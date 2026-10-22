@@ -95,7 +95,7 @@
 #define SSH2_FX_OP_UNSUPPORTED		8
 #define SSH2_FX_MAX			8
 
-struct passwd;
+بنية passwd;
 
-int	sftp_server_main(int, char **, struct passwd *);
-void	sftp_server_cleanup_exit(int) __attribute__((noreturn));
+صحيح	sftp_server_main(صحيح, حرف **, بنية passwd *);
+فراغ	sftp_server_cleanup_exit(صحيح) __attribute__((noreturn));

@@ -16,33 +16,33 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifdef ENABLE_SK_INTERNAL
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <stdarg.h>
-#include <time.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <stdio.h>
+#ضمن <stddef.h>
+#ضمن <stdarg.h>
+#ضمن <time.h>
 #ifdef HAVE_SHA2_H
-#include <sha2.h>
+#ضمن <sha2.h>
 #endif
 
 #ifdef WITH_OPENSSL
-#include <openssl/opensslv.h>
-#include <openssl/crypto.h>
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/evp.h>
-#include "openbsd-compat/openssl-compat.h"
+#ضمن <openssl/opensslv.h>
+#ضمن <openssl/crypto.h>
+#ضمن <openssl/bn.h>
+#ضمن <openssl/ec.h>
+#ضمن <openssl/ecdsa.h>
+#ضمن <openssl/evp.h>
+#ضمن "openbsd-compat/openssl-compat.h"
 #endif /* WITH_OPENSSL */
 
-#include <fido.h>
-#include <fido/credman.h>
+#ضمن <fido.h>
+#ضمن <fido/credman.h>
 
 /* backwards compat for libfido2 */
 #ifndef HAVE_FIDO_CRED_PROT
@@ -79,16 +79,16 @@
 # define sk_api_version		ssh_sk_api_version
 # define sk_enroll		ssh_sk_enroll
 # define sk_sign		ssh_sk_sign
-# define sk_load_resident_keys	ssh_sk_load_resident_keys
+# define sk_load_resident_کلیدیں	ssh_sk_load_resident_کلیدیں
 #endif /* !SK_STANDALONE */
 
-#include "sk-api.h"
+#ضمن "sk-api.h"
 
 /* #define SK_DEBUG 1 */
 
 #ifdef SK_DEBUG
 #define SSH_FIDO_INIT_ARG	FIDO_DEBUG
-#else
+#وإلا
 #define SSH_FIDO_INIT_ARG	0
 #endif
 
@@ -101,45 +101,45 @@
 #define FIDO_ERR_OPERATION_DENIED 0x27
 #endif
 
-struct sk_usbhid {
+بنية sk_usbhid {
 	fido_dev_t *dev;
-	char *path;
+	حرف *path;
 };
 
 /* Return the version of the middleware API */
-uint32_t sk_api_version(void);
+uint32_t sk_api_version(فراغ);
 
 /* Enroll a U2F key (private key generation) */
-int sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
-    const char *application, uint8_t flags, const char *pin,
-    struct sk_option **options, struct sk_enroll_response **enroll_response);
+صحيح sk_enroll(uint32_t alg, ثابت uint8_t *challenge, size_t challenge_len,
+    ثابت حرف *application, uint8_t flags, ثابت حرف *pin,
+    بنية sk_option **options, بنية sk_enroll_response **enroll_response);
 
 /* Sign a challenge */
-int sk_sign(uint32_t alg, const uint8_t *data, size_t data_len,
-    const char *application, const uint8_t *key_handle, size_t key_handle_len,
-    uint8_t flags, const char *pin, struct sk_option **options,
-    struct sk_sign_response **sign_response);
+صحيح sk_sign(uint32_t alg, ثابت uint8_t *data, size_t data_len,
+    ثابت حرف *application, ثابت uint8_t *کلید_handle, size_t کلید_handle_len,
+    uint8_t flags, ثابت حرف *pin, بنية sk_option **options,
+    بنية sk_sign_response **sign_response);
 
 /* Load resident keys */
-int sk_load_resident_keys(const char *pin, struct sk_option **options,
-    struct sk_resident_key ***rks, size_t *nrks);
+صحيح sk_load_resident_کلیدیں(ثابت حرف *pin, بنية sk_option **options,
+    بنية sk_resident_کلید ***rks, size_t *nrks);
 
-static void skdebug(const char *func, const char *fmt, ...)
+ساكن فراغ skdebug(ثابت حرف *func, ثابت حرف *fmt, ...)
     __attribute__((__format__ (printf, 2, 3)));
 
-static void
-skdebug(const char *func, const char *fmt, ...)
+ساكن فراغ
+skdebug(ثابت حرف *func, ثابت حرف *fmt, ...)
 {
-#if !defined(SK_STANDALONE)
-	char *msg;
+#إذا !defined(SK_STANDALONE)
+	حرف *پیغام;
 	va_list ap;
 
 	va_start(ap, fmt);
-	xvasprintf(&msg, fmt, ap);
+	xvasprintf(&پیغام, fmt, ap);
 	va_end(ap);
-	debug("%s: %s", func, msg);
-	free(msg);
-#elif defined(SK_DEBUG)
+	debug("%s: %s", func, پیغام);
+	حرر(پیغام);
+#وإلاإذا defined(SK_DEBUG)
 	va_list ap;
 
 	va_start(ap, fmt);
@@ -147,443 +147,443 @@ skdebug(const char *func, const char *fmt, ...)
 	vfprintf(stderr, fmt, ap);
 	fputc('\n', stderr);
 	va_end(ap);
-#else
-	(void)func; /* XXX */
-	(void)fmt; /* XXX */
+#وإلا
+	(فراغ)func; /* XXX */
+	(فراغ)fmt; /* XXX */
 #endif
 }
 
 uint32_t
-sk_api_version(void)
+sk_api_version(فراغ)
 {
-	return SSH_SK_VERSION_MAJOR;
+	أرجع SSH_SK_VERSION_MAJOR;
 }
 
-static struct sk_usbhid *
-sk_open(const char *path)
+ساكن بنية sk_usbhid *
+sk_open(ثابت حرف *path)
 {
-	struct sk_usbhid *sk;
-	int r;
+	بنية sk_usbhid *sk;
+	صحيح r;
 
-	if (path == NULL) {
+	إذا (path == عدم) {
 		skdebug(__func__, "path == NULL");
-		return NULL;
+		أرجع عدم;
 	}
-	if ((sk = calloc(1, sizeof(*sk))) == NULL) {
+	إذا ((sk = calloc(1, حجم(*sk))) == عدم) {
 		skdebug(__func__, "calloc sk failed");
-		return NULL;
+		أرجع عدم;
 	}
-	if ((sk->path = strdup(path)) == NULL) {
+	إذا ((sk->path = strdup(path)) == عدم) {
 		skdebug(__func__, "strdup path failed");
-		free(sk);
-		return NULL;
+		حرر(sk);
+		أرجع عدم;
 	}
-	if ((sk->dev = fido_dev_new()) == NULL) {
+	إذا ((sk->dev = fido_dev_new()) == عدم) {
 		skdebug(__func__, "fido_dev_new failed");
-		free(sk->path);
-		free(sk);
-		return NULL;
+		حرر(sk->path);
+		حرر(sk);
+		أرجع عدم;
 	}
-	if ((r = fido_dev_open(sk->dev, sk->path)) != FIDO_OK) {
+	إذا ((r = fido_dev_open(sk->dev, sk->path)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_open %s failed: %s", sk->path,
 		    fido_strerr(r));
 		fido_dev_free(&sk->dev);
-		free(sk->path);
-		free(sk);
-		return NULL;
+		حرر(sk->path);
+		حرر(sk);
+		أرجع عدم;
 	}
-	return sk;
+	أرجع sk;
 }
 
-static void
-sk_close(struct sk_usbhid *sk)
+ساكن فراغ
+sk_close(بنية sk_usbhid *sk)
 {
-	if (sk == NULL)
-		return;
+	إذا (sk == عدم)
+		أرجع;
 	fido_dev_cancel(sk->dev); /* cancel any pending operation */
 	fido_dev_close(sk->dev);
 	fido_dev_free(&sk->dev);
-	free(sk->path);
-	free(sk);
+	حرر(sk->path);
+	حرر(sk);
 }
 
-static struct sk_usbhid **
-sk_openv(const fido_dev_info_t *devlist, size_t ndevs, size_t *nopen)
+ساكن بنية sk_usbhid **
+sk_openv(ثابت fido_dev_info_t *devlist, size_t ndevs, size_t *nopen)
 {
-	const fido_dev_info_t *di;
-	struct sk_usbhid **skv;
+	ثابت fido_dev_info_t *di;
+	بنية sk_usbhid **skv;
 	size_t i;
 
 	*nopen = 0;
-	if ((skv = calloc(ndevs, sizeof(*skv))) == NULL) {
+	إذا ((skv = calloc(ndevs, حجم(*skv))) == عدم) {
 		skdebug(__func__, "calloc skv failed");
-		return NULL;
+		أرجع عدم;
 	}
-	for (i = 0; i < ndevs; i++) {
-		if ((di = fido_dev_info_ptr(devlist, i)) == NULL)
+	لكل (i = 0; i < ndevs; i++) {
+		إذا ((di = fido_dev_info_ptr(devlist, i)) == عدم)
 			skdebug(__func__, "fido_dev_info_ptr failed");
-		else if ((skv[*nopen] = sk_open(fido_dev_info_path(di))) == NULL)
+		وإلا إذا ((skv[*nopen] = sk_open(fido_dev_info_path(di))) == عدم)
 			skdebug(__func__, "sk_open failed");
-		else
+		وإلا
 			(*nopen)++;
 	}
-	if (*nopen == 0) {
-		for (i = 0; i < ndevs; i++)
+	إذا (*nopen == 0) {
+		لكل (i = 0; i < ndevs; i++)
 			sk_close(skv[i]);
-		free(skv);
-		skv = NULL;
+		حرر(skv);
+		skv = عدم;
 	}
 
-	return skv;
+	أرجع skv;
 }
 
-static void
-sk_closev(struct sk_usbhid **skv, size_t nsk)
+ساكن فراغ
+sk_closev(بنية sk_usbhid **skv, size_t nsk)
 {
 	size_t i;
 
-	for (i = 0; i < nsk; i++)
+	لكل (i = 0; i < nsk; i++)
 		sk_close(skv[i]);
-	free(skv);
+	حرر(skv);
 }
 
-static int
-sk_touch_begin(struct sk_usbhid **skv, size_t nsk)
+ساكن صحيح
+sk_touch_begin(بنية sk_usbhid **skv, size_t nsk)
 {
 	size_t i, ok = 0;
-	int r;
+	صحيح r;
 
-	for (i = 0; i < nsk; i++)
-		if ((r = fido_dev_get_touch_begin(skv[i]->dev)) != FIDO_OK)
+	لكل (i = 0; i < nsk; i++)
+		إذا ((r = fido_dev_get_touch_begin(skv[i]->dev)) != FIDO_OK)
 			skdebug(__func__, "fido_dev_get_touch_begin %s failed:"
 			    " %s", skv[i]->path, fido_strerr(r));
-		else
+		وإلا
 			ok++;
 
-	return ok ? 0 : -1;
+	أرجع ok ? 0 : -1;
 }
 
-static int
-sk_touch_poll(struct sk_usbhid **skv, size_t nsk, int *touch, size_t *idx)
+ساكن صحيح
+sk_touch_poll(بنية sk_usbhid **skv, size_t nsk, صحيح *touch, size_t *idx)
 {
-	struct timespec ts_pause;
+	بنية timespec ts_pause;
 	size_t npoll, i;
-	int r;
+	صحيح r;
 
 	ts_pause.tv_sec = 0;
 	ts_pause.tv_nsec = POLL_SLEEP_NS;
-	nanosleep(&ts_pause, NULL);
+	nanosleep(&ts_pause, عدم);
 	npoll = nsk;
-	for (i = 0; i < nsk; i++) {
-		if (skv[i] == NULL)
-			continue; /* device discarded */
+	لكل (i = 0; i < nsk; i++) {
+		إذا (skv[i] == عدم)
+			استمر; /* device discarded */
 		skdebug(__func__, "polling %s", skv[i]->path);
-		if ((r = fido_dev_get_touch_status(skv[i]->dev, touch,
+		إذا ((r = fido_dev_get_touch_status(skv[i]->dev, touch,
 		    FIDO_POLL_MS)) != FIDO_OK) {
 			skdebug(__func__, "fido_dev_get_touch_status %s: %s",
 			    skv[i]->path, fido_strerr(r));
 			sk_close(skv[i]); /* discard device */
-			skv[i] = NULL;
-			if (--npoll == 0) {
+			skv[i] = عدم;
+			إذا (--npoll == 0) {
 				skdebug(__func__, "no device left to poll");
-				return -1;
+				أرجع -1;
 			}
-		} else if (*touch) {
+		} وإلا إذا (*touch) {
 			*idx = i;
-			return 0;
+			أرجع 0;
 		}
 	}
 	*touch = 0;
-	return 0;
+	أرجع 0;
 }
 
-#if !defined(HAVE_FIDO_ASSERT_SET_CLIENTDATA) || \
+#إذا !defined(HAVE_FIDO_ASSERT_SET_CLIENTDATA) || \
     !defined(HAVE_FIDO_CRED_SET_CLIENTDATA)
 /* Calculate SHA256(m) */
-static int
-sha256_mem(const void *m, size_t mlen, u_char *d, size_t dlen)
+ساكن صحيح
+sha256_mem(ثابت فراغ *m, size_t mlen, u_char *d, size_t dlen)
 {
 #ifdef WITH_OPENSSL
 	u_int mdlen;
-#else
+#وإلا
 	SHA2_CTX ctx;
 #endif
 
-	if (dlen != 32)
-		return -1;
+	إذا (dlen != 32)
+		أرجع -1;
 #ifdef WITH_OPENSSL
 	mdlen = dlen;
-	if (!EVP_Digest(m, mlen, d, &mdlen, EVP_sha256(), NULL))
-		return -1;
-#else
+	إذا (!EVP_Digest(m, mlen, d, &mdlen, EVP_sha256(), عدم))
+		أرجع -1;
+#وإلا
 	SHA256Init(&ctx);
-	SHA256Update(&ctx, (const uint8_t *)m, mlen);
+	SHA256Update(&ctx, (ثابت uint8_t *)m, mlen);
 	SHA256Final(d, &ctx);
 #endif
-	return 0;
+	أرجع 0;
 }
 #endif /* !HAVE_FIDO_ASSERT_SET_CLIENTDATA || !HAVE_FIDO_CRED_SET_CLIENTDATA */
 
 #ifndef HAVE_FIDO_CRED_SET_CLIENTDATA
-static int
-fido_cred_set_clientdata(fido_cred_t *cred, const u_char *ptr, size_t len)
+ساكن صحيح
+fido_cred_set_clientdata(fido_cred_t *cred, ثابت u_char *ptr, size_t len)
 {
 	uint8_t d[32];
-	int r;
+	صحيح r;
 
-	if (sha256_mem(ptr, len, d, sizeof(d)) != 0) {
+	إذا (sha256_mem(ptr, len, d, حجم(d)) != 0) {
 		skdebug(__func__, "hash challenge failed");
-		return FIDO_ERR_INTERNAL;
+		أرجع FIDO_ERR_INTERNAL;
 	}
-	r = fido_cred_set_clientdata_hash(cred, d, sizeof(d));
-	explicit_bzero(d, sizeof(d));
-	if (r != FIDO_OK) {
+	r = fido_cred_set_clientdata_hash(cred, d, حجم(d));
+	explicit_bzero(d, حجم(d));
+	إذا (r != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_clientdata_hash failed: %s",
 		    fido_strerr(r));
 	}
-	return r;
+	أرجع r;
 }
 #endif /* HAVE_FIDO_CRED_SET_CLIENTDATA */
 
 #ifndef HAVE_FIDO_ASSERT_SET_CLIENTDATA
-static int
-fido_assert_set_clientdata(fido_assert_t *assert, const u_char *ptr, size_t len)
+ساكن صحيح
+fido_assert_set_clientdata(fido_assert_t *أكد, ثابت u_char *ptr, size_t len)
 {
 	uint8_t d[32];
-	int r;
+	صحيح r;
 
-	if (sha256_mem(ptr, len, d, sizeof(d)) != 0) {
+	إذا (sha256_mem(ptr, len, d, حجم(d)) != 0) {
 		skdebug(__func__, "hash challenge failed");
-		return FIDO_ERR_INTERNAL;
+		أرجع FIDO_ERR_INTERNAL;
 	}
-	r = fido_assert_set_clientdata_hash(assert, d, sizeof(d));
-	explicit_bzero(d, sizeof(d));
-	if (r != FIDO_OK) {
+	r = fido_assert_set_clientdata_hash(أكد, d, حجم(d));
+	explicit_bzero(d, حجم(d));
+	إذا (r != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_clientdata_hash failed: %s",
 		    fido_strerr(r));
 	}
-	return r;
+	أرجع r;
 }
 #endif /* HAVE_FIDO_ASSERT_SET_CLIENTDATA */
 
 #ifndef HAVE_FIDO_DEV_IS_WINHELLO
-static bool
-fido_dev_is_winhello(const fido_dev_t *fdev)
+ساكن bool
+fido_dev_is_winhello(ثابت fido_dev_t *fdev)
 {
-	return 0;
+	أرجع 0;
 }
 #endif /* HAVE_FIDO_DEV_IS_WINHELLO */
 
 /* Check if the specified key handle exists on a given sk. */
-static int
-sk_try(const struct sk_usbhid *sk, const char *application,
-    const uint8_t *key_handle, size_t key_handle_len)
+ساكن صحيح
+sk_try(ثابت بنية sk_usbhid *sk, ثابت حرف *application,
+    ثابت uint8_t *کلید_handle, size_t کلید_handle_len)
 {
-	fido_assert_t *assert = NULL;
-	int r = FIDO_ERR_INTERNAL;
+	fido_assert_t *أكد = عدم;
+	صحيح r = FIDO_ERR_INTERNAL;
 	uint8_t message[32];
 
-	memset(message, '\0', sizeof(message));
-	if ((assert = fido_assert_new()) == NULL) {
+	memset(message, '\0', حجم(message));
+	إذا ((أكد = fido_assert_new()) == عدم) {
 		skdebug(__func__, "fido_assert_new failed");
-		goto out;
+		اذهب out;
 	}
 	/* generate an invalid signature on FIDO2 tokens */
-	if ((r = fido_assert_set_clientdata(assert, message,
-	    sizeof(message))) != FIDO_OK) {
+	إذا ((r = fido_assert_set_clientdata(أكد, message,
+	    حجم(message))) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_clientdata: %s",
 		    fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_assert_set_rp(assert, application)) != FIDO_OK) {
+	إذا ((r = fido_assert_set_rp(أكد, application)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_rp: %s", fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_assert_allow_cred(assert, key_handle,
-	    key_handle_len)) != FIDO_OK) {
+	إذا ((r = fido_assert_allow_cred(أكد, کلید_handle,
+	    کلید_handle_len)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_allow_cred: %s", fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_assert_set_up(assert, FIDO_OPT_FALSE)) != FIDO_OK) {
+	إذا ((r = fido_assert_set_up(أكد, FIDO_OPT_FALSE)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_up: %s", fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	r = fido_dev_get_assert(sk->dev, assert, NULL);
+	r = fido_dev_get_assert(sk->dev, أكد, عدم);
 	skdebug(__func__, "fido_dev_get_assert: %s", fido_strerr(r));
-	if (r == FIDO_ERR_USER_PRESENCE_REQUIRED) {
+	إذا (r == FIDO_ERR_USER_PRESENCE_REQUIRED) {
 		/* U2F tokens may return this */
 		r = FIDO_OK;
 	}
  out:
-	fido_assert_free(&assert);
+	fido_assert_free(&أكد);
 
-	return r != FIDO_OK ? -1 : 0;
+	أرجع r != FIDO_OK ? -1 : 0;
 }
 
-static int
-check_sk_options(fido_dev_t *dev, const char *opt, int *ret)
+ساكن صحيح
+check_sk_options(fido_dev_t *dev, ثابت حرف *opt, صحيح *ret)
 {
 	fido_cbor_info_t *info;
-	char * const *name;
-	const bool *value;
+	حرف * ثابت *name;
+	ثابت bool *قدر;
 	size_t len, i;
-	int r;
+	صحيح r;
 
 	*ret = -1;
 
-	if (!fido_dev_is_fido2(dev)) {
+	إذا (!fido_dev_is_fido2(dev)) {
 		skdebug(__func__, "device is not fido2");
-		return 0;
+		أرجع 0;
 	}
-	if ((info = fido_cbor_info_new()) == NULL) {
+	إذا ((info = fido_cbor_info_new()) == عدم) {
 		skdebug(__func__, "fido_cbor_info_new failed");
-		return -1;
+		أرجع -1;
 	}
-	if ((r = fido_dev_get_cbor_info(dev, info)) != FIDO_OK) {
+	إذا ((r = fido_dev_get_cbor_info(dev, info)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_get_cbor_info: %s", fido_strerr(r));
 		fido_cbor_info_free(&info);
-		return -1;
+		أرجع -1;
 	}
 	name = fido_cbor_info_options_name_ptr(info);
-	value = fido_cbor_info_options_value_ptr(info);
+	قدر = fido_cbor_info_options_قدر_ptr(info);
 	len = fido_cbor_info_options_len(info);
-	for (i = 0; i < len; i++) {
-		if (!strcmp(name[i], opt)) {
-			*ret = value[i];
-			break;
+	لكل (i = 0; i < len; i++) {
+		إذا (!strcmp(name[i], opt)) {
+			*ret = قدر[i];
+			اكسر;
 		}
 	}
 	fido_cbor_info_free(&info);
-	if (*ret == -1)
+	إذا (*ret == -1)
 		skdebug(__func__, "option %s is unknown", opt);
-	else
+	وإلا
 		skdebug(__func__, "option %s is %s", opt, *ret ? "on" : "off");
 
-	return 0;
+	أرجع 0;
 }
 
-static struct sk_usbhid *
-sk_select_by_cred(const fido_dev_info_t *devlist, size_t ndevs,
-    const char *application, const uint8_t *key_handle, size_t key_handle_len)
+ساكن بنية sk_usbhid *
+sk_select_by_cred(ثابت fido_dev_info_t *devlist, size_t ndevs,
+    ثابت حرف *application, ثابت uint8_t *کلید_handle, size_t کلید_handle_len)
 {
-	struct sk_usbhid **skv, *sk;
+	بنية sk_usbhid **skv, *sk;
 	size_t skvcnt, i;
-	int internal_uv;
+	صحيح internal_uv;
 
-	if ((skv = sk_openv(devlist, ndevs, &skvcnt)) == NULL) {
+	إذا ((skv = sk_openv(devlist, ndevs, &skvcnt)) == عدم) {
 		skdebug(__func__, "sk_openv failed");
-		return NULL;
+		أرجع عدم;
 	}
-	if (skvcnt == 1 && check_sk_options(skv[0]->dev, "uv",
+	إذا (skvcnt == 1 && check_sk_options(skv[0]->dev, "uv",
 	    &internal_uv) == 0 && internal_uv != -1) {
 		sk = skv[0];
-		skv[0] = NULL;
-		goto out;
+		skv[0] = عدم;
+		اذهب out;
 	}
-	sk = NULL;
-	for (i = 0; i < skvcnt; i++) {
-		if (sk_try(skv[i], application, key_handle,
-		    key_handle_len) == 0) {
+	sk = عدم;
+	لكل (i = 0; i < skvcnt; i++) {
+		إذا (sk_try(skv[i], application, کلید_handle,
+		    کلید_handle_len) == 0) {
 			sk = skv[i];
-			skv[i] = NULL;
+			skv[i] = عدم;
 			skdebug(__func__, "found key in %s", sk->path);
-			break;
+			اكسر;
 		}
 	}
  out:
 	sk_closev(skv, skvcnt);
-	return sk;
+	أرجع sk;
 }
 
-static struct sk_usbhid *
-sk_select_by_touch(const fido_dev_info_t *devlist, size_t ndevs)
+ساكن بنية sk_usbhid *
+sk_select_by_touch(ثابت fido_dev_info_t *devlist, size_t ndevs)
 {
-	struct sk_usbhid **skv, *sk;
-	struct timeval tv_start, tv_now, tv_delta;
+	بنية sk_usbhid **skv, *sk;
+	بنية timeval tv_start, tv_now, tv_delta;
 	size_t skvcnt, idx;
-	int touch, ms_remain;
+	صحيح touch, ms_remain;
 
-	if ((skv = sk_openv(devlist, ndevs, &skvcnt)) == NULL) {
+	إذا ((skv = sk_openv(devlist, ndevs, &skvcnt)) == عدم) {
 		skdebug(__func__, "sk_openv failed");
-		return NULL;
+		أرجع عدم;
 	}
-	sk = NULL;
-	if (skvcnt < 2) {
-		if (skvcnt == 1) {
+	sk = عدم;
+	إذا (skvcnt < 2) {
+		إذا (skvcnt == 1) {
 			/* single candidate */
 			sk = skv[0];
-			skv[0] = NULL;
+			skv[0] = عدم;
 		}
-		goto out;
+		اذهب out;
 	}
 #ifndef HAVE_FIDO_DEV_GET_TOUCH_STATUS
 	skdebug(__func__, "libfido2 version does not support a feature needed for multiple tokens. Please upgrade to >=1.5.0");
-	goto out;
+	اذهب out;
 #endif
 
-	if (sk_touch_begin(skv, skvcnt) == -1) {
+	إذا (sk_touch_begin(skv, skvcnt) == -1) {
 		skdebug(__func__, "sk_touch_begin failed");
-		goto out;
+		اذهب out;
 	}
 	monotime_tv(&tv_start);
-	do {
-		if (sk_touch_poll(skv, skvcnt, &touch, &idx) == -1) {
+	افعل {
+		إذا (sk_touch_poll(skv, skvcnt, &touch, &idx) == -1) {
 			skdebug(__func__, "sk_touch_poll failed");
-			goto out;
+			اذهب out;
 		}
-		if (touch) {
+		إذا (touch) {
 			sk = skv[idx];
-			skv[idx] = NULL;
-			goto out;
+			skv[idx] = عدم;
+			اذهب out;
 		}
 		monotime_tv(&tv_now);
 		timersub(&tv_now, &tv_start, &tv_delta);
 		ms_remain = SELECT_MS - tv_delta.tv_sec * 1000 -
 		    tv_delta.tv_usec / 1000;
-	} while (ms_remain >= FIDO_POLL_MS);
+	} طالما (ms_remain >= FIDO_POLL_MS);
 	skdebug(__func__, "timeout");
 out:
 	sk_closev(skv, skvcnt);
-	return sk;
+	أرجع sk;
 }
 
-static struct sk_usbhid *
-sk_probe(const char *application, const uint8_t *key_handle,
-    size_t key_handle_len, int probe_resident)
+ساكن بنية sk_usbhid *
+sk_probe(ثابت حرف *application, ثابت uint8_t *کلید_handle,
+    size_t کلید_handle_len, صحيح probe_resident)
 {
-	struct sk_usbhid *sk;
+	بنية sk_usbhid *sk;
 	fido_dev_info_t *devlist;
 	size_t ndevs;
-	int r;
+	صحيح r;
 
 #ifdef HAVE_CYGWIN
-	if (!probe_resident && (sk = sk_open("windows://hello")) != NULL)
-		return sk;
+	إذا (!probe_resident && (sk = sk_open("windows://hello")) != عدم)
+		أرجع sk;
 #endif /* HAVE_CYGWIN */
-	if ((devlist = fido_dev_info_new(MAX_FIDO_DEVICES)) == NULL) {
+	إذا ((devlist = fido_dev_info_new(MAX_FIDO_DEVICES)) == عدم) {
 		skdebug(__func__, "fido_dev_info_new failed");
-		return NULL;
+		أرجع عدم;
 	}
-	if ((r = fido_dev_info_manifest(devlist, MAX_FIDO_DEVICES,
+	إذا ((r = fido_dev_info_manifest(devlist, MAX_FIDO_DEVICES,
 	    &ndevs)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_info_manifest failed: %s",
 		    fido_strerr(r));
 		fido_dev_info_free(&devlist, MAX_FIDO_DEVICES);
-		return NULL;
+		أرجع عدم;
 	}
 	skdebug(__func__, "%zu device(s) detected", ndevs);
-	if (ndevs == 0) {
-		sk = NULL;
-	} else if (application != NULL && key_handle != NULL) {
+	إذا (ndevs == 0) {
+		sk = عدم;
+	} وإلا إذا (application != عدم && کلید_handle != عدم) {
 		skdebug(__func__, "selecting sk by cred");
-		sk = sk_select_by_cred(devlist, ndevs, application, key_handle,
-		    key_handle_len);
-	} else {
+		sk = sk_select_by_cred(devlist, ndevs, application, کلید_handle,
+		    کلید_handle_len);
+	} وإلا {
 		skdebug(__func__, "selecting sk by touch");
 		sk = sk_select_by_touch(devlist, ndevs);
 	}
 	fido_dev_info_free(&devlist, MAX_FIDO_DEVICES);
-	return sk;
+	أرجع sk;
 }
 
 #ifdef WITH_OPENSSL
@@ -591,751 +591,751 @@ sk_probe(const char *application, const uint8_t *key_handle,
  * The key returned via fido_cred_pubkey_ptr() is in affine coordinates,
  * but the API expects a SEC1 octet string.
  */
-static int
-pack_public_key_ecdsa(const fido_cred_t *cred,
-    struct sk_enroll_response *response)
+ساكن صحيح
+pack_public_کلید_ecdsa(ثابت fido_cred_t *cred,
+    بنية sk_enroll_response *response)
 {
-	const uint8_t *ptr;
-	BIGNUM *x = NULL, *y = NULL;
-	EC_POINT *q = NULL;
-	EC_GROUP *g = NULL;
-	int ret = -1;
+	ثابت uint8_t *ptr;
+	BIGNUM *x = عدم, *y = عدم;
+	EC_POINT *q = عدم;
+	EC_GROUP *g = عدم;
+	صحيح ret = -1;
 
-	response->public_key = NULL;
-	response->public_key_len = 0;
+	response->public_کلید = عدم;
+	response->public_کلید_len = 0;
 
-	if ((x = BN_new()) == NULL ||
-	    (y = BN_new()) == NULL ||
-	    (g = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1)) == NULL ||
-	    (q = EC_POINT_new(g)) == NULL) {
+	إذا ((x = BN_new()) == عدم ||
+	    (y = BN_new()) == عدم ||
+	    (g = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1)) == عدم ||
+	    (q = EC_POINT_new(g)) == عدم) {
 		skdebug(__func__, "libcrypto setup failed");
-		goto out;
+		اذهب out;
 	}
-	if ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
+	إذا ((ptr = fido_cred_pubkey_ptr(cred)) == عدم) {
 		skdebug(__func__, "fido_cred_pubkey_ptr failed");
-		goto out;
+		اذهب out;
 	}
-	if (fido_cred_pubkey_len(cred) != 64) {
+	إذا (fido_cred_pubkey_len(cred) != 64) {
 		skdebug(__func__, "bad fido_cred_pubkey_len %zu",
 		    fido_cred_pubkey_len(cred));
-		goto out;
+		اذهب out;
 	}
 
-	if (BN_bin2bn(ptr, 32, x) == NULL ||
-	    BN_bin2bn(ptr + 32, 32, y) == NULL) {
+	إذا (BN_bin2bn(ptr, 32, x) == عدم ||
+	    BN_bin2bn(ptr + 32, 32, y) == عدم) {
 		skdebug(__func__, "BN_bin2bn failed");
-		goto out;
+		اذهب out;
 	}
-	if (EC_POINT_set_affine_coordinates(g, q, x, y, NULL) != 1) {
+	إذا (EC_POINT_set_affine_coordinates(g, q, x, y, عدم) != 1) {
 		skdebug(__func__, "EC_POINT_set_affine_coordinates failed");
-		goto out;
+		اذهب out;
 	}
-	response->public_key_len = EC_POINT_point2oct(g, q,
-	    POINT_CONVERSION_UNCOMPRESSED, NULL, 0, NULL);
-	if (response->public_key_len == 0 || response->public_key_len > 2048) {
+	response->public_کلید_len = EC_POINT_point2oct(g, q,
+	    POINT_CONVERSION_UNCOMPRESSED, عدم, 0, عدم);
+	إذا (response->public_کلید_len == 0 || response->public_کلید_len > 2048) {
 		skdebug(__func__, "bad pubkey length %zu",
-		    response->public_key_len);
-		goto out;
+		    response->public_کلید_len);
+		اذهب out;
 	}
-	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
+	إذا ((response->public_کلید = malloc(response->public_کلید_len)) == عدم) {
 		skdebug(__func__, "malloc pubkey failed");
-		goto out;
+		اذهب out;
 	}
-	if (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
-	    response->public_key, response->public_key_len, NULL) == 0) {
+	إذا (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
+	    response->public_کلید, response->public_کلید_len, عدم) == 0) {
 		skdebug(__func__, "EC_POINT_point2oct failed");
-		goto out;
+		اذهب out;
 	}
 	/* success */
 	ret = 0;
  out:
-	if (ret != 0 && response->public_key != NULL) {
-		memset(response->public_key, 0, response->public_key_len);
-		free(response->public_key);
-		response->public_key = NULL;
+	إذا (ret != 0 && response->public_کلید != عدم) {
+		memset(response->public_کلید, 0, response->public_کلید_len);
+		حرر(response->public_کلید);
+		response->public_کلید = عدم;
 	}
 	EC_POINT_free(q);
 	EC_GROUP_free(g);
 	BN_clear_free(x);
 	BN_clear_free(y);
-	return ret;
+	أرجع ret;
 }
 #endif /* WITH_OPENSSL */
 
-static int
-pack_public_key_ed25519(const fido_cred_t *cred,
-    struct sk_enroll_response *response)
+ساكن صحيح
+pack_public_کلید_ed25519(ثابت fido_cred_t *cred,
+    بنية sk_enroll_response *response)
 {
-	const uint8_t *ptr;
+	ثابت uint8_t *ptr;
 	size_t len;
-	int ret = -1;
+	صحيح ret = -1;
 
-	response->public_key = NULL;
-	response->public_key_len = 0;
+	response->public_کلید = عدم;
+	response->public_کلید_len = 0;
 
-	if ((len = fido_cred_pubkey_len(cred)) != 32) {
+	إذا ((len = fido_cred_pubkey_len(cred)) != 32) {
 		skdebug(__func__, "bad fido_cred_pubkey_len len %zu", len);
-		goto out;
+		اذهب out;
 	}
-	if ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
+	إذا ((ptr = fido_cred_pubkey_ptr(cred)) == عدم) {
 		skdebug(__func__, "fido_cred_pubkey_ptr failed");
-		goto out;
+		اذهب out;
 	}
-	response->public_key_len = len;
-	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
+	response->public_کلید_len = len;
+	إذا ((response->public_کلید = malloc(response->public_کلید_len)) == عدم) {
 		skdebug(__func__, "malloc pubkey failed");
-		goto out;
+		اذهب out;
 	}
-	memcpy(response->public_key, ptr, len);
+	memcpy(response->public_کلید, ptr, len);
 	ret = 0;
  out:
-	if (ret != 0)
-		free(response->public_key);
-	return ret;
+	إذا (ret != 0)
+		حرر(response->public_کلید);
+	أرجع ret;
 }
 
-static int
-pack_public_key(uint32_t alg, const fido_cred_t *cred,
-    struct sk_enroll_response *response)
+ساكن صحيح
+pack_public_کلید(uint32_t alg, ثابت fido_cred_t *cred,
+    بنية sk_enroll_response *response)
 {
-	switch(alg) {
+	بدل(alg) {
 #ifdef WITH_OPENSSL
-	case SSH_SK_ECDSA:
-		return pack_public_key_ecdsa(cred, response);
+	حالة SSH_SK_ECDSA:
+		أرجع pack_public_کلید_ecdsa(cred, response);
 #endif /* WITH_OPENSSL */
-	case SSH_SK_ED25519:
-		return pack_public_key_ed25519(cred, response);
-	default:
-		return -1;
+	حالة SSH_SK_ED25519:
+		أرجع pack_public_کلید_ed25519(cred, response);
+	افتراضي:
+		أرجع -1;
 	}
 }
 
-static int
-fidoerr_to_skerr(int fidoerr)
+ساكن صحيح
+fidoerr_to_skerr(صحيح fidoerr)
 {
-	switch (fidoerr) {
-	case FIDO_ERR_UNSUPPORTED_OPTION:
-	case FIDO_ERR_UNSUPPORTED_ALGORITHM:
-		return SSH_SK_ERR_UNSUPPORTED;
-	case FIDO_ERR_PIN_REQUIRED:
-	case FIDO_ERR_PIN_INVALID:
-	case FIDO_ERR_OPERATION_DENIED:
-		return SSH_SK_ERR_PIN_REQUIRED;
-	default:
-		return -1;
+	بدل (fidoerr) {
+	حالة FIDO_ERR_UNSUPPORTED_OPTION:
+	حالة FIDO_ERR_UNSUPPORTED_ALGORITHM:
+		أرجع SSH_SK_ERR_UNSUPPORTED;
+	حالة FIDO_ERR_PIN_REQUIRED:
+	حالة FIDO_ERR_PIN_INVALID:
+	حالة FIDO_ERR_OPERATION_DENIED:
+		أرجع SSH_SK_ERR_PIN_REQUIRED;
+	افتراضي:
+		أرجع -1;
 	}
 }
 
-static int
-check_enroll_options(struct sk_option **options, char **devicep,
+ساكن صحيح
+check_enroll_options(بنية sk_option **options, حرف **devicep,
     uint8_t *user_id, size_t user_id_len)
 {
 	size_t i;
 
-	if (options == NULL)
-		return 0;
-	for (i = 0; options[i] != NULL; i++) {
-		if (strcmp(options[i]->name, "device") == 0) {
-			if ((*devicep = strdup(options[i]->value)) == NULL) {
+	إذا (options == عدم)
+		أرجع 0;
+	لكل (i = 0; options[i] != عدم; i++) {
+		إذا (strcmp(options[i]->name, "device") == 0) {
+			إذا ((*devicep = strdup(options[i]->قدر)) == عدم) {
 				skdebug(__func__, "strdup device failed");
-				return -1;
+				أرجع -1;
 			}
 			skdebug(__func__, "requested device %s", *devicep);
-		} else if (strcmp(options[i]->name, "user") == 0) {
-			if (strlcpy(user_id, options[i]->value, user_id_len) >=
+		} وإلا إذا (strcmp(options[i]->name, "user") == 0) {
+			إذا (strlcpy(user_id, options[i]->قدر, user_id_len) >=
 			    user_id_len) {
 				skdebug(__func__, "user too long");
-				return -1;
+				أرجع -1;
 			}
 			skdebug(__func__, "requested user %s",
-			    (char *)user_id);
-		} else {
+			    (حرف *)user_id);
+		} وإلا {
 			skdebug(__func__, "requested unsupported option %s",
 			    options[i]->name);
-			if (options[i]->required) {
+			إذا (options[i]->required) {
 				skdebug(__func__, "unknown required option");
-				return -1;
+				أرجع -1;
 			}
 		}
 	}
-	return 0;
+	أرجع 0;
 }
 
-static int
-key_lookup(fido_dev_t *dev, const char *application, const uint8_t *user_id,
-    size_t user_id_len, const char *pin)
+ساكن صحيح
+کلید_lookup(fido_dev_t *dev, ثابت حرف *application, ثابت uint8_t *user_id,
+    size_t user_id_len, ثابت حرف *pin)
 {
-	fido_assert_t *assert = NULL;
+	fido_assert_t *أكد = عدم;
 	uint8_t message[32];
-	int r = FIDO_ERR_INTERNAL;
-	int sk_supports_uv, uv;
+	صحيح r = FIDO_ERR_INTERNAL;
+	صحيح sk_supports_uv, uv;
 	size_t i;
 
-	memset(message, '\0', sizeof(message));
-	if ((assert = fido_assert_new()) == NULL) {
+	memset(message, '\0', حجم(message));
+	إذا ((أكد = fido_assert_new()) == عدم) {
 		skdebug(__func__, "fido_assert_new failed");
-		goto out;
+		اذهب out;
 	}
 	/* generate an invalid signature on FIDO2 tokens */
-	if ((r = fido_assert_set_clientdata(assert, message,
-	    sizeof(message))) != FIDO_OK) {
+	إذا ((r = fido_assert_set_clientdata(أكد, message,
+	    حجم(message))) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_clientdata: %s",
 		    fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_assert_set_rp(assert, application)) != FIDO_OK) {
+	إذا ((r = fido_assert_set_rp(أكد, application)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_rp: %s", fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_assert_set_up(assert, FIDO_OPT_FALSE)) != FIDO_OK) {
+	إذا ((r = fido_assert_set_up(أكد, FIDO_OPT_FALSE)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_up: %s", fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
 	uv = FIDO_OPT_OMIT;
-	if (pin == NULL && check_sk_options(dev, "uv", &sk_supports_uv) == 0 &&
+	إذا (pin == عدم && check_sk_options(dev, "uv", &sk_supports_uv) == 0 &&
 	    sk_supports_uv != -1)
 		uv = FIDO_OPT_TRUE;
-	if ((r = fido_assert_set_uv(assert, uv)) != FIDO_OK) {
+	إذا ((r = fido_assert_set_uv(أكد, uv)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_uv: %s", fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_dev_get_assert(dev, assert, pin)) != FIDO_OK) {
+	إذا ((r = fido_dev_get_assert(dev, أكد, pin)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_get_assert: %s", fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
 	r = FIDO_ERR_NO_CREDENTIALS;
-	skdebug(__func__, "%zu signatures returned", fido_assert_count(assert));
-	for (i = 0; i < fido_assert_count(assert); i++) {
-		if (fido_assert_user_id_len(assert, i) == user_id_len &&
-		    memcmp(fido_assert_user_id_ptr(assert, i), user_id,
+	skdebug(__func__, "%zu signatures returned", fido_assert_گنتی(أكد));
+	لكل (i = 0; i < fido_assert_گنتی(أكد); i++) {
+		إذا (fido_assert_user_id_len(أكد, i) == user_id_len &&
+		    memcmp(fido_assert_user_id_ptr(أكد, i), user_id,
 		    user_id_len) == 0) {
 			skdebug(__func__, "credential exists");
 			r = FIDO_OK;
-			goto out;
+			اذهب out;
 		}
 	}
  out:
-	fido_assert_free(&assert);
+	fido_assert_free(&أكد);
 
-	return r;
+	أرجع r;
 }
 
-int
-sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
-    const char *application, uint8_t flags, const char *pin,
-    struct sk_option **options, struct sk_enroll_response **enroll_response)
+صحيح
+sk_enroll(uint32_t alg, ثابت uint8_t *challenge, size_t challenge_len,
+    ثابت حرف *application, uint8_t flags, ثابت حرف *pin,
+    بنية sk_option **options, بنية sk_enroll_response **enroll_response)
 {
-	fido_cred_t *cred = NULL;
-	const uint8_t *ptr;
+	fido_cred_t *cred = عدم;
+	ثابت uint8_t *ptr;
 	uint8_t user_id[32];
-	struct sk_usbhid *sk = NULL;
-	struct sk_enroll_response *response = NULL;
+	بنية sk_usbhid *sk = عدم;
+	بنية sk_enroll_response *response = عدم;
 	size_t len;
-	int credprot;
-	int cose_alg;
-	int ret = SSH_SK_ERR_GENERAL;
-	int r;
-	char *device = NULL;
+	صحيح credprot;
+	صحيح cose_alg;
+	صحيح ret = SSH_SK_ERR_GENERAL;
+	صحيح r;
+	حرف *device = عدم;
 
 	fido_init(SSH_FIDO_INIT_ARG);
 
-	if (enroll_response == NULL) {
+	إذا (enroll_response == عدم) {
 		skdebug(__func__, "enroll_response == NULL");
-		goto out;
+		اذهب out;
 	}
-	*enroll_response = NULL;
-	memset(user_id, 0, sizeof(user_id));
-	if (check_enroll_options(options, &device, user_id,
-	    sizeof(user_id)) != 0)
-		goto out; /* error already logged */
+	*enroll_response = عدم;
+	memset(user_id, 0, حجم(user_id));
+	إذا (check_enroll_options(options, &device, user_id,
+	    حجم(user_id)) != 0)
+		اذهب out; /* error already logged */
 
-	switch(alg) {
+	بدل(alg) {
 #ifdef WITH_OPENSSL
-	case SSH_SK_ECDSA:
+	حالة SSH_SK_ECDSA:
 		cose_alg = COSE_ES256;
-		break;
+		اكسر;
 #endif /* WITH_OPENSSL */
-	case SSH_SK_ED25519:
+	حالة SSH_SK_ED25519:
 		cose_alg = COSE_EDDSA;
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		skdebug(__func__, "unsupported key type %d", alg);
-		goto out;
+		اذهب out;
 	}
-	if (device != NULL)
+	إذا (device != عدم)
 		sk = sk_open(device);
-	else
-		sk = sk_probe(NULL, NULL, 0, 0);
-	if (sk == NULL) {
+	وإلا
+		sk = sk_probe(عدم, عدم, 0, 0);
+	إذا (sk == عدم) {
 		ret = SSH_SK_ERR_DEVICE_NOT_FOUND;
 		skdebug(__func__, "failed to find sk");
-		goto out;
+		اذهب out;
 	}
 	skdebug(__func__, "using device %s", sk->path);
-	if ((flags & SSH_SK_RESIDENT_KEY) != 0 &&
+	إذا ((flags & SSH_SK_RESIDENT_کلید) != 0 &&
 	    (flags & SSH_SK_FORCE_OPERATION) == 0 &&
-	    (r = key_lookup(sk->dev, application, user_id, sizeof(user_id),
+	    (r = کلید_lookup(sk->dev, application, user_id, حجم(user_id),
 	    pin)) != FIDO_ERR_NO_CREDENTIALS) {
-		if (r != FIDO_OK) {
+		إذا (r != FIDO_OK) {
 			ret = fidoerr_to_skerr(r);
 			skdebug(__func__, "key_lookup failed");
-		} else {
+		} وإلا {
 			ret = SSH_SK_ERR_CREDENTIAL_EXISTS;
 			skdebug(__func__, "key exists");
 		}
-		goto out;
+		اذهب out;
 	}
-	if ((cred = fido_cred_new()) == NULL) {
+	إذا ((cred = fido_cred_new()) == عدم) {
 		skdebug(__func__, "fido_cred_new failed");
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_cred_set_type(cred, cose_alg)) != FIDO_OK) {
+	إذا ((r = fido_cred_set_type(cred, cose_alg)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_type: %s", fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_cred_set_clientdata(cred,
+	إذا ((r = fido_cred_set_clientdata(cred,
 	    challenge, challenge_len)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_clientdata: %s",
 		    fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_cred_set_rk(cred, (flags & SSH_SK_RESIDENT_KEY) != 0 ?
+	إذا ((r = fido_cred_set_rk(cred, (flags & SSH_SK_RESIDENT_کلید) != 0 ?
 	    FIDO_OPT_TRUE : FIDO_OPT_OMIT)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_rk: %s", fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_cred_set_user(cred, user_id, sizeof(user_id),
-	    "openssh", "openssh", NULL)) != FIDO_OK) {
+	إذا ((r = fido_cred_set_user(cred, user_id, حجم(user_id),
+	    "openssh", "openssh", عدم)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_user: %s", fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_cred_set_rp(cred, application, NULL)) != FIDO_OK) {
+	إذا ((r = fido_cred_set_rp(cred, application, عدم)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_rp: %s", fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	if ((flags & (SSH_SK_RESIDENT_KEY|SSH_SK_USER_VERIFICATION_REQD)) != 0) {
-#if !defined(HAVE_FIDO_DEV_SUPPORTS_CRED_PROT) || \
+	إذا ((flags & (SSH_SK_RESIDENT_کلید|SSH_SK_USER_VERIFICATION_REQD)) != 0) {
+#إذا !defined(HAVE_FIDO_DEV_SUPPORTS_CRED_PROT) || \
     !defined(HAVE_FIDO_CRED_SET_PROT)
 		skdebug(__func__, "libfido2 version does not support a feature required for this operation. Please upgrade to >=1.5.0");
 		ret = SSH_SK_ERR_UNSUPPORTED;
-		goto out;
-		credprot = 0; (void)credprot; /* avoid warning */
+		اذهب out;
+		credprot = 0; (فراغ)credprot; /* avoid warning */
 #endif
-		if (!fido_dev_supports_cred_prot(sk->dev)) {
+		إذا (!fido_dev_supports_cred_prot(sk->dev)) {
 			skdebug(__func__, "%s does not support credprot, "
 			    "refusing to create unprotected "
 			    "resident/verify-required key", sk->path);
 			ret = SSH_SK_ERR_UNSUPPORTED;
-			goto out;
+			اذهب out;
 		}
-		if ((flags & SSH_SK_USER_VERIFICATION_REQD))
+		إذا ((flags & SSH_SK_USER_VERIFICATION_REQD))
 			credprot = FIDO_CRED_PROT_UV_REQUIRED;
-		else
+		وإلا
 			credprot = FIDO_CRED_PROT_UV_OPTIONAL_WITH_ID;
 
-		if ((r = fido_cred_set_prot(cred, credprot)) != FIDO_OK) {
+		إذا ((r = fido_cred_set_prot(cred, credprot)) != FIDO_OK) {
 			skdebug(__func__, "fido_cred_set_prot: %s",
 			    fido_strerr(r));
 			ret = fidoerr_to_skerr(r);
-			goto out;
+			اذهب out;
 		}
 	}
-	if ((r = fido_dev_make_cred(sk->dev, cred, pin)) != FIDO_OK) {
+	إذا ((r = fido_dev_make_cred(sk->dev, cred, pin)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_make_cred: %s", fido_strerr(r));
 		ret = fidoerr_to_skerr(r);
-		goto out;
+		اذهب out;
 	}
-	if (fido_cred_x5c_ptr(cred) != NULL) {
-		if ((r = fido_cred_verify(cred)) != FIDO_OK) {
+	إذا (fido_cred_x5c_ptr(cred) != عدم) {
+		إذا ((r = fido_cred_verify(cred)) != FIDO_OK) {
 			skdebug(__func__, "fido_cred_verify: %s",
 			    fido_strerr(r));
-			goto out;
+			اذهب out;
 		}
-	} else if (strcmp(fido_cred_fmt(cred), "none") != 0) {
+	} وإلا إذا (strcmp(fido_cred_fmt(cred), "none") != 0) {
 		skdebug(__func__, "self-attested credential");
-		if ((r = fido_cred_verify_self(cred)) != FIDO_OK) {
+		إذا ((r = fido_cred_verify_self(cred)) != FIDO_OK) {
 			skdebug(__func__, "fido_cred_verify_self: %s",
 			    fido_strerr(r));
-			goto out;
+			اذهب out;
 		}
-	} else {
+	} وإلا {
 		skdebug(__func__, "no attestation data");
 	}
-	if ((response = calloc(1, sizeof(*response))) == NULL) {
+	إذا ((response = calloc(1, حجم(*response))) == عدم) {
 		skdebug(__func__, "calloc response failed");
-		goto out;
+		اذهب out;
 	}
 	response->flags = flags;
-	if (pack_public_key(alg, cred, response) != 0) {
+	إذا (pack_public_کلید(alg, cred, response) != 0) {
 		skdebug(__func__, "pack_public_key failed");
-		goto out;
+		اذهب out;
 	}
-	if ((ptr = fido_cred_id_ptr(cred)) != NULL) {
+	إذا ((ptr = fido_cred_id_ptr(cred)) != عدم) {
 		len = fido_cred_id_len(cred);
-		if ((response->key_handle = calloc(1, len)) == NULL) {
+		إذا ((response->کلید_handle = calloc(1, len)) == عدم) {
 			skdebug(__func__, "calloc key handle failed");
-			goto out;
+			اذهب out;
 		}
-		memcpy(response->key_handle, ptr, len);
-		response->key_handle_len = len;
+		memcpy(response->کلید_handle, ptr, len);
+		response->کلید_handle_len = len;
 	}
-	if ((ptr = fido_cred_sig_ptr(cred)) != NULL) {
+	إذا ((ptr = fido_cred_sig_ptr(cred)) != عدم) {
 		len = fido_cred_sig_len(cred);
-		if ((response->signature = calloc(1, len)) == NULL) {
+		إذا ((response->signature = calloc(1, len)) == عدم) {
 			skdebug(__func__, "calloc signature failed");
-			goto out;
+			اذهب out;
 		}
 		memcpy(response->signature, ptr, len);
 		response->signature_len = len;
 	}
-	if ((ptr = fido_cred_x5c_ptr(cred)) != NULL) {
+	إذا ((ptr = fido_cred_x5c_ptr(cred)) != عدم) {
 		len = fido_cred_x5c_len(cred);
 		skdebug(__func__, "attestation cert len=%zu", len);
-		if ((response->attestation_cert = calloc(1, len)) == NULL) {
+		إذا ((response->attestation_cert = calloc(1, len)) == عدم) {
 			skdebug(__func__, "calloc attestation cert failed");
-			goto out;
+			اذهب out;
 		}
 		memcpy(response->attestation_cert, ptr, len);
 		response->attestation_cert_len = len;
 	}
-	if ((ptr = fido_cred_authdata_ptr(cred)) != NULL) {
+	إذا ((ptr = fido_cred_authdata_ptr(cred)) != عدم) {
 		len = fido_cred_authdata_len(cred);
 		skdebug(__func__, "authdata len=%zu", len);
-		if ((response->authdata = calloc(1, len)) == NULL) {
+		إذا ((response->authdata = calloc(1, len)) == عدم) {
 			skdebug(__func__, "calloc authdata failed");
-			goto out;
+			اذهب out;
 		}
 		memcpy(response->authdata, ptr, len);
 		response->authdata_len = len;
 	}
 	*enroll_response = response;
-	response = NULL;
+	response = عدم;
 	ret = 0;
  out:
-	free(device);
-	if (response != NULL) {
-		free(response->public_key);
-		free(response->key_handle);
-		free(response->signature);
-		free(response->attestation_cert);
-		free(response->authdata);
-		free(response);
+	حرر(device);
+	إذا (response != عدم) {
+		حرر(response->public_کلید);
+		حرر(response->کلید_handle);
+		حرر(response->signature);
+		حرر(response->attestation_cert);
+		حرر(response->authdata);
+		حرر(response);
 	}
 	sk_close(sk);
 	fido_cred_free(&cred);
-	return ret;
+	أرجع ret;
 }
 
 #ifdef WITH_OPENSSL
-static int
-pack_sig_ecdsa(fido_assert_t *assert, struct sk_sign_response *response)
+ساكن صحيح
+pack_sig_ecdsa(fido_assert_t *أكد, بنية sk_sign_response *response)
 {
-	ECDSA_SIG *sig = NULL;
-	const BIGNUM *sig_r, *sig_s;
-	const unsigned char *cp;
+	ECDSA_SIG *sig = عدم;
+	ثابت BIGNUM *sig_r, *sig_s;
+	ثابت unsigned حرف *cp;
 	size_t sig_len;
-	int ret = -1;
+	صحيح ret = -1;
 
-	cp = fido_assert_sig_ptr(assert, 0);
-	sig_len = fido_assert_sig_len(assert, 0);
-	if ((sig = d2i_ECDSA_SIG(NULL, &cp, sig_len)) == NULL) {
+	cp = fido_assert_sig_ptr(أكد, 0);
+	sig_len = fido_assert_sig_len(أكد, 0);
+	إذا ((sig = d2i_ECDSA_SIG(عدم, &cp, sig_len)) == عدم) {
 		skdebug(__func__, "d2i_ECDSA_SIG failed");
-		goto out;
+		اذهب out;
 	}
 	ECDSA_SIG_get0(sig, &sig_r, &sig_s);
-	response->sig_r_len = BN_num_bytes(sig_r);
-	response->sig_s_len = BN_num_bytes(sig_s);
-	if ((response->sig_r = calloc(1, response->sig_r_len)) == NULL ||
-	    (response->sig_s = calloc(1, response->sig_s_len)) == NULL) {
+	response->sig_r_len = BN_عدد_bytes(sig_r);
+	response->sig_s_len = BN_عدد_bytes(sig_s);
+	إذا ((response->sig_r = calloc(1, response->sig_r_len)) == عدم ||
+	    (response->sig_s = calloc(1, response->sig_s_len)) == عدم) {
 		skdebug(__func__, "calloc signature failed");
-		goto out;
+		اذهب out;
 	}
 	BN_bn2bin(sig_r, response->sig_r);
 	BN_bn2bin(sig_s, response->sig_s);
 	ret = 0;
  out:
 	ECDSA_SIG_free(sig);
-	if (ret != 0) {
-		free(response->sig_r);
-		free(response->sig_s);
-		response->sig_r = NULL;
-		response->sig_s = NULL;
+	إذا (ret != 0) {
+		حرر(response->sig_r);
+		حرر(response->sig_s);
+		response->sig_r = عدم;
+		response->sig_s = عدم;
 	}
-	return ret;
+	أرجع ret;
 }
 #endif /* WITH_OPENSSL */
 
-static int
-pack_sig_ed25519(fido_assert_t *assert, struct sk_sign_response *response)
+ساكن صحيح
+pack_sig_ed25519(fido_assert_t *أكد, بنية sk_sign_response *response)
 {
-	const unsigned char *ptr;
+	ثابت unsigned حرف *ptr;
 	size_t len;
-	int ret = -1;
+	صحيح ret = -1;
 
-	ptr = fido_assert_sig_ptr(assert, 0);
-	len = fido_assert_sig_len(assert, 0);
-	if (len != 64) {
+	ptr = fido_assert_sig_ptr(أكد, 0);
+	len = fido_assert_sig_len(أكد, 0);
+	إذا (len != 64) {
 		skdebug(__func__, "bad length %zu", len);
-		goto out;
+		اذهب out;
 	}
 	response->sig_r_len = len;
-	if ((response->sig_r = calloc(1, response->sig_r_len)) == NULL) {
+	إذا ((response->sig_r = calloc(1, response->sig_r_len)) == عدم) {
 		skdebug(__func__, "calloc signature failed");
-		goto out;
+		اذهب out;
 	}
 	memcpy(response->sig_r, ptr, len);
 	ret = 0;
  out:
-	if (ret != 0) {
-		free(response->sig_r);
-		response->sig_r = NULL;
+	إذا (ret != 0) {
+		حرر(response->sig_r);
+		response->sig_r = عدم;
 	}
-	return ret;
+	أرجع ret;
 }
 
-static int
-pack_sig(uint32_t  alg, fido_assert_t *assert,
-    struct sk_sign_response *response)
+ساكن صحيح
+pack_sig(uint32_t  alg, fido_assert_t *أكد,
+    بنية sk_sign_response *response)
 {
-	switch(alg) {
+	بدل(alg) {
 #ifdef WITH_OPENSSL
-	case SSH_SK_ECDSA:
-		return pack_sig_ecdsa(assert, response);
+	حالة SSH_SK_ECDSA:
+		أرجع pack_sig_ecdsa(أكد, response);
 #endif /* WITH_OPENSSL */
-	case SSH_SK_ED25519:
-		return pack_sig_ed25519(assert, response);
-	default:
-		return -1;
+	حالة SSH_SK_ED25519:
+		أرجع pack_sig_ed25519(أكد, response);
+	افتراضي:
+		أرجع -1;
 	}
 }
 
 /* Checks sk_options for sk_sign() and sk_load_resident_keys() */
-static int
-check_sign_load_resident_options(struct sk_option **options, char **devicep)
+ساكن صحيح
+check_sign_load_resident_options(بنية sk_option **options, حرف **devicep)
 {
 	size_t i;
 
-	if (options == NULL)
-		return 0;
-	for (i = 0; options[i] != NULL; i++) {
-		if (strcmp(options[i]->name, "device") == 0) {
-			if ((*devicep = strdup(options[i]->value)) == NULL) {
+	إذا (options == عدم)
+		أرجع 0;
+	لكل (i = 0; options[i] != عدم; i++) {
+		إذا (strcmp(options[i]->name, "device") == 0) {
+			إذا ((*devicep = strdup(options[i]->قدر)) == عدم) {
 				skdebug(__func__, "strdup device failed");
-				return -1;
+				أرجع -1;
 			}
 			skdebug(__func__, "requested device %s", *devicep);
-		} else {
+		} وإلا {
 			skdebug(__func__, "requested unsupported option %s",
 			    options[i]->name);
-			if (options[i]->required) {
+			إذا (options[i]->required) {
 				skdebug(__func__, "unknown required option");
-				return -1;
+				أرجع -1;
 			}
 		}
 	}
-	return 0;
+	أرجع 0;
 }
 
-int
-sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
-    const char *application,
-    const uint8_t *key_handle, size_t key_handle_len,
-    uint8_t flags, const char *pin, struct sk_option **options,
-    struct sk_sign_response **sign_response)
+صحيح
+sk_sign(uint32_t alg, ثابت uint8_t *data, size_t datalen,
+    ثابت حرف *application,
+    ثابت uint8_t *کلید_handle, size_t کلید_handle_len,
+    uint8_t flags, ثابت حرف *pin, بنية sk_option **options,
+    بنية sk_sign_response **sign_response)
 {
-	fido_assert_t *assert = NULL;
-	char *device = NULL;
-	struct sk_usbhid *sk = NULL;
-	struct sk_sign_response *response = NULL;
-	int ret = SSH_SK_ERR_GENERAL, internal_uv;
-	int r;
+	fido_assert_t *أكد = عدم;
+	حرف *device = عدم;
+	بنية sk_usbhid *sk = عدم;
+	بنية sk_sign_response *response = عدم;
+	صحيح ret = SSH_SK_ERR_GENERAL, internal_uv;
+	صحيح r;
 
 	fido_init(SSH_FIDO_INIT_ARG);
 
-	if (sign_response == NULL) {
+	إذا (sign_response == عدم) {
 		skdebug(__func__, "sign_response == NULL");
-		goto out;
+		اذهب out;
 	}
-	*sign_response = NULL;
-	if (check_sign_load_resident_options(options, &device) != 0)
-		goto out; /* error already logged */
-	if (device != NULL)
+	*sign_response = عدم;
+	إذا (check_sign_load_resident_options(options, &device) != 0)
+		اذهب out; /* error already logged */
+	إذا (device != عدم)
 		sk = sk_open(device);
-	else if (pin != NULL || (flags & SSH_SK_USER_VERIFICATION_REQD))
-		sk = sk_probe(NULL, NULL, 0, 0);
-	else
-		sk = sk_probe(application, key_handle, key_handle_len, 0);
-	if (sk == NULL) {
+	وإلا إذا (pin != عدم || (flags & SSH_SK_USER_VERIFICATION_REQD))
+		sk = sk_probe(عدم, عدم, 0, 0);
+	وإلا
+		sk = sk_probe(application, کلید_handle, کلید_handle_len, 0);
+	إذا (sk == عدم) {
 		ret = SSH_SK_ERR_DEVICE_NOT_FOUND;
 		skdebug(__func__, "failed to find sk");
-		goto out;
+		اذهب out;
 	}
-	if ((assert = fido_assert_new()) == NULL) {
+	إذا ((أكد = fido_assert_new()) == عدم) {
 		skdebug(__func__, "fido_assert_new failed");
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_assert_set_clientdata(assert,
+	إذا ((r = fido_assert_set_clientdata(أكد,
 	    data, datalen)) != FIDO_OK)  {
 		skdebug(__func__, "fido_assert_set_clientdata: %s",
 		    fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_assert_set_rp(assert, application)) != FIDO_OK) {
+	إذا ((r = fido_assert_set_rp(أكد, application)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_rp: %s", fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_assert_allow_cred(assert, key_handle,
-	    key_handle_len)) != FIDO_OK) {
+	إذا ((r = fido_assert_allow_cred(أكد, کلید_handle,
+	    کلید_handle_len)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_allow_cred: %s", fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_assert_set_up(assert,
+	إذا ((r = fido_assert_set_up(أكد,
 	    (flags & SSH_SK_USER_PRESENCE_REQD) ?
 	    FIDO_OPT_TRUE : FIDO_OPT_FALSE)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_up: %s", fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
 	/*
 	 * WinHello requests the PIN by default.  Make "uv" request explicit
 	 * to allow keys with and without -O verify-required to make sense.
 	 */
-	if (pin == NULL && fido_dev_is_winhello (sk->dev) &&
-	    (r = fido_assert_set_uv(assert, FIDO_OPT_FALSE)) != FIDO_OK) {
+	إذا (pin == عدم && fido_dev_is_winhello (sk->dev) &&
+	    (r = fido_assert_set_uv(أكد, FIDO_OPT_FALSE)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_uv: %s", fido_strerr(r));
 	}
-	if (pin == NULL && (flags & SSH_SK_USER_VERIFICATION_REQD)) {
-		if (check_sk_options(sk->dev, "uv", &internal_uv) < 0 ||
+	إذا (pin == عدم && (flags & SSH_SK_USER_VERIFICATION_REQD)) {
+		إذا (check_sk_options(sk->dev, "uv", &internal_uv) < 0 ||
 		    internal_uv != 1) {
 			skdebug(__func__, "check_sk_options uv");
 			ret = SSH_SK_ERR_PIN_REQUIRED;
-			goto out;
+			اذهب out;
 		}
-		if ((r = fido_assert_set_uv(assert,
+		إذا ((r = fido_assert_set_uv(أكد,
 		    FIDO_OPT_TRUE)) != FIDO_OK) {
 			skdebug(__func__, "fido_assert_set_uv: %s",
 			    fido_strerr(r));
 			ret = fidoerr_to_skerr(r);
-			goto out;
+			اذهب out;
 		}
 	}
-	if ((r = fido_dev_get_assert(sk->dev, assert, pin)) != FIDO_OK) {
+	إذا ((r = fido_dev_get_assert(sk->dev, أكد, pin)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_get_assert: %s", fido_strerr(r));
 		ret = fidoerr_to_skerr(r);
-		goto out;
+		اذهب out;
 	}
-	if ((response = calloc(1, sizeof(*response))) == NULL) {
+	إذا ((response = calloc(1, حجم(*response))) == عدم) {
 		skdebug(__func__, "calloc response failed");
-		goto out;
+		اذهب out;
 	}
-	response->flags = fido_assert_flags(assert, 0);
-	response->counter = fido_assert_sigcount(assert, 0);
-	if (pack_sig(alg, assert, response) != 0) {
+	response->flags = fido_assert_flags(أكد, 0);
+	response->counter = fido_assert_sigcount(أكد, 0);
+	إذا (pack_sig(alg, أكد, response) != 0) {
 		skdebug(__func__, "pack_sig failed");
-		goto out;
+		اذهب out;
 	}
 	*sign_response = response;
-	response = NULL;
+	response = عدم;
 	ret = 0;
  out:
-	free(device);
-	if (response != NULL) {
-		free(response->sig_r);
-		free(response->sig_s);
-		free(response);
+	حرر(device);
+	إذا (response != عدم) {
+		حرر(response->sig_r);
+		حرر(response->sig_s);
+		حرر(response);
 	}
 	sk_close(sk);
-	fido_assert_free(&assert);
-	return ret;
+	fido_assert_free(&أكد);
+	أرجع ret;
 }
 
-static int
-read_rks(struct sk_usbhid *sk, const char *pin,
-    struct sk_resident_key ***rksp, size_t *nrksp)
+ساكن صحيح
+read_rks(بنية sk_usbhid *sk, ثابت حرف *pin,
+    بنية sk_resident_کلید ***rksp, size_t *nrksp)
 {
-	int ret = SSH_SK_ERR_GENERAL, r = -1;
+	صحيح ret = SSH_SK_ERR_GENERAL, r = -1;
 	uint32_t alg;
-	fido_credman_metadata_t *metadata = NULL;
-	fido_credman_rp_t *rp = NULL;
-	fido_credman_rk_t *rk = NULL;
+	fido_credman_metadata_t *metadata = عدم;
+	fido_credman_rp_t *rp = عدم;
+	fido_credman_rk_t *rk = عدم;
 	size_t i, j, nrp, nrk, user_id_len;
-	const fido_cred_t *cred;
-	const char *rp_id, *rp_name, *user_name;
-	struct sk_resident_key *srk = NULL, **tmp;
-	const u_char *user_id;
+	ثابت fido_cred_t *cred;
+	ثابت حرف *rp_id, *rp_name, *user_name;
+	بنية sk_resident_کلید *srk = عدم, **tmp;
+	ثابت u_char *user_id;
 
-	if (pin == NULL) {
+	إذا (pin == عدم) {
 		skdebug(__func__, "no PIN specified");
 		ret = SSH_SK_ERR_PIN_REQUIRED;
-		goto out;
+		اذهب out;
 	}
-	if ((metadata = fido_credman_metadata_new()) == NULL) {
+	إذا ((metadata = fido_credman_metadata_new()) == عدم) {
 		skdebug(__func__, "alloc failed");
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_credman_get_dev_metadata(sk->dev, metadata, pin)) != 0) {
-		if (r == FIDO_ERR_INVALID_COMMAND) {
+	إذا ((r = fido_credman_get_dev_metadata(sk->dev, metadata, pin)) != 0) {
+		إذا (r == FIDO_ERR_INVALID_COMMAND) {
 			skdebug(__func__, "device %s does not support "
 			    "resident keys", sk->path);
 			ret = 0;
-			goto out;
+			اذهب out;
 		}
 		skdebug(__func__, "get metadata for %s failed: %s",
 		    sk->path, fido_strerr(r));
 		ret = fidoerr_to_skerr(r);
-		goto out;
+		اذهب out;
 	}
 	skdebug(__func__, "existing %llu, remaining %llu",
 	    (unsigned long long)fido_credman_rk_existing(metadata),
 	    (unsigned long long)fido_credman_rk_remaining(metadata));
-	if ((rp = fido_credman_rp_new()) == NULL) {
+	إذا ((rp = fido_credman_rp_new()) == عدم) {
 		skdebug(__func__, "alloc rp failed");
-		goto out;
+		اذهب out;
 	}
-	if ((r = fido_credman_get_dev_rp(sk->dev, rp, pin)) != 0) {
+	إذا ((r = fido_credman_get_dev_rp(sk->dev, rp, pin)) != 0) {
 		skdebug(__func__, "get RPs for %s failed: %s",
 		    sk->path, fido_strerr(r));
-		goto out;
+		اذهب out;
 	}
-	nrp = fido_credman_rp_count(rp);
+	nrp = fido_credman_rp_گنتی(rp);
 	skdebug(__func__, "Device %s has resident keys for %zu RPs",
 	    sk->path, nrp);
 
 	/* Iterate over RP IDs that have resident keys */
-	for (i = 0; i < nrp; i++) {
+	لكل (i = 0; i < nrp; i++) {
 		rp_id = fido_credman_rp_id(rp, i);
 		rp_name = fido_credman_rp_name(rp, i);
 		skdebug(__func__, "rp %zu: name=\"%s\" id=\"%s\" hashlen=%zu",
-		    i, rp_name == NULL ? "(none)" : rp_name,
-		    rp_id == NULL ? "(none)" : rp_id,
+		    i, rp_name == عدم ? "(none)" : rp_name,
+		    rp_id == عدم ? "(none)" : rp_id,
 		    fido_credman_rp_id_hash_len(rp, i));
 
 		/* Skip non-SSH RP IDs */
-		if (rp_id == NULL ||
+		إذا (rp_id == عدم ||
 		    strncasecmp(fido_credman_rp_id(rp, i), "ssh:", 4) != 0)
-			continue;
+			استمر;
 
 		fido_credman_rk_free(&rk);
-		if ((rk = fido_credman_rk_new()) == NULL) {
+		إذا ((rk = fido_credman_rk_new()) == عدم) {
 			skdebug(__func__, "alloc rk failed");
-			goto out;
+			اذهب out;
 		}
-		if ((r = fido_credman_get_dev_rk(sk->dev,
+		إذا ((r = fido_credman_get_dev_rk(sk->dev,
 		    fido_credman_rp_id(rp, i), rk, pin)) != 0) {
 			skdebug(__func__, "get RKs for %s slot %zu failed: %s",
 			    sk->path, i, fido_strerr(r));
-			goto out;
+			اذهب out;
 		}
-		nrk = fido_credman_rk_count(rk);
+		nrk = fido_credman_rk_گنتی(rk);
 		skdebug(__func__, "RP \"%s\" has %zu resident keys",
 		    fido_credman_rp_id(rp, i), nrk);
 
 		/* Iterate over resident keys for this RP ID */
-		for (j = 0; j < nrk; j++) {
-			if ((cred = fido_credman_rk(rk, j)) == NULL) {
+		لكل (j = 0; j < nrk; j++) {
+			إذا ((cred = fido_credman_rk(rk, j)) == عدم) {
 				skdebug(__func__, "no RK in slot %zu", j);
-				continue;
+				استمر;
 			}
-			if ((user_name = fido_cred_user_name(cred)) == NULL)
+			إذا ((user_name = fido_cred_user_name(cred)) == عدم)
 				user_name = "";
 			user_id = fido_cred_user_id_ptr(cred);
 			user_id_len = fido_cred_user_id_len(cred);
@@ -1346,127 +1346,127 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 			    fido_cred_flags(cred), fido_cred_prot(cred));
 
 			/* Determine key algorithm */
-			switch (fido_cred_type(cred)) {
-			case COSE_ES256:
+			بدل (fido_cred_type(cred)) {
+			حالة COSE_ES256:
 				alg = SSH_SK_ECDSA;
-				break;
-			case COSE_EDDSA:
+				اكسر;
+			حالة COSE_EDDSA:
 				alg = SSH_SK_ED25519;
-				break;
-			default:
+				اكسر;
+			افتراضي:
 				skdebug(__func__, "unsupported key type %d",
 				    fido_cred_type(cred));
-				continue;
+				استمر;
 			}
 
 			/* build response entry */
-			if ((srk = calloc(1, sizeof(*srk))) == NULL ||
-			    (srk->key.key_handle = calloc(1,
-			    fido_cred_id_len(cred))) == NULL ||
-			    (srk->application = strdup(rp_id)) == NULL ||
+			إذا ((srk = calloc(1, حجم(*srk))) == عدم ||
+			    (srk->کلید.کلید_handle = calloc(1,
+			    fido_cred_id_len(cred))) == عدم ||
+			    (srk->application = strdup(rp_id)) == عدم ||
 			    (user_id_len > 0 &&
-			     (srk->user_id = calloc(1, user_id_len)) == NULL)) {
+			     (srk->user_id = calloc(1, user_id_len)) == عدم)) {
 				skdebug(__func__, "alloc sk_resident_key");
-				goto out;
+				اذهب out;
 			}
 
 			srk->alg = alg;
-			srk->key.key_handle_len = fido_cred_id_len(cred);
-			memcpy(srk->key.key_handle, fido_cred_id_ptr(cred),
-			    srk->key.key_handle_len);
+			srk->کلید.کلید_handle_len = fido_cred_id_len(cred);
+			memcpy(srk->کلید.کلید_handle, fido_cred_id_ptr(cred),
+			    srk->کلید.کلید_handle_len);
 			srk->user_id_len = user_id_len;
-			if (srk->user_id_len != 0)
+			إذا (srk->user_id_len != 0)
 				memcpy(srk->user_id, user_id, srk->user_id_len);
 
 #ifdef HAVE_FIDO_CRED_PROT
-			if (fido_cred_prot(cred) ==
+			إذا (fido_cred_prot(cred) ==
 			    FIDO_CRED_PROT_UV_REQUIRED)
 				srk->flags |=  SSH_SK_USER_VERIFICATION_REQD;
 #endif
 
-			if ((r = pack_public_key(srk->alg, cred,
-			    &srk->key)) != 0) {
+			إذا ((r = pack_public_کلید(srk->alg, cred,
+			    &srk->کلید)) != 0) {
 				skdebug(__func__, "pack public key failed");
-				goto out;
+				اذهب out;
 			}
 			/* append */
-			if ((tmp = recallocarray(*rksp, *nrksp, (*nrksp) + 1,
-			    sizeof(**rksp))) == NULL) {
+			إذا ((tmp = recallocarray(*rksp, *nrksp, (*nrksp) + 1,
+			    حجم(**rksp))) == عدم) {
 				skdebug(__func__, "alloc rksp");
-				goto out;
+				اذهب out;
 			}
 			*rksp = tmp;
 			(*rksp)[(*nrksp)++] = srk;
-			srk = NULL;
+			srk = عدم;
 		}
 	}
 	/* Success */
 	ret = 0;
  out:
-	if (srk != NULL) {
-		free(srk->application);
-		freezero(srk->key.public_key, srk->key.public_key_len);
-		freezero(srk->key.key_handle, srk->key.key_handle_len);
+	إذا (srk != عدم) {
+		حرر(srk->application);
+		freezero(srk->کلید.public_کلید, srk->کلید.public_کلید_len);
+		freezero(srk->کلید.کلید_handle, srk->کلید.کلید_handle_len);
 		freezero(srk->user_id, srk->user_id_len);
-		freezero(srk, sizeof(*srk));
+		freezero(srk, حجم(*srk));
 	}
 	fido_credman_rp_free(&rp);
 	fido_credman_rk_free(&rk);
 	fido_credman_metadata_free(&metadata);
-	return ret;
+	أرجع ret;
 }
 
-int
-sk_load_resident_keys(const char *pin, struct sk_option **options,
-    struct sk_resident_key ***rksp, size_t *nrksp)
+صحيح
+sk_load_resident_کلیدیں(ثابت حرف *pin, بنية sk_option **options,
+    بنية sk_resident_کلید ***rksp, size_t *nrksp)
 {
-	int ret = SSH_SK_ERR_GENERAL, r = -1;
+	صحيح ret = SSH_SK_ERR_GENERAL, r = -1;
 	size_t i, nrks = 0;
-	struct sk_resident_key **rks = NULL;
-	struct sk_usbhid *sk = NULL;
-	char *device = NULL;
+	بنية sk_resident_کلید **rks = عدم;
+	بنية sk_usbhid *sk = عدم;
+	حرف *device = عدم;
 
-	*rksp = NULL;
+	*rksp = عدم;
 	*nrksp = 0;
 
 	fido_init(SSH_FIDO_INIT_ARG);
 
-	if (check_sign_load_resident_options(options, &device) != 0)
-		goto out; /* error already logged */
-	if (device != NULL)
+	إذا (check_sign_load_resident_options(options, &device) != 0)
+		اذهب out; /* error already logged */
+	إذا (device != عدم)
 		sk = sk_open(device);
-	else
-		sk = sk_probe(NULL, NULL, 0, 1);
-	if (sk == NULL) {
+	وإلا
+		sk = sk_probe(عدم, عدم, 0, 1);
+	إذا (sk == عدم) {
 		ret = SSH_SK_ERR_DEVICE_NOT_FOUND;
 		skdebug(__func__, "failed to find sk");
-		goto out;
+		اذهب out;
 	}
 	skdebug(__func__, "trying %s", sk->path);
-	if ((r = read_rks(sk, pin, &rks, &nrks)) != 0) {
+	إذا ((r = read_rks(sk, pin, &rks, &nrks)) != 0) {
 		skdebug(__func__, "read_rks failed for %s", sk->path);
 		ret = r;
-		goto out;
+		اذهب out;
 	}
 	/* success, unless we have no keys but a specific error */
-	if (nrks > 0 || ret == SSH_SK_ERR_GENERAL)
+	إذا (nrks > 0 || ret == SSH_SK_ERR_GENERAL)
 		ret = 0;
 	*rksp = rks;
 	*nrksp = nrks;
-	rks = NULL;
+	rks = عدم;
 	nrks = 0;
  out:
 	sk_close(sk);
-	for (i = 0; i < nrks; i++) {
-		free(rks[i]->application);
-		freezero(rks[i]->key.public_key, rks[i]->key.public_key_len);
-		freezero(rks[i]->key.key_handle, rks[i]->key.key_handle_len);
+	لكل (i = 0; i < nrks; i++) {
+		حرر(rks[i]->application);
+		freezero(rks[i]->کلید.public_کلید, rks[i]->کلید.public_کلید_len);
+		freezero(rks[i]->کلید.کلید_handle, rks[i]->کلید.کلید_handle_len);
 		freezero(rks[i]->user_id, rks[i]->user_id_len);
-		freezero(rks[i], sizeof(*rks[i]));
+		freezero(rks[i], حجم(*rks[i]));
 	}
-	free(device);
-	free(rks);
-	return ret;
+	حرر(device);
+	حرر(rks);
+	أرجع ret;
 }
 
 #endif /* ENABLE_SK_INTERNAL */
