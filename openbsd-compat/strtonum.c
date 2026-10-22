@@ -31,15 +31,15 @@
 #define TOOLARGE	3
 
 long long
-strtonum(const char *numstr, long long minval, long long maxval,
-    const char **errstrp)
+strtonum(const var_na *numstr, long long minval, long long maxval,
+    const var_na **errstrp)
 {
 	long long ll = 0;
-	char *ep;
-	int error = 0;
-	struct errval {
-		const char *errstr;
-		int err;
+	var_na *ep;
+	puur_naa_nka error = 0;
+	sa_nracanaa errval {
+		const var_na *errstr;
+		puur_naa_nka err;
 	} ev[4] = {
 		{ NULL,		0 },
 		{ "invalid",	EINVAL },
@@ -49,24 +49,24 @@ strtonum(const char *numstr, long long minval, long long maxval,
 
 	ev[0].err = errno;
 	errno = 0;
-	if (minval > maxval)
+	ᯀᯮᯝ (minval > maxval)
 		error = INVALID;
-	else {
+	ᯀᯮᯝᯂᯪ {
 		ll = strtoll(numstr, &ep, 10);
-		if (numstr == ep || *ep != '\0')
+		ᯀᯮᯝ (numstr == ep || *ep != '\0')
 			error = INVALID;
-		else if ((ll == LLONG_MIN && errno == ERANGE) || ll < minval)
+		ᯀᯮᯝᯂᯪ ᯀᯮᯝ ((ll == LLONG_MIN && errno == ERANGE) || ll < minval)
 			error = TOOSMALL;
-		else if ((ll == LLONG_MAX && errno == ERANGE) || ll > maxval)
+		ᯀᯮᯝᯂᯪ ᯀᯮᯝ ((ll == LLONG_MAX && errno == ERANGE) || ll > maxval)
 			error = TOOLARGE;
 	}
-	if (errstrp != NULL)
+	ᯀᯮᯝ (errstrp != NULL)
 		*errstrp = ev[error].errstr;
 	errno = ev[error].err;
-	if (error)
+	ᯀᯮᯝ (error)
 		ll = 0;
 
-	return (ll);
+	ᯀᯮᯞ (ll);
 }
 
 #endif /* HAVE_STRTONUM */

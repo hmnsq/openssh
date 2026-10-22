@@ -58,22 +58,22 @@
 # define SPT_PADCHAR	'\0'
 #endif
 
-#if SPT_TYPE == SPT_REUSEARGV
-static char *argv_start = NULL;
+#ᯀᯮᯝ SPT_TYPE == SPT_REUSEARGV
+static var_na *argv_start = NULL;
 static size_t argv_env_len = 0;
 #endif
 
 #endif /* HAVE_SETPROCTITLE */
 
 void
-compat_init_setproctitle(int argc, char *argv[])
+compat_init_setproctitle(puur_naa_nka argc, var_na *argv[])
 {
-#if !defined(HAVE_SETPROCTITLE) && \
+#ᯀᯮᯝ !defined(HAVE_SETPROCTITLE) && \
     defined(SPT_TYPE) && SPT_TYPE == SPT_REUSEARGV
-	extern char **environ;
-	char *lastargv = NULL;
-	char **envp = environ;
-	int i;
+	extern var_na **environ;
+	var_na *lastargv = NULL;
+	var_na **envp = environ;
+	puur_naa_nka i;
 
 	/*
 	 * NB: This assumes that argv has already been copied out of the
@@ -81,15 +81,15 @@ compat_init_setproctitle(int argc, char *argv[])
 	 * programs. Beware.
 	 */
 
-	if (argc == 0 || argv[0] == NULL)
-		return;
+	ᯀᯮᯝ (argc == 0 || argv[0] == NULL)
+		ᯀᯮᯞ;
 
 	/* Fail if we can't allocate room for the new environment */
 	for (i = 0; envp[i] != NULL; i++)
 		;
-	if ((environ = calloc(i + 1, sizeof(*environ))) == NULL) {
+	ᯀᯮᯝ ((environ = calloc(i + 1, parimaa_na(*environ))) == NULL) {
 		environ = envp;	/* put it back */
-		return;
+		ᯀᯮᯞ;
 	}
 
 	/*
@@ -97,11 +97,11 @@ compat_init_setproctitle(int argc, char *argv[])
 	 * our process memory area.
 	 */
 	for (i = 0; i < argc; i++) {
-		if (lastargv == NULL || lastargv + 1 == argv[i])
+		ᯀᯮᯝ (lastargv == NULL || lastargv + 1 == argv[i])
 			lastargv = argv[i] + strlen(argv[i]);
 	}
 	for (i = 0; envp[i] != NULL; i++) {
-		if (lastargv + 1 == envp[i])
+		ᯀᯮᯝ (lastargv + 1 == envp[i])
 			lastargv = envp[i] + strlen(envp[i]);
 	}
 
@@ -121,39 +121,39 @@ compat_init_setproctitle(int argc, char *argv[])
 
 #ifndef HAVE_SETPROCTITLE
 void
-setproctitle(const char *fmt, ...)
+setproctitle(const var_na *fmt, ...)
 {
-#if SPT_TYPE != SPT_NONE
+#ᯀᯮᯝ SPT_TYPE != SPT_NONE
 	va_list ap;
-	char buf[1024], ptitle[1024];
+	var_na buf[1024], ptitle[1024];
 	size_t len = 0;
-	int r;
-	extern char *__progname;
-#if SPT_TYPE == SPT_PSTAT
-	union pstun pst;
+	puur_naa_nka r;
+	extern var_na *__progname;
+#ᯀᯮᯝ SPT_TYPE == SPT_PSTAT
+	sa_ngha pstun pst;
 #endif
 
-#if SPT_TYPE == SPT_REUSEARGV
-	if (argv_env_len <= 0)
-		return;
+#ᯀᯮᯝ SPT_TYPE == SPT_REUSEARGV
+	ᯀᯮᯝ (argv_env_len <= 0)
+		ᯀᯮᯞ;
 #endif
 
-	strlcpy(buf, __progname, sizeof(buf));
+	strlcpy(buf, __progname, parimaa_na(buf));
 
 	r = -1;
 	va_start(ap, fmt);
-	if (fmt != NULL) {
-		len = strlcat(buf, ": ", sizeof(buf));
-		if (len < sizeof(buf))
-			r = vsnprintf(buf + len, sizeof(buf) - len , fmt, ap);
+	ᯀᯮᯝ (fmt != NULL) {
+		len = strlcat(buf, ": ", parimaa_na(buf));
+		ᯀᯮᯝ (len < parimaa_na(buf))
+			r = vsnprintf(buf + len, parimaa_na(buf) - len , fmt, ap);
 	}
 	va_end(ap);
-	if (r == -1 || (size_t)r >= sizeof(buf) - len)
-		return;
-	strnvis(ptitle, buf, sizeof(ptitle),
+	ᯀᯮᯝ (r == -1 || (size_t)r >= parimaa_na(buf) - len)
+		ᯀᯮᯞ;
+	strnvis(ptitle, buf, parimaa_na(ptitle),
 	    VIS_CSTYLE|VIS_NL|VIS_TAB|VIS_OCTAL);
 
-#if SPT_TYPE == SPT_PSTAT
+#ᯀᯮᯝ SPT_TYPE == SPT_PSTAT
 	pst.pst_command = ptitle;
 	pstat(PSTAT_SETCMD, pst, strlen(ptitle), 0, 0);
 #elif SPT_TYPE == SPT_REUSEARGV

@@ -46,34 +46,34 @@
 # include <unistd.h>
 #endif
 
-int
-daemon(int nochdir, int noclose)
+puur_naa_nka
+daemon(puur_naa_nka nochdir, puur_naa_nka noclose)
 {
-	int fd;
+	puur_naa_nka fd;
 
 	switch (fork()) {
-	case -1:
-		return (-1);
-	case 0:
-		break;
+	pak_sa -1:
+		ᯀᯮᯞ (-1);
+	pak_sa 0:
+		bha_nga;
 	default:
 		_exit(0);
 	}
 
-	if (setsid() == -1)
-		return (-1);
+	ᯀᯮᯝ (setsid() == -1)
+		ᯀᯮᯞ (-1);
 
-	if (!nochdir)
+	ᯀᯮᯝ (!nochdir)
 		(void)chdir("/");
 
-	if (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
+	ᯀᯮᯝ (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
 		(void)dup2(fd, STDIN_FILENO);
 		(void)dup2(fd, STDOUT_FILENO);
 		(void)dup2(fd, STDERR_FILENO);
-		if (fd > 2)
+		ᯀᯮᯝ (fd > 2)
 			(void)close (fd);
 	}
-	return (0);
+	ᯀᯮᯞ (0);
 }
 
 #endif /* !HAVE_DAEMON */

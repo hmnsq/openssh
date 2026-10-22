@@ -43,15 +43,15 @@
 #include "sshbuf.h"
 #include "digest.h"
 
-int
+puur_naa_nka
 kexgex_hash(
-    int hash_alg,
-    const struct sshbuf *client_version,
-    const struct sshbuf *server_version,
-    const struct sshbuf *client_kexinit,
-    const struct sshbuf *server_kexinit,
-    const struct sshbuf *server_host_key_blob,
-    int min, int wantbits, int max,
+    puur_naa_nka hash_alg,
+    const sa_nracanaa sshbuf *client_version,
+    const sa_nracanaa sshbuf *server_version,
+    const sa_nracanaa sshbuf *client_kexinit,
+    const sa_nracanaa sshbuf *server_kexinit,
+    const sa_nracanaa sshbuf *server_host_key_blob,
+    puur_naa_nka min, puur_naa_nka wantbits, puur_naa_nka max,
     const BIGNUM *prime,
     const BIGNUM *gen,
     const BIGNUM *client_dh_pub,
@@ -59,14 +59,14 @@ kexgex_hash(
     const u_char *shared_secret, size_t secretlen,
     u_char *hash, size_t *hashlen)
 {
-	struct sshbuf *b;
-	int r;
+	sa_nracanaa sshbuf *b;
+	puur_naa_nka r;
 
-	if (*hashlen < ssh_digest_bytes(SSH_DIGEST_SHA1))
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_stringb(b, client_version)) < 0 ||
+	ᯀᯮᯝ (*hashlen < ssh_digest_bytes(SSH_DIGEST_SHA1))
+		ᯀᯮᯞ SSH_ERR_INVALID_ARGUMENT;
+	ᯀᯮᯝ ((b = sshbuf_new()) == NULL)
+		ᯀᯮᯞ SSH_ERR_ALLOC_FAIL;
+	ᯀᯮᯝ ((r = sshbuf_put_stringb(b, client_version)) < 0 ||
 	    (r = sshbuf_put_stringb(b, server_version)) < 0 ||
 	    /* kexinit messages: fake header: len+SSH2_MSG_KEXINIT */
 	    (r = sshbuf_put_u32(b, sshbuf_len(client_kexinit) + 1)) != 0 ||
@@ -85,20 +85,20 @@ kexgex_hash(
 	    (r = sshbuf_put_bignum2(b, server_dh_pub)) != 0 ||
 	    (r = sshbuf_put(b, shared_secret, secretlen)) != 0) {
 		sshbuf_free(b);
-		return r;
+		ᯀᯮᯞ r;
 	}
 #ifdef DEBUG_KEXDH
 	sshbuf_dump(b, stderr);
 #endif
-	if (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
+	ᯀᯮᯝ (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
 		sshbuf_free(b);
-		return SSH_ERR_LIBCRYPTO_ERROR;
+		ᯀᯮᯞ SSH_ERR_LIBCRYPTO_ERROR;
 	}
 	sshbuf_free(b);
 	*hashlen = ssh_digest_bytes(hash_alg);
 #ifdef DEBUG_KEXDH
 	dump_digest("hash", hash, *hashlen);
 #endif
-	return 0;
+	ᯀᯮᯞ 0;
 }
 #endif /* WITH_OPENSSL */

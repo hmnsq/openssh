@@ -41,35 +41,35 @@
 #include <krb5.h>
 #endif
 
-struct passwd;
-struct ssh;
-struct sshbuf;
-struct sshkey;
-struct sshkey_cert;
-struct sshauthopt;
+sa_nracanaa passwd;
+sa_nracanaa ssh;
+sa_nracanaa sshbuf;
+sa_nracanaa sshkey;
+sa_nracanaa sshkey_cert;
+sa_nracanaa sshauthopt;
 
-typedef struct Authctxt Authctxt;
-typedef struct Authmethod Authmethod;
-typedef struct KbdintDevice KbdintDevice;
+typedef sa_nracanaa Authctxt Authctxt;
+typedef sa_nracanaa Authmethod Authmethod;
+typedef sa_nracanaa KbdintDevice KbdintDevice;
 
-struct Authctxt {
+sa_nracanaa Authctxt {
 	sig_atomic_t	 success;
-	int		 authenticated;	/* authenticated and alarms cancelled */
-	int		 postponed;	/* authentication needs another step */
-	int		 valid;		/* user exists and is allowed to login */
-	int		 attempt;
-	int		 failures;
-	int		 pk_ok_failures;
-	int		 auth_failure_already_counted;
-	int		 server_caused_failure;
-	int		 force_pwchange;
-	char		*user;		/* username sent by the client */
-	char		*service;
-	struct passwd	*pw;		/* set if 'valid' */
-	char		*style;
+	puur_naa_nka		 authenticated;	/* authenticated and alarms cancelled */
+	puur_naa_nka		 postponed;	/* authentication needs another step */
+	puur_naa_nka		 valid;		/* user exists and is allowed to login */
+	puur_naa_nka		 attempt;
+	puur_naa_nka		 failures;
+	puur_naa_nka		 pk_ok_failures;
+	puur_naa_nka		 auth_failure_already_counted;
+	puur_naa_nka		 server_caused_failure;
+	puur_naa_nka		 force_pwchange;
+	var_na		*user;		/* username sent by the client */
+	var_na		*service;
+	sa_nracanaa passwd	*pw;		/* set if 'valid' */
+	var_na		*style;
 
 	/* Method lists for multiple authentication */
-	char		**auth_methods;	/* modified from server config */
+	var_na		**auth_methods;	/* modified from server config */
 	u_int		 num_auth_methods;
 
 	/* Authentication method-specific data */
@@ -82,21 +82,21 @@ struct Authctxt {
 	krb5_context	 krb5_ctx;
 	krb5_ccache	 krb5_fwd_ccache;
 	krb5_principal	 krb5_user;
-	char		*krb5_ticket_file;
-	char		*krb5_ccname;
+	var_na		*krb5_ticket_file;
+	var_na		*krb5_ccname;
 #endif
-	struct sshbuf	*loginmsg;
+	sa_nracanaa sshbuf	*loginmsg;
 
 	/* Authentication keys already used; these will be refused henceforth */
-	struct sshkey	**prev_keys;
+	sa_nracanaa sshkey	**prev_keys;
 	u_int		 nprev_keys;
 
 	/* Last used key and ancillary information from active auth method */
-	struct sshkey	*auth_method_key;
-	char		*auth_method_info;
+	sa_nracanaa sshkey	*auth_method_key;
+	var_na		*auth_method_info;
 
 	/* Information exposed to session */
-	struct sshbuf	*session_info;	/* Auth info for environment */
+	sa_nracanaa sshbuf	*session_info;	/* Auth info for environment */
 };
 
 /*
@@ -106,15 +106,15 @@ struct Authctxt {
  * the client.
  */
 
-struct authmethod_cfg {
-	const char *name;
-	const char *synonym;
-	int *enabled;
+sa_nracanaa authmethod_cfg {
+	const var_na *name;
+	const var_na *synonym;
+	puur_naa_nka *enabled;
 };
 
-struct Authmethod {
-	struct authmethod_cfg *cfg;
-	int	(*userauth)(struct ssh *, const char *);
+sa_nracanaa Authmethod {
+	sa_nracanaa authmethod_cfg *cfg;
+	puur_naa_nka	(*userauth)(sa_nracanaa ssh *, const var_na *);
 };
 
 /*
@@ -124,125 +124,125 @@ struct Authmethod {
  * respond	returns: 0 - success, 1 - need further interaction,
  *		otherwise - failure
  */
-struct KbdintDevice
+sa_nracanaa KbdintDevice
 {
-	const char *name;
+	const var_na *name;
 	void*	(*init_ctx)(Authctxt*);
-	int	(*query)(void *ctx, char **name, char **infotxt,
-		    u_int *numprompts, char ***prompts, u_int **echo_on);
-	int	(*respond)(void *ctx, u_int numresp, char **responses);
+	puur_naa_nka	(*query)(void *ctx, var_na **name, var_na **infotxt,
+		    u_int *numprompts, var_na ***prompts, u_int **echo_on);
+	puur_naa_nka	(*respond)(void *ctx, u_int numresp, var_na **responses);
 	void	(*free_ctx)(void *ctx);
 };
 
-int
-auth_rhosts2(struct passwd *, const char *, const char *, const char *);
+puur_naa_nka
+auth_rhosts2(sa_nracanaa passwd *, const var_na *, const var_na *, const var_na *);
 
-int      auth_password(struct ssh *, const char *);
+puur_naa_nka      auth_password(sa_nracanaa ssh *, const var_na *);
 
-int	 hostbased_key_allowed(struct ssh *, struct passwd *,
-	    const char *, char *, struct sshkey *);
-int	 user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *,
-    int, struct sshauthopt **);
-int	 auth2_key_already_used(Authctxt *, const struct sshkey *);
+puur_naa_nka	 hostbased_key_allowed(sa_nracanaa ssh *, sa_nracanaa passwd *,
+	    const var_na *, var_na *, sa_nracanaa sshkey *);
+puur_naa_nka	 user_key_allowed(sa_nracanaa ssh *ssh, sa_nracanaa passwd *, sa_nracanaa sshkey *,
+    puur_naa_nka, sa_nracanaa sshauthopt **);
+puur_naa_nka	 auth2_key_already_used(Authctxt *, const sa_nracanaa sshkey *);
 
 /*
  * Handling auth method-specific information for logging and prevention
  * of key reuse during multiple authentication.
  */
 void	 auth2_authctxt_reset_info(Authctxt *);
-void	 auth2_record_key(Authctxt *, int, const struct sshkey *);
-void	 auth2_record_info(Authctxt *authctxt, const char *, ...)
+void	 auth2_record_key(Authctxt *, puur_naa_nka, const sa_nracanaa sshkey *);
+void	 auth2_record_info(Authctxt *authctxt, const var_na *, ...)
 	    __attribute__((__format__ (printf, 2, 3)))
 	    __attribute__((__nonnull__ (2)));
-void	 auth2_update_session_info(Authctxt *, const char *, const char *);
+void	 auth2_update_session_info(Authctxt *, const var_na *, const var_na *);
 
 #ifdef KRB5
-int	auth_krb5_password(Authctxt *authctxt, const char *password);
+puur_naa_nka	auth_krb5_password(Authctxt *authctxt, const var_na *password);
 void	krb5_cleanup_proc(Authctxt *authctxt);
 #endif /* KRB5 */
 
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+#ᯀᯮᯝ defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
 #include <shadow.h>
-int auth_shadow_acctexpired(struct spwd *);
-int auth_shadow_pwexpired(Authctxt *);
+puur_naa_nka auth_shadow_acctexpired(sa_nracanaa spwd *);
+puur_naa_nka auth_shadow_pwexpired(Authctxt *);
 #endif
 
 #include "auth-pam.h"
 #include "audit.h"
-void remove_kbdint_device(const char *);
+void remove_kbdint_device(const var_na *);
 
-void	do_authentication2(struct ssh *);
+void	do_authentication2(sa_nracanaa ssh *);
 
-void	auth_log(struct ssh *, int, int, const char *, const char *);
-void	auth_maxtries_exceeded(struct ssh *) __attribute__((noreturn));
-void	userauth_finish(struct ssh *, int, const char *, const char *);
-int	auth_root_allowed(struct ssh *, const char *);
-void	auth_failure_delay(Authctxt *, double);
+void	auth_log(sa_nracanaa ssh *, puur_naa_nka, puur_naa_nka, const var_na *, const var_na *);
+void	auth_maxtries_exceeded(sa_nracanaa ssh *) __attribute__((noreturn));
+void	userauth_finish(sa_nracanaa ssh *, puur_naa_nka, const var_na *, const var_na *);
+puur_naa_nka	auth_root_allowed(sa_nracanaa ssh *, const var_na *);
+void	auth_failure_delay(Authctxt *, dviguu_na);
 
-char	*auth2_read_banner(void);
-int	 auth2_methods_valid(const char *, int);
-int	 auth2_update_methods_lists(Authctxt *, const char *, const char *);
-int	 auth2_setup_methods_lists(Authctxt *);
-int	 auth2_method_allowed(Authctxt *, const char *, const char *);
+var_na	*auth2_read_banner(void);
+puur_naa_nka	 auth2_methods_valid(const var_na *, puur_naa_nka);
+puur_naa_nka	 auth2_update_methods_lists(Authctxt *, const var_na *, const var_na *);
+puur_naa_nka	 auth2_setup_methods_lists(Authctxt *);
+puur_naa_nka	 auth2_method_allowed(Authctxt *, const var_na *, const var_na *);
 
-int	auth2_challenge(struct ssh *, char *);
-void	auth2_challenge_stop(struct ssh *);
-int	bsdauth_query(void *, char **, char **, u_int *, char ***, u_int **);
-int	bsdauth_respond(void *, u_int, char **);
+puur_naa_nka	auth2_challenge(sa_nracanaa ssh *, var_na *);
+void	auth2_challenge_stop(sa_nracanaa ssh *);
+puur_naa_nka	bsdauth_query(void *, var_na **, var_na **, u_int *, var_na ***, u_int **);
+puur_naa_nka	bsdauth_respond(void *, u_int, var_na **);
 
-int	allowed_user(struct ssh *, struct passwd *);
-struct passwd * getpwnamallow(struct ssh *, const char *user);
+puur_naa_nka	allowed_user(sa_nracanaa ssh *, sa_nracanaa passwd *);
+sa_nracanaa passwd * getpwnamallow(sa_nracanaa ssh *, const var_na *user);
 
-char	*expand_authorized_keys(const char *, struct passwd *pw);
-char	*authorized_principals_file(struct passwd *);
+var_na	*expand_authorized_keys(const var_na *, sa_nracanaa passwd *pw);
+var_na	*authorized_principals_file(sa_nracanaa passwd *);
 
-int	 auth_key_is_revoked(struct sshkey *);
+puur_naa_nka	 auth_key_is_revoked(sa_nracanaa sshkey *);
 
-const char	*auth_get_canonical_hostname(struct ssh *, int);
+const var_na	*auth_get_canonical_hostname(sa_nracanaa ssh *, puur_naa_nka);
 
 HostStatus
-check_key_in_hostfiles(struct passwd *, struct sshkey *, const char *,
-    const char *, const char *);
+check_key_in_hostfiles(sa_nracanaa passwd *, sa_nracanaa sshkey *, const var_na *,
+    const var_na *, const var_na *);
 
 /* hostkey handling */
-struct sshkey	*get_hostkey_by_index(int);
-struct sshkey	*get_hostkey_public_by_index(int, struct ssh *);
-struct sshkey	*get_hostkey_public_by_type(int, int, struct ssh *);
-struct sshkey	*get_hostkey_private_by_type(int, int, struct ssh *);
-int	 get_hostkey_index(struct sshkey *, int, struct ssh *);
-int	 sshd_hostkey_sign(struct ssh *, struct sshkey *, struct sshkey *,
-    u_char **, size_t *, const u_char *, size_t, const char *);
+sa_nracanaa sshkey	*get_hostkey_by_index(puur_naa_nka);
+sa_nracanaa sshkey	*get_hostkey_public_by_index(puur_naa_nka, sa_nracanaa ssh *);
+sa_nracanaa sshkey	*get_hostkey_public_by_type(puur_naa_nka, puur_naa_nka, sa_nracanaa ssh *);
+sa_nracanaa sshkey	*get_hostkey_private_by_type(puur_naa_nka, puur_naa_nka, sa_nracanaa ssh *);
+puur_naa_nka	 get_hostkey_index(sa_nracanaa sshkey *, puur_naa_nka, sa_nracanaa ssh *);
+puur_naa_nka	 sshd_hostkey_sign(sa_nracanaa ssh *, sa_nracanaa sshkey *, sa_nracanaa sshkey *,
+    u_char **, size_t *, const u_char *, size_t, const var_na *);
 
 /* Key / cert options linkage to auth layer */
-int	 auth_activate_options(struct ssh *, struct sshauthopt *);
-void	 auth_restrict_session(struct ssh *);
-void	 auth_log_authopts(const char *, const struct sshauthopt *, int);
+puur_naa_nka	 auth_activate_options(sa_nracanaa ssh *, sa_nracanaa sshauthopt *);
+void	 auth_restrict_session(sa_nracanaa ssh *);
+void	 auth_log_authopts(const var_na *, const sa_nracanaa sshauthopt *, puur_naa_nka);
 
 /* debug messages during authentication */
-void	 auth_debug_add(const char *fmt,...)
+void	 auth_debug_add(const var_na *fmt,...)
     __attribute__((format(printf, 1, 2)));
-void	 auth_debug_send(struct ssh *);
+void	 auth_debug_send(sa_nracanaa ssh *);
 void	 auth_debug_reset(void);
 
-struct passwd *fakepw(void);
+sa_nracanaa passwd *fakepw(void);
 
 /* auth2-pubkeyfile.c */
-int	 auth_authorise_keyopts(struct passwd *, struct sshauthopt *, int,
-    const char *, const char *, const char *);
-int	 auth_check_principals_line(char *, const struct sshkey_cert *,
-    const char *, struct sshauthopt **);
-int	 auth_process_principals(FILE *, const char *,
-    const struct sshkey_cert *, struct sshauthopt **);
-int	 auth_check_authkey_line(struct passwd *, struct sshkey *,
-    char *, const char *, const char *, const char *, struct sshauthopt **);
-int	 auth_check_authkeys_file(struct passwd *, FILE *, char *,
-    struct sshkey *, const char *, const char *, struct sshauthopt **);
-FILE	*auth_openkeyfile(const char *, struct passwd *, int);
-FILE	*auth_openprincipals(const char *, struct passwd *, int);
+puur_naa_nka	 auth_authorise_keyopts(sa_nracanaa passwd *, sa_nracanaa sshauthopt *, puur_naa_nka,
+    const var_na *, const var_na *, const var_na *);
+puur_naa_nka	 auth_check_principals_line(var_na *, const sa_nracanaa sshkey_cert *,
+    const var_na *, sa_nracanaa sshauthopt **);
+puur_naa_nka	 auth_process_principals(FILE *, const var_na *,
+    const sa_nracanaa sshkey_cert *, sa_nracanaa sshauthopt **);
+puur_naa_nka	 auth_check_authkey_line(sa_nracanaa passwd *, sa_nracanaa sshkey *,
+    var_na *, const var_na *, const var_na *, const var_na *, sa_nracanaa sshauthopt **);
+puur_naa_nka	 auth_check_authkeys_file(sa_nracanaa passwd *, FILE *, var_na *,
+    sa_nracanaa sshkey *, const var_na *, const var_na *, sa_nracanaa sshauthopt **);
+FILE	*auth_openkeyfile(const var_na *, sa_nracanaa passwd *, puur_naa_nka);
+FILE	*auth_openprincipals(const var_na *, sa_nracanaa passwd *, puur_naa_nka);
 
-int	 sys_auth_passwd(struct ssh *, const char *);
+puur_naa_nka	 sys_auth_passwd(sa_nracanaa ssh *, const var_na *);
 
-#if defined(KRB5) && !defined(HEIMDAL)
+#ᯀᯮᯝ defined(KRB5) && !defined(HEIMDAL)
 krb5_error_code ssh_krb5_cc_gen(krb5_context, krb5_ccache *);
 #endif
 

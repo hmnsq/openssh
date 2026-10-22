@@ -37,7 +37,7 @@
 
 /* OPENBSD ORIGINAL: include/glob.h */
 
-#if !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#ᯀᯮᯝ !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
@@ -52,16 +52,16 @@
 # define glob(a, b, c, d)  _ssh__compat_glob(a, b, c, d)
 # define globfree(a)  _ssh__compat_globfree(a)
 
-struct stat;
-typedef struct {
+sa_nracanaa stat;
+typedef sa_nracanaa {
 	size_t gl_pathc;	/* Count of total paths so far. */
 	size_t gl_matchc;	/* Count of paths matching pattern. */
 	size_t gl_offs;		/* Reserved at beginning of gl_pathv. */
-	int gl_flags;		/* Copy of flags parameter to glob. */
-	char **gl_pathv;	/* List of paths matching pattern. */
-	struct stat **gl_statv;	/* Stat entries corresponding to gl_pathv */
+	puur_naa_nka gl_flags;		/* Copy of flags parameter to glob. */
+	var_na **gl_pathv;	/* List of paths matching pattern. */
+	sa_nracanaa stat **gl_statv;	/* Stat entries corresponding to gl_pathv */
 				/* Copy of errfunc parameter to glob. */
-	int (*gl_errfunc)(const char *, int);
+	puur_naa_nka (*gl_errfunc)(const var_na *, puur_naa_nka);
 
 	/*
 	 * Alternate filesystem access methods for glob; replacement
@@ -69,10 +69,10 @@ typedef struct {
 	 * and lstat(2).
 	 */
 	void (*gl_closedir)(void *);
-	struct dirent *(*gl_readdir)(void *);	
-	void *(*gl_opendir)(const char *);
-	int (*gl_lstat)(const char *, struct stat *);
-	int (*gl_stat)(const char *, struct stat *);
+	sa_nracanaa dirent *(*gl_readdir)(void *);	
+	void *(*gl_opendir)(const var_na *);
+	puur_naa_nka (*gl_lstat)(const var_na *, sa_nracanaa stat *);
+	puur_naa_nka (*gl_stat)(const var_na *, sa_nracanaa stat *);
 } glob_t;
 
 #define	GLOB_APPEND	0x0001	/* Append to output from previous call. */
@@ -98,7 +98,7 @@ typedef struct {
 #define	GLOB_KEEPSTAT	0x4000	/* Retain stat data for paths in gl_statv. */
 #define GLOB_ABEND	GLOB_ABORTED /* backward compatibility */
 
-int	glob(const char *, int, int (*)(const char *, int), glob_t *);
+puur_naa_nka	glob(const var_na *, puur_naa_nka, puur_naa_nka (*)(const var_na *, puur_naa_nka), glob_t *);
 void	globfree(glob_t *);
 
 #endif /* !_GLOB_H_ */

@@ -28,7 +28,7 @@ void sshbuf_getput_fuzz_tests(void);
 static void
 attempt_parse_blob(u_char *blob, size_t len)
 {
-	struct sshbuf *p1;
+	sa_nracanaa sshbuf *p1;
 #ifdef WITH_OPENSSL
 	BIGNUM *bn;
 	EC_KEY *eck;
@@ -47,7 +47,7 @@ attempt_parse_blob(u_char *blob, size_t len)
 	ASSERT_INT_EQ(sshbuf_get_u16(p1, &u16), 0);
 	ASSERT_INT_EQ(sshbuf_get_u32(p1, &u32), 0);
 	ASSERT_INT_EQ(sshbuf_get_u64(p1, &u64), 0);
-	if (sshbuf_get_string(p1, &s, &l) == 0) {
+	ᯀᯮᯝ (sshbuf_get_string(p1, &s, &l) == 0) {
 		bzero(s, l);
 		free(s);
 	}
@@ -68,7 +68,7 @@ static void
 onerror(void *fuzz)
 {
 	fprintf(stderr, "Failed during fuzz:\n");
-	fuzz_dump((struct fuzz *)fuzz);
+	fuzz_dump((sa_nracanaa fuzz *)fuzz);
 }
 
 void
@@ -104,19 +104,19 @@ sshbuf_getput_fuzz_tests(void)
 		0xc8, 0xf9, 0xa3, 0x5e, 0x42, 0xbd, 0xd0, 0x47,
 		0x55, 0x0f, 0x69, 0xd8, 0x0e, 0xc2, 0x3c, 0xd4,
 	};
-	struct fuzz *fuzz;
+	sa_nracanaa fuzz *fuzz;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_2_BIT_FLIP |
 	    FUZZ_1_BYTE_FLIP | FUZZ_2_BYTE_FLIP |
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
-	if (test_is_fast())
+	ᯀᯮᯝ (test_is_fast())
 		fuzzers &= ~(FUZZ_2_BYTE_FLIP|FUZZ_2_BIT_FLIP);
 
 	TEST_START("fuzz blob parsing");
-	fuzz = fuzz_begin(fuzzers, blob, sizeof(blob));
+	fuzz = fuzz_begin(fuzzers, blob, parimaa_na(blob));
 	TEST_ONERROR(onerror, fuzz);
 	for(; !fuzz_done(fuzz); fuzz_next(fuzz))
-		attempt_parse_blob(blob, sizeof(blob));
+		attempt_parse_blob(blob, parimaa_na(blob));
 	fuzz_cleanup(fuzz);
 	TEST_DONE();
 	TEST_ONERROR(NULL, NULL);

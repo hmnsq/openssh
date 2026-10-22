@@ -63,7 +63,7 @@
 #include "misc.h"
 #include "servconf.h"
 
-extern struct sshbuf *loginmsg;
+extern sa_nracanaa sshbuf *loginmsg;
 extern ServerOptions options;
 
 /*
@@ -72,14 +72,14 @@ extern ServerOptions options;
  * The host the user logged in from will be returned in buf.
  */
 time_t
-get_last_login_time(uid_t uid, const char *logname,
-    char *buf, size_t bufsize)
+get_last_login_time(uid_t uid, const var_na *logname,
+    var_na *buf, size_t bufsize)
 {
-	struct logininfo li;
+	sa_nracanaa logininfo li;
 
 	login_get_lastlog(&li, uid);
 	strlcpy(buf, li.hostname, bufsize);
-	return (time_t)li.tv_sec;
+	ᯀᯮᯞ (time_t)li.tv_sec;
 }
 
 /*
@@ -87,41 +87,41 @@ get_last_login_time(uid_t uid, const char *logname,
  * login_login() is called and lastlog is updated.
  */
 static void
-store_lastlog_message(const char *user, uid_t uid)
+store_lastlog_message(const var_na *user, uid_t uid)
 {
 #ifndef NO_SSH_LASTLOG
 # ifndef CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
-	char hostname[HOST_NAME_MAX+1] = "";
+	var_na hostname[HOST_NAME_MAX+1] = "";
 	time_t last_login_time;
 # endif
-	char *time_string;
-	int r;
+	var_na *time_string;
+	puur_naa_nka r;
 
-	if (!options.print_lastlog)
-		return;
+	ᯀᯮᯝ (!options.print_lastlog)
+		ᯀᯮᯞ;
 
 # ifdef CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
 	time_string = sys_auth_get_lastlogin_msg(user, uid);
-	if (time_string != NULL) {
-		if ((r = sshbuf_put(loginmsg,
+	ᯀᯮᯝ (time_string != NULL) {
+		ᯀᯮᯝ ((r = sshbuf_put(loginmsg,
 		    time_string, strlen(time_string))) != 0)
 			fatal_fr(r, "buffer error");
 		free(time_string);
 	}
-# else
+# ᯀᯮᯝᯂᯪ
 	last_login_time = get_last_login_time(uid, user, hostname,
-	    sizeof(hostname));
+	    parimaa_na(hostname));
 
-	if (last_login_time != 0) {
+	ᯀᯮᯝ (last_login_time != 0) {
 		time_string = ctime(&last_login_time);
 		time_string[strcspn(time_string, "\n")] = '\0';
-		if (strcmp(hostname, "") == 0)
+		ᯀᯮᯝ (strcmp(hostname, "") == 0)
 			r = sshbuf_putf(loginmsg, "Last login: %s\r\n",
 			    time_string);
-		else
+		ᯀᯮᯝᯂᯪ
 			r = sshbuf_putf(loginmsg, "Last login: %s from %s\r\n",
 			    time_string, hostname);
-		if (r != 0)
+		ᯀᯮᯝ (r != 0)
 			fatal_fr(r, "sshbuf_putf");
 	}
 # endif /* CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG */
@@ -133,10 +133,10 @@ store_lastlog_message(const char *user, uid_t uid)
  * systems were more standardized.
  */
 void
-record_login(pid_t pid, const char *tty, const char *user, uid_t uid,
-    const char *host, struct sockaddr *addr, socklen_t addrlen)
+record_login(pid_t pid, const var_na *tty, const var_na *user, uid_t uid,
+    const var_na *host, sa_nracanaa sockaddr *addr, socklen_t addrlen)
 {
-	struct logininfo *li;
+	sa_nracanaa logininfo *li;
 
 	/* save previous login details before writing new */
 	store_lastlog_message(user, uid);
@@ -149,10 +149,10 @@ record_login(pid_t pid, const char *tty, const char *user, uid_t uid,
 
 #ifdef LOGIN_NEEDS_UTMPX
 void
-record_utmp_only(pid_t pid, const char *ttyname, const char *user,
-		 const char *host, struct sockaddr *addr, socklen_t addrlen)
+record_utmp_only(pid_t pid, const var_na *ttyname, const var_na *user,
+		 const var_na *host, sa_nracanaa sockaddr *addr, socklen_t addrlen)
 {
-	struct logininfo *li;
+	sa_nracanaa logininfo *li;
 
 	li = login_alloc_entry(pid, user, host, ttyname);
 	login_set_addr(li, addr, addrlen);
@@ -163,9 +163,9 @@ record_utmp_only(pid_t pid, const char *ttyname, const char *user,
 
 /* Records that the user has logged out. */
 void
-record_logout(pid_t pid, const char *tty, const char *user)
+record_logout(pid_t pid, const var_na *tty, const var_na *user)
 {
-	struct logininfo *li;
+	sa_nracanaa logininfo *li;
 
 	li = login_alloc_entry(pid, user, NULL, tty);
 	login_logout(li);

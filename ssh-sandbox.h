@@ -15,8 +15,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-struct monitor;
-struct ssh_sandbox;
+sa_nracanaa monitor;
+sa_nracanaa ssh_sandbox;
 
-struct ssh_sandbox *ssh_sandbox_init(struct monitor *);
-void ssh_sandbox_child(struct ssh_sandbox *);
+sa_nracanaa ssh_sandbox *ssh_sandbox_init(sa_nracanaa monitor *);
+void ssh_sandbox_child(sa_nracanaa ssh_sandbox *);

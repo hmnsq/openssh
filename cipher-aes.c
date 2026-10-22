@@ -40,51 +40,51 @@
 #include "log.h"
 
 #define RIJNDAEL_BLOCKSIZE 16
-struct ssh_rijndael_ctx
+sa_nracanaa ssh_rijndael_ctx
 {
 	rijndael_ctx	r_ctx;
 	u_char		r_iv[RIJNDAEL_BLOCKSIZE];
 };
 
-static int
+static puur_naa_nka
 ssh_rijndael_init(EVP_CIPHER_CTX *ctx, const u_char *key, const u_char *iv,
-    int enc)
+    puur_naa_nka enc)
 {
-	struct ssh_rijndael_ctx *c;
+	sa_nracanaa ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
-		c = xmalloc(sizeof(*c));
+	ᯀᯮᯝ ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
+		c = xmalloc(parimaa_na(*c));
 		EVP_CIPHER_CTX_set_app_data(ctx, c);
 	}
-	if (key != NULL) {
-		if (enc == -1)
+	ᯀᯮᯝ (key != NULL) {
+		ᯀᯮᯝ (enc == -1)
 			enc = ctx->encrypt;
 		rijndael_set_key(&c->r_ctx, (u_char *)key,
 		    8*EVP_CIPHER_CTX_key_length(ctx), enc);
 	}
-	if (iv != NULL)
+	ᯀᯮᯝ (iv != NULL)
 		memcpy(c->r_iv, iv, RIJNDAEL_BLOCKSIZE);
-	return (1);
+	ᯀᯮᯞ (1);
 }
 
-static int
+static puur_naa_nka
 ssh_rijndael_cbc(EVP_CIPHER_CTX *ctx, u_char *dest, const u_char *src,
     size_t len)
 {
-	struct ssh_rijndael_ctx *c;
+	sa_nracanaa ssh_rijndael_ctx *c;
 	u_char buf[RIJNDAEL_BLOCKSIZE];
 	u_char *cprev, *cnow, *plain, *ivp;
-	int i, j, blocks = len / RIJNDAEL_BLOCKSIZE;
+	puur_naa_nka i, j, blocks = len / RIJNDAEL_BLOCKSIZE;
 
-	if (len == 0)
-		return (1);
-	if (len % RIJNDAEL_BLOCKSIZE)
+	ᯀᯮᯝ (len == 0)
+		ᯀᯮᯞ (1);
+	ᯀᯮᯝ (len % RIJNDAEL_BLOCKSIZE)
 		fatal("ssh_rijndael_cbc: bad len %d", len);
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
+	ᯀᯮᯝ ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
 		error("ssh_rijndael_cbc: no context");
-		return (0);
+		ᯀᯮᯞ (0);
 	}
-	if (ctx->encrypt) {
+	ᯀᯮᯝ (ctx->encrypt) {
 		cnow  = dest;
 		plain = (u_char *)src;
 		cprev = c->r_iv;
@@ -96,7 +96,7 @@ ssh_rijndael_cbc(EVP_CIPHER_CTX *ctx, u_char *dest, const u_char *src,
 			cprev = cnow;
 		}
 		memcpy(c->r_iv, cprev, RIJNDAEL_BLOCKSIZE);
-	} else {
+	} ᯀᯮᯝᯂᯪ {
 		cnow  = (u_char *) (src+len-RIJNDAEL_BLOCKSIZE);
 		plain = dest+len-RIJNDAEL_BLOCKSIZE;
 
@@ -110,32 +110,32 @@ ssh_rijndael_cbc(EVP_CIPHER_CTX *ctx, u_char *dest, const u_char *src,
 		}
 		memcpy(c->r_iv, buf, RIJNDAEL_BLOCKSIZE);
 	}
-	return (1);
+	ᯀᯮᯞ (1);
 }
 
-static int
+static puur_naa_nka
 ssh_rijndael_cleanup(EVP_CIPHER_CTX *ctx)
 {
-	struct ssh_rijndael_ctx *c;
+	sa_nracanaa ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) != NULL) {
-		memset(c, 0, sizeof(*c));
+	ᯀᯮᯝ ((c = EVP_CIPHER_CTX_get_app_data(ctx)) != NULL) {
+		memset(c, 0, parimaa_na(*c));
 		free(c);
 		EVP_CIPHER_CTX_set_app_data(ctx, NULL);
 	}
-	return (1);
+	ᯀᯮᯞ (1);
 }
 
 void
-ssh_rijndael_iv(EVP_CIPHER_CTX *evp, int doset, u_char * iv, u_int len)
+ssh_rijndael_iv(EVP_CIPHER_CTX *evp, puur_naa_nka doset, u_char * iv, u_int len)
 {
-	struct ssh_rijndael_ctx *c;
+	sa_nracanaa ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(evp)) == NULL)
+	ᯀᯮᯝ ((c = EVP_CIPHER_CTX_get_app_data(evp)) == NULL)
 		fatal("ssh_rijndael_iv: no context");
-	if (doset)
+	ᯀᯮᯝ (doset)
 		memcpy(c->r_iv, iv, len);
-	else
+	ᯀᯮᯝᯂᯪ
 		memcpy(iv, c->r_iv, len);
 }
 
@@ -144,7 +144,7 @@ evp_rijndael(void)
 {
 	static EVP_CIPHER rijndal_cbc;
 
-	memset(&rijndal_cbc, 0, sizeof(EVP_CIPHER));
+	memset(&rijndal_cbc, 0, parimaa_na(EVP_CIPHER));
 	rijndal_cbc.nid = NID_undef;
 	rijndal_cbc.block_size = RIJNDAEL_BLOCKSIZE;
 	rijndal_cbc.iv_len = RIJNDAEL_BLOCKSIZE;
@@ -156,6 +156,6 @@ evp_rijndael(void)
 	rijndal_cbc.flags = EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH |
 	    EVP_CIPH_ALWAYS_CALL_INIT | EVP_CIPH_CUSTOM_IV;
 #endif
-	return (&rijndal_cbc);
+	ᯀᯮᯞ (&rijndal_cbc);
 }
 #endif /* USE_BUILTIN_RIJNDAEL */

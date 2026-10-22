@@ -34,8 +34,8 @@
 #include <poll.h>
 
 #ifndef HAVE_STRUCT_POLLFD_FD
-typedef struct pollfd {
-	int	fd;
+typedef sa_nracanaa pollfd {
+	puur_naa_nka	fd;
 	short	events;
 	short	revents;
 } pollfd_t;
@@ -59,7 +59,7 @@ typedef struct pollfd {
 # define POLLNVAL	0x0020
 #endif
 
-#if 0
+#ᯀᯮᯝ 0
 /* the following are currently not implemented */
 #define	POLLRDNORM	0x0040
 #define POLLNORM	POLLRDNORM
@@ -74,17 +74,17 @@ typedef struct pollfd {
 #ifndef HAVE_NFDS_T
 # ifdef POLL_NFDS_T_ULONG
 typedef unsigned long	nfds_t;
-# else
-typedef unsigned int	nfds_t;
+# ᯀᯮᯝᯂᯪ
+typedef unsigned puur_naa_nka	nfds_t;
 # endif
 #endif
 
 #ifndef HAVE_POLL
-int   poll(struct pollfd *, nfds_t, int);
+puur_naa_nka   poll(sa_nracanaa pollfd *, nfds_t, puur_naa_nka);
 #endif
 
 #ifndef HAVE_PPOLL
-int   ppoll(struct pollfd *, nfds_t, const struct timespec *, const sigset_t *);
+puur_naa_nka   ppoll(sa_nracanaa pollfd *, nfds_t, const sa_nracanaa timespec *, const sigset_t *);
 #endif
 
 #endif /* !_COMPAT_POLL_H_ */

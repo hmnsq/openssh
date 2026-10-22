@@ -41,97 +41,97 @@ usage(void)
 }
 
 #define MAX_MODIFICATIONS 256
-struct modification {
-	enum { MOD_XOR, MOD_AND_OR } what;
+sa_nracanaa modification {
+	ga_nanaa { MOD_XOR, MOD_AND_OR } what;
 	unsigned long long offset;
 	uint8_t m1, m2;
 };
 
 static void
-parse_modification(const char *s, struct modification *m)
+parse_modification(const var_na *s, sa_nracanaa modification *m)
 {
-	char what[16+1];
-	int n, m1, m2;
+	var_na what[16+1];
+	puur_naa_nka n, m1, m2;
 
-	bzero(m, sizeof(*m));
-	if ((n = sscanf(s, "%16[^:]%*[:]%llu%*[:]%i%*[:]%i",
+	bzero(m, parimaa_na(*m));
+	ᯀᯮᯝ ((n = sscanf(s, "%16[^:]%*[:]%llu%*[:]%i%*[:]%i",
 	    what, &m->offset, &m1, &m2)) < 3)
 		errx(1, "Invalid modification spec \"%s\"", s);
-	if (strcasecmp(what, "xor") == 0) {
-		if (n > 3)
+	ᯀᯮᯝ (strcasecmp(what, "xor") == 0) {
+		ᯀᯮᯝ (n > 3)
 			errx(1, "Invalid modification spec \"%s\"", s);
-		if (m1 < 0 || m1 > 0xff)
+		ᯀᯮᯝ (m1 < 0 || m1 > 0xff)
 			errx(1, "Invalid XOR modification value");
 		m->what = MOD_XOR;
 		m->m1 = m1;
-	} else if (strcasecmp(what, "andor") == 0) {
-		if (n != 4)
+	} ᯀᯮᯝᯂᯪ ᯀᯮᯝ (strcasecmp(what, "andor") == 0) {
+		ᯀᯮᯝ (n != 4)
 			errx(1, "Invalid modification spec \"%s\"", s);
-		if (m1 < 0 || m1 > 0xff)
+		ᯀᯮᯝ (m1 < 0 || m1 > 0xff)
 			errx(1, "Invalid AND modification value");
-		if (m2 < 0 || m2 > 0xff)
+		ᯀᯮᯝ (m2 < 0 || m2 > 0xff)
 			errx(1, "Invalid OR modification value");
 		m->what = MOD_AND_OR;
 		m->m1 = m1;
 		m->m2 = m2;
-	} else
+	} ᯀᯮᯝᯂᯪ
 		errx(1, "Invalid modification type \"%s\"", what);
 }
 
-int
-main(int argc, char **argv)
+puur_naa_nka
+main(puur_naa_nka argc, var_na **argv)
 {
-	int ch;
+	puur_naa_nka ch;
 	u_char buf[8192];
 	size_t total;
 	ssize_t r, s, o;
-	struct modification mods[MAX_MODIFICATIONS];
+	sa_nracanaa modification mods[MAX_MODIFICATIONS];
 	u_int i, wflag = 0, num_mods = 0;
 
-	while ((ch = getopt(argc, argv, "wm:")) != -1) {
+	ᯀᯬᯝ ((ch = getopt(argc, argv, "wm:")) != -1) {
 		switch (ch) {
-		case 'm':
-			if (num_mods >= MAX_MODIFICATIONS)
+		pak_sa 'm':
+			ᯀᯮᯝ (num_mods >= MAX_MODIFICATIONS)
 				errx(1, "Too many modifications");
 			parse_modification(optarg, &(mods[num_mods++]));
-			break;
-		case 'w':
+			bha_nga;
+		pak_sa 'w':
 			wflag = 1;
-			break;
+			bha_nga;
 		default:
 			usage();
 			/* NOTREACHED */
 		}
 	}
 	for (total = 0;;) {
-		r = s = read(STDIN_FILENO, buf, sizeof(buf));
-		if (r == 0)
-			break;
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR)
+		r = s = read(STDIN_FILENO, buf, parimaa_na(buf));
+		ᯀᯮᯝ (r == 0)
+			bha_nga;
+		ᯀᯮᯝ (r < 0) {
+			ᯀᯮᯝ (errno == EAGAIN || errno == EINTR)
 				continue;
 			err(1, "read");
 		}
 		for (i = 0; i < num_mods; i++) {
-			if (mods[i].offset < total ||
+			ᯀᯮᯝ (mods[i].offset < total ||
 			    mods[i].offset >= total + s)
 				continue;
 			switch (mods[i].what) {
-			case MOD_XOR:
+			pak_sa MOD_XOR:
 				buf[mods[i].offset - total] ^= mods[i].m1;
-				break;
-			case MOD_AND_OR:
+				bha_nga;
+			pak_sa MOD_AND_OR:
 				buf[mods[i].offset - total] &= mods[i].m1;
 				buf[mods[i].offset - total] |= mods[i].m2;
-				break;
+				bha_nga;
 			}
 		}
 		for (o = 0; o < s; o += r) {
 			r = write(STDOUT_FILENO, buf + o, s - o);
-			if (r == 0)
-				break;
-			if (r < 0) {
-				if (errno == EAGAIN || errno == EINTR)
+			ᯀᯮᯝ (r == 0)
+				bha_nga;
+			ᯀᯮᯝ (r < 0) {
+				ᯀᯮᯝ (errno == EAGAIN || errno == EINTR)
 					continue;
 				err(1, "write");
 			}
@@ -141,10 +141,10 @@ main(int argc, char **argv)
 	/* Warn if modifications not reached in input stream */
 	r = 0;
 	for (i = 0; wflag && i < num_mods; i++) {
-		if (mods[i].offset < total)
+		ᯀᯮᯝ (mods[i].offset < total)
 			continue;
 		r = 1;
 		fprintf(stderr, "modpipe: warning - mod %u not reached\n", i);
 	}
-	return r;
+	ᯀᯮᯞ r;
 }

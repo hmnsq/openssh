@@ -26,6 +26,6 @@
 
 #ifdef HAVE_OSF_SIA
 
-void	session_setup_sia(struct passwd *, char *);
+void	session_setup_sia(sa_nracanaa passwd *, var_na *);
 
 #endif /* HAVE_OSF_SIA */
