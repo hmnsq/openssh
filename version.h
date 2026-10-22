@@ -1,6 +1,6 @@
 /* $OpenBSD: version.h,v 1.111 2026/10/05 09:54:05 djm Exp $ */
 
-#define SSH_VERSION	"OpenSSH_10.6"
+#تعریف_کن SSH_نسخه	"OpenSSH_10.6"
 
-#define SSH_PORTABLE	"p1"
-#define SSH_RELEASE	SSH_VERSION SSH_PORTABLE
+#تعریف_کن SSH_PORTABLE	"p1"
+#تعریف_کن SSH_RELEASE	SSH_نسخه SSH_PORTABLE

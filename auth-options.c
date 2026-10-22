@@ -15,588 +15,588 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/queue.h>
+#ضمن <sys/types.h>
+#ضمن <sys/queue.h>
 
-#include <stdlib.h>
-#include <netdb.h>
-#include <pwd.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <limits.h>
+#ضمن <stdlib.h>
+#ضمن <netdb.h>
+#ضمن <pwd.h>
+#ضمن <string.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdarg.h>
+#ضمن <ctype.h>
+#ضمن <limits.h>
 
-#include "xmalloc.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "sshkey.h"
-#include "match.h"
-#include "ssh2.h"
-#include "auth-options.h"
+#ضمن "xmalloc.h"
+#ضمن "ssherr.h"
+#ضمن "log.h"
+#ضمن "sshbuf.h"
+#ضمن "misc.h"
+#ضمن "sshkey.h"
+#ضمن "match.h"
+#ضمن "ssh2.h"
+#ضمن "auth-options.h"
 
-static int
-dup_strings(char ***dstp, size_t *ndstp, char **src, size_t nsrc)
+ساكن صحيح
+dup_رشتهها(حرف ***dstp, اندازه_t *ndstp, حرف **src, اندازه_t nsrc)
 {
-	char **dst;
-	size_t i, j;
+	حرف **dst;
+	اندازه_t i, j;
 
-	*dstp = NULL;
+	*dstp = عدم;
 	*ndstp = 0;
 
-	if (nsrc == 0)
-		return 0;
-	if (nsrc >= SIZE_MAX / sizeof(*src) ||
-	    (dst = calloc(nsrc, sizeof(*src))) == NULL)
-		return -1;
-	for (i = 0; i < nsrc; i++) {
-		if ((dst[i] = strdup(src[i])) == NULL) {
-			for (j = 0; j < i; j++)
-				free(dst[j]);
-			free(dst);
-			return -1;
+	إذا (nsrc == 0)
+		أرجع 0;
+	إذا (nsrc >= SIZE_MAX / حجم(*src) ||
+	    (dst = حافظه_صفر_بده(nsrc, حجم(*src))) == عدم)
+		أرجع -1;
+	لكل (i = 0; i < nsrc; i++) {
+		إذا ((dst[i] = strdup(src[i])) == عدم) {
+			لكل (j = 0; j < i; j++)
+				حرر(dst[j]);
+			حرر(dst);
+			أرجع -1;
 		}
 	}
 	/* success */
 	*dstp = dst;
 	*ndstp = nsrc;
-	return 0;
+	أرجع 0;
 }
 
-#define OPTIONS_CRITICAL	1
-#define OPTIONS_EXTENSIONS	2
-static int
-cert_option_list(struct sshauthopt *opts, struct sshbuf *oblob,
-    u_int which, int crit)
+#تعریف_کن OPTIONS_CRITICAL	1
+#تعریف_کن OPTIONS_EXTENSIONS	2
+ساكن صحيح
+cert_option_list(بنية sshauthopt *opts, بنية sshbuf *oblob,
+    u_int which, صحيح crit)
 {
-	char *command, *allowed;
-	char *name = NULL;
-	struct sshbuf *c = NULL, *data = NULL;
-	int r, ret = -1, found;
+	حرف *command, *allowed;
+	حرف *name = عدم;
+	بنية sshbuf *c = عدم, *داده = عدم;
+	صحيح r, ret = -1, یافت;
 
-	if ((c = sshbuf_fromb(oblob)) == NULL) {
+	إذا ((c = sshbuf_fromb(oblob)) == عدم) {
 		error_f("sshbuf_fromb failed");
-		goto out;
+		اذهب بیرون;
 	}
 
-	while (sshbuf_len(c) > 0) {
-		sshbuf_free(data);
-		data = NULL;
-		if ((r = sshbuf_get_cstring(c, &name, NULL)) != 0 ||
-		    (r = sshbuf_froms(c, &data)) != 0) {
+	طالما (sshbuf_len(c) > 0) {
+		sshbuf_free(داده);
+		داده = عدم;
+		إذا ((r = sshbuf_get_cstring(c, &name, عدم)) != 0 ||
+		    (r = sshbuf_froms(c, &داده)) != 0) {
 			error_r(r, "Unable to parse certificate options");
-			goto out;
+			اذهب بیرون;
 		}
 		debug3("found certificate option \"%.100s\" len %zu",
-		    name, sshbuf_len(data));
-		found = 0;
-		if ((which & OPTIONS_EXTENSIONS) != 0) {
-			if (strcmp(name, "no-touch-required") == 0) {
+		    name, sshbuf_len(داده));
+		یافت = 0;
+		إذا ((which & OPTIONS_EXTENSIONS) != 0) {
+			إذا (strcmp(name, "no-touch-required") == 0) {
 				opts->no_require_user_presence = 1;
-				found = 1;
-			} else if (strcmp(name, "permit-X11-forwarding") == 0) {
+				یافت = 1;
+			} وإلا إذا (strcmp(name, "permit-X11-forwarding") == 0) {
 				opts->permit_x11_forwarding_flag = 1;
-				found = 1;
-			} else if (strcmp(name,
+				یافت = 1;
+			} وإلا إذا (strcmp(name,
 			    "permit-agent-forwarding") == 0) {
 				opts->permit_agent_forwarding_flag = 1;
-				found = 1;
-			} else if (strcmp(name,
+				یافت = 1;
+			} وإلا إذا (strcmp(name,
 			    "permit-port-forwarding") == 0) {
-				opts->permit_port_forwarding_flag = 1;
-				found = 1;
-			} else if (strcmp(name, "permit-pty") == 0) {
+				opts->permit_پورت_forwarding_flag = 1;
+				یافت = 1;
+			} وإلا إذا (strcmp(name, "permit-pty") == 0) {
 				opts->permit_pty_flag = 1;
-				found = 1;
-			} else if (strcmp(name, "permit-user-rc") == 0) {
+				یافت = 1;
+			} وإلا إذا (strcmp(name, "permit-user-rc") == 0) {
 				opts->permit_user_rc = 1;
-				found = 1;
+				یافت = 1;
 			}
 		}
-		if (!found && (which & OPTIONS_CRITICAL) != 0) {
-			if (strcmp(name, "verify-required") == 0) {
+		إذا (!یافت && (which & OPTIONS_CRITICAL) != 0) {
+			إذا (strcmp(name, "verify-required") == 0) {
 				opts->require_verify = 1;
-				found = 1;
-			} else if (strcmp(name, "force-command") == 0) {
-				if ((r = sshbuf_get_cstring(data, &command,
-				    NULL)) != 0) {
+				یافت = 1;
+			} وإلا إذا (strcmp(name, "force-command") == 0) {
+				إذا ((r = sshbuf_get_cstring(داده, &command,
+				    عدم)) != 0) {
 					error_r(r, "Unable to parse \"%s\" "
 					    "section", name);
-					goto out;
+					اذهب بیرون;
 				}
-				if (opts->force_command != NULL) {
+				إذا (opts->force_command != عدم) {
 					error("Certificate has multiple "
 					    "force-command options");
-					free(command);
-					goto out;
+					حرر(command);
+					اذهب بیرون;
 				}
 				opts->force_command = command;
-				found = 1;
-			} else if (strcmp(name, "source-address") == 0) {
-				if ((r = sshbuf_get_cstring(data, &allowed,
-				    NULL)) != 0) {
+				یافت = 1;
+			} وإلا إذا (strcmp(name, "source-address") == 0) {
+				إذا ((r = sshbuf_get_cstring(داده, &allowed,
+				    عدم)) != 0) {
 					error_r(r, "Unable to parse \"%s\" "
 					    "section", name);
-					goto out;
+					اذهب بیرون;
 				}
-				if (opts->required_from_host_cert != NULL) {
+				إذا (opts->required_from_host_cert != عدم) {
 					error("Certificate has multiple "
 					    "source-address options");
-					free(allowed);
-					goto out;
+					حرر(allowed);
+					اذهب بیرون;
 				}
 				/* Check syntax */
-				if (addr_match_cidr_list(NULL, allowed) == -1) {
+				إذا (addr_تطابق_cidr_list(عدم, allowed) == -1) {
 					error("Certificate source-address "
 					    "contents invalid");
-					free(allowed);
-					goto out;
+					حرر(allowed);
+					اذهب بیرون;
 				}
 				opts->required_from_host_cert = allowed;
-				found = 1;
+				یافت = 1;
 			}
 		}
 
-		if (!found) {
-			if (crit) {
+		إذا (!یافت) {
+			إذا (crit) {
 				error("Certificate critical option \"%s\" "
 				    "is not supported", name);
-				goto out;
-			} else {
+				اذهب بیرون;
+			} وإلا {
 				logit("Certificate extension \"%s\" "
 				    "is not supported", name);
 			}
-		} else if (sshbuf_len(data) != 0) {
+		} وإلا إذا (sshbuf_len(داده) != 0) {
 			error("Certificate option \"%s\" corrupt "
 			    "(extra data)", name);
-			goto out;
+			اذهب بیرون;
 		}
-		free(name);
-		name = NULL;
+		حرر(name);
+		name = عدم;
 	}
 	/* successfully parsed all options */
 	ret = 0;
 
- out:
-	free(name);
-	sshbuf_free(data);
+ بیرون:
+	حرر(name);
+	sshbuf_free(داده);
 	sshbuf_free(c);
-	return ret;
+	أرجع ret;
 }
 
-struct sshauthopt *
-sshauthopt_new(void)
+بنية sshauthopt *
+sshauthopt_new(فراغ)
 {
-	struct sshauthopt *ret;
+	بنية sshauthopt *ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
+	إذا ((ret = حافظه_صفر_بده(1, حجم(*ret))) == عدم)
+		أرجع عدم;
 	ret->force_tun_device = -1;
-	return ret;
+	أرجع ret;
 }
 
-void
-sshauthopt_free(struct sshauthopt *opts)
+فراغ
+sshauthopt_free(بنية sshauthopt *opts)
 {
-	size_t i;
+	اندازه_t i;
 
-	if (opts == NULL)
-		return;
+	إذا (opts == عدم)
+		أرجع;
 
-	free(opts->cert_principals);
-	free(opts->force_command);
-	free(opts->required_from_host_cert);
-	free(opts->required_from_host_keys);
+	حرر(opts->cert_principals);
+	حرر(opts->force_command);
+	حرر(opts->required_from_host_cert);
+	حرر(opts->required_from_host_کلیدها);
 
-	for (i = 0; i < opts->nenv; i++)
-		free(opts->env[i]);
-	free(opts->env);
+	لكل (i = 0; i < opts->nenv; i++)
+		حرر(opts->env[i]);
+	حرر(opts->env);
 
-	for (i = 0; i < opts->npermitopen; i++)
-		free(opts->permitopen[i]);
-	free(opts->permitopen);
+	لكل (i = 0; i < opts->npermitopen; i++)
+		حرر(opts->permitopen[i]);
+	حرر(opts->permitopen);
 
-	for (i = 0; i < opts->npermitlisten; i++)
-		free(opts->permitlisten[i]);
-	free(opts->permitlisten);
+	لكل (i = 0; i < opts->npermitlisten; i++)
+		حرر(opts->permitlisten[i]);
+	حرر(opts->permitlisten);
 
-	freezero(opts, sizeof(*opts));
+	freezero(opts, حجم(*opts));
 }
 
-struct sshauthopt *
-sshauthopt_new_with_keys_defaults(void)
+بنية sshauthopt *
+sshauthopt_new_with_کلیدها_defaults(فراغ)
 {
-	struct sshauthopt *ret = NULL;
+	بنية sshauthopt *ret = عدم;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	إذا ((ret = sshauthopt_new()) == عدم)
+		أرجع عدم;
 
 	/* Defaults for authorized_keys flags */
-	ret->permit_port_forwarding_flag = 1;
+	ret->permit_پورت_forwarding_flag = 1;
 	ret->permit_agent_forwarding_flag = 1;
 	ret->permit_x11_forwarding_flag = 1;
 	ret->permit_pty_flag = 1;
 	ret->permit_user_rc = 1;
-	return ret;
+	أرجع ret;
 }
 
 /*
  * Parse and record a permitopen/permitlisten directive.
  * Return 0 on success. Return -1 on failure and sets *errstrp to error reason.
  */
-static int
-handle_permit(const char **optsp, int allow_bare_port,
-    char ***permitsp, size_t *npermitsp, const char **errstrp)
+ساكن صحيح
+handle_permit(ثابت حرف **optsp, صحيح allow_bare_پورت,
+    حرف ***permitsp, اندازه_t *npermitsp, ثابت حرف **errstrp)
 {
-	char *opt, *tmp, *cp, *host, **permits = *permitsp;
-	size_t npermits = *npermitsp;
-	const char *errstr = "unknown error";
+	حرف *opt, *tmp, *cp, *host, **permits = *permitsp;
+	اندازه_t npermits = *npermitsp;
+	ثابت حرف *errstr = "unknown error";
 
-	if (npermits > SSH_AUTHOPT_PERMIT_MAX) {
+	إذا (npermits > SSH_AUTHOPT_PERMIT_MAX) {
 		*errstrp = "too many permission directives";
-		return -1;
+		أرجع -1;
 	}
-	if ((opt = opt_dequote(optsp, &errstr)) == NULL) {
-		return -1;
+	إذا ((opt = opt_dequote(optsp, &errstr)) == عدم) {
+		أرجع -1;
 	}
-	if (allow_bare_port && strchr(opt, ':') == NULL) {
+	إذا (allow_bare_پورت && strchr(opt, ':') == عدم) {
 		/*
 		 * Allow a bare port number in permitlisten to indicate a
 		 * listen_host wildcard.
 		 */
-		if (asprintf(&tmp, "*:%s", opt) == -1) {
-			free(opt);
+		إذا (asprintf(&tmp, "*:%s", opt) == -1) {
+			حرر(opt);
 			*errstrp = "memory allocation failed";
-			return -1;
+			أرجع -1;
 		}
-		free(opt);
+		حرر(opt);
 		opt = tmp;
 	}
-	if ((tmp = strdup(opt)) == NULL) {
-		free(opt);
+	إذا ((tmp = strdup(opt)) == عدم) {
+		حرر(opt);
 		*errstrp = "memory allocation failed";
-		return -1;
+		أرجع -1;
 	}
 	cp = tmp;
 	/* validate syntax before recording it. */
-	host = hpdelim2(&cp, NULL);
-	if (host == NULL || strlen(host) >= NI_MAXHOST) {
-		free(tmp);
-		free(opt);
+	host = hpdelim2(&cp, عدم);
+	إذا (host == عدم || طول_رشته(host) >= NI_MAXHOST) {
+		حرر(tmp);
+		حرر(opt);
 		*errstrp = "invalid permission hostname";
-		return -1;
+		أرجع -1;
 	}
 	/*
 	 * don't want to use permitopen_port to avoid
 	 * dependency on channels.[ch] here.
 	 */
-	if (cp == NULL ||
+	إذا (cp == عدم ||
 	    (strcmp(cp, "*") != 0 && a2port(cp) <= 0)) {
-		free(tmp);
-		free(opt);
+		حرر(tmp);
+		حرر(opt);
 		*errstrp = "invalid permission port";
-		return -1;
+		أرجع -1;
 	}
 	/* XXX - add streamlocal support */
-	free(tmp);
+	حرر(tmp);
 	/* Record it */
-	if ((permits = recallocarray(permits, npermits, npermits + 1,
-	    sizeof(*permits))) == NULL) {
-		free(opt);
+	إذا ((permits = recallocarray(permits, npermits, npermits + 1,
+	    حجم(*permits))) == عدم) {
+		حرر(opt);
 		/* NB. don't update *permitsp if alloc fails */
 		*errstrp = "memory allocation failed";
-		return -1;
+		أرجع -1;
 	}
 	permits[npermits++] = opt;
 	*permitsp = permits;
 	*npermitsp = npermits;
-	return 0;
+	أرجع 0;
 }
 
-struct sshauthopt *
-sshauthopt_parse(const char *opts, const char **errstrp)
+بنية sshauthopt *
+sshauthopt_parse(ثابت حرف *opts, ثابت حرف **errstrp)
 {
-	char **oarray, *opt, *cp, *tmp;
-	int r;
-	struct sshauthopt *ret = NULL;
-	const char *errstr = "unknown error";
+	حرف **oarray, *opt, *cp, *tmp;
+	صحيح r;
+	بنية sshauthopt *ret = عدم;
+	ثابت حرف *errstr = "unknown error";
 	uint64_t valid_before;
-	size_t i, l;
+	اندازه_t i, l;
 
-	if (errstrp != NULL)
-		*errstrp = NULL;
-	if ((ret = sshauthopt_new_with_keys_defaults()) == NULL)
-		goto alloc_fail;
+	إذا (errstrp != عدم)
+		*errstrp = عدم;
+	إذا ((ret = sshauthopt_new_with_کلیدها_defaults()) == عدم)
+		اذهب alloc_fail;
 
-	if (opts == NULL)
-		return ret;
+	إذا (opts == عدم)
+		أرجع ret;
 
-	while (*opts && *opts != ' ' && *opts != '\t') {
+	طالما (*opts && *opts != ' ' && *opts != '\t') {
 		/* flag options */
-		if ((r = opt_flag("restrict", 0, &opts)) != -1) {
+		إذا ((r = opt_flag("restrict", 0, &opts)) != -1) {
 			ret->restricted = 1;
-			ret->permit_port_forwarding_flag = 0;
+			ret->permit_پورت_forwarding_flag = 0;
 			ret->permit_agent_forwarding_flag = 0;
 			ret->permit_x11_forwarding_flag = 0;
 			ret->permit_pty_flag = 0;
 			ret->permit_user_rc = 0;
-		} else if ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
+		} وإلا إذا ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
 			ret->cert_authority = r;
-		} else if ((r = opt_flag("port-forwarding", 1, &opts)) != -1) {
-			ret->permit_port_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("agent-forwarding", 1, &opts)) != -1) {
+		} وإلا إذا ((r = opt_flag("port-forwarding", 1, &opts)) != -1) {
+			ret->permit_پورت_forwarding_flag = r == 1;
+		} وإلا إذا ((r = opt_flag("agent-forwarding", 1, &opts)) != -1) {
 			ret->permit_agent_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("x11-forwarding", 1, &opts)) != -1) {
+		} وإلا إذا ((r = opt_flag("x11-forwarding", 1, &opts)) != -1) {
 			ret->permit_x11_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("touch-required", 1, &opts)) != -1) {
+		} وإلا إذا ((r = opt_flag("touch-required", 1, &opts)) != -1) {
 			ret->no_require_user_presence = r != 1; /* NB. flip */
-		} else if ((r = opt_flag("verify-required", 1, &opts)) != -1) {
+		} وإلا إذا ((r = opt_flag("verify-required", 1, &opts)) != -1) {
 			ret->require_verify = r == 1;
-		} else if ((r = opt_flag("pty", 1, &opts)) != -1) {
+		} وإلا إذا ((r = opt_flag("pty", 1, &opts)) != -1) {
 			ret->permit_pty_flag = r == 1;
-		} else if ((r = opt_flag("user-rc", 1, &opts)) != -1) {
+		} وإلا إذا ((r = opt_flag("user-rc", 1, &opts)) != -1) {
 			ret->permit_user_rc = r == 1;
-		} else if (opt_match(&opts, "command")) {
-			if (ret->force_command != NULL) {
+		} وإلا إذا (opt_تطابق(&opts, "command")) {
+			إذا (ret->force_command != عدم) {
 				errstr = "multiple \"command\" clauses";
-				goto fail;
+				اذهب fail;
 			}
 			ret->force_command = opt_dequote(&opts, &errstr);
-			if (ret->force_command == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "principals")) {
-			if (ret->cert_principals != NULL) {
+			إذا (ret->force_command == عدم)
+				اذهب fail;
+		} وإلا إذا (opt_تطابق(&opts, "principals")) {
+			إذا (ret->cert_principals != عدم) {
 				errstr = "multiple \"principals\" clauses";
-				goto fail;
+				اذهب fail;
 			}
 			ret->cert_principals = opt_dequote(&opts, &errstr);
-			if (ret->cert_principals == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "from")) {
-			if (ret->required_from_host_keys != NULL) {
+			إذا (ret->cert_principals == عدم)
+				اذهب fail;
+		} وإلا إذا (opt_تطابق(&opts, "from")) {
+			إذا (ret->required_from_host_کلیدها != عدم) {
 				errstr = "multiple \"from\" clauses";
-				goto fail;
+				اذهب fail;
 			}
-			ret->required_from_host_keys = opt_dequote(&opts,
+			ret->required_from_host_کلیدها = opt_dequote(&opts,
 			    &errstr);
-			if (ret->required_from_host_keys == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "expiry-time")) {
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			if (parse_absolute_time(opt, &valid_before) != 0 ||
+			إذا (ret->required_from_host_کلیدها == عدم)
+				اذهب fail;
+		} وإلا إذا (opt_تطابق(&opts, "expiry-time")) {
+			إذا ((opt = opt_dequote(&opts, &errstr)) == عدم)
+				اذهب fail;
+			إذا (parse_absolute_زمان(opt, &valid_before) != 0 ||
 			    valid_before == 0) {
-				free(opt);
+				حرر(opt);
 				errstr = "invalid expires time";
-				goto fail;
+				اذهب fail;
 			}
-			free(opt);
-			if (ret->valid_before == 0 ||
+			حرر(opt);
+			إذا (ret->valid_before == 0 ||
 			    valid_before < ret->valid_before)
 				ret->valid_before = valid_before;
-		} else if (opt_match(&opts, "environment")) {
-			if (ret->nenv > SSH_AUTHOPT_ENV_MAX) {
+		} وإلا إذا (opt_تطابق(&opts, "environment")) {
+			إذا (ret->nenv > SSH_AUTHOPT_ENV_MAX) {
 				errstr = "too many environment strings";
-				goto fail;
+				اذهب fail;
 			}
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
+			إذا ((opt = opt_dequote(&opts, &errstr)) == عدم)
+				اذهب fail;
 			/* env name must be alphanumeric and followed by '=' */
-			if ((tmp = strchr(opt, '=')) == NULL) {
-				free(opt);
+			إذا ((tmp = strchr(opt, '=')) == عدم) {
+				حرر(opt);
 				errstr = "invalid environment string";
-				goto fail;
+				اذهب fail;
 			}
-			if ((cp = strdup(opt)) == NULL) {
-				free(opt);
-				goto alloc_fail;
+			إذا ((cp = strdup(opt)) == عدم) {
+				حرر(opt);
+				اذهب alloc_fail;
 			}
-			l = (size_t)(tmp - opt);
+			l = (اندازه_t)(tmp - opt);
 			cp[l] = '\0'; /* truncate at '=' */
-			if (!valid_env_name(cp)) {
-				free(cp);
-				free(opt);
+			إذا (!valid_env_name(cp)) {
+				حرر(cp);
+				حرر(opt);
 				errstr = "invalid environment string";
-				goto fail;
+				اذهب fail;
 			}
 			/* Check for duplicates; XXX O(n*log(n)) */
-			for (i = 0; i < ret->nenv; i++) {
-				if (strncmp(ret->env[i], cp, l) == 0 &&
+			لكل (i = 0; i < ret->nenv; i++) {
+				إذا (مقایسه_رشته(ret->env[i], cp, l) == 0 &&
 				    ret->env[i][l] == '=')
-					break;
+					اكسر;
 			}
-			free(cp);
+			حرر(cp);
 			/* First match wins */
-			if (i >= ret->nenv) {
+			إذا (i >= ret->nenv) {
 				/* Append it. */
 				oarray = ret->env;
-				if ((ret->env = recallocarray(ret->env,
+				إذا ((ret->env = recallocarray(ret->env,
 				    ret->nenv, ret->nenv + 1,
-				    sizeof(*ret->env))) == NULL) {
-					free(opt);
+				    حجم(*ret->env))) == عدم) {
+					حرر(opt);
 					/* put it back for cleanup */
 					ret->env = oarray;
-					goto alloc_fail;
+					اذهب alloc_fail;
 				}
 				ret->env[ret->nenv++] = opt;
-				opt = NULL; /* transferred */
+				opt = عدم; /* transferred */
 			}
-			free(opt);
-		} else if (opt_match(&opts, "permitopen")) {
-			if (handle_permit(&opts, 0, &ret->permitopen,
+			حرر(opt);
+		} وإلا إذا (opt_تطابق(&opts, "permitopen")) {
+			إذا (handle_permit(&opts, 0, &ret->permitopen,
 			    &ret->npermitopen, &errstr) != 0)
-				goto fail;
-		} else if (opt_match(&opts, "permitlisten")) {
-			if (handle_permit(&opts, 1, &ret->permitlisten,
+				اذهب fail;
+		} وإلا إذا (opt_تطابق(&opts, "permitlisten")) {
+			إذا (handle_permit(&opts, 1, &ret->permitlisten,
 			    &ret->npermitlisten, &errstr) != 0)
-				goto fail;
-		} else if (opt_match(&opts, "tunnel")) {
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			ret->force_tun_device = a2tun(opt, NULL);
-			free(opt);
-			if (ret->force_tun_device == SSH_TUNID_ERR) {
+				اذهب fail;
+		} وإلا إذا (opt_تطابق(&opts, "tunnel")) {
+			إذا ((opt = opt_dequote(&opts, &errstr)) == عدم)
+				اذهب fail;
+			ret->force_tun_device = a2tun(opt, عدم);
+			حرر(opt);
+			إذا (ret->force_tun_device == SSH_TUNID_ERR) {
 				errstr = "invalid tun device";
-				goto fail;
+				اذهب fail;
 			}
 		}
 		/*
 		 * Skip the comma, and move to the next option
 		 * (or break out if there are no more).
 		 */
-		if (*opts == '\0' || *opts == ' ' || *opts == '\t')
-			break;		/* End of options. */
+		إذا (*opts == '\0' || *opts == ' ' || *opts == '\t')
+			اكسر;		/* End of options. */
 		/* Anything other than a comma is an unknown option */
-		if (*opts != ',') {
+		إذا (*opts != ',') {
 			errstr = "unknown key option";
-			goto fail;
+			اذهب fail;
 		}
 		opts++;
-		if (*opts == '\0') {
+		إذا (*opts == '\0') {
 			errstr = "unexpected end-of-options";
-			goto fail;
+			اذهب fail;
 		}
 	}
 
 	/* success */
-	if (errstrp != NULL)
-		*errstrp = NULL;
-	return ret;
+	إذا (errstrp != عدم)
+		*errstrp = عدم;
+	أرجع ret;
 
 alloc_fail:
 	errstr = "memory allocation failed";
 fail:
 	sshauthopt_free(ret);
-	if (errstrp != NULL)
+	إذا (errstrp != عدم)
 		*errstrp = errstr;
-	return NULL;
+	أرجع عدم;
 }
 
-struct sshauthopt *
-sshauthopt_from_cert(struct sshkey *k)
+بنية sshauthopt *
+sshauthopt_from_cert(بنية sshkey *k)
 {
-	struct sshauthopt *ret;
+	بنية sshauthopt *ret;
 
-	if (k == NULL || !sshkey_type_is_cert(k->type) || k->cert == NULL ||
+	إذا (k == عدم || !sshkey_type_is_cert(k->type) || k->cert == عدم ||
 	    k->cert->type != SSH2_CERT_TYPE_USER)
-		return NULL;
+		أرجع عدم;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	إذا ((ret = sshauthopt_new()) == عدم)
+		أرجع عدم;
 
 	/* Handle options and critical extensions separately */
-	if (cert_option_list(ret, k->cert->critical,
+	إذا (cert_option_list(ret, k->cert->critical,
 	    OPTIONS_CRITICAL, 1) == -1) {
 		sshauthopt_free(ret);
-		return NULL;
+		أرجع عدم;
 	}
-	if (cert_option_list(ret, k->cert->extensions,
+	إذا (cert_option_list(ret, k->cert->extensions,
 	    OPTIONS_EXTENSIONS, 0) == -1) {
 		sshauthopt_free(ret);
-		return NULL;
+		أرجع عدم;
 	}
 	/* success */
-	return ret;
+	أرجع ret;
 }
 
 /*
  * Merges "additional" options to "primary" and returns the result.
  * NB. Some options from primary have primacy.
  */
-struct sshauthopt *
-sshauthopt_merge(const struct sshauthopt *primary,
-    const struct sshauthopt *additional, const char **errstrp)
+بنية sshauthopt *
+sshauthopt_ادغام(ثابت بنية sshauthopt *primary,
+    ثابت بنية sshauthopt *additional, ثابت حرف **errstrp)
 {
-	struct sshauthopt *ret;
-	const char *errstr = "internal error";
-	const char *tmp;
+	بنية sshauthopt *ret;
+	ثابت حرف *errstr = "internal error";
+	ثابت حرف *tmp;
 
-	if (errstrp != NULL)
-		*errstrp = NULL;
+	إذا (errstrp != عدم)
+		*errstrp = عدم;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		goto alloc_fail;
+	إذا ((ret = sshauthopt_new()) == عدم)
+		اذهب alloc_fail;
 
 	/* cert_authority and cert_principals are cleared in result */
 
 	/* Prefer access lists from primary. */
 	/* XXX err is both set and mismatch? */
 	tmp = primary->required_from_host_cert;
-	if (tmp == NULL)
+	إذا (tmp == عدم)
 		tmp = additional->required_from_host_cert;
-	if (tmp != NULL && (ret->required_from_host_cert = strdup(tmp)) == NULL)
-		goto alloc_fail;
-	tmp = primary->required_from_host_keys;
-	if (tmp == NULL)
-		tmp = additional->required_from_host_keys;
-	if (tmp != NULL && (ret->required_from_host_keys = strdup(tmp)) == NULL)
-		goto alloc_fail;
+	إذا (tmp != عدم && (ret->required_from_host_cert = strdup(tmp)) == عدم)
+		اذهب alloc_fail;
+	tmp = primary->required_from_host_کلیدها;
+	إذا (tmp == عدم)
+		tmp = additional->required_from_host_کلیدها;
+	إذا (tmp != عدم && (ret->required_from_host_کلیدها = strdup(tmp)) == عدم)
+		اذهب alloc_fail;
 
 	/*
 	 * force_tun_device, permitopen/permitlisten and environment all
 	 * prefer the primary.
 	 */
 	ret->force_tun_device = primary->force_tun_device;
-	if (ret->force_tun_device == -1)
+	إذا (ret->force_tun_device == -1)
 		ret->force_tun_device = additional->force_tun_device;
-	if (primary->nenv > 0) {
-		if (dup_strings(&ret->env, &ret->nenv,
+	إذا (primary->nenv > 0) {
+		إذا (dup_رشتهها(&ret->env, &ret->nenv,
 		    primary->env, primary->nenv) != 0)
-			goto alloc_fail;
-	} else if (additional->nenv) {
-		if (dup_strings(&ret->env, &ret->nenv,
+			اذهب alloc_fail;
+	} وإلا إذا (additional->nenv) {
+		إذا (dup_رشتهها(&ret->env, &ret->nenv,
 		    additional->env, additional->nenv) != 0)
-			goto alloc_fail;
+			اذهب alloc_fail;
 	}
-	if (primary->npermitopen > 0) {
-		if (dup_strings(&ret->permitopen, &ret->npermitopen,
+	إذا (primary->npermitopen > 0) {
+		إذا (dup_رشتهها(&ret->permitopen, &ret->npermitopen,
 		    primary->permitopen, primary->npermitopen) != 0)
-			goto alloc_fail;
-	} else if (additional->npermitopen > 0) {
-		if (dup_strings(&ret->permitopen, &ret->npermitopen,
+			اذهب alloc_fail;
+	} وإلا إذا (additional->npermitopen > 0) {
+		إذا (dup_رشتهها(&ret->permitopen, &ret->npermitopen,
 		    additional->permitopen, additional->npermitopen) != 0)
-			goto alloc_fail;
+			اذهب alloc_fail;
 	}
 
-	if (primary->npermitlisten > 0) {
-		if (dup_strings(&ret->permitlisten, &ret->npermitlisten,
+	إذا (primary->npermitlisten > 0) {
+		إذا (dup_رشتهها(&ret->permitlisten, &ret->npermitlisten,
 		    primary->permitlisten, primary->npermitlisten) != 0)
-			goto alloc_fail;
-	} else if (additional->npermitlisten > 0) {
-		if (dup_strings(&ret->permitlisten, &ret->npermitlisten,
+			اذهب alloc_fail;
+	} وإلا إذا (additional->npermitlisten > 0) {
+		إذا (dup_رشتهها(&ret->permitlisten, &ret->npermitlisten,
 		    additional->permitlisten, additional->npermitlisten) != 0)
-			goto alloc_fail;
+			اذهب alloc_fail;
 	}
 
-#define OPTFLAG_AND(x) ret->x = (primary->x == 1) && (additional->x == 1)
-#define OPTFLAG_OR(x) ret->x = (primary->x == 1) || (additional->x == 1)
+#تعریف_کن OPTFLAG_AND(x) ret->x = (primary->x == 1) && (additional->x == 1)
+#تعریف_کن OPTFLAG_OR(x) ret->x = (primary->x == 1) || (additional->x == 1)
 	/* Permissive flags are logical-AND (i.e. must be set in both) */
-	OPTFLAG_AND(permit_port_forwarding_flag);
+	OPTFLAG_AND(permit_پورت_forwarding_flag);
 	OPTFLAG_AND(permit_agent_forwarding_flag);
 	OPTFLAG_AND(permit_x11_forwarding_flag);
 	OPTFLAG_AND(permit_pty_flag);
@@ -605,12 +605,12 @@ sshauthopt_merge(const struct sshauthopt *primary,
 	/* Restrictive flags are logical-OR (i.e. must be set in either) */
 	OPTFLAG_OR(require_verify);
 	OPTFLAG_OR(restricted);
-#undef OPTFLAG_AND
+#لغو_تعریف OPTFLAG_AND
 
 	/* Earliest expiry time should win */
-	if (primary->valid_before != 0)
+	إذا (primary->valid_before != 0)
 		ret->valid_before = primary->valid_before;
-	if (additional->valid_before != 0 &&
+	إذا (additional->valid_before != 0 &&
 	    additional->valid_before < ret->valid_before)
 		ret->valid_before = additional->valid_before;
 
@@ -618,54 +618,54 @@ sshauthopt_merge(const struct sshauthopt *primary,
 	 * When both multiple forced-command are specified, only
 	 * proceed if they are identical, otherwise fail.
 	 */
-	if (primary->force_command != NULL &&
-	    additional->force_command != NULL) {
-		if (strcmp(primary->force_command,
+	إذا (primary->force_command != عدم &&
+	    additional->force_command != عدم) {
+		إذا (strcmp(primary->force_command,
 		    additional->force_command) == 0) {
 			/* ok */
 			ret->force_command = strdup(primary->force_command);
-			if (ret->force_command == NULL)
-				goto alloc_fail;
-		} else {
+			إذا (ret->force_command == عدم)
+				اذهب alloc_fail;
+		} وإلا {
 			errstr = "forced command options do not match";
-			goto fail;
+			اذهب fail;
 		}
-	} else if (primary->force_command != NULL) {
-		if ((ret->force_command = strdup(
-		    primary->force_command)) == NULL)
-			goto alloc_fail;
-	} else if (additional->force_command != NULL) {
-		if ((ret->force_command = strdup(
-		    additional->force_command)) == NULL)
-			goto alloc_fail;
+	} وإلا إذا (primary->force_command != عدم) {
+		إذا ((ret->force_command = strdup(
+		    primary->force_command)) == عدم)
+			اذهب alloc_fail;
+	} وإلا إذا (additional->force_command != عدم) {
+		إذا ((ret->force_command = strdup(
+		    additional->force_command)) == عدم)
+			اذهب alloc_fail;
 	}
 	/* success */
-	if (errstrp != NULL)
-		*errstrp = NULL;
-	return ret;
+	إذا (errstrp != عدم)
+		*errstrp = عدم;
+	أرجع ret;
 
  alloc_fail:
 	errstr = "memory allocation failed";
  fail:
-	if (errstrp != NULL)
+	إذا (errstrp != عدم)
 		*errstrp = errstr;
 	sshauthopt_free(ret);
-	return NULL;
+	أرجع عدم;
 }
 
 /*
  * Copy options
  */
-struct sshauthopt *
-sshauthopt_copy(const struct sshauthopt *orig)
+بنية sshauthopt *
+sshauthopt_copy(ثابت بنية sshauthopt *orig)
 {
-	struct sshauthopt *ret;
+	بنية sshauthopt *ret;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	إذا ((ret = sshauthopt_new()) == عدم)
+		أرجع عدم;
 
-#define OPTSCALAR(x) ret->x = orig->x
-	OPTSCALAR(permit_port_forwarding_flag);
+#تعریف_کن OPTSCALAR(x) ret->x = orig->x
+	OPTSCALAR(permit_پورت_forwarding_flag);
 	OPTSCALAR(permit_agent_forwarding_flag);
 	OPTSCALAR(permit_x11_forwarding_flag);
 	OPTSCALAR(permit_pty_flag);
@@ -676,131 +676,131 @@ sshauthopt_copy(const struct sshauthopt *orig)
 	OPTSCALAR(valid_before);
 	OPTSCALAR(no_require_user_presence);
 	OPTSCALAR(require_verify);
-#undef OPTSCALAR
-#define OPTSTRING(x) \
-	do { \
-		if (orig->x != NULL && (ret->x = strdup(orig->x)) == NULL) { \
+#لغو_تعریف OPTSCALAR
+#تعریف_کن OPTSTRING(x) \
+	افعل { \
+		إذا (orig->x != عدم && (ret->x = strdup(orig->x)) == عدم) { \
 			sshauthopt_free(ret); \
-			return NULL; \
+			أرجع عدم; \
 		} \
-	} while (0)
+	} طالما (0)
 	OPTSTRING(cert_principals);
 	OPTSTRING(force_command);
 	OPTSTRING(required_from_host_cert);
-	OPTSTRING(required_from_host_keys);
-#undef OPTSTRING
+	OPTSTRING(required_from_host_کلیدها);
+#لغو_تعریف OPTSTRING
 
-	if (dup_strings(&ret->env, &ret->nenv, orig->env, orig->nenv) != 0 ||
-	    dup_strings(&ret->permitopen, &ret->npermitopen,
+	إذا (dup_رشتهها(&ret->env, &ret->nenv, orig->env, orig->nenv) != 0 ||
+	    dup_رشتهها(&ret->permitopen, &ret->npermitopen,
 	    orig->permitopen, orig->npermitopen) != 0 ||
-	    dup_strings(&ret->permitlisten, &ret->npermitlisten,
+	    dup_رشتهها(&ret->permitlisten, &ret->npermitlisten,
 	    orig->permitlisten, orig->npermitlisten) != 0) {
 		sshauthopt_free(ret);
-		return NULL;
+		أرجع عدم;
 	}
-	return ret;
+	أرجع ret;
 }
 
-static int
-serialise_array(struct sshbuf *m, char **a, size_t n)
+ساكن صحيح
+serialise_array(بنية sshbuf *m, حرف **a, اندازه_t n)
 {
-	struct sshbuf *b;
-	size_t i;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	بنية sshbuf *b;
+	اندازه_t i;
+	صحيح r = SSH_ERR_داخلی_ERROR;
 
-	if (n > INT_MAX)
-		return SSH_ERR_INTERNAL_ERROR;
+	إذا (n > بیشترین_صحیح)
+		أرجع SSH_ERR_داخلی_ERROR;
 
-	if ((b = sshbuf_new()) == NULL) {
-		return SSH_ERR_ALLOC_FAIL;
+	إذا ((b = sshbuf_new()) == عدم) {
+		أرجع SSH_ERR_ALLOC_FAIL;
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_put_cstring(b, a[i])) != 0)
-			goto out;
+	لكل (i = 0; i < n; i++) {
+		إذا ((r = sshbuf_put_cstring(b, a[i])) != 0)
+			اذهب بیرون;
 	}
-	if ((r = sshbuf_put_u32(m, n)) != 0 ||
+	إذا ((r = sshbuf_put_u32(m, n)) != 0 ||
 	    (r = sshbuf_put_stringb(m, b)) != 0)
-		goto out;
+		اذهب بیرون;
 	/* success */
 	r = 0;
- out:
+ بیرون:
 	sshbuf_free(b);
-	return r;
+	أرجع r;
 }
 
-static int
-deserialise_array(struct sshbuf *m, char ***ap, size_t *np)
+ساكن صحيح
+deserialise_array(بنية sshbuf *m, حرف ***ap, اندازه_t *np)
 {
-	char **a = NULL;
-	size_t i, n = 0;
-	struct sshbuf *b = NULL;
+	حرف **a = عدم;
+	اندازه_t i, n = 0;
+	بنية sshbuf *b = عدم;
 	u_int tmp;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	صحيح r = SSH_ERR_داخلی_ERROR;
 
-	if ((r = sshbuf_get_u32(m, &tmp)) != 0 ||
+	إذا ((r = sshbuf_get_u32(m, &tmp)) != 0 ||
 	    (r = sshbuf_froms(m, &b)) != 0)
-		goto out;
-	if (tmp > INT_MAX) {
+		اذهب بیرون;
+	إذا (tmp > بیشترین_صحیح) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بیرون;
 	}
 	n = tmp;
-	if (n > 0 && (a = calloc(n, sizeof(*a))) == NULL) {
+	إذا (n > 0 && (a = حافظه_صفر_بده(n, حجم(*a))) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب بیرون;
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_get_cstring(b, &a[i], NULL)) != 0)
-			goto out;
+	لكل (i = 0; i < n; i++) {
+		إذا ((r = sshbuf_get_cstring(b, &a[i], عدم)) != 0)
+			اذهب بیرون;
 	}
 	/* success */
 	r = 0;
 	*ap = a;
-	a = NULL;
+	a = عدم;
 	*np = n;
 	n = 0;
- out:
-	if (a != NULL) {
-		for (i = 0; i < n; i++)
-			free(a[i]);
-		free(a);
+ بیرون:
+	إذا (a != عدم) {
+		لكل (i = 0; i < n; i++)
+			حرر(a[i]);
+		حرر(a);
 	}
 	sshbuf_free(b);
-	return r;
+	أرجع r;
 }
 
-static int
-serialise_nullable_string(struct sshbuf *m, const char *s)
+ساكن صحيح
+serialise_nullable_string(بنية sshbuf *m, ثابت حرف *s)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshbuf_put_u8(m, s == NULL)) != 0 ||
+	إذا ((r = sshbuf_put_u8(m, s == عدم)) != 0 ||
 	    (r = sshbuf_put_cstring(m, s)) != 0)
-		return r;
-	return 0;
+		أرجع r;
+	أرجع 0;
 }
 
-static int
-deserialise_nullable_string(struct sshbuf *m, char **sp)
+ساكن صحيح
+deserialise_nullable_string(بنية sshbuf *m, حرف **sp)
 {
-	int r;
+	صحيح r;
 	u_char flag;
 
-	*sp = NULL;
-	if ((r = sshbuf_get_u8(m, &flag)) != 0 ||
-	    (r = sshbuf_get_cstring(m, flag ? NULL : sp, NULL)) != 0)
-		return r;
-	return 0;
+	*sp = عدم;
+	إذا ((r = sshbuf_get_u8(m, &flag)) != 0 ||
+	    (r = sshbuf_get_cstring(m, flag ? عدم : sp, عدم)) != 0)
+		أرجع r;
+	أرجع 0;
 }
 
-int
-sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m,
-    int untrusted)
+صحيح
+sshauthopt_serialise(ثابت بنية sshauthopt *opts, بنية sshbuf *m,
+    صحيح untrusted)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	صحيح r = SSH_ERR_داخلی_ERROR;
 
 	/* Flag options */
-	if ((r = sshbuf_put_u8(m, opts->permit_port_forwarding_flag)) != 0 ||
+	إذا ((r = sshbuf_put_u8(m, opts->permit_پورت_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_agent_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_x11_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_pty_flag)) != 0 ||
@@ -809,61 +809,61 @@ sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m,
 	    (r = sshbuf_put_u8(m, opts->cert_authority)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->no_require_user_presence)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->require_verify)) != 0)
-		return r;
+		أرجع r;
 
 	/* Simple integer options */
-	if ((r = sshbuf_put_u64(m, opts->valid_before)) != 0)
-		return r;
+	إذا ((r = sshbuf_put_u64(m, opts->valid_before)) != 0)
+		أرجع r;
 
 	/* tunnel number can be negative to indicate "unset" */
-	if ((r = sshbuf_put_u8(m, opts->force_tun_device == -1)) != 0 ||
+	إذا ((r = sshbuf_put_u8(m, opts->force_tun_device == -1)) != 0 ||
 	    (r = sshbuf_put_u32(m, (opts->force_tun_device < 0) ?
 	    0 : (u_int)opts->force_tun_device)) != 0)
-		return r;
+		أرجع r;
 
 	/* String options; these may be NULL */
-	if ((r = serialise_nullable_string(m,
+	إذا ((r = serialise_nullable_string(m,
 	    untrusted ? "yes" : opts->cert_principals)) != 0 ||
 	    (r = serialise_nullable_string(m,
 	    untrusted ? "true" : opts->force_command)) != 0 ||
 	    (r = serialise_nullable_string(m,
-	    untrusted ? NULL : opts->required_from_host_cert)) != 0 ||
+	    untrusted ? عدم : opts->required_from_host_cert)) != 0 ||
 	    (r = serialise_nullable_string(m,
-	    untrusted ? NULL : opts->required_from_host_keys)) != 0)
-		return r;
+	    untrusted ? عدم : opts->required_from_host_کلیدها)) != 0)
+		أرجع r;
 
 	/* Array options */
-	if ((r = serialise_array(m, opts->env,
+	إذا ((r = serialise_array(m, opts->env,
 	    untrusted ? 0 : opts->nenv)) != 0 ||
 	    (r = serialise_array(m, opts->permitopen,
 	    untrusted ? 0 : opts->npermitopen)) != 0 ||
 	    (r = serialise_array(m, opts->permitlisten,
 	    untrusted ? 0 : opts->npermitlisten)) != 0)
-		return r;
+		أرجع r;
 
 	/* success */
-	return 0;
+	أرجع 0;
 }
 
-int
-sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **optsp)
+صحيح
+sshauthopt_deserialise(بنية sshbuf *m, بنية sshauthopt **optsp)
 {
-	struct sshauthopt *opts = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	بنية sshauthopt *opts = عدم;
+	صحيح r = SSH_ERR_داخلی_ERROR;
 	u_char f;
 	u_int tmp;
 
-	if ((opts = calloc(1, sizeof(*opts))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	إذا ((opts = حافظه_صفر_بده(1, حجم(*opts))) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
 
 	/* Flag options */
-#define OPT_FLAG(x) \
-	do { \
-		if ((r = sshbuf_get_u8(m, &f)) != 0) \
-			goto out; \
+#تعریف_کن OPT_FLAG(x) \
+	افعل { \
+		إذا ((r = sshbuf_get_u8(m, &f)) != 0) \
+			اذهب بیرون; \
 		opts->x = f; \
-	} while (0)
-	OPT_FLAG(permit_port_forwarding_flag);
+	} طالما (0)
+	OPT_FLAG(permit_پورت_forwarding_flag);
 	OPT_FLAG(permit_agent_forwarding_flag);
 	OPT_FLAG(permit_x11_forwarding_flag);
 	OPT_FLAG(permit_pty_flag);
@@ -872,40 +872,40 @@ sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **optsp)
 	OPT_FLAG(cert_authority);
 	OPT_FLAG(no_require_user_presence);
 	OPT_FLAG(require_verify);
-#undef OPT_FLAG
+#لغو_تعریف OPT_FLAG
 
 	/* Simple integer options */
-	if ((r = sshbuf_get_u64(m, &opts->valid_before)) != 0)
-		goto out;
+	إذا ((r = sshbuf_get_u64(m, &opts->valid_before)) != 0)
+		اذهب بیرون;
 
 	/* tunnel number can be negative to indicate "unset" */
-	if ((r = sshbuf_get_u8(m, &f)) != 0 ||
+	إذا ((r = sshbuf_get_u8(m, &f)) != 0 ||
 	    (r = sshbuf_get_u32(m, &tmp)) != 0)
-		goto out;
-	opts->force_tun_device = f ? -1 : (int)tmp;
+		اذهب بیرون;
+	opts->force_tun_device = f ? -1 : (صحيح)tmp;
 
 	/* String options may be NULL */
-	if ((r = deserialise_nullable_string(m, &opts->cert_principals)) != 0 ||
+	إذا ((r = deserialise_nullable_string(m, &opts->cert_principals)) != 0 ||
 	    (r = deserialise_nullable_string(m, &opts->force_command)) != 0 ||
 	    (r = deserialise_nullable_string(m,
 	    &opts->required_from_host_cert)) != 0 ||
 	    (r = deserialise_nullable_string(m,
-	    &opts->required_from_host_keys)) != 0)
-		goto out;
+	    &opts->required_from_host_کلیدها)) != 0)
+		اذهب بیرون;
 
 	/* Array options */
-	if ((r = deserialise_array(m, &opts->env, &opts->nenv)) != 0 ||
+	إذا ((r = deserialise_array(m, &opts->env, &opts->nenv)) != 0 ||
 	    (r = deserialise_array(m,
 	    &opts->permitopen, &opts->npermitopen)) != 0 ||
 	    (r = deserialise_array(m,
 	    &opts->permitlisten, &opts->npermitlisten)) != 0)
-		goto out;
+		اذهب بیرون;
 
 	/* success */
 	r = 0;
 	*optsp = opts;
-	opts = NULL;
- out:
+	opts = عدم;
+ بیرون:
 	sshauthopt_free(opts);
-	return r;
+	أرجع r;
 }

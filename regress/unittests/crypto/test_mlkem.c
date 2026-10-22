@@ -5,29 +5,29 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifdef USE_MLKEM768X25519
+#اگر_تعریف_شده USE_MLKEM768X25519
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "crypto_api.h"
+#ضمن "../test_helper/test_helper.h"
+#ضمن "crypto_api.h"
 
-struct mlkem768_kat {
-	const char *seed;
-	const char *pk_hash;
-	const char *sk_hash;
-	const char *enc_seed;
-	const char *ct_hash;
-	const char *shared_secret;
+بنية mlkem768_kat {
+	ثابت حرف *دانه;
+	ثابت حرف *pk_hash;
+	ثابت حرف *sk_hash;
+	ثابت حرف *enc_دانه;
+	ثابت حرف *ct_hash;
+	ثابت حرف *shared_secret;
 };
 
-static const struct mlkem768_kat mlkem768_kats[] = {
+ساكن ثابت بنية mlkem768_kat mlkem768_kats[] = {
 	{
 		"7c9935a0b07694aa0c6d10e4db6b1add2fd81a25"
 		"ccb148032dcd739936737f2d"
@@ -110,48 +110,48 @@ static const struct mlkem768_kat mlkem768_kats[] = {
 	}
 };
 
-void mlkem_tests(void);
+فراغ mlkem_tests(فراغ);
 
-void
-mlkem_tests(void)
+فراغ
+mlkem_tests(فراغ)
 {
 	uint8_t pk[MLKEM768_PUBLICKEYBYTES];
 	uint8_t sk[MLKEM768_SECRETKEYBYTES];
 	uint8_t ct[MLKEM768_CIPHERTEXTBYTES];
-	uint8_t shared_secret[MLKEM768_BYTES], shared_secret2[MLKEM768_BYTES];
+	uint8_t shared_secret[MLKEM768_بایتها], shared_secret2[MLKEM768_بایتها];
 	uint8_t pk_hash[32], sk_hash[32], ct_hash[32];
 	uint8_t expected_pk_hash[32], expected_sk_hash[32];
 	uint8_t expected_ct_hash[32], expected_shared_secret[32];
-	uint8_t seed[64], enc_seed[32];
-	size_t i;
+	uint8_t دانه[64], enc_دانه[32];
+	اندازه_t i;
 
-	TEST_START("ML-KEM 768 KATs");
-	for (i = 0; i < sizeof(mlkem768_kats) / sizeof(mlkem768_kats[0]); i++) {
+	TEST_شروع("ML-KEM 768 KATs");
+	لكل (i = 0; i < حجم(mlkem768_kats) / حجم(mlkem768_kats[0]); i++) {
 		test_subtest_info("vector %zu", i);
 
-		hex2bin(seed, mlkem768_kats[i].seed, 64);
+		hex2bin(دانه, mlkem768_kats[i].دانه, 64);
 		hex2bin(expected_pk_hash, mlkem768_kats[i].pk_hash, 32);
 		hex2bin(expected_sk_hash, mlkem768_kats[i].sk_hash, 32);
 
 		/* Keypair generation */
-		ASSERT_INT_EQ(crypto_kem_mlkem768_keypair_seeded(pk, sk, seed), 0);
+		ASSERT_INT_EQ(crypto_kem_mlkem768_keypair_seeded(pk, sk, دانه), 0);
 
-		sha3_256(pk_hash, pk, sizeof(pk));
-		sha3_256(sk_hash, sk, sizeof(sk));
+		sha3_256(pk_hash, pk, حجم(pk));
+		sha3_256(sk_hash, sk, حجم(sk));
 
 		ASSERT_MEM_EQ(pk_hash, expected_pk_hash, 32);
 		ASSERT_MEM_EQ(sk_hash, expected_sk_hash, 32);
 
-		hex2bin(enc_seed, mlkem768_kats[i].enc_seed, 32);
+		hex2bin(enc_دانه, mlkem768_kats[i].enc_دانه, 32);
 		hex2bin(expected_ct_hash, mlkem768_kats[i].ct_hash, 32);
 		hex2bin(expected_shared_secret,
 		    mlkem768_kats[i].shared_secret, 32);
 
 		/* Encapsulation */
 		ASSERT_INT_EQ(crypto_kem_mlkem768_enc_seeded(ct, shared_secret,
-		    pk, enc_seed), 0);
+		    pk, enc_دانه), 0);
 
-		sha3_256(ct_hash, ct, sizeof(ct));
+		sha3_256(ct_hash, ct, حجم(ct));
 		ASSERT_MEM_EQ(ct_hash, expected_ct_hash, 32);
 		ASSERT_MEM_EQ(shared_secret, expected_shared_secret, 32);
 
@@ -159,6 +159,6 @@ mlkem_tests(void)
 		ASSERT_INT_EQ(crypto_kem_mlkem768_dec(shared_secret2, ct, sk), 0);
 		ASSERT_MEM_EQ(shared_secret, shared_secret2, 32);
 	}
-	TEST_DONE();
+	TEST_انجامشده();
 }
-#endif /* USE_MLKEM768X25519 */
+#پایان_اگر /* USE_MLKEM768X25519 */

@@ -25,34 +25,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DNS_H
-#define DNS_H
+#اگر_تعریف_نشده DNS_H
+#تعریف_کن DNS_H
 
-enum sshfp_types {
-	SSHFP_KEY_RESERVED = 0,
-	SSHFP_KEY_RSA = 1,
-	SSHFP_KEY_DSA = 2,
-	SSHFP_KEY_ECDSA = 3,
-	SSHFP_KEY_ED25519 = 4
+تعداد sshfp_types {
+	SSHFP_کلید_RESERVED = 0,
+	SSHFP_کلید_RSA = 1,
+	SSHFP_کلید_DSA = 2,
+	SSHFP_کلید_ECDSA = 3,
+	SSHFP_کلید_ED25519 = 4
 };
 
-enum sshfp_hashes {
+تعداد sshfp_hashes {
 	SSHFP_HASH_RESERVED = 0,
 	SSHFP_HASH_SHA1 = 1,
 	SSHFP_HASH_SHA256 = 2,
 	SSHFP_HASH_MAX = 3
 };
 
-#define DNS_RDATACLASS_IN	1
-#define DNS_RDATATYPE_SSHFP	44
+#تعریف_کن DNS_RDATACLASS_درون	1
+#تعریف_کن DNS_RDATATYPE_SSHFP	44
 
-#define DNS_VERIFY_FOUND	0x00000001
-#define DNS_VERIFY_MATCH	0x00000002
-#define DNS_VERIFY_SECURE	0x00000004
-#define DNS_VERIFY_FAILED	0x00000008
+#تعریف_کن DNS_VERIFY_یافت	0x00000001
+#تعریف_کن DNS_VERIFY_تطابق	0x00000002
+#تعریف_کن DNS_VERIFY_SECURE	0x00000004
+#تعریف_کن DNS_VERIFY_FAILED	0x00000008
 
-int	verify_host_key_dns(const char *, struct sockaddr *,
-    struct sshkey *, int *);
-int	export_dns_rr(const char *, struct sshkey *, FILE *, int, int);
+صحيح	verify_host_کلید_dns(ثابت حرف *, بنية sockaddr *,
+    بنية sshkey *, صحيح *);
+صحيح	export_dns_rr(ثابت حرف *, بنية sshkey *, FILE *, صحيح, صحيح);
 
-#endif /* DNS_H */
+#پایان_اگر /* DNS_H */

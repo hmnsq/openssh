@@ -5,52 +5,52 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <ctype.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "sshbuf.h"
+#ضمن "../test_helper/test_helper.h"
+#ضمن "sshbuf.h"
 
-void mldsa_tests(void);
-void mlkem_tests(void);
-void ed25519_tests(void);
-void mldsa_eddsa_tests(void);
+فراغ mldsa_tests(فراغ);
+فراغ mlkem_tests(فراغ);
+فراغ ed25519_tests(فراغ);
+فراغ mldsa_eddsa_tests(فراغ);
 
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+بنية sshbuf *بارگیری_متن_file(ثابت حرف *name);
+حرف *get_json_string(بنية sshbuf *content, ثابت حرف *کلید, صحيح consume);
 
-static struct sshbuf *
-load_file(const char *name)
+ساكن بنية sshbuf *
+بارگیری_file(ثابت حرف *name)
 {
-	struct sshbuf *ret = NULL;
+	بنية sshbuf *ret = عدم;
 
-	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_INT_EQ(sshbuf_بارگیری_file(test_داده_file(name), &ret), 0);
+	ASSERT_PTR_NE(ret, عدم);
+	أرجع ret;
 }
 
-struct sshbuf *
-load_text_file(const char *name)
+بنية sshbuf *
+بارگیری_متن_file(ثابت حرف *name)
 {
-	struct sshbuf *ret = load_file(name);
-	const u_char *p;
-	size_t len;
+	بنية sshbuf *ret = بارگیری_file(name);
+	ثابت u_char *p;
+	اندازه_t len;
 
 	/* Trim whitespace at EOL */
-	for (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
+	لكل (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
 		len--;
-		if (p[len] == '\r' || p[len] == '\t' ||
+		إذا (p[len] == '\r' || p[len] == '\t' ||
 		    p[len] == ' ' || p[len] == '\n')
-			ASSERT_INT_EQ(sshbuf_consume_end(ret, 1), 0);
-		else
-			break;
+			ASSERT_INT_EQ(sshbuf_consume_انتها(ret, 1), 0);
+		وإلا
+			اكسر;
 	}
 	/* \0 terminate */
 	ASSERT_INT_EQ(sshbuf_put_u8(ret, 0), 0);
-	return ret;
+	أرجع ret;
 }
 
 
@@ -59,65 +59,65 @@ load_text_file(const char *name)
  * Extracts the value for a given key.
  * Errors cause ASSERT_* failures.
  */
-char *
-get_json_string(struct sshbuf *content, const char *key, int consume)
+حرف *
+get_json_string(بنية sshbuf *content, ثابت حرف *کلید, صحيح consume)
 {
-	struct sshbuf *tmp;
-	char *k, *ret;
-	size_t off, end_off;
+	بنية sshbuf *tmp;
+	حرف *k, *ret;
+	اندازه_t off, انتها_off;
 	u_char c;
 
 	tmp = sshbuf_fromb(content);
-	ASSERT_PTR_NE(tmp, NULL);
-	ASSERT_INT_GT(asprintf(&k, "\"%s\"", key), 0);
-	if (sshbuf_find(tmp, 0, k, strlen(k), &off) != 0) {
+	ASSERT_PTR_NE(tmp, عدم);
+	ASSERT_INT_GT(asprintf(&k, "\"%s\"", کلید), 0);
+	إذا (sshbuf_پیدا_کن(tmp, 0, k, طول_رشته(k), &off) != 0) {
 		fprintf(stderr, "Key %s not found in JSON\n", k);
 		ASSERT_INT_EQ(1, 0);
 	}
-	ASSERT_INT_EQ(sshbuf_consume(tmp, off + strlen(k)), 0);
-	free(k);
+	ASSERT_INT_EQ(sshbuf_consume(tmp, off + طول_رشته(k)), 0);
+	حرر(k);
 
 	/* Skip colon, spaces, commas */
-	while (sshbuf_len(tmp) > 0) {
+	طالما (sshbuf_len(tmp) > 0) {
 		c = *sshbuf_ptr(tmp);
-		if (isspace(c) || c == ':' || c == ',')
+		إذا (آیا_فاصله(c) || c == ':' || c == ',')
 			ASSERT_INT_EQ(sshbuf_consume(tmp, 1), 0);
-		else
-			break;
+		وإلا
+			اكسر;
 	}
 	/* Expect opening quote */
 	ASSERT_INT_EQ(sshbuf_get_u8(tmp, &c), 0);
 	ASSERT_CHAR_EQ(c, '"');
 	/* Find closing quote */
-	ASSERT_INT_EQ(sshbuf_find(tmp, 0, "\"", 1, &end_off), 0);
-	ASSERT_PTR_NE(ret = malloc(end_off + 1), NULL);
-	memcpy(ret, sshbuf_ptr(tmp), end_off);
-	ret[end_off] = '\0';
-	if (consume) {
-		ASSERT_INT_EQ(sshbuf_consume(tmp, end_off), 0);
-		ASSERT_INT_EQ(sshbuf_consume_upto_child(content, tmp), 0);
+	ASSERT_INT_EQ(sshbuf_پیدا_کن(tmp, 0, "\"", 1, &انتها_off), 0);
+	ASSERT_PTR_NE(ret = حافظه_بده(انتها_off + 1), عدم);
+	کپی_حافظه(ret, sshbuf_ptr(tmp), انتها_off);
+	ret[انتها_off] = '\0';
+	إذا (consume) {
+		ASSERT_INT_EQ(sshbuf_consume(tmp, انتها_off), 0);
+		ASSERT_INT_EQ(sshbuf_consume_upto_فرزند(content, tmp), 0);
 	}
 	sshbuf_free(tmp);
-	return ret;
+	أرجع ret;
 }
 
-void
-tests(void)
+فراغ
+tests(فراغ)
 {
-#ifdef USE_MLDSA
+#اگر_تعریف_شده USE_MLDSA
 	mldsa_tests();
-#endif
-#ifdef USE_MLKEM768X25519
+#پایان_اگر
+#اگر_تعریف_شده USE_MLKEM768X25519
 	mlkem_tests();
-#endif
+#پایان_اگر
 	ed25519_tests();
-#ifdef USE_MLDSA
+#اگر_تعریف_شده USE_MLDSA
 	mldsa_eddsa_tests();
-#endif
+#پایان_اگر
 }
 
-void
-benchmarks(void)
+فراغ
+benchmarks(فراغ)
 {
 	/* none */
 }

@@ -12,40 +12,40 @@
  * with every copy.
  */
 
-#ifndef _MD5_H_
-#define _MD5_H_
+#اگر_تعریف_نشده _MD5_H_
+#تعریف_کن _MD5_H_
 
-#ifndef WITH_OPENSSL
+#اگر_تعریف_نشده WITH_OPENSSL
 
-#define	MD5_BLOCK_LENGTH		64
-#define	MD5_DIGEST_LENGTH		16
-#define	MD5_DIGEST_STRING_LENGTH	(MD5_DIGEST_LENGTH * 2 + 1)
+#تعریف_کن	MD5_بلوک_درازی		64
+#تعریف_کن	MD5_DIGEST_درازی		16
+#تعریف_کن	MD5_DIGEST_STRING_درازی	(MD5_DIGEST_درازی * 2 + 1)
 
-typedef struct MD5Context {
+تعريفنوع بنية MD5Context {
 	u_int32_t state[4];			/* state */
-	u_int64_t count;			/* number of bits, mod 2^64 */
-	u_int8_t buffer[MD5_BLOCK_LENGTH];	/* input buffer */
+	u_int64_t شمار;			/* number of bits, mod 2^64 */
+	u_int8_t میانگیر[MD5_بلوک_درازی];	/* input buffer */
 } MD5_CTX;
 
-void	 MD5Init(MD5_CTX *);
-void	 MD5Update(MD5_CTX *, const u_int8_t *, size_t)
+فراغ	 MD5Init(MD5_CTX *);
+فراغ	 MD5Update(MD5_CTX *, ثابت u_int8_t *, اندازه_t)
 		__attribute__((__bounded__(__string__,2,3)));
-void	 MD5Pad(MD5_CTX *);
-void	 MD5Final(u_int8_t [MD5_DIGEST_LENGTH], MD5_CTX *)
-		__attribute__((__bounded__(__minbytes__,1,MD5_DIGEST_LENGTH)));
-void	 MD5Transform(u_int32_t [4], const u_int8_t [MD5_BLOCK_LENGTH])
+فراغ	 MD5Pad(MD5_CTX *);
+فراغ	 MD5Final(u_int8_t [MD5_DIGEST_درازی], MD5_CTX *)
+		__attribute__((__bounded__(__minbytes__,1,MD5_DIGEST_درازی)));
+فراغ	 MD5Transform(u_int32_t [4], ثابت u_int8_t [MD5_بلوک_درازی])
 		__attribute__((__bounded__(__minbytes__,1,4)))
-		__attribute__((__bounded__(__minbytes__,2,MD5_BLOCK_LENGTH)));
-char	*MD5End(MD5_CTX *, char *)
-		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5File(const char *, char *)
-		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5FileChunk(const char *, char *, off_t, off_t)
-		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5Data(const u_int8_t *, size_t, char *)
+		__attribute__((__bounded__(__minbytes__,2,MD5_بلوک_درازی)));
+حرف	*MD5_انتها(MD5_CTX *, حرف *)
+		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_درازی)));
+حرف	*MD5File(ثابت حرف *, حرف *)
+		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_درازی)));
+حرف	*MD5FileChunk(ثابت حرف *, حرف *, off_t, off_t)
+		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_درازی)));
+حرف	*MD5_داده(ثابت u_int8_t *, اندازه_t, حرف *)
 		__attribute__((__bounded__(__string__,1,2)))
-		__attribute__((__bounded__(__minbytes__,3,MD5_DIGEST_STRING_LENGTH)));
+		__attribute__((__bounded__(__minbytes__,3,MD5_DIGEST_STRING_درازی)));
 
-#endif /* !WITH_OPENSSL */
+#پایان_اگر /* !WITH_OPENSSL */
 
-#endif /* _MD5_H_ */
+#پایان_اگر /* _MD5_H_ */

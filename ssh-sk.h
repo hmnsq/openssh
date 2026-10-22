@@ -15,26 +15,26 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _SSH_SK_H
-#define _SSH_SK_H 1
+#اگر_تعریف_نشده _SSH_SK_H
+#تعریف_کن _SSH_SK_H 1
 
-struct sshbuf;
-struct sshkey;
-struct sk_option;
+بنية sshbuf;
+بنية sshkey;
+بنية sk_option;
 
 /* Version of protocol expected from ssh-sk-helper */
-#define SSH_SK_HELPER_VERSION		5
+#تعریف_کن SSH_SK_HELPER_نسخه		5
 
 /* ssh-sk-helper messages */
-#define SSH_SK_HELPER_ERROR		0	/* Only valid H->C */
-#define SSH_SK_HELPER_SIGN		1
-#define SSH_SK_HELPER_ENROLL		2
-#define SSH_SK_HELPER_LOAD_RESIDENT	3
+#تعریف_کن SSH_SK_HELPER_ERROR		0	/* Only valid H->C */
+#تعریف_کن SSH_SK_HELPER_SIGN		1
+#تعریف_کن SSH_SK_HELPER_ENROLL		2
+#تعریف_کن SSH_SK_HELPER_بارگیری_RESIDENT	3
 
-struct sshsk_resident_key {
-	struct sshkey *key;
+بنية sshsk_resident_کلید {
+	بنية sshkey *کلید;
 	uint8_t *user_id;
-	size_t user_id_len;
+	اندازه_t user_id_len;
 };
 
 /*
@@ -47,10 +47,10 @@ struct sshsk_resident_key {
  * If successful and the attest_data buffer is not NULL then attestation
  * information is placed there.
  */
-int sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest);
+صحيح sshsk_enroll(صحيح type, ثابت حرف *provider_مسیر, ثابت حرف *device,
+    ثابت حرف *application, ثابت حرف *userid, uint8_t flags,
+    ثابت حرف *pin, بنية sshbuf *challenge_buf,
+    بنية sshkey **keyp, بنية sshbuf *attest);
 
 /*
  * Calculate an ECDSA_SK or ED25519_SK signature using the specified key
@@ -58,9 +58,9 @@ int sshsk_enroll(int type, const char *provider_path, const char *device,
  *
  * Returns 0 on success or a ssherr.h error code on failure.
  */
-int sshsk_sign(const char *provider_path, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin);
+صحيح sshsk_sign(ثابت حرف *provider_مسیر, بنية sshkey *کلید,
+    u_char **sigp, اندازه_t *lenp, ثابت u_char *داده, اندازه_t datalen,
+    u_int compat, ثابت حرف *pin);
 
 /*
  * Enumerates and loads all SSH-compatible resident keys from a security
@@ -68,12 +68,12 @@ int sshsk_sign(const char *provider_path, struct sshkey *key,
  *
  * Returns 0 on success or a ssherr.h error code on failure.
  */
-int sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
-    size_t *nsrksp);
+صحيح sshsk_بارگیری_resident(ثابت حرف *provider_مسیر, ثابت حرف *device,
+    ثابت حرف *pin, u_int flags, بنية sshsk_resident_کلید ***srksp,
+    اندازه_t *nsrksp);
 
 /* Free an array of sshsk_resident_key (as returned from sshsk_load_resident) */
-void sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks);
+فراغ sshsk_free_resident_کلیدها(بنية sshsk_resident_کلید **srks, اندازه_t nsrks);
 
-#endif /* _SSH_SK_H */
+#پایان_اگر /* _SSH_SK_H */
 

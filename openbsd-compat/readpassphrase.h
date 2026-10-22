@@ -22,23 +22,23 @@
 
 /* OPENBSD ORIGINAL: include/readpassphrase.h */
 
-#ifndef _READPASSPHRASE_H_
-#define _READPASSPHRASE_H_
+#اگر_تعریف_نشده _READPASSPHRASE_H_
+#تعریف_کن _READPASSPHRASE_H_
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifndef HAVE_READPASSPHRASE
+#اگر_تعریف_نشده HAVE_READPASSPHRASE
 
-#define RPP_ECHO_OFF    0x00		/* Turn off echo (default). */
-#define RPP_ECHO_ON     0x01		/* Leave echo on. */
-#define RPP_REQUIRE_TTY 0x02		/* Fail if there is no tty. */
-#define RPP_FORCELOWER  0x04		/* Force input to lower case. */
-#define RPP_FORCEUPPER  0x08		/* Force input to upper case. */
-#define RPP_SEVENBIT    0x10		/* Strip the high bit from input. */
-#define RPP_STDIN       0x20		/* Read from stdin, not /dev/tty */
+#تعریف_کن RPP_ECHO_OFF    0x00		/* Turn off echo (default). */
+#تعریف_کن RPP_ECHO_ON     0x01		/* Leave echo on. */
+#تعریف_کن RPP_REQUIRE_TTY 0x02		/* Fail if there is no tty. */
+#تعریف_کن RPP_FORCELOWER  0x04		/* Force input to lower case. */
+#تعریف_کن RPP_FORCEUPPER  0x08		/* Force input to upper case. */
+#تعریف_کن RPP_SEVENBIT    0x10		/* Strip the high bit from input. */
+#تعریف_کن RPP_STDIN       0x20		/* Read from stdin, not /dev/tty */
 
-char * readpassphrase(const char *, char *, size_t, int);
+حرف * readpassphrase(ثابت حرف *, حرف *, اندازه_t, صحيح);
 
-#endif /* HAVE_READPASSPHRASE */
+#پایان_اگر /* HAVE_READPASSPHRASE */
 
-#endif /* !_READPASSPHRASE_H_ */
+#پایان_اگر /* !_READPASSPHRASE_H_ */

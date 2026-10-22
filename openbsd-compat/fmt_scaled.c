@@ -38,25 +38,25 @@
  * Scanning code written for OpenBSD libutil.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifndef HAVE_FMT_SCALED
+#اگر_تعریف_نشده HAVE_FMT_SCALED
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
-#include <ctype.h>
-#include <limits.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <errno.h>
+#ضمن <string.h>
+#ضمن <ctype.h>
+#ضمن <limits.h>
 
-typedef enum {
+تعريفنوع تعداد {
 	NONE = 0, KILO = 1, MEGA = 2, GIGA = 3, TERA = 4, PETA = 5, EXA = 6
 } unit_type;
 
 /* These three arrays MUST be in sync!  XXX make a struct */
-static const unit_type units[] = { NONE, KILO, MEGA, GIGA, TERA, PETA, EXA };
-static const char scale_chars[] = "BKMGTPE";
-static const long long scale_factors[] = {
+ساكن ثابت unit_type units[] = { NONE, KILO, MEGA, GIGA, TERA, PETA, EXA };
+ساكن ثابت حرف scale_chars[] = "BKMGTPE";
+ساكن ثابت دراز دراز scale_factors[] = {
 	1LL,
 	1024LL,
 	1024LL*1024,
@@ -65,38 +65,38 @@ static const long long scale_factors[] = {
 	1024LL*1024*1024*1024*1024,
 	1024LL*1024*1024*1024*1024*1024,
 };
-#define	SCALE_LENGTH (sizeof(units)/sizeof(units[0]))
+#تعریف_کن	SCALE_درازی (حجم(units)/حجم(units[0]))
 
-#define MAX_DIGITS (SCALE_LENGTH * 3)	/* XXX strlen(sprintf("%lld", -1)? */
+#تعریف_کن MAX_DIGITS (SCALE_درازی * 3)	/* XXX strlen(sprintf("%lld", -1)? */
 
 /* Convert the given input string "scaled" into numeric in "result".
  * Return 0 on success, -1 and errno set on error.
  */
-int
-scan_scaled(char *scaled, long long *result)
+صحيح
+پیمایش_scaled(حرف *scaled, دراز دراز *نتیجه)
 {
-	char *p = scaled;
-	int sign = 0;
-	unsigned int i, ndigits = 0, fract_digits = 0, muls = 0, divs = 0;
-	long long scale_fact = 1, whole = 0, fpart = 0;
+	حرف *p = scaled;
+	صحيح sign = 0;
+	بیعلامت صحيح i, ndigits = 0, fract_digits = 0, muls = 0, divs = 0;
+	دراز دراز scale_fact = 1, کامل = 0, fpart = 0;
 
 	/* Skip leading whitespace */
-	while (isascii((unsigned char)*p) && isspace((unsigned char)*p))
+	طالما (isascii((بیعلامت حرف)*p) && آیا_فاصله((بیعلامت حرف)*p))
 		++p;
 
 	/* Then at most one leading + or - */
-	while (*p == '-' || *p == '+') {
-		if (*p == '-') {
-			if (sign) {
+	طالما (*p == '-' || *p == '+') {
+		إذا (*p == '-') {
+			إذا (sign) {
 				errno = EINVAL;
-				return -1;
+				أرجع -1;
 			}
 			sign = -1;
 			++p;
-		} else if (*p == '+') {
-			if (sign) {
+		} وإلا إذا (*p == '+') {
+			إذا (sign) {
 				errno = EINVAL;
-				return -1;
+				أرجع -1;
 			}
 			sign = +1;
 			++p;
@@ -108,83 +108,83 @@ scan_scaled(char *scaled, long long *result)
 	 * (but note that E for Exa might look like e to some!).
 	 * Advance 'p' to end, to get scale factor.
 	 */
-	for (; isascii((unsigned char)*p) &&
-	    (isdigit((unsigned char)*p) || *p=='.'); ++p) {
-		if (*p == '.') {
-			if (fract_digits > 0) {	/* oops, more than one '.' */
+	لكل (; isascii((بیعلامت حرف)*p) &&
+	    (آیا_رقم((بیعلامت حرف)*p) || *p=='.'); ++p) {
+		إذا (*p == '.') {
+			إذا (fract_digits > 0) {	/* oops, more than one '.' */
 				errno = EINVAL;
-				return -1;
+				أرجع -1;
 			}
 			fract_digits = 1;
-			continue;
+			استمر;
 		}
 
 		i = (*p) - '0';			/* whew! finally a digit we can use */
-		if (fract_digits > 0) {
-			if (fract_digits >= MAX_DIGITS-1)
+		إذا (fract_digits > 0) {
+			إذا (fract_digits >= MAX_DIGITS-1)
 				/* ignore extra fractional digits */
-				continue;
+				استمر;
 			fract_digits++;		/* for later scaling */
-			if (fpart > LLONG_MAX / 10) {
+			إذا (fpart > LLONG_MAX / 10) {
 				errno = ERANGE;
-				return -1;
+				أرجع -1;
 			}
 			fpart *= 10;
-			if (i > LLONG_MAX - fpart) {
+			إذا (i > LLONG_MAX - fpart) {
 				errno = ERANGE;
-				return -1;
+				أرجع -1;
 			}
 			fpart += i;
-		} else {				/* normal digit */
-			if (++ndigits >= MAX_DIGITS) {
+		} وإلا {				/* normal digit */
+			إذا (++ndigits >= MAX_DIGITS) {
 				errno = ERANGE;
-				return -1;
+				أرجع -1;
 			}
-			if (whole > LLONG_MAX / 10) {
+			إذا (کامل > LLONG_MAX / 10) {
 				errno = ERANGE;
-				return -1;
+				أرجع -1;
 			}
-			whole *= 10;
-			if (i > LLONG_MAX - whole) {
+			کامل *= 10;
+			إذا (i > LLONG_MAX - کامل) {
 				errno = ERANGE;
-				return -1;
+				أرجع -1;
 			}
-			whole += i;
+			کامل += i;
 		}
 	}
 
-	if (sign)
-		whole *= sign;
+	إذا (sign)
+		کامل *= sign;
 
 	/* If no scale factor given, we're done. fraction is discarded. */
-	if (!*p) {
-		*result = whole;
-		return 0;
+	إذا (!*p) {
+		*نتیجه = کامل;
+		أرجع 0;
 	}
 
 	/* Validate scale factor, and scale whole and fraction by it. */
-	for (i = 0; i < SCALE_LENGTH; i++) {
+	لكل (i = 0; i < SCALE_درازی; i++) {
 
 		/* Are we there yet? */
-		if (*p == scale_chars[i] ||
-			*p == tolower((unsigned char)scale_chars[i])) {
+		إذا (*p == scale_chars[i] ||
+			*p == tolower((بیعلامت حرف)scale_chars[i])) {
 
 			/* If it ends with alphanumerics after the scale char, bad. */
-			if (isalnum((unsigned char)*(p+1))) {
+			إذا (آیا_حرف_یا_رقم((بیعلامت حرف)*(p+1))) {
 				errno = EINVAL;
-				return -1;
+				أرجع -1;
 			}
 			scale_fact = scale_factors[i];
 
 			/* check for overflow and underflow after scaling */
-			if (whole > LLONG_MAX / scale_fact ||
-			    whole < LLONG_MIN / scale_fact) {
+			إذا (کامل > LLONG_MAX / scale_fact ||
+			    کامل < LLONG_MIN / scale_fact) {
 				errno = ERANGE;
-				return -1;
+				أرجع -1;
 			}
 
 			/* scale whole part */
-			whole *= scale_fact;
+			کامل *= scale_fact;
 
 			/*
 			 * Scale fractional part: compute
@@ -197,128 +197,128 @@ scan_scaled(char *scaled, long long *result)
 			 */
 			muls = i;
 			divs = fract_digits > 0 ?  fract_digits - 1 : 0;
-			while (muls > 0 && divs > 0) {
-				if (fpart <= LLONG_MAX / 1024) {
+			طالما (muls > 0 && divs > 0) {
+				إذا (fpart <= LLONG_MAX / 1024) {
 					fpart *= 1024;
 					muls--;
-				} else {
+				} وإلا {
 					fpart /= 10;
 					divs--;
 				}
 			}
-			while (muls > 0) {
+			طالما (muls > 0) {
 				fpart *= 1024;
 				muls--;
 			}
-			while (divs > 0) {
+			طالما (divs > 0) {
 				fpart /= 10;
 				divs--;
 			}
-			if (sign == -1)
-				whole -= fpart;
-			else
-				whole += fpart;
-			*result = whole;
-			return 0;
+			إذا (sign == -1)
+				کامل -= fpart;
+			وإلا
+				کامل += fpart;
+			*نتیجه = کامل;
+			أرجع 0;
 		}
 	}
 
 	/* Invalid unit or character */
 	errno = EINVAL;
-	return -1;
+	أرجع -1;
 }
 
 /* Format the given "number" into human-readable form in "result".
  * Result must point to an allocated buffer of length FMT_SCALED_STRSIZE.
  * Return 0 on success, -1 and errno set if error.
  */
-int
-fmt_scaled(long long number, char *result)
+صحيح
+fmt_scaled(دراز دراز عدد, حرف *نتیجه)
 {
-	long long abval, fract = 0;
-	unsigned int i;
+	دراز دراز abval, fract = 0;
+	بیعلامت صحيح i;
 	unit_type unit = NONE;
 
 	/* Not every negative long long has a positive representation. */
-	if (number == LLONG_MIN) {
+	إذا (عدد == LLONG_MIN) {
 		errno = ERANGE;
-		return -1;
+		أرجع -1;
 	}
 
-	abval = llabs(number);
+	abval = llabs(عدد);
 
 	/* Also check for numbers that are just too darned big to format. */
-	if (abval / 1024 >= scale_factors[SCALE_LENGTH-1]) {
+	إذا (abval / 1024 >= scale_factors[SCALE_درازی-1]) {
 		errno = ERANGE;
-		return -1;
+		أرجع -1;
 	}
 
 	/* scale whole part; get unscaled fraction */
-	for (i = 0; i < SCALE_LENGTH; i++) {
-		if (abval/1024 < scale_factors[i]) {
+	لكل (i = 0; i < SCALE_درازی; i++) {
+		إذا (abval/1024 < scale_factors[i]) {
 			unit = units[i];
 			fract = (i == 0) ? 0 : abval % scale_factors[i];
-			number /= scale_factors[i];
-			if (i > 0)
+			عدد /= scale_factors[i];
+			إذا (i > 0)
 				fract /= scale_factors[i - 1];
-			break;
+			اكسر;
 		}
 	}
 
 	fract = (10 * fract + 512) / 1024;
 	/* if the result would be >= 10, round main number */
-	if (fract >= 10) {
-		if (number >= 0)
-			number++;
-		else
-			number--;
+	إذا (fract >= 10) {
+		إذا (عدد >= 0)
+			عدد++;
+		وإلا
+			عدد--;
 		fract = 0;
-	} else if (fract < 0) {
+	} وإلا إذا (fract < 0) {
 		/* shouldn't happen */
 		fract = 0;
 	}
 
-	if (number == 0)
-		strlcpy(result, "0B", FMT_SCALED_STRSIZE);
-	else if (unit == NONE || number >= 100 || number <= -100) {
-		if (fract >= 5) {
-			if (number >= 0)
-				number++;
-			else
-				number--;
+	إذا (عدد == 0)
+		strlcpy(نتیجه, "0B", FMT_SCALED_STRSIZE);
+	وإلا إذا (unit == NONE || عدد >= 100 || عدد <= -100) {
+		إذا (fract >= 5) {
+			إذا (عدد >= 0)
+				عدد++;
+			وإلا
+				عدد--;
 		}
-		(void)snprintf(result, FMT_SCALED_STRSIZE, "%lld%c",
-			number, scale_chars[unit]);
-	} else
-		(void)snprintf(result, FMT_SCALED_STRSIZE, "%lld.%1lld%c",
-			number, fract, scale_chars[unit]);
+		(فراغ)snprintf(نتیجه, FMT_SCALED_STRSIZE, "%lld%c",
+			عدد, scale_chars[unit]);
+	} وإلا
+		(فراغ)snprintf(نتیجه, FMT_SCALED_STRSIZE, "%lld.%1lld%c",
+			عدد, fract, scale_chars[unit]);
 
-	return 0;
+	أرجع 0;
 }
 
-#ifdef	MAIN
+#اگر_تعریف_شده	MAIN
 /*
  * This is the original version of the program in the man page.
  * Copy-and-paste whatever you need from it.
  */
-int
-main(int argc, char **argv)
+صحيح
+اصلی(صحيح argc, حرف **argv)
 {
-	char *cinput = "1.5K", buf[FMT_SCALED_STRSIZE];
-	long long ninput = 10483892, result;
+	حرف *cinput = "1.5K", buf[FMT_SCALED_STRSIZE];
+	دراز دراز ninput = 10483892, نتیجه;
 
-	if (scan_scaled(cinput, &result) == 0)
-		printf("\"%s\" -> %lld\n", cinput, result);
-	else
+	إذا (پیمایش_scaled(cinput, &نتیجه) == 0)
+		چاپ_کن("\"%s\" -> %lld\n", cinput, نتیجه);
+	وإلا
 		perror(cinput);
 
-	if (fmt_scaled(ninput, buf) == 0)
-		printf("%lld -> \"%s\"\n", ninput, buf);
-	else
+	إذا (fmt_scaled(ninput, buf) == 0)
+		چاپ_کن("%lld -> \"%s\"\n", ninput, buf);
+	وإلا
 		fprintf(stderr, "%lld invalid (%s)\n", ninput, strerror(errno));
 
-	return 0;
+	أرجع 0;
 }
-#endif
+#پایان_اگر
 
-#endif /* HAVE_FMT_SCALED */
+#پایان_اگر /* HAVE_FMT_SCALED */

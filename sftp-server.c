@@ -15,142 +15,142 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/resource.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/statvfs.h>
+#ضمن <sys/types.h>
+#ضمن <sys/resource.h>
+#ضمن <sys/stat.h>
+#ضمن <sys/time.h>
+#ضمن <sys/statvfs.h>
 
-#include <dirent.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <poll.h>
-#include <pwd.h>
-#include <grp.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <stdarg.h>
+#ضمن <dirent.h>
+#ضمن <errno.h>
+#ضمن <fcntl.h>
+#ضمن <limits.h>
+#ضمن <poll.h>
+#ضمن <pwd.h>
+#ضمن <grp.h>
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ضمن <time.h>
+#ضمن <unistd.h>
+#ضمن <stdarg.h>
 
-#include "atomicio.h"
-#include "xmalloc.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "log.h"
-#include "misc.h"
-#include "match.h"
-#include "uidswap.h"
+#ضمن "atomicio.h"
+#ضمن "xmalloc.h"
+#ضمن "sshbuf.h"
+#ضمن "ssherr.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "match.h"
+#ضمن "uidswap.h"
 
-#include "sftp.h"
-#include "sftp-common.h"
+#ضمن "sftp.h"
+#ضمن "sftp-common.h"
 
-char *sftp_realpath(const char *, char *); /* sftp-realpath.c */
+حرف *sftp_realpath(ثابت حرف *, حرف *); /* sftp-realpath.c */
 
 /* Maximum data read that we are willing to accept */
-#define SFTP_MAX_READ_LENGTH (SFTP_MAX_MSG_LENGTH - 1024)
+#تعریف_کن SFTP_MAX_READ_درازی (SFTP_MAX_پیام_درازی - 1024)
 
 /* Our verbosity */
-static LogLevel log_level = SYSLOG_LEVEL_ERROR;
+ساكن LogLevel log_level = SYSLOG_LEVEL_ERROR;
 
 /* Our client */
-static struct passwd *pw = NULL;
-static char *client_addr = NULL;
+ساكن بنية passwd *pw = عدم;
+ساكن حرف *client_addr = عدم;
 
 /* input and output queue */
-struct sshbuf *iqueue;
-struct sshbuf *oqueue;
+بنية sshbuf *iqueue;
+بنية sshbuf *oqueue;
 
 /* Version of client */
-static u_int version;
+ساكن u_int نسخه;
 
 /* SSH2_FXP_INIT received */
-static int init_done;
+ساكن صحيح init_انجامشده;
 
 /* Disable writes */
-static int readonly;
+ساكن صحيح readonly;
 
 /* Requests that are allowed/denied */
-static char *request_allowlist, *request_denylist;
+ساكن حرف *request_allowlist, *request_denylist;
 
 /* portable attributes, etc. */
-typedef struct Stat Stat;
+تعريفنوع بنية Stat Stat;
 
-struct Stat {
-	char *name;
-	char *long_name;
+بنية Stat {
+	حرف *name;
+	حرف *long_name;
 	Attrib attrib;
 };
 
 /* Packet handlers */
-static void process_open(uint32_t id);
-static void process_close(uint32_t id);
-static void process_read(uint32_t id);
-static void process_write(uint32_t id);
-static void process_stat(uint32_t id);
-static void process_lstat(uint32_t id);
-static void process_fstat(uint32_t id);
-static void process_setstat(uint32_t id);
-static void process_fsetstat(uint32_t id);
-static void process_opendir(uint32_t id);
-static void process_readdir(uint32_t id);
-static void process_remove(uint32_t id);
-static void process_mkdir(uint32_t id);
-static void process_rmdir(uint32_t id);
-static void process_realpath(uint32_t id);
-static void process_rename(uint32_t id);
-static void process_readlink(uint32_t id);
-static void process_symlink(uint32_t id);
-static void process_extended_posix_rename(uint32_t id);
-static void process_extended_statvfs(uint32_t id);
-static void process_extended_fstatvfs(uint32_t id);
-static void process_extended_hardlink(uint32_t id);
-static void process_extended_fsync(uint32_t id);
-static void process_extended_lsetstat(uint32_t id);
-static void process_extended_limits(uint32_t id);
-static void process_extended_expand(uint32_t id);
-static void process_extended_copy_data(uint32_t id);
-static void process_extended_home_directory(uint32_t id);
-static void process_extended_get_users_groups_by_id(uint32_t id);
-static void process_extended(uint32_t id);
+ساكن فراغ process_open(uint32_t id);
+ساكن فراغ process_close(uint32_t id);
+ساكن فراغ process_read(uint32_t id);
+ساكن فراغ process_write(uint32_t id);
+ساكن فراغ process_stat(uint32_t id);
+ساكن فراغ process_lstat(uint32_t id);
+ساكن فراغ process_fstat(uint32_t id);
+ساكن فراغ process_setstat(uint32_t id);
+ساكن فراغ process_fsetstat(uint32_t id);
+ساكن فراغ process_opendir(uint32_t id);
+ساكن فراغ process_readdir(uint32_t id);
+ساكن فراغ process_remove(uint32_t id);
+ساكن فراغ process_mkdir(uint32_t id);
+ساكن فراغ process_rmdir(uint32_t id);
+ساكن فراغ process_realpath(uint32_t id);
+ساكن فراغ process_rename(uint32_t id);
+ساكن فراغ process_readlink(uint32_t id);
+ساكن فراغ process_symlink(uint32_t id);
+ساكن فراغ process_extended_posix_rename(uint32_t id);
+ساكن فراغ process_extended_statvfs(uint32_t id);
+ساكن فراغ process_extended_fstatvfs(uint32_t id);
+ساكن فراغ process_extended_hardlink(uint32_t id);
+ساكن فراغ process_extended_fsync(uint32_t id);
+ساكن فراغ process_extended_lsetstat(uint32_t id);
+ساكن فراغ process_extended_limits(uint32_t id);
+ساكن فراغ process_extended_expand(uint32_t id);
+ساكن فراغ process_extended_copy_داده(uint32_t id);
+ساكن فراغ process_extended_home_directory(uint32_t id);
+ساكن فراغ process_extended_get_users_groups_by_id(uint32_t id);
+ساكن فراغ process_extended(uint32_t id);
 
-struct sftp_handler {
-	const char *name;	/* user-visible name for fine-grained perms */
-	const char *ext_name;	/* extended request name */
+بنية sftp_handler {
+	ثابت حرف *name;	/* user-visible name for fine-grained perms */
+	ثابت حرف *ext_name;	/* extended request name */
 	u_int type;		/* packet type, for non extended packets */
-	void (*handler)(uint32_t);
-	int does_write;		/* if nonzero, banned for readonly mode */
+	فراغ (*handler)(uint32_t);
+	صحيح does_write;		/* if nonzero, banned for readonly mode */
 };
 
-static const struct sftp_handler handlers[] = {
+ساكن ثابت بنية sftp_handler handlers[] = {
 	/* NB. SSH2_FXP_OPEN does the readonly check in the handler itself */
-	{ "open", NULL, SSH2_FXP_OPEN, process_open, 0 },
-	{ "close", NULL, SSH2_FXP_CLOSE, process_close, 0 },
-	{ "read", NULL, SSH2_FXP_READ, process_read, 0 },
-	{ "write", NULL, SSH2_FXP_WRITE, process_write, 1 },
-	{ "lstat", NULL, SSH2_FXP_LSTAT, process_lstat, 0 },
-	{ "fstat", NULL, SSH2_FXP_FSTAT, process_fstat, 0 },
-	{ "setstat", NULL, SSH2_FXP_SETSTAT, process_setstat, 1 },
-	{ "fsetstat", NULL, SSH2_FXP_FSETSTAT, process_fsetstat, 1 },
-	{ "opendir", NULL, SSH2_FXP_OPENDIR, process_opendir, 0 },
-	{ "readdir", NULL, SSH2_FXP_READDIR, process_readdir, 0 },
-	{ "remove", NULL, SSH2_FXP_REMOVE, process_remove, 1 },
-	{ "mkdir", NULL, SSH2_FXP_MKDIR, process_mkdir, 1 },
-	{ "rmdir", NULL, SSH2_FXP_RMDIR, process_rmdir, 1 },
-	{ "realpath", NULL, SSH2_FXP_REALPATH, process_realpath, 0 },
-	{ "stat", NULL, SSH2_FXP_STAT, process_stat, 0 },
-	{ "rename", NULL, SSH2_FXP_RENAME, process_rename, 1 },
-	{ "readlink", NULL, SSH2_FXP_READLINK, process_readlink, 0 },
-	{ "symlink", NULL, SSH2_FXP_SYMLINK, process_symlink, 1 },
-	{ NULL, NULL, 0, NULL, 0 }
+	{ "open", عدم, SSH2_FXP_OPEN, process_open, 0 },
+	{ "close", عدم, SSH2_FXP_CLOSE, process_close, 0 },
+	{ "read", عدم, SSH2_FXP_READ, process_read, 0 },
+	{ "write", عدم, SSH2_FXP_WRITE, process_write, 1 },
+	{ "lstat", عدم, SSH2_FXP_LSTAT, process_lstat, 0 },
+	{ "fstat", عدم, SSH2_FXP_FSTAT, process_fstat, 0 },
+	{ "setstat", عدم, SSH2_FXP_SETSTAT, process_setstat, 1 },
+	{ "fsetstat", عدم, SSH2_FXP_FSETSTAT, process_fsetstat, 1 },
+	{ "opendir", عدم, SSH2_FXP_OPENDIR, process_opendir, 0 },
+	{ "readdir", عدم, SSH2_FXP_READDIR, process_readdir, 0 },
+	{ "remove", عدم, SSH2_FXP_REMOVE, process_remove, 1 },
+	{ "mkdir", عدم, SSH2_FXP_MKDIR, process_mkdir, 1 },
+	{ "rmdir", عدم, SSH2_FXP_RMDIR, process_rmdir, 1 },
+	{ "realpath", عدم, SSH2_FXP_REALPATH, process_realpath, 0 },
+	{ "stat", عدم, SSH2_FXP_STAT, process_stat, 0 },
+	{ "rename", عدم, SSH2_FXP_RENAME, process_rename, 1 },
+	{ "readlink", عدم, SSH2_FXP_READLINK, process_readlink, 0 },
+	{ "symlink", عدم, SSH2_FXP_SYMLINK, process_symlink, 1 },
+	{ عدم, عدم, 0, عدم, 0 }
 };
 
 /* SSH2_FXP_EXTENDED submessages */
-static const struct sftp_handler extended_handlers[] = {
+ساكن ثابت بنية sftp_handler extended_handlers[] = {
 	{ "posix-rename", "posix-rename@openssh.com", 0,
 	    process_extended_posix_rename, 1 },
 	{ "statvfs", "statvfs@openssh.com", 0, process_extended_statvfs, 0 },
@@ -161,368 +161,368 @@ static const struct sftp_handler extended_handlers[] = {
 	{ "limits", "limits@openssh.com", 0, process_extended_limits, 0 },
 	{ "expand-path", "expand-path@openssh.com", 0,
 	    process_extended_expand, 0 },
-	{ "copy-data", "copy-data", 0, process_extended_copy_data, 1 },
+	{ "copy-data", "copy-data", 0, process_extended_copy_داده, 1 },
 	{ "home-directory", "home-directory", 0,
 	    process_extended_home_directory, 0 },
 	{ "users-groups-by-id", "users-groups-by-id@openssh.com", 0,
 	    process_extended_get_users_groups_by_id, 0 },
-	{ NULL, NULL, 0, NULL, 0 }
+	{ عدم, عدم, 0, عدم, 0 }
 };
 
-static const struct sftp_handler *
-extended_handler_byname(const char *name)
+ساكن ثابت بنية sftp_handler *
+extended_handler_byname(ثابت حرف *name)
 {
-	int i;
+	صحيح i;
 
-	for (i = 0; extended_handlers[i].handler != NULL; i++) {
-		if (strcmp(name, extended_handlers[i].ext_name) == 0)
-			return &extended_handlers[i];
+	لكل (i = 0; extended_handlers[i].handler != عدم; i++) {
+		إذا (strcmp(name, extended_handlers[i].ext_name) == 0)
+			أرجع &extended_handlers[i];
 	}
-	return NULL;
+	أرجع عدم;
 }
 
-static int
-request_permitted(const struct sftp_handler *h)
+ساكن صحيح
+request_permitted(ثابت بنية sftp_handler *h)
 {
-	char *result;
+	حرف *نتیجه;
 
-	if (readonly && h->does_write) {
+	إذا (readonly && h->does_write) {
 		verbose("Refusing %s request in read-only mode", h->name);
-		return 0;
+		أرجع 0;
 	}
-	if (request_denylist != NULL &&
-	    ((result = match_list(h->name, request_denylist, NULL))) != NULL) {
-		free(result);
+	إذا (request_denylist != عدم &&
+	    ((نتیجه = تطابق_list(h->name, request_denylist, عدم))) != عدم) {
+		حرر(نتیجه);
 		verbose("Refusing denylisted %s request", h->name);
-		return 0;
+		أرجع 0;
 	}
-	if (request_allowlist != NULL &&
-	    ((result = match_list(h->name, request_allowlist, NULL))) != NULL) {
-		free(result);
+	إذا (request_allowlist != عدم &&
+	    ((نتیجه = تطابق_list(h->name, request_allowlist, عدم))) != عدم) {
+		حرر(نتیجه);
 		debug2("Permitting allowlisted %s request", h->name);
-		return 1;
+		أرجع 1;
 	}
-	if (request_allowlist != NULL) {
+	إذا (request_allowlist != عدم) {
 		verbose("Refusing non-allowlisted %s request", h->name);
-		return 0;
+		أرجع 0;
 	}
-	return 1;
+	أرجع 1;
 }
 
-static int
-errno_to_portable(int unixerrno)
+ساكن صحيح
+errno_مقصد_portable(صحيح unixerrno)
 {
-	int ret = 0;
+	صحيح ret = 0;
 
-	switch (unixerrno) {
-	case 0:
+	بدل (unixerrno) {
+	حالة 0:
 		ret = SSH2_FX_OK;
-		break;
-	case ENOENT:
-	case ENOTDIR:
-	case EBADF:
-	case ELOOP:
+		اكسر;
+	حالة ENOENT:
+	حالة ENOTDIR:
+	حالة EBADF:
+	حالة ELOOP:
 		ret = SSH2_FX_NO_SUCH_FILE;
-		break;
-	case EPERM:
-	case EACCES:
-	case EFAULT:
+		اكسر;
+	حالة EPERM:
+	حالة EACCES:
+	حالة EFAULT:
 		ret = SSH2_FX_PERMISSION_DENIED;
-		break;
-	case ENAMETOOLONG:
-	case EINVAL:
-		ret = SSH2_FX_BAD_MESSAGE;
-		break;
-	case ENOSYS:
+		اكسر;
+	حالة ENAMETOOLONG:
+	حالة EINVAL:
+		ret = SSH2_FX_BAD_پیام;
+		اكسر;
+	حالة ENOSYS:
 		ret = SSH2_FX_OP_UNSUPPORTED;
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		ret = SSH2_FX_FAILURE;
-		break;
+		اكسر;
 	}
-	return ret;
+	أرجع ret;
 }
 
-static int
-flags_from_portable(int pflags)
+ساكن صحيح
+flags_from_portable(صحيح pflags)
 {
-	int flags = 0;
+	صحيح flags = 0;
 
-	if ((pflags & SSH2_FXF_READ) &&
+	إذا ((pflags & SSH2_FXF_READ) &&
 	    (pflags & SSH2_FXF_WRITE)) {
 		flags = O_RDWR;
-	} else if (pflags & SSH2_FXF_READ) {
+	} وإلا إذا (pflags & SSH2_FXF_READ) {
 		flags = O_RDONLY;
-	} else if (pflags & SSH2_FXF_WRITE) {
+	} وإلا إذا (pflags & SSH2_FXF_WRITE) {
 		flags = O_WRONLY;
 	}
-	if (pflags & SSH2_FXF_APPEND)
+	إذا (pflags & SSH2_FXF_APPEND)
 		flags |= O_APPEND;
-	if (pflags & SSH2_FXF_CREAT)
+	إذا (pflags & SSH2_FXF_CREAT)
 		flags |= O_CREAT;
-	if (pflags & SSH2_FXF_TRUNC)
+	إذا (pflags & SSH2_FXF_TRUNC)
 		flags |= O_TRUNC;
-	if (pflags & SSH2_FXF_EXCL)
+	إذا (pflags & SSH2_FXF_EXCL)
 		flags |= O_EXCL;
-	return flags;
+	أرجع flags;
 }
 
-static const char *
-string_from_portable(int pflags)
+ساكن ثابت حرف *
+string_from_portable(صحيح pflags)
 {
-	static char ret[128];
+	ساكن حرف ret[128];
 
 	*ret = '\0';
 
-#define PAPPEND(str)	{				\
-		if (*ret != '\0')			\
-			strlcat(ret, ",", sizeof(ret));	\
-		strlcat(ret, str, sizeof(ret));		\
+#تعریف_کن PAPPEND(str)	{				\
+		إذا (*ret != '\0')			\
+			strlcat(ret, ",", حجم(ret));	\
+		strlcat(ret, str, حجم(ret));		\
 	}
 
-	if (pflags & SSH2_FXF_READ)
+	إذا (pflags & SSH2_FXF_READ)
 		PAPPEND("READ")
-	if (pflags & SSH2_FXF_WRITE)
+	إذا (pflags & SSH2_FXF_WRITE)
 		PAPPEND("WRITE")
-	if (pflags & SSH2_FXF_APPEND)
+	إذا (pflags & SSH2_FXF_APPEND)
 		PAPPEND("APPEND")
-	if (pflags & SSH2_FXF_CREAT)
+	إذا (pflags & SSH2_FXF_CREAT)
 		PAPPEND("CREATE")
-	if (pflags & SSH2_FXF_TRUNC)
+	إذا (pflags & SSH2_FXF_TRUNC)
 		PAPPEND("TRUNCATE")
-	if (pflags & SSH2_FXF_EXCL)
+	إذا (pflags & SSH2_FXF_EXCL)
 		PAPPEND("EXCL")
 
-	return ret;
+	أرجع ret;
 }
 
 /* handle handles */
 
-typedef struct Handle Handle;
-struct Handle {
-	int use;
+تعريفنوع بنية Handle Handle;
+بنية Handle {
+	صحيح use;
 	DIR *dirp;
-	int fd;
-	int flags;
-	char *name;
-	uint64_t bytes_read, bytes_write;
-	int next_unused;
+	صحيح fd;
+	صحيح flags;
+	حرف *name;
+	uint64_t بایتها_read, بایتها_write;
+	صحيح بعدی_استفادهنشده;
 };
 
-enum {
-	HANDLE_UNUSED,
+تعداد {
+	HANDLE_استفادهنشده,
 	HANDLE_DIR,
 	HANDLE_FILE
 };
 
-static Handle *handles = NULL;
-static u_int num_handles = 0;
-static int first_unused_handle = -1;
+ساكن Handle *handles = عدم;
+ساكن u_int رقم_handles = 0;
+ساكن صحيح اولی_استفادهنشده_handle = -1;
 
-static void handle_unused(int i)
+ساكن فراغ handle_استفادهنشده(صحيح i)
 {
-	handles[i].use = HANDLE_UNUSED;
-	handles[i].next_unused = first_unused_handle;
-	first_unused_handle = i;
+	handles[i].use = HANDLE_استفادهنشده;
+	handles[i].بعدی_استفادهنشده = اولی_استفادهنشده_handle;
+	اولی_استفادهنشده_handle = i;
 }
 
-static int
-handle_new(int use, const char *name, int fd, int flags, DIR *dirp)
+ساكن صحيح
+handle_new(صحيح use, ثابت حرف *name, صحيح fd, صحيح flags, DIR *dirp)
 {
-	int i;
+	صحيح i;
 
-	if (first_unused_handle == -1) {
-		if (num_handles + 1 <= num_handles)
-			return -1;
-		num_handles++;
-		handles = xreallocarray(handles, num_handles, sizeof(Handle));
-		handle_unused(num_handles - 1);
+	إذا (اولی_استفادهنشده_handle == -1) {
+		إذا (رقم_handles + 1 <= رقم_handles)
+			أرجع -1;
+		رقم_handles++;
+		handles = xreallocarray(handles, رقم_handles, حجم(Handle));
+		handle_استفادهنشده(رقم_handles - 1);
 	}
 
-	i = first_unused_handle;
-	first_unused_handle = handles[i].next_unused;
+	i = اولی_استفادهنشده_handle;
+	اولی_استفادهنشده_handle = handles[i].بعدی_استفادهنشده;
 
 	handles[i].use = use;
 	handles[i].dirp = dirp;
 	handles[i].fd = fd;
 	handles[i].flags = flags;
 	handles[i].name = xstrdup(name);
-	handles[i].bytes_read = handles[i].bytes_write = 0;
+	handles[i].بایتها_read = handles[i].بایتها_write = 0;
 
-	return i;
+	أرجع i;
 }
 
-static int
-handle_is_ok(int i, int type)
+ساكن صحيح
+handle_is_ok(صحيح i, صحيح type)
 {
-	return i >= 0 && (u_int)i < num_handles && handles[i].use == type;
+	أرجع i >= 0 && (u_int)i < رقم_handles && handles[i].use == type;
 }
 
-static int
-handle_to_string(int handle, u_char **stringp, int *hlenp)
+ساكن صحيح
+handle_مقصد_string(صحيح handle, u_char **stringp, صحيح *hlenp)
 {
-	if (stringp == NULL || hlenp == NULL)
-		return -1;
-	*stringp = xmalloc(sizeof(int32_t));
+	إذا (stringp == عدم || hlenp == عدم)
+		أرجع -1;
+	*stringp = xmalloc(حجم(int32_t));
 	put_u32(*stringp, handle);
-	*hlenp = sizeof(int32_t);
-	return 0;
+	*hlenp = حجم(int32_t);
+	أرجع 0;
 }
 
-static int
-handle_from_string(const u_char *handle, u_int hlen)
+ساكن صحيح
+handle_from_string(ثابت u_char *handle, u_int hlen)
 {
-	int val;
+	صحيح val;
 
-	if (hlen != sizeof(int32_t))
-		return -1;
+	إذا (hlen != حجم(int32_t))
+		أرجع -1;
 	val = get_u32(handle);
-	if (handle_is_ok(val, HANDLE_FILE) ||
+	إذا (handle_is_ok(val, HANDLE_FILE) ||
 	    handle_is_ok(val, HANDLE_DIR))
-		return val;
-	return -1;
+		أرجع val;
+	أرجع -1;
 }
 
-static char *
-handle_to_name(int handle)
+ساكن حرف *
+handle_مقصد_name(صحيح handle)
 {
-	if (handle_is_ok(handle, HANDLE_DIR)||
+	إذا (handle_is_ok(handle, HANDLE_DIR)||
 	    handle_is_ok(handle, HANDLE_FILE))
-		return handles[handle].name;
-	return NULL;
+		أرجع handles[handle].name;
+	أرجع عدم;
 }
 
-static DIR *
-handle_to_dir(int handle)
+ساكن DIR *
+handle_مقصد_dir(صحيح handle)
 {
-	if (handle_is_ok(handle, HANDLE_DIR))
-		return handles[handle].dirp;
-	return NULL;
+	إذا (handle_is_ok(handle, HANDLE_DIR))
+		أرجع handles[handle].dirp;
+	أرجع عدم;
 }
 
-static int
-handle_to_fd(int handle)
+ساكن صحيح
+handle_مقصد_fd(صحيح handle)
 {
-	if (handle_is_ok(handle, HANDLE_FILE))
-		return handles[handle].fd;
-	return -1;
+	إذا (handle_is_ok(handle, HANDLE_FILE))
+		أرجع handles[handle].fd;
+	أرجع -1;
 }
 
-static int
-handle_to_flags(int handle)
+ساكن صحيح
+handle_مقصد_flags(صحيح handle)
 {
-	if (handle_is_ok(handle, HANDLE_FILE))
-		return handles[handle].flags;
-	return 0;
+	إذا (handle_is_ok(handle, HANDLE_FILE))
+		أرجع handles[handle].flags;
+	أرجع 0;
 }
 
-static void
-handle_update_read(int handle, ssize_t bytes)
+ساكن فراغ
+handle_update_read(صحيح handle, ssize_t بایتها)
 {
-	if (handle_is_ok(handle, HANDLE_FILE) && bytes > 0)
-		handles[handle].bytes_read += bytes;
+	إذا (handle_is_ok(handle, HANDLE_FILE) && بایتها > 0)
+		handles[handle].بایتها_read += بایتها;
 }
 
-static void
-handle_update_write(int handle, ssize_t bytes)
+ساكن فراغ
+handle_update_write(صحيح handle, ssize_t بایتها)
 {
-	if (handle_is_ok(handle, HANDLE_FILE) && bytes > 0)
-		handles[handle].bytes_write += bytes;
+	إذا (handle_is_ok(handle, HANDLE_FILE) && بایتها > 0)
+		handles[handle].بایتها_write += بایتها;
 }
 
-static uint64_t
-handle_bytes_read(int handle)
+ساكن uint64_t
+handle_بایتها_read(صحيح handle)
 {
-	if (handle_is_ok(handle, HANDLE_FILE))
-		return (handles[handle].bytes_read);
-	return 0;
+	إذا (handle_is_ok(handle, HANDLE_FILE))
+		أرجع (handles[handle].بایتها_read);
+	أرجع 0;
 }
 
-static uint64_t
-handle_bytes_write(int handle)
+ساكن uint64_t
+handle_بایتها_write(صحيح handle)
 {
-	if (handle_is_ok(handle, HANDLE_FILE))
-		return (handles[handle].bytes_write);
-	return 0;
+	إذا (handle_is_ok(handle, HANDLE_FILE))
+		أرجع (handles[handle].بایتها_write);
+	أرجع 0;
 }
 
-static int
-handle_close(int handle)
+ساكن صحيح
+handle_close(صحيح handle)
 {
-	int ret = -1;
+	صحيح ret = -1;
 
-	if (handle_is_ok(handle, HANDLE_FILE)) {
+	إذا (handle_is_ok(handle, HANDLE_FILE)) {
 		ret = close(handles[handle].fd);
-		free(handles[handle].name);
-		handle_unused(handle);
-	} else if (handle_is_ok(handle, HANDLE_DIR)) {
+		حرر(handles[handle].name);
+		handle_استفادهنشده(handle);
+	} وإلا إذا (handle_is_ok(handle, HANDLE_DIR)) {
 		ret = closedir(handles[handle].dirp);
-		free(handles[handle].name);
-		handle_unused(handle);
-	} else {
+		حرر(handles[handle].name);
+		handle_استفادهنشده(handle);
+	} وإلا {
 		errno = ENOENT;
 	}
-	return ret;
+	أرجع ret;
 }
 
-static void
-handle_log_close(int handle, char *emsg)
+ساكن فراغ
+handle_log_close(صحيح handle, حرف *emsg)
 {
-	if (handle_is_ok(handle, HANDLE_FILE)) {
+	إذا (handle_is_ok(handle, HANDLE_FILE)) {
 		logit("%s%sclose \"%s\" bytes read %llu written %llu",
-		    emsg == NULL ? "" : emsg, emsg == NULL ? "" : " ",
-		    handle_to_name(handle),
-		    (unsigned long long)handle_bytes_read(handle),
-		    (unsigned long long)handle_bytes_write(handle));
-	} else {
+		    emsg == عدم ? "" : emsg, emsg == عدم ? "" : " ",
+		    handle_مقصد_name(handle),
+		    (بیعلامت دراز دراز)handle_بایتها_read(handle),
+		    (بیعلامت دراز دراز)handle_بایتها_write(handle));
+	} وإلا {
 		logit("%s%sclosedir \"%s\"",
-		    emsg == NULL ? "" : emsg, emsg == NULL ? "" : " ",
-		    handle_to_name(handle));
+		    emsg == عدم ? "" : emsg, emsg == عدم ? "" : " ",
+		    handle_مقصد_name(handle));
 	}
 }
 
-static void
-handle_log_exit(void)
+ساكن فراغ
+handle_log_exit(فراغ)
 {
 	u_int i;
 
-	for (i = 0; i < num_handles; i++)
-		if (handles[i].use != HANDLE_UNUSED)
+	لكل (i = 0; i < رقم_handles; i++)
+		إذا (handles[i].use != HANDLE_استفادهنشده)
 			handle_log_close(i, "forced");
 }
 
-static int
-get_handle(struct sshbuf *queue, int *hp)
+ساكن صحيح
+get_handle(بنية sshbuf *صف, صحيح *hp)
 {
 	u_char *handle;
-	int r;
-	size_t hlen;
+	صحيح r;
+	اندازه_t hlen;
 
 	*hp = -1;
-	if ((r = sshbuf_get_string(queue, &handle, &hlen)) != 0)
-		return r;
-	if (hlen < 256)
+	إذا ((r = sshbuf_get_string(صف, &handle, &hlen)) != 0)
+		أرجع r;
+	إذا (hlen < 256)
 		*hp = handle_from_string(handle, hlen);
-	free(handle);
-	return 0;
+	حرر(handle);
+	أرجع 0;
 }
 
 /* send replies */
 
-static void
-send_msg(struct sshbuf *m)
+ساكن فراغ
+send_پیام(بنية sshbuf *m)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshbuf_put_stringb(oqueue, m)) != 0)
+	إذا ((r = sshbuf_put_stringb(oqueue, m)) != 0)
 		fatal_fr(r, "enqueue");
 	sshbuf_reset(m);
 }
 
-static const char *
-status_to_message(uint32_t status)
+ساكن ثابت حرف *
+وضعیت_مقصد_پیام(uint32_t وضعیت)
 {
-	static const char * const status_messages[] = {
+	ساكن ثابت حرف * ثابت وضعیت_messages[] = {
 		"Success",			/* SSH_FX_OK */
 		"End of file",			/* SSH_FX_EOF */
 		"No such file",			/* SSH_FX_NO_SUCH_FILE */
@@ -534,1082 +534,1082 @@ status_to_message(uint32_t status)
 		"Operation unsupported",	/* SSH_FX_OP_UNSUPPORTED */
 		"Unknown error"			/* Others */
 	};
-	return (status_messages[MINIMUM(status,SSH2_FX_MAX)]);
+	أرجع (وضعیت_messages[MINIMUM(وضعیت,SSH2_FX_MAX)]);
 }
 
-static void
-send_status_errmsg(uint32_t id, uint32_t status, const char *errmsg)
+ساكن فراغ
+send_وضعیت_errmsg(uint32_t id, uint32_t وضعیت, ثابت حرف *errmsg)
 {
-	struct sshbuf *msg;
-	int r;
+	بنية sshbuf *پیام;
+	صحيح r;
 
-	debug3("request %u: sent status %u", id, status);
-	if (log_level > SYSLOG_LEVEL_VERBOSE ||
-	    (status != SSH2_FX_OK && status != SSH2_FX_EOF))
-		logit("sent status %s", status_to_message(status));
-	if ((msg = sshbuf_new()) == NULL)
+	debug3("request %u: sent status %u", id, وضعیت);
+	إذا (log_level > SYSLOG_LEVEL_VERBOSE ||
+	    (وضعیت != SSH2_FX_OK && وضعیت != SSH2_FX_EOF))
+		logit("sent status %s", وضعیت_مقصد_پیام(وضعیت));
+	إذا ((پیام = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_STATUS)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_u32(msg, status)) != 0)
+	إذا ((r = sshbuf_put_u8(پیام, SSH2_FXP_وضعیت)) != 0 ||
+	    (r = sshbuf_put_u32(پیام, id)) != 0 ||
+	    (r = sshbuf_put_u32(پیام, وضعیت)) != 0)
 		fatal_fr(r, "compose");
-	if (version >= 3) {
-		if ((r = sshbuf_put_cstring(msg, errmsg == NULL ?
-		    status_to_message(status) : errmsg)) != 0 ||
-		    (r = sshbuf_put_cstring(msg, "")) != 0)
+	إذا (نسخه >= 3) {
+		إذا ((r = sshbuf_put_cstring(پیام, errmsg == عدم ?
+		    وضعیت_مقصد_پیام(وضعیت) : errmsg)) != 0 ||
+		    (r = sshbuf_put_cstring(پیام, "")) != 0)
 			fatal_fr(r, "compose message");
 	}
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_پیام(پیام);
+	sshbuf_free(پیام);
 }
 
-static void
-send_status(uint32_t id, uint32_t status)
+ساكن فراغ
+send_وضعیت(uint32_t id, uint32_t وضعیت)
 {
-	send_status_errmsg(id, status, NULL);
+	send_وضعیت_errmsg(id, وضعیت, عدم);
 }
 
-static void
-send_data_or_handle(char type, uint32_t id, const u_char *data, int dlen)
+ساكن فراغ
+send_داده_or_handle(حرف type, uint32_t id, ثابت u_char *داده, صحيح dlen)
 {
-	struct sshbuf *msg;
-	int r;
+	بنية sshbuf *پیام;
+	صحيح r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	إذا ((پیام = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_string(msg, data, dlen)) != 0)
+	إذا ((r = sshbuf_put_u8(پیام, type)) != 0 ||
+	    (r = sshbuf_put_u32(پیام, id)) != 0 ||
+	    (r = sshbuf_put_string(پیام, داده, dlen)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_پیام(پیام);
+	sshbuf_free(پیام);
 }
 
-static void
-send_data(uint32_t id, const u_char *data, int dlen)
+ساكن فراغ
+send_داده(uint32_t id, ثابت u_char *داده, صحيح dlen)
 {
 	debug("request %u: sent data len %d", id, dlen);
-	send_data_or_handle(SSH2_FXP_DATA, id, data, dlen);
+	send_داده_or_handle(SSH2_FXP_داده, id, داده, dlen);
 }
 
-static void
-send_handle(uint32_t id, int handle)
+ساكن فراغ
+send_handle(uint32_t id, صحيح handle)
 {
 	u_char *string;
-	int hlen;
+	صحيح hlen;
 
-	handle_to_string(handle, &string, &hlen);
+	handle_مقصد_string(handle, &string, &hlen);
 	debug("request %u: sent handle %d", id, handle);
-	send_data_or_handle(SSH2_FXP_HANDLE, id, string, hlen);
-	free(string);
+	send_داده_or_handle(SSH2_FXP_HANDLE, id, string, hlen);
+	حرر(string);
 }
 
-static void
-send_names(uint32_t id, int count, const Stat *stats)
+ساكن فراغ
+send_نامها(uint32_t id, صحيح شمار, ثابت Stat *stats)
 {
-	struct sshbuf *msg;
-	int i, r;
+	بنية sshbuf *پیام;
+	صحيح i, r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	إذا ((پیام = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_NAME)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_u32(msg, count)) != 0)
+	إذا ((r = sshbuf_put_u8(پیام, SSH2_FXP_NAME)) != 0 ||
+	    (r = sshbuf_put_u32(پیام, id)) != 0 ||
+	    (r = sshbuf_put_u32(پیام, شمار)) != 0)
 		fatal_fr(r, "compose");
-	debug("request %u: sent names count %d", id, count);
-	for (i = 0; i < count; i++) {
-		if ((r = sshbuf_put_cstring(msg, stats[i].name)) != 0 ||
-		    (r = sshbuf_put_cstring(msg, stats[i].long_name)) != 0 ||
-		    (r = encode_attrib(msg, &stats[i].attrib)) != 0)
+	debug("request %u: sent names count %d", id, شمار);
+	لكل (i = 0; i < شمار; i++) {
+		إذا ((r = sshbuf_put_cstring(پیام, stats[i].name)) != 0 ||
+		    (r = sshbuf_put_cstring(پیام, stats[i].long_name)) != 0 ||
+		    (r = encode_attrib(پیام, &stats[i].attrib)) != 0)
 			fatal_fr(r, "compose filenames/attrib");
 	}
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_پیام(پیام);
+	sshbuf_free(پیام);
 }
 
-static void
-send_attrib(uint32_t id, const Attrib *a)
+ساكن فراغ
+send_attrib(uint32_t id, ثابت Attrib *a)
 {
-	struct sshbuf *msg;
-	int r;
+	بنية sshbuf *پیام;
+	صحيح r;
 
 	debug("request %u: sent attrib have 0x%x", id, a->flags);
-	if ((msg = sshbuf_new()) == NULL)
+	إذا ((پیام = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_ATTRS)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = encode_attrib(msg, a)) != 0)
+	إذا ((r = sshbuf_put_u8(پیام, SSH2_FXP_ATTRS)) != 0 ||
+	    (r = sshbuf_put_u32(پیام, id)) != 0 ||
+	    (r = encode_attrib(پیام, a)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_پیام(پیام);
+	sshbuf_free(پیام);
 }
 
-static void
-send_statvfs(uint32_t id, struct statvfs *st)
+ساكن فراغ
+send_statvfs(uint32_t id, بنية statvfs *st)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *پیام;
 	uint64_t flag;
-	int r;
+	صحيح r;
 
 	flag = (st->f_flag & ST_RDONLY) ? SSH2_FXE_STATVFS_ST_RDONLY : 0;
 	flag |= (st->f_flag & ST_NOSUID) ? SSH2_FXE_STATVFS_ST_NOSUID : 0;
 
-	if ((msg = sshbuf_new()) == NULL)
+	إذا ((پیام = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_bsize)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_frsize)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_blocks)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_bfree)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_bavail)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_files)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_ffree)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_favail)) != 0 ||
-	    (r = sshbuf_put_u64(msg, FSID_TO_ULONG(st->f_fsid))) != 0 ||
-	    (r = sshbuf_put_u64(msg, flag)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_namemax)) != 0)
+	إذا ((r = sshbuf_put_u8(پیام, SSH2_FXP_EXTENDED_پاسخ)) != 0 ||
+	    (r = sshbuf_put_u32(پیام, id)) != 0 ||
+	    (r = sshbuf_put_u64(پیام, st->f_bsize)) != 0 ||
+	    (r = sshbuf_put_u64(پیام, st->f_frsize)) != 0 ||
+	    (r = sshbuf_put_u64(پیام, st->f_بلوکها)) != 0 ||
+	    (r = sshbuf_put_u64(پیام, st->f_bfree)) != 0 ||
+	    (r = sshbuf_put_u64(پیام, st->f_bavail)) != 0 ||
+	    (r = sshbuf_put_u64(پیام, st->f_files)) != 0 ||
+	    (r = sshbuf_put_u64(پیام, st->f_ffree)) != 0 ||
+	    (r = sshbuf_put_u64(پیام, st->f_favail)) != 0 ||
+	    (r = sshbuf_put_u64(پیام, FSID_مقصد_ULONG(st->f_fsid))) != 0 ||
+	    (r = sshbuf_put_u64(پیام, flag)) != 0 ||
+	    (r = sshbuf_put_u64(پیام, st->f_namemax)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_پیام(پیام);
+	sshbuf_free(پیام);
 }
 
 /*
  * Prepare SSH2_FXP_VERSION extension advertisement for a single extension.
  * The extension is checked for permission prior to advertisement.
  */
-static int
-compose_extension(struct sshbuf *msg, const char *name, const char *ver)
+ساكن صحيح
+compose_extension(بنية sshbuf *پیام, ثابت حرف *name, ثابت حرف *ver)
 {
-	int r;
-	const struct sftp_handler *exthnd;
+	صحيح r;
+	ثابت بنية sftp_handler *exthnd;
 
-	if ((exthnd = extended_handler_byname(name)) == NULL)
+	إذا ((exthnd = extended_handler_byname(name)) == عدم)
 		fatal_f("internal error: no handler for %s", name);
-	if (!request_permitted(exthnd)) {
+	إذا (!request_permitted(exthnd)) {
 		debug2_f("refusing to advertise disallowed extension %s", name);
-		return 0;
+		أرجع 0;
 	}
-	if ((r = sshbuf_put_cstring(msg, name)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, ver)) != 0)
+	إذا ((r = sshbuf_put_cstring(پیام, name)) != 0 ||
+	    (r = sshbuf_put_cstring(پیام, ver)) != 0)
 		fatal_fr(r, "compose %s", name);
-	return 0;
+	أرجع 0;
 }
 
 /* parse incoming */
 
-static void
-process_init(void)
+ساكن فراغ
+process_init(فراغ)
 {
-	struct sshbuf *msg;
-	int r;
+	بنية sshbuf *پیام;
+	صحيح r;
 
-	if ((r = sshbuf_get_u32(iqueue, &version)) != 0)
+	إذا ((r = sshbuf_get_u32(iqueue, &نسخه)) != 0)
 		fatal_fr(r, "parse");
-	verbose("received client version %u", version);
-	if ((msg = sshbuf_new()) == NULL)
+	verbose("received client version %u", نسخه);
+	إذا ((پیام = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_VERSION)) != 0 ||
-	    (r = sshbuf_put_u32(msg, SSH2_FILEXFER_VERSION)) != 0)
+	إذا ((r = sshbuf_put_u8(پیام, SSH2_FXP_نسخه)) != 0 ||
+	    (r = sshbuf_put_u32(پیام, SSH2_FILEXFER_نسخه)) != 0)
 		fatal_fr(r, "compose");
 
 	 /* extension advertisements */
-	compose_extension(msg, "posix-rename@openssh.com", "1");
-	compose_extension(msg, "statvfs@openssh.com", "2");
-	compose_extension(msg, "fstatvfs@openssh.com", "2");
-	compose_extension(msg, "hardlink@openssh.com", "1");
-	compose_extension(msg, "fsync@openssh.com", "1");
-	compose_extension(msg, "lsetstat@openssh.com", "1");
-	compose_extension(msg, "limits@openssh.com", "1");
-	compose_extension(msg, "expand-path@openssh.com", "1");
-	compose_extension(msg, "copy-data", "1");
-	compose_extension(msg, "home-directory", "1");
-	compose_extension(msg, "users-groups-by-id@openssh.com", "1");
+	compose_extension(پیام, "posix-rename@openssh.com", "1");
+	compose_extension(پیام, "statvfs@openssh.com", "2");
+	compose_extension(پیام, "fstatvfs@openssh.com", "2");
+	compose_extension(پیام, "hardlink@openssh.com", "1");
+	compose_extension(پیام, "fsync@openssh.com", "1");
+	compose_extension(پیام, "lsetstat@openssh.com", "1");
+	compose_extension(پیام, "limits@openssh.com", "1");
+	compose_extension(پیام, "expand-path@openssh.com", "1");
+	compose_extension(پیام, "copy-data", "1");
+	compose_extension(پیام, "home-directory", "1");
+	compose_extension(پیام, "users-groups-by-id@openssh.com", "1");
 
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_پیام(پیام);
+	sshbuf_free(پیام);
 }
 
-static void
+ساكن فراغ
 process_open(uint32_t id)
 {
 	uint32_t pflags;
 	Attrib a;
-	char *name;
-	int r, handle, fd, flags, mode, status = SSH2_FX_FAILURE;
+	حرف *name;
+	صحيح r, handle, fd, flags, نما, وضعیت = SSH2_FX_FAILURE;
 
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 ||
+	إذا ((r = sshbuf_get_cstring(iqueue, &name, عدم)) != 0 ||
 	    (r = sshbuf_get_u32(iqueue, &pflags)) != 0 || /* portable flags */
 	    (r = decode_attrib(iqueue, &a)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: open flags %d", id, pflags);
 	flags = flags_from_portable(pflags);
-	mode = (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) ? a.perm : 0666;
+	نما = (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) ? a.perm : 0666;
 	logit("open \"%s\" flags %s mode 0%o",
-	    name, string_from_portable(pflags), mode);
-	if (readonly &&
+	    name, string_from_portable(pflags), نما);
+	إذا (readonly &&
 	    ((flags & O_ACCMODE) != O_RDONLY ||
 	    (flags & (O_CREAT|O_TRUNC)) != 0)) {
 		verbose("Refusing open request in read-only mode");
-		status = SSH2_FX_PERMISSION_DENIED;
-	} else {
-		fd = open(name, flags, mode);
-		if (fd == -1) {
-			status = errno_to_portable(errno);
-		} else {
-			handle = handle_new(HANDLE_FILE, name, fd, flags, NULL);
-			if (handle < 0) {
+		وضعیت = SSH2_FX_PERMISSION_DENIED;
+	} وإلا {
+		fd = open(name, flags, نما);
+		إذا (fd == -1) {
+			وضعیت = errno_مقصد_portable(errno);
+		} وإلا {
+			handle = handle_new(HANDLE_FILE, name, fd, flags, عدم);
+			إذا (handle < 0) {
 				close(fd);
-			} else {
+			} وإلا {
 				send_handle(id, handle);
-				status = SSH2_FX_OK;
+				وضعیت = SSH2_FX_OK;
 			}
 		}
 	}
-	if (status != SSH2_FX_OK)
-		send_status(id, status);
-	free(name);
+	إذا (وضعیت != SSH2_FX_OK)
+		send_وضعیت(id, وضعیت);
+	حرر(name);
 }
 
-static void
+ساكن فراغ
 process_close(uint32_t id)
 {
-	int r, handle, ret, status = SSH2_FX_FAILURE;
+	صحيح r, handle, ret, وضعیت = SSH2_FX_FAILURE;
 
-	if ((r = get_handle(iqueue, &handle)) != 0)
+	إذا ((r = get_handle(iqueue, &handle)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: close handle %u", id, handle);
-	handle_log_close(handle, NULL);
+	handle_log_close(handle, عدم);
 	ret = handle_close(handle);
-	status = (ret == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
-	send_status(id, status);
+	وضعیت = (ret == -1) ? errno_مقصد_portable(errno) : SSH2_FX_OK;
+	send_وضعیت(id, وضعیت);
 }
 
-static void
+ساكن فراغ
 process_read(uint32_t id)
 {
-	static u_char *buf;
-	static size_t buflen;
+	ساكن u_char *buf;
+	ساكن اندازه_t buflen;
 	uint32_t len;
-	int r, handle, fd, ret, status = SSH2_FX_FAILURE;
+	صحيح r, handle, fd, ret, وضعیت = SSH2_FX_FAILURE;
 	uint64_t off;
 
-	if ((r = get_handle(iqueue, &handle)) != 0 ||
+	إذا ((r = get_handle(iqueue, &handle)) != 0 ||
 	    (r = sshbuf_get_u64(iqueue, &off)) != 0 ||
 	    (r = sshbuf_get_u32(iqueue, &len)) != 0)
 		fatal_fr(r, "parse");
 
 	debug("request %u: read \"%s\" (handle %d) off %llu len %u",
-	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
-	if ((fd = handle_to_fd(handle)) == -1)
-		goto out;
-	if (len > SFTP_MAX_READ_LENGTH) {
-		debug2("read change len %u to %u", len, SFTP_MAX_READ_LENGTH);
-		len = SFTP_MAX_READ_LENGTH;
+	    id, handle_مقصد_name(handle), handle, (بیعلامت دراز دراز)off, len);
+	إذا ((fd = handle_مقصد_fd(handle)) == -1)
+		اذهب بیرون;
+	إذا (len > SFTP_MAX_READ_درازی) {
+		debug2("read change len %u to %u", len, SFTP_MAX_READ_درازی);
+		len = SFTP_MAX_READ_درازی;
 	}
-	if (len > buflen) {
+	إذا (len > buflen) {
 		debug3_f("allocate %zu => %u", buflen, len);
-		if ((buf = realloc(buf, len)) == NULL)
+		إذا ((buf = realloc(buf, len)) == عدم)
 			fatal_f("realloc failed");
 		buflen = len;
 	}
-	if (lseek(fd, off, SEEK_SET) == -1) {
-		status = errno_to_portable(errno);
-		error_f("seek \"%.100s\": %s", handle_to_name(handle),
+	إذا (lseek(fd, off, SEEK_SET) == -1) {
+		وضعیت = errno_مقصد_portable(errno);
+		error_f("seek \"%.100s\": %s", handle_مقصد_name(handle),
 		    strerror(errno));
-		goto out;
+		اذهب بیرون;
 	}
-	if (len == 0) {
+	إذا (len == 0) {
 		/* weird, but not strictly disallowed */
 		ret = 0;
-	} else if ((ret = read(fd, buf, len)) == -1) {
-		status = errno_to_portable(errno);
-		error_f("read \"%.100s\": %s", handle_to_name(handle),
+	} وإلا إذا ((ret = اقرأ(fd, buf, len)) == -1) {
+		وضعیت = errno_مقصد_portable(errno);
+		error_f("read \"%.100s\": %s", handle_مقصد_name(handle),
 		    strerror(errno));
-		goto out;
-	} else if (ret == 0) {
-		status = SSH2_FX_EOF;
-		goto out;
+		اذهب بیرون;
+	} وإلا إذا (ret == 0) {
+		وضعیت = SSH2_FX_EOF;
+		اذهب بیرون;
 	}
-	send_data(id, buf, ret);
+	send_داده(id, buf, ret);
 	handle_update_read(handle, ret);
 	/* success */
-	status = SSH2_FX_OK;
- out:
-	if (status != SSH2_FX_OK)
-		send_status(id, status);
+	وضعیت = SSH2_FX_OK;
+ بیرون:
+	إذا (وضعیت != SSH2_FX_OK)
+		send_وضعیت(id, وضعیت);
 }
 
-static void
+ساكن فراغ
 process_write(uint32_t id)
 {
 	uint64_t off;
-	size_t len;
-	int r, handle, fd, ret, status;
-	u_char *data;
+	اندازه_t len;
+	صحيح r, handle, fd, ret, وضعیت;
+	u_char *داده;
 
-	if ((r = get_handle(iqueue, &handle)) != 0 ||
+	إذا ((r = get_handle(iqueue, &handle)) != 0 ||
 	    (r = sshbuf_get_u64(iqueue, &off)) != 0 ||
-	    (r = sshbuf_get_string(iqueue, &data, &len)) != 0)
+	    (r = sshbuf_get_string(iqueue, &داده, &len)) != 0)
 		fatal_fr(r, "parse");
 
 	debug("request %u: write \"%s\" (handle %d) off %llu len %zu",
-	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
-	fd = handle_to_fd(handle);
+	    id, handle_مقصد_name(handle), handle, (بیعلامت دراز دراز)off, len);
+	fd = handle_مقصد_fd(handle);
 
-	if (fd < 0)
-		status = SSH2_FX_FAILURE;
-	else {
-		if (!(handle_to_flags(handle) & O_APPEND) &&
+	إذا (fd < 0)
+		وضعیت = SSH2_FX_FAILURE;
+	وإلا {
+		إذا (!(handle_مقصد_flags(handle) & O_APPEND) &&
 		    lseek(fd, off, SEEK_SET) == -1) {
-			status = errno_to_portable(errno);
-			error_f("seek \"%.100s\": %s", handle_to_name(handle),
+			وضعیت = errno_مقصد_portable(errno);
+			error_f("seek \"%.100s\": %s", handle_مقصد_name(handle),
 			    strerror(errno));
-		} else {
+		} وإلا {
 /* XXX ATOMICIO ? */
-			ret = write(fd, data, len);
-			if (ret == -1) {
-				status = errno_to_portable(errno);
+			ret = اكتب(fd, داده, len);
+			إذا (ret == -1) {
+				وضعیت = errno_مقصد_portable(errno);
 				error_f("write \"%.100s\": %s",
-				    handle_to_name(handle), strerror(errno));
-			} else if ((size_t)ret == len) {
-				status = SSH2_FX_OK;
+				    handle_مقصد_name(handle), strerror(errno));
+			} وإلا إذا ((اندازه_t)ret == len) {
+				وضعیت = SSH2_FX_OK;
 				handle_update_write(handle, ret);
-			} else {
+			} وإلا {
 				debug2_f("nothing at all written");
-				status = SSH2_FX_FAILURE;
+				وضعیت = SSH2_FX_FAILURE;
 			}
 		}
 	}
-	send_status(id, status);
-	free(data);
+	send_وضعیت(id, وضعیت);
+	حرر(داده);
 }
 
-static void
-process_do_stat(uint32_t id, int do_lstat)
+ساكن فراغ
+process_do_stat(uint32_t id, صحيح do_lstat)
 {
 	Attrib a;
-	struct stat st;
-	char *name;
-	int r, status = SSH2_FX_FAILURE;
+	بنية stat st;
+	حرف *name;
+	صحيح r, وضعیت = SSH2_FX_FAILURE;
 
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &name, عدم)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: %sstat", id, do_lstat ? "l" : "");
 	verbose("%sstat name \"%s\"", do_lstat ? "l" : "", name);
 	r = do_lstat ? lstat(name, &st) : stat(name, &st);
-	if (r == -1) {
-		status = errno_to_portable(errno);
-	} else {
-		stat_to_attrib(&st, &a);
+	إذا (r == -1) {
+		وضعیت = errno_مقصد_portable(errno);
+	} وإلا {
+		stat_مقصد_attrib(&st, &a);
 		send_attrib(id, &a);
-		status = SSH2_FX_OK;
+		وضعیت = SSH2_FX_OK;
 	}
-	if (status != SSH2_FX_OK)
-		send_status(id, status);
-	free(name);
+	إذا (وضعیت != SSH2_FX_OK)
+		send_وضعیت(id, وضعیت);
+	حرر(name);
 }
 
-static void
+ساكن فراغ
 process_stat(uint32_t id)
 {
 	process_do_stat(id, 0);
 }
 
-static void
+ساكن فراغ
 process_lstat(uint32_t id)
 {
 	process_do_stat(id, 1);
 }
 
-static void
+ساكن فراغ
 process_fstat(uint32_t id)
 {
 	Attrib a;
-	struct stat st;
-	int fd, r, handle, status = SSH2_FX_FAILURE;
+	بنية stat st;
+	صحيح fd, r, handle, وضعیت = SSH2_FX_FAILURE;
 
-	if ((r = get_handle(iqueue, &handle)) != 0)
+	إذا ((r = get_handle(iqueue, &handle)) != 0)
 		fatal_fr(r, "parse");
 	debug("request %u: fstat \"%s\" (handle %u)",
-	    id, handle_to_name(handle), handle);
-	fd = handle_to_fd(handle);
-	if (fd >= 0) {
+	    id, handle_مقصد_name(handle), handle);
+	fd = handle_مقصد_fd(handle);
+	إذا (fd >= 0) {
 		r = fstat(fd, &st);
-		if (r == -1) {
-			status = errno_to_portable(errno);
-		} else {
-			stat_to_attrib(&st, &a);
+		إذا (r == -1) {
+			وضعیت = errno_مقصد_portable(errno);
+		} وإلا {
+			stat_مقصد_attrib(&st, &a);
 			send_attrib(id, &a);
-			status = SSH2_FX_OK;
+			وضعیت = SSH2_FX_OK;
 		}
 	}
-	if (status != SSH2_FX_OK)
-		send_status(id, status);
+	إذا (وضعیت != SSH2_FX_OK)
+		send_وضعیت(id, وضعیت);
 }
 
-static struct timeval *
-attrib_to_tv(const Attrib *a)
+ساكن بنية timeval *
+attrib_مقصد_tv(ثابت Attrib *a)
 {
-	static struct timeval tv[2];
+	ساكن بنية timeval tv[2];
 
 	tv[0].tv_sec = a->atime;
 	tv[0].tv_usec = 0;
 	tv[1].tv_sec = a->mtime;
 	tv[1].tv_usec = 0;
-	return tv;
+	أرجع tv;
 }
 
-static struct timespec *
-attrib_to_ts(const Attrib *a)
+ساكن بنية timespec *
+attrib_مقصد_ts(ثابت Attrib *a)
 {
-	static struct timespec ts[2];
+	ساكن بنية timespec ts[2];
 
 	ts[0].tv_sec = a->atime;
 	ts[0].tv_nsec = 0;
 	ts[1].tv_sec = a->mtime;
 	ts[1].tv_nsec = 0;
-	return ts;
+	أرجع ts;
 }
 
-static void
+ساكن فراغ
 process_setstat(uint32_t id)
 {
 	Attrib a;
-	char *name;
-	int r, status = SSH2_FX_OK;
+	حرف *name;
+	صحيح r, وضعیت = SSH2_FX_OK;
 
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 ||
+	إذا ((r = sshbuf_get_cstring(iqueue, &name, عدم)) != 0 ||
 	    (r = decode_attrib(iqueue, &a)) != 0)
 		fatal_fr(r, "parse");
 
 	debug("request %u: setstat name \"%s\"", id, name);
-	if (a.flags & SSH2_FILEXFER_ATTR_SIZE) {
+	إذا (a.flags & SSH2_FILEXFER_ATTR_اندازه) {
 		logit("set \"%s\" size %llu",
-		    name, (unsigned long long)a.size);
-		r = truncate(name, a.size);
-		if (r == -1)
-			status = errno_to_portable(errno);
+		    name, (بیعلامت دراز دراز)a.اندازه);
+		r = truncate(name, a.اندازه);
+		إذا (r == -1)
+			وضعیت = errno_مقصد_portable(errno);
 	}
-	if (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+	إذا (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
 		logit("set \"%s\" mode %04o", name, a.perm);
 		r = chmod(name, a.perm & 07777);
-		if (r == -1)
-			status = errno_to_portable(errno);
+		إذا (r == -1)
+			وضعیت = errno_مقصد_portable(errno);
 	}
-	if (a.flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		char buf[64];
+	إذا (a.flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		حرف buf[64];
 		time_t t = a.mtime;
 
-		strftime(buf, sizeof(buf), "%Y%m%d-%H:%M:%S",
+		strftime(buf, حجم(buf), "%Y%m%d-%H:%M:%S",
 		    localtime(&t));
 		logit("set \"%s\" modtime %s", name, buf);
-		r = utimes(name, attrib_to_tv(&a));
-		if (r == -1)
-			status = errno_to_portable(errno);
+		r = utimes(name, attrib_مقصد_tv(&a));
+		إذا (r == -1)
+			وضعیت = errno_مقصد_portable(errno);
 	}
-	if (a.flags & SSH2_FILEXFER_ATTR_UIDGID) {
+	إذا (a.flags & SSH2_FILEXFER_ATTR_UIDGID) {
 		logit("set \"%s\" owner %lu group %lu", name,
 		    (u_long)a.uid, (u_long)a.gid);
 		r = chown(name, a.uid, a.gid);
-		if (r == -1)
-			status = errno_to_portable(errno);
+		إذا (r == -1)
+			وضعیت = errno_مقصد_portable(errno);
 	}
-	send_status(id, status);
-	free(name);
+	send_وضعیت(id, وضعیت);
+	حرر(name);
 }
 
-static void
+ساكن فراغ
 process_fsetstat(uint32_t id)
 {
 	Attrib a;
-	int handle, fd, r;
-	int status = SSH2_FX_OK;
+	صحيح handle, fd, r;
+	صحيح وضعیت = SSH2_FX_OK;
 
-	if ((r = get_handle(iqueue, &handle)) != 0 ||
+	إذا ((r = get_handle(iqueue, &handle)) != 0 ||
 	    (r = decode_attrib(iqueue, &a)) != 0)
 		fatal_fr(r, "parse");
 
 	debug("request %u: fsetstat handle %d", id, handle);
-	fd = handle_to_fd(handle);
-	if (fd < 0)
-		status = SSH2_FX_FAILURE;
-	else {
-		char *name = handle_to_name(handle);
+	fd = handle_مقصد_fd(handle);
+	إذا (fd < 0)
+		وضعیت = SSH2_FX_FAILURE;
+	وإلا {
+		حرف *name = handle_مقصد_name(handle);
 
-		if (a.flags & SSH2_FILEXFER_ATTR_SIZE) {
+		إذا (a.flags & SSH2_FILEXFER_ATTR_اندازه) {
 			logit("set \"%s\" size %llu",
-			    name, (unsigned long long)a.size);
-			r = ftruncate(fd, a.size);
-			if (r == -1)
-				status = errno_to_portable(errno);
+			    name, (بیعلامت دراز دراز)a.اندازه);
+			r = ftruncate(fd, a.اندازه);
+			إذا (r == -1)
+				وضعیت = errno_مقصد_portable(errno);
 		}
-		if (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		إذا (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
 			logit("set \"%s\" mode %04o", name, a.perm);
-#ifdef HAVE_FCHMOD
+#اگر_تعریف_شده HAVE_FCHMOD
 			r = fchmod(fd, a.perm & 07777);
-#else
+#وإلا
 			r = chmod(name, a.perm & 07777);
-#endif
-			if (r == -1)
-				status = errno_to_portable(errno);
+#پایان_اگر
+			إذا (r == -1)
+				وضعیت = errno_مقصد_portable(errno);
 		}
-		if (a.flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-			char buf[64];
+		إذا (a.flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+			حرف buf[64];
 			time_t t = a.mtime;
 
-			strftime(buf, sizeof(buf), "%Y%m%d-%H:%M:%S",
+			strftime(buf, حجم(buf), "%Y%m%d-%H:%M:%S",
 			    localtime(&t));
 			logit("set \"%s\" modtime %s", name, buf);
-#ifdef HAVE_FUTIMES
-			r = futimes(fd, attrib_to_tv(&a));
-#else
-			r = utimes(name, attrib_to_tv(&a));
-#endif
-			if (r == -1)
-				status = errno_to_portable(errno);
+#اگر_تعریف_شده HAVE_FUTIMES
+			r = futimes(fd, attrib_مقصد_tv(&a));
+#وإلا
+			r = utimes(name, attrib_مقصد_tv(&a));
+#پایان_اگر
+			إذا (r == -1)
+				وضعیت = errno_مقصد_portable(errno);
 		}
-		if (a.flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		إذا (a.flags & SSH2_FILEXFER_ATTR_UIDGID) {
 			logit("set \"%s\" owner %lu group %lu", name,
 			    (u_long)a.uid, (u_long)a.gid);
-#ifdef HAVE_FCHOWN
+#اگر_تعریف_شده HAVE_FCHOWN
 			r = fchown(fd, a.uid, a.gid);
-#else
+#وإلا
 			r = chown(name, a.uid, a.gid);
-#endif
-			if (r == -1)
-				status = errno_to_portable(errno);
+#پایان_اگر
+			إذا (r == -1)
+				وضعیت = errno_مقصد_portable(errno);
 		}
 	}
-	send_status(id, status);
+	send_وضعیت(id, وضعیت);
 }
 
-static void
+ساكن فراغ
 process_opendir(uint32_t id)
 {
-	DIR *dirp = NULL;
-	char *path;
-	int r, handle, status = SSH2_FX_FAILURE;
+	DIR *dirp = عدم;
+	حرف *مسیر;
+	صحيح r, handle, وضعیت = SSH2_FX_FAILURE;
 
-	if ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &مسیر, عدم)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: opendir", id);
-	logit("opendir \"%s\"", path);
-	dirp = opendir(path);
-	if (dirp == NULL) {
-		status = errno_to_portable(errno);
-	} else {
-		handle = handle_new(HANDLE_DIR, path, 0, 0, dirp);
-		if (handle < 0) {
+	logit("opendir \"%s\"", مسیر);
+	dirp = opendir(مسیر);
+	إذا (dirp == عدم) {
+		وضعیت = errno_مقصد_portable(errno);
+	} وإلا {
+		handle = handle_new(HANDLE_DIR, مسیر, 0, 0, dirp);
+		إذا (handle < 0) {
 			closedir(dirp);
-		} else {
+		} وإلا {
 			send_handle(id, handle);
-			status = SSH2_FX_OK;
+			وضعیت = SSH2_FX_OK;
 		}
 
 	}
-	if (status != SSH2_FX_OK)
-		send_status(id, status);
-	free(path);
+	إذا (وضعیت != SSH2_FX_OK)
+		send_وضعیت(id, وضعیت);
+	حرر(مسیر);
 }
 
-static void
+ساكن فراغ
 process_readdir(uint32_t id)
 {
 	DIR *dirp;
-	struct dirent *dp;
-	char *path;
-	int r, handle;
+	بنية dirent *dp;
+	حرف *مسیر;
+	صحيح r, handle;
 
-	if ((r = get_handle(iqueue, &handle)) != 0)
+	إذا ((r = get_handle(iqueue, &handle)) != 0)
 		fatal_fr(r, "parse");
 
 	debug("request %u: readdir \"%s\" (handle %d)", id,
-	    handle_to_name(handle), handle);
-	dirp = handle_to_dir(handle);
-	path = handle_to_name(handle);
-	if (dirp == NULL || path == NULL) {
-		send_status(id, SSH2_FX_FAILURE);
-	} else {
-		struct stat st;
-		char *pathname;
+	    handle_مقصد_name(handle), handle);
+	dirp = handle_مقصد_dir(handle);
+	مسیر = handle_مقصد_name(handle);
+	إذا (dirp == عدم || مسیر == عدم) {
+		send_وضعیت(id, SSH2_FX_FAILURE);
+	} وإلا {
+		بنية stat st;
+		حرف *pathname;
 		Stat *stats;
-		int nstats = 10, count = 0, i;
+		صحيح nstats = 10, شمار = 0, i;
 
-		stats = xcalloc(nstats, sizeof(Stat));
-		while ((dp = readdir(dirp)) != NULL) {
-			if (count >= nstats) {
+		stats = xcalloc(nstats, حجم(Stat));
+		طالما ((dp = readdir(dirp)) != عدم) {
+			إذا (شمار >= nstats) {
 				nstats *= 2;
-				stats = xreallocarray(stats, nstats, sizeof(Stat));
+				stats = xreallocarray(stats, nstats, حجم(Stat));
 			}
-			xasprintf(&pathname, "%s%s%s", path,
-			    strcmp(path, "/") ? "/" : "", dp->d_name);
+			xasprintf(&pathname, "%s%s%s", مسیر,
+			    strcmp(مسیر, "/") ? "/" : "", dp->d_name);
 			r = lstat(pathname, &st);
-			free(pathname);
-			if (r == -1)
-				continue;
-			stat_to_attrib(&st, &(stats[count].attrib));
-			stats[count].name = xstrdup(dp->d_name);
-			stats[count].long_name = ls_file(dp->d_name, &st,
-			    0, 0, NULL, NULL);
-			count++;
+			حرر(pathname);
+			إذا (r == -1)
+				استمر;
+			stat_مقصد_attrib(&st, &(stats[شمار].attrib));
+			stats[شمار].name = xstrdup(dp->d_name);
+			stats[شمار].long_name = ls_file(dp->d_name, &st,
+			    0, 0, عدم, عدم);
+			شمار++;
 			/* send up to 100 entries in one message */
 			/* XXX check packet size instead */
-			if (count == 100)
-				break;
+			إذا (شمار == 100)
+				اكسر;
 		}
-		if (count > 0) {
-			send_names(id, count, stats);
-			for (i = 0; i < count; i++) {
-				free(stats[i].name);
-				free(stats[i].long_name);
+		إذا (شمار > 0) {
+			send_نامها(id, شمار, stats);
+			لكل (i = 0; i < شمار; i++) {
+				حرر(stats[i].name);
+				حرر(stats[i].long_name);
 			}
-		} else {
-			send_status(id, SSH2_FX_EOF);
+		} وإلا {
+			send_وضعیت(id, SSH2_FX_EOF);
 		}
-		free(stats);
+		حرر(stats);
 	}
 }
 
-static void
+ساكن فراغ
 process_remove(uint32_t id)
 {
-	char *name;
-	int r, status = SSH2_FX_FAILURE;
+	حرف *name;
+	صحيح r, وضعیت = SSH2_FX_FAILURE;
 
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &name, عدم)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: remove", id);
 	logit("remove name \"%s\"", name);
 	r = unlink(name);
-	status = (r == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
-	send_status(id, status);
-	free(name);
+	وضعیت = (r == -1) ? errno_مقصد_portable(errno) : SSH2_FX_OK;
+	send_وضعیت(id, وضعیت);
+	حرر(name);
 }
 
-static void
+ساكن فراغ
 process_mkdir(uint32_t id)
 {
 	Attrib a;
-	char *name;
-	int r, mode, status = SSH2_FX_FAILURE;
+	حرف *name;
+	صحيح r, نما, وضعیت = SSH2_FX_FAILURE;
 
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 ||
+	إذا ((r = sshbuf_get_cstring(iqueue, &name, عدم)) != 0 ||
 	    (r = decode_attrib(iqueue, &a)) != 0)
 		fatal_fr(r, "parse");
 
-	mode = (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) ?
+	نما = (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) ?
 	    a.perm & 07777 : 0777;
 	debug3("request %u: mkdir", id);
-	logit("mkdir name \"%s\" mode 0%o", name, mode);
-	r = mkdir(name, mode);
-	status = (r == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
-	send_status(id, status);
-	free(name);
+	logit("mkdir name \"%s\" mode 0%o", name, نما);
+	r = mkdir(name, نما);
+	وضعیت = (r == -1) ? errno_مقصد_portable(errno) : SSH2_FX_OK;
+	send_وضعیت(id, وضعیت);
+	حرر(name);
 }
 
-static void
+ساكن فراغ
 process_rmdir(uint32_t id)
 {
-	char *name;
-	int r, status;
+	حرف *name;
+	صحيح r, وضعیت;
 
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &name, عدم)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: rmdir", id);
 	logit("rmdir name \"%s\"", name);
 	r = rmdir(name);
-	status = (r == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
-	send_status(id, status);
-	free(name);
+	وضعیت = (r == -1) ? errno_مقصد_portable(errno) : SSH2_FX_OK;
+	send_وضعیت(id, وضعیت);
+	حرر(name);
 }
 
-static void
+ساكن فراغ
 process_realpath(uint32_t id)
 {
-	char resolvedname[PATH_MAX];
-	char *path;
-	int r;
+	حرف resolvedname[PATH_MAX];
+	حرف *مسیر;
+	صحيح r;
 
-	if ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &مسیر, عدم)) != 0)
 		fatal_fr(r, "parse");
 
-	if (path[0] == '\0') {
-		free(path);
-		path = xstrdup(".");
+	إذا (مسیر[0] == '\0') {
+		حرر(مسیر);
+		مسیر = xstrdup(".");
 	}
 	debug3("request %u: realpath", id);
-	verbose("realpath \"%s\"", path);
-	if (sftp_realpath(path, resolvedname) == NULL) {
-		send_status(id, errno_to_portable(errno));
-	} else {
+	verbose("realpath \"%s\"", مسیر);
+	إذا (sftp_realpath(مسیر, resolvedname) == عدم) {
+		send_وضعیت(id, errno_مقصد_portable(errno));
+	} وإلا {
 		Stat s;
 		attrib_clear(&s.attrib);
 		s.name = s.long_name = resolvedname;
-		send_names(id, 1, &s);
+		send_نامها(id, 1, &s);
 	}
-	free(path);
+	حرر(مسیر);
 }
 
-static void
+ساكن فراغ
 process_rename(uint32_t id)
 {
-	char *oldpath, *newpath;
-	int r, status;
-	struct stat sb;
+	حرف *oldpath, *newpath;
+	صحيح r, وضعیت;
+	بنية stat sb;
 
-	if ((r = sshbuf_get_cstring(iqueue, &oldpath, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(iqueue, &newpath, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &oldpath, عدم)) != 0 ||
+	    (r = sshbuf_get_cstring(iqueue, &newpath, عدم)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: rename", id);
 	logit("rename old \"%s\" new \"%s\"", oldpath, newpath);
-	status = SSH2_FX_FAILURE;
-	if (lstat(oldpath, &sb) == -1)
-		status = errno_to_portable(errno);
-	else if (S_ISREG(sb.st_mode)) {
+	وضعیت = SSH2_FX_FAILURE;
+	إذا (lstat(oldpath, &sb) == -1)
+		وضعیت = errno_مقصد_portable(errno);
+	وإلا إذا (S_ISREG(sb.st_mode)) {
 		/* Race-free rename of regular files */
-		if (link(oldpath, newpath) == -1) {
-			if (errno == EOPNOTSUPP || errno == ENOSYS
-#ifdef EXDEV
+		إذا (link(oldpath, newpath) == -1) {
+			إذا (errno == EOPNOTSUPP || errno == ENOSYS
+#اگر_تعریف_شده EXDEV
 			    || errno == EXDEV
-#endif
-#ifdef LINK_OPNOTSUPP_ERRNO
+#پایان_اگر
+#اگر_تعریف_شده LINK_OPNOTSUPP_ERRNO
 			    || errno == LINK_OPNOTSUPP_ERRNO
-#endif
+#پایان_اگر
 			    ) {
-				struct stat st;
+				بنية stat st;
 
 				/*
 				 * fs doesn't support links, so fall back to
 				 * stat+rename.  This is racy.
 				 */
-				if (stat(newpath, &st) == -1) {
-					if (rename(oldpath, newpath) == -1)
-						status =
-						    errno_to_portable(errno);
-					else
-						status = SSH2_FX_OK;
+				إذا (stat(newpath, &st) == -1) {
+					إذا (rename(oldpath, newpath) == -1)
+						وضعیت =
+						    errno_مقصد_portable(errno);
+					وإلا
+						وضعیت = SSH2_FX_OK;
 				}
-			} else {
-				status = errno_to_portable(errno);
+			} وإلا {
+				وضعیت = errno_مقصد_portable(errno);
 			}
-		} else if (unlink(oldpath) == -1) {
-			status = errno_to_portable(errno);
+		} وإلا إذا (unlink(oldpath) == -1) {
+			وضعیت = errno_مقصد_portable(errno);
 			/* clean spare link */
 			unlink(newpath);
-		} else
-			status = SSH2_FX_OK;
-	} else if (stat(newpath, &sb) == -1) {
-		if (rename(oldpath, newpath) == -1)
-			status = errno_to_portable(errno);
-		else
-			status = SSH2_FX_OK;
+		} وإلا
+			وضعیت = SSH2_FX_OK;
+	} وإلا إذا (stat(newpath, &sb) == -1) {
+		إذا (rename(oldpath, newpath) == -1)
+			وضعیت = errno_مقصد_portable(errno);
+		وإلا
+			وضعیت = SSH2_FX_OK;
 	}
-	send_status(id, status);
-	free(oldpath);
-	free(newpath);
+	send_وضعیت(id, وضعیت);
+	حرر(oldpath);
+	حرر(newpath);
 }
 
-static void
+ساكن فراغ
 process_readlink(uint32_t id)
 {
-	int r, len;
-	char buf[PATH_MAX];
-	char *path;
+	صحيح r, len;
+	حرف buf[PATH_MAX];
+	حرف *مسیر;
 
-	if ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &مسیر, عدم)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: readlink", id);
-	verbose("readlink \"%s\"", path);
-	if ((len = readlink(path, buf, sizeof(buf) - 1)) == -1)
-		send_status(id, errno_to_portable(errno));
-	else {
+	verbose("readlink \"%s\"", مسیر);
+	إذا ((len = readlink(مسیر, buf, حجم(buf) - 1)) == -1)
+		send_وضعیت(id, errno_مقصد_portable(errno));
+	وإلا {
 		Stat s;
 
 		buf[len] = '\0';
 		attrib_clear(&s.attrib);
 		s.name = s.long_name = buf;
-		send_names(id, 1, &s);
+		send_نامها(id, 1, &s);
 	}
-	free(path);
+	حرر(مسیر);
 }
 
-static void
+ساكن فراغ
 process_symlink(uint32_t id)
 {
-	char *oldpath, *newpath;
-	int r, status;
+	حرف *oldpath, *newpath;
+	صحيح r, وضعیت;
 
-	if ((r = sshbuf_get_cstring(iqueue, &oldpath, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(iqueue, &newpath, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &oldpath, عدم)) != 0 ||
+	    (r = sshbuf_get_cstring(iqueue, &newpath, عدم)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: symlink", id);
 	logit("symlink old \"%s\" new \"%s\"", oldpath, newpath);
 	/* this will fail if 'newpath' exists */
 	r = symlink(oldpath, newpath);
-	status = (r == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
-	send_status(id, status);
-	free(oldpath);
-	free(newpath);
+	وضعیت = (r == -1) ? errno_مقصد_portable(errno) : SSH2_FX_OK;
+	send_وضعیت(id, وضعیت);
+	حرر(oldpath);
+	حرر(newpath);
 }
 
-static void
+ساكن فراغ
 process_extended_posix_rename(uint32_t id)
 {
-	char *oldpath, *newpath;
-	int r, status;
+	حرف *oldpath, *newpath;
+	صحيح r, وضعیت;
 
-	if ((r = sshbuf_get_cstring(iqueue, &oldpath, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(iqueue, &newpath, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &oldpath, عدم)) != 0 ||
+	    (r = sshbuf_get_cstring(iqueue, &newpath, عدم)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: posix-rename", id);
 	logit("posix-rename old \"%s\" new \"%s\"", oldpath, newpath);
 	r = rename(oldpath, newpath);
-	status = (r == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
-	send_status(id, status);
-	free(oldpath);
-	free(newpath);
+	وضعیت = (r == -1) ? errno_مقصد_portable(errno) : SSH2_FX_OK;
+	send_وضعیت(id, وضعیت);
+	حرر(oldpath);
+	حرر(newpath);
 }
 
-static void
+ساكن فراغ
 process_extended_statvfs(uint32_t id)
 {
-	char *path;
-	struct statvfs st;
-	int r;
+	حرف *مسیر;
+	بنية statvfs st;
+	صحيح r;
 
-	if ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &مسیر, عدم)) != 0)
 		fatal_fr(r, "parse");
 	debug3("request %u: statvfs", id);
-	logit("statvfs \"%s\"", path);
+	logit("statvfs \"%s\"", مسیر);
 
-	if (statvfs(path, &st) != 0)
-		send_status(id, errno_to_portable(errno));
-	else
+	إذا (statvfs(مسیر, &st) != 0)
+		send_وضعیت(id, errno_مقصد_portable(errno));
+	وإلا
 		send_statvfs(id, &st);
-	free(path);
+	حرر(مسیر);
 }
 
-static void
+ساكن فراغ
 process_extended_fstatvfs(uint32_t id)
 {
-	int r, handle, fd;
-	struct statvfs st;
+	صحيح r, handle, fd;
+	بنية statvfs st;
 
-	if ((r = get_handle(iqueue, &handle)) != 0)
+	إذا ((r = get_handle(iqueue, &handle)) != 0)
 		fatal_fr(r, "parse");
 	debug("request %u: fstatvfs \"%s\" (handle %u)",
-	    id, handle_to_name(handle), handle);
-	if ((fd = handle_to_fd(handle)) < 0) {
-		send_status(id, SSH2_FX_FAILURE);
-		return;
+	    id, handle_مقصد_name(handle), handle);
+	إذا ((fd = handle_مقصد_fd(handle)) < 0) {
+		send_وضعیت(id, SSH2_FX_FAILURE);
+		أرجع;
 	}
-	if (fstatvfs(fd, &st) != 0)
-		send_status(id, errno_to_portable(errno));
-	else
+	إذا (fstatvfs(fd, &st) != 0)
+		send_وضعیت(id, errno_مقصد_portable(errno));
+	وإلا
 		send_statvfs(id, &st);
 }
 
-static void
+ساكن فراغ
 process_extended_hardlink(uint32_t id)
 {
-	char *oldpath, *newpath;
-	int r, status;
+	حرف *oldpath, *newpath;
+	صحيح r, وضعیت;
 
-	if ((r = sshbuf_get_cstring(iqueue, &oldpath, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(iqueue, &newpath, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &oldpath, عدم)) != 0 ||
+	    (r = sshbuf_get_cstring(iqueue, &newpath, عدم)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: hardlink", id);
 	logit("hardlink old \"%s\" new \"%s\"", oldpath, newpath);
 	r = link(oldpath, newpath);
-	status = (r == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
-	send_status(id, status);
-	free(oldpath);
-	free(newpath);
+	وضعیت = (r == -1) ? errno_مقصد_portable(errno) : SSH2_FX_OK;
+	send_وضعیت(id, وضعیت);
+	حرر(oldpath);
+	حرر(newpath);
 }
 
-static void
+ساكن فراغ
 process_extended_fsync(uint32_t id)
 {
-	int handle, fd, r, status = SSH2_FX_OP_UNSUPPORTED;
+	صحيح handle, fd, r, وضعیت = SSH2_FX_OP_UNSUPPORTED;
 
-	if ((r = get_handle(iqueue, &handle)) != 0)
+	إذا ((r = get_handle(iqueue, &handle)) != 0)
 		fatal_fr(r, "parse");
 	debug3("request %u: fsync (handle %u)", id, handle);
-	verbose("fsync \"%s\"", handle_to_name(handle));
-	if ((fd = handle_to_fd(handle)) < 0)
-		status = SSH2_FX_NO_SUCH_FILE;
-	else if (handle_is_ok(handle, HANDLE_FILE)) {
+	verbose("fsync \"%s\"", handle_مقصد_name(handle));
+	إذا ((fd = handle_مقصد_fd(handle)) < 0)
+		وضعیت = SSH2_FX_NO_SUCH_FILE;
+	وإلا إذا (handle_is_ok(handle, HANDLE_FILE)) {
 		r = fsync(fd);
-		status = (r == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
+		وضعیت = (r == -1) ? errno_مقصد_portable(errno) : SSH2_FX_OK;
 	}
-	send_status(id, status);
+	send_وضعیت(id, وضعیت);
 }
 
-static void
+ساكن فراغ
 process_extended_lsetstat(uint32_t id)
 {
 	Attrib a;
-	char *name;
-	int r, status = SSH2_FX_OK;
+	حرف *name;
+	صحيح r, وضعیت = SSH2_FX_OK;
 
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 ||
+	إذا ((r = sshbuf_get_cstring(iqueue, &name, عدم)) != 0 ||
 	    (r = decode_attrib(iqueue, &a)) != 0)
 		fatal_fr(r, "parse");
 
 	debug("request %u: lsetstat name \"%s\"", id, name);
-	if (a.flags & SSH2_FILEXFER_ATTR_SIZE) {
+	إذا (a.flags & SSH2_FILEXFER_ATTR_اندازه) {
 		/* nonsensical for links */
-		status = SSH2_FX_BAD_MESSAGE;
-		goto out;
+		وضعیت = SSH2_FX_BAD_پیام;
+		اذهب بیرون;
 	}
-	if (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+	إذا (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
 		logit("set \"%s\" mode %04o", name, a.perm);
 		r = fchmodat(AT_FDCWD, name,
 		    a.perm & 07777, AT_SYMLINK_NOFOLLOW);
-		if (r == -1)
-			status = errno_to_portable(errno);
+		إذا (r == -1)
+			وضعیت = errno_مقصد_portable(errno);
 	}
-	if (a.flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		char buf[64];
+	إذا (a.flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		حرف buf[64];
 		time_t t = a.mtime;
 
-		strftime(buf, sizeof(buf), "%Y%m%d-%H:%M:%S",
+		strftime(buf, حجم(buf), "%Y%m%d-%H:%M:%S",
 		    localtime(&t));
 		logit("set \"%s\" modtime %s", name, buf);
 		r = utimensat(AT_FDCWD, name,
-		    attrib_to_ts(&a), AT_SYMLINK_NOFOLLOW);
-		if (r == -1)
-			status = errno_to_portable(errno);
+		    attrib_مقصد_ts(&a), AT_SYMLINK_NOFOLLOW);
+		إذا (r == -1)
+			وضعیت = errno_مقصد_portable(errno);
 	}
-	if (a.flags & SSH2_FILEXFER_ATTR_UIDGID) {
+	إذا (a.flags & SSH2_FILEXFER_ATTR_UIDGID) {
 		logit("set \"%s\" owner %lu group %lu", name,
 		    (u_long)a.uid, (u_long)a.gid);
 		r = fchownat(AT_FDCWD, name, a.uid, a.gid,
 		    AT_SYMLINK_NOFOLLOW);
-		if (r == -1)
-			status = errno_to_portable(errno);
+		إذا (r == -1)
+			وضعیت = errno_مقصد_portable(errno);
 	}
- out:
-	send_status(id, status);
-	free(name);
+ بیرون:
+	send_وضعیت(id, وضعیت);
+	حرر(name);
 }
 
-static void
+ساكن فراغ
 process_extended_limits(uint32_t id)
 {
-	struct sshbuf *msg;
-	int r;
+	بنية sshbuf *پیام;
+	صحيح r;
 	uint64_t nfiles = 0;
-#if defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
-	struct rlimit rlim;
-#endif
+#إذا defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
+	بنية rlimit rlim;
+#پایان_اگر
 
 	debug("request %u: limits", id);
 
-#if defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
-	if (getrlimit(RLIMIT_NOFILE, &rlim) != -1 && rlim.rlim_cur > 5)
+#إذا defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
+	إذا (getrlimit(RLIMIT_NOFILE, &rlim) != -1 && rlim.rlim_cur > 5)
 		nfiles = rlim.rlim_cur - 5; /* stdio(3) + syslog + spare */
-#endif
+#پایان_اگر
 
-	if ((msg = sshbuf_new()) == NULL)
+	إذا ((پیام = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
+	إذا ((r = sshbuf_put_u8(پیام, SSH2_FXP_EXTENDED_پاسخ)) != 0 ||
+	    (r = sshbuf_put_u32(پیام, id)) != 0 ||
 	    /* max-packet-length */
-	    (r = sshbuf_put_u64(msg, SFTP_MAX_MSG_LENGTH)) != 0 ||
+	    (r = sshbuf_put_u64(پیام, SFTP_MAX_پیام_درازی)) != 0 ||
 	    /* max-read-length */
-	    (r = sshbuf_put_u64(msg, SFTP_MAX_READ_LENGTH)) != 0 ||
+	    (r = sshbuf_put_u64(پیام, SFTP_MAX_READ_درازی)) != 0 ||
 	    /* max-write-length */
-	    (r = sshbuf_put_u64(msg, SFTP_MAX_MSG_LENGTH - 1024)) != 0 ||
+	    (r = sshbuf_put_u64(پیام, SFTP_MAX_پیام_درازی - 1024)) != 0 ||
 	    /* max-open-handles */
-	    (r = sshbuf_put_u64(msg, nfiles)) != 0)
+	    (r = sshbuf_put_u64(پیام, nfiles)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_پیام(پیام);
+	sshbuf_free(پیام);
 }
 
-static void
+ساكن فراغ
 process_extended_expand(uint32_t id)
 {
-	char cwd[PATH_MAX], resolvedname[PATH_MAX];
-	char *path, *npath;
-	int r;
+	حرف cwd[PATH_MAX], resolvedname[PATH_MAX];
+	حرف *مسیر, *npath;
+	صحيح r;
 	Stat s;
 
-	if ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &مسیر, عدم)) != 0)
 		fatal_fr(r, "parse");
-	if (getcwd(cwd, sizeof(cwd)) == NULL) {
-		send_status(id, errno_to_portable(errno));
-		goto out;
+	إذا (getcwd(cwd, حجم(cwd)) == عدم) {
+		send_وضعیت(id, errno_مقصد_portable(errno));
+		اذهب بیرون;
 	}
 
-	debug3("request %u: expand, original \"%s\"", id, path);
-	if (path[0] == '\0') {
+	debug3("request %u: expand, original \"%s\"", id, مسیر);
+	إذا (مسیر[0] == '\0') {
 		/* empty path */
-		free(path);
-		path = xstrdup(".");
-	} else if (*path == '~') {
+		حرر(مسیر);
+		مسیر = xstrdup(".");
+	} وإلا إذا (*مسیر == '~') {
 		/* ~ expand path */
 		/* Special-case for "~" and "~/" to respect homedir flag */
-		if (strcmp(path, "~") == 0) {
-			free(path);
-			path = xstrdup(cwd);
-		} else if (strncmp(path, "~/", 2) == 0) {
-			npath = xstrdup(path + 2);
-			free(path);
-			xasprintf(&path, "%s/%s", cwd, npath);
-			free(npath);
-		} else {
+		إذا (strcmp(مسیر, "~") == 0) {
+			حرر(مسیر);
+			مسیر = xstrdup(cwd);
+		} وإلا إذا (مقایسه_رشته(مسیر, "~/", 2) == 0) {
+			npath = xstrdup(مسیر + 2);
+			حرر(مسیر);
+			xasprintf(&مسیر, "%s/%s", cwd, npath);
+			حرر(npath);
+		} وإلا {
 			/* ~user expansions */
-			if (tilde_expand(path, pw->pw_uid, &npath) != 0) {
-				send_status_errmsg(id,
-				    errno_to_portable(ENOENT), "no such user");
-				goto out;
+			إذا (tilde_expand(مسیر, pw->pw_uid, &npath) != 0) {
+				send_وضعیت_errmsg(id,
+				    errno_مقصد_portable(ENOENT), "no such user");
+				اذهب بیرون;
 			}
-			free(path);
-			path = npath;
+			حرر(مسیر);
+			مسیر = npath;
 		}
-	} else if (*path != '/') {
+	} وإلا إذا (*مسیر != '/') {
 		/* relative path */
-		xasprintf(&npath, "%s/%s", cwd, path);
-		free(path);
-		path = npath;
+		xasprintf(&npath, "%s/%s", cwd, مسیر);
+		حرر(مسیر);
+		مسیر = npath;
 	}
-	verbose("expand \"%s\"", path);
-	if (sftp_realpath(path, resolvedname) == NULL) {
-		send_status(id, errno_to_portable(errno));
-		goto out;
+	verbose("expand \"%s\"", مسیر);
+	إذا (sftp_realpath(مسیر, resolvedname) == عدم) {
+		send_وضعیت(id, errno_مقصد_portable(errno));
+		اذهب بیرون;
 	}
 	attrib_clear(&s.attrib);
 	s.name = s.long_name = resolvedname;
-	send_names(id, 1, &s);
- out:
-	free(path);
+	send_نامها(id, 1, &s);
+ بیرون:
+	حرر(مسیر);
 }
 
-static void
-process_extended_copy_data(uint32_t id)
+ساكن فراغ
+process_extended_copy_داده(uint32_t id)
 {
 	u_char buf[64*1024];
-	int read_handle, read_fd, write_handle, write_fd;
+	صحيح read_handle, read_fd, write_handle, write_fd;
 	uint64_t len, read_off, read_len, write_off;
-	int r, copy_until_eof, status = SSH2_FX_OP_UNSUPPORTED;
-	size_t ret;
-	struct stat st_read, st_write;
+	صحيح r, copy_until_eof, وضعیت = SSH2_FX_OP_UNSUPPORTED;
+	اندازه_t ret;
+	بنية stat st_read, st_write;
 
-	if ((r = get_handle(iqueue, &read_handle)) != 0 ||
+	إذا ((r = get_handle(iqueue, &read_handle)) != 0 ||
 	    (r = sshbuf_get_u64(iqueue, &read_off)) != 0 ||
 	    (r = sshbuf_get_u64(iqueue, &read_len)) != 0 ||
 	    (r = get_handle(iqueue, &write_handle)) != 0 ||
@@ -1618,284 +1618,284 @@ process_extended_copy_data(uint32_t id)
 
 	debug("request %u: copy-data from \"%s\" (handle %d) off %llu len %llu "
 	    "to \"%s\" (handle %d) off %llu",
-	    id, handle_to_name(read_handle), read_handle,
-	    (unsigned long long)read_off, (unsigned long long)read_len,
-	    handle_to_name(write_handle), write_handle,
-	    (unsigned long long)write_off);
+	    id, handle_مقصد_name(read_handle), read_handle,
+	    (بیعلامت دراز دراز)read_off, (بیعلامت دراز دراز)read_len,
+	    handle_مقصد_name(write_handle), write_handle,
+	    (بیعلامت دراز دراز)write_off);
 
 	/* For read length of 0, we read until EOF. */
-	if (read_len == 0) {
+	إذا (read_len == 0) {
 		read_len = (uint64_t)-1 - read_off;
 		copy_until_eof = 1;
-	} else
+	} وإلا
 		copy_until_eof = 0;
 
 	/* Disallow reading & writing to the same handle, path or inode */
-	read_fd = handle_to_fd(read_handle);
-	write_fd = handle_to_fd(write_handle);
-	if (read_fd < 0 || write_fd < 0) {
+	read_fd = handle_مقصد_fd(read_handle);
+	write_fd = handle_مقصد_fd(write_handle);
+	إذا (read_fd < 0 || write_fd < 0) {
 		error_f("bad read or write fd");
-		status = errno_to_portable(EBADF);
-		goto out;
+		وضعیت = errno_مقصد_portable(EBADF);
+		اذهب بیرون;
 	}
-	if (fstat(read_fd, &st_read) != 0) {
-		status = errno_to_portable(errno);
+	إذا (fstat(read_fd, &st_read) != 0) {
+		وضعیت = errno_مقصد_portable(errno);
 		error_f("fstat read_fd failed: %s", strerror(errno));
-		goto out;
+		اذهب بیرون;
 	}
-	if (fstat(write_fd, &st_write) != 0) {
-		status = errno_to_portable(errno);
+	إذا (fstat(write_fd, &st_write) != 0) {
+		وضعیت = errno_مقصد_portable(errno);
 		error_f("fstat write_fd failed: %s", strerror(errno));
-		goto out;
+		اذهب بیرون;
 	}
-	if (read_handle == write_handle ||
-	    !strcmp(handle_to_name(read_handle), handle_to_name(write_handle)) ||
+	إذا (read_handle == write_handle ||
+	    !strcmp(handle_مقصد_name(read_handle), handle_مقصد_name(write_handle)) ||
 	    (st_read.st_dev != 0 && st_read.st_ino != 0 &&
 	    st_read.st_dev == st_write.st_dev &&
 	    st_read.st_ino == st_write.st_ino)) {
 		error_f("refusing to read/write same file: "
 		    "read \"%s\" dev %lu ino %lu, write \"%s\" dev %lu ino %lu",
-		    handle_to_name(read_handle),
+		    handle_مقصد_name(read_handle),
 		    (u_long)st_read.st_dev, (u_long)st_read.st_ino,
-		    handle_to_name(write_handle),
+		    handle_مقصد_name(write_handle),
 		    (u_long)st_write.st_dev, (u_long)st_write.st_ino);
-		status = SSH2_FX_FAILURE;
-		goto out;
+		وضعیت = SSH2_FX_FAILURE;
+		اذهب بیرون;
 	}
 
-	if (lseek(read_fd, read_off, SEEK_SET) < 0) {
-		status = errno_to_portable(errno);
+	إذا (lseek(read_fd, read_off, SEEK_SET) < 0) {
+		وضعیت = errno_مقصد_portable(errno);
 		error_f("read_seek failed");
-		goto out;
+		اذهب بیرون;
 	}
 
-	if ((handle_to_flags(write_handle) & O_APPEND) == 0 &&
+	إذا ((handle_مقصد_flags(write_handle) & O_APPEND) == 0 &&
 	    lseek(write_fd, write_off, SEEK_SET) < 0) {
-		status = errno_to_portable(errno);
+		وضعیت = errno_مقصد_portable(errno);
 		error_f("write_seek failed");
-		goto out;
+		اذهب بیرون;
 	}
 
 	/* Process the request in chunks. */
-	while (read_len > 0 || copy_until_eof) {
-		len = MINIMUM(sizeof(buf), read_len);
+	طالما (read_len > 0 || copy_until_eof) {
+		len = MINIMUM(حجم(buf), read_len);
 		read_len -= len;
 
-		ret = atomicio(read, read_fd, buf, len);
-		if (ret == 0 && errno == EPIPE) {
-			status = copy_until_eof ? SSH2_FX_OK : SSH2_FX_EOF;
-			break;
-		} else if (ret == 0) {
-			status = errno_to_portable(errno);
+		ret = atomicio(اقرأ, read_fd, buf, len);
+		إذا (ret == 0 && errno == EPIPE) {
+			وضعیت = copy_until_eof ? SSH2_FX_OK : SSH2_FX_EOF;
+			اكسر;
+		} وإلا إذا (ret == 0) {
+			وضعیت = errno_مقصد_portable(errno);
 			error_f("read failed: %s", strerror(errno));
-			break;
+			اكسر;
 		}
 		len = ret;
 		handle_update_read(read_handle, len);
 
 		ret = atomicio(vwrite, write_fd, buf, len);
-		if (ret != len) {
-			status = errno_to_portable(errno);
+		إذا (ret != len) {
+			وضعیت = errno_مقصد_portable(errno);
 			error("%s: write failed: %llu != %llu: %s", __func__,
-			    (unsigned long long)ret, (unsigned long long)len,
+			    (بیعلامت دراز دراز)ret, (بیعلامت دراز دراز)len,
 			    strerror(errno));
-			break;
+			اكسر;
 		}
 		handle_update_write(write_handle, len);
 	}
 
-	if (read_len == 0)
-		status = SSH2_FX_OK;
+	إذا (read_len == 0)
+		وضعیت = SSH2_FX_OK;
 
- out:
-	send_status(id, status);
+ بیرون:
+	send_وضعیت(id, وضعیت);
 }
 
-static void
+ساكن فراغ
 process_extended_home_directory(uint32_t id)
 {
-	char *username;
-	struct passwd *user_pw;
-	int r;
+	حرف *username;
+	بنية passwd *user_pw;
+	صحيح r;
 	Stat s;
 
-	if ((r = sshbuf_get_cstring(iqueue, &username, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &username, عدم)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: home-directory \"%s\"", id, username);
-	if (username[0] == '\0') {
+	إذا (username[0] == '\0') {
 		user_pw = pw;
-	} else if ((user_pw = getpwnam(username)) == NULL) {
-		send_status(id, SSH2_FX_FAILURE);
-		goto out;
+	} وإلا إذا ((user_pw = getpwnam(username)) == عدم) {
+		send_وضعیت(id, SSH2_FX_FAILURE);
+		اذهب بیرون;
 	}
 
 	verbose("home-directory \"%s\"", user_pw->pw_dir);
 	attrib_clear(&s.attrib);
 	s.name = s.long_name = user_pw->pw_dir;
-	send_names(id, 1, &s);
- out:
-	free(username);
+	send_نامها(id, 1, &s);
+ بیرون:
+	حرر(username);
 }
 
-static void
+ساكن فراغ
 process_extended_get_users_groups_by_id(uint32_t id)
 {
-	struct passwd *user_pw;
-	struct group *gr;
-	struct sshbuf *uids, *gids, *usernames, *groupnames, *msg;
-	int r;
+	بنية passwd *user_pw;
+	بنية گروه *gr;
+	بنية sshbuf *uids, *gids, *usernames, *groupnames, *پیام;
+	صحيح r;
 	u_int n, nusers = 0, ngroups = 0;
-	const char *name;
+	ثابت حرف *name;
 
-	if ((usernames = sshbuf_new()) == NULL ||
-	    (groupnames = sshbuf_new()) == NULL ||
-	    (msg = sshbuf_new()) == NULL)
+	إذا ((usernames = sshbuf_new()) == عدم ||
+	    (groupnames = sshbuf_new()) == عدم ||
+	    (پیام = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_froms(iqueue, &uids)) != 0 ||
+	إذا ((r = sshbuf_froms(iqueue, &uids)) != 0 ||
 	    (r = sshbuf_froms(iqueue, &gids)) != 0)
 		fatal_fr(r, "parse");
 	debug_f("uids len = %zu, gids len = %zu",
 	    sshbuf_len(uids), sshbuf_len(gids));
-	while (sshbuf_len(uids) != 0) {
-		if ((r = sshbuf_get_u32(uids, &n)) != 0)
+	طالما (sshbuf_len(uids) != 0) {
+		إذا ((r = sshbuf_get_u32(uids, &n)) != 0)
 			fatal_fr(r, "parse inner uid");
 		user_pw = getpwuid((uid_t)n);
-		name = user_pw == NULL ? "" : user_pw->pw_name;
+		name = user_pw == عدم ? "" : user_pw->pw_name;
 		debug3_f("uid %u => \"%s\"", n, name);
-		if ((r = sshbuf_put_cstring(usernames, name)) != 0)
+		إذا ((r = sshbuf_put_cstring(usernames, name)) != 0)
 			fatal_fr(r, "assemble uid reply");
 		nusers++;
 	}
-	while (sshbuf_len(gids) != 0) {
-		if ((r = sshbuf_get_u32(gids, &n)) != 0)
+	طالما (sshbuf_len(gids) != 0) {
+		إذا ((r = sshbuf_get_u32(gids, &n)) != 0)
 			fatal_fr(r, "parse inner gid");
 		gr = getgrgid((gid_t)n);
-		name = gr == NULL ? "" : gr->gr_name;
+		name = gr == عدم ? "" : gr->gr_name;
 		debug3_f("gid %u => \"%s\"", n, name);
-		if ((r = sshbuf_put_cstring(groupnames, name)) != 0)
+		إذا ((r = sshbuf_put_cstring(groupnames, name)) != 0)
 			fatal_fr(r, "assemble gid reply");
 		ngroups++;
 	}
 	verbose("users-groups-by-id: %u users, %u groups", nusers, ngroups);
 
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, usernames)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, groupnames)) != 0)
+	إذا ((r = sshbuf_put_u8(پیام, SSH2_FXP_EXTENDED_پاسخ)) != 0 ||
+	    (r = sshbuf_put_u32(پیام, id)) != 0 ||
+	    (r = sshbuf_put_stringb(پیام, usernames)) != 0 ||
+	    (r = sshbuf_put_stringb(پیام, groupnames)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(msg);
+	send_پیام(پیام);
 
 	sshbuf_free(uids);
 	sshbuf_free(gids);
 	sshbuf_free(usernames);
 	sshbuf_free(groupnames);
-	sshbuf_free(msg);
+	sshbuf_free(پیام);
 }
 
-static void
+ساكن فراغ
 process_extended(uint32_t id)
 {
-	char *request;
-	int r;
-	const struct sftp_handler *exthand;
+	حرف *request;
+	صحيح r;
+	ثابت بنية sftp_handler *exthand;
 
-	if ((r = sshbuf_get_cstring(iqueue, &request, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &request, عدم)) != 0)
 		fatal_fr(r, "parse");
-	if ((exthand = extended_handler_byname(request)) == NULL) {
+	إذا ((exthand = extended_handler_byname(request)) == عدم) {
 		error("Unknown extended request \"%.100s\"", request);
-		send_status(id, SSH2_FX_OP_UNSUPPORTED);	/* MUST */
-	} else {
-		if (!request_permitted(exthand))
-			send_status(id, SSH2_FX_PERMISSION_DENIED);
-		else
+		send_وضعیت(id, SSH2_FX_OP_UNSUPPORTED);	/* MUST */
+	} وإلا {
+		إذا (!request_permitted(exthand))
+			send_وضعیت(id, SSH2_FX_PERMISSION_DENIED);
+		وإلا
 			exthand->handler(id);
 	}
-	free(request);
+	حرر(request);
 }
 
 /* stolen from ssh-agent */
 
-static void
-process(void)
+ساكن فراغ
+process(فراغ)
 {
-	u_int msg_len;
+	u_int پیام_len;
 	u_int buf_len;
 	u_int consumed;
 	u_char type;
-	const u_char *cp;
-	int i, r;
+	ثابت u_char *cp;
+	صحيح i, r;
 	uint32_t id;
 
 	buf_len = sshbuf_len(iqueue);
-	if (buf_len < 5)
-		return;		/* Incomplete message. */
+	إذا (buf_len < 5)
+		أرجع;		/* Incomplete message. */
 	cp = sshbuf_ptr(iqueue);
-	msg_len = get_u32(cp);
-	if (msg_len > SFTP_MAX_MSG_LENGTH) {
+	پیام_len = get_u32(cp);
+	إذا (پیام_len > SFTP_MAX_پیام_درازی) {
 		error("bad message from %s local user %s",
 		    client_addr, pw->pw_name);
 		sftp_server_cleanup_exit(11);
 	}
-	if (buf_len < msg_len + 4)
-		return;
-	if ((r = sshbuf_consume(iqueue, 4)) != 0)
+	إذا (buf_len < پیام_len + 4)
+		أرجع;
+	إذا ((r = sshbuf_consume(iqueue, 4)) != 0)
 		fatal_fr(r, "consume");
 	buf_len -= 4;
-	if ((r = sshbuf_get_u8(iqueue, &type)) != 0)
+	إذا ((r = sshbuf_get_u8(iqueue, &type)) != 0)
 		fatal_fr(r, "parse type");
 
-	switch (type) {
-	case SSH2_FXP_INIT:
+	بدل (type) {
+	حالة SSH2_FXP_INIT:
 		process_init();
-		init_done = 1;
-		break;
-	case SSH2_FXP_EXTENDED:
-		if (!init_done)
+		init_انجامشده = 1;
+		اكسر;
+	حالة SSH2_FXP_EXTENDED:
+		إذا (!init_انجامشده)
 			fatal("Received extended request before init");
-		if ((r = sshbuf_get_u32(iqueue, &id)) != 0)
+		إذا ((r = sshbuf_get_u32(iqueue, &id)) != 0)
 			fatal_fr(r, "parse extended ID");
 		process_extended(id);
-		break;
-	default:
-		if (!init_done)
+		اكسر;
+	افتراضي:
+		إذا (!init_انجامشده)
 			fatal("Received %u request before init", type);
-		if ((r = sshbuf_get_u32(iqueue, &id)) != 0)
+		إذا ((r = sshbuf_get_u32(iqueue, &id)) != 0)
 			fatal_fr(r, "parse ID");
-		for (i = 0; handlers[i].handler != NULL; i++) {
-			if (type == handlers[i].type) {
-				if (!request_permitted(&handlers[i])) {
-					send_status(id,
+		لكل (i = 0; handlers[i].handler != عدم; i++) {
+			إذا (type == handlers[i].type) {
+				إذا (!request_permitted(&handlers[i])) {
+					send_وضعیت(id,
 					    SSH2_FX_PERMISSION_DENIED);
-				} else {
+				} وإلا {
 					handlers[i].handler(id);
 				}
-				break;
+				اكسر;
 			}
 		}
-		if (handlers[i].handler == NULL)
+		إذا (handlers[i].handler == عدم)
 			error("Unknown message %u", type);
 	}
 	/* discard the remaining bytes from the current packet */
-	if (buf_len < sshbuf_len(iqueue)) {
+	إذا (buf_len < sshbuf_len(iqueue)) {
 		error("iqueue grew unexpectedly");
 		sftp_server_cleanup_exit(255);
 	}
 	consumed = buf_len - sshbuf_len(iqueue);
-	if (msg_len < consumed) {
-		error("msg_len %u < consumed %u", msg_len, consumed);
+	إذا (پیام_len < consumed) {
+		error("msg_len %u < consumed %u", پیام_len, consumed);
 		sftp_server_cleanup_exit(255);
 	}
-	if (msg_len > consumed &&
-	    (r = sshbuf_consume(iqueue, msg_len - consumed)) != 0)
+	إذا (پیام_len > consumed &&
+	    (r = sshbuf_consume(iqueue, پیام_len - consumed)) != 0)
 		fatal_fr(r, "consume");
 }
 
 /* Cleanup handler that logs active handles upon normal exit */
-void
-sftp_server_cleanup_exit(int i)
+فراغ
+sftp_server_cleanup_exit(صحيح i)
 {
-	if (pw != NULL && client_addr != NULL) {
+	إذا (pw != عدم && client_addr != عدم) {
 		handle_log_exit();
 		logit("session closed for local user %s from [%s]",
 		    pw->pw_name, client_addr);
@@ -1903,10 +1903,10 @@ sftp_server_cleanup_exit(int i)
 	_exit(i);
 }
 
-static void
-sftp_server_usage(void)
+ساكن فراغ
+sftp_server_usage(فراغ)
 {
-	extern char *__progname;
+	خارجي حرف *__progname;
 
 	fprintf(stderr,
 	    "usage: %s [-ehR] [-d start_directory] [-f log_facility] "
@@ -1914,91 +1914,91 @@ sftp_server_usage(void)
 	    "[-p allowed_requests] [-u umask]\n"
 	    "       %s -Q protocol_feature\n",
 	    __progname, __progname);
-	exit(1);
+	خروج(1);
 }
 
-int
-sftp_server_main(int argc, char **argv, struct passwd *user_pw)
+صحيح
+sftp_server_main(صحيح argc, حرف **argv, بنية passwd *user_pw)
 {
-	int i, r, in, out, ch, skipargs = 0, log_stderr = 0;
+	صحيح i, r, درون, بیرون, ch, skipargs = 0, log_stderr = 0;
 	ssize_t len, olen;
 	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
-	char *cp, *homedir = NULL, uidstr[32], buf[4*4096];
-	long mask;
+	حرف *cp, *homedir = عدم, uidstr[32], buf[4*4096];
+	دراز ماسک;
 
-	extern char *optarg;
-	extern char *__progname;
+	خارجي حرف *optarg;
+	خارجي حرف *__progname;
 
 	__progname = ssh_get_progname(argv[0]);
 	log_init(__progname, log_level, log_facility, log_stderr);
 
 	pw = pwcopy(user_pw);
 
-	while (!skipargs && (ch = getopt(argc, argv,
+	طالما (!skipargs && (ch = getopt(argc, argv,
 	    "d:f:l:P:p:Q:u:cehR")) != -1) {
-		switch (ch) {
-		case 'Q':
-			if (strcasecmp(optarg, "requests") != 0) {
+		بدل (ch) {
+		حالة 'Q':
+			إذا (strcasecmp(optarg, "requests") != 0) {
 				fprintf(stderr, "Invalid query type\n");
-				exit(1);
+				خروج(1);
 			}
-			for (i = 0; handlers[i].handler != NULL; i++)
-				printf("%s\n", handlers[i].name);
-			for (i = 0; extended_handlers[i].handler != NULL; i++)
-				printf("%s\n", extended_handlers[i].name);
-			exit(0);
-			break;
-		case 'R':
+			لكل (i = 0; handlers[i].handler != عدم; i++)
+				چاپ_کن("%s\n", handlers[i].name);
+			لكل (i = 0; extended_handlers[i].handler != عدم; i++)
+				چاپ_کن("%s\n", extended_handlers[i].name);
+			خروج(0);
+			اكسر;
+		حالة 'R':
 			readonly = 1;
-			break;
-		case 'c':
+			اكسر;
+		حالة 'c':
 			/*
 			 * Ignore all arguments if we are invoked as a
 			 * shell using "sftp-server -c command"
 			 */
 			skipargs = 1;
-			break;
-		case 'e':
+			اكسر;
+		حالة 'e':
 			log_stderr = 1;
-			break;
-		case 'l':
-			log_level = log_level_number(optarg);
-			if (log_level == SYSLOG_LEVEL_NOT_SET)
+			اكسر;
+		حالة 'l':
+			log_level = log_level_عدد(optarg);
+			إذا (log_level == SYSLOG_LEVEL_NOT_مجموعه)
 				error("Invalid log level \"%s\"", optarg);
-			break;
-		case 'f':
-			log_facility = log_facility_number(optarg);
-			if (log_facility == SYSLOG_FACILITY_NOT_SET)
+			اكسر;
+		حالة 'f':
+			log_facility = log_facility_عدد(optarg);
+			إذا (log_facility == SYSLOG_FACILITY_NOT_مجموعه)
 				error("Invalid log facility \"%s\"", optarg);
-			break;
-		case 'd':
+			اكسر;
+		حالة 'd':
 			cp = tilde_expand_filename(optarg, user_pw->pw_uid);
-			snprintf(uidstr, sizeof(uidstr), "%llu",
-			    (unsigned long long)pw->pw_uid);
+			snprintf(uidstr, حجم(uidstr), "%llu",
+			    (بیعلامت دراز دراز)pw->pw_uid);
 			homedir = percent_expand(cp, "d", user_pw->pw_dir,
-			    "u", user_pw->pw_name, "U", uidstr, (char *)NULL);
-			free(cp);
-			break;
-		case 'p':
-			if (request_allowlist != NULL)
+			    "u", user_pw->pw_name, "U", uidstr, (حرف *)عدم);
+			حرر(cp);
+			اكسر;
+		حالة 'p':
+			إذا (request_allowlist != عدم)
 				fatal("Permitted requests already set");
 			request_allowlist = xstrdup(optarg);
-			break;
-		case 'P':
-			if (request_denylist != NULL)
+			اكسر;
+		حالة 'P':
+			إذا (request_denylist != عدم)
 				fatal("Refused requests already set");
 			request_denylist = xstrdup(optarg);
-			break;
-		case 'u':
+			اكسر;
+		حالة 'u':
 			errno = 0;
-			mask = strtol(optarg, &cp, 8);
-			if (mask < 0 || mask > 0777 || *cp != '\0' ||
-			    cp == optarg || (mask == 0 && errno != 0))
+			ماسک = strtol(optarg, &cp, 8);
+			إذا (ماسک < 0 || ماسک > 0777 || *cp != '\0' ||
+			    cp == optarg || (ماسک == 0 && errno != 0))
 				fatal("Invalid umask \"%s\"", optarg);
-			(void)umask((mode_t)mask);
-			break;
-		case 'h':
-		default:
+			(فراغ)umask((نما_t)ماسک);
+			اكسر;
+		حالة 'h':
+		افتراضي:
 			sftp_server_usage();
 		}
 	}
@@ -2016,44 +2016,44 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 	/* Drop any fine-grained privileges we don't need */
 	platform_pledge_sftp_server();
 
-	if ((cp = getenv("SSH_CONNECTION")) != NULL) {
+	إذا ((cp = getenv("SSH_CONNECTION")) != عدم) {
 		client_addr = xstrdup(cp);
-		if ((cp = strchr(client_addr, ' ')) == NULL) {
+		إذا ((cp = strchr(client_addr, ' ')) == عدم) {
 			error("Malformed SSH_CONNECTION variable: \"%s\"",
 			    getenv("SSH_CONNECTION"));
 			sftp_server_cleanup_exit(255);
 		}
 		*cp = '\0';
-	} else
+	} وإلا
 		client_addr = xstrdup("UNKNOWN");
 
 	logit("session opened for local user %s from [%s]",
 	    pw->pw_name, client_addr);
 
-	in = STDIN_FILENO;
-	out = STDOUT_FILENO;
+	درون = STDIN_FILENO;
+	بیرون = STDOUT_FILENO;
 
-#ifdef HAVE_CYGWIN
-	setmode(in, O_BINARY);
-	setmode(out, O_BINARY);
-#endif
+#اگر_تعریف_شده HAVE_CYGWIN
+	setmode(درون, O_دودویی);
+	setmode(بیرون, O_دودویی);
+#پایان_اگر
 
-	if ((iqueue = sshbuf_new()) == NULL)
+	إذا ((iqueue = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((oqueue = sshbuf_new()) == NULL)
+	إذا ((oqueue = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 
-	if (homedir != NULL) {
-		if (chdir(homedir) != 0) {
+	إذا (homedir != عدم) {
+		إذا (chdir(homedir) != 0) {
 			error("chdir to \"%s\" failed: %s", homedir,
 			    strerror(errno));
 		}
 	}
 
-	for (;;) {
-		struct pollfd pfd[2];
+	لكل (;;) {
+		بنية pollfd pfd[2];
 
-		memset(pfd, 0, sizeof pfd);
+		memset(pfd, 0, حجم pfd);
 		pfd[0].fd = pfd[1].fd = -1;
 
 		/*
@@ -2061,55 +2061,55 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 		 * the worst-case length packet it can generate,
 		 * otherwise apply backpressure by stopping reads.
 		 */
-		if ((r = sshbuf_check_reserve(iqueue, sizeof(buf))) == 0 &&
+		إذا ((r = sshbuf_check_reserve(iqueue, حجم(buf))) == 0 &&
 		    (r = sshbuf_check_reserve(oqueue,
-		    SFTP_MAX_MSG_LENGTH)) == 0) {
-			pfd[0].fd = in;
+		    SFTP_MAX_پیام_درازی)) == 0) {
+			pfd[0].fd = درون;
 			pfd[0].events = POLLIN;
 		}
-		else if (r != SSH_ERR_NO_BUFFER_SPACE)
+		وإلا إذا (r != SSH_ERR_NO_میانگیر_SPACE)
 			fatal_fr(r, "reserve");
 
 		olen = sshbuf_len(oqueue);
-		if (olen > 0) {
-			pfd[1].fd = out;
+		إذا (olen > 0) {
+			pfd[1].fd = بیرون;
 			pfd[1].events = POLLOUT;
 		}
 
-		if (poll(pfd, 2, -1) == -1) {
-			if (errno == EINTR)
-				continue;
+		إذا (poll(pfd, 2, -1) == -1) {
+			إذا (errno == EINTR)
+				استمر;
 			error("poll: %s", strerror(errno));
 			sftp_server_cleanup_exit(2);
 		}
 
 		/* copy stdin to iqueue */
-		if (pfd[0].revents & (POLLIN|POLLHUP)) {
-			len = read(in, buf, sizeof buf);
-			if (len == 0) {
+		إذا (pfd[0].revents & (POLLIN|POLLHUP)) {
+			len = اقرأ(درون, buf, حجم buf);
+			إذا (len == 0) {
 				debug("read eof");
 				sftp_server_cleanup_exit(0);
-			} else if (len == -1) {
-				if (errno != EAGAIN && errno != EINTR) {
+			} وإلا إذا (len == -1) {
+				إذا (errno != EAGAIN && errno != EINTR) {
 					error("read: %s", strerror(errno));
 					sftp_server_cleanup_exit(1);
 				}
-			} else if ((r = sshbuf_put(iqueue, buf, len)) != 0)
+			} وإلا إذا ((r = sshbuf_put(iqueue, buf, len)) != 0)
 				fatal_fr(r, "sshbuf_put");
 		}
 		/* send oqueue to stdout */
-		if (pfd[1].revents & (POLLOUT|POLLHUP)) {
-			len = write(out, sshbuf_ptr(oqueue), olen);
-			if (len == 0 || (len == -1 && errno == EPIPE)) {
+		إذا (pfd[1].revents & (POLLOUT|POLLHUP)) {
+			len = اكتب(بیرون, sshbuf_ptr(oqueue), olen);
+			إذا (len == 0 || (len == -1 && errno == EPIPE)) {
 				debug("write eof");
 				sftp_server_cleanup_exit(0);
-			} else if (len == -1) {
+			} وإلا إذا (len == -1) {
 				sftp_server_cleanup_exit(1);
-				if (errno != EAGAIN && errno != EINTR) {
+				إذا (errno != EAGAIN && errno != EINTR) {
 					error("write: %s", strerror(errno));
 					sftp_server_cleanup_exit(1);
 				}
-			} else if ((r = sshbuf_consume(oqueue, len)) != 0)
+			} وإلا إذا ((r = sshbuf_consume(oqueue, len)) != 0)
 				fatal_fr(r, "consume");
 		}
 
@@ -2118,10 +2118,10 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 		 * into the output buffer, otherwise stop processing input
 		 * and let the output queue drain.
 		 */
-		r = sshbuf_check_reserve(oqueue, SFTP_MAX_MSG_LENGTH);
-		if (r == 0)
+		r = sshbuf_check_reserve(oqueue, SFTP_MAX_پیام_درازی);
+		إذا (r == 0)
 			process();
-		else if (r != SSH_ERR_NO_BUFFER_SPACE)
+		وإلا إذا (r != SSH_ERR_NO_میانگیر_SPACE)
 			fatal_fr(r, "reserve");
 	}
 }

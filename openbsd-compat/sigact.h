@@ -42,49 +42,49 @@
 
 /* OPENBSD ORIGINAL: lib/libcurses/SigAction.h */
 
-#ifndef _SIGACTION_H
-#define _SIGACTION_H
+#اگر_تعریف_نشده _SIGACTION_H
+#تعریف_کن _SIGACTION_H
 
-#if !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC)
+#إذا !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC)
 
-#undef  SIG_BLOCK
-#define SIG_BLOCK       00
+#لغو_تعریف  SIG_BLOCK
+#تعریف_کن SIG_BLOCK       00
 
-#undef  SIG_UNBLOCK
-#define SIG_UNBLOCK     01
+#لغو_تعریف  SIG_UNBLOCK
+#تعریف_کن SIG_UNBLOCK     01
 
-#undef  SIG_SETMASK
-#define SIG_SETMASK     02
+#لغو_تعریف  SIG_SETMASK
+#تعریف_کن SIG_SETMASK     02
 
 /*
  * <bsd/signal.h> is in the Linux 1.2.8 + gcc 2.7.0 configuration,
  * and is useful for testing this header file.
  */
-#if HAVE_BSD_SIGNAL_H
+#إذا HAVE_BSD_SIGNAL_H
 # include <bsd/signal.h>
-#endif
+#پایان_اگر
 
-struct sigaction
+بنية sigaction
 {
-	struct sigvec sv;
+	بنية sigvec sv;
 };
 
-typedef unsigned long sigset_t;
+تعريفنوع بیعلامت دراز sigset_t;
 
-#undef  sa_mask
-#define sa_mask sv.sv_mask
-#undef  sa_handler
-#define sa_handler sv.sv_handler
-#undef  sa_flags
-#define sa_flags sv.sv_flags
+#لغو_تعریف  sa_mask
+#تعریف_کن sa_mask sv.sv_ماسک
+#لغو_تعریف  sa_handler
+#تعریف_کن sa_handler sv.sv_handler
+#لغو_تعریف  sa_flags
+#تعریف_کن sa_flags sv.sv_flags
 
-int sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact);
-int sigprocmask (int how, sigset_t *mask, sigset_t *omask);
-int sigemptyset (sigset_t *mask);
-int sigsuspend (sigset_t *mask);
-int sigdelset (sigset_t *mask, int sig);
-int sigaddset (sigset_t *mask, int sig);
+صحيح sigaction(صحيح sig, بنية sigaction *sigact, بنية sigaction *osigact);
+صحيح sigprocmask (صحيح how, sigset_t *ماسک, sigset_t *omask);
+صحيح sigemptyset (sigset_t *ماسک);
+صحيح sigsuspend (sigset_t *ماسک);
+صحيح sigdelset (sigset_t *ماسک, صحيح sig);
+صحيح sigaddset (sigset_t *ماسک, صحيح sig);
 
-#endif /* !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC) */
+#پایان_اگر /* !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC) */
 
-#endif /* !defined(_SIGACTION_H) */
+#پایان_اگر /* !defined(_SIGACTION_H) */

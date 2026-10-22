@@ -14,23 +14,23 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _BSD_SIGNAL_H
-#define _BSD_SIGNAL_H
+#اگر_تعریف_نشده _BSD_SIGNAL_H
+#تعریف_کن _BSD_SIGNAL_H
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <signal.h>
+#ضمن <signal.h>
 
-#ifndef _NSIG
+#اگر_تعریف_نشده _NSIG
 # ifdef NSIG
 #  define _NSIG NSIG
-# else
+# وإلا
 #  define _NSIG 128
 # endif
-#endif
+#پایان_اگر
 
-#if !defined(HAVE_STRSIGNAL)
-char *strsignal(int);
-#endif
+#إذا !defined(HAVE_STRSIGNAL)
+حرف *strsignal(صحيح);
+#پایان_اگر
 
-#endif /* _BSD_SIGNAL_H */
+#پایان_اگر /* _BSD_SIGNAL_H */

@@ -24,122 +24,122 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
-#include <sys/queue.h>
-#include <sys/stat.h>
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h>
+#ضمن <sys/wait.h>
+#ضمن <sys/queue.h>
+#ضمن <sys/stat.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
-#include <vis.h>
-#endif
+#ضمن <errno.h>
+#ضمن <fcntl.h>
+#ضمن <limits.h>
+#ضمن <pwd.h>
+#ضمن <signal.h>
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ضمن <stdarg.h>
+#ضمن <unistd.h>
+#إذا defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#ضمن <vis.h>
+#پایان_اگر
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "compat.h"
-#include "cipher.h"
-#include "sshkey.h"
-#include "kex.h"
-#include "sshconnect.h"
-#include "authfile.h"
-#include "authfd.h"
-#include "log.h"
-#include "misc.h"
-#include "readconf.h"
-#include "match.h"
-#include "dispatch.h"
-#include "canohost.h"
-#include "msg.h"
-#include "pathnames.h"
-#include "hostfile.h"
-#include "ssherr.h"
-#include "utf8.h"
-#include "ssh-sk.h"
-#include "sk-api.h"
+#ضمن "xmalloc.h"
+#ضمن "ssh.h"
+#ضمن "ssh2.h"
+#ضمن "sshbuf.h"
+#ضمن "packet.h"
+#ضمن "compat.h"
+#ضمن "cipher.h"
+#ضمن "sshkey.h"
+#ضمن "kex.h"
+#ضمن "sshconnect.h"
+#ضمن "authfile.h"
+#ضمن "authfd.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "readconf.h"
+#ضمن "match.h"
+#ضمن "dispatch.h"
+#ضمن "canohost.h"
+#ضمن "msg.h"
+#ضمن "pathnames.h"
+#ضمن "hostfile.h"
+#ضمن "ssherr.h"
+#ضمن "utf8.h"
+#ضمن "ssh-sk.h"
+#ضمن "sk-api.h"
 
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
+#اگر_تعریف_شده GSSAPI
+#ضمن "ssh-gss.h"
+#پایان_اگر
 
 /* import */
-extern Options options;
+خارجي Options options;
 
 /*
  * SSH2 key exchange
  */
 
-static char *xxx_host;
-static struct sockaddr_storage xxx_hostaddr;
-static const struct ssh_conn_info *xxx_conn_info;
-static int key_type_allowed(struct sshkey *, const char *);
+ساكن حرف *xxx_host;
+ساكن بنية sockaddr_storage xxx_hostaddr;
+ساكن ثابت بنية ssh_conn_info *xxx_conn_info;
+ساكن صحيح کلید_type_allowed(بنية sshkey *, ثابت حرف *);
 
-static int
-verify_host_key_callback(struct sshkey *hostkey, struct ssh *ssh)
+ساكن صحيح
+verify_host_کلید_callback(بنية sshkey *hostkey, بنية ssh *ssh)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshkey_check_rsa_length(hostkey,
-	    options.required_rsa_size)) != 0)
+	إذا ((r = sshkey_check_rsa_درازی(hostkey,
+	    options.required_rsa_اندازه)) != 0)
 		fatal_r(r, "Bad server host key");
-	if (!key_type_allowed(hostkey, options.hostkeyalgorithms)) {
+	إذا (!کلید_type_allowed(hostkey, options.hostkeyalgorithms)) {
 		fatal("Server host key %s not in HostKeyAlgorithms",
 		    sshkey_ssh_name(hostkey));
 	}
-	if (verify_host_key(xxx_host, (struct sockaddr *)&xxx_hostaddr, hostkey,
+	إذا (verify_host_کلید(xxx_host, (بنية sockaddr *)&xxx_hostaddr, hostkey,
 	    xxx_conn_info) != 0)
 		fatal("Host key verification failed.");
-	return 0;
+	أرجع 0;
 }
 
 /* Returns the first item from a comma-separated algorithm list */
-static char *
-first_alg(const char *algs)
+ساكن حرف *
+اولی_alg(ثابت حرف *algs)
 {
-	char *ret, *cp;
+	حرف *ret, *cp;
 
 	ret = xstrdup(algs);
-	if ((cp = strchr(ret, ',')) != NULL)
+	إذا ((cp = strchr(ret, ',')) != عدم)
 		*cp = '\0';
-	return ret;
+	أرجع ret;
 }
 
-static char *
-order_hostkeyalgs(char *host, struct sockaddr *hostaddr, u_short port,
-    const struct ssh_conn_info *cinfo)
+ساكن حرف *
+ترتیب_hostkeyalgs(حرف *host, بنية sockaddr *hostaddr, u_short پورت,
+    ثابت بنية ssh_conn_info *cinfo)
 {
-	char *oavail = NULL, *avail = NULL, *first = NULL, *last = NULL;
-	char *alg = NULL, *hostname = NULL, *ret = NULL, *best = NULL;
-	size_t maxlen;
-	struct hostkeys *hostkeys = NULL;
-	int ktype;
+	حرف *oavail = عدم, *avail = عدم, *اولی = عدم, *آخرین = عدم;
+	حرف *alg = عدم, *hostname = عدم, *ret = عدم, *بهترین = عدم;
+	اندازه_t maxlen;
+	بنية hostkeys *hostkeys = عدم;
+	صحيح ktype;
 	u_int i;
 
 	/* Find all hostkeys for this hostname */
-	get_hostfile_hostname_ipaddr(host, hostaddr, port, &hostname, NULL);
+	get_hostfile_hostname_ipaddr(host, hostaddr, پورت, &hostname, عدم);
 	hostkeys = init_hostkeys();
-	for (i = 0; i < options.num_user_hostfiles; i++)
-		load_hostkeys(hostkeys, hostname, options.user_hostfiles[i], 0);
-	for (i = 0; i < options.num_system_hostfiles; i++) {
-		load_hostkeys(hostkeys, hostname,
+	لكل (i = 0; i < options.رقم_user_hostfiles; i++)
+		بارگیری_hostkeys(hostkeys, hostname, options.user_hostfiles[i], 0);
+	لكل (i = 0; i < options.رقم_system_hostfiles; i++) {
+		بارگیری_hostkeys(hostkeys, hostname,
 		    options.system_hostfiles[i], 0);
 	}
-	if (options.known_hosts_command != NULL) {
-		load_hostkeys_command(hostkeys, options.known_hosts_command,
-		    "ORDER", cinfo, NULL, hostname);
+	إذا (options.معلوم_hosts_command != عدم) {
+		بارگیری_hostkeys_command(hostkeys, options.معلوم_hosts_command,
+		    "ORDER", cinfo, عدم, hostname);
 	}
 	/*
 	 * If a plain public key exists that matches the type of the best
@@ -148,14 +148,14 @@ order_hostkeyalgs(char *host, struct sockaddr *hostaddr, u_short port,
 	 * certificate type, as sshconnect.c will downgrade certs to
 	 * plain keys if necessary.
 	 */
-	best = first_alg(options.hostkeyalgorithms);
-	if (lookup_key_in_hostkeys_by_type(hostkeys,
-	    sshkey_type_plain(sshkey_type_from_name(best)),
-	    sshkey_ecdsa_nid_from_name(best), NULL)) {
+	بهترین = اولی_alg(options.hostkeyalgorithms);
+	إذا (lookup_کلید_درون_hostkeys_by_type(hostkeys,
+	    sshkey_type_plain(sshkey_type_from_name(بهترین)),
+	    sshkey_ecdsa_nid_from_name(بهترین), عدم)) {
 		debug3_f("have matching best-preference key type %s, "
-		    "using HostkeyAlgorithms verbatim", best);
+		    "using HostkeyAlgorithms verbatim", بهترین);
 		ret = xstrdup(options.hostkeyalgorithms);
-		goto out;
+		اذهب بیرون;
 	}
 
 	/*
@@ -163,71 +163,71 @@ order_hostkeyalgs(char *host, struct sockaddr *hostaddr, u_short port,
 	 * while keeping the ordering of HostkeyAlgorithms as much as possible.
 	 */
 	oavail = avail = xstrdup(options.hostkeyalgorithms);
-	maxlen = strlen(avail) + 1;
-	first = xmalloc(maxlen);
-	last = xmalloc(maxlen);
-	*first = *last = '\0';
+	maxlen = طول_رشته(avail) + 1;
+	اولی = xmalloc(maxlen);
+	آخرین = xmalloc(maxlen);
+	*اولی = *آخرین = '\0';
 
-#define ALG_APPEND(to, from) \
-	do { \
-		if (*to != '\0') \
-			strlcat(to, ",", maxlen); \
-		strlcat(to, from, maxlen); \
-	} while (0)
+#تعریف_کن ALG_APPEND(مقصد, from) \
+	افعل { \
+		إذا (*مقصد != '\0') \
+			strlcat(مقصد, ",", maxlen); \
+		strlcat(مقصد, from, maxlen); \
+	} طالما (0)
 
-	while ((alg = strsep(&avail, ",")) && *alg != '\0') {
-		if ((ktype = sshkey_type_from_name(alg)) == KEY_UNSPEC)
+	طالما ((alg = strsep(&avail, ",")) && *alg != '\0') {
+		إذا ((ktype = sshkey_type_from_name(alg)) == کلید_UNSPEC)
 			fatal_f("unknown alg %s", alg);
 		/*
 		 * If we have a @cert-authority marker in known_hosts then
 		 * prefer all certificate algorithms.
 		 */
-		if (sshkey_type_is_cert(ktype) &&
-		    lookup_marker_in_hostkeys(hostkeys, MRK_CA)) {
-			ALG_APPEND(first, alg);
-			continue;
+		إذا (sshkey_type_is_cert(ktype) &&
+		    lookup_marker_درون_hostkeys(hostkeys, MRK_CA)) {
+			ALG_APPEND(اولی, alg);
+			استمر;
 		}
 		/* If the key appears in known_hosts then prefer it */
-		if (lookup_key_in_hostkeys_by_type(hostkeys,
+		إذا (lookup_کلید_درون_hostkeys_by_type(hostkeys,
 		    sshkey_type_plain(ktype),
-		    sshkey_ecdsa_nid_from_name(alg), NULL)) {
-			ALG_APPEND(first, alg);
-			continue;
+		    sshkey_ecdsa_nid_from_name(alg), عدم)) {
+			ALG_APPEND(اولی, alg);
+			استمر;
 		}
 		/* Otherwise, put it last */
-		ALG_APPEND(last, alg);
+		ALG_APPEND(آخرین, alg);
 	}
-#undef ALG_APPEND
-	xasprintf(&ret, "%s%s%s", first,
-	    (*first == '\0' || *last == '\0') ? "" : ",", last);
-	if (*first != '\0')
-		debug3_f("prefer hostkeyalgs: %s", first);
-	else
+#لغو_تعریف ALG_APPEND
+	xasprintf(&ret, "%s%s%s", اولی,
+	    (*اولی == '\0' || *آخرین == '\0') ? "" : ",", آخرین);
+	إذا (*اولی != '\0')
+		debug3_f("prefer hostkeyalgs: %s", اولی);
+	وإلا
 		debug3_f("no algorithms matched; accept original");
- out:
-	free(best);
-	free(first);
-	free(last);
-	free(hostname);
-	free(oavail);
+ بیرون:
+	حرر(بهترین);
+	حرر(اولی);
+	حرر(آخرین);
+	حرر(hostname);
+	حرر(oavail);
 	free_hostkeys(hostkeys);
 
-	return ret;
+	أرجع ret;
 }
 
-void
-ssh_kex2(struct ssh *ssh, char *host, struct sockaddr_storage *hostaddr,
-    u_short port, const struct ssh_conn_info *cinfo)
+فراغ
+ssh_kex2(بنية ssh *ssh, حرف *host, بنية sockaddr_storage *hostaddr,
+    u_short پورت, ثابت بنية ssh_conn_info *cinfo)
 {
-	char *myproposal[PROPOSAL_MAX];
-	char *all_key, *hkalgs = NULL;
-	int r, use_known_hosts_order = 0;
+	حرف *myproposal[PROPOSAL_MAX];
+	حرف *all_کلید, *hkalgs = عدم;
+	صحيح r, use_معلوم_hosts_ترتیب = 0;
 
 	xxx_host = xstrdup(host);
 	xxx_hostaddr = *hostaddr;
 	xxx_conn_info = ssh_conn_info_dup(cinfo);
 
-	ssh_packet_set_rekey_limits(ssh, options.rekey_limit,
+	ssh_packet_مجموعه_rekey_limits(ssh, options.rekey_حد,
 	    options.rekey_interval);
 
 	/*
@@ -235,21 +235,21 @@ ssh_kex2(struct ssh *ssh, char *host, struct sockaddr_storage *hostaddr,
 	 * appended or removed algorithms from that list then prefer algorithms
 	 * that are in the list that are supported by known_hosts keys.
 	 */
-	if (options.hostkeyalgorithms == NULL ||
+	إذا (options.hostkeyalgorithms == عدم ||
 	    options.hostkeyalgorithms[0] == '-' ||
 	    options.hostkeyalgorithms[0] == '+')
-		use_known_hosts_order = 1;
+		use_معلوم_hosts_ترتیب = 1;
 
 	/* Expand or fill in HostkeyAlgorithms */
-	all_key = sshkey_alg_list(0, 0, 1, ',');
-	if ((r = kex_assemble_names(&options.hostkeyalgorithms,
-	    kex_default_pk_alg(), all_key)) != 0)
+	all_کلید = sshkey_alg_list(0, 0, 1, ',');
+	إذا ((r = kex_assemble_نامها(&options.hostkeyalgorithms,
+	    kex_default_pk_alg(), all_کلید)) != 0)
 		fatal_fr(r, "kex_assemble_namelist");
-	free(all_key);
+	حرر(all_کلید);
 
-	if (use_known_hosts_order) {
-		hkalgs = order_hostkeyalgs(host, (struct sockaddr *)hostaddr,
-		    port, cinfo);
+	إذا (use_معلوم_hosts_ترتیب) {
+		hkalgs = ترتیب_hostkeyalgs(host, (بنية sockaddr *)hostaddr,
+		    پورت, cinfo);
 	}
 
 	kex_proposal_populate_entries(ssh, myproposal,
@@ -257,12 +257,12 @@ ssh_kex2(struct ssh *ssh, char *host, struct sockaddr_storage *hostaddr,
 	    compression_alg_list(options.compression),
 	    hkalgs ? hkalgs : options.hostkeyalgorithms);
 
-	free(hkalgs);
+	حرر(hkalgs);
 
 	/* start key exchange */
-	if ((r = kex_setup(ssh, myproposal)) != 0)
+	إذا ((r = kex_راهاندازی(ssh, myproposal)) != 0)
 		fatal_r(r, "kex_setup");
-#ifdef WITH_OPENSSL
+#اگر_تعریف_شده WITH_OPENSSL
 	ssh->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_client;
 	ssh->kex->kex[KEX_DH_GRP14_SHA1] = kex_gen_client;
 	ssh->kex->kex[KEX_DH_GRP14_SHA256] = kex_gen_client;
@@ -271,454 +271,454 @@ ssh_kex2(struct ssh *ssh, char *host, struct sockaddr_storage *hostaddr,
 	ssh->kex->kex[KEX_DH_GEX_SHA1] = kexgex_client;
 	ssh->kex->kex[KEX_DH_GEX_SHA256] = kexgex_client;
 	ssh->kex->kex[KEX_ECDH_SHA2] = kex_gen_client;
-#endif
+#پایان_اگر
 	ssh->kex->kex[KEX_C25519_SHA256] = kex_gen_client;
 	ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_client;
 	ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_client;
 	ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_client;
-	ssh->kex->verify_host_key=&verify_host_key_callback;
+	ssh->kex->verify_host_کلید=&verify_host_کلید_callback;
 
-	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &ssh->kex->done);
+	ssh_dispatch_پیاپی_fatal(ssh, DISPATCH_بلوک, &ssh->kex->انجامشده);
 	kex_proposal_free_entries(myproposal);
 
-#ifdef DEBUG_KEXDH
+#اگر_تعریف_شده DEBUG_KEXDH
 	/* send 1st encrypted/maced/compressed message */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
+	إذا ((r = sshpkt_شروع(ssh, SSH2_پیام_IGNORE)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "markus")) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
 		fatal_fr(r, "send packet");
-#endif
+#پایان_اگر
 }
 
 /*
  * Authenticate user
  */
 
-typedef struct cauthctxt Authctxt;
-typedef struct cauthmethod Authmethod;
-typedef struct identity Identity;
-typedef struct idlist Idlist;
+تعريفنوع بنية cauthctxt Authctxt;
+تعريفنوع بنية cauthmethod Authmethod;
+تعريفنوع بنية عنصر_خنثی_2 عنصر_خنثی;
+تعريفنوع بنية idlist Idlist;
 
-struct identity {
-	TAILQ_ENTRY(identity) next;
-	int	agent_fd;		/* >=0 if agent supports key */
-	struct sshkey	*key;		/* public/private key */
-	char	*filename;		/* comment for agent-only keys */
-	int	tried;
-	int	isprivate;		/* key points to the private key */
-	int	userprovided;
+بنية عنصر_خنثی_2 {
+	TAILQ_ENTRY(عنصر_خنثی_2) بعدی;
+	صحيح	agent_fd;		/* >=0 if agent supports key */
+	بنية sshkey	*کلید;		/* public/private key */
+	حرف	*filename;		/* comment for agent-only keys */
+	صحيح	tried;
+	صحيح	isprivate;		/* key points to the private key */
+	صحيح	userprovided;
 };
-TAILQ_HEAD(idlist, identity);
+TAILQ_HEAD(idlist, عنصر_خنثی_2);
 
-struct cauthctxt {
-	const char *server_user;
-	const char *local_user;
-	const char *host;
-	const char *service;
-	struct cauthmethod *method;
+بنية cauthctxt {
+	ثابت حرف *server_user;
+	ثابت حرف *local_user;
+	ثابت حرف *host;
+	ثابت حرف *service;
+	بنية cauthmethod *روش;
 	sig_atomic_t success;
-	char *authlist;
-#ifdef GSSAPI
+	حرف *authlist;
+#اگر_تعریف_شده GSSAPI
 	/* gssapi */
-	gss_OID_set gss_supported_mechs;
+	gss_OID_مجموعه gss_supported_mechs;
 	u_int mech_tried;
-#endif
+#پایان_اگر
 	/* pubkey */
-	struct idlist keys;
-	int agent_fd;
+	بنية idlist کلیدها;
+	صحيح agent_fd;
 	/* hostbased */
 	Sensitive *sensitive;
-	char *oktypes, *ktypes;
-	const char *active_ktype;
+	حرف *oktypes, *ktypes;
+	ثابت حرف *فعال_ktype;
 	/* kbd-interactive */
-	int info_req_seen;
-	int attempt_kbdint;
+	صحيح info_req_دیده;
+	صحيح attempt_kbdint;
 	/* password */
-	int attempt_passwd;
+	صحيح attempt_passwd;
 	/* generic */
-	void *methoddata;
+	فراغ *methoddata;
 };
 
-struct cauthmethod {
-	char	*name;		/* string to compare against server's list */
-	int	(*userauth)(struct ssh *ssh);
-	void	(*cleanup)(struct ssh *ssh);
-	int	*enabled;	/* flag in option struct that enables method */
-	int	*batch_flag;	/* flag in option struct that disables method */
+بنية cauthmethod {
+	حرف	*name;		/* string to compare against server's list */
+	صحيح	(*userauth)(بنية ssh *ssh);
+	فراغ	(*cleanup)(بنية ssh *ssh);
+	صحيح	*enabled;	/* flag in option struct that enables method */
+	صحيح	*batch_flag;	/* flag in option struct that disables method */
 };
 
-static int input_userauth_service_accept(int, uint32_t, struct ssh *);
-static int input_userauth_success(int, uint32_t, struct ssh *);
-static int input_userauth_failure(int, uint32_t, struct ssh *);
-static int input_userauth_banner(int, uint32_t, struct ssh *);
-static int input_userauth_error(int, uint32_t, struct ssh *);
-static int input_userauth_info_req(int, uint32_t, struct ssh *);
-static int input_userauth_pk_ok(int, uint32_t, struct ssh *);
-static int input_userauth_passwd_changereq(int, uint32_t, struct ssh *);
+ساكن صحيح درون_داد_userauth_service_accept(صحيح, uint32_t, بنية ssh *);
+ساكن صحيح درون_داد_userauth_success(صحيح, uint32_t, بنية ssh *);
+ساكن صحيح درون_داد_userauth_failure(صحيح, uint32_t, بنية ssh *);
+ساكن صحيح درون_داد_userauth_banner(صحيح, uint32_t, بنية ssh *);
+ساكن صحيح درون_داد_userauth_error(صحيح, uint32_t, بنية ssh *);
+ساكن صحيح درون_داد_userauth_info_req(صحيح, uint32_t, بنية ssh *);
+ساكن صحيح درون_داد_userauth_pk_ok(صحيح, uint32_t, بنية ssh *);
+ساكن صحيح درون_داد_userauth_passwd_changereq(صحيح, uint32_t, بنية ssh *);
 
-static int userauth_none(struct ssh *);
-static int userauth_pubkey(struct ssh *);
-static int userauth_passwd(struct ssh *);
-static int userauth_kbdint(struct ssh *);
-static int userauth_hostbased(struct ssh *);
+ساكن صحيح userauth_none(بنية ssh *);
+ساكن صحيح userauth_pubkey(بنية ssh *);
+ساكن صحيح userauth_passwd(بنية ssh *);
+ساكن صحيح userauth_kbdint(بنية ssh *);
+ساكن صحيح userauth_hostbased(بنية ssh *);
 
-#ifdef GSSAPI
-static int userauth_gssapi(struct ssh *);
-static void userauth_gssapi_cleanup(struct ssh *);
-static int input_gssapi_response(int type, uint32_t, struct ssh *);
-static int input_gssapi_token(int type, uint32_t, struct ssh *);
-static int input_gssapi_error(int, uint32_t, struct ssh *);
-static int input_gssapi_errtok(int, uint32_t, struct ssh *);
-#endif
+#اگر_تعریف_شده GSSAPI
+ساكن صحيح userauth_gssapi(بنية ssh *);
+ساكن فراغ userauth_gssapi_cleanup(بنية ssh *);
+ساكن صحيح درون_داد_gssapi_response(صحيح type, uint32_t, بنية ssh *);
+ساكن صحيح درون_داد_gssapi_token(صحيح type, uint32_t, بنية ssh *);
+ساكن صحيح درون_داد_gssapi_error(صحيح, uint32_t, بنية ssh *);
+ساكن صحيح درون_داد_gssapi_errtok(صحيح, uint32_t, بنية ssh *);
+#پایان_اگر
 
-void	userauth(struct ssh *, char *);
+فراغ	userauth(بنية ssh *, حرف *);
 
-static void pubkey_cleanup(struct ssh *);
-static int sign_and_send_pubkey(struct ssh *ssh, Identity *);
-static void pubkey_prepare(struct ssh *, Authctxt *);
-static void pubkey_reset(Authctxt *);
-static struct sshkey *load_identity_file(Identity *);
+ساكن فراغ pubkey_cleanup(بنية ssh *);
+ساكن صحيح sign_and_send_pubkey(بنية ssh *ssh, عنصر_خنثی *);
+ساكن فراغ pubkey_prepare(بنية ssh *, Authctxt *);
+ساكن فراغ pubkey_reset(Authctxt *);
+ساكن بنية sshkey *بارگیری_عنصر_خنثی_file(عنصر_خنثی *);
 
-static Authmethod *authmethod_get(char *authlist);
-static Authmethod *authmethod_lookup(const char *name);
-static char *authmethods_get(void);
+ساكن Authmethod *authmethod_get(حرف *authlist);
+ساكن Authmethod *authmethod_lookup(ثابت حرف *name);
+ساكن حرف *authmethods_get(فراغ);
 
 Authmethod authmethods[] = {
-#ifdef GSSAPI
+#اگر_تعریف_شده GSSAPI
 	{"gssapi-with-mic",
 		userauth_gssapi,
 		userauth_gssapi_cleanup,
 		&options.gss_authentication,
-		NULL},
-#endif
+		عدم},
+#پایان_اگر
 	{"hostbased",
 		userauth_hostbased,
-		NULL,
+		عدم,
 		&options.hostbased_authentication,
-		NULL},
+		عدم},
 	{"publickey",
 		userauth_pubkey,
-		NULL,
+		عدم,
 		&options.pubkey_authentication,
-		NULL},
+		عدم},
 	{"keyboard-interactive",
 		userauth_kbdint,
-		NULL,
+		عدم,
 		&options.kbd_interactive_authentication,
-		&options.batch_mode},
+		&options.batch_نما},
 	{"password",
 		userauth_passwd,
-		NULL,
+		عدم,
 		&options.password_authentication,
-		&options.batch_mode},
+		&options.batch_نما},
 	{"none",
 		userauth_none,
-		NULL,
-		NULL,
-		NULL},
-	{NULL, NULL, NULL, NULL, NULL}
+		عدم,
+		عدم,
+		عدم},
+	{عدم, عدم, عدم, عدم, عدم}
 };
 
-void
-ssh_userauth2(struct ssh *ssh, const char *local_user,
-    const char *server_user, char *host, Sensitive *sensitive)
+فراغ
+ssh_userauth2(بنية ssh *ssh, ثابت حرف *local_user,
+    ثابت حرف *server_user, حرف *host, Sensitive *sensitive)
 {
 	Authctxt authctxt;
-	int r;
+	صحيح r;
 
-	if (options.preferred_authentications == NULL)
+	إذا (options.preferred_authentications == عدم)
 		options.preferred_authentications = authmethods_get();
 
 	/* setup authentication context */
-	memset(&authctxt, 0, sizeof(authctxt));
+	memset(&authctxt, 0, حجم(authctxt));
 	authctxt.server_user = server_user;
 	authctxt.local_user = local_user;
 	authctxt.host = host;
 	authctxt.service = "ssh-connection";		/* service name */
 	authctxt.success = 0;
-	authctxt.method = authmethod_lookup("none");
-	authctxt.authlist = NULL;
-	authctxt.methoddata = NULL;
+	authctxt.روش = authmethod_lookup("none");
+	authctxt.authlist = عدم;
+	authctxt.methoddata = عدم;
 	authctxt.sensitive = sensitive;
-	authctxt.active_ktype = authctxt.oktypes = authctxt.ktypes = NULL;
-	authctxt.info_req_seen = 0;
+	authctxt.فعال_ktype = authctxt.oktypes = authctxt.ktypes = عدم;
+	authctxt.info_req_دیده = 0;
 	authctxt.attempt_kbdint = 0;
 	authctxt.attempt_passwd = 0;
-#if GSSAPI
-	authctxt.gss_supported_mechs = NULL;
+#إذا GSSAPI
+	authctxt.gss_supported_mechs = عدم;
 	authctxt.mech_tried = 0;
-#endif
+#پایان_اگر
 	authctxt.agent_fd = -1;
-	if (authctxt.method == NULL)
+	إذا (authctxt.روش == عدم)
 		fatal_f("internal error: cannot send userauth none request");
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_SERVICE_REQUEST)) != 0 ||
+	إذا ((r = sshpkt_شروع(ssh, SSH2_پیام_SERVICE_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "ssh-userauth")) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
 	ssh->authctxt = &authctxt;
-	ssh_dispatch_init(ssh, &input_userauth_error);
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_SERVICE_ACCEPT, &input_userauth_service_accept);
-	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &authctxt.success);	/* loop until success */
+	ssh_dispatch_init(ssh, &درون_داد_userauth_error);
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_EXT_INFO, kex_درون_داد_ext_info);
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_SERVICE_ACCEPT, &درون_داد_userauth_service_accept);
+	ssh_dispatch_پیاپی_fatal(ssh, DISPATCH_بلوک, &authctxt.success);	/* loop until success */
 	pubkey_cleanup(ssh);
-#ifdef GSSAPI
-	if (authctxt.gss_supported_mechs != NULL) {
+#اگر_تعریف_شده GSSAPI
+	إذا (authctxt.gss_supported_mechs != عدم) {
 		u_int ms;
 
-		gss_release_oid_set(&ms, &authctxt.gss_supported_mechs);
-		authctxt.gss_supported_mechs = NULL;
+		gss_release_oid_مجموعه(&ms, &authctxt.gss_supported_mechs);
+		authctxt.gss_supported_mechs = عدم;
 	}
-#endif
-	ssh->authctxt = NULL;
+#پایان_اگر
+	ssh->authctxt = عدم;
 
-	ssh_dispatch_range(ssh, SSH2_MSG_USERAUTH_MIN, SSH2_MSG_USERAUTH_MAX, NULL);
+	ssh_dispatch_range(ssh, SSH2_پیام_USERAUTH_MIN, SSH2_پیام_USERAUTH_MAX, عدم);
 
-	if (!authctxt.success)
+	إذا (!authctxt.success)
 		fatal("Authentication failed.");
-	if (ssh_packet_connection_is_on_socket(ssh)) {
+	إذا (ssh_packet_connection_is_on_socket(ssh)) {
 		verbose("Authenticated to %s ([%s]:%d) using \"%s\".", host,
-		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
-		    authctxt.method->name);
-	} else {
+		    ssh_remote_ipaddr(ssh), ssh_remote_پورت(ssh),
+		    authctxt.روش->name);
+	} وإلا {
 		verbose("Authenticated to %s (via proxy) using \"%s\".", host,
-		    authctxt.method->name);
+		    authctxt.روش->name);
 	}
 }
 
-static int
-input_userauth_service_accept(int type, uint32_t seq, struct ssh *ssh)
+ساكن صحيح
+درون_داد_userauth_service_accept(صحيح type, uint32_t seq, بنية ssh *ssh)
 {
-	int r;
+	صحيح r;
 
-	if (ssh_packet_remaining(ssh) > 0) {
-		char *reply;
+	إذا (ssh_packet_مانده(ssh) > 0) {
+		حرف *پاسخ;
 
-		if ((r = sshpkt_get_cstring(ssh, &reply, NULL)) != 0)
-			goto out;
-		debug2("service_accept: %s", reply);
-		free(reply);
-	} else {
+		إذا ((r = sshpkt_get_cstring(ssh, &پاسخ, عدم)) != 0)
+			اذهب بیرون;
+		debug2("service_accept: %s", پاسخ);
+		حرر(پاسخ);
+	} وإلا {
 		debug2("buggy server: service_accept w/o service");
 	}
-	if ((r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+	إذا ((r = sshpkt_get_انتها(ssh)) != 0)
+		اذهب بیرون;
 	debug("SSH2_MSG_SERVICE_ACCEPT received");
 
 	/* initial userauth request */
 	userauth_none(ssh);
 
 	/* accept EXT_INFO at any time during userauth */
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, ssh->kex->ext_info_s ?
-	    &kex_input_ext_info : &input_userauth_error);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_SUCCESS, &input_userauth_success);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_FAILURE, &input_userauth_failure);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_BANNER, &input_userauth_banner);
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_EXT_INFO, ssh->kex->ext_info_s ?
+	    &kex_درون_داد_ext_info : &درون_داد_userauth_error);
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_USERAUTH_SUCCESS, &درون_داد_userauth_success);
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_USERAUTH_FAILURE, &درون_داد_userauth_failure);
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_USERAUTH_BANNER, &درون_داد_userauth_banner);
 	r = 0;
- out:
-	return r;
+ بیرون:
+	أرجع r;
 }
 
-void
-userauth(struct ssh *ssh, char *authlist)
+فراغ
+userauth(بنية ssh *ssh, حرف *authlist)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 
-	if (authctxt->method != NULL && authctxt->method->cleanup != NULL)
-		authctxt->method->cleanup(ssh);
+	إذا (authctxt->روش != عدم && authctxt->روش->cleanup != عدم)
+		authctxt->روش->cleanup(ssh);
 
-	free(authctxt->methoddata);
-	authctxt->methoddata = NULL;
-	if (authlist == NULL) {
+	حرر(authctxt->methoddata);
+	authctxt->methoddata = عدم;
+	إذا (authlist == عدم) {
 		authlist = authctxt->authlist;
-	} else {
-		free(authctxt->authlist);
+	} وإلا {
+		حرر(authctxt->authlist);
 		authctxt->authlist = authlist;
 	}
-	for (;;) {
-		Authmethod *method = authmethod_get(authlist);
-		if (method == NULL)
+	لكل (;;) {
+		Authmethod *روش = authmethod_get(authlist);
+		إذا (روش == عدم)
 			fatal("%s@%s: Permission denied (%s).",
 			    authctxt->server_user, authctxt->host, authlist);
-		authctxt->method = method;
+		authctxt->روش = روش;
 
 		/* reset the per method handler */
-		ssh_dispatch_range(ssh, SSH2_MSG_USERAUTH_PER_METHOD_MIN,
-		    SSH2_MSG_USERAUTH_PER_METHOD_MAX, NULL);
+		ssh_dispatch_range(ssh, SSH2_پیام_USERAUTH_در_هر_روش_MIN,
+		    SSH2_پیام_USERAUTH_در_هر_روش_MAX, عدم);
 
 		/* and try new method */
-		if (method->userauth(ssh) != 0) {
-			debug2("we sent a %s packet, wait for reply", method->name);
-			break;
-		} else {
+		إذا (روش->userauth(ssh) != 0) {
+			debug2("we sent a %s packet, wait for reply", روش->name);
+			اكسر;
+		} وإلا {
 			debug2("we did not send a packet, disable method");
-			method->enabled = NULL;
+			روش->enabled = عدم;
 		}
 	}
 }
 
-static int
-input_userauth_error(int type, uint32_t seq, struct ssh *ssh)
+ساكن صحيح
+درون_داد_userauth_error(صحيح type, uint32_t seq, بنية ssh *ssh)
 {
 	fatal_f("bad message during authentication: type %d", type);
-	return 0;
+	أرجع 0;
 }
 
-static int
-input_userauth_banner(int type, uint32_t seq, struct ssh *ssh)
+ساكن صحيح
+درون_داد_userauth_banner(صحيح type, uint32_t seq, بنية ssh *ssh)
 {
-	char *msg = NULL;
-	size_t len;
-	int r;
+	حرف *پیام = عدم;
+	اندازه_t len;
+	صحيح r;
 
 	debug3_f("entering");
-	if ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0)
-		goto out;
-	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO)
-		fmprintf(stderr, "%s", msg);
+	إذا ((r = sshpkt_get_cstring(ssh, &پیام, &len)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, عدم, عدم)) != 0)
+		اذهب بیرون;
+	إذا (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO)
+		fmprintf(stderr, "%s", پیام);
 	r = 0;
- out:
-	free(msg);
-	return r;
+ بیرون:
+	حرر(پیام);
+	أرجع r;
 }
 
-static int
-input_userauth_success(int type, uint32_t seq, struct ssh *ssh)
+ساكن صحيح
+درون_داد_userauth_success(صحيح type, uint32_t seq, بنية ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 
-	if (authctxt == NULL)
+	إذا (authctxt == عدم)
 		fatal_f("no authentication context");
-	free(authctxt->authlist);
-	authctxt->authlist = NULL;
-	if (authctxt->method != NULL && authctxt->method->cleanup != NULL)
-		authctxt->method->cleanup(ssh);
-	free(authctxt->methoddata);
-	authctxt->methoddata = NULL;
+	حرر(authctxt->authlist);
+	authctxt->authlist = عدم;
+	إذا (authctxt->روش != عدم && authctxt->روش->cleanup != عدم)
+		authctxt->روش->cleanup(ssh);
+	حرر(authctxt->methoddata);
+	authctxt->methoddata = عدم;
 	authctxt->success = 1;			/* break out */
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, dispatch_protocol_error);
-	return 0;
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_EXT_INFO, dispatch_protocol_error);
+	أرجع 0;
 }
 
-#if 0
-static int
-input_userauth_success_unexpected(int type, uint32_t seq, struct ssh *ssh)
+#إذا 0
+ساكن صحيح
+درون_داد_userauth_success_unexpected(صحيح type, uint32_t seq, بنية ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 
-	if (authctxt == NULL)
+	إذا (authctxt == عدم)
 		fatal_f("no authentication context");
 
 	fatal("Unexpected authentication success during %s.",
-	    authctxt->method->name);
-	return 0;
+	    authctxt->روش->name);
+	أرجع 0;
 }
-#endif
+#پایان_اگر
 
-static int
-input_userauth_failure(int type, uint32_t seq, struct ssh *ssh)
+ساكن صحيح
+درون_داد_userauth_failure(صحيح type, uint32_t seq, بنية ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	char *authlist = NULL;
+	حرف *authlist = عدم;
 	u_char partial;
 
-	if (authctxt == NULL)
+	إذا (authctxt == عدم)
 		fatal("input_userauth_failure: no authentication context");
 
-	if (sshpkt_get_cstring(ssh, &authlist, NULL) != 0 ||
+	إذا (sshpkt_get_cstring(ssh, &authlist, عدم) != 0 ||
 	    sshpkt_get_u8(ssh, &partial) != 0 ||
-	    sshpkt_get_end(ssh) != 0)
-		goto out;
+	    sshpkt_get_انتها(ssh) != 0)
+		اذهب بیرون;
 
-	if (partial != 0) {
+	إذا (partial != 0) {
 		verbose("Authenticated using \"%s\" with partial success.",
-		    authctxt->method->name);
+		    authctxt->روش->name);
 		/* reset state */
 		pubkey_reset(authctxt);
 	}
 	debug("Authentications that can continue: %s", authlist);
 
 	userauth(ssh, authlist);
-	authlist = NULL;
- out:
-	free(authlist);
-	return 0;
+	authlist = عدم;
+ بیرون:
+	حرر(authlist);
+	أرجع 0;
 }
 
 /*
  * Format an identity for logging including filename, key type, fingerprint
  * and location (agent, etc.). Caller must free.
  */
-static char *
-format_identity(Identity *id)
+ساكن حرف *
+format_عنصر_خنثی(عنصر_خنثی *id)
 {
-	char *fp = NULL, *ret = NULL;
-	const char *note = "";
+	حرف *fp = عدم, *ret = عدم;
+	ثابت حرف *note = "";
 
-	if (id->key != NULL) {
-		fp = sshkey_fingerprint(id->key, options.fingerprint_hash,
+	إذا (id->کلید != عدم) {
+		fp = sshkey_fingerprint(id->کلید, options.fingerprint_hash,
 		    SSH_FP_DEFAULT);
 	}
-	if (id->key) {
-		if ((id->key->flags & SSHKEY_FLAG_EXT) != 0)
+	إذا (id->کلید) {
+		إذا ((id->کلید->flags & SSHKEY_FLAG_EXT) != 0)
 			note = " token";
-		else if (sshkey_is_sk(id->key))
+		وإلا إذا (sshkey_is_sk(id->کلید))
 			note = " authenticator";
 	}
 	xasprintf(&ret, "%s %s%s%s%s%s%s",
 	    id->filename,
-	    id->key ? sshkey_type(id->key) : "", id->key ? " " : "",
+	    id->کلید ? sshkey_type(id->کلید) : "", id->کلید ? " " : "",
 	    fp ? fp : "",
 	    id->userprovided ? " explicit" : "", note,
 	    id->agent_fd != -1 ? " agent" : "");
-	free(fp);
-	return ret;
+	حرر(fp);
+	أرجع ret;
 }
 
-static int
-input_userauth_pk_ok(int type, uint32_t seq, struct ssh *ssh)
+ساكن صحيح
+درون_داد_userauth_pk_ok(صحيح type, uint32_t seq, بنية ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct sshkey *key = NULL;
-	struct sshbuf *keyblob = NULL;
-	Identity *id = NULL;
-	int pktype, found = 0, sent = 0;
-	char *pkalg = NULL, *fp = NULL, *ident = NULL;
-	int r;
+	بنية sshkey *کلید = عدم;
+	بنية sshbuf *keyblob = عدم;
+	عنصر_خنثی *id = عدم;
+	صحيح pktype, یافت = 0, فرستاده = 0;
+	حرف *pkalg = عدم, *fp = عدم, *ident = عدم;
+	صحيح r;
 
-	if (authctxt == NULL)
+	إذا (authctxt == عدم)
 		fatal_f("no authentication context");
 
-	if ((r = sshpkt_get_cstring(ssh, &pkalg, NULL)) != 0 ||
+	إذا ((r = sshpkt_get_cstring(ssh, &pkalg, عدم)) != 0 ||
 	    (r = sshpkt_getb_froms(ssh, &keyblob)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
-		goto done;
+	    (r = sshpkt_get_انتها(ssh)) != 0)
+		اذهب انجامشده;
 
-	if (match_pattern_list(pkalg, options.pubkey_accepted_algos, 0) != 1) {
+	إذا (تطابق_الگو_list(pkalg, options.pubkey_accepted_algos, 0) != 1) {
 		error_f("server replied to PK_OK with signature type %s not "
 		    "in PubkeyAcceptedAlgorithms", pkalg);
 		r = SSH_ERR_SIGN_ALG_UNSUPPORTED;
-		goto done;
+		اذهب انجامشده;
 	}
-	if ((pktype = sshkey_type_from_name(pkalg)) == KEY_UNSPEC) {
+	إذا ((pktype = sshkey_type_from_name(pkalg)) == کلید_UNSPEC) {
 		debug_f("server sent unknown pkalg %s", pkalg);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto done;
+		اذهب انجامشده;
 	}
 	/* inner key type should match signature type */
-	if ((r = sshkey_fromb_allowlist(keyblob, &key, pkalg, NULL)) != 0) {
+	إذا ((r = sshkey_fromb_allowlist(keyblob, &کلید, pkalg, عدم)) != 0) {
 		debug_r(r, "no key from blob. pkalg %s", pkalg);
-		goto done;
+		اذهب انجامشده;
 	}
-	if (key->type != pktype) {
+	إذا (کلید->type != pktype) {
 		error("input_userauth_pk_ok: type mismatch "
 		    "for decoded key (received %d, expected %d)",
-		    key->type, pktype);
+		    کلید->type, pktype);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto done;
+		اذهب انجامشده;
 	}
 
 	/*
@@ -726,433 +726,433 @@ input_userauth_pk_ok(int type, uint32_t seq, struct ssh *ssh)
 	 * moved to the end of the queue.  this also avoids confusion by
 	 * duplicate keys
 	 */
-	TAILQ_FOREACH_REVERSE(id, &authctxt->keys, idlist, next) {
-		if (sshkey_equal(key, id->key)) {
-			found = 1;
-			break;
+	TAILQ_FOREACH_معکوس(id, &authctxt->کلیدها, idlist, بعدی) {
+		إذا (sshkey_equal(کلید, id->کلید)) {
+			یافت = 1;
+			اكسر;
 		}
 	}
-	if (!found || id == NULL) {
-		fp = sshkey_fingerprint(key, options.fingerprint_hash,
+	إذا (!یافت || id == عدم) {
+		fp = sshkey_fingerprint(کلید, options.fingerprint_hash,
 		    SSH_FP_DEFAULT);
 		error_f("server replied with unknown key: %s %s",
-		    sshkey_type(key), fp == NULL ? "<ERROR>" : fp);
+		    sshkey_type(کلید), fp == عدم ? "<ERROR>" : fp);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto done;
+		اذهب انجامشده;
 	}
-	ident = format_identity(id);
+	ident = format_عنصر_خنثی(id);
 	debug("Server accepts key: %s", ident);
-	sent = sign_and_send_pubkey(ssh, id);
+	فرستاده = sign_and_send_pubkey(ssh, id);
 	r = 0;
- done:
-	sshkey_free(key);
+ انجامشده:
+	sshkey_free(کلید);
 	sshbuf_free(keyblob);
-	free(ident);
-	free(fp);
-	free(pkalg);
+	حرر(ident);
+	حرر(fp);
+	حرر(pkalg);
 
 	/* try another method if we did not send a packet */
-	if (r == 0 && sent == 0)
-		userauth(ssh, NULL);
-	return r;
+	إذا (r == 0 && فرستاده == 0)
+		userauth(ssh, عدم);
+	أرجع r;
 }
 
-#ifdef GSSAPI
-static int
-userauth_gssapi(struct ssh *ssh)
+#اگر_تعریف_شده GSSAPI
+ساكن صحيح
+userauth_gssapi(بنية ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	Gssctxt *gssctxt = NULL;
+	Gssctxt *gssctxt = عدم;
 	OM_uint32 min;
-	int r, ok = 0;
-	gss_OID mech = NULL;
+	صحيح r, ok = 0;
+	gss_OID mech = عدم;
 
 	/* Try one GSSAPI method at a time, rather than sending them all at
 	 * once. */
 
-	if (authctxt->gss_supported_mechs == NULL)
+	إذا (authctxt->gss_supported_mechs == عدم)
 		gss_indicate_mechs(&min, &authctxt->gss_supported_mechs);
 
 	/* Check to see whether the mechanism is usable before we offer it */
-	while (authctxt->mech_tried < authctxt->gss_supported_mechs->count &&
+	طالما (authctxt->mech_tried < authctxt->gss_supported_mechs->شمار &&
 	    !ok) {
 		mech = &authctxt->gss_supported_mechs->
 		    elements[authctxt->mech_tried];
 		/* My DER encoding requires length<128 */
-		if (mech->length < 128 && ssh_gssapi_check_mechanism(&gssctxt,
+		إذا (mech->درازی < 128 && ssh_gssapi_check_mechanism(&gssctxt,
 		    mech, authctxt->host)) {
 			ok = 1; /* Mechanism works */
-		} else {
+		} وإلا {
 			authctxt->mech_tried++;
 		}
 	}
 
-	if (!ok || mech == NULL)
-		return 0;
+	إذا (!ok || mech == عدم)
+		أرجع 0;
 
-	authctxt->methoddata=(void *)gssctxt;
+	authctxt->methoddata=(فراغ *)gssctxt;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	إذا ((r = sshpkt_شروع(ssh, SSH2_پیام_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, authctxt->روش->name)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, 1)) != 0 ||
-	    (r = sshpkt_put_u32(ssh, (mech->length) + 2)) != 0 ||
+	    (r = sshpkt_put_u32(ssh, (mech->درازی) + 2)) != 0 ||
 	    (r = sshpkt_put_u8(ssh, SSH_GSS_OIDTYPE)) != 0 ||
-	    (r = sshpkt_put_u8(ssh, mech->length)) != 0 ||
-	    (r = sshpkt_put(ssh, mech->elements, mech->length)) != 0 ||
+	    (r = sshpkt_put_u8(ssh, mech->درازی)) != 0 ||
+	    (r = sshpkt_put(ssh, mech->elements, mech->درازی)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_RESPONSE, &input_gssapi_response);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, &input_gssapi_token);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERROR, &input_gssapi_error);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, &input_gssapi_errtok);
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_USERAUTH_GSSAPI_RESPONSE, &درون_داد_gssapi_response);
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_USERAUTH_GSSAPI_TOKEN, &درون_داد_gssapi_token);
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_USERAUTH_GSSAPI_ERROR, &درون_داد_gssapi_error);
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_USERAUTH_GSSAPI_ERRTOK, &درون_داد_gssapi_errtok);
 
 	authctxt->mech_tried++; /* Move along to next candidate */
 
-	return 1;
+	أرجع 1;
 }
 
-static void
-userauth_gssapi_cleanup(struct ssh *ssh)
+ساكن فراغ
+userauth_gssapi_cleanup(بنية ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 	Gssctxt *gssctxt = (Gssctxt *)authctxt->methoddata;
 
 	ssh_gssapi_delete_ctx(&gssctxt);
-	authctxt->methoddata = NULL;
+	authctxt->methoddata = عدم;
 }
 
-static OM_uint32
-process_gssapi_token(struct ssh *ssh, gss_buffer_t recv_tok)
+ساكن OM_uint32
+process_gssapi_token(بنية ssh *ssh, gss_میانگیر_t recv_tok)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt = authctxt->methoddata;
-	gss_buffer_desc send_tok = GSS_C_EMPTY_BUFFER;
-	gss_buffer_desc mic = GSS_C_EMPTY_BUFFER;
-	gss_buffer_desc gssbuf;
-	OM_uint32 status, ms, flags;
-	int r;
+	gss_میانگیر_desc send_tok = GSS_C_خالی_میانگیر;
+	gss_میانگیر_desc mic = GSS_C_خالی_میانگیر;
+	gss_میانگیر_desc gssbuf;
+	OM_uint32 وضعیت, ms, flags;
+	صحيح r;
 
-	status = ssh_gssapi_init_ctx(gssctxt, options.gss_deleg_creds,
+	وضعیت = ssh_gssapi_init_ctx(gssctxt, options.gss_deleg_creds,
 	    recv_tok, &send_tok, &flags);
 
-	if (send_tok.length > 0) {
-		u_char type = GSS_ERROR(status) ?
-		    SSH2_MSG_USERAUTH_GSSAPI_ERRTOK :
-		    SSH2_MSG_USERAUTH_GSSAPI_TOKEN;
+	إذا (send_tok.درازی > 0) {
+		u_char type = GSS_ERROR(وضعیت) ?
+		    SSH2_پیام_USERAUTH_GSSAPI_ERRTOK :
+		    SSH2_پیام_USERAUTH_GSSAPI_TOKEN;
 
-		if ((r = sshpkt_start(ssh, type)) != 0 ||
-		    (r = sshpkt_put_string(ssh, send_tok.value,
-		    send_tok.length)) != 0 ||
+		إذا ((r = sshpkt_شروع(ssh, type)) != 0 ||
+		    (r = sshpkt_put_string(ssh, send_tok.مقدار,
+		    send_tok.درازی)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
 			fatal_fr(r, "send %u packet", type);
 
-		gss_release_buffer(&ms, &send_tok);
+		gss_release_میانگیر(&ms, &send_tok);
 	}
 
-	if (status == GSS_S_COMPLETE) {
+	إذا (وضعیت == GSS_S_COMPLETE) {
 		/* send either complete or MIC, depending on mechanism */
-		if (!(flags & GSS_C_INTEG_FLAG)) {
-			if ((r = sshpkt_start(ssh,
-			    SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE)) != 0 ||
+		إذا (!(flags & GSS_C_INTEG_FLAG)) {
+			إذا ((r = sshpkt_شروع(ssh,
+			    SSH2_پیام_USERAUTH_GSSAPI_EXCHANGE_COMPLETE)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0)
 				fatal_fr(r, "send completion");
-		} else {
-			struct sshbuf *b;
+		} وإلا {
+			بنية sshbuf *b;
 
-			if ((b = sshbuf_new()) == NULL)
+			إذا ((b = sshbuf_new()) == عدم)
 				fatal_f("sshbuf_new failed");
 			ssh_gssapi_buildmic(b, authctxt->server_user,
 			    authctxt->service, "gssapi-with-mic",
 			    ssh->kex->session_id);
 
-			if ((gssbuf.value = sshbuf_mutable_ptr(b)) == NULL)
+			إذا ((gssbuf.مقدار = sshbuf_mutable_ptr(b)) == عدم)
 				fatal_f("sshbuf_mutable_ptr failed");
-			gssbuf.length = sshbuf_len(b);
+			gssbuf.درازی = sshbuf_len(b);
 
-			status = ssh_gssapi_sign(gssctxt, &gssbuf, &mic);
+			وضعیت = ssh_gssapi_sign(gssctxt, &gssbuf, &mic);
 
-			if (!GSS_ERROR(status)) {
-				if ((r = sshpkt_start(ssh,
-				    SSH2_MSG_USERAUTH_GSSAPI_MIC)) != 0 ||
-				    (r = sshpkt_put_string(ssh, mic.value,
-				    mic.length)) != 0 ||
+			إذا (!GSS_ERROR(وضعیت)) {
+				إذا ((r = sshpkt_شروع(ssh,
+				    SSH2_پیام_USERAUTH_GSSAPI_MIC)) != 0 ||
+				    (r = sshpkt_put_string(ssh, mic.مقدار,
+				    mic.درازی)) != 0 ||
 				    (r = sshpkt_send(ssh)) != 0)
 					fatal_fr(r, "send MIC");
 			}
 
 			sshbuf_free(b);
-			gss_release_buffer(&ms, &mic);
+			gss_release_میانگیر(&ms, &mic);
 		}
 	}
 
-	return status;
+	أرجع وضعیت;
 }
 
-static int
-input_gssapi_response(int type, uint32_t plen, struct ssh *ssh)
+ساكن صحيح
+درون_داد_gssapi_response(صحيح type, uint32_t plen, بنية ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt;
-	size_t oidlen;
-	u_char *oidv = NULL;
-	int r;
+	اندازه_t oidlen;
+	u_char *oidv = عدم;
+	صحيح r;
 
-	if (authctxt == NULL)
+	إذا (authctxt == عدم)
 		fatal("input_gssapi_response: no authentication context");
 	gssctxt = authctxt->methoddata;
 
 	/* Setup our OID */
-	if ((r = sshpkt_get_string(ssh, &oidv, &oidlen)) != 0)
-		goto done;
+	إذا ((r = sshpkt_get_string(ssh, &oidv, &oidlen)) != 0)
+		اذهب انجامشده;
 
-	if (oidlen <= 2 ||
+	إذا (oidlen <= 2 ||
 	    oidv[0] != SSH_GSS_OIDTYPE ||
 	    oidv[1] != oidlen - 2) {
 		debug("Badly encoded mechanism OID received");
-		userauth(ssh, NULL);
-		goto ok;
+		userauth(ssh, عدم);
+		اذهب ok;
 	}
 
-	if (!ssh_gssapi_check_oid(gssctxt, oidv + 2, oidlen - 2))
+	إذا (!ssh_gssapi_check_oid(gssctxt, oidv + 2, oidlen - 2))
 		fatal("Server returned different OID than expected");
 
-	if ((r = sshpkt_get_end(ssh)) != 0)
-		goto done;
+	إذا ((r = sshpkt_get_انتها(ssh)) != 0)
+		اذهب انجامشده;
 
-	if (GSS_ERROR(process_gssapi_token(ssh, GSS_C_NO_BUFFER))) {
+	إذا (GSS_ERROR(process_gssapi_token(ssh, GSS_C_NO_میانگیر))) {
 		/* Start again with next method on list */
 		debug("Trying to start again");
-		userauth(ssh, NULL);
-		goto ok;
+		userauth(ssh, عدم);
+		اذهب ok;
 	}
  ok:
 	r = 0;
- done:
-	free(oidv);
-	return r;
+ انجامشده:
+	حرر(oidv);
+	أرجع r;
 }
 
-static int
-input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
+ساكن صحيح
+درون_داد_gssapi_token(صحيح type, uint32_t plen, بنية ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	gss_buffer_desc recv_tok;
-	u_char *p = NULL;
-	size_t len;
-	OM_uint32 status;
-	int r;
+	gss_میانگیر_desc recv_tok;
+	u_char *p = عدم;
+	اندازه_t len;
+	OM_uint32 وضعیت;
+	صحيح r;
 
-	if (authctxt == NULL)
+	إذا (authctxt == عدم)
 		fatal("input_gssapi_response: no authentication context");
 
-	if ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+	إذا ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
+	    (r = sshpkt_get_انتها(ssh)) != 0)
+		اذهب بیرون;
 
-	recv_tok.value = p;
-	recv_tok.length = len;
-	status = process_gssapi_token(ssh, &recv_tok);
+	recv_tok.مقدار = p;
+	recv_tok.درازی = len;
+	وضعیت = process_gssapi_token(ssh, &recv_tok);
 
 	/* Start again with the next method in the list */
-	if (GSS_ERROR(status)) {
-		userauth(ssh, NULL);
+	إذا (GSS_ERROR(وضعیت)) {
+		userauth(ssh, عدم);
 		/* ok */
 	}
 	r = 0;
- out:
-	free(p);
-	return r;
+ بیرون:
+	حرر(p);
+	أرجع r;
 }
 
-static int
-input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
+ساكن صحيح
+درون_داد_gssapi_errtok(صحيح type, uint32_t plen, بنية ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt;
-	gss_buffer_desc send_tok = GSS_C_EMPTY_BUFFER;
-	gss_buffer_desc recv_tok;
+	gss_میانگیر_desc send_tok = GSS_C_خالی_میانگیر;
+	gss_میانگیر_desc recv_tok;
 	OM_uint32 ms;
-	u_char *p = NULL;
-	size_t len;
-	int r;
+	u_char *p = عدم;
+	اندازه_t len;
+	صحيح r;
 
-	if (authctxt == NULL)
+	إذا (authctxt == عدم)
 		fatal("input_gssapi_response: no authentication context");
 	gssctxt = authctxt->methoddata;
 
-	if ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0) {
-		free(p);
-		return r;
+	إذا ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
+	    (r = sshpkt_get_انتها(ssh)) != 0) {
+		حرر(p);
+		أرجع r;
 	}
 
 	/* Stick it into GSSAPI and see what it says */
-	recv_tok.value = p;
-	recv_tok.length = len;
-	(void)ssh_gssapi_init_ctx(gssctxt, options.gss_deleg_creds,
-	    &recv_tok, &send_tok, NULL);
-	free(p);
-	gss_release_buffer(&ms, &send_tok);
+	recv_tok.مقدار = p;
+	recv_tok.درازی = len;
+	(فراغ)ssh_gssapi_init_ctx(gssctxt, options.gss_deleg_creds,
+	    &recv_tok, &send_tok, عدم);
+	حرر(p);
+	gss_release_میانگیر(&ms, &send_tok);
 
 	/* Server will be returning a failed packet after this one */
-	return 0;
+	أرجع 0;
 }
 
-static int
-input_gssapi_error(int type, uint32_t plen, struct ssh *ssh)
+ساكن صحيح
+درون_داد_gssapi_error(صحيح type, uint32_t plen, بنية ssh *ssh)
 {
-	char *msg = NULL;
-	char *lang = NULL;
-	int r;
+	حرف *پیام = عدم;
+	حرف *lang = عدم;
+	صحيح r;
 
-	if ((r = sshpkt_get_u32(ssh, NULL)) != 0 ||	/* maj */
-	    (r = sshpkt_get_u32(ssh, NULL)) != 0 ||	/* min */
-	    (r = sshpkt_get_cstring(ssh, &msg, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0)
-		goto out;
-	r = sshpkt_get_end(ssh);
-	debug("Server GSSAPI Error:\n%s", msg);
- out:
-	free(msg);
-	free(lang);
-	return r;
+	إذا ((r = sshpkt_get_u32(ssh, عدم)) != 0 ||	/* maj */
+	    (r = sshpkt_get_u32(ssh, عدم)) != 0 ||	/* min */
+	    (r = sshpkt_get_cstring(ssh, &پیام, عدم)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &lang, عدم)) != 0)
+		اذهب بیرون;
+	r = sshpkt_get_انتها(ssh);
+	debug("Server GSSAPI Error:\n%s", پیام);
+ بیرون:
+	حرر(پیام);
+	حرر(lang);
+	أرجع r;
 }
-#endif /* GSSAPI */
+#پایان_اگر /* GSSAPI */
 
-static int
-userauth_none(struct ssh *ssh)
+ساكن صحيح
+userauth_none(بنية ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	int r;
+	صحيح r;
 
 	/* initial userauth request */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	إذا ((r = sshpkt_شروع(ssh, SSH2_پیام_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, authctxt->روش->name)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
-	return 1;
+	أرجع 1;
 }
 
-static int
-userauth_passwd(struct ssh *ssh)
+ساكن صحيح
+userauth_passwd(بنية ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	char *password, *prompt = NULL;
-	const char *host = options.host_key_alias ?  options.host_key_alias :
+	حرف *password, *prompt = عدم;
+	ثابت حرف *host = options.host_کلید_alias ?  options.host_کلید_alias :
 	    authctxt->host;
-	int r;
+	صحيح r;
 
-	if (authctxt->attempt_passwd++ >= options.number_of_password_prompts)
-		return 0;
+	إذا (authctxt->attempt_passwd++ >= options.عدد_از_password_prompts)
+		أرجع 0;
 
-	if (authctxt->attempt_passwd != 1)
+	إذا (authctxt->attempt_passwd != 1)
 		error("Permission denied, please try again.");
 
 	xasprintf(&prompt, "%s@%s's password: ", authctxt->server_user, host);
 	password = read_passphrase(prompt, 0);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	إذا ((r = sshpkt_شروع(ssh, SSH2_پیام_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, authctxt->روش->name)) != 0 ||
 	    (r = sshpkt_put_u8(ssh, 0)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, password)) != 0 ||
-	    (r = sshpkt_add_padding(ssh, 64)) != 0 ||
+	    (r = sshpkt_جمع_کن_padding(ssh, 64)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
-	free(prompt);
-	if (password != NULL)
-		freezero(password, strlen(password));
+	حرر(prompt);
+	إذا (password != عدم)
+		freezero(password, طول_رشته(password));
 
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ,
-	    &input_userauth_passwd_changereq);
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_USERAUTH_PASSWD_CHANGEREQ,
+	    &درون_داد_userauth_passwd_changereq);
 
-	return 1;
+	أرجع 1;
 }
 
 /*
  * parse PASSWD_CHANGEREQ, prompt user and send SSH2_MSG_USERAUTH_REQUEST
  */
-static int
-input_userauth_passwd_changereq(int type, uint32_t seqnr, struct ssh *ssh)
+ساكن صحيح
+درون_داد_userauth_passwd_changereq(صحيح type, uint32_t seqnr, بنية ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	char *info = NULL, *lang = NULL, *password = NULL, *retype = NULL;
-	char prompt[256];
-	const char *host;
-	int r, addnl;
-	size_t len;
+	حرف *info = عدم, *lang = عدم, *password = عدم, *retype = عدم;
+	حرف prompt[256];
+	ثابت حرف *host;
+	صحيح r, addnl;
+	اندازه_t len;
 
 	debug2("input_userauth_passwd_changereq");
 
-	if (authctxt == NULL)
+	إذا (authctxt == عدم)
 		fatal("input_userauth_passwd_changereq: "
 		    "no authentication context");
-	host = options.host_key_alias ? options.host_key_alias : authctxt->host;
+	host = options.host_کلید_alias ? options.host_کلید_alias : authctxt->host;
 
-	if ((r = sshpkt_get_cstring(ssh, &info, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0)
-		goto out;
-	if ((len = strlen(info)) > 0) {
+	إذا ((r = sshpkt_get_cstring(ssh, &info, عدم)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &lang, عدم)) != 0)
+		اذهب بیرون;
+	إذا ((len = طول_رشته(info)) > 0) {
 		addnl = info[len] != '\n';
 		fmprintf(stderr, "%s%s", info, addnl ? "\n" : "");
 	}
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	إذا ((r = sshpkt_شروع(ssh, SSH2_پیام_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, authctxt->روش->name)) != 0 ||
 	    (r = sshpkt_put_u8(ssh, 1)) != 0)	/* additional info */
-		goto out;
+		اذهب بیرون;
 
-	snprintf(prompt, sizeof(prompt),
+	snprintf(prompt, حجم(prompt),
 	    "Enter %.30s@%.128s's old password: ",
 	    authctxt->server_user, host);
 	password = read_passphrase(prompt, 0);
-	if ((r = sshpkt_put_cstring(ssh, password)) != 0)
-		goto out;
+	إذا ((r = sshpkt_put_cstring(ssh, password)) != 0)
+		اذهب بیرون;
 
-	freezero(password, strlen(password));
-	password = NULL;
-	while (password == NULL) {
-		snprintf(prompt, sizeof(prompt),
+	freezero(password, طول_رشته(password));
+	password = عدم;
+	طالما (password == عدم) {
+		snprintf(prompt, حجم(prompt),
 		    "Enter %.30s@%.128s's new password: ",
 		    authctxt->server_user, host);
 		password = read_passphrase(prompt, RP_ALLOW_EOF);
-		if (password == NULL) {
+		إذا (password == عدم) {
 			/* bail out */
 			r = 0;
-			goto out;
+			اذهب بیرون;
 		}
-		snprintf(prompt, sizeof(prompt),
+		snprintf(prompt, حجم(prompt),
 		    "Retype %.30s@%.128s's new password: ",
 		    authctxt->server_user, host);
 		retype = read_passphrase(prompt, 0);
-		if (strcmp(password, retype) != 0) {
-			freezero(password, strlen(password));
+		إذا (strcmp(password, retype) != 0) {
+			freezero(password, طول_رشته(password));
 			logit("Mismatch; try again, EOF to quit.");
-			password = NULL;
+			password = عدم;
 		}
-		freezero(retype, strlen(retype));
+		freezero(retype, طول_رشته(retype));
 	}
-	if ((r = sshpkt_put_cstring(ssh, password)) != 0 ||
-	    (r = sshpkt_add_padding(ssh, 64)) != 0 ||
+	إذا ((r = sshpkt_put_cstring(ssh, password)) != 0 ||
+	    (r = sshpkt_جمع_کن_padding(ssh, 64)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		goto out;
+		اذهب بیرون;
 
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ,
-	    &input_userauth_passwd_changereq);
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_USERAUTH_PASSWD_CHANGEREQ,
+	    &درون_داد_userauth_passwd_changereq);
 	r = 0;
- out:
-	if (password)
-		freezero(password, strlen(password));
-	free(info);
-	free(lang);
-	return r;
+ بیرون:
+	إذا (password)
+		freezero(password, طول_رشته(password));
+	حرر(info);
+	حرر(lang);
+	أرجع r;
 }
 
 /*
@@ -1162,23 +1162,23 @@ input_userauth_passwd_changereq(int type, uint32_t seqnr, struct ssh *ssh)
  * Call with ssh==NULL to ignore server-sig-algs extension list and
  * only attempt with the key's base signature type.
  */
-static char *
-key_sig_algorithm(struct ssh *ssh, const struct sshkey *key)
+ساكن حرف *
+کلید_sig_algorithm(بنية ssh *ssh, ثابت بنية sshkey *کلید)
 {
-	char *allowed, *oallowed, *cp, *tmp, *alg = NULL;
-	const char *server_sig_algs;
+	حرف *allowed, *oallowed, *cp, *tmp, *alg = عدم;
+	ثابت حرف *server_sig_algs;
 
 	/*
 	 * The signature algorithm will only differ from the key algorithm
 	 * for RSA keys/certs and when the server advertises support for
 	 * newer (SHA2) algorithms.
 	 */
-	if (ssh == NULL || ssh->kex->server_sig_algs == NULL ||
-	    (key->type != KEY_RSA && key->type != KEY_RSA_CERT) ||
-	    (key->type == KEY_RSA_CERT && (ssh->compat & SSH_BUG_SIGTYPE))) {
+	إذا (ssh == عدم || ssh->kex->server_sig_algs == عدم ||
+	    (کلید->type != کلید_RSA && کلید->type != کلید_RSA_CERT) ||
+	    (کلید->type == کلید_RSA_CERT && (ssh->compat & SSH_BUG_SIGTYPE))) {
 		/* Filter base key signature alg against our configuration */
-		return match_list(sshkey_ssh_name(key),
-		    options.pubkey_accepted_algos, NULL);
+		أرجع تطابق_list(sshkey_ssh_name(کلید),
+		    options.pubkey_accepted_algos, عدم);
 	}
 
 	/*
@@ -1186,7 +1186,7 @@ key_sig_algorithm(struct ssh *ssh, const struct sshkey *key)
 	 * fails to advertise it via SSH2_MSG_EXT_INFO.
 	 */
 	server_sig_algs = ssh->kex->server_sig_algs;
-	if (key->type == KEY_RSA && (ssh->compat & SSH_BUG_SIGTYPE74))
+	إذا (کلید->type == کلید_RSA && (ssh->compat & SSH_BUG_SIGTYPE74))
 		server_sig_algs = "rsa-sha2-256,rsa-sha2-512";
 
 	/*
@@ -1196,153 +1196,153 @@ key_sig_algorithm(struct ssh *ssh, const struct sshkey *key)
 	 * the server.
 	 */
 	oallowed = allowed = xstrdup(options.pubkey_accepted_algos);
-	while ((cp = strsep(&allowed, ",")) != NULL) {
-		if (sshkey_type_from_name(cp) != key->type)
-			continue;
-		tmp = match_list(sshkey_sigalg_by_name(cp),
-		    server_sig_algs, NULL);
-		if (tmp != NULL)
+	طالما ((cp = strsep(&allowed, ",")) != عدم) {
+		إذا (sshkey_type_from_name(cp) != کلید->type)
+			استمر;
+		tmp = تطابق_list(sshkey_sigalg_by_name(cp),
+		    server_sig_algs, عدم);
+		إذا (tmp != عدم)
 			alg = xstrdup(cp);
-		free(tmp);
-		if (alg != NULL)
-			break;
+		حرر(tmp);
+		إذا (alg != عدم)
+			اكسر;
 	}
-	free(oallowed);
-	return alg;
+	حرر(oallowed);
+	أرجع alg;
 }
 
-static int
-identity_sign(struct identity *id, u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen, u_int compat, const char *alg)
+ساكن صحيح
+عنصر_خنثی_sign(بنية عنصر_خنثی_2 *id, u_char **sigp, اندازه_t *lenp,
+    ثابت u_char *داده, اندازه_t datalen, u_int compat, ثابت حرف *alg)
 {
-	struct sshkey *sign_key = NULL, *prv = NULL;
-	int is_agent = 0, retried = 0, r = SSH_ERR_INTERNAL_ERROR;
-	struct notifier_ctx *notifier = NULL;
-	char *fp = NULL, *pin = NULL, *prompt = NULL;
+	بنية sshkey *sign_کلید = عدم, *prv = عدم;
+	صحيح is_agent = 0, retried = 0, r = SSH_ERR_داخلی_ERROR;
+	بنية notifier_ctx *notifier = عدم;
+	حرف *fp = عدم, *pin = عدم, *prompt = عدم;
 
-	*sigp = NULL;
+	*sigp = عدم;
 	*lenp = 0;
 
 	/* The agent supports this key. */
-	if (id->key != NULL && id->agent_fd != -1) {
-		return ssh_agent_sign(id->agent_fd, id->key, sigp, lenp,
-		    data, datalen, alg, compat);
+	إذا (id->کلید != عدم && id->agent_fd != -1) {
+		أرجع ssh_agent_sign(id->agent_fd, id->کلید, sigp, lenp,
+		    داده, datalen, alg, compat);
 	}
 
 	/*
 	 * We have already loaded the private key or the private key is
 	 * stored in external hardware.
 	 */
-	if (id->key != NULL &&
-	    (id->isprivate || (id->key->flags & SSHKEY_FLAG_EXT))) {
-		sign_key = id->key;
+	إذا (id->کلید != عدم &&
+	    (id->isprivate || (id->کلید->flags & SSHKEY_FLAG_EXT))) {
+		sign_کلید = id->کلید;
 		is_agent = 1;
-	} else {
+	} وإلا {
 		/* Load the private key from the file. */
-		if ((prv = load_identity_file(id)) == NULL)
-			return SSH_ERR_KEY_NOT_FOUND;
-		if (id->key != NULL && !sshkey_equal_public(prv, id->key)) {
+		إذا ((prv = بارگیری_عنصر_خنثی_file(id)) == عدم)
+			أرجع SSH_ERR_کلید_NOT_یافت;
+		إذا (id->کلید != عدم && !sshkey_equal_عمومی(prv, id->کلید)) {
 			error_f("private key %s contents do not match public",
 			    id->filename);
-			r = SSH_ERR_KEY_NOT_FOUND;
-			goto out;
+			r = SSH_ERR_کلید_NOT_یافت;
+			اذهب بیرون;
 		}
-		sign_key = prv;
+		sign_کلید = prv;
 	}
  retry_pin:
 	/* Prompt for touch for non-agent FIDO keys that request UP */
-	if (!is_agent && sshkey_is_sk(sign_key) &&
-	    (sign_key->sk_flags & SSH_SK_USER_PRESENCE_REQD)) {
+	إذا (!is_agent && sshkey_is_sk(sign_کلید) &&
+	    (sign_کلید->sk_flags & SSH_SK_USER_PRESENCE_REQD)) {
 		/* XXX should batch mode just skip these? */
-		if ((fp = sshkey_fingerprint(sign_key,
-		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
+		إذا ((fp = sshkey_fingerprint(sign_کلید,
+		    options.fingerprint_hash, SSH_FP_DEFAULT)) == عدم)
 			fatal_f("fingerprint failed");
-		notifier = notify_start(options.batch_mode,
+		notifier = notify_شروع(options.batch_نما,
 		    "Confirm user presence for key %s %s",
-		    sshkey_type(sign_key), fp);
-		free(fp);
+		    sshkey_type(sign_کلید), fp);
+		حرر(fp);
 	}
-	if ((r = sshkey_sign(sign_key, sigp, lenp, data, datalen,
+	إذا ((r = sshkey_sign(sign_کلید, sigp, lenp, داده, datalen,
 	    alg, options.sk_provider, pin, compat)) != 0) {
 		debug_fr(r, "sshkey_sign");
-		if (!retried && pin == NULL && !is_agent &&
-		    sshkey_is_sk(sign_key) &&
-		    r == SSH_ERR_KEY_WRONG_PASSPHRASE) {
-			notify_complete(notifier, NULL);
-			notifier = NULL;
+		إذا (!retried && pin == عدم && !is_agent &&
+		    sshkey_is_sk(sign_کلید) &&
+		    r == SSH_ERR_کلید_WRONG_PASSPHRASE) {
+			notify_complete(notifier, عدم);
+			notifier = عدم;
 			xasprintf(&prompt, "Enter PIN for %s key %s: ",
-			    sshkey_type(sign_key), id->filename);
+			    sshkey_type(sign_کلید), id->filename);
 			pin = read_passphrase(prompt, 0);
 			retried = 1;
-			goto retry_pin;
+			اذهب retry_pin;
 		}
-		goto out;
+		اذهب بیرون;
 	}
 
 	/*
 	 * PKCS#11 tokens may not support all signature algorithms,
 	 * so check what we get back.
 	 */
-	if (id->key != NULL && (id->key->flags & SSHKEY_FLAG_EXT) != 0 &&
+	إذا (id->کلید != عدم && (id->کلید->flags & SSHKEY_FLAG_EXT) != 0 &&
 	    (r = sshkey_check_sigtype(*sigp, *lenp, alg)) != 0) {
 		debug_fr(r, "sshkey_check_sigtype");
-		goto out;
+		اذهب بیرون;
 	}
 	/* success */
 	r = 0;
- out:
-	free(prompt);
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
-	notify_complete(notifier, r == 0 ? "User presence confirmed" : NULL);
+ بیرون:
+	حرر(prompt);
+	إذا (pin != عدم)
+		freezero(pin, طول_رشته(pin));
+	notify_complete(notifier, r == 0 ? "User presence confirmed" : عدم);
 	sshkey_free(prv);
-	return r;
+	أرجع r;
 }
 
-static int
-id_filename_matches(Identity *id, Identity *private_id)
+ساكن صحيح
+id_filename_matches(عنصر_خنثی *id, عنصر_خنثی *خصوصی_id)
 {
-	static const char * const suffixes[] = { ".pub", "-cert.pub", NULL };
-	size_t len = strlen(id->filename), plen = strlen(private_id->filename);
-	size_t i, slen;
+	ساكن ثابت حرف * ثابت suffixes[] = { ".pub", "-cert.pub", عدم };
+	اندازه_t len = طول_رشته(id->filename), plen = طول_رشته(خصوصی_id->filename);
+	اندازه_t i, slen;
 
-	if (strcmp(id->filename, private_id->filename) == 0)
-		return 1;
-	for (i = 0; suffixes[i]; i++) {
-		slen = strlen(suffixes[i]);
-		if (len > slen && plen == len - slen &&
+	إذا (strcmp(id->filename, خصوصی_id->filename) == 0)
+		أرجع 1;
+	لكل (i = 0; suffixes[i]; i++) {
+		slen = طول_رشته(suffixes[i]);
+		إذا (len > slen && plen == len - slen &&
 		    strcmp(id->filename + (len - slen), suffixes[i]) == 0 &&
-		    memcmp(id->filename, private_id->filename, plen) == 0)
-			return 1;
+		    memcmp(id->filename, خصوصی_id->filename, plen) == 0)
+			أرجع 1;
 	}
-	return 0;
+	أرجع 0;
 }
 
-static int
-sign_and_send_pubkey(struct ssh *ssh, Identity *id)
+ساكن صحيح
+sign_and_send_pubkey(بنية ssh *ssh, عنصر_خنثی *id)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	struct sshbuf *b = NULL;
-	Identity *private_id, *sign_id = NULL;
-	u_char *signature = NULL;
-	size_t slen = 0, skip = 0;
-	int r, fallback_sigtype, sent = 0;
-	char *alg = NULL, *fp = NULL;
-	const char *loc = "", *method = "publickey";
-	int hostbound = 0;
+	بنية sshbuf *b = عدم;
+	عنصر_خنثی *خصوصی_id, *sign_id = عدم;
+	u_char *signature = عدم;
+	اندازه_t slen = 0, skip = 0;
+	صحيح r, fallback_sigtype, فرستاده = 0;
+	حرف *alg = عدم, *fp = عدم;
+	ثابت حرف *loc = "", *روش = "publickey";
+	صحيح hostbound = 0;
 
 	/* prefer host-bound pubkey signatures if supported by server */
-	if ((ssh->kex->flags & KEX_HAS_PUBKEY_HOSTBOUND) != 0 &&
+	إذا ((ssh->kex->flags & KEX_HAS_PUBKEY_HOSTBOUND) != 0 &&
 	    (options.pubkey_authentication & SSH_PUBKEY_AUTH_HBOUND) != 0) {
 		hostbound = 1;
-		method = "publickey-hostbound-v00@openssh.com";
+		روش = "publickey-hostbound-v00@openssh.com";
 	}
 
-	if ((fp = sshkey_fingerprint(id->key, options.fingerprint_hash,
-	    SSH_FP_DEFAULT)) == NULL)
-		return 0;
+	إذا ((fp = sshkey_fingerprint(id->کلید, options.fingerprint_hash,
+	    SSH_FP_DEFAULT)) == عدم)
+		أرجع 0;
 
-	debug3_f("using %s with %s %s", method, sshkey_type(id->key), fp);
+	debug3_f("using %s with %s %s", روش, sshkey_type(id->کلید), fp);
 
 	/*
 	 * If the key is an certificate, try to find a matching private key
@@ -1352,12 +1352,12 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 	 * This will try to set sign_id to the private key that will perform
 	 * the signature.
 	 */
-	if (id->agent_fd == -1 && sshkey_is_cert(id->key)) {
-		TAILQ_FOREACH(private_id, &authctxt->keys, next) {
-			if (sshkey_equal_public(id->key, private_id->key) &&
-			    id->key->type != private_id->key->type) {
-				sign_id = private_id;
-				break;
+	إذا (id->agent_fd == -1 && sshkey_is_cert(id->کلید)) {
+		TAILQ_FOREACH(خصوصی_id, &authctxt->کلیدها, بعدی) {
+			إذا (sshkey_equal_عمومی(id->کلید, خصوصی_id->کلید) &&
+			    id->کلید->type != خصوصی_id->کلید->type) {
+				sign_id = خصوصی_id;
+				اكسر;
 			}
 		}
 		/*
@@ -1367,22 +1367,22 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 		 * of keeping just a private key file and public
 		 * certificate on disk.
 		 */
-		if (sign_id == NULL &&
+		إذا (sign_id == عدم &&
 		    !id->isprivate && id->agent_fd == -1 &&
-		    (id->key->flags & SSHKEY_FLAG_EXT) == 0) {
-			TAILQ_FOREACH(private_id, &authctxt->keys, next) {
-				if (private_id->key == NULL &&
-				    id_filename_matches(id, private_id)) {
-					sign_id = private_id;
-					break;
+		    (id->کلید->flags & SSHKEY_FLAG_EXT) == 0) {
+			TAILQ_FOREACH(خصوصی_id, &authctxt->کلیدها, بعدی) {
+				إذا (خصوصی_id->کلید == عدم &&
+				    id_filename_matches(id, خصوصی_id)) {
+					sign_id = خصوصی_id;
+					اكسر;
 				}
 			}
 		}
-		if (sign_id != NULL) {
+		إذا (sign_id != عدم) {
 			debug2_f("using private key \"%s\"%s for "
 			    "certificate", sign_id->filename,
 			    sign_id->agent_fd != -1 ? " from agent" : "");
-		} else {
+		} وإلا {
 			debug_f("no separate private key for certificate "
 			    "\"%s\"", id->filename);
 		}
@@ -1392,370 +1392,370 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 	 * If the above didn't select another identity to do the signing
 	 * then default to the one we started with.
 	 */
-	if (sign_id == NULL)
+	إذا (sign_id == عدم)
 		sign_id = id;
 
 	/* assemble and sign data */
-	for (fallback_sigtype = 0; fallback_sigtype <= 1; fallback_sigtype++) {
-		free(alg);
+	لكل (fallback_sigtype = 0; fallback_sigtype <= 1; fallback_sigtype++) {
+		حرر(alg);
 		slen = 0;
-		signature = NULL;
-		if ((alg = key_sig_algorithm(fallback_sigtype ? NULL : ssh,
-		    id->key)) == NULL) {
+		signature = عدم;
+		إذا ((alg = کلید_sig_algorithm(fallback_sigtype ? عدم : ssh,
+		    id->کلید)) == عدم) {
 			error_f("no mutual signature supported");
-			goto out;
+			اذهب بیرون;
 		}
 		debug3_f("signing using %s %s", alg, fp);
 
 		sshbuf_free(b);
-		if ((b = sshbuf_new()) == NULL)
+		إذا ((b = sshbuf_new()) == عدم)
 			fatal_f("sshbuf_new failed");
-		if ((r = sshbuf_put_stringb(b,
+		إذا ((r = sshbuf_put_stringb(b,
 		    ssh->kex->session_id)) != 0)
 			fatal_fr(r, "sshbuf_put_stringb");
 		skip = sshbuf_len(b);
-		if ((r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+		إذا ((r = sshbuf_put_u8(b, SSH2_پیام_USERAUTH_REQUEST)) != 0 ||
 		    (r = sshbuf_put_cstring(b, authctxt->server_user)) != 0 ||
 		    (r = sshbuf_put_cstring(b, authctxt->service)) != 0 ||
-		    (r = sshbuf_put_cstring(b, method)) != 0 ||
+		    (r = sshbuf_put_cstring(b, روش)) != 0 ||
 		    (r = sshbuf_put_u8(b, 1)) != 0 ||
 		    (r = sshbuf_put_cstring(b, alg)) != 0 ||
-		    (r = sshkey_puts(id->key, b)) != 0) {
+		    (r = sshkey_puts(id->کلید, b)) != 0) {
 			fatal_fr(r, "assemble signed data");
 		}
-		if (hostbound) {
-			if (ssh->kex->initial_hostkey == NULL) {
+		إذا (hostbound) {
+			إذا (ssh->kex->initial_hostkey == عدم) {
 				fatal_f("internal error: initial hostkey "
 				    "not recorded");
 			}
-			if ((r = sshkey_puts(ssh->kex->initial_hostkey, b)) != 0)
-				fatal_fr(r, "assemble %s hostkey", method);
+			إذا ((r = sshkey_puts(ssh->kex->initial_hostkey, b)) != 0)
+				fatal_fr(r, "assemble %s hostkey", روش);
 		}
 		/* generate signature */
-		r = identity_sign(sign_id, &signature, &slen,
+		r = عنصر_خنثی_sign(sign_id, &signature, &slen,
 		    sshbuf_ptr(b), sshbuf_len(b), ssh->compat, alg);
-		if (r == 0)
-			break;
-		else if (r == SSH_ERR_KEY_NOT_FOUND)
-			goto out; /* soft failure */
-		else if (r == SSH_ERR_SIGN_ALG_UNSUPPORTED &&
+		إذا (r == 0)
+			اكسر;
+		وإلا إذا (r == SSH_ERR_کلید_NOT_یافت)
+			اذهب بیرون; /* soft failure */
+		وإلا إذا (r == SSH_ERR_SIGN_ALG_UNSUPPORTED &&
 		    !fallback_sigtype) {
-			if (sign_id->agent_fd != -1)
+			إذا (sign_id->agent_fd != -1)
 				loc = "agent ";
-			else if (sign_id->key != NULL &&
-			    (sign_id->key->flags & SSHKEY_FLAG_EXT) != 0)
+			وإلا إذا (sign_id->کلید != عدم &&
+			    (sign_id->کلید->flags & SSHKEY_FLAG_EXT) != 0)
 				loc = "token ";
 			logit("%skey %s %s returned incorrect signature type",
-			    loc, sshkey_type(id->key), fp);
-			continue;
+			    loc, sshkey_type(id->کلید), fp);
+			استمر;
 		}
 		error_fr(r, "signing failed for %s \"%s\"%s",
-		    sshkey_type(sign_id->key), sign_id->filename,
+		    sshkey_type(sign_id->کلید), sign_id->filename,
 		    id->agent_fd != -1 ? " from agent" : "");
-		goto out;
+		اذهب بیرون;
 	}
-	if (slen == 0 || signature == NULL) /* shouldn't happen */
+	إذا (slen == 0 || signature == عدم) /* shouldn't happen */
 		fatal_f("no signature");
 
 	/* append signature */
-	if ((r = sshbuf_put_string(b, signature, slen)) != 0)
+	إذا ((r = sshbuf_put_string(b, signature, slen)) != 0)
 		fatal_fr(r, "append signature");
 
-#ifdef DEBUG_PK
+#اگر_تعریف_شده DEBUG_PK
 	sshbuf_dump(b, stderr);
-#endif
+#پایان_اگر
 	/* skip session id and packet type */
-	if ((r = sshbuf_consume(b, skip + 1)) != 0)
+	إذا ((r = sshbuf_consume(b, skip + 1)) != 0)
 		fatal_fr(r, "consume");
 
 	/* put remaining data from buffer into packet */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	إذا ((r = sshpkt_شروع(ssh, SSH2_پیام_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_putb(ssh, b)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "enqueue request");
 
 	/* success */
-	sent = 1;
+	فرستاده = 1;
 
- out:
-	free(fp);
-	free(alg);
+ بیرون:
+	حرر(fp);
+	حرر(alg);
 	sshbuf_free(b);
 	freezero(signature, slen);
-	return sent;
+	أرجع فرستاده;
 }
 
-static int
-send_pubkey_test(struct ssh *ssh, Identity *id)
+ساكن صحيح
+send_pubkey_test(بنية ssh *ssh, عنصر_خنثی *id)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	u_char *blob = NULL;
-	char *alg = NULL;
-	size_t bloblen;
+	u_char *blob = عدم;
+	حرف *alg = عدم;
+	اندازه_t bloblen;
 	u_int have_sig = 0;
-	int sent = 0, r;
+	صحيح فرستاده = 0, r;
 
-	if ((alg = key_sig_algorithm(ssh, id->key)) == NULL) {
+	إذا ((alg = کلید_sig_algorithm(ssh, id->کلید)) == عدم) {
 		debug_f("no mutual signature algorithm");
-		goto out;
+		اذهب بیرون;
 	}
 
-	if ((r = sshkey_to_blob(id->key, &blob, &bloblen)) != 0) {
+	إذا ((r = sshkey_مقصد_blob(id->کلید, &blob, &bloblen)) != 0) {
 		/* we cannot handle this key */
 		debug3_f("cannot handle key");
-		goto out;
+		اذهب بیرون;
 	}
 	/* register callback for USERAUTH_PK_OK message */
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PK_OK, &input_userauth_pk_ok);
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_USERAUTH_PK_OK, &درون_داد_userauth_pk_ok);
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	إذا ((r = sshpkt_شروع(ssh, SSH2_پیام_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, authctxt->روش->name)) != 0 ||
 	    (r = sshpkt_put_u8(ssh, have_sig)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, alg)) != 0 ||
 	    (r = sshpkt_put_string(ssh, blob, bloblen)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
-	sent = 1;
+	فرستاده = 1;
 
- out:
-	free(alg);
-	free(blob);
-	return sent;
+ بیرون:
+	حرر(alg);
+	حرر(blob);
+	أرجع فرستاده;
 }
 
-static struct sshkey *
-load_identity_file(Identity *id)
+ساكن بنية sshkey *
+بارگیری_عنصر_خنثی_file(عنصر_خنثی *id)
 {
-	struct sshkey *private = NULL;
-	char prompt[300], *passphrase, *comment;
-	int r, quit = 0, i;
-	struct stat st;
+	بنية sshkey *خاص = عدم;
+	حرف prompt[300], *passphrase, *comment;
+	صحيح r, quit = 0, i;
+	بنية stat st;
 
-	if (stat(id->filename, &st) == -1) {
+	إذا (stat(id->filename, &st) == -1) {
 		do_log2(id->userprovided ?
 		    SYSLOG_LEVEL_INFO : SYSLOG_LEVEL_DEBUG3,
 		    "no such identity: %s: %s", id->filename, strerror(errno));
-		return NULL;
+		أرجع عدم;
 	}
-	snprintf(prompt, sizeof prompt,
+	snprintf(prompt, حجم prompt,
 	    "Enter passphrase for key '%.100s': ", id->filename);
-	for (i = 0; i <= options.number_of_password_prompts; i++) {
-		if (i == 0)
+	لكل (i = 0; i <= options.عدد_از_password_prompts; i++) {
+		إذا (i == 0)
 			passphrase = "";
-		else {
+		وإلا {
 			passphrase = read_passphrase(prompt, 0);
-			if (*passphrase == '\0') {
+			إذا (*passphrase == '\0') {
 				debug2("no passphrase given, try next key");
-				free(passphrase);
-				break;
+				حرر(passphrase);
+				اكسر;
 			}
 		}
-		switch ((r = sshkey_load_private_type(KEY_UNSPEC, id->filename,
-		    passphrase, &private, &comment))) {
-		case 0:
-			break;
-		case SSH_ERR_KEY_WRONG_PASSPHRASE:
-			if (options.batch_mode) {
+		بدل ((r = sshkey_بارگیری_خصوصی_type(کلید_UNSPEC, id->filename,
+		    passphrase, &خاص, &comment))) {
+		حالة 0:
+			اكسر;
+		حالة SSH_ERR_کلید_WRONG_PASSPHRASE:
+			إذا (options.batch_نما) {
 				quit = 1;
-				break;
+				اكسر;
 			}
-			if (i != 0)
+			إذا (i != 0)
 				debug2("bad passphrase given, try again...");
-			break;
-		case SSH_ERR_SYSTEM_ERROR:
-			if (errno == ENOENT) {
+			اكسر;
+		حالة SSH_ERR_SYSTEM_ERROR:
+			إذا (errno == ENOENT) {
 				debug2_r(r, "Load key \"%s\"", id->filename);
 				quit = 1;
-				break;
+				اكسر;
 			}
 			/* FALLTHROUGH */
-		default:
+		افتراضي:
 			error_r(r, "Load key \"%s\"", id->filename);
 			quit = 1;
-			break;
+			اكسر;
 		}
-		if (private != NULL && sshkey_is_sk(private) &&
-		    options.sk_provider == NULL) {
+		إذا (خاص != عدم && sshkey_is_sk(خاص) &&
+		    options.sk_provider == عدم) {
 			debug("key \"%s\" is an authenticator-hosted key, "
 			    "but no provider specified", id->filename);
-			sshkey_free(private);
-			private = NULL;
+			sshkey_free(خاص);
+			خاص = عدم;
 			quit = 1;
 		}
-		if (!quit && (r = sshkey_check_rsa_length(private,
-		    options.required_rsa_size)) != 0) {
+		إذا (!quit && (r = sshkey_check_rsa_درازی(خاص,
+		    options.required_rsa_اندازه)) != 0) {
 			debug_fr(r, "Skipping key %s", id->filename);
-			sshkey_free(private);
-			private = NULL;
+			sshkey_free(خاص);
+			خاص = عدم;
 			quit = 1;
 		}
-		if (!quit && private != NULL && id->agent_fd == -1 &&
-		    !(id->key && id->isprivate))
-			maybe_add_key_to_agent(id->filename, private, comment,
+		إذا (!quit && خاص != عدم && id->agent_fd == -1 &&
+		    !(id->کلید && id->isprivate))
+			maybe_جمع_کن_کلید_مقصد_agent(id->filename, خاص, comment,
 			    passphrase);
-		if (i > 0)
-			freezero(passphrase, strlen(passphrase));
-		free(comment);
-		if (private != NULL || quit)
-			break;
+		إذا (i > 0)
+			freezero(passphrase, طول_رشته(passphrase));
+		حرر(comment);
+		إذا (خاص != عدم || quit)
+			اكسر;
 	}
-	return private;
+	أرجع خاص;
 }
 
-static int
-key_type_allowed(struct sshkey *key, const char *allowlist)
+ساكن صحيح
+کلید_type_allowed(بنية sshkey *کلید, ثابت حرف *allowlist)
 {
-	if (match_pattern_list(sshkey_ssh_name(key), allowlist, 0) == 1)
-		return 1;
+	إذا (تطابق_الگو_list(sshkey_ssh_name(کلید), allowlist, 0) == 1)
+		أرجع 1;
 
 	/* RSA keys/certs might be allowed by alternate signature types */
-	switch (key->type) {
-	case KEY_RSA:
-		if (match_pattern_list("rsa-sha2-512", allowlist, 0) == 1)
-			return 1;
-		if (match_pattern_list("rsa-sha2-256", allowlist, 0) == 1)
-			return 1;
-		break;
-	case KEY_RSA_CERT:
-		if (match_pattern_list("rsa-sha2-512-cert-v01@openssh.com",
+	بدل (کلید->type) {
+	حالة کلید_RSA:
+		إذا (تطابق_الگو_list("rsa-sha2-512", allowlist, 0) == 1)
+			أرجع 1;
+		إذا (تطابق_الگو_list("rsa-sha2-256", allowlist, 0) == 1)
+			أرجع 1;
+		اكسر;
+	حالة کلید_RSA_CERT:
+		إذا (تطابق_الگو_list("rsa-sha2-512-cert-v01@openssh.com",
 		    allowlist, 0) == 1)
-			return 1;
-		if (match_pattern_list("rsa-sha2-256-cert-v01@openssh.com",
+			أرجع 1;
+		إذا (تطابق_الگو_list("rsa-sha2-256-cert-v01@openssh.com",
 		    allowlist, 0) == 1)
-			return 1;
-		break;
+			أرجع 1;
+		اكسر;
 	}
-	return 0;
+	أرجع 0;
 }
 
-static int
-key_type_allowed_by_config(struct sshkey *key)
+ساكن صحيح
+کلید_type_allowed_by_config(بنية sshkey *کلید)
 {
-	return key_type_allowed(key, options.pubkey_accepted_algos);
+	أرجع کلید_type_allowed(کلید, options.pubkey_accepted_algos);
 }
 
 /* obtain a list of keys from the agent */
-static int
-get_agent_identities(struct ssh *ssh, int *agent_fdp,
-    struct ssh_identitylist **idlistp)
+ساكن صحيح
+get_agent_identities(بنية ssh *ssh, صحيح *agent_fdp,
+    بنية ssh_identitylist **idlistp)
 {
-	int r, agent_fd;
-	struct ssh_identitylist *idlist;
+	صحيح r, agent_fd;
+	بنية ssh_identitylist *idlist;
 
-	if ((r = ssh_get_authentication_socket(&agent_fd)) != 0) {
-		if (r != SSH_ERR_AGENT_NOT_PRESENT)
+	إذا ((r = ssh_get_authentication_socket(&agent_fd)) != 0) {
+		إذا (r != SSH_ERR_AGENT_NOT_PRESENT)
 			debug_fr(r, "ssh_get_authentication_socket");
-		return r;
+		أرجع r;
 	}
-	if (ssh != NULL && ssh->kex != NULL) {
-		if ((r = ssh_agent_bind_hostkey(agent_fd, ssh->kex->initial_hostkey,
+	إذا (ssh != عدم && ssh->kex != عدم) {
+		إذا ((r = ssh_agent_bind_hostkey(agent_fd, ssh->kex->initial_hostkey,
 		    ssh->kex->session_id, ssh->kex->initial_sig, 0)) == 0)
 			debug_f("bound agent to hostkey");
-		else
+		وإلا
 			debug2_fr(r, "ssh_agent_bind_hostkey");
 	}
 
-	if ((r = ssh_fetch_identitylist(agent_fd, &idlist)) != 0) {
+	إذا ((r = ssh_fetch_identitylist(agent_fd, &idlist)) != 0) {
 		debug_fr(r, "ssh_fetch_identitylist");
 		close(agent_fd);
-		return r;
+		أرجع r;
 	}
 	/* success */
 	*agent_fdp = agent_fd;
 	*idlistp = idlist;
 	debug_f("agent returned %zu keys", idlist->nkeys);
-	return 0;
+	أرجع 0;
 }
 
 /*
  * Returns nonzero if the certificate extensions/critical-options section
  * has the specified option present, zero otherwise.
  */
-static int
-cert_has_option(struct sshbuf *oblob, const char *target)
+ساكن صحيح
+cert_has_option(بنية sshbuf *oblob, ثابت حرف *هدف)
 {
-	struct sshbuf *c = NULL, *data = NULL;
-	char *name = NULL;
-	int r, found = 0;
+	بنية sshbuf *c = عدم, *داده = عدم;
+	حرف *name = عدم;
+	صحيح r, یافت = 0;
 
-	if (oblob == NULL || (c = sshbuf_fromb(oblob)) == NULL)
-		return 0;
-	while (sshbuf_len(c) > 0) {
-		sshbuf_free(data);
-		data = NULL;
-		free(name);
-		name = NULL;
-		if ((r = sshbuf_get_cstring(c, &name, NULL)) != 0 ||
-		    (r = sshbuf_froms(c, &data)) != 0)
-			break;
-		if (strcmp(name, target) == 0) {
-			found = 1;
-			break;
+	إذا (oblob == عدم || (c = sshbuf_fromb(oblob)) == عدم)
+		أرجع 0;
+	طالما (sshbuf_len(c) > 0) {
+		sshbuf_free(داده);
+		داده = عدم;
+		حرر(name);
+		name = عدم;
+		إذا ((r = sshbuf_get_cstring(c, &name, عدم)) != 0 ||
+		    (r = sshbuf_froms(c, &داده)) != 0)
+			اكسر;
+		إذا (strcmp(name, هدف) == 0) {
+			یافت = 1;
+			اكسر;
 		}
 	}
-	sshbuf_free(data);
-	free(name);
+	sshbuf_free(داده);
+	حرر(name);
 	sshbuf_free(c);
-	return found;
+	أرجع یافت;
 }
 
 /*
  * Returns an integer describing the priority of the identity
  * within its group. Lower numbers are higher priority.
  */
-#define MAX_ID_PRIORITY 3
-static int
-identity_prioritise(struct identity *id)
+#تعریف_کن MAX_ID_اولویت 3
+ساكن صحيح
+عنصر_خنثی_prioritise(بنية عنصر_خنثی_2 *id)
 {
-	if (id == NULL || id->key == NULL)
-		return 3;
-	if (!sshkey_is_cert(id->key) || id->key->cert == NULL)
-		return 3;
-	if (sshkey_is_sk(id->key) &&
-	    cert_has_option(id->key->cert->critical, "verify-required"))
-		return 2;
-	if (sshkey_is_sk(id->key) &&
-	    cert_has_option(id->key->cert->extensions, "no-touch-required"))
-		return 0;
-	return 1;
+	إذا (id == عدم || id->کلید == عدم)
+		أرجع 3;
+	إذا (!sshkey_is_cert(id->کلید) || id->کلید->cert == عدم)
+		أرجع 3;
+	إذا (sshkey_is_sk(id->کلید) &&
+	    cert_has_option(id->کلید->cert->critical, "verify-required"))
+		أرجع 2;
+	إذا (sshkey_is_sk(id->کلید) &&
+	    cert_has_option(id->کلید->cert->extensions, "no-touch-required"))
+		أرجع 0;
+	أرجع 1;
 }
 
-static void
-order_identities_by_prio(struct idlist *list)
+ساكن فراغ
+ترتیب_identities_by_prio(بنية idlist *list)
 {
-	struct idlist prio[MAX_ID_PRIORITY + 1], sorted;
-	struct identity *id, *tmp, *dummy;
-	int p;
+	بنية idlist prio[MAX_ID_اولویت + 1], sorted;
+	بنية عنصر_خنثی_2 *id, *tmp, *dummy;
+	صحيح p;
 
-	for (p = 0; p <= MAX_ID_PRIORITY; p++)
+	لكل (p = 0; p <= MAX_ID_اولویت; p++)
 		TAILQ_INIT(&prio[p]);
 	TAILQ_INIT(&sorted);
 
-	TAILQ_FOREACH_SAFE(id, list, next, tmp) {
-		if (id->userprovided)
-			continue;
-		dummy = xcalloc(1, sizeof(*dummy));
+	TAILQ_FOREACH_امن(id, list, بعدی, tmp) {
+		إذا (id->userprovided)
+			استمر;
+		dummy = xcalloc(1, حجم(*dummy));
 		dummy->userprovided = -1;
-		TAILQ_INSERT_BEFORE(id, dummy, next);
-		TAILQ_REMOVE(list, id, next);
-		p = identity_prioritise(id);
-		if (p < 0 || p > MAX_ID_PRIORITY)
+		TAILQ_INSERT_BEFORE(id, dummy, بعدی);
+		TAILQ_REMOVE(list, id, بعدی);
+		p = عنصر_خنثی_prioritise(id);
+		إذا (p < 0 || p > MAX_ID_اولویت)
 			fatal_f("internal error: bad priority");
-		TAILQ_INSERT_TAIL(&prio[p], id, next);
+		TAILQ_INSERT_TAIL(&prio[p], id, بعدی);
 	}
-	for (p = 0; p <= MAX_ID_PRIORITY; p++)
-		TAILQ_CONCAT(&sorted, &prio[p], next);
+	لكل (p = 0; p <= MAX_ID_اولویت; p++)
+		TAILQ_CONCAT(&sorted, &prio[p], بعدی);
 
-	TAILQ_FOREACH_SAFE(id, list, next, tmp) {
-		if (id->userprovided != -1)
-			continue;
-		struct identity *s = TAILQ_FIRST(&sorted);
-		TAILQ_REMOVE(&sorted, s, next);
-		TAILQ_INSERT_BEFORE(id, s, next);
-		TAILQ_REMOVE(list, id, next);
-		free(id);
+	TAILQ_FOREACH_امن(id, list, بعدی, tmp) {
+		إذا (id->userprovided != -1)
+			استمر;
+		بنية عنصر_خنثی_2 *s = TAILQ_FIRST(&sorted);
+		TAILQ_REMOVE(&sorted, s, بعدی);
+		TAILQ_INSERT_BEFORE(id, s, بعدی);
+		TAILQ_REMOVE(list, id, بعدی);
+		حرر(id);
 	}
 }
 
@@ -1767,513 +1767,513 @@ order_identities_by_prio(struct idlist *list)
  *	4. PKCS#11 keys that are found in the config file
  *	5. keys that are only listed in the config file
  */
-static void
-pubkey_prepare(struct ssh *ssh, Authctxt *authctxt)
+ساكن فراغ
+pubkey_prepare(بنية ssh *ssh, Authctxt *authctxt)
 {
-	struct identity *id, *id2, *tmp;
-	struct idlist agent, files, certs, agent_keys, *preferred;
-	struct sshkey *key;
-	int disallowed, agent_fd = -1, i, r, found;
-	size_t j;
-	struct ssh_identitylist *idlist;
-	char *cp, *ident;
+	بنية عنصر_خنثی_2 *id, *id2, *tmp;
+	بنية idlist agent, files, certs, agent_کلیدها, *preferred;
+	بنية sshkey *کلید;
+	صحيح disallowed, agent_fd = -1, i, r, یافت;
+	اندازه_t j;
+	بنية ssh_identitylist *idlist;
+	حرف *cp, *ident;
 
 	TAILQ_INIT(&agent);	/* keys from the agent */
 	TAILQ_INIT(&files);	/* keys from the config file */
 	TAILQ_INIT(&certs);	/* certificates specified by user */
-	TAILQ_INIT(&agent_keys); /* keys supported by the agent */
-	preferred = &authctxt->keys;
+	TAILQ_INIT(&agent_کلیدها); /* keys supported by the agent */
+	preferred = &authctxt->کلیدها;
 	TAILQ_INIT(preferred);	/* preferred order of keys */
 
 	/* list of keys stored in the filesystem and PKCS#11 */
-	for (i = 0; i < options.num_identity_files; i++) {
-		key = options.identity_keys[i];
-		if (key && key->cert &&
-		    key->cert->type != SSH2_CERT_TYPE_USER) {
+	لكل (i = 0; i < options.رقم_عنصر_خنثی_files; i++) {
+		کلید = options.عنصر_خنثی_کلیدها[i];
+		إذا (کلید && کلید->cert &&
+		    کلید->cert->type != SSH2_CERT_TYPE_USER) {
 			debug_f("ignoring certificate %s: not a user "
-			    "certificate", options.identity_files[i]);
-			continue;
+			    "certificate", options.عنصر_خنثی_files[i]);
+			استمر;
 		}
-		if (key && sshkey_is_sk(key) && options.sk_provider == NULL) {
+		إذا (کلید && sshkey_is_sk(کلید) && options.sk_provider == عدم) {
 			debug_f("ignoring authenticator-hosted key %s as no "
 			    "SecurityKeyProvider has been specified",
-			    options.identity_files[i]);
-			continue;
+			    options.عنصر_خنثی_files[i]);
+			استمر;
 		}
-		options.identity_keys[i] = NULL;
-		id = xcalloc(1, sizeof(*id));
+		options.عنصر_خنثی_کلیدها[i] = عدم;
+		id = xcalloc(1, حجم(*id));
 		id->agent_fd = -1;
-		id->key = key;
-		id->filename = xstrdup(options.identity_files[i]);
-		id->userprovided = options.identity_file_userprovided[i];
-		TAILQ_INSERT_TAIL(&files, id, next);
+		id->کلید = کلید;
+		id->filename = xstrdup(options.عنصر_خنثی_files[i]);
+		id->userprovided = options.عنصر_خنثی_file_userprovided[i];
+		TAILQ_INSERT_TAIL(&files, id, بعدی);
 	}
 
 	/* list of certificates specified by user */
-	for (i = 0; i < options.num_certificate_files; i++) {
-		key = options.certificates[i];
-		if (!sshkey_is_cert(key) || key->cert == NULL ||
-		    key->cert->type != SSH2_CERT_TYPE_USER) {
+	لكل (i = 0; i < options.رقم_certificate_files; i++) {
+		کلید = options.certificates[i];
+		إذا (!sshkey_is_cert(کلید) || کلید->cert == عدم ||
+		    کلید->cert->type != SSH2_CERT_TYPE_USER) {
 			debug_f("ignoring certificate %s: not a user "
-			    "certificate", options.identity_files[i]);
-			continue;
+			    "certificate", options.عنصر_خنثی_files[i]);
+			استمر;
 		}
-		if (key && sshkey_is_sk(key) && options.sk_provider == NULL) {
+		إذا (کلید && sshkey_is_sk(کلید) && options.sk_provider == عدم) {
 			debug_f("ignoring authenticator-hosted key "
 			    "certificate %s as no "
 			    "SecurityKeyProvider has been specified",
-			    options.identity_files[i]);
-			continue;
+			    options.عنصر_خنثی_files[i]);
+			استمر;
 		}
-		id = xcalloc(1, sizeof(*id));
+		id = xcalloc(1, حجم(*id));
 		id->agent_fd = -1;
-		id->key = key;
+		id->کلید = کلید;
 		id->filename = xstrdup(options.certificate_files[i]);
 		id->userprovided = options.certificate_file_userprovided[i];
-		TAILQ_INSERT_TAIL(&certs, id, next);
+		TAILQ_INSERT_TAIL(&certs, id, بعدی);
 	}
-	order_identities_by_prio(&certs);
-	TAILQ_CONCAT(preferred, &certs, next);
+	ترتیب_identities_by_prio(&certs);
+	TAILQ_CONCAT(preferred, &certs, بعدی);
 
 	/* list of keys supported by the agent */
-	if ((r = get_agent_identities(ssh, &agent_fd, &idlist)) == 0) {
-		for (j = 0; j < idlist->nkeys; j++) {
-			if ((r = sshkey_check_rsa_length(idlist->keys[j],
-			    options.required_rsa_size)) != 0) {
+	إذا ((r = get_agent_identities(ssh, &agent_fd, &idlist)) == 0) {
+		لكل (j = 0; j < idlist->nkeys; j++) {
+			إذا ((r = sshkey_check_rsa_درازی(idlist->کلیدها[j],
+			    options.required_rsa_اندازه)) != 0) {
 				debug_fr(r, "ignoring %s agent key",
-				    sshkey_ssh_name(idlist->keys[j]));
-				continue;
+				    sshkey_ssh_name(idlist->کلیدها[j]));
+				استمر;
 			}
-			found = 0;
-			TAILQ_FOREACH(id, &files, next) {
+			یافت = 0;
+			TAILQ_FOREACH(id, &files, بعدی) {
 				/*
 				 * agent keys from the config file are
 				 * preferred
 				 */
-				if (sshkey_equal(idlist->keys[j], id->key)) {
-					TAILQ_REMOVE(&files, id, next);
-					TAILQ_INSERT_TAIL(&agent_keys, id, next);
+				إذا (sshkey_equal(idlist->کلیدها[j], id->کلید)) {
+					TAILQ_REMOVE(&files, id, بعدی);
+					TAILQ_INSERT_TAIL(&agent_کلیدها, id, بعدی);
 					id->agent_fd = agent_fd;
-					found = 1;
-					break;
+					یافت = 1;
+					اكسر;
 				}
 			}
-			if (!found && !options.identities_only) {
-				id = xcalloc(1, sizeof(*id));
+			إذا (!یافت && !options.identities_only) {
+				id = xcalloc(1, حجم(*id));
 				/* XXX "steals" key/comment from idlist */
-				id->key = idlist->keys[j];
+				id->کلید = idlist->کلیدها[j];
 				id->filename = idlist->comments[j];
-				idlist->keys[j] = NULL;
-				idlist->comments[j] = NULL;
+				idlist->کلیدها[j] = عدم;
+				idlist->comments[j] = عدم;
 				id->agent_fd = agent_fd;
-				TAILQ_INSERT_TAIL(&agent, id, next);
+				TAILQ_INSERT_TAIL(&agent, id, بعدی);
 			}
 		}
 		ssh_free_identitylist(idlist);
 		/* append remaining agent keys */
-		TAILQ_CONCAT(&agent_keys, &agent, next);
-		order_identities_by_prio(&agent_keys);
-		TAILQ_CONCAT(preferred, &agent_keys, next);
+		TAILQ_CONCAT(&agent_کلیدها, &agent, بعدی);
+		ترتیب_identities_by_prio(&agent_کلیدها);
+		TAILQ_CONCAT(preferred, &agent_کلیدها, بعدی);
 		authctxt->agent_fd = agent_fd;
 	}
 	/* Prefer PKCS11 keys that are explicitly listed */
-	TAILQ_FOREACH_SAFE(id, &files, next, tmp) {
-		if (id->key == NULL || (id->key->flags & SSHKEY_FLAG_EXT) == 0)
-			continue;
-		found = 0;
-		TAILQ_FOREACH(id2, &files, next) {
-			if (id2->key == NULL ||
-			    (id2->key->flags & SSHKEY_FLAG_EXT) != 0)
-				continue;
-			if (sshkey_equal(id->key, id2->key)) {
-				TAILQ_REMOVE(&files, id, next);
-				TAILQ_INSERT_TAIL(preferred, id, next);
-				found = 1;
-				break;
+	TAILQ_FOREACH_امن(id, &files, بعدی, tmp) {
+		إذا (id->کلید == عدم || (id->کلید->flags & SSHKEY_FLAG_EXT) == 0)
+			استمر;
+		یافت = 0;
+		TAILQ_FOREACH(id2, &files, بعدی) {
+			إذا (id2->کلید == عدم ||
+			    (id2->کلید->flags & SSHKEY_FLAG_EXT) != 0)
+				استمر;
+			إذا (sshkey_equal(id->کلید, id2->کلید)) {
+				TAILQ_REMOVE(&files, id, بعدی);
+				TAILQ_INSERT_TAIL(preferred, id, بعدی);
+				یافت = 1;
+				اكسر;
 			}
 		}
 		/* If IdentitiesOnly set and key not found then don't use it */
-		if (!found && options.identities_only) {
-			TAILQ_REMOVE(&files, id, next);
-			freezero(id, sizeof(*id));
+		إذا (!یافت && options.identities_only) {
+			TAILQ_REMOVE(&files, id, بعدی);
+			freezero(id, حجم(*id));
 		}
 	}
-	order_identities_by_prio(&files);
+	ترتیب_identities_by_prio(&files);
 	/* append remaining keys from the config file */
-	TAILQ_CONCAT(preferred, &files, next);
+	TAILQ_CONCAT(preferred, &files, بعدی);
 	/* finally, filter by PubkeyAcceptedAlgorithms */
-	TAILQ_FOREACH_SAFE(id, preferred, next, id2) {
+	TAILQ_FOREACH_امن(id, preferred, بعدی, id2) {
 		disallowed = 0;
-		cp = NULL;
-		if (id->key == NULL)
-			continue;
-		if (!key_type_allowed_by_config(id->key)) {
+		cp = عدم;
+		إذا (id->کلید == عدم)
+			استمر;
+		إذا (!کلید_type_allowed_by_config(id->کلید)) {
 			debug("Skipping %s key %s - corresponding algorithm "
 			    "not in PubkeyAcceptedAlgorithms",
-			    sshkey_ssh_name(id->key), id->filename);
+			    sshkey_ssh_name(id->کلید), id->filename);
 			disallowed = 1;
-		} else if (ssh != NULL && ssh->kex != NULL &&
-		    ssh->kex->server_sig_algs != NULL &&
-		    (cp = key_sig_algorithm(ssh, id->key)) == NULL) {
+		} وإلا إذا (ssh != عدم && ssh->kex != عدم &&
+		    ssh->kex->server_sig_algs != عدم &&
+		    (cp = کلید_sig_algorithm(ssh, id->کلید)) == عدم) {
 			debug("Skipping %s key %s - corresponding algorithm "
 			    "not supported by server",
-			    sshkey_ssh_name(id->key), id->filename);
+			    sshkey_ssh_name(id->کلید), id->filename);
 			disallowed = 1;
 		}
-		free(cp);
-		if (!disallowed)
-			continue;
+		حرر(cp);
+		إذا (!disallowed)
+			استمر;
 		/* remove key */
-		TAILQ_REMOVE(preferred, id, next);
-		sshkey_free(id->key);
-		free(id->filename);
-		freezero(id, sizeof(*id));
+		TAILQ_REMOVE(preferred, id, بعدی);
+		sshkey_free(id->کلید);
+		حرر(id->filename);
+		freezero(id, حجم(*id));
 	}
 	/* List the keys we plan on using */
-	TAILQ_FOREACH_SAFE(id, preferred, next, id2) {
-		ident = format_identity(id);
+	TAILQ_FOREACH_امن(id, preferred, بعدی, id2) {
+		ident = format_عنصر_خنثی(id);
 		debug("Will attempt key: %s", ident);
-		free(ident);
+		حرر(ident);
 	}
 	debug2_f("done");
 }
 
-static void
-pubkey_cleanup(struct ssh *ssh)
+ساكن فراغ
+pubkey_cleanup(بنية ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	Identity *id;
+	عنصر_خنثی *id;
 
-	if (authctxt->agent_fd != -1) {
+	إذا (authctxt->agent_fd != -1) {
 		ssh_close_authentication_socket(authctxt->agent_fd);
 		authctxt->agent_fd = -1;
 	}
-	for (id = TAILQ_FIRST(&authctxt->keys); id;
-	    id = TAILQ_FIRST(&authctxt->keys)) {
-		TAILQ_REMOVE(&authctxt->keys, id, next);
-		sshkey_free(id->key);
-		free(id->filename);
-		free(id);
+	لكل (id = TAILQ_FIRST(&authctxt->کلیدها); id;
+	    id = TAILQ_FIRST(&authctxt->کلیدها)) {
+		TAILQ_REMOVE(&authctxt->کلیدها, id, بعدی);
+		sshkey_free(id->کلید);
+		حرر(id->filename);
+		حرر(id);
 	}
 }
 
-void
-pubkey_dump(struct ssh *ssh)
+فراغ
+pubkey_dump(بنية ssh *ssh)
 {
 	Authctxt authctxt;
-	Identity *id;
-	char *ident;
+	عنصر_خنثی *id;
+	حرف *ident;
 
-	memset(&authctxt, 0, sizeof(authctxt));
+	memset(&authctxt, 0, حجم(authctxt));
 	authctxt.agent_fd = -1;
 	ssh->authctxt = &authctxt;
 
 	pubkey_prepare(ssh, &authctxt);
-	TAILQ_FOREACH(id, &authctxt.keys, next) {
-		ident = format_identity(id);
+	TAILQ_FOREACH(id, &authctxt.کلیدها, بعدی) {
+		ident = format_عنصر_خنثی(id);
 		fprintf(stdout, "%s\n", ident);
-		free(ident);
+		حرر(ident);
 	}
 	pubkey_cleanup(ssh);
-	ssh->authctxt = NULL;
+	ssh->authctxt = عدم;
 }
 
-static void
+ساكن فراغ
 pubkey_reset(Authctxt *authctxt)
 {
-	Identity *id;
+	عنصر_خنثی *id;
 
-	TAILQ_FOREACH(id, &authctxt->keys, next)
+	TAILQ_FOREACH(id, &authctxt->کلیدها, بعدی)
 		id->tried = 0;
 }
 
-static int
-userauth_pubkey(struct ssh *ssh)
+ساكن صحيح
+userauth_pubkey(بنية ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	Identity *id;
-	int sent = 0;
-	char *ident;
-	static int prepared;
+	عنصر_خنثی *id;
+	صحيح فرستاده = 0;
+	حرف *ident;
+	ساكن صحيح prepared;
 
-	if (!prepared) {
+	إذا (!prepared) {
 		pubkey_prepare(ssh, authctxt);
 		prepared = 1;
 	}
 
-	while ((id = TAILQ_FIRST(&authctxt->keys))) {
-		if (id->tried++)
-			return (0);
+	طالما ((id = TAILQ_FIRST(&authctxt->کلیدها))) {
+		إذا (id->tried++)
+			أرجع (0);
 		/* move key to the end of the queue */
-		TAILQ_REMOVE(&authctxt->keys, id, next);
-		TAILQ_INSERT_TAIL(&authctxt->keys, id, next);
+		TAILQ_REMOVE(&authctxt->کلیدها, id, بعدی);
+		TAILQ_INSERT_TAIL(&authctxt->کلیدها, id, بعدی);
 		/*
 		 * send a test message if we have the public key. for
 		 * encrypted keys we cannot do this and have to load the
 		 * private key instead
 		 */
-		if (id->key != NULL) {
-			ident = format_identity(id);
+		إذا (id->کلید != عدم) {
+			ident = format_عنصر_خنثی(id);
 			debug("Offering public key: %s", ident);
-			free(ident);
-			sent = send_pubkey_test(ssh, id);
-		} else {
+			حرر(ident);
+			فرستاده = send_pubkey_test(ssh, id);
+		} وإلا {
 			debug("Trying private key: %s", id->filename);
-			id->key = load_identity_file(id);
-			if (id->key != NULL) {
+			id->کلید = بارگیری_عنصر_خنثی_file(id);
+			إذا (id->کلید != عدم) {
 				id->isprivate = 1;
-				sent = sign_and_send_pubkey(ssh, id);
-				sshkey_free(id->key);
-				id->key = NULL;
+				فرستاده = sign_and_send_pubkey(ssh, id);
+				sshkey_free(id->کلید);
+				id->کلید = عدم;
 				id->isprivate = 0;
 			}
 		}
-		if (sent)
-			return (sent);
+		إذا (فرستاده)
+			أرجع (فرستاده);
 	}
-	return (0);
+	أرجع (0);
 }
 
 /*
  * Send userauth request message specifying keyboard-interactive method.
  */
-static int
-userauth_kbdint(struct ssh *ssh)
+ساكن صحيح
+userauth_kbdint(بنية ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	int r;
+	صحيح r;
 
-	if (authctxt->attempt_kbdint++ >= options.number_of_password_prompts)
-		return 0;
+	إذا (authctxt->attempt_kbdint++ >= options.عدد_از_password_prompts)
+		أرجع 0;
 	/* disable if no SSH2_MSG_USERAUTH_INFO_REQUEST has been seen */
-	if (authctxt->attempt_kbdint > 1 && !authctxt->info_req_seen) {
+	إذا (authctxt->attempt_kbdint > 1 && !authctxt->info_req_دیده) {
 		debug3("userauth_kbdint: disable: no info_req_seen");
-		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST, NULL);
-		return 0;
+		ssh_dispatch_مجموعه(ssh, SSH2_پیام_USERAUTH_INFO_REQUEST, عدم);
+		أرجع 0;
 	}
 
 	debug2("userauth_kbdint");
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	إذا ((r = sshpkt_شروع(ssh, SSH2_پیام_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, authctxt->روش->name)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||		/* lang */
 	    (r = sshpkt_put_cstring(ssh, options.kbd_interactive_devices ?
 	    options.kbd_interactive_devices : "")) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST, &input_userauth_info_req);
-	return 1;
+	ssh_dispatch_مجموعه(ssh, SSH2_پیام_USERAUTH_INFO_REQUEST, &درون_داد_userauth_info_req);
+	أرجع 1;
 }
 
 /*
  * parse INFO_REQUEST, prompt user and send INFO_RESPONSE
  */
-static int
-input_userauth_info_req(int type, uint32_t seq, struct ssh *ssh)
+ساكن صحيح
+درون_داد_userauth_info_req(صحيح type, uint32_t seq, بنية ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	char *name = NULL, *inst = NULL, *lang = NULL, *prompt = NULL;
-	char *display_prompt = NULL, *response = NULL;
+	حرف *name = عدم, *inst = عدم, *lang = عدم, *prompt = عدم;
+	حرف *display_prompt = عدم, *response = عدم;
 	u_char echo = 0;
-	u_int num_prompts, i;
-	int r, addnl;
-	size_t len;
+	u_int رقم_prompts, i;
+	صحيح r, addnl;
+	اندازه_t len;
 
 	debug2_f("entering");
 
-	if (authctxt == NULL)
+	إذا (authctxt == عدم)
 		fatal_f("no authentication context");
 
-	authctxt->info_req_seen = 1;
+	authctxt->info_req_دیده = 1;
 
-	if ((r = sshpkt_get_cstring(ssh, &name, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &inst, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0)
-		goto out;
-	if ((len = strlen(name)) > 0) {
+	إذا ((r = sshpkt_get_cstring(ssh, &name, عدم)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &inst, عدم)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &lang, عدم)) != 0)
+		اذهب بیرون;
+	إذا ((len = طول_رشته(name)) > 0) {
 		addnl = name[len] != '\n';
 		fmprintf(stderr, "%s%s", name, addnl ? "\n" : "");
 	}
-	if ((len = strlen(inst)) > 0) {
+	إذا ((len = طول_رشته(inst)) > 0) {
 		addnl = inst[len] != '\n';
 		fmprintf(stderr, "%s%s", inst, addnl ? "\n" : "");
 	}
 
-	if ((r = sshpkt_get_u32(ssh, &num_prompts)) != 0)
-		goto out;
+	إذا ((r = sshpkt_get_u32(ssh, &رقم_prompts)) != 0)
+		اذهب بیرون;
 	/*
 	 * Begin to build info response packet based on prompts requested.
 	 * We commit to providing the correct number of responses, so if
 	 * further on we run into a problem that prevents this, we have to
 	 * be sure and clean this up and send a correct error response.
 	 */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE)) != 0 ||
-	    (r = sshpkt_put_u32(ssh, num_prompts)) != 0)
-		goto out;
+	إذا ((r = sshpkt_شروع(ssh, SSH2_پیام_USERAUTH_INFO_RESPONSE)) != 0 ||
+	    (r = sshpkt_put_u32(ssh, رقم_prompts)) != 0)
+		اذهب بیرون;
 
-	debug2_f("num_prompts %d", num_prompts);
-	for (i = 0; i < num_prompts; i++) {
-		if ((r = sshpkt_get_cstring(ssh, &prompt, NULL)) != 0 ||
+	debug2_f("num_prompts %d", رقم_prompts);
+	لكل (i = 0; i < رقم_prompts; i++) {
+		إذا ((r = sshpkt_get_cstring(ssh, &prompt, عدم)) != 0 ||
 		    (r = sshpkt_get_u8(ssh, &echo)) != 0)
-			goto out;
-		if (asmprintf(&display_prompt, INT_MAX, NULL, "(%s@%s) %s",
-		    authctxt->server_user, options.host_key_alias ?
-		    options.host_key_alias : authctxt->host, prompt) == -1)
+			اذهب بیرون;
+		إذا (asmprintf(&display_prompt, بیشترین_صحیح, عدم, "(%s@%s) %s",
+		    authctxt->server_user, options.host_کلید_alias ?
+		    options.host_کلید_alias : authctxt->host, prompt) == -1)
 			fatal_f("asmprintf failed");
 		response = read_passphrase(display_prompt, echo ? RP_ECHO : 0);
-		if ((r = sshpkt_put_cstring(ssh, response)) != 0)
-			goto out;
-		freezero(response, strlen(response));
-		free(prompt);
-		free(display_prompt);
-		display_prompt = response = prompt = NULL;
+		إذا ((r = sshpkt_put_cstring(ssh, response)) != 0)
+			اذهب بیرون;
+		freezero(response, طول_رشته(response));
+		حرر(prompt);
+		حرر(display_prompt);
+		display_prompt = response = prompt = عدم;
 	}
 	/* done with parsing incoming message. */
-	if ((r = sshpkt_get_end(ssh)) != 0 ||
-	    (r = sshpkt_add_padding(ssh, 64)) != 0)
-		goto out;
+	إذا ((r = sshpkt_get_انتها(ssh)) != 0 ||
+	    (r = sshpkt_جمع_کن_padding(ssh, 64)) != 0)
+		اذهب بیرون;
 	r = sshpkt_send(ssh);
- out:
-	if (response)
-		freezero(response, strlen(response));
-	free(prompt);
-	free(display_prompt);
-	free(name);
-	free(inst);
-	free(lang);
-	return r;
+ بیرون:
+	إذا (response)
+		freezero(response, طول_رشته(response));
+	حرر(prompt);
+	حرر(display_prompt);
+	حرر(name);
+	حرر(inst);
+	حرر(lang);
+	أرجع r;
 }
 
-static int
-ssh_keysign(struct ssh *ssh, struct sshkey *key, u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen)
+ساكن صحيح
+ssh_keysign(بنية ssh *ssh, بنية sshkey *کلید, u_char **sigp, اندازه_t *lenp,
+    ثابت u_char *داده, اندازه_t datalen)
 {
-	struct sshbuf *b;
-	struct stat st;
+	بنية sshbuf *b;
+	بنية stat st;
 	pid_t pid;
-	int r, to[2], from[2], status;
-	int sock = ssh_packet_get_connection_in(ssh);
-	u_char rversion = 0, version = 2;
-	void (*osigchld)(int);
+	صحيح r, مقصد[2], from[2], وضعیت;
+	صحيح sock = ssh_packet_get_connection_درون(ssh);
+	u_char rversion = 0, نسخه = 2;
+	فراغ (*osigchld)(صحيح);
 
-	*sigp = NULL;
+	*sigp = عدم;
 	*lenp = 0;
 
-	if (stat(_PATH_SSH_KEY_SIGN, &st) == -1) {
+	إذا (stat(مسیر_SSH_کلید_SIGN, &st) == -1) {
 		error_f("not installed: %s", strerror(errno));
-		return -1;
+		أرجع -1;
 	}
-	if (fflush(stdout) != 0) {
+	إذا (fflush(stdout) != 0) {
 		error_f("fflush: %s", strerror(errno));
-		return -1;
+		أرجع -1;
 	}
-	if (pipe(to) == -1) {
+	إذا (pipe(مقصد) == -1) {
 		error_f("pipe: %s", strerror(errno));
-		return -1;
+		أرجع -1;
 	}
-	if (pipe(from) == -1) {
+	إذا (pipe(from) == -1) {
 		error_f("pipe: %s", strerror(errno));
-		return -1;
+		أرجع -1;
 	}
-	if ((pid = fork()) == -1) {
+	إذا ((pid = fork()) == -1) {
 		error_f("fork: %s", strerror(errno));
-		return -1;
+		أرجع -1;
 	}
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if (pid == 0) {
+	إذا (pid == 0) {
 		close(from[0]);
-		if (dup2(from[1], STDOUT_FILENO) == -1)
+		إذا (dup2(from[1], STDOUT_FILENO) == -1)
 			fatal_f("dup2: %s", strerror(errno));
-		close(to[1]);
-		if (dup2(to[0], STDIN_FILENO) == -1)
+		close(مقصد[1]);
+		إذا (dup2(مقصد[0], STDIN_FILENO) == -1)
 			fatal_f("dup2: %s", strerror(errno));
 		close(from[1]);
-		close(to[0]);
+		close(مقصد[0]);
 
-		if (dup2(sock, STDERR_FILENO + 1) == -1)
+		إذا (dup2(sock, STDERR_FILENO + 1) == -1)
 			fatal_f("dup2: %s", strerror(errno));
 		sock = STDERR_FILENO + 1;
-		if (fcntl(sock, F_SETFD, 0) == -1) /* keep the socket on exec */
+		إذا (fcntl(sock, F_SETFD, 0) == -1) /* keep the socket on exec */
 			debug3_f("fcntl F_SETFD: %s", strerror(errno));
 		closefrom(sock + 1);
 
 		debug3_f("[child] pid=%ld, exec %s",
-		    (long)getpid(), _PATH_SSH_KEY_SIGN);
-		execl(_PATH_SSH_KEY_SIGN, _PATH_SSH_KEY_SIGN, (char *)NULL);
-		fatal_f("exec(%s): %s", _PATH_SSH_KEY_SIGN,
+		    (دراز)getpid(), مسیر_SSH_کلید_SIGN);
+		execl(مسیر_SSH_کلید_SIGN, مسیر_SSH_کلید_SIGN, (حرف *)عدم);
+		fatal_f("exec(%s): %s", مسیر_SSH_کلید_SIGN,
 		    strerror(errno));
 	}
 	close(from[1]);
-	close(to[0]);
+	close(مقصد[0]);
 	sock = STDERR_FILENO + 1;
 
-	if ((b = sshbuf_new()) == NULL)
+	إذا ((b = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 	/* send # of sock, data to be signed */
-	if ((r = sshbuf_put_u32(b, sock)) != 0 ||
-	    (r = sshbuf_put_string(b, data, datalen)) != 0)
+	إذا ((r = sshbuf_put_u32(b, sock)) != 0 ||
+	    (r = sshbuf_put_string(b, داده, datalen)) != 0)
 		fatal_fr(r, "buffer error");
-	if (ssh_msg_send(to[1], version, b) == -1)
+	إذا (ssh_پیام_send(مقصد[1], نسخه, b) == -1)
 		fatal_f("couldn't send request");
 	sshbuf_reset(b);
-	r = ssh_msg_recv(from[0], b);
+	r = ssh_پیام_recv(from[0], b);
 	close(from[0]);
-	close(to[1]);
-	if (r < 0) {
+	close(مقصد[1]);
+	إذا (r < 0) {
 		error_f("no reply");
-		goto fail;
+		اذهب fail;
 	}
 
 	errno = 0;
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno != EINTR) {
-			error_f("waitpid %ld: %s", (long)pid, strerror(errno));
-			goto fail;
+	طالما (waitpid(pid, &وضعیت, 0) == -1) {
+		إذا (errno != EINTR) {
+			error_f("waitpid %ld: %s", (دراز)pid, strerror(errno));
+			اذهب fail;
 		}
 	}
-	if (!WIFEXITED(status)) {
+	إذا (!WIFEXITED(وضعیت)) {
 		error_f("exited abnormally");
-		goto fail;
+		اذهب fail;
 	}
-	if (WEXITSTATUS(status) != 0) {
-		error_f("exited with status %d", WEXITSTATUS(status));
-		goto fail;
+	إذا (WEXITSTATUS(وضعیت) != 0) {
+		error_f("exited with status %d", WEXITSTATUS(وضعیت));
+		اذهب fail;
 	}
-	if ((r = sshbuf_get_u8(b, &rversion)) != 0) {
+	إذا ((r = sshbuf_get_u8(b, &rversion)) != 0) {
 		error_fr(r, "buffer error");
-		goto fail;
+		اذهب fail;
 	}
-	if (rversion != version) {
+	إذا (rversion != نسخه) {
 		error_f("bad version");
-		goto fail;
+		اذهب fail;
 	}
-	if ((r = sshbuf_get_string(b, sigp, lenp)) != 0) {
+	إذا ((r = sshbuf_get_string(b, sigp, lenp)) != 0) {
 		error_fr(r, "buffer error");
  fail:
 		ssh_signal(SIGCHLD, osigchld);
 		sshbuf_free(b);
-		return -1;
+		أرجع -1;
 	}
 	ssh_signal(SIGCHLD, osigchld);
 	sshbuf_free(b);
 
-	return 0;
+	أرجع 0;
 }
 
-static int
-userauth_hostbased(struct ssh *ssh)
+ساكن صحيح
+userauth_hostbased(بنية ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	struct sshkey *private = NULL;
-	struct sshbuf *b = NULL;
-	u_char *sig = NULL, *keyblob = NULL;
-	char *fp = NULL, *chost = NULL, *lname = NULL;
-	size_t siglen = 0, keylen = 0;
-	int i, r, success = 0;
+	بنية sshkey *خاص = عدم;
+	بنية sshbuf *b = عدم;
+	u_char *sig = عدم, *keyblob = عدم;
+	حرف *fp = عدم, *chost = عدم, *lname = عدم;
+	اندازه_t siglen = 0, keylen = 0;
+	صحيح i, r, success = 0;
 
-	if (authctxt->ktypes == NULL) {
+	إذا (authctxt->ktypes == عدم) {
 		authctxt->oktypes = xstrdup(options.hostbased_accepted_algos);
 		authctxt->ktypes = authctxt->oktypes;
 	}
@@ -2282,56 +2282,56 @@ userauth_hostbased(struct ssh *ssh)
 	 * Work through each listed type pattern in HostbasedAcceptedAlgorithms,
 	 * trying each hostkey that matches the type in turn.
 	 */
-	for (;;) {
-		if (authctxt->active_ktype == NULL)
-			authctxt->active_ktype = strsep(&authctxt->ktypes, ",");
-		if (authctxt->active_ktype == NULL ||
-		    *authctxt->active_ktype == '\0')
-			break;
-		debug3_f("trying key type %s", authctxt->active_ktype);
+	لكل (;;) {
+		إذا (authctxt->فعال_ktype == عدم)
+			authctxt->فعال_ktype = strsep(&authctxt->ktypes, ",");
+		إذا (authctxt->فعال_ktype == عدم ||
+		    *authctxt->فعال_ktype == '\0')
+			اكسر;
+		debug3_f("trying key type %s", authctxt->فعال_ktype);
 
 		/* check for a useful key */
-		private = NULL;
-		for (i = 0; i < authctxt->sensitive->nkeys; i++) {
-			if (authctxt->sensitive->keys[i] == NULL ||
-			    authctxt->sensitive->keys[i]->type == KEY_UNSPEC)
-				continue;
-			if (!sshkey_match_keyname_to_sigalgs(
-			    sshkey_ssh_name(authctxt->sensitive->keys[i]),
-			    authctxt->active_ktype))
-				continue;
+		خاص = عدم;
+		لكل (i = 0; i < authctxt->sensitive->nkeys; i++) {
+			إذا (authctxt->sensitive->کلیدها[i] == عدم ||
+			    authctxt->sensitive->کلیدها[i]->type == کلید_UNSPEC)
+				استمر;
+			إذا (!sshkey_تطابق_keyname_مقصد_sigalgs(
+			    sshkey_ssh_name(authctxt->sensitive->کلیدها[i]),
+			    authctxt->فعال_ktype))
+				استمر;
 			/* we take and free the key */
-			private = authctxt->sensitive->keys[i];
-			authctxt->sensitive->keys[i] = NULL;
-			break;
+			خاص = authctxt->sensitive->کلیدها[i];
+			authctxt->sensitive->کلیدها[i] = عدم;
+			اكسر;
 		}
 		/* Found one */
-		if (private != NULL)
-			break;
+		إذا (خاص != عدم)
+			اكسر;
 		/* No more keys of this type; advance */
-		authctxt->active_ktype = NULL;
+		authctxt->فعال_ktype = عدم;
 	}
-	if (private == NULL) {
-		free(authctxt->oktypes);
-		authctxt->oktypes = authctxt->ktypes = NULL;
-		authctxt->active_ktype = NULL;
+	إذا (خاص == عدم) {
+		حرر(authctxt->oktypes);
+		authctxt->oktypes = authctxt->ktypes = عدم;
+		authctxt->فعال_ktype = عدم;
 		debug("No more client hostkeys for hostbased authentication.");
-		goto out;
+		اذهب بیرون;
 	}
 
-	if ((fp = sshkey_fingerprint(private, options.fingerprint_hash,
-	    SSH_FP_DEFAULT)) == NULL) {
+	إذا ((fp = sshkey_fingerprint(خاص, options.fingerprint_hash,
+	    SSH_FP_DEFAULT)) == عدم) {
 		error_f("sshkey_fingerprint failed");
-		goto out;
+		اذهب بیرون;
 	}
 	debug_f("trying hostkey %s %s using sigalg %s",
-	    sshkey_ssh_name(private), fp, authctxt->active_ktype);
+	    sshkey_ssh_name(خاص), fp, authctxt->فعال_ktype);
 
 	/* figure out a name for the client host */
-	lname = get_local_name(ssh_packet_get_connection_in(ssh));
-	if (lname == NULL) {
+	lname = get_local_name(ssh_packet_get_connection_درون(ssh));
+	إذا (lname == عدم) {
 		error_f("cannot get local ipaddr/name");
-		goto out;
+		اذهب بیرون;
 	}
 
 	/* XXX sshbuf_put_stringf? */
@@ -2339,62 +2339,62 @@ userauth_hostbased(struct ssh *ssh)
 	debug2_f("chost %s", chost);
 
 	/* construct data */
-	if ((b = sshbuf_new()) == NULL) {
+	إذا ((b = sshbuf_new()) == عدم) {
 		error_f("sshbuf_new failed");
-		goto out;
+		اذهب بیرون;
 	}
-	if ((r = sshkey_to_blob(private, &keyblob, &keylen)) != 0) {
+	إذا ((r = sshkey_مقصد_blob(خاص, &keyblob, &keylen)) != 0) {
 		error_fr(r, "sshkey_to_blob");
-		goto out;
+		اذهب بیرون;
 	}
-	if ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	إذا ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_پیام_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->server_user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->service)) != 0 ||
-	    (r = sshbuf_put_cstring(b, authctxt->method->name)) != 0 ||
-	    (r = sshbuf_put_cstring(b, authctxt->active_ktype)) != 0 ||
+	    (r = sshbuf_put_cstring(b, authctxt->روش->name)) != 0 ||
+	    (r = sshbuf_put_cstring(b, authctxt->فعال_ktype)) != 0 ||
 	    (r = sshbuf_put_string(b, keyblob, keylen)) != 0 ||
 	    (r = sshbuf_put_cstring(b, chost)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->local_user)) != 0) {
 		error_fr(r, "buffer error");
-		goto out;
+		اذهب بیرون;
 	}
 
-#ifdef DEBUG_PK
+#اگر_تعریف_شده DEBUG_PK
 	sshbuf_dump(b, stderr);
-#endif
-	if ((r = ssh_keysign(ssh, private, &sig, &siglen,
+#پایان_اگر
+	إذا ((r = ssh_keysign(ssh, خاص, &sig, &siglen,
 	    sshbuf_ptr(b), sshbuf_len(b))) != 0) {
 		error("sign using hostkey %s %s failed",
-		    sshkey_ssh_name(private), fp);
-		goto out;
+		    sshkey_ssh_name(خاص), fp);
+		اذهب بیرون;
 	}
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	إذا ((r = sshpkt_شروع(ssh, SSH2_پیام_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, authctxt->active_ktype)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, authctxt->روش->name)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, authctxt->فعال_ktype)) != 0 ||
 	    (r = sshpkt_put_string(ssh, keyblob, keylen)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, chost)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->local_user)) != 0 ||
 	    (r = sshpkt_put_string(ssh, sig, siglen)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0) {
 		error_fr(r, "packet error");
-		goto out;
+		اذهب بیرون;
 	}
 	success = 1;
 
- out:
-	if (sig != NULL)
+ بیرون:
+	إذا (sig != عدم)
 		freezero(sig, siglen);
-	free(keyblob);
-	free(lname);
-	free(fp);
-	free(chost);
-	sshkey_free(private);
+	حرر(keyblob);
+	حرر(lname);
+	حرر(fp);
+	حرر(chost);
+	sshkey_free(خاص);
 	sshbuf_free(b);
 
-	return success;
+	أرجع success;
 }
 
 /* find auth method */
@@ -2403,101 +2403,101 @@ userauth_hostbased(struct ssh *ssh)
  * given auth method name, if configurable options permit this method fill
  * in auth_ident field and return true, otherwise return false.
  */
-static int
-authmethod_is_enabled(Authmethod *method)
+ساكن صحيح
+authmethod_is_enabled(Authmethod *روش)
 {
-	if (method == NULL)
-		return 0;
+	إذا (روش == عدم)
+		أرجع 0;
 	/* return false if options indicate this method is disabled */
-	if  (method->enabled == NULL || *method->enabled == 0)
-		return 0;
+	إذا  (روش->enabled == عدم || *روش->enabled == 0)
+		أرجع 0;
 	/* return false if batch mode is enabled but method needs interactive mode */
-	if  (method->batch_flag != NULL && *method->batch_flag != 0)
-		return 0;
-	return 1;
+	إذا  (روش->batch_flag != عدم && *روش->batch_flag != 0)
+		أرجع 0;
+	أرجع 1;
 }
 
-static Authmethod *
-authmethod_lookup(const char *name)
+ساكن Authmethod *
+authmethod_lookup(ثابت حرف *name)
 {
-	Authmethod *method = NULL;
-	if (name != NULL)
-		for (method = authmethods; method->name != NULL; method++)
-			if (strcmp(name, method->name) == 0)
-				return method;
+	Authmethod *روش = عدم;
+	إذا (name != عدم)
+		لكل (روش = authmethods; روش->name != عدم; روش++)
+			إذا (strcmp(name, روش->name) == 0)
+				أرجع روش;
 	debug2("Unrecognized authentication method name: %s", name ? name : "NULL");
-	return NULL;
+	أرجع عدم;
 }
 
 /* XXX internal state */
-static Authmethod *current = NULL;
-static char *supported = NULL;
-static char *preferred = NULL;
+ساكن Authmethod *current = عدم;
+ساكن حرف *supported = عدم;
+ساكن حرف *preferred = عدم;
 
 /*
  * Given the authentication method list sent by the server, return the
  * next method we should try.  If the server initially sends a nil list,
  * use a built-in default list.
  */
-static Authmethod *
-authmethod_get(char *authlist)
+ساكن Authmethod *
+authmethod_get(حرف *authlist)
 {
-	char *name = NULL;
-	u_int next;
+	حرف *name = عدم;
+	u_int بعدی;
 
 	/* Use a suitable default if we're passed a nil list.  */
-	if (authlist == NULL || strlen(authlist) == 0)
+	إذا (authlist == عدم || طول_رشته(authlist) == 0)
 		authlist = options.preferred_authentications;
 
-	if (supported == NULL || strcmp(authlist, supported) != 0) {
+	إذا (supported == عدم || strcmp(authlist, supported) != 0) {
 		debug3("start over, passed a different list %s", authlist);
-		free(supported);
+		حرر(supported);
 		supported = xstrdup(authlist);
 		preferred = options.preferred_authentications;
 		debug3("preferred %s", preferred);
-		current = NULL;
-	} else if (current != NULL && authmethod_is_enabled(current))
-		return current;
+		current = عدم;
+	} وإلا إذا (current != عدم && authmethod_is_enabled(current))
+		أرجع current;
 
-	for (;;) {
-		if ((name = match_list(preferred, supported, &next)) == NULL) {
+	لكل (;;) {
+		إذا ((name = تطابق_list(preferred, supported, &بعدی)) == عدم) {
 			debug("No more authentication methods to try.");
-			current = NULL;
-			return NULL;
+			current = عدم;
+			أرجع عدم;
 		}
-		preferred += next;
+		preferred += بعدی;
 		debug3("authmethod_lookup %s", name);
 		debug3("remaining preferred: %s", preferred);
-		if ((current = authmethod_lookup(name)) != NULL &&
+		إذا ((current = authmethod_lookup(name)) != عدم &&
 		    authmethod_is_enabled(current)) {
 			debug3("authmethod_is_enabled %s", name);
 			debug("Next authentication method: %s", name);
-			free(name);
-			return current;
+			حرر(name);
+			أرجع current;
 		}
-		free(name);
+		حرر(name);
 	}
 }
 
-static char *
-authmethods_get(void)
+ساكن حرف *
+authmethods_get(فراغ)
 {
-	Authmethod *method = NULL;
-	struct sshbuf *b;
-	char *list;
-	int r;
+	Authmethod *روش = عدم;
+	بنية sshbuf *b;
+	حرف *list;
+	صحيح r;
 
-	if ((b = sshbuf_new()) == NULL)
+	إذا ((b = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	for (method = authmethods; method->name != NULL; method++) {
-		if (authmethod_is_enabled(method)) {
-			if ((r = sshbuf_putf(b, "%s%s",
-			    sshbuf_len(b) ? "," : "", method->name)) != 0)
+	لكل (روش = authmethods; روش->name != عدم; روش++) {
+		إذا (authmethod_is_enabled(روش)) {
+			إذا ((r = sshbuf_putf(b, "%s%s",
+			    sshbuf_len(b) ? "," : "", روش->name)) != 0)
 				fatal_fr(r, "buffer error");
 		}
 	}
-	if ((list = sshbuf_dup_string(b)) == NULL)
+	إذا ((list = sshbuf_dup_string(b)) == عدم)
 		fatal_f("sshbuf_dup_string failed");
 	sshbuf_free(b);
-	return list;
+	أرجع list;
 }

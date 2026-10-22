@@ -34,44 +34,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CIPHER_H
-#define CIPHER_H
+#اگر_تعریف_نشده CIPHER_H
+#تعریف_کن CIPHER_H
 
-#include <sys/types.h>
-#ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#endif
-#include "cipher-chachapoly.h"
-#include "cipher-aesctr.h"
+#ضمن <sys/types.h>
+#اگر_تعریف_شده WITH_OPENSSL
+#ضمن <openssl/evp.h>
+#پایان_اگر
+#ضمن "cipher-chachapoly.h"
+#ضمن "cipher-aesctr.h"
 
-#define CIPHER_ENCRYPT		1
-#define CIPHER_DECRYPT		0
+#تعریف_کن CIPHER_ENCRYPT		1
+#تعریف_کن CIPHER_DECRYPT		0
 
-struct sshcipher;
-struct sshcipher_ctx;
+بنية sshcipher;
+بنية sshcipher_ctx;
 
-const struct sshcipher *cipher_by_name(const char *);
-const char *cipher_warning_message(const struct sshcipher_ctx *);
-int	 ciphers_valid(const char *);
-char	*cipher_alg_list(char, int);
-const char *compression_alg_list(int);
-int	 cipher_init(struct sshcipher_ctx **, const struct sshcipher *,
-    const u_char *, u_int, const u_char *, u_int, int);
-int	 cipher_crypt(struct sshcipher_ctx *, u_int, u_char *, const u_char *,
+ثابت بنية sshcipher *cipher_by_name(ثابت حرف *);
+ثابت حرف *cipher_warning_پیام(ثابت بنية sshcipher_ctx *);
+صحيح	 ciphers_valid(ثابت حرف *);
+حرف	*cipher_alg_list(حرف, صحيح);
+ثابت حرف *compression_alg_list(صحيح);
+صحيح	 cipher_init(بنية sshcipher_ctx **, ثابت بنية sshcipher *,
+    ثابت u_char *, u_int, ثابت u_char *, u_int, صحيح);
+صحيح	 cipher_crypt(بنية sshcipher_ctx *, u_int, u_char *, ثابت u_char *,
     u_int, u_int, u_int);
-int	 cipher_get_length(struct sshcipher_ctx *, u_int *, u_int,
-    const u_char *, u_int);
-void	 cipher_free(struct sshcipher_ctx *);
-u_int	 cipher_blocksize(const struct sshcipher *);
-u_int	 cipher_keylen(const struct sshcipher *);
-u_int	 cipher_seclen(const struct sshcipher *);
-u_int	 cipher_authlen(const struct sshcipher *);
-u_int	 cipher_ivlen(const struct sshcipher *);
-u_int	 cipher_is_cbc(const struct sshcipher *);
-u_int	 cipher_is_internal(const struct sshcipher *);
+صحيح	 cipher_get_درازی(بنية sshcipher_ctx *, u_int *, u_int,
+    ثابت u_char *, u_int);
+فراغ	 cipher_free(بنية sshcipher_ctx *);
+u_int	 cipher_blocksize(ثابت بنية sshcipher *);
+u_int	 cipher_keylen(ثابت بنية sshcipher *);
+u_int	 cipher_seclen(ثابت بنية sshcipher *);
+u_int	 cipher_authlen(ثابت بنية sshcipher *);
+u_int	 cipher_ivlen(ثابت بنية sshcipher *);
+u_int	 cipher_is_cbc(ثابت بنية sshcipher *);
+u_int	 cipher_is_داخلی(ثابت بنية sshcipher *);
 
-u_int	 cipher_ctx_is_plaintext(struct sshcipher_ctx *);
+u_int	 cipher_ctx_is_plaintext(بنية sshcipher_ctx *);
 
-int	 cipher_get_keyiv(struct sshcipher_ctx *, u_char *, size_t);
+صحيح	 cipher_get_keyiv(بنية sshcipher_ctx *, u_char *, اندازه_t);
 
-#endif				/* CIPHER_H */
+#پایان_اگر				/* CIPHER_H */

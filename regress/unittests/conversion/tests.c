@@ -5,25 +5,25 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <limits.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
+#ضمن "../test_helper/test_helper.h"
 
-#include "misc.h"
+#ضمن "misc.h"
 
-void
-tests(void)
+فراغ
+tests(فراغ)
 {
-	char buf[1024];
+	حرف buf[1024];
 
-	TEST_START("conversion_convtime");
+	TEST_شروع("conversion_convtime");
 	ASSERT_INT_EQ(convtime("0"), 0);
 	ASSERT_INT_EQ(convtime("1"), 1);
 	ASSERT_INT_EQ(convtime("1S"), 1);
@@ -37,21 +37,21 @@ tests(void)
 	ASSERT_INT_EQ(convtime("-7"), -1);
 	ASSERT_INT_EQ(convtime("-9d"), -1);
 	
-	/* overflow */
-	snprintf(buf, sizeof buf, "%llu", (unsigned long long)INT_MAX);
-	ASSERT_INT_EQ(convtime(buf), INT_MAX);
-	snprintf(buf, sizeof buf, "%llu", (unsigned long long)INT_MAX + 1);
+	/*سرریز*/
+	snprintf(buf, حجم buf, "%llu", (بیعلامت دراز دراز)بیشترین_صحیح);
+	ASSERT_INT_EQ(convtime(buf), بیشترین_صحیح);
+	snprintf(buf, حجم buf, "%llu", (بیعلامت دراز دراز)بیشترین_صحیح + 1);
 	ASSERT_INT_EQ(convtime(buf), -1);
 
 	/* overflow with multiplier */
-	snprintf(buf, sizeof buf, "%lluM", (unsigned long long)INT_MAX/60 + 1);
+	snprintf(buf, حجم buf, "%lluM", (بیعلامت دراز دراز)بیشترین_صحیح/60 + 1);
 	ASSERT_INT_EQ(convtime(buf), -1);
 	ASSERT_INT_EQ(convtime("1000000000000000000000w"), -1);
-	TEST_DONE();
+	TEST_انجامشده();
 }
 
-void
-benchmarks(void)
+فراغ
+benchmarks(فراغ)
 {
-	printf("no benchmarks\n");
+	چاپ_کن("no benchmarks\n");
 }

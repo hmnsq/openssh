@@ -35,98 +35,98 @@
 
 /* OPENBSD ORIGINAL: lib/libcurses/base/sigaction.c */
 
-#include "includes.h"
-#include <errno.h>
-#include <signal.h>
-#include "sigact.h"
+#ضمن "includes.h"
+#ضمن <errno.h>
+#ضمن <signal.h>
+#ضمن "sigact.h"
 
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#إذا !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+صحيح
+sigaction(صحيح sig, بنية sigaction *sigact, بنية sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
-	    osigact ? &osigact->sv : NULL);
+	أرجع sigvec(sig, sigact ? &sigact->sv : عدم,
+	    osigact ? &osigact->sv : عدم);
 }
 
-int
-sigemptyset (sigset_t *mask)
+صحيح
+sigemptyset (sigset_t *ماسک)
 {
-	if (!mask) {
+	إذا (!ماسک) {
 		errno = EINVAL;
-		return -1;
+		أرجع -1;
 	}
-	*mask = 0;
-	return 0;
+	*ماسک = 0;
+	أرجع 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+صحيح
+sigprocmask (صحيح نما, sigset_t *ماسک, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
+	إذا (!ماسک) {
 		errno = EINVAL;
-		return -1;
+		أرجع -1;
 	}
 
-	if (omask)
+	إذا (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
-		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
-		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
-	current = *mask;
+	إذا (نما == SIG_BLOCK)
+		current |= *ماسک;
+	وإلا إذا (نما == SIG_UNBLOCK)
+		current &= ~*ماسک;
+	وإلا إذا (نما == SIG_SETMASK)
+	current = *ماسک;
 
 	sigsetmask(current);
-	return 0;
+	أرجع 0;
 }
 
-int
-sigsuspend (sigset_t *mask)
+صحيح
+sigsuspend (sigset_t *ماسک)
 {
-	if (!mask) {
+	إذا (!ماسک) {
 		errno = EINVAL;
-		return -1;
+		أرجع -1;
 	}
-	return sigpause(*mask);
+	أرجع sigpause(*ماسک);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+صحيح
+sigdelset (sigset_t *ماسک, صحيح sig)
 {
-	if (!mask) {
+	إذا (!ماسک) {
 		errno = EINVAL;
-		return -1;
+		أرجع -1;
 	}
-	*mask &= ~sigmask(sig);
-	return 0;
+	*ماسک &= ~sigmask(sig);
+	أرجع 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+صحيح
+sigaddset (sigset_t *ماسک, صحيح sig)
 {
-	if (!mask) {
+	إذا (!ماسک) {
 		errno = EINVAL;
-		return -1;
+		أرجع -1;
 	}
-	*mask |= sigmask(sig);
-	return 0;
+	*ماسک |= sigmask(sig);
+	أرجع 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+صحيح
+sigismember (sigset_t *ماسک, صحيح sig)
 {
-	if (!mask) {
+	إذا (!ماسک) {
 		errno = EINVAL;
-		return -1;
+		أرجع -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	أرجع (*ماسک & sigmask(sig)) != 0;
 }
 
-#endif
+#پایان_اگر

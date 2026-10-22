@@ -36,38 +36,38 @@
  * Bruce Schneier.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if !defined(HAVE_BCRYPT_PBKDF) && (!defined(HAVE_BLOWFISH_INITSTATE) || \
+#إذا !defined(HAVE_BCRYPT_PBKDF) && (!defined(HAVE_BLOWFISH_INITSTATE) || \
     !defined(HAVE_BLOWFISH_EXPAND0STATE) || !defined(HAVE_BLF_ENC))
 
-#if 0
-#include <stdio.h>		/* used for debugging */
-#include <string.h>
-#endif
+#إذا 0
+#ضمن <stdio.h>		/* used for debugging */
+#ضمن <string.h>
+#پایان_اگر
 
-#include <sys/types.h>
-#ifdef HAVE_BLF_H
-#include <blf.h>
-#endif
+#ضمن <sys/types.h>
+#اگر_تعریف_شده HAVE_BLF_H
+#ضمن <blf.h>
+#پایان_اگر
 
-#undef inline
-#ifdef __GNUC__
-#define inline __inline
-#else				/* !__GNUC__ */
-#define inline
-#endif				/* !__GNUC__ */
+#لغو_تعریف مضمن
+#اگر_تعریف_شده __GNUC__
+#تعریف_کن مضمن __inline
+#وإلا				/* !__GNUC__ */
+#تعریف_کن مضمن
+#پایان_اگر				/* !__GNUC__ */
 
 /* Function for Feistel Networks */
 
-#define F(s, x) ((((s)[        (((x)>>24)&0xFF)]  \
+#تعریف_کن F(s, x) ((((s)[        (((x)>>24)&0xFF)]  \
 		 + (s)[0x100 + (((x)>>16)&0xFF)]) \
 		 ^ (s)[0x200 + (((x)>> 8)&0xFF)]) \
 		 + (s)[0x300 + ( (x)     &0xFF)])
 
-#define BLFRND(s,p,i,j,n) (i ^= F(s,j) ^ (p)[n])
+#تعریف_کن BLFRND(s,p,i,j,n) (i ^= F(s,j) ^ (p)[n])
 
-void
+فراغ
 Blowfish_encipher(blf_ctx *c, u_int32_t *xl, u_int32_t *xr)
 {
 	u_int32_t Xl;
@@ -92,7 +92,7 @@ Blowfish_encipher(blf_ctx *c, u_int32_t *xl, u_int32_t *xr)
 	*xr = Xl;
 }
 
-void
+فراغ
 Blowfish_decipher(blf_ctx *c, u_int32_t *xl, u_int32_t *xr)
 {
 	u_int32_t Xl;
@@ -117,12 +117,12 @@ Blowfish_decipher(blf_ctx *c, u_int32_t *xl, u_int32_t *xr)
 	*xr = Xl;
 }
 
-void
+فراغ
 Blowfish_initstate(blf_ctx *c)
 {
 	/* P-box and S-box tables initialized with digits of Pi */
 
-	static const blf_ctx initstate =
+	ساكن ثابت blf_ctx initstate =
 	{ {
 		{
 			0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7,
@@ -397,55 +397,55 @@ Blowfish_initstate(blf_ctx *c)
 }
 
 u_int32_t
-Blowfish_stream2word(const u_int8_t *data, u_int16_t databytes,
+Blowfish_stream2word(ثابت u_int8_t *داده, u_int16_t databytes,
     u_int16_t *current)
 {
 	u_int8_t i;
 	u_int16_t j;
-	u_int32_t temp;
+	u_int32_t موقت;
 
-	temp = 0x00000000;
+	موقت = 0x00000000;
 	j = *current;
 
-	for (i = 0; i < 4; i++, j++) {
-		if (j >= databytes)
+	لكل (i = 0; i < 4; i++, j++) {
+		إذا (j >= databytes)
 			j = 0;
-		temp = (temp << 8) | data[j];
+		موقت = (موقت << 8) | داده[j];
 	}
 
 	*current = j;
-	return temp;
+	أرجع موقت;
 }
 
-void
-Blowfish_expand0state(blf_ctx *c, const u_int8_t *key, u_int16_t keybytes)
+فراغ
+Blowfish_expand0state(blf_ctx *c, ثابت u_int8_t *کلید, u_int16_t keybytes)
 {
 	u_int16_t i;
 	u_int16_t j;
 	u_int16_t k;
-	u_int32_t temp;
+	u_int32_t موقت;
 	u_int32_t datal;
 	u_int32_t datar;
 
 	j = 0;
-	for (i = 0; i < BLF_N + 2; i++) {
+	لكل (i = 0; i < BLF_N + 2; i++) {
 		/* Extract 4 int8 to 1 int32 from keystream */
-		temp = Blowfish_stream2word(key, keybytes, &j);
-		c->P[i] = c->P[i] ^ temp;
+		موقت = Blowfish_stream2word(کلید, keybytes, &j);
+		c->P[i] = c->P[i] ^ موقت;
 	}
 
 	j = 0;
 	datal = 0x00000000;
 	datar = 0x00000000;
-	for (i = 0; i < BLF_N + 2; i += 2) {
+	لكل (i = 0; i < BLF_N + 2; i += 2) {
 		Blowfish_encipher(c, &datal, &datar);
 
 		c->P[i] = datal;
 		c->P[i + 1] = datar;
 	}
 
-	for (i = 0; i < 4; i++) {
-		for (k = 0; k < 256; k += 2) {
+	لكل (i = 0; i < 4; i++) {
+		لكل (k = 0; k < 256; k += 2) {
 			Blowfish_encipher(c, &datal, &datar);
 
 			c->S[i][k] = datal;
@@ -455,40 +455,40 @@ Blowfish_expand0state(blf_ctx *c, const u_int8_t *key, u_int16_t keybytes)
 }
 
 
-void
-Blowfish_expandstate(blf_ctx *c, const u_int8_t *data, u_int16_t databytes,
-    const u_int8_t *key, u_int16_t keybytes)
+فراغ
+Blowfish_expandstate(blf_ctx *c, ثابت u_int8_t *داده, u_int16_t databytes,
+    ثابت u_int8_t *کلید, u_int16_t keybytes)
 {
 	u_int16_t i;
 	u_int16_t j;
 	u_int16_t k;
-	u_int32_t temp;
+	u_int32_t موقت;
 	u_int32_t datal;
 	u_int32_t datar;
 
 	j = 0;
-	for (i = 0; i < BLF_N + 2; i++) {
+	لكل (i = 0; i < BLF_N + 2; i++) {
 		/* Extract 4 int8 to 1 int32 from keystream */
-		temp = Blowfish_stream2word(key, keybytes, &j);
-		c->P[i] = c->P[i] ^ temp;
+		موقت = Blowfish_stream2word(کلید, keybytes, &j);
+		c->P[i] = c->P[i] ^ موقت;
 	}
 
 	j = 0;
 	datal = 0x00000000;
 	datar = 0x00000000;
-	for (i = 0; i < BLF_N + 2; i += 2) {
-		datal ^= Blowfish_stream2word(data, databytes, &j);
-		datar ^= Blowfish_stream2word(data, databytes, &j);
+	لكل (i = 0; i < BLF_N + 2; i += 2) {
+		datal ^= Blowfish_stream2word(داده, databytes, &j);
+		datar ^= Blowfish_stream2word(داده, databytes, &j);
 		Blowfish_encipher(c, &datal, &datar);
 
 		c->P[i] = datal;
 		c->P[i + 1] = datar;
 	}
 
-	for (i = 0; i < 4; i++) {
-		for (k = 0; k < 256; k += 2) {
-			datal ^= Blowfish_stream2word(data, databytes, &j);
-			datar ^= Blowfish_stream2word(data, databytes, &j);
+	لكل (i = 0; i < 4; i++) {
+		لكل (k = 0; k < 256; k += 2) {
+			datal ^= Blowfish_stream2word(داده, databytes, &j);
+			datar ^= Blowfish_stream2word(داده, databytes, &j);
 			Blowfish_encipher(c, &datal, &datar);
 
 			c->S[i][k] = datal;
@@ -498,8 +498,8 @@ Blowfish_expandstate(blf_ctx *c, const u_int8_t *data, u_int16_t databytes,
 
 }
 
-void
-blf_key(blf_ctx *c, const u_int8_t *k, u_int16_t len)
+فراغ
+blf_کلید(blf_ctx *c, ثابت u_int8_t *k, u_int16_t len)
 {
 	/* Initialize S-boxes and subkeys with Pi */
 	Blowfish_initstate(c);
@@ -508,186 +508,186 @@ blf_key(blf_ctx *c, const u_int8_t *k, u_int16_t len)
 	Blowfish_expand0state(c, k, len);
 }
 
-void
-blf_enc(blf_ctx *c, u_int32_t *data, u_int16_t blocks)
+فراغ
+blf_enc(blf_ctx *c, u_int32_t *داده, u_int16_t بلوکها)
 {
 	u_int32_t *d;
 	u_int16_t i;
 
-	d = data;
-	for (i = 0; i < blocks; i++) {
+	d = داده;
+	لكل (i = 0; i < بلوکها; i++) {
 		Blowfish_encipher(c, d, d + 1);
 		d += 2;
 	}
 }
 
-void
-blf_dec(blf_ctx *c, u_int32_t *data, u_int16_t blocks)
+فراغ
+blf_dec(blf_ctx *c, u_int32_t *داده, u_int16_t بلوکها)
 {
 	u_int32_t *d;
 	u_int16_t i;
 
-	d = data;
-	for (i = 0; i < blocks; i++) {
+	d = داده;
+	لكل (i = 0; i < بلوکها; i++) {
 		Blowfish_decipher(c, d, d + 1);
 		d += 2;
 	}
 }
 
-void
-blf_ecb_encrypt(blf_ctx *c, u_int8_t *data, u_int32_t len)
+فراغ
+blf_ecb_encrypt(blf_ctx *c, u_int8_t *داده, u_int32_t len)
 {
 	u_int32_t l, r;
 	u_int32_t i;
 
-	for (i = 0; i < len; i += 8) {
-		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
-		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
+	لكل (i = 0; i < len; i += 8) {
+		l = داده[0] << 24 | داده[1] << 16 | داده[2] << 8 | داده[3];
+		r = داده[4] << 24 | داده[5] << 16 | داده[6] << 8 | داده[7];
 		Blowfish_encipher(c, &l, &r);
-		data[0] = l >> 24 & 0xff;
-		data[1] = l >> 16 & 0xff;
-		data[2] = l >> 8 & 0xff;
-		data[3] = l & 0xff;
-		data[4] = r >> 24 & 0xff;
-		data[5] = r >> 16 & 0xff;
-		data[6] = r >> 8 & 0xff;
-		data[7] = r & 0xff;
-		data += 8;
+		داده[0] = l >> 24 & 0xff;
+		داده[1] = l >> 16 & 0xff;
+		داده[2] = l >> 8 & 0xff;
+		داده[3] = l & 0xff;
+		داده[4] = r >> 24 & 0xff;
+		داده[5] = r >> 16 & 0xff;
+		داده[6] = r >> 8 & 0xff;
+		داده[7] = r & 0xff;
+		داده += 8;
 	}
 }
 
-void
-blf_ecb_decrypt(blf_ctx *c, u_int8_t *data, u_int32_t len)
+فراغ
+blf_ecb_decrypt(blf_ctx *c, u_int8_t *داده, u_int32_t len)
 {
 	u_int32_t l, r;
 	u_int32_t i;
 
-	for (i = 0; i < len; i += 8) {
-		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
-		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
+	لكل (i = 0; i < len; i += 8) {
+		l = داده[0] << 24 | داده[1] << 16 | داده[2] << 8 | داده[3];
+		r = داده[4] << 24 | داده[5] << 16 | داده[6] << 8 | داده[7];
 		Blowfish_decipher(c, &l, &r);
-		data[0] = l >> 24 & 0xff;
-		data[1] = l >> 16 & 0xff;
-		data[2] = l >> 8 & 0xff;
-		data[3] = l & 0xff;
-		data[4] = r >> 24 & 0xff;
-		data[5] = r >> 16 & 0xff;
-		data[6] = r >> 8 & 0xff;
-		data[7] = r & 0xff;
-		data += 8;
+		داده[0] = l >> 24 & 0xff;
+		داده[1] = l >> 16 & 0xff;
+		داده[2] = l >> 8 & 0xff;
+		داده[3] = l & 0xff;
+		داده[4] = r >> 24 & 0xff;
+		داده[5] = r >> 16 & 0xff;
+		داده[6] = r >> 8 & 0xff;
+		داده[7] = r & 0xff;
+		داده += 8;
 	}
 }
 
-void
-blf_cbc_encrypt(blf_ctx *c, u_int8_t *iv, u_int8_t *data, u_int32_t len)
+فراغ
+blf_cbc_encrypt(blf_ctx *c, u_int8_t *iv, u_int8_t *داده, u_int32_t len)
 {
 	u_int32_t l, r;
 	u_int32_t i, j;
 
-	for (i = 0; i < len; i += 8) {
-		for (j = 0; j < 8; j++)
-			data[j] ^= iv[j];
-		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
-		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
+	لكل (i = 0; i < len; i += 8) {
+		لكل (j = 0; j < 8; j++)
+			داده[j] ^= iv[j];
+		l = داده[0] << 24 | داده[1] << 16 | داده[2] << 8 | داده[3];
+		r = داده[4] << 24 | داده[5] << 16 | داده[6] << 8 | داده[7];
 		Blowfish_encipher(c, &l, &r);
-		data[0] = l >> 24 & 0xff;
-		data[1] = l >> 16 & 0xff;
-		data[2] = l >> 8 & 0xff;
-		data[3] = l & 0xff;
-		data[4] = r >> 24 & 0xff;
-		data[5] = r >> 16 & 0xff;
-		data[6] = r >> 8 & 0xff;
-		data[7] = r & 0xff;
-		iv = data;
-		data += 8;
+		داده[0] = l >> 24 & 0xff;
+		داده[1] = l >> 16 & 0xff;
+		داده[2] = l >> 8 & 0xff;
+		داده[3] = l & 0xff;
+		داده[4] = r >> 24 & 0xff;
+		داده[5] = r >> 16 & 0xff;
+		داده[6] = r >> 8 & 0xff;
+		داده[7] = r & 0xff;
+		iv = داده;
+		داده += 8;
 	}
 }
 
-void
-blf_cbc_decrypt(blf_ctx *c, u_int8_t *iva, u_int8_t *data, u_int32_t len)
+فراغ
+blf_cbc_decrypt(blf_ctx *c, u_int8_t *iva, u_int8_t *داده, u_int32_t len)
 {
 	u_int32_t l, r;
 	u_int8_t *iv;
 	u_int32_t i, j;
 
-	iv = data + len - 16;
-	data = data + len - 8;
-	for (i = len - 8; i >= 8; i -= 8) {
-		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
-		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
+	iv = داده + len - 16;
+	داده = داده + len - 8;
+	لكل (i = len - 8; i >= 8; i -= 8) {
+		l = داده[0] << 24 | داده[1] << 16 | داده[2] << 8 | داده[3];
+		r = داده[4] << 24 | داده[5] << 16 | داده[6] << 8 | داده[7];
 		Blowfish_decipher(c, &l, &r);
-		data[0] = l >> 24 & 0xff;
-		data[1] = l >> 16 & 0xff;
-		data[2] = l >> 8 & 0xff;
-		data[3] = l & 0xff;
-		data[4] = r >> 24 & 0xff;
-		data[5] = r >> 16 & 0xff;
-		data[6] = r >> 8 & 0xff;
-		data[7] = r & 0xff;
-		for (j = 0; j < 8; j++)
-			data[j] ^= iv[j];
+		داده[0] = l >> 24 & 0xff;
+		داده[1] = l >> 16 & 0xff;
+		داده[2] = l >> 8 & 0xff;
+		داده[3] = l & 0xff;
+		داده[4] = r >> 24 & 0xff;
+		داده[5] = r >> 16 & 0xff;
+		داده[6] = r >> 8 & 0xff;
+		داده[7] = r & 0xff;
+		لكل (j = 0; j < 8; j++)
+			داده[j] ^= iv[j];
 		iv -= 8;
-		data -= 8;
+		داده -= 8;
 	}
-	l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
-	r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
+	l = داده[0] << 24 | داده[1] << 16 | داده[2] << 8 | داده[3];
+	r = داده[4] << 24 | داده[5] << 16 | داده[6] << 8 | داده[7];
 	Blowfish_decipher(c, &l, &r);
-	data[0] = l >> 24 & 0xff;
-	data[1] = l >> 16 & 0xff;
-	data[2] = l >> 8 & 0xff;
-	data[3] = l & 0xff;
-	data[4] = r >> 24 & 0xff;
-	data[5] = r >> 16 & 0xff;
-	data[6] = r >> 8 & 0xff;
-	data[7] = r & 0xff;
-	for (j = 0; j < 8; j++)
-		data[j] ^= iva[j];
+	داده[0] = l >> 24 & 0xff;
+	داده[1] = l >> 16 & 0xff;
+	داده[2] = l >> 8 & 0xff;
+	داده[3] = l & 0xff;
+	داده[4] = r >> 24 & 0xff;
+	داده[5] = r >> 16 & 0xff;
+	داده[6] = r >> 8 & 0xff;
+	داده[7] = r & 0xff;
+	لكل (j = 0; j < 8; j++)
+		داده[j] ^= iva[j];
 }
 
-#if 0
-void
-report(u_int32_t data[], u_int16_t len)
+#إذا 0
+فراغ
+report(u_int32_t داده[], u_int16_t len)
 {
 	u_int16_t i;
-	for (i = 0; i < len; i += 2)
-		printf("Block %0hd: %08lx %08lx.\n",
-		    i / 2, data[i], data[i + 1]);
+	لكل (i = 0; i < len; i += 2)
+		چاپ_کن("Block %0hd: %08lx %08lx.\n",
+		    i / 2, داده[i], داده[i + 1]);
 }
-void
-main(void)
+فراغ
+اصلی(فراغ)
 {
 
 	blf_ctx c;
-	char    key[] = "AAAAA";
-	char    key2[] = "abcdefghijklmnopqrstuvwxyz";
+	حرف    کلید[] = "AAAAA";
+	حرف    key2[] = "abcdefghijklmnopqrstuvwxyz";
 
-	u_int32_t data[10];
+	u_int32_t داده[10];
 	u_int32_t data2[] =
 	{0x424c4f57l, 0x46495348l};
 
 	u_int16_t i;
 
 	/* First test */
-	for (i = 0; i < 10; i++)
-		data[i] = i;
+	لكل (i = 0; i < 10; i++)
+		داده[i] = i;
 
-	blf_key(&c, (u_int8_t *) key, 5);
-	blf_enc(&c, data, 5);
-	blf_dec(&c, data, 1);
-	blf_dec(&c, data + 2, 4);
-	printf("Should read as 0 - 9.\n");
-	report(data, 10);
+	blf_کلید(&c, (u_int8_t *) کلید, 5);
+	blf_enc(&c, داده, 5);
+	blf_dec(&c, داده, 1);
+	blf_dec(&c, داده + 2, 4);
+	چاپ_کن("Should read as 0 - 9.\n");
+	report(داده, 10);
 
 	/* Second test */
-	blf_key(&c, (u_int8_t *) key2, strlen(key2));
+	blf_کلید(&c, (u_int8_t *) key2, طول_رشته(key2));
 	blf_enc(&c, data2, 1);
-	printf("\nShould read as: 0x324ed0fe 0xf413a203.\n");
+	چاپ_کن("\nShould read as: 0x324ed0fe 0xf413a203.\n");
 	report(data2, 2);
 	blf_dec(&c, data2, 1);
 	report(data2, 2);
 }
-#endif
+#پایان_اگر
 
-#endif /* !defined(HAVE_BCRYPT_PBKDF) && (!defined(HAVE_BLOWFISH_INITSTATE) || \
+#پایان_اگر /* !defined(HAVE_BCRYPT_PBKDF) && (!defined(HAVE_BLOWFISH_INITSTATE) || \
     !defined(HAVE_BLOWFISH_EXPAND0STATE) || !defined(HAVE_BLF_ENC)) */
 

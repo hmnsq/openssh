@@ -24,42 +24,42 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef COMPAT_H
-#define COMPAT_H
+#اگر_تعریف_نشده COMPAT_H
+#تعریف_کن COMPAT_H
 
-#define SSH_BUG_UTF8TTYMODE	0x00000001
-#define SSH_BUG_SIGTYPE		0x00000002
-#define SSH_BUG_SIGTYPE74	0x00000004
+#تعریف_کن SSH_BUG_UTF8TTYMODE	0x00000001
+#تعریف_کن SSH_BUG_SIGTYPE		0x00000002
+#تعریف_کن SSH_BUG_SIGTYPE74	0x00000004
 /* #define unused		0x00000008 */
 /* #define unused		0x00000010 */
 /* #define unused		0x00000020 */
-#define SSH_BUG_DEBUG		0x00000040
+#تعریف_کن SSH_BUG_DEBUG		0x00000040
 /* #define unused		0x00000080 */
 /* #define unused		0x00000100 */
 /* #define unused		0x00000200 */
 /* #define unused		0x00000400 */
-#define SSH_BUG_SCANNER		0x00000800
+#تعریف_کن SSH_BUG_SCANNER		0x00000800
 /* #define unused		0x00001000 */
 /* #define unused		0x00002000 */
-#define SSH_OLD_DHGEX		0x00004000
-#define SSH_BUG_NOREKEY		0x00008000
+#تعریف_کن SSH_OLD_DHGEX		0x00004000
+#تعریف_کن SSH_BUG_NOREKEY		0x00008000
 /* #define unused		0x00010000 */
 /* #define unused		0x00020000 */
 /* #define unused		0x00040000 */
 /* #define unused		0x00100000 */
-#define SSH_BUG_EXTEOF		0x00200000
-#define SSH_BUG_PROBE		0x00400000
+#تعریف_کن SSH_BUG_EXTEOF		0x00200000
+#تعریف_کن SSH_BUG_PROBE		0x00400000
 /* #define unused		0x00800000 */
-#define SSH_OLD_FORWARD_ADDR	0x01000000
+#تعریف_کن SSH_OLD_FORWARD_ADDR	0x01000000
 /* #define unused		0x02000000 */
-#define SSH_NEW_OPENSSH		0x04000000
-#define SSH_BUG_DYNAMIC_RPORT	0x08000000
-#define SSH_BUG_CURVE25519PAD	0x10000000
-#define SSH_BUG_HOSTKEYS	0x20000000
-#define SSH_BUG_DHGEX_LARGE	0x40000000
+#تعریف_کن SSH_NEW_OPENSSH		0x04000000
+#تعریف_کن SSH_BUG_DYNAMIC_RPORT	0x08000000
+#تعریف_کن SSH_BUG_CURVE25519PAD	0x10000000
+#تعریف_کن SSH_BUG_HOSTKEYS	0x20000000
+#تعریف_کن SSH_BUG_DHGEX_LARGE	0x40000000
 
-struct ssh;
+بنية ssh;
 
-void    compat_banner(struct ssh *, const char *);
-char	*compat_kex_proposal(struct ssh *, const char *);
-#endif
+فراغ    compat_banner(بنية ssh *, ثابت حرف *);
+حرف	*compat_kex_proposal(بنية ssh *, ثابت حرف *);
+#پایان_اگر

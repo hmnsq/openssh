@@ -14,22 +14,22 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#define SSH_DONT_OVERLOAD_OPENSSL_FUNCS
-#include "includes.h"
+#تعریف_کن SSH_DONT_OVERLOAD_OPENSSL_FUNCS
+#ضمن "includes.h"
 
-#ifdef WITH_OPENSSL
+#اگر_تعریف_شده WITH_OPENSSL
 
-#include <stdarg.h>
-#include <string.h>
+#ضمن <stdarg.h>
+#ضمن <string.h>
 
-#ifdef USE_OPENSSL_ENGINE
+#اگر_تعریف_شده USE_OPENSSL_ENGINE
 # include <openssl/engine.h>
 # include <openssl/conf.h>
-#endif
+#پایان_اگر
 
-#include "log.h"
+#ضمن "log.h"
 
-#include "openssl-compat.h"
+#ضمن "openssl-compat.h"
 
 /*
  * OpenSSL version numbers: MNNFFPPS: major minor fix patch status.
@@ -40,77 +40,77 @@
  * See https://www.openssl.org/policies/releasestrat.html
  */
 
-int
-ssh_compatible_openssl(long headerver, long libver)
+صحيح
+ssh_compatible_openssl(دراز headerver, دراز libver)
 {
-	long mask, hfix, lfix;
+	دراز ماسک, hfix, lfix;
 
 	/* exact match is always OK */
-	if (headerver == libver)
-		return 1;
+	إذا (headerver == libver)
+		أرجع 1;
 
 	/*
 	 * For versions >= 3.0, only the major must match.
 	 */
-	if (headerver >= 0x30000000) {
-		mask = 0xf0000000L; /* major only */
-		return (headerver & mask) == (libver & mask);
+	إذا (headerver >= 0x30000000) {
+		ماسک = 0xf0000000L; /* major only */
+		أرجع (headerver & ماسک) == (libver & ماسک);
 	}
 
 	/*
 	 * For versions >= 1.0.0, but <3, major,minor,status must match and
 	 * library fix version must be equal to or newer than the header.
 	 */
-	mask = 0xfff0000fL; /* major,minor,status */
+	ماسک = 0xfff0000fL; /* major,minor,status */
 	hfix = (headerver & 0x000ff000) >> 12;
 	lfix = (libver & 0x000ff000) >> 12;
-	if ( (headerver & mask) == (libver & mask) && lfix >= hfix)
-		return 1;
-	return 0;
+	إذا ( (headerver & ماسک) == (libver & ماسک) && lfix >= hfix)
+		أرجع 1;
+	أرجع 0;
 }
 
-int
-ssh_libcrypto_init(void)
+صحيح
+ssh_libcrypto_init(فراغ)
 {
-	uint64_t opts = OPENSSL_INIT_ADD_ALL_CIPHERS |
-	    OPENSSL_INIT_ADD_ALL_DIGESTS;
+	uint64_t opts = OPENSSL_INIT_جمع_کن_ALL_CIPHERS |
+	    OPENSSL_INIT_جمع_کن_ALL_DIGESTS;
 
-#ifdef	USE_OPENSSL_ENGINE
+#اگر_تعریف_شده	USE_OPENSSL_ENGINE
 	/* Enable use of crypto hardware */
-	ENGINE_load_builtin_engines();
-	ENGINE_register_all_complete();
+	ENGINE_بارگیری_builtin_engines();
+	ENGINE_ثبات_all_complete();
 
 	/* Tell libcrypto config file to pick up engines defined there */
-	opts |= OPENSSL_INIT_LOAD_CONFIG;
-#endif /* USE_OPENSSL_ENGINE */
+	opts |= OPENSSL_INIT_بارگیری_CONFIG;
+#پایان_اگر /* USE_OPENSSL_ENGINE */
 
-	return OPENSSL_init_crypto(opts, NULL);
+	أرجع OPENSSL_init_crypto(opts, عدم);
 }
 
-#ifndef HAVE_EVP_DIGESTSIGN
-int
-EVP_DigestSign(EVP_MD_CTX *ctx, unsigned char *sigret, size_t *siglen,
-    const unsigned char *tbs, size_t tbslen)
+#اگر_تعریف_نشده HAVE_EVP_DIGESTSIGN
+صحيح
+EVP_DigestSign(EVP_MD_CTX *ctx, بیعلامت حرف *sigret, اندازه_t *siglen,
+    ثابت بیعلامت حرف *tbs, اندازه_t tbslen)
 {
-	if (sigret != NULL) {
-		if (EVP_DigestSignUpdate(ctx, tbs, tbslen) <= 0)
-			return 0;
+	إذا (sigret != عدم) {
+		إذا (EVP_DigestSignUpdate(ctx, tbs, tbslen) <= 0)
+			أرجع 0;
 	}
 
-	return EVP_DigestSignFinal(ctx, sigret, siglen);
+	أرجع EVP_DigestSignFinal(ctx, sigret, siglen);
 }
-#endif
+#پایان_اگر
 
-#ifndef HAVE_EVP_DIGESTVERIFY
-int
-EVP_DigestVerify(EVP_MD_CTX *ctx, const unsigned char *sigret, size_t siglen,
-    const unsigned char *tbs, size_t tbslen)
+#اگر_تعریف_نشده HAVE_EVP_DIGESTVERIFY
+صحيح
+EVP_DigestVerify(EVP_MD_CTX *ctx, ثابت بیعلامت حرف *sigret, اندازه_t siglen,
+    ثابت بیعلامت حرف *tbs, اندازه_t tbslen)
 {
-	if (EVP_DigestVerifyUpdate(ctx, tbs, tbslen) <= 0)
-		return -1;
+	إذا (EVP_DigestVerifyUpdate(ctx, tbs, tbslen) <= 0)
+		أرجع -1;
 
-	return EVP_DigestVerifyFinal(ctx, sigret, siglen);
+	أرجع EVP_DigestVerifyFinal(ctx, sigret, siglen);
 }
-#endif
+#پایان_اگر
 
-#endif /* WITH_OPENSSL */
+#پایان_اگر /* WITH_OPENSSL */

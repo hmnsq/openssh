@@ -35,58 +35,58 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#ضمن <string.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
 
-#include "cipher.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "ssherr.h"
+#ضمن "cipher.h"
+#ضمن "misc.h"
+#ضمن "sshbuf.h"
+#ضمن "ssherr.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#ضمن "openbsd-compat/openssl-compat.h"
 
-#ifndef WITH_OPENSSL
-#define EVP_CIPHER_CTX void
-#endif
+#اگر_تعریف_نشده WITH_OPENSSL
+#تعریف_کن EVP_CIPHER_CTX فراغ
+#پایان_اگر
 
-struct sshcipher_ctx {
-	int	plaintext;
-	int	encrypt;
+بنية sshcipher_ctx {
+	صحيح	plaintext;
+	صحيح	encrypt;
 	EVP_CIPHER_CTX *evp;
-	struct chachapoly_ctx *cp_ctx;
-	struct aesctr_ctx ac_ctx; /* XXX union with evp? */
-	const struct sshcipher *cipher;
+	بنية chachapoly_ctx *cp_ctx;
+	بنية aesctr_ctx ac_ctx; /* XXX union with evp? */
+	ثابت بنية sshcipher *cipher;
 };
 
-struct sshcipher {
-	char	*name;
-	u_int	block_size;
-	u_int	key_len;
+بنية sshcipher {
+	حرف	*name;
+	u_int	بلوک_اندازه;
+	u_int	کلید_len;
 	u_int	iv_len;		/* defaults to block_size */
 	u_int	auth_len;
 	u_int	flags;
-#define CFLAG_CBC		(1<<0)
-#define CFLAG_CHACHAPOLY	(1<<1)
-#define CFLAG_AESCTR		(1<<2)
-#define CFLAG_NONE		(1<<3)
-#define CFLAG_INTERNAL		CFLAG_NONE /* Don't use "none" for packets */
-#ifdef WITH_OPENSSL
-	const EVP_CIPHER	*(*evptype)(void);
-#else
-	void	*ignored;
-#endif
+#تعریف_کن CFLAG_CBC		(1<<0)
+#تعریف_کن CFLAG_CHACHAPOLY	(1<<1)
+#تعریف_کن CFLAG_AESCTR		(1<<2)
+#تعریف_کن CFLAG_NONE		(1<<3)
+#تعریف_کن CFLAG_داخلی		CFLAG_NONE /* Don't use "none" for packets */
+#اگر_تعریف_شده WITH_OPENSSL
+	ثابت EVP_CIPHER	*(*evptype)(فراغ);
+#وإلا
+	فراغ	*ignored;
+#پایان_اگر
 };
 
-static const struct sshcipher ciphers[] = {
-#ifdef WITH_OPENSSL
-#ifndef OPENSSL_NO_DES
+ساكن ثابت بنية sshcipher ciphers[] = {
+#اگر_تعریف_شده WITH_OPENSSL
+#اگر_تعریف_نشده OPENSSL_NO_DES
 	{ "3des-cbc",		8, 24, 0, 0, CFLAG_CBC, EVP_des_ede3_cbc },
-#endif
+#پایان_اگر
 	{ "aes128-cbc",		16, 16, 0, 0, CFLAG_CBC, EVP_aes_128_cbc },
 	{ "aes192-cbc",		16, 24, 0, 0, CFLAG_CBC, EVP_aes_192_cbc },
 	{ "aes256-cbc",		16, 32, 0, 0, CFLAG_CBC, EVP_aes_256_cbc },
@@ -97,236 +97,236 @@ static const struct sshcipher ciphers[] = {
 				16, 16, 12, 16, 0, EVP_aes_128_gcm },
 	{ "aes256-gcm@openssh.com",
 				16, 32, 12, 16, 0, EVP_aes_256_gcm },
-#else
-	{ "aes128-ctr",		16, 16, 0, 0, CFLAG_AESCTR, NULL },
-	{ "aes192-ctr",		16, 24, 0, 0, CFLAG_AESCTR, NULL },
-	{ "aes256-ctr",		16, 32, 0, 0, CFLAG_AESCTR, NULL },
-#endif
+#وإلا
+	{ "aes128-ctr",		16, 16, 0, 0, CFLAG_AESCTR, عدم },
+	{ "aes192-ctr",		16, 24, 0, 0, CFLAG_AESCTR, عدم },
+	{ "aes256-ctr",		16, 32, 0, 0, CFLAG_AESCTR, عدم },
+#پایان_اگر
 	{ "chacha20-poly1305@openssh.com",
-				8, 64, 0, 16, CFLAG_CHACHAPOLY, NULL },
-	{ "none",		8, 0, 0, 0, CFLAG_NONE, NULL },
+				8, 64, 0, 16, CFLAG_CHACHAPOLY, عدم },
+	{ "none",		8, 0, 0, 0, CFLAG_NONE, عدم },
 
-	{ NULL,			0, 0, 0, 0, 0, NULL }
+	{ عدم,			0, 0, 0, 0, 0, عدم }
 };
 
 /*--*/
 
 /* Returns a comma-separated list of supported ciphers. */
-char *
-cipher_alg_list(char sep, int auth_only)
+حرف *
+cipher_alg_list(حرف sep, صحيح auth_only)
 {
-	char *ret = NULL;
-	const struct sshcipher *c;
-	char sep_str[2] = {sep, '\0'};
+	حرف *ret = عدم;
+	ثابت بنية sshcipher *c;
+	حرف sep_str[2] = {sep, '\0'};
 
-	for (c = ciphers; c->name != NULL; c++) {
-		if ((c->flags & CFLAG_INTERNAL) != 0)
-			continue;
-		if (auth_only && c->auth_len == 0)
-			continue;
+	لكل (c = ciphers; c->name != عدم; c++) {
+		إذا ((c->flags & CFLAG_داخلی) != 0)
+			استمر;
+		إذا (auth_only && c->auth_len == 0)
+			استمر;
 		xextendf(&ret, sep_str, "%s", c->name);
 	}
-	return ret;
+	أرجع ret;
 }
 
-const char *
-compression_alg_list(int compression)
+ثابت حرف *
+compression_alg_list(صحيح compression)
 {
-#ifdef WITH_ZLIB
-	return compression ? "zlib@openssh.com,none" :
+#اگر_تعریف_شده WITH_ZLIB
+	أرجع compression ? "zlib@openssh.com,none" :
 	    "none,zlib@openssh.com";
-#else
-	return "none";
-#endif
+#وإلا
+	أرجع "none";
+#پایان_اگر
 }
 
 u_int
-cipher_blocksize(const struct sshcipher *c)
+cipher_blocksize(ثابت بنية sshcipher *c)
 {
-	return (c->block_size);
+	أرجع (c->بلوک_اندازه);
 }
 
 u_int
-cipher_keylen(const struct sshcipher *c)
+cipher_keylen(ثابت بنية sshcipher *c)
 {
-	return (c->key_len);
+	أرجع (c->کلید_len);
 }
 
 u_int
-cipher_seclen(const struct sshcipher *c)
+cipher_seclen(ثابت بنية sshcipher *c)
 {
-	if (strcmp("3des-cbc", c->name) == 0)
-		return 14;
-	return cipher_keylen(c);
+	إذا (strcmp("3des-cbc", c->name) == 0)
+		أرجع 14;
+	أرجع cipher_keylen(c);
 }
 
 u_int
-cipher_authlen(const struct sshcipher *c)
+cipher_authlen(ثابت بنية sshcipher *c)
 {
-	return (c->auth_len);
+	أرجع (c->auth_len);
 }
 
 u_int
-cipher_ivlen(const struct sshcipher *c)
+cipher_ivlen(ثابت بنية sshcipher *c)
 {
 	/*
 	 * Default is cipher block size, except for chacha20+poly1305 that
 	 * needs no IV. XXX make iv_len == -1 default?
 	 */
-	return (c->iv_len != 0 || (c->flags & CFLAG_CHACHAPOLY) != 0) ?
-	    c->iv_len : c->block_size;
+	أرجع (c->iv_len != 0 || (c->flags & CFLAG_CHACHAPOLY) != 0) ?
+	    c->iv_len : c->بلوک_اندازه;
 }
 
 u_int
-cipher_is_cbc(const struct sshcipher *c)
+cipher_is_cbc(ثابت بنية sshcipher *c)
 {
-	return (c->flags & CFLAG_CBC) != 0;
+	أرجع (c->flags & CFLAG_CBC) != 0;
 }
 
 u_int
-cipher_is_internal(const struct sshcipher *c)
+cipher_is_داخلی(ثابت بنية sshcipher *c)
 {
-	return (c->flags & CFLAG_INTERNAL) != 0;
+	أرجع (c->flags & CFLAG_داخلی) != 0;
 }
 
 u_int
-cipher_ctx_is_plaintext(struct sshcipher_ctx *cc)
+cipher_ctx_is_plaintext(بنية sshcipher_ctx *cc)
 {
-	return cc->plaintext;
+	أرجع cc->plaintext;
 }
 
-const struct sshcipher *
-cipher_by_name(const char *name)
+ثابت بنية sshcipher *
+cipher_by_name(ثابت حرف *name)
 {
-	const struct sshcipher *c;
-	for (c = ciphers; c->name != NULL; c++)
-		if (strcmp(c->name, name) == 0)
-			return c;
-	return NULL;
+	ثابت بنية sshcipher *c;
+	لكل (c = ciphers; c->name != عدم; c++)
+		إذا (strcmp(c->name, name) == 0)
+			أرجع c;
+	أرجع عدم;
 }
 
-#define	CIPHER_SEP	","
-int
-ciphers_valid(const char *names)
+#تعریف_کن	CIPHER_SEP	","
+صحيح
+ciphers_valid(ثابت حرف *نامها)
 {
-	const struct sshcipher *c;
-	char *cipher_list, *cp;
-	char *p;
-	int found = 0;
+	ثابت بنية sshcipher *c;
+	حرف *cipher_list, *cp;
+	حرف *p;
+	صحيح یافت = 0;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((cipher_list = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, CIPHER_SEP)); p && *p != '\0';
+	إذا (نامها == عدم || strcmp(نامها, "") == 0)
+		أرجع 0;
+	إذا ((cipher_list = cp = strdup(نامها)) == عدم)
+		أرجع 0;
+	لكل ((p = strsep(&cp, CIPHER_SEP)); p && *p != '\0';
 	    (p = strsep(&cp, CIPHER_SEP))) {
 		c = cipher_by_name(p);
-		if (c == NULL || (c->flags & CFLAG_INTERNAL) != 0) {
-			free(cipher_list);
-			return 0;
-		} else
-			found = 1;
+		إذا (c == عدم || (c->flags & CFLAG_داخلی) != 0) {
+			حرر(cipher_list);
+			أرجع 0;
+		} وإلا
+			یافت = 1;
 	}
-	free(cipher_list);
-	return found;
+	حرر(cipher_list);
+	أرجع یافت;
 }
 
-const char *
-cipher_warning_message(const struct sshcipher_ctx *cc)
+ثابت حرف *
+cipher_warning_پیام(ثابت بنية sshcipher_ctx *cc)
 {
-	if (cc == NULL || cc->cipher == NULL)
-		return NULL;
+	إذا (cc == عدم || cc->cipher == عدم)
+		أرجع عدم;
 	/* XXX repurpose for CBC warning */
-	return NULL;
+	أرجع عدم;
 }
 
-int
-cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
-    const u_char *key, u_int keylen, const u_char *iv, u_int ivlen,
-    int do_encrypt)
+صحيح
+cipher_init(بنية sshcipher_ctx **ccp, ثابت بنية sshcipher *cipher,
+    ثابت u_char *کلید, u_int keylen, ثابت u_char *iv, u_int ivlen,
+    صحيح do_encrypt)
 {
-	struct sshcipher_ctx *cc = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
-#ifdef WITH_OPENSSL
-	const EVP_CIPHER *type;
-	int klen;
-#endif
+	بنية sshcipher_ctx *cc = عدم;
+	صحيح ret = SSH_ERR_داخلی_ERROR;
+#اگر_تعریف_شده WITH_OPENSSL
+	ثابت EVP_CIPHER *type;
+	صحيح klen;
+#پایان_اگر
 
-	*ccp = NULL;
-	if ((cc = calloc(1, sizeof(*cc))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	*ccp = عدم;
+	إذا ((cc = حافظه_صفر_بده(1, حجم(*cc))) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
 
 	cc->plaintext = (cipher->flags & CFLAG_NONE) != 0;
 	cc->encrypt = do_encrypt;
 
-	if (keylen < cipher->key_len ||
-	    (iv != NULL && ivlen < cipher_ivlen(cipher))) {
-		ret = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+	إذا (keylen < cipher->کلید_len ||
+	    (iv != عدم && ivlen < cipher_ivlen(cipher))) {
+		ret = SSH_ERR_INVALID_آرگومان;
+		اذهب بیرون;
 	}
 
 	cc->cipher = cipher;
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		cc->cp_ctx = chachapoly_new(key, keylen);
-		ret = cc->cp_ctx != NULL ? 0 : SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+	إذا ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		cc->cp_ctx = chachapoly_new(کلید, keylen);
+		ret = cc->cp_ctx != عدم ? 0 : SSH_ERR_INVALID_آرگومان;
+		اذهب بیرون;
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0) {
+	إذا ((cc->cipher->flags & CFLAG_NONE) != 0) {
 		ret = 0;
-		goto out;
+		اذهب بیرون;
 	}
-#ifndef WITH_OPENSSL
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		aesctr_keysetup(&cc->ac_ctx, key, 8 * keylen, 8 * ivlen);
+#اگر_تعریف_نشده WITH_OPENSSL
+	إذا ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		aesctr_keysetup(&cc->ac_ctx, کلید, 8 * keylen, 8 * ivlen);
 		aesctr_ivsetup(&cc->ac_ctx, iv);
 		ret = 0;
-		goto out;
+		اذهب بیرون;
 	}
-	ret = SSH_ERR_INVALID_ARGUMENT;
-	goto out;
-#else /* WITH_OPENSSL */
+	ret = SSH_ERR_INVALID_آرگومان;
+	اذهب بیرون;
+#وإلا /* WITH_OPENSSL */
 	type = (*cipher->evptype)();
-	if ((cc->evp = EVP_CIPHER_CTX_new()) == NULL) {
+	إذا ((cc->evp = EVP_CIPHER_CTX_new()) == عدم) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب بیرون;
 	}
-	if (EVP_CipherInit(cc->evp, type, NULL, (u_char *)iv,
+	إذا (EVP_CipherInit(cc->evp, type, عدم, (u_char *)iv,
 	    (do_encrypt == CIPHER_ENCRYPT)) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب بیرون;
 	}
-	if (cipher_authlen(cipher) &&
-	    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_SET_IV_FIXED,
+	إذا (cipher_authlen(cipher) &&
+	    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_مجموعه_IV_FIXED,
 	    -1, (u_char *)iv) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب بیرون;
 	}
-	klen = EVP_CIPHER_CTX_key_length(cc->evp);
-	if (klen > 0 && keylen != (u_int)klen) {
-		if (EVP_CIPHER_CTX_set_key_length(cc->evp, keylen) == 0) {
+	klen = EVP_CIPHER_CTX_کلید_درازی(cc->evp);
+	إذا (klen > 0 && keylen != (u_int)klen) {
+		إذا (EVP_CIPHER_CTX_مجموعه_کلید_درازی(cc->evp, keylen) == 0) {
 			ret = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			اذهب بیرون;
 		}
 	}
-	if (EVP_CipherInit(cc->evp, NULL, (u_char *)key, NULL, -1) == 0) {
+	إذا (EVP_CipherInit(cc->evp, عدم, (u_char *)کلید, عدم, -1) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب بیرون;
 	}
 	ret = 0;
-#endif /* WITH_OPENSSL */
- out:
-	if (ret == 0) {
+#پایان_اگر /* WITH_OPENSSL */
+ بیرون:
+	إذا (ret == 0) {
 		/* success */
 		*ccp = cc;
-	} else {
-		if (cc != NULL) {
-#ifdef WITH_OPENSSL
+	} وإلا {
+		إذا (cc != عدم) {
+#اگر_تعریف_شده WITH_OPENSSL
 			EVP_CIPHER_CTX_free(cc->evp);
-#endif /* WITH_OPENSSL */
-			freezero(cc, sizeof(*cc));
+#پایان_اگر /* WITH_OPENSSL */
+			freezero(cc, حجم(*cc));
 		}
 	}
-	return ret;
+	أرجع ret;
 }
 
 /*
@@ -339,135 +339,135 @@ cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
  * This tag is written on encryption and verified on decryption.
  * Both 'aadlen' and 'authlen' can be set to 0.
  */
-int
-cipher_crypt(struct sshcipher_ctx *cc, u_int seqnr, u_char *dest,
-   const u_char *src, u_int len, u_int aadlen, u_int authlen)
+صحيح
+cipher_crypt(بنية sshcipher_ctx *cc, u_int seqnr, u_char *dest,
+   ثابت u_char *src, u_int len, u_int aadlen, u_int authlen)
 {
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		return chachapoly_crypt(cc->cp_ctx, seqnr, dest, src,
+	إذا ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		أرجع chachapoly_crypt(cc->cp_ctx, seqnr, dest, src,
 		    len, aadlen, authlen, cc->encrypt);
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0) {
-		memcpy(dest, src, aadlen + len);
-		return 0;
+	إذا ((cc->cipher->flags & CFLAG_NONE) != 0) {
+		کپی_حافظه(dest, src, aadlen + len);
+		أرجع 0;
 	}
-#ifndef WITH_OPENSSL
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		if (aadlen)
-			memcpy(dest, src, aadlen);
-		aesctr_encrypt_bytes(&cc->ac_ctx, src + aadlen,
+#اگر_تعریف_نشده WITH_OPENSSL
+	إذا ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		إذا (aadlen)
+			کپی_حافظه(dest, src, aadlen);
+		aesctr_encrypt_بایتها(&cc->ac_ctx, src + aadlen,
 		    dest + aadlen, len);
-		return 0;
+		أرجع 0;
 	}
-	return SSH_ERR_INVALID_ARGUMENT;
-#else
-	if (authlen) {
+	أرجع SSH_ERR_INVALID_آرگومان;
+#وإلا
+	إذا (authlen) {
 		u_char lastiv[1];
 
-		if (authlen != cipher_authlen(cc->cipher))
-			return SSH_ERR_INVALID_ARGUMENT;
+		إذا (authlen != cipher_authlen(cc->cipher))
+			أرجع SSH_ERR_INVALID_آرگومان;
 		/* increment IV */
-		if (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN,
+		إذا (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN,
 		    1, lastiv) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			أرجع SSH_ERR_LIBCRYPTO_ERROR;
 		/* set tag on decryption */
-		if (!cc->encrypt &&
-		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_SET_TAG,
+		إذا (!cc->encrypt &&
+		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_مجموعه_برچسب,
 		    authlen, (u_char *)src + aadlen + len) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			أرجع SSH_ERR_LIBCRYPTO_ERROR;
 	}
-	if (aadlen) {
-		if (authlen &&
-		    EVP_Cipher(cc->evp, NULL, (u_char *)src, aadlen) < 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
-		memcpy(dest, src, aadlen);
+	إذا (aadlen) {
+		إذا (authlen &&
+		    EVP_Cipher(cc->evp, عدم, (u_char *)src, aadlen) < 0)
+			أرجع SSH_ERR_LIBCRYPTO_ERROR;
+		کپی_حافظه(dest, src, aadlen);
 	}
-	if (len % cc->cipher->block_size)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_Cipher(cc->evp, dest + aadlen, (u_char *)src + aadlen,
+	إذا (len % cc->cipher->بلوک_اندازه)
+		أرجع SSH_ERR_INVALID_آرگومان;
+	إذا (EVP_Cipher(cc->evp, dest + aadlen, (u_char *)src + aadlen,
 	    len) < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (authlen) {
+		أرجع SSH_ERR_LIBCRYPTO_ERROR;
+	إذا (authlen) {
 		/* compute tag (on encrypt) or verify tag (on decrypt) */
-		if (EVP_Cipher(cc->evp, NULL, NULL, 0) < 0)
-			return cc->encrypt ?
+		إذا (EVP_Cipher(cc->evp, عدم, عدم, 0) < 0)
+			أرجع cc->encrypt ?
 			    SSH_ERR_LIBCRYPTO_ERROR : SSH_ERR_MAC_INVALID;
-		if (cc->encrypt &&
-		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_GET_TAG,
+		إذا (cc->encrypt &&
+		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_GET_برچسب,
 		    authlen, dest + aadlen + len) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			أرجع SSH_ERR_LIBCRYPTO_ERROR;
 	}
-	return 0;
-#endif
+	أرجع 0;
+#پایان_اگر
 }
 
 /* Extract the packet length, including any decryption necessary beforehand */
-int
-cipher_get_length(struct sshcipher_ctx *cc, u_int *plenp, u_int seqnr,
-    const u_char *cp, u_int len)
+صحيح
+cipher_get_درازی(بنية sshcipher_ctx *cc, u_int *plenp, u_int seqnr,
+    ثابت u_char *cp, u_int len)
 {
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0)
-		return chachapoly_get_length(cc->cp_ctx, plenp, seqnr,
+	إذا ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0)
+		أرجع chachapoly_get_درازی(cc->cp_ctx, plenp, seqnr,
 		    cp, len);
-	if (len < 4)
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+	إذا (len < 4)
+		أرجع SSH_ERR_پیام_INCOMPLETE;
 	*plenp = PEEK_U32(cp);
-	return 0;
+	أرجع 0;
 }
 
-void
-cipher_free(struct sshcipher_ctx *cc)
+فراغ
+cipher_free(بنية sshcipher_ctx *cc)
 {
-	if (cc == NULL)
-		return;
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+	إذا (cc == عدم)
+		أرجع;
+	إذا ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
 		chachapoly_free(cc->cp_ctx);
-		cc->cp_ctx = NULL;
-	} else if ((cc->cipher->flags & CFLAG_AESCTR) != 0)
-		explicit_bzero(&cc->ac_ctx, sizeof(cc->ac_ctx));
-#ifdef WITH_OPENSSL
+		cc->cp_ctx = عدم;
+	} وإلا إذا ((cc->cipher->flags & CFLAG_AESCTR) != 0)
+		explicit_bzero(&cc->ac_ctx, حجم(cc->ac_ctx));
+#اگر_تعریف_شده WITH_OPENSSL
 	EVP_CIPHER_CTX_free(cc->evp);
-	cc->evp = NULL;
-#endif
-	freezero(cc, sizeof(*cc));
+	cc->evp = عدم;
+#پایان_اگر
+	freezero(cc, حجم(*cc));
 }
 
-int
-cipher_get_keyiv(struct sshcipher_ctx *cc, u_char *iv, size_t len)
+صحيح
+cipher_get_keyiv(بنية sshcipher_ctx *cc, u_char *iv, اندازه_t len)
 {
-#ifdef WITH_OPENSSL
-	const struct sshcipher *c = cc->cipher;
-	int evplen;
-#endif
+#اگر_تعریف_شده WITH_OPENSSL
+	ثابت بنية sshcipher *c = cc->cipher;
+	صحيح evplen;
+#پایان_اگر
 
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		if (len != 0)
-			return SSH_ERR_INVALID_ARGUMENT;
-		return 0;
+	إذا ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		إذا (len != 0)
+			أرجع SSH_ERR_INVALID_آرگومان;
+		أرجع 0;
 	}
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		if (len != sizeof(cc->ac_ctx.ctr))
-			return SSH_ERR_INVALID_ARGUMENT;
-		memcpy(iv, cc->ac_ctx.ctr, len);
-		return 0;
+	إذا ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		إذا (len != حجم(cc->ac_ctx.ctr))
+			أرجع SSH_ERR_INVALID_آرگومان;
+		کپی_حافظه(iv, cc->ac_ctx.ctr, len);
+		أرجع 0;
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0)
-		return 0;
+	إذا ((cc->cipher->flags & CFLAG_NONE) != 0)
+		أرجع 0;
 
-#ifdef WITH_OPENSSL
-	evplen = EVP_CIPHER_CTX_iv_length(cc->evp);
-	if (evplen == 0)
-		return 0;
-	else if (evplen < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if ((size_t)evplen != len)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (cipher_authlen(c)) {
-		if (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN, len,
+#اگر_تعریف_شده WITH_OPENSSL
+	evplen = EVP_CIPHER_CTX_iv_درازی(cc->evp);
+	إذا (evplen == 0)
+		أرجع 0;
+	وإلا إذا (evplen < 0)
+		أرجع SSH_ERR_LIBCRYPTO_ERROR;
+	إذا ((اندازه_t)evplen != len)
+		أرجع SSH_ERR_INVALID_آرگومان;
+	إذا (cipher_authlen(c)) {
+		إذا (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN, len,
 		    iv) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
-	} else if (EVP_CIPHER_CTX_get_iv(cc->evp, iv, len) <= 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-#endif
-	return 0;
+			أرجع SSH_ERR_LIBCRYPTO_ERROR;
+	} وإلا إذا (EVP_CIPHER_CTX_get_iv(cc->evp, iv, len) <= 0)
+		أرجع SSH_ERR_LIBCRYPTO_ERROR;
+#پایان_اگر
+	أرجع 0;
 }

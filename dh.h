@@ -23,62 +23,62 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DH_H
-#define DH_H
+#اگر_تعریف_نشده DH_H
+#تعریف_کن DH_H
 
-#ifdef WITH_OPENSSL
+#اگر_تعریف_شده WITH_OPENSSL
 
-struct dhgroup {
-	int size;
+بنية dhgroup {
+	صحيح اندازه;
 	BIGNUM *g;
 	BIGNUM *p;
 };
 
-DH	*choose_dh(int, int, int);
-DH	*dh_new_group_asc(const char *, const char *);
-DH	*dh_new_group(BIGNUM *, BIGNUM *);
-DH	*dh_new_group1(void);
-DH	*dh_new_group14(void);
-DH	*dh_new_group16(void);
-DH	*dh_new_group18(void);
-DH	*dh_new_group_fallback(int);
+DH	*انتخاب_dh(صحيح, صحيح, صحيح);
+DH	*dh_new_گروه_asc(ثابت حرف *, ثابت حرف *);
+DH	*dh_new_گروه(BIGNUM *, BIGNUM *);
+DH	*dh_new_group1(فراغ);
+DH	*dh_new_group14(فراغ);
+DH	*dh_new_group16(فراغ);
+DH	*dh_new_group18(فراغ);
+DH	*dh_new_گروه_fallback(صحيح);
 
-int	 dh_gen_key(DH *, int);
-int	 dh_pub_is_valid(const DH *, const BIGNUM *);
+صحيح	 dh_gen_کلید(DH *, صحيح);
+صحيح	 dh_pub_is_valid(ثابت DH *, ثابت BIGNUM *);
 
-u_int	 dh_estimate(int);
-void	 dh_set_moduli_file(const char *);
+u_int	 dh_estimate(صحيح);
+فراغ	 dh_مجموعه_moduli_file(ثابت حرف *);
 
 /*
  * Max value from RFC4419.
  * Min value from RFC8270.
  */
-#define DH_GRP_MIN	2048
-#define DH_GRP_MAX	8192
+#تعریف_کن DH_GRP_MIN	2048
+#تعریف_کن DH_GRP_MAX	8192
 
 /*
  * Values for "type" field of moduli(5)
  * Specifies the internal structure of the prime modulus.
  */
-#define MODULI_TYPE_UNKNOWN		(0)
-#define MODULI_TYPE_UNSTRUCTURED	(1)
-#define MODULI_TYPE_SAFE		(2)
-#define MODULI_TYPE_SCHNORR		(3)
-#define MODULI_TYPE_SOPHIE_GERMAIN	(4)
-#define MODULI_TYPE_STRONG		(5)
+#تعریف_کن MODULI_TYPE_UNKNOWN		(0)
+#تعریف_کن MODULI_TYPE_UNSTRUCTURED	(1)
+#تعریف_کن MODULI_TYPE_امن		(2)
+#تعریف_کن MODULI_TYPE_SCHNORR		(3)
+#تعریف_کن MODULI_TYPE_SOPHIE_GERMAIN	(4)
+#تعریف_کن MODULI_TYPE_STRONG		(5)
 
 /*
  * Values for "tests" field of moduli(5)
  * Specifies the methods used in checking for primality.
  * Usually, more than one test is used.
  */
-#define MODULI_TESTS_UNTESTED		(0x00)
-#define MODULI_TESTS_COMPOSITE		(0x01)
-#define MODULI_TESTS_SIEVE		(0x02)
-#define MODULI_TESTS_MILLER_RABIN	(0x04)
-#define MODULI_TESTS_JACOBI		(0x08)
-#define MODULI_TESTS_ELLIPTIC		(0x10)
+#تعریف_کن MODULI_TESTS_UNTESTED		(0x00)
+#تعریف_کن MODULI_TESTS_مرکب		(0x01)
+#تعریف_کن MODULI_TESTS_SIEVE		(0x02)
+#تعریف_کن MODULI_TESTS_MILLER_RABIN	(0x04)
+#تعریف_کن MODULI_TESTS_JACOBI		(0x08)
+#تعریف_کن MODULI_TESTS_ELLIPTIC		(0x10)
 
-#endif /* WITH_OPENSSL */
+#پایان_اگر /* WITH_OPENSSL */
 
-#endif /* DH_H */
+#پایان_اگر /* DH_H */

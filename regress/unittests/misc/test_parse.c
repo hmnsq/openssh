@@ -5,85 +5,85 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
+#ضمن "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#ضمن "log.h"
+#ضمن "misc.h"
 
-void test_parse(void);
+فراغ test_parse(فراغ);
 
-void
-test_parse(void)
+فراغ
+test_parse(فراغ)
 {
-	int port;
-	char *user, *host, *path;
+	صحيح پورت;
+	حرف *user, *host, *مسیر;
 
-	TEST_START("misc_parse_user_host_path");
-	user = host = path = NULL;
-	ASSERT_INT_EQ(parse_user_host_path("someuser@some.host:some/path",
-	    &user, &host, &path), 0);
+	TEST_شروع("misc_parse_user_host_path");
+	user = host = مسیر = عدم;
+	ASSERT_INT_EQ(parse_user_host_مسیر("someuser@some.host:some/path",
+	    &user, &host, &مسیر), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "some.host");
-	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
-	TEST_DONE();
+	ASSERT_STRING_EQ(مسیر, "some/path");
+	حرر(user); حرر(host); حرر(مسیر);
+	TEST_انجامشده();
 
-	TEST_START("misc_parse_user_ipv4_path");
-	user = host = path = NULL;
-	ASSERT_INT_EQ(parse_user_host_path("someuser@1.22.33.144:some/path",
-	    &user, &host, &path), 0);
+	TEST_شروع("misc_parse_user_ipv4_path");
+	user = host = مسیر = عدم;
+	ASSERT_INT_EQ(parse_user_host_مسیر("someuser@1.22.33.144:some/path",
+	    &user, &host, &مسیر), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "1.22.33.144");
-	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
-	TEST_DONE();
+	ASSERT_STRING_EQ(مسیر, "some/path");
+	حرر(user); حرر(host); حرر(مسیر);
+	TEST_انجامشده();
 
-	TEST_START("misc_parse_user_[ipv4]_path");
-	user = host = path = NULL;
-	ASSERT_INT_EQ(parse_user_host_path("someuser@[1.22.33.144]:some/path",
-	    &user, &host, &path), 0);
+	TEST_شروع("misc_parse_user_[ipv4]_path");
+	user = host = مسیر = عدم;
+	ASSERT_INT_EQ(parse_user_host_مسیر("someuser@[1.22.33.144]:some/path",
+	    &user, &host, &مسیر), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "1.22.33.144");
-	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
-	TEST_DONE();
+	ASSERT_STRING_EQ(مسیر, "some/path");
+	حرر(user); حرر(host); حرر(مسیر);
+	TEST_انجامشده();
 
-	TEST_START("misc_parse_user_[ipv4]_nopath");
-	user = host = path = NULL;
-	ASSERT_INT_EQ(parse_user_host_path("someuser@[1.22.33.144]:",
-	    &user, &host, &path), 0);
+	TEST_شروع("misc_parse_user_[ipv4]_nopath");
+	user = host = مسیر = عدم;
+	ASSERT_INT_EQ(parse_user_host_مسیر("someuser@[1.22.33.144]:",
+	    &user, &host, &مسیر), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "1.22.33.144");
-	ASSERT_STRING_EQ(path, ".");
-	free(user); free(host); free(path);
-	TEST_DONE();
+	ASSERT_STRING_EQ(مسیر, ".");
+	حرر(user); حرر(host); حرر(مسیر);
+	TEST_انجامشده();
 
-	TEST_START("misc_parse_user_ipv6_path");
-	user = host = path = NULL;
-	ASSERT_INT_EQ(parse_user_host_path("someuser@[::1]:some/path",
-	    &user, &host, &path), 0);
+	TEST_شروع("misc_parse_user_ipv6_path");
+	user = host = مسیر = عدم;
+	ASSERT_INT_EQ(parse_user_host_مسیر("someuser@[::1]:some/path",
+	    &user, &host, &مسیر), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "::1");
-	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
-	TEST_DONE();
+	ASSERT_STRING_EQ(مسیر, "some/path");
+	حرر(user); حرر(host); حرر(مسیر);
+	TEST_انجامشده();
 
-	TEST_START("misc_parse_uri");
-	user = host = path = NULL;
+	TEST_شروع("misc_parse_uri");
+	user = host = مسیر = عدم;
 	ASSERT_INT_EQ(parse_uri("ssh", "ssh://someuser@some.host:22/some/path",
-	    &user, &host, &port, &path), 0);
+	    &user, &host, &پورت, &مسیر), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "some.host");
-	ASSERT_INT_EQ(port, 22);
-	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
-	TEST_DONE();
+	ASSERT_INT_EQ(پورت, 22);
+	ASSERT_STRING_EQ(مسیر, "some/path");
+	حرر(user); حرر(host); حرر(مسیر);
+	TEST_انجامشده();
 }

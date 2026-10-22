@@ -5,83 +5,83 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
+#ضمن "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "xmalloc.h"
 
-void test_strdelim(void);
+فراغ test_strdelim(فراغ);
 
-void
-test_strdelim(void)
+فراغ
+test_strdelim(فراغ)
 {
-	char *orig, *str, *cp;
+	حرف *orig, *str, *cp;
 
-#define START_STRING(x)	orig = str = xstrdup(x)
-#define DONE_STRING()	free(orig)
+#تعریف_کن شروع_STRING(x)	orig = str = xstrdup(x)
+#تعریف_کن انجامشده_STRING()	حرر(orig)
 
-	TEST_START("empty");
-	START_STRING("");
+	TEST_شروع("empty");
+	شروع_STRING("");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX arguable */
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, عدم);
+	انجامشده_STRING();
+	TEST_انجامشده();
 
-	TEST_START("whitespace");
-	START_STRING("	");
+	TEST_شروع("whitespace");
+	شروع_STRING("	");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
 	ASSERT_STRING_EQ(str, "");
-	DONE_STRING();
-	TEST_DONE();
+	انجامشده_STRING();
+	TEST_انجامشده();
 
-	TEST_START("trivial");
-	START_STRING("blob");
+	TEST_شروع("trivial");
+	شروع_STRING("blob");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob");
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, عدم);
+	ASSERT_PTR_EQ(str, عدم);
+	انجامشده_STRING();
+	TEST_انجامشده();
 
-	TEST_START("trivial whitespace");
-	START_STRING("blob   ");
+	TEST_شروع("trivial whitespace");
+	شروع_STRING("blob   ");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob");
 	ASSERT_STRING_EQ(str, "");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(str, عدم);
+	انجامشده_STRING();
+	TEST_انجامشده();
 
-	TEST_START("multi");
-	START_STRING("blob1 blob2");
+	TEST_شروع("multi");
+	شروع_STRING("blob1 blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob1");
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, عدم);
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, عدم);
+	انجامشده_STRING();
+	TEST_انجامشده();
 
-	TEST_START("multi whitespace");
-	START_STRING("blob1	 	blob2  	 	");
+	TEST_شروع("multi whitespace");
+	شروع_STRING("blob1	 	blob2  	 	");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob1");
 	ASSERT_STRING_EQ(str, "blob2  	 	");
@@ -89,25 +89,25 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(cp, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(str, عدم);
+	انجامشده_STRING();
+	TEST_انجامشده();
 
-	TEST_START("multi equals");
-	START_STRING("blob1=blob2");
+	TEST_شروع("multi equals");
+	شروع_STRING("blob1=blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob1");
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, عدم);
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, عدم);
+	انجامشده_STRING();
+	TEST_انجامشده();
 
-	TEST_START("multi too many equals");
-	START_STRING("blob1==blob2");
+	TEST_شروع("multi too many equals");
+	شروع_STRING("blob1==blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob1");	/* XXX better returning NULL early */
 	ASSERT_STRING_EQ(str, "=blob2");
@@ -116,45 +116,45 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");	/* XXX should (but can't) reject */
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(str, عدم);
+	انجامشده_STRING();
+	TEST_انجامشده();
 
-	TEST_START("multi equals strdelimw");
-	START_STRING("blob1=blob2");
+	TEST_شروع("multi equals strdelimw");
+	شروع_STRING("blob1=blob2");
 	cp = strdelimw(&str);
 	ASSERT_STRING_EQ(cp, "blob1=blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, عدم);
 	cp = strdelimw(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, عدم);
+	انجامشده_STRING();
+	TEST_انجامشده();
 
-	TEST_START("quoted");
-	START_STRING("\"blob\"");
+	TEST_شروع("quoted");
+	شروع_STRING("\"blob\"");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(str, عدم);
+	انجامشده_STRING();
+	TEST_انجامشده();
 
-	TEST_START("quoted multi");
-	START_STRING("\"blob1\" blob2");
+	TEST_شروع("quoted multi");
+	شروع_STRING("\"blob1\" blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob1");
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, عدم);
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, عدم);
+	انجامشده_STRING();
+	TEST_انجامشده();
 
-	TEST_START("quoted multi reverse");
-	START_STRING("blob1 \"blob2\"");
+	TEST_شروع("quoted multi reverse");
+	شروع_STRING("blob1 \"blob2\"");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob1");
 	ASSERT_STRING_EQ(str, "\"blob2\"");
@@ -163,12 +163,12 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(str, عدم);
+	انجامشده_STRING();
+	TEST_انجامشده();
 
-	TEST_START("quoted multi middle");
-	START_STRING("blob1 \"blob2\" blob3");
+	TEST_شروع("quoted multi middle");
+	شروع_STRING("blob1 \"blob2\" blob3");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob1");
 	cp = strdelim(&str);
@@ -176,24 +176,24 @@ test_strdelim(void)
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob3");
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, عدم);
+	انجامشده_STRING();
+	TEST_انجامشده();
 
-	TEST_START("badquote");
-	START_STRING("\"blob");
+	TEST_شروع("badquote");
+	شروع_STRING("\"blob");
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, عدم);
+	انجامشده_STRING();
+	TEST_انجامشده();
 
-	TEST_START("oops quote");
-	START_STRING("\"blob\\\"");
+	TEST_شروع("oops quote");
+	شروع_STRING("\"blob\\\"");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob\\");	/* XXX wrong */
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");
-	DONE_STRING();
-	TEST_DONE();
+	انجامشده_STRING();
+	TEST_انجامشده();
 
 }

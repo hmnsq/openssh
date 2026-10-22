@@ -34,392 +34,392 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/queue.h>
-#include <sys/resource.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/un.h>
-#include <sys/wait.h>
+#ضمن <sys/types.h>
+#ضمن <sys/time.h>
+#ضمن <sys/queue.h>
+#ضمن <sys/resource.h>
+#ضمن <sys/socket.h>
+#ضمن <sys/stat.h>
+#ضمن <sys/un.h>
+#ضمن <sys/wait.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#include "openbsd-compat/openssl-compat.h"
-#endif
+#اگر_تعریف_شده WITH_OPENSSL
+#ضمن <openssl/evp.h>
+#ضمن "openbsd-compat/openssl-compat.h"
+#پایان_اگر
 
-#include <errno.h>
-#include <fcntl.h>
-#include <paths.h>
-#include <poll.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <limits.h>
-#include <time.h>
-#include <unistd.h>
-#include <util.h>
-#include <pwd.h>
+#ضمن <errno.h>
+#ضمن <fcntl.h>
+#ضمن <paths.h>
+#ضمن <poll.h>
+#ضمن <signal.h>
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ضمن <stdarg.h>
+#ضمن <limits.h>
+#ضمن <time.h>
+#ضمن <unistd.h>
+#ضمن <util.h>
+#ضمن <pwd.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "log.h"
-#include "misc.h"
-#include "digest.h"
-#include "ssherr.h"
-#include "match.h"
-#include "msg.h"
-#include "pathnames.h"
-#include "ssh-pkcs11.h"
-#include "sk-api.h"
-#include "myproposal.h"
-#include "version.h"
+#ضمن "xmalloc.h"
+#ضمن "ssh.h"
+#ضمن "ssh2.h"
+#ضمن "sshbuf.h"
+#ضمن "sshkey.h"
+#ضمن "authfd.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "digest.h"
+#ضمن "ssherr.h"
+#ضمن "match.h"
+#ضمن "msg.h"
+#ضمن "pathnames.h"
+#ضمن "ssh-pkcs11.h"
+#ضمن "sk-api.h"
+#ضمن "myproposal.h"
+#ضمن "version.h"
 
-#ifndef DEFAULT_ALLOWED_PROVIDERS
+#اگر_تعریف_نشده DEFAULT_ALLOWED_PROVIDERS
 # define DEFAULT_ALLOWED_PROVIDERS "/usr/lib*/*,/usr/local/lib*/*"
-#endif
-#ifndef DEFAULT_WEBSAFE_ALLOWLIST
+#پایان_اگر
+#اگر_تعریف_نشده DEFAULT_WEBSAFE_ALLOWLIST
 # define DEFAULT_WEBSAFE_ALLOWLIST "ssh:*"
-#endif
+#پایان_اگر
 
 /* Maximum accepted message length */
-#define AGENT_MAX_LEN		(256*1024)
+#تعریف_کن AGENT_MAX_LEN		(256*1024)
 /* Maximum bytes to read from client socket */
-#define AGENT_RBUF_LEN		(4096)
+#تعریف_کن AGENT_RBUF_LEN		(4096)
 /* Maximum number of recorded session IDs/hostkeys per connection */
-#define AGENT_MAX_SESSION_IDS		16
+#تعریف_کن AGENT_MAX_SESSION_IDS		16
 /* Maximum size of session ID */
-#define AGENT_MAX_SID_LEN		128
+#تعریف_کن AGENT_MAX_SID_LEN		128
 /* Maximum number of destination constraints to accept on a key */
-#define AGENT_MAX_DEST_CONSTRAINTS	1024
+#تعریف_کن AGENT_MAX_DEST_CONSTRAINTS	1024
 /* Maximum number of associated certificate constraints to accept on a key */
-#define AGENT_MAX_EXT_CERTS		1024
+#تعریف_کن AGENT_MAX_EXT_CERTS		1024
 /* Max length of username constraint */
-#define AGENT_USER_CONSTRAINT_MAX_LEN	256
+#تعریف_کن AGENT_USER_CONSTRAINT_MAX_LEN	256
 
 /* XXX store hostkey_sid in a refcounted tree */
 
-typedef enum {
-	AUTH_UNUSED = 0,
+تعريفنوع تعداد {
+	AUTH_استفادهنشده = 0,
 	AUTH_SOCKET = 1,
 	AUTH_CONNECTION = 2,
 } sock_type;
 
-struct hostkey_sid {
-	struct sshkey *key;
-	struct sshbuf *sid;
-	int forwarded;
+بنية hostkey_sid {
+	بنية sshkey *کلید;
+	بنية sshbuf *sid;
+	صحيح forwarded;
 };
 
-typedef struct socket_entry {
-	int fd;
+تعريفنوع بنية socket_مدخل {
+	صحيح fd;
 	sock_type type;
-	struct sshbuf *input;
-	struct sshbuf *output;
-	struct sshbuf *request;
-	size_t nsession_ids;
-	struct hostkey_sid *session_ids;
-	int session_bind_attempted;
-} SocketEntry;
+	بنية sshbuf *درون_داد;
+	بنية sshbuf *output;
+	بنية sshbuf *request;
+	اندازه_t nsession_ids;
+	بنية hostkey_sid *session_ids;
+	صحيح session_bind_attempted;
+} Socket_مدخل;
 
 u_int sockets_alloc = 0;
-SocketEntry *sockets = NULL;
+Socket_مدخل *sockets = عدم;
 
-typedef struct identity {
-	TAILQ_ENTRY(identity) next;
-	struct sshkey *key;
-	char *comment;
-	char *provider;
+تعريفنوع بنية عنصر_خنثی_2 {
+	TAILQ_ENTRY(عنصر_خنثی_2) بعدی;
+	بنية sshkey *کلید;
+	حرف *comment;
+	حرف *provider;
 	time_t death;
 	u_int confirm;
-	char *sk_provider;
-	struct dest_constraint *dest_constraints;
-	size_t ndest_constraints;
-} Identity;
+	حرف *sk_provider;
+	بنية dest_constraint *dest_constraints;
+	اندازه_t ndest_constraints;
+} عنصر_خنثی;
 
-struct idtable {
-	int nentries;
-	TAILQ_HEAD(idqueue, identity) idlist;
+بنية idtable {
+	صحيح nentries;
+	TAILQ_HEAD(idqueue, عنصر_خنثی_2) idlist;
 };
 
 /* private key table */
-struct idtable *idtab;
+بنية idtable *idtab;
 
-int max_fd = 0;
+صحيح max_fd = 0;
 
 /* pid of shell == parent of agent */
-pid_t parent_pid = -1;
-time_t parent_alive_interval = 0;
+pid_t والد_pid = -1;
+time_t والد_alive_interval = 0;
 
-static sig_atomic_t signalled_exit;
-static sig_atomic_t signalled_keydrop;
+ساكن sig_atomic_t signalled_exit;
+ساكن sig_atomic_t signalled_keydrop;
 
 /* pid of process for which cleanup_socket is applicable */
 pid_t cleanup_pid = 0;
 
 /* pathname and directory for AUTH_SOCKET */
-static char *socket_name;
-static char *socket_dir;
-static char *socket_dirspec;
+ساكن حرف *socket_name;
+ساكن حرف *socket_dir;
+ساكن حرف *socket_dirspec;
 
 /* Pattern-list of allowed PKCS#11/Security key paths */
-static char *allowed_providers;
+ساكن حرف *allowed_providers;
 
 /*
  * Allows PKCS11 providers or SK keys that use non-internal providers to
  * be added over a remote connection (identified by session-bind@openssh.com).
  */
-static int remote_add_provider;
+ساكن صحيح remote_جمع_کن_provider;
 
 /* locking */
-#define LOCK_SIZE	32
-#define LOCK_SALT_SIZE	16
-#define LOCK_ROUNDS	1
-int locked = 0;
-u_char lock_pwhash[LOCK_SIZE];
-u_char lock_salt[LOCK_SALT_SIZE];
+#تعریف_کن قفل_اندازه	32
+#تعریف_کن قفل_SALT_اندازه	16
+#تعریف_کن قفل_دورها	1
+صحيح locked = 0;
+u_char قفل_pwhash[قفل_اندازه];
+u_char قفل_salt[قفل_SALT_اندازه];
 
-extern char *__progname;
+خارجي حرف *__progname;
 
 /* Default lifetime in seconds (0 == forever) */
-static int lifetime = 0;
+ساكن صحيح lifetime = 0;
 
-static int fingerprint_hash = SSH_FP_HASH_DEFAULT;
+ساكن صحيح fingerprint_hash = SSH_FP_HASH_DEFAULT;
 
 /* Refuse signing of non-SSH messages for web-origin FIDO keys */
-static int restrict_websafe = 1;
-static char *websafe_allowlist;
+ساكن صحيح restrict_websafe = 1;
+ساكن حرف *websafe_allowlist;
 
-static void
-close_socket(SocketEntry *e)
+ساكن فراغ
+close_socket(Socket_مدخل *e)
 {
-	size_t i;
+	اندازه_t i;
 
 	close(e->fd);
-	sshbuf_free(e->input);
+	sshbuf_free(e->درون_داد);
 	sshbuf_free(e->output);
 	sshbuf_free(e->request);
-	for (i = 0; i < e->nsession_ids; i++) {
-		sshkey_free(e->session_ids[i].key);
+	لكل (i = 0; i < e->nsession_ids; i++) {
+		sshkey_free(e->session_ids[i].کلید);
 		sshbuf_free(e->session_ids[i].sid);
 	}
-	free(e->session_ids);
-	memset(e, '\0', sizeof(*e));
+	حرر(e->session_ids);
+	memset(e, '\0', حجم(*e));
 	e->fd = -1;
-	e->type = AUTH_UNUSED;
+	e->type = AUTH_استفادهنشده;
 }
 
-static void
-idtab_init(void)
+ساكن فراغ
+idtab_init(فراغ)
 {
-	idtab = xcalloc(1, sizeof(*idtab));
+	idtab = xcalloc(1, حجم(*idtab));
 	TAILQ_INIT(&idtab->idlist);
 	idtab->nentries = 0;
 }
 
-static void
-free_dest_constraint_hop(struct dest_constraint_hop *dch)
+ساكن فراغ
+free_dest_constraint_hop(بنية dest_constraint_hop *dch)
 {
 	u_int i;
 
-	if (dch == NULL)
-		return;
-	free(dch->user);
-	free(dch->hostname);
-	for (i = 0; i < dch->nkeys; i++)
-		sshkey_free(dch->keys[i]);
-	free(dch->keys);
-	free(dch->key_is_ca);
+	إذا (dch == عدم)
+		أرجع;
+	حرر(dch->user);
+	حرر(dch->hostname);
+	لكل (i = 0; i < dch->nkeys; i++)
+		sshkey_free(dch->کلیدها[i]);
+	حرر(dch->کلیدها);
+	حرر(dch->کلید_is_ca);
 }
 
-static void
-free_dest_constraints(struct dest_constraint *dcs, size_t ndcs)
+ساكن فراغ
+free_dest_constraints(بنية dest_constraint *dcs, اندازه_t ndcs)
 {
-	size_t i;
+	اندازه_t i;
 
-	for (i = 0; i < ndcs; i++) {
+	لكل (i = 0; i < ndcs; i++) {
 		free_dest_constraint_hop(&dcs[i].from);
-		free_dest_constraint_hop(&dcs[i].to);
+		free_dest_constraint_hop(&dcs[i].مقصد);
 	}
-	free(dcs);
+	حرر(dcs);
 }
 
-#ifdef ENABLE_PKCS11
-static void
-dup_dest_constraint_hop(const struct dest_constraint_hop *dch,
-    struct dest_constraint_hop *out)
+#اگر_تعریف_شده ENABLE_PKCS11
+ساكن فراغ
+dup_dest_constraint_hop(ثابت بنية dest_constraint_hop *dch,
+    بنية dest_constraint_hop *بیرون)
 {
 	u_int i;
-	int r;
+	صحيح r;
 
-	out->user = dch->user == NULL ? NULL : xstrdup(dch->user);
-	out->hostname = dch->hostname == NULL ? NULL : xstrdup(dch->hostname);
-	out->is_ca = dch->is_ca;
-	out->nkeys = dch->nkeys;
-	out->keys = out->nkeys == 0 ? NULL :
-	    xcalloc(out->nkeys, sizeof(*out->keys));
-	out->key_is_ca = out->nkeys == 0 ? NULL :
-	    xcalloc(out->nkeys, sizeof(*out->key_is_ca));
-	for (i = 0; i < dch->nkeys; i++) {
-		if (dch->keys[i] != NULL &&
-		    (r = sshkey_from_private(dch->keys[i],
-		    &(out->keys[i]))) != 0)
+	بیرون->user = dch->user == عدم ? عدم : xstrdup(dch->user);
+	بیرون->hostname = dch->hostname == عدم ? عدم : xstrdup(dch->hostname);
+	بیرون->is_ca = dch->is_ca;
+	بیرون->nkeys = dch->nkeys;
+	بیرون->کلیدها = بیرون->nkeys == 0 ? عدم :
+	    xcalloc(بیرون->nkeys, حجم(*بیرون->کلیدها));
+	بیرون->کلید_is_ca = بیرون->nkeys == 0 ? عدم :
+	    xcalloc(بیرون->nkeys, حجم(*بیرون->کلید_is_ca));
+	لكل (i = 0; i < dch->nkeys; i++) {
+		إذا (dch->کلیدها[i] != عدم &&
+		    (r = sshkey_from_خصوصی(dch->کلیدها[i],
+		    &(بیرون->کلیدها[i]))) != 0)
 			fatal_fr(r, "copy key");
-		out->key_is_ca[i] = dch->key_is_ca[i];
+		بیرون->کلید_is_ca[i] = dch->کلید_is_ca[i];
 	}
 }
 
-static struct dest_constraint *
-dup_dest_constraints(const struct dest_constraint *dcs, size_t ndcs)
+ساكن بنية dest_constraint *
+dup_dest_constraints(ثابت بنية dest_constraint *dcs, اندازه_t ndcs)
 {
-	size_t i;
-	struct dest_constraint *ret;
+	اندازه_t i;
+	بنية dest_constraint *ret;
 
-	if (ndcs == 0)
-		return NULL;
-	ret = xcalloc(ndcs, sizeof(*ret));
-	for (i = 0; i < ndcs; i++) {
+	إذا (ndcs == 0)
+		أرجع عدم;
+	ret = xcalloc(ndcs, حجم(*ret));
+	لكل (i = 0; i < ndcs; i++) {
 		dup_dest_constraint_hop(&dcs[i].from, &ret[i].from);
-		dup_dest_constraint_hop(&dcs[i].to, &ret[i].to);
+		dup_dest_constraint_hop(&dcs[i].مقصد, &ret[i].مقصد);
 	}
-	return ret;
+	أرجع ret;
 }
-#endif /* ENABLE_PKCS11 */
+#پایان_اگر /* ENABLE_PKCS11 */
 
-#ifdef DEBUG_CONSTRAINTS
-static void
-dump_dest_constraint_hop(const struct dest_constraint_hop *dch)
+#اگر_تعریف_شده DEBUG_CONSTRAINTS
+ساكن فراغ
+dump_dest_constraint_hop(ثابت بنية dest_constraint_hop *dch)
 {
 	u_int i;
-	char *fp;
+	حرف *fp;
 
 	debug_f("user %s hostname %s is_ca %d nkeys %u",
-	    dch->user == NULL ? "(null)" : dch->user,
-	    dch->hostname == NULL ? "(null)" : dch->hostname,
+	    dch->user == عدم ? "(null)" : dch->user,
+	    dch->hostname == عدم ? "(null)" : dch->hostname,
 	    dch->is_ca, dch->nkeys);
-	for (i = 0; i < dch->nkeys; i++) {
-		fp = NULL;
-		if (dch->keys[i] != NULL &&
-		    (fp = sshkey_fingerprint(dch->keys[i],
-		    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == NULL)
+	لكل (i = 0; i < dch->nkeys; i++) {
+		fp = عدم;
+		إذا (dch->کلیدها[i] != عدم &&
+		    (fp = sshkey_fingerprint(dch->کلیدها[i],
+		    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == عدم)
 			fatal_f("fingerprint failed");
 		debug_f("key %u/%u: %s%s%s key_is_ca %d", i, dch->nkeys,
-		    dch->keys[i] == NULL ? "" : sshkey_ssh_name(dch->keys[i]),
-		    dch->keys[i] == NULL ? "" : " ",
-		    dch->keys[i] == NULL ? "none" : fp,
-		    dch->key_is_ca[i]);
-		free(fp);
+		    dch->کلیدها[i] == عدم ? "" : sshkey_ssh_name(dch->کلیدها[i]),
+		    dch->کلیدها[i] == عدم ? "" : " ",
+		    dch->کلیدها[i] == عدم ? "none" : fp,
+		    dch->کلید_is_ca[i]);
+		حرر(fp);
 	}
 }
-#endif /* DEBUG_CONSTRAINTS */
+#پایان_اگر /* DEBUG_CONSTRAINTS */
 
-static void
-dump_dest_constraints(const char *context,
-    const struct dest_constraint *dcs, size_t ndcs)
+ساكن فراغ
+dump_dest_constraints(ثابت حرف *context,
+    ثابت بنية dest_constraint *dcs, اندازه_t ndcs)
 {
-#ifdef DEBUG_CONSTRAINTS
-	size_t i;
+#اگر_تعریف_شده DEBUG_CONSTRAINTS
+	اندازه_t i;
 
 	debug_f("%s: %zu constraints", context, ndcs);
-	for (i = 0; i < ndcs; i++) {
+	لكل (i = 0; i < ndcs; i++) {
 		debug_f("constraint %zu / %zu: from: ", i, ndcs);
 		dump_dest_constraint_hop(&dcs[i].from);
 		debug_f("constraint %zu / %zu: to: ", i, ndcs);
-		dump_dest_constraint_hop(&dcs[i].to);
+		dump_dest_constraint_hop(&dcs[i].مقصد);
 	}
 	debug_f("done for %s", context);
-#endif /* DEBUG_CONSTRAINTS */
+#پایان_اگر /* DEBUG_CONSTRAINTS */
 }
 
-static void
-free_identity(Identity *id)
+ساكن فراغ
+free_عنصر_خنثی(عنصر_خنثی *id)
 {
-	sshkey_free(id->key);
-	free(id->provider);
-	free(id->comment);
-	free(id->sk_provider);
+	sshkey_free(id->کلید);
+	حرر(id->provider);
+	حرر(id->comment);
+	حرر(id->sk_provider);
 	free_dest_constraints(id->dest_constraints, id->ndest_constraints);
-	free(id);
+	حرر(id);
 }
 
 /*
  * Match 'key' against the key/CA list in a destination constraint hop
  * Returns 0 on success or -1 otherwise.
  */
-static int
-match_key_hop(const char *tag, const struct sshkey *key,
-    const struct dest_constraint_hop *dch)
+ساكن صحيح
+تطابق_کلید_hop(ثابت حرف *برچسب, ثابت بنية sshkey *کلید,
+    ثابت بنية dest_constraint_hop *dch)
 {
-	const char *reason = NULL;
-	const char *hostname = dch->hostname ? dch->hostname : "(ORIGIN)";
+	ثابت حرف *reason = عدم;
+	ثابت حرف *hostname = dch->hostname ? dch->hostname : "(ORIGIN)";
 	u_int i;
-	char *fp;
+	حرف *fp;
 
-	if (key == NULL)
-		return -1;
+	إذا (کلید == عدم)
+		أرجع -1;
 	/* XXX logspam */
-	if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	إذا ((fp = sshkey_fingerprint(کلید, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == عدم)
 		fatal_f("fingerprint failed");
 	debug3_f("%s: entering hostname %s, requested key %s %s, %u keys avail",
-	    tag, hostname, sshkey_type(key), fp, dch->nkeys);
-	free(fp);
-	for (i = 0; i < dch->nkeys; i++) {
-		if (dch->keys[i] == NULL)
-			return -1;
+	    برچسب, hostname, sshkey_type(کلید), fp, dch->nkeys);
+	حرر(fp);
+	لكل (i = 0; i < dch->nkeys; i++) {
+		إذا (dch->کلیدها[i] == عدم)
+			أرجع -1;
 		/* XXX logspam */
-		if ((fp = sshkey_fingerprint(dch->keys[i], SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+		إذا ((fp = sshkey_fingerprint(dch->کلیدها[i], SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == عدم)
 			fatal_f("fingerprint failed");
-		debug3_f("%s: key %u: %s%s %s", tag, i,
-		    dch->key_is_ca[i] ? "CA " : "",
-		    sshkey_type(dch->keys[i]), fp);
-		free(fp);
-		if (!sshkey_is_cert(key)) {
+		debug3_f("%s: key %u: %s%s %s", برچسب, i,
+		    dch->کلید_is_ca[i] ? "CA " : "",
+		    sshkey_type(dch->کلیدها[i]), fp);
+		حرر(fp);
+		إذا (!sshkey_is_cert(کلید)) {
 			/* plain key */
-			if (dch->key_is_ca[i] ||
-			    !sshkey_equal(key, dch->keys[i]))
-				continue;
-			return 0;
+			إذا (dch->کلید_is_ca[i] ||
+			    !sshkey_equal(کلید, dch->کلیدها[i]))
+				استمر;
+			أرجع 0;
 		}
 		/* certificate */
-		if (!dch->key_is_ca[i])
-			continue;
-		if (key->cert == NULL || key->cert->signature_key == NULL)
-			return -1; /* shouldn't happen */
-		if (!sshkey_equal(key->cert->signature_key, dch->keys[i]))
-			continue;
-		if (sshkey_cert_check_host(key, hostname,
+		إذا (!dch->کلید_is_ca[i])
+			استمر;
+		إذا (کلید->cert == عدم || کلید->cert->signature_کلید == عدم)
+			أرجع -1; /* shouldn't happen */
+		إذا (!sshkey_equal(کلید->cert->signature_کلید, dch->کلیدها[i]))
+			استمر;
+		إذا (sshkey_cert_check_host(کلید, hostname,
 		    SSH_ALLOWED_CA_SIGALGS, &reason) != 0) {
 			debug_f("cert %s / hostname %s rejected: %s",
-			    key->cert->key_id, hostname, reason);
-			continue;
+			    کلید->cert->کلید_id, hostname, reason);
+			استمر;
 		}
-		return 0;
+		أرجع 0;
 	}
-	return -1;
+	أرجع -1;
 }
 
 /* Check destination constraints on an identity against the hostkey/user */
-static int
-permitted_by_dest_constraints(const struct sshkey *fromkey,
-    const struct sshkey *tokey, Identity *id, const char *user,
-    const char **hostnamep)
+ساكن صحيح
+permitted_by_dest_constraints(ثابت بنية sshkey *fromkey,
+    ثابت بنية sshkey *tokey, عنصر_خنثی *id, ثابت حرف *user,
+    ثابت حرف **hostnamep)
 {
-	size_t i;
-	struct dest_constraint *d;
+	اندازه_t i;
+	بنية dest_constraint *d;
 
-	if (hostnamep != NULL)
-		*hostnamep = NULL;
-	for (i = 0; i < id->ndest_constraints; i++) {
+	إذا (hostnamep != عدم)
+		*hostnamep = عدم;
+	لكل (i = 0; i < id->ndest_constraints; i++) {
 		d = id->dest_constraints + i;
 		/* XXX remove logspam */
 		debug2_f("constraint %zu %s%s%s (%u keys) > %s%s%s (%u keys)",
@@ -427,37 +427,37 @@ permitted_by_dest_constraints(const struct sshkey *fromkey,
 		    d->from.user ? "@" : "",
 		    d->from.hostname ? d->from.hostname : "(ORIGIN)",
 		    d->from.nkeys,
-		    d->to.user ? d->to.user : "", d->to.user ? "@" : "",
-		    d->to.hostname ? d->to.hostname : "(ANY)", d->to.nkeys);
+		    d->مقصد.user ? d->مقصد.user : "", d->مقصد.user ? "@" : "",
+		    d->مقصد.hostname ? d->مقصد.hostname : "(ANY)", d->مقصد.nkeys);
 
 		/* Match 'from' key */
-		if (fromkey == NULL) {
+		إذا (fromkey == عدم) {
 			/* We are matching the first hop */
-			if (d->from.hostname != NULL || d->from.nkeys != 0)
-				continue;
-		} else if (match_key_hop("from", fromkey, &d->from) != 0)
-			continue;
+			إذا (d->from.hostname != عدم || d->from.nkeys != 0)
+				استمر;
+		} وإلا إذا (تطابق_کلید_hop("from", fromkey, &d->from) != 0)
+			استمر;
 
 		/* Match 'to' key */
-		if (tokey != NULL && match_key_hop("to", tokey, &d->to) != 0)
-			continue;
+		إذا (tokey != عدم && تطابق_کلید_hop("to", tokey, &d->مقصد) != 0)
+			استمر;
 
 		/* Match user if specified */
-		if (d->to.user != NULL && user != NULL &&
-		    !match_pattern(user, d->to.user))
-			continue;
+		إذا (d->مقصد.user != عدم && user != عدم &&
+		    !تطابق_الگو(user, d->مقصد.user))
+			استمر;
 
 		/* successfully matched this constraint */
-		if (hostnamep != NULL)
-			*hostnamep = d->to.hostname;
+		إذا (hostnamep != عدم)
+			*hostnamep = d->مقصد.hostname;
 		debug2_f("allowed for hostname %s",
-		    d->to.hostname == NULL ? "*" : d->to.hostname);
-		return 0;
+		    d->مقصد.hostname == عدم ? "*" : d->مقصد.hostname);
+		أرجع 0;
 	}
 	/* no match */
 	debug2_f("%s identity \"%s\" not permitted for this destination",
-	    sshkey_type(id->key), id->comment);
-	return -1;
+	    sshkey_type(id->کلید), id->comment);
+	أرجع -1;
 }
 
 /*
@@ -465,66 +465,66 @@ permitted_by_dest_constraints(const struct sshkey *fromkey,
  * are permitted by the destination constraints on the Identity.
  * Returns 0 on success or -1 otherwise.
  */
-static int
-identity_permitted(Identity *id, SocketEntry *e, char *user,
-    const char **forward_hostnamep, const char **last_hostnamep)
+ساكن صحيح
+عنصر_خنثی_permitted(عنصر_خنثی *id, Socket_مدخل *e, حرف *user,
+    ثابت حرف **forward_hostnamep, ثابت حرف **آخرین_hostnamep)
 {
-	size_t i;
-	const char **hp;
-	struct hostkey_sid *hks;
-	const struct sshkey *fromkey = NULL;
-	const char *test_user;
-	char *fp1, *fp2;
+	اندازه_t i;
+	ثابت حرف **hp;
+	بنية hostkey_sid *hks;
+	ثابت بنية sshkey *fromkey = عدم;
+	ثابت حرف *test_user;
+	حرف *fp1, *fp2;
 
 	/* XXX remove logspam */
 	debug3_f("entering: key %s comment \"%s\", %zu socket bindings, "
-	    "%zu constraints", sshkey_type(id->key), id->comment,
+	    "%zu constraints", sshkey_type(id->کلید), id->comment,
 	    e->nsession_ids, id->ndest_constraints);
-	if (id->ndest_constraints == 0)
-		return 0; /* unconstrained */
-	if (e->session_bind_attempted && e->nsession_ids == 0) {
+	إذا (id->ndest_constraints == 0)
+		أرجع 0; /* unconstrained */
+	إذا (e->session_bind_attempted && e->nsession_ids == 0) {
 		error_f("previous session bind failed on socket");
-		return -1;
+		أرجع -1;
 	}
-	if (e->nsession_ids == 0)
-		return 0; /* local use */
+	إذا (e->nsession_ids == 0)
+		أرجع 0; /* local use */
 	/*
 	 * Walk through the hops recorded by session_id and try to find a
 	 * constraint that satisfies each.
 	 */
-	for (i = 0; i < e->nsession_ids; i++) {
+	لكل (i = 0; i < e->nsession_ids; i++) {
 		hks = e->session_ids + i;
-		if (hks->key == NULL)
+		إذا (hks->کلید == عدم)
 			fatal_f("internal error: no bound key");
 		/* XXX remove logspam */
-		fp1 = fp2 = NULL;
-		if (fromkey != NULL &&
+		fp1 = fp2 = عدم;
+		إذا (fromkey != عدم &&
 		    (fp1 = sshkey_fingerprint(fromkey, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+		    SSH_FP_DEFAULT)) == عدم)
 			fatal_f("fingerprint failed");
-		if ((fp2 = sshkey_fingerprint(hks->key, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+		إذا ((fp2 = sshkey_fingerprint(hks->کلید, SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == عدم)
 			fatal_f("fingerprint failed");
 		debug3_f("socketentry fd=%d, entry %zu %s, "
 		    "from hostkey %s %s to user %s hostkey %s %s",
 		    e->fd, i, hks->forwarded ? "FORWARD" : "AUTH",
 		    fromkey ? sshkey_type(fromkey) : "(ORIGIN)",
 		    fromkey ? fp1 : "", user ? user : "(ANY)",
-		    sshkey_type(hks->key), fp2);
-		free(fp1);
-		free(fp2);
+		    sshkey_type(hks->کلید), fp2);
+		حرر(fp1);
+		حرر(fp2);
 		/*
 		 * Record the hostnames for the initial forwarding and
 		 * the final destination.
 		 */
-		hp = NULL;
-		if (i == e->nsession_ids - 1)
-			hp = last_hostnamep;
-		else if (i == 0)
+		hp = عدم;
+		إذا (i == e->nsession_ids - 1)
+			hp = آخرین_hostnamep;
+		وإلا إذا (i == 0)
 			hp = forward_hostnamep;
 		/* Special handling for final recorded binding */
-		test_user = NULL;
-		if (i == e->nsession_ids - 1) {
+		test_user = عدم;
+		إذا (i == e->nsession_ids - 1) {
 			/* Can only check user at final hop */
 			test_user = user;
 			/*
@@ -532,18 +532,18 @@ identity_permitted(Identity *id, SocketEntry *e, char *user,
 			 * If this is the case, make sure last binding is not
 			 * for a forwarding.
 			 */
-			if (hks->forwarded && user != NULL) {
+			إذا (hks->forwarded && user != عدم) {
 				error_f("tried to sign on forwarding hop");
-				return -1;
+				أرجع -1;
 			}
-		} else if (!hks->forwarded) {
+		} وإلا إذا (!hks->forwarded) {
 			error_f("tried to forward though signing bind");
-			return -1;
+			أرجع -1;
 		}
-		if (permitted_by_dest_constraints(fromkey, hks->key, id,
+		إذا (permitted_by_dest_constraints(fromkey, hks->کلید, id,
 		    test_user, hp) != 0)
-			return -1;
-		fromkey = hks->key;
+			أرجع -1;
+		fromkey = hks->کلید;
 	}
 	/*
 	 * Another special case: if the last bound session ID was for a
@@ -554,132 +554,132 @@ identity_permitted(Identity *id, SocketEntry *e, char *user,
 	 * authenticate *to* a host but not permitted for *use* beyond it.
 	 */
 	hks = &e->session_ids[e->nsession_ids - 1];
-	if (hks->forwarded && user == NULL &&
-	    permitted_by_dest_constraints(hks->key, NULL, id,
-	    NULL, NULL) != 0) {
+	إذا (hks->forwarded && user == عدم &&
+	    permitted_by_dest_constraints(hks->کلید, عدم, id,
+	    عدم, عدم) != 0) {
 		debug3_f("key permitted at host but not after");
-		return -1;
+		أرجع -1;
 	}
 
 	/* success */
-	return 0;
+	أرجع 0;
 }
 
-static int
-socket_is_remote(SocketEntry *e)
+ساكن صحيح
+socket_is_remote(Socket_مدخل *e)
 {
-	return e->session_bind_attempted || (e->nsession_ids != 0);
+	أرجع e->session_bind_attempted || (e->nsession_ids != 0);
 }
 
 /* return matching private key for given public key */
-static Identity *
-lookup_identity(struct sshkey *key)
+ساكن عنصر_خنثی *
+lookup_عنصر_خنثی(بنية sshkey *کلید)
 {
-	Identity *id;
+	عنصر_خنثی *id;
 
-	TAILQ_FOREACH(id, &idtab->idlist, next) {
-		if (sshkey_equal(key, id->key))
-			return (id);
+	TAILQ_FOREACH(id, &idtab->idlist, بعدی) {
+		إذا (sshkey_equal(کلید, id->کلید))
+			أرجع (id);
 	}
-	return (NULL);
+	أرجع (عدم);
 }
 
 /* Check confirmation of keysign request */
-static int
-confirm_key(Identity *id, const char *extra)
+ساكن صحيح
+confirm_کلید(عنصر_خنثی *id, ثابت حرف *extra)
 {
-	char *p;
-	int ret = -1;
+	حرف *p;
+	صحيح ret = -1;
 
-	p = sshkey_fingerprint(id->key, fingerprint_hash, SSH_FP_DEFAULT);
-	if (p != NULL &&
+	p = sshkey_fingerprint(id->کلید, fingerprint_hash, SSH_FP_DEFAULT);
+	إذا (p != عدم &&
 	    ask_permission("Allow use of key %s?\nKey fingerprint %s.%s%s",
 	    id->comment, p,
-	    extra == NULL ? "" : "\n", extra == NULL ? "" : extra))
+	    extra == عدم ? "" : "\n", extra == عدم ? "" : extra))
 		ret = 0;
-	free(p);
+	حرر(p);
 
-	return (ret);
+	أرجع (ret);
 }
 
-static void
-send_status_generic(SocketEntry *e, u_int code)
+ساكن فراغ
+send_وضعیت_generic(Socket_مدخل *e, u_int کد)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshbuf_put_u32(e->output, 1)) != 0 ||
-	    (r = sshbuf_put_u8(e->output, code)) != 0)
+	إذا ((r = sshbuf_put_u32(e->output, 1)) != 0 ||
+	    (r = sshbuf_put_u8(e->output, کد)) != 0)
 		fatal_fr(r, "compose");
 }
 
-static void
-send_status(SocketEntry *e, int success)
+ساكن فراغ
+send_وضعیت(Socket_مدخل *e, صحيح success)
 {
-	send_status_generic(e,
+	send_وضعیت_generic(e,
 	    success ? SSH_AGENT_SUCCESS : SSH_AGENT_FAILURE);
 }
 
 /* send list of supported public keys to 'client' */
-static void
-process_request_identities(SocketEntry *e)
+ساكن فراغ
+process_request_identities(Socket_مدخل *e)
 {
-	Identity *id;
-	struct sshbuf *msg, *keys;
-	int r;
+	عنصر_خنثی *id;
+	بنية sshbuf *پیام, *کلیدها;
+	صحيح r;
 	u_int i = 0, nentries = 0;
-	char *fp;
+	حرف *fp;
 
 	debug2_f("entering");
 
-	if ((msg = sshbuf_new()) == NULL || (keys = sshbuf_new()) == NULL)
+	إذا ((پیام = sshbuf_new()) == عدم || (کلیدها = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	TAILQ_FOREACH(id, &idtab->idlist, next) {
-		if ((fp = sshkey_fingerprint(id->key, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+	TAILQ_FOREACH(id, &idtab->idlist, بعدی) {
+		إذا ((fp = sshkey_fingerprint(id->کلید, SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == عدم)
 			fatal_f("fingerprint failed");
 		debug_f("key %u / %u: %s %s", i++, idtab->nentries,
-		    sshkey_ssh_name(id->key), fp);
+		    sshkey_ssh_name(id->کلید), fp);
 		dump_dest_constraints(__func__,
 		    id->dest_constraints, id->ndest_constraints);
-		free(fp);
+		حرر(fp);
 		/* identity not visible, don't include in response */
-		if (identity_permitted(id, e, NULL, NULL, NULL) != 0)
-			continue;
-		if ((r = sshkey_puts(id->key, keys)) != 0 ||
-		    (r = sshbuf_put_cstring(keys, id->comment)) != 0) {
+		إذا (عنصر_خنثی_permitted(id, e, عدم, عدم, عدم) != 0)
+			استمر;
+		إذا ((r = sshkey_puts(id->کلید, کلیدها)) != 0 ||
+		    (r = sshbuf_put_cstring(کلیدها, id->comment)) != 0) {
 			error_fr(r, "compose key/comment");
-			continue;
+			استمر;
 		}
 		nentries++;
 	}
 	debug2_f("replying with %u allowed of %u available keys",
 	    nentries, idtab->nentries);
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
-	    (r = sshbuf_put_u32(msg, nentries)) != 0 ||
-	    (r = sshbuf_putb(msg, keys)) != 0)
+	إذا ((r = sshbuf_put_u8(پیام, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
+	    (r = sshbuf_put_u32(پیام, nentries)) != 0 ||
+	    (r = sshbuf_putb(پیام, کلیدها)) != 0)
 		fatal_fr(r, "compose");
-	if ((r = sshbuf_put_stringb(e->output, msg)) != 0)
+	إذا ((r = sshbuf_put_stringb(e->output, پیام)) != 0)
 		fatal_fr(r, "enqueue");
-	sshbuf_free(msg);
-	sshbuf_free(keys);
+	sshbuf_free(پیام);
+	sshbuf_free(کلیدها);
 }
 
 
-static char *
-agent_decode_alg(struct sshkey *key, u_int flags)
+ساكن حرف *
+agent_decode_alg(بنية sshkey *کلید, u_int flags)
 {
-	if (key->type == KEY_RSA) {
-		if (flags & SSH_AGENT_RSA_SHA2_256)
-			return "rsa-sha2-256";
-		else if (flags & SSH_AGENT_RSA_SHA2_512)
-			return "rsa-sha2-512";
-	} else if (key->type == KEY_RSA_CERT) {
-		if (flags & SSH_AGENT_RSA_SHA2_256)
-			return "rsa-sha2-256-cert-v01@openssh.com";
-		else if (flags & SSH_AGENT_RSA_SHA2_512)
-			return "rsa-sha2-512-cert-v01@openssh.com";
+	إذا (کلید->type == کلید_RSA) {
+		إذا (flags & SSH_AGENT_RSA_SHA2_256)
+			أرجع "rsa-sha2-256";
+		وإلا إذا (flags & SSH_AGENT_RSA_SHA2_512)
+			أرجع "rsa-sha2-512";
+	} وإلا إذا (کلید->type == کلید_RSA_CERT) {
+		إذا (flags & SSH_AGENT_RSA_SHA2_256)
+			أرجع "rsa-sha2-256-cert-v01@openssh.com";
+		وإلا إذا (flags & SSH_AGENT_RSA_SHA2_512)
+			أرجع "rsa-sha2-512-cert-v01@openssh.com";
 	}
-	return NULL;
+	أرجع عدم;
 }
 
 /*
@@ -689,115 +689,115 @@ agent_decode_alg(struct sshkey *key, u_int flags)
  * Note: does not modify msg buffer.
  * Optionally extract the username, session ID and/or hostkey from the request.
  */
-static int
-parse_userauth_request(struct sshbuf *msg, const struct sshkey *expected_key,
-    char **userp, struct sshbuf **sess_idp, struct sshkey **hostkeyp)
+ساكن صحيح
+parse_userauth_request(بنية sshbuf *پیام, ثابت بنية sshkey *expected_کلید,
+    حرف **userp, بنية sshbuf **sess_idp, بنية sshkey **hostkeyp)
 {
-	struct sshbuf *b = NULL, *sess_id = NULL;
-	char *user = NULL, *service = NULL, *method = NULL, *pkalg = NULL;
-	int r;
+	بنية sshbuf *b = عدم, *sess_id = عدم;
+	حرف *user = عدم, *service = عدم, *روش = عدم, *pkalg = عدم;
+	صحيح r;
 	u_char t, sig_follows;
-	struct sshkey *mkey = NULL, *hostkey = NULL;
+	بنية sshkey *mkey = عدم, *hostkey = عدم;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (sess_idp != NULL)
-		*sess_idp = NULL;
-	if (hostkeyp != NULL)
-		*hostkeyp = NULL;
-	if ((b = sshbuf_fromb(msg)) == NULL)
+	إذا (userp != عدم)
+		*userp = عدم;
+	إذا (sess_idp != عدم)
+		*sess_idp = عدم;
+	إذا (hostkeyp != عدم)
+		*hostkeyp = عدم;
+	إذا ((b = sshbuf_fromb(پیام)) == عدم)
 		fatal_f("sshbuf_fromb");
 
 	/* SSH userauth request */
-	if ((r = sshbuf_froms(b, &sess_id)) != 0)
-		goto out;
-	if (sshbuf_len(sess_id) == 0) {
+	إذا ((r = sshbuf_froms(b, &sess_id)) != 0)
+		اذهب بیرون;
+	إذا (sshbuf_len(sess_id) == 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بیرون;
 	}
-	if ((r = sshbuf_get_u8(b, &t)) != 0 || /* SSH2_MSG_USERAUTH_REQUEST */
-	    (r = sshbuf_get_cstring(b, &user, NULL)) != 0 || /* server user */
-	    (r = sshbuf_get_cstring(b, &service, NULL)) != 0 || /* service */
-	    (r = sshbuf_get_cstring(b, &method, NULL)) != 0 || /* method */
+	إذا ((r = sshbuf_get_u8(b, &t)) != 0 || /* SSH2_MSG_USERAUTH_REQUEST */
+	    (r = sshbuf_get_cstring(b, &user, عدم)) != 0 || /* server user */
+	    (r = sshbuf_get_cstring(b, &service, عدم)) != 0 || /* service */
+	    (r = sshbuf_get_cstring(b, &روش, عدم)) != 0 || /*روش*/
 	    (r = sshbuf_get_u8(b, &sig_follows)) != 0 || /* sig-follows */
-	    (r = sshbuf_get_cstring(b, &pkalg, NULL)) != 0 || /* alg */
-	    (r = sshkey_froms(b, &mkey)) != 0) /* key */
-		goto out;
-	if (t != SSH2_MSG_USERAUTH_REQUEST ||
+	    (r = sshbuf_get_cstring(b, &pkalg, عدم)) != 0 || /* alg */
+	    (r = sshkey_froms(b, &mkey)) != 0) /*کلید*/
+		اذهب بیرون;
+	إذا (t != SSH2_پیام_USERAUTH_REQUEST ||
 	    sig_follows != 1 ||
 	    strcmp(service, "ssh-connection") != 0 ||
-	    !sshkey_equal(expected_key, mkey) ||
-	    sshkey_type_from_name(pkalg) != expected_key->type) {
+	    !sshkey_equal(expected_کلید, mkey) ||
+	    sshkey_type_from_name(pkalg) != expected_کلید->type) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بیرون;
 	}
-	if (strcmp(method, "publickey-hostbound-v00@openssh.com") == 0) {
-		if ((r = sshkey_froms(b, &hostkey)) != 0)
-			goto out;
-	} else if (strcmp(method, "publickey") != 0) {
+	إذا (strcmp(روش, "publickey-hostbound-v00@openssh.com") == 0) {
+		إذا ((r = sshkey_froms(b, &hostkey)) != 0)
+			اذهب بیرون;
+	} وإلا إذا (strcmp(روش, "publickey") != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بیرون;
 	}
-	if (sshbuf_len(b) != 0) {
+	إذا (sshbuf_len(b) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بیرون;
 	}
 	/* success */
 	r = 0;
 	debug3_f("well formed userauth");
-	if (userp != NULL) {
+	إذا (userp != عدم) {
 		*userp = user;
-		user = NULL;
+		user = عدم;
 	}
-	if (sess_idp != NULL) {
+	إذا (sess_idp != عدم) {
 		*sess_idp = sess_id;
-		sess_id = NULL;
+		sess_id = عدم;
 	}
-	if (hostkeyp != NULL) {
+	إذا (hostkeyp != عدم) {
 		*hostkeyp = hostkey;
-		hostkey = NULL;
+		hostkey = عدم;
 	}
- out:
+ بیرون:
 	sshbuf_free(b);
 	sshbuf_free(sess_id);
-	free(user);
-	free(service);
-	free(method);
-	free(pkalg);
+	حرر(user);
+	حرر(service);
+	حرر(روش);
+	حرر(pkalg);
 	sshkey_free(mkey);
 	sshkey_free(hostkey);
-	return r;
+	أرجع r;
 }
 
 /*
  * Attempt to parse the contents of a buffer as a SSHSIG signature request.
  * Note: does not modify buffer.
  */
-static int
-parse_sshsig_request(struct sshbuf *msg)
+ساكن صحيح
+parse_sshsig_request(بنية sshbuf *پیام)
 {
-	int r;
-	struct sshbuf *b;
+	صحيح r;
+	بنية sshbuf *b;
 
-	if ((b = sshbuf_fromb(msg)) == NULL)
+	إذا ((b = sshbuf_fromb(پیام)) == عدم)
 		fatal_f("sshbuf_fromb");
 
-	if ((r = sshbuf_cmp(b, 0, "SSHSIG", 6)) != 0 ||
+	إذا ((r = sshbuf_cmp(b, 0, "SSHSIG", 6)) != 0 ||
 	    (r = sshbuf_consume(b, 6)) != 0 ||
-	    (r = sshbuf_get_cstring(b, NULL, NULL)) != 0 || /* namespace */
-	    (r = sshbuf_get_string_direct(b, NULL, NULL)) != 0 || /* reserved */
-	    (r = sshbuf_get_cstring(b, NULL, NULL)) != 0 || /* hashalg */
-	    (r = sshbuf_get_string_direct(b, NULL, NULL)) != 0) /* H(msg) */
-		goto out;
-	if (sshbuf_len(b) != 0) {
+	    (r = sshbuf_get_cstring(b, عدم, عدم)) != 0 || /* namespace */
+	    (r = sshbuf_get_string_مستقیم(b, عدم, عدم)) != 0 || /* reserved */
+	    (r = sshbuf_get_cstring(b, عدم, عدم)) != 0 || /* hashalg */
+	    (r = sshbuf_get_string_مستقیم(b, عدم, عدم)) != 0) /* H(msg) */
+		اذهب بیرون;
+	إذا (sshbuf_len(b) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بیرون;
 	}
 	/* success */
 	r = 0;
- out:
+ بیرون:
 	sshbuf_free(b);
-	return r;
+	أرجع r;
 }
 
 /*
@@ -807,162 +807,162 @@ parse_sshsig_request(struct sshbuf *msg)
  * (pubkey userauth, sshsig, CA key signing) to exclude signing challenges
  * for the web.
  */
-static int
-check_websafe_message_contents(struct sshkey *key, struct sshbuf *data)
+ساكن صحيح
+check_websafe_پیام_contents(بنية sshkey *کلید, بنية sshbuf *داده)
 {
-	if (parse_userauth_request(data, key, NULL, NULL, NULL) == 0) {
+	إذا (parse_userauth_request(داده, کلید, عدم, عدم, عدم) == 0) {
 		debug_f("signed data matches public key userauth request");
-		return 1;
+		أرجع 1;
 	}
-	if (parse_sshsig_request(data) == 0) {
+	إذا (parse_sshsig_request(داده) == 0) {
 		debug_f("signed data matches SSHSIG signature request");
-		return 1;
+		أرجع 1;
 	}
 
 	/* XXX check CA signature operation */
 
 	error("web-origin key attempting to sign non-SSH message");
-	return 0;
+	أرجع 0;
 }
 
-static int
-buf_equal(const struct sshbuf *a, const struct sshbuf *b)
+ساكن صحيح
+buf_equal(ثابت بنية sshbuf *a, ثابت بنية sshbuf *b)
 {
-	if (sshbuf_ptr(a) == NULL || sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (sshbuf_len(a) != sshbuf_len(b))
-		return SSH_ERR_INVALID_FORMAT;
-	if (timingsafe_bcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	إذا (sshbuf_ptr(a) == عدم || sshbuf_ptr(b) == عدم)
+		أرجع SSH_ERR_INVALID_آرگومان;
+	إذا (sshbuf_len(a) != sshbuf_len(b))
+		أرجع SSH_ERR_INVALID_FORMAT;
+	إذا (timingsafe_bcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
+		أرجع SSH_ERR_INVALID_FORMAT;
+	أرجع 0;
 }
 
 /* ssh2 only */
-static void
-process_sign_request2(SocketEntry *e)
+ساكن فراغ
+process_sign_request2(Socket_مدخل *e)
 {
-	u_char *signature = NULL;
-	size_t slen = 0;
+	u_char *signature = عدم;
+	اندازه_t slen = 0;
 	u_int compat = 0, flags;
-	int r, ok = -1, retried = 0;
-	char *fp = NULL, *pin = NULL, *prompt = NULL;
-	char *user = NULL, *sig_dest = NULL;
-	const char *fwd_host = NULL, *dest_host = NULL;
-	struct sshbuf *msg = NULL, *data = NULL, *sid = NULL;
-	struct sshkey *key = NULL, *hostkey = NULL;
-	struct identity *id;
-	struct notifier_ctx *notifier = NULL;
+	صحيح r, ok = -1, retried = 0;
+	حرف *fp = عدم, *pin = عدم, *prompt = عدم;
+	حرف *user = عدم, *sig_dest = عدم;
+	ثابت حرف *fwd_host = عدم, *dest_host = عدم;
+	بنية sshbuf *پیام = عدم, *داده = عدم, *sid = عدم;
+	بنية sshkey *کلید = عدم, *hostkey = عدم;
+	بنية عنصر_خنثی_2 *id;
+	بنية notifier_ctx *notifier = عدم;
 
 	debug_f("entering");
 
-	if ((msg = sshbuf_new()) == NULL || (data = sshbuf_new()) == NULL)
+	إذا ((پیام = sshbuf_new()) == عدم || (داده = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_froms(e->request, &key)) != 0 ||
-	    (r = sshbuf_get_stringb(e->request, data)) != 0 ||
+	إذا ((r = sshkey_froms(e->request, &کلید)) != 0 ||
+	    (r = sshbuf_get_stringb(e->request, داده)) != 0 ||
 	    (r = sshbuf_get_u32(e->request, &flags)) != 0) {
 		error_fr(r, "parse");
-		goto send;
+		اذهب send;
 	}
 
-	if ((id = lookup_identity(key)) == NULL) {
-		verbose_f("%s key not found", sshkey_type(key));
-		goto send;
+	إذا ((id = lookup_عنصر_خنثی(کلید)) == عدم) {
+		verbose_f("%s key not found", sshkey_type(کلید));
+		اذهب send;
 	}
-	if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	إذا ((fp = sshkey_fingerprint(کلید, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == عدم)
 		fatal_f("fingerprint failed");
 
-	if (id->ndest_constraints != 0) {
-		if (e->nsession_ids == 0) {
+	إذا (id->ndest_constraints != 0) {
+		إذا (e->nsession_ids == 0) {
 			logit_f("refusing use of destination-constrained key "
 			    "to sign on unbound connection");
-			goto send;
+			اذهب send;
 		}
-		if (parse_userauth_request(data, key, &user, &sid,
+		إذا (parse_userauth_request(داده, کلید, &user, &sid,
 		    &hostkey) != 0) {
 			logit_f("refusing use of destination-constrained key "
 			   "to sign an unidentified signature");
-			goto send;
+			اذهب send;
 		}
 		/* XXX logspam */
 		debug_f("user=%s", user);
-		if (identity_permitted(id, e, user, &fwd_host, &dest_host) != 0)
-			goto send;
+		إذا (عنصر_خنثی_permitted(id, e, user, &fwd_host, &dest_host) != 0)
+			اذهب send;
 		/* XXX display fwd_host/dest_host in askpass UI */
 		/*
 		 * Ensure that the session ID is the most recent one
 		 * registered on the socket - it should have been bound by
 		 * ssh immediately before userauth.
 		 */
-		if (buf_equal(sid,
+		إذا (buf_equal(sid,
 		    e->session_ids[e->nsession_ids - 1].sid) != 0) {
 			error_f("unexpected session ID (%zu listed) on "
 			    "signature request for target user %s with "
 			    "key %s %s", e->nsession_ids, user,
-			    sshkey_type(id->key), fp);
-			goto send;
+			    sshkey_type(id->کلید), fp);
+			اذهب send;
 		}
 		/*
 		 * Ensure that the hostkey embedded in the signature matches
 		 * the one most recently bound to the socket. An exception is
 		 * made for the initial forwarding hop.
 		 */
-		if (e->nsession_ids > 1 && hostkey == NULL) {
+		إذا (e->nsession_ids > 1 && hostkey == عدم) {
 			error_f("refusing use of destination-constrained key: "
 			    "no hostkey recorded in signature for forwarded "
 			    "connection");
-			goto send;
+			اذهب send;
 		}
-		if (hostkey != NULL && !sshkey_equal(hostkey,
-		    e->session_ids[e->nsession_ids - 1].key)) {
+		إذا (hostkey != عدم && !sshkey_equal(hostkey,
+		    e->session_ids[e->nsession_ids - 1].کلید)) {
 			error_f("refusing use of destination-constrained key: "
 			    "mismatch between hostkey in request and most "
 			    "recently bound session");
-			goto send;
+			اذهب send;
 		}
 		xasprintf(&sig_dest, "public key authentication request for "
 		    "user \"%s\" to listed host", user);
 	}
-	if (id->confirm && confirm_key(id, sig_dest) != 0) {
+	إذا (id->confirm && confirm_کلید(id, sig_dest) != 0) {
 		verbose_f("user refused key");
-		goto send;
+		اذهب send;
 	}
-	if (sshkey_is_sk(id->key)) {
-		if (restrict_websafe &&
-		    match_pattern_list(id->key->sk_application,
+	إذا (sshkey_is_sk(id->کلید)) {
+		إذا (restrict_websafe &&
+		    تطابق_الگو_list(id->کلید->sk_application,
 		    websafe_allowlist, 0) != 1 &&
-		    !check_websafe_message_contents(key, data)) {
+		    !check_websafe_پیام_contents(کلید, داده)) {
 			/* error already logged */
-			goto send;
+			اذهب send;
 		}
-		if (id->key->sk_flags & SSH_SK_USER_PRESENCE_REQD) {
-			notifier = notify_start(0,
+		إذا (id->کلید->sk_flags & SSH_SK_USER_PRESENCE_REQD) {
+			notifier = notify_شروع(0,
 			    "Confirm user presence for key %s %s%s%s",
-			    sshkey_type(id->key), fp,
-			    sig_dest == NULL ? "" : "\n",
-			    sig_dest == NULL ? "" : sig_dest);
+			    sshkey_type(id->کلید), fp,
+			    sig_dest == عدم ? "" : "\n",
+			    sig_dest == عدم ? "" : sig_dest);
 		}
 	}
  retry_pin:
-	if ((r = sshkey_sign(id->key, &signature, &slen,
-	    sshbuf_ptr(data), sshbuf_len(data), agent_decode_alg(key, flags),
+	إذا ((r = sshkey_sign(id->کلید, &signature, &slen,
+	    sshbuf_ptr(داده), sshbuf_len(داده), agent_decode_alg(کلید, flags),
 	    id->sk_provider, pin, compat)) != 0) {
 		debug_fr(r, "sshkey_sign");
-		if (pin == NULL && !retried && sshkey_is_sk(id->key) &&
-		    r == SSH_ERR_KEY_WRONG_PASSPHRASE) {
-			notify_complete(notifier, NULL);
-			notifier = NULL;
+		إذا (pin == عدم && !retried && sshkey_is_sk(id->کلید) &&
+		    r == SSH_ERR_کلید_WRONG_PASSPHRASE) {
+			notify_complete(notifier, عدم);
+			notifier = عدم;
 			/* XXX include sig_dest */
 			xasprintf(&prompt, "Enter PIN%sfor %s key %s: ",
-			    (id->key->sk_flags & SSH_SK_USER_PRESENCE_REQD) ?
+			    (id->کلید->sk_flags & SSH_SK_USER_PRESENCE_REQD) ?
 			    " and confirm user presence " : " ",
-			    sshkey_type(id->key), fp);
+			    sshkey_type(id->کلید), fp);
 			pin = read_passphrase(prompt, RP_USE_ASKPASS);
 			retried = 1;
-			goto retry_pin;
+			اذهب retry_pin;
 		}
 		error_fr(r, "sshkey_sign");
-		goto send;
+		اذهب send;
 	}
 	/* Success */
 	ok = 0;
@@ -970,464 +970,464 @@ process_sign_request2(SocketEntry *e)
  send:
 	notify_complete(notifier, "User presence confirmed");
 
-	if (ok == 0) {
-		if ((r = sshbuf_put_u8(msg, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
-		    (r = sshbuf_put_string(msg, signature, slen)) != 0)
+	إذا (ok == 0) {
+		إذا ((r = sshbuf_put_u8(پیام, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
+		    (r = sshbuf_put_string(پیام, signature, slen)) != 0)
 			fatal_fr(r, "compose");
-	} else if ((r = sshbuf_put_u8(msg, SSH_AGENT_FAILURE)) != 0)
+	} وإلا إذا ((r = sshbuf_put_u8(پیام, SSH_AGENT_FAILURE)) != 0)
 		fatal_fr(r, "compose failure");
 
-	if ((r = sshbuf_put_stringb(e->output, msg)) != 0)
+	إذا ((r = sshbuf_put_stringb(e->output, پیام)) != 0)
 		fatal_fr(r, "enqueue");
 
 	sshbuf_free(sid);
-	sshbuf_free(data);
-	sshbuf_free(msg);
-	sshkey_free(key);
+	sshbuf_free(داده);
+	sshbuf_free(پیام);
+	sshkey_free(کلید);
 	sshkey_free(hostkey);
-	free(fp);
-	free(signature);
-	free(sig_dest);
-	free(user);
-	free(prompt);
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
+	حرر(fp);
+	حرر(signature);
+	حرر(sig_dest);
+	حرر(user);
+	حرر(prompt);
+	إذا (pin != عدم)
+		freezero(pin, طول_رشته(pin));
 }
 
 /* shared */
-static void
-process_remove_identity(SocketEntry *e)
+ساكن فراغ
+process_remove_عنصر_خنثی(Socket_مدخل *e)
 {
-	int r, success = 0;
-	struct sshkey *key = NULL;
-	Identity *id;
+	صحيح r, success = 0;
+	بنية sshkey *کلید = عدم;
+	عنصر_خنثی *id;
 
 	debug2_f("entering");
-	if ((r = sshkey_froms(e->request, &key)) != 0) {
+	إذا ((r = sshkey_froms(e->request, &کلید)) != 0) {
 		error_fr(r, "parse key");
-		goto done;
+		اذهب انجامشده;
 	}
-	if ((id = lookup_identity(key)) == NULL) {
+	إذا ((id = lookup_عنصر_خنثی(کلید)) == عدم) {
 		debug_f("key not found");
-		goto done;
+		اذهب انجامشده;
 	}
 	/* identity not visible, cannot be removed */
-	if (identity_permitted(id, e, NULL, NULL, NULL) != 0)
-		goto done; /* error already logged */
+	إذا (عنصر_خنثی_permitted(id, e, عدم, عدم, عدم) != 0)
+		اذهب انجامشده; /* error already logged */
 	/* We have this key, free it. */
-	if (idtab->nentries < 1)
+	إذا (idtab->nentries < 1)
 		fatal_f("internal error: nentries %d", idtab->nentries);
-	TAILQ_REMOVE(&idtab->idlist, id, next);
-	free_identity(id);
+	TAILQ_REMOVE(&idtab->idlist, id, بعدی);
+	free_عنصر_خنثی(id);
 	idtab->nentries--;
 	success = 1;
- done:
-	sshkey_free(key);
-	send_status(e, success);
+ انجامشده:
+	sshkey_free(کلید);
+	send_وضعیت(e, success);
 }
 
-static void
-remove_all_identities(void)
+ساكن فراغ
+remove_all_identities(فراغ)
 {
-	Identity *id;
+	عنصر_خنثی *id;
 
 	debug2_f("entering");
 	/* Loop over all identities and clear the keys. */
-	for (id = TAILQ_FIRST(&idtab->idlist); id;
+	لكل (id = TAILQ_FIRST(&idtab->idlist); id;
 	    id = TAILQ_FIRST(&idtab->idlist)) {
-		TAILQ_REMOVE(&idtab->idlist, id, next);
-		free_identity(id);
+		TAILQ_REMOVE(&idtab->idlist, id, بعدی);
+		free_عنصر_خنثی(id);
 	}
 
 	/* Mark that there are no identities. */
 	idtab->nentries = 0;
 }
 
-static void
-process_remove_all_identities(SocketEntry *e)
+ساكن فراغ
+process_remove_all_identities(Socket_مدخل *e)
 {
 	remove_all_identities();
 
 	/* Send success. */
-	send_status(e, 1);
+	send_وضعیت(e, 1);
 }
 
 /* removes expired keys and returns number of seconds until the next expiry */
-static time_t
-reaper(void)
+ساكن time_t
+reaper(فراغ)
 {
 	time_t deadline = 0, now = monotime();
-	Identity *id, *nxt;
+	عنصر_خنثی *id, *nxt;
 
-	for (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
-		nxt = TAILQ_NEXT(id, next);
-		if (id->death == 0)
-			continue;
-		if (now >= id->death) {
+	لكل (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
+		nxt = TAILQ_NEXT(id, بعدی);
+		إذا (id->death == 0)
+			استمر;
+		إذا (now >= id->death) {
 			debug("expiring key '%s'", id->comment);
-			TAILQ_REMOVE(&idtab->idlist, id, next);
-			free_identity(id);
+			TAILQ_REMOVE(&idtab->idlist, id, بعدی);
+			free_عنصر_خنثی(id);
 			idtab->nentries--;
-		} else
+		} وإلا
 			deadline = (deadline == 0) ? id->death :
 			    MINIMUM(deadline, id->death);
 	}
-	if (deadline == 0 || deadline <= now)
-		return 0;
-	else
-		return (deadline - now);
+	إذا (deadline == 0 || deadline <= now)
+		أرجع 0;
+	وإلا
+		أرجع (deadline - now);
 }
 
-static int
-parse_dest_constraint_hop(struct sshbuf *b, struct dest_constraint_hop *dch)
+ساكن صحيح
+parse_dest_constraint_hop(بنية sshbuf *b, بنية dest_constraint_hop *dch)
 {
-	u_char key_is_ca;
-	size_t elen = 0, userlen = 0;
-	int r;
-	struct sshkey *k = NULL;
-	char *fp;
+	u_char کلید_is_ca;
+	اندازه_t elen = 0, userlen = 0;
+	صحيح r;
+	بنية sshkey *k = عدم;
+	حرف *fp;
 
-	memset(dch, '\0', sizeof(*dch));
-	if ((r = sshbuf_get_cstring(b, &dch->user, &userlen)) != 0 ||
-	    (r = sshbuf_get_cstring(b, &dch->hostname, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(b, NULL, &elen)) != 0) {
+	memset(dch, '\0', حجم(*dch));
+	إذا ((r = sshbuf_get_cstring(b, &dch->user, &userlen)) != 0 ||
+	    (r = sshbuf_get_cstring(b, &dch->hostname, عدم)) != 0 ||
+	    (r = sshbuf_get_string_مستقیم(b, عدم, &elen)) != 0) {
 		error_fr(r, "parse");
-		goto out;
+		اذهب بیرون;
 	}
-	if (elen != 0) {
+	إذا (elen != 0) {
 		error_f("unsupported extensions (len %zu)", elen);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		اذهب بیرون;
 	}
-	if (*dch->hostname == '\0') {
-		free(dch->hostname);
-		dch->hostname = NULL;
+	إذا (*dch->hostname == '\0') {
+		حرر(dch->hostname);
+		dch->hostname = عدم;
 	}
-	if (*dch->user == '\0') {
-		free(dch->user);
-		dch->user = NULL;
-	} else if (userlen > AGENT_USER_CONSTRAINT_MAX_LEN) {
+	إذا (*dch->user == '\0') {
+		حرر(dch->user);
+		dch->user = عدم;
+	} وإلا إذا (userlen > AGENT_USER_CONSTRAINT_MAX_LEN) {
 		error_f("user match pattern too long");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بیرون;
 	}
-	while (sshbuf_len(b) != 0) {
-		dch->keys = xrecallocarray(dch->keys, dch->nkeys,
-		    dch->nkeys + 1, sizeof(*dch->keys));
-		dch->key_is_ca = xrecallocarray(dch->key_is_ca, dch->nkeys,
-		    dch->nkeys + 1, sizeof(*dch->key_is_ca));
-		if ((r = sshkey_froms(b, &k)) != 0 ||
-		    (r = sshbuf_get_u8(b, &key_is_ca)) != 0)
-			goto out;
-		if ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+	طالما (sshbuf_len(b) != 0) {
+		dch->کلیدها = xrecallocarray(dch->کلیدها, dch->nkeys,
+		    dch->nkeys + 1, حجم(*dch->کلیدها));
+		dch->کلید_is_ca = xrecallocarray(dch->کلید_is_ca, dch->nkeys,
+		    dch->nkeys + 1, حجم(*dch->کلید_is_ca));
+		إذا ((r = sshkey_froms(b, &k)) != 0 ||
+		    (r = sshbuf_get_u8(b, &کلید_is_ca)) != 0)
+			اذهب بیرون;
+		إذا ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == عدم)
 			fatal_f("fingerprint failed");
 		debug3_f("%s%s%s: adding %skey %s %s",
-		    dch->user == NULL ? "" : dch->user,
-		    dch->user == NULL ? "" : "@",
-		    dch->hostname, key_is_ca ? "CA " : "", sshkey_type(k), fp);
-		free(fp);
-		dch->keys[dch->nkeys] = k;
-		dch->key_is_ca[dch->nkeys] = key_is_ca != 0;
+		    dch->user == عدم ? "" : dch->user,
+		    dch->user == عدم ? "" : "@",
+		    dch->hostname, کلید_is_ca ? "CA " : "", sshkey_type(k), fp);
+		حرر(fp);
+		dch->کلیدها[dch->nkeys] = k;
+		dch->کلید_is_ca[dch->nkeys] = کلید_is_ca != 0;
 		dch->nkeys++;
-		k = NULL; /* transferred */
+		k = عدم; /* transferred */
 	}
 	/* success */
 	r = 0;
- out:
+ بیرون:
 	sshkey_free(k);
-	return r;
+	أرجع r;
 }
 
-static int
-parse_dest_constraint(struct sshbuf *m, struct dest_constraint *dc)
+ساكن صحيح
+parse_dest_constraint(بنية sshbuf *m, بنية dest_constraint *dc)
 {
-	struct sshbuf *b = NULL, *frombuf = NULL, *tobuf = NULL;
-	int r;
-	size_t elen = 0;
+	بنية sshbuf *b = عدم, *frombuf = عدم, *tobuf = عدم;
+	صحيح r;
+	اندازه_t elen = 0;
 
 	debug3_f("entering");
 
-	memset(dc, '\0', sizeof(*dc));
-	if ((r = sshbuf_froms(m, &b)) != 0 ||
+	memset(dc, '\0', حجم(*dc));
+	إذا ((r = sshbuf_froms(m, &b)) != 0 ||
 	    (r = sshbuf_froms(b, &frombuf)) != 0 ||
 	    (r = sshbuf_froms(b, &tobuf)) != 0 ||
-	    (r = sshbuf_get_string_direct(b, NULL, &elen)) != 0) {
+	    (r = sshbuf_get_string_مستقیم(b, عدم, &elen)) != 0) {
 		error_fr(r, "parse");
-		goto out;
+		اذهب بیرون;
 	}
-	if ((r = parse_dest_constraint_hop(frombuf, &dc->from)) != 0 ||
-	    (r = parse_dest_constraint_hop(tobuf, &dc->to)) != 0)
-		goto out; /* already logged */
-	if (elen != 0) {
+	إذا ((r = parse_dest_constraint_hop(frombuf, &dc->from)) != 0 ||
+	    (r = parse_dest_constraint_hop(tobuf, &dc->مقصد)) != 0)
+		اذهب بیرون; /* already logged */
+	إذا (elen != 0) {
 		error_f("unsupported extensions (len %zu)", elen);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		اذهب بیرون;
 	}
 	debug2_f("parsed %s (%u keys) > %s%s%s (%u keys)",
 	    dc->from.hostname ? dc->from.hostname : "(ORIGIN)", dc->from.nkeys,
-	    dc->to.user ? dc->to.user : "", dc->to.user ? "@" : "",
-	    dc->to.hostname ? dc->to.hostname : "(ANY)", dc->to.nkeys);
+	    dc->مقصد.user ? dc->مقصد.user : "", dc->مقصد.user ? "@" : "",
+	    dc->مقصد.hostname ? dc->مقصد.hostname : "(ANY)", dc->مقصد.nkeys);
 	/* check consistency */
-	if ((dc->from.hostname == NULL) != (dc->from.nkeys == 0) ||
-	    dc->from.user != NULL) {
+	إذا ((dc->from.hostname == عدم) != (dc->from.nkeys == 0) ||
+	    dc->from.user != عدم) {
 		error_f("inconsistent \"from\" specification");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بیرون;
 	}
-	if (dc->to.hostname == NULL || dc->to.nkeys == 0) {
+	إذا (dc->مقصد.hostname == عدم || dc->مقصد.nkeys == 0) {
 		error_f("incomplete \"to\" specification");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بیرون;
 	}
 	/* success */
 	r = 0;
- out:
+ بیرون:
 	sshbuf_free(b);
 	sshbuf_free(frombuf);
 	sshbuf_free(tobuf);
-	return r;
+	أرجع r;
 }
 
-static int
-parse_key_constraint_extension(struct sshbuf *m, char **sk_providerp,
-    struct dest_constraint **dcsp, size_t *ndcsp, int *cert_onlyp,
-    struct sshkey ***certs, size_t *ncerts)
+ساكن صحيح
+parse_کلید_constraint_extension(بنية sshbuf *m, حرف **sk_providerp,
+    بنية dest_constraint **dcsp, اندازه_t *ndcsp, صحيح *cert_onlyp,
+    بنية sshkey ***certs, اندازه_t *ncerts)
 {
-	char *ext_name = NULL;
-	int r;
-	struct sshbuf *b = NULL;
+	حرف *ext_name = عدم;
+	صحيح r;
+	بنية sshbuf *b = عدم;
 	u_char v;
-	struct sshkey *k;
+	بنية sshkey *k;
 
-	if ((r = sshbuf_get_cstring(m, &ext_name, NULL)) != 0) {
+	إذا ((r = sshbuf_get_cstring(m, &ext_name, عدم)) != 0) {
 		error_fr(r, "parse constraint extension");
-		goto out;
+		اذهب بیرون;
 	}
 	debug_f("constraint ext %s", ext_name);
-	if (strcmp(ext_name, "sk-provider@openssh.com") == 0) {
-		if (sk_providerp == NULL) {
+	إذا (strcmp(ext_name, "sk-provider@openssh.com") == 0) {
+		إذا (sk_providerp == عدم) {
 			error_f("%s not valid here", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			اذهب بیرون;
 		}
-		if (*sk_providerp != NULL) {
+		إذا (*sk_providerp != عدم) {
 			error_f("%s already set", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			اذهب بیرون;
 		}
-		if ((r = sshbuf_get_cstring(m, sk_providerp, NULL)) != 0) {
+		إذا ((r = sshbuf_get_cstring(m, sk_providerp, عدم)) != 0) {
 			error_fr(r, "parse %s", ext_name);
-			goto out;
+			اذهب بیرون;
 		}
-	} else if (strcmp(ext_name,
+	} وإلا إذا (strcmp(ext_name,
 	    "restrict-destination-v00@openssh.com") == 0) {
-		if (*dcsp != NULL) {
+		إذا (*dcsp != عدم) {
 			error_f("%s already set", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			اذهب بیرون;
 		}
-		if ((r = sshbuf_froms(m, &b)) != 0) {
+		إذا ((r = sshbuf_froms(m, &b)) != 0) {
 			error_fr(r, "parse %s outer", ext_name);
-			goto out;
+			اذهب بیرون;
 		}
-		while (sshbuf_len(b) != 0) {
-			if (*ndcsp >= AGENT_MAX_DEST_CONSTRAINTS) {
+		طالما (sshbuf_len(b) != 0) {
+			إذا (*ndcsp >= AGENT_MAX_DEST_CONSTRAINTS) {
 				error_f("too many %s constraints", ext_name);
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				اذهب بیرون;
 			}
 			*dcsp = xrecallocarray(*dcsp, *ndcsp, *ndcsp + 1,
-			    sizeof(**dcsp));
-			if ((r = parse_dest_constraint(b,
+			    حجم(**dcsp));
+			إذا ((r = parse_dest_constraint(b,
 			    *dcsp + (*ndcsp)++)) != 0)
-				goto out; /* error already logged */
+				اذهب بیرون; /* error already logged */
 		}
-	} else if (strcmp(ext_name,
+	} وإلا إذا (strcmp(ext_name,
 	    "associated-certs-v00@openssh.com") == 0) {
-		if (certs == NULL || ncerts == NULL || cert_onlyp == NULL) {
+		إذا (certs == عدم || ncerts == عدم || cert_onlyp == عدم) {
 			error_f("%s not valid here", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			اذهب بیرون;
 		}
-		if (*certs != NULL) {
+		إذا (*certs != عدم) {
 			error_f("%s already set", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			اذهب بیرون;
 		}
-		if ((r = sshbuf_get_u8(m, &v)) != 0 ||
+		إذا ((r = sshbuf_get_u8(m, &v)) != 0 ||
 		    (r = sshbuf_froms(m, &b)) != 0) {
 			error_fr(r, "parse %s", ext_name);
-			goto out;
+			اذهب بیرون;
 		}
 		*cert_onlyp = v != 0;
-		while (sshbuf_len(b) != 0) {
-			if (*ncerts >= AGENT_MAX_EXT_CERTS) {
+		طالما (sshbuf_len(b) != 0) {
+			إذا (*ncerts >= AGENT_MAX_EXT_CERTS) {
 				error_f("too many %s constraints", ext_name);
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				اذهب بیرون;
 			}
 			*certs = xrecallocarray(*certs, *ncerts, *ncerts + 1,
-			    sizeof(**certs));
-			if ((r = sshkey_froms(b, &k)) != 0) {
+			    حجم(**certs));
+			إذا ((r = sshkey_froms(b, &k)) != 0) {
 				error_fr(r, "parse key");
-				goto out;
+				اذهب بیرون;
 			}
 			(*certs)[(*ncerts)++] = k;
 		}
-	} else {
+	} وإلا {
 		error_f("unsupported constraint \"%s\"", ext_name);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		اذهب بیرون;
 	}
 	/* success */
 	r = 0;
- out:
-	free(ext_name);
+ بیرون:
+	حرر(ext_name);
 	sshbuf_free(b);
-	return r;
+	أرجع r;
 }
 
-static int
-parse_key_constraints(struct sshbuf *m, struct sshkey *k, time_t *deathp,
-    u_int *secondsp, int *confirmp, char **sk_providerp,
-    struct dest_constraint **dcsp, size_t *ndcsp,
-    int *cert_onlyp, size_t *ncerts, struct sshkey ***certs)
+ساكن صحيح
+parse_کلید_constraints(بنية sshbuf *m, بنية sshkey *k, time_t *deathp,
+    u_int *secondsp, صحيح *confirmp, حرف **sk_providerp,
+    بنية dest_constraint **dcsp, اندازه_t *ndcsp,
+    صحيح *cert_onlyp, اندازه_t *ncerts, بنية sshkey ***certs)
 {
 	u_char ctype;
-	int r;
+	صحيح r;
 	u_int seconds;
 
-	while (sshbuf_len(m)) {
-		if ((r = sshbuf_get_u8(m, &ctype)) != 0) {
+	طالما (sshbuf_len(m)) {
+		إذا ((r = sshbuf_get_u8(m, &ctype)) != 0) {
 			error_fr(r, "parse constraint type");
-			goto out;
+			اذهب بیرون;
 		}
-		switch (ctype) {
-		case SSH_AGENT_CONSTRAIN_LIFETIME:
-			if (*deathp != 0) {
+		بدل (ctype) {
+		حالة SSH_AGENT_CONSTRAIN_LIFETIME:
+			إذا (*deathp != 0) {
 				error_f("lifetime already set");
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				اذهب بیرون;
 			}
-			if ((r = sshbuf_get_u32(m, &seconds)) != 0) {
+			إذا ((r = sshbuf_get_u32(m, &seconds)) != 0) {
 				error_fr(r, "parse lifetime constraint");
-				goto out;
+				اذهب بیرون;
 			}
 			*deathp = monotime() + seconds;
 			*secondsp = seconds;
-			break;
-		case SSH_AGENT_CONSTRAIN_CONFIRM:
-			if (*confirmp != 0) {
+			اكسر;
+		حالة SSH_AGENT_CONSTRAIN_CONFIRM:
+			إذا (*confirmp != 0) {
 				error_f("confirm already set");
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				اذهب بیرون;
 			}
 			*confirmp = 1;
-			break;
-		case SSH_AGENT_CONSTRAIN_EXTENSION:
-			if ((r = parse_key_constraint_extension(m,
+			اكسر;
+		حالة SSH_AGENT_CONSTRAIN_EXTENSION:
+			إذا ((r = parse_کلید_constraint_extension(m,
 			    sk_providerp, dcsp, ndcsp,
 			    cert_onlyp, certs, ncerts)) != 0)
-				goto out; /* error already logged */
-			break;
-		default:
+				اذهب بیرون; /* error already logged */
+			اكسر;
+		افتراضي:
 			error_f("Unknown constraint %d", ctype);
 			r = SSH_ERR_FEATURE_UNSUPPORTED;
-			goto out;
+			اذهب بیرون;
 		}
 	}
 	/* success */
 	r = 0;
- out:
-	return r;
+ بیرون:
+	أرجع r;
 }
 
-static void
-process_add_identity(SocketEntry *e)
+ساكن فراغ
+process_جمع_کن_عنصر_خنثی(Socket_مدخل *e)
 {
-	Identity *id;
-	int success = 0, confirm = 0;
-	char *fp, *comment = NULL, *sk_provider = NULL;
-	char canonical_provider[PATH_MAX];
+	عنصر_خنثی *id;
+	صحيح success = 0, confirm = 0;
+	حرف *fp, *comment = عدم, *sk_provider = عدم;
+	حرف canonical_provider[PATH_MAX];
 	time_t death = 0;
 	u_int seconds = 0;
-	struct dest_constraint *dest_constraints = NULL;
-	size_t ndest_constraints = 0;
-	struct sshkey *k = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	بنية dest_constraint *dest_constraints = عدم;
+	اندازه_t ndest_constraints = 0;
+	بنية sshkey *k = عدم;
+	صحيح r = SSH_ERR_داخلی_ERROR;
 
 	debug2_f("entering");
-	if ((r = sshkey_private_deserialize(e->request, &k)) != 0 ||
-	    k == NULL ||
-	    (r = sshbuf_get_cstring(e->request, &comment, NULL)) != 0) {
+	إذا ((r = sshkey_خصوصی_deserialize(e->request, &k)) != 0 ||
+	    k == عدم ||
+	    (r = sshbuf_get_cstring(e->request, &comment, عدم)) != 0) {
 		error_fr(r, "parse");
-		goto out;
+		اذهب بیرون;
 	}
-	if (parse_key_constraints(e->request, k, &death, &seconds, &confirm,
+	إذا (parse_کلید_constraints(e->request, k, &death, &seconds, &confirm,
 	    &sk_provider, &dest_constraints, &ndest_constraints,
-	    NULL, NULL, NULL) != 0) {
+	    عدم, عدم, عدم) != 0) {
 		error_f("failed to parse constraints");
 		sshbuf_reset(e->request);
-		goto out;
+		اذهب بیرون;
 	}
 	dump_dest_constraints(__func__, dest_constraints, ndest_constraints);
 
-	if (sk_provider != NULL) {
-		if (!sshkey_is_sk(k)) {
+	إذا (sk_provider != عدم) {
+		إذا (!sshkey_is_sk(k)) {
 			error("Cannot add provider: %s is not an "
 			    "authenticator-hosted key", sshkey_type(k));
-			goto out;
+			اذهب بیرون;
 		}
-		if (strcasecmp(sk_provider, "internal") == 0) {
+		إذا (strcasecmp(sk_provider, "internal") == 0) {
 			debug_f("internal provider");
-		} else {
-			if (socket_is_remote(e) && !remote_add_provider) {
+		} وإلا {
+			إذا (socket_is_remote(e) && !remote_جمع_کن_provider) {
 				verbose("failed add of SK provider \"%.100s\": "
 				    "remote addition of providers is disabled",
 				    sk_provider);
-				goto out;
+				اذهب بیرون;
 			}
-			if (realpath(sk_provider, canonical_provider) == NULL) {
+			إذا (realpath(sk_provider, canonical_provider) == عدم) {
 				verbose("failed provider \"%.100s\": "
 				    "realpath: %s", sk_provider,
 				    strerror(errno));
-				goto out;
+				اذهب بیرون;
 			}
-			free(sk_provider);
+			حرر(sk_provider);
 			sk_provider = xstrdup(canonical_provider);
-			if (match_pattern_list(sk_provider,
+			إذا (تطابق_الگو_list(sk_provider,
 			    allowed_providers, 0) != 1) {
 				error("Refusing add key: "
 				    "provider %s not allowed", sk_provider);
-				goto out;
+				اذهب بیرون;
 			}
 		}
 	}
-	if ((r = sshkey_shield_private(k)) != 0) {
+	إذا ((r = sshkey_shield_خصوصی(k)) != 0) {
 		error_fr(r, "shield private");
-		goto out;
+		اذهب بیرون;
 	}
-	if (lifetime && !death)
+	إذا (lifetime && !death)
 		death = monotime() + lifetime;
-	if ((id = lookup_identity(k)) == NULL) {
-		id = xcalloc(1, sizeof(Identity));
-		TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
+	إذا ((id = lookup_عنصر_خنثی(k)) == عدم) {
+		id = xcalloc(1, حجم(عنصر_خنثی));
+		TAILQ_INSERT_TAIL(&idtab->idlist, id, بعدی);
 		/* Increment the number of identities. */
 		idtab->nentries++;
-	} else {
+	} وإلا {
 		/* identity not visible, do not update */
-		if (identity_permitted(id, e, NULL, NULL, NULL) != 0)
-			goto out; /* error already logged */
+		إذا (عنصر_خنثی_permitted(id, e, عدم, عدم, عدم) != 0)
+			اذهب بیرون; /* error already logged */
 		/* key state might have been updated */
-		sshkey_free(id->key);
-		free(id->comment);
-		free(id->sk_provider);
+		sshkey_free(id->کلید);
+		حرر(id->comment);
+		حرر(id->sk_provider);
 		free_dest_constraints(id->dest_constraints,
 		    id->ndest_constraints);
 	}
 	/* success */
-	id->key = k;
+	id->کلید = k;
 	id->comment = comment;
 	id->death = death;
 	id->confirm = confirm;
@@ -1435,38 +1435,38 @@ process_add_identity(SocketEntry *e)
 	id->dest_constraints = dest_constraints;
 	id->ndest_constraints = ndest_constraints;
 
-	if ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	إذا ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == عدم)
 		fatal_f("sshkey_fingerprint failed");
 	debug_f("add %s %s \"%.100s\" (life: %u) (confirm: %u) "
 	    "(provider: %s) (destination constraints: %zu)",
 	    sshkey_ssh_name(k), fp, comment, seconds, confirm,
-	    sk_provider == NULL ? "none" : sk_provider, ndest_constraints);
-	free(fp);
+	    sk_provider == عدم ? "none" : sk_provider, ndest_constraints);
+	حرر(fp);
 	/* transferred */
-	k = NULL;
-	comment = NULL;
-	sk_provider = NULL;
-	dest_constraints = NULL;
+	k = عدم;
+	comment = عدم;
+	sk_provider = عدم;
+	dest_constraints = عدم;
 	ndest_constraints = 0;
 	success = 1;
- out:
-	free(sk_provider);
-	free(comment);
+ بیرون:
+	حرر(sk_provider);
+	حرر(comment);
 	sshkey_free(k);
 	free_dest_constraints(dest_constraints, ndest_constraints);
-	send_status(e, success);
+	send_وضعیت(e, success);
 }
 
 /* XXX todo: encrypt sensitive data with passphrase */
-static void
-process_lock_agent(SocketEntry *e, int lock)
+ساكن فراغ
+process_قفل_agent(Socket_مدخل *e, صحيح قفل)
 {
-	int r, success = 0, delay;
-	char *passwd;
-	u_char passwdhash[LOCK_SIZE];
-	static u_int fail_count = 0;
-	size_t pwlen;
+	صحيح r, success = 0, delay;
+	حرف *passwd;
+	u_char passwdhash[قفل_اندازه];
+	ساكن u_int fail_شمار = 0;
+	اندازه_t pwlen;
 
 	debug2_f("entering");
 	/*
@@ -1474,74 +1474,74 @@ process_lock_agent(SocketEntry *e, int lock)
 	 * but we can't parse their request properly. The only safe thing to
 	 * do is abort.
 	 */
-	if ((r = sshbuf_get_cstring(e->request, &passwd, &pwlen)) != 0)
+	إذا ((r = sshbuf_get_cstring(e->request, &passwd, &pwlen)) != 0)
 		fatal_fr(r, "parse");
-	if (pwlen == 0) {
+	إذا (pwlen == 0) {
 		debug("empty password not supported");
-	} else if (locked && !lock) {
-		if (bcrypt_pbkdf(passwd, pwlen, lock_salt, sizeof(lock_salt),
-		    passwdhash, sizeof(passwdhash), LOCK_ROUNDS) < 0)
+	} وإلا إذا (locked && !قفل) {
+		إذا (bcrypt_pbkdf(passwd, pwlen, قفل_salt, حجم(قفل_salt),
+		    passwdhash, حجم(passwdhash), قفل_دورها) < 0)
 			fatal("bcrypt_pbkdf");
-		if (timingsafe_bcmp(passwdhash, lock_pwhash, LOCK_SIZE) == 0) {
+		إذا (timingsafe_bcmp(passwdhash, قفل_pwhash, قفل_اندازه) == 0) {
 			debug("agent unlocked");
 			locked = 0;
-			fail_count = 0;
-			explicit_bzero(lock_pwhash, sizeof(lock_pwhash));
+			fail_شمار = 0;
+			explicit_bzero(قفل_pwhash, حجم(قفل_pwhash));
 			success = 1;
-		} else {
+		} وإلا {
 			/* delay in 0.1s increments up to 10s */
-			if (fail_count < 100)
-				fail_count++;
-			delay = 100000 * fail_count;
+			إذا (fail_شمار < 100)
+				fail_شمار++;
+			delay = 100000 * fail_شمار;
 			debug("unlock failed, delaying %0.1lf seconds",
-			    (double)delay/1000000);
+			    (مزدوج)delay/1000000);
 			usleep(delay);
 		}
-		explicit_bzero(passwdhash, sizeof(passwdhash));
-	} else if (!locked && lock) {
+		explicit_bzero(passwdhash, حجم(passwdhash));
+	} وإلا إذا (!locked && قفل) {
 		debug("agent locked");
 		locked = 1;
-		arc4random_buf(lock_salt, sizeof(lock_salt));
-		if (bcrypt_pbkdf(passwd, pwlen, lock_salt, sizeof(lock_salt),
-		    lock_pwhash, sizeof(lock_pwhash), LOCK_ROUNDS) < 0)
+		arc4random_buf(قفل_salt, حجم(قفل_salt));
+		إذا (bcrypt_pbkdf(passwd, pwlen, قفل_salt, حجم(قفل_salt),
+		    قفل_pwhash, حجم(قفل_pwhash), قفل_دورها) < 0)
 			fatal("bcrypt_pbkdf");
 		success = 1;
 	}
 	freezero(passwd, pwlen);
-	send_status(e, success);
+	send_وضعیت(e, success);
 }
 
-static void
-no_identities(SocketEntry *e)
+ساكن فراغ
+no_identities(Socket_مدخل *e)
 {
-	struct sshbuf *msg;
-	int r;
+	بنية sshbuf *پیام;
+	صحيح r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	إذا ((پیام = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
-	    (r = sshbuf_put_u32(msg, 0)) != 0 ||
-	    (r = sshbuf_put_stringb(e->output, msg)) != 0)
+	إذا ((r = sshbuf_put_u8(پیام, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
+	    (r = sshbuf_put_u32(پیام, 0)) != 0 ||
+	    (r = sshbuf_put_stringb(e->output, پیام)) != 0)
 		fatal_fr(r, "compose");
-	sshbuf_free(msg);
+	sshbuf_free(پیام);
 }
 
-#ifdef ENABLE_PKCS11
+#اگر_تعریف_شده ENABLE_PKCS11
 /* Add an identity to idlist; takes ownership of 'key' and 'comment' */
-static void
-add_p11_identity(struct sshkey *key, char *comment, const char *provider,
-    time_t death, u_int confirm, struct dest_constraint *dest_constraints,
-    size_t ndest_constraints)
+ساكن فراغ
+جمع_کن_p11_عنصر_خنثی(بنية sshkey *کلید, حرف *comment, ثابت حرف *provider,
+    time_t death, u_int confirm, بنية dest_constraint *dest_constraints,
+    اندازه_t ndest_constraints)
 {
-	Identity *id;
+	عنصر_خنثی *id;
 
-	if (lookup_identity(key) != NULL) {
-		sshkey_free(key);
-		free(comment);
-		return;
+	إذا (lookup_عنصر_خنثی(کلید) != عدم) {
+		sshkey_free(کلید);
+		حرر(comment);
+		أرجع;
 	}
-	id = xcalloc(1, sizeof(Identity));
-	id->key = key;
+	id = xcalloc(1, حجم(عنصر_خنثی));
+	id->کلید = کلید;
 	id->comment = comment;
 	id->provider = xstrdup(provider);
 	id->death = death;
@@ -1549,193 +1549,193 @@ add_p11_identity(struct sshkey *key, char *comment, const char *provider,
 	id->dest_constraints = dup_dest_constraints(dest_constraints,
 	    ndest_constraints);
 	id->ndest_constraints = ndest_constraints;
-	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
+	TAILQ_INSERT_TAIL(&idtab->idlist, id, بعدی);
 	idtab->nentries++;
 }
 
-static void
-process_add_smartcard_key(SocketEntry *e)
+ساكن فراغ
+process_جمع_کن_smartcard_کلید(Socket_مدخل *e)
 {
-	char *provider = NULL, *pin = NULL, canonical_provider[PATH_MAX];
-	char **comments = NULL;
-	int r, i, count = 0, success = 0, confirm = 0;
+	حرف *provider = عدم, *pin = عدم, canonical_provider[PATH_MAX];
+	حرف **comments = عدم;
+	صحيح r, i, شمار = 0, success = 0, confirm = 0;
 	u_int seconds = 0;
 	time_t death = 0;
-	struct sshkey **keys = NULL, *k;
-	struct dest_constraint *dest_constraints = NULL;
-	size_t j, ndest_constraints = 0, ncerts = 0;
-	struct sshkey **certs = NULL;
-	int cert_only = 0;
+	بنية sshkey **کلیدها = عدم, *k;
+	بنية dest_constraint *dest_constraints = عدم;
+	اندازه_t j, ndest_constraints = 0, ncerts = 0;
+	بنية sshkey **certs = عدم;
+	صحيح cert_only = 0;
 
 	debug2_f("entering");
-	if ((r = sshbuf_get_cstring(e->request, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(e->request, &pin, NULL)) != 0) {
+	إذا ((r = sshbuf_get_cstring(e->request, &provider, عدم)) != 0 ||
+	    (r = sshbuf_get_cstring(e->request, &pin, عدم)) != 0) {
 		error_fr(r, "parse");
-		goto send;
+		اذهب send;
 	}
-	if (parse_key_constraints(e->request, NULL, &death, &seconds, &confirm,
-	    NULL, &dest_constraints, &ndest_constraints, &cert_only,
+	إذا (parse_کلید_constraints(e->request, عدم, &death, &seconds, &confirm,
+	    عدم, &dest_constraints, &ndest_constraints, &cert_only,
 	    &ncerts, &certs) != 0) {
 		error_f("failed to parse constraints");
-		goto send;
+		اذهب send;
 	}
 	dump_dest_constraints(__func__, dest_constraints, ndest_constraints);
-	if (socket_is_remote(e) && !remote_add_provider) {
+	إذا (socket_is_remote(e) && !remote_جمع_کن_provider) {
 		verbose("failed PKCS#11 add of \"%.100s\": remote addition of "
 		    "providers is disabled", provider);
-		goto send;
+		اذهب send;
 	}
-	if (realpath(provider, canonical_provider) == NULL) {
+	إذا (realpath(provider, canonical_provider) == عدم) {
 		verbose("failed PKCS#11 add of \"%.100s\": realpath: %s",
 		    provider, strerror(errno));
-		goto send;
+		اذهب send;
 	}
-	if (match_pattern_list(canonical_provider, allowed_providers, 0) != 1) {
+	إذا (تطابق_الگو_list(canonical_provider, allowed_providers, 0) != 1) {
 		verbose("refusing PKCS#11 add of \"%.100s\": "
 		    "provider not allowed", canonical_provider);
-		goto send;
+		اذهب send;
 	}
 	debug_f("add %.100s", canonical_provider);
-	if (lifetime && !death)
+	إذا (lifetime && !death)
 		death = monotime() + lifetime;
 
-	count = pkcs11_add_provider(canonical_provider, pin, &keys, &comments);
-	for (i = 0; i < count; i++) {
-		if (comments[i] == NULL || comments[i][0] == '\0') {
-			free(comments[i]);
+	شمار = pkcs11_جمع_کن_provider(canonical_provider, pin, &کلیدها, &comments);
+	لكل (i = 0; i < شمار; i++) {
+		إذا (comments[i] == عدم || comments[i][0] == '\0') {
+			حرر(comments[i]);
 			comments[i] = xstrdup(canonical_provider);
 		}
-		for (j = 0; j < ncerts; j++) {
-			if (!sshkey_is_cert(certs[j]))
-				continue;
-			if (!sshkey_equal_public(keys[i], certs[j]))
-				continue;
-			if (pkcs11_make_cert(keys[i], certs[j], &k) != 0)
-				continue;
-			add_p11_identity(k, xstrdup(comments[i]),
+		لكل (j = 0; j < ncerts; j++) {
+			إذا (!sshkey_is_cert(certs[j]))
+				استمر;
+			إذا (!sshkey_equal_عمومی(کلیدها[i], certs[j]))
+				استمر;
+			إذا (pkcs11_make_cert(کلیدها[i], certs[j], &k) != 0)
+				استمر;
+			جمع_کن_p11_عنصر_خنثی(k, xstrdup(comments[i]),
 			    canonical_provider, death, confirm,
 			    dest_constraints, ndest_constraints);
 			success = 1;
 		}
-		if (!cert_only && lookup_identity(keys[i]) == NULL) {
-			add_p11_identity(keys[i], comments[i],
+		إذا (!cert_only && lookup_عنصر_خنثی(کلیدها[i]) == عدم) {
+			جمع_کن_p11_عنصر_خنثی(کلیدها[i], comments[i],
 			    canonical_provider, death, confirm,
 			    dest_constraints, ndest_constraints);
-			keys[i] = NULL;		/* transferred */
-			comments[i] = NULL;	/* transferred */
+			کلیدها[i] = عدم;		/* transferred */
+			comments[i] = عدم;	/* transferred */
 			success = 1;
 		}
 		/* XXX update constraints for existing keys */
-		sshkey_free(keys[i]);
-		free(comments[i]);
+		sshkey_free(کلیدها[i]);
+		حرر(comments[i]);
 	}
 send:
-	free(pin);
-	free(provider);
-	free(keys);
-	free(comments);
+	حرر(pin);
+	حرر(provider);
+	حرر(کلیدها);
+	حرر(comments);
 	free_dest_constraints(dest_constraints, ndest_constraints);
-	for (j = 0; j < ncerts; j++)
+	لكل (j = 0; j < ncerts; j++)
 		sshkey_free(certs[j]);
-	free(certs);
-	send_status(e, success);
+	حرر(certs);
+	send_وضعیت(e, success);
 }
 
-static void
-process_remove_smartcard_key(SocketEntry *e)
+ساكن فراغ
+process_remove_smartcard_کلید(Socket_مدخل *e)
 {
-	char *provider = NULL, *pin = NULL, canonical_provider[PATH_MAX];
-	int r, success = 0;
-	Identity *id, *nxt;
+	حرف *provider = عدم, *pin = عدم, canonical_provider[PATH_MAX];
+	صحيح r, success = 0;
+	عنصر_خنثی *id, *nxt;
 
 	debug2_f("entering");
-	if ((r = sshbuf_get_cstring(e->request, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(e->request, &pin, NULL)) != 0) {
+	إذا ((r = sshbuf_get_cstring(e->request, &provider, عدم)) != 0 ||
+	    (r = sshbuf_get_cstring(e->request, &pin, عدم)) != 0) {
 		error_fr(r, "parse");
-		goto send;
+		اذهب send;
 	}
-	free(pin);
+	حرر(pin);
 
-	if (realpath(provider, canonical_provider) == NULL) {
+	إذا (realpath(provider, canonical_provider) == عدم) {
 		verbose("failed PKCS#11 add of \"%.100s\": realpath: %s",
 		    provider, strerror(errno));
-		goto send;
+		اذهب send;
 	}
 
 	debug_f("remove %.100s", canonical_provider);
-	for (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
-		nxt = TAILQ_NEXT(id, next);
+	لكل (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
+		nxt = TAILQ_NEXT(id, بعدی);
 		/* Skip file--based keys */
-		if (id->provider == NULL)
-			continue;
-		if (!strcmp(canonical_provider, id->provider)) {
-			TAILQ_REMOVE(&idtab->idlist, id, next);
-			free_identity(id);
+		إذا (id->provider == عدم)
+			استمر;
+		إذا (!strcmp(canonical_provider, id->provider)) {
+			TAILQ_REMOVE(&idtab->idlist, id, بعدی);
+			free_عنصر_خنثی(id);
 			idtab->nentries--;
 		}
 	}
-	if (pkcs11_del_provider(canonical_provider) == 0)
+	إذا (pkcs11_del_provider(canonical_provider) == 0)
 		success = 1;
-	else
+	وإلا
 		error_f("pkcs11_del_provider failed");
 send:
-	free(provider);
-	send_status(e, success);
+	حرر(provider);
+	send_وضعیت(e, success);
 }
-#endif /* ENABLE_PKCS11 */
+#پایان_اگر /* ENABLE_PKCS11 */
 
-static int
-process_ext_session_bind(SocketEntry *e)
+ساكن صحيح
+process_ext_session_bind(Socket_مدخل *e)
 {
-	int r, sid_match, key_match;
-	struct sshkey *key = NULL;
-	struct sshbuf *sid = NULL, *sig = NULL;
-	char *fp = NULL;
-	size_t i;
+	صحيح r, sid_تطابق, کلید_تطابق;
+	بنية sshkey *کلید = عدم;
+	بنية sshbuf *sid = عدم, *sig = عدم;
+	حرف *fp = عدم;
+	اندازه_t i;
 	u_char fwd = 0;
 
 	debug2_f("entering");
 	e->session_bind_attempted = 1;
-	if ((r = sshkey_froms(e->request, &key)) != 0 ||
+	إذا ((r = sshkey_froms(e->request, &کلید)) != 0 ||
 	    (r = sshbuf_froms(e->request, &sid)) != 0 ||
 	    (r = sshbuf_froms(e->request, &sig)) != 0 ||
 	    (r = sshbuf_get_u8(e->request, &fwd)) != 0) {
 		error_fr(r, "parse");
-		goto out;
+		اذهب بیرون;
 	}
-	if (sshbuf_len(sid) > AGENT_MAX_SID_LEN) {
+	إذا (sshbuf_len(sid) > AGENT_MAX_SID_LEN) {
 		error_f("session ID too long");
-		goto out;
+		اذهب بیرون;
 	}
-	if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	إذا ((fp = sshkey_fingerprint(کلید, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == عدم)
 		fatal_f("fingerprint failed");
 	/* check signature with hostkey on session ID */
-	if ((r = sshkey_verify(key, sshbuf_ptr(sig), sshbuf_len(sig),
-	    sshbuf_ptr(sid), sshbuf_len(sid), NULL, 0, NULL)) != 0) {
-		error_fr(r, "sshkey_verify for %s %s", sshkey_type(key), fp);
-		goto out;
+	إذا ((r = sshkey_verify(کلید, sshbuf_ptr(sig), sshbuf_len(sig),
+	    sshbuf_ptr(sid), sshbuf_len(sid), عدم, 0, عدم)) != 0) {
+		error_fr(r, "sshkey_verify for %s %s", sshkey_type(کلید), fp);
+		اذهب بیرون;
 	}
 	/* check whether sid/key already recorded */
-	for (i = 0; i < e->nsession_ids; i++) {
-		if (!e->session_ids[i].forwarded) {
+	لكل (i = 0; i < e->nsession_ids; i++) {
+		إذا (!e->session_ids[i].forwarded) {
 			error_f("attempt to bind session ID to socket "
 			    "previously bound for authentication attempt");
 			r = -1;
-			goto out;
+			اذهب بیرون;
 		}
-		sid_match = buf_equal(sid, e->session_ids[i].sid) == 0;
-		key_match = sshkey_equal(key, e->session_ids[i].key);
-		if (sid_match && key_match) {
+		sid_تطابق = buf_equal(sid, e->session_ids[i].sid) == 0;
+		کلید_تطابق = sshkey_equal(کلید, e->session_ids[i].کلید);
+		إذا (sid_تطابق && کلید_تطابق) {
 			debug_f("session ID already recorded for %s %s",
-			    sshkey_type(key), fp);
+			    sshkey_type(کلید), fp);
 			r = 0;
-			goto out;
-		} else if (sid_match) {
+			اذهب بیرون;
+		} وإلا إذا (sid_تطابق) {
 			error_f("session ID recorded against different key "
-			    "for %s %s", sshkey_type(key), fp);
+			    "for %s %s", sshkey_type(کلید), fp);
 			r = -1;
-			goto out;
+			اذهب بیرون;
 		}
 		/*
 		 * new sid with previously-seen key can happen, e.g. multiple
@@ -1743,65 +1743,65 @@ process_ext_session_bind(SocketEntry *e)
 		 */
 	}
 	/* record new key/sid */
-	if (e->nsession_ids >= AGENT_MAX_SESSION_IDS) {
+	إذا (e->nsession_ids >= AGENT_MAX_SESSION_IDS) {
 		error_f("too many session IDs recorded");
 		r = -1;
-		goto out;
+		اذهب بیرون;
 	}
 	e->session_ids = xrecallocarray(e->session_ids, e->nsession_ids,
-	    e->nsession_ids + 1, sizeof(*e->session_ids));
+	    e->nsession_ids + 1, حجم(*e->session_ids));
 	i = e->nsession_ids++;
-	debug_f("recorded %s %s (slot %zu of %d)", sshkey_type(key), fp, i,
+	debug_f("recorded %s %s (slot %zu of %d)", sshkey_type(کلید), fp, i,
 	    AGENT_MAX_SESSION_IDS);
-	e->session_ids[i].key = key;
+	e->session_ids[i].کلید = کلید;
 	e->session_ids[i].forwarded = fwd != 0;
-	key = NULL; /* transferred */
+	کلید = عدم; /* transferred */
 	/* can't transfer sid; it's refcounted and scoped to request's life */
-	if ((e->session_ids[i].sid = sshbuf_new()) == NULL)
+	إذا ((e->session_ids[i].sid = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_putb(e->session_ids[i].sid, sid)) != 0)
+	إذا ((r = sshbuf_putb(e->session_ids[i].sid, sid)) != 0)
 		fatal_fr(r, "sshbuf_putb session ID");
 	/* success */
 	r = 0;
- out:
-	free(fp);
-	sshkey_free(key);
+ بیرون:
+	حرر(fp);
+	sshkey_free(کلید);
 	sshbuf_free(sid);
 	sshbuf_free(sig);
-	return r == 0 ? 1 : 0;
+	أرجع r == 0 ? 1 : 0;
 }
 
-static int
-process_ext_query(SocketEntry *e)
+ساكن صحيح
+process_ext_query(Socket_مدخل *e)
 {
-	int r;
-	struct sshbuf *msg = NULL;
+	صحيح r;
+	بنية sshbuf *پیام = عدم;
 
 	debug2_f("entering");
-	if ((msg = sshbuf_new()) == NULL)
+	إذا ((پیام = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH_AGENT_EXTENSION_RESPONSE)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "query")) != 0 ||
+	إذا ((r = sshbuf_put_u8(پیام, SSH_AGENT_EXTENSION_RESPONSE)) != 0 ||
+	    (r = sshbuf_put_cstring(پیام, "query")) != 0 ||
 	    /* string[]     supported extension types */
-	    (r = sshbuf_put_cstring(msg, "session-bind@openssh.com")) != 0)
+	    (r = sshbuf_put_cstring(پیام, "session-bind@openssh.com")) != 0)
 		fatal_fr(r, "compose");
-	if ((r = sshbuf_put_stringb(e->output, msg)) != 0)
+	إذا ((r = sshbuf_put_stringb(e->output, پیام)) != 0)
 		fatal_fr(r, "enqueue");
-	sshbuf_free(msg);
-	return 1;
+	sshbuf_free(پیام);
+	أرجع 1;
 }
 
-static void
-process_extension(SocketEntry *e)
+ساكن فراغ
+process_extension(Socket_مدخل *e)
 {
-	int r, replied = 0, success = 0;
-	char *name;
+	صحيح r, replied = 0, success = 0;
+	حرف *name;
 
 	debug2_f("entering");
-	if ((r = sshbuf_get_cstring(e->request, &name, NULL)) != 0) {
+	إذا ((r = sshbuf_get_cstring(e->request, &name, عدم)) != 0) {
 		error_fr(r, "parse");
-		send_status(e, 0);
-		return;
+		send_وضعیت(e, 0);
+		أرجع;
 	}
 
 	/*
@@ -1810,24 +1810,24 @@ process_extension(SocketEntry *e)
 	 * Other operations should be refused when locked.
 	 */
 
-	if (strcmp(name, "session-bind@openssh.com") == 0) {
+	إذا (strcmp(name, "session-bind@openssh.com") == 0) {
 		success = process_ext_session_bind(e);
-	} else if (locked) {
+	} وإلا إذا (locked) {
 		debug_f("attempt to use extension \"%s\" while locked", name);
-		goto generic_fail;
-	} else if (strcmp(name, "query") == 0) {
+		اذهب generic_fail;
+	} وإلا إذا (strcmp(name, "query") == 0) {
 		replied = success = process_ext_query(e);
-	} else {
+	} وإلا {
 		debug_f("unsupported extension \"%s\"", name);
  generic_fail:
-		free(name);
-		send_status(e, 0);
-		return;
+		حرر(name);
+		send_وضعیت(e, 0);
+		أرجع;
 	}
-	free(name);
+	حرر(name);
 	/* Agent failures are signalled with a different error code */
-	if (!replied) {
-		send_status_generic(e,
+	إذا (!replied) {
+		send_وضعیت_generic(e,
 		    success ? SSH_AGENT_SUCCESS : SSH_AGENT_EXTENSION_FAILURE);
 	}
 }
@@ -1836,39 +1836,39 @@ process_extension(SocketEntry *e)
  * dispatch incoming message.
  * returns 1 on success, 0 for incomplete messages or -1 on error.
  */
-static int
-process_message(u_int socknum)
+ساكن صحيح
+process_پیام(u_int socknum)
 {
-	u_int msg_len;
+	u_int پیام_len;
 	u_char type;
-	const u_char *cp;
-	int r;
-	SocketEntry *e;
+	ثابت u_char *cp;
+	صحيح r;
+	Socket_مدخل *e;
 
-	if (socknum >= sockets_alloc)
+	إذا (socknum >= sockets_alloc)
 		fatal_f("sock %u >= allocated %u", socknum, sockets_alloc);
 	e = &sockets[socknum];
 
-	if (sshbuf_len(e->input) < 5)
-		return 0;		/* Incomplete message header. */
-	cp = sshbuf_ptr(e->input);
-	msg_len = PEEK_U32(cp);
-	if (msg_len > AGENT_MAX_LEN) {
+	إذا (sshbuf_len(e->درون_داد) < 5)
+		أرجع 0;		/* Incomplete message header. */
+	cp = sshbuf_ptr(e->درون_داد);
+	پیام_len = PEEK_U32(cp);
+	إذا (پیام_len > AGENT_MAX_LEN) {
 		debug_f("socket %u (fd=%d) message too long %u > %u",
-		    socknum, e->fd, msg_len, AGENT_MAX_LEN);
-		return -1;
+		    socknum, e->fd, پیام_len, AGENT_MAX_LEN);
+		أرجع -1;
 	}
-	if (sshbuf_len(e->input) < msg_len + 4)
-		return 0;		/* Incomplete message body. */
+	إذا (sshbuf_len(e->درون_داد) < پیام_len + 4)
+		أرجع 0;		/* Incomplete message body. */
 
 	/* move the current input to e->request */
 	sshbuf_reset(e->request);
-	if ((r = sshbuf_get_stringb(e->input, e->request)) != 0 ||
+	إذا ((r = sshbuf_get_stringb(e->درون_داد, e->request)) != 0 ||
 	    (r = sshbuf_get_u8(e->request, &type)) != 0) {
-		if (r == SSH_ERR_MESSAGE_INCOMPLETE ||
+		إذا (r == SSH_ERR_پیام_INCOMPLETE ||
 		    r == SSH_ERR_STRING_TOO_LARGE) {
 			error_fr(r, "parse");
-			return -1;
+			أرجع -1;
 		}
 		fatal_fr(r, "parse");
 	}
@@ -1876,368 +1876,368 @@ process_message(u_int socknum)
 	debug_f("socket %u (fd=%d) type %d", socknum, e->fd, type);
 
 	/* check whether agent is locked */
-	if (locked && type != SSH_AGENTC_UNLOCK) {
-		switch (type) {
-		case SSH2_AGENTC_REQUEST_IDENTITIES:
+	إذا (locked && type != SSH_AGENTC_UNLOCK) {
+		بدل (type) {
+		حالة SSH2_AGENTC_REQUEST_IDENTITIES:
 			/* send empty lists */
 			no_identities(e);
-			break;
-		case SSH_AGENTC_EXTENSION:
+			اكسر;
+		حالة SSH_AGENTC_EXTENSION:
 			process_extension(e);
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			/* send a fail message for all other request types */
-			send_status(e, 0);
+			send_وضعیت(e, 0);
 		}
 		sshbuf_reset(e->request);
-		return 1;
+		أرجع 1;
 	}
 
-	switch (type) {
-	case SSH_AGENTC_LOCK:
-	case SSH_AGENTC_UNLOCK:
-		process_lock_agent(e, type == SSH_AGENTC_LOCK);
-		break;
-	case SSH_AGENTC_REMOVE_ALL_RSA_IDENTITIES:
+	بدل (type) {
+	حالة SSH_AGENTC_قفل:
+	حالة SSH_AGENTC_UNLOCK:
+		process_قفل_agent(e, type == SSH_AGENTC_قفل);
+		اكسر;
+	حالة SSH_AGENTC_REMOVE_ALL_RSA_IDENTITIES:
 		process_remove_all_identities(e); /* safe for !WITH_SSH1 */
-		break;
+		اكسر;
 	/* ssh2 */
-	case SSH2_AGENTC_SIGN_REQUEST:
+	حالة SSH2_AGENTC_SIGN_REQUEST:
 		process_sign_request2(e);
-		break;
-	case SSH2_AGENTC_REQUEST_IDENTITIES:
+		اكسر;
+	حالة SSH2_AGENTC_REQUEST_IDENTITIES:
 		process_request_identities(e);
-		break;
-	case SSH2_AGENTC_ADD_IDENTITY:
-	case SSH2_AGENTC_ADD_ID_CONSTRAINED:
-		process_add_identity(e);
-		break;
-	case SSH2_AGENTC_REMOVE_IDENTITY:
-		process_remove_identity(e);
-		break;
-	case SSH2_AGENTC_REMOVE_ALL_IDENTITIES:
+		اكسر;
+	حالة SSH2_AGENTC_جمع_کن_عنصر_خنثی:
+	حالة SSH2_AGENTC_جمع_کن_ID_CONSTRAINED:
+		process_جمع_کن_عنصر_خنثی(e);
+		اكسر;
+	حالة SSH2_AGENTC_REMOVE_عنصر_خنثی:
+		process_remove_عنصر_خنثی(e);
+		اكسر;
+	حالة SSH2_AGENTC_REMOVE_ALL_IDENTITIES:
 		process_remove_all_identities(e);
-		break;
-#ifdef ENABLE_PKCS11
-	case SSH_AGENTC_ADD_SMARTCARD_KEY:
-	case SSH_AGENTC_ADD_SMARTCARD_KEY_CONSTRAINED:
-		process_add_smartcard_key(e);
-		break;
-	case SSH_AGENTC_REMOVE_SMARTCARD_KEY:
-		process_remove_smartcard_key(e);
-		break;
-#endif /* ENABLE_PKCS11 */
-	case SSH_AGENTC_EXTENSION:
+		اكسر;
+#اگر_تعریف_شده ENABLE_PKCS11
+	حالة SSH_AGENTC_جمع_کن_SMARTCARD_کلید:
+	حالة SSH_AGENTC_جمع_کن_SMARTCARD_کلید_CONSTRAINED:
+		process_جمع_کن_smartcard_کلید(e);
+		اكسر;
+	حالة SSH_AGENTC_REMOVE_SMARTCARD_کلید:
+		process_remove_smartcard_کلید(e);
+		اكسر;
+#پایان_اگر /* ENABLE_PKCS11 */
+	حالة SSH_AGENTC_EXTENSION:
 		process_extension(e);
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		/* Unknown message.  Respond with failure. */
 		error("Unknown message %d", type);
 		sshbuf_reset(e->request);
-		send_status(e, 0);
-		break;
+		send_وضعیت(e, 0);
+		اكسر;
 	}
-	return 1;
+	أرجع 1;
 }
 
-static void
-new_socket(sock_type type, int fd)
+ساكن فراغ
+new_socket(sock_type type, صحيح fd)
 {
 	u_int i, old_alloc, new_alloc;
 
 	debug_f("type = %s", type == AUTH_CONNECTION ? "CONNECTION" :
 	    (type == AUTH_SOCKET ? "SOCKET" : "UNKNOWN"));
-	set_nonblock(fd);
+	مجموعه_nonblock(fd);
 
-	if (fd > max_fd)
+	إذا (fd > max_fd)
 		max_fd = fd;
 
-	for (i = 0; i < sockets_alloc; i++)
-		if (sockets[i].type == AUTH_UNUSED) {
+	لكل (i = 0; i < sockets_alloc; i++)
+		إذا (sockets[i].type == AUTH_استفادهنشده) {
 			sockets[i].fd = fd;
-			if ((sockets[i].input = sshbuf_new()) == NULL ||
-			    (sockets[i].output = sshbuf_new()) == NULL ||
-			    (sockets[i].request = sshbuf_new()) == NULL)
+			إذا ((sockets[i].درون_داد = sshbuf_new()) == عدم ||
+			    (sockets[i].output = sshbuf_new()) == عدم ||
+			    (sockets[i].request = sshbuf_new()) == عدم)
 				fatal_f("sshbuf_new failed");
 			sockets[i].type = type;
-			return;
+			أرجع;
 		}
 	old_alloc = sockets_alloc;
 	new_alloc = sockets_alloc + 10;
 	sockets = xrecallocarray(sockets, old_alloc, new_alloc,
-	    sizeof(sockets[0]));
-	for (i = old_alloc; i < new_alloc; i++)
-		sockets[i].type = AUTH_UNUSED;
+	    حجم(sockets[0]));
+	لكل (i = old_alloc; i < new_alloc; i++)
+		sockets[i].type = AUTH_استفادهنشده;
 	sockets_alloc = new_alloc;
 	sockets[old_alloc].fd = fd;
-	if ((sockets[old_alloc].input = sshbuf_new()) == NULL ||
-	    (sockets[old_alloc].output = sshbuf_new()) == NULL ||
-	    (sockets[old_alloc].request = sshbuf_new()) == NULL)
+	إذا ((sockets[old_alloc].درون_داد = sshbuf_new()) == عدم ||
+	    (sockets[old_alloc].output = sshbuf_new()) == عدم ||
+	    (sockets[old_alloc].request = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 	sockets[old_alloc].type = type;
 }
 
-static int
+ساكن صحيح
 handle_socket_read(u_int socknum)
 {
-	struct sockaddr_un sunaddr;
+	بنية sockaddr_un sunaddr;
 	socklen_t slen;
 	uid_t euid;
 	gid_t egid;
-	int fd;
+	صحيح fd;
 
-	slen = sizeof(sunaddr);
-	fd = accept(sockets[socknum].fd, (struct sockaddr *)&sunaddr, &slen);
-	if (fd == -1) {
+	slen = حجم(sunaddr);
+	fd = accept(sockets[socknum].fd, (بنية sockaddr *)&sunaddr, &slen);
+	إذا (fd == -1) {
 		error("accept from AUTH_SOCKET: %s", strerror(errno));
-		return -1;
+		أرجع -1;
 	}
-	if (getpeereid(fd, &euid, &egid) == -1) {
+	إذا (getpeereid(fd, &euid, &egid) == -1) {
 		error("getpeereid %d failed: %s", fd, strerror(errno));
 		close(fd);
-		return -1;
+		أرجع -1;
 	}
-	if ((euid != 0) && (getuid() != euid)) {
+	إذا ((euid != 0) && (getuid() != euid)) {
 		error("uid mismatch: peer euid %u != uid %u",
 		    (u_int) euid, (u_int) getuid());
 		close(fd);
-		return -1;
+		أرجع -1;
 	}
 	new_socket(AUTH_CONNECTION, fd);
-	return 0;
+	أرجع 0;
 }
 
-static int
+ساكن صحيح
 handle_conn_read(u_int socknum)
 {
-	char buf[AGENT_RBUF_LEN];
+	حرف buf[AGENT_RBUF_LEN];
 	ssize_t len;
-	int r;
+	صحيح r;
 
-	if ((len = read(sockets[socknum].fd, buf, sizeof(buf))) <= 0) {
-		if (len == -1) {
-			if (errno == EAGAIN || errno == EINTR)
-				return 0;
+	إذا ((len = اقرأ(sockets[socknum].fd, buf, حجم(buf))) <= 0) {
+		إذا (len == -1) {
+			إذا (errno == EAGAIN || errno == EINTR)
+				أرجع 0;
 			error_f("read error on socket %u (fd %d): %s",
 			    socknum, sockets[socknum].fd, strerror(errno));
 		}
-		return -1;
+		أرجع -1;
 	}
-	if ((r = sshbuf_put(sockets[socknum].input, buf, len)) != 0)
+	إذا ((r = sshbuf_put(sockets[socknum].درون_داد, buf, len)) != 0)
 		fatal_fr(r, "compose");
-	explicit_bzero(buf, sizeof(buf));
-	for (;;) {
-		if ((r = process_message(socknum)) == -1)
-			return -1;
-		else if (r == 0)
-			break;
+	explicit_bzero(buf, حجم(buf));
+	لكل (;;) {
+		إذا ((r = process_پیام(socknum)) == -1)
+			أرجع -1;
+		وإلا إذا (r == 0)
+			اكسر;
 	}
-	return 0;
+	أرجع 0;
 }
 
-static int
+ساكن صحيح
 handle_conn_write(u_int socknum)
 {
 	ssize_t len;
-	int r;
+	صحيح r;
 
-	if (sshbuf_len(sockets[socknum].output) == 0)
-		return 0; /* shouldn't happen */
-	if ((len = write(sockets[socknum].fd,
+	إذا (sshbuf_len(sockets[socknum].output) == 0)
+		أرجع 0; /* shouldn't happen */
+	إذا ((len = اكتب(sockets[socknum].fd,
 	    sshbuf_ptr(sockets[socknum].output),
 	    sshbuf_len(sockets[socknum].output))) <= 0) {
-		if (len == -1) {
-			if (errno == EAGAIN || errno == EINTR)
-				return 0;
+		إذا (len == -1) {
+			إذا (errno == EAGAIN || errno == EINTR)
+				أرجع 0;
 			error_f("read error on socket %u (fd %d): %s",
 			    socknum, sockets[socknum].fd, strerror(errno));
 		}
-		return -1;
+		أرجع -1;
 	}
-	if ((r = sshbuf_consume(sockets[socknum].output, len)) != 0)
+	إذا ((r = sshbuf_consume(sockets[socknum].output, len)) != 0)
 		fatal_fr(r, "consume");
-	return 0;
+	أرجع 0;
 }
 
-static void
-after_poll(struct pollfd *pfd, size_t npfd, u_int maxfds)
+ساكن فراغ
+after_poll(بنية pollfd *pfd, اندازه_t npfd, u_int maxfds)
 {
-	size_t i;
+	اندازه_t i;
 	u_int socknum, activefds = npfd;
 
-	for (i = 0; i < npfd; i++) {
-		if (pfd[i].revents == 0)
-			continue;
+	لكل (i = 0; i < npfd; i++) {
+		إذا (pfd[i].revents == 0)
+			استمر;
 		/* Find sockets entry */
-		for (socknum = 0; socknum < sockets_alloc; socknum++) {
-			if (sockets[socknum].type != AUTH_SOCKET &&
+		لكل (socknum = 0; socknum < sockets_alloc; socknum++) {
+			إذا (sockets[socknum].type != AUTH_SOCKET &&
 			    sockets[socknum].type != AUTH_CONNECTION)
-				continue;
-			if (pfd[i].fd == sockets[socknum].fd)
-				break;
+				استمر;
+			إذا (pfd[i].fd == sockets[socknum].fd)
+				اكسر;
 		}
-		if (socknum >= sockets_alloc) {
+		إذا (socknum >= sockets_alloc) {
 			error_f("no socket for fd %d", pfd[i].fd);
-			continue;
+			استمر;
 		}
 		/* Process events */
-		switch (sockets[socknum].type) {
-		case AUTH_SOCKET:
-			if ((pfd[i].revents & (POLLIN|POLLERR)) == 0)
-				break;
-			if (npfd > maxfds) {
+		بدل (sockets[socknum].type) {
+		حالة AUTH_SOCKET:
+			إذا ((pfd[i].revents & (POLLIN|POLLERR)) == 0)
+				اكسر;
+			إذا (npfd > maxfds) {
 				debug3("out of fds (active %u >= limit %u); "
 				    "skipping accept", activefds, maxfds);
-				break;
+				اكسر;
 			}
-			if (handle_socket_read(socknum) == 0)
+			إذا (handle_socket_read(socknum) == 0)
 				activefds++;
-			break;
-		case AUTH_CONNECTION:
-			if ((pfd[i].revents & (POLLIN|POLLHUP|POLLERR)) != 0 &&
+			اكسر;
+		حالة AUTH_CONNECTION:
+			إذا ((pfd[i].revents & (POLLIN|POLLHUP|POLLERR)) != 0 &&
 			    handle_conn_read(socknum) != 0)
-				goto close_sock;
-			if ((pfd[i].revents & (POLLOUT|POLLHUP)) != 0 &&
+				اذهب close_sock;
+			إذا ((pfd[i].revents & (POLLOUT|POLLHUP)) != 0 &&
 			    handle_conn_write(socknum) != 0) {
  close_sock:
-				if (activefds == 0)
+				إذا (activefds == 0)
 					fatal("activefds == 0 at close_sock");
 				close_socket(&sockets[socknum]);
 				activefds--;
-				break;
+				اكسر;
 			}
-			break;
-		default:
-			break;
+			اكسر;
+		افتراضي:
+			اكسر;
 		}
 	}
 }
 
-static int
-prepare_poll(struct pollfd **pfdp, size_t *npfdp, struct timespec *timeoutp, u_int maxfds)
+ساكن صحيح
+prepare_poll(بنية pollfd **pfdp, اندازه_t *npfdp, بنية timespec *timeoutp, u_int maxfds)
 {
-	struct pollfd *pfd = *pfdp;
-	size_t i, j, npfd = 0;
+	بنية pollfd *pfd = *pfdp;
+	اندازه_t i, j, npfd = 0;
 	time_t deadline;
-	int r;
+	صحيح r;
 
 	/* Count active sockets */
-	for (i = 0; i < sockets_alloc; i++) {
-		switch (sockets[i].type) {
-		case AUTH_SOCKET:
-		case AUTH_CONNECTION:
+	لكل (i = 0; i < sockets_alloc; i++) {
+		بدل (sockets[i].type) {
+		حالة AUTH_SOCKET:
+		حالة AUTH_CONNECTION:
 			npfd++;
-			break;
-		case AUTH_UNUSED:
-			break;
-		default:
+			اكسر;
+		حالة AUTH_استفادهنشده:
+			اكسر;
+		افتراضي:
 			fatal("Unknown socket type %d", sockets[i].type);
-			break;
+			اكسر;
 		}
 	}
-	if (npfd != *npfdp &&
-	    (pfd = recallocarray(pfd, *npfdp, npfd, sizeof(*pfd))) == NULL)
+	إذا (npfd != *npfdp &&
+	    (pfd = recallocarray(pfd, *npfdp, npfd, حجم(*pfd))) == عدم)
 		fatal_f("recallocarray failed");
 	*pfdp = pfd;
 	*npfdp = npfd;
 
-	for (i = j = 0; i < sockets_alloc; i++) {
-		switch (sockets[i].type) {
-		case AUTH_SOCKET:
-			if (npfd > maxfds) {
+	لكل (i = j = 0; i < sockets_alloc; i++) {
+		بدل (sockets[i].type) {
+		حالة AUTH_SOCKET:
+			إذا (npfd > maxfds) {
 				debug3("out of fds (active %zu >= limit %u); "
 				    "skipping arming listener", npfd, maxfds);
-				break;
+				اكسر;
 			}
 			pfd[j].fd = sockets[i].fd;
 			pfd[j].revents = 0;
 			pfd[j].events = POLLIN;
 			j++;
-			break;
-		case AUTH_CONNECTION:
+			اكسر;
+		حالة AUTH_CONNECTION:
 			pfd[j].fd = sockets[i].fd;
 			pfd[j].revents = 0;
 			/*
 			 * Only prepare to read if we can handle a full-size
 			 * input read buffer and enqueue a max size reply..
 			 */
-			if ((r = sshbuf_check_reserve(sockets[i].input,
+			إذا ((r = sshbuf_check_reserve(sockets[i].درون_داد,
 			    AGENT_RBUF_LEN)) == 0 &&
 			    (r = sshbuf_check_reserve(sockets[i].output,
 			    AGENT_MAX_LEN)) == 0)
 				pfd[j].events = POLLIN;
-			else if (r != SSH_ERR_NO_BUFFER_SPACE)
+			وإلا إذا (r != SSH_ERR_NO_میانگیر_SPACE)
 				fatal_fr(r, "reserve");
-			if (sshbuf_len(sockets[i].output) > 0)
+			إذا (sshbuf_len(sockets[i].output) > 0)
 				pfd[j].events |= POLLOUT;
 			j++;
-			break;
-		default:
-			break;
+			اكسر;
+		افتراضي:
+			اكسر;
 		}
 	}
 	deadline = reaper();
-	if (parent_alive_interval != 0)
-		deadline = (deadline == 0) ? parent_alive_interval :
-		    MINIMUM(deadline, parent_alive_interval);
-	if (deadline != 0)
+	إذا (والد_alive_interval != 0)
+		deadline = (deadline == 0) ? والد_alive_interval :
+		    MINIMUM(deadline, والد_alive_interval);
+	إذا (deadline != 0)
 		ptimeout_deadline_sec(timeoutp, deadline);
-	return (1);
+	أرجع (1);
 }
 
-static void
-cleanup_socket(void)
+ساكن فراغ
+cleanup_socket(فراغ)
 {
-	if (cleanup_pid != 0 && getpid() != cleanup_pid)
-		return;
+	إذا (cleanup_pid != 0 && getpid() != cleanup_pid)
+		أرجع;
 	debug_f("cleanup");
-	if (socket_name != NULL) {
+	إذا (socket_name != عدم) {
 		agent_listener_cleanup(socket_dirspec, socket_name, socket_dir);
-		free(socket_name);
-		socket_name = NULL;
-		free(socket_dir);
-		socket_dir = NULL;
+		حرر(socket_name);
+		socket_name = عدم;
+		حرر(socket_dir);
+		socket_dir = عدم;
 	}
 }
 
-void
-cleanup_exit(int i)
+فراغ
+cleanup_exit(صحيح i)
 {
 	cleanup_socket();
-#ifdef ENABLE_PKCS11
+#اگر_تعریف_شده ENABLE_PKCS11
 	pkcs11_terminate();
-#endif
+#پایان_اگر
 	_exit(i);
 }
 
-static void
-cleanup_handler(int sig)
+ساكن فراغ
+cleanup_handler(صحيح sig)
 {
 	signalled_exit = sig;
 }
 
-static void
-keydrop_handler(int sig)
+ساكن فراغ
+keydrop_handler(صحيح sig)
 {
 	signalled_keydrop = sig;
 }
 
-static void
-check_parent_exists(void)
+ساكن فراغ
+check_والد_exists(فراغ)
 {
 	/*
 	 * If our parent has exited then getppid() will return (pid_t)1,
 	 * so testing for that should be safe.
 	 */
-	if (parent_pid != -1 && getppid() != parent_pid) {
+	إذا (والد_pid != -1 && getppid() != والد_pid) {
 		/* printf("Parent has died - Authentication agent exiting.\n"); */
 		cleanup_socket();
 		_exit(2);
 	}
 }
 
-static void
-usage(void)
+ساكن فراغ
+usage(فراغ)
 {
 	fprintf(stderr,
 	    "usage: ssh-agent [-c | -s] [-DdU] [-T | -A directory | -a bind_address]\n"
@@ -2249,196 +2249,196 @@ usage(void)
 	    "       ssh-agent [-c | -s] -k\n"
 	    "       ssh-agent -u\n"
 	    "       ssh-agent -V\n");
-	exit(1);
+	خروج(1);
 }
 
-int
-main(int ac, char **av)
+صحيح
+اصلی(صحيح ac, حرف **av)
 {
-	int c_flag = 0, d_flag = 0, D_flag = 0, k_flag = 0;
-	int s_flag = 0, T_flag = 0, u_flag = 0, U_flag = 0;
-	int sock = -1, ch, result, saved_errno;
+	صحيح c_flag = 0, d_flag = 0, D_flag = 0, k_flag = 0;
+	صحيح s_flag = 0, T_flag = 0, u_flag = 0, U_flag = 0;
+	صحيح sock = -1, ch, نتیجه, saved_errno;
 	pid_t pid;
- 	char *homedir = NULL, *shell, *format, *pidstr, *agentsocket = NULL;
-	char *cp, pidstrbuf[1 + 3 * sizeof pid];
-	char *fdstr;
-	const char *errstr = NULL;
-	const char *ccp;
-#ifdef HAVE_SETRLIMIT
-	struct rlimit rlim;
-#endif
-	extern int optind;
-	extern char *optarg;
-	size_t len;
-	mode_t prev_mask;
-	struct timespec timeout;
-	struct pollfd *pfd = NULL;
-	size_t npfd = 0;
+ 	حرف *homedir = عدم, *shell, *format, *pidstr, *agentsocket = عدم;
+	حرف *cp, pidstrbuf[1 + 3 * حجم pid];
+	حرف *fdstr;
+	ثابت حرف *errstr = عدم;
+	ثابت حرف *ccp;
+#اگر_تعریف_شده HAVE_SETRLIMIT
+	بنية rlimit rlim;
+#پایان_اگر
+	خارجي صحيح optind;
+	خارجي حرف *optarg;
+	اندازه_t len;
+	نما_t prev_ماسک;
+	بنية timespec timeout;
+	بنية pollfd *pfd = عدم;
+	اندازه_t npfd = 0;
 	u_int maxfds;
 	sigset_t nsigset, osigset;
-	int socket_activated = 0;
-	struct passwd *pw;
+	صحيح socket_activated = 0;
+	بنية passwd *pw;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
 
 	/* drop */
-	(void)setegid(getgid());
-	(void)setgid(getgid());
+	(فراغ)setegid(getgid());
+	(فراغ)setgid(getgid());
 
 	platform_disable_tracing(0);	/* strict=no */
 
-	if ((pw = getpwuid(getuid())) == NULL)
+	إذا ((pw = getpwuid(getuid())) == عدم)
 		fatal("No user exists for uid %lu", (u_long)getuid());
 	pw = pwcopy(pw);
 
-#ifdef RLIMIT_NOFILE
-	if (getrlimit(RLIMIT_NOFILE, &rlim) == -1)
+#اگر_تعریف_شده RLIMIT_NOFILE
+	إذا (getrlimit(RLIMIT_NOFILE, &rlim) == -1)
 		fatal("%s: getrlimit: %s", __progname, strerror(errno));
-#endif
+#پایان_اگر
 
 	__progname = ssh_get_progname(av[0]);
-	seed_rng();
+	دانه_rng();
 
-	while ((ch = getopt(ac, av, "cDdksTuUVA:E:a:O:P:t:")) != -1) {
-		switch (ch) {
-		case 'E':
+	طالما ((ch = getopt(ac, av, "cDdksTuUVA:E:a:O:P:t:")) != -1) {
+		بدل (ch) {
+		حالة 'E':
 			fingerprint_hash = ssh_digest_alg_by_name(optarg);
-			if (fingerprint_hash == -1)
+			إذا (fingerprint_hash == -1)
 				fatal("Invalid hash algorithm \"%s\"", optarg);
-			break;
-		case 'c':
-			if (s_flag)
+			اكسر;
+		حالة 'c':
+			إذا (s_flag)
 				usage();
 			c_flag++;
-			break;
-		case 'k':
+			اكسر;
+		حالة 'k':
 			k_flag++;
-			break;
-		case 'O':
-			if (strcmp(optarg, "no-restrict-websafe") == 0)
+			اكسر;
+		حالة 'O':
+			إذا (strcmp(optarg, "no-restrict-websafe") == 0)
 				restrict_websafe = 0;
-			else if (strcmp(optarg, "allow-remote-pkcs11") == 0)
-				remote_add_provider = 1;
-			else if ((ccp = strprefix(optarg,
-			    "websafe-allow=", 0)) != NULL) {
-				if (websafe_allowlist != NULL)
+			وإلا إذا (strcmp(optarg, "allow-remote-pkcs11") == 0)
+				remote_جمع_کن_provider = 1;
+			وإلا إذا ((ccp = strprefix(optarg,
+			    "websafe-allow=", 0)) != عدم) {
+				إذا (websafe_allowlist != عدم)
 					fatal("websafe-allow already set");
 				websafe_allowlist = xstrdup(ccp);
-			} else
+			} وإلا
 				fatal("Unknown -O option");
-			break;
-		case 'P':
-			if (allowed_providers != NULL)
+			اكسر;
+		حالة 'P':
+			إذا (allowed_providers != عدم)
 				fatal("-P option already specified");
 			allowed_providers = xstrdup(optarg);
-			break;
-		case 's':
-			if (c_flag)
+			اكسر;
+		حالة 's':
+			إذا (c_flag)
 				usage();
 			s_flag++;
-			break;
-		case 'd':
-			if (d_flag || D_flag)
+			اكسر;
+		حالة 'd':
+			إذا (d_flag || D_flag)
 				usage();
 			d_flag++;
-			break;
-		case 'D':
-			if (d_flag || D_flag)
+			اكسر;
+		حالة 'D':
+			إذا (d_flag || D_flag)
 				usage();
 			D_flag++;
-			break;
-		case 'a':
+			اكسر;
+		حالة 'a':
 			agentsocket = optarg;
-			break;
-		case 'A':
+			اكسر;
+		حالة 'A':
 			socket_dirspec = xstrdup(optarg);
-			break;
-		case 't':
-			if ((lifetime = convtime(optarg)) == -1) {
+			اكسر;
+		حالة 't':
+			إذا ((lifetime = convtime(optarg)) == -1) {
 				fprintf(stderr, "Invalid lifetime\n");
 				usage();
 			}
-			break;
-		case 'T':
+			اكسر;
+		حالة 'T':
 			T_flag++;
-			break;
-		case 'u':
+			اكسر;
+		حالة 'u':
 			u_flag++;
-			break;
-		case 'U':
+			اكسر;
+		حالة 'U':
 			U_flag++;
-			break;
-		case 'V':
+			اكسر;
+		حالة 'V':
 			fprintf(stderr, "%s, %s\n",
-			    SSH_VERSION, SSH_OPENSSL_VERSION);
-			exit(0);
-		default:
+			    SSH_نسخه, SSH_OPENSSL_نسخه);
+			خروج(0);
+		افتراضي:
 			usage();
 		}
 	}
 	ac -= optind;
 	av += optind;
 
-	if (ac > 0 &&
+	إذا (ac > 0 &&
 	    (c_flag || k_flag || s_flag || d_flag || D_flag || u_flag))
 		usage();
 	/* only one of -a, -A and -T allowed */
-	if (((socket_dirspec != NULL) + (agentsocket != NULL) + T_flag) > 1)
+	إذا (((socket_dirspec != عدم) + (agentsocket != عدم) + T_flag) > 1)
 		usage();
 
 	log_init(__progname,
 	    d_flag ? SYSLOG_LEVEL_DEBUG3 : SYSLOG_LEVEL_INFO,
 	    SYSLOG_FACILITY_AUTH, 1);
 
-	if (allowed_providers == NULL)
+	إذا (allowed_providers == عدم)
 		allowed_providers = xstrdup(DEFAULT_ALLOWED_PROVIDERS);
-	if (websafe_allowlist == NULL)
+	إذا (websafe_allowlist == عدم)
 		websafe_allowlist = xstrdup(DEFAULT_WEBSAFE_ALLOWLIST);
 
-	if (T_flag)
-		socket_dirspec = xstrdup(_PATH_SSH_AGENT_SOCKET_TMPDIR);
-	else if (socket_dirspec == NULL && agentsocket == NULL)
-		socket_dirspec = xstrdup(_PATH_SSH_AGENT_SOCKET_DIR);
+	إذا (T_flag)
+		socket_dirspec = xstrdup(مسیر_SSH_AGENT_SOCKET_TMPDIR);
+	وإلا إذا (socket_dirspec == عدم && agentsocket == عدم)
+		socket_dirspec = xstrdup(مسیر_SSH_AGENT_SOCKET_DIR);
 
-	if (ac == 0 && !c_flag && !s_flag) {
+	إذا (ac == 0 && !c_flag && !s_flag) {
 		shell = getenv("SHELL");
-		if (shell != NULL && (len = strlen(shell)) > 2 &&
-		    strncmp(shell + len - 3, "csh", 3) == 0)
+		إذا (shell != عدم && (len = طول_رشته(shell)) > 2 &&
+		    مقایسه_رشته(shell + len - 3, "csh", 3) == 0)
 			c_flag = 1;
 	}
-	if (k_flag) {
+	إذا (k_flag) {
 		pidstr = getenv(SSH_AGENTPID_ENV_NAME);
-		if (pidstr == NULL) {
+		إذا (pidstr == عدم) {
 			fprintf(stderr, "%s not set, cannot kill agent\n",
 			    SSH_AGENTPID_ENV_NAME);
-			exit(1);
+			خروج(1);
 		}
-		pid = (int)strtonum(pidstr, 2, INT_MAX, &errstr);
-		if (errstr) {
+		pid = (صحيح)strtonum(pidstr, 2, بیشترین_صحیح, &errstr);
+		إذا (errstr) {
 			fprintf(stderr,
 			    "%s=\"%s\", which is not a good PID: %s\n",
 			    SSH_AGENTPID_ENV_NAME, pidstr, errstr);
-			exit(1);
+			خروج(1);
 		}
-		if (kill(pid, SIGTERM) == -1) {
+		إذا (kill(pid, SIGTERM) == -1) {
 			perror("kill");
-			exit(1);
+			خروج(1);
 		}
 		format = c_flag ? "unsetenv %s;\n" : "unset %s;\n";
-		printf(format, SSH_AUTHSOCKET_ENV_NAME);
-		printf(format, SSH_AGENTPID_ENV_NAME);
-		printf("echo Agent pid %ld killed;\n", (long)pid);
-		exit(0);
+		چاپ_کن(format, SSH_AUTHSOCKET_ENV_NAME);
+		چاپ_کن(format, SSH_AGENTPID_ENV_NAME);
+		چاپ_کن("echo Agent pid %ld killed;\n", (دراز)pid);
+		خروج(0);
 	}
-	if (u_flag) {
-		if ((homedir = get_homedir()) == NULL)
+	إذا (u_flag) {
+		إذا ((homedir = get_homedir()) == عدم)
 			fatal("Couldn't determine home directory");
 		agent_cleanup_stale(socket_dirspec,
 		    pw->pw_name, pw->pw_uid, homedir, u_flag > 1);
-		printf("Deleted stale agent sockets in ~/%s\n",
-		    _PATH_SSH_AGENT_SOCKET_DIR);
-		exit(0);
+		چاپ_کن("Deleted stale agent sockets in ~/%s\n",
+		    مسیر_SSH_AGENT_SOCKET_DIR);
+		خروج(0);
 	}
 
 	/*
@@ -2446,58 +2446,58 @@ main(int ac, char **av)
 	 * stdio (3) + listener (1) + syslog (1 maybe) + connection (1) +
 	 * a few spare for libc / stack protectors / sanitisers, etc.
 	 */
-#define SSH_AGENT_MIN_FDS (3+1+1+1+4)
-	if (rlim.rlim_cur < SSH_AGENT_MIN_FDS)
+#تعریف_کن SSH_AGENT_MIN_FDS (3+1+1+1+4)
+	إذا (rlim.rlim_cur < SSH_AGENT_MIN_FDS)
 		fatal("%s: file descriptor rlimit %lld too low (minimum %u)",
-		    __progname, (long long)rlim.rlim_cur, SSH_AGENT_MIN_FDS);
+		    __progname, (دراز دراز)rlim.rlim_cur, SSH_AGENT_MIN_FDS);
 	maxfds = rlim.rlim_cur - SSH_AGENT_MIN_FDS;
 
-	parent_pid = getpid();
+	والد_pid = getpid();
 
 	/* Has the socket been provided via socket activation? */
-	if (agentsocket == NULL && ac == 0 && (d_flag || D_flag) &&
-	    (pidstr = getenv("LISTEN_PID")) != NULL &&
-	    (fdstr = getenv("LISTEN_FDS")) != NULL) {
-		if (strcmp(fdstr, "1") != 0) {
+	إذا (agentsocket == عدم && ac == 0 && (d_flag || D_flag) &&
+	    (pidstr = getenv("LISTEN_PID")) != عدم &&
+	    (fdstr = getenv("LISTEN_FDS")) != عدم) {
+		إذا (strcmp(fdstr, "1") != 0) {
 			fatal("unexpected LISTEN_FDS contents "
 			    "(want: \"1\" got\"%s\"", fdstr);
 		}
-		if (fcntl(3, F_GETFL) == -1)
+		إذا (fcntl(3, F_GETFL) == -1)
 			fatal("LISTEN_FDS set but fd 3 unavailable");
-		pid = (int)strtonum(pidstr, 1, INT_MAX, &errstr);
-		if (errstr != NULL)
+		pid = (صحيح)strtonum(pidstr, 1, بیشترین_صحیح, &errstr);
+		إذا (errstr != عدم)
 			fatal("invalid LISTEN_PID: %s", errstr);
-		if (pid != getpid())
+		إذا (pid != getpid())
 			fatal("bad LISTEN_PID: %d vs pid %d", pid, getpid());
 		debug("using socket activation on fd=3");
 		sock = 3;
 		socket_activated = 1;
 	}
 
-	if (sock == -1 && agentsocket == NULL) {
+	إذا (sock == -1 && agentsocket == عدم) {
 		/* Listen on a socket in/under a given directory */
-		if ((homedir = get_homedir()) == NULL)
+		إذا ((homedir = get_homedir()) == عدم)
 			fatal("Couldn't determine home directory");
-		if (!U_flag) {
+		إذا (!U_flag) {
 			agent_cleanup_stale(socket_dirspec,
 			    pw->pw_name, pw->pw_uid, homedir, 0);
 		}
-		if (agent_listener(socket_dirspec, pw->pw_name, pw->pw_uid,
+		إذا (agent_listener(socket_dirspec, pw->pw_name, pw->pw_uid,
 		    homedir, getpid(), "local", &sock, &socket_name,
 		    &socket_dir) != 0)
 			fatal_f("Couldn't prepare agent socket");
-		free(homedir);
-	} else if (sock == -1) {
+		حرر(homedir);
+	} وإلا إذا (sock == -1) {
 		/* Listen on explicit socket path */
-		prev_mask = umask(0177);
+		prev_ماسک = umask(0177);
 		socket_name = xstrdup(agentsocket);
-		if ((sock = unix_listener(socket_name,
+		إذا ((sock = unix_listener(socket_name,
 		    SSH_LISTEN_BACKLOG, 0)) < 0) {
-			free(socket_name);
-			socket_name = NULL; /* Don't unlink existing file */
+			حرر(socket_name);
+			socket_name = عدم; /* Don't unlink existing file */
 			cleanup_exit(1);
 		}
-		umask(prev_mask);
+		umask(prev_ماسک);
 	}
 
 	closefrom(sock == -1 ? STDERR_FILENO + 1 : sock + 1);
@@ -2506,96 +2506,96 @@ main(int ac, char **av)
 	 * Create socket early so it will exist before command gets run from
 	 * the parent.
 	 */
-	if (sock == -1) {
-		prev_mask = umask(0177);
+	إذا (sock == -1) {
+		prev_ماسک = umask(0177);
 		sock = unix_listener(socket_name, SSH_LISTEN_BACKLOG, 0);
-		if (sock < 0) {
+		إذا (sock < 0) {
 			/* XXX - unix_listener() calls error() not perror() */
 			*socket_name = '\0'; /* Don't unlink existing file */
 			cleanup_exit(1);
 		}
-		umask(prev_mask);
+		umask(prev_ماسک);
 	}
 
 	/*
 	 * Fork, and have the parent execute the command, if any, or present
 	 * the socket data.  The child continues as the authentication agent.
 	 */
-	if (D_flag || d_flag) {
+	إذا (D_flag || d_flag) {
 		log_init(__progname,
 		    d_flag ? SYSLOG_LEVEL_DEBUG3 : SYSLOG_LEVEL_INFO,
 		    SYSLOG_FACILITY_AUTH, 1);
-		if (socket_name != NULL) {
+		إذا (socket_name != عدم) {
 			cp = argv_assemble(1, &socket_name);
 			format = c_flag ?
 			    "setenv %s %s;\n" : "%s=%s; export %s;\n";
-			printf(format, SSH_AUTHSOCKET_ENV_NAME, cp,
+			چاپ_کن(format, SSH_AUTHSOCKET_ENV_NAME, cp,
 			    SSH_AUTHSOCKET_ENV_NAME);
-			free(cp);
-			printf("echo Agent pid %ld;\n", (long)parent_pid);
+			حرر(cp);
+			چاپ_کن("echo Agent pid %ld;\n", (دراز)والد_pid);
 			fflush(stdout);
 		}
-		goto skip;
+		اذهب skip;
 	}
 	pid = fork();
-	if (pid == -1) {
+	إذا (pid == -1) {
 		perror("fork");
 		cleanup_exit(1);
 	}
-	if (pid != 0) {		/* Parent - execute the given command. */
+	إذا (pid != 0) {		/* Parent - execute the given command. */
 		close(sock);
-		snprintf(pidstrbuf, sizeof pidstrbuf, "%ld", (long)pid);
-		if (ac == 0) {
+		snprintf(pidstrbuf, حجم pidstrbuf, "%ld", (دراز)pid);
+		إذا (ac == 0) {
 			format = c_flag ? "setenv %s %s;\n" : "%s=%s; export %s;\n";
 			cp = argv_assemble(1, &socket_name);
-			printf(format, SSH_AUTHSOCKET_ENV_NAME, cp,
+			چاپ_کن(format, SSH_AUTHSOCKET_ENV_NAME, cp,
 			    SSH_AUTHSOCKET_ENV_NAME);
-			printf(format, SSH_AGENTPID_ENV_NAME, pidstrbuf,
+			چاپ_کن(format, SSH_AGENTPID_ENV_NAME, pidstrbuf,
 			    SSH_AGENTPID_ENV_NAME);
-			free(cp);
-			printf("echo Agent pid %ld;\n", (long)pid);
-			exit(0);
+			حرر(cp);
+			چاپ_کن("echo Agent pid %ld;\n", (دراز)pid);
+			خروج(0);
 		}
-		if (setenv(SSH_AUTHSOCKET_ENV_NAME, socket_name, 1) == -1 ||
+		إذا (setenv(SSH_AUTHSOCKET_ENV_NAME, socket_name, 1) == -1 ||
 		    setenv(SSH_AGENTPID_ENV_NAME, pidstrbuf, 1) == -1) {
 			perror("setenv");
-			exit(1);
+			خروج(1);
 		}
 		execvp(av[0], av);
 		perror(av[0]);
-		exit(1);
+		خروج(1);
 	}
-	/* child */
+	/*فرزند*/
 	log_init(__progname, SYSLOG_LEVEL_INFO, SYSLOG_FACILITY_AUTH, 0);
 
-	if (setsid() == -1) {
+	إذا (setsid() == -1) {
 		error("setsid: %s", strerror(errno));
 		cleanup_exit(1);
 	}
 
-	(void)chdir("/");
-	if (stdfd_devnull(1, 1, 1) == -1)
+	(فراغ)chdir("/");
+	إذا (stdfd_devnull(1, 1, 1) == -1)
 		error_f("stdfd_devnull failed");
 
-#ifdef HAVE_SETRLIMIT
+#اگر_تعریف_شده HAVE_SETRLIMIT
 	/* deny core dumps, since memory contains unencrypted private keys */
 	rlim.rlim_cur = rlim.rlim_max = 0;
-	if (setrlimit(RLIMIT_CORE, &rlim) == -1) {
+	إذا (setrlimit(RLIMIT_CORE, &rlim) == -1) {
 		error("setrlimit RLIMIT_CORE: %s", strerror(errno));
 		cleanup_exit(1);
 	}
-#endif
+#پایان_اگر
 
 skip:
 
 	cleanup_pid = getpid();
 
-#ifdef ENABLE_PKCS11
+#اگر_تعریف_شده ENABLE_PKCS11
 	pkcs11_init(0);
-#endif
+#پایان_اگر
 	new_socket(AUTH_SOCKET, sock);
-	if (ac > 0)
-		parent_alive_interval = 10;
+	إذا (ac > 0)
+		والد_alive_interval = 10;
 	idtab_init();
 	ssh_signal(SIGPIPE, SIG_IGN);
 	ssh_signal(SIGINT, (d_flag | D_flag) ? cleanup_handler : SIG_IGN);
@@ -2609,60 +2609,60 @@ skip:
 	sigaddset(&nsigset, SIGTERM);
 	sigaddset(&nsigset, SIGUSR1);
 
-	if (socket_name != NULL && unveil(socket_name, "c") == -1) {
+	إذا (socket_name != عدم && unveil(socket_name, "c") == -1) {
 		fatal("%s: unveil %s %s", __progname, socket_name,
 		    strerror(errno));
 	}
-	if (socket_dir != NULL && unveil(socket_dir, "c") == -1) {
+	إذا (socket_dir != عدم && unveil(socket_dir, "c") == -1) {
 		fatal("%s: unveil %s %s", __progname, socket_dir,
 		    strerror(errno));
 	}
-	if (unveil("/", "r") == -1)
+	إذا (unveil("/", "r") == -1)
 		fatal("%s: unveil /: %s", __progname, strerror(errno));
-	if ((ccp = getenv("SSH_SK_HELPER")) == NULL || *ccp == '\0')
-		ccp = _PATH_SSH_SK_HELPER;
-	if (unveil(ccp, "x") == -1)
+	إذا ((ccp = getenv("SSH_SK_HELPER")) == عدم || *ccp == '\0')
+		ccp = مسیر_SSH_SK_HELPER;
+	إذا (unveil(ccp, "x") == -1)
 		fatal("%s: unveil %s: %s", __progname, ccp, strerror(errno));
-	if ((ccp = getenv("SSH_PKCS11_HELPER")) == NULL || *ccp == '\0')
-		ccp = _PATH_SSH_PKCS11_HELPER;
-	if (unveil(ccp, "x") == -1)
+	إذا ((ccp = getenv("SSH_PKCS11_HELPER")) == عدم || *ccp == '\0')
+		ccp = مسیر_SSH_PKCS11_HELPER;
+	إذا (unveil(ccp, "x") == -1)
 		fatal("%s: unveil %s: %s", __progname, ccp, strerror(errno));
-	if ((ccp = getenv("SSH_ASKPASS")) == NULL || *ccp == '\0')
-		ccp = _PATH_SSH_ASKPASS_DEFAULT;
-	if (unveil(ccp, "x") == -1)
+	إذا ((ccp = getenv("SSH_ASKPASS")) == عدم || *ccp == '\0')
+		ccp = مسیر_SSH_ASKPASS_DEFAULT;
+	إذا (unveil(ccp, "x") == -1)
 		fatal("%s: unveil %s: %s", __progname, ccp, strerror(errno));
-	if (unveil("/dev/null", "rw") == -1)
+	إذا (unveil("/dev/null", "rw") == -1)
 		fatal("%s: unveil /dev/null: %s", __progname, strerror(errno));
-	if (pledge("stdio rpath cpath wpath unix id proc exec", NULL) == -1)
+	إذا (pledge("stdio rpath cpath wpath unix id proc exec", عدم) == -1)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 	platform_pledge_agent();
 
-	while (1) {
+	طالما (1) {
 		sigprocmask(SIG_BLOCK, &nsigset, &osigset);
-		if (signalled_exit != 0) {
-			logit("exiting on signal %d", (int)signalled_exit);
+		إذا (signalled_exit != 0) {
+			logit("exiting on signal %d", (صحيح)signalled_exit);
 			cleanup_exit((signalled_exit == SIGTERM &&
 			    socket_activated) ? 0 : 2);
 		}
-		if (signalled_keydrop) {
+		إذا (signalled_keydrop) {
 			logit("signal %d received; removing all keys",
-			    (int)signalled_keydrop);
+			    (صحيح)signalled_keydrop);
 			remove_all_identities();
 			signalled_keydrop = 0;
 		}
 		ptimeout_init(&timeout);
 		prepare_poll(&pfd, &npfd, &timeout, maxfds);
-		result = ppoll(pfd, npfd, ptimeout_get_tsp(&timeout), &osigset);
-		sigprocmask(SIG_SETMASK, &osigset, NULL);
+		نتیجه = ppoll(pfd, npfd, ptimeout_get_tsp(&timeout), &osigset);
+		sigprocmask(SIG_SETMASK, &osigset, عدم);
 		saved_errno = errno;
-		if (parent_alive_interval != 0)
-			check_parent_exists();
-		(void) reaper();	/* remove expired keys */
-		if (result == -1) {
-			if (saved_errno == EINTR)
-				continue;
+		إذا (والد_alive_interval != 0)
+			check_والد_exists();
+		(فراغ) reaper();	/* remove expired keys */
+		إذا (نتیجه == -1) {
+			إذا (saved_errno == EINTR)
+				استمر;
 			fatal("poll: %s", strerror(saved_errno));
-		} else if (result > 0)
+		} وإلا إذا (نتیجه > 0)
 			after_poll(pfd, npfd, maxfds);
 	}
 	/* NOTREACHED */

@@ -52,14 +52,14 @@
 /* --- User Switches ---------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
-#ifndef UMAC_OUTPUT_LEN
-#define UMAC_OUTPUT_LEN     8  /* Allowable: 4, 8, 12, 16                  */
-#endif
+#اگر_تعریف_نشده UMAC_OUTPUT_LEN
+#تعریف_کن UMAC_OUTPUT_LEN     8  /* Allowable: 4, 8, 12, 16                  */
+#پایان_اگر
 
-#if UMAC_OUTPUT_LEN != 4 && UMAC_OUTPUT_LEN != 8 && \
+#إذا UMAC_OUTPUT_LEN != 4 && UMAC_OUTPUT_LEN != 8 && \
     UMAC_OUTPUT_LEN != 12 && UMAC_OUTPUT_LEN != 16
-# error UMAC_OUTPUT_LEN must be defined to 4, 8, 12 or 16
-#endif
+# error UMAC_OUTPUT_LEN must be defined مقصد 4, 8, 12 or 16
+#پایان_اگر
 
 /* #define FORCE_C_ONLY        1  ANSI C and 64-bit integers req'd        */
 /* #define AES_IMPLEMENTAION   1  1 = OpenSSL, 2 = Barreto, 3 = Gladman   */
@@ -71,46 +71,46 @@
 /* -- Global Includes --------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <endian.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <stddef.h>
+#ضمن <sys/types.h>
+#ضمن <endian.h>
+#ضمن <string.h>
+#ضمن <stdarg.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <stddef.h>
 
-#include "xmalloc.h"
-#include "umac.h"
-#include "misc.h"
+#ضمن "xmalloc.h"
+#ضمن "umac.h"
+#ضمن "misc.h"
 
 /* ---------------------------------------------------------------------- */
 /* --- Primitive Data Types ---                                           */
 /* ---------------------------------------------------------------------- */
 
 /* The following assumptions may need change on your system */
-typedef uint8_t	UINT8;  /* 1 byte   */
-typedef uint16_t	UINT16; /* 2 byte   */
-typedef uint32_t	UINT32; /* 4 byte   */
-typedef uint64_t	UINT64; /* 8 bytes  */
-typedef unsigned int	UWORD;  /* Register */
+تعريفنوع uint8_t	UINT8;  /* 1 byte   */
+تعريفنوع uint16_t	UINT16; /* 2 byte   */
+تعريفنوع uint32_t	UINT32; /* 4 byte   */
+تعريفنوع uint64_t	UINT64; /* 8 bytes  */
+تعريفنوع بیعلامت صحيح	UWORD;  /*ثبات*/
 
 /* ---------------------------------------------------------------------- */
 /* --- Constants -------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
-#define UMAC_KEY_LEN           16  /* UMAC takes 16 bytes of external key */
+#تعریف_کن UMAC_کلید_LEN           16  /* UMAC takes 16 bytes of external key */
 
 /* Message "words" are read from memory in an endian-specific manner.     */
 /* For this implementation to behave correctly, __LITTLE_ENDIAN__ must    */
 /* be set true if the host computer is little-endian.                     */
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-#define __LITTLE_ENDIAN__ 1
-#else
-#define __LITTLE_ENDIAN__ 0
-#endif
+#إذا BYTE_ORDER == LITTLE_ENDIAN
+#تعریف_کن __LITTLE_ENDIAN__ 1
+#وإلا
+#تعریف_کن __LITTLE_ENDIAN__ 0
+#پایان_اگر
 
 /* ---------------------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -130,22 +130,22 @@ typedef unsigned int	UWORD;  /* Register */
 /* --- 32-bit by 32-bit to 64-bit Multiplication ------------------------ */
 /* ---------------------------------------------------------------------- */
 
-#define MUL64(a,b) ((UINT64)((UINT64)(UINT32)(a) * (UINT64)(UINT32)(b)))
+#تعریف_کن MUL64(a,b) ((UINT64)((UINT64)(UINT32)(a) * (UINT64)(UINT32)(b)))
 
 /* ---------------------------------------------------------------------- */
 /* --- Endian Conversion --- Forcing assembly on some platforms           */
 /* ---------------------------------------------------------------------- */
 
-#if (__LITTLE_ENDIAN__)
-#define LOAD_UINT32_REVERSED(p)		get_u32(p)
-#define STORE_UINT32_REVERSED(p,v)	put_u32(p,v)
-#else
-#define LOAD_UINT32_REVERSED(p)		get_u32_le(p)
-#define STORE_UINT32_REVERSED(p,v)	put_u32_le(p,v)
-#endif
+#إذا (__LITTLE_ENDIAN__)
+#تعریف_کن بارگیری_UINT32_REVERSED(p)		get_u32(p)
+#تعریف_کن STORE_UINT32_REVERSED(p,v)	put_u32(p,v)
+#وإلا
+#تعریف_کن بارگیری_UINT32_REVERSED(p)		get_u32_le(p)
+#تعریف_کن STORE_UINT32_REVERSED(p,v)	put_u32_le(p,v)
+#پایان_اگر
 
-#define LOAD_UINT32_LITTLE(p)		(get_u32_le(p))
-#define STORE_UINT32_BIG(p,v)		put_u32(p, v)
+#تعریف_کن بارگیری_UINT32_LITTLE(p)		(get_u32_le(p))
+#تعریف_کن STORE_UINT32_BIG(p,v)		put_u32(p, v)
 
 /* ---------------------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -154,29 +154,29 @@ typedef unsigned int	UWORD;  /* Register */
 /* ---------------------------------------------------------------------- */
 
 /* UMAC uses AES with 16 byte block and key lengths */
-#define AES_BLOCK_LEN  16
+#تعریف_کن AES_بلوک_LEN  16
 
 /* OpenSSL's AES */
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
-#ifndef USE_BUILTIN_RIJNDAEL
+#اگر_تعریف_شده WITH_OPENSSL
+#ضمن "openbsd-compat/openssl-compat.h"
+#اگر_تعریف_نشده USE_BUILTIN_RIJNDAEL
 # include <openssl/aes.h>
-#endif
-typedef AES_KEY aes_int_key[1];
-#define aes_encryption(in,out,int_key)                  \
-  AES_encrypt((u_char *)(in),(u_char *)(out),(AES_KEY *)int_key)
-#define aes_key_setup(key,int_key)                      \
-  AES_set_encrypt_key((const u_char *)(key),UMAC_KEY_LEN*8,int_key)
-#else
-#include "rijndael.h"
-#define AES_ROUNDS ((UMAC_KEY_LEN / 4) + 6)
-typedef UINT8 aes_int_key[AES_ROUNDS+1][4][4];	/* AES internal */
-#define aes_encryption(in,out,int_key) \
-  rijndaelEncrypt((u32 *)(int_key), AES_ROUNDS, (u8 *)(in), (u8 *)(out))
-#define aes_key_setup(key,int_key) \
-  rijndaelKeySetupEnc((u32 *)(int_key), (const unsigned char *)(key), \
-  UMAC_KEY_LEN*8)
-#endif
+#پایان_اگر
+تعريفنوع AES_کلید aes_int_کلید[1];
+#تعریف_کن aes_encryption(درون,بیرون,int_کلید)                  \
+  AES_encrypt((u_char *)(درون),(u_char *)(بیرون),(AES_کلید *)int_کلید)
+#تعریف_کن aes_کلید_راهاندازی(کلید,int_کلید)                      \
+  AES_مجموعه_encrypt_کلید((ثابت u_char *)(کلید),UMAC_کلید_LEN*8,int_کلید)
+#وإلا
+#ضمن "rijndael.h"
+#تعریف_کن AES_دورها ((UMAC_کلید_LEN / 4) + 6)
+تعريفنوع UINT8 aes_int_کلید[AES_دورها+1][4][4];	/* AES internal */
+#تعریف_کن aes_encryption(درون,بیرون,int_کلید) \
+  rijndaelEncrypt((u32 *)(int_کلید), AES_دورها, (u8 *)(درون), (u8 *)(بیرون))
+#تعریف_کن aes_کلید_راهاندازی(کلید,int_کلید) \
+  rijndael_کلید_راهاندازی_Enc((u32 *)(int_کلید), (ثابت بیعلامت حرف *)(کلید), \
+  UMAC_کلید_LEN*8)
+#پایان_اگر
 
 /* The user-supplied UMAC key is stretched using AES in a counter
  * mode to supply all random bits needed by UMAC. The kdf function takes
@@ -184,30 +184,30 @@ typedef UINT8 aes_int_key[AES_ROUNDS+1][4][4];	/* AES internal */
  * 'nbytes' bytes to the memory pointed at by 'bufp'. Each distinct
  * 'ndx' causes a distinct byte stream.
  */
-static void kdf(void *bufp, aes_int_key key, UINT8 ndx, int nbytes)
+ساكن فراغ kdf(فراغ *bufp, aes_int_کلید کلید, UINT8 ndx, صحيح nbytes)
 {
-    UINT8 in_buf[AES_BLOCK_LEN] = {0};
-    UINT8 out_buf[AES_BLOCK_LEN];
+    UINT8 درون_buf[AES_بلوک_LEN] = {0};
+    UINT8 بیرون_buf[AES_بلوک_LEN];
     UINT8 *dst_buf = (UINT8 *)bufp;
-    int i;
+    صحيح i;
 
     /* Setup the initial value */
-    in_buf[AES_BLOCK_LEN-9] = ndx;
-    in_buf[AES_BLOCK_LEN-1] = i = 1;
+    درون_buf[AES_بلوک_LEN-9] = ndx;
+    درون_buf[AES_بلوک_LEN-1] = i = 1;
 
-    while (nbytes >= AES_BLOCK_LEN) {
-        aes_encryption(in_buf, out_buf, key);
-        memcpy(dst_buf,out_buf,AES_BLOCK_LEN);
-        in_buf[AES_BLOCK_LEN-1] = ++i;
-        nbytes -= AES_BLOCK_LEN;
-        dst_buf += AES_BLOCK_LEN;
+    طالما (nbytes >= AES_بلوک_LEN) {
+        aes_encryption(درون_buf, بیرون_buf, کلید);
+        کپی_حافظه(dst_buf,بیرون_buf,AES_بلوک_LEN);
+        درون_buf[AES_بلوک_LEN-1] = ++i;
+        nbytes -= AES_بلوک_LEN;
+        dst_buf += AES_بلوک_LEN;
     }
-    if (nbytes) {
-        aes_encryption(in_buf, out_buf, key);
-        memcpy(dst_buf,out_buf,nbytes);
+    إذا (nbytes) {
+        aes_encryption(درون_buf, بیرون_buf, کلید);
+        کپی_حافظه(dst_buf,بیرون_buf,nbytes);
     }
-    explicit_bzero(in_buf, sizeof(in_buf));
-    explicit_bzero(out_buf, sizeof(out_buf));
+    explicit_bzero(درون_buf, حجم(درون_buf));
+    explicit_bzero(بیرون_buf, حجم(بیرون_buf));
 }
 
 /* The final UHASH result is XOR'd with the output of a pseudorandom
@@ -216,26 +216,26 @@ static void kdf(void *bufp, aes_int_key key, UINT8 ndx, int nbytes)
  * This scheme is optimized for sequential, increasing big-endian nonces.
  */
 
-typedef struct {
-    UINT8 cache[AES_BLOCK_LEN];  /* Previous AES output is saved      */
-    UINT8 nonce[AES_BLOCK_LEN];  /* The AES input making above cache  */
-    aes_int_key prf_key;         /* Expanded AES key for PDF          */
+تعريفنوع بنية {
+    UINT8 cache[AES_بلوک_LEN];  /* Previous AES output is saved      */
+    UINT8 nonce[AES_بلوک_LEN];  /* The AES input making above cache  */
+    aes_int_کلید prf_کلید;         /* Expanded AES key for PDF          */
 } pdf_ctx;
 
-static void pdf_init(pdf_ctx *pc, aes_int_key prf_key)
+ساكن فراغ pdf_init(pdf_ctx *pc, aes_int_کلید prf_کلید)
 {
-    UINT8 buf[UMAC_KEY_LEN];
+    UINT8 buf[UMAC_کلید_LEN];
 
-    kdf(buf, prf_key, 0, UMAC_KEY_LEN);
-    aes_key_setup(buf, pc->prf_key);
+    kdf(buf, prf_کلید, 0, UMAC_کلید_LEN);
+    aes_کلید_راهاندازی(buf, pc->prf_کلید);
 
     /* Initialize pdf and cache */
-    memset(pc->nonce, 0, sizeof(pc->nonce));
-    aes_encryption(pc->nonce, pc->cache, pc->prf_key);
-    explicit_bzero(buf, sizeof(buf));
+    memset(pc->nonce, 0, حجم(pc->nonce));
+    aes_encryption(pc->nonce, pc->cache, pc->prf_کلید);
+    explicit_bzero(buf, حجم(buf));
 }
 
-static void pdf_gen_xor(pdf_ctx *pc, const UINT8 nonce[8],
+ساكن فراغ pdf_gen_xor(pdf_ctx *pc, ثابت UINT8 nonce[8],
     UINT8 buf[UMAC_OUTPUT_LEN])
 {
     /* 'ndx' indicates that we'll be using the 0th or 1st eight bytes
@@ -243,42 +243,42 @@ static void pdf_gen_xor(pdf_ctx *pc, const UINT8 nonce[8],
      * element, then we may have the result in the cache already.
      */
 
-#if (UMAC_OUTPUT_LEN == 4)
-#define LOW_BIT_MASK 3
-#elif (UMAC_OUTPUT_LEN == 8)
-#define LOW_BIT_MASK 1
-#elif (UMAC_OUTPUT_LEN > 8)
-#define LOW_BIT_MASK 0
-#endif
-    union {
+#إذا (UMAC_OUTPUT_LEN == 4)
+#تعریف_کن کم_بیت_ماسک 3
+#وإلاإذا (UMAC_OUTPUT_LEN == 8)
+#تعریف_کن کم_بیت_ماسک 1
+#وإلاإذا (UMAC_OUTPUT_LEN > 8)
+#تعریف_کن کم_بیت_ماسک 0
+#پایان_اگر
+    اتحاد {
         UINT8 tmp_nonce_lo[4];
         UINT32 align;
     } t;
-#if LOW_BIT_MASK != 0
-    int ndx = nonce[7] & LOW_BIT_MASK;
-#endif
-    *(UINT32 *)t.tmp_nonce_lo = ((const UINT32 *)nonce)[1];
-    t.tmp_nonce_lo[3] &= ~LOW_BIT_MASK; /* zero last bit */
+#إذا کم_بیت_ماسک != 0
+    صحيح ndx = nonce[7] & کم_بیت_ماسک;
+#پایان_اگر
+    *(UINT32 *)t.tmp_nonce_lo = ((ثابت UINT32 *)nonce)[1];
+    t.tmp_nonce_lo[3] &= ~کم_بیت_ماسک; /* zero last bit */
 
-    if ( (((UINT32 *)t.tmp_nonce_lo)[0] != ((UINT32 *)pc->nonce)[1]) ||
-         (((const UINT32 *)nonce)[0] != ((UINT32 *)pc->nonce)[0]) )
+    إذا ( (((UINT32 *)t.tmp_nonce_lo)[0] != ((UINT32 *)pc->nonce)[1]) ||
+         (((ثابت UINT32 *)nonce)[0] != ((UINT32 *)pc->nonce)[0]) )
     {
-        ((UINT32 *)pc->nonce)[0] = ((const UINT32 *)nonce)[0];
+        ((UINT32 *)pc->nonce)[0] = ((ثابت UINT32 *)nonce)[0];
         ((UINT32 *)pc->nonce)[1] = ((UINT32 *)t.tmp_nonce_lo)[0];
-        aes_encryption(pc->nonce, pc->cache, pc->prf_key);
+        aes_encryption(pc->nonce, pc->cache, pc->prf_کلید);
     }
 
-#if (UMAC_OUTPUT_LEN == 4)
+#إذا (UMAC_OUTPUT_LEN == 4)
     *((UINT32 *)buf) ^= ((UINT32 *)pc->cache)[ndx];
-#elif (UMAC_OUTPUT_LEN == 8)
+#وإلاإذا (UMAC_OUTPUT_LEN == 8)
     *((UINT64 *)buf) ^= ((UINT64 *)pc->cache)[ndx];
-#elif (UMAC_OUTPUT_LEN == 12)
+#وإلاإذا (UMAC_OUTPUT_LEN == 12)
     ((UINT64 *)buf)[0] ^= ((UINT64 *)pc->cache)[0];
     ((UINT32 *)buf)[2] ^= ((UINT32 *)pc->cache)[2];
-#elif (UMAC_OUTPUT_LEN == 16)
+#وإلاإذا (UMAC_OUTPUT_LEN == 16)
     ((UINT64 *)buf)[0] ^= ((UINT64 *)pc->cache)[0];
     ((UINT64 *)buf)[1] ^= ((UINT64 *)pc->cache)[1];
-#endif
+#پایان_اگر
 }
 
 /* ---------------------------------------------------------------------- */
@@ -313,25 +313,25 @@ static void pdf_gen_xor(pdf_ctx *pc, const UINT8 nonce[8],
   * allowing the parallel implementation of the streams.
   */
 
-#define STREAMS (UMAC_OUTPUT_LEN / 4) /* Number of times hash is applied  */
-#define L1_KEY_LEN         1024     /* Internal key bytes                 */
-#define L1_KEY_SHIFT         16     /* Toeplitz key shift between streams */
-#define L1_PAD_BOUNDARY      32     /* pad message to boundary multiple   */
-#define ALLOC_BOUNDARY       16     /* Keep buffers aligned to this       */
-#define HASH_BUF_BYTES       64     /* nh_aux_hb buffer multiple          */
+#تعریف_کن STREAMS (UMAC_OUTPUT_LEN / 4) /* Number of times hash is applied  */
+#تعریف_کن L1_کلید_LEN         1024     /* Internal key bytes                 */
+#تعریف_کن L1_کلید_لغزش         16     /* Toeplitz key shift between streams */
+#تعریف_کن L1_PAD_BOUNDARY      32     /* pad message to boundary multiple   */
+#تعریف_کن ALLOC_BOUNDARY       16     /* Keep buffers aligned to this       */
+#تعریف_کن HASH_BUF_بایتها       64     /* nh_aux_hb buffer multiple          */
 
-typedef struct {
-    UINT8  nh_key [L1_KEY_LEN + L1_KEY_SHIFT * (STREAMS - 1)]; /* NH Key */
-    UINT8  data   [HASH_BUF_BYTES];    /* Incoming data buffer           */
-    int next_data_empty;    /* Bookkeeping variable for data buffer.     */
-    int bytes_hashed;       /* Bytes (out of L1_KEY_LEN) incorporated.   */
+تعريفنوع بنية {
+    UINT8  nh_کلید [L1_کلید_LEN + L1_کلید_لغزش * (STREAMS - 1)]; /* NH Key */
+    UINT8  داده   [HASH_BUF_بایتها];    /* Incoming data buffer           */
+    صحيح بعدی_داده_خالی;    /* Bookkeeping variable for data buffer.     */
+    صحيح بایتها_hashed;       /* Bytes (out of L1_KEY_LEN) incorporated.   */
     UINT64 state[STREAMS];               /* on-line state     */
 } nh_ctx;
 
 
-#if (UMAC_OUTPUT_LEN == 4)
+#إذا (UMAC_OUTPUT_LEN == 4)
 
-static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
+ساكن فراغ nh_aux(فراغ *kp, ثابت فراغ *dp, فراغ *hp, UINT32 dlen)
 /* NH hashing primitive. Previous (partial) hash result is loaded and
 * then stored via hp pointer. The length of the data pointed at by "dp",
 * "dlen", is guaranteed to be divisible by L1_PAD_BOUNDARY (32).  Key
@@ -341,16 +341,16 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
     UINT64 h;
     UWORD c = dlen / 32;
     UINT32 *k = (UINT32 *)kp;
-    const UINT32 *d = (const UINT32 *)dp;
+    ثابت UINT32 *d = (ثابت UINT32 *)dp;
     UINT32 d0,d1,d2,d3,d4,d5,d6,d7;
     UINT32 k0,k1,k2,k3,k4,k5,k6,k7;
 
     h = *((UINT64 *)hp);
-    do {
-        d0 = LOAD_UINT32_LITTLE(d+0); d1 = LOAD_UINT32_LITTLE(d+1);
-        d2 = LOAD_UINT32_LITTLE(d+2); d3 = LOAD_UINT32_LITTLE(d+3);
-        d4 = LOAD_UINT32_LITTLE(d+4); d5 = LOAD_UINT32_LITTLE(d+5);
-        d6 = LOAD_UINT32_LITTLE(d+6); d7 = LOAD_UINT32_LITTLE(d+7);
+    افعل {
+        d0 = بارگیری_UINT32_LITTLE(d+0); d1 = بارگیری_UINT32_LITTLE(d+1);
+        d2 = بارگیری_UINT32_LITTLE(d+2); d3 = بارگیری_UINT32_LITTLE(d+3);
+        d4 = بارگیری_UINT32_LITTLE(d+4); d5 = بارگیری_UINT32_LITTLE(d+5);
+        d6 = بارگیری_UINT32_LITTLE(d+6); d7 = بارگیری_UINT32_LITTLE(d+7);
         k0 = *(k+0); k1 = *(k+1); k2 = *(k+2); k3 = *(k+3);
         k4 = *(k+4); k5 = *(k+5); k6 = *(k+6); k7 = *(k+7);
         h += MUL64((k0 + d0), (k4 + d4));
@@ -360,13 +360,13 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 
         d += 8;
         k += 8;
-    } while (--c);
+    } طالما (--c);
   *((UINT64 *)hp) = h;
 }
 
-#elif (UMAC_OUTPUT_LEN == 8)
+#وإلاإذا (UMAC_OUTPUT_LEN == 8)
 
-static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
+ساكن فراغ nh_aux(فراغ *kp, ثابت فراغ *dp, فراغ *hp, UINT32 dlen)
 /* Same as previous nh_aux, but two streams are handled in one pass,
  * reading and writing 16 bytes of hash-state per call.
  */
@@ -374,7 +374,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
   UINT64 h1,h2;
   UWORD c = dlen / 32;
   UINT32 *k = (UINT32 *)kp;
-  const UINT32 *d = (const UINT32 *)dp;
+  ثابت UINT32 *d = (ثابت UINT32 *)dp;
   UINT32 d0,d1,d2,d3,d4,d5,d6,d7;
   UINT32 k0,k1,k2,k3,k4,k5,k6,k7,
         k8,k9,k10,k11;
@@ -382,11 +382,11 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
   h1 = *((UINT64 *)hp);
   h2 = *((UINT64 *)hp + 1);
   k0 = *(k+0); k1 = *(k+1); k2 = *(k+2); k3 = *(k+3);
-  do {
-    d0 = LOAD_UINT32_LITTLE(d+0); d1 = LOAD_UINT32_LITTLE(d+1);
-    d2 = LOAD_UINT32_LITTLE(d+2); d3 = LOAD_UINT32_LITTLE(d+3);
-    d4 = LOAD_UINT32_LITTLE(d+4); d5 = LOAD_UINT32_LITTLE(d+5);
-    d6 = LOAD_UINT32_LITTLE(d+6); d7 = LOAD_UINT32_LITTLE(d+7);
+  افعل {
+    d0 = بارگیری_UINT32_LITTLE(d+0); d1 = بارگیری_UINT32_LITTLE(d+1);
+    d2 = بارگیری_UINT32_LITTLE(d+2); d3 = بارگیری_UINT32_LITTLE(d+3);
+    d4 = بارگیری_UINT32_LITTLE(d+4); d5 = بارگیری_UINT32_LITTLE(d+5);
+    d6 = بارگیری_UINT32_LITTLE(d+6); d7 = بارگیری_UINT32_LITTLE(d+7);
     k4 = *(k+4); k5 = *(k+5); k6 = *(k+6); k7 = *(k+7);
     k8 = *(k+8); k9 = *(k+9); k10 = *(k+10); k11 = *(k+11);
 
@@ -406,14 +406,14 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 
     d += 8;
     k += 8;
-  } while (--c);
+  } طالما (--c);
   ((UINT64 *)hp)[0] = h1;
   ((UINT64 *)hp)[1] = h2;
 }
 
-#elif (UMAC_OUTPUT_LEN == 12)
+#وإلاإذا (UMAC_OUTPUT_LEN == 12)
 
-static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
+ساكن فراغ nh_aux(فراغ *kp, ثابت فراغ *dp, فراغ *hp, UINT32 dlen)
 /* Same as previous nh_aux, but two streams are handled in one pass,
  * reading and writing 24 bytes of hash-state per call.
 */
@@ -421,7 +421,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
     UINT64 h1,h2,h3;
     UWORD c = dlen / 32;
     UINT32 *k = (UINT32 *)kp;
-    const UINT32 *d = (const UINT32 *)dp;
+    ثابت UINT32 *d = (ثابت UINT32 *)dp;
     UINT32 d0,d1,d2,d3,d4,d5,d6,d7;
     UINT32 k0,k1,k2,k3,k4,k5,k6,k7,
         k8,k9,k10,k11,k12,k13,k14,k15;
@@ -431,11 +431,11 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
     h3 = *((UINT64 *)hp + 2);
     k0 = *(k+0); k1 = *(k+1); k2 = *(k+2); k3 = *(k+3);
     k4 = *(k+4); k5 = *(k+5); k6 = *(k+6); k7 = *(k+7);
-    do {
-        d0 = LOAD_UINT32_LITTLE(d+0); d1 = LOAD_UINT32_LITTLE(d+1);
-        d2 = LOAD_UINT32_LITTLE(d+2); d3 = LOAD_UINT32_LITTLE(d+3);
-        d4 = LOAD_UINT32_LITTLE(d+4); d5 = LOAD_UINT32_LITTLE(d+5);
-        d6 = LOAD_UINT32_LITTLE(d+6); d7 = LOAD_UINT32_LITTLE(d+7);
+    افعل {
+        d0 = بارگیری_UINT32_LITTLE(d+0); d1 = بارگیری_UINT32_LITTLE(d+1);
+        d2 = بارگیری_UINT32_LITTLE(d+2); d3 = بارگیری_UINT32_LITTLE(d+3);
+        d4 = بارگیری_UINT32_LITTLE(d+4); d5 = بارگیری_UINT32_LITTLE(d+5);
+        d6 = بارگیری_UINT32_LITTLE(d+6); d7 = بارگیری_UINT32_LITTLE(d+7);
         k8 = *(k+8); k9 = *(k+9); k10 = *(k+10); k11 = *(k+11);
         k12 = *(k+12); k13 = *(k+13); k14 = *(k+14); k15 = *(k+15);
 
@@ -460,15 +460,15 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 
         d += 8;
         k += 8;
-    } while (--c);
+    } طالما (--c);
     ((UINT64 *)hp)[0] = h1;
     ((UINT64 *)hp)[1] = h2;
     ((UINT64 *)hp)[2] = h3;
 }
 
-#elif (UMAC_OUTPUT_LEN == 16)
+#وإلاإذا (UMAC_OUTPUT_LEN == 16)
 
-static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
+ساكن فراغ nh_aux(فراغ *kp, ثابت فراغ *dp, فراغ *hp, UINT32 dlen)
 /* Same as previous nh_aux, but two streams are handled in one pass,
  * reading and writing 24 bytes of hash-state per call.
 */
@@ -476,7 +476,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
     UINT64 h1,h2,h3,h4;
     UWORD c = dlen / 32;
     UINT32 *k = (UINT32 *)kp;
-    const UINT32 *d = (const UINT32 *)dp;
+    ثابت UINT32 *d = (ثابت UINT32 *)dp;
     UINT32 d0,d1,d2,d3,d4,d5,d6,d7;
     UINT32 k0,k1,k2,k3,k4,k5,k6,k7,
         k8,k9,k10,k11,k12,k13,k14,k15,
@@ -488,11 +488,11 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
     h4 = *((UINT64 *)hp + 3);
     k0 = *(k+0); k1 = *(k+1); k2 = *(k+2); k3 = *(k+3);
     k4 = *(k+4); k5 = *(k+5); k6 = *(k+6); k7 = *(k+7);
-    do {
-        d0 = LOAD_UINT32_LITTLE(d+0); d1 = LOAD_UINT32_LITTLE(d+1);
-        d2 = LOAD_UINT32_LITTLE(d+2); d3 = LOAD_UINT32_LITTLE(d+3);
-        d4 = LOAD_UINT32_LITTLE(d+4); d5 = LOAD_UINT32_LITTLE(d+5);
-        d6 = LOAD_UINT32_LITTLE(d+6); d7 = LOAD_UINT32_LITTLE(d+7);
+    افعل {
+        d0 = بارگیری_UINT32_LITTLE(d+0); d1 = بارگیری_UINT32_LITTLE(d+1);
+        d2 = بارگیری_UINT32_LITTLE(d+2); d3 = بارگیری_UINT32_LITTLE(d+3);
+        d4 = بارگیری_UINT32_LITTLE(d+4); d5 = بارگیری_UINT32_LITTLE(d+5);
+        d6 = بارگیری_UINT32_LITTLE(d+6); d7 = بارگیری_UINT32_LITTLE(d+7);
         k8 = *(k+8); k9 = *(k+9); k10 = *(k+10); k11 = *(k+11);
         k12 = *(k+12); k13 = *(k+13); k14 = *(k+14); k15 = *(k+15);
         k16 = *(k+16); k17 = *(k+17); k18 = *(k+18); k19 = *(k+19);
@@ -523,7 +523,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 
         d += 8;
         k += 8;
-    } while (--c);
+    } طالما (--c);
     ((UINT64 *)hp)[0] = h1;
     ((UINT64 *)hp)[1] = h2;
     ((UINT64 *)hp)[2] = h3;
@@ -531,134 +531,134 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 }
 
 /* ---------------------------------------------------------------------- */
-#endif  /* UMAC_OUTPUT_LENGTH */
+#پایان_اگر  /* UMAC_OUTPUT_LENGTH */
 /* ---------------------------------------------------------------------- */
 
 
 /* ---------------------------------------------------------------------- */
 
-static void nh_transform(nh_ctx *hc, const UINT8 *buf, UINT32 nbytes)
+ساكن فراغ nh_transform(nh_ctx *hc, ثابت UINT8 *buf, UINT32 nbytes)
 /* This function is a wrapper for the primitive NH hash functions. It takes
  * as argument "hc" the current hash context and a buffer which must be a
  * multiple of L1_PAD_BOUNDARY. The key passed to nh_aux is offset
  * appropriately according to how much message has been hashed already.
  */
 {
-    UINT8 *key;
+    UINT8 *کلید;
 
-    key = hc->nh_key + hc->bytes_hashed;
-    nh_aux(key, buf, hc->state, nbytes);
+    کلید = hc->nh_کلید + hc->بایتها_hashed;
+    nh_aux(کلید, buf, hc->state, nbytes);
 }
 
 /* ---------------------------------------------------------------------- */
 
-#if (__LITTLE_ENDIAN__)
-static void endian_convert(void *buf, UWORD bpw, UINT32 num_bytes)
+#إذا (__LITTLE_ENDIAN__)
+ساكن فراغ endian_convert(فراغ *buf, UWORD bpw, UINT32 رقم_بایتها)
 /* We endian convert the keys on little-endian computers to               */
 /* compensate for the lack of big-endian memory reads during hashing.     */
 {
-    UWORD iters = num_bytes / bpw;
-    if (bpw == 4) {
+    UWORD iters = رقم_بایتها / bpw;
+    إذا (bpw == 4) {
         UINT32 *p = (UINT32 *)buf;
-        do {
-            *p = LOAD_UINT32_REVERSED(p);
+        افعل {
+            *p = بارگیری_UINT32_REVERSED(p);
             p++;
-        } while (--iters);
-    } else if (bpw == 8) {
+        } طالما (--iters);
+    } وإلا إذا (bpw == 8) {
         UINT32 *p = (UINT32 *)buf;
         UINT32 t;
-        do {
-            t = LOAD_UINT32_REVERSED(p+1);
-            p[1] = LOAD_UINT32_REVERSED(p);
+        افعل {
+            t = بارگیری_UINT32_REVERSED(p+1);
+            p[1] = بارگیری_UINT32_REVERSED(p);
             p[0] = t;
             p += 2;
-        } while (--iters);
+        } طالما (--iters);
     }
 }
-#define endian_convert_if_le(x,y,z) endian_convert((x),(y),(z))
-#else
-#define endian_convert_if_le(x,y,z) do{}while(0)  /* Do nothing */
-#endif
+#تعریف_کن endian_convert_if_le(x,y,z) endian_convert((x),(y),(z))
+#وإلا
+#تعریف_کن endian_convert_if_le(x,y,z) افعل{}طالما(0)  /* Do nothing */
+#پایان_اگر
 
 /* ---------------------------------------------------------------------- */
 
-static void nh_reset(nh_ctx *hc)
+ساكن فراغ nh_reset(nh_ctx *hc)
 /* Reset nh_ctx to ready for hashing of new data */
 {
-    hc->bytes_hashed = 0;
-    hc->next_data_empty = 0;
+    hc->بایتها_hashed = 0;
+    hc->بعدی_داده_خالی = 0;
     hc->state[0] = 0;
-#if (UMAC_OUTPUT_LEN >= 8)
+#إذا (UMAC_OUTPUT_LEN >= 8)
     hc->state[1] = 0;
-#endif
-#if (UMAC_OUTPUT_LEN >= 12)
+#پایان_اگر
+#إذا (UMAC_OUTPUT_LEN >= 12)
     hc->state[2] = 0;
-#endif
-#if (UMAC_OUTPUT_LEN == 16)
+#پایان_اگر
+#إذا (UMAC_OUTPUT_LEN == 16)
     hc->state[3] = 0;
-#endif
+#پایان_اگر
 
 }
 
 /* ---------------------------------------------------------------------- */
 
-static void nh_init(nh_ctx *hc, aes_int_key prf_key)
+ساكن فراغ nh_init(nh_ctx *hc, aes_int_کلید prf_کلید)
 /* Generate nh_key, endian convert and reset to be ready for hashing.   */
 {
-    kdf(hc->nh_key, prf_key, 1, sizeof(hc->nh_key));
-    endian_convert_if_le(hc->nh_key, 4, sizeof(hc->nh_key));
+    kdf(hc->nh_کلید, prf_کلید, 1, حجم(hc->nh_کلید));
+    endian_convert_if_le(hc->nh_کلید, 4, حجم(hc->nh_کلید));
     nh_reset(hc);
 }
 
 /* ---------------------------------------------------------------------- */
 
-static void nh_update(nh_ctx *hc, const UINT8 *buf, UINT32 nbytes)
+ساكن فراغ nh_update(nh_ctx *hc, ثابت UINT8 *buf, UINT32 nbytes)
 /* Incorporate nbytes of data into a nh_ctx, buffer whatever is not an    */
 /* even multiple of HASH_BUF_BYTES.                                       */
 {
     UINT32 i,j;
 
-    j = hc->next_data_empty;
-    if ((j + nbytes) >= HASH_BUF_BYTES) {
-        if (j) {
-            i = HASH_BUF_BYTES - j;
-            memcpy(hc->data+j, buf, i);
-            nh_transform(hc,hc->data,HASH_BUF_BYTES);
+    j = hc->بعدی_داده_خالی;
+    إذا ((j + nbytes) >= HASH_BUF_بایتها) {
+        إذا (j) {
+            i = HASH_BUF_بایتها - j;
+            کپی_حافظه(hc->داده+j, buf, i);
+            nh_transform(hc,hc->داده,HASH_BUF_بایتها);
             nbytes -= i;
             buf += i;
-            hc->bytes_hashed += HASH_BUF_BYTES;
+            hc->بایتها_hashed += HASH_BUF_بایتها;
         }
-        if (nbytes >= HASH_BUF_BYTES) {
-            i = nbytes & ~(HASH_BUF_BYTES - 1);
+        إذا (nbytes >= HASH_BUF_بایتها) {
+            i = nbytes & ~(HASH_BUF_بایتها - 1);
             nh_transform(hc, buf, i);
             nbytes -= i;
             buf += i;
-            hc->bytes_hashed += i;
+            hc->بایتها_hashed += i;
         }
         j = 0;
     }
-    memcpy(hc->data + j, buf, nbytes);
-    hc->next_data_empty = j + nbytes;
+    کپی_حافظه(hc->داده + j, buf, nbytes);
+    hc->بعدی_داده_خالی = j + nbytes;
 }
 
 /* ---------------------------------------------------------------------- */
 
-static void zero_pad(UINT8 *p, int nbytes)
+ساكن فراغ zero_pad(UINT8 *p, صحيح nbytes)
 {
 /* Write "nbytes" of zeroes, beginning at "p" */
-    if (nbytes >= (int)sizeof(UWORD)) {
-        while ((ptrdiff_t)p % sizeof(UWORD)) {
+    إذا (nbytes >= (صحيح)حجم(UWORD)) {
+        طالما ((ptrdiff_t)p % حجم(UWORD)) {
             *p = 0;
             nbytes--;
             p++;
         }
-        while (nbytes >= (int)sizeof(UWORD)) {
+        طالما (nbytes >= (صحيح)حجم(UWORD)) {
             *(UWORD *)p = 0;
-            nbytes -= sizeof(UWORD);
-            p += sizeof(UWORD);
+            nbytes -= حجم(UWORD);
+            p += حجم(UWORD);
         }
     }
-    while (nbytes) {
+    طالما (nbytes) {
         *p = 0;
         nbytes--;
         p++;
@@ -667,7 +667,7 @@ static void zero_pad(UINT8 *p, int nbytes)
 
 /* ---------------------------------------------------------------------- */
 
-static void nh_final(nh_ctx *hc, UINT8 *result)
+ساكن فراغ nh_final(nh_ctx *hc, UINT8 *نتیجه)
 /* After passing some number of data buffers to nh_update() for integration
  * into an NH context, nh_final is called to produce a hash result. If any
  * bytes are in the buffer hc->data, incorporate them into the
@@ -676,39 +676,39 @@ static void nh_final(nh_ctx *hc, UINT8 *result)
  * If nh_update was never called, L1_PAD_BOUNDARY zeroes are incorporated.
  */
 {
-    int nh_len, nbits;
+    صحيح nh_len, nbits;
 
-    if (hc->next_data_empty != 0) {
-        nh_len = ((hc->next_data_empty + (L1_PAD_BOUNDARY - 1)) &
+    إذا (hc->بعدی_داده_خالی != 0) {
+        nh_len = ((hc->بعدی_داده_خالی + (L1_PAD_BOUNDARY - 1)) &
                                                 ~(L1_PAD_BOUNDARY - 1));
-        zero_pad(hc->data + hc->next_data_empty,
-                                          nh_len - hc->next_data_empty);
-        nh_transform(hc, hc->data, nh_len);
-        hc->bytes_hashed += hc->next_data_empty;
-    } else if (hc->bytes_hashed == 0) {
+        zero_pad(hc->داده + hc->بعدی_داده_خالی,
+                                          nh_len - hc->بعدی_داده_خالی);
+        nh_transform(hc, hc->داده, nh_len);
+        hc->بایتها_hashed += hc->بعدی_داده_خالی;
+    } وإلا إذا (hc->بایتها_hashed == 0) {
 	nh_len = L1_PAD_BOUNDARY;
-        zero_pad(hc->data, L1_PAD_BOUNDARY);
-        nh_transform(hc, hc->data, nh_len);
+        zero_pad(hc->داده, L1_PAD_BOUNDARY);
+        nh_transform(hc, hc->داده, nh_len);
     }
 
-    nbits = (hc->bytes_hashed << 3);
-    ((UINT64 *)result)[0] = ((UINT64 *)hc->state)[0] + nbits;
-#if (UMAC_OUTPUT_LEN >= 8)
-    ((UINT64 *)result)[1] = ((UINT64 *)hc->state)[1] + nbits;
-#endif
-#if (UMAC_OUTPUT_LEN >= 12)
-    ((UINT64 *)result)[2] = ((UINT64 *)hc->state)[2] + nbits;
-#endif
-#if (UMAC_OUTPUT_LEN == 16)
-    ((UINT64 *)result)[3] = ((UINT64 *)hc->state)[3] + nbits;
-#endif
+    nbits = (hc->بایتها_hashed << 3);
+    ((UINT64 *)نتیجه)[0] = ((UINT64 *)hc->state)[0] + nbits;
+#إذا (UMAC_OUTPUT_LEN >= 8)
+    ((UINT64 *)نتیجه)[1] = ((UINT64 *)hc->state)[1] + nbits;
+#پایان_اگر
+#إذا (UMAC_OUTPUT_LEN >= 12)
+    ((UINT64 *)نتیجه)[2] = ((UINT64 *)hc->state)[2] + nbits;
+#پایان_اگر
+#إذا (UMAC_OUTPUT_LEN == 16)
+    ((UINT64 *)نتیجه)[3] = ((UINT64 *)hc->state)[3] + nbits;
+#پایان_اگر
     nh_reset(hc);
 }
 
 /* ---------------------------------------------------------------------- */
 
-static void nh(nh_ctx *hc, const UINT8 *buf, UINT32 padded_len,
-               UINT32 unpadded_len, UINT8 *result)
+ساكن فراغ nh(nh_ctx *hc, ثابت UINT8 *buf, UINT32 padded_len,
+               UINT32 unpadded_len, UINT8 *نتیجه)
 /* All-in-one nh_update() and nh_final() equivalent.
  * Assumes that padded_len is divisible by L1_PAD_BOUNDARY and result is
  * well aligned
@@ -719,18 +719,18 @@ static void nh(nh_ctx *hc, const UINT8 *buf, UINT32 padded_len,
     /* Initialize the hash state */
     nbits = (unpadded_len << 3);
 
-    ((UINT64 *)result)[0] = nbits;
-#if (UMAC_OUTPUT_LEN >= 8)
-    ((UINT64 *)result)[1] = nbits;
-#endif
-#if (UMAC_OUTPUT_LEN >= 12)
-    ((UINT64 *)result)[2] = nbits;
-#endif
-#if (UMAC_OUTPUT_LEN == 16)
-    ((UINT64 *)result)[3] = nbits;
-#endif
+    ((UINT64 *)نتیجه)[0] = nbits;
+#إذا (UMAC_OUTPUT_LEN >= 8)
+    ((UINT64 *)نتیجه)[1] = nbits;
+#پایان_اگر
+#إذا (UMAC_OUTPUT_LEN >= 12)
+    ((UINT64 *)نتیجه)[2] = nbits;
+#پایان_اگر
+#إذا (UMAC_OUTPUT_LEN == 16)
+    ((UINT64 *)نتیجه)[3] = nbits;
+#پایان_اگر
 
-    nh_aux(hc->nh_key, buf, result, padded_len);
+    nh_aux(hc->nh_کلید, buf, نتیجه, padded_len);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -768,23 +768,23 @@ static void nh(nh_ctx *hc, const UINT8 *buf, UINT32 padded_len,
 /* ---------------------------------------------------------------------- */
 
 /* Primes and masks */
-#define p36    ((UINT64)0x0000000FFFFFFFFBull)              /* 2^36 -  5 */
-#define p64    ((UINT64)0xFFFFFFFFFFFFFFC5ull)              /* 2^64 - 59 */
-#define m36    ((UINT64)0x0000000FFFFFFFFFull)  /* The low 36 of 64 bits */
+#تعریف_کن p36    ((UINT64)0x0000000FFFFFFFFBull)              /* 2^36 -  5 */
+#تعریف_کن p64    ((UINT64)0xFFFFFFFFFFFFFFC5ull)              /* 2^64 - 59 */
+#تعریف_کن m36    ((UINT64)0x0000000FFFFFFFFFull)  /* The low 36 of 64 bits */
 
 
 /* ---------------------------------------------------------------------- */
 
-typedef struct uhash_ctx {
+تعريفنوع بنية uhash_ctx {
     nh_ctx hash;                          /* Hash context for L1 NH hash  */
-    UINT64 poly_key_8[STREAMS];           /* p64 poly keys                */
+    UINT64 poly_کلید_8[STREAMS];           /* p64 poly keys                */
     UINT64 poly_accum[STREAMS];           /* poly hash result             */
-    UINT64 ip_keys[STREAMS*4];            /* Inner-product keys           */
+    UINT64 ip_کلیدها[STREAMS*4];            /* Inner-product keys           */
     UINT32 ip_trans[STREAMS];             /* Inner-product translation    */
-    UINT32 msg_len;                       /* Total length of data passed  */
+    UINT32 پیام_len;                       /* Total length of data passed  */
                                           /* to uhash */
 } uhash_ctx;
-typedef struct uhash_ctx *uhash_ctx_t;
+تعريفنوع بنية uhash_ctx *uhash_ctx_t;
 
 /* ---------------------------------------------------------------------- */
 
@@ -797,32 +797,32 @@ typedef struct uhash_ctx *uhash_ctx_t;
  * patches any errant values.
  */
 
-static UINT64 poly64(UINT64 cur, UINT64 key, UINT64 data)
+ساكن UINT64 poly64(UINT64 cur, UINT64 کلید, UINT64 داده)
 {
-    UINT32 key_hi = (UINT32)(key >> 32),
-           key_lo = (UINT32)key,
+    UINT32 کلید_hi = (UINT32)(کلید >> 32),
+           کلید_lo = (UINT32)کلید,
            cur_hi = (UINT32)(cur >> 32),
            cur_lo = (UINT32)cur,
            x_lo,
            x_hi;
     UINT64 X,T,res;
 
-    X =  MUL64(key_hi, cur_lo) + MUL64(cur_hi, key_lo);
+    X =  MUL64(کلید_hi, cur_lo) + MUL64(cur_hi, کلید_lo);
     x_lo = (UINT32)X;
     x_hi = (UINT32)(X >> 32);
 
-    res = (MUL64(key_hi, cur_hi) + x_hi) * 59 + MUL64(key_lo, cur_lo);
+    res = (MUL64(کلید_hi, cur_hi) + x_hi) * 59 + MUL64(کلید_lo, cur_lo);
 
     T = ((UINT64)x_lo << 32);
     res += T;
-    if (res < T)
+    إذا (res < T)
         res += 59;
 
-    res += data;
-    if (res < data)
+    res += داده;
+    إذا (res < داده)
         res += 59;
 
-    return res;
+    أرجع res;
 }
 
 
@@ -832,20 +832,20 @@ static UINT64 poly64(UINT64 cur, UINT64 key, UINT64 data)
  * 2^14 poly_hash() invocations per stream (for a total capacity of 2^24
  * bytes input to UMAC per tag, ie. 16MB).
  */
-static void poly_hash(uhash_ctx_t hc, UINT32 data_in[])
+ساكن فراغ poly_hash(uhash_ctx_t hc, UINT32 داده_درون[])
 {
-    int i;
-    UINT64 *data=(UINT64*)data_in;
+    صحيح i;
+    UINT64 *داده=(UINT64*)داده_درون;
 
-    for (i = 0; i < STREAMS; i++) {
-        if ((UINT32)(data[i] >> 32) == 0xfffffffful) {
+    لكل (i = 0; i < STREAMS; i++) {
+        إذا ((UINT32)(داده[i] >> 32) == 0xfffffffful) {
             hc->poly_accum[i] = poly64(hc->poly_accum[i],
-                                       hc->poly_key_8[i], p64 - 1);
+                                       hc->poly_کلید_8[i], p64 - 1);
             hc->poly_accum[i] = poly64(hc->poly_accum[i],
-                                       hc->poly_key_8[i], (data[i] - 59));
-        } else {
+                                       hc->poly_کلید_8[i], (داده[i] - 59));
+        } وإلا {
             hc->poly_accum[i] = poly64(hc->poly_accum[i],
-                                       hc->poly_key_8[i], data[i]);
+                                       hc->poly_کلید_8[i], داده[i]);
         }
     }
 }
@@ -860,27 +860,27 @@ static void poly_hash(uhash_ctx_t hc, UINT32 data_in[])
  * multiplies each with a 36 bit key.
  */
 
-static UINT64 ip_aux(UINT64 t, UINT64 *ipkp, UINT64 data)
+ساكن UINT64 ip_aux(UINT64 t, UINT64 *ipkp, UINT64 داده)
 {
-    t = t + ipkp[0] * (UINT64)(UINT16)(data >> 48);
-    t = t + ipkp[1] * (UINT64)(UINT16)(data >> 32);
-    t = t + ipkp[2] * (UINT64)(UINT16)(data >> 16);
-    t = t + ipkp[3] * (UINT64)(UINT16)(data);
+    t = t + ipkp[0] * (UINT64)(UINT16)(داده >> 48);
+    t = t + ipkp[1] * (UINT64)(UINT16)(داده >> 32);
+    t = t + ipkp[2] * (UINT64)(UINT16)(داده >> 16);
+    t = t + ipkp[3] * (UINT64)(UINT16)(داده);
 
-    return t;
+    أرجع t;
 }
 
-static UINT32 ip_reduce_p36(UINT64 t)
+ساكن UINT32 ip_reduce_p36(UINT64 t)
 {
 /* Divisionless modular reduction */
     UINT64 ret;
 
     ret = (t & m36) + 5 * (t >> 36);
-    if (ret >= p36)
+    إذا (ret >= p36)
         ret -= p36;
 
     /* return least significant 32 bits */
-    return (UINT32)(ret);
+    أرجع (UINT32)(ret);
 }
 
 
@@ -888,41 +888,41 @@ static UINT32 ip_reduce_p36(UINT64 t)
  * the polyhash stage is skipped and ip_short is applied directly to the
  * NH output.
  */
-static void ip_short(uhash_ctx_t ahc, UINT8 *nh_res, u_char *res)
+ساكن فراغ ip_short(uhash_ctx_t ahc, UINT8 *nh_res, u_char *res)
 {
     UINT64 t;
     UINT64 *nhp = (UINT64 *)nh_res;
 
-    t  = ip_aux(0,ahc->ip_keys, nhp[0]);
+    t  = ip_aux(0,ahc->ip_کلیدها, nhp[0]);
     STORE_UINT32_BIG((UINT32 *)res+0, ip_reduce_p36(t) ^ ahc->ip_trans[0]);
-#if (UMAC_OUTPUT_LEN >= 8)
-    t  = ip_aux(0,ahc->ip_keys+4, nhp[1]);
+#إذا (UMAC_OUTPUT_LEN >= 8)
+    t  = ip_aux(0,ahc->ip_کلیدها+4, nhp[1]);
     STORE_UINT32_BIG((UINT32 *)res+1, ip_reduce_p36(t) ^ ahc->ip_trans[1]);
-#endif
-#if (UMAC_OUTPUT_LEN >= 12)
-    t  = ip_aux(0,ahc->ip_keys+8, nhp[2]);
+#پایان_اگر
+#إذا (UMAC_OUTPUT_LEN >= 12)
+    t  = ip_aux(0,ahc->ip_کلیدها+8, nhp[2]);
     STORE_UINT32_BIG((UINT32 *)res+2, ip_reduce_p36(t) ^ ahc->ip_trans[2]);
-#endif
-#if (UMAC_OUTPUT_LEN == 16)
-    t  = ip_aux(0,ahc->ip_keys+12, nhp[3]);
+#پایان_اگر
+#إذا (UMAC_OUTPUT_LEN == 16)
+    t  = ip_aux(0,ahc->ip_کلیدها+12, nhp[3]);
     STORE_UINT32_BIG((UINT32 *)res+3, ip_reduce_p36(t) ^ ahc->ip_trans[3]);
-#endif
+#پایان_اگر
 }
 
 /* If the data being hashed by UHASH is longer than L1_KEY_LEN, then
  * the polyhash stage is not skipped and ip_long is applied to the
  * polyhash output.
  */
-static void ip_long(uhash_ctx_t ahc, u_char *res)
+ساكن فراغ ip_long(uhash_ctx_t ahc, u_char *res)
 {
-    int i;
+    صحيح i;
     UINT64 t;
 
-    for (i = 0; i < STREAMS; i++) {
+    لكل (i = 0; i < STREAMS; i++) {
         /* fix polyhash output not in Z_p64 */
-        if (ahc->poly_accum[i] >= p64)
+        إذا (ahc->poly_accum[i] >= p64)
             ahc->poly_accum[i] -= p64;
-        t  = ip_aux(0,ahc->ip_keys+(i*4), ahc->poly_accum[i]);
+        t  = ip_aux(0,ahc->ip_کلیدها+(i*4), ahc->poly_accum[i]);
         STORE_UINT32_BIG((UINT32 *)res+i,
                          ip_reduce_p36(t) ^ ahc->ip_trans[i]);
     }
@@ -934,21 +934,21 @@ static void ip_long(uhash_ctx_t ahc, u_char *res)
 /* ---------------------------------------------------------------------- */
 
 /* Reset uhash context for next hash session */
-static int uhash_reset(uhash_ctx_t pc)
+ساكن صحيح uhash_reset(uhash_ctx_t pc)
 {
     nh_reset(&pc->hash);
-    pc->msg_len = 0;
+    pc->پیام_len = 0;
     pc->poly_accum[0] = 1;
-#if (UMAC_OUTPUT_LEN >= 8)
+#إذا (UMAC_OUTPUT_LEN >= 8)
     pc->poly_accum[1] = 1;
-#endif
-#if (UMAC_OUTPUT_LEN >= 12)
+#پایان_اگر
+#إذا (UMAC_OUTPUT_LEN >= 12)
     pc->poly_accum[2] = 1;
-#endif
-#if (UMAC_OUTPUT_LEN == 16)
+#پایان_اگر
+#إذا (UMAC_OUTPUT_LEN == 16)
     pc->poly_accum[3] = 1;
-#endif
-    return 1;
+#پایان_اگر
+    أرجع 1;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -958,218 +958,218 @@ static int uhash_reset(uhash_ctx_t pc)
  * product hashing. All keys are endian adjusted in memory so that native
  * loads cause correct keys to be in registers during calculation.
  */
-static void uhash_init(uhash_ctx_t ahc, aes_int_key prf_key)
+ساكن فراغ uhash_init(uhash_ctx_t ahc, aes_int_کلید prf_کلید)
 {
-    int i;
-    UINT8 buf[(8*STREAMS+4)*sizeof(UINT64)];
+    صحيح i;
+    UINT8 buf[(8*STREAMS+4)*حجم(UINT64)];
 
     /* Zero the entire uhash context */
-    memset(ahc, 0, sizeof(uhash_ctx));
+    memset(ahc, 0, حجم(uhash_ctx));
 
     /* Initialize the L1 hash */
-    nh_init(&ahc->hash, prf_key);
+    nh_init(&ahc->hash, prf_کلید);
 
     /* Setup L2 hash variables */
-    kdf(buf, prf_key, 2, sizeof(buf));    /* Fill buffer with index 1 key */
-    for (i = 0; i < STREAMS; i++) {
+    kdf(buf, prf_کلید, 2, حجم(buf));    /* Fill buffer with index 1 key */
+    لكل (i = 0; i < STREAMS; i++) {
         /* Fill keys from the buffer, skipping bytes in the buffer not
          * used by this implementation. Endian reverse the keys if on a
          * little-endian computer.
          */
-        memcpy(ahc->poly_key_8+i, buf+24*i, 8);
-        endian_convert_if_le(ahc->poly_key_8+i, 8, 8);
+        کپی_حافظه(ahc->poly_کلید_8+i, buf+24*i, 8);
+        endian_convert_if_le(ahc->poly_کلید_8+i, 8, 8);
         /* Mask the 64-bit keys to their special domain */
-        ahc->poly_key_8[i] &= ((UINT64)0x01ffffffu << 32) + 0x01ffffffu;
+        ahc->poly_کلید_8[i] &= ((UINT64)0x01ffffffu << 32) + 0x01ffffffu;
         ahc->poly_accum[i] = 1;  /* Our polyhash prepends a non-zero word */
     }
 
     /* Setup L3-1 hash variables */
-    kdf(buf, prf_key, 3, sizeof(buf)); /* Fill buffer with index 2 key */
-    for (i = 0; i < STREAMS; i++)
-          memcpy(ahc->ip_keys+4*i, buf+(8*i+4)*sizeof(UINT64),
-                                                 4*sizeof(UINT64));
-    endian_convert_if_le(ahc->ip_keys, sizeof(UINT64),
-                                                  sizeof(ahc->ip_keys));
-    for (i = 0; i < STREAMS*4; i++)
-        ahc->ip_keys[i] %= p36;  /* Bring into Z_p36 */
+    kdf(buf, prf_کلید, 3, حجم(buf)); /* Fill buffer with index 2 key */
+    لكل (i = 0; i < STREAMS; i++)
+          کپی_حافظه(ahc->ip_کلیدها+4*i, buf+(8*i+4)*حجم(UINT64),
+                                                 4*حجم(UINT64));
+    endian_convert_if_le(ahc->ip_کلیدها, حجم(UINT64),
+                                                  حجم(ahc->ip_کلیدها));
+    لكل (i = 0; i < STREAMS*4; i++)
+        ahc->ip_کلیدها[i] %= p36;  /* Bring into Z_p36 */
 
     /* Setup L3-2 hash variables    */
     /* Fill buffer with index 4 key */
-    kdf(ahc->ip_trans, prf_key, 4, STREAMS * sizeof(UINT32));
-    endian_convert_if_le(ahc->ip_trans, sizeof(UINT32),
-                         STREAMS * sizeof(UINT32));
-    explicit_bzero(buf, sizeof(buf));
+    kdf(ahc->ip_trans, prf_کلید, 4, STREAMS * حجم(UINT32));
+    endian_convert_if_le(ahc->ip_trans, حجم(UINT32),
+                         STREAMS * حجم(UINT32));
+    explicit_bzero(buf, حجم(buf));
 }
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
-static uhash_ctx_t uhash_alloc(u_char key[])
+#إذا 0
+ساكن uhash_ctx_t uhash_alloc(u_char کلید[])
 {
 /* Allocate memory and force to a 16-byte boundary. */
     uhash_ctx_t ctx;
-    u_char bytes_to_add;
-    aes_int_key prf_key;
+    u_char بایتها_مقصد_جمع_کن;
+    aes_int_کلید prf_کلید;
 
-    ctx = (uhash_ctx_t)malloc(sizeof(uhash_ctx)+ALLOC_BOUNDARY);
-    if (ctx) {
-        if (ALLOC_BOUNDARY) {
-            bytes_to_add = ALLOC_BOUNDARY -
+    ctx = (uhash_ctx_t)حافظه_بده(حجم(uhash_ctx)+ALLOC_BOUNDARY);
+    إذا (ctx) {
+        إذا (ALLOC_BOUNDARY) {
+            بایتها_مقصد_جمع_کن = ALLOC_BOUNDARY -
                               ((ptrdiff_t)ctx & (ALLOC_BOUNDARY -1));
-            ctx = (uhash_ctx_t)((u_char *)ctx + bytes_to_add);
-            *((u_char *)ctx - 1) = bytes_to_add;
+            ctx = (uhash_ctx_t)((u_char *)ctx + بایتها_مقصد_جمع_کن);
+            *((u_char *)ctx - 1) = بایتها_مقصد_جمع_کن;
         }
-        aes_key_setup(key,prf_key);
-        uhash_init(ctx, prf_key);
+        aes_کلید_راهاندازی(کلید,prf_کلید);
+        uhash_init(ctx, prf_کلید);
     }
-    return (ctx);
+    أرجع (ctx);
 }
-#endif
+#پایان_اگر
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
-static int uhash_free(uhash_ctx_t ctx)
+#إذا 0
+ساكن صحيح uhash_free(uhash_ctx_t ctx)
 {
 /* Free memory allocated by uhash_alloc */
-    u_char bytes_to_sub;
+    u_char بایتها_مقصد_sub;
 
-    if (ctx) {
-        if (ALLOC_BOUNDARY) {
-            bytes_to_sub = *((u_char *)ctx - 1);
-            ctx = (uhash_ctx_t)((u_char *)ctx - bytes_to_sub);
+    إذا (ctx) {
+        إذا (ALLOC_BOUNDARY) {
+            بایتها_مقصد_sub = *((u_char *)ctx - 1);
+            ctx = (uhash_ctx_t)((u_char *)ctx - بایتها_مقصد_sub);
         }
-        free(ctx);
+        حرر(ctx);
     }
-    return (1);
+    أرجع (1);
 }
-#endif
+#پایان_اگر
 /* ---------------------------------------------------------------------- */
 
-static int uhash_update(uhash_ctx_t ctx, const u_char *input, long len)
+ساكن صحيح uhash_update(uhash_ctx_t ctx, ثابت u_char *درون_داد, دراز len)
 /* Given len bytes of data, we parse it into L1_KEY_LEN chunks and
  * hash each one with NH, calling the polyhash on each NH output.
  */
 {
-    UWORD bytes_hashed, bytes_remaining;
-    UINT64 result_buf[STREAMS];
-    UINT8 *nh_result = (UINT8 *)&result_buf;
+    UWORD بایتها_hashed, بایتها_مانده;
+    UINT64 نتیجه_buf[STREAMS];
+    UINT8 *nh_نتیجه = (UINT8 *)&نتیجه_buf;
 
-    if (ctx->msg_len + len <= L1_KEY_LEN) {
-        nh_update(&ctx->hash, (const UINT8 *)input, len);
-        ctx->msg_len += len;
-    } else {
+    إذا (ctx->پیام_len + len <= L1_کلید_LEN) {
+        nh_update(&ctx->hash, (ثابت UINT8 *)درون_داد, len);
+        ctx->پیام_len += len;
+    } وإلا {
 
-         bytes_hashed = ctx->msg_len % L1_KEY_LEN;
-         if (ctx->msg_len == L1_KEY_LEN)
-             bytes_hashed = L1_KEY_LEN;
+         بایتها_hashed = ctx->پیام_len % L1_کلید_LEN;
+         إذا (ctx->پیام_len == L1_کلید_LEN)
+             بایتها_hashed = L1_کلید_LEN;
 
-         if (bytes_hashed + len >= L1_KEY_LEN) {
+         إذا (بایتها_hashed + len >= L1_کلید_LEN) {
 
              /* If some bytes have been passed to the hash function      */
              /* then we want to pass at most (L1_KEY_LEN - bytes_hashed) */
              /* bytes to complete the current nh_block.                  */
-             if (bytes_hashed) {
-                 bytes_remaining = (L1_KEY_LEN - bytes_hashed);
-                 nh_update(&ctx->hash, (const UINT8 *)input, bytes_remaining);
-                 nh_final(&ctx->hash, nh_result);
-                 ctx->msg_len += bytes_remaining;
-                 poly_hash(ctx,(UINT32 *)nh_result);
-                 len -= bytes_remaining;
-                 input += bytes_remaining;
+             إذا (بایتها_hashed) {
+                 بایتها_مانده = (L1_کلید_LEN - بایتها_hashed);
+                 nh_update(&ctx->hash, (ثابت UINT8 *)درون_داد, بایتها_مانده);
+                 nh_final(&ctx->hash, nh_نتیجه);
+                 ctx->پیام_len += بایتها_مانده;
+                 poly_hash(ctx,(UINT32 *)nh_نتیجه);
+                 len -= بایتها_مانده;
+                 درون_داد += بایتها_مانده;
              }
 
              /* Hash directly from input stream if enough bytes */
-             while (len >= L1_KEY_LEN) {
-                 nh(&ctx->hash, (const UINT8 *)input, L1_KEY_LEN,
-                                   L1_KEY_LEN, nh_result);
-                 ctx->msg_len += L1_KEY_LEN;
-                 len -= L1_KEY_LEN;
-                 input += L1_KEY_LEN;
-                 poly_hash(ctx,(UINT32 *)nh_result);
+             طالما (len >= L1_کلید_LEN) {
+                 nh(&ctx->hash, (ثابت UINT8 *)درون_داد, L1_کلید_LEN,
+                                   L1_کلید_LEN, nh_نتیجه);
+                 ctx->پیام_len += L1_کلید_LEN;
+                 len -= L1_کلید_LEN;
+                 درون_داد += L1_کلید_LEN;
+                 poly_hash(ctx,(UINT32 *)nh_نتیجه);
              }
          }
 
          /* pass remaining < L1_KEY_LEN bytes of input data to NH */
-         if (len > 0 && (unsigned long)len <= UINT32_MAX) {
-             nh_update(&ctx->hash, (const UINT8 *)input, len);
-             ctx->msg_len += len;
+         إذا (len > 0 && (بیعلامت دراز)len <= UINT32_MAX) {
+             nh_update(&ctx->hash, (ثابت UINT8 *)درون_داد, len);
+             ctx->پیام_len += len;
          }
      }
 
-    return (1);
+    أرجع (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
-static int uhash_final(uhash_ctx_t ctx, u_char *res)
+ساكن صحيح uhash_final(uhash_ctx_t ctx, u_char *res)
 /* Incorporate any pending data, pad, and generate tag */
 {
-    UINT64 result_buf[STREAMS];
-    UINT8 *nh_result = (UINT8 *)&result_buf;
+    UINT64 نتیجه_buf[STREAMS];
+    UINT8 *nh_نتیجه = (UINT8 *)&نتیجه_buf;
 
-    if (ctx->msg_len > L1_KEY_LEN) {
-        if (ctx->msg_len % L1_KEY_LEN) {
-            nh_final(&ctx->hash, nh_result);
-            poly_hash(ctx,(UINT32 *)nh_result);
+    إذا (ctx->پیام_len > L1_کلید_LEN) {
+        إذا (ctx->پیام_len % L1_کلید_LEN) {
+            nh_final(&ctx->hash, nh_نتیجه);
+            poly_hash(ctx,(UINT32 *)nh_نتیجه);
         }
         ip_long(ctx, res);
-    } else {
-        nh_final(&ctx->hash, nh_result);
-        ip_short(ctx,nh_result, res);
+    } وإلا {
+        nh_final(&ctx->hash, nh_نتیجه);
+        ip_short(ctx,nh_نتیجه, res);
     }
     uhash_reset(ctx);
-    return (1);
+    أرجع (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
-static int uhash(uhash_ctx_t ahc, u_char *msg, long len, u_char *res)
+#إذا 0
+ساكن صحيح uhash(uhash_ctx_t ahc, u_char *پیام, دراز len, u_char *res)
 /* assumes that msg is in a writable buffer of length divisible by */
 /* L1_PAD_BOUNDARY. Bytes beyond msg[len] may be zeroed.           */
 {
-    UINT8 nh_result[STREAMS*sizeof(UINT64)];
+    UINT8 nh_نتیجه[STREAMS*حجم(UINT64)];
     UINT32 nh_len;
-    int extra_zeroes_needed;
+    صحيح extra_zeroes_needed;
 
     /* If the message to be hashed is no longer than L1_HASH_LEN, we skip
      * the polyhash.
      */
-    if (len <= L1_KEY_LEN) {
-	if (len == 0)                  /* If zero length messages will not */
+    إذا (len <= L1_کلید_LEN) {
+	إذا (len == 0)                  /* If zero length messages will not */
 		nh_len = L1_PAD_BOUNDARY;  /* be seen, comment out this case   */
-	else
+	وإلا
 		nh_len = ((len + (L1_PAD_BOUNDARY - 1)) & ~(L1_PAD_BOUNDARY - 1));
         extra_zeroes_needed = nh_len - len;
-        zero_pad((UINT8 *)msg + len, extra_zeroes_needed);
-        nh(&ahc->hash, (UINT8 *)msg, nh_len, len, nh_result);
-        ip_short(ahc,nh_result, res);
-    } else {
+        zero_pad((UINT8 *)پیام + len, extra_zeroes_needed);
+        nh(&ahc->hash, (UINT8 *)پیام, nh_len, len, nh_نتیجه);
+        ip_short(ahc,nh_نتیجه, res);
+    } وإلا {
         /* Otherwise, we hash each L1_KEY_LEN chunk with NH, passing the NH
          * output to poly_hash().
          */
-        do {
-            nh(&ahc->hash, (UINT8 *)msg, L1_KEY_LEN, L1_KEY_LEN, nh_result);
-            poly_hash(ahc,(UINT32 *)nh_result);
-            len -= L1_KEY_LEN;
-            msg += L1_KEY_LEN;
-        } while (len >= L1_KEY_LEN);
-        if (len) {
+        افعل {
+            nh(&ahc->hash, (UINT8 *)پیام, L1_کلید_LEN, L1_کلید_LEN, nh_نتیجه);
+            poly_hash(ahc,(UINT32 *)nh_نتیجه);
+            len -= L1_کلید_LEN;
+            پیام += L1_کلید_LEN;
+        } طالما (len >= L1_کلید_LEN);
+        إذا (len) {
             nh_len = ((len + (L1_PAD_BOUNDARY - 1)) & ~(L1_PAD_BOUNDARY - 1));
             extra_zeroes_needed = nh_len - len;
-            zero_pad((UINT8 *)msg + len, extra_zeroes_needed);
-            nh(&ahc->hash, (UINT8 *)msg, nh_len, len, nh_result);
-            poly_hash(ahc,(UINT32 *)nh_result);
+            zero_pad((UINT8 *)پیام + len, extra_zeroes_needed);
+            nh(&ahc->hash, (UINT8 *)پیام, nh_len, len, nh_نتیجه);
+            poly_hash(ahc,(UINT32 *)nh_نتیجه);
         }
 
         ip_long(ahc, res);
     }
 
     uhash_reset(ahc);
-    return 1;
+    أرجع 1;
 }
-#endif
+#پایان_اگر
 
 /* ---------------------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -1183,100 +1183,100 @@ static int uhash(uhash_ctx_t ahc, u_char *msg, long len, u_char *res)
  * time. The all-at-once is more optimized than the sequential version and
  * should be preferred when the sequential interface is not required.
  */
-struct umac_ctx {
+بنية umac_ctx {
     uhash_ctx hash;          /* Hash function for message compression    */
     pdf_ctx pdf;             /* PDF for hashed output                    */
-    void *free_ptr;          /* Address to free this struct via          */
+    فراغ *free_ptr;          /* Address to free this struct via          */
 } umac_ctx;
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
-int umac_reset(struct umac_ctx *ctx)
+#إذا 0
+صحيح umac_reset(بنية umac_ctx *ctx)
 /* Reset the hash function to begin a new authentication.        */
 {
     uhash_reset(&ctx->hash);
-    return (1);
+    أرجع (1);
 }
-#endif
+#پایان_اگر
 
 /* ---------------------------------------------------------------------- */
 
-int umac_delete(struct umac_ctx *ctx)
+صحيح umac_delete(بنية umac_ctx *ctx)
 /* Deallocate the ctx structure */
 {
-    if (ctx) {
-        if (ALLOC_BOUNDARY)
-            ctx = (struct umac_ctx *)ctx->free_ptr;
-        freezero(ctx, sizeof(*ctx) + ALLOC_BOUNDARY);
+    إذا (ctx) {
+        إذا (ALLOC_BOUNDARY)
+            ctx = (بنية umac_ctx *)ctx->free_ptr;
+        freezero(ctx, حجم(*ctx) + ALLOC_BOUNDARY);
     }
-    return (1);
+    أرجع (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
-struct umac_ctx *umac_new(const u_char key[])
+بنية umac_ctx *umac_new(ثابت u_char کلید[])
 /* Dynamically allocate a umac_ctx struct, initialize variables,
  * generate subkeys from key. Align to 16-byte boundary.
  */
 {
-    struct umac_ctx *ctx, *octx;
-    size_t bytes_to_add;
-    aes_int_key prf_key;
+    بنية umac_ctx *ctx, *octx;
+    اندازه_t بایتها_مقصد_جمع_کن;
+    aes_int_کلید prf_کلید;
 
-    octx = ctx = xcalloc(1, sizeof(*ctx) + ALLOC_BOUNDARY);
-    if (ctx) {
-        if (ALLOC_BOUNDARY) {
-            bytes_to_add = ALLOC_BOUNDARY -
+    octx = ctx = xcalloc(1, حجم(*ctx) + ALLOC_BOUNDARY);
+    إذا (ctx) {
+        إذا (ALLOC_BOUNDARY) {
+            بایتها_مقصد_جمع_کن = ALLOC_BOUNDARY -
                               ((ptrdiff_t)ctx & (ALLOC_BOUNDARY - 1));
-            ctx = (struct umac_ctx *)((u_char *)ctx + bytes_to_add);
+            ctx = (بنية umac_ctx *)((u_char *)ctx + بایتها_مقصد_جمع_کن);
         }
         ctx->free_ptr = octx;
-        aes_key_setup(key, prf_key);
-        pdf_init(&ctx->pdf, prf_key);
-        uhash_init(&ctx->hash, prf_key);
-        explicit_bzero(prf_key, sizeof(prf_key));
+        aes_کلید_راهاندازی(کلید, prf_کلید);
+        pdf_init(&ctx->pdf, prf_کلید);
+        uhash_init(&ctx->hash, prf_کلید);
+        explicit_bzero(prf_کلید, حجم(prf_کلید));
     }
 
-    return (ctx);
+    أرجع (ctx);
 }
 
 /* ---------------------------------------------------------------------- */
 
-int umac_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8])
+صحيح umac_final(بنية umac_ctx *ctx, u_char برچسب[], ثابت u_char nonce[8])
 /* Incorporate any pending data, pad, and generate tag */
 {
-    uhash_final(&ctx->hash, (u_char *)tag);
-    pdf_gen_xor(&ctx->pdf, (const UINT8 *)nonce, (UINT8 *)tag);
+    uhash_final(&ctx->hash, (u_char *)برچسب);
+    pdf_gen_xor(&ctx->pdf, (ثابت UINT8 *)nonce, (UINT8 *)برچسب);
 
-    return (1);
+    أرجع (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
-int umac_update(struct umac_ctx *ctx, const u_char *input, long len)
+صحيح umac_update(بنية umac_ctx *ctx, ثابت u_char *درون_داد, دراز len)
 /* Given len bytes of data, we parse it into L1_KEY_LEN chunks and   */
 /* hash each one, calling the PDF on the hashed output whenever the hash- */
 /* output buffer is full.                                                 */
 {
-    uhash_update(&ctx->hash, input, len);
-    return (1);
+    uhash_update(&ctx->hash, درون_داد, len);
+    أرجع (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
-int umac(struct umac_ctx *ctx, u_char *input,
-         long len, u_char tag[],
+#إذا 0
+صحيح umac(بنية umac_ctx *ctx, u_char *درون_داد,
+         دراز len, u_char برچسب[],
          u_char nonce[8])
 /* All-in-one version simply calls umac_update() and umac_final().        */
 {
-    uhash(&ctx->hash, input, len, (u_char *)tag);
-    pdf_gen_xor(&ctx->pdf, (UINT8 *)nonce, (UINT8 *)tag);
+    uhash(&ctx->hash, درون_داد, len, (u_char *)برچسب);
+    pdf_gen_xor(&ctx->pdf, (UINT8 *)nonce, (UINT8 *)برچسب);
 
-    return (1);
+    أرجع (1);
 }
-#endif
+#پایان_اگر
 
 /* ---------------------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */

@@ -23,15 +23,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _PORT_IRIX_H
-#define _PORT_IRIX_H
+#اگر_تعریف_نشده پورت_IRIX_H
+#تعریف_کن پورت_IRIX_H
 
-#if defined(WITH_IRIX_PROJECT) || \
+#إذا defined(WITH_IRIX_PROJECT) || \
     defined(WITH_IRIX_JOBS) || \
     defined(WITH_IRIX_ARRAY)
 
-void irix_setusercontext(struct passwd *pw);
+فراغ irix_setusercontext(بنية passwd *pw);
 
-#endif /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */
+#پایان_اگر /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */
 
-#endif /* ! _PORT_IRIX_H */
+#پایان_اگر /* ! _PORT_IRIX_H */

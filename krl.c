@@ -15,35 +15,35 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/tree.h>
-#include <sys/queue.h>
+#ضمن <sys/types.h>
+#ضمن <sys/tree.h>
+#ضمن <sys/queue.h>
 
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
+#ضمن <errno.h>
+#ضمن <limits.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <time.h>
 
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "sshkey.h"
-#include "misc.h"
-#include "log.h"
-#include "digest.h"
-#include "bitmap.h"
-#include "utf8.h"
+#ضمن "sshbuf.h"
+#ضمن "ssherr.h"
+#ضمن "sshkey.h"
+#ضمن "misc.h"
+#ضمن "log.h"
+#ضمن "digest.h"
+#ضمن "bitmap.h"
+#ضمن "utf8.h"
 
-#include "krl.h"
+#ضمن "krl.h"
 
 /* #define DEBUG_KRL */
-#ifdef DEBUG_KRL
+#اگر_تعریف_شده DEBUG_KRL
 # define KRL_DBG(x) debug3_f x
-#else
+#وإلا
 # define KRL_DBG(x)
-#endif
+#پایان_اگر
 
 /*
  * Trees of revoked serial numbers, key IDs and keys. This allows
@@ -51,235 +51,235 @@
  */
 
 /* Tree of serial numbers. XXX make smarter: really need a real sparse bitmap */
-struct revoked_serial {
+بنية revoked_serial {
 	uint64_t lo, hi;
-	RB_ENTRY(revoked_serial) tree_entry;
+	RB_مدخل(revoked_serial) درخت_مدخل;
 };
-static int serial_cmp(struct revoked_serial *a, struct revoked_serial *b);
-RB_HEAD(revoked_serial_tree, revoked_serial);
-RB_GENERATE_STATIC(revoked_serial_tree, revoked_serial, tree_entry, serial_cmp)
+ساكن صحيح serial_cmp(بنية revoked_serial *a, بنية revoked_serial *b);
+RB_سر(revoked_serial_درخت, revoked_serial);
+RB_GENERATE_STATIC(revoked_serial_درخت, revoked_serial, درخت_مدخل, serial_cmp)
 
 /* Tree of key IDs */
-struct revoked_key_id {
-	char *key_id;
-	RB_ENTRY(revoked_key_id) tree_entry;
+بنية revoked_کلید_id {
+	حرف *کلید_id;
+	RB_مدخل(revoked_کلید_id) درخت_مدخل;
 };
-static int key_id_cmp(struct revoked_key_id *a, struct revoked_key_id *b);
-RB_HEAD(revoked_key_id_tree, revoked_key_id);
-RB_GENERATE_STATIC(revoked_key_id_tree, revoked_key_id, tree_entry, key_id_cmp)
+ساكن صحيح کلید_id_cmp(بنية revoked_کلید_id *a, بنية revoked_کلید_id *b);
+RB_سر(revoked_کلید_id_درخت, revoked_کلید_id);
+RB_GENERATE_STATIC(revoked_کلید_id_درخت, revoked_کلید_id, درخت_مدخل, کلید_id_cmp)
 
 /* Tree of blobs (used for keys and fingerprints) */
-struct revoked_blob {
+بنية revoked_blob {
 	u_char *blob;
-	size_t len;
-	RB_ENTRY(revoked_blob) tree_entry;
+	اندازه_t len;
+	RB_مدخل(revoked_blob) درخت_مدخل;
 };
-static int blob_cmp(struct revoked_blob *a, struct revoked_blob *b);
-RB_HEAD(revoked_blob_tree, revoked_blob);
-RB_GENERATE_STATIC(revoked_blob_tree, revoked_blob, tree_entry, blob_cmp)
+ساكن صحيح blob_cmp(بنية revoked_blob *a, بنية revoked_blob *b);
+RB_سر(revoked_blob_درخت, revoked_blob);
+RB_GENERATE_STATIC(revoked_blob_درخت, revoked_blob, درخت_مدخل, blob_cmp)
 
 /* Tracks revoked certs for a single CA */
-struct revoked_certs {
-	struct sshkey *ca_key;
-	struct revoked_serial_tree revoked_serials;
-	struct revoked_key_id_tree revoked_key_ids;
-	TAILQ_ENTRY(revoked_certs) entry;
+بنية revoked_certs {
+	بنية sshkey *ca_کلید;
+	بنية revoked_serial_درخت revoked_serials;
+	بنية revoked_کلید_id_درخت revoked_کلید_ids;
+	TAILQ_ENTRY(revoked_certs) مدخل;
 };
 TAILQ_HEAD(revoked_certs_list, revoked_certs);
 
-struct ssh_krl {
-	uint64_t krl_version;
+بنية ssh_krl {
+	uint64_t krl_نسخه;
 	uint64_t generated_date;
 	uint64_t flags;
-	char *comment;
-	struct revoked_blob_tree revoked_keys;
-	struct revoked_blob_tree revoked_sha1s;
-	struct revoked_blob_tree revoked_sha256s;
-	struct revoked_certs_list revoked_certs;
+	حرف *comment;
+	بنية revoked_blob_درخت revoked_کلیدها;
+	بنية revoked_blob_درخت revoked_sha1s;
+	بنية revoked_blob_درخت revoked_sha256s;
+	بنية revoked_certs_list revoked_certs;
 };
 
 /* Return equal if a and b overlap */
-static int
-serial_cmp(struct revoked_serial *a, struct revoked_serial *b)
+ساكن صحيح
+serial_cmp(بنية revoked_serial *a, بنية revoked_serial *b)
 {
-	if (a->hi >= b->lo && a->lo <= b->hi)
-		return 0;
-	return a->lo < b->lo ? -1 : 1;
+	إذا (a->hi >= b->lo && a->lo <= b->hi)
+		أرجع 0;
+	أرجع a->lo < b->lo ? -1 : 1;
 }
 
-static int
-key_id_cmp(struct revoked_key_id *a, struct revoked_key_id *b)
+ساكن صحيح
+کلید_id_cmp(بنية revoked_کلید_id *a, بنية revoked_کلید_id *b)
 {
-	return strcmp(a->key_id, b->key_id);
+	أرجع strcmp(a->کلید_id, b->کلید_id);
 }
 
-static int
-blob_cmp(struct revoked_blob *a, struct revoked_blob *b)
+ساكن صحيح
+blob_cmp(بنية revoked_blob *a, بنية revoked_blob *b)
 {
-	int r;
+	صحيح r;
 
-	if (a->len != b->len) {
-		if ((r = memcmp(a->blob, b->blob, MINIMUM(a->len, b->len))) != 0)
-			return r;
-		return a->len > b->len ? 1 : -1;
-	} else
-		return memcmp(a->blob, b->blob, a->len);
+	إذا (a->len != b->len) {
+		إذا ((r = memcmp(a->blob, b->blob, MINIMUM(a->len, b->len))) != 0)
+			أرجع r;
+		أرجع a->len > b->len ? 1 : -1;
+	} وإلا
+		أرجع memcmp(a->blob, b->blob, a->len);
 }
 
-struct ssh_krl *
-ssh_krl_init(void)
+بنية ssh_krl *
+ssh_krl_init(فراغ)
 {
-	struct ssh_krl *krl;
+	بنية ssh_krl *krl;
 
-	if ((krl = calloc(1, sizeof(*krl))) == NULL)
-		return NULL;
-	RB_INIT(&krl->revoked_keys);
+	إذا ((krl = حافظه_صفر_بده(1, حجم(*krl))) == عدم)
+		أرجع عدم;
+	RB_INIT(&krl->revoked_کلیدها);
 	RB_INIT(&krl->revoked_sha1s);
 	RB_INIT(&krl->revoked_sha256s);
 	TAILQ_INIT(&krl->revoked_certs);
-	return krl;
+	أرجع krl;
 }
 
-static void
-revoked_certs_free(struct revoked_certs *rc)
+ساكن فراغ
+revoked_certs_free(بنية revoked_certs *rc)
 {
-	struct revoked_serial *rs, *trs;
-	struct revoked_key_id *rki, *trki;
+	بنية revoked_serial *rs, *trs;
+	بنية revoked_کلید_id *rki, *trki;
 
-	if (rc == NULL)
-		return;
-	RB_FOREACH_SAFE(rs, revoked_serial_tree, &rc->revoked_serials, trs) {
-		RB_REMOVE(revoked_serial_tree, &rc->revoked_serials, rs);
-		free(rs);
+	إذا (rc == عدم)
+		أرجع;
+	RB_FOREACH_امن(rs, revoked_serial_درخت, &rc->revoked_serials, trs) {
+		RB_REMOVE(revoked_serial_درخت, &rc->revoked_serials, rs);
+		حرر(rs);
 	}
-	RB_FOREACH_SAFE(rki, revoked_key_id_tree, &rc->revoked_key_ids, trki) {
-		RB_REMOVE(revoked_key_id_tree, &rc->revoked_key_ids, rki);
-		free(rki->key_id);
-		free(rki);
+	RB_FOREACH_امن(rki, revoked_کلید_id_درخت, &rc->revoked_کلید_ids, trki) {
+		RB_REMOVE(revoked_کلید_id_درخت, &rc->revoked_کلید_ids, rki);
+		حرر(rki->کلید_id);
+		حرر(rki);
 	}
-	sshkey_free(rc->ca_key);
-	freezero(rc, sizeof(*rc));
+	sshkey_free(rc->ca_کلید);
+	freezero(rc, حجم(*rc));
 }
 
-void
-ssh_krl_free(struct ssh_krl *krl)
+فراغ
+ssh_krl_free(بنية ssh_krl *krl)
 {
-	struct revoked_blob *rb, *trb;
-	struct revoked_certs *rc, *trc;
+	بنية revoked_blob *rb, *trb;
+	بنية revoked_certs *rc, *trc;
 
-	if (krl == NULL)
-		return;
+	إذا (krl == عدم)
+		أرجع;
 
-	free(krl->comment);
-	RB_FOREACH_SAFE(rb, revoked_blob_tree, &krl->revoked_keys, trb) {
-		RB_REMOVE(revoked_blob_tree, &krl->revoked_keys, rb);
-		free(rb->blob);
-		free(rb);
+	حرر(krl->comment);
+	RB_FOREACH_امن(rb, revoked_blob_درخت, &krl->revoked_کلیدها, trb) {
+		RB_REMOVE(revoked_blob_درخت, &krl->revoked_کلیدها, rb);
+		حرر(rb->blob);
+		حرر(rb);
 	}
-	RB_FOREACH_SAFE(rb, revoked_blob_tree, &krl->revoked_sha1s, trb) {
-		RB_REMOVE(revoked_blob_tree, &krl->revoked_sha1s, rb);
-		free(rb->blob);
-		free(rb);
+	RB_FOREACH_امن(rb, revoked_blob_درخت, &krl->revoked_sha1s, trb) {
+		RB_REMOVE(revoked_blob_درخت, &krl->revoked_sha1s, rb);
+		حرر(rb->blob);
+		حرر(rb);
 	}
-	RB_FOREACH_SAFE(rb, revoked_blob_tree, &krl->revoked_sha256s, trb) {
-		RB_REMOVE(revoked_blob_tree, &krl->revoked_sha256s, rb);
-		free(rb->blob);
-		free(rb);
+	RB_FOREACH_امن(rb, revoked_blob_درخت, &krl->revoked_sha256s, trb) {
+		RB_REMOVE(revoked_blob_درخت, &krl->revoked_sha256s, rb);
+		حرر(rb->blob);
+		حرر(rb);
 	}
-	TAILQ_FOREACH_SAFE(rc, &krl->revoked_certs, entry, trc) {
-		TAILQ_REMOVE(&krl->revoked_certs, rc, entry);
+	TAILQ_FOREACH_امن(rc, &krl->revoked_certs, مدخل, trc) {
+		TAILQ_REMOVE(&krl->revoked_certs, rc, مدخل);
 		revoked_certs_free(rc);
 	}
-	free(krl);
+	حرر(krl);
 }
 
-void
-ssh_krl_set_version(struct ssh_krl *krl, uint64_t version)
+فراغ
+ssh_krl_مجموعه_نسخه(بنية ssh_krl *krl, uint64_t نسخه)
 {
-	krl->krl_version = version;
+	krl->krl_نسخه = نسخه;
 }
 
-int
-ssh_krl_set_comment(struct ssh_krl *krl, const char *comment)
+صحيح
+ssh_krl_مجموعه_comment(بنية ssh_krl *krl, ثابت حرف *comment)
 {
-	free(krl->comment);
-	if ((krl->comment = strdup(comment)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	return 0;
+	حرر(krl->comment);
+	إذا ((krl->comment = strdup(comment)) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
+	أرجع 0;
 }
 
 /*
  * Find the revoked_certs struct for a CA key. If allow_create is set then
  * create a new one in the tree if one did not exist already.
  */
-static int
-revoked_certs_for_ca_key(struct ssh_krl *krl, const struct sshkey *ca_key,
-    struct revoked_certs **rcp, int allow_create)
+ساكن صحيح
+revoked_certs_for_ca_کلید(بنية ssh_krl *krl, ثابت بنية sshkey *ca_کلید,
+    بنية revoked_certs **rcp, صحيح allow_create)
 {
-	struct revoked_certs *rc;
-	int r;
+	بنية revoked_certs *rc;
+	صحيح r;
 
-	*rcp = NULL;
-	TAILQ_FOREACH(rc, &krl->revoked_certs, entry) {
-		if ((ca_key == NULL && rc->ca_key == NULL) ||
-		    sshkey_equal(rc->ca_key, ca_key)) {
+	*rcp = عدم;
+	TAILQ_FOREACH(rc, &krl->revoked_certs, مدخل) {
+		إذا ((ca_کلید == عدم && rc->ca_کلید == عدم) ||
+		    sshkey_equal(rc->ca_کلید, ca_کلید)) {
 			*rcp = rc;
-			return 0;
+			أرجع 0;
 		}
 	}
-	if (!allow_create)
-		return 0;
+	إذا (!allow_create)
+		أرجع 0;
 	/* If this CA doesn't exist in the list then add it now */
-	if ((rc = calloc(1, sizeof(*rc))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (ca_key == NULL)
-		rc->ca_key = NULL;
-	else if ((r = sshkey_from_private(ca_key, &rc->ca_key)) != 0) {
-		free(rc);
-		return r;
+	إذا ((rc = حافظه_صفر_بده(1, حجم(*rc))) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
+	إذا (ca_کلید == عدم)
+		rc->ca_کلید = عدم;
+	وإلا إذا ((r = sshkey_from_خصوصی(ca_کلید, &rc->ca_کلید)) != 0) {
+		حرر(rc);
+		أرجع r;
 	}
 	RB_INIT(&rc->revoked_serials);
-	RB_INIT(&rc->revoked_key_ids);
-	TAILQ_INSERT_TAIL(&krl->revoked_certs, rc, entry);
-	KRL_DBG(("new CA %s", ca_key == NULL ? "*" : sshkey_type(ca_key)));
+	RB_INIT(&rc->revoked_کلید_ids);
+	TAILQ_INSERT_TAIL(&krl->revoked_certs, rc, مدخل);
+	KRL_DBG(("new CA %s", ca_کلید == عدم ? "*" : sshkey_type(ca_کلید)));
 	*rcp = rc;
-	return 0;
+	أرجع 0;
 }
 
-static int
-insert_serial_range(struct revoked_serial_tree *rt, uint64_t lo, uint64_t hi)
+ساكن صحيح
+درج_serial_range(بنية revoked_serial_درخت *rt, uint64_t lo, uint64_t hi)
 {
-	struct revoked_serial rs, *ers, *crs, *irs;
+	بنية revoked_serial rs, *ers, *crs, *irs;
 
 	KRL_DBG(("insert %llu:%llu",
-	    (unsigned long long)lo, (unsigned long long)hi));
-	memset(&rs, 0, sizeof(rs));
+	    (بیعلامت دراز دراز)lo, (بیعلامت دراز دراز)hi));
+	memset(&rs, 0, حجم(rs));
 	rs.lo = lo;
 	rs.hi = hi;
-	ers = RB_NFIND(revoked_serial_tree, rt, &rs);
-	if (ers == NULL || serial_cmp(ers, &rs) != 0) {
+	ers = RB_NFIND(revoked_serial_درخت, rt, &rs);
+	إذا (ers == عدم || serial_cmp(ers, &rs) != 0) {
 		/* No entry matches. Just insert */
-		if ((irs = malloc(sizeof(rs))) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		memcpy(irs, &rs, sizeof(*irs));
-		ers = RB_INSERT(revoked_serial_tree, rt, irs);
-		if (ers != NULL) {
+		إذا ((irs = حافظه_بده(حجم(rs))) == عدم)
+			أرجع SSH_ERR_ALLOC_FAIL;
+		کپی_حافظه(irs, &rs, حجم(*irs));
+		ers = RB_درج(revoked_serial_درخت, rt, irs);
+		إذا (ers != عدم) {
 			KRL_DBG(("bad: ers != NULL"));
 			/* Shouldn't happen */
-			free(irs);
-			return SSH_ERR_INTERNAL_ERROR;
+			حرر(irs);
+			أرجع SSH_ERR_داخلی_ERROR;
 		}
 		ers = irs;
-	} else {
+	} وإلا {
 		KRL_DBG(("overlap found %llu:%llu",
-		    (unsigned long long)ers->lo, (unsigned long long)ers->hi));
+		    (بیعلامت دراز دراز)ers->lo, (بیعلامت دراز دراز)ers->hi));
 		/*
 		 * The inserted entry overlaps an existing one. Grow the
 		 * existing entry.
 		 */
-		if (ers->lo > lo)
+		إذا (ers->lo > lo)
 			ers->lo = lo;
-		if (ers->hi < hi)
+		إذا (ers->hi < hi)
 			ers->hi = hi;
 	}
 
@@ -289,189 +289,189 @@ insert_serial_range(struct revoked_serial_tree *rt, uint64_t lo, uint64_t hi)
 	 */
 
 	/* Check predecessors */
-	while ((crs = RB_PREV(revoked_serial_tree, rt, ers)) != NULL) {
+	طالما ((crs = RB_PREV(revoked_serial_درخت, rt, ers)) != عدم) {
 		KRL_DBG(("pred %llu:%llu",
-		    (unsigned long long)crs->lo, (unsigned long long)crs->hi));
-		if (ers->lo != 0 && crs->hi < ers->lo - 1)
-			break;
+		    (بیعلامت دراز دراز)crs->lo, (بیعلامت دراز دراز)crs->hi));
+		إذا (ers->lo != 0 && crs->hi < ers->lo - 1)
+			اكسر;
 		/* This entry overlaps. */
-		if (crs->lo < ers->lo) {
+		إذا (crs->lo < ers->lo) {
 			ers->lo = crs->lo;
 			KRL_DBG(("pred extend %llu:%llu",
-			    (unsigned long long)ers->lo,
-			    (unsigned long long)ers->hi));
+			    (بیعلامت دراز دراز)ers->lo,
+			    (بیعلامت دراز دراز)ers->hi));
 		}
-		RB_REMOVE(revoked_serial_tree, rt, crs);
-		free(crs);
+		RB_REMOVE(revoked_serial_درخت, rt, crs);
+		حرر(crs);
 	}
 	/* Check successors */
-	while ((crs = RB_NEXT(revoked_serial_tree, rt, ers)) != NULL) {
+	طالما ((crs = RB_بعدی(revoked_serial_درخت, rt, ers)) != عدم) {
 		KRL_DBG(("succ %llu:%llu",
-		    (unsigned long long)crs->lo, (unsigned long long)crs->hi));
-		if (ers->hi != (uint64_t)-1 && crs->lo > ers->hi + 1)
-			break;
+		    (بیعلامت دراز دراز)crs->lo, (بیعلامت دراز دراز)crs->hi));
+		إذا (ers->hi != (uint64_t)-1 && crs->lo > ers->hi + 1)
+			اكسر;
 		/* This entry overlaps. */
-		if (crs->hi > ers->hi) {
+		إذا (crs->hi > ers->hi) {
 			ers->hi = crs->hi;
 			KRL_DBG(("succ extend %llu:%llu",
-			    (unsigned long long)ers->lo,
-			    (unsigned long long)ers->hi));
+			    (بیعلامت دراز دراز)ers->lo,
+			    (بیعلامت دراز دراز)ers->hi));
 		}
-		RB_REMOVE(revoked_serial_tree, rt, crs);
-		free(crs);
+		RB_REMOVE(revoked_serial_درخت, rt, crs);
+		حرر(crs);
 	}
 	KRL_DBG(("done, final %llu:%llu",
-	    (unsigned long long)ers->lo, (unsigned long long)ers->hi));
-	return 0;
+	    (بیعلامت دراز دراز)ers->lo, (بیعلامت دراز دراز)ers->hi));
+	أرجع 0;
 }
 
-int
-ssh_krl_revoke_cert_by_serial(struct ssh_krl *krl, const struct sshkey *ca_key,
+صحيح
+ssh_krl_revoke_cert_by_serial(بنية ssh_krl *krl, ثابت بنية sshkey *ca_کلید,
     uint64_t serial)
 {
-	return ssh_krl_revoke_cert_by_serial_range(krl, ca_key, serial, serial);
+	أرجع ssh_krl_revoke_cert_by_serial_range(krl, ca_کلید, serial, serial);
 }
 
-int
-ssh_krl_revoke_cert_by_serial_range(struct ssh_krl *krl,
-    const struct sshkey *ca_key, uint64_t lo, uint64_t hi)
+صحيح
+ssh_krl_revoke_cert_by_serial_range(بنية ssh_krl *krl,
+    ثابت بنية sshkey *ca_کلید, uint64_t lo, uint64_t hi)
 {
-	struct revoked_certs *rc;
-	int r;
+	بنية revoked_certs *rc;
+	صحيح r;
 
-	if (lo > hi || lo == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = revoked_certs_for_ca_key(krl, ca_key, &rc, 1)) != 0)
-		return r;
-	return insert_serial_range(&rc->revoked_serials, lo, hi);
+	إذا (lo > hi || lo == 0)
+		أرجع SSH_ERR_INVALID_آرگومان;
+	إذا ((r = revoked_certs_for_ca_کلید(krl, ca_کلید, &rc, 1)) != 0)
+		أرجع r;
+	أرجع درج_serial_range(&rc->revoked_serials, lo, hi);
 }
 
-int
-ssh_krl_revoke_cert_by_key_id(struct ssh_krl *krl, const struct sshkey *ca_key,
-    const char *key_id)
+صحيح
+ssh_krl_revoke_cert_by_کلید_id(بنية ssh_krl *krl, ثابت بنية sshkey *ca_کلید,
+    ثابت حرف *کلید_id)
 {
-	struct revoked_key_id *rki, *erki;
-	struct revoked_certs *rc;
-	int r;
+	بنية revoked_کلید_id *rki, *erki;
+	بنية revoked_certs *rc;
+	صحيح r;
 
-	if ((r = revoked_certs_for_ca_key(krl, ca_key, &rc, 1)) != 0)
-		return r;
+	إذا ((r = revoked_certs_for_ca_کلید(krl, ca_کلید, &rc, 1)) != 0)
+		أرجع r;
 
-	KRL_DBG(("revoke %s", key_id));
-	if ((rki = calloc(1, sizeof(*rki))) == NULL ||
-	    (rki->key_id = strdup(key_id)) == NULL) {
-		free(rki);
-		return SSH_ERR_ALLOC_FAIL;
+	KRL_DBG(("revoke %s", کلید_id));
+	إذا ((rki = حافظه_صفر_بده(1, حجم(*rki))) == عدم ||
+	    (rki->کلید_id = strdup(کلید_id)) == عدم) {
+		حرر(rki);
+		أرجع SSH_ERR_ALLOC_FAIL;
 	}
-	erki = RB_INSERT(revoked_key_id_tree, &rc->revoked_key_ids, rki);
-	if (erki != NULL) {
-		free(rki->key_id);
-		free(rki);
+	erki = RB_درج(revoked_کلید_id_درخت, &rc->revoked_کلید_ids, rki);
+	إذا (erki != عدم) {
+		حرر(rki->کلید_id);
+		حرر(rki);
 	}
-	return 0;
+	أرجع 0;
 }
 
 /* Convert "key" to a public key blob without any certificate information */
-static int
-plain_key_blob(const struct sshkey *key, u_char **blob, size_t *blen)
+ساكن صحيح
+plain_کلید_blob(ثابت بنية sshkey *کلید, u_char **blob, اندازه_t *blen)
 {
-	struct sshkey *kcopy;
-	int r;
+	بنية sshkey *kcopy;
+	صحيح r;
 
-	if ((r = sshkey_from_private(key, &kcopy)) != 0)
-		return r;
-	if (sshkey_is_cert(kcopy)) {
-		if ((r = sshkey_drop_cert(kcopy)) != 0) {
+	إذا ((r = sshkey_from_خصوصی(کلید, &kcopy)) != 0)
+		أرجع r;
+	إذا (sshkey_is_cert(kcopy)) {
+		إذا ((r = sshkey_drop_cert(kcopy)) != 0) {
 			sshkey_free(kcopy);
-			return r;
+			أرجع r;
 		}
 	}
-	r = sshkey_to_blob(kcopy, blob, blen);
+	r = sshkey_مقصد_blob(kcopy, blob, blen);
 	sshkey_free(kcopy);
-	return r;
+	أرجع r;
 }
 
 /* Revoke a key blob. Ownership of blob is transferred to the tree */
-static int
-revoke_blob(struct revoked_blob_tree *rbt, u_char *blob, size_t len)
+ساكن صحيح
+revoke_blob(بنية revoked_blob_درخت *rbt, u_char *blob, اندازه_t len)
 {
-	struct revoked_blob *rb, *erb;
+	بنية revoked_blob *rb, *erb;
 
-	if ((rb = calloc(1, sizeof(*rb))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	إذا ((rb = حافظه_صفر_بده(1, حجم(*rb))) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
 	rb->blob = blob;
 	rb->len = len;
-	erb = RB_INSERT(revoked_blob_tree, rbt, rb);
-	if (erb != NULL) {
-		free(rb->blob);
-		free(rb);
+	erb = RB_درج(revoked_blob_درخت, rbt, rb);
+	إذا (erb != عدم) {
+		حرر(rb->blob);
+		حرر(rb);
 	}
-	return 0;
+	أرجع 0;
 }
 
-int
-ssh_krl_revoke_key_explicit(struct ssh_krl *krl, const struct sshkey *key)
+صحيح
+ssh_krl_revoke_کلید_explicit(بنية ssh_krl *krl, ثابت بنية sshkey *کلید)
 {
 	u_char *blob;
-	size_t len;
-	int r;
+	اندازه_t len;
+	صحيح r;
 
-	debug3_f("revoke type %s", sshkey_type(key));
-	if ((r = plain_key_blob(key, &blob, &len)) != 0)
-		return r;
-	return revoke_blob(&krl->revoked_keys, blob, len);
+	debug3_f("revoke type %s", sshkey_type(کلید));
+	إذا ((r = plain_کلید_blob(کلید, &blob, &len)) != 0)
+		أرجع r;
+	أرجع revoke_blob(&krl->revoked_کلیدها, blob, len);
 }
 
-static int
-revoke_by_hash(struct revoked_blob_tree *target, const u_char *p, size_t len)
+ساكن صحيح
+revoke_by_hash(بنية revoked_blob_درخت *هدف, ثابت u_char *p, اندازه_t len)
 {
 	u_char *blob;
-	int r;
+	صحيح r;
 
 	/* need to copy hash, as revoke_blob steals ownership */
-	if ((blob = malloc(len)) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
-	memcpy(blob, p, len);
-	if ((r = revoke_blob(target, blob, len)) != 0) {
-		free(blob);
-		return r;
+	إذا ((blob = حافظه_بده(len)) == عدم)
+		أرجع SSH_ERR_SYSTEM_ERROR;
+	کپی_حافظه(blob, p, len);
+	إذا ((r = revoke_blob(هدف, blob, len)) != 0) {
+		حرر(blob);
+		أرجع r;
 	}
-	return 0;
+	أرجع 0;
 }
 
-int
-ssh_krl_revoke_key_sha1(struct ssh_krl *krl, const u_char *p, size_t len)
+صحيح
+ssh_krl_revoke_کلید_sha1(بنية ssh_krl *krl, ثابت u_char *p, اندازه_t len)
 {
 	debug3_f("revoke by sha1");
-	if (len != 20)
-		return SSH_ERR_INVALID_FORMAT;
-	return revoke_by_hash(&krl->revoked_sha1s, p, len);
+	إذا (len != 20)
+		أرجع SSH_ERR_INVALID_FORMAT;
+	أرجع revoke_by_hash(&krl->revoked_sha1s, p, len);
 }
 
-int
-ssh_krl_revoke_key_sha256(struct ssh_krl *krl, const u_char *p, size_t len)
+صحيح
+ssh_krl_revoke_کلید_sha256(بنية ssh_krl *krl, ثابت u_char *p, اندازه_t len)
 {
 	debug3_f("revoke by sha256");
-	if (len != 32)
-		return SSH_ERR_INVALID_FORMAT;
-	return revoke_by_hash(&krl->revoked_sha256s, p, len);
+	إذا (len != 32)
+		أرجع SSH_ERR_INVALID_FORMAT;
+	أرجع revoke_by_hash(&krl->revoked_sha256s, p, len);
 }
 
-int
-ssh_krl_revoke_key(struct ssh_krl *krl, const struct sshkey *key)
+صحيح
+ssh_krl_revoke_کلید(بنية ssh_krl *krl, ثابت بنية sshkey *کلید)
 {
 	/* XXX replace with SHA256? */
-	if (!sshkey_is_cert(key))
-		return ssh_krl_revoke_key_explicit(krl, key);
+	إذا (!sshkey_is_cert(کلید))
+		أرجع ssh_krl_revoke_کلید_explicit(krl, کلید);
 
-	if (key->cert->serial == 0) {
-		return ssh_krl_revoke_cert_by_key_id(krl,
-		    key->cert->signature_key,
-		    key->cert->key_id);
-	} else {
-		return ssh_krl_revoke_cert_by_serial(krl,
-		    key->cert->signature_key,
-		    key->cert->serial);
+	إذا (کلید->cert->serial == 0) {
+		أرجع ssh_krl_revoke_cert_by_کلید_id(krl,
+		    کلید->cert->signature_کلید,
+		    کلید->cert->کلید_id);
+	} وإلا {
+		أرجع ssh_krl_revoke_cert_by_serial(krl,
+		    کلید->cert->signature_کلید,
+		    کلید->cert->serial);
 	}
 }
 
@@ -482,931 +482,931 @@ ssh_krl_revoke_key(struct ssh_krl *krl, const struct sshkey *key)
  * Applies a mostly-accurate bit cost model to select the section type
  * that will minimise the size of the resultant KRL.
  */
-static int
-choose_next_state(int current_state, uint64_t contig, int final,
-    uint64_t last_gap, uint64_t next_gap, size_t bitmap_len,
-    int *force_new_section)
+ساكن صحيح
+انتخاب_بعدی_state(صحيح current_state, uint64_t contig, صحيح final,
+    uint64_t آخرین_gap, uint64_t بعدی_gap, اندازه_t bitmap_len,
+    صحيح *force_new_section)
 {
-	int new_state;
-	uint64_t cost, cost_list, cost_range, cost_bitmap, cost_bitmap_restart;
+	صحيح new_state;
+	uint64_t هزینه, هزینه_list, هزینه_range, هزینه_bitmap, هزینه_bitmap_restart;
 
 	/*
 	 * Avoid unsigned overflows.
 	 * The limits are high enough to avoid confusing the calculations.
 	 */
 	contig = MINIMUM(contig, 1ULL<<31);
-	last_gap = MINIMUM(last_gap, 1ULL<<31);
-	next_gap = MINIMUM(next_gap, 1ULL<<31);
+	آخرین_gap = MINIMUM(آخرین_gap, 1ULL<<31);
+	بعدی_gap = MINIMUM(بعدی_gap, 1ULL<<31);
 
 	/*
 	 * Calculate the cost to switch from the current state to candidates.
 	 * NB. range sections only ever contain a single range, so their
 	 * switching cost is independent of the current_state.
 	 */
-	cost_list = cost_bitmap = cost_bitmap_restart = 0;
-	cost_range = 8;
-	switch (current_state) {
-	case KRL_SECTION_CERT_SERIAL_LIST:
-		cost_bitmap_restart = cost_bitmap = 8 + 64;
-		break;
-	case KRL_SECTION_CERT_SERIAL_BITMAP:
-		cost_list = 8;
-		cost_bitmap_restart = 8 + 64;
-		break;
-	case KRL_SECTION_CERT_SERIAL_RANGE:
-	case 0:
-		cost_bitmap_restart = cost_bitmap = 8 + 64;
-		cost_list = 8;
+	هزینه_list = هزینه_bitmap = هزینه_bitmap_restart = 0;
+	هزینه_range = 8;
+	بدل (current_state) {
+	حالة KRL_SECTION_CERT_SERIAL_LIST:
+		هزینه_bitmap_restart = هزینه_bitmap = 8 + 64;
+		اكسر;
+	حالة KRL_SECTION_CERT_SERIAL_BITMAP:
+		هزینه_list = 8;
+		هزینه_bitmap_restart = 8 + 64;
+		اكسر;
+	حالة KRL_SECTION_CERT_SERIAL_RANGE:
+	حالة 0:
+		هزینه_bitmap_restart = هزینه_bitmap = 8 + 64;
+		هزینه_list = 8;
 	}
 
 	/* Estimate base cost in bits of each section type */
-	cost_list += 64 * contig + (final ? 0 : 8+64);
-	cost_range += (2 * 64) + (final ? 0 : 8+64);
-	cost_bitmap += last_gap + contig + (final ? 0 : MINIMUM(next_gap, 8+64));
-	cost_bitmap_restart += contig + (final ? 0 : MINIMUM(next_gap, 8+64));
+	هزینه_list += 64 * contig + (final ? 0 : 8+64);
+	هزینه_range += (2 * 64) + (final ? 0 : 8+64);
+	هزینه_bitmap += آخرین_gap + contig + (final ? 0 : MINIMUM(بعدی_gap, 8+64));
+	هزینه_bitmap_restart += contig + (final ? 0 : MINIMUM(بعدی_gap, 8+64));
 
 	/* Convert to byte costs for actual comparison */
-	cost_list = (cost_list + 7) / 8;
-	cost_bitmap = (cost_bitmap + 7) / 8;
-	cost_bitmap_restart = (cost_bitmap_restart + 7) / 8;
-	cost_range = (cost_range + 7) / 8;
+	هزینه_list = (هزینه_list + 7) / 8;
+	هزینه_bitmap = (هزینه_bitmap + 7) / 8;
+	هزینه_bitmap_restart = (هزینه_bitmap_restart + 7) / 8;
+	هزینه_range = (هزینه_range + 7) / 8;
 
 	/* Ensure that we never emit a bitmap larger than sshbuf can handle */
-	if (bitmap_len + cost_bitmap >= SSHBUF_MAX_BIGNUM) {
+	إذا (bitmap_len + هزینه_bitmap >= SSHBUF_MAX_BIGNUM) {
 		KRL_DBG(("bitmap overfull len=%zu cost=%llu max=%u",
-		    bitmap_len, (unsigned long long)cost_bitmap,
+		    bitmap_len, (بیعلامت دراز دراز)هزینه_bitmap,
 		    SSHBUF_MAX_BIGNUM));
-		cost_bitmap = (uint64_t)-1;
+		هزینه_bitmap = (uint64_t)-1;
 	}
 
 	/* Now pick the best choice */
 	*force_new_section = 0;
 	new_state = KRL_SECTION_CERT_SERIAL_BITMAP;
-	cost = cost_bitmap;
-	if (cost_range < cost) {
+	هزینه = هزینه_bitmap;
+	إذا (هزینه_range < هزینه) {
 		new_state = KRL_SECTION_CERT_SERIAL_RANGE;
-		cost = cost_range;
+		هزینه = هزینه_range;
 	}
-	if (cost_list < cost) {
+	إذا (هزینه_list < هزینه) {
 		new_state = KRL_SECTION_CERT_SERIAL_LIST;
-		cost = cost_list;
+		هزینه = هزینه_list;
 	}
-	if (cost_bitmap_restart < cost) {
+	إذا (هزینه_bitmap_restart < هزینه) {
 		new_state = KRL_SECTION_CERT_SERIAL_BITMAP;
 		*force_new_section = 1;
-		cost = cost_bitmap_restart;
+		هزینه = هزینه_bitmap_restart;
 	}
 	KRL_DBG(("contig %llu last_gap %llu next_gap %llu final %d, costs:"
 	    "list %llu range %llu bitmap %llu new bitmap %llu, "
-	    "selected 0x%02x%s", (long long unsigned)contig,
-	    (long long unsigned)last_gap, (long long unsigned)next_gap, final,
-	    (long long unsigned)cost_list, (long long unsigned)cost_range,
-	    (long long unsigned)cost_bitmap,
-	    (long long unsigned)cost_bitmap_restart, new_state,
+	    "selected 0x%02x%s", (دراز دراز بیعلامت)contig,
+	    (دراز دراز بیعلامت)آخرین_gap, (دراز دراز بیعلامت)بعدی_gap, final,
+	    (دراز دراز بیعلامت)هزینه_list, (دراز دراز بیعلامت)هزینه_range,
+	    (دراز دراز بیعلامت)هزینه_bitmap,
+	    (دراز دراز بیعلامت)هزینه_bitmap_restart, new_state,
 	    *force_new_section ? " restart" : ""));
-	return new_state;
+	أرجع new_state;
 }
 
-static int
-put_bitmap(struct sshbuf *buf, struct bitmap *bitmap)
+ساكن صحيح
+put_bitmap(بنية sshbuf *buf, بنية bitmap *bitmap)
 {
-	size_t len;
+	اندازه_t len;
 	u_char *blob;
-	int r;
+	صحيح r;
 
 	len = bitmap_nbytes(bitmap);
-	if ((blob = malloc(len)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (bitmap_to_string(bitmap, blob, len) != 0) {
-		free(blob);
-		return SSH_ERR_INTERNAL_ERROR;
+	إذا ((blob = حافظه_بده(len)) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
+	إذا (bitmap_مقصد_string(bitmap, blob, len) != 0) {
+		حرر(blob);
+		أرجع SSH_ERR_داخلی_ERROR;
 	}
-	r = sshbuf_put_bignum2_bytes(buf, blob, len);
-	free(blob);
-	return r;
+	r = sshbuf_put_bignum2_بایتها(buf, blob, len);
+	حرر(blob);
+	أرجع r;
 }
 
 /* Generate a KRL_SECTION_CERTIFICATES KRL section */
-static int
-revoked_certs_generate(struct revoked_certs *rc, struct sshbuf *buf)
+ساكن صحيح
+revoked_certs_generate(بنية revoked_certs *rc, بنية sshbuf *buf)
 {
-	int final, force_new_sect, r = SSH_ERR_INTERNAL_ERROR;
-	uint64_t i, contig, gap, last = 0, bitmap_start = 0;
-	struct revoked_serial *rs, *nrs;
-	struct revoked_key_id *rki;
-	int next_state, state = 0;
-	size_t bitmap_len;
-	struct sshbuf *sect;
-	struct bitmap *bitmap = NULL;
+	صحيح final, force_new_sect, r = SSH_ERR_داخلی_ERROR;
+	uint64_t i, contig, gap, آخرین = 0, bitmap_شروع = 0;
+	بنية revoked_serial *rs, *nrs;
+	بنية revoked_کلید_id *rki;
+	صحيح بعدی_state, state = 0;
+	اندازه_t bitmap_len;
+	بنية sshbuf *sect;
+	بنية bitmap *bitmap = عدم;
 
-	if ((sect = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	إذا ((sect = sshbuf_new()) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
 
 	/* Store the header: optional CA scope key, reserved */
-	if (rc->ca_key == NULL) {
-		if ((r = sshbuf_put_string(buf, NULL, 0)) != 0)
-			goto out;
-	} else {
-		if ((r = sshkey_puts(rc->ca_key, buf)) != 0)
-			goto out;
+	إذا (rc->ca_کلید == عدم) {
+		إذا ((r = sshbuf_put_string(buf, عدم, 0)) != 0)
+			اذهب بیرون;
+	} وإلا {
+		إذا ((r = sshkey_puts(rc->ca_کلید, buf)) != 0)
+			اذهب بیرون;
 	}
-	if ((r = sshbuf_put_string(buf, NULL, 0)) != 0)
-		goto out;
+	إذا ((r = sshbuf_put_string(buf, عدم, 0)) != 0)
+		اذهب بیرون;
 
 	/* Store the revoked serials.  */
-	for (rs = RB_MIN(revoked_serial_tree, &rc->revoked_serials);
-	     rs != NULL;
-	     rs = RB_NEXT(revoked_serial_tree, &rc->revoked_serials, rs)) {
+	لكل (rs = RB_MIN(revoked_serial_درخت, &rc->revoked_serials);
+	     rs != عدم;
+	     rs = RB_بعدی(revoked_serial_درخت, &rc->revoked_serials, rs)) {
 		KRL_DBG(("serial %llu:%llu state 0x%02x",
-		    (long long unsigned)rs->lo, (long long unsigned)rs->hi,
+		    (دراز دراز بیعلامت)rs->lo, (دراز دراز بیعلامت)rs->hi,
 		    state));
 
 		/* Check contiguous length and gap to next section (if any) */
-		nrs = RB_NEXT(revoked_serial_tree, &rc->revoked_serials, rs);
-		final = nrs == NULL;
-		gap = nrs == NULL ? 0 : nrs->lo - rs->hi;
+		nrs = RB_بعدی(revoked_serial_درخت, &rc->revoked_serials, rs);
+		final = nrs == عدم;
+		gap = nrs == عدم ? 0 : nrs->lo - rs->hi;
 		contig = 1 + (rs->hi - rs->lo);
 
 		bitmap_len = state == KRL_SECTION_CERT_SERIAL_BITMAP ?
 		    bitmap_nbytes(bitmap) : 0;
 
 		/* Choose next state based on these */
-		next_state = choose_next_state(state, contig, final,
-		    state == 0 ? 0 : rs->lo - last, gap, bitmap_len,
+		بعدی_state = انتخاب_بعدی_state(state, contig, final,
+		    state == 0 ? 0 : rs->lo - آخرین, gap, bitmap_len,
 		    &force_new_sect);
 
 		/*
 		 * If the current section is a range section or has a different
 		 * type to the next section, then finish it off now.
 		 */
-		if (state != 0 && (force_new_sect || next_state != state ||
+		إذا (state != 0 && (force_new_sect || بعدی_state != state ||
 		    state == KRL_SECTION_CERT_SERIAL_RANGE)) {
 			KRL_DBG(("finish state 0x%02x", state));
-			switch (state) {
-			case KRL_SECTION_CERT_SERIAL_LIST:
-			case KRL_SECTION_CERT_SERIAL_RANGE:
-				break;
-			case KRL_SECTION_CERT_SERIAL_BITMAP:
-				if ((r = put_bitmap(sect, bitmap)) != 0)
-					goto out;
+			بدل (state) {
+			حالة KRL_SECTION_CERT_SERIAL_LIST:
+			حالة KRL_SECTION_CERT_SERIAL_RANGE:
+				اكسر;
+			حالة KRL_SECTION_CERT_SERIAL_BITMAP:
+				إذا ((r = put_bitmap(sect, bitmap)) != 0)
+					اذهب بیرون;
 				bitmap_free(bitmap);
-				bitmap = NULL;
-				break;
+				bitmap = عدم;
+				اكسر;
 			}
-			if ((r = sshbuf_put_u8(buf, state)) != 0 ||
+			إذا ((r = sshbuf_put_u8(buf, state)) != 0 ||
 			    (r = sshbuf_put_stringb(buf, sect)) != 0)
-				goto out;
+				اذهب بیرون;
 			sshbuf_reset(sect);
 		}
 
 		/* If we are starting a new section then prepare it now */
-		if (next_state != state || force_new_sect) {
+		إذا (بعدی_state != state || force_new_sect) {
 			KRL_DBG(("start state 0x%02x",
-			    next_state));
-			state = next_state;
+			    بعدی_state));
+			state = بعدی_state;
 			sshbuf_reset(sect);
-			switch (state) {
-			case KRL_SECTION_CERT_SERIAL_LIST:
-			case KRL_SECTION_CERT_SERIAL_RANGE:
-				break;
-			case KRL_SECTION_CERT_SERIAL_BITMAP:
-				if ((bitmap = bitmap_new()) == NULL) {
+			بدل (state) {
+			حالة KRL_SECTION_CERT_SERIAL_LIST:
+			حالة KRL_SECTION_CERT_SERIAL_RANGE:
+				اكسر;
+			حالة KRL_SECTION_CERT_SERIAL_BITMAP:
+				إذا ((bitmap = bitmap_new()) == عدم) {
 					r = SSH_ERR_ALLOC_FAIL;
-					goto out;
+					اذهب بیرون;
 				}
-				bitmap_start = rs->lo;
-				if ((r = sshbuf_put_u64(sect,
-				    bitmap_start)) != 0)
-					goto out;
-				break;
+				bitmap_شروع = rs->lo;
+				إذا ((r = sshbuf_put_u64(sect,
+				    bitmap_شروع)) != 0)
+					اذهب بیرون;
+				اكسر;
 			}
 		}
 
 		/* Perform section-specific processing */
-		switch (state) {
-		case KRL_SECTION_CERT_SERIAL_LIST:
-			for (i = 0; i < contig; i++) {
-				if ((r = sshbuf_put_u64(sect, rs->lo + i)) != 0)
-					goto out;
+		بدل (state) {
+		حالة KRL_SECTION_CERT_SERIAL_LIST:
+			لكل (i = 0; i < contig; i++) {
+				إذا ((r = sshbuf_put_u64(sect, rs->lo + i)) != 0)
+					اذهب بیرون;
 			}
-			break;
-		case KRL_SECTION_CERT_SERIAL_RANGE:
-			if ((r = sshbuf_put_u64(sect, rs->lo)) != 0 ||
+			اكسر;
+		حالة KRL_SECTION_CERT_SERIAL_RANGE:
+			إذا ((r = sshbuf_put_u64(sect, rs->lo)) != 0 ||
 			    (r = sshbuf_put_u64(sect, rs->hi)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_CERT_SERIAL_BITMAP:
-			if (rs->lo - bitmap_start > INT_MAX) {
+				اذهب بیرون;
+			اكسر;
+		حالة KRL_SECTION_CERT_SERIAL_BITMAP:
+			إذا (rs->lo - bitmap_شروع > بیشترین_صحیح) {
 				r = SSH_ERR_INVALID_FORMAT;
 				error_f("insane bitmap gap");
-				goto out;
+				اذهب بیرون;
 			}
-			for (i = 0; i < contig; i++) {
-				if (bitmap_set_bit(bitmap,
-				    rs->lo + i - bitmap_start) != 0) {
+			لكل (i = 0; i < contig; i++) {
+				إذا (bitmap_مجموعه_بیت(bitmap,
+				    rs->lo + i - bitmap_شروع) != 0) {
 					r = SSH_ERR_ALLOC_FAIL;
-					goto out;
+					اذهب بیرون;
 				}
 			}
-			break;
+			اكسر;
 		}
-		last = rs->hi;
+		آخرین = rs->hi;
 	}
 	/* Flush the remaining section, if any */
-	if (state != 0) {
+	إذا (state != 0) {
 		KRL_DBG(("serial final flush for state 0x%02x", state));
-		switch (state) {
-		case KRL_SECTION_CERT_SERIAL_LIST:
-		case KRL_SECTION_CERT_SERIAL_RANGE:
-			break;
-		case KRL_SECTION_CERT_SERIAL_BITMAP:
-			if ((r = put_bitmap(sect, bitmap)) != 0)
-				goto out;
+		بدل (state) {
+		حالة KRL_SECTION_CERT_SERIAL_LIST:
+		حالة KRL_SECTION_CERT_SERIAL_RANGE:
+			اكسر;
+		حالة KRL_SECTION_CERT_SERIAL_BITMAP:
+			إذا ((r = put_bitmap(sect, bitmap)) != 0)
+				اذهب بیرون;
 			bitmap_free(bitmap);
-			bitmap = NULL;
-			break;
+			bitmap = عدم;
+			اكسر;
 		}
-		if ((r = sshbuf_put_u8(buf, state)) != 0 ||
+		إذا ((r = sshbuf_put_u8(buf, state)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			اذهب بیرون;
 	}
 	KRL_DBG(("serial done "));
 
 	/* Now output a section for any revocations by key ID */
 	sshbuf_reset(sect);
-	RB_FOREACH(rki, revoked_key_id_tree, &rc->revoked_key_ids) {
-		KRL_DBG(("key ID %s", rki->key_id));
-		if ((r = sshbuf_put_cstring(sect, rki->key_id)) != 0)
-			goto out;
+	RB_FOREACH(rki, revoked_کلید_id_درخت, &rc->revoked_کلید_ids) {
+		KRL_DBG(("key ID %s", rki->کلید_id));
+		إذا ((r = sshbuf_put_cstring(sect, rki->کلید_id)) != 0)
+			اذهب بیرون;
 	}
-	if (sshbuf_len(sect) != 0) {
-		if ((r = sshbuf_put_u8(buf, KRL_SECTION_CERT_KEY_ID)) != 0 ||
+	إذا (sshbuf_len(sect) != 0) {
+		إذا ((r = sshbuf_put_u8(buf, KRL_SECTION_CERT_کلید_ID)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			اذهب بیرون;
 	}
 	r = 0;
- out:
+ بیرون:
 	bitmap_free(bitmap);
 	sshbuf_free(sect);
-	return r;
+	أرجع r;
 }
 
-int
-ssh_krl_to_blob(struct ssh_krl *krl, struct sshbuf *buf)
+صحيح
+ssh_krl_مقصد_blob(بنية ssh_krl *krl, بنية sshbuf *buf)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct revoked_certs *rc;
-	struct revoked_blob *rb;
-	struct sshbuf *sect;
-	u_char *sblob = NULL;
+	صحيح r = SSH_ERR_داخلی_ERROR;
+	بنية revoked_certs *rc;
+	بنية revoked_blob *rb;
+	بنية sshbuf *sect;
+	u_char *sblob = عدم;
 
-	if (krl->generated_date == 0)
-		krl->generated_date = time(NULL);
+	إذا (krl->generated_date == 0)
+		krl->generated_date = time(عدم);
 
-	if ((sect = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	إذا ((sect = sshbuf_new()) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
 
 	/* Store the header */
-	if ((r = sshbuf_put(buf, KRL_MAGIC, sizeof(KRL_MAGIC) - 1)) != 0 ||
-	    (r = sshbuf_put_u32(buf, KRL_FORMAT_VERSION)) != 0 ||
-	    (r = sshbuf_put_u64(buf, krl->krl_version)) != 0 ||
+	إذا ((r = sshbuf_put(buf, KRL_MAGIC, حجم(KRL_MAGIC) - 1)) != 0 ||
+	    (r = sshbuf_put_u32(buf, KRL_FORMAT_نسخه)) != 0 ||
+	    (r = sshbuf_put_u64(buf, krl->krl_نسخه)) != 0 ||
 	    (r = sshbuf_put_u64(buf, krl->generated_date)) != 0 ||
 	    (r = sshbuf_put_u64(buf, krl->flags)) != 0 ||
-	    (r = sshbuf_put_string(buf, NULL, 0)) != 0 ||
+	    (r = sshbuf_put_string(buf, عدم, 0)) != 0 ||
 	    (r = sshbuf_put_cstring(buf, krl->comment)) != 0)
-		goto out;
+		اذهب بیرون;
 
 	/* Store sections for revoked certificates */
-	TAILQ_FOREACH(rc, &krl->revoked_certs, entry) {
+	TAILQ_FOREACH(rc, &krl->revoked_certs, مدخل) {
 		sshbuf_reset(sect);
-		if ((r = revoked_certs_generate(rc, sect)) != 0)
-			goto out;
-		if ((r = sshbuf_put_u8(buf, KRL_SECTION_CERTIFICATES)) != 0 ||
+		إذا ((r = revoked_certs_generate(rc, sect)) != 0)
+			اذهب بیرون;
+		إذا ((r = sshbuf_put_u8(buf, KRL_SECTION_CERTIFICATES)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			اذهب بیرون;
 	}
 
 	/* Finally, output sections for revocations by public key/hash */
 	sshbuf_reset(sect);
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_keys) {
+	RB_FOREACH(rb, revoked_blob_درخت, &krl->revoked_کلیدها) {
 		KRL_DBG(("key len %zu ", rb->len));
-		if ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
-			goto out;
+		إذا ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
+			اذهب بیرون;
 	}
-	if (sshbuf_len(sect) != 0) {
-		if ((r = sshbuf_put_u8(buf, KRL_SECTION_EXPLICIT_KEY)) != 0 ||
+	إذا (sshbuf_len(sect) != 0) {
+		إذا ((r = sshbuf_put_u8(buf, KRL_SECTION_EXPLICIT_کلید)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			اذهب بیرون;
 	}
 	sshbuf_reset(sect);
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha1s) {
+	RB_FOREACH(rb, revoked_blob_درخت, &krl->revoked_sha1s) {
 		KRL_DBG(("hash len %zu ", rb->len));
-		if ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
-			goto out;
+		إذا ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
+			اذهب بیرون;
 	}
-	if (sshbuf_len(sect) != 0) {
-		if ((r = sshbuf_put_u8(buf,
+	إذا (sshbuf_len(sect) != 0) {
+		إذا ((r = sshbuf_put_u8(buf,
 		    KRL_SECTION_FINGERPRINT_SHA1)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			اذهب بیرون;
 	}
 	sshbuf_reset(sect);
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha256s) {
+	RB_FOREACH(rb, revoked_blob_درخت, &krl->revoked_sha256s) {
 		KRL_DBG(("hash len %zu ", rb->len));
-		if ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
-			goto out;
+		إذا ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
+			اذهب بیرون;
 	}
-	if (sshbuf_len(sect) != 0) {
-		if ((r = sshbuf_put_u8(buf,
+	إذا (sshbuf_len(sect) != 0) {
+		إذا ((r = sshbuf_put_u8(buf,
 		    KRL_SECTION_FINGERPRINT_SHA256)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			اذهب بیرون;
 	}
 	/* success */
 	r = 0;
- out:
-	free(sblob);
+ بیرون:
+	حرر(sblob);
 	sshbuf_free(sect);
-	return r;
+	أرجع r;
 }
 
-static void
-format_timestamp(uint64_t timestamp, char *ts, size_t nts)
+ساكن فراغ
+format_timestamp(uint64_t timestamp, حرف *ts, اندازه_t nts)
 {
 	time_t t;
-	struct tm *tm;
+	بنية tm *tm;
 
 	t = timestamp;
 	tm = localtime(&t);
-	if (tm == NULL)
+	إذا (tm == عدم)
 		strlcpy(ts, "<INVALID>", nts);
-	else {
+	وإلا {
 		*ts = '\0';
 		strftime(ts, nts, "%Y%m%dT%H%M%S", tm);
 	}
 }
 
-static int
-cert_extension_subsection(struct sshbuf *subsect, struct ssh_krl *krl)
+ساكن صحيح
+cert_extension_subsection(بنية sshbuf *subsect, بنية ssh_krl *krl)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	صحيح r = SSH_ERR_داخلی_ERROR;
 	u_char critical = 1;
-	struct sshbuf *value = NULL;
-	char *name = NULL;
+	بنية sshbuf *مقدار = عدم;
+	حرف *name = عدم;
 
-	if ((r = sshbuf_get_cstring(subsect, &name, NULL)) != 0 ||
+	إذا ((r = sshbuf_get_cstring(subsect, &name, عدم)) != 0 ||
 	    (r = sshbuf_get_u8(subsect, &critical)) != 0 ||
-	    (r = sshbuf_froms(subsect, &value)) != 0) {
+	    (r = sshbuf_froms(subsect, &مقدار)) != 0) {
 		debug_fr(r, "parse");
 		error("KRL has invalid certificate extension subsection");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بیرون;
 	}
-	if (sshbuf_len(subsect) != 0) {
+	إذا (sshbuf_len(subsect) != 0) {
 		error("KRL has invalid certificate extension subsection: "
 		    "trailing data");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بیرون;
 	}
 	debug_f("cert extension %s critical %u len %zu",
-	    name, critical, sshbuf_len(value));
+	    name, critical, sshbuf_len(مقدار));
 	/* no extensions are currently supported */
-	if (critical) {
+	إذا (critical) {
 		error("KRL contains unsupported critical certificate "
 		    "subsection \"%s\"", name);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		اذهب بیرون;
 	}
 	/* success */
 	r = 0;
- out:
-	free(name);
-	sshbuf_free(value);
-	return r;
+ بیرون:
+	حرر(name);
+	sshbuf_free(مقدار);
+	أرجع r;
 }
 
-static int
-parse_revoked_certs(struct sshbuf *buf, struct ssh_krl *krl)
+ساكن صحيح
+parse_revoked_certs(بنية sshbuf *buf, بنية ssh_krl *krl)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	صحيح r = SSH_ERR_داخلی_ERROR;
 	u_char type;
-	const u_char *blob;
-	size_t blen, nbits;
-	struct sshbuf *subsect = NULL;
+	ثابت u_char *blob;
+	اندازه_t blen, nbits;
+	بنية sshbuf *subsect = عدم;
 	uint64_t serial, serial_lo, serial_hi;
-	struct bitmap *bitmap = NULL;
-	char *key_id = NULL;
-	struct sshkey *ca_key = NULL;
+	بنية bitmap *bitmap = عدم;
+	حرف *کلید_id = عدم;
+	بنية sshkey *ca_کلید = عدم;
 
-	if ((subsect = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	إذا ((subsect = sshbuf_new()) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
 
 	/* Header: key, reserved */
-	if ((r = sshbuf_get_string_direct(buf, &blob, &blen)) != 0 ||
+	إذا ((r = sshbuf_get_string_مستقیم(buf, &blob, &blen)) != 0 ||
 	    (r = sshbuf_skip_string(buf)) != 0)
-		goto out;
-	if (blen != 0 && (r = sshkey_from_blob(blob, blen, &ca_key)) != 0)
-		goto out;
+		اذهب بیرون;
+	إذا (blen != 0 && (r = sshkey_from_blob(blob, blen, &ca_کلید)) != 0)
+		اذهب بیرون;
 
-	while (sshbuf_len(buf) > 0) {
+	طالما (sshbuf_len(buf) > 0) {
 		sshbuf_free(subsect);
-		subsect = NULL;
-		if ((r = sshbuf_get_u8(buf, &type)) != 0 ||
+		subsect = عدم;
+		إذا ((r = sshbuf_get_u8(buf, &type)) != 0 ||
 		    (r = sshbuf_froms(buf, &subsect)) != 0)
-			goto out;
+			اذهب بیرون;
 		KRL_DBG(("subsection type 0x%02x", type));
 		/* sshbuf_dump(subsect, stderr); */
 
-		switch (type) {
-		case KRL_SECTION_CERT_SERIAL_LIST:
-			while (sshbuf_len(subsect) > 0) {
-				if ((r = sshbuf_get_u64(subsect, &serial)) != 0)
-					goto out;
-				if ((r = ssh_krl_revoke_cert_by_serial(krl,
-				    ca_key, serial)) != 0)
-					goto out;
+		بدل (type) {
+		حالة KRL_SECTION_CERT_SERIAL_LIST:
+			طالما (sshbuf_len(subsect) > 0) {
+				إذا ((r = sshbuf_get_u64(subsect, &serial)) != 0)
+					اذهب بیرون;
+				إذا ((r = ssh_krl_revoke_cert_by_serial(krl,
+				    ca_کلید, serial)) != 0)
+					اذهب بیرون;
 			}
-			break;
-		case KRL_SECTION_CERT_SERIAL_RANGE:
-			if ((r = sshbuf_get_u64(subsect, &serial_lo)) != 0 ||
+			اكسر;
+		حالة KRL_SECTION_CERT_SERIAL_RANGE:
+			إذا ((r = sshbuf_get_u64(subsect, &serial_lo)) != 0 ||
 			    (r = sshbuf_get_u64(subsect, &serial_hi)) != 0)
-				goto out;
-			if ((r = ssh_krl_revoke_cert_by_serial_range(krl,
-			    ca_key, serial_lo, serial_hi)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_CERT_SERIAL_BITMAP:
-			if ((bitmap = bitmap_new()) == NULL) {
+				اذهب بیرون;
+			إذا ((r = ssh_krl_revoke_cert_by_serial_range(krl,
+			    ca_کلید, serial_lo, serial_hi)) != 0)
+				اذهب بیرون;
+			اكسر;
+		حالة KRL_SECTION_CERT_SERIAL_BITMAP:
+			إذا ((bitmap = bitmap_new()) == عدم) {
 				r = SSH_ERR_ALLOC_FAIL;
-				goto out;
+				اذهب بیرون;
 			}
-			if ((r = sshbuf_get_u64(subsect, &serial_lo)) != 0 ||
-			    (r = sshbuf_get_bignum2_bytes_direct(subsect,
+			إذا ((r = sshbuf_get_u64(subsect, &serial_lo)) != 0 ||
+			    (r = sshbuf_get_bignum2_بایتها_مستقیم(subsect,
 			    &blob, &blen)) != 0)
-				goto out;
-			if (bitmap_from_string(bitmap, blob, blen) != 0) {
+				اذهب بیرون;
+			إذا (bitmap_from_string(bitmap, blob, blen) != 0) {
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				اذهب بیرون;
 			}
 			nbits = bitmap_nbits(bitmap);
-			for (serial = 0; serial < (uint64_t)nbits; serial++) {
-				if (serial > 0 && serial_lo + serial == 0) {
+			لكل (serial = 0; serial < (uint64_t)nbits; serial++) {
+				إذا (serial > 0 && serial_lo + serial == 0) {
 					error_f("bitmap wraps u64");
 					r = SSH_ERR_INVALID_FORMAT;
-					goto out;
+					اذهب بیرون;
 				}
-				if (!bitmap_test_bit(bitmap, serial))
-					continue;
-				if ((r = ssh_krl_revoke_cert_by_serial(krl,
-				    ca_key, serial_lo + serial)) != 0)
-					goto out;
+				إذا (!bitmap_test_بیت(bitmap, serial))
+					استمر;
+				إذا ((r = ssh_krl_revoke_cert_by_serial(krl,
+				    ca_کلید, serial_lo + serial)) != 0)
+					اذهب بیرون;
 			}
 			bitmap_free(bitmap);
-			bitmap = NULL;
-			break;
-		case KRL_SECTION_CERT_KEY_ID:
-			while (sshbuf_len(subsect) > 0) {
-				if ((r = sshbuf_get_cstring(subsect,
-				    &key_id, NULL)) != 0)
-					goto out;
-				if ((r = ssh_krl_revoke_cert_by_key_id(krl,
-				    ca_key, key_id)) != 0)
-					goto out;
-				free(key_id);
-				key_id = NULL;
+			bitmap = عدم;
+			اكسر;
+		حالة KRL_SECTION_CERT_کلید_ID:
+			طالما (sshbuf_len(subsect) > 0) {
+				إذا ((r = sshbuf_get_cstring(subsect,
+				    &کلید_id, عدم)) != 0)
+					اذهب بیرون;
+				إذا ((r = ssh_krl_revoke_cert_by_کلید_id(krl,
+				    ca_کلید, کلید_id)) != 0)
+					اذهب بیرون;
+				حرر(کلید_id);
+				کلید_id = عدم;
 			}
-			break;
-		case KRL_SECTION_CERT_EXTENSION:
-			if ((r = cert_extension_subsection(subsect, krl)) != 0)
-				goto out;
-			break;
-		default:
+			اكسر;
+		حالة KRL_SECTION_CERT_EXTENSION:
+			إذا ((r = cert_extension_subsection(subsect, krl)) != 0)
+				اذهب بیرون;
+			اكسر;
+		افتراضي:
 			error("Unsupported KRL certificate section %u", type);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			اذهب بیرون;
 		}
-		if (sshbuf_len(subsect) > 0) {
+		إذا (sshbuf_len(subsect) > 0) {
 			error("KRL certificate section contains unparsed data");
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			اذهب بیرون;
 		}
 	}
 
 	r = 0;
- out:
-	if (bitmap != NULL)
+ بیرون:
+	إذا (bitmap != عدم)
 		bitmap_free(bitmap);
-	free(key_id);
-	sshkey_free(ca_key);
+	حرر(کلید_id);
+	sshkey_free(ca_کلید);
 	sshbuf_free(subsect);
-	return r;
+	أرجع r;
 }
 
-static int
-blob_section(struct sshbuf *sect, struct revoked_blob_tree *target_tree,
-    size_t expected_len)
+ساكن صحيح
+blob_section(بنية sshbuf *sect, بنية revoked_blob_درخت *هدف_درخت,
+    اندازه_t expected_len)
 {
-	u_char *rdata = NULL;
-	size_t rlen = 0;
-	int r;
+	u_char *rdata = عدم;
+	اندازه_t rlen = 0;
+	صحيح r;
 
-	while (sshbuf_len(sect) > 0) {
-		if ((r = sshbuf_get_string(sect, &rdata, &rlen)) != 0)
-			return r;
-		if (expected_len != 0 && rlen != expected_len) {
+	طالما (sshbuf_len(sect) > 0) {
+		إذا ((r = sshbuf_get_string(sect, &rdata, &rlen)) != 0)
+			أرجع r;
+		إذا (expected_len != 0 && rlen != expected_len) {
 			error_f("bad length");
-			free(rdata);
-			return SSH_ERR_INVALID_FORMAT;
+			حرر(rdata);
+			أرجع SSH_ERR_INVALID_FORMAT;
 		}
-		if ((r = revoke_blob(target_tree, rdata, rlen)) != 0) {
-			free(rdata);
-			return r;
+		إذا ((r = revoke_blob(هدف_درخت, rdata, rlen)) != 0) {
+			حرر(rdata);
+			أرجع r;
 		}
 	}
-	return 0;
+	أرجع 0;
 }
 
-static int
-extension_section(struct sshbuf *sect, struct ssh_krl *krl)
+ساكن صحيح
+extension_section(بنية sshbuf *sect, بنية ssh_krl *krl)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	صحيح r = SSH_ERR_داخلی_ERROR;
 	u_char critical = 1;
-	struct sshbuf *value = NULL;
-	char *name = NULL;
+	بنية sshbuf *مقدار = عدم;
+	حرف *name = عدم;
 
-	if ((r = sshbuf_get_cstring(sect, &name, NULL)) != 0 ||
+	إذا ((r = sshbuf_get_cstring(sect, &name, عدم)) != 0 ||
 	    (r = sshbuf_get_u8(sect, &critical)) != 0 ||
-	    (r = sshbuf_froms(sect, &value)) != 0) {
+	    (r = sshbuf_froms(sect, &مقدار)) != 0) {
 		debug_fr(r, "parse");
 		error("KRL has invalid extension section");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بیرون;
 	}
-	if (sshbuf_len(sect) != 0) {
+	إذا (sshbuf_len(sect) != 0) {
 		error("KRL has invalid extension section: trailing data");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بیرون;
 	}
 	debug_f("extension %s critical %u len %zu",
-	    name, critical, sshbuf_len(value));
+	    name, critical, sshbuf_len(مقدار));
 	/* no extensions are currently supported */
-	if (critical) {
+	إذا (critical) {
 		error("KRL contains unsupported critical section \"%s\"", name);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		اذهب بیرون;
 	}
 	/* success */
 	r = 0;
- out:
-	free(name);
-	sshbuf_free(value);
-	return r;
+ بیرون:
+	حرر(name);
+	sshbuf_free(مقدار);
+	أرجع r;
 }
 
 /* Attempt to parse a KRL */
-int
-ssh_krl_from_blob(struct sshbuf *buf, struct ssh_krl **krlp)
+صحيح
+ssh_krl_from_blob(بنية sshbuf *buf, بنية ssh_krl **krlp)
 {
-	struct sshbuf *copy = NULL, *sect = NULL;
-	struct ssh_krl *krl = NULL;
-	char timestamp[64];
-	int r = SSH_ERR_INTERNAL_ERROR;
+	بنية sshbuf *copy = عدم, *sect = عدم;
+	بنية ssh_krl *krl = عدم;
+	حرف timestamp[64];
+	صحيح r = SSH_ERR_داخلی_ERROR;
 	u_char type;
-	u_int format_version;
+	u_int format_نسخه;
 
-	*krlp = NULL;
+	*krlp = عدم;
 
 	/* KRL must begin with magic string */
-	if ((r = sshbuf_cmp(buf, 0, KRL_MAGIC, sizeof(KRL_MAGIC) - 1)) != 0) {
+	إذا ((r = sshbuf_cmp(buf, 0, KRL_MAGIC, حجم(KRL_MAGIC) - 1)) != 0) {
 		debug2_f("bad KRL magic header");
-		return SSH_ERR_KRL_BAD_MAGIC;
+		أرجع SSH_ERR_KRL_BAD_MAGIC;
 	}
 
-	if ((krl = ssh_krl_init()) == NULL) {
+	إذا ((krl = ssh_krl_init()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
 		error_f("alloc failed");
-		goto out;
+		اذهب بیرون;
 	}
 	/* Don't modify buffer */
-	if ((copy = sshbuf_fromb(buf)) == NULL) {
+	إذا ((copy = sshbuf_fromb(buf)) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب بیرون;
 	}
-	if ((r = sshbuf_consume(copy, sizeof(KRL_MAGIC) - 1)) != 0 ||
-	    (r = sshbuf_get_u32(copy, &format_version)) != 0)
-		goto out;
-	if (format_version != KRL_FORMAT_VERSION) {
-		error_f("unsupported KRL format version %u", format_version);
+	إذا ((r = sshbuf_consume(copy, حجم(KRL_MAGIC) - 1)) != 0 ||
+	    (r = sshbuf_get_u32(copy, &format_نسخه)) != 0)
+		اذهب بیرون;
+	إذا (format_نسخه != KRL_FORMAT_نسخه) {
+		error_f("unsupported KRL format version %u", format_نسخه);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بیرون;
 	}
-	if ((r = sshbuf_get_u64(copy, &krl->krl_version)) != 0 ||
+	إذا ((r = sshbuf_get_u64(copy, &krl->krl_نسخه)) != 0 ||
 	    (r = sshbuf_get_u64(copy, &krl->generated_date)) != 0 ||
 	    (r = sshbuf_get_u64(copy, &krl->flags)) != 0 ||
 	    (r = sshbuf_skip_string(copy)) != 0 ||
-	    (r = sshbuf_get_cstring(copy, &krl->comment, NULL)) != 0) {
+	    (r = sshbuf_get_cstring(copy, &krl->comment, عدم)) != 0) {
 		error_fr(r, "parse KRL header");
-		goto out;
+		اذهب بیرون;
 	}
-	format_timestamp(krl->generated_date, timestamp, sizeof(timestamp));
+	format_timestamp(krl->generated_date, timestamp, حجم(timestamp));
 	debug("KRL version %llu generated at %s%s%s",
-	    (long long unsigned)krl->krl_version, timestamp,
+	    (دراز دراز بیعلامت)krl->krl_نسخه, timestamp,
 	    *krl->comment ? ": " : "", krl->comment);
 
 	/* Parse and load the KRL sections. */
-	while (sshbuf_len(copy) > 0) {
+	طالما (sshbuf_len(copy) > 0) {
 		sshbuf_free(sect);
-		sect = NULL;
-		if ((r = sshbuf_get_u8(copy, &type)) != 0 ||
+		sect = عدم;
+		إذا ((r = sshbuf_get_u8(copy, &type)) != 0 ||
 		    (r = sshbuf_froms(copy, &sect)) != 0)
-			goto out;
+			اذهب بیرون;
 		KRL_DBG(("section 0x%02x", type));
 
-		switch (type) {
-		case KRL_SECTION_CERTIFICATES:
-			if ((r = parse_revoked_certs(sect, krl)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_EXPLICIT_KEY:
-			if ((r = blob_section(sect,
-			    &krl->revoked_keys, 0)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_FINGERPRINT_SHA1:
-			if ((r = blob_section(sect,
+		بدل (type) {
+		حالة KRL_SECTION_CERTIFICATES:
+			إذا ((r = parse_revoked_certs(sect, krl)) != 0)
+				اذهب بیرون;
+			اكسر;
+		حالة KRL_SECTION_EXPLICIT_کلید:
+			إذا ((r = blob_section(sect,
+			    &krl->revoked_کلیدها, 0)) != 0)
+				اذهب بیرون;
+			اكسر;
+		حالة KRL_SECTION_FINGERPRINT_SHA1:
+			إذا ((r = blob_section(sect,
 			    &krl->revoked_sha1s, 20)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_FINGERPRINT_SHA256:
-			if ((r = blob_section(sect,
+				اذهب بیرون;
+			اكسر;
+		حالة KRL_SECTION_FINGERPRINT_SHA256:
+			إذا ((r = blob_section(sect,
 			    &krl->revoked_sha256s, 32)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_EXTENSION:
-			if ((r = extension_section(sect, krl)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_SIGNATURE:
+				اذهب بیرون;
+			اكسر;
+		حالة KRL_SECTION_EXTENSION:
+			إذا ((r = extension_section(sect, krl)) != 0)
+				اذهب بیرون;
+			اكسر;
+		حالة KRL_SECTION_SIGNATURE:
 			/* Handled above, but still need to stay in synch */
 			sshbuf_free(sect);
-			sect = NULL;
-			if ((r = sshbuf_skip_string(copy)) != 0)
-				goto out;
-			break;
-		default:
+			sect = عدم;
+			إذا ((r = sshbuf_skip_string(copy)) != 0)
+				اذهب بیرون;
+			اكسر;
+		افتراضي:
 			error("Unsupported KRL section %u", type);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			اذهب بیرون;
 		}
-		if (sect != NULL && sshbuf_len(sect) > 0) {
+		إذا (sect != عدم && sshbuf_len(sect) > 0) {
 			error("KRL section contains unparsed data");
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			اذهب بیرون;
 		}
 	}
 
 	/* Success */
 	*krlp = krl;
 	r = 0;
- out:
-	if (r != 0)
+ بیرون:
+	إذا (r != 0)
 		ssh_krl_free(krl);
 	sshbuf_free(copy);
 	sshbuf_free(sect);
-	return r;
+	أرجع r;
 }
 
 /* Checks certificate serial number and key ID revocation */
-static int
-is_cert_revoked(const struct sshkey *key, struct revoked_certs *rc)
+ساكن صحيح
+is_cert_revoked(ثابت بنية sshkey *کلید, بنية revoked_certs *rc)
 {
-	struct revoked_serial rs, *ers;
-	struct revoked_key_id rki, *erki;
+	بنية revoked_serial rs, *ers;
+	بنية revoked_کلید_id rki, *erki;
 
 	/* Check revocation by cert key ID */
-	memset(&rki, 0, sizeof(rki));
-	rki.key_id = key->cert->key_id;
-	erki = RB_FIND(revoked_key_id_tree, &rc->revoked_key_ids, &rki);
-	if (erki != NULL) {
+	memset(&rki, 0, حجم(rki));
+	rki.کلید_id = کلید->cert->کلید_id;
+	erki = RB_پیدا_کن(revoked_کلید_id_درخت, &rc->revoked_کلید_ids, &rki);
+	إذا (erki != عدم) {
 		KRL_DBG(("revoked by key ID"));
-		return SSH_ERR_KEY_REVOKED;
+		أرجع SSH_ERR_کلید_REVOKED;
 	}
 
 	/*
 	 * Zero serials numbers are ignored (it's the default when the
 	 * CA doesn't specify one).
 	 */
-	if (key->cert->serial == 0)
-		return 0;
+	إذا (کلید->cert->serial == 0)
+		أرجع 0;
 
-	memset(&rs, 0, sizeof(rs));
-	rs.lo = rs.hi = key->cert->serial;
-	ers = RB_FIND(revoked_serial_tree, &rc->revoked_serials, &rs);
-	if (ers != NULL) {
+	memset(&rs, 0, حجم(rs));
+	rs.lo = rs.hi = کلید->cert->serial;
+	ers = RB_پیدا_کن(revoked_serial_درخت, &rc->revoked_serials, &rs);
+	إذا (ers != عدم) {
 		KRL_DBG(("revoked serial %llu matched %llu:%llu",
-		    (unsigned long long)key->cert->serial,
-		    (unsigned long long)ers->lo,
-		    (unsigned long long)ers->hi));
-		return SSH_ERR_KEY_REVOKED;
+		    (بیعلامت دراز دراز)کلید->cert->serial,
+		    (بیعلامت دراز دراز)ers->lo,
+		    (بیعلامت دراز دراز)ers->hi));
+		أرجع SSH_ERR_کلید_REVOKED;
 	}
-	return 0;
+	أرجع 0;
 }
 
 /* Checks whether a given key/cert is revoked. Does not check its CA */
-static int
-is_key_revoked(struct ssh_krl *krl, const struct sshkey *key)
+ساكن صحيح
+is_کلید_revoked(بنية ssh_krl *krl, ثابت بنية sshkey *کلید)
 {
-	struct revoked_blob rb, *erb;
-	struct revoked_certs *rc;
-	int r;
+	بنية revoked_blob rb, *erb;
+	بنية revoked_certs *rc;
+	صحيح r;
 
 	/* Check explicitly revoked hashes first */
-	memset(&rb, 0, sizeof(rb));
-	if ((r = sshkey_fingerprint_raw(key, SSH_DIGEST_SHA1,
+	memset(&rb, 0, حجم(rb));
+	إذا ((r = sshkey_fingerprint_raw(کلید, SSH_DIGEST_SHA1,
 	    &rb.blob, &rb.len)) != 0)
-		return r;
-	erb = RB_FIND(revoked_blob_tree, &krl->revoked_sha1s, &rb);
-	free(rb.blob);
-	if (erb != NULL) {
+		أرجع r;
+	erb = RB_پیدا_کن(revoked_blob_درخت, &krl->revoked_sha1s, &rb);
+	حرر(rb.blob);
+	إذا (erb != عدم) {
 		KRL_DBG(("revoked by key SHA1"));
-		return SSH_ERR_KEY_REVOKED;
+		أرجع SSH_ERR_کلید_REVOKED;
 	}
-	memset(&rb, 0, sizeof(rb));
-	if ((r = sshkey_fingerprint_raw(key, SSH_DIGEST_SHA256,
+	memset(&rb, 0, حجم(rb));
+	إذا ((r = sshkey_fingerprint_raw(کلید, SSH_DIGEST_SHA256,
 	    &rb.blob, &rb.len)) != 0)
-		return r;
-	erb = RB_FIND(revoked_blob_tree, &krl->revoked_sha256s, &rb);
-	free(rb.blob);
-	if (erb != NULL) {
+		أرجع r;
+	erb = RB_پیدا_کن(revoked_blob_درخت, &krl->revoked_sha256s, &rb);
+	حرر(rb.blob);
+	إذا (erb != عدم) {
 		KRL_DBG(("revoked by key SHA256"));
-		return SSH_ERR_KEY_REVOKED;
+		أرجع SSH_ERR_کلید_REVOKED;
 	}
 
 	/* Next, explicit keys */
-	memset(&rb, 0, sizeof(rb));
-	if ((r = plain_key_blob(key, &rb.blob, &rb.len)) != 0)
-		return r;
-	erb = RB_FIND(revoked_blob_tree, &krl->revoked_keys, &rb);
-	free(rb.blob);
-	if (erb != NULL) {
+	memset(&rb, 0, حجم(rb));
+	إذا ((r = plain_کلید_blob(کلید, &rb.blob, &rb.len)) != 0)
+		أرجع r;
+	erb = RB_پیدا_کن(revoked_blob_درخت, &krl->revoked_کلیدها, &rb);
+	حرر(rb.blob);
+	إذا (erb != عدم) {
 		KRL_DBG(("revoked by explicit key"));
-		return SSH_ERR_KEY_REVOKED;
+		أرجع SSH_ERR_کلید_REVOKED;
 	}
 
-	if (!sshkey_is_cert(key))
-		return 0;
+	إذا (!sshkey_is_cert(کلید))
+		أرجع 0;
 
 	/* Check cert revocation for the specified CA */
-	if ((r = revoked_certs_for_ca_key(krl, key->cert->signature_key,
+	إذا ((r = revoked_certs_for_ca_کلید(krl, کلید->cert->signature_کلید,
 	    &rc, 0)) != 0)
-		return r;
-	if (rc != NULL) {
-		if ((r = is_cert_revoked(key, rc)) != 0)
-			return r;
+		أرجع r;
+	إذا (rc != عدم) {
+		إذا ((r = is_cert_revoked(کلید, rc)) != 0)
+			أرجع r;
 	}
 	/* Check cert revocation for the wildcard CA */
-	if ((r = revoked_certs_for_ca_key(krl, NULL, &rc, 0)) != 0)
-		return r;
-	if (rc != NULL) {
-		if ((r = is_cert_revoked(key, rc)) != 0)
-			return r;
+	إذا ((r = revoked_certs_for_ca_کلید(krl, عدم, &rc, 0)) != 0)
+		أرجع r;
+	إذا (rc != عدم) {
+		إذا ((r = is_cert_revoked(کلید, rc)) != 0)
+			أرجع r;
 	}
 
-	KRL_DBG(("%llu no match", (unsigned long long)key->cert->serial));
-	return 0;
+	KRL_DBG(("%llu no match", (بیعلامت دراز دراز)کلید->cert->serial));
+	أرجع 0;
 }
 
-int
-ssh_krl_check_key(struct ssh_krl *krl, const struct sshkey *key)
+صحيح
+ssh_krl_check_کلید(بنية ssh_krl *krl, ثابت بنية sshkey *کلید)
 {
-	int r;
+	صحيح r;
 
 	KRL_DBG(("checking key"));
-	if ((r = is_key_revoked(krl, key)) != 0)
-		return r;
-	if (sshkey_is_cert(key)) {
+	إذا ((r = is_کلید_revoked(krl, کلید)) != 0)
+		أرجع r;
+	إذا (sshkey_is_cert(کلید)) {
 		debug2_f("checking CA key");
-		if ((r = is_key_revoked(krl, key->cert->signature_key)) != 0)
-			return r;
+		إذا ((r = is_کلید_revoked(krl, کلید->cert->signature_کلید)) != 0)
+			أرجع r;
 	}
 	KRL_DBG(("key okay"));
-	return 0;
+	أرجع 0;
 }
 
-int
-ssh_krl_file_contains_key(const char *path, const struct sshkey *key)
+صحيح
+ssh_krl_file_شامل_است_کلید(ثابت حرف *مسیر, ثابت بنية sshkey *کلید)
 {
-	struct sshbuf *krlbuf = NULL;
-	struct ssh_krl *krl = NULL;
-	int oerrno = 0, r;
+	بنية sshbuf *krlbuf = عدم;
+	بنية ssh_krl *krl = عدم;
+	صحيح oerrno = 0, r;
 
-	if (path == NULL)
-		return 0;
-	if ((r = sshbuf_load_file(path, &krlbuf)) != 0) {
+	إذا (مسیر == عدم)
+		أرجع 0;
+	إذا ((r = sshbuf_بارگیری_file(مسیر, &krlbuf)) != 0) {
 		oerrno = errno;
-		goto out;
+		اذهب بیرون;
 	}
-	if ((r = ssh_krl_from_blob(krlbuf, &krl)) != 0)
-		goto out;
-	debug2_f("checking KRL %s", path);
-	r = ssh_krl_check_key(krl, key);
- out:
+	إذا ((r = ssh_krl_from_blob(krlbuf, &krl)) != 0)
+		اذهب بیرون;
+	debug2_f("checking KRL %s", مسیر);
+	r = ssh_krl_check_کلید(krl, کلید);
+ بیرون:
 	sshbuf_free(krlbuf);
 	ssh_krl_free(krl);
-	if (r != 0)
+	إذا (r != 0)
 		errno = oerrno;
-	return r;
+	أرجع r;
 }
 
-int
-krl_dump(struct ssh_krl *krl, FILE *f)
+صحيح
+krl_dump(بنية ssh_krl *krl, FILE *f)
 {
-	struct sshkey *key = NULL;
-	struct revoked_blob *rb;
-	struct revoked_certs *rc;
-	struct revoked_serial *rs;
-	struct revoked_key_id *rki;
-	int r, ret = 0;
-	char *fp, timestamp[64];
+	بنية sshkey *کلید = عدم;
+	بنية revoked_blob *rb;
+	بنية revoked_certs *rc;
+	بنية revoked_serial *rs;
+	بنية revoked_کلید_id *rki;
+	صحيح r, ret = 0;
+	حرف *fp, timestamp[64];
 
 	/* Try to print in a KRL spec-compatible format */
-	format_timestamp(krl->generated_date, timestamp, sizeof(timestamp));
-	fprintf(f, "# KRL version %llu\n", (unsigned long long)krl->krl_version);
+	format_timestamp(krl->generated_date, timestamp, حجم(timestamp));
+	fprintf(f, "# KRL version %llu\n", (بیعلامت دراز دراز)krl->krl_نسخه);
 	fprintf(f, "# Generated at %s\n", timestamp);
-	if (krl->comment != NULL && *krl->comment != '\0') {
-		r = INT_MAX;
-		asmprintf(&fp, INT_MAX, &r, "%s", krl->comment);
+	إذا (krl->comment != عدم && *krl->comment != '\0') {
+		r = بیشترین_صحیح;
+		asmprintf(&fp, بیشترین_صحیح, &r, "%s", krl->comment);
 		fprintf(f, "# Comment: %s\n", fp);
-		free(fp);
+		حرر(fp);
 	}
 	fputc('\n', f);
 
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_keys) {
-		if ((r = sshkey_from_blob(rb->blob, rb->len, &key)) != 0) {
+	RB_FOREACH(rb, revoked_blob_درخت, &krl->revoked_کلیدها) {
+		إذا ((r = sshkey_from_blob(rb->blob, rb->len, &کلید)) != 0) {
 			ret = SSH_ERR_INVALID_FORMAT;
 			error_r(r, "parse KRL key");
-			continue;
+			استمر;
 		}
-		if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL) {
+		إذا ((fp = sshkey_fingerprint(کلید, SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == عدم) {
 			ret = SSH_ERR_INVALID_FORMAT;
 			error("sshkey_fingerprint failed");
-			continue;
+			استمر;
 		}
-		fprintf(f, "hash: %s # %s\n", fp, sshkey_ssh_name(key));
-		free(fp);
-		free(key);
+		fprintf(f, "hash: %s # %s\n", fp, sshkey_ssh_name(کلید));
+		حرر(fp);
+		حرر(کلید);
 	}
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha256s) {
+	RB_FOREACH(rb, revoked_blob_درخت, &krl->revoked_sha256s) {
 		fp = tohex(rb->blob, rb->len);
 		fprintf(f, "hash: SHA256:%s\n", fp);
-		free(fp);
+		حرر(fp);
 	}
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha1s) {
+	RB_FOREACH(rb, revoked_blob_درخت, &krl->revoked_sha1s) {
 		/*
 		 * There is not KRL spec keyword for raw SHA1 hashes, so
 		 * print them as comments.
 		 */
 		fp = tohex(rb->blob, rb->len);
 		fprintf(f, "# hash SHA1:%s\n", fp);
-		free(fp);
+		حرر(fp);
 	}
 
-	TAILQ_FOREACH(rc, &krl->revoked_certs, entry) {
+	TAILQ_FOREACH(rc, &krl->revoked_certs, مدخل) {
 		fputc('\n', f);
-		if (rc->ca_key == NULL)
+		إذا (rc->ca_کلید == عدم)
 			fprintf(f, "# Wildcard CA\n");
-		else {
-			if ((fp = sshkey_fingerprint(rc->ca_key,
-			    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == NULL) {
+		وإلا {
+			إذا ((fp = sshkey_fingerprint(rc->ca_کلید,
+			    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == عدم) {
 				ret = SSH_ERR_INVALID_FORMAT;
 				error("sshkey_fingerprint failed");
-				continue;
+				استمر;
 			}
 			fprintf(f, "# CA key %s %s\n",
-			    sshkey_ssh_name(rc->ca_key), fp);
-			free(fp);
+			    sshkey_ssh_name(rc->ca_کلید), fp);
+			حرر(fp);
 		}
-		RB_FOREACH(rs, revoked_serial_tree, &rc->revoked_serials) {
-			if (rs->lo == rs->hi) {
+		RB_FOREACH(rs, revoked_serial_درخت, &rc->revoked_serials) {
+			إذا (rs->lo == rs->hi) {
 				fprintf(f, "serial: %llu\n",
-				    (unsigned long long)rs->lo);
-			} else {
+				    (بیعلامت دراز دراز)rs->lo);
+			} وإلا {
 				fprintf(f, "serial: %llu-%llu\n",
-				    (unsigned long long)rs->lo,
-				    (unsigned long long)rs->hi);
+				    (بیعلامت دراز دراز)rs->lo,
+				    (بیعلامت دراز دراز)rs->hi);
 			}
 		}
-		RB_FOREACH(rki, revoked_key_id_tree, &rc->revoked_key_ids) {
+		RB_FOREACH(rki, revoked_کلید_id_درخت, &rc->revoked_کلید_ids) {
 			/*
 			 * We don't want key IDs with embedded newlines to
 			 * mess up the display.
 			 */
-			r = INT_MAX;
-			asmprintf(&fp, INT_MAX, &r, "%s", rki->key_id);
+			r = بیشترین_صحیح;
+			asmprintf(&fp, بیشترین_صحیح, &r, "%s", rki->کلید_id);
 			fprintf(f, "id: %s\n", fp);
-			free(fp);
+			حرر(fp);
 		}
 	}
-	return ret;
+	أرجع ret;
 }

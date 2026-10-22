@@ -16,38 +16,38 @@
 
 /* Address handling routines */
 
-#ifndef _ADDR_H
-#define _ADDR_H
+#اگر_تعریف_نشده _ADDR_H
+#تعریف_کن _ADDR_H
 
-#include <sys/socket.h>
-#include <netinet/in.h>
+#ضمن <sys/socket.h>
+#ضمن <netinet/in.h>
 
-struct xaddr {
+بنية xaddr {
 	sa_family_t	af;
-	union {
-		struct in_addr		v4;
-		struct in6_addr		v6;
+	اتحاد {
+		بنية in_addr		v4;
+		بنية in6_addr		v6;
 		uint8_t			addr8[16];
 		uint16_t		addr16[8];
 		uint32_t		addr32[4];
 	} xa;		    /* 128-bit address */
 	uint32_t	scope_id;	/* iface scope id for v6 */
-#define v4	xa.v4
-#define v6	xa.v6
-#define addr8	xa.addr8
-#define addr16	xa.addr16
-#define addr32	xa.addr32
+#تعریف_کن v4	xa.v4
+#تعریف_کن v6	xa.v6
+#تعریف_کن addr8	xa.addr8
+#تعریف_کن addr16	xa.addr16
+#تعریف_کن addr32	xa.addr32
 };
 
-int addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa);
-int addr_netmask(int af, u_int l, struct xaddr *n);
-int addr_pton(const char *p, struct xaddr *n);
-int addr_pton_cidr(const char *p, struct xaddr *n, u_int *l);
-int addr_ntop(const struct xaddr *n, char *p, size_t len);
-int addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b);
-int addr_cmp(const struct xaddr *a, const struct xaddr *b);
-int addr_host_to_all1s(struct xaddr *a, u_int masklen);
-int addr_netmatch(const struct xaddr *host, const struct xaddr *net,
+صحيح addr_sa_مقصد_xaddr(بنية sockaddr *sa, socklen_t slen, بنية xaddr *xa);
+صحيح addr_netmask(صحيح af, u_int l, بنية xaddr *n);
+صحيح addr_pton(ثابت حرف *p, بنية xaddr *n);
+صحيح addr_pton_cidr(ثابت حرف *p, بنية xaddr *n, u_int *l);
+صحيح addr_ntop(ثابت بنية xaddr *n, حرف *p, اندازه_t len);
+صحيح addr_and(بنية xaddr *dst, ثابت بنية xaddr *a, ثابت بنية xaddr *b);
+صحيح addr_cmp(ثابت بنية xaddr *a, ثابت بنية xaddr *b);
+صحيح addr_host_مقصد_all1s(بنية xaddr *a, u_int masklen);
+صحيح addr_netmatch(ثابت بنية xaddr *host, ثابت بنية xaddr *net,
     u_int masklen);
-void addr_increment(struct xaddr *a);
-#endif /* _ADDR_H */
+فراغ addr_increment(بنية xaddr *a);
+#پایان_اگر /* _ADDR_H */

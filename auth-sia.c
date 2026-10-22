@@ -22,94 +22,94 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifdef HAVE_OSF_SIA
-#include <sia.h>
-#include <siad.h>
-#include <pwd.h>
-#include <signal.h>
-#include <setjmp.h>
-#include <sys/resource.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <string.h>
+#اگر_تعریف_شده HAVE_OSF_SIA
+#ضمن <sia.h>
+#ضمن <siad.h>
+#ضمن <pwd.h>
+#ضمن <signal.h>
+#ضمن <setjmp.h>
+#ضمن <sys/resource.h>
+#ضمن <unistd.h>
+#ضمن <stdarg.h>
+#ضمن <string.h>
 
-#include "ssh.h"
-#include "ssh_api.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-sia.h"
-#include "log.h"
-#include "servconf.h"
-#include "canohost.h"
-#include "uidswap.h"
+#ضمن "ssh.h"
+#ضمن "ssh_api.h"
+#ضمن "hostfile.h"
+#ضمن "auth.h"
+#ضمن "auth-sia.h"
+#ضمن "log.h"
+#ضمن "servconf.h"
+#ضمن "canohost.h"
+#ضمن "uidswap.h"
 
-extern ServerOptions options;
-extern int saved_argc;
-extern char **saved_argv;
+خارجي ServerOptions options;
+خارجي صحيح saved_argc;
+خارجي حرف **saved_argv;
 
-int
-sys_auth_passwd(struct ssh *ssh, const char *pass)
+صحيح
+sys_auth_passwd(بنية ssh *ssh, ثابت حرف *pass)
 {
-	int ret;
-	SIAENTITY *ent = NULL;
-	const char *host;
+	صحيح ret;
+	SIAENTITY *ent = عدم;
+	ثابت حرف *host;
 	Authctxt *authctxt = ssh->authctxt;
 
 	host = get_canonical_hostname(options.use_dns);
 
-	if (!authctxt->user || pass == NULL || pass[0] == '\0')
-		return (0);
+	إذا (!authctxt->user || pass == عدم || pass[0] == '\0')
+		أرجع (0);
 
-	if (sia_ses_init(&ent, saved_argc, saved_argv, host, authctxt->user,
-	    NULL, 0, NULL) != SIASUCCESS)
-		return (0);
+	إذا (sia_ses_init(&ent, saved_argc, saved_argv, host, authctxt->user,
+	    عدم, 0, عدم) != SIASUCCESS)
+		أرجع (0);
 
-	if ((ret = sia_ses_authent(NULL, pass, ent)) != SIASUCCESS) {
+	إذا ((ret = sia_ses_authent(عدم, pass, ent)) != SIASUCCESS) {
 		error("Couldn't authenticate %s from %s",
 		    authctxt->user, host);
-		if (ret & SIASTOP)
+		إذا (ret & SIASTOP)
 			sia_ses_release(&ent);
 
-		return (0);
+		أرجع (0);
 	}
 
 	sia_ses_release(&ent);
 
-	return (1);
+	أرجع (1);
 }
 
-void
-session_setup_sia(struct passwd *pw, char *tty)
+فراغ
+session_راهاندازی_sia(بنية passwd *pw, حرف *tty)
 {
-	SIAENTITY *ent = NULL;
-	const char *host;
+	SIAENTITY *ent = عدم;
+	ثابت حرف *host;
 
 	host = get_canonical_hostname(options.use_dns);
 
-	if (sia_ses_init(&ent, saved_argc, saved_argv, host, pw->pw_name,
-	    tty, 0, NULL) != SIASUCCESS)
+	إذا (sia_ses_init(&ent, saved_argc, saved_argv, host, pw->pw_name,
+	    tty, 0, عدم) != SIASUCCESS)
 		fatal("sia_ses_init failed");
 
-	if (sia_make_entity_pwd(pw, ent) != SIASUCCESS) {
+	إذا (sia_make_entity_pwd(pw, ent) != SIASUCCESS) {
 		sia_ses_release(&ent);
 		fatal("sia_make_entity_pwd failed");
 	}
 
 	ent->authtype = SIA_A_NONE;
-	if (sia_ses_estab(sia_collect_trm, ent) != SIASUCCESS)
+	إذا (sia_ses_estab(sia_collect_trm, ent) != SIASUCCESS)
 		fatal("Couldn't establish session for %s from %s",
 		    pw->pw_name, host);
 
-	if (sia_ses_launch(sia_collect_trm, ent) != SIASUCCESS)
+	إذا (sia_ses_launch(sia_collect_trm, ent) != SIASUCCESS)
 		fatal("Couldn't launch session for %s from %s",
 		    pw->pw_name, host);
 
 	sia_ses_release(&ent);
 
 	setuid(0);
-	permanently_set_uid(pw);
+	permanently_مجموعه_uid(pw);
 }
 
-#endif /* HAVE_OSF_SIA */
+#پایان_اگر /* HAVE_OSF_SIA */

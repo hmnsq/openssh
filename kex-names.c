@@ -23,35 +23,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <signal.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/crypto.h>
-#include <openssl/evp.h>
-#endif
+#اگر_تعریف_شده WITH_OPENSSL
+#ضمن <openssl/crypto.h>
+#ضمن <openssl/evp.h>
+#پایان_اگر
 
-#include "kex.h"
-#include "log.h"
-#include "match.h"
-#include "digest.h"
-#include "misc.h"
+#ضمن "kex.h"
+#ضمن "log.h"
+#ضمن "match.h"
+#ضمن "digest.h"
+#ضمن "misc.h"
 
-#include "ssherr.h"
+#ضمن "ssherr.h"
 
-struct kexalg {
-	char *name;
+بنية kexalg {
+	حرف *name;
 	u_int type;
-	int ec_nid;
-	int hash_alg;
-	int pq_alg;
+	صحيح ec_nid;
+	صحيح hash_alg;
+	صحيح pq_alg;
 };
-static const struct kexalg kexalgs[] = {
-#ifdef WITH_OPENSSL
+ساكن ثابت بنية kexalg kexalgs[] = {
+#اگر_تعریف_شده WITH_OPENSSL
 	{ KEX_DH1, KEX_DH_GRP1_SHA1, 0, SSH_DIGEST_SHA1, KEX_NOT_PQ },
 	{ KEX_DH14_SHA1, KEX_DH_GRP14_SHA1, 0, SSH_DIGEST_SHA1, KEX_NOT_PQ },
 	{ KEX_DH14_SHA256, KEX_DH_GRP14_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
@@ -69,165 +69,165 @@ static const struct kexalg kexalgs[] = {
 	    SSH_DIGEST_SHA512, KEX_NOT_PQ },
 	{ KEX_MLKEM768NISTP256_SHA256, KEX_KEM_MLKEM768ECDH_SHA256,
 	    NID_X9_62_prime256v1, SSH_DIGEST_SHA256, KEX_IS_PQ },
-#endif /* WITH_OPENSSL */
-#if defined(HAVE_EVP_SHA256) || !defined(WITH_OPENSSL)
+#پایان_اگر /* WITH_OPENSSL */
+#إذا defined(HAVE_EVP_SHA256) || !defined(WITH_OPENSSL)
 	{ KEX_CURVE25519_SHA256, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
 	{ KEX_CURVE25519_SHA256_OLD, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
-#ifdef USE_SNTRUP761X25519
+#اگر_تعریف_شده USE_SNTRUP761X25519
 	{ KEX_SNTRUP761X25519_SHA512, KEX_KEM_SNTRUP761X25519_SHA512, 0,
 	    SSH_DIGEST_SHA512, KEX_IS_PQ },
 	{ KEX_SNTRUP761X25519_SHA512_OLD, KEX_KEM_SNTRUP761X25519_SHA512, 0,
 	    SSH_DIGEST_SHA512, KEX_IS_PQ },
-#endif
-#ifdef USE_MLKEM768X25519
+#پایان_اگر
+#اگر_تعریف_شده USE_MLKEM768X25519
 	{ KEX_MLKEM768X25519_SHA256, KEX_KEM_MLKEM768X25519_SHA256, 0,
 	    SSH_DIGEST_SHA256, KEX_IS_PQ },
-#endif
-#endif /* HAVE_EVP_SHA256 || !WITH_OPENSSL */
-	{ NULL, 0, -1, -1, 0 },
+#پایان_اگر
+#پایان_اگر /* HAVE_EVP_SHA256 || !WITH_OPENSSL */
+	{ عدم, 0, -1, -1, 0 },
 };
 
-char *
-kex_alg_list(char sep)
+حرف *
+kex_alg_list(حرف sep)
 {
-	char *ret = NULL;
-	const struct kexalg *k;
-	char sep_str[2] = {sep, '\0'};
+	حرف *ret = عدم;
+	ثابت بنية kexalg *k;
+	حرف sep_str[2] = {sep, '\0'};
 
-	for (k = kexalgs; k->name != NULL; k++)
+	لكل (k = kexalgs; k->name != عدم; k++)
 		xextendf(&ret, sep_str, "%s", k->name);
 
-	return ret;
+	أرجع ret;
 }
 
-static const struct kexalg *
-kex_alg_by_name(const char *name)
+ساكن ثابت بنية kexalg *
+kex_alg_by_name(ثابت حرف *name)
 {
-	const struct kexalg *k;
+	ثابت بنية kexalg *k;
 
-	for (k = kexalgs; k->name != NULL; k++) {
-		if (strcmp(k->name, name) == 0)
-			return k;
+	لكل (k = kexalgs; k->name != عدم; k++) {
+		إذا (strcmp(k->name, name) == 0)
+			أرجع k;
 	}
-	return NULL;
+	أرجع عدم;
 }
 
-int
-kex_name_valid(const char *name)
+صحيح
+kex_name_valid(ثابت حرف *name)
 {
-	return kex_alg_by_name(name) != NULL;
+	أرجع kex_alg_by_name(name) != عدم;
 }
 
-int
-kex_is_pq_from_name(const char *name)
+صحيح
+kex_is_pq_from_name(ثابت حرف *name)
 {
-	const struct kexalg *k;
+	ثابت بنية kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return 0;
-	return k->pq_alg == KEX_IS_PQ;
+	إذا ((k = kex_alg_by_name(name)) == عدم)
+		أرجع 0;
+	أرجع k->pq_alg == KEX_IS_PQ;
 }
 
 u_int
-kex_type_from_name(const char *name)
+kex_type_from_name(ثابت حرف *name)
 {
-	const struct kexalg *k;
+	ثابت بنية kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return 0;
-	return k->type;
+	إذا ((k = kex_alg_by_name(name)) == عدم)
+		أرجع 0;
+	أرجع k->type;
 }
 
-int
-kex_hash_from_name(const char *name)
+صحيح
+kex_hash_from_name(ثابت حرف *name)
 {
-	const struct kexalg *k;
+	ثابت بنية kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return -1;
-	return k->hash_alg;
+	إذا ((k = kex_alg_by_name(name)) == عدم)
+		أرجع -1;
+	أرجع k->hash_alg;
 }
 
-int
-kex_nid_from_name(const char *name)
+صحيح
+kex_nid_from_name(ثابت حرف *name)
 {
-	const struct kexalg *k;
+	ثابت بنية kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return -1;
-	return k->ec_nid;
+	إذا ((k = kex_alg_by_name(name)) == عدم)
+		أرجع -1;
+	أرجع k->ec_nid;
 }
 
 /* Validate KEX method name list */
-int
-kex_names_valid(const char *names)
+صحيح
+kex_نامها_valid(ثابت حرف *نامها)
 {
-	char *s, *cp, *p;
+	حرف *s, *cp, *p;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((s = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, ",")); p && *p != '\0';
+	إذا (نامها == عدم || strcmp(نامها, "") == 0)
+		أرجع 0;
+	إذا ((s = cp = strdup(نامها)) == عدم)
+		أرجع 0;
+	لكل ((p = strsep(&cp, ",")); p && *p != '\0';
 	    (p = strsep(&cp, ","))) {
-		if (kex_alg_by_name(p) == NULL) {
+		إذا (kex_alg_by_name(p) == عدم) {
 			error("Unsupported KEX algorithm \"%.100s\"", p);
-			free(s);
-			return 0;
+			حرر(s);
+			أرجع 0;
 		}
 	}
-	debug3("kex names ok: [%s]", names);
-	free(s);
-	return 1;
+	debug3("kex names ok: [%s]", نامها);
+	حرر(s);
+	أرجع 1;
 }
 
 /* returns non-zero if proposal contains any algorithm from algs */
-int
-kex_has_any_alg(const char *proposal, const char *algs)
+صحيح
+kex_has_any_alg(ثابت حرف *proposal, ثابت حرف *algs)
 {
-	char *cp;
+	حرف *cp;
 
-	if ((cp = match_list(proposal, algs, NULL)) == NULL)
-		return 0;
-	free(cp);
-	return 1;
+	إذا ((cp = تطابق_list(proposal, algs, عدم)) == عدم)
+		أرجع 0;
+	حرر(cp);
+	أرجع 1;
 }
 
 /*
  * Concatenate algorithm names, avoiding duplicates in the process.
  * Caller must free returned string.
  */
-char *
-kex_names_cat(const char *a, const char *b)
+حرف *
+kex_نامها_cat(ثابت حرف *a, ثابت حرف *b)
 {
-	char *ret = NULL, *tmp = NULL, *cp, *p;
-	size_t len;
+	حرف *ret = عدم, *tmp = عدم, *cp, *p;
+	اندازه_t len;
 
-	if (a == NULL || *a == '\0')
-		return strdup(b);
-	if (b == NULL || *b == '\0')
-		return strdup(a);
-	if (strlen(b) > 1024*1024)
-		return NULL;
-	len = strlen(a) + strlen(b) + 2;
-	if ((tmp = cp = strdup(b)) == NULL ||
-	    (ret = calloc(1, len)) == NULL) {
-		free(tmp);
-		return NULL;
+	إذا (a == عدم || *a == '\0')
+		أرجع strdup(b);
+	إذا (b == عدم || *b == '\0')
+		أرجع strdup(a);
+	إذا (طول_رشته(b) > 1024*1024)
+		أرجع عدم;
+	len = طول_رشته(a) + طول_رشته(b) + 2;
+	إذا ((tmp = cp = strdup(b)) == عدم ||
+	    (ret = حافظه_صفر_بده(1, len)) == عدم) {
+		حرر(tmp);
+		أرجع عدم;
 	}
 	strlcpy(ret, a, len);
-	for ((p = strsep(&cp, ",")); p && *p != '\0'; (p = strsep(&cp, ","))) {
-		if (kex_has_any_alg(ret, p))
-			continue; /* Algorithm already present */
-		if (strlcat(ret, ",", len) >= len ||
+	لكل ((p = strsep(&cp, ",")); p && *p != '\0'; (p = strsep(&cp, ","))) {
+		إذا (kex_has_any_alg(ret, p))
+			استمر; /* Algorithm already present */
+		إذا (strlcat(ret, ",", len) >= len ||
 		    strlcat(ret, p, len) >= len) {
-			free(tmp);
-			free(ret);
-			return NULL; /* Shouldn't happen */
+			حرر(tmp);
+			حرر(ret);
+			أرجع عدم; /* Shouldn't happen */
 		}
 	}
-	free(tmp);
-	return ret;
+	حرر(tmp);
+	أرجع ret;
 }
 
 /*
@@ -237,50 +237,50 @@ kex_names_cat(const char *a, const char *b)
  * specified names should be removed, or '^' that they should be placed
  * at the head.
  */
-int
-kex_assemble_names(char **listp, const char *def, const char *all)
+صحيح
+kex_assemble_نامها(حرف **listp, ثابت حرف *def, ثابت حرف *all)
 {
-	char *cp, *tmp, *patterns;
-	char *list = NULL, *ret = NULL, *matching = NULL, *opatterns = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	حرف *cp, *tmp, *patterns;
+	حرف *list = عدم, *ret = عدم, *matching = عدم, *opatterns = عدم;
+	صحيح r = SSH_ERR_داخلی_ERROR;
 
-	if (listp == NULL || def == NULL || all == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	إذا (listp == عدم || def == عدم || all == عدم)
+		أرجع SSH_ERR_INVALID_آرگومان;
 
-	if (*listp == NULL || **listp == '\0') {
-		if ((*listp = strdup(def)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
+	إذا (*listp == عدم || **listp == '\0') {
+		إذا ((*listp = strdup(def)) == عدم)
+			أرجع SSH_ERR_ALLOC_FAIL;
+		أرجع 0;
 	}
 
 	list = *listp;
-	*listp = NULL;
-	if (*list == '+') {
+	*listp = عدم;
+	إذا (*list == '+') {
 		/* Append names to default list */
-		if ((tmp = kex_names_cat(def, list + 1)) == NULL) {
+		إذا ((tmp = kex_نامها_cat(def, list + 1)) == عدم) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			اذهب fail;
 		}
-		free(list);
+		حرر(list);
 		list = tmp;
-	} else if (*list == '-') {
+	} وإلا إذا (*list == '-') {
 		/* Remove names from default list */
-		if ((*listp = match_filter_denylist(def, list + 1)) == NULL) {
+		إذا ((*listp = تطابق_filter_denylist(def, list + 1)) == عدم) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			اذهب fail;
 		}
-		free(list);
+		حرر(list);
 		/* filtering has already been done */
-		return 0;
-	} else if (*list == '^') {
+		أرجع 0;
+	} وإلا إذا (*list == '^') {
 		/* Place names at head of default list */
-		if ((tmp = kex_names_cat(list + 1, def)) == NULL) {
+		إذا ((tmp = kex_نامها_cat(list + 1, def)) == عدم) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			اذهب fail;
 		}
-		free(list);
+		حرر(list);
 		list = tmp;
-	} else {
+	} وإلا {
 		/* Explicit list, overrides default - just use "list" as is */
 	}
 
@@ -289,46 +289,46 @@ kex_assemble_names(char **listp, const char *def, const char *all)
 	 * the patterns are applied above. For the +list and explicit list
 	 * cases we need to do it now.
 	 */
-	ret = NULL;
-	if ((patterns = opatterns = strdup(list)) == NULL) {
+	ret = عدم;
+	إذا ((patterns = opatterns = strdup(list)) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto fail;
+		اذهب fail;
 	}
 	/* Apply positive (i.e. non-negated) patterns from the list */
-	while ((cp = strsep(&patterns, ",")) != NULL) {
-		if (*cp == '!') {
+	طالما ((cp = strsep(&patterns, ",")) != عدم) {
+		إذا (*cp == '!') {
 			/* negated matches are not supported here */
-			r = SSH_ERR_INVALID_ARGUMENT;
-			goto fail;
+			r = SSH_ERR_INVALID_آرگومان;
+			اذهب fail;
 		}
-		free(matching);
-		if ((matching = match_filter_allowlist(all, cp)) == NULL) {
+		حرر(matching);
+		إذا ((matching = تطابق_filter_allowlist(all, cp)) == عدم) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			اذهب fail;
 		}
-		if ((tmp = kex_names_cat(ret, matching)) == NULL) {
+		إذا ((tmp = kex_نامها_cat(ret, matching)) == عدم) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			اذهب fail;
 		}
-		free(ret);
+		حرر(ret);
 		ret = tmp;
 	}
-	if (ret == NULL || *ret == '\0') {
+	إذا (ret == عدم || *ret == '\0') {
 		/* An empty name-list is an error */
 		/* XXX better error code? */
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto fail;
+		r = SSH_ERR_INVALID_آرگومان;
+		اذهب fail;
 	}
 
 	/* success */
 	*listp = ret;
-	ret = NULL;
+	ret = عدم;
 	r = 0;
 
  fail:
-	free(matching);
-	free(opatterns);
-	free(list);
-	free(ret);
-	return r;
+	حرر(matching);
+	حرر(opatterns);
+	حرر(list);
+	حرر(ret);
+	أرجع r;
 }

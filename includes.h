@@ -13,172 +13,172 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#ifndef INCLUDES_H
-#define INCLUDES_H
+#اگر_تعریف_نشده INCLUDES_H
+#تعریف_کن INCLUDES_H
 
-#include "config.h"
+#ضمن "config.h"
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE /* activate extra prototypes for glibc */
-#endif
+#اگر_تعریف_نشده GNU_منبع
+#تعریف_کن GNU_منبع /* activate extra prototypes for glibc */
+#پایان_اگر
 
-#include <sys/types.h>
-#include <sys/socket.h> /* For CMSG_* */
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h> /* For CMSG_* */
 
-#ifdef HAVE_LIMITS_H
+#اگر_تعریف_شده HAVE_LIMITS_H
 # include <limits.h> /* For PATH_MAX, _POSIX_HOST_NAME_MAX */
-#endif
-#ifdef HAVE_BSTRING_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_BSTRING_H
 # include <bstring.h>
-#endif
-#ifdef HAVE_ENDIAN_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_ENDIAN_H
 # include <endian.h>
-#endif
-#ifdef HAVE_FCNTL_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_FCNTL_H
 # include <fcntl.h>
-#endif
-#ifdef HAVE_TTYENT_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_TTYENT_H
 # include <ttyent.h>
-#endif
-#ifdef HAVE_UTIME_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_UTIME_H
 # include <utime.h>
-#endif
-#ifdef HAVE_MAILLOCK_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_MAILLOCK_H
 # include <maillock.h> /* For _PATH_MAILDIR */
-#endif
-#ifdef HAVE_NEXT
+#پایان_اگر
+#اگر_تعریف_شده HAVE_بعدی
 # include <libc.h>
-#endif
-#ifdef HAVE_PATHS_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_PATHS_H
 # include <paths.h>
-#endif
-#ifdef HAVE_FCNTL_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_FCNTL_H
 # include <fcntl.h> /* For AT_FDCWD */
-#endif
+#پایان_اگر
 
 /*
  *-*-nto-qnx needs these headers for strcasecmp and LASTLOG_FILE respectively
  */
-#ifdef HAVE_STRINGS_H
+#اگر_تعریف_شده HAVE_رشتهها_H
 # include <strings.h>
-#endif
-#ifdef HAVE_LOGIN_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_LOGIN_H
 # include <login.h>
-#endif
+#پایان_اگر
 
-#ifdef HAVE_UTMP_H
+#اگر_تعریف_شده HAVE_UTMP_H
 #  include <utmp.h>
-#endif
-#ifdef HAVE_UTMPX_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_UTMPX_H
 #  include <utmpx.h>
-#endif
-#ifdef HAVE_LASTLOG_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_LASTLOG_H
 #  include <lastlog.h>
-#endif
+#پایان_اگر
 
-#ifdef HAVE_SYS_SELECT_H
+#اگر_تعریف_شده HAVE_SYS_SELECT_H
 # include <sys/select.h>
-#endif
-#ifdef HAVE_SYS_BSDTTY_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_SYS_BSDTTY_H
 # include <sys/bsdtty.h>
-#endif
-#ifdef HAVE_STDINT_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_STDINT_H
 # include <stdint.h>
-#endif
-#include <termios.h>
-#ifdef HAVE_SYS_BITYPES_H
+#پایان_اگر
+#ضمن <termios.h>
+#اگر_تعریف_شده HAVE_SYS_BITYPES_H
 # include <sys/bitypes.h> /* For u_intXX_t */
-#endif
-#ifdef HAVE_SYS_CDEFS_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_SYS_CDEFS_H
 # include <sys/cdefs.h> /* For __P() */
-#endif
-#ifdef HAVE_SYS_STAT_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_SYS_STAT_H
 # include <sys/stat.h> /* For S_* constants and macros */
-#endif
-#ifdef HAVE_SYS_SYSMACROS_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_SYS_SYSMACROS_H
 # include <sys/sysmacros.h> /* For MIN, MAX, etc */
-#endif
-#ifdef HAVE_SYS_TIME_H
+#پایان_اگر
+#اگر_تعریف_شده HAVE_SYS_زمان_H
 # include <sys/time.h> /* for timespeccmp if present */
-#endif
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h> /* for MAP_ANONYMOUS */
-#endif
-#ifdef HAVE_SYS_STRTIO_H
-#include <sys/strtio.h>	/* for TIOCCBRK on HP-UX */
-#endif
-#if defined(HAVE_SYS_PTMS_H) && defined(HAVE_DEV_PTMX)
-# if defined(HAVE_SYS_STREAM_H)
+#پایان_اگر
+#اگر_تعریف_شده HAVE_SYS_MMAN_H
+#ضمن <sys/mman.h> /* for MAP_ANONYMOUS */
+#پایان_اگر
+#اگر_تعریف_شده HAVE_SYS_STRTIO_H
+#ضمن <sys/strtio.h>	/* for TIOCCBRK on HP-UX */
+#پایان_اگر
+#إذا defined(HAVE_SYS_PTMS_H) && defined(HAVE_DEV_PTMX)
+# إذا defined(HAVE_SYS_جریان_H)
 #  include <sys/stream.h>	/* reqd for queue_t on Solaris 2.5.1 */
 # endif
-#include <sys/ptms.h>	/* for grantpt() and friends */
-#endif
+#ضمن <sys/ptms.h>	/* for grantpt() and friends */
+#پایان_اگر
 
-#include <netinet/in.h>
-#include <netinet/in_systm.h> /* For typedefs */
-#ifdef HAVE_RPC_TYPES_H
+#ضمن <netinet/in.h>
+#ضمن <netinet/in_systm.h> /* For typedefs */
+#اگر_تعریف_شده HAVE_RPC_TYPES_H
 # include <rpc/types.h> /* For INADDR_LOOPBACK */
-#endif
-#ifdef USE_PAM
-#if defined(HAVE_SECURITY_PAM_APPL_H)
+#پایان_اگر
+#اگر_تعریف_شده USE_PAM
+#إذا defined(HAVE_SECURITY_PAM_APPL_H)
 # include <security/pam_appl.h>
-#elif defined (HAVE_PAM_PAM_APPL_H)
+#وإلاإذا defined (HAVE_PAM_PAM_APPL_H)
 # include <pam/pam_appl.h>
-#endif
-#endif
-#ifdef HAVE_READPASSPHRASE_H
+#پایان_اگر
+#پایان_اگر
+#اگر_تعریف_شده HAVE_READPASSPHRASE_H
 # include <readpassphrase.h>
-#endif
+#پایان_اگر
 
-#ifdef HAVE_IA_H
+#اگر_تعریف_شده HAVE_IA_H
 # include <ia.h>
-#endif
+#پایان_اگر
 
-#ifdef HAVE_IAF_H
+#اگر_تعریف_شده HAVE_IAF_H
 # include <iaf.h>
-#endif
+#پایان_اگر
 
-#ifdef HAVE_TMPDIR_H
+#اگر_تعریف_شده HAVE_TMPDIR_H
 # include <tmpdir.h>
-#endif
+#پایان_اگر
 
-#if defined(HAVE_BSD_LIBUTIL_H)
+#إذا defined(HAVE_BSD_LIBUTIL_H)
 # include <bsd/libutil.h>
-#elif defined(HAVE_LIBUTIL_H)
+#وإلاإذا defined(HAVE_LIBUTIL_H)
 # include <libutil.h>
-#endif
+#پایان_اگر
 
-#if defined(KRB5) && defined(USE_AFS)
+#إذا defined(KRB5) && defined(USE_AFS)
 # include <krb5.h>
 # include <kafs.h>
-#endif
+#پایان_اگر
 
-#if defined(HAVE_SYS_SYSLOG_H)
+#إذا defined(HAVE_SYS_SYSLOG_H)
 # include <sys/syslog.h>
-#endif
+#پایان_اگر
 
-#include <errno.h>
+#ضمن <errno.h>
 
 /*
  * On HP-UX 11.11, shadow.h and prot.h provide conflicting declarations
  * of getspnam when _INCLUDE__STDC__ is defined, so we unset it here.
  */
-#ifdef GETSPNAM_CONFLICTING_DEFS
+#اگر_تعریف_شده GETSPNAM_CONFLICTING_DEFS
 # ifdef _INCLUDE__STDC__
 #  undef _INCLUDE__STDC__
 # endif
-#endif
+#پایان_اگر
 
-#ifdef WITH_OPENSSL
-#include <openssl/opensslv.h> /* For OPENSSL_VERSION_NUMBER */
-#endif
+#اگر_تعریف_شده WITH_OPENSSL
+#ضمن <openssl/opensslv.h> /* For OPENSSL_VERSION_NUMBER */
+#پایان_اگر
 
-#include "defines.h"
+#ضمن "defines.h"
 
-#include "platform.h"
-#include "openbsd-compat/openbsd-compat.h"
-#include "openbsd-compat/bsd-nextstep.h"
+#ضمن "platform.h"
+#ضمن "openbsd-compat/openbsd-compat.h"
+#ضمن "openbsd-compat/bsd-nextstep.h"
 
-#include "entropy.h"
+#ضمن "entropy.h"
 
-#endif /* INCLUDES_H */
+#پایان_اگر /* INCLUDES_H */

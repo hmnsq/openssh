@@ -25,90 +25,90 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _MM_WRAP_H_
-#define _MM_WRAP_H_
+#اگر_تعریف_نشده _MM_WRAP_H_
+#تعریف_کن _MM_WRAP_H_
 
-#define MONITOR_MAX_MSGLEN		(4 * 1024 * 1024)
+#تعریف_کن MONITOR_MAX_MSGLEN		(4 * 1024 * 1024)
 /* The configuration has to fit in a monitor message along with other state */
-#define MONITOR_MAX_CFGLEN		(MONITOR_MAX_MSGLEN - (64 * 1024))
+#تعریف_کن MONITOR_MAX_CFGLEN		(MONITOR_MAX_MSGLEN - (64 * 1024))
 
-enum mm_keytype { MM_NOKEY, MM_HOSTKEY, MM_USERKEY };
+تعداد mm_keytype { MM_NOKEY, MM_HOSTKEY, MM_USERKEY };
 
-struct ssh;
-struct monitor;
-struct Authctxt;
-struct sshkey;
-struct sshauthopt;
-struct sshkey_sig_details;
+بنية ssh;
+بنية monitor;
+بنية Authctxt;
+بنية sshkey;
+بنية sshauthopt;
+بنية sshkey_sig_details;
 
-void mm_log_handler(LogLevel, int, const char *, void *);
-int mm_is_monitor(void);
-#ifdef WITH_OPENSSL
-DH *mm_choose_dh(int, int, int);
-#endif
-void mm_sshkey_setcompat(struct ssh *);
-int mm_sshkey_sign(struct ssh *, struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *,
-    const char *, u_int compat);
-void mm_inform_authserv(char *, char *);
-struct passwd *mm_getpwnamallow(struct ssh *, const char *);
-char *mm_auth2_read_banner(void);
-int mm_auth_password(struct ssh *, char *);
-int mm_key_allowed(enum mm_keytype, const char *, const char *, struct sshkey *,
-    int, struct sshauthopt **);
-int mm_user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *, int,
-    struct sshauthopt **);
-int mm_hostbased_key_allowed(struct ssh *, struct passwd *, const char *,
-    const char *, struct sshkey *);
-int mm_sshkey_verify(const struct sshkey *, const u_char *, size_t,
-    const u_char *, size_t, const char *, u_int, struct sshkey_sig_details **);
+فراغ mm_log_handler(LogLevel, صحيح, ثابت حرف *, فراغ *);
+صحيح mm_is_monitor(فراغ);
+#اگر_تعریف_شده WITH_OPENSSL
+DH *mm_انتخاب_dh(صحيح, صحيح, صحيح);
+#پایان_اگر
+فراغ mm_sshkey_setcompat(بنية ssh *);
+صحيح mm_sshkey_sign(بنية ssh *, بنية sshkey *, u_char **, اندازه_t *,
+    ثابت u_char *, اندازه_t, ثابت حرف *, ثابت حرف *,
+    ثابت حرف *, u_int compat);
+فراغ mm_inform_authserv(حرف *, حرف *);
+بنية passwd *mm_getpwnamallow(بنية ssh *, ثابت حرف *);
+حرف *mm_auth2_read_banner(فراغ);
+صحيح mm_auth_password(بنية ssh *, حرف *);
+صحيح mm_کلید_allowed(تعداد mm_keytype, ثابت حرف *, ثابت حرف *, بنية sshkey *,
+    صحيح, بنية sshauthopt **);
+صحيح mm_user_کلید_allowed(بنية ssh *ssh, بنية passwd *, بنية sshkey *, صحيح,
+    بنية sshauthopt **);
+صحيح mm_hostbased_کلید_allowed(بنية ssh *, بنية passwd *, ثابت حرف *,
+    ثابت حرف *, بنية sshkey *);
+صحيح mm_sshkey_verify(ثابت بنية sshkey *, ثابت u_char *, اندازه_t,
+    ثابت u_char *, اندازه_t, ثابت حرف *, u_int, بنية sshkey_sig_details **);
 
-void mm_decode_activate_server_options(struct ssh *ssh, struct sshbuf *m);
+فراغ mm_decode_activate_server_options(بنية ssh *ssh, بنية sshbuf *m);
 
-#ifdef GSSAPI
+#اگر_تعریف_شده GSSAPI
 OM_uint32 mm_ssh_gssapi_server_ctx(Gssctxt **, gss_OID);
 OM_uint32 mm_ssh_gssapi_accept_ctx(Gssctxt *,
-   gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
-int mm_ssh_gssapi_userok(char *user);
-OM_uint32 mm_ssh_gssapi_checkmic(Gssctxt *, gss_buffer_t, gss_buffer_t);
-#endif
+   gss_میانگیر_desc *, gss_میانگیر_desc *, OM_uint32 *);
+صحيح mm_ssh_gssapi_userok(حرف *user);
+OM_uint32 mm_ssh_gssapi_checkmic(Gssctxt *, gss_میانگیر_t, gss_میانگیر_t);
+#پایان_اگر
 
-#ifdef USE_PAM
-void mm_start_pam(struct ssh *ssh);
-u_int mm_do_pam_account(void);
-void *mm_sshpam_init_ctx(struct Authctxt *);
-int mm_sshpam_query(void *, char **, char **, u_int *, char ***, u_int **);
-int mm_sshpam_respond(void *, u_int, char **);
-void mm_sshpam_free_ctx(void *);
-#endif
+#اگر_تعریف_شده USE_PAM
+فراغ mm_شروع_pam(بنية ssh *ssh);
+u_int mm_do_pam_account(فراغ);
+فراغ *mm_sshpam_init_ctx(بنية Authctxt *);
+صحيح mm_sshpam_query(فراغ *, حرف **, حرف **, u_int *, حرف ***, u_int **);
+صحيح mm_sshpam_respond(فراغ *, u_int, حرف **);
+فراغ mm_sshpam_free_ctx(فراغ *);
+#پایان_اگر
 
-#ifdef SSH_AUDIT_EVENTS
-#include "audit.h"
-void mm_audit_event(struct ssh *, ssh_audit_event_t);
-void mm_audit_run_command(const char *);
-#endif
+#اگر_تعریف_شده SSH_AUDIT_EVENTS
+#ضمن "audit.h"
+فراغ mm_audit_event(بنية ssh *, ssh_audit_event_t);
+فراغ mm_audit_پیاپی_command(ثابت حرف *);
+#پایان_اگر
 
-struct Session;
-void mm_terminate(void);
-int mm_pty_allocate(int *, int *, char *, size_t);
-void mm_session_pty_cleanup2(struct Session *);
+بنية Session;
+فراغ mm_terminate(فراغ);
+صحيح mm_pty_allocate(صحيح *, صحيح *, حرف *, اندازه_t);
+فراغ mm_session_pty_cleanup2(بنية Session *);
 
-void mm_send_keystate(struct ssh *, struct monitor*);
+فراغ mm_send_keystate(بنية ssh *, بنية monitor*);
 
 /* state */
-struct ServerOptions;
-void mm_get_state(struct ssh *, struct ServerOptions *,
-    struct sshbuf **, uint64_t *, struct sshbuf **, struct sshbuf **,
-    u_char **, struct sshbuf **, struct sshbuf **);
+بنية ServerOptions;
+فراغ mm_get_state(بنية ssh *, بنية ServerOptions *,
+    بنية sshbuf **, uint64_t *, بنية sshbuf **, بنية sshbuf **,
+    u_char **, بنية sshbuf **, بنية sshbuf **);
 
 /* bsdauth */
-int mm_bsdauth_query(void *, char **, char **, u_int *, char ***, u_int **);
-int mm_bsdauth_respond(void *, u_int, char **);
+صحيح mm_bsdauth_query(فراغ *, حرف **, حرف **, u_int *, حرف ***, u_int **);
+صحيح mm_bsdauth_respond(فراغ *, u_int, حرف **);
 
 /* config / channels glue */
-void	 server_process_permitopen(struct ssh *);
-void	 server_process_channel_timeouts(struct ssh *ssh);
-struct connection_info *
-	 server_get_connection_info(struct ssh *, int, int);
+فراغ	 server_process_permitopen(بنية ssh *);
+فراغ	 server_process_channel_timeouts(بنية ssh *ssh);
+بنية connection_info *
+	 server_get_connection_info(بنية ssh *, صحيح, صحيح);
 
-#endif /* _MM_WRAP_H_ */
+#پایان_اگر /* _MM_WRAP_H_ */

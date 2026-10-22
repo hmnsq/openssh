@@ -25,293 +25,293 @@
  * protocol changes.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <limits.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
+#ضمن <limits.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <errno.h>
 
-#include "xmalloc.h"
-#include "log.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "msg.h"
-#include "uidswap.h"
-#include "ssherr.h"
-#include "ssh-sk.h"
-#include "ssh-pkcs11.h"
+#ضمن "xmalloc.h"
+#ضمن "log.h"
+#ضمن "sshkey.h"
+#ضمن "authfd.h"
+#ضمن "misc.h"
+#ضمن "sshbuf.h"
+#ضمن "msg.h"
+#ضمن "uidswap.h"
+#ضمن "ssherr.h"
+#ضمن "ssh-sk.h"
+#ضمن "ssh-pkcs11.h"
 
-#ifdef ENABLE_SK
-extern char *__progname;
+#اگر_تعریف_شده ENABLE_SK
+خارجي حرف *__progname;
 
-static struct sshbuf *reply_error(int r, char *fmt, ...)
-    __attribute__((__format__ (printf, 2, 3)));
+ساكن بنية sshbuf *پاسخ_error(صحيح r, حرف *fmt, ...)
+    __attribute__((__format__ (چاپ_کن, 2, 3)));
 
-static struct sshbuf *
-reply_error(int r, char *fmt, ...)
+ساكن بنية sshbuf *
+پاسخ_error(صحيح r, حرف *fmt, ...)
 {
-	char *msg;
+	حرف *پیام;
 	va_list ap;
-	struct sshbuf *resp;
+	بنية sshbuf *resp;
 
 	va_start(ap, fmt);
-	xvasprintf(&msg, fmt, ap);
+	xvasprintf(&پیام, fmt, ap);
 	va_end(ap);
-	debug("%s: %s", __progname, msg);
-	free(msg);
+	debug("%s: %s", __progname, پیام);
+	حرر(پیام);
 
-	if (r >= 0)
+	إذا (r >= 0)
 		fatal_f("invalid error code %d", r);
 
-	if ((resp = sshbuf_new()) == NULL)
+	إذا ((resp = sshbuf_new()) == عدم)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (sshbuf_put_u32(resp, SSH_SK_HELPER_ERROR) != 0 ||
+	إذا (sshbuf_put_u32(resp, SSH_SK_HELPER_ERROR) != 0 ||
 	    sshbuf_put_u32(resp, (u_int)-r) != 0)
 		fatal("%s: buffer error", __progname);
-	return resp;
+	أرجع resp;
 }
 
 /* If the specified string is zero length, then free it and replace with NULL */
-static void
-null_empty(char **s)
+ساكن فراغ
+null_خالی(حرف **s)
 {
-	if (s == NULL || *s == NULL || **s != '\0')
-		return;
+	إذا (s == عدم || *s == عدم || **s != '\0')
+		أرجع;
 
-	free(*s);
-	*s = NULL;
+	حرر(*s);
+	*s = عدم;
 }
 
 /* stubs */
-int
-pkcs11_sign(struct sshkey *key,
-    u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider,
-    const char *sk_pin, u_int compat)
+صحيح
+pkcs11_sign(بنية sshkey *کلید,
+    u_char **sigp, اندازه_t *lenp,
+    ثابت u_char *داده, اندازه_t datalen,
+    ثابت حرف *alg, ثابت حرف *sk_provider,
+    ثابت حرف *sk_pin, u_int compat)
 {
-	return SSH_ERR_INTERNAL_ERROR;
+	أرجع SSH_ERR_داخلی_ERROR;
 }
 
-void
-pkcs11_key_free(struct sshkey *key)
+فراغ
+pkcs11_کلید_free(بنية sshkey *کلید)
 {
 }
 
-static struct sshbuf *
-process_sign(struct sshbuf *req)
+ساكن بنية sshbuf *
+process_sign(بنية sshbuf *req)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *resp, *kbuf;
-	struct sshkey *key = NULL;
+	صحيح r = SSH_ERR_داخلی_ERROR;
+	بنية sshbuf *resp, *kbuf;
+	بنية sshkey *کلید = عدم;
 	uint32_t compat;
-	const u_char *message;
-	u_char *sig = NULL;
-	size_t msglen, siglen = 0;
-	char *provider = NULL, *pin = NULL;
+	ثابت u_char *پیام_2;
+	u_char *sig = عدم;
+	اندازه_t msglen, siglen = 0;
+	حرف *provider = عدم, *pin = عدم;
 
-	if ((r = sshbuf_froms(req, &kbuf)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(req, &message, &msglen)) != 0 ||
-	    (r = sshbuf_get_cstring(req, NULL, NULL)) != 0 || /* alg */
+	إذا ((r = sshbuf_froms(req, &kbuf)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &provider, عدم)) != 0 ||
+	    (r = sshbuf_get_string_مستقیم(req, &پیام_2, &msglen)) != 0 ||
+	    (r = sshbuf_get_cstring(req, عدم, عدم)) != 0 || /* alg */
 	    (r = sshbuf_get_u32(req, &compat)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0)
+	    (r = sshbuf_get_cstring(req, &pin, عدم)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	إذا (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
-	if ((r = sshkey_private_deserialize(kbuf, &key)) != 0)
+	إذا ((r = sshkey_خصوصی_deserialize(kbuf, &کلید)) != 0)
 		fatal_r(r, "%s: Unable to parse private key", __progname);
-	if (!sshkey_is_sk(key)) {
+	إذا (!sshkey_is_sk(کلید)) {
 		fatal("%s: Unsupported key type %s",
-		    __progname, sshkey_ssh_name(key));
+		    __progname, sshkey_ssh_name(کلید));
 	}
 
 	debug_f("ready to sign with key %s, provider %s: "
-	    "msg len %zu, compat 0x%lx", sshkey_type(key),
+	    "msg len %zu, compat 0x%lx", sshkey_type(کلید),
 	    provider, msglen, (u_long)compat);
 
-	null_empty(&pin);
+	null_خالی(&pin);
 
-	if ((r = sshsk_sign(provider, key, &sig, &siglen,
-	    message, msglen, compat, pin)) != 0) {
-		resp = reply_error(r, "Signing failed: %s", ssh_err(r));
-		goto out;
+	إذا ((r = sshsk_sign(provider, کلید, &sig, &siglen,
+	    پیام_2, msglen, compat, pin)) != 0) {
+		resp = پاسخ_error(r, "Signing failed: %s", ssh_err(r));
+		اذهب بیرون;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	إذا ((resp = sshbuf_new()) == عدم)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_SIGN)) != 0 ||
+	إذا ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_SIGN)) != 0 ||
 	    (r = sshbuf_put_string(resp, sig, siglen)) != 0)
 		fatal_r(r, "%s: compose", __progname);
- out:
-	sshkey_free(key);
+ بیرون:
+	sshkey_free(کلید);
 	sshbuf_free(kbuf);
-	free(provider);
-	if (sig != NULL)
+	حرر(provider);
+	إذا (sig != عدم)
 		freezero(sig, siglen);
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
-	return resp;
+	إذا (pin != عدم)
+		freezero(pin, طول_رشته(pin));
+	أرجع resp;
 }
 
-static struct sshbuf *
-process_enroll(struct sshbuf *req)
+ساكن بنية sshbuf *
+process_enroll(بنية sshbuf *req)
 {
-	int r;
+	صحيح r;
 	u_int type;
-	char *provider, *application, *pin, *device, *userid;
+	حرف *provider, *application, *pin, *device, *userid;
 	uint8_t flags;
-	struct sshbuf *challenge, *attest, *kbuf, *resp;
-	struct sshkey *key;
+	بنية sshbuf *challenge, *attest, *kbuf, *resp;
+	بنية sshkey *کلید;
 
-	if ((attest = sshbuf_new()) == NULL ||
-	    (kbuf = sshbuf_new()) == NULL)
+	إذا ((attest = sshbuf_new()) == عدم ||
+	    (kbuf = sshbuf_new()) == عدم)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_get_u32(req, &type)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &device, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &application, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &userid, NULL)) != 0 ||
+	إذا ((r = sshbuf_get_u32(req, &type)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &provider, عدم)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &device, عدم)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &application, عدم)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &userid, عدم)) != 0 ||
 	    (r = sshbuf_get_u8(req, &flags)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &pin, عدم)) != 0 ||
 	    (r = sshbuf_froms(req, &challenge)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	إذا (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
-	if (type > INT_MAX)
+	إذا (type > بیشترین_صحیح)
 		fatal("%s: bad type %u", __progname, type);
-	if (sshbuf_len(challenge) == 0) {
+	إذا (sshbuf_len(challenge) == 0) {
 		sshbuf_free(challenge);
-		challenge = NULL;
+		challenge = عدم;
 	}
-	null_empty(&device);
-	null_empty(&userid);
-	null_empty(&pin);
+	null_خالی(&device);
+	null_خالی(&userid);
+	null_خالی(&pin);
 
-	if ((r = sshsk_enroll((int)type, provider, device, application, userid,
-	    flags, pin, challenge, &key, attest)) != 0) {
-		resp = reply_error(r, "Enrollment failed: %s", ssh_err(r));
-		goto out;
+	إذا ((r = sshsk_enroll((صحيح)type, provider, device, application, userid,
+	    flags, pin, challenge, &کلید, attest)) != 0) {
+		resp = پاسخ_error(r, "Enrollment failed: %s", ssh_err(r));
+		اذهب بیرون;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	إذا ((resp = sshbuf_new()) == عدم)
 		fatal("%s: sshbuf_new failed", __progname);
-	if ((r = sshkey_private_serialize(key, kbuf)) != 0)
+	إذا ((r = sshkey_خصوصی_serialize(کلید, kbuf)) != 0)
 		fatal_r(r, "%s: encode key", __progname);
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_ENROLL)) != 0 ||
+	إذا ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_ENROLL)) != 0 ||
 	    (r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
 	    (r = sshbuf_put_stringb(resp, attest)) != 0)
 		fatal_r(r, "%s: compose", __progname);
 
- out:
-	sshkey_free(key);
+ بیرون:
+	sshkey_free(کلید);
 	sshbuf_free(kbuf);
 	sshbuf_free(attest);
 	sshbuf_free(challenge);
-	free(provider);
-	free(application);
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
+	حرر(provider);
+	حرر(application);
+	إذا (pin != عدم)
+		freezero(pin, طول_رشته(pin));
 
-	return resp;
+	أرجع resp;
 }
 
-static struct sshbuf *
-process_load_resident(struct sshbuf *req)
+ساكن بنية sshbuf *
+process_بارگیری_resident(بنية sshbuf *req)
 {
-	int r;
-	char *provider, *pin, *device;
-	struct sshbuf *kbuf, *resp;
-	struct sshsk_resident_key **srks = NULL;
-	size_t nsrks = 0, i;
+	صحيح r;
+	حرف *provider, *pin, *device;
+	بنية sshbuf *kbuf, *resp;
+	بنية sshsk_resident_کلید **srks = عدم;
+	اندازه_t nsrks = 0, i;
 	u_int flags;
 
-	if ((kbuf = sshbuf_new()) == NULL)
+	إذا ((kbuf = sshbuf_new()) == عدم)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &device, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0 ||
+	إذا ((r = sshbuf_get_cstring(req, &provider, عدم)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &device, عدم)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &pin, عدم)) != 0 ||
 	    (r = sshbuf_get_u32(req, &flags)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	إذا (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
-	null_empty(&device);
-	null_empty(&pin);
+	null_خالی(&device);
+	null_خالی(&pin);
 
-	if ((r = sshsk_load_resident(provider, device, pin, flags,
+	إذا ((r = sshsk_بارگیری_resident(provider, device, pin, flags,
 	    &srks, &nsrks)) != 0) {
-		resp = reply_error(r, "sshsk_load_resident failed: %s",
+		resp = پاسخ_error(r, "sshsk_load_resident failed: %s",
 		    ssh_err(r));
-		goto out;
+		اذهب بیرون;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	إذا ((resp = sshbuf_new()) == عدم)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
+	إذا ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_بارگیری_RESIDENT)) != 0)
 		fatal_r(r, "%s: compose", __progname);
 
-	for (i = 0; i < nsrks; i++) {
+	لكل (i = 0; i < nsrks; i++) {
 		debug_f("key %zu %s %s uidlen %zu", i,
-		    sshkey_type(srks[i]->key), srks[i]->key->sk_application,
+		    sshkey_type(srks[i]->کلید), srks[i]->کلید->sk_application,
 		    srks[i]->user_id_len);
 		sshbuf_reset(kbuf);
-		if ((r = sshkey_private_serialize(srks[i]->key, kbuf)) != 0)
+		إذا ((r = sshkey_خصوصی_serialize(srks[i]->کلید, kbuf)) != 0)
 			fatal_r(r, "%s: encode key", __progname);
-		if ((r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
+		إذا ((r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
 		    (r = sshbuf_put_cstring(resp, "")) != 0 || /* comment */
 		    (r = sshbuf_put_string(resp, srks[i]->user_id,
 		    srks[i]->user_id_len)) != 0)
 			fatal_r(r, "%s: compose key", __progname);
 	}
 
- out:
-	sshsk_free_resident_keys(srks, nsrks);
+ بیرون:
+	sshsk_free_resident_کلیدها(srks, nsrks);
 	sshbuf_free(kbuf);
-	free(provider);
-	free(device);
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
-	return resp;
+	حرر(provider);
+	حرر(device);
+	إذا (pin != عدم)
+		freezero(pin, طول_رشته(pin));
+	أرجع resp;
 }
 
-int
-main(int argc, char **argv)
+صحيح
+اصلی(صحيح argc, حرف **argv)
 {
 	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
 	LogLevel log_level = SYSLOG_LEVEL_ERROR;
-	struct sshbuf *req, *resp;
-	int in, out, ch, r, vflag = 0;
+	بنية sshbuf *req, *resp;
+	صحيح درون, بیرون, ch, r, vflag = 0;
 	u_int rtype, ll = 0;
-	uint8_t version, log_stderr = 0;
+	uint8_t نسخه, log_stderr = 0;
 
 	sanitise_stdfd();
 	log_init(__progname, log_level, log_facility, log_stderr);
 
-	while ((ch = getopt(argc, argv, "v")) != -1) {
-		switch (ch) {
-		case 'v':
+	طالما ((ch = getopt(argc, argv, "v")) != -1) {
+		بدل (ch) {
+		حالة 'v':
 			vflag = 1;
-			if (log_level == SYSLOG_LEVEL_ERROR)
+			إذا (log_level == SYSLOG_LEVEL_ERROR)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			وإلا إذا (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			fprintf(stderr, "usage: %s [-v]\n", __progname);
-			exit(1);
+			خروج(1);
 		}
 	}
 	log_init(__progname, log_level, log_facility, vflag);
@@ -321,63 +321,63 @@ main(int argc, char **argv)
 	 * providers not to fiddle with stdin/out.
 	 */
 	closefrom(STDERR_FILENO + 1);
-	if ((in = dup(STDIN_FILENO)) == -1 || (out = dup(STDOUT_FILENO)) == -1)
+	إذا ((درون = dup(STDIN_FILENO)) == -1 || (بیرون = dup(STDOUT_FILENO)) == -1)
 		fatal("%s: dup: %s", __progname, strerror(errno));
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	sanitise_stdfd(); /* resets to /dev/null */
 
-	if ((req = sshbuf_new()) == NULL)
+	إذا ((req = sshbuf_new()) == عدم)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (ssh_msg_recv(in, req) < 0)
+	إذا (ssh_پیام_recv(درون, req) < 0)
 		fatal("ssh_msg_recv failed");
-	close(in);
+	close(درون);
 	debug_f("received message len %zu", sshbuf_len(req));
 
-	if ((r = sshbuf_get_u8(req, &version)) != 0)
+	إذا ((r = sshbuf_get_u8(req, &نسخه)) != 0)
 		fatal_r(r, "%s: parse version", __progname);
-	if (version != SSH_SK_HELPER_VERSION) {
+	إذا (نسخه != SSH_SK_HELPER_نسخه) {
 		fatal("unsupported version: received %d, expected %d",
-		    version, SSH_SK_HELPER_VERSION);
+		    نسخه, SSH_SK_HELPER_نسخه);
 	}
 
-	if ((r = sshbuf_get_u32(req, &rtype)) != 0 ||
+	إذا ((r = sshbuf_get_u32(req, &rtype)) != 0 ||
 	    (r = sshbuf_get_u8(req, &log_stderr)) != 0 ||
 	    (r = sshbuf_get_u32(req, &ll)) != 0)
 		fatal_r(r, "%s: parse", __progname);
 
-	if (!vflag && log_level_name((LogLevel)ll) != NULL)
+	إذا (!vflag && log_level_name((LogLevel)ll) != عدم)
 		log_init(__progname, (LogLevel)ll, log_facility, log_stderr);
 
-	switch (rtype) {
-	case SSH_SK_HELPER_SIGN:
+	بدل (rtype) {
+	حالة SSH_SK_HELPER_SIGN:
 		resp = process_sign(req);
-		break;
-	case SSH_SK_HELPER_ENROLL:
+		اكسر;
+	حالة SSH_SK_HELPER_ENROLL:
 		resp = process_enroll(req);
-		break;
-	case SSH_SK_HELPER_LOAD_RESIDENT:
-		resp = process_load_resident(req);
-		break;
-	default:
+		اكسر;
+	حالة SSH_SK_HELPER_بارگیری_RESIDENT:
+		resp = process_بارگیری_resident(req);
+		اكسر;
+	افتراضي:
 		fatal("%s: unsupported request type %u", __progname, rtype);
 	}
 	sshbuf_free(req);
 	debug_f("reply len %zu", sshbuf_len(resp));
 
-	if (ssh_msg_send(out, SSH_SK_HELPER_VERSION, resp) == -1)
+	إذا (ssh_پیام_send(بیرون, SSH_SK_HELPER_نسخه, resp) == -1)
 		fatal("ssh_msg_send failed");
 	sshbuf_free(resp);
-	close(out);
+	close(بیرون);
 
-	return (0);
+	أرجع (0);
 }
-#else /* ENABLE_SK */
+#وإلا /* ENABLE_SK */
 
-int
-main(int argc, char **argv)
+صحيح
+اصلی(صحيح argc, حرف **argv)
 {
 	fprintf(stderr, "ssh-sk-helper: disabled at compile time\n");
-	return -1;
+	أرجع -1;
 }
-#endif /* ENABLE_SK */
+#پایان_اگر /* ENABLE_SK */

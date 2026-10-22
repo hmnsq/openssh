@@ -36,139 +36,139 @@
 
 /* OPENBSD ORIGINAL: include/sha2.h */
 
-#ifndef _SSHSHA2_H
-#define _SSHSHA2_H
+#اگر_تعریف_نشده _SSHSHA2_H
+#تعریف_کن _SSHSHA2_H
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if !defined(HAVE_SHA256UPDATE) || !defined(HAVE_SHA384UPDATE) || \
+#إذا !defined(HAVE_SHA256UPDATE) || !defined(HAVE_SHA384UPDATE) || \
     !defined(HAVE_SHA512UPDATE)
 
 /*** SHA-256/384/512 Various Length Definitions ***********************/
-#define SHA224_BLOCK_LENGTH		64
-#define SHA224_DIGEST_LENGTH		28
-#define SHA224_DIGEST_STRING_LENGTH	(SHA224_DIGEST_LENGTH * 2 + 1)
-#define SHA256_BLOCK_LENGTH		64
-#define SHA256_DIGEST_LENGTH		32
-#define SHA256_DIGEST_STRING_LENGTH	(SHA256_DIGEST_LENGTH * 2 + 1)
-#define SHA384_BLOCK_LENGTH		128
-#define SHA384_DIGEST_LENGTH		48
-#define SHA384_DIGEST_STRING_LENGTH	(SHA384_DIGEST_LENGTH * 2 + 1)
-#define SHA512_BLOCK_LENGTH		128
-#define SHA512_DIGEST_LENGTH		64
-#define SHA512_DIGEST_STRING_LENGTH	(SHA512_DIGEST_LENGTH * 2 + 1)
-#define SHA512_256_BLOCK_LENGTH		128
-#define SHA512_256_DIGEST_LENGTH	32
-#define SHA512_256_DIGEST_STRING_LENGTH	(SHA512_256_DIGEST_LENGTH * 2 + 1)
+#تعریف_کن SHA224_بلوک_درازی		64
+#تعریف_کن SHA224_DIGEST_درازی		28
+#تعریف_کن SHA224_DIGEST_STRING_درازی	(SHA224_DIGEST_درازی * 2 + 1)
+#تعریف_کن SHA256_بلوک_درازی		64
+#تعریف_کن SHA256_DIGEST_درازی		32
+#تعریف_کن SHA256_DIGEST_STRING_درازی	(SHA256_DIGEST_درازی * 2 + 1)
+#تعریف_کن SHA384_بلوک_درازی		128
+#تعریف_کن SHA384_DIGEST_درازی		48
+#تعریف_کن SHA384_DIGEST_STRING_درازی	(SHA384_DIGEST_درازی * 2 + 1)
+#تعریف_کن SHA512_بلوک_درازی		128
+#تعریف_کن SHA512_DIGEST_درازی		64
+#تعریف_کن SHA512_DIGEST_STRING_درازی	(SHA512_DIGEST_درازی * 2 + 1)
+#تعریف_کن SHA512_256_بلوک_درازی		128
+#تعریف_کن SHA512_256_DIGEST_درازی	32
+#تعریف_کن SHA512_256_DIGEST_STRING_درازی	(SHA512_256_DIGEST_درازی * 2 + 1)
 
 
 /*** SHA-224/256/384/512 Context Structure *******************************/
-typedef struct _SHA2_CTX {
-	union {
+تعريفنوع بنية _SHA2_CTX {
+	اتحاد {
 		u_int32_t	st32[8];
 		u_int64_t	st64[8];
 	} state;
 	u_int64_t	bitcount[2];
-	u_int8_t	buffer[SHA512_BLOCK_LENGTH];
+	u_int8_t	میانگیر[SHA512_بلوک_درازی];
 } SHA2_CTX;
 
-#if 0
+#إذا 0
 __BEGIN_DECLS
-void SHA224Init(SHA2_CTX *);
-void SHA224Transform(u_int32_t state[8], const u_int8_t [SHA224_BLOCK_LENGTH]);
-void SHA224Update(SHA2_CTX *, const u_int8_t *, size_t)
+فراغ SHA224Init(SHA2_CTX *);
+فراغ SHA224Transform(u_int32_t state[8], ثابت u_int8_t [SHA224_بلوک_درازی]);
+فراغ SHA224Update(SHA2_CTX *, ثابت u_int8_t *, اندازه_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA224Pad(SHA2_CTX *);
-void SHA224Final(u_int8_t [SHA224_DIGEST_LENGTH], SHA2_CTX *)
-	__attribute__((__bounded__(__minbytes__,1,SHA224_DIGEST_LENGTH)));
-char *SHA224End(SHA2_CTX *, char *)
-	__attribute__((__bounded__(__minbytes__,2,SHA224_DIGEST_STRING_LENGTH)));
-char *SHA224File(const char *, char *)
-	__attribute__((__bounded__(__minbytes__,2,SHA224_DIGEST_STRING_LENGTH)));
-char *SHA224FileChunk(const char *, char *, off_t, off_t)
-	__attribute__((__bounded__(__minbytes__,2,SHA224_DIGEST_STRING_LENGTH)));
-char *SHA224Data(const u_int8_t *, size_t, char *)
+فراغ SHA224Pad(SHA2_CTX *);
+فراغ SHA224Final(u_int8_t [SHA224_DIGEST_درازی], SHA2_CTX *)
+	__attribute__((__bounded__(__minbytes__,1,SHA224_DIGEST_درازی)));
+حرف *SHA224_انتها(SHA2_CTX *, حرف *)
+	__attribute__((__bounded__(__minbytes__,2,SHA224_DIGEST_STRING_درازی)));
+حرف *SHA224File(ثابت حرف *, حرف *)
+	__attribute__((__bounded__(__minbytes__,2,SHA224_DIGEST_STRING_درازی)));
+حرف *SHA224FileChunk(ثابت حرف *, حرف *, off_t, off_t)
+	__attribute__((__bounded__(__minbytes__,2,SHA224_DIGEST_STRING_درازی)));
+حرف *SHA224_داده(ثابت u_int8_t *, اندازه_t, حرف *)
 	__attribute__((__bounded__(__string__,1,2)))
-	__attribute__((__bounded__(__minbytes__,3,SHA224_DIGEST_STRING_LENGTH)));
-#endif /* 0 */
+	__attribute__((__bounded__(__minbytes__,3,SHA224_DIGEST_STRING_درازی)));
+#پایان_اگر /* 0 */
 
-#ifndef HAVE_SHA256UPDATE
-void SHA256Init(SHA2_CTX *);
-void SHA256Transform(u_int32_t state[8], const u_int8_t [SHA256_BLOCK_LENGTH]);
-void SHA256Update(SHA2_CTX *, const u_int8_t *, size_t)
+#اگر_تعریف_نشده HAVE_SHA256UPDATE
+فراغ SHA256Init(SHA2_CTX *);
+فراغ SHA256Transform(u_int32_t state[8], ثابت u_int8_t [SHA256_بلوک_درازی]);
+فراغ SHA256Update(SHA2_CTX *, ثابت u_int8_t *, اندازه_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA256Pad(SHA2_CTX *);
-void SHA256Final(u_int8_t [SHA256_DIGEST_LENGTH], SHA2_CTX *)
-	__attribute__((__bounded__(__minbytes__,1,SHA256_DIGEST_LENGTH)));
-char *SHA256End(SHA2_CTX *, char *)
-	__attribute__((__bounded__(__minbytes__,2,SHA256_DIGEST_STRING_LENGTH)));
-char *SHA256File(const char *, char *)
-	__attribute__((__bounded__(__minbytes__,2,SHA256_DIGEST_STRING_LENGTH)));
-char *SHA256FileChunk(const char *, char *, off_t, off_t)
-	__attribute__((__bounded__(__minbytes__,2,SHA256_DIGEST_STRING_LENGTH)));
-char *SHA256Data(const u_int8_t *, size_t, char *)
+فراغ SHA256Pad(SHA2_CTX *);
+فراغ SHA256Final(u_int8_t [SHA256_DIGEST_درازی], SHA2_CTX *)
+	__attribute__((__bounded__(__minbytes__,1,SHA256_DIGEST_درازی)));
+حرف *SHA256_انتها(SHA2_CTX *, حرف *)
+	__attribute__((__bounded__(__minbytes__,2,SHA256_DIGEST_STRING_درازی)));
+حرف *SHA256File(ثابت حرف *, حرف *)
+	__attribute__((__bounded__(__minbytes__,2,SHA256_DIGEST_STRING_درازی)));
+حرف *SHA256FileChunk(ثابت حرف *, حرف *, off_t, off_t)
+	__attribute__((__bounded__(__minbytes__,2,SHA256_DIGEST_STRING_درازی)));
+حرف *SHA256_داده(ثابت u_int8_t *, اندازه_t, حرف *)
 	__attribute__((__bounded__(__string__,1,2)))
-	__attribute__((__bounded__(__minbytes__,3,SHA256_DIGEST_STRING_LENGTH)));
-#endif /* HAVE_SHA256UPDATE */
+	__attribute__((__bounded__(__minbytes__,3,SHA256_DIGEST_STRING_درازی)));
+#پایان_اگر /* HAVE_SHA256UPDATE */
 
-#ifndef HAVE_SHA384UPDATE
-void SHA384Init(SHA2_CTX *);
-void SHA384Transform(u_int64_t state[8], const u_int8_t [SHA384_BLOCK_LENGTH]);
-void SHA384Update(SHA2_CTX *, const u_int8_t *, size_t)
+#اگر_تعریف_نشده HAVE_SHA384UPDATE
+فراغ SHA384Init(SHA2_CTX *);
+فراغ SHA384Transform(u_int64_t state[8], ثابت u_int8_t [SHA384_بلوک_درازی]);
+فراغ SHA384Update(SHA2_CTX *, ثابت u_int8_t *, اندازه_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA384Pad(SHA2_CTX *);
-void SHA384Final(u_int8_t [SHA384_DIGEST_LENGTH], SHA2_CTX *)
-	__attribute__((__bounded__(__minbytes__,1,SHA384_DIGEST_LENGTH)));
-char *SHA384End(SHA2_CTX *, char *)
-	__attribute__((__bounded__(__minbytes__,2,SHA384_DIGEST_STRING_LENGTH)));
-char *SHA384File(const char *, char *)
-	__attribute__((__bounded__(__minbytes__,2,SHA384_DIGEST_STRING_LENGTH)));
-char *SHA384FileChunk(const char *, char *, off_t, off_t)
-	__attribute__((__bounded__(__minbytes__,2,SHA384_DIGEST_STRING_LENGTH)));
-char *SHA384Data(const u_int8_t *, size_t, char *)
+فراغ SHA384Pad(SHA2_CTX *);
+فراغ SHA384Final(u_int8_t [SHA384_DIGEST_درازی], SHA2_CTX *)
+	__attribute__((__bounded__(__minbytes__,1,SHA384_DIGEST_درازی)));
+حرف *SHA384_انتها(SHA2_CTX *, حرف *)
+	__attribute__((__bounded__(__minbytes__,2,SHA384_DIGEST_STRING_درازی)));
+حرف *SHA384File(ثابت حرف *, حرف *)
+	__attribute__((__bounded__(__minbytes__,2,SHA384_DIGEST_STRING_درازی)));
+حرف *SHA384FileChunk(ثابت حرف *, حرف *, off_t, off_t)
+	__attribute__((__bounded__(__minbytes__,2,SHA384_DIGEST_STRING_درازی)));
+حرف *SHA384_داده(ثابت u_int8_t *, اندازه_t, حرف *)
 	__attribute__((__bounded__(__string__,1,2)))
-	__attribute__((__bounded__(__minbytes__,3,SHA384_DIGEST_STRING_LENGTH)));
-#endif /* HAVE_SHA384UPDATE */
+	__attribute__((__bounded__(__minbytes__,3,SHA384_DIGEST_STRING_درازی)));
+#پایان_اگر /* HAVE_SHA384UPDATE */
 
-#ifndef HAVE_SHA512UPDATE
-void SHA512Init(SHA2_CTX *);
-void SHA512Transform(u_int64_t state[8], const u_int8_t [SHA512_BLOCK_LENGTH]);
-void SHA512Update(SHA2_CTX *, const u_int8_t *, size_t)
+#اگر_تعریف_نشده HAVE_SHA512UPDATE
+فراغ SHA512Init(SHA2_CTX *);
+فراغ SHA512Transform(u_int64_t state[8], ثابت u_int8_t [SHA512_بلوک_درازی]);
+فراغ SHA512Update(SHA2_CTX *, ثابت u_int8_t *, اندازه_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA512Pad(SHA2_CTX *);
-void SHA512Final(u_int8_t [SHA512_DIGEST_LENGTH], SHA2_CTX *)
-	__attribute__((__bounded__(__minbytes__,1,SHA512_DIGEST_LENGTH)));
-char *SHA512End(SHA2_CTX *, char *)
-	__attribute__((__bounded__(__minbytes__,2,SHA512_DIGEST_STRING_LENGTH)));
-char *SHA512File(const char *, char *)
-	__attribute__((__bounded__(__minbytes__,2,SHA512_DIGEST_STRING_LENGTH)));
-char *SHA512FileChunk(const char *, char *, off_t, off_t)
-	__attribute__((__bounded__(__minbytes__,2,SHA512_DIGEST_STRING_LENGTH)));
-char *SHA512Data(const u_int8_t *, size_t, char *)
+فراغ SHA512Pad(SHA2_CTX *);
+فراغ SHA512Final(u_int8_t [SHA512_DIGEST_درازی], SHA2_CTX *)
+	__attribute__((__bounded__(__minbytes__,1,SHA512_DIGEST_درازی)));
+حرف *SHA512_انتها(SHA2_CTX *, حرف *)
+	__attribute__((__bounded__(__minbytes__,2,SHA512_DIGEST_STRING_درازی)));
+حرف *SHA512File(ثابت حرف *, حرف *)
+	__attribute__((__bounded__(__minbytes__,2,SHA512_DIGEST_STRING_درازی)));
+حرف *SHA512FileChunk(ثابت حرف *, حرف *, off_t, off_t)
+	__attribute__((__bounded__(__minbytes__,2,SHA512_DIGEST_STRING_درازی)));
+حرف *SHA512_داده(ثابت u_int8_t *, اندازه_t, حرف *)
 	__attribute__((__bounded__(__string__,1,2)))
-	__attribute__((__bounded__(__minbytes__,3,SHA512_DIGEST_STRING_LENGTH)));
-#endif /* HAVE_SHA512UPDATE */
+	__attribute__((__bounded__(__minbytes__,3,SHA512_DIGEST_STRING_درازی)));
+#پایان_اگر /* HAVE_SHA512UPDATE */
 
-#if 0
-void SHA512_256Init(SHA2_CTX *);
-void SHA512_256Transform(u_int64_t state[8], const u_int8_t [SHA512_256_BLOCK_LENGTH]);
-void SHA512_256Update(SHA2_CTX *, const u_int8_t *, size_t)
+#إذا 0
+فراغ SHA512_256Init(SHA2_CTX *);
+فراغ SHA512_256Transform(u_int64_t state[8], ثابت u_int8_t [SHA512_256_بلوک_درازی]);
+فراغ SHA512_256Update(SHA2_CTX *, ثابت u_int8_t *, اندازه_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA512_256Pad(SHA2_CTX *);
-void SHA512_256Final(u_int8_t [SHA512_256_DIGEST_LENGTH], SHA2_CTX *)
-	__attribute__((__bounded__(__minbytes__,1,SHA512_256_DIGEST_LENGTH)));
-char *SHA512_256End(SHA2_CTX *, char *)
-	__attribute__((__bounded__(__minbytes__,2,SHA512_256_DIGEST_STRING_LENGTH)));
-char *SHA512_256File(const char *, char *)
-	__attribute__((__bounded__(__minbytes__,2,SHA512_256_DIGEST_STRING_LENGTH)));
-char *SHA512_256FileChunk(const char *, char *, off_t, off_t)
-	__attribute__((__bounded__(__minbytes__,2,SHA512_256_DIGEST_STRING_LENGTH)));
-char *SHA512_256Data(const u_int8_t *, size_t, char *)
+فراغ SHA512_256Pad(SHA2_CTX *);
+فراغ SHA512_256Final(u_int8_t [SHA512_256_DIGEST_درازی], SHA2_CTX *)
+	__attribute__((__bounded__(__minbytes__,1,SHA512_256_DIGEST_درازی)));
+حرف *SHA512_256_انتها(SHA2_CTX *, حرف *)
+	__attribute__((__bounded__(__minbytes__,2,SHA512_256_DIGEST_STRING_درازی)));
+حرف *SHA512_256File(ثابت حرف *, حرف *)
+	__attribute__((__bounded__(__minbytes__,2,SHA512_256_DIGEST_STRING_درازی)));
+حرف *SHA512_256FileChunk(ثابت حرف *, حرف *, off_t, off_t)
+	__attribute__((__bounded__(__minbytes__,2,SHA512_256_DIGEST_STRING_درازی)));
+حرف *SHA512_256_داده(ثابت u_int8_t *, اندازه_t, حرف *)
 	__attribute__((__bounded__(__string__,1,2)))
-	__attribute__((__bounded__(__minbytes__,3,SHA512_256_DIGEST_STRING_LENGTH)));
+	__attribute__((__bounded__(__minbytes__,3,SHA512_256_DIGEST_STRING_درازی)));
 __END_DECLS
-#endif /* 0 */
+#پایان_اگر /* 0 */
 
-#endif /* HAVE_SHA{256,384,512}UPDATE */
+#پایان_اگر /* HAVE_SHA{256,384,512}UPDATE */
 
-#endif /* _SSHSHA2_H */
+#پایان_اگر /* _SSHSHA2_H */
