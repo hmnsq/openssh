@@ -15,14 +15,14 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-int	 vasnmprintf(char **, size_t, int *, const char *, va_list);
-int	 mprintf(const char *, ...)
+ຈຳນວນເຕັມ	 vasnmprintf(var_na **, size_t, ຈຳນວນເຕັມ *, const var_na *, va_list);
+ຈຳນວນເຕັມ	 mprintf(const var_na *, ...)
 	    __attribute__((format(printf, 1, 2)));
-int	 fmprintf(FILE *, const char *, ...)
+ຈຳນວນເຕັມ	 fmprintf(FILE *, const var_na *, ...)
 	    __attribute__((format(printf, 2, 3)));
-int	 vfmprintf(FILE *, const char *, va_list);
-int	 snmprintf(char *, size_t, int *, const char *, ...)
+ຈຳນວນເຕັມ	 vfmprintf(FILE *, const var_na *, va_list);
+ຈຳນວນເຕັມ	 snmprintf(var_na *, size_t, ຈຳນວນເຕັມ *, const var_na *, ...)
 	    __attribute__((format(printf, 4, 5)));
-int	 asmprintf(char **, size_t, int *, const char *, ...)
+ຈຳນວນເຕັມ	 asmprintf(var_na **, size_t, ຈຳນວນເຕັມ *, const var_na *, ...)
 	    __attribute__((format(printf, 4, 5)));
 void	 msetlocale(void);

@@ -6,87 +6,87 @@
 
 void test_one(const uint8_t* s, size_t slen);
 
-static int
+static ຈຳນວນເຕັມ
 devnull_or_die(void)
 {
-	int fd;
+	ຈຳນວນເຕັມ fd;
 
-	if ((fd = open("/dev/null", O_RDWR)) == -1) {
+	ຖ້າ ((fd = open("/dev/null", O_RDWR)) == -1) {
 		error_f("open /dev/null: %s", strerror(errno));
 		abort();
 	}
-	return fd;
+	ສົ່ງຄືນ fd;
 }
 
-static struct sshkey *
-pubkey_or_die(const char *s)
+static sa_nracanaa sshkey *
+pubkey_or_die(const var_na *s)
 {
-	char *tmp, *cp;
-	struct sshkey *pubkey;
-	int r;
+	var_na *tmp, *cp;
+	sa_nracanaa sshkey *pubkey;
+	ຈຳນວນເຕັມ r;
 
 	tmp = cp = xstrdup(s);
-	if ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
+	ຖ້າ ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
 		abort();
-	if ((r = sshkey_read(pubkey, &cp)) != 0) {
+	ຖ້າ ((r = sshkey_read(pubkey, &cp)) != 0) {
 		error_fr(r, "parse");
 		abort();
 	}
 	free(tmp);
-	return pubkey;
+	ສົ່ງຄືນ pubkey;
 }
 
-static struct sshkey *
-privkey_or_die(const char *s)
+static sa_nracanaa sshkey *
+privkey_or_die(const var_na *s)
 {
-	int r;
-	struct sshbuf *b;
-	struct sshkey *privkey;
+	ຈຳນວນເຕັມ r;
+	sa_nracanaa sshbuf *b;
+	sa_nracanaa sshkey *privkey;
 
-	if ((b = sshbuf_from(s, strlen(s))) == NULL) {
+	ຖ້າ ((b = sshbuf_from(s, strlen(s))) == NULL) {
 		error_f("sshbuf_from failed");
 		abort();
 	}
-	if ((r = sshkey_parse_private_fileblob(b, "", &privkey, NULL)) != 0) {
+	ຖ້າ ((r = sshkey_parse_private_fileblob(b, "", &privkey, NULL)) != 0) {
 		error_fr(r, "parse");
 		abort();
 	}
 	sshbuf_free(b);
-	return privkey;
+	ສົ່ງຄືນ privkey;
 }
 
 static void
-add_key(const char *privkey, const char *certpath)
+add_key(const var_na *privkey, const var_na *certpath)
 {
 	Identity *id;
-	int r;
-	struct sshkey *cert;
+	ຈຳນວນເຕັມ r;
+	sa_nracanaa sshkey *cert;
 
-	id = xcalloc(1, sizeof(Identity));
+	id = xcalloc(1, parimaa_na(Identity));
 	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
 	idtab->nentries++;
 	id->key = privkey_or_die(privkey);
 	id->comment = xstrdup("rhododaktulos Eos");
-	if (sshkey_is_sk(id->key))
+	ຖ້າ (sshkey_is_sk(id->key))
 		id->sk_provider = xstrdup("internal");
 
 	/* Now the cert too */
-	id = xcalloc(1, sizeof(Identity));
+	id = xcalloc(1, parimaa_na(Identity));
 	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
 	idtab->nentries++;
 	id->key = privkey_or_die(privkey);
 	cert = pubkey_or_die(certpath);
-	if ((r = sshkey_to_certified(id->key)) != 0) {
+	ຖ້າ ((r = sshkey_to_certified(id->key)) != 0) {
 		error_fr(r, "sshkey_to_certified");
 		abort();
 	}
-	if ((r = sshkey_cert_copy(cert, id->key)) != 0) {
+	ຖ້າ ((r = sshkey_cert_copy(cert, id->key)) != 0) {
 		error_fr(r, "sshkey_cert_copy");
 		abort();
 	}
 	sshkey_free(cert);
 	id->comment = xstrdup("outis");
-	if (sshkey_is_sk(id->key))
+	ຖ້າ (sshkey_is_sk(id->key))
 		id->sk_provider = xstrdup("internal");
 }
 
@@ -95,8 +95,8 @@ cleanup_idtab(void)
 {
 	Identity *id;
 
-	if (idtab == NULL) return;
-	for (id = TAILQ_FIRST(&idtab->idlist); id;
+	ຖ້າ (idtab == NULL) ສົ່ງຄືນ;
+	ສຳລັບ (id = TAILQ_FIRST(&idtab->idlist); id;
 	    id = TAILQ_FIRST(&idtab->idlist)) {
 		TAILQ_REMOVE(&idtab->idlist, id, next);
 		free_identity(id);
@@ -122,8 +122,8 @@ static void
 cleanup_sockettab(void)
 {
 	u_int i;
-	for (i = 0; i < sockets_alloc; i++) {
-		if (sockets[i].type != AUTH_UNUSED)
+	ສຳລັບ (i = 0; i < sockets_alloc; i++) {
+		ຖ້າ (sockets[i].type != AUTH_UNUSED)
 			close_socket(sockets + i);
 	}
 	free(sockets);
@@ -132,12 +132,12 @@ cleanup_sockettab(void)
 }
 
 static void
-reset_sockettab(int devnull)
+reset_sockettab(ຈຳນວນເຕັມ devnull)
 {
-	int fd;
+	ຈຳນວນເຕັມ fd;
 
 	cleanup_sockettab();
-	if ((fd = dup(devnull)) == -1) {
+	ຖ້າ ((fd = dup(devnull)) == -1) {
 		error_f("dup: %s", strerror(errno));
 		abort();
 	}
@@ -150,10 +150,10 @@ reset_sockettab(int devnull)
 void
 test_one(const uint8_t* s, size_t slen)
 {
-	static int devnull = -1;
+	static ຈຳນວນເຕັມ devnull = -1;
 	size_t i, olen, nlen;
 
-	if (devnull == -1) {
+	ຖ້າ (devnull == -1) {
 		log_init(__progname, SYSLOG_LEVEL_DEBUG3,
 		    SYSLOG_FACILITY_AUTH, 1);
 		devnull = devnull_or_die();
@@ -165,12 +165,12 @@ test_one(const uint8_t* s, size_t slen)
 	reset_idtab();
 	reset_sockettab(devnull);
 	(void)sshbuf_put(sockets[0].input, s, slen);
-	for (i = 0; i < MAX_MESSAGES; i++) {
+	ສຳລັບ (i = 0; i < MAX_MESSAGES; i++) {
 		olen = sshbuf_len(sockets[0].input);
 		process_message(0);
 		nlen = sshbuf_len(sockets[0].input);
-		if (nlen == 0 || nlen == olen)
-			break;
+		ຖ້າ (nlen == 0 || nlen == olen)
+			bha_nga;
 	}
 	cleanup_idtab();
 	cleanup_sockettab();

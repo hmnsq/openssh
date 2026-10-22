@@ -33,7 +33,7 @@
 # define AT_SYMLINK_NOFOLLOW 0x80000000
 #endif
 
-int utimensat(int, const char *, const struct timespec[2], int);
+ຈຳນວນເຕັມ utimensat(ຈຳນວນເຕັມ, const var_na *, const sa_nracanaa timespec[2], ຈຳນວນເຕັມ);
 
 static void
 cleanup(void)
@@ -43,29 +43,29 @@ cleanup(void)
 }
 
 static void
-fail(char *msg, long expect, long got)
+fail(var_na *msg, long expect, long got)
 {
-	int saved_errno = errno;
+	ຈຳນວນເຕັມ saved_errno = errno;
 
-	if (expect == got && got == 0)
+	ຖ້າ (expect == got && got == 0)
 		fprintf(stderr, "utimensat: %s: %s\n", msg,
 		     strerror(saved_errno));
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		fprintf(stderr, "utimensat: %s: expected %ld got %ld\n",
 		     msg, expect, got);
 	cleanup();
 	exit(1);
 }
 
-int
+ຈຳນວນເຕັມ
 main(void)
 {
-	int fd;
-	struct stat sb;
-	struct timespec ts[2];
+	ຈຳນວນເຕັມ fd;
+	sa_nracanaa stat sb;
+	sa_nracanaa timespec ts[2];
 
 	cleanup();
-	if ((fd = open(TMPFILE, O_CREAT, 0600)) == -1)
+	ຖ້າ ((fd = open(TMPFILE, O_CREAT, 0600)) == -1)
 		fail("open", 0, 0);
 	close(fd);
 
@@ -73,30 +73,30 @@ main(void)
 	ts[0].tv_nsec = 23456789;
 	ts[1].tv_sec = 34567890;
 	ts[1].tv_nsec = 45678901;
-	if (utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW) == -1)
+	ຖ້າ (utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW) == -1)
 		fail("utimensat", 0, 0);
 
-	if (stat(TMPFILE, &sb) == -1)
+	ຖ້າ (stat(TMPFILE, &sb) == -1)
 		fail("stat", 0, 0);
-#if 0
+#ຖ້າ 0
 	/*
 	 * This test only works on filesystems mounted 'noatime', otherwise the
 	 * stat() above resets atime. Skip by default.
 	 */
-	if (sb.st_atime != 12345678)
+	ຖ້າ (sb.st_atime != 12345678)
 		fail("st_atime", 0, 0);
 #endif
-	if (sb.st_mtime != 34567890)
+	ຖ້າ (sb.st_mtime != 34567890)
 		fail("st_mtime", 0, 0);
-#if 0
+#ຖ້າ 0
 	/*
 	 * Results expected to be rounded to the nearest microsecond.
 	 * Depends on timestamp precision in kernel and filesystem so
 	 * disabled by default.
 	 */
-	if (sb.st_atim.tv_nsec != 23456000)
+	ຖ້າ (sb.st_atim.tv_nsec != 23456000)
 		fail("atim.tv_nsec", 23456000, sb.st_atim.tv_nsec);
-	if (sb.st_mtim.tv_nsec != 45678000)
+	ຖ້າ (sb.st_mtim.tv_nsec != 45678000)
 		fail("mtim.tv_nsec", 45678000, sb.st_mtim.tv_nsec);
 #endif
 
@@ -107,18 +107,18 @@ main(void)
 	 * with instead of following a symlink when explicitly asked not to.
 	 * Here we just test that it does not update the destination.
 	 */
-	if (rename(TMPFILE, TMPFILE2) == -1)
+	ຖ້າ (rename(TMPFILE, TMPFILE2) == -1)
 		fail("rename", 0, 0);
-	if (symlink(TMPFILE2, TMPFILE) == -1)
+	ຖ້າ (symlink(TMPFILE2, TMPFILE) == -1)
 		fail("symlink", 0, 0);
 	ts[0].tv_sec = 11223344;
 	ts[1].tv_sec = 55667788;
 	(void)utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW);
-	if (stat(TMPFILE2, &sb) == -1)
+	ຖ້າ (stat(TMPFILE2, &sb) == -1)
 		fail("stat", 0, 0 );
-	if (sb.st_atime == 11223344)
+	ຖ້າ (sb.st_atime == 11223344)
 		fail("utimensat symlink st_atime", 0, 0 );
-	if (sb.st_mtime == 55667788)
+	ຖ້າ (sb.st_mtime == 55667788)
 		fail("utimensat symlink st_mtime", 0, 0 );
 
 	cleanup();

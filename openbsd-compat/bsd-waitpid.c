@@ -30,24 +30,24 @@
 #include "bsd-waitpid.h"
 
 pid_t
-waitpid(int pid, int *stat_loc, int options)
+waitpid(ຈຳນວນເຕັມ pid, ຈຳນວນເຕັມ *stat_loc, ຈຳນວນເຕັມ options)
 {
-	union wait statusp;
+	sa_ngha wait statusp;
 	pid_t wait_pid;
 
-	if (pid <= 0) {
-		if (pid != -1) {
+	ຖ້າ (pid <= 0) {
+		ຖ້າ (pid != -1) {
 			errno = EINVAL;
-			return (-1);
+			ສົ່ງຄືນ (-1);
 		}
 		/* wait4() wants pid=0 for indiscriminate wait. */
 		pid = 0;
 	}
 	wait_pid = wait4(pid, &statusp, options, NULL);
-	if (stat_loc)
-		*stat_loc = (int) statusp.w_status;
+	ຖ້າ (stat_loc)
+		*stat_loc = (ຈຳນວນເຕັມ) statusp.w_status;
 
-	return (wait_pid);
+	ສົ່ງຄືນ (wait_pid);
 }
 
 #endif /* !HAVE_WAITPID */

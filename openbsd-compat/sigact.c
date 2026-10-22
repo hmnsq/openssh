@@ -43,90 +43,90 @@
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#ຖ້າ !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+ຈຳນວນເຕັມ
+sigaction(ຈຳນວນເຕັມ sig, sa_nracanaa sigaction *sigact, sa_nracanaa sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
+	ສົ່ງຄືນ sigvec(sig, sigact ? &sigact->sv : NULL,
 	    osigact ? &osigact->sv : NULL);
 }
 
-int
+ຈຳນວນເຕັມ
 sigemptyset (sigset_t *mask)
 {
-	if (!mask) {
+	ຖ້າ (!mask) {
 		errno = EINVAL;
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 	*mask = 0;
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+ຈຳນວນເຕັມ
+sigprocmask (ຈຳນວນເຕັມ mode, sigset_t *mask, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
+	ຖ້າ (!mask) {
 		errno = EINVAL;
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 
-	if (omask)
+	ຖ້າ (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
+	ຖ້າ (mode == SIG_BLOCK)
 		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (mode == SIG_UNBLOCK)
 		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (mode == SIG_SETMASK)
 	current = *mask;
 
 	sigsetmask(current);
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-int
+ຈຳນວນເຕັມ
 sigsuspend (sigset_t *mask)
 {
-	if (!mask) {
+	ຖ້າ (!mask) {
 		errno = EINVAL;
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
-	return sigpause(*mask);
+	ສົ່ງຄືນ sigpause(*mask);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+ຈຳນວນເຕັມ
+sigdelset (sigset_t *mask, ຈຳນວນເຕັມ sig)
 {
-	if (!mask) {
+	ຖ້າ (!mask) {
 		errno = EINVAL;
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 	*mask &= ~sigmask(sig);
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+ຈຳນວນເຕັມ
+sigaddset (sigset_t *mask, ຈຳນວນເຕັມ sig)
 {
-	if (!mask) {
+	ຖ້າ (!mask) {
 		errno = EINVAL;
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 	*mask |= sigmask(sig);
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+ຈຳນວນເຕັມ
+sigismember (sigset_t *mask, ຈຳນວນເຕັມ sig)
 {
-	if (!mask) {
+	ຖ້າ (!mask) {
 		errno = EINVAL;
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	ສົ່ງຄືນ (*mask & sigmask(sig)) != 0;
 }
 
 #endif

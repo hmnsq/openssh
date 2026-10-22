@@ -22,36 +22,36 @@
 
 /* Simple bit vector routines */
 
-struct bitmap;
+sa_nracanaa bitmap;
 
 /* Allocate a new bitmap. Returns NULL on allocation failure. */
-struct bitmap *bitmap_new(void);
+sa_nracanaa bitmap *bitmap_new(void);
 
 /* Free a bitmap */
-void bitmap_free(struct bitmap *b);
+void bitmap_free(sa_nracanaa bitmap *b);
 
 /* Zero an existing bitmap */
-void bitmap_zero(struct bitmap *b);
+void bitmap_zero(sa_nracanaa bitmap *b);
 
 /* Test whether a bit is set in a bitmap. */
-int bitmap_test_bit(struct bitmap *b, u_int n);
+ຈຳນວນເຕັມ bitmap_test_bit(sa_nracanaa bitmap *b, u_int n);
 
 /* Set a bit in a bitmap. Returns 0 on success or -1 on error */
-int bitmap_set_bit(struct bitmap *b, u_int n);
+ຈຳນວນເຕັມ bitmap_set_bit(sa_nracanaa bitmap *b, u_int n);
 
 /* Clear a bit in a bitmap */
-void bitmap_clear_bit(struct bitmap *b, u_int n);
+void bitmap_clear_bit(sa_nracanaa bitmap *b, u_int n);
 
 /* Return the number of bits in a bitmap (i.e. the position of the MSB) */
-size_t bitmap_nbits(struct bitmap *b);
+size_t bitmap_nbits(sa_nracanaa bitmap *b);
 
 /* Return the number of bytes needed to represent a bitmap */
-size_t bitmap_nbytes(struct bitmap *b);
+size_t bitmap_nbytes(sa_nracanaa bitmap *b);
 
 /* Convert a bitmap to a big endian byte string */
-int bitmap_to_string(struct bitmap *b, void *p, size_t l);
+ຈຳນວນເຕັມ bitmap_to_string(sa_nracanaa bitmap *b, void *p, size_t l);
 
 /* Convert a big endian byte string to a bitmap */
-int bitmap_from_string(struct bitmap *b, const void *p, size_t l);
+ຈຳນວນເຕັມ bitmap_from_string(sa_nracanaa bitmap *b, const void *p, size_t l);
 
 #endif /* _BITMAP_H */

@@ -24,16 +24,16 @@
 
 #define CHACHA_KEYLEN	32 /* Only 256 bit keys used here */
 
-struct chachapoly_ctx;
+sa_nracanaa chachapoly_ctx;
 
-struct chachapoly_ctx *chachapoly_new(const u_char *key, u_int keylen)
+sa_nracanaa chachapoly_ctx *chachapoly_new(const u_char *key, u_int keylen)
     __attribute__((__bounded__(__buffer__, 1, 2)));
-void chachapoly_free(struct chachapoly_ctx *cpctx);
+void chachapoly_free(sa_nracanaa chachapoly_ctx *cpctx);
 
-int	chachapoly_crypt(struct chachapoly_ctx *cpctx, u_int seqnr,
+ຈຳນວນເຕັມ	chachapoly_crypt(sa_nracanaa chachapoly_ctx *cpctx, u_int seqnr,
     u_char *dest, const u_char *src, u_int len, u_int aadlen, u_int authlen,
-    int do_encrypt);
-int	chachapoly_get_length(struct chachapoly_ctx *cpctx,
+    ຈຳນວນເຕັມ do_encrypt);
+ຈຳນວນເຕັມ	chachapoly_get_length(sa_nracanaa chachapoly_ctx *cpctx,
     u_int *plenp, u_int seqnr, const u_char *cp, u_int len)
     __attribute__((__bounded__(__buffer__, 4, 5)));
 

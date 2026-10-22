@@ -14,47 +14,47 @@
 #ifndef HOSTFILE_H
 #define HOSTFILE_H
 
-typedef enum {
+typedef ga_nanaa {
 	HOST_OK, HOST_NEW, HOST_CHANGED, HOST_REVOKED, HOST_FOUND
 }       HostStatus;
 
-typedef enum {
+typedef ga_nanaa {
 	MRK_ERROR, MRK_NONE, MRK_REVOKE, MRK_CA
 }	HostkeyMarker;
 
-struct hostkey_entry {
-	char *host;
-	char *file;
+sa_nracanaa hostkey_entry {
+	var_na *host;
+	var_na *file;
 	u_long line;
-	struct sshkey *key;
+	sa_nracanaa sshkey *key;
 	HostkeyMarker marker;
 	u_int note; /* caller-specific note/flag */
 };
-struct hostkeys {
-	struct hostkey_entry *entries;
+sa_nracanaa hostkeys {
+	sa_nracanaa hostkey_entry *entries;
 	u_int num_entries;
 };
 
-struct hostkeys *init_hostkeys(void);
-void	 load_hostkeys(struct hostkeys *, const char *,
-    const char *, u_int);
-void	 load_hostkeys_file(struct hostkeys *, const char *,
-    const char *, FILE *, u_int note);
-void	 free_hostkeys(struct hostkeys *);
+sa_nracanaa hostkeys *init_hostkeys(void);
+void	 load_hostkeys(sa_nracanaa hostkeys *, const var_na *,
+    const var_na *, u_int);
+void	 load_hostkeys_file(sa_nracanaa hostkeys *, const var_na *,
+    const var_na *, FILE *, u_int note);
+void	 free_hostkeys(sa_nracanaa hostkeys *);
 
-HostStatus check_key_in_hostkeys(struct hostkeys *, struct sshkey *,
-    const struct hostkey_entry **);
-int	 lookup_key_in_hostkeys_by_type(struct hostkeys *, int, int,
-    const struct hostkey_entry **);
-int	 lookup_marker_in_hostkeys(struct hostkeys *, int);
+HostStatus check_key_in_hostkeys(sa_nracanaa hostkeys *, sa_nracanaa sshkey *,
+    const sa_nracanaa hostkey_entry **);
+ຈຳນວນເຕັມ	 lookup_key_in_hostkeys_by_type(sa_nracanaa hostkeys *, ຈຳນວນເຕັມ, ຈຳນວນເຕັມ,
+    const sa_nracanaa hostkey_entry **);
+ຈຳນວນເຕັມ	 lookup_marker_in_hostkeys(sa_nracanaa hostkeys *, ຈຳນວນເຕັມ);
 
-int	 hostfile_read_key(char **, u_int *, struct sshkey *);
-int	 add_host_to_hostfile(const char *, const char *,
-    const struct sshkey *, int);
+ຈຳນວນເຕັມ	 hostfile_read_key(var_na **, u_int *, sa_nracanaa sshkey *);
+ຈຳນວນເຕັມ	 add_host_to_hostfile(const var_na *, const var_na *,
+    const sa_nracanaa sshkey *, ຈຳນວນເຕັມ);
 
-int	 hostfile_replace_entries(const char *filename,
-    const char *host, const char *ip, struct sshkey **keys, size_t nkeys,
-    int store_hash, int quiet, int hash_alg);
+ຈຳນວນເຕັມ	 hostfile_replace_entries(const var_na *filename,
+    const var_na *host, const var_na *ip, sa_nracanaa sshkey **keys, size_t nkeys,
+    ຈຳນວນເຕັມ store_hash, ຈຳນວນເຕັມ quiet, ຈຳນວນເຕັມ hash_alg);
 
 #define HASH_MAGIC	"|1|"
 #define HASH_DELIM	'|'
@@ -62,7 +62,7 @@ int	 hostfile_replace_entries(const char *filename,
 #define CA_MARKER	"@cert-authority"
 #define REVOKE_MARKER	"@revoked"
 
-char	*host_hash(const char *, const char *, u_int);
+var_na	*host_hash(const var_na *, const var_na *, u_int);
 
 /*
  * Iterate through a hostkeys file, optionally parsing keys and matching
@@ -88,18 +88,18 @@ char	*host_hash(const char *, const char *, u_int);
  * hostkey line. The callback may "steal" the 'key' field by setting it to NULL.
  * If a parse error occurred, then "hosts" and subsequent options may be NULL.
  */
-struct hostkey_foreach_line {
-	const char *path; /* Path of file */
+sa_nracanaa hostkey_foreach_line {
+	const var_na *path; /* Path of file */
 	u_long linenum;	/* Line number */
 	u_int status;	/* One of HKF_STATUS_* */
 	u_int match;	/* Zero or more of HKF_MATCH_* OR'd together */
-	char *line;	/* Entire key line; mutable by callback */
-	int marker;	/* CA/revocation markers; indicated by MRK_* value */
-	const char *hosts; /* Raw hosts text, may be hashed or list multiple */
-	const char *rawkey; /* Text of key and any comment following it */
-	int keytype;	/* Type of key; KEY_UNSPEC for invalid/comment lines */
-	struct sshkey *key; /* Key, if parsed ok and HKF_WANT_MATCH_HOST set */
-	const char *comment; /* Any comment following the key */
+	var_na *line;	/* Entire key line; mutable by callback */
+	ຈຳນວນເຕັມ marker;	/* CA/revocation markers; indicated by MRK_* value */
+	const var_na *hosts; /* Raw hosts text, may be hashed or list multiple */
+	const var_na *rawkey; /* Text of key and any comment following it */
+	ຈຳນວນເຕັມ keytype;	/* Type of key; KEY_UNSPEC for invalid/comment lines */
+	sa_nracanaa sshkey *key; /* Key, if parsed ok and HKF_WANT_MATCH_HOST set */
+	const var_na *comment; /* Any comment following the key */
 	u_int note;	/* caller-specified note copied from arguments */
 };
 
@@ -108,16 +108,16 @@ struct hostkey_foreach_line {
  * is set). The foreach loop will terminate if the callback returns a non-
  * zero exit status.
  */
-typedef int hostkeys_foreach_fn(struct hostkey_foreach_line *l, void *ctx);
+typedef ຈຳນວນເຕັມ hostkeys_foreach_fn(sa_nracanaa hostkey_foreach_line *l, void *ctx);
 
 /* Iterate over a hostkeys file */
-int hostkeys_foreach(const char *path,
+ຈຳນວນເຕັມ hostkeys_foreach(const var_na *path,
     hostkeys_foreach_fn *callback, void *ctx,
-    const char *host, const char *ip, u_int options, u_int note);
-int hostkeys_foreach_file(const char *path, FILE *f,
+    const var_na *host, const var_na *ip, u_int options, u_int note);
+ຈຳນວນເຕັມ hostkeys_foreach_file(const var_na *path, FILE *f,
     hostkeys_foreach_fn *callback, void *ctx,
-    const char *host, const char *ip, u_int options, u_int note);
+    const var_na *host, const var_na *ip, u_int options, u_int note);
 
-void hostfile_create_user_ssh_dir(const char *, int);
+void hostfile_create_user_ssh_dir(const var_na *, ຈຳນວນເຕັມ);
 
 #endif

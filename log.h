@@ -19,7 +19,7 @@
 #include "ssherr.h" /* ssh_err() */
 
 /* Supported syslog facilities and levels. */
-typedef enum {
+typedef ga_nanaa {
 	SYSLOG_FACILITY_DAEMON,
 	SYSLOG_FACILITY_USER,
 	SYSLOG_FACILITY_AUTH,
@@ -37,7 +37,7 @@ typedef enum {
 	SYSLOG_FACILITY_NOT_SET = -1
 }       SyslogFacility;
 
-typedef enum {
+typedef ga_nanaa {
 	SYSLOG_LEVEL_QUIET,
 	SYSLOG_LEVEL_FATAL,
 	SYSLOG_LEVEL_ERROR,
@@ -49,39 +49,39 @@ typedef enum {
 	SYSLOG_LEVEL_NOT_SET = -1
 }       LogLevel;
 
-typedef void (log_handler_fn)(LogLevel, int, const char *, void *);
+typedef void (log_handler_fn)(LogLevel, ຈຳນວນເຕັມ, const var_na *, void *);
 
-void     log_init(const char *, LogLevel, SyslogFacility, int);
+void     log_init(const var_na *, LogLevel, SyslogFacility, ຈຳນວນເຕັມ);
 LogLevel log_level_get(void);
-int      log_change_level(LogLevel);
-int      log_is_on_stderr(void);
-void     log_redirect_stderr_to(const char *);
-void	 log_verbose_add(const char *);
+ຈຳນວນເຕັມ      log_change_level(LogLevel);
+ຈຳນວນເຕັມ      log_is_on_stderr(void);
+void     log_redirect_stderr_to(const var_na *);
+void	 log_verbose_add(const var_na *);
 void	 log_verbose_reset(void);
 
-SyslogFacility	log_facility_number(char *);
-const char *	log_facility_name(SyslogFacility);
-LogLevel	log_level_number(char *);
-const char *	log_level_name(LogLevel);
+SyslogFacility	log_facility_number(var_na *);
+const var_na *	log_facility_name(SyslogFacility);
+LogLevel	log_level_number(var_na *);
+const var_na *	log_level_name(LogLevel);
 
 void	 set_log_handler(log_handler_fn *, void *);
-void	 cleanup_exit(int) __attribute__((noreturn));
+void	 cleanup_exit(ຈຳນວນເຕັມ) __attribute__((noreturn));
 
-void	 sshlog(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...)
+void	 sshlog(const var_na *, const var_na *, ຈຳນວນເຕັມ, ຈຳນວນເຕັມ,
+    LogLevel, const var_na *, const var_na *, ...)
     __attribute__((format(printf, 7, 8)));
-void	 sshlogv(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, va_list);
-void	 sshlogdie(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...) __attribute__((noreturn))
+void	 sshlogv(const var_na *, const var_na *, ຈຳນວນເຕັມ, ຈຳນວນເຕັມ,
+    LogLevel, const var_na *, const var_na *, va_list);
+void	 sshlogdie(const var_na *, const var_na *, ຈຳນວນເຕັມ, ຈຳນວນເຕັມ,
+    LogLevel, const var_na *, const var_na *, ...) __attribute__((noreturn))
     __attribute__((format(printf, 7, 8)));
-void	 sshfatal(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...) __attribute__((noreturn))
+void	 sshfatal(const var_na *, const var_na *, ຈຳນວນເຕັມ, ຈຳນວນເຕັມ,
+    LogLevel, const var_na *, const var_na *, ...) __attribute__((noreturn))
     __attribute__((format(printf, 7, 8)));
-void	 sshlogdirect(LogLevel, int, const char *, ...)
+void	 sshlogdirect(LogLevel, ຈຳນວນເຕັມ, const var_na *, ...)
     __attribute__((format(printf, 3, 4)));
 
-struct log_ratelimit_ctx {
+sa_nracanaa log_ratelimit_ctx {
 	/* configuration */
 	u_int threshold;	/* events per second */
 	u_int max_accum;	/* max events to accumulate */
@@ -93,16 +93,16 @@ struct log_ratelimit_ctx {
 	u_int accumulated_events; /* used for threshold comparisons */
 
 	/* state while actively rate-limiting */
-	int ratelimit_active;
+	ຈຳນວນເຕັມ ratelimit_active;
 	time_t ratelimit_start;
 	time_t last_log;
 	time_t hysteresis_start;
 	u_int ratelimited_events;
 };
 
-void log_ratelimit_init(struct log_ratelimit_ctx *rl, u_int threshold,
+void log_ratelimit_init(sa_nracanaa log_ratelimit_ctx *rl, u_int threshold,
     u_int max_accum, u_int hysteresis, u_int log_every);
-int log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
+ຈຳນວນເຕັມ log_ratelimit(sa_nracanaa log_ratelimit_ctx *rl, time_t now, ຈຳນວນເຕັມ *active,
     u_int *events_dropped);
 
 #define do_log2(level, ...)	sshlog(__FILE__, __func__, __LINE__, 0, level, NULL, __VA_ARGS__)

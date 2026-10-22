@@ -15,7 +15,7 @@
  */
 
 #include "includes.h"
-#if !defined(HAVE_PPOLL) || !defined(HAVE_POLL) || defined(BROKEN_POLL)
+#ຖ້າ !defined(HAVE_PPOLL) || !defined(HAVE_POLL) || defined(BROKEN_POLL)
 
 #include <sys/types.h>
 #include <sys/time.h>
@@ -32,7 +32,7 @@
 #include <unistd.h>
 #include "bsd-poll.h"
 
-#if !defined(HAVE_PPOLL) || defined(BROKEN_POLL)
+#ຖ້າ !defined(HAVE_PPOLL) || defined(BROKEN_POLL)
 /*
  * A minimal implementation of ppoll(2), built on top of pselect(2).
  *
@@ -42,19 +42,19 @@
  * Supports pfd.fd = -1 meaning "unused" although it's not standard.
  */
 
-int
-ppoll(struct pollfd *fds, nfds_t nfds, const struct timespec *tmoutp,
+ຈຳນວນເຕັມ
+ppoll(sa_nracanaa pollfd *fds, nfds_t nfds, const sa_nracanaa timespec *tmoutp,
     const sigset_t *sigmask)
 {
 	nfds_t i;
-	int ret, fd, maxfd = 0;
+	ຈຳນວນເຕັມ ret, fd, maxfd = 0;
 	fd_set readfds, writefds, exceptfds;
 
-	for (i = 0; i < nfds; i++) {
+	ສຳລັບ (i = 0; i < nfds; i++) {
 		fd = fds[i].fd;
-		if (fd != -1 && fd >= FD_SETSIZE) {
+		ຖ້າ (fd != -1 && fd >= FD_SETSIZE) {
 			errno = EINVAL;
-			return -1;
+			ສົ່ງຄືນ -1;
 		}
 		maxfd = MAX(maxfd, fd);
 	}
@@ -63,52 +63,52 @@ ppoll(struct pollfd *fds, nfds_t nfds, const struct timespec *tmoutp,
 	FD_ZERO(&readfds);
 	FD_ZERO(&writefds);
 	FD_ZERO(&exceptfds);
-	for (i = 0; i < nfds; i++) {
+	ສຳລັບ (i = 0; i < nfds; i++) {
 		fd = fds[i].fd;
-		if (fd == -1)
+		ຖ້າ (fd == -1)
 			continue;
-		if (fds[i].events & POLLIN)
+		ຖ້າ (fds[i].events & POLLIN)
 			FD_SET(fd, &readfds);
-		if (fds[i].events & POLLOUT)
+		ຖ້າ (fds[i].events & POLLOUT)
 			FD_SET(fd, &writefds);
-		if (fds[i].events & POLLPRI)
+		ຖ້າ (fds[i].events & POLLPRI)
 			FD_SET(fd, &exceptfds);
 	}
 
 	ret = pselect(maxfd + 1, &readfds, &writefds, &exceptfds, tmoutp, sigmask);
 
 	/* scan through select results and set poll() flags */
-	for (i = 0; i < nfds; i++) {
+	ສຳລັບ (i = 0; i < nfds; i++) {
 		fd = fds[i].fd;
 		fds[i].revents = 0;
-		if (fd == -1)
+		ຖ້າ (fd == -1)
 			continue;
-		if ((fds[i].events & POLLIN) && FD_ISSET(fd, &readfds))
+		ຖ້າ ((fds[i].events & POLLIN) && FD_ISSET(fd, &readfds))
 			fds[i].revents |= POLLIN;
-		if ((fds[i].events & POLLOUT) && FD_ISSET(fd, &writefds))
+		ຖ້າ ((fds[i].events & POLLOUT) && FD_ISSET(fd, &writefds))
 			fds[i].revents |= POLLOUT;
-		if ((fds[i].events & POLLPRI) && FD_ISSET(fd, &exceptfds))
+		ຖ້າ ((fds[i].events & POLLPRI) && FD_ISSET(fd, &exceptfds))
 			fds[i].revents |= POLLPRI;
 	}
 
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 #endif /* !HAVE_PPOLL || BROKEN_POLL */
 
-#if !defined(HAVE_POLL) || defined(BROKEN_POLL)
-int
-poll(struct pollfd *fds, nfds_t nfds, int timeout)
+#ຖ້າ !defined(HAVE_POLL) || defined(BROKEN_POLL)
+ຈຳນວນເຕັມ
+poll(sa_nracanaa pollfd *fds, nfds_t nfds, ຈຳນວນເຕັມ timeout)
 {
-	struct timespec ts, *tsp = NULL;
+	sa_nracanaa timespec ts, *tsp = NULL;
 
 	/* poll timeout is msec, ppoll is timespec (sec + nsec) */
-	if (timeout >= 0) {
+	ຖ້າ (timeout >= 0) {
 		ts.tv_sec = timeout / 1000;
 		ts.tv_nsec = (timeout % 1000) * 1000000;
 		tsp = &ts;
 	}
 
-	return ppoll(fds, nfds, tsp, NULL);
+	ສົ່ງຄືນ ppoll(fds, nfds, tsp, NULL);
 }
 #endif /* !HAVE_POLL || BROKEN_POLL */
 

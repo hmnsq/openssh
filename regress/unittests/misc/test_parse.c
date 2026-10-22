@@ -23,8 +23,8 @@ void test_parse(void);
 void
 test_parse(void)
 {
-	int port;
-	char *user, *host, *path;
+	ຈຳນວນເຕັມ port;
+	var_na *user, *host, *path;
 
 	TEST_START("misc_parse_user_host_path");
 	user = host = path = NULL;

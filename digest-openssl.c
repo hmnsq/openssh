@@ -42,20 +42,20 @@
 # define EVP_sha512 NULL
 #endif
 
-struct ssh_digest_ctx {
-	int alg;
+sa_nracanaa ssh_digest_ctx {
+	ຈຳນວນເຕັມ alg;
 	EVP_MD_CTX *mdctx;
 };
 
-struct ssh_digest {
-	int id;
-	const char *name;
+sa_nracanaa ssh_digest {
+	ຈຳນວນເຕັມ id;
+	const var_na *name;
 	size_t digest_len;
 	const EVP_MD *(*mdfunc)(void);
 };
 
 /* NB. Indexed directly by algorithm number */
-const struct ssh_digest digests[] = {
+const sa_nracanaa ssh_digest digests[] = {
 	{ SSH_DIGEST_MD5,	"MD5",		16,	EVP_md5 },
 	{ SSH_DIGEST_SHA1,	"SHA1",		20,	EVP_sha1 },
 	{ SSH_DIGEST_SHA256,	"SHA256",	32,	EVP_sha256 },
@@ -64,144 +64,144 @@ const struct ssh_digest digests[] = {
 	{ -1,			NULL,		0,	NULL },
 };
 
-static const struct ssh_digest *
-ssh_digest_by_alg(int alg)
+static const sa_nracanaa ssh_digest *
+ssh_digest_by_alg(ຈຳນວນເຕັມ alg)
 {
-	if (alg < 0 || alg >= SSH_DIGEST_MAX)
-		return NULL;
-	if (digests[alg].id != alg) /* sanity */
-		return NULL;
-	if (digests[alg].mdfunc == NULL)
-		return NULL;
-	return &(digests[alg]);
+	ຖ້າ (alg < 0 || alg >= SSH_DIGEST_MAX)
+		ສົ່ງຄືນ NULL;
+	ຖ້າ (digests[alg].id != alg) /* sanity */
+		ສົ່ງຄືນ NULL;
+	ຖ້າ (digests[alg].mdfunc == NULL)
+		ສົ່ງຄືນ NULL;
+	ສົ່ງຄືນ &(digests[alg]);
 }
 
-int
-ssh_digest_alg_by_name(const char *name)
+ຈຳນວນເຕັມ
+ssh_digest_alg_by_name(const var_na *name)
 {
-	int alg;
+	ຈຳນວນເຕັມ alg;
 
-	for (alg = 0; digests[alg].id != -1; alg++) {
-		if (strcasecmp(name, digests[alg].name) == 0)
-			return digests[alg].id;
+	ສຳລັບ (alg = 0; digests[alg].id != -1; alg++) {
+		ຖ້າ (strcasecmp(name, digests[alg].name) == 0)
+			ສົ່ງຄືນ digests[alg].id;
 	}
-	return -1;
+	ສົ່ງຄືນ -1;
 }
 
-const char *
-ssh_digest_alg_name(int alg)
+const var_na *
+ssh_digest_alg_name(ຈຳນວນເຕັມ alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? NULL : digest->name;
-}
-
-size_t
-ssh_digest_bytes(int alg)
-{
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-
-	return digest == NULL ? 0 : digest->digest_len;
+	ສົ່ງຄືນ digest == NULL ? NULL : digest->name;
 }
 
 size_t
-ssh_digest_blocksize(struct ssh_digest_ctx *ctx)
+ssh_digest_bytes(ຈຳນວນເຕັມ alg)
 {
-	return EVP_MD_CTX_block_size(ctx->mdctx);
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(alg);
+
+	ສົ່ງຄືນ digest == NULL ? 0 : digest->digest_len;
 }
 
-struct ssh_digest_ctx *
-ssh_digest_start(int alg)
+size_t
+ssh_digest_blocksize(sa_nracanaa ssh_digest_ctx *ctx)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-	struct ssh_digest_ctx *ret;
+	ສົ່ງຄືນ EVP_MD_CTX_block_size(ctx->mdctx);
+}
 
-	if (digest == NULL || ((ret = calloc(1, sizeof(*ret))) == NULL))
-		return NULL;
+sa_nracanaa ssh_digest_ctx *
+ssh_digest_start(ຈຳນວນເຕັມ alg)
+{
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(alg);
+	sa_nracanaa ssh_digest_ctx *ret;
+
+	ຖ້າ (digest == NULL || ((ret = calloc(1, parimaa_na(*ret))) == NULL))
+		ສົ່ງຄືນ NULL;
 	ret->alg = alg;
-	if ((ret->mdctx = EVP_MD_CTX_new()) == NULL) {
+	ຖ້າ ((ret->mdctx = EVP_MD_CTX_new()) == NULL) {
 		free(ret);
-		return NULL;
+		ສົ່ງຄືນ NULL;
 	}
-	if (EVP_DigestInit_ex(ret->mdctx, digest->mdfunc(), NULL) != 1) {
+	ຖ້າ (EVP_DigestInit_ex(ret->mdctx, digest->mdfunc(), NULL) != 1) {
 		ssh_digest_free(ret);
-		return NULL;
+		ສົ່ງຄືນ NULL;
 	}
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 
-int
-ssh_digest_copy_state(struct ssh_digest_ctx *from, struct ssh_digest_ctx *to)
+ຈຳນວນເຕັມ
+ssh_digest_copy_state(sa_nracanaa ssh_digest_ctx *from, sa_nracanaa ssh_digest_ctx *to)
 {
-	if (from->alg != to->alg)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ຖ້າ (from->alg != to->alg)
+		ສົ່ງຄືນ SSH_ERR_INVALID_ARGUMENT;
 	/* we have bcopy-style order while openssl has memcpy-style */
-	if (!EVP_MD_CTX_copy_ex(to->mdctx, from->mdctx))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	ຖ້າ (!EVP_MD_CTX_copy_ex(to->mdctx, from->mdctx))
+		ສົ່ງຄືນ SSH_ERR_LIBCRYPTO_ERROR;
+	ສົ່ງຄືນ 0;
 }
 
-int
-ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
+ຈຳນວນເຕັມ
+ssh_digest_update(sa_nracanaa ssh_digest_ctx *ctx, const void *m, size_t mlen)
 {
-	if (EVP_DigestUpdate(ctx->mdctx, m, mlen) != 1)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	ຖ້າ (EVP_DigestUpdate(ctx->mdctx, m, mlen) != 1)
+		ສົ່ງຄືນ SSH_ERR_LIBCRYPTO_ERROR;
+	ສົ່ງຄືນ 0;
 }
 
-int
-ssh_digest_update_buffer(struct ssh_digest_ctx *ctx, const struct sshbuf *b)
+ຈຳນວນເຕັມ
+ssh_digest_update_buffer(sa_nracanaa ssh_digest_ctx *ctx, const sa_nracanaa sshbuf *b)
 {
-	return ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
+	ສົ່ງຄືນ ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
 }
 
-int
-ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
+ຈຳນວນເຕັມ
+ssh_digest_final(sa_nracanaa ssh_digest_ctx *ctx, u_char *d, size_t dlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 	u_int l = dlen;
 
-	if (digest == NULL || dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len) /* No truncation allowed */
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_DigestFinal_ex(ctx->mdctx, d, &l) != 1)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (l != digest->digest_len) /* sanity */
-		return SSH_ERR_INTERNAL_ERROR;
-	return 0;
+	ຖ້າ (digest == NULL || dlen > UINT_MAX)
+		ສົ່ງຄືນ SSH_ERR_INVALID_ARGUMENT;
+	ຖ້າ (dlen < digest->digest_len) /* No truncation allowed */
+		ສົ່ງຄືນ SSH_ERR_INVALID_ARGUMENT;
+	ຖ້າ (EVP_DigestFinal_ex(ctx->mdctx, d, &l) != 1)
+		ສົ່ງຄືນ SSH_ERR_LIBCRYPTO_ERROR;
+	ຖ້າ (l != digest->digest_len) /* sanity */
+		ສົ່ງຄືນ SSH_ERR_INTERNAL_ERROR;
+	ສົ່ງຄືນ 0;
 }
 
 void
-ssh_digest_free(struct ssh_digest_ctx *ctx)
+ssh_digest_free(sa_nracanaa ssh_digest_ctx *ctx)
 {
-	if (ctx == NULL)
-		return;
+	ຖ້າ (ctx == NULL)
+		ສົ່ງຄືນ;
 	EVP_MD_CTX_free(ctx->mdctx);
-	freezero(ctx, sizeof(*ctx));
+	freezero(ctx, parimaa_na(*ctx));
 }
 
-int
-ssh_digest_memory(int alg, const void *m, size_t mlen, u_char *d, size_t dlen)
+ຈຳນວນເຕັມ
+ssh_digest_memory(ຈຳນວນເຕັມ alg, const void *m, size_t mlen, u_char *d, size_t dlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(alg);
 	u_int mdlen;
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ຖ້າ (digest == NULL)
+		ສົ່ງຄືນ SSH_ERR_INVALID_ARGUMENT;
+	ຖ້າ (dlen > UINT_MAX)
+		ສົ່ງຄືນ SSH_ERR_INVALID_ARGUMENT;
+	ຖ້າ (dlen < digest->digest_len)
+		ສົ່ງຄືນ SSH_ERR_INVALID_ARGUMENT;
 	mdlen = dlen;
-	if (!EVP_Digest(m, mlen, d, &mdlen, digest->mdfunc(), NULL))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	ຖ້າ (!EVP_Digest(m, mlen, d, &mdlen, digest->mdfunc(), NULL))
+		ສົ່ງຄືນ SSH_ERR_LIBCRYPTO_ERROR;
+	ສົ່ງຄືນ 0;
 }
 
-int
-ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+ຈຳນວນເຕັມ
+ssh_digest_buffer(ຈຳນວນເຕັມ alg, const sa_nracanaa sshbuf *b, u_char *d, size_t dlen)
 {
-	return ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
+	ສົ່ງຄືນ ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
 }
 #endif /* WITH_OPENSSL */

@@ -24,7 +24,7 @@ void test_strdelim(void);
 void
 test_strdelim(void)
 {
-	char *orig, *str, *cp;
+	var_na *orig, *str, *cp;
 
 #define START_STRING(x)	orig = str = xstrdup(x)
 #define DONE_STRING()	free(orig)

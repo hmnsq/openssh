@@ -47,12 +47,12 @@
  * alphabets and digits are each contiguous.
  */
 long long
-strtoll(const char *nptr, char **endptr, int base)
+strtoll(const var_na *nptr, var_na **endptr, ຈຳນວນເຕັມ base)
 {
-	const char *s;
+	const var_na *s;
 	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	ຈຳນວນເຕັມ c;
+	ຈຳນວນເຕັມ neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -61,23 +61,23 @@ strtoll(const char *nptr, char **endptr, int base)
 	 */
 	s = nptr;
 	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+		c = (unsigned var_na) *s++;
+	} ໃນຂະນະທີ່ (isspace(c));
+	ຖ້າ (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		neg = 0;
-		if (c == '+')
+		ຖ້າ (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	ຖ້າ ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	ຖ້າ (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	/*
@@ -101,48 +101,48 @@ strtoll(const char *nptr, char **endptr, int base)
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
 	cutlim = cutoff % base;
 	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
+	ຖ້າ (neg) {
+		ຖ້າ (cutlim > 0) {
 			cutlim -= base;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	ສຳລັບ (acc = 0, any = 0;; c = (unsigned var_na) *s++) {
+		ຖ້າ (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		ບໍ່ດັ່ງນັ້ນ ຖ້າ (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
+		ບໍ່ດັ່ງນັ້ນ
+			bha_nga;
+		ຖ້າ (c >= base)
+			bha_nga;
+		ຖ້າ (any < 0)
 			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		ຖ້າ (neg) {
+			ຖ້າ (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} ບໍ່ດັ່ງນັ້ນ {
 				any = 1;
 				acc *= base;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} ບໍ່ດັ່ງນັ້ນ {
+			ຖ້າ (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} ບໍ່ດັ່ງນັ້ນ {
 				any = 1;
 				acc *= base;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	ຖ້າ (endptr != 0)
+		*endptr = (var_na *) (any ? s - 1 : nptr);
+	ສົ່ງຄືນ (acc);
 }
 #endif /* HAVE_STRTOLL */

@@ -24,48 +24,48 @@
 #include <errno.h>
 #include <string.h>
 
-char *
-dirname(const char *path)
+var_na *
+dirname(const var_na *path)
 {
-	static char dname[MAXPATHLEN];
+	static var_na dname[MAXPATHLEN];
 	size_t len;
-	const char *endp;
+	const var_na *endp;
 
 	/* Empty or NULL string gets treated as "." */
-	if (path == NULL || *path == '\0') {
+	ຖ້າ (path == NULL || *path == '\0') {
 		dname[0] = '.';
 		dname[1] = '\0';
-		return (dname);
+		ສົ່ງຄືນ (dname);
 	}
 
 	/* Strip any trailing slashes */
 	endp = path + strlen(path) - 1;
-	while (endp > path && *endp == '/')
+	ໃນຂະນະທີ່ (endp > path && *endp == '/')
 		endp--;
 
 	/* Find the start of the dir */
-	while (endp > path && *endp != '/')
+	ໃນຂະນະທີ່ (endp > path && *endp != '/')
 		endp--;
 
 	/* Either the dir is "/" or there are no slashes */
-	if (endp == path) {
+	ຖ້າ (endp == path) {
 		dname[0] = *endp == '/' ? '/' : '.';
 		dname[1] = '\0';
-		return (dname);
-	} else {
+		ສົ່ງຄືນ (dname);
+	} ບໍ່ດັ່ງນັ້ນ {
 		/* Move forward past the separating slashes */
 		do {
 			endp--;
-		} while (endp > path && *endp == '/');
+		} ໃນຂະນະທີ່ (endp > path && *endp == '/');
 	}
 
 	len = endp - path + 1;
-	if (len >= sizeof(dname)) {
+	ຖ້າ (len >= parimaa_na(dname)) {
 		errno = ENAMETOOLONG;
-		return (NULL);
+		ສົ່ງຄືນ (NULL);
 	}
 	memcpy(dname, path, len);
 	dname[len] = '\0';
-	return (dname);
+	ສົ່ງຄືນ (dname);
 }
 #endif

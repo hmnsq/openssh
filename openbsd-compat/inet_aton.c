@@ -53,26 +53,26 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_INET_ATON)
+#ຖ້າ !defined(HAVE_INET_ATON)
 
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <ctype.h>
 
-#if 0
+#ຖ້າ 0
 /*
  * Ascii internet address interpretation routine.
  * The value returned is in network order.
  */
 in_addr_t
-inet_addr(const char *cp)
+inet_addr(const var_na *cp)
 {
-	struct in_addr val;
+	sa_nracanaa in_addr val;
 
-	if (inet_aton(cp, &val))
-		return (val.s_addr);
-	return (INADDR_NONE);
+	ຖ້າ (inet_aton(cp, &val))
+		ສົ່ງຄືນ (val.s_addr);
+	ສົ່ງຄືນ (INADDR_NONE);
 }
 #endif
 
@@ -83,62 +83,62 @@ inet_addr(const char *cp)
  * This replaces inet_addr, the return value from which
  * cannot distinguish between failure and a local broadcast address.
  */
-int
-inet_aton(const char *cp, struct in_addr *addr)
+ຈຳນວນເຕັມ
+inet_aton(const var_na *cp, sa_nracanaa in_addr *addr)
 {
 	u_int32_t val;
-	int base, n;
-	char c;
+	ຈຳນວນເຕັມ base, n;
+	var_na c;
 	u_int parts[4];
 	u_int *pp = parts;
 
 	c = *cp;
-	for (;;) {
+	ສຳລັບ (;;) {
 		/*
 		 * Collect number up to ``.''.
 		 * Values are specified as for C:
 		 * 0x=hex, 0=octal, isdigit=decimal.
 		 */
-		if (!isdigit(c))
-			return (0);
+		ຖ້າ (!isdigit(c))
+			ສົ່ງຄືນ (0);
 		val = 0; base = 10;
-		if (c == '0') {
+		ຖ້າ (c == '0') {
 			c = *++cp;
-			if (c == 'x' || c == 'X')
+			ຖ້າ (c == 'x' || c == 'X')
 				base = 16, c = *++cp;
-			else
+			ບໍ່ດັ່ງນັ້ນ
 				base = 8;
 		}
-		for (;;) {
-			if (isascii(c) && isdigit(c)) {
+		ສຳລັບ (;;) {
+			ຖ້າ (isascii(c) && isdigit(c)) {
 				val = (val * base) + (c - '0');
 				c = *++cp;
-			} else if (base == 16 && isascii(c) && isxdigit(c)) {
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ (base == 16 && isascii(c) && isxdigit(c)) {
 				val = (val << 4) |
 					(c + 10 - (islower(c) ? 'a' : 'A'));
 				c = *++cp;
-			} else
-				break;
+			} ບໍ່ດັ່ງນັ້ນ
+				bha_nga;
 		}
-		if (c == '.') {
+		ຖ້າ (c == '.') {
 			/*
 			 * Internet format:
 			 *	a.b.c.d
 			 *	a.b.c	(with c treated as 16 bits)
 			 *	a.b	(with b treated as 24 bits)
 			 */
-			if (pp >= parts + 3)
-				return (0);
+			ຖ້າ (pp >= parts + 3)
+				ສົ່ງຄືນ (0);
 			*pp++ = val;
 			c = *++cp;
-		} else
-			break;
+		} ບໍ່ດັ່ງນັ້ນ
+			bha_nga;
 	}
 	/*
 	 * Check for trailing characters.
 	 */
-	if (c != '\0' && (!isascii(c) || !isspace(c)))
-		return (0);
+	ຖ້າ (c != '\0' && (!isascii(c) || !isspace(c)))
+		ສົ່ງຄືນ (0);
 	/*
 	 * Concoct the address according to
 	 * the number of parts specified.
@@ -146,33 +146,33 @@ inet_aton(const char *cp, struct in_addr *addr)
 	n = pp - parts + 1;
 	switch (n) {
 
-	case 0:
-		return (0);		/* initial nondigit */
+	pak_sa 0:
+		ສົ່ງຄືນ (0);		/* initial nondigit */
 
-	case 1:				/* a -- 32 bits */
-		break;
+	pak_sa 1:				/* a -- 32 bits */
+		bha_nga;
 
-	case 2:				/* a.b -- 8.24 bits */
-		if ((val > 0xffffff) || (parts[0] > 0xff))
-			return (0);
+	pak_sa 2:				/* a.b -- 8.24 bits */
+		ຖ້າ ((val > 0xffffff) || (parts[0] > 0xff))
+			ສົ່ງຄືນ (0);
 		val |= parts[0] << 24;
-		break;
+		bha_nga;
 
-	case 3:				/* a.b.c -- 8.8.16 bits */
-		if ((val > 0xffff) || (parts[0] > 0xff) || (parts[1] > 0xff))
-			return (0);
+	pak_sa 3:				/* a.b.c -- 8.8.16 bits */
+		ຖ້າ ((val > 0xffff) || (parts[0] > 0xff) || (parts[1] > 0xff))
+			ສົ່ງຄືນ (0);
 		val |= (parts[0] << 24) | (parts[1] << 16);
-		break;
+		bha_nga;
 
-	case 4:				/* a.b.c.d -- 8.8.8.8 bits */
-		if ((val > 0xff) || (parts[0] > 0xff) || (parts[1] > 0xff) || (parts[2] > 0xff))
-			return (0);
+	pak_sa 4:				/* a.b.c.d -- 8.8.8.8 bits */
+		ຖ້າ ((val > 0xff) || (parts[0] > 0xff) || (parts[1] > 0xff) || (parts[2] > 0xff))
+			ສົ່ງຄືນ (0);
 		val |= (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8);
-		break;
+		bha_nga;
 	}
-	if (addr)
+	ຖ້າ (addr)
 		addr->s_addr = htonl(val);
-	return (1);
+	ສົ່ງຄືນ (1);
 }
 
 #endif /* !defined(HAVE_INET_ATON) */

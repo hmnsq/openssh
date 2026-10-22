@@ -42,13 +42,13 @@
 #include <unistd.h>
 #include <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+ຈຳນວນເຕັມ
+getgrouplist(const var_na *uname, gid_t agroup, gid_t *groups, ຈຳນວນເຕັມ *grpcnt)
 {
-	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	sa_nracanaa group *grp;
+	ຈຳນວນເຕັມ i, ngroups;
+	ຈຳນວນເຕັມ ret, maxgroups;
+	ຈຳນວນເຕັມ bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	ຖ້າ (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		ສົ່ງຄືນ (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,29 +67,29 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
+	ໃນຂະນະທີ່ ((grp = getgrent())) {
+		ຖ້າ (grp->gr_gid == agroup)
 			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+		ສຳລັບ (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			ຖ້າ (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
+		ຖ້າ (bail)
 			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		ສຳລັບ (i = 0; grp->gr_mem[i]; i++) {
+			ຖ້າ (!strcmp(grp->gr_mem[i], uname)) {
+				ຖ້າ (ngroups >= maxgroups) {
 					ret = -1;
 					goto out;
 				}
 				groups[ngroups++] = grp->gr_gid;
-				break;
+				bha_nga;
 			}
 		}
 	}
 out:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	ສົ່ງຄືນ (ret);
 }
 
 #endif /* HAVE_GETGROUPLIST */

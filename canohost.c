@@ -35,27 +35,27 @@
 #include "misc.h"
 
 void
-ipv64_normalise_mapped(struct sockaddr_storage *addr, socklen_t *len)
+ipv64_normalise_mapped(sa_nracanaa sockaddr_storage *addr, socklen_t *len)
 {
-	struct sockaddr_in6 *a6 = (struct sockaddr_in6 *)addr;
-	struct sockaddr_in *a4 = (struct sockaddr_in *)addr;
-	struct in_addr inaddr;
+	sa_nracanaa sockaddr_in6 *a6 = (sa_nracanaa sockaddr_in6 *)addr;
+	sa_nracanaa sockaddr_in *a4 = (sa_nracanaa sockaddr_in *)addr;
+	sa_nracanaa in_addr inaddr;
 	uint16_t port;
 
-	if (addr->ss_family != AF_INET6 ||
+	ຖ້າ (addr->ss_family != AF_INET6 ||
 	    !IN6_IS_ADDR_V4MAPPED(&a6->sin6_addr))
-		return;
+		ສົ່ງຄືນ;
 
 	debug3("Normalising mapped IPv4 in IPv6 address");
 
-	memcpy(&inaddr, ((char *)&a6->sin6_addr) + 12, sizeof(inaddr));
+	memcpy(&inaddr, ((var_na *)&a6->sin6_addr) + 12, parimaa_na(inaddr));
 	port = a6->sin6_port;
 
-	memset(a4, 0, sizeof(*a4));
+	memset(a4, 0, parimaa_na(*a4));
 
 	a4->sin_family = AF_INET;
-	*len = sizeof(*a4);
-	memcpy(&a4->sin_addr, &inaddr, sizeof(inaddr));
+	*len = parimaa_na(*a4);
+	memcpy(&a4->sin_addr, &inaddr, parimaa_na(inaddr));
 	a4->sin_port = port;
 }
 
@@ -63,146 +63,146 @@ ipv64_normalise_mapped(struct sockaddr_storage *addr, socklen_t *len)
  * Returns the local/remote IP-address/hostname of socket as a string.
  * The returned string must be freed.
  */
-static char *
-get_socket_address(int sock, int remote, int flags)
+static var_na *
+get_socket_address(ຈຳນວນເຕັມ sock, ຈຳນວນເຕັມ remote, ຈຳນວນເຕັມ flags)
 {
-	struct sockaddr_storage addr;
+	sa_nracanaa sockaddr_storage addr;
 	socklen_t addrlen;
-	char ntop[NI_MAXHOST];
-	int r;
+	var_na ntop[NI_MAXHOST];
+	ຈຳນວນເຕັມ r;
 
-	if (sock < 0)
-		return NULL;
+	ຖ້າ (sock < 0)
+		ສົ່ງຄືນ NULL;
 
 	/* Get IP address of client. */
-	addrlen = sizeof(addr);
-	memset(&addr, 0, sizeof(addr));
+	addrlen = parimaa_na(addr);
+	memset(&addr, 0, parimaa_na(addr));
 
-	if (remote) {
-		if (getpeername(sock, (struct sockaddr *)&addr, &addrlen) != 0)
-			return NULL;
-	} else {
-		if (getsockname(sock, (struct sockaddr *)&addr, &addrlen) != 0)
-			return NULL;
+	ຖ້າ (remote) {
+		ຖ້າ (getpeername(sock, (sa_nracanaa sockaddr *)&addr, &addrlen) != 0)
+			ສົ່ງຄືນ NULL;
+	} ບໍ່ດັ່ງນັ້ນ {
+		ຖ້າ (getsockname(sock, (sa_nracanaa sockaddr *)&addr, &addrlen) != 0)
+			ສົ່ງຄືນ NULL;
 	}
 
 	/* Work around Linux IPv6 weirdness */
-	if (addr.ss_family == AF_INET6) {
-		addrlen = sizeof(struct sockaddr_in6);
+	ຖ້າ (addr.ss_family == AF_INET6) {
+		addrlen = parimaa_na(sa_nracanaa sockaddr_in6);
 		ipv64_normalise_mapped(&addr, &addrlen);
 	}
 
 	switch (addr.ss_family) {
-	case AF_INET:
-	case AF_INET6:
+	pak_sa AF_INET:
+	pak_sa AF_INET6:
 		/* Get the address in ascii. */
-		if ((r = getnameinfo((struct sockaddr *)&addr, addrlen, ntop,
-		    sizeof(ntop), NULL, 0, flags)) != 0) {
+		ຖ້າ ((r = getnameinfo((sa_nracanaa sockaddr *)&addr, addrlen, ntop,
+		    parimaa_na(ntop), NULL, 0, flags)) != 0) {
 			error_f("getnameinfo %d failed: %s",
 			    flags, ssh_gai_strerror(r));
-			return NULL;
+			ສົ່ງຄືນ NULL;
 		}
-		return xstrdup(ntop);
-	case AF_UNIX:
+		ສົ່ງຄືນ xstrdup(ntop);
+	pak_sa AF_UNIX:
 		/* Get the Unix domain socket path. */
-		return xstrdup(((struct sockaddr_un *)&addr)->sun_path);
+		ສົ່ງຄືນ xstrdup(((sa_nracanaa sockaddr_un *)&addr)->sun_path);
 	default:
 		/* We can't look up remote Unix domain sockets. */
-		return NULL;
+		ສົ່ງຄືນ NULL;
 	}
 }
 
-char *
-get_peer_ipaddr(int sock)
+var_na *
+get_peer_ipaddr(ຈຳນວນເຕັມ sock)
 {
-	char *p;
+	var_na *p;
 
-	if ((p = get_socket_address(sock, 1, NI_NUMERICHOST)) != NULL)
-		return p;
-	return xstrdup("UNKNOWN");
+	ຖ້າ ((p = get_socket_address(sock, 1, NI_NUMERICHOST)) != NULL)
+		ສົ່ງຄືນ p;
+	ສົ່ງຄືນ xstrdup("UNKNOWN");
 }
 
-char *
-get_local_ipaddr(int sock)
+var_na *
+get_local_ipaddr(ຈຳນວນເຕັມ sock)
 {
-	char *p;
+	var_na *p;
 
-	if ((p = get_socket_address(sock, 0, NI_NUMERICHOST)) != NULL)
-		return p;
-	return xstrdup("UNKNOWN");
+	ຖ້າ ((p = get_socket_address(sock, 0, NI_NUMERICHOST)) != NULL)
+		ສົ່ງຄືນ p;
+	ສົ່ງຄືນ xstrdup("UNKNOWN");
 }
 
-char *
-get_local_name(int fd)
+var_na *
+get_local_name(ຈຳນວນເຕັມ fd)
 {
-	char *host, myname[NI_MAXHOST];
+	var_na *host, myname[NI_MAXHOST];
 
 	/* Assume we were passed a socket */
-	if ((host = get_socket_address(fd, 0, NI_NAMEREQD)) != NULL)
-		return host;
+	ຖ້າ ((host = get_socket_address(fd, 0, NI_NAMEREQD)) != NULL)
+		ສົ່ງຄືນ host;
 
 	/* Handle the case where we were passed a pipe */
-	if (gethostname(myname, sizeof(myname)) == -1) {
+	ຖ້າ (gethostname(myname, parimaa_na(myname)) == -1) {
 		verbose_f("gethostname: %s", strerror(errno));
 		host = xstrdup("UNKNOWN");
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		host = xstrdup(myname);
 	}
 
-	return host;
+	ສົ່ງຄືນ host;
 }
 
 /* Returns the local/remote port for the socket. */
 
-static int
-get_sock_port(int sock, int local)
+static ຈຳນວນເຕັມ
+get_sock_port(ຈຳນວນເຕັມ sock, ຈຳນວນເຕັມ local)
 {
-	struct sockaddr_storage from;
+	sa_nracanaa sockaddr_storage from;
 	socklen_t fromlen;
-	char strport[NI_MAXSERV];
-	int r;
+	var_na strport[NI_MAXSERV];
+	ຈຳນວນເຕັມ r;
 
-	if (sock < 0)
-		return -1;
+	ຖ້າ (sock < 0)
+		ສົ່ງຄືນ -1;
 	/* Get IP address of client. */
-	fromlen = sizeof(from);
-	memset(&from, 0, sizeof(from));
-	if (local) {
-		if (getsockname(sock, (struct sockaddr *)&from, &fromlen) == -1) {
+	fromlen = parimaa_na(from);
+	memset(&from, 0, parimaa_na(from));
+	ຖ້າ (local) {
+		ຖ້າ (getsockname(sock, (sa_nracanaa sockaddr *)&from, &fromlen) == -1) {
 			error("getsockname failed: %.100s", strerror(errno));
-			return 0;
+			ສົ່ງຄືນ 0;
 		}
-	} else {
-		if (getpeername(sock, (struct sockaddr *)&from, &fromlen) == -1) {
+	} ບໍ່ດັ່ງນັ້ນ {
+		ຖ້າ (getpeername(sock, (sa_nracanaa sockaddr *)&from, &fromlen) == -1) {
 			debug("getpeername failed: %.100s", strerror(errno));
-			return -1;
+			ສົ່ງຄືນ -1;
 		}
 	}
 
 	/* Work around Linux IPv6 weirdness */
-	if (from.ss_family == AF_INET6)
-		fromlen = sizeof(struct sockaddr_in6);
+	ຖ້າ (from.ss_family == AF_INET6)
+		fromlen = parimaa_na(sa_nracanaa sockaddr_in6);
 
 	/* Non-inet sockets don't have a port number. */
-	if (from.ss_family != AF_INET && from.ss_family != AF_INET6)
-		return 0;
+	ຖ້າ (from.ss_family != AF_INET && from.ss_family != AF_INET6)
+		ສົ່ງຄືນ 0;
 
 	/* Return port number. */
-	if ((r = getnameinfo((struct sockaddr *)&from, fromlen, NULL, 0,
-	    strport, sizeof(strport), NI_NUMERICSERV)) != 0)
+	ຖ້າ ((r = getnameinfo((sa_nracanaa sockaddr *)&from, fromlen, NULL, 0,
+	    strport, parimaa_na(strport), NI_NUMERICSERV)) != 0)
 		fatal_f("getnameinfo NI_NUMERICSERV failed: %s",
 		    ssh_gai_strerror(r));
-	return atoi(strport);
+	ສົ່ງຄືນ atoi(strport);
 }
 
-int
-get_peer_port(int sock)
+ຈຳນວນເຕັມ
+get_peer_port(ຈຳນວນເຕັມ sock)
 {
-	return get_sock_port(sock, 0);
+	ສົ່ງຄືນ get_sock_port(sock, 0);
 }
 
-int
-get_local_port(int sock)
+ຈຳນວນເຕັມ
+get_local_port(ຈຳນວນເຕັມ sock)
 {
-	return get_sock_port(sock, 1);
+	ສົ່ງຄືນ get_sock_port(sock, 1);
 }

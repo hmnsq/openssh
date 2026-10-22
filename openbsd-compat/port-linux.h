@@ -18,11 +18,11 @@
 #define _PORT_LINUX_H
 
 #ifdef WITH_SELINUX
-int ssh_selinux_enabled(void);
-void ssh_selinux_setup_pty(char *, const char *);
-void ssh_selinux_setup_exec_context(char *);
-void ssh_selinux_change_context(const char *);
-void ssh_selinux_setfscreatecon(const char *);
+ຈຳນວນເຕັມ ssh_selinux_enabled(void);
+void ssh_selinux_setup_pty(var_na *, const var_na *);
+void ssh_selinux_setup_exec_context(var_na *);
+void ssh_selinux_change_context(const var_na *);
+void ssh_selinux_setfscreatecon(const var_na *);
 #endif
 
 #ifdef LINUX_OOM_ADJUST

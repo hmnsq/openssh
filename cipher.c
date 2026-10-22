@@ -54,17 +54,17 @@
 #define EVP_CIPHER_CTX void
 #endif
 
-struct sshcipher_ctx {
-	int	plaintext;
-	int	encrypt;
+sa_nracanaa sshcipher_ctx {
+	ຈຳນວນເຕັມ	plaintext;
+	ຈຳນວນເຕັມ	encrypt;
 	EVP_CIPHER_CTX *evp;
-	struct chachapoly_ctx *cp_ctx;
-	struct aesctr_ctx ac_ctx; /* XXX union with evp? */
-	const struct sshcipher *cipher;
+	sa_nracanaa chachapoly_ctx *cp_ctx;
+	sa_nracanaa aesctr_ctx ac_ctx; /* XXX union with evp? */
+	const sa_nracanaa sshcipher *cipher;
 };
 
-struct sshcipher {
-	char	*name;
+sa_nracanaa sshcipher {
+	var_na	*name;
 	u_int	block_size;
 	u_int	key_len;
 	u_int	iv_len;		/* defaults to block_size */
@@ -77,12 +77,12 @@ struct sshcipher {
 #define CFLAG_INTERNAL		CFLAG_NONE /* Don't use "none" for packets */
 #ifdef WITH_OPENSSL
 	const EVP_CIPHER	*(*evptype)(void);
-#else
+#ບໍ່ດັ່ງນັ້ນ
 	void	*ignored;
 #endif
 };
 
-static const struct sshcipher ciphers[] = {
+static const sa_nracanaa sshcipher ciphers[] = {
 #ifdef WITH_OPENSSL
 #ifndef OPENSSL_NO_DES
 	{ "3des-cbc",		8, 24, 0, 0, CFLAG_CBC, EVP_des_ede3_cbc },
@@ -97,7 +97,7 @@ static const struct sshcipher ciphers[] = {
 				16, 16, 12, 16, 0, EVP_aes_128_gcm },
 	{ "aes256-gcm@openssh.com",
 				16, 32, 12, 16, 0, EVP_aes_256_gcm },
-#else
+#ບໍ່ດັ່ງນັ້ນ
 	{ "aes128-ctr",		16, 16, 0, 0, CFLAG_AESCTR, NULL },
 	{ "aes192-ctr",		16, 24, 0, 0, CFLAG_AESCTR, NULL },
 	{ "aes256-ctr",		16, 32, 0, 0, CFLAG_AESCTR, NULL },
@@ -112,171 +112,171 @@ static const struct sshcipher ciphers[] = {
 /*--*/
 
 /* Returns a comma-separated list of supported ciphers. */
-char *
-cipher_alg_list(char sep, int auth_only)
+var_na *
+cipher_alg_list(var_na sep, ຈຳນວນເຕັມ auth_only)
 {
-	char *ret = NULL;
-	const struct sshcipher *c;
-	char sep_str[2] = {sep, '\0'};
+	var_na *ret = NULL;
+	const sa_nracanaa sshcipher *c;
+	var_na sep_str[2] = {sep, '\0'};
 
-	for (c = ciphers; c->name != NULL; c++) {
-		if ((c->flags & CFLAG_INTERNAL) != 0)
+	ສຳລັບ (c = ciphers; c->name != NULL; c++) {
+		ຖ້າ ((c->flags & CFLAG_INTERNAL) != 0)
 			continue;
-		if (auth_only && c->auth_len == 0)
+		ຖ້າ (auth_only && c->auth_len == 0)
 			continue;
 		xextendf(&ret, sep_str, "%s", c->name);
 	}
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 
-const char *
-compression_alg_list(int compression)
+const var_na *
+compression_alg_list(ຈຳນວນເຕັມ compression)
 {
 #ifdef WITH_ZLIB
-	return compression ? "zlib@openssh.com,none" :
+	ສົ່ງຄືນ compression ? "zlib@openssh.com,none" :
 	    "none,zlib@openssh.com";
-#else
-	return "none";
+#ບໍ່ດັ່ງນັ້ນ
+	ສົ່ງຄືນ "none";
 #endif
 }
 
 u_int
-cipher_blocksize(const struct sshcipher *c)
+cipher_blocksize(const sa_nracanaa sshcipher *c)
 {
-	return (c->block_size);
+	ສົ່ງຄືນ (c->block_size);
 }
 
 u_int
-cipher_keylen(const struct sshcipher *c)
+cipher_keylen(const sa_nracanaa sshcipher *c)
 {
-	return (c->key_len);
+	ສົ່ງຄືນ (c->key_len);
 }
 
 u_int
-cipher_seclen(const struct sshcipher *c)
+cipher_seclen(const sa_nracanaa sshcipher *c)
 {
-	if (strcmp("3des-cbc", c->name) == 0)
-		return 14;
-	return cipher_keylen(c);
+	ຖ້າ (strcmp("3des-cbc", c->name) == 0)
+		ສົ່ງຄືນ 14;
+	ສົ່ງຄືນ cipher_keylen(c);
 }
 
 u_int
-cipher_authlen(const struct sshcipher *c)
+cipher_authlen(const sa_nracanaa sshcipher *c)
 {
-	return (c->auth_len);
+	ສົ່ງຄືນ (c->auth_len);
 }
 
 u_int
-cipher_ivlen(const struct sshcipher *c)
+cipher_ivlen(const sa_nracanaa sshcipher *c)
 {
 	/*
 	 * Default is cipher block size, except for chacha20+poly1305 that
 	 * needs no IV. XXX make iv_len == -1 default?
 	 */
-	return (c->iv_len != 0 || (c->flags & CFLAG_CHACHAPOLY) != 0) ?
+	ສົ່ງຄືນ (c->iv_len != 0 || (c->flags & CFLAG_CHACHAPOLY) != 0) ?
 	    c->iv_len : c->block_size;
 }
 
 u_int
-cipher_is_cbc(const struct sshcipher *c)
+cipher_is_cbc(const sa_nracanaa sshcipher *c)
 {
-	return (c->flags & CFLAG_CBC) != 0;
+	ສົ່ງຄືນ (c->flags & CFLAG_CBC) != 0;
 }
 
 u_int
-cipher_is_internal(const struct sshcipher *c)
+cipher_is_internal(const sa_nracanaa sshcipher *c)
 {
-	return (c->flags & CFLAG_INTERNAL) != 0;
+	ສົ່ງຄືນ (c->flags & CFLAG_INTERNAL) != 0;
 }
 
 u_int
-cipher_ctx_is_plaintext(struct sshcipher_ctx *cc)
+cipher_ctx_is_plaintext(sa_nracanaa sshcipher_ctx *cc)
 {
-	return cc->plaintext;
+	ສົ່ງຄືນ cc->plaintext;
 }
 
-const struct sshcipher *
-cipher_by_name(const char *name)
+const sa_nracanaa sshcipher *
+cipher_by_name(const var_na *name)
 {
-	const struct sshcipher *c;
-	for (c = ciphers; c->name != NULL; c++)
-		if (strcmp(c->name, name) == 0)
-			return c;
-	return NULL;
+	const sa_nracanaa sshcipher *c;
+	ສຳລັບ (c = ciphers; c->name != NULL; c++)
+		ຖ້າ (strcmp(c->name, name) == 0)
+			ສົ່ງຄືນ c;
+	ສົ່ງຄືນ NULL;
 }
 
 #define	CIPHER_SEP	","
-int
-ciphers_valid(const char *names)
+ຈຳນວນເຕັມ
+ciphers_valid(const var_na *names)
 {
-	const struct sshcipher *c;
-	char *cipher_list, *cp;
-	char *p;
-	int found = 0;
+	const sa_nracanaa sshcipher *c;
+	var_na *cipher_list, *cp;
+	var_na *p;
+	ຈຳນວນເຕັມ found = 0;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((cipher_list = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, CIPHER_SEP)); p && *p != '\0';
+	ຖ້າ (names == NULL || strcmp(names, "") == 0)
+		ສົ່ງຄືນ 0;
+	ຖ້າ ((cipher_list = cp = strdup(names)) == NULL)
+		ສົ່ງຄືນ 0;
+	ສຳລັບ ((p = strsep(&cp, CIPHER_SEP)); p && *p != '\0';
 	    (p = strsep(&cp, CIPHER_SEP))) {
 		c = cipher_by_name(p);
-		if (c == NULL || (c->flags & CFLAG_INTERNAL) != 0) {
+		ຖ້າ (c == NULL || (c->flags & CFLAG_INTERNAL) != 0) {
 			free(cipher_list);
-			return 0;
-		} else
+			ສົ່ງຄືນ 0;
+		} ບໍ່ດັ່ງນັ້ນ
 			found = 1;
 	}
 	free(cipher_list);
-	return found;
+	ສົ່ງຄືນ found;
 }
 
-const char *
-cipher_warning_message(const struct sshcipher_ctx *cc)
+const var_na *
+cipher_warning_message(const sa_nracanaa sshcipher_ctx *cc)
 {
-	if (cc == NULL || cc->cipher == NULL)
-		return NULL;
+	ຖ້າ (cc == NULL || cc->cipher == NULL)
+		ສົ່ງຄືນ NULL;
 	/* XXX repurpose for CBC warning */
-	return NULL;
+	ສົ່ງຄືນ NULL;
 }
 
-int
-cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
+ຈຳນວນເຕັມ
+cipher_init(sa_nracanaa sshcipher_ctx **ccp, const sa_nracanaa sshcipher *cipher,
     const u_char *key, u_int keylen, const u_char *iv, u_int ivlen,
-    int do_encrypt)
+    ຈຳນວນເຕັມ do_encrypt)
 {
-	struct sshcipher_ctx *cc = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	sa_nracanaa sshcipher_ctx *cc = NULL;
+	ຈຳນວນເຕັມ ret = SSH_ERR_INTERNAL_ERROR;
 #ifdef WITH_OPENSSL
 	const EVP_CIPHER *type;
-	int klen;
+	ຈຳນວນເຕັມ klen;
 #endif
 
 	*ccp = NULL;
-	if ((cc = calloc(1, sizeof(*cc))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ຖ້າ ((cc = calloc(1, parimaa_na(*cc))) == NULL)
+		ສົ່ງຄືນ SSH_ERR_ALLOC_FAIL;
 
 	cc->plaintext = (cipher->flags & CFLAG_NONE) != 0;
 	cc->encrypt = do_encrypt;
 
-	if (keylen < cipher->key_len ||
+	ຖ້າ (keylen < cipher->key_len ||
 	    (iv != NULL && ivlen < cipher_ivlen(cipher))) {
 		ret = SSH_ERR_INVALID_ARGUMENT;
 		goto out;
 	}
 
 	cc->cipher = cipher;
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+	ຖ້າ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
 		cc->cp_ctx = chachapoly_new(key, keylen);
 		ret = cc->cp_ctx != NULL ? 0 : SSH_ERR_INVALID_ARGUMENT;
 		goto out;
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0) {
+	ຖ້າ ((cc->cipher->flags & CFLAG_NONE) != 0) {
 		ret = 0;
 		goto out;
 	}
 #ifndef WITH_OPENSSL
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+	ຖ້າ ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
 		aesctr_keysetup(&cc->ac_ctx, key, 8 * keylen, 8 * ivlen);
 		aesctr_ivsetup(&cc->ac_ctx, iv);
 		ret = 0;
@@ -284,49 +284,49 @@ cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
 	}
 	ret = SSH_ERR_INVALID_ARGUMENT;
 	goto out;
-#else /* WITH_OPENSSL */
+#ບໍ່ດັ່ງນັ້ນ /* WITH_OPENSSL */
 	type = (*cipher->evptype)();
-	if ((cc->evp = EVP_CIPHER_CTX_new()) == NULL) {
+	ຖ້າ ((cc->evp = EVP_CIPHER_CTX_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (EVP_CipherInit(cc->evp, type, NULL, (u_char *)iv,
+	ຖ້າ (EVP_CipherInit(cc->evp, type, NULL, (u_char *)iv,
 	    (do_encrypt == CIPHER_ENCRYPT)) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if (cipher_authlen(cipher) &&
+	ຖ້າ (cipher_authlen(cipher) &&
 	    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_SET_IV_FIXED,
 	    -1, (u_char *)iv) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	klen = EVP_CIPHER_CTX_key_length(cc->evp);
-	if (klen > 0 && keylen != (u_int)klen) {
-		if (EVP_CIPHER_CTX_set_key_length(cc->evp, keylen) == 0) {
+	ຖ້າ (klen > 0 && keylen != (u_int)klen) {
+		ຖ້າ (EVP_CIPHER_CTX_set_key_length(cc->evp, keylen) == 0) {
 			ret = SSH_ERR_LIBCRYPTO_ERROR;
 			goto out;
 		}
 	}
-	if (EVP_CipherInit(cc->evp, NULL, (u_char *)key, NULL, -1) == 0) {
+	ຖ້າ (EVP_CipherInit(cc->evp, NULL, (u_char *)key, NULL, -1) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	ret = 0;
 #endif /* WITH_OPENSSL */
  out:
-	if (ret == 0) {
+	ຖ້າ (ret == 0) {
 		/* success */
 		*ccp = cc;
-	} else {
-		if (cc != NULL) {
+	} ບໍ່ດັ່ງນັ້ນ {
+		ຖ້າ (cc != NULL) {
 #ifdef WITH_OPENSSL
 			EVP_CIPHER_CTX_free(cc->evp);
 #endif /* WITH_OPENSSL */
-			freezero(cc, sizeof(*cc));
+			freezero(cc, parimaa_na(*cc));
 		}
 	}
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 
 /*
@@ -339,135 +339,135 @@ cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
  * This tag is written on encryption and verified on decryption.
  * Both 'aadlen' and 'authlen' can be set to 0.
  */
-int
-cipher_crypt(struct sshcipher_ctx *cc, u_int seqnr, u_char *dest,
+ຈຳນວນເຕັມ
+cipher_crypt(sa_nracanaa sshcipher_ctx *cc, u_int seqnr, u_char *dest,
    const u_char *src, u_int len, u_int aadlen, u_int authlen)
 {
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		return chachapoly_crypt(cc->cp_ctx, seqnr, dest, src,
+	ຖ້າ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		ສົ່ງຄືນ chachapoly_crypt(cc->cp_ctx, seqnr, dest, src,
 		    len, aadlen, authlen, cc->encrypt);
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0) {
+	ຖ້າ ((cc->cipher->flags & CFLAG_NONE) != 0) {
 		memcpy(dest, src, aadlen + len);
-		return 0;
+		ສົ່ງຄືນ 0;
 	}
 #ifndef WITH_OPENSSL
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		if (aadlen)
+	ຖ້າ ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		ຖ້າ (aadlen)
 			memcpy(dest, src, aadlen);
 		aesctr_encrypt_bytes(&cc->ac_ctx, src + aadlen,
 		    dest + aadlen, len);
-		return 0;
+		ສົ່ງຄືນ 0;
 	}
-	return SSH_ERR_INVALID_ARGUMENT;
-#else
-	if (authlen) {
+	ສົ່ງຄືນ SSH_ERR_INVALID_ARGUMENT;
+#ບໍ່ດັ່ງນັ້ນ
+	ຖ້າ (authlen) {
 		u_char lastiv[1];
 
-		if (authlen != cipher_authlen(cc->cipher))
-			return SSH_ERR_INVALID_ARGUMENT;
+		ຖ້າ (authlen != cipher_authlen(cc->cipher))
+			ສົ່ງຄືນ SSH_ERR_INVALID_ARGUMENT;
 		/* increment IV */
-		if (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN,
+		ຖ້າ (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN,
 		    1, lastiv) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			ສົ່ງຄືນ SSH_ERR_LIBCRYPTO_ERROR;
 		/* set tag on decryption */
-		if (!cc->encrypt &&
+		ຖ້າ (!cc->encrypt &&
 		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_SET_TAG,
 		    authlen, (u_char *)src + aadlen + len) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			ສົ່ງຄືນ SSH_ERR_LIBCRYPTO_ERROR;
 	}
-	if (aadlen) {
-		if (authlen &&
+	ຖ້າ (aadlen) {
+		ຖ້າ (authlen &&
 		    EVP_Cipher(cc->evp, NULL, (u_char *)src, aadlen) < 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			ສົ່ງຄືນ SSH_ERR_LIBCRYPTO_ERROR;
 		memcpy(dest, src, aadlen);
 	}
-	if (len % cc->cipher->block_size)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_Cipher(cc->evp, dest + aadlen, (u_char *)src + aadlen,
+	ຖ້າ (len % cc->cipher->block_size)
+		ສົ່ງຄືນ SSH_ERR_INVALID_ARGUMENT;
+	ຖ້າ (EVP_Cipher(cc->evp, dest + aadlen, (u_char *)src + aadlen,
 	    len) < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (authlen) {
+		ສົ່ງຄືນ SSH_ERR_LIBCRYPTO_ERROR;
+	ຖ້າ (authlen) {
 		/* compute tag (on encrypt) or verify tag (on decrypt) */
-		if (EVP_Cipher(cc->evp, NULL, NULL, 0) < 0)
-			return cc->encrypt ?
+		ຖ້າ (EVP_Cipher(cc->evp, NULL, NULL, 0) < 0)
+			ສົ່ງຄືນ cc->encrypt ?
 			    SSH_ERR_LIBCRYPTO_ERROR : SSH_ERR_MAC_INVALID;
-		if (cc->encrypt &&
+		ຖ້າ (cc->encrypt &&
 		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_GET_TAG,
 		    authlen, dest + aadlen + len) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			ສົ່ງຄືນ SSH_ERR_LIBCRYPTO_ERROR;
 	}
-	return 0;
+	ສົ່ງຄືນ 0;
 #endif
 }
 
 /* Extract the packet length, including any decryption necessary beforehand */
-int
-cipher_get_length(struct sshcipher_ctx *cc, u_int *plenp, u_int seqnr,
+ຈຳນວນເຕັມ
+cipher_get_length(sa_nracanaa sshcipher_ctx *cc, u_int *plenp, u_int seqnr,
     const u_char *cp, u_int len)
 {
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0)
-		return chachapoly_get_length(cc->cp_ctx, plenp, seqnr,
+	ຖ້າ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0)
+		ສົ່ງຄືນ chachapoly_get_length(cc->cp_ctx, plenp, seqnr,
 		    cp, len);
-	if (len < 4)
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+	ຖ້າ (len < 4)
+		ສົ່ງຄືນ SSH_ERR_MESSAGE_INCOMPLETE;
 	*plenp = PEEK_U32(cp);
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 void
-cipher_free(struct sshcipher_ctx *cc)
+cipher_free(sa_nracanaa sshcipher_ctx *cc)
 {
-	if (cc == NULL)
-		return;
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+	ຖ້າ (cc == NULL)
+		ສົ່ງຄືນ;
+	ຖ້າ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
 		chachapoly_free(cc->cp_ctx);
 		cc->cp_ctx = NULL;
-	} else if ((cc->cipher->flags & CFLAG_AESCTR) != 0)
-		explicit_bzero(&cc->ac_ctx, sizeof(cc->ac_ctx));
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ ((cc->cipher->flags & CFLAG_AESCTR) != 0)
+		explicit_bzero(&cc->ac_ctx, parimaa_na(cc->ac_ctx));
 #ifdef WITH_OPENSSL
 	EVP_CIPHER_CTX_free(cc->evp);
 	cc->evp = NULL;
 #endif
-	freezero(cc, sizeof(*cc));
+	freezero(cc, parimaa_na(*cc));
 }
 
-int
-cipher_get_keyiv(struct sshcipher_ctx *cc, u_char *iv, size_t len)
+ຈຳນວນເຕັມ
+cipher_get_keyiv(sa_nracanaa sshcipher_ctx *cc, u_char *iv, size_t len)
 {
 #ifdef WITH_OPENSSL
-	const struct sshcipher *c = cc->cipher;
-	int evplen;
+	const sa_nracanaa sshcipher *c = cc->cipher;
+	ຈຳນວນເຕັມ evplen;
 #endif
 
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		if (len != 0)
-			return SSH_ERR_INVALID_ARGUMENT;
-		return 0;
+	ຖ້າ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		ຖ້າ (len != 0)
+			ສົ່ງຄືນ SSH_ERR_INVALID_ARGUMENT;
+		ສົ່ງຄືນ 0;
 	}
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		if (len != sizeof(cc->ac_ctx.ctr))
-			return SSH_ERR_INVALID_ARGUMENT;
+	ຖ້າ ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		ຖ້າ (len != parimaa_na(cc->ac_ctx.ctr))
+			ສົ່ງຄືນ SSH_ERR_INVALID_ARGUMENT;
 		memcpy(iv, cc->ac_ctx.ctr, len);
-		return 0;
+		ສົ່ງຄືນ 0;
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0)
-		return 0;
+	ຖ້າ ((cc->cipher->flags & CFLAG_NONE) != 0)
+		ສົ່ງຄືນ 0;
 
 #ifdef WITH_OPENSSL
 	evplen = EVP_CIPHER_CTX_iv_length(cc->evp);
-	if (evplen == 0)
-		return 0;
-	else if (evplen < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if ((size_t)evplen != len)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (cipher_authlen(c)) {
-		if (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN, len,
+	ຖ້າ (evplen == 0)
+		ສົ່ງຄືນ 0;
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (evplen < 0)
+		ສົ່ງຄືນ SSH_ERR_LIBCRYPTO_ERROR;
+	ຖ້າ ((size_t)evplen != len)
+		ສົ່ງຄືນ SSH_ERR_INVALID_ARGUMENT;
+	ຖ້າ (cipher_authlen(c)) {
+		ຖ້າ (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN, len,
 		    iv) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
-	} else if (EVP_CIPHER_CTX_get_iv(cc->evp, iv, len) <= 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+			ສົ່ງຄືນ SSH_ERR_LIBCRYPTO_ERROR;
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (EVP_CIPHER_CTX_get_iv(cc->evp, iv, len) <= 0)
+		ສົ່ງຄືນ SSH_ERR_LIBCRYPTO_ERROR;
 #endif
-	return 0;
+	ສົ່ງຄືນ 0;
 }

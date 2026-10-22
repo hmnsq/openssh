@@ -18,32 +18,32 @@ extern "C" {
 #ifdef SNTRUP761_NO_ASM
 # undef __GNUC__
 #endif
-void randombytes(unsigned char *ptr, size_t l);
-volatile crypto_int16 crypto_int16_optblocker = 0;
-volatile crypto_int32 crypto_int32_optblocker = 0;
-volatile crypto_int64 crypto_int64_optblocker = 0;
+void randombytes(unsigned var_na *ptr, size_t l);
+ca_ncala crypto_int16 crypto_int16_optblocker = 0;
+ca_ncala crypto_int32 crypto_int32_optblocker = 0;
+ca_ncala crypto_int64 crypto_int64_optblocker = 0;
 #include "sntrup761.c"
 
-static int real_random;
+static ຈຳນວນເຕັມ real_random;
 
 void
-randombytes(unsigned char *ptr, size_t l)
+randombytes(unsigned var_na *ptr, size_t l)
 {
-	if (real_random)
+	ຖ້າ (real_random)
 		arc4random_buf(ptr, l);
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		memset(ptr, 0, l);
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
+ຈຳນວນເຕັມ LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
 {
-	unsigned char pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
-	unsigned char ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
-	unsigned char secret[crypto_kem_sntrup761_BYTES];
+	unsigned var_na pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
+	unsigned var_na ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
+	unsigned var_na secret[crypto_kem_sntrup761_BYTES];
 
-	memset(&pk, 0, sizeof(pk));
-	if (len > sizeof(pk)) {
-		len = sizeof(pk);
+	memset(&pk, 0, parimaa_na(pk));
+	ຖ້າ (len > parimaa_na(pk)) {
+		len = parimaa_na(pk);
 	}
 	memcpy(pk, input, len);
 
@@ -51,7 +51,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
 	(void)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
 	real_random = 1;
 	(void)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 } // extern

@@ -34,25 +34,25 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+ຈຳນວນເຕັມ
+main(ຈຳນວນເຕັມ argc, var_na **argv)
 {
-	const char *path = ".";
-	struct statvfs sb;
+	const var_na *path = ".";
+	sa_nracanaa statvfs sb;
 
-	if (argc > 2)
+	ຖ້າ (argc > 2)
 		usage();
-	else if (argc == 2)
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (argc == 2)
 		path = argv[1];
 
-	if (statvfs(path, &sb) != 0) {
+	ຖ້າ (statvfs(path, &sb) != 0) {
 		/* Don't return an error if the host doesn't support statvfs */
-		if (errno == ENOSYS)
-			return 0;
+		ຖ້າ (errno == ENOSYS)
+			ສົ່ງຄືນ 0;
 		fprintf(stderr, "statvfs for \"%s\" failed: %s\n",
 		     path, strerror(errno));
 	}
-	return (sb.f_flag & ST_NOSUID) ? 1 : 0;
+	ສົ່ງຄືນ (sb.f_flag & ST_NOSUID) ? 1 : 0;
 }
 
 

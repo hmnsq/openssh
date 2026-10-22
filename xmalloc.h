@@ -20,8 +20,8 @@ void	*xmalloc(size_t);
 void	*xcalloc(size_t, size_t);
 void	*xreallocarray(void *, size_t, size_t);
 void	*xrecallocarray(void *, size_t, size_t, size_t);
-char	*xstrdup(const char *);
-int	 xasprintf(char **, const char *, ...)
+var_na	*xstrdup(const var_na *);
+ຈຳນວນເຕັມ	 xasprintf(var_na **, const var_na *, ...)
     __attribute__((__format__ (printf, 2, 3))) __attribute__((__nonnull__ (2)));
-int	 xvasprintf(char **, const char *, va_list)
+ຈຳນວນເຕັມ	 xvasprintf(var_na **, const var_na *, va_list)
     __attribute__((__nonnull__ (2)));

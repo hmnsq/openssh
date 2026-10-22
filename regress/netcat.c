@@ -75,7 +75,7 @@
 
 #ifndef SUN_LEN
 #define SUN_LEN(su) \
-	(sizeof(*(su)) - sizeof((su)->sun_path) + strlen((su)->sun_path))
+	(parimaa_na(*(su)) - parimaa_na((su)->sun_path) + strlen((su)->sun_path))
 #endif
 
 #define PORT_MAX	65535
@@ -89,69 +89,69 @@
 #define BUFSIZE 16384
 
 /* Command Line Options */
-int	dflag;					/* detached, no stdin */
-int	Fflag;					/* fdpass sock to stdout */
-unsigned int iflag;				/* Interval Flag */
-int	kflag;					/* More than one connect */
-int	lflag;					/* Bind to local port */
-int	Nflag;					/* shutdown() network socket */
-int	nflag;					/* Don't do name look up */
-char   *Pflag;					/* Proxy username */
-char   *pflag;					/* Localport flag */
-int	rflag;					/* Random ports flag */
-char   *sflag;					/* Source Address */
-int	tflag;					/* Telnet Emulation */
-int	uflag;					/* UDP - Default to TCP */
-int	vflag;					/* Verbosity */
-int	xflag;					/* Socks proxy */
-int	zflag;					/* Port Scan Flag */
-int	Dflag;					/* sodebug */
-int	Iflag;					/* TCP receive buffer size */
-int	Oflag;					/* TCP send buffer size */
-int	Sflag;					/* TCP MD5 signature option */
-int	Tflag = -1;				/* IP Type of Service */
-int	rtableid = -1;
+ຈຳນວນເຕັມ	dflag;					/* detached, no stdin */
+ຈຳນວນເຕັມ	Fflag;					/* fdpass sock to stdout */
+unsigned ຈຳນວນເຕັມ iflag;				/* Interval Flag */
+ຈຳນວນເຕັມ	kflag;					/* More than one connect */
+ຈຳນວນເຕັມ	lflag;					/* Bind to local port */
+ຈຳນວນເຕັມ	Nflag;					/* shutdown() network socket */
+ຈຳນວນເຕັມ	nflag;					/* Don't do name look up */
+var_na   *Pflag;					/* Proxy username */
+var_na   *pflag;					/* Localport flag */
+ຈຳນວນເຕັມ	rflag;					/* Random ports flag */
+var_na   *sflag;					/* Source Address */
+ຈຳນວນເຕັມ	tflag;					/* Telnet Emulation */
+ຈຳນວນເຕັມ	uflag;					/* UDP - Default to TCP */
+ຈຳນວນເຕັມ	vflag;					/* Verbosity */
+ຈຳນວນເຕັມ	xflag;					/* Socks proxy */
+ຈຳນວນເຕັມ	zflag;					/* Port Scan Flag */
+ຈຳນວນເຕັມ	Dflag;					/* sodebug */
+ຈຳນວນເຕັມ	Iflag;					/* TCP receive buffer size */
+ຈຳນວນເຕັມ	Oflag;					/* TCP send buffer size */
+ຈຳນວນເຕັມ	Sflag;					/* TCP MD5 signature option */
+ຈຳນວນເຕັມ	Tflag = -1;				/* IP Type of Service */
+ຈຳນວນເຕັມ	rtableid = -1;
 
-int timeout = -1;
-int family = AF_UNSPEC;
-char *portlist[PORT_MAX+1];
-char *unix_dg_tmp_socket;
+ຈຳນວນເຕັມ timeout = -1;
+ຈຳນວນເຕັມ family = AF_UNSPEC;
+var_na *portlist[PORT_MAX+1];
+var_na *unix_dg_tmp_socket;
 
-void	atelnet(int, unsigned char *, unsigned int);
-void	build_ports(char *);
+void	atelnet(ຈຳນວນເຕັມ, unsigned var_na *, unsigned ຈຳນວນເຕັມ);
+void	build_ports(var_na *);
 void	help(void);
-int	local_listen(char *, char *, struct addrinfo);
-void	readwrite(int);
-void	fdpass(int nfd) __attribute__((noreturn));
-int	remote_connect(const char *, const char *, struct addrinfo);
-int	timeout_connect(int, const struct sockaddr *, socklen_t);
-int	socks_connect(const char *, const char *, struct addrinfo,
-	    const char *, const char *, struct addrinfo, int, const char *);
-int	udptest(int);
-int	unix_bind(char *);
-int	unix_connect(char *);
-int	unix_listen(char *);
-void	set_common_sockopts(int, int);
-int	map_tos(char *, int *);
-void	report_connect(const struct sockaddr *, socklen_t);
-void	usage(int);
-ssize_t drainbuf(int, unsigned char *, size_t *);
-ssize_t fillbuf(int, unsigned char *, size_t *);
+ຈຳນວນເຕັມ	local_listen(var_na *, var_na *, sa_nracanaa addrinfo);
+void	readwrite(ຈຳນວນເຕັມ);
+void	fdpass(ຈຳນວນເຕັມ nfd) __attribute__((noreturn));
+ຈຳນວນເຕັມ	remote_connect(const var_na *, const var_na *, sa_nracanaa addrinfo);
+ຈຳນວນເຕັມ	timeout_connect(ຈຳນວນເຕັມ, const sa_nracanaa sockaddr *, socklen_t);
+ຈຳນວນເຕັມ	socks_connect(const var_na *, const var_na *, sa_nracanaa addrinfo,
+	    const var_na *, const var_na *, sa_nracanaa addrinfo, ຈຳນວນເຕັມ, const var_na *);
+ຈຳນວນເຕັມ	udptest(ຈຳນວນເຕັມ);
+ຈຳນວນເຕັມ	unix_bind(var_na *);
+ຈຳນວນເຕັມ	unix_connect(var_na *);
+ຈຳນວນເຕັມ	unix_listen(var_na *);
+void	set_common_sockopts(ຈຳນວນເຕັມ, ຈຳນວນເຕັມ);
+ຈຳນວນເຕັມ	map_tos(var_na *, ຈຳນວນເຕັມ *);
+void	report_connect(const sa_nracanaa sockaddr *, socklen_t);
+void	usage(ຈຳນວນເຕັມ);
+ssize_t drainbuf(ຈຳນວນເຕັມ, unsigned var_na *, size_t *);
+ssize_t fillbuf(ຈຳນວນເຕັມ, unsigned var_na *, size_t *);
 
 
-int
-main(int argc, char *argv[])
+ຈຳນວນເຕັມ
+main(ຈຳນວນເຕັມ argc, var_na *argv[])
 {
-	int ch, s, ret, socksv;
-	char *host, *uport;
-	struct addrinfo hints;
-	struct servent *sv;
+	ຈຳນວນເຕັມ ch, s, ret, socksv;
+	var_na *host, *uport;
+	sa_nracanaa addrinfo hints;
+	sa_nracanaa servent *sv;
 	socklen_t len;
-	struct sockaddr_storage cliaddr;
-	char *proxy = NULL;
-	const char *errstr, *proxyhost = "", *proxyport = NULL;
-	struct addrinfo proxyhints;
-	char unix_dg_tmp_socket_buf[UNIX_DG_TMP_SOCKET_SIZE];
+	sa_nracanaa sockaddr_storage cliaddr;
+	var_na *proxy = NULL;
+	const var_na *errstr, *proxyhost = "", *proxyport = NULL;
+	sa_nracanaa addrinfo proxyhints;
+	var_na unix_dg_tmp_socket_buf[UNIX_DG_TMP_SOCKET_SIZE];
 
 	ret = 1;
 	s = 0;
@@ -160,133 +160,133 @@ main(int argc, char *argv[])
 	uport = NULL;
 	sv = NULL;
 
-	signal(SIGPIPE, SIG_IGN);
+	sa_nkeeta(SIGPIPE, SIG_IGN);
 
-	while ((ch = getopt(argc, argv,
+	ໃນຂະນະທີ່ ((ch = getopt(argc, argv,
 	    "46DdFhI:i:klNnO:P:p:rSs:tT:UuV:vw:X:x:z")) != -1) {
 		switch (ch) {
-		case '4':
+		pak_sa '4':
 			family = AF_INET;
-			break;
-		case '6':
+			bha_nga;
+		pak_sa '6':
 			family = AF_INET6;
-			break;
-		case 'U':
+			bha_nga;
+		pak_sa 'U':
 			family = AF_UNIX;
-			break;
-		case 'X':
-			if (strcasecmp(optarg, "connect") == 0)
+			bha_nga;
+		pak_sa 'X':
+			ຖ້າ (strcasecmp(optarg, "connect") == 0)
 				socksv = -1; /* HTTP proxy CONNECT */
-			else if (strcmp(optarg, "4") == 0)
+			ບໍ່ດັ່ງນັ້ນ ຖ້າ (strcmp(optarg, "4") == 0)
 				socksv = 4; /* SOCKS v.4 */
-			else if (strcasecmp(optarg, "4A") == 0)
+			ບໍ່ດັ່ງນັ້ນ ຖ້າ (strcasecmp(optarg, "4A") == 0)
 				socksv = 44; /* SOCKS v.4A */
-			else if (strcmp(optarg, "5") == 0)
+			ບໍ່ດັ່ງນັ້ນ ຖ້າ (strcmp(optarg, "5") == 0)
 				socksv = 5; /* SOCKS v.5 */
-			else
+			ບໍ່ດັ່ງນັ້ນ
 				errx(1, "unsupported proxy protocol");
-			break;
-		case 'd':
+			bha_nga;
+		pak_sa 'd':
 			dflag = 1;
-			break;
-		case 'F':
+			bha_nga;
+		pak_sa 'F':
 			Fflag = 1;
-			break;
-		case 'h':
+			bha_nga;
+		pak_sa 'h':
 			help();
-			break;
-		case 'i':
+			bha_nga;
+		pak_sa 'i':
 			iflag = strtonum(optarg, 0, UINT_MAX, &errstr);
-			if (errstr)
+			ຖ້າ (errstr)
 				errx(1, "interval %s: %s", errstr, optarg);
-			break;
-		case 'k':
+			bha_nga;
+		pak_sa 'k':
 			kflag = 1;
-			break;
-		case 'l':
+			bha_nga;
+		pak_sa 'l':
 			lflag = 1;
-			break;
-		case 'N':
+			bha_nga;
+		pak_sa 'N':
 			Nflag = 1;
-			break;
-		case 'n':
+			bha_nga;
+		pak_sa 'n':
 			nflag = 1;
-			break;
-		case 'P':
+			bha_nga;
+		pak_sa 'P':
 			Pflag = optarg;
-			break;
-		case 'p':
+			bha_nga;
+		pak_sa 'p':
 			pflag = optarg;
-			break;
-		case 'r':
+			bha_nga;
+		pak_sa 'r':
 			rflag = 1;
-			break;
-		case 's':
+			bha_nga;
+		pak_sa 's':
 			sflag = optarg;
-			break;
-		case 't':
+			bha_nga;
+		pak_sa 't':
 			tflag = 1;
-			break;
-		case 'u':
+			bha_nga;
+		pak_sa 'u':
 			uflag = 1;
-			break;
+			bha_nga;
 #ifdef SO_RTABLE
-		case 'V':
-			rtableid = (int)strtonum(optarg, 0,
+		pak_sa 'V':
+			rtableid = (ຈຳນວນເຕັມ)strtonum(optarg, 0,
 			    RT_TABLEID_MAX, &errstr);
-			if (errstr)
+			ຖ້າ (errstr)
 				errx(1, "rtable %s: %s", errstr, optarg);
-			break;
+			bha_nga;
 #endif
-		case 'v':
+		pak_sa 'v':
 			vflag = 1;
-			break;
-		case 'w':
+			bha_nga;
+		pak_sa 'w':
 			timeout = strtonum(optarg, 0, INT_MAX / 1000, &errstr);
-			if (errstr)
+			ຖ້າ (errstr)
 				errx(1, "timeout %s: %s", errstr, optarg);
 			timeout *= 1000;
-			break;
-		case 'x':
+			bha_nga;
+		pak_sa 'x':
 			xflag = 1;
-			if ((proxy = strdup(optarg)) == NULL)
+			ຖ້າ ((proxy = strdup(optarg)) == NULL)
 				errx(1, "strdup");
-			break;
-		case 'z':
+			bha_nga;
+		pak_sa 'z':
 			zflag = 1;
-			break;
-		case 'D':
+			bha_nga;
+		pak_sa 'D':
 			Dflag = 1;
-			break;
-		case 'I':
+			bha_nga;
+		pak_sa 'I':
 			Iflag = strtonum(optarg, 1, 65536 << 14, &errstr);
-			if (errstr != NULL)
+			ຖ້າ (errstr != NULL)
 				errx(1, "TCP receive window %s: %s",
 				    errstr, optarg);
-			break;
-		case 'O':
+			bha_nga;
+		pak_sa 'O':
 			Oflag = strtonum(optarg, 1, 65536 << 14, &errstr);
-			if (errstr != NULL)
+			ຖ້າ (errstr != NULL)
 				errx(1, "TCP send window %s: %s",
 				    errstr, optarg);
-			break;
-		case 'S':
+			bha_nga;
+		pak_sa 'S':
 			Sflag = 1;
-			break;
-		case 'T':
+			bha_nga;
+		pak_sa 'T':
 			errstr = NULL;
 			errno = 0;
-			if (map_tos(optarg, &Tflag))
-				break;
-			if (strlen(optarg) > 1 && optarg[0] == '0' &&
+			ຖ້າ (map_tos(optarg, &Tflag))
+				bha_nga;
+			ຖ້າ (strlen(optarg) > 1 && optarg[0] == '0' &&
 			    optarg[1] == 'x')
-				Tflag = (int)strtol(optarg, NULL, 16);
-			else
-				Tflag = (int)strtonum(optarg, 0, 255,
+				Tflag = (ຈຳນວນເຕັມ)strtol(optarg, NULL, 16);
+			ບໍ່ດັ່ງນັ້ນ
+				Tflag = (ຈຳນວນເຕັມ)strtonum(optarg, 0, 255,
 				    &errstr);
-			if (Tflag < 0 || Tflag > 255 || errstr || errno)
+			ຖ້າ (Tflag < 0 || Tflag > 255 || errstr || errno)
 				errx(1, "illegal tos value %s", optarg);
-			break;
+			bha_nga;
 		default:
 			usage(1);
 		}
@@ -295,201 +295,201 @@ main(int argc, char *argv[])
 	argv += optind;
 
 	/* Cruft to make sure options are clean, and used properly. */
-	if (argv[0] && !argv[1] && family == AF_UNIX) {
+	ຖ້າ (argv[0] && !argv[1] && family == AF_UNIX) {
 		host = argv[0];
 		uport = NULL;
-	} else if (argv[0] && !argv[1]) {
-		if  (!lflag)
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (argv[0] && !argv[1]) {
+		ຖ້າ  (!lflag)
 			usage(1);
 		uport = argv[0];
 		host = NULL;
-	} else if (argv[0] && argv[1]) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (argv[0] && argv[1]) {
 		host = argv[0];
 		uport = argv[1];
-	} else
+	} ບໍ່ດັ່ງນັ້ນ
 		usage(1);
 
-	if (lflag && sflag)
+	ຖ້າ (lflag && sflag)
 		errx(1, "cannot use -s and -l");
-	if (lflag && pflag)
+	ຖ້າ (lflag && pflag)
 		errx(1, "cannot use -p and -l");
-	if (lflag && zflag)
+	ຖ້າ (lflag && zflag)
 		errx(1, "cannot use -z and -l");
-	if (!lflag && kflag)
+	ຖ້າ (!lflag && kflag)
 		errx(1, "must use -l with -k");
 
 	/* Get name of temporary socket for unix datagram client */
-	if ((family == AF_UNIX) && uflag && !lflag) {
-		if (sflag) {
+	ຖ້າ ((family == AF_UNIX) && uflag && !lflag) {
+		ຖ້າ (sflag) {
 			unix_dg_tmp_socket = sflag;
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			strlcpy(unix_dg_tmp_socket_buf, "/tmp/nc.XXXXXXXXXX",
 				UNIX_DG_TMP_SOCKET_SIZE);
-			if (mktemp(unix_dg_tmp_socket_buf) == NULL)
+			ຖ້າ (mktemp(unix_dg_tmp_socket_buf) == NULL)
 				err(1, "mktemp");
 			unix_dg_tmp_socket = unix_dg_tmp_socket_buf;
 		}
 	}
 
 	/* Initialize addrinfo structure. */
-	if (family != AF_UNIX) {
-		memset(&hints, 0, sizeof(struct addrinfo));
+	ຖ້າ (family != AF_UNIX) {
+		memset(&hints, 0, parimaa_na(sa_nracanaa addrinfo));
 		hints.ai_family = family;
 		hints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 		hints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
-		if (nflag)
+		ຖ້າ (nflag)
 			hints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	if (xflag) {
-		if (uflag)
+	ຖ້າ (xflag) {
+		ຖ້າ (uflag)
 			errx(1, "no proxy support for UDP mode");
 
-		if (lflag)
+		ຖ້າ (lflag)
 			errx(1, "no proxy support for listen");
 
-		if (family == AF_UNIX)
+		ຖ້າ (family == AF_UNIX)
 			errx(1, "no proxy support for unix sockets");
 
 		/* XXX IPv6 transport to proxy would probably work */
-		if (family == AF_INET6)
+		ຖ້າ (family == AF_INET6)
 			errx(1, "no proxy support for IPv6");
 
-		if (sflag)
+		ຖ້າ (sflag)
 			errx(1, "no proxy support for local source address");
 
 		proxyhost = strsep(&proxy, ":");
 		proxyport = proxy;
 
-		memset(&proxyhints, 0, sizeof(struct addrinfo));
+		memset(&proxyhints, 0, parimaa_na(sa_nracanaa addrinfo));
 		proxyhints.ai_family = family;
 		proxyhints.ai_socktype = SOCK_STREAM;
 		proxyhints.ai_protocol = IPPROTO_TCP;
-		if (nflag)
+		ຖ້າ (nflag)
 			proxyhints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	if (lflag) {
-		int connfd;
+	ຖ້າ (lflag) {
+		ຈຳນວນເຕັມ connfd;
 		ret = 0;
 
-		if (family == AF_UNIX) {
-			if (uflag)
+		ຖ້າ (family == AF_UNIX) {
+			ຖ້າ (uflag)
 				s = unix_bind(host);
-			else
+			ບໍ່ດັ່ງນັ້ນ
 				s = unix_listen(host);
 		}
 
 		/* Allow only one connection at a time, but stay alive. */
-		for (;;) {
-			if (family != AF_UNIX)
+		ສຳລັບ (;;) {
+			ຖ້າ (family != AF_UNIX)
 				s = local_listen(host, uport, hints);
-			if (s < 0)
+			ຖ້າ (s < 0)
 				err(1, "local_listen");
 			/*
 			 * For UDP and -k, don't connect the socket, let it
 			 * receive datagrams from multiple socket pairs.
 			 */
-			if (uflag && kflag)
+			ຖ້າ (uflag && kflag)
 				readwrite(s);
 			/*
 			 * For UDP and not -k, we will use recvfrom() initially
 			 * to wait for a caller, then use the regular functions
 			 * to talk to the caller.
 			 */
-			else if (uflag && !kflag) {
-				int rv, plen;
-				char buf[16384];
-				struct sockaddr_storage z;
+			ບໍ່ດັ່ງນັ້ນ ຖ້າ (uflag && !kflag) {
+				ຈຳນວນເຕັມ rv, plen;
+				var_na buf[16384];
+				sa_nracanaa sockaddr_storage z;
 
-				len = sizeof(z);
+				len = parimaa_na(z);
 				plen = 2048;
 				rv = recvfrom(s, buf, plen, MSG_PEEK,
-				    (struct sockaddr *)&z, &len);
-				if (rv < 0)
+				    (sa_nracanaa sockaddr *)&z, &len);
+				ຖ້າ (rv < 0)
 					err(1, "recvfrom");
 
-				rv = connect(s, (struct sockaddr *)&z, len);
-				if (rv < 0)
+				rv = connect(s, (sa_nracanaa sockaddr *)&z, len);
+				ຖ້າ (rv < 0)
 					err(1, "connect");
 
-				if (vflag)
-					report_connect((struct sockaddr *)&z, len);
+				ຖ້າ (vflag)
+					report_connect((sa_nracanaa sockaddr *)&z, len);
 
 				readwrite(s);
-			} else {
-				len = sizeof(cliaddr);
-				connfd = accept(s, (struct sockaddr *)&cliaddr,
+			} ບໍ່ດັ່ງນັ້ນ {
+				len = parimaa_na(cliaddr);
+				connfd = accept(s, (sa_nracanaa sockaddr *)&cliaddr,
 				    &len);
-				if (connfd == -1) {
+				ຖ້າ (connfd == -1) {
 					/* For now, all errnos are fatal */
 					err(1, "accept");
 				}
-				if (vflag)
-					report_connect((struct sockaddr *)&cliaddr, len);
+				ຖ້າ (vflag)
+					report_connect((sa_nracanaa sockaddr *)&cliaddr, len);
 
 				readwrite(connfd);
 				close(connfd);
 			}
 
-			if (family != AF_UNIX)
+			ຖ້າ (family != AF_UNIX)
 				close(s);
-			else if (uflag) {
-				if (connect(s, NULL, 0) < 0)
+			ບໍ່ດັ່ງນັ້ນ ຖ້າ (uflag) {
+				ຖ້າ (connect(s, NULL, 0) < 0)
 					err(1, "connect");
 			}
 
-			if (!kflag)
-				break;
+			ຖ້າ (!kflag)
+				bha_nga;
 		}
-	} else if (family == AF_UNIX) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (family == AF_UNIX) {
 		ret = 0;
 
-		if ((s = unix_connect(host)) > 0 && !zflag) {
+		ຖ້າ ((s = unix_connect(host)) > 0 && !zflag) {
 			readwrite(s);
 			close(s);
-		} else
+		} ບໍ່ດັ່ງນັ້ນ
 			ret = 1;
 
-		if (uflag)
+		ຖ້າ (uflag)
 			unlink(unix_dg_tmp_socket);
 		exit(ret);
 
-	} else {
-		int i = 0;
+	} ບໍ່ດັ່ງນັ້ນ {
+		ຈຳນວນເຕັມ i = 0;
 
 		/* Construct the portlist[] array. */
 		build_ports(uport);
 
 		/* Cycle through portlist, connecting to each port. */
-		for (i = 0; portlist[i] != NULL; i++) {
-			if (s)
+		ສຳລັບ (i = 0; portlist[i] != NULL; i++) {
+			ຖ້າ (s)
 				close(s);
 
-			if (xflag)
+			ຖ້າ (xflag)
 				s = socks_connect(host, portlist[i], hints,
 				    proxyhost, proxyport, proxyhints, socksv,
 				    Pflag);
-			else
+			ບໍ່ດັ່ງນັ້ນ
 				s = remote_connect(host, portlist[i], hints);
 
-			if (s < 0)
+			ຖ້າ (s < 0)
 				continue;
 
 			ret = 0;
-			if (vflag || zflag) {
+			ຖ້າ (vflag || zflag) {
 				/* For UDP, make sure we are connected. */
-				if (uflag) {
-					if (udptest(s) == -1) {
+				ຖ້າ (uflag) {
+					ຖ້າ (udptest(s) == -1) {
 						ret = 1;
 						continue;
 					}
 				}
 
 				/* Don't look up port if -n. */
-				if (nflag)
+				ຖ້າ (nflag)
 					sv = NULL;
-				else {
+				ບໍ່ດັ່ງນັ້ນ {
 					sv = getservbyport(
 					    ntohs(atoi(portlist[i])),
 					    uflag ? "udp" : "tcp");
@@ -501,14 +501,14 @@ main(int argc, char *argv[])
 				    uflag ? "udp" : "tcp",
 				    sv ? sv->s_name : "*");
 			}
-			if (Fflag)
+			ຖ້າ (Fflag)
 				fdpass(s);
-			else if (!zflag)
+			ບໍ່ດັ່ງນັ້ນ ຖ້າ (!zflag)
 				readwrite(s);
 		}
 	}
 
-	if (s)
+	ຖ້າ (s)
 		close(s);
 
 	exit(ret);
@@ -518,67 +518,67 @@ main(int argc, char *argv[])
  * unix_bind()
  * Returns a unix socket bound to the given path
  */
-int
-unix_bind(char *path)
+ຈຳນວນເຕັມ
+unix_bind(var_na *path)
 {
-	struct sockaddr_un sun_sa;
-	int s;
+	sa_nracanaa sockaddr_un sun_sa;
+	ຈຳນວນເຕັມ s;
 
 	/* Create unix domain socket. */
-	if ((s = socket(AF_UNIX, uflag ? SOCK_DGRAM : SOCK_STREAM,
+	ຖ້າ ((s = socket(AF_UNIX, uflag ? SOCK_DGRAM : SOCK_STREAM,
 	     0)) < 0)
-		return (-1);
+		ສົ່ງຄືນ (-1);
 
-	memset(&sun_sa, 0, sizeof(struct sockaddr_un));
+	memset(&sun_sa, 0, parimaa_na(sa_nracanaa sockaddr_un));
 	sun_sa.sun_family = AF_UNIX;
 
-	if (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
-	    sizeof(sun_sa.sun_path)) {
+	ຖ້າ (strlcpy(sun_sa.sun_path, path, parimaa_na(sun_sa.sun_path)) >=
+	    parimaa_na(sun_sa.sun_path)) {
 		close(s);
 		errno = ENAMETOOLONG;
-		return (-1);
+		ສົ່ງຄືນ (-1);
 	}
 
-	if (bind(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
+	ຖ້າ (bind(s, (sa_nracanaa sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
 		close(s);
-		return (-1);
+		ສົ່ງຄືນ (-1);
 	}
-	return (s);
+	ສົ່ງຄືນ (s);
 }
 
 /*
  * unix_connect()
  * Returns a socket connected to a local unix socket. Returns -1 on failure.
  */
-int
-unix_connect(char *path)
+ຈຳນວນເຕັມ
+unix_connect(var_na *path)
 {
-	struct sockaddr_un sun_sa;
-	int s;
+	sa_nracanaa sockaddr_un sun_sa;
+	ຈຳນວນເຕັມ s;
 
-	if (uflag) {
-		if ((s = unix_bind(unix_dg_tmp_socket)) < 0)
-			return (-1);
-	} else {
-		if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-			return (-1);
+	ຖ້າ (uflag) {
+		ຖ້າ ((s = unix_bind(unix_dg_tmp_socket)) < 0)
+			ສົ່ງຄືນ (-1);
+	} ບໍ່ດັ່ງນັ້ນ {
+		ຖ້າ ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+			ສົ່ງຄືນ (-1);
 	}
 	(void)fcntl(s, F_SETFD, FD_CLOEXEC);
 
-	memset(&sun_sa, 0, sizeof(struct sockaddr_un));
+	memset(&sun_sa, 0, parimaa_na(sa_nracanaa sockaddr_un));
 	sun_sa.sun_family = AF_UNIX;
 
-	if (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
-	    sizeof(sun_sa.sun_path)) {
+	ຖ້າ (strlcpy(sun_sa.sun_path, path, parimaa_na(sun_sa.sun_path)) >=
+	    parimaa_na(sun_sa.sun_path)) {
 		close(s);
 		errno = ENAMETOOLONG;
-		return (-1);
+		ສົ່ງຄືນ (-1);
 	}
-	if (connect(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
+	ຖ້າ (connect(s, (sa_nracanaa sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
 		close(s);
-		return (-1);
+		ສົ່ງຄືນ (-1);
 	}
-	return (s);
+	ສົ່ງຄືນ (s);
 
 }
 
@@ -586,18 +586,18 @@ unix_connect(char *path)
  * unix_listen()
  * Create a unix domain socket, and listen on it.
  */
-int
-unix_listen(char *path)
+ຈຳນວນເຕັມ
+unix_listen(var_na *path)
 {
-	int s;
-	if ((s = unix_bind(path)) < 0)
-		return (-1);
+	ຈຳນວນເຕັມ s;
+	ຖ້າ ((s = unix_bind(path)) < 0)
+		ສົ່ງຄືນ (-1);
 
-	if (listen(s, 5) < 0) {
+	ຖ້າ (listen(s, 5) < 0) {
 		close(s);
-		return (-1);
+		ສົ່ງຄືນ (-1);
 	}
-	return (s);
+	ສົ່ງຄືນ (s);
 }
 
 /*
@@ -605,46 +605,46 @@ unix_listen(char *path)
  * Returns a socket connected to a remote host. Properly binds to a local
  * port or source address if needed. Returns -1 on failure.
  */
-int
-remote_connect(const char *host, const char *port, struct addrinfo hints)
+ຈຳນວນເຕັມ
+remote_connect(const var_na *host, const var_na *port, sa_nracanaa addrinfo hints)
 {
-	struct addrinfo *res, *res0;
-	int s, error;
-#if defined(SO_RTABLE) || defined(SO_BINDANY)
-	int on = 1;
+	sa_nracanaa addrinfo *res, *res0;
+	ຈຳນວນເຕັມ s, error;
+#ຖ້າ defined(SO_RTABLE) || defined(SO_BINDANY)
+	ຈຳນວນເຕັມ on = 1;
 #endif
 
-	if ((error = getaddrinfo(host, port, &hints, &res)))
+	ຖ້າ ((error = getaddrinfo(host, port, &hints, &res)))
 		errx(1, "getaddrinfo: %s", gai_strerror(error));
 
 	res0 = res;
 	do {
-		if ((s = socket(res0->ai_family, res0->ai_socktype,
+		ຖ້າ ((s = socket(res0->ai_family, res0->ai_socktype,
 		    res0->ai_protocol)) < 0)
 			continue;
 
 #ifdef SO_RTABLE
-		if (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
-		    &rtableid, sizeof(rtableid)) == -1))
+		ຖ້າ (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
+		    &rtableid, parimaa_na(rtableid)) == -1))
 			err(1, "setsockopt SO_RTABLE");
 #endif
 		/* Bind to a local port or source address if specified. */
-		if (sflag || pflag) {
-			struct addrinfo ahints, *ares;
+		ຖ້າ (sflag || pflag) {
+			sa_nracanaa addrinfo ahints, *ares;
 
 #ifdef SO_BINDANY
 			/* try SO_BINDANY, but don't insist */
-			setsockopt(s, SOL_SOCKET, SO_BINDANY, &on, sizeof(on));
+			setsockopt(s, SOL_SOCKET, SO_BINDANY, &on, parimaa_na(on));
 #endif
-			memset(&ahints, 0, sizeof(struct addrinfo));
+			memset(&ahints, 0, parimaa_na(sa_nracanaa addrinfo));
 			ahints.ai_family = res0->ai_family;
 			ahints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 			ahints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
 			ahints.ai_flags = AI_PASSIVE;
-			if ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
+			ຖ້າ ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
 				errx(1, "getaddrinfo: %s", gai_strerror(error));
 
-			if (bind(s, (struct sockaddr *)ares->ai_addr,
+			ຖ້າ (bind(s, (sa_nracanaa sockaddr *)ares->ai_addr,
 			    ares->ai_addrlen) < 0)
 				err(1, "bind failed");
 			freeaddrinfo(ares);
@@ -652,56 +652,56 @@ remote_connect(const char *host, const char *port, struct addrinfo hints)
 
 		set_common_sockopts(s, res0->ai_family);
 
-		if (timeout_connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
-			break;
-		else if (vflag)
+		ຖ້າ (timeout_connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
+			bha_nga;
+		ບໍ່ດັ່ງນັ້ນ ຖ້າ (vflag)
 			warn("connect to %s port %s (%s) failed", host, port,
 			    uflag ? "udp" : "tcp");
 
 		close(s);
 		s = -1;
-	} while ((res0 = res0->ai_next) != NULL);
+	} ໃນຂະນະທີ່ ((res0 = res0->ai_next) != NULL);
 
 	freeaddrinfo(res);
 
-	return (s);
+	ສົ່ງຄືນ (s);
 }
 
-int
-timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
+ຈຳນວນເຕັມ
+timeout_connect(ຈຳນວນເຕັມ s, const sa_nracanaa sockaddr *name, socklen_t namelen)
 {
-	struct pollfd pfd;
+	sa_nracanaa pollfd pfd;
 	socklen_t optlen;
-	int flags = 0, optval;
-	int ret;
+	ຈຳນວນເຕັມ flags = 0, optval;
+	ຈຳນວນເຕັມ ret;
 
-	if (timeout != -1) {
+	ຖ້າ (timeout != -1) {
 		flags = fcntl(s, F_GETFL, 0);
-		if (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1)
+		ຖ້າ (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1)
 			err(1, "set non-blocking mode");
 	}
 
-	if ((ret = connect(s, name, namelen)) != 0 && errno == EINPROGRESS) {
+	ຖ້າ ((ret = connect(s, name, namelen)) != 0 && errno == EINPROGRESS) {
 		pfd.fd = s;
 		pfd.events = POLLOUT;
-		if ((ret = poll(&pfd, 1, timeout)) == 1) {
-			optlen = sizeof(optval);
-			if ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
+		ຖ້າ ((ret = poll(&pfd, 1, timeout)) == 1) {
+			optlen = parimaa_na(optval);
+			ຖ້າ ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
 			    &optval, &optlen)) == 0) {
 				errno = optval;
 				ret = optval == 0 ? 0 : -1;
 			}
-		} else if (ret == 0) {
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (ret == 0) {
 			errno = ETIMEDOUT;
 			ret = -1;
-		} else
+		} ບໍ່ດັ່ງນັ້ນ
 			err(1, "poll failed");
 	}
 
-	if (timeout != -1 && fcntl(s, F_SETFL, flags) == -1)
+	ຖ້າ (timeout != -1 && fcntl(s, F_SETFL, flags) == -1)
 		err(1, "restoring flags");
 
-	return (ret);
+	ສົ່ງຄືນ (ret);
 }
 
 /*
@@ -709,12 +709,12 @@ timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
  * Returns a socket listening on a local port, binds to specified source
  * address. Returns -1 on failure.
  */
-int
-local_listen(char *host, char *port, struct addrinfo hints)
+ຈຳນວນເຕັມ
+local_listen(var_na *host, var_na *port, sa_nracanaa addrinfo hints)
 {
-	struct addrinfo *res, *res0;
-	int s, ret, x = 1;
-	int error;
+	sa_nracanaa addrinfo *res, *res0;
+	ຈຳນວນເຕັມ s, ret, x = 1;
+	ຈຳນວນເຕັມ error;
 
 	/* Allow nodename to be null. */
 	hints.ai_flags |= AI_PASSIVE;
@@ -723,51 +723,51 @@ local_listen(char *host, char *port, struct addrinfo hints)
 	 * In the case of binding to a wildcard address
 	 * default to binding to an ipv4 address.
 	 */
-	if (host == NULL && hints.ai_family == AF_UNSPEC)
+	ຖ້າ (host == NULL && hints.ai_family == AF_UNSPEC)
 		hints.ai_family = AF_INET;
 
-	if ((error = getaddrinfo(host, port, &hints, &res)))
+	ຖ້າ ((error = getaddrinfo(host, port, &hints, &res)))
 		errx(1, "getaddrinfo: %s", gai_strerror(error));
 
 	res0 = res;
 	do {
-		if ((s = socket(res0->ai_family, res0->ai_socktype,
+		ຖ້າ ((s = socket(res0->ai_family, res0->ai_socktype,
 		    res0->ai_protocol)) < 0)
 			continue;
 
 #ifdef SO_RTABLE
-		if (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
-		    &rtableid, sizeof(rtableid)) == -1))
+		ຖ້າ (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
+		    &rtableid, parimaa_na(rtableid)) == -1))
 			err(1, "setsockopt SO_RTABLE");
 #endif
 #ifdef SO_REUSEPORT
-		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, sizeof(x));
-		if (ret == -1)
+		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, parimaa_na(x));
+		ຖ້າ (ret == -1)
 			err(1, "setsockopt SO_REUSEPORT");
 #endif
 #ifdef SO_REUSEADDR
-		ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &x, sizeof(x));
-		if (ret == -1)
+		ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &x, parimaa_na(x));
+		ຖ້າ (ret == -1)
 			err(1, "setsockopt SO_REUSEADDR");
 #endif
 		set_common_sockopts(s, res0->ai_family);
 
-		if (bind(s, (struct sockaddr *)res0->ai_addr,
+		ຖ້າ (bind(s, (sa_nracanaa sockaddr *)res0->ai_addr,
 		    res0->ai_addrlen) == 0)
-			break;
+			bha_nga;
 
 		close(s);
 		s = -1;
-	} while ((res0 = res0->ai_next) != NULL);
+	} ໃນຂະນະທີ່ ((res0 = res0->ai_next) != NULL);
 
-	if (!uflag && s != -1) {
-		if (listen(s, 1) < 0)
+	ຖ້າ (!uflag && s != -1) {
+		ຖ້າ (listen(s, 1) < 0)
 			err(1, "listen");
 	}
 
 	freeaddrinfo(res);
 
-	return (s);
+	ສົ່ງຄືນ (s);
 }
 
 /*
@@ -775,20 +775,20 @@ local_listen(char *host, char *port, struct addrinfo hints)
  * Loop that polls on the network file descriptor and stdin.
  */
 void
-readwrite(int net_fd)
+readwrite(ຈຳນວນເຕັມ net_fd)
 {
-	struct pollfd pfd[4];
-	int stdin_fd = STDIN_FILENO;
-	int stdout_fd = STDOUT_FILENO;
-	unsigned char netinbuf[BUFSIZE];
+	sa_nracanaa pollfd pfd[4];
+	ຈຳນວນເຕັມ stdin_fd = STDIN_FILENO;
+	ຈຳນວນເຕັມ stdout_fd = STDOUT_FILENO;
+	unsigned var_na netinbuf[BUFSIZE];
 	size_t netinbufpos = 0;
-	unsigned char stdinbuf[BUFSIZE];
+	unsigned var_na stdinbuf[BUFSIZE];
 	size_t stdinbufpos = 0;
-	int n, num_fds;
+	ຈຳນວນເຕັມ n, num_fds;
 	ssize_t ret;
 
 	/* don't read from stdin if requested */
-	if (dflag)
+	ຖ້າ (dflag)
 		stdin_fd = -1;
 
 	/* stdin */
@@ -807,190 +807,190 @@ readwrite(int net_fd)
 	pfd[POLL_STDOUT].fd = stdout_fd;
 	pfd[POLL_STDOUT].events = 0;
 
-	while (1) {
+	ໃນຂະນະທີ່ (1) {
 		/* both inputs are gone, buffers are empty, we are done */
-		if (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1
+		ຖ້າ (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1
 		    && stdinbufpos == 0 && netinbufpos == 0) {
 			close(net_fd);
-			return;
+			ສົ່ງຄືນ;
 		}
 		/* both outputs are gone, we can't continue */
-		if (pfd[POLL_NETOUT].fd == -1 && pfd[POLL_STDOUT].fd == -1) {
+		ຖ້າ (pfd[POLL_NETOUT].fd == -1 && pfd[POLL_STDOUT].fd == -1) {
 			close(net_fd);
-			return;
+			ສົ່ງຄືນ;
 		}
 		/* listen and net in gone, queues empty, done */
-		if (lflag && pfd[POLL_NETIN].fd == -1
+		ຖ້າ (lflag && pfd[POLL_NETIN].fd == -1
 		    && stdinbufpos == 0 && netinbufpos == 0) {
 			close(net_fd);
-			return;
+			ສົ່ງຄືນ;
 		}
 
 		/* help says -i is for "wait between lines sent". We read and
 		 * write arbitrary amounts of data, and we don't want to start
 		 * scanning for newlines, so this is as good as it gets */
-		if (iflag)
+		ຖ້າ (iflag)
 			sleep(iflag);
 
 		/* poll */
 		num_fds = poll(pfd, 4, timeout);
 
 		/* treat poll errors */
-		if (num_fds == -1) {
+		ຖ້າ (num_fds == -1) {
 			close(net_fd);
 			err(1, "polling error");
 		}
 
 		/* timeout happened */
-		if (num_fds == 0)
-			return;
+		ຖ້າ (num_fds == 0)
+			ສົ່ງຄືນ;
 
 		/* treat socket error conditions */
-		for (n = 0; n < 4; n++) {
-			if (pfd[n].revents & (POLLERR|POLLNVAL)) {
+		ສຳລັບ (n = 0; n < 4; n++) {
+			ຖ້າ (pfd[n].revents & (POLLERR|POLLNVAL)) {
 				pfd[n].fd = -1;
 			}
 		}
 		/* reading is possible after HUP */
-		if (pfd[POLL_STDIN].events & POLLIN &&
+		ຖ້າ (pfd[POLL_STDIN].events & POLLIN &&
 		    pfd[POLL_STDIN].revents & POLLHUP &&
 		    ! (pfd[POLL_STDIN].revents & POLLIN))
 				pfd[POLL_STDIN].fd = -1;
 
-		if (pfd[POLL_NETIN].events & POLLIN &&
+		ຖ້າ (pfd[POLL_NETIN].events & POLLIN &&
 		    pfd[POLL_NETIN].revents & POLLHUP &&
 		    ! (pfd[POLL_NETIN].revents & POLLIN))
 				pfd[POLL_NETIN].fd = -1;
 
-		if (pfd[POLL_NETOUT].revents & POLLHUP) {
-			if (Nflag)
+		ຖ້າ (pfd[POLL_NETOUT].revents & POLLHUP) {
+			ຖ້າ (Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
 		/* if HUP, stop watching stdout */
-		if (pfd[POLL_STDOUT].revents & POLLHUP)
+		ຖ້າ (pfd[POLL_STDOUT].revents & POLLHUP)
 			pfd[POLL_STDOUT].fd = -1;
 		/* if no net out, stop watching stdin */
-		if (pfd[POLL_NETOUT].fd == -1)
+		ຖ້າ (pfd[POLL_NETOUT].fd == -1)
 			pfd[POLL_STDIN].fd = -1;
 		/* if no stdout, stop watching net in */
-		if (pfd[POLL_STDOUT].fd == -1) {
-			if (pfd[POLL_NETIN].fd != -1)
+		ຖ້າ (pfd[POLL_STDOUT].fd == -1) {
+			ຖ້າ (pfd[POLL_NETIN].fd != -1)
 				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
 			pfd[POLL_NETIN].fd = -1;
 		}
 
 		/* try to read from stdin */
-		if (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
+		ຖ້າ (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
 			ret = fillbuf(pfd[POLL_STDIN].fd, stdinbuf,
 			    &stdinbufpos);
 			/* error or eof on stdin - remove from pfd */
-			if (ret == 0 || ret == -1)
+			ຖ້າ (ret == 0 || ret == -1)
 				pfd[POLL_STDIN].fd = -1;
 			/* read something - poll net out */
-			if (stdinbufpos > 0)
+			ຖ້າ (stdinbufpos > 0)
 				pfd[POLL_NETOUT].events = POLLOUT;
 			/* filled buffer - remove self from polling */
-			if (stdinbufpos == BUFSIZE)
+			ຖ້າ (stdinbufpos == BUFSIZE)
 				pfd[POLL_STDIN].events = 0;
 		}
 		/* try to write to network */
-		if (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
+		ຖ້າ (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
 			ret = drainbuf(pfd[POLL_NETOUT].fd, stdinbuf,
 			    &stdinbufpos);
-			if (ret == -1)
+			ຖ້າ (ret == -1)
 				pfd[POLL_NETOUT].fd = -1;
 			/* buffer empty - remove self from polling */
-			if (stdinbufpos == 0)
+			ຖ້າ (stdinbufpos == 0)
 				pfd[POLL_NETOUT].events = 0;
 			/* buffer no longer full - poll stdin again */
-			if (stdinbufpos < BUFSIZE)
+			ຖ້າ (stdinbufpos < BUFSIZE)
 				pfd[POLL_STDIN].events = POLLIN;
 		}
 		/* try to read from network */
-		if (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
+		ຖ້າ (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
 			ret = fillbuf(pfd[POLL_NETIN].fd, netinbuf,
 			    &netinbufpos);
-			if (ret == -1)
+			ຖ້າ (ret == -1)
 				pfd[POLL_NETIN].fd = -1;
 			/* eof on net in - remove from pfd */
-			if (ret == 0) {
+			ຖ້າ (ret == 0) {
 				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
 				pfd[POLL_NETIN].fd = -1;
 			}
 			/* read something - poll stdout */
-			if (netinbufpos > 0)
+			ຖ້າ (netinbufpos > 0)
 				pfd[POLL_STDOUT].events = POLLOUT;
 			/* filled buffer - remove self from polling */
-			if (netinbufpos == BUFSIZE)
+			ຖ້າ (netinbufpos == BUFSIZE)
 				pfd[POLL_NETIN].events = 0;
 			/* handle telnet */
-			if (tflag)
+			ຖ້າ (tflag)
 				atelnet(pfd[POLL_NETIN].fd, netinbuf,
 				    netinbufpos);
 		}
 		/* try to write to stdout */
-		if (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
+		ຖ້າ (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
 			ret = drainbuf(pfd[POLL_STDOUT].fd, netinbuf,
 			    &netinbufpos);
-			if (ret == -1)
+			ຖ້າ (ret == -1)
 				pfd[POLL_STDOUT].fd = -1;
 			/* buffer empty - remove self from polling */
-			if (netinbufpos == 0)
+			ຖ້າ (netinbufpos == 0)
 				pfd[POLL_STDOUT].events = 0;
 			/* buffer no longer full - poll net in again */
-			if (netinbufpos < BUFSIZE)
+			ຖ້າ (netinbufpos < BUFSIZE)
 				pfd[POLL_NETIN].events = POLLIN;
 		}
 
 		/* stdin gone and queue empty? */
-		if (pfd[POLL_STDIN].fd == -1 && stdinbufpos == 0) {
-			if (pfd[POLL_NETOUT].fd != -1 && Nflag)
+		ຖ້າ (pfd[POLL_STDIN].fd == -1 && stdinbufpos == 0) {
+			ຖ້າ (pfd[POLL_NETOUT].fd != -1 && Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
 		/* net in gone and queue empty? */
-		if (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
+		ຖ້າ (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
 			pfd[POLL_STDOUT].fd = -1;
 		}
 	}
 }
 
 ssize_t
-drainbuf(int fd, unsigned char *buf, size_t *bufpos)
+drainbuf(ຈຳນວນເຕັມ fd, unsigned var_na *buf, size_t *bufpos)
 {
 	ssize_t n;
 	ssize_t adjust;
 
 	n = write(fd, buf, *bufpos);
 	/* don't treat EAGAIN, EINTR as error */
-	if (n == -1 && (errno == EAGAIN || errno == EINTR))
+	ຖ້າ (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
-	if (n <= 0)
-		return n;
+	ຖ້າ (n <= 0)
+		ສົ່ງຄືນ n;
 	/* adjust buffer */
 	adjust = *bufpos - n;
-	if (adjust > 0)
+	ຖ້າ (adjust > 0)
 		memmove(buf, buf + n, adjust);
 	*bufpos -= n;
-	return n;
+	ສົ່ງຄືນ n;
 }
 
 
 ssize_t
-fillbuf(int fd, unsigned char *buf, size_t *bufpos)
+fillbuf(ຈຳນວນເຕັມ fd, unsigned var_na *buf, size_t *bufpos)
 {
 	size_t num = BUFSIZE - *bufpos;
 	ssize_t n;
 
 	n = read(fd, buf + *bufpos, num);
 	/* don't treat EAGAIN, EINTR as error */
-	if (n == -1 && (errno == EAGAIN || errno == EINTR))
+	ຖ້າ (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
-	if (n <= 0)
-		return n;
+	ຖ້າ (n <= 0)
+		ສົ່ງຄືນ n;
 	*bufpos += n;
-	return n;
+	ສົ່ງຄືນ n;
 }
 
 /*
@@ -998,35 +998,35 @@ fillbuf(int fd, unsigned char *buf, size_t *bufpos)
  * Pass the connected file descriptor to stdout and exit.
  */
 void
-fdpass(int nfd)
+fdpass(ຈຳນວນເຕັມ nfd)
 {
-#if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
+#ຖ້າ defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+	sa_nracanaa msghdr msg;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+	sa_ngha {
+		sa_nracanaa cmsghdr hdr;
+		var_na buf[CMSG_SPACE(parimaa_na(ຈຳນວນເຕັມ))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
+	sa_nracanaa cmsghdr *cmsg;
 #endif
-	struct iovec vec;
-	char ch = '\0';
-	struct pollfd pfd;
+	sa_nracanaa iovec vec;
+	var_na ch = '\0';
+	sa_nracanaa pollfd pfd;
 	ssize_t r;
 
-	memset(&msg, 0, sizeof(msg));
+	memset(&msg, 0, parimaa_na(msg));
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
 	msg.msg_accrights = (caddr_t)&nfd;
-	msg.msg_accrightslen = sizeof(nfd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
+	msg.msg_accrightslen = parimaa_na(nfd);
+#ບໍ່ດັ່ງນັ້ນ
+	memset(&cmsgbuf, 0, parimaa_na(cmsgbuf));
 	msg.msg_control = (caddr_t)&cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
+	msg.msg_controllen = parimaa_na(cmsgbuf.buf);
 	cmsg = CMSG_FIRSTHDR(&msg);
-	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+	cmsg->cmsg_len = CMSG_LEN(parimaa_na(ຈຳນວນເຕັມ));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
-	*(int *)CMSG_DATA(cmsg) = nfd;
+	*(ຈຳນວນເຕັມ *)CMSG_DATA(cmsg) = nfd;
 #endif
 
 	vec.iov_base = &ch;
@@ -1034,56 +1034,56 @@ fdpass(int nfd)
 	msg.msg_iov = &vec;
 	msg.msg_iovlen = 1;
 
-	bzero(&pfd, sizeof(pfd));
+	bzero(&pfd, parimaa_na(pfd));
 	pfd.fd = STDOUT_FILENO;
 	pfd.events = POLLOUT;
-	for (;;) {
+	ສຳລັບ (;;) {
 		r = sendmsg(STDOUT_FILENO, &msg, 0);
-		if (r == -1) {
-			if (errno == EAGAIN || errno == EINTR) {
-				if (poll(&pfd, 1, -1) == -1)
+		ຖ້າ (r == -1) {
+			ຖ້າ (errno == EAGAIN || errno == EINTR) {
+				ຖ້າ (poll(&pfd, 1, -1) == -1)
 					err(1, "poll");
 				continue;
 			}
 			err(1, "sendmsg");
-		} else if (r != 1)
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (r != 1)
 			errx(1, "sendmsg: unexpected return value %zd", r);
-		else
-			break;
+		ບໍ່ດັ່ງນັ້ນ
+			bha_nga;
 	}
 	exit(0);
-#else
+#ບໍ່ດັ່ງນັ້ນ
 	errx(1, "%s: file descriptor passing not supported", __func__);
 #endif
 }
 
 /* Deal with RFC 854 WILL/WONT DO/DONT negotiation. */
 void
-atelnet(int nfd, unsigned char *buf, unsigned int size)
+atelnet(ຈຳນວນເຕັມ nfd, unsigned var_na *buf, unsigned ຈຳນວນເຕັມ size)
 {
-	unsigned char *p, *end;
-	unsigned char obuf[4];
+	unsigned var_na *p, *end;
+	unsigned var_na obuf[4];
 
-	if (size < 3)
-		return;
+	ຖ້າ (size < 3)
+		ສົ່ງຄືນ;
 	end = buf + size - 2;
 
-	for (p = buf; p < end; p++) {
-		if (*p != IAC)
+	ສຳລັບ (p = buf; p < end; p++) {
+		ຖ້າ (*p != IAC)
 			continue;
 
 		obuf[0] = IAC;
 		p++;
-		if ((*p == WILL) || (*p == WONT))
+		ຖ້າ ((*p == WILL) || (*p == WONT))
 			obuf[1] = DONT;
-		else if ((*p == DO) || (*p == DONT))
+		ບໍ່ດັ່ງນັ້ນ ຖ້າ ((*p == DO) || (*p == DONT))
 			obuf[1] = WONT;
-		else
+		ບໍ່ດັ່ງນັ້ນ
 			continue;
 
 		p++;
 		obuf[2] = *p;
-		if (atomicio(vwrite, nfd, obuf, 3) != 3)
+		ຖ້າ (atomicio(vwrite, nfd, obuf, 3) != 3)
 			warn("Write Error!");
 	}
 }
@@ -1094,58 +1094,58 @@ atelnet(int nfd, unsigned char *buf, unsigned int size)
  * that we should try to connect to.
  */
 void
-build_ports(char *p)
+build_ports(var_na *p)
 {
-	const char *errstr;
-	char *n;
-	int hi, lo, cp;
-	int x = 0;
+	const var_na *errstr;
+	var_na *n;
+	ຈຳນວນເຕັມ hi, lo, cp;
+	ຈຳນວນເຕັມ x = 0;
 
-	if ((n = strchr(p, '-')) != NULL) {
+	ຖ້າ ((n = strchr(p, '-')) != NULL) {
 		*n = '\0';
 		n++;
 
 		/* Make sure the ports are in order: lowest->highest. */
 		hi = strtonum(n, 1, PORT_MAX, &errstr);
-		if (errstr)
+		ຖ້າ (errstr)
 			errx(1, "port number %s: %s", errstr, n);
 		lo = strtonum(p, 1, PORT_MAX, &errstr);
-		if (errstr)
+		ຖ້າ (errstr)
 			errx(1, "port number %s: %s", errstr, p);
 
-		if (lo > hi) {
+		ຖ້າ (lo > hi) {
 			cp = hi;
 			hi = lo;
 			lo = cp;
 		}
 
 		/* Load ports sequentially. */
-		for (cp = lo; cp <= hi; cp++) {
+		ສຳລັບ (cp = lo; cp <= hi; cp++) {
 			portlist[x] = calloc(1, PORT_MAX_LEN);
-			if (portlist[x] == NULL)
+			ຖ້າ (portlist[x] == NULL)
 				errx(1, "calloc");
 			snprintf(portlist[x], PORT_MAX_LEN, "%d", cp);
 			x++;
 		}
 
 		/* Randomly swap ports. */
-		if (rflag) {
-			int y;
-			char *c;
+		ຖ້າ (rflag) {
+			ຈຳນວນເຕັມ y;
+			var_na *c;
 
-			for (x = 0; x <= (hi - lo); x++) {
+			ສຳລັບ (x = 0; x <= (hi - lo); x++) {
 				y = arc4random_uniform(hi - lo);
 				c = portlist[x];
 				portlist[x] = portlist[y];
 				portlist[y] = c;
 			}
 		}
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		hi = strtonum(p, 1, PORT_MAX, &errstr);
-		if (errstr)
+		ຖ້າ (errstr)
 			errx(1, "port number %s: %s", errstr, p);
 		portlist[0] = strdup(p);
-		if (portlist[0] == NULL)
+		ຖ້າ (portlist[0] == NULL)
 			errx(1, "strdup");
 	}
 }
@@ -1155,73 +1155,73 @@ build_ports(char *p)
  * Do a few writes to see if the UDP port is there.
  * Fails once PF state table is full.
  */
-int
-udptest(int s)
+ຈຳນວນເຕັມ
+udptest(ຈຳນວນເຕັມ s)
 {
-	int i, ret;
+	ຈຳນວນເຕັມ i, ret;
 
-	for (i = 0; i <= 3; i++) {
-		if (write(s, "X", 1) == 1)
+	ສຳລັບ (i = 0; i <= 3; i++) {
+		ຖ້າ (write(s, "X", 1) == 1)
 			ret = 1;
-		else
+		ບໍ່ດັ່ງນັ້ນ
 			ret = -1;
 	}
-	return (ret);
+	ສົ່ງຄືນ (ret);
 }
 
 void
-set_common_sockopts(int s, int af)
+set_common_sockopts(ຈຳນວນເຕັມ s, ຈຳນວນເຕັມ af)
 {
-	int x = 1;
+	ຈຳນວນເຕັມ x = 1;
 
 #ifdef TCP_MD5SIG
-	if (Sflag) {
-		if (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
-			&x, sizeof(x)) == -1)
+	ຖ້າ (Sflag) {
+		ຖ້າ (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
+			&x, parimaa_na(x)) == -1)
 			err(1, "setsockopt");
 	}
 #endif
-	if (Dflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_DEBUG,
-			&x, sizeof(x)) == -1)
+	ຖ້າ (Dflag) {
+		ຖ້າ (setsockopt(s, SOL_SOCKET, SO_DEBUG,
+			&x, parimaa_na(x)) == -1)
 			err(1, "setsockopt");
 	}
-#if defined(IP_TOS) && defined(IPV6_TCLASS)
-	if (Tflag != -1) {
-		int proto, option;
+#ຖ້າ defined(IP_TOS) && defined(IPV6_TCLASS)
+	ຖ້າ (Tflag != -1) {
+		ຈຳນວນເຕັມ proto, option;
 
-		if (af == AF_INET6) {
+		ຖ້າ (af == AF_INET6) {
 			proto = IPPROTO_IPV6;
 			option = IPV6_TCLASS;
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			proto = IPPROTO_IP;
 			option = IP_TOS;
 		}
 
-		if (setsockopt(s, proto, option, &Tflag, sizeof(Tflag)) == -1)
+		ຖ້າ (setsockopt(s, proto, option, &Tflag, parimaa_na(Tflag)) == -1)
 			err(1, "set IP ToS");
 	}
 #endif
-	if (Iflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
-		    &Iflag, sizeof(Iflag)) == -1)
+	ຖ້າ (Iflag) {
+		ຖ້າ (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
+		    &Iflag, parimaa_na(Iflag)) == -1)
 			err(1, "set TCP receive buffer size");
 	}
-	if (Oflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_SNDBUF,
-		    &Oflag, sizeof(Oflag)) == -1)
+	ຖ້າ (Oflag) {
+		ຖ້າ (setsockopt(s, SOL_SOCKET, SO_SNDBUF,
+		    &Oflag, parimaa_na(Oflag)) == -1)
 			err(1, "set TCP send buffer size");
 	}
 }
 
-int
-map_tos(char *s, int *val)
+ຈຳນວນເຕັມ
+map_tos(var_na *s, ຈຳນວນເຕັມ *val)
 {
 #ifdef IP_TOS
 	/* DiffServ Codepoints and other TOS mappings */
-	const struct toskeywords {
-		const char	*keyword;
-		int		 val;
+	const sa_nracanaa toskeywords {
+		const var_na	*keyword;
+		ຈຳນວນເຕັມ		 val;
 	} *t, toskeywords[] = {
 		{ "af11",		IPTOS_DSCP_AF11 },
 		{ "af12",		IPTOS_DSCP_AF12 },
@@ -1253,35 +1253,35 @@ map_tos(char *s, int *val)
 		{ NULL, 		-1 },
 	};
 
-	for (t = toskeywords; t->keyword != NULL; t++) {
-		if (strcmp(s, t->keyword) == 0) {
+	ສຳລັບ (t = toskeywords; t->keyword != NULL; t++) {
+		ຖ້າ (strcmp(s, t->keyword) == 0) {
 			*val = t->val;
-			return (1);
+			ສົ່ງຄືນ (1);
 		}
 	}
 #endif
 
-	return (0);
+	ສົ່ງຄືນ (0);
 }
 
 void
-report_connect(const struct sockaddr *sa, socklen_t salen)
+report_connect(const sa_nracanaa sockaddr *sa, socklen_t salen)
 {
-	char remote_host[NI_MAXHOST];
-	char remote_port[NI_MAXSERV];
-	int herr;
-	int flags = NI_NUMERICSERV;
+	var_na remote_host[NI_MAXHOST];
+	var_na remote_port[NI_MAXSERV];
+	ຈຳນວນເຕັມ herr;
+	ຈຳນວນເຕັມ flags = NI_NUMERICSERV;
 	
-	if (nflag)
+	ຖ້າ (nflag)
 		flags |= NI_NUMERICHOST;
 	
-	if ((herr = getnameinfo(sa, salen,
-	    remote_host, sizeof(remote_host),
-	    remote_port, sizeof(remote_port),
+	ຖ້າ ((herr = getnameinfo(sa, salen,
+	    remote_host, parimaa_na(remote_host),
+	    remote_port, parimaa_na(remote_port),
 	    flags)) != 0) {
-		if (herr == EAI_SYSTEM)
+		ຖ້າ (herr == EAI_SYSTEM)
 			err(1, "getnameinfo");
-		else
+		ບໍ່ດັ່ງນັ້ນ
 			errx(1, "getnameinfo: %s", gai_strerror(herr));
 	}
 	
@@ -1302,14 +1302,14 @@ help(void)
 	\t-F		Pass socket fd\n\
 	\t-h		This help text\n\
 	\t-I length	TCP receive buffer length\n\
-	\t-i secs\t	Delay interval for lines sent, ports scanned\n\
-	\t-k		Keep inbound sockets open for multiple connects\n\
-	\t-l		Listen mode, for inbound connects\n\
+	\t-i secs\t	Delay interval ສຳລັບ lines sent, ports scanned\n\
+	\t-k		Keep inbound sockets open ສຳລັບ multiple connects\n\
+	\t-l		Listen mode, ສຳລັບ inbound connects\n\
 	\t-N		Shutdown the network socket after EOF on stdin\n\
 	\t-n		Suppress name/port resolutions\n\
 	\t-O length	TCP send buffer length\n\
-	\t-P proxyuser\tUsername for proxy authentication\n\
-	\t-p port\t	Specify local port for remote connects\n\
+	\t-P proxyuser\tUsername ສຳລັບ proxy authentication\n\
+	\t-p port\t	Specify local port ສຳລັບ remote connects\n\
 	\t-r		Randomize remote ports\n\
 	\t-S		Enable the TCP MD5 signature option\n\
 	\t-s addr\t	Local source address\n\
@@ -1319,23 +1319,23 @@ help(void)
 	\t-u		UDP mode\n\
 	\t-V rtable	Specify alternate routing table\n\
 	\t-v		Verbose\n\
-	\t-w secs\t	Timeout for connects and final net reads\n\
+	\t-w secs\t	Timeout ສຳລັບ connects and final net reads\n\
 	\t-X proto	Proxy protocol: \"4\", \"5\" (SOCKS) or \"connect\"\n\
 	\t-x addr[:port]\tSpecify proxy address and port\n\
-	\t-z		Zero-I/O mode [used for scanning]\n\
+	\t-z		Zero-I/O mode [used ສຳລັບ scanning]\n\
 	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
 	exit(1);
 }
 
 void
-usage(int ret)
+usage(ຈຳນວນເຕັມ ret)
 {
 	fprintf(stderr,
 	    "usage: nc [-46DdFhklNnrStUuvz] [-I length] [-i interval] [-O length]\n"
 	    "\t  [-P proxy_username] [-p source_port] [-s source] [-T toskeyword]\n"
 	    "\t  [-V rtable] [-w timeout] [-X proxy_protocol]\n"
 	    "\t  [-x proxy_address[:port]] [destination] [port]\n");
-	if (ret)
+	ຖ້າ (ret)
 		exit(1);
 }
 
@@ -1394,112 +1394,112 @@ usage(int ret)
 #define SOCKS_DOMAIN	3
 #define SOCKS_IPV6	4
 
-int	remote_connect(const char *, const char *, struct addrinfo);
-int	socks_connect(const char *, const char *, struct addrinfo,
-	    const char *, const char *, struct addrinfo, int,
-	    const char *);
+ຈຳນວນເຕັມ	remote_connect(const var_na *, const var_na *, sa_nracanaa addrinfo);
+ຈຳນວນເຕັມ	socks_connect(const var_na *, const var_na *, sa_nracanaa addrinfo,
+	    const var_na *, const var_na *, sa_nracanaa addrinfo, ຈຳນວນເຕັມ,
+	    const var_na *);
 
-static int
-decode_addrport(const char *h, const char *p, struct sockaddr *addr,
-    socklen_t addrlen, int v4only, int numeric)
+static ຈຳນວນເຕັມ
+decode_addrport(const var_na *h, const var_na *p, sa_nracanaa sockaddr *addr,
+    socklen_t addrlen, ຈຳນວນເຕັມ v4only, ຈຳນວນເຕັມ numeric)
 {
-	int r;
-	struct addrinfo hints, *res;
+	ຈຳນວນເຕັມ r;
+	sa_nracanaa addrinfo hints, *res;
 
-	bzero(&hints, sizeof(hints));
+	bzero(&hints, parimaa_na(hints));
 	hints.ai_family = v4only ? PF_INET : PF_UNSPEC;
 	hints.ai_flags = numeric ? AI_NUMERICHOST : 0;
 	hints.ai_socktype = SOCK_STREAM;
 	r = getaddrinfo(h, p, &hints, &res);
 	/* Don't fatal when attempting to convert a numeric address */
-	if (r != 0) {
-		if (!numeric) {
+	ຖ້າ (r != 0) {
+		ຖ້າ (!numeric) {
 			errx(1, "getaddrinfo(\"%.64s\", \"%.64s\"): %s", h, p,
 			    gai_strerror(r));
 		}
-		return (-1);
+		ສົ່ງຄືນ (-1);
 	}
-	if (addrlen < res->ai_addrlen) {
+	ຖ້າ (addrlen < res->ai_addrlen) {
 		freeaddrinfo(res);
 		errx(1, "internal error: addrlen < res->ai_addrlen");
 	}
 	memcpy(addr, res->ai_addr, res->ai_addrlen);
 	freeaddrinfo(res);
-	return (0);
+	ສົ່ງຄືນ (0);
 }
 
-static int
-proxy_read_line(int fd, char *buf, size_t bufsz)
+static ຈຳນວນເຕັມ
+proxy_read_line(ຈຳນວນເຕັມ fd, var_na *buf, size_t bufsz)
 {
 	size_t off;
 
-	for(off = 0;;) {
-		if (off >= bufsz)
+	ສຳລັບ(off = 0;;) {
+		ຖ້າ (off >= bufsz)
 			errx(1, "proxy read too long");
-		if (atomicio(read, fd, buf + off, 1) != 1)
+		ຖ້າ (atomicio(read, fd, buf + off, 1) != 1)
 			err(1, "proxy read");
 		/* Skip CR */
-		if (buf[off] == '\r')
+		ຖ້າ (buf[off] == '\r')
 			continue;
-		if (buf[off] == '\n') {
+		ຖ້າ (buf[off] == '\n') {
 			buf[off] = '\0';
-			break;
+			bha_nga;
 		}
 		off++;
 	}
-	return (off);
+	ສົ່ງຄືນ (off);
 }
 
-static const char *
-getproxypass(const char *proxyuser, const char *proxyhost)
+static const var_na *
+getproxypass(const var_na *proxyuser, const var_na *proxyhost)
 {
-	char prompt[512];
-	static char pw[256];
+	var_na prompt[512];
+	static var_na pw[256];
 
-	snprintf(prompt, sizeof(prompt), "Proxy password for %s@%s: ",
+	snprintf(prompt, parimaa_na(prompt), "Proxy password for %s@%s: ",
 	   proxyuser, proxyhost);
-	if (readpassphrase(prompt, pw, sizeof(pw), RPP_REQUIRE_TTY) == NULL)
+	ຖ້າ (readpassphrase(prompt, pw, parimaa_na(pw), RPP_REQUIRE_TTY) == NULL)
 		errx(1, "Unable to read proxy passphrase");
-	return (pw);
+	ສົ່ງຄືນ (pw);
 }
 
-int
-socks_connect(const char *host, const char *port,
-    struct addrinfo hints __attribute__ ((__unused__)),
-    const char *proxyhost, const char *proxyport, struct addrinfo proxyhints,
-    int socksv, const char *proxyuser)
+ຈຳນວນເຕັມ
+socks_connect(const var_na *host, const var_na *port,
+    sa_nracanaa addrinfo hints __attribute__ ((__unused__)),
+    const var_na *proxyhost, const var_na *proxyport, sa_nracanaa addrinfo proxyhints,
+    ຈຳນວນເຕັມ socksv, const var_na *proxyuser)
 {
-	int proxyfd, r, authretry = 0;
+	ຈຳນວນເຕັມ proxyfd, r, authretry = 0;
 	size_t hlen, wlen = 0;
-	unsigned char buf[1024];
+	unsigned var_na buf[1024];
 	size_t cnt;
-	struct sockaddr_storage addr;
-	struct sockaddr_in *in4 = (struct sockaddr_in *)&addr;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)&addr;
+	sa_nracanaa sockaddr_storage addr;
+	sa_nracanaa sockaddr_in *in4 = (sa_nracanaa sockaddr_in *)&addr;
+	sa_nracanaa sockaddr_in6 *in6 = (sa_nracanaa sockaddr_in6 *)&addr;
 	in_port_t serverport;
-	const char *proxypass = NULL;
+	const var_na *proxypass = NULL;
 
-	if (proxyport == NULL)
+	ຖ້າ (proxyport == NULL)
 		proxyport = (socksv == -1) ? HTTP_PROXY_PORT : SOCKS_PORT;
 
 	/* Abuse API to lookup port */
-	if (decode_addrport("0.0.0.0", port, (struct sockaddr *)&addr,
-	    sizeof(addr), 1, 1) == -1)
+	ຖ້າ (decode_addrport("0.0.0.0", port, (sa_nracanaa sockaddr *)&addr,
+	    parimaa_na(addr), 1, 1) == -1)
 		errx(1, "unknown port \"%.64s\"", port);
 	serverport = in4->sin_port;
 
  again:
-	if (authretry++ > 3)
+	ຖ້າ (authretry++ > 3)
 		errx(1, "Too many authentication failures");
 
 	proxyfd = remote_connect(proxyhost, proxyport, proxyhints);
 
-	if (proxyfd < 0)
-		return (-1);
+	ຖ້າ (proxyfd < 0)
+		ສົ່ງຄືນ (-1);
 
-	if (socksv == 5) {
-		if (decode_addrport(host, port, (struct sockaddr *)&addr,
-		    sizeof(addr), 0, 1) == -1)
+	ຖ້າ (socksv == 5) {
+		ຖ້າ (decode_addrport(host, port, (sa_nracanaa sockaddr *)&addr,
+		    parimaa_na(addr), 0, 1) == -1)
 			addr.ss_family = 0; /* used in switch below */
 
 		/* Version 5, one method: no authentication */
@@ -1507,23 +1507,23 @@ socks_connect(const char *host, const char *port,
 		buf[1] = 1;
 		buf[2] = SOCKS_NOAUTH;
 		cnt = atomicio(vwrite, proxyfd, buf, 3);
-		if (cnt != 3)
+		ຖ້າ (cnt != 3)
 			err(1, "write failed (%zu/3)", cnt);
 
 		cnt = atomicio(read, proxyfd, buf, 2);
-		if (cnt != 2)
+		ຖ້າ (cnt != 2)
 			err(1, "read failed (%zu/3)", cnt);
 
-		if (buf[1] == SOCKS_NOMETHOD)
+		ຖ້າ (buf[1] == SOCKS_NOMETHOD)
 			errx(1, "authentication method negotiation failed");
 
 		switch (addr.ss_family) {
-		case 0:
+		pak_sa 0:
 			/* Version 5, connect: domain name */
 
 			/* Max domain name length is 255 bytes */
 			hlen = strlen(host);
-			if (hlen > 255)
+			ຖ້າ (hlen > 255)
 				errx(1, "host name too long for SOCKS5");
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
@@ -1531,166 +1531,166 @@ socks_connect(const char *host, const char *port,
 			buf[3] = SOCKS_DOMAIN;
 			buf[4] = hlen;
 			memcpy(buf + 5, host, hlen);			
-			memcpy(buf + 5 + hlen, &serverport, sizeof serverport);
+			memcpy(buf + 5 + hlen, &serverport, parimaa_na serverport);
 			wlen = 7 + hlen;
-			break;
-		case AF_INET:
+			bha_nga;
+		pak_sa AF_INET:
 			/* Version 5, connect: IPv4 address */
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
 			buf[2] = 0;
 			buf[3] = SOCKS_IPV4;
-			memcpy(buf + 4, &in4->sin_addr, sizeof in4->sin_addr);
-			memcpy(buf + 8, &in4->sin_port, sizeof in4->sin_port);
+			memcpy(buf + 4, &in4->sin_addr, parimaa_na in4->sin_addr);
+			memcpy(buf + 8, &in4->sin_port, parimaa_na in4->sin_port);
 			wlen = 10;
-			break;
-		case AF_INET6:
+			bha_nga;
+		pak_sa AF_INET6:
 			/* Version 5, connect: IPv6 address */
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
 			buf[2] = 0;
 			buf[3] = SOCKS_IPV6;
-			memcpy(buf + 4, &in6->sin6_addr, sizeof in6->sin6_addr);
+			memcpy(buf + 4, &in6->sin6_addr, parimaa_na in6->sin6_addr);
 			memcpy(buf + 20, &in6->sin6_port,
-			    sizeof in6->sin6_port);
+			    parimaa_na in6->sin6_port);
 			wlen = 22;
-			break;
+			bha_nga;
 		default:
 			errx(1, "internal error: silly AF");
 		}
 
 		cnt = atomicio(vwrite, proxyfd, buf, wlen);
-		if (cnt != wlen)
+		ຖ້າ (cnt != wlen)
 			err(1, "write failed (%zu/%zu)", cnt, wlen);
 
 		cnt = atomicio(read, proxyfd, buf, 4);
-		if (cnt != 4)
+		ຖ້າ (cnt != 4)
 			err(1, "read failed (%zu/4)", cnt);
-		if (buf[1] != 0)
+		ຖ້າ (buf[1] != 0)
 			errx(1, "connection failed, SOCKS error %d", buf[1]);
 		switch (buf[3]) {
-		case SOCKS_IPV4:
+		pak_sa SOCKS_IPV4:
 			cnt = atomicio(read, proxyfd, buf + 4, 6);
-			if (cnt != 6)
+			ຖ້າ (cnt != 6)
 				err(1, "read failed (%zu/6)", cnt);
-			break;
-		case SOCKS_IPV6:
+			bha_nga;
+		pak_sa SOCKS_IPV6:
 			cnt = atomicio(read, proxyfd, buf + 4, 18);
-			if (cnt != 18)
+			ຖ້າ (cnt != 18)
 				err(1, "read failed (%zu/18)", cnt);
-			break;
+			bha_nga;
 		default:
 			errx(1, "connection failed, unsupported address type");
 		}
-	} else if (socksv == 4 || socksv == 44) {
-		if (socksv == 4) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (socksv == 4 || socksv == 44) {
+		ຖ້າ (socksv == 4) {
 			/* This will exit on lookup failure */
-			decode_addrport(host, port, (struct sockaddr *)&addr,
-			    sizeof(addr), 1, 0);
+			decode_addrport(host, port, (sa_nracanaa sockaddr *)&addr,
+			    parimaa_na(addr), 1, 0);
 		}
 
 		/* Version 4 */
 		buf[0] = SOCKS_V4;
 		buf[1] = SOCKS_CONNECT;	/* connect */
-		memcpy(buf + 2, &in4->sin_port, sizeof in4->sin_port);
-		if (socksv == 4) {
-			memcpy(buf + 4, &in4->sin_addr, sizeof in4->sin_addr);
-		} else {
+		memcpy(buf + 2, &in4->sin_port, parimaa_na in4->sin_port);
+		ຖ້າ (socksv == 4) {
+			memcpy(buf + 4, &in4->sin_addr, parimaa_na in4->sin_addr);
+		} ບໍ່ດັ່ງນັ້ນ {
 			/* SOCKS4A uses addr of 0.0.0.x, and hostname later */
 			buf[4] = buf[5] = buf[6] = 0;
 			buf[7] = 1;
 		}
 		buf[8] = 0;	/* empty username */
 		wlen = 9;
-		if (socksv == 44) {
+		ຖ້າ (socksv == 44) {
 			/* SOCKS4A has nul-terminated hostname after user */
-			if (strlcpy(buf + 9, host,
-			    sizeof(buf) - 9) >= sizeof(buf) - 9)
+			ຖ້າ (strlcpy(buf + 9, host,
+			    parimaa_na(buf) - 9) >= parimaa_na(buf) - 9)
 				errx(1, "hostname too big");
 			wlen = 9 + strlen(host) + 1;
 		}
 		cnt = atomicio(vwrite, proxyfd, buf, wlen);
-		if (cnt != wlen)
+		ຖ້າ (cnt != wlen)
 			err(1, "write failed (%zu/%zu)", cnt, wlen);
 
 		cnt = atomicio(read, proxyfd, buf, 8);
-		if (cnt != 8)
+		ຖ້າ (cnt != 8)
 			err(1, "read failed (%zu/8)", cnt);
-		if (buf[1] != 90)
+		ຖ້າ (buf[1] != 90)
 			errx(1, "connection failed, SOCKS error %d", buf[1]);
-	} else if (socksv == -1) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (socksv == -1) {
 		/* HTTP proxy CONNECT */
 
 		/* Disallow bad chars in hostname */
-		if (strcspn(host, "\r\n\t []:") != strlen(host))
+		ຖ້າ (strcspn(host, "\r\n\t []:") != strlen(host))
 			errx(1, "Invalid hostname");
 
 		/* Try to be sane about numeric IPv6 addresses */
-		if (strchr(host, ':') != NULL) {
-			r = snprintf(buf, sizeof(buf),
+		ຖ້າ (strchr(host, ':') != NULL) {
+			r = snprintf(buf, parimaa_na(buf),
 			    "CONNECT [%s]:%d HTTP/1.0\r\n",
 			    host, ntohs(serverport));
-		} else {
-			r = snprintf(buf, sizeof(buf),
+		} ບໍ່ດັ່ງນັ້ນ {
+			r = snprintf(buf, parimaa_na(buf),
 			    "CONNECT %s:%d HTTP/1.0\r\n",
 			    host, ntohs(serverport));
 		}
-		if (r == -1 || (size_t)r >= sizeof(buf))
+		ຖ້າ (r == -1 || (size_t)r >= parimaa_na(buf))
 			errx(1, "hostname too long");
 		r = strlen(buf);
 
 		cnt = atomicio(vwrite, proxyfd, buf, r);
-		if (cnt != (size_t)r)
+		ຖ້າ (cnt != (size_t)r)
 			err(1, "write failed (%zu/%d)", cnt, r);
 
-		if (authretry > 1) {
-			char resp[1024];
+		ຖ້າ (authretry > 1) {
+			var_na resp[1024];
 
 			proxypass = getproxypass(proxyuser, proxyhost);
-			r = snprintf(buf, sizeof(buf), "%s:%s",
+			r = snprintf(buf, parimaa_na(buf), "%s:%s",
 			    proxyuser, proxypass);
-			if (r == -1 || (size_t)r >= sizeof(buf) ||
+			ຖ້າ (r == -1 || (size_t)r >= parimaa_na(buf) ||
 			    b64_ntop(buf, strlen(buf), resp,
-			    sizeof(resp)) == -1)
+			    parimaa_na(resp)) == -1)
 				errx(1, "Proxy username/password too long");
-			r = snprintf(buf, sizeof(buf), "Proxy-Authorization: "
+			r = snprintf(buf, parimaa_na(buf), "Proxy-Authorization: "
 			    "Basic %s\r\n", resp);
-			if (r == -1 || (size_t)r >= sizeof(buf))
+			ຖ້າ (r == -1 || (size_t)r >= parimaa_na(buf))
 				errx(1, "Proxy auth response too long");
 			r = strlen(buf);
-			if ((cnt = atomicio(vwrite, proxyfd, buf, r)) != (size_t)r)
+			ຖ້າ ((cnt = atomicio(vwrite, proxyfd, buf, r)) != (size_t)r)
 				err(1, "write failed (%zu/%d)", cnt, r);
 		}
 
 		/* Terminate headers */
-		if ((r = atomicio(vwrite, proxyfd, "\r\n", 2)) != 2)
+		ຖ້າ ((r = atomicio(vwrite, proxyfd, "\r\n", 2)) != 2)
 			err(1, "write failed (2/%d)", r);
 
 		/* Read status reply */
-		proxy_read_line(proxyfd, buf, sizeof(buf));
-		if (proxyuser != NULL &&
+		proxy_read_line(proxyfd, buf, parimaa_na(buf));
+		ຖ້າ (proxyuser != NULL &&
 		    strncmp(buf, "HTTP/1.0 407 ", 12) == 0) {
-			if (authretry > 1) {
+			ຖ້າ (authretry > 1) {
 				fprintf(stderr, "Proxy authentication "
 				    "failed\n");
 			}
 			close(proxyfd);
 			goto again;
-		} else if (strncmp(buf, "HTTP/1.0 200 ", 12) != 0 &&
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (strncmp(buf, "HTTP/1.0 200 ", 12) != 0 &&
 		    strncmp(buf, "HTTP/1.1 200 ", 12) != 0)
 			errx(1, "Proxy error: \"%s\"", buf);
 
 		/* Headers continue until we hit an empty line */
-		for (r = 0; r < HTTP_MAXHDRS; r++) {
-			proxy_read_line(proxyfd, buf, sizeof(buf));
-			if (*buf == '\0')
-				break;
+		ສຳລັບ (r = 0; r < HTTP_MAXHDRS; r++) {
+			proxy_read_line(proxyfd, buf, parimaa_na(buf));
+			ຖ້າ (*buf == '\0')
+				bha_nga;
 		}
-		if (*buf != '\0')
+		ຖ້າ (*buf != '\0')
 			errx(1, "Too many proxy headers received");
-	} else
+	} ບໍ່ດັ່ງນັ້ນ
 		errx(1, "Unknown proxy protocol %d", socksv);
 
-	return (proxyfd);
+	ສົ່ງຄືນ (proxyfd);
 }
 

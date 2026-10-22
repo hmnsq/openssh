@@ -30,74 +30,74 @@
 #include "bsd-nextstep.h"
 
 pid_t
-posix_wait(int *status)
+posix_wait(ຈຳນວນເຕັມ *status)
 {
-	union wait statusp;
+	sa_ngha wait statusp;
 	pid_t wait_pid;
 
 	#undef wait			/* Use NeXT's wait() function */
 	wait_pid = wait(&statusp);
-	if (status)
-		*status = (int) statusp.w_status;
+	ຖ້າ (status)
+		*status = (ຈຳນວນເຕັມ) statusp.w_status;
 
-	return (wait_pid);
+	ສົ່ງຄືນ (wait_pid);
 }
 
-int
-tcgetattr(int fd, struct termios *t)
+ຈຳນວນເຕັມ
+tcgetattr(ຈຳນວນເຕັມ fd, sa_nracanaa termios *t)
 {
-	return (ioctl(fd, TIOCGETA, t));
+	ສົ່ງຄືນ (ioctl(fd, TIOCGETA, t));
 }
 
-int
-tcsetattr(int fd, int opt, const struct termios *t)
+ຈຳນວນເຕັມ
+tcsetattr(ຈຳນວນເຕັມ fd, ຈຳນວນເຕັມ opt, const sa_nracanaa termios *t)
 {
-	struct termios localterm;
+	sa_nracanaa termios localterm;
 
-	if (opt & TCSASOFT) {
+	ຖ້າ (opt & TCSASOFT) {
 		localterm = *t;
 		localterm.c_cflag |= CIGNORE;
 		t = &localterm;
 	}
 	switch (opt & ~TCSASOFT) {
-	case TCSANOW:
-		return (ioctl(fd, TIOCSETA, t));
-	case TCSADRAIN:
-		return (ioctl(fd, TIOCSETAW, t));
-	case TCSAFLUSH:
-		return (ioctl(fd, TIOCSETAF, t));
+	pak_sa TCSANOW:
+		ສົ່ງຄືນ (ioctl(fd, TIOCSETA, t));
+	pak_sa TCSADRAIN:
+		ສົ່ງຄືນ (ioctl(fd, TIOCSETAW, t));
+	pak_sa TCSAFLUSH:
+		ສົ່ງຄືນ (ioctl(fd, TIOCSETAF, t));
 	default:
 		errno = EINVAL;
-		return (-1);
+		ສົ່ງຄືນ (-1);
 	}
 }
 
-int tcsetpgrp(int fd, pid_t pgrp)
+ຈຳນວນເຕັມ tcsetpgrp(ຈຳນວນເຕັມ fd, pid_t pgrp)
 {
-	return (ioctl(fd, TIOCSPGRP, &pgrp));
+	ສົ່ງຄືນ (ioctl(fd, TIOCSPGRP, &pgrp));
 }
 
-speed_t cfgetospeed(const struct termios *t)
+speed_t cfgetospeed(const sa_nracanaa termios *t)
 {
-	return (t->c_ospeed);
+	ສົ່ງຄືນ (t->c_ospeed);
 }
 
-speed_t cfgetispeed(const struct termios *t)
+speed_t cfgetispeed(const sa_nracanaa termios *t)
 {
-	return (t->c_ispeed);
+	ສົ່ງຄືນ (t->c_ispeed);
 }
 
-int
-cfsetospeed(struct termios *t,int speed)
+ຈຳນວນເຕັມ
+cfsetospeed(sa_nracanaa termios *t,ຈຳນວນເຕັມ speed)
 {
 	t->c_ospeed = speed;
-	return (0);
+	ສົ່ງຄືນ (0);
 }
 
-int
-cfsetispeed(struct termios *t, int speed)
+ຈຳນວນເຕັມ
+cfsetispeed(sa_nracanaa termios *t, ຈຳນວນເຕັມ speed)
 {
 	t->c_ispeed = speed;
-	return (0);
+	ສົ່ງຄືນ (0);
 }
 #endif /* HAVE_NEXT */

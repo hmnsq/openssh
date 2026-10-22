@@ -74,7 +74,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#if !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#ຖ້າ !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
@@ -112,14 +112,14 @@
 
 typedef u_short Char;
 
-#else
+#ບໍ່ດັ່ງນັ້ນ
 
 #define	M_QUOTE		0x80
 #define	M_PROTECT	0x40
 #define	M_MASK		0xff
 #define	M_ASCII		0x7f
 
-typedef char Char;
+typedef var_na Char;
 
 #endif
 
@@ -139,94 +139,94 @@ typedef char Char;
 #define	GLOB_LIMIT_STAT		2048
 #define	GLOB_LIMIT_READDIR	16384
 
-struct glob_lim {
+sa_nracanaa glob_lim {
 	size_t	glim_malloc;
 	size_t	glim_stat;
 	size_t	glim_readdir;
 };
 
-struct glob_path_stat {
-	char		*gps_path;
-	struct stat	*gps_stat;
+sa_nracanaa glob_path_stat {
+	var_na		*gps_path;
+	sa_nracanaa stat	*gps_stat;
 };
 
-static int	 compare(const void *, const void *);
-static int	 compare_gps(const void *, const void *);
-static int	 g_Ctoc(const Char *, char *, size_t);
-static int	 g_lstat(Char *, struct stat *, glob_t *);
+static ຈຳນວນເຕັມ	 compare(const void *, const void *);
+static ຈຳນວນເຕັມ	 compare_gps(const void *, const void *);
+static ຈຳນວນເຕັມ	 g_Ctoc(const Char *, var_na *, size_t);
+static ຈຳນວນເຕັມ	 g_lstat(Char *, sa_nracanaa stat *, glob_t *);
 static DIR	*g_opendir(Char *, glob_t *);
-static Char	*g_strchr(const Char *, int);
-static int	 g_strncmp(const Char *, const char *, size_t);
-static int	 g_stat(Char *, struct stat *, glob_t *);
-static int	 glob0(const Char *, glob_t *, struct glob_lim *);
-static int	 glob1(Char *, Char *, glob_t *, struct glob_lim *);
-static int	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
-		    glob_t *, struct glob_lim *);
-static int	 glob3(Char *, Char *, Char *, Char *, Char *,
-		    Char *, Char *, glob_t *, struct glob_lim *);
-static int	 globextend(const Char *, glob_t *, struct glob_lim *,
-		    struct stat *);
+static Char	*g_strchr(const Char *, ຈຳນວນເຕັມ);
+static ຈຳນວນເຕັມ	 g_strncmp(const Char *, const var_na *, size_t);
+static ຈຳນວນເຕັມ	 g_stat(Char *, sa_nracanaa stat *, glob_t *);
+static ຈຳນວນເຕັມ	 glob0(const Char *, glob_t *, sa_nracanaa glob_lim *);
+static ຈຳນວນເຕັມ	 glob1(Char *, Char *, glob_t *, sa_nracanaa glob_lim *);
+static ຈຳນວນເຕັມ	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
+		    glob_t *, sa_nracanaa glob_lim *);
+static ຈຳນວນເຕັມ	 glob3(Char *, Char *, Char *, Char *, Char *,
+		    Char *, Char *, glob_t *, sa_nracanaa glob_lim *);
+static ຈຳນວນເຕັມ	 globextend(const Char *, glob_t *, sa_nracanaa glob_lim *,
+		    sa_nracanaa stat *);
 static const Char *
 		 globtilde(const Char *, Char *, size_t, glob_t *);
-static int	 globexp1(const Char *, glob_t *, struct glob_lim *);
-static int	 globexp2(const Char *, const Char *, glob_t *,
-		    struct glob_lim *);
-static int	 match(Char *, Char *, Char *);
+static ຈຳນວນເຕັມ	 globexp1(const Char *, glob_t *, sa_nracanaa glob_lim *);
+static ຈຳນວນເຕັມ	 globexp2(const Char *, const Char *, glob_t *,
+		    sa_nracanaa glob_lim *);
+static ຈຳນວນເຕັມ	 match(Char *, Char *, Char *);
 #ifdef DEBUG
-static void	 qprintf(const char *, Char *);
+static void	 qprintf(const var_na *, Char *);
 #endif
 
-int
-glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
+ຈຳນວນເຕັມ
+glob(const var_na *pattern, ຈຳນວນເຕັມ flags, ຈຳນວນເຕັມ (*errfunc)(const var_na *, ຈຳນວນເຕັມ),
     glob_t *pglob)
 {
 	const u_char *patnext;
-	int c;
+	ຈຳນວນເຕັມ c;
 	Char *bufnext, *bufend, patbuf[PATH_MAX];
-	struct glob_lim limit = { 0, 0, 0 };
+	sa_nracanaa glob_lim limit = { 0, 0, 0 };
 
 	patnext = (u_char *) pattern;
-	if (!(flags & GLOB_APPEND)) {
+	ຖ້າ (!(flags & GLOB_APPEND)) {
 		pglob->gl_pathc = 0;
 		pglob->gl_pathv = NULL;
 		pglob->gl_statv = NULL;
-		if (!(flags & GLOB_DOOFFS))
+		ຖ້າ (!(flags & GLOB_DOOFFS))
 			pglob->gl_offs = 0;
 	}
 	pglob->gl_flags = flags & ~GLOB_MAGCHAR;
 	pglob->gl_errfunc = errfunc;
 	pglob->gl_matchc = 0;
 
-	if (strnlen(pattern, PATH_MAX) == PATH_MAX)
-		return(GLOB_NOMATCH);
+	ຖ້າ (strnlen(pattern, PATH_MAX) == PATH_MAX)
+		ສົ່ງຄືນ(GLOB_NOMATCH);
 
-	if (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
+	ຖ້າ (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX - pglob->gl_offs - 1)
-		return GLOB_NOSPACE;
+		ສົ່ງຄືນ GLOB_NOSPACE;
 
 	bufnext = patbuf;
 	bufend = bufnext + PATH_MAX - 1;
-	if (flags & GLOB_NOESCAPE)
-		while (bufnext < bufend && (c = *patnext++) != EOS)
+	ຖ້າ (flags & GLOB_NOESCAPE)
+		ໃນຂະນະທີ່ (bufnext < bufend && (c = *patnext++) != EOS)
 			*bufnext++ = c;
-	else {
+	ບໍ່ດັ່ງນັ້ນ {
 		/* Protect the quoted characters. */
-		while (bufnext < bufend && (c = *patnext++) != EOS)
-			if (c == QUOTE) {
-				if ((c = *patnext++) == EOS) {
+		ໃນຂະນະທີ່ (bufnext < bufend && (c = *patnext++) != EOS)
+			ຖ້າ (c == QUOTE) {
+				ຖ້າ ((c = *patnext++) == EOS) {
 					c = QUOTE;
 					--patnext;
 				}
 				*bufnext++ = c | M_PROTECT;
-			} else
+			} ບໍ່ດັ່ງນັ້ນ
 				*bufnext++ = c;
 	}
 	*bufnext = EOS;
 
-	if (flags & GLOB_BRACE)
-		return globexp1(patbuf, pglob, &limit);
-	else
-		return glob0(patbuf, pglob, &limit);
+	ຖ້າ (flags & GLOB_BRACE)
+		ສົ່ງຄືນ globexp1(patbuf, pglob, &limit);
+	ບໍ່ດັ່ງນັ້ນ
+		ສົ່ງຄືນ glob0(patbuf, pglob, &limit);
 }
 
 /*
@@ -234,19 +234,19 @@ glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
  * invoke the standard globbing routine to glob the rest of the magic
  * characters
  */
-static int
-globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
+static ຈຳນວນເຕັມ
+globexp1(const Char *pattern, glob_t *pglob, sa_nracanaa glob_lim *limitp)
 {
 	const Char* ptr = pattern;
 
 	/* Protect a single {}, for find(1), like csh */
-	if (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
-		return glob0(pattern, pglob, limitp);
+	ຖ້າ (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
+		ສົ່ງຄືນ glob0(pattern, pglob, limitp);
 
-	if ((ptr = (const Char *) g_strchr(ptr, LBRACE)) != NULL)
-		return globexp2(ptr, pattern, pglob, limitp);
+	ຖ້າ ((ptr = (const Char *) g_strchr(ptr, LBRACE)) != NULL)
+		ສົ່ງຄືນ globexp2(ptr, pattern, pglob, limitp);
 
-	return glob0(pattern, pglob, limitp);
+	ສົ່ງຄືນ glob0(pattern, pglob, limitp);
 }
 
 
@@ -255,84 +255,84 @@ globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
  * If it succeeds then it invokes globexp1 with the new pattern.
  * If it fails then it tries to glob the rest of the pattern and returns.
  */
-static int
+static ຈຳນວນເຕັມ
 globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
-    struct glob_lim *limitp)
+    sa_nracanaa glob_lim *limitp)
 {
-	int     i, rv;
+	ຈຳນວນເຕັມ     i, rv;
 	Char   *lm, *ls;
 	const Char *pe, *pm, *pl;
 	Char    patbuf[PATH_MAX];
 
 	/* copy part up to the brace */
-	for (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
+	ສຳລັບ (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
 		;
 	*lm = EOS;
 	ls = lm;
 
 	/* Find the balanced brace */
-	for (i = 0, pe = ++ptr; *pe; pe++)
-		if (*pe == LBRACKET) {
+	ສຳລັບ (i = 0, pe = ++ptr; *pe; pe++)
+		ຖ້າ (*pe == LBRACKET) {
 			/* Ignore everything between [] */
-			for (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
+			ສຳລັບ (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
 				;
-			if (*pe == EOS) {
+			ຖ້າ (*pe == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pe = pm;
 			}
-		} else if (*pe == LBRACE)
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (*pe == LBRACE)
 			i++;
-		else if (*pe == RBRACE) {
-			if (i == 0)
-				break;
+		ບໍ່ດັ່ງນັ້ນ ຖ້າ (*pe == RBRACE) {
+			ຖ້າ (i == 0)
+				bha_nga;
 			i--;
 		}
 
 	/* Non matching braces; just glob the pattern */
-	if (i != 0 || *pe == EOS)
-		return glob0(patbuf, pglob, limitp);
+	ຖ້າ (i != 0 || *pe == EOS)
+		ສົ່ງຄືນ glob0(patbuf, pglob, limitp);
 
-	for (i = 0, pl = pm = ptr; pm <= pe; pm++) {
+	ສຳລັບ (i = 0, pl = pm = ptr; pm <= pe; pm++) {
 		switch (*pm) {
-		case LBRACKET:
+		pak_sa LBRACKET:
 			/* Ignore everything between [] */
-			for (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
+			ສຳລັບ (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
 				;
-			if (*pm == EOS) {
+			ຖ້າ (*pm == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pm = pl;
 			}
-			break;
+			bha_nga;
 
-		case LBRACE:
+		pak_sa LBRACE:
 			i++;
-			break;
+			bha_nga;
 
-		case RBRACE:
-			if (i) {
+		pak_sa RBRACE:
+			ຖ້າ (i) {
 				i--;
-				break;
+				bha_nga;
 			}
 			/* FALLTHROUGH */
-		case COMMA:
-			if (i && *pm == COMMA)
-				break;
-			else {
+		pak_sa COMMA:
+			ຖ້າ (i && *pm == COMMA)
+				bha_nga;
+			ບໍ່ດັ່ງນັ້ນ {
 				/* Append the current string */
-				for (lm = ls; (pl < pm); *lm++ = *pl++)
+				ສຳລັບ (lm = ls; (pl < pm); *lm++ = *pl++)
 					;
 
 				/*
 				 * Append the rest of the pattern after the
 				 * closing brace
 				 */
-				for (pl = pe + 1; (*lm++ = *pl++) != EOS; )
+				ສຳລັບ (pl = pe + 1; (*lm++ = *pl++) != EOS; )
 					;
 
 				/* Expand the current pattern */
@@ -340,19 +340,19 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 				qprintf("globexp2:", patbuf);
 #endif
 				rv = globexp1(patbuf, pglob, limitp);
-				if (rv && rv != GLOB_NOMATCH)
-					return rv;
+				ຖ້າ (rv && rv != GLOB_NOMATCH)
+					ສົ່ງຄືນ rv;
 
 				/* move after the comma, to the next string */
 				pl = pm + 1;
 			}
-			break;
+			bha_nga;
 
 		default:
-			break;
+			bha_nga;
 		}
 	}
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 
@@ -363,103 +363,103 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 static const Char *
 globtilde(const Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
 {
-	struct passwd *pwd;
-	char *h;
+	sa_nracanaa passwd *pwd;
+	var_na *h;
 	const Char *p;
 	Char *b, *eb;
 
-	if (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
-		return pattern;
+	ຖ້າ (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
+		ສົ່ງຄືນ pattern;
 
 	/* Copy up to the end of the string or / */
 	eb = &patbuf[patbuf_len - 1];
-	for (p = pattern + 1, h = (char *) patbuf;
-	    h < (char *)eb && *p && *p != SLASH; *h++ = *p++)
+	ສຳລັບ (p = pattern + 1, h = (var_na *) patbuf;
+	    h < (var_na *)eb && *p && *p != SLASH; *h++ = *p++)
 		;
 
 	*h = EOS;
 
-#if 0
-	if (h == (char *)eb)
-		return what;
+#ຖ້າ 0
+	ຖ້າ (h == (var_na *)eb)
+		ສົ່ງຄືນ what;
 #endif
 
-	if (((char *) patbuf)[0] == EOS) {
+	ຖ້າ (((var_na *) patbuf)[0] == EOS) {
 		/*
 		 * handle a plain ~ or ~/ by expanding $HOME
 		 * first and then trying the password file
 		 */
-#if 0
-		if (issetugid() != 0 || (h = getenv("HOME")) == NULL) {
+#ຖ້າ 0
+		ຖ້າ (issetugid() != 0 || (h = getenv("HOME")) == NULL) {
 #endif
-		if ((getuid() != geteuid()) || (h = getenv("HOME")) == NULL) {
-			if ((pwd = getpwuid(getuid())) == NULL)
-				return pattern;
-			else
+		ຖ້າ ((getuid() != geteuid()) || (h = getenv("HOME")) == NULL) {
+			ຖ້າ ((pwd = getpwuid(getuid())) == NULL)
+				ສົ່ງຄືນ pattern;
+			ບໍ່ດັ່ງນັ້ນ
 				h = pwd->pw_dir;
 		}
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		/*
 		 * Expand a ~user
 		 */
-		if ((pwd = getpwnam((char*) patbuf)) == NULL)
-			return pattern;
-		else
+		ຖ້າ ((pwd = getpwnam((var_na*) patbuf)) == NULL)
+			ສົ່ງຄືນ pattern;
+		ບໍ່ດັ່ງນັ້ນ
 			h = pwd->pw_dir;
 	}
 
 	/* Copy the home directory */
-	for (b = patbuf; b < eb && *h; *b++ = *h++)
+	ສຳລັບ (b = patbuf; b < eb && *h; *b++ = *h++)
 		;
 
 	/* Append the rest of the pattern */
-	while (b < eb && (*b++ = *p++) != EOS)
+	ໃນຂະນະທີ່ (b < eb && (*b++ = *p++) != EOS)
 		;
 	*b = EOS;
 
-	return patbuf;
+	ສົ່ງຄືນ patbuf;
 }
 
-static int
-g_strncmp(const Char *s1, const char *s2, size_t n)
+static ຈຳນວນເຕັມ
+g_strncmp(const Char *s1, const var_na *s2, size_t n)
 {
-	int rv = 0;
+	ຈຳນວນເຕັມ rv = 0;
 
-	while (n--) {
-		rv = *(Char *)s1 - *(const unsigned char *)s2++;
-		if (rv)
-			break;
-		if (*s1++ == '\0')
-			break;
+	ໃນຂະນະທີ່ (n--) {
+		rv = *(Char *)s1 - *(const unsigned var_na *)s2++;
+		ຖ້າ (rv)
+			bha_nga;
+		ຖ້າ (*s1++ == '\0')
+			bha_nga;
 	}
-	return rv;
+	ສົ່ງຄືນ rv;
 }
 
-static int
+static ຈຳນວນເຕັມ
 g_charclass(const Char **patternp, Char **bufnextp)
 {
 	const Char *pattern = *patternp + 1;
 	Char *bufnext = *bufnextp;
 	const Char *colon;
-	struct cclass *cc;
+	sa_nracanaa cclass *cc;
 	size_t len;
 
-	if ((colon = g_strchr(pattern, ':')) == NULL || colon[1] != ']')
-		return 1;	/* not a character class */
+	ຖ້າ ((colon = g_strchr(pattern, ':')) == NULL || colon[1] != ']')
+		ສົ່ງຄືນ 1;	/* not a character class */
 
 	len = (size_t)(colon - pattern);
-	for (cc = cclasses; cc->name != NULL; cc++) {
-		if (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
-			break;
+	ສຳລັບ (cc = cclasses; cc->name != NULL; cc++) {
+		ຖ້າ (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
+			bha_nga;
 	}
-	if (cc->name == NULL)
-		return -1;	/* invalid character class */
+	ຖ້າ (cc->name == NULL)
+		ສົ່ງຄືນ -1;	/* invalid character class */
 	*bufnext++ = M_CLASS;
 	*bufnext++ = (Char)(cc - &cclasses[0]);
 	*bufnextp = bufnext;
 	*patternp += len + 3;
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 /*
@@ -469,11 +469,11 @@ g_charclass(const Char **patternp, Char **bufnextp)
  * if things went well, nonzero if errors occurred.  It is not an error
  * to find no matches.
  */
-static int
-glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
+static ຈຳນວນເຕັມ
+glob0(const Char *pattern, glob_t *pglob, sa_nracanaa glob_lim *limitp)
 {
 	const Char *qpatnext;
-	int c, err;
+	ຈຳນວນເຕັມ c, err;
 	size_t oldpathc;
 	Char *bufnext, patbuf[PATH_MAX];
 
@@ -482,64 +482,64 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	bufnext = patbuf;
 
 	/* We don't need to check for buffer overflow any more. */
-	while ((c = *qpatnext++) != EOS) {
+	ໃນຂະນະທີ່ ((c = *qpatnext++) != EOS) {
 		switch (c) {
-		case LBRACKET:
+		pak_sa LBRACKET:
 			c = *qpatnext;
-			if (c == NOT)
+			ຖ້າ (c == NOT)
 				++qpatnext;
-			if (*qpatnext == EOS ||
+			ຖ້າ (*qpatnext == EOS ||
 			    g_strchr(qpatnext+1, RBRACKET) == NULL) {
 				*bufnext++ = LBRACKET;
-				if (c == NOT)
+				ຖ້າ (c == NOT)
 					--qpatnext;
-				break;
+				bha_nga;
 			}
 			*bufnext++ = M_SET;
-			if (c == NOT)
+			ຖ້າ (c == NOT)
 				*bufnext++ = M_NOT;
 			c = *qpatnext++;
 			do {
-				if (c == LBRACKET && *qpatnext == ':') {
+				ຖ້າ (c == LBRACKET && *qpatnext == ':') {
 					do {
 						err = g_charclass(&qpatnext,
 						    &bufnext);
-						if (err)
-							break;
+						ຖ້າ (err)
+							bha_nga;
 						c = *qpatnext++;
-					} while (c == LBRACKET && *qpatnext == ':');
-					if (err == -1 &&
+					} ໃນຂະນະທີ່ (c == LBRACKET && *qpatnext == ':');
+					ຖ້າ (err == -1 &&
 					    !(pglob->gl_flags & GLOB_NOCHECK))
-						return GLOB_NOMATCH;
-					if (c == RBRACKET)
-						break;
+						ສົ່ງຄືນ GLOB_NOMATCH;
+					ຖ້າ (c == RBRACKET)
+						bha_nga;
 				}
 				*bufnext++ = CHAR(c);
-				if (*qpatnext == RANGE &&
+				ຖ້າ (*qpatnext == RANGE &&
 				    (c = qpatnext[1]) != RBRACKET) {
 					*bufnext++ = M_RNG;
 					*bufnext++ = CHAR(c);
 					qpatnext += 2;
 				}
-			} while ((c = *qpatnext++) != RBRACKET);
+			} ໃນຂະນະທີ່ ((c = *qpatnext++) != RBRACKET);
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			*bufnext++ = M_END;
-			break;
-		case QUESTION:
+			bha_nga;
+		pak_sa QUESTION:
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			*bufnext++ = M_ONE;
-			break;
-		case STAR:
+			bha_nga;
+		pak_sa STAR:
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			/* collapse adjacent stars to one,
 			 * to avoid exponential behavior
 			 */
-			if (bufnext == patbuf || bufnext[-1] != M_ALL)
+			ຖ້າ (bufnext == patbuf || bufnext[-1] != M_ALL)
 				*bufnext++ = M_ALL;
-			break;
+			bha_nga;
 		default:
 			*bufnext++ = CHAR(c);
-			break;
+			bha_nga;
 		}
 	}
 	*bufnext = EOS;
@@ -547,8 +547,8 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	qprintf("glob0:", patbuf);
 #endif
 
-	if ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
-		return(err);
+	ຖ້າ ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
+		ສົ່ງຄືນ(err);
 
 	/*
 	 * If there was no match we are going to append the pattern
@@ -556,67 +556,67 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	 * and the pattern did not contain any magic characters
 	 * GLOB_NOMAGIC is there just for compatibility with csh.
 	 */
-	if (pglob->gl_pathc == oldpathc) {
-		if ((pglob->gl_flags & GLOB_NOCHECK) ||
+	ຖ້າ (pglob->gl_pathc == oldpathc) {
+		ຖ້າ ((pglob->gl_flags & GLOB_NOCHECK) ||
 		    ((pglob->gl_flags & GLOB_NOMAGIC) &&
 		    !(pglob->gl_flags & GLOB_MAGCHAR)))
-			return(globextend(pattern, pglob, limitp, NULL));
-		else
-			return(GLOB_NOMATCH);
+			ສົ່ງຄືນ(globextend(pattern, pglob, limitp, NULL));
+		ບໍ່ດັ່ງນັ້ນ
+			ສົ່ງຄືນ(GLOB_NOMATCH);
 	}
-	if (!(pglob->gl_flags & GLOB_NOSORT)) {
-		if ((pglob->gl_flags & GLOB_KEEPSTAT)) {
+	ຖ້າ (!(pglob->gl_flags & GLOB_NOSORT)) {
+		ຖ້າ ((pglob->gl_flags & GLOB_KEEPSTAT)) {
 			/* Keep the paths and stat info synced during sort */
-			struct glob_path_stat *path_stat;
+			sa_nracanaa glob_path_stat *path_stat;
 			size_t i;
 			size_t n = pglob->gl_pathc - oldpathc;
 			size_t o = pglob->gl_offs + oldpathc;
 
-			if ((path_stat = calloc(n, sizeof(*path_stat))) == NULL)
-				return GLOB_NOSPACE;
-			for (i = 0; i < n; i++) {
+			ຖ້າ ((path_stat = calloc(n, parimaa_na(*path_stat))) == NULL)
+				ສົ່ງຄືນ GLOB_NOSPACE;
+			ສຳລັບ (i = 0; i < n; i++) {
 				path_stat[i].gps_path = pglob->gl_pathv[o + i];
 				path_stat[i].gps_stat = pglob->gl_statv[o + i];
 			}
-			qsort(path_stat, n, sizeof(*path_stat), compare_gps);
-			for (i = 0; i < n; i++) {
+			qsort(path_stat, n, parimaa_na(*path_stat), compare_gps);
+			ສຳລັບ (i = 0; i < n; i++) {
 				pglob->gl_pathv[o + i] = path_stat[i].gps_path;
 				pglob->gl_statv[o + i] = path_stat[i].gps_stat;
 			}
 			free(path_stat);
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			qsort(pglob->gl_pathv + pglob->gl_offs + oldpathc,
-			    pglob->gl_pathc - oldpathc, sizeof(char *),
+			    pglob->gl_pathc - oldpathc, parimaa_na(var_na *),
 			    compare);
 		}
 	}
-	return(0);
+	ສົ່ງຄືນ(0);
 }
 
-static int
+static ຈຳນວນເຕັມ
 compare(const void *p, const void *q)
 {
-	return(strcmp(*(char **)p, *(char **)q));
+	ສົ່ງຄືນ(strcmp(*(var_na **)p, *(var_na **)q));
 }
 
-static int
+static ຈຳນວນເຕັມ
 compare_gps(const void *_p, const void *_q)
 {
-	const struct glob_path_stat *p = (const struct glob_path_stat *)_p;
-	const struct glob_path_stat *q = (const struct glob_path_stat *)_q;
+	const sa_nracanaa glob_path_stat *p = (const sa_nracanaa glob_path_stat *)_p;
+	const sa_nracanaa glob_path_stat *q = (const sa_nracanaa glob_path_stat *)_q;
 
-	return(strcmp(p->gps_path, q->gps_path));
+	ສົ່ງຄືນ(strcmp(p->gps_path, q->gps_path));
 }
 
-static int
-glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
+static ຈຳນວນເຕັມ
+glob1(Char *pattern, Char *pattern_last, glob_t *pglob, sa_nracanaa glob_lim *limitp)
 {
 	Char pathbuf[PATH_MAX];
 
 	/* A null pathname is invalid -- POSIX 1003.1 sect. 2.4. */
-	if (*pattern == EOS)
-		return(0);
-	return(glob2(pathbuf, pathbuf+PATH_MAX-1,
+	ຖ້າ (*pattern == EOS)
+		ສົ່ງຄືນ(0);
+	ສົ່ງຄືນ(glob2(pathbuf, pathbuf+PATH_MAX-1,
 	    pathbuf, pathbuf+PATH_MAX-1,
 	    pattern, pattern_last, pglob, limitp));
 }
@@ -626,83 +626,83 @@ glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
  * of recursion for each segment in the pattern that contains one or more
  * meta characters.
  */
-static int
+static ຈຳນວນເຕັມ
 glob2(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
-    Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
+    Char *pattern, Char *pattern_last, glob_t *pglob, sa_nracanaa glob_lim *limitp)
 {
-	struct stat sb;
+	sa_nracanaa stat sb;
 	Char *p, *q;
-	int anymeta;
+	ຈຳນວນເຕັມ anymeta;
 
 	/*
 	 * Loop over pattern segments until end of pattern or until
 	 * segment with meta character found.
 	 */
-	for (anymeta = 0;;) {
-		if (*pattern == EOS) {		/* End of pattern? */
+	ສຳລັບ (anymeta = 0;;) {
+		ຖ້າ (*pattern == EOS) {		/* End of pattern? */
 			*pathend = EOS;
 
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
+			ຖ້າ ((pglob->gl_flags & GLOB_LIMIT) &&
 			    limitp->glim_stat++ >= GLOB_LIMIT_STAT) {
 				errno = 0;
 				*pathend++ = SEP;
 				*pathend = EOS;
-				return(GLOB_NOSPACE);
+				ສົ່ງຄືນ(GLOB_NOSPACE);
 			}
-			if (g_lstat(pathbuf, &sb, pglob))
-				return(0);
+			ຖ້າ (g_lstat(pathbuf, &sb, pglob))
+				ສົ່ງຄືນ(0);
 
-			if (((pglob->gl_flags & GLOB_MARK) &&
+			ຖ້າ (((pglob->gl_flags & GLOB_MARK) &&
 			    pathend[-1] != SEP) && (S_ISDIR(sb.st_mode) ||
 			    (S_ISLNK(sb.st_mode) &&
 			    (g_stat(pathbuf, &sb, pglob) == 0) &&
 			    S_ISDIR(sb.st_mode)))) {
-				if (pathend+1 > pathend_last)
-					return (1);
+				ຖ້າ (pathend+1 > pathend_last)
+					ສົ່ງຄືນ (1);
 				*pathend++ = SEP;
 				*pathend = EOS;
 			}
 			++pglob->gl_matchc;
-			return(globextend(pathbuf, pglob, limitp, &sb));
+			ສົ່ງຄືນ(globextend(pathbuf, pglob, limitp, &sb));
 		}
 
 		/* Find end of next segment, copy tentatively to pathend. */
 		q = pathend;
 		p = pattern;
-		while (*p != EOS && *p != SEP) {
-			if (ismeta(*p))
+		ໃນຂະນະທີ່ (*p != EOS && *p != SEP) {
+			ຖ້າ (ismeta(*p))
 				anymeta = 1;
-			if (q+1 > pathend_last)
-				return (1);
+			ຖ້າ (q+1 > pathend_last)
+				ສົ່ງຄືນ (1);
 			*q++ = *p++;
 		}
 
-		if (!anymeta) {		/* No expansion, do next segment. */
+		ຖ້າ (!anymeta) {		/* No expansion, do next segment. */
 			pathend = q;
 			pattern = p;
-			while (*pattern == SEP) {
-				if (pathend+1 > pathend_last)
-					return (1);
+			ໃນຂະນະທີ່ (*pattern == SEP) {
+				ຖ້າ (pathend+1 > pathend_last)
+					ສົ່ງຄືນ (1);
 				*pathend++ = *pattern++;
 			}
-		} else
+		} ບໍ່ດັ່ງນັ້ນ
 			/* Need expansion, recurse. */
-			return(glob3(pathbuf, pathbuf_last, pathend,
+			ສົ່ງຄືນ(glob3(pathbuf, pathbuf_last, pathend,
 			    pathend_last, pattern, p, pattern_last,
 			    pglob, limitp));
 	}
 	/* NOTREACHED */
 }
 
-static int
+static ຈຳນວນເຕັມ
 glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
     Char *pattern, Char *restpattern, Char *restpattern_last, glob_t *pglob,
-    struct glob_lim *limitp)
+    sa_nracanaa glob_lim *limitp)
 {
-	struct dirent *dp;
+	sa_nracanaa dirent *dp;
 	DIR *dirp;
-	int err;
-	char buf[PATH_MAX];
+	ຈຳນວນເຕັມ err;
+	var_na buf[PATH_MAX];
 
 	/*
 	 * The readdirfunc declaration can't be prototyped, because it is
@@ -710,73 +710,73 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
 	 * and dirent.h as taking pointers to differently typed opaque
 	 * structures.
 	 */
-	struct dirent *(*readdirfunc)(void *);
+	sa_nracanaa dirent *(*readdirfunc)(void *);
 
-	if (pathend > pathend_last)
-		return (1);
+	ຖ້າ (pathend > pathend_last)
+		ສົ່ງຄືນ (1);
 	*pathend = EOS;
 	errno = 0;
 
-	if ((dirp = g_opendir(pathbuf, pglob)) == NULL) {
+	ຖ້າ ((dirp = g_opendir(pathbuf, pglob)) == NULL) {
 		/* TODO: don't call for ENOENT or ENOTDIR? */
-		if (pglob->gl_errfunc) {
-			if (g_Ctoc(pathbuf, buf, sizeof(buf)))
-				return(GLOB_ABORTED);
-			if (pglob->gl_errfunc(buf, errno) ||
+		ຖ້າ (pglob->gl_errfunc) {
+			ຖ້າ (g_Ctoc(pathbuf, buf, parimaa_na(buf)))
+				ສົ່ງຄືນ(GLOB_ABORTED);
+			ຖ້າ (pglob->gl_errfunc(buf, errno) ||
 			    pglob->gl_flags & GLOB_ERR)
-				return(GLOB_ABORTED);
+				ສົ່ງຄືນ(GLOB_ABORTED);
 		}
-		return(0);
+		ສົ່ງຄືນ(0);
 	}
 
 	err = 0;
 
 	/* Search directory for matching names. */
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	ຖ້າ (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		readdirfunc = pglob->gl_readdir;
-	else
-		readdirfunc = (struct dirent *(*)(void *))readdir;
-	while ((dp = (*readdirfunc)(dirp))) {
+	ບໍ່ດັ່ງນັ້ນ
+		readdirfunc = (sa_nracanaa dirent *(*)(void *))readdir;
+	ໃນຂະນະທີ່ ((dp = (*readdirfunc)(dirp))) {
 		u_char *sc;
 		Char *dc;
 
-		if ((pglob->gl_flags & GLOB_LIMIT) &&
+		ຖ້າ ((pglob->gl_flags & GLOB_LIMIT) &&
 		    limitp->glim_readdir++ >= GLOB_LIMIT_READDIR) {
 			errno = 0;
 			*pathend++ = SEP;
 			*pathend = EOS;
 			err = GLOB_NOSPACE;
-			break;
+			bha_nga;
 		}
 
 		/* Initial DOT must be matched literally. */
-		if (dp->d_name[0] == DOT && *pattern != DOT)
+		ຖ້າ (dp->d_name[0] == DOT && *pattern != DOT)
 			continue;
 		dc = pathend;
 		sc = (u_char *) dp->d_name;
-		while (dc < pathend_last && (*dc++ = *sc++) != EOS)
+		ໃນຂະນະທີ່ (dc < pathend_last && (*dc++ = *sc++) != EOS)
 			;
-		if (dc >= pathend_last) {
+		ຖ້າ (dc >= pathend_last) {
 			*dc = EOS;
 			err = 1;
-			break;
+			bha_nga;
 		}
 
-		if (!match(pathend, pattern, restpattern)) {
+		ຖ້າ (!match(pathend, pattern, restpattern)) {
 			*pathend = EOS;
 			continue;
 		}
 		err = glob2(pathbuf, pathbuf_last, --dc, pathend_last,
 		    restpattern, restpattern_last, pglob, limitp);
-		if (err)
-			break;
+		ຖ້າ (err)
+			bha_nga;
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	ຖ້າ (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		(*pglob->gl_closedir)(dirp);
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		closedir(dirp);
-	return(err);
+	ສົ່ງຄືນ(err);
 }
 
 
@@ -794,27 +794,27 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
  *	Either gl_pathc is zero and gl_pathv is NULL; or gl_pathc > 0 and
  *	gl_pathv points to (gl_offs + gl_pathc + 1) items.
  */
-static int
-globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
-    struct stat *sb)
+static ຈຳນວນເຕັມ
+globextend(const Char *path, glob_t *pglob, sa_nracanaa glob_lim *limitp,
+    sa_nracanaa stat *sb)
 {
-	char **pathv;
+	var_na **pathv;
 	size_t i, newn, len;
-	char *copy = NULL;
+	var_na *copy = NULL;
 	const Char *p;
-	struct stat **statv;
+	sa_nracanaa stat **statv;
 
 	newn = 2 + pglob->gl_pathc + pglob->gl_offs;
-	if (pglob->gl_offs >= SSIZE_MAX ||
+	ຖ້າ (pglob->gl_offs >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX ||
 	    newn >= SSIZE_MAX ||
-	    SIZE_MAX / sizeof(*pathv) <= newn ||
-	    SIZE_MAX / sizeof(*statv) <= newn) {
+	    SIZE_MAX / parimaa_na(*pathv) <= newn ||
+	    SIZE_MAX / parimaa_na(*statv) <= newn) {
  nospace:
-		for (i = pglob->gl_offs; i < newn - 2; i++) {
-			if (pglob->gl_pathv && pglob->gl_pathv[i])
+		ສຳລັບ (i = pglob->gl_offs; i < newn - 2; i++) {
+			ຖ້າ (pglob->gl_pathv && pglob->gl_pathv[i])
 				free(pglob->gl_pathv[i]);
-			if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
+			ຖ້າ ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
 			    pglob->gl_pathv && pglob->gl_pathv[i])
 				free(pglob->gl_statv[i]);
 		}
@@ -822,70 +822,70 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
 		pglob->gl_pathv = NULL;
 		free(pglob->gl_statv);
 		pglob->gl_statv = NULL;
-		return(GLOB_NOSPACE);
+		ສົ່ງຄືນ(GLOB_NOSPACE);
 	}
 
-	pathv = reallocarray(pglob->gl_pathv, newn, sizeof(*pathv));
-	if (pathv == NULL)
+	pathv = reallocarray(pglob->gl_pathv, newn, parimaa_na(*pathv));
+	ຖ້າ (pathv == NULL)
 		goto nospace;
-	if (pglob->gl_pathv == NULL && pglob->gl_offs > 0) {
+	ຖ້າ (pglob->gl_pathv == NULL && pglob->gl_offs > 0) {
 		/* first time around -- clear initial gl_offs items */
 		pathv += pglob->gl_offs;
-		for (i = pglob->gl_offs; i > 0; i--)
+		ສຳລັບ (i = pglob->gl_offs; i > 0; i--)
 			*--pathv = NULL;
 	}
 	pglob->gl_pathv = pathv;
 
-	if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
-		statv = reallocarray(pglob->gl_statv, newn, sizeof(*statv));
-		if (statv == NULL)
+	ຖ້າ ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
+		statv = reallocarray(pglob->gl_statv, newn, parimaa_na(*statv));
+		ຖ້າ (statv == NULL)
 			goto nospace;
-		if (pglob->gl_statv == NULL && pglob->gl_offs > 0) {
+		ຖ້າ (pglob->gl_statv == NULL && pglob->gl_offs > 0) {
 			/* first time around -- clear initial gl_offs items */
 			statv += pglob->gl_offs;
-			for (i = pglob->gl_offs; i > 0; i--)
+			ສຳລັບ (i = pglob->gl_offs; i > 0; i--)
 				*--statv = NULL;
 		}
 		pglob->gl_statv = statv;
-		if (sb == NULL)
+		ຖ້າ (sb == NULL)
 			statv[pglob->gl_offs + pglob->gl_pathc] = NULL;
-		else {
-			limitp->glim_malloc += sizeof(**statv);
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
+		ບໍ່ດັ່ງນັ້ນ {
+			limitp->glim_malloc += parimaa_na(**statv);
+			ຖ້າ ((pglob->gl_flags & GLOB_LIMIT) &&
 			    limitp->glim_malloc >= GLOB_LIMIT_MALLOC) {
 				errno = 0;
-				return(GLOB_NOSPACE);
+				ສົ່ງຄືນ(GLOB_NOSPACE);
 			}
-			if ((statv[pglob->gl_offs + pglob->gl_pathc] =
-			    malloc(sizeof(**statv))) == NULL)
+			ຖ້າ ((statv[pglob->gl_offs + pglob->gl_pathc] =
+			    malloc(parimaa_na(**statv))) == NULL)
 				goto copy_error;
 			memcpy(statv[pglob->gl_offs + pglob->gl_pathc], sb,
-			    sizeof(*sb));
+			    parimaa_na(*sb));
 		}
 		statv[pglob->gl_offs + pglob->gl_pathc + 1] = NULL;
 	}
 
-	for (p = path; *p++;)
+	ສຳລັບ (p = path; *p++;)
 		;
 	len = (size_t)(p - path);
 	limitp->glim_malloc += len;
-	if ((copy = malloc(len)) != NULL) {
-		if (g_Ctoc(path, copy, len)) {
+	ຖ້າ ((copy = malloc(len)) != NULL) {
+		ຖ້າ (g_Ctoc(path, copy, len)) {
 			free(copy);
-			return(GLOB_NOSPACE);
+			ສົ່ງຄືນ(GLOB_NOSPACE);
 		}
 		pathv[pglob->gl_offs + pglob->gl_pathc++] = copy;
 	}
 	pathv[pglob->gl_offs + pglob->gl_pathc] = NULL;
 
-	if ((pglob->gl_flags & GLOB_LIMIT) &&
-	    (newn * sizeof(*pathv)) + limitp->glim_malloc >
+	ຖ້າ ((pglob->gl_flags & GLOB_LIMIT) &&
+	    (newn * parimaa_na(*pathv)) + limitp->glim_malloc >
 	    GLOB_LIMIT_MALLOC) {
 		errno = 0;
-		return(GLOB_NOSPACE);
+		ສົ່ງຄືນ(GLOB_NOSPACE);
 	}
  copy_error:
-	return(copy == NULL ? GLOB_NOSPACE : 0);
+	ສົ່ງຄືນ(copy == NULL ? GLOB_NOSPACE : 0);
 }
 
 
@@ -900,72 +900,72 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
  * from Russ Cox to not go quadratic on cases like a file called
  * ("a" x 100) . "x" matched against a pattern like "a*a*a*a*a*a*a*y".
  */
-static int
+static ຈຳນວນເຕັມ
 match(Char *name, Char *pat, Char *patend)
 {
-	int ok, negate_range;
+	ຈຳນວນເຕັມ ok, negate_range;
 	Char c, k;
 	Char *nextp = NULL;
 	Char *nextn = NULL;
 
 loop:
-	while (pat < patend) {
+	ໃນຂະນະທີ່ (pat < patend) {
 		c = *pat++;
 		switch (c & M_MASK) {
-		case M_ALL:
-			while (pat < patend && (*pat & M_MASK) == M_ALL)
+		pak_sa M_ALL:
+			ໃນຂະນະທີ່ (pat < patend && (*pat & M_MASK) == M_ALL)
 				pat++;	/* eat consecutive '*' */
-			if (pat == patend)
-				return(1);
-			if (*name == EOS)
-				return(0);
+			ຖ້າ (pat == patend)
+				ສົ່ງຄືນ(1);
+			ຖ້າ (*name == EOS)
+				ສົ່ງຄືນ(0);
 			nextn = name + 1;
 			nextp = pat - 1;
-			break;
-		case M_ONE:
-			if (*name++ == EOS)
+			bha_nga;
+		pak_sa M_ONE:
+			ຖ້າ (*name++ == EOS)
 				goto fail;
-			break;
-		case M_SET:
+			bha_nga;
+		pak_sa M_SET:
 			ok = 0;
-			if ((k = *name++) == EOS)
+			ຖ້າ ((k = *name++) == EOS)
 				goto fail;
-			if ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
+			ຖ້າ ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
 				++pat;
-			while (((c = *pat++) & M_MASK) != M_END) {
-				if ((c & M_MASK) == M_CLASS) {
+			ໃນຂະນະທີ່ (((c = *pat++) & M_MASK) != M_END) {
+				ຖ້າ ((c & M_MASK) == M_CLASS) {
 					Char idx = *pat & M_MASK;
-					if (idx < NCCLASSES &&
+					ຖ້າ (idx < NCCLASSES &&
 					    cclasses[idx].isctype(k))
 						ok = 1;
 					++pat;
 				}
-				if ((*pat & M_MASK) == M_RNG) {
-					if (c <= k && k <= pat[1])
+				ຖ້າ ((*pat & M_MASK) == M_RNG) {
+					ຖ້າ (c <= k && k <= pat[1])
 						ok = 1;
 					pat += 2;
-				} else if (c == k)
+				} ບໍ່ດັ່ງນັ້ນ ຖ້າ (c == k)
 					ok = 1;
 			}
-			if (ok == negate_range)
+			ຖ້າ (ok == negate_range)
 				goto fail;
-			break;
+			bha_nga;
 		default:
-			if (*name++ != c)
+			ຖ້າ (*name++ != c)
 				goto fail;
-			break;
+			bha_nga;
 		}
 	}
-	if (*name == EOS)
-		return(1);
+	ຖ້າ (*name == EOS)
+		ສົ່ງຄືນ(1);
 
 fail:
-	if (nextn) {
+	ຖ້າ (nextn) {
 		pat = nextp;
 		name = nextn;
 		goto loop;
 	}
-	return(0);
+	ສົ່ງຄືນ(0);
 }
 
 /* Free allocated data belonging to a glob_t structure. */
@@ -973,17 +973,17 @@ void
 globfree(glob_t *pglob)
 {
 	size_t i;
-	char **pp;
+	var_na **pp;
 
-	if (pglob->gl_pathv != NULL) {
+	ຖ້າ (pglob->gl_pathv != NULL) {
 		pp = pglob->gl_pathv + pglob->gl_offs;
-		for (i = pglob->gl_pathc; i--; ++pp)
+		ສຳລັບ (i = pglob->gl_pathc; i--; ++pp)
 			free(*pp);
 		free(pglob->gl_pathv);
 		pglob->gl_pathv = NULL;
 	}
-	if (pglob->gl_statv != NULL) {
-		for (i = 0; i < pglob->gl_pathc; i++) {
+	ຖ້າ (pglob->gl_statv != NULL) {
+		ສຳລັບ (i = 0; i < pglob->gl_pathc; i++) {
 			free(pglob->gl_statv[i]);
 		}
 		free(pglob->gl_statv);
@@ -994,80 +994,80 @@ globfree(glob_t *pglob)
 static DIR *
 g_opendir(Char *str, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	var_na buf[PATH_MAX];
 
-	if (!*str)
-		strlcpy(buf, ".", sizeof buf);
-	else {
-		if (g_Ctoc(str, buf, sizeof(buf)))
-			return(NULL);
+	ຖ້າ (!*str)
+		strlcpy(buf, ".", parimaa_na buf);
+	ບໍ່ດັ່ງນັ້ນ {
+		ຖ້າ (g_Ctoc(str, buf, parimaa_na(buf)))
+			ສົ່ງຄືນ(NULL);
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_opendir)(buf));
+	ຖ້າ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		ສົ່ງຄືນ((*pglob->gl_opendir)(buf));
 
-	return(opendir(buf));
+	ສົ່ງຄືນ(opendir(buf));
 }
 
-static int
-g_lstat(Char *fn, struct stat *sb, glob_t *pglob)
+static ຈຳນວນເຕັມ
+g_lstat(Char *fn, sa_nracanaa stat *sb, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	var_na buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_lstat)(buf, sb));
-	return(lstat(buf, sb));
+	ຖ້າ (g_Ctoc(fn, buf, parimaa_na(buf)))
+		ສົ່ງຄືນ(-1);
+	ຖ້າ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		ສົ່ງຄືນ((*pglob->gl_lstat)(buf, sb));
+	ສົ່ງຄືນ(lstat(buf, sb));
 }
 
-static int
-g_stat(Char *fn, struct stat *sb, glob_t *pglob)
+static ຈຳນວນເຕັມ
+g_stat(Char *fn, sa_nracanaa stat *sb, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	var_na buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_stat)(buf, sb));
-	return(stat(buf, sb));
+	ຖ້າ (g_Ctoc(fn, buf, parimaa_na(buf)))
+		ສົ່ງຄືນ(-1);
+	ຖ້າ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		ສົ່ງຄືນ((*pglob->gl_stat)(buf, sb));
+	ສົ່ງຄືນ(stat(buf, sb));
 }
 
 static Char *
-g_strchr(const Char *str, int ch)
+g_strchr(const Char *str, ຈຳນວນເຕັມ ch)
 {
 	do {
-		if (*str == ch)
-			return ((Char *)str);
-	} while (*str++);
-	return (NULL);
+		ຖ້າ (*str == ch)
+			ສົ່ງຄືນ ((Char *)str);
+	} ໃນຂະນະທີ່ (*str++);
+	ສົ່ງຄືນ (NULL);
 }
 
-static int
-g_Ctoc(const Char *str, char *buf, size_t len)
+static ຈຳນວນເຕັມ
+g_Ctoc(const Char *str, var_na *buf, size_t len)
 {
 
-	while (len--) {
-		if ((*buf++ = *str++) == EOS)
-			return (0);
+	ໃນຂະນະທີ່ (len--) {
+		ຖ້າ ((*buf++ = *str++) == EOS)
+			ສົ່ງຄືນ (0);
 	}
-	return (1);
+	ສົ່ງຄືນ (1);
 }
 
 #ifdef DEBUG
 static void
-qprintf(const char *str, Char *s)
+qprintf(const var_na *str, Char *s)
 {
 	Char *p;
 
 	(void)printf("%s:\n", str);
-	for (p = s; *p; p++)
+	ສຳລັບ (p = s; *p; p++)
 		(void)printf("%c", CHAR(*p));
 	(void)printf("\n");
-	for (p = s; *p; p++)
+	ສຳລັບ (p = s; *p; p++)
 		(void)printf("%c", *p & M_PROTECT ? '"' : ' ');
 	(void)printf("\n");
-	for (p = s; *p; p++)
+	ສຳລັບ (p = s; *p; p++)
 		(void)printf("%c", ismeta(*p) ? '_' : ' ');
 	(void)printf("\n");
 }

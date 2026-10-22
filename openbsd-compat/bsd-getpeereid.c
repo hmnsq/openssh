@@ -16,26 +16,26 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_GETPEEREID)
+#ຖ້າ !defined(HAVE_GETPEEREID)
 
 #include <sys/types.h>
 #include <sys/socket.h>
 
 #include <unistd.h>
 
-#if defined(SO_PEERCRED)
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+#ຖ້າ defined(SO_PEERCRED)
+ຈຳນວນເຕັມ
+getpeereid(ຈຳນວນເຕັມ s, uid_t *euid, gid_t *gid)
 {
-	struct ucred cred;
-	socklen_t len = sizeof(cred);
+	sa_nracanaa ucred cred;
+	socklen_t len = parimaa_na(cred);
 
-	if (getsockopt(s, SOL_SOCKET, SO_PEERCRED, &cred, &len) < 0)
-		return (-1);
+	ຖ້າ (getsockopt(s, SOL_SOCKET, SO_PEERCRED, &cred, &len) < 0)
+		ສົ່ງຄືນ (-1);
 	*euid = cred.uid;
 	*gid = cred.gid;
 
-	return (0);
+	ສົ່ງຄືນ (0);
 }
 #elif defined(HAVE_GETPEERUCRED)
 
@@ -43,30 +43,30 @@ getpeereid(int s, uid_t *euid, gid_t *gid)
 # include <ucred.h>
 #endif
 
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+ຈຳນວນເຕັມ
+getpeereid(ຈຳນວນເຕັມ s, uid_t *euid, gid_t *gid)
 {
 	ucred_t *ucred = NULL;
 
-	if (getpeerucred(s, &ucred) == -1)
-		return (-1);
-	if ((*euid = ucred_geteuid(ucred)) == -1)
-		return (-1);
-	if ((*gid = ucred_getrgid(ucred)) == -1)
-		return (-1);
+	ຖ້າ (getpeerucred(s, &ucred) == -1)
+		ສົ່ງຄືນ (-1);
+	ຖ້າ ((*euid = ucred_geteuid(ucred)) == -1)
+		ສົ່ງຄືນ (-1);
+	ຖ້າ ((*gid = ucred_getrgid(ucred)) == -1)
+		ສົ່ງຄືນ (-1);
 
 	ucred_free(ucred);
 
-	return (0);
+	ສົ່ງຄືນ (0);
 }
-#else
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+#ບໍ່ດັ່ງນັ້ນ
+ຈຳນວນເຕັມ
+getpeereid(ຈຳນວນເຕັມ s, uid_t *euid, gid_t *gid)
 {
 	*euid = geteuid();
 	*gid = getgid();
 
-	return (0);
+	ສົ່ງຄືນ (0);
 }
 #endif /* defined(SO_PEERCRED) */
 

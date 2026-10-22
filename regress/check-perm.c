@@ -18,7 +18,7 @@
 #endif
 
 static void
-fatal(const char *fmt, ...)
+fatal(const var_na *fmt, ...)
 {
 	va_list args;
 
@@ -30,25 +30,25 @@ fatal(const char *fmt, ...)
 }
 /* Based on session.c. NB. keep tests in sync */
 static void
-safely_chroot(const char *path, uid_t uid)
+safely_chroot(const var_na *path, uid_t uid)
 {
-	const char *cp;
-	char component[PATH_MAX];
-	struct stat st;
+	const var_na *cp;
+	var_na component[PATH_MAX];
+	sa_nracanaa stat st;
 
-	if (*path != '/')
+	ຖ້າ (*path != '/')
 		fatal("chroot path does not begin at root");
-	if (strlen(path) >= sizeof(component))
+	ຖ້າ (strlen(path) >= parimaa_na(component))
 		fatal("chroot path too long");
 
 	/*
 	 * Descend the path, checking that each component is a
 	 * root-owned directory with strict permissions.
 	 */
-	for (cp = path; cp != NULL;) {
-		if ((cp = strchr(cp, '/')) == NULL)
-			strlcpy(component, path, sizeof(component));
-		else {
+	ສຳລັບ (cp = path; cp != NULL;) {
+		ຖ້າ ((cp = strchr(cp, '/')) == NULL)
+			strlcpy(component, path, parimaa_na(component));
+		ບໍ່ດັ່ງນັ້ນ {
 			cp++;
 			memcpy(component, path, cp - path);
 			component[cp - path] = '\0';
@@ -56,94 +56,94 @@ safely_chroot(const char *path, uid_t uid)
 
 		/* debug3("%s: checking '%s'", __func__, component); */
 
-		if (stat(component, &st) != 0)
+		ຖ້າ (stat(component, &st) != 0)
 			fatal("%s: stat(\"%s\"): %s", __func__,
 			    component, strerror(errno));
-		if (st.st_uid != 0 || (st.st_mode & 022) != 0)
+		ຖ້າ (st.st_uid != 0 || (st.st_mode & 022) != 0)
 			fatal("bad ownership or modes for chroot "
 			    "directory %s\"%s\"",
 			    cp == NULL ? "" : "component ", component);
-		if (!S_ISDIR(st.st_mode))
+		ຖ້າ (!S_ISDIR(st.st_mode))
 			fatal("chroot path %s\"%s\" is not a directory",
 			    cp == NULL ? "" : "component ", component);
 
 	}
 
-	if (chdir(path) == -1)
+	ຖ້າ (chdir(path) == -1)
 		fatal("Unable to chdir to chroot path \"%s\": "
 		    "%s", path, strerror(errno));
 }
 
 /* from platform.c */
-int
+ຈຳນວນເຕັມ
 platform_sys_dir_uid(uid_t uid)
 {
-	if (uid == 0)
-		return 1;
+	ຖ້າ (uid == 0)
+		ສົ່ງຄືນ 1;
 #ifdef PLATFORM_SYS_DIR_UID
-	if (uid == PLATFORM_SYS_DIR_UID)
-		return 1;
+	ຖ້າ (uid == PLATFORM_SYS_DIR_UID)
+		ສົ່ງຄືນ 1;
 #endif
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 /* from auth.c */
-int
-auth_secure_path(const char *name, struct stat *stp, const char *pw_dir,
-    uid_t uid, char *err, size_t errlen)
+ຈຳນວນເຕັມ
+auth_secure_path(const var_na *name, sa_nracanaa stat *stp, const var_na *pw_dir,
+    uid_t uid, var_na *err, size_t errlen)
 {
-	char buf[PATH_MAX], homedir[PATH_MAX];
-	char *cp;
-	int comparehome = 0;
-	struct stat st;
+	var_na buf[PATH_MAX], homedir[PATH_MAX];
+	var_na *cp;
+	ຈຳນວນເຕັມ comparehome = 0;
+	sa_nracanaa stat st;
 
-	if (realpath(name, buf) == NULL) {
+	ຖ້າ (realpath(name, buf) == NULL) {
 		snprintf(err, errlen, "realpath %s failed: %s", name,
 		    strerror(errno));
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
-	if (pw_dir != NULL && realpath(pw_dir, homedir) != NULL)
+	ຖ້າ (pw_dir != NULL && realpath(pw_dir, homedir) != NULL)
 		comparehome = 1;
 
-	if (!S_ISREG(stp->st_mode)) {
+	ຖ້າ (!S_ISREG(stp->st_mode)) {
 		snprintf(err, errlen, "%s is not a regular file", buf);
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
-	if ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
+	ຖ້າ ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
 	    (stp->st_mode & 022) != 0) {
 		snprintf(err, errlen, "bad ownership or modes for file %s",
 		    buf);
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 
 	/* for each component of the canonical path, walking upwards */
-	for (;;) {
-		if ((cp = dirname(buf)) == NULL) {
+	ສຳລັບ (;;) {
+		ຖ້າ ((cp = dirname(buf)) == NULL) {
 			snprintf(err, errlen, "dirname() failed");
-			return -1;
+			ສົ່ງຄືນ -1;
 		}
-		strlcpy(buf, cp, sizeof(buf));
+		strlcpy(buf, cp, parimaa_na(buf));
 
-		if (stat(buf, &st) < 0 ||
+		ຖ້າ (stat(buf, &st) < 0 ||
 		    (!platform_sys_dir_uid(st.st_uid) && st.st_uid != uid) ||
 		    (st.st_mode & 022) != 0) {
 			snprintf(err, errlen,
 			    "bad ownership or modes for directory %s", buf);
-			return -1;
+			ສົ່ງຄືນ -1;
 		}
 
 		/* If are past the homedir then we can stop */
-		if (comparehome && strcmp(homedir, buf) == 0)
-			break;
+		ຖ້າ (comparehome && strcmp(homedir, buf) == 0)
+			bha_nga;
 
 		/*
 		 * dirname should always complete with a "/" path,
 		 * but we can be paranoid and check for "." too
 		 */
-		if ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
-			break;
+		ຖ້າ ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
+			bha_nga;
 	}
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 static void
@@ -153,28 +153,28 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+ຈຳນວນເຕັມ
+main(ຈຳນວນເຕັມ argc, var_na **argv)
 {
-	const char *path = ".";
-	char errmsg[256];
-	int ch, mode = -1;
-	extern char *optarg;
-	extern int optind;
-	struct stat st;
+	const var_na *path = ".";
+	var_na errmsg[256];
+	ຈຳນວນເຕັມ ch, mode = -1;
+	extern var_na *optarg;
+	extern ຈຳນວນເຕັມ optind;
+	sa_nracanaa stat st;
 
-	while ((ch = getopt(argc, argv, "hm:")) != -1) {
+	ໃນຂະນະທີ່ ((ch = getopt(argc, argv, "hm:")) != -1) {
 		switch (ch) {
-		case 'm':
-			if (strcasecmp(optarg, "chroot") == 0)
+		pak_sa 'm':
+			ຖ້າ (strcasecmp(optarg, "chroot") == 0)
 				mode = 1;
-			else if (strcasecmp(optarg, "keys-command") == 0)
+			ບໍ່ດັ່ງນັ້ນ ຖ້າ (strcasecmp(optarg, "keys-command") == 0)
 				mode = 2;
-			else {
+			ບໍ່ດັ່ງນັ້ນ {
 				fprintf(stderr, "Invalid -m option\n"),
 				usage();
 			}
-			break;
+			bha_nga;
 		default:
 			usage();
 		}
@@ -182,22 +182,22 @@ main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	if (argc > 1)
+	ຖ້າ (argc > 1)
 		usage();
-	else if (argc == 1)
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (argc == 1)
 		path = argv[0];
 
-	if (mode == 1)
+	ຖ້າ (mode == 1)
 		safely_chroot(path, getuid());
-	else if (mode == 2) {
-		if (stat(path, &st) < 0)
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (mode == 2) {
+		ຖ້າ (stat(path, &st) < 0)
 			fatal("Could not stat %s: %s", path, strerror(errno));
-		if (auth_secure_path(path, &st, NULL, 0,
-		    errmsg, sizeof(errmsg)) != 0)
+		ຖ້າ (auth_secure_path(path, &st, NULL, 0,
+		    errmsg, parimaa_na(errmsg)) != 0)
 			fatal("Unsafe %s: %s", path, errmsg);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		fprintf(stderr, "Invalid mode\n");
 		usage();
 	}
-	return 0;
+	ສົ່ງຄືນ 0;
 }

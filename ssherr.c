@@ -19,140 +19,140 @@
 #include <string.h>
 #include "ssherr.h"
 
-const char *
-ssh_err(int n)
+const var_na *
+ssh_err(ຈຳນວນເຕັມ n)
 {
-	const char *msg = NULL;
+	const var_na *msg = NULL;
 
 	switch (n) {
-	case SSH_ERR_SUCCESS:
-		return "success";
-	case SSH_ERR_INTERNAL_ERROR:
-		return "unexpected internal error";
-	case SSH_ERR_ALLOC_FAIL:
-		return "memory allocation failed";
-	case SSH_ERR_MESSAGE_INCOMPLETE:
-		return "incomplete message";
-	case SSH_ERR_INVALID_FORMAT:
-		return "invalid format";
-	case SSH_ERR_BIGNUM_IS_NEGATIVE:
-		return "bignum is negative";
-	case SSH_ERR_STRING_TOO_LARGE:
-		return "string is too large";
-	case SSH_ERR_BIGNUM_TOO_LARGE:
-		return "bignum is too large";
-	case SSH_ERR_ECPOINT_TOO_LARGE:
-		return "elliptic curve point is too large";
-	case SSH_ERR_NO_BUFFER_SPACE:
-		return "insufficient buffer space";
-	case SSH_ERR_INVALID_ARGUMENT:
-		return "invalid argument";
-	case SSH_ERR_KEY_BITS_MISMATCH:
-		return "key bits do not match";
-	case SSH_ERR_EC_CURVE_INVALID:
-		return "invalid elliptic curve";
-	case SSH_ERR_KEY_TYPE_MISMATCH:
-		return "key type does not match";
-	case SSH_ERR_KEY_TYPE_UNKNOWN:
-		return "unknown or unsupported key type";
-	case SSH_ERR_EC_CURVE_MISMATCH:
-		return "elliptic curve does not match";
-	case SSH_ERR_EXPECTED_CERT:
-		return "plain key provided where certificate required";
-	case SSH_ERR_KEY_LACKS_CERTBLOB:
-		return "key lacks certificate data";
-	case SSH_ERR_KEY_CERT_UNKNOWN_TYPE:
-		return "unknown/unsupported certificate type";
-	case SSH_ERR_KEY_CERT_INVALID_SIGN_KEY:
-		return "invalid certificate signing key";
-	case SSH_ERR_KEY_INVALID_EC_VALUE:
-		return "invalid elliptic curve value";
-	case SSH_ERR_SIGNATURE_INVALID:
-		return "incorrect signature";
-	case SSH_ERR_LIBCRYPTO_ERROR:
+	pak_sa SSH_ERR_SUCCESS:
+		ສົ່ງຄືນ "success";
+	pak_sa SSH_ERR_INTERNAL_ERROR:
+		ສົ່ງຄືນ "unexpected internal error";
+	pak_sa SSH_ERR_ALLOC_FAIL:
+		ສົ່ງຄືນ "memory allocation failed";
+	pak_sa SSH_ERR_MESSAGE_INCOMPLETE:
+		ສົ່ງຄືນ "incomplete message";
+	pak_sa SSH_ERR_INVALID_FORMAT:
+		ສົ່ງຄືນ "invalid format";
+	pak_sa SSH_ERR_BIGNUM_IS_NEGATIVE:
+		ສົ່ງຄືນ "bignum is negative";
+	pak_sa SSH_ERR_STRING_TOO_LARGE:
+		ສົ່ງຄືນ "string is too large";
+	pak_sa SSH_ERR_BIGNUM_TOO_LARGE:
+		ສົ່ງຄືນ "bignum is too large";
+	pak_sa SSH_ERR_ECPOINT_TOO_LARGE:
+		ສົ່ງຄືນ "elliptic curve point is too large";
+	pak_sa SSH_ERR_NO_BUFFER_SPACE:
+		ສົ່ງຄືນ "insufficient buffer space";
+	pak_sa SSH_ERR_INVALID_ARGUMENT:
+		ສົ່ງຄືນ "invalid argument";
+	pak_sa SSH_ERR_KEY_BITS_MISMATCH:
+		ສົ່ງຄືນ "key bits do not match";
+	pak_sa SSH_ERR_EC_CURVE_INVALID:
+		ສົ່ງຄືນ "invalid elliptic curve";
+	pak_sa SSH_ERR_KEY_TYPE_MISMATCH:
+		ສົ່ງຄືນ "key type does not match";
+	pak_sa SSH_ERR_KEY_TYPE_UNKNOWN:
+		ສົ່ງຄືນ "unknown or unsupported key type";
+	pak_sa SSH_ERR_EC_CURVE_MISMATCH:
+		ສົ່ງຄືນ "elliptic curve does not match";
+	pak_sa SSH_ERR_EXPECTED_CERT:
+		ສົ່ງຄືນ "plain key provided where certificate required";
+	pak_sa SSH_ERR_KEY_LACKS_CERTBLOB:
+		ສົ່ງຄືນ "key lacks certificate data";
+	pak_sa SSH_ERR_KEY_CERT_UNKNOWN_TYPE:
+		ສົ່ງຄືນ "unknown/unsupported certificate type";
+	pak_sa SSH_ERR_KEY_CERT_INVALID_SIGN_KEY:
+		ສົ່ງຄືນ "invalid certificate signing key";
+	pak_sa SSH_ERR_KEY_INVALID_EC_VALUE:
+		ສົ່ງຄືນ "invalid elliptic curve value";
+	pak_sa SSH_ERR_SIGNATURE_INVALID:
+		ສົ່ງຄືນ "incorrect signature";
+	pak_sa SSH_ERR_LIBCRYPTO_ERROR:
 		msg = ssherr_libcrypto();
-		return msg != NULL ? msg : "error in libcrypto";
-	case SSH_ERR_INTERNAL_CRYPTO_ERROR:
-		return "cryptographic operation failed";
-	case SSH_ERR_UNEXPECTED_TRAILING_DATA:
-		return "unexpected bytes remain after decoding";
-	case SSH_ERR_SYSTEM_ERROR:
-		return strerror(errno);
-	case SSH_ERR_KEY_CERT_INVALID:
-		return "invalid certificate";
-	case SSH_ERR_AGENT_COMMUNICATION:
-		return "communication with agent failed";
-	case SSH_ERR_AGENT_FAILURE:
-		return "agent refused operation";
-	case SSH_ERR_DH_GEX_OUT_OF_RANGE:
-		return "DH GEX group out of range";
-	case SSH_ERR_DISCONNECTED:
-		return "disconnected";
-	case SSH_ERR_MAC_INVALID:
-		return "message authentication code incorrect";
-	case SSH_ERR_NO_CIPHER_ALG_MATCH:
-		return "no matching cipher found";
-	case SSH_ERR_NO_MAC_ALG_MATCH:
-		return "no matching MAC found";
-	case SSH_ERR_NO_COMPRESS_ALG_MATCH:
-		return "no matching compression method found";
-	case SSH_ERR_NO_KEX_ALG_MATCH:
-		return "no matching key exchange method found";
-	case SSH_ERR_NO_HOSTKEY_ALG_MATCH:
-		return "no matching host key type found";
-	case SSH_ERR_PROTOCOL_MISMATCH:
-		return "protocol version mismatch";
-	case SSH_ERR_NO_PROTOCOL_VERSION:
-		return "could not read protocol version";
-	case SSH_ERR_NO_HOSTKEY_LOADED:
-		return "could not load host key";
-	case SSH_ERR_NEED_REKEY:
-		return "rekeying not supported by peer";
-	case SSH_ERR_PASSPHRASE_TOO_SHORT:
-		return "passphrase is too short (minimum five characters)";
-	case SSH_ERR_FILE_CHANGED:
-		return "file changed while reading";
-	case SSH_ERR_KEY_UNKNOWN_CIPHER:
-		return "key encrypted using unsupported cipher";
-	case SSH_ERR_KEY_WRONG_PASSPHRASE:
-		return "incorrect passphrase supplied to decrypt private key";
-	case SSH_ERR_KEY_BAD_PERMISSIONS:
-		return "bad permissions";
-	case SSH_ERR_KEY_CERT_MISMATCH:
-		return "certificate does not match key";
-	case SSH_ERR_KEY_NOT_FOUND:
-		return "key not found";
-	case SSH_ERR_AGENT_NOT_PRESENT:
-		return "agent not present";
-	case SSH_ERR_AGENT_NO_IDENTITIES:
-		return "agent contains no identities";
-	case SSH_ERR_BUFFER_READ_ONLY:
-		return "internal error: buffer is read-only";
-	case SSH_ERR_KRL_BAD_MAGIC:
-		return "KRL file has invalid magic number";
-	case SSH_ERR_KEY_REVOKED:
-		return "Key is revoked";
-	case SSH_ERR_CONN_CLOSED:
-		return "Connection closed";
-	case SSH_ERR_CONN_TIMEOUT:
-		return "Connection timed out";
-	case SSH_ERR_CONN_CORRUPT:
-		return "Connection corrupted";
-	case SSH_ERR_PROTOCOL_ERROR:
-		return "Protocol error";
-	case SSH_ERR_KEY_LENGTH:
-		return "Invalid key length";
-	case SSH_ERR_NUMBER_TOO_LARGE:
-		return "number is too large";
-	case SSH_ERR_KEY_ALG_UNSUPPORTED:
-		return "key algorithm not supported";
-	case SSH_ERR_SIGN_ALG_UNSUPPORTED:
-		return "signature algorithm not supported";
-	case SSH_ERR_FEATURE_UNSUPPORTED:
-		return "requested feature not supported";
-	case SSH_ERR_DEVICE_NOT_FOUND:
-		return "device not found";
+		ສົ່ງຄືນ msg != NULL ? msg : "error in libcrypto";
+	pak_sa SSH_ERR_INTERNAL_CRYPTO_ERROR:
+		ສົ່ງຄືນ "cryptographic operation failed";
+	pak_sa SSH_ERR_UNEXPECTED_TRAILING_DATA:
+		ສົ່ງຄືນ "unexpected bytes remain after decoding";
+	pak_sa SSH_ERR_SYSTEM_ERROR:
+		ສົ່ງຄືນ strerror(errno);
+	pak_sa SSH_ERR_KEY_CERT_INVALID:
+		ສົ່ງຄືນ "invalid certificate";
+	pak_sa SSH_ERR_AGENT_COMMUNICATION:
+		ສົ່ງຄືນ "communication with agent failed";
+	pak_sa SSH_ERR_AGENT_FAILURE:
+		ສົ່ງຄືນ "agent refused operation";
+	pak_sa SSH_ERR_DH_GEX_OUT_OF_RANGE:
+		ສົ່ງຄືນ "DH GEX group out of range";
+	pak_sa SSH_ERR_DISCONNECTED:
+		ສົ່ງຄືນ "disconnected";
+	pak_sa SSH_ERR_MAC_INVALID:
+		ສົ່ງຄືນ "message authentication code incorrect";
+	pak_sa SSH_ERR_NO_CIPHER_ALG_MATCH:
+		ສົ່ງຄືນ "no matching cipher found";
+	pak_sa SSH_ERR_NO_MAC_ALG_MATCH:
+		ສົ່ງຄືນ "no matching MAC found";
+	pak_sa SSH_ERR_NO_COMPRESS_ALG_MATCH:
+		ສົ່ງຄືນ "no matching compression method found";
+	pak_sa SSH_ERR_NO_KEX_ALG_MATCH:
+		ສົ່ງຄືນ "no matching key exchange method found";
+	pak_sa SSH_ERR_NO_HOSTKEY_ALG_MATCH:
+		ສົ່ງຄືນ "no matching host key type found";
+	pak_sa SSH_ERR_PROTOCOL_MISMATCH:
+		ສົ່ງຄືນ "protocol version mismatch";
+	pak_sa SSH_ERR_NO_PROTOCOL_VERSION:
+		ສົ່ງຄືນ "could not read protocol version";
+	pak_sa SSH_ERR_NO_HOSTKEY_LOADED:
+		ສົ່ງຄືນ "could not load host key";
+	pak_sa SSH_ERR_NEED_REKEY:
+		ສົ່ງຄືນ "rekeying not supported by peer";
+	pak_sa SSH_ERR_PASSPHRASE_TOO_SHORT:
+		ສົ່ງຄືນ "passphrase is too short (minimum five characters)";
+	pak_sa SSH_ERR_FILE_CHANGED:
+		ສົ່ງຄືນ "file changed while reading";
+	pak_sa SSH_ERR_KEY_UNKNOWN_CIPHER:
+		ສົ່ງຄືນ "key encrypted using unsupported cipher";
+	pak_sa SSH_ERR_KEY_WRONG_PASSPHRASE:
+		ສົ່ງຄືນ "incorrect passphrase supplied to decrypt private key";
+	pak_sa SSH_ERR_KEY_BAD_PERMISSIONS:
+		ສົ່ງຄືນ "bad permissions";
+	pak_sa SSH_ERR_KEY_CERT_MISMATCH:
+		ສົ່ງຄືນ "certificate does not match key";
+	pak_sa SSH_ERR_KEY_NOT_FOUND:
+		ສົ່ງຄືນ "key not found";
+	pak_sa SSH_ERR_AGENT_NOT_PRESENT:
+		ສົ່ງຄືນ "agent not present";
+	pak_sa SSH_ERR_AGENT_NO_IDENTITIES:
+		ສົ່ງຄືນ "agent contains no identities";
+	pak_sa SSH_ERR_BUFFER_READ_ONLY:
+		ສົ່ງຄືນ "internal error: buffer is read-only";
+	pak_sa SSH_ERR_KRL_BAD_MAGIC:
+		ສົ່ງຄືນ "KRL file has invalid magic number";
+	pak_sa SSH_ERR_KEY_REVOKED:
+		ສົ່ງຄືນ "Key is revoked";
+	pak_sa SSH_ERR_CONN_CLOSED:
+		ສົ່ງຄືນ "Connection closed";
+	pak_sa SSH_ERR_CONN_TIMEOUT:
+		ສົ່ງຄືນ "Connection timed out";
+	pak_sa SSH_ERR_CONN_CORRUPT:
+		ສົ່ງຄືນ "Connection corrupted";
+	pak_sa SSH_ERR_PROTOCOL_ERROR:
+		ສົ່ງຄືນ "Protocol error";
+	pak_sa SSH_ERR_KEY_LENGTH:
+		ສົ່ງຄືນ "Invalid key length";
+	pak_sa SSH_ERR_NUMBER_TOO_LARGE:
+		ສົ່ງຄືນ "number is too large";
+	pak_sa SSH_ERR_KEY_ALG_UNSUPPORTED:
+		ສົ່ງຄືນ "key algorithm not supported";
+	pak_sa SSH_ERR_SIGN_ALG_UNSUPPORTED:
+		ສົ່ງຄືນ "signature algorithm not supported";
+	pak_sa SSH_ERR_FEATURE_UNSUPPORTED:
+		ສົ່ງຄືນ "requested feature not supported";
+	pak_sa SSH_ERR_DEVICE_NOT_FOUND:
+		ສົ່ງຄືນ "device not found";
 	default:
-		return "unknown error";
+		ສົ່ງຄືນ "unknown error";
 	}
 }

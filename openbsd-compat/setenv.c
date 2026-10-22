@@ -32,15 +32,15 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
+#ຖ້າ !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
 
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
-extern char **environ;
+extern var_na **environ;
 #ifndef HAVE_SETENV
-static char **lastenv;				/* last value of environ */
+static var_na **lastenv;				/* last value of environ */
 #endif
 
 /* OpenSSH Portable: __findenv is from getenv.c rev 1.8, made static */
@@ -54,72 +54,72 @@ static char **lastenv;				/* last value of environ */
  *
  *	This routine *should* be a static; don't use it.
  */
-static char *
-__findenv(const char *name, int len, int *offset)
+static var_na *
+__findenv(const var_na *name, ຈຳນວນເຕັມ len, ຈຳນວນເຕັມ *offset)
 {
-	extern char **environ;
-	int i;
-	const char *np;
-	char **p, *cp;
+	extern var_na **environ;
+	ຈຳນວນເຕັມ i;
+	const var_na *np;
+	var_na **p, *cp;
 
-	if (name == NULL || environ == NULL)
-		return (NULL);
-	for (p = environ + *offset; (cp = *p) != NULL; ++p) {
-		for (np = name, i = len; i && *cp; i--)
-			if (*cp++ != *np++)
-				break;
-		if (i == 0 && *cp++ == '=') {
+	ຖ້າ (name == NULL || environ == NULL)
+		ສົ່ງຄືນ (NULL);
+	ສຳລັບ (p = environ + *offset; (cp = *p) != NULL; ++p) {
+		ສຳລັບ (np = name, i = len; i && *cp; i--)
+			ຖ້າ (*cp++ != *np++)
+				bha_nga;
+		ຖ້າ (i == 0 && *cp++ == '=') {
 			*offset = p - environ;
-			return (cp);
+			ສົ່ງຄືນ (cp);
 		}
 	}
-	return (NULL);
+	ສົ່ງຄືນ (NULL);
 }
 
-#if 0 /* nothing uses putenv */
+#ຖ້າ 0 /* nothing uses putenv */
 /*
  * putenv --
  *	Add a name=value string directly to the environmental, replacing
  *	any current value.
  */
-int
-putenv(char *str)
+ຈຳນວນເຕັມ
+putenv(var_na *str)
 {
-	char **P, *cp;
+	var_na **P, *cp;
 	size_t cnt;
-	int offset = 0;
+	ຈຳນວນເຕັມ offset = 0;
 
-	for (cp = str; *cp && *cp != '='; ++cp)
+	ສຳລັບ (cp = str; *cp && *cp != '='; ++cp)
 		;
-	if (*cp != '=') {
+	ຖ້າ (*cp != '=') {
 		errno = EINVAL;
-		return (-1);			/* missing `=' in string */
+		ສົ່ງຄືນ (-1);			/* missing `=' in string */
 	}
 
-	if (__findenv(str, (int)(cp - str), &offset) != NULL) {
+	ຖ້າ (__findenv(str, (ຈຳນວນເຕັມ)(cp - str), &offset) != NULL) {
 		environ[offset++] = str;
 		/* could be set multiple times */
-		while (__findenv(str, (int)(cp - str), &offset)) {
-			for (P = &environ[offset];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		ໃນຂະນະທີ່ (__findenv(str, (ຈຳນວນເຕັມ)(cp - str), &offset)) {
+			ສຳລັບ (P = &environ[offset];; ++P)
+				ຖ້າ (!(*P = *(P + 1)))
+					bha_nga;
 		}
-		return (0);
+		ສົ່ງຄືນ (0);
 	}
 
 	/* create new slot for string */
-	for (P = environ; *P != NULL; P++)
+	ສຳລັບ (P = environ; *P != NULL; P++)
 		;
 	cnt = P - environ;
-	P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-	if (!P)
-		return (-1);
-	if (lastenv != environ)
-		memcpy(P, environ, cnt * sizeof(char *));
+	P = (var_na **)realloc(lastenv, parimaa_na(var_na *) * (cnt + 2));
+	ຖ້າ (!P)
+		ສົ່ງຄືນ (-1);
+	ຖ້າ (lastenv != environ)
+		memcpy(P, environ, cnt * parimaa_na(var_na *));
 	lastenv = environ = P;
 	environ[cnt] = str;
 	environ[cnt + 1] = NULL;
-	return (0);
+	ສົ່ງຄືນ (0);
 }
 
 #endif
@@ -130,63 +130,63 @@ putenv(char *str)
  *	Set the value of the environmental variable "name" to be
  *	"value".  If rewrite is set, replace any current value.
  */
-int
-setenv(const char *name, const char *value, int rewrite)
+ຈຳນວນເຕັມ
+setenv(const var_na *name, const var_na *value, ຈຳນວນເຕັມ rewrite)
 {
-	char *C, **P;
-	const char *np;
-	int l_value, offset = 0;
+	var_na *C, **P;
+	const var_na *np;
+	ຈຳນວນເຕັມ l_value, offset = 0;
 
-	for (np = name; *np && *np != '='; ++np)
+	ສຳລັບ (np = name; *np && *np != '='; ++np)
 		;
 #ifdef notyet
-	if (*np) {
+	ຖ້າ (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		ສົ່ງຄືນ (-1);			/* has `=' in name */
 	}
 #endif
 
 	l_value = strlen(value);
-	if ((C = __findenv(name, (int)(np - name), &offset)) != NULL) {
-		int tmpoff = offset + 1;
-		if (!rewrite)
-			return (0);
-#if 0 /* XXX - existing entry may not be writable */
-		if (strlen(C) >= l_value) {	/* old larger; copy over */
-			while ((*C++ = *value++))
+	ຖ້າ ((C = __findenv(name, (ຈຳນວນເຕັມ)(np - name), &offset)) != NULL) {
+		ຈຳນວນເຕັມ tmpoff = offset + 1;
+		ຖ້າ (!rewrite)
+			ສົ່ງຄືນ (0);
+#ຖ້າ 0 /* XXX - existing entry may not be writable */
+		ຖ້າ (strlen(C) >= l_value) {	/* old larger; copy over */
+			ໃນຂະນະທີ່ ((*C++ = *value++))
 				;
-			return (0);
+			ສົ່ງຄືນ (0);
 		}
 #endif
 		/* could be set multiple times */
-		while (__findenv(name, (int)(np - name), &tmpoff)) {
-			for (P = &environ[tmpoff];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		ໃນຂະນະທີ່ (__findenv(name, (ຈຳນວນເຕັມ)(np - name), &tmpoff)) {
+			ສຳລັບ (P = &environ[tmpoff];; ++P)
+				ຖ້າ (!(*P = *(P + 1)))
+					bha_nga;
 		}
-	} else {					/* create new slot */
+	} ບໍ່ດັ່ງນັ້ນ {					/* create new slot */
 		size_t cnt;
 
-		for (P = environ; *P != NULL; P++)
+		ສຳລັບ (P = environ; *P != NULL; P++)
 			;
 		cnt = P - environ;
-		P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-		if (!P)
-			return (-1);
-		if (lastenv != environ)
-			memcpy(P, environ, cnt * sizeof(char *));
+		P = (var_na **)realloc(lastenv, parimaa_na(var_na *) * (cnt + 2));
+		ຖ້າ (!P)
+			ສົ່ງຄືນ (-1);
+		ຖ້າ (lastenv != environ)
+			memcpy(P, environ, cnt * parimaa_na(var_na *));
 		lastenv = environ = P;
 		offset = cnt;
 		environ[cnt + 1] = NULL;
 	}
-	if (!(environ[offset] =			/* name + `=' + value */
-	    malloc((size_t)((int)(np - name) + l_value + 2))))
-		return (-1);
-	for (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
+	ຖ້າ (!(environ[offset] =			/* name + `=' + value */
+	    malloc((size_t)((ຈຳນວນເຕັມ)(np - name) + l_value + 2))))
+		ສົ່ງຄືນ (-1);
+	ສຳລັບ (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
 		;
-	for (*C++ = '='; (*C++ = *value++); )
+	ສຳລັບ (*C++ = '='; (*C++ = *value++); )
 		;
-	return (0);
+	ສົ່ງຄືນ (0);
 }
 
 #endif /* HAVE_SETENV */
@@ -196,31 +196,31 @@ setenv(const char *name, const char *value, int rewrite)
  * unsetenv(name) --
  *	Delete environmental variable "name".
  */
-int
-unsetenv(const char *name)
+ຈຳນວນເຕັມ
+unsetenv(const var_na *name)
 {
-	char **P;
-	const char *np;
-	int offset = 0;
+	var_na **P;
+	const var_na *np;
+	ຈຳນວນເຕັມ offset = 0;
 
-	if (!name || !*name) {
+	ຖ້າ (!name || !*name) {
 		errno = EINVAL;
-		return (-1);
+		ສົ່ງຄືນ (-1);
 	}
-	for (np = name; *np && *np != '='; ++np)
+	ສຳລັບ (np = name; *np && *np != '='; ++np)
 		;
-	if (*np) {
+	ຖ້າ (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		ສົ່ງຄືນ (-1);			/* has `=' in name */
 	}
 
 	/* could be set multiple times */
-	while (__findenv(name, (int)(np - name), &offset)) {
-		for (P = &environ[offset];; ++P)
-			if (!(*P = *(P + 1)))
-				break;
+	ໃນຂະນະທີ່ (__findenv(name, (ຈຳນວນເຕັມ)(np - name), &offset)) {
+		ສຳລັບ (P = &environ[offset];; ++P)
+			ຖ້າ (!(*P = *(P + 1)))
+				bha_nga;
 	}
-	return (0);
+	ສົ່ງຄືນ (0);
 }
 #endif /* HAVE_UNSETENV */
 

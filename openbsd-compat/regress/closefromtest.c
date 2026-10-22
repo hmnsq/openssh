@@ -27,37 +27,37 @@
 #define NUM_OPENS 10
 
 void
-fail(char *msg)
+fail(var_na *msg)
 {
 	fprintf(stderr, "closefrom: %s\n", msg);
 	exit(1);
 }
 
-int
+ຈຳນວນເຕັມ
 main(void)
 {
-	int i, max, fds[NUM_OPENS];
-	char buf[512];
+	ຈຳນວນເຕັມ i, max, fds[NUM_OPENS];
+	var_na buf[512];
 
-	for (i = 0; i < NUM_OPENS; i++)
-		if ((fds[i] = open("/dev/null", O_RDONLY)) == -1)
+	ສຳລັບ (i = 0; i < NUM_OPENS; i++)
+		ຖ້າ ((fds[i] = open("/dev/null", O_RDONLY)) == -1)
 			exit(0);	/* can't test */
 	max = i - 1;
 
 	/* should close last fd only */
 	closefrom(fds[max]);
-	if (close(fds[max]) != -1)
+	ຖ້າ (close(fds[max]) != -1)
 		fail("failed to close highest fd");
 
 	/* make sure we can still use remaining descriptors */
-	for (i = 0; i < max; i++)
-		if (read(fds[i], buf, sizeof(buf)) == -1)
+	ສຳລັບ (i = 0; i < max; i++)
+		ຖ້າ (read(fds[i], buf, parimaa_na(buf)) == -1)
 			fail("closed descriptors it should not have");
 
 	/* should close all fds */
 	closefrom(fds[0]);
-	for (i = 0; i < NUM_OPENS; i++)
-		if (close(fds[i]) != -1)
+	ສຳລັບ (i = 0; i < NUM_OPENS; i++)
+		ຖ້າ (close(fds[i]) != -1)
 			fail("failed to close from lowest fd");
-	return 0;
+	ສົ່ງຄືນ 0;
 }

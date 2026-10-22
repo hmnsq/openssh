@@ -26,14 +26,14 @@ const u_char test_buf[] = "\x01\x12\x34\x56\x78\x00\x00\x00\x05hello";
 void
 sshbuf_fixed(void)
 {
-	struct sshbuf *p1, *p2, *p3;
+	sa_nracanaa sshbuf *p1, *p2, *p3;
 	u_char c;
-	char *s;
+	var_na *s;
 	u_int i;
 	size_t l;
 
 	TEST_START("sshbuf_from");
-	p1 = sshbuf_from(test_buf, sizeof(test_buf));
+	p1 = sshbuf_from(test_buf, parimaa_na(test_buf));
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_PTR_EQ(sshbuf_mutable_ptr(p1), NULL);
 	ASSERT_INT_EQ(sshbuf_check_reserve(p1, 1), SSH_ERR_BUFFER_READ_ONLY);
@@ -46,7 +46,7 @@ sshbuf_fixed(void)
 	TEST_DONE();
 
 	TEST_START("sshbuf_from data");
-	p1 = sshbuf_from(test_buf, sizeof(test_buf) - 1);
+	p1 = sshbuf_from(test_buf, parimaa_na(test_buf) - 1);
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_PTR_EQ(sshbuf_ptr(p1), test_buf);
 	ASSERT_INT_EQ(sshbuf_get_u8(p1, &c), 0);
@@ -68,7 +68,7 @@ sshbuf_fixed(void)
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_U_INT_EQ(sshbuf_refcount(p1), 1);
 	ASSERT_PTR_EQ(sshbuf_parent(p1), NULL);
-	ASSERT_INT_EQ(sshbuf_put(p1, test_buf, sizeof(test_buf) - 1), 0);
+	ASSERT_INT_EQ(sshbuf_put(p1, test_buf, parimaa_na(test_buf) - 1), 0);
 	p2 = sshbuf_fromb(p1);
 	ASSERT_PTR_NE(p2, NULL);
 	ASSERT_U_INT_EQ(sshbuf_refcount(p1), 2);
@@ -104,15 +104,15 @@ sshbuf_fixed(void)
 	ASSERT_INT_EQ(sshbuf_put_cstring(p1, "hello"), 0);
 	p2 = sshbuf_new();
 	ASSERT_PTR_NE(p2, NULL);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(test_buf) - 1);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), parimaa_na(test_buf) - 1);
 	ASSERT_INT_EQ(sshbuf_put_stringb(p2, p1), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p2), sizeof(test_buf) + 4 - 1);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p2), parimaa_na(test_buf) + 4 - 1);
 	ASSERT_INT_EQ(sshbuf_froms(p2, &p3), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p2), 0);
 	ASSERT_PTR_NE(p3, NULL);
 	ASSERT_PTR_NE(sshbuf_ptr(p3), NULL);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p3), sizeof(test_buf) - 1);
-	ASSERT_MEM_EQ(sshbuf_ptr(p3), test_buf, sizeof(test_buf) - 1);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p3), parimaa_na(test_buf) - 1);
+	ASSERT_MEM_EQ(sshbuf_ptr(p3), test_buf, parimaa_na(test_buf) - 1);
 	sshbuf_free(p3);
 	ASSERT_INT_EQ(sshbuf_put_stringb(p2, p1), 0);
 	ASSERT_INT_EQ(sshbuf_consume_end(p2, 1), 0);

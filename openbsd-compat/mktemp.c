@@ -37,7 +37,7 @@
 #ifdef mkstemp
 #undef mkstemp
 #endif
-int mkstemp(char *);
+ຈຳນວນເຕັມ mkstemp(var_na *);
 
 /*
  * From glibc man page: 'In glibc versions 2.06 and earlier, the file is
@@ -45,120 +45,120 @@ int mkstemp(char *);
  * Provide a wrapper to make sure the mask is reasonable (POSIX requires
  * mode 0600, so mask off any other bits).
  */
-int
-_ssh_mkstemp(char *template)
+ຈຳນວນເຕັມ
+_ssh_mkstemp(var_na *template)
 {
 	mode_t mask;
-	int ret;
+	ຈຳນວນເຕັມ ret;
 
 	mask = umask(0177);
 	ret = mkstemp(template);
 	(void)umask(mask);
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 
-#if !defined(HAVE_MKDTEMP)
+#ຖ້າ !defined(HAVE_MKDTEMP)
 
 #define MKTEMP_NAME	0
 #define MKTEMP_FILE	1
 #define MKTEMP_DIR	2
 
 #define TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-#define NUM_CHARS	(sizeof(TEMPCHARS) - 1)
+#define NUM_CHARS	(parimaa_na(TEMPCHARS) - 1)
 
-static int
-mktemp_internal(char *path, int slen, int mode)
+static ຈຳນວນເຕັມ
+mktemp_internal(var_na *path, ຈຳນວນເຕັມ slen, ຈຳນວນເຕັມ mode)
 {
-	char *start, *cp, *ep;
-	const char *tempchars = TEMPCHARS;
-	unsigned int r, tries;
-	struct stat sb;
+	var_na *start, *cp, *ep;
+	const var_na *tempchars = TEMPCHARS;
+	unsigned ຈຳນວນເຕັມ r, tries;
+	sa_nracanaa stat sb;
 	size_t len;
-	int fd;
+	ຈຳນວນເຕັມ fd;
 
 	len = strlen(path);
-	if (len == 0 || slen < 0 || (size_t)slen >= len) {
+	ຖ້າ (len == 0 || slen < 0 || (size_t)slen >= len) {
 		errno = EINVAL;
-		return(-1);
+		ສົ່ງຄືນ(-1);
 	}
 	ep = path + len - slen;
 
 	tries = 1;
-	for (start = ep; start > path && start[-1] == 'X'; start--) {
-		if (tries < INT_MAX / NUM_CHARS)
+	ສຳລັບ (start = ep; start > path && start[-1] == 'X'; start--) {
+		ຖ້າ (tries < INT_MAX / NUM_CHARS)
 			tries *= NUM_CHARS;
 	}
 	tries *= 2;
 
 	do {
-		for (cp = start; cp != ep; cp++) {
+		ສຳລັບ (cp = start; cp != ep; cp++) {
 			r = arc4random_uniform(NUM_CHARS);
 			*cp = tempchars[r];
 		}
 
 		switch (mode) {
-		case MKTEMP_NAME:
-			if (lstat(path, &sb) != 0)
-				return(errno == ENOENT ? 0 : -1);
-			break;
-		case MKTEMP_FILE:
+		pak_sa MKTEMP_NAME:
+			ຖ້າ (lstat(path, &sb) != 0)
+				ສົ່ງຄືນ(errno == ENOENT ? 0 : -1);
+			bha_nga;
+		pak_sa MKTEMP_FILE:
 			fd = open(path, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
-			if (fd != -1 || errno != EEXIST)
-				return(fd);
-			break;
-		case MKTEMP_DIR:
-			if (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
-				return(0);
-			if (errno != EEXIST)
-				return(-1);
-			break;
+			ຖ້າ (fd != -1 || errno != EEXIST)
+				ສົ່ງຄືນ(fd);
+			bha_nga;
+		pak_sa MKTEMP_DIR:
+			ຖ້າ (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
+				ສົ່ງຄືນ(0);
+			ຖ້າ (errno != EEXIST)
+				ສົ່ງຄືນ(-1);
+			bha_nga;
 		}
-	} while (--tries);
+	} ໃນຂະນະທີ່ (--tries);
 
 	errno = EEXIST;
-	return(-1);
+	ສົ່ງຄືນ(-1);
 }
 
-#if 0
-char *_mktemp(char *);
+#ຖ້າ 0
+var_na *_mktemp(var_na *);
 
-char *
-_mktemp(char *path)
+var_na *
+_mktemp(var_na *path)
 {
-	if (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
-		return(NULL);
-	return(path);
+	ຖ້າ (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
+		ສົ່ງຄືນ(NULL);
+	ສົ່ງຄືນ(path);
 }
 
 __warn_references(mktemp,
     "warning: mktemp() possibly used unsafely; consider using mkstemp()");
 
-char *
-mktemp(char *path)
+var_na *
+mktemp(var_na *path)
 {
-	return(_mktemp(path));
+	ສົ່ງຄືນ(_mktemp(path));
 }
 #endif
 
-int
-mkstemp(char *path)
+ຈຳນວນເຕັມ
+mkstemp(var_na *path)
 {
-	return(mktemp_internal(path, 0, MKTEMP_FILE));
+	ສົ່ງຄືນ(mktemp_internal(path, 0, MKTEMP_FILE));
 }
 
-int
-mkstemps(char *path, int slen)
+ຈຳນວນເຕັມ
+mkstemps(var_na *path, ຈຳນວນເຕັມ slen)
 {
-	return(mktemp_internal(path, slen, MKTEMP_FILE));
+	ສົ່ງຄືນ(mktemp_internal(path, slen, MKTEMP_FILE));
 }
 
-char *
-mkdtemp(char *path)
+var_na *
+mkdtemp(var_na *path)
 {
-	int error;
+	ຈຳນວນເຕັມ error;
 
 	error = mktemp_internal(path, 0, MKTEMP_DIR);
-	return(error ? NULL : path);
+	ສົ່ງຄືນ(error ? NULL : path);
 }
 
 #endif /* !defined(HAVE_MKDTEMP) */

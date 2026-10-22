@@ -49,7 +49,7 @@
 #include "sftp.h"
 #include "sftp-common.h"
 
-char *sftp_realpath(const char *, char *); /* sftp-realpath.c */
+var_na *sftp_realpath(const var_na *, var_na *); /* sftp-realpath.c */
 
 /* Maximum data read that we are willing to accept */
 #define SFTP_MAX_READ_LENGTH (SFTP_MAX_MSG_LENGTH - 1024)
@@ -58,31 +58,31 @@ char *sftp_realpath(const char *, char *); /* sftp-realpath.c */
 static LogLevel log_level = SYSLOG_LEVEL_ERROR;
 
 /* Our client */
-static struct passwd *pw = NULL;
-static char *client_addr = NULL;
+static sa_nracanaa passwd *pw = NULL;
+static var_na *client_addr = NULL;
 
 /* input and output queue */
-struct sshbuf *iqueue;
-struct sshbuf *oqueue;
+sa_nracanaa sshbuf *iqueue;
+sa_nracanaa sshbuf *oqueue;
 
 /* Version of client */
 static u_int version;
 
 /* SSH2_FXP_INIT received */
-static int init_done;
+static ຈຳນວນເຕັມ init_done;
 
 /* Disable writes */
-static int readonly;
+static ຈຳນວນເຕັມ readonly;
 
 /* Requests that are allowed/denied */
-static char *request_allowlist, *request_denylist;
+static var_na *request_allowlist, *request_denylist;
 
 /* portable attributes, etc. */
-typedef struct Stat Stat;
+typedef sa_nracanaa Stat Stat;
 
-struct Stat {
-	char *name;
-	char *long_name;
+sa_nracanaa Stat {
+	var_na *name;
+	var_na *long_name;
 	Attrib attrib;
 };
 
@@ -118,15 +118,15 @@ static void process_extended_home_directory(uint32_t id);
 static void process_extended_get_users_groups_by_id(uint32_t id);
 static void process_extended(uint32_t id);
 
-struct sftp_handler {
-	const char *name;	/* user-visible name for fine-grained perms */
-	const char *ext_name;	/* extended request name */
+sa_nracanaa sftp_handler {
+	const var_na *name;	/* user-visible name for fine-grained perms */
+	const var_na *ext_name;	/* extended request name */
 	u_int type;		/* packet type, for non extended packets */
 	void (*handler)(uint32_t);
-	int does_write;		/* if nonzero, banned for readonly mode */
+	ຈຳນວນເຕັມ does_write;		/* if nonzero, banned for readonly mode */
 };
 
-static const struct sftp_handler handlers[] = {
+static const sa_nracanaa sftp_handler handlers[] = {
 	/* NB. SSH2_FXP_OPEN does the readonly check in the handler itself */
 	{ "open", NULL, SSH2_FXP_OPEN, process_open, 0 },
 	{ "close", NULL, SSH2_FXP_CLOSE, process_close, 0 },
@@ -150,7 +150,7 @@ static const struct sftp_handler handlers[] = {
 };
 
 /* SSH2_FXP_EXTENDED submessages */
-static const struct sftp_handler extended_handlers[] = {
+static const sa_nracanaa sftp_handler extended_handlers[] = {
 	{ "posix-rename", "posix-rename@openssh.com", 0,
 	    process_extended_posix_rename, 1 },
 	{ "statvfs", "statvfs@openssh.com", 0, process_extended_statvfs, 0 },
@@ -169,147 +169,147 @@ static const struct sftp_handler extended_handlers[] = {
 	{ NULL, NULL, 0, NULL, 0 }
 };
 
-static const struct sftp_handler *
-extended_handler_byname(const char *name)
+static const sa_nracanaa sftp_handler *
+extended_handler_byname(const var_na *name)
 {
-	int i;
+	ຈຳນວນເຕັມ i;
 
-	for (i = 0; extended_handlers[i].handler != NULL; i++) {
-		if (strcmp(name, extended_handlers[i].ext_name) == 0)
-			return &extended_handlers[i];
+	ສຳລັບ (i = 0; extended_handlers[i].handler != NULL; i++) {
+		ຖ້າ (strcmp(name, extended_handlers[i].ext_name) == 0)
+			ສົ່ງຄືນ &extended_handlers[i];
 	}
-	return NULL;
+	ສົ່ງຄືນ NULL;
 }
 
-static int
-request_permitted(const struct sftp_handler *h)
+static ຈຳນວນເຕັມ
+request_permitted(const sa_nracanaa sftp_handler *h)
 {
-	char *result;
+	var_na *result;
 
-	if (readonly && h->does_write) {
+	ຖ້າ (readonly && h->does_write) {
 		verbose("Refusing %s request in read-only mode", h->name);
-		return 0;
+		ສົ່ງຄືນ 0;
 	}
-	if (request_denylist != NULL &&
+	ຖ້າ (request_denylist != NULL &&
 	    ((result = match_list(h->name, request_denylist, NULL))) != NULL) {
 		free(result);
 		verbose("Refusing denylisted %s request", h->name);
-		return 0;
+		ສົ່ງຄືນ 0;
 	}
-	if (request_allowlist != NULL &&
+	ຖ້າ (request_allowlist != NULL &&
 	    ((result = match_list(h->name, request_allowlist, NULL))) != NULL) {
 		free(result);
 		debug2("Permitting allowlisted %s request", h->name);
-		return 1;
+		ສົ່ງຄືນ 1;
 	}
-	if (request_allowlist != NULL) {
+	ຖ້າ (request_allowlist != NULL) {
 		verbose("Refusing non-allowlisted %s request", h->name);
-		return 0;
+		ສົ່ງຄືນ 0;
 	}
-	return 1;
+	ສົ່ງຄືນ 1;
 }
 
-static int
-errno_to_portable(int unixerrno)
+static ຈຳນວນເຕັມ
+errno_to_portable(ຈຳນວນເຕັມ unixerrno)
 {
-	int ret = 0;
+	ຈຳນວນເຕັມ ret = 0;
 
 	switch (unixerrno) {
-	case 0:
+	pak_sa 0:
 		ret = SSH2_FX_OK;
-		break;
-	case ENOENT:
-	case ENOTDIR:
-	case EBADF:
-	case ELOOP:
+		bha_nga;
+	pak_sa ENOENT:
+	pak_sa ENOTDIR:
+	pak_sa EBADF:
+	pak_sa ELOOP:
 		ret = SSH2_FX_NO_SUCH_FILE;
-		break;
-	case EPERM:
-	case EACCES:
-	case EFAULT:
+		bha_nga;
+	pak_sa EPERM:
+	pak_sa EACCES:
+	pak_sa EFAULT:
 		ret = SSH2_FX_PERMISSION_DENIED;
-		break;
-	case ENAMETOOLONG:
-	case EINVAL:
+		bha_nga;
+	pak_sa ENAMETOOLONG:
+	pak_sa EINVAL:
 		ret = SSH2_FX_BAD_MESSAGE;
-		break;
-	case ENOSYS:
+		bha_nga;
+	pak_sa ENOSYS:
 		ret = SSH2_FX_OP_UNSUPPORTED;
-		break;
+		bha_nga;
 	default:
 		ret = SSH2_FX_FAILURE;
-		break;
+		bha_nga;
 	}
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 
-static int
-flags_from_portable(int pflags)
+static ຈຳນວນເຕັມ
+flags_from_portable(ຈຳນວນເຕັມ pflags)
 {
-	int flags = 0;
+	ຈຳນວນເຕັມ flags = 0;
 
-	if ((pflags & SSH2_FXF_READ) &&
+	ຖ້າ ((pflags & SSH2_FXF_READ) &&
 	    (pflags & SSH2_FXF_WRITE)) {
 		flags = O_RDWR;
-	} else if (pflags & SSH2_FXF_READ) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (pflags & SSH2_FXF_READ) {
 		flags = O_RDONLY;
-	} else if (pflags & SSH2_FXF_WRITE) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (pflags & SSH2_FXF_WRITE) {
 		flags = O_WRONLY;
 	}
-	if (pflags & SSH2_FXF_APPEND)
+	ຖ້າ (pflags & SSH2_FXF_APPEND)
 		flags |= O_APPEND;
-	if (pflags & SSH2_FXF_CREAT)
+	ຖ້າ (pflags & SSH2_FXF_CREAT)
 		flags |= O_CREAT;
-	if (pflags & SSH2_FXF_TRUNC)
+	ຖ້າ (pflags & SSH2_FXF_TRUNC)
 		flags |= O_TRUNC;
-	if (pflags & SSH2_FXF_EXCL)
+	ຖ້າ (pflags & SSH2_FXF_EXCL)
 		flags |= O_EXCL;
-	return flags;
+	ສົ່ງຄືນ flags;
 }
 
-static const char *
-string_from_portable(int pflags)
+static const var_na *
+string_from_portable(ຈຳນວນເຕັມ pflags)
 {
-	static char ret[128];
+	static var_na ret[128];
 
 	*ret = '\0';
 
 #define PAPPEND(str)	{				\
-		if (*ret != '\0')			\
-			strlcat(ret, ",", sizeof(ret));	\
-		strlcat(ret, str, sizeof(ret));		\
+		ຖ້າ (*ret != '\0')			\
+			strlcat(ret, ",", parimaa_na(ret));	\
+		strlcat(ret, str, parimaa_na(ret));		\
 	}
 
-	if (pflags & SSH2_FXF_READ)
+	ຖ້າ (pflags & SSH2_FXF_READ)
 		PAPPEND("READ")
-	if (pflags & SSH2_FXF_WRITE)
+	ຖ້າ (pflags & SSH2_FXF_WRITE)
 		PAPPEND("WRITE")
-	if (pflags & SSH2_FXF_APPEND)
+	ຖ້າ (pflags & SSH2_FXF_APPEND)
 		PAPPEND("APPEND")
-	if (pflags & SSH2_FXF_CREAT)
+	ຖ້າ (pflags & SSH2_FXF_CREAT)
 		PAPPEND("CREATE")
-	if (pflags & SSH2_FXF_TRUNC)
+	ຖ້າ (pflags & SSH2_FXF_TRUNC)
 		PAPPEND("TRUNCATE")
-	if (pflags & SSH2_FXF_EXCL)
+	ຖ້າ (pflags & SSH2_FXF_EXCL)
 		PAPPEND("EXCL")
 
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 
 /* handle handles */
 
-typedef struct Handle Handle;
-struct Handle {
-	int use;
+typedef sa_nracanaa Handle Handle;
+sa_nracanaa Handle {
+	ຈຳນວນເຕັມ use;
 	DIR *dirp;
-	int fd;
-	int flags;
-	char *name;
+	ຈຳນວນເຕັມ fd;
+	ຈຳນວນເຕັມ flags;
+	var_na *name;
 	uint64_t bytes_read, bytes_write;
-	int next_unused;
+	ຈຳນວນເຕັມ next_unused;
 };
 
-enum {
+ga_nanaa {
 	HANDLE_UNUSED,
 	HANDLE_DIR,
 	HANDLE_FILE
@@ -317,25 +317,25 @@ enum {
 
 static Handle *handles = NULL;
 static u_int num_handles = 0;
-static int first_unused_handle = -1;
+static ຈຳນວນເຕັມ first_unused_handle = -1;
 
-static void handle_unused(int i)
+static void handle_unused(ຈຳນວນເຕັມ i)
 {
 	handles[i].use = HANDLE_UNUSED;
 	handles[i].next_unused = first_unused_handle;
 	first_unused_handle = i;
 }
 
-static int
-handle_new(int use, const char *name, int fd, int flags, DIR *dirp)
+static ຈຳນວນເຕັມ
+handle_new(ຈຳນວນເຕັມ use, const var_na *name, ຈຳນວນເຕັມ fd, ຈຳນວນເຕັມ flags, DIR *dirp)
 {
-	int i;
+	ຈຳນວນເຕັມ i;
 
-	if (first_unused_handle == -1) {
-		if (num_handles + 1 <= num_handles)
-			return -1;
+	ຖ້າ (first_unused_handle == -1) {
+		ຖ້າ (num_handles + 1 <= num_handles)
+			ສົ່ງຄືນ -1;
 		num_handles++;
-		handles = xreallocarray(handles, num_handles, sizeof(Handle));
+		handles = xreallocarray(handles, num_handles, parimaa_na(Handle));
 		handle_unused(num_handles - 1);
 	}
 
@@ -349,132 +349,132 @@ handle_new(int use, const char *name, int fd, int flags, DIR *dirp)
 	handles[i].name = xstrdup(name);
 	handles[i].bytes_read = handles[i].bytes_write = 0;
 
-	return i;
+	ສົ່ງຄືນ i;
 }
 
-static int
-handle_is_ok(int i, int type)
+static ຈຳນວນເຕັມ
+handle_is_ok(ຈຳນວນເຕັມ i, ຈຳນວນເຕັມ type)
 {
-	return i >= 0 && (u_int)i < num_handles && handles[i].use == type;
+	ສົ່ງຄືນ i >= 0 && (u_int)i < num_handles && handles[i].use == type;
 }
 
-static int
-handle_to_string(int handle, u_char **stringp, int *hlenp)
+static ຈຳນວນເຕັມ
+handle_to_string(ຈຳນວນເຕັມ handle, u_char **stringp, ຈຳນວນເຕັມ *hlenp)
 {
-	if (stringp == NULL || hlenp == NULL)
-		return -1;
-	*stringp = xmalloc(sizeof(int32_t));
+	ຖ້າ (stringp == NULL || hlenp == NULL)
+		ສົ່ງຄືນ -1;
+	*stringp = xmalloc(parimaa_na(int32_t));
 	put_u32(*stringp, handle);
-	*hlenp = sizeof(int32_t);
-	return 0;
+	*hlenp = parimaa_na(int32_t);
+	ສົ່ງຄືນ 0;
 }
 
-static int
+static ຈຳນວນເຕັມ
 handle_from_string(const u_char *handle, u_int hlen)
 {
-	int val;
+	ຈຳນວນເຕັມ val;
 
-	if (hlen != sizeof(int32_t))
-		return -1;
+	ຖ້າ (hlen != parimaa_na(int32_t))
+		ສົ່ງຄືນ -1;
 	val = get_u32(handle);
-	if (handle_is_ok(val, HANDLE_FILE) ||
+	ຖ້າ (handle_is_ok(val, HANDLE_FILE) ||
 	    handle_is_ok(val, HANDLE_DIR))
-		return val;
-	return -1;
+		ສົ່ງຄືນ val;
+	ສົ່ງຄືນ -1;
 }
 
-static char *
-handle_to_name(int handle)
+static var_na *
+handle_to_name(ຈຳນວນເຕັມ handle)
 {
-	if (handle_is_ok(handle, HANDLE_DIR)||
+	ຖ້າ (handle_is_ok(handle, HANDLE_DIR)||
 	    handle_is_ok(handle, HANDLE_FILE))
-		return handles[handle].name;
-	return NULL;
+		ສົ່ງຄືນ handles[handle].name;
+	ສົ່ງຄືນ NULL;
 }
 
 static DIR *
-handle_to_dir(int handle)
+handle_to_dir(ຈຳນວນເຕັມ handle)
 {
-	if (handle_is_ok(handle, HANDLE_DIR))
-		return handles[handle].dirp;
-	return NULL;
+	ຖ້າ (handle_is_ok(handle, HANDLE_DIR))
+		ສົ່ງຄືນ handles[handle].dirp;
+	ສົ່ງຄືນ NULL;
 }
 
-static int
-handle_to_fd(int handle)
+static ຈຳນວນເຕັມ
+handle_to_fd(ຈຳນວນເຕັມ handle)
 {
-	if (handle_is_ok(handle, HANDLE_FILE))
-		return handles[handle].fd;
-	return -1;
+	ຖ້າ (handle_is_ok(handle, HANDLE_FILE))
+		ສົ່ງຄືນ handles[handle].fd;
+	ສົ່ງຄືນ -1;
 }
 
-static int
-handle_to_flags(int handle)
+static ຈຳນວນເຕັມ
+handle_to_flags(ຈຳນວນເຕັມ handle)
 {
-	if (handle_is_ok(handle, HANDLE_FILE))
-		return handles[handle].flags;
-	return 0;
+	ຖ້າ (handle_is_ok(handle, HANDLE_FILE))
+		ສົ່ງຄືນ handles[handle].flags;
+	ສົ່ງຄືນ 0;
 }
 
 static void
-handle_update_read(int handle, ssize_t bytes)
+handle_update_read(ຈຳນວນເຕັມ handle, ssize_t bytes)
 {
-	if (handle_is_ok(handle, HANDLE_FILE) && bytes > 0)
+	ຖ້າ (handle_is_ok(handle, HANDLE_FILE) && bytes > 0)
 		handles[handle].bytes_read += bytes;
 }
 
 static void
-handle_update_write(int handle, ssize_t bytes)
+handle_update_write(ຈຳນວນເຕັມ handle, ssize_t bytes)
 {
-	if (handle_is_ok(handle, HANDLE_FILE) && bytes > 0)
+	ຖ້າ (handle_is_ok(handle, HANDLE_FILE) && bytes > 0)
 		handles[handle].bytes_write += bytes;
 }
 
 static uint64_t
-handle_bytes_read(int handle)
+handle_bytes_read(ຈຳນວນເຕັມ handle)
 {
-	if (handle_is_ok(handle, HANDLE_FILE))
-		return (handles[handle].bytes_read);
-	return 0;
+	ຖ້າ (handle_is_ok(handle, HANDLE_FILE))
+		ສົ່ງຄືນ (handles[handle].bytes_read);
+	ສົ່ງຄືນ 0;
 }
 
 static uint64_t
-handle_bytes_write(int handle)
+handle_bytes_write(ຈຳນວນເຕັມ handle)
 {
-	if (handle_is_ok(handle, HANDLE_FILE))
-		return (handles[handle].bytes_write);
-	return 0;
+	ຖ້າ (handle_is_ok(handle, HANDLE_FILE))
+		ສົ່ງຄືນ (handles[handle].bytes_write);
+	ສົ່ງຄືນ 0;
 }
 
-static int
-handle_close(int handle)
+static ຈຳນວນເຕັມ
+handle_close(ຈຳນວນເຕັມ handle)
 {
-	int ret = -1;
+	ຈຳນວນເຕັມ ret = -1;
 
-	if (handle_is_ok(handle, HANDLE_FILE)) {
+	ຖ້າ (handle_is_ok(handle, HANDLE_FILE)) {
 		ret = close(handles[handle].fd);
 		free(handles[handle].name);
 		handle_unused(handle);
-	} else if (handle_is_ok(handle, HANDLE_DIR)) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (handle_is_ok(handle, HANDLE_DIR)) {
 		ret = closedir(handles[handle].dirp);
 		free(handles[handle].name);
 		handle_unused(handle);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		errno = ENOENT;
 	}
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 
 static void
-handle_log_close(int handle, char *emsg)
+handle_log_close(ຈຳນວນເຕັມ handle, var_na *emsg)
 {
-	if (handle_is_ok(handle, HANDLE_FILE)) {
+	ຖ້າ (handle_is_ok(handle, HANDLE_FILE)) {
 		logit("%s%sclose \"%s\" bytes read %llu written %llu",
 		    emsg == NULL ? "" : emsg, emsg == NULL ? "" : " ",
 		    handle_to_name(handle),
 		    (unsigned long long)handle_bytes_read(handle),
 		    (unsigned long long)handle_bytes_write(handle));
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		logit("%s%sclosedir \"%s\"",
 		    emsg == NULL ? "" : emsg, emsg == NULL ? "" : " ",
 		    handle_to_name(handle));
@@ -486,43 +486,43 @@ handle_log_exit(void)
 {
 	u_int i;
 
-	for (i = 0; i < num_handles; i++)
-		if (handles[i].use != HANDLE_UNUSED)
+	ສຳລັບ (i = 0; i < num_handles; i++)
+		ຖ້າ (handles[i].use != HANDLE_UNUSED)
 			handle_log_close(i, "forced");
 }
 
-static int
-get_handle(struct sshbuf *queue, int *hp)
+static ຈຳນວນເຕັມ
+get_handle(sa_nracanaa sshbuf *queue, ຈຳນວນເຕັມ *hp)
 {
 	u_char *handle;
-	int r;
+	ຈຳນວນເຕັມ r;
 	size_t hlen;
 
 	*hp = -1;
-	if ((r = sshbuf_get_string(queue, &handle, &hlen)) != 0)
-		return r;
-	if (hlen < 256)
+	ຖ້າ ((r = sshbuf_get_string(queue, &handle, &hlen)) != 0)
+		ສົ່ງຄືນ r;
+	ຖ້າ (hlen < 256)
 		*hp = handle_from_string(handle, hlen);
 	free(handle);
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 /* send replies */
 
 static void
-send_msg(struct sshbuf *m)
+send_msg(sa_nracanaa sshbuf *m)
 {
-	int r;
+	ຈຳນວນເຕັມ r;
 
-	if ((r = sshbuf_put_stringb(oqueue, m)) != 0)
+	ຖ້າ ((r = sshbuf_put_stringb(oqueue, m)) != 0)
 		fatal_fr(r, "enqueue");
 	sshbuf_reset(m);
 }
 
-static const char *
+static const var_na *
 status_to_message(uint32_t status)
 {
-	static const char * const status_messages[] = {
+	static const var_na * const status_messages[] = {
 		"Success",			/* SSH_FX_OK */
 		"End of file",			/* SSH_FX_EOF */
 		"No such file",			/* SSH_FX_NO_SUCH_FILE */
@@ -534,27 +534,27 @@ status_to_message(uint32_t status)
 		"Operation unsupported",	/* SSH_FX_OP_UNSUPPORTED */
 		"Unknown error"			/* Others */
 	};
-	return (status_messages[MINIMUM(status,SSH2_FX_MAX)]);
+	ສົ່ງຄືນ (status_messages[MINIMUM(status,SSH2_FX_MAX)]);
 }
 
 static void
-send_status_errmsg(uint32_t id, uint32_t status, const char *errmsg)
+send_status_errmsg(uint32_t id, uint32_t status, const var_na *errmsg)
 {
-	struct sshbuf *msg;
-	int r;
+	sa_nracanaa sshbuf *msg;
+	ຈຳນວນເຕັມ r;
 
 	debug3("request %u: sent status %u", id, status);
-	if (log_level > SYSLOG_LEVEL_VERBOSE ||
+	ຖ້າ (log_level > SYSLOG_LEVEL_VERBOSE ||
 	    (status != SSH2_FX_OK && status != SSH2_FX_EOF))
 		logit("sent status %s", status_to_message(status));
-	if ((msg = sshbuf_new()) == NULL)
+	ຖ້າ ((msg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_STATUS)) != 0 ||
+	ຖ້າ ((r = sshbuf_put_u8(msg, SSH2_FXP_STATUS)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_u32(msg, status)) != 0)
 		fatal_fr(r, "compose");
-	if (version >= 3) {
-		if ((r = sshbuf_put_cstring(msg, errmsg == NULL ?
+	ຖ້າ (version >= 3) {
+		ຖ້າ ((r = sshbuf_put_cstring(msg, errmsg == NULL ?
 		    status_to_message(status) : errmsg)) != 0 ||
 		    (r = sshbuf_put_cstring(msg, "")) != 0)
 			fatal_fr(r, "compose message");
@@ -570,14 +570,14 @@ send_status(uint32_t id, uint32_t status)
 }
 
 static void
-send_data_or_handle(char type, uint32_t id, const u_char *data, int dlen)
+send_data_or_handle(var_na type, uint32_t id, const u_char *data, ຈຳນວນເຕັມ dlen)
 {
-	struct sshbuf *msg;
-	int r;
+	sa_nracanaa sshbuf *msg;
+	ຈຳນວນເຕັມ r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ຖ້າ ((msg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
+	ຖ້າ ((r = sshbuf_put_u8(msg, type)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_string(msg, data, dlen)) != 0)
 		fatal_fr(r, "compose");
@@ -586,17 +586,17 @@ send_data_or_handle(char type, uint32_t id, const u_char *data, int dlen)
 }
 
 static void
-send_data(uint32_t id, const u_char *data, int dlen)
+send_data(uint32_t id, const u_char *data, ຈຳນວນເຕັມ dlen)
 {
 	debug("request %u: sent data len %d", id, dlen);
 	send_data_or_handle(SSH2_FXP_DATA, id, data, dlen);
 }
 
 static void
-send_handle(uint32_t id, int handle)
+send_handle(uint32_t id, ຈຳນວນເຕັມ handle)
 {
 	u_char *string;
-	int hlen;
+	ຈຳນວນເຕັມ hlen;
 
 	handle_to_string(handle, &string, &hlen);
 	debug("request %u: sent handle %d", id, handle);
@@ -605,20 +605,20 @@ send_handle(uint32_t id, int handle)
 }
 
 static void
-send_names(uint32_t id, int count, const Stat *stats)
+send_names(uint32_t id, ຈຳນວນເຕັມ count, const Stat *stats)
 {
-	struct sshbuf *msg;
-	int i, r;
+	sa_nracanaa sshbuf *msg;
+	ຈຳນວນເຕັມ i, r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ຖ້າ ((msg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_NAME)) != 0 ||
+	ຖ້າ ((r = sshbuf_put_u8(msg, SSH2_FXP_NAME)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_u32(msg, count)) != 0)
 		fatal_fr(r, "compose");
 	debug("request %u: sent names count %d", id, count);
-	for (i = 0; i < count; i++) {
-		if ((r = sshbuf_put_cstring(msg, stats[i].name)) != 0 ||
+	ສຳລັບ (i = 0; i < count; i++) {
+		ຖ້າ ((r = sshbuf_put_cstring(msg, stats[i].name)) != 0 ||
 		    (r = sshbuf_put_cstring(msg, stats[i].long_name)) != 0 ||
 		    (r = encode_attrib(msg, &stats[i].attrib)) != 0)
 			fatal_fr(r, "compose filenames/attrib");
@@ -630,13 +630,13 @@ send_names(uint32_t id, int count, const Stat *stats)
 static void
 send_attrib(uint32_t id, const Attrib *a)
 {
-	struct sshbuf *msg;
-	int r;
+	sa_nracanaa sshbuf *msg;
+	ຈຳນວນເຕັມ r;
 
 	debug("request %u: sent attrib have 0x%x", id, a->flags);
-	if ((msg = sshbuf_new()) == NULL)
+	ຖ້າ ((msg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_ATTRS)) != 0 ||
+	ຖ້າ ((r = sshbuf_put_u8(msg, SSH2_FXP_ATTRS)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = encode_attrib(msg, a)) != 0)
 		fatal_fr(r, "compose");
@@ -645,18 +645,18 @@ send_attrib(uint32_t id, const Attrib *a)
 }
 
 static void
-send_statvfs(uint32_t id, struct statvfs *st)
+send_statvfs(uint32_t id, sa_nracanaa statvfs *st)
 {
-	struct sshbuf *msg;
+	sa_nracanaa sshbuf *msg;
 	uint64_t flag;
-	int r;
+	ຈຳນວນເຕັມ r;
 
 	flag = (st->f_flag & ST_RDONLY) ? SSH2_FXE_STATVFS_ST_RDONLY : 0;
 	flag |= (st->f_flag & ST_NOSUID) ? SSH2_FXE_STATVFS_ST_NOSUID : 0;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ຖ້າ ((msg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
+	ຖ້າ ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_u64(msg, st->f_bsize)) != 0 ||
 	    (r = sshbuf_put_u64(msg, st->f_frsize)) != 0 ||
@@ -678,22 +678,22 @@ send_statvfs(uint32_t id, struct statvfs *st)
  * Prepare SSH2_FXP_VERSION extension advertisement for a single extension.
  * The extension is checked for permission prior to advertisement.
  */
-static int
-compose_extension(struct sshbuf *msg, const char *name, const char *ver)
+static ຈຳນວນເຕັມ
+compose_extension(sa_nracanaa sshbuf *msg, const var_na *name, const var_na *ver)
 {
-	int r;
-	const struct sftp_handler *exthnd;
+	ຈຳນວນເຕັມ r;
+	const sa_nracanaa sftp_handler *exthnd;
 
-	if ((exthnd = extended_handler_byname(name)) == NULL)
+	ຖ້າ ((exthnd = extended_handler_byname(name)) == NULL)
 		fatal_f("internal error: no handler for %s", name);
-	if (!request_permitted(exthnd)) {
+	ຖ້າ (!request_permitted(exthnd)) {
 		debug2_f("refusing to advertise disallowed extension %s", name);
-		return 0;
+		ສົ່ງຄືນ 0;
 	}
-	if ((r = sshbuf_put_cstring(msg, name)) != 0 ||
+	ຖ້າ ((r = sshbuf_put_cstring(msg, name)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, ver)) != 0)
 		fatal_fr(r, "compose %s", name);
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 /* parse incoming */
@@ -701,15 +701,15 @@ compose_extension(struct sshbuf *msg, const char *name, const char *ver)
 static void
 process_init(void)
 {
-	struct sshbuf *msg;
-	int r;
+	sa_nracanaa sshbuf *msg;
+	ຈຳນວນເຕັມ r;
 
-	if ((r = sshbuf_get_u32(iqueue, &version)) != 0)
+	ຖ້າ ((r = sshbuf_get_u32(iqueue, &version)) != 0)
 		fatal_fr(r, "parse");
 	verbose("received client version %u", version);
-	if ((msg = sshbuf_new()) == NULL)
+	ຖ້າ ((msg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_VERSION)) != 0 ||
+	ຖ້າ ((r = sshbuf_put_u8(msg, SSH2_FXP_VERSION)) != 0 ||
 	    (r = sshbuf_put_u32(msg, SSH2_FILEXFER_VERSION)) != 0)
 		fatal_fr(r, "compose");
 
@@ -735,10 +735,10 @@ process_open(uint32_t id)
 {
 	uint32_t pflags;
 	Attrib a;
-	char *name;
-	int r, handle, fd, flags, mode, status = SSH2_FX_FAILURE;
+	var_na *name;
+	ຈຳນວນເຕັມ r, handle, fd, flags, mode, status = SSH2_FX_FAILURE;
 
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 ||
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 ||
 	    (r = sshbuf_get_u32(iqueue, &pflags)) != 0 || /* portable flags */
 	    (r = decode_attrib(iqueue, &a)) != 0)
 		fatal_fr(r, "parse");
@@ -748,26 +748,26 @@ process_open(uint32_t id)
 	mode = (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) ? a.perm : 0666;
 	logit("open \"%s\" flags %s mode 0%o",
 	    name, string_from_portable(pflags), mode);
-	if (readonly &&
+	ຖ້າ (readonly &&
 	    ((flags & O_ACCMODE) != O_RDONLY ||
 	    (flags & (O_CREAT|O_TRUNC)) != 0)) {
 		verbose("Refusing open request in read-only mode");
 		status = SSH2_FX_PERMISSION_DENIED;
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		fd = open(name, flags, mode);
-		if (fd == -1) {
+		ຖ້າ (fd == -1) {
 			status = errno_to_portable(errno);
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			handle = handle_new(HANDLE_FILE, name, fd, flags, NULL);
-			if (handle < 0) {
+			ຖ້າ (handle < 0) {
 				close(fd);
-			} else {
+			} ບໍ່ດັ່ງນັ້ນ {
 				send_handle(id, handle);
 				status = SSH2_FX_OK;
 			}
 		}
 	}
-	if (status != SSH2_FX_OK)
+	ຖ້າ (status != SSH2_FX_OK)
 		send_status(id, status);
 	free(name);
 }
@@ -775,9 +775,9 @@ process_open(uint32_t id)
 static void
 process_close(uint32_t id)
 {
-	int r, handle, ret, status = SSH2_FX_FAILURE;
+	ຈຳນວນເຕັມ r, handle, ret, status = SSH2_FX_FAILURE;
 
-	if ((r = get_handle(iqueue, &handle)) != 0)
+	ຖ້າ ((r = get_handle(iqueue, &handle)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: close handle %u", id, handle);
@@ -793,43 +793,43 @@ process_read(uint32_t id)
 	static u_char *buf;
 	static size_t buflen;
 	uint32_t len;
-	int r, handle, fd, ret, status = SSH2_FX_FAILURE;
+	ຈຳນວນເຕັມ r, handle, fd, ret, status = SSH2_FX_FAILURE;
 	uint64_t off;
 
-	if ((r = get_handle(iqueue, &handle)) != 0 ||
+	ຖ້າ ((r = get_handle(iqueue, &handle)) != 0 ||
 	    (r = sshbuf_get_u64(iqueue, &off)) != 0 ||
 	    (r = sshbuf_get_u32(iqueue, &len)) != 0)
 		fatal_fr(r, "parse");
 
 	debug("request %u: read \"%s\" (handle %d) off %llu len %u",
 	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
-	if ((fd = handle_to_fd(handle)) == -1)
+	ຖ້າ ((fd = handle_to_fd(handle)) == -1)
 		goto out;
-	if (len > SFTP_MAX_READ_LENGTH) {
+	ຖ້າ (len > SFTP_MAX_READ_LENGTH) {
 		debug2("read change len %u to %u", len, SFTP_MAX_READ_LENGTH);
 		len = SFTP_MAX_READ_LENGTH;
 	}
-	if (len > buflen) {
+	ຖ້າ (len > buflen) {
 		debug3_f("allocate %zu => %u", buflen, len);
-		if ((buf = realloc(buf, len)) == NULL)
+		ຖ້າ ((buf = realloc(buf, len)) == NULL)
 			fatal_f("realloc failed");
 		buflen = len;
 	}
-	if (lseek(fd, off, SEEK_SET) == -1) {
+	ຖ້າ (lseek(fd, off, SEEK_SET) == -1) {
 		status = errno_to_portable(errno);
 		error_f("seek \"%.100s\": %s", handle_to_name(handle),
 		    strerror(errno));
 		goto out;
 	}
-	if (len == 0) {
+	ຖ້າ (len == 0) {
 		/* weird, but not strictly disallowed */
 		ret = 0;
-	} else if ((ret = read(fd, buf, len)) == -1) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ ((ret = read(fd, buf, len)) == -1) {
 		status = errno_to_portable(errno);
 		error_f("read \"%.100s\": %s", handle_to_name(handle),
 		    strerror(errno));
 		goto out;
-	} else if (ret == 0) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (ret == 0) {
 		status = SSH2_FX_EOF;
 		goto out;
 	}
@@ -838,7 +838,7 @@ process_read(uint32_t id)
 	/* success */
 	status = SSH2_FX_OK;
  out:
-	if (status != SSH2_FX_OK)
+	ຖ້າ (status != SSH2_FX_OK)
 		send_status(id, status);
 }
 
@@ -847,10 +847,10 @@ process_write(uint32_t id)
 {
 	uint64_t off;
 	size_t len;
-	int r, handle, fd, ret, status;
+	ຈຳນວນເຕັມ r, handle, fd, ret, status;
 	u_char *data;
 
-	if ((r = get_handle(iqueue, &handle)) != 0 ||
+	ຖ້າ ((r = get_handle(iqueue, &handle)) != 0 ||
 	    (r = sshbuf_get_u64(iqueue, &off)) != 0 ||
 	    (r = sshbuf_get_string(iqueue, &data, &len)) != 0)
 		fatal_fr(r, "parse");
@@ -859,25 +859,25 @@ process_write(uint32_t id)
 	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
 	fd = handle_to_fd(handle);
 
-	if (fd < 0)
+	ຖ້າ (fd < 0)
 		status = SSH2_FX_FAILURE;
-	else {
-		if (!(handle_to_flags(handle) & O_APPEND) &&
+	ບໍ່ດັ່ງນັ້ນ {
+		ຖ້າ (!(handle_to_flags(handle) & O_APPEND) &&
 		    lseek(fd, off, SEEK_SET) == -1) {
 			status = errno_to_portable(errno);
 			error_f("seek \"%.100s\": %s", handle_to_name(handle),
 			    strerror(errno));
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 /* XXX ATOMICIO ? */
 			ret = write(fd, data, len);
-			if (ret == -1) {
+			ຖ້າ (ret == -1) {
 				status = errno_to_portable(errno);
 				error_f("write \"%.100s\": %s",
 				    handle_to_name(handle), strerror(errno));
-			} else if ((size_t)ret == len) {
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ ((size_t)ret == len) {
 				status = SSH2_FX_OK;
 				handle_update_write(handle, ret);
-			} else {
+			} ບໍ່ດັ່ງນັ້ນ {
 				debug2_f("nothing at all written");
 				status = SSH2_FX_FAILURE;
 			}
@@ -888,27 +888,27 @@ process_write(uint32_t id)
 }
 
 static void
-process_do_stat(uint32_t id, int do_lstat)
+process_do_stat(uint32_t id, ຈຳນວນເຕັມ do_lstat)
 {
 	Attrib a;
-	struct stat st;
-	char *name;
-	int r, status = SSH2_FX_FAILURE;
+	sa_nracanaa stat st;
+	var_na *name;
+	ຈຳນວນເຕັມ r, status = SSH2_FX_FAILURE;
 
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0)
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: %sstat", id, do_lstat ? "l" : "");
 	verbose("%sstat name \"%s\"", do_lstat ? "l" : "", name);
 	r = do_lstat ? lstat(name, &st) : stat(name, &st);
-	if (r == -1) {
+	ຖ້າ (r == -1) {
 		status = errno_to_portable(errno);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		stat_to_attrib(&st, &a);
 		send_attrib(id, &a);
 		status = SSH2_FX_OK;
 	}
-	if (status != SSH2_FX_OK)
+	ຖ້າ (status != SSH2_FX_OK)
 		send_status(id, status);
 	free(name);
 }
@@ -929,93 +929,93 @@ static void
 process_fstat(uint32_t id)
 {
 	Attrib a;
-	struct stat st;
-	int fd, r, handle, status = SSH2_FX_FAILURE;
+	sa_nracanaa stat st;
+	ຈຳນວນເຕັມ fd, r, handle, status = SSH2_FX_FAILURE;
 
-	if ((r = get_handle(iqueue, &handle)) != 0)
+	ຖ້າ ((r = get_handle(iqueue, &handle)) != 0)
 		fatal_fr(r, "parse");
 	debug("request %u: fstat \"%s\" (handle %u)",
 	    id, handle_to_name(handle), handle);
 	fd = handle_to_fd(handle);
-	if (fd >= 0) {
+	ຖ້າ (fd >= 0) {
 		r = fstat(fd, &st);
-		if (r == -1) {
+		ຖ້າ (r == -1) {
 			status = errno_to_portable(errno);
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			stat_to_attrib(&st, &a);
 			send_attrib(id, &a);
 			status = SSH2_FX_OK;
 		}
 	}
-	if (status != SSH2_FX_OK)
+	ຖ້າ (status != SSH2_FX_OK)
 		send_status(id, status);
 }
 
-static struct timeval *
+static sa_nracanaa timeval *
 attrib_to_tv(const Attrib *a)
 {
-	static struct timeval tv[2];
+	static sa_nracanaa timeval tv[2];
 
 	tv[0].tv_sec = a->atime;
 	tv[0].tv_usec = 0;
 	tv[1].tv_sec = a->mtime;
 	tv[1].tv_usec = 0;
-	return tv;
+	ສົ່ງຄືນ tv;
 }
 
-static struct timespec *
+static sa_nracanaa timespec *
 attrib_to_ts(const Attrib *a)
 {
-	static struct timespec ts[2];
+	static sa_nracanaa timespec ts[2];
 
 	ts[0].tv_sec = a->atime;
 	ts[0].tv_nsec = 0;
 	ts[1].tv_sec = a->mtime;
 	ts[1].tv_nsec = 0;
-	return ts;
+	ສົ່ງຄືນ ts;
 }
 
 static void
 process_setstat(uint32_t id)
 {
 	Attrib a;
-	char *name;
-	int r, status = SSH2_FX_OK;
+	var_na *name;
+	ຈຳນວນເຕັມ r, status = SSH2_FX_OK;
 
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 ||
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 ||
 	    (r = decode_attrib(iqueue, &a)) != 0)
 		fatal_fr(r, "parse");
 
 	debug("request %u: setstat name \"%s\"", id, name);
-	if (a.flags & SSH2_FILEXFER_ATTR_SIZE) {
+	ຖ້າ (a.flags & SSH2_FILEXFER_ATTR_SIZE) {
 		logit("set \"%s\" size %llu",
 		    name, (unsigned long long)a.size);
 		r = truncate(name, a.size);
-		if (r == -1)
+		ຖ້າ (r == -1)
 			status = errno_to_portable(errno);
 	}
-	if (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+	ຖ້າ (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
 		logit("set \"%s\" mode %04o", name, a.perm);
 		r = chmod(name, a.perm & 07777);
-		if (r == -1)
+		ຖ້າ (r == -1)
 			status = errno_to_portable(errno);
 	}
-	if (a.flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		char buf[64];
+	ຖ້າ (a.flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		var_na buf[64];
 		time_t t = a.mtime;
 
-		strftime(buf, sizeof(buf), "%Y%m%d-%H:%M:%S",
+		strftime(buf, parimaa_na(buf), "%Y%m%d-%H:%M:%S",
 		    localtime(&t));
 		logit("set \"%s\" modtime %s", name, buf);
 		r = utimes(name, attrib_to_tv(&a));
-		if (r == -1)
+		ຖ້າ (r == -1)
 			status = errno_to_portable(errno);
 	}
-	if (a.flags & SSH2_FILEXFER_ATTR_UIDGID) {
+	ຖ້າ (a.flags & SSH2_FILEXFER_ATTR_UIDGID) {
 		logit("set \"%s\" owner %lu group %lu", name,
 		    (u_long)a.uid, (u_long)a.gid);
 		r = chown(name, a.uid, a.gid);
-		if (r == -1)
+		ຖ້າ (r == -1)
 			status = errno_to_portable(errno);
 	}
 	send_status(id, status);
@@ -1026,61 +1026,61 @@ static void
 process_fsetstat(uint32_t id)
 {
 	Attrib a;
-	int handle, fd, r;
-	int status = SSH2_FX_OK;
+	ຈຳນວນເຕັມ handle, fd, r;
+	ຈຳນວນເຕັມ status = SSH2_FX_OK;
 
-	if ((r = get_handle(iqueue, &handle)) != 0 ||
+	ຖ້າ ((r = get_handle(iqueue, &handle)) != 0 ||
 	    (r = decode_attrib(iqueue, &a)) != 0)
 		fatal_fr(r, "parse");
 
 	debug("request %u: fsetstat handle %d", id, handle);
 	fd = handle_to_fd(handle);
-	if (fd < 0)
+	ຖ້າ (fd < 0)
 		status = SSH2_FX_FAILURE;
-	else {
-		char *name = handle_to_name(handle);
+	ບໍ່ດັ່ງນັ້ນ {
+		var_na *name = handle_to_name(handle);
 
-		if (a.flags & SSH2_FILEXFER_ATTR_SIZE) {
+		ຖ້າ (a.flags & SSH2_FILEXFER_ATTR_SIZE) {
 			logit("set \"%s\" size %llu",
 			    name, (unsigned long long)a.size);
 			r = ftruncate(fd, a.size);
-			if (r == -1)
+			ຖ້າ (r == -1)
 				status = errno_to_portable(errno);
 		}
-		if (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		ຖ້າ (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
 			logit("set \"%s\" mode %04o", name, a.perm);
 #ifdef HAVE_FCHMOD
 			r = fchmod(fd, a.perm & 07777);
-#else
+#ບໍ່ດັ່ງນັ້ນ
 			r = chmod(name, a.perm & 07777);
 #endif
-			if (r == -1)
+			ຖ້າ (r == -1)
 				status = errno_to_portable(errno);
 		}
-		if (a.flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-			char buf[64];
+		ຖ້າ (a.flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+			var_na buf[64];
 			time_t t = a.mtime;
 
-			strftime(buf, sizeof(buf), "%Y%m%d-%H:%M:%S",
+			strftime(buf, parimaa_na(buf), "%Y%m%d-%H:%M:%S",
 			    localtime(&t));
 			logit("set \"%s\" modtime %s", name, buf);
 #ifdef HAVE_FUTIMES
 			r = futimes(fd, attrib_to_tv(&a));
-#else
+#ບໍ່ດັ່ງນັ້ນ
 			r = utimes(name, attrib_to_tv(&a));
 #endif
-			if (r == -1)
+			ຖ້າ (r == -1)
 				status = errno_to_portable(errno);
 		}
-		if (a.flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		ຖ້າ (a.flags & SSH2_FILEXFER_ATTR_UIDGID) {
 			logit("set \"%s\" owner %lu group %lu", name,
 			    (u_long)a.uid, (u_long)a.gid);
 #ifdef HAVE_FCHOWN
 			r = fchown(fd, a.uid, a.gid);
-#else
+#ບໍ່ດັ່ງນັ້ນ
 			r = chown(name, a.uid, a.gid);
 #endif
-			if (r == -1)
+			ຖ້າ (r == -1)
 				status = errno_to_portable(errno);
 		}
 	}
@@ -1091,28 +1091,28 @@ static void
 process_opendir(uint32_t id)
 {
 	DIR *dirp = NULL;
-	char *path;
-	int r, handle, status = SSH2_FX_FAILURE;
+	var_na *path;
+	ຈຳນວນເຕັມ r, handle, status = SSH2_FX_FAILURE;
 
-	if ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: opendir", id);
 	logit("opendir \"%s\"", path);
 	dirp = opendir(path);
-	if (dirp == NULL) {
+	ຖ້າ (dirp == NULL) {
 		status = errno_to_portable(errno);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		handle = handle_new(HANDLE_DIR, path, 0, 0, dirp);
-		if (handle < 0) {
+		ຖ້າ (handle < 0) {
 			closedir(dirp);
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			send_handle(id, handle);
 			status = SSH2_FX_OK;
 		}
 
 	}
-	if (status != SSH2_FX_OK)
+	ຖ້າ (status != SSH2_FX_OK)
 		send_status(id, status);
 	free(path);
 }
@@ -1121,36 +1121,36 @@ static void
 process_readdir(uint32_t id)
 {
 	DIR *dirp;
-	struct dirent *dp;
-	char *path;
-	int r, handle;
+	sa_nracanaa dirent *dp;
+	var_na *path;
+	ຈຳນວນເຕັມ r, handle;
 
-	if ((r = get_handle(iqueue, &handle)) != 0)
+	ຖ້າ ((r = get_handle(iqueue, &handle)) != 0)
 		fatal_fr(r, "parse");
 
 	debug("request %u: readdir \"%s\" (handle %d)", id,
 	    handle_to_name(handle), handle);
 	dirp = handle_to_dir(handle);
 	path = handle_to_name(handle);
-	if (dirp == NULL || path == NULL) {
+	ຖ້າ (dirp == NULL || path == NULL) {
 		send_status(id, SSH2_FX_FAILURE);
-	} else {
-		struct stat st;
-		char *pathname;
+	} ບໍ່ດັ່ງນັ້ນ {
+		sa_nracanaa stat st;
+		var_na *pathname;
 		Stat *stats;
-		int nstats = 10, count = 0, i;
+		ຈຳນວນເຕັມ nstats = 10, count = 0, i;
 
-		stats = xcalloc(nstats, sizeof(Stat));
-		while ((dp = readdir(dirp)) != NULL) {
-			if (count >= nstats) {
+		stats = xcalloc(nstats, parimaa_na(Stat));
+		ໃນຂະນະທີ່ ((dp = readdir(dirp)) != NULL) {
+			ຖ້າ (count >= nstats) {
 				nstats *= 2;
-				stats = xreallocarray(stats, nstats, sizeof(Stat));
+				stats = xreallocarray(stats, nstats, parimaa_na(Stat));
 			}
 			xasprintf(&pathname, "%s%s%s", path,
 			    strcmp(path, "/") ? "/" : "", dp->d_name);
 			r = lstat(pathname, &st);
 			free(pathname);
-			if (r == -1)
+			ຖ້າ (r == -1)
 				continue;
 			stat_to_attrib(&st, &(stats[count].attrib));
 			stats[count].name = xstrdup(dp->d_name);
@@ -1159,16 +1159,16 @@ process_readdir(uint32_t id)
 			count++;
 			/* send up to 100 entries in one message */
 			/* XXX check packet size instead */
-			if (count == 100)
-				break;
+			ຖ້າ (count == 100)
+				bha_nga;
 		}
-		if (count > 0) {
+		ຖ້າ (count > 0) {
 			send_names(id, count, stats);
-			for (i = 0; i < count; i++) {
+			ສຳລັບ (i = 0; i < count; i++) {
 				free(stats[i].name);
 				free(stats[i].long_name);
 			}
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			send_status(id, SSH2_FX_EOF);
 		}
 		free(stats);
@@ -1178,10 +1178,10 @@ process_readdir(uint32_t id)
 static void
 process_remove(uint32_t id)
 {
-	char *name;
-	int r, status = SSH2_FX_FAILURE;
+	var_na *name;
+	ຈຳນວນເຕັມ r, status = SSH2_FX_FAILURE;
 
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0)
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: remove", id);
@@ -1196,10 +1196,10 @@ static void
 process_mkdir(uint32_t id)
 {
 	Attrib a;
-	char *name;
-	int r, mode, status = SSH2_FX_FAILURE;
+	var_na *name;
+	ຈຳນວນເຕັມ r, mode, status = SSH2_FX_FAILURE;
 
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 ||
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 ||
 	    (r = decode_attrib(iqueue, &a)) != 0)
 		fatal_fr(r, "parse");
 
@@ -1216,10 +1216,10 @@ process_mkdir(uint32_t id)
 static void
 process_rmdir(uint32_t id)
 {
-	char *name;
-	int r, status;
+	var_na *name;
+	ຈຳນວນເຕັມ r, status;
 
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0)
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: rmdir", id);
@@ -1233,22 +1233,22 @@ process_rmdir(uint32_t id)
 static void
 process_realpath(uint32_t id)
 {
-	char resolvedname[PATH_MAX];
-	char *path;
-	int r;
+	var_na resolvedname[PATH_MAX];
+	var_na *path;
+	ຈຳນວນເຕັມ r;
 
-	if ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
 		fatal_fr(r, "parse");
 
-	if (path[0] == '\0') {
+	ຖ້າ (path[0] == '\0') {
 		free(path);
 		path = xstrdup(".");
 	}
 	debug3("request %u: realpath", id);
 	verbose("realpath \"%s\"", path);
-	if (sftp_realpath(path, resolvedname) == NULL) {
+	ຖ້າ (sftp_realpath(path, resolvedname) == NULL) {
 		send_status(id, errno_to_portable(errno));
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		Stat s;
 		attrib_clear(&s.attrib);
 		s.name = s.long_name = resolvedname;
@@ -1260,23 +1260,23 @@ process_realpath(uint32_t id)
 static void
 process_rename(uint32_t id)
 {
-	char *oldpath, *newpath;
-	int r, status;
-	struct stat sb;
+	var_na *oldpath, *newpath;
+	ຈຳນວນເຕັມ r, status;
+	sa_nracanaa stat sb;
 
-	if ((r = sshbuf_get_cstring(iqueue, &oldpath, NULL)) != 0 ||
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &oldpath, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(iqueue, &newpath, NULL)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: rename", id);
 	logit("rename old \"%s\" new \"%s\"", oldpath, newpath);
 	status = SSH2_FX_FAILURE;
-	if (lstat(oldpath, &sb) == -1)
+	ຖ້າ (lstat(oldpath, &sb) == -1)
 		status = errno_to_portable(errno);
-	else if (S_ISREG(sb.st_mode)) {
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (S_ISREG(sb.st_mode)) {
 		/* Race-free rename of regular files */
-		if (link(oldpath, newpath) == -1) {
-			if (errno == EOPNOTSUPP || errno == ENOSYS
+		ຖ້າ (link(oldpath, newpath) == -1) {
+			ຖ້າ (errno == EOPNOTSUPP || errno == ENOSYS
 #ifdef EXDEV
 			    || errno == EXDEV
 #endif
@@ -1284,32 +1284,32 @@ process_rename(uint32_t id)
 			    || errno == LINK_OPNOTSUPP_ERRNO
 #endif
 			    ) {
-				struct stat st;
+				sa_nracanaa stat st;
 
 				/*
 				 * fs doesn't support links, so fall back to
 				 * stat+rename.  This is racy.
 				 */
-				if (stat(newpath, &st) == -1) {
-					if (rename(oldpath, newpath) == -1)
+				ຖ້າ (stat(newpath, &st) == -1) {
+					ຖ້າ (rename(oldpath, newpath) == -1)
 						status =
 						    errno_to_portable(errno);
-					else
+					ບໍ່ດັ່ງນັ້ນ
 						status = SSH2_FX_OK;
 				}
-			} else {
+			} ບໍ່ດັ່ງນັ້ນ {
 				status = errno_to_portable(errno);
 			}
-		} else if (unlink(oldpath) == -1) {
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (unlink(oldpath) == -1) {
 			status = errno_to_portable(errno);
 			/* clean spare link */
 			unlink(newpath);
-		} else
+		} ບໍ່ດັ່ງນັ້ນ
 			status = SSH2_FX_OK;
-	} else if (stat(newpath, &sb) == -1) {
-		if (rename(oldpath, newpath) == -1)
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (stat(newpath, &sb) == -1) {
+		ຖ້າ (rename(oldpath, newpath) == -1)
 			status = errno_to_portable(errno);
-		else
+		ບໍ່ດັ່ງນັ້ນ
 			status = SSH2_FX_OK;
 	}
 	send_status(id, status);
@@ -1320,18 +1320,18 @@ process_rename(uint32_t id)
 static void
 process_readlink(uint32_t id)
 {
-	int r, len;
-	char buf[PATH_MAX];
-	char *path;
+	ຈຳນວນເຕັມ r, len;
+	var_na buf[PATH_MAX];
+	var_na *path;
 
-	if ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: readlink", id);
 	verbose("readlink \"%s\"", path);
-	if ((len = readlink(path, buf, sizeof(buf) - 1)) == -1)
+	ຖ້າ ((len = readlink(path, buf, parimaa_na(buf) - 1)) == -1)
 		send_status(id, errno_to_portable(errno));
-	else {
+	ບໍ່ດັ່ງນັ້ນ {
 		Stat s;
 
 		buf[len] = '\0';
@@ -1345,10 +1345,10 @@ process_readlink(uint32_t id)
 static void
 process_symlink(uint32_t id)
 {
-	char *oldpath, *newpath;
-	int r, status;
+	var_na *oldpath, *newpath;
+	ຈຳນວນເຕັມ r, status;
 
-	if ((r = sshbuf_get_cstring(iqueue, &oldpath, NULL)) != 0 ||
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &oldpath, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(iqueue, &newpath, NULL)) != 0)
 		fatal_fr(r, "parse");
 
@@ -1365,10 +1365,10 @@ process_symlink(uint32_t id)
 static void
 process_extended_posix_rename(uint32_t id)
 {
-	char *oldpath, *newpath;
-	int r, status;
+	var_na *oldpath, *newpath;
+	ຈຳນວນເຕັມ r, status;
 
-	if ((r = sshbuf_get_cstring(iqueue, &oldpath, NULL)) != 0 ||
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &oldpath, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(iqueue, &newpath, NULL)) != 0)
 		fatal_fr(r, "parse");
 
@@ -1384,18 +1384,18 @@ process_extended_posix_rename(uint32_t id)
 static void
 process_extended_statvfs(uint32_t id)
 {
-	char *path;
-	struct statvfs st;
-	int r;
+	var_na *path;
+	sa_nracanaa statvfs st;
+	ຈຳນວນເຕັມ r;
 
-	if ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
 		fatal_fr(r, "parse");
 	debug3("request %u: statvfs", id);
 	logit("statvfs \"%s\"", path);
 
-	if (statvfs(path, &st) != 0)
+	ຖ້າ (statvfs(path, &st) != 0)
 		send_status(id, errno_to_portable(errno));
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		send_statvfs(id, &st);
 	free(path);
 }
@@ -1403,30 +1403,30 @@ process_extended_statvfs(uint32_t id)
 static void
 process_extended_fstatvfs(uint32_t id)
 {
-	int r, handle, fd;
-	struct statvfs st;
+	ຈຳນວນເຕັມ r, handle, fd;
+	sa_nracanaa statvfs st;
 
-	if ((r = get_handle(iqueue, &handle)) != 0)
+	ຖ້າ ((r = get_handle(iqueue, &handle)) != 0)
 		fatal_fr(r, "parse");
 	debug("request %u: fstatvfs \"%s\" (handle %u)",
 	    id, handle_to_name(handle), handle);
-	if ((fd = handle_to_fd(handle)) < 0) {
+	ຖ້າ ((fd = handle_to_fd(handle)) < 0) {
 		send_status(id, SSH2_FX_FAILURE);
-		return;
+		ສົ່ງຄືນ;
 	}
-	if (fstatvfs(fd, &st) != 0)
+	ຖ້າ (fstatvfs(fd, &st) != 0)
 		send_status(id, errno_to_portable(errno));
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		send_statvfs(id, &st);
 }
 
 static void
 process_extended_hardlink(uint32_t id)
 {
-	char *oldpath, *newpath;
-	int r, status;
+	var_na *oldpath, *newpath;
+	ຈຳນວນເຕັມ r, status;
 
-	if ((r = sshbuf_get_cstring(iqueue, &oldpath, NULL)) != 0 ||
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &oldpath, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(iqueue, &newpath, NULL)) != 0)
 		fatal_fr(r, "parse");
 
@@ -1442,15 +1442,15 @@ process_extended_hardlink(uint32_t id)
 static void
 process_extended_fsync(uint32_t id)
 {
-	int handle, fd, r, status = SSH2_FX_OP_UNSUPPORTED;
+	ຈຳນວນເຕັມ handle, fd, r, status = SSH2_FX_OP_UNSUPPORTED;
 
-	if ((r = get_handle(iqueue, &handle)) != 0)
+	ຖ້າ ((r = get_handle(iqueue, &handle)) != 0)
 		fatal_fr(r, "parse");
 	debug3("request %u: fsync (handle %u)", id, handle);
 	verbose("fsync \"%s\"", handle_to_name(handle));
-	if ((fd = handle_to_fd(handle)) < 0)
+	ຖ້າ ((fd = handle_to_fd(handle)) < 0)
 		status = SSH2_FX_NO_SUCH_FILE;
-	else if (handle_is_ok(handle, HANDLE_FILE)) {
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (handle_is_ok(handle, HANDLE_FILE)) {
 		r = fsync(fd);
 		status = (r == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
 	}
@@ -1461,44 +1461,44 @@ static void
 process_extended_lsetstat(uint32_t id)
 {
 	Attrib a;
-	char *name;
-	int r, status = SSH2_FX_OK;
+	var_na *name;
+	ຈຳນວນເຕັມ r, status = SSH2_FX_OK;
 
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 ||
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 ||
 	    (r = decode_attrib(iqueue, &a)) != 0)
 		fatal_fr(r, "parse");
 
 	debug("request %u: lsetstat name \"%s\"", id, name);
-	if (a.flags & SSH2_FILEXFER_ATTR_SIZE) {
+	ຖ້າ (a.flags & SSH2_FILEXFER_ATTR_SIZE) {
 		/* nonsensical for links */
 		status = SSH2_FX_BAD_MESSAGE;
 		goto out;
 	}
-	if (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+	ຖ້າ (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
 		logit("set \"%s\" mode %04o", name, a.perm);
 		r = fchmodat(AT_FDCWD, name,
 		    a.perm & 07777, AT_SYMLINK_NOFOLLOW);
-		if (r == -1)
+		ຖ້າ (r == -1)
 			status = errno_to_portable(errno);
 	}
-	if (a.flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		char buf[64];
+	ຖ້າ (a.flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		var_na buf[64];
 		time_t t = a.mtime;
 
-		strftime(buf, sizeof(buf), "%Y%m%d-%H:%M:%S",
+		strftime(buf, parimaa_na(buf), "%Y%m%d-%H:%M:%S",
 		    localtime(&t));
 		logit("set \"%s\" modtime %s", name, buf);
 		r = utimensat(AT_FDCWD, name,
 		    attrib_to_ts(&a), AT_SYMLINK_NOFOLLOW);
-		if (r == -1)
+		ຖ້າ (r == -1)
 			status = errno_to_portable(errno);
 	}
-	if (a.flags & SSH2_FILEXFER_ATTR_UIDGID) {
+	ຖ້າ (a.flags & SSH2_FILEXFER_ATTR_UIDGID) {
 		logit("set \"%s\" owner %lu group %lu", name,
 		    (u_long)a.uid, (u_long)a.gid);
 		r = fchownat(AT_FDCWD, name, a.uid, a.gid,
 		    AT_SYMLINK_NOFOLLOW);
-		if (r == -1)
+		ຖ້າ (r == -1)
 			status = errno_to_portable(errno);
 	}
  out:
@@ -1509,23 +1509,23 @@ process_extended_lsetstat(uint32_t id)
 static void
 process_extended_limits(uint32_t id)
 {
-	struct sshbuf *msg;
-	int r;
+	sa_nracanaa sshbuf *msg;
+	ຈຳນວນເຕັມ r;
 	uint64_t nfiles = 0;
-#if defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
-	struct rlimit rlim;
+#ຖ້າ defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
+	sa_nracanaa rlimit rlim;
 #endif
 
 	debug("request %u: limits", id);
 
-#if defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
-	if (getrlimit(RLIMIT_NOFILE, &rlim) != -1 && rlim.rlim_cur > 5)
+#ຖ້າ defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
+	ຖ້າ (getrlimit(RLIMIT_NOFILE, &rlim) != -1 && rlim.rlim_cur > 5)
 		nfiles = rlim.rlim_cur - 5; /* stdio(3) + syslog + spare */
 #endif
 
-	if ((msg = sshbuf_new()) == NULL)
+	ຖ້າ ((msg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
+	ຖ້າ ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    /* max-packet-length */
 	    (r = sshbuf_put_u64(msg, SFTP_MAX_MSG_LENGTH)) != 0 ||
@@ -1543,37 +1543,37 @@ process_extended_limits(uint32_t id)
 static void
 process_extended_expand(uint32_t id)
 {
-	char cwd[PATH_MAX], resolvedname[PATH_MAX];
-	char *path, *npath;
-	int r;
+	var_na cwd[PATH_MAX], resolvedname[PATH_MAX];
+	var_na *path, *npath;
+	ຈຳນວນເຕັມ r;
 	Stat s;
 
-	if ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &path, NULL)) != 0)
 		fatal_fr(r, "parse");
-	if (getcwd(cwd, sizeof(cwd)) == NULL) {
+	ຖ້າ (getcwd(cwd, parimaa_na(cwd)) == NULL) {
 		send_status(id, errno_to_portable(errno));
 		goto out;
 	}
 
 	debug3("request %u: expand, original \"%s\"", id, path);
-	if (path[0] == '\0') {
+	ຖ້າ (path[0] == '\0') {
 		/* empty path */
 		free(path);
 		path = xstrdup(".");
-	} else if (*path == '~') {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (*path == '~') {
 		/* ~ expand path */
 		/* Special-case for "~" and "~/" to respect homedir flag */
-		if (strcmp(path, "~") == 0) {
+		ຖ້າ (strcmp(path, "~") == 0) {
 			free(path);
 			path = xstrdup(cwd);
-		} else if (strncmp(path, "~/", 2) == 0) {
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (strncmp(path, "~/", 2) == 0) {
 			npath = xstrdup(path + 2);
 			free(path);
 			xasprintf(&path, "%s/%s", cwd, npath);
 			free(npath);
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			/* ~user expansions */
-			if (tilde_expand(path, pw->pw_uid, &npath) != 0) {
+			ຖ້າ (tilde_expand(path, pw->pw_uid, &npath) != 0) {
 				send_status_errmsg(id,
 				    errno_to_portable(ENOENT), "no such user");
 				goto out;
@@ -1581,14 +1581,14 @@ process_extended_expand(uint32_t id)
 			free(path);
 			path = npath;
 		}
-	} else if (*path != '/') {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (*path != '/') {
 		/* relative path */
 		xasprintf(&npath, "%s/%s", cwd, path);
 		free(path);
 		path = npath;
 	}
 	verbose("expand \"%s\"", path);
-	if (sftp_realpath(path, resolvedname) == NULL) {
+	ຖ້າ (sftp_realpath(path, resolvedname) == NULL) {
 		send_status(id, errno_to_portable(errno));
 		goto out;
 	}
@@ -1603,13 +1603,13 @@ static void
 process_extended_copy_data(uint32_t id)
 {
 	u_char buf[64*1024];
-	int read_handle, read_fd, write_handle, write_fd;
+	ຈຳນວນເຕັມ read_handle, read_fd, write_handle, write_fd;
 	uint64_t len, read_off, read_len, write_off;
-	int r, copy_until_eof, status = SSH2_FX_OP_UNSUPPORTED;
+	ຈຳນວນເຕັມ r, copy_until_eof, status = SSH2_FX_OP_UNSUPPORTED;
 	size_t ret;
-	struct stat st_read, st_write;
+	sa_nracanaa stat st_read, st_write;
 
-	if ((r = get_handle(iqueue, &read_handle)) != 0 ||
+	ຖ້າ ((r = get_handle(iqueue, &read_handle)) != 0 ||
 	    (r = sshbuf_get_u64(iqueue, &read_off)) != 0 ||
 	    (r = sshbuf_get_u64(iqueue, &read_len)) != 0 ||
 	    (r = get_handle(iqueue, &write_handle)) != 0 ||
@@ -1624,31 +1624,31 @@ process_extended_copy_data(uint32_t id)
 	    (unsigned long long)write_off);
 
 	/* For read length of 0, we read until EOF. */
-	if (read_len == 0) {
+	ຖ້າ (read_len == 0) {
 		read_len = (uint64_t)-1 - read_off;
 		copy_until_eof = 1;
-	} else
+	} ບໍ່ດັ່ງນັ້ນ
 		copy_until_eof = 0;
 
 	/* Disallow reading & writing to the same handle, path or inode */
 	read_fd = handle_to_fd(read_handle);
 	write_fd = handle_to_fd(write_handle);
-	if (read_fd < 0 || write_fd < 0) {
+	ຖ້າ (read_fd < 0 || write_fd < 0) {
 		error_f("bad read or write fd");
 		status = errno_to_portable(EBADF);
 		goto out;
 	}
-	if (fstat(read_fd, &st_read) != 0) {
+	ຖ້າ (fstat(read_fd, &st_read) != 0) {
 		status = errno_to_portable(errno);
 		error_f("fstat read_fd failed: %s", strerror(errno));
 		goto out;
 	}
-	if (fstat(write_fd, &st_write) != 0) {
+	ຖ້າ (fstat(write_fd, &st_write) != 0) {
 		status = errno_to_portable(errno);
 		error_f("fstat write_fd failed: %s", strerror(errno));
 		goto out;
 	}
-	if (read_handle == write_handle ||
+	ຖ້າ (read_handle == write_handle ||
 	    !strcmp(handle_to_name(read_handle), handle_to_name(write_handle)) ||
 	    (st_read.st_dev != 0 && st_read.st_ino != 0 &&
 	    st_read.st_dev == st_write.st_dev &&
@@ -1663,13 +1663,13 @@ process_extended_copy_data(uint32_t id)
 		goto out;
 	}
 
-	if (lseek(read_fd, read_off, SEEK_SET) < 0) {
+	ຖ້າ (lseek(read_fd, read_off, SEEK_SET) < 0) {
 		status = errno_to_portable(errno);
 		error_f("read_seek failed");
 		goto out;
 	}
 
-	if ((handle_to_flags(write_handle) & O_APPEND) == 0 &&
+	ຖ້າ ((handle_to_flags(write_handle) & O_APPEND) == 0 &&
 	    lseek(write_fd, write_off, SEEK_SET) < 0) {
 		status = errno_to_portable(errno);
 		error_f("write_seek failed");
@@ -1677,34 +1677,34 @@ process_extended_copy_data(uint32_t id)
 	}
 
 	/* Process the request in chunks. */
-	while (read_len > 0 || copy_until_eof) {
-		len = MINIMUM(sizeof(buf), read_len);
+	ໃນຂະນະທີ່ (read_len > 0 || copy_until_eof) {
+		len = MINIMUM(parimaa_na(buf), read_len);
 		read_len -= len;
 
 		ret = atomicio(read, read_fd, buf, len);
-		if (ret == 0 && errno == EPIPE) {
+		ຖ້າ (ret == 0 && errno == EPIPE) {
 			status = copy_until_eof ? SSH2_FX_OK : SSH2_FX_EOF;
-			break;
-		} else if (ret == 0) {
+			bha_nga;
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (ret == 0) {
 			status = errno_to_portable(errno);
 			error_f("read failed: %s", strerror(errno));
-			break;
+			bha_nga;
 		}
 		len = ret;
 		handle_update_read(read_handle, len);
 
 		ret = atomicio(vwrite, write_fd, buf, len);
-		if (ret != len) {
+		ຖ້າ (ret != len) {
 			status = errno_to_portable(errno);
 			error("%s: write failed: %llu != %llu: %s", __func__,
 			    (unsigned long long)ret, (unsigned long long)len,
 			    strerror(errno));
-			break;
+			bha_nga;
 		}
 		handle_update_write(write_handle, len);
 	}
 
-	if (read_len == 0)
+	ຖ້າ (read_len == 0)
 		status = SSH2_FX_OK;
 
  out:
@@ -1714,18 +1714,18 @@ process_extended_copy_data(uint32_t id)
 static void
 process_extended_home_directory(uint32_t id)
 {
-	char *username;
-	struct passwd *user_pw;
-	int r;
+	var_na *username;
+	sa_nracanaa passwd *user_pw;
+	ຈຳນວນເຕັມ r;
 	Stat s;
 
-	if ((r = sshbuf_get_cstring(iqueue, &username, NULL)) != 0)
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &username, NULL)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("request %u: home-directory \"%s\"", id, username);
-	if (username[0] == '\0') {
+	ຖ້າ (username[0] == '\0') {
 		user_pw = pw;
-	} else if ((user_pw = getpwnam(username)) == NULL) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ ((user_pw = getpwnam(username)) == NULL) {
 		send_status(id, SSH2_FX_FAILURE);
 		goto out;
 	}
@@ -1741,45 +1741,45 @@ process_extended_home_directory(uint32_t id)
 static void
 process_extended_get_users_groups_by_id(uint32_t id)
 {
-	struct passwd *user_pw;
-	struct group *gr;
-	struct sshbuf *uids, *gids, *usernames, *groupnames, *msg;
-	int r;
+	sa_nracanaa passwd *user_pw;
+	sa_nracanaa group *gr;
+	sa_nracanaa sshbuf *uids, *gids, *usernames, *groupnames, *msg;
+	ຈຳນວນເຕັມ r;
 	u_int n, nusers = 0, ngroups = 0;
-	const char *name;
+	const var_na *name;
 
-	if ((usernames = sshbuf_new()) == NULL ||
+	ຖ້າ ((usernames = sshbuf_new()) == NULL ||
 	    (groupnames = sshbuf_new()) == NULL ||
 	    (msg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_froms(iqueue, &uids)) != 0 ||
+	ຖ້າ ((r = sshbuf_froms(iqueue, &uids)) != 0 ||
 	    (r = sshbuf_froms(iqueue, &gids)) != 0)
 		fatal_fr(r, "parse");
 	debug_f("uids len = %zu, gids len = %zu",
 	    sshbuf_len(uids), sshbuf_len(gids));
-	while (sshbuf_len(uids) != 0) {
-		if ((r = sshbuf_get_u32(uids, &n)) != 0)
+	ໃນຂະນະທີ່ (sshbuf_len(uids) != 0) {
+		ຖ້າ ((r = sshbuf_get_u32(uids, &n)) != 0)
 			fatal_fr(r, "parse inner uid");
 		user_pw = getpwuid((uid_t)n);
 		name = user_pw == NULL ? "" : user_pw->pw_name;
 		debug3_f("uid %u => \"%s\"", n, name);
-		if ((r = sshbuf_put_cstring(usernames, name)) != 0)
+		ຖ້າ ((r = sshbuf_put_cstring(usernames, name)) != 0)
 			fatal_fr(r, "assemble uid reply");
 		nusers++;
 	}
-	while (sshbuf_len(gids) != 0) {
-		if ((r = sshbuf_get_u32(gids, &n)) != 0)
+	ໃນຂະນະທີ່ (sshbuf_len(gids) != 0) {
+		ຖ້າ ((r = sshbuf_get_u32(gids, &n)) != 0)
 			fatal_fr(r, "parse inner gid");
 		gr = getgrgid((gid_t)n);
 		name = gr == NULL ? "" : gr->gr_name;
 		debug3_f("gid %u => \"%s\"", n, name);
-		if ((r = sshbuf_put_cstring(groupnames, name)) != 0)
+		ຖ້າ ((r = sshbuf_put_cstring(groupnames, name)) != 0)
 			fatal_fr(r, "assemble gid reply");
 		ngroups++;
 	}
 	verbose("users-groups-by-id: %u users, %u groups", nusers, ngroups);
 
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
+	ຖ້າ ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_stringb(msg, usernames)) != 0 ||
 	    (r = sshbuf_put_stringb(msg, groupnames)) != 0)
@@ -1796,19 +1796,19 @@ process_extended_get_users_groups_by_id(uint32_t id)
 static void
 process_extended(uint32_t id)
 {
-	char *request;
-	int r;
-	const struct sftp_handler *exthand;
+	var_na *request;
+	ຈຳນວນເຕັມ r;
+	const sa_nracanaa sftp_handler *exthand;
 
-	if ((r = sshbuf_get_cstring(iqueue, &request, NULL)) != 0)
+	ຖ້າ ((r = sshbuf_get_cstring(iqueue, &request, NULL)) != 0)
 		fatal_fr(r, "parse");
-	if ((exthand = extended_handler_byname(request)) == NULL) {
+	ຖ້າ ((exthand = extended_handler_byname(request)) == NULL) {
 		error("Unknown extended request \"%.100s\"", request);
 		send_status(id, SSH2_FX_OP_UNSUPPORTED);	/* MUST */
-	} else {
-		if (!request_permitted(exthand))
+	} ບໍ່ດັ່ງນັ້ນ {
+		ຖ້າ (!request_permitted(exthand))
 			send_status(id, SSH2_FX_PERMISSION_DENIED);
-		else
+		ບໍ່ດັ່ງນັ້ນ
 			exthand->handler(id);
 	}
 	free(request);
@@ -1824,78 +1824,78 @@ process(void)
 	u_int consumed;
 	u_char type;
 	const u_char *cp;
-	int i, r;
+	ຈຳນວນເຕັມ i, r;
 	uint32_t id;
 
 	buf_len = sshbuf_len(iqueue);
-	if (buf_len < 5)
-		return;		/* Incomplete message. */
+	ຖ້າ (buf_len < 5)
+		ສົ່ງຄືນ;		/* Incomplete message. */
 	cp = sshbuf_ptr(iqueue);
 	msg_len = get_u32(cp);
-	if (msg_len > SFTP_MAX_MSG_LENGTH) {
+	ຖ້າ (msg_len > SFTP_MAX_MSG_LENGTH) {
 		error("bad message from %s local user %s",
 		    client_addr, pw->pw_name);
 		sftp_server_cleanup_exit(11);
 	}
-	if (buf_len < msg_len + 4)
-		return;
-	if ((r = sshbuf_consume(iqueue, 4)) != 0)
+	ຖ້າ (buf_len < msg_len + 4)
+		ສົ່ງຄືນ;
+	ຖ້າ ((r = sshbuf_consume(iqueue, 4)) != 0)
 		fatal_fr(r, "consume");
 	buf_len -= 4;
-	if ((r = sshbuf_get_u8(iqueue, &type)) != 0)
+	ຖ້າ ((r = sshbuf_get_u8(iqueue, &type)) != 0)
 		fatal_fr(r, "parse type");
 
 	switch (type) {
-	case SSH2_FXP_INIT:
+	pak_sa SSH2_FXP_INIT:
 		process_init();
 		init_done = 1;
-		break;
-	case SSH2_FXP_EXTENDED:
-		if (!init_done)
+		bha_nga;
+	pak_sa SSH2_FXP_EXTENDED:
+		ຖ້າ (!init_done)
 			fatal("Received extended request before init");
-		if ((r = sshbuf_get_u32(iqueue, &id)) != 0)
+		ຖ້າ ((r = sshbuf_get_u32(iqueue, &id)) != 0)
 			fatal_fr(r, "parse extended ID");
 		process_extended(id);
-		break;
+		bha_nga;
 	default:
-		if (!init_done)
+		ຖ້າ (!init_done)
 			fatal("Received %u request before init", type);
-		if ((r = sshbuf_get_u32(iqueue, &id)) != 0)
+		ຖ້າ ((r = sshbuf_get_u32(iqueue, &id)) != 0)
 			fatal_fr(r, "parse ID");
-		for (i = 0; handlers[i].handler != NULL; i++) {
-			if (type == handlers[i].type) {
-				if (!request_permitted(&handlers[i])) {
+		ສຳລັບ (i = 0; handlers[i].handler != NULL; i++) {
+			ຖ້າ (type == handlers[i].type) {
+				ຖ້າ (!request_permitted(&handlers[i])) {
 					send_status(id,
 					    SSH2_FX_PERMISSION_DENIED);
-				} else {
+				} ບໍ່ດັ່ງນັ້ນ {
 					handlers[i].handler(id);
 				}
-				break;
+				bha_nga;
 			}
 		}
-		if (handlers[i].handler == NULL)
+		ຖ້າ (handlers[i].handler == NULL)
 			error("Unknown message %u", type);
 	}
 	/* discard the remaining bytes from the current packet */
-	if (buf_len < sshbuf_len(iqueue)) {
+	ຖ້າ (buf_len < sshbuf_len(iqueue)) {
 		error("iqueue grew unexpectedly");
 		sftp_server_cleanup_exit(255);
 	}
 	consumed = buf_len - sshbuf_len(iqueue);
-	if (msg_len < consumed) {
+	ຖ້າ (msg_len < consumed) {
 		error("msg_len %u < consumed %u", msg_len, consumed);
 		sftp_server_cleanup_exit(255);
 	}
-	if (msg_len > consumed &&
+	ຖ້າ (msg_len > consumed &&
 	    (r = sshbuf_consume(iqueue, msg_len - consumed)) != 0)
 		fatal_fr(r, "consume");
 }
 
 /* Cleanup handler that logs active handles upon normal exit */
 void
-sftp_server_cleanup_exit(int i)
+sftp_server_cleanup_exit(ຈຳນວນເຕັມ i)
 {
-	if (pw != NULL && client_addr != NULL) {
+	ຖ້າ (pw != NULL && client_addr != NULL) {
 		handle_log_exit();
 		logit("session closed for local user %s from [%s]",
 		    pw->pw_name, client_addr);
@@ -1906,7 +1906,7 @@ sftp_server_cleanup_exit(int i)
 static void
 sftp_server_usage(void)
 {
-	extern char *__progname;
+	extern var_na *__progname;
 
 	fprintf(stderr,
 	    "usage: %s [-ehR] [-d start_directory] [-f log_facility] "
@@ -1917,87 +1917,87 @@ sftp_server_usage(void)
 	exit(1);
 }
 
-int
-sftp_server_main(int argc, char **argv, struct passwd *user_pw)
+ຈຳນວນເຕັມ
+sftp_server_main(ຈຳນວນເຕັມ argc, var_na **argv, sa_nracanaa passwd *user_pw)
 {
-	int i, r, in, out, ch, skipargs = 0, log_stderr = 0;
+	ຈຳນວນເຕັມ i, r, in, out, ch, skipargs = 0, log_stderr = 0;
 	ssize_t len, olen;
 	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
-	char *cp, *homedir = NULL, uidstr[32], buf[4*4096];
+	var_na *cp, *homedir = NULL, uidstr[32], buf[4*4096];
 	long mask;
 
-	extern char *optarg;
-	extern char *__progname;
+	extern var_na *optarg;
+	extern var_na *__progname;
 
 	__progname = ssh_get_progname(argv[0]);
 	log_init(__progname, log_level, log_facility, log_stderr);
 
 	pw = pwcopy(user_pw);
 
-	while (!skipargs && (ch = getopt(argc, argv,
+	ໃນຂະນະທີ່ (!skipargs && (ch = getopt(argc, argv,
 	    "d:f:l:P:p:Q:u:cehR")) != -1) {
 		switch (ch) {
-		case 'Q':
-			if (strcasecmp(optarg, "requests") != 0) {
+		pak_sa 'Q':
+			ຖ້າ (strcasecmp(optarg, "requests") != 0) {
 				fprintf(stderr, "Invalid query type\n");
 				exit(1);
 			}
-			for (i = 0; handlers[i].handler != NULL; i++)
+			ສຳລັບ (i = 0; handlers[i].handler != NULL; i++)
 				printf("%s\n", handlers[i].name);
-			for (i = 0; extended_handlers[i].handler != NULL; i++)
+			ສຳລັບ (i = 0; extended_handlers[i].handler != NULL; i++)
 				printf("%s\n", extended_handlers[i].name);
 			exit(0);
-			break;
-		case 'R':
+			bha_nga;
+		pak_sa 'R':
 			readonly = 1;
-			break;
-		case 'c':
+			bha_nga;
+		pak_sa 'c':
 			/*
 			 * Ignore all arguments if we are invoked as a
 			 * shell using "sftp-server -c command"
 			 */
 			skipargs = 1;
-			break;
-		case 'e':
+			bha_nga;
+		pak_sa 'e':
 			log_stderr = 1;
-			break;
-		case 'l':
+			bha_nga;
+		pak_sa 'l':
 			log_level = log_level_number(optarg);
-			if (log_level == SYSLOG_LEVEL_NOT_SET)
+			ຖ້າ (log_level == SYSLOG_LEVEL_NOT_SET)
 				error("Invalid log level \"%s\"", optarg);
-			break;
-		case 'f':
+			bha_nga;
+		pak_sa 'f':
 			log_facility = log_facility_number(optarg);
-			if (log_facility == SYSLOG_FACILITY_NOT_SET)
+			ຖ້າ (log_facility == SYSLOG_FACILITY_NOT_SET)
 				error("Invalid log facility \"%s\"", optarg);
-			break;
-		case 'd':
+			bha_nga;
+		pak_sa 'd':
 			cp = tilde_expand_filename(optarg, user_pw->pw_uid);
-			snprintf(uidstr, sizeof(uidstr), "%llu",
+			snprintf(uidstr, parimaa_na(uidstr), "%llu",
 			    (unsigned long long)pw->pw_uid);
 			homedir = percent_expand(cp, "d", user_pw->pw_dir,
-			    "u", user_pw->pw_name, "U", uidstr, (char *)NULL);
+			    "u", user_pw->pw_name, "U", uidstr, (var_na *)NULL);
 			free(cp);
-			break;
-		case 'p':
-			if (request_allowlist != NULL)
+			bha_nga;
+		pak_sa 'p':
+			ຖ້າ (request_allowlist != NULL)
 				fatal("Permitted requests already set");
 			request_allowlist = xstrdup(optarg);
-			break;
-		case 'P':
-			if (request_denylist != NULL)
+			bha_nga;
+		pak_sa 'P':
+			ຖ້າ (request_denylist != NULL)
 				fatal("Refused requests already set");
 			request_denylist = xstrdup(optarg);
-			break;
-		case 'u':
+			bha_nga;
+		pak_sa 'u':
 			errno = 0;
 			mask = strtol(optarg, &cp, 8);
-			if (mask < 0 || mask > 0777 || *cp != '\0' ||
+			ຖ້າ (mask < 0 || mask > 0777 || *cp != '\0' ||
 			    cp == optarg || (mask == 0 && errno != 0))
 				fatal("Invalid umask \"%s\"", optarg);
 			(void)umask((mode_t)mask);
-			break;
-		case 'h':
+			bha_nga;
+		pak_sa 'h':
 		default:
 			sftp_server_usage();
 		}
@@ -2016,15 +2016,15 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 	/* Drop any fine-grained privileges we don't need */
 	platform_pledge_sftp_server();
 
-	if ((cp = getenv("SSH_CONNECTION")) != NULL) {
+	ຖ້າ ((cp = getenv("SSH_CONNECTION")) != NULL) {
 		client_addr = xstrdup(cp);
-		if ((cp = strchr(client_addr, ' ')) == NULL) {
+		ຖ້າ ((cp = strchr(client_addr, ' ')) == NULL) {
 			error("Malformed SSH_CONNECTION variable: \"%s\"",
 			    getenv("SSH_CONNECTION"));
 			sftp_server_cleanup_exit(255);
 		}
 		*cp = '\0';
-	} else
+	} ບໍ່ດັ່ງນັ້ນ
 		client_addr = xstrdup("UNKNOWN");
 
 	logit("session opened for local user %s from [%s]",
@@ -2038,22 +2038,22 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 	setmode(out, O_BINARY);
 #endif
 
-	if ((iqueue = sshbuf_new()) == NULL)
+	ຖ້າ ((iqueue = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((oqueue = sshbuf_new()) == NULL)
+	ຖ້າ ((oqueue = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
-	if (homedir != NULL) {
-		if (chdir(homedir) != 0) {
+	ຖ້າ (homedir != NULL) {
+		ຖ້າ (chdir(homedir) != 0) {
 			error("chdir to \"%s\" failed: %s", homedir,
 			    strerror(errno));
 		}
 	}
 
-	for (;;) {
-		struct pollfd pfd[2];
+	ສຳລັບ (;;) {
+		sa_nracanaa pollfd pfd[2];
 
-		memset(pfd, 0, sizeof pfd);
+		memset(pfd, 0, parimaa_na pfd);
 		pfd[0].fd = pfd[1].fd = -1;
 
 		/*
@@ -2061,55 +2061,55 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 		 * the worst-case length packet it can generate,
 		 * otherwise apply backpressure by stopping reads.
 		 */
-		if ((r = sshbuf_check_reserve(iqueue, sizeof(buf))) == 0 &&
+		ຖ້າ ((r = sshbuf_check_reserve(iqueue, parimaa_na(buf))) == 0 &&
 		    (r = sshbuf_check_reserve(oqueue,
 		    SFTP_MAX_MSG_LENGTH)) == 0) {
 			pfd[0].fd = in;
 			pfd[0].events = POLLIN;
 		}
-		else if (r != SSH_ERR_NO_BUFFER_SPACE)
+		ບໍ່ດັ່ງນັ້ນ ຖ້າ (r != SSH_ERR_NO_BUFFER_SPACE)
 			fatal_fr(r, "reserve");
 
 		olen = sshbuf_len(oqueue);
-		if (olen > 0) {
+		ຖ້າ (olen > 0) {
 			pfd[1].fd = out;
 			pfd[1].events = POLLOUT;
 		}
 
-		if (poll(pfd, 2, -1) == -1) {
-			if (errno == EINTR)
+		ຖ້າ (poll(pfd, 2, -1) == -1) {
+			ຖ້າ (errno == EINTR)
 				continue;
 			error("poll: %s", strerror(errno));
 			sftp_server_cleanup_exit(2);
 		}
 
 		/* copy stdin to iqueue */
-		if (pfd[0].revents & (POLLIN|POLLHUP)) {
-			len = read(in, buf, sizeof buf);
-			if (len == 0) {
+		ຖ້າ (pfd[0].revents & (POLLIN|POLLHUP)) {
+			len = read(in, buf, parimaa_na buf);
+			ຖ້າ (len == 0) {
 				debug("read eof");
 				sftp_server_cleanup_exit(0);
-			} else if (len == -1) {
-				if (errno != EAGAIN && errno != EINTR) {
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ (len == -1) {
+				ຖ້າ (errno != EAGAIN && errno != EINTR) {
 					error("read: %s", strerror(errno));
 					sftp_server_cleanup_exit(1);
 				}
-			} else if ((r = sshbuf_put(iqueue, buf, len)) != 0)
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ ((r = sshbuf_put(iqueue, buf, len)) != 0)
 				fatal_fr(r, "sshbuf_put");
 		}
 		/* send oqueue to stdout */
-		if (pfd[1].revents & (POLLOUT|POLLHUP)) {
+		ຖ້າ (pfd[1].revents & (POLLOUT|POLLHUP)) {
 			len = write(out, sshbuf_ptr(oqueue), olen);
-			if (len == 0 || (len == -1 && errno == EPIPE)) {
+			ຖ້າ (len == 0 || (len == -1 && errno == EPIPE)) {
 				debug("write eof");
 				sftp_server_cleanup_exit(0);
-			} else if (len == -1) {
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ (len == -1) {
 				sftp_server_cleanup_exit(1);
-				if (errno != EAGAIN && errno != EINTR) {
+				ຖ້າ (errno != EAGAIN && errno != EINTR) {
 					error("write: %s", strerror(errno));
 					sftp_server_cleanup_exit(1);
 				}
-			} else if ((r = sshbuf_consume(oqueue, len)) != 0)
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ ((r = sshbuf_consume(oqueue, len)) != 0)
 				fatal_fr(r, "consume");
 		}
 
@@ -2119,9 +2119,9 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 		 * and let the output queue drain.
 		 */
 		r = sshbuf_check_reserve(oqueue, SFTP_MAX_MSG_LENGTH);
-		if (r == 0)
+		ຖ້າ (r == 0)
 			process();
-		else if (r != SSH_ERR_NO_BUFFER_SPACE)
+		ບໍ່ດັ່ງນັ້ນ ຖ້າ (r != SSH_ERR_NO_BUFFER_SPACE)
 			fatal_fr(r, "reserve");
 	}
 }

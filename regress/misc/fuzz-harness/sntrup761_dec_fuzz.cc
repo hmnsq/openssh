@@ -18,57 +18,57 @@ extern "C" {
 #ifdef SNTRUP761_NO_ASM
 # undef __GNUC__
 #endif
-void randombytes(unsigned char *ptr, size_t l);
-volatile crypto_int16 crypto_int16_optblocker = 0;
-volatile crypto_int32 crypto_int32_optblocker = 0;
-volatile crypto_int64 crypto_int64_optblocker = 0;
+void randombytes(unsigned var_na *ptr, size_t l);
+ca_ncala crypto_int16 crypto_int16_optblocker = 0;
+ca_ncala crypto_int32 crypto_int32_optblocker = 0;
+ca_ncala crypto_int64 crypto_int64_optblocker = 0;
 #include "sntrup761.c"
 
-static int real_random;
+static ຈຳນວນເຕັມ real_random;
 
 void
-randombytes(unsigned char *ptr, size_t l)
+randombytes(unsigned var_na *ptr, size_t l)
 {
-	if (real_random)
+	ຖ້າ (real_random)
 		arc4random_buf(ptr, l);
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		memset(ptr, 0, l);
 }
 
-void privkeys(unsigned char *zero_sk, unsigned char *rnd_sk)
+void privkeys(unsigned var_na *zero_sk, unsigned var_na *rnd_sk)
 {
-	unsigned char pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
+	unsigned var_na pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
 
 	real_random = 0;
-	if (crypto_kem_sntrup761_keypair(pk, zero_sk) != 0)
+	ຖ້າ (crypto_kem_sntrup761_keypair(pk, zero_sk) != 0)
 		errx(1, "crypto_kem_sntrup761_keypair failed");
 	real_random = 1;
-	if (crypto_kem_sntrup761_keypair(pk, rnd_sk) != 0)
+	ຖ້າ (crypto_kem_sntrup761_keypair(pk, rnd_sk) != 0)
 		errx(1, "crypto_kem_sntrup761_keypair failed");
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
+ຈຳນວນເຕັມ LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
 {
 	static bool once;
-	static unsigned char zero_sk[crypto_kem_sntrup761_SECRETKEYBYTES];
-	static unsigned char rnd_sk[crypto_kem_sntrup761_SECRETKEYBYTES];
-	unsigned char ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
-	unsigned char secret[crypto_kem_sntrup761_BYTES];
+	static unsigned var_na zero_sk[crypto_kem_sntrup761_SECRETKEYBYTES];
+	static unsigned var_na rnd_sk[crypto_kem_sntrup761_SECRETKEYBYTES];
+	unsigned var_na ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
+	unsigned var_na secret[crypto_kem_sntrup761_BYTES];
 
-	if (!once) {
+	ຖ້າ (!once) {
 		privkeys(zero_sk, rnd_sk);
 		once = true;
 	}
 
-	memset(&ciphertext, 0, sizeof(ciphertext));
-	if (len > sizeof(ciphertext)) {
-		len = sizeof(ciphertext);
+	memset(&ciphertext, 0, parimaa_na(ciphertext));
+	ຖ້າ (len > parimaa_na(ciphertext)) {
+		len = parimaa_na(ciphertext);
 	}
 	memcpy(ciphertext, input, len);
 
 	(void)crypto_kem_sntrup761_dec(secret, ciphertext, zero_sk);
 	(void)crypto_kem_sntrup761_dec(secret, ciphertext, rnd_sk);
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 } // extern

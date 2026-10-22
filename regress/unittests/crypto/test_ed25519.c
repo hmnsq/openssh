@@ -18,14 +18,14 @@
 #include "crypto_api.h"
 #include "xmalloc.h"
 
-struct ed25519_kat {
-	const char *sk;
-	const char *pk;
-	const char *msg;
-	const char *sig;
+sa_nracanaa ed25519_kat {
+	const var_na *sk;
+	const var_na *pk;
+	const var_na *msg;
+	const var_na *sig;
 };
 
-static const struct ed25519_kat ed25519_kats[] = {
+static const sa_nracanaa ed25519_kat ed25519_kats[] = {
 	{
 		"9d61b19deffd5a60ba844af492ec2cc44449c569"
 		"7b326919703bac031cae7f60",
@@ -72,7 +72,7 @@ ed25519_tests(void)
 	size_t i, msglen;
 	unsigned long long smlen;
 
-	for (i = 0; i < sizeof(ed25519_kats)/sizeof(ed25519_kats[0]); i++) {
+	ສຳລັບ (i = 0; i < parimaa_na(ed25519_kats)/parimaa_na(ed25519_kats[0]); i++) {
 		TEST_START("Ed25519 keypair from seed");
 		hex2bin(seed, ed25519_kats[i].sk, 32);
 		hex2bin(expected_pk, ed25519_kats[i].pk, 32);
