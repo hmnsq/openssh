@@ -5,22 +5,22 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <stdio.h>
+#अन्तर्भाव <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#अन्तर्भाव "../test_helper/test_helper.h"
 
-void sshbuf_tests(void);
-void sshbuf_getput_basic_tests(void);
-void sshbuf_getput_crypto_tests(void);
-void sshbuf_misc_tests(void);
-void sshbuf_fuzz_tests(void);
-void sshbuf_getput_fuzz_tests(void);
-void sshbuf_fixed(void);
+शून्य sshbuf_tests(शून्य);
+शून्य sshbuf_getput_basic_tests(शून्य);
+शून्य sshbuf_getput_crypto_tests(शून्य);
+शून्य sshbuf_misc_tests(शून्य);
+शून्य sshbuf_fuzz_tests(शून्य);
+शून्य sshbuf_getput_fuzz_tests(शून्य);
+शून्य sshbuf_fixed(शून्य);
 
-void
-tests(void)
+शून्य
+tests(शून्य)
 {
 	sshbuf_tests();
 	sshbuf_getput_basic_tests();
@@ -33,8 +33,8 @@ tests(void)
 	sshbuf_fixed();
 }
 
-void
-benchmarks(void)
+शून्य
+benchmarks(शून्य)
 {
-	printf("no benchmarks\n");
+	म_लिखो("no benchmarks\n");
 }

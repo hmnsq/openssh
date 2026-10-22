@@ -17,62 +17,62 @@
 
 #define BUFSZ 2048
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <string.h>
 
-static int failed = 0;
+स्थिर पूर्णाङ्क failed = 0;
 
-static void
-fail(const char *m)
+स्थिर शून्य
+fail(ध्रुव वर्ण *m)
 {
-	fprintf(stderr, "snprintftest: %s\n", m);
+	ख_लिखो(मानक_त्रुटि, "snprintftest: %s\n", m);
 	failed = 1;
 }
 
-int x_snprintf(char *str, size_t count, const char *fmt, ...)
+पूर्णाङ्क x_snprintf(वर्ण *str, माप_प्रकार गिनती, ध्रुव वर्ण *fmt, ...)
 {
-	size_t ret;
-	va_list ap;
+	माप_प्रकार ret;
+	बहु_सूची ap;
 
-	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
-	va_end(ap);
-	return ret;
+	बहु_शुरू(ap, fmt);
+	ret = vsnprintf(str, गिनती, fmt, ap);
+	बहु_पूर्ण(ap);
+	प्रत्यागम ret;
 }
 
-int
-main(void)
+पूर्णाङ्क
+main(शून्य)
 {
-	char b[5];
-	char *src = NULL;
-	int ret;
+	वर्ण b[5];
+	वर्ण *src = रिक्त;
+	पूर्णाङ्क ret;
 
-	memset(b, 'X', sizeof(b));
+	स_रखो(b, 'X', परिमाण(b));
 	ret = snprintf(b, 5, "123456789");
-	if (ret != 9 || b[4] != '\0')
+	यदि (ret != 9 || b[4] != '\0')
 		fail("snprintf does not correctly terminate long strings");
 
 	/* check for read overrun on unterminated string */
-	if ((src = malloc(BUFSZ)) == NULL) {
+	यदि ((src = दो_स्मृति(BUFSZ)) == रिक्त) {
 		fail("malloc failed");
-	} else {
-		memset(src, 'a', BUFSZ);
-		snprintf(b, sizeof(b), "%.*s", 1, src);
-		if (strcmp(b, "a") != 0)
+	} अन्यथा {
+		स_रखो(src, 'a', BUFSZ);
+		snprintf(b, परिमाण(b), "%.*s", 1, src);
+		यदि (म_भेद(b, "a") != 0)
 			fail("failed with length limit '%%.s'");
 	}
 
 	/* check that snprintf and vsnprintf return sane values */
-	if (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	यदि (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("snprintf does not return required length");
-	if (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	यदि (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("vsnprintf does not return required length");
 
-	free(src);
-	return failed;
+	मुक्त(src);
+	प्रत्यागम failed;
 }

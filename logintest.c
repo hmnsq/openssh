@@ -27,39 +27,39 @@
  **               and lastlog retrieval
  **/
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/socket.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/wait.h>
+#अन्तर्भाव <sys/socket.h>
 
-#include <netinet/in.h>
+#अन्तर्भाव <netinet/in.h>
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <pwd.h>
-#include <netdb.h>
-#include <time.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <pwd.h>
+#अन्तर्भाव <netdb.h>
+#अन्तर्भाव <time.h>
 
-#include "loginrec.h"
+#अन्तर्भाव "loginrec.h"
 
-extern char *__progname;
+बाह्य वर्ण *__progname;
 
 #define PAUSE_BEFORE_LOGOUT 3
 
-int nologtest = 0;
-int compile_opts_only = 0;
-int be_verbose = 0;
+पूर्णाङ्क nologtest = 0;
+पूर्णाङ्क compile_opts_only = 0;
+पूर्णाङ्क be_verbose = 0;
 
 
 /* Dump a logininfo to stdout. Assumes a tab size of 8 chars. */
-void
-dump_logininfo(struct logininfo *li, char *descname)
+शून्य
+dump_logininfo(संरचना logininfo *li, वर्ण *descname)
 {
 	/* yes I know how nasty this is */
-	printf("struct logininfo %s = {\n\t"
+	म_लिखो("struct logininfo %s = {\n\t"
 	    "progname\t'%s'\n\ttype\t\t%d\n\t"
 	    "pid\t\t%d\n\tuid\t\t%d\n\t"
 	    "line\t\t'%s'\n\tusername\t'%s'\n\t"
@@ -71,236 +71,236 @@ dump_logininfo(struct logininfo *li, char *descname)
 	    "\t}\n"
 	    "}\n",
 	    descname, li->progname, li->type,
-	    li->pid, li->uid, li->line,
-	    li->username, li->hostname, li->exit,
+	    li->pid, li->uid, li->पंक्ति,
+	    li->username, li->hostname, li->निकास,
 	    li->termination, li->tv_sec, li->tv_usec,
 	    li->hostaddr.sa.sa_family);
 }
 
 
-int
+पूर्णाङ्क
 testAPI()
 {
-	struct logininfo *li1;
-	struct passwd *pw;
-	struct hostent *he;
-	struct sockaddr_in sa_in4;
-	char cmdstring[256], stripline[8];
-	char username[32];
+	संरचना logininfo *li1;
+	संरचना passwd *pw;
+	संरचना hostent *he;
+	संरचना sockaddr_in sa_in4;
+	वर्ण cmdstring[256], stripline[8];
+	वर्ण username[32];
 #ifdef HAVE_TIME_H
-	time_t t0, t1, t2, logintime, logouttime;
-	char s_t0[64],s_t1[64],s_t2[64];
-	char s_logintime[64], s_logouttime[64]; /* ctime() strings */
+	समय_प्रकार t0, t1, t2, logintime, logouttime;
+	वर्ण s_t0[64],s_t1[64],s_t2[64];
+	वर्ण s_logintime[64], s_logouttime[64]; /* ctime() strings */
 #endif
 
-	printf("**\n** Testing the API...\n**\n");
+	म_लिखो("**\n** Testing the API...\n**\n");
 
 	pw = getpwuid(getuid());
-	strlcpy(username, pw->pw_name, sizeof(username));
+	strlcpy(username, pw->pw_name, परिमाण(username));
 
 	/* gethostname(hostname, sizeof(hostname)); */
 
-	printf("login_alloc_entry test (no host info):\n");
+	म_लिखो("login_alloc_entry test (no host info):\n");
 
 	/* FIXME fake tty more effectively - this could upset some platforms */
-	li1 = login_alloc_entry((int)getpid(), username, NULL, ttyname(0));
-	strlcpy(li1->progname, "OpenSSH-logintest", sizeof(li1->progname));
+	li1 = login_alloc_entry((पूर्णाङ्क)getpid(), username, रिक्त, ttyname(0));
+	strlcpy(li1->progname, "OpenSSH-logintest", परिमाण(li1->progname));
 
-	if (be_verbose)
+	यदि (be_verbose)
 		dump_logininfo(li1, "li1");
 
-	printf("Setting host address info for 'localhost' (may call out):\n");
-	if (! (he = gethostbyname("localhost"))) {
-		printf("Couldn't set hostname(lookup failed)\n");
-	} else {
+	म_लिखो("Setting host address info for 'localhost' (may call out):\n");
+	यदि (! (he = gethostbyname("localhost"))) {
+		म_लिखो("Couldn't set hostname(lookup failed)\n");
+	} अन्यथा {
 		/* NOTE: this is messy, but typically a program wouldn't have to set
 		 *  any of this, a sockaddr_in* would be already prepared */
-		memcpy((void *)&(sa_in4.sin_addr), (void *)&(he->h_addr_list[0][0]),
-		    sizeof(struct in_addr));
-		login_set_addr(li1, (struct sockaddr *) &sa_in4, sizeof(sa_in4));
-		strlcpy(li1->hostname, "localhost", sizeof(li1->hostname));
+		स_नकल((शून्य *)&(sa_in4.sin_addr), (शून्य *)&(he->h_addr_list[0][0]),
+		    परिमाण(संरचना in_addr));
+		login_set_addr(li1, (संरचना sockaddr *) &sa_in4, परिमाण(sa_in4));
+		strlcpy(li1->hostname, "localhost", परिमाण(li1->hostname));
 	}
-	if (be_verbose)
+	यदि (be_verbose)
 		dump_logininfo(li1, "li1");
 
-	if ((int)geteuid() != 0) {
-		printf("NOT RUNNING LOGIN TESTS - you are not root!\n");
-		return 1;
+	यदि ((पूर्णाङ्क)geteuid() != 0) {
+		म_लिखो("NOT RUNNING LOGIN TESTS - you are not root!\n");
+		प्रत्यागम 1;
 	}
 
-	if (nologtest)
-		return 1;
+	यदि (nologtest)
+		प्रत्यागम 1;
 
-	line_stripname(stripline, li1->line, sizeof(stripline));
+	पंक्ति_stripname(stripline, li1->पंक्ति, परिमाण(stripline));
 
-	printf("Performing an invalid login attempt (no type field)\n--\n");
+	म_लिखो("Performing an invalid login attempt (no type field)\n--\n");
 	login_write(li1);
-	printf("--\n(Should have written errors to stderr)\n");
+	म_लिखो("--\n(Should have written errors to stderr)\n");
 
 #ifdef HAVE_TIME_H
-	(void)time(&t0);
-	strlcpy(s_t0, ctime(&t0), sizeof(s_t0));
+	(शून्य)समय(&t0);
+	strlcpy(s_t0, स_समय(&t0), परिमाण(s_t0));
 	t1 = login_get_lastlog_time(getuid());
-	strlcpy(s_t1, ctime(&t1), sizeof(s_t1));
-	printf("Before logging in:\n\tcurrent time is %d - %s\t"
+	strlcpy(s_t1, स_समय(&t1), परिमाण(s_t1));
+	म_लिखो("Before logging in:\n\tcurrent time is %d - %s\t"
 	    "lastlog time is %d - %s\n",
-	    (int)t0, s_t0, (int)t1, s_t1);
+	    (पूर्णाङ्क)t0, s_t0, (पूर्णाङ्क)t1, s_t1);
 #endif
 
-	printf("Performing a login on line %s ", stripline);
+	म_लिखो("Performing a login on line %s ", stripline);
 #ifdef HAVE_TIME_H
-	(void)time(&logintime);
-	strlcpy(s_logintime, ctime(&logintime), sizeof(s_logintime));
-	printf("at %d - %s", (int)logintime, s_logintime);
+	(शून्य)समय(&logintime);
+	strlcpy(s_logintime, स_समय(&logintime), परिमाण(s_logintime));
+	म_लिखो("at %d - %s", (पूर्णाङ्क)logintime, s_logintime);
 #endif
-	printf("--\n");
+	म_लिखो("--\n");
 	login_login(li1);
 
-	snprintf(cmdstring, sizeof(cmdstring), "who | grep '%s '",
+	snprintf(cmdstring, परिमाण(cmdstring), "who | grep '%s '",
 		 stripline);
-	system(cmdstring);
+	प्रणाली(cmdstring);
 
-	printf("--\nPausing for %d second(s)...\n", PAUSE_BEFORE_LOGOUT);
+	म_लिखो("--\nPausing for %d second(s)...\n", PAUSE_BEFORE_LOGOUT);
 	sleep(PAUSE_BEFORE_LOGOUT);
 
-	printf("Performing a logout ");
+	म_लिखो("Performing a logout ");
 #ifdef HAVE_TIME_H
-	(void)time(&logouttime);
-	strlcpy(s_logouttime, ctime(&logouttime), sizeof(s_logouttime));
-	printf("at %d - %s", (int)logouttime, s_logouttime);
+	(शून्य)समय(&logouttime);
+	strlcpy(s_logouttime, स_समय(&logouttime), परिमाण(s_logouttime));
+	म_लिखो("at %d - %s", (पूर्णाङ्क)logouttime, s_logouttime);
 #endif
-	printf("\nThe root login shown above should be gone.\n"
+	म_लिखो("\nThe root login shown above should be gone.\n"
 	    "If the root login hasn't gone, but another user on the same\n"
 	    "pty has, this is OK - we're hacking it here, and there\n"
 	    "shouldn't be two users on one pty in reality...\n"
 	    "-- ('who' output follows)\n");
 	login_logout(li1);
 
-	system(cmdstring);
-	printf("-- ('who' output ends)\n");
+	प्रणाली(cmdstring);
+	म_लिखो("-- ('who' output ends)\n");
 
 #ifdef HAVE_TIME_H
 	t2 = login_get_lastlog_time(getuid());
-	strlcpy(s_t2, ctime(&t2), sizeof(s_t2));
-	printf("After logging in, lastlog time is %d - %s\n", (int)t2, s_t2);
-	if (t1 == t2)
-		printf("The lastlog times before and after logging in are the "
+	strlcpy(s_t2, स_समय(&t2), परिमाण(s_t2));
+	म_लिखो("After logging in, lastlog time is %d - %s\n", (पूर्णाङ्क)t2, s_t2);
+	यदि (t1 == t2)
+		म_लिखो("The lastlog times before and after logging in are the "
 		    "same.\nThis indicates that lastlog is ** NOT WORKING "
 		    "CORRECTLY **\n");
-	else if (t0 != t2)
+	अन्यथा यदि (t0 != t2)
 		/* We can be off by a second or so, even when recording works fine.
 		 * I'm not 100% sure why, but it's true. */
-		printf("** The login time and the lastlog time differ.\n"
+		म_लिखो("** The login time and the lastlog time differ.\n"
 		    "** This indicates that lastlog is either recording the "
 		    "wrong time,\n** or retrieving the wrong entry.\n"
 		    "If it's off by less than %d second(s) "
 		    "run the test again.\n", PAUSE_BEFORE_LOGOUT);
-	else
-		printf("lastlog agrees with the login time. This is a good thing.\n");
+	अन्यथा
+		म_लिखो("lastlog agrees with the login time. This is a good thing.\n");
 
 #endif
 
-	printf("--\nThe output of 'last' shown next should have "
+	म_लिखो("--\nThe output of 'last' shown next should have "
 	    "an entry for root \n  on %s for the time shown above:\n--\n",
 	    stripline);
-	snprintf(cmdstring, sizeof(cmdstring), "last | grep '%s ' | head -3",
+	snprintf(cmdstring, परिमाण(cmdstring), "last | grep '%s ' | head -3",
 		 stripline);
-	system(cmdstring);
+	प्रणाली(cmdstring);
 
-	printf("--\nEnd of login test.\n");
+	म_लिखो("--\nEnd of login test.\n");
 
 	login_free_entry(li1);
 
-	return 1;
+	प्रत्यागम 1;
 } /* testAPI() */
 
 
-void
-testLineName(char *line)
+शून्य
+test_पंक्ति_Name(वर्ण *पंक्ति)
 {
 	/* have to null-terminate - these functions are designed for
 	 * structures with fixed-length char arrays, and don't null-term.*/
-	char full[17], strip[9], abbrev[5];
+	वर्ण full[17], strip[9], abbrev[5];
 
-	memset(full, '\0', sizeof(full));
-	memset(strip, '\0', sizeof(strip));
-	memset(abbrev, '\0', sizeof(abbrev));
+	स_रखो(full, '\0', परिमाण(full));
+	स_रखो(strip, '\0', परिमाण(strip));
+	स_रखो(abbrev, '\0', परिमाण(abbrev));
 
-	line_fullname(full, line, sizeof(full)-1);
-	line_stripname(strip, full, sizeof(strip)-1);
-	line_abbrevname(abbrev, full, sizeof(abbrev)-1);
-	printf("%s: %s, %s, %s\n", line, full, strip, abbrev);
+	पंक्ति_fullname(full, पंक्ति, परिमाण(full)-1);
+	पंक्ति_stripname(strip, full, परिमाण(strip)-1);
+	पंक्ति_abbrevname(abbrev, full, परिमाण(abbrev)-1);
+	म_लिखो("%s: %s, %s, %s\n", पंक्ति, full, strip, abbrev);
 
 } /* testLineName() */
 
 
-int
+पूर्णाङ्क
 testOutput()
 {
-	printf("**\n** Testing linename functions\n**\n");
-	testLineName("/dev/pts/1");
-	testLineName("pts/1");
-	testLineName("pts/999");
-	testLineName("/dev/ttyp00");
-	testLineName("ttyp00");
+	म_लिखो("**\n** Testing linename functions\n**\n");
+	test_पंक्ति_Name("/dev/pts/1");
+	test_पंक्ति_Name("pts/1");
+	test_पंक्ति_Name("pts/999");
+	test_पंक्ति_Name("/dev/ttyp00");
+	test_पंक्ति_Name("ttyp00");
 
-	return 1;
+	प्रत्यागम 1;
 } /* testOutput() */
 
 
 /* show which options got compiled in */
-void
-showOptions(void)
+शून्य
+showOptions(शून्य)
 {
-	printf("**\n** Compile-time options\n**\n");
+	म_लिखो("**\n** Compile-time options\n**\n");
 
-	printf("login recording methods selected:\n");
+	म_लिखो("login recording methods selected:\n");
 #ifdef USE_LOGIN
-	printf("\tUSE_LOGIN\n");
+	म_लिखो("\tUSE_LOGIN\n");
 #endif
 #ifdef USE_UTMP
-	printf("\tUSE_UTMP (UTMP_FILE=%s)\n", UTMP_FILE);
+	म_लिखो("\tUSE_UTMP (UTMP_FILE=%s)\n", UTMP_FILE);
 #endif
 #ifdef USE_UTMPX
-	printf("\tUSE_UTMPX\n");
+	म_लिखो("\tUSE_UTMPX\n");
 #endif
 #ifdef USE_WTMP
-	printf("\tUSE_WTMP (WTMP_FILE=%s)\n", WTMP_FILE);
+	म_लिखो("\tUSE_WTMP (WTMP_FILE=%s)\n", WTMP_FILE);
 #endif
 #ifdef USE_WTMPX
-	printf("\tUSE_WTMPX (WTMPX_FILE=%s)\n", WTMPX_FILE);
+	म_लिखो("\tUSE_WTMPX (WTMPX_FILE=%s)\n", WTMPX_FILE);
 #endif
 #ifdef USE_LASTLOG
-	printf("\tUSE_LASTLOG (LASTLOG_FILE=%s)\n", LASTLOG_FILE);
+	म_लिखो("\tUSE_LASTLOG (LASTLOG_FILE=%s)\n", LASTLOG_FILE);
 #endif
-	printf("\n");
+	म_लिखो("\n");
 
 } /* showOptions() */
 
 
-int
-main(int argc, char *argv[])
+पूर्णाङ्क
+main(पूर्णाङ्क argc, वर्ण *argv[])
 {
-	printf("Platform-independent login recording test driver\n");
+	म_लिखो("Platform-independent login recording test driver\n");
 
 	__progname = ssh_get_progname(argv[0]);
-	if (argc == 2) {
-		if (strncmp(argv[1], "-i", 3) == 0)
+	यदि (argc == 2) {
+		यदि (म_भेदन(argv[1], "-i", 3) == 0)
 			compile_opts_only = 1;
-		else if (strncmp(argv[1], "-v", 3) == 0)
+		अन्यथा यदि (म_भेदन(argv[1], "-v", 3) == 0)
 			be_verbose=1;
 	}
 
-	if (!compile_opts_only) {
-		if (be_verbose && !testOutput())
-			return 1;
+	यदि (!compile_opts_only) {
+		यदि (be_verbose && !testOutput())
+			प्रत्यागम 1;
 
-		if (!testAPI())
-			return 1;
+		यदि (!testAPI())
+			प्रत्यागम 1;
 	}
 
 	showOptions();
 
-	return 0;
+	प्रत्यागम 0;
 } /* main() */
 

@@ -5,57 +5,57 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #ifdef USE_MLDSA
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "crypto_api.h"
-#include "xmalloc.h"
-#include "sshbuf.h"
+#अन्तर्भाव "../test_helper/test_helper.h"
+#अन्तर्भाव "crypto_api.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "sshbuf.h"
 
 /* in tests.c */
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+संरचना sshbuf *load_text_file(ध्रुव वर्ण *name);
+वर्ण *get_json_string(संरचना sshbuf *content, ध्रुव वर्ण *कुंजी, पूर्णाङ्क consume);
 
-void mldsa_tests(void);
+शून्य mldsa_tests(शून्य);
 
-struct kat {
-	char *seed;
-	char *pk_hash;
-	char *sk_hash;
-	char *msg;
-	char *rand;
-	char *sig_hash;
+संरचना kat {
+	वर्ण *seed;
+	वर्ण *pk_hash;
+	वर्ण *sk_hash;
+	वर्ण *संदेश;
+	वर्ण *अक्रम;
+	वर्ण *sig_hash;
 };
 
-static void
-load_kats(const char *file, struct kat ***katsp, size_t *nkatsp)
+स्थिर शून्य
+load_kats(ध्रुव वर्ण *file, संरचना kat ***katsp, माप_प्रकार *nkatsp)
 {
-	struct sshbuf *json_buf;
-	struct kat *kat = NULL, **kats = NULL;
-	size_t nkats = 0;
+	संरचना sshbuf *json_buf;
+	संरचना kat *kat = रिक्त, **kats = रिक्त;
+	माप_प्रकार nkats = 0;
 
 	json_buf = load_text_file(file);
-	while (sshbuf_find(json_buf, 0, "key_generation_seed",
-	    strlen("key_generation_seed"), NULL) == 0) {
-		kat = xcalloc(1, sizeof(*kat));
+	यावत् (sshbuf_find(json_buf, 0, "key_generation_seed",
+	    म_माप("key_generation_seed"), रिक्त) == 0) {
+		kat = xcalloc(1, परिमाण(*kat));
 		kat->seed = get_json_string(json_buf, "key_generation_seed", 1);
 		kat->pk_hash = get_json_string(json_buf,
 		    "sha3_256_hash_of_verification_key", 1);
 		kat->sk_hash = get_json_string(json_buf,
 		    "sha3_256_hash_of_signing_key", 1);
-		kat->msg = get_json_string(json_buf, "message", 1);
-		kat->rand = get_json_string(json_buf, "signing_randomness", 1);
+		kat->संदेश = get_json_string(json_buf, "message", 1);
+		kat->अक्रम = get_json_string(json_buf, "signing_randomness", 1);
 		kat->sig_hash = get_json_string(json_buf,
 		    "sha3_256_hash_of_signature", 1);
-		kats = xrecallocarray(kats, nkats, nkats + 1, sizeof(*kats));
+		kats = xrecallocarray(kats, nkats, nkats + 1, परिमाण(*kats));
 		kats[nkats++] = kat;
 	}
 	*katsp = kats;
@@ -63,27 +63,27 @@ load_kats(const char *file, struct kat ***katsp, size_t *nkatsp)
 	sshbuf_free(json_buf);
 }
 
-static void
-free_kats(struct kat **kats, size_t nkats)
+स्थिर शून्य
+free_kats(संरचना kat **kats, माप_प्रकार nkats)
 {
-	size_t i;
-	struct kat *kat;
+	माप_प्रकार i;
+	संरचना kat *kat;
 
-	for (i = 0; i < nkats; i++) {
+	प्रति (i = 0; i < nkats; i++) {
 		kat = kats[i];
-		free(kat->seed);
-		free(kat->pk_hash);
-		free(kat->sk_hash);
-		free(kat->msg);
-		free(kat->rand);
-		free(kat->sig_hash);
-		free(kat);
+		मुक्त(kat->seed);
+		मुक्त(kat->pk_hash);
+		मुक्त(kat->sk_hash);
+		मुक्त(kat->संदेश);
+		मुक्त(kat->अक्रम);
+		मुक्त(kat->sig_hash);
+		मुक्त(kat);
 	}
-	free(kats);
+	मुक्त(kats);
 }
 
-void
-mldsa_tests(void)
+शून्य
+mldsa_tests(शून्य)
 {
 	uint8_t pk[MLDSA44_PUBLICKEYBYTES];
 	uint8_t sk[MLDSA44_SECRETKEYBYTES];
@@ -91,14 +91,14 @@ mldsa_tests(void)
 	uint8_t pk_hash[32], sk_hash[32], sig_hash[32];
 	uint8_t expected_pk_hash[32], expected_sk_hash[32];
 	uint8_t expected_sig_hash[32];
-	uint8_t seed[32], rand[32];
-	uint8_t *msg;
-	size_t nkats, i, msglen;
-	struct kat **kats, *kat;
+	uint8_t seed[32], अक्रम[32];
+	uint8_t *संदेश;
+	माप_प्रकार nkats, i, msglen;
+	संरचना kat **kats, *kat;
 
 	TEST_START("ML-DSA 44 KATs");
 	load_kats("nistkats-44.json", &kats, &nkats);
-	for (i = 0; i < nkats; i++) {
+	प्रति (i = 0; i < nkats; i++) {
 		kat = kats[i];
 		test_subtest_info("vector %zu", i);
 
@@ -110,29 +110,29 @@ mldsa_tests(void)
 		ASSERT_INT_EQ(crypto_sign_mldsa44_keypair_seeded(pk,
 		    sk, seed), 0);
 
-		sha3_256(pk_hash, pk, sizeof(pk));
-		sha3_256(sk_hash, sk, sizeof(sk));
+		sha3_256(pk_hash, pk, परिमाण(pk));
+		sha3_256(sk_hash, sk, परिमाण(sk));
 
 		ASSERT_MEM_EQ(pk_hash, expected_pk_hash, 32);
 		ASSERT_MEM_EQ(sk_hash, expected_sk_hash, 32);
 
-		msglen = strlen(kat->msg) / 2;
-		ASSERT_PTR_NE(msg = malloc(msglen), NULL);
-		hex2bin(msg, kat->msg, msglen);
-		hex2bin(rand, kat->rand, 32);
+		msglen = म_माप(kat->संदेश) / 2;
+		ASSERT_PTR_NE(संदेश = दो_स्मृति(msglen), रिक्त);
+		hex2bin(संदेश, kat->संदेश, msglen);
+		hex2bin(अक्रम, kat->अक्रम, 32);
 		hex2bin(expected_sig_hash, kat->sig_hash, 32);
 
 		/* Signing */
-		ASSERT_INT_EQ(crypto_sign_mldsa44_seeded(sig, msg,
-		    msglen, NULL, 0, sk, rand), 0);
+		ASSERT_INT_EQ(crypto_sign_mldsa44_seeded(sig, संदेश,
+		    msglen, रिक्त, 0, sk, अक्रम), 0);
 
-		sha3_256(sig_hash, sig, sizeof(sig));
+		sha3_256(sig_hash, sig, परिमाण(sig));
 		ASSERT_MEM_EQ(sig_hash, expected_sig_hash, 32);
 
 		/* Verification */
-		ASSERT_INT_EQ(crypto_sign_mldsa44_verify(sig, msg,
-		    msglen, NULL, 0, pk), 0);
-		free(msg);
+		ASSERT_INT_EQ(crypto_sign_mldsa44_verify(sig, संदेश,
+		    msglen, रिक्त, 0, pk), 0);
+		मुक्त(संदेश);
 	}
 	free_kats(kats, nkats);
 	TEST_DONE();
