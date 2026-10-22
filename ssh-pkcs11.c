@@ -16,85 +16,85 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifdef ENABLE_PKCS11
 
-#include <sys/time.h>
+#ضمن <sys/time.h>
 
-#include <sys/types.h>
-#include <sys/queue.h>
-#include <stdarg.h>
-#include <stdio.h>
+#ضمن <sys/types.h>
+#ضمن <sys/queue.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
 
-#include <string.h>
-#include <dlfcn.h>
+#ضمن <string.h>
+#ضمن <dlfcn.h>
 
 #ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
-#include <openssl/bn.h>
-#include <openssl/ecdsa.h>
-#include <openssl/x509.h>
-#include <openssl/err.h>
+#ضمن "openbsd-compat/openssl-compat.h"
+#ضمن <openssl/bn.h>
+#ضمن <openssl/ecdsa.h>
+#ضمن <openssl/x509.h>
+#ضمن <openssl/err.h>
 #endif
 
 #define CRYPTOKI_COMPAT
-#include "pkcs11.h"
+#ضمن "pkcs11.h"
 
 #define SSHKEY_INTERNAL
-#include "sshkey.h"
+#ضمن "sshkey.h"
 
-#include "log.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "ssh-pkcs11.h"
-#include "digest.h"
-#include "xmalloc.h"
-#include "crypto_api.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "sshbuf.h"
+#ضمن "ssh-pkcs11.h"
+#ضمن "digest.h"
+#ضمن "xmalloc.h"
+#ضمن "crypto_api.h"
 
-struct pkcs11_slotinfo {
+بنية pkcs11_slotinfo {
 	CK_TOKEN_INFO		token;
 	CK_SESSION_HANDLE	session;
-	int			logged_in;
+	صحيح			logged_in;
 };
 
-struct pkcs11_provider {
-	char			*name;
-	void			*handle;
+بنية pkcs11_provider {
+	حرف			*name;
+	فراغ			*handle;
 	CK_FUNCTION_LIST	*function_list;
 	CK_INFO			info;
 	CK_ULONG		nslots;
 	CK_SLOT_ID		*slotlist;
-	struct pkcs11_slotinfo	*slotinfo;
-	int			valid;
-	int			refcount;
+	بنية pkcs11_slotinfo	*slotinfo;
+	صحيح			valid;
+	صحيح			refcount;
 	TAILQ_ENTRY(pkcs11_provider) next;
 };
 
 TAILQ_HEAD(, pkcs11_provider) pkcs11_providers;
 
-struct pkcs11_key {
-	struct sshbuf		*keyblob;
-	struct pkcs11_provider	*provider;
+بنية pkcs11_ئاچقۇچ {
+	بنية sshbuf		*keyblob;
+	بنية pkcs11_provider	*provider;
 	CK_ULONG		slotidx;
-	char			*keyid;
-	int			keyid_len;
-	TAILQ_ENTRY(pkcs11_key)	next;
+	حرف			*keyid;
+	صحيح			keyid_len;
+	TAILQ_ENTRY(pkcs11_ئاچقۇچ)	next;
 };
 
-TAILQ_HEAD(, pkcs11_key) pkcs11_keys; /* XXX a tree would be better */
+TAILQ_HEAD(, pkcs11_ئاچقۇچ) pkcs11_ئاچقۇچلار; /* XXX a tree would be better */
 
-int pkcs11_interactive = 0;
+صحيح pkcs11_interactive = 0;
 
 #ifdef WITH_OPENSSL
-static void
-ossl_error(const char *msg)
+ساكن فراغ
+ossl_error(ثابت حرف *ئۇچۇر)
 {
 	unsigned long    e;
 
-	error_f("%s", msg);
-	while ((e = ERR_get_error()) != 0)
-		error_f("libcrypto error: %s", ERR_error_string(e, NULL));
+	error_f("%s", ئۇچۇر);
+	طالما ((e = ERR_get_error()) != 0)
+		error_f("libcrypto error: %s", ERR_error_string(e, عدم));
 }
 #endif
 
@@ -104,26 +104,26 @@ ossl_error(const char *msg)
  * so the actual freeing of memory is handled by pkcs11_provider_unref().
  * this is called when a provider gets unregistered.
  */
-static void
-pkcs11_provider_finalize(struct pkcs11_provider *p)
+ساكن فراغ
+pkcs11_provider_finalize(بنية pkcs11_provider *p)
 {
 	CK_RV rv;
 	CK_ULONG i;
 
 	debug_f("provider \"%s\" refcount %d valid %d",
 	    p->name, p->refcount, p->valid);
-	if (!p->valid)
-		return;
-	for (i = 0; i < p->nslots; i++) {
-		if (p->slotinfo[i].session &&
+	إذا (!p->valid)
+		أرجع;
+	لكل (i = 0; i < p->nslots; i++) {
+		إذا (p->slotinfo[i].session &&
 		    (rv = p->function_list->C_CloseSession(
 		    p->slotinfo[i].session)) != CKR_OK)
 			error("C_CloseSession failed: %lu", rv);
 	}
-	if ((rv = p->function_list->C_Finalize(NULL)) != CKR_OK)
+	إذا ((rv = p->function_list->C_Finalize(عدم)) != CKR_OK)
 		error("C_Finalize failed: %lu", rv);
 	p->valid = 0;
-	p->function_list = NULL;
+	p->function_list = عدم;
 	dlclose(p->handle);
 }
 
@@ -131,163 +131,163 @@ pkcs11_provider_finalize(struct pkcs11_provider *p)
  * remove a reference to the provider.
  * called when a key gets destroyed or when the provider is unregistered.
  */
-static void
-pkcs11_provider_unref(struct pkcs11_provider *p)
+ساكن فراغ
+pkcs11_provider_unref(بنية pkcs11_provider *p)
 {
 	debug_f("provider \"%s\" refcount %d", p->name, p->refcount);
-	if (--p->refcount <= 0) {
-		if (p->valid)
+	إذا (--p->refcount <= 0) {
+		إذا (p->valid)
 			error_f("provider \"%s\" still valid", p->name);
-		free(p->name);
-		free(p->slotlist);
-		free(p->slotinfo);
-		free(p);
+		حرر(p->name);
+		حرر(p->slotlist);
+		حرر(p->slotinfo);
+		حرر(p);
 	}
 }
 
 /* lookup provider by name */
-static struct pkcs11_provider *
-pkcs11_provider_lookup(char *provider_id)
+ساكن بنية pkcs11_provider *
+pkcs11_provider_lookup(حرف *provider_id)
 {
-	struct pkcs11_provider *p;
+	بنية pkcs11_provider *p;
 
 	TAILQ_FOREACH(p, &pkcs11_providers, next) {
 		debug("check provider \"%s\"", p->name);
-		if (!strcmp(provider_id, p->name))
-			return (p);
+		إذا (!strcmp(provider_id, p->name))
+			أرجع (p);
 	}
-	return (NULL);
+	أرجع (عدم);
 }
 
 /* unregister provider by name */
-int
-pkcs11_del_provider(char *provider_id)
+صحيح
+pkcs11_del_provider(حرف *provider_id)
 {
-	struct pkcs11_provider *p;
+	بنية pkcs11_provider *p;
 
-	if ((p = pkcs11_provider_lookup(provider_id)) != NULL) {
+	إذا ((p = pkcs11_provider_lookup(provider_id)) != عدم) {
 		TAILQ_REMOVE(&pkcs11_providers, p, next);
 		pkcs11_provider_finalize(p);
 		pkcs11_provider_unref(p);
-		return (0);
+		أرجع (0);
 	}
-	return (-1);
+	أرجع (-1);
 }
 
 /* release a wrapped object */
-static void
-pkcs11_k11_free(struct pkcs11_key *k11)
+ساكن فراغ
+pkcs11_k11_free(بنية pkcs11_ئاچقۇچ *k11)
 {
-	if (k11 == NULL)
-		return;
-	if (k11->provider)
+	إذا (k11 == عدم)
+		أرجع;
+	إذا (k11->provider)
 		pkcs11_provider_unref(k11->provider);
-	free(k11->keyid);
+	حرر(k11->keyid);
 	sshbuf_free(k11->keyblob);
-	free(k11);
+	حرر(k11);
 }
 
 /* find a single 'obj' for given attributes */
-static int
-pkcs11_find(struct pkcs11_provider *p, CK_ULONG slotidx, CK_ATTRIBUTE *attr,
+ساكن صحيح
+pkcs11_find(بنية pkcs11_provider *p, CK_ULONG slotidx, CK_ATTRIBUTE *attr,
     CK_ULONG nattr, CK_OBJECT_HANDLE *obj)
 {
 	CK_FUNCTION_LIST	*f;
 	CK_SESSION_HANDLE	session;
 	CK_ULONG		nfound = 0;
 	CK_RV			rv;
-	int			ret = -1;
+	صحيح			ret = -1;
 
 	f = p->function_list;
 	session = p->slotinfo[slotidx].session;
-	if ((rv = f->C_FindObjectsInit(session, attr, nattr)) != CKR_OK) {
+	إذا ((rv = f->C_FindObjectsInit(session, attr, nattr)) != CKR_OK) {
 		error("C_FindObjectsInit failed (nattr %lu): %lu", nattr, rv);
-		return (-1);
+		أرجع (-1);
 	}
-	if ((rv = f->C_FindObjects(session, obj, 1, &nfound)) != CKR_OK ||
+	إذا ((rv = f->C_FindObjects(session, obj, 1, &nfound)) != CKR_OK ||
 	    nfound != 1) {
 		debug("C_FindObjects failed (nfound %lu nattr %lu): %lu",
 		    nfound, nattr, rv);
-	} else
+	} وإلا
 		ret = 0;
-	if ((rv = f->C_FindObjectsFinal(session)) != CKR_OK)
+	إذا ((rv = f->C_FindObjectsFinal(session)) != CKR_OK)
 		error("C_FindObjectsFinal failed: %lu", rv);
-	return (ret);
+	أرجع (ret);
 }
 
-static int
-pkcs11_login_slot(struct pkcs11_provider *provider, struct pkcs11_slotinfo *si,
+ساكن صحيح
+pkcs11_login_slot(بنية pkcs11_provider *provider, بنية pkcs11_slotinfo *si,
     CK_USER_TYPE type)
 {
-	char			*pin = NULL, prompt[1024];
+	حرف			*pin = عدم, prompt[1024];
 	CK_RV			 rv;
 
-	if (provider == NULL || si == NULL || !provider->valid) {
+	إذا (provider == عدم || si == عدم || !provider->valid) {
 		error("no pkcs11 (valid) provider found");
-		return (-1);
+		أرجع (-1);
 	}
 
-	if (!pkcs11_interactive) {
+	إذا (!pkcs11_interactive) {
 		error("need pin entry%s",
 		    (si->token.flags & CKF_PROTECTED_AUTHENTICATION_PATH) ?
 		    " on reader keypad" : "");
-		return (-1);
+		أرجع (-1);
 	}
-	if (si->token.flags & CKF_PROTECTED_AUTHENTICATION_PATH)
+	إذا (si->token.flags & CKF_PROTECTED_AUTHENTICATION_PATH)
 		verbose("Deferring PIN entry to reader keypad.");
-	else {
-		snprintf(prompt, sizeof(prompt), "Enter PIN for '%s': ",
+	وإلا {
+		snprintf(prompt, حجم(prompt), "Enter PIN for '%s': ",
 		    si->token.label);
-		if ((pin = read_passphrase(prompt, RP_ALLOW_EOF)) == NULL) {
+		إذا ((pin = read_passphrase(prompt, RP_ALLOW_EOF)) == عدم) {
 			debug_f("no pin specified");
-			return (-1);	/* bail out */
+			أرجع (-1);	/* bail out */
 		}
 	}
 	rv = provider->function_list->C_Login(si->session, type, (u_char *)pin,
-	    (pin != NULL) ? strlen(pin) : 0);
-	if (pin != NULL)
+	    (pin != عدم) ? strlen(pin) : 0);
+	إذا (pin != عدم)
 		freezero(pin, strlen(pin));
 
-	switch (rv) {
-	case CKR_OK:
-	case CKR_USER_ALREADY_LOGGED_IN:
+	بدل (rv) {
+	حالة CKR_OK:
+	حالة CKR_USER_ALREADY_LOGGED_IN:
 		/* success */
-		break;
-	case CKR_PIN_LEN_RANGE:
+		اكسر;
+	حالة CKR_PIN_LEN_RANGE:
 		error("PKCS#11 login failed: PIN length out of range");
-		return -1;
-	case CKR_PIN_INCORRECT:
+		أرجع -1;
+	حالة CKR_PIN_INCORRECT:
 		error("PKCS#11 login failed: PIN incorrect");
-		return -1;
-	case CKR_PIN_LOCKED:
+		أرجع -1;
+	حالة CKR_PIN_LOCKED:
 		error("PKCS#11 login failed: PIN locked");
-		return -1;
-	default:
+		أرجع -1;
+	افتراضي:
 		error("PKCS#11 login failed: error %lu", rv);
-		return -1;
+		أرجع -1;
 	}
 	si->logged_in = 1;
-	return (0);
+	أرجع (0);
 }
 
-static int
-pkcs11_login(struct pkcs11_key *k11, CK_USER_TYPE type)
+ساكن صحيح
+pkcs11_login(بنية pkcs11_ئاچقۇچ *k11, CK_USER_TYPE type)
 {
-	if (k11 == NULL || k11->provider == NULL || !k11->provider->valid) {
+	إذا (k11 == عدم || k11->provider == عدم || !k11->provider->valid) {
 		error("no pkcs11 (valid) provider found");
-		return (-1);
+		أرجع (-1);
 	}
 
-	return pkcs11_login_slot(k11->provider,
+	أرجع pkcs11_login_slot(k11->provider,
 	    &k11->provider->slotinfo[k11->slotidx], type);
 }
 
 
-static int
-pkcs11_check_obj_bool_attrib(struct pkcs11_key *k11, CK_OBJECT_HANDLE obj,
-    CK_ATTRIBUTE_TYPE type, int *val)
+ساكن صحيح
+pkcs11_check_obj_bool_attrib(بنية pkcs11_ئاچقۇچ *k11, CK_OBJECT_HANDLE obj,
+    CK_ATTRIBUTE_TYPE type, صحيح *val)
 {
-	struct pkcs11_slotinfo	*si;
+	بنية pkcs11_slotinfo	*si;
 	CK_FUNCTION_LIST	*f;
 	CK_BBOOL		flag = 0;
 	CK_ATTRIBUTE		attr;
@@ -295,173 +295,173 @@ pkcs11_check_obj_bool_attrib(struct pkcs11_key *k11, CK_OBJECT_HANDLE obj,
 
 	*val = 0;
 
-	if (!k11->provider || !k11->provider->valid) {
+	إذا (!k11->provider || !k11->provider->valid) {
 		error("no pkcs11 (valid) provider found");
-		return (-1);
+		أرجع (-1);
 	}
 
 	f = k11->provider->function_list;
 	si = &k11->provider->slotinfo[k11->slotidx];
 
 	attr.type = type;
-	attr.pValue = &flag;
-	attr.ulValueLen = sizeof(flag);
+	attr.p_قىممەت = &flag;
+	attr.ul_قىممەت_Len = حجم(flag);
 
-	rv = f->C_GetAttributeValue(si->session, obj, &attr, 1);
-	if (rv != CKR_OK) {
+	rv = f->C_Get_Attribute_قىممەت(si->session, obj, &attr, 1);
+	إذا (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
-		return (-1);
+		أرجع (-1);
 	}
 	*val = flag != 0;
 	debug_f("provider \"%s\" slot %lu object %lu: attrib %lu = %d",
 	    k11->provider->name, k11->slotidx, obj, type, *val);
-	return (0);
+	أرجع (0);
 }
 
-static int
-pkcs11_get_key(struct pkcs11_key *k11, CK_MECHANISM_TYPE mech_type)
+ساكن صحيح
+pkcs11_get_ئاچقۇچ(بنية pkcs11_ئاچقۇچ *k11, CK_MECHANISM_TYPE mech_type)
 {
-	struct pkcs11_slotinfo	*si;
+	بنية pkcs11_slotinfo	*si;
 	CK_FUNCTION_LIST	*f;
 	CK_OBJECT_HANDLE	 obj;
 	CK_RV			 rv;
-	CK_OBJECT_CLASS		 private_key_class;
+	CK_OBJECT_CLASS		 private_ئاچقۇچ_class;
 	CK_BBOOL		 true_val;
 	CK_MECHANISM		 mech;
-	CK_ATTRIBUTE		 key_filter[3];
-	int			 always_auth = 0;
-	int			 did_login = 0;
+	CK_ATTRIBUTE		 ئاچقۇچ_filter[3];
+	صحيح			 always_auth = 0;
+	صحيح			 did_login = 0;
 
-	if (!k11->provider || !k11->provider->valid) {
+	إذا (!k11->provider || !k11->provider->valid) {
 		error("no pkcs11 (valid) provider found");
-		return (-1);
+		أرجع (-1);
 	}
 
 	f = k11->provider->function_list;
 	si = &k11->provider->slotinfo[k11->slotidx];
 
-	if ((si->token.flags & CKF_LOGIN_REQUIRED) && !si->logged_in) {
-		if (pkcs11_login(k11, CKU_USER) < 0) {
+	إذا ((si->token.flags & CKF_LOGIN_REQUIRED) && !si->logged_in) {
+		إذا (pkcs11_login(k11, CKU_USER) < 0) {
 			error("login failed");
-			return (-1);
+			أرجع (-1);
 		}
 		did_login = 1;
 	}
 
-	memset(&key_filter, 0, sizeof(key_filter));
-	private_key_class = CKO_PRIVATE_KEY;
-	key_filter[0].type = CKA_CLASS;
-	key_filter[0].pValue = &private_key_class;
-	key_filter[0].ulValueLen = sizeof(private_key_class);
+	memset(&ئاچقۇچ_filter, 0, حجم(ئاچقۇچ_filter));
+	private_ئاچقۇچ_class = CKO_PRIVATE_ئاچقۇچ;
+	ئاچقۇچ_filter[0].type = CKA_CLASS;
+	ئاچقۇچ_filter[0].p_قىممەت = &private_ئاچقۇچ_class;
+	ئاچقۇچ_filter[0].ul_قىممەت_Len = حجم(private_ئاچقۇچ_class);
 
-	key_filter[1].type = CKA_ID;
-	key_filter[1].pValue = k11->keyid;
-	key_filter[1].ulValueLen = k11->keyid_len;
+	ئاچقۇچ_filter[1].type = CKA_ID;
+	ئاچقۇچ_filter[1].p_قىممەت = k11->keyid;
+	ئاچقۇچ_filter[1].ul_قىممەت_Len = k11->keyid_len;
 
 	true_val = CK_TRUE;
-	key_filter[2].type = CKA_SIGN;
-	key_filter[2].pValue = &true_val;
-	key_filter[2].ulValueLen = sizeof(true_val);
+	ئاچقۇچ_filter[2].type = CKA_SIGN;
+	ئاچقۇچ_filter[2].p_قىممەت = &true_val;
+	ئاچقۇچ_filter[2].ul_قىممەت_Len = حجم(true_val);
 
 	/* try to find object w/CKA_SIGN first, retry w/o */
-	if (pkcs11_find(k11->provider, k11->slotidx, key_filter, 3, &obj) < 0 &&
-	    pkcs11_find(k11->provider, k11->slotidx, key_filter, 2, &obj) < 0) {
+	إذا (pkcs11_find(k11->provider, k11->slotidx, ئاچقۇچ_filter, 3, &obj) < 0 &&
+	    pkcs11_find(k11->provider, k11->slotidx, ئاچقۇچ_filter, 2, &obj) < 0) {
 		error("cannot find private key");
-		return (-1);
+		أرجع (-1);
 	}
 
-	memset(&mech, 0, sizeof(mech));
+	memset(&mech, 0, حجم(mech));
 	mech.mechanism = mech_type;
 	mech.pParameter = NULL_PTR;
 	mech.ulParameterLen = 0;
 
-	if ((rv = f->C_SignInit(si->session, &mech, obj)) != CKR_OK) {
+	إذا ((rv = f->C_SignInit(si->session, &mech, obj)) != CKR_OK) {
 		error("C_SignInit failed: %lu", rv);
-		return (-1);
+		أرجع (-1);
 	}
 
 	pkcs11_check_obj_bool_attrib(k11, obj, CKA_ALWAYS_AUTHENTICATE,
 	    &always_auth); /* ignore errors here */
-	if (always_auth && !did_login) {
+	إذا (always_auth && !did_login) {
 		debug_f("always-auth key");
-		if (pkcs11_login(k11, CKU_CONTEXT_SPECIFIC) < 0) {
+		إذا (pkcs11_login(k11, CKU_CONTEXT_SPECIFIC) < 0) {
 			error("login failed for always-auth key");
-			return (-1);
+			أرجع (-1);
 		}
 	}
 
-	return (0);
+	أرجع (0);
 }
 
 /* record the key information later use lookup by keyblob */
-static int
-pkcs11_record_key(struct pkcs11_provider *provider, CK_ULONG slotidx,
-    CK_ATTRIBUTE *keyid_attrib, struct sshkey *key)
+ساكن صحيح
+pkcs11_record_ئاچقۇچ(بنية pkcs11_provider *provider, CK_ULONG slotidx,
+    CK_ATTRIBUTE *keyid_attrib, بنية sshkey *ئاچقۇچ)
 {
-	struct sshbuf *keyblob;
-	struct pkcs11_key *k11;
-	int r;
-	char *hex;
+	بنية sshbuf *keyblob;
+	بنية pkcs11_ئاچقۇچ *k11;
+	صحيح r;
+	حرف *hex;
 
-	hex = tohex(keyid_attrib->pValue, keyid_attrib->ulValueLen);
+	hex = tohex(keyid_attrib->p_قىممەت, keyid_attrib->ul_قىممەت_Len);
 	debug_f("%s key: provider %s slot %lu keyid %s",
-	    sshkey_type(key), provider->name, (u_long)slotidx, hex);
-	free(hex);
+	    sshkey_type(ئاچقۇچ), provider->name, (u_long)slotidx, hex);
+	حرر(hex);
 
-	if ((keyblob = sshbuf_new()) == NULL)
+	إذا ((keyblob = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_putb(key, keyblob)) != 0)
+	إذا ((r = sshkey_putb(ئاچقۇچ, keyblob)) != 0)
 		fatal_fr(r, "sshkey_putb");
 
 	/* Check if we've already recorded this key in a different slot */
-	TAILQ_FOREACH(k11, &pkcs11_keys, next) {
-		if (sshbuf_equals(k11->keyblob, keyblob) == 0) {
+	TAILQ_FOREACH(k11, &pkcs11_ئاچقۇچلار, next) {
+		إذا (sshbuf_equals(k11->keyblob, keyblob) == 0) {
 			hex = tohex(k11->keyid, k11->keyid_len);
 			debug_f("Already seen this key at "
 			    "provider %s slot %lu keyid %s",
 			    k11->provider->name, k11->slotidx, hex);
-			free(hex);
+			حرر(hex);
 			sshbuf_free(keyblob);
-			return -1;
+			أرجع -1;
 		}
 	}
 
-	k11 = xcalloc(1, sizeof(*k11));
+	k11 = xcalloc(1, حجم(*k11));
 	k11->provider = provider;
 	k11->keyblob = keyblob;
 	provider->refcount++;	/* provider referenced by RSA key */
 	k11->slotidx = slotidx;
 	/* identify key object on smartcard */
-	k11->keyid_len = keyid_attrib->ulValueLen;
-	if (k11->keyid_len > 0) {
+	k11->keyid_len = keyid_attrib->ul_قىممەت_Len;
+	إذا (k11->keyid_len > 0) {
 		k11->keyid = xmalloc(k11->keyid_len);
-		memcpy(k11->keyid, keyid_attrib->pValue, k11->keyid_len);
+		memcpy(k11->keyid, keyid_attrib->p_قىممەت, k11->keyid_len);
 	}
-	TAILQ_INSERT_TAIL(&pkcs11_keys, k11, next);
+	TAILQ_INSERT_TAIL(&pkcs11_ئاچقۇچلار, k11, next);
 
-	return 0;
+	أرجع 0;
 }
 
 /* retrieve the key information by keyblob */
-static struct pkcs11_key *
-pkcs11_lookup_key(struct sshkey *key)
+ساكن بنية pkcs11_ئاچقۇچ *
+pkcs11_lookup_ئاچقۇچ(بنية sshkey *ئاچقۇچ)
 {
-	struct pkcs11_key *k11, *found = NULL;
-	struct sshbuf *keyblob;
-	int r;
+	بنية pkcs11_ئاچقۇچ *k11, *found = عدم;
+	بنية sshbuf *keyblob;
+	صحيح r;
 
-	if ((keyblob = sshbuf_new()) == NULL)
+	إذا ((keyblob = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_putb(key, keyblob)) != 0)
+	إذا ((r = sshkey_putb(ئاچقۇچ, keyblob)) != 0)
 		fatal_fr(r, "sshkey_putb");
-	TAILQ_FOREACH(k11, &pkcs11_keys, next) {
-		if (sshbuf_equals(k11->keyblob, keyblob) == 0) {
+	TAILQ_FOREACH(k11, &pkcs11_ئاچقۇچلار, next) {
+		إذا (sshbuf_equals(k11->keyblob, keyblob) == 0) {
 			found = k11;
-			break;
+			اكسر;
 		}
 	}
 	sshbuf_free(keyblob);
-	return found;
+	أرجع found;
 }
 
 #ifdef WITH_OPENSSL
@@ -474,7 +474,7 @@ pkcs11_lookup_key(struct sshkey *key)
  * id-sha1 OBJECT IDENTIFIER ::= { iso(1) identified-organization(3)
  *	oiw(14) secsig(3) algorithms(2) 26 }
  */
-static const u_char id_sha1[] = {
+ساكن ثابت u_char id_sha1[] = {
 	0x30, 0x21, /* type Sequence, length 0x21 (33) */
 	0x30, 0x09, /* type Sequence, length 0x09 */
 	0x06, 0x05, /* type OID, length 0x05 */
@@ -488,7 +488,7 @@ static const u_char id_sha1[] = {
  *      organization(1) gov(101) csor(3) nistAlgorithm(4) hashAlgs(2)
  *      id-sha256(1) }
  */
-static const u_char id_sha256[] = {
+ساكن ثابت u_char id_sha256[] = {
 	0x30, 0x31, /* type Sequence, length 0x31 (49) */
 	0x30, 0x0d, /* type Sequence, length 0x0d (13) */
 	0x06, 0x09, /* type OID, length 0x09 */
@@ -502,7 +502,7 @@ static const u_char id_sha256[] = {
  *      organization(1) gov(101) csor(3) nistAlgorithm(4) hashAlgs(2)
  *      id-sha256(3) }
  */
-static const u_char id_sha512[] = {
+ساكن ثابت u_char id_sha512[] = {
 	0x30, 0x51, /* type Sequence, length 0x51 (81) */
 	0x30, 0x0d, /* type Sequence, length 0x0d (13) */
 	0x06, 0x09, /* type OID, length 0x09 */
@@ -511,106 +511,106 @@ static const u_char id_sha512[] = {
 	0x04, 0x40  /* Octet string, length 0x40 (64), followed by sha512 hash */
 };
 
-static int
-rsa_hash_alg_oid(int hash_alg, const u_char **oidp, size_t *oidlenp)
+ساكن صحيح
+rsa_hash_alg_oid(صحيح hash_alg, ثابت u_char **oidp, size_t *oidlenp)
 {
-	switch (hash_alg) {
-	case SSH_DIGEST_SHA1:
+	بدل (hash_alg) {
+	حالة SSH_DIGEST_SHA1:
 		*oidp = id_sha1;
-		*oidlenp = sizeof(id_sha1);
-		break;
-	case SSH_DIGEST_SHA256:
+		*oidlenp = حجم(id_sha1);
+		اكسر;
+	حالة SSH_DIGEST_SHA256:
 		*oidp = id_sha256;
-		*oidlenp = sizeof(id_sha256);
-		break;
-	case SSH_DIGEST_SHA512:
+		*oidlenp = حجم(id_sha256);
+		اكسر;
+	حالة SSH_DIGEST_SHA512:
 		*oidp = id_sha512;
-		*oidlenp = sizeof(id_sha512);
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		*oidlenp = حجم(id_sha512);
+		اكسر;
+	افتراضي:
+		أرجع SSH_ERR_INVALID_ARGUMENT;
 	}
-	return 0;
+	أرجع 0;
 }
 
-static int
-pkcs11_sign_rsa(struct sshkey *key,
+ساكن صحيح
+pkcs11_sign_rsa(بنية sshkey *ئاچقۇچ,
     u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider,
-    const char *sk_pin, u_int compat)
+    ثابت u_char *data, size_t datalen,
+    ثابت حرف *alg, ثابت حرف *sk_provider,
+    ثابت حرف *sk_pin, u_int compat)
 {
-	struct pkcs11_key	*k11;
-	struct pkcs11_slotinfo	*si;
+	بنية pkcs11_ئاچقۇچ	*k11;
+	بنية pkcs11_slotinfo	*si;
 	CK_FUNCTION_LIST	*f;
 	CK_ULONG		slen = 0;
 	CK_RV			rv;
-	int			hashalg, r, diff, siglen, ret = -1;
-	u_char			*oid_dgst = NULL, *sig = NULL;
+	صحيح			hashalg, r, diff, siglen, ret = -1;
+	u_char			*oid_dgst = عدم, *sig = عدم;
 	size_t			dgst_len, oid_len, oid_dgst_len = 0;
-	const u_char		*oid;
+	ثابت u_char		*oid;
 
-	if (sigp != NULL)
-		*sigp = NULL;
-	if (lenp != NULL)
+	إذا (sigp != عدم)
+		*sigp = عدم;
+	إذا (lenp != عدم)
 		*lenp = 0;
 
-	if ((k11 = pkcs11_lookup_key(key)) == NULL) {
+	إذا ((k11 = pkcs11_lookup_ئاچقۇچ(ئاچقۇچ)) == عدم) {
 		error_f("no key found");
-		return SSH_ERR_KEY_NOT_FOUND;
+		أرجع SSH_ERR_ئاچقۇچ_NOT_FOUND;
 	}
 
 	debug3_f("sign with alg \"%s\" using provider %s slotidx %lu",
-	    alg == NULL ? "" : alg, k11->provider->name, (u_long)k11->slotidx);
+	    alg == عدم ? "" : alg, k11->provider->name, (u_long)k11->slotidx);
 
-	if (pkcs11_get_key(k11, CKM_RSA_PKCS) == -1) {
+	إذا (pkcs11_get_ئاچقۇچ(k11, CKM_RSA_PKCS) == -1) {
 		error("pkcs11_get_key failed");
-		return SSH_ERR_AGENT_FAILURE;
+		أرجع SSH_ERR_AGENT_FAILURE;
 	}
 
 	f = k11->provider->function_list;
 	si = &k11->provider->slotinfo[k11->slotidx];
 
-	if ((siglen = EVP_PKEY_size(key->pkey)) <= 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	إذا ((siglen = EVP_PKEY_size(ئاچقۇچ->pkey)) <= 0)
+		أرجع SSH_ERR_INVALID_ARGUMENT;
 	sig = xmalloc(siglen);
 	slen = (CK_ULONG)siglen;
 
 	/* Determine hash algorithm and OID for signature */
-	if (alg == NULL || *alg == '\0')
+	إذا (alg == عدم || *alg == '\0')
 		hashalg = SSH_DIGEST_SHA1;
-	else if ((hashalg = ssh_rsa_hash_id_from_keyname(alg)) == -1)
+	وإلا إذا ((hashalg = ssh_rsa_hash_id_from_keyname(alg)) == -1)
 		fatal_f("couldn't determine RSA hash alg \"%s\"", alg);
-	if ((r = rsa_hash_alg_oid(hashalg, &oid, &oid_len)) != 0)
+	إذا ((r = rsa_hash_alg_oid(hashalg, &oid, &oid_len)) != 0)
 		fatal_fr(r, "rsa_hash_alg_oid failed");
-	if ((dgst_len = ssh_digest_bytes(hashalg)) == 0)
+	إذا ((dgst_len = ssh_digest_bytes(hashalg)) == 0)
 		fatal_f("bad hash alg %d", hashalg);
 
 	/* Prepare { oid || digest } */
 	oid_dgst_len = oid_len + dgst_len;
 	oid_dgst = xcalloc(1, oid_dgst_len);
 	memcpy(oid_dgst, oid, oid_len);
-	if ((r = ssh_digest_memory(hashalg, data, datalen,
+	إذا ((r = ssh_digest_memory(hashalg, data, datalen,
 	    oid_dgst + oid_len, dgst_len)) == -1)
 		fatal_fr(r, "hash failed");
 
 	/* XXX handle CKR_BUFFER_TOO_SMALL */
-	if ((rv = f->C_Sign(si->session, (CK_BYTE *)oid_dgst,
+	إذا ((rv = f->C_Sign(si->session, (CK_BYTE *)oid_dgst,
 	    oid_dgst_len, sig, &slen)) != CKR_OK) {
 		error("C_Sign failed: %lu", rv);
-		goto done;
+		اذهب done;
 	}
 
-	if (slen < (CK_ULONG)siglen) {
+	إذا (slen < (CK_ULONG)siglen) {
 		diff = siglen - slen;
 		debug3_f("repack %lu < %d (diff %d)",
 		    (u_long)slen, siglen, diff);
 		memmove(sig + diff, sig, slen);
 		explicit_bzero(sig, diff);
-	} else if (slen > (size_t)siglen)
+	} وإلا إذا (slen > (size_t)siglen)
 		fatal_f("bad C_Sign length");
 
-	if ((ret = ssh_rsa_encode_store_sig(hashalg, sig, siglen,
+	إذا ((ret = ssh_rsa_encode_store_sig(hashalg, sig, siglen,
 	    sigp, lenp)) != 0)
 		fatal_fr(ret, "couldn't store signature");
 
@@ -618,40 +618,40 @@ pkcs11_sign_rsa(struct sshkey *key,
 	ret = 0;
  done:
 	freezero(oid_dgst, oid_dgst_len);
-	free(sig);
-	return ret;
+	حرر(sig);
+	أرجع ret;
 }
 
-static int
-pkcs11_sign_ecdsa(struct sshkey *key,
+ساكن صحيح
+pkcs11_sign_ecdsa(بنية sshkey *ئاچقۇچ,
     u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider,
-    const char *sk_pin, u_int compat)
+    ثابت u_char *data, size_t datalen,
+    ثابت حرف *alg, ثابت حرف *sk_provider,
+    ثابت حرف *sk_pin, u_int compat)
 {
-	struct pkcs11_key	*k11;
-	struct pkcs11_slotinfo	*si;
+	بنية pkcs11_ئاچقۇچ	*k11;
+	بنية pkcs11_slotinfo	*si;
 	CK_FUNCTION_LIST	*f;
 	CK_ULONG		slen = 0, bnlen;
 	CK_RV			rv;
-	BIGNUM			*sig_r = NULL, *sig_s = NULL;
-	u_char			*sig = NULL, *dgst = NULL;
+	BIGNUM			*sig_r = عدم, *sig_s = عدم;
+	u_char			*sig = عدم, *dgst = عدم;
 	size_t			dgst_len = 0;
-	int			hashalg, ret = -1, r, siglen;
+	صحيح			hashalg, ret = -1, r, siglen;
 
-	if (sigp != NULL)
-		*sigp = NULL;
-	if (lenp != NULL)
+	إذا (sigp != عدم)
+		*sigp = عدم;
+	إذا (lenp != عدم)
 		*lenp = 0;
 
-	if ((k11 = pkcs11_lookup_key(key)) == NULL) {
+	إذا ((k11 = pkcs11_lookup_ئاچقۇچ(ئاچقۇچ)) == عدم) {
 		error_f("no key found");
-		return SSH_ERR_KEY_NOT_FOUND;
+		أرجع SSH_ERR_ئاچقۇچ_NOT_FOUND;
 	}
 
-	if (pkcs11_get_key(k11, CKM_ECDSA) == -1) {
+	إذا (pkcs11_get_ئاچقۇچ(k11, CKM_ECDSA) == -1) {
 		error("pkcs11_get_key failed");
-		return SSH_ERR_AGENT_FAILURE;
+		أرجع SSH_ERR_AGENT_FAILURE;
 	}
 
 	debug3_f("sign using provider %s slotidx %lu",
@@ -661,38 +661,38 @@ pkcs11_sign_ecdsa(struct sshkey *key,
 	si = &k11->provider->slotinfo[k11->slotidx];
 
 	/* Prepare digest to be signed */
-	if ((hashalg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
+	إذا ((hashalg = sshkey_ec_nid_to_hash_alg(ئاچقۇچ->ecdsa_nid)) == -1)
 		fatal_f("couldn't determine ECDSA hash alg");
-	if ((dgst_len = ssh_digest_bytes(hashalg)) == 0)
+	إذا ((dgst_len = ssh_digest_bytes(hashalg)) == 0)
 		fatal_f("bad hash alg %d", hashalg);
 	dgst = xcalloc(1, dgst_len);
-	if ((r = ssh_digest_memory(hashalg, data, datalen,
+	إذا ((r = ssh_digest_memory(hashalg, data, datalen,
 	    dgst, dgst_len)) == -1)
 		fatal_fr(r, "hash failed");
 
-	if ((siglen = EVP_PKEY_size(key->pkey)) <= 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	إذا ((siglen = EVP_PKEY_size(ئاچقۇچ->pkey)) <= 0)
+		أرجع SSH_ERR_INVALID_ARGUMENT;
 	sig = xmalloc(siglen);
 	slen = (CK_ULONG)siglen;
 
 	/* XXX handle CKR_BUFFER_TOO_SMALL */
 	rv = f->C_Sign(si->session, (CK_BYTE *)dgst, dgst_len, sig, &slen);
-	if (rv != CKR_OK) {
+	إذا (rv != CKR_OK) {
 		error("C_Sign failed: %lu", rv);
-		goto done;
+		اذهب done;
 	}
-	if (slen < 64 || slen > 132 || slen % 2) {
+	إذا (slen < 64 || slen > 132 || slen % 2) {
 		error_f("bad signature length: %lu", (u_long)slen);
-		goto done;
+		اذهب done;
 	}
 	bnlen = slen/2;
-	if ((sig_r = BN_bin2bn(sig, bnlen, NULL)) == NULL ||
-	    (sig_s = BN_bin2bn(sig+bnlen, bnlen, NULL)) == NULL) {
+	إذا ((sig_r = BN_bin2bn(sig, bnlen, عدم)) == عدم ||
+	    (sig_s = BN_bin2bn(sig+bnlen, bnlen, عدم)) == عدم) {
 		ossl_error("BN_bin2bn failed");
-		goto done;
+		اذهب done;
 	}
 
-	if ((ret = ssh_ecdsa_encode_store_sig(key, sig_r, sig_s,
+	إذا ((ret = ssh_ecdsa_encode_store_sig(ئاچقۇچ, sig_r, sig_s,
 	    sigp, lenp)) != 0)
 		fatal_fr(ret, "couldn't store signature");
 
@@ -702,40 +702,40 @@ pkcs11_sign_ecdsa(struct sshkey *key,
 	freezero(dgst, dgst_len);
 	BN_free(sig_r);
 	BN_free(sig_s);
-	free(sig);
-	return ret;
+	حرر(sig);
+	أرجع ret;
 }
 #endif /* WITH_OPENSSL */
 
-static int
-pkcs11_sign_ed25519(struct sshkey *key,
+ساكن صحيح
+pkcs11_sign_ed25519(بنية sshkey *ئاچقۇچ,
     u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider,
-    const char *sk_pin, u_int compat)
+    ثابت u_char *data, size_t datalen,
+    ثابت حرف *alg, ثابت حرف *sk_provider,
+    ثابت حرف *sk_pin, u_int compat)
 {
-	struct pkcs11_key	*k11;
-	struct pkcs11_slotinfo	*si;
+	بنية pkcs11_ئاچقۇچ	*k11;
+	بنية pkcs11_slotinfo	*si;
 	CK_FUNCTION_LIST	*f;
 	CK_ULONG		slen = 0;
 	CK_RV			rv;
-	u_char			*sig = NULL;
-	CK_BYTE			*xdata = NULL;
-	int			ret = -1;
+	u_char			*sig = عدم;
+	CK_BYTE			*xdata = عدم;
+	صحيح			ret = -1;
 
-	if (sigp != NULL)
-		*sigp = NULL;
-	if (lenp != NULL)
+	إذا (sigp != عدم)
+		*sigp = عدم;
+	إذا (lenp != عدم)
 		*lenp = 0;
 
-	if ((k11 = pkcs11_lookup_key(key)) == NULL) {
+	إذا ((k11 = pkcs11_lookup_ئاچقۇچ(ئاچقۇچ)) == عدم) {
 		error_f("no key found");
-		return SSH_ERR_KEY_NOT_FOUND;
+		أرجع SSH_ERR_ئاچقۇچ_NOT_FOUND;
 	}
 
-	if (pkcs11_get_key(k11, CKM_EDDSA) == -1) {
+	إذا (pkcs11_get_ئاچقۇچ(k11, CKM_EDDSA) == -1) {
 		error("pkcs11_get_key failed");
-		return SSH_ERR_AGENT_FAILURE;
+		أرجع SSH_ERR_AGENT_FAILURE;
 	}
 
 	debug3_f("sign using provider %s slotidx %lu",
@@ -750,57 +750,57 @@ pkcs11_sign_ed25519(struct sshkey *key,
 	slen = crypto_sign_ed25519_BYTES;
 
 	rv = f->C_Sign(si->session, xdata, datalen, sig, &slen);
-	if (rv != CKR_OK) {
+	إذا (rv != CKR_OK) {
 		error("C_Sign failed: %lu", rv);
-		goto done;
+		اذهب done;
 	}
-	if (slen != crypto_sign_ed25519_BYTES) {
+	إذا (slen != crypto_sign_ed25519_BYTES) {
 		error_f("bad signature length: %lu", (u_long)slen);
-		goto done;
+		اذهب done;
 	}
-	if ((ret = ssh_ed25519_encode_store_sig(sig, slen, sigp, lenp)) != 0)
+	إذا ((ret = ssh_ed25519_encode_store_sig(sig, slen, sigp, lenp)) != 0)
 		fatal_fr(ret, "couldn't store signature");
 
 	/* success */
 	ret = 0;
  done:
-	if (xdata != NULL)
+	إذا (xdata != عدم)
 		freezero(xdata, datalen);
-	free(sig);
-	return ret;
+	حرر(sig);
+	أرجع ret;
 }
 
 /* remove trailing spaces */
-static char *
+ساكن حرف *
 rmspace(u_char *buf, size_t len)
 {
 	size_t i;
 
-	if (len == 0)
-		return buf;
-	for (i = len - 1; i > 0; i--)
-		if (buf[i] == ' ')
+	إذا (len == 0)
+		أرجع buf;
+	لكل (i = len - 1; i > 0; i--)
+		إذا (buf[i] == ' ')
 			buf[i] = '\0';
-		else
-			break;
-	return buf;
+		وإلا
+			اكسر;
+	أرجع buf;
 }
 /* Used to printf fixed-width, space-padded, unterminated strings using %.*s */
-#define RMSPACE(s) (int)sizeof(s), rmspace(s, sizeof(s))
+#define RMSPACE(s) (صحيح)حجم(s), rmspace(s, حجم(s))
 
 /*
  * open a pkcs11 session and login if required.
  * if pin == NULL we delay login until key use
  */
-static int
-pkcs11_open_session(struct pkcs11_provider *p, CK_ULONG slotidx, char *pin,
+ساكن صحيح
+pkcs11_open_session(بنية pkcs11_provider *p, CK_ULONG slotidx, حرف *pin,
     CK_ULONG user)
 {
-	struct pkcs11_slotinfo	*si;
+	بنية pkcs11_slotinfo	*si;
 	CK_FUNCTION_LIST	*f;
 	CK_RV			rv;
 	CK_SESSION_HANDLE	session;
-	int			login_required, ret;
+	صحيح			login_required, ret;
 
 	f = p->function_list;
 	si = &p->slotinfo[slotidx];
@@ -808,73 +808,73 @@ pkcs11_open_session(struct pkcs11_provider *p, CK_ULONG slotidx, char *pin,
 	login_required = si->token.flags & CKF_LOGIN_REQUIRED;
 
 	/* fail early before opening session */
-	if (login_required && !pkcs11_interactive &&
-	    (pin == NULL || strlen(pin) == 0)) {
+	إذا (login_required && !pkcs11_interactive &&
+	    (pin == عدم || strlen(pin) == 0)) {
 		error("pin required");
-		return (-SSH_PKCS11_ERR_PIN_REQUIRED);
+		أرجع (-SSH_PKCS11_ERR_PIN_REQUIRED);
 	}
-	if ((rv = f->C_OpenSession(p->slotlist[slotidx], CKF_RW_SESSION|
-	    CKF_SERIAL_SESSION, NULL, NULL, &session)) != CKR_OK) {
+	إذا ((rv = f->C_OpenSession(p->slotlist[slotidx], CKF_RW_SESSION|
+	    CKF_SERIAL_SESSION, عدم, عدم, &session)) != CKR_OK) {
 		error("C_OpenSession failed: %lu", rv);
-		return (-1);
+		أرجع (-1);
 	}
-	if (login_required && pin != NULL && strlen(pin) != 0) {
+	إذا (login_required && pin != عدم && strlen(pin) != 0) {
 		rv = f->C_Login(session, user, (u_char *)pin, strlen(pin));
-		if (rv != CKR_OK && rv != CKR_USER_ALREADY_LOGGED_IN) {
+		إذا (rv != CKR_OK && rv != CKR_USER_ALREADY_LOGGED_IN) {
 			error("C_Login failed: %lu", rv);
 			ret = (rv == CKR_PIN_LOCKED) ?
 			    -SSH_PKCS11_ERR_PIN_LOCKED :
 			    -SSH_PKCS11_ERR_LOGIN_FAIL;
-			if ((rv = f->C_CloseSession(session)) != CKR_OK)
+			إذا ((rv = f->C_CloseSession(session)) != CKR_OK)
 				error("C_CloseSession failed: %lu", rv);
-			return (ret);
+			أرجع (ret);
 		}
 		si->logged_in = 1;
 	}
 	si->session = session;
-	return (0);
+	أرجع (0);
 }
 
-static int
-pkcs11_key_included(struct sshkey ***keysp, int *nkeys, struct sshkey *key)
+ساكن صحيح
+pkcs11_ئاچقۇچ_included(بنية sshkey ***keysp, صحيح *nkeys, بنية sshkey *ئاچقۇچ)
 {
-	int i;
+	صحيح i;
 
-	for (i = 0; i < *nkeys; i++)
-		if (sshkey_equal(key, (*keysp)[i]))
-			return (1);
-	return (0);
+	لكل (i = 0; i < *nkeys; i++)
+		إذا (sshkey_equal(ئاچقۇچ, (*keysp)[i]))
+			أرجع (1);
+	أرجع (0);
 }
 
 #ifdef WITH_OPENSSL
-static struct sshkey *
-pkcs11_fetch_ecdsa_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
+ساكن بنية sshkey *
+pkcs11_fetch_ecdsa_pubkey(بنية pkcs11_provider *p, CK_ULONG slotidx,
     CK_OBJECT_HANDLE *obj)
 {
-	CK_ATTRIBUTE		 key_attr[3];
+	CK_ATTRIBUTE		 ئاچقۇچ_attr[3];
 	CK_SESSION_HANDLE	 session;
-	CK_FUNCTION_LIST	*f = NULL;
+	CK_FUNCTION_LIST	*f = عدم;
 	CK_RV			 rv;
-	ASN1_OCTET_STRING	*octet = NULL;
-	EC_KEY			*ec = NULL;
-	EC_GROUP		*group = NULL;
-	struct sshkey		*key = NULL;
-	const unsigned char	*attrp = NULL;
-	int			 success = -1, r, i, nid;
+	ASN1_OCTET_STRING	*octet = عدم;
+	EC_ئاچقۇچ			*ec = عدم;
+	EC_GROUP		*group = عدم;
+	بنية sshkey		*ئاچقۇچ = عدم;
+	ثابت unsigned حرف	*attrp = عدم;
+	صحيح			 success = -1, r, i, nid;
 
-	memset(&key_attr, 0, sizeof(key_attr));
-	key_attr[0].type = CKA_ID;
-	key_attr[1].type = CKA_EC_POINT;
-	key_attr[2].type = CKA_EC_PARAMS;
+	memset(&ئاچقۇچ_attr, 0, حجم(ئاچقۇچ_attr));
+	ئاچقۇچ_attr[0].type = CKA_ID;
+	ئاچقۇچ_attr[1].type = CKA_EC_POINT;
+	ئاچقۇچ_attr[2].type = CKA_EC_PARAMS;
 
 	session = p->slotinfo[slotidx].session;
 	f = p->function_list;
 
 	/* figure out size of the attributes */
-	rv = f->C_GetAttributeValue(session, *obj, key_attr, 3);
-	if (rv != CKR_OK) {
+	rv = f->C_Get_Attribute_قىممەت(session, *obj, ئاچقۇچ_attr, 3);
+	إذا (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
-		return (NULL);
+		أرجع (عدم);
 	}
 
 	/*
@@ -882,131 +882,131 @@ pkcs11_fetch_ecdsa_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 	 * ensure that none of the others are zero length.
 	 * XXX assumes CKA_ID is always first.
 	 */
-	if (key_attr[1].ulValueLen == 0 ||
-	    key_attr[2].ulValueLen == 0) {
+	إذا (ئاچقۇچ_attr[1].ul_قىممەت_Len == 0 ||
+	    ئاچقۇچ_attr[2].ul_قىممەت_Len == 0) {
 		error("invalid attribute length");
-		return (NULL);
+		أرجع (عدم);
 	}
 
 	/* allocate buffers for attributes */
-	for (i = 0; i < 3; i++)
-		if (key_attr[i].ulValueLen > 0)
-			key_attr[i].pValue = xcalloc(1, key_attr[i].ulValueLen);
+	لكل (i = 0; i < 3; i++)
+		إذا (ئاچقۇچ_attr[i].ul_قىممەت_Len > 0)
+			ئاچقۇچ_attr[i].p_قىممەت = xcalloc(1, ئاچقۇچ_attr[i].ul_قىممەت_Len);
 
 	/* retrieve ID, public point and curve parameters of EC key */
-	rv = f->C_GetAttributeValue(session, *obj, key_attr, 3);
-	if (rv != CKR_OK) {
+	rv = f->C_Get_Attribute_قىممەت(session, *obj, ئاچقۇچ_attr, 3);
+	إذا (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
-		goto fail;
+		اذهب fail;
 	}
 
-	ec = EC_KEY_new();
-	if (ec == NULL) {
+	ec = EC_ئاچقۇچ_new();
+	إذا (ec == عدم) {
 		error("EC_KEY_new failed");
-		goto fail;
+		اذهب fail;
 	}
 
-	attrp = key_attr[2].pValue;
-	group = d2i_ECPKParameters(NULL, &attrp, key_attr[2].ulValueLen);
-	if (group == NULL) {
+	attrp = ئاچقۇچ_attr[2].p_قىممەت;
+	group = d2i_ECPKParameters(عدم, &attrp, ئاچقۇچ_attr[2].ul_قىممەت_Len);
+	إذا (group == عدم) {
 		ossl_error("d2i_ECPKParameters failed");
-		goto fail;
+		اذهب fail;
 	}
 
-	if (EC_KEY_set_group(ec, group) == 0) {
+	إذا (EC_ئاچقۇچ_set_group(ec, group) == 0) {
 		ossl_error("EC_KEY_set_group failed");
-		goto fail;
+		اذهب fail;
 	}
 
-	if (key_attr[1].ulValueLen <= 2) {
+	إذا (ئاچقۇچ_attr[1].ul_قىممەت_Len <= 2) {
 		error("CKA_EC_POINT too small");
-		goto fail;
+		اذهب fail;
 	}
 
-	attrp = key_attr[1].pValue;
-	octet = d2i_ASN1_OCTET_STRING(NULL, &attrp, key_attr[1].ulValueLen);
-	if (octet == NULL) {
+	attrp = ئاچقۇچ_attr[1].p_قىممەت;
+	octet = d2i_ASN1_OCTET_STRING(عدم, &attrp, ئاچقۇچ_attr[1].ul_قىممەت_Len);
+	إذا (octet == عدم) {
 		ossl_error("d2i_ASN1_OCTET_STRING failed");
-		goto fail;
+		اذهب fail;
 	}
 	attrp = ASN1_STRING_get0_data(octet);
-	if (o2i_ECPublicKey(&ec, &attrp, ASN1_STRING_length(octet)) == NULL) {
+	إذا (o2i_ECPublic_ئاچقۇچ(&ec, &attrp, ASN1_STRING_length(octet)) == عدم) {
 		ossl_error("o2i_ECPublicKey failed");
-		goto fail;
+		اذهب fail;
 	}
-	if ((r = sshkey_ec_validate_public(EC_KEY_get0_group(ec),
-	    EC_KEY_get0_public_key(ec))) != 0) {
+	إذا ((r = sshkey_ec_validate_public(EC_ئاچقۇچ_get0_group(ec),
+	    EC_ئاچقۇچ_get0_public_ئاچقۇچ(ec))) != 0) {
 		error_fr(r, "invalid EC key");
-		goto fail;
+		اذهب fail;
 	}
 
-	nid = sshkey_ecdsa_key_to_nid(ec);
-	if (nid < 0) {
+	nid = sshkey_ecdsa_ئاچقۇچ_to_nid(ec);
+	إذا (nid < 0) {
 		error("couldn't get curve nid");
-		goto fail;
+		اذهب fail;
 	}
 
-	key = sshkey_new(KEY_UNSPEC);
-	if (key == NULL) {
+	ئاچقۇچ = sshkey_new(ئاچقۇچ_UNSPEC);
+	إذا (ئاچقۇچ == عدم) {
 		error("sshkey_new failed");
-		goto fail;
+		اذهب fail;
 	}
 
-	EVP_PKEY_free(key->pkey);
-	if ((key->pkey = EVP_PKEY_new()) == NULL)
+	EVP_PKEY_free(ئاچقۇچ->pkey);
+	إذا ((ئاچقۇچ->pkey = EVP_PKEY_new()) == عدم)
 		fatal("EVP_PKEY_new failed");
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1)
+	إذا (EVP_PKEY_set1_EC_ئاچقۇچ(ئاچقۇچ->pkey, ec) != 1)
 		fatal("EVP_PKEY_set1_EC_KEY failed");
-	key->ecdsa_nid = nid;
-	key->type = KEY_ECDSA;
-	key->flags |= SSHKEY_FLAG_EXT;
-	if (pkcs11_record_key(p, slotidx, &key_attr[0], key))
-		goto fail;
+	ئاچقۇچ->ecdsa_nid = nid;
+	ئاچقۇچ->type = ئاچقۇچ_ECDSA;
+	ئاچقۇچ->flags |= SSHKEY_FLAG_EXT;
+	إذا (pkcs11_record_ئاچقۇچ(p, slotidx, &ئاچقۇچ_attr[0], ئاچقۇچ))
+		اذهب fail;
 	/* success */
 	success = 0;
 fail:
-	if (success != 0) {
-		sshkey_free(key);
-		key = NULL;
+	إذا (success != 0) {
+		sshkey_free(ئاچقۇچ);
+		ئاچقۇچ = عدم;
 	}
-	for (i = 0; i < 3; i++)
-		free(key_attr[i].pValue);
-	if (ec)
-		EC_KEY_free(ec);
-	if (group)
+	لكل (i = 0; i < 3; i++)
+		حرر(ئاچقۇچ_attr[i].p_قىممەت);
+	إذا (ec)
+		EC_ئاچقۇچ_free(ec);
+	إذا (group)
 		EC_GROUP_free(group);
-	if (octet)
+	إذا (octet)
 		ASN1_OCTET_STRING_free(octet);
 
-	return (key);
+	أرجع (ئاچقۇچ);
 }
 
-static struct sshkey *
-pkcs11_fetch_rsa_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
+ساكن بنية sshkey *
+pkcs11_fetch_rsa_pubkey(بنية pkcs11_provider *p, CK_ULONG slotidx,
     CK_OBJECT_HANDLE *obj)
 {
-	CK_ATTRIBUTE		 key_attr[3];
+	CK_ATTRIBUTE		 ئاچقۇچ_attr[3];
 	CK_SESSION_HANDLE	 session;
-	CK_FUNCTION_LIST	*f = NULL;
+	CK_FUNCTION_LIST	*f = عدم;
 	CK_RV			 rv;
-	RSA			*rsa = NULL;
+	RSA			*rsa = عدم;
 	BIGNUM			*rsa_n, *rsa_e;
-	struct sshkey		*key = NULL;
-	int			 i, success = -1;
+	بنية sshkey		*ئاچقۇچ = عدم;
+	صحيح			 i, success = -1;
 
-	memset(&key_attr, 0, sizeof(key_attr));
-	key_attr[0].type = CKA_ID;
-	key_attr[1].type = CKA_MODULUS;
-	key_attr[2].type = CKA_PUBLIC_EXPONENT;
+	memset(&ئاچقۇچ_attr, 0, حجم(ئاچقۇچ_attr));
+	ئاچقۇچ_attr[0].type = CKA_ID;
+	ئاچقۇچ_attr[1].type = CKA_MODULUS;
+	ئاچقۇچ_attr[2].type = CKA_PUBLIC_EXPONENT;
 
 	session = p->slotinfo[slotidx].session;
 	f = p->function_list;
 
 	/* figure out size of the attributes */
-	rv = f->C_GetAttributeValue(session, *obj, key_attr, 3);
-	if (rv != CKR_OK) {
+	rv = f->C_Get_Attribute_قىممەت(session, *obj, ئاچقۇچ_attr, 3);
+	إذا (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
-		return (NULL);
+		أرجع (عدم);
 	}
 
 	/*
@@ -1014,109 +1014,109 @@ pkcs11_fetch_rsa_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 	 * ensure that none of the others are zero length.
 	 * XXX assumes CKA_ID is always first.
 	 */
-	if (key_attr[1].ulValueLen == 0 ||
-	    key_attr[2].ulValueLen == 0) {
+	إذا (ئاچقۇچ_attr[1].ul_قىممەت_Len == 0 ||
+	    ئاچقۇچ_attr[2].ul_قىممەت_Len == 0) {
 		error("invalid attribute length");
-		return (NULL);
+		أرجع (عدم);
 	}
 
 	/* allocate buffers for attributes */
-	for (i = 0; i < 3; i++)
-		if (key_attr[i].ulValueLen > 0)
-			key_attr[i].pValue = xcalloc(1, key_attr[i].ulValueLen);
+	لكل (i = 0; i < 3; i++)
+		إذا (ئاچقۇچ_attr[i].ul_قىممەت_Len > 0)
+			ئاچقۇچ_attr[i].p_قىممەت = xcalloc(1, ئاچقۇچ_attr[i].ul_قىممەت_Len);
 
 	/* retrieve ID, modulus and public exponent of RSA key */
-	rv = f->C_GetAttributeValue(session, *obj, key_attr, 3);
-	if (rv != CKR_OK) {
+	rv = f->C_Get_Attribute_قىممەت(session, *obj, ئاچقۇچ_attr, 3);
+	إذا (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
-		goto fail;
+		اذهب fail;
 	}
 
 	rsa = RSA_new();
-	if (rsa == NULL) {
+	إذا (rsa == عدم) {
 		error("RSA_new failed");
-		goto fail;
+		اذهب fail;
 	}
 
-	rsa_n = BN_bin2bn(key_attr[1].pValue, key_attr[1].ulValueLen, NULL);
-	rsa_e = BN_bin2bn(key_attr[2].pValue, key_attr[2].ulValueLen, NULL);
-	if (rsa_n == NULL || rsa_e == NULL) {
+	rsa_n = BN_bin2bn(ئاچقۇچ_attr[1].p_قىممەت, ئاچقۇچ_attr[1].ul_قىممەت_Len, عدم);
+	rsa_e = BN_bin2bn(ئاچقۇچ_attr[2].p_قىممەت, ئاچقۇچ_attr[2].ul_قىممەت_Len, عدم);
+	إذا (rsa_n == عدم || rsa_e == عدم) {
 		error("BN_bin2bn failed");
-		goto fail;
+		اذهب fail;
 	}
-	if (!RSA_set0_key(rsa, rsa_n, rsa_e, NULL))
+	إذا (!RSA_set0_ئاچقۇچ(rsa, rsa_n, rsa_e, عدم))
 		fatal_f("set key");
-	rsa_n = rsa_e = NULL; /* transferred */
+	rsa_n = rsa_e = عدم; /* transferred */
 
-	key = sshkey_new(KEY_UNSPEC);
-	if (key == NULL) {
+	ئاچقۇچ = sshkey_new(ئاچقۇچ_UNSPEC);
+	إذا (ئاچقۇچ == عدم) {
 		error("sshkey_new failed");
-		goto fail;
+		اذهب fail;
 	}
 
-	EVP_PKEY_free(key->pkey);
-	if ((key->pkey = EVP_PKEY_new()) == NULL)
+	EVP_PKEY_free(ئاچقۇچ->pkey);
+	إذا ((ئاچقۇچ->pkey = EVP_PKEY_new()) == عدم)
 		fatal("EVP_PKEY_new failed");
-	if (EVP_PKEY_set1_RSA(key->pkey, rsa) != 1)
+	إذا (EVP_PKEY_set1_RSA(ئاچقۇچ->pkey, rsa) != 1)
 		fatal("EVP_PKEY_set1_RSA failed");
-	key->type = KEY_RSA;
-	key->flags |= SSHKEY_FLAG_EXT;
-	if (EVP_PKEY_bits(key->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE) {
+	ئاچقۇچ->type = ئاچقۇچ_RSA;
+	ئاچقۇچ->flags |= SSHKEY_FLAG_EXT;
+	إذا (EVP_PKEY_bits(ئاچقۇچ->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE) {
 		error_f("RSA key too small %d < minimum %d",
-		    EVP_PKEY_bits(key->pkey), SSH_RSA_MINIMUM_MODULUS_SIZE);
-		goto fail;
+		    EVP_PKEY_bits(ئاچقۇچ->pkey), SSH_RSA_MINIMUM_MODULUS_SIZE);
+		اذهب fail;
 	}
-	if (pkcs11_record_key(p, slotidx, &key_attr[0], key))
-		goto fail;
+	إذا (pkcs11_record_ئاچقۇچ(p, slotidx, &ئاچقۇچ_attr[0], ئاچقۇچ))
+		اذهب fail;
 	/* success */
 	success = 0;
 fail:
-	for (i = 0; i < 3; i++)
-		free(key_attr[i].pValue);
+	لكل (i = 0; i < 3; i++)
+		حرر(ئاچقۇچ_attr[i].p_قىممەت);
 	RSA_free(rsa);
-	if (success != 0) {
-		sshkey_free(key);
-		key = NULL;
+	إذا (success != 0) {
+		sshkey_free(ئاچقۇچ);
+		ئاچقۇچ = عدم;
 	}
-	return key;
+	أرجع ئاچقۇچ;
 }
 #endif /* WITH_OPENSSL */
 
-static struct sshkey *
-pkcs11_fetch_ed25519_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
+ساكن بنية sshkey *
+pkcs11_fetch_ed25519_pubkey(بنية pkcs11_provider *p, CK_ULONG slotidx,
     CK_OBJECT_HANDLE *obj)
 {
-	CK_ATTRIBUTE		 key_attr[3];
+	CK_ATTRIBUTE		 ئاچقۇچ_attr[3];
 	CK_SESSION_HANDLE	 session;
-	CK_FUNCTION_LIST	*f = NULL;
+	CK_FUNCTION_LIST	*f = عدم;
 	CK_RV			 rv;
-	struct sshkey		*key = NULL;
-	const unsigned char	*d = NULL;
+	بنية sshkey		*ئاچقۇچ = عدم;
+	ثابت unsigned حرف	*d = عدم;
 	size_t			len;
-	char			*hex = NULL;
-	int			 success = -1, i;
+	حرف			*hex = عدم;
+	صحيح			 success = -1, i;
 	/* https://docs.oasis-open.org/pkcs11/pkcs11-curr/v3.0/os/pkcs11-curr-v3.0-os.html#_Toc30061180 */
-	const u_char		 id1[14] = {
+	ثابت u_char		 id1[14] = {
 		0x13, 0x0c, 0x65, 0x64, 0x77, 0x61, 0x72, 0x64,
 		0x73, 0x32, 0x35, 0x35, 0x31, 0x39,
 	}; /* PrintableString { "edwards25519" } */
-	const u_char		 id2[5] = {
+	ثابت u_char		 id2[5] = {
 		0x06, 0x03, 0x2b, 0x65, 0x70,
 	}; /* OBJECT_IDENTIFIER { 1.3.101.112 } */
 
-	memset(&key_attr, 0, sizeof(key_attr));
-	key_attr[0].type = CKA_ID;
-	key_attr[1].type = CKA_EC_POINT; /* XXX or CKA_VALUE ? */
-	key_attr[2].type = CKA_EC_PARAMS;
+	memset(&ئاچقۇچ_attr, 0, حجم(ئاچقۇچ_attr));
+	ئاچقۇچ_attr[0].type = CKA_ID;
+	ئاچقۇچ_attr[1].type = CKA_EC_POINT; /* XXX or CKA_VALUE ? */
+	ئاچقۇچ_attr[2].type = CKA_EC_PARAMS;
 
 	session = p->slotinfo[slotidx].session;
 	f = p->function_list;
 
 	/* figure out size of the attributes */
-	rv = f->C_GetAttributeValue(session, *obj, key_attr, 3);
-	if (rv != CKR_OK) {
+	rv = f->C_Get_Attribute_قىممەت(session, *obj, ئاچقۇچ_attr, 3);
+	إذا (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
-		return (NULL);
+		أرجع (عدم);
 	}
 
 	/*
@@ -1124,111 +1124,111 @@ pkcs11_fetch_ed25519_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 	 * ensure that none of the others are zero length.
 	 * XXX assumes CKA_ID is always first.
 	 */
-	if (key_attr[1].ulValueLen == 0 ||
-	    key_attr[2].ulValueLen == 0) {
+	إذا (ئاچقۇچ_attr[1].ul_قىممەت_Len == 0 ||
+	    ئاچقۇچ_attr[2].ul_قىممەت_Len == 0) {
 		error("invalid attribute length");
-		return (NULL);
+		أرجع (عدم);
 	}
 
 	/* allocate buffers for attributes */
-	for (i = 0; i < 3; i++) {
-		if (key_attr[i].ulValueLen > 0)
-			key_attr[i].pValue = xcalloc(1, key_attr[i].ulValueLen);
+	لكل (i = 0; i < 3; i++) {
+		إذا (ئاچقۇچ_attr[i].ul_قىممەت_Len > 0)
+			ئاچقۇچ_attr[i].p_قىممەت = xcalloc(1, ئاچقۇچ_attr[i].ul_قىممەت_Len);
 	}
 
 	/* retrieve ID, public point and curve parameters of EC key */
-	rv = f->C_GetAttributeValue(session, *obj, key_attr, 3);
-	if (rv != CKR_OK) {
+	rv = f->C_Get_Attribute_قىممەت(session, *obj, ئاچقۇچ_attr, 3);
+	إذا (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
-		goto fail;
+		اذهب fail;
 	}
 
 	/* Expect one of the supported identifiers in CKA_EC_PARAMS */
-	d = (u_char *)key_attr[2].pValue;
-	len = key_attr[2].ulValueLen;
-	if ((len != sizeof(id1) || memcmp(d, id1, sizeof(id1)) != 0) &&
-	    (len != sizeof(id2) || memcmp(d, id2, sizeof(id2)) != 0)) {
+	d = (u_char *)ئاچقۇچ_attr[2].p_قىممەت;
+	len = ئاچقۇچ_attr[2].ul_قىممەت_Len;
+	إذا ((len != حجم(id1) || memcmp(d, id1, حجم(id1)) != 0) &&
+	    (len != حجم(id2) || memcmp(d, id2, حجم(id2)) != 0)) {
 		hex = tohex(d, len);
 		logit_f("unsupported CKA_EC_PARAMS: %s (len %zu)", hex, len);
-		goto fail;
+		اذهب fail;
 	}
 
 	/*
 	 * Expect either a raw 32 byte pubkey or an OCTET STRING with
 	 * a 32 byte pubkey in CKA_VALUE
 	 */
-	d = (u_char *)key_attr[1].pValue;
-	len = key_attr[1].ulValueLen;
-	if (len == ED25519_PK_SZ + 2 && d[0] == 0x04 && d[1] == ED25519_PK_SZ) {
+	d = (u_char *)ئاچقۇچ_attr[1].p_قىممەت;
+	len = ئاچقۇچ_attr[1].ul_قىممەت_Len;
+	إذا (len == ED25519_PK_SZ + 2 && d[0] == 0x04 && d[1] == ED25519_PK_SZ) {
 		d += 2;
 		len -= 2;
 	}
-	if (len != ED25519_PK_SZ) {
-		hex = tohex(key_attr[1].pValue, key_attr[1].ulValueLen);
+	إذا (len != ED25519_PK_SZ) {
+		hex = tohex(ئاچقۇچ_attr[1].p_قىممەت, ئاچقۇچ_attr[1].ul_قىممەت_Len);
 		logit_f("CKA_EC_POINT invalid octet str: %s (len %lu)",
-		    hex, (u_long)key_attr[1].ulValueLen);
-		goto fail;
+		    hex, (u_long)ئاچقۇچ_attr[1].ul_قىممەت_Len);
+		اذهب fail;
 	}
 
-	if ((key = sshkey_new(KEY_UNSPEC)) == NULL)
+	إذا ((ئاچقۇچ = sshkey_new(ئاچقۇچ_UNSPEC)) == عدم)
 		fatal_f("sshkey_new failed");
-	key->ed25519_pk = xmalloc(ED25519_PK_SZ);
-	memcpy(key->ed25519_pk, d, ED25519_PK_SZ);
-	key->type = KEY_ED25519;
-	key->flags |= SSHKEY_FLAG_EXT;
-	if (pkcs11_record_key(p, slotidx, &key_attr[0], key))
-		goto fail;
+	ئاچقۇچ->ed25519_pk = xmalloc(ED25519_PK_SZ);
+	memcpy(ئاچقۇچ->ed25519_pk, d, ED25519_PK_SZ);
+	ئاچقۇچ->type = ئاچقۇچ_ED25519;
+	ئاچقۇچ->flags |= SSHKEY_FLAG_EXT;
+	إذا (pkcs11_record_ئاچقۇچ(p, slotidx, &ئاچقۇچ_attr[0], ئاچقۇچ))
+		اذهب fail;
 	/* success */
 	success = 0;
  fail:
-	if (success != 0) {
-		sshkey_free(key);
-		key = NULL;
+	إذا (success != 0) {
+		sshkey_free(ئاچقۇچ);
+		ئاچقۇچ = عدم;
 	}
-	free(hex);
-	for (i = 0; i < 3; i++)
-		free(key_attr[i].pValue);
-	return key;
+	حرر(hex);
+	لكل (i = 0; i < 3; i++)
+		حرر(ئاچقۇچ_attr[i].p_قىممەت);
+	أرجع ئاچقۇچ;
 }
 
 #ifdef WITH_OPENSSL
-static int
-pkcs11_fetch_x509_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
-    CK_OBJECT_HANDLE *obj, struct sshkey **keyp, char **labelp)
+ساكن صحيح
+pkcs11_fetch_x509_pubkey(بنية pkcs11_provider *p, CK_ULONG slotidx,
+    CK_OBJECT_HANDLE *obj, بنية sshkey **keyp, حرف **labelp)
 {
 	CK_ATTRIBUTE		 cert_attr[3];
 	CK_SESSION_HANDLE	 session;
-	CK_FUNCTION_LIST	*f = NULL;
+	CK_FUNCTION_LIST	*f = عدم;
 	CK_RV			 rv;
-	X509			*x509 = NULL;
-	X509_NAME		*x509_name = NULL;
+	X509			*x509 = عدم;
+	X509_NAME		*x509_name = عدم;
 	EVP_PKEY		*evp;
-	RSA			*rsa = NULL;
-	EC_KEY			*ec = NULL;
-	struct sshkey		*key = NULL;
-	int			 r, i, nid, success = -1;
-	const u_char		*cp;
-	char			*subject = NULL;
+	RSA			*rsa = عدم;
+	EC_ئاچقۇچ			*ec = عدم;
+	بنية sshkey		*ئاچقۇچ = عدم;
+	صحيح			 r, i, nid, success = -1;
+	ثابت u_char		*cp;
+	حرف			*subject = عدم;
 #ifdef OPENSSL_HAS_ED25519
 	size_t			len;
 #endif /* OPENSSL_HAS_ED25519 */
 
-	*keyp = NULL;
-	*labelp = NULL;
+	*keyp = عدم;
+	*labelp = عدم;
 
-	memset(&cert_attr, 0, sizeof(cert_attr));
+	memset(&cert_attr, 0, حجم(cert_attr));
 	cert_attr[0].type = CKA_ID;
 	cert_attr[1].type = CKA_SUBJECT;
-	cert_attr[2].type = CKA_VALUE;
+	cert_attr[2].type = CKA_قىممەت;
 
 	session = p->slotinfo[slotidx].session;
 	f = p->function_list;
 
 	/* figure out size of the attributes */
-	rv = f->C_GetAttributeValue(session, *obj, cert_attr, 3);
-	if (rv != CKR_OK) {
+	rv = f->C_Get_Attribute_قىممەت(session, *obj, cert_attr, 3);
+	إذا (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
-		return -1;
+		أرجع -1;
 	}
 
 	/*
@@ -1236,172 +1236,172 @@ pkcs11_fetch_x509_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 	 * ensure that none of the others are zero length.
 	 * XXX assumes CKA_ID is always first.
 	 */
-	if (cert_attr[1].ulValueLen == 0 ||
-	    cert_attr[2].ulValueLen == 0) {
+	إذا (cert_attr[1].ul_قىممەت_Len == 0 ||
+	    cert_attr[2].ul_قىممەت_Len == 0) {
 		error("invalid attribute length");
-		return -1;
+		أرجع -1;
 	}
 
 	/* allocate buffers for attributes */
-	for (i = 0; i < 3; i++)
-		if (cert_attr[i].ulValueLen > 0)
-			cert_attr[i].pValue = xcalloc(1, cert_attr[i].ulValueLen);
+	لكل (i = 0; i < 3; i++)
+		إذا (cert_attr[i].ul_قىممەت_Len > 0)
+			cert_attr[i].p_قىممەت = xcalloc(1, cert_attr[i].ul_قىممەت_Len);
 
 	/* retrieve ID, subject and value of certificate */
-	rv = f->C_GetAttributeValue(session, *obj, cert_attr, 3);
-	if (rv != CKR_OK) {
+	rv = f->C_Get_Attribute_قىممەت(session, *obj, cert_attr, 3);
+	إذا (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
-		goto out;
+		اذهب out;
 	}
 
 	/* Decode DER-encoded cert subject */
-	cp = cert_attr[1].pValue;
-	if ((x509_name = d2i_X509_NAME(NULL, &cp,
-	    cert_attr[1].ulValueLen)) == NULL ||
-	    (subject = X509_NAME_oneline(x509_name, NULL, 0)) == NULL)
+	cp = cert_attr[1].p_قىممەت;
+	إذا ((x509_name = d2i_X509_NAME(عدم, &cp,
+	    cert_attr[1].ul_قىممەت_Len)) == عدم ||
+	    (subject = X509_NAME_oneline(x509_name, عدم, 0)) == عدم)
 		subject = xstrdup("invalid subject");
 	X509_NAME_free(x509_name);
 
-	cp = cert_attr[2].pValue;
-	if ((x509 = d2i_X509(NULL, &cp, cert_attr[2].ulValueLen)) == NULL) {
+	cp = cert_attr[2].p_قىممەت;
+	إذا ((x509 = d2i_X509(عدم, &cp, cert_attr[2].ul_قىممەت_Len)) == عدم) {
 		error("d2i_x509 failed");
-		goto out;
+		اذهب out;
 	}
 
-	if ((evp = X509_get_pubkey(x509)) == NULL) {
+	إذا ((evp = X509_get_pubkey(x509)) == عدم) {
 		error("X509_get_pubkey failed");
-		goto out;
+		اذهب out;
 	}
 
-	if (EVP_PKEY_base_id(evp) == EVP_PKEY_RSA) {
-		if (EVP_PKEY_get0_RSA(evp) == NULL) {
+	إذا (EVP_PKEY_base_id(evp) == EVP_PKEY_RSA) {
+		إذا (EVP_PKEY_get0_RSA(evp) == عدم) {
 			error("invalid x509; no rsa key");
-			goto out;
+			اذهب out;
 		}
-		if ((rsa = RSAPublicKey_dup(EVP_PKEY_get0_RSA(evp))) == NULL) {
+		إذا ((rsa = RSAPublic_ئاچقۇچ_dup(EVP_PKEY_get0_RSA(evp))) == عدم) {
 			error("RSAPublicKey_dup failed");
-			goto out;
+			اذهب out;
 		}
 
-		key = sshkey_new(KEY_UNSPEC);
-		if (key == NULL) {
+		ئاچقۇچ = sshkey_new(ئاچقۇچ_UNSPEC);
+		إذا (ئاچقۇچ == عدم) {
 			error("sshkey_new failed");
-			goto out;
+			اذهب out;
 		}
 
-		EVP_PKEY_free(key->pkey);
-		if ((key->pkey = EVP_PKEY_new()) == NULL)
+		EVP_PKEY_free(ئاچقۇچ->pkey);
+		إذا ((ئاچقۇچ->pkey = EVP_PKEY_new()) == عدم)
 			fatal("EVP_PKEY_new failed");
-		if (EVP_PKEY_set1_RSA(key->pkey, rsa) != 1)
+		إذا (EVP_PKEY_set1_RSA(ئاچقۇچ->pkey, rsa) != 1)
 			fatal("EVP_PKEY_set1_RSA failed");
-		key->type = KEY_RSA;
-		key->flags |= SSHKEY_FLAG_EXT;
-		if (EVP_PKEY_bits(key->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE) {
+		ئاچقۇچ->type = ئاچقۇچ_RSA;
+		ئاچقۇچ->flags |= SSHKEY_FLAG_EXT;
+		إذا (EVP_PKEY_bits(ئاچقۇچ->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE) {
 			error_f("RSA key too small %d < minimum %d",
-			    EVP_PKEY_bits(key->pkey),
+			    EVP_PKEY_bits(ئاچقۇچ->pkey),
 			    SSH_RSA_MINIMUM_MODULUS_SIZE);
-			goto out;
+			اذهب out;
 		}
-		if (pkcs11_record_key(p, slotidx, &cert_attr[0], key))
-			goto out;
+		إذا (pkcs11_record_ئاچقۇچ(p, slotidx, &cert_attr[0], ئاچقۇچ))
+			اذهب out;
 		/* success */
 		success = 0;
-	} else if (EVP_PKEY_base_id(evp) == EVP_PKEY_EC) {
-		if (EVP_PKEY_get0_EC_KEY(evp) == NULL) {
+	} وإلا إذا (EVP_PKEY_base_id(evp) == EVP_PKEY_EC) {
+		إذا (EVP_PKEY_get0_EC_ئاچقۇچ(evp) == عدم) {
 			error("invalid x509; no ec key");
-			goto out;
+			اذهب out;
 		}
-		if ((ec = EC_KEY_dup(EVP_PKEY_get0_EC_KEY(evp))) == NULL) {
+		إذا ((ec = EC_ئاچقۇچ_dup(EVP_PKEY_get0_EC_ئاچقۇچ(evp))) == عدم) {
 			error("EC_KEY_dup failed");
-			goto out;
+			اذهب out;
 		}
-		if ((r = sshkey_ec_validate_public(EC_KEY_get0_group(ec),
-		    EC_KEY_get0_public_key(ec))) != 0) {
+		إذا ((r = sshkey_ec_validate_public(EC_ئاچقۇچ_get0_group(ec),
+		    EC_ئاچقۇچ_get0_public_ئاچقۇچ(ec))) != 0) {
 			error_fr(r, "invalid EC key");
-			goto out;
+			اذهب out;
 		}
-		nid = sshkey_ecdsa_key_to_nid(ec);
-		if (nid < 0) {
+		nid = sshkey_ecdsa_ئاچقۇچ_to_nid(ec);
+		إذا (nid < 0) {
 			error("couldn't get curve nid");
-			goto out;
+			اذهب out;
 		}
 
-		key = sshkey_new(KEY_UNSPEC);
-		if (key == NULL) {
+		ئاچقۇچ = sshkey_new(ئاچقۇچ_UNSPEC);
+		إذا (ئاچقۇچ == عدم) {
 			error("sshkey_new failed");
-			goto out;
+			اذهب out;
 		}
 
-		EVP_PKEY_free(key->pkey);
-		if ((key->pkey = EVP_PKEY_new()) == NULL)
+		EVP_PKEY_free(ئاچقۇچ->pkey);
+		إذا ((ئاچقۇچ->pkey = EVP_PKEY_new()) == عدم)
 			fatal("EVP_PKEY_new failed");
-		if (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1)
+		إذا (EVP_PKEY_set1_EC_ئاچقۇچ(ئاچقۇچ->pkey, ec) != 1)
 			fatal("EVP_PKEY_set1_EC_KEY failed");
-		key->ecdsa_nid = nid;
-		key->type = KEY_ECDSA;
-		key->flags |= SSHKEY_FLAG_EXT;
-		if (pkcs11_record_key(p, slotidx, &cert_attr[0], key))
-			goto out;
+		ئاچقۇچ->ecdsa_nid = nid;
+		ئاچقۇچ->type = ئاچقۇچ_ECDSA;
+		ئاچقۇچ->flags |= SSHKEY_FLAG_EXT;
+		إذا (pkcs11_record_ئاچقۇچ(p, slotidx, &cert_attr[0], ئاچقۇچ))
+			اذهب out;
 		/* success */
 		success = 0;
 #ifdef OPENSSL_HAS_ED25519
-	} else if (EVP_PKEY_base_id(evp) == EVP_PKEY_ED25519) {
-		if ((key = sshkey_new(KEY_UNSPEC)) == NULL ||
-		    (key->ed25519_pk = calloc(1, ED25519_PK_SZ)) == NULL)
+	} وإلا إذا (EVP_PKEY_base_id(evp) == EVP_PKEY_ED25519) {
+		إذا ((ئاچقۇچ = sshkey_new(ئاچقۇچ_UNSPEC)) == عدم ||
+		    (ئاچقۇچ->ed25519_pk = calloc(1, ED25519_PK_SZ)) == عدم)
 			fatal_f("allocation failed");
 		len = ED25519_PK_SZ;
-		if (!EVP_PKEY_get_raw_public_key(evp, key->ed25519_pk, &len)) {
+		إذا (!EVP_PKEY_get_raw_public_ئاچقۇچ(evp, ئاچقۇچ->ed25519_pk, &len)) {
 			ossl_error("EVP_PKEY_get_raw_public_key failed");
-			goto out;
+			اذهب out;
 		}
-		if (len != ED25519_PK_SZ) {
+		إذا (len != ED25519_PK_SZ) {
 			error_f("incorrect returned public key "
 			    "length for ed25519");
-			goto out;
+			اذهب out;
 		}
-		key->type = KEY_ED25519;
-		key->flags |= SSHKEY_FLAG_EXT;
-		if (pkcs11_record_key(p, slotidx, &cert_attr[0], key))
-			goto out;
+		ئاچقۇچ->type = ئاچقۇچ_ED25519;
+		ئاچقۇچ->flags |= SSHKEY_FLAG_EXT;
+		إذا (pkcs11_record_ئاچقۇچ(p, slotidx, &cert_attr[0], ئاچقۇچ))
+			اذهب out;
 		/* success */
 		success = 0;
 #endif /* OPENSSL_HAS_ED25519 */
-	} else {
+	} وإلا {
 		error("unknown certificate key type");
-		goto out;
+		اذهب out;
 	}
  out:
-	for (i = 0; i < 3; i++)
-		free(cert_attr[i].pValue);
+	لكل (i = 0; i < 3; i++)
+		حرر(cert_attr[i].p_قىممەت);
 	X509_free(x509);
 	RSA_free(rsa);
-	EC_KEY_free(ec);
-	if (success != 0 || key == NULL) {
-		sshkey_free(key);
-		free(subject);
-		return -1;
+	EC_ئاچقۇچ_free(ec);
+	إذا (success != 0 || ئاچقۇچ == عدم) {
+		sshkey_free(ئاچقۇچ);
+		حرر(subject);
+		أرجع -1;
 	}
 	/* success */
-	*keyp = key;
+	*keyp = ئاچقۇچ;
 	*labelp = subject;
-	return 0;
+	أرجع 0;
 }
 #endif /* WITH_OPENSSL */
 
-static void
-note_key(struct pkcs11_provider *p, CK_ULONG slotidx, const char *context,
-    struct sshkey *key)
+ساكن فراغ
+note_ئاچقۇچ(بنية pkcs11_provider *p, CK_ULONG slotidx, ثابت حرف *context,
+    بنية sshkey *ئاچقۇچ)
 {
-	char *fp;
+	حرف *fp;
 
-	if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL) {
+	إذا ((fp = sshkey_fingerprint(ئاچقۇچ, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == عدم) {
 		error_f("sshkey_fingerprint failed");
-		return;
+		أرجع;
 	}
 	debug2("%s: provider %s slot %lu: %s %s", context, p->name,
-	    (u_long)slotidx, sshkey_type(key), fp);
-	free(fp);
+	    (u_long)slotidx, sshkey_type(ئاچقۇچ), fp);
+	حرر(fp);
 }
 
 #ifdef WITH_OPENSSL /* libcrypto needed for certificate parsing */
@@ -1410,89 +1410,89 @@ note_key(struct pkcs11_provider *p, CK_ULONG slotidx, const char *context,
  * add 'wrapped' public keys to the 'keysp' array and increment nkeys.
  * keysp points to an (possibly empty) array with *nkeys keys.
  */
-static int
-pkcs11_fetch_certs(struct pkcs11_provider *p, CK_ULONG slotidx,
-    struct sshkey ***keysp, char ***labelsp, int *nkeys)
+ساكن صحيح
+pkcs11_fetch_certs(بنية pkcs11_provider *p, CK_ULONG slotidx,
+    بنية sshkey ***keysp, حرف ***labelsp, صحيح *nkeys)
 {
-	struct sshkey		*key = NULL;
-	CK_OBJECT_CLASS		 key_class;
-	CK_ATTRIBUTE		 key_attr[1];
+	بنية sshkey		*ئاچقۇچ = عدم;
+	CK_OBJECT_CLASS		 ئاچقۇچ_class;
+	CK_ATTRIBUTE		 ئاچقۇچ_attr[1];
 	CK_SESSION_HANDLE	 session;
-	CK_FUNCTION_LIST	*f = NULL;
+	CK_FUNCTION_LIST	*f = عدم;
 	CK_RV			 rv;
 	CK_OBJECT_HANDLE	 obj;
 	CK_ULONG		 n = 0;
-	int			 ret = -1;
-	char			*label;
+	صحيح			 ret = -1;
+	حرف			*label;
 
-	memset(&key_attr, 0, sizeof(key_attr));
-	memset(&obj, 0, sizeof(obj));
+	memset(&ئاچقۇچ_attr, 0, حجم(ئاچقۇچ_attr));
+	memset(&obj, 0, حجم(obj));
 
-	key_class = CKO_CERTIFICATE;
-	key_attr[0].type = CKA_CLASS;
-	key_attr[0].pValue = &key_class;
-	key_attr[0].ulValueLen = sizeof(key_class);
+	ئاچقۇچ_class = CKO_CERTIFICATE;
+	ئاچقۇچ_attr[0].type = CKA_CLASS;
+	ئاچقۇچ_attr[0].p_قىممەت = &ئاچقۇچ_class;
+	ئاچقۇچ_attr[0].ul_قىممەت_Len = حجم(ئاچقۇچ_class);
 
 	session = p->slotinfo[slotidx].session;
 	f = p->function_list;
 
-	rv = f->C_FindObjectsInit(session, key_attr, 1);
-	if (rv != CKR_OK) {
+	rv = f->C_FindObjectsInit(session, ئاچقۇچ_attr, 1);
+	إذا (rv != CKR_OK) {
 		error("C_FindObjectsInit failed: %lu", rv);
-		goto fail;
+		اذهب fail;
 	}
 
-	while (1) {
+	طالما (1) {
 		CK_CERTIFICATE_TYPE	ck_cert_type;
 
 		rv = f->C_FindObjects(session, &obj, 1, &n);
-		if (rv != CKR_OK) {
+		إذا (rv != CKR_OK) {
 			error("C_FindObjects failed: %lu", rv);
-			goto fail;
+			اذهب fail;
 		}
-		if (n == 0)
-			break;
+		إذا (n == 0)
+			اكسر;
 
-		memset(&ck_cert_type, 0, sizeof(ck_cert_type));
-		memset(&key_attr, 0, sizeof(key_attr));
-		key_attr[0].type = CKA_CERTIFICATE_TYPE;
-		key_attr[0].pValue = &ck_cert_type;
-		key_attr[0].ulValueLen = sizeof(ck_cert_type);
+		memset(&ck_cert_type, 0, حجم(ck_cert_type));
+		memset(&ئاچقۇچ_attr, 0, حجم(ئاچقۇچ_attr));
+		ئاچقۇچ_attr[0].type = CKA_CERTIFICATE_TYPE;
+		ئاچقۇچ_attr[0].p_قىممەت = &ck_cert_type;
+		ئاچقۇچ_attr[0].ul_قىممەت_Len = حجم(ck_cert_type);
 
-		rv = f->C_GetAttributeValue(session, obj, key_attr, 1);
-		if (rv != CKR_OK) {
+		rv = f->C_Get_Attribute_قىممەت(session, obj, ئاچقۇچ_attr, 1);
+		إذا (rv != CKR_OK) {
 			error("C_GetAttributeValue failed: %lu", rv);
-			goto fail;
+			اذهب fail;
 		}
 
-		key = NULL;
-		label = NULL;
-		switch (ck_cert_type) {
-		case CKC_X_509:
-			if (pkcs11_fetch_x509_pubkey(p, slotidx, &obj,
-			    &key, &label) != 0) {
+		ئاچقۇچ = عدم;
+		label = عدم;
+		بدل (ck_cert_type) {
+		حالة CKC_X_509:
+			إذا (pkcs11_fetch_x509_pubkey(p, slotidx, &obj,
+			    &ئاچقۇچ, &label) != 0) {
 				debug_f("failed to fetch key");
-				continue;
+				استمر;
 			}
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			error("skipping unsupported certificate type %lu",
 			    ck_cert_type);
-			continue;
+			استمر;
 		}
-		note_key(p, slotidx, __func__, key);
-		if (pkcs11_key_included(keysp, nkeys, key)) {
+		note_ئاچقۇچ(p, slotidx, __func__, ئاچقۇچ);
+		إذا (pkcs11_ئاچقۇچ_included(keysp, nkeys, ئاچقۇچ)) {
 			debug2_f("key already included");
-			sshkey_free(key);
-		} else {
+			sshkey_free(ئاچقۇچ);
+		} وإلا {
 			/* expand key array and add key */
 			*keysp = xrecallocarray(*keysp, *nkeys,
-			    *nkeys + 1, sizeof(struct sshkey *));
-			(*keysp)[*nkeys] = key;
-			if (labelsp != NULL) {
+			    *nkeys + 1, حجم(بنية sshkey *));
+			(*keysp)[*nkeys] = ئاچقۇچ;
+			إذا (labelsp != عدم) {
 				*labelsp = xrecallocarray(*labelsp, *nkeys,
-				    *nkeys + 1, sizeof(char *));
-				(*labelsp)[*nkeys] = xstrdup((char *)label);
+				    *nkeys + 1, حجم(حرف *));
+				(*labelsp)[*nkeys] = xstrdup((حرف *)label);
 			}
 			*nkeys = *nkeys + 1;
 			debug("have %d keys", *nkeys);
@@ -1502,12 +1502,12 @@ pkcs11_fetch_certs(struct pkcs11_provider *p, CK_ULONG slotidx,
 	ret = 0;
 fail:
 	rv = f->C_FindObjectsFinal(session);
-	if (rv != CKR_OK) {
+	إذا (rv != CKR_OK) {
 		error("C_FindObjectsFinal failed: %lu", rv);
 		ret = -1;
 	}
 
-	return (ret);
+	أرجع (ret);
 }
 #endif /* WITH_OPENSSL */
 
@@ -1516,102 +1516,102 @@ fail:
  * add 'wrapped' public keys to the 'keysp' array and increment nkeys.
  * keysp points to an (possibly empty) array with *nkeys keys.
  */
-static int
-pkcs11_fetch_keys(struct pkcs11_provider *p, CK_ULONG slotidx,
-    struct sshkey ***keysp, char ***labelsp, int *nkeys)
+ساكن صحيح
+pkcs11_fetch_ئاچقۇچلار(بنية pkcs11_provider *p, CK_ULONG slotidx,
+    بنية sshkey ***keysp, حرف ***labelsp, صحيح *nkeys)
 {
-	struct sshkey		*key = NULL;
-	CK_OBJECT_CLASS		 key_class;
-	CK_ATTRIBUTE		 key_attr[2];
+	بنية sshkey		*ئاچقۇچ = عدم;
+	CK_OBJECT_CLASS		 ئاچقۇچ_class;
+	CK_ATTRIBUTE		 ئاچقۇچ_attr[2];
 	CK_SESSION_HANDLE	 session;
-	CK_FUNCTION_LIST	*f = NULL;
+	CK_FUNCTION_LIST	*f = عدم;
 	CK_RV			 rv;
 	CK_OBJECT_HANDLE	 obj;
 	CK_ULONG		 n = 0;
-	int			 ret = -1;
+	صحيح			 ret = -1;
 
-	memset(&key_attr, 0, sizeof(key_attr));
-	memset(&obj, 0, sizeof(obj));
+	memset(&ئاچقۇچ_attr, 0, حجم(ئاچقۇچ_attr));
+	memset(&obj, 0, حجم(obj));
 
-	key_class = CKO_PUBLIC_KEY;
-	key_attr[0].type = CKA_CLASS;
-	key_attr[0].pValue = &key_class;
-	key_attr[0].ulValueLen = sizeof(key_class);
+	ئاچقۇچ_class = CKO_PUBLIC_ئاچقۇچ;
+	ئاچقۇچ_attr[0].type = CKA_CLASS;
+	ئاچقۇچ_attr[0].p_قىممەت = &ئاچقۇچ_class;
+	ئاچقۇچ_attr[0].ul_قىممەت_Len = حجم(ئاچقۇچ_class);
 
 	session = p->slotinfo[slotidx].session;
 	f = p->function_list;
 
-	rv = f->C_FindObjectsInit(session, key_attr, 1);
-	if (rv != CKR_OK) {
+	rv = f->C_FindObjectsInit(session, ئاچقۇچ_attr, 1);
+	إذا (rv != CKR_OK) {
 		error("C_FindObjectsInit failed: %lu", rv);
-		goto fail;
+		اذهب fail;
 	}
 
-	while (1) {
-		CK_KEY_TYPE	ck_key_type;
+	طالما (1) {
+		CK_ئاچقۇچ_TYPE	ck_ئاچقۇچ_type;
 		CK_UTF8CHAR	label[256];
 
 		rv = f->C_FindObjects(session, &obj, 1, &n);
-		if (rv != CKR_OK) {
+		إذا (rv != CKR_OK) {
 			error("C_FindObjects failed: %lu", rv);
-			goto fail;
+			اذهب fail;
 		}
-		if (n == 0)
-			break;
+		إذا (n == 0)
+			اكسر;
 
-		memset(&ck_key_type, 0, sizeof(ck_key_type));
-		memset(&key_attr, 0, sizeof(key_attr));
-		key_attr[0].type = CKA_KEY_TYPE;
-		key_attr[0].pValue = &ck_key_type;
-		key_attr[0].ulValueLen = sizeof(ck_key_type);
-		key_attr[1].type = CKA_LABEL;
-		key_attr[1].pValue = &label;
-		key_attr[1].ulValueLen = sizeof(label) - 1;
+		memset(&ck_ئاچقۇچ_type, 0, حجم(ck_ئاچقۇچ_type));
+		memset(&ئاچقۇچ_attr, 0, حجم(ئاچقۇچ_attr));
+		ئاچقۇچ_attr[0].type = CKA_ئاچقۇچ_TYPE;
+		ئاچقۇچ_attr[0].p_قىممەت = &ck_ئاچقۇچ_type;
+		ئاچقۇچ_attr[0].ul_قىممەت_Len = حجم(ck_ئاچقۇچ_type);
+		ئاچقۇچ_attr[1].type = CKA_LABEL;
+		ئاچقۇچ_attr[1].p_قىممەت = &label;
+		ئاچقۇچ_attr[1].ul_قىممەت_Len = حجم(label) - 1;
 
-		rv = f->C_GetAttributeValue(session, obj, key_attr, 2);
-		if (rv != CKR_OK) {
+		rv = f->C_Get_Attribute_قىممەت(session, obj, ئاچقۇچ_attr, 2);
+		إذا (rv != CKR_OK) {
 			error("C_GetAttributeValue failed: %lu", rv);
-			goto fail;
+			اذهب fail;
 		}
 
-		label[key_attr[1].ulValueLen] = '\0';
+		label[ئاچقۇچ_attr[1].ul_قىممەت_Len] = '\0';
 
-		switch (ck_key_type) {
+		بدل (ck_ئاچقۇچ_type) {
 #ifdef WITH_OPENSSL
-		case CKK_RSA:
-			key = pkcs11_fetch_rsa_pubkey(p, slotidx, &obj);
-			break;
-		case CKK_ECDSA:
-			key = pkcs11_fetch_ecdsa_pubkey(p, slotidx, &obj);
-			break;
+		حالة CKK_RSA:
+			ئاچقۇچ = pkcs11_fetch_rsa_pubkey(p, slotidx, &obj);
+			اكسر;
+		حالة CKK_ECDSA:
+			ئاچقۇچ = pkcs11_fetch_ecdsa_pubkey(p, slotidx, &obj);
+			اكسر;
 #endif /* WITH_OPENSSL */
-		case CKK_EC_EDWARDS:
-			key = pkcs11_fetch_ed25519_pubkey(p, slotidx, &obj);
-			break;
-		default:
+		حالة CKK_EC_EDWARDS:
+			ئاچقۇچ = pkcs11_fetch_ed25519_pubkey(p, slotidx, &obj);
+			اكسر;
+		افتراضي:
 			/* XXX print key type? */
-			key = NULL;
+			ئاچقۇچ = عدم;
 			error("skipping unsupported key type 0x%lx",
-			    (u_long)ck_key_type);
+			    (u_long)ck_ئاچقۇچ_type);
 		}
 
-		if (key == NULL) {
+		إذا (ئاچقۇچ == عدم) {
 			debug_f("failed to fetch key");
-			continue;
+			استمر;
 		}
-		note_key(p, slotidx, __func__, key);
-		if (pkcs11_key_included(keysp, nkeys, key)) {
+		note_ئاچقۇچ(p, slotidx, __func__, ئاچقۇچ);
+		إذا (pkcs11_ئاچقۇچ_included(keysp, nkeys, ئاچقۇچ)) {
 			debug2_f("key already included");
-			sshkey_free(key);
-		} else {
+			sshkey_free(ئاچقۇچ);
+		} وإلا {
 			/* expand key array and add key */
 			*keysp = xrecallocarray(*keysp, *nkeys,
-			    *nkeys + 1, sizeof(struct sshkey *));
-			(*keysp)[*nkeys] = key;
-			if (labelsp != NULL) {
+			    *nkeys + 1, حجم(بنية sshkey *));
+			(*keysp)[*nkeys] = ئاچقۇچ;
+			إذا (labelsp != عدم) {
 				*labelsp = xrecallocarray(*labelsp, *nkeys,
-				    *nkeys + 1, sizeof(char *));
-				(*labelsp)[*nkeys] = xstrdup((char *)label);
+				    *nkeys + 1, حجم(حرف *));
+				(*labelsp)[*nkeys] = xstrdup((حرف *)label);
 			}
 			*nkeys = *nkeys + 1;
 			debug("have %d keys", *nkeys);
@@ -1621,209 +1621,209 @@ pkcs11_fetch_keys(struct pkcs11_provider *p, CK_ULONG slotidx,
 	ret = 0;
 fail:
 	rv = f->C_FindObjectsFinal(session);
-	if (rv != CKR_OK) {
+	إذا (rv != CKR_OK) {
 		error("C_FindObjectsFinal failed: %lu", rv);
 		ret = -1;
 	}
 
-	return (ret);
+	أرجع (ret);
 }
 
 #ifdef WITH_PKCS11_KEYGEN
 #define FILL_ATTR(attr, idx, typ, val, len) \
-	{ (attr[idx]).type=(typ); (attr[idx]).pValue=(val); (attr[idx]).ulValueLen=len; idx++; }
+	{ (attr[idx]).type=(typ); (attr[idx]).p_قىممەت=(val); (attr[idx]).ul_قىممەت_Len=len; idx++; }
 
-static struct sshkey *
-pkcs11_rsa_generate_private_key(struct pkcs11_provider *p, CK_ULONG slotidx,
-    char *label, CK_ULONG bits, CK_BYTE keyid, uint32_t *err)
+ساكن بنية sshkey *
+pkcs11_rsa_generate_private_ئاچقۇچ(بنية pkcs11_provider *p, CK_ULONG slotidx,
+    حرف *label, CK_ULONG bits, CK_BYTE keyid, uint32_t *err)
 {
-	struct pkcs11_slotinfo	*si;
-	char			*plabel = label ? label : "";
-	int			 npub = 0, npriv = 0;
+	بنية pkcs11_slotinfo	*si;
+	حرف			*plabel = label ? label : "";
+	صحيح			 npub = 0, npriv = 0;
 	CK_RV			 rv;
 	CK_FUNCTION_LIST	*f;
 	CK_SESSION_HANDLE	 session;
 	CK_BBOOL		 true_val = CK_TRUE, false_val = CK_FALSE;
-	CK_OBJECT_HANDLE	 pubKey, privKey;
+	CK_OBJECT_HANDLE	 pub_ئاچقۇچ_2, priv_ئاچقۇچ;
 	CK_ATTRIBUTE		 tpub[16], tpriv[16];
 	CK_MECHANISM		 mech = {
-	    CKM_RSA_PKCS_KEY_PAIR_GEN, NULL_PTR, 0
+	    CKM_RSA_PKCS_ئاچقۇچ_PAIR_GEN, NULL_PTR, 0
 	};
 	CK_BYTE			 pubExponent[] = {
 	    0x01, 0x00, 0x01 /* RSA_F4 in bytes */
 	};
-	pubkey_filter[0].pValue = &pubkey_class;
-	cert_filter[0].pValue = &cert_class;
+	pubkey_filter[0].p_قىممەت = &pubkey_class;
+	cert_filter[0].p_قىممەت = &cert_class;
 
 	*err = 0;
 
-	FILL_ATTR(tpub, npub, CKA_TOKEN, &true_val, sizeof(true_val));
+	FILL_ATTR(tpub, npub, CKA_TOKEN, &true_val, حجم(true_val));
 	FILL_ATTR(tpub, npub, CKA_LABEL, plabel, strlen(plabel));
-	FILL_ATTR(tpub, npub, CKA_ENCRYPT, &false_val, sizeof(false_val));
-	FILL_ATTR(tpub, npub, CKA_VERIFY, &true_val, sizeof(true_val));
+	FILL_ATTR(tpub, npub, CKA_ENCRYPT, &false_val, حجم(false_val));
+	FILL_ATTR(tpub, npub, CKA_VERIFY, &true_val, حجم(true_val));
 	FILL_ATTR(tpub, npub, CKA_VERIFY_RECOVER, &false_val,
-	    sizeof(false_val));
-	FILL_ATTR(tpub, npub, CKA_WRAP, &false_val, sizeof(false_val));
-	FILL_ATTR(tpub, npub, CKA_DERIVE, &false_val, sizeof(false_val));
-	FILL_ATTR(tpub, npub, CKA_MODULUS_BITS, &bits, sizeof(bits));
+	    حجم(false_val));
+	FILL_ATTR(tpub, npub, CKA_WRAP, &false_val, حجم(false_val));
+	FILL_ATTR(tpub, npub, CKA_DERIVE, &false_val, حجم(false_val));
+	FILL_ATTR(tpub, npub, CKA_MODULUS_BITS, &bits, حجم(bits));
 	FILL_ATTR(tpub, npub, CKA_PUBLIC_EXPONENT, pubExponent,
-	    sizeof(pubExponent));
-	FILL_ATTR(tpub, npub, CKA_ID, &keyid, sizeof(keyid));
+	    حجم(pubExponent));
+	FILL_ATTR(tpub, npub, CKA_ID, &keyid, حجم(keyid));
 
-	FILL_ATTR(tpriv, npriv, CKA_TOKEN,  &true_val, sizeof(true_val));
+	FILL_ATTR(tpriv, npriv, CKA_TOKEN,  &true_val, حجم(true_val));
 	FILL_ATTR(tpriv, npriv, CKA_LABEL,  plabel, strlen(plabel));
-	FILL_ATTR(tpriv, npriv, CKA_PRIVATE,  &true_val, sizeof(true_val));
-	FILL_ATTR(tpriv, npriv, CKA_SENSITIVE,  &true_val, sizeof(true_val));
-	FILL_ATTR(tpriv, npriv, CKA_DECRYPT,  &false_val, sizeof(false_val));
-	FILL_ATTR(tpriv, npriv, CKA_SIGN,  &true_val, sizeof(true_val));
+	FILL_ATTR(tpriv, npriv, CKA_PRIVATE,  &true_val, حجم(true_val));
+	FILL_ATTR(tpriv, npriv, CKA_SENSITIVE,  &true_val, حجم(true_val));
+	FILL_ATTR(tpriv, npriv, CKA_DECRYPT,  &false_val, حجم(false_val));
+	FILL_ATTR(tpriv, npriv, CKA_SIGN,  &true_val, حجم(true_val));
 	FILL_ATTR(tpriv, npriv, CKA_SIGN_RECOVER,  &false_val,
-	    sizeof(false_val));
-	FILL_ATTR(tpriv, npriv, CKA_UNWRAP,  &false_val, sizeof(false_val));
-	FILL_ATTR(tpriv, npriv, CKA_DERIVE,  &false_val, sizeof(false_val));
-	FILL_ATTR(tpriv, npriv, CKA_ID, &keyid, sizeof(keyid));
+	    حجم(false_val));
+	FILL_ATTR(tpriv, npriv, CKA_UNWRAP,  &false_val, حجم(false_val));
+	FILL_ATTR(tpriv, npriv, CKA_DERIVE,  &false_val, حجم(false_val));
+	FILL_ATTR(tpriv, npriv, CKA_ID, &keyid, حجم(keyid));
 
 	f = p->function_list;
 	si = &p->slotinfo[slotidx];
 	session = si->session;
 
-	if ((rv = f->C_GenerateKeyPair(session, &mech, tpub, npub, tpriv, npriv,
-	    &pubKey, &privKey)) != CKR_OK) {
+	إذا ((rv = f->C_Generate_ئاچقۇچ_Pair(session, &mech, tpub, npub, tpriv, npriv,
+	    &pub_ئاچقۇچ_2, &priv_ئاچقۇچ)) != CKR_OK) {
 		error_f("key generation failed: error 0x%lx", rv);
 		*err = rv;
-		return NULL;
+		أرجع عدم;
 	}
 
-	return pkcs11_fetch_rsa_pubkey(p, slotidx, &pubKey);
+	أرجع pkcs11_fetch_rsa_pubkey(p, slotidx, &pub_ئاچقۇچ_2);
 }
 
-static int
-h2i(char c)
+ساكن صحيح
+h2i(حرف c)
 {
-	if (c >= '0' && c <= '9')
-		return c - '0';
-	else if (c >= 'a' && c <= 'f')
-		return c - 'a' + 10;
-	else if (c >= 'A' && c <= 'F')
-		return c - 'A' + 10;
-	else
-		return -1;
+	إذا (c >= '0' && c <= '9')
+		أرجع c - '0';
+	وإلا إذا (c >= 'a' && c <= 'f')
+		أرجع c - 'a' + 10;
+	وإلا إذا (c >= 'A' && c <= 'F')
+		أرجع c - 'A' + 10;
+	وإلا
+		أرجع -1;
 }
 
-static int
-pkcs11_decode_hex(const char *hex, unsigned char **dest, size_t *rlen)
+ساكن صحيح
+pkcs11_decode_hex(ثابت حرف *hex, unsigned حرف **dest, size_t *rlen)
 {
 	size_t	i, len;
 
-	if (dest)
-		*dest = NULL;
-	if (rlen)
+	إذا (dest)
+		*dest = عدم;
+	إذا (rlen)
 		*rlen = 0;
 
-	if ((len = strlen(hex)) % 2)
-		return -1;
+	إذا ((len = strlen(hex)) % 2)
+		أرجع -1;
 	len /= 2;
 
 	*dest = xmalloc(len);
 
-	for (i = 0; i < len; i++) {
-		int hi, lo;
+	لكل (i = 0; i < len; i++) {
+		صحيح hi, lo;
 
 		hi = h2i(hex[2 * i]);
 		lo = h2i(hex[(2 * i) + 1]);
-		if (hi == -1 || lo == -1)
-			return -1;
+		إذا (hi == -1 || lo == -1)
+			أرجع -1;
 		(*dest)[i] = (hi << 4) | lo;
 	}
 
-	if (rlen)
+	إذا (rlen)
 		*rlen = len;
 
-	return 0;
+	أرجع 0;
 }
 
-static struct ec_curve_info {
-	const char	*name;
-	const char	*oid;
-	const char	*oid_encoded;
+ساكن بنية ec_curve_info {
+	ثابت حرف	*name;
+	ثابت حرف	*oid;
+	ثابت حرف	*oid_encoded;
 	size_t		 size;
 } ec_curve_infos[] = {
 	{"prime256v1",	"1.2.840.10045.3.1.7",	"06082A8648CE3D030107", 256},
 	{"secp384r1",	"1.3.132.0.34",		"06052B81040022",	384},
 	{"secp521r1",	"1.3.132.0.35",		"06052B81040023",	521},
-	{NULL,		NULL,			NULL,			0},
+	{عدم,		عدم,			عدم,			0},
 };
 
-static struct sshkey *
-pkcs11_ecdsa_generate_private_key(struct pkcs11_provider *p, CK_ULONG slotidx,
-    char *label, CK_ULONG bits, CK_BYTE keyid, uint32_t *err)
+ساكن بنية sshkey *
+pkcs11_ecdsa_generate_private_ئاچقۇچ(بنية pkcs11_provider *p, CK_ULONG slotidx,
+    حرف *label, CK_ULONG bits, CK_BYTE keyid, uint32_t *err)
 {
-	struct pkcs11_slotinfo	*si;
-	char			*plabel = label ? label : "";
-	int			 i;
+	بنية pkcs11_slotinfo	*si;
+	حرف			*plabel = label ? label : "";
+	صحيح			 i;
 	size_t			 ecparams_size;
-	unsigned char		*ecparams = NULL;
-	int			 npub = 0, npriv = 0;
+	unsigned حرف		*ecparams = عدم;
+	صحيح			 npub = 0, npriv = 0;
 	CK_RV			 rv;
 	CK_FUNCTION_LIST	*f;
 	CK_SESSION_HANDLE	 session;
 	CK_BBOOL		 true_val = CK_TRUE, false_val = CK_FALSE;
-	CK_OBJECT_HANDLE	 pubKey, privKey;
+	CK_OBJECT_HANDLE	 pub_ئاچقۇچ_2, priv_ئاچقۇچ;
 	CK_MECHANISM		 mech = {
-	    CKM_EC_KEY_PAIR_GEN, NULL_PTR, 0
+	    CKM_EC_ئاچقۇچ_PAIR_GEN, NULL_PTR, 0
 	};
 	CK_ATTRIBUTE		 tpub[16], tpriv[16];
 
 	*err = 0;
 
-	for (i = 0; ec_curve_infos[i].name; i++) {
-		if (ec_curve_infos[i].size == bits)
-			break;
+	لكل (i = 0; ec_curve_infos[i].name; i++) {
+		إذا (ec_curve_infos[i].size == bits)
+			اكسر;
 	}
-	if (!ec_curve_infos[i].name) {
+	إذا (!ec_curve_infos[i].name) {
 		error_f("invalid key size %lu", bits);
-		return NULL;
+		أرجع عدم;
 	}
-	if (pkcs11_decode_hex(ec_curve_infos[i].oid_encoded, &ecparams,
+	إذا (pkcs11_decode_hex(ec_curve_infos[i].oid_encoded, &ecparams,
 	    &ecparams_size) == -1) {
 		error_f("invalid oid");
-		return NULL;
+		أرجع عدم;
 	}
 
-	FILL_ATTR(tpub, npub, CKA_TOKEN, &true_val, sizeof(true_val));
+	FILL_ATTR(tpub, npub, CKA_TOKEN, &true_val, حجم(true_val));
 	FILL_ATTR(tpub, npub, CKA_LABEL, plabel, strlen(plabel));
-	FILL_ATTR(tpub, npub, CKA_ENCRYPT, &false_val, sizeof(false_val));
-	FILL_ATTR(tpub, npub, CKA_VERIFY, &true_val, sizeof(true_val));
+	FILL_ATTR(tpub, npub, CKA_ENCRYPT, &false_val, حجم(false_val));
+	FILL_ATTR(tpub, npub, CKA_VERIFY, &true_val, حجم(true_val));
 	FILL_ATTR(tpub, npub, CKA_VERIFY_RECOVER, &false_val,
-	    sizeof(false_val));
-	FILL_ATTR(tpub, npub, CKA_WRAP, &false_val, sizeof(false_val));
-	FILL_ATTR(tpub, npub, CKA_DERIVE, &false_val, sizeof(false_val));
+	    حجم(false_val));
+	FILL_ATTR(tpub, npub, CKA_WRAP, &false_val, حجم(false_val));
+	FILL_ATTR(tpub, npub, CKA_DERIVE, &false_val, حجم(false_val));
 	FILL_ATTR(tpub, npub, CKA_EC_PARAMS, ecparams, ecparams_size);
-	FILL_ATTR(tpub, npub, CKA_ID, &keyid, sizeof(keyid));
+	FILL_ATTR(tpub, npub, CKA_ID, &keyid, حجم(keyid));
 
-	FILL_ATTR(tpriv, npriv, CKA_TOKEN, &true_val, sizeof(true_val));
+	FILL_ATTR(tpriv, npriv, CKA_TOKEN, &true_val, حجم(true_val));
 	FILL_ATTR(tpriv, npriv, CKA_LABEL, plabel, strlen(plabel));
-	FILL_ATTR(tpriv, npriv, CKA_PRIVATE, &true_val, sizeof(true_val));
-	FILL_ATTR(tpriv, npriv, CKA_SENSITIVE, &true_val, sizeof(true_val));
-	FILL_ATTR(tpriv, npriv, CKA_DECRYPT, &false_val, sizeof(false_val));
-	FILL_ATTR(tpriv, npriv, CKA_SIGN, &true_val, sizeof(true_val));
+	FILL_ATTR(tpriv, npriv, CKA_PRIVATE, &true_val, حجم(true_val));
+	FILL_ATTR(tpriv, npriv, CKA_SENSITIVE, &true_val, حجم(true_val));
+	FILL_ATTR(tpriv, npriv, CKA_DECRYPT, &false_val, حجم(false_val));
+	FILL_ATTR(tpriv, npriv, CKA_SIGN, &true_val, حجم(true_val));
 	FILL_ATTR(tpriv, npriv, CKA_SIGN_RECOVER, &false_val,
-	    sizeof(false_val));
-	FILL_ATTR(tpriv, npriv, CKA_UNWRAP, &false_val, sizeof(false_val));
-	FILL_ATTR(tpriv, npriv, CKA_DERIVE, &false_val, sizeof(false_val));
-	FILL_ATTR(tpriv, npriv, CKA_ID, &keyid, sizeof(keyid));
+	    حجم(false_val));
+	FILL_ATTR(tpriv, npriv, CKA_UNWRAP, &false_val, حجم(false_val));
+	FILL_ATTR(tpriv, npriv, CKA_DERIVE, &false_val, حجم(false_val));
+	FILL_ATTR(tpriv, npriv, CKA_ID, &keyid, حجم(keyid));
 
 	f = p->function_list;
 	si = &p->slotinfo[slotidx];
 	session = si->session;
 
-	if ((rv = f->C_GenerateKeyPair(session, &mech, tpub, npub, tpriv, npriv,
-	    &pubKey, &privKey)) != CKR_OK) {
+	إذا ((rv = f->C_Generate_ئاچقۇچ_Pair(session, &mech, tpub, npub, tpriv, npriv,
+	    &pub_ئاچقۇچ_2, &priv_ئاچقۇچ)) != CKR_OK) {
 		error_f("key generation failed: error 0x%lx", rv);
 		*err = rv;
-		return NULL;
+		أرجع عدم;
 	}
 
-	return pkcs11_fetch_ecdsa_pubkey(p, slotidx, &pubKey);
+	أرجع pkcs11_fetch_ecdsa_pubkey(p, slotidx, &pub_ئاچقۇچ_2);
 }
 #endif /* WITH_PKCS11_KEYGEN */
 
@@ -1831,65 +1831,65 @@ pkcs11_ecdsa_generate_private_key(struct pkcs11_provider *p, CK_ULONG slotidx,
  * register a new provider, fails if provider already exists. if
  * keyp is provided, fetch keys.
  */
-static int
-pkcs11_register_provider(char *provider_id, char *pin,
-    struct sshkey ***keyp, char ***labelsp,
-    struct pkcs11_provider **providerp, CK_ULONG user)
+ساكن صحيح
+pkcs11_register_provider(حرف *provider_id, حرف *pin,
+    بنية sshkey ***keyp, حرف ***labelsp,
+    بنية pkcs11_provider **providerp, CK_ULONG user)
 {
-	int nkeys, need_finalize = 0;
-	int ret = -1;
-	struct pkcs11_provider *p = NULL;
-	void *handle = NULL;
+	صحيح nkeys, need_finalize = 0;
+	صحيح ret = -1;
+	بنية pkcs11_provider *p = عدم;
+	فراغ *handle = عدم;
 	CK_RV (*getfunctionlist)(CK_FUNCTION_LIST **);
 	CK_RV rv;
-	CK_FUNCTION_LIST *f = NULL;
+	CK_FUNCTION_LIST *f = عدم;
 	CK_TOKEN_INFO *token;
 	CK_ULONG i;
 
-	if (providerp == NULL)
-		goto fail;
-	*providerp = NULL;
+	إذا (providerp == عدم)
+		اذهب fail;
+	*providerp = عدم;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if (labelsp != NULL)
-		*labelsp = NULL;
+	إذا (keyp != عدم)
+		*keyp = عدم;
+	إذا (labelsp != عدم)
+		*labelsp = عدم;
 
-	if (pkcs11_provider_lookup(provider_id) != NULL) {
+	إذا (pkcs11_provider_lookup(provider_id) != عدم) {
 		debug_f("provider already registered: %s", provider_id);
-		goto fail;
+		اذهب fail;
 	}
-	if (lib_contains_symbol(provider_id, "C_GetFunctionList") != 0) {
+	إذا (lib_contains_بەلگە(provider_id, "C_GetFunctionList") != 0) {
 		error("provider %s is not a PKCS11 library", provider_id);
-		goto fail;
+		اذهب fail;
 	}
 	/* open shared pkcs11-library */
-	if ((handle = dlopen(provider_id, RTLD_NOW)) == NULL) {
+	إذا ((handle = dlopen(provider_id, RTLD_NOW)) == عدم) {
 		error("dlopen %s failed: %s", provider_id, dlerror());
-		goto fail;
+		اذهب fail;
 	}
-	if ((getfunctionlist = dlsym(handle, "C_GetFunctionList")) == NULL)
+	إذا ((getfunctionlist = dlsym(handle, "C_GetFunctionList")) == عدم)
 		fatal("dlsym(C_GetFunctionList) failed: %s", dlerror());
-	p = xcalloc(1, sizeof(*p));
+	p = xcalloc(1, حجم(*p));
 	p->name = xstrdup(provider_id);
 	p->handle = handle;
 	/* set up the pkcs11 callbacks */
-	if ((rv = (*getfunctionlist)(&f)) != CKR_OK) {
+	إذا ((rv = (*getfunctionlist)(&f)) != CKR_OK) {
 		error("C_GetFunctionList for provider %s failed: %lu",
 		    provider_id, rv);
-		goto fail;
+		اذهب fail;
 	}
 	p->function_list = f;
-	if ((rv = f->C_Initialize(NULL)) != CKR_OK) {
+	إذا ((rv = f->C_Initialize(عدم)) != CKR_OK) {
 		error("C_Initialize for provider %s failed: %lu",
 		    provider_id, rv);
-		goto fail;
+		اذهب fail;
 	}
 	need_finalize = 1;
-	if ((rv = f->C_GetInfo(&p->info)) != CKR_OK) {
+	إذا ((rv = f->C_GetInfo(&p->info)) != CKR_OK) {
 		error("C_GetInfo for provider %s failed: %lu",
 		    provider_id, rv);
-		goto fail;
+		اذهب fail;
 	}
 	debug("provider %s: manufacturerID <%.*s> cryptokiVersion %d.%d"
 	    " libraryDescription <%.*s> libraryVersion %d.%d",
@@ -1900,68 +1900,68 @@ pkcs11_register_provider(char *provider_id, char *pin,
 	    RMSPACE(p->info.libraryDescription),
 	    p->info.libraryVersion.major,
 	    p->info.libraryVersion.minor);
-	if ((rv = f->C_GetSlotList(CK_TRUE, NULL, &p->nslots)) != CKR_OK) {
+	إذا ((rv = f->C_GetSlotList(CK_TRUE, عدم, &p->nslots)) != CKR_OK) {
 		error("C_GetSlotList failed: %lu", rv);
-		goto fail;
+		اذهب fail;
 	}
-	if (p->nslots == 0) {
+	إذا (p->nslots == 0) {
 		debug_f("provider %s returned no slots", provider_id);
 		ret = -SSH_PKCS11_ERR_NO_SLOTS;
-		goto fail;
+		اذهب fail;
 	}
-	p->slotlist = xcalloc(p->nslots, sizeof(CK_SLOT_ID));
-	if ((rv = f->C_GetSlotList(CK_TRUE, p->slotlist, &p->nslots))
+	p->slotlist = xcalloc(p->nslots, حجم(CK_SLOT_ID));
+	إذا ((rv = f->C_GetSlotList(CK_TRUE, p->slotlist, &p->nslots))
 	    != CKR_OK) {
 		error("C_GetSlotList for provider %s failed: %lu",
 		    provider_id, rv);
-		goto fail;
+		اذهب fail;
 	}
-	p->slotinfo = xcalloc(p->nslots, sizeof(struct pkcs11_slotinfo));
+	p->slotinfo = xcalloc(p->nslots, حجم(بنية pkcs11_slotinfo));
 	p->valid = 1;
 	nkeys = 0;
-	for (i = 0; i < p->nslots; i++) {
+	لكل (i = 0; i < p->nslots; i++) {
 		token = &p->slotinfo[i].token;
-		if ((rv = f->C_GetTokenInfo(p->slotlist[i], token))
+		إذا ((rv = f->C_GetTokenInfo(p->slotlist[i], token))
 		    != CKR_OK) {
 			error("C_GetTokenInfo for provider %s slot %lu "
 			    "failed: %lu", provider_id, (u_long)i, rv);
-			continue;
+			استمر;
 		}
-		if ((token->flags & CKF_TOKEN_INITIALIZED) == 0) {
+		إذا ((token->flags & CKF_TOKEN_INITIALIZED) == 0) {
 			debug2_f("ignoring uninitialised token in "
 			    "provider %s slot %lu", provider_id, (u_long)i);
-			continue;
+			استمر;
 		}
 		debug("provider %s slot %lu: label <%.*s> "
 		    "manufacturerID <%.*s> model <%.*s> serial <%.*s> "
 		    "flags 0x%lx",
 		    provider_id, (unsigned long)i,
 		    RMSPACE(token->label), RMSPACE(token->manufacturerID),
-		    RMSPACE(token->model), RMSPACE(token->serialNumber),
+		    RMSPACE(token->model), RMSPACE(token->serial_سان_2),
 		    token->flags);
 		/*
 		 * open session, login with pin and retrieve public
 		 * keys (if keyp is provided)
 		 */
-		if ((ret = pkcs11_open_session(p, i, pin, user)) != 0 ||
-		    keyp == NULL)
-			continue;
-		pkcs11_fetch_keys(p, i, keyp, labelsp, &nkeys);
+		إذا ((ret = pkcs11_open_session(p, i, pin, user)) != 0 ||
+		    keyp == عدم)
+			استمر;
+		pkcs11_fetch_ئاچقۇچلار(p, i, keyp, labelsp, &nkeys);
 #ifdef WITH_OPENSSL
 		pkcs11_fetch_certs(p, i, keyp, labelsp, &nkeys);
 #endif
-		if (nkeys == 0 && !p->slotinfo[i].logged_in &&
+		إذا (nkeys == 0 && !p->slotinfo[i].logged_in &&
 		    pkcs11_interactive) {
 			/*
 			 * Some tokens require login before they will
 			 * expose keys.
 			 */
-			if (pkcs11_login_slot(p, &p->slotinfo[i],
+			إذا (pkcs11_login_slot(p, &p->slotinfo[i],
 			    CKU_USER) < 0) {
 				error("login failed");
-				continue;
+				استمر;
 			}
-			pkcs11_fetch_keys(p, i, keyp, labelsp, &nkeys);
+			pkcs11_fetch_ئاچقۇچلار(p, i, keyp, labelsp, &nkeys);
 #ifdef WITH_OPENSSL
 			pkcs11_fetch_certs(p, i, keyp, labelsp, &nkeys);
 #endif
@@ -1974,49 +1974,49 @@ pkcs11_register_provider(char *provider_id, char *pin,
 	TAILQ_INSERT_TAIL(&pkcs11_providers, p, next);
 	p->refcount++;	/* add to provider list */
 
-	return (nkeys);
+	أرجع (nkeys);
 fail:
-	if (need_finalize && (rv = f->C_Finalize(NULL)) != CKR_OK)
+	إذا (need_finalize && (rv = f->C_Finalize(عدم)) != CKR_OK)
 		error("C_Finalize for provider %s failed: %lu",
 		    provider_id, rv);
-	if (p) {
-		free(p->name);
-		free(p->slotlist);
-		free(p->slotinfo);
-		free(p);
+	إذا (p) {
+		حرر(p->name);
+		حرر(p->slotlist);
+		حرر(p->slotinfo);
+		حرر(p);
 	}
-	if (handle)
+	إذا (handle)
 		dlclose(handle);
-	if (ret > 0)
+	إذا (ret > 0)
 		ret = -1;
-	return (ret);
+	أرجع (ret);
 }
 
-int
-pkcs11_init(int interactive)
+صحيح
+pkcs11_init(صحيح interactive)
 {
 	debug3_f("called, interactive = %d", interactive);
 
 	pkcs11_interactive = interactive;
 	TAILQ_INIT(&pkcs11_providers);
-	TAILQ_INIT(&pkcs11_keys);
-	return (0);
+	TAILQ_INIT(&pkcs11_ئاچقۇچلار);
+	أرجع (0);
 }
 
 /* unregister all providers, keys might still point to the providers */
-void
-pkcs11_terminate(void)
+فراغ
+pkcs11_terminate(فراغ)
 {
-	struct pkcs11_provider *p;
-	struct pkcs11_key *k11;
+	بنية pkcs11_provider *p;
+	بنية pkcs11_ئاچقۇچ *k11;
 
 	debug3_f("called");
 
-	while ((k11 = TAILQ_FIRST(&pkcs11_keys)) != NULL) {
-		TAILQ_REMOVE(&pkcs11_keys, k11, next);
+	طالما ((k11 = TAILQ_FIRST(&pkcs11_ئاچقۇچلار)) != عدم) {
+		TAILQ_REMOVE(&pkcs11_ئاچقۇچلار, k11, next);
 		pkcs11_k11_free(k11);
 	}
-	while ((p = TAILQ_FIRST(&pkcs11_providers)) != NULL) {
+	طالما ((p = TAILQ_FIRST(&pkcs11_providers)) != عدم) {
 		TAILQ_REMOVE(&pkcs11_providers, p, next);
 		pkcs11_provider_finalize(p);
 		pkcs11_provider_unref(p);
@@ -2027,284 +2027,284 @@ pkcs11_terminate(void)
  * register a new provider and get number of keys hold by the token,
  * fails if provider already exists
  */
-int
-pkcs11_add_provider(char *provider_id, char *pin, struct sshkey ***keyp,
-    char ***labelsp)
+صحيح
+pkcs11_add_provider(حرف *provider_id, حرف *pin, بنية sshkey ***keyp,
+    حرف ***labelsp)
 {
-	struct pkcs11_provider *p = NULL;
-	int nkeys;
+	بنية pkcs11_provider *p = عدم;
+	صحيح nkeys;
 
 	nkeys = pkcs11_register_provider(provider_id, pin, keyp, labelsp,
 	    &p, CKU_USER);
 
 	/* no keys found or some other error, de-register provider */
-	if (nkeys <= 0 && p != NULL) {
+	إذا (nkeys <= 0 && p != عدم) {
 		TAILQ_REMOVE(&pkcs11_providers, p, next);
 		pkcs11_provider_finalize(p);
 		pkcs11_provider_unref(p);
 	}
-	if (nkeys == 0)
+	إذا (nkeys == 0)
 		debug_f("provider %s returned no keys", provider_id);
 
-	return (nkeys);
+	أرجع (nkeys);
 }
 
-int
-pkcs11_sign(struct sshkey *key,
+صحيح
+pkcs11_sign(بنية sshkey *ئاچقۇچ,
     u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider,
-    const char *sk_pin, u_int compat)
+    ثابت u_char *data, size_t datalen,
+    ثابت حرف *alg, ثابت حرف *sk_provider,
+    ثابت حرف *sk_pin, u_int compat)
 {
-	switch (key->type) {
+	بدل (ئاچقۇچ->type) {
 #ifdef WITH_OPENSSL
-	case KEY_RSA:
-	case KEY_RSA_CERT:
-		return pkcs11_sign_rsa(key, sigp, lenp, data, datalen,
+	حالة ئاچقۇچ_RSA:
+	حالة ئاچقۇچ_RSA_CERT:
+		أرجع pkcs11_sign_rsa(ئاچقۇچ, sigp, lenp, data, datalen,
 		    alg, sk_provider, sk_pin, compat);
-	case KEY_ECDSA:
-	case KEY_ECDSA_CERT:
-		return pkcs11_sign_ecdsa(key, sigp, lenp, data, datalen,
+	حالة ئاچقۇچ_ECDSA:
+	حالة ئاچقۇچ_ECDSA_CERT:
+		أرجع pkcs11_sign_ecdsa(ئاچقۇچ, sigp, lenp, data, datalen,
 		    alg, sk_provider, sk_pin, compat);
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519:
-	case KEY_ED25519_CERT:
-		return pkcs11_sign_ed25519(key, sigp, lenp, data, datalen,
+	حالة ئاچقۇچ_ED25519:
+	حالة ئاچقۇچ_ED25519_CERT:
+		أرجع pkcs11_sign_ed25519(ئاچقۇچ, sigp, lenp, data, datalen,
 		    alg, sk_provider, sk_pin, compat);
-	default:
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+	افتراضي:
+		أرجع SSH_ERR_ئاچقۇچ_TYPE_UNKNOWN;
 	}
 }
 
-void
-pkcs11_key_free(struct sshkey *key)
+فراغ
+pkcs11_ئاچقۇچ_free(بنية sshkey *ئاچقۇچ)
 {
 	/* never called */
 }
 
 #ifdef WITH_PKCS11_KEYGEN
-struct sshkey *
-pkcs11_gakp(char *provider_id, char *pin, unsigned int slotidx, char *label,
-    unsigned int type, unsigned int bits, unsigned char keyid, uint32_t *err)
+بنية sshkey *
+pkcs11_gakp(حرف *provider_id, حرف *pin, unsigned صحيح slotidx, حرف *label,
+    unsigned صحيح type, unsigned صحيح bits, unsigned حرف keyid, uint32_t *err)
 {
-	struct pkcs11_provider	*p = NULL;
-	struct pkcs11_slotinfo	*si;
+	بنية pkcs11_provider	*p = عدم;
+	بنية pkcs11_slotinfo	*si;
 	CK_FUNCTION_LIST	*f;
 	CK_SESSION_HANDLE	 session;
-	struct sshkey		*k = NULL;
-	int			 ret = -1, reset_pin = 0, reset_provider = 0;
+	بنية sshkey		*k = عدم;
+	صحيح			 ret = -1, reset_pin = 0, reset_provider = 0;
 	CK_RV			 rv;
 
 	*err = 0;
 
-	if ((p = pkcs11_provider_lookup(provider_id)) != NULL)
+	إذا ((p = pkcs11_provider_lookup(provider_id)) != عدم)
 		debug_f("provider \"%s\" available", provider_id);
-	else if ((ret = pkcs11_register_provider(provider_id, pin, NULL, NULL,
+	وإلا إذا ((ret = pkcs11_register_provider(provider_id, pin, عدم, عدم,
 	    &p, CKU_SO)) < 0) {
 		debug_f("could not register provider %s", provider_id);
-		goto out;
-	} else
+		اذهب out;
+	} وإلا
 		reset_provider = 1;
 
 	f = p->function_list;
 	si = &p->slotinfo[slotidx];
 	session = si->session;
 
-	if ((rv = f->C_SetOperationState(session , pin, strlen(pin),
+	إذا ((rv = f->C_SetOperationState(session , pin, strlen(pin),
 	    CK_INVALID_HANDLE, CK_INVALID_HANDLE)) != CKR_OK) {
 		debug_f("could not supply SO pin: %lu", rv);
 		reset_pin = 0;
-	} else
+	} وإلا
 		reset_pin = 1;
 
-	switch (type) {
-	case KEY_RSA:
-		if ((k = pkcs11_rsa_generate_private_key(p, slotidx, label,
-		    bits, keyid, err)) == NULL) {
+	بدل (type) {
+	حالة ئاچقۇچ_RSA:
+		إذا ((k = pkcs11_rsa_generate_private_ئاچقۇچ(p, slotidx, label,
+		    bits, keyid, err)) == عدم) {
 			debug_f("failed to generate RSA key");
-			goto out;
+			اذهب out;
 		}
-		break;
-	case KEY_ECDSA:
-		if ((k = pkcs11_ecdsa_generate_private_key(p, slotidx, label,
-		    bits, keyid, err)) == NULL) {
+		اكسر;
+	حالة ئاچقۇچ_ECDSA:
+		إذا ((k = pkcs11_ecdsa_generate_private_ئاچقۇچ(p, slotidx, label,
+		    bits, keyid, err)) == عدم) {
 			debug_f("failed to generate ECDSA key");
-			goto out;
+			اذهب out;
 		}
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		*err = SSH_PKCS11_ERR_GENERIC;
 		debug_f("unknown type %d", type);
-		goto out;
+		اذهب out;
 	}
 
 out:
-	if (reset_pin)
-		f->C_SetOperationState(session , NULL, 0, CK_INVALID_HANDLE,
+	إذا (reset_pin)
+		f->C_SetOperationState(session , عدم, 0, CK_INVALID_HANDLE,
 		    CK_INVALID_HANDLE);
 
-	if (reset_provider)
+	إذا (reset_provider)
 		pkcs11_del_provider(provider_id);
 
-	return (k);
+	أرجع (k);
 }
 
-struct sshkey *
-pkcs11_destroy_keypair(char *provider_id, char *pin, unsigned long slotidx,
-    unsigned char keyid, uint32_t *err)
+بنية sshkey *
+pkcs11_destroy_keypair(حرف *provider_id, حرف *pin, unsigned long slotidx,
+    unsigned حرف keyid, uint32_t *err)
 {
-	struct pkcs11_provider	*p = NULL;
-	struct pkcs11_slotinfo	*si;
-	struct sshkey		*k = NULL;
-	int			 reset_pin = 0, reset_provider = 0;
+	بنية pkcs11_provider	*p = عدم;
+	بنية pkcs11_slotinfo	*si;
+	بنية sshkey		*k = عدم;
+	صحيح			 reset_pin = 0, reset_provider = 0;
 	CK_ULONG		 nattrs;
 	CK_FUNCTION_LIST	*f;
 	CK_SESSION_HANDLE	 session;
 	CK_ATTRIBUTE		 attrs[16];
-	CK_OBJECT_CLASS		 key_class;
-	CK_KEY_TYPE		 key_type;
+	CK_OBJECT_CLASS		 ئاچقۇچ_class;
+	CK_ئاچقۇچ_TYPE		 ئاچقۇچ_type;
 	CK_OBJECT_HANDLE	 obj = CK_INVALID_HANDLE;
 	CK_RV			 rv;
 
 	*err = 0;
 
-	if ((p = pkcs11_provider_lookup(provider_id)) != NULL) {
+	إذا ((p = pkcs11_provider_lookup(provider_id)) != عدم) {
 		debug_f("using provider \"%s\"", provider_id);
-	} else if (pkcs11_register_provider(provider_id, pin, NULL, NULL, &p,
+	} وإلا إذا (pkcs11_register_provider(provider_id, pin, عدم, عدم, &p,
 	    CKU_SO) < 0) {
 		debug_f("could not register provider %s",
 		    provider_id);
-		goto out;
-	} else
+		اذهب out;
+	} وإلا
 		reset_provider = 1;
 
 	f = p->function_list;
 	si = &p->slotinfo[slotidx];
 	session = si->session;
 
-	if ((rv = f->C_SetOperationState(session , pin, strlen(pin),
+	إذا ((rv = f->C_SetOperationState(session , pin, strlen(pin),
 	    CK_INVALID_HANDLE, CK_INVALID_HANDLE)) != CKR_OK) {
 		debug_f("could not supply SO pin: %lu", rv);
 		reset_pin = 0;
-	} else
+	} وإلا
 		reset_pin = 1;
 
 	/* private key */
 	nattrs = 0;
-	key_class = CKO_PRIVATE_KEY;
-	FILL_ATTR(attrs, nattrs, CKA_CLASS, &key_class, sizeof(key_class));
-	FILL_ATTR(attrs, nattrs, CKA_ID, &keyid, sizeof(keyid));
+	ئاچقۇچ_class = CKO_PRIVATE_ئاچقۇچ;
+	FILL_ATTR(attrs, nattrs, CKA_CLASS, &ئاچقۇچ_class, حجم(ئاچقۇچ_class));
+	FILL_ATTR(attrs, nattrs, CKA_ID, &keyid, حجم(keyid));
 
-	if (pkcs11_find(p, slotidx, attrs, nattrs, &obj) == 0 &&
+	إذا (pkcs11_find(p, slotidx, attrs, nattrs, &obj) == 0 &&
 	    obj != CK_INVALID_HANDLE) {
-		if ((rv = f->C_DestroyObject(session, obj)) != CKR_OK) {
+		إذا ((rv = f->C_DestroyObject(session, obj)) != CKR_OK) {
 			debug_f("could not destroy private key 0x%hhx",
 			    keyid);
 			*err = rv;
-			goto out;
+			اذهب out;
 		}
 	}
 
 	/* public key */
 	nattrs = 0;
-	key_class = CKO_PUBLIC_KEY;
-	FILL_ATTR(attrs, nattrs, CKA_CLASS, &key_class, sizeof(key_class));
-	FILL_ATTR(attrs, nattrs, CKA_ID, &keyid, sizeof(keyid));
+	ئاچقۇچ_class = CKO_PUBLIC_ئاچقۇچ;
+	FILL_ATTR(attrs, nattrs, CKA_CLASS, &ئاچقۇچ_class, حجم(ئاچقۇچ_class));
+	FILL_ATTR(attrs, nattrs, CKA_ID, &keyid, حجم(keyid));
 
-	if (pkcs11_find(p, slotidx, attrs, nattrs, &obj) == 0 &&
+	إذا (pkcs11_find(p, slotidx, attrs, nattrs, &obj) == 0 &&
 	    obj != CK_INVALID_HANDLE) {
 
 		/* get key type */
 		nattrs = 0;
-		FILL_ATTR(attrs, nattrs, CKA_KEY_TYPE, &key_type,
-		    sizeof(key_type));
-		rv = f->C_GetAttributeValue(session, obj, attrs, nattrs);
-		if (rv != CKR_OK) {
+		FILL_ATTR(attrs, nattrs, CKA_ئاچقۇچ_TYPE, &ئاچقۇچ_type,
+		    حجم(ئاچقۇچ_type));
+		rv = f->C_Get_Attribute_قىممەت(session, obj, attrs, nattrs);
+		إذا (rv != CKR_OK) {
 			debug_f("could not get key type of public key 0x%hhx",
 			    keyid);
 			*err = rv;
-			key_type = -1;
+			ئاچقۇچ_type = -1;
 		}
-		switch (key_type) {
+		بدل (ئاچقۇچ_type) {
 #ifdef WITH_OPENSSL
-		case CKK_RSA:
+		حالة CKK_RSA:
 			k = pkcs11_fetch_rsa_pubkey(p, slotidx, &obj);
-			break;
-		case CKK_ECDSA:
+			اكسر;
+		حالة CKK_ECDSA:
 			k = pkcs11_fetch_ecdsa_pubkey(p, slotidx, &obj);
-			break;
+			اكسر;
 #endif /* WITH_OPENSSL */
-		case CKK_EC_EDWARDS:
+		حالة CKK_EC_EDWARDS:
 			k = pkcs11_fetch_ed25519_pubkey(p, slotidx, &obj);
-			break;
-		default:
-			debug_f("unsupported key type %lu", (u_long)key_type);
-			break;
+			اكسر;
+		افتراضي:
+			debug_f("unsupported key type %lu", (u_long)ئاچقۇچ_type);
+			اكسر;
 		}
 
-		if ((rv = f->C_DestroyObject(session, obj)) != CKR_OK) {
+		إذا ((rv = f->C_DestroyObject(session, obj)) != CKR_OK) {
 			debug_f("could not destroy public key 0x%hhx", keyid);
 			*err = rv;
-			goto out;
+			اذهب out;
 		}
 	}
 
 out:
-	if (reset_pin)
-		f->C_SetOperationState(session , NULL, 0, CK_INVALID_HANDLE,
+	إذا (reset_pin)
+		f->C_SetOperationState(session , عدم, 0, CK_INVALID_HANDLE,
 		    CK_INVALID_HANDLE);
 
-	if (reset_provider)
+	إذا (reset_provider)
 		pkcs11_del_provider(provider_id);
 
-	return (k);
+	أرجع (k);
 }
 #endif /* WITH_PKCS11_KEYGEN */
-#else /* ENABLE_PKCS11 */
+#وإلا /* ENABLE_PKCS11 */
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
+#ضمن <sys/types.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
 
-#include "log.h"
-#include "sshkey.h"
-#include "ssherr.h"
-#include "ssh-pkcs11.h"
+#ضمن "log.h"
+#ضمن "sshkey.h"
+#ضمن "ssherr.h"
+#ضمن "ssh-pkcs11.h"
 
-int
-pkcs11_init(int interactive)
+صحيح
+pkcs11_init(صحيح interactive)
 {
 	error_f("PKCS#11 not supported");
-	return (-1);
+	أرجع (-1);
 }
 
-int
-pkcs11_add_provider(char *provider_id, char *pin, struct sshkey ***keyp,
-    char ***labelsp)
+صحيح
+pkcs11_add_provider(حرف *provider_id, حرف *pin, بنية sshkey ***keyp,
+    حرف ***labelsp)
 {
 	error_f("PKCS#11 not supported");
-	return (-1);
+	أرجع (-1);
 }
 
-void
-pkcs11_key_free(struct sshkey *key)
+فراغ
+pkcs11_ئاچقۇچ_free(بنية sshkey *ئاچقۇچ)
 {
 	error_f("PKCS#11 not supported");
 }
 
-int
-pkcs11_sign(struct sshkey *key,
+صحيح
+pkcs11_sign(بنية sshkey *ئاچقۇچ,
     u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider,
-    const char *sk_pin, u_int compat)
+    ثابت u_char *data, size_t datalen,
+    ثابت حرف *alg, ثابت حرف *sk_provider,
+    ثابت حرف *sk_pin, u_int compat)
 {
 	error_f("PKCS#11 not supported");
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	أرجع SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
-void
-pkcs11_terminate(void)
+فراغ
+pkcs11_terminate(فراغ)
 {
 	error_f("PKCS#11 not supported");
 }

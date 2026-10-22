@@ -26,7 +26,7 @@
 
 /* KRL section types */
 #define KRL_SECTION_CERTIFICATES	1
-#define KRL_SECTION_EXPLICIT_KEY	2
+#define KRL_SECTION_EXPLICIT_ئاچقۇچ	2
 #define KRL_SECTION_FINGERPRINT_SHA1	3
 #define KRL_SECTION_SIGNATURE		4
 #define KRL_SECTION_FINGERPRINT_SHA256	5
@@ -36,32 +36,32 @@
 #define KRL_SECTION_CERT_SERIAL_LIST	0x20
 #define KRL_SECTION_CERT_SERIAL_RANGE	0x21
 #define KRL_SECTION_CERT_SERIAL_BITMAP	0x22
-#define KRL_SECTION_CERT_KEY_ID		0x23
+#define KRL_SECTION_CERT_ئاچقۇچ_ID		0x23
 #define KRL_SECTION_CERT_EXTENSION	0x39
 
-struct sshkey;
-struct sshbuf;
-struct ssh_krl;
+بنية sshkey;
+بنية sshbuf;
+بنية ssh_krl;
 
-struct ssh_krl *ssh_krl_init(void);
-void ssh_krl_free(struct ssh_krl *krl);
-void ssh_krl_set_version(struct ssh_krl *krl, uint64_t version);
-int ssh_krl_set_comment(struct ssh_krl *krl, const char *comment);
-int ssh_krl_revoke_cert_by_serial(struct ssh_krl *krl,
-    const struct sshkey *ca_key, uint64_t serial);
-int ssh_krl_revoke_cert_by_serial_range(struct ssh_krl *krl,
-    const struct sshkey *ca_key, uint64_t lo, uint64_t hi);
-int ssh_krl_revoke_cert_by_key_id(struct ssh_krl *krl,
-    const struct sshkey *ca_key, const char *key_id);
-int ssh_krl_revoke_key_explicit(struct ssh_krl *krl, const struct sshkey *key);
-int ssh_krl_revoke_key_sha1(struct ssh_krl *krl, const u_char *p, size_t len);
-int ssh_krl_revoke_key_sha256(struct ssh_krl *krl, const u_char *p, size_t len);
-int ssh_krl_revoke_key(struct ssh_krl *krl, const struct sshkey *key);
-int ssh_krl_to_blob(struct ssh_krl *krl, struct sshbuf *buf);
-int ssh_krl_from_blob(struct sshbuf *buf, struct ssh_krl **krlp);
-int ssh_krl_check_key(struct ssh_krl *krl, const struct sshkey *key);
-int ssh_krl_file_contains_key(const char *path, const struct sshkey *key);
-int krl_dump(struct ssh_krl *krl, FILE *f);
+بنية ssh_krl *ssh_krl_init(فراغ);
+فراغ ssh_krl_free(بنية ssh_krl *krl);
+فراغ ssh_krl_set_version(بنية ssh_krl *krl, uint64_t version);
+صحيح ssh_krl_set_comment(بنية ssh_krl *krl, ثابت حرف *comment);
+صحيح ssh_krl_revoke_cert_by_serial(بنية ssh_krl *krl,
+    ثابت بنية sshkey *ca_ئاچقۇچ, uint64_t serial);
+صحيح ssh_krl_revoke_cert_by_serial_range(بنية ssh_krl *krl,
+    ثابت بنية sshkey *ca_ئاچقۇچ, uint64_t lo, uint64_t hi);
+صحيح ssh_krl_revoke_cert_by_ئاچقۇچ_id(بنية ssh_krl *krl,
+    ثابت بنية sshkey *ca_ئاچقۇچ, ثابت حرف *ئاچقۇچ_id);
+صحيح ssh_krl_revoke_ئاچقۇچ_explicit(بنية ssh_krl *krl, ثابت بنية sshkey *ئاچقۇچ);
+صحيح ssh_krl_revoke_ئاچقۇچ_sha1(بنية ssh_krl *krl, ثابت u_char *p, size_t len);
+صحيح ssh_krl_revoke_ئاچقۇچ_sha256(بنية ssh_krl *krl, ثابت u_char *p, size_t len);
+صحيح ssh_krl_revoke_ئاچقۇچ(بنية ssh_krl *krl, ثابت بنية sshkey *ئاچقۇچ);
+صحيح ssh_krl_to_blob(بنية ssh_krl *krl, بنية sshbuf *buf);
+صحيح ssh_krl_from_blob(بنية sshbuf *buf, بنية ssh_krl **krlp);
+صحيح ssh_krl_check_ئاچقۇچ(بنية ssh_krl *krl, ثابت بنية sshkey *ئاچقۇچ);
+صحيح ssh_krl_file_contains_ئاچقۇچ(ثابت حرف *path, ثابت بنية sshkey *ئاچقۇچ);
+صحيح krl_dump(بنية ssh_krl *krl, FILE *f);
 
 #endif /* _KRL_H */
 

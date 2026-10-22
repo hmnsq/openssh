@@ -39,55 +39,55 @@ limitations under the License.
  * so LSan sees zero per-iteration leaks.
  */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#ضمن <setjmp.h>
+#ضمن <signal.h>
+#ضمن <stddef.h>
+#ضمن <stdint.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <sys/socket.h>
+#ضمن <sys/types.h>
 
-extern "C" {
-#include "includes.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sftp.h"
-#include "sftp-common.h"
-#include "sftp-client.h"
+خارجي "C" {
+#ضمن "includes.h"
+#ضمن "sshbuf.h"
+#ضمن "ssherr.h"
+#ضمن "log.h"
+#ضمن "sftp.h"
+#ضمن "sftp-common.h"
+#ضمن "sftp-client.h"
 
-void fuzz_arena_begin(void);
-void fuzz_arena_cleanup(void);
+فراغ fuzz_arena_begin(فراغ);
+فراغ fuzz_arena_cleanup(فراغ);
 }
 
-extern "C" volatile sig_atomic_t interrupted = 0;
-extern "C" int showprogress = 0;
-extern "C" void start_progress_meter(const char *file, off_t filesize,
-    off_t *ctr) { (void)file; (void)filesize; (void)ctr; }
-extern "C" void refresh_progress_meter(int force_update) { (void)force_update; }
-extern "C" void stop_progress_meter(void) { }
+خارجي "C" متطاير sig_atomic_t interrupted = 0;
+خارجي "C" صحيح showprogress = 0;
+خارجي "C" فراغ start_progress_meter(ثابت حرف *file, off_t filesize,
+    off_t *ctr) { (فراغ)file; (فراغ)filesize; (فراغ)ctr; }
+خارجي "C" فراغ refresh_progress_meter(صحيح force_update) { (فراغ)force_update; }
+خارجي "C" فراغ stop_progress_meter(فراغ) { }
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+ساكن jmp_buf fuzz_env;
+ساكن متطاير صحيح in_fuzz = 0;
 
-extern "C" void
-cleanup_exit(int code)
+خارجي "C" فراغ
+cleanup_exit(صحيح code)
 {
-	if (in_fuzz)
+	إذا (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
 
-static const uint8_t k_version_reply[] = {
+ساكن ثابت uint8_t k_version_reply[] = {
     0x00, 0x00, 0x00, 0x05,
     0x02,
     0x00, 0x00, 0x00, 0x03,
 };
 
-enum {
+تعداد {
 	API_STAT,
 	API_LSTAT,
 	API_REALPATH,
@@ -100,84 +100,84 @@ enum {
 	API_RMDIR,
 	API_RENAME,
 	API_SYMLINK,
-	API_COUNT,
+	API_سانى,
 };
 
-static void
-run_one(int api, const uint8_t *body, size_t bsize)
+ساكن فراغ
+run_one(صحيح api, ثابت uint8_t *body, size_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	صحيح sv[2] = { -1, -1 };
+	إذا (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		أرجع;
 
-	ssize_t w = write(sv[0], k_version_reply, sizeof(k_version_reply));
-	(void)w;
-	if (bsize > 0)
-		w = write(sv[0], body, bsize);
-	(void)w;
+	ssize_t w = اكتب(sv[0], k_version_reply, حجم(k_version_reply));
+	(فراغ)w;
+	إذا (bsize > 0)
+		w = اكتب(sv[0], body, bsize);
+	(فراغ)w;
 	shutdown(sv[0], SHUT_WR);
 
 	fuzz_arena_begin();
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
-		struct sftp_conn *conn = sftp_init(sv[1], sv[1], 32768, 64, 0);
-		if (conn != NULL) {
+	إذا (setjmp(fuzz_env) == 0) {
+		بنية sftp_conn *conn = sftp_init(sv[1], sv[1], 32768, 64, 0);
+		إذا (conn != عدم) {
 			Attrib attr;
 			attrib_clear(&attr);
 
-			switch (api) {
-			case API_STAT: {
+			بدل (api) {
+			حالة API_STAT: {
 				Attrib a;
-				(void)sftp_stat(conn, "/fuzz", 1, &a);
-				break;
+				(فراغ)sftp_stat(conn, "/fuzz", 1, &a);
+				اكسر;
 			}
-			case API_LSTAT: {
+			حالة API_LSTAT: {
 				Attrib a;
-				(void)sftp_lstat(conn, "/fuzz", 1, &a);
-				break;
+				(فراغ)sftp_lstat(conn, "/fuzz", 1, &a);
+				اكسر;
 			}
-			case API_REALPATH: {
-				char *p = sftp_realpath(conn, "/fuzz");
-				free(p);
-				break;
+			حالة API_REALPATH: {
+				حرف *p = sftp_realpath(conn, "/fuzz");
+				حرر(p);
+				اكسر;
 			}
-			case API_EXPAND_PATH: {
-				char *p = sftp_expand_path(conn, "~");
-				free(p);
-				break;
+			حالة API_EXPAND_PATH: {
+				حرف *p = sftp_expand_path(conn, "~");
+				حرر(p);
+				اكسر;
 			}
-			case API_READDIR: {
-				SFTP_DIRENT **dir = NULL;
-				(void)sftp_readdir(conn, "/fuzz", &dir);
-				if (dir != NULL)
+			حالة API_READDIR: {
+				SFTP_DIRENT **dir = عدم;
+				(فراغ)sftp_readdir(conn, "/fuzz", &dir);
+				إذا (dir != عدم)
 					sftp_free_dirents(dir);
-				break;
+				اكسر;
 			}
-			case API_STATVFS: {
-				struct sftp_statvfs vfs;
-				(void)sftp_statvfs(conn, "/fuzz", &vfs, 1);
-				break;
+			حالة API_STATVFS: {
+				بنية sftp_statvfs vfs;
+				(فراغ)sftp_statvfs(conn, "/fuzz", &vfs, 1);
+				اكسر;
 			}
-			case API_GET_LIMITS: {
-				struct sftp_limits lim;
-				(void)sftp_get_limits(conn, &lim);
-				break;
+			حالة API_GET_LIMITS: {
+				بنية sftp_limits lim;
+				(فراغ)sftp_get_limits(conn, &lim);
+				اكسر;
 			}
-			case API_RM:
-				(void)sftp_rm(conn, "/fuzz");
-				break;
-			case API_MKDIR:
-				(void)sftp_mkdir(conn, "/fuzz", &attr, 0);
-				break;
-			case API_RMDIR:
-				(void)sftp_rmdir(conn, "/fuzz");
-				break;
-			case API_RENAME:
-				(void)sftp_rename(conn, "/a", "/b", 0);
-				break;
-			case API_SYMLINK:
-				(void)sftp_symlink(conn, "/a", "/b");
-				break;
+			حالة API_RM:
+				(فراغ)sftp_rm(conn, "/fuzz");
+				اكسر;
+			حالة API_MKDIR:
+				(فراغ)sftp_mkdir(conn, "/fuzz", &attr, 0);
+				اكسر;
+			حالة API_RMDIR:
+				(فراغ)sftp_rmdir(conn, "/fuzz");
+				اكسر;
+			حالة API_RENAME:
+				(فراغ)sftp_rename(conn, "/a", "/b", 0);
+				اكسر;
+			حالة API_SYMLINK:
+				(فراغ)sftp_symlink(conn, "/a", "/b");
+				اكسر;
 			}
 
 			sftp_free(conn);
@@ -190,21 +190,21 @@ run_one(int api, const uint8_t *body, size_t bsize)
 	close(sv[1]);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+خارجي "C" صحيح
+LLVMFuzzer_Test_One_كىرگۈزۈش(ثابت uint8_t *data, size_t size)
 {
-	static int initialized = 0;
-	if (!initialized) {
+	ساكن صحيح initialized = 0;
+	إذا (!initialized) {
 		initialized = 1;
 		log_init("sftp_client_fuzz", SYSLOG_LEVEL_ERROR,
 		    SYSLOG_FACILITY_AUTH, 0);
 	}
 
-	if (size > 65536)
-		return 0;
+	إذا (size > 65536)
+		أرجع 0;
 
-	for (int api = 0; api < API_COUNT; api++)
+	لكل (صحيح api = 0; api < API_سانى; api++)
 		run_one(api, data, size);
 
-	return 0;
+	أرجع 0;
 }

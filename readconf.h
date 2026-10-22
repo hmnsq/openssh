@@ -19,177 +19,177 @@
 /* Data structure for representing option data. */
 
 #define SSH_MAX_HOSTS_FILES	32
-#define PATH_MAX_SUN		(sizeof((struct sockaddr_un *)0)->sun_path)
+#define PATH_MAX_SUN		(حجم((بنية sockaddr_un *)0)->sun_path)
 
-struct allowed_cname {
-	char *source_list;
-	char *target_list;
+بنية allowed_cname {
+	حرف *source_list;
+	حرف *target_list;
 };
 
-typedef struct {
-	char   *host_arg;	/* Host arg as specified on command line. */
-	int     forward_agent;	/* Forward authentication agent. */
-	char   *forward_agent_sock_path; /* Optional path of the agent. */
-	int     forward_x11;	/* Forward X11 display. */
-	int     forward_x11_timeout;	/* Expiration for Cookies */
-	int     forward_x11_trusted;	/* Trust Forward X11 display. */
-	int     exit_on_forward_failure;	/* Exit if bind(2) fails for -L/-R */
-	char   *xauth_location;	/* Location for xauth program */
-	struct ForwardOptions fwd_opts;	/* forwarding options */
-	int     pubkey_authentication;	/* Try ssh2 pubkey authentication. */
-	int     hostbased_authentication;	/* ssh2's rhosts_rsa */
-	int     gss_authentication;	/* Try GSS authentication */
-	int     gss_deleg_creds;	/* Delegate GSS credentials */
-	int     password_authentication;	/* Try password
+تعريفنوع بنية {
+	حرف   *host_arg;	/* Host arg as specified on command line. */
+	صحيح     forward_agent;	/* Forward authentication agent. */
+	حرف   *forward_agent_sock_path; /* Optional path of the agent. */
+	صحيح     forward_x11;	/* Forward X11 display. */
+	صحيح     forward_x11_timeout;	/* Expiration for Cookies */
+	صحيح     forward_x11_trusted;	/* Trust Forward X11 display. */
+	صحيح     exit_on_forward_failure;	/* Exit if bind(2) fails for -L/-R */
+	حرف   *xauth_location;	/* Location for xauth program */
+	بنية ForwardOptions fwd_opts;	/* forwarding options */
+	صحيح     pubkey_authentication;	/* Try ssh2 pubkey authentication. */
+	صحيح     hostbased_authentication;	/* ssh2's rhosts_rsa */
+	صحيح     gss_authentication;	/* Try GSS authentication */
+	صحيح     gss_deleg_creds;	/* Delegate GSS credentials */
+	صحيح     password_authentication;	/* Try password
 						 * authentication. */
-	int     kbd_interactive_authentication; /* Try keyboard-interactive auth. */
-	char	*kbd_interactive_devices; /* Keyboard-interactive auth devices. */
-	int     batch_mode;	/* Batch mode: do not ask for passwords. */
-	int     check_host_ip;	/* Also keep track of keys for IP address */
-	int     strict_host_key_checking;	/* Strict host key checking. */
-	int     compression;	/* Compress packets in both directions. */
-	int     tcp_keep_alive;	/* Set SO_KEEPALIVE. */
-	int	ip_qos_interactive;	/* DSCP value for interactive */
-	int	ip_qos_bulk;		/* DSCP value for bulk traffic */
+	صحيح     kbd_interactive_authentication; /* Try keyboard-interactive auth. */
+	حرف	*kbd_interactive_devices; /* Keyboard-interactive auth devices. */
+	صحيح     batch_mode;	/* Batch mode: do not ask for passwords. */
+	صحيح     check_host_ip;	/* Also keep track of keys for IP address */
+	صحيح     strict_host_ئاچقۇچ_checking;	/* Strict host key checking. */
+	صحيح     compression;	/* Compress packets in both directions. */
+	صحيح     tcp_keep_alive;	/* Set SO_KEEPALIVE. */
+	صحيح	ip_qos_interactive;	/* DSCP value for interactive */
+	صحيح	ip_qos_bulk;		/* DSCP value for bulk traffic */
 	SyslogFacility log_facility;	/* Facility for system logging. */
 	LogLevel log_level;	/* Level for logging. */
-	u_int	num_log_verbose;	/* Verbose log overrides */
-	char   **log_verbose;
-	int     port;		/* Port to connect. */
-	int     address_family;
-	int     connection_attempts;	/* Max attempts (seconds) before
+	u_int	رەقەم_log_verbose;	/* Verbose log overrides */
+	حرف   **log_verbose;
+	صحيح     port;		/* Port to connect. */
+	صحيح     address_family;
+	صحيح     connection_attempts;	/* Max attempts (seconds) before
 					 * giving up */
-	int     connection_timeout;	/* Max time (seconds) before
+	صحيح     connection_timeout;	/* Max time (seconds) before
 					 * aborting connection attempt */
-	int     number_of_password_prompts;	/* Max number of password
+	صحيح     سان_of_password_prompts;	/* Max number of password
 						 * prompts. */
-	char   *ciphers;	/* SSH2 ciphers in order of preference. */
-	char   *macs;		/* SSH2 macs in order of preference. */
-	char   *hostkeyalgorithms;	/* SSH2 server key types in order of preference. */
-	char   *kex_algorithms;	/* SSH2 kex methods in order of preference. */
-	int	kex_algorithms_set; /* KexAlgorithms was set by the user */
-	char   *ca_sign_algorithms;	/* Allowed CA signature algorithms */
-	char   *hostname;	/* Real host to connect. */
-	char   *tag;		/* Configuration tag name. */
-	char   *host_key_alias;	/* hostname alias for .ssh/known_hosts */
-	char   *proxy_command;	/* Proxy command for connecting the host. */
-	char   *user;		/* User to log in as. */
-	int     escape_char;	/* Escape character; -2 = none */
+	حرف   *ciphers;	/* SSH2 ciphers in order of preference. */
+	حرف   *macs;		/* SSH2 macs in order of preference. */
+	حرف   *hostkeyalgorithms;	/* SSH2 server key types in order of preference. */
+	حرف   *kex_algorithms;	/* SSH2 kex methods in order of preference. */
+	صحيح	kex_algorithms_set; /* KexAlgorithms was set by the user */
+	حرف   *ca_sign_algorithms;	/* Allowed CA signature algorithms */
+	حرف   *hostname;	/* Real host to connect. */
+	حرف   *tag;		/* Configuration tag name. */
+	حرف   *host_ئاچقۇچ_alias;	/* hostname alias for .ssh/known_hosts */
+	حرف   *proxy_command;	/* Proxy command for connecting the host. */
+	حرف   *user;		/* User to log in as. */
+	صحيح     escape_char;	/* Escape character; -2 = none */
 
-	u_int	num_system_hostfiles;	/* Paths for /etc/ssh/ssh_known_hosts */
-	char   *system_hostfiles[SSH_MAX_HOSTS_FILES];
-	u_int	num_user_hostfiles;	/* Path for $HOME/.ssh/known_hosts */
-	char   *user_hostfiles[SSH_MAX_HOSTS_FILES];
-	char   *preferred_authentications;
-	char   *bind_address;	/* local socket address for connection to sshd */
-	char   *bind_interface;	/* local interface for bind address */
-	char   *pkcs11_provider; /* PKCS#11 provider */
-	char   *sk_provider; /* Security key provider */
-	int	verify_host_key_dns;	/* Verify host key using DNS */
+	u_int	رەقەم_system_hostfiles;	/* Paths for /etc/ssh/ssh_known_hosts */
+	حرف   *system_hostfiles[SSH_MAX_HOSTS_FILES];
+	u_int	رەقەم_user_hostfiles;	/* Path for $HOME/.ssh/known_hosts */
+	حرف   *user_hostfiles[SSH_MAX_HOSTS_FILES];
+	حرف   *preferred_authentications;
+	حرف   *bind_address;	/* local socket address for connection to sshd */
+	حرف   *bind_interface;	/* local interface for bind address */
+	حرف   *pkcs11_provider; /* PKCS#11 provider */
+	حرف   *sk_provider; /* Security key provider */
+	صحيح	verify_host_ئاچقۇچ_dns;	/* Verify host key using DNS */
 
-	int     num_identity_files;	/* Number of files for identities. */
-	char   *identity_files[SSH_MAX_IDENTITY_FILES];
-	int    identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
-	struct sshkey *identity_keys[SSH_MAX_IDENTITY_FILES];
+	صحيح     رەقەم_identity_files;	/* Number of files for identities. */
+	حرف   *identity_files[SSH_MAX_IDENTITY_FILES];
+	صحيح    identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
+	بنية sshkey *identity_ئاچقۇچلار[SSH_MAX_IDENTITY_FILES];
 
-	int	num_certificate_files; /* Number of extra certificates for ssh. */
-	char	*certificate_files[SSH_MAX_CERTIFICATE_FILES];
-	int	certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
-	struct sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
+	صحيح	رەقەم_certificate_files; /* Number of extra certificates for ssh. */
+	حرف	*certificate_files[SSH_MAX_CERTIFICATE_FILES];
+	صحيح	certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
+	بنية sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
 
-	int	add_keys_to_agent;
-	int	add_keys_to_agent_lifespan;
-	char   *identity_agent;		/* Optional path to ssh-agent socket */
+	صحيح	add_ئاچقۇچلار_to_agent;
+	صحيح	add_ئاچقۇچلار_to_agent_lifespan;
+	حرف   *identity_agent;		/* Optional path to ssh-agent socket */
 
 	/* Local TCP/IP forward requests. */
-	int     num_local_forwards;
-	struct Forward *local_forwards;
+	صحيح     رەقەم_local_forwards;
+	بنية Forward *local_forwards;
 
 	/* Remote TCP/IP forward requests. */
-	int     num_remote_forwards;
-	struct Forward *remote_forwards;
-	int	clear_forwardings;
+	صحيح     رەقەم_remote_forwards;
+	بنية Forward *remote_forwards;
+	صحيح	clear_forwardings;
 
 	/* Restrict remote dynamic forwarding */
-	char  **permitted_remote_opens;
-	u_int	num_permitted_remote_opens;
+	حرف  **permitted_remote_opens;
+	u_int	رەقەم_permitted_remote_opens;
 
 	/* stdio forwarding (-W) host and port */
-	char   *stdio_forward_host;
-	int	stdio_forward_port;
+	حرف   *stdio_forward_host;
+	صحيح	stdio_forward_port;
 
-	int	enable_ssh_keysign;
+	صحيح	enable_ssh_keysign;
 	int64_t rekey_limit;
-	int	rekey_interval;
-	int	no_host_authentication_for_localhost;
-	int	identities_only;
-	int	server_alive_interval;
-	int	server_alive_count_max;
+	صحيح	rekey_interval;
+	صحيح	no_host_authentication_for_localhost;
+	صحيح	identities_only;
+	صحيح	server_alive_interval;
+	صحيح	server_alive_سانى_max;
 
-	u_int	num_send_env;
-	char	**send_env;
-	u_int	num_setenv;
-	char	**setenv;
+	u_int	رەقەم_send_env;
+	حرف	**send_env;
+	u_int	رەقەم_setenv;
+	حرف	**setenv;
 
-	char	*control_path;
-	int	control_master;
-	int     control_persist; /* ControlPersist flag */
-	int     control_persist_timeout; /* ControlPersist timeout (seconds) */
+	حرف	*control_path;
+	صحيح	control_master;
+	صحيح     control_persist; /* ControlPersist flag */
+	صحيح     control_persist_timeout; /* ControlPersist timeout (seconds) */
 
-	int	hash_known_hosts;
+	صحيح	hash_known_hosts;
 
-	int	tun_open;	/* tun(4) */
-	int     tun_local;	/* force tun device (optional) */
-	int     tun_remote;	/* force tun device (optional) */
+	صحيح	tun_open;	/* tun(4) */
+	صحيح     tun_local;	/* force tun device (optional) */
+	صحيح     tun_remote;	/* force tun device (optional) */
 
-	char	*local_command;
-	int	permit_local_command;
-	char	*remote_command;
-	int	visual_host_key;
+	حرف	*local_command;
+	صحيح	permit_local_command;
+	حرف	*remote_command;
+	صحيح	visual_host_ئاچقۇچ;
 
-	int	request_tty;
-	int	session_type;
-	int	stdin_null;
-	int	fork_after_authentication;
+	صحيح	request_tty;
+	صحيح	session_type;
+	صحيح	stdin_null;
+	صحيح	fork_after_authentication;
 
-	int	proxy_use_fdpass;
+	صحيح	proxy_use_fdpass;
 
-	int	num_canonical_domains;
-	char	**canonical_domains;
-	int	canonicalize_hostname;
-	int	canonicalize_max_dots;
-	int	canonicalize_fallback_local;
-	int	num_permitted_cnames;
-	struct allowed_cname *permitted_cnames;
+	صحيح	رەقەم_canonical_domains;
+	حرف	**canonical_domains;
+	صحيح	canonicalize_hostname;
+	صحيح	canonicalize_max_dots;
+	صحيح	canonicalize_fallback_local;
+	صحيح	رەقەم_permitted_cnames;
+	بنية allowed_cname *permitted_cnames;
 
-	u_int	num_revoked_host_keys;
-	char	**revoked_host_keys;
+	u_int	رەقەم_revoked_host_ئاچقۇچلار;
+	حرف	**revoked_host_ئاچقۇچلار;
 
-	int	 fingerprint_hash;
+	صحيح	 fingerprint_hash;
 
-	int	 update_hostkeys; /* one of SSH_UPDATE_HOSTKEYS_* */
+	صحيح	 update_hostkeys; /* one of SSH_UPDATE_HOSTKEYS_* */
 
-	char   *hostbased_accepted_algos;
-	char   *pubkey_accepted_algos;
+	حرف   *hostbased_accepted_algos;
+	حرف   *pubkey_accepted_algos;
 
-	char   *jump_user;
-	char   *jump_host;
-	int	jump_port;
-	char   *jump_extra;
+	حرف   *jump_user;
+	حرف   *jump_host;
+	صحيح	jump_port;
+	حرف   *jump_extra;
 
-	char   *known_hosts_command;
+	حرف   *known_hosts_command;
 
-	int	required_rsa_size;	/* minimum size of RSA keys */
-	int	enable_escape_commandline;	/* ~C commandline */
-	int	obscure_keystroke_timing_interval;
-	int	warn_weak_crypto;
+	صحيح	required_rsa_size;	/* minimum size of RSA keys */
+	صحيح	enable_escape_commandline;	/* ~C commandline */
+	صحيح	obscure_keystroke_timing_interval;
+	صحيح	warn_weak_crypto;
 
-	char	**channel_timeouts;	/* inactivity timeout by channel type */
-	u_int	num_channel_timeouts;
+	حرف	**channel_timeouts;	/* inactivity timeout by channel type */
+	u_int	رەقەم_channel_timeouts;
 
-	char	*version_addendum;
+	حرف	*version_addendum;
 
-	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
+	حرف	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
 }       Options;
 
 #define SSH_PUBKEY_AUTH_NO	0x00
@@ -239,30 +239,30 @@ typedef struct {
 #define SSH_KEEPALIVES_TRANSPORT	1
 #define SSH_KEEPALIVES_ALL		2
 
-const char *kex_default_pk_alg(void);
-char	*ssh_connection_hash(const char *thishost, const char *host,
-    const char *portstr, const char *user, const char *jump_host);
-void     initialize_options(Options *);
-int      fill_default_options(Options *);
-void	 fill_default_options_for_canonicalization(Options *);
-void	 free_options(Options *o);
-int	 process_config_line(Options *, struct passwd *, const char *,
-    const char *, const char *, char *, const char *, int, int *, int);
-int	 read_config_file(const char *, struct passwd *, const char *,
-    const char *, const char *, Options *, int, int *);
-int	 parse_forward(struct Forward *, const char *, int, int);
-int	 ssh_valid_hostname(const char *);
-int	 ssh_valid_ruser(const char *);
-int	 parse_jump(const char *, Options *, int, int);
-int	 parse_ssh_uri(const char *, char **, char **, int *);
-int	 default_ssh_port(void);
-int	 option_clear_or_none(const char *);
-int	 config_has_permitted_cnames(Options *);
-void	 dump_client_config(Options *o, const char *host);
+ثابت حرف *kex_default_pk_alg(فراغ);
+حرف	*ssh_connection_hash(ثابت حرف *thishost, ثابت حرف *host,
+    ثابت حرف *portstr, ثابت حرف *user, ثابت حرف *jump_host);
+فراغ     initialize_options(Options *);
+صحيح      fill_default_options(Options *);
+فراغ	 fill_default_options_for_canonicalization(Options *);
+فراغ	 free_options(Options *o);
+صحيح	 process_config_قۇر(Options *, بنية passwd *, ثابت حرف *,
+    ثابت حرف *, ثابت حرف *, حرف *, ثابت حرف *, صحيح, صحيح *, صحيح);
+صحيح	 read_config_file(ثابت حرف *, بنية passwd *, ثابت حرف *,
+    ثابت حرف *, ثابت حرف *, Options *, صحيح, صحيح *);
+صحيح	 parse_forward(بنية Forward *, ثابت حرف *, صحيح, صحيح);
+صحيح	 ssh_valid_hostname(ثابت حرف *);
+صحيح	 ssh_valid_ruser(ثابت حرف *);
+صحيح	 parse_jump(ثابت حرف *, Options *, صحيح, صحيح);
+صحيح	 parse_ssh_uri(ثابت حرف *, حرف **, حرف **, صحيح *);
+صحيح	 default_ssh_port(فراغ);
+صحيح	 option_clear_or_none(ثابت حرف *);
+صحيح	 config_has_permitted_cnames(Options *);
+فراغ	 dump_client_config(Options *o, ثابت حرف *host);
 
-void	 add_local_forward(Options *, const struct Forward *);
-void	 add_remote_forward(Options *, const struct Forward *);
-void	 add_identity_file(Options *, const char *, const char *, int);
-void	 add_certificate_file(Options *, const char *, int);
+فراغ	 add_local_forward(Options *, ثابت بنية Forward *);
+فراغ	 add_remote_forward(Options *, ثابت بنية Forward *);
+فراغ	 add_identity_file(Options *, ثابت حرف *, ثابت حرف *, صحيح);
+فراغ	 add_certificate_file(Options *, ثابت حرف *, صحيح);
 
 #endif				/* READCONF_H */

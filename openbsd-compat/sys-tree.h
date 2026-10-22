@@ -26,13 +26,13 @@
 
 /* OPENBSD ORIGINAL: sys/sys/tree.h */
 
-#include "config.h"
+#ضمن "config.h"
 #ifdef NO_ATTRIBUTE_ON_RETURN_TYPE
 # define __attribute__(x)
 #endif
 
-#ifndef	_SYS_TREE_H_
-#define	_SYS_TREE_H_
+#ifndef	SYS_دەرەخ_H
+#define	SYS_دەرەخ_H
 
 /*
  * This file defines data structures for different types of trees:
@@ -62,178 +62,178 @@
  */
 
 #define SPLAY_HEAD(name, type)						\
-struct name {								\
-	struct type *sph_root; /* root of the tree */			\
+بنية name {								\
+	بنية type *sph_يىلتىز; /* root of the tree */			\
 }
 
-#define SPLAY_INITIALIZER(root)						\
-	{ NULL }
+#define SPLAY_INITIALIZER(يىلتىز)						\
+	{ عدم }
 
-#define SPLAY_INIT(root) do {						\
-	(root)->sph_root = NULL;					\
-} while (0)
+#define SPLAY_INIT(يىلتىز) افعل {						\
+	(يىلتىز)->sph_يىلتىز = عدم;					\
+} طالما (0)
 
 #define SPLAY_ENTRY(type)						\
-struct {								\
-	struct type *spe_left; /* left element */			\
-	struct type *spe_right; /* right element */			\
+بنية {								\
+	بنية type *spe_سول; /* left element */			\
+	بنية type *spe_ئوڭ; /* right element */			\
 }
 
-#define SPLAY_LEFT(elm, field)		(elm)->field.spe_left
-#define SPLAY_RIGHT(elm, field)		(elm)->field.spe_right
-#define SPLAY_ROOT(head)		(head)->sph_root
-#define SPLAY_EMPTY(head)		(SPLAY_ROOT(head) == NULL)
+#define SPLAY_سول(elm, field)		(elm)->field.spe_سول
+#define SPLAY_ئوڭ(elm, field)		(elm)->field.spe_ئوڭ
+#define SPLAY_يىلتىز(head)		(head)->sph_يىلتىز
+#define SPLAY_EMPTY(head)		(SPLAY_يىلتىز(head) == عدم)
 
 /* SPLAY_ROTATE_{LEFT,RIGHT} expect that tmp hold SPLAY_{RIGHT,LEFT} */
-#define SPLAY_ROTATE_RIGHT(head, tmp, field) do {			\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(tmp, field);	\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
-} while (0)
+#define SPLAY_ROTATE_ئوڭ(head, tmp, field) افعل {			\
+	SPLAY_سول((head)->sph_يىلتىز, field) = SPLAY_ئوڭ(tmp, field);	\
+	SPLAY_ئوڭ(tmp, field) = (head)->sph_يىلتىز;			\
+	(head)->sph_يىلتىز = tmp;						\
+} طالما (0)
 	
-#define SPLAY_ROTATE_LEFT(head, tmp, field) do {			\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(tmp, field);	\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
-} while (0)
+#define SPLAY_ROTATE_سول(head, tmp, field) افعل {			\
+	SPLAY_ئوڭ((head)->sph_يىلتىز, field) = SPLAY_سول(tmp, field);	\
+	SPLAY_سول(tmp, field) = (head)->sph_يىلتىز;			\
+	(head)->sph_يىلتىز = tmp;						\
+} طالما (0)
 
-#define SPLAY_LINKLEFT(head, tmp, field) do {				\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);		\
-} while (0)
+#define SPLAY_LINKLEFT(head, tmp, field) افعل {				\
+	SPLAY_سول(tmp, field) = (head)->sph_يىلتىز;			\
+	tmp = (head)->sph_يىلتىز;						\
+	(head)->sph_يىلتىز = SPLAY_سول((head)->sph_يىلتىز, field);		\
+} طالما (0)
 
-#define SPLAY_LINKRIGHT(head, tmp, field) do {				\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);	\
-} while (0)
+#define SPLAY_LINKRIGHT(head, tmp, field) افعل {				\
+	SPLAY_ئوڭ(tmp, field) = (head)->sph_يىلتىز;			\
+	tmp = (head)->sph_يىلتىز;						\
+	(head)->sph_يىلتىز = SPLAY_ئوڭ((head)->sph_يىلتىز, field);	\
+} طالما (0)
 
-#define SPLAY_ASSEMBLE(head, node, left, right, field) do {		\
-	SPLAY_RIGHT(left, field) = SPLAY_LEFT((head)->sph_root, field);	\
-	SPLAY_LEFT(right, field) = SPLAY_RIGHT((head)->sph_root, field);\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(node, field);	\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(node, field);	\
-} while (0)
+#define SPLAY_ASSEMBLE(head, تۈگۈن, سول, ئوڭ, field) افعل {		\
+	SPLAY_ئوڭ(سول, field) = SPLAY_سول((head)->sph_يىلتىز, field);	\
+	SPLAY_سول(ئوڭ, field) = SPLAY_ئوڭ((head)->sph_يىلتىز, field);\
+	SPLAY_سول((head)->sph_يىلتىز, field) = SPLAY_ئوڭ(تۈگۈن, field);	\
+	SPLAY_ئوڭ((head)->sph_يىلتىز, field) = SPLAY_سول(تۈگۈن, field);	\
+} طالما (0)
 
 /* Generates prototypes and inline functions */
 
 #define SPLAY_PROTOTYPE(name, type, field, cmp)				\
-void name##_SPLAY(struct name *, struct type *);			\
-void name##_SPLAY_MINMAX(struct name *, int);				\
-struct type *name##_SPLAY_INSERT(struct name *, struct type *);		\
-struct type *name##_SPLAY_REMOVE(struct name *, struct type *);		\
+فراغ name##_SPLAY(بنية name *, بنية type *);			\
+فراغ name##_SPLAY_MINMAX(بنية name *, صحيح);				\
+بنية type *name##_SPLAY_INSERT(بنية name *, بنية type *);		\
+بنية type *name##_SPLAY_REMOVE(بنية name *, بنية type *);		\
 									\
 /* Finds the node with the same key as elm */				\
-static __inline struct type *						\
-name##_SPLAY_FIND(struct name *head, struct type *elm)			\
+ساكن __inline بنية type *						\
+name##_SPLAY_FIND(بنية name *head, بنية type *elm)			\
 {									\
-	if (SPLAY_EMPTY(head))						\
-		return(NULL);						\
+	إذا (SPLAY_EMPTY(head))						\
+		أرجع(عدم);						\
 	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0)				\
-		return (head->sph_root);				\
-	return (NULL);							\
+	إذا ((cmp)(elm, (head)->sph_يىلتىز) == 0)				\
+		أرجع (head->sph_يىلتىز);				\
+	أرجع (عدم);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_NEXT(struct name *head, struct type *elm)			\
+ساكن __inline بنية type *						\
+name##_SPLAY_NEXT(بنية name *head, بنية type *elm)			\
 {									\
 	name##_SPLAY(head, elm);					\
-	if (SPLAY_RIGHT(elm, field) != NULL) {				\
-		elm = SPLAY_RIGHT(elm, field);				\
-		while (SPLAY_LEFT(elm, field) != NULL) {		\
-			elm = SPLAY_LEFT(elm, field);			\
+	إذا (SPLAY_ئوڭ(elm, field) != عدم) {				\
+		elm = SPLAY_ئوڭ(elm, field);				\
+		طالما (SPLAY_سول(elm, field) != عدم) {		\
+			elm = SPLAY_سول(elm, field);			\
 		}							\
-	} else								\
-		elm = NULL;						\
-	return (elm);							\
+	} وإلا								\
+		elm = عدم;						\
+	أرجع (elm);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_MIN_MAX(struct name *head, int val)			\
+ساكن __inline بنية type *						\
+name##_SPLAY_MIN_MAX(بنية name *head, صحيح val)			\
 {									\
 	name##_SPLAY_MINMAX(head, val);					\
-        return (SPLAY_ROOT(head));					\
+        أرجع (SPLAY_يىلتىز(head));					\
 }
 
 /* Main splay operation.
  * Moves node close to the key of elm to top
  */
 #define SPLAY_GENERATE(name, type, field, cmp)				\
-struct type *								\
-name##_SPLAY_INSERT(struct name *head, struct type *elm)		\
+بنية type *								\
+name##_SPLAY_INSERT(بنية name *head, بنية type *elm)		\
 {									\
-    if (SPLAY_EMPTY(head)) {						\
-	    SPLAY_LEFT(elm, field) = SPLAY_RIGHT(elm, field) = NULL;	\
-    } else {								\
-	    int __comp;							\
+    إذا (SPLAY_EMPTY(head)) {						\
+	    SPLAY_سول(elm, field) = SPLAY_ئوڭ(elm, field) = عدم;	\
+    } وإلا {								\
+	    صحيح __comp;							\
 	    name##_SPLAY(head, elm);					\
-	    __comp = (cmp)(elm, (head)->sph_root);			\
-	    if(__comp < 0) {						\
-		    SPLAY_LEFT(elm, field) = SPLAY_LEFT((head)->sph_root, field);\
-		    SPLAY_RIGHT(elm, field) = (head)->sph_root;		\
-		    SPLAY_LEFT((head)->sph_root, field) = NULL;		\
-	    } else if (__comp > 0) {					\
-		    SPLAY_RIGHT(elm, field) = SPLAY_RIGHT((head)->sph_root, field);\
-		    SPLAY_LEFT(elm, field) = (head)->sph_root;		\
-		    SPLAY_RIGHT((head)->sph_root, field) = NULL;	\
-	    } else							\
-		    return ((head)->sph_root);				\
+	    __comp = (cmp)(elm, (head)->sph_يىلتىز);			\
+	    إذا(__comp < 0) {						\
+		    SPLAY_سول(elm, field) = SPLAY_سول((head)->sph_يىلتىز, field);\
+		    SPLAY_ئوڭ(elm, field) = (head)->sph_يىلتىز;		\
+		    SPLAY_سول((head)->sph_يىلتىز, field) = عدم;		\
+	    } وإلا إذا (__comp > 0) {					\
+		    SPLAY_ئوڭ(elm, field) = SPLAY_ئوڭ((head)->sph_يىلتىز, field);\
+		    SPLAY_سول(elm, field) = (head)->sph_يىلتىز;		\
+		    SPLAY_ئوڭ((head)->sph_يىلتىز, field) = عدم;	\
+	    } وإلا							\
+		    أرجع ((head)->sph_يىلتىز);				\
     }									\
-    (head)->sph_root = (elm);						\
-    return (NULL);							\
+    (head)->sph_يىلتىز = (elm);						\
+    أرجع (عدم);							\
 }									\
 									\
-struct type *								\
-name##_SPLAY_REMOVE(struct name *head, struct type *elm)		\
+بنية type *								\
+name##_SPLAY_REMOVE(بنية name *head, بنية type *elm)		\
 {									\
-	struct type *__tmp;						\
-	if (SPLAY_EMPTY(head))						\
-		return (NULL);						\
+	بنية type *__tmp;						\
+	إذا (SPLAY_EMPTY(head))						\
+		أرجع (عدم);						\
 	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0) {			\
-		if (SPLAY_LEFT((head)->sph_root, field) == NULL) {	\
-			(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);\
-		} else {						\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);\
+	إذا ((cmp)(elm, (head)->sph_يىلتىز) == 0) {			\
+		إذا (SPLAY_سول((head)->sph_يىلتىز, field) == عدم) {	\
+			(head)->sph_يىلتىز = SPLAY_ئوڭ((head)->sph_يىلتىز, field);\
+		} وإلا {						\
+			__tmp = SPLAY_ئوڭ((head)->sph_يىلتىز, field);	\
+			(head)->sph_يىلتىز = SPLAY_سول((head)->sph_يىلتىز, field);\
 			name##_SPLAY(head, elm);			\
-			SPLAY_RIGHT((head)->sph_root, field) = __tmp;	\
+			SPLAY_ئوڭ((head)->sph_يىلتىز, field) = __tmp;	\
 		}							\
-		return (elm);						\
+		أرجع (elm);						\
 	}								\
-	return (NULL);							\
+	أرجع (عدم);							\
 }									\
 									\
-void									\
-name##_SPLAY(struct name *head, struct type *elm)			\
+فراغ									\
+name##_SPLAY(بنية name *head, بنية type *elm)			\
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
-	int __comp;							\
+	بنية type __node, *__left, *__right, *__tmp;			\
+	صحيح __comp;							\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_سول(&__node, field) = SPLAY_ئوڭ(&__node, field) = عدم;\
 	__left = __right = &__node;					\
 \
-	while ((__comp = (cmp)(elm, (head)->sph_root))) {		\
-		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) < 0){			\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+	طالما ((__comp = (cmp)(elm, (head)->sph_يىلتىز))) {		\
+		إذا (__comp < 0) {					\
+			__tmp = SPLAY_سول((head)->sph_يىلتىز, field);	\
+			إذا (__tmp == عدم)				\
+				اكسر;					\
+			إذا ((cmp)(elm, __tmp) < 0){			\
+				SPLAY_ROTATE_ئوڭ(head, __tmp, field);	\
+				إذا (SPLAY_سول((head)->sph_يىلتىز, field) == عدم)\
+					اكسر;				\
 			}						\
 			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) > 0){			\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+		} وإلا إذا (__comp > 0) {				\
+			__tmp = SPLAY_ئوڭ((head)->sph_يىلتىز, field);	\
+			إذا (__tmp == عدم)				\
+				اكسر;					\
+			إذا ((cmp)(elm, __tmp) > 0){			\
+				SPLAY_ROTATE_سول(head, __tmp, field);	\
+				إذا (SPLAY_ئوڭ((head)->sph_يىلتىز, field) == عدم)\
+					اكسر;				\
 			}						\
 			SPLAY_LINKRIGHT(head, __left, field);		\
 		}							\
@@ -244,32 +244,32 @@ name##_SPLAY(struct name *head, struct type *elm)			\
 /* Splay with either the minimum or the maximum element			\
  * Used to find minimum or maximum element in tree.			\
  */									\
-void name##_SPLAY_MINMAX(struct name *head, int __comp) \
+فراغ name##_SPLAY_MINMAX(بنية name *head, صحيح __comp) \
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
+	بنية type __node, *__left, *__right, *__tmp;			\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_سول(&__node, field) = SPLAY_ئوڭ(&__node, field) = عدم;\
 	__left = __right = &__node;					\
 \
-	while (1) {							\
-		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp < 0){				\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+	طالما (1) {							\
+		إذا (__comp < 0) {					\
+			__tmp = SPLAY_سول((head)->sph_يىلتىز, field);	\
+			إذا (__tmp == عدم)				\
+				اكسر;					\
+			إذا (__comp < 0){				\
+				SPLAY_ROTATE_ئوڭ(head, __tmp, field);	\
+				إذا (SPLAY_سول((head)->sph_يىلتىز, field) == عدم)\
+					اكسر;				\
 			}						\
 			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp > 0) {				\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+		} وإلا إذا (__comp > 0) {				\
+			__tmp = SPLAY_ئوڭ((head)->sph_يىلتىز, field);	\
+			إذا (__tmp == عدم)				\
+				اكسر;					\
+			إذا (__comp > 0) {				\
+				SPLAY_ROTATE_سول(head, __tmp, field);	\
+				إذا (SPLAY_ئوڭ((head)->sph_يىلتىز, field) == عدم)\
+					اكسر;				\
 			}						\
 			SPLAY_LINKRIGHT(head, __left, field);		\
 		}							\
@@ -280,120 +280,120 @@ void name##_SPLAY_MINMAX(struct name *head, int __comp) \
 #define SPLAY_NEGINF	-1
 #define SPLAY_INF	1
 
-#define SPLAY_INSERT(name, x, y)	name##_SPLAY_INSERT(x, y)
+#define SPLAY_قىستۇرۇش(name, x, y)	name##_SPLAY_INSERT(x, y)
 #define SPLAY_REMOVE(name, x, y)	name##_SPLAY_REMOVE(x, y)
 #define SPLAY_FIND(name, x, y)		name##_SPLAY_FIND(x, y)
 #define SPLAY_NEXT(name, x, y)		name##_SPLAY_NEXT(x, y)
-#define SPLAY_MIN(name, x)		(SPLAY_EMPTY(x) ? NULL	\
+#define SPLAY_MIN(name, x)		(SPLAY_EMPTY(x) ? عدم	\
 					: name##_SPLAY_MIN_MAX(x, SPLAY_NEGINF))
-#define SPLAY_MAX(name, x)		(SPLAY_EMPTY(x) ? NULL	\
+#define SPLAY_MAX(name, x)		(SPLAY_EMPTY(x) ? عدم	\
 					: name##_SPLAY_MIN_MAX(x, SPLAY_INF))
 
 #define SPLAY_FOREACH(x, name, head)					\
-	for ((x) = SPLAY_MIN(name, head);				\
-	     (x) != NULL;						\
+	لكل ((x) = SPLAY_MIN(name, head);				\
+	     (x) != عدم;						\
 	     (x) = SPLAY_NEXT(name, head, x))
 
 /* Macros that define a red-black tree */
 #define RB_HEAD(name, type)						\
-struct name {								\
-	struct type *rbh_root; /* root of the tree */			\
+بنية name {								\
+	بنية type *rbh_يىلتىز; /* root of the tree */			\
 }
 
-#define RB_INITIALIZER(root)						\
-	{ NULL }
+#define RB_INITIALIZER(يىلتىز)						\
+	{ عدم }
 
-#define RB_INIT(root) do {						\
-	(root)->rbh_root = NULL;					\
-} while (0)
+#define RB_INIT(يىلتىز) افعل {						\
+	(يىلتىز)->rbh_يىلتىز = عدم;					\
+} طالما (0)
 
 #define RB_BLACK	0
 #define RB_RED		1
 #define RB_ENTRY(type)							\
-struct {								\
-	struct type *rbe_left;		/* left element */		\
-	struct type *rbe_right;		/* right element */		\
-	struct type *rbe_parent;	/* parent element */		\
-	int rbe_color;			/* node color */		\
+بنية {								\
+	بنية type *rbe_سول;		/* left element */		\
+	بنية type *rbe_ئوڭ;		/* right element */		\
+	بنية type *rbe_parent;	/* parent element */		\
+	صحيح rbe_color;			/* node color */		\
 }
 
-#define RB_LEFT(elm, field)		(elm)->field.rbe_left
-#define RB_RIGHT(elm, field)		(elm)->field.rbe_right
+#define RB_سول(elm, field)		(elm)->field.rbe_سول
+#define RB_ئوڭ(elm, field)		(elm)->field.rbe_ئوڭ
 #define RB_PARENT(elm, field)		(elm)->field.rbe_parent
 #define RB_COLOR(elm, field)		(elm)->field.rbe_color
-#define RB_ROOT(head)			(head)->rbh_root
-#define RB_EMPTY(head)			(RB_ROOT(head) == NULL)
+#define RB_يىلتىز(head)			(head)->rbh_يىلتىز
+#define RB_EMPTY(head)			(RB_يىلتىز(head) == عدم)
 
-#define RB_SET(elm, parent, field) do {					\
+#define RB_SET(elm, parent, field) افعل {					\
 	RB_PARENT(elm, field) = parent;					\
-	RB_LEFT(elm, field) = RB_RIGHT(elm, field) = NULL;		\
+	RB_سول(elm, field) = RB_ئوڭ(elm, field) = عدم;		\
 	RB_COLOR(elm, field) = RB_RED;					\
-} while (0)
+} طالما (0)
 
-#define RB_SET_BLACKRED(black, red, field) do {				\
+#define RB_SET_BLACKRED(black, red, field) افعل {				\
 	RB_COLOR(black, field) = RB_BLACK;				\
 	RB_COLOR(red, field) = RB_RED;					\
-} while (0)
+} طالما (0)
 
 #ifndef RB_AUGMENT
-#define RB_AUGMENT(x)	do {} while (0)
+#define RB_AUGMENT(x)	افعل {} طالما (0)
 #endif
 
-#define RB_ROTATE_LEFT(head, elm, tmp, field) do {			\
-	(tmp) = RB_RIGHT(elm, field);					\
-	if ((RB_RIGHT(elm, field) = RB_LEFT(tmp, field))) {		\
-		RB_PARENT(RB_LEFT(tmp, field), field) = (elm);		\
+#define RB_ROTATE_سول(head, elm, tmp, field) افعل {			\
+	(tmp) = RB_ئوڭ(elm, field);					\
+	إذا ((RB_ئوڭ(elm, field) = RB_سول(tmp, field))) {		\
+		RB_PARENT(RB_سول(tmp, field), field) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_LEFT(tmp, field) = (elm);					\
+	إذا ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
+		إذا ((elm) == RB_سول(RB_PARENT(elm, field), field))	\
+			RB_سول(RB_PARENT(elm, field), field) = (tmp);	\
+		وإلا							\
+			RB_ئوڭ(RB_PARENT(elm, field), field) = (tmp);	\
+	} وإلا								\
+		(head)->rbh_يىلتىز = (tmp);				\
+	RB_سول(tmp, field) = (elm);					\
 	RB_PARENT(elm, field) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
+	إذا ((RB_PARENT(tmp, field)))					\
 		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+} طالما (0)
 
-#define RB_ROTATE_RIGHT(head, elm, tmp, field) do {			\
-	(tmp) = RB_LEFT(elm, field);					\
-	if ((RB_LEFT(elm, field) = RB_RIGHT(tmp, field))) {		\
-		RB_PARENT(RB_RIGHT(tmp, field), field) = (elm);		\
+#define RB_ROTATE_ئوڭ(head, elm, tmp, field) افعل {			\
+	(tmp) = RB_سول(elm, field);					\
+	إذا ((RB_سول(elm, field) = RB_ئوڭ(tmp, field))) {		\
+		RB_PARENT(RB_ئوڭ(tmp, field), field) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_RIGHT(tmp, field) = (elm);					\
+	إذا ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
+		إذا ((elm) == RB_سول(RB_PARENT(elm, field), field))	\
+			RB_سول(RB_PARENT(elm, field), field) = (tmp);	\
+		وإلا							\
+			RB_ئوڭ(RB_PARENT(elm, field), field) = (tmp);	\
+	} وإلا								\
+		(head)->rbh_يىلتىز = (tmp);				\
+	RB_ئوڭ(tmp, field) = (elm);					\
 	RB_PARENT(elm, field) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
+	إذا ((RB_PARENT(tmp, field)))					\
 		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+} طالما (0)
 
 /* Generates prototypes and inline functions */
 #define	RB_PROTOTYPE(name, type, field, cmp)				\
 	RB_PROTOTYPE_INTERNAL(name, type, field, cmp,)
 #define	RB_PROTOTYPE_STATIC(name, type, field, cmp)			\
-	RB_PROTOTYPE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
+	RB_PROTOTYPE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) ساكن)
 #define RB_PROTOTYPE_INTERNAL(name, type, field, cmp, attr)		\
-attr void name##_RB_INSERT_COLOR(struct name *, struct type *);		\
-attr void name##_RB_REMOVE_COLOR(struct name *, struct type *, struct type *);\
-attr struct type *name##_RB_REMOVE(struct name *, struct type *);	\
-attr struct type *name##_RB_INSERT(struct name *, struct type *);	\
-attr struct type *name##_RB_FIND(struct name *, struct type *);		\
-attr struct type *name##_RB_NFIND(struct name *, struct type *);	\
-attr struct type *name##_RB_NEXT(struct type *);			\
-attr struct type *name##_RB_PREV(struct type *);			\
-attr struct type *name##_RB_MINMAX(struct name *, int);			\
+attr فراغ name##_RB_INSERT_COLOR(بنية name *, بنية type *);		\
+attr فراغ name##_RB_REMOVE_COLOR(بنية name *, بنية type *, بنية type *);\
+attr بنية type *name##_RB_REMOVE(بنية name *, بنية type *);	\
+attr بنية type *name##_RB_INSERT(بنية name *, بنية type *);	\
+attr بنية type *name##_RB_FIND(بنية name *, بنية type *);		\
+attr بنية type *name##_RB_NFIND(بنية name *, بنية type *);	\
+attr بنية type *name##_RB_NEXT(بنية type *);			\
+attr بنية type *name##_RB_PREV(بنية type *);			\
+attr بنية type *name##_RB_MINMAX(بنية name *, صحيح);			\
 									\
 
 /* Main rb operation.
@@ -402,328 +402,328 @@ attr struct type *name##_RB_MINMAX(struct name *, int);			\
 #define	RB_GENERATE(name, type, field, cmp)				\
 	RB_GENERATE_INTERNAL(name, type, field, cmp,)
 #define	RB_GENERATE_STATIC(name, type, field, cmp)			\
-	RB_GENERATE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
+	RB_GENERATE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) ساكن)
 #define RB_GENERATE_INTERNAL(name, type, field, cmp, attr)		\
-attr void								\
-name##_RB_INSERT_COLOR(struct name *head, struct type *elm)		\
+attr فراغ								\
+name##_RB_INSERT_COLOR(بنية name *head, بنية type *elm)		\
 {									\
-	struct type *parent, *gparent, *tmp;				\
-	while ((parent = RB_PARENT(elm, field)) &&			\
+	بنية type *parent, *gparent, *tmp;				\
+	طالما ((parent = RB_PARENT(elm, field)) &&			\
 	    RB_COLOR(parent, field) == RB_RED) {			\
 		gparent = RB_PARENT(parent, field);			\
-		if (parent == RB_LEFT(gparent, field)) {		\
-			tmp = RB_RIGHT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
+		إذا (parent == RB_سول(gparent, field)) {		\
+			tmp = RB_ئوڭ(gparent, field);			\
+			إذا (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
 				RB_COLOR(tmp, field) = RB_BLACK;	\
 				RB_SET_BLACKRED(parent, gparent, field);\
 				elm = gparent;				\
-				continue;				\
+				استمر;				\
 			}						\
-			if (RB_RIGHT(parent, field) == elm) {		\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
+			إذا (RB_ئوڭ(parent, field) == elm) {		\
+				RB_ROTATE_سول(head, parent, tmp, field);\
 				tmp = parent;				\
 				parent = elm;				\
 				elm = tmp;				\
 			}						\
 			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_RIGHT(head, gparent, tmp, field);	\
-		} else {						\
-			tmp = RB_LEFT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
+			RB_ROTATE_ئوڭ(head, gparent, tmp, field);	\
+		} وإلا {						\
+			tmp = RB_سول(gparent, field);			\
+			إذا (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
 				RB_COLOR(tmp, field) = RB_BLACK;	\
 				RB_SET_BLACKRED(parent, gparent, field);\
 				elm = gparent;				\
-				continue;				\
+				استمر;				\
 			}						\
-			if (RB_LEFT(parent, field) == elm) {		\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
+			إذا (RB_سول(parent, field) == elm) {		\
+				RB_ROTATE_ئوڭ(head, parent, tmp, field);\
 				tmp = parent;				\
 				parent = elm;				\
 				elm = tmp;				\
 			}						\
 			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_LEFT(head, gparent, tmp, field);	\
+			RB_ROTATE_سول(head, gparent, tmp, field);	\
 		}							\
 	}								\
-	RB_COLOR(head->rbh_root, field) = RB_BLACK;			\
+	RB_COLOR(head->rbh_يىلتىز, field) = RB_BLACK;			\
 }									\
 									\
-attr void								\
-name##_RB_REMOVE_COLOR(struct name *head, struct type *parent, struct type *elm) \
+attr فراغ								\
+name##_RB_REMOVE_COLOR(بنية name *head, بنية type *parent, بنية type *elm) \
 {									\
-	struct type *tmp;						\
-	while ((elm == NULL || RB_COLOR(elm, field) == RB_BLACK) &&	\
-	    elm != RB_ROOT(head)) {					\
-		if (RB_LEFT(parent, field) == elm) {			\
-			tmp = RB_RIGHT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
+	بنية type *tmp;						\
+	طالما ((elm == عدم || RB_COLOR(elm, field) == RB_BLACK) &&	\
+	    elm != RB_يىلتىز(head)) {					\
+		إذا (RB_سول(parent, field) == elm) {			\
+			tmp = RB_ئوڭ(parent, field);			\
+			إذا (RB_COLOR(tmp, field) == RB_RED) {		\
 				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				tmp = RB_RIGHT(parent, field);		\
+				RB_ROTATE_سول(head, parent, tmp, field);\
+				tmp = RB_ئوڭ(parent, field);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
+			إذا ((RB_سول(tmp, field) == عدم ||		\
+			    RB_COLOR(RB_سول(tmp, field), field) == RB_BLACK) &&\
+			    (RB_ئوڭ(tmp, field) == عدم ||		\
+			    RB_COLOR(RB_ئوڭ(tmp, field), field) == RB_BLACK)) {\
 				RB_COLOR(tmp, field) = RB_RED;		\
 				elm = parent;				\
 				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_RIGHT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK) {\
-					struct type *oleft;		\
-					if ((oleft = RB_LEFT(tmp, field)))\
+			} وإلا {					\
+				إذا (RB_ئوڭ(tmp, field) == عدم ||	\
+				    RB_COLOR(RB_ئوڭ(tmp, field), field) == RB_BLACK) {\
+					بنية type *oleft;		\
+					إذا ((oleft = RB_سول(tmp, field)))\
 						RB_COLOR(oleft, field) = RB_BLACK;\
 					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_RIGHT(head, tmp, oleft, field);\
-					tmp = RB_RIGHT(parent, field);	\
+					RB_ROTATE_ئوڭ(head, tmp, oleft, field);\
+					tmp = RB_ئوڭ(parent, field);	\
 				}					\
 				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
 				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_RIGHT(tmp, field))		\
-					RB_COLOR(RB_RIGHT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
-				break;					\
+				إذا (RB_ئوڭ(tmp, field))		\
+					RB_COLOR(RB_ئوڭ(tmp, field), field) = RB_BLACK;\
+				RB_ROTATE_سول(head, parent, tmp, field);\
+				elm = RB_يىلتىز(head);			\
+				اكسر;					\
 			}						\
-		} else {						\
-			tmp = RB_LEFT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
+		} وإلا {						\
+			tmp = RB_سول(parent, field);			\
+			إذا (RB_COLOR(tmp, field) == RB_RED) {		\
 				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				tmp = RB_LEFT(parent, field);		\
+				RB_ROTATE_ئوڭ(head, parent, tmp, field);\
+				tmp = RB_سول(parent, field);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
+			إذا ((RB_سول(tmp, field) == عدم ||		\
+			    RB_COLOR(RB_سول(tmp, field), field) == RB_BLACK) &&\
+			    (RB_ئوڭ(tmp, field) == عدم ||		\
+			    RB_COLOR(RB_ئوڭ(tmp, field), field) == RB_BLACK)) {\
 				RB_COLOR(tmp, field) = RB_RED;		\
 				elm = parent;				\
 				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_LEFT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) {\
-					struct type *oright;		\
-					if ((oright = RB_RIGHT(tmp, field)))\
+			} وإلا {					\
+				إذا (RB_سول(tmp, field) == عدم ||	\
+				    RB_COLOR(RB_سول(tmp, field), field) == RB_BLACK) {\
+					بنية type *oright;		\
+					إذا ((oright = RB_ئوڭ(tmp, field)))\
 						RB_COLOR(oright, field) = RB_BLACK;\
 					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_LEFT(head, tmp, oright, field);\
-					tmp = RB_LEFT(parent, field);	\
+					RB_ROTATE_سول(head, tmp, oright, field);\
+					tmp = RB_سول(parent, field);	\
 				}					\
 				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
 				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_LEFT(tmp, field))		\
-					RB_COLOR(RB_LEFT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
-				break;					\
+				إذا (RB_سول(tmp, field))		\
+					RB_COLOR(RB_سول(tmp, field), field) = RB_BLACK;\
+				RB_ROTATE_ئوڭ(head, parent, tmp, field);\
+				elm = RB_يىلتىز(head);			\
+				اكسر;					\
 			}						\
 		}							\
 	}								\
-	if (elm)							\
+	إذا (elm)							\
 		RB_COLOR(elm, field) = RB_BLACK;			\
 }									\
 									\
-attr struct type *							\
-name##_RB_REMOVE(struct name *head, struct type *elm)			\
+attr بنية type *							\
+name##_RB_REMOVE(بنية name *head, بنية type *elm)			\
 {									\
-	struct type *child, *parent, *old = elm;			\
-	int color;							\
-	if (RB_LEFT(elm, field) == NULL)				\
-		child = RB_RIGHT(elm, field);				\
-	else if (RB_RIGHT(elm, field) == NULL)				\
-		child = RB_LEFT(elm, field);				\
-	else {								\
-		struct type *left;					\
-		elm = RB_RIGHT(elm, field);				\
-		while ((left = RB_LEFT(elm, field)))			\
-			elm = left;					\
-		child = RB_RIGHT(elm, field);				\
+	بنية type *child, *parent, *old = elm;			\
+	صحيح color;							\
+	إذا (RB_سول(elm, field) == عدم)				\
+		child = RB_ئوڭ(elm, field);				\
+	وإلا إذا (RB_ئوڭ(elm, field) == عدم)				\
+		child = RB_سول(elm, field);				\
+	وإلا {								\
+		بنية type *سول;					\
+		elm = RB_ئوڭ(elm, field);				\
+		طالما ((سول = RB_سول(elm, field)))			\
+			elm = سول;					\
+		child = RB_ئوڭ(elm, field);				\
 		parent = RB_PARENT(elm, field);				\
 		color = RB_COLOR(elm, field);				\
-		if (child)						\
+		إذا (child)						\
 			RB_PARENT(child, field) = parent;		\
-		if (parent) {						\
-			if (RB_LEFT(parent, field) == elm)		\
-				RB_LEFT(parent, field) = child;		\
-			else						\
-				RB_RIGHT(parent, field) = child;	\
+		إذا (parent) {						\
+			إذا (RB_سول(parent, field) == elm)		\
+				RB_سول(parent, field) = child;		\
+			وإلا						\
+				RB_ئوڭ(parent, field) = child;	\
 			RB_AUGMENT(parent);				\
-		} else							\
-			RB_ROOT(head) = child;				\
-		if (RB_PARENT(elm, field) == old)			\
+		} وإلا							\
+			RB_يىلتىز(head) = child;				\
+		إذا (RB_PARENT(elm, field) == old)			\
 			parent = elm;					\
 		(elm)->field = (old)->field;				\
-		if (RB_PARENT(old, field)) {				\
-			if (RB_LEFT(RB_PARENT(old, field), field) == old)\
-				RB_LEFT(RB_PARENT(old, field), field) = elm;\
-			else						\
-				RB_RIGHT(RB_PARENT(old, field), field) = elm;\
+		إذا (RB_PARENT(old, field)) {				\
+			إذا (RB_سول(RB_PARENT(old, field), field) == old)\
+				RB_سول(RB_PARENT(old, field), field) = elm;\
+			وإلا						\
+				RB_ئوڭ(RB_PARENT(old, field), field) = elm;\
 			RB_AUGMENT(RB_PARENT(old, field));		\
-		} else							\
-			RB_ROOT(head) = elm;				\
-		RB_PARENT(RB_LEFT(old, field), field) = elm;		\
-		if (RB_RIGHT(old, field))				\
-			RB_PARENT(RB_RIGHT(old, field), field) = elm;	\
-		if (parent) {						\
-			left = parent;					\
-			do {						\
-				RB_AUGMENT(left);			\
-			} while ((left = RB_PARENT(left, field)));	\
+		} وإلا							\
+			RB_يىلتىز(head) = elm;				\
+		RB_PARENT(RB_سول(old, field), field) = elm;		\
+		إذا (RB_ئوڭ(old, field))				\
+			RB_PARENT(RB_ئوڭ(old, field), field) = elm;	\
+		إذا (parent) {						\
+			سول = parent;					\
+			افعل {						\
+				RB_AUGMENT(سول);			\
+			} طالما ((سول = RB_PARENT(سول, field)));	\
 		}							\
-		goto color;						\
+		اذهب color;						\
 	}								\
 	parent = RB_PARENT(elm, field);					\
 	color = RB_COLOR(elm, field);					\
-	if (child)							\
+	إذا (child)							\
 		RB_PARENT(child, field) = parent;			\
-	if (parent) {							\
-		if (RB_LEFT(parent, field) == elm)			\
-			RB_LEFT(parent, field) = child;			\
-		else							\
-			RB_RIGHT(parent, field) = child;		\
+	إذا (parent) {							\
+		إذا (RB_سول(parent, field) == elm)			\
+			RB_سول(parent, field) = child;			\
+		وإلا							\
+			RB_ئوڭ(parent, field) = child;		\
 		RB_AUGMENT(parent);					\
-	} else								\
-		RB_ROOT(head) = child;					\
+	} وإلا								\
+		RB_يىلتىز(head) = child;					\
 color:									\
-	if (color == RB_BLACK)						\
+	إذا (color == RB_BLACK)						\
 		name##_RB_REMOVE_COLOR(head, parent, child);		\
-	return (old);							\
+	أرجع (old);							\
 }									\
 									\
 /* Inserts a node into the RB tree */					\
-attr struct type *							\
-name##_RB_INSERT(struct name *head, struct type *elm)			\
+attr بنية type *							\
+name##_RB_INSERT(بنية name *head, بنية type *elm)			\
 {									\
-	struct type *tmp;						\
-	struct type *parent = NULL;					\
-	int comp = 0;							\
-	tmp = RB_ROOT(head);						\
-	while (tmp) {							\
+	بنية type *tmp;						\
+	بنية type *parent = عدم;					\
+	صحيح comp = 0;							\
+	tmp = RB_يىلتىز(head);						\
+	طالما (tmp) {							\
 		parent = tmp;						\
 		comp = (cmp)(elm, parent);				\
-		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		إذا (comp < 0)						\
+			tmp = RB_سول(tmp, field);			\
+		وإلا إذا (comp > 0)					\
+			tmp = RB_ئوڭ(tmp, field);			\
+		وإلا							\
+			أرجع (tmp);					\
 	}								\
 	RB_SET(elm, parent, field);					\
-	if (parent != NULL) {						\
-		if (comp < 0)						\
-			RB_LEFT(parent, field) = elm;			\
-		else							\
-			RB_RIGHT(parent, field) = elm;			\
+	إذا (parent != عدم) {						\
+		إذا (comp < 0)						\
+			RB_سول(parent, field) = elm;			\
+		وإلا							\
+			RB_ئوڭ(parent, field) = elm;			\
 		RB_AUGMENT(parent);					\
-	} else								\
-		RB_ROOT(head) = elm;					\
+	} وإلا								\
+		RB_يىلتىز(head) = elm;					\
 	name##_RB_INSERT_COLOR(head, elm);				\
-	return (NULL);							\
+	أرجع (عدم);							\
 }									\
 									\
 /* Finds the node with the same key as elm */				\
-attr struct type *							\
-name##_RB_FIND(struct name *head, struct type *elm)			\
+attr بنية type *							\
+name##_RB_FIND(بنية name *head, بنية type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	int comp;							\
-	while (tmp) {							\
+	بنية type *tmp = RB_يىلتىز(head);				\
+	صحيح comp;							\
+	طالما (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		إذا (comp < 0)						\
+			tmp = RB_سول(tmp, field);			\
+		وإلا إذا (comp > 0)					\
+			tmp = RB_ئوڭ(tmp, field);			\
+		وإلا							\
+			أرجع (tmp);					\
 	}								\
-	return (NULL);							\
+	أرجع (عدم);							\
 }									\
 									\
 /* Finds the first node greater than or equal to the search key */	\
-attr struct type *							\
-name##_RB_NFIND(struct name *head, struct type *elm)			\
+attr بنية type *							\
+name##_RB_NFIND(بنية name *head, بنية type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *res = NULL;					\
-	int comp;							\
-	while (tmp) {							\
+	بنية type *tmp = RB_يىلتىز(head);				\
+	بنية type *res = عدم;					\
+	صحيح comp;							\
+	طالما (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0) {						\
+		إذا (comp < 0) {						\
 			res = tmp;					\
-			tmp = RB_LEFT(tmp, field);			\
+			tmp = RB_سول(tmp, field);			\
 		}							\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		وإلا إذا (comp > 0)					\
+			tmp = RB_ئوڭ(tmp, field);			\
+		وإلا							\
+			أرجع (tmp);					\
 	}								\
-	return (res);							\
+	أرجع (res);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_NEXT(struct type *elm)					\
+attr بنية type *							\
+name##_RB_NEXT(بنية type *elm)					\
 {									\
-	if (RB_RIGHT(elm, field)) {					\
-		elm = RB_RIGHT(elm, field);				\
-		while (RB_LEFT(elm, field))				\
-			elm = RB_LEFT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_LEFT(RB_PARENT(elm, field), field)))	\
+	إذا (RB_ئوڭ(elm, field)) {					\
+		elm = RB_ئوڭ(elm, field);				\
+		طالما (RB_سول(elm, field))				\
+			elm = RB_سول(elm, field);			\
+	} وإلا {							\
+		إذا (RB_PARENT(elm, field) &&				\
+		    (elm == RB_سول(RB_PARENT(elm, field), field)))	\
 			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))\
+		وإلا {							\
+			طالما (RB_PARENT(elm, field) &&			\
+			    (elm == RB_ئوڭ(RB_PARENT(elm, field), field)))\
 				elm = RB_PARENT(elm, field);		\
 			elm = RB_PARENT(elm, field);			\
 		}							\
 	}								\
-	return (elm);							\
+	أرجع (elm);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_PREV(struct type *elm)					\
+attr بنية type *							\
+name##_RB_PREV(بنية type *elm)					\
 {									\
-	if (RB_LEFT(elm, field)) {					\
-		elm = RB_LEFT(elm, field);				\
-		while (RB_RIGHT(elm, field))				\
-			elm = RB_RIGHT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))	\
+	إذا (RB_سول(elm, field)) {					\
+		elm = RB_سول(elm, field);				\
+		طالما (RB_ئوڭ(elm, field))				\
+			elm = RB_ئوڭ(elm, field);			\
+	} وإلا {							\
+		إذا (RB_PARENT(elm, field) &&				\
+		    (elm == RB_ئوڭ(RB_PARENT(elm, field), field)))	\
 			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_LEFT(RB_PARENT(elm, field), field)))\
+		وإلا {							\
+			طالما (RB_PARENT(elm, field) &&			\
+			    (elm == RB_سول(RB_PARENT(elm, field), field)))\
 				elm = RB_PARENT(elm, field);		\
 			elm = RB_PARENT(elm, field);			\
 		}							\
 	}								\
-	return (elm);							\
+	أرجع (elm);							\
 }									\
 									\
-attr struct type *							\
-name##_RB_MINMAX(struct name *head, int val)				\
+attr بنية type *							\
+name##_RB_MINMAX(بنية name *head, صحيح val)				\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *parent = NULL;					\
-	while (tmp) {							\
+	بنية type *tmp = RB_يىلتىز(head);				\
+	بنية type *parent = عدم;					\
+	طالما (tmp) {							\
 		parent = tmp;						\
-		if (val < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else							\
-			tmp = RB_RIGHT(tmp, field);			\
+		إذا (val < 0)						\
+			tmp = RB_سول(tmp, field);			\
+		وإلا							\
+			tmp = RB_ئوڭ(tmp, field);			\
 	}								\
-	return (parent);						\
+	أرجع (parent);						\
 }
 
 #define RB_NEGINF	-1
 #define RB_INF	1
 
-#define RB_INSERT(name, x, y)	name##_RB_INSERT(x, y)
+#define RB_قىستۇرۇش(name, x, y)	name##_RB_INSERT(x, y)
 #define RB_REMOVE(name, x, y)	name##_RB_REMOVE(x, y)
 #define RB_FIND(name, x, y)	name##_RB_FIND(x, y)
 #define RB_NFIND(name, x, y)	name##_RB_NFIND(x, y)
@@ -733,23 +733,23 @@ name##_RB_MINMAX(struct name *head, int val)				\
 #define RB_MAX(name, x)		name##_RB_MINMAX(x, RB_INF)
 
 #define RB_FOREACH(x, name, head)					\
-	for ((x) = RB_MIN(name, head);					\
-	     (x) != NULL;						\
+	لكل ((x) = RB_MIN(name, head);					\
+	     (x) != عدم;						\
 	     (x) = name##_RB_NEXT(x))
 
 #define RB_FOREACH_SAFE(x, name, head, y)				\
-	for ((x) = RB_MIN(name, head);					\
-	    ((x) != NULL) && ((y) = name##_RB_NEXT(x), 1);		\
+	لكل ((x) = RB_MIN(name, head);					\
+	    ((x) != عدم) && ((y) = name##_RB_NEXT(x), 1);		\
 	     (x) = (y))
 
 #define RB_FOREACH_REVERSE(x, name, head)				\
-	for ((x) = RB_MAX(name, head);					\
-	     (x) != NULL;						\
+	لكل ((x) = RB_MAX(name, head);					\
+	     (x) != عدم;						\
 	     (x) = name##_RB_PREV(x))
 
 #define RB_FOREACH_REVERSE_SAFE(x, name, head, y)			\
-	for ((x) = RB_MAX(name, head);					\
-	    ((x) != NULL) && ((y) = name##_RB_PREV(x), 1);		\
+	لكل ((x) = RB_MAX(name, head);					\
+	    ((x) != عدم) && ((y) = name##_RB_PREV(x), 1);		\
 	     (x) = (y))
 
 #endif	/* _SYS_TREE_H_ */

@@ -16,58 +16,58 @@
 #ifndef AUTHFD_H
 #define AUTHFD_H
 
-struct sshbuf;
-struct sshkey;
+بنية sshbuf;
+بنية sshkey;
 
 /* List of identities returned by ssh_fetch_identitylist() */
-struct ssh_identitylist {
+بنية ssh_identitylist {
 	size_t nkeys;
-	struct sshkey **keys;
-	char **comments;
+	بنية sshkey **ئاچقۇچلار;
+	حرف **comments;
 };
 
 /* Key destination restrictions */
-struct dest_constraint_hop {
-	char *user;	/* wildcards allowed */
-	char *hostname; /* used to matching cert principals and for display */
-	int is_ca;
+بنية dest_constraint_hop {
+	حرف *user;	/* wildcards allowed */
+	حرف *hostname; /* used to matching cert principals and for display */
+	صحيح is_ca;
 	u_int nkeys;	/* number of entries in *both* 'keys' and 'key_is_ca' */
-	struct sshkey **keys;
-	int *key_is_ca;
+	بنية sshkey **ئاچقۇچلار;
+	صحيح *ئاچقۇچ_is_ca;
 };
-struct dest_constraint {
-	struct dest_constraint_hop from;
-	struct dest_constraint_hop to;
+بنية dest_constraint {
+	بنية dest_constraint_hop from;
+	بنية dest_constraint_hop to;
 };
 
-int	ssh_get_authentication_socket(int *fdp);
-int	ssh_get_authentication_socket_path(const char *authsocket, int *fdp);
-void	ssh_close_authentication_socket(int sock);
+صحيح	ssh_get_authentication_socket(صحيح *fdp);
+صحيح	ssh_get_authentication_socket_path(ثابت حرف *authsocket, صحيح *fdp);
+فراغ	ssh_close_authentication_socket(صحيح sock);
 
-int	ssh_lock_agent(int sock, int lock, const char *password);
-int	ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp);
-void	ssh_free_identitylist(struct ssh_identitylist *idl);
-int	ssh_add_identity_constrained(int sock, struct sshkey *key,
-    const char *comment, u_int life, u_int confirm, const char *provider,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints);
-int	ssh_agent_has_key(int sock, const struct sshkey *key);
-int	ssh_remove_identity(int sock, const struct sshkey *key);
-int	ssh_update_card(int sock, int add, const char *reader_id,
-	    const char *pin, u_int life, u_int confirm,
-	    struct dest_constraint **dest_constraints,
+صحيح	ssh_lock_agent(صحيح sock, صحيح lock, ثابت حرف *password);
+صحيح	ssh_fetch_identitylist(صحيح sock, بنية ssh_identitylist **idlp);
+فراغ	ssh_free_identitylist(بنية ssh_identitylist *idl);
+صحيح	ssh_add_identity_constrained(صحيح sock, بنية sshkey *ئاچقۇچ,
+    ثابت حرف *comment, u_int life, u_int confirm, ثابت حرف *provider,
+    بنية dest_constraint **dest_constraints, size_t ndest_constraints);
+صحيح	ssh_agent_has_ئاچقۇچ(صحيح sock, ثابت بنية sshkey *ئاچقۇچ);
+صحيح	ssh_remove_identity(صحيح sock, ثابت بنية sshkey *ئاچقۇچ);
+صحيح	ssh_update_card(صحيح sock, صحيح add, ثابت حرف *reader_id,
+	    ثابت حرف *pin, u_int life, u_int confirm,
+	    بنية dest_constraint **dest_constraints,
 	    size_t ndest_constraints,
-	    int cert_only, struct sshkey **certs, size_t ncerts);
-int	ssh_remove_all_identities(int sock, int version);
+	    صحيح cert_only, بنية sshkey **certs, size_t ncerts);
+صحيح	ssh_remove_all_identities(صحيح sock, صحيح version);
 
-int	ssh_agent_sign(int sock, const struct sshkey *key,
+صحيح	ssh_agent_sign(صحيح sock, ثابت بنية sshkey *ئاچقۇچ,
 	    u_char **sigp, size_t *lenp,
-	    const u_char *data, size_t datalen, const char *alg, u_int compat);
+	    ثابت u_char *data, size_t datalen, ثابت حرف *alg, u_int compat);
 
-int	ssh_agent_bind_hostkey(int sock, const struct sshkey *key,
-    const struct sshbuf *session_id, const struct sshbuf *signature,
-    int forwarding);
+صحيح	ssh_agent_bind_hostkey(صحيح sock, ثابت بنية sshkey *ئاچقۇچ,
+    ثابت بنية sshbuf *session_id, ثابت بنية sshbuf *signature,
+    صحيح forwarding);
 
-int	ssh_agent_query_extensions(int sock, char ***exts);
+صحيح	ssh_agent_query_extensions(صحيح sock, حرف ***exts);
 
 /* Messages for the authentication agent connection. */
 #define SSH_AGENTC_REQUEST_RSA_IDENTITIES	1
@@ -90,8 +90,8 @@ int	ssh_agent_query_extensions(int sock, char ***exts);
 #define SSH2_AGENTC_REMOVE_ALL_IDENTITIES	19
 
 /* smartcard */
-#define SSH_AGENTC_ADD_SMARTCARD_KEY		20
-#define SSH_AGENTC_REMOVE_SMARTCARD_KEY		21
+#define SSH_AGENTC_ADD_SMARTCARD_ئاچقۇچ		20
+#define SSH_AGENTC_REMOVE_SMARTCARD_ئاچقۇچ		21
 
 /* lock/unlock the agent */
 #define SSH_AGENTC_LOCK				22
@@ -100,7 +100,7 @@ int	ssh_agent_query_extensions(int sock, char ***exts);
 /* add key with constraints */
 #define SSH_AGENTC_ADD_RSA_ID_CONSTRAINED	24
 #define SSH2_AGENTC_ADD_ID_CONSTRAINED		25
-#define SSH_AGENTC_ADD_SMARTCARD_KEY_CONSTRAINED 26
+#define SSH_AGENTC_ADD_SMARTCARD_ئاچقۇچ_CONSTRAINED 26
 
 /* generic extension mechanism */
 #define SSH_AGENTC_EXTENSION			27

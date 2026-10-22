@@ -23,54 +23,54 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <stdlib.h>
-#include <pwd.h>
-#include <string.h>
-#include <stdarg.h>
+#ضمن <stdlib.h>
+#ضمن <pwd.h>
+#ضمن <string.h>
+#ضمن <stdarg.h>
 
-#include "xmalloc.h"
-#include "ssh2.h"
-#include "packet.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "canohost.h"
+#ضمن "xmalloc.h"
+#ضمن "ssh2.h"
+#ضمن "packet.h"
+#ضمن "kex.h"
+#ضمن "sshbuf.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "servconf.h"
+#ضمن "sshkey.h"
+#ضمن "hostfile.h"
+#ضمن "auth.h"
+#ضمن "canohost.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#ضمن "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
-#include "pathnames.h"
-#include "ssherr.h"
-#include "match.h"
+#ضمن "monitor_wrap.h"
+#ضمن "pathnames.h"
+#ضمن "ssherr.h"
+#ضمن "match.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_hostbased;
+خارجي ServerOptions options;
+خارجي بنية authmethod_cfg methodcfg_hostbased;
 
-static int
-userauth_hostbased(struct ssh *ssh, const char *method)
+ساكن صحيح
+userauth_hostbased(بنية ssh *ssh, ثابت حرف *method)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct sshbuf *keyblob = NULL, *b = NULL;
-	struct sshkey *key = NULL;
-	char *pkalg, *cuser, *chost;
+	بنية sshbuf *keyblob = عدم, *b = عدم;
+	بنية sshkey *ئاچقۇچ = عدم;
+	حرف *pkalg, *cuser, *chost;
 	u_char *sig;
 	size_t alen, slen;
-	int r, pktype, authenticated = 0;
+	صحيح r, pktype, authenticated = 0;
 
-	if ((r = sshpkt_get_cstring(ssh, &pkalg, &alen)) != 0 ||
+	إذا ((r = sshpkt_get_cstring(ssh, &pkalg, &alen)) != 0 ||
 	    (r = sshpkt_getb_froms(ssh, &keyblob)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &chost, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &cuser, NULL)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &chost, عدم)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &cuser, عدم)) != 0 ||
 	    (r = sshpkt_get_string(ssh, &sig, &slen)) != 0)
 		fatal_fr(r, "parse packet");
 
@@ -81,63 +81,63 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 	sshbuf_dump_data(sig, slen, stderr);
 #endif
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC) {
+	إذا (pktype == ئاچقۇچ_UNSPEC) {
 		/* this is perfectly legal */
 		logit_f("unsupported public key algorithm: %s",
 		    pkalg);
-		goto done;
+		اذهب done;
 	}
-	if (match_pattern_list(pkalg,
+	إذا (match_pattern_list(pkalg,
 	    options.hostbased_accepted_algos, 0) != 1) {
 		logit_f("signature algorithm %s not in "
 		    "HostbasedAcceptedAlgorithms", pkalg);
-		goto done;
+		اذهب done;
 	}
-	if ((b = sshbuf_fromb(keyblob)) == NULL)
+	إذا ((b = sshbuf_fromb(keyblob)) == عدم)
 		fatal_f("sshbuf_fromb failed");
-	switch ((r = sshkey_fromb_allowlist(b, &key,
+	بدل ((r = sshkey_fromb_allowlist(b, &ئاچقۇچ,
 	    options.hostbased_accepted_algos, options.ca_sign_algorithms))) {
-	case 0:
+	حالة 0:
 		/* ok */
-		break;
-	case SSH_ERR_KEY_ALG_UNSUPPORTED:
+		اكسر;
+	حالة SSH_ERR_ئاچقۇچ_ALG_UNSUPPORTED:
 		/* This shouldn't happen unless the client is being weird */
 		logit_f("key algorithm differs from signature algorithm %s and "
 		    "is not in HostbasedAcceptedAlgorithms", pkalg);
-		goto done;
-	case SSH_ERR_SIGN_ALG_UNSUPPORTED:
+		اذهب done;
+	حالة SSH_ERR_SIGN_ALG_UNSUPPORTED:
 		logit_fr(r, "certificate signature algorithm not in "
 		    "CASignatureAlgorithms");
-		goto done;
-	default:
+		اذهب done;
+	افتراضي:
 		error_fr(r, "parse key");
-		goto done;
+		اذهب done;
 	}
 	sshbuf_free(b);
-	b = NULL;
+	b = عدم;
 
-	if (key->type != pktype || (sshkey_type_plain(pktype) == KEY_ECDSA &&
-	    sshkey_ecdsa_nid_from_name(pkalg) != key->ecdsa_nid)) {
+	إذا (ئاچقۇچ->type != pktype || (sshkey_type_plain(pktype) == ئاچقۇچ_ECDSA &&
+	    sshkey_ecdsa_nid_from_name(pkalg) != ئاچقۇچ->ecdsa_nid)) {
 		error_f("key type mismatch for decoded key "
-		    "(received %s, expected %s)", sshkey_ssh_name(key), pkalg);
-		goto done;
+		    "(received %s, expected %s)", sshkey_ssh_name(ئاچقۇچ), pkalg);
+		اذهب done;
 	}
-	if ((r = sshkey_check_rsa_length(key,
+	إذا ((r = sshkey_check_rsa_length(ئاچقۇچ,
 	    options.required_rsa_size)) != 0) {
-		logit_r(r, "refusing %s key", sshkey_type(key));
-		goto done;
+		logit_r(r, "refusing %s key", sshkey_type(ئاچقۇچ));
+		اذهب done;
 	}
 
-	if (!authctxt->valid || authctxt->user == NULL) {
+	إذا (!authctxt->valid || authctxt->user == عدم) {
 		debug2_f("disabled because of invalid user");
-		goto done;
+		اذهب done;
 	}
 
-	if ((b = sshbuf_new()) == NULL)
+	إذا ((b = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 	/* reconstruct packet */
-	if ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	إذا ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_ئۇچۇر_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->service)) != 0 ||
 	    (r = sshbuf_put_cstring(b, method)) != 0 ||
@@ -155,37 +155,37 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 
 	/* test for allowed key and correct signature */
 	authenticated = 0;
-	if (mm_hostbased_key_allowed(ssh, authctxt->pw, cuser,
-	    chost, key) &&
-	    mm_sshkey_verify(key, sig, slen,
-	    sshbuf_ptr(b), sshbuf_len(b), pkalg, ssh->compat, NULL) == 0)
+	إذا (mm_hostbased_ئاچقۇچ_allowed(ssh, authctxt->pw, cuser,
+	    chost, ئاچقۇچ) &&
+	    mm_sshkey_verify(ئاچقۇچ, sig, slen,
+	    sshbuf_ptr(b), sshbuf_len(b), pkalg, ssh->compat, عدم) == 0)
 		authenticated = 1;
 
-	auth2_record_key(authctxt, authenticated, key);
+	auth2_record_ئاچقۇچ(authctxt, authenticated, ئاچقۇچ);
 done:
 	debug2_f("authenticated %d", authenticated);
-	sshkey_free(key);
+	sshkey_free(ئاچقۇچ);
 	sshbuf_free(b);
 	sshbuf_free(keyblob);
-	free(pkalg);
-	free(cuser);
-	free(chost);
-	free(sig);
-	return authenticated;
+	حرر(pkalg);
+	حرر(cuser);
+	حرر(chost);
+	حرر(sig);
+	أرجع authenticated;
 }
 
 /* return 1 if given hostkey is allowed */
-int
-hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
-    const char *cuser, char *chost, struct sshkey *key)
+صحيح
+hostbased_ئاچقۇچ_allowed(بنية ssh *ssh, بنية passwd *pw,
+    ثابت حرف *cuser, حرف *chost, بنية sshkey *ئاچقۇچ)
 {
-	const char *resolvedname, *ipaddr, *lookup, *reason;
+	ثابت حرف *resolvedname, *ipaddr, *lookup, *reason;
 	HostStatus host_status;
-	int len;
-	char *fp;
+	صحيح len;
+	حرف *fp;
 
-	if (auth_key_is_revoked(key))
-		return 0;
+	إذا (auth_ئاچقۇچ_is_revoked(ئاچقۇچ))
+		أرجع 0;
 
 	resolvedname = auth_get_canonical_hostname(ssh, options.use_dns);
 	ipaddr = ssh_remote_ipaddr(ssh);
@@ -193,81 +193,81 @@ hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
 	debug2_f("chost %s resolvedname %s ipaddr %s",
 	    chost, resolvedname, ipaddr);
 
-	if (((len = strlen(chost)) > 0) && chost[len - 1] == '.') {
+	إذا (((len = strlen(chost)) > 0) && chost[len - 1] == '.') {
 		debug2("stripping trailing dot from chost %s", chost);
 		chost[len - 1] = '\0';
 	}
 
-	if (options.hostbased_uses_name_from_packet_only) {
-		if (auth_rhosts2(pw, cuser, chost, chost) == 0) {
+	إذا (options.hostbased_uses_name_from_packet_only) {
+		إذا (auth_rhosts2(pw, cuser, chost, chost) == 0) {
 			debug2_f("auth_rhosts2 refused user \"%.100s\" "
 			    "host \"%.100s\" (from packet)", cuser, chost);
-			return 0;
+			أرجع 0;
 		}
 		lookup = chost;
-	} else {
-		if (strcasecmp(resolvedname, chost) != 0)
+	} وإلا {
+		إذا (strcasecmp(resolvedname, chost) != 0)
 			logit("userauth_hostbased mismatch: "
 			    "client sends %s, but we resolve %s to %s",
 			    chost, ipaddr, resolvedname);
-		if (auth_rhosts2(pw, cuser, resolvedname, ipaddr) == 0) {
+		إذا (auth_rhosts2(pw, cuser, resolvedname, ipaddr) == 0) {
 			debug2_f("auth_rhosts2 refused "
 			    "user \"%.100s\" host \"%.100s\" addr \"%.100s\"",
 			    cuser, resolvedname, ipaddr);
-			return 0;
+			أرجع 0;
 		}
 		lookup = resolvedname;
 	}
 	debug2_f("access allowed by auth_rhosts2");
 
-	if (sshkey_is_cert(key) && sshkey_cert_check_host(key, lookup,
+	إذا (sshkey_is_cert(ئاچقۇچ) && sshkey_cert_check_host(ئاچقۇچ, lookup,
 	     options.ca_sign_algorithms, &reason) != 0) {
-		if ((fp = sshkey_fingerprint(key->cert->signature_key,
-		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
+		إذا ((fp = sshkey_fingerprint(ئاچقۇچ->cert->signature_ئاچقۇچ,
+		    options.fingerprint_hash, SSH_FP_DEFAULT)) == عدم)
 			fatal_f("sshkey_fingerprint fail");
 		error("Refusing certificate ID \"%s\" serial=%llu signed by "
-		    "%s CA %s: %s", key->cert->key_id,
-		    (unsigned long long)key->cert->serial,
-		    sshkey_type(key->cert->signature_key), fp, reason);
+		    "%s CA %s: %s", ئاچقۇچ->cert->ئاچقۇچ_id,
+		    (unsigned long long)ئاچقۇچ->cert->serial,
+		    sshkey_type(ئاچقۇچ->cert->signature_ئاچقۇچ), fp, reason);
 		auth_debug_add("Refused Certificate ID \"%s\" serial=%llu: %s",
-		    key->cert->key_id, (unsigned long long)key->cert->serial,
+		    ئاچقۇچ->cert->ئاچقۇچ_id, (unsigned long long)ئاچقۇچ->cert->serial,
 		    reason);
-		free(fp);
-		return 0;
+		حرر(fp);
+		أرجع 0;
 	}
 
-	host_status = check_key_in_hostfiles(pw, key, lookup,
+	host_status = check_ئاچقۇچ_in_hostfiles(pw, ئاچقۇچ, lookup,
 	    _PATH_SSH_SYSTEM_HOSTFILE,
-	    options.ignore_user_known_hosts ? NULL : _PATH_SSH_USER_HOSTFILE);
+	    options.ignore_user_known_hosts ? عدم : _PATH_SSH_USER_HOSTFILE);
 
 	/* backward compat if no key has been found. */
-	if (host_status == HOST_NEW) {
-		host_status = check_key_in_hostfiles(pw, key, lookup,
+	إذا (host_status == HOST_NEW) {
+		host_status = check_ئاچقۇچ_in_hostfiles(pw, ئاچقۇچ, lookup,
 		    _PATH_SSH_SYSTEM_HOSTFILE2,
-		    options.ignore_user_known_hosts ? NULL :
+		    options.ignore_user_known_hosts ? عدم :
 		    _PATH_SSH_USER_HOSTFILE2);
 	}
 
-	if (host_status == HOST_OK) {
-		if (sshkey_is_cert(key)) {
-			if ((fp = sshkey_fingerprint(key->cert->signature_key,
-			    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
+	إذا (host_status == HOST_OK) {
+		إذا (sshkey_is_cert(ئاچقۇچ)) {
+			إذا ((fp = sshkey_fingerprint(ئاچقۇچ->cert->signature_ئاچقۇچ,
+			    options.fingerprint_hash, SSH_FP_DEFAULT)) == عدم)
 				fatal_f("sshkey_fingerprint fail");
 			verbose("Accepted certificate ID \"%s\" signed by "
-			    "%s CA %s from %s@%s", key->cert->key_id,
-			    sshkey_type(key->cert->signature_key), fp,
+			    "%s CA %s from %s@%s", ئاچقۇچ->cert->ئاچقۇچ_id,
+			    sshkey_type(ئاچقۇچ->cert->signature_ئاچقۇچ), fp,
 			    cuser, lookup);
-		} else {
-			if ((fp = sshkey_fingerprint(key,
-			    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
+		} وإلا {
+			إذا ((fp = sshkey_fingerprint(ئاچقۇچ,
+			    options.fingerprint_hash, SSH_FP_DEFAULT)) == عدم)
 				fatal_f("sshkey_fingerprint fail");
 			verbose("Accepted %s public key %s from %s@%s",
-			    sshkey_type(key), fp, cuser, lookup);
+			    sshkey_type(ئاچقۇچ), fp, cuser, lookup);
 		}
-		free(fp);
+		حرر(fp);
 	}
 
-	return (host_status == HOST_OK);
+	أرجع (host_status == HOST_OK);
 }
 
 Authmethod method_hostbased = {

@@ -33,23 +33,23 @@
 /* for 256-bit keys, fewer for less */
 #define AES_MAXROUNDS	14
 
-typedef unsigned char	u8;
-typedef unsigned short	u16;
-typedef unsigned int	u32;
+تعريفنوع unsigned حرف	u8;
+تعريفنوع unsigned short	u16;
+تعريفنوع unsigned صحيح	u32;
 
-int	rijndaelKeySetupEnc(unsigned int [], const unsigned char [], int);
-void	rijndaelEncrypt(const unsigned int [], int, const u8 [16], u8 [16]);
+صحيح	rijndael_ئاچقۇچ_Setup_Enc(unsigned صحيح [], ثابت unsigned حرف [], صحيح);
+فراغ	rijndaelEncrypt(ثابت unsigned صحيح [], صحيح, ثابت u8 [16], u8 [16]);
 
 /*  The structure for key information */
-typedef struct {
-	int	decrypt;
-	int	Nr;		/* key-length-dependent number of rounds */
+تعريفنوع بنية {
+	صحيح	decrypt;
+	صحيح	Nr;		/* key-length-dependent number of rounds */
 	u32	ek[4*(AES_MAXROUNDS + 1)];	/* encrypt key schedule */
 	u32	dk[4*(AES_MAXROUNDS + 1)];	/* decrypt key schedule */
 } rijndael_ctx;
 
-void	 rijndael_set_key(rijndael_ctx *, u_char *, int, int);
-void	 rijndael_decrypt(rijndael_ctx *, u_char *, u_char *);
-void	 rijndael_encrypt(rijndael_ctx *, u_char *, u_char *);
+فراغ	 rijndael_set_ئاچقۇچ(rijndael_ctx *, u_char *, صحيح, صحيح);
+فراغ	 rijndael_decrypt(rijndael_ctx *, u_char *, u_char *);
+فراغ	 rijndael_encrypt(rijndael_ctx *, u_char *, u_char *);
 
 #endif /* _PRIVATE_RIJNDAEL_H */
