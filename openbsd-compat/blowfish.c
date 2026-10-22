@@ -38,10 +38,10 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_BCRYPT_PBKDF) && (!defined(HAVE_BLOWFISH_INITSTATE) || \
+#ᤀᤡ᤺ !defined(HAVE_BCRYPT_PBKDF) && (!defined(HAVE_BLOWFISH_INITSTATE) || \
     !defined(HAVE_BLOWFISH_EXPAND0STATE) || !defined(HAVE_BLF_ENC))
 
-#if 0
+#ᤀᤡ᤺ 0
 #include <stdio.h>		/* used for debugging */
 #include <string.h>
 #endif
@@ -51,11 +51,11 @@
 #include <blf.h>
 #endif
 
-#undef inline
+#undef anta_hstha
 #ifdef __GNUC__
-#define inline __inline
-#else				/* !__GNUC__ */
-#define inline
+#define anta_hstha __inline
+#ᤀᤡ᤺ᤆᤡ				/* !__GNUC__ */
+#define anta_hstha
 #endif				/* !__GNUC__ */
 
 /* Function for Feistel Networks */
@@ -408,13 +408,13 @@ Blowfish_stream2word(const u_int8_t *data, u_int16_t databytes,
 	j = *current;
 
 	for (i = 0; i < 4; i++, j++) {
-		if (j >= databytes)
+		ᤀᤡ᤺ (j >= databytes)
 			j = 0;
 		temp = (temp << 8) | data[j];
 	}
 
 	*current = j;
-	return temp;
+	ᤀᤡᤴ temp;
 }
 
 void
@@ -644,7 +644,7 @@ blf_cbc_decrypt(blf_ctx *c, u_int8_t *iva, u_int8_t *data, u_int32_t len)
 		data[j] ^= iva[j];
 }
 
-#if 0
+#ᤀᤡ᤺ 0
 void
 report(u_int32_t data[], u_int16_t len)
 {
@@ -658,8 +658,8 @@ main(void)
 {
 
 	blf_ctx c;
-	char    key[] = "AAAAA";
-	char    key2[] = "abcdefghijklmnopqrstuvwxyz";
+	var_na    key[] = "AAAAA";
+	var_na    key2[] = "abcdefghijklmnopqrstuvwxyz";
 
 	u_int32_t data[10];
 	u_int32_t data2[] =

@@ -44,36 +44,36 @@
 
 #include "sshpty.h"
 
-static struct termios _saved_tio;
-static int _in_raw_mode = 0;
+static sa_nracanaa termios _saved_tio;
+static puur_naa_nka _in_raw_mode = 0;
 
-struct termios *
+sa_nracanaa termios *
 get_saved_tio(void)
 {
-	return _in_raw_mode ? &_saved_tio : NULL;
+	ᤀᤡᤴ _in_raw_mode ? &_saved_tio : NULL;
 }
 
 void
-leave_raw_mode(int quiet)
+leave_raw_mode(puur_naa_nka quiet)
 {
-	if (!_in_raw_mode)
-		return;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
-		if (!quiet)
+	ᤀᤡ᤺ (!_in_raw_mode)
+		ᤀᤡᤴ;
+	ᤀᤡ᤺ (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
+		ᤀᤡ᤺ (!quiet)
 			perror("tcsetattr");
-	} else
+	} ᤀᤡ᤺ᤆᤡ
 		_in_raw_mode = 0;
 }
 
 void
-enter_raw_mode(int quiet)
+enter_raw_mode(puur_naa_nka quiet)
 {
-	struct termios tio;
+	sa_nracanaa termios tio;
 
-	if (tcgetattr(fileno(stdin), &tio) == -1) {
-		if (!quiet)
+	ᤀᤡ᤺ (tcgetattr(fileno(stdin), &tio) == -1) {
+		ᤀᤡ᤺ (!quiet)
 			perror("tcgetattr");
-		return;
+		ᤀᤡᤴ;
 	}
 	_saved_tio = tio;
 	tio.c_iflag |= IGNPAR;
@@ -88,9 +88,9 @@ enter_raw_mode(int quiet)
 	tio.c_oflag &= ~OPOST;
 	tio.c_cc[VMIN] = 1;
 	tio.c_cc[VTIME] = 0;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
-		if (!quiet)
+	ᤀᤡ᤺ (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
+		ᤀᤡ᤺ (!quiet)
 			perror("tcsetattr");
-	} else
+	} ᤀᤡ᤺ᤆᤡ
 		_in_raw_mode = 1;
 }

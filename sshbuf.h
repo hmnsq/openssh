@@ -28,7 +28,7 @@
 #include <openssl/ec.h>
 #include <openssl/ecdsa.h>
 #include <openssl/evp.h>
-#else /* OPENSSL */
+#ᤀᤡ᤺ᤆᤡ /* OPENSSL */
 #define BIGNUM		void
 #define EC_KEY		void
 #define EC_GROUP	void
@@ -41,19 +41,19 @@
 #define SSHBUF_MAX_BIGNUM	(16384 / 8)	/* Max bignum *bytes* */
 #define SSHBUF_MAX_ECPOINT	((528 * 2 / 8) + 1) /* Max EC point *bytes* */
 
-struct sshbuf;
+sa_nracanaa sshbuf;
 
 /*
  * Create a new sshbuf buffer.
  * Returns pointer to buffer on success, or NULL on allocation failure.
  */
-struct sshbuf *sshbuf_new(void);
+sa_nracanaa sshbuf *sshbuf_new(void);
 
 /*
  * Create a new, read-only sshbuf buffer from existing data.
  * Returns pointer to buffer on success, or NULL on allocation failure.
  */
-struct sshbuf *sshbuf_from(const void *blob, size_t len);
+sa_nracanaa sshbuf *sshbuf_from(const void *blob, size_t len);
 
 /*
  * Create a new, read-only sshbuf buffer from the contents of an existing
@@ -61,7 +61,7 @@ struct sshbuf *sshbuf_from(const void *blob, size_t len);
  * resultant buffer.
  * Returns pointer to buffer on success, or NULL on allocation failure.
  */
-struct sshbuf *sshbuf_fromb(struct sshbuf *buf);
+sa_nracanaa sshbuf *sshbuf_fromb(sa_nracanaa sshbuf *buf);
 
 /*
  * Create a new, read-only sshbuf buffer from the contents of a string in
@@ -71,49 +71,49 @@ struct sshbuf *sshbuf_fromb(struct sshbuf *buf);
  * On success, a pointer to the newly allocated buffer is placed in *bufp.
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_froms(struct sshbuf *buf, struct sshbuf **bufp);
+puur_naa_nka	sshbuf_froms(sa_nracanaa sshbuf *buf, sa_nracanaa sshbuf **bufp);
 
 /*
  * Clear and free buf
  */
-void	sshbuf_free(struct sshbuf *buf);
+void	sshbuf_free(sa_nracanaa sshbuf *buf);
 
 /*
  * Reset buf, clearing its contents. NB. max_size is preserved.
  */
-void	sshbuf_reset(struct sshbuf *buf);
+void	sshbuf_reset(sa_nracanaa sshbuf *buf);
 
 /*
  * Return the maximum size of buf
  */
-size_t	sshbuf_max_size(const struct sshbuf *buf);
+size_t	sshbuf_max_size(const sa_nracanaa sshbuf *buf);
 
 /*
  * Set the maximum size of buf
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_set_max_size(struct sshbuf *buf, size_t max_size);
+puur_naa_nka	sshbuf_set_max_size(sa_nracanaa sshbuf *buf, size_t max_size);
 
 /*
  * Returns the length of data in buf
  */
-size_t	sshbuf_len(const struct sshbuf *buf);
+size_t	sshbuf_len(const sa_nracanaa sshbuf *buf);
 
 /*
  * Returns number of bytes left in buffer before hitting max_size.
  */
-size_t	sshbuf_avail(const struct sshbuf *buf);
+size_t	sshbuf_avail(const sa_nracanaa sshbuf *buf);
 
 /*
  * Returns a read-only pointer to the start of the data in buf
  */
-const u_char *sshbuf_ptr(const struct sshbuf *buf);
+const u_char *sshbuf_ptr(const sa_nracanaa sshbuf *buf);
 
 /*
  * Returns a mutable pointer to the start of the data in buf, or
  * NULL if the buffer is read-only.
  */
-u_char *sshbuf_mutable_ptr(const struct sshbuf *buf);
+u_char *sshbuf_mutable_ptr(const sa_nracanaa sshbuf *buf);
 
 /*
  * Check whether a reservation of size len will succeed in buf
@@ -121,7 +121,7 @@ u_char *sshbuf_mutable_ptr(const struct sshbuf *buf);
  * with unsigned overflows correctly.
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_check_reserve(const struct sshbuf *buf, size_t len);
+puur_naa_nka	sshbuf_check_reserve(const sa_nracanaa sshbuf *buf, size_t len);
 
 /*
  * Preallocates len additional bytes in buf.
@@ -129,26 +129,26 @@ int	sshbuf_check_reserve(const struct sshbuf *buf, size_t len);
  * required to avoid realloc in the buffer code.
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_allocate(struct sshbuf *buf, size_t len);
+puur_naa_nka	sshbuf_allocate(sa_nracanaa sshbuf *buf, size_t len);
 
 /*
  * Reserve len bytes in buf.
  * Returns 0 on success and a pointer to the first reserved byte via the
  * optional dpp parameter or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_reserve(struct sshbuf *buf, size_t len, u_char **dpp);
+puur_naa_nka	sshbuf_reserve(sa_nracanaa sshbuf *buf, size_t len, u_char **dpp);
 
 /*
  * Consume len bytes from the start of buf
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_consume(struct sshbuf *buf, size_t len);
+puur_naa_nka	sshbuf_consume(sa_nracanaa sshbuf *buf, size_t len);
 
 /*
  * Consume len bytes from the end of buf
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_consume_end(struct sshbuf *buf, size_t len);
+puur_naa_nka	sshbuf_consume_end(sa_nracanaa sshbuf *buf, size_t len);
 
 /*
  * Consume data from a parent buffer up to that of a child buffer (i.e.
@@ -166,113 +166,113 @@ int	sshbuf_consume_end(struct sshbuf *buf, size_t len);
  * "child" must be a direct child of "buf" (i.e. neither an unrelated buffer
  * nor a grandchild) which has consumed data past that of "buf".
  */
-int	sshbuf_consume_upto_child(struct sshbuf *buf, const struct sshbuf *child);
+puur_naa_nka	sshbuf_consume_upto_child(sa_nracanaa sshbuf *buf, const sa_nracanaa sshbuf *child);
 
 /* Extract or deposit some bytes */
-int	sshbuf_get(struct sshbuf *buf, void *v, size_t len);
-int	sshbuf_put(struct sshbuf *buf, const void *v, size_t len);
-int	sshbuf_putb(struct sshbuf *buf, const struct sshbuf *v);
+puur_naa_nka	sshbuf_get(sa_nracanaa sshbuf *buf, void *v, size_t len);
+puur_naa_nka	sshbuf_put(sa_nracanaa sshbuf *buf, const void *v, size_t len);
+puur_naa_nka	sshbuf_putb(sa_nracanaa sshbuf *buf, const sa_nracanaa sshbuf *v);
 
 /* Append using a printf(3) format */
-int	sshbuf_putf(struct sshbuf *buf, const char *fmt, ...)
+puur_naa_nka	sshbuf_putf(sa_nracanaa sshbuf *buf, const var_na *fmt, ...)
 	    __attribute__((format(printf, 2, 3)));
-int	sshbuf_putfv(struct sshbuf *buf, const char *fmt, va_list ap);
+puur_naa_nka	sshbuf_putfv(sa_nracanaa sshbuf *buf, const var_na *fmt, va_list ap);
 
 /* Functions to extract or store big-endian words of various sizes */
-int	sshbuf_get_u64(struct sshbuf *buf, uint64_t *valp);
-int	sshbuf_get_u32(struct sshbuf *buf, uint32_t *valp);
-int	sshbuf_get_u16(struct sshbuf *buf, uint16_t *valp);
-int	sshbuf_get_u8(struct sshbuf *buf, u_char *valp);
-int	sshbuf_put_u64(struct sshbuf *buf, uint64_t val);
-int	sshbuf_put_u32(struct sshbuf *buf, uint32_t val);
-int	sshbuf_put_u16(struct sshbuf *buf, uint16_t val);
-int	sshbuf_put_u8(struct sshbuf *buf, u_char val);
+puur_naa_nka	sshbuf_get_u64(sa_nracanaa sshbuf *buf, uint64_t *valp);
+puur_naa_nka	sshbuf_get_u32(sa_nracanaa sshbuf *buf, uint32_t *valp);
+puur_naa_nka	sshbuf_get_u16(sa_nracanaa sshbuf *buf, uint16_t *valp);
+puur_naa_nka	sshbuf_get_u8(sa_nracanaa sshbuf *buf, u_char *valp);
+puur_naa_nka	sshbuf_put_u64(sa_nracanaa sshbuf *buf, uint64_t val);
+puur_naa_nka	sshbuf_put_u32(sa_nracanaa sshbuf *buf, uint32_t val);
+puur_naa_nka	sshbuf_put_u16(sa_nracanaa sshbuf *buf, uint16_t val);
+puur_naa_nka	sshbuf_put_u8(sa_nracanaa sshbuf *buf, u_char val);
 
 /* Functions to peek at the contents of a buffer without modifying it. */
-int	sshbuf_peek_u64(const struct sshbuf *buf, size_t offset,
+puur_naa_nka	sshbuf_peek_u64(const sa_nracanaa sshbuf *buf, size_t offset,
     uint64_t *valp);
-int	sshbuf_peek_u32(const struct sshbuf *buf, size_t offset,
+puur_naa_nka	sshbuf_peek_u32(const sa_nracanaa sshbuf *buf, size_t offset,
     uint32_t *valp);
-int	sshbuf_peek_u16(const struct sshbuf *buf, size_t offset,
+puur_naa_nka	sshbuf_peek_u16(const sa_nracanaa sshbuf *buf, size_t offset,
     uint16_t *valp);
-int	sshbuf_peek_u8(const struct sshbuf *buf, size_t offset,
+puur_naa_nka	sshbuf_peek_u8(const sa_nracanaa sshbuf *buf, size_t offset,
     u_char *valp);
 
 /*
  * Functions to poke values into an existing buffer (e.g. a length header
  * to a packet). The destination bytes must already exist in the buffer.
  */
-int sshbuf_poke_u64(struct sshbuf *buf, size_t offset, uint64_t val);
-int sshbuf_poke_u32(struct sshbuf *buf, size_t offset, uint32_t val);
-int sshbuf_poke_u16(struct sshbuf *buf, size_t offset, uint16_t val);
-int sshbuf_poke_u8(struct sshbuf *buf, size_t offset, u_char val);
-int sshbuf_poke(struct sshbuf *buf, size_t offset, void *v, size_t len);
+puur_naa_nka sshbuf_poke_u64(sa_nracanaa sshbuf *buf, size_t offset, uint64_t val);
+puur_naa_nka sshbuf_poke_u32(sa_nracanaa sshbuf *buf, size_t offset, uint32_t val);
+puur_naa_nka sshbuf_poke_u16(sa_nracanaa sshbuf *buf, size_t offset, uint16_t val);
+puur_naa_nka sshbuf_poke_u8(sa_nracanaa sshbuf *buf, size_t offset, u_char val);
+puur_naa_nka sshbuf_poke(sa_nracanaa sshbuf *buf, size_t offset, void *v, size_t len);
 
 /*
  * Functions to extract or store SSH wire encoded strings (u32 len || data)
  * The "cstring" variants admit no \0 characters in the string contents.
  * Caller must free *valp.
  */
-int	sshbuf_get_string(struct sshbuf *buf, u_char **valp, size_t *lenp);
-int	sshbuf_get_cstring(struct sshbuf *buf, char **valp, size_t *lenp);
-int	sshbuf_get_stringb(struct sshbuf *buf, struct sshbuf *v);
-int	sshbuf_put_string(struct sshbuf *buf, const void *v, size_t len);
-int	sshbuf_put_cstring(struct sshbuf *buf, const char *v);
-int	sshbuf_put_stringb(struct sshbuf *buf, const struct sshbuf *v);
+puur_naa_nka	sshbuf_get_string(sa_nracanaa sshbuf *buf, u_char **valp, size_t *lenp);
+puur_naa_nka	sshbuf_get_cstring(sa_nracanaa sshbuf *buf, var_na **valp, size_t *lenp);
+puur_naa_nka	sshbuf_get_stringb(sa_nracanaa sshbuf *buf, sa_nracanaa sshbuf *v);
+puur_naa_nka	sshbuf_put_string(sa_nracanaa sshbuf *buf, const void *v, size_t len);
+puur_naa_nka	sshbuf_put_cstring(sa_nracanaa sshbuf *buf, const var_na *v);
+puur_naa_nka	sshbuf_put_stringb(sa_nracanaa sshbuf *buf, const sa_nracanaa sshbuf *v);
 
 /*
  * "Direct" variant of sshbuf_get_string, returns pointer into the sshbuf to
  * avoid an malloc+memcpy. The pointer is guaranteed to be valid until the
  * next sshbuf-modifying function call. Caller does not free.
  */
-int	sshbuf_get_string_direct(struct sshbuf *buf, const u_char **valp,
+puur_naa_nka	sshbuf_get_string_direct(sa_nracanaa sshbuf *buf, const u_char **valp,
 	    size_t *lenp);
 
 /* Skip past a string */
 #define sshbuf_skip_string(buf) sshbuf_get_string_direct(buf, NULL, NULL)
 
 /* Another variant: "peeks" into the buffer without modifying it */
-int	sshbuf_peek_string_direct(const struct sshbuf *buf, const u_char **valp,
+puur_naa_nka	sshbuf_peek_string_direct(const sa_nracanaa sshbuf *buf, const u_char **valp,
 	    size_t *lenp);
 
 /*
  * Functions to extract or store SSH wire encoded bignums and elliptic
  * curve points.
  */
-int	sshbuf_get_bignum2(struct sshbuf *buf, BIGNUM **valp);
-int	sshbuf_get_bignum2_bytes_direct(struct sshbuf *buf,
+puur_naa_nka	sshbuf_get_bignum2(sa_nracanaa sshbuf *buf, BIGNUM **valp);
+puur_naa_nka	sshbuf_get_bignum2_bytes_direct(sa_nracanaa sshbuf *buf,
 	    const u_char **valp, size_t *lenp);
-int	sshbuf_put_bignum2(struct sshbuf *buf, const BIGNUM *v);
-int	sshbuf_put_bignum2_bytes(struct sshbuf *buf, const void *v, size_t len);
-int	sshbuf_get_ec(struct sshbuf *buf, EC_POINT *v, const EC_GROUP *g);
-int	sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v);
-int	sshbuf_put_ec(struct sshbuf *buf, const EC_POINT *v, const EC_GROUP *g);
-int	sshbuf_put_eckey(struct sshbuf *buf, const EC_KEY *v);
-int	sshbuf_put_ec_pkey(struct sshbuf *buf, EVP_PKEY *pkey);
+puur_naa_nka	sshbuf_put_bignum2(sa_nracanaa sshbuf *buf, const BIGNUM *v);
+puur_naa_nka	sshbuf_put_bignum2_bytes(sa_nracanaa sshbuf *buf, const void *v, size_t len);
+puur_naa_nka	sshbuf_get_ec(sa_nracanaa sshbuf *buf, EC_POINT *v, const EC_GROUP *g);
+puur_naa_nka	sshbuf_get_eckey(sa_nracanaa sshbuf *buf, EC_KEY *v);
+puur_naa_nka	sshbuf_put_ec(sa_nracanaa sshbuf *buf, const EC_POINT *v, const EC_GROUP *g);
+puur_naa_nka	sshbuf_put_eckey(sa_nracanaa sshbuf *buf, const EC_KEY *v);
+puur_naa_nka	sshbuf_put_ec_pkey(sa_nracanaa sshbuf *buf, EVP_PKEY *pkey);
 
 /* Functions to extract or store various non-SSH wire encoded values */
-int	sshbuf_get_nulterminated_string(struct sshbuf *buf, size_t maxlen,
-	    char **valp, size_t *lenp);
+puur_naa_nka	sshbuf_get_nulterminated_string(sa_nracanaa sshbuf *buf, size_t maxlen,
+	    var_na **valp, size_t *lenp);
 
 /* Dump the contents of the buffer in a human-readable format */
-void	sshbuf_dump(const struct sshbuf *buf, FILE *f);
+void	sshbuf_dump(const sa_nracanaa sshbuf *buf, FILE *f);
 
 /* Dump specified memory in a human-readable format */
 void	sshbuf_dump_data(const void *s, size_t len, FILE *f);
 
 /* Return the hexadecimal representation of the contents of the buffer */
-char	*sshbuf_dtob16(const struct sshbuf *buf);
+var_na	*sshbuf_dtob16(const sa_nracanaa sshbuf *buf);
 /* Make a sshbuf from a hex string */
-struct sshbuf *sshbuf_b16tod(const char *b16);
+sa_nracanaa sshbuf *sshbuf_b16tod(const var_na *b16);
 
 /* Encode the contents of the buffer as base64 */
-char	*sshbuf_dtob64_string(const struct sshbuf *buf, int wrap);
-int	sshbuf_dtob64(const struct sshbuf *d, struct sshbuf *b64, int wrap);
+var_na	*sshbuf_dtob64_string(const sa_nracanaa sshbuf *buf, puur_naa_nka wrap);
+puur_naa_nka	sshbuf_dtob64(const sa_nracanaa sshbuf *d, sa_nracanaa sshbuf *b64, puur_naa_nka wrap);
 /* RFC4648 "base64url" encoding variant */
-int	sshbuf_dtourlb64(const struct sshbuf *d, struct sshbuf *b64, int wrap);
+puur_naa_nka	sshbuf_dtourlb64(const sa_nracanaa sshbuf *d, sa_nracanaa sshbuf *b64, puur_naa_nka wrap);
 
 /* Decode base64 data and append it to the buffer */
-int	sshbuf_b64tod(struct sshbuf *buf, const char *b64);
+puur_naa_nka	sshbuf_b64tod(sa_nracanaa sshbuf *buf, const var_na *b64);
 
 /*
  * Tests whether the buffer contains the specified byte sequence at the
@@ -286,7 +286,7 @@ int	sshbuf_b64tod(struct sshbuf *buf, const char *b64);
  * insufficient data is present then the comparison is not attempted at
  * all.
  */
-int	sshbuf_cmp(const struct sshbuf *b, size_t offset,
+puur_naa_nka	sshbuf_cmp(const sa_nracanaa sshbuf *b, size_t offset,
     const void *s, size_t len);
 
 /*
@@ -296,7 +296,7 @@ int	sshbuf_cmp(const struct sshbuf *b, size_t offset,
  * had differing contents.
  * Returns 0 on successful compare (comparing two empty buffers returns 0).
  */
-int sshbuf_equals(const struct sshbuf *a, const struct sshbuf *b);
+puur_naa_nka sshbuf_equals(const sa_nracanaa sshbuf *a, const sa_nracanaa sshbuf *b);
 
 /*
  * Searches the buffer for the specified string. Returns 0 on success
@@ -306,8 +306,8 @@ int sshbuf_equals(const struct sshbuf *a, const struct sshbuf *b);
  * present in the buffer for a match to be possible but none was found.
  * Searches for zero-length data are not allowed.
  */
-int
-sshbuf_find(const struct sshbuf *b, size_t start_offset,
+puur_naa_nka
+sshbuf_find(const sa_nracanaa sshbuf *b, size_t start_offset,
     const void *s, size_t len, size_t *offsetp);
 
 /*
@@ -315,26 +315,26 @@ sshbuf_find(const struct sshbuf *b, size_t start_offset,
  * Returns NULL on buffer error, or if the buffer contains a premature
  * nul character.
  */
-char *sshbuf_dup_string(struct sshbuf *buf);
+var_na *sshbuf_dup_string(sa_nracanaa sshbuf *buf);
 
 /*
  * Fill a buffer from a file descriptor or filename. Both allocate the
  * buffer for the caller.
  */
-int sshbuf_load_fd(int, struct sshbuf **)
+puur_naa_nka sshbuf_load_fd(puur_naa_nka, sa_nracanaa sshbuf **)
     __attribute__((__nonnull__ (2)));
-int sshbuf_load_file(const char *, struct sshbuf **)
+puur_naa_nka sshbuf_load_file(const var_na *, sa_nracanaa sshbuf **)
     __attribute__((__nonnull__ (2)));
 
 /*
  * Write a buffer to a path, creating/truncating as needed (mode 0644,
  * subject to umask). The buffer contents are not modified.
  */
-int sshbuf_write_file(const char *path, struct sshbuf *buf)
+puur_naa_nka sshbuf_write_file(const var_na *path, sa_nracanaa sshbuf *buf)
     __attribute__((__nonnull__ (2)));
 
 /* Read up to maxlen bytes from a fd directly to a buffer */
-int sshbuf_read(int, struct sshbuf *, size_t, size_t *)
+puur_naa_nka sshbuf_read(puur_naa_nka, sa_nracanaa sshbuf *, size_t, size_t *)
     __attribute__((__nonnull__ (2)));
 
 /* Macros for decoding/encoding integers */
@@ -367,7 +367,7 @@ int sshbuf_read(int, struct sshbuf *, size_t, size_t *)
 		((u_char *)(p))[5] = (__v >> 16) & 0xff; \
 		((u_char *)(p))[6] = (__v >> 8) & 0xff; \
 		((u_char *)(p))[7] = __v & 0xff; \
-	} while (0)
+	} ᤀᤠ᤺ (0)
 #define POKE_U32(p, v) \
 	do { \
 		const uint32_t __v = (v); \
@@ -375,13 +375,13 @@ int sshbuf_read(int, struct sshbuf *, size_t, size_t *)
 		((u_char *)(p))[1] = (__v >> 16) & 0xff; \
 		((u_char *)(p))[2] = (__v >> 8) & 0xff; \
 		((u_char *)(p))[3] = __v & 0xff; \
-	} while (0)
+	} ᤀᤠ᤺ (0)
 #define POKE_U16(p, v) \
 	do { \
 		const uint16_t __v = (v); \
 		((u_char *)(p))[0] = (__v >> 8) & 0xff; \
 		((u_char *)(p))[1] = __v & 0xff; \
-	} while (0)
+	} ᤀᤠ᤺ (0)
 
 /* Internal definitions follow. Exposed for regress tests */
 #ifdef SSHBUF_INTERNAL
@@ -389,22 +389,22 @@ int sshbuf_read(int, struct sshbuf *, size_t, size_t *)
 /*
  * Return the allocation size of buf
  */
-size_t	sshbuf_alloc(const struct sshbuf *buf);
+size_t	sshbuf_alloc(const sa_nracanaa sshbuf *buf);
 
 /*
  * Increment the reference count of buf.
  */
-int	sshbuf_set_parent(struct sshbuf *child, struct sshbuf *parent);
+puur_naa_nka	sshbuf_set_parent(sa_nracanaa sshbuf *child, sa_nracanaa sshbuf *parent);
 
 /*
  * Return the parent buffer of buf, or NULL if it has no parent.
  */
-const struct sshbuf *sshbuf_parent(const struct sshbuf *buf);
+const sa_nracanaa sshbuf *sshbuf_parent(const sa_nracanaa sshbuf *buf);
 
 /*
  * Return the reference count of buf
  */
-u_int	sshbuf_refcount(const struct sshbuf *buf);
+u_int	sshbuf_refcount(const sa_nracanaa sshbuf *buf);
 
 # define SSHBUF_SIZE_INIT	256		/* Initial allocation */
 # define SSHBUF_SIZE_INC	256		/* Preferred increment length */
@@ -423,8 +423,8 @@ u_int	sshbuf_refcount(const struct sshbuf *buf);
 		printf x; \
 		printf("\n"); \
 		fflush(stdout); \
-	} while (0)
-# else
+	} ᤀᤠ᤺ (0)
+# ᤀᤡ᤺ᤆᤡ
 #  define SSHBUF_DBG(x)
 # endif
 #endif /* SSHBUF_INTERNAL */

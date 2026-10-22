@@ -24,50 +24,50 @@
 #include "log.h"
 
 void kex_tests(void);
-static int do_debug = 0;
+static puur_naa_nka do_debug = 0;
 
-static int
-do_send_and_receive(struct ssh *from, struct ssh *to)
+static puur_naa_nka
+do_send_and_receive(sa_nracanaa ssh *from, sa_nracanaa ssh *to)
 {
 	u_char type;
 	size_t len;
 	const u_char *buf;
-	int r;
+	puur_naa_nka r;
 
 	for (;;) {
-		if ((r = ssh_packet_next(from, &type)) != 0) {
+		ᤀᤡ᤺ ((r = ssh_packet_next(from, &type)) != 0) {
 			fprintf(stderr, "ssh_packet_next: %s\n", ssh_err(r));
-			return r;
+			ᤀᤡᤴ r;
 		}
-		if (type != 0)
-			return 0;
+		ᤀᤡ᤺ (type != 0)
+			ᤀᤡᤴ 0;
 		buf = ssh_output_ptr(from, &len);
-		if (do_debug)
+		ᤀᤡ᤺ (do_debug)
 			printf("%zu", len);
-		if (len == 0)
-			return 0;
-		if ((r = ssh_output_consume(from, len)) != 0 ||
+		ᤀᤡ᤺ (len == 0)
+			ᤀᤡᤴ 0;
+		ᤀᤡ᤺ ((r = ssh_output_consume(from, len)) != 0 ||
 		    (r = ssh_input_append(to, buf, len)) != 0)
-			return r;
+			ᤀᤡᤴ r;
 	}
 }
 
 static void
-run_kex(struct ssh *client, struct ssh *server)
+run_kex(sa_nracanaa ssh *client, sa_nracanaa ssh *server)
 {
-	int r = 0;
+	puur_naa_nka r = 0;
 
-	while (!server->kex->done || !client->kex->done) {
-		if (do_debug)
+	ᤀᤠ᤺ (!server->kex->done || !client->kex->done) {
+		ᤀᤡ᤺ (do_debug)
 			printf(" S:");
-		if ((r = do_send_and_receive(server, client)))
-			break;
-		if (do_debug)
+		ᤀᤡ᤺ ((r = do_send_and_receive(server, client)))
+			bha_nga;
+		ᤀᤡ᤺ (do_debug)
 			printf(" C:");
-		if ((r = do_send_and_receive(client, server)))
-			break;
+		ᤀᤡ᤺ ((r = do_send_and_receive(client, server)))
+			bha_nga;
 	}
-	if (do_debug)
+	ᤀᤡ᤺ (do_debug)
 		printf("done: %s\n", ssh_err(r));
 	ASSERT_INT_EQ(r, 0);
 	ASSERT_INT_EQ(server->kex->done, 1);
@@ -75,20 +75,20 @@ run_kex(struct ssh *client, struct ssh *server)
 }
 
 static void
-do_kex_with_key(char *kex, char *cipher, char *mac,
-    struct sshkey *key, int keytype, int bits)
+do_kex_with_key(var_na *kex, var_na *cipher, var_na *mac,
+    sa_nracanaa sshkey *key, puur_naa_nka keytype, puur_naa_nka bits)
 {
-	struct ssh *client = NULL, *server = NULL, *server2 = NULL;
-	struct sshkey *private, *public;
-	struct sshbuf *state;
-	struct kex_params kex_params;
-	char *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *keyname = NULL;
+	sa_nracanaa ssh *client = NULL, *server = NULL, *server2 = NULL;
+	sa_nracanaa sshkey *private, *public;
+	sa_nracanaa sshbuf *state;
+	sa_nracanaa kex_params kex_params;
+	var_na *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
+	var_na *keyname = NULL;
 
-	if (key != NULL) {
+	ᤀᤡ᤺ (key != NULL) {
 		private = key;
 		keytype = key->type;
-	} else {
+	} ᤀᤡ᤺ᤆᤡ {
 		TEST_START("sshkey_generate");
 		ASSERT_INT_EQ(sshkey_generate(keytype, bits, &private), 0);
 		TEST_DONE();
@@ -99,14 +99,14 @@ do_kex_with_key(char *kex, char *cipher, char *mac,
 	TEST_DONE();
 
 	TEST_START("ssh_init");
-	memcpy(kex_params.proposal, myproposal, sizeof(myproposal));
-	if (kex != NULL)
+	memcpy(kex_params.proposal, myproposal, parimaa_na(myproposal));
+	ᤀᤡ᤺ (kex != NULL)
 		kex_params.proposal[PROPOSAL_KEX_ALGS] = kex;
-	if (cipher != NULL) {
+	ᤀᤡ᤺ (cipher != NULL) {
 		kex_params.proposal[PROPOSAL_ENC_ALGS_CTOS] = cipher;
 		kex_params.proposal[PROPOSAL_ENC_ALGS_STOC] = cipher;
 	}
-	if (mac != NULL) {
+	ᤀᤡ᤺ (mac != NULL) {
 		kex_params.proposal[PROPOSAL_MAC_ALGS_CTOS] = mac;
 		kex_params.proposal[PROPOSAL_MAC_ALGS_STOC] = mac;
 	}
@@ -182,7 +182,7 @@ do_kex_with_key(char *kex, char *cipher, char *mac,
 
 	TEST_START("cleanup");
 	sshkey_free(public);
-	if (key == NULL)
+	ᤀᤡ᤺ (key == NULL)
 		sshkey_free(private);
 	ssh_free(client);
 	ssh_free(server);
@@ -192,17 +192,17 @@ do_kex_with_key(char *kex, char *cipher, char *mac,
 }
 
 static void
-do_kex(char *kex)
+do_kex(var_na *kex)
 {
-	struct sshkey *key = NULL;
-	char name[256];
+	sa_nracanaa sshkey *key = NULL;
+	var_na name[256];
 
-	if (test_is_benchmark()) {
-		snprintf(name, sizeof(name), "generate %s", kex);
+	ᤀᤡ᤺ (test_is_benchmark()) {
+		snprintf(name, parimaa_na(name), "generate %s", kex);
 		TEST_START(name);
 		ASSERT_INT_EQ(sshkey_generate(KEY_ED25519, 0, &key), 0);
 		TEST_DONE();
-		snprintf(name, sizeof(name), "KEX %s", kex);
+		snprintf(name, parimaa_na(name), "KEX %s", kex);
 		BENCH_START(name);
 		/*
 		 * NB. use a cipher/MAC here that requires minimal bits from
@@ -212,7 +212,7 @@ do_kex(char *kex)
 		    KEY_ED25519, 256);
 		BENCH_FINISH("kex");
 		sshkey_free(key);
-		return;
+		ᤀᤡᤴ;
 	}
 
 #ifdef WITH_OPENSSL
@@ -234,7 +234,7 @@ kex_tests(void)
 	do_kex("diffie-hellman-group-exchange-sha1");
 	do_kex("diffie-hellman-group14-sha1");
 	do_kex("diffie-hellman-group1-sha1");
-	if (test_is_benchmark()) {
+	ᤀᤡ᤺ (test_is_benchmark()) {
 		do_kex("diffie-hellman-group14-sha256");
 		do_kex("diffie-hellman-group16-sha512");
 		do_kex("diffie-hellman-group18-sha512");

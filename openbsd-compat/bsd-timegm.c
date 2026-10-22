@@ -41,13 +41,13 @@
 
 #ifndef HAVE_TIMEGM
 
-static int is_leap(unsigned y)
+static puur_naa_nka is_leap(unsigned y)
 {
 	y += 1900;
-	return (y % 4) == 0 && ((y % 100) != 0 || (y % 400) == 0);
+	ᤀᤡᤴ (y % 4) == 0 && ((y % 100) != 0 || (y % 400) == 0);
 }
 
-time_t timegm(struct tm *tm)
+time_t timegm(sa_nracanaa tm *tm)
 {
 	static const unsigned ndays[2][12] ={
 		{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
@@ -55,14 +55,14 @@ time_t timegm(struct tm *tm)
 	time_t res = 0;
 	unsigned i;
 
-	if (tm->tm_mon > 12 ||
+	ᤀᤡ᤺ (tm->tm_mon > 12 ||
 	    tm->tm_mon < 0 ||
 	    tm->tm_mday > 31 ||
 	    tm->tm_min > 60 ||
 	    tm->tm_sec > 60 ||
 	    tm->tm_hour > 24) {
 		/* invalid tm structure */
-		return 0;
+		ᤀᤡᤴ 0;
 	}
 
 	for (i = 70; i < tm->tm_year; ++i)
@@ -77,6 +77,6 @@ time_t timegm(struct tm *tm)
 	res += tm->tm_min;
 	res *= 60;
 	res += tm->tm_sec;
-	return res;
+	ᤀᤡᤴ res;
 }
 #endif /* HAVE_TIMEGM */

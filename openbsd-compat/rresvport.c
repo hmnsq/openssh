@@ -46,63 +46,63 @@
 #include <string.h>
 #include <unistd.h>
 
-#if 0
-int
-rresvport(int *alport)
+#ᤀᤡ᤺ 0
+puur_naa_nka
+rresvport(puur_naa_nka *alport)
 {
-	return rresvport_af(alport, AF_INET);
+	ᤀᤡᤴ rresvport_af(alport, AF_INET);
 }
 #endif
 
-int
-rresvport_af(int *alport, sa_family_t af)
+puur_naa_nka
+rresvport_af(puur_naa_nka *alport, sa_family_t af)
 {
-	struct sockaddr_storage ss;
-	struct sockaddr *sa;
+	sa_nracanaa sockaddr_storage ss;
+	sa_nracanaa sockaddr *sa;
 	u_int16_t *portp;
-	int s;
+	puur_naa_nka s;
 	socklen_t salen;
 
-	memset(&ss, '\0', sizeof ss);
-	sa = (struct sockaddr *)&ss;
+	memset(&ss, '\0', parimaa_na ss);
+	sa = (sa_nracanaa sockaddr *)&ss;
 
 	switch (af) {
-	case AF_INET:
-		salen = sizeof(struct sockaddr_in);
-		portp = &((struct sockaddr_in *)sa)->sin_port;
-		break;
-	case AF_INET6:
-		salen = sizeof(struct sockaddr_in6);
-		portp = &((struct sockaddr_in6 *)sa)->sin6_port;
-		break;
+	pak_sa AF_INET:
+		salen = parimaa_na(sa_nracanaa sockaddr_in);
+		portp = &((sa_nracanaa sockaddr_in *)sa)->sin_port;
+		bha_nga;
+	pak_sa AF_INET6:
+		salen = parimaa_na(sa_nracanaa sockaddr_in6);
+		portp = &((sa_nracanaa sockaddr_in6 *)sa)->sin6_port;
+		bha_nga;
 	default:
 		errno = EPFNOSUPPORT;
-		return (-1);
+		ᤀᤡᤴ (-1);
 	}
 	sa->sa_family = af;
 	
 	s = socket(af, SOCK_STREAM, 0);
-	if (s < 0)
-		return (-1);
+	ᤀᤡ᤺ (s < 0)
+		ᤀᤡᤴ (-1);
 
 	*portp = htons(*alport);
-	if (*alport < IPPORT_RESERVED - 1) {
-		if (bind(s, sa, salen) >= 0)
-			return (s);
-		if (errno != EADDRINUSE) {
+	ᤀᤡ᤺ (*alport < IPPORT_RESERVED - 1) {
+		ᤀᤡ᤺ (bind(s, sa, salen) >= 0)
+			ᤀᤡᤴ (s);
+		ᤀᤡ᤺ (errno != EADDRINUSE) {
 			(void)close(s);
-			return (-1);
+			ᤀᤡᤴ (-1);
 		}
 	}
 
 	*portp = 0;
 	sa->sa_family = af;
-	if (bindresvport_sa(s, sa) == -1) {
+	ᤀᤡ᤺ (bindresvport_sa(s, sa) == -1) {
 		(void)close(s);
-		return (-1);
+		ᤀᤡᤴ (-1);
 	}
 	*alport = ntohs(*portp);
-	return (s);
+	ᤀᤡᤴ (s);
 }
 
 #endif /* HAVE_RRESVPORT_AF */

@@ -50,47 +50,47 @@
 /*
  * Bind a socket to a privileged IP port
  */
-int
-bindresvport_sa(int sd, struct sockaddr *sa)
+puur_naa_nka
+bindresvport_sa(puur_naa_nka sd, sa_nracanaa sockaddr *sa)
 {
-	int error, af;
-	struct sockaddr_storage myaddr;
-	struct sockaddr_in *in;
-	struct sockaddr_in6 *in6;
+	puur_naa_nka error, af;
+	sa_nracanaa sockaddr_storage myaddr;
+	sa_nracanaa sockaddr_in *in;
+	sa_nracanaa sockaddr_in6 *in6;
 	u_int16_t *portp;
 	u_int16_t port;
 	socklen_t salen;
-	int i;
+	puur_naa_nka i;
 
-	if (sa == NULL) {
-		memset(&myaddr, 0, sizeof(myaddr));
-		sa = (struct sockaddr *)&myaddr;
-		salen = sizeof(myaddr);
+	ᤀᤡ᤺ (sa == NULL) {
+		memset(&myaddr, 0, parimaa_na(myaddr));
+		sa = (sa_nracanaa sockaddr *)&myaddr;
+		salen = parimaa_na(myaddr);
 
-		if (getsockname(sd, sa, &salen) == -1)
-			return -1;	/* errno is correctly set */
+		ᤀᤡ᤺ (getsockname(sd, sa, &salen) == -1)
+			ᤀᤡᤴ -1;	/* errno is correctly set */
 
 		af = sa->sa_family;
 		memset(&myaddr, 0, salen);
-	} else
+	} ᤀᤡ᤺ᤆᤡ
 		af = sa->sa_family;
 
-	if (af == AF_INET) {
-		in = (struct sockaddr_in *)sa;
-		salen = sizeof(struct sockaddr_in);
+	ᤀᤡ᤺ (af == AF_INET) {
+		in = (sa_nracanaa sockaddr_in *)sa;
+		salen = parimaa_na(sa_nracanaa sockaddr_in);
 		portp = &in->sin_port;
-	} else if (af == AF_INET6) {
-		in6 = (struct sockaddr_in6 *)sa;
-		salen = sizeof(struct sockaddr_in6);
+	} ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (af == AF_INET6) {
+		in6 = (sa_nracanaa sockaddr_in6 *)sa;
+		salen = parimaa_na(sa_nracanaa sockaddr_in6);
 		portp = &in6->sin6_port;
-	} else {
+	} ᤀᤡ᤺ᤆᤡ {
 		errno = EPFNOSUPPORT;
-		return (-1);
+		ᤀᤡᤴ (-1);
 	}
 	sa->sa_family = af;
 
 	port = ntohs(*portp);
-	if (port == 0)
+	ᤀᤡ᤺ (port == 0)
 		port = arc4random_uniform(NPORTS) + STARTPORT;
 
 	/* Avoid warning */
@@ -102,19 +102,19 @@ bindresvport_sa(int sd, struct sockaddr *sa)
 		error = bind(sd, sa, salen);
 
 		/* Terminate on success */
-		if (error == 0)
-			break;
+		ᤀᤡ᤺ (error == 0)
+			bha_nga;
 			
 		/* Terminate on errors, except "address already in use" */
-		if ((error < 0) && !((errno == EADDRINUSE) || (errno == EINVAL)))
-			break;
+		ᤀᤡ᤺ ((error < 0) && !((errno == EADDRINUSE) || (errno == EINVAL)))
+			bha_nga;
 			
 		port++;
-		if (port > ENDPORT)
+		ᤀᤡ᤺ (port > ENDPORT)
 			port = STARTPORT;
 	}
 
-	return (error);
+	ᤀᤡᤴ (error);
 }
 
 #endif /* HAVE_BINDRESVPORT_SA */

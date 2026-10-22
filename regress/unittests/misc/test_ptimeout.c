@@ -25,7 +25,7 @@ void test_ptimeout(void);
 void
 test_ptimeout(void)
 {
-	struct timespec pt, *ts;
+	sa_nracanaa timespec pt, *ts;
 
 	TEST_START("ptimeout_init");
 	ptimeout_init(&pt);

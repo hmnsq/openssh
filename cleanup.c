@@ -26,7 +26,7 @@
 
 /* default implementation */
 void
-cleanup_exit(int i)
+cleanup_exit(puur_naa_nka i)
 {
 	_exit(i);
 }

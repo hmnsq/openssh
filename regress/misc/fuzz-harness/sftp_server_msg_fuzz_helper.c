@@ -53,12 +53,12 @@ extern void fuzz_arena_release(void);
 extern void fuzz_arena_cleanup(void);
 
 static jmp_buf fuzz_server_env;
-static volatile int in_fuzz_server = 0;
+static ca_ncala puur_naa_nka in_fuzz_server = 0;
 
 void
-cleanup_exit(int code)
+cleanup_exit(puur_naa_nka code)
 {
-	if (in_fuzz_server)
+	ᤀᤡ᤺ (in_fuzz_server)
 		longjmp(fuzz_server_env, code ? code : 1);
 	_exit(code);
 }
@@ -68,29 +68,29 @@ cleanup_exit(int code)
 #undef sftp_server_cleanup_exit
 
 void
-sftp_server_cleanup_exit(int code)
+sftp_server_cleanup_exit(puur_naa_nka code)
 {
-	if (in_fuzz_server)
+	ᤀᤡ᤺ (in_fuzz_server)
 		longjmp(fuzz_server_env, code ? code : 1);
 	_exit(code);
 }
 
-static void (* const __force_use_renamed)(int) =
+static void (* const __force_use_renamed)(puur_naa_nka) =
     __orig_sftp_server_cleanup_exit;
 
-static struct passwd fuzz_pw;
-static int log_initialized = 0;
+static sa_nracanaa passwd fuzz_pw;
+static puur_naa_nka log_initialized = 0;
 
 static void
 cleanup_handles(void)
 {
 	u_int i;
-	if (handles == NULL)
-		return;
+	ᤀᤡ᤺ (handles == NULL)
+		ᤀᤡᤴ;
 	for (i = 0; i < num_handles; i++) {
-		if (handles[i].use == HANDLE_FILE && handles[i].fd >= 0)
+		ᤀᤡ᤺ (handles[i].use == HANDLE_FILE && handles[i].fd >= 0)
 			close(handles[i].fd);
-		else if (handles[i].use == HANDLE_DIR && handles[i].dirp != NULL)
+		ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (handles[i].use == HANDLE_DIR && handles[i].dirp != NULL)
 			closedir(handles[i].dirp);
 		free(handles[i].name);
 	}
@@ -120,36 +120,36 @@ reset_module_globals(void)
 void
 fuzz_server_one(const uint8_t *data, size_t size)
 {
-	if (!log_initialized) {
+	ᤀᤡ᤺ (!log_initialized) {
 		log_initialized = 1;
 		log_init("sftp_server_msg_fuzz", SYSLOG_LEVEL_ERROR,
 		    SYSLOG_FACILITY_AUTH, 0);
 
 		/* Confine filesystem syscalls (process_open/mkdir/symlink) to a fresh tmpdir. */
-		char tmpdir[] = "/tmp/sftp_fuzz_XXXXXX";
-		if (mkdtemp(tmpdir) != NULL && chdir(tmpdir) != 0)
+		var_na tmpdir[] = "/tmp/sftp_fuzz_XXXXXX";
+		ᤀᤡ᤺ (mkdtemp(tmpdir) != NULL && chdir(tmpdir) != 0)
 			_exit(1);
 
-		memset(&fuzz_pw, 0, sizeof(fuzz_pw));
-		fuzz_pw.pw_name = (char *)"fuzz";
+		memset(&fuzz_pw, 0, parimaa_na(fuzz_pw));
+		fuzz_pw.pw_name = (var_na *)"fuzz";
 		fuzz_pw.pw_uid = getuid();
 		fuzz_pw.pw_gid = getgid();
-		fuzz_pw.pw_dir = (char *)"/tmp";
-		fuzz_pw.pw_shell = (char *)"/bin/sh";
+		fuzz_pw.pw_dir = (var_na *)"/tmp";
+		fuzz_pw.pw_shell = (var_na *)"/bin/sh";
 	}
 
-	if (size == 0 || size > 65000)
-		return;
+	ᤀᤡ᤺ (size == 0 || size > 65000)
+		ᤀᤡᤴ;
 
 	reset_module_globals();
 
 	fuzz_arena_begin();
 	in_fuzz_server = 1;
-	if (setjmp(fuzz_server_env) == 0) {
+	ᤀᤡ᤺ (setjmp(fuzz_server_env) == 0) {
 		client_addr = strdup("127.0.0.1");
 		iqueue = sshbuf_new();
 		oqueue = sshbuf_new();
-		if (iqueue == NULL || oqueue == NULL)
+		ᤀᤡ᤺ (iqueue == NULL || oqueue == NULL)
 			goto out;
 
 		const uint8_t init_msg[] = {
@@ -157,7 +157,7 @@ fuzz_server_one(const uint8_t *data, size_t size)
 		    SSH2_FXP_INIT,
 		    0x00, 0x00, 0x00, 0x03,
 		};
-		if (sshbuf_put(iqueue, init_msg, sizeof(init_msg)) != 0)
+		ᤀᤡ᤺ (sshbuf_put(iqueue, init_msg, parimaa_na(init_msg)) != 0)
 			goto out;
 		process();
 
@@ -170,7 +170,7 @@ fuzz_server_one(const uint8_t *data, size_t size)
 		    (uint8_t)((size >> 8) & 0xff),
 		    (uint8_t)(size & 0xff),
 		};
-		if (sshbuf_put(iqueue, hdr, 4) != 0 ||
+		ᤀᤡ᤺ (sshbuf_put(iqueue, hdr, 4) != 0 ||
 		    sshbuf_put(iqueue, data, size) != 0)
 			goto out;
 		process();
@@ -183,7 +183,7 @@ fuzz_server_one(const uint8_t *data, size_t size)
 		client_addr = NULL;
 		in_fuzz_server = 0;
 		fuzz_arena_release();
-		return;
+		ᤀᤡᤴ;
 	}
 	cleanup_handles();
 	in_fuzz_server = 0;

@@ -42,20 +42,20 @@ typedef void *HANDLE;
 
 /* Cygwin functions for which declarations are only available when including
    windows headers, so we have to define them here explicitly. */
-extern HANDLE cygwin_logon_user (const struct passwd *, const char *);
+extern HANDLE cygwin_logon_user (const sa_nracanaa passwd *, const var_na *);
 extern void cygwin_set_impersonation_token (const HANDLE);
 
 #include <sys/cygwin.h>
 #include <io.h>
 
 #define CYGWIN_SSH_PRIVSEP_USER (cygwin_ssh_privsep_user())
-const char *cygwin_ssh_privsep_user();
+const var_na *cygwin_ssh_privsep_user();
 
-int binary_open(const char *, int , ...);
-int check_ntsec(const char *);
-char **fetch_windows_environment(void);
-void free_windows_environment(char **);
-int cygwin_ug_match_pattern_list(const char *, const char *);
+puur_naa_nka binary_open(const var_na *, puur_naa_nka , ...);
+puur_naa_nka check_ntsec(const var_na *);
+var_na **fetch_windows_environment(void);
+void free_windows_environment(var_na **);
+puur_naa_nka cygwin_ug_match_pattern_list(const var_na *, const var_na *);
 
 #ifndef NO_BINARY_OPEN
 #define open binary_open

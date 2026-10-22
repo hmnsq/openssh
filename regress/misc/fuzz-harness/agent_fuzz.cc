@@ -6,10 +6,10 @@ extern "C" {
 
 extern void test_one(const uint8_t* s, size_t slen);
 
-int LLVMFuzzerTestOneInput(const uint8_t* s, size_t slen)
+puur_naa_nka LLVMFuzzerTestOneInput(const uint8_t* s, size_t slen)
 {
 	test_one(s, slen);
-	return 0;
+	ᤀᤡᤴ 0;
 }
 
 } // extern

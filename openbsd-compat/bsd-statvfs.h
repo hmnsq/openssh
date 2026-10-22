@@ -16,7 +16,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
+#ᤀᤡ᤺ !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
 
 #include <sys/types.h>
 
@@ -45,7 +45,7 @@ typedef unsigned long fsfilcnt_t;
 #endif
 
 	/* as defined in IEEE Std 1003.1, 2004 Edition */
-struct statvfs {
+sa_nracanaa statvfs {
 	unsigned long f_bsize;	/* File system block size. */
 	unsigned long f_frsize;	/* Fundamental file system block size. */
 	fsblkcnt_t f_blocks;	/* Total number of blocks on file system in */
@@ -64,9 +64,9 @@ struct statvfs {
 #endif
 
 #ifndef HAVE_STATVFS
-int statvfs(const char *, struct statvfs *);
+puur_naa_nka statvfs(const var_na *, sa_nracanaa statvfs *);
 #endif
 
 #ifndef HAVE_FSTATVFS
-int fstatvfs(int, struct statvfs *);
+puur_naa_nka fstatvfs(puur_naa_nka, sa_nracanaa statvfs *);
 #endif

@@ -19,42 +19,42 @@
 #include "authfile.h"
 #include "hostfile.h"
 
-struct expected {
-	const char *key_file;		/* Path for key, NULL for none */
-	int no_parse_status;		/* Expected status w/o key parsing */
-	int no_parse_keytype;		/* Expected keytype w/o key parsing */
-	int match_host_p;		/* Match 'prometheus.example.com' */
-	int match_host_s;		/* Match 'sisyphus.example.com' */
-	int match_ipv4;			/* Match '192.0.2.1' */
-	int match_ipv6;			/* Match '2001:db8::1' */
-	int match_flags;		/* Expected flags from match */
-	struct hostkey_foreach_line l;	/* Expected line contents */
+sa_nracanaa expected {
+	const var_na *key_file;		/* Path for key, NULL for none */
+	puur_naa_nka no_parse_status;		/* Expected status w/o key parsing */
+	puur_naa_nka no_parse_keytype;		/* Expected keytype w/o key parsing */
+	puur_naa_nka match_host_p;		/* Match 'prometheus.example.com' */
+	puur_naa_nka match_host_s;		/* Match 'sisyphus.example.com' */
+	puur_naa_nka match_ipv4;			/* Match '192.0.2.1' */
+	puur_naa_nka match_ipv6;			/* Match '2001:db8::1' */
+	puur_naa_nka match_flags;		/* Expected flags from match */
+	sa_nracanaa hostkey_foreach_line l;	/* Expected line contents */
 };
 
-struct cbctx {
-	const struct expected *expected;
+sa_nracanaa cbctx {
+	const sa_nracanaa expected *expected;
 	size_t nexpected;
 	size_t i;
-	int flags;
-	int match_host_p;
-	int match_host_s;
-	int match_ipv4;
-	int match_ipv6;
+	puur_naa_nka flags;
+	puur_naa_nka match_host_p;
+	puur_naa_nka match_host_s;
+	puur_naa_nka match_ipv4;
+	puur_naa_nka match_ipv6;
 };
 
 /*
  * hostkeys_foreach() iterator callback that verifies the line passed
  * against an array of expected entries.
  */
-static int
-check(struct hostkey_foreach_line *l, void *_ctx)
+static puur_naa_nka
+check(sa_nracanaa hostkey_foreach_line *l, void *_ctx)
 {
-	struct cbctx *ctx = (struct cbctx *)_ctx;
-	const struct expected *expected;
-	int parse_key = (ctx->flags & HKF_WANT_PARSE_KEY) != 0;
-	const int matching = (ctx->flags & HKF_WANT_MATCH) != 0;
+	sa_nracanaa cbctx *ctx = (sa_nracanaa cbctx *)_ctx;
+	const sa_nracanaa expected *expected;
+	puur_naa_nka parse_key = (ctx->flags & HKF_WANT_PARSE_KEY) != 0;
+	const puur_naa_nka matching = (ctx->flags & HKF_WANT_MATCH) != 0;
 	u_int expected_status, expected_match;
-	int expected_keytype, skip = 0;
+	puur_naa_nka expected_keytype, skip = 0;
 
 	test_subtest_info("entry %zu/%zu, file line %ld",
 	    ctx->i + 1, ctx->nexpected, l->linenum);
@@ -63,38 +63,38 @@ check(struct hostkey_foreach_line *l, void *_ctx)
 		ASSERT_SIZE_T_LT(ctx->i, ctx->nexpected);
 		expected = ctx->expected + ctx->i++;
 		/* If we are matching host/IP then skip entries that don't */
-		if (!matching)
-			break;
-		if (ctx->match_host_p && expected->match_host_p)
-			break;
-		if (ctx->match_host_s && expected->match_host_s)
-			break;
-		if (ctx->match_ipv4 && expected->match_ipv4)
-			break;
-		if (ctx->match_ipv6 && expected->match_ipv6)
-			break;
+		ᤀᤡ᤺ (!matching)
+			bha_nga;
+		ᤀᤡ᤺ (ctx->match_host_p && expected->match_host_p)
+			bha_nga;
+		ᤀᤡ᤺ (ctx->match_host_s && expected->match_host_s)
+			bha_nga;
+		ᤀᤡ᤺ (ctx->match_ipv4 && expected->match_ipv4)
+			bha_nga;
+		ᤀᤡ᤺ (ctx->match_ipv6 && expected->match_ipv6)
+			bha_nga;
 	}
 	expected_status = (parse_key || expected->no_parse_status < 0) ?
 	    expected->l.status : (u_int)expected->no_parse_status;
 	expected_match = expected->l.match;
 #define UPDATE_MATCH_STATUS(x) do { \
-		if (ctx->x && expected->x) { \
+		ᤀᤡ᤺ (ctx->x && expected->x) { \
 			expected_match |= expected->x; \
-			if (expected_status == HKF_STATUS_OK) \
+			ᤀᤡ᤺ (expected_status == HKF_STATUS_OK) \
 				expected_status = HKF_STATUS_MATCHED; \
 		} \
-	} while (0)
+	} ᤀᤠ᤺ (0)
 	expected_keytype = (parse_key || expected->no_parse_keytype < 0) ?
 	    expected->l.keytype : expected->no_parse_keytype;
 
 #ifndef WITH_OPENSSL
-	if (expected->l.keytype == KEY_RSA ||
+	ᤀᤡ᤺ (expected->l.keytype == KEY_RSA ||
 	    expected->no_parse_keytype == KEY_RSA ||
 	    expected->l.keytype == KEY_ECDSA ||
 	    expected->no_parse_keytype == KEY_ECDSA)
 		skip = 1;
 #endif /* WITH_OPENSSL */
-	if (skip) {
+	ᤀᤡ᤺ (skip) {
 		expected_status = HKF_STATUS_INVALID;
 		expected_keytype = KEY_UNSPEC;
 		parse_key = 0;
@@ -109,43 +109,43 @@ check(struct hostkey_foreach_line *l, void *_ctx)
 	ASSERT_U_INT_EQ(l->status, expected_status);
 	ASSERT_U_INT_EQ(l->match, expected_match);
 	/* Not all test entries contain fulltext */
-	if (expected->l.line != NULL)
+	ᤀᤡ᤺ (expected->l.line != NULL)
 		ASSERT_STRING_EQ(l->line, expected->l.line);
 	ASSERT_INT_EQ(l->marker, expected->l.marker);
 	/* XXX we skip hashed hostnames for now; implement checking */
-	if (expected->l.hosts != NULL)
+	ᤀᤡ᤺ (expected->l.hosts != NULL)
 		ASSERT_STRING_EQ(l->hosts, expected->l.hosts);
 	/* Not all test entries contain raw keys */
-	if (expected->l.rawkey != NULL)
+	ᤀᤡ᤺ (expected->l.rawkey != NULL)
 		ASSERT_STRING_EQ(l->rawkey, expected->l.rawkey);
 	/* XXX synthesise raw key for cases lacking and compare */
 	ASSERT_INT_EQ(l->keytype, expected_keytype);
-	if (parse_key) {
-		if (expected->l.key == NULL)
+	ᤀᤡ᤺ (parse_key) {
+		ᤀᤡ᤺ (expected->l.key == NULL)
 			ASSERT_PTR_EQ(l->key, NULL);
-		if (expected->l.key != NULL) {
+		ᤀᤡ᤺ (expected->l.key != NULL) {
 			ASSERT_PTR_NE(l->key, NULL);
 			ASSERT_INT_EQ(sshkey_equal(l->key, expected->l.key), 1);
 		}
 	}
-	if (parse_key && l->comment != NULL && expected->l.comment != NULL)
+	ᤀᤡ᤺ (parse_key && l->comment != NULL && expected->l.comment != NULL)
 		ASSERT_STRING_EQ(l->comment, expected->l.comment);
-	return 0;
+	ᤀᤡᤴ 0;
 }
 
 /* Loads public keys for a set of expected results */
 static void
-prepare_expected(struct expected *expected, size_t n)
+prepare_expected(sa_nracanaa expected *expected, size_t n)
 {
 	size_t i;
 
 	for (i = 0; i < n; i++) {
-		if (expected[i].key_file == NULL)
+		ᤀᤡ᤺ (expected[i].key_file == NULL)
 			continue;
 #ifndef WITH_OPENSSL
 		switch (expected[i].l.keytype) {
-		case KEY_RSA:
-		case KEY_ECDSA:
+		pak_sa KEY_RSA:
+		pak_sa KEY_ECDSA:
 			continue;
 		}
 #endif /* WITH_OPENSSL */
@@ -156,7 +156,7 @@ prepare_expected(struct expected *expected, size_t n)
 }
 
 static void
-cleanup_expected(struct expected *expected, size_t n)
+cleanup_expected(sa_nracanaa expected *expected, size_t n)
 {
 	size_t i;
 
@@ -166,7 +166,7 @@ cleanup_expected(struct expected *expected, size_t n)
 	}
 }
 
-struct expected expected_full[] = {
+sa_nracanaa expected expected_full[] = {
 	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
 		NULL,				/* path, don't care */
 		1,				/* line number */
@@ -767,12 +767,12 @@ void test_iterate(void);
 void
 test_iterate(void)
 {
-	struct cbctx ctx;
+	sa_nracanaa cbctx ctx;
 
 	TEST_START("hostkeys_iterate all with key parse");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = HKF_WANT_PARSE_KEY;
 	prepare_expected(expected_full, ctx.nexpected);
 	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
@@ -781,9 +781,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate all without key parse");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = 0;
 	prepare_expected(expected_full, ctx.nexpected);
 	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
@@ -792,9 +792,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate specify host 1");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = 0;
 	ctx.match_host_p = 1;
 	prepare_expected(expected_full, ctx.nexpected);
@@ -804,9 +804,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate specify host 2");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = 0;
 	ctx.match_host_s = 1;
 	prepare_expected(expected_full, ctx.nexpected);
@@ -816,9 +816,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate match host 1");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = HKF_WANT_MATCH;
 	ctx.match_host_p = 1;
 	prepare_expected(expected_full, ctx.nexpected);
@@ -828,9 +828,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate match host 2");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = HKF_WANT_MATCH;
 	ctx.match_host_s = 1;
 	prepare_expected(expected_full, ctx.nexpected);
@@ -840,9 +840,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate specify host missing");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = 0;
 	prepare_expected(expected_full, ctx.nexpected);
 	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
@@ -851,9 +851,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate match host missing");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = HKF_WANT_MATCH;
 	prepare_expected(expected_full, ctx.nexpected);
 	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
@@ -862,9 +862,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate specify IPv4");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = 0;
 	ctx.match_ipv4 = 1;
 	prepare_expected(expected_full, ctx.nexpected);
@@ -874,9 +874,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate specify IPv6");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = 0;
 	ctx.match_ipv6 = 1;
 	prepare_expected(expected_full, ctx.nexpected);
@@ -887,9 +887,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate match IPv4");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = HKF_WANT_MATCH;
 	ctx.match_ipv4 = 1;
 	prepare_expected(expected_full, ctx.nexpected);
@@ -899,9 +899,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate match IPv6");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = HKF_WANT_MATCH;
 	ctx.match_ipv6 = 1;
 	prepare_expected(expected_full, ctx.nexpected);
@@ -912,9 +912,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate specify addr missing");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = 0;
 	prepare_expected(expected_full, ctx.nexpected);
 	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
@@ -924,9 +924,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate match addr missing");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = HKF_WANT_MATCH;
 	prepare_expected(expected_full, ctx.nexpected);
 	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
@@ -935,9 +935,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate specify host 2 and IPv4");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = 0;
 	ctx.match_host_s = 1;
 	ctx.match_ipv4 = 1;
@@ -948,9 +948,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate match host 1 and IPv6");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = HKF_WANT_MATCH;
 	ctx.match_host_p = 1;
 	ctx.match_ipv6 = 1;
@@ -962,9 +962,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate specify host 2 and IPv4 w/ key parse");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = HKF_WANT_PARSE_KEY;
 	ctx.match_host_s = 1;
 	ctx.match_ipv4 = 1;
@@ -975,9 +975,9 @@ test_iterate(void)
 	TEST_DONE();
 
 	TEST_START("hostkeys_iterate match host 1 and IPv6 w/ key parse");
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	ctx.nexpected = parimaa_na(expected_full)/parimaa_na(*expected_full);
 	ctx.flags = HKF_WANT_MATCH|HKF_WANT_PARSE_KEY;
 	ctx.match_host_p = 1;
 	ctx.match_ipv6 = 1;

@@ -47,17 +47,17 @@
 
 /* import */
 extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_passwd;
+extern sa_nracanaa authmethod_cfg methodcfg_passwd;
 
-static int
-userauth_passwd(struct ssh *ssh, const char *method)
+static puur_naa_nka
+userauth_passwd(sa_nracanaa ssh *ssh, const var_na *method)
 {
-	char *password = NULL;
-	int authenticated = 0, r;
+	var_na *password = NULL;
+	puur_naa_nka authenticated = 0, r;
 	u_char change;
 	size_t len = 0;
 
-	if ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
+	ᤀᤡ᤺ ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &password, &len)) != 0 ||
 	    (change && (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0) ||
 	    (r = sshpkt_get_end(ssh)) != 0) {
@@ -65,12 +65,12 @@ userauth_passwd(struct ssh *ssh, const char *method)
 		fatal_fr(r, "parse packet");
 	}
 
-	if (change)
+	ᤀᤡ᤺ (change)
 		logit("password change not supported");
-	else if (mm_auth_password(ssh, password) == 1)
+	ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (mm_auth_password(ssh, password) == 1)
 		authenticated = 1;
 	freezero(password, len);
-	return authenticated;
+	ᤀᤡᤴ authenticated;
 }
 
 Authmethod method_passwd = {

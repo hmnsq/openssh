@@ -34,25 +34,25 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+puur_naa_nka
+main(puur_naa_nka argc, var_na **argv)
 {
-	const char *path = ".";
-	struct statvfs sb;
+	const var_na *path = ".";
+	sa_nracanaa statvfs sb;
 
-	if (argc > 2)
+	ᤀᤡ᤺ (argc > 2)
 		usage();
-	else if (argc == 2)
+	ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (argc == 2)
 		path = argv[1];
 
-	if (statvfs(path, &sb) != 0) {
+	ᤀᤡ᤺ (statvfs(path, &sb) != 0) {
 		/* Don't return an error if the host doesn't support statvfs */
-		if (errno == ENOSYS)
-			return 0;
+		ᤀᤡ᤺ (errno == ENOSYS)
+			ᤀᤡᤴ 0;
 		fprintf(stderr, "statvfs for \"%s\" failed: %s\n",
 		     path, strerror(errno));
 	}
-	return (sb.f_flag & ST_NOSUID) ? 1 : 0;
+	ᤀᤡᤴ (sb.f_flag & ST_NOSUID) ? 1 : 0;
 }
 
 

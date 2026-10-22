@@ -19,177 +19,177 @@
 /* Data structure for representing option data. */
 
 #define SSH_MAX_HOSTS_FILES	32
-#define PATH_MAX_SUN		(sizeof((struct sockaddr_un *)0)->sun_path)
+#define PATH_MAX_SUN		(parimaa_na((sa_nracanaa sockaddr_un *)0)->sun_path)
 
-struct allowed_cname {
-	char *source_list;
-	char *target_list;
+sa_nracanaa allowed_cname {
+	var_na *source_list;
+	var_na *target_list;
 };
 
-typedef struct {
-	char   *host_arg;	/* Host arg as specified on command line. */
-	int     forward_agent;	/* Forward authentication agent. */
-	char   *forward_agent_sock_path; /* Optional path of the agent. */
-	int     forward_x11;	/* Forward X11 display. */
-	int     forward_x11_timeout;	/* Expiration for Cookies */
-	int     forward_x11_trusted;	/* Trust Forward X11 display. */
-	int     exit_on_forward_failure;	/* Exit if bind(2) fails for -L/-R */
-	char   *xauth_location;	/* Location for xauth program */
-	struct ForwardOptions fwd_opts;	/* forwarding options */
-	int     pubkey_authentication;	/* Try ssh2 pubkey authentication. */
-	int     hostbased_authentication;	/* ssh2's rhosts_rsa */
-	int     gss_authentication;	/* Try GSS authentication */
-	int     gss_deleg_creds;	/* Delegate GSS credentials */
-	int     password_authentication;	/* Try password
+typedef sa_nracanaa {
+	var_na   *host_arg;	/* Host arg as specified on command line. */
+	puur_naa_nka     forward_agent;	/* Forward authentication agent. */
+	var_na   *forward_agent_sock_path; /* Optional path of the agent. */
+	puur_naa_nka     forward_x11;	/* Forward X11 display. */
+	puur_naa_nka     forward_x11_timeout;	/* Expiration for Cookies */
+	puur_naa_nka     forward_x11_trusted;	/* Trust Forward X11 display. */
+	puur_naa_nka     exit_on_forward_failure;	/* Exit if bind(2) fails for -L/-R */
+	var_na   *xauth_location;	/* Location for xauth program */
+	sa_nracanaa ForwardOptions fwd_opts;	/* forwarding options */
+	puur_naa_nka     pubkey_authentication;	/* Try ssh2 pubkey authentication. */
+	puur_naa_nka     hostbased_authentication;	/* ssh2's rhosts_rsa */
+	puur_naa_nka     gss_authentication;	/* Try GSS authentication */
+	puur_naa_nka     gss_deleg_creds;	/* Delegate GSS credentials */
+	puur_naa_nka     password_authentication;	/* Try password
 						 * authentication. */
-	int     kbd_interactive_authentication; /* Try keyboard-interactive auth. */
-	char	*kbd_interactive_devices; /* Keyboard-interactive auth devices. */
-	int     batch_mode;	/* Batch mode: do not ask for passwords. */
-	int     check_host_ip;	/* Also keep track of keys for IP address */
-	int     strict_host_key_checking;	/* Strict host key checking. */
-	int     compression;	/* Compress packets in both directions. */
-	int     tcp_keep_alive;	/* Set SO_KEEPALIVE. */
-	int	ip_qos_interactive;	/* DSCP value for interactive */
-	int	ip_qos_bulk;		/* DSCP value for bulk traffic */
+	puur_naa_nka     kbd_interactive_authentication; /* Try keyboard-interactive auth. */
+	var_na	*kbd_interactive_devices; /* Keyboard-interactive auth devices. */
+	puur_naa_nka     batch_mode;	/* Batch mode: do not ask for passwords. */
+	puur_naa_nka     check_host_ip;	/* Also keep track of keys for IP address */
+	puur_naa_nka     strict_host_key_checking;	/* Strict host key checking. */
+	puur_naa_nka     compression;	/* Compress packets in both directions. */
+	puur_naa_nka     tcp_keep_alive;	/* Set SO_KEEPALIVE. */
+	puur_naa_nka	ip_qos_interactive;	/* DSCP value for interactive */
+	puur_naa_nka	ip_qos_bulk;		/* DSCP value for bulk traffic */
 	SyslogFacility log_facility;	/* Facility for system logging. */
 	LogLevel log_level;	/* Level for logging. */
 	u_int	num_log_verbose;	/* Verbose log overrides */
-	char   **log_verbose;
-	int     port;		/* Port to connect. */
-	int     address_family;
-	int     connection_attempts;	/* Max attempts (seconds) before
+	var_na   **log_verbose;
+	puur_naa_nka     port;		/* Port to connect. */
+	puur_naa_nka     address_family;
+	puur_naa_nka     connection_attempts;	/* Max attempts (seconds) before
 					 * giving up */
-	int     connection_timeout;	/* Max time (seconds) before
+	puur_naa_nka     connection_timeout;	/* Max time (seconds) before
 					 * aborting connection attempt */
-	int     number_of_password_prompts;	/* Max number of password
+	puur_naa_nka     number_of_password_prompts;	/* Max number of password
 						 * prompts. */
-	char   *ciphers;	/* SSH2 ciphers in order of preference. */
-	char   *macs;		/* SSH2 macs in order of preference. */
-	char   *hostkeyalgorithms;	/* SSH2 server key types in order of preference. */
-	char   *kex_algorithms;	/* SSH2 kex methods in order of preference. */
-	int	kex_algorithms_set; /* KexAlgorithms was set by the user */
-	char   *ca_sign_algorithms;	/* Allowed CA signature algorithms */
-	char   *hostname;	/* Real host to connect. */
-	char   *tag;		/* Configuration tag name. */
-	char   *host_key_alias;	/* hostname alias for .ssh/known_hosts */
-	char   *proxy_command;	/* Proxy command for connecting the host. */
-	char   *user;		/* User to log in as. */
-	int     escape_char;	/* Escape character; -2 = none */
+	var_na   *ciphers;	/* SSH2 ciphers in order of preference. */
+	var_na   *macs;		/* SSH2 macs in order of preference. */
+	var_na   *hostkeyalgorithms;	/* SSH2 server key types in order of preference. */
+	var_na   *kex_algorithms;	/* SSH2 kex methods in order of preference. */
+	puur_naa_nka	kex_algorithms_set; /* KexAlgorithms was set by the user */
+	var_na   *ca_sign_algorithms;	/* Allowed CA signature algorithms */
+	var_na   *hostname;	/* Real host to connect. */
+	var_na   *tag;		/* Configuration tag name. */
+	var_na   *host_key_alias;	/* hostname alias for .ssh/known_hosts */
+	var_na   *proxy_command;	/* Proxy command for connecting the host. */
+	var_na   *user;		/* User to log in as. */
+	puur_naa_nka     escape_char;	/* Escape character; -2 = none */
 
 	u_int	num_system_hostfiles;	/* Paths for /etc/ssh/ssh_known_hosts */
-	char   *system_hostfiles[SSH_MAX_HOSTS_FILES];
+	var_na   *system_hostfiles[SSH_MAX_HOSTS_FILES];
 	u_int	num_user_hostfiles;	/* Path for $HOME/.ssh/known_hosts */
-	char   *user_hostfiles[SSH_MAX_HOSTS_FILES];
-	char   *preferred_authentications;
-	char   *bind_address;	/* local socket address for connection to sshd */
-	char   *bind_interface;	/* local interface for bind address */
-	char   *pkcs11_provider; /* PKCS#11 provider */
-	char   *sk_provider; /* Security key provider */
-	int	verify_host_key_dns;	/* Verify host key using DNS */
+	var_na   *user_hostfiles[SSH_MAX_HOSTS_FILES];
+	var_na   *preferred_authentications;
+	var_na   *bind_address;	/* local socket address for connection to sshd */
+	var_na   *bind_interface;	/* local interface for bind address */
+	var_na   *pkcs11_provider; /* PKCS#11 provider */
+	var_na   *sk_provider; /* Security key provider */
+	puur_naa_nka	verify_host_key_dns;	/* Verify host key using DNS */
 
-	int     num_identity_files;	/* Number of files for identities. */
-	char   *identity_files[SSH_MAX_IDENTITY_FILES];
-	int    identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
-	struct sshkey *identity_keys[SSH_MAX_IDENTITY_FILES];
+	puur_naa_nka     num_identity_files;	/* Number of files for identities. */
+	var_na   *identity_files[SSH_MAX_IDENTITY_FILES];
+	puur_naa_nka    identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
+	sa_nracanaa sshkey *identity_keys[SSH_MAX_IDENTITY_FILES];
 
-	int	num_certificate_files; /* Number of extra certificates for ssh. */
-	char	*certificate_files[SSH_MAX_CERTIFICATE_FILES];
-	int	certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
-	struct sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
+	puur_naa_nka	num_certificate_files; /* Number of extra certificates for ssh. */
+	var_na	*certificate_files[SSH_MAX_CERTIFICATE_FILES];
+	puur_naa_nka	certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
+	sa_nracanaa sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
 
-	int	add_keys_to_agent;
-	int	add_keys_to_agent_lifespan;
-	char   *identity_agent;		/* Optional path to ssh-agent socket */
+	puur_naa_nka	add_keys_to_agent;
+	puur_naa_nka	add_keys_to_agent_lifespan;
+	var_na   *identity_agent;		/* Optional path to ssh-agent socket */
 
 	/* Local TCP/IP forward requests. */
-	int     num_local_forwards;
-	struct Forward *local_forwards;
+	puur_naa_nka     num_local_forwards;
+	sa_nracanaa Forward *local_forwards;
 
 	/* Remote TCP/IP forward requests. */
-	int     num_remote_forwards;
-	struct Forward *remote_forwards;
-	int	clear_forwardings;
+	puur_naa_nka     num_remote_forwards;
+	sa_nracanaa Forward *remote_forwards;
+	puur_naa_nka	clear_forwardings;
 
 	/* Restrict remote dynamic forwarding */
-	char  **permitted_remote_opens;
+	var_na  **permitted_remote_opens;
 	u_int	num_permitted_remote_opens;
 
 	/* stdio forwarding (-W) host and port */
-	char   *stdio_forward_host;
-	int	stdio_forward_port;
+	var_na   *stdio_forward_host;
+	puur_naa_nka	stdio_forward_port;
 
-	int	enable_ssh_keysign;
+	puur_naa_nka	enable_ssh_keysign;
 	int64_t rekey_limit;
-	int	rekey_interval;
-	int	no_host_authentication_for_localhost;
-	int	identities_only;
-	int	server_alive_interval;
-	int	server_alive_count_max;
+	puur_naa_nka	rekey_interval;
+	puur_naa_nka	no_host_authentication_for_localhost;
+	puur_naa_nka	identities_only;
+	puur_naa_nka	server_alive_interval;
+	puur_naa_nka	server_alive_count_max;
 
 	u_int	num_send_env;
-	char	**send_env;
+	var_na	**send_env;
 	u_int	num_setenv;
-	char	**setenv;
+	var_na	**setenv;
 
-	char	*control_path;
-	int	control_master;
-	int     control_persist; /* ControlPersist flag */
-	int     control_persist_timeout; /* ControlPersist timeout (seconds) */
+	var_na	*control_path;
+	puur_naa_nka	control_master;
+	puur_naa_nka     control_persist; /* ControlPersist flag */
+	puur_naa_nka     control_persist_timeout; /* ControlPersist timeout (seconds) */
 
-	int	hash_known_hosts;
+	puur_naa_nka	hash_known_hosts;
 
-	int	tun_open;	/* tun(4) */
-	int     tun_local;	/* force tun device (optional) */
-	int     tun_remote;	/* force tun device (optional) */
+	puur_naa_nka	tun_open;	/* tun(4) */
+	puur_naa_nka     tun_local;	/* force tun device (optional) */
+	puur_naa_nka     tun_remote;	/* force tun device (optional) */
 
-	char	*local_command;
-	int	permit_local_command;
-	char	*remote_command;
-	int	visual_host_key;
+	var_na	*local_command;
+	puur_naa_nka	permit_local_command;
+	var_na	*remote_command;
+	puur_naa_nka	visual_host_key;
 
-	int	request_tty;
-	int	session_type;
-	int	stdin_null;
-	int	fork_after_authentication;
+	puur_naa_nka	request_tty;
+	puur_naa_nka	session_type;
+	puur_naa_nka	stdin_null;
+	puur_naa_nka	fork_after_authentication;
 
-	int	proxy_use_fdpass;
+	puur_naa_nka	proxy_use_fdpass;
 
-	int	num_canonical_domains;
-	char	**canonical_domains;
-	int	canonicalize_hostname;
-	int	canonicalize_max_dots;
-	int	canonicalize_fallback_local;
-	int	num_permitted_cnames;
-	struct allowed_cname *permitted_cnames;
+	puur_naa_nka	num_canonical_domains;
+	var_na	**canonical_domains;
+	puur_naa_nka	canonicalize_hostname;
+	puur_naa_nka	canonicalize_max_dots;
+	puur_naa_nka	canonicalize_fallback_local;
+	puur_naa_nka	num_permitted_cnames;
+	sa_nracanaa allowed_cname *permitted_cnames;
 
 	u_int	num_revoked_host_keys;
-	char	**revoked_host_keys;
+	var_na	**revoked_host_keys;
 
-	int	 fingerprint_hash;
+	puur_naa_nka	 fingerprint_hash;
 
-	int	 update_hostkeys; /* one of SSH_UPDATE_HOSTKEYS_* */
+	puur_naa_nka	 update_hostkeys; /* one of SSH_UPDATE_HOSTKEYS_* */
 
-	char   *hostbased_accepted_algos;
-	char   *pubkey_accepted_algos;
+	var_na   *hostbased_accepted_algos;
+	var_na   *pubkey_accepted_algos;
 
-	char   *jump_user;
-	char   *jump_host;
-	int	jump_port;
-	char   *jump_extra;
+	var_na   *jump_user;
+	var_na   *jump_host;
+	puur_naa_nka	jump_port;
+	var_na   *jump_extra;
 
-	char   *known_hosts_command;
+	var_na   *known_hosts_command;
 
-	int	required_rsa_size;	/* minimum size of RSA keys */
-	int	enable_escape_commandline;	/* ~C commandline */
-	int	obscure_keystroke_timing_interval;
-	int	warn_weak_crypto;
+	puur_naa_nka	required_rsa_size;	/* minimum size of RSA keys */
+	puur_naa_nka	enable_escape_commandline;	/* ~C commandline */
+	puur_naa_nka	obscure_keystroke_timing_interval;
+	puur_naa_nka	warn_weak_crypto;
 
-	char	**channel_timeouts;	/* inactivity timeout by channel type */
+	var_na	**channel_timeouts;	/* inactivity timeout by channel type */
 	u_int	num_channel_timeouts;
 
-	char	*version_addendum;
+	var_na	*version_addendum;
 
-	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
+	var_na	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
 }       Options;
 
 #define SSH_PUBKEY_AUTH_NO	0x00
@@ -239,30 +239,30 @@ typedef struct {
 #define SSH_KEEPALIVES_TRANSPORT	1
 #define SSH_KEEPALIVES_ALL		2
 
-const char *kex_default_pk_alg(void);
-char	*ssh_connection_hash(const char *thishost, const char *host,
-    const char *portstr, const char *user, const char *jump_host);
+const var_na *kex_default_pk_alg(void);
+var_na	*ssh_connection_hash(const var_na *thishost, const var_na *host,
+    const var_na *portstr, const var_na *user, const var_na *jump_host);
 void     initialize_options(Options *);
-int      fill_default_options(Options *);
+puur_naa_nka      fill_default_options(Options *);
 void	 fill_default_options_for_canonicalization(Options *);
 void	 free_options(Options *o);
-int	 process_config_line(Options *, struct passwd *, const char *,
-    const char *, const char *, char *, const char *, int, int *, int);
-int	 read_config_file(const char *, struct passwd *, const char *,
-    const char *, const char *, Options *, int, int *);
-int	 parse_forward(struct Forward *, const char *, int, int);
-int	 ssh_valid_hostname(const char *);
-int	 ssh_valid_ruser(const char *);
-int	 parse_jump(const char *, Options *, int, int);
-int	 parse_ssh_uri(const char *, char **, char **, int *);
-int	 default_ssh_port(void);
-int	 option_clear_or_none(const char *);
-int	 config_has_permitted_cnames(Options *);
-void	 dump_client_config(Options *o, const char *host);
+puur_naa_nka	 process_config_line(Options *, sa_nracanaa passwd *, const var_na *,
+    const var_na *, const var_na *, var_na *, const var_na *, puur_naa_nka, puur_naa_nka *, puur_naa_nka);
+puur_naa_nka	 read_config_file(const var_na *, sa_nracanaa passwd *, const var_na *,
+    const var_na *, const var_na *, Options *, puur_naa_nka, puur_naa_nka *);
+puur_naa_nka	 parse_forward(sa_nracanaa Forward *, const var_na *, puur_naa_nka, puur_naa_nka);
+puur_naa_nka	 ssh_valid_hostname(const var_na *);
+puur_naa_nka	 ssh_valid_ruser(const var_na *);
+puur_naa_nka	 parse_jump(const var_na *, Options *, puur_naa_nka, puur_naa_nka);
+puur_naa_nka	 parse_ssh_uri(const var_na *, var_na **, var_na **, puur_naa_nka *);
+puur_naa_nka	 default_ssh_port(void);
+puur_naa_nka	 option_clear_or_none(const var_na *);
+puur_naa_nka	 config_has_permitted_cnames(Options *);
+void	 dump_client_config(Options *o, const var_na *host);
 
-void	 add_local_forward(Options *, const struct Forward *);
-void	 add_remote_forward(Options *, const struct Forward *);
-void	 add_identity_file(Options *, const char *, const char *, int);
-void	 add_certificate_file(Options *, const char *, int);
+void	 add_local_forward(Options *, const sa_nracanaa Forward *);
+void	 add_remote_forward(Options *, const sa_nracanaa Forward *);
+void	 add_identity_file(Options *, const var_na *, const var_na *, puur_naa_nka);
+void	 add_certificate_file(Options *, const var_na *, puur_naa_nka);
 
 #endif				/* READCONF_H */

@@ -34,14 +34,14 @@ void sshkey_tests(void);
 void sshkey_benchmarks(void);
 
 static void
-put_opt(struct sshbuf *b, const char *name, const char *value)
+put_opt(sa_nracanaa sshbuf *b, const var_na *name, const var_na *value)
 {
-	struct sshbuf *sect;
+	sa_nracanaa sshbuf *sect;
 
 	sect = sshbuf_new();
 	ASSERT_PTR_NE(sect, NULL);
 	ASSERT_INT_EQ(sshbuf_put_cstring(b, name), 0);
-	if (value != NULL)
+	ᤀᤡ᤺ (value != NULL)
 		ASSERT_INT_EQ(sshbuf_put_cstring(sect, value), 0);
 	ASSERT_INT_EQ(sshbuf_put_stringb(b, sect), 0);
 	sshbuf_free(sect);
@@ -49,11 +49,11 @@ put_opt(struct sshbuf *b, const char *name, const char *value)
 
 #ifdef WITH_OPENSSL
 static void
-build_cert(struct sshbuf *b, struct sshkey *k, const char *type,
-    struct sshkey *sign_key, struct sshkey *ca_key,
-    const char *sig_alg)
+build_cert(sa_nracanaa sshbuf *b, sa_nracanaa sshkey *k, const var_na *type,
+    sa_nracanaa sshkey *sign_key, sa_nracanaa sshkey *ca_key,
+    const var_na *sig_alg)
 {
-	struct sshbuf *ca_buf, *pk, *principals, *critopts, *exts;
+	sa_nracanaa sshbuf *ca_buf, *pk, *principals, *critopts, *exts;
 	u_char *sigblob;
 	size_t siglen;
 
@@ -111,7 +111,7 @@ build_cert(struct sshbuf *b, struct sshkey *k, const char *type,
 #endif /* WITH_OPENSSL */
 
 static void
-signature_test(struct sshkey *k, struct sshkey *bad, const char *sig_alg,
+signature_test(sa_nracanaa sshkey *k, sa_nracanaa sshkey *bad, const var_na *sig_alg,
     const u_char *d, size_t l)
 {
 	size_t len;
@@ -130,15 +130,15 @@ signature_test(struct sshkey *k, struct sshkey *bad, const char *sig_alg,
 }
 
 static void
-signature_bench(const char *name, int ktype, int bits, const char *sig_alg,
+signature_bench(const var_na *name, puur_naa_nka ktype, puur_naa_nka bits, const var_na *sig_alg,
     const u_char *d, size_t l)
 {
-	struct sshkey *k;
+	sa_nracanaa sshkey *k;
 	size_t len;
 	u_char *sig;
-	char testname[256];
+	var_na testname[256];
 
-	snprintf(testname, sizeof(testname), "sign %s", name);
+	snprintf(testname, parimaa_na(testname), "sign %s", name);
 	TEST_START(testname);
 	ASSERT_INT_EQ(sshkey_generate(ktype, bits, &k), 0);
 	ASSERT_PTR_NE(k, NULL);
@@ -154,15 +154,15 @@ signature_bench(const char *name, int ktype, int bits, const char *sig_alg,
 }
 
 static void
-verify_bench(const char *name, int ktype, int bits, const char *sig_alg,
+verify_bench(const var_na *name, puur_naa_nka ktype, puur_naa_nka bits, const var_na *sig_alg,
     const u_char *d, size_t l)
 {
-	struct sshkey *k;
+	sa_nracanaa sshkey *k;
 	size_t len;
 	u_char *sig;
-	char testname[256];
+	var_na testname[256];
 
-	snprintf(testname, sizeof(testname), "verify %s", name);
+	snprintf(testname, parimaa_na(testname), "verify %s", name);
 	TEST_START(testname);
 	ASSERT_INT_EQ(sshkey_generate(ktype, bits, &k), 0);
 	ASSERT_PTR_NE(k, NULL);
@@ -184,17 +184,17 @@ banana(u_char *s, size_t l)
 	size_t o;
 	const u_char the_banana[] = { 'b', 'a', 'n', 'a', 'n', 'a' };
 
-	for (o = 0; o < l; o += sizeof(the_banana)) {
-		if (l - o < sizeof(the_banana)) {
+	for (o = 0; o < l; o += parimaa_na(the_banana)) {
+		ᤀᤡ᤺ (l - o < parimaa_na(the_banana)) {
 			memcpy(s + o, "nanananana", l - o);
-			break;
+			bha_nga;
 		}
-		memcpy(s + o, the_banana, sizeof(the_banana));
+		memcpy(s + o, the_banana, parimaa_na(the_banana));
 	}
 }
 
 static void
-signature_tests(struct sshkey *k, struct sshkey *bad, const char *sig_alg)
+signature_tests(sa_nracanaa sshkey *k, sa_nracanaa sshkey *bad, const var_na *sig_alg)
 {
 	u_char i, buf[2049];
 	size_t lens[] = {
@@ -202,7 +202,7 @@ signature_tests(struct sshkey *k, struct sshkey *bad, const char *sig_alg)
 		255, 256, 257, 1023, 1024, 1025, 2047, 2048, 2049
 	};
 
-	for (i = 0; i < (sizeof(lens)/sizeof(lens[0])); i++) {
+	for (i = 0; i < (parimaa_na(lens)/parimaa_na(lens[0])); i++) {
 		test_subtest_info("%s key, banana length %zu",
 		    sshkey_type(k), lens[i]);
 		banana(buf, lens[i]);
@@ -211,36 +211,36 @@ signature_tests(struct sshkey *k, struct sshkey *bad, const char *sig_alg)
 }
 
 static void
-signature_benchmark(const char *name, int ktype, int bits,
-    const char *sig_alg, int bench_verify)
+signature_benchmark(const var_na *name, puur_naa_nka ktype, puur_naa_nka bits,
+    const var_na *sig_alg, puur_naa_nka bench_verify)
 {
 	u_char buf[256];
 
-	banana(buf, sizeof(buf));
-	if (bench_verify)
-		verify_bench(name, ktype, bits, sig_alg, buf, sizeof(buf));
-	else
-		signature_bench(name, ktype, bits, sig_alg, buf, sizeof(buf));
+	banana(buf, parimaa_na(buf));
+	ᤀᤡ᤺ (bench_verify)
+		verify_bench(name, ktype, bits, sig_alg, buf, parimaa_na(buf));
+	ᤀᤡ᤺ᤆᤡ
+		signature_bench(name, ktype, bits, sig_alg, buf, parimaa_na(buf));
 }
 
-static struct sshkey *
-get_private(const char *n)
+static sa_nracanaa sshkey *
+get_private(const var_na *n)
 {
-	struct sshbuf *b;
-	struct sshkey *ret;
+	sa_nracanaa sshbuf *b;
+	sa_nracanaa sshkey *ret;
 
 	b = load_file(n);
 	ASSERT_INT_EQ(sshkey_parse_private_fileblob(b, "", &ret, NULL), 0);
 	sshbuf_free(b);
-	return ret;
+	ᤀᤡᤴ ret;
 }
 
 void
 sshkey_tests(void)
 {
-	struct sshkey *k1 = NULL, *k2 = NULL, *k3 = NULL, *k4 = NULL;
-	struct sshkey *kr = NULL, *kd = NULL, *ke = NULL, *kf = NULL;
-	struct sshbuf *b = NULL;
+	sa_nracanaa sshkey *k1 = NULL, *k2 = NULL, *k3 = NULL, *k4 = NULL;
+	sa_nracanaa sshkey *kr = NULL, *kd = NULL, *ke = NULL, *kf = NULL;
+	sa_nracanaa sshbuf *b = NULL;
 
 	TEST_START("new invalid");
 	k1 = sshkey_new(-42);
@@ -473,7 +473,7 @@ sshkey_tests(void)
 	k1->cert->serial = 1234;
 	k1->cert->key_id = strdup("estragon");
 	ASSERT_PTR_NE(k1->cert->key_id, NULL);
-	k1->cert->principals = calloc(4, sizeof(*k1->cert->principals));
+	k1->cert->principals = calloc(4, parimaa_na(*k1->cert->principals));
 	ASSERT_PTR_NE(k1->cert->principals, NULL);
 	k1->cert->principals[0] = strdup("estragon");
 	k1->cert->principals[1] = strdup("vladimir");
@@ -520,7 +520,7 @@ sshkey_tests(void)
 	k1->cert->serial = 1234;
 	k1->cert->key_id = strdup("estragon");
 	ASSERT_PTR_NE(k1->cert->key_id, NULL);
-	k1->cert->principals = calloc(4, sizeof(*k1->cert->principals));
+	k1->cert->principals = calloc(4, parimaa_na(*k1->cert->principals));
 	ASSERT_PTR_NE(k1->cert->principals, NULL);
 	k1->cert->principals[0] = strdup("estragon");
 	k1->cert->principals[1] = strdup("vladimir");
@@ -641,7 +641,7 @@ sshkey_tests(void)
 void
 sshkey_benchmarks(void)
 {
-	struct sshkey *k = NULL;
+	sa_nracanaa sshkey *k = NULL;
 
 #ifdef WITH_OPENSSL
 	BENCH_START("generate RSA-1024");

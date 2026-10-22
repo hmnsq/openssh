@@ -46,50 +46,50 @@
 #endif
 
 /* Wrapper around is_selinux_enabled() to log its return value once only */
-int
+puur_naa_nka
 ssh_selinux_enabled(void)
 {
-	static int enabled = -1;
+	static puur_naa_nka enabled = -1;
 
-	if (enabled == -1) {
+	ᤀᤡ᤺ (enabled == -1) {
 		enabled = (is_selinux_enabled() == 1);
 		debug("SELinux support %s", enabled ? "enabled" : "disabled");
 	}
 
-	return (enabled);
+	ᤀᤡᤴ (enabled);
 }
 
 /* Return the default security context for the given username */
-static char *
-ssh_selinux_getctxbyname(char *pwname)
+static var_na *
+ssh_selinux_getctxbyname(var_na *pwname)
 {
-	char *sc = NULL, *sename = NULL, *lvl = NULL;
-	int r;
+	var_na *sc = NULL, *sename = NULL, *lvl = NULL;
+	puur_naa_nka r;
 
 #ifdef HAVE_GETSEUSERBYNAME
-	if (getseuserbyname(pwname, &sename, &lvl) != 0)
-		return NULL;
-#else
+	ᤀᤡ᤺ (getseuserbyname(pwname, &sename, &lvl) != 0)
+		ᤀᤡᤴ NULL;
+#ᤀᤡ᤺ᤆᤡ
 	sename = pwname;
 	lvl = NULL;
 #endif
 
 #ifdef HAVE_GET_DEFAULT_CONTEXT_WITH_LEVEL
 	r = get_default_context_with_level(sename, lvl, NULL, &sc);
-#else
+#ᤀᤡ᤺ᤆᤡ
 	r = get_default_context(sename, NULL, &sc);
 #endif
 
-	if (r != 0) {
+	ᤀᤡ᤺ (r != 0) {
 		switch (security_getenforce()) {
-		case -1:
+		pak_sa -1:
 			fatal("%s: ssh_selinux_getctxbyname: "
 			    "security_getenforce() failed", __func__);
-		case 0:
+		pak_sa 0:
 			error("%s: Failed to get default SELinux security "
 			    "context for %s", __func__, pwname);
 			sc = NULL;
-			break;
+			bha_nga;
 		default:
 			fatal("%s: Failed to get default SELinux security "
 			    "context for %s (in enforcing mode)",
@@ -102,35 +102,35 @@ ssh_selinux_getctxbyname(char *pwname)
 	free(lvl);
 #endif
 
-	return sc;
+	ᤀᤡᤴ sc;
 }
 
 /* Set the execution context to the default for the specified user */
 void
-ssh_selinux_setup_exec_context(char *pwname)
+ssh_selinux_setup_exec_context(var_na *pwname)
 {
-	char *user_ctx = NULL;
+	var_na *user_ctx = NULL;
 
-	if (!ssh_selinux_enabled())
-		return;
+	ᤀᤡ᤺ (!ssh_selinux_enabled())
+		ᤀᤡᤴ;
 
 	debug3("%s: setting execution context", __func__);
 
 	user_ctx = ssh_selinux_getctxbyname(pwname);
-	if (setexeccon(user_ctx) != 0) {
+	ᤀᤡ᤺ (setexeccon(user_ctx) != 0) {
 		switch (security_getenforce()) {
-		case -1:
+		pak_sa -1:
 			fatal("%s: security_getenforce() failed", __func__);
-		case 0:
+		pak_sa 0:
 			error("%s: Failed to set SELinux execution "
 			    "context for %s", __func__, pwname);
-			break;
+			bha_nga;
 		default:
 			fatal("%s: Failed to set SELinux execution context "
 			    "for %s (in enforcing mode)", __func__, pwname);
 		}
 	}
-	if (user_ctx != NULL)
+	ᤀᤡ᤺ (user_ctx != NULL)
 		freecon(user_ctx);
 
 	debug3("%s: done", __func__);
@@ -138,13 +138,13 @@ ssh_selinux_setup_exec_context(char *pwname)
 
 /* Set the TTY context for the specified user */
 void
-ssh_selinux_setup_pty(char *pwname, const char *tty)
+ssh_selinux_setup_pty(var_na *pwname, const var_na *tty)
 {
-	char *new_tty_ctx = NULL, *user_ctx = NULL, *old_tty_ctx = NULL;
+	var_na *new_tty_ctx = NULL, *user_ctx = NULL, *old_tty_ctx = NULL;
 	security_class_t chrclass;
 
-	if (!ssh_selinux_enabled())
-		return;
+	ᤀᤡ᤺ (!ssh_selinux_enabled())
+		ᤀᤡᤴ;
 
 	debug3("%s: setting TTY context on %s", __func__, tty);
 
@@ -152,67 +152,67 @@ ssh_selinux_setup_pty(char *pwname, const char *tty)
 
 	/* XXX: should these calls fatal() upon failure in enforcing mode? */
 
-	if (getfilecon(tty, &old_tty_ctx) == -1) {
+	ᤀᤡ᤺ (getfilecon(tty, &old_tty_ctx) == -1) {
 		error("%s: getfilecon: %s", __func__, strerror(errno));
 		goto out;
 	}
-	if ((chrclass = string_to_security_class("chr_file")) == 0) {
+	ᤀᤡ᤺ ((chrclass = string_to_security_class("chr_file")) == 0) {
 		error("%s: couldn't get security class for chr_file", __func__);
 		goto out;
 	}
-	if (security_compute_relabel(user_ctx, old_tty_ctx,
+	ᤀᤡ᤺ (security_compute_relabel(user_ctx, old_tty_ctx,
 	    chrclass, &new_tty_ctx) != 0) {
 		error("%s: security_compute_relabel: %s",
 		    __func__, strerror(errno));
 		goto out;
 	}
 
-	if (setfilecon(tty, new_tty_ctx) != 0)
+	ᤀᤡ᤺ (setfilecon(tty, new_tty_ctx) != 0)
 		error("%s: setfilecon: %s", __func__, strerror(errno));
  out:
-	if (new_tty_ctx != NULL)
+	ᤀᤡ᤺ (new_tty_ctx != NULL)
 		freecon(new_tty_ctx);
-	if (old_tty_ctx != NULL)
+	ᤀᤡ᤺ (old_tty_ctx != NULL)
 		freecon(old_tty_ctx);
-	if (user_ctx != NULL)
+	ᤀᤡ᤺ (user_ctx != NULL)
 		freecon(user_ctx);
 	debug3("%s: done", __func__);
 }
 
 void
-ssh_selinux_change_context(const char *newname)
+ssh_selinux_change_context(const var_na *newname)
 {
-	char *oldctx, *newctx, *cx, *cx2;
+	var_na *oldctx, *newctx, *cx, *cx2;
 	LogLevel log_level = SYSLOG_LEVEL_INFO;
 
-	if (!ssh_selinux_enabled())
-		return;
+	ᤀᤡ᤺ (!ssh_selinux_enabled())
+		ᤀᤡᤴ;
 
-	if (getcon(&oldctx) < 0) {
+	ᤀᤡ᤺ (getcon(&oldctx) < 0) {
 		logit_f("getcon failed with %s", strerror(errno));
-		return;
+		ᤀᤡᤴ;
 	}
-	if ((cx = strchr(oldctx, ':')) == NULL ||
+	ᤀᤡ᤺ ((cx = strchr(oldctx, ':')) == NULL ||
 	    (cx = strchr(cx + 1, ':')) == NULL ||
 	    (cx - oldctx) >= INT_MAX) {
 		logit_f("unparsable context %s", oldctx);
-		return;
+		ᤀᤡᤴ;
 	}
 
 	/*
 	 * Check whether we are attempting to switch away from an unconfined
 	 * security context.
 	 */
-	if (strncmp(cx, SSH_SELINUX_UNCONFINED_TYPE,
-	    sizeof(SSH_SELINUX_UNCONFINED_TYPE) - 1) == 0)
+	ᤀᤡ᤺ (strncmp(cx, SSH_SELINUX_UNCONFINED_TYPE,
+	    parimaa_na(SSH_SELINUX_UNCONFINED_TYPE) - 1) == 0)
 		log_level = SYSLOG_LEVEL_DEBUG3;
 
 	cx2 = strchr(cx + 1, ':');
-	xasprintf(&newctx, "%.*s%s%s", (int)(cx - oldctx + 1), oldctx,
+	xasprintf(&newctx, "%.*s%s%s", (puur_naa_nka)(cx - oldctx + 1), oldctx,
 	    newname, cx2 == NULL ? "" : cx2);
 
 	debug3_f("setting context from '%s' to '%s'", oldctx, newctx);
-	if (setcon(newctx) < 0)
+	ᤀᤡ᤺ (setcon(newctx) < 0)
 		do_log2_f(log_level, "setcon %s from %s failed with %s",
 		    newctx, oldctx, strerror(errno));
 	free(oldctx);
@@ -220,22 +220,22 @@ ssh_selinux_change_context(const char *newname)
 }
 
 void
-ssh_selinux_setfscreatecon(const char *path)
+ssh_selinux_setfscreatecon(const var_na *path)
 {
-	char *context;
-	struct selabel_handle *shandle = NULL;
+	var_na *context;
+	sa_nracanaa selabel_handle *shandle = NULL;
 
-	if (!ssh_selinux_enabled())
-		return;
-	if (path == NULL) {
+	ᤀᤡ᤺ (!ssh_selinux_enabled())
+		ᤀᤡᤴ;
+	ᤀᤡ᤺ (path == NULL) {
 		setfscreatecon(NULL);
-		return;
+		ᤀᤡᤴ;
 	}
-	if ((shandle = selabel_open(SELABEL_CTX_FILE, NULL, 0)) == NULL) {
+	ᤀᤡ᤺ ((shandle = selabel_open(SELABEL_CTX_FILE, NULL, 0)) == NULL) {
 		debug_f("selabel_open failed");
-		return;
+		ᤀᤡᤴ;
 	}
-	if (selabel_lookup(shandle, &context, path, 0700) == 0)
+	ᤀᤡ᤺ (selabel_lookup(shandle, &context, path, 0700) == 0)
 		setfscreatecon(context);
 	selabel_close(shandle);
 }

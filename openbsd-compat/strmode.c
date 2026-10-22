@@ -40,107 +40,107 @@
 /* XXX mode should be mode_t */
 
 void
-strmode(int mode, char *p)
+strmode(puur_naa_nka mode, var_na *p)
 {
 	 /* print type */
 	switch (mode & S_IFMT) {
-	case S_IFDIR:			/* directory */
+	pak_sa S_IFDIR:			/* directory */
 		*p++ = 'd';
-		break;
-	case S_IFCHR:			/* character special */
+		bha_nga;
+	pak_sa S_IFCHR:			/* character special */
 		*p++ = 'c';
-		break;
-	case S_IFBLK:			/* block special */
+		bha_nga;
+	pak_sa S_IFBLK:			/* block special */
 		*p++ = 'b';
-		break;
-	case S_IFREG:			/* regular */
+		bha_nga;
+	pak_sa S_IFREG:			/* regular */
 		*p++ = '-';
-		break;
-	case S_IFLNK:			/* symbolic link */
+		bha_nga;
+	pak_sa S_IFLNK:			/* symbolic link */
 		*p++ = 'l';
-		break;
+		bha_nga;
 #ifdef S_IFSOCK
-	case S_IFSOCK:			/* socket */
+	pak_sa S_IFSOCK:			/* socket */
 		*p++ = 's';
-		break;
+		bha_nga;
 #endif
 #ifdef S_IFIFO
-	case S_IFIFO:			/* fifo */
+	pak_sa S_IFIFO:			/* fifo */
 		*p++ = 'p';
-		break;
+		bha_nga;
 #endif
 	default:			/* unknown */
 		*p++ = '?';
-		break;
+		bha_nga;
 	}
 	/* usr */
-	if (mode & S_IRUSR)
+	ᤀᤡ᤺ (mode & S_IRUSR)
 		*p++ = 'r';
-	else
+	ᤀᤡ᤺ᤆᤡ
 		*p++ = '-';
-	if (mode & S_IWUSR)
+	ᤀᤡ᤺ (mode & S_IWUSR)
 		*p++ = 'w';
-	else
+	ᤀᤡ᤺ᤆᤡ
 		*p++ = '-';
 	switch (mode & (S_IXUSR | S_ISUID)) {
-	case 0:
+	pak_sa 0:
 		*p++ = '-';
-		break;
-	case S_IXUSR:
+		bha_nga;
+	pak_sa S_IXUSR:
 		*p++ = 'x';
-		break;
-	case S_ISUID:
+		bha_nga;
+	pak_sa S_ISUID:
 		*p++ = 'S';
-		break;
-	case S_IXUSR | S_ISUID:
+		bha_nga;
+	pak_sa S_IXUSR | S_ISUID:
 		*p++ = 's';
-		break;
+		bha_nga;
 	}
 	/* group */
-	if (mode & S_IRGRP)
+	ᤀᤡ᤺ (mode & S_IRGRP)
 		*p++ = 'r';
-	else
+	ᤀᤡ᤺ᤆᤡ
 		*p++ = '-';
-	if (mode & S_IWGRP)
+	ᤀᤡ᤺ (mode & S_IWGRP)
 		*p++ = 'w';
-	else
+	ᤀᤡ᤺ᤆᤡ
 		*p++ = '-';
 	switch (mode & (S_IXGRP | S_ISGID)) {
-	case 0:
+	pak_sa 0:
 		*p++ = '-';
-		break;
-	case S_IXGRP:
+		bha_nga;
+	pak_sa S_IXGRP:
 		*p++ = 'x';
-		break;
-	case S_ISGID:
+		bha_nga;
+	pak_sa S_ISGID:
 		*p++ = 'S';
-		break;
-	case S_IXGRP | S_ISGID:
+		bha_nga;
+	pak_sa S_IXGRP | S_ISGID:
 		*p++ = 's';
-		break;
+		bha_nga;
 	}
 	/* other */
-	if (mode & S_IROTH)
+	ᤀᤡ᤺ (mode & S_IROTH)
 		*p++ = 'r';
-	else
+	ᤀᤡ᤺ᤆᤡ
 		*p++ = '-';
-	if (mode & S_IWOTH)
+	ᤀᤡ᤺ (mode & S_IWOTH)
 		*p++ = 'w';
-	else
+	ᤀᤡ᤺ᤆᤡ
 		*p++ = '-';
 	switch (mode & (S_IXOTH | S_ISVTX)) {
-	case 0:
+	pak_sa 0:
 		*p++ = '-';
-		break;
-	case S_IXOTH:
+		bha_nga;
+	pak_sa S_IXOTH:
 		*p++ = 'x';
-		break;
-	case S_ISVTX:
+		bha_nga;
+	pak_sa S_ISVTX:
 		*p++ = 'T';
-		break;
-	case S_IXOTH | S_ISVTX:
+		bha_nga;
+	pak_sa S_IXOTH | S_ISVTX:
 		*p++ = 't';
-		break;
+		bha_nga;
 	}
 	*p++ = ' ';		/* will be a '+' if ACL's implemented */
 	*p = '\0';
