@@ -18,50 +18,50 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/basename.c */
 
-#include "includes.h"
-#ifndef HAVE_BASENAME
-#include <errno.h>
-#include <string.h>
+#ضمن "includes.h"
+#که_نه_تعریف_شوی HAVE_BASENAME
+#ضمن <errno.h>
+#ضمن <string.h>
 
-char *
-basename(const char *path)
+حرف *
+basename(ثابت حرف *لار)
 {
-	static char bname[MAXPATHLEN];
-	size_t len;
-	const char *endp, *startp;
+	ساكن حرف bname[MAXPATHLEN];
+	اندازه_t len;
+	ثابت حرف *endp, *startp;
 
 	/* Empty or NULL string gets treated as "." */
-	if (path == NULL || *path == '\0') {
+	إذا (لار == عدم || *لار == '\0') {
 		bname[0] = '.';
 		bname[1] = '\0';
-		return (bname);
+		أرجع (bname);
 	}
 
 	/* Strip any trailing slashes */
-	endp = path + strlen(path) - 1;
-	while (endp > path && *endp == '/')
+	endp = لار + مزي_اوږدوالی(لار) - 1;
+	طالما (endp > لار && *endp == '/')
 		endp--;
 
 	/* All slashes becomes "/" */
-	if (endp == path && *endp == '/') {
+	إذا (endp == لار && *endp == '/') {
 		bname[0] = '/';
 		bname[1] = '\0';
-		return (bname);
+		أرجع (bname);
 	}
 
 	/* Find the start of the base */
 	startp = endp;
-	while (startp > path && *(startp - 1) != '/')
+	طالما (startp > لار && *(startp - 1) != '/')
 		startp--;
 
 	len = endp - startp + 1;
-	if (len >= sizeof(bname)) {
+	إذا (len >= حجم(bname)) {
 		errno = ENAMETOOLONG;
-		return (NULL);
+		أرجع (عدم);
 	}
-	memcpy(bname, startp, len);
+	حافظه_نقل(bname, startp, len);
 	bname[len] = '\0';
-	return (bname);
+	أرجع (bname);
 }
 
-#endif /* !defined(HAVE_BASENAME) */
+#د_که_پای /* !defined(HAVE_BASENAME) */

@@ -9,23 +9,23 @@
 /*
  * POSIX character class support for fnmatch() and glob().
  */
-static struct cclass {
-	const char *name;
-	int (*isctype)(int);
+ساكن بنية cclass {
+	ثابت حرف *name;
+	صحيح (*isctype)(صحيح);
 } cclasses[] = {
-	{ "alnum",	isalnum },
-	{ "alpha",	isalpha },
+	{ "alnum",	که_توری_یا_عدد },
+	{ "alpha",	که_توری },
 	{ "blank",	isblank },
 	{ "cntrl",	iscntrl },
-	{ "digit",	isdigit },
+	{ "digit",	که_عدد },
 	{ "graph",	isgraph },
 	{ "lower",	islower },
 	{ "print",	isprint },
 	{ "punct",	ispunct },
-	{ "space",	isspace },
+	{ "space",	که_تشه },
 	{ "upper",	isupper },
 	{ "xdigit",	isxdigit },
-	{ NULL,		NULL }
+	{ عدم,		عدم }
 };
 
-#define NCCLASSES	(sizeof(cclasses) / sizeof(cclasses[0]) - 1)
+#تعریف_کړه NCCLASSES	(حجم(cclasses) / حجم(cclasses[0]) - 1)

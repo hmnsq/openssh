@@ -24,12 +24,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GROUPACCESS_H
-#define GROUPACCESS_H
+#که_نه_تعریف_شوی GROUPACCESS_H
+#تعریف_کړه GROUPACCESS_H
 
-int	 ga_init(const char *, gid_t);
-int	 ga_match(char * const *, int);
-int	 ga_match_pattern_list(const char *);
-void	 ga_free(void);
+صحيح	 ga_init(ثابت حرف *, gid_t);
+صحيح	 ga_سمون(حرف * ثابت *, صحيح);
+صحيح	 ga_سمون_نمونه_list(ثابت حرف *);
+فراغ	 ga_free(فراغ);
 
-#endif
+#د_که_پای

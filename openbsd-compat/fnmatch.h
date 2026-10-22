@@ -34,33 +34,33 @@
 
 /* OPENBSD ORIGINAL: include/fnmatch.h */
 
-#ifndef HAVE_FNMATCH_H
+#که_نه_تعریف_شوی HAVE_FNMATCH_H
 /* Ensure we define FNM_CASEFOLD */
-#define __BSD_VISIBLE 1
+#تعریف_کړه __BSD_VISIBLE 1
 
-#ifndef	_FNMATCH_H_
-#define	_FNMATCH_H_
+#که_نه_تعریف_شوی	_FNMATCH_H_
+#تعریف_کړه	_FNMATCH_H_
 
-#ifdef HAVE_SYS_CDEFS_H
-#include <sys/cdefs.h>
-#endif
+#که_تعریف_شوی HAVE_SYS_CDEFS_H
+#ضمن <sys/cdefs.h>
+#د_که_پای
 
-#define	FNM_NOMATCH	1	/* Match failed. */
-#define	FNM_NOSYS	2	/* Function not supported (unused). */
+#تعریف_کړه	FNM_NOMATCH	1	/* Match failed. */
+#تعریف_کړه	FNM_NOSYS	2	/* Function not supported (unused). */
 
-#define	FNM_NOESCAPE	0x01	/* Disable backslash escaping. */
-#define	FNM_PATHNAME	0x02	/* Slash must be matched by slash. */
-#define	FNM_PERIOD	0x04	/* Period must be matched by period. */
-#if __BSD_VISIBLE
-#define	FNM_LEADING_DIR	0x08	/* Ignore /<tail> after Imatch. */
-#define	FNM_CASEFOLD	0x10	/* Case insensitive search. */
-#define	FNM_IGNORECASE	FNM_CASEFOLD
-#define	FNM_FILE_NAME	FNM_PATHNAME
-#endif
+#تعریف_کړه	FNM_NOESCAPE	0x01	/* Disable backslash escaping. */
+#تعریف_کړه	FNM_PATHNAME	0x02	/* Slash must be matched by slash. */
+#تعریف_کړه	FNM_PERIOD	0x04	/* Period must be matched by period. */
+#إذا __BSD_VISIBLE
+#تعریف_کړه	FNM_LEADING_DIR	0x08	/* Ignore /<tail> after Imatch. */
+#تعریف_کړه	FNM_CASEFOLD	0x10	/* Case insensitive search. */
+#تعریف_کړه	FNM_IGNORECASE	FNM_CASEFOLD
+#تعریف_کړه	FNM_FILE_NAME	FNM_PATHNAME
+#د_که_پای
 
 /* __BEGIN_DECLS */
-int	 fnmatch(const char *, const char *, int);
+صحيح	 fnmatch(ثابت حرف *, ثابت حرف *, صحيح);
 /* __END_DECLS */
 
-#endif /* !_FNMATCH_H_ */
-#endif /* ! HAVE_FNMATCH_H */
+#د_که_پای /* !_FNMATCH_H_ */
+#د_که_پای /* ! HAVE_FNMATCH_H */

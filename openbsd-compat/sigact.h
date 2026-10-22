@@ -42,49 +42,49 @@
 
 /* OPENBSD ORIGINAL: lib/libcurses/SigAction.h */
 
-#ifndef _SIGACTION_H
-#define _SIGACTION_H
+#که_نه_تعریف_شوی _SIGACTION_H
+#تعریف_کړه _SIGACTION_H
 
-#if !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC)
+#إذا !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC)
 
-#undef  SIG_BLOCK
-#define SIG_BLOCK       00
+#تعریف_لغوه  SIG_BLOCK
+#تعریف_کړه SIG_BLOCK       00
 
-#undef  SIG_UNBLOCK
-#define SIG_UNBLOCK     01
+#تعریف_لغوه  SIG_UNBLOCK
+#تعریف_کړه SIG_UNBLOCK     01
 
-#undef  SIG_SETMASK
-#define SIG_SETMASK     02
+#تعریف_لغوه  SIG_SETMASK
+#تعریف_کړه SIG_SETMASK     02
 
 /*
  * <bsd/signal.h> is in the Linux 1.2.8 + gcc 2.7.0 configuration,
  * and is useful for testing this header file.
  */
-#if HAVE_BSD_SIGNAL_H
+#إذا HAVE_BSD_SIGNAL_H
 # include <bsd/signal.h>
-#endif
+#د_که_پای
 
-struct sigaction
+بنية sigaction
 {
-	struct sigvec sv;
+	بنية sigvec sv;
 };
 
-typedef unsigned long sigset_t;
+تعريفنوع بینښه اوږد sigset_t;
 
-#undef  sa_mask
-#define sa_mask sv.sv_mask
-#undef  sa_handler
-#define sa_handler sv.sv_handler
-#undef  sa_flags
-#define sa_flags sv.sv_flags
+#تعریف_لغوه  sa_mask
+#تعریف_کړه sa_mask sv.sv_ماسک
+#تعریف_لغوه  sa_handler
+#تعریف_کړه sa_handler sv.sv_handler
+#تعریف_لغوه  sa_flags
+#تعریف_کړه sa_flags sv.sv_flags
 
-int sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact);
-int sigprocmask (int how, sigset_t *mask, sigset_t *omask);
-int sigemptyset (sigset_t *mask);
-int sigsuspend (sigset_t *mask);
-int sigdelset (sigset_t *mask, int sig);
-int sigaddset (sigset_t *mask, int sig);
+صحيح sigaction(صحيح sig, بنية sigaction *sigact, بنية sigaction *osigact);
+صحيح sigprocmask (صحيح how, sigset_t *ماسک, sigset_t *omask);
+صحيح sigemptyset (sigset_t *ماسک);
+صحيح sigsuspend (sigset_t *ماسک);
+صحيح sigdelset (sigset_t *ماسک, صحيح sig);
+صحيح sigaddset (sigset_t *ماسک, صحيح sig);
 
-#endif /* !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC) */
+#د_که_پای /* !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC) */
 
-#endif /* !defined(_SIGACTION_H) */
+#د_که_پای /* !defined(_SIGACTION_H) */

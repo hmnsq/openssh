@@ -5,85 +5,85 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
+#ضمن "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "xmalloc.h"
 
-void test_xextendf(void);
+فراغ test_xextendf(فراغ);
 
-void
-test_xextendf(void)
+فراغ
+test_xextendf(فراغ)
 {
-	char *s = NULL;
+	حرف *s = عدم;
 
-	TEST_START("xextendf NULL string");
+	TEST_پیل("xextendf NULL string");
 	xextendf(&s, ",", "hello");
 	ASSERT_STRING_EQ(s, "hello");
-	free(s);
-	s = NULL;
-	TEST_DONE();
+	حرر(s);
+	s = عدم;
+	TEST_بشپړ();
 
-	TEST_START("xextendf empty string");
+	TEST_پیل("xextendf empty string");
 	s = xstrdup("");
 	xextendf(&s, ",", "world");
 	ASSERT_STRING_EQ(s, "world");
-	free(s);
-	s = NULL;
-	TEST_DONE();
+	حرر(s);
+	s = عدم;
+	TEST_بشپړ();
 
-	TEST_START("xextendf append to string");
+	TEST_پیل("xextendf append to string");
 	s = xstrdup("foo");
 	xextendf(&s, ",", "bar");
 	ASSERT_STRING_EQ(s, "foo,bar");
-	free(s);
-	s = NULL;
-	TEST_DONE();
+	حرر(s);
+	s = عدم;
+	TEST_بشپړ();
 
-	TEST_START("xextendf append with NULL separator");
+	TEST_پیل("xextendf append with NULL separator");
 	s = xstrdup("foo");
-	xextendf(&s, NULL, "bar");
+	xextendf(&s, عدم, "bar");
 	ASSERT_STRING_EQ(s, "foobar");
-	free(s);
-	s = NULL;
-	TEST_DONE();
+	حرر(s);
+	s = عدم;
+	TEST_بشپړ();
 
-	TEST_START("xextendf append with empty separator");
+	TEST_پیل("xextendf append with empty separator");
 	s = xstrdup("foo");
 	xextendf(&s, "", "bar");
 	ASSERT_STRING_EQ(s, "foobar");
-	free(s);
-	s = NULL;
-	TEST_DONE();
+	حرر(s);
+	s = عدم;
+	TEST_بشپړ();
 
-	TEST_START("xextendf with format string");
+	TEST_پیل("xextendf with format string");
 	s = xstrdup("start");
 	xextendf(&s, ":", "s=%s,d=%d", "string", 123);
 	ASSERT_STRING_EQ(s, "start:s=string,d=123");
-	free(s);
-	s = NULL;
-	TEST_DONE();
+	حرر(s);
+	s = عدم;
+	TEST_بشپړ();
 
-	TEST_START("xextendf multiple appends");
-	s = NULL;
+	TEST_پیل("xextendf multiple appends");
+	s = عدم;
 	xextendf(&s, ",", "one");
 	ASSERT_STRING_EQ(s, "one");
 	xextendf(&s, ",", "two");
 	ASSERT_STRING_EQ(s, "one,two");
 	xextendf(&s, ":", "three=%d", 3);
 	ASSERT_STRING_EQ(s, "one,two:three=3");
-	xextendf(&s, NULL, "four");
+	xextendf(&s, عدم, "four");
 	ASSERT_STRING_EQ(s, "one,two:three=3four");
-	free(s);
-	s = NULL;
-	TEST_DONE();
+	حرر(s);
+	s = عدم;
+	TEST_بشپړ();
 }

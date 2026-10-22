@@ -25,31 +25,31 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _PRIVATE_RIJNDAEL_H
-#define _PRIVATE_RIJNDAEL_H
+#که_نه_تعریف_شوی شخصي_RIJNDAEL_H
+#تعریف_کړه شخصي_RIJNDAEL_H
 
-#define AES_MAXKEYBITS	(256)
-#define AES_MAXKEYBYTES	(AES_MAXKEYBITS/8)
+#تعریف_کړه AES_MAXKEYBITS	(256)
+#تعریف_کړه AES_MAXKEYBYTES	(AES_MAXKEYBITS/8)
 /* for 256-bit keys, fewer for less */
-#define AES_MAXROUNDS	14
+#تعریف_کړه AES_MAXROUNDS	14
 
-typedef unsigned char	u8;
-typedef unsigned short	u16;
-typedef unsigned int	u32;
+تعريفنوع بینښه حرف	u8;
+تعريفنوع بینښه لنډ	u16;
+تعريفنوع بینښه صحيح	u32;
 
-int	rijndaelKeySetupEnc(unsigned int [], const unsigned char [], int);
-void	rijndaelEncrypt(const unsigned int [], int, const u8 [16], u8 [16]);
+صحيح	rijndael_کلی_تیاری_Enc(بینښه صحيح [], ثابت بینښه حرف [], صحيح);
+فراغ	rijndaelEncrypt(ثابت بینښه صحيح [], صحيح, ثابت u8 [16], u8 [16]);
 
 /*  The structure for key information */
-typedef struct {
-	int	decrypt;
-	int	Nr;		/* key-length-dependent number of rounds */
+تعريفنوع بنية {
+	صحيح	decrypt;
+	صحيح	Nr;		/* key-length-dependent number of rounds */
 	u32	ek[4*(AES_MAXROUNDS + 1)];	/* encrypt key schedule */
 	u32	dk[4*(AES_MAXROUNDS + 1)];	/* decrypt key schedule */
 } rijndael_ctx;
 
-void	 rijndael_set_key(rijndael_ctx *, u_char *, int, int);
-void	 rijndael_decrypt(rijndael_ctx *, u_char *, u_char *);
-void	 rijndael_encrypt(rijndael_ctx *, u_char *, u_char *);
+فراغ	 rijndael_سېټ_کلی(rijndael_ctx *, u_char *, صحيح, صحيح);
+فراغ	 rijndael_decrypt(rijndael_ctx *, u_char *, u_char *);
+فراغ	 rijndael_encrypt(rijndael_ctx *, u_char *, u_char *);
 
-#endif /* _PRIVATE_RIJNDAEL_H */
+#د_که_پای /* _PRIVATE_RIJNDAEL_H */

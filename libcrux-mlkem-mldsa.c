@@ -15,416 +15,416 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if defined(USE_MLDSA) || defined(USE_MLKEM768X25519)
+#إذا defined(USE_MLDSA) || defined(USE_MLKEM768X25519)
 
-#include <sys/types.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <stdbool.h>
+#ضمن <string.h>
 
-#include "log.h"
-#include "crypto_api.h"
-#include "libcrux_internal.h"
+#ضمن "log.h"
+#ضمن "crypto_api.h"
+#ضمن "libcrux_internal.h"
 
 /* ML-KEM 768 */
 
-int
+صحيح
 crypto_kem_mlkem768_keypair(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
     uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES])
 {
 	uint8_t rnd[crypto_kem_mlkem768_KEYPAIRSEEDBYTES];
-	int r;
+	صحيح r;
 
-	arc4random_buf(rnd, sizeof(rnd));
+	arc4random_buf(rnd, حجم(rnd));
 	r = crypto_kem_mlkem768_keypair_seeded(pk, sk, rnd);
-	explicit_bzero(rnd, sizeof(rnd));
-	return r;
+	explicit_bzero(rnd, حجم(rnd));
+	أرجع r;
 }
 
-int
+صحيح
 crypto_kem_mlkem768_keypair_seeded(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
     uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES],
-    const uint8_t seed[crypto_kem_mlkem768_KEYPAIRSEEDBYTES])
+    ثابت uint8_t تخم[crypto_kem_mlkem768_KEYPAIRSEEDBYTES])
 {
 	libcrux_mlkem768_keypair keypair;
 	libcrux_mlkem768_keypair_rnd rnd;
 
-	memcpy(rnd.data, seed, sizeof(rnd.data));
-	keypair = libcrux_ml_kem_mlkem768_portable_generate_key_pair(rnd);
-	memcpy(pk, keypair.pk.data, crypto_kem_mlkem768_PUBLICKEYBYTES);
-	memcpy(sk, keypair.sk.data, crypto_kem_mlkem768_SECRETKEYBYTES);
+	حافظه_نقل(rnd.معلومات, تخم, حجم(rnd.معلومات));
+	keypair = libcrux_ml_kem_mlkem768_portable_generate_کلی_pair(rnd);
+	حافظه_نقل(pk, keypair.pk.معلومات, crypto_kem_mlkem768_PUBLICKEYBYTES);
+	حافظه_نقل(sk, keypair.sk.معلومات, crypto_kem_mlkem768_SECRETKEYBYTES);
 
-	explicit_bzero(&keypair, sizeof(keypair));
-	explicit_bzero(&rnd, sizeof(rnd));
-	return 0;
+	explicit_bzero(&keypair, حجم(keypair));
+	explicit_bzero(&rnd, حجم(rnd));
+	أرجع 0;
 }
 
-int
+صحيح
 crypto_kem_mlkem768_enc(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
-    uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
-    const uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES])
+    uint8_t shared_secret[crypto_kem_mlkem768_بایټونه],
+    ثابت uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES])
 {
 	uint8_t rnd[crypto_kem_mlkem768_ENCSEEDBYTES];
-	int r;
+	صحيح r;
 
-	arc4random_buf(rnd, sizeof(rnd));
+	arc4random_buf(rnd, حجم(rnd));
 	r = crypto_kem_mlkem768_enc_seeded(ct, shared_secret, pk, rnd);
-	explicit_bzero(rnd, sizeof(rnd));
-	return r;
+	explicit_bzero(rnd, حجم(rnd));
+	أرجع r;
 }
 
-int
+صحيح
 crypto_kem_mlkem768_enc_seeded(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
-    uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
-    const uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
-    const uint8_t seed[crypto_kem_mlkem768_ENCSEEDBYTES])
+    uint8_t shared_secret[crypto_kem_mlkem768_بایټونه],
+    ثابت uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
+    ثابت uint8_t تخم[crypto_kem_mlkem768_ENCSEEDBYTES])
 {
-	libcrux_mlkem768_enc_result enc;
-	libcrux_mlkem768_pk pk_internal;
+	libcrux_mlkem768_enc_پایله enc;
+	libcrux_mlkem768_pk pk_دننی;
 	libcrux_mlkem768_enc_rnd rnd;
 
-	memcpy(pk_internal.data, pk, crypto_kem_mlkem768_PUBLICKEYBYTES);
-	if (!libcrux_ml_kem_mlkem768_portable_validate_public_key(&pk_internal))
-		return -1;
-	memcpy(rnd.data, seed, sizeof(rnd.data));
-	enc = libcrux_ml_kem_mlkem768_portable_encapsulate(&pk_internal, rnd);
-	memcpy(ct, enc.fst.data, crypto_kem_mlkem768_CIPHERTEXTBYTES);
-	memcpy(shared_secret, enc.snd.data, crypto_kem_mlkem768_BYTES);
+	حافظه_نقل(pk_دننی.معلومات, pk, crypto_kem_mlkem768_PUBLICKEYBYTES);
+	إذا (!libcrux_ml_kem_mlkem768_portable_validate_عامه_کلی(&pk_دننی))
+		أرجع -1;
+	حافظه_نقل(rnd.معلومات, تخم, حجم(rnd.معلومات));
+	enc = libcrux_ml_kem_mlkem768_portable_encapsulate(&pk_دننی, rnd);
+	حافظه_نقل(ct, enc.fst.معلومات, crypto_kem_mlkem768_CIPHERTEXTBYTES);
+	حافظه_نقل(shared_secret, enc.snd.معلومات, crypto_kem_mlkem768_بایټونه);
 
-	explicit_bzero(&enc, sizeof(enc));
-	explicit_bzero(&rnd, sizeof(rnd));
-	return 0;
+	explicit_bzero(&enc, حجم(enc));
+	explicit_bzero(&rnd, حجم(rnd));
+	أرجع 0;
 }
 
-int
-crypto_kem_mlkem768_dec(uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
-    const uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
-    const uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES])
+صحيح
+crypto_kem_mlkem768_dec(uint8_t shared_secret[crypto_kem_mlkem768_بایټونه],
+    ثابت uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
+    ثابت uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES])
 {
-	libcrux_mlkem768_sk sk_internal;
-	libcrux_mlkem768_ciphertext ct_internal;
-	libcrux_mlkem768_dec_result shared_secret_internal;
+	libcrux_mlkem768_sk sk_دننی;
+	libcrux_mlkem768_ciphertext ct_دننی;
+	libcrux_mlkem768_dec_پایله shared_secret_دننی;
 
-	memcpy(sk_internal.data, sk, crypto_kem_mlkem768_SECRETKEYBYTES);
-	memcpy(ct_internal.data, ct, crypto_kem_mlkem768_CIPHERTEXTBYTES);
-	shared_secret_internal = libcrux_ml_kem_mlkem768_portable_decapsulate(
-	    &sk_internal, &ct_internal);
-	memcpy(shared_secret, shared_secret_internal.data,
-	    crypto_kem_mlkem768_BYTES);
+	حافظه_نقل(sk_دننی.معلومات, sk, crypto_kem_mlkem768_SECRETKEYBYTES);
+	حافظه_نقل(ct_دننی.معلومات, ct, crypto_kem_mlkem768_CIPHERTEXTBYTES);
+	shared_secret_دننی = libcrux_ml_kem_mlkem768_portable_decapsulate(
+	    &sk_دننی, &ct_دننی);
+	حافظه_نقل(shared_secret, shared_secret_دننی.معلومات,
+	    crypto_kem_mlkem768_بایټونه);
 
-	explicit_bzero(&sk_internal, sizeof(sk_internal));
-	explicit_bzero(&shared_secret_internal, sizeof(shared_secret_internal));
-	return 0;
+	explicit_bzero(&sk_دننی, حجم(sk_دننی));
+	explicit_bzero(&shared_secret_دننی, حجم(shared_secret_دننی));
+	أرجع 0;
 }
 
 /* ML-DSA 44 */
 
-int
+صحيح
 crypto_sign_mldsa44_keypair(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
     uint8_t sk[MLDSA44_SECRETKEYBYTES])
 {
 	uint8_t rnd[MLDSA44_SEEDBYTES];
-	int r;
+	صحيح r;
 
-	arc4random_buf(rnd, sizeof(rnd));
+	arc4random_buf(rnd, حجم(rnd));
 	r = crypto_sign_mldsa44_keypair_seeded(pk, sk, rnd);
-	explicit_bzero(rnd, sizeof(rnd));
-	return r;
+	explicit_bzero(rnd, حجم(rnd));
+	أرجع r;
 }
 
-int
+صحيح
 crypto_sign_mldsa44_keypair_seeded(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
-    uint8_t sk[MLDSA44_SECRETKEYBYTES], const uint8_t seed[MLDSA44_SEEDBYTES])
+    uint8_t sk[MLDSA44_SECRETKEYBYTES], ثابت uint8_t تخم[MLDSA44_SEEDBYTES])
 {
 	libcrux_mldsa44_keypair_rnd rnd;
 	libcrux_mldsa44_keypair keypair;
 
-	memcpy(rnd.data, seed, sizeof(rnd.data));
-	keypair = libcrux_ml_dsa_ml_dsa_44_portable_generate_key_pair(rnd);
-	memcpy(pk, keypair.verification_key.data, MLDSA44_PUBLICKEYBYTES);
-	memcpy(sk, keypair.signing_key.data, MLDSA44_SECRETKEYBYTES);
+	حافظه_نقل(rnd.معلومات, تخم, حجم(rnd.معلومات));
+	keypair = libcrux_ml_dsa_ml_dsa_44_portable_generate_کلی_pair(rnd);
+	حافظه_نقل(pk, keypair.verification_کلی.معلومات, MLDSA44_PUBLICKEYBYTES);
+	حافظه_نقل(sk, keypair.signing_کلی.معلومات, MLDSA44_SECRETKEYBYTES);
 
-	explicit_bzero(&keypair, sizeof(keypair));
-	explicit_bzero(&rnd, sizeof(rnd));
-	return 0;
+	explicit_bzero(&keypair, حجم(keypair));
+	explicit_bzero(&rnd, حجم(rnd));
+	أرجع 0;
 }
 
-int
+صحيح
 crypto_sign_mldsa44(uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA44_SECRETKEYBYTES])
+    ثابت uint8_t *پیغام, اندازه_t msglen,
+    ثابت uint8_t *ctx, اندازه_t ctxlen,
+    ثابت uint8_t sk[MLDSA44_SECRETKEYBYTES])
 {
 	uint8_t rnd[MLDSA44_SEEDBYTES];
-	int r;
+	صحيح r;
 
-	arc4random_buf(rnd, sizeof(rnd));
-	r = crypto_sign_mldsa44_seeded(sig, msg, msglen, ctx, ctxlen, sk, rnd);
-	explicit_bzero(rnd, sizeof(rnd));
-	return r;
+	arc4random_buf(rnd, حجم(rnd));
+	r = crypto_sign_mldsa44_seeded(sig, پیغام, msglen, ctx, ctxlen, sk, rnd);
+	explicit_bzero(rnd, حجم(rnd));
+	أرجع r;
 }
 
-int
+صحيح
 crypto_sign_mldsa44_seeded(uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA44_SECRETKEYBYTES],
-    const uint8_t seed[MLDSA44_SEEDBYTES])
+    ثابت uint8_t *پیغام, اندازه_t msglen,
+    ثابت uint8_t *ctx, اندازه_t ctxlen,
+    ثابت uint8_t sk[MLDSA44_SECRETKEYBYTES],
+    ثابت uint8_t تخم[MLDSA44_SEEDBYTES])
 {
 	libcrux_mldsa44_sign_rnd rnd;
-	libcrux_mldsa44_sk sk_internal;
-	libcrux_mldsa44_message message = { msg, msglen };
-	libcrux_mldsa44_message context = { ctx, ctxlen };
-	libcrux_mldsa44_sign_result res;
-	int r = -1;
+	libcrux_mldsa44_sk sk_دننی;
+	libcrux_mldsa44_پیغام پیغام_2 = { پیغام, msglen };
+	libcrux_mldsa44_پیغام context = { ctx, ctxlen };
+	libcrux_mldsa44_sign_پایله res;
+	صحيح r = -1;
 
-	memcpy(sk_internal.data, sk, MLDSA44_SECRETKEYBYTES);
-	memcpy(rnd.data, seed, sizeof(rnd.data));
-	res = libcrux_ml_dsa_ml_dsa_44_portable_sign(&sk_internal,
-	    message, context, rnd);
-	if (res.tag == LIBCRUX_RESULT_OK) {
-		memcpy(sig, res.val.case_Ok.data, MLDSA44_SIGBYTES);
+	حافظه_نقل(sk_دننی.معلومات, sk, MLDSA44_SECRETKEYBYTES);
+	حافظه_نقل(rnd.معلومات, تخم, حجم(rnd.معلومات));
+	res = libcrux_ml_dsa_ml_dsa_44_portable_sign(&sk_دننی,
+	    پیغام_2, context, rnd);
+	إذا (res.نښان == LIBCRUX_پایله_OK) {
+		حافظه_نقل(sig, res.val.case_Ok.معلومات, MLDSA44_SIGBYTES);
 		r = 0;
 	}
 
-	explicit_bzero(&sk_internal, sizeof(sk_internal));
-	explicit_bzero(&res, sizeof(res));
-	explicit_bzero(&rnd, sizeof(rnd));
-	return r;
+	explicit_bzero(&sk_دننی, حجم(sk_دننی));
+	explicit_bzero(&res, حجم(res));
+	explicit_bzero(&rnd, حجم(rnd));
+	أرجع r;
 }
 
-int
-crypto_sign_mldsa44_verify(const uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA44_PUBLICKEYBYTES])
+صحيح
+crypto_sign_mldsa44_verify(ثابت uint8_t sig[MLDSA44_SIGBYTES],
+    ثابت uint8_t *پیغام, اندازه_t msglen,
+    ثابت uint8_t *ctx, اندازه_t ctxlen,
+    ثابت uint8_t pk[MLDSA44_PUBLICKEYBYTES])
 {
-	libcrux_mldsa44_pk pk_internal;
-	libcrux_mldsa44_signature sig_internal;
-	libcrux_mldsa44_message message = { msg, msglen };
-	libcrux_mldsa44_message context = { ctx, ctxlen };
-	libcrux_mldsa44_verify_result res;
+	libcrux_mldsa44_pk pk_دننی;
+	libcrux_mldsa44_signature sig_دننی;
+	libcrux_mldsa44_پیغام پیغام_2 = { پیغام, msglen };
+	libcrux_mldsa44_پیغام context = { ctx, ctxlen };
+	libcrux_mldsa44_verify_پایله res;
 
-	memcpy(pk_internal.data, pk, MLDSA44_PUBLICKEYBYTES);
-	memcpy(sig_internal.data, sig, MLDSA44_SIGBYTES);
-	res = libcrux_ml_dsa_ml_dsa_44_portable_verify(&pk_internal,
-	    message, context, &sig_internal);
+	حافظه_نقل(pk_دننی.معلومات, pk, MLDSA44_PUBLICKEYBYTES);
+	حافظه_نقل(sig_دننی.معلومات, sig, MLDSA44_SIGBYTES);
+	res = libcrux_ml_dsa_ml_dsa_44_portable_verify(&pk_دننی,
+	    پیغام_2, context, &sig_دننی);
 
-	return (res.tag == LIBCRUX_RESULT_OK) ? 0 : -1;
+	أرجع (res.نښان == LIBCRUX_پایله_OK) ? 0 : -1;
 }
 
 /* ML-DSA 65 */
 
-#if 0
-int
+#إذا 0
+صحيح
 crypto_sign_mldsa65_keypair(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
     uint8_t sk[MLDSA65_SECRETKEYBYTES])
 {
 	uint8_t rnd[MLDSA65_SEEDBYTES];
-	int r;
+	صحيح r;
 
-	arc4random_buf(rnd, sizeof(rnd));
+	arc4random_buf(rnd, حجم(rnd));
 	r = crypto_sign_mldsa65_keypair_seeded(pk, sk, rnd);
-	explicit_bzero(rnd, sizeof(rnd));
-	return r;
+	explicit_bzero(rnd, حجم(rnd));
+	أرجع r;
 }
 
-int
+صحيح
 crypto_sign_mldsa65_keypair_seeded(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
-    uint8_t sk[MLDSA65_SECRETKEYBYTES], const uint8_t seed[MLDSA65_SEEDBYTES])
+    uint8_t sk[MLDSA65_SECRETKEYBYTES], ثابت uint8_t تخم[MLDSA65_SEEDBYTES])
 {
 	libcrux_mldsa65_keypair_rnd rnd;
 	libcrux_mldsa65_keypair keypair;
 
-	memcpy(rnd.data, seed, sizeof(rnd.data));
-	keypair = libcrux_ml_dsa_ml_dsa_65_portable_generate_key_pair(rnd);
-	memcpy(pk, keypair.verification_key.data, MLDSA65_PUBLICKEYBYTES);
-	memcpy(sk, keypair.signing_key.data, MLDSA65_SECRETKEYBYTES);
+	حافظه_نقل(rnd.معلومات, تخم, حجم(rnd.معلومات));
+	keypair = libcrux_ml_dsa_ml_dsa_65_portable_generate_کلی_pair(rnd);
+	حافظه_نقل(pk, keypair.verification_کلی.معلومات, MLDSA65_PUBLICKEYBYTES);
+	حافظه_نقل(sk, keypair.signing_کلی.معلومات, MLDSA65_SECRETKEYBYTES);
 
-	explicit_bzero(&keypair, sizeof(keypair));
-	explicit_bzero(&rnd, sizeof(rnd));
-	return 0;
+	explicit_bzero(&keypair, حجم(keypair));
+	explicit_bzero(&rnd, حجم(rnd));
+	أرجع 0;
 }
 
-int
+صحيح
 crypto_sign_mldsa65(uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA65_SECRETKEYBYTES])
+    ثابت uint8_t *پیغام, اندازه_t msglen,
+    ثابت uint8_t *ctx, اندازه_t ctxlen,
+    ثابت uint8_t sk[MLDSA65_SECRETKEYBYTES])
 {
 	uint8_t rnd[MLDSA65_SEEDBYTES];
-	int r;
+	صحيح r;
 
-	arc4random_buf(rnd, sizeof(rnd));
-	r = crypto_sign_mldsa65_seeded(sig, msg, msglen, ctx, ctxlen, sk, rnd);
-	explicit_bzero(rnd, sizeof(rnd));
-	return r;
+	arc4random_buf(rnd, حجم(rnd));
+	r = crypto_sign_mldsa65_seeded(sig, پیغام, msglen, ctx, ctxlen, sk, rnd);
+	explicit_bzero(rnd, حجم(rnd));
+	أرجع r;
 }
 
-int
+صحيح
 crypto_sign_mldsa65_seeded(uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA65_SECRETKEYBYTES],
-    const uint8_t seed[MLDSA65_SEEDBYTES])
+    ثابت uint8_t *پیغام, اندازه_t msglen,
+    ثابت uint8_t *ctx, اندازه_t ctxlen,
+    ثابت uint8_t sk[MLDSA65_SECRETKEYBYTES],
+    ثابت uint8_t تخم[MLDSA65_SEEDBYTES])
 {
 	libcrux_mldsa65_sign_rnd rnd;
-	libcrux_mldsa65_sk sk_internal;
-	libcrux_mldsa65_message message = { msg, msglen };
-	libcrux_mldsa65_message context = { ctx, ctxlen };
-	libcrux_mldsa65_sign_result res;
-	int r = -1;
+	libcrux_mldsa65_sk sk_دننی;
+	libcrux_mldsa65_پیغام پیغام_2 = { پیغام, msglen };
+	libcrux_mldsa65_پیغام context = { ctx, ctxlen };
+	libcrux_mldsa65_sign_پایله res;
+	صحيح r = -1;
 
-	memcpy(sk_internal.data, sk, MLDSA65_SECRETKEYBYTES);
-	memcpy(rnd.data, seed, sizeof(rnd.data));
-	res = libcrux_ml_dsa_ml_dsa_65_portable_sign(&sk_internal,
-	    message, context, rnd);
-	if (res.tag == LIBCRUX_RESULT_OK) {
-		memcpy(sig, res.val.case_Ok.data, MLDSA65_SIGBYTES);
+	حافظه_نقل(sk_دننی.معلومات, sk, MLDSA65_SECRETKEYBYTES);
+	حافظه_نقل(rnd.معلومات, تخم, حجم(rnd.معلومات));
+	res = libcrux_ml_dsa_ml_dsa_65_portable_sign(&sk_دننی,
+	    پیغام_2, context, rnd);
+	إذا (res.نښان == LIBCRUX_پایله_OK) {
+		حافظه_نقل(sig, res.val.case_Ok.معلومات, MLDSA65_SIGBYTES);
 		r = 0;
 	}
 
-	explicit_bzero(&sk_internal, sizeof(sk_internal));
-	explicit_bzero(&res, sizeof(res));
-	explicit_bzero(&rnd, sizeof(rnd));
-	return r;
+	explicit_bzero(&sk_دننی, حجم(sk_دننی));
+	explicit_bzero(&res, حجم(res));
+	explicit_bzero(&rnd, حجم(rnd));
+	أرجع r;
 }
 
-int
-crypto_sign_mldsa65_verify(const uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA65_PUBLICKEYBYTES])
+صحيح
+crypto_sign_mldsa65_verify(ثابت uint8_t sig[MLDSA65_SIGBYTES],
+    ثابت uint8_t *پیغام, اندازه_t msglen,
+    ثابت uint8_t *ctx, اندازه_t ctxlen,
+    ثابت uint8_t pk[MLDSA65_PUBLICKEYBYTES])
 {
-	libcrux_mldsa65_pk pk_internal;
-	libcrux_mldsa65_signature sig_internal;
-	libcrux_mldsa65_message message = { msg, msglen };
-	libcrux_mldsa65_message context = { ctx, ctxlen };
-	libcrux_mldsa65_verify_result res;
+	libcrux_mldsa65_pk pk_دننی;
+	libcrux_mldsa65_signature sig_دننی;
+	libcrux_mldsa65_پیغام پیغام_2 = { پیغام, msglen };
+	libcrux_mldsa65_پیغام context = { ctx, ctxlen };
+	libcrux_mldsa65_verify_پایله res;
 
-	memcpy(pk_internal.data, pk, MLDSA65_PUBLICKEYBYTES);
-	memcpy(sig_internal.data, sig, MLDSA65_SIGBYTES);
-	res = libcrux_ml_dsa_ml_dsa_65_portable_verify(&pk_internal,
-	    message, context, &sig_internal);
+	حافظه_نقل(pk_دننی.معلومات, pk, MLDSA65_PUBLICKEYBYTES);
+	حافظه_نقل(sig_دننی.معلومات, sig, MLDSA65_SIGBYTES);
+	res = libcrux_ml_dsa_ml_dsa_65_portable_verify(&pk_دننی,
+	    پیغام_2, context, &sig_دننی);
 
-	return (res.tag == LIBCRUX_RESULT_OK) ? 0 : -1;
+	أرجع (res.نښان == LIBCRUX_پایله_OK) ? 0 : -1;
 }
-#endif
+#د_که_پای
 
 /* ML-DSA 87 */
 
-#if 0
-int
+#إذا 0
+صحيح
 crypto_sign_mldsa87_keypair(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
     uint8_t sk[MLDSA87_SECRETKEYBYTES])
 {
 	uint8_t rnd[MLDSA87_SEEDBYTES];
-	int r;
+	صحيح r;
 
-	arc4random_buf(rnd, sizeof(rnd));
+	arc4random_buf(rnd, حجم(rnd));
 	r = crypto_sign_mldsa87_keypair_seeded(pk, sk, rnd);
-	explicit_bzero(rnd, sizeof(rnd));
-	return r;
+	explicit_bzero(rnd, حجم(rnd));
+	أرجع r;
 }
 
-int
+صحيح
 crypto_sign_mldsa87_keypair_seeded(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
-    uint8_t sk[MLDSA87_SECRETKEYBYTES], const uint8_t seed[MLDSA87_SEEDBYTES])
+    uint8_t sk[MLDSA87_SECRETKEYBYTES], ثابت uint8_t تخم[MLDSA87_SEEDBYTES])
 {
 	libcrux_mldsa87_keypair_rnd rnd;
 	libcrux_mldsa87_keypair keypair;
 
-	memcpy(rnd.data, seed, sizeof(rnd.data));
-	keypair = libcrux_ml_dsa_ml_dsa_87_portable_generate_key_pair(rnd);
-	memcpy(pk, keypair.verification_key.data, MLDSA87_PUBLICKEYBYTES);
-	memcpy(sk, keypair.signing_key.data, MLDSA87_SECRETKEYBYTES);
+	حافظه_نقل(rnd.معلومات, تخم, حجم(rnd.معلومات));
+	keypair = libcrux_ml_dsa_ml_dsa_87_portable_generate_کلی_pair(rnd);
+	حافظه_نقل(pk, keypair.verification_کلی.معلومات, MLDSA87_PUBLICKEYBYTES);
+	حافظه_نقل(sk, keypair.signing_کلی.معلومات, MLDSA87_SECRETKEYBYTES);
 
-	explicit_bzero(&keypair, sizeof(keypair));
-	explicit_bzero(&rnd, sizeof(rnd));
-	return 0;
+	explicit_bzero(&keypair, حجم(keypair));
+	explicit_bzero(&rnd, حجم(rnd));
+	أرجع 0;
 }
 
-int
+صحيح
 crypto_sign_mldsa87(uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA87_SECRETKEYBYTES])
+    ثابت uint8_t *پیغام, اندازه_t msglen,
+    ثابت uint8_t *ctx, اندازه_t ctxlen,
+    ثابت uint8_t sk[MLDSA87_SECRETKEYBYTES])
 {
 	uint8_t rnd[MLDSA87_SEEDBYTES];
-	int r;
+	صحيح r;
 
-	arc4random_buf(rnd, sizeof(rnd));
-	r = crypto_sign_mldsa87_seeded(sig, msg, msglen, ctx, ctxlen, sk, rnd);
-	explicit_bzero(rnd, sizeof(rnd));
-	return r;
+	arc4random_buf(rnd, حجم(rnd));
+	r = crypto_sign_mldsa87_seeded(sig, پیغام, msglen, ctx, ctxlen, sk, rnd);
+	explicit_bzero(rnd, حجم(rnd));
+	أرجع r;
 }
 
-int
+صحيح
 crypto_sign_mldsa87_seeded(uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA87_SECRETKEYBYTES],
-    const uint8_t seed[MLDSA87_SEEDBYTES])
+    ثابت uint8_t *پیغام, اندازه_t msglen,
+    ثابت uint8_t *ctx, اندازه_t ctxlen,
+    ثابت uint8_t sk[MLDSA87_SECRETKEYBYTES],
+    ثابت uint8_t تخم[MLDSA87_SEEDBYTES])
 {
 	libcrux_mldsa87_sign_rnd rnd;
-	libcrux_mldsa87_sk sk_internal;
-	libcrux_mldsa87_message message = { msg, msglen };
-	libcrux_mldsa87_message context = { ctx, ctxlen };
-	libcrux_mldsa87_sign_result res;
-	int r = -1;
+	libcrux_mldsa87_sk sk_دننی;
+	libcrux_mldsa87_پیغام پیغام_2 = { پیغام, msglen };
+	libcrux_mldsa87_پیغام context = { ctx, ctxlen };
+	libcrux_mldsa87_sign_پایله res;
+	صحيح r = -1;
 
-	memcpy(sk_internal.data, sk, MLDSA87_SECRETKEYBYTES);
-	memcpy(rnd.data, seed, sizeof(rnd.data));
-	res = libcrux_ml_dsa_ml_dsa_87_portable_sign(&sk_internal,
-	    message, context, rnd);
-	if (res.tag == LIBCRUX_RESULT_OK) {
-		memcpy(sig, res.val.case_Ok.data, MLDSA87_SIGBYTES);
+	حافظه_نقل(sk_دننی.معلومات, sk, MLDSA87_SECRETKEYBYTES);
+	حافظه_نقل(rnd.معلومات, تخم, حجم(rnd.معلومات));
+	res = libcrux_ml_dsa_ml_dsa_87_portable_sign(&sk_دننی,
+	    پیغام_2, context, rnd);
+	إذا (res.نښان == LIBCRUX_پایله_OK) {
+		حافظه_نقل(sig, res.val.case_Ok.معلومات, MLDSA87_SIGBYTES);
 		r = 0;
 	}
 
-	explicit_bzero(&sk_internal, sizeof(sk_internal));
-	explicit_bzero(&res, sizeof(res));
-	explicit_bzero(&rnd, sizeof(rnd));
-	return r;
+	explicit_bzero(&sk_دننی, حجم(sk_دننی));
+	explicit_bzero(&res, حجم(res));
+	explicit_bzero(&rnd, حجم(rnd));
+	أرجع r;
 }
 
-int
-crypto_sign_mldsa87_verify(const uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA87_PUBLICKEYBYTES])
+صحيح
+crypto_sign_mldsa87_verify(ثابت uint8_t sig[MLDSA87_SIGBYTES],
+    ثابت uint8_t *پیغام, اندازه_t msglen,
+    ثابت uint8_t *ctx, اندازه_t ctxlen,
+    ثابت uint8_t pk[MLDSA87_PUBLICKEYBYTES])
 {
-	libcrux_mldsa87_pk pk_internal;
-	libcrux_mldsa87_signature sig_internal;
-	libcrux_mldsa87_message message = { msg, msglen };
-	libcrux_mldsa87_message context = { ctx, ctxlen };
-	libcrux_mldsa87_verify_result res;
+	libcrux_mldsa87_pk pk_دننی;
+	libcrux_mldsa87_signature sig_دننی;
+	libcrux_mldsa87_پیغام پیغام_2 = { پیغام, msglen };
+	libcrux_mldsa87_پیغام context = { ctx, ctxlen };
+	libcrux_mldsa87_verify_پایله res;
 
-	memcpy(pk_internal.data, pk, MLDSA87_PUBLICKEYBYTES);
-	memcpy(sig_internal.data, sig, MLDSA87_SIGBYTES);
-	res = libcrux_ml_dsa_ml_dsa_87_portable_verify(&pk_internal,
-	    message, context, &sig_internal);
+	حافظه_نقل(pk_دننی.معلومات, pk, MLDSA87_PUBLICKEYBYTES);
+	حافظه_نقل(sig_دننی.معلومات, sig, MLDSA87_SIGBYTES);
+	res = libcrux_ml_dsa_ml_dsa_87_portable_verify(&pk_دننی,
+	    پیغام_2, context, &sig_دننی);
 
-	return (res.tag == LIBCRUX_RESULT_OK) ? 0 : -1;
+	أرجع (res.نښان == LIBCRUX_پایله_OK) ? 0 : -1;
 }
-#endif
+#د_که_پای
 
-void
-sha3_256(uint8_t digest[32], const uint8_t *data, size_t len)
+فراغ
+sha3_256(uint8_t digest[32], ثابت uint8_t *معلومات, اندازه_t len)
 {
-	Eurydice_borrow_slice_u8 input = { data, len };
-	Eurydice_mut_borrow_slice_u8 output = { digest, 32 };
-	libcrux_sha3_portable_sha256(output, input);
+	Eurydice_borrow_ټوټه_u8 ننوت = { معلومات, len };
+	Eurydice_mut_borrow_ټوټه_u8 output = { digest, 32 };
+	libcrux_sha3_portable_sha256(output, ننوت);
 }
 
-void
-sha3_512(uint8_t digest[64], const uint8_t *data, size_t len)
+فراغ
+sha3_512(uint8_t digest[64], ثابت uint8_t *معلومات, اندازه_t len)
 {
-	Eurydice_borrow_slice_u8 input = { data, len };
-	Eurydice_mut_borrow_slice_u8 output = { digest, 64 };
-	libcrux_sha3_portable_sha512(output, input);
+	Eurydice_borrow_ټوټه_u8 ننوت = { معلومات, len };
+	Eurydice_mut_borrow_ټوټه_u8 output = { digest, 64 };
+	libcrux_sha3_portable_sha512(output, ننوت);
 }
-#endif /* defined(USE_MLDSA) || defined(USE_MLKEM768X25519) */
+#د_که_پای /* defined(USE_MLDSA) || defined(USE_MLKEM768X25519) */

@@ -17,72 +17,72 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/recallocarray.c */
 
-#include "includes.h"
-#ifndef HAVE_RECALLOCARRAY
+#ضمن "includes.h"
+#که_نه_تعریف_شوی HAVE_RECALLOCARRAY
 
-#include <errno.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <unistd.h>
+#ضمن <errno.h>
+#ضمن <stdlib.h>
+#ضمن <stdint.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
 
 /*
  * This is sqrt(SIZE_MAX+1), as s1*s2 <= SIZE_MAX
  * if both s1 < MUL_NO_OVERFLOW and s2 < MUL_NO_OVERFLOW
  */
-#define MUL_NO_OVERFLOW ((size_t)1 << (sizeof(size_t) * 4))
+#تعریف_کړه MUL_NO_ډکېدنه ((اندازه_t)1 << (حجم(اندازه_t) * 4))
 
-void *
-recallocarray(void *ptr, size_t oldnmemb, size_t newnmemb, size_t size)
+فراغ *
+recallocarray(فراغ *ptr, اندازه_t oldnmemb, اندازه_t newnmemb, اندازه_t اندازه)
 {
-	size_t oldsize, newsize;
-	void *newptr;
+	اندازه_t oldsize, newsize;
+	فراغ *newptr;
 
-	if (ptr == NULL)
-		return calloc(newnmemb, size);
+	إذا (ptr == عدم)
+		أرجع حافظه_صفر_ورکړه(newnmemb, اندازه);
 
-	if ((newnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
-	    newnmemb > 0 && SIZE_MAX / newnmemb < size) {
+	إذا ((newnmemb >= MUL_NO_ډکېدنه || اندازه >= MUL_NO_ډکېدنه) &&
+	    newnmemb > 0 && SIZE_MAX / newnmemb < اندازه) {
 		errno = ENOMEM;
-		return NULL;
+		أرجع عدم;
 	}
-	newsize = newnmemb * size;
+	newsize = newnmemb * اندازه;
 
-	if ((oldnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
-	    oldnmemb > 0 && SIZE_MAX / oldnmemb < size) {
+	إذا ((oldnmemb >= MUL_NO_ډکېدنه || اندازه >= MUL_NO_ډکېدنه) &&
+	    oldnmemb > 0 && SIZE_MAX / oldnmemb < اندازه) {
 		errno = EINVAL;
-		return NULL;
+		أرجع عدم;
 	}
-	oldsize = oldnmemb * size;
+	oldsize = oldnmemb * اندازه;
 	
 	/*
 	 * Don't bother too much if we're shrinking just a bit,
 	 * we do not shrink for series of small steps, oh well.
 	 */
-	if (newsize <= oldsize) {
-		size_t d = oldsize - newsize;
+	إذا (newsize <= oldsize) {
+		اندازه_t d = oldsize - newsize;
 
-		if (d < oldsize / 2 && d < (size_t)getpagesize()) {
-			memset((char *)ptr + newsize, 0, d);
-			return ptr;
+		إذا (d < oldsize / 2 && d < (اندازه_t)getpagesize()) {
+			memset((حرف *)ptr + newsize, 0, d);
+			أرجع ptr;
 		}
 	}
 
-	newptr = malloc(newsize);
-	if (newptr == NULL)
-		return NULL;
+	newptr = حافظه_ورکړه(newsize);
+	إذا (newptr == عدم)
+		أرجع عدم;
 
-	if (newsize > oldsize) {
-		memcpy(newptr, ptr, oldsize);
-		memset((char *)newptr + oldsize, 0, newsize - oldsize);
-	} else
-		memcpy(newptr, ptr, newsize);
+	إذا (newsize > oldsize) {
+		حافظه_نقل(newptr, ptr, oldsize);
+		memset((حرف *)newptr + oldsize, 0, newsize - oldsize);
+	} وإلا
+		حافظه_نقل(newptr, ptr, newsize);
 
 	explicit_bzero(ptr, oldsize);
-	free(ptr);
+	حرر(ptr);
 
-	return newptr;
+	أرجع newptr;
 }
 /* DEF_WEAK(recallocarray); */
 
-#endif /* HAVE_RECALLOCARRAY */
+#د_که_پای /* HAVE_RECALLOCARRAY */

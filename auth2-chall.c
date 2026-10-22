@@ -24,206 +24,206 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ضمن <stdarg.h>
 
-#include "xmalloc.h"
-#include "ssh2.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "dispatch.h"
-#include "ssherr.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
+#ضمن "xmalloc.h"
+#ضمن "ssh2.h"
+#ضمن "sshkey.h"
+#ضمن "hostfile.h"
+#ضمن "auth.h"
+#ضمن "sshbuf.h"
+#ضمن "packet.h"
+#ضمن "dispatch.h"
+#ضمن "ssherr.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "servconf.h"
 
 /* import */
-extern ServerOptions options;
+خارجي ServerOptions options;
 
-static int auth2_challenge_start(struct ssh *);
-static int send_userauth_info_request(struct ssh *);
-static int input_userauth_info_response(int, uint32_t, struct ssh *);
+ساكن صحيح auth2_challenge_پیل(بنية ssh *);
+ساكن صحيح send_userauth_info_request(بنية ssh *);
+ساكن صحيح ننوت_userauth_info_response(صحيح, uint32_t, بنية ssh *);
 
-#ifdef BSD_AUTH
-extern KbdintDevice mm_bsdauth_device;
-#else
-#ifdef USE_PAM
-extern KbdintDevice mm_sshpam_device;
-#endif
-#endif
+#که_تعریف_شوی BSD_AUTH
+خارجي KbdintDevice mm_bsdauth_device;
+#وإلا
+#که_تعریف_شوی USE_PAM
+خارجي KbdintDevice mm_sshpam_device;
+#د_که_پای
+#د_که_پای
 
 KbdintDevice *devices[] = {
-#ifdef BSD_AUTH
+#که_تعریف_شوی BSD_AUTH
 	&mm_bsdauth_device,
-#else
-#ifdef USE_PAM
+#وإلا
+#که_تعریف_شوی USE_PAM
 	&mm_sshpam_device,
-#endif
-#endif
-	NULL
+#د_که_پای
+#د_که_پای
+	عدم
 };
 
-typedef struct KbdintAuthctxt KbdintAuthctxt;
-struct KbdintAuthctxt
+تعريفنوع بنية KbdintAuthctxt KbdintAuthctxt;
+بنية KbdintAuthctxt
 {
-	char *devices;
-	void *ctxt;
+	حرف *devices;
+	فراغ *ctxt;
 	KbdintDevice *device;
 	u_int nreq;
-	u_int devices_done;
+	u_int devices_بشپړ;
 };
 
-#ifdef USE_PAM
-void
-remove_kbdint_device(const char *devname)
+#که_تعریف_شوی USE_PAM
+فراغ
+remove_kbdint_device(ثابت حرف *devname)
 {
-	int i, j;
+	صحيح i, j;
 
-	for (i = 0; devices[i] != NULL; i++)
-		if (strcmp(devices[i]->name, devname) == 0) {
-			for (j = i; devices[j] != NULL; j++)
+	لكل (i = 0; devices[i] != عدم; i++)
+		إذا (strcmp(devices[i]->name, devname) == 0) {
+			لكل (j = i; devices[j] != عدم; j++)
 				devices[j] = devices[j+1];
 			i--;
 		}
 }
-#endif
+#د_که_پای
 
-static KbdintAuthctxt *
-kbdint_alloc(const char *devs)
+ساكن KbdintAuthctxt *
+kbdint_alloc(ثابت حرف *devs)
 {
 	KbdintAuthctxt *kbdintctxt;
-	struct sshbuf *b;
-	int i, r;
+	بنية sshbuf *b;
+	صحيح i, r;
 
-#ifdef USE_PAM
-	if (!options.use_pam)
+#که_تعریف_شوی USE_PAM
+	إذا (!options.use_pam)
 		remove_kbdint_device("pam");
-#endif
+#د_که_پای
 
-	kbdintctxt = xcalloc(1, sizeof(KbdintAuthctxt));
-	if (strcmp(devs, "") == 0) {
-		if ((b = sshbuf_new()) == NULL)
+	kbdintctxt = xcalloc(1, حجم(KbdintAuthctxt));
+	إذا (strcmp(devs, "") == 0) {
+		إذا ((b = sshbuf_new()) == عدم)
 			fatal_f("sshbuf_new failed");
-		for (i = 0; devices[i]; i++) {
-			if ((r = sshbuf_putf(b, "%s%s",
+		لكل (i = 0; devices[i]; i++) {
+			إذا ((r = sshbuf_putf(b, "%s%s",
 			    sshbuf_len(b) ? "," : "", devices[i]->name)) != 0)
 				fatal_fr(r, "buffer error");
 		}
-		if ((kbdintctxt->devices = sshbuf_dup_string(b)) == NULL)
+		إذا ((kbdintctxt->devices = sshbuf_dup_string(b)) == عدم)
 			fatal_f("sshbuf_dup_string failed");
 		sshbuf_free(b);
-	} else {
+	} وإلا {
 		kbdintctxt->devices = xstrdup(devs);
 	}
 	debug("kbdint_alloc: devices '%s'", kbdintctxt->devices);
-	kbdintctxt->ctxt = NULL;
-	kbdintctxt->device = NULL;
+	kbdintctxt->ctxt = عدم;
+	kbdintctxt->device = عدم;
 	kbdintctxt->nreq = 0;
 
-	return kbdintctxt;
+	أرجع kbdintctxt;
 }
-static void
+ساكن فراغ
 kbdint_reset_device(KbdintAuthctxt *kbdintctxt)
 {
-	if (kbdintctxt->ctxt) {
+	إذا (kbdintctxt->ctxt) {
 		kbdintctxt->device->free_ctx(kbdintctxt->ctxt);
-		kbdintctxt->ctxt = NULL;
+		kbdintctxt->ctxt = عدم;
 	}
-	kbdintctxt->device = NULL;
+	kbdintctxt->device = عدم;
 }
-static void
+ساكن فراغ
 kbdint_free(KbdintAuthctxt *kbdintctxt)
 {
-	if (kbdintctxt->device)
+	إذا (kbdintctxt->device)
 		kbdint_reset_device(kbdintctxt);
-	free(kbdintctxt->devices);
-	freezero(kbdintctxt, sizeof(*kbdintctxt));
+	حرر(kbdintctxt->devices);
+	freezero(kbdintctxt, حجم(*kbdintctxt));
 }
 /* get next device */
-static int
-kbdint_next_device(Authctxt *authctxt, KbdintAuthctxt *kbdintctxt)
+ساكن صحيح
+kbdint_بل_device(Authctxt *authctxt, KbdintAuthctxt *kbdintctxt)
 {
-	size_t len;
-	char *t;
-	size_t i;
+	اندازه_t len;
+	حرف *t;
+	اندازه_t i;
 
-	if (kbdintctxt->device)
+	إذا (kbdintctxt->device)
 		kbdint_reset_device(kbdintctxt);
-	do {
+	افعل {
 		len = kbdintctxt->devices ?
 		    strcspn(kbdintctxt->devices, ",") : 0;
 
-		if (len == 0)
-			break;
-		for (i = 0; devices[i]; i++) {
-			if (i >= sizeof(kbdintctxt->devices_done) * 8 ||
-			    i >= sizeof(devices) / sizeof(devices[0]))
+		إذا (len == 0)
+			اكسر;
+		لكل (i = 0; devices[i]; i++) {
+			إذا (i >= حجم(kbdintctxt->devices_بشپړ) * 8 ||
+			    i >= حجم(devices) / حجم(devices[0]))
 				fatal_f("internal error: too many devices");
-			if ((kbdintctxt->devices_done & (1 << i)) != 0 ||
-			    !auth2_method_allowed(authctxt,
+			إذا ((kbdintctxt->devices_بشپړ & (1 << i)) != 0 ||
+			    !auth2_لاره_allowed(authctxt,
 			    "keyboard-interactive", devices[i]->name))
-				continue;
-			if (strlen(devices[i]->name) == len &&
+				استمر;
+			إذا (مزي_اوږدوالی(devices[i]->name) == len &&
 			    memcmp(kbdintctxt->devices, devices[i]->name,
 			    len) == 0) {
 				kbdintctxt->device = devices[i];
-				kbdintctxt->devices_done |= 1 << i;
+				kbdintctxt->devices_بشپړ |= 1 << i;
 			}
 		}
 		t = kbdintctxt->devices;
-		kbdintctxt->devices = t[len] ? xstrdup(t+len+1) : NULL;
-		free(t);
+		kbdintctxt->devices = t[len] ? xstrdup(t+len+1) : عدم;
+		حرر(t);
 		debug2("kbdint_next_device: devices %s", kbdintctxt->devices ?
 		    kbdintctxt->devices : "<empty>");
-	} while (kbdintctxt->devices && !kbdintctxt->device);
+	} طالما (kbdintctxt->devices && !kbdintctxt->device);
 
-	return kbdintctxt->device ? 1 : 0;
+	أرجع kbdintctxt->device ? 1 : 0;
 }
 
 /*
  * try challenge-response, set authctxt->postponed if we have to
  * wait for the response.
  */
-int
-auth2_challenge(struct ssh *ssh, char *devs)
+صحيح
+auth2_challenge(بنية ssh *ssh, حرف *devs)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	debug("auth2_challenge: user=%s devs=%s",
 	    authctxt->user ? authctxt->user : "<nouser>",
 	    devs ? devs : "<no devs>");
 
-	if (authctxt->user == NULL || !devs)
-		return 0;
-	if (authctxt->kbdintctxt == NULL)
+	إذا (authctxt->user == عدم || !devs)
+		أرجع 0;
+	إذا (authctxt->kbdintctxt == عدم)
 		authctxt->kbdintctxt = kbdint_alloc(devs);
-	return auth2_challenge_start(ssh);
+	أرجع auth2_challenge_پیل(ssh);
 }
 
 /* unregister kbd-int callbacks and context */
-void
-auth2_challenge_stop(struct ssh *ssh)
+فراغ
+auth2_challenge_stop(بنية ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	/* unregister callback */
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE, NULL);
-	if (authctxt->kbdintctxt != NULL) {
+	ssh_dispatch_سېټ(ssh, SSH2_پیغام_USERAUTH_INFO_RESPONSE, عدم);
+	إذا (authctxt->kbdintctxt != عدم) {
 		kbdint_free(authctxt->kbdintctxt);
-		authctxt->kbdintctxt = NULL;
+		authctxt->kbdintctxt = عدم;
 	}
 }
 
 /* side effect: sets authctxt->postponed if a reply was sent*/
-static int
-auth2_challenge_start(struct ssh *ssh)
+ساكن صحيح
+auth2_challenge_پیل(بنية ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt = authctxt->kbdintctxt;
@@ -231,138 +231,138 @@ auth2_challenge_start(struct ssh *ssh)
 	debug2("auth2_challenge_start: devices %s",
 	    kbdintctxt->devices ?  kbdintctxt->devices : "<empty>");
 
-	if (kbdint_next_device(authctxt, kbdintctxt) == 0) {
+	إذا (kbdint_بل_device(authctxt, kbdintctxt) == 0) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		أرجع 0;
 	}
 	debug("auth2_challenge_start: trying authentication method '%s'",
 	    kbdintctxt->device->name);
 
-	if ((kbdintctxt->ctxt = kbdintctxt->device->init_ctx(authctxt)) == NULL) {
+	إذا ((kbdintctxt->ctxt = kbdintctxt->device->init_ctx(authctxt)) == عدم) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		أرجع 0;
 	}
-	if (send_userauth_info_request(ssh) == 0) {
+	إذا (send_userauth_info_request(ssh) == 0) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		أرجع 0;
 	}
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE,
-	    &input_userauth_info_response);
+	ssh_dispatch_سېټ(ssh, SSH2_پیغام_USERAUTH_INFO_RESPONSE,
+	    &ننوت_userauth_info_response);
 
 	authctxt->postponed = 1;
-	return 0;
+	أرجع 0;
 }
 
-static int
-send_userauth_info_request(struct ssh *ssh)
+ساكن صحيح
+send_userauth_info_request(بنية ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt;
-	char *name, *instr, **prompts;
+	حرف *name, *instr, **prompts;
 	u_int r, i, *echo_on;
 
 	kbdintctxt = authctxt->kbdintctxt;
-	if (kbdintctxt->device->query(kbdintctxt->ctxt,
+	إذا (kbdintctxt->device->query(kbdintctxt->ctxt,
 	    &name, &instr, &kbdintctxt->nreq, &prompts, &echo_on))
-		return 0;
+		أرجع 0;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST)) != 0 ||
+	إذا ((r = sshpkt_پیل(ssh, SSH2_پیغام_USERAUTH_INFO_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, name)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, instr)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||	/* language not used */
 	    (r = sshpkt_put_u32(ssh, kbdintctxt->nreq)) != 0)
 		fatal_fr(r, "start packet");
-	for (i = 0; i < kbdintctxt->nreq; i++) {
-		if ((r = sshpkt_put_cstring(ssh, prompts[i])) != 0 ||
+	لكل (i = 0; i < kbdintctxt->nreq; i++) {
+		إذا ((r = sshpkt_put_cstring(ssh, prompts[i])) != 0 ||
 		    (r = sshpkt_put_u8(ssh, echo_on[i])) != 0)
 			fatal_fr(r, "assemble packet");
 	}
-	if ((r = sshpkt_send(ssh)) != 0 ||
+	إذا ((r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
-	for (i = 0; i < kbdintctxt->nreq; i++)
-		free(prompts[i]);
-	free(prompts);
-	free(echo_on);
-	free(name);
-	free(instr);
-	return 1;
+	لكل (i = 0; i < kbdintctxt->nreq; i++)
+		حرر(prompts[i]);
+	حرر(prompts);
+	حرر(echo_on);
+	حرر(name);
+	حرر(instr);
+	أرجع 1;
 }
 
-static int
-input_userauth_info_response(int type, uint32_t seq, struct ssh *ssh)
+ساكن صحيح
+ننوت_userauth_info_response(صحيح type, uint32_t seq, بنية ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt;
-	int authenticated = 0, res;
-	int r;
+	صحيح authenticated = 0, res;
+	صحيح r;
 	u_int i, nresp;
-	const char *devicename = NULL;
-	char **response = NULL;
-	double tstart = monotime_double();
+	ثابت حرف *devicename = عدم;
+	حرف **response = عدم;
+	مزدوج tstart = monotime_double();
 
-	if (authctxt == NULL)
+	إذا (authctxt == عدم)
 		fatal_f("no authctxt");
 	kbdintctxt = authctxt->kbdintctxt;
-	if (kbdintctxt == NULL || kbdintctxt->ctxt == NULL)
+	إذا (kbdintctxt == عدم || kbdintctxt->ctxt == عدم)
 		fatal_f("no kbdintctxt");
-	if (kbdintctxt->device == NULL)
+	إذا (kbdintctxt->device == عدم)
 		fatal_f("no device");
 
 	authctxt->postponed = 0;	/* reset */
-	if ((r = sshpkt_get_u32(ssh, &nresp)) != 0)
+	إذا ((r = sshpkt_get_u32(ssh, &nresp)) != 0)
 		fatal_fr(r, "parse packet");
-	if (nresp != kbdintctxt->nreq)
+	إذا (nresp != kbdintctxt->nreq)
 		fatal_f("wrong number of replies");
-	if (nresp > 100)
+	إذا (nresp > 100)
 		fatal_f("too many replies");
-	if (nresp > 0) {
-		response = xcalloc(nresp, sizeof(char *));
-		for (i = 0; i < nresp; i++) {
-			if ((r = sshpkt_get_cstring(ssh, &response[i], NULL)) != 0)
+	إذا (nresp > 0) {
+		response = xcalloc(nresp, حجم(حرف *));
+		لكل (i = 0; i < nresp; i++) {
+			إذا ((r = sshpkt_get_cstring(ssh, &response[i], عدم)) != 0)
 				fatal_fr(r, "parse response");
 		}
 	}
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	إذا ((r = sshpkt_get_پای_ټکی(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	res = kbdintctxt->device->respond(kbdintctxt->ctxt, nresp, response);
 
-	for (i = 0; i < nresp; i++) {
-		explicit_bzero(response[i], strlen(response[i]));
-		free(response[i]);
+	لكل (i = 0; i < nresp; i++) {
+		explicit_bzero(response[i], مزي_اوږدوالی(response[i]));
+		حرر(response[i]);
 	}
-	free(response);
+	حرر(response);
 
-	switch (res) {
-	case 0:
+	بدل (res) {
+	حالة 0:
 		/* Success! */
 		authenticated = authctxt->valid ? 1 : 0;
-		break;
-	case 1:
+		اكسر;
+	حالة 1:
 		/* Authentication needs further interaction */
-		if (send_userauth_info_request(ssh) == 1)
+		إذا (send_userauth_info_request(ssh) == 1)
 			authctxt->postponed = 1;
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		/* Failure! */
-		break;
+		اكسر;
 	}
 	devicename = kbdintctxt->device->name;
-	if (!authctxt->postponed) {
-		if (authenticated) {
+	إذا (!authctxt->postponed) {
+		إذا (authenticated) {
 			auth2_challenge_stop(ssh);
-		} else {
+		} وإلا {
 			/* start next device */
 			/* may set authctxt->postponed */
-			auth2_challenge_start(ssh);
+			auth2_challenge_پیل(ssh);
 		}
 	}
 
-	if (!authenticated)
+	إذا (!authenticated)
 		auth_failure_delay(authctxt, tstart);
-	userauth_finish(ssh, authenticated, "keyboard-interactive",
+	userauth_پای(ssh, authenticated, "keyboard-interactive",
 	    devicename);
-	return 0;
+	أرجع 0;
 }

@@ -27,64 +27,64 @@
 
 /* OPENBSD ORIGINAL: sys/sys/poll.h */
 
-#ifndef	_COMPAT_POLL_H_
-#define	_COMPAT_POLL_H_
+#که_نه_تعریف_شوی	_COMPAT_POLL_H_
+#تعریف_کړه	_COMPAT_POLL_H_
 
-#include <sys/types.h>
-#include <poll.h>
+#ضمن <sys/types.h>
+#ضمن <poll.h>
 
-#ifndef HAVE_STRUCT_POLLFD_FD
-typedef struct pollfd {
-	int	fd;
-	short	events;
-	short	revents;
+#که_نه_تعریف_شوی HAVE_STRUCT_POLLFD_FD
+تعريفنوع بنية pollfd {
+	صحيح	fd;
+	لنډ	events;
+	لنډ	revents;
 } pollfd_t;
 
-#ifndef POLLIN
+#که_نه_تعریف_شوی POLLIN
 # define POLLIN		0x0001
-#endif
-#ifndef POLLPRI
+#د_که_پای
+#که_نه_تعریف_شوی POLLPRI
 # define POLLPRI	0x0002
-#endif
-#ifndef POLLOUT
+#د_که_پای
+#که_نه_تعریف_شوی POLLOUT
 # define POLLOUT	0x0004
-#endif
-#ifndef POLLERR
+#د_که_پای
+#که_نه_تعریف_شوی POLLERR
 # define POLLERR	0x0008
-#endif
-#ifndef POLLHUP
+#د_که_پای
+#که_نه_تعریف_شوی POLLHUP
 # define POLLHUP	0x0010
-#endif
-#ifndef POLLNVAL
+#د_که_پای
+#که_نه_تعریف_شوی POLLNVAL
 # define POLLNVAL	0x0020
-#endif
+#د_که_پای
 
-#if 0
+#إذا 0
 /* the following are currently not implemented */
-#define	POLLRDNORM	0x0040
-#define POLLNORM	POLLRDNORM
-#define POLLWRNORM      POLLOUT
-#define	POLLRDBAND	0x0080
-#define	POLLWRBAND	0x0100
-#endif
+#تعریف_کړه	POLLRDNORM	0x0040
+#تعریف_کړه POLLNORM	POLLRDNORM
+#تعریف_کړه POLLWRNORM      POLLOUT
+#تعریف_کړه	POLLRDBAND	0x0080
+#تعریف_کړه	POLLWRBAND	0x0100
+#د_که_پای
 
-#define INFTIM		(-1)	/* not standard */
-#endif /* !HAVE_STRUCT_POLLFD_FD */
+#تعریف_کړه INFTIM		(-1)	/* not standard */
+#د_که_پای /* !HAVE_STRUCT_POLLFD_FD */
 
-#ifndef HAVE_NFDS_T
+#که_نه_تعریف_شوی HAVE_NFDS_T
 # ifdef POLL_NFDS_T_ULONG
-typedef unsigned long	nfds_t;
-# else
-typedef unsigned int	nfds_t;
+تعريفنوع بینښه اوږد	nfds_t;
+# وإلا
+تعريفنوع بینښه صحيح	nfds_t;
 # endif
-#endif
+#د_که_پای
 
-#ifndef HAVE_POLL
-int   poll(struct pollfd *, nfds_t, int);
-#endif
+#که_نه_تعریف_شوی HAVE_POLL
+صحيح   poll(بنية pollfd *, nfds_t, صحيح);
+#د_که_پای
 
-#ifndef HAVE_PPOLL
-int   ppoll(struct pollfd *, nfds_t, const struct timespec *, const sigset_t *);
-#endif
+#که_نه_تعریف_شوی HAVE_PPOLL
+صحيح   ppoll(بنية pollfd *, nfds_t, ثابت بنية timespec *, ثابت sigset_t *);
+#د_که_پای
 
-#endif /* !_COMPAT_POLL_H_ */
+#د_که_پای /* !_COMPAT_POLL_H_ */

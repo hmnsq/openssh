@@ -14,88 +14,88 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _OPENSSL_COMPAT_H
-#define _OPENSSL_COMPAT_H
+#که_نه_تعریف_شوی _OPENSSL_COMPAT_H
+#تعریف_کړه _OPENSSL_COMPAT_H
 
-#include "includes.h"
-#ifdef WITH_OPENSSL
+#ضمن "includes.h"
+#که_تعریف_شوی WITH_OPENSSL
 
-#include <openssl/opensslv.h>
-#include <openssl/crypto.h>
-#include <openssl/evp.h>
-#include <openssl/bn.h>
-#include <openssl/rsa.h>
-#include <openssl/ecdsa.h>
-#include <openssl/dh.h>
+#ضمن <openssl/opensslv.h>
+#ضمن <openssl/crypto.h>
+#ضمن <openssl/evp.h>
+#ضمن <openssl/bn.h>
+#ضمن <openssl/rsa.h>
+#ضمن <openssl/ecdsa.h>
+#ضمن <openssl/dh.h>
 
-int ssh_compatible_openssl(long, long);
-int ssh_libcrypto_init(void);
+صحيح ssh_compatible_openssl(اوږد, اوږد);
+صحيح ssh_libcrypto_init(فراغ);
 
-#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#إذا (OPENSSL_نسخه_شمېره < 0x10100000L)
 # error OpenSSL 1.1.0 or greater is required
-#endif
-#ifdef LIBRESSL_VERSION_NUMBER
-# if LIBRESSL_VERSION_NUMBER < 0x3010000fL
+#د_که_پای
+#که_تعریف_شوی LIBRESSL_نسخه_شمېره
+# إذا LIBRESSL_نسخه_شمېره < 0x3010000fL
 #  error LibreSSL 3.1.0 or greater is required
 # endif
-#endif
+#د_که_پای
 
-#ifndef OPENSSL_RSA_MAX_MODULUS_BITS
-# define OPENSSL_RSA_MAX_MODULUS_BITS	16384
-#endif
+#که_نه_تعریف_شوی OPENSSL_RSA_MAX_MODULUS_بټونه
+# define OPENSSL_RSA_MAX_MODULUS_بټونه	16384
+#د_که_پای
 
-#ifdef LIBRESSL_VERSION_NUMBER
-# if LIBRESSL_VERSION_NUMBER < 0x3010000fL
+#که_تعریف_شوی LIBRESSL_نسخه_شمېره
+# إذا LIBRESSL_نسخه_شمېره < 0x3010000fL
 #  define HAVE_BROKEN_CHACHA20
 # endif
-#endif
+#د_که_پای
 
-#if defined(OPENSSL_IS_BORINGSSL) || defined(OPENSSL_IS_AWSLC)
+#إذا defined(OPENSSL_IS_BORINGSSL) || defined(OPENSSL_IS_AWSLC)
 /*
  * BoringSSL and AWS-LC (rightly) got rid of the BN_FLG_CONSTTIME flag, along with
  * the entire BN_set_flags() interface.
  * https://boringssl.googlesource.com/boringssl/+/0a211dfe9
  */
-# define BN_set_flags(a, b)
-#endif
+# define BN_سېټ_flags(a, b)
+#د_که_پای
 
 /* LibreSSL <3.4 has the _GFp variants but not the equivalent modern ones. */
-#ifndef HAVE_EC_POINT_GET_AFFINE_COORDINATES
-# ifdef HAVE_EC_POINT_GET_AFFINE_COORDINATES_GFP
-#  define EC_POINT_get_affine_coordinates(a, b, c, d, e) \
-	(EC_POINT_get_affine_coordinates_GFp(a, b, c, d, e))
+#که_نه_تعریف_شوی HAVE_EC_ټکی_GET_AFFINE_COORDINATES
+# ifdef HAVE_EC_ټکی_GET_AFFINE_COORDINATES_GFP
+#  define EC_ټکی_get_affine_coordinates(a, b, c, d, e) \
+	(EC_ټکی_get_affine_coordinates_GFp(a, b, c, d, e))
 # endif
-#endif
-#ifndef HAVE_EC_POINT_SET_AFFINE_COORDINATES
-# ifdef HAVE_EC_POINT_SET_AFFINE_COORDINATES_GFP
-#  define EC_POINT_set_affine_coordinates(a, b, c, d, e) \
-	(EC_POINT_set_affine_coordinates_GFp(a, b, c, d, e))
+#د_که_پای
+#که_نه_تعریف_شوی HAVE_EC_ټکی_سېټ_AFFINE_COORDINATES
+# ifdef HAVE_EC_ټکی_سېټ_AFFINE_COORDINATES_GFP
+#  define EC_ټکی_سېټ_affine_coordinates(a, b, c, d, e) \
+	(EC_ټکی_سېټ_affine_coordinates_GFp(a, b, c, d, e))
 # endif
-#endif
+#د_که_پای
 
-#ifndef HAVE_EVP_CIPHER_CTX_GET_IV
+#که_نه_تعریف_شوی HAVE_EVP_CIPHER_CTX_GET_IV
 # ifdef HAVE_EVP_CIPHER_CTX_GET_UPDATED_IV
 #  define EVP_CIPHER_CTX_get_iv EVP_CIPHER_CTX_get_updated_iv
-# else /* HAVE_EVP_CIPHER_CTX_GET_UPDATED_IV */
-int EVP_CIPHER_CTX_get_iv(const EVP_CIPHER_CTX *ctx,
-    unsigned char *iv, size_t len);
+# وإلا /* HAVE_EVP_CIPHER_CTX_GET_UPDATED_IV */
+صحيح EVP_CIPHER_CTX_get_iv(ثابت EVP_CIPHER_CTX *ctx,
+    بینښه حرف *iv, اندازه_t len);
 # endif /* HAVE_EVP_CIPHER_CTX_GET_UPDATED_IV */
-#endif /* HAVE_EVP_CIPHER_CTX_GET_IV */
+#د_که_پای /* HAVE_EVP_CIPHER_CTX_GET_IV */
 
-#ifndef HAVE_EVP_CIPHER_CTX_SET_IV
-int EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx,
-    const unsigned char *iv, size_t len);
-#endif /* HAVE_EVP_CIPHER_CTX_SET_IV */
+#که_نه_تعریف_شوی HAVE_EVP_CIPHER_CTX_سېټ_IV
+صحيح EVP_CIPHER_CTX_سېټ_iv(EVP_CIPHER_CTX *ctx,
+    ثابت بینښه حرف *iv, اندازه_t len);
+#د_که_پای /* HAVE_EVP_CIPHER_CTX_SET_IV */
 
-#ifndef HAVE_EVP_DIGESTSIGN
-int EVP_DigestSign(EVP_MD_CTX *, unsigned char *, size_t *,
-    const unsigned char *, size_t);
-#endif
+#که_نه_تعریف_شوی HAVE_EVP_DIGESTSIGN
+صحيح EVP_DigestSign(EVP_MD_CTX *, بینښه حرف *, اندازه_t *,
+    ثابت بینښه حرف *, اندازه_t);
+#د_که_پای
 
-#ifndef HAVE_EVP_DIGESTVERIFY
-int EVP_DigestVerify(EVP_MD_CTX *, const unsigned char *, size_t,
-    const unsigned char *, size_t);
-#endif
+#که_نه_تعریف_شوی HAVE_EVP_DIGESTVERIFY
+صحيح EVP_DigestVerify(EVP_MD_CTX *, ثابت بینښه حرف *, اندازه_t,
+    ثابت بینښه حرف *, اندازه_t);
+#د_که_پای
 
-#endif /* WITH_OPENSSL */
-#endif /* _OPENSSL_COMPAT_H */
+#د_که_پای /* WITH_OPENSSL */
+#د_که_پای /* _OPENSSL_COMPAT_H */

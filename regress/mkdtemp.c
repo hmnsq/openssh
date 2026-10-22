@@ -16,46 +16,46 @@
 
 /* Roughly equivalent to "mktemp -d -t TEMPLATE", but portable. */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <limits.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#ضمن <limits.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <unistd.h>
 
-#include "log.h"
+#ضمن "log.h"
 
-static void
-usage(void)
+ساكن فراغ
+usage(فراغ)
 {
 	fprintf(stderr, "mkdtemp template\n");
-	exit(1);
+	وتل(1);
 }
 
-int
-main(int argc, char **argv)
+صحيح
+اصلي(صحيح argc, حرف **argv)
 {
-	const char *base;
-	const char *tmpdir;
-	char template[PATH_MAX];
-	int r;
-	char *dir;
+	ثابت حرف *بنسټ;
+	ثابت حرف *tmpdir;
+	حرف کينډۍ[PATH_MAX];
+	صحيح r;
+	حرف *dir;
 
-	if (argc != 2)
+	إذا (argc != 2)
 		usage();
-	base = argv[1];
+	بنسټ = argv[1];
 
-	if ((tmpdir = getenv("TMPDIR")) == NULL)
+	إذا ((tmpdir = getenv("TMPDIR")) == عدم)
 		tmpdir = "/tmp";
-	r = snprintf(template, sizeof(template), "%s/%s", tmpdir, base);
-	if (r < 0 || (size_t)r >= sizeof(template))
+	r = snprintf(کينډۍ, حجم(کينډۍ), "%s/%s", tmpdir, بنسټ);
+	إذا (r < 0 || (اندازه_t)r >= حجم(کينډۍ))
 		fatal("template string too long");
-	dir = mkdtemp(template);
-	if (dir == NULL) {
+	dir = mkdtemp(کينډۍ);
+	إذا (dir == عدم) {
 		perror("mkdtemp");
-		exit(1);
+		وتل(1);
 	}
 	puts(dir);
-	return 0;
+	أرجع 0;
 }

@@ -19,29 +19,29 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtonum.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifndef HAVE_STRTONUM
-#include <stdlib.h>
-#include <limits.h>
-#include <errno.h>
+#که_نه_تعریف_شوی HAVE_STRTONUM
+#ضمن <stdlib.h>
+#ضمن <limits.h>
+#ضمن <errno.h>
 
-#define INVALID		1
-#define TOOSMALL	2
-#define TOOLARGE	3
+#تعریف_کړه INVALID		1
+#تعریف_کړه TOOSMALL	2
+#تعریف_کړه TOOLARGE	3
 
-long long
-strtonum(const char *numstr, long long minval, long long maxval,
-    const char **errstrp)
+اوږد اوږد
+strtonum(ثابت حرف *numstr, اوږد اوږد minval, اوږد اوږد maxval,
+    ثابت حرف **errstrp)
 {
-	long long ll = 0;
-	char *ep;
-	int error = 0;
-	struct errval {
-		const char *errstr;
-		int err;
+	اوږد اوږد ll = 0;
+	حرف *ep;
+	صحيح error = 0;
+	بنية errval {
+		ثابت حرف *errstr;
+		صحيح err;
 	} ev[4] = {
-		{ NULL,		0 },
+		{ عدم,		0 },
 		{ "invalid",	EINVAL },
 		{ "too small",	ERANGE },
 		{ "too large",	ERANGE },
@@ -49,24 +49,24 @@ strtonum(const char *numstr, long long minval, long long maxval,
 
 	ev[0].err = errno;
 	errno = 0;
-	if (minval > maxval)
+	إذا (minval > maxval)
 		error = INVALID;
-	else {
+	وإلا {
 		ll = strtoll(numstr, &ep, 10);
-		if (numstr == ep || *ep != '\0')
+		إذا (numstr == ep || *ep != '\0')
 			error = INVALID;
-		else if ((ll == LLONG_MIN && errno == ERANGE) || ll < minval)
+		وإلا إذا ((ll == LLONG_MIN && errno == ERANGE) || ll < minval)
 			error = TOOSMALL;
-		else if ((ll == LLONG_MAX && errno == ERANGE) || ll > maxval)
+		وإلا إذا ((ll == LLONG_MAX && errno == ERANGE) || ll > maxval)
 			error = TOOLARGE;
 	}
-	if (errstrp != NULL)
+	إذا (errstrp != عدم)
 		*errstrp = ev[error].errstr;
 	errno = ev[error].err;
-	if (error)
+	إذا (error)
 		ll = 0;
 
-	return (ll);
+	أرجع (ll);
 }
 
-#endif /* HAVE_STRTONUM */
+#د_که_پای /* HAVE_STRTONUM */

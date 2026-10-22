@@ -22,34 +22,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#define RANDOM_SEED_SIZE 48
+#تعریف_کړه RANDOM_تخم_اندازه 48
 
-#ifdef WITH_OPENSSL
+#که_تعریف_شوی WITH_OPENSSL
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <errno.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ضمن <errno.h>
+#ضمن <signal.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
 
-#include <openssl/rand.h>
-#include <openssl/crypto.h>
-#include <openssl/err.h>
+#ضمن <openssl/rand.h>
+#ضمن <openssl/crypto.h>
+#ضمن <openssl/err.h>
 
-#include "openbsd-compat/openssl-compat.h"
+#ضمن "openbsd-compat/openssl-compat.h"
 
-#include "ssh.h"
-#include "misc.h"
-#include "xmalloc.h"
-#include "atomicio.h"
-#include "pathnames.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "ssherr.h"
+#ضمن "ssh.h"
+#ضمن "misc.h"
+#ضمن "xmalloc.h"
+#ضمن "atomicio.h"
+#ضمن "pathnames.h"
+#ضمن "log.h"
+#ضمن "sshbuf.h"
+#ضمن "ssherr.h"
 
 /*
  * Portable OpenSSH PRNG seeding:
@@ -58,74 +58,74 @@
  * PRNGd.
  */
 
-void
-seed_rng(void)
+فراغ
+تخم_rng(فراغ)
 {
-	unsigned char buf[RANDOM_SEED_SIZE];
+	بینښه حرف buf[RANDOM_تخم_اندازه];
 
 	/* Initialise libcrypto */
-	if (ssh_libcrypto_init() != 1)
+	إذا (ssh_libcrypto_init() != 1)
 		fatal("libcrypto failed to initialize.");
 
-	if (!ssh_compatible_openssl(OPENSSL_VERSION_NUMBER,
-	    OpenSSL_version_num()))
+	إذا (!ssh_compatible_openssl(OPENSSL_نسخه_شمېره,
+	    Open_SSL_نسخه_عدد()))
 		fatal("OpenSSL version mismatch. Built against %lx, you "
-		    "have %lx", (u_long)OPENSSL_VERSION_NUMBER,
-		    OpenSSL_version_num());
+		    "have %lx", (u_long)OPENSSL_نسخه_شمېره,
+		    Open_SSL_نسخه_عدد());
 
-#ifndef OPENSSL_PRNG_ONLY
-	if (RAND_status() == 1)
+#که_نه_تعریف_شوی OPENSSL_PRNG_ONLY
+	إذا (RAND_حالت() == 1)
 		debug3("RNG is ready, skipping seeding");
-	else {
-		if (seed_from_prngd(buf, sizeof(buf)) == -1)
+	وإلا {
+		إذا (تخم_from_prngd(buf, حجم(buf)) == -1)
 			fatal("Could not obtain seed from PRNGd");
-		RAND_add(buf, sizeof(buf), sizeof(buf));
+		RAND_جمع_کړه(buf, حجم(buf), حجم(buf));
 	}
-#endif /* OPENSSL_PRNG_ONLY */
+#د_که_پای /* OPENSSL_PRNG_ONLY */
 
-	if (RAND_status() != 1)
+	إذا (RAND_حالت() != 1)
 		fatal("PRNG is not seeded");
 
 	/* Ensure arc4random() is primed */
-	arc4random_buf(buf, sizeof(buf));
-	explicit_bzero(buf, sizeof(buf));
+	arc4random_buf(buf, حجم(buf));
+	explicit_bzero(buf, حجم(buf));
 }
 
-#else /* WITH_OPENSSL */
+#وإلا /* WITH_OPENSSL */
 
-#include <stdlib.h>
-#include <string.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
 /* Actual initialisation is handled in arc4random() */
-void
-seed_rng(void)
+فراغ
+تخم_rng(فراغ)
 {
-	unsigned char buf[RANDOM_SEED_SIZE];
+	بینښه حرف buf[RANDOM_تخم_اندازه];
 
 	/* Ensure arc4random() is primed */
-	arc4random_buf(buf, sizeof(buf));
-	explicit_bzero(buf, sizeof(buf));
+	arc4random_buf(buf, حجم(buf));
+	explicit_bzero(buf, حجم(buf));
 }
 
-#endif /* WITH_OPENSSL */
+#د_که_پای /* WITH_OPENSSL */
 
-void
-reseed_prngs(void)
+فراغ
+reseed_prngs(فراغ)
 {
 	uint32_t rnd[256];
 
-#ifdef WITH_OPENSSL
+#که_تعریف_شوی WITH_OPENSSL
 	RAND_poll();
-#endif
+#د_که_پای
 	arc4random_stir(); /* noop on recent arc4random() implementations */
-	arc4random_buf(rnd, sizeof(rnd)); /* let arc4random notice PID change */
+	arc4random_buf(rnd, حجم(rnd)); /* let arc4random notice PID change */
 
-#ifdef WITH_OPENSSL
-	RAND_seed(rnd, sizeof(rnd));
+#که_تعریف_شوی WITH_OPENSSL
+	RAND_تخم(rnd, حجم(rnd));
 	/* give libcrypto a chance to notice the PID change */
-	if ((RAND_bytes((u_char *)rnd, 1)) != 1)
+	إذا ((RAND_بایټونه((u_char *)rnd, 1)) != 1)
 		fatal_f("RAND_bytes failed");
-#endif
+#د_که_پای
 
-	explicit_bzero(rnd, sizeof(rnd));
+	explicit_bzero(rnd, حجم(rnd));
 }

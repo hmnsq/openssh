@@ -23,233 +23,233 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifdef USE_SNTRUP761X25519
+#که_تعریف_شوی USE_SNTRUP761X25519
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <stdio.h>
-#include <string.h>
-#include <signal.h>
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ضمن <signal.h>
 
-#include "sshkey.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "digest.h"
-#include "ssherr.h"
+#ضمن "sshkey.h"
+#ضمن "kex.h"
+#ضمن "sshbuf.h"
+#ضمن "digest.h"
+#ضمن "ssherr.h"
 
-volatile crypto_int16 crypto_int16_optblocker = 0;
-volatile crypto_int32 crypto_int32_optblocker = 0;
-volatile crypto_int64 crypto_int64_optblocker = 0;
+متطاير crypto_int16 crypto_int16_optblocker = 0;
+متطاير crypto_int32 crypto_int32_optblocker = 0;
+متطاير crypto_int64 crypto_int64_optblocker = 0;
 
-int
-kex_kem_sntrup761x25519_keypair(struct kex *kex)
+صحيح
+kex_kem_sntrup761x25519_keypair(بنية kex *kex)
 {
-	struct sshbuf *buf = NULL;
-	u_char *cp = NULL;
-	size_t need;
-	int r;
+	بنية sshbuf *buf = عدم;
+	u_char *cp = عدم;
+	اندازه_t need;
+	صحيح r;
 
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	need = crypto_kem_sntrup761_PUBLICKEYBYTES + CURVE25519_SIZE;
-	if ((r = sshbuf_reserve(buf, need, &cp)) != 0)
-		goto out;
-	crypto_kem_sntrup761_keypair(cp, kex->sntrup761_client_key);
-#ifdef DEBUG_KEXECDH
+	إذا ((buf = sshbuf_new()) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
+	need = crypto_kem_sntrup761_PUBLICKEYBYTES + CURVE25519_اندازه;
+	إذا ((r = sshbuf_reserve(buf, need, &cp)) != 0)
+		اذهب بهر;
+	crypto_kem_sntrup761_keypair(cp, kex->sntrup761_client_کلی);
+#که_تعریف_شوی DEBUG_KEXECDH
 	dump_digest("client public key sntrup761:", cp,
 	    crypto_kem_sntrup761_PUBLICKEYBYTES);
-#endif
+#د_که_پای
 	cp += crypto_kem_sntrup761_PUBLICKEYBYTES;
-	kexc25519_keygen(kex->c25519_client_key, cp);
-#ifdef DEBUG_KEXECDH
-	dump_digest("client public key c25519:", cp, CURVE25519_SIZE);
-#endif
+	kexc25519_keygen(kex->c25519_client_کلی, cp);
+#که_تعریف_شوی DEBUG_KEXECDH
+	dump_digest("client public key c25519:", cp, CURVE25519_اندازه);
+#د_که_پای
 	kex->client_pub = buf;
-	buf = NULL;
- out:
+	buf = عدم;
+ بهر:
 	sshbuf_free(buf);
-	return r;
+	أرجع r;
 }
 
-int
-kex_kem_sntrup761x25519_enc(struct kex *kex,
-   const struct sshbuf *client_blob, struct sshbuf **server_blobp,
-   struct sshbuf **shared_secretp)
+صحيح
+kex_kem_sntrup761x25519_enc(بنية kex *kex,
+   ثابت بنية sshbuf *client_blob, بنية sshbuf **server_blobp,
+   بنية sshbuf **shared_secretp)
 {
-	struct sshbuf *server_blob = NULL;
-	struct sshbuf *buf = NULL;
-	const u_char *client_pub;
-	u_char *kem_key, *ciphertext, *server_pub;
-	u_char server_key[CURVE25519_SIZE];
-	u_char hash[SSH_DIGEST_MAX_LENGTH];
-	size_t need;
-	int r;
+	بنية sshbuf *server_blob = عدم;
+	بنية sshbuf *buf = عدم;
+	ثابت u_char *client_pub;
+	u_char *kem_کلی, *ciphertext, *server_pub;
+	u_char server_کلی[CURVE25519_اندازه];
+	u_char hash[SSH_DIGEST_MAX_اوږدتیا];
+	اندازه_t need;
+	صحيح r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = عدم;
+	*shared_secretp = عدم;
 
 	/* client_blob contains both KEM and ECDH client pubkeys */
-	need = crypto_kem_sntrup761_PUBLICKEYBYTES + CURVE25519_SIZE;
-	if (sshbuf_len(client_blob) != need) {
+	need = crypto_kem_sntrup761_PUBLICKEYBYTES + CURVE25519_اندازه;
+	إذا (sshbuf_len(client_blob) != need) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		اذهب بهر;
 	}
 	client_pub = sshbuf_ptr(client_blob);
-#ifdef DEBUG_KEXECDH
+#که_تعریف_شوی DEBUG_KEXECDH
 	dump_digest("client public key sntrup761:", client_pub,
 	    crypto_kem_sntrup761_PUBLICKEYBYTES);
 	dump_digest("client public key 25519:",
 	    client_pub + crypto_kem_sntrup761_PUBLICKEYBYTES,
-	    CURVE25519_SIZE);
-#endif
+	    CURVE25519_اندازه);
+#د_که_پای
 	/* allocate buffer for concatenation of KEM key and ECDH shared key */
 	/* the buffer will be hashed and the result is the shared secret */
-	if ((buf = sshbuf_new()) == NULL) {
+	إذا ((buf = sshbuf_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب بهر;
 	}
-	if ((r = sshbuf_reserve(buf, crypto_kem_sntrup761_BYTES,
-	    &kem_key)) != 0)
-		goto out;
+	إذا ((r = sshbuf_reserve(buf, crypto_kem_sntrup761_بایټونه,
+	    &kem_کلی)) != 0)
+		اذهب بهر;
 	/* allocate space for encrypted KEM key and ECDH pub key */
-	if ((server_blob = sshbuf_new()) == NULL) {
+	إذا ((server_blob = sshbuf_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب بهر;
 	}
-	need = crypto_kem_sntrup761_CIPHERTEXTBYTES + CURVE25519_SIZE;
-	if ((r = sshbuf_reserve(server_blob, need, &ciphertext)) != 0)
-		goto out;
+	need = crypto_kem_sntrup761_CIPHERTEXTBYTES + CURVE25519_اندازه;
+	إذا ((r = sshbuf_reserve(server_blob, need, &ciphertext)) != 0)
+		اذهب بهر;
 	/* generate and encrypt KEM key with client key */
-	crypto_kem_sntrup761_enc(ciphertext, kem_key, client_pub);
+	crypto_kem_sntrup761_enc(ciphertext, kem_کلی, client_pub);
 	/* generate ECDH key pair, store server pubkey after ciphertext */
 	server_pub = ciphertext + crypto_kem_sntrup761_CIPHERTEXTBYTES;
-	kexc25519_keygen(server_key, server_pub);
+	kexc25519_keygen(server_کلی, server_pub);
 	/* append ECDH shared key */
 	client_pub += crypto_kem_sntrup761_PUBLICKEYBYTES;
-	if ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 1)) < 0)
-		goto out;
-	if ((r = ssh_digest_buffer(kex->hash_alg, buf, hash, sizeof(hash))) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
-	dump_digest("server public key 25519:", server_pub, CURVE25519_SIZE);
+	إذا ((r = kexc25519_shared_کلی_ext(server_کلی, client_pub, buf, 1)) < 0)
+		اذهب بهر;
+	إذا ((r = ssh_digest_بفر(kex->hash_alg, buf, hash, حجم(hash))) != 0)
+		اذهب بهر;
+#که_تعریف_شوی DEBUG_KEXECDH
+	dump_digest("server public key 25519:", server_pub, CURVE25519_اندازه);
 	dump_digest("server cipher text:", ciphertext,
 	    crypto_kem_sntrup761_CIPHERTEXTBYTES);
-	dump_digest("server kem key:", kem_key, crypto_kem_sntrup761_BYTES);
+	dump_digest("server kem key:", kem_کلی, crypto_kem_sntrup761_بایټونه);
 	dump_digest("concatenation of KEM key and ECDH shared key:",
 	    sshbuf_ptr(buf), sshbuf_len(buf));
-#endif
+#د_که_پای
 	/* string-encoded hash is resulting shared secret */
 	sshbuf_reset(buf);
-	if ((r = sshbuf_put_string(buf, hash,
-	    ssh_digest_bytes(kex->hash_alg))) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
+	إذا ((r = sshbuf_put_string(buf, hash,
+	    ssh_digest_بایټونه(kex->hash_alg))) != 0)
+		اذهب بهر;
+#که_تعریف_شوی DEBUG_KEXECDH
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
-#endif
+#د_که_پای
 	*server_blobp = server_blob;
 	*shared_secretp = buf;
-	server_blob = NULL;
-	buf = NULL;
- out:
-	explicit_bzero(hash, sizeof(hash));
-	explicit_bzero(server_key, sizeof(server_key));
+	server_blob = عدم;
+	buf = عدم;
+ بهر:
+	explicit_bzero(hash, حجم(hash));
+	explicit_bzero(server_کلی, حجم(server_کلی));
 	sshbuf_free(server_blob);
 	sshbuf_free(buf);
-	return r;
+	أرجع r;
 }
 
-int
-kex_kem_sntrup761x25519_dec(struct kex *kex,
-    const struct sshbuf *server_blob, struct sshbuf **shared_secretp)
+صحيح
+kex_kem_sntrup761x25519_dec(بنية kex *kex,
+    ثابت بنية sshbuf *server_blob, بنية sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	u_char *kem_key = NULL;
-	const u_char *ciphertext, *server_pub;
-	u_char hash[SSH_DIGEST_MAX_LENGTH];
-	size_t need;
-	int r, decoded;
+	بنية sshbuf *buf = عدم;
+	u_char *kem_کلی = عدم;
+	ثابت u_char *ciphertext, *server_pub;
+	u_char hash[SSH_DIGEST_MAX_اوږدتیا];
+	اندازه_t need;
+	صحيح r, decoded;
 
-	*shared_secretp = NULL;
+	*shared_secretp = عدم;
 
-	need = crypto_kem_sntrup761_CIPHERTEXTBYTES + CURVE25519_SIZE;
-	if (sshbuf_len(server_blob) != need) {
+	need = crypto_kem_sntrup761_CIPHERTEXTBYTES + CURVE25519_اندازه;
+	إذا (sshbuf_len(server_blob) != need) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		اذهب بهر;
 	}
 	ciphertext = sshbuf_ptr(server_blob);
 	server_pub = ciphertext + crypto_kem_sntrup761_CIPHERTEXTBYTES;
-#ifdef DEBUG_KEXECDH
+#که_تعریف_شوی DEBUG_KEXECDH
 	dump_digest("server cipher text:", ciphertext,
 	    crypto_kem_sntrup761_CIPHERTEXTBYTES);
-	dump_digest("server public key c25519:", server_pub, CURVE25519_SIZE);
-#endif
+	dump_digest("server public key c25519:", server_pub, CURVE25519_اندازه);
+#د_که_پای
 	/* hash concatenation of KEM key and ECDH shared key */
-	if ((buf = sshbuf_new()) == NULL) {
+	إذا ((buf = sshbuf_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب بهر;
 	}
-	if ((r = sshbuf_reserve(buf, crypto_kem_sntrup761_BYTES,
-	    &kem_key)) != 0)
-		goto out;
-	decoded = crypto_kem_sntrup761_dec(kem_key, ciphertext,
-	    kex->sntrup761_client_key);
-	if ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
+	إذا ((r = sshbuf_reserve(buf, crypto_kem_sntrup761_بایټونه,
+	    &kem_کلی)) != 0)
+		اذهب بهر;
+	decoded = crypto_kem_sntrup761_dec(kem_کلی, ciphertext,
+	    kex->sntrup761_client_کلی);
+	إذا ((r = kexc25519_shared_کلی_ext(kex->c25519_client_کلی, server_pub,
 	    buf, 1)) < 0)
-		goto out;
-	if ((r = ssh_digest_buffer(kex->hash_alg, buf, hash, sizeof(hash))) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
-	dump_digest("client kem key:", kem_key, crypto_kem_sntrup761_BYTES);
+		اذهب بهر;
+	إذا ((r = ssh_digest_بفر(kex->hash_alg, buf, hash, حجم(hash))) != 0)
+		اذهب بهر;
+#که_تعریف_شوی DEBUG_KEXECDH
+	dump_digest("client kem key:", kem_کلی, crypto_kem_sntrup761_بایټونه);
 	dump_digest("concatenation of KEM key and ECDH shared key:",
 	    sshbuf_ptr(buf), sshbuf_len(buf));
-#endif
+#د_که_پای
 	sshbuf_reset(buf);
-	if ((r = sshbuf_put_string(buf, hash,
-	    ssh_digest_bytes(kex->hash_alg))) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
+	إذا ((r = sshbuf_put_string(buf, hash,
+	    ssh_digest_بایټونه(kex->hash_alg))) != 0)
+		اذهب بهر;
+#که_تعریف_شوی DEBUG_KEXECDH
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
-#endif
-	if (decoded != 0) {
+#د_که_پای
+	إذا (decoded != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		اذهب بهر;
 	}
 	*shared_secretp = buf;
-	buf = NULL;
- out:
-	explicit_bzero(hash, sizeof(hash));
+	buf = عدم;
+ بهر:
+	explicit_bzero(hash, حجم(hash));
 	sshbuf_free(buf);
-	return r;
+	أرجع r;
 }
 
-#else
+#وإلا
 
-#include "ssherr.h"
+#ضمن "ssherr.h"
 
-struct kex;
-struct sshbuf;
-struct sshkey;
+بنية kex;
+بنية sshbuf;
+بنية sshkey;
 
-int
-kex_kem_sntrup761x25519_keypair(struct kex *kex)
+صحيح
+kex_kem_sntrup761x25519_keypair(بنية kex *kex)
 {
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	أرجع SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 
-int
-kex_kem_sntrup761x25519_enc(struct kex *kex,
-   const struct sshbuf *client_blob, struct sshbuf **server_blobp,
-   struct sshbuf **shared_secretp)
+صحيح
+kex_kem_sntrup761x25519_enc(بنية kex *kex,
+   ثابت بنية sshbuf *client_blob, بنية sshbuf **server_blobp,
+   بنية sshbuf **shared_secretp)
 {
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	أرجع SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 
-int
-kex_kem_sntrup761x25519_dec(struct kex *kex,
-    const struct sshbuf *server_blob, struct sshbuf **shared_secretp)
+صحيح
+kex_kem_sntrup761x25519_dec(بنية kex *kex,
+    ثابت بنية sshbuf *server_blob, بنية sshbuf **shared_secretp)
 {
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	أرجع SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
-#endif /* USE_SNTRUP761X25519 */
+#د_که_پای /* USE_SNTRUP761X25519 */

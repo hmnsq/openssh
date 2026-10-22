@@ -28,74 +28,74 @@
  * draft-ietf-secsh-filexfer-01.txt
  */
 
-/* version */
-#define	SSH2_FILEXFER_VERSION		3
+/*نسخه*/
+#تعریف_کړه	SSH2_FILEXFER_نسخه		3
 
 /* client to server */
-#define SSH2_FXP_INIT			1
-#define SSH2_FXP_OPEN			3
-#define SSH2_FXP_CLOSE			4
-#define SSH2_FXP_READ			5
-#define SSH2_FXP_WRITE			6
-#define SSH2_FXP_LSTAT			7
-#define SSH2_FXP_STAT_VERSION_0		7
-#define SSH2_FXP_FSTAT			8
-#define SSH2_FXP_SETSTAT		9
-#define SSH2_FXP_FSETSTAT		10
-#define SSH2_FXP_OPENDIR		11
-#define SSH2_FXP_READDIR		12
-#define SSH2_FXP_REMOVE			13
-#define SSH2_FXP_MKDIR			14
-#define SSH2_FXP_RMDIR			15
-#define SSH2_FXP_REALPATH		16
-#define SSH2_FXP_STAT			17
-#define SSH2_FXP_RENAME			18
-#define SSH2_FXP_READLINK		19
-#define SSH2_FXP_SYMLINK		20
+#تعریف_کړه SSH2_FXP_INIT			1
+#تعریف_کړه SSH2_FXP_OPEN			3
+#تعریف_کړه SSH2_FXP_CLOSE			4
+#تعریف_کړه SSH2_FXP_READ			5
+#تعریف_کړه SSH2_FXP_WRITE			6
+#تعریف_کړه SSH2_FXP_LSTAT			7
+#تعریف_کړه SSH2_FXP_STAT_نسخه_0		7
+#تعریف_کړه SSH2_FXP_FSTAT			8
+#تعریف_کړه SSH2_FXP_SETSTAT		9
+#تعریف_کړه SSH2_FXP_FSETSTAT		10
+#تعریف_کړه SSH2_FXP_OPENDIR		11
+#تعریف_کړه SSH2_FXP_READDIR		12
+#تعریف_کړه SSH2_FXP_REMOVE			13
+#تعریف_کړه SSH2_FXP_MKDIR			14
+#تعریف_کړه SSH2_FXP_RMDIR			15
+#تعریف_کړه SSH2_FXP_REALPATH		16
+#تعریف_کړه SSH2_FXP_STAT			17
+#تعریف_کړه SSH2_FXP_RENAME			18
+#تعریف_کړه SSH2_FXP_READLINK		19
+#تعریف_کړه SSH2_FXP_SYMLINK		20
 
 /* server to client */
-#define SSH2_FXP_VERSION		2
-#define SSH2_FXP_STATUS			101
-#define SSH2_FXP_HANDLE			102
-#define SSH2_FXP_DATA			103
-#define SSH2_FXP_NAME			104
-#define SSH2_FXP_ATTRS			105
+#تعریف_کړه SSH2_FXP_نسخه		2
+#تعریف_کړه SSH2_FXP_حالت			101
+#تعریف_کړه SSH2_FXP_HANDLE			102
+#تعریف_کړه SSH2_FXP_معلومات			103
+#تعریف_کړه SSH2_FXP_NAME			104
+#تعریف_کړه SSH2_FXP_ATTRS			105
 
-#define SSH2_FXP_EXTENDED		200
-#define SSH2_FXP_EXTENDED_REPLY		201
+#تعریف_کړه SSH2_FXP_EXTENDED		200
+#تعریف_کړه SSH2_FXP_EXTENDED_ځواب		201
 
-/* attributes */
-#define SSH2_FILEXFER_ATTR_SIZE		0x00000001
-#define SSH2_FILEXFER_ATTR_UIDGID	0x00000002
-#define SSH2_FILEXFER_ATTR_PERMISSIONS	0x00000004
-#define SSH2_FILEXFER_ATTR_ACMODTIME	0x00000008
-#define SSH2_FILEXFER_ATTR_EXTENDED	0x80000000
+/*ځانګړتیاوې*/
+#تعریف_کړه SSH2_FILEXFER_ATTR_اندازه		0x00000001
+#تعریف_کړه SSH2_FILEXFER_ATTR_UIDGID	0x00000002
+#تعریف_کړه SSH2_FILEXFER_ATTR_PERMISSIONS	0x00000004
+#تعریف_کړه SSH2_FILEXFER_ATTR_ACMODTIME	0x00000008
+#تعریف_کړه SSH2_FILEXFER_ATTR_EXTENDED	0x80000000
 
 /* portable open modes */
-#define SSH2_FXF_READ			0x00000001
-#define SSH2_FXF_WRITE			0x00000002
-#define SSH2_FXF_APPEND			0x00000004
-#define SSH2_FXF_CREAT			0x00000008
-#define SSH2_FXF_TRUNC			0x00000010
-#define SSH2_FXF_EXCL			0x00000020
+#تعریف_کړه SSH2_FXF_READ			0x00000001
+#تعریف_کړه SSH2_FXF_WRITE			0x00000002
+#تعریف_کړه SSH2_FXF_APPEND			0x00000004
+#تعریف_کړه SSH2_FXF_CREAT			0x00000008
+#تعریف_کړه SSH2_FXF_TRUNC			0x00000010
+#تعریف_کړه SSH2_FXF_EXCL			0x00000020
 
 /* statvfs@openssh.com f_flag flags */
-#define SSH2_FXE_STATVFS_ST_RDONLY	0x00000001
-#define SSH2_FXE_STATVFS_ST_NOSUID	0x00000002
+#تعریف_کړه SSH2_FXE_STATVFS_ST_RDONLY	0x00000001
+#تعریف_کړه SSH2_FXE_STATVFS_ST_NOSUID	0x00000002
 
 /* status messages */
-#define SSH2_FX_OK			0
-#define SSH2_FX_EOF			1
-#define SSH2_FX_NO_SUCH_FILE		2
-#define SSH2_FX_PERMISSION_DENIED	3
-#define SSH2_FX_FAILURE			4
-#define SSH2_FX_BAD_MESSAGE		5
-#define SSH2_FX_NO_CONNECTION		6
-#define SSH2_FX_CONNECTION_LOST		7
-#define SSH2_FX_OP_UNSUPPORTED		8
-#define SSH2_FX_MAX			8
+#تعریف_کړه SSH2_FX_OK			0
+#تعریف_کړه SSH2_FX_EOF			1
+#تعریف_کړه SSH2_FX_NO_SUCH_FILE		2
+#تعریف_کړه SSH2_FX_PERMISSION_DENIED	3
+#تعریف_کړه SSH2_FX_FAILURE			4
+#تعریف_کړه SSH2_FX_BAD_پیغام		5
+#تعریف_کړه SSH2_FX_NO_CONNECTION		6
+#تعریف_کړه SSH2_FX_CONNECTION_ورک		7
+#تعریف_کړه SSH2_FX_OP_UNSUPPORTED		8
+#تعریف_کړه SSH2_FX_MAX			8
 
-struct passwd;
+بنية passwd;
 
-int	sftp_server_main(int, char **, struct passwd *);
-void	sftp_server_cleanup_exit(int) __attribute__((noreturn));
+صحيح	sftp_server_main(صحيح, حرف **, بنية passwd *);
+فراغ	sftp_server_cleanup_exit(صحيح) __attribute__((noreturn));

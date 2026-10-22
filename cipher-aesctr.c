@@ -15,69 +15,69 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifndef WITH_OPENSSL
+#که_نه_تعریف_شوی WITH_OPENSSL
 
-#include <sys/types.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <string.h>
 
-#include "cipher-aesctr.h"
+#ضمن "cipher-aesctr.h"
 
 /*
  * increment counter 'ctr',
  * the counter is of size 'len' bytes and stored in network-byte-order.
  * (LSB at ctr[len-1], MSB at ctr[0])
  */
-static inline void
+ساكن مضمن فراغ
 aesctr_inc(u8 *ctr, u32 len)
 {
 	ssize_t i;
 
-#ifndef CONSTANT_TIME_INCREMENT
-	for (i = len - 1; i >= 0; i--)
-		if (++ctr[i])	/* continue on overflow */
-			return;
-#else
-	u8 x, add = 1;
+#که_نه_تعریف_شوی CONSTANT_وخت_INCREMENT
+	لكل (i = len - 1; i >= 0; i--)
+		إذا (++ctr[i])	/* continue on overflow */
+			أرجع;
+#وإلا
+	u8 x, جمع_کړه = 1;
 
-	for (i = len - 1; i >= 0; i--) {
-		ctr[i] += add;
+	لكل (i = len - 1; i >= 0; i--) {
+		ctr[i] += جمع_کړه;
 		/* constant time for: x = ctr[i] ? 1 : 0 */
 		x = ctr[i];
 		x = (x | (x >> 4)) & 0xf;
 		x = (x | (x >> 2)) & 0x3;
 		x = (x | (x >> 1)) & 0x1;
-		add *= (x^1);
+		جمع_کړه *= (x^1);
 	}
-#endif
+#د_که_پای
 }
 
-void
-aesctr_keysetup(aesctr_ctx *x,const u8 *k,u32 kbits,u32 ivbits)
+فراغ
+aesctr_keysetup(aesctr_ctx *x,ثابت u8 *k,u32 kbits,u32 ivbits)
 {
-	x->rounds = rijndaelKeySetupEnc(x->ek, k, kbits);
+	x->پړاوونه = rijndael_کلی_تیاری_Enc(x->ek, k, kbits);
 }
 
-void
-aesctr_ivsetup(aesctr_ctx *x,const u8 *iv)
+فراغ
+aesctr_ivsetup(aesctr_ctx *x,ثابت u8 *iv)
 {
-	memcpy(x->ctr, iv, AES_BLOCK_SIZE);
+	حافظه_نقل(x->ctr, iv, AES_بلاک_اندازه);
 }
 
-void
-aesctr_encrypt_bytes(aesctr_ctx *x,const u8 *m,u8 *c,u32 bytes)
+فراغ
+aesctr_encrypt_بایټونه(aesctr_ctx *x,ثابت u8 *m,u8 *c,u32 بایټونه)
 {
 	u32 n = 0;
-	u8 buf[AES_BLOCK_SIZE];
+	u8 buf[AES_بلاک_اندازه];
 
-	while ((bytes--) > 0) {
-		if (n == 0) {
-			rijndaelEncrypt(x->ek, x->rounds, x->ctr, buf);
-			aesctr_inc(x->ctr, AES_BLOCK_SIZE);
+	طالما ((بایټونه--) > 0) {
+		إذا (n == 0) {
+			rijndaelEncrypt(x->ek, x->پړاوونه, x->ctr, buf);
+			aesctr_inc(x->ctr, AES_بلاک_اندازه);
 		}
 		*(c++) = *(m++) ^ buf[n];
-		n = (n + 1) % AES_BLOCK_SIZE;
+		n = (n + 1) % AES_بلاک_اندازه;
 	}
 }
-#endif /* !WITH_OPENSSL */
+#د_که_پای /* !WITH_OPENSSL */

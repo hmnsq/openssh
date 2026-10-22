@@ -5,84 +5,84 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/rsa.h>
-#endif
+#که_تعریف_شوی WITH_OPENSSL
+#ضمن <openssl/bn.h>
+#ضمن <openssl/ec.h>
+#ضمن <openssl/rsa.h>
+#د_که_پای
 
-#include "../test_helper/test_helper.h"
+#ضمن "../test_helper/test_helper.h"
 
-#include "ssherr.h"
-#include "sshbuf.h"
-#define SSHBUF_INTERNAL 1	/* access internals for testing */
-#include "sshkey.h"
+#ضمن "ssherr.h"
+#ضمن "sshbuf.h"
+#تعریف_کړه SSHBUF_دننی 1	/* access internals for testing */
+#ضمن "sshkey.h"
 
-#include "authfile.h"
-#include "common.h"
-#include "ssh2.h"
+#ضمن "authfile.h"
+#ضمن "common.h"
+#ضمن "ssh2.h"
 
-void sshkey_tests(void);
-void sshkey_benchmarks(void);
+فراغ sshkey_tests(فراغ);
+فراغ sshkey_benchmarks(فراغ);
 
-static void
-put_opt(struct sshbuf *b, const char *name, const char *value)
+ساكن فراغ
+put_opt(بنية sshbuf *b, ثابت حرف *name, ثابت حرف *ارزښت)
 {
-	struct sshbuf *sect;
+	بنية sshbuf *sect;
 
 	sect = sshbuf_new();
-	ASSERT_PTR_NE(sect, NULL);
+	ASSERT_PTR_NE(sect, عدم);
 	ASSERT_INT_EQ(sshbuf_put_cstring(b, name), 0);
-	if (value != NULL)
-		ASSERT_INT_EQ(sshbuf_put_cstring(sect, value), 0);
+	إذا (ارزښت != عدم)
+		ASSERT_INT_EQ(sshbuf_put_cstring(sect, ارزښت), 0);
 	ASSERT_INT_EQ(sshbuf_put_stringb(b, sect), 0);
 	sshbuf_free(sect);
 }
 
-#ifdef WITH_OPENSSL
-static void
-build_cert(struct sshbuf *b, struct sshkey *k, const char *type,
-    struct sshkey *sign_key, struct sshkey *ca_key,
-    const char *sig_alg)
+#که_تعریف_شوی WITH_OPENSSL
+ساكن فراغ
+build_cert(بنية sshbuf *b, بنية sshkey *k, ثابت حرف *type,
+    بنية sshkey *sign_کلی, بنية sshkey *ca_کلی,
+    ثابت حرف *sig_alg)
 {
-	struct sshbuf *ca_buf, *pk, *principals, *critopts, *exts;
+	بنية sshbuf *ca_buf, *pk, *principals, *critopts, *exts;
 	u_char *sigblob;
-	size_t siglen;
+	اندازه_t siglen;
 
 	ca_buf = sshbuf_new();
-	ASSERT_PTR_NE(ca_buf, NULL);
-	ASSERT_INT_EQ(sshkey_putb(ca_key, ca_buf), 0);
+	ASSERT_PTR_NE(ca_buf, عدم);
+	ASSERT_INT_EQ(sshkey_putb(ca_کلی, ca_buf), 0);
 
 	/*
 	 * Get the public key serialisation by rendering the key and skipping
 	 * the type string. This is a bit of a hack :/
 	 */
 	pk = sshbuf_new();
-	ASSERT_PTR_NE(pk, NULL);
+	ASSERT_PTR_NE(pk, عدم);
 	ASSERT_INT_EQ(sshkey_putb_plain(k, pk), 0);
 	ASSERT_INT_EQ(sshbuf_skip_string(pk), 0);
 
 	principals = sshbuf_new();
-	ASSERT_PTR_NE(principals, NULL);
+	ASSERT_PTR_NE(principals, عدم);
 	ASSERT_INT_EQ(sshbuf_put_cstring(principals, "gsamsa"), 0);
 	ASSERT_INT_EQ(sshbuf_put_cstring(principals, "gregor"), 0);
 
 	critopts = sshbuf_new();
-	ASSERT_PTR_NE(critopts, NULL);
+	ASSERT_PTR_NE(critopts, عدم);
 	put_opt(critopts, "force-command", "/usr/local/bin/nethack");
 	put_opt(critopts, "source-address", "192.168.0.0/24,127.0.0.1,::1");
 
 	exts = sshbuf_new();
-	ASSERT_PTR_NE(exts, NULL);
-	put_opt(critopts, "permit-X11-forwarding", NULL);
+	ASSERT_PTR_NE(exts, عدم);
+	put_opt(critopts, "permit-X11-forwarding", عدم);
 
 	ASSERT_INT_EQ(sshbuf_put_cstring(b, type), 0);
 	ASSERT_INT_EQ(sshbuf_put_cstring(b, "noncenoncenonce!"), 0); /* nonce */
@@ -91,118 +91,118 @@ build_cert(struct sshbuf *b, struct sshkey *k, const char *type,
 	ASSERT_INT_EQ(sshbuf_put_u32(b, SSH2_CERT_TYPE_USER), 0); /* type */
 	ASSERT_INT_EQ(sshbuf_put_cstring(b, "gregor"), 0); /* key ID */
 	ASSERT_INT_EQ(sshbuf_put_stringb(b, principals), 0); /* principals */
-	ASSERT_INT_EQ(sshbuf_put_u64(b, 0), 0); /* start */
-	ASSERT_INT_EQ(sshbuf_put_u64(b, 0xffffffffffffffffULL), 0); /* end */
+	ASSERT_INT_EQ(sshbuf_put_u64(b, 0), 0); /*پیل*/
+	ASSERT_INT_EQ(sshbuf_put_u64(b, 0xffffffffffffffffULL), 0); /*پای_ټکی*/
 	ASSERT_INT_EQ(sshbuf_put_stringb(b, critopts), 0); /* options */
 	ASSERT_INT_EQ(sshbuf_put_stringb(b, exts), 0); /* extensions */
-	ASSERT_INT_EQ(sshbuf_put_string(b, NULL, 0), 0); /* reserved */
+	ASSERT_INT_EQ(sshbuf_put_string(b, عدم, 0), 0); /* reserved */
 	ASSERT_INT_EQ(sshbuf_put_stringb(b, ca_buf), 0); /* signature key */
-	ASSERT_INT_EQ(sshkey_sign(sign_key, &sigblob, &siglen,
-	    sshbuf_ptr(b), sshbuf_len(b), sig_alg, NULL, NULL, 0), 0);
+	ASSERT_INT_EQ(sshkey_sign(sign_کلی, &sigblob, &siglen,
+	    sshbuf_ptr(b), sshbuf_len(b), sig_alg, عدم, عدم, 0), 0);
 	ASSERT_INT_EQ(sshbuf_put_string(b, sigblob, siglen), 0); /* signature */
 
-	free(sigblob);
+	حرر(sigblob);
 	sshbuf_free(ca_buf);
 	sshbuf_free(exts);
 	sshbuf_free(critopts);
 	sshbuf_free(principals);
 	sshbuf_free(pk);
 }
-#endif /* WITH_OPENSSL */
+#د_که_پای /* WITH_OPENSSL */
 
-static void
-signature_test(struct sshkey *k, struct sshkey *bad, const char *sig_alg,
-    const u_char *d, size_t l)
+ساكن فراغ
+signature_test(بنية sshkey *k, بنية sshkey *bad, ثابت حرف *sig_alg,
+    ثابت u_char *d, اندازه_t l)
 {
-	size_t len;
+	اندازه_t len;
 	u_char *sig;
 
 	ASSERT_INT_EQ(sshkey_sign(k, &sig, &len, d, l, sig_alg,
-	    NULL, NULL, 0), 0);
-	ASSERT_SIZE_T_GT(len, 8);
-	ASSERT_PTR_NE(sig, NULL);
-	ASSERT_INT_EQ(sshkey_verify(k, sig, len, d, l, NULL, 0, NULL), 0);
-	ASSERT_INT_NE(sshkey_verify(bad, sig, len, d, l, NULL, 0, NULL), 0);
+	    عدم, عدم, 0), 0);
+	ASSERT_اندازه_T_GT(len, 8);
+	ASSERT_PTR_NE(sig, عدم);
+	ASSERT_INT_EQ(sshkey_verify(k, sig, len, d, l, عدم, 0, عدم), 0);
+	ASSERT_INT_NE(sshkey_verify(bad, sig, len, d, l, عدم, 0, عدم), 0);
 	/* Fuzz test is more comprehensive, this is just a smoke test */
 	sig[len - 5] ^= 0x10;
-	ASSERT_INT_NE(sshkey_verify(k, sig, len, d, l, NULL, 0, NULL), 0);
-	free(sig);
+	ASSERT_INT_NE(sshkey_verify(k, sig, len, d, l, عدم, 0, عدم), 0);
+	حرر(sig);
 }
 
-static void
-signature_bench(const char *name, int ktype, int bits, const char *sig_alg,
-    const u_char *d, size_t l)
+ساكن فراغ
+signature_bench(ثابت حرف *name, صحيح ktype, صحيح بټونه, ثابت حرف *sig_alg,
+    ثابت u_char *d, اندازه_t l)
 {
-	struct sshkey *k;
-	size_t len;
+	بنية sshkey *k;
+	اندازه_t len;
 	u_char *sig;
-	char testname[256];
+	حرف testname[256];
 
-	snprintf(testname, sizeof(testname), "sign %s", name);
-	TEST_START(testname);
-	ASSERT_INT_EQ(sshkey_generate(ktype, bits, &k), 0);
-	ASSERT_PTR_NE(k, NULL);
+	snprintf(testname, حجم(testname), "sign %s", name);
+	TEST_پیل(testname);
+	ASSERT_INT_EQ(sshkey_generate(ktype, بټونه, &k), 0);
+	ASSERT_PTR_NE(k, عدم);
 
-	BENCH_START(testname);
+	BENCH_پیل(testname);
 	ASSERT_INT_EQ(sshkey_sign(k, &sig, &len, d, l, sig_alg,
-	    NULL, NULL, 0), 0);
-	free(sig);
-	BENCH_FINISH("sign");
+	    عدم, عدم, 0), 0);
+	حرر(sig);
+	BENCH_پای("sign");
 
 	sshkey_free(k);
-	TEST_DONE();
+	TEST_بشپړ();
 }
 
-static void
-verify_bench(const char *name, int ktype, int bits, const char *sig_alg,
-    const u_char *d, size_t l)
+ساكن فراغ
+verify_bench(ثابت حرف *name, صحيح ktype, صحيح بټونه, ثابت حرف *sig_alg,
+    ثابت u_char *d, اندازه_t l)
 {
-	struct sshkey *k;
-	size_t len;
+	بنية sshkey *k;
+	اندازه_t len;
 	u_char *sig;
-	char testname[256];
+	حرف testname[256];
 
-	snprintf(testname, sizeof(testname), "verify %s", name);
-	TEST_START(testname);
-	ASSERT_INT_EQ(sshkey_generate(ktype, bits, &k), 0);
-	ASSERT_PTR_NE(k, NULL);
+	snprintf(testname, حجم(testname), "verify %s", name);
+	TEST_پیل(testname);
+	ASSERT_INT_EQ(sshkey_generate(ktype, بټونه, &k), 0);
+	ASSERT_PTR_NE(k, عدم);
 
 	ASSERT_INT_EQ(sshkey_sign(k, &sig, &len, d, l, sig_alg,
-	    NULL, NULL, 0), 0);
-	BENCH_START(testname);
-	ASSERT_INT_EQ(sshkey_verify(k, sig, len, d, l, NULL, 0, NULL), 0);
-	BENCH_FINISH("verify");
+	    عدم, عدم, 0), 0);
+	BENCH_پیل(testname);
+	ASSERT_INT_EQ(sshkey_verify(k, sig, len, d, l, عدم, 0, عدم), 0);
+	BENCH_پای("verify");
 
-	free(sig);
+	حرر(sig);
 	sshkey_free(k);
-	TEST_DONE();
+	TEST_بشپړ();
 }
 
-static void
-banana(u_char *s, size_t l)
+ساكن فراغ
+banana(u_char *s, اندازه_t l)
 {
-	size_t o;
-	const u_char the_banana[] = { 'b', 'a', 'n', 'a', 'n', 'a' };
+	اندازه_t o;
+	ثابت u_char the_banana[] = { 'b', 'a', 'n', 'a', 'n', 'a' };
 
-	for (o = 0; o < l; o += sizeof(the_banana)) {
-		if (l - o < sizeof(the_banana)) {
-			memcpy(s + o, "nanananana", l - o);
-			break;
+	لكل (o = 0; o < l; o += حجم(the_banana)) {
+		إذا (l - o < حجم(the_banana)) {
+			حافظه_نقل(s + o, "nanananana", l - o);
+			اكسر;
 		}
-		memcpy(s + o, the_banana, sizeof(the_banana));
+		حافظه_نقل(s + o, the_banana, حجم(the_banana));
 	}
 }
 
-static void
-signature_tests(struct sshkey *k, struct sshkey *bad, const char *sig_alg)
+ساكن فراغ
+signature_tests(بنية sshkey *k, بنية sshkey *bad, ثابت حرف *sig_alg)
 {
 	u_char i, buf[2049];
-	size_t lens[] = {
+	اندازه_t lens[] = {
 		1, 2, 7, 8, 9, 15, 16, 17, 31, 32, 33, 127, 128, 129,
 		255, 256, 257, 1023, 1024, 1025, 2047, 2048, 2049
 	};
 
-	for (i = 0; i < (sizeof(lens)/sizeof(lens[0])); i++) {
+	لكل (i = 0; i < (حجم(lens)/حجم(lens[0])); i++) {
 		test_subtest_info("%s key, banana length %zu",
 		    sshkey_type(k), lens[i]);
 		banana(buf, lens[i]);
@@ -210,529 +210,529 @@ signature_tests(struct sshkey *k, struct sshkey *bad, const char *sig_alg)
 	}
 }
 
-static void
-signature_benchmark(const char *name, int ktype, int bits,
-    const char *sig_alg, int bench_verify)
+ساكن فراغ
+signature_benchmark(ثابت حرف *name, صحيح ktype, صحيح بټونه,
+    ثابت حرف *sig_alg, صحيح bench_verify)
 {
 	u_char buf[256];
 
-	banana(buf, sizeof(buf));
-	if (bench_verify)
-		verify_bench(name, ktype, bits, sig_alg, buf, sizeof(buf));
-	else
-		signature_bench(name, ktype, bits, sig_alg, buf, sizeof(buf));
+	banana(buf, حجم(buf));
+	إذا (bench_verify)
+		verify_bench(name, ktype, بټونه, sig_alg, buf, حجم(buf));
+	وإلا
+		signature_bench(name, ktype, بټونه, sig_alg, buf, حجم(buf));
 }
 
-static struct sshkey *
-get_private(const char *n)
+ساكن بنية sshkey *
+get_شخصي(ثابت حرف *n)
 {
-	struct sshbuf *b;
-	struct sshkey *ret;
+	بنية sshbuf *b;
+	بنية sshkey *ret;
 
-	b = load_file(n);
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(b, "", &ret, NULL), 0);
+	b = بارول_file(n);
+	ASSERT_INT_EQ(sshkey_parse_شخصي_fileblob(b, "", &ret, عدم), 0);
 	sshbuf_free(b);
-	return ret;
+	أرجع ret;
 }
 
-void
-sshkey_tests(void)
+فراغ
+sshkey_tests(فراغ)
 {
-	struct sshkey *k1 = NULL, *k2 = NULL, *k3 = NULL, *k4 = NULL;
-	struct sshkey *kr = NULL, *kd = NULL, *ke = NULL, *kf = NULL;
-	struct sshbuf *b = NULL;
+	بنية sshkey *k1 = عدم, *k2 = عدم, *k3 = عدم, *k4 = عدم;
+	بنية sshkey *kr = عدم, *kd = عدم, *ke = عدم, *kf = عدم;
+	بنية sshbuf *b = عدم;
 
-	TEST_START("new invalid");
+	TEST_پیل("new invalid");
 	k1 = sshkey_new(-42);
-	ASSERT_PTR_EQ(k1, NULL);
-	TEST_DONE();
+	ASSERT_PTR_EQ(k1, عدم);
+	TEST_بشپړ();
 
-	TEST_START("new/free KEY_UNSPEC");
-	k1 = sshkey_new(KEY_UNSPEC);
-	ASSERT_PTR_NE(k1, NULL);
+	TEST_پیل("new/free KEY_UNSPEC");
+	k1 = sshkey_new(کلی_UNSPEC);
+	ASSERT_PTR_NE(k1, عدم);
 	sshkey_free(k1);
-	k1 = NULL;
-	TEST_DONE();
+	k1 = عدم;
+	TEST_بشپړ();
 
-#ifdef WITH_OPENSSL
-	TEST_START("new/free KEY_RSA");
-	k1 = sshkey_new(KEY_RSA);
-	ASSERT_PTR_NE(k1, NULL);
-	ASSERT_PTR_NE(k1->pkey, NULL);
+#که_تعریف_شوی WITH_OPENSSL
+	TEST_پیل("new/free KEY_RSA");
+	k1 = sshkey_new(کلی_RSA);
+	ASSERT_PTR_NE(k1, عدم);
+	ASSERT_PTR_NE(k1->pkey, عدم);
 	sshkey_free(k1);
-	k1 = NULL;
-	TEST_DONE();
+	k1 = عدم;
+	TEST_بشپړ();
 
-	TEST_START("new/free KEY_ECDSA");
-	k1 = sshkey_new(KEY_ECDSA);
-	ASSERT_PTR_NE(k1, NULL);
-	ASSERT_PTR_EQ(k1->pkey, NULL);  /* Can't allocate without NID */
+	TEST_پیل("new/free KEY_ECDSA");
+	k1 = sshkey_new(کلی_ECDSA);
+	ASSERT_PTR_NE(k1, عدم);
+	ASSERT_PTR_EQ(k1->pkey, عدم);  /* Can't allocate without NID */
 	sshkey_free(k1);
-	k1 = NULL;
-	TEST_DONE();
-#endif /* WITH_OPENSSL */
+	k1 = عدم;
+	TEST_بشپړ();
+#د_که_پای /* WITH_OPENSSL */
 
-	TEST_START("new/free KEY_ED25519");
-	k1 = sshkey_new(KEY_ED25519);
-	ASSERT_PTR_NE(k1, NULL);
+	TEST_پیل("new/free KEY_ED25519");
+	k1 = sshkey_new(کلی_ED25519);
+	ASSERT_PTR_NE(k1, عدم);
 	/* These should be blank until key loaded or generated */
-	ASSERT_PTR_EQ(k1->ed25519_sk, NULL);
-	ASSERT_PTR_EQ(k1->ed25519_pk, NULL);
+	ASSERT_PTR_EQ(k1->ed25519_sk, عدم);
+	ASSERT_PTR_EQ(k1->ed25519_pk, عدم);
 	sshkey_free(k1);
-	k1 = NULL;
-	TEST_DONE();
+	k1 = عدم;
+	TEST_بشپړ();
 
-	TEST_START("new/free KEY_MLDSA44_ED25519");
-	k1 = sshkey_new(KEY_MLDSA44_ED25519);
-	ASSERT_PTR_NE(k1, NULL);
-	ASSERT_PTR_EQ(k1->mldsa_ed25519_sk, NULL);
-	ASSERT_PTR_EQ(k1->mldsa_ed25519_pk, NULL);
+	TEST_پیل("new/free KEY_MLDSA44_ED25519");
+	k1 = sshkey_new(کلی_MLDSA44_ED25519);
+	ASSERT_PTR_NE(k1, عدم);
+	ASSERT_PTR_EQ(k1->mldsa_ed25519_sk, عدم);
+	ASSERT_PTR_EQ(k1->mldsa_ed25519_pk, عدم);
 	sshkey_free(k1);
-	k1 = NULL;
-	TEST_DONE();
+	k1 = عدم;
+	TEST_بشپړ();
 
-#ifdef WITH_OPENSSL
-	TEST_START("generate KEY_RSA too small modulus");
-	ASSERT_INT_EQ(sshkey_generate(KEY_RSA, 128, &k1),
-	    SSH_ERR_KEY_LENGTH);
-	ASSERT_PTR_EQ(k1, NULL);
-	TEST_DONE();
+#که_تعریف_شوی WITH_OPENSSL
+	TEST_پیل("generate KEY_RSA too small modulus");
+	ASSERT_INT_EQ(sshkey_generate(کلی_RSA, 128, &k1),
+	    SSH_ERR_کلی_اوږدتیا);
+	ASSERT_PTR_EQ(k1, عدم);
+	TEST_بشپړ();
 
-	TEST_START("generate KEY_RSA too large modulus");
-	ASSERT_INT_EQ(sshkey_generate(KEY_RSA, 1 << 20, &k1),
-	    SSH_ERR_KEY_LENGTH);
-	ASSERT_PTR_EQ(k1, NULL);
-	TEST_DONE();
+	TEST_پیل("generate KEY_RSA too large modulus");
+	ASSERT_INT_EQ(sshkey_generate(کلی_RSA, 1 << 20, &k1),
+	    SSH_ERR_کلی_اوږدتیا);
+	ASSERT_PTR_EQ(k1, عدم);
+	TEST_بشپړ();
 
 
-	TEST_START("generate KEY_ECDSA wrong bits");
-	ASSERT_INT_EQ(sshkey_generate(KEY_ECDSA, 42, &k1),
-	    SSH_ERR_KEY_LENGTH);
-	ASSERT_PTR_EQ(k1, NULL);
+	TEST_پیل("generate KEY_ECDSA wrong bits");
+	ASSERT_INT_EQ(sshkey_generate(کلی_ECDSA, 42, &k1),
+	    SSH_ERR_کلی_اوږدتیا);
+	ASSERT_PTR_EQ(k1, عدم);
 	sshkey_free(k1);
-	k1 = NULL;
-	TEST_DONE();
+	k1 = عدم;
+	TEST_بشپړ();
 
-	TEST_START("generate KEY_RSA");
-	ASSERT_INT_EQ(sshkey_generate(KEY_RSA, 767, &kr),
-	    SSH_ERR_KEY_LENGTH);
-	ASSERT_INT_EQ(sshkey_generate(KEY_RSA, 1024, &kr), 0);
-	ASSERT_PTR_NE(kr, NULL);
-	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(kr->pkey), NULL);
-	ASSERT_PTR_NE(rsa_n(kr), NULL);
-	ASSERT_PTR_NE(rsa_e(kr), NULL);
-	ASSERT_PTR_NE(rsa_p(kr), NULL);
-	ASSERT_INT_EQ(BN_num_bits(rsa_n(kr)), 1024);
-	TEST_DONE();
+	TEST_پیل("generate KEY_RSA");
+	ASSERT_INT_EQ(sshkey_generate(کلی_RSA, 767, &kr),
+	    SSH_ERR_کلی_اوږدتیا);
+	ASSERT_INT_EQ(sshkey_generate(کلی_RSA, 1024, &kr), 0);
+	ASSERT_PTR_NE(kr, عدم);
+	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(kr->pkey), عدم);
+	ASSERT_PTR_NE(rsa_n(kr), عدم);
+	ASSERT_PTR_NE(rsa_e(kr), عدم);
+	ASSERT_PTR_NE(rsa_p(kr), عدم);
+	ASSERT_INT_EQ(BN_عدد_بټونه(rsa_n(kr)), 1024);
+	TEST_بشپړ();
 
 
-	TEST_START("generate KEY_ECDSA");
-	ASSERT_INT_EQ(sshkey_generate(KEY_ECDSA, 256, &ke), 0);
-	ASSERT_PTR_NE(ke, NULL);
-	ASSERT_PTR_NE(EVP_PKEY_get0_EC_KEY(ke->pkey), NULL);
-	ASSERT_PTR_NE(EC_KEY_get0_public_key(EVP_PKEY_get0_EC_KEY(ke->pkey)),
-	    NULL);
-	ASSERT_PTR_NE(EC_KEY_get0_private_key(EVP_PKEY_get0_EC_KEY(ke->pkey)),
-	    NULL);
-	TEST_DONE();
-#endif /* WITH_OPENSSL */
+	TEST_پیل("generate KEY_ECDSA");
+	ASSERT_INT_EQ(sshkey_generate(کلی_ECDSA, 256, &ke), 0);
+	ASSERT_PTR_NE(ke, عدم);
+	ASSERT_PTR_NE(EVP_PKEY_get0_EC_کلی(ke->pkey), عدم);
+	ASSERT_PTR_NE(EC_کلی_get0_عامه_کلی(EVP_PKEY_get0_EC_کلی(ke->pkey)),
+	    عدم);
+	ASSERT_PTR_NE(EC_کلی_get0_شخصي_کلی(EVP_PKEY_get0_EC_کلی(ke->pkey)),
+	    عدم);
+	TEST_بشپړ();
+#د_که_پای /* WITH_OPENSSL */
 
-	TEST_START("generate KEY_ED25519");
-	ASSERT_INT_EQ(sshkey_generate(KEY_ED25519, 256, &kf), 0);
-	ASSERT_PTR_NE(kf, NULL);
-	ASSERT_INT_EQ(kf->type, KEY_ED25519);
-	ASSERT_PTR_NE(kf->ed25519_pk, NULL);
-	ASSERT_PTR_NE(kf->ed25519_sk, NULL);
-	TEST_DONE();
+	TEST_پیل("generate KEY_ED25519");
+	ASSERT_INT_EQ(sshkey_generate(کلی_ED25519, 256, &kf), 0);
+	ASSERT_PTR_NE(kf, عدم);
+	ASSERT_INT_EQ(kf->type, کلی_ED25519);
+	ASSERT_PTR_NE(kf->ed25519_pk, عدم);
+	ASSERT_PTR_NE(kf->ed25519_sk, عدم);
+	TEST_بشپړ();
 
-	TEST_START("generate KEY_MLDSA44_ED25519");
-	ASSERT_INT_EQ(sshkey_generate(KEY_MLDSA44_ED25519, 256, &k1), 0);
-	ASSERT_PTR_NE(k1, NULL);
-	ASSERT_INT_EQ(k1->type, KEY_MLDSA44_ED25519);
-	ASSERT_PTR_NE(k1->mldsa_ed25519_pk, NULL);
-	ASSERT_PTR_NE(k1->mldsa_ed25519_sk, NULL);
+	TEST_پیل("generate KEY_MLDSA44_ED25519");
+	ASSERT_INT_EQ(sshkey_generate(کلی_MLDSA44_ED25519, 256, &k1), 0);
+	ASSERT_PTR_NE(k1, عدم);
+	ASSERT_INT_EQ(k1->type, کلی_MLDSA44_ED25519);
+	ASSERT_PTR_NE(k1->mldsa_ed25519_pk, عدم);
+	ASSERT_PTR_NE(k1->mldsa_ed25519_sk, عدم);
 	sshkey_free(k1);
-	k1 = NULL;
-	TEST_DONE();
+	k1 = عدم;
+	TEST_بشپړ();
 
-#ifdef WITH_OPENSSL
-	TEST_START("demote KEY_RSA");
-	ASSERT_INT_EQ(sshkey_from_private(kr, &k1), 0);
-	ASSERT_PTR_NE(k1, NULL);
+#که_تعریف_شوی WITH_OPENSSL
+	TEST_پیل("demote KEY_RSA");
+	ASSERT_INT_EQ(sshkey_from_شخصي(kr, &k1), 0);
+	ASSERT_PTR_NE(k1, عدم);
 	ASSERT_PTR_NE(kr, k1);
-	ASSERT_INT_EQ(k1->type, KEY_RSA);
-	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k1->pkey), NULL);
-	ASSERT_PTR_NE(rsa_n(k1), NULL);
-	ASSERT_PTR_NE(rsa_e(k1), NULL);
-	ASSERT_PTR_EQ(rsa_p(k1), NULL);
-	TEST_DONE();
+	ASSERT_INT_EQ(k1->type, کلی_RSA);
+	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k1->pkey), عدم);
+	ASSERT_PTR_NE(rsa_n(k1), عدم);
+	ASSERT_PTR_NE(rsa_e(k1), عدم);
+	ASSERT_PTR_EQ(rsa_p(k1), عدم);
+	TEST_بشپړ();
 
-	TEST_START("equal KEY_RSA/demoted KEY_RSA");
+	TEST_پیل("equal KEY_RSA/demoted KEY_RSA");
 	ASSERT_INT_EQ(sshkey_equal(kr, k1), 1);
 	sshkey_free(k1);
-	k1 = NULL;
-	TEST_DONE();
+	k1 = عدم;
+	TEST_بشپړ();
 
 
-	TEST_START("demote KEY_ECDSA");
-	ASSERT_INT_EQ(sshkey_from_private(ke, &k1), 0);
-	ASSERT_PTR_NE(k1, NULL);
+	TEST_پیل("demote KEY_ECDSA");
+	ASSERT_INT_EQ(sshkey_from_شخصي(ke, &k1), 0);
+	ASSERT_PTR_NE(k1, عدم);
 	ASSERT_PTR_NE(ke, k1);
-	ASSERT_INT_EQ(k1->type, KEY_ECDSA);
-	ASSERT_PTR_NE(EVP_PKEY_get0_EC_KEY(k1->pkey), NULL);
+	ASSERT_INT_EQ(k1->type, کلی_ECDSA);
+	ASSERT_PTR_NE(EVP_PKEY_get0_EC_کلی(k1->pkey), عدم);
 	ASSERT_INT_EQ(k1->ecdsa_nid, ke->ecdsa_nid);
-	ASSERT_PTR_NE(EC_KEY_get0_public_key(EVP_PKEY_get0_EC_KEY(ke->pkey)),
-	   NULL);
-	ASSERT_PTR_EQ(EC_KEY_get0_private_key(EVP_PKEY_get0_EC_KEY(k1->pkey)),
-	   NULL);
-	TEST_DONE();
+	ASSERT_PTR_NE(EC_کلی_get0_عامه_کلی(EVP_PKEY_get0_EC_کلی(ke->pkey)),
+	   عدم);
+	ASSERT_PTR_EQ(EC_کلی_get0_شخصي_کلی(EVP_PKEY_get0_EC_کلی(k1->pkey)),
+	   عدم);
+	TEST_بشپړ();
 
-	TEST_START("equal KEY_ECDSA/demoted KEY_ECDSA");
+	TEST_پیل("equal KEY_ECDSA/demoted KEY_ECDSA");
 	ASSERT_INT_EQ(sshkey_equal(ke, k1), 1);
 	sshkey_free(k1);
-	k1 = NULL;
-	TEST_DONE();
-#endif /* WITH_OPENSSL */
+	k1 = عدم;
+	TEST_بشپړ();
+#د_که_پای /* WITH_OPENSSL */
 
-	TEST_START("demote KEY_ED25519");
-	ASSERT_INT_EQ(sshkey_from_private(kf, &k1), 0);
-	ASSERT_PTR_NE(k1, NULL);
+	TEST_پیل("demote KEY_ED25519");
+	ASSERT_INT_EQ(sshkey_from_شخصي(kf, &k1), 0);
+	ASSERT_PTR_NE(k1, عدم);
 	ASSERT_PTR_NE(kf, k1);
-	ASSERT_INT_EQ(k1->type, KEY_ED25519);
-	ASSERT_PTR_NE(k1->ed25519_pk, NULL);
-	ASSERT_PTR_EQ(k1->ed25519_sk, NULL);
-	TEST_DONE();
+	ASSERT_INT_EQ(k1->type, کلی_ED25519);
+	ASSERT_PTR_NE(k1->ed25519_pk, عدم);
+	ASSERT_PTR_EQ(k1->ed25519_sk, عدم);
+	TEST_بشپړ();
 
-	TEST_START("equal KEY_ED25519/demoted KEY_ED25519");
+	TEST_پیل("equal KEY_ED25519/demoted KEY_ED25519");
 	ASSERT_INT_EQ(sshkey_equal(kf, k1), 1);
 	sshkey_free(k1);
-	k1 = NULL;
-	TEST_DONE();
+	k1 = عدم;
+	TEST_بشپړ();
 
-	TEST_START("demote KEY_MLDSA44_ED25519");
-	ASSERT_INT_EQ(sshkey_generate(KEY_MLDSA44_ED25519, 256, &k2), 0);
-	ASSERT_INT_EQ(sshkey_from_private(k2, &k1), 0);
-	ASSERT_PTR_NE(k1, NULL);
+	TEST_پیل("demote KEY_MLDSA44_ED25519");
+	ASSERT_INT_EQ(sshkey_generate(کلی_MLDSA44_ED25519, 256, &k2), 0);
+	ASSERT_INT_EQ(sshkey_from_شخصي(k2, &k1), 0);
+	ASSERT_PTR_NE(k1, عدم);
 	ASSERT_PTR_NE(k2, k1);
-	ASSERT_INT_EQ(k1->type, KEY_MLDSA44_ED25519);
-	ASSERT_PTR_NE(k1->mldsa_ed25519_pk, NULL);
-	ASSERT_PTR_EQ(k1->mldsa_ed25519_sk, NULL);
-	TEST_DONE();
+	ASSERT_INT_EQ(k1->type, کلی_MLDSA44_ED25519);
+	ASSERT_PTR_NE(k1->mldsa_ed25519_pk, عدم);
+	ASSERT_PTR_EQ(k1->mldsa_ed25519_sk, عدم);
+	TEST_بشپړ();
 
-	TEST_START("equal KEY_MLDSA44_ED25519/demoted KEY_MLDSA44_ED25519");
+	TEST_پیل("equal KEY_MLDSA44_ED25519/demoted KEY_MLDSA44_ED25519");
 	ASSERT_INT_EQ(sshkey_equal(k2, k1), 1);
 	sshkey_free(k1);
 	sshkey_free(k2);
-	k1 = k2 = NULL;
-	TEST_DONE();
+	k1 = k2 = عدم;
+	TEST_بشپړ();
 
-#ifdef WITH_OPENSSL
-	TEST_START("equal mismatched key types");
+#که_تعریف_شوی WITH_OPENSSL
+	TEST_پیل("equal mismatched key types");
 	ASSERT_INT_EQ(sshkey_equal(kd, kr), 0);
 	ASSERT_INT_EQ(sshkey_equal(kd, ke), 0);
 	ASSERT_INT_EQ(sshkey_equal(kr, ke), 0);
 	ASSERT_INT_EQ(sshkey_equal(ke, kf), 0);
 	ASSERT_INT_EQ(sshkey_equal(kd, kf), 0);
-	TEST_DONE();
+	TEST_بشپړ();
 
-	TEST_START("equal different keys");
-	ASSERT_INT_EQ(sshkey_generate(KEY_RSA, 1024, &k1), 0);
+	TEST_پیل("equal different keys");
+	ASSERT_INT_EQ(sshkey_generate(کلی_RSA, 1024, &k1), 0);
 	ASSERT_INT_EQ(sshkey_equal(kr, k1), 0);
 	sshkey_free(k1);
-	k1 = NULL;
-	ASSERT_INT_EQ(sshkey_generate(KEY_ECDSA, 256, &k1), 0);
+	k1 = عدم;
+	ASSERT_INT_EQ(sshkey_generate(کلی_ECDSA, 256, &k1), 0);
 	ASSERT_INT_EQ(sshkey_equal(ke, k1), 0);
 	sshkey_free(k1);
-	k1 = NULL;
-	ASSERT_INT_EQ(sshkey_generate(KEY_ED25519, 256, &k1), 0);
+	k1 = عدم;
+	ASSERT_INT_EQ(sshkey_generate(کلی_ED25519, 256, &k1), 0);
 	ASSERT_INT_EQ(sshkey_equal(kf, k1), 0);
 	sshkey_free(k1);
-	k1 = NULL;
-	ASSERT_INT_EQ(sshkey_generate(KEY_MLDSA44_ED25519, 256, &k1), 0);
-	ASSERT_INT_EQ(sshkey_generate(KEY_MLDSA44_ED25519, 256, &k2), 0);
+	k1 = عدم;
+	ASSERT_INT_EQ(sshkey_generate(کلی_MLDSA44_ED25519, 256, &k1), 0);
+	ASSERT_INT_EQ(sshkey_generate(کلی_MLDSA44_ED25519, 256, &k2), 0);
 	ASSERT_INT_EQ(sshkey_equal(k2, k1), 0);
 	sshkey_free(k1);
 	sshkey_free(k2);
-	k1 = k2 = NULL;
-	TEST_DONE();
-#endif /* WITH_OPENSSL */
+	k1 = k2 = عدم;
+	TEST_بشپړ();
+#د_که_پای /* WITH_OPENSSL */
 
 	sshkey_free(kr);
 	sshkey_free(kd);
 	sshkey_free(ke);
 	sshkey_free(kf);
-	kr = kd = ke = kf = NULL;
+	kr = kd = ke = kf = عدم;
 
-	TEST_START("certify key");
-	ASSERT_INT_EQ(sshkey_load_public(test_data_file("ed25519_1.pub"),
-	    &k1, NULL), 0);
-	k2 = get_private("ed25519_2");
-	ASSERT_INT_EQ(sshkey_to_certified(k1), 0);
-	ASSERT_PTR_NE(k1->cert, NULL);
+	TEST_پیل("certify key");
+	ASSERT_INT_EQ(sshkey_بارول_عامه(test_معلومات_file("ed25519_1.pub"),
+	    &k1, عدم), 0);
+	k2 = get_شخصي("ed25519_2");
+	ASSERT_INT_EQ(sshkey_منزل_certified(k1), 0);
+	ASSERT_PTR_NE(k1->cert, عدم);
 	k1->cert->type = SSH2_CERT_TYPE_USER;
 	k1->cert->serial = 1234;
-	k1->cert->key_id = strdup("estragon");
-	ASSERT_PTR_NE(k1->cert->key_id, NULL);
-	k1->cert->principals = calloc(4, sizeof(*k1->cert->principals));
-	ASSERT_PTR_NE(k1->cert->principals, NULL);
+	k1->cert->کلی_id = strdup("estragon");
+	ASSERT_PTR_NE(k1->cert->کلی_id, عدم);
+	k1->cert->principals = حافظه_صفر_ورکړه(4, حجم(*k1->cert->principals));
+	ASSERT_PTR_NE(k1->cert->principals, عدم);
 	k1->cert->principals[0] = strdup("estragon");
 	k1->cert->principals[1] = strdup("vladimir");
 	k1->cert->principals[2] = strdup("pozzo");
 	k1->cert->principals[3] = strdup("lucky");
-	ASSERT_PTR_NE(k1->cert->principals[0], NULL);
-	ASSERT_PTR_NE(k1->cert->principals[1], NULL);
-	ASSERT_PTR_NE(k1->cert->principals[2], NULL);
-	ASSERT_PTR_NE(k1->cert->principals[3], NULL);
+	ASSERT_PTR_NE(k1->cert->principals[0], عدم);
+	ASSERT_PTR_NE(k1->cert->principals[1], عدم);
+	ASSERT_PTR_NE(k1->cert->principals[2], عدم);
+	ASSERT_PTR_NE(k1->cert->principals[3], عدم);
 	k1->cert->nprincipals = 4;
 	k1->cert->valid_after = 0;
 	k1->cert->valid_before = (uint64_t)-1;
 	sshbuf_free(k1->cert->critical);
 	k1->cert->critical = sshbuf_new();
-	ASSERT_PTR_NE(k1->cert->critical, NULL);
+	ASSERT_PTR_NE(k1->cert->critical, عدم);
 	sshbuf_free(k1->cert->extensions);
 	k1->cert->extensions = sshbuf_new();
-	ASSERT_PTR_NE(k1->cert->extensions, NULL);
+	ASSERT_PTR_NE(k1->cert->extensions, عدم);
 	put_opt(k1->cert->critical, "force-command", "/usr/bin/true");
 	put_opt(k1->cert->critical, "source-address", "127.0.0.1");
-	put_opt(k1->cert->extensions, "permit-X11-forwarding", NULL);
-	put_opt(k1->cert->extensions, "permit-agent-forwarding", NULL);
-	ASSERT_INT_EQ(sshkey_from_private(k2, &k1->cert->signature_key), 0);
-	ASSERT_INT_EQ(sshkey_certify(k1, k2, NULL, NULL, NULL), 0);
+	put_opt(k1->cert->extensions, "permit-X11-forwarding", عدم);
+	put_opt(k1->cert->extensions, "permit-agent-forwarding", عدم);
+	ASSERT_INT_EQ(sshkey_from_شخصي(k2, &k1->cert->signature_کلی), 0);
+	ASSERT_INT_EQ(sshkey_certify(k1, k2, عدم, عدم, عدم), 0);
 	b = sshbuf_new();
-	ASSERT_PTR_NE(b, NULL);
+	ASSERT_PTR_NE(b, عدم);
 	ASSERT_INT_EQ(sshkey_putb(k1, b), 0);
 	ASSERT_INT_EQ(sshkey_from_blob(sshbuf_ptr(b), sshbuf_len(b), &k3), 0);
 
 	sshkey_free(k1);
 	sshkey_free(k2);
 	sshkey_free(k3);
-	k1 = k2 = k3 = NULL;
+	k1 = k2 = k3 = عدم;
 	sshbuf_reset(b);
-	TEST_DONE();
+	TEST_بشپړ();
 
-	TEST_START("certify key MLDSA44-ED25519");
-	ASSERT_INT_EQ(sshkey_load_public(
-	    test_data_file("mldsa44_ed25519_1.pub"), &k1, NULL), 0);
-	k2 = get_private("mldsa44_ed25519_2");
-	ASSERT_INT_EQ(sshkey_to_certified(k1), 0);
-	ASSERT_PTR_NE(k1->cert, NULL);
+	TEST_پیل("certify key MLDSA44-ED25519");
+	ASSERT_INT_EQ(sshkey_بارول_عامه(
+	    test_معلومات_file("mldsa44_ed25519_1.pub"), &k1, عدم), 0);
+	k2 = get_شخصي("mldsa44_ed25519_2");
+	ASSERT_INT_EQ(sshkey_منزل_certified(k1), 0);
+	ASSERT_PTR_NE(k1->cert, عدم);
 	k1->cert->type = SSH2_CERT_TYPE_USER;
 	k1->cert->serial = 1234;
-	k1->cert->key_id = strdup("estragon");
-	ASSERT_PTR_NE(k1->cert->key_id, NULL);
-	k1->cert->principals = calloc(4, sizeof(*k1->cert->principals));
-	ASSERT_PTR_NE(k1->cert->principals, NULL);
+	k1->cert->کلی_id = strdup("estragon");
+	ASSERT_PTR_NE(k1->cert->کلی_id, عدم);
+	k1->cert->principals = حافظه_صفر_ورکړه(4, حجم(*k1->cert->principals));
+	ASSERT_PTR_NE(k1->cert->principals, عدم);
 	k1->cert->principals[0] = strdup("estragon");
 	k1->cert->principals[1] = strdup("vladimir");
 	k1->cert->principals[2] = strdup("pozzo");
 	k1->cert->principals[3] = strdup("lucky");
-	ASSERT_PTR_NE(k1->cert->principals[0], NULL);
-	ASSERT_PTR_NE(k1->cert->principals[1], NULL);
-	ASSERT_PTR_NE(k1->cert->principals[2], NULL);
-	ASSERT_PTR_NE(k1->cert->principals[3], NULL);
+	ASSERT_PTR_NE(k1->cert->principals[0], عدم);
+	ASSERT_PTR_NE(k1->cert->principals[1], عدم);
+	ASSERT_PTR_NE(k1->cert->principals[2], عدم);
+	ASSERT_PTR_NE(k1->cert->principals[3], عدم);
 	k1->cert->nprincipals = 4;
 	k1->cert->valid_after = 0;
 	k1->cert->valid_before = (uint64_t)-1;
 	sshbuf_free(k1->cert->critical);
 	k1->cert->critical = sshbuf_new();
-	ASSERT_PTR_NE(k1->cert->critical, NULL);
+	ASSERT_PTR_NE(k1->cert->critical, عدم);
 	sshbuf_free(k1->cert->extensions);
 	k1->cert->extensions = sshbuf_new();
-	ASSERT_PTR_NE(k1->cert->extensions, NULL);
+	ASSERT_PTR_NE(k1->cert->extensions, عدم);
 	put_opt(k1->cert->critical, "force-command", "/usr/bin/true");
 	put_opt(k1->cert->critical, "source-address", "127.0.0.1");
-	put_opt(k1->cert->extensions, "permit-X11-forwarding", NULL);
-	put_opt(k1->cert->extensions, "permit-agent-forwarding", NULL);
-	ASSERT_INT_EQ(sshkey_from_private(k2, &k1->cert->signature_key), 0);
-	ASSERT_INT_EQ(sshkey_certify(k1, k2, NULL, NULL, NULL), 0);
+	put_opt(k1->cert->extensions, "permit-X11-forwarding", عدم);
+	put_opt(k1->cert->extensions, "permit-agent-forwarding", عدم);
+	ASSERT_INT_EQ(sshkey_from_شخصي(k2, &k1->cert->signature_کلی), 0);
+	ASSERT_INT_EQ(sshkey_certify(k1, k2, عدم, عدم, عدم), 0);
 	b = sshbuf_new();
-	ASSERT_PTR_NE(b, NULL);
+	ASSERT_PTR_NE(b, عدم);
 	ASSERT_INT_EQ(sshkey_putb(k1, b), 0);
 	ASSERT_INT_EQ(sshkey_from_blob(sshbuf_ptr(b), sshbuf_len(b), &k3), 0);
 	sshkey_free(k1);
 	sshkey_free(k2);
 	sshkey_free(k3);
-	k1 = k2 = k3 = NULL;
+	k1 = k2 = k3 = عدم;
 	sshbuf_reset(b);
-	TEST_DONE();
+	TEST_بشپړ();
 
-#ifdef WITH_OPENSSL
-	TEST_START("sign and verify RSA");
-	k1 = get_private("rsa_1");
-	ASSERT_INT_EQ(sshkey_load_public(test_data_file("rsa_2.pub"), &k2,
-	    NULL), 0);
+#که_تعریف_شوی WITH_OPENSSL
+	TEST_پیل("sign and verify RSA");
+	k1 = get_شخصي("rsa_1");
+	ASSERT_INT_EQ(sshkey_بارول_عامه(test_معلومات_file("rsa_2.pub"), &k2,
+	    عدم), 0);
 	signature_tests(k1, k2, "ssh-rsa");
 	sshkey_free(k1);
 	sshkey_free(k2);
-	k1 = k2 = NULL;
-	TEST_DONE();
+	k1 = k2 = عدم;
+	TEST_بشپړ();
 
-	TEST_START("sign and verify RSA-SHA256");
-	k1 = get_private("rsa_1");
-	ASSERT_INT_EQ(sshkey_load_public(test_data_file("rsa_2.pub"), &k2,
-	    NULL), 0);
+	TEST_پیل("sign and verify RSA-SHA256");
+	k1 = get_شخصي("rsa_1");
+	ASSERT_INT_EQ(sshkey_بارول_عامه(test_معلومات_file("rsa_2.pub"), &k2,
+	    عدم), 0);
 	signature_tests(k1, k2, "rsa-sha2-256");
 	sshkey_free(k1);
 	sshkey_free(k2);
-	k1 = k2 = NULL;
-	TEST_DONE();
+	k1 = k2 = عدم;
+	TEST_بشپړ();
 
-	TEST_START("sign and verify RSA-SHA512");
-	k1 = get_private("rsa_1");
-	ASSERT_INT_EQ(sshkey_load_public(test_data_file("rsa_2.pub"), &k2,
-	    NULL), 0);
+	TEST_پیل("sign and verify RSA-SHA512");
+	k1 = get_شخصي("rsa_1");
+	ASSERT_INT_EQ(sshkey_بارول_عامه(test_معلومات_file("rsa_2.pub"), &k2,
+	    عدم), 0);
 	signature_tests(k1, k2, "rsa-sha2-512");
 	sshkey_free(k1);
 	sshkey_free(k2);
-	k1 = k2 = NULL;
-	TEST_DONE();
+	k1 = k2 = عدم;
+	TEST_بشپړ();
 
 
-	TEST_START("sign and verify ECDSA");
-	k1 = get_private("ecdsa_1");
-	ASSERT_INT_EQ(sshkey_load_public(test_data_file("ecdsa_2.pub"), &k2,
-	    NULL), 0);
-	signature_tests(k1, k2, NULL);
+	TEST_پیل("sign and verify ECDSA");
+	k1 = get_شخصي("ecdsa_1");
+	ASSERT_INT_EQ(sshkey_بارول_عامه(test_معلومات_file("ecdsa_2.pub"), &k2,
+	    عدم), 0);
+	signature_tests(k1, k2, عدم);
 	sshkey_free(k1);
 	sshkey_free(k2);
-	k1 = k2 = NULL;
-	TEST_DONE();
-#endif /* WITH_OPENSSL */
+	k1 = k2 = عدم;
+	TEST_بشپړ();
+#د_که_پای /* WITH_OPENSSL */
 
-	TEST_START("sign and verify ED25519");
-	k1 = get_private("ed25519_1");
-	ASSERT_INT_EQ(sshkey_load_public(test_data_file("ed25519_2.pub"), &k2,
-	    NULL), 0);
-	signature_tests(k1, k2, NULL);
+	TEST_پیل("sign and verify ED25519");
+	k1 = get_شخصي("ed25519_1");
+	ASSERT_INT_EQ(sshkey_بارول_عامه(test_معلومات_file("ed25519_2.pub"), &k2,
+	    عدم), 0);
+	signature_tests(k1, k2, عدم);
 	sshkey_free(k1);
 	sshkey_free(k2);
-	k1 = k2 = NULL;
-	TEST_DONE();
+	k1 = k2 = عدم;
+	TEST_بشپړ();
 
-	TEST_START("sign and verify MLDSA44-ED25519");
-	k1 = get_private("mldsa44_ed25519_1");
-	ASSERT_INT_EQ(sshkey_load_public(
-	    test_data_file("mldsa44_ed25519_2.pub"), &k2, NULL), 0);
-	signature_tests(k1, k2, NULL);
+	TEST_پیل("sign and verify MLDSA44-ED25519");
+	k1 = get_شخصي("mldsa44_ed25519_1");
+	ASSERT_INT_EQ(sshkey_بارول_عامه(
+	    test_معلومات_file("mldsa44_ed25519_2.pub"), &k2, عدم), 0);
+	signature_tests(k1, k2, عدم);
 	sshkey_free(k1);
 	sshkey_free(k2);
-	k1 = k2 = NULL;
-	TEST_DONE();
+	k1 = k2 = عدم;
+	TEST_بشپړ();
 
-#ifdef WITH_OPENSSL
-	TEST_START("nested certificate");
-	ASSERT_INT_EQ(sshkey_load_cert(test_data_file("rsa_1"), &k1), 0);
-	ASSERT_INT_EQ(sshkey_load_public(test_data_file("rsa_1.pub"), &k2,
-	    NULL), 0);
-	k3 = get_private("rsa_1");
-	build_cert(b, k2, "ssh-rsa-cert-v01@openssh.com", k3, k1, NULL);
+#که_تعریف_شوی WITH_OPENSSL
+	TEST_پیل("nested certificate");
+	ASSERT_INT_EQ(sshkey_بارول_cert(test_معلومات_file("rsa_1"), &k1), 0);
+	ASSERT_INT_EQ(sshkey_بارول_عامه(test_معلومات_file("rsa_1.pub"), &k2,
+	    عدم), 0);
+	k3 = get_شخصي("rsa_1");
+	build_cert(b, k2, "ssh-rsa-cert-v01@openssh.com", k3, k1, عدم);
 	ASSERT_INT_EQ(sshkey_from_blob(sshbuf_ptr(b), sshbuf_len(b), &k4),
-	    SSH_ERR_KEY_CERT_INVALID_SIGN_KEY);
-	ASSERT_PTR_EQ(k4, NULL);
+	    SSH_ERR_کلی_CERT_INVALID_SIGN_کلی);
+	ASSERT_PTR_EQ(k4, عدم);
 	sshkey_free(k1);
 	sshkey_free(k2);
 	sshkey_free(k3);
-	k1 = k2 = k3 = NULL;
+	k1 = k2 = k3 = عدم;
 	sshbuf_free(b);
-	TEST_DONE();
-#endif /* WITH_OPENSSL */
+	TEST_بشپړ();
+#د_که_پای /* WITH_OPENSSL */
 }
 
-void
-sshkey_benchmarks(void)
+فراغ
+sshkey_benchmarks(فراغ)
 {
-	struct sshkey *k = NULL;
+	بنية sshkey *k = عدم;
 
-#ifdef WITH_OPENSSL
-	BENCH_START("generate RSA-1024");
-	TEST_START("generate KEY_RSA");
-	ASSERT_INT_EQ(sshkey_generate(KEY_RSA, 1024, &k), 0);
-	ASSERT_PTR_NE(k, NULL);
+#که_تعریف_شوی WITH_OPENSSL
+	BENCH_پیل("generate RSA-1024");
+	TEST_پیل("generate KEY_RSA");
+	ASSERT_INT_EQ(sshkey_generate(کلی_RSA, 1024, &k), 0);
+	ASSERT_PTR_NE(k, عدم);
 	sshkey_free(k);
-	k = NULL;
-	TEST_DONE();
-	BENCH_FINISH("keys");
+	k = عدم;
+	TEST_بشپړ();
+	BENCH_پای("keys");
 
-	BENCH_START("generate RSA-2048");
-	TEST_START("generate KEY_RSA");
-	ASSERT_INT_EQ(sshkey_generate(KEY_RSA, 2048, &k), 0);
-	ASSERT_PTR_NE(k, NULL);
+	BENCH_پیل("generate RSA-2048");
+	TEST_پیل("generate KEY_RSA");
+	ASSERT_INT_EQ(sshkey_generate(کلی_RSA, 2048, &k), 0);
+	ASSERT_PTR_NE(k, عدم);
 	sshkey_free(k);
-	k = NULL;
-	TEST_DONE();
-	BENCH_FINISH("keys");
+	k = عدم;
+	TEST_بشپړ();
+	BENCH_پای("keys");
 
-	BENCH_START("generate ECDSA-256");
-	TEST_START("generate KEY_ECDSA");
-	ASSERT_INT_EQ(sshkey_generate(KEY_ECDSA, 256, &k), 0);
-	ASSERT_PTR_NE(k, NULL);
+	BENCH_پیل("generate ECDSA-256");
+	TEST_پیل("generate KEY_ECDSA");
+	ASSERT_INT_EQ(sshkey_generate(کلی_ECDSA, 256, &k), 0);
+	ASSERT_PTR_NE(k, عدم);
 	sshkey_free(k);
-	k = NULL;
-	TEST_DONE();
-	BENCH_FINISH("keys");
+	k = عدم;
+	TEST_بشپړ();
+	BENCH_پای("keys");
 
-	BENCH_START("generate ECDSA-384");
-	TEST_START("generate KEY_ECDSA");
-	ASSERT_INT_EQ(sshkey_generate(KEY_ECDSA, 384, &k), 0);
-	ASSERT_PTR_NE(k, NULL);
+	BENCH_پیل("generate ECDSA-384");
+	TEST_پیل("generate KEY_ECDSA");
+	ASSERT_INT_EQ(sshkey_generate(کلی_ECDSA, 384, &k), 0);
+	ASSERT_PTR_NE(k, عدم);
 	sshkey_free(k);
-	k = NULL;
-	TEST_DONE();
-	BENCH_FINISH("keys");
+	k = عدم;
+	TEST_بشپړ();
+	BENCH_پای("keys");
 
-	BENCH_START("generate ECDSA-521");
-	TEST_START("generate KEY_ECDSA");
-	ASSERT_INT_EQ(sshkey_generate(KEY_ECDSA, 521, &k), 0);
-	ASSERT_PTR_NE(k, NULL);
+	BENCH_پیل("generate ECDSA-521");
+	TEST_پیل("generate KEY_ECDSA");
+	ASSERT_INT_EQ(sshkey_generate(کلی_ECDSA, 521, &k), 0);
+	ASSERT_PTR_NE(k, عدم);
 	sshkey_free(k);
-	k = NULL;
-	TEST_DONE();
-	BENCH_FINISH("keys");
-#endif /* WITH_OPENSSL */
+	k = عدم;
+	TEST_بشپړ();
+	BENCH_پای("keys");
+#د_که_پای /* WITH_OPENSSL */
 
-	BENCH_START("generate ED25519");
-	TEST_START("generate KEY_ED25519");
-	ASSERT_INT_EQ(sshkey_generate(KEY_ED25519, 256, &k), 0);
-	ASSERT_PTR_NE(k, NULL);
+	BENCH_پیل("generate ED25519");
+	TEST_پیل("generate KEY_ED25519");
+	ASSERT_INT_EQ(sshkey_generate(کلی_ED25519, 256, &k), 0);
+	ASSERT_PTR_NE(k, عدم);
 	sshkey_free(k);
-	k = NULL;
-	TEST_DONE();
-	BENCH_FINISH("keys");
+	k = عدم;
+	TEST_بشپړ();
+	BENCH_پای("keys");
 
-	BENCH_START("generate MLDSA44-ED25519");
-	TEST_START("generate KEY_MLDSA44_ED25519");
-	ASSERT_INT_EQ(sshkey_generate(KEY_MLDSA44_ED25519, 256, &k), 0);
-	ASSERT_PTR_NE(k, NULL);
+	BENCH_پیل("generate MLDSA44-ED25519");
+	TEST_پیل("generate KEY_MLDSA44_ED25519");
+	ASSERT_INT_EQ(sshkey_generate(کلی_MLDSA44_ED25519, 256, &k), 0);
+	ASSERT_PTR_NE(k, عدم);
 	sshkey_free(k);
-	k = NULL;
-	TEST_DONE();
-	BENCH_FINISH("keys");
+	k = عدم;
+	TEST_بشپړ();
+	BENCH_پای("keys");
 
-#ifdef WITH_OPENSSL
+#که_تعریف_شوی WITH_OPENSSL
 	/* sign */
-	signature_benchmark("RSA-1024/SHA1", KEY_RSA, 1024, "ssh-rsa", 0);
-	signature_benchmark("RSA-1024/SHA256", KEY_RSA, 1024, "rsa-sha2-256", 0);
-	signature_benchmark("RSA-1024/SHA512", KEY_RSA, 1024, "rsa-sha2-512", 0);
-	signature_benchmark("RSA-2048/SHA1", KEY_RSA, 2048, "ssh-rsa", 0);
-	signature_benchmark("RSA-2048/SHA256", KEY_RSA, 2048, "rsa-sha2-256", 0);
-	signature_benchmark("RSA-2048/SHA512", KEY_RSA, 2048, "rsa-sha2-512", 0);
-	signature_benchmark("ECDSA-256", KEY_ECDSA, 256, NULL, 0);
-	signature_benchmark("ECDSA-384", KEY_ECDSA, 384, NULL, 0);
-	signature_benchmark("ECDSA-521", KEY_ECDSA, 521, NULL, 0);
-	signature_benchmark("ED25519", KEY_ED25519, 0, NULL, 0);
-	signature_benchmark("MLDSA44-ED25519", KEY_MLDSA44_ED25519, 0, NULL, 0);
+	signature_benchmark("RSA-1024/SHA1", کلی_RSA, 1024, "ssh-rsa", 0);
+	signature_benchmark("RSA-1024/SHA256", کلی_RSA, 1024, "rsa-sha2-256", 0);
+	signature_benchmark("RSA-1024/SHA512", کلی_RSA, 1024, "rsa-sha2-512", 0);
+	signature_benchmark("RSA-2048/SHA1", کلی_RSA, 2048, "ssh-rsa", 0);
+	signature_benchmark("RSA-2048/SHA256", کلی_RSA, 2048, "rsa-sha2-256", 0);
+	signature_benchmark("RSA-2048/SHA512", کلی_RSA, 2048, "rsa-sha2-512", 0);
+	signature_benchmark("ECDSA-256", کلی_ECDSA, 256, عدم, 0);
+	signature_benchmark("ECDSA-384", کلی_ECDSA, 384, عدم, 0);
+	signature_benchmark("ECDSA-521", کلی_ECDSA, 521, عدم, 0);
+	signature_benchmark("ED25519", کلی_ED25519, 0, عدم, 0);
+	signature_benchmark("MLDSA44-ED25519", کلی_MLDSA44_ED25519, 0, عدم, 0);
 
 	/* verify */
-	signature_benchmark("RSA-1024/SHA1", KEY_RSA, 1024, "ssh-rsa", 1);
-	signature_benchmark("RSA-1024/SHA256", KEY_RSA, 1024, "rsa-sha2-256", 1);
-	signature_benchmark("RSA-1024/SHA512", KEY_RSA, 1024, "rsa-sha2-512", 1);
-	signature_benchmark("RSA-2048/SHA1", KEY_RSA, 2048, "ssh-rsa", 1);
-	signature_benchmark("RSA-2048/SHA256", KEY_RSA, 2048, "rsa-sha2-256", 1);
-	signature_benchmark("RSA-2048/SHA512", KEY_RSA, 2048, "rsa-sha2-512", 1);
-	signature_benchmark("ECDSA-256", KEY_ECDSA, 256, NULL, 1);
-	signature_benchmark("ECDSA-384", KEY_ECDSA, 384, NULL, 1);
-	signature_benchmark("ECDSA-521", KEY_ECDSA, 521, NULL, 1);
-#endif /* WITH_OPENSSL */
-	signature_benchmark("ED25519", KEY_ED25519, 0, NULL, 1);
-	signature_benchmark("MLDSA44-ED25519", KEY_MLDSA44_ED25519, 0, NULL, 1);
+	signature_benchmark("RSA-1024/SHA1", کلی_RSA, 1024, "ssh-rsa", 1);
+	signature_benchmark("RSA-1024/SHA256", کلی_RSA, 1024, "rsa-sha2-256", 1);
+	signature_benchmark("RSA-1024/SHA512", کلی_RSA, 1024, "rsa-sha2-512", 1);
+	signature_benchmark("RSA-2048/SHA1", کلی_RSA, 2048, "ssh-rsa", 1);
+	signature_benchmark("RSA-2048/SHA256", کلی_RSA, 2048, "rsa-sha2-256", 1);
+	signature_benchmark("RSA-2048/SHA512", کلی_RSA, 2048, "rsa-sha2-512", 1);
+	signature_benchmark("ECDSA-256", کلی_ECDSA, 256, عدم, 1);
+	signature_benchmark("ECDSA-384", کلی_ECDSA, 384, عدم, 1);
+	signature_benchmark("ECDSA-521", کلی_ECDSA, 521, عدم, 1);
+#د_که_پای /* WITH_OPENSSL */
+	signature_benchmark("ED25519", کلی_ED25519, 0, عدم, 1);
+	signature_benchmark("MLDSA44-ED25519", کلی_MLDSA44_ED25519, 0, عدم, 1);
 }

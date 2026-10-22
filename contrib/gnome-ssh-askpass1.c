@@ -43,130 +43,130 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <gnome.h>
-#include <X11/Xlib.h>
-#include <gdk/gdkx.h>
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ضمن <gnome.h>
+#ضمن <X11/Xlib.h>
+#ضمن <gdk/gdkx.h>
 
-void
-report_failed_grab (void)
+فراغ
+report_failed_grab (فراغ)
 {
 	GtkWidget *err;
 
-	err = gnome_message_box_new("Could not grab keyboard or mouse.\n"
+	err = gnome_پیغام_box_new("Could not grab keyboard or mouse.\n"
 		"A malicious client may be eavesdropping on your session.",
-				    GNOME_MESSAGE_BOX_ERROR, "EXIT", NULL);
-	gtk_window_set_position(GTK_WINDOW(err), GTK_WIN_POS_CENTER);
-	gtk_object_set(GTK_OBJECT(err), "type", GTK_WINDOW_POPUP, NULL);
+				    GNOME_پیغام_BOX_ERROR, "EXIT", عدم);
+	gtk_کړکۍ_سېټ_position(GTK_کړکۍ(err), GTK_WIN_POS_CENTER);
+	gtk_object_سېټ(GTK_OBJECT(err), "type", GTK_کړکۍ_POPUP, عدم);
 
-	gnome_dialog_run_and_close(GNOME_DIALOG(err));
+	gnome_dialog_پرلپسې_and_close(GNOME_DIALOG(err));
 }
 
-int
-passphrase_dialog(char *message)
+صحيح
+passphrase_dialog(حرف *پیغام_2)
 {
-	char *passphrase;
-	char **messages;
-	int result, i, grab_server, grab_pointer;
-	GtkWidget *dialog, *entry, *label;
+	حرف *passphrase;
+	حرف **messages;
+	صحيح پایله, i, grab_server, grab_اشاره_ګر;
+	GtkWidget *dialog, *ثبت, *label;
 
-	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != NULL);
-	grab_pointer = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != NULL);
+	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != عدم);
+	grab_اشاره_ګر = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != عدم);
 
 	dialog = gnome_dialog_new("OpenSSH", GNOME_STOCK_BUTTON_OK,
-	    GNOME_STOCK_BUTTON_CANCEL, NULL);
+	    GNOME_STOCK_BUTTON_CANCEL, عدم);
 
-	messages = g_strsplit(message, "\\n", 0);
-	if (messages)
-		for(i = 0; messages[i]; i++) {
+	messages = g_strsplit(پیغام_2, "\\n", 0);
+	إذا (messages)
+		لكل(i = 0; messages[i]; i++) {
 			label = gtk_label_new(messages[i]);
-			gtk_box_pack_start(GTK_BOX(GNOME_DIALOG(dialog)->vbox),
+			gtk_box_pack_پیل(GTK_BOX(GNOME_DIALOG(dialog)->vbox),
 			    label, FALSE, FALSE, 0);
 		}
 
-	entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(GNOME_DIALOG(dialog)->vbox), entry, FALSE,
+	ثبت = gtk_ثبت_new();
+	gtk_box_pack_پیل(GTK_BOX(GNOME_DIALOG(dialog)->vbox), ثبت, FALSE,
 	    FALSE, 0);
-	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-	gtk_widget_grab_focus(entry);
+	gtk_ثبت_سېټ_visibility(GTK_ثبت(ثبت), FALSE);
+	gtk_widget_grab_focus(ثبت);
 
 	/* Center window and prepare for grab */
-	gtk_object_set(GTK_OBJECT(dialog), "type", GTK_WINDOW_POPUP, NULL);
-	gnome_dialog_set_default(GNOME_DIALOG(dialog), 0);
-	gtk_window_set_position (GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-	gtk_window_set_policy(GTK_WINDOW(dialog), FALSE, FALSE, TRUE);
+	gtk_object_سېټ(GTK_OBJECT(dialog), "type", GTK_کړکۍ_POPUP, عدم);
+	gnome_dialog_سېټ_default(GNOME_DIALOG(dialog), 0);
+	gtk_کړکۍ_سېټ_position (GTK_کړکۍ(dialog), GTK_WIN_POS_CENTER);
+	gtk_کړکۍ_سېټ_policy(GTK_کړکۍ(dialog), FALSE, FALSE, TRUE);
 	gnome_dialog_close_hides(GNOME_DIALOG(dialog), TRUE);
-	gtk_container_set_border_width(GTK_CONTAINER(GNOME_DIALOG(dialog)->vbox),
+	gtk_container_سېټ_border_پلنوالی(GTK_CONTAINER(GNOME_DIALOG(dialog)->vbox),
 	    GNOME_PAD);
 	gtk_widget_show_all(dialog);
 
 	/* Grab focus */
-	if (grab_server)
+	إذا (grab_server)
 		XGrabServer(GDK_DISPLAY());
-	if (grab_pointer && gdk_pointer_grab(dialog->window, TRUE, 0,
-	    NULL, NULL, GDK_CURRENT_TIME))
-		goto nograb;
-	if (gdk_keyboard_grab(dialog->window, FALSE, GDK_CURRENT_TIME))
-		goto nograbkb;
+	إذا (grab_اشاره_ګر && gdk_اشاره_ګر_grab(dialog->کړکۍ, TRUE, 0,
+	    عدم, عدم, GDK_CURRENT_وخت))
+		اذهب nograb;
+	إذا (gdk_keyboard_grab(dialog->کړکۍ, FALSE, GDK_CURRENT_وخت))
+		اذهب nograbkb;
 
 	/* Make <enter> close dialog */
-	gnome_dialog_editable_enters(GNOME_DIALOG(dialog), GTK_EDITABLE(entry));
+	gnome_dialog_editable_enters(GNOME_DIALOG(dialog), GTK_EDITABLE(ثبت));
 
 	/* Run dialog */
-	result = gnome_dialog_run(GNOME_DIALOG(dialog));
+	پایله = gnome_dialog_پرلپسې(GNOME_DIALOG(dialog));
 
 	/* Ungrab */
-	if (grab_server)
+	إذا (grab_server)
 		XUngrabServer(GDK_DISPLAY());
-	if (grab_pointer)
-		gdk_pointer_ungrab(GDK_CURRENT_TIME);
-	gdk_keyboard_ungrab(GDK_CURRENT_TIME);
+	إذا (grab_اشاره_ګر)
+		gdk_اشاره_ګر_ungrab(GDK_CURRENT_وخت);
+	gdk_keyboard_ungrab(GDK_CURRENT_وخت);
 	gdk_flush();
 
 	/* Report passphrase if user selected OK */
-	passphrase = gtk_entry_get_text(GTK_ENTRY(entry));
-	if (result == 0)
+	passphrase = gtk_ثبت_get_متن(GTK_ثبت(ثبت));
+	إذا (پایله == 0)
 		puts(passphrase);
 		
 	/* Zero passphrase in memory */
-	memset(passphrase, '\0', strlen(passphrase));
-	gtk_entry_set_text(GTK_ENTRY(entry), passphrase);
+	memset(passphrase, '\0', مزي_اوږدوالی(passphrase));
+	gtk_ثبت_سېټ_متن(GTK_ثبت(ثبت), passphrase);
 			
 	gnome_dialog_close(GNOME_DIALOG(dialog));
-	return (result == 0 ? 0 : -1);
+	أرجع (پایله == 0 ? 0 : -1);
 
 	/*
 	 * At least one grab failed - ungrab what we got, and report the
 	 * failure to the user. Note that XGrabServer() cannot fail.
 	 */
  nograbkb:
-	gdk_pointer_ungrab(GDK_CURRENT_TIME);
+	gdk_اشاره_ګر_ungrab(GDK_CURRENT_وخت);
  nograb:
-	if (grab_server)
+	إذا (grab_server)
 		XUngrabServer(GDK_DISPLAY());
 	gnome_dialog_close(GNOME_DIALOG(dialog));
 	
 	report_failed_grab();
-	return (-1);
+	أرجع (-1);
 }
 
-int
-main(int argc, char **argv)
+صحيح
+اصلي(صحيح argc, حرف **argv)
 {
-	char *message;
-	int result;
+	حرف *پیغام_2;
+	صحيح پایله;
 
 	gnome_init("GNOME ssh-askpass", "0.1", argc, argv);
 
-	if (argc == 2)
-		message = argv[1];
-	else
-		message = "Enter your OpenSSH passphrase:";
+	إذا (argc == 2)
+		پیغام_2 = argv[1];
+	وإلا
+		پیغام_2 = "Enter your OpenSSH passphrase:";
 
 	setvbuf(stdout, 0, _IONBF, 0);
-	result = passphrase_dialog(message);
+	پایله = passphrase_dialog(پیغام_2);
 
-	return (result);
+	أرجع (پایله);
 }

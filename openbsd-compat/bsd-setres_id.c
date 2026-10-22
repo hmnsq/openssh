@@ -14,85 +14,85 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <stdarg.h>
-#include <unistd.h>
-#include <string.h>
+#ضمن <stdarg.h>
+#ضمن <unistd.h>
+#ضمن <string.h>
 
-#include "log.h"
+#ضمن "log.h"
 
-#if !defined(HAVE_SETRESGID) || defined(BROKEN_SETRESGID)
-int
+#إذا !defined(HAVE_SETRESGID) || defined(BROKEN_SETRESGID)
+صحيح
 setresgid(gid_t rgid, gid_t egid, gid_t sgid)
 {
-	int ret = 0, saved_errno;
+	صحيح ret = 0, saved_errno;
 
-	if (rgid != sgid) {
+	إذا (rgid != sgid) {
 		errno = ENOSYS;
-		return -1;
+		أرجع -1;
 	}
-#if defined(HAVE_SETREGID) && !defined(BROKEN_SETREGID)
-	if (setregid(rgid, egid) < 0) {
+#إذا defined(HAVE_SETREGID) && !defined(BROKEN_SETREGID)
+	إذا (setregid(rgid, egid) < 0) {
 		saved_errno = errno;
 		error("setregid %lu: %.100s", (u_long)rgid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-#else
-	if (setegid(egid) < 0) {
+#وإلا
+	إذا (setegid(egid) < 0) {
 		saved_errno = errno;
 		error("setegid %lu: %.100s", (u_long)egid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-	if (setgid(rgid) < 0) {
+	إذا (setgid(rgid) < 0) {
 		saved_errno = errno;
 		error("setgid %lu: %.100s", (u_long)rgid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-#endif
-	return ret;
+#د_که_پای
+	أرجع ret;
 }
-#endif
+#د_که_پای
 
-#if !defined(HAVE_SETRESUID) || defined(BROKEN_SETRESUID)
-int
+#إذا !defined(HAVE_SETRESUID) || defined(BROKEN_SETRESUID)
+صحيح
 setresuid(uid_t ruid, uid_t euid, uid_t suid)
 {
-	int ret = 0, saved_errno;
+	صحيح ret = 0, saved_errno;
 
-	if (ruid != suid) {
+	إذا (ruid != suid) {
 		errno = ENOSYS;
-		return -1;
+		أرجع -1;
 	}
-#if defined(HAVE_SETREUID) && !defined(BROKEN_SETREUID)
-	if (setreuid(ruid, euid) < 0) {
+#إذا defined(HAVE_SETREUID) && !defined(BROKEN_SETREUID)
+	إذا (setreuid(ruid, euid) < 0) {
 		saved_errno = errno;
 		error("setreuid %lu: %.100s", (u_long)ruid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-#else
+#وإلا
 
 # ifndef SETEUID_BREAKS_SETUID
-	if (seteuid(euid) < 0) {
+	إذا (seteuid(euid) < 0) {
 		saved_errno = errno;
 		error("seteuid %lu: %.100s", (u_long)euid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
 # endif
-	if (setuid(ruid) < 0) {
+	إذا (setuid(ruid) < 0) {
 		saved_errno = errno;
 		error("setuid %lu: %.100s", (u_long)ruid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-#endif
-	return ret;
+#د_که_پای
+	أرجع ret;
 }
-#endif
+#د_که_پای

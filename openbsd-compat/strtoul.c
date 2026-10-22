@@ -30,13 +30,13 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoul.c */
 
-#include "includes.h"
-#ifndef HAVE_STRTOUL
+#ضمن "includes.h"
+#که_نه_تعریف_شوی HAVE_STRTOUL
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#ضمن <ctype.h>
+#ضمن <errno.h>
+#ضمن <limits.h>
+#ضمن <stdlib.h>
 
 /*
  * Convert a string to an unsigned long integer.
@@ -44,65 +44,65 @@
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-unsigned long
-strtoul(const char *nptr, char **endptr, int base)
+بینښه اوږد
+strtoul(ثابت حرف *nptr, حرف **endptr, صحيح بنسټ)
 {
-	const char *s;
-	unsigned long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	ثابت حرف *s;
+	بینښه اوږد acc, cutoff;
+	صحيح c;
+	صحيح neg, any, cutlim;
 
 	/*
 	 * See strtol for comments as to the logic used.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	افعل {
+		c = (بینښه حرف) *s++;
+	} طالما (که_تشه(c));
+	إذا (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} وإلا {
 		neg = 0;
-		if (c == '+')
+		إذا (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	إذا ((بنسټ == 0 || بنسټ == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
-		base = 16;
+		بنسټ = 16;
 	}
-	if (base == 0)
-		base = c == '0' ? 8 : 10;
+	إذا (بنسټ == 0)
+		بنسټ = c == '0' ? 8 : 10;
 
-	cutoff = ULONG_MAX / (unsigned long)base;
-	cutlim = ULONG_MAX % (unsigned long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	cutoff = ULONG_MAX / (بینښه اوږد)بنسټ;
+	cutlim = ULONG_MAX % (بینښه اوږد)بنسټ;
+	لكل (acc = 0, any = 0;; c = (بینښه حرف) *s++) {
+		إذا (که_عدد(c))
 			c -= '0';
-		else if (isalpha(c))
+		وإلا إذا (که_توری(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (acc > cutoff || acc == cutoff && c > cutlim) {
+		وإلا
+			اكسر;
+		إذا (c >= بنسټ)
+			اكسر;
+		إذا (any < 0)
+			استمر;
+		إذا (acc > cutoff || acc == cutoff && c > cutlim) {
 			any = -1;
 			acc = ULONG_MAX;
 			errno = ERANGE;
-		} else {
+		} وإلا {
 			any = 1;
-			acc *= (unsigned long)base;
+			acc *= (بینښه اوږد)بنسټ;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	إذا (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	إذا (endptr != 0)
+		*endptr = (حرف *) (any ? s - 1 : nptr);
+	أرجع (acc);
 }
-#endif /* !HAVE_STRTOUL */
+#د_که_پای /* !HAVE_STRTOUL */

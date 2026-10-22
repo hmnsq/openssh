@@ -18,54 +18,54 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/dirname.c */
 
-#include "includes.h"
-#ifndef HAVE_DIRNAME
+#ضمن "includes.h"
+#که_نه_تعریف_شوی HAVE_DIRNAME
 
-#include <errno.h>
-#include <string.h>
+#ضمن <errno.h>
+#ضمن <string.h>
 
-char *
-dirname(const char *path)
+حرف *
+dirname(ثابت حرف *لار)
 {
-	static char dname[MAXPATHLEN];
-	size_t len;
-	const char *endp;
+	ساكن حرف dname[MAXPATHLEN];
+	اندازه_t len;
+	ثابت حرف *endp;
 
 	/* Empty or NULL string gets treated as "." */
-	if (path == NULL || *path == '\0') {
+	إذا (لار == عدم || *لار == '\0') {
 		dname[0] = '.';
 		dname[1] = '\0';
-		return (dname);
+		أرجع (dname);
 	}
 
 	/* Strip any trailing slashes */
-	endp = path + strlen(path) - 1;
-	while (endp > path && *endp == '/')
+	endp = لار + مزي_اوږدوالی(لار) - 1;
+	طالما (endp > لار && *endp == '/')
 		endp--;
 
 	/* Find the start of the dir */
-	while (endp > path && *endp != '/')
+	طالما (endp > لار && *endp != '/')
 		endp--;
 
 	/* Either the dir is "/" or there are no slashes */
-	if (endp == path) {
+	إذا (endp == لار) {
 		dname[0] = *endp == '/' ? '/' : '.';
 		dname[1] = '\0';
-		return (dname);
-	} else {
+		أرجع (dname);
+	} وإلا {
 		/* Move forward past the separating slashes */
-		do {
+		افعل {
 			endp--;
-		} while (endp > path && *endp == '/');
+		} طالما (endp > لار && *endp == '/');
 	}
 
-	len = endp - path + 1;
-	if (len >= sizeof(dname)) {
+	len = endp - لار + 1;
+	إذا (len >= حجم(dname)) {
 		errno = ENAMETOOLONG;
-		return (NULL);
+		أرجع (عدم);
 	}
-	memcpy(dname, path, len);
+	حافظه_نقل(dname, لار, len);
 	dname[len] = '\0';
-	return (dname);
+	أرجع (dname);
 }
-#endif
+#د_که_پای

@@ -27,117 +27,117 @@
 
 /* #define DEBUG_SK 1 */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/evp.h>
+#که_تعریف_شوی WITH_OPENSSL
+#ضمن "openbsd-compat/openssl-compat.h"
+#ضمن <openssl/bn.h>
+#ضمن <openssl/ec.h>
+#ضمن <openssl/ecdsa.h>
+#ضمن <openssl/evp.h>
 
-#include <string.h>
-#include <stdio.h> /* needed for DEBUG_SK only */
+#ضمن <string.h>
+#ضمن <stdio.h> /* needed for DEBUG_SK only */
 
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "digest.h"
-#define SSHKEY_INTERNAL
-#include "sshkey.h"
+#ضمن "sshbuf.h"
+#ضمن "ssherr.h"
+#ضمن "digest.h"
+#تعریف_کړه SSHKEY_دننی
+#ضمن "sshkey.h"
 
 /* Reuse some ECDSA internals */
-extern struct sshkey_impl_funcs sshkey_ecdsa_funcs;
+خارجي بنية sshkey_impl_funcs sshkey_ecdsa_funcs;
 
-static void
-ssh_ecdsa_sk_cleanup(struct sshkey *k)
+ساكن فراغ
+ssh_ecdsa_sk_cleanup(بنية sshkey *k)
 {
 	sshkey_sk_cleanup(k);
 	sshkey_ecdsa_funcs.cleanup(k);
 }
 
-static int
-ssh_ecdsa_sk_equal(const struct sshkey *a, const struct sshkey *b)
+ساكن صحيح
+ssh_ecdsa_sk_equal(ثابت بنية sshkey *a, ثابت بنية sshkey *b)
 {
-	if (!sshkey_sk_fields_equal(a, b))
-		return 0;
-	if (!sshkey_ecdsa_funcs.equal(a, b))
-		return 0;
-	return 1;
+	إذا (!sshkey_sk_fields_equal(a, b))
+		أرجع 0;
+	إذا (!sshkey_ecdsa_funcs.equal(a, b))
+		أرجع 0;
+	أرجع 1;
 }
 
-static int
-ssh_ecdsa_sk_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+ساكن صحيح
+ssh_ecdsa_sk_serialize_عامه(ثابت بنية sshkey *کلی, بنية sshbuf *b,
+    تعداد sshkey_serialize_rep opts)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshkey_ecdsa_funcs.serialize_public(key, b, opts)) != 0)
-		return r;
-	if ((r = sshkey_serialize_sk(key, b)) != 0)
-		return r;
+	إذا ((r = sshkey_ecdsa_funcs.serialize_عامه(کلی, b, opts)) != 0)
+		أرجع r;
+	إذا ((r = sshkey_serialize_sk(کلی, b)) != 0)
+		أرجع r;
 
-	return 0;
+	أرجع 0;
 }
 
-static int
-ssh_ecdsa_sk_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+ساكن صحيح
+ssh_ecdsa_sk_serialize_شخصي(ثابت بنية sshkey *کلی, بنية sshbuf *b,
+    تعداد sshkey_serialize_rep opts)
 {
-	int r;
+	صحيح r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = sshkey_ecdsa_funcs.serialize_public(key,
+	إذا (!sshkey_is_cert(کلی)) {
+		إذا ((r = sshkey_ecdsa_funcs.serialize_عامه(کلی,
 		    b, opts)) != 0)
-			return r;
+			أرجع r;
 	}
-	if ((r = sshkey_serialize_private_sk(key, b)) != 0)
-		return r;
+	إذا ((r = sshkey_serialize_شخصي_sk(کلی, b)) != 0)
+		أرجع r;
 
-	return 0;
+	أرجع 0;
 }
 
-static int
-ssh_ecdsa_sk_copy_public(const struct sshkey *from, struct sshkey *to)
+ساكن صحيح
+ssh_ecdsa_sk_copy_عامه(ثابت بنية sshkey *from, بنية sshkey *منزل)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshkey_ecdsa_funcs.copy_public(from, to)) != 0)
-		return r;
-	if ((r = sshkey_copy_public_sk(from, to)) != 0)
-		return r;
-	return 0;
+	إذا ((r = sshkey_ecdsa_funcs.copy_عامه(from, منزل)) != 0)
+		أرجع r;
+	إذا ((r = sshkey_copy_عامه_sk(from, منزل)) != 0)
+		أرجع r;
+	أرجع 0;
 }
 
-static int
-ssh_ecdsa_sk_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+ساكن صحيح
+ssh_ecdsa_sk_deserialize_عامه(ثابت حرف *ktype, بنية sshbuf *b,
+    بنية sshkey *کلی)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshkey_ecdsa_funcs.deserialize_public(ktype, b, key)) != 0)
-		return r;
-	if ((r = sshkey_deserialize_sk(b, key)) != 0)
-		return r;
-	return 0;
+	إذا ((r = sshkey_ecdsa_funcs.deserialize_عامه(ktype, b, کلی)) != 0)
+		أرجع r;
+	إذا ((r = sshkey_deserialize_sk(b, کلی)) != 0)
+		أرجع r;
+	أرجع 0;
 }
 
-static int
-ssh_ecdsa_sk_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+ساكن صحيح
+ssh_ecdsa_sk_deserialize_شخصي(ثابت حرف *ktype, بنية sshbuf *b,
+    بنية sshkey *کلی)
 {
-	int r;
+	صحيح r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = sshkey_ecdsa_funcs.deserialize_public(ktype,
-		    b, key)) != 0)
-			return r;
+	إذا (!sshkey_is_cert(کلی)) {
+		إذا ((r = sshkey_ecdsa_funcs.deserialize_عامه(ktype,
+		    b, کلی)) != 0)
+			أرجع r;
 	}
-	if ((r = sshkey_private_deserialize_sk(b, key)) != 0)
-		return r;
+	إذا ((r = sshkey_شخصي_deserialize_sk(b, کلی)) != 0)
+		أرجع r;
 
-	return 0;
+	أرجع 0;
 }
 
 /*
@@ -152,29 +152,29 @@ ssh_ecdsa_sk_deserialize_private(const char *ktype, struct sshbuf *b,
  * that the hash of the signed message is present within the clientData
  * structure without needing to implement any JSON parsing.
  */
-static int
-webauthn_check_prepare_hash(const u_char *data, size_t datalen,
-    const char *origin, const struct sshbuf *wrapper,
-    uint8_t flags, const struct sshbuf *extensions,
-    u_char *msghash, size_t msghashlen)
+ساكن صحيح
+webauthn_check_prepare_hash(ثابت u_char *معلومات, اندازه_t datalen,
+    ثابت حرف *origin, ثابت بنية sshbuf *wrapper,
+    uint8_t flags, ثابت بنية sshbuf *extensions,
+    u_char *msghash, اندازه_t msghashlen)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *chall = NULL, *m = NULL;
+	صحيح r = SSH_ERR_دننی_ERROR;
+	بنية sshbuf *chall = عدم, *m = عدم;
 
-	if ((m = sshbuf_new()) == NULL ||
-	    (chall = sshbuf_from(data, datalen)) == NULL) {
+	إذا ((m = sshbuf_new()) == عدم ||
+	    (chall = sshbuf_from(معلومات, datalen)) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب بهر;
 	}
 	/*
 	 * Ensure origin contains no quote character and that the flags are
 	 * consistent with what we received
 	 */
-	if (strchr(origin, '\"') != NULL ||
+	إذا (strchr(origin, '\"') != عدم ||
 	    (flags & 0x40) != 0 /* AD */ ||
 	    ((flags & 0x80) == 0 /* ED */) != (sshbuf_len(extensions) == 0)) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بهر;
 	}
 
 	/*
@@ -183,269 +183,269 @@ webauthn_check_prepare_hash(const u_char *data, size_t datalen,
 	 * structure. The crossOrigin flag and any additional extension
 	 * fields present are ignored.
 	 */
-#define WEBAUTHN_0	"{\"type\":\"webauthn.get\",\"challenge\":\""
-#define WEBAUTHN_1	"\",\"origin\":\""
-#define WEBAUTHN_2	"\""
-	if ((r = sshbuf_put(m, WEBAUTHN_0, sizeof(WEBAUTHN_0) - 1)) != 0 ||
+#تعریف_کړه WEBAUTHN_0	"{\"type\":\"webauthn.get\",\"challenge\":\""
+#تعریف_کړه WEBAUTHN_1	"\",\"origin\":\""
+#تعریف_کړه WEBAUTHN_2	"\""
+	إذا ((r = sshbuf_put(m, WEBAUTHN_0, حجم(WEBAUTHN_0) - 1)) != 0 ||
 	    (r = sshbuf_dtourlb64(chall, m, 0)) != 0 ||
-	    (r = sshbuf_put(m, WEBAUTHN_1, sizeof(WEBAUTHN_1) - 1)) != 0 ||
-	    (r = sshbuf_put(m, origin, strlen(origin))) != 0 ||
-	    (r = sshbuf_put(m, WEBAUTHN_2, sizeof(WEBAUTHN_2) - 1)) != 0)
-		goto out;
-#ifdef DEBUG_SK
+	    (r = sshbuf_put(m, WEBAUTHN_1, حجم(WEBAUTHN_1) - 1)) != 0 ||
+	    (r = sshbuf_put(m, origin, مزي_اوږدوالی(origin))) != 0 ||
+	    (r = sshbuf_put(m, WEBAUTHN_2, حجم(WEBAUTHN_2) - 1)) != 0)
+		اذهب بهر;
+#که_تعریف_شوی DEBUG_SK
 	fprintf(stderr, "%s: received origin: %s\n", __func__, origin);
 	fprintf(stderr, "%s: received clientData:\n", __func__);
 	sshbuf_dump(wrapper, stderr);
 	fprintf(stderr, "%s: expected clientData preamble:\n", __func__);
 	sshbuf_dump(m, stderr);
-#endif
+#د_که_پای
 	/* Check that the supplied clientData has the preamble we expect */
-	if ((r = sshbuf_cmp(wrapper, 0, sshbuf_ptr(m), sshbuf_len(m))) != 0)
-		goto out;
+	إذا ((r = sshbuf_cmp(wrapper, 0, sshbuf_ptr(m), sshbuf_len(m))) != 0)
+		اذهب بهر;
 
 	/* Prepare hash of clientData */
-	if ((r = ssh_digest_buffer(SSH_DIGEST_SHA256, wrapper,
+	إذا ((r = ssh_digest_بفر(SSH_DIGEST_SHA256, wrapper,
 	    msghash, msghashlen)) != 0)
-		goto out;
+		اذهب بهر;
 
 	/* success */
 	r = 0;
- out:
+ بهر:
 	sshbuf_free(chall);
 	sshbuf_free(m);
-	return r;
+	أرجع r;
 }
 
-static int
-ssh_ecdsa_sk_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+ساكن صحيح
+ssh_ecdsa_sk_verify(ثابت بنية sshkey *کلی,
+    ثابت u_char *sig, اندازه_t siglen,
+    ثابت u_char *معلومات, اندازه_t dlen, ثابت حرف *alg, u_int compat,
+    بنية sshkey_sig_details **detailsp)
 {
-	ECDSA_SIG *esig = NULL;
-	EVP_MD_CTX *md_ctx = NULL;
-	BIGNUM *sig_r = NULL, *sig_s = NULL;
+	ECDSA_SIG *esig = عدم;
+	EVP_MD_CTX *md_ctx = عدم;
+	BIGNUM *sig_r = عدم, *sig_s = عدم;
 	u_char sig_flags;
 	u_char msghash[32], apphash[32];
 	u_int sig_counter;
-	u_char *sigb = NULL, *cp;
-	int is_webauthn = 0, ret = SSH_ERR_INTERNAL_ERROR, len = 0;
-	struct sshbuf *b = NULL, *sigbuf = NULL, *original_signed = NULL;
-	struct sshbuf *webauthn_wrapper = NULL, *webauthn_exts = NULL;
-	char *ktype = NULL, *webauthn_origin = NULL;
-	struct sshkey_sig_details *details = NULL;
-#ifdef DEBUG_SK
-	char *tmp = NULL;
-#endif
+	u_char *sigb = عدم, *cp;
+	صحيح is_webauthn = 0, ret = SSH_ERR_دننی_ERROR, len = 0;
+	بنية sshbuf *b = عدم, *sigbuf = عدم, *original_signed = عدم;
+	بنية sshbuf *webauthn_wrapper = عدم, *webauthn_exts = عدم;
+	حرف *ktype = عدم, *webauthn_origin = عدم;
+	بنية sshkey_sig_details *details = عدم;
+#که_تعریف_شوی DEBUG_SK
+	حرف *tmp = عدم;
+#د_که_پای
 
-	if (detailsp != NULL)
-		*detailsp = NULL;
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ECDSA_SK ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	إذا (detailsp != عدم)
+		*detailsp = عدم;
+	إذا (کلی == عدم || کلی->pkey == عدم ||
+	    sshkey_type_plain(کلی->type) != کلی_ECDSA_SK ||
+	    sig == عدم || siglen == 0)
+		أرجع SSH_ERR_INVALID_دلیل;
 
-	if (key->ecdsa_nid != NID_X9_62_prime256v1)
-		return SSH_ERR_INTERNAL_ERROR;
+	إذا (کلی->ecdsa_nid != NID_X9_62_prime256v1)
+		أرجع SSH_ERR_دننی_ERROR;
 
 	/* fetch signature */
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((details = calloc(1, sizeof(*details))) == NULL) {
+	إذا ((b = sshbuf_from(sig, siglen)) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
+	إذا ((details = حافظه_صفر_ورکړه(1, حجم(*details))) == عدم) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب بهر;
 	}
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0) {
+	إذا (sshbuf_get_cstring(b, &ktype, عدم) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بهر;
 	}
-	if (strcmp(ktype, "webauthn-sk-ecdsa-sha2-nistp256@openssh.com") == 0 ||
+	إذا (strcmp(ktype, "webauthn-sk-ecdsa-sha2-nistp256@openssh.com") == 0 ||
 	    strcmp(ktype, "webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com")
 	      == 0)
 		is_webauthn = 1;
-	else if (strcmp(ktype, "sk-ecdsa-sha2-nistp256@openssh.com") != 0) {
+	وإلا إذا (strcmp(ktype, "sk-ecdsa-sha2-nistp256@openssh.com") != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بهر;
 	}
-	if (sshbuf_froms(b, &sigbuf) != 0 ||
+	إذا (sshbuf_froms(b, &sigbuf) != 0 ||
 	    sshbuf_get_u8(b, &sig_flags) != 0 ||
 	    sshbuf_get_u32(b, &sig_counter) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بهر;
 	}
-	if (is_webauthn) {
-		if (sshbuf_get_cstring(b, &webauthn_origin, NULL) != 0 ||
+	إذا (is_webauthn) {
+		إذا (sshbuf_get_cstring(b, &webauthn_origin, عدم) != 0 ||
 		    sshbuf_froms(b, &webauthn_wrapper) != 0 ||
 		    sshbuf_froms(b, &webauthn_exts) != 0) {
 			ret = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			اذهب بهر;
 		}
 	}
-	if (sshbuf_len(b) != 0) {
-		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+	إذا (sshbuf_len(b) != 0) {
+		ret = SSH_ERR_UNEXPECTED_TRAILING_معلومات;
+		اذهب بهر;
 	}
 
 	/* parse signature */
-	if (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
+	إذا (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
 	    sshbuf_get_bignum2(sigbuf, &sig_s) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب بهر;
 	}
-	if (sshbuf_len(sigbuf) != 0) {
-		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+	إذا (sshbuf_len(sigbuf) != 0) {
+		ret = SSH_ERR_UNEXPECTED_TRAILING_معلومات;
+		اذهب بهر;
 	}
 
-#ifdef DEBUG_SK
+#که_تعریف_شوی DEBUG_SK
 	fprintf(stderr, "%s: data: (len %zu)\n", __func__, dlen);
 	/* sshbuf_dump_data(data, datalen, stderr); */
 	fprintf(stderr, "%s: sig_r: %s\n", __func__, (tmp = BN_bn2hex(sig_r)));
-	free(tmp);
+	حرر(tmp);
 	fprintf(stderr, "%s: sig_s: %s\n", __func__, (tmp = BN_bn2hex(sig_s)));
-	free(tmp);
+	حرر(tmp);
 	fprintf(stderr, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
 	    __func__, sig_flags, sig_counter);
-	if (is_webauthn) {
+	إذا (is_webauthn) {
 		fprintf(stderr, "%s: webauthn origin: %s\n", __func__,
 		    webauthn_origin);
 		fprintf(stderr, "%s: webauthn_wrapper:\n", __func__);
 		sshbuf_dump(webauthn_wrapper, stderr);
 	}
-#endif
-	if ((esig = ECDSA_SIG_new()) == NULL) {
+#د_که_پای
+	إذا ((esig = ECDSA_SIG_new()) == عدم) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب بهر;
 	}
-	if (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
+	إذا (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب بهر;
 	}
-	sig_r = sig_s = NULL; /* transferred */
+	sig_r = sig_s = عدم; /* transferred */
 
 	/* Reconstruct data that was supposedly signed */
-	if ((original_signed = sshbuf_new()) == NULL) {
+	إذا ((original_signed = sshbuf_new()) == عدم) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب بهر;
 	}
-	if (is_webauthn) {
-		if ((ret = webauthn_check_prepare_hash(data, dlen,
+	إذا (is_webauthn) {
+		إذا ((ret = webauthn_check_prepare_hash(معلومات, dlen,
 		    webauthn_origin, webauthn_wrapper, sig_flags, webauthn_exts,
-		    msghash, sizeof(msghash))) != 0)
-			goto out;
-	} else if ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, data, dlen,
-	    msghash, sizeof(msghash))) != 0)
-		goto out;
+		    msghash, حجم(msghash))) != 0)
+			اذهب بهر;
+	} وإلا إذا ((ret = ssh_digest_حافظه(SSH_DIGEST_SHA256, معلومات, dlen,
+	    msghash, حجم(msghash))) != 0)
+		اذهب بهر;
 	/* Application value is hashed before signature */
-	if ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
-	    strlen(key->sk_application), apphash, sizeof(apphash))) != 0)
-		goto out;
-#ifdef DEBUG_SK
+	إذا ((ret = ssh_digest_حافظه(SSH_DIGEST_SHA256, کلی->sk_application,
+	    مزي_اوږدوالی(کلی->sk_application), apphash, حجم(apphash))) != 0)
+		اذهب بهر;
+#که_تعریف_شوی DEBUG_SK
 	fprintf(stderr, "%s: hashed application:\n", __func__);
-	sshbuf_dump_data(apphash, sizeof(apphash), stderr);
+	sshbuf_dump_معلومات(apphash, حجم(apphash), stderr);
 	fprintf(stderr, "%s: hashed message:\n", __func__);
-	sshbuf_dump_data(msghash, sizeof(msghash), stderr);
-#endif
-	if ((ret = sshbuf_put(original_signed,
-	    apphash, sizeof(apphash))) != 0 ||
+	sshbuf_dump_معلومات(msghash, حجم(msghash), stderr);
+#د_که_پای
+	إذا ((ret = sshbuf_put(original_signed,
+	    apphash, حجم(apphash))) != 0 ||
 	    (ret = sshbuf_put_u8(original_signed, sig_flags)) != 0 ||
 	    (ret = sshbuf_put_u32(original_signed, sig_counter)) != 0 ||
 	    (ret = sshbuf_putb(original_signed, webauthn_exts)) != 0 ||
-	    (ret = sshbuf_put(original_signed, msghash, sizeof(msghash))) != 0)
-		goto out;
+	    (ret = sshbuf_put(original_signed, msghash, حجم(msghash))) != 0)
+		اذهب بهر;
 	details->sk_counter = sig_counter;
 	details->sk_flags = sig_flags;
-#ifdef DEBUG_SK
+#که_تعریف_شوی DEBUG_SK
 	fprintf(stderr, "%s: signed buf:\n", __func__);
 	sshbuf_dump(original_signed, stderr);
-#endif
+#د_که_پای
 
-	if ((md_ctx = EVP_MD_CTX_new()) == NULL) {
+	إذا ((md_ctx = EVP_MD_CTX_new()) == عدم) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب بهر;
 	}
-	if ((len = i2d_ECDSA_SIG(esig, NULL)) <= 0) {
+	إذا ((len = i2d_ECDSA_SIG(esig, عدم)) <= 0) {
 		len = 0;
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب بهر;
 	}
-	if ((sigb = calloc(1, len)) == NULL) {
+	إذا ((sigb = حافظه_صفر_ورکړه(1, len)) == عدم) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب بهر;
 	}
 	cp = sigb; /* ASN1_item_i2d increments the pointer past the object */
-	if (i2d_ECDSA_SIG(esig, &cp) != len) {
+	إذا (i2d_ECDSA_SIG(esig, &cp) != len) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب بهر;
 	}
-#ifdef DEBUG_SK
+#که_تعریف_شوی DEBUG_SK
 	fprintf(stderr, "%s: signed hash:\n", __func__);
-	sshbuf_dump_data(sigb, len, stderr);
-#endif
+	sshbuf_dump_معلومات(sigb, len, stderr);
+#د_که_پای
 	/* Verify it */
-	if (EVP_DigestVerifyInit(md_ctx, NULL, EVP_sha256(), NULL,
-	    key->pkey) != 1) {
+	إذا (EVP_DigestVerifyInit(md_ctx, عدم, EVP_sha256(), عدم,
+	    کلی->pkey) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب بهر;
 	}
-	switch (EVP_DigestVerify(md_ctx, sigb, len,
+	بدل (EVP_DigestVerify(md_ctx, sigb, len,
 	    sshbuf_ptr(original_signed), sshbuf_len(original_signed))) {
-	case 1:
+	حالة 1:
 		ret = 0;
-		break;
-	case 0:
+		اكسر;
+	حالة 0:
 		ret = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
-	default:
+		اذهب بهر;
+	افتراضي:
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب بهر;
 	}
 	/* success */
-	if (detailsp != NULL) {
+	إذا (detailsp != عدم) {
 		*detailsp = details;
-		details = NULL;
+		details = عدم;
 	}
- out:
-	explicit_bzero(&sig_flags, sizeof(sig_flags));
-	explicit_bzero(&sig_counter, sizeof(sig_counter));
-	explicit_bzero(msghash, sizeof(msghash));
-	explicit_bzero(apphash, sizeof(apphash));
+ بهر:
+	explicit_bzero(&sig_flags, حجم(sig_flags));
+	explicit_bzero(&sig_counter, حجم(sig_counter));
+	explicit_bzero(msghash, حجم(msghash));
+	explicit_bzero(apphash, حجم(apphash));
 	sshkey_sig_details_free(details);
 	sshbuf_free(webauthn_wrapper);
 	sshbuf_free(webauthn_exts);
-	free(webauthn_origin);
+	حرر(webauthn_origin);
 	sshbuf_free(original_signed);
 	sshbuf_free(sigbuf);
 	sshbuf_free(b);
 	ECDSA_SIG_free(esig);
 	BN_clear_free(sig_r);
 	BN_clear_free(sig_s);
-	free(ktype);
+	حرر(ktype);
 	freezero(sigb, len);
 	EVP_MD_CTX_free(md_ctx);
-	return ret;
+	أرجع ret;
 }
 
-static const struct sshkey_impl_funcs sshkey_ecdsa_sk_funcs = {
-	/* .size = */		NULL,
-	/* .alloc = */		NULL,
+ساكن ثابت بنية sshkey_impl_funcs sshkey_ecdsa_sk_funcs = {
+	/* .size = */		عدم,
+	/* .alloc = */		عدم,
 	/* .cleanup = */	ssh_ecdsa_sk_cleanup,
 	/* .equal = */		ssh_ecdsa_sk_equal,
-	/* .ssh_serialize_public = */ ssh_ecdsa_sk_serialize_public,
-	/* .ssh_deserialize_public = */ ssh_ecdsa_sk_deserialize_public,
-	/* .ssh_serialize_private = */ ssh_ecdsa_sk_serialize_private,
-	/* .ssh_deserialize_private = */ ssh_ecdsa_sk_deserialize_private,
-	/* .generate = */	NULL,
-	/* .copy_public = */	ssh_ecdsa_sk_copy_public,
-	/* .sign = */		NULL,
+	/* .ssh_serialize_public = */ ssh_ecdsa_sk_serialize_عامه,
+	/* .ssh_deserialize_public = */ ssh_ecdsa_sk_deserialize_عامه,
+	/* .ssh_serialize_private = */ ssh_ecdsa_sk_serialize_شخصي,
+	/* .ssh_deserialize_private = */ ssh_ecdsa_sk_deserialize_شخصي,
+	/* .generate = */	عدم,
+	/* .copy_public = */	ssh_ecdsa_sk_copy_عامه,
+	/* .sign = */		عدم,
 	/* .verify = */		ssh_ecdsa_sk_verify,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_impl = {
+ثابت بنية sshkey_impl sshkey_ecdsa_sk_impl = {
 	/* .name = */		"sk-ecdsa-sha2-nistp256@openssh.com",
 	/* .shortname = */	"ECDSA-SK",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK,
+	/* .sigalg = */		عدم,
+	/* .type = */		کلی_ECDSA_SK,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -453,11 +453,11 @@ const struct sshkey_impl sshkey_ecdsa_sk_impl = {
 	/* .funcs = */		&sshkey_ecdsa_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_cert_impl = {
+ثابت بنية sshkey_impl sshkey_ecdsa_sk_cert_impl = {
 	/* .name = */		"sk-ecdsa-sha2-nistp256-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-SK-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK_CERT,
+	/* .sigalg = */		عدم,
+	/* .type = */		کلی_ECDSA_SK_CERT,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -465,11 +465,11 @@ const struct sshkey_impl sshkey_ecdsa_sk_cert_impl = {
 	/* .funcs = */		&sshkey_ecdsa_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_webauthn_impl = {
+ثابت بنية sshkey_impl sshkey_ecdsa_sk_webauthn_impl = {
 	/* .name = */		"webauthn-sk-ecdsa-sha2-nistp256@openssh.com",
 	/* .shortname = */	"ECDSA-SK",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK,
+	/* .sigalg = */		عدم,
+	/* .type = */		کلی_ECDSA_SK,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		0,
 	/* .sigonly = */	1,
@@ -477,15 +477,15 @@ const struct sshkey_impl sshkey_ecdsa_sk_webauthn_impl = {
 	/* .funcs = */		&sshkey_ecdsa_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_webauthn_cert_impl = {
+ثابت بنية sshkey_impl sshkey_ecdsa_sk_webauthn_cert_impl = {
 	/* .name = */		"webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-SK-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK_CERT,
+	/* .sigalg = */		عدم,
+	/* .type = */		کلی_ECDSA_SK_CERT,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		1,
 	/* .sigonly = */	1,
 	/* .keybits = */	256,
 	/* .funcs = */		&sshkey_ecdsa_sk_funcs,
 };
-#endif /* WITH_OPENSSL */
+#د_که_پای /* WITH_OPENSSL */

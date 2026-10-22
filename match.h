@@ -11,20 +11,20 @@
  * incompatible with the protocol description in the RFC file, it must be
  * called by a name other than "ssh" or "Secure Shell".
  */
-#ifndef MATCH_H
-#define MATCH_H
+#که_نه_تعریف_شوی سمون_H
+#تعریف_کړه سمون_H
 
-int	 match_pattern(const char *, const char *);
-int	 match_pattern_list(const char *, const char *, int);
-int	 match_usergroup_pattern_list(const char *, const char *);
-int	 match_hostname(const char *, const char *);
-int	 match_host_and_ip(const char *, const char *, const char *);
-int	 match_user(const char *, const char *, const char *, const char *);
-char	*match_list(const char *, const char *, u_int *);
-char	*match_filter_denylist(const char *, const char *);
-char	*match_filter_allowlist(const char *, const char *);
+صحيح	 سمون_نمونه(ثابت حرف *, ثابت حرف *);
+صحيح	 سمون_نمونه_list(ثابت حرف *, ثابت حرف *, صحيح);
+صحيح	 سمون_usergroup_نمونه_list(ثابت حرف *, ثابت حرف *);
+صحيح	 سمون_hostname(ثابت حرف *, ثابت حرف *);
+صحيح	 سمون_host_and_ip(ثابت حرف *, ثابت حرف *, ثابت حرف *);
+صحيح	 سمون_user(ثابت حرف *, ثابت حرف *, ثابت حرف *, ثابت حرف *);
+حرف	*سمون_list(ثابت حرف *, ثابت حرف *, u_int *);
+حرف	*سمون_filter_denylist(ثابت حرف *, ثابت حرف *);
+حرف	*سمون_filter_allowlist(ثابت حرف *, ثابت حرف *);
 
 /* addrmatch.c */
-int	 addr_match_list(const char *, const char *);
-int	 addr_match_cidr_list(const char *, const char *);
-#endif
+صحيح	 addr_سمون_list(ثابت حرف *, ثابت حرف *);
+صحيح	 addr_سمون_cidr_list(ثابت حرف *, ثابت حرف *);
+#د_که_پای

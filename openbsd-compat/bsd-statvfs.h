@@ -14,41 +14,41 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
+#إذا !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#ifdef HAVE_SYS_MOUNT_H
-#include <sys/mount.h>
-#endif
-#ifdef HAVE_SYS_STATFS_H
-#include <sys/statfs.h>
-#endif
-#ifdef HAVE_SYS_VFS_H
-#include <sys/vfs.h>
-#endif
+#که_تعریف_شوی HAVE_SYS_MOUNT_H
+#ضمن <sys/mount.h>
+#د_که_پای
+#که_تعریف_شوی HAVE_SYS_STATFS_H
+#ضمن <sys/statfs.h>
+#د_که_پای
+#که_تعریف_شوی HAVE_SYS_VFS_H
+#ضمن <sys/vfs.h>
+#د_که_پای
 
-#ifndef HAVE_FSBLKCNT_T
-typedef unsigned long fsblkcnt_t;
-#endif
-#ifndef HAVE_FSFILCNT_T
-typedef unsigned long fsfilcnt_t;
-#endif
+#که_نه_تعریف_شوی HAVE_FSBLKCNT_T
+تعريفنوع بینښه اوږد fsblkcnt_t;
+#د_که_پای
+#که_نه_تعریف_شوی HAVE_FSFILCNT_T
+تعريفنوع بینښه اوږد fsfilcnt_t;
+#د_که_پای
 
-#ifndef ST_RDONLY
-#define ST_RDONLY	1
-#endif
-#ifndef ST_NOSUID
-#define ST_NOSUID	2
-#endif
+#که_نه_تعریف_شوی ST_RDONLY
+#تعریف_کړه ST_RDONLY	1
+#د_که_پای
+#که_نه_تعریف_شوی ST_NOSUID
+#تعریف_کړه ST_NOSUID	2
+#د_که_پای
 
 	/* as defined in IEEE Std 1003.1, 2004 Edition */
-struct statvfs {
-	unsigned long f_bsize;	/* File system block size. */
-	unsigned long f_frsize;	/* Fundamental file system block size. */
-	fsblkcnt_t f_blocks;	/* Total number of blocks on file system in */
+بنية statvfs {
+	بینښه اوږد f_bsize;	/* File system block size. */
+	بینښه اوږد f_frsize;	/* Fundamental file system block size. */
+	fsblkcnt_t f_بلاکونه;	/* Total number of blocks on file system in */
 				/* units of f_frsize. */
 	fsblkcnt_t    f_bfree;	/* Total number of free blocks. */
 	fsblkcnt_t    f_bavail;	/* Number of free blocks available to  */
@@ -57,16 +57,16 @@ struct statvfs {
 	fsfilcnt_t    f_ffree;	/* Total number of free file serial numbers. */
 	fsfilcnt_t    f_favail;	/* Number of file serial numbers available to */
 				/* non-privileged process. */
-	unsigned long f_fsid;	/* File system ID. */
-	unsigned long f_flag;	/* BBit mask of f_flag values. */
-	unsigned long f_namemax;/*  Maximum filename length. */
+	بینښه اوږد f_fsid;	/* File system ID. */
+	بینښه اوږد f_flag;	/* BBit mask of f_flag values. */
+	بینښه اوږد f_namemax;/*  Maximum filename length. */
 };
-#endif
+#د_که_پای
 
-#ifndef HAVE_STATVFS
-int statvfs(const char *, struct statvfs *);
-#endif
+#که_نه_تعریف_شوی HAVE_STATVFS
+صحيح statvfs(ثابت حرف *, بنية statvfs *);
+#د_که_پای
 
-#ifndef HAVE_FSTATVFS
-int fstatvfs(int, struct statvfs *);
-#endif
+#که_نه_تعریف_شوی HAVE_FSTATVFS
+صحيح fstatvfs(صحيح, بنية statvfs *);
+#د_که_پای

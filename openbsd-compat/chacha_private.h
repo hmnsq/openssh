@@ -8,116 +8,116 @@ Public domain.
 
 /* $OpenBSD: chacha_private.h,v 1.3 2022/02/28 21:56:29 dtucker Exp $ */
 
-typedef unsigned char u8;
-typedef unsigned int u32;
+تعريفنوع بینښه حرف u8;
+تعريفنوع بینښه صحيح u32;
 
-typedef struct
+تعريفنوع بنية
 {
-  u32 input[16]; /* could be compressed */
+  u32 ننوت[16]; /* could be compressed */
 } chacha_ctx;
 
-#define U8C(v) (v##U)
-#define U32C(v) (v##U)
+#تعریف_کړه U8C(v) (v##U)
+#تعریف_کړه U32C(v) (v##U)
 
-#define U8V(v) ((u8)(v) & U8C(0xFF))
-#define U32V(v) ((u32)(v) & U32C(0xFFFFFFFF))
+#تعریف_کړه U8V(v) ((u8)(v) & U8C(0xFF))
+#تعریف_کړه U32V(v) ((u32)(v) & U32C(0xFFFFFFFF))
 
-#define ROTL32(v, n) \
+#تعریف_کړه ROTL32(v, n) \
   (U32V((v) << (n)) | ((v) >> (32 - (n))))
 
-#define U8TO32_LITTLE(p) \
+#تعریف_کړه U8TO32_LITTLE(p) \
   (((u32)((p)[0])      ) | \
    ((u32)((p)[1]) <<  8) | \
    ((u32)((p)[2]) << 16) | \
    ((u32)((p)[3]) << 24))
 
-#define U32TO8_LITTLE(p, v) \
-  do { \
+#تعریف_کړه U32TO8_LITTLE(p, v) \
+  افعل { \
     (p)[0] = U8V((v)      ); \
     (p)[1] = U8V((v) >>  8); \
     (p)[2] = U8V((v) >> 16); \
     (p)[3] = U8V((v) >> 24); \
-  } while (0)
+  } طالما (0)
 
-#define ROTATE(v,c) (ROTL32(v,c))
-#define XOR(v,w) ((v) ^ (w))
-#define PLUS(v,w) (U32V((v) + (w)))
-#define PLUSONE(v) (PLUS((v),1))
+#تعریف_کړه ROTATE(v,c) (ROTL32(v,c))
+#تعریف_کړه XOR(v,w) ((v) ^ (w))
+#تعریف_کړه PLUS(v,w) (U32V((v) + (w)))
+#تعریف_کړه PLUSONE(v) (PLUS((v),1))
 
-#define QUARTERROUND(a,b,c,d) \
+#تعریف_کړه QUARTERROUND(a,b,c,d) \
   a = PLUS(a,b); d = ROTATE(XOR(d,a),16); \
   c = PLUS(c,d); b = ROTATE(XOR(b,c),12); \
   a = PLUS(a,b); d = ROTATE(XOR(d,a), 8); \
   c = PLUS(c,d); b = ROTATE(XOR(b,c), 7);
 
-static const char sigma[16] = "expand 32-byte k";
-static const char tau[16] = "expand 16-byte k";
+ساكن ثابت حرف sigma[16] = "expand 32-byte k";
+ساكن ثابت حرف tau[16] = "expand 16-byte k";
 
-static void
-chacha_keysetup(chacha_ctx *x,const u8 *k,u32 kbits)
+ساكن فراغ
+chacha_keysetup(chacha_ctx *x,ثابت u8 *k,u32 kbits)
 {
-  const char *constants;
+  ثابت حرف *constants;
 
-  x->input[4] = U8TO32_LITTLE(k + 0);
-  x->input[5] = U8TO32_LITTLE(k + 4);
-  x->input[6] = U8TO32_LITTLE(k + 8);
-  x->input[7] = U8TO32_LITTLE(k + 12);
-  if (kbits == 256) { /* recommended */
+  x->ننوت[4] = U8TO32_LITTLE(k + 0);
+  x->ننوت[5] = U8TO32_LITTLE(k + 4);
+  x->ننوت[6] = U8TO32_LITTLE(k + 8);
+  x->ننوت[7] = U8TO32_LITTLE(k + 12);
+  إذا (kbits == 256) { /* recommended */
     k += 16;
     constants = sigma;
-  } else { /* kbits == 128 */
+  } وإلا { /* kbits == 128 */
     constants = tau;
   }
-  x->input[8] = U8TO32_LITTLE(k + 0);
-  x->input[9] = U8TO32_LITTLE(k + 4);
-  x->input[10] = U8TO32_LITTLE(k + 8);
-  x->input[11] = U8TO32_LITTLE(k + 12);
-  x->input[0] = U8TO32_LITTLE(constants + 0);
-  x->input[1] = U8TO32_LITTLE(constants + 4);
-  x->input[2] = U8TO32_LITTLE(constants + 8);
-  x->input[3] = U8TO32_LITTLE(constants + 12);
+  x->ننوت[8] = U8TO32_LITTLE(k + 0);
+  x->ننوت[9] = U8TO32_LITTLE(k + 4);
+  x->ننوت[10] = U8TO32_LITTLE(k + 8);
+  x->ننوت[11] = U8TO32_LITTLE(k + 12);
+  x->ننوت[0] = U8TO32_LITTLE(constants + 0);
+  x->ننوت[1] = U8TO32_LITTLE(constants + 4);
+  x->ننوت[2] = U8TO32_LITTLE(constants + 8);
+  x->ننوت[3] = U8TO32_LITTLE(constants + 12);
 }
 
-static void
-chacha_ivsetup(chacha_ctx *x,const u8 *iv)
+ساكن فراغ
+chacha_ivsetup(chacha_ctx *x,ثابت u8 *iv)
 {
-  x->input[12] = 0;
-  x->input[13] = 0;
-  x->input[14] = U8TO32_LITTLE(iv + 0);
-  x->input[15] = U8TO32_LITTLE(iv + 4);
+  x->ننوت[12] = 0;
+  x->ننوت[13] = 0;
+  x->ننوت[14] = U8TO32_LITTLE(iv + 0);
+  x->ننوت[15] = U8TO32_LITTLE(iv + 4);
 }
 
-static void
-chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
+ساكن فراغ
+chacha_encrypt_بایټونه(chacha_ctx *x,ثابت u8 *m,u8 *c,u32 بایټونه)
 {
   u32 x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15;
   u32 j0, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, j15;
-  u8 *ctarget = NULL;
+  u8 *ctarget = عدم;
   u8 tmp[64];
   u_int i;
 
-  if (!bytes) return;
+  إذا (!بایټونه) أرجع;
 
-  j0 = x->input[0];
-  j1 = x->input[1];
-  j2 = x->input[2];
-  j3 = x->input[3];
-  j4 = x->input[4];
-  j5 = x->input[5];
-  j6 = x->input[6];
-  j7 = x->input[7];
-  j8 = x->input[8];
-  j9 = x->input[9];
-  j10 = x->input[10];
-  j11 = x->input[11];
-  j12 = x->input[12];
-  j13 = x->input[13];
-  j14 = x->input[14];
-  j15 = x->input[15];
+  j0 = x->ننوت[0];
+  j1 = x->ننوت[1];
+  j2 = x->ننوت[2];
+  j3 = x->ننوت[3];
+  j4 = x->ننوت[4];
+  j5 = x->ننوت[5];
+  j6 = x->ننوت[6];
+  j7 = x->ننوت[7];
+  j8 = x->ننوت[8];
+  j9 = x->ننوت[9];
+  j10 = x->ننوت[10];
+  j11 = x->ننوت[11];
+  j12 = x->ننوت[12];
+  j13 = x->ننوت[13];
+  j14 = x->ننوت[14];
+  j15 = x->ننوت[15];
 
-  for (;;) {
-    if (bytes < 64) {
-      for (i = 0;i < bytes;++i) tmp[i] = m[i];
+  لكل (;;) {
+    إذا (بایټونه < 64) {
+      لكل (i = 0;i < بایټونه;++i) tmp[i] = m[i];
       m = tmp;
       ctarget = c;
       c = tmp;
@@ -138,7 +138,7 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
     x13 = j13;
     x14 = j14;
     x15 = j15;
-    for (i = 20;i > 0;i -= 2) {
+    لكل (i = 20;i > 0;i -= 2) {
       QUARTERROUND( x0, x4, x8,x12)
       QUARTERROUND( x1, x5, x9,x13)
       QUARTERROUND( x2, x6,x10,x14)
@@ -165,7 +165,7 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
     x14 = PLUS(x14,j14);
     x15 = PLUS(x15,j15);
 
-#ifndef KEYSTREAM_ONLY
+#که_نه_تعریف_شوی KEYSTREAM_ONLY
     x0 = XOR(x0,U8TO32_LITTLE(m + 0));
     x1 = XOR(x1,U8TO32_LITTLE(m + 4));
     x2 = XOR(x2,U8TO32_LITTLE(m + 8));
@@ -182,10 +182,10 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
     x13 = XOR(x13,U8TO32_LITTLE(m + 52));
     x14 = XOR(x14,U8TO32_LITTLE(m + 56));
     x15 = XOR(x15,U8TO32_LITTLE(m + 60));
-#endif
+#د_که_پای
 
     j12 = PLUSONE(j12);
-    if (!j12) {
+    إذا (!j12) {
       j13 = PLUSONE(j13);
       /* stopping at 2^70 bytes per nonce is user's responsibility */
     }
@@ -207,18 +207,18 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
     U32TO8_LITTLE(c + 56,x14);
     U32TO8_LITTLE(c + 60,x15);
 
-    if (bytes <= 64) {
-      if (bytes < 64) {
-        for (i = 0;i < bytes;++i) ctarget[i] = c[i];
+    إذا (بایټونه <= 64) {
+      إذا (بایټونه < 64) {
+        لكل (i = 0;i < بایټونه;++i) ctarget[i] = c[i];
       }
-      x->input[12] = j12;
-      x->input[13] = j13;
-      return;
+      x->ننوت[12] = j12;
+      x->ننوت[13] = j13;
+      أرجع;
     }
-    bytes -= 64;
+    بایټونه -= 64;
     c += 64;
-#ifndef KEYSTREAM_ONLY
+#که_نه_تعریف_شوی KEYSTREAM_ONLY
     m += 64;
-#endif
+#د_که_پای
   }
 }

@@ -34,100 +34,100 @@
 
 /* OPENBSD ORIGINAL: sys/sys/queue.h */
 
-#ifndef	_FAKE_QUEUE_H_
-#define	_FAKE_QUEUE_H_
+#که_نه_تعریف_شوی	FAKE_کتار_H
+#تعریف_کړه	FAKE_کتار_H
 
 /*
  * Require for OS/X and other platforms that have old/broken/incomplete
  * <sys/queue.h>.
  */
-#undef CIRCLEQ_EMPTY
-#undef CIRCLEQ_END
-#undef CIRCLEQ_ENTRY
-#undef CIRCLEQ_FIRST
-#undef CIRCLEQ_FOREACH
-#undef CIRCLEQ_FOREACH_REVERSE
-#undef CIRCLEQ_HEAD
-#undef CIRCLEQ_HEAD_INITIALIZER
-#undef CIRCLEQ_INIT
-#undef CIRCLEQ_INSERT_AFTER
-#undef CIRCLEQ_INSERT_BEFORE
-#undef CIRCLEQ_INSERT_HEAD
-#undef CIRCLEQ_INSERT_TAIL
-#undef CIRCLEQ_LAST
-#undef CIRCLEQ_NEXT
-#undef CIRCLEQ_PREV
-#undef CIRCLEQ_REMOVE
-#undef CIRCLEQ_REPLACE
-#undef LIST_EMPTY
-#undef LIST_END
-#undef LIST_ENTRY
-#undef LIST_FIRST
-#undef LIST_FOREACH
-#undef LIST_FOREACH_SAFE
-#undef LIST_HEAD
-#undef LIST_HEAD_INITIALIZER
-#undef LIST_INIT
-#undef LIST_INSERT_AFTER
-#undef LIST_INSERT_BEFORE
-#undef LIST_INSERT_HEAD
-#undef LIST_NEXT
-#undef LIST_REMOVE
-#undef LIST_REPLACE
-#undef SIMPLEQ_CONCAT
-#undef SIMPLEQ_EMPTY
-#undef SIMPLEQ_END
-#undef SIMPLEQ_ENTRY
-#undef SIMPLEQ_FIRST
-#undef SIMPLEQ_FOREACH
-#undef SIMPLEQ_FOREACH_SAFE
-#undef SIMPLEQ_HEAD
-#undef SIMPLEQ_HEAD_INITIALIZER
-#undef SIMPLEQ_INIT
-#undef SIMPLEQ_INSERT_AFTER
-#undef SIMPLEQ_INSERT_HEAD
-#undef SIMPLEQ_INSERT_TAIL
-#undef SIMPLEQ_NEXT
-#undef SIMPLEQ_REMOVE_AFTER
-#undef SIMPLEQ_REMOVE_HEAD
-#undef SLIST_EMPTY
-#undef SLIST_END
-#undef SLIST_ENTRY
-#undef SLIST_FIRST
-#undef SLIST_FOREACH
-#undef SLIST_FOREACH_PREVPTR
-#undef SLIST_FOREACH_SAFE
-#undef SLIST_HEAD
-#undef SLIST_HEAD_INITIALIZER
-#undef SLIST_INIT
-#undef SLIST_INSERT_AFTER
-#undef SLIST_INSERT_HEAD
-#undef SLIST_NEXT
-#undef SLIST_REMOVE
-#undef SLIST_REMOVE_AFTER
-#undef SLIST_REMOVE_HEAD
-#undef SLIST_REMOVE_NEXT
-#undef TAILQ_CONCAT
-#undef TAILQ_EMPTY
-#undef TAILQ_END
-#undef TAILQ_ENTRY
-#undef TAILQ_FIRST
-#undef TAILQ_FOREACH
-#undef TAILQ_FOREACH_REVERSE
-#undef TAILQ_FOREACH_REVERSE_SAFE
-#undef TAILQ_FOREACH_SAFE
-#undef TAILQ_HEAD
-#undef TAILQ_HEAD_INITIALIZER
-#undef TAILQ_INIT
-#undef TAILQ_INSERT_AFTER
-#undef TAILQ_INSERT_BEFORE
-#undef TAILQ_INSERT_HEAD
-#undef TAILQ_INSERT_TAIL
-#undef TAILQ_LAST
-#undef TAILQ_NEXT
-#undef TAILQ_PREV
-#undef TAILQ_REMOVE
-#undef TAILQ_REPLACE
+#تعریف_لغوه CIRCLEQ_EMPTY
+#تعریف_لغوه CIRCLEQ_پای_ټکی
+#تعریف_لغوه CIRCLEQ_ENTRY
+#تعریف_لغوه CIRCLEQ_FIRST
+#تعریف_لغوه CIRCLEQ_FOREACH
+#تعریف_لغوه CIRCLEQ_FOREACH_REVERSE
+#تعریف_لغوه CIRCLEQ_HEAD
+#تعریف_لغوه CIRCLEQ_HEAD_INITIALIZER
+#تعریف_لغوه CIRCLEQ_INIT
+#تعریف_لغوه CIRCLEQ_INSERT_AFTER
+#تعریف_لغوه CIRCLEQ_INSERT_BEFORE
+#تعریف_لغوه CIRCLEQ_INSERT_HEAD
+#تعریف_لغوه CIRCLEQ_INSERT_TAIL
+#تعریف_لغوه CIRCLEQ_LAST
+#تعریف_لغوه CIRCLEQ_NEXT
+#تعریف_لغوه CIRCLEQ_PREV
+#تعریف_لغوه CIRCLEQ_REMOVE
+#تعریف_لغوه CIRCLEQ_REPLACE
+#تعریف_لغوه LIST_EMPTY
+#تعریف_لغوه LIST_پای_ټکی
+#تعریف_لغوه LIST_ENTRY
+#تعریف_لغوه LIST_FIRST
+#تعریف_لغوه LIST_FOREACH
+#تعریف_لغوه LIST_FOREACH_خوندي
+#تعریف_لغوه LIST_HEAD
+#تعریف_لغوه LIST_HEAD_INITIALIZER
+#تعریف_لغوه LIST_INIT
+#تعریف_لغوه LIST_INSERT_AFTER
+#تعریف_لغوه LIST_INSERT_BEFORE
+#تعریف_لغوه LIST_INSERT_HEAD
+#تعریف_لغوه LIST_NEXT
+#تعریف_لغوه LIST_REMOVE
+#تعریف_لغوه LIST_REPLACE
+#تعریف_لغوه SIMPLEQ_CONCAT
+#تعریف_لغوه SIMPLEQ_EMPTY
+#تعریف_لغوه SIMPLEQ_پای_ټکی
+#تعریف_لغوه SIMPLEQ_ENTRY
+#تعریف_لغوه SIMPLEQ_FIRST
+#تعریف_لغوه SIMPLEQ_FOREACH
+#تعریف_لغوه SIMPLEQ_FOREACH_خوندي
+#تعریف_لغوه SIMPLEQ_HEAD
+#تعریف_لغوه SIMPLEQ_HEAD_INITIALIZER
+#تعریف_لغوه SIMPLEQ_INIT
+#تعریف_لغوه SIMPLEQ_INSERT_AFTER
+#تعریف_لغوه SIMPLEQ_INSERT_HEAD
+#تعریف_لغوه SIMPLEQ_INSERT_TAIL
+#تعریف_لغوه SIMPLEQ_NEXT
+#تعریف_لغوه SIMPLEQ_REMOVE_AFTER
+#تعریف_لغوه SIMPLEQ_REMOVE_HEAD
+#تعریف_لغوه SLIST_EMPTY
+#تعریف_لغوه SLIST_پای_ټکی
+#تعریف_لغوه SLIST_ENTRY
+#تعریف_لغوه SLIST_FIRST
+#تعریف_لغوه SLIST_FOREACH
+#تعریف_لغوه SLIST_FOREACH_PREVPTR
+#تعریف_لغوه SLIST_FOREACH_خوندي
+#تعریف_لغوه SLIST_HEAD
+#تعریف_لغوه SLIST_HEAD_INITIALIZER
+#تعریف_لغوه SLIST_INIT
+#تعریف_لغوه SLIST_INSERT_AFTER
+#تعریف_لغوه SLIST_INSERT_HEAD
+#تعریف_لغوه SLIST_NEXT
+#تعریف_لغوه SLIST_REMOVE
+#تعریف_لغوه SLIST_REMOVE_AFTER
+#تعریف_لغوه SLIST_REMOVE_HEAD
+#تعریف_لغوه SLIST_REMOVE_بل
+#تعریف_لغوه TAILQ_CONCAT
+#تعریف_لغوه TAILQ_EMPTY
+#تعریف_لغوه TAILQ_پای_ټکی
+#تعریف_لغوه TAILQ_ENTRY
+#تعریف_لغوه TAILQ_FIRST
+#تعریف_لغوه TAILQ_FOREACH
+#تعریف_لغوه TAILQ_FOREACH_سرچپه
+#تعریف_لغوه TAILQ_FOREACH_سرچپه_خوندي
+#تعریف_لغوه TAILQ_FOREACH_خوندي
+#تعریف_لغوه TAILQ_HEAD
+#تعریف_لغوه TAILQ_HEAD_INITIALIZER
+#تعریف_لغوه TAILQ_INIT
+#تعریف_لغوه TAILQ_INSERT_AFTER
+#تعریف_لغوه TAILQ_INSERT_BEFORE
+#تعریف_لغوه TAILQ_INSERT_HEAD
+#تعریف_لغوه TAILQ_INSERT_TAIL
+#تعریف_لغوه TAILQ_LAST
+#تعریف_لغوه TAILQ_NEXT
+#تعریف_لغوه TAILQ_PREV
+#تعریف_لغوه TAILQ_REMOVE
+#تعریف_لغوه TAILQ_REPLACE
 
 /*
  * This file defines five types of data structures: singly-linked lists,
@@ -173,456 +173,456 @@
  * For details on the use of these macros, see the queue(3) manual page.
  */
 
-#if defined(QUEUE_MACRO_DEBUG) || (defined(_KERNEL) && defined(DIAGNOSTIC))
-#define _Q_INVALID ((void *)-1)
-#define _Q_INVALIDATE(a) (a) = _Q_INVALID
-#else
-#define _Q_INVALIDATE(a)
-#endif
+#إذا defined(کتار_MACRO_DEBUG) || (defined(_KERNEL) && defined(DIAGNOSTIC))
+#تعریف_کړه _Q_INVALID ((فراغ *)-1)
+#تعریف_کړه _Q_INVALIDATE(a) (a) = _Q_INVALID
+#وإلا
+#تعریف_کړه _Q_INVALIDATE(a)
+#د_که_پای
 
 /*
  * Singly-linked List definitions.
  */
-#define SLIST_HEAD(name, type)						\
-struct name {								\
-	struct type *slh_first;	/* first element */			\
+#تعریف_کړه SLIST_HEAD(name, type)						\
+بنية name {								\
+	بنية type *slh_لومړی;	/* first element */			\
 }
 
-#define	SLIST_HEAD_INITIALIZER(head)					\
-	{ NULL }
+#تعریف_کړه	SLIST_HEAD_INITIALIZER(سر_2)					\
+	{ عدم }
 
-#define SLIST_ENTRY(type)						\
-struct {								\
-	struct type *sle_next;	/* next element */			\
+#تعریف_کړه SLIST_ENTRY(type)						\
+بنية {								\
+	بنية type *sle_بل;	/* next element */			\
 }
 
 /*
  * Singly-linked List access methods.
  */
-#define	SLIST_FIRST(head)	((head)->slh_first)
-#define	SLIST_END(head)		NULL
-#define	SLIST_EMPTY(head)	(SLIST_FIRST(head) == SLIST_END(head))
-#define	SLIST_NEXT(elm, field)	((elm)->field.sle_next)
+#تعریف_کړه	SLIST_FIRST(سر_2)	((سر_2)->slh_لومړی)
+#تعریف_کړه	SLIST_پای_ټکی(سر_2)		عدم
+#تعریف_کړه	SLIST_EMPTY(سر_2)	(SLIST_FIRST(سر_2) == SLIST_پای_ټکی(سر_2))
+#تعریف_کړه	SLIST_NEXT(elm, ډګر)	((elm)->ډګر.sle_بل)
 
-#define	SLIST_FOREACH(var, head, field)					\
-	for((var) = SLIST_FIRST(head);					\
-	    (var) != SLIST_END(head);					\
-	    (var) = SLIST_NEXT(var, field))
+#تعریف_کړه	SLIST_FOREACH(var, سر_2, ډګر)					\
+	لكل((var) = SLIST_FIRST(سر_2);					\
+	    (var) != SLIST_پای_ټکی(سر_2);					\
+	    (var) = SLIST_NEXT(var, ډګر))
 
-#define	SLIST_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = SLIST_FIRST(head);				\
-	    (var) && ((tvar) = SLIST_NEXT(var, field), 1);		\
+#تعریف_کړه	SLIST_FOREACH_خوندي(var, سر_2, ډګر, tvar)			\
+	لكل ((var) = SLIST_FIRST(سر_2);				\
+	    (var) && ((tvar) = SLIST_NEXT(var, ډګر), 1);		\
 	    (var) = (tvar))
 
 /*
  * Singly-linked List functions.
  */
-#define	SLIST_INIT(head) {						\
-	SLIST_FIRST(head) = SLIST_END(head);				\
+#تعریف_کړه	SLIST_INIT(سر_2) {						\
+	SLIST_FIRST(سر_2) = SLIST_پای_ټکی(سر_2);				\
 }
 
-#define	SLIST_INSERT_AFTER(slistelm, elm, field) do {			\
-	(elm)->field.sle_next = (slistelm)->field.sle_next;		\
-	(slistelm)->field.sle_next = (elm);				\
-} while (0)
+#تعریف_کړه	SLIST_INSERT_AFTER(slistelm, elm, ډګر) افعل {			\
+	(elm)->ډګر.sle_بل = (slistelm)->ډګر.sle_بل;		\
+	(slistelm)->ډګر.sle_بل = (elm);				\
+} طالما (0)
 
-#define	SLIST_INSERT_HEAD(head, elm, field) do {			\
-	(elm)->field.sle_next = (head)->slh_first;			\
-	(head)->slh_first = (elm);					\
-} while (0)
+#تعریف_کړه	SLIST_INSERT_HEAD(سر_2, elm, ډګر) افعل {			\
+	(elm)->ډګر.sle_بل = (سر_2)->slh_لومړی;			\
+	(سر_2)->slh_لومړی = (elm);					\
+} طالما (0)
 
-#define	SLIST_REMOVE_AFTER(elm, field) do {				\
-	(elm)->field.sle_next = (elm)->field.sle_next->field.sle_next;	\
-} while (0)
+#تعریف_کړه	SLIST_REMOVE_AFTER(elm, ډګر) افعل {				\
+	(elm)->ډګر.sle_بل = (elm)->ډګر.sle_بل->ډګر.sle_بل;	\
+} طالما (0)
 
-#define	SLIST_REMOVE_HEAD(head, field) do {				\
-	(head)->slh_first = (head)->slh_first->field.sle_next;		\
-} while (0)
+#تعریف_کړه	SLIST_REMOVE_HEAD(سر_2, ډګر) افعل {				\
+	(سر_2)->slh_لومړی = (سر_2)->slh_لومړی->ډګر.sle_بل;		\
+} طالما (0)
 
-#define SLIST_REMOVE(head, elm, type, field) do {			\
-	if ((head)->slh_first == (elm)) {				\
-		SLIST_REMOVE_HEAD((head), field);			\
-	} else {							\
-		struct type *curelm = (head)->slh_first;		\
+#تعریف_کړه SLIST_REMOVE(سر_2, elm, type, ډګر) افعل {			\
+	إذا ((سر_2)->slh_لومړی == (elm)) {				\
+		SLIST_REMOVE_HEAD((سر_2), ډګر);			\
+	} وإلا {							\
+		بنية type *curelm = (سر_2)->slh_لومړی;		\
 									\
-		while (curelm->field.sle_next != (elm))			\
-			curelm = curelm->field.sle_next;		\
-		curelm->field.sle_next =				\
-		    curelm->field.sle_next->field.sle_next;		\
+		طالما (curelm->ډګر.sle_بل != (elm))			\
+			curelm = curelm->ډګر.sle_بل;		\
+		curelm->ډګر.sle_بل =				\
+		    curelm->ډګر.sle_بل->ډګر.sle_بل;		\
 	}								\
-	_Q_INVALIDATE((elm)->field.sle_next);				\
-} while (0)
+	_Q_INVALIDATE((elm)->ډګر.sle_بل);				\
+} طالما (0)
 
 /*
  * List definitions.
  */
-#define LIST_HEAD(name, type)						\
-struct name {								\
-	struct type *lh_first;	/* first element */			\
+#تعریف_کړه LIST_HEAD(name, type)						\
+بنية name {								\
+	بنية type *lh_لومړی;	/* first element */			\
 }
 
-#define LIST_HEAD_INITIALIZER(head)					\
-	{ NULL }
+#تعریف_کړه LIST_HEAD_INITIALIZER(سر_2)					\
+	{ عدم }
 
-#define LIST_ENTRY(type)						\
-struct {								\
-	struct type *le_next;	/* next element */			\
-	struct type **le_prev;	/* address of previous next element */	\
+#تعریف_کړه LIST_ENTRY(type)						\
+بنية {								\
+	بنية type *le_بل;	/* next element */			\
+	بنية type **le_prev;	/* address of previous next element */	\
 }
 
 /*
  * List access methods.
  */
-#define	LIST_FIRST(head)		((head)->lh_first)
-#define	LIST_END(head)			NULL
-#define	LIST_EMPTY(head)		(LIST_FIRST(head) == LIST_END(head))
-#define	LIST_NEXT(elm, field)		((elm)->field.le_next)
+#تعریف_کړه	LIST_FIRST(سر_2)		((سر_2)->lh_لومړی)
+#تعریف_کړه	LIST_پای_ټکی(سر_2)			عدم
+#تعریف_کړه	LIST_EMPTY(سر_2)		(LIST_FIRST(سر_2) == LIST_پای_ټکی(سر_2))
+#تعریف_کړه	LIST_NEXT(elm, ډګر)		((elm)->ډګر.le_بل)
 
-#define LIST_FOREACH(var, head, field)					\
-	for((var) = LIST_FIRST(head);					\
-	    (var)!= LIST_END(head);					\
-	    (var) = LIST_NEXT(var, field))
+#تعریف_کړه LIST_FOREACH(var, سر_2, ډګر)					\
+	لكل((var) = LIST_FIRST(سر_2);					\
+	    (var)!= LIST_پای_ټکی(سر_2);					\
+	    (var) = LIST_NEXT(var, ډګر))
 
-#define	LIST_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = LIST_FIRST(head);				\
-	    (var) && ((tvar) = LIST_NEXT(var, field), 1);		\
+#تعریف_کړه	LIST_FOREACH_خوندي(var, سر_2, ډګر, tvar)			\
+	لكل ((var) = LIST_FIRST(سر_2);				\
+	    (var) && ((tvar) = LIST_NEXT(var, ډګر), 1);		\
 	    (var) = (tvar))
 
 /*
  * List functions.
  */
-#define	LIST_INIT(head) do {						\
-	LIST_FIRST(head) = LIST_END(head);				\
-} while (0)
+#تعریف_کړه	LIST_INIT(سر_2) افعل {						\
+	LIST_FIRST(سر_2) = LIST_پای_ټکی(سر_2);				\
+} طالما (0)
 
-#define LIST_INSERT_AFTER(listelm, elm, field) do {			\
-	if (((elm)->field.le_next = (listelm)->field.le_next) != NULL)	\
-		(listelm)->field.le_next->field.le_prev =		\
-		    &(elm)->field.le_next;				\
-	(listelm)->field.le_next = (elm);				\
-	(elm)->field.le_prev = &(listelm)->field.le_next;		\
-} while (0)
+#تعریف_کړه LIST_INSERT_AFTER(listelm, elm, ډګر) افعل {			\
+	إذا (((elm)->ډګر.le_بل = (listelm)->ډګر.le_بل) != عدم)	\
+		(listelm)->ډګر.le_بل->ډګر.le_prev =		\
+		    &(elm)->ډګر.le_بل;				\
+	(listelm)->ډګر.le_بل = (elm);				\
+	(elm)->ډګر.le_prev = &(listelm)->ډګر.le_بل;		\
+} طالما (0)
 
-#define	LIST_INSERT_BEFORE(listelm, elm, field) do {			\
-	(elm)->field.le_prev = (listelm)->field.le_prev;		\
-	(elm)->field.le_next = (listelm);				\
-	*(listelm)->field.le_prev = (elm);				\
-	(listelm)->field.le_prev = &(elm)->field.le_next;		\
-} while (0)
+#تعریف_کړه	LIST_INSERT_BEFORE(listelm, elm, ډګر) افعل {			\
+	(elm)->ډګر.le_prev = (listelm)->ډګر.le_prev;		\
+	(elm)->ډګر.le_بل = (listelm);				\
+	*(listelm)->ډګر.le_prev = (elm);				\
+	(listelm)->ډګر.le_prev = &(elm)->ډګر.le_بل;		\
+} طالما (0)
 
-#define LIST_INSERT_HEAD(head, elm, field) do {				\
-	if (((elm)->field.le_next = (head)->lh_first) != NULL)		\
-		(head)->lh_first->field.le_prev = &(elm)->field.le_next;\
-	(head)->lh_first = (elm);					\
-	(elm)->field.le_prev = &(head)->lh_first;			\
-} while (0)
+#تعریف_کړه LIST_INSERT_HEAD(سر_2, elm, ډګر) افعل {				\
+	إذا (((elm)->ډګر.le_بل = (سر_2)->lh_لومړی) != عدم)		\
+		(سر_2)->lh_لومړی->ډګر.le_prev = &(elm)->ډګر.le_بل;\
+	(سر_2)->lh_لومړی = (elm);					\
+	(elm)->ډګر.le_prev = &(سر_2)->lh_لومړی;			\
+} طالما (0)
 
-#define LIST_REMOVE(elm, field) do {					\
-	if ((elm)->field.le_next != NULL)				\
-		(elm)->field.le_next->field.le_prev =			\
-		    (elm)->field.le_prev;				\
-	*(elm)->field.le_prev = (elm)->field.le_next;			\
-	_Q_INVALIDATE((elm)->field.le_prev);				\
-	_Q_INVALIDATE((elm)->field.le_next);				\
-} while (0)
+#تعریف_کړه LIST_REMOVE(elm, ډګر) افعل {					\
+	إذا ((elm)->ډګر.le_بل != عدم)				\
+		(elm)->ډګر.le_بل->ډګر.le_prev =			\
+		    (elm)->ډګر.le_prev;				\
+	*(elm)->ډګر.le_prev = (elm)->ډګر.le_بل;			\
+	_Q_INVALIDATE((elm)->ډګر.le_prev);				\
+	_Q_INVALIDATE((elm)->ډګر.le_بل);				\
+} طالما (0)
 
-#define LIST_REPLACE(elm, elm2, field) do {				\
-	if (((elm2)->field.le_next = (elm)->field.le_next) != NULL)	\
-		(elm2)->field.le_next->field.le_prev =			\
-		    &(elm2)->field.le_next;				\
-	(elm2)->field.le_prev = (elm)->field.le_prev;			\
-	*(elm2)->field.le_prev = (elm2);				\
-	_Q_INVALIDATE((elm)->field.le_prev);				\
-	_Q_INVALIDATE((elm)->field.le_next);				\
-} while (0)
+#تعریف_کړه LIST_REPLACE(elm, elm2, ډګر) افعل {				\
+	إذا (((elm2)->ډګر.le_بل = (elm)->ډګر.le_بل) != عدم)	\
+		(elm2)->ډګر.le_بل->ډګر.le_prev =			\
+		    &(elm2)->ډګر.le_بل;				\
+	(elm2)->ډګر.le_prev = (elm)->ډګر.le_prev;			\
+	*(elm2)->ډګر.le_prev = (elm2);				\
+	_Q_INVALIDATE((elm)->ډګر.le_prev);				\
+	_Q_INVALIDATE((elm)->ډګر.le_بل);				\
+} طالما (0)
 
 /*
  * Simple queue definitions.
  */
-#define SIMPLEQ_HEAD(name, type)					\
-struct name {								\
-	struct type *sqh_first;	/* first element */			\
-	struct type **sqh_last;	/* addr of last next element */		\
+#تعریف_کړه SIMPLEQ_HEAD(name, type)					\
+بنية name {								\
+	بنية type *sqh_لومړی;	/* first element */			\
+	بنية type **sqh_وروستی;	/* addr of last next element */		\
 }
 
-#define SIMPLEQ_HEAD_INITIALIZER(head)					\
-	{ NULL, &(head).sqh_first }
+#تعریف_کړه SIMPLEQ_HEAD_INITIALIZER(سر_2)					\
+	{ عدم, &(سر_2).sqh_لومړی }
 
-#define SIMPLEQ_ENTRY(type)						\
-struct {								\
-	struct type *sqe_next;	/* next element */			\
+#تعریف_کړه SIMPLEQ_ENTRY(type)						\
+بنية {								\
+	بنية type *sqe_بل;	/* next element */			\
 }
 
 /*
  * Simple queue access methods.
  */
-#define	SIMPLEQ_FIRST(head)	    ((head)->sqh_first)
-#define	SIMPLEQ_END(head)	    NULL
-#define	SIMPLEQ_EMPTY(head)	    (SIMPLEQ_FIRST(head) == SIMPLEQ_END(head))
-#define	SIMPLEQ_NEXT(elm, field)    ((elm)->field.sqe_next)
+#تعریف_کړه	SIMPLEQ_FIRST(سر_2)	    ((سر_2)->sqh_لومړی)
+#تعریف_کړه	SIMPLEQ_پای_ټکی(سر_2)	    عدم
+#تعریف_کړه	SIMPLEQ_EMPTY(سر_2)	    (SIMPLEQ_FIRST(سر_2) == SIMPLEQ_پای_ټکی(سر_2))
+#تعریف_کړه	SIMPLEQ_NEXT(elm, ډګر)    ((elm)->ډګر.sqe_بل)
 
-#define SIMPLEQ_FOREACH(var, head, field)				\
-	for((var) = SIMPLEQ_FIRST(head);				\
-	    (var) != SIMPLEQ_END(head);					\
-	    (var) = SIMPLEQ_NEXT(var, field))
+#تعریف_کړه SIMPLEQ_FOREACH(var, سر_2, ډګر)				\
+	لكل((var) = SIMPLEQ_FIRST(سر_2);				\
+	    (var) != SIMPLEQ_پای_ټکی(سر_2);					\
+	    (var) = SIMPLEQ_NEXT(var, ډګر))
 
-#define	SIMPLEQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = SIMPLEQ_FIRST(head);				\
-	    (var) && ((tvar) = SIMPLEQ_NEXT(var, field), 1);		\
+#تعریف_کړه	SIMPLEQ_FOREACH_خوندي(var, سر_2, ډګر, tvar)			\
+	لكل ((var) = SIMPLEQ_FIRST(سر_2);				\
+	    (var) && ((tvar) = SIMPLEQ_NEXT(var, ډګر), 1);		\
 	    (var) = (tvar))
 
 /*
  * Simple queue functions.
  */
-#define	SIMPLEQ_INIT(head) do {						\
-	(head)->sqh_first = NULL;					\
-	(head)->sqh_last = &(head)->sqh_first;				\
-} while (0)
+#تعریف_کړه	SIMPLEQ_INIT(سر_2) افعل {						\
+	(سر_2)->sqh_لومړی = عدم;					\
+	(سر_2)->sqh_وروستی = &(سر_2)->sqh_لومړی;				\
+} طالما (0)
 
-#define SIMPLEQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.sqe_next = (head)->sqh_first) == NULL)	\
-		(head)->sqh_last = &(elm)->field.sqe_next;		\
-	(head)->sqh_first = (elm);					\
-} while (0)
+#تعریف_کړه SIMPLEQ_INSERT_HEAD(سر_2, elm, ډګر) افعل {			\
+	إذا (((elm)->ډګر.sqe_بل = (سر_2)->sqh_لومړی) == عدم)	\
+		(سر_2)->sqh_وروستی = &(elm)->ډګر.sqe_بل;		\
+	(سر_2)->sqh_لومړی = (elm);					\
+} طالما (0)
 
-#define SIMPLEQ_INSERT_TAIL(head, elm, field) do {			\
-	(elm)->field.sqe_next = NULL;					\
-	*(head)->sqh_last = (elm);					\
-	(head)->sqh_last = &(elm)->field.sqe_next;			\
-} while (0)
+#تعریف_کړه SIMPLEQ_INSERT_TAIL(سر_2, elm, ډګر) افعل {			\
+	(elm)->ډګر.sqe_بل = عدم;					\
+	*(سر_2)->sqh_وروستی = (elm);					\
+	(سر_2)->sqh_وروستی = &(elm)->ډګر.sqe_بل;			\
+} طالما (0)
 
-#define SIMPLEQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.sqe_next = (listelm)->field.sqe_next) == NULL)\
-		(head)->sqh_last = &(elm)->field.sqe_next;		\
-	(listelm)->field.sqe_next = (elm);				\
-} while (0)
+#تعریف_کړه SIMPLEQ_INSERT_AFTER(سر_2, listelm, elm, ډګر) افعل {		\
+	إذا (((elm)->ډګر.sqe_بل = (listelm)->ډګر.sqe_بل) == عدم)\
+		(سر_2)->sqh_وروستی = &(elm)->ډګر.sqe_بل;		\
+	(listelm)->ډګر.sqe_بل = (elm);				\
+} طالما (0)
 
-#define SIMPLEQ_REMOVE_HEAD(head, field) do {			\
-	if (((head)->sqh_first = (head)->sqh_first->field.sqe_next) == NULL) \
-		(head)->sqh_last = &(head)->sqh_first;			\
-} while (0)
+#تعریف_کړه SIMPLEQ_REMOVE_HEAD(سر_2, ډګر) افعل {			\
+	إذا (((سر_2)->sqh_لومړی = (سر_2)->sqh_لومړی->ډګر.sqe_بل) == عدم) \
+		(سر_2)->sqh_وروستی = &(سر_2)->sqh_لومړی;			\
+} طالما (0)
 
-#define SIMPLEQ_REMOVE_AFTER(head, elm, field) do {			\
-	if (((elm)->field.sqe_next = (elm)->field.sqe_next->field.sqe_next) \
-	    == NULL)							\
-		(head)->sqh_last = &(elm)->field.sqe_next;		\
-} while (0)
+#تعریف_کړه SIMPLEQ_REMOVE_AFTER(سر_2, elm, ډګر) افعل {			\
+	إذا (((elm)->ډګر.sqe_بل = (elm)->ډګر.sqe_بل->ډګر.sqe_بل) \
+	    == عدم)							\
+		(سر_2)->sqh_وروستی = &(elm)->ډګر.sqe_بل;		\
+} طالما (0)
 
-#define SIMPLEQ_CONCAT(head1, head2) do {				\
-	if (!SIMPLEQ_EMPTY((head2))) {					\
-		*(head1)->sqh_last = (head2)->sqh_first;		\
-		(head1)->sqh_last = (head2)->sqh_last;			\
+#تعریف_کړه SIMPLEQ_CONCAT(head1, head2) افعل {				\
+	إذا (!SIMPLEQ_EMPTY((head2))) {					\
+		*(head1)->sqh_وروستی = (head2)->sqh_لومړی;		\
+		(head1)->sqh_وروستی = (head2)->sqh_وروستی;			\
 		SIMPLEQ_INIT((head2));					\
 	}								\
-} while (0)
+} طالما (0)
 
 /*
  * XOR Simple queue definitions.
  */
-#define XSIMPLEQ_HEAD(name, type)					\
-struct name {								\
-	struct type *sqx_first;	/* first element */			\
-	struct type **sqx_last;	/* addr of last next element */		\
-	unsigned long sqx_cookie;					\
+#تعریف_کړه XSIMPLEQ_سر(name, type)					\
+بنية name {								\
+	بنية type *sqx_لومړی;	/* first element */			\
+	بنية type **sqx_وروستی;	/* addr of last next element */		\
+	بینښه اوږد sqx_cookie;					\
 }
 
-#define XSIMPLEQ_ENTRY(type)						\
-struct {								\
-	struct type *sqx_next;	/* next element */			\
+#تعریف_کړه XSIMPLEQ_ثبت(type)						\
+بنية {								\
+	بنية type *sqx_بل;	/* next element */			\
 }
 
 /*
  * XOR Simple queue access methods.
  */
-#define XSIMPLEQ_XOR(head, ptr)	    ((__typeof(ptr))((head)->sqx_cookie ^ \
-					(unsigned long)(ptr)))
-#define	XSIMPLEQ_FIRST(head)	    XSIMPLEQ_XOR(head, ((head)->sqx_first))
-#define	XSIMPLEQ_END(head)	    NULL
-#define	XSIMPLEQ_EMPTY(head)	    (XSIMPLEQ_FIRST(head) == XSIMPLEQ_END(head))
-#define	XSIMPLEQ_NEXT(head, elm, field)    XSIMPLEQ_XOR(head, ((elm)->field.sqx_next))
+#تعریف_کړه XSIMPLEQ_XOR(سر_2, ptr)	    ((__typeof(ptr))((سر_2)->sqx_cookie ^ \
+					(بینښه اوږد)(ptr)))
+#تعریف_کړه	XSIMPLEQ_لومړی(سر_2)	    XSIMPLEQ_XOR(سر_2, ((سر_2)->sqx_لومړی))
+#تعریف_کړه	XSIMPLEQ_پای_ټکی(سر_2)	    عدم
+#تعریف_کړه	XSIMPLEQ_تشه(سر_2)	    (XSIMPLEQ_لومړی(سر_2) == XSIMPLEQ_پای_ټکی(سر_2))
+#تعریف_کړه	XSIMPLEQ_بل(سر_2, elm, ډګر)    XSIMPLEQ_XOR(سر_2, ((elm)->ډګر.sqx_بل))
 
 
-#define XSIMPLEQ_FOREACH(var, head, field)				\
-	for ((var) = XSIMPLEQ_FIRST(head);				\
-	    (var) != XSIMPLEQ_END(head);				\
-	    (var) = XSIMPLEQ_NEXT(head, var, field))
+#تعریف_کړه XSIMPLEQ_FOREACH(var, سر_2, ډګر)				\
+	لكل ((var) = XSIMPLEQ_لومړی(سر_2);				\
+	    (var) != XSIMPLEQ_پای_ټکی(سر_2);				\
+	    (var) = XSIMPLEQ_بل(سر_2, var, ډګر))
 
-#define	XSIMPLEQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = XSIMPLEQ_FIRST(head);				\
-	    (var) && ((tvar) = XSIMPLEQ_NEXT(head, var, field), 1);	\
+#تعریف_کړه	XSIMPLEQ_FOREACH_خوندي(var, سر_2, ډګر, tvar)			\
+	لكل ((var) = XSIMPLEQ_لومړی(سر_2);				\
+	    (var) && ((tvar) = XSIMPLEQ_بل(سر_2, var, ډګر), 1);	\
 	    (var) = (tvar))
 
 /*
  * XOR Simple queue functions.
  */
-#define	XSIMPLEQ_INIT(head) do {					\
-	arc4random_buf(&(head)->sqx_cookie, sizeof((head)->sqx_cookie)); \
-	(head)->sqx_first = XSIMPLEQ_XOR(head, NULL);			\
-	(head)->sqx_last = XSIMPLEQ_XOR(head, &(head)->sqx_first);	\
-} while (0)
+#تعریف_کړه	XSIMPLEQ_INIT(سر_2) افعل {					\
+	arc4random_buf(&(سر_2)->sqx_cookie, حجم((سر_2)->sqx_cookie)); \
+	(سر_2)->sqx_لومړی = XSIMPLEQ_XOR(سر_2, عدم);			\
+	(سر_2)->sqx_وروستی = XSIMPLEQ_XOR(سر_2, &(سر_2)->sqx_لومړی);	\
+} طالما (0)
 
-#define XSIMPLEQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.sqx_next = (head)->sqx_first) ==		\
-	    XSIMPLEQ_XOR(head, NULL))					\
-		(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next); \
-	(head)->sqx_first = XSIMPLEQ_XOR(head, (elm));			\
-} while (0)
+#تعریف_کړه XSIMPLEQ_ورننباسه_سر(سر_2, elm, ډګر) افعل {			\
+	إذا (((elm)->ډګر.sqx_بل = (سر_2)->sqx_لومړی) ==		\
+	    XSIMPLEQ_XOR(سر_2, عدم))					\
+		(سر_2)->sqx_وروستی = XSIMPLEQ_XOR(سر_2, &(elm)->ډګر.sqx_بل); \
+	(سر_2)->sqx_لومړی = XSIMPLEQ_XOR(سر_2, (elm));			\
+} طالما (0)
 
-#define XSIMPLEQ_INSERT_TAIL(head, elm, field) do {			\
-	(elm)->field.sqx_next = XSIMPLEQ_XOR(head, NULL);		\
-	*(XSIMPLEQ_XOR(head, (head)->sqx_last)) = XSIMPLEQ_XOR(head, (elm)); \
-	(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next);	\
-} while (0)
+#تعریف_کړه XSIMPLEQ_ورننباسه_لکۍ(سر_2, elm, ډګر) افعل {			\
+	(elm)->ډګر.sqx_بل = XSIMPLEQ_XOR(سر_2, عدم);		\
+	*(XSIMPLEQ_XOR(سر_2, (سر_2)->sqx_وروستی)) = XSIMPLEQ_XOR(سر_2, (elm)); \
+	(سر_2)->sqx_وروستی = XSIMPLEQ_XOR(سر_2, &(elm)->ډګر.sqx_بل);	\
+} طالما (0)
 
-#define XSIMPLEQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.sqx_next = (listelm)->field.sqx_next) ==	\
-	    XSIMPLEQ_XOR(head, NULL))					\
-		(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next); \
-	(listelm)->field.sqx_next = XSIMPLEQ_XOR(head, (elm));		\
-} while (0)
+#تعریف_کړه XSIMPLEQ_ورننباسه_AFTER(سر_2, listelm, elm, ډګر) افعل {		\
+	إذا (((elm)->ډګر.sqx_بل = (listelm)->ډګر.sqx_بل) ==	\
+	    XSIMPLEQ_XOR(سر_2, عدم))					\
+		(سر_2)->sqx_وروستی = XSIMPLEQ_XOR(سر_2, &(elm)->ډګر.sqx_بل); \
+	(listelm)->ډګر.sqx_بل = XSIMPLEQ_XOR(سر_2, (elm));		\
+} طالما (0)
 
-#define XSIMPLEQ_REMOVE_HEAD(head, field) do {				\
-	if (((head)->sqx_first = XSIMPLEQ_XOR(head,			\
-	    (head)->sqx_first)->field.sqx_next) == XSIMPLEQ_XOR(head, NULL)) \
-		(head)->sqx_last = XSIMPLEQ_XOR(head, &(head)->sqx_first); \
-} while (0)
+#تعریف_کړه XSIMPLEQ_REMOVE_سر(سر_2, ډګر) افعل {				\
+	إذا (((سر_2)->sqx_لومړی = XSIMPLEQ_XOR(سر_2,			\
+	    (سر_2)->sqx_لومړی)->ډګر.sqx_بل) == XSIMPLEQ_XOR(سر_2, عدم)) \
+		(سر_2)->sqx_وروستی = XSIMPLEQ_XOR(سر_2, &(سر_2)->sqx_لومړی); \
+} طالما (0)
 
-#define XSIMPLEQ_REMOVE_AFTER(head, elm, field) do {			\
-	if (((elm)->field.sqx_next = XSIMPLEQ_XOR(head,			\
-	    (elm)->field.sqx_next)->field.sqx_next)			\
-	    == XSIMPLEQ_XOR(head, NULL))				\
-		(head)->sqx_last = 					\
-		    XSIMPLEQ_XOR(head, &(elm)->field.sqx_next);		\
-} while (0)
+#تعریف_کړه XSIMPLEQ_REMOVE_AFTER(سر_2, elm, ډګر) افعل {			\
+	إذا (((elm)->ډګر.sqx_بل = XSIMPLEQ_XOR(سر_2,			\
+	    (elm)->ډګر.sqx_بل)->ډګر.sqx_بل)			\
+	    == XSIMPLEQ_XOR(سر_2, عدم))				\
+		(سر_2)->sqx_وروستی = 					\
+		    XSIMPLEQ_XOR(سر_2, &(elm)->ډګر.sqx_بل);		\
+} طالما (0)
 
 
 /*
  * Tail queue definitions.
  */
-#define TAILQ_HEAD(name, type)						\
-struct name {								\
-	struct type *tqh_first;	/* first element */			\
-	struct type **tqh_last;	/* addr of last next element */		\
+#تعریف_کړه TAILQ_HEAD(name, type)						\
+بنية name {								\
+	بنية type *tqh_first;	/* first element */			\
+	بنية type **tqh_last;	/* addr of last next element */		\
 }
 
-#define TAILQ_HEAD_INITIALIZER(head)					\
-	{ NULL, &(head).tqh_first }
+#تعریف_کړه TAILQ_HEAD_INITIALIZER(سر_2)					\
+	{ عدم, &(سر_2).tqh_first }
 
-#define TAILQ_ENTRY(type)						\
-struct {								\
-	struct type *tqe_next;	/* next element */			\
-	struct type **tqe_prev;	/* address of previous next element */	\
+#تعریف_کړه TAILQ_ENTRY(type)						\
+بنية {								\
+	بنية type *tqe_next;	/* next element */			\
+	بنية type **tqe_prev;	/* address of previous next element */	\
 }
 
 /*
  * Tail queue access methods.
  */
-#define	TAILQ_FIRST(head)		((head)->tqh_first)
-#define	TAILQ_END(head)			NULL
-#define	TAILQ_NEXT(elm, field)		((elm)->field.tqe_next)
-#define TAILQ_LAST(head, headname)					\
-	(*(((struct headname *)((head)->tqh_last))->tqh_last))
+#تعریف_کړه	TAILQ_FIRST(سر_2)		((سر_2)->tqh_first)
+#تعریف_کړه	TAILQ_پای_ټکی(سر_2)			عدم
+#تعریف_کړه	TAILQ_NEXT(elm, ډګر)		((elm)->ډګر.tqe_next)
+#تعریف_کړه TAILQ_LAST(سر_2, headname)					\
+	(*(((بنية headname *)((سر_2)->tqh_last))->tqh_last))
 /* XXX */
-#define TAILQ_PREV(elm, headname, field)				\
-	(*(((struct headname *)((elm)->field.tqe_prev))->tqh_last))
-#define	TAILQ_EMPTY(head)						\
-	(TAILQ_FIRST(head) == TAILQ_END(head))
+#تعریف_کړه TAILQ_PREV(elm, headname, ډګر)				\
+	(*(((بنية headname *)((elm)->ډګر.tqe_prev))->tqh_last))
+#تعریف_کړه	TAILQ_EMPTY(سر_2)						\
+	(TAILQ_FIRST(سر_2) == TAILQ_پای_ټکی(سر_2))
 
-#define TAILQ_FOREACH(var, head, field)					\
-	for((var) = TAILQ_FIRST(head);					\
-	    (var) != TAILQ_END(head);					\
-	    (var) = TAILQ_NEXT(var, field))
+#تعریف_کړه TAILQ_FOREACH(var, سر_2, ډګر)					\
+	لكل((var) = TAILQ_FIRST(سر_2);					\
+	    (var) != TAILQ_پای_ټکی(سر_2);					\
+	    (var) = TAILQ_NEXT(var, ډګر))
 
-#define	TAILQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = TAILQ_FIRST(head);					\
-	    (var) != TAILQ_END(head) &&					\
-	    ((tvar) = TAILQ_NEXT(var, field), 1);			\
+#تعریف_کړه	TAILQ_FOREACH_خوندي(var, سر_2, ډګر, tvar)			\
+	لكل ((var) = TAILQ_FIRST(سر_2);					\
+	    (var) != TAILQ_پای_ټکی(سر_2) &&					\
+	    ((tvar) = TAILQ_NEXT(var, ډګر), 1);			\
 	    (var) = (tvar))
 
 
-#define TAILQ_FOREACH_REVERSE(var, head, headname, field)		\
-	for((var) = TAILQ_LAST(head, headname);				\
-	    (var) != TAILQ_END(head);					\
-	    (var) = TAILQ_PREV(var, headname, field))
+#تعریف_کړه TAILQ_FOREACH_سرچپه(var, سر_2, headname, ډګر)		\
+	لكل((var) = TAILQ_LAST(سر_2, headname);				\
+	    (var) != TAILQ_پای_ټکی(سر_2);					\
+	    (var) = TAILQ_PREV(var, headname, ډګر))
 
-#define	TAILQ_FOREACH_REVERSE_SAFE(var, head, headname, field, tvar)	\
-	for ((var) = TAILQ_LAST(head, headname);			\
-	    (var) != TAILQ_END(head) &&					\
-	    ((tvar) = TAILQ_PREV(var, headname, field), 1);		\
+#تعریف_کړه	TAILQ_FOREACH_سرچپه_خوندي(var, سر_2, headname, ډګر, tvar)	\
+	لكل ((var) = TAILQ_LAST(سر_2, headname);			\
+	    (var) != TAILQ_پای_ټکی(سر_2) &&					\
+	    ((tvar) = TAILQ_PREV(var, headname, ډګر), 1);		\
 	    (var) = (tvar))
 
 /*
  * Tail queue functions.
  */
-#define	TAILQ_INIT(head) do {						\
-	(head)->tqh_first = NULL;					\
-	(head)->tqh_last = &(head)->tqh_first;				\
-} while (0)
+#تعریف_کړه	TAILQ_INIT(سر_2) افعل {						\
+	(سر_2)->tqh_first = عدم;					\
+	(سر_2)->tqh_last = &(سر_2)->tqh_first;				\
+} طالما (0)
 
-#define TAILQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.tqe_next = (head)->tqh_first) != NULL)	\
-		(head)->tqh_first->field.tqe_prev =			\
-		    &(elm)->field.tqe_next;				\
-	else								\
-		(head)->tqh_last = &(elm)->field.tqe_next;		\
-	(head)->tqh_first = (elm);					\
-	(elm)->field.tqe_prev = &(head)->tqh_first;			\
-} while (0)
+#تعریف_کړه TAILQ_INSERT_HEAD(سر_2, elm, ډګر) افعل {			\
+	إذا (((elm)->ډګر.tqe_next = (سر_2)->tqh_first) != عدم)	\
+		(سر_2)->tqh_first->ډګر.tqe_prev =			\
+		    &(elm)->ډګر.tqe_next;				\
+	وإلا								\
+		(سر_2)->tqh_last = &(elm)->ډګر.tqe_next;		\
+	(سر_2)->tqh_first = (elm);					\
+	(elm)->ډګر.tqe_prev = &(سر_2)->tqh_first;			\
+} طالما (0)
 
-#define TAILQ_INSERT_TAIL(head, elm, field) do {			\
-	(elm)->field.tqe_next = NULL;					\
-	(elm)->field.tqe_prev = (head)->tqh_last;			\
-	*(head)->tqh_last = (elm);					\
-	(head)->tqh_last = &(elm)->field.tqe_next;			\
-} while (0)
+#تعریف_کړه TAILQ_INSERT_TAIL(سر_2, elm, ډګر) افعل {			\
+	(elm)->ډګر.tqe_next = عدم;					\
+	(elm)->ډګر.tqe_prev = (سر_2)->tqh_last;			\
+	*(سر_2)->tqh_last = (elm);					\
+	(سر_2)->tqh_last = &(elm)->ډګر.tqe_next;			\
+} طالما (0)
 
-#define TAILQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.tqe_next = (listelm)->field.tqe_next) != NULL)\
-		(elm)->field.tqe_next->field.tqe_prev =			\
-		    &(elm)->field.tqe_next;				\
-	else								\
-		(head)->tqh_last = &(elm)->field.tqe_next;		\
-	(listelm)->field.tqe_next = (elm);				\
-	(elm)->field.tqe_prev = &(listelm)->field.tqe_next;		\
-} while (0)
+#تعریف_کړه TAILQ_INSERT_AFTER(سر_2, listelm, elm, ډګر) افعل {		\
+	إذا (((elm)->ډګر.tqe_next = (listelm)->ډګر.tqe_next) != عدم)\
+		(elm)->ډګر.tqe_next->ډګر.tqe_prev =			\
+		    &(elm)->ډګر.tqe_next;				\
+	وإلا								\
+		(سر_2)->tqh_last = &(elm)->ډګر.tqe_next;		\
+	(listelm)->ډګر.tqe_next = (elm);				\
+	(elm)->ډګر.tqe_prev = &(listelm)->ډګر.tqe_next;		\
+} طالما (0)
 
-#define	TAILQ_INSERT_BEFORE(listelm, elm, field) do {			\
-	(elm)->field.tqe_prev = (listelm)->field.tqe_prev;		\
-	(elm)->field.tqe_next = (listelm);				\
-	*(listelm)->field.tqe_prev = (elm);				\
-	(listelm)->field.tqe_prev = &(elm)->field.tqe_next;		\
-} while (0)
+#تعریف_کړه	TAILQ_INSERT_BEFORE(listelm, elm, ډګر) افعل {			\
+	(elm)->ډګر.tqe_prev = (listelm)->ډګر.tqe_prev;		\
+	(elm)->ډګر.tqe_next = (listelm);				\
+	*(listelm)->ډګر.tqe_prev = (elm);				\
+	(listelm)->ډګر.tqe_prev = &(elm)->ډګر.tqe_next;		\
+} طالما (0)
 
-#define TAILQ_REMOVE(head, elm, field) do {				\
-	if (((elm)->field.tqe_next) != NULL)				\
-		(elm)->field.tqe_next->field.tqe_prev =			\
-		    (elm)->field.tqe_prev;				\
-	else								\
-		(head)->tqh_last = (elm)->field.tqe_prev;		\
-	*(elm)->field.tqe_prev = (elm)->field.tqe_next;			\
-	_Q_INVALIDATE((elm)->field.tqe_prev);				\
-	_Q_INVALIDATE((elm)->field.tqe_next);				\
-} while (0)
+#تعریف_کړه TAILQ_REMOVE(سر_2, elm, ډګر) افعل {				\
+	إذا (((elm)->ډګر.tqe_next) != عدم)				\
+		(elm)->ډګر.tqe_next->ډګر.tqe_prev =			\
+		    (elm)->ډګر.tqe_prev;				\
+	وإلا								\
+		(سر_2)->tqh_last = (elm)->ډګر.tqe_prev;		\
+	*(elm)->ډګر.tqe_prev = (elm)->ډګر.tqe_next;			\
+	_Q_INVALIDATE((elm)->ډګر.tqe_prev);				\
+	_Q_INVALIDATE((elm)->ډګر.tqe_next);				\
+} طالما (0)
 
-#define TAILQ_REPLACE(head, elm, elm2, field) do {			\
-	if (((elm2)->field.tqe_next = (elm)->field.tqe_next) != NULL)	\
-		(elm2)->field.tqe_next->field.tqe_prev =		\
-		    &(elm2)->field.tqe_next;				\
-	else								\
-		(head)->tqh_last = &(elm2)->field.tqe_next;		\
-	(elm2)->field.tqe_prev = (elm)->field.tqe_prev;			\
-	*(elm2)->field.tqe_prev = (elm2);				\
-	_Q_INVALIDATE((elm)->field.tqe_prev);				\
-	_Q_INVALIDATE((elm)->field.tqe_next);				\
-} while (0)
+#تعریف_کړه TAILQ_REPLACE(سر_2, elm, elm2, ډګر) افعل {			\
+	إذا (((elm2)->ډګر.tqe_next = (elm)->ډګر.tqe_next) != عدم)	\
+		(elm2)->ډګر.tqe_next->ډګر.tqe_prev =		\
+		    &(elm2)->ډګر.tqe_next;				\
+	وإلا								\
+		(سر_2)->tqh_last = &(elm2)->ډګر.tqe_next;		\
+	(elm2)->ډګر.tqe_prev = (elm)->ډګر.tqe_prev;			\
+	*(elm2)->ډګر.tqe_prev = (elm2);				\
+	_Q_INVALIDATE((elm)->ډګر.tqe_prev);				\
+	_Q_INVALIDATE((elm)->ډګر.tqe_next);				\
+} طالما (0)
 
-#define TAILQ_CONCAT(head1, head2, field) do {				\
-	if (!TAILQ_EMPTY(head2)) {					\
+#تعریف_کړه TAILQ_CONCAT(head1, head2, ډګر) افعل {				\
+	إذا (!TAILQ_EMPTY(head2)) {					\
 		*(head1)->tqh_last = (head2)->tqh_first;		\
-		(head2)->tqh_first->field.tqe_prev = (head1)->tqh_last;	\
+		(head2)->tqh_first->ډګر.tqe_prev = (head1)->tqh_last;	\
 		(head1)->tqh_last = (head2)->tqh_last;			\
 		TAILQ_INIT((head2));					\
 	}								\
-} while (0)
+} طالما (0)
 
-#endif	/* !_SYS_QUEUE_H_ */
+#د_که_پای	/* !_SYS_QUEUE_H_ */

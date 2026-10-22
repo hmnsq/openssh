@@ -15,200 +15,200 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <string.h>
-#include <stdlib.h>
+#ضمن <sys/types.h>
+#ضمن <string.h>
+#ضمن <stdlib.h>
 
-#include "bitmap.h"
+#ضمن "bitmap.h"
 
-#define BITMAP_WTYPE	u_int
-#define BITMAP_MAX	(1<<24)
-#define BITMAP_BYTES	(sizeof(BITMAP_WTYPE))
-#define BITMAP_BITS	(sizeof(BITMAP_WTYPE) * 8)
-#define BITMAP_WMASK	((BITMAP_WTYPE)BITMAP_BITS - 1)
-struct bitmap {
+#تعریف_کړه BITMAP_WTYPE	u_int
+#تعریف_کړه BITMAP_MAX	(1<<24)
+#تعریف_کړه BITMAP_بایټونه	(حجم(BITMAP_WTYPE))
+#تعریف_کړه BITMAP_بټونه	(حجم(BITMAP_WTYPE) * 8)
+#تعریف_کړه BITMAP_WMASK	((BITMAP_WTYPE)BITMAP_بټونه - 1)
+بنية bitmap {
 	BITMAP_WTYPE *d;
-	size_t len; /* number of words allocated */
-	size_t top; /* index of top word allocated */
+	اندازه_t len; /* number of words allocated */
+	اندازه_t سر; /* index of top word allocated */
 };
 
-struct bitmap *
-bitmap_new(void)
+بنية bitmap *
+bitmap_new(فراغ)
 {
-	struct bitmap *ret;
+	بنية bitmap *ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
-	if ((ret->d = calloc(1, BITMAP_BYTES)) == NULL) {
-		free(ret);
-		return NULL;
+	إذا ((ret = حافظه_صفر_ورکړه(1, حجم(*ret))) == عدم)
+		أرجع عدم;
+	إذا ((ret->d = حافظه_صفر_ورکړه(1, BITMAP_بایټونه)) == عدم) {
+		حرر(ret);
+		أرجع عدم;
 	}
 	ret->len = 1;
-	ret->top = 0;
-	return ret;
+	ret->سر = 0;
+	أرجع ret;
 }
 
-void
-bitmap_free(struct bitmap *b)
+فراغ
+bitmap_free(بنية bitmap *b)
 {
-	if (b != NULL && b->d != NULL) {
+	إذا (b != عدم && b->d != عدم) {
 		bitmap_zero(b);
-		free(b->d);
-		b->d = NULL;
+		حرر(b->d);
+		b->d = عدم;
 	}
-	free(b);
+	حرر(b);
 }
 
-void
-bitmap_zero(struct bitmap *b)
+فراغ
+bitmap_zero(بنية bitmap *b)
 {
-	memset(b->d, 0, b->len * BITMAP_BYTES);
-	b->top = 0;
+	memset(b->d, 0, b->len * BITMAP_بایټونه);
+	b->سر = 0;
 }
 
-int
-bitmap_test_bit(struct bitmap *b, u_int n)
+صحيح
+bitmap_test_بټ(بنية bitmap *b, u_int n)
 {
-	if (b->top >= b->len)
-		return 0; /* invalid */
-	if (b->len == 0 || (n / BITMAP_BITS) > b->top)
-		return 0;
-	return (b->d[n / BITMAP_BITS] >> (n & BITMAP_WMASK)) & 1;
+	إذا (b->سر >= b->len)
+		أرجع 0; /* invalid */
+	إذا (b->len == 0 || (n / BITMAP_بټونه) > b->سر)
+		أرجع 0;
+	أرجع (b->d[n / BITMAP_بټونه] >> (n & BITMAP_WMASK)) & 1;
 }
 
-static int
-reserve(struct bitmap *b, u_int n)
+ساكن صحيح
+reserve(بنية bitmap *b, u_int n)
 {
 	BITMAP_WTYPE *tmp;
-	size_t nlen;
+	اندازه_t nlen;
 
-	if (b->top >= b->len || n > BITMAP_MAX)
-		return -1; /* invalid */
-	nlen = (n / BITMAP_BITS) + 1;
-	if (b->len < nlen) {
-		if ((tmp = recallocarray(b->d, b->len,
-		    nlen, BITMAP_BYTES)) == NULL)
-			return -1;
+	إذا (b->سر >= b->len || n > BITMAP_MAX)
+		أرجع -1; /* invalid */
+	nlen = (n / BITMAP_بټونه) + 1;
+	إذا (b->len < nlen) {
+		إذا ((tmp = recallocarray(b->d, b->len,
+		    nlen, BITMAP_بایټونه)) == عدم)
+			أرجع -1;
 		b->d = tmp;
 		b->len = nlen;
 	}
-	return 0;
+	أرجع 0;
 }
 
-int
-bitmap_set_bit(struct bitmap *b, u_int n)
+صحيح
+bitmap_سېټ_بټ(بنية bitmap *b, u_int n)
 {
-	int r;
-	size_t offset;
+	صحيح r;
+	اندازه_t دننه_واټن;
 
-	if ((r = reserve(b, n)) != 0)
-		return r;
-	offset = n / BITMAP_BITS;
-	if (offset > b->top)
-		b->top = offset;
-	b->d[offset] |= (BITMAP_WTYPE)1 << (n & BITMAP_WMASK);
-	return 0;
+	إذا ((r = reserve(b, n)) != 0)
+		أرجع r;
+	دننه_واټن = n / BITMAP_بټونه;
+	إذا (دننه_واټن > b->سر)
+		b->سر = دننه_واټن;
+	b->d[دننه_واټن] |= (BITMAP_WTYPE)1 << (n & BITMAP_WMASK);
+	أرجع 0;
 }
 
 /* Resets b->top to point to the most significant bit set in b->d */
-static void
-retop(struct bitmap *b)
+ساكن فراغ
+retop(بنية bitmap *b)
 {
-	if (b->top >= b->len)
-		return;
-	while (b->top > 0 && b->d[b->top] == 0)
-		b->top--;
+	إذا (b->سر >= b->len)
+		أرجع;
+	طالما (b->سر > 0 && b->d[b->سر] == 0)
+		b->سر--;
 }
 
-void
-bitmap_clear_bit(struct bitmap *b, u_int n)
+فراغ
+bitmap_clear_بټ(بنية bitmap *b, u_int n)
 {
-	size_t offset;
+	اندازه_t دننه_واټن;
 
-	if (b->top >= b->len || n > BITMAP_MAX)
-		return; /* invalid */
-	offset = n / BITMAP_BITS;
-	if (offset > b->top)
-		return;
-	b->d[offset] &= ~((BITMAP_WTYPE)1 << (n & BITMAP_WMASK));
+	إذا (b->سر >= b->len || n > BITMAP_MAX)
+		أرجع; /* invalid */
+	دننه_واټن = n / BITMAP_بټونه;
+	إذا (دننه_واټن > b->سر)
+		أرجع;
+	b->d[دننه_واټن] &= ~((BITMAP_WTYPE)1 << (n & BITMAP_WMASK));
 	/* The top may have changed as a result of the clear */
 	retop(b);
 }
 
-size_t
-bitmap_nbits(struct bitmap *b)
+اندازه_t
+bitmap_nbits(بنية bitmap *b)
 {
-	size_t bits;
+	اندازه_t بټونه;
 	BITMAP_WTYPE w;
 
 	retop(b);
-	if (b->top >= b->len)
-		return 0; /* invalid */
-	if (b->len == 0 || (b->top == 0 && b->d[0] == 0))
-		return 0;
+	إذا (b->سر >= b->len)
+		أرجع 0; /* invalid */
+	إذا (b->len == 0 || (b->سر == 0 && b->d[0] == 0))
+		أرجع 0;
 	/* Find MSB set */
-	w = b->d[b->top];
-	bits = (b->top + 1) * BITMAP_BITS;
-	while (!(w & ((BITMAP_WTYPE)1 << (BITMAP_BITS - 1)))) {
+	w = b->d[b->سر];
+	بټونه = (b->سر + 1) * BITMAP_بټونه;
+	طالما (!(w & ((BITMAP_WTYPE)1 << (BITMAP_بټونه - 1)))) {
 		w <<= 1;
-		bits--;
+		بټونه--;
 	}
-	return bits;
+	أرجع بټونه;
 }
 
-size_t
-bitmap_nbytes(struct bitmap *b)
+اندازه_t
+bitmap_nbytes(بنية bitmap *b)
 {
-	return (bitmap_nbits(b) + 7) / 8;
+	أرجع (bitmap_nbits(b) + 7) / 8;
 }
 
-int
-bitmap_to_string(struct bitmap *b, void *p, size_t l)
+صحيح
+bitmap_منزل_string(بنية bitmap *b, فراغ *p, اندازه_t l)
 {
 	u_char *s = (u_char *)p;
-	size_t i, j, k, need = bitmap_nbytes(b);
+	اندازه_t i, j, k, need = bitmap_nbytes(b);
 
-	if (l < need || b->top >= b->len)
-		return -1;
-	if (l > need)
+	إذا (l < need || b->سر >= b->len)
+		أرجع -1;
+	إذا (l > need)
 		l = need;
 	/* Put the bytes from LSB backwards */
-	for (i = k = 0; i < b->top + 1; i++) {
-		for (j = 0; j < BITMAP_BYTES; j++) {
-			if (k >= l)
-				break;
+	لكل (i = k = 0; i < b->سر + 1; i++) {
+		لكل (j = 0; j < BITMAP_بایټونه; j++) {
+			إذا (k >= l)
+				اكسر;
 			s[need - 1 - k++] = (b->d[i] >> (j * 8)) & 0xff;
 		}
 	}
-	return 0;
+	أرجع 0;
 }
 
-int
-bitmap_from_string(struct bitmap *b, const void *p, size_t l)
+صحيح
+bitmap_from_string(بنية bitmap *b, ثابت فراغ *p, اندازه_t l)
 {
-	int r;
-	size_t i, offset, shift;
-	const u_char *s = (const u_char *)p;
+	صحيح r;
+	اندازه_t i, دننه_واټن, ښويدنه;
+	ثابت u_char *s = (ثابت u_char *)p;
 
-	if (l > BITMAP_MAX / 8)
-		return -1;
-	if ((r = reserve(b, l * 8)) != 0)
-		return r;
+	إذا (l > BITMAP_MAX / 8)
+		أرجع -1;
+	إذا ((r = reserve(b, l * 8)) != 0)
+		أرجع r;
 	bitmap_zero(b);
-	if (l == 0)
-		return 0;
-	b->top = offset = ((l + (BITMAP_BYTES - 1)) / BITMAP_BYTES) - 1;
-	shift = ((l + (BITMAP_BYTES - 1)) % BITMAP_BYTES) * 8;
-	for (i = 0; i < l; i++) {
-		b->d[offset] |= (BITMAP_WTYPE)s[i] << shift;
-		if (shift == 0) {
-			offset--;
-			shift = BITMAP_BITS - 8;
-		} else
-			shift -= 8;
+	إذا (l == 0)
+		أرجع 0;
+	b->سر = دننه_واټن = ((l + (BITMAP_بایټونه - 1)) / BITMAP_بایټونه) - 1;
+	ښويدنه = ((l + (BITMAP_بایټونه - 1)) % BITMAP_بایټونه) * 8;
+	لكل (i = 0; i < l; i++) {
+		b->d[دننه_واټن] |= (BITMAP_WTYPE)s[i] << ښويدنه;
+		إذا (ښويدنه == 0) {
+			دننه_واټن--;
+			ښويدنه = BITMAP_بټونه - 8;
+		} وإلا
+			ښويدنه -= 8;
 	}
 	retop(b);
-	return 0;
+	أرجع 0;
 }

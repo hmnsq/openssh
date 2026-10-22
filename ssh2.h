@@ -58,123 +58,123 @@
 
 /* special marker for no message */
 
-#define SSH_MSG_NONE					0
+#تعریف_کړه SSH_پیغام_NONE					0
 
 /* ranges */
 
-#define SSH2_MSG_TRANSPORT_MIN				1
-#define SSH2_MSG_TRANSPORT_MAX				49
-#define SSH2_MSG_USERAUTH_MIN				50
-#define SSH2_MSG_USERAUTH_MAX				79
-#define SSH2_MSG_USERAUTH_PER_METHOD_MIN		60
-#define SSH2_MSG_USERAUTH_PER_METHOD_MAX		SSH2_MSG_USERAUTH_MAX
-#define SSH2_MSG_CONNECTION_MIN				80
-#define SSH2_MSG_CONNECTION_MAX				127
-#define SSH2_MSG_RESERVED_MIN				128
-#define SSH2_MSG_RESERVED_MAX				191
-#define SSH2_MSG_LOCAL_MIN				192
-#define SSH2_MSG_LOCAL_MAX				255
-#define SSH2_MSG_MIN					1
-#define SSH2_MSG_MAX					255
+#تعریف_کړه SSH2_پیغام_TRANSPORT_MIN				1
+#تعریف_کړه SSH2_پیغام_TRANSPORT_MAX				49
+#تعریف_کړه SSH2_پیغام_USERAUTH_MIN				50
+#تعریف_کړه SSH2_پیغام_USERAUTH_MAX				79
+#تعریف_کړه SSH2_پیغام_USERAUTH_فی_لاره_MIN		60
+#تعریف_کړه SSH2_پیغام_USERAUTH_فی_لاره_MAX		SSH2_پیغام_USERAUTH_MAX
+#تعریف_کړه SSH2_پیغام_CONNECTION_MIN				80
+#تعریف_کړه SSH2_پیغام_CONNECTION_MAX				127
+#تعریف_کړه SSH2_پیغام_RESERVED_MIN				128
+#تعریف_کړه SSH2_پیغام_RESERVED_MAX				191
+#تعریف_کړه SSH2_پیغام_LOCAL_MIN				192
+#تعریف_کړه SSH2_پیغام_LOCAL_MAX				255
+#تعریف_کړه SSH2_پیغام_MIN					1
+#تعریف_کړه SSH2_پیغام_MAX					255
 
 /* transport layer: generic */
 
-#define SSH2_MSG_DISCONNECT				1
-#define SSH2_MSG_IGNORE					2
-#define SSH2_MSG_UNIMPLEMENTED				3
-#define SSH2_MSG_DEBUG					4
-#define SSH2_MSG_SERVICE_REQUEST			5
-#define SSH2_MSG_SERVICE_ACCEPT				6
-#define SSH2_MSG_EXT_INFO				7
-#define SSH2_MSG_NEWCOMPRESS				8
+#تعریف_کړه SSH2_پیغام_DISCONNECT				1
+#تعریف_کړه SSH2_پیغام_IGNORE					2
+#تعریف_کړه SSH2_پیغام_UNIMPLEMENTED				3
+#تعریف_کړه SSH2_پیغام_DEBUG					4
+#تعریف_کړه SSH2_پیغام_SERVICE_REQUEST			5
+#تعریف_کړه SSH2_پیغام_SERVICE_ACCEPT				6
+#تعریف_کړه SSH2_پیغام_EXT_INFO				7
+#تعریف_کړه SSH2_پیغام_NEWCOMPRESS				8
 
 /* transport layer: alg negotiation */
 
-#define SSH2_MSG_KEXINIT				20
-#define SSH2_MSG_NEWKEYS				21
+#تعریف_کړه SSH2_پیغام_KEXINIT				20
+#تعریف_کړه SSH2_پیغام_NEWKEYS				21
 
 /* transport layer: kex specific messages, can be reused */
 
-#define SSH2_MSG_KEXDH_INIT				30
-#define SSH2_MSG_KEXDH_REPLY				31
+#تعریف_کړه SSH2_پیغام_KEXDH_INIT				30
+#تعریف_کړه SSH2_پیغام_KEXDH_ځواب				31
 
 /* dh-group-exchange */
-#define SSH2_MSG_KEX_DH_GEX_REQUEST_OLD			30
-#define SSH2_MSG_KEX_DH_GEX_GROUP			31
-#define SSH2_MSG_KEX_DH_GEX_INIT			32
-#define SSH2_MSG_KEX_DH_GEX_REPLY			33
-#define SSH2_MSG_KEX_DH_GEX_REQUEST			34
+#تعریف_کړه SSH2_پیغام_KEX_DH_GEX_REQUEST_OLD			30
+#تعریف_کړه SSH2_پیغام_KEX_DH_GEX_ډله			31
+#تعریف_کړه SSH2_پیغام_KEX_DH_GEX_INIT			32
+#تعریف_کړه SSH2_پیغام_KEX_DH_GEX_ځواب			33
+#تعریف_کړه SSH2_پیغام_KEX_DH_GEX_REQUEST			34
 
 /* ecdh */
-#define SSH2_MSG_KEX_ECDH_INIT				30
-#define SSH2_MSG_KEX_ECDH_REPLY				31
+#تعریف_کړه SSH2_پیغام_KEX_ECDH_INIT				30
+#تعریف_کړه SSH2_پیغام_KEX_ECDH_ځواب				31
 
 /* transport layer: OpenSSH extensions */
-#define SSH2_MSG_PING					192
-#define SSH2_MSG_PONG					193
+#تعریف_کړه SSH2_پیغام_PING					192
+#تعریف_کړه SSH2_پیغام_PONG					193
 
 /* user authentication: generic */
 
-#define SSH2_MSG_USERAUTH_REQUEST			50
-#define SSH2_MSG_USERAUTH_FAILURE			51
-#define SSH2_MSG_USERAUTH_SUCCESS			52
-#define SSH2_MSG_USERAUTH_BANNER			53
+#تعریف_کړه SSH2_پیغام_USERAUTH_REQUEST			50
+#تعریف_کړه SSH2_پیغام_USERAUTH_FAILURE			51
+#تعریف_کړه SSH2_پیغام_USERAUTH_SUCCESS			52
+#تعریف_کړه SSH2_پیغام_USERAUTH_BANNER			53
 
 /* user authentication: method specific, can be reused */
 
-#define SSH2_MSG_USERAUTH_PK_OK				60
-#define SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ		60
-#define SSH2_MSG_USERAUTH_INFO_REQUEST			60
-#define SSH2_MSG_USERAUTH_INFO_RESPONSE			61
+#تعریف_کړه SSH2_پیغام_USERAUTH_PK_OK				60
+#تعریف_کړه SSH2_پیغام_USERAUTH_PASSWD_CHANGEREQ		60
+#تعریف_کړه SSH2_پیغام_USERAUTH_INFO_REQUEST			60
+#تعریف_کړه SSH2_پیغام_USERAUTH_INFO_RESPONSE			61
 
 /* connection protocol: generic */
 
-#define SSH2_MSG_GLOBAL_REQUEST				80
-#define SSH2_MSG_REQUEST_SUCCESS			81
-#define SSH2_MSG_REQUEST_FAILURE			82
+#تعریف_کړه SSH2_پیغام_GLOBAL_REQUEST				80
+#تعریف_کړه SSH2_پیغام_REQUEST_SUCCESS			81
+#تعریف_کړه SSH2_پیغام_REQUEST_FAILURE			82
 
 /* channel related messages */
 
-#define SSH2_MSG_CHANNEL_OPEN				90
-#define SSH2_MSG_CHANNEL_OPEN_CONFIRMATION		91
-#define SSH2_MSG_CHANNEL_OPEN_FAILURE			92
-#define SSH2_MSG_CHANNEL_WINDOW_ADJUST			93
-#define SSH2_MSG_CHANNEL_DATA				94
-#define SSH2_MSG_CHANNEL_EXTENDED_DATA			95
-#define SSH2_MSG_CHANNEL_EOF				96
-#define SSH2_MSG_CHANNEL_CLOSE				97
-#define SSH2_MSG_CHANNEL_REQUEST			98
-#define SSH2_MSG_CHANNEL_SUCCESS			99
-#define SSH2_MSG_CHANNEL_FAILURE			100
+#تعریف_کړه SSH2_پیغام_CHANNEL_OPEN				90
+#تعریف_کړه SSH2_پیغام_CHANNEL_OPEN_CONFIRMATION		91
+#تعریف_کړه SSH2_پیغام_CHANNEL_OPEN_FAILURE			92
+#تعریف_کړه SSH2_پیغام_CHANNEL_کړکۍ_ADJUST			93
+#تعریف_کړه SSH2_پیغام_CHANNEL_معلومات				94
+#تعریف_کړه SSH2_پیغام_CHANNEL_EXTENDED_معلومات			95
+#تعریف_کړه SSH2_پیغام_CHANNEL_EOF				96
+#تعریف_کړه SSH2_پیغام_CHANNEL_CLOSE				97
+#تعریف_کړه SSH2_پیغام_CHANNEL_REQUEST			98
+#تعریف_کړه SSH2_پیغام_CHANNEL_SUCCESS			99
+#تعریف_کړه SSH2_پیغام_CHANNEL_FAILURE			100
 
 /* disconnect reason code */
 
-#define SSH2_DISCONNECT_HOST_NOT_ALLOWED_TO_CONNECT	1
-#define SSH2_DISCONNECT_PROTOCOL_ERROR			2
-#define SSH2_DISCONNECT_KEY_EXCHANGE_FAILED		3
-#define SSH2_DISCONNECT_HOST_AUTHENTICATION_FAILED	4
-#define SSH2_DISCONNECT_RESERVED			4
-#define SSH2_DISCONNECT_MAC_ERROR			5
-#define SSH2_DISCONNECT_COMPRESSION_ERROR		6
-#define SSH2_DISCONNECT_SERVICE_NOT_AVAILABLE		7
-#define SSH2_DISCONNECT_PROTOCOL_VERSION_NOT_SUPPORTED	8
-#define SSH2_DISCONNECT_HOST_KEY_NOT_VERIFIABLE		9
-#define SSH2_DISCONNECT_CONNECTION_LOST			10
-#define SSH2_DISCONNECT_BY_APPLICATION			11
-#define SSH2_DISCONNECT_TOO_MANY_CONNECTIONS		12
-#define SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER		13
-#define SSH2_DISCONNECT_NO_MORE_AUTH_METHODS_AVAILABLE	14
-#define SSH2_DISCONNECT_ILLEGAL_USER_NAME		15
+#تعریف_کړه SSH2_DISCONNECT_HOST_NOT_ALLOWED_منزل_CONNECT	1
+#تعریف_کړه SSH2_DISCONNECT_PROTOCOL_ERROR			2
+#تعریف_کړه SSH2_DISCONNECT_کلی_EXCHANGE_FAILED		3
+#تعریف_کړه SSH2_DISCONNECT_HOST_AUTHENTICATION_FAILED	4
+#تعریف_کړه SSH2_DISCONNECT_RESERVED			4
+#تعریف_کړه SSH2_DISCONNECT_MAC_ERROR			5
+#تعریف_کړه SSH2_DISCONNECT_COMPRESSION_ERROR		6
+#تعریف_کړه SSH2_DISCONNECT_SERVICE_NOT_شته		7
+#تعریف_کړه SSH2_DISCONNECT_PROTOCOL_نسخه_NOT_SUPPORTED	8
+#تعریف_کړه SSH2_DISCONNECT_HOST_کلی_NOT_VERIFIABLE		9
+#تعریف_کړه SSH2_DISCONNECT_CONNECTION_ورک			10
+#تعریف_کړه SSH2_DISCONNECT_BY_APPLICATION			11
+#تعریف_کړه SSH2_DISCONNECT_TOO_MANY_CONNECTIONS		12
+#تعریف_کړه SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER		13
+#تعریف_کړه SSH2_DISCONNECT_NO_نور_AUTH_METHODS_شته	14
+#تعریف_کړه SSH2_DISCONNECT_ILLEGAL_USER_NAME		15
 
 /* misc */
 
-#define SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED		1
-#define SSH2_OPEN_CONNECT_FAILED			2
-#define SSH2_OPEN_UNKNOWN_CHANNEL_TYPE			3
-#define SSH2_OPEN_RESOURCE_SHORTAGE			4
+#تعریف_کړه SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED		1
+#تعریف_کړه SSH2_OPEN_CONNECT_FAILED			2
+#تعریف_کړه SSH2_OPEN_UNKNOWN_CHANNEL_TYPE			3
+#تعریف_کړه SSH2_OPEN_RESOURCE_SHORTAGE			4
 
-#define SSH2_EXTENDED_DATA_STDERR			1
+#تعریف_کړه SSH2_EXTENDED_معلومات_STDERR			1
 
 /* Certificate types for OpenSSH certificate keys extension */
-#define SSH2_CERT_TYPE_USER				1
-#define SSH2_CERT_TYPE_HOST				2
+#تعریف_کړه SSH2_CERT_TYPE_USER				1
+#تعریف_کړه SSH2_CERT_TYPE_HOST				2
