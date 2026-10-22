@@ -16,9 +16,9 @@
 #ifndef SERVCONF_H
 #define SERVCONF_H
 
-#include <sys/queue.h>
+#ضمن <sys/queue.h>
 
-struct sshbuf;
+بنية sshbuf;
 
 #define MAX_PORTS		256	/* Max # ports. */
 
@@ -53,7 +53,7 @@ struct sshbuf;
 #define SSHD_DEFAULT_X11_DISPLAY_OFFSET	10
 #ifdef WITH_ZLIB
 #define SSHD_DEFAULT_COMPRESSION	COMP_DELAYED
-#else
+#وإلا
 #define SSHD_DEFAULT_COMPRESSION	COMP_NONE
 #endif
 
@@ -62,41 +62,41 @@ struct sshbuf;
 #define SSH_KEEPALIVES_TRANSPORT	1
 #define SSH_KEEPALIVES_ALL		2
 
-struct ssh;
+بنية ssh;
 
 /*
  * Used to store addresses from ListenAddr directives. These may be
  * incomplete, as they may specify addresses that need to be merged
  * with any ports requested by ListenPort.
  */
-struct queued_listenaddr {
-	char *addr;
-	int port; /* <=0 if unspecified */
-	char *rdomain;
+بنية queued_listenaddr {
+	حرف *addr;
+	صحيح port; /* <=0 if unspecified */
+	حرف *rdomain;
 };
 
 /* Resolved listen addresses, grouped by optional routing domain */
-struct listenaddr {
-	char *rdomain;
-	struct addrinfo *addrs;
+بنية listenaddr {
+	حرف *rdomain;
+	بنية addrinfo *addrs;
 };
 
 #define PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL	1
 #define PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE	2
-struct per_source_penalty {
-	int	enabled;
-	int	max_sources4;
-	int	max_sources6;
-	int	overflow_mode;
-	int	overflow_mode6;
-	double	penalty_crash;
-	double	penalty_grace;
-	double	penalty_authfail;
-	double	penalty_invaliduser;
-	double	penalty_noauth;
-	double	penalty_refuseconnection;
-	double	penalty_max;
-	double	penalty_min;
+بنية per_source_penalty {
+	صحيح	enabled;
+	صحيح	max_sources4;
+	صحيح	max_sources6;
+	صحيح	overflow_mode;
+	صحيح	overflow_mode6;
+	مزدوج	penalty_crash;
+	مزدوج	penalty_grace;
+	مزدوج	penalty_authfail;
+	مزدوج	penalty_invaliduser;
+	مزدوج	penalty_noauth;
+	مزدوج	penalty_refuseconnection;
+	مزدوج	penalty_max;
+	مزدوج	penalty_min;
 };
 
 /* Options for whether config entries are copied after Match processing */
@@ -171,13 +171,13 @@ SSHCONF_STRARRAY(host_cert_files, num_host_cert_files, HostCertificate, SSHCFG_G
 SSHCONF_STRING(host_key_agent, HostKeyAgent, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(pid_file, PidFile, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(moduli_file, ModuliFile, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
-SSHCONF_INT(login_grace_time, LoginGraceTime, SSHCFG_GLOBAL, NULL, SSHD_DEFAULT_LOGIN_GRACE_TIME, SSHCFG_COPY_NONE) \
+SSHCONF_INT(login_grace_time, LoginGraceTime, SSHCFG_GLOBAL, عدم, SSHD_DEFAULT_LOGIN_GRACE_TIME, SSHCFG_COPY_NONE) \
 SSHCONF_INT(permit_root_login, PermitRootLogin, SSHCFG_ALL, multistate_permitrootlogin, PERMIT_NO_PASSWD, SSHCFG_COPY_MATCH) \
 SSHCONF_INT(ignore_rhosts, IgnoreRhosts, SSHCFG_ALL, multistate_ignore_rhosts, 1, SSHCFG_COPY_MATCH) \
 SSHCONF_INTFLAG(ignore_user_known_hosts, IgnoreUserKnownHosts, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(print_motd, PrintMotd, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(x11_forwarding, X11Forwarding, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
-SSHCONF_INT(x11_display_offset, X11DisplayOffset, SSHCFG_ALL, NULL, SSHD_DEFAULT_X11_DISPLAY_OFFSET, SSHCFG_COPY_MATCH) \
+SSHCONF_INT(x11_display_offset, X11DisplayOffset, SSHCFG_ALL, عدم, SSHD_DEFAULT_X11_DISPLAY_OFFSET, SSHCFG_COPY_MATCH) \
 SSHCONF_INTFLAG(x11_use_localhost, X11UseLocalhost, SSHCFG_ALL, 1, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(xauth_location, XAuthLocation, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(permit_tty, PermitTTY, SSHCFG_ALL, 1, SSHCFG_COPY_MATCH) \
@@ -209,14 +209,14 @@ SSHCONF_STRARRAY(allow_groups, num_allow_groups, AllowGroups, SSHCFG_ALL, SSHCFG
 SSHCONF_STRARRAY(deny_groups, num_deny_groups, DenyGroups, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_STRARRAY(accept_env, num_accept_env, AcceptEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_STRARRAY(setenv, num_setenv, SetEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
-SSHCONF_INT(per_source_max_startups, PerSourceMaxStartups, SSHCFG_GLOBAL, NULL, INT_MAX, SSHCFG_COPY_NONE) \
+SSHCONF_INT(per_source_max_startups, PerSourceMaxStartups, SSHCFG_GLOBAL, عدم, INT_MAX, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(per_source_penalty_exempt, PerSourcePenaltyExemptList, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
-SSHCONF_INT(max_authtries, MaxAuthTries, SSHCFG_ALL, NULL, DEFAULT_AUTH_FAIL_MAX, SSHCFG_COPY_MATCH) \
-SSHCONF_INT(max_sessions, MaxSessions, SSHCFG_ALL, NULL, DEFAULT_SESSIONS_MAX, SSHCFG_COPY_MATCH) \
+SSHCONF_INT(max_authtries, MaxAuthTries, SSHCFG_ALL, عدم, DEFAULT_AUTH_FAIL_MAX, SSHCFG_COPY_MATCH) \
+SSHCONF_INT(max_sessions, MaxSessions, SSHCFG_ALL, عدم, DEFAULT_SESSIONS_MAX, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(banner, Banner, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_INTFLAG(use_dns, UseDNS, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE) \
-SSHCONF_INT(client_alive_interval, ClientAliveInterval, SSHCFG_ALL, NULL, 0, SSHCFG_COPY_MATCH) \
-SSHCONF_INT(client_alive_count_max, ClientAliveCountMax, SSHCFG_ALL, NULL, 3, SSHCFG_COPY_MATCH) \
+SSHCONF_INT(client_alive_interval, ClientAliveInterval, SSHCFG_ALL, عدم, 0, SSHCFG_COPY_MATCH) \
+SSHCONF_INT(client_alive_count_max, ClientAliveCountMax, SSHCFG_ALL, عدم, 3, SSHCFG_COPY_MATCH) \
 SSHCONF_STRARRAY(authorized_keys_files, num_authkeys_files, AuthorizedKeysFile, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(adm_forced_command, ForceCommand, SSHCFG_ALL, SSHCFG_COPY_MANUAL) \
 SSHCONF_INTFLAG(permit_tun, PermitTunnel, SSHCFG_ALL, SSH_TUNMODE_NO, SSHCFG_COPY_MATCH) \
@@ -232,12 +232,12 @@ SSHCONF_STRING(authorized_principals_command, AuthorizedPrincipalsCommand, SSHCF
 SSHCONF_STRING(authorized_principals_command_user, AuthorizedPrincipalsCommandUser, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(version_addendum, VersionAddendum, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_STRARRAY(auth_methods, num_auth_methods, AuthenticationMethods, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
-SSHCONF_INT(fingerprint_hash, FingerprintHash, SSHCFG_GLOBAL, NULL, SSH_FP_HASH_DEFAULT, SSHCFG_COPY_NONE) \
+SSHCONF_INT(fingerprint_hash, FingerprintHash, SSHCFG_GLOBAL, عدم, SSH_FP_HASH_DEFAULT, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(expose_userauth_info, ExposeAuthInfo, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(sk_provider, SecurityKeyProvider, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
-SSHCONF_INT(required_rsa_size, RequiredRSASize, SSHCFG_ALL, NULL, SSH_RSA_MINIMUM_MODULUS_SIZE, SSHCFG_COPY_MATCH) \
+SSHCONF_INT(required_rsa_size, RequiredRSASize, SSHCFG_ALL, عدم, SSH_RSA_MINIMUM_MODULUS_SIZE, SSHCFG_COPY_MATCH) \
 SSHCONF_STRARRAY(channel_timeouts, num_channel_timeouts, ChannelTimeout, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
-SSHCONF_INT(unused_connection_timeout, UnusedConnectionTimeout, SSHCFG_ALL, NULL, 0, SSHCFG_COPY_MATCH) \
+SSHCONF_INT(unused_connection_timeout, UnusedConnectionTimeout, SSHCFG_ALL, عدم, 0, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(sshd_session_path, SshdSessionPath, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(sshd_auth_path, SshdAuthPath, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(refuse_connection, RefuseConnection, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
@@ -281,7 +281,7 @@ SSHCONF_ALIAS(KeepAlive, TCPKeepAlive, SSHCFG_GLOBAL)
 #define SSHD_CONFIG_ENTRIES_PAM \
 SSHCONF_INTFLAG(use_pam, UsePAM, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_MATCH)
-#else
+#وإلا
 #define SSHD_CONFIG_ENTRIES_PAM \
 SSHCONF_UNSUPPORTED_INT(use_pam, UsePAM, SSHCFG_GLOBAL) \
 SSHCONF_UNSUPPORTED_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL)
@@ -290,7 +290,7 @@ SSHCONF_UNSUPPORTED_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL)
 #ifdef DISABLE_LASTLOG
 #define SSHD_CONFIG_ENTRIES_LASTLOG \
 SSHCONF_UNSUPPORTED_INT(print_lastlog, PrintLastLog, SSHCFG_GLOBAL)
-#else
+#وإلا
 #define SSHD_CONFIG_ENTRIES_LASTLOG \
 SSHCONF_INTFLAG(print_lastlog, PrintLastLog, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
 #endif
@@ -301,7 +301,7 @@ SSHCONF_INTFLAG(print_lastlog, PrintLastLog, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
 #ifdef USE_AFS
 #define SSHD_CONFIG_KRB5_AFS \
 SSHCONF_INTFLAG(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE)
-#else /* USE_AFS */
+#وإلا /* USE_AFS */
 #define SSHD_CONFIG_KRB5_AFS \
 SSHCONF_UNSUPPORTED_INT(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOBAL)
 #endif /* USE_AFS */
@@ -311,7 +311,7 @@ SSHCONF_INTFLAG(kerberos_authentication, KerberosAuthentication, SSHCFG_ALL, 0, 
 SSHCONF_INTFLAG(kerberos_or_local_passwd, KerberosOrLocalPasswd, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(kerberos_ticket_cleanup, KerberosTicketCleanup, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
 SSHD_CONFIG_KRB5_AFS
-#else /* KRB5 */
+#وإلا /* KRB5 */
 #define SSHD_CONFIG_ENTRIES_KRB5 \
 SSHCONF_UNSUPPORTED_INT(kerberos_authentication, KerberosAuthentication, SSHCFG_ALL) \
 SSHCONF_UNSUPPORTED_INT(kerberos_or_local_passwd, KerberosOrLocalPasswd, SSHCFG_GLOBAL) \
@@ -325,7 +325,7 @@ SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 0, SSHCFG_
 SSHCONF_INTFLAG(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
-#else /* GSSAPI */
+#وإلا /* GSSAPI */
 #define SSHD_CONFIG_ENTRIES_GSS \
 SSHCONF_UNSUPPORTED_INT(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL) \
 SSHCONF_UNSUPPORTED_INT(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL) \
@@ -339,66 +339,66 @@ SSHCONF_UNSUPPORTED_INT(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_G
 	SSHD_CONFIG_ENTRIES_GSS \
 
 /* Macros to declare ServerOptions member variables */
-#define SSHCONF_INT(var, conf, flags, ms, def, cp)	int var;
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp)	int var;
-#define SSHCONF_STRING(var, conf, flags, cp)		char *var;
+#define SSHCONF_INT(var, conf, flags, ms, def, cp)	صحيح var;
+#define SSHCONF_INTFLAG(var, conf, flags, def, cp)	صحيح var;
+#define SSHCONF_STRING(var, conf, flags, cp)		حرف *var;
 #define SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	\
-	char **var; \
+	حرف **var; \
 	u_int nvar;
 #define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	/* empty */
 #define SSHCONF_NONCONF(funcsuffix)			/* empty */
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	int var;
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	char *var;
+#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	صحيح var;
+#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	حرف *var;
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
-typedef struct ServerOptions {
+تعريفنوع بنية ServerOptions {
 	SSHD_CONFIG_ENTRIES
 	/* Ports */
 	u_int	num_ports;
 	u_int	ports_from_cmdline;
-	int	ports[MAX_PORTS];	/* Port number to listen on. */
+	صحيح	ports[MAX_PORTS];	/* Port number to listen on. */
 	/* ListenAddress */
-	struct queued_listenaddr *queued_listen_addrs;
+	بنية queued_listenaddr *queued_listen_addrs;
 	u_int	num_queued_listens;
-	struct listenaddr *listen_addrs;
+	بنية listenaddr *listen_addrs;
 	u_int	num_listen_addrs;
 	/* HostKey */
-	char   **host_key_files;	/* Files containing host keys. */
-	int	*host_key_file_userprovided; /* Key was specified by user. */
+	حرف   **host_key_files;	/* Files containing host keys. */
+	صحيح	*host_key_file_userprovided; /* Key was specified by user. */
 	u_int	num_host_key_files;     /* Number of files for host keys. */
 	/* IPQoS */
-	int	ip_qos_interactive;	/* IP ToS/DSCP/class for interactive */
-	int	ip_qos_bulk;		/* IP ToS/DSCP/class for bulk traffic */
+	صحيح	ip_qos_interactive;	/* IP ToS/DSCP/class for interactive */
+	صحيح	ip_qos_bulk;		/* IP ToS/DSCP/class for bulk traffic */
 	/* GatewayPorts, StreamLocalBindMask, StreamLocalBindUnlink */
-	struct ForwardOptions fwd_opts;	/* forwarding options */
+	بنية ForwardOptions fwd_opts;	/* forwarding options */
 	/* LogFacility */
 	SyslogFacility log_facility;	/* Facility for system logging. */
 	/* LogLevel */
 	LogLevel log_level;	/* Level for system logging. */
 	/* PermitUserEnvironment */
-	int     permit_user_env;	/* If true, read ~/.ssh/environment */
-	char   *permit_user_env_allowlist; /* pattern-list of allowed env names */
+	صحيح     permit_user_env;	/* If true, read ~/.ssh/environment */
+	حرف   *permit_user_env_allowlist; /* pattern-list of allowed env names */
 	/* Subsystem */
 	u_int num_subsystems;
-	char   **subsystem_name;
-	char   **subsystem_command;
-	char   **subsystem_args;
+	حرف   **subsystem_name;
+	حرف   **subsystem_command;
+	حرف   **subsystem_args;
 	/* MaxStartups */
-	int	max_startups_begin;
-	int	max_startups_rate;
-	int	max_startups;
+	صحيح	max_startups_begin;
+	صحيح	max_startups_rate;
+	صحيح	max_startups;
 	/* PerSourceNetBlockSize */
-	int	per_source_masklen_ipv4;
-	int	per_source_masklen_ipv6;
+	صحيح	per_source_masklen_ipv4;
+	صحيح	per_source_masklen_ipv6;
 	/* PerSourcePenalties */
-	struct per_source_penalty per_source_penalty;
+	بنية per_source_penalty per_source_penalty;
 	/* RekeyLimit */
 	int64_t rekey_limit;
-	int	rekey_interval;
+	صحيح	rekey_interval;
 	/* PubkeyAuthOptions */
-	int	pubkey_auth_options;
-	int	max_pubkey_ok;
+	صحيح	pubkey_auth_options;
+	صحيح	max_pubkey_ok;
 	/* Passed by config but not keyword for this */
 	uint64_t timing_secret;
 }       ServerOptions;
@@ -414,48 +414,48 @@ typedef struct ServerOptions {
 #undef SSHCONF_ALIAS
 
 /* Information about the incoming connection as used by Match */
-struct connection_info {
-	const char *user;
-	int user_invalid;
-	const char *host;	/* possibly resolved hostname */
-	const char *address;	/* remote address */
-	const char *laddress;	/* local address */
-	int lport;		/* local port */
-	const char *rdomain;	/* routing domain if available */
-	int test;		/* test mode, allow some attributes to be
+بنية connection_info {
+	ثابت حرف *user;
+	صحيح user_invalid;
+	ثابت حرف *host;	/* possibly resolved hostname */
+	ثابت حرف *address;	/* remote address */
+	ثابت حرف *laddress;	/* local address */
+	صحيح lport;		/* local port */
+	ثابت حرف *rdomain;	/* routing domain if available */
+	صحيح test;		/* test mode, allow some attributes to be
 				 * unspecified */
 };
 
 /* List of included files for re-exec from the parsed configuration */
-struct include_item {
-	char *selector;
-	char *filename;
-	struct sshbuf *contents;
+بنية include_item {
+	حرف *selector;
+	حرف *filename;
+	بنية sshbuf *contents;
 	TAILQ_ENTRY(include_item) entry;
 };
 TAILQ_HEAD(include_list, include_item);
 
-void	 initialize_server_options(ServerOptions *);
-void	 fill_default_server_options(ServerOptions *);
-int	 process_server_config_line(ServerOptions *, char *, const char *, int,
-	    int *, struct connection_info *, struct include_list *includes);
-void	 load_server_config(const char *, struct sshbuf *);
-void	 parse_server_config(ServerOptions *, const char *, struct sshbuf *,
-	    struct include_list *includes, struct connection_info *, int);
-void	 parse_server_match_config(ServerOptions *,
-	    struct include_list *includes, struct connection_info *);
-int	 parse_server_match_testspec(struct connection_info *, char *);
-void	 servconf_merge_subsystems(ServerOptions *, ServerOptions *);
-void	 copy_set_server_options(ServerOptions *, ServerOptions *, int);
-void	 dump_config(ServerOptions *);
-char	*derelativise_path(const char *);
-void	 servconf_add_hostkey(const char *, const int,
-	    ServerOptions *, const char *path, int);
-void	 servconf_add_hostcert(const char *, const int,
-	    ServerOptions *, const char *path);
+فراغ	 initialize_server_options(ServerOptions *);
+فراغ	 fill_default_server_options(ServerOptions *);
+صحيح	 process_server_config_line(ServerOptions *, حرف *, ثابت حرف *, صحيح,
+	    صحيح *, بنية connection_info *, بنية include_list *includes);
+فراغ	 load_server_config(ثابت حرف *, بنية sshbuf *);
+فراغ	 parse_server_config(ServerOptions *, ثابت حرف *, بنية sshbuf *,
+	    بنية include_list *includes, بنية connection_info *, صحيح);
+فراغ	 parse_server_match_config(ServerOptions *,
+	    بنية include_list *includes, بنية connection_info *);
+صحيح	 parse_server_match_testspec(بنية connection_info *, حرف *);
+فراغ	 servconf_merge_subsystems(ServerOptions *, ServerOptions *);
+فراغ	 copy_set_server_options(ServerOptions *, ServerOptions *, صحيح);
+فراغ	 dump_config(ServerOptions *);
+حرف	*derelativise_path(ثابت حرف *);
+فراغ	 servconf_add_hostkey(ثابت حرف *, ثابت صحيح,
+	    ServerOptions *, ثابت حرف *path, صحيح);
+فراغ	 servconf_add_hostcert(ثابت حرف *, ثابت صحيح,
+	    ServerOptions *, ثابت حرف *path);
 
-int	 serialise_server_options(const ServerOptions *, struct sshbuf **);
-int	 deserialise_server_options(struct sshbuf *, ServerOptions *);
-void	 free_server_options(ServerOptions *);
+صحيح	 serialise_server_options(ثابت ServerOptions *, بنية sshbuf **);
+صحيح	 deserialise_server_options(بنية sshbuf *, ServerOptions *);
+فراغ	 free_server_options(ServerOptions *);
 
 #endif				/* SERVCONF_H */

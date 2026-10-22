@@ -17,47 +17,47 @@
 
 /* OPENBSD ORIGINAL: regress/lib/libc/strtonum/strtonumtest.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
+#ضمن <limits.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
 
 /* LLONG_MAX is known as LONGLONG_MAX on AIX */
-#if defined(LONGLONG_MAX) && !defined(LLONG_MAX)
+#𐤀𐤌 defined(LONGLONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONGLONG_MAX
 # define LLONG_MIN LONGLONG_MIN
 #endif
 
 /* LLONG_MAX is known as LONG_LONG_MAX on HP-UX */
-#if defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
+#𐤀𐤌 defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONG_LONG_MAX
 # define LLONG_MIN LONG_LONG_MIN
 #endif
 
-long long strtonum(const char *, long long, long long, const char **);
+long long strtonum(ثابت حرف *, long long, long long, ثابت حرف **);
 
-int fail;
+صحيح fail;
 
-void
-test(const char *p, long long lb, long long ub, int ok)
+فراغ
+test(ثابت حرف *p, long long lb, long long ub, صحيح ok)
 {
 	long long val;
-	const char *q;
+	ثابت حرف *q;
 
 	val = strtonum(p, lb, ub, &q);
-	if (ok && q != NULL) {
+	𐤀𐤌 (ok && q != عدم) {
 		fprintf(stderr, "%s [%lld-%lld] ", p, lb, ub);
 		fprintf(stderr, "NUMBER NOT ACCEPTED %s\n", q);
 		fail = 1;
-	} else if (!ok && q == NULL) {
+	} وإلا 𐤀𐤌 (!ok && q == عدم) {
 		fprintf(stderr, "%s [%lld-%lld] %lld ", p, lb, ub, val);
 		fprintf(stderr, "NUMBER ACCEPTED\n");
 		fail = 1;
 	}
 }
 
-int main(void)
+صحيح main(فراغ)
 {
 	test("1", 0, 10, 1);
 	test("0", -2, 5, 1);
@@ -77,6 +77,6 @@ int main(void)
 	test("-20", -10, -1, 0);
 	test("20", -10, -1, 0);
 
-	return (fail);
+	أرجع (fail);
 }
 

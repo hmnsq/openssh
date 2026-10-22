@@ -14,44 +14,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "config.h"
+#ضمن "config.h"
 #undef malloc
 #undef calloc
 #undef realloc
 
-#include <sys/types.h>
-#include <stdlib.h>
+#ضمن <sys/types.h>
+#ضمن <stdlib.h>
 
-#if defined(HAVE_MALLOC) && HAVE_MALLOC == 0
-void *
+#𐤀𐤌 defined(HAVE_MALLOC) && HAVE_MALLOC == 0
+فراغ *
 rpl_malloc(size_t size)
 {
-	if (size == 0)
+	𐤀𐤌 (size == 0)
 		size = 1;
-	return malloc(size);
+	أرجع malloc(size);
 }
 #endif
 
-#if defined(HAVE_CALLOC) && HAVE_CALLOC == 0
-void *
+#𐤀𐤌 defined(HAVE_CALLOC) && HAVE_CALLOC == 0
+فراغ *
 rpl_calloc(size_t nmemb, size_t size)
 {
-	if (nmemb == 0)
+	𐤀𐤌 (nmemb == 0)
 		nmemb = 1;
-	if (size == 0)
+	𐤀𐤌 (size == 0)
 		size = 1;
-	return calloc(nmemb, size);
+	أرجع calloc(nmemb, size);
 }
 #endif
 
-#if defined (HAVE_REALLOC) && HAVE_REALLOC == 0
-void *
-rpl_realloc(void *ptr, size_t size)
+#𐤀𐤌 defined (HAVE_REALLOC) && HAVE_REALLOC == 0
+فراغ *
+rpl_realloc(فراغ *ptr, size_t size)
 {
-	if (size == 0)
+	𐤀𐤌 (size == 0)
 		size = 1;
-	if (ptr == 0)
-		return malloc(size);
-	return realloc(ptr, size);
+	𐤀𐤌 (ptr == 0)
+		أرجع malloc(size);
+	أرجع realloc(ptr, size);
 }
 #endif

@@ -4,12 +4,12 @@
  * poly1305-donna-unrolled.c from https://github.com/floodyberry/poly1305-donna
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdint.h>
+#ضمن <sys/types.h>
+#ضمن <stdint.h>
 
-#include "poly1305.h"
+#ضمن "poly1305.h"
 
 #define mul32x32_64(a,b) ((uint64_t)(a) * (b))
 
@@ -20,15 +20,15 @@
 	 ((uint32_t)((p)[3]) << 24))
 
 #define U32TO8_LE(p, v) \
-	do { \
+	𐤐𐤏𐤋 { \
 		(p)[0] = (uint8_t)((v)); \
 		(p)[1] = (uint8_t)((v) >>  8); \
 		(p)[2] = (uint8_t)((v) >> 16); \
 		(p)[3] = (uint8_t)((v) >> 24); \
-	} while (0)
+	} طالما (0)
 
-void
-poly1305_auth(unsigned char out[POLY1305_TAGLEN], const unsigned char *m, size_t inlen, const unsigned char key[POLY1305_KEYLEN]) {
+فراغ
+poly1305_auth(unsigned حرف out[POLY1305_TAGLEN], ثابت unsigned حرف *m, size_t inlen, ثابت unsigned حرف key[POLY1305_KEYLEN]) {
 	uint32_t t0,t1,t2,t3;
 	uint32_t h0,h1,h2,h3,h4;
 	uint32_t r0,r1,r2,r3,r4;
@@ -39,7 +39,7 @@ poly1305_auth(unsigned char out[POLY1305_TAGLEN], const unsigned char *m, size_t
 	uint64_t f0,f1,f2,f3;
 	uint32_t g0,g1,g2,g3,g4;
 	uint64_t c;
-	unsigned char mp[16];
+	unsigned حرف mp[16];
 
 	/* clamp key */
 	t0 = U8TO32_LE(key+0);
@@ -67,7 +67,7 @@ poly1305_auth(unsigned char out[POLY1305_TAGLEN], const unsigned char *m, size_t
 	h4 = 0;
 
 	/* full blocks */
-	if (inlen < 16) goto poly1305_donna_atmost15bytes;
+	𐤀𐤌 (inlen < 16) اذهب poly1305_donna_atmost15bytes;
 poly1305_donna_16bytes:
 	m += 16;
 	inlen -= 16;
@@ -98,15 +98,15 @@ poly1305_donna_mul:
 	t[4] += b;      h4 = (uint32_t)t[4] & 0x3ffffff; b = (uint32_t)(t[4] >> 26);
 	h0 += b * 5;
 
-	if (inlen >= 16) goto poly1305_donna_16bytes;
+	𐤀𐤌 (inlen >= 16) اذهب poly1305_donna_16bytes;
 
 	/* final bytes */
 poly1305_donna_atmost15bytes:
-	if (!inlen) goto poly1305_donna_finish;
+	𐤀𐤌 (!inlen) اذهب poly1305_donna_finish;
 
-	for (j = 0; j < inlen; j++) mp[j] = m[j];
+	لكل (j = 0; j < inlen; j++) mp[j] = m[j];
 	mp[j++] = 1;
-	for (; j < 16; j++)	mp[j] = 0;
+	لكل (; j < 16; j++)	mp[j] = 0;
 	inlen = 0;
 
 	t0 = U8TO32_LE(mp+0);
@@ -120,7 +120,7 @@ poly1305_donna_atmost15bytes:
 	h3 += ((((uint64_t)t3 << 32) | t2) >> 14) & 0x3ffffff;
 	h4 += (t3 >> 8);
 
-	goto poly1305_donna_mul;
+	اذهب poly1305_donna_mul;
 
 poly1305_donna_finish:
 	             b = h0 >> 26; h0 = h0 & 0x3ffffff;

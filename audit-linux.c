@@ -25,37 +25,37 @@
  * Red Hat author: Jan F. Chadima <jchadima@redhat.com>
  */
 
-#include "includes.h"
-#if defined(USE_LINUX_AUDIT)
-#include <libaudit.h>
-#include <unistd.h>
-#include <string.h>
+#ضمن "includes.h"
+#𐤀𐤌 defined(USE_LINUX_AUDIT)
+#ضمن <libaudit.h>
+#ضمن <unistd.h>
+#ضمن <string.h>
 
-#include "log.h"
-#include "audit.h"
-#include "canohost.h"
-#include "packet.h"
+#ضمن "log.h"
+#ضمن "audit.h"
+#ضمن "canohost.h"
+#ضمن "packet.h"
 
-const char *audit_username(void);
+ثابت حرف *audit_username(فراغ);
 
-int
-linux_audit_record_event(int uid, const char *username, const char *hostname,
-    const char *ip, const char *ttyn, int success)
+صحيح
+linux_audit_record_event(صحيح uid, ثابت حرف *username, ثابت حرف *hostname,
+    ثابت حرف *ip, ثابت حرف *ttyn, صحيح success)
 {
-	int audit_fd, rc, saved_errno;
+	صحيح audit_fd, rc, saved_errno;
 
-	if ((audit_fd = audit_open()) < 0) {
-		if (errno == EINVAL || errno == EPROTONOSUPPORT ||
+	𐤀𐤌 ((audit_fd = audit_open()) < 0) {
+		𐤀𐤌 (errno == EINVAL || errno == EPROTONOSUPPORT ||
 		    errno == EAFNOSUPPORT)
-			return 1; /* No audit support in kernel */
-		else
-			return 0; /* Must prevent login */
+			أرجع 1; /* No audit support in kernel */
+		وإلا
+			أرجع 0; /* Must prevent login */
 	}
-        if (hostname != NULL && strcmp(hostname, "UNKNOWN") == 0)
-                hostname = NULL;
+        𐤀𐤌 (hostname != عدم && strcmp(hostname, "UNKNOWN") == 0)
+                hostname = عدم;
 	rc = audit_log_acct_message(audit_fd, AUDIT_USER_LOGIN,
-	    NULL, "login", username ? username : "(unknown)",
-	    username == NULL ? uid : -1, hostname, ip, ttyn, success);
+	    عدم, "login", username ? username : "(unknown)",
+	    username == عدم ? uid : -1, hostname, ip, ttyn, success);
 	saved_errno = errno;
 	close(audit_fd);
 
@@ -63,64 +63,64 @@ linux_audit_record_event(int uid, const char *username, const char *hostname,
 	 * Do not report error if the error is EPERM and sshd is run as non
 	 * root user.
 	 */
-	if ((rc == -EPERM) && (geteuid() != 0))
+	𐤀𐤌 ((rc == -EPERM) && (geteuid() != 0))
 		rc = 0;
 	errno = saved_errno;
 
-	return rc >= 0;
+	أرجع rc >= 0;
 }
 
 /* Below is the sshd audit API code */
 
-void
-audit_connection_from(const char *host, int port)
+فراغ
+audit_connection_from(ثابت حرف *host, صحيح port)
 {
 	/* not implemented */
 }
 
-void
-audit_run_command(const char *command)
+فراغ
+audit_run_command(ثابت حرف *command)
 {
 	/* not implemented */
 }
 
-void
-audit_session_open(struct logininfo *li)
+فراغ
+audit_session_open(بنية logininfo *li)
 {
-	if (linux_audit_record_event(li->uid, NULL, li->hostname, NULL,
+	𐤀𐤌 (linux_audit_record_event(li->uid, عدم, li->hostname, عدم,
 	    li->line, 1) == 0)
 		fatal("linux_audit_write_entry failed: %s", strerror(errno));
 }
 
-void
-audit_session_close(struct logininfo *li)
+فراغ
+audit_session_close(بنية logininfo *li)
 {
 	/* not implemented */
 }
 
-void
-audit_event(struct ssh *ssh, ssh_audit_event_t event)
+فراغ
+audit_event(بنية ssh *ssh, ssh_audit_event_t event)
 {
-	switch(event) {
-	case SSH_AUTH_SUCCESS:
-	case SSH_CONNECTION_CLOSE:
-	case SSH_NOLOGIN:
-	case SSH_LOGIN_EXCEED_MAXTRIES:
-	case SSH_LOGIN_ROOT_DENIED:
-		break;
-	case SSH_AUTH_FAIL_NONE:
-	case SSH_AUTH_FAIL_PASSWD:
-	case SSH_AUTH_FAIL_KBDINT:
-	case SSH_AUTH_FAIL_PUBKEY:
-	case SSH_AUTH_FAIL_HOSTBASED:
-	case SSH_AUTH_FAIL_GSSAPI:
-	case SSH_INVALID_USER:
-		linux_audit_record_event(-1, audit_username(), NULL,
+	بدل(event) {
+	حالة SSH_AUTH_SUCCESS:
+	حالة SSH_CONNECTION_CLOSE:
+	حالة SSH_NOLOGIN:
+	حالة SSH_LOGIN_EXCEED_MAXTRIES:
+	حالة SSH_LOGIN_ROOT_DENIED:
+		اكسر;
+	حالة SSH_AUTH_FAIL_NONE:
+	حالة SSH_AUTH_FAIL_PASSWD:
+	حالة SSH_AUTH_FAIL_KBDINT:
+	حالة SSH_AUTH_FAIL_PUBKEY:
+	حالة SSH_AUTH_FAIL_HOSTBASED:
+	حالة SSH_AUTH_FAIL_GSSAPI:
+	حالة SSH_INVALID_USER:
+		linux_audit_record_event(-1, audit_username(), عدم,
 		    ssh_remote_ipaddr(ssh), "sshd", 0);
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		debug_f("unhandled event %d", event);
-		break;
+		اكسر;
 	}
 }
 #endif /* USE_LINUX_AUDIT */
