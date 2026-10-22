@@ -26,15 +26,15 @@
  */
 
 /* Maximum packet that we are willing to send/accept */
-#define SFTP_MAX_MSG_LENGTH	(256 * 1024)
+#define SFTP_MAX_বার্তা_দৈর্ঘ্য	(256 * 1024)
 
-struct sshbuf;
-typedef struct Attrib Attrib;
+কাঠামো sshbuf;
+প্রকারলেখ কাঠামো Attrib Attrib;
 
 /* File attributes */
-struct Attrib {
+কাঠামো Attrib {
 	uint32_t	flags;
-	uint64_t	size;
+	uint64_t	আকার_2;
 	uint32_t	uid;
 	uint32_t	gid;
 	uint32_t	perm;
@@ -42,12 +42,12 @@ struct Attrib {
 	uint32_t	mtime;
 };
 
-void	 attrib_clear(Attrib *);
-void	 stat_to_attrib(const struct stat *, Attrib *);
-void	 attrib_to_stat(const Attrib *, struct stat *);
-int	 decode_attrib(struct sshbuf *, Attrib *);
-int	 encode_attrib(struct sshbuf *, const Attrib *);
-char	*ls_file(const char *, const struct stat *, int, int,
-    const char *, const char *);
+শূন্য	 attrib_clear(Attrib *);
+শূন্য	 stat_to_attrib(ধ্রুবক কাঠামো stat *, Attrib *);
+শূন্য	 attrib_to_stat(ধ্রুবক Attrib *, কাঠামো stat *);
+পূর্ণসংখ্যা	 decode_attrib(কাঠামো sshbuf *, Attrib *);
+পূর্ণসংখ্যা	 encode_attrib(কাঠামো sshbuf *, ধ্রুবক Attrib *);
+অক্ষর	*ls_file(ধ্রুবক অক্ষর *, ধ্রুবক কাঠামো stat *, পূর্ণসংখ্যা, পূর্ণসংখ্যা,
+    ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
 
-const char *fx2txt(int);
+ধ্রুবক অক্ষর *fx2txt(পূর্ণসংখ্যা);

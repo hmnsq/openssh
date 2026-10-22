@@ -23,123 +23,123 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include <grp.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+#অন্তর্ভাব <grp.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <limits.h>
 
-#include "xmalloc.h"
-#include "groupaccess.h"
-#include "match.h"
-#include "log.h"
+#অন্তর্ভাব "xmalloc.h"
+#অন্তর্ভাব "groupaccess.h"
+#অন্তর্ভাব "match.h"
+#অন্তর্ভাব "log.h"
 
-static int ngroups;
-static char **groups_byname;
+স্থির পূর্ণসংখ্যা ngroups;
+স্থির অক্ষর **groups_byname;
 
 /*
  * Initialize group access list for user with primary (base) and
  * supplementary groups.  Return the number of groups in the list.
  */
-int
-ga_init(const char *user, gid_t base)
+পূর্ণসংখ্যা
+ga_init(ধ্রুবক অক্ষর *user, gid_t base)
 {
 	gid_t *groups_bygid;
-	int ongroups, i, j, retry = 0;
-	struct group *gr;
+	পূর্ণসংখ্যা ongroups, i, j, retry = 0;
+	কাঠামো group *gr;
 
-	if (ngroups > 0)
+	যদি (ngroups > 0)
 		ga_free();
 
 	ongroups = ngroups = NGROUPS_MAX;
-#if defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
+#যদি defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
 	ongroups = ngroups = MAX(NGROUPS_MAX, sysconf(_SC_NGROUPS_MAX));
 #endif
 
-	groups_bygid = xcalloc(ngroups, sizeof(*groups_bygid));
-	while (getgrouplist(user, base, groups_bygid, &ngroups) == -1) {
-		if (ngroups <= ongroups) {
+	groups_bygid = xcalloc(ngroups, আকার(*groups_bygid));
+	যখন (getgrouplist(user, base, groups_bygid, &ngroups) == -1) {
+		যদি (ngroups <= ongroups) {
 			error("getgrouplist(\"%s\", %ld): failed",
 			    user, (long)base);
-			free(groups_bygid);
-			groups_bygid = NULL;
+			মুক্ত(groups_bygid);
+			groups_bygid = ফাঁকা;
 			ngroups = 0;
-			return 0;
+			ফেরত 0;
 		}
-		if (retry++ > 0) {
+		যদি (retry++ > 0) {
 			fatal("getgrouplist(\"%s\", %ld): groups list too big "
 			    "(have %ld, need %ld)", user, (long)base,
 			    (long)ongroups, (long)ngroups);
 		}
 		groups_bygid = xreallocarray(groups_bygid, ngroups,
-		    sizeof(*groups_bygid));
+		    আকার(*groups_bygid));
 	}
-	groups_byname = xcalloc(ngroups, sizeof(*groups_byname));
+	groups_byname = xcalloc(ngroups, আকার(*groups_byname));
 
-	for (i = 0, j = 0; i < ngroups; i++)
-		if ((gr = getgrgid(groups_bygid[i])) != NULL)
+	জন্য (i = 0, j = 0; i < ngroups; i++)
+		যদি ((gr = getgrgid(groups_bygid[i])) != ফাঁকা)
 			groups_byname[j++] = xstrdup(gr->gr_name);
-	free(groups_bygid);
-	return (ngroups = j);
+	মুক্ত(groups_bygid);
+	ফেরত (ngroups = j);
 }
 
 /*
  * Return 1 if one of user's groups is contained in groups.
  * Return 0 otherwise.  Use match_pattern() for string comparison.
  */
-int
-ga_match(char * const *groups, int n)
+পূর্ণসংখ্যা
+ga_match(অক্ষর * ধ্রুবক *groups, পূর্ণসংখ্যা n)
 {
-	int i, j;
+	পূর্ণসংখ্যা i, j;
 
-	for (i = 0; i < ngroups; i++)
-		for (j = 0; j < n; j++)
-			if (match_pattern(groups_byname[i], groups[j]))
-				return 1;
-	return 0;
+	জন্য (i = 0; i < ngroups; i++)
+		জন্য (j = 0; j < n; j++)
+			যদি (match_pattern(groups_byname[i], groups[j]))
+				ফেরত 1;
+	ফেরত 0;
 }
 
 /*
  * Return 1 if one of user's groups matches group_pattern list.
  * Return 0 on negated or no match.
  */
-int
-ga_match_pattern_list(const char *group_pattern)
+পূর্ণসংখ্যা
+ga_match_pattern_list(ধ্রুবক অক্ষর *group_pattern)
 {
-	int i, found = 0;
+	পূর্ণসংখ্যা i, found = 0;
 
-	for (i = 0; i < ngroups; i++) {
-		switch (match_usergroup_pattern_list(groups_byname[i],
+	জন্য (i = 0; i < ngroups; i++) {
+		নির্বাচন (match_usergroup_pattern_list(groups_byname[i],
 		    group_pattern)) {
-		case -1:
-			return 0;	/* Negated match wins */
-		case 0:
-			continue;
-		case 1:
+		ক্ষেত্র -1:
+			ফেরত 0;	/* Negated match wins */
+		ক্ষেত্র 0:
+			চালু;
+		ক্ষেত্র 1:
 			found = 1;
 		}
 	}
-	return found;
+	ফেরত found;
 }
 
 /*
  * Free memory allocated for group access list.
  */
-void
-ga_free(void)
+শূন্য
+ga_free(শূন্য)
 {
-	int i;
+	পূর্ণসংখ্যা i;
 
-	if (ngroups > 0) {
-		for (i = 0; i < ngroups; i++)
-			free(groups_byname[i]);
+	যদি (ngroups > 0) {
+		জন্য (i = 0; i < ngroups; i++)
+			মুক্ত(groups_byname[i]);
 		ngroups = 0;
-		free(groups_byname);
-		groups_byname = NULL;
+		মুক্ত(groups_byname);
+		groups_byname = ফাঁকা;
 	}
 }

@@ -23,48 +23,48 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <errno.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <signal.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/crypto.h>
-#include <openssl/dh.h>
+#অন্তর্ভাব <openssl/crypto.h>
+#অন্তর্ভাব <openssl/dh.h>
 #endif
 
-#include "ssh.h"
-#include "ssh2.h"
-#include "atomicio.h"
-#include "version.h"
-#include "packet.h"
-#include "compat.h"
-#include "cipher.h"
-#include "sshkey.h"
-#include "kex.h"
-#include "log.h"
-#include "mac.h"
-#include "match.h"
-#include "misc.h"
-#include "dispatch.h"
-#include "myproposal.h"
+#অন্তর্ভাব "ssh.h"
+#অন্তর্ভাব "ssh2.h"
+#অন্তর্ভাব "atomicio.h"
+#অন্তর্ভাব "version.h"
+#অন্তর্ভাব "packet.h"
+#অন্তর্ভাব "compat.h"
+#অন্তর্ভাব "cipher.h"
+#অন্তর্ভাব "sshkey.h"
+#অন্তর্ভাব "kex.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "mac.h"
+#অন্তর্ভাব "match.h"
+#অন্তর্ভাব "misc.h"
+#অন্তর্ভাব "dispatch.h"
+#অন্তর্ভাব "myproposal.h"
 
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "digest.h"
-#include "xmalloc.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "digest.h"
+#অন্তর্ভাব "xmalloc.h"
 
 /* prototype */
-static int kex_choose_conf(struct ssh *, uint32_t seq);
-static int kex_input_newkeys(int, uint32_t, struct ssh *);
+স্থির পূর্ণসংখ্যা kex_choose_conf(কাঠামো ssh *, uint32_t seq);
+স্থির পূর্ণসংখ্যা kex_প্রবেশ_newkeys(পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
 
-static const char * const proposal_names[PROPOSAL_MAX] = {
+স্থির ধ্রুবক অক্ষর * ধ্রুবক proposal_names[PROPOSAL_MAX] = {
 	"KEX algorithms",
 	"host key algorithms",
 	"ciphers ctos",
@@ -83,70 +83,70 @@ static const char * const proposal_names[PROPOSAL_MAX] = {
  * Any of the options may be NULL, in which case the default is used.
  * Array contents must be freed by calling kex_proposal_free_entries.
  */
-void
-kex_proposal_populate_entries(struct ssh *ssh, char *prop[PROPOSAL_MAX],
-    const char *kexalgos, const char *ciphers, const char *macs,
-    const char *comp, const char *hkalgs)
+শূন্য
+kex_proposal_populate_entries(কাঠামো ssh *ssh, অক্ষর *prop[PROPOSAL_MAX],
+    ধ্রুবক অক্ষর *kexalgos, ধ্রুবক অক্ষর *ciphers, ধ্রুবক অক্ষর *macs,
+    ধ্রুবক অক্ষর *comp, ধ্রুবক অক্ষর *hkalgs)
 {
-	const char *defpropserver[PROPOSAL_MAX] = { KEX_SERVER };
-	const char *defpropclient[PROPOSAL_MAX] = { KEX_CLIENT };
-	const char **defprop = ssh->kex->server ? defpropserver : defpropclient;
+	ধ্রুবক অক্ষর *defpropserver[PROPOSAL_MAX] = { KEX_SERVER };
+	ধ্রুবক অক্ষর *defpropclient[PROPOSAL_MAX] = { KEX_CLIENT };
+	ধ্রুবক অক্ষর **defprop = ssh->kex->server ? defpropserver : defpropclient;
 	u_int i;
-	char *cp;
+	অক্ষর *cp;
 
-	if (prop == NULL)
+	যদি (prop == ফাঁকা)
 		fatal_f("proposal missing");
 
 	/* Append EXT_INFO signalling to KexAlgorithms */
-	if (kexalgos == NULL)
+	যদি (kexalgos == ফাঁকা)
 		kexalgos = defprop[PROPOSAL_KEX_ALGS];
-	if ((cp = kex_names_cat(kexalgos, ssh->kex->server ?
+	যদি ((cp = kex_names_cat(kexalgos, ssh->kex->server ?
 	    "ext-info-s,kex-strict-s-v00@openssh.com" :
-	    "ext-info-c,kex-strict-c-v00@openssh.com")) == NULL)
+	    "ext-info-c,kex-strict-c-v00@openssh.com")) == ফাঁকা)
 		fatal_f("kex_names_cat");
 
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		switch(i) {
-		case PROPOSAL_KEX_ALGS:
+	জন্য (i = 0; i < PROPOSAL_MAX; i++) {
+		নির্বাচন(i) {
+		ক্ষেত্র PROPOSAL_KEX_ALGS:
 			prop[i] = compat_kex_proposal(ssh, cp);
-			break;
-		case PROPOSAL_ENC_ALGS_CTOS:
-		case PROPOSAL_ENC_ALGS_STOC:
+			বিরতি;
+		ক্ষেত্র PROPOSAL_ENC_ALGS_CTOS:
+		ক্ষেত্র PROPOSAL_ENC_ALGS_STOC:
 			prop[i] = xstrdup(ciphers ? ciphers : defprop[i]);
-			break;
-		case PROPOSAL_MAC_ALGS_CTOS:
-		case PROPOSAL_MAC_ALGS_STOC:
+			বিরতি;
+		ক্ষেত্র PROPOSAL_MAC_ALGS_CTOS:
+		ক্ষেত্র PROPOSAL_MAC_ALGS_STOC:
 			prop[i]  = xstrdup(macs ? macs : defprop[i]);
-			break;
-		case PROPOSAL_COMP_ALGS_CTOS:
-		case PROPOSAL_COMP_ALGS_STOC:
+			বিরতি;
+		ক্ষেত্র PROPOSAL_COMP_ALGS_CTOS:
+		ক্ষেত্র PROPOSAL_COMP_ALGS_STOC:
 			prop[i] = xstrdup(comp ? comp : defprop[i]);
-			break;
-		case PROPOSAL_SERVER_HOST_KEY_ALGS:
+			বিরতি;
+		ক্ষেত্র PROPOSAL_SERVER_HOST_চাবি_ALGS:
 			prop[i] = xstrdup(hkalgs ? hkalgs : defprop[i]);
-			break;
-		default:
+			বিরতি;
+		পূর্বনির্ধারিত:
 			prop[i] = xstrdup(defprop[i]);
 		}
 	}
-	free(cp);
+	মুক্ত(cp);
 }
 
-void
-kex_proposal_free_entries(char *prop[PROPOSAL_MAX])
+শূন্য
+kex_proposal_free_entries(অক্ষর *prop[PROPOSAL_MAX])
 {
 	u_int i;
 
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(prop[i]);
+	জন্য (i = 0; i < PROPOSAL_MAX; i++)
+		মুক্ত(prop[i]);
 }
 
 /* put algorithm proposal into buffer */
-int
-kex_prop2buf(struct sshbuf *b, char *proposal[PROPOSAL_MAX])
+পূর্ণসংখ্যা
+kex_prop2buf(কাঠামো sshbuf *b, অক্ষর *proposal[PROPOSAL_MAX])
 {
 	u_int i;
-	int r;
+	পূর্ণসংখ্যা r;
 
 	sshbuf_reset(b);
 
@@ -154,110 +154,110 @@ kex_prop2buf(struct sshbuf *b, char *proposal[PROPOSAL_MAX])
 	 * add a dummy cookie, the cookie will be overwritten by
 	 * kex_send_kexinit(), each time a kexinit is set
 	 */
-	for (i = 0; i < KEX_COOKIE_LEN; i++) {
-		if ((r = sshbuf_put_u8(b, 0)) != 0)
-			return r;
+	জন্য (i = 0; i < KEX_COOKIE_LEN; i++) {
+		যদি ((r = sshbuf_put_u8(b, 0)) != 0)
+			ফেরত r;
 	}
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		if ((r = sshbuf_put_cstring(b, proposal[i])) != 0)
-			return r;
+	জন্য (i = 0; i < PROPOSAL_MAX; i++) {
+		যদি ((r = sshbuf_put_cstring(b, proposal[i])) != 0)
+			ফেরত r;
 	}
-	if ((r = sshbuf_put_u8(b, 0)) != 0 ||	/* first_kex_packet_follows */
+	যদি ((r = sshbuf_put_u8(b, 0)) != 0 ||	/* first_kex_packet_follows */
 	    (r = sshbuf_put_u32(b, 0)) != 0)	/* uint32 reserved */
-		return r;
-	return 0;
+		ফেরত r;
+	ফেরত 0;
 }
 
 /* parse buffer and return algorithm proposal */
-int
-kex_buf2prop(struct sshbuf *raw, int *first_kex_follows, char ***propp)
+পূর্ণসংখ্যা
+kex_buf2prop(কাঠামো sshbuf *raw, পূর্ণসংখ্যা *first_kex_follows, অক্ষর ***propp)
 {
-	struct sshbuf *b = NULL;
+	কাঠামো sshbuf *b = ফাঁকা;
 	u_char v;
 	u_int i;
-	char **proposal = NULL;
-	int r;
+	অক্ষর **proposal = ফাঁকা;
+	পূর্ণসংখ্যা r;
 
-	*propp = NULL;
-	if ((proposal = calloc(PROPOSAL_MAX, sizeof(char *))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((b = sshbuf_fromb(raw)) == NULL) {
+	*propp = ফাঁকা;
+	যদি ((proposal = calloc(PROPOSAL_MAX, আকার(অক্ষর *))) == ফাঁকা)
+		ফেরত SSH_ERR_ALLOC_FAIL;
+	যদি ((b = sshbuf_fromb(raw)) == ফাঁকা) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if ((r = sshbuf_consume(b, KEX_COOKIE_LEN)) != 0) { /* skip cookie */
+	যদি ((r = sshbuf_consume(b, KEX_COOKIE_LEN)) != 0) { /* skip cookie */
 		error_fr(r, "consume cookie");
-		goto out;
+		যাও out;
 	}
 	/* extract kex init proposal strings */
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		if ((r = sshbuf_get_cstring(b, &(proposal[i]), NULL)) != 0) {
+	জন্য (i = 0; i < PROPOSAL_MAX; i++) {
+		যদি ((r = sshbuf_get_cstring(b, &(proposal[i]), ফাঁকা)) != 0) {
 			error_fr(r, "parse proposal %u", i);
-			goto out;
+			যাও out;
 		}
 		debug2("%s: %s", proposal_names[i], proposal[i]);
 	}
 	/* first kex follows / reserved */
-	if ((r = sshbuf_get_u8(b, &v)) != 0 ||	/* first_kex_follows */
+	যদি ((r = sshbuf_get_u8(b, &v)) != 0 ||	/* first_kex_follows */
 	    (r = sshbuf_get_u32(b, &i)) != 0) {	/* reserved */
 		error_fr(r, "parse");
-		goto out;
+		যাও out;
 	}
-	if (first_kex_follows != NULL)
+	যদি (first_kex_follows != ফাঁকা)
 		*first_kex_follows = v;
 	debug2("first_kex_follows %d ", v);
 	debug2("reserved %u ", i);
 	r = 0;
 	*propp = proposal;
  out:
-	if (r != 0 && proposal != NULL)
+	যদি (r != 0 && proposal != ফাঁকা)
 		kex_prop_free(proposal);
 	sshbuf_free(b);
-	return r;
+	ফেরত r;
 }
 
-void
-kex_prop_free(char **proposal)
+শূন্য
+kex_prop_free(অক্ষর **proposal)
 {
 	u_int i;
 
-	if (proposal == NULL)
-		return;
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
-	free(proposal);
+	যদি (proposal == ফাঁকা)
+		ফেরত;
+	জন্য (i = 0; i < PROPOSAL_MAX; i++)
+		মুক্ত(proposal[i]);
+	মুক্ত(proposal);
 }
 
-int
-kex_protocol_error(int type, uint32_t seq, struct ssh *ssh)
+পূর্ণসংখ্যা
+kex_protocol_error(পূর্ণসংখ্যা type, uint32_t seq, কাঠামো ssh *ssh)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
 	/* If in strict mode, any unexpected message is an error */
-	if ((ssh->kex->flags & KEX_INITIAL) && ssh->kex->kex_strict) {
+	যদি ((ssh->kex->flags & KEX_INITIAL) && ssh->kex->kex_strict) {
 		ssh_packet_disconnect(ssh, "strict KEX violation: "
 		    "unexpected packet type %u (seqnr %u)", type, seq);
 	}
 	error_f("type %u seq %u", type, seq);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_UNIMPLEMENTED)) != 0 ||
+	যদি ((r = sshpkt_start(ssh, SSH2_বার্তা_UNIMPLEMENTED)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, seq)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
-	return 0;
+		ফেরত r;
+	ফেরত 0;
 }
 
-static void
-kex_reset_dispatch(struct ssh *ssh)
+স্থির শূন্য
+kex_reset_dispatch(কাঠামো ssh *ssh)
 {
-	ssh_dispatch_range(ssh, SSH2_MSG_TRANSPORT_MIN,
-	    SSH2_MSG_TRANSPORT_MAX, &kex_protocol_error);
+	ssh_dispatch_range(ssh, SSH2_বার্তা_TRANSPORT_MIN,
+	    SSH2_বার্তা_TRANSPORT_MAX, &kex_protocol_error);
 }
 
-void
-kex_set_server_sig_algs(struct ssh *ssh, const char *allowed_algs)
+শূন্য
+kex_set_server_sig_algs(কাঠামো ssh *ssh, ধ্রুবক অক্ষর *allowed_algs)
 {
-	char *alg, *oalgs, *algs, *sigalgs;
-	const char *sigalg;
+	অক্ষর *alg, *oalgs, *algs, *sigalgs;
+	ধ্রুবক অক্ষর *sigalg;
 
 	/*
 	 * NB. allowed algorithms may contain certificate algorithms that
@@ -266,56 +266,56 @@ kex_set_server_sig_algs(struct ssh *ssh, const char *allowed_algs)
 	 * We need to be careful here to match these, retain the mapping
 	 * and only add each signature algorithm once.
 	 */
-	if ((sigalgs = sshkey_alg_list(0, 1, 1, ',')) == NULL)
+	যদি ((sigalgs = sshkey_alg_list(0, 1, 1, ',')) == ফাঁকা)
 		fatal_f("sshkey_alg_list failed");
 	oalgs = algs = xstrdup(allowed_algs);
-	free(ssh->kex->server_sig_algs);
-	ssh->kex->server_sig_algs = NULL;
-	for ((alg = strsep(&algs, ",")); alg != NULL && *alg != '\0';
+	মুক্ত(ssh->kex->server_sig_algs);
+	ssh->kex->server_sig_algs = ফাঁকা;
+	জন্য ((alg = strsep(&algs, ",")); alg != ফাঁকা && *alg != '\0';
 	    (alg = strsep(&algs, ","))) {
-		if ((sigalg = sshkey_sigalg_by_name(alg)) == NULL)
-			continue;
-		if (!kex_has_any_alg(sigalg, sigalgs))
-			continue;
+		যদি ((sigalg = sshkey_sigalg_by_name(alg)) == ফাঁকা)
+			চালু;
+		যদি (!kex_has_any_alg(sigalg, sigalgs))
+			চালু;
 		/* Don't add an algorithm twice. */
-		if (ssh->kex->server_sig_algs != NULL &&
+		যদি (ssh->kex->server_sig_algs != ফাঁকা &&
 		    kex_has_any_alg(sigalg, ssh->kex->server_sig_algs))
-			continue;
+			চালু;
 		xextendf(&ssh->kex->server_sig_algs, ",", "%s", sigalg);
 	}
-	free(oalgs);
-	free(sigalgs);
-	if (ssh->kex->server_sig_algs == NULL)
+	মুক্ত(oalgs);
+	মুক্ত(sigalgs);
+	যদি (ssh->kex->server_sig_algs == ফাঁকা)
 		ssh->kex->server_sig_algs = xstrdup("");
 }
 
-void
-kex_set_warn_weak_crypto(struct ssh *ssh, int warn_weak_crypto)
+শূন্য
+kex_set_warn_weak_crypto(কাঠামো ssh *ssh, পূর্ণসংখ্যা warn_weak_crypto)
 {
-	if (ssh != NULL && ssh->kex != NULL)
+	যদি (ssh != ফাঁকা && ssh->kex != ফাঁকা)
 		ssh->kex->warn_weak_crypto = warn_weak_crypto != 0;
 }
 
-void
-kex_check_warn_weak_crypto(struct ssh *ssh)
+শূন্য
+kex_check_warn_weak_crypto(কাঠামো ssh *ssh)
 {
-	char remote_id[512];
-	int rekeyed = 0;
+	অক্ষর remote_id[512];
+	পূর্ণসংখ্যা rekeyed = 0;
 
-	if (ssh == NULL || ssh->kex == NULL || ssh->kex->name == NULL ||
+	যদি (ssh == ফাঁকা || ssh->kex == ফাঁকা || ssh->kex->name == ফাঁকা ||
 	    !ssh->kex->warn_weak_crypto || ssh->kex->non_pq_kex_warned)
-		return;
-	if (kex_is_pq_from_name(ssh->kex->name)) {
+		ফেরত;
+	যদি (kex_is_pq_from_name(ssh->kex->name)) {
 		ssh->kex->pq_kex_negotiated = 1;
-		return;
+		ফেরত;
 	}
 
-	if (ssh->kex->pq_kex_negotiated)
+	যদি (ssh->kex->pq_kex_negotiated)
 		rekeyed = 1;
-	if (!rekeyed && !ssh->kex->server)
-		return; /* client logs initial KEX warning separately */
+	যদি (!rekeyed && !ssh->kex->server)
+		ফেরত; /* client logs initial KEX warning separately */
 
-	sshpkt_fmt_connection_id(ssh, remote_id, sizeof(remote_id));
+	sshpkt_fmt_connection_id(ssh, remote_id, আকার(remote_id));
 	logit("WARNING: %sconnection%s%s is not using a post-quantum "
 	    "key exchange algorithm: \"%s\"", rekeyed ? "rekeyed " : "",
 	    ssh->kex->server ? " from " : "",
@@ -323,15 +323,15 @@ kex_check_warn_weak_crypto(struct ssh *ssh)
 	ssh->kex->non_pq_kex_warned = 1;
 }
 
-static int
-kex_compose_ext_info_server(struct ssh *ssh, struct sshbuf *m)
+স্থির পূর্ণসংখ্যা
+kex_compose_ext_info_server(কাঠামো ssh *ssh, কাঠামো sshbuf *m)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if (ssh->kex->server_sig_algs == NULL &&
-	    (ssh->kex->server_sig_algs = sshkey_alg_list(0, 1, 1, ',')) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u32(m, 4)) != 0 ||
+	যদি (ssh->kex->server_sig_algs == ফাঁকা &&
+	    (ssh->kex->server_sig_algs = sshkey_alg_list(0, 1, 1, ',')) == ফাঁকা)
+		ফেরত SSH_ERR_ALLOC_FAIL;
+	যদি ((r = sshbuf_put_u32(m, 4)) != 0 ||
 	    (r = sshbuf_put_cstring(m, "server-sig-algs")) != 0 ||
 	    (r = sshbuf_put_cstring(m, ssh->kex->server_sig_algs)) != 0 ||
 	    (r = sshbuf_put_cstring(m,
@@ -342,344 +342,344 @@ kex_compose_ext_info_server(struct ssh *ssh, struct sshbuf *m)
 	    (r = sshbuf_put_cstring(m, "agent-forward")) != 0 ||
 	    (r = sshbuf_put_cstring(m, "0")) != 0) {
 		error_fr(r, "compose");
-		return r;
+		ফেরত r;
 	}
-	return 0;
+	ফেরত 0;
 }
 
-static int
-kex_compose_ext_info_client(struct ssh *ssh, struct sshbuf *m)
+স্থির পূর্ণসংখ্যা
+kex_compose_ext_info_client(কাঠামো ssh *ssh, কাঠামো sshbuf *m)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if ((r = sshbuf_put_u32(m, 1)) != 0 ||
+	যদি ((r = sshbuf_put_u32(m, 1)) != 0 ||
 	    (r = sshbuf_put_cstring(m, "ext-info-in-auth@openssh.com")) != 0 ||
 	    (r = sshbuf_put_cstring(m, "0")) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		যাও out;
 	}
 	/* success */
 	r = 0;
  out:
-	return r;
+	ফেরত r;
 }
 
-static int
-kex_maybe_send_ext_info(struct ssh *ssh)
+স্থির পূর্ণসংখ্যা
+kex_maybe_send_ext_info(কাঠামো ssh *ssh)
 {
-	int r;
-	struct sshbuf *m = NULL;
+	পূর্ণসংখ্যা r;
+	কাঠামো sshbuf *m = ফাঁকা;
 
-	if ((ssh->kex->flags & KEX_INITIAL) == 0)
-		return 0;
-	if (!ssh->kex->ext_info_c && !ssh->kex->ext_info_s)
-		return 0;
+	যদি ((ssh->kex->flags & KEX_INITIAL) == 0)
+		ফেরত 0;
+	যদি (!ssh->kex->ext_info_c && !ssh->kex->ext_info_s)
+		ফেরত 0;
 
 	/* Compose EXT_INFO packet. */
-	if ((m = sshbuf_new()) == NULL)
+	যদি ((m = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	if (ssh->kex->ext_info_c &&
+	যদি (ssh->kex->ext_info_c &&
 	    (r = kex_compose_ext_info_server(ssh, m)) != 0)
-		goto fail;
-	if (ssh->kex->ext_info_s &&
+		যাও fail;
+	যদি (ssh->kex->ext_info_s &&
 	    (r = kex_compose_ext_info_client(ssh, m)) != 0)
-		goto fail;
+		যাও fail;
 
 	/* Send the actual KEX_INFO packet */
 	debug("Sending SSH2_MSG_EXT_INFO");
-	if ((r = sshpkt_start(ssh, SSH2_MSG_EXT_INFO)) != 0 ||
+	যদি ((r = sshpkt_start(ssh, SSH2_বার্তা_EXT_INFO)) != 0 ||
 	    (r = sshpkt_putb(ssh, m)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0) {
 		error_f("send EXT_INFO");
-		goto fail;
+		যাও fail;
 	}
 
 	r = 0;
 
  fail:
 	sshbuf_free(m);
-	return r;
+	ফেরত r;
 }
 
-int
-kex_server_update_ext_info(struct ssh *ssh)
+পূর্ণসংখ্যা
+kex_server_update_ext_info(কাঠামো ssh *ssh)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if ((ssh->kex->flags & KEX_HAS_EXT_INFO_IN_AUTH) == 0)
-		return 0;
+	যদি ((ssh->kex->flags & KEX_HAS_EXT_INFO_IN_AUTH) == 0)
+		ফেরত 0;
 
 	debug_f("Sending SSH2_MSG_EXT_INFO");
-	if ((r = sshpkt_start(ssh, SSH2_MSG_EXT_INFO)) != 0 ||
+	যদি ((r = sshpkt_start(ssh, SSH2_বার্তা_EXT_INFO)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, 1)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "server-sig-algs")) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, ssh->kex->server_sig_algs)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0) {
 		error_f("send EXT_INFO");
-		return r;
+		ফেরত r;
 	}
-	return 0;
+	ফেরত 0;
 }
 
-int
-kex_send_newkeys(struct ssh *ssh)
+পূর্ণসংখ্যা
+kex_send_newkeys(কাঠামো ssh *ssh)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
 	kex_reset_dispatch(ssh);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_NEWKEYS)) != 0 ||
+	যদি ((r = sshpkt_start(ssh, SSH2_বার্তা_NEWKEYS)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
+		ফেরত r;
 	debug("SSH2_MSG_NEWKEYS sent");
-	ssh_dispatch_set(ssh, SSH2_MSG_NEWKEYS, &kex_input_newkeys);
-	if ((r = kex_maybe_send_ext_info(ssh)) != 0)
-		return r;
+	ssh_dispatch_set(ssh, SSH2_বার্তা_NEWKEYS, &kex_প্রবেশ_newkeys);
+	যদি ((r = kex_maybe_send_ext_info(ssh)) != 0)
+		ফেরত r;
 	debug("expecting SSH2_MSG_NEWKEYS");
-	return 0;
+	ফেরত 0;
 }
 
 /* Check whether an ext_info value contains the expected version string */
-static int
-kex_ext_info_check_ver(struct kex *kex, const char *name,
-    const u_char *val, size_t len, const char *want_ver, u_int flag)
+স্থির পূর্ণসংখ্যা
+kex_ext_info_check_ver(কাঠামো kex *kex, ধ্রুবক অক্ষর *name,
+    ধ্রুবক u_char *val, আকার_t len, ধ্রুবক অক্ষর *want_ver, u_int flag)
 {
-	if (memchr(val, '\0', len) != NULL) {
+	যদি (memchr(val, '\0', len) != ফাঁকা) {
 		error("SSH2_MSG_EXT_INFO: %s value contains nul byte", name);
-		return SSH_ERR_INVALID_FORMAT;
+		ফেরত SSH_ERR_INVALID_FORMAT;
 	}
 	debug_f("%s=<%s>", name, val);
-	if (strcmp(val, want_ver) == 0)
+	যদি (strcmp(val, want_ver) == 0)
 		kex->flags |= flag;
-	else
+	অন্যথা
 		debug_f("unsupported version of %s extension", name);
-	return 0;
+	ফেরত 0;
 }
 
-static int
-kex_ext_info_client_parse(struct ssh *ssh, const char *name,
-    const u_char *value, size_t vlen)
+স্থির পূর্ণসংখ্যা
+kex_ext_info_client_parse(কাঠামো ssh *ssh, ধ্রুবক অক্ষর *name,
+    ধ্রুবক u_char *মান, আকার_t vlen)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
 	/* NB. some messages are only accepted in the initial EXT_INFO */
-	if (strcmp(name, "server-sig-algs") == 0) {
+	যদি (strcmp(name, "server-sig-algs") == 0) {
 		/* Ensure no \0 lurking in value */
-		if (memchr(value, '\0', vlen) != NULL) {
+		যদি (memchr(মান, '\0', vlen) != ফাঁকা) {
 			error_f("nul byte in %s", name);
-			return SSH_ERR_INVALID_FORMAT;
+			ফেরত SSH_ERR_INVALID_FORMAT;
 		}
-		debug_f("%s=<%s>", name, value);
-		free(ssh->kex->server_sig_algs);
-		ssh->kex->server_sig_algs = xstrdup((const char *)value);
-	} else if (ssh->kex->ext_info_received == 1 &&
+		debug_f("%s=<%s>", name, মান);
+		মুক্ত(ssh->kex->server_sig_algs);
+		ssh->kex->server_sig_algs = xstrdup((ধ্রুবক অক্ষর *)মান);
+	} অন্যথা যদি (ssh->kex->ext_info_received == 1 &&
 	    strcmp(name, "publickey-hostbound@openssh.com") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+		যদি ((r = kex_ext_info_check_ver(ssh->kex, name, মান, vlen,
 		    "0", KEX_HAS_PUBKEY_HOSTBOUND)) != 0) {
-			return r;
+			ফেরত r;
 		}
-	} else if (ssh->kex->ext_info_received == 1 &&
+	} অন্যথা যদি (ssh->kex->ext_info_received == 1 &&
 	    strcmp(name, "ping@openssh.com") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+		যদি ((r = kex_ext_info_check_ver(ssh->kex, name, মান, vlen,
 		    "0", KEX_HAS_PING)) != 0) {
-			return r;
+			ফেরত r;
 		}
-	} else if (ssh->kex->ext_info_received == 1 &&
+	} অন্যথা যদি (ssh->kex->ext_info_received == 1 &&
 	    strcmp(name, "agent-forward") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+		যদি ((r = kex_ext_info_check_ver(ssh->kex, name, মান, vlen,
 		    "0", KEX_HAS_NEWAGENT)) != 0) {
-			return r;
+			ফেরত r;
 		}
-	} else
+	} অন্যথা
 		debug_f("%s (unrecognised)", name);
 
-	return 0;
+	ফেরত 0;
 }
 
-static int
-kex_ext_info_server_parse(struct ssh *ssh, const char *name,
-    const u_char *value, size_t vlen)
+স্থির পূর্ণসংখ্যা
+kex_ext_info_server_parse(কাঠামো ssh *ssh, ধ্রুবক অক্ষর *name,
+    ধ্রুবক u_char *মান, আকার_t vlen)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if (strcmp(name, "ext-info-in-auth@openssh.com") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+	যদি (strcmp(name, "ext-info-in-auth@openssh.com") == 0) {
+		যদি ((r = kex_ext_info_check_ver(ssh->kex, name, মান, vlen,
 		    "0", KEX_HAS_EXT_INFO_IN_AUTH)) != 0) {
-			return r;
+			ফেরত r;
 		}
-	} else
+	} অন্যথা
 		debug_f("%s (unrecognised)", name);
-	return 0;
+	ফেরত 0;
 }
 
-int
-kex_input_ext_info(int type, uint32_t seq, struct ssh *ssh)
+পূর্ণসংখ্যা
+kex_প্রবেশ_ext_info(পূর্ণসংখ্যা type, uint32_t seq, কাঠামো ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	const int max_ext_info = kex->server ? 1 : 2;
+	কাঠামো kex *kex = ssh->kex;
+	ধ্রুবক পূর্ণসংখ্যা max_ext_info = kex->server ? 1 : 2;
 	uint32_t i, ninfo;
-	char *name;
+	অক্ষর *name;
 	u_char *val;
-	size_t vlen;
-	int r;
+	আকার_t vlen;
+	পূর্ণসংখ্যা r;
 
 	debug("SSH2_MSG_EXT_INFO received");
-	if (++kex->ext_info_received > max_ext_info) {
+	যদি (++kex->ext_info_received > max_ext_info) {
 		error("too many SSH2_MSG_EXT_INFO messages sent by peer");
-		return dispatch_protocol_error(type, seq, ssh);
+		ফেরত dispatch_protocol_error(type, seq, ssh);
 	}
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &kex_protocol_error);
-	if ((r = sshpkt_get_u32(ssh, &ninfo)) != 0)
-		return r;
-	if (ninfo >= 1024) {
+	ssh_dispatch_set(ssh, SSH2_বার্তা_EXT_INFO, &kex_protocol_error);
+	যদি ((r = sshpkt_get_u32(ssh, &ninfo)) != 0)
+		ফেরত r;
+	যদি (ninfo >= 1024) {
 		error("SSH2_MSG_EXT_INFO with too many entries, expected "
 		    "<=1024, received %u", ninfo);
-		return dispatch_protocol_error(type, seq, ssh);
+		ফেরত dispatch_protocol_error(type, seq, ssh);
 	}
-	for (i = 0; i < ninfo; i++) {
-		if ((r = sshpkt_get_cstring(ssh, &name, NULL)) != 0)
-			return r;
-		if ((r = sshpkt_get_string(ssh, &val, &vlen)) != 0) {
-			free(name);
-			return r;
+	জন্য (i = 0; i < ninfo; i++) {
+		যদি ((r = sshpkt_get_cstring(ssh, &name, ফাঁকা)) != 0)
+			ফেরত r;
+		যদি ((r = sshpkt_get_string(ssh, &val, &vlen)) != 0) {
+			মুক্ত(name);
+			ফেরত r;
 		}
 		debug3_f("extension %s", name);
-		if (kex->server) {
-			if ((r = kex_ext_info_server_parse(ssh, name,
+		যদি (kex->server) {
+			যদি ((r = kex_ext_info_server_parse(ssh, name,
 			    val, vlen)) != 0)
-				return r;
-		} else {
-			if ((r = kex_ext_info_client_parse(ssh, name,
+				ফেরত r;
+		} অন্যথা {
+			যদি ((r = kex_ext_info_client_parse(ssh, name,
 			    val, vlen)) != 0)
-				return r;
+				ফেরত r;
 		}
-		free(name);
-		free(val);
+		মুক্ত(name);
+		মুক্ত(val);
 	}
-	return sshpkt_get_end(ssh);
+	ফেরত sshpkt_get_end(ssh);
 }
 
-static int
-kex_input_newkeys(int type, uint32_t seq, struct ssh *ssh)
+স্থির পূর্ণসংখ্যা
+kex_প্রবেশ_newkeys(পূর্ণসংখ্যা type, uint32_t seq, কাঠামো ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r, initial = (kex->flags & KEX_INITIAL) != 0;
-	char *cp, **prop;
+	কাঠামো kex *kex = ssh->kex;
+	পূর্ণসংখ্যা r, initial = (kex->flags & KEX_INITIAL) != 0;
+	অক্ষর *cp, **prop;
 
 	debug("SSH2_MSG_NEWKEYS received");
-	if (kex->ext_info_c && initial)
-		ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_NEWKEYS, &kex_protocol_error);
-	ssh_dispatch_set(ssh, SSH2_MSG_KEXINIT, &kex_input_kexinit);
-	if ((r = sshpkt_get_end(ssh)) != 0)
-		return r;
-	if ((r = ssh_set_newkeys(ssh, MODE_IN)) != 0)
-		return r;
-	if (initial) {
+	যদি (kex->ext_info_c && initial)
+		ssh_dispatch_set(ssh, SSH2_বার্তা_EXT_INFO, &kex_প্রবেশ_ext_info);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_NEWKEYS, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_KEXINIT, &kex_প্রবেশ_kexinit);
+	যদি ((r = sshpkt_get_end(ssh)) != 0)
+		ফেরত r;
+	যদি ((r = ssh_set_newkeys(ssh, MODE_IN)) != 0)
+		ফেরত r;
+	যদি (initial) {
 		/* Remove initial KEX signalling from proposal for rekeying */
-		if ((r = kex_buf2prop(kex->my, NULL, &prop)) != 0)
-			return r;
-		if ((cp = match_filter_denylist(prop[PROPOSAL_KEX_ALGS],
+		যদি ((r = kex_buf2prop(kex->my, ফাঁকা, &prop)) != 0)
+			ফেরত r;
+		যদি ((cp = match_filter_denylist(prop[PROPOSAL_KEX_ALGS],
 		    kex->server ?
 		    "ext-info-s,kex-strict-s-v00@openssh.com" :
-		    "ext-info-c,kex-strict-c-v00@openssh.com")) == NULL) {
+		    "ext-info-c,kex-strict-c-v00@openssh.com")) == ফাঁকা) {
 			error_f("match_filter_denylist failed");
-			goto fail;
+			যাও fail;
 		}
-		free(prop[PROPOSAL_KEX_ALGS]);
+		মুক্ত(prop[PROPOSAL_KEX_ALGS]);
 		prop[PROPOSAL_KEX_ALGS] = cp;
-		if ((r = kex_prop2buf(ssh->kex->my, prop)) != 0) {
+		যদি ((r = kex_prop2buf(ssh->kex->my, prop)) != 0) {
 			error_f("kex_prop2buf failed");
  fail:
 			kex_proposal_free_entries(prop);
-			free(prop);
-			return SSH_ERR_INTERNAL_ERROR;
+			মুক্ত(prop);
+			ফেরত SSH_ERR_INTERNAL_ERROR;
 		}
 		kex_proposal_free_entries(prop);
-		free(prop);
+		মুক্ত(prop);
 	}
 	kex->done = 1;
 	kex->flags &= ~KEX_INITIAL;
 	sshbuf_reset(kex->peer);
 	kex->flags &= ~(KEX_INIT_SENT|KEX_INIT_RECVD);
 	kex_check_warn_weak_crypto(ssh);
-	return 0;
+	ফেরত 0;
 }
 
-int
-kex_send_kexinit(struct ssh *ssh)
+পূর্ণসংখ্যা
+kex_send_kexinit(কাঠামো ssh *ssh)
 {
 	u_char *cookie;
-	struct kex *kex = ssh->kex;
-	int r;
+	কাঠামো kex *kex = ssh->kex;
+	পূর্ণসংখ্যা r;
 
-	if (kex == NULL) {
+	যদি (kex == ফাঁকা) {
 		error_f("no kex");
-		return SSH_ERR_INTERNAL_ERROR;
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 	}
-	if (kex->flags & KEX_INIT_SENT)
-		return 0;
+	যদি (kex->flags & KEX_INIT_SENT)
+		ফেরত 0;
 	kex->done = 0;
 
 	/* generate a random cookie */
-	if (sshbuf_len(kex->my) < KEX_COOKIE_LEN) {
+	যদি (sshbuf_len(kex->my) < KEX_COOKIE_LEN) {
 		error_f("bad kex length: %zu < %d",
 		    sshbuf_len(kex->my), KEX_COOKIE_LEN);
-		return SSH_ERR_INVALID_FORMAT;
+		ফেরত SSH_ERR_INVALID_FORMAT;
 	}
-	if ((cookie = sshbuf_mutable_ptr(kex->my)) == NULL) {
+	যদি ((cookie = sshbuf_mutable_ptr(kex->my)) == ফাঁকা) {
 		error_f("buffer error");
-		return SSH_ERR_INTERNAL_ERROR;
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 	}
 	arc4random_buf(cookie, KEX_COOKIE_LEN);
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEXINIT)) != 0 ||
+	যদি ((r = sshpkt_start(ssh, SSH2_বার্তা_KEXINIT)) != 0 ||
 	    (r = sshpkt_putb(ssh, kex->my)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0) {
 		error_fr(r, "compose reply");
-		return r;
+		ফেরত r;
 	}
 	debug("SSH2_MSG_KEXINIT sent");
 	kex->flags |= KEX_INIT_SENT;
-	return 0;
+	ফেরত 0;
 }
 
-int
-kex_input_kexinit(int type, uint32_t seq, struct ssh *ssh)
+পূর্ণসংখ্যা
+kex_প্রবেশ_kexinit(পূর্ণসংখ্যা type, uint32_t seq, কাঠামো ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	const u_char *ptr;
+	কাঠামো kex *kex = ssh->kex;
+	ধ্রুবক u_char *ptr;
 	u_int i;
-	size_t dlen;
-	int r;
+	আকার_t dlen;
+	পূর্ণসংখ্যা r;
 
 	debug("SSH2_MSG_KEXINIT received");
-	if (kex == NULL) {
+	যদি (kex == ফাঁকা) {
 		error_f("no kex");
-		return SSH_ERR_INTERNAL_ERROR;
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 	}
-	free(kex->name);
-	kex->name = NULL;
-	if ((kex->flags & KEX_INIT_RECVD) != 0) {
+	মুক্ত(kex->name);
+	kex->name = ফাঁকা;
+	যদি ((kex->flags & KEX_INIT_RECVD) != 0) {
 		ssh_packet_disconnect(ssh,
 		    "multiple KEXINIT received from peer");
 	}
 	kex->flags |= KEX_INIT_RECVD;
-	ssh_dispatch_set(ssh, SSH2_MSG_KEXINIT, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_KEXINIT, &kex_protocol_error);
 	ptr = sshpkt_ptr(ssh, &dlen);
-	if ((r = sshbuf_put(kex->peer, ptr, dlen)) != 0)
-		return r;
+	যদি ((r = sshbuf_put(kex->peer, ptr, dlen)) != 0)
+		ফেরত r;
 
 	/* discard packet */
-	for (i = 0; i < KEX_COOKIE_LEN; i++) {
-		if ((r = sshpkt_get_u8(ssh, NULL)) != 0) {
+	জন্য (i = 0; i < KEX_COOKIE_LEN; i++) {
+		যদি ((r = sshpkt_get_u8(ssh, ফাঁকা)) != 0) {
 			error_fr(r, "discard cookie");
-			return r;
+			ফেরত r;
 		}
 	}
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		if ((r = sshpkt_get_string(ssh, NULL, NULL)) != 0) {
+	জন্য (i = 0; i < PROPOSAL_MAX; i++) {
+		যদি ((r = sshpkt_get_string(ssh, ফাঁকা, ফাঁকা)) != 0) {
 			error_fr(r, "discard proposal");
-			return r;
+			ফেরত r;
 		}
 	}
 	/*
@@ -692,86 +692,86 @@ kex_input_kexinit(int type, uint32_t seq, struct ssh *ssh)
 	 * for cases where the server *doesn't* go first. I guess we should
 	 * ignore it when it is set for these cases, which is what we do now.
 	 */
-	if ((r = sshpkt_get_u8(ssh, NULL)) != 0 ||	/* first_kex_follows */
-	    (r = sshpkt_get_u32(ssh, NULL)) != 0 ||	/* reserved */
+	যদি ((r = sshpkt_get_u8(ssh, ফাঁকা)) != 0 ||	/* first_kex_follows */
+	    (r = sshpkt_get_u32(ssh, ফাঁকা)) != 0 ||	/* reserved */
 	    (r = sshpkt_get_end(ssh)) != 0)
-			return r;
+			ফেরত r;
 
-	if (!(kex->flags & KEX_INIT_SENT))
-		if ((r = kex_send_kexinit(ssh)) != 0)
-			return r;
-	if ((r = kex_choose_conf(ssh, seq)) != 0)
-		return r;
+	যদি (!(kex->flags & KEX_INIT_SENT))
+		যদি ((r = kex_send_kexinit(ssh)) != 0)
+			ফেরত r;
+	যদি ((r = kex_choose_conf(ssh, seq)) != 0)
+		ফেরত r;
 
-	if (kex->kex_type < KEX_MAX && kex->kex[kex->kex_type] != NULL)
-		return (kex->kex[kex->kex_type])(ssh);
+	যদি (kex->kex_type < KEX_MAX && kex->kex[kex->kex_type] != ফাঁকা)
+		ফেরত (kex->kex[kex->kex_type])(ssh);
 
 	error_f("unknown kex type %u", kex->kex_type);
-	return SSH_ERR_INTERNAL_ERROR;
+	ফেরত SSH_ERR_INTERNAL_ERROR;
 }
 
-struct kex *
-kex_new(void)
+কাঠামো kex *
+kex_new(শূন্য)
 {
-	struct kex *kex;
+	কাঠামো kex *kex;
 
-	if ((kex = calloc(1, sizeof(*kex))) == NULL ||
-	    (kex->peer = sshbuf_new()) == NULL ||
-	    (kex->my = sshbuf_new()) == NULL ||
-	    (kex->client_version = sshbuf_new()) == NULL ||
-	    (kex->server_version = sshbuf_new()) == NULL ||
-	    (kex->session_id = sshbuf_new()) == NULL) {
+	যদি ((kex = calloc(1, আকার(*kex))) == ফাঁকা ||
+	    (kex->peer = sshbuf_new()) == ফাঁকা ||
+	    (kex->my = sshbuf_new()) == ফাঁকা ||
+	    (kex->client_version = sshbuf_new()) == ফাঁকা ||
+	    (kex->server_version = sshbuf_new()) == ফাঁকা ||
+	    (kex->session_id = sshbuf_new()) == ফাঁকা) {
 		kex_free(kex);
-		return NULL;
+		ফেরত ফাঁকা;
 	}
-	return kex;
+	ফেরত kex;
 }
 
-void
-kex_free_newkeys(struct newkeys *newkeys)
+শূন্য
+kex_free_newkeys(কাঠামো newkeys *newkeys)
 {
-	if (newkeys == NULL)
-		return;
-	if (newkeys->enc.key) {
-		explicit_bzero(newkeys->enc.key, newkeys->enc.key_len);
-		free(newkeys->enc.key);
-		newkeys->enc.key = NULL;
+	যদি (newkeys == ফাঁকা)
+		ফেরত;
+	যদি (newkeys->enc.চাবি) {
+		explicit_bzero(newkeys->enc.চাবি, newkeys->enc.চাবি_len);
+		মুক্ত(newkeys->enc.চাবি);
+		newkeys->enc.চাবি = ফাঁকা;
 	}
-	if (newkeys->enc.iv) {
+	যদি (newkeys->enc.iv) {
 		explicit_bzero(newkeys->enc.iv, newkeys->enc.iv_len);
-		free(newkeys->enc.iv);
-		newkeys->enc.iv = NULL;
+		মুক্ত(newkeys->enc.iv);
+		newkeys->enc.iv = ফাঁকা;
 	}
-	free(newkeys->enc.name);
-	explicit_bzero(&newkeys->enc, sizeof(newkeys->enc));
-	free(newkeys->comp.name);
-	explicit_bzero(&newkeys->comp, sizeof(newkeys->comp));
+	মুক্ত(newkeys->enc.name);
+	explicit_bzero(&newkeys->enc, আকার(newkeys->enc));
+	মুক্ত(newkeys->comp.name);
+	explicit_bzero(&newkeys->comp, আকার(newkeys->comp));
 	mac_clear(&newkeys->mac);
-	if (newkeys->mac.key) {
-		explicit_bzero(newkeys->mac.key, newkeys->mac.key_len);
-		free(newkeys->mac.key);
-		newkeys->mac.key = NULL;
+	যদি (newkeys->mac.চাবি) {
+		explicit_bzero(newkeys->mac.চাবি, newkeys->mac.চাবি_len);
+		মুক্ত(newkeys->mac.চাবি);
+		newkeys->mac.চাবি = ফাঁকা;
 	}
-	free(newkeys->mac.name);
-	explicit_bzero(&newkeys->mac, sizeof(newkeys->mac));
-	freezero(newkeys, sizeof(*newkeys));
+	মুক্ত(newkeys->mac.name);
+	explicit_bzero(&newkeys->mac, আকার(newkeys->mac));
+	freezero(newkeys, আকার(*newkeys));
 }
 
-void
-kex_free(struct kex *kex)
+শূন্য
+kex_free(কাঠামো kex *kex)
 {
 	u_int mode;
 
-	if (kex == NULL)
-		return;
+	যদি (kex == ফাঁকা)
+		ফেরত;
 
 #ifdef WITH_OPENSSL
 	DH_free(kex->dh);
-	EC_KEY_free(kex->ec_client_key);
+	EC_চাবি_free(kex->ec_client_চাবি);
 #endif /* WITH_OPENSSL */
-	for (mode = 0; mode < MODE_MAX; mode++) {
+	জন্য (mode = 0; mode < MODE_MAX; mode++) {
 		kex_free_newkeys(kex->newkeys[mode]);
-		kex->newkeys[mode] = NULL;
+		kex->newkeys[mode] = ফাঁকা;
 	}
 	sshbuf_free(kex->peer);
 	sshbuf_free(kex->my);
@@ -781,230 +781,230 @@ kex_free(struct kex *kex)
 	sshbuf_free(kex->session_id);
 	sshbuf_free(kex->initial_sig);
 	sshkey_free(kex->initial_hostkey);
-	free(kex->failed_choice);
-	free(kex->hostkey_alg);
-	free(kex->name);
-	free(kex->server_sig_algs);
-	free(kex);
+	মুক্ত(kex->failed_choice);
+	মুক্ত(kex->hostkey_alg);
+	মুক্ত(kex->name);
+	মুক্ত(kex->server_sig_algs);
+	মুক্ত(kex);
 }
 
-int
-kex_ready(struct ssh *ssh, char *proposal[PROPOSAL_MAX])
+পূর্ণসংখ্যা
+kex_ready(কাঠামো ssh *ssh, অক্ষর *proposal[PROPOSAL_MAX])
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if ((r = kex_prop2buf(ssh->kex->my, proposal)) != 0)
-		return r;
+	যদি ((r = kex_prop2buf(ssh->kex->my, proposal)) != 0)
+		ফেরত r;
 	ssh->kex->flags = KEX_INITIAL;
 	kex_reset_dispatch(ssh);
-	ssh_dispatch_set(ssh, SSH2_MSG_KEXINIT, &kex_input_kexinit);
-	return 0;
+	ssh_dispatch_set(ssh, SSH2_বার্তা_KEXINIT, &kex_প্রবেশ_kexinit);
+	ফেরত 0;
 }
 
-int
-kex_setup(struct ssh *ssh, char *proposal[PROPOSAL_MAX])
+পূর্ণসংখ্যা
+kex_setup(কাঠামো ssh *ssh, অক্ষর *proposal[PROPOSAL_MAX])
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if ((r = kex_ready(ssh, proposal)) != 0)
-		return r;
-	if ((r = kex_send_kexinit(ssh)) != 0) {		/* we start */
+	যদি ((r = kex_ready(ssh, proposal)) != 0)
+		ফেরত r;
+	যদি ((r = kex_send_kexinit(ssh)) != 0) {		/* we start */
 		kex_free(ssh->kex);
-		ssh->kex = NULL;
-		return r;
+		ssh->kex = ফাঁকা;
+		ফেরত r;
 	}
-	return 0;
+	ফেরত 0;
 }
 
 /*
  * Request key re-exchange, returns 0 on success or a ssherr.h error
  * code otherwise. Must not be called if KEX is incomplete or in-progress.
  */
-int
-kex_start_rekex(struct ssh *ssh)
+পূর্ণসংখ্যা
+kex_start_rekex(কাঠামো ssh *ssh)
 {
-	if (ssh->kex == NULL) {
+	যদি (ssh->kex == ফাঁকা) {
 		error_f("no kex");
-		return SSH_ERR_INTERNAL_ERROR;
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 	}
-	if (ssh->kex->done == 0) {
+	যদি (ssh->kex->done == 0) {
 		error_f("requested twice");
-		return SSH_ERR_INTERNAL_ERROR;
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 	}
 	ssh->kex->done = 0;
-	return kex_send_kexinit(ssh);
+	ফেরত kex_send_kexinit(ssh);
 }
 
-static int
-choose_enc(struct sshenc *enc, char *client, char *server)
+স্থির পূর্ণসংখ্যা
+choose_enc(কাঠামো sshenc *enc, অক্ষর *client, অক্ষর *server)
 {
-	char *name = match_list(client, server, NULL);
+	অক্ষর *name = match_list(client, server, ফাঁকা);
 
-	if (name == NULL)
-		return SSH_ERR_NO_CIPHER_ALG_MATCH;
-	if ((enc->cipher = cipher_by_name(name)) == NULL) {
+	যদি (name == ফাঁকা)
+		ফেরত SSH_ERR_NO_CIPHER_ALG_MATCH;
+	যদি ((enc->cipher = cipher_by_name(name)) == ফাঁকা) {
 		error_f("unsupported cipher %s", name);
-		free(name);
-		return SSH_ERR_INTERNAL_ERROR;
+		মুক্ত(name);
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 	}
 	enc->name = name;
 	enc->enabled = 0;
-	enc->iv = NULL;
+	enc->iv = ফাঁকা;
 	enc->iv_len = cipher_ivlen(enc->cipher);
-	enc->key = NULL;
-	enc->key_len = cipher_keylen(enc->cipher);
-	enc->block_size = cipher_blocksize(enc->cipher);
-	return 0;
+	enc->চাবি = ফাঁকা;
+	enc->চাবি_len = cipher_keylen(enc->cipher);
+	enc->block_আকার = cipher_blocksize(enc->cipher);
+	ফেরত 0;
 }
 
-static int
-choose_mac(struct ssh *ssh, struct sshmac *mac, char *client, char *server)
+স্থির পূর্ণসংখ্যা
+choose_mac(কাঠামো ssh *ssh, কাঠামো sshmac *mac, অক্ষর *client, অক্ষর *server)
 {
-	char *name = match_list(client, server, NULL);
+	অক্ষর *name = match_list(client, server, ফাঁকা);
 
-	if (name == NULL)
-		return SSH_ERR_NO_MAC_ALG_MATCH;
-	if (mac_setup(mac, name) < 0) {
+	যদি (name == ফাঁকা)
+		ফেরত SSH_ERR_NO_MAC_ALG_MATCH;
+	যদি (mac_setup(mac, name) < 0) {
 		error_f("unsupported MAC %s", name);
-		free(name);
-		return SSH_ERR_INTERNAL_ERROR;
+		মুক্ত(name);
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 	}
 	mac->name = name;
-	mac->key = NULL;
+	mac->চাবি = ফাঁকা;
 	mac->enabled = 0;
-	return 0;
+	ফেরত 0;
 }
 
-static int
-choose_comp(struct sshcomp *comp, char *client, char *server)
+স্থির পূর্ণসংখ্যা
+choose_comp(কাঠামো sshcomp *comp, অক্ষর *client, অক্ষর *server)
 {
-	char *name = match_list(client, server, NULL);
+	অক্ষর *name = match_list(client, server, ফাঁকা);
 
-	if (name == NULL)
-		return SSH_ERR_NO_COMPRESS_ALG_MATCH;
+	যদি (name == ফাঁকা)
+		ফেরত SSH_ERR_NO_COMPRESS_ALG_MATCH;
 #ifdef WITH_ZLIB
-	if (strcmp(name, "zlib@openssh.com") == 0) {
+	যদি (strcmp(name, "zlib@openssh.com") == 0) {
 		comp->type = COMP_DELAYED;
-	} else
+	} অন্যথা
 #endif	/* WITH_ZLIB */
-	if (strcmp(name, "none") == 0) {
+	যদি (strcmp(name, "none") == 0) {
 		comp->type = COMP_NONE;
-	} else {
+	} অন্যথা {
 		error_f("unsupported compression scheme %s", name);
-		free(name);
-		return SSH_ERR_INTERNAL_ERROR;
+		মুক্ত(name);
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 	}
 	comp->name = name;
-	return 0;
+	ফেরত 0;
 }
 
-static int
-choose_kex(struct kex *k, char *client, char *server)
+স্থির পূর্ণসংখ্যা
+choose_kex(কাঠামো kex *k, অক্ষর *client, অক্ষর *server)
 {
-	k->name = match_list(client, server, NULL);
+	k->name = match_list(client, server, ফাঁকা);
 
 	debug("kex: algorithm: %s", k->name ? k->name : "(no match)");
-	if (k->name == NULL)
-		return SSH_ERR_NO_KEX_ALG_MATCH;
-	if (!kex_name_valid(k->name)) {
+	যদি (k->name == ফাঁকা)
+		ফেরত SSH_ERR_NO_KEX_ALG_MATCH;
+	যদি (!kex_name_valid(k->name)) {
 		error_f("unsupported KEX method %s", k->name);
-		return SSH_ERR_INTERNAL_ERROR;
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 	}
 	k->kex_type = kex_type_from_name(k->name);
 	k->hash_alg = kex_hash_from_name(k->name);
 	k->ec_nid = kex_nid_from_name(k->name);
-	return 0;
+	ফেরত 0;
 }
 
-static int
-choose_hostkeyalg(struct kex *k, char *client, char *server)
+স্থির পূর্ণসংখ্যা
+choose_hostkeyalg(কাঠামো kex *k, অক্ষর *client, অক্ষর *server)
 {
-	free(k->hostkey_alg);
-	k->hostkey_alg = match_list(client, server, NULL);
+	মুক্ত(k->hostkey_alg);
+	k->hostkey_alg = match_list(client, server, ফাঁকা);
 
 	debug("kex: host key algorithm: %s",
 	    k->hostkey_alg ? k->hostkey_alg : "(no match)");
-	if (k->hostkey_alg == NULL)
-		return SSH_ERR_NO_HOSTKEY_ALG_MATCH;
+	যদি (k->hostkey_alg == ফাঁকা)
+		ফেরত SSH_ERR_NO_HOSTKEY_ALG_MATCH;
 	k->hostkey_type = sshkey_type_from_name(k->hostkey_alg);
-	if (k->hostkey_type == KEY_UNSPEC) {
+	যদি (k->hostkey_type == চাবি_UNSPEC) {
 		error_f("unsupported hostkey algorithm %s", k->hostkey_alg);
-		return SSH_ERR_INTERNAL_ERROR;
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 	}
 	k->hostkey_nid = sshkey_ecdsa_nid_from_name(k->hostkey_alg);
-	return 0;
+	ফেরত 0;
 }
 
-static int
-proposals_match(char *my[PROPOSAL_MAX], char *peer[PROPOSAL_MAX])
+স্থির পূর্ণসংখ্যা
+proposals_match(অক্ষর *my[PROPOSAL_MAX], অক্ষর *peer[PROPOSAL_MAX])
 {
-	static int check[] = {
-		PROPOSAL_KEX_ALGS, PROPOSAL_SERVER_HOST_KEY_ALGS, -1
+	স্থির পূর্ণসংখ্যা check[] = {
+		PROPOSAL_KEX_ALGS, PROPOSAL_SERVER_HOST_চাবি_ALGS, -1
 	};
-	int *idx;
-	char *p;
+	পূর্ণসংখ্যা *idx;
+	অক্ষর *p;
 
-	for (idx = &check[0]; *idx != -1; idx++) {
-		if ((p = strchr(my[*idx], ',')) != NULL)
+	জন্য (idx = &check[0]; *idx != -1; idx++) {
+		যদি ((p = strchr(my[*idx], ',')) != ফাঁকা)
 			*p = '\0';
-		if ((p = strchr(peer[*idx], ',')) != NULL)
+		যদি ((p = strchr(peer[*idx], ',')) != ফাঁকা)
 			*p = '\0';
-		if (strcmp(my[*idx], peer[*idx]) != 0) {
+		যদি (strcmp(my[*idx], peer[*idx]) != 0) {
 			debug2("proposal mismatch: my %s peer %s",
 			    my[*idx], peer[*idx]);
-			return (0);
+			ফেরত (0);
 		}
 	}
 	debug2("proposals match");
-	return (1);
+	ফেরত (1);
 }
 
-static int
-kexalgs_contains(char **peer, const char *ext)
+স্থির পূর্ণসংখ্যা
+kexalgs_contains(অক্ষর **peer, ধ্রুবক অক্ষর *ext)
 {
-	return kex_has_any_alg(peer[PROPOSAL_KEX_ALGS], ext);
+	ফেরত kex_has_any_alg(peer[PROPOSAL_KEX_ALGS], ext);
 }
 
-static int
-kex_choose_conf(struct ssh *ssh, uint32_t seq)
+স্থির পূর্ণসংখ্যা
+kex_choose_conf(কাঠামো ssh *ssh, uint32_t seq)
 {
-	struct kex *kex = ssh->kex;
-	struct newkeys *newkeys;
-	char **my = NULL, **peer = NULL;
-	char **cprop, **sprop;
-	int nenc, nmac, ncomp;
+	কাঠামো kex *kex = ssh->kex;
+	কাঠামো newkeys *newkeys;
+	অক্ষর **my = ফাঁকা, **peer = ফাঁকা;
+	অক্ষর **cprop, **sprop;
+	পূর্ণসংখ্যা nenc, nmac, ncomp;
 	u_int mode, ctos, need, dh_need, authlen;
-	int r, first_kex_follows;
+	পূর্ণসংখ্যা r, first_kex_follows;
 
 	debug2("local %s KEXINIT proposal", kex->server ? "server" : "client");
-	if ((r = kex_buf2prop(kex->my, NULL, &my)) != 0)
-		goto out;
+	যদি ((r = kex_buf2prop(kex->my, ফাঁকা, &my)) != 0)
+		যাও out;
 	debug2("peer %s KEXINIT proposal", kex->server ? "client" : "server");
-	if ((r = kex_buf2prop(kex->peer, &first_kex_follows, &peer)) != 0)
-		goto out;
+	যদি ((r = kex_buf2prop(kex->peer, &first_kex_follows, &peer)) != 0)
+		যাও out;
 
-	if (kex->server) {
+	যদি (kex->server) {
 		cprop=peer;
 		sprop=my;
-	} else {
+	} অন্যথা {
 		cprop=my;
 		sprop=peer;
 	}
 
 	/* Check whether peer supports ext_info/kex_strict */
-	if ((kex->flags & KEX_INITIAL) != 0) {
-		if (kex->server) {
+	যদি ((kex->flags & KEX_INITIAL) != 0) {
+		যদি (kex->server) {
 			kex->ext_info_c = kexalgs_contains(peer, "ext-info-c");
 			kex->kex_strict = kexalgs_contains(peer,
 			    "kex-strict-c-v00@openssh.com");
-		} else {
+		} অন্যথা {
 			kex->ext_info_s = kexalgs_contains(peer, "ext-info-s");
 			kex->kex_strict = kexalgs_contains(peer,
 			    "kex-strict-s-v00@openssh.com");
 		}
-		if (kex->kex_strict) {
+		যদি (kex->kex_strict) {
 			debug3_f("will use strict KEX ordering");
-			if (seq != 0)
+			যদি (seq != 0)
 				ssh_packet_disconnect(ssh,
 				    "strict KEX violation: "
 				    "KEXINIT was not the first packet");
@@ -1012,32 +1012,32 @@ kex_choose_conf(struct ssh *ssh, uint32_t seq)
 	}
 
 	/* Check whether client supports rsa-sha2 algorithms */
-	if (kex->server && (kex->flags & KEX_INITIAL)) {
-		if (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_KEY_ALGS],
+	যদি (kex->server && (kex->flags & KEX_INITIAL)) {
+		যদি (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_চাবি_ALGS],
 		    "rsa-sha2-256,rsa-sha2-256-cert-v01@openssh.com"))
 			kex->flags |= KEX_RSA_SHA2_256_SUPPORTED;
-		if (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_KEY_ALGS],
+		যদি (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_চাবি_ALGS],
 		    "rsa-sha2-512,rsa-sha2-512-cert-v01@openssh.com"))
 			kex->flags |= KEX_RSA_SHA2_512_SUPPORTED;
 	}
 
 	/* Algorithm Negotiation */
-	if ((r = choose_kex(kex, cprop[PROPOSAL_KEX_ALGS],
+	যদি ((r = choose_kex(kex, cprop[PROPOSAL_KEX_ALGS],
 	    sprop[PROPOSAL_KEX_ALGS])) != 0) {
 		kex->failed_choice = peer[PROPOSAL_KEX_ALGS];
-		peer[PROPOSAL_KEX_ALGS] = NULL;
-		goto out;
+		peer[PROPOSAL_KEX_ALGS] = ফাঁকা;
+		যাও out;
 	}
-	if ((r = choose_hostkeyalg(kex, cprop[PROPOSAL_SERVER_HOST_KEY_ALGS],
-	    sprop[PROPOSAL_SERVER_HOST_KEY_ALGS])) != 0) {
-		kex->failed_choice = peer[PROPOSAL_SERVER_HOST_KEY_ALGS];
-		peer[PROPOSAL_SERVER_HOST_KEY_ALGS] = NULL;
-		goto out;
+	যদি ((r = choose_hostkeyalg(kex, cprop[PROPOSAL_SERVER_HOST_চাবি_ALGS],
+	    sprop[PROPOSAL_SERVER_HOST_চাবি_ALGS])) != 0) {
+		kex->failed_choice = peer[PROPOSAL_SERVER_HOST_চাবি_ALGS];
+		peer[PROPOSAL_SERVER_HOST_চাবি_ALGS] = ফাঁকা;
+		যাও out;
 	}
-	for (mode = 0; mode < MODE_MAX; mode++) {
-		if ((newkeys = calloc(1, sizeof(*newkeys))) == NULL) {
+	জন্য (mode = 0; mode < MODE_MAX; mode++) {
+		যদি ((newkeys = calloc(1, আকার(*newkeys))) == ফাঁকা) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			যাও out;
 		}
 		kex->newkeys[mode] = newkeys;
 		ctos = (!kex->server && mode == MODE_OUT) ||
@@ -1045,26 +1045,26 @@ kex_choose_conf(struct ssh *ssh, uint32_t seq)
 		nenc  = ctos ? PROPOSAL_ENC_ALGS_CTOS  : PROPOSAL_ENC_ALGS_STOC;
 		nmac  = ctos ? PROPOSAL_MAC_ALGS_CTOS  : PROPOSAL_MAC_ALGS_STOC;
 		ncomp = ctos ? PROPOSAL_COMP_ALGS_CTOS : PROPOSAL_COMP_ALGS_STOC;
-		if ((r = choose_enc(&newkeys->enc, cprop[nenc],
+		যদি ((r = choose_enc(&newkeys->enc, cprop[nenc],
 		    sprop[nenc])) != 0) {
 			kex->failed_choice = peer[nenc];
-			peer[nenc] = NULL;
-			goto out;
+			peer[nenc] = ফাঁকা;
+			যাও out;
 		}
 		authlen = cipher_authlen(newkeys->enc.cipher);
 		/* ignore mac for authenticated encryption */
-		if (authlen == 0 &&
+		যদি (authlen == 0 &&
 		    (r = choose_mac(ssh, &newkeys->mac, cprop[nmac],
 		    sprop[nmac])) != 0) {
 			kex->failed_choice = peer[nmac];
-			peer[nmac] = NULL;
-			goto out;
+			peer[nmac] = ফাঁকা;
+			যাও out;
 		}
-		if ((r = choose_comp(&newkeys->comp, cprop[ncomp],
+		যদি ((r = choose_comp(&newkeys->comp, cprop[ncomp],
 		    sprop[ncomp])) != 0) {
 			kex->failed_choice = peer[ncomp];
-			peer[ncomp] = NULL;
-			goto out;
+			peer[ncomp] = ফাঁকা;
+			যাও out;
 		}
 		debug("kex: %s cipher: %s MAC: %s compression: %s",
 		    ctos ? "client->server" : "server->client",
@@ -1073,180 +1073,180 @@ kex_choose_conf(struct ssh *ssh, uint32_t seq)
 		    newkeys->comp.name);
 	}
 	need = dh_need = 0;
-	for (mode = 0; mode < MODE_MAX; mode++) {
+	জন্য (mode = 0; mode < MODE_MAX; mode++) {
 		newkeys = kex->newkeys[mode];
-		need = MAXIMUM(need, newkeys->enc.key_len);
-		need = MAXIMUM(need, newkeys->enc.block_size);
+		need = MAXIMUM(need, newkeys->enc.চাবি_len);
+		need = MAXIMUM(need, newkeys->enc.block_আকার);
 		need = MAXIMUM(need, newkeys->enc.iv_len);
-		need = MAXIMUM(need, newkeys->mac.key_len);
+		need = MAXIMUM(need, newkeys->mac.চাবি_len);
 		dh_need = MAXIMUM(dh_need, cipher_seclen(newkeys->enc.cipher));
-		dh_need = MAXIMUM(dh_need, newkeys->enc.block_size);
+		dh_need = MAXIMUM(dh_need, newkeys->enc.block_আকার);
 		dh_need = MAXIMUM(dh_need, newkeys->enc.iv_len);
-		dh_need = MAXIMUM(dh_need, newkeys->mac.key_len);
+		dh_need = MAXIMUM(dh_need, newkeys->mac.চাবি_len);
 	}
 	/* XXX need runden? */
 	kex->we_need = need;
 	kex->dh_need = dh_need;
 
 	/* ignore the next message if the proposals do not match */
-	if (first_kex_follows && !proposals_match(my, peer))
+	যদি (first_kex_follows && !proposals_match(my, peer))
 		ssh->dispatch_skip_packets = 1;
 	r = 0;
  out:
 	kex_prop_free(my);
 	kex_prop_free(peer);
-	return r;
+	ফেরত r;
 }
 
-static int
-derive_key(struct ssh *ssh, int id, u_int need, u_char *hash, u_int hashlen,
-    const struct sshbuf *shared_secret, u_char **keyp)
+স্থির পূর্ণসংখ্যা
+derive_চাবি(কাঠামো ssh *ssh, পূর্ণসংখ্যা id, u_int need, u_char *hash, u_int hashlen,
+    ধ্রুবক কাঠামো sshbuf *shared_secret, u_char **keyp)
 {
-	struct kex *kex = ssh->kex;
-	struct ssh_digest_ctx *hashctx = NULL;
-	char c = id;
+	কাঠামো kex *kex = ssh->kex;
+	কাঠামো ssh_digest_ctx *hashctx = ফাঁকা;
+	অক্ষর c = id;
 	u_int have;
-	size_t mdsz;
+	আকার_t mdsz;
 	u_char *digest;
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if ((mdsz = ssh_digest_bytes(kex->hash_alg)) == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((digest = calloc(1, ROUNDUP(need, mdsz))) == NULL) {
+	যদি ((mdsz = ssh_digest_bytes(kex->hash_alg)) == 0)
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
+	যদি ((digest = calloc(1, ROUNDUP(need, mdsz))) == ফাঁকা) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
 
 	/* K1 = HASH(K || H || "A" || session_id) */
-	if ((hashctx = ssh_digest_start(kex->hash_alg)) == NULL ||
-	    ssh_digest_update_buffer(hashctx, shared_secret) != 0 ||
+	যদি ((hashctx = ssh_digest_start(kex->hash_alg)) == ফাঁকা ||
+	    ssh_digest_update_বাফার(hashctx, shared_secret) != 0 ||
 	    ssh_digest_update(hashctx, hash, hashlen) != 0 ||
 	    ssh_digest_update(hashctx, &c, 1) != 0 ||
-	    ssh_digest_update_buffer(hashctx, kex->session_id) != 0 ||
+	    ssh_digest_update_বাফার(hashctx, kex->session_id) != 0 ||
 	    ssh_digest_final(hashctx, digest, mdsz) != 0) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		error_f("KEX hash failed");
-		goto out;
+		যাও out;
 	}
 	ssh_digest_free(hashctx);
-	hashctx = NULL;
+	hashctx = ফাঁকা;
 
 	/*
 	 * expand key:
 	 * Kn = HASH(K || H || K1 || K2 || ... || Kn-1)
 	 * Key = K1 || K2 || ... || Kn
 	 */
-	for (have = mdsz; need > have; have += mdsz) {
-		if ((hashctx = ssh_digest_start(kex->hash_alg)) == NULL ||
-		    ssh_digest_update_buffer(hashctx, shared_secret) != 0 ||
+	জন্য (have = mdsz; need > have; have += mdsz) {
+		যদি ((hashctx = ssh_digest_start(kex->hash_alg)) == ফাঁকা ||
+		    ssh_digest_update_বাফার(hashctx, shared_secret) != 0 ||
 		    ssh_digest_update(hashctx, hash, hashlen) != 0 ||
 		    ssh_digest_update(hashctx, digest, have) != 0 ||
 		    ssh_digest_final(hashctx, digest + have, mdsz) != 0) {
 			error_f("KDF failed");
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			যাও out;
 		}
 		ssh_digest_free(hashctx);
-		hashctx = NULL;
+		hashctx = ফাঁকা;
 	}
 #ifdef DEBUG_KEX
 	fprintf(stderr, "key '%c'== ", c);
 	dump_digest("key", digest, need);
 #endif
 	*keyp = digest;
-	digest = NULL;
+	digest = ফাঁকা;
 	r = 0;
  out:
-	free(digest);
+	মুক্ত(digest);
 	ssh_digest_free(hashctx);
-	return r;
+	ফেরত r;
 }
 
 #define NKEYS	6
-int
-kex_derive_keys(struct ssh *ssh, u_char *hash, u_int hashlen,
-    const struct sshbuf *shared_secret)
+পূর্ণসংখ্যা
+kex_derive_চাবিগুলি(কাঠামো ssh *ssh, u_char *hash, u_int hashlen,
+    ধ্রুবক কাঠামো sshbuf *shared_secret)
 {
-	struct kex *kex = ssh->kex;
-	u_char *keys[NKEYS];
+	কাঠামো kex *kex = ssh->kex;
+	u_char *চাবিগুলি[NKEYS];
 	u_int i, j, mode, ctos;
-	int r;
+	পূর্ণসংখ্যা r;
 
 	/* save initial hash as session id */
-	if ((kex->flags & KEX_INITIAL) != 0) {
-		if (sshbuf_len(kex->session_id) != 0) {
+	যদি ((kex->flags & KEX_INITIAL) != 0) {
+		যদি (sshbuf_len(kex->session_id) != 0) {
 			error_f("already have session ID at kex");
-			return SSH_ERR_INTERNAL_ERROR;
+			ফেরত SSH_ERR_INTERNAL_ERROR;
 		}
-		if ((r = sshbuf_put(kex->session_id, hash, hashlen)) != 0)
-			return r;
-	} else if (sshbuf_len(kex->session_id) == 0) {
+		যদি ((r = sshbuf_put(kex->session_id, hash, hashlen)) != 0)
+			ফেরত r;
+	} অন্যথা যদি (sshbuf_len(kex->session_id) == 0) {
 		error_f("no session ID in rekex");
-		return SSH_ERR_INTERNAL_ERROR;
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 	}
-	for (i = 0; i < NKEYS; i++) {
-		if ((r = derive_key(ssh, 'A'+i, kex->we_need, hash, hashlen,
-		    shared_secret, &keys[i])) != 0) {
-			for (j = 0; j < i; j++)
-				free(keys[j]);
-			return r;
+	জন্য (i = 0; i < NKEYS; i++) {
+		যদি ((r = derive_চাবি(ssh, 'A'+i, kex->we_need, hash, hashlen,
+		    shared_secret, &চাবিগুলি[i])) != 0) {
+			জন্য (j = 0; j < i; j++)
+				মুক্ত(চাবিগুলি[j]);
+			ফেরত r;
 		}
 	}
-	for (mode = 0; mode < MODE_MAX; mode++) {
+	জন্য (mode = 0; mode < MODE_MAX; mode++) {
 		ctos = (!kex->server && mode == MODE_OUT) ||
 		    (kex->server && mode == MODE_IN);
-		kex->newkeys[mode]->enc.iv  = keys[ctos ? 0 : 1];
-		kex->newkeys[mode]->enc.key = keys[ctos ? 2 : 3];
-		kex->newkeys[mode]->mac.key = keys[ctos ? 4 : 5];
+		kex->newkeys[mode]->enc.iv  = চাবিগুলি[ctos ? 0 : 1];
+		kex->newkeys[mode]->enc.চাবি = চাবিগুলি[ctos ? 2 : 3];
+		kex->newkeys[mode]->mac.চাবি = চাবিগুলি[ctos ? 4 : 5];
 	}
-	return 0;
+	ফেরত 0;
 }
 
-int
-kex_load_hostkey(struct ssh *ssh, struct sshkey **prvp, struct sshkey **pubp)
+পূর্ণসংখ্যা
+kex_load_hostkey(কাঠামো ssh *ssh, কাঠামো sshkey **prvp, কাঠামো sshkey **pubp)
 {
-	struct kex *kex = ssh->kex;
+	কাঠামো kex *kex = ssh->kex;
 
-	*pubp = NULL;
-	*prvp = NULL;
-	if (kex->load_host_public_key == NULL ||
-	    kex->load_host_private_key == NULL) {
+	*pubp = ফাঁকা;
+	*prvp = ফাঁকা;
+	যদি (kex->load_host_public_চাবি == ফাঁকা ||
+	    kex->load_host_private_চাবি == ফাঁকা) {
 		error_f("missing hostkey loader");
-		return SSH_ERR_INVALID_ARGUMENT;
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
 	}
-	*pubp = kex->load_host_public_key(kex->hostkey_type,
+	*pubp = kex->load_host_public_চাবি(kex->hostkey_type,
 	    kex->hostkey_nid, ssh);
-	*prvp = kex->load_host_private_key(kex->hostkey_type,
+	*prvp = kex->load_host_private_চাবি(kex->hostkey_type,
 	    kex->hostkey_nid, ssh);
-	if (*pubp == NULL)
-		return SSH_ERR_NO_HOSTKEY_LOADED;
-	return 0;
+	যদি (*pubp == ফাঁকা)
+		ফেরত SSH_ERR_NO_HOSTKEY_LOADED;
+	ফেরত 0;
 }
 
-int
-kex_verify_host_key(struct ssh *ssh, struct sshkey *server_host_key)
+পূর্ণসংখ্যা
+kex_verify_host_চাবি(কাঠামো ssh *ssh, কাঠামো sshkey *server_host_চাবি)
 {
-	struct kex *kex = ssh->kex;
+	কাঠামো kex *kex = ssh->kex;
 
-	if (kex->verify_host_key == NULL) {
+	যদি (kex->verify_host_চাবি == ফাঁকা) {
 		error_f("missing hostkey verifier");
-		return SSH_ERR_INVALID_ARGUMENT;
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (server_host_key->type != kex->hostkey_type ||
-	    (kex->hostkey_type == KEY_ECDSA &&
-	    server_host_key->ecdsa_nid != kex->hostkey_nid))
-		return SSH_ERR_KEY_TYPE_MISMATCH;
-	if (kex->verify_host_key(server_host_key, ssh) == -1)
-		return  SSH_ERR_SIGNATURE_INVALID;
-	return 0;
+	যদি (server_host_চাবি->type != kex->hostkey_type ||
+	    (kex->hostkey_type == চাবি_ECDSA &&
+	    server_host_চাবি->ecdsa_nid != kex->hostkey_nid))
+		ফেরত SSH_ERR_চাবি_TYPE_MISMATCH;
+	যদি (kex->verify_host_চাবি(server_host_চাবি, ssh) == -1)
+		ফেরত  SSH_ERR_SIGNATURE_INVALID;
+	ফেরত 0;
 }
 
-#if defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
-void
-dump_digest(const char *msg, const u_char *digest, int len)
+#যদি defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
+শূন্য
+dump_digest(ধ্রুবক অক্ষর *বার্তা, ধ্রুবক u_char *digest, পূর্ণসংখ্যা len)
 {
-	fprintf(stderr, "%s\n", msg);
-	sshbuf_dump_data(digest, len, stderr);
+	fprintf(stderr, "%s\n", বার্তা);
+	sshbuf_dump_তথ্য(digest, len, stderr);
 }
 #endif
 
@@ -1254,16 +1254,16 @@ dump_digest(const char *msg, const u_char *digest, int len)
  * Send a plaintext error message to the peer, suffixed by \r\n.
  * Only used during banner exchange, and there only for the server.
  */
-static void
-send_error(struct ssh *ssh, char *msg)
+স্থির শূন্য
+send_error(কাঠামো ssh *ssh, অক্ষর *বার্তা)
 {
-	char *crnl = "\r\n";
+	অক্ষর *crnl = "\r\n";
 
-	if (!ssh->kex->server)
-		return;
+	যদি (!ssh->kex->server)
+		ফেরত;
 
-	if (atomicio(vwrite, ssh_packet_get_connection_out(ssh),
-	    msg, strlen(msg)) != strlen(msg) ||
+	যদি (atomicio(vwrite, ssh_packet_get_connection_out(ssh),
+	    বার্তা, strlen(বার্তা)) != strlen(বার্তা) ||
 	    atomicio(vwrite, ssh_packet_get_connection_out(ssh),
 	    crnl, strlen(crnl)) != strlen(crnl))
 		error_f("write: %.100s", strerror(errno));
@@ -1274,208 +1274,208 @@ send_error(struct ssh *ssh, char *msg)
  * up to timeout_ms (or indefinitely if timeout_ms <= 0).
  * Returns on 0 success or a ssherr.h code on failure.
  */
-int
-kex_exchange_identification(struct ssh *ssh, int timeout_ms,
-    const char *version_addendum)
+পূর্ণসংখ্যা
+kex_exchange_identification(কাঠামো ssh *ssh, পূর্ণসংখ্যা timeout_ms,
+    ধ্রুবক অক্ষর *version_addendum)
 {
-	int remote_major, remote_minor, mismatch, oerrno = 0;
-	size_t len, n;
-	int r, expect_nl;
+	পূর্ণসংখ্যা remote_major, remote_minor, mismatch, oerrno = 0;
+	আকার_t len, n;
+	পূর্ণসংখ্যা r, expect_nl;
 	u_char c;
-	struct sshbuf *our_version = ssh->kex->server ?
+	কাঠামো sshbuf *our_version = ssh->kex->server ?
 	    ssh->kex->server_version : ssh->kex->client_version;
-	struct sshbuf *peer_version = ssh->kex->server ?
+	কাঠামো sshbuf *peer_version = ssh->kex->server ?
 	    ssh->kex->client_version : ssh->kex->server_version;
-	char *our_version_string = NULL, *peer_version_string = NULL;
-	char *cp, *remote_version = NULL;
+	অক্ষর *our_version_string = ফাঁকা, *peer_version_string = ফাঁকা;
+	অক্ষর *cp, *remote_version = ফাঁকা;
 
 	/* Prepare and send our banner */
 	sshbuf_reset(our_version);
-	if (version_addendum != NULL && *version_addendum == '\0')
-		version_addendum = NULL;
-	if ((r = sshbuf_putf(our_version, "SSH-%d.%d-%s%s%s\r\n",
+	যদি (version_addendum != ফাঁকা && *version_addendum == '\0')
+		version_addendum = ফাঁকা;
+	যদি ((r = sshbuf_putf(our_version, "SSH-%d.%d-%s%s%s\r\n",
 	    PROTOCOL_MAJOR_2, PROTOCOL_MINOR_2, SSH_VERSION,
-	    version_addendum == NULL ? "" : " ",
-	    version_addendum == NULL ? "" : version_addendum)) != 0) {
+	    version_addendum == ফাঁকা ? "" : " ",
+	    version_addendum == ফাঁকা ? "" : version_addendum)) != 0) {
 		oerrno = errno;
 		error_fr(r, "sshbuf_putf");
-		goto out;
+		যাও out;
 	}
 
-	if (atomicio(vwrite, ssh_packet_get_connection_out(ssh),
+	যদি (atomicio(vwrite, ssh_packet_get_connection_out(ssh),
 	    sshbuf_mutable_ptr(our_version),
 	    sshbuf_len(our_version)) != sshbuf_len(our_version)) {
 		oerrno = errno;
 		debug_f("write: %.100s", strerror(errno));
 		r = SSH_ERR_SYSTEM_ERROR;
-		goto out;
+		যাও out;
 	}
-	if ((r = sshbuf_consume_end(our_version, 2)) != 0) { /* trim \r\n */
+	যদি ((r = sshbuf_consume_end(our_version, 2)) != 0) { /* trim \r\n */
 		oerrno = errno;
 		error_fr(r, "sshbuf_consume_end");
-		goto out;
+		যাও out;
 	}
 	our_version_string = sshbuf_dup_string(our_version);
-	if (our_version_string == NULL) {
+	যদি (our_version_string == ফাঁকা) {
 		error_f("sshbuf_dup_string failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
 	debug("Local version string %.100s", our_version_string);
 
 	/* Read other side's version identification. */
-	for (n = 0; ; n++) {
-		if (n >= SSH_MAX_PRE_BANNER_LINES) {
+	জন্য (n = 0; ; n++) {
+		যদি (n >= SSH_MAX_PRE_BANNER_সারিগুলি) {
 			send_error(ssh, "No SSH identification string "
 			    "received.");
 			error_f("No SSH version received in first %u lines "
-			    "from server", SSH_MAX_PRE_BANNER_LINES);
+			    "from server", SSH_MAX_PRE_BANNER_সারিগুলি);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			যাও out;
 		}
 		sshbuf_reset(peer_version);
 		expect_nl = 0;
-		for (;;) {
-			if (timeout_ms > 0) {
+		জন্য (;;) {
+			যদি (timeout_ms > 0) {
 				r = waitrfd(ssh_packet_get_connection_in(ssh),
-				    &timeout_ms, NULL);
-				if (r == -1 && errno == ETIMEDOUT) {
+				    &timeout_ms, ফাঁকা);
+				যদি (r == -1 && errno == ETIMEDOUT) {
 					send_error(ssh, "Timed out waiting "
 					    "for SSH identification string.");
 					error("Connection timed out during "
 					    "banner exchange");
 					r = SSH_ERR_CONN_TIMEOUT;
-					goto out;
-				} else if (r == -1) {
+					যাও out;
+				} অন্যথা যদি (r == -1) {
 					oerrno = errno;
 					error_f("%s", strerror(errno));
 					r = SSH_ERR_SYSTEM_ERROR;
-					goto out;
+					যাও out;
 				}
 			}
 
-			len = atomicio(read, ssh_packet_get_connection_in(ssh),
+			len = atomicio(পঠ, ssh_packet_get_connection_in(ssh),
 			    &c, 1);
-			if (len != 1 && errno == EPIPE) {
+			যদি (len != 1 && errno == EPIPE) {
 				verbose_f("Connection closed by remote host");
 				r = SSH_ERR_CONN_CLOSED;
-				goto out;
-			} else if (len != 1) {
+				যাও out;
+			} অন্যথা যদি (len != 1) {
 				oerrno = errno;
 				error_f("read: %.100s", strerror(errno));
 				r = SSH_ERR_SYSTEM_ERROR;
-				goto out;
+				যাও out;
 			}
-			if (c == '\r') {
+			যদি (c == '\r') {
 				expect_nl = 1;
-				continue;
+				চালু;
 			}
-			if (c == '\n')
-				break;
-			if (c == '\0' || expect_nl) {
+			যদি (c == '\n')
+				বিরতি;
+			যদি (c == '\0' || expect_nl) {
 				verbose_f("banner line contains invalid "
 				    "characters");
-				goto invalid;
+				যাও invalid;
 			}
-			if ((r = sshbuf_put_u8(peer_version, c)) != 0) {
+			যদি ((r = sshbuf_put_u8(peer_version, c)) != 0) {
 				oerrno = errno;
 				error_fr(r, "sshbuf_put");
-				goto out;
+				যাও out;
 			}
-			if (sshbuf_len(peer_version) > SSH_MAX_BANNER_LEN) {
+			যদি (sshbuf_len(peer_version) > SSH_MAX_BANNER_LEN) {
 				verbose_f("banner line too long");
-				goto invalid;
+				যাও invalid;
 			}
 		}
 		/* Is this an actual protocol banner? */
-		if (sshbuf_len(peer_version) > 4 &&
+		যদি (sshbuf_len(peer_version) > 4 &&
 		    memcmp(sshbuf_ptr(peer_version), "SSH-", 4) == 0)
-			break;
+			বিরতি;
 		/* If not, then just log the line and continue */
-		if ((cp = sshbuf_dup_string(peer_version)) == NULL) {
+		যদি ((cp = sshbuf_dup_string(peer_version)) == ফাঁকা) {
 			error_f("sshbuf_dup_string failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			যাও out;
 		}
 		/* Do not accept lines before the SSH ident from a client */
-		if (ssh->kex->server) {
+		যদি (ssh->kex->server) {
 			verbose_f("client sent invalid protocol identifier "
 			    "\"%.256s\"", cp);
-			free(cp);
-			goto invalid;
+			মুক্ত(cp);
+			যাও invalid;
 		}
 		debug_f("banner line %zu: %s", n, cp);
-		free(cp);
+		মুক্ত(cp);
 	}
 	peer_version_string = sshbuf_dup_string(peer_version);
-	if (peer_version_string == NULL)
+	যদি (peer_version_string == ফাঁকা)
 		fatal_f("sshbuf_dup_string failed");
 	/* XXX must be same size for sscanf */
-	if ((remote_version = calloc(1, sshbuf_len(peer_version))) == NULL) {
+	যদি ((remote_version = calloc(1, sshbuf_len(peer_version))) == ফাঁকা) {
 		error_f("calloc failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
 
 	/*
 	 * Check that the versions match.  In future this might accept
 	 * several versions and set appropriate flags to handle them.
 	 */
-	if (sscanf(peer_version_string, "SSH-%d.%d-%[^\n]\n",
+	যদি (sscanf(peer_version_string, "SSH-%d.%d-%[^\n]\n",
 	    &remote_major, &remote_minor, remote_version) != 3) {
 		error("Bad remote protocol version identification: '%.100s'",
 		    peer_version_string);
  invalid:
 		send_error(ssh, "Invalid SSH identification string.");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		যাও out;
 	}
 	debug("Remote protocol version %d.%d, remote software version %.100s",
 	    remote_major, remote_minor, remote_version);
 	compat_banner(ssh, remote_version);
 
 	mismatch = 0;
-	switch (remote_major) {
-	case 2:
-		break;
-	case 1:
-		if (remote_minor != 99)
+	নির্বাচন (remote_major) {
+	ক্ষেত্র 2:
+		বিরতি;
+	ক্ষেত্র 1:
+		যদি (remote_minor != 99)
 			mismatch = 1;
-		break;
-	default:
+		বিরতি;
+	পূর্বনির্ধারিত:
 		mismatch = 1;
-		break;
+		বিরতি;
 	}
-	if (mismatch) {
+	যদি (mismatch) {
 		error("Protocol major versions differ: %d vs. %d",
 		    PROTOCOL_MAJOR_2, remote_major);
 		send_error(ssh, "Protocol major versions differ.");
 		r = SSH_ERR_NO_PROTOCOL_VERSION;
-		goto out;
+		যাও out;
 	}
 
-	if (ssh->kex->server && (ssh->compat & SSH_BUG_PROBE) != 0) {
+	যদি (ssh->kex->server && (ssh->compat & SSH_BUG_PROBE) != 0) {
 		logit("probed from %s port %d with %s.  Don't panic.",
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
 		    peer_version_string);
 		r = SSH_ERR_CONN_CLOSED; /* XXX */
-		goto out;
+		যাও out;
 	}
-	if (ssh->kex->server && (ssh->compat & SSH_BUG_SCANNER) != 0) {
+	যদি (ssh->kex->server && (ssh->compat & SSH_BUG_SCANNER) != 0) {
 		logit("scanned from %s port %d with %s.  Don't panic.",
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
 		    peer_version_string);
 		r = SSH_ERR_CONN_CLOSED; /* XXX */
-		goto out;
+		যাও out;
 	}
 	/* success */
 	r = 0;
  out:
-	free(our_version_string);
-	free(peer_version_string);
+	মুক্ত(our_version_string);
+	মুক্ত(peer_version_string);
 	ssh->remote_version = remote_version;  /* transferred */
-	if (r == SSH_ERR_SYSTEM_ERROR)
+	যদি (r == SSH_ERR_SYSTEM_ERROR)
 		errno = oerrno;
-	return r;
+	ফেরত r;
 }
 

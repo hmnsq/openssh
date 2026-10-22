@@ -19,14 +19,14 @@
 #ifndef _ADDR_H
 #define _ADDR_H
 
-#include <sys/socket.h>
-#include <netinet/in.h>
+#অন্তর্ভাব <sys/socket.h>
+#অন্তর্ভাব <netinet/in.h>
 
-struct xaddr {
+কাঠামো xaddr {
 	sa_family_t	af;
-	union {
-		struct in_addr		v4;
-		struct in6_addr		v6;
+	সংঘ {
+		কাঠামো in_addr		v4;
+		কাঠামো in6_addr		v6;
 		uint8_t			addr8[16];
 		uint16_t		addr16[8];
 		uint32_t		addr32[4];
@@ -39,15 +39,15 @@ struct xaddr {
 #define addr32	xa.addr32
 };
 
-int addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa);
-int addr_netmask(int af, u_int l, struct xaddr *n);
-int addr_pton(const char *p, struct xaddr *n);
-int addr_pton_cidr(const char *p, struct xaddr *n, u_int *l);
-int addr_ntop(const struct xaddr *n, char *p, size_t len);
-int addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b);
-int addr_cmp(const struct xaddr *a, const struct xaddr *b);
-int addr_host_to_all1s(struct xaddr *a, u_int masklen);
-int addr_netmatch(const struct xaddr *host, const struct xaddr *net,
+পূর্ণসংখ্যা addr_sa_to_xaddr(কাঠামো sockaddr *sa, socklen_t slen, কাঠামো xaddr *xa);
+পূর্ণসংখ্যা addr_netmask(পূর্ণসংখ্যা af, u_int l, কাঠামো xaddr *n);
+পূর্ণসংখ্যা addr_pton(ধ্রুবক অক্ষর *p, কাঠামো xaddr *n);
+পূর্ণসংখ্যা addr_pton_cidr(ধ্রুবক অক্ষর *p, কাঠামো xaddr *n, u_int *l);
+পূর্ণসংখ্যা addr_ntop(ধ্রুবক কাঠামো xaddr *n, অক্ষর *p, আকার_t len);
+পূর্ণসংখ্যা addr_and(কাঠামো xaddr *dst, ধ্রুবক কাঠামো xaddr *a, ধ্রুবক কাঠামো xaddr *b);
+পূর্ণসংখ্যা addr_cmp(ধ্রুবক কাঠামো xaddr *a, ধ্রুবক কাঠামো xaddr *b);
+পূর্ণসংখ্যা addr_host_to_all1s(কাঠামো xaddr *a, u_int masklen);
+পূর্ণসংখ্যা addr_netmatch(ধ্রুবক কাঠামো xaddr *host, ধ্রুবক কাঠামো xaddr *net,
     u_int masklen);
-void addr_increment(struct xaddr *a);
+শূন্য addr_increment(কাঠামো xaddr *a);
 #endif /* _ADDR_H */

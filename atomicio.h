@@ -29,25 +29,25 @@
 #ifndef _ATOMICIO_H
 #define _ATOMICIO_H
 
-struct iovec;
+কাঠামো iovec;
 
 /*
  * Ensure all of data on socket comes through. f==read || f==vwrite
  */
-size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *);
-size_t	atomicio(ssize_t (*)(int, void *, size_t), int, void *, size_t);
+আকার_t
+atomicio6(ssize_t (*f) (পূর্ণসংখ্যা, শূন্য *, আকার_t), পূর্ণসংখ্যা fd, শূন্য *_s, আকার_t n,
+    পূর্ণসংখ্যা (*cb)(শূন্য *, আকার_t), শূন্য *);
+আকার_t	atomicio(ssize_t (*)(পূর্ণসংখ্যা, শূন্য *, আকার_t), পূর্ণসংখ্যা, শূন্য *, আকার_t);
 
-#define vwrite (ssize_t (*)(int, void *, size_t))write
+#define vwrite (ssize_t (*)(পূর্ণসংখ্যা, শূন্য *, আকার_t))লিখ
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
-size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt, int (*cb)(void *, size_t), void *);
-size_t	atomiciov(ssize_t (*)(int, const struct iovec *, int),
-    int, const struct iovec *, int);
+আকার_t
+atomiciov6(ssize_t (*f) (পূর্ণসংখ্যা, ধ্রুবক কাঠামো iovec *, পূর্ণসংখ্যা), পূর্ণসংখ্যা fd,
+    ধ্রুবক কাঠামো iovec *_iov, পূর্ণসংখ্যা iovcnt, পূর্ণসংখ্যা (*cb)(শূন্য *, আকার_t), শূন্য *);
+আকার_t	atomiciov(ssize_t (*)(পূর্ণসংখ্যা, ধ্রুবক কাঠামো iovec *, পূর্ণসংখ্যা),
+    পূর্ণসংখ্যা, ধ্রুবক কাঠামো iovec *, পূর্ণসংখ্যা);
 
 #endif /* _ATOMICIO_H */

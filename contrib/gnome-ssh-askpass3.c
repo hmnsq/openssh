@@ -52,101 +52,101 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
 
-#include <X11/Xlib.h>
-#include <gtk/gtk.h>
-#include <gdk/gdkx.h>
-#include <gdk/gdkkeysyms.h>
+#অন্তর্ভাব <X11/Xlib.h>
+#অন্তর্ভাব <gtk/gtk.h>
+#অন্তর্ভাব <gdk/gdkx.h>
+#অন্তর্ভাব <gdk/gdkkeysyms.h>
 
-static void
+স্থির শূন্য
 ok_dialog(GtkWidget *entry, gpointer dialog)
 {
 	g_return_if_fail(GTK_IS_DIALOG(dialog));
 	gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 }
 
-static gboolean
-check_none(GtkWidget *widget, GdkEventKey *event, gpointer dialog)
+স্থির gboolean
+check_none(GtkWidget *widget, Gdk_Event_চাবি *event, gpointer dialog)
 {
-	switch (event->keyval) {
-	case GDK_KEY_Escape:
+	নির্বাচন (event->keyval) {
+	ক্ষেত্র GDK_চাবি_Escape:
 		/* esc -> close dialog */
 		gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE);
-		return TRUE;
-	case GDK_KEY_Tab:
+		ফেরত TRUE;
+	ক্ষেত্র GDK_চাবি_Tab:
 		/* tab -> focus close button */
 		gtk_widget_grab_focus(gtk_dialog_get_widget_for_response(
 		    dialog, GTK_RESPONSE_CLOSE));
-		return TRUE;
-	default:
+		ফেরত TRUE;
+	পূর্বনির্ধারিত:
 		/* eat all other key events */
-		return TRUE;
+		ফেরত TRUE;
 	}
 }
 
-static int
-parse_env_hex_color(const char *env, GdkColor *c)
+স্থির পূর্ণসংখ্যা
+parse_env_hex_color(ধ্রুবক অক্ষর *env, GdkColor *c)
 {
-	const char *s;
+	ধ্রুবক অক্ষর *s;
 	unsigned long ul;
-	char *ep;
-	size_t n;
+	অক্ষর *ep;
+	আকার_t n;
 
-	if ((s = getenv(env)) == NULL)
-		return 0;
+	যদি ((s = getenv(env)) == ফাঁকা)
+		ফেরত 0;
 
-	memset(c, 0, sizeof(*c));
+	memset(c, 0, আকার(*c));
 
 	/* Permit hex rgb or rrggbb optionally prefixed by '#' or '0x' */
-	if (*s == '#')
+	যদি (*s == '#')
 		s++;
-	else if (strncmp(s, "0x", 2) == 0)
+	অন্যথা যদি (strncmp(s, "0x", 2) == 0)
 		s += 2;
 	n = strlen(s);
-	if (n != 3 && n != 6)
-		goto bad;
+	যদি (n != 3 && n != 6)
+		যাও bad;
 	ul = strtoul(s, &ep, 16);
-	if (*ep != '\0' || ul > 0xffffff) {
+	যদি (*ep != '\0' || ul > 0xffffff) {
  bad:
 		fprintf(stderr, "Invalid $%s - invalid hex color code\n", env);
-		return 0;
+		ফেরত 0;
 	}
 	/* Valid hex sequence; expand into a GdkColor */
-	if (n == 3) {
+	যদি (n == 3) {
 		/* 4-bit RGB */
 		c->red = ((ul >> 8) & 0xf) << 12;
 		c->green = ((ul >> 4) & 0xf) << 12;
 		c->blue = (ul & 0xf) << 12;
-	} else {
+	} অন্যথা {
 		/* 8-bit RGB */
 		c->red = ((ul >> 16) & 0xff) << 8;
 		c->green = ((ul >> 8) & 0xff) << 8;
 		c->blue = (ul & 0xff) << 8;
 	}
-	return 1;
+	ফেরত 1;
 }
 
-static int
-passphrase_dialog(char *message, int prompt_type)
+স্থির পূর্ণসংখ্যা
+passphrase_dialog(অক্ষর *message, পূর্ণসংখ্যা prompt_type)
 {
-	const char *failed;
-	char *passphrase, *local;
-	int result, grab_tries, grab_server, grab_pointer;
-	int buttons, default_response;
+	ধ্রুবক অক্ষর *failed;
+	অক্ষর *passphrase, *local;
+	পূর্ণসংখ্যা ফলাফল, grab_tries, grab_server, grab_pointer;
+	পূর্ণসংখ্যা buttons, default_response;
 	GtkWidget *parent_window, *dialog, *entry, *err;
 	GdkGrabStatus status;
 	GdkColor fg, bg;
 	GdkSeat *seat;
 	GdkDisplay *display;
 	GdkSeatCapabilities caps;
-	int fg_set = 0, bg_set = 0;
+	পূর্ণসংখ্যা fg_set = 0, bg_set = 0;
 
-	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != NULL);
-	grab_pointer = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != NULL);
+	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != ফাঁকা);
+	grab_pointer = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != ফাঁকা);
 	grab_tries = 0;
 
 	fg_set = parse_env_hex_color("GNOME_SSH_ASKPASS_FG_COLOR", &fg);
@@ -156,19 +156,19 @@ passphrase_dialog(char *message, int prompt_type)
 	 * complain.  */
 	parent_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-	switch (prompt_type) {
-	case PROMPT_CONFIRM:
+	নির্বাচন (prompt_type) {
+	ক্ষেত্র PROMPT_CONFIRM:
 		buttons = GTK_BUTTONS_YES_NO;
 		default_response = GTK_RESPONSE_YES;
-		break;
-	case PROMPT_NONE:
+		বিরতি;
+	ক্ষেত্র PROMPT_NONE:
 		buttons = GTK_BUTTONS_CLOSE;
 		default_response = GTK_RESPONSE_CLOSE;
-		break;
-	default:
+		বিরতি;
+	পূর্বনির্ধারিত:
 		buttons = GTK_BUTTONS_OK_CANCEL;
 		default_response = GTK_RESPONSE_OK;
-		break;
+		বিরতি;
 	}
 
 	dialog = gtk_message_dialog_new(GTK_WINDOW(parent_window), 0,
@@ -180,28 +180,28 @@ passphrase_dialog(char *message, int prompt_type)
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), default_response);
 	gtk_window_set_keep_above(GTK_WINDOW(dialog), TRUE);
 
-	if (fg_set)
+	যদি (fg_set)
 		gtk_widget_modify_fg(dialog, GTK_STATE_NORMAL, &fg);
-	if (bg_set)
+	যদি (bg_set)
 		gtk_widget_modify_bg(dialog, GTK_STATE_NORMAL, &bg);
 
-	if (prompt_type == PROMPT_ENTRY || prompt_type == PROMPT_NONE) {
+	যদি (prompt_type == PROMPT_ENTRY || prompt_type == PROMPT_NONE) {
 		entry = gtk_entry_new();
-		if (fg_set)
+		যদি (fg_set)
 			gtk_widget_modify_fg(entry, GTK_STATE_NORMAL, &fg);
-		if (bg_set)
+		যদি (bg_set)
 			gtk_widget_modify_bg(entry, GTK_STATE_NORMAL, &bg);
 		gtk_box_pack_start(
 		    GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 		    entry, FALSE, FALSE, 0);
 		gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 		gtk_widget_grab_focus(entry);
-		if (prompt_type == PROMPT_ENTRY) {
+		যদি (prompt_type == PROMPT_ENTRY) {
 			gtk_widget_show(entry);
 			/* Make <enter> close dialog */
 			g_signal_connect(G_OBJECT(entry), "activate",
 					 G_CALLBACK(ok_dialog), dialog);
-		} else {
+		} অন্যথা {
 			/*
 			 * Ensure the 'close' button is not focused by default
 			 * but is still reachable via tab. This is a bit of a
@@ -218,37 +218,37 @@ passphrase_dialog(char *message, int prompt_type)
 	display = gtk_widget_get_display(GTK_WIDGET(dialog));
 	seat = gdk_display_get_default_seat(display);
 	caps = GDK_SEAT_CAPABILITY_KEYBOARD;
-	if (grab_pointer)
+	যদি (grab_pointer)
 		caps |= GDK_SEAT_CAPABILITY_ALL_POINTING;
-	if (grab_server)
+	যদি (grab_server)
 		caps = GDK_SEAT_CAPABILITY_ALL;
-	for (;;) {
+	জন্য (;;) {
 		status = gdk_seat_grab(seat, gtk_widget_get_window(dialog),
-		    caps, TRUE, NULL, NULL, NULL, NULL);
-		if (status == GDK_GRAB_SUCCESS)
-			break;
+		    caps, TRUE, ফাঁকা, ফাঁকা, ফাঁকা, ফাঁকা);
+		যদি (status == GDK_GRAB_SUCCESS)
+			বিরতি;
 		usleep(GRAB_WAIT * 1000);
-		if (++grab_tries > GRAB_TRIES)
-			goto nograb;
+		যদি (++grab_tries > GRAB_TRIES)
+			যাও nograb;
 	}
 
-	result = gtk_dialog_run(GTK_DIALOG(dialog));
+	ফলাফল = gtk_dialog_run(GTK_DIALOG(dialog));
 
 	/* Ungrab */
 	gdk_seat_ungrab(seat);
 	gdk_display_flush(display);
 
 	/* Report passphrase if user selected OK */
-	if (prompt_type == PROMPT_ENTRY) {
+	যদি (prompt_type == PROMPT_ENTRY) {
 		passphrase = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
-		if (result == GTK_RESPONSE_OK) {
+		যদি (ফলাফল == GTK_RESPONSE_OK) {
 			local = g_locale_from_utf8(passphrase,
-			    strlen(passphrase), NULL, NULL, NULL);
-			if (local != NULL) {
+			    strlen(passphrase), ফাঁকা, ফাঁকা, ফাঁকা);
+			যদি (local != ফাঁকা) {
 				puts(local);
 				memset(local, '\0', strlen(local));
 				g_free(local);
-			} else {
+			} অন্যথা {
 				puts(passphrase);
 			}
 		}
@@ -260,9 +260,9 @@ passphrase_dialog(char *message, int prompt_type)
 	}
 
 	gtk_widget_destroy(dialog);
-	if (result != GTK_RESPONSE_OK && result != GTK_RESPONSE_YES)
-		return -1;
-	return 0;
+	যদি (ফলাফল != GTK_RESPONSE_OK && ফলাফল != GTK_RESPONSE_YES)
+		ফেরত -1;
+	ফেরত 0;
 
  nograb:
 	gtk_widget_destroy(dialog);
@@ -273,33 +273,33 @@ passphrase_dialog(char *message, int prompt_type)
 	gtk_window_set_position(GTK_WINDOW(err), GTK_WIN_POS_CENTER);
 	gtk_dialog_run(GTK_DIALOG(err));
 	gtk_widget_destroy(err);
-	return -1;
+	ফেরত -1;
 }
 
-int
-main(int argc, char **argv)
+পূর্ণসংখ্যা
+প্রধান(পূর্ণসংখ্যা argc, অক্ষর **argv)
 {
-	char *message, *prompt_mode;
-	int result, prompt_type = PROMPT_ENTRY;
+	অক্ষর *message, *prompt_mode;
+	পূর্ণসংখ্যা ফলাফল, prompt_type = PROMPT_ENTRY;
 
 	gtk_init(&argc, &argv);
 
-	if (argc > 1) {
+	যদি (argc > 1) {
 		message = g_strjoinv(" ", argv + 1);
-	} else {
+	} অন্যথা {
 		message = g_strdup("Enter your OpenSSH passphrase:");
 	}
 
-	if ((prompt_mode = getenv("SSH_ASKPASS_PROMPT")) != NULL) {
-		if (strcasecmp(prompt_mode, "confirm") == 0)
+	যদি ((prompt_mode = getenv("SSH_ASKPASS_PROMPT")) != ফাঁকা) {
+		যদি (strcasecmp(prompt_mode, "confirm") == 0)
 			prompt_type = PROMPT_CONFIRM;
-		else if (strcasecmp(prompt_mode, "none") == 0)
+		অন্যথা যদি (strcasecmp(prompt_mode, "none") == 0)
 			prompt_type = PROMPT_NONE;
 	}
 
 	setvbuf(stdout, 0, _IONBF, 0);
-	result = passphrase_dialog(message, prompt_type);
+	ফলাফল = passphrase_dialog(message, prompt_type);
 	g_free(message);
 
-	return (result);
+	ফেরত (ফলাফল);
 }

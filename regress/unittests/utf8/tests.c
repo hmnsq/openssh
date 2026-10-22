@@ -6,61 +6,61 @@
  * and placed in the public domain.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <locale.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
+#অন্তর্ভাব <locale.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#অন্তর্ভাব "../test_helper/test_helper.h"
 
-#include "utf8.h"
+#অন্তর্ভাব "utf8.h"
 
-static void
-badarg(void)
+স্থির শূন্য
+badarg(শূন্য)
 {
-	char	 buf[16];
-	int	 len, width;
+	অক্ষর	 buf[16];
+	পূর্ণসংখ্যা	 len, width;
 
 	width = 1;
 	TEST_START("utf8_badarg");
-	len = snmprintf(buf, sizeof(buf), &width, "\377");
+	len = snmprintf(buf, আকার(buf), &width, "\377");
 	ASSERT_INT_EQ(len, -1);
 	ASSERT_STRING_EQ(buf, "");
 	ASSERT_INT_EQ(width, 0);
 	TEST_DONE();
 }
 
-static void
-one(int utf8, const char *name, const char *mbs, int width,
-    int wantwidth, int wantlen, const char *wants)
+স্থির শূন্য
+one(পূর্ণসংখ্যা utf8, ধ্রুবক অক্ষর *name, ধ্রুবক অক্ষর *mbs, পূর্ণসংখ্যা width,
+    পূর্ণসংখ্যা wantwidth, পূর্ণসংখ্যা wantlen, ধ্রুবক অক্ষর *wants)
 {
-	char	 buf[16];
-	int	*wp;
-	int	 len;
+	অক্ষর	 buf[16];
+	পূর্ণসংখ্যা	*wp;
+	পূর্ণসংখ্যা	 len;
 
-	if (wantlen == -2)
+	যদি (wantlen == -2)
 		wantlen = strlen(wants);
-	(void)strlcpy(buf, utf8 ? "utf8_" : "c_", sizeof(buf));
-	(void)strlcat(buf, name, sizeof(buf));
+	(শূন্য)strlcpy(buf, utf8 ? "utf8_" : "c_", আকার(buf));
+	(শূন্য)strlcat(buf, name, আকার(buf));
 	TEST_START(buf);
-	wp = wantwidth == -2 ? NULL : &width;
-	len = snmprintf(buf, sizeof(buf), wp, "%s", mbs);
+	wp = wantwidth == -2 ? ফাঁকা : &width;
+	len = snmprintf(buf, আকার(buf), wp, "%s", mbs);
 	ASSERT_INT_EQ(len, wantlen);
 	ASSERT_STRING_EQ(buf, wants);
 	ASSERT_INT_EQ(width, wantwidth);
 	TEST_DONE();
 }
 
-void
-tests(void)
+শূন্য
+tests(শূন্য)
 {
-	char	*loc;
+	অক্ষর	*loc;
 
 	TEST_START("utf8_setlocale");
 	loc = setlocale(LC_CTYPE, "en_US.UTF-8");
-	ASSERT_PTR_NE(loc, NULL);
+	ASSERT_PTR_NE(loc, ফাঁকা);
 	TEST_DONE();
 
 	badarg();
@@ -82,7 +82,7 @@ tests(void)
 
 	TEST_START("C_setlocale");
 	loc = setlocale(LC_CTYPE, "C");
-	ASSERT_PTR_NE(loc, NULL);
+	ASSERT_PTR_NE(loc, ফাঁকা);
 	TEST_DONE();
 
 	badarg();
@@ -103,8 +103,8 @@ tests(void)
 	one(0, "double_spc", "a\343\201\201", 13, 13, 13, "a\\343\\201\\201");
 }
 
-void
-benchmarks(void)
+শূন্য
+benchmarks(শূন্য)
 {
 	printf("no benchmarks\n");
 }

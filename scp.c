@@ -71,59 +71,59 @@
  *
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/wait.h>
-#include <sys/uio.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <sys/stat.h>
+#অন্তর্ভাব <sys/time.h>
+#অন্তর্ভাব <sys/wait.h>
+#অন্তর্ভাব <sys/uio.h>
 
-#include <ctype.h>
-#include <dirent.h>
-#include <errno.h>
-#include <fcntl.h>
+#অন্তর্ভাব <ctype.h>
+#অন্তর্ভাব <dirent.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <fcntl.h>
 #ifdef HAVE_FNMATCH_H
-#include <fnmatch.h>
+#অন্তর্ভাব <fnmatch.h>
 #endif
-#include <glob.h>
-#include <libgen.h>
-#include <locale.h>
-#include <poll.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <limits.h>
-#include <util.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
-#include <vis.h>
+#অন্তর্ভাব <glob.h>
+#অন্তর্ভাব <libgen.h>
+#অন্তর্ভাব <locale.h>
+#অন্তর্ভাব <poll.h>
+#অন্তর্ভাব <pwd.h>
+#অন্তর্ভাব <signal.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <time.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <limits.h>
+#অন্তর্ভাব <util.h>
+#যদি defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#অন্তর্ভাব <vis.h>
 #endif
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "atomicio.h"
-#include "pathnames.h"
-#include "log.h"
-#include "misc.h"
-#include "progressmeter.h"
-#include "utf8.h"
-#include "sftp.h"
+#অন্তর্ভাব "xmalloc.h"
+#অন্তর্ভাব "ssh.h"
+#অন্তর্ভাব "atomicio.h"
+#অন্তর্ভাব "pathnames.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "misc.h"
+#অন্তর্ভাব "progressmeter.h"
+#অন্তর্ভাব "utf8.h"
+#অন্তর্ভাব "sftp.h"
 
-#include "sftp-common.h"
-#include "sftp-client.h"
+#অন্তর্ভাব "sftp-common.h"
+#অন্তর্ভাব "sftp-client.h"
 
-extern char *__progname;
+বাহ্যিক অক্ষর *__progname;
 
 #define COPY_BUFLEN	16384
 
-int do_cmd(char *, char *, char *, int, int, char *, int *, int *, pid_t *);
-int do_cmd2(char *, char *, int, char *, int, int);
+পূর্ণসংখ্যা do_cmd(অক্ষর *, অক্ষর *, অক্ষর *, পূর্ণসংখ্যা, পূর্ণসংখ্যা, অক্ষর *, পূর্ণসংখ্যা *, পূর্ণসংখ্যা *, pid_t *);
+পূর্ণসংখ্যা do_cmd2(অক্ষর *, অক্ষর *, পূর্ণসংখ্যা, অক্ষর *, পূর্ণসংখ্যা, পূর্ণসংখ্যা);
 
 /* Struct for addargs */
 arglist args;
@@ -131,103 +131,103 @@ arglist remote_remote_args;
 
 /* Bandwidth limit */
 long long limit_kbps = 0;
-struct bwlimit bwlimit;
+কাঠামো bwlimit bwlimit;
 
 /* Name of current file being transferred. */
-char *curfile;
+অক্ষর *curfile;
 
 /* This is set to non-zero to enable verbose mode. */
-int verbose_mode = 0;
+পূর্ণসংখ্যা verbose_mode = 0;
 LogLevel log_level = SYSLOG_LEVEL_INFO;
 
 /* This is set to zero if the progressmeter is not desired. */
-int showprogress = 1;
+পূর্ণসংখ্যা showprogress = 1;
 
 /*
  * This is set to non-zero if remote-remote copy should be piped
  * through this process.
  */
-int throughlocal = 1;
+পূর্ণসংখ্যা throughlocal = 1;
 
 /* Non-standard port to use for the ssh connection or -1. */
-int sshport = -1;
+পূর্ণসংখ্যা sshport = -1;
 
 /* This is the program to execute for the secure connection. ("ssh" or -S) */
-char *ssh_program = _PATH_SSH_PROGRAM;
+অক্ষর *ssh_program = _PATH_SSH_PROGRAM;
 
 /* This is used to store the pid of ssh_program */
 pid_t do_cmd_pid = -1;
 pid_t do_cmd_pid2 = -1;
 
 /* SFTP copy parameters */
-size_t sftp_copy_buflen;
-size_t sftp_nrequests;
+আকার_t sftp_copy_buflen;
+আকার_t sftp_nrequests;
 
 /* Needed for sftp */
-volatile sig_atomic_t interrupted = 0;
+অস্থির sig_atomic_t interrupted = 0;
 
-int sftp_glob(struct sftp_conn *, const char *, int,
-    int (*)(const char *, int), glob_t *); /* proto for sftp-glob.c */
+পূর্ণসংখ্যা sftp_glob(কাঠামো sftp_conn *, ধ্রুবক অক্ষর *, পূর্ণসংখ্যা,
+    পূর্ণসংখ্যা (*)(ধ্রুবক অক্ষর *, পূর্ণসংখ্যা), glob_t *); /* proto for sftp-glob.c */
 
-static void
-killchild(int signo)
+স্থির শূন্য
+killchild(পূর্ণসংখ্যা signo)
 {
-	if (do_cmd_pid > 1) {
+	যদি (do_cmd_pid > 1) {
 		kill(do_cmd_pid, signo ? signo : SIGTERM);
-		(void)waitpid(do_cmd_pid, NULL, 0);
+		(শূন্য)waitpid(do_cmd_pid, ফাঁকা, 0);
 	}
-	if (do_cmd_pid2 > 1) {
+	যদি (do_cmd_pid2 > 1) {
 		kill(do_cmd_pid2, signo ? signo : SIGTERM);
-		(void)waitpid(do_cmd_pid2, NULL, 0);
+		(শূন্য)waitpid(do_cmd_pid2, ফাঁকা, 0);
 	}
 
-	if (signo)
+	যদি (signo)
 		_exit(1);
 	exit(1);
 }
 
-static void
-suspone(int pid, int signo)
+স্থির শূন্য
+suspone(পূর্ণসংখ্যা pid, পূর্ণসংখ্যা signo)
 {
-	int status;
+	পূর্ণসংখ্যা status;
 
-	if (pid > 1) {
+	যদি (pid > 1) {
 		kill(pid, signo);
-		while (waitpid(pid, &status, WUNTRACED) == -1 &&
+		যখন (waitpid(pid, &status, WUNTRACED) == -1 &&
 		    errno == EINTR)
 			;
 	}
 }
 
-static void
-suspchild(int signo)
+স্থির শূন্য
+suspchild(পূর্ণসংখ্যা signo)
 {
-	int save_errno = errno;
+	পূর্ণসংখ্যা save_errno = errno;
 	suspone(do_cmd_pid, signo);
 	suspone(do_cmd_pid2, signo);
 	kill(getpid(), SIGSTOP);
 	errno = save_errno;
 }
 
-static int
+স্থির পূর্ণসংখ্যা
 do_local_cmd(arglist *a)
 {
-	char *cp;
-	int status;
+	অক্ষর *cp;
+	পূর্ণসংখ্যা status;
 	pid_t pid;
 
-	if (a->num == 0)
+	যদি (a->অঙ্ক == 0)
 		fatal("do_local_cmd: no arguments");
 
-	if (verbose_mode) {
-		cp = argv_assemble(a->num, a->list);
+	যদি (verbose_mode) {
+		cp = argv_assemble(a->অঙ্ক, a->list);
 		fmprintf(stderr, "Executing: %s\n", cp);
-		free(cp);
+		মুক্ত(cp);
 	}
-	if ((pid = fork()) == -1)
+	যদি ((pid = fork()) == -1)
 		fatal("do_local_cmd: fork: %s", strerror(errno));
 
-	if (pid == 0) {
+	যদি (pid == 0) {
 		execvp(a->list[0], a->list);
 		perror(a->list[0]);
 		exit(1);
@@ -238,16 +238,16 @@ do_local_cmd(arglist *a)
 	ssh_signal(SIGINT, killchild);
 	ssh_signal(SIGHUP, killchild);
 
-	while (waitpid(pid, &status, 0) == -1)
-		if (errno != EINTR)
+	যখন (waitpid(pid, &status, 0) == -1)
+		যদি (errno != EINTR)
 			fatal("do_local_cmd: waitpid: %s", strerror(errno));
 
 	do_cmd_pid = -1;
 
-	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
-		return (-1);
+	যদি (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+		ফেরত (-1);
 
-	return (0);
+	ফেরত (0);
 }
 
 /*
@@ -256,31 +256,31 @@ do_local_cmd(arglist *a)
  * assigns the input and output file descriptors on success.
  */
 
-int
-do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
-    char *cmd, int *fdin, int *fdout, pid_t *pid)
+পূর্ণসংখ্যা
+do_cmd(অক্ষর *program, অক্ষর *host, অক্ষর *remuser, পূর্ণসংখ্যা port, পূর্ণসংখ্যা subsystem,
+    অক্ষর *cmd, পূর্ণসংখ্যা *fdin, পূর্ণসংখ্যা *fdout, pid_t *pid)
 {
 #ifdef USE_PIPES
-	int pin[2], pout[2];
-#else
-	int sv[2];
+	পূর্ণসংখ্যা pin[2], pout[2];
+#অন্যথা
+	পূর্ণসংখ্যা sv[2];
 #endif
 
-	if (verbose_mode)
+	যদি (verbose_mode)
 		fmprintf(stderr,
 		    "Executing: program %s host %s, user %s, command %s\n",
 		    program, host,
 		    remuser ? remuser : "(unspecified)", cmd);
 
-	if (port == -1)
+	যদি (port == -1)
 		port = sshport;
 
 #ifdef USE_PIPES
-	if (pipe(pin) == -1 || pipe(pout) == -1)
+	যদি (pipe(pin) == -1 || pipe(pout) == -1)
 		fatal("pipe: %s", strerror(errno));
-#else
+#অন্যথা
 	/* Create a socket pair for communicating with ssh. */
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) == -1)
+	যদি (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) == -1)
 		fatal("socketpair: %s", strerror(errno));
 #endif
 
@@ -290,13 +290,13 @@ do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
 
 	/* Fork a child to execute the command on the remote host using ssh. */
 	*pid = fork();
-	switch (*pid) {
-	case -1:
+	নির্বাচন (*pid) {
+	ক্ষেত্র -1:
 		fatal("fork: %s", strerror(errno));
-	case 0:
+	ক্ষেত্র 0:
 		/* Child. */
 #ifdef USE_PIPES
-		if (dup2(pin[0], STDIN_FILENO) == -1 ||
+		যদি (dup2(pin[0], STDIN_FILENO) == -1 ||
 		    dup2(pout[1], STDOUT_FILENO) == -1) {
 			error("dup2: %s", strerror(errno));
 			_exit(1);
@@ -305,8 +305,8 @@ do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
 		close(pin[1]);
 		close(pout[0]);
 		close(pout[1]);
-#else
-		if (dup2(sv[0], STDIN_FILENO) == -1 ||
+#অন্যথা
+		যদি (dup2(sv[0], STDIN_FILENO) == -1 ||
 		    dup2(sv[0], STDOUT_FILENO) == -1) {
 			error("dup2: %s", strerror(errno));
 			_exit(1);
@@ -315,15 +315,15 @@ do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
 		close(sv[1]);
 #endif
 		replacearg(&args, 0, "%s", program);
-		if (port != -1) {
+		যদি (port != -1) {
 			addargs(&args, "-p");
 			addargs(&args, "%d", port);
 		}
-		if (remuser != NULL) {
+		যদি (remuser != ফাঁকা) {
 			addargs(&args, "-l");
 			addargs(&args, "%s", remuser);
 		}
-		if (subsystem)
+		যদি (subsystem)
 			addargs(&args, "-s");
 		addargs(&args, "--");
 		addargs(&args, "%s", host);
@@ -332,14 +332,14 @@ do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
 		execvp(program, args.list);
 		perror(program);
 		_exit(1);
-	default:
+	পূর্বনির্ধারিত:
 		/* Parent.  Close the other side, and return the local side. */
 #ifdef USE_PIPES
 		close(pin[0]);
 		close(pout[1]);
 		*fdout = pin[1];
 		*fdin = pout[0];
-#else
+#অন্যথা
 		close(sv[0]);
 		*fdin = sv[1];
 		*fdout = sv[1];
@@ -347,7 +347,7 @@ do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
 		ssh_signal(SIGTERM, killchild);
 		ssh_signal(SIGINT, killchild);
 		ssh_signal(SIGHUP, killchild);
-		return 0;
+		ফেরত 0;
 	}
 }
 
@@ -356,36 +356,36 @@ do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
  * input and output descriptors to be setup by a previous call to do_cmd().
  * This way the input and output of two commands can be connected.
  */
-int
-do_cmd2(char *host, char *remuser, int port, char *cmd,
-    int fdin, int fdout)
+পূর্ণসংখ্যা
+do_cmd2(অক্ষর *host, অক্ষর *remuser, পূর্ণসংখ্যা port, অক্ষর *cmd,
+    পূর্ণসংখ্যা fdin, পূর্ণসংখ্যা fdout)
 {
-	int status;
+	পূর্ণসংখ্যা status;
 	pid_t pid;
 
-	if (verbose_mode)
+	যদি (verbose_mode)
 		fmprintf(stderr,
 		    "Executing: 2nd program %s host %s, user %s, command %s\n",
 		    ssh_program, host,
 		    remuser ? remuser : "(unspecified)", cmd);
 
-	if (port == -1)
+	যদি (port == -1)
 		port = sshport;
 
 	/* Fork a child to execute the command on the remote host using ssh. */
 	pid = fork();
-	if (pid == 0) {
-		if (dup2(fdin, 0) == -1)
+	যদি (pid == 0) {
+		যদি (dup2(fdin, 0) == -1)
 			perror("dup2");
-		if (dup2(fdout, 1) == -1)
+		যদি (dup2(fdout, 1) == -1)
 			perror("dup2");
 
 		replacearg(&args, 0, "%s", ssh_program);
-		if (port != -1) {
+		যদি (port != -1) {
 			addargs(&args, "-p");
 			addargs(&args, "%d", port);
 		}
-		if (remuser != NULL) {
+		যদি (remuser != ফাঁকা) {
 			addargs(&args, "-l");
 			addargs(&args, "%s", remuser);
 		}
@@ -397,66 +397,66 @@ do_cmd2(char *host, char *remuser, int port, char *cmd,
 		execvp(ssh_program, args.list);
 		perror(ssh_program);
 		exit(1);
-	} else if (pid == -1) {
+	} অন্যথা যদি (pid == -1) {
 		fatal("fork: %s", strerror(errno));
 	}
-	while (waitpid(pid, &status, 0) == -1)
-		if (errno != EINTR)
+	যখন (waitpid(pid, &status, 0) == -1)
+		যদি (errno != EINTR)
 			fatal("do_cmd2: waitpid: %s", strerror(errno));
-	return 0;
+	ফেরত 0;
 }
 
-typedef struct {
-	size_t cnt;
-	char *buf;
+প্রকারলেখ কাঠামো {
+	আকার_t cnt;
+	অক্ষর *buf;
 } BUF;
 
-BUF *allocbuf(BUF *, int, int);
-void lostconn(int);
-int okname(char *);
-void run_err(const char *,...)
+BUF *allocbuf(BUF *, পূর্ণসংখ্যা, পূর্ণসংখ্যা);
+শূন্য lostconn(পূর্ণসংখ্যা);
+পূর্ণসংখ্যা okname(অক্ষর *);
+শূন্য run_err(ধ্রুবক অক্ষর *,...)
     __attribute__((__format__ (printf, 1, 2)))
     __attribute__((__nonnull__ (1)));
-int note_err(const char *,...)
+পূর্ণসংখ্যা note_err(ধ্রুবক অক্ষর *,...)
     __attribute__((__format__ (printf, 1, 2)));
-void verifydir(char *);
+শূন্য verifydir(অক্ষর *);
 
-struct passwd *pwd;
+কাঠামো passwd *pwd;
 uid_t userid;
-int errs, remin, remout, remin2, remout2;
-int Tflag, pflag, iamremote, iamrecursive, targetshouldbedirectory;
+পূর্ণসংখ্যা errs, remin, remout, remin2, remout2;
+পূর্ণসংখ্যা Tflag, pflag, iamremote, iamrecursive, targetshouldbedirectory;
 
 #define	CMDNEEDS	64
-char cmd[CMDNEEDS];		/* must hold "rcp -r -p -d\0" */
+অক্ষর cmd[CMDNEEDS];		/* must hold "rcp -r -p -d\0" */
 
-enum scp_mode_e {
+গণনা scp_mode_e {
 	MODE_SCP,
 	MODE_SFTP
 };
 
-int response(void);
-void rsource(char *, struct stat *);
-void sink(int, char *[], const char *);
-void source(int, char *[]);
-void tolocal(int, char *[], enum scp_mode_e, char *sftp_direct);
-void toremote(int, char *[], enum scp_mode_e, char *sftp_direct);
-void usage(void);
+পূর্ণসংখ্যা response(শূন্য);
+শূন্য rsource(অক্ষর *, কাঠামো stat *);
+শূন্য sink(পূর্ণসংখ্যা, অক্ষর *[], ধ্রুবক অক্ষর *);
+শূন্য source(পূর্ণসংখ্যা, অক্ষর *[]);
+শূন্য tolocal(পূর্ণসংখ্যা, অক্ষর *[], গণনা scp_mode_e, অক্ষর *sftp_direct);
+শূন্য toremote(পূর্ণসংখ্যা, অক্ষর *[], গণনা scp_mode_e, অক্ষর *sftp_direct);
+শূন্য usage(শূন্য);
 
-void source_sftp(int, char *, char *, struct sftp_conn *);
-void sink_sftp(int, char *, const char *, struct sftp_conn *);
-void throughlocal_sftp(struct sftp_conn *, struct sftp_conn *,
-    char *, char *);
+শূন্য source_sftp(পূর্ণসংখ্যা, অক্ষর *, অক্ষর *, কাঠামো sftp_conn *);
+শূন্য sink_sftp(পূর্ণসংখ্যা, অক্ষর *, ধ্রুবক অক্ষর *, কাঠামো sftp_conn *);
+শূন্য throughlocal_sftp(কাঠামো sftp_conn *, কাঠামো sftp_conn *,
+    অক্ষর *, অক্ষর *);
 
-int
-main(int argc, char **argv)
+পূর্ণসংখ্যা
+প্রধান(পূর্ণসংখ্যা argc, অক্ষর **argv)
 {
-	int ch, fflag, tflag, status, r, n;
-	char **newargv, *argv0;
-	const char *errstr;
-	extern char *optarg;
-	extern int optind;
-	enum scp_mode_e mode = MODE_SFTP;
-	char *sftp_direct = NULL;
+	পূর্ণসংখ্যা ch, fflag, tflag, status, r, n;
+	অক্ষর **newargv, *argv0;
+	ধ্রুবক অক্ষর *errstr;
+	বাহ্যিক অক্ষর *optarg;
+	বাহ্যিক পূর্ণসংখ্যা optind;
+	গণনা scp_mode_e mode = MODE_SFTP;
+	অক্ষর *sftp_direct = ফাঁকা;
 	long long llv;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
@@ -466,8 +466,8 @@ main(int argc, char **argv)
 
 	/* Copy argv, because we modify it */
 	argv0 = argv[0];
-	newargv = xcalloc(MAXIMUM(argc + 1, 1), sizeof(*newargv));
-	for (n = 0; n < argc; n++)
+	newargv = xcalloc(MAXIMUM(argc + 1, 1), আকার(*newargv));
+	জন্য (n = 0; n < argc; n++)
 		newargv[n] = xstrdup(argv[n]);
 	argv = newargv;
 
@@ -475,9 +475,9 @@ main(int argc, char **argv)
 
 	log_init(argv0, log_level, SYSLOG_FACILITY_USER, 2);
 
-	memset(&args, '\0', sizeof(args));
-	memset(&remote_remote_args, '\0', sizeof(remote_remote_args));
-	args.list = remote_remote_args.list = NULL;
+	memset(&args, '\0', আকার(args));
+	memset(&remote_remote_args, '\0', আকার(remote_remote_args));
+	args.list = remote_remote_args.list = ফাঁকা;
 	addargs(&args, "%s", ssh_program);
 	addargs(&args, "-x");
 	addargs(&args, "-oPermitLocalCommand=no");
@@ -487,135 +487,135 @@ main(int argc, char **argv)
 	addargs(&args, "-oControlMaster=no");
 
 	fflag = Tflag = tflag = 0;
-	while ((ch = getopt(argc, argv,
+	যখন ((ch = getopt(argc, argv,
 	    "12346ABCTdfOpqRrstvD:F:J:M:P:S:c:i:l:o:X:")) != -1) {
-		switch (ch) {
+		নির্বাচন (ch) {
 		/* User-visible flags. */
-		case '1':
+		ক্ষেত্র '1':
 			fatal("SSH protocol v.1 is no longer supported");
-			break;
-		case '2':
+			বিরতি;
+		ক্ষেত্র '2':
 			/* Ignored */
-			break;
-		case 'A':
-		case '4':
-		case '6':
-		case 'C':
+			বিরতি;
+		ক্ষেত্র 'A':
+		ক্ষেত্র '4':
+		ক্ষেত্র '6':
+		ক্ষেত্র 'C':
 			addargs(&args, "-%c", ch);
 			addargs(&remote_remote_args, "-%c", ch);
-			break;
-		case 'D':
+			বিরতি;
+		ক্ষেত্র 'D':
 			sftp_direct = optarg;
-			break;
-		case '3':
+			বিরতি;
+		ক্ষেত্র '3':
 			throughlocal = 1;
-			break;
-		case 'R':
+			বিরতি;
+		ক্ষেত্র 'R':
 			fprintf(stderr, "warning: remote/remote -R copy mode "
 			    "is deprecated and will soon be removed\n");
 			throughlocal = 0;
-			break;
-		case 'o':
-		case 'c':
-		case 'i':
-		case 'F':
-		case 'J':
+			বিরতি;
+		ক্ষেত্র 'o':
+		ক্ষেত্র 'c':
+		ক্ষেত্র 'i':
+		ক্ষেত্র 'F':
+		ক্ষেত্র 'J':
 			addargs(&remote_remote_args, "-%c", ch);
 			addargs(&remote_remote_args, "%s", optarg);
 			addargs(&args, "-%c", ch);
 			addargs(&args, "%s", optarg);
-			break;
-		case 'O':
+			বিরতি;
+		ক্ষেত্র 'O':
 			mode = MODE_SCP;
-			break;
-		case 's':
+			বিরতি;
+		ক্ষেত্র 's':
 			/* Ignored */
-			break;
-		case 'P':
+			বিরতি;
+		ক্ষেত্র 'P':
 			sshport = a2port(optarg);
-			if (sshport <= 0)
+			যদি (sshport <= 0)
 				fatal("bad port \"%s\"\n", optarg);
-			break;
-		case 'B':
+			বিরতি;
+		ক্ষেত্র 'B':
 			addargs(&remote_remote_args, "-oBatchmode=yes");
 			addargs(&args, "-oBatchmode=yes");
-			break;
-		case 'l':
+			বিরতি;
+		ক্ষেত্র 'l':
 			limit_kbps = strtonum(optarg, 1, 100 * 1024 * 1024,
 			    &errstr);
-			if (errstr != NULL)
+			যদি (errstr != ফাঁকা)
 				usage();
 			limit_kbps *= 1024; /* kbps */
 			bandwidth_limit_init(&bwlimit, limit_kbps, COPY_BUFLEN);
-			break;
-		case 'p':
+			বিরতি;
+		ক্ষেত্র 'p':
 			pflag = 1;
-			break;
-		case 'r':
+			বিরতি;
+		ক্ষেত্র 'r':
 			iamrecursive = 1;
-			break;
-		case 'S':
+			বিরতি;
+		ক্ষেত্র 'S':
 			ssh_program = xstrdup(optarg);
-			break;
-		case 'v':
+			বিরতি;
+		ক্ষেত্র 'v':
 			addargs(&args, "-v");
 			addargs(&remote_remote_args, "-v");
-			if (verbose_mode == 0)
+			যদি (verbose_mode == 0)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			অন্যথা যদি (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
 			verbose_mode = 1;
-			break;
-		case 'q':
+			বিরতি;
+		ক্ষেত্র 'q':
 			addargs(&args, "-q");
 			addargs(&remote_remote_args, "-q");
 			showprogress = 0;
-			break;
-		case 'X':
+			বিরতি;
+		ক্ষেত্র 'X':
 			/* Please keep in sync with sftp.c -X */
-			if (strncmp(optarg, "buffer=", 7) == 0) {
+			যদি (strncmp(optarg, "buffer=", 7) == 0) {
 				r = scan_scaled(optarg + 7, &llv);
-				if (r == 0 && (llv <= 0 || llv > 256 * 1024)) {
+				যদি (r == 0 && (llv <= 0 || llv > 256 * 1024)) {
 					r = -1;
 					errno = EINVAL;
 				}
-				if (r == -1) {
+				যদি (r == -1) {
 					fatal("Invalid buffer size \"%s\": %s",
 					     optarg + 7, strerror(errno));
 				}
-				sftp_copy_buflen = (size_t)llv;
-			} else if (strncmp(optarg, "nrequests=", 10) == 0) {
+				sftp_copy_buflen = (আকার_t)llv;
+			} অন্যথা যদি (strncmp(optarg, "nrequests=", 10) == 0) {
 				llv = strtonum(optarg + 10, 1, 256 * 1024,
 				    &errstr);
-				if (errstr != NULL) {
+				যদি (errstr != ফাঁকা) {
 					fatal("Invalid number of requests "
 					    "\"%s\": %s", optarg + 10, errstr);
 				}
-				sftp_nrequests = (size_t)llv;
-			} else {
+				sftp_nrequests = (আকার_t)llv;
+			} অন্যথা {
 				fatal("Invalid -X option");
 			}
-			break;
+			বিরতি;
 
 		/* Server options. */
-		case 'd':
+		ক্ষেত্র 'd':
 			targetshouldbedirectory = 1;
-			break;
-		case 'f':	/* "from" */
+			বিরতি;
+		ক্ষেত্র 'f':	/* "from" */
 			iamremote = 1;
 			fflag = 1;
-			break;
-		case 't':	/* "to" */
+			বিরতি;
+		ক্ষেত্র 't':	/* "to" */
 			iamremote = 1;
 			tflag = 1;
 #ifdef HAVE_CYGWIN
-			setmode(0, O_BINARY);
+			setmode(0, O_দ্বিমিক);
 #endif
-			break;
-		case 'T':
+			বিরতি;
+		ক্ষেত্র 'T':
 			Tflag = 1;
-			break;
-		default:
+			বিরতি;
+		পূর্বনির্ধারিত:
 			usage();
 		}
 	}
@@ -627,20 +627,20 @@ main(int argc, char **argv)
 	/* Do this last because we want the user to be able to override it */
 	addargs(&args, "-oForwardAgent=no");
 
-	if (iamremote)
+	যদি (iamremote)
 		mode = MODE_SCP;
 
-	if ((pwd = getpwuid(userid = getuid())) == NULL)
+	যদি ((pwd = getpwuid(userid = getuid())) == ফাঁকা)
 		fatal("unknown user %u", (u_int) userid);
 
-	if (!isatty(STDOUT_FILENO))
+	যদি (!isatty(STDOUT_FILENO))
 		showprogress = 0;
 
-	if (pflag) {
+	যদি (pflag) {
 		/* Cannot pledge: -p allows setuid/setgid files... */
-	} else {
-		if (pledge("stdio rpath wpath cpath fattr tty proc exec",
-		    NULL) == -1) {
+	} অন্যথা {
+		যদি (pledge("stdio rpath wpath cpath fattr tty proc exec",
+		    ফাঁকা) == -1) {
 			perror("pledge");
 			exit(1);
 		}
@@ -649,36 +649,36 @@ main(int argc, char **argv)
 	remin = STDIN_FILENO;
 	remout = STDOUT_FILENO;
 
-	if (fflag) {
+	যদি (fflag) {
 		/* Follow "protocol", send data. */
-		(void) response();
+		(শূন্য) response();
 		source(argc, argv);
 		exit(errs != 0);
 	}
-	if (tflag) {
+	যদি (tflag) {
 		/* Receive data. */
-		sink(argc, argv, NULL);
+		sink(argc, argv, ফাঁকা);
 		exit(errs != 0);
 	}
-	if (argc < 2)
+	যদি (argc < 2)
 		usage();
-	if (argc > 2)
+	যদি (argc > 2)
 		targetshouldbedirectory = 1;
 
 	remin = remout = -1;
 	do_cmd_pid = -1;
 	/* Command to be executed on remote system using "ssh". */
-	(void) snprintf(cmd, sizeof cmd, "scp%s%s%s%s",
+	(শূন্য) snprintf(cmd, আকার cmd, "scp%s%s%s%s",
 	    verbose_mode ? " -v" : "",
 	    iamrecursive ? " -r" : "", pflag ? " -p" : "",
 	    targetshouldbedirectory ? " -d" : "");
 
-	(void) ssh_signal(SIGPIPE, lostconn);
+	(শূন্য) ssh_signal(SIGPIPE, lostconn);
 
-	if (colon(argv[argc - 1]))	/* Dest is remote host. */
+	যদি (colon(argv[argc - 1]))	/* Dest is remote host. */
 		toremote(argc, argv, mode, sftp_direct);
-	else {
-		if (targetshouldbedirectory)
+	অন্যথা {
+		যদি (targetshouldbedirectory)
 			verifydir(argv[argc - 1]);
 		tolocal(argc, argv, mode, sftp_direct);	/* Dest is local host. */
 	}
@@ -686,15 +686,15 @@ main(int argc, char **argv)
 	 * Finally check the exit status of the ssh process, if one was forked
 	 * and no error has occurred yet
 	 */
-	if (do_cmd_pid != -1 && (mode == MODE_SFTP || errs == 0)) {
-		if (remin != -1)
-		    (void) close(remin);
-		if (remout != -1)
-		    (void) close(remout);
-		if (waitpid(do_cmd_pid, &status, 0) == -1)
+	যদি (do_cmd_pid != -1 && (mode == MODE_SFTP || errs == 0)) {
+		যদি (remin != -1)
+		    (শূন্য) close(remin);
+		যদি (remout != -1)
+		    (শূন্য) close(remout);
+		যদি (waitpid(do_cmd_pid, &status, 0) == -1)
 			errs = 1;
-		else {
-			if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+		অন্যথা {
+			যদি (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
 				errs = 1;
 		}
 	}
@@ -702,159 +702,159 @@ main(int argc, char **argv)
 }
 
 /* Callback from atomicio6 to update progress meter and limit bandwidth */
-static int
-scpio(void *_cnt, size_t s)
+স্থির পূর্ণসংখ্যা
+scpio(শূন্য *_cnt, আকার_t s)
 {
 	off_t *cnt = (off_t *)_cnt;
 
 	*cnt += s;
 	refresh_progress_meter(0);
-	if (limit_kbps > 0)
+	যদি (limit_kbps > 0)
 		bandwidth_limit(&bwlimit, s);
-	return 0;
+	ফেরত 0;
 }
 
-static int
-do_times(int fd, int verb, const struct stat *sb)
+স্থির পূর্ণসংখ্যা
+do_times(পূর্ণসংখ্যা fd, পূর্ণসংখ্যা verb, ধ্রুবক কাঠামো stat *sb)
 {
 	/* strlen(2^64) == 20; strlen(10^6) == 7 */
-	char buf[(20 + 7 + 2) * 2 + 2];
+	অক্ষর buf[(20 + 7 + 2) * 2 + 2];
 
-	(void)snprintf(buf, sizeof(buf), "T%llu 0 %llu 0\n",
+	(শূন্য)snprintf(buf, আকার(buf), "T%llu 0 %llu 0\n",
 	    (unsigned long long) (sb->st_mtime < 0 ? 0 : sb->st_mtime),
 	    (unsigned long long) (sb->st_atime < 0 ? 0 : sb->st_atime));
-	if (verb) {
+	যদি (verb) {
 		fprintf(stderr, "File mtime %lld atime %lld\n",
 		    (long long)sb->st_mtime, (long long)sb->st_atime);
 		fprintf(stderr, "Sending file timestamps: %s", buf);
 	}
-	(void) atomicio(vwrite, fd, buf, strlen(buf));
-	return (response());
+	(শূন্য) atomicio(vwrite, fd, buf, strlen(buf));
+	ফেরত (response());
 }
 
-static int
-parse_scp_uri(const char *uri, char **userp, char **hostp, int *portp,
-    char **pathp)
+স্থির পূর্ণসংখ্যা
+parse_scp_uri(ধ্রুবক অক্ষর *uri, অক্ষর **userp, অক্ষর **hostp, পূর্ণসংখ্যা *portp,
+    অক্ষর **pathp)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
 	r = parse_uri("scp", uri, userp, hostp, portp, pathp);
-	if (r == 0 && *pathp == NULL)
+	যদি (r == 0 && *pathp == ফাঁকা)
 		*pathp = xstrdup(".");
-	return r;
+	ফেরত r;
 }
 
 /* Appends a string to an array; returns 0 on success, -1 on alloc failure */
-static int
-append(char *cp, char ***ap, size_t *np)
+স্থির পূর্ণসংখ্যা
+append(অক্ষর *cp, অক্ষর ***ap, আকার_t *np)
 {
-	char **tmp;
+	অক্ষর **tmp;
 
-	if ((tmp = reallocarray(*ap, *np + 1, sizeof(*tmp))) == NULL)
-		return -1;
+	যদি ((tmp = reallocarray(*ap, *np + 1, আকার(*tmp))) == ফাঁকা)
+		ফেরত -1;
 	tmp[(*np)] = cp;
 	(*np)++;
 	*ap = tmp;
-	return 0;
+	ফেরত 0;
 }
 
 /*
  * Finds the start and end of the first brace pair in the pattern.
  * returns 0 on success or -1 for invalid patterns.
  */
-static int
-find_brace(const char *pattern, int *startp, int *endp)
+স্থির পূর্ণসংখ্যা
+find_brace(ধ্রুবক অক্ষর *pattern, পূর্ণসংখ্যা *startp, পূর্ণসংখ্যা *endp)
 {
-	int i;
-	int in_bracket, brace_level;
+	পূর্ণসংখ্যা i;
+	পূর্ণসংখ্যা in_bracket, brace_level;
 
 	*startp = *endp = -1;
 	in_bracket = brace_level = 0;
-	for (i = 0; i < INT_MAX && *endp < 0 && pattern[i] != '\0'; i++) {
-		switch (pattern[i]) {
-		case '\\':
+	জন্য (i = 0; i < INT_MAX && *endp < 0 && pattern[i] != '\0'; i++) {
+		নির্বাচন (pattern[i]) {
+		ক্ষেত্র '\\':
 			/* skip next character */
-			if (pattern[i + 1] != '\0')
+			যদি (pattern[i + 1] != '\0')
 				i++;
-			break;
-		case '[':
+			বিরতি;
+		ক্ষেত্র '[':
 			in_bracket = 1;
-			break;
-		case ']':
+			বিরতি;
+		ক্ষেত্র ']':
 			in_bracket = 0;
-			break;
-		case '{':
-			if (in_bracket)
-				break;
-			if (pattern[i + 1] == '}') {
+			বিরতি;
+		ক্ষেত্র '{':
+			যদি (in_bracket)
+				বিরতি;
+			যদি (pattern[i + 1] == '}') {
 				/* Protect a single {}, for find(1), like csh */
 				i++; /* skip */
-				break;
+				বিরতি;
 			}
-			if (*startp == -1)
+			যদি (*startp == -1)
 				*startp = i;
 			brace_level++;
-			break;
-		case '}':
-			if (in_bracket)
-				break;
-			if (*startp < 0) {
+			বিরতি;
+		ক্ষেত্র '}':
+			যদি (in_bracket)
+				বিরতি;
+			যদি (*startp < 0) {
 				/* Unbalanced brace */
-				return -1;
+				ফেরত -1;
 			}
-			if (--brace_level <= 0)
+			যদি (--brace_level <= 0)
 				*endp = i;
-			break;
+			বিরতি;
 		}
 	}
 	/* unbalanced brackets/braces */
-	if (*endp < 0 && (*startp >= 0 || in_bracket))
-		return -1;
-	return 0;
+	যদি (*endp < 0 && (*startp >= 0 || in_bracket))
+		ফেরত -1;
+	ফেরত 0;
 }
 
 /*
  * Assembles and records a successfully-expanded pattern, returns -1 on
  * alloc failure.
  */
-static int
-emit_expansion(const char *pattern, int brace_start, int brace_end,
-    int sel_start, int sel_end, char ***patternsp, size_t *npatternsp)
+স্থির পূর্ণসংখ্যা
+emit_expansion(ধ্রুবক অক্ষর *pattern, পূর্ণসংখ্যা brace_start, পূর্ণসংখ্যা brace_end,
+    পূর্ণসংখ্যা sel_start, পূর্ণসংখ্যা sel_end, অক্ষর ***patternsp, আকার_t *npatternsp)
 {
-	char *cp;
-	size_t pattern_len;
-	int o = 0, tail_len;
+	অক্ষর *cp;
+	আকার_t pattern_len;
+	পূর্ণসংখ্যা o = 0, লেজ_len;
 
-	if ((pattern_len = strlen(pattern)) == 0 || pattern_len >= INT_MAX)
-		return -1;
+	যদি ((pattern_len = strlen(pattern)) == 0 || pattern_len >= INT_MAX)
+		ফেরত -1;
 
-	tail_len = strlen(pattern + brace_end + 1);
-	if ((cp = malloc(brace_start + (sel_end - sel_start) +
-	    tail_len + 1)) == NULL)
-		return -1;
+	লেজ_len = strlen(pattern + brace_end + 1);
+	যদি ((cp = malloc(brace_start + (sel_end - sel_start) +
+	    লেজ_len + 1)) == ফাঁকা)
+		ফেরত -1;
 
 	/* Pattern before initial brace */
-	if (brace_start > 0) {
+	যদি (brace_start > 0) {
 		memcpy(cp, pattern, brace_start);
 		o = brace_start;
 	}
 	/* Current braced selection */
-	if (sel_end - sel_start > 0) {
+	যদি (sel_end - sel_start > 0) {
 		memcpy(cp + o, pattern + sel_start,
 		    sel_end - sel_start);
 		o += sel_end - sel_start;
 	}
 	/* Remainder of pattern after closing brace */
-	if (tail_len > 0) {
-		memcpy(cp + o, pattern + brace_end + 1, tail_len);
-		o += tail_len;
+	যদি (লেজ_len > 0) {
+		memcpy(cp + o, pattern + brace_end + 1, লেজ_len);
+		o += লেজ_len;
 	}
 	cp[o] = '\0';
-	if (append(cp, patternsp, npatternsp) != 0) {
-		free(cp);
-		return -1;
+	যদি (append(cp, patternsp, npatternsp) != 0) {
+		মুক্ত(cp);
+		ফেরত -1;
 	}
-	return 0;
+	ফেরত 0;
 }
 
 /*
@@ -866,214 +866,214 @@ emit_expansion(const char *pattern, int brace_start, int brace_end,
  * Signals whether expansion was performed via *expanded and whether
  * pattern was invalid via *invalid.
  */
-static int
-brace_expand_one(const char *pattern, char ***patternsp, size_t *npatternsp,
-    int *expanded, int *invalid)
+স্থির পূর্ণসংখ্যা
+brace_expand_one(ধ্রুবক অক্ষর *pattern, অক্ষর ***patternsp, আকার_t *npatternsp,
+    পূর্ণসংখ্যা *expanded, পূর্ণসংখ্যা *invalid)
 {
-	int i;
-	int in_bracket, brace_start, brace_end, brace_level;
-	int sel_start, sel_end;
+	পূর্ণসংখ্যা i;
+	পূর্ণসংখ্যা in_bracket, brace_start, brace_end, brace_level;
+	পূর্ণসংখ্যা sel_start, sel_end;
 
 	*invalid = *expanded = 0;
 
-	if (find_brace(pattern, &brace_start, &brace_end) != 0) {
+	যদি (find_brace(pattern, &brace_start, &brace_end) != 0) {
 		*invalid = 1;
-		return 0;
-	} else if (brace_start == -1)
-		return 0;
+		ফেরত 0;
+	} অন্যথা যদি (brace_start == -1)
+		ফেরত 0;
 
 	in_bracket = brace_level = 0;
-	for (i = sel_start = brace_start + 1; i < brace_end; i++) {
-		switch (pattern[i]) {
-		case '{':
-			if (in_bracket)
-				break;
+	জন্য (i = sel_start = brace_start + 1; i < brace_end; i++) {
+		নির্বাচন (pattern[i]) {
+		ক্ষেত্র '{':
+			যদি (in_bracket)
+				বিরতি;
 			brace_level++;
-			break;
-		case '}':
-			if (in_bracket)
-				break;
+			বিরতি;
+		ক্ষেত্র '}':
+			যদি (in_bracket)
+				বিরতি;
 			brace_level--;
-			break;
-		case '[':
+			বিরতি;
+		ক্ষেত্র '[':
 			in_bracket = 1;
-			break;
-		case ']':
+			বিরতি;
+		ক্ষেত্র ']':
 			in_bracket = 0;
-			break;
-		case '\\':
-			if (i < brace_end - 1)
+			বিরতি;
+		ক্ষেত্র '\\':
+			যদি (i < brace_end - 1)
 				i++; /* skip */
-			break;
+			বিরতি;
 		}
-		if (pattern[i] == ',' || i == brace_end - 1) {
-			if (in_bracket || brace_level > 0)
-				continue;
+		যদি (pattern[i] == ',' || i == brace_end - 1) {
+			যদি (in_bracket || brace_level > 0)
+				চালু;
 			/* End of a selection, emit an expanded pattern */
 
 			/* Adjust end index for last selection */
 			sel_end = (i == brace_end - 1) ? brace_end : i;
-			if (emit_expansion(pattern, brace_start, brace_end,
+			যদি (emit_expansion(pattern, brace_start, brace_end,
 			    sel_start, sel_end, patternsp, npatternsp) != 0)
-				return -1;
+				ফেরত -1;
 			/* move on to the next selection */
 			sel_start = i + 1;
-			continue;
+			চালু;
 		}
 	}
-	if (in_bracket || brace_level > 0) {
+	যদি (in_bracket || brace_level > 0) {
 		*invalid = 1;
-		return 0;
+		ফেরত 0;
 	}
 	/* success */
 	*expanded = 1;
-	return 0;
+	ফেরত 0;
 }
 
 /* Expand braces from pattern. Returns 0 on success, -1 on failure */
-static int
-brace_expand(const char *pattern, char ***patternsp, size_t *npatternsp)
+স্থির পূর্ণসংখ্যা
+brace_expand(ধ্রুবক অক্ষর *pattern, অক্ষর ***patternsp, আকার_t *npatternsp)
 {
-	char *cp, *cp2, **active = NULL, **done = NULL;
-	size_t i, nactive = 0, ndone = 0;
-	int ret = -1, invalid = 0, expanded = 0;
+	অক্ষর *cp, *cp2, **active = ফাঁকা, **done = ফাঁকা;
+	আকার_t i, nactive = 0, ndone = 0;
+	পূর্ণসংখ্যা ret = -1, invalid = 0, expanded = 0;
 
-	*patternsp = NULL;
+	*patternsp = ফাঁকা;
 	*npatternsp = 0;
 
 	/* Start the worklist with the original pattern */
-	if ((cp = strdup(pattern)) == NULL)
-		return -1;
-	if (append(cp, &active, &nactive) != 0) {
-		free(cp);
-		return -1;
+	যদি ((cp = strdup(pattern)) == ফাঁকা)
+		ফেরত -1;
+	যদি (append(cp, &active, &nactive) != 0) {
+		মুক্ত(cp);
+		ফেরত -1;
 	}
-	while (nactive > 0) {
+	যখন (nactive > 0) {
 		cp = active[nactive - 1];
 		nactive--;
-		if (brace_expand_one(cp, &active, &nactive,
+		যদি (brace_expand_one(cp, &active, &nactive,
 		    &expanded, &invalid) == -1) {
-			free(cp);
-			goto fail;
+			মুক্ত(cp);
+			যাও fail;
 		}
-		if (invalid)
+		যদি (invalid)
 			fatal_f("invalid brace pattern \"%s\"", cp);
-		if (expanded) {
+		যদি (expanded) {
 			/*
 			 * Current entry expanded to new entries on the
 			 * active list; discard the progenitor pattern.
 			 */
-			free(cp);
-			continue;
+			মুক্ত(cp);
+			চালু;
 		}
 		/*
 		 * Pattern did not expand; append the filename component to
 		 * the completed list
 		 */
-		if ((cp2 = strrchr(cp, '/')) != NULL)
+		যদি ((cp2 = strrchr(cp, '/')) != ফাঁকা)
 			*cp2++ = '\0';
-		else
+		অন্যথা
 			cp2 = cp;
-		if (append(xstrdup(cp2), &done, &ndone) != 0) {
-			free(cp);
-			goto fail;
+		যদি (append(xstrdup(cp2), &done, &ndone) != 0) {
+			মুক্ত(cp);
+			যাও fail;
 		}
-		free(cp);
+		মুক্ত(cp);
 	}
 	/* success */
 	*patternsp = done;
 	*npatternsp = ndone;
-	done = NULL;
+	done = ফাঁকা;
 	ndone = 0;
 	ret = 0;
  fail:
-	for (i = 0; i < nactive; i++)
-		free(active[i]);
-	free(active);
-	for (i = 0; i < ndone; i++)
-		free(done[i]);
-	free(done);
-	return ret;
+	জন্য (i = 0; i < nactive; i++)
+		মুক্ত(active[i]);
+	মুক্ত(active);
+	জন্য (i = 0; i < ndone; i++)
+		মুক্ত(done[i]);
+	মুক্ত(done);
+	ফেরত ret;
 }
 
-static struct sftp_conn *
-do_sftp_connect(char *host, char *user, int port, char *sftp_direct,
-   int *reminp, int *remoutp, int *pidp)
+স্থির কাঠামো sftp_conn *
+do_sftp_connect(অক্ষর *host, অক্ষর *user, পূর্ণসংখ্যা port, অক্ষর *sftp_direct,
+   পূর্ণসংখ্যা *reminp, পূর্ণসংখ্যা *remoutp, পূর্ণসংখ্যা *pidp)
 {
-	if (sftp_direct == NULL) {
-		if (do_cmd(ssh_program, host, user, port, 1, "sftp",
+	যদি (sftp_direct == ফাঁকা) {
+		যদি (do_cmd(ssh_program, host, user, port, 1, "sftp",
 		    reminp, remoutp, pidp) < 0)
-			return NULL;
+			ফেরত ফাঁকা;
 
-	} else {
+	} অন্যথা {
 		freeargs(&args);
 		addargs(&args, "sftp-server");
-		if (do_cmd(sftp_direct, host, NULL, -1, 0, "sftp",
+		যদি (do_cmd(sftp_direct, host, ফাঁকা, -1, 0, "sftp",
 		    reminp, remoutp, pidp) < 0)
-			return NULL;
+			ফেরত ফাঁকা;
 	}
-	return sftp_init(*reminp, *remoutp,
+	ফেরত sftp_init(*reminp, *remoutp,
 	    sftp_copy_buflen, sftp_nrequests, limit_kbps);
 }
 
-void
-toremote(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
+শূন্য
+toremote(পূর্ণসংখ্যা argc, অক্ষর **argv, গণনা scp_mode_e mode, অক্ষর *sftp_direct)
 {
-	char *suser = NULL, *host = NULL, *src = NULL;
-	char *bp, *tuser, *thost, *targ;
-	int sport = -1, tport = -1;
-	struct sftp_conn *conn = NULL, *conn2 = NULL;
+	অক্ষর *suser = ফাঁকা, *host = ফাঁকা, *src = ফাঁকা;
+	অক্ষর *bp, *tuser, *thost, *targ;
+	পূর্ণসংখ্যা sport = -1, tport = -1;
+	কাঠামো sftp_conn *conn = ফাঁকা, *conn2 = ফাঁকা;
 	arglist alist;
-	int i, r, status;
-	struct stat sb;
+	পূর্ণসংখ্যা i, r, status;
+	কাঠামো stat sb;
 	u_int j;
 
-	memset(&alist, '\0', sizeof(alist));
-	alist.list = NULL;
+	memset(&alist, '\0', আকার(alist));
+	alist.list = ফাঁকা;
 
 	/* Parse target */
 	r = parse_scp_uri(argv[argc - 1], &tuser, &thost, &tport, &targ);
-	if (r == -1) {
+	যদি (r == -1) {
 		fmprintf(stderr, "%s: invalid uri\n", argv[argc - 1]);
 		++errs;
-		goto out;
+		যাও out;
 	}
-	if (r != 0) {
-		if (parse_user_host_path(argv[argc - 1], &tuser, &thost,
+	যদি (r != 0) {
+		যদি (parse_user_host_path(argv[argc - 1], &tuser, &thost,
 		    &targ) == -1) {
 			fmprintf(stderr, "%s: invalid target\n", argv[argc - 1]);
 			++errs;
-			goto out;
+			যাও out;
 		}
 	}
 
 	/* Parse source files */
-	for (i = 0; i < argc - 1; i++) {
-		free(suser);
-		free(host);
-		free(src);
+	জন্য (i = 0; i < argc - 1; i++) {
+		মুক্ত(suser);
+		মুক্ত(host);
+		মুক্ত(src);
 		r = parse_scp_uri(argv[i], &suser, &host, &sport, &src);
-		if (r == -1) {
+		যদি (r == -1) {
 			fmprintf(stderr, "%s: invalid uri\n", argv[i]);
 			++errs;
-			continue;
+			চালু;
 		}
-		if (r != 0) {
+		যদি (r != 0) {
 			parse_user_host_path(argv[i], &suser, &host, &src);
 		}
-		if (suser != NULL && !okname(suser)) {
+		যদি (suser != ফাঁকা && !okname(suser)) {
 			++errs;
-			continue;
+			চালু;
 		}
-		if (host && throughlocal) {	/* extended remote to remote */
-			if (mode == MODE_SFTP) {
-				if (remin == -1 || conn == NULL) {
+		যদি (host && throughlocal) {	/* extended remote to remote */
+			যদি (mode == MODE_SFTP) {
+				যদি (remin == -1 || conn == ফাঁকা) {
 					/* Connect to dest now */
 					sftp_free(conn);
 					conn = do_sftp_connect(thost, tuser,
 					    tport, sftp_direct,
 					    &remin, &remout, &do_cmd_pid);
-					if (conn == NULL) {
+					যদি (conn == ফাঁকা) {
 						fatal("Unable to open "
 						    "destination connection");
 					}
@@ -1091,51 +1091,51 @@ toremote(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
 				conn2 = do_sftp_connect(host, suser,
 				    sport, sftp_direct,
 				    &remin2, &remout2, &do_cmd_pid2);
-				if (conn2 == NULL) {
+				যদি (conn2 == ফাঁকা) {
 					fatal("Unable to open "
 					    "source connection");
 				}
 				debug3_f("destination in %d out %d pid %ld",
 				    remin2, remout2, (long)do_cmd_pid2);
 				throughlocal_sftp(conn2, conn, src, targ);
-				(void) close(remin2);
-				(void) close(remout2);
+				(শূন্য) close(remin2);
+				(শূন্য) close(remout2);
 				remin2 = remout2 = -1;
-				if (waitpid(do_cmd_pid2, &status, 0) == -1)
+				যদি (waitpid(do_cmd_pid2, &status, 0) == -1)
 					++errs;
-				else if (!WIFEXITED(status) ||
+				অন্যথা যদি (!WIFEXITED(status) ||
 				    WEXITSTATUS(status) != 0)
 					++errs;
 				do_cmd_pid2 = -1;
-				continue;
-			} else {
+				চালু;
+			} অন্যথা {
 				xasprintf(&bp, "%s -f %s%s", cmd,
 				    *src == '-' ? "-- " : "", src);
-				if (do_cmd(ssh_program, host, suser, sport, 0,
+				যদি (do_cmd(ssh_program, host, suser, sport, 0,
 				    bp, &remin, &remout, &do_cmd_pid) < 0)
 					exit(1);
-				free(bp);
+				মুক্ত(bp);
 				xasprintf(&bp, "%s -t %s%s", cmd,
 				    *targ == '-' ? "-- " : "", targ);
-				if (do_cmd2(thost, tuser, tport, bp,
+				যদি (do_cmd2(thost, tuser, tport, bp,
 				    remin, remout) < 0)
 					exit(1);
-				free(bp);
-				(void) close(remin);
-				(void) close(remout);
+				মুক্ত(bp);
+				(শূন্য) close(remin);
+				(শূন্য) close(remout);
 				remin = remout = -1;
 			}
-		} else if (host) {	/* standard remote to remote */
+		} অন্যথা যদি (host) {	/* standard remote to remote */
 			/*
 			 * Second remote user is passed to first remote side
 			 * via scp command-line. Ensure it contains no obvious
 			 * shell characters.
 			 */
-			if (tuser != NULL && !okname(tuser)) {
+			যদি (tuser != ফাঁকা && !okname(tuser)) {
 				++errs;
-				continue;
+				চালু;
 			}
-			if (tport != -1 && tport != SSH_DEFAULT_PORT) {
+			যদি (tport != -1 && tport != SSH_DEFAULT_PORT) {
 				/* This would require the remote support URIs */
 				fatal("target port not supported with two "
 				    "remote hosts and the -R option");
@@ -1146,16 +1146,16 @@ toremote(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
 			addargs(&alist, "-x");
 			addargs(&alist, "-oClearAllForwardings=yes");
 			addargs(&alist, "-n");
-			for (j = 0; j < remote_remote_args.num; j++) {
+			জন্য (j = 0; j < remote_remote_args.অঙ্ক; j++) {
 				addargs(&alist, "%s",
 				    remote_remote_args.list[j]);
 			}
 
-			if (sport != -1) {
+			যদি (sport != -1) {
 				addargs(&alist, "-p");
 				addargs(&alist, "%d", sport);
 			}
-			if (suser) {
+			যদি (suser) {
 				addargs(&alist, "-l");
 				addargs(&alist, "%s", suser);
 			}
@@ -1166,22 +1166,22 @@ toremote(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
 			addargs(&alist, "%s%s%s:%s",
 			    tuser ? tuser : "", tuser ? "@" : "",
 			    thost, targ);
-			if (do_local_cmd(&alist) != 0)
+			যদি (do_local_cmd(&alist) != 0)
 				errs = 1;
-		} else {	/* local to remote */
-			if (mode == MODE_SFTP) {
+		} অন্যথা {	/* local to remote */
+			যদি (mode == MODE_SFTP) {
 				/* no need to glob: already done by shell */
-				if (stat(argv[i], &sb) != 0) {
+				যদি (stat(argv[i], &sb) != 0) {
 					fatal("stat local \"%s\": %s", argv[i],
 					    strerror(errno));
 				}
-				if (remin == -1) {
+				যদি (remin == -1) {
 					/* Connect to remote now */
 					sftp_free(conn);
 					conn = do_sftp_connect(thost, tuser,
 					    tport, sftp_direct,
 					    &remin, &remout, &do_cmd_pid);
-					if (conn == NULL) {
+					যদি (conn == ফাঁকা) {
 						fatal("Unable to open sftp "
 						    "connection");
 					}
@@ -1189,588 +1189,588 @@ toremote(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
 
 				/* The protocol */
 				source_sftp(1, argv[i], targ, conn);
-				continue;
+				চালু;
 			}
 			/* SCP */
-			if (remin == -1) {
+			যদি (remin == -1) {
 				xasprintf(&bp, "%s -t %s%s", cmd,
 				    *targ == '-' ? "-- " : "", targ);
-				if (do_cmd(ssh_program, thost, tuser, tport, 0,
+				যদি (do_cmd(ssh_program, thost, tuser, tport, 0,
 				    bp, &remin, &remout, &do_cmd_pid) < 0)
 					exit(1);
-				if (response() < 0)
+				যদি (response() < 0)
 					exit(1);
-				free(bp);
+				মুক্ত(bp);
 			}
 			source(1, argv + i);
 		}
 	}
 out:
 	freeargs(&alist);
-	free(tuser);
-	free(thost);
-	free(targ);
-	free(suser);
-	free(host);
-	free(src);
+	মুক্ত(tuser);
+	মুক্ত(thost);
+	মুক্ত(targ);
+	মুক্ত(suser);
+	মুক্ত(host);
+	মুক্ত(src);
 	sftp_free(conn);
 	sftp_free(conn2);
 }
 
-void
-tolocal(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
+শূন্য
+tolocal(পূর্ণসংখ্যা argc, অক্ষর **argv, গণনা scp_mode_e mode, অক্ষর *sftp_direct)
 {
-	char *bp, *host = NULL, *src = NULL, *suser = NULL;
+	অক্ষর *bp, *host = ফাঁকা, *src = ফাঁকা, *suser = ফাঁকা;
 	arglist alist;
-	struct sftp_conn *conn = NULL;
-	int i, r, sport = -1;
+	কাঠামো sftp_conn *conn = ফাঁকা;
+	পূর্ণসংখ্যা i, r, sport = -1;
 
-	memset(&alist, '\0', sizeof(alist));
-	alist.list = NULL;
+	memset(&alist, '\0', আকার(alist));
+	alist.list = ফাঁকা;
 
-	for (i = 0; i < argc - 1; i++) {
-		free(suser);
-		free(host);
-		free(src);
+	জন্য (i = 0; i < argc - 1; i++) {
+		মুক্ত(suser);
+		মুক্ত(host);
+		মুক্ত(src);
 		r = parse_scp_uri(argv[i], &suser, &host, &sport, &src);
-		if (r == -1) {
+		যদি (r == -1) {
 			fmprintf(stderr, "%s: invalid uri\n", argv[i]);
 			++errs;
-			continue;
+			চালু;
 		}
-		if (r != 0)
+		যদি (r != 0)
 			parse_user_host_path(argv[i], &suser, &host, &src);
-		if (suser != NULL && !okname(suser)) {
+		যদি (suser != ফাঁকা && !okname(suser)) {
 			++errs;
-			continue;
+			চালু;
 		}
-		if (!host) {	/* Local to local. */
+		যদি (!host) {	/* Local to local. */
 			freeargs(&alist);
 			addargs(&alist, "%s", _PATH_CP);
-			if (iamrecursive)
+			যদি (iamrecursive)
 				addargs(&alist, "-r");
-			if (pflag)
+			যদি (pflag)
 				addargs(&alist, "-p");
 			addargs(&alist, "--");
 			addargs(&alist, "%s", argv[i]);
 			addargs(&alist, "%s", argv[argc-1]);
-			if (do_local_cmd(&alist))
+			যদি (do_local_cmd(&alist))
 				++errs;
-			continue;
+			চালু;
 		}
 		/* Remote to local. */
-		if (mode == MODE_SFTP) {
+		যদি (mode == MODE_SFTP) {
 			sftp_free(conn);
 			conn = do_sftp_connect(host, suser, sport,
 			    sftp_direct, &remin, &remout, &do_cmd_pid);
-			if (conn == NULL) {
+			যদি (conn == ফাঁকা) {
 				error("sftp connection failed");
 				++errs;
-				continue;
+				চালু;
 			}
 
 			/* The protocol */
 			sink_sftp(1, argv[argc - 1], src, conn);
 
-			(void) close(remin);
-			(void) close(remout);
+			(শূন্য) close(remin);
+			(শূন্য) close(remout);
 			remin = remout = -1;
-			continue;
+			চালু;
 		}
 		/* SCP */
 		xasprintf(&bp, "%s -f %s%s",
 		    cmd, *src == '-' ? "-- " : "", src);
-		if (do_cmd(ssh_program, host, suser, sport, 0, bp,
+		যদি (do_cmd(ssh_program, host, suser, sport, 0, bp,
 		    &remin, &remout, &do_cmd_pid) < 0) {
-			free(bp);
+			মুক্ত(bp);
 			++errs;
-			continue;
+			চালু;
 		}
-		free(bp);
+		মুক্ত(bp);
 		sink(1, argv + argc - 1, src);
-		(void) close(remin);
+		(শূন্য) close(remin);
 		remin = remout = -1;
 	}
 	freeargs(&alist);
-	free(suser);
-	free(host);
-	free(src);
+	মুক্ত(suser);
+	মুক্ত(host);
+	মুক্ত(src);
 	sftp_free(conn);
 }
 
 /* Prepare remote path, handling ~ by assuming cwd is the homedir */
-static char *
-prepare_remote_path(struct sftp_conn *conn, const char *path)
+স্থির অক্ষর *
+prepare_remote_path(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path)
 {
-	size_t nslash;
+	আকার_t nslash;
 
 	/* Handle ~ prefixed paths */
-	if (*path == '\0' || strcmp(path, "~") == 0)
-		return xstrdup(".");
-	if (*path != '~')
-		return xstrdup(path);
-	if (strncmp(path, "~/", 2) == 0) {
-		if ((nslash = strspn(path + 2, "/")) == strlen(path + 2))
-			return xstrdup(".");
-		return xstrdup(path + 2 + nslash);
+	যদি (*path == '\0' || strcmp(path, "~") == 0)
+		ফেরত xstrdup(".");
+	যদি (*path != '~')
+		ফেরত xstrdup(path);
+	যদি (strncmp(path, "~/", 2) == 0) {
+		যদি ((nslash = strspn(path + 2, "/")) == strlen(path + 2))
+			ফেরত xstrdup(".");
+		ফেরত xstrdup(path + 2 + nslash);
 	}
-	if (sftp_can_expand_path(conn))
-		return sftp_expand_path(conn, path);
+	যদি (sftp_can_expand_path(conn))
+		ফেরত sftp_expand_path(conn, path);
 	/* No protocol extension */
 	error("server expand-path extension is required "
 	    "for ~user paths in SFTP mode");
-	return NULL;
+	ফেরত ফাঁকা;
 }
 
-void
-source_sftp(int argc, char *src, char *targ, struct sftp_conn *conn)
+শূন্য
+source_sftp(পূর্ণসংখ্যা argc, অক্ষর *src, অক্ষর *targ, কাঠামো sftp_conn *conn)
 {
-	char *target = NULL, *filename = NULL, *abs_dst = NULL;
-	int src_is_dir, target_is_dir;
+	অক্ষর *target = ফাঁকা, *filename = ফাঁকা, *abs_dst = ফাঁকা;
+	পূর্ণসংখ্যা src_is_dir, target_is_dir;
 	Attrib a;
-	struct stat st;
+	কাঠামো stat st;
 
-	memset(&a, '\0', sizeof(a));
-	if (stat(src, &st) != 0)
+	memset(&a, '\0', আকার(a));
+	যদি (stat(src, &st) != 0)
 		fatal("stat local \"%s\": %s", src, strerror(errno));
 	src_is_dir = S_ISDIR(st.st_mode);
-	if ((filename = basename(src)) == NULL)
+	যদি ((filename = basename(src)) == ফাঁকা)
 		fatal("basename \"%s\": %s", src, strerror(errno));
 
 	/* Special handling for source of '..' */
-	if (strcmp(filename, "..") == 0)
+	যদি (strcmp(filename, "..") == 0)
 		filename = "."; /* Upload to dest, not dest/.. */
 
 	/*
 	 * No need to glob here - the local shell already took care of
 	 * the expansions
 	 */
-	if ((target = prepare_remote_path(conn, targ)) == NULL)
+	যদি ((target = prepare_remote_path(conn, targ)) == ফাঁকা)
 		cleanup_exit(255);
 	target_is_dir = sftp_remote_is_dir(conn, target);
-	if (targetshouldbedirectory && !target_is_dir) {
+	যদি (targetshouldbedirectory && !target_is_dir) {
 		debug("target directory \"%s\" does not exist", target);
 		a.flags = SSH2_FILEXFER_ATTR_PERMISSIONS;
 		a.perm = st.st_mode | 0700; /* ensure writable */
-		if (sftp_mkdir(conn, target, &a, 1) != 0)
+		যদি (sftp_mkdir(conn, target, &a, 1) != 0)
 			cleanup_exit(255); /* error already logged */
 		target_is_dir = 1;
 	}
-	if (target_is_dir)
+	যদি (target_is_dir)
 		abs_dst = sftp_path_append(target, filename);
-	else {
+	অন্যথা {
 		abs_dst = target;
-		target = NULL;
+		target = ফাঁকা;
 	}
 	debug3_f("copying local %s to remote %s", src, abs_dst);
 
-	if (src_is_dir && iamrecursive) {
-		if (sftp_upload_dir(conn, src, abs_dst, pflag,
+	যদি (src_is_dir && iamrecursive) {
+		যদি (sftp_upload_dir(conn, src, abs_dst, pflag,
 		    SFTP_PROGRESS_ONLY, 0, 0, 1, 1) != 0) {
 			error("failed to upload directory %s to %s", src, targ);
 			errs = 1;
 		}
-	} else if (sftp_upload(conn, src, abs_dst, pflag, 0, 0, 1) != 0) {
+	} অন্যথা যদি (sftp_upload(conn, src, abs_dst, pflag, 0, 0, 1) != 0) {
 		error("failed to upload file %s to %s", src, targ);
 		errs = 1;
 	}
 
-	free(abs_dst);
-	free(target);
+	মুক্ত(abs_dst);
+	মুক্ত(target);
 }
 
-void
-source(int argc, char **argv)
+শূন্য
+source(পূর্ণসংখ্যা argc, অক্ষর **argv)
 {
-	struct stat stb;
-	static BUF buffer;
+	কাঠামো stat stb;
+	স্থির BUF বাফার;
 	BUF *bp;
 	off_t i, statbytes;
-	size_t amt, nr;
-	int fd = -1, haderr, indx;
-	char *last, *name, buf[PATH_MAX + 128], encname[PATH_MAX];
-	int len;
+	আকার_t amt, nr;
+	পূর্ণসংখ্যা fd = -1, haderr, indx;
+	অক্ষর *last, *name, buf[PATH_MAX + 128], encname[PATH_MAX];
+	পূর্ণসংখ্যা len;
 
-	for (indx = 0; indx < argc; ++indx) {
+	জন্য (indx = 0; indx < argc; ++indx) {
 		name = argv[indx];
 		statbytes = 0;
 		len = strlen(name);
-		while (len > 1 && name[len-1] == '/')
+		যখন (len > 1 && name[len-1] == '/')
 			name[--len] = '\0';
-		if ((fd = open(name, O_RDONLY|O_NONBLOCK)) == -1)
-			goto syserr;
-		if (strchr(name, '\n') != NULL) {
-			strnvis(encname, name, sizeof(encname), VIS_NL);
+		যদি ((fd = open(name, O_RDONLY|O_NONBLOCK)) == -1)
+			যাও syserr;
+		যদি (strchr(name, '\n') != ফাঁকা) {
+			strnvis(encname, name, আকার(encname), VIS_NL);
 			name = encname;
 		}
-		if (fstat(fd, &stb) == -1) {
+		যদি (fstat(fd, &stb) == -1) {
 syserr:			run_err("%s: %s", name, strerror(errno));
-			goto next;
+			যাও পরবর্তী;
 		}
-		if (stb.st_size < 0) {
+		যদি (stb.st_size < 0) {
 			run_err("%s: %s", name, "Negative file size");
-			goto next;
+			যাও পরবর্তী;
 		}
 		unset_nonblock(fd);
-		switch (stb.st_mode & S_IFMT) {
-		case S_IFREG:
-			break;
-		case S_IFDIR:
-			if (iamrecursive) {
+		নির্বাচন (stb.st_mode & S_IFMT) {
+		ক্ষেত্র S_IFREG:
+			বিরতি;
+		ক্ষেত্র S_IFDIR:
+			যদি (iamrecursive) {
 				rsource(name, &stb);
-				goto next;
+				যাও পরবর্তী;
 			}
 			/* FALLTHROUGH */
-		default:
+		পূর্বনির্ধারিত:
 			run_err("%s: not a regular file", name);
-			goto next;
+			যাও পরবর্তী;
 		}
-		if ((last = strrchr(name, '/')) == NULL)
+		যদি ((last = strrchr(name, '/')) == ফাঁকা)
 			last = name;
-		else
+		অন্যথা
 			++last;
 		curfile = last;
-		if (pflag) {
-			if (do_times(remout, verbose_mode, &stb) < 0)
-				goto next;
+		যদি (pflag) {
+			যদি (do_times(remout, verbose_mode, &stb) < 0)
+				যাও পরবর্তী;
 		}
 #define	FILEMODEMASK	(S_ISUID|S_ISGID|S_IRWXU|S_IRWXG|S_IRWXO)
-		snprintf(buf, sizeof buf, "C%04o %lld %s\n",
+		snprintf(buf, আকার buf, "C%04o %lld %s\n",
 		    (u_int) (stb.st_mode & FILEMODEMASK),
 		    (long long)stb.st_size, last);
-		if (verbose_mode)
+		যদি (verbose_mode)
 			fmprintf(stderr, "Sending file modes: %s", buf);
-		(void) atomicio(vwrite, remout, buf, strlen(buf));
-		if (response() < 0)
-			goto next;
-		if ((bp = allocbuf(&buffer, fd, COPY_BUFLEN)) == NULL) {
-next:			if (fd != -1) {
-				(void) close(fd);
+		(শূন্য) atomicio(vwrite, remout, buf, strlen(buf));
+		যদি (response() < 0)
+			যাও পরবর্তী;
+		যদি ((bp = allocbuf(&বাফার, fd, COPY_BUFLEN)) == ফাঁকা) {
+পরবর্তী:			যদি (fd != -1) {
+				(শূন্য) close(fd);
 				fd = -1;
 			}
-			continue;
+			চালু;
 		}
-		if (showprogress)
+		যদি (showprogress)
 			start_progress_meter(curfile, stb.st_size, &statbytes);
 		set_nonblock(remout);
-		for (haderr = i = 0; i < stb.st_size; i += bp->cnt) {
+		জন্য (haderr = i = 0; i < stb.st_size; i += bp->cnt) {
 			amt = bp->cnt;
-			if (i + (off_t)amt > stb.st_size)
+			যদি (i + (off_t)amt > stb.st_size)
 				amt = stb.st_size - i;
-			if (!haderr) {
-				if ((nr = atomicio(read, fd,
+			যদি (!haderr) {
+				যদি ((nr = atomicio(পঠ, fd,
 				    bp->buf, amt)) != amt) {
 					haderr = errno;
 					memset(bp->buf + nr, 0, amt - nr);
 				}
 			}
 			/* Keep writing after error to retain sync */
-			if (haderr) {
-				(void)atomicio(vwrite, remout, bp->buf, amt);
+			যদি (haderr) {
+				(শূন্য)atomicio(vwrite, remout, bp->buf, amt);
 				memset(bp->buf, 0, amt);
-				continue;
+				চালু;
 			}
-			if (atomicio6(vwrite, remout, bp->buf, amt, scpio,
+			যদি (atomicio6(vwrite, remout, bp->buf, amt, scpio,
 			    &statbytes) != amt)
 				haderr = errno;
 		}
 		unset_nonblock(remout);
 
-		if (fd != -1) {
-			if (close(fd) == -1 && !haderr)
+		যদি (fd != -1) {
+			যদি (close(fd) == -1 && !haderr)
 				haderr = errno;
 			fd = -1;
 		}
-		if (!haderr)
-			(void) atomicio(vwrite, remout, "", 1);
-		else
+		যদি (!haderr)
+			(শূন্য) atomicio(vwrite, remout, "", 1);
+		অন্যথা
 			run_err("%s: %s", name, strerror(haderr));
-		(void) response();
-		if (showprogress)
+		(শূন্য) response();
+		যদি (showprogress)
 			stop_progress_meter();
 	}
 }
 
-void
-rsource(char *name, struct stat *statp)
+শূন্য
+rsource(অক্ষর *name, কাঠামো stat *statp)
 {
 	DIR *dirp;
-	struct dirent *dp;
-	char *last, *vect[1], path[PATH_MAX];
+	কাঠামো dirent *dp;
+	অক্ষর *last, *vect[1], path[PATH_MAX];
 
-	if (!(dirp = opendir(name))) {
+	যদি (!(dirp = opendir(name))) {
 		run_err("%s: %s", name, strerror(errno));
-		return;
+		ফেরত;
 	}
 	last = strrchr(name, '/');
-	if (last == NULL)
+	যদি (last == ফাঁকা)
 		last = name;
-	else
+	অন্যথা
 		last++;
-	if (pflag) {
-		if (do_times(remout, verbose_mode, statp) < 0) {
+	যদি (pflag) {
+		যদি (do_times(remout, verbose_mode, statp) < 0) {
 			closedir(dirp);
-			return;
+			ফেরত;
 		}
 	}
-	(void) snprintf(path, sizeof path, "D%04o %d %.1024s\n",
+	(শূন্য) snprintf(path, আকার path, "D%04o %d %.1024s\n",
 	    (u_int) (statp->st_mode & FILEMODEMASK), 0, last);
-	if (verbose_mode)
+	যদি (verbose_mode)
 		fmprintf(stderr, "Entering directory: %s", path);
-	(void) atomicio(vwrite, remout, path, strlen(path));
-	if (response() < 0) {
+	(শূন্য) atomicio(vwrite, remout, path, strlen(path));
+	যদি (response() < 0) {
 		closedir(dirp);
-		return;
+		ফেরত;
 	}
-	while ((dp = readdir(dirp)) != NULL) {
-		if (dp->d_ino == 0)
-			continue;
-		if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
-			continue;
-		if (strlen(name) + 1 + strlen(dp->d_name) >= sizeof(path) - 1) {
+	যখন ((dp = readdir(dirp)) != ফাঁকা) {
+		যদি (dp->d_ino == 0)
+			চালু;
+		যদি (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
+			চালু;
+		যদি (strlen(name) + 1 + strlen(dp->d_name) >= আকার(path) - 1) {
 			run_err("%s/%s: name too long", name, dp->d_name);
-			continue;
+			চালু;
 		}
-		(void) snprintf(path, sizeof path, "%s/%s", name, dp->d_name);
+		(শূন্য) snprintf(path, আকার path, "%s/%s", name, dp->d_name);
 		vect[0] = path;
 		source(1, vect);
 	}
-	(void) closedir(dirp);
-	(void) atomicio(vwrite, remout, "E\n", 2);
-	(void) response();
+	(শূন্য) closedir(dirp);
+	(শূন্য) atomicio(vwrite, remout, "E\n", 2);
+	(শূন্য) response();
 }
 
-void
-sink_sftp(int argc, char *dst, const char *src, struct sftp_conn *conn)
+শূন্য
+sink_sftp(পূর্ণসংখ্যা argc, অক্ষর *dst, ধ্রুবক অক্ষর *src, কাঠামো sftp_conn *conn)
 {
-	char *abs_src = NULL;
-	char *abs_dst = NULL;
+	অক্ষর *abs_src = ফাঁকা;
+	অক্ষর *abs_dst = ফাঁকা;
 	glob_t g;
-	char *filename, *tmp = NULL;
-	int i, r, err = 0, dst_is_dir;
-	struct stat st;
+	অক্ষর *filename, *tmp = ফাঁকা;
+	পূর্ণসংখ্যা i, r, err = 0, dst_is_dir;
+	কাঠামো stat st;
 
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, আকার(g));
 
 	/*
 	 * Here, we need remote glob as SFTP can not depend on remote shell
 	 * expansions
 	 */
-	if ((abs_src = prepare_remote_path(conn, src)) == NULL) {
+	যদি ((abs_src = prepare_remote_path(conn, src)) == ফাঁকা) {
 		err = -1;
-		goto out;
+		যাও out;
 	}
 
 	debug3_f("copying remote %s to local %s", abs_src, dst);
-	if ((r = sftp_glob(conn, abs_src, GLOB_NOCHECK|GLOB_MARK,
-	    NULL, &g)) != 0) {
-		if (r == GLOB_NOSPACE)
+	যদি ((r = sftp_glob(conn, abs_src, GLOB_NOCHECK|GLOB_MARK,
+	    ফাঁকা, &g)) != 0) {
+		যদি (r == GLOB_NOSPACE)
 			error("%s: too many glob matches", src);
-		else
+		অন্যথা
 			error("%s: %s", src, strerror(ENOENT));
 		err = -1;
-		goto out;
+		যাও out;
 	}
 
 	/* Did we actually get any matches back from the glob? */
-	if (g.gl_matchc == 0 && g.gl_pathc == 1 && g.gl_pathv[0] != NULL) {
+	যদি (g.gl_matchc == 0 && g.gl_pathc == 1 && g.gl_pathv[0] != ফাঁকা) {
 		/*
 		 * If nothing matched but a path returned, then it's probably
 		 * a GLOB_NOCHECK result. Check whether the unglobbed path
 		 * exists so we can give a nice error message early.
 		 */
-		if (sftp_stat(conn, g.gl_pathv[0], 1, NULL) != 0) {
+		যদি (sftp_stat(conn, g.gl_pathv[0], 1, ফাঁকা) != 0) {
 			error("%s: %s", src, strerror(ENOENT));
 			err = -1;
-			goto out;
+			যাও out;
 		}
 	}
 
-	if ((r = stat(dst, &st)) != 0)
+	যদি ((r = stat(dst, &st)) != 0)
 		debug2_f("stat local \"%s\": %s", dst, strerror(errno));
 	dst_is_dir = r == 0 && S_ISDIR(st.st_mode);
 
-	if (g.gl_matchc > 1 && !dst_is_dir) {
-		if (r == 0) {
+	যদি (g.gl_matchc > 1 && !dst_is_dir) {
+		যদি (r == 0) {
 			error("Multiple files match pattern, but destination "
 			    "\"%s\" is not a directory", dst);
 			err = -1;
-			goto out;
+			যাও out;
 		}
 		debug2_f("creating destination \"%s\"", dst);
-		if (mkdir(dst, 0777) != 0) {
+		যদি (mkdir(dst, 0777) != 0) {
 			error("local mkdir \"%s\": %s", dst, strerror(errno));
 			err = -1;
-			goto out;
+			যাও out;
 		}
 		dst_is_dir = 1;
 	}
 
-	for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+	জন্য (i = 0; g.gl_pathv[i] && !interrupted; i++) {
 		tmp = xstrdup(g.gl_pathv[i]);
-		if ((filename = basename(tmp)) == NULL) {
+		যদি ((filename = basename(tmp)) == ফাঁকা) {
 			error("basename %s: %s", tmp, strerror(errno));
 			err = -1;
-			goto out;
+			যাও out;
 		}
 
 		/* Special handling for destination of '..' */
-		if (strcmp(filename, "..") == 0)
+		যদি (strcmp(filename, "..") == 0)
 			filename = "."; /* Download to dest, not dest/.. */
 
-		if (dst_is_dir)
+		যদি (dst_is_dir)
 			abs_dst = sftp_path_append(dst, filename);
-		else
+		অন্যথা
 			abs_dst = xstrdup(dst);
 
 		debug("Fetching %s to %s\n", g.gl_pathv[i], abs_dst);
-		if (sftp_globpath_is_dir(g.gl_pathv[i]) && iamrecursive) {
-			if (sftp_download_dir(conn, g.gl_pathv[i], abs_dst,
-			    NULL, pflag, SFTP_PROGRESS_ONLY, 0, 0, 1, 1) == -1)
+		যদি (sftp_globpath_is_dir(g.gl_pathv[i]) && iamrecursive) {
+			যদি (sftp_download_dir(conn, g.gl_pathv[i], abs_dst,
+			    ফাঁকা, pflag, SFTP_PROGRESS_ONLY, 0, 0, 1, 1) == -1)
 				err = -1;
-		} else {
-			if (sftp_download(conn, g.gl_pathv[i], abs_dst, NULL,
+		} অন্যথা {
+			যদি (sftp_download(conn, g.gl_pathv[i], abs_dst, ফাঁকা,
 			    pflag, 0, 0, 1) == -1)
 				err = -1;
 		}
-		free(abs_dst);
-		abs_dst = NULL;
-		free(tmp);
-		tmp = NULL;
+		মুক্ত(abs_dst);
+		abs_dst = ফাঁকা;
+		মুক্ত(tmp);
+		tmp = ফাঁকা;
 	}
 
 out:
-	free(abs_src);
-	free(tmp);
+	মুক্ত(abs_src);
+	মুক্ত(tmp);
 	globfree(&g);
-	if (err == -1)
+	যদি (err == -1)
 		errs = 1;
 }
 
 
 #define TYPE_OVERFLOW(type, val) \
-	((sizeof(type) == 4 && (val) > INT32_MAX) || \
-	 (sizeof(type) == 8 && (val) > INT64_MAX) || \
-	 (sizeof(type) != 4 && sizeof(type) != 8))
+	((আকার(type) == 4 && (val) > INT32_MAX) || \
+	 (আকার(type) == 8 && (val) > INT64_MAX) || \
+	 (আকার(type) != 4 && আকার(type) != 8))
 
-void
-sink(int argc, char **argv, const char *src)
+শূন্য
+sink(পূর্ণসংখ্যা argc, অক্ষর **argv, ধ্রুবক অক্ষর *src)
 {
-	static BUF buffer;
-	struct stat stb;
+	স্থির BUF বাফার;
+	কাঠামো stat stb;
 	BUF *bp;
 	off_t i;
-	size_t j, count;
-	int amt, exists, first, ofd;
+	আকার_t j, গুনতি;
+	পূর্ণসংখ্যা amt, exists, first, ofd;
 	mode_t mode, omode, mask;
-	off_t size, statbytes;
+	off_t আকার_2, statbytes;
 	unsigned long long ull;
-	int setimes, targisdir, wrerr;
-	char ch, *cp, *np, *targ, *why, *vect[1], buf[2048], visbuf[2048];
-	char **patterns = NULL;
-	size_t n, npatterns = 0;
-	struct timeval tv[2];
+	পূর্ণসংখ্যা setimes, targisdir, wrerr;
+	অক্ষর ch, *cp, *np, *targ, *why, *vect[1], buf[2048], visbuf[2048];
+	অক্ষর **patterns = ফাঁকা;
+	আকার_t n, npatterns = 0;
+	কাঠামো timeval tv[2];
 
 #define	atime	tv[0]
 #define	mtime	tv[1]
-#define	SCREWUP(str)	{ why = str; goto screwup; }
+#define	SCREWUP(str)	{ why = str; যাও screwup; }
 
-	if (TYPE_OVERFLOW(time_t, 0) || TYPE_OVERFLOW(off_t, 0))
+	যদি (TYPE_OVERFLOW(time_t, 0) || TYPE_OVERFLOW(off_t, 0))
 		SCREWUP("Unexpected off_t/time_t size");
 
 	setimes = targisdir = 0;
 	mask = umask(0);
-	if (!pflag) {
-		(void) umask(mask);
+	যদি (!pflag) {
+		(শূন্য) umask(mask);
 		mask |= 07000;
 	}
-	if (argc != 1) {
+	যদি (argc != 1) {
 		run_err("ambiguous target");
 		exit(1);
 	}
 	targ = *argv;
-	if (targetshouldbedirectory)
+	যদি (targetshouldbedirectory)
 		verifydir(targ);
 
-	(void) atomicio(vwrite, remout, "", 1);
-	if (stat(targ, &stb) == 0 && S_ISDIR(stb.st_mode))
+	(শূন্য) atomicio(vwrite, remout, "", 1);
+	যদি (stat(targ, &stb) == 0 && S_ISDIR(stb.st_mode))
 		targisdir = 1;
-	if (src != NULL && !iamrecursive && !Tflag) {
+	যদি (src != ফাঁকা && !iamrecursive && !Tflag) {
 		/*
 		 * Prepare to try to restrict incoming filenames to match
 		 * the requested destination file glob.
 		 */
-		if (brace_expand(src, &patterns, &npatterns) != 0)
+		যদি (brace_expand(src, &patterns, &npatterns) != 0)
 			fatal_f("could not expand pattern");
 	}
-	for (first = 1;; first = 0) {
+	জন্য (first = 1;; first = 0) {
 		cp = buf;
-		if (atomicio(read, remin, cp, 1) != 1)
-			goto done;
-		if (*cp++ == '\n')
+		যদি (atomicio(পঠ, remin, cp, 1) != 1)
+			যাও done;
+		যদি (*cp++ == '\n')
 			SCREWUP("unexpected <newline>");
-		do {
-			if (atomicio(read, remin, &ch, sizeof(ch)) != sizeof(ch))
+		করো {
+			যদি (atomicio(পঠ, remin, &ch, আকার(ch)) != আকার(ch))
 				SCREWUP("lost connection");
-			if (ch == '\0')
+			যদি (ch == '\0')
 				SCREWUP("nul byte in filename");
 			*cp++ = ch;
-		} while (cp < &buf[sizeof(buf) - 1] && ch != '\n');
+		} যখন (cp < &buf[আকার(buf) - 1] && ch != '\n');
 		*cp = 0;
-		if (verbose_mode)
+		যদি (verbose_mode)
 			fmprintf(stderr, "Sink: %s", buf);
 
-		if (buf[0] == '\01' || buf[0] == '\02') {
-			if (iamremote == 0) {
-				(void) snmprintf(visbuf, sizeof(visbuf),
-				    NULL, "%s", buf + 1);
-				(void) atomicio(vwrite, STDERR_FILENO,
+		যদি (buf[0] == '\01' || buf[0] == '\02') {
+			যদি (iamremote == 0) {
+				(শূন্য) snmprintf(visbuf, আকার(visbuf),
+				    ফাঁকা, "%s", buf + 1);
+				(শূন্য) atomicio(vwrite, STDERR_FILENO,
 				    visbuf, strlen(visbuf));
 			}
-			if (buf[0] == '\02')
+			যদি (buf[0] == '\02')
 				exit(1);
 			++errs;
-			continue;
+			চালু;
 		}
-		if (buf[0] == 'E') {
-			(void) atomicio(vwrite, remout, "", 1);
-			goto done;
+		যদি (buf[0] == 'E') {
+			(শূন্য) atomicio(vwrite, remout, "", 1);
+			যাও done;
 		}
-		if (ch == '\n')
+		যদি (ch == '\n')
 			*--cp = 0;
 
 		cp = buf;
-		if (*cp == 'T') {
+		যদি (*cp == 'T') {
 			setimes++;
 			cp++;
-			if (!isdigit((unsigned char)*cp))
+			যদি (!isdigit((unsigned অক্ষর)*cp))
 				SCREWUP("mtime.sec not present");
 			ull = strtoull(cp, &cp, 10);
-			if (!cp || *cp++ != ' ')
+			যদি (!cp || *cp++ != ' ')
 				SCREWUP("mtime.sec not delimited");
-			if (TYPE_OVERFLOW(time_t, ull))
+			যদি (TYPE_OVERFLOW(time_t, ull))
 				setimes = 0;	/* out of range */
 			mtime.tv_sec = ull;
 			mtime.tv_usec = strtol(cp, &cp, 10);
-			if (!cp || *cp++ != ' ' || mtime.tv_usec < 0 ||
+			যদি (!cp || *cp++ != ' ' || mtime.tv_usec < 0 ||
 			    mtime.tv_usec > 999999)
 				SCREWUP("mtime.usec not delimited");
-			if (!isdigit((unsigned char)*cp))
+			যদি (!isdigit((unsigned অক্ষর)*cp))
 				SCREWUP("atime.sec not present");
 			ull = strtoull(cp, &cp, 10);
-			if (!cp || *cp++ != ' ')
+			যদি (!cp || *cp++ != ' ')
 				SCREWUP("atime.sec not delimited");
-			if (TYPE_OVERFLOW(time_t, ull))
+			যদি (TYPE_OVERFLOW(time_t, ull))
 				setimes = 0;	/* out of range */
 			atime.tv_sec = ull;
 			atime.tv_usec = strtol(cp, &cp, 10);
-			if (!cp || *cp++ != '\0' || atime.tv_usec < 0 ||
+			যদি (!cp || *cp++ != '\0' || atime.tv_usec < 0 ||
 			    atime.tv_usec > 999999)
 				SCREWUP("atime.usec not delimited");
-			(void) atomicio(vwrite, remout, "", 1);
-			continue;
+			(শূন্য) atomicio(vwrite, remout, "", 1);
+			চালু;
 		}
-		if (*cp != 'C' && *cp != 'D') {
+		যদি (*cp != 'C' && *cp != 'D') {
 			/*
 			 * Check for the case "rcp remote:foo\* local:bar".
 			 * In this case, the line "No match." can be returned
@@ -1778,110 +1778,110 @@ sink(int argc, char **argv, const char *src)
 			 * executed so the ^Aerror_message convention isn't
 			 * followed.
 			 */
-			if (first) {
+			যদি (first) {
 				run_err("%s", cp);
 				exit(1);
 			}
 			SCREWUP("expected control record");
 		}
 		mode = 0;
-		for (++cp; cp < buf + 5; cp++) {
-			if (*cp < '0' || *cp > '7')
+		জন্য (++cp; cp < buf + 5; cp++) {
+			যদি (*cp < '0' || *cp > '7')
 				SCREWUP("bad mode");
 			mode = (mode << 3) | (*cp - '0');
 		}
-		if (!pflag)
+		যদি (!pflag)
 			mode &= ~mask;
-		if (*cp++ != ' ')
+		যদি (*cp++ != ' ')
 			SCREWUP("mode not delimited");
 
-		if (!isdigit((unsigned char)*cp))
+		যদি (!isdigit((unsigned অক্ষর)*cp))
 			SCREWUP("size not present");
 		ull = strtoull(cp, &cp, 10);
-		if (!cp || *cp++ != ' ')
+		যদি (!cp || *cp++ != ' ')
 			SCREWUP("size not delimited");
-		if (TYPE_OVERFLOW(off_t, ull))
+		যদি (TYPE_OVERFLOW(off_t, ull))
 			SCREWUP("size out of range");
-		size = (off_t)ull;
+		আকার_2 = (off_t)ull;
 
-		if (*cp == '\0' || strchr(cp, '/') != NULL ||
+		যদি (*cp == '\0' || strchr(cp, '/') != ফাঁকা ||
 		    strcmp(cp, ".") == 0 || strcmp(cp, "..") == 0) {
 			run_err("error: unexpected filename: %s", cp);
 			exit(1);
 		}
-		if (npatterns > 0) {
-			for (n = 0; n < npatterns; n++) {
-				if (strcmp(patterns[n], cp) == 0 ||
+		যদি (npatterns > 0) {
+			জন্য (n = 0; n < npatterns; n++) {
+				যদি (strcmp(patterns[n], cp) == 0 ||
 				    fnmatch(patterns[n], cp, 0) == 0)
-					break;
+					বিরতি;
 			}
-			if (n >= npatterns) {
+			যদি (n >= npatterns) {
 				debug2_f("incoming filename \"%s\" does not "
 				    "match any of %zu expected patterns", cp,
 				    npatterns);
-				for (n = 0; n < npatterns; n++) {
+				জন্য (n = 0; n < npatterns; n++) {
 					debug3_f("expected pattern %zu: \"%s\"",
 					    n, patterns[n]);
 				}
 				SCREWUP("filename does not match request");
 			}
 		}
-		if (targisdir) {
-			static char *namebuf;
-			static size_t cursize;
-			size_t need;
+		যদি (targisdir) {
+			স্থির অক্ষর *namebuf;
+			স্থির আকার_t cursize;
+			আকার_t need;
 
 			need = strlen(targ) + strlen(cp) + 250;
-			if (need > cursize) {
-				free(namebuf);
+			যদি (need > cursize) {
+				মুক্ত(namebuf);
 				namebuf = xmalloc(need);
 				cursize = need;
 			}
-			(void) snprintf(namebuf, need, "%s%s%s", targ,
+			(শূন্য) snprintf(namebuf, need, "%s%s%s", targ,
 			    strcmp(targ, "/") ? "/" : "", cp);
 			np = namebuf;
-		} else
+		} অন্যথা
 			np = targ;
 		curfile = cp;
 		exists = stat(np, &stb) == 0;
-		if (buf[0] == 'D') {
-			int mod_flag = pflag;
-			if (!iamrecursive)
+		যদি (buf[0] == 'D') {
+			পূর্ণসংখ্যা mod_flag = pflag;
+			যদি (!iamrecursive)
 				SCREWUP("received directory without -r");
-			if (exists) {
-				if (!S_ISDIR(stb.st_mode)) {
+			যদি (exists) {
+				যদি (!S_ISDIR(stb.st_mode)) {
 					errno = ENOTDIR;
-					goto bad;
+					যাও bad;
 				}
-				if (pflag)
-					(void) chmod(np, mode);
-			} else {
+				যদি (pflag)
+					(শূন্য) chmod(np, mode);
+			} অন্যথা {
 				/* Handle copying from a read-only directory */
 				mod_flag = 1;
-				if (mkdir(np, mode | S_IRWXU) == -1)
-					goto bad;
+				যদি (mkdir(np, mode | S_IRWXU) == -1)
+					যাও bad;
 			}
 			vect[0] = xstrdup(np);
 			sink(1, vect, src);
-			if (setimes) {
+			যদি (setimes) {
 				setimes = 0;
-				(void) utimes(vect[0], tv);
+				(শূন্য) utimes(vect[0], tv);
 			}
-			if (mod_flag)
-				(void) chmod(vect[0], mode);
-			free(vect[0]);
-			continue;
+			যদি (mod_flag)
+				(শূন্য) chmod(vect[0], mode);
+			মুক্ত(vect[0]);
+			চালু;
 		}
 		omode = mode;
 		mode |= S_IWUSR;
-		if ((ofd = open(np, O_WRONLY|O_CREAT, mode)) == -1) {
+		যদি ((ofd = open(np, O_WRONLY|O_CREAT, mode)) == -1) {
 bad:			run_err("%s: %s", np, strerror(errno));
-			continue;
+			চালু;
 		}
-		(void) atomicio(vwrite, remout, "", 1);
-		if ((bp = allocbuf(&buffer, ofd, COPY_BUFLEN)) == NULL) {
-			(void) close(ofd);
-			continue;
+		(শূন্য) atomicio(vwrite, remout, "", 1);
+		যদি ((bp = allocbuf(&বাফার, ofd, COPY_BUFLEN)) == ফাঁকা) {
+			(শূন্য) close(ofd);
+			চালু;
 		}
 		cp = bp->buf;
 		wrerr = 0;
@@ -1892,18 +1892,18 @@ bad:			run_err("%s: %s", np, strerror(errno));
 		 * desynchronise us from the peer. Use note_err() instead.
 		 */
 		statbytes = 0;
-		if (showprogress)
-			start_progress_meter(curfile, size, &statbytes);
+		যদি (showprogress)
+			start_progress_meter(curfile, আকার_2, &statbytes);
 		set_nonblock(remin);
-		for (count = i = 0; i < size; i += bp->cnt) {
+		জন্য (গুনতি = i = 0; i < আকার_2; i += bp->cnt) {
 			amt = bp->cnt;
-			if (i + amt > size)
-				amt = size - i;
-			count += amt;
-			do {
-				j = atomicio6(read, remin, cp, amt,
+			যদি (i + amt > আকার_2)
+				amt = আকার_2 - i;
+			গুনতি += amt;
+			করো {
+				j = atomicio6(পঠ, remin, cp, amt,
 				    scpio, &statbytes);
-				if (j == 0) {
+				যদি (j == 0) {
 					run_err("%s", j != EPIPE ?
 					    strerror(errno) :
 					    "dropped connection");
@@ -1911,239 +1911,239 @@ bad:			run_err("%s: %s", np, strerror(errno));
 				}
 				amt -= j;
 				cp += j;
-			} while (amt > 0);
+			} যখন (amt > 0);
 
-			if (count == bp->cnt) {
+			যদি (গুনতি == bp->cnt) {
 				/* Keep reading so we stay sync'd up. */
-				if (!wrerr) {
-					if (atomicio(vwrite, ofd, bp->buf,
-					    count) != count) {
+				যদি (!wrerr) {
+					যদি (atomicio(vwrite, ofd, bp->buf,
+					    গুনতি) != গুনতি) {
 						note_err("%s: %s", np,
 						    strerror(errno));
 						wrerr = 1;
 					}
 				}
-				count = 0;
+				গুনতি = 0;
 				cp = bp->buf;
 			}
 		}
 		unset_nonblock(remin);
-		if (count != 0 && !wrerr &&
-		    atomicio(vwrite, ofd, bp->buf, count) != count) {
+		যদি (গুনতি != 0 && !wrerr &&
+		    atomicio(vwrite, ofd, bp->buf, গুনতি) != গুনতি) {
 			note_err("%s: %s", np, strerror(errno));
 			wrerr = 1;
 		}
-		if (!wrerr && (!exists || S_ISREG(stb.st_mode)) &&
-		    ftruncate(ofd, size) != 0)
+		যদি (!wrerr && (!exists || S_ISREG(stb.st_mode)) &&
+		    ftruncate(ofd, আকার_2) != 0)
 			note_err("%s: truncate: %s", np, strerror(errno));
-		if (pflag) {
-			if (exists || omode != mode)
+		যদি (pflag) {
+			যদি (exists || omode != mode)
 #ifdef HAVE_FCHMOD
-				if (fchmod(ofd, omode)) {
-#else /* HAVE_FCHMOD */
-				if (chmod(np, omode)) {
+				যদি (fchmod(ofd, omode)) {
+#অন্যথা /* HAVE_FCHMOD */
+				যদি (chmod(np, omode)) {
 #endif /* HAVE_FCHMOD */
 					note_err("%s: set mode: %s",
 					    np, strerror(errno));
 				}
-		} else {
-			if (!exists && omode != mode)
+		} অন্যথা {
+			যদি (!exists && omode != mode)
 #ifdef HAVE_FCHMOD
-				if (fchmod(ofd, omode & ~mask)) {
-#else /* HAVE_FCHMOD */
-				if (chmod(np, omode & ~mask)) {
+				যদি (fchmod(ofd, omode & ~mask)) {
+#অন্যথা /* HAVE_FCHMOD */
+				যদি (chmod(np, omode & ~mask)) {
 #endif /* HAVE_FCHMOD */
 					note_err("%s: set mode: %s",
 					    np, strerror(errno));
 				}
 		}
-		if (close(ofd) == -1)
+		যদি (close(ofd) == -1)
 			note_err("%s: close: %s", np, strerror(errno));
-		(void) response();
-		if (showprogress)
+		(শূন্য) response();
+		যদি (showprogress)
 			stop_progress_meter();
-		if (setimes && !wrerr) {
+		যদি (setimes && !wrerr) {
 			setimes = 0;
-			if (utimes(np, tv) == -1) {
+			যদি (utimes(np, tv) == -1) {
 				note_err("%s: set times: %s",
 				    np, strerror(errno));
 			}
 		}
 		/* If no error was noted then signal success for this file */
-		if (note_err(NULL) == 0)
-			(void) atomicio(vwrite, remout, "", 1);
+		যদি (note_err(ফাঁকা) == 0)
+			(শূন্য) atomicio(vwrite, remout, "", 1);
 	}
 done:
-	for (n = 0; n < npatterns; n++)
-		free(patterns[n]);
-	free(patterns);
-	return;
+	জন্য (n = 0; n < npatterns; n++)
+		মুক্ত(patterns[n]);
+	মুক্ত(patterns);
+	ফেরত;
 screwup:
-	for (n = 0; n < npatterns; n++)
-		free(patterns[n]);
-	free(patterns);
+	জন্য (n = 0; n < npatterns; n++)
+		মুক্ত(patterns[n]);
+	মুক্ত(patterns);
 	run_err("protocol error: %s", why);
 	exit(1);
 }
 
-void
-throughlocal_sftp(struct sftp_conn *from, struct sftp_conn *to,
-    char *src, char *targ)
+শূন্য
+throughlocal_sftp(কাঠামো sftp_conn *from, কাঠামো sftp_conn *to,
+    অক্ষর *src, অক্ষর *targ)
 {
-	char *target = NULL, *filename = NULL, *abs_dst = NULL;
-	char *abs_src = NULL, *tmp = NULL;
+	অক্ষর *target = ফাঁকা, *filename = ফাঁকা, *abs_dst = ফাঁকা;
+	অক্ষর *abs_src = ফাঁকা, *tmp = ফাঁকা;
 	glob_t g;
-	int i, r, targetisdir, err = 0;
+	পূর্ণসংখ্যা i, r, targetisdir, err = 0;
 
-	if ((filename = basename(src)) == NULL)
+	যদি ((filename = basename(src)) == ফাঁকা)
 		fatal("basename %s: %s", src, strerror(errno));
 
-	if ((abs_src = prepare_remote_path(from, src)) == NULL ||
-	    (target = prepare_remote_path(to, targ)) == NULL)
+	যদি ((abs_src = prepare_remote_path(from, src)) == ফাঁকা ||
+	    (target = prepare_remote_path(to, targ)) == ফাঁকা)
 		cleanup_exit(255);
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, আকার(g));
 
 	targetisdir = sftp_remote_is_dir(to, target);
-	if (!targetisdir && targetshouldbedirectory) {
+	যদি (!targetisdir && targetshouldbedirectory) {
 		error("%s: destination is not a directory", targ);
 		err = -1;
-		goto out;
+		যাও out;
 	}
 
 	debug3_f("copying remote %s to remote %s", abs_src, target);
-	if ((r = sftp_glob(from, abs_src, GLOB_NOCHECK|GLOB_MARK,
-	    NULL, &g)) != 0) {
-		if (r == GLOB_NOSPACE)
+	যদি ((r = sftp_glob(from, abs_src, GLOB_NOCHECK|GLOB_MARK,
+	    ফাঁকা, &g)) != 0) {
+		যদি (r == GLOB_NOSPACE)
 			error("%s: too many glob matches", src);
-		else
+		অন্যথা
 			error("%s: %s", src, strerror(ENOENT));
 		err = -1;
-		goto out;
+		যাও out;
 	}
 
 	/* Did we actually get any matches back from the glob? */
-	if (g.gl_matchc == 0 && g.gl_pathc == 1 && g.gl_pathv[0] != NULL) {
+	যদি (g.gl_matchc == 0 && g.gl_pathc == 1 && g.gl_pathv[0] != ফাঁকা) {
 		/*
 		 * If nothing matched but a path returned, then it's probably
 		 * a GLOB_NOCHECK result. Check whether the unglobbed path
 		 * exists so we can give a nice error message early.
 		 */
-		if (sftp_stat(from, g.gl_pathv[0], 1, NULL) != 0) {
+		যদি (sftp_stat(from, g.gl_pathv[0], 1, ফাঁকা) != 0) {
 			error("%s: %s", src, strerror(ENOENT));
 			err = -1;
-			goto out;
+			যাও out;
 		}
 	}
 
-	for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+	জন্য (i = 0; g.gl_pathv[i] && !interrupted; i++) {
 		tmp = xstrdup(g.gl_pathv[i]);
-		if ((filename = basename(tmp)) == NULL) {
+		যদি ((filename = basename(tmp)) == ফাঁকা) {
 			error("basename %s: %s", tmp, strerror(errno));
 			err = -1;
-			goto out;
+			যাও out;
 		}
 
 		/* Special handling for source of '..' */
-		if (strcmp(filename, "..") == 0)
+		যদি (strcmp(filename, "..") == 0)
 			filename = "."; /* Download to dest, not dest/.. */
 
-		if (targetisdir)
+		যদি (targetisdir)
 			abs_dst = sftp_path_append(target, filename);
-		else
+		অন্যথা
 			abs_dst = xstrdup(target);
 
 		debug("Fetching %s to %s\n", g.gl_pathv[i], abs_dst);
-		if (sftp_globpath_is_dir(g.gl_pathv[i]) && iamrecursive) {
-			if (sftp_crossload_dir(from, to, g.gl_pathv[i], abs_dst,
-			    NULL, pflag, SFTP_PROGRESS_ONLY, 1) == -1)
+		যদি (sftp_globpath_is_dir(g.gl_pathv[i]) && iamrecursive) {
+			যদি (sftp_crossload_dir(from, to, g.gl_pathv[i], abs_dst,
+			    ফাঁকা, pflag, SFTP_PROGRESS_ONLY, 1) == -1)
 				err = -1;
-		} else {
-			if (sftp_crossload(from, to, g.gl_pathv[i], abs_dst,
-			    NULL, pflag) == -1)
+		} অন্যথা {
+			যদি (sftp_crossload(from, to, g.gl_pathv[i], abs_dst,
+			    ফাঁকা, pflag) == -1)
 				err = -1;
 		}
-		free(abs_dst);
-		abs_dst = NULL;
-		free(tmp);
-		tmp = NULL;
+		মুক্ত(abs_dst);
+		abs_dst = ফাঁকা;
+		মুক্ত(tmp);
+		tmp = ফাঁকা;
 	}
 
 out:
-	free(abs_src);
-	free(abs_dst);
-	free(target);
-	free(tmp);
+	মুক্ত(abs_src);
+	মুক্ত(abs_dst);
+	মুক্ত(target);
+	মুক্ত(tmp);
 	globfree(&g);
-	if (err == -1)
+	যদি (err == -1)
 		errs = 1;
 }
 
-int
-response(void)
+পূর্ণসংখ্যা
+response(শূন্য)
 {
-	char ch, *cp, resp, rbuf[2048], visbuf[2048];
+	অক্ষর ch, *cp, resp, rbuf[2048], visbuf[2048];
 
-	if (atomicio(read, remin, &resp, sizeof(resp)) != sizeof(resp))
+	যদি (atomicio(পঠ, remin, &resp, আকার(resp)) != আকার(resp))
 		lostconn(0);
 
 	cp = rbuf;
-	switch (resp) {
-	case 0:		/* ok */
-		return (0);
-	default:
+	নির্বাচন (resp) {
+	ক্ষেত্র 0:		/* ok */
+		ফেরত (0);
+	পূর্বনির্ধারিত:
 		*cp++ = resp;
 		/* FALLTHROUGH */
-	case 1:		/* error, followed by error msg */
-	case 2:		/* fatal error, "" */
-		do {
-			if (atomicio(read, remin, &ch, sizeof(ch)) != sizeof(ch))
+	ক্ষেত্র 1:		/* error, followed by error msg */
+	ক্ষেত্র 2:		/* fatal error, "" */
+		করো {
+			যদি (atomicio(পঠ, remin, &ch, আকার(ch)) != আকার(ch))
 				lostconn(0);
 			*cp++ = ch;
-		} while (cp < &rbuf[sizeof(rbuf) - 1] && ch != '\n');
+		} যখন (cp < &rbuf[আকার(rbuf) - 1] && ch != '\n');
 
-		if (!iamremote) {
+		যদি (!iamremote) {
 			cp[-1] = '\0';
-			(void) snmprintf(visbuf, sizeof(visbuf),
-			    NULL, "%s\n", rbuf);
-			(void) atomicio(vwrite, STDERR_FILENO,
+			(শূন্য) snmprintf(visbuf, আকার(visbuf),
+			    ফাঁকা, "%s\n", rbuf);
+			(শূন্য) atomicio(vwrite, STDERR_FILENO,
 			    visbuf, strlen(visbuf));
 		}
 		++errs;
-		if (resp == 1)
-			return (-1);
+		যদি (resp == 1)
+			ফেরত (-1);
 		exit(1);
 	}
 	/* NOTREACHED */
 }
 
-void
-usage(void)
+শূন্য
+usage(শূন্য)
 {
-	(void) fprintf(stderr,
+	(শূন্য) fprintf(stderr,
 	    "usage: scp [-346ABCOpqRrTv] [-c cipher] [-D sftp_server_path] [-F ssh_config]\n"
 	    "           [-i identity_file] [-J destination] [-l limit] [-o ssh_option]\n"
 	    "           [-P port] [-S program] [-X sftp_option] source ... target\n");
 	exit(1);
 }
 
-void
-run_err(const char *fmt,...)
+শূন্য
+run_err(ধ্রুবক অক্ষর *fmt,...)
 {
-	static FILE *fp;
+	স্থির FILE *fp;
 	va_list ap;
 
 	++errs;
-	if (fp != NULL || (remout != -1 && (fp = fdopen(remout, "w")))) {
-		(void) fprintf(fp, "%c", 0x01);
-		(void) fprintf(fp, "scp: ");
+	যদি (fp != ফাঁকা || (remout != -1 && (fp = fdopen(remout, "w")))) {
+		(শূন্য) fprintf(fp, "%c", 0x01);
+		(শূন্য) fprintf(fp, "scp: ");
 		va_start(ap, fmt);
-		(void) vfprintf(fp, fmt, ap);
+		(শূন্য) vfprintf(fp, fmt, ap);
 		va_end(ap);
-		(void) fprintf(fp, "\n");
-		(void) fflush(fp);
+		(শূন্য) fprintf(fp, "\n");
+		(শূন্য) fflush(fp);
 	}
 
-	if (!iamremote) {
+	যদি (!iamremote) {
 		va_start(ap, fmt);
 		vfmprintf(stderr, fmt, ap);
 		va_end(ap);
@@ -2156,126 +2156,126 @@ run_err(const char *fmt,...)
  * no error has been noted or -1 otherwise. Use note_err(NULL) to flush
  * any active error at the end of the transfer.
  */
-int
-note_err(const char *fmt, ...)
+পূর্ণসংখ্যা
+note_err(ধ্রুবক অক্ষর *fmt, ...)
 {
-	static char *emsg;
+	স্থির অক্ষর *emsg;
 	va_list ap;
 
 	/* Replay any previously-noted error */
-	if (fmt == NULL) {
-		if (emsg == NULL)
-			return 0;
+	যদি (fmt == ফাঁকা) {
+		যদি (emsg == ফাঁকা)
+			ফেরত 0;
 		run_err("%s", emsg);
-		free(emsg);
-		emsg = NULL;
-		return -1;
+		মুক্ত(emsg);
+		emsg = ফাঁকা;
+		ফেরত -1;
 	}
 
 	errs++;
 	/* Prefer first-noted error */
-	if (emsg != NULL)
-		return -1;
+	যদি (emsg != ফাঁকা)
+		ফেরত -1;
 
 	va_start(ap, fmt);
-	vasnmprintf(&emsg, INT_MAX, NULL, fmt, ap);
+	vasnmprintf(&emsg, INT_MAX, ফাঁকা, fmt, ap);
 	va_end(ap);
-	return -1;
+	ফেরত -1;
 }
 
-void
-verifydir(char *cp)
+শূন্য
+verifydir(অক্ষর *cp)
 {
-	struct stat stb;
+	কাঠামো stat stb;
 
-	if (!stat(cp, &stb)) {
-		if (S_ISDIR(stb.st_mode))
-			return;
+	যদি (!stat(cp, &stb)) {
+		যদি (S_ISDIR(stb.st_mode))
+			ফেরত;
 		errno = ENOTDIR;
 	}
 	run_err("%s: %s", cp, strerror(errno));
 	killchild(0);
 }
 
-int
-okname(char *cp0)
+পূর্ণসংখ্যা
+okname(অক্ষর *cp0)
 {
-	int c;
-	char *cp;
+	পূর্ণসংখ্যা c;
+	অক্ষর *cp;
 
 	cp = cp0;
-	do {
-		c = (int)*cp;
-		if (c & 0200)
-			goto bad;
-		if (!isalpha(c) && !isdigit((unsigned char)c)) {
-			switch (c) {
-			case '\'':
-			case '"':
-			case '`':
-			case ' ':
-			case '#':
-				goto bad;
-			default:
-				break;
+	করো {
+		c = (পূর্ণসংখ্যা)*cp;
+		যদি (c & 0200)
+			যাও bad;
+		যদি (!isalpha(c) && !isdigit((unsigned অক্ষর)c)) {
+			নির্বাচন (c) {
+			ক্ষেত্র '\'':
+			ক্ষেত্র '"':
+			ক্ষেত্র '`':
+			ক্ষেত্র ' ':
+			ক্ষেত্র '#':
+				যাও bad;
+			পূর্বনির্ধারিত:
+				বিরতি;
 			}
 		}
-	} while (*++cp);
-	return (1);
+	} যখন (*++cp);
+	ফেরত (1);
 
 bad:	fmprintf(stderr, "%s: invalid user name\n", cp0);
-	return (0);
+	ফেরত (0);
 }
 
 BUF *
-allocbuf(BUF *bp, int fd, int blksize)
+allocbuf(BUF *bp, পূর্ণসংখ্যা fd, পূর্ণসংখ্যা blksize)
 {
-	size_t size;
+	আকার_t আকার_2;
 #ifdef HAVE_STRUCT_STAT_ST_BLKSIZE
-	struct stat stb;
+	কাঠামো stat stb;
 
-	if (fstat(fd, &stb) == -1) {
+	যদি (fstat(fd, &stb) == -1) {
 		run_err("fstat: %s", strerror(errno));
-		return (NULL);
+		ফেরত (ফাঁকা);
 	}
-	size = ROUNDUP(stb.st_blksize, blksize);
-	if (size == 0)
-		size = blksize;
-#else /* HAVE_STRUCT_STAT_ST_BLKSIZE */
-	size = blksize;
+	আকার_2 = ROUNDUP(stb.st_blksize, blksize);
+	যদি (আকার_2 == 0)
+		আকার_2 = blksize;
+#অন্যথা /* HAVE_STRUCT_STAT_ST_BLKSIZE */
+	আকার_2 = blksize;
 #endif /* HAVE_STRUCT_STAT_ST_BLKSIZE */
-	if (bp->cnt >= size)
-		return (bp);
-	bp->buf = xrecallocarray(bp->buf, bp->cnt, size, 1);
-	bp->cnt = size;
-	return (bp);
+	যদি (bp->cnt >= আকার_2)
+		ফেরত (bp);
+	bp->buf = xrecallocarray(bp->buf, bp->cnt, আকার_2, 1);
+	bp->cnt = আকার_2;
+	ফেরত (bp);
 }
 
-void
-lostconn(int signo)
+শূন্য
+lostconn(পূর্ণসংখ্যা signo)
 {
-	if (!iamremote)
-		(void)write(STDERR_FILENO, "lost connection\n", 16);
-	if (signo)
+	যদি (!iamremote)
+		(শূন্য)লিখ(STDERR_FILENO, "lost connection\n", 16);
+	যদি (signo)
 		_exit(1);
-	else
+	অন্যথা
 		exit(1);
 }
 
-void
-cleanup_exit(int i)
+শূন্য
+cleanup_exit(পূর্ণসংখ্যা i)
 {
-	if (remin > 0)
+	যদি (remin > 0)
 		close(remin);
-	if (remout > 0)
+	যদি (remout > 0)
 		close(remout);
-	if (remin2 > 0)
+	যদি (remin2 > 0)
 		close(remin2);
-	if (remout2 > 0)
+	যদি (remout2 > 0)
 		close(remout2);
-	if (do_cmd_pid > 0)
-		(void)waitpid(do_cmd_pid, NULL, 0);
-	if (do_cmd_pid2 > 0)
-		(void)waitpid(do_cmd_pid2, NULL, 0);
+	যদি (do_cmd_pid > 0)
+		(শূন্য)waitpid(do_cmd_pid, ফাঁকা, 0);
+	যদি (do_cmd_pid2 > 0)
+		(শূন্য)waitpid(do_cmd_pid2, ফাঁকা, 0);
 	exit(i);
 }

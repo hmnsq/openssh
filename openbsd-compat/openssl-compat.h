@@ -17,25 +17,25 @@
 #ifndef _OPENSSL_COMPAT_H
 #define _OPENSSL_COMPAT_H
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 #ifdef WITH_OPENSSL
 
-#include <openssl/opensslv.h>
-#include <openssl/crypto.h>
-#include <openssl/evp.h>
-#include <openssl/bn.h>
-#include <openssl/rsa.h>
-#include <openssl/ecdsa.h>
-#include <openssl/dh.h>
+#অন্তর্ভাব <openssl/opensslv.h>
+#অন্তর্ভাব <openssl/crypto.h>
+#অন্তর্ভাব <openssl/evp.h>
+#অন্তর্ভাব <openssl/bn.h>
+#অন্তর্ভাব <openssl/rsa.h>
+#অন্তর্ভাব <openssl/ecdsa.h>
+#অন্তর্ভাব <openssl/dh.h>
 
-int ssh_compatible_openssl(long, long);
-int ssh_libcrypto_init(void);
+পূর্ণসংখ্যা ssh_compatible_openssl(long, long);
+পূর্ণসংখ্যা ssh_libcrypto_init(শূন্য);
 
-#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#যদি (OPENSSL_VERSION_সংখ্যা < 0x10100000L)
 # error OpenSSL 1.1.0 or greater is required
 #endif
-#ifdef LIBRESSL_VERSION_NUMBER
-# if LIBRESSL_VERSION_NUMBER < 0x3010000fL
+#ifdef LIBRESSL_VERSION_সংখ্যা
+# যদি LIBRESSL_VERSION_সংখ্যা < 0x3010000fL
 #  error LibreSSL 3.1.0 or greater is required
 # endif
 #endif
@@ -44,13 +44,13 @@ int ssh_libcrypto_init(void);
 # define OPENSSL_RSA_MAX_MODULUS_BITS	16384
 #endif
 
-#ifdef LIBRESSL_VERSION_NUMBER
-# if LIBRESSL_VERSION_NUMBER < 0x3010000fL
+#ifdef LIBRESSL_VERSION_সংখ্যা
+# যদি LIBRESSL_VERSION_সংখ্যা < 0x3010000fL
 #  define HAVE_BROKEN_CHACHA20
 # endif
 #endif
 
-#if defined(OPENSSL_IS_BORINGSSL) || defined(OPENSSL_IS_AWSLC)
+#যদি defined(OPENSSL_IS_BORINGSSL) || defined(OPENSSL_IS_AWSLC)
 /*
  * BoringSSL and AWS-LC (rightly) got rid of the BN_FLG_CONSTTIME flag, along with
  * the entire BN_set_flags() interface.
@@ -76,25 +76,25 @@ int ssh_libcrypto_init(void);
 #ifndef HAVE_EVP_CIPHER_CTX_GET_IV
 # ifdef HAVE_EVP_CIPHER_CTX_GET_UPDATED_IV
 #  define EVP_CIPHER_CTX_get_iv EVP_CIPHER_CTX_get_updated_iv
-# else /* HAVE_EVP_CIPHER_CTX_GET_UPDATED_IV */
-int EVP_CIPHER_CTX_get_iv(const EVP_CIPHER_CTX *ctx,
-    unsigned char *iv, size_t len);
+# অন্যথা /* HAVE_EVP_CIPHER_CTX_GET_UPDATED_IV */
+পূর্ণসংখ্যা EVP_CIPHER_CTX_get_iv(ধ্রুবক EVP_CIPHER_CTX *ctx,
+    unsigned অক্ষর *iv, আকার_t len);
 # endif /* HAVE_EVP_CIPHER_CTX_GET_UPDATED_IV */
 #endif /* HAVE_EVP_CIPHER_CTX_GET_IV */
 
 #ifndef HAVE_EVP_CIPHER_CTX_SET_IV
-int EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx,
-    const unsigned char *iv, size_t len);
+পূর্ণসংখ্যা EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx,
+    ধ্রুবক unsigned অক্ষর *iv, আকার_t len);
 #endif /* HAVE_EVP_CIPHER_CTX_SET_IV */
 
 #ifndef HAVE_EVP_DIGESTSIGN
-int EVP_DigestSign(EVP_MD_CTX *, unsigned char *, size_t *,
-    const unsigned char *, size_t);
+পূর্ণসংখ্যা EVP_DigestSign(EVP_MD_CTX *, unsigned অক্ষর *, আকার_t *,
+    ধ্রুবক unsigned অক্ষর *, আকার_t);
 #endif
 
 #ifndef HAVE_EVP_DIGESTVERIFY
-int EVP_DigestVerify(EVP_MD_CTX *, const unsigned char *, size_t,
-    const unsigned char *, size_t);
+পূর্ণসংখ্যা EVP_DigestVerify(EVP_MD_CTX *, ধ্রুবক unsigned অক্ষর *, আকার_t,
+    ধ্রুবক unsigned অক্ষর *, আকার_t);
 #endif
 
 #endif /* WITH_OPENSSL */

@@ -25,37 +25,37 @@
  * Red Hat author: Jan F. Chadima <jchadima@redhat.com>
  */
 
-#include "includes.h"
-#if defined(USE_LINUX_AUDIT)
-#include <libaudit.h>
-#include <unistd.h>
-#include <string.h>
+#অন্তর্ভাব "includes.h"
+#যদি defined(USE_LINUX_AUDIT)
+#অন্তর্ভাব <libaudit.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <string.h>
 
-#include "log.h"
-#include "audit.h"
-#include "canohost.h"
-#include "packet.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "audit.h"
+#অন্তর্ভাব "canohost.h"
+#অন্তর্ভাব "packet.h"
 
-const char *audit_username(void);
+ধ্রুবক অক্ষর *audit_username(শূন্য);
 
-int
-linux_audit_record_event(int uid, const char *username, const char *hostname,
-    const char *ip, const char *ttyn, int success)
+পূর্ণসংখ্যা
+linux_audit_record_event(পূর্ণসংখ্যা uid, ধ্রুবক অক্ষর *username, ধ্রুবক অক্ষর *hostname,
+    ধ্রুবক অক্ষর *ip, ধ্রুবক অক্ষর *ttyn, পূর্ণসংখ্যা success)
 {
-	int audit_fd, rc, saved_errno;
+	পূর্ণসংখ্যা audit_fd, rc, saved_errno;
 
-	if ((audit_fd = audit_open()) < 0) {
-		if (errno == EINVAL || errno == EPROTONOSUPPORT ||
+	যদি ((audit_fd = audit_open()) < 0) {
+		যদি (errno == EINVAL || errno == EPROTONOSUPPORT ||
 		    errno == EAFNOSUPPORT)
-			return 1; /* No audit support in kernel */
-		else
-			return 0; /* Must prevent login */
+			ফেরত 1; /* No audit support in kernel */
+		অন্যথা
+			ফেরত 0; /* Must prevent login */
 	}
-        if (hostname != NULL && strcmp(hostname, "UNKNOWN") == 0)
-                hostname = NULL;
+        যদি (hostname != ফাঁকা && strcmp(hostname, "UNKNOWN") == 0)
+                hostname = ফাঁকা;
 	rc = audit_log_acct_message(audit_fd, AUDIT_USER_LOGIN,
-	    NULL, "login", username ? username : "(unknown)",
-	    username == NULL ? uid : -1, hostname, ip, ttyn, success);
+	    ফাঁকা, "login", username ? username : "(unknown)",
+	    username == ফাঁকা ? uid : -1, hostname, ip, ttyn, success);
 	saved_errno = errno;
 	close(audit_fd);
 
@@ -63,64 +63,64 @@ linux_audit_record_event(int uid, const char *username, const char *hostname,
 	 * Do not report error if the error is EPERM and sshd is run as non
 	 * root user.
 	 */
-	if ((rc == -EPERM) && (geteuid() != 0))
+	যদি ((rc == -EPERM) && (geteuid() != 0))
 		rc = 0;
 	errno = saved_errno;
 
-	return rc >= 0;
+	ফেরত rc >= 0;
 }
 
 /* Below is the sshd audit API code */
 
-void
-audit_connection_from(const char *host, int port)
+শূন্য
+audit_connection_from(ধ্রুবক অক্ষর *host, পূর্ণসংখ্যা port)
 {
 	/* not implemented */
 }
 
-void
-audit_run_command(const char *command)
+শূন্য
+audit_run_command(ধ্রুবক অক্ষর *command)
 {
 	/* not implemented */
 }
 
-void
-audit_session_open(struct logininfo *li)
+শূন্য
+audit_session_open(কাঠামো logininfo *li)
 {
-	if (linux_audit_record_event(li->uid, NULL, li->hostname, NULL,
-	    li->line, 1) == 0)
+	যদি (linux_audit_record_event(li->uid, ফাঁকা, li->hostname, ফাঁকা,
+	    li->সারি, 1) == 0)
 		fatal("linux_audit_write_entry failed: %s", strerror(errno));
 }
 
-void
-audit_session_close(struct logininfo *li)
+শূন্য
+audit_session_close(কাঠামো logininfo *li)
 {
 	/* not implemented */
 }
 
-void
-audit_event(struct ssh *ssh, ssh_audit_event_t event)
+শূন্য
+audit_event(কাঠামো ssh *ssh, ssh_audit_event_t event)
 {
-	switch(event) {
-	case SSH_AUTH_SUCCESS:
-	case SSH_CONNECTION_CLOSE:
-	case SSH_NOLOGIN:
-	case SSH_LOGIN_EXCEED_MAXTRIES:
-	case SSH_LOGIN_ROOT_DENIED:
-		break;
-	case SSH_AUTH_FAIL_NONE:
-	case SSH_AUTH_FAIL_PASSWD:
-	case SSH_AUTH_FAIL_KBDINT:
-	case SSH_AUTH_FAIL_PUBKEY:
-	case SSH_AUTH_FAIL_HOSTBASED:
-	case SSH_AUTH_FAIL_GSSAPI:
-	case SSH_INVALID_USER:
-		linux_audit_record_event(-1, audit_username(), NULL,
+	নির্বাচন(event) {
+	ক্ষেত্র SSH_AUTH_SUCCESS:
+	ক্ষেত্র SSH_CONNECTION_CLOSE:
+	ক্ষেত্র SSH_NOLOGIN:
+	ক্ষেত্র SSH_LOGIN_EXCEED_MAXTRIES:
+	ক্ষেত্র SSH_LOGIN_মূল_DENIED:
+		বিরতি;
+	ক্ষেত্র SSH_AUTH_FAIL_NONE:
+	ক্ষেত্র SSH_AUTH_FAIL_PASSWD:
+	ক্ষেত্র SSH_AUTH_FAIL_KBDINT:
+	ক্ষেত্র SSH_AUTH_FAIL_PUBKEY:
+	ক্ষেত্র SSH_AUTH_FAIL_HOSTBASED:
+	ক্ষেত্র SSH_AUTH_FAIL_GSSAPI:
+	ক্ষেত্র SSH_INVALID_USER:
+		linux_audit_record_event(-1, audit_username(), ফাঁকা,
 		    ssh_remote_ipaddr(ssh), "sshd", 0);
-		break;
-	default:
+		বিরতি;
+	পূর্বনির্ধারিত:
 		debug_f("unhandled event %d", event);
-		break;
+		বিরতি;
 	}
 }
 #endif /* USE_LINUX_AUDIT */

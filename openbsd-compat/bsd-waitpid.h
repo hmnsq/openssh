@@ -33,17 +33,17 @@
 #undef WIFSIGNALED
 
 /* Define required functions to mimic a POSIX look and feel */
-#define _W_INT(w)	(*(int*)&(w))	/* convert union wait to int */
+#define _W_INT(w)	(*(পূর্ণসংখ্যা*)&(w))	/* convert union wait to int */
 #define WIFEXITED(w)	(!((_W_INT(w)) & 0377))
 #define WIFSTOPPED(w)	((_W_INT(w)) & 0100)
 #define WIFSIGNALED(w)	(!WIFEXITED(w) && !WIFSTOPPED(w))
-#define WEXITSTATUS(w)	(int)(WIFEXITED(w) ? ((_W_INT(w) >> 8) & 0377) : -1)
-#define WTERMSIG(w)	(int)(WIFSIGNALED(w) ? (_W_INT(w) & 0177) : -1)
+#define WEXITSTATUS(w)	(পূর্ণসংখ্যা)(WIFEXITED(w) ? ((_W_INT(w) >> 8) & 0377) : -1)
+#define WTERMSIG(w)	(পূর্ণসংখ্যা)(WIFSIGNALED(w) ? (_W_INT(w) & 0177) : -1)
 #define WCOREFLAG	0x80
 #define WCOREDUMP(w)	((_W_INT(w)) & WCOREFLAG)
 
 /* Prototype */
-pid_t waitpid(int, int *, int);
+pid_t waitpid(পূর্ণসংখ্যা, পূর্ণসংখ্যা *, পূর্ণসংখ্যা);
 
 #endif /* !HAVE_WAITPID */
 #endif /* _BSD_WAITPID_H */

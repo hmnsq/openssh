@@ -32,15 +32,15 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
-#if !defined(HAVE_OPENPTY)
+#অন্তর্ভাব "includes.h"
+#যদি !defined(HAVE_OPENPTY)
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include <stdlib.h>
-#include <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <stdio.h>
 
-#include <sys/stat.h>
+#অন্তর্ভাব <sys/stat.h>
 #ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
 #endif
@@ -49,104 +49,104 @@
 # include <fcntl.h>
 #endif
 
-#include <util.h>
+#অন্তর্ভাব <util.h>
 
 #ifdef HAVE_PTY_H
 # include <pty.h>
 #endif
-#if defined(HAVE_DEV_PTMX) && defined(HAVE_SYS_STROPTS_H)
+#যদি defined(HAVE_DEV_PTMX) && defined(HAVE_SYS_STROPTS_H)
 # include <sys/stropts.h>
 #endif
 
-#include <signal.h>
-#include <string.h>
-#include <unistd.h>
+#অন্তর্ভাব <signal.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
 
-#include "misc.h"
-#include "log.h"
+#অন্তর্ভাব "misc.h"
+#অন্তর্ভাব "log.h"
 
 #ifndef O_NOCTTY
 #define O_NOCTTY 0
 #endif
 
-#if defined(HAVE_DEV_PTMX) && !defined(HAVE__GETPTY)
-static int
-openpty_streams(int *amaster, int *aslave)
+#যদি defined(HAVE_DEV_PTMX) && !defined(HAVE__GETPTY)
+স্থির পূর্ণসংখ্যা
+openpty_streams(পূর্ণসংখ্যা *amaster, পূর্ণসংখ্যা *aslave)
 {
 	/*
 	 * This code is used e.g. on Solaris 2.x.  (Note that Solaris 2.3
 	 * also has bsd-style ptys, but they simply do not work.)
 	 */
-	int ptm;
-	char *pts;
+	পূর্ণসংখ্যা ptm;
+	অক্ষর *pts;
 	sshsig_t old_signal;
 
-	if ((ptm = open("/dev/ptmx", O_RDWR | O_NOCTTY)) == -1)
-		return (-1);
+	যদি ((ptm = open("/dev/ptmx", O_RDWR | O_NOCTTY)) == -1)
+		ফেরত (-1);
 
 	/* XXX: need to close ptm on error? */
 	old_signal = ssh_signal(SIGCHLD, SIG_DFL);
-	if (grantpt(ptm) < 0)
-		return (-1);
+	যদি (grantpt(ptm) < 0)
+		ফেরত (-1);
 	ssh_signal(SIGCHLD, old_signal);
 
-	if (unlockpt(ptm) < 0)
-		return (-1);
+	যদি (unlockpt(ptm) < 0)
+		ফেরত (-1);
 
-	if ((pts = ptsname(ptm)) == NULL)
-		return (-1);
+	যদি ((pts = ptsname(ptm)) == ফাঁকা)
+		ফেরত (-1);
 	*amaster = ptm;
 
 	/* Open the slave side. */
-	if ((*aslave = open(pts, O_RDWR | O_NOCTTY)) == -1) {
+	যদি ((*aslave = open(pts, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		ফেরত (-1);
 	}
 
-# if defined(I_FIND) && defined(__SVR4)
+# যদি defined(I_FIND) && defined(__SVR4)
 	/*
 	 * If the streams modules have already been pushed then there
 	 * is no more work to do here.
 	 */
-	if (ioctl(*aslave, I_FIND, "ptem") != 0)
-		return 0;
+	যদি (ioctl(*aslave, I_FIND, "ptem") != 0)
+		ফেরত 0;
 # endif
 
 	/*
 	 * Try to push the appropriate streams modules, as described
 	 * in Solaris pts(7).
 	 */
-	ioctl(*aslave, I_PUSH, "ptem");
-	ioctl(*aslave, I_PUSH, "ldterm");
+	ioctl(*aslave, I_ঠেলো, "ptem");
+	ioctl(*aslave, I_ঠেলো, "ldterm");
 # ifndef __hpux
-	ioctl(*aslave, I_PUSH, "ttcompat");
+	ioctl(*aslave, I_ঠেলো, "ttcompat");
 # endif /* __hpux */
-	return (0);
+	ফেরত (0);
 }
 #endif
 
-int
-openpty(int *amaster, int *aslave, char *name, const struct termios *termp,
-   const struct winsize *winp)
+পূর্ণসংখ্যা
+openpty(পূর্ণসংখ্যা *amaster, পূর্ণসংখ্যা *aslave, অক্ষর *name, ধ্রুবক কাঠামো termios *termp,
+   ধ্রুবক কাঠামো winsize *winp)
 {
-#if defined(HAVE__GETPTY)
+#যদি defined(HAVE__GETPTY)
 	/*
 	 * _getpty(3) exists in SGI Irix 4.x, 5.x & 6.x -- it generates more
 	 * pty's automagically when needed
 	 */
-	char *slave;
+	অক্ষর *slave;
 
-	if ((slave = _getpty(amaster, O_RDWR, 0622, 0)) == NULL)
-		return (-1);
+	যদি ((slave = _getpty(amaster, O_RDWR, 0622, 0)) == ফাঁকা)
+		ফেরত (-1);
 
 	/* Open the slave side. */
-	if ((*aslave = open(slave, O_RDWR | O_NOCTTY)) == -1) {
+	যদি ((*aslave = open(slave, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		ফেরত (-1);
 	}
-	return (0);
+	ফেরত (0);
 
-#elif defined(HAVE_DEV_PTMX)
+#নতুবা_যদি defined(HAVE_DEV_PTMX)
 
 #ifdef SSHD_ACQUIRES_CTTY
 	/*
@@ -159,79 +159,79 @@ openpty(int *amaster, int *aslave, char *name, const struct termios *termp,
 	 * different session and is available to become controlling terminal
 	 * for the client's subprocess.  See bugzilla #245 for details.
 	 */
-	int r, fd;
-	static int junk_ptyfd = -1, junk_ttyfd;
-	char *junk_name;
+	পূর্ণসংখ্যা r, fd;
+	স্থির পূর্ণসংখ্যা junk_ptyfd = -1, junk_ttyfd;
+	অক্ষর *junk_name;
 
 	r = openpty_streams(amaster, aslave);
-	if (junk_ptyfd == -1 && (fd = open(_PATH_TTY, O_RDWR|O_NOCTTY)) >= 0) {
+	যদি (junk_ptyfd == -1 && (fd = open(_PATH_TTY, O_RDWR|O_NOCTTY)) >= 0) {
 		close(fd);
 		junk_ptyfd = *amaster;
 		junk_ttyfd = *aslave;
 		junk_name = ttyname(junk_ttyfd);
 		debug("STREAMS bug workaround pty %d tty %d name %s",
 		    junk_ptyfd, junk_ttyfd, junk_name ? junk_name : "<none>");
-	} else
-		return r;
+	} অন্যথা
+		ফেরত r;
 #endif
 
-	return openpty_streams(amaster, aslave);
+	ফেরত openpty_streams(amaster, aslave);
 
-#elif defined(HAVE_DEV_PTS_AND_PTC)
+#নতুবা_যদি defined(HAVE_DEV_PTS_AND_PTC)
 	/* AIX-style pty code. */
-	const char *ttname;
+	ধ্রুবক অক্ষর *ttname;
 
-	if ((*amaster = open("/dev/ptc", O_RDWR | O_NOCTTY)) == -1)
-		return (-1);
-	if ((ttname = ttyname(*amaster)) == NULL)
-		return (-1);
-	if ((*aslave = open(ttname, O_RDWR | O_NOCTTY)) == -1) {
+	যদি ((*amaster = open("/dev/ptc", O_RDWR | O_NOCTTY)) == -1)
+		ফেরত (-1);
+	যদি ((ttname = ttyname(*amaster)) == ফাঁকা)
+		ফেরত (-1);
+	যদি ((*aslave = open(ttname, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		ফেরত (-1);
 	}
-	return (0);
+	ফেরত (0);
 
-#else
+#অন্যথা
 	/* BSD-style pty code. */
-	char ptbuf[64], ttbuf[64];
-	int i;
-	const char *ptymajors = "pqrstuvwxyzabcdefghijklmno"
+	অক্ষর ptbuf[64], ttbuf[64];
+	পূর্ণসংখ্যা i;
+	ধ্রুবক অক্ষর *ptymajors = "pqrstuvwxyzabcdefghijklmno"
 	    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	const char *ptyminors = "0123456789abcdef";
-	int num_minors = strlen(ptyminors);
-	int num_ptys = strlen(ptymajors) * num_minors;
-	struct termios tio;
+	ধ্রুবক অক্ষর *ptyminors = "0123456789abcdef";
+	পূর্ণসংখ্যা অঙ্ক_minors = strlen(ptyminors);
+	পূর্ণসংখ্যা অঙ্ক_ptys = strlen(ptymajors) * অঙ্ক_minors;
+	কাঠামো termios tio;
 
-	for (i = 0; i < num_ptys; i++) {
-		snprintf(ptbuf, sizeof(ptbuf), "/dev/pty%c%c",
-		    ptymajors[i / num_minors], ptyminors[i % num_minors]);
-		snprintf(ttbuf, sizeof(ttbuf), "/dev/tty%c%c",
-		    ptymajors[i / num_minors], ptyminors[i % num_minors]);
+	জন্য (i = 0; i < অঙ্ক_ptys; i++) {
+		snprintf(ptbuf, আকার(ptbuf), "/dev/pty%c%c",
+		    ptymajors[i / অঙ্ক_minors], ptyminors[i % অঙ্ক_minors]);
+		snprintf(ttbuf, আকার(ttbuf), "/dev/tty%c%c",
+		    ptymajors[i / অঙ্ক_minors], ptyminors[i % অঙ্ক_minors]);
 
-		if ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1) {
+		যদি ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1) {
 			/* Try SCO style naming */
-			snprintf(ptbuf, sizeof(ptbuf), "/dev/ptyp%d", i);
-			snprintf(ttbuf, sizeof(ttbuf), "/dev/ttyp%d", i);
-			if ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1)
-				continue;
+			snprintf(ptbuf, আকার(ptbuf), "/dev/ptyp%d", i);
+			snprintf(ttbuf, আকার(ttbuf), "/dev/ttyp%d", i);
+			যদি ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1)
+				চালু;
 		}
 
 		/* Open the slave side. */
-		if ((*aslave = open(ttbuf, O_RDWR | O_NOCTTY)) == -1) {
+		যদি ((*aslave = open(ttbuf, O_RDWR | O_NOCTTY)) == -1) {
 			close(*amaster);
-			return (-1);
+			ফেরত (-1);
 		}
 		/* set tty modes to a sane state for broken clients */
-		if (tcgetattr(*amaster, &tio) != -1) {
+		যদি (tcgetattr(*amaster, &tio) != -1) {
 			tio.c_lflag |= (ECHO | ISIG | ICANON);
 			tio.c_oflag |= (OPOST | ONLCR);
 			tio.c_iflag |= ICRNL;
 			tcsetattr(*amaster, TCSANOW, &tio);
 		}
 
-		return (0);
+		ফেরত (0);
 	}
-	return (-1);
+	ফেরত (-1);
 #endif
 }
 

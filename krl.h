@@ -26,7 +26,7 @@
 
 /* KRL section types */
 #define KRL_SECTION_CERTIFICATES	1
-#define KRL_SECTION_EXPLICIT_KEY	2
+#define KRL_SECTION_EXPLICIT_চাবি	2
 #define KRL_SECTION_FINGERPRINT_SHA1	3
 #define KRL_SECTION_SIGNATURE		4
 #define KRL_SECTION_FINGERPRINT_SHA256	5
@@ -36,32 +36,32 @@
 #define KRL_SECTION_CERT_SERIAL_LIST	0x20
 #define KRL_SECTION_CERT_SERIAL_RANGE	0x21
 #define KRL_SECTION_CERT_SERIAL_BITMAP	0x22
-#define KRL_SECTION_CERT_KEY_ID		0x23
+#define KRL_SECTION_CERT_চাবি_ID		0x23
 #define KRL_SECTION_CERT_EXTENSION	0x39
 
-struct sshkey;
-struct sshbuf;
-struct ssh_krl;
+কাঠামো sshkey;
+কাঠামো sshbuf;
+কাঠামো ssh_krl;
 
-struct ssh_krl *ssh_krl_init(void);
-void ssh_krl_free(struct ssh_krl *krl);
-void ssh_krl_set_version(struct ssh_krl *krl, uint64_t version);
-int ssh_krl_set_comment(struct ssh_krl *krl, const char *comment);
-int ssh_krl_revoke_cert_by_serial(struct ssh_krl *krl,
-    const struct sshkey *ca_key, uint64_t serial);
-int ssh_krl_revoke_cert_by_serial_range(struct ssh_krl *krl,
-    const struct sshkey *ca_key, uint64_t lo, uint64_t hi);
-int ssh_krl_revoke_cert_by_key_id(struct ssh_krl *krl,
-    const struct sshkey *ca_key, const char *key_id);
-int ssh_krl_revoke_key_explicit(struct ssh_krl *krl, const struct sshkey *key);
-int ssh_krl_revoke_key_sha1(struct ssh_krl *krl, const u_char *p, size_t len);
-int ssh_krl_revoke_key_sha256(struct ssh_krl *krl, const u_char *p, size_t len);
-int ssh_krl_revoke_key(struct ssh_krl *krl, const struct sshkey *key);
-int ssh_krl_to_blob(struct ssh_krl *krl, struct sshbuf *buf);
-int ssh_krl_from_blob(struct sshbuf *buf, struct ssh_krl **krlp);
-int ssh_krl_check_key(struct ssh_krl *krl, const struct sshkey *key);
-int ssh_krl_file_contains_key(const char *path, const struct sshkey *key);
-int krl_dump(struct ssh_krl *krl, FILE *f);
+কাঠামো ssh_krl *ssh_krl_init(শূন্য);
+শূন্য ssh_krl_free(কাঠামো ssh_krl *krl);
+শূন্য ssh_krl_set_version(কাঠামো ssh_krl *krl, uint64_t version);
+পূর্ণসংখ্যা ssh_krl_set_comment(কাঠামো ssh_krl *krl, ধ্রুবক অক্ষর *comment);
+পূর্ণসংখ্যা ssh_krl_revoke_cert_by_serial(কাঠামো ssh_krl *krl,
+    ধ্রুবক কাঠামো sshkey *ca_চাবি, uint64_t serial);
+পূর্ণসংখ্যা ssh_krl_revoke_cert_by_serial_range(কাঠামো ssh_krl *krl,
+    ধ্রুবক কাঠামো sshkey *ca_চাবি, uint64_t lo, uint64_t hi);
+পূর্ণসংখ্যা ssh_krl_revoke_cert_by_চাবি_id(কাঠামো ssh_krl *krl,
+    ধ্রুবক কাঠামো sshkey *ca_চাবি, ধ্রুবক অক্ষর *চাবি_id);
+পূর্ণসংখ্যা ssh_krl_revoke_চাবি_explicit(কাঠামো ssh_krl *krl, ধ্রুবক কাঠামো sshkey *চাবি);
+পূর্ণসংখ্যা ssh_krl_revoke_চাবি_sha1(কাঠামো ssh_krl *krl, ধ্রুবক u_char *p, আকার_t len);
+পূর্ণসংখ্যা ssh_krl_revoke_চাবি_sha256(কাঠামো ssh_krl *krl, ধ্রুবক u_char *p, আকার_t len);
+পূর্ণসংখ্যা ssh_krl_revoke_চাবি(কাঠামো ssh_krl *krl, ধ্রুবক কাঠামো sshkey *চাবি);
+পূর্ণসংখ্যা ssh_krl_to_blob(কাঠামো ssh_krl *krl, কাঠামো sshbuf *buf);
+পূর্ণসংখ্যা ssh_krl_from_blob(কাঠামো sshbuf *buf, কাঠামো ssh_krl **krlp);
+পূর্ণসংখ্যা ssh_krl_check_চাবি(কাঠামো ssh_krl *krl, ধ্রুবক কাঠামো sshkey *চাবি);
+পূর্ণসংখ্যা ssh_krl_file_contains_চাবি(ধ্রুবক অক্ষর *path, ধ্রুবক কাঠামো sshkey *চাবি);
+পূর্ণসংখ্যা krl_dump(কাঠামো ssh_krl *krl, FILE *f);
 
 #endif /* _KRL_H */
 

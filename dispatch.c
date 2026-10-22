@@ -23,112 +23,112 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include <signal.h>
-#include <stdarg.h>
+#অন্তর্ভাব <signal.h>
+#অন্তর্ভাব <stdarg.h>
 
-#include "ssh2.h"
-#include "log.h"
-#include "dispatch.h"
-#include "packet.h"
-#include "ssherr.h"
+#অন্তর্ভাব "ssh2.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "dispatch.h"
+#অন্তর্ভাব "packet.h"
+#অন্তর্ভাব "ssherr.h"
 
-int
-dispatch_protocol_error(int type, uint32_t seq, struct ssh *ssh)
+পূর্ণসংখ্যা
+dispatch_protocol_error(পূর্ণসংখ্যা type, uint32_t seq, কাঠামো ssh *ssh)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
 	logit_f("type %d seq %u", type, seq);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_UNIMPLEMENTED)) != 0 ||
+	যদি ((r = sshpkt_start(ssh, SSH2_বার্তা_UNIMPLEMENTED)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, seq)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s", __func__);
-	return 0;
+	ফেরত 0;
 }
 
-int
-dispatch_protocol_ignore(int type, uint32_t seq, struct ssh *ssh)
+পূর্ণসংখ্যা
+dispatch_protocol_ignore(পূর্ণসংখ্যা type, uint32_t seq, কাঠামো ssh *ssh)
 {
 	logit_f("type %d seq %u", type, seq);
-	return 0;
+	ফেরত 0;
 }
 
-void
-ssh_dispatch_init(struct ssh *ssh, dispatch_fn *dflt)
+শূন্য
+ssh_dispatch_init(কাঠামো ssh *ssh, dispatch_fn *dflt)
 {
 	u_int i;
-	for (i = 0; i < DISPATCH_MAX; i++)
+	জন্য (i = 0; i < DISPATCH_MAX; i++)
 		ssh->dispatch[i] = dflt;
 }
 
-void
-ssh_dispatch_range(struct ssh *ssh, u_int from, u_int to, dispatch_fn *fn)
+শূন্য
+ssh_dispatch_range(কাঠামো ssh *ssh, u_int from, u_int to, dispatch_fn *fn)
 {
 	u_int i;
 
-	for (i = from; i <= to; i++) {
-		if (i >= DISPATCH_MAX)
-			break;
+	জন্য (i = from; i <= to; i++) {
+		যদি (i >= DISPATCH_MAX)
+			বিরতি;
 		ssh->dispatch[i] = fn;
 	}
 }
 
-void
-ssh_dispatch_set(struct ssh *ssh, int type, dispatch_fn *fn)
+শূন্য
+ssh_dispatch_set(কাঠামো ssh *ssh, পূর্ণসংখ্যা type, dispatch_fn *fn)
 {
 	ssh->dispatch[type] = fn;
 }
 
-int
-ssh_dispatch_run(struct ssh *ssh, int mode, volatile sig_atomic_t *done)
+পূর্ণসংখ্যা
+ssh_dispatch_run(কাঠামো ssh *ssh, পূর্ণসংখ্যা mode, অস্থির sig_atomic_t *done)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 	u_char type;
 	uint32_t seqnr;
 
-	for (;;) {
-		if (mode == DISPATCH_BLOCK) {
+	জন্য (;;) {
+		যদি (mode == DISPATCH_BLOCK) {
 			r = ssh_packet_read_seqnr(ssh, &type, &seqnr);
-			if (r != 0)
-				return r;
-		} else {
+			যদি (r != 0)
+				ফেরত r;
+		} অন্যথা {
 			r = ssh_packet_read_poll_seqnr(ssh, &type, &seqnr);
-			if (r != 0)
-				return r;
-			if (type == SSH_MSG_NONE)
-				return 0;
+			যদি (r != 0)
+				ফেরত r;
+			যদি (type == SSH_বার্তা_NONE)
+				ফেরত 0;
 		}
-		if (type > 0 && type < DISPATCH_MAX &&
-		    ssh->dispatch[type] != NULL) {
-			if (ssh->dispatch_skip_packets) {
+		যদি (type > 0 && type < DISPATCH_MAX &&
+		    ssh->dispatch[type] != ফাঁকা) {
+			যদি (ssh->dispatch_skip_packets) {
 				debug2("skipped packet (type %u)", type);
 				ssh->dispatch_skip_packets--;
-				continue;
+				চালু;
 			}
 			r = (*ssh->dispatch[type])(type, seqnr, ssh);
-			if (r != 0)
-				return r;
-		} else {
+			যদি (r != 0)
+				ফেরত r;
+		} অন্যথা {
 			r = sshpkt_disconnect(ssh,
 			    "protocol error: rcvd type %d", type);
-			if (r != 0)
-				return r;
-			return SSH_ERR_DISCONNECTED;
+			যদি (r != 0)
+				ফেরত r;
+			ফেরত SSH_ERR_DISCONNECTED;
 		}
-		if (done != NULL && *done)
-			return 0;
+		যদি (done != ফাঁকা && *done)
+			ফেরত 0;
 	}
 }
 
-void
-ssh_dispatch_run_fatal(struct ssh *ssh, int mode, volatile sig_atomic_t *done)
+শূন্য
+ssh_dispatch_run_fatal(কাঠামো ssh *ssh, পূর্ণসংখ্যা mode, অস্থির sig_atomic_t *done)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if ((r = ssh_dispatch_run(ssh, mode, done)) != 0)
+	যদি ((r = ssh_dispatch_run(ssh, mode, done)) != 0)
 		sshpkt_fatal(ssh, r, "%s", __func__);
 }

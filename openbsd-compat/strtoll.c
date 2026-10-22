@@ -30,15 +30,15 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoll.c */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 #ifndef HAVE_STRTOLL
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#অন্তর্ভাব <ctype.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <limits.h>
+#অন্তর্ভাব <stdlib.h>
 
 /*
  * Convert a string to a long long.
@@ -47,12 +47,12 @@
  * alphabets and digits are each contiguous.
  */
 long long
-strtoll(const char *nptr, char **endptr, int base)
+strtoll(ধ্রুবক অক্ষর *nptr, অক্ষর **endptr, পূর্ণসংখ্যা base)
 {
-	const char *s;
+	ধ্রুবক অক্ষর *s;
 	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	পূর্ণসংখ্যা c;
+	পূর্ণসংখ্যা neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -60,24 +60,24 @@ strtoll(const char *nptr, char **endptr, int base)
 	 * assume decimal; if base is already 16, allow 0x.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	করো {
+		c = (unsigned অক্ষর) *s++;
+	} যখন (isspace(c));
+	যদি (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} অন্যথা {
 		neg = 0;
-		if (c == '+')
+		যদি (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	যদি ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	যদি (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	/*
@@ -101,48 +101,48 @@ strtoll(const char *nptr, char **endptr, int base)
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
 	cutlim = cutoff % base;
 	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
+	যদি (neg) {
+		যদি (cutlim > 0) {
 			cutlim -= base;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	জন্য (acc = 0, any = 0;; c = (unsigned অক্ষর) *s++) {
+		যদি (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		অন্যথা যদি (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		অন্যথা
+			বিরতি;
+		যদি (c >= base)
+			বিরতি;
+		যদি (any < 0)
+			চালু;
+		যদি (neg) {
+			যদি (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} অন্যথা {
 				any = 1;
 				acc *= base;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} অন্যথা {
+			যদি (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} অন্যথা {
 				any = 1;
 				acc *= base;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	যদি (endptr != 0)
+		*endptr = (অক্ষর *) (any ? s - 1 : nptr);
+	ফেরত (acc);
 }
 #endif /* HAVE_STRTOLL */

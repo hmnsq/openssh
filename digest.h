@@ -19,7 +19,7 @@
 #define _DIGEST_H
 
 /* Maximum digest output length */
-#define SSH_DIGEST_MAX_LENGTH	64
+#define SSH_DIGEST_MAX_দৈর্ঘ্য	64
 
 /* Digest algorithms */
 #define SSH_DIGEST_MD5		0
@@ -29,42 +29,42 @@
 #define SSH_DIGEST_SHA512	4
 #define SSH_DIGEST_MAX		5
 
-struct sshbuf;
-struct ssh_digest_ctx;
+কাঠামো sshbuf;
+কাঠামো ssh_digest_ctx;
 
 /* Looks up a digest algorithm by name */
-int ssh_digest_alg_by_name(const char *name);
+পূর্ণসংখ্যা ssh_digest_alg_by_name(ধ্রুবক অক্ষর *name);
 
 /* Returns the algorithm name for a digest identifier */
-const char *ssh_digest_alg_name(int alg);
+ধ্রুবক অক্ষর *ssh_digest_alg_name(পূর্ণসংখ্যা alg);
 
 /* Returns the algorithm's digest length in bytes or 0 for invalid algorithm */
-size_t ssh_digest_bytes(int alg);
+আকার_t ssh_digest_bytes(পূর্ণসংখ্যা alg);
 
 /* Returns the block size of the digest, e.g. for implementing HMAC */
-size_t ssh_digest_blocksize(struct ssh_digest_ctx *ctx);
+আকার_t ssh_digest_blocksize(কাঠামো ssh_digest_ctx *ctx);
 
 /* Copies internal state of digest of 'from' to 'to' */
-int ssh_digest_copy_state(struct ssh_digest_ctx *from,
-    struct ssh_digest_ctx *to);
+পূর্ণসংখ্যা ssh_digest_copy_state(কাঠামো ssh_digest_ctx *from,
+    কাঠামো ssh_digest_ctx *to);
 
 /* One-shot API */
-int ssh_digest_memory(int alg, const void *m, size_t mlen,
-    u_char *d, size_t dlen)
+পূর্ণসংখ্যা ssh_digest_memory(পূর্ণসংখ্যা alg, ধ্রুবক শূন্য *m, আকার_t mlen,
+    u_char *d, আকার_t dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)))
 	__attribute__((__bounded__(__buffer__, 4, 5)));
-int ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+পূর্ণসংখ্যা ssh_digest_বাফার(পূর্ণসংখ্যা alg, ধ্রুবক কাঠামো sshbuf *b, u_char *d, আকার_t dlen)
 	__attribute__((__bounded__(__buffer__, 3, 4)));
 
 /* Update API */
-struct ssh_digest_ctx *ssh_digest_start(int alg);
-int ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
+কাঠামো ssh_digest_ctx *ssh_digest_start(পূর্ণসংখ্যা alg);
+পূর্ণসংখ্যা ssh_digest_update(কাঠামো ssh_digest_ctx *ctx, ধ্রুবক শূন্য *m, আকার_t mlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_digest_update_buffer(struct ssh_digest_ctx *ctx,
-    const struct sshbuf *b);
-int ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
+পূর্ণসংখ্যা ssh_digest_update_বাফার(কাঠামো ssh_digest_ctx *ctx,
+    ধ্রুবক কাঠামো sshbuf *b);
+পূর্ণসংখ্যা ssh_digest_final(কাঠামো ssh_digest_ctx *ctx, u_char *d, আকার_t dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-void ssh_digest_free(struct ssh_digest_ctx *ctx);
+শূন্য ssh_digest_free(কাঠামো ssh_digest_ctx *ctx);
 
 #endif /* _DIGEST_H */
 

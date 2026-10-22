@@ -15,38 +15,38 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-extern "C" {
+বাহ্যিক "C" {
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include "ssherr.h"
-#include "ssh-sk.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "ssh-sk.h"
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest)
+পূর্ণসংখ্যা
+sshsk_enroll(পূর্ণসংখ্যা type, ধ্রুবক অক্ষর *provider_path, ধ্রুবক অক্ষর *device,
+    ধ্রুবক অক্ষর *application, ধ্রুবক অক্ষর *userid, uint8_t flags,
+    ধ্রুবক অক্ষর *pin, কাঠামো sshbuf *challenge_buf,
+    কাঠামো sshkey **keyp, কাঠামো sshbuf *attest)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	ফেরত SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
-int
-sshsk_sign(const char *provider_path, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin)
+পূর্ণসংখ্যা
+sshsk_sign(ধ্রুবক অক্ষর *provider_path, কাঠামো sshkey *চাবি,
+    u_char **sigp, আকার_t *lenp, ধ্রুবক u_char *তথ্য, আকার_t datalen,
+    u_int compat, ধ্রুবক অক্ষর *pin)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	ফেরত SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
-int
-sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
-    size_t *nsrksp)
+পূর্ণসংখ্যা
+sshsk_load_resident(ধ্রুবক অক্ষর *provider_path, ধ্রুবক অক্ষর *device,
+    ধ্রুবক অক্ষর *pin, u_int flags, কাঠামো sshsk_resident_চাবি ***srksp,
+    আকার_t *nsrksp)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	ফেরত SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
 };

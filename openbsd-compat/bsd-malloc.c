@@ -14,44 +14,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 #undef malloc
 #undef calloc
 #undef realloc
 
-#include <sys/types.h>
-#include <stdlib.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <stdlib.h>
 
-#if defined(HAVE_MALLOC) && HAVE_MALLOC == 0
-void *
-rpl_malloc(size_t size)
+#যদি defined(HAVE_MALLOC) && HAVE_MALLOC == 0
+শূন্য *
+rpl_malloc(আকার_t আকার_2)
 {
-	if (size == 0)
-		size = 1;
-	return malloc(size);
+	যদি (আকার_2 == 0)
+		আকার_2 = 1;
+	ফেরত malloc(আকার_2);
 }
 #endif
 
-#if defined(HAVE_CALLOC) && HAVE_CALLOC == 0
-void *
-rpl_calloc(size_t nmemb, size_t size)
+#যদি defined(HAVE_CALLOC) && HAVE_CALLOC == 0
+শূন্য *
+rpl_calloc(আকার_t nmemb, আকার_t আকার_2)
 {
-	if (nmemb == 0)
+	যদি (nmemb == 0)
 		nmemb = 1;
-	if (size == 0)
-		size = 1;
-	return calloc(nmemb, size);
+	যদি (আকার_2 == 0)
+		আকার_2 = 1;
+	ফেরত calloc(nmemb, আকার_2);
 }
 #endif
 
-#if defined (HAVE_REALLOC) && HAVE_REALLOC == 0
-void *
-rpl_realloc(void *ptr, size_t size)
+#যদি defined (HAVE_REALLOC) && HAVE_REALLOC == 0
+শূন্য *
+rpl_realloc(শূন্য *ptr, আকার_t আকার_2)
 {
-	if (size == 0)
-		size = 1;
-	if (ptr == 0)
-		return malloc(size);
-	return realloc(ptr, size);
+	যদি (আকার_2 == 0)
+		আকার_2 = 1;
+	যদি (ptr == 0)
+		ফেরত malloc(আকার_2);
+	ফেরত realloc(ptr, আকার_2);
 }
 #endif

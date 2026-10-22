@@ -23,189 +23,189 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <fcntl.h>
-#include <paths.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
+#অন্তর্ভাব <fcntl.h>
+#অন্তর্ভাব <paths.h>
+#অন্তর্ভাব <pwd.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <errno.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#include <openssl/rand.h>
-#include <openssl/rsa.h>
-#include "openbsd-compat/openssl-compat.h"
+#অন্তর্ভাব <openssl/evp.h>
+#অন্তর্ভাব <openssl/rand.h>
+#অন্তর্ভাব <openssl/rsa.h>
+#অন্তর্ভাব "openbsd-compat/openssl-compat.h"
 #endif
 
-#include "xmalloc.h"
-#include "log.h"
-#include "sshkey.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "authfile.h"
-#include "msg.h"
-#include "canohost.h"
-#include "pathnames.h"
-#include "readconf.h"
-#include "uidswap.h"
-#include "ssherr.h"
+#অন্তর্ভাব "xmalloc.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "sshkey.h"
+#অন্তর্ভাব "ssh.h"
+#অন্তর্ভাব "ssh2.h"
+#অন্তর্ভাব "misc.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "authfile.h"
+#অন্তর্ভাব "msg.h"
+#অন্তর্ভাব "canohost.h"
+#অন্তর্ভাব "pathnames.h"
+#অন্তর্ভাব "readconf.h"
+#অন্তর্ভাব "uidswap.h"
+#অন্তর্ভাব "ssherr.h"
 
-extern char *__progname;
+বাহ্যিক অক্ষর *__progname;
 
-static int
-valid_request(struct passwd *pw, char *host, struct sshkey **ret, char **pkalgp,
-    u_char *data, size_t datalen)
+স্থির পূর্ণসংখ্যা
+valid_request(কাঠামো passwd *pw, অক্ষর *host, কাঠামো sshkey **ret, অক্ষর **pkalgp,
+    u_char *তথ্য, আকার_t datalen)
 {
-	struct sshbuf *b;
-	struct sshkey *key = NULL;
+	কাঠামো sshbuf *b;
+	কাঠামো sshkey *চাবি = ফাঁকা;
 	u_char type, *pkblob;
-	char *p;
-	size_t blen, len;
-	char *pkalg, *luser;
-	int r, pktype, fail;
+	অক্ষর *p;
+	আকার_t blen, len;
+	অক্ষর *pkalg, *luser;
+	পূর্ণসংখ্যা r, pktype, fail;
 
-	if (ret != NULL)
-		*ret = NULL;
-	if (pkalgp != NULL)
-		*pkalgp = NULL;
+	যদি (ret != ফাঁকা)
+		*ret = ফাঁকা;
+	যদি (pkalgp != ফাঁকা)
+		*pkalgp = ফাঁকা;
 	fail = 0;
 
-	if ((b = sshbuf_from(data, datalen)) == NULL)
+	যদি ((b = sshbuf_from(তথ্য, datalen)) == ফাঁকা)
 		fatal_f("sshbuf_from failed");
 
 	/* session id */
-	if ((r = sshbuf_get_string(b, NULL, &len)) != 0)
+	যদি ((r = sshbuf_get_string(b, ফাঁকা, &len)) != 0)
 		fatal_fr(r, "parse session ID");
-	if (len != 20 && /* SHA1 */
+	যদি (len != 20 && /* SHA1 */
 	    len != 32 && /* SHA256 */
 	    len != 48 && /* SHA384 */
 	    len != 64)   /* SHA512 */
 		fail++;
 
-	if ((r = sshbuf_get_u8(b, &type)) != 0)
+	যদি ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_MSG_USERAUTH_REQUEST)
+	যদি (type != SSH2_বার্তা_USERAUTH_REQUEST)
 		fail++;
 
 	/* server user */
-	if ((r = sshbuf_skip_string(b)) != 0)
+	যদি ((r = sshbuf_skip_string(b)) != 0)
 		fatal_fr(r, "parse user");
 
 	/* service */
-	if ((r = sshbuf_get_cstring(b, &p, NULL)) != 0)
+	যদি ((r = sshbuf_get_cstring(b, &p, ফাঁকা)) != 0)
 		fatal_fr(r, "parse service");
-	if (strcmp("ssh-connection", p) != 0)
+	যদি (strcmp("ssh-connection", p) != 0)
 		fail++;
-	free(p);
+	মুক্ত(p);
 
 	/* method */
-	if ((r = sshbuf_get_cstring(b, &p, NULL)) != 0)
+	যদি ((r = sshbuf_get_cstring(b, &p, ফাঁকা)) != 0)
 		fatal_fr(r, "parse method");
-	if (strcmp("hostbased", p) != 0)
+	যদি (strcmp("hostbased", p) != 0)
 		fail++;
-	free(p);
+	মুক্ত(p);
 
 	/* pubkey */
-	if ((r = sshbuf_get_cstring(b, &pkalg, NULL)) != 0 ||
+	যদি ((r = sshbuf_get_cstring(b, &pkalg, ফাঁকা)) != 0 ||
 	    (r = sshbuf_get_string(b, &pkblob, &blen)) != 0)
 		fatal_fr(r, "parse pk");
 
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC)
+	যদি (pktype == চাবি_UNSPEC)
 		fail++;
-	else if ((r = sshkey_from_blob(pkblob, blen, &key)) != 0) {
+	অন্যথা যদি ((r = sshkey_from_blob(pkblob, blen, &চাবি)) != 0) {
 		error_fr(r, "decode key");
 		fail++;
-	} else if (key->type != pktype)
+	} অন্যথা যদি (চাবি->type != pktype)
 		fail++;
 
 	/* client host name, handle trailing dot */
-	if ((r = sshbuf_get_cstring(b, &p, &len)) != 0)
+	যদি ((r = sshbuf_get_cstring(b, &p, &len)) != 0)
 		fatal_fr(r, "parse hostname");
 	debug2_f("check expect chost \"%s\" got \"%s\"", host, p);
-	if (len == 0)
+	যদি (len == 0)
 		fail++;
-	else if (strlen(host) != len - 1)
+	অন্যথা যদি (strlen(host) != len - 1)
 		fail++;
-	else if (p[len - 1] != '.')
+	অন্যথা যদি (p[len - 1] != '.')
 		fail++;
-	else if (strncasecmp(host, p, len - 1) != 0)
+	অন্যথা যদি (strncasecmp(host, p, len - 1) != 0)
 		fail++;
-	free(p);
+	মুক্ত(p);
 
 	/* local user */
-	if ((r = sshbuf_get_cstring(b, &luser, NULL)) != 0)
+	যদি ((r = sshbuf_get_cstring(b, &luser, ফাঁকা)) != 0)
 		fatal_fr(r, "parse luser");
 
-	if (strcmp(pw->pw_name, luser) != 0)
+	যদি (strcmp(pw->pw_name, luser) != 0)
 		fail++;
-	free(luser);
+	মুক্ত(luser);
 
 	/* end of message */
-	if (sshbuf_len(b) != 0)
+	যদি (sshbuf_len(b) != 0)
 		fail++;
 	sshbuf_free(b);
 
 	debug3_f("fail %d", fail);
 
-	if (!fail) {
-		if (ret != NULL) {
-			*ret = key;
-			key = NULL;
+	যদি (!fail) {
+		যদি (ret != ফাঁকা) {
+			*ret = চাবি;
+			চাবি = ফাঁকা;
 		}
-		if (pkalgp != NULL) {
+		যদি (pkalgp != ফাঁকা) {
 			*pkalgp = pkalg;
-			pkalg = NULL;
+			pkalg = ফাঁকা;
 		}
 	}
-	sshkey_free(key);
-	free(pkalg);
-	free(pkblob);
+	sshkey_free(চাবি);
+	মুক্ত(pkalg);
+	মুক্ত(pkblob);
 
-	return (fail ? -1 : 0);
+	ফেরত (fail ? -1 : 0);
 }
 
-int
-main(int argc, char **argv)
+পূর্ণসংখ্যা
+প্রধান(পূর্ণসংখ্যা argc, অক্ষর **argv)
 {
-	struct sshbuf *b;
+	কাঠামো sshbuf *b;
 	Options options;
-#define NUM_KEYTYPES 5
-	struct sshkey *keys[NUM_KEYTYPES], *key = NULL;
-	struct passwd *pw;
-	int r, key_fd[NUM_KEYTYPES], i, found, version = 2, fd;
-	u_char *signature, *data, rver;
-	char *host, *fp, *pkalg;
-	size_t slen, dlen;
+#define অঙ্ক_KEYTYPES 5
+	কাঠামো sshkey *চাবিগুলি[অঙ্ক_KEYTYPES], *চাবি = ফাঁকা;
+	কাঠামো passwd *pw;
+	পূর্ণসংখ্যা r, চাবি_fd[অঙ্ক_KEYTYPES], i, found, version = 2, fd;
+	u_char *signature, *তথ্য, rver;
+	অক্ষর *host, *fp, *pkalg;
+	আকার_t slen, dlen;
 
 	/* Ensure that stdin and stdout are connected */
-	if ((fd = open(_PATH_DEVNULL, O_RDWR)) < 2)
+	যদি ((fd = open(_PATH_DEVNULL, O_RDWR)) < 2)
 		exit(1);
 	/* Leave /dev/null fd iff it is attached to stderr */
-	if (fd > 2)
+	যদি (fd > 2)
 		close(fd);
 
-	if (pledge("stdio rpath getpw dns id", NULL) != 0)
+	যদি (pledge("stdio rpath getpw dns id", ফাঁকা) != 0)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 
-	for (i = 0; i < NUM_KEYTYPES; i++)
-		key_fd[i] = -1;
+	জন্য (i = 0; i < অঙ্ক_KEYTYPES; i++)
+		চাবি_fd[i] = -1;
 
 	i = 0;
 	/* XXX This really needs to read sshd_config for the paths */
-	key_fd[i++] = open(_PATH_HOST_ECDSA_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_ED25519_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_RSA_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_MLDSA44_ED25519_KEY_FILE, O_RDONLY);
+	চাবি_fd[i++] = open(PATH_HOST_ECDSA_চাবি_FILE, O_RDONLY);
+	চাবি_fd[i++] = open(PATH_HOST_ED25519_চাবি_FILE, O_RDONLY);
+	চাবি_fd[i++] = open(PATH_HOST_RSA_চাবি_FILE, O_RDONLY);
+	চাবি_fd[i++] = open(PATH_HOST_MLDSA44_ED25519_চাবি_FILE, O_RDONLY);
 
-	if ((pw = getpwuid(getuid())) == NULL)
+	যদি ((pw = getpwuid(getuid())) == ফাঁকা)
 		fatal("getpwuid failed");
 	pw = pwcopy(pw);
 
@@ -219,90 +219,90 @@ main(int argc, char **argv)
 
 	/* verify that ssh-keysign is enabled by the admin */
 	initialize_options(&options);
-	(void)read_config_file(_PATH_HOST_CONFIG_FILE, pw, "", "", "",
-	    &options, 0, NULL);
-	(void)fill_default_options(&options);
-	if (options.enable_ssh_keysign != 1)
+	(শূন্য)read_config_file(_PATH_HOST_CONFIG_FILE, pw, "", "", "",
+	    &options, 0, ফাঁকা);
+	(শূন্য)fill_default_options(&options);
+	যদি (options.enable_ssh_keysign != 1)
 		fatal("ssh-keysign not enabled in %s",
 		    _PATH_HOST_CONFIG_FILE);
 
-	if (pledge("stdio dns", NULL) != 0)
+	যদি (pledge("stdio dns", ফাঁকা) != 0)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 
-	for (i = found = 0; i < NUM_KEYTYPES; i++) {
-		if (key_fd[i] != -1)
+	জন্য (i = found = 0; i < অঙ্ক_KEYTYPES; i++) {
+		যদি (চাবি_fd[i] != -1)
 			found = 1;
 	}
-	if (found == 0)
+	যদি (found == 0)
 		fatal("could not open any host key");
 
 	found = 0;
-	for (i = 0; i < NUM_KEYTYPES; i++) {
-		keys[i] = NULL;
-		if (key_fd[i] == -1)
-			continue;
-		r = sshkey_load_private_type_fd(key_fd[i], KEY_UNSPEC,
-		    NULL, &key, NULL);
-		close(key_fd[i]);
-		if (r != 0)
+	জন্য (i = 0; i < অঙ্ক_KEYTYPES; i++) {
+		চাবিগুলি[i] = ফাঁকা;
+		যদি (চাবি_fd[i] == -1)
+			চালু;
+		r = sshkey_load_private_type_fd(চাবি_fd[i], চাবি_UNSPEC,
+		    ফাঁকা, &চাবি, ফাঁকা);
+		close(চাবি_fd[i]);
+		যদি (r != 0)
 			debug_r(r, "parse key %d", i);
-		else if (key != NULL) {
-			keys[i] = key;
+		অন্যথা যদি (চাবি != ফাঁকা) {
+			চাবিগুলি[i] = চাবি;
 			found = 1;
 		}
 	}
-	if (!found)
+	যদি (!found)
 		fatal("no hostkey found");
 
-	if ((b = sshbuf_new()) == NULL)
+	যদি ((b = sshbuf_new()) == ফাঁকা)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (ssh_msg_recv(STDIN_FILENO, b) < 0)
+	যদি (ssh_বার্তা_recv(STDIN_FILENO, b) < 0)
 		fatal("%s: ssh_msg_recv failed", __progname);
-	if ((r = sshbuf_get_u8(b, &rver)) != 0)
+	যদি ((r = sshbuf_get_u8(b, &rver)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (rver != version)
+	যদি (rver != version)
 		fatal("%s: bad version: received %d, expected %d",
 		    __progname, rver, version);
-	if ((r = sshbuf_get_u32(b, (u_int *)&fd)) != 0)
+	যদি ((r = sshbuf_get_u32(b, (u_int *)&fd)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (fd <= STDERR_FILENO)
+	যদি (fd <= STDERR_FILENO)
 		fatal("%s: bad fd = %d", __progname, fd);
-	if ((host = get_local_name(fd)) == NULL)
+	যদি ((host = get_local_name(fd)) == ফাঁকা)
 		fatal("%s: cannot get local name for fd", __progname);
 
-	if ((r = sshbuf_get_string(b, &data, &dlen)) != 0)
+	যদি ((r = sshbuf_get_string(b, &তথ্য, &dlen)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (valid_request(pw, host, &key, &pkalg, data, dlen) < 0)
+	যদি (valid_request(pw, host, &চাবি, &pkalg, তথ্য, dlen) < 0)
 		fatal("%s: not a valid request", __progname);
-	free(host);
+	মুক্ত(host);
 
 	found = 0;
-	for (i = 0; i < NUM_KEYTYPES; i++) {
-		if (keys[i] != NULL &&
-		    sshkey_equal_public(key, keys[i])) {
+	জন্য (i = 0; i < অঙ্ক_KEYTYPES; i++) {
+		যদি (চাবিগুলি[i] != ফাঁকা &&
+		    sshkey_equal_public(চাবি, চাবিগুলি[i])) {
 			found = 1;
-			break;
+			বিরতি;
 		}
 	}
-	if (!found) {
-		if ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
-		    SSH_FP_DEFAULT)) == NULL)
+	যদি (!found) {
+		যদি ((fp = sshkey_fingerprint(চাবি, options.fingerprint_hash,
+		    SSH_FP_DEFAULT)) == ফাঁকা)
 			fatal("%s: sshkey_fingerprint failed", __progname);
 		fatal("%s: no matching hostkey found for key %s %s", __progname,
-		    sshkey_type(key), fp ? fp : "");
+		    sshkey_type(চাবি), fp ? fp : "");
 	}
 
-	if ((r = sshkey_sign(keys[i], &signature, &slen, data, dlen,
-	    pkalg, NULL, NULL, 0)) != 0)
+	যদি ((r = sshkey_sign(চাবিগুলি[i], &signature, &slen, তথ্য, dlen,
+	    pkalg, ফাঁকা, ফাঁকা, 0)) != 0)
 		fatal_r(r, "%s: sshkey_sign failed", __progname);
-	free(data);
+	মুক্ত(তথ্য);
 
 	/* send reply */
 	sshbuf_reset(b);
-	if ((r = sshbuf_put_string(b, signature, slen)) != 0)
+	যদি ((r = sshbuf_put_string(b, signature, slen)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (ssh_msg_send(STDOUT_FILENO, version, b) == -1)
+	যদি (ssh_বার্তা_send(STDOUT_FILENO, version, b) == -1)
 		fatal("%s: ssh_msg_send failed", __progname);
 
-	return (0);
+	ফেরত (0);
 }

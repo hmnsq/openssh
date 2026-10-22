@@ -20,50 +20,50 @@
 /* XXX: remove all logging, only return status codes */
 /* XXX: copy between two remote sites */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <sys/queue.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/statvfs.h>
-#include <sys/uio.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <sys/queue.h>
+#অন্তর্ভাব <sys/stat.h>
+#অন্তর্ভাব <sys/time.h>
+#অন্তর্ভাব <sys/statvfs.h>
+#অন্তর্ভাব <sys/uio.h>
 
-#include <dirent.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <poll.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#অন্তর্ভাব <dirent.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <fcntl.h>
+#অন্তর্ভাব <poll.h>
+#অন্তর্ভাব <signal.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
 
-#include "xmalloc.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "atomicio.h"
-#include "progressmeter.h"
-#include "misc.h"
-#include "utf8.h"
+#অন্তর্ভাব "xmalloc.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "atomicio.h"
+#অন্তর্ভাব "progressmeter.h"
+#অন্তর্ভাব "misc.h"
+#অন্তর্ভাব "utf8.h"
 
-#include "sftp.h"
-#include "sftp-common.h"
-#include "sftp-client.h"
+#অন্তর্ভাব "sftp.h"
+#অন্তর্ভাব "sftp-common.h"
+#অন্তর্ভাব "sftp-client.h"
 
-extern volatile sig_atomic_t interrupted;
-extern int showprogress;
+বাহ্যিক অস্থির sig_atomic_t interrupted;
+বাহ্যিক পূর্ণসংখ্যা showprogress;
 
 /* Default size of buffer for up/download (fix sftp.1 scp.1 if changed) */
 #define DEFAULT_COPY_BUFLEN	32768
 
 /* Default number of concurrent xfer requests (fix sftp.1 scp.1 if changed) */
-#define DEFAULT_NUM_REQUESTS	64
+#define DEFAULT_অঙ্ক_REQUESTS	64
 
 /* Minimum amount of data to read at a time */
-#define MIN_READ_SIZE	512
+#define MIN_READ_আকার	512
 
 /* Maximum depth to descend in directory trees */
 #define MAX_DIR_DEPTH 64
@@ -71,18 +71,18 @@ extern int showprogress;
 /* Directory separator characters */
 #ifdef HAVE_CYGWIN
 # define SFTP_DIRECTORY_CHARS      "/\\"
-#else /* HAVE_CYGWIN */
+#অন্যথা /* HAVE_CYGWIN */
 # define SFTP_DIRECTORY_CHARS      "/"
 #endif /* HAVE_CYGWIN */
 
-struct sftp_conn {
-	int fd_in;
-	int fd_out;
+কাঠামো sftp_conn {
+	পূর্ণসংখ্যা fd_in;
+	পূর্ণসংখ্যা fd_out;
 	u_int download_buflen;
 	u_int upload_buflen;
-	u_int num_requests;
+	u_int অঙ্ক_requests;
 	u_int version;
-	u_int msg_id;
+	u_int বার্তা_id;
 #define SFTP_EXT_POSIX_RENAME		0x00000001
 #define SFTP_EXT_STATVFS		0x00000002
 #define SFTP_EXT_FSTATVFS		0x00000004
@@ -91,699 +91,699 @@ struct sftp_conn {
 #define SFTP_EXT_LSETSTAT		0x00000020
 #define SFTP_EXT_LIMITS			0x00000040
 #define SFTP_EXT_PATH_EXPAND		0x00000080
-#define SFTP_EXT_COPY_DATA		0x00000100
+#define SFTP_EXT_COPY_তথ্য		0x00000100
 #define SFTP_EXT_GETUSERSGROUPS_BY_ID	0x00000200
 	u_int exts;
 	uint64_t limit_kbps;
-	struct bwlimit bwlimit_in, bwlimit_out;
+	কাঠামো bwlimit bwlimit_in, bwlimit_out;
 };
 
 /* Tracks in-progress requests during file transfers */
-struct request {
+কাঠামো request {
 	u_int id;
-	size_t len;
+	আকার_t len;
 	uint64_t offset;
 	TAILQ_ENTRY(request) tq;
 };
 TAILQ_HEAD(requests, request);
 
-static u_char *
-get_handle(struct sftp_conn *conn, u_int expected_id, size_t *len,
-    const char *errfmt, ...) __attribute__((format(printf, 4, 5)));
+স্থির u_char *
+get_handle(কাঠামো sftp_conn *conn, u_int expected_id, আকার_t *len,
+    ধ্রুবক অক্ষর *errfmt, ...) __attribute__((format(printf, 4, 5)));
 
-static struct request *
-request_enqueue(struct requests *requests, u_int id, size_t len,
+স্থির কাঠামো request *
+request_enqueue(কাঠামো requests *requests, u_int id, আকার_t len,
     uint64_t offset)
 {
-	struct request *req;
+	কাঠামো request *req;
 
-	req = xcalloc(1, sizeof(*req));
+	req = xcalloc(1, আকার(*req));
 	req->id = id;
 	req->len = len;
 	req->offset = offset;
 	TAILQ_INSERT_TAIL(requests, req, tq);
-	return req;
+	ফেরত req;
 }
 
-static struct request *
-request_find(struct requests *requests, u_int id)
+স্থির কাঠামো request *
+request_find(কাঠামো requests *requests, u_int id)
 {
-	struct request *req;
+	কাঠামো request *req;
 
-	for (req = TAILQ_FIRST(requests);
-	    req != NULL && req->id != id;
+	জন্য (req = TAILQ_FIRST(requests);
+	    req != ফাঁকা && req->id != id;
 	    req = TAILQ_NEXT(req, tq))
 		;
-	return req;
+	ফেরত req;
 }
 
-static int
-sftpio(void *_bwlimit, size_t amount)
+স্থির পূর্ণসংখ্যা
+sftpio(শূন্য *_bwlimit, আকার_t amount)
 {
-	struct bwlimit *bwlimit = (struct bwlimit *)_bwlimit;
+	কাঠামো bwlimit *bwlimit = (কাঠামো bwlimit *)_bwlimit;
 
 	refresh_progress_meter(0);
-	if (bwlimit != NULL)
+	যদি (bwlimit != ফাঁকা)
 		bandwidth_limit(bwlimit, amount);
-	return 0;
+	ফেরত 0;
 }
 
-static void
-send_msg(struct sftp_conn *conn, struct sshbuf *m)
+স্থির শূন্য
+send_বার্তা(কাঠামো sftp_conn *conn, কাঠামো sshbuf *m)
 {
 	u_char mlen[4];
-	struct iovec iov[2];
+	কাঠামো iovec iov[2];
 
-	if (sshbuf_len(m) > SFTP_MAX_MSG_LENGTH)
+	যদি (sshbuf_len(m) > SFTP_MAX_বার্তা_দৈর্ঘ্য)
 		fatal("Outbound message too long %zu", sshbuf_len(m));
 
 	/* Send length first */
 	put_u32(mlen, sshbuf_len(m));
 	iov[0].iov_base = mlen;
-	iov[0].iov_len = sizeof(mlen);
+	iov[0].iov_len = আকার(mlen);
 	iov[1].iov_base = (u_char *)sshbuf_ptr(m);
 	iov[1].iov_len = sshbuf_len(m);
 
-	if (atomiciov6(writev, conn->fd_out, iov, 2, sftpio,
-	    conn->limit_kbps > 0 ? &conn->bwlimit_out : NULL) !=
-	    sshbuf_len(m) + sizeof(mlen))
+	যদি (atomiciov6(writev, conn->fd_out, iov, 2, sftpio,
+	    conn->limit_kbps > 0 ? &conn->bwlimit_out : ফাঁকা) !=
+	    sshbuf_len(m) + আকার(mlen))
 		fatal("Couldn't send packet: %s", strerror(errno));
 
 	sshbuf_reset(m);
 }
 
-static void
-get_msg_extended(struct sftp_conn *conn, struct sshbuf *m, int initial)
+স্থির শূন্য
+get_বার্তা_extended(কাঠামো sftp_conn *conn, কাঠামো sshbuf *m, পূর্ণসংখ্যা initial)
 {
-	u_int msg_len;
+	u_int বার্তা_len;
 	u_char *p;
-	int r;
+	পূর্ণসংখ্যা r;
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_reserve(m, 4, &p)) != 0)
+	যদি ((r = sshbuf_reserve(m, 4, &p)) != 0)
 		fatal_fr(r, "reserve");
-	if (atomicio6(read, conn->fd_in, p, 4, sftpio,
-	    conn->limit_kbps > 0 ? &conn->bwlimit_in : NULL) != 4) {
-		if (errno == EPIPE || errno == ECONNRESET)
+	যদি (atomicio6(পঠ, conn->fd_in, p, 4, sftpio,
+	    conn->limit_kbps > 0 ? &conn->bwlimit_in : ফাঁকা) != 4) {
+		যদি (errno == EPIPE || errno == ECONNRESET)
 			fatal("Connection closed");
-		else
+		অন্যথা
 			fatal("Couldn't read packet: %s", strerror(errno));
 	}
 
-	if ((r = sshbuf_get_u32(m, &msg_len)) != 0)
+	যদি ((r = sshbuf_get_u32(m, &বার্তা_len)) != 0)
 		fatal_fr(r, "sshbuf_get_u32");
-	if (msg_len > SFTP_MAX_MSG_LENGTH) {
+	যদি (বার্তা_len > SFTP_MAX_বার্তা_দৈর্ঘ্য) {
 		do_log2(initial ? SYSLOG_LEVEL_ERROR : SYSLOG_LEVEL_FATAL,
-		    "Received message too long %u", msg_len);
+		    "Received message too long %u", বার্তা_len);
 		fatal("Ensure the remote shell produces no output "
 		    "for non-interactive sessions.");
 	}
 
-	if ((r = sshbuf_reserve(m, msg_len, &p)) != 0)
+	যদি ((r = sshbuf_reserve(m, বার্তা_len, &p)) != 0)
 		fatal_fr(r, "reserve");
-	if (atomicio6(read, conn->fd_in, p, msg_len, sftpio,
-	    conn->limit_kbps > 0 ? &conn->bwlimit_in : NULL)
-	    != msg_len) {
-		if (errno == EPIPE)
+	যদি (atomicio6(পঠ, conn->fd_in, p, বার্তা_len, sftpio,
+	    conn->limit_kbps > 0 ? &conn->bwlimit_in : ফাঁকা)
+	    != বার্তা_len) {
+		যদি (errno == EPIPE)
 			fatal("Connection closed");
-		else
+		অন্যথা
 			fatal("Read packet: %s", strerror(errno));
 	}
 }
 
-static void
-get_msg(struct sftp_conn *conn, struct sshbuf *m)
+স্থির শূন্য
+get_বার্তা(কাঠামো sftp_conn *conn, কাঠামো sshbuf *m)
 {
-	get_msg_extended(conn, m, 0);
+	get_বার্তা_extended(conn, m, 0);
 }
 
-static void
-send_string_request(struct sftp_conn *conn, u_int id, u_int code, const char *s,
+স্থির শূন্য
+send_string_request(কাঠামো sftp_conn *conn, u_int id, u_int code, ধ্রুবক অক্ষর *s,
     u_int len)
 {
-	struct sshbuf *msg;
-	int r;
+	কাঠামো sshbuf *বার্তা;
+	পূর্ণসংখ্যা r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, code)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_string(msg, s, len)) != 0)
+	যদি ((r = sshbuf_put_u8(বার্তা, code)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_string(বার্তা, s, len)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
+	send_বার্তা(conn, বার্তা);
 	debug3("Sent message fd %d T:%u I:%u", conn->fd_out, code, id);
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 }
 
-static void
-send_string_attrs_request(struct sftp_conn *conn, u_int id, u_int code,
-    const void *s, u_int len, Attrib *a)
+স্থির শূন্য
+send_string_attrs_request(কাঠামো sftp_conn *conn, u_int id, u_int code,
+    ধ্রুবক শূন্য *s, u_int len, Attrib *a)
 {
-	struct sshbuf *msg;
-	int r;
+	কাঠামো sshbuf *বার্তা;
+	পূর্ণসংখ্যা r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, code)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_string(msg, s, len)) != 0 ||
-	    (r = encode_attrib(msg, a)) != 0)
+	যদি ((r = sshbuf_put_u8(বার্তা, code)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_string(বার্তা, s, len)) != 0 ||
+	    (r = encode_attrib(বার্তা, a)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
+	send_বার্তা(conn, বার্তা);
 	debug3("Sent message fd %d T:%u I:%u F:0x%04x M:%05o",
 	    conn->fd_out, code, id, a->flags, a->perm);
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 }
 
-static u_int
-get_status(struct sftp_conn *conn, u_int expected_id)
+স্থির u_int
+get_status(কাঠামো sftp_conn *conn, u_int expected_id)
 {
-	struct sshbuf *msg;
+	কাঠামো sshbuf *বার্তা;
 	u_char type;
 	u_int id, status;
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &id)) != 0)
+	get_বার্তা(conn, বার্তা);
+	যদি ((r = sshbuf_get_u8(বার্তা, &type)) != 0 ||
+	    (r = sshbuf_get_u32(বার্তা, &id)) != 0)
 		fatal_fr(r, "compose");
 
-	if (id != expected_id)
+	যদি (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
-	if (type != SSH2_FXP_STATUS)
+	যদি (type != SSH2_FXP_STATUS)
 		fatal("Expected SSH2_FXP_STATUS(%u) packet, got %u",
 		    SSH2_FXP_STATUS, type);
 
-	if ((r = sshbuf_get_u32(msg, &status)) != 0)
+	যদি ((r = sshbuf_get_u32(বার্তা, &status)) != 0)
 		fatal_fr(r, "parse");
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 
 	debug3("SSH2_FXP_STATUS %u", status);
 
-	return status;
+	ফেরত status;
 }
 
-static u_char *
-get_handle(struct sftp_conn *conn, u_int expected_id, size_t *len,
-    const char *errfmt, ...)
+স্থির u_char *
+get_handle(কাঠামো sftp_conn *conn, u_int expected_id, আকার_t *len,
+    ধ্রুবক অক্ষর *errfmt, ...)
 {
-	struct sshbuf *msg;
+	কাঠামো sshbuf *বার্তা;
 	u_int id, status;
 	u_char type;
 	u_char *handle;
-	char errmsg[256];
+	অক্ষর errmsg[256];
 	va_list args;
-	int r;
+	পূর্ণসংখ্যা r;
 
 	va_start(args, errfmt);
-	if (errfmt != NULL)
-		vsnprintf(errmsg, sizeof(errmsg), errfmt, args);
+	যদি (errfmt != ফাঁকা)
+		vsnprintf(errmsg, আকার(errmsg), errfmt, args);
 	va_end(args);
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &id)) != 0)
+	get_বার্তা(conn, বার্তা);
+	যদি ((r = sshbuf_get_u8(বার্তা, &type)) != 0 ||
+	    (r = sshbuf_get_u32(বার্তা, &id)) != 0)
 		fatal_fr(r, "parse");
 
-	if (id != expected_id)
+	যদি (id != expected_id)
 		fatal("%s: ID mismatch (%u != %u)",
-		    errfmt == NULL ? __func__ : errmsg, id, expected_id);
-	if (type == SSH2_FXP_STATUS) {
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		    errfmt == ফাঁকা ? __func__ : errmsg, id, expected_id);
+	যদি (type == SSH2_FXP_STATUS) {
+		যদি ((r = sshbuf_get_u32(বার্তা, &status)) != 0)
 			fatal_fr(r, "parse status");
-		if (errfmt != NULL)
+		যদি (errfmt != ফাঁকা)
 			error("%s: %s", errmsg, fx2txt(status));
-		sshbuf_free(msg);
-		return(NULL);
-	} else if (type != SSH2_FXP_HANDLE)
+		sshbuf_free(বার্তা);
+		ফেরত(ফাঁকা);
+	} অন্যথা যদি (type != SSH2_FXP_HANDLE)
 		fatal("%s: Expected SSH2_FXP_HANDLE(%u) packet, got %u",
-		    errfmt == NULL ? __func__ : errmsg, SSH2_FXP_HANDLE, type);
+		    errfmt == ফাঁকা ? __func__ : errmsg, SSH2_FXP_HANDLE, type);
 
-	if ((r = sshbuf_get_string(msg, &handle, len)) != 0)
+	যদি ((r = sshbuf_get_string(বার্তা, &handle, len)) != 0)
 		fatal_fr(r, "parse handle");
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 
-	return handle;
+	ফেরত handle;
 }
 
-static int
-get_decode_stat(struct sftp_conn *conn, u_int expected_id, int quiet, Attrib *a)
+স্থির পূর্ণসংখ্যা
+get_decode_stat(কাঠামো sftp_conn *conn, u_int expected_id, পূর্ণসংখ্যা quiet, Attrib *a)
 {
-	struct sshbuf *msg;
+	কাঠামো sshbuf *বার্তা;
 	u_int id;
 	u_char type;
-	int r;
+	পূর্ণসংখ্যা r;
 	Attrib attr;
 
-	if (a != NULL)
-		memset(a, '\0', sizeof(*a));
-	if ((msg = sshbuf_new()) == NULL)
+	যদি (a != ফাঁকা)
+		memset(a, '\0', আকার(*a));
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	get_msg(conn, msg);
+	get_বার্তা(conn, বার্তা);
 
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &id)) != 0)
+	যদি ((r = sshbuf_get_u8(বার্তা, &type)) != 0 ||
+	    (r = sshbuf_get_u32(বার্তা, &id)) != 0)
 		fatal_fr(r, "parse");
 
-	if (id != expected_id)
+	যদি (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
-	if (type == SSH2_FXP_STATUS) {
+	যদি (type == SSH2_FXP_STATUS) {
 		u_int status;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		যদি ((r = sshbuf_get_u32(বার্তা, &status)) != 0)
 			fatal_fr(r, "parse status");
-		if (quiet)
+		যদি (quiet)
 			debug("stat remote: %s", fx2txt(status));
-		else
+		অন্যথা
 			error("stat remote: %s", fx2txt(status));
-		sshbuf_free(msg);
-		return -1;
-	} else if (type != SSH2_FXP_ATTRS) {
+		sshbuf_free(বার্তা);
+		ফেরত -1;
+	} অন্যথা যদি (type != SSH2_FXP_ATTRS) {
 		fatal("Expected SSH2_FXP_ATTRS(%u) packet, got %u",
 		    SSH2_FXP_ATTRS, type);
 	}
-	if ((r = decode_attrib(msg, &attr)) != 0) {
+	যদি ((r = decode_attrib(বার্তা, &attr)) != 0) {
 		error_fr(r, "decode_attrib");
-		sshbuf_free(msg);
-		return -1;
+		sshbuf_free(বার্তা);
+		ফেরত -1;
 	}
 	/* success */
-	if (a != NULL)
+	যদি (a != ফাঁকা)
 		*a = attr;
 	debug3("Received stat reply T:%u I:%u F:0x%04x M:%05o",
 	    type, id, attr.flags, attr.perm);
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 
-	return 0;
+	ফেরত 0;
 }
 
-static int
-get_decode_statvfs(struct sftp_conn *conn, struct sftp_statvfs *st,
-    u_int expected_id, int quiet)
+স্থির পূর্ণসংখ্যা
+get_decode_statvfs(কাঠামো sftp_conn *conn, কাঠামো sftp_statvfs *st,
+    u_int expected_id, পূর্ণসংখ্যা quiet)
 {
-	struct sshbuf *msg;
+	কাঠামো sshbuf *বার্তা;
 	u_char type;
 	u_int id;
 	uint64_t flag;
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	get_msg(conn, msg);
+	get_বার্তা(conn, বার্তা);
 
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &id)) != 0)
+	যদি ((r = sshbuf_get_u8(বার্তা, &type)) != 0 ||
+	    (r = sshbuf_get_u32(বার্তা, &id)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("Received statvfs reply T:%u I:%u", type, id);
-	if (id != expected_id)
+	যদি (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
-	if (type == SSH2_FXP_STATUS) {
+	যদি (type == SSH2_FXP_STATUS) {
 		u_int status;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		যদি ((r = sshbuf_get_u32(বার্তা, &status)) != 0)
 			fatal_fr(r, "parse status");
-		if (quiet)
+		যদি (quiet)
 			debug("remote statvfs: %s", fx2txt(status));
-		else
+		অন্যথা
 			error("remote statvfs: %s", fx2txt(status));
-		sshbuf_free(msg);
-		return -1;
-	} else if (type != SSH2_FXP_EXTENDED_REPLY) {
+		sshbuf_free(বার্তা);
+		ফেরত -1;
+	} অন্যথা যদি (type != SSH2_FXP_EXTENDED_REPLY) {
 		fatal("Expected SSH2_FXP_EXTENDED_REPLY(%u) packet, got %u",
 		    SSH2_FXP_EXTENDED_REPLY, type);
 	}
 
-	memset(st, 0, sizeof(*st));
-	if ((r = sshbuf_get_u64(msg, &st->f_bsize)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_frsize)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_blocks)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_bfree)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_bavail)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_files)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_ffree)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_favail)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_fsid)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &flag)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_namemax)) != 0)
+	memset(st, 0, আকার(*st));
+	যদি ((r = sshbuf_get_u64(বার্তা, &st->f_bsize)) != 0 ||
+	    (r = sshbuf_get_u64(বার্তা, &st->f_frsize)) != 0 ||
+	    (r = sshbuf_get_u64(বার্তা, &st->f_blocks)) != 0 ||
+	    (r = sshbuf_get_u64(বার্তা, &st->f_bfree)) != 0 ||
+	    (r = sshbuf_get_u64(বার্তা, &st->f_bavail)) != 0 ||
+	    (r = sshbuf_get_u64(বার্তা, &st->f_files)) != 0 ||
+	    (r = sshbuf_get_u64(বার্তা, &st->f_ffree)) != 0 ||
+	    (r = sshbuf_get_u64(বার্তা, &st->f_favail)) != 0 ||
+	    (r = sshbuf_get_u64(বার্তা, &st->f_fsid)) != 0 ||
+	    (r = sshbuf_get_u64(বার্তা, &flag)) != 0 ||
+	    (r = sshbuf_get_u64(বার্তা, &st->f_namemax)) != 0)
 		fatal_fr(r, "parse statvfs");
 
 	st->f_flag = (flag & SSH2_FXE_STATVFS_ST_RDONLY) ? ST_RDONLY : 0;
 	st->f_flag |= (flag & SSH2_FXE_STATVFS_ST_NOSUID) ? ST_NOSUID : 0;
 
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 
-	return 0;
+	ফেরত 0;
 }
 
-struct sftp_conn *
-sftp_init(int fd_in, int fd_out, u_int transfer_buflen, u_int num_requests,
+কাঠামো sftp_conn *
+sftp_init(পূর্ণসংখ্যা fd_in, পূর্ণসংখ্যা fd_out, u_int transfer_buflen, u_int অঙ্ক_requests,
     uint64_t limit_kbps)
 {
 	u_char type;
-	struct sshbuf *msg;
-	struct sftp_conn *ret;
-	int r;
+	কাঠামো sshbuf *বার্তা;
+	কাঠামো sftp_conn *ret;
+	পূর্ণসংখ্যা r;
 
-	ret = xcalloc(1, sizeof(*ret));
-	ret->msg_id = 1;
+	ret = xcalloc(1, আকার(*ret));
+	ret->বার্তা_id = 1;
 	ret->fd_in = fd_in;
 	ret->fd_out = fd_out;
 	ret->download_buflen = ret->upload_buflen =
 	    transfer_buflen ? transfer_buflen : DEFAULT_COPY_BUFLEN;
-	ret->num_requests =
-	    num_requests ? num_requests : DEFAULT_NUM_REQUESTS;
+	ret->অঙ্ক_requests =
+	    অঙ্ক_requests ? অঙ্ক_requests : DEFAULT_অঙ্ক_REQUESTS;
 	ret->exts = 0;
 	ret->limit_kbps = 0;
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_INIT)) != 0 ||
-	    (r = sshbuf_put_u32(msg, SSH2_FILEXFER_VERSION)) != 0)
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_INIT)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, SSH2_FILEXFER_VERSION)) != 0)
 		fatal_fr(r, "parse");
 
-	send_msg(ret, msg);
+	send_বার্তা(ret, বার্তা);
 
-	get_msg_extended(ret, msg, 1);
+	get_বার্তা_extended(ret, বার্তা, 1);
 
 	/* Expecting a VERSION reply */
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
+	যদি ((r = sshbuf_get_u8(বার্তা, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_FXP_VERSION) {
+	যদি (type != SSH2_FXP_VERSION) {
 		error("Invalid packet back from SSH2_FXP_INIT (type %u)",
 		    type);
-		sshbuf_free(msg);
-		free(ret);
-		return(NULL);
+		sshbuf_free(বার্তা);
+		মুক্ত(ret);
+		ফেরত(ফাঁকা);
 	}
-	if ((r = sshbuf_get_u32(msg, &ret->version)) != 0)
+	যদি ((r = sshbuf_get_u32(বার্তা, &ret->version)) != 0)
 		fatal_fr(r, "parse version");
 
 	debug2("Remote version: %u", ret->version);
 
 	/* Check for extensions */
-	while (sshbuf_len(msg) > 0) {
-		char *name;
-		u_char *value;
-		size_t vlen;
-		int known = 0;
+	যখন (sshbuf_len(বার্তা) > 0) {
+		অক্ষর *name;
+		u_char *মান;
+		আকার_t vlen;
+		পূর্ণসংখ্যা known = 0;
 
-		if ((r = sshbuf_get_cstring(msg, &name, NULL)) != 0 ||
-		    (r = sshbuf_get_string(msg, &value, &vlen)) != 0)
+		যদি ((r = sshbuf_get_cstring(বার্তা, &name, ফাঁকা)) != 0 ||
+		    (r = sshbuf_get_string(বার্তা, &মান, &vlen)) != 0)
 			fatal_fr(r, "parse extension");
-		if (strcmp(name, "posix-rename@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		যদি (strcmp(name, "posix-rename@openssh.com") == 0 &&
+		    strcmp((অক্ষর *)মান, "1") == 0) {
 			ret->exts |= SFTP_EXT_POSIX_RENAME;
 			known = 1;
-		} else if (strcmp(name, "statvfs@openssh.com") == 0 &&
-		    strcmp((char *)value, "2") == 0) {
+		} অন্যথা যদি (strcmp(name, "statvfs@openssh.com") == 0 &&
+		    strcmp((অক্ষর *)মান, "2") == 0) {
 			ret->exts |= SFTP_EXT_STATVFS;
 			known = 1;
-		} else if (strcmp(name, "fstatvfs@openssh.com") == 0 &&
-		    strcmp((char *)value, "2") == 0) {
+		} অন্যথা যদি (strcmp(name, "fstatvfs@openssh.com") == 0 &&
+		    strcmp((অক্ষর *)মান, "2") == 0) {
 			ret->exts |= SFTP_EXT_FSTATVFS;
 			known = 1;
-		} else if (strcmp(name, "hardlink@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		} অন্যথা যদি (strcmp(name, "hardlink@openssh.com") == 0 &&
+		    strcmp((অক্ষর *)মান, "1") == 0) {
 			ret->exts |= SFTP_EXT_HARDLINK;
 			known = 1;
-		} else if (strcmp(name, "fsync@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		} অন্যথা যদি (strcmp(name, "fsync@openssh.com") == 0 &&
+		    strcmp((অক্ষর *)মান, "1") == 0) {
 			ret->exts |= SFTP_EXT_FSYNC;
 			known = 1;
-		} else if (strcmp(name, "lsetstat@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		} অন্যথা যদি (strcmp(name, "lsetstat@openssh.com") == 0 &&
+		    strcmp((অক্ষর *)মান, "1") == 0) {
 			ret->exts |= SFTP_EXT_LSETSTAT;
 			known = 1;
-		} else if (strcmp(name, "limits@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		} অন্যথা যদি (strcmp(name, "limits@openssh.com") == 0 &&
+		    strcmp((অক্ষর *)মান, "1") == 0) {
 			ret->exts |= SFTP_EXT_LIMITS;
 			known = 1;
-		} else if (strcmp(name, "expand-path@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		} অন্যথা যদি (strcmp(name, "expand-path@openssh.com") == 0 &&
+		    strcmp((অক্ষর *)মান, "1") == 0) {
 			ret->exts |= SFTP_EXT_PATH_EXPAND;
 			known = 1;
-		} else if (strcmp(name, "copy-data") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
-			ret->exts |= SFTP_EXT_COPY_DATA;
+		} অন্যথা যদি (strcmp(name, "copy-data") == 0 &&
+		    strcmp((অক্ষর *)মান, "1") == 0) {
+			ret->exts |= SFTP_EXT_COPY_তথ্য;
 			known = 1;
-		} else if (strcmp(name,
+		} অন্যথা যদি (strcmp(name,
 		    "users-groups-by-id@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		    strcmp((অক্ষর *)মান, "1") == 0) {
 			ret->exts |= SFTP_EXT_GETUSERSGROUPS_BY_ID;
 			known = 1;
 		}
-		if (known) {
+		যদি (known) {
 			debug2("Server supports extension \"%s\" revision %s",
-			    name, value);
-		} else {
+			    name, মান);
+		} অন্যথা {
 			debug2("Unrecognised server extension \"%s\"", name);
 		}
-		free(name);
-		free(value);
+		মুক্ত(name);
+		মুক্ত(মান);
 	}
 
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 
 	/* Query the server for its limits */
-	if (ret->exts & SFTP_EXT_LIMITS) {
-		struct sftp_limits limits;
-		if (sftp_get_limits(ret, &limits) != 0)
+	যদি (ret->exts & SFTP_EXT_LIMITS) {
+		কাঠামো sftp_limits limits;
+		যদি (sftp_get_limits(ret, &limits) != 0)
 			fatal_f("limits failed");
 
 		/* If the caller did not specify, find a good value */
-		if (transfer_buflen == 0) {
-			ret->download_buflen = MINIMUM(limits.read_length,
-			    SFTP_MAX_MSG_LENGTH - 1024);
-			ret->upload_buflen = MINIMUM(limits.write_length,
-			    SFTP_MAX_MSG_LENGTH - 1024);
+		যদি (transfer_buflen == 0) {
+			ret->download_buflen = MINIMUM(limits.read_দৈর্ঘ্য,
+			    SFTP_MAX_বার্তা_দৈর্ঘ্য - 1024);
+			ret->upload_buflen = MINIMUM(limits.write_দৈর্ঘ্য,
+			    SFTP_MAX_বার্তা_দৈর্ঘ্য - 1024);
 			ret->download_buflen = MAXIMUM(ret->download_buflen, 64);
 			ret->upload_buflen = MAXIMUM(ret->upload_buflen, 64);
 			debug3("server upload/download buffer sizes "
 			    "%llu / %llu; using %u / %u",
-			    (unsigned long long)limits.write_length,
-			    (unsigned long long)limits.read_length,
+			    (unsigned long long)limits.write_দৈর্ঘ্য,
+			    (unsigned long long)limits.read_দৈর্ঘ্য,
 			    ret->upload_buflen, ret->download_buflen);
 		}
 	}
 
 	/* Some filexfer v.0 servers don't support large packets */
-	if (ret->version == 0) {
+	যদি (ret->version == 0) {
 		ret->download_buflen = MINIMUM(ret->download_buflen, 20480);
 		ret->upload_buflen = MINIMUM(ret->upload_buflen, 20480);
 	}
 
 	ret->limit_kbps = limit_kbps;
-	if (ret->limit_kbps > 0) {
+	যদি (ret->limit_kbps > 0) {
 		bandwidth_limit_init(&ret->bwlimit_in, ret->limit_kbps,
 		    ret->download_buflen);
 		bandwidth_limit_init(&ret->bwlimit_out, ret->limit_kbps,
 		    ret->upload_buflen);
 	}
 
-	return ret;
+	ফেরত ret;
 }
 
-void
-sftp_free(struct sftp_conn *conn)
+শূন্য
+sftp_free(কাঠামো sftp_conn *conn)
 {
-	if (conn == NULL)
-		return;
-	freezero(conn, sizeof(*conn));
+	যদি (conn == ফাঁকা)
+		ফেরত;
+	freezero(conn, আকার(*conn));
 }
 
 u_int
-sftp_proto_version(struct sftp_conn *conn)
+sftp_proto_version(কাঠামো sftp_conn *conn)
 {
-	return conn->version;
+	ফেরত conn->version;
 }
 
-int
-sftp_get_limits(struct sftp_conn *conn, struct sftp_limits *limits)
+পূর্ণসংখ্যা
+sftp_get_limits(কাঠামো sftp_conn *conn, কাঠামো sftp_limits *limits)
 {
-	u_int id, msg_id;
+	u_int id, বার্তা_id;
 	u_char type;
-	struct sshbuf *msg;
-	int r;
+	কাঠামো sshbuf *বার্তা;
+	পূর্ণসংখ্যা r;
 
-	if ((conn->exts & SFTP_EXT_LIMITS) == 0) {
+	যদি ((conn->exts & SFTP_EXT_LIMITS) == 0) {
 		error("Server does not support limits@openssh.com extension");
-		return -1;
+		ফেরত -1;
 	}
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
 
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "limits@openssh.com")) != 0)
+	id = conn->বার্তা_id++;
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, "limits@openssh.com")) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
+	send_বার্তা(conn, বার্তা);
 	debug3("Sent message limits@openssh.com I:%u", id);
 
-	get_msg(conn, msg);
+	get_বার্তা(conn, বার্তা);
 
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &msg_id)) != 0)
+	যদি ((r = sshbuf_get_u8(বার্তা, &type)) != 0 ||
+	    (r = sshbuf_get_u32(বার্তা, &বার্তা_id)) != 0)
 		fatal_fr(r, "parse");
 
-	debug3("Received limits reply T:%u I:%u", type, msg_id);
-	if (id != msg_id)
-		fatal("ID mismatch (%u != %u)", msg_id, id);
-	if (type != SSH2_FXP_EXTENDED_REPLY) {
+	debug3("Received limits reply T:%u I:%u", type, বার্তা_id);
+	যদি (id != বার্তা_id)
+		fatal("ID mismatch (%u != %u)", বার্তা_id, id);
+	যদি (type != SSH2_FXP_EXTENDED_REPLY) {
 		debug_f("expected SSH2_FXP_EXTENDED_REPLY(%u) packet, got %u",
 		    SSH2_FXP_EXTENDED_REPLY, type);
 		/* Disable the limits extension */
 		conn->exts &= ~SFTP_EXT_LIMITS;
-		sshbuf_free(msg);
-		return -1;
+		sshbuf_free(বার্তা);
+		ফেরত -1;
 	}
 
-	memset(limits, 0, sizeof(*limits));
-	if ((r = sshbuf_get_u64(msg, &limits->packet_length)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &limits->read_length)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &limits->write_length)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &limits->open_handles)) != 0)
+	memset(limits, 0, আকার(*limits));
+	যদি ((r = sshbuf_get_u64(বার্তা, &limits->packet_দৈর্ঘ্য)) != 0 ||
+	    (r = sshbuf_get_u64(বার্তা, &limits->read_দৈর্ঘ্য)) != 0 ||
+	    (r = sshbuf_get_u64(বার্তা, &limits->write_দৈর্ঘ্য)) != 0 ||
+	    (r = sshbuf_get_u64(বার্তা, &limits->open_handles)) != 0)
 		fatal_fr(r, "parse limits");
 
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 
-	return 0;
+	ফেরত 0;
 }
 
-int
-sftp_close(struct sftp_conn *conn, const u_char *handle, u_int handle_len)
+পূর্ণসংখ্যা
+sftp_close(কাঠামো sftp_conn *conn, ধ্রুবক u_char *handle, u_int handle_len)
 {
 	u_int id, status;
-	struct sshbuf *msg;
-	int r;
+	কাঠামো sshbuf *বার্তা;
+	পূর্ণসংখ্যা r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
 
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_CLOSE)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_string(msg, handle, handle_len)) != 0)
+	id = conn->বার্তা_id++;
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_CLOSE)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_string(বার্তা, handle, handle_len)) != 0)
 		fatal_fr(r, "parse");
-	send_msg(conn, msg);
+	send_বার্তা(conn, বার্তা);
 	debug3("Sent message SSH2_FXP_CLOSE I:%u", id);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	যদি (status != SSH2_FX_OK)
 		error("close remote: %s", fx2txt(status));
 
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
 
-static int
-sftp_lsreaddir(struct sftp_conn *conn, const char *path, int print_flag,
+স্থির পূর্ণসংখ্যা
+sftp_lsreaddir(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path, পূর্ণসংখ্যা print_flag,
     SFTP_DIRENT ***dir)
 {
-	struct sshbuf *msg;
-	u_int count, id, i, expected_id, ents = 0;
-	size_t handle_len;
+	কাঠামো sshbuf *বার্তা;
+	u_int গুনতি, id, i, expected_id, ents = 0;
+	আকার_t handle_len;
 	u_char type, *handle;
-	int status = SSH2_FX_FAILURE;
-	int r;
+	পূর্ণসংখ্যা status = SSH2_FX_FAILURE;
+	পূর্ণসংখ্যা r;
 
-	if (dir)
-		*dir = NULL;
+	যদি (dir)
+		*dir = ফাঁকা;
 
-	id = conn->msg_id++;
+	id = conn->বার্তা_id++;
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_OPENDIR)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, path)) != 0)
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_OPENDIR)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, path)) != 0)
 		fatal_fr(r, "compose OPENDIR");
-	send_msg(conn, msg);
+	send_বার্তা(conn, বার্তা);
 
 	handle = get_handle(conn, id, &handle_len,
 	    "remote readdir(\"%s\")", path);
-	if (handle == NULL) {
-		sshbuf_free(msg);
-		return -1;
+	যদি (handle == ফাঁকা) {
+		sshbuf_free(বার্তা);
+		ফেরত -1;
 	}
 
-	if (dir) {
+	যদি (dir) {
 		ents = 0;
-		*dir = xcalloc(1, sizeof(**dir));
-		(*dir)[0] = NULL;
+		*dir = xcalloc(1, আকার(**dir));
+		(*dir)[0] = ফাঁকা;
 	}
 
-	for (; !interrupted;) {
-		id = expected_id = conn->msg_id++;
+	জন্য (; !interrupted;) {
+		id = expected_id = conn->বার্তা_id++;
 
 		debug3("Sending SSH2_FXP_READDIR I:%u", id);
 
-		sshbuf_reset(msg);
-		if ((r = sshbuf_put_u8(msg, SSH2_FXP_READDIR)) != 0 ||
-		    (r = sshbuf_put_u32(msg, id)) != 0 ||
-		    (r = sshbuf_put_string(msg, handle, handle_len)) != 0)
+		sshbuf_reset(বার্তা);
+		যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_READDIR)) != 0 ||
+		    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+		    (r = sshbuf_put_string(বার্তা, handle, handle_len)) != 0)
 			fatal_fr(r, "compose READDIR");
-		send_msg(conn, msg);
+		send_বার্তা(conn, বার্তা);
 
-		sshbuf_reset(msg);
+		sshbuf_reset(বার্তা);
 
-		get_msg(conn, msg);
+		get_বার্তা(conn, বার্তা);
 
-		if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-		    (r = sshbuf_get_u32(msg, &id)) != 0)
+		যদি ((r = sshbuf_get_u8(বার্তা, &type)) != 0 ||
+		    (r = sshbuf_get_u32(বার্তা, &id)) != 0)
 			fatal_fr(r, "parse");
 
 		debug3("Received reply T:%u I:%u", type, id);
 
-		if (id != expected_id)
+		যদি (id != expected_id)
 			fatal("ID mismatch (%u != %u)", id, expected_id);
 
-		if (type == SSH2_FXP_STATUS) {
+		যদি (type == SSH2_FXP_STATUS) {
 			u_int rstatus;
 
-			if ((r = sshbuf_get_u32(msg, &rstatus)) != 0)
+			যদি ((r = sshbuf_get_u32(বার্তা, &rstatus)) != 0)
 				fatal_fr(r, "parse status");
 			debug3("Received SSH2_FXP_STATUS %d", rstatus);
-			if (rstatus == SSH2_FX_EOF)
-				break;
+			যদি (rstatus == SSH2_FX_EOF)
+				বিরতি;
 			error("Couldn't read directory: %s", fx2txt(rstatus));
-			goto out;
-		} else if (type != SSH2_FXP_NAME)
+			যাও out;
+		} অন্যথা যদি (type != SSH2_FXP_NAME)
 			fatal("Expected SSH2_FXP_NAME(%u) packet, got %u",
 			    SSH2_FXP_NAME, type);
 
-		if ((r = sshbuf_get_u32(msg, &count)) != 0)
+		যদি ((r = sshbuf_get_u32(বার্তা, &গুনতি)) != 0)
 			fatal_fr(r, "parse count");
-		if (count > SSHBUF_SIZE_MAX)
+		যদি (গুনতি > SSHBUF_আকার_MAX)
 			fatal_f("nonsensical number of entries");
-		if (count == 0)
-			break;
-		debug3("Received %d SSH2_FXP_NAME responses", count);
-		for (i = 0; i < count; i++) {
-			char *filename, *longname;
+		যদি (গুনতি == 0)
+			বিরতি;
+		debug3("Received %d SSH2_FXP_NAME responses", গুনতি);
+		জন্য (i = 0; i < গুনতি; i++) {
+			অক্ষর *filename, *longname;
 			Attrib a;
 
-			if ((r = sshbuf_get_cstring(msg, &filename,
-			    NULL)) != 0 ||
-			    (r = sshbuf_get_cstring(msg, &longname,
-			    NULL)) != 0)
+			যদি ((r = sshbuf_get_cstring(বার্তা, &filename,
+			    ফাঁকা)) != 0 ||
+			    (r = sshbuf_get_cstring(বার্তা, &longname,
+			    ফাঁকা)) != 0)
 				fatal_fr(r, "parse filenames");
-			if ((r = decode_attrib(msg, &a)) != 0) {
+			যদি ((r = decode_attrib(বার্তা, &a)) != 0) {
 				error_fr(r, "couldn't decode attrib");
-				free(filename);
-				free(longname);
-				goto out;
+				মুক্ত(filename);
+				মুক্ত(longname);
+				যাও out;
 			}
 
-			if (print_flag)
+			যদি (print_flag)
 				mprintf("%s\n", longname);
 
 			/*
@@ -791,362 +791,362 @@ sftp_lsreaddir(struct sftp_conn *conn, const char *path, int print_flag,
 			 * These can be used to attack recursive ops
 			 * (e.g. send '../../../../etc/passwd')
 			 */
-			if (*filename == '\0' ||
-			    strpbrk(filename, SFTP_DIRECTORY_CHARS) != NULL) {
+			যদি (*filename == '\0' ||
+			    strpbrk(filename, SFTP_DIRECTORY_CHARS) != ফাঁকা) {
 				error("Server sent suspect path \"%s\" "
 				    "during readdir of \"%s\"", filename, path);
-			} else if (dir) {
-				*dir = xreallocarray(*dir, ents + 2, sizeof(**dir));
-				(*dir)[ents] = xcalloc(1, sizeof(***dir));
+			} অন্যথা যদি (dir) {
+				*dir = xreallocarray(*dir, ents + 2, আকার(**dir));
+				(*dir)[ents] = xcalloc(1, আকার(***dir));
 				(*dir)[ents]->filename = xstrdup(filename);
 				(*dir)[ents]->longname = xstrdup(longname);
-				memcpy(&(*dir)[ents]->a, &a, sizeof(a));
-				(*dir)[++ents] = NULL;
+				memcpy(&(*dir)[ents]->a, &a, আকার(a));
+				(*dir)[++ents] = ফাঁকা;
 			}
-			free(filename);
-			free(longname);
+			মুক্ত(filename);
+			মুক্ত(longname);
 		}
 	}
 	status = 0;
 
  out:
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 	sftp_close(conn, handle, handle_len);
-	free(handle);
+	মুক্ত(handle);
 
-	if (status != 0 && dir != NULL) {
+	যদি (status != 0 && dir != ফাঁকা) {
 		/* Don't return results on error */
 		sftp_free_dirents(*dir);
-		*dir = NULL;
-	} else if (interrupted && dir != NULL && *dir != NULL) {
+		*dir = ফাঁকা;
+	} অন্যথা যদি (interrupted && dir != ফাঁকা && *dir != ফাঁকা) {
 		/* Don't return partial matches on interrupt */
 		sftp_free_dirents(*dir);
-		*dir = xcalloc(1, sizeof(**dir));
-		**dir = NULL;
+		*dir = xcalloc(1, আকার(**dir));
+		**dir = ফাঁকা;
 	}
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_readdir(struct sftp_conn *conn, const char *path, SFTP_DIRENT ***dir)
+পূর্ণসংখ্যা
+sftp_readdir(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path, SFTP_DIRENT ***dir)
 {
-	return sftp_lsreaddir(conn, path, 0, dir);
+	ফেরত sftp_lsreaddir(conn, path, 0, dir);
 }
 
-void sftp_free_dirents(SFTP_DIRENT **s)
+শূন্য sftp_free_dirents(SFTP_DIRENT **s)
 {
-	int i;
+	পূর্ণসংখ্যা i;
 
-	if (s == NULL)
-		return;
-	for (i = 0; s[i]; i++) {
-		free(s[i]->filename);
-		free(s[i]->longname);
-		free(s[i]);
+	যদি (s == ফাঁকা)
+		ফেরত;
+	জন্য (i = 0; s[i]; i++) {
+		মুক্ত(s[i]->filename);
+		মুক্ত(s[i]->longname);
+		মুক্ত(s[i]);
 	}
-	free(s);
+	মুক্ত(s);
 }
 
-int
-sftp_rm(struct sftp_conn *conn, const char *path)
+পূর্ণসংখ্যা
+sftp_rm(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path)
 {
 	u_int status, id;
 
 	debug2("Sending SSH2_FXP_REMOVE \"%s\"", path);
 
-	id = conn->msg_id++;
+	id = conn->বার্তা_id++;
 	send_string_request(conn, id, SSH2_FXP_REMOVE, path, strlen(path));
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	যদি (status != SSH2_FX_OK)
 		error("remote delete %s: %s", path, fx2txt(status));
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_mkdir(struct sftp_conn *conn, const char *path, Attrib *a, int print_flag)
+পূর্ণসংখ্যা
+sftp_mkdir(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path, Attrib *a, পূর্ণসংখ্যা print_flag)
 {
 	u_int status, id;
 
 	debug2("Sending SSH2_FXP_MKDIR \"%s\"", path);
 
-	id = conn->msg_id++;
+	id = conn->বার্তা_id++;
 	send_string_attrs_request(conn, id, SSH2_FXP_MKDIR, path,
 	    strlen(path), a);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK && print_flag)
+	যদি (status != SSH2_FX_OK && print_flag)
 		error("remote mkdir \"%s\": %s", path, fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_mkpath(struct sftp_conn *conn, const char *path, Attrib *a, int print_flag)
+পূর্ণসংখ্যা
+sftp_mkpath(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path, Attrib *a, পূর্ণসংখ্যা print_flag)
 {
-	char *slash, *tmp_path;
-	int done;
+	অক্ষর *slash, *tmp_path;
+	পূর্ণসংখ্যা done;
 
 	tmp_path = xstrdup(path);
 	slash = tmp_path;
 
-	for (;;) {
+	জন্য (;;) {
 		slash += strspn(slash, "/");
 		slash += strcspn(slash, "/");
 
 		done = (*slash == '\0');
 		*slash = '\0';
 
-		if (!sftp_remote_is_dir(conn, tmp_path)) {
-			if (sftp_mkdir(conn, tmp_path, a, print_flag) != 0) {
-				free(tmp_path);
-				return -1;
+		যদি (!sftp_remote_is_dir(conn, tmp_path)) {
+			যদি (sftp_mkdir(conn, tmp_path, a, print_flag) != 0) {
+				মুক্ত(tmp_path);
+				ফেরত -1;
 			}
 		}
 
-		if (done)
-			break;
+		যদি (done)
+			বিরতি;
 
 		*slash = '/';
 	}
 
-	free(tmp_path);
-	return 0;
+	মুক্ত(tmp_path);
+	ফেরত 0;
 }
 
-int
-sftp_rmdir(struct sftp_conn *conn, const char *path)
+পূর্ণসংখ্যা
+sftp_rmdir(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path)
 {
 	u_int status, id;
 
 	debug2("Sending SSH2_FXP_RMDIR \"%s\"", path);
 
-	id = conn->msg_id++;
+	id = conn->বার্তা_id++;
 	send_string_request(conn, id, SSH2_FXP_RMDIR, path,
 	    strlen(path));
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	যদি (status != SSH2_FX_OK)
 		error("remote rmdir \"%s\": %s", path, fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_stat(struct sftp_conn *conn, const char *path, int quiet, Attrib *a)
+পূর্ণসংখ্যা
+sftp_stat(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path, পূর্ণসংখ্যা quiet, Attrib *a)
 {
 	u_int id;
 
 	debug2("Sending SSH2_FXP_STAT \"%s\"", path);
 
-	id = conn->msg_id++;
+	id = conn->বার্তা_id++;
 
 	send_string_request(conn, id,
 	    conn->version == 0 ? SSH2_FXP_STAT_VERSION_0 : SSH2_FXP_STAT,
 	    path, strlen(path));
 
-	return get_decode_stat(conn, id, quiet, a);
+	ফেরত get_decode_stat(conn, id, quiet, a);
 }
 
-int
-sftp_lstat(struct sftp_conn *conn, const char *path, int quiet, Attrib *a)
+পূর্ণসংখ্যা
+sftp_lstat(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path, পূর্ণসংখ্যা quiet, Attrib *a)
 {
 	u_int id;
 
-	if (conn->version == 0) {
+	যদি (conn->version == 0) {
 		do_log2(quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_INFO,
 		    "Server version does not support lstat operation");
-		return sftp_stat(conn, path, quiet, a);
+		ফেরত sftp_stat(conn, path, quiet, a);
 	}
 
-	id = conn->msg_id++;
+	id = conn->বার্তা_id++;
 	send_string_request(conn, id, SSH2_FXP_LSTAT, path,
 	    strlen(path));
 
-	return get_decode_stat(conn, id, quiet, a);
+	ফেরত get_decode_stat(conn, id, quiet, a);
 }
 
 #ifdef notyet
-int
-sftp_fstat(struct sftp_conn *conn, const u_char *handle, u_int handle_len,
-    int quiet, Attrib *a)
+পূর্ণসংখ্যা
+sftp_fstat(কাঠামো sftp_conn *conn, ধ্রুবক u_char *handle, u_int handle_len,
+    পূর্ণসংখ্যা quiet, Attrib *a)
 {
 	u_int id;
 
 	debug2("Sending SSH2_FXP_FSTAT \"%s\"");
 
-	id = conn->msg_id++;
+	id = conn->বার্তা_id++;
 	send_string_request(conn, id, SSH2_FXP_FSTAT, handle,
 	    handle_len);
 
-	return get_decode_stat(conn, id, quiet, a);
+	ফেরত get_decode_stat(conn, id, quiet, a);
 }
 #endif
 
-int
-sftp_setstat(struct sftp_conn *conn, const char *path, Attrib *a)
+পূর্ণসংখ্যা
+sftp_setstat(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path, Attrib *a)
 {
 	u_int status, id;
 
 	debug2("Sending SSH2_FXP_SETSTAT \"%s\"", path);
 
-	id = conn->msg_id++;
+	id = conn->বার্তা_id++;
 	send_string_attrs_request(conn, id, SSH2_FXP_SETSTAT, path,
 	    strlen(path), a);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	যদি (status != SSH2_FX_OK)
 		error("remote setstat \"%s\": %s", path, fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_fsetstat(struct sftp_conn *conn, const u_char *handle, u_int handle_len,
+পূর্ণসংখ্যা
+sftp_fsetstat(কাঠামো sftp_conn *conn, ধ্রুবক u_char *handle, u_int handle_len,
     Attrib *a)
 {
 	u_int status, id;
 
 	debug2("Sending SSH2_FXP_FSETSTAT");
 
-	id = conn->msg_id++;
+	id = conn->বার্তা_id++;
 	send_string_attrs_request(conn, id, SSH2_FXP_FSETSTAT, handle,
 	    handle_len, a);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	যদি (status != SSH2_FX_OK)
 		error("remote fsetstat: %s", fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
 /* Implements both the realpath and expand-path operations */
-static char *
-sftp_realpath_expand(struct sftp_conn *conn, const char *path, int expand)
+স্থির অক্ষর *
+sftp_realpath_expand(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path, পূর্ণসংখ্যা expand)
 {
-	struct sshbuf *msg;
-	u_int expected_id, count, id;
-	char *filename, *longname;
+	কাঠামো sshbuf *বার্তা;
+	u_int expected_id, গুনতি, id;
+	অক্ষর *filename, *longname;
 	Attrib a;
 	u_char type;
-	int r;
-	const char *what = "SSH2_FXP_REALPATH";
+	পূর্ণসংখ্যা r;
+	ধ্রুবক অক্ষর *what = "SSH2_FXP_REALPATH";
 
-	if (expand)
+	যদি (expand)
 		what = "expand-path@openssh.com";
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
 
-	expected_id = id = conn->msg_id++;
-	if (expand) {
+	expected_id = id = conn->বার্তা_id++;
+	যদি (expand) {
 		debug2("Sending SSH2_FXP_EXTENDED(expand-path@openssh.com) "
 		    "\"%s\"", path);
-		if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-		    (r = sshbuf_put_u32(msg, id)) != 0 ||
-		    (r = sshbuf_put_cstring(msg,
+		যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_EXTENDED)) != 0 ||
+		    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+		    (r = sshbuf_put_cstring(বার্তা,
 		    "expand-path@openssh.com")) != 0 ||
-		    (r = sshbuf_put_cstring(msg, path)) != 0)
+		    (r = sshbuf_put_cstring(বার্তা, path)) != 0)
 			fatal_fr(r, "compose %s", what);
-		send_msg(conn, msg);
-	} else {
+		send_বার্তা(conn, বার্তা);
+	} অন্যথা {
 		debug2("Sending SSH2_FXP_REALPATH \"%s\"", path);
 		send_string_request(conn, id, SSH2_FXP_REALPATH,
 		    path, strlen(path));
 	}
-	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &id)) != 0)
+	get_বার্তা(conn, বার্তা);
+	যদি ((r = sshbuf_get_u8(বার্তা, &type)) != 0 ||
+	    (r = sshbuf_get_u32(বার্তা, &id)) != 0)
 		fatal_fr(r, "parse");
 
-	if (id != expected_id)
+	যদি (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
 
-	if (type == SSH2_FXP_STATUS) {
+	যদি (type == SSH2_FXP_STATUS) {
 		u_int status;
-		char *errmsg;
+		অক্ষর *errmsg;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0 ||
-		    (r = sshbuf_get_cstring(msg, &errmsg, NULL)) != 0)
+		যদি ((r = sshbuf_get_u32(বার্তা, &status)) != 0 ||
+		    (r = sshbuf_get_cstring(বার্তা, &errmsg, ফাঁকা)) != 0)
 			fatal_fr(r, "parse status");
 		error("%s %s: %s", expand ? "expand" : "realpath",
 		    path, *errmsg == '\0' ? fx2txt(status) : errmsg);
-		free(errmsg);
-		sshbuf_free(msg);
-		return NULL;
-	} else if (type != SSH2_FXP_NAME)
+		মুক্ত(errmsg);
+		sshbuf_free(বার্তা);
+		ফেরত ফাঁকা;
+	} অন্যথা যদি (type != SSH2_FXP_NAME)
 		fatal("Expected SSH2_FXP_NAME(%u) packet, got %u",
 		    SSH2_FXP_NAME, type);
 
-	if ((r = sshbuf_get_u32(msg, &count)) != 0)
+	যদি ((r = sshbuf_get_u32(বার্তা, &গুনতি)) != 0)
 		fatal_fr(r, "parse count");
-	if (count != 1)
-		fatal("Got multiple names (%d) from %s", count, what);
+	যদি (গুনতি != 1)
+		fatal("Got multiple names (%d) from %s", গুনতি, what);
 
-	if ((r = sshbuf_get_cstring(msg, &filename, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(msg, &longname, NULL)) != 0 ||
-	    (r = decode_attrib(msg, &a)) != 0)
+	যদি ((r = sshbuf_get_cstring(বার্তা, &filename, ফাঁকা)) != 0 ||
+	    (r = sshbuf_get_cstring(বার্তা, &longname, ফাঁকা)) != 0 ||
+	    (r = decode_attrib(বার্তা, &a)) != 0)
 		fatal_fr(r, "parse filename/attrib");
 
 	debug3("%s %s -> %s", what, path, filename);
 
-	free(longname);
+	মুক্ত(longname);
 
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 
-	return(filename);
+	ফেরত(filename);
 }
 
-char *
-sftp_realpath(struct sftp_conn *conn, const char *path)
+অক্ষর *
+sftp_realpath(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path)
 {
-	return sftp_realpath_expand(conn, path, 0);
+	ফেরত sftp_realpath_expand(conn, path, 0);
 }
 
-int
-sftp_can_expand_path(struct sftp_conn *conn)
+পূর্ণসংখ্যা
+sftp_can_expand_path(কাঠামো sftp_conn *conn)
 {
-	return (conn->exts & SFTP_EXT_PATH_EXPAND) != 0;
+	ফেরত (conn->exts & SFTP_EXT_PATH_EXPAND) != 0;
 }
 
-char *
-sftp_expand_path(struct sftp_conn *conn, const char *path)
+অক্ষর *
+sftp_expand_path(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path)
 {
-	if (!sftp_can_expand_path(conn)) {
+	যদি (!sftp_can_expand_path(conn)) {
 		debug3_f("no server support, fallback to realpath");
-		return sftp_realpath_expand(conn, path, 0);
+		ফেরত sftp_realpath_expand(conn, path, 0);
 	}
-	return sftp_realpath_expand(conn, path, 1);
+	ফেরত sftp_realpath_expand(conn, path, 1);
 }
 
-int
-sftp_copy(struct sftp_conn *conn, const char *oldpath, const char *newpath)
+পূর্ণসংখ্যা
+sftp_copy(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *oldpath, ধ্রুবক অক্ষর *newpath)
 {
 	Attrib junk, attr;
-	struct sshbuf *msg;
+	কাঠামো sshbuf *বার্তা;
 	u_char *old_handle, *new_handle;
 	u_int mode, status, id;
-	size_t old_handle_len, new_handle_len;
-	int r;
+	আকার_t old_handle_len, new_handle_len;
+	পূর্ণসংখ্যা r;
 
 	/* Return if the extension is not supported */
-	if ((conn->exts & SFTP_EXT_COPY_DATA) == 0) {
+	যদি ((conn->exts & SFTP_EXT_COPY_তথ্য) == 0) {
 		error("Server does not support copy-data extension");
-		return -1;
+		ফেরত -1;
 	}
 
 	/* Make sure the file exists, and we can copy its perms */
-	if (sftp_stat(conn, oldpath, 0, &attr) != 0)
-		return -1;
+	যদি (sftp_stat(conn, oldpath, 0, &attr) != 0)
+		ফেরত -1;
 
 	/* Do not preserve set[ug]id here, as we do not preserve ownership */
-	if (attr.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+	যদি (attr.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
 		mode = attr.perm & 0777;
 
-		if (!S_ISREG(attr.perm)) {
+		যদি (!S_ISREG(attr.perm)) {
 			error("Cannot copy non-regular file: %s", oldpath);
-			return -1;
+			ফেরত -1;
 		}
-	} else {
+	} অন্যথা {
 		/* NB: The user's umask will apply to this */
 		mode = 0666;
 	}
@@ -1156,478 +1156,478 @@ sftp_copy(struct sftp_conn *conn, const char *oldpath, const char *newpath)
 	attr.perm = mode;
 	attr.flags |= SSH2_FILEXFER_ATTR_PERMISSIONS;
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
 
 	attrib_clear(&junk); /* Send empty attributes */
 
 	/* Open the old file for reading */
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_OPEN)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, oldpath)) != 0 ||
-	    (r = sshbuf_put_u32(msg, SSH2_FXF_READ)) != 0 ||
-	    (r = encode_attrib(msg, &junk)) != 0)
+	id = conn->বার্তা_id++;
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_OPEN)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, oldpath)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, SSH2_FXF_READ)) != 0 ||
+	    (r = encode_attrib(বার্তা, &junk)) != 0)
 		fatal_fr(r, "buffer error");
-	send_msg(conn, msg);
+	send_বার্তা(conn, বার্তা);
 	debug3("Sent message SSH2_FXP_OPEN I:%u P:%s", id, oldpath);
 
-	sshbuf_reset(msg);
+	sshbuf_reset(বার্তা);
 
 	old_handle = get_handle(conn, id, &old_handle_len,
 	    "remote open(\"%s\")", oldpath);
-	if (old_handle == NULL) {
-		sshbuf_free(msg);
-		return -1;
+	যদি (old_handle == ফাঁকা) {
+		sshbuf_free(বার্তা);
+		ফেরত -1;
 	}
 
 	/* Open the new file for writing */
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_OPEN)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, newpath)) != 0 ||
-	    (r = sshbuf_put_u32(msg, SSH2_FXF_WRITE|SSH2_FXF_CREAT|
+	id = conn->বার্তা_id++;
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_OPEN)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, newpath)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, SSH2_FXF_WRITE|SSH2_FXF_CREAT|
 	    SSH2_FXF_TRUNC)) != 0 ||
-	    (r = encode_attrib(msg, &attr)) != 0)
+	    (r = encode_attrib(বার্তা, &attr)) != 0)
 		fatal_fr(r, "buffer error");
-	send_msg(conn, msg);
+	send_বার্তা(conn, বার্তা);
 	debug3("Sent message SSH2_FXP_OPEN I:%u P:%s", id, newpath);
 
-	sshbuf_reset(msg);
+	sshbuf_reset(বার্তা);
 
 	new_handle = get_handle(conn, id, &new_handle_len,
 	    "remote open(\"%s\")", newpath);
-	if (new_handle == NULL) {
-		sshbuf_free(msg);
-		free(old_handle);
-		return -1;
+	যদি (new_handle == ফাঁকা) {
+		sshbuf_free(বার্তা);
+		মুক্ত(old_handle);
+		ফেরত -1;
 	}
 
 	/* Copy the file data */
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "copy-data")) != 0 ||
-	    (r = sshbuf_put_string(msg, old_handle, old_handle_len)) != 0 ||
-	    (r = sshbuf_put_u64(msg, 0)) != 0 ||
-	    (r = sshbuf_put_u64(msg, 0)) != 0 ||
-	    (r = sshbuf_put_string(msg, new_handle, new_handle_len)) != 0 ||
-	    (r = sshbuf_put_u64(msg, 0)) != 0)
+	id = conn->বার্তা_id++;
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, "copy-data")) != 0 ||
+	    (r = sshbuf_put_string(বার্তা, old_handle, old_handle_len)) != 0 ||
+	    (r = sshbuf_put_u64(বার্তা, 0)) != 0 ||
+	    (r = sshbuf_put_u64(বার্তা, 0)) != 0 ||
+	    (r = sshbuf_put_string(বার্তা, new_handle, new_handle_len)) != 0 ||
+	    (r = sshbuf_put_u64(বার্তা, 0)) != 0)
 		fatal_fr(r, "buffer error");
-	send_msg(conn, msg);
+	send_বার্তা(conn, বার্তা);
 	debug3("Sent message copy-data \"%s\" 0 0 -> \"%s\" 0",
 	       oldpath, newpath);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	যদি (status != SSH2_FX_OK)
 		error("Couldn't copy file \"%s\" to \"%s\": %s", oldpath,
 		    newpath, fx2txt(status));
 
 	/* Clean up everything */
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 	sftp_close(conn, old_handle, old_handle_len);
 	sftp_close(conn, new_handle, new_handle_len);
-	free(old_handle);
-	free(new_handle);
+	মুক্ত(old_handle);
+	মুক্ত(new_handle);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_rename(struct sftp_conn *conn, const char *oldpath, const char *newpath,
-    int force_legacy)
+পূর্ণসংখ্যা
+sftp_rename(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *oldpath, ধ্রুবক অক্ষর *newpath,
+    পূর্ণসংখ্যা force_legacy)
 {
-	struct sshbuf *msg;
+	কাঠামো sshbuf *বার্তা;
 	u_int status, id;
-	int r, use_ext = (conn->exts & SFTP_EXT_POSIX_RENAME) && !force_legacy;
+	পূর্ণসংখ্যা r, use_ext = (conn->exts & SFTP_EXT_POSIX_RENAME) && !force_legacy;
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
 
 	/* Send rename request */
-	id = conn->msg_id++;
-	if (use_ext) {
+	id = conn->বার্তা_id++;
+	যদি (use_ext) {
 		debug2("Sending SSH2_FXP_EXTENDED(posix-rename@openssh.com) "
 		    "\"%s\" to \"%s\"", oldpath, newpath);
-		if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-		    (r = sshbuf_put_u32(msg, id)) != 0 ||
-		    (r = sshbuf_put_cstring(msg,
+		যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_EXTENDED)) != 0 ||
+		    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+		    (r = sshbuf_put_cstring(বার্তা,
 		    "posix-rename@openssh.com")) != 0)
 			fatal_fr(r, "compose posix-rename");
-	} else {
+	} অন্যথা {
 		debug2("Sending SSH2_FXP_RENAME \"%s\" to \"%s\"",
 		    oldpath, newpath);
-		if ((r = sshbuf_put_u8(msg, SSH2_FXP_RENAME)) != 0 ||
-		    (r = sshbuf_put_u32(msg, id)) != 0)
+		যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_RENAME)) != 0 ||
+		    (r = sshbuf_put_u32(বার্তা, id)) != 0)
 			fatal_fr(r, "compose rename");
 	}
-	if ((r = sshbuf_put_cstring(msg, oldpath)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, newpath)) != 0)
+	যদি ((r = sshbuf_put_cstring(বার্তা, oldpath)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, newpath)) != 0)
 		fatal_fr(r, "compose paths");
-	send_msg(conn, msg);
+	send_বার্তা(conn, বার্তা);
 	debug3("Sent message %s \"%s\" -> \"%s\"",
 	    use_ext ? "posix-rename@openssh.com" :
 	    "SSH2_FXP_RENAME", oldpath, newpath);
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	যদি (status != SSH2_FX_OK)
 		error("remote rename \"%s\" to \"%s\": %s", oldpath,
 		    newpath, fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_hardlink(struct sftp_conn *conn, const char *oldpath, const char *newpath)
+পূর্ণসংখ্যা
+sftp_hardlink(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *oldpath, ধ্রুবক অক্ষর *newpath)
 {
-	struct sshbuf *msg;
+	কাঠামো sshbuf *বার্তা;
 	u_int status, id;
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if ((conn->exts & SFTP_EXT_HARDLINK) == 0) {
+	যদি ((conn->exts & SFTP_EXT_HARDLINK) == 0) {
 		error("Server does not support hardlink@openssh.com extension");
-		return -1;
+		ফেরত -1;
 	}
 	debug2("Sending SSH2_FXP_EXTENDED(hardlink@openssh.com) "
 	    "\"%s\" to \"%s\"", oldpath, newpath);
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
 
 	/* Send link request */
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "hardlink@openssh.com")) != 0 ||
-	    (r = sshbuf_put_cstring(msg, oldpath)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, newpath)) != 0)
+	id = conn->বার্তা_id++;
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, "hardlink@openssh.com")) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, oldpath)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, newpath)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
+	send_বার্তা(conn, বার্তা);
 	debug3("Sent message hardlink@openssh.com \"%s\" -> \"%s\"",
 	    oldpath, newpath);
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	যদি (status != SSH2_FX_OK)
 		error("remote link \"%s\" to \"%s\": %s", oldpath,
 		    newpath, fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_symlink(struct sftp_conn *conn, const char *oldpath, const char *newpath)
+পূর্ণসংখ্যা
+sftp_symlink(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *oldpath, ধ্রুবক অক্ষর *newpath)
 {
-	struct sshbuf *msg;
+	কাঠামো sshbuf *বার্তা;
 	u_int status, id;
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if (conn->version < 3) {
+	যদি (conn->version < 3) {
 		error("This server does not support the symlink operation");
-		return(SSH2_FX_OP_UNSUPPORTED);
+		ফেরত(SSH2_FX_OP_UNSUPPORTED);
 	}
 	debug2("Sending SSH2_FXP_SYMLINK \"%s\" to \"%s\"", oldpath, newpath);
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
 
 	/* Send symlink request */
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_SYMLINK)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, oldpath)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, newpath)) != 0)
+	id = conn->বার্তা_id++;
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_SYMLINK)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, oldpath)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, newpath)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
+	send_বার্তা(conn, বার্তা);
 	debug3("Sent message SSH2_FXP_SYMLINK \"%s\" -> \"%s\"", oldpath,
 	    newpath);
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	যদি (status != SSH2_FX_OK)
 		error("remote symlink file \"%s\" to \"%s\": %s", oldpath,
 		    newpath, fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_fsync(struct sftp_conn *conn, u_char *handle, u_int handle_len)
+পূর্ণসংখ্যা
+sftp_fsync(কাঠামো sftp_conn *conn, u_char *handle, u_int handle_len)
 {
-	struct sshbuf *msg;
+	কাঠামো sshbuf *বার্তা;
 	u_int status, id;
-	int r;
+	পূর্ণসংখ্যা r;
 
 	/* Silently return if the extension is not supported */
-	if ((conn->exts & SFTP_EXT_FSYNC) == 0)
-		return -1;
+	যদি ((conn->exts & SFTP_EXT_FSYNC) == 0)
+		ফেরত -1;
 	debug2("Sending SSH2_FXP_EXTENDED(fsync@openssh.com)");
 
 	/* Send fsync request */
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "fsync@openssh.com")) != 0 ||
-	    (r = sshbuf_put_string(msg, handle, handle_len)) != 0)
+	id = conn->বার্তা_id++;
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, "fsync@openssh.com")) != 0 ||
+	    (r = sshbuf_put_string(বার্তা, handle, handle_len)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
+	send_বার্তা(conn, বার্তা);
 	debug3("Sent message fsync@openssh.com I:%u", id);
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	যদি (status != SSH2_FX_OK)
 		error("remote fsync: %s", fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
 #ifdef notyet
-char *
-sftp_readlink(struct sftp_conn *conn, const char *path)
+অক্ষর *
+sftp_readlink(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path)
 {
-	struct sshbuf *msg;
-	u_int expected_id, count, id;
-	char *filename, *longname;
+	কাঠামো sshbuf *বার্তা;
+	u_int expected_id, গুনতি, id;
+	অক্ষর *filename, *longname;
 	Attrib a;
 	u_char type;
-	int r;
+	পূর্ণসংখ্যা r;
 
 	debug2("Sending SSH2_FXP_READLINK \"%s\"", path);
 
-	expected_id = id = conn->msg_id++;
+	expected_id = id = conn->বার্তা_id++;
 	send_string_request(conn, id, SSH2_FXP_READLINK, path, strlen(path));
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
 
-	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &id)) != 0)
+	get_বার্তা(conn, বার্তা);
+	যদি ((r = sshbuf_get_u8(বার্তা, &type)) != 0 ||
+	    (r = sshbuf_get_u32(বার্তা, &id)) != 0)
 		fatal_fr(r, "parse");
 
-	if (id != expected_id)
+	যদি (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
 
-	if (type == SSH2_FXP_STATUS) {
+	যদি (type == SSH2_FXP_STATUS) {
 		u_int status;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		যদি ((r = sshbuf_get_u32(বার্তা, &status)) != 0)
 			fatal_fr(r, "parse status");
 		error("Couldn't readlink: %s", fx2txt(status));
-		sshbuf_free(msg);
-		return(NULL);
-	} else if (type != SSH2_FXP_NAME)
+		sshbuf_free(বার্তা);
+		ফেরত(ফাঁকা);
+	} অন্যথা যদি (type != SSH2_FXP_NAME)
 		fatal("Expected SSH2_FXP_NAME(%u) packet, got %u",
 		    SSH2_FXP_NAME, type);
 
-	if ((r = sshbuf_get_u32(msg, &count)) != 0)
+	যদি ((r = sshbuf_get_u32(বার্তা, &গুনতি)) != 0)
 		fatal_fr(r, "parse count");
-	if (count != 1)
-		fatal("Got multiple names (%d) from SSH_FXP_READLINK", count);
+	যদি (গুনতি != 1)
+		fatal("Got multiple names (%d) from SSH_FXP_READLINK", গুনতি);
 
-	if ((r = sshbuf_get_cstring(msg, &filename, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(msg, &longname, NULL)) != 0 ||
-	    (r = decode_attrib(msg, &a)) != 0)
+	যদি ((r = sshbuf_get_cstring(বার্তা, &filename, ফাঁকা)) != 0 ||
+	    (r = sshbuf_get_cstring(বার্তা, &longname, ফাঁকা)) != 0 ||
+	    (r = decode_attrib(বার্তা, &a)) != 0)
 		fatal_fr(r, "parse filenames/attrib");
 
 	debug3("SSH_FXP_READLINK %s -> %s", path, filename);
 
-	free(longname);
+	মুক্ত(longname);
 
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 
-	return filename;
+	ফেরত filename;
 }
 #endif
 
-int
-sftp_statvfs(struct sftp_conn *conn, const char *path, struct sftp_statvfs *st,
-    int quiet)
+পূর্ণসংখ্যা
+sftp_statvfs(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path, কাঠামো sftp_statvfs *st,
+    পূর্ণসংখ্যা quiet)
 {
-	struct sshbuf *msg;
+	কাঠামো sshbuf *বার্তা;
 	u_int id;
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if ((conn->exts & SFTP_EXT_STATVFS) == 0) {
+	যদি ((conn->exts & SFTP_EXT_STATVFS) == 0) {
 		error("Server does not support statvfs@openssh.com extension");
-		return -1;
+		ফেরত -1;
 	}
 
 	debug2("Sending SSH2_FXP_EXTENDED(statvfs@openssh.com) \"%s\"", path);
 
-	id = conn->msg_id++;
+	id = conn->বার্তা_id++;
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "statvfs@openssh.com")) != 0 ||
-	    (r = sshbuf_put_cstring(msg, path)) != 0)
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, "statvfs@openssh.com")) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, path)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
-	sshbuf_free(msg);
+	send_বার্তা(conn, বার্তা);
+	sshbuf_free(বার্তা);
 
-	return get_decode_statvfs(conn, st, id, quiet);
+	ফেরত get_decode_statvfs(conn, st, id, quiet);
 }
 
 #ifdef notyet
-int
-sftp_fstatvfs(struct sftp_conn *conn, const u_char *handle, u_int handle_len,
-    struct sftp_statvfs *st, int quiet)
+পূর্ণসংখ্যা
+sftp_fstatvfs(কাঠামো sftp_conn *conn, ধ্রুবক u_char *handle, u_int handle_len,
+    কাঠামো sftp_statvfs *st, পূর্ণসংখ্যা quiet)
 {
-	struct sshbuf *msg;
+	কাঠামো sshbuf *বার্তা;
 	u_int id;
 
-	if ((conn->exts & SFTP_EXT_FSTATVFS) == 0) {
+	যদি ((conn->exts & SFTP_EXT_FSTATVFS) == 0) {
 		error("Server does not support fstatvfs@openssh.com extension");
-		return -1;
+		ফেরত -1;
 	}
 
 	debug2("Sending SSH2_FXP_EXTENDED(fstatvfs@openssh.com)");
 
-	id = conn->msg_id++;
+	id = conn->বার্তা_id++;
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "fstatvfs@openssh.com")) != 0 ||
-	    (r = sshbuf_put_string(msg, handle, handle_len)) != 0)
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, "fstatvfs@openssh.com")) != 0 ||
+	    (r = sshbuf_put_string(বার্তা, handle, handle_len)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
-	sshbuf_free(msg);
+	send_বার্তা(conn, বার্তা);
+	sshbuf_free(বার্তা);
 
-	return get_decode_statvfs(conn, st, id, quiet);
+	ফেরত get_decode_statvfs(conn, st, id, quiet);
 }
 #endif
 
-int
-sftp_lsetstat(struct sftp_conn *conn, const char *path, Attrib *a)
+পূর্ণসংখ্যা
+sftp_lsetstat(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path, Attrib *a)
 {
-	struct sshbuf *msg;
+	কাঠামো sshbuf *বার্তা;
 	u_int status, id;
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if ((conn->exts & SFTP_EXT_LSETSTAT) == 0) {
+	যদি ((conn->exts & SFTP_EXT_LSETSTAT) == 0) {
 		error("Server does not support lsetstat@openssh.com extension");
-		return -1;
+		ফেরত -1;
 	}
 
 	debug2("Sending SSH2_FXP_EXTENDED(lsetstat@openssh.com) \"%s\"", path);
 
-	id = conn->msg_id++;
-	if ((msg = sshbuf_new()) == NULL)
+	id = conn->বার্তা_id++;
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "lsetstat@openssh.com")) != 0 ||
-	    (r = sshbuf_put_cstring(msg, path)) != 0 ||
-	    (r = encode_attrib(msg, a)) != 0)
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, "lsetstat@openssh.com")) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, path)) != 0 ||
+	    (r = encode_attrib(বার্তা, a)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
-	sshbuf_free(msg);
+	send_বার্তা(conn, বার্তা);
+	sshbuf_free(বার্তা);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	যদি (status != SSH2_FX_OK)
 		error("remote lsetstat \"%s\": %s", path, fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
-static void
-send_read_request(struct sftp_conn *conn, u_int id, uint64_t offset,
-    u_int len, const u_char *handle, u_int handle_len)
+স্থির শূন্য
+send_read_request(কাঠামো sftp_conn *conn, u_int id, uint64_t offset,
+    u_int len, ধ্রুবক u_char *handle, u_int handle_len)
 {
-	struct sshbuf *msg;
-	int r;
+	কাঠামো sshbuf *বার্তা;
+	পূর্ণসংখ্যা r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_READ)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_string(msg, handle, handle_len)) != 0 ||
-	    (r = sshbuf_put_u64(msg, offset)) != 0 ||
-	    (r = sshbuf_put_u32(msg, len)) != 0)
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_READ)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_string(বার্তা, handle, handle_len)) != 0 ||
+	    (r = sshbuf_put_u64(বার্তা, offset)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, len)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
-	sshbuf_free(msg);
+	send_বার্তা(conn, বার্তা);
+	sshbuf_free(বার্তা);
 }
 
-static int
-send_open(struct sftp_conn *conn, const char *path, const char *tag,
-    u_int openmode, Attrib *a, u_char **handlep, size_t *handle_lenp)
+স্থির পূর্ণসংখ্যা
+send_open(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path, ধ্রুবক অক্ষর *tag,
+    u_int openmode, Attrib *a, u_char **handlep, আকার_t *handle_lenp)
 {
 	Attrib junk;
 	u_char *handle;
-	size_t handle_len;
-	struct sshbuf *msg;
-	int r;
+	আকার_t handle_len;
+	কাঠামো sshbuf *বার্তা;
+	পূর্ণসংখ্যা r;
 	u_int id;
 
 	debug2("Sending SSH2_FXP_OPEN \"%s\"", path);
 
-	*handlep = NULL;
+	*handlep = ফাঁকা;
 	*handle_lenp = 0;
 
-	if (a == NULL) {
+	যদি (a == ফাঁকা) {
 		attrib_clear(&junk); /* Send empty attributes */
 		a = &junk;
 	}
 	/* Send open request */
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_OPEN)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, path)) != 0 ||
-	    (r = sshbuf_put_u32(msg, openmode)) != 0 ||
-	    (r = encode_attrib(msg, a)) != 0)
+	id = conn->বার্তা_id++;
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_OPEN)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা, path)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, openmode)) != 0 ||
+	    (r = encode_attrib(বার্তা, a)) != 0)
 		fatal_fr(r, "compose %s open", tag);
-	send_msg(conn, msg);
-	sshbuf_free(msg);
+	send_বার্তা(conn, বার্তা);
+	sshbuf_free(বার্তা);
 	debug3("Sent %s message SSH2_FXP_OPEN I:%u P:%s M:0x%04x",
 	    tag, id, path, openmode);
-	if ((handle = get_handle(conn, id, &handle_len,
-	    "%s open \"%s\"", tag, path)) == NULL)
-		return -1;
+	যদি ((handle = get_handle(conn, id, &handle_len,
+	    "%s open \"%s\"", tag, path)) == ফাঁকা)
+		ফেরত -1;
 	/* success */
 	*handlep = handle;
 	*handle_lenp = handle_len;
-	return 0;
+	ফেরত 0;
 }
 
-static const char *
-progress_meter_path(const char *path)
+স্থির ধ্রুবক অক্ষর *
+progress_meter_path(ধ্রুবক অক্ষর *path)
 {
-	const char *progresspath;
+	ধ্রুবক অক্ষর *progresspath;
 
-	if ((progresspath = strrchr(path, '/')) == NULL)
-		return path;
+	যদি ((progresspath = strrchr(path, '/')) == ফাঁকা)
+		ফেরত path;
 	progresspath++;
-	if (*progresspath == '\0')
-		return path;
-	return progresspath;
+	যদি (*progresspath == '\0')
+		ফেরত path;
+	ফেরত progresspath;
 }
 
-int
-sftp_download(struct sftp_conn *conn, const char *remote_path,
-    const char *local_path, Attrib *a, int preserve_flag, int resume_flag,
-    int fsync_flag, int inplace_flag)
+পূর্ণসংখ্যা
+sftp_download(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *remote_path,
+    ধ্রুবক অক্ষর *local_path, Attrib *a, পূর্ণসংখ্যা preserve_flag, পূর্ণসংখ্যা resume_flag,
+    পূর্ণসংখ্যা fsync_flag, পূর্ণসংখ্যা inplace_flag)
 {
-	struct sshbuf *msg;
+	কাঠামো sshbuf *বার্তা;
 	u_char *handle;
-	int local_fd = -1, write_error, seen_zerolen = 0;
-	int read_error, write_errno, lmodified = 0, reordered = 0, r;
-	uint64_t offset = 0, size, highwater = 0, maxack = 0;
-	u_int mode, id, buflen, num_req, max_req, status = SSH2_FX_OK;
-	off_t progress_counter;
-	size_t handle_len;
-	struct stat st;
-	struct requests requests;
-	struct request *req;
+	পূর্ণসংখ্যা local_fd = -1, write_error, seen_zerolen = 0;
+	পূর্ণসংখ্যা read_error, write_errno, lmodified = 0, reordered = 0, r;
+	uint64_t offset = 0, আকার_2, highwater = 0, maxack = 0;
+	u_int mode, id, buflen, অঙ্ক_req, max_req, status = SSH2_FX_OK;
+	off_t progress_গণক;
+	আকার_t handle_len;
+	কাঠামো stat st;
+	কাঠামো requests requests;
+	কাঠামো request *req;
 	u_char type;
 	Attrib attr;
 
@@ -1636,150 +1636,150 @@ sftp_download(struct sftp_conn *conn, const char *remote_path,
 
 	TAILQ_INIT(&requests);
 
-	if (a == NULL) {
-		if (sftp_stat(conn, remote_path, 0, &attr) != 0)
-			return -1;
+	যদি (a == ফাঁকা) {
+		যদি (sftp_stat(conn, remote_path, 0, &attr) != 0)
+			ফেরত -1;
 		a = &attr;
 	}
 
 	/* Do not preserve set[ug]id here, as we do not preserve ownership */
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
+	যদি (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
 		mode = a->perm & 0777;
-	else
+	অন্যথা
 		mode = 0666;
 
-	if ((a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) &&
+	যদি ((a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) &&
 	    (!S_ISREG(a->perm))) {
 		error("download %s: not a regular file", remote_path);
-		return(-1);
+		ফেরত(-1);
 	}
 
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE)
-		size = a->size;
-	else
-		size = 0;
+	যদি (a->flags & SSH2_FILEXFER_ATTR_আকার)
+		আকার_2 = a->আকার_2;
+	অন্যথা
+		আকার_2 = 0;
 
 	buflen = conn->download_buflen;
 
 	/* Send open request */
-	if (send_open(conn, remote_path, "remote", SSH2_FXF_READ, NULL,
+	যদি (send_open(conn, remote_path, "remote", SSH2_FXF_READ, ফাঁকা,
 	    &handle, &handle_len) != 0)
-		return -1;
+		ফেরত -1;
 
 	local_fd = open(local_path, O_WRONLY | O_CREAT |
 	((resume_flag || inplace_flag) ? 0 : O_TRUNC), mode | S_IWUSR);
-	if (local_fd == -1) {
+	যদি (local_fd == -1) {
 		error("open local \"%s\": %s", local_path, strerror(errno));
-		goto fail;
+		যাও fail;
 	}
-	if (resume_flag) {
-		if (fstat(local_fd, &st) == -1) {
+	যদি (resume_flag) {
+		যদি (fstat(local_fd, &st) == -1) {
 			error("stat local \"%s\": %s",
 			    local_path, strerror(errno));
-			goto fail;
+			যাও fail;
 		}
-		if (st.st_size < 0) {
+		যদি (st.st_size < 0) {
 			error("\"%s\" has negative size", local_path);
-			goto fail;
+			যাও fail;
 		}
-		if ((uint64_t)st.st_size > size) {
+		যদি ((uint64_t)st.st_size > আকার_2) {
 			error("Unable to resume download of \"%s\": "
 			    "local file is larger than remote", local_path);
  fail:
 			sftp_close(conn, handle, handle_len);
-			free(handle);
-			if (local_fd != -1)
+			মুক্ত(handle);
+			যদি (local_fd != -1)
 				close(local_fd);
-			return -1;
+			ফেরত -1;
 		}
 		offset = highwater = maxack = st.st_size;
 	}
 
 	/* Read from remote and write to local */
-	write_error = read_error = write_errno = num_req = 0;
+	write_error = read_error = write_errno = অঙ্ক_req = 0;
 	max_req = 1;
-	progress_counter = offset;
+	progress_গণক = offset;
 
-	if (showprogress && size != 0) {
+	যদি (showprogress && আকার_2 != 0) {
 		start_progress_meter(progress_meter_path(remote_path),
-		    size, &progress_counter);
+		    আকার_2, &progress_গণক);
 	}
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
 
-	while (num_req > 0 || max_req > 0) {
-		u_char *data;
-		size_t len;
+	যখন (অঙ্ক_req > 0 || max_req > 0) {
+		u_char *তথ্য;
+		আকার_t len;
 
 		/*
 		 * Simulate EOF on interrupt: stop sending new requests and
 		 * allow outstanding requests to drain gracefully
 		 */
-		if (interrupted) {
-			if (num_req == 0) /* If we haven't started yet... */
-				break;
+		যদি (interrupted) {
+			যদি (অঙ্ক_req == 0) /* If we haven't started yet... */
+				বিরতি;
 			max_req = 0;
 		}
 
 		/* Send some more requests */
-		while (num_req < max_req) {
+		যখন (অঙ্ক_req < max_req) {
 			debug3("Request range %llu -> %llu (%d/%d)",
 			    (unsigned long long)offset,
 			    (unsigned long long)offset + buflen - 1,
-			    num_req, max_req);
-			req = request_enqueue(&requests, conn->msg_id++,
+			    অঙ্ক_req, max_req);
+			req = request_enqueue(&requests, conn->বার্তা_id++,
 			    buflen, offset);
 			offset += buflen;
-			num_req++;
+			অঙ্ক_req++;
 			send_read_request(conn, req->id, req->offset,
 			    req->len, handle, handle_len);
 		}
 
-		sshbuf_reset(msg);
-		get_msg(conn, msg);
-		if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-		    (r = sshbuf_get_u32(msg, &id)) != 0)
+		sshbuf_reset(বার্তা);
+		get_বার্তা(conn, বার্তা);
+		যদি ((r = sshbuf_get_u8(বার্তা, &type)) != 0 ||
+		    (r = sshbuf_get_u32(বার্তা, &id)) != 0)
 			fatal_fr(r, "parse");
 		debug3("Received reply T:%u I:%u R:%d", type, id, max_req);
 
 		/* Find the request in our queue */
-		if ((req = request_find(&requests, id)) == NULL)
+		যদি ((req = request_find(&requests, id)) == ফাঁকা)
 			fatal("Unexpected reply %u", id);
 
-		switch (type) {
-		case SSH2_FXP_STATUS:
-			if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		নির্বাচন (type) {
+		ক্ষেত্র SSH2_FXP_STATUS:
+			যদি ((r = sshbuf_get_u32(বার্তা, &status)) != 0)
 				fatal_fr(r, "parse status");
-			if (status != SSH2_FX_EOF)
+			যদি (status != SSH2_FX_EOF)
 				read_error = 1;
 			max_req = 0;
 			TAILQ_REMOVE(&requests, req, tq);
-			free(req);
-			num_req--;
-			break;
-		case SSH2_FXP_DATA:
-			if ((r = sshbuf_get_string(msg, &data, &len)) != 0)
+			মুক্ত(req);
+			অঙ্ক_req--;
+			বিরতি;
+		ক্ষেত্র SSH2_FXP_তথ্য:
+			যদি ((r = sshbuf_get_string(বার্তা, &তথ্য, &len)) != 0)
 				fatal_fr(r, "parse data");
 			debug3("Received data %llu -> %llu",
 			    (unsigned long long)req->offset,
 			    (unsigned long long)req->offset + len - 1);
-			if (len > req->len)
+			যদি (len > req->len)
 				fatal("Received more data than asked for "
 				    "%zu > %zu", len, req->len);
-			if (len == 0) {
-				if (seen_zerolen)
+			যদি (len == 0) {
+				যদি (seen_zerolen)
 					fatal_f("server sent zero data length");
 				seen_zerolen = 1;
 			}
 			lmodified = 1;
-			if ((lseek(local_fd, req->offset, SEEK_SET) == -1 ||
-			    atomicio(vwrite, local_fd, data, len) != len) &&
+			যদি ((lseek(local_fd, req->offset, SEEK_SET) == -1 ||
+			    atomicio(vwrite, local_fd, তথ্য, len) != len) &&
 			    !write_error) {
 				write_errno = errno;
 				write_error = 1;
 				max_req = 0;
-			} else {
+			} অন্যথা {
 				/*
 				 * Track both the highest offset acknowledged
 				 * and the highest *contiguous* offset
@@ -1787,63 +1787,63 @@ sftp_download(struct sftp_conn *conn, const char *remote_path,
 				 * We'll need the latter for ftruncate()ing
 				 * interrupted transfers.
 				 */
-				if (maxack < req->offset + len)
+				যদি (maxack < req->offset + len)
 					maxack = req->offset + len;
-				if (!reordered && req->offset <= highwater)
+				যদি (!reordered && req->offset <= highwater)
 					highwater = maxack;
-				else if (!reordered && req->offset > highwater)
+				অন্যথা যদি (!reordered && req->offset > highwater)
 					reordered = 1;
 			}
-			progress_counter += len;
-			free(data);
+			progress_গণক += len;
+			মুক্ত(তথ্য);
 
-			if (len == req->len) {
+			যদি (len == req->len) {
 				TAILQ_REMOVE(&requests, req, tq);
-				free(req);
-				num_req--;
-			} else {
+				মুক্ত(req);
+				অঙ্ক_req--;
+			} অন্যথা {
 				/* Resend the request for the missing data */
 				debug3("Short data block, re-requesting "
 				    "%llu -> %llu (%2d)",
 				    (unsigned long long)req->offset + len,
 				    (unsigned long long)req->offset +
-				    req->len - 1, num_req);
-				req->id = conn->msg_id++;
+				    req->len - 1, অঙ্ক_req);
+				req->id = conn->বার্তা_id++;
 				req->len -= len;
 				req->offset += len;
 				send_read_request(conn, req->id,
 				    req->offset, req->len, handle, handle_len);
 				/* Reduce the request size */
-				if (len < buflen)
-					buflen = MAXIMUM(MIN_READ_SIZE, len);
+				যদি (len < buflen)
+					buflen = MAXIMUM(MIN_READ_আকার, len);
 			}
-			if (max_req > 0) { /* max_req = 0 iff EOF received */
-				if (size > 0 && offset > size) {
+			যদি (max_req > 0) { /* max_req = 0 iff EOF received */
+				যদি (আকার_2 > 0 && offset > আকার_2) {
 					/* Only one request at a time
 					 * after the expected EOF */
 					debug3("Finish at %llu (%2d)",
 					    (unsigned long long)offset,
-					    num_req);
+					    অঙ্ক_req);
 					max_req = 1;
-				} else if (max_req < conn->num_requests) {
+				} অন্যথা যদি (max_req < conn->অঙ্ক_requests) {
 					++max_req;
 				}
 			}
-			break;
-		default:
+			বিরতি;
+		পূর্বনির্ধারিত:
 			fatal("Expected SSH2_FXP_DATA(%u) packet, got %u",
-			    SSH2_FXP_DATA, type);
+			    SSH2_FXP_তথ্য, type);
 		}
 	}
 
-	if (showprogress && size)
+	যদি (showprogress && আকার_2)
 		stop_progress_meter();
 
 	/* Sanity check */
-	if (TAILQ_FIRST(&requests) != NULL)
+	যদি (TAILQ_FIRST(&requests) != ফাঁকা)
 		fatal("Transfer complete, but requests still in queue");
 
-	if (!read_error && !write_error && !interrupted) {
+	যদি (!read_error && !write_error && !interrupted) {
 		/* we got everything */
 		highwater = maxack;
 	}
@@ -1852,300 +1852,300 @@ sftp_download(struct sftp_conn *conn, const char *remote_path,
 	 * Truncate at highest contiguous point to avoid holes on interrupt,
 	 * or unconditionally if writing in place.
 	 */
-	if (inplace_flag || read_error || write_error || interrupted) {
-		if (reordered && resume_flag &&
+	যদি (inplace_flag || read_error || write_error || interrupted) {
+		যদি (reordered && resume_flag &&
 		    (read_error || write_error || interrupted)) {
 			error("Unable to resume download of \"%s\": "
 			    "server reordered requests", local_path);
 		}
 		debug("truncating at %llu", (unsigned long long)highwater);
-		if (ftruncate(local_fd, highwater) == -1)
+		যদি (ftruncate(local_fd, highwater) == -1)
 			error("local ftruncate \"%s\": %s", local_path,
 			    strerror(errno));
 	}
-	if (read_error) {
+	যদি (read_error) {
 		error("read remote \"%s\" : %s", remote_path, fx2txt(status));
 		status = -1;
 		sftp_close(conn, handle, handle_len);
-	} else if (write_error) {
+	} অন্যথা যদি (write_error) {
 		error("write local \"%s\": %s", local_path,
 		    strerror(write_errno));
 		status = SSH2_FX_FAILURE;
 		sftp_close(conn, handle, handle_len);
-	} else {
-		if (sftp_close(conn, handle, handle_len) != 0 || interrupted)
+	} অন্যথা {
+		যদি (sftp_close(conn, handle, handle_len) != 0 || interrupted)
 			status = SSH2_FX_FAILURE;
-		else
+		অন্যথা
 			status = SSH2_FX_OK;
 		/* Override umask and utimes if asked */
 #ifdef HAVE_FCHMOD
-		if (preserve_flag && fchmod(local_fd, mode) == -1)
-#else
-		if (preserve_flag && chmod(local_path, mode) == -1)
+		যদি (preserve_flag && fchmod(local_fd, mode) == -1)
+#অন্যথা
+		যদি (preserve_flag && chmod(local_path, mode) == -1)
 #endif /* HAVE_FCHMOD */
 			error("local chmod \"%s\": %s", local_path,
 			    strerror(errno));
-		if (preserve_flag &&
+		যদি (preserve_flag &&
 		    (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME)) {
-			struct timeval tv[2];
+			কাঠামো timeval tv[2];
 			tv[0].tv_sec = a->atime;
 			tv[1].tv_sec = a->mtime;
 			tv[0].tv_usec = tv[1].tv_usec = 0;
-			if (utimes(local_path, tv) == -1)
+			যদি (utimes(local_path, tv) == -1)
 				error("local set times \"%s\": %s",
 				    local_path, strerror(errno));
 		}
-		if (resume_flag && !lmodified)
+		যদি (resume_flag && !lmodified)
 			logit("File \"%s\" was not modified", local_path);
-		else if (fsync_flag) {
+		অন্যথা যদি (fsync_flag) {
 			debug("syncing \"%s\"", local_path);
-			if (fsync(local_fd) == -1)
+			যদি (fsync(local_fd) == -1)
 				error("local sync \"%s\": %s",
 				    local_path, strerror(errno));
 		}
 	}
 	close(local_fd);
-	sshbuf_free(msg);
-	free(handle);
+	sshbuf_free(বার্তা);
+	মুক্ত(handle);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
-static int
-download_dir_internal(struct sftp_conn *conn, const char *src, const char *dst,
-    int depth, Attrib *dirattrib, int preserve_flag, int print_flag,
-    int resume_flag, int fsync_flag, int follow_link_flag, int inplace_flag)
+স্থির পূর্ণসংখ্যা
+download_dir_internal(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *src, ধ্রুবক অক্ষর *dst,
+    পূর্ণসংখ্যা depth, Attrib *dirattrib, পূর্ণসংখ্যা preserve_flag, পূর্ণসংখ্যা print_flag,
+    পূর্ণসংখ্যা resume_flag, পূর্ণসংখ্যা fsync_flag, পূর্ণসংখ্যা follow_link_flag, পূর্ণসংখ্যা inplace_flag)
 {
-	int i, ret = 0;
+	পূর্ণসংখ্যা i, ret = 0;
 	SFTP_DIRENT **dir_entries;
-	char *filename, *new_src = NULL, *new_dst = NULL;
+	অক্ষর *filename, *new_src = ফাঁকা, *new_dst = ফাঁকা;
 	mode_t mode = 0777, tmpmode = mode;
 	Attrib *a, ldirattrib, lsym;
 
-	if (depth >= MAX_DIR_DEPTH) {
+	যদি (depth >= MAX_DIR_DEPTH) {
 		error("Maximum directory depth exceeded: %d levels", depth);
-		return -1;
+		ফেরত -1;
 	}
 
 	debug2_f("download dir remote \"%s\" to local \"%s\"", src, dst);
 
-	if (dirattrib == NULL) {
-		if (sftp_stat(conn, src, 1, &ldirattrib) != 0) {
+	যদি (dirattrib == ফাঁকা) {
+		যদি (sftp_stat(conn, src, 1, &ldirattrib) != 0) {
 			error("stat remote \"%s\" directory failed", src);
-			return -1;
+			ফেরত -1;
 		}
 		dirattrib = &ldirattrib;
 	}
-	if (!S_ISDIR(dirattrib->perm)) {
+	যদি (!S_ISDIR(dirattrib->perm)) {
 		error("\"%s\" is not a directory", src);
-		return -1;
+		ফেরত -1;
 	}
-	if (print_flag && print_flag != SFTP_PROGRESS_ONLY)
+	যদি (print_flag && print_flag != SFTP_PROGRESS_ONLY)
 		mprintf("Retrieving %s\n", src);
 
-	if (dirattrib->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+	যদি (dirattrib->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
 		mode = dirattrib->perm & 01777;
 		tmpmode = mode | (S_IWUSR|S_IXUSR);
-	} else {
+	} অন্যথা {
 		debug("download remote \"%s\": server "
 		    "did not send permissions", dst);
 	}
 
-	if (mkdir(dst, tmpmode) == -1 && errno != EEXIST) {
+	যদি (mkdir(dst, tmpmode) == -1 && errno != EEXIST) {
 		error("mkdir %s: %s", dst, strerror(errno));
-		return -1;
+		ফেরত -1;
 	}
 
-	if (sftp_readdir(conn, src, &dir_entries) == -1) {
+	যদি (sftp_readdir(conn, src, &dir_entries) == -1) {
 		error("remote readdir \"%s\" failed", src);
-		return -1;
+		ফেরত -1;
 	}
 
-	for (i = 0; dir_entries[i] != NULL && !interrupted; i++) {
-		free(new_dst);
-		free(new_src);
+	জন্য (i = 0; dir_entries[i] != ফাঁকা && !interrupted; i++) {
+		মুক্ত(new_dst);
+		মুক্ত(new_src);
 
 		filename = dir_entries[i]->filename;
 		new_dst = sftp_path_append(dst, filename);
 		new_src = sftp_path_append(src, filename);
 
 		a = &dir_entries[i]->a;
-		if (S_ISLNK(a->perm)) {
-			if (!follow_link_flag) {
+		যদি (S_ISLNK(a->perm)) {
+			যদি (!follow_link_flag) {
 				logit("download \"%s\": not a regular file",
 				    new_src);
-				continue;
+				চালু;
 			}
 			/* Replace the stat contents with the symlink target */
-			if (sftp_stat(conn, new_src, 1, &lsym) != 0) {
+			যদি (sftp_stat(conn, new_src, 1, &lsym) != 0) {
 				logit("remote stat \"%s\" failed", new_src);
 				ret = -1;
-				continue;
+				চালু;
 			}
 			a = &lsym;
 		}
 
-		if (S_ISDIR(a->perm)) {
-			if (strcmp(filename, ".") == 0 ||
+		যদি (S_ISDIR(a->perm)) {
+			যদি (strcmp(filename, ".") == 0 ||
 			    strcmp(filename, "..") == 0)
-				continue;
-			if (download_dir_internal(conn, new_src, new_dst,
+				চালু;
+			যদি (download_dir_internal(conn, new_src, new_dst,
 			    depth + 1, a, preserve_flag,
 			    print_flag, resume_flag,
 			    fsync_flag, follow_link_flag, inplace_flag) == -1)
 				ret = -1;
-		} else if (S_ISREG(a->perm)) {
-			if (sftp_download(conn, new_src, new_dst, a,
+		} অন্যথা যদি (S_ISREG(a->perm)) {
+			যদি (sftp_download(conn, new_src, new_dst, a,
 			    preserve_flag, resume_flag, fsync_flag,
 			    inplace_flag) == -1) {
 				error("Download of file %s to %s failed",
 				    new_src, new_dst);
 				ret = -1;
 			}
-		} else
+		} অন্যথা
 			logit("download \"%s\": not a regular file", new_src);
 
 	}
-	free(new_dst);
-	free(new_src);
+	মুক্ত(new_dst);
+	মুক্ত(new_src);
 
-	if (preserve_flag) {
-		if (dirattrib->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-			struct timeval tv[2];
+	যদি (preserve_flag) {
+		যদি (dirattrib->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+			কাঠামো timeval tv[2];
 			tv[0].tv_sec = dirattrib->atime;
 			tv[1].tv_sec = dirattrib->mtime;
 			tv[0].tv_usec = tv[1].tv_usec = 0;
-			if (utimes(dst, tv) == -1)
+			যদি (utimes(dst, tv) == -1)
 				error("local set times on \"%s\": %s",
 				    dst, strerror(errno));
-		} else
+		} অন্যথা
 			debug("Server did not send times for directory "
 			    "\"%s\"", dst);
 	}
 
-	if (mode != tmpmode && chmod(dst, mode) == -1)
+	যদি (mode != tmpmode && chmod(dst, mode) == -1)
 		error("local chmod directory \"%s\": %s", dst,
 		    strerror(errno));
 
 	sftp_free_dirents(dir_entries);
 
-	return ret;
+	ফেরত ret;
 }
 
-int
-sftp_download_dir(struct sftp_conn *conn, const char *src, const char *dst,
-    Attrib *dirattrib, int preserve_flag, int print_flag, int resume_flag,
-    int fsync_flag, int follow_link_flag, int inplace_flag)
+পূর্ণসংখ্যা
+sftp_download_dir(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *src, ধ্রুবক অক্ষর *dst,
+    Attrib *dirattrib, পূর্ণসংখ্যা preserve_flag, পূর্ণসংখ্যা print_flag, পূর্ণসংখ্যা resume_flag,
+    পূর্ণসংখ্যা fsync_flag, পূর্ণসংখ্যা follow_link_flag, পূর্ণসংখ্যা inplace_flag)
 {
-	char *src_canon;
-	int ret;
+	অক্ষর *src_canon;
+	পূর্ণসংখ্যা ret;
 
-	if ((src_canon = sftp_realpath(conn, src)) == NULL) {
+	যদি ((src_canon = sftp_realpath(conn, src)) == ফাঁকা) {
 		error("download \"%s\": path canonicalization failed", src);
-		return -1;
+		ফেরত -1;
 	}
 
 	ret = download_dir_internal(conn, src_canon, dst, 0,
 	    dirattrib, preserve_flag, print_flag, resume_flag, fsync_flag,
 	    follow_link_flag, inplace_flag);
-	free(src_canon);
-	return ret;
+	মুক্ত(src_canon);
+	ফেরত ret;
 }
 
-int
-sftp_upload(struct sftp_conn *conn, const char *local_path,
-    const char *remote_path, int preserve_flag, int resume,
-    int fsync_flag, int inplace_flag)
+পূর্ণসংখ্যা
+sftp_upload(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *local_path,
+    ধ্রুবক অক্ষর *remote_path, পূর্ণসংখ্যা preserve_flag, পূর্ণসংখ্যা resume,
+    পূর্ণসংখ্যা fsync_flag, পূর্ণসংখ্যা inplace_flag)
 {
-	int r, local_fd;
+	পূর্ণসংখ্যা r, local_fd;
 	u_int openmode, id, status = SSH2_FX_OK, status2, reordered = 0;
-	off_t offset, progress_counter;
-	u_char type, *handle, *data;
-	struct sshbuf *msg;
-	struct stat sb;
+	off_t offset, progress_গণক;
+	u_char type, *handle, *তথ্য;
+	কাঠামো sshbuf *বার্তা;
+	কাঠামো stat sb;
 	Attrib a, t, c;
 	uint32_t startid, ackid;
 	uint64_t highwater = 0, maxack = 0;
-	struct request *ack = NULL;
-	struct requests acks;
-	size_t handle_len;
+	কাঠামো request *ack = ফাঁকা;
+	কাঠামো requests acks;
+	আকার_t handle_len;
 
 	debug2_f("upload local \"%s\" to remote \"%s\"",
 	    local_path, remote_path);
 
 	TAILQ_INIT(&acks);
 
-	if ((local_fd = open(local_path, O_RDONLY)) == -1) {
+	যদি ((local_fd = open(local_path, O_RDONLY)) == -1) {
 		error("open local \"%s\": %s", local_path, strerror(errno));
-		return(-1);
+		ফেরত(-1);
 	}
-	if (fstat(local_fd, &sb) == -1) {
+	যদি (fstat(local_fd, &sb) == -1) {
 		error("fstat local \"%s\": %s", local_path, strerror(errno));
 		close(local_fd);
-		return(-1);
+		ফেরত(-1);
 	}
-	if (!S_ISREG(sb.st_mode)) {
+	যদি (!S_ISREG(sb.st_mode)) {
 		error("local \"%s\" is not a regular file", local_path);
 		close(local_fd);
-		return(-1);
+		ফেরত(-1);
 	}
 	stat_to_attrib(&sb, &a);
 
-	a.flags &= ~SSH2_FILEXFER_ATTR_SIZE;
+	a.flags &= ~SSH2_FILEXFER_ATTR_আকার;
 	a.flags &= ~SSH2_FILEXFER_ATTR_UIDGID;
 	a.perm &= 0777;
-	if (!preserve_flag)
+	যদি (!preserve_flag)
 		a.flags &= ~SSH2_FILEXFER_ATTR_ACMODTIME;
 
-	if (resume) {
+	যদি (resume) {
 		/* Get remote file size if it exists */
-		if (sftp_stat(conn, remote_path, 0, &c) != 0) {
+		যদি (sftp_stat(conn, remote_path, 0, &c) != 0) {
 			close(local_fd);
-			return -1;
+			ফেরত -1;
 		}
 
-		if ((off_t)c.size >= sb.st_size) {
+		যদি ((off_t)c.আকার_2 >= sb.st_size) {
 			error("resume \"%s\": destination file "
 			    "same size or larger", local_path);
 			close(local_fd);
-			return -1;
+			ফেরত -1;
 		}
 
-		if (lseek(local_fd, (off_t)c.size, SEEK_SET) == -1) {
+		যদি (lseek(local_fd, (off_t)c.আকার_2, SEEK_SET) == -1) {
 			close(local_fd);
-			return -1;
+			ফেরত -1;
 		}
-		highwater = c.size;
+		highwater = c.আকার_2;
 	}
 
 	openmode = SSH2_FXF_WRITE|SSH2_FXF_CREAT;
-	if (resume)
+	যদি (resume)
 		openmode |= SSH2_FXF_APPEND;
-	else if (!inplace_flag)
+	অন্যথা যদি (!inplace_flag)
 		openmode |= SSH2_FXF_TRUNC;
 
 	/* Send open request */
-	if (send_open(conn, remote_path, "dest", openmode, &a,
+	যদি (send_open(conn, remote_path, "dest", openmode, &a,
 	    &handle, &handle_len) != 0) {
 		close(local_fd);
-		return -1;
+		ফেরত -1;
 	}
 
-	id = conn->msg_id;
+	id = conn->বার্তা_id;
 	startid = ackid = id + 1;
-	data = xmalloc(conn->upload_buflen);
+	তথ্য = xmalloc(conn->upload_buflen);
 
 	/* Read from local and write to remote */
-	offset = progress_counter = (resume ? c.size : 0);
-	if (showprogress) {
+	offset = progress_গণক = (resume ? c.আকার_2 : 0);
+	যদি (showprogress) {
 		start_progress_meter(progress_meter_path(local_path),
-		    sb.st_size, &progress_counter);
+		    sb.st_size, &progress_গণক);
 	}
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	for (;;) {
-		int len;
+	জন্য (;;) {
+		পূর্ণসংখ্যা len;
 
 		/*
 		 * Can't use atomicio here because it returns 0 on EOF,
@@ -2153,162 +2153,162 @@ sftp_upload(struct sftp_conn *conn, const char *local_path,
 		 * Simulate an EOF on interrupt, allowing ACKs from the
 		 * server to drain.
 		 */
-		if (interrupted || status != SSH2_FX_OK)
+		যদি (interrupted || status != SSH2_FX_OK)
 			len = 0;
-		else do
-			len = read(local_fd, data, conn->upload_buflen);
-		while ((len == -1) &&
+		অন্যথা করো
+			len = পঠ(local_fd, তথ্য, conn->upload_buflen);
+		যখন ((len == -1) &&
 		    (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK));
 
-		if (len == -1) {
+		যদি (len == -1) {
 			fatal("read local \"%s\": %s",
 			    local_path, strerror(errno));
-		} else if (len != 0) {
+		} অন্যথা যদি (len != 0) {
 			ack = request_enqueue(&acks, ++id, len, offset);
-			sshbuf_reset(msg);
-			if ((r = sshbuf_put_u8(msg, SSH2_FXP_WRITE)) != 0 ||
-			    (r = sshbuf_put_u32(msg, ack->id)) != 0 ||
-			    (r = sshbuf_put_string(msg, handle,
+			sshbuf_reset(বার্তা);
+			যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_WRITE)) != 0 ||
+			    (r = sshbuf_put_u32(বার্তা, ack->id)) != 0 ||
+			    (r = sshbuf_put_string(বার্তা, handle,
 			    handle_len)) != 0 ||
-			    (r = sshbuf_put_u64(msg, offset)) != 0 ||
-			    (r = sshbuf_put_string(msg, data, len)) != 0)
+			    (r = sshbuf_put_u64(বার্তা, offset)) != 0 ||
+			    (r = sshbuf_put_string(বার্তা, তথ্য, len)) != 0)
 				fatal_fr(r, "compose");
-			send_msg(conn, msg);
+			send_বার্তা(conn, বার্তা);
 			debug3("Sent message SSH2_FXP_WRITE I:%u O:%llu S:%u",
 			    id, (unsigned long long)offset, len);
-		} else if (TAILQ_FIRST(&acks) == NULL)
-			break;
+		} অন্যথা যদি (TAILQ_FIRST(&acks) == ফাঁকা)
+			বিরতি;
 
-		if (ack == NULL)
+		যদি (ack == ফাঁকা)
 			fatal("Unexpected ACK %u", id);
 
-		if (id == startid || len == 0 ||
-		    id - ackid >= conn->num_requests) {
+		যদি (id == startid || len == 0 ||
+		    id - ackid >= conn->অঙ্ক_requests) {
 			u_int rid;
 
-			sshbuf_reset(msg);
-			get_msg(conn, msg);
-			if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-			    (r = sshbuf_get_u32(msg, &rid)) != 0)
+			sshbuf_reset(বার্তা);
+			get_বার্তা(conn, বার্তা);
+			যদি ((r = sshbuf_get_u8(বার্তা, &type)) != 0 ||
+			    (r = sshbuf_get_u32(বার্তা, &rid)) != 0)
 				fatal_fr(r, "parse");
 
-			if (type != SSH2_FXP_STATUS)
+			যদি (type != SSH2_FXP_STATUS)
 				fatal("Expected SSH2_FXP_STATUS(%d) packet, "
 				    "got %d", SSH2_FXP_STATUS, type);
 
-			if ((r = sshbuf_get_u32(msg, &status2)) != 0)
+			যদি ((r = sshbuf_get_u32(বার্তা, &status2)) != 0)
 				fatal_fr(r, "parse status");
 			debug3("SSH2_FXP_STATUS %u", status2);
-			if (status2 != SSH2_FX_OK)
+			যদি (status2 != SSH2_FX_OK)
 				status = status2; /* remember errors */
 
 			/* Find the request in our queue */
-			if ((ack = request_find(&acks, rid)) == NULL)
+			যদি ((ack = request_find(&acks, rid)) == ফাঁকা)
 				fatal("Can't find request for ID %u", rid);
 			TAILQ_REMOVE(&acks, ack, tq);
 			debug3("In write loop, ack for %u %zu bytes at %lld",
 			    ack->id, ack->len, (unsigned long long)ack->offset);
 			++ackid;
-			progress_counter += ack->len;
+			progress_গণক += ack->len;
 			/*
 			 * Track both the highest offset acknowledged and the
 			 * highest *contiguous* offset acknowledged.
 			 * We'll need the latter for ftruncate()ing
 			 * interrupted transfers.
 			 */
-			if (maxack < ack->offset + ack->len)
+			যদি (maxack < ack->offset + ack->len)
 				maxack = ack->offset + ack->len;
-			if (!reordered && ack->offset <= highwater)
+			যদি (!reordered && ack->offset <= highwater)
 				highwater = maxack;
-			else if (!reordered && ack->offset > highwater) {
+			অন্যথা যদি (!reordered && ack->offset > highwater) {
 				debug3_f("server reordered ACKs");
 				reordered = 1;
 			}
-			free(ack);
+			মুক্ত(ack);
 		}
 		offset += len;
-		if (offset < 0)
+		যদি (offset < 0)
 			fatal_f("offset < 0");
 	}
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 
-	if (showprogress)
+	যদি (showprogress)
 		stop_progress_meter();
-	free(data);
+	মুক্ত(তথ্য);
 
-	if (status == SSH2_FX_OK && !interrupted) {
+	যদি (status == SSH2_FX_OK && !interrupted) {
 		/* we got everything */
 		highwater = maxack;
 	}
-	if (status != SSH2_FX_OK) {
+	যদি (status != SSH2_FX_OK) {
 		error("write remote \"%s\": %s", remote_path, fx2txt(status));
 		status = SSH2_FX_FAILURE;
 	}
 
-	if (inplace_flag || (resume && (status != SSH2_FX_OK || interrupted))) {
+	যদি (inplace_flag || (resume && (status != SSH2_FX_OK || interrupted))) {
 		debug("truncating at %llu", (unsigned long long)highwater);
 		attrib_clear(&t);
-		t.flags = SSH2_FILEXFER_ATTR_SIZE;
-		t.size = highwater;
+		t.flags = SSH2_FILEXFER_ATTR_আকার;
+		t.আকার_2 = highwater;
 		sftp_fsetstat(conn, handle, handle_len, &t);
 	}
 
-	if (close(local_fd) == -1) {
+	যদি (close(local_fd) == -1) {
 		error("close local \"%s\": %s", local_path, strerror(errno));
 		status = SSH2_FX_FAILURE;
 	}
 
 	/* Override umask and utimes if asked */
-	if (preserve_flag)
+	যদি (preserve_flag)
 		sftp_fsetstat(conn, handle, handle_len, &a);
 
-	if (fsync_flag)
-		(void)sftp_fsync(conn, handle, handle_len);
+	যদি (fsync_flag)
+		(শূন্য)sftp_fsync(conn, handle, handle_len);
 
-	if (sftp_close(conn, handle, handle_len) != 0)
+	যদি (sftp_close(conn, handle, handle_len) != 0)
 		status = SSH2_FX_FAILURE;
 
-	free(handle);
+	মুক্ত(handle);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
-static int
-upload_dir_internal(struct sftp_conn *conn, const char *src, const char *dst,
-    int depth, int preserve_flag, int print_flag, int resume, int fsync_flag,
-    int follow_link_flag, int inplace_flag)
+স্থির পূর্ণসংখ্যা
+upload_dir_internal(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *src, ধ্রুবক অক্ষর *dst,
+    পূর্ণসংখ্যা depth, পূর্ণসংখ্যা preserve_flag, পূর্ণসংখ্যা print_flag, পূর্ণসংখ্যা resume, পূর্ণসংখ্যা fsync_flag,
+    পূর্ণসংখ্যা follow_link_flag, পূর্ণসংখ্যা inplace_flag)
 {
-	int created = 0, ret = 0;
+	পূর্ণসংখ্যা created = 0, ret = 0;
 	DIR *dirp;
-	struct dirent *dp;
-	char *filename, *new_src = NULL, *new_dst = NULL;
-	struct stat sb;
+	কাঠামো dirent *dp;
+	অক্ষর *filename, *new_src = ফাঁকা, *new_dst = ফাঁকা;
+	কাঠামো stat sb;
 	Attrib a, dirattrib;
 	uint32_t saved_perm;
 
 	debug2_f("upload local dir \"%s\" to remote \"%s\"", src, dst);
 
-	if (depth >= MAX_DIR_DEPTH) {
+	যদি (depth >= MAX_DIR_DEPTH) {
 		error("Maximum directory depth exceeded: %d levels", depth);
-		return -1;
+		ফেরত -1;
 	}
 
-	if (stat(src, &sb) == -1) {
+	যদি (stat(src, &sb) == -1) {
 		error("stat local \"%s\": %s", src, strerror(errno));
-		return -1;
+		ফেরত -1;
 	}
-	if (!S_ISDIR(sb.st_mode)) {
+	যদি (!S_ISDIR(sb.st_mode)) {
 		error("\"%s\" is not a directory", src);
-		return -1;
+		ফেরত -1;
 	}
-	if (print_flag && print_flag != SFTP_PROGRESS_ONLY)
+	যদি (print_flag && print_flag != SFTP_PROGRESS_ONLY)
 		mprintf("Entering %s\n", src);
 
 	stat_to_attrib(&sb, &a);
-	a.flags &= ~SSH2_FILEXFER_ATTR_SIZE;
+	a.flags &= ~SSH2_FILEXFER_ATTR_আকার;
 	a.flags &= ~SSH2_FILEXFER_ATTR_UIDGID;
 	a.perm &= 01777;
-	if (!preserve_flag)
+	যদি (!preserve_flag)
 		a.flags &= ~SSH2_FILEXFER_ATTR_ACMODTIME;
 
 	/*
@@ -2319,143 +2319,143 @@ upload_dir_internal(struct sftp_conn *conn, const char *src, const char *dst,
 	 */
 	saved_perm = a.perm;
 	a.perm |= (S_IWUSR|S_IXUSR);
-	if (sftp_mkdir(conn, dst, &a, 0) == 0)
+	যদি (sftp_mkdir(conn, dst, &a, 0) == 0)
 		created = 1;
-	else {
-		if (sftp_stat(conn, dst, 0, &dirattrib) != 0)
-			return -1;
-		if (!S_ISDIR(dirattrib.perm)) {
+	অন্যথা {
+		যদি (sftp_stat(conn, dst, 0, &dirattrib) != 0)
+			ফেরত -1;
+		যদি (!S_ISDIR(dirattrib.perm)) {
 			error("\"%s\" exists but is not a directory", dst);
-			return -1;
+			ফেরত -1;
 		}
 	}
 	a.perm = saved_perm;
 
-	if ((dirp = opendir(src)) == NULL) {
+	যদি ((dirp = opendir(src)) == ফাঁকা) {
 		error("local opendir \"%s\": %s", src, strerror(errno));
-		return -1;
+		ফেরত -1;
 	}
 
-	while (((dp = readdir(dirp)) != NULL) && !interrupted) {
-		if (dp->d_ino == 0)
-			continue;
-		free(new_dst);
-		free(new_src);
+	যখন (((dp = readdir(dirp)) != ফাঁকা) && !interrupted) {
+		যদি (dp->d_ino == 0)
+			চালু;
+		মুক্ত(new_dst);
+		মুক্ত(new_src);
 		filename = dp->d_name;
 		new_dst = sftp_path_append(dst, filename);
 		new_src = sftp_path_append(src, filename);
 
-		if (strcmp(filename, ".") == 0 || strcmp(filename, "..") == 0)
-			continue;
-		if (lstat(new_src, &sb) == -1) {
+		যদি (strcmp(filename, ".") == 0 || strcmp(filename, "..") == 0)
+			চালু;
+		যদি (lstat(new_src, &sb) == -1) {
 			logit("local lstat \"%s\": %s", filename,
 			    strerror(errno));
 			ret = -1;
-			continue;
+			চালু;
 		}
-		if (S_ISLNK(sb.st_mode)) {
-			if (!follow_link_flag) {
+		যদি (S_ISLNK(sb.st_mode)) {
+			যদি (!follow_link_flag) {
 				logit("%s: not a regular file", filename);
-				continue;
+				চালু;
 			}
 			/* Replace the stat contents with the symlink target */
-			if (stat(new_src, &sb) == -1) {
+			যদি (stat(new_src, &sb) == -1) {
 				logit("local stat \"%s\": %s", filename,
 				    strerror(errno));
 				ret = -1;
-				continue;
+				চালু;
 			}
 		}
-		if (S_ISDIR(sb.st_mode)) {
-			if (upload_dir_internal(conn, new_src, new_dst,
+		যদি (S_ISDIR(sb.st_mode)) {
+			যদি (upload_dir_internal(conn, new_src, new_dst,
 			    depth + 1, preserve_flag, print_flag, resume,
 			    fsync_flag, follow_link_flag, inplace_flag) == -1)
 				ret = -1;
-		} else if (S_ISREG(sb.st_mode)) {
-			if (sftp_upload(conn, new_src, new_dst,
+		} অন্যথা যদি (S_ISREG(sb.st_mode)) {
+			যদি (sftp_upload(conn, new_src, new_dst,
 			    preserve_flag, resume, fsync_flag,
 			    inplace_flag) == -1) {
 				error("upload \"%s\" to \"%s\" failed",
 				    new_src, new_dst);
 				ret = -1;
 			}
-		} else
+		} অন্যথা
 			logit("%s: not a regular file", filename);
 	}
-	free(new_dst);
-	free(new_src);
+	মুক্ত(new_dst);
+	মুক্ত(new_src);
 
-	if (created || preserve_flag)
+	যদি (created || preserve_flag)
 		sftp_setstat(conn, dst, &a);
 
-	(void) closedir(dirp);
-	return ret;
+	(শূন্য) closedir(dirp);
+	ফেরত ret;
 }
 
-int
-sftp_upload_dir(struct sftp_conn *conn, const char *src, const char *dst,
-    int preserve_flag, int print_flag, int resume, int fsync_flag,
-    int follow_link_flag, int inplace_flag)
+পূর্ণসংখ্যা
+sftp_upload_dir(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *src, ধ্রুবক অক্ষর *dst,
+    পূর্ণসংখ্যা preserve_flag, পূর্ণসংখ্যা print_flag, পূর্ণসংখ্যা resume, পূর্ণসংখ্যা fsync_flag,
+    পূর্ণসংখ্যা follow_link_flag, পূর্ণসংখ্যা inplace_flag)
 {
-	char *dst_canon;
-	int ret;
+	অক্ষর *dst_canon;
+	পূর্ণসংখ্যা ret;
 
-	if ((dst_canon = sftp_realpath(conn, dst)) == NULL) {
+	যদি ((dst_canon = sftp_realpath(conn, dst)) == ফাঁকা) {
 		error("upload \"%s\": path canonicalization failed", dst);
-		return -1;
+		ফেরত -1;
 	}
 
 	ret = upload_dir_internal(conn, src, dst_canon, 0, preserve_flag,
 	    print_flag, resume, fsync_flag, follow_link_flag, inplace_flag);
 
-	free(dst_canon);
-	return ret;
+	মুক্ত(dst_canon);
+	ফেরত ret;
 }
 
-static void
-handle_dest_replies(struct sftp_conn *to, const char *to_path, int synchronous,
+স্থির শূন্য
+handle_dest_replies(কাঠামো sftp_conn *to, ধ্রুবক অক্ষর *to_path, পূর্ণসংখ্যা synchronous,
     u_int *nreqsp, u_int *write_errorp)
 {
-	struct sshbuf *msg;
+	কাঠামো sshbuf *বার্তা;
 	u_char type;
 	u_int id, status;
-	int r;
-	struct pollfd pfd;
+	পূর্ণসংখ্যা r;
+	কাঠামো pollfd pfd;
 
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
 
 	/* Try to eat replies from the upload side */
-	while (*nreqsp > 0) {
+	যখন (*nreqsp > 0) {
 		debug3_f("%u outstanding replies", *nreqsp);
-		if (!synchronous) {
+		যদি (!synchronous) {
 			/* Bail out if no data is ready to be read */
 			pfd.fd = to->fd_in;
 			pfd.events = POLLIN;
-			if ((r = poll(&pfd, 1, 0)) == -1) {
-				if (errno == EINTR)
-					break;
+			যদি ((r = poll(&pfd, 1, 0)) == -1) {
+				যদি (errno == EINTR)
+					বিরতি;
 				fatal_f("poll: %s", strerror(errno));
-			} else if (r == 0)
-				break; /* fd not ready */
+			} অন্যথা যদি (r == 0)
+				বিরতি; /* fd not ready */
 		}
-		sshbuf_reset(msg);
-		get_msg(to, msg);
+		sshbuf_reset(বার্তা);
+		get_বার্তা(to, বার্তা);
 
-		if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-		    (r = sshbuf_get_u32(msg, &id)) != 0)
+		যদি ((r = sshbuf_get_u8(বার্তা, &type)) != 0 ||
+		    (r = sshbuf_get_u32(বার্তা, &id)) != 0)
 			fatal_fr(r, "dest parse");
 		debug3("Received dest reply T:%u I:%u R:%u", type, id, *nreqsp);
-		if (type != SSH2_FXP_STATUS) {
+		যদি (type != SSH2_FXP_STATUS) {
 			fatal_f("Expected SSH2_FXP_STATUS(%d) packet, got %d",
 			    SSH2_FXP_STATUS, type);
 		}
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		যদি ((r = sshbuf_get_u32(বার্তা, &status)) != 0)
 			fatal_fr(r, "parse dest status");
 		debug3("dest SSH2_FXP_STATUS %u", status);
-		if (status != SSH2_FX_OK) {
+		যদি (status != SSH2_FX_OK) {
 			/* record first error */
-			if (*write_errorp == 0)
+			যদি (*write_errorp == 0)
 				*write_errorp = status;
 		}
 		/*
@@ -2476,24 +2476,24 @@ handle_dest_replies(struct sftp_conn *to, const char *to_path, int synchronous,
 		(*nreqsp)--;
 	}
 	debug3_f("done: %u outstanding replies", *nreqsp);
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 }
 
-int
-sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
-    const char *from_path, const char *to_path,
-    Attrib *a, int preserve_flag)
+পূর্ণসংখ্যা
+sftp_crossload(কাঠামো sftp_conn *from, কাঠামো sftp_conn *to,
+    ধ্রুবক অক্ষর *from_path, ধ্রুবক অক্ষর *to_path,
+    Attrib *a, পূর্ণসংখ্যা preserve_flag)
 {
-	struct sshbuf *msg;
-	int write_error, read_error, r, seen_zerolen = 0;
-	uint64_t offset = 0, size;
-	u_int id, buflen, num_req, max_req, status = SSH2_FX_OK;
-	u_int num_upload_req;
-	off_t progress_counter;
+	কাঠামো sshbuf *বার্তা;
+	পূর্ণসংখ্যা write_error, read_error, r, seen_zerolen = 0;
+	uint64_t offset = 0, আকার_2;
+	u_int id, buflen, অঙ্ক_req, max_req, status = SSH2_FX_OK;
+	u_int অঙ্ক_upload_req;
+	off_t progress_গণক;
 	u_char *from_handle, *to_handle;
-	size_t from_handle_len, to_handle_len;
-	struct requests requests;
-	struct request *req;
+	আকার_t from_handle_len, to_handle_len;
+	কাঠামো requests requests;
+	কাঠামো request *req;
 	u_char type;
 	Attrib attr;
 
@@ -2501,273 +2501,273 @@ sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
 
 	TAILQ_INIT(&requests);
 
-	if (a == NULL) {
-		if (sftp_stat(from, from_path, 0, &attr) != 0)
-			return -1;
+	যদি (a == ফাঁকা) {
+		যদি (sftp_stat(from, from_path, 0, &attr) != 0)
+			ফেরত -1;
 		a = &attr;
 	}
 
-	if ((a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) &&
+	যদি ((a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) &&
 	    (!S_ISREG(a->perm))) {
 		error("download \"%s\": not a regular file", from_path);
-		return(-1);
+		ফেরত(-1);
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE)
-		size = a->size;
-	else
-		size = 0;
+	যদি (a->flags & SSH2_FILEXFER_ATTR_আকার)
+		আকার_2 = a->আকার_2;
+	অন্যথা
+		আকার_2 = 0;
 
 	buflen = from->download_buflen;
-	if (buflen > to->upload_buflen)
+	যদি (buflen > to->upload_buflen)
 		buflen = to->upload_buflen;
 
 	/* Send open request to read side */
-	if (send_open(from, from_path, "origin", SSH2_FXF_READ, NULL,
+	যদি (send_open(from, from_path, "origin", SSH2_FXF_READ, ফাঁকা,
 	    &from_handle, &from_handle_len) != 0)
-		return -1;
+		ফেরত -1;
 
 	/* Send open request to write side */
-	a->flags &= ~SSH2_FILEXFER_ATTR_SIZE;
+	a->flags &= ~SSH2_FILEXFER_ATTR_আকার;
 	a->flags &= ~SSH2_FILEXFER_ATTR_UIDGID;
 	a->perm &= 0777;
-	if (!preserve_flag)
+	যদি (!preserve_flag)
 		a->flags &= ~SSH2_FILEXFER_ATTR_ACMODTIME;
-	if (send_open(to, to_path, "dest",
+	যদি (send_open(to, to_path, "dest",
 	    SSH2_FXF_WRITE|SSH2_FXF_CREAT|SSH2_FXF_TRUNC, a,
 	    &to_handle, &to_handle_len) != 0) {
 		sftp_close(from, from_handle, from_handle_len);
-		return -1;
+		ফেরত -1;
 	}
 
 	/* Read from remote "from" and write to remote "to" */
 	offset = 0;
-	write_error = read_error = num_req = num_upload_req = 0;
+	write_error = read_error = অঙ্ক_req = অঙ্ক_upload_req = 0;
 	max_req = 1;
-	progress_counter = 0;
+	progress_গণক = 0;
 
-	if (showprogress && size != 0) {
+	যদি (showprogress && আকার_2 != 0) {
 		start_progress_meter(progress_meter_path(from_path),
-		    size, &progress_counter);
+		    আকার_2, &progress_গণক);
 	}
-	if ((msg = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	while (num_req > 0 || max_req > 0) {
-		u_char *data;
-		size_t len;
+	যখন (অঙ্ক_req > 0 || max_req > 0) {
+		u_char *তথ্য;
+		আকার_t len;
 
 		/*
 		 * Simulate EOF on interrupt: stop sending new requests and
 		 * allow outstanding requests to drain gracefully
 		 */
-		if (interrupted) {
-			if (num_req == 0) /* If we haven't started yet... */
-				break;
+		যদি (interrupted) {
+			যদি (অঙ্ক_req == 0) /* If we haven't started yet... */
+				বিরতি;
 			max_req = 0;
 		}
 
 		/* Send some more requests */
-		while (num_req < max_req) {
+		যখন (অঙ্ক_req < max_req) {
 			debug3("Request range %llu -> %llu (%d/%d)",
 			    (unsigned long long)offset,
 			    (unsigned long long)offset + buflen - 1,
-			    num_req, max_req);
-			req = request_enqueue(&requests, from->msg_id++,
+			    অঙ্ক_req, max_req);
+			req = request_enqueue(&requests, from->বার্তা_id++,
 			    buflen, offset);
 			offset += buflen;
-			num_req++;
+			অঙ্ক_req++;
 			send_read_request(from, req->id, req->offset,
 			    req->len, from_handle, from_handle_len);
 		}
 
 		/* Try to eat replies from the upload side (nonblocking) */
 		handle_dest_replies(to, to_path, 0,
-		    &num_upload_req, &write_error);
+		    &অঙ্ক_upload_req, &write_error);
 
-		sshbuf_reset(msg);
-		get_msg(from, msg);
-		if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-		    (r = sshbuf_get_u32(msg, &id)) != 0)
+		sshbuf_reset(বার্তা);
+		get_বার্তা(from, বার্তা);
+		যদি ((r = sshbuf_get_u8(বার্তা, &type)) != 0 ||
+		    (r = sshbuf_get_u32(বার্তা, &id)) != 0)
 			fatal_fr(r, "parse");
 		debug3("Received origin reply T:%u I:%u R:%d",
 		    type, id, max_req);
 
 		/* Find the request in our queue */
-		if ((req = request_find(&requests, id)) == NULL)
+		যদি ((req = request_find(&requests, id)) == ফাঁকা)
 			fatal("Unexpected reply %u", id);
 
-		switch (type) {
-		case SSH2_FXP_STATUS:
-			if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		নির্বাচন (type) {
+		ক্ষেত্র SSH2_FXP_STATUS:
+			যদি ((r = sshbuf_get_u32(বার্তা, &status)) != 0)
 				fatal_fr(r, "parse status");
-			if (status != SSH2_FX_EOF)
+			যদি (status != SSH2_FX_EOF)
 				read_error = 1;
 			max_req = 0;
 			TAILQ_REMOVE(&requests, req, tq);
-			free(req);
-			num_req--;
-			break;
-		case SSH2_FXP_DATA:
-			if ((r = sshbuf_get_string(msg, &data, &len)) != 0)
+			মুক্ত(req);
+			অঙ্ক_req--;
+			বিরতি;
+		ক্ষেত্র SSH2_FXP_তথ্য:
+			যদি ((r = sshbuf_get_string(বার্তা, &তথ্য, &len)) != 0)
 				fatal_fr(r, "parse data");
 			debug3("Received data %llu -> %llu",
 			    (unsigned long long)req->offset,
 			    (unsigned long long)req->offset + len - 1);
-			if (len > req->len)
+			যদি (len > req->len)
 				fatal("Received more data than asked for "
 				    "%zu > %zu", len, req->len);
-			if (len == 0) {
-				if (seen_zerolen)
+			যদি (len == 0) {
+				যদি (seen_zerolen)
 					fatal_f("server sent zero data length");
 				seen_zerolen = 1;
 			}
 
 			/* Write this chunk out to the destination */
-			sshbuf_reset(msg);
-			if ((r = sshbuf_put_u8(msg, SSH2_FXP_WRITE)) != 0 ||
-			    (r = sshbuf_put_u32(msg, to->msg_id++)) != 0 ||
-			    (r = sshbuf_put_string(msg, to_handle,
+			sshbuf_reset(বার্তা);
+			যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_WRITE)) != 0 ||
+			    (r = sshbuf_put_u32(বার্তা, to->বার্তা_id++)) != 0 ||
+			    (r = sshbuf_put_string(বার্তা, to_handle,
 			    to_handle_len)) != 0 ||
-			    (r = sshbuf_put_u64(msg, req->offset)) != 0 ||
-			    (r = sshbuf_put_string(msg, data, len)) != 0)
+			    (r = sshbuf_put_u64(বার্তা, req->offset)) != 0 ||
+			    (r = sshbuf_put_string(বার্তা, তথ্য, len)) != 0)
 				fatal_fr(r, "compose write");
-			send_msg(to, msg);
+			send_বার্তা(to, বার্তা);
 			debug3("Sent message SSH2_FXP_WRITE I:%u O:%llu S:%zu",
 			    id, (unsigned long long)offset, len);
-			num_upload_req++;
-			progress_counter += len;
-			free(data);
+			অঙ্ক_upload_req++;
+			progress_গণক += len;
+			মুক্ত(তথ্য);
 
-			if (len == req->len) {
+			যদি (len == req->len) {
 				TAILQ_REMOVE(&requests, req, tq);
-				free(req);
-				num_req--;
-			} else {
+				মুক্ত(req);
+				অঙ্ক_req--;
+			} অন্যথা {
 				/* Resend the request for the missing data */
 				debug3("Short data block, re-requesting "
 				    "%llu -> %llu (%2d)",
 				    (unsigned long long)req->offset + len,
 				    (unsigned long long)req->offset +
-				    req->len - 1, num_req);
-				req->id = from->msg_id++;
+				    req->len - 1, অঙ্ক_req);
+				req->id = from->বার্তা_id++;
 				req->len -= len;
 				req->offset += len;
 				send_read_request(from, req->id,
 				    req->offset, req->len,
 				    from_handle, from_handle_len);
 				/* Reduce the request size */
-				if (len < buflen)
-					buflen = MAXIMUM(MIN_READ_SIZE, len);
+				যদি (len < buflen)
+					buflen = MAXIMUM(MIN_READ_আকার, len);
 			}
-			if (max_req > 0) { /* max_req = 0 iff EOF received */
-				if (size > 0 && offset > size) {
+			যদি (max_req > 0) { /* max_req = 0 iff EOF received */
+				যদি (আকার_2 > 0 && offset > আকার_2) {
 					/* Only one request at a time
 					 * after the expected EOF */
 					debug3("Finish at %llu (%2d)",
 					    (unsigned long long)offset,
-					    num_req);
+					    অঙ্ক_req);
 					max_req = 1;
-				} else if (max_req < from->num_requests) {
+				} অন্যথা যদি (max_req < from->অঙ্ক_requests) {
 					++max_req;
 				}
 			}
-			break;
-		default:
+			বিরতি;
+		পূর্বনির্ধারিত:
 			fatal("Expected SSH2_FXP_DATA(%u) packet, got %u",
-			    SSH2_FXP_DATA, type);
+			    SSH2_FXP_তথ্য, type);
 		}
 	}
 
-	if (showprogress && size)
+	যদি (showprogress && আকার_2)
 		stop_progress_meter();
 
 	/* Drain replies from the server (blocking) */
-	debug3_f("waiting for %u replies from destination", num_upload_req);
-	handle_dest_replies(to, to_path, 1, &num_upload_req, &write_error);
+	debug3_f("waiting for %u replies from destination", অঙ্ক_upload_req);
+	handle_dest_replies(to, to_path, 1, &অঙ্ক_upload_req, &write_error);
 
 	/* Sanity check */
-	if (TAILQ_FIRST(&requests) != NULL)
+	যদি (TAILQ_FIRST(&requests) != ফাঁকা)
 		fatal("Transfer complete, but requests still in queue");
 	/* Truncate at 0 length on interrupt or error to avoid holes at dest */
-	if (read_error || write_error || interrupted) {
+	যদি (read_error || write_error || interrupted) {
 		debug("truncating \"%s\" at 0", to_path);
 		sftp_close(to, to_handle, to_handle_len);
-		free(to_handle);
-		if (send_open(to, to_path, "dest",
+		মুক্ত(to_handle);
+		যদি (send_open(to, to_path, "dest",
 		    SSH2_FXF_WRITE|SSH2_FXF_CREAT|SSH2_FXF_TRUNC, a,
 		    &to_handle, &to_handle_len) != 0) {
 			error("dest truncate \"%s\" failed", to_path);
-			to_handle = NULL;
+			to_handle = ফাঁকা;
 		}
 	}
-	if (read_error) {
+	যদি (read_error) {
 		error("read origin \"%s\": %s", from_path, fx2txt(status));
 		status = -1;
 		sftp_close(from, from_handle, from_handle_len);
-		if (to_handle != NULL)
+		যদি (to_handle != ফাঁকা)
 			sftp_close(to, to_handle, to_handle_len);
-	} else if (write_error) {
+	} অন্যথা যদি (write_error) {
 		error("write dest \"%s\": %s", to_path, fx2txt(write_error));
 		status = SSH2_FX_FAILURE;
 		sftp_close(from, from_handle, from_handle_len);
-		if (to_handle != NULL)
+		যদি (to_handle != ফাঁকা)
 			sftp_close(to, to_handle, to_handle_len);
-	} else {
-		if (sftp_close(from, from_handle, from_handle_len) != 0 ||
+	} অন্যথা {
+		যদি (sftp_close(from, from_handle, from_handle_len) != 0 ||
 		    interrupted)
 			status = -1;
-		else
+		অন্যথা
 			status = SSH2_FX_OK;
-		if (to_handle != NULL) {
+		যদি (to_handle != ফাঁকা) {
 			/* Need to resend utimes after write */
-			if (preserve_flag)
+			যদি (preserve_flag)
 				sftp_fsetstat(to, to_handle, to_handle_len, a);
 			sftp_close(to, to_handle, to_handle_len);
 		}
 	}
-	sshbuf_free(msg);
-	free(from_handle);
-	free(to_handle);
+	sshbuf_free(বার্তা);
+	মুক্ত(from_handle);
+	মুক্ত(to_handle);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	ফেরত status == SSH2_FX_OK ? 0 : -1;
 }
 
-static int
-crossload_dir_internal(struct sftp_conn *from, struct sftp_conn *to,
-    const char *from_path, const char *to_path,
-    int depth, Attrib *dirattrib, int preserve_flag, int print_flag,
-    int follow_link_flag)
+স্থির পূর্ণসংখ্যা
+crossload_dir_internal(কাঠামো sftp_conn *from, কাঠামো sftp_conn *to,
+    ধ্রুবক অক্ষর *from_path, ধ্রুবক অক্ষর *to_path,
+    পূর্ণসংখ্যা depth, Attrib *dirattrib, পূর্ণসংখ্যা preserve_flag, পূর্ণসংখ্যা print_flag,
+    পূর্ণসংখ্যা follow_link_flag)
 {
-	int i, ret = 0, created = 0;
+	পূর্ণসংখ্যা i, ret = 0, created = 0;
 	SFTP_DIRENT **dir_entries;
-	char *filename, *new_from_path = NULL, *new_to_path = NULL;
+	অক্ষর *filename, *new_from_path = ফাঁকা, *new_to_path = ফাঁকা;
 	mode_t mode = 0777;
 	Attrib *a, curdir, ldirattrib, newdir, lsym;
 
 	debug2_f("crossload dir src \"%s\" to dst \"%s\"", from_path, to_path);
 
-	if (depth >= MAX_DIR_DEPTH) {
+	যদি (depth >= MAX_DIR_DEPTH) {
 		error("Maximum directory depth exceeded: %d levels", depth);
-		return -1;
+		ফেরত -1;
 	}
 
-	if (dirattrib == NULL) {
-		if (sftp_stat(from, from_path, 1, &ldirattrib) != 0) {
+	যদি (dirattrib == ফাঁকা) {
+		যদি (sftp_stat(from, from_path, 1, &ldirattrib) != 0) {
 			error("stat remote \"%s\" failed", from_path);
-			return -1;
+			ফেরত -1;
 		}
 		dirattrib = &ldirattrib;
 	}
-	if (!S_ISDIR(dirattrib->perm)) {
+	যদি (!S_ISDIR(dirattrib->perm)) {
 		error("\"%s\" is not a directory", from_path);
-		return -1;
+		ফেরত -1;
 	}
-	if (print_flag && print_flag != SFTP_PROGRESS_ONLY)
+	যদি (print_flag && print_flag != SFTP_PROGRESS_ONLY)
 		mprintf("Retrieving %s\n", from_path);
 
 	curdir = *dirattrib; /* dirattrib will be clobbered */
-	curdir.flags &= ~SSH2_FILEXFER_ATTR_SIZE;
+	curdir.flags &= ~SSH2_FILEXFER_ATTR_আকার;
 	curdir.flags &= ~SSH2_FILEXFER_ATTR_UIDGID;
-	if ((curdir.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) == 0) {
+	যদি ((curdir.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) == 0) {
 		debug("Origin did not send permissions for "
 		    "directory \"%s\"", to_path);
 		curdir.perm = S_IWUSR|S_IXUSR;
@@ -2783,265 +2783,265 @@ crossload_dir_internal(struct sftp_conn *from, struct sftp_conn *to,
 	 * the path already existed and is a directory.  Ensure we can
 	 * write to the directory we create for the duration of the transfer.
 	 */
-	if (sftp_mkdir(to, to_path, &curdir, 0) == 0)
+	যদি (sftp_mkdir(to, to_path, &curdir, 0) == 0)
 		created = 1;
-	else {
-		if (sftp_stat(to, to_path, 0, &newdir) != 0)
-			return -1;
-		if (!S_ISDIR(newdir.perm)) {
+	অন্যথা {
+		যদি (sftp_stat(to, to_path, 0, &newdir) != 0)
+			ফেরত -1;
+		যদি (!S_ISDIR(newdir.perm)) {
 			error("\"%s\" exists but is not a directory", to_path);
-			return -1;
+			ফেরত -1;
 		}
 	}
 	curdir.perm = mode;
 
-	if (sftp_readdir(from, from_path, &dir_entries) == -1) {
+	যদি (sftp_readdir(from, from_path, &dir_entries) == -1) {
 		error("origin readdir \"%s\" failed", from_path);
-		return -1;
+		ফেরত -1;
 	}
 
-	for (i = 0; dir_entries[i] != NULL && !interrupted; i++) {
-		free(new_from_path);
-		free(new_to_path);
+	জন্য (i = 0; dir_entries[i] != ফাঁকা && !interrupted; i++) {
+		মুক্ত(new_from_path);
+		মুক্ত(new_to_path);
 
 		filename = dir_entries[i]->filename;
 		new_from_path = sftp_path_append(from_path, filename);
 		new_to_path = sftp_path_append(to_path, filename);
 
 		a = &dir_entries[i]->a;
-		if (S_ISLNK(a->perm)) {
-			if (!follow_link_flag) {
+		যদি (S_ISLNK(a->perm)) {
+			যদি (!follow_link_flag) {
 				logit("%s: not a regular file", filename);
-				continue;
+				চালু;
 			}
 			/* Replace the stat contents with the symlink target */
-			if (sftp_stat(from, new_from_path, 1, &lsym) != 0) {
+			যদি (sftp_stat(from, new_from_path, 1, &lsym) != 0) {
 				logit("remote stat \"%s\" failed",
 				    new_from_path);
 				ret = -1;
-				continue;
+				চালু;
 			}
 			a = &lsym;
 		}
-		if (S_ISDIR(a->perm)) {
-			if (strcmp(filename, ".") == 0 ||
+		যদি (S_ISDIR(a->perm)) {
+			যদি (strcmp(filename, ".") == 0 ||
 			    strcmp(filename, "..") == 0)
-				continue;
-			if (crossload_dir_internal(from, to,
+				চালু;
+			যদি (crossload_dir_internal(from, to,
 			    new_from_path, new_to_path,
 			    depth + 1, a, preserve_flag,
 			    print_flag, follow_link_flag) == -1)
 				ret = -1;
-		} else if (S_ISREG(a->perm)) {
-			if (sftp_crossload(from, to, new_from_path,
+		} অন্যথা যদি (S_ISREG(a->perm)) {
+			যদি (sftp_crossload(from, to, new_from_path,
 			    new_to_path, a, preserve_flag) == -1) {
 				error("crossload \"%s\" to \"%s\" failed",
 				    new_from_path, new_to_path);
 				ret = -1;
 			}
-		} else {
+		} অন্যথা {
 			logit("origin \"%s\": not a regular file",
 			    new_from_path);
 		}
 	}
-	free(new_to_path);
-	free(new_from_path);
+	মুক্ত(new_to_path);
+	মুক্ত(new_from_path);
 
-	if (created || preserve_flag)
+	যদি (created || preserve_flag)
 		sftp_setstat(to, to_path, &curdir);
 
 	sftp_free_dirents(dir_entries);
 
-	return ret;
+	ফেরত ret;
 }
 
-int
-sftp_crossload_dir(struct sftp_conn *from, struct sftp_conn *to,
-    const char *from_path, const char *to_path,
-    Attrib *dirattrib, int preserve_flag, int print_flag, int follow_link_flag)
+পূর্ণসংখ্যা
+sftp_crossload_dir(কাঠামো sftp_conn *from, কাঠামো sftp_conn *to,
+    ধ্রুবক অক্ষর *from_path, ধ্রুবক অক্ষর *to_path,
+    Attrib *dirattrib, পূর্ণসংখ্যা preserve_flag, পূর্ণসংখ্যা print_flag, পূর্ণসংখ্যা follow_link_flag)
 {
-	char *from_path_canon;
-	int ret;
+	অক্ষর *from_path_canon;
+	পূর্ণসংখ্যা ret;
 
-	if ((from_path_canon = sftp_realpath(from, from_path)) == NULL) {
+	যদি ((from_path_canon = sftp_realpath(from, from_path)) == ফাঁকা) {
 		error("crossload \"%s\": path canonicalization failed",
 		    from_path);
-		return -1;
+		ফেরত -1;
 	}
 
 	ret = crossload_dir_internal(from, to, from_path_canon, to_path, 0,
 	    dirattrib, preserve_flag, print_flag, follow_link_flag);
-	free(from_path_canon);
-	return ret;
+	মুক্ত(from_path_canon);
+	ফেরত ret;
 }
 
-int
-sftp_can_get_users_groups_by_id(struct sftp_conn *conn)
+পূর্ণসংখ্যা
+sftp_can_get_users_groups_by_id(কাঠামো sftp_conn *conn)
 {
-	return (conn->exts & SFTP_EXT_GETUSERSGROUPS_BY_ID) != 0;
+	ফেরত (conn->exts & SFTP_EXT_GETUSERSGROUPS_BY_ID) != 0;
 }
 
-int
-sftp_get_users_groups_by_id(struct sftp_conn *conn,
-    const u_int *uids, u_int nuids,
-    const u_int *gids, u_int ngids,
-    char ***usernamesp, char ***groupnamesp)
+পূর্ণসংখ্যা
+sftp_get_users_groups_by_id(কাঠামো sftp_conn *conn,
+    ধ্রুবক u_int *uids, u_int nuids,
+    ধ্রুবক u_int *gids, u_int ngids,
+    অক্ষর ***usernamesp, অক্ষর ***groupnamesp)
 {
-	struct sshbuf *msg, *uidbuf, *gidbuf;
+	কাঠামো sshbuf *বার্তা, *uidbuf, *gidbuf;
 	u_int i, expected_id, id;
-	char *name, **usernames = NULL, **groupnames = NULL;
+	অক্ষর *name, **usernames = ফাঁকা, **groupnames = ফাঁকা;
 	u_char type;
-	int r;
+	পূর্ণসংখ্যা r;
 
-	*usernamesp = *groupnamesp = NULL;
-	if (!sftp_can_get_users_groups_by_id(conn))
-		return SSH_ERR_FEATURE_UNSUPPORTED;
+	*usernamesp = *groupnamesp = ফাঁকা;
+	যদি (!sftp_can_get_users_groups_by_id(conn))
+		ফেরত SSH_ERR_FEATURE_UNSUPPORTED;
 
-	if ((msg = sshbuf_new()) == NULL ||
-	    (uidbuf = sshbuf_new()) == NULL ||
-	    (gidbuf = sshbuf_new()) == NULL)
+	যদি ((বার্তা = sshbuf_new()) == ফাঁকা ||
+	    (uidbuf = sshbuf_new()) == ফাঁকা ||
+	    (gidbuf = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	expected_id = id = conn->msg_id++;
+	expected_id = id = conn->বার্তা_id++;
 	debug2("Sending SSH2_FXP_EXTENDED(users-groups-by-id@openssh.com)");
-	for (i = 0; i < nuids; i++) {
-		if ((r = sshbuf_put_u32(uidbuf, uids[i])) != 0)
+	জন্য (i = 0; i < nuids; i++) {
+		যদি ((r = sshbuf_put_u32(uidbuf, uids[i])) != 0)
 			fatal_fr(r, "compose uids");
 	}
-	for (i = 0; i < ngids; i++) {
-		if ((r = sshbuf_put_u32(gidbuf, gids[i])) != 0)
+	জন্য (i = 0; i < ngids; i++) {
+		যদি ((r = sshbuf_put_u32(gidbuf, gids[i])) != 0)
 			fatal_fr(r, "compose gids");
 	}
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg,
+	যদি ((r = sshbuf_put_u8(বার্তা, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(বার্তা, id)) != 0 ||
+	    (r = sshbuf_put_cstring(বার্তা,
 	    "users-groups-by-id@openssh.com")) != 0 ||
-	    (r = sshbuf_put_stringb(msg, uidbuf)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, gidbuf)) != 0)
+	    (r = sshbuf_put_stringb(বার্তা, uidbuf)) != 0 ||
+	    (r = sshbuf_put_stringb(বার্তা, gidbuf)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
-	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &id)) != 0)
+	send_বার্তা(conn, বার্তা);
+	get_বার্তা(conn, বার্তা);
+	যদি ((r = sshbuf_get_u8(বার্তা, &type)) != 0 ||
+	    (r = sshbuf_get_u32(বার্তা, &id)) != 0)
 		fatal_fr(r, "parse");
-	if (id != expected_id)
+	যদি (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
-	if (type == SSH2_FXP_STATUS) {
+	যদি (type == SSH2_FXP_STATUS) {
 		u_int status;
-		char *errmsg;
+		অক্ষর *errmsg;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0 ||
-		    (r = sshbuf_get_cstring(msg, &errmsg, NULL)) != 0)
+		যদি ((r = sshbuf_get_u32(বার্তা, &status)) != 0 ||
+		    (r = sshbuf_get_cstring(বার্তা, &errmsg, ফাঁকা)) != 0)
 			fatal_fr(r, "parse status");
 		error("users-groups-by-id %s",
 		    *errmsg == '\0' ? fx2txt(status) : errmsg);
-		free(errmsg);
-		sshbuf_free(msg);
+		মুক্ত(errmsg);
+		sshbuf_free(বার্তা);
 		sshbuf_free(uidbuf);
 		sshbuf_free(gidbuf);
-		return -1;
-	} else if (type != SSH2_FXP_EXTENDED_REPLY)
+		ফেরত -1;
+	} অন্যথা যদি (type != SSH2_FXP_EXTENDED_REPLY)
 		fatal("Expected SSH2_FXP_EXTENDED_REPLY(%u) packet, got %u",
 		    SSH2_FXP_EXTENDED_REPLY, type);
 
 	/* reuse */
 	sshbuf_free(uidbuf);
 	sshbuf_free(gidbuf);
-	uidbuf = gidbuf = NULL;
-	if ((r = sshbuf_froms(msg, &uidbuf)) != 0 ||
-	    (r = sshbuf_froms(msg, &gidbuf)) != 0)
+	uidbuf = gidbuf = ফাঁকা;
+	যদি ((r = sshbuf_froms(বার্তা, &uidbuf)) != 0 ||
+	    (r = sshbuf_froms(বার্তা, &gidbuf)) != 0)
 		fatal_fr(r, "parse response");
-	if (nuids > 0) {
-		usernames = xcalloc(nuids, sizeof(*usernames));
-		for (i = 0; i < nuids; i++) {
-			if ((r = sshbuf_get_cstring(uidbuf, &name, NULL)) != 0)
+	যদি (nuids > 0) {
+		usernames = xcalloc(nuids, আকার(*usernames));
+		জন্য (i = 0; i < nuids; i++) {
+			যদি ((r = sshbuf_get_cstring(uidbuf, &name, ফাঁকা)) != 0)
 				fatal_fr(r, "parse user name");
 			/* Handle unresolved names */
-			if (*name == '\0') {
-				free(name);
-				name = NULL;
+			যদি (*name == '\0') {
+				মুক্ত(name);
+				name = ফাঁকা;
 			}
 			usernames[i] = name;
 		}
 	}
-	if (ngids > 0) {
-		groupnames = xcalloc(ngids, sizeof(*groupnames));
-		for (i = 0; i < ngids; i++) {
-			if ((r = sshbuf_get_cstring(gidbuf, &name, NULL)) != 0)
+	যদি (ngids > 0) {
+		groupnames = xcalloc(ngids, আকার(*groupnames));
+		জন্য (i = 0; i < ngids; i++) {
+			যদি ((r = sshbuf_get_cstring(gidbuf, &name, ফাঁকা)) != 0)
 				fatal_fr(r, "parse user name");
 			/* Handle unresolved names */
-			if (*name == '\0') {
-				free(name);
-				name = NULL;
+			যদি (*name == '\0') {
+				মুক্ত(name);
+				name = ফাঁকা;
 			}
 			groupnames[i] = name;
 		}
 	}
-	if (sshbuf_len(uidbuf) != 0)
+	যদি (sshbuf_len(uidbuf) != 0)
 		fatal_f("unexpected extra username data");
-	if (sshbuf_len(gidbuf) != 0)
+	যদি (sshbuf_len(gidbuf) != 0)
 		fatal_f("unexpected extra groupname data");
 	sshbuf_free(uidbuf);
 	sshbuf_free(gidbuf);
-	sshbuf_free(msg);
+	sshbuf_free(বার্তা);
 	/* success */
 	*usernamesp = usernames;
 	*groupnamesp = groupnames;
-	return 0;
+	ফেরত 0;
 }
 
-char *
-sftp_path_append(const char *p1, const char *p2)
+অক্ষর *
+sftp_path_append(ধ্রুবক অক্ষর *p1, ধ্রুবক অক্ষর *p2)
 {
-	char *ret;
-	size_t len = strlen(p1) + strlen(p2) + 2;
+	অক্ষর *ret;
+	আকার_t len = strlen(p1) + strlen(p2) + 2;
 
 	ret = xmalloc(len);
 	strlcpy(ret, p1, len);
-	if (p1[0] != '\0' && p1[strlen(p1) - 1] != '/')
+	যদি (p1[0] != '\0' && p1[strlen(p1) - 1] != '/')
 		strlcat(ret, "/", len);
 	strlcat(ret, p2, len);
 
-	return(ret);
+	ফেরত(ret);
 }
 
 /*
  * Arg p must be dynamically allocated.  It will either be returned or
  * freed and a replacement allocated.  Caller must free returned string.
  */
-char *
-sftp_make_absolute(char *p, const char *pwd)
+অক্ষর *
+sftp_make_absolute(অক্ষর *p, ধ্রুবক অক্ষর *pwd)
 {
-	char *abs_str;
+	অক্ষর *abs_str;
 
 	/* Derelativise */
-	if (p && !path_absolute(p)) {
+	যদি (p && !path_absolute(p)) {
 		abs_str = sftp_path_append(pwd, p);
-		free(p);
-		return(abs_str);
-	} else
-		return(p);
+		মুক্ত(p);
+		ফেরত(abs_str);
+	} অন্যথা
+		ফেরত(p);
 }
 
-int
-sftp_remote_is_dir(struct sftp_conn *conn, const char *path)
+পূর্ণসংখ্যা
+sftp_remote_is_dir(কাঠামো sftp_conn *conn, ধ্রুবক অক্ষর *path)
 {
 	Attrib a;
 
 	/* XXX: report errors? */
-	if (sftp_stat(conn, path, 1, &a) != 0)
-		return(0);
-	if (!(a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS))
-		return(0);
-	return S_ISDIR(a.perm);
+	যদি (sftp_stat(conn, path, 1, &a) != 0)
+		ফেরত(0);
+	যদি (!(a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS))
+		ফেরত(0);
+	ফেরত S_ISDIR(a.perm);
 }
 
 
 /* Check whether path returned from glob(..., GLOB_MARK, ...) is a directory */
-int
-sftp_globpath_is_dir(const char *pathname)
+পূর্ণসংখ্যা
+sftp_globpath_is_dir(ধ্রুবক অক্ষর *pathname)
 {
-	size_t l = strlen(pathname);
+	আকার_t l = strlen(pathname);
 
-	return l > 0 && pathname[l - 1] == '/';
+	ফেরত l > 0 && pathname[l - 1] == '/';
 }
 

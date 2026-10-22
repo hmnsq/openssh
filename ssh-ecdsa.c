@@ -24,43 +24,43 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#if defined(WITH_OPENSSL)
-#include "openbsd-compat/openssl-compat.h"
+#যদি defined(WITH_OPENSSL)
+#অন্তর্ভাব "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/evp.h>
+#অন্তর্ভাব <openssl/bn.h>
+#অন্তর্ভাব <openssl/ec.h>
+#অন্তর্ভাব <openssl/ecdsa.h>
+#অন্তর্ভাব <openssl/evp.h>
 
-#include <string.h>
+#অন্তর্ভাব <string.h>
 
-#include "sshbuf.h"
-#include "ssherr.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "ssherr.h"
 #define SSHKEY_INTERNAL
-#include "sshkey.h"
+#অন্তর্ভাব "sshkey.h"
 
-int
+পূর্ণসংখ্যা
 sshkey_ecdsa_fixup_group(EVP_PKEY *k)
 {
-	int nids[] = {
+	পূর্ণসংখ্যা nids[] = {
 		NID_X9_62_prime256v1,
 		NID_secp384r1,
 		NID_secp521r1,
 		-1
 	};
-	int nid = -1;
+	পূর্ণসংখ্যা nid = -1;
 	u_int i;
-	const EC_GROUP *g;
-	EC_KEY *ec = NULL;
-	EC_GROUP *eg = NULL;
+	ধ্রুবক EC_GROUP *g;
+	EC_চাবি *ec = ফাঁকা;
+	EC_GROUP *eg = ফাঁকা;
 
-	if ((ec = EVP_PKEY_get1_EC_KEY(k)) == NULL ||
-	    (g = EC_KEY_get0_group(ec)) == NULL)
-		goto out;
+	যদি ((ec = EVP_PKEY_get1_EC_চাবি(k)) == ফাঁকা ||
+	    (g = EC_চাবি_get0_group(ec)) == ফাঁকা)
+		যাও out;
 	/*
 	 * The group may be stored in a ASN.1 encoded private key in one of two
 	 * ways: as a "named group", which is reconstituted by ASN.1 object ID
@@ -69,413 +69,413 @@ sshkey_ecdsa_fixup_group(EVP_PKEY *k)
 	 * it out for the other case by comparing against all the groups that
 	 * are supported.
 	 */
-	if ((nid = EC_GROUP_get_curve_name(g)) > 0)
-		goto out;
+	যদি ((nid = EC_GROUP_get_curve_name(g)) > 0)
+		যাও out;
 	nid = -1;
-	for (i = 0; nids[i] != -1; i++) {
-		if ((eg = EC_GROUP_new_by_curve_name(nids[i])) == NULL)
-			goto out;
-		if (EC_GROUP_cmp(g, eg, NULL) == 0)
-			break;
+	জন্য (i = 0; nids[i] != -1; i++) {
+		যদি ((eg = EC_GROUP_new_by_curve_name(nids[i])) == ফাঁকা)
+			যাও out;
+		যদি (EC_GROUP_cmp(g, eg, ফাঁকা) == 0)
+			বিরতি;
 		EC_GROUP_free(eg);
-		eg = NULL;
+		eg = ফাঁকা;
 	}
-	if (nids[i] == -1)
-		goto out;
+	যদি (nids[i] == -1)
+		যাও out;
 
 	/* Use the group with the NID attached */
 	EC_GROUP_set_asn1_flag(eg, OPENSSL_EC_NAMED_CURVE);
-	if (EC_KEY_set_group(ec, eg) != 1 ||
-	    EVP_PKEY_set1_EC_KEY(k, ec) != 1)
-		goto out;
+	যদি (EC_চাবি_set_group(ec, eg) != 1 ||
+	    EVP_PKEY_set1_EC_চাবি(k, ec) != 1)
+		যাও out;
 	/* success */
 	nid = nids[i];
  out:
-	EC_KEY_free(ec);
+	EC_চাবি_free(ec);
 	EC_GROUP_free(eg);
-	return nid;
+	ফেরত nid;
 }
 
-static u_int
-ssh_ecdsa_size(const struct sshkey *key)
+স্থির u_int
+ssh_ecdsa_আকার(ধ্রুবক কাঠামো sshkey *চাবি)
 {
-	switch (key->ecdsa_nid) {
-	case NID_X9_62_prime256v1:
-		return 256;
-	case NID_secp384r1:
-		return 384;
-	case NID_secp521r1:
-		return 521;
-	default:
-		return 0;
+	নির্বাচন (চাবি->ecdsa_nid) {
+	ক্ষেত্র NID_X9_62_prime256v1:
+		ফেরত 256;
+	ক্ষেত্র NID_secp384r1:
+		ফেরত 384;
+	ক্ষেত্র NID_secp521r1:
+		ফেরত 521;
+	পূর্বনির্ধারিত:
+		ফেরত 0;
 	}
 }
 
-static void
-ssh_ecdsa_cleanup(struct sshkey *k)
+স্থির শূন্য
+ssh_ecdsa_cleanup(কাঠামো sshkey *k)
 {
 	EVP_PKEY_free(k->pkey);
-	k->pkey = NULL;
+	k->pkey = ফাঁকা;
 }
 
-static int
-ssh_ecdsa_equal(const struct sshkey *a, const struct sshkey *b)
+স্থির পূর্ণসংখ্যা
+ssh_ecdsa_equal(ধ্রুবক কাঠামো sshkey *a, ধ্রুবক কাঠামো sshkey *b)
 {
-	if (a->pkey == NULL || b->pkey == NULL)
-		return 0;
-	return EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
+	যদি (a->pkey == ফাঁকা || b->pkey == ফাঁকা)
+		ফেরত 0;
+	ফেরত EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
 }
 
-static int
-ssh_ecdsa_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+স্থির পূর্ণসংখ্যা
+ssh_ecdsa_serialize_public(ধ্রুবক কাঠামো sshkey *চাবি, কাঠামো sshbuf *b,
+    গণনা sshkey_serialize_rep opts)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if (key->pkey == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_cstring(b,
-	    sshkey_curve_nid_to_name(key->ecdsa_nid))) != 0 ||
-	    (r = sshbuf_put_ec_pkey(b, key->pkey)) != 0)
-		return r;
+	যদি (চাবি->pkey == ফাঁকা)
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
+	যদি ((r = sshbuf_put_cstring(b,
+	    sshkey_curve_nid_to_name(চাবি->ecdsa_nid))) != 0 ||
+	    (r = sshbuf_put_ec_pkey(b, চাবি->pkey)) != 0)
+		ফেরত r;
 
-	return 0;
+	ফেরত 0;
 }
 
-static int
-ssh_ecdsa_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+স্থির পূর্ণসংখ্যা
+ssh_ecdsa_serialize_private(ধ্রুবক কাঠামো sshkey *চাবি, কাঠামো sshbuf *b,
+    গণনা sshkey_serialize_rep opts)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_ecdsa_serialize_public(key, b, opts)) != 0)
-			return r;
+	যদি (!sshkey_is_cert(চাবি)) {
+		যদি ((r = ssh_ecdsa_serialize_public(চাবি, b, opts)) != 0)
+			ফেরত r;
 	}
-	if ((r = sshbuf_put_bignum2(b,
-	    EC_KEY_get0_private_key(EVP_PKEY_get0_EC_KEY(key->pkey)))) != 0)
-		return r;
-	return 0;
+	যদি ((r = sshbuf_put_bignum2(b,
+	    EC_চাবি_get0_private_চাবি(EVP_PKEY_get0_EC_চাবি(চাবি->pkey)))) != 0)
+		ফেরত r;
+	ফেরত 0;
 }
 
-static int
-ssh_ecdsa_generate(struct sshkey *k, int bits)
+স্থির পূর্ণসংখ্যা
+ssh_ecdsa_generate(কাঠামো sshkey *k, পূর্ণসংখ্যা bits)
 {
-	EVP_PKEY *res = NULL;
-	EVP_PKEY_CTX *ctx = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	EVP_PKEY *res = ফাঁকা;
+	EVP_PKEY_CTX *ctx = ফাঁকা;
+	পূর্ণসংখ্যা ret = SSH_ERR_INTERNAL_ERROR;
 
-	if ((k->ecdsa_nid = sshkey_ecdsa_bits_to_nid(bits)) == -1)
-		return SSH_ERR_KEY_LENGTH;
+	যদি ((k->ecdsa_nid = sshkey_ecdsa_bits_to_nid(bits)) == -1)
+		ফেরত SSH_ERR_চাবি_দৈর্ঘ্য;
 
-	if ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	যদি ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, ফাঁকা)) == ফাঁকা)
+		ফেরত SSH_ERR_ALLOC_FAIL;
 
-	if (EVP_PKEY_keygen_init(ctx) <= 0 ||
+	যদি (EVP_PKEY_keygen_init(ctx) <= 0 ||
 	    EVP_PKEY_CTX_set_ec_paramgen_curve_nid(ctx, k->ecdsa_nid) <= 0 ||
 	    EVP_PKEY_keygen(ctx, &res) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		যাও out;
 	}
 	/* success */
 	k->pkey = res;
-	res = NULL;
+	res = ফাঁকা;
 	ret = 0;
  out:
 	EVP_PKEY_free(res);
 	EVP_PKEY_CTX_free(ctx);
-	return ret;
+	ফেরত ret;
 }
 
-static int
-ssh_ecdsa_copy_public(const struct sshkey *from, struct sshkey *to)
+স্থির পূর্ণসংখ্যা
+ssh_ecdsa_copy_public(ধ্রুবক কাঠামো sshkey *from, কাঠামো sshkey *to)
 {
-	const EC_KEY *ec_from;
-	EC_KEY *ec_to = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	ধ্রুবক EC_চাবি *ec_from;
+	EC_চাবি *ec_to = ফাঁকা;
+	পূর্ণসংখ্যা ret = SSH_ERR_INTERNAL_ERROR;
 
-	ec_from = EVP_PKEY_get0_EC_KEY(from->pkey);
-	if (ec_from == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	ec_from = EVP_PKEY_get0_EC_চাবি(from->pkey);
+	যদি (ec_from == ফাঁকা)
+		ফেরত SSH_ERR_LIBCRYPTO_ERROR;
 
 	to->ecdsa_nid = from->ecdsa_nid;
-	if ((ec_to = EC_KEY_new_by_curve_name(from->ecdsa_nid)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (EC_KEY_set_public_key(ec_to,
-	    EC_KEY_get0_public_key(ec_from)) != 1) {
+	যদি ((ec_to = EC_চাবি_new_by_curve_name(from->ecdsa_nid)) == ফাঁকা)
+		ফেরত SSH_ERR_ALLOC_FAIL;
+	যদি (EC_চাবি_set_public_চাবি(ec_to,
+	    EC_চাবি_get0_public_চাবি(ec_from)) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		যাও out;
 	}
 	EVP_PKEY_free(to->pkey);
-	if ((to->pkey = EVP_PKEY_new()) == NULL) {
+	যদি ((to->pkey = EVP_PKEY_new()) == ফাঁকা) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(to->pkey, ec_to) != 1) {
+	যদি (EVP_PKEY_set1_EC_চাবি(to->pkey, ec_to) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		যাও out;
 	}
 	ret = 0;
  out:
-	EC_KEY_free(ec_to);
-	return ret;
+	EC_চাবি_free(ec_to);
+	ফেরত ret;
 }
 
-static int
-ssh_ecdsa_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+স্থির পূর্ণসংখ্যা
+ssh_ecdsa_deserialize_public(ধ্রুবক অক্ষর *ktype, কাঠামো sshbuf *b,
+    কাঠামো sshkey *চাবি)
 {
-	int r;
-	char *curve = NULL;
-	EVP_PKEY *pkey = NULL;
-	EC_KEY *ec = NULL;
+	পূর্ণসংখ্যা r;
+	অক্ষর *curve = ফাঁকা;
+	EVP_PKEY *pkey = ফাঁকা;
+	EC_চাবি *ec = ফাঁকা;
 
-	if ((key->ecdsa_nid = sshkey_ecdsa_nid_from_name(ktype)) == -1)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_get_cstring(b, &curve, NULL)) != 0)
-		goto out;
-	if (key->ecdsa_nid != sshkey_curve_name_to_nid(curve)) {
+	যদি ((চাবি->ecdsa_nid = sshkey_ecdsa_nid_from_name(ktype)) == -1)
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
+	যদি ((r = sshbuf_get_cstring(b, &curve, ফাঁকা)) != 0)
+		যাও out;
+	যদি (চাবি->ecdsa_nid != sshkey_curve_name_to_nid(curve)) {
 		r = SSH_ERR_EC_CURVE_MISMATCH;
-		goto out;
+		যাও out;
 	}
-	if ((ec = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL) {
+	যদি ((ec = EC_চাবি_new_by_curve_name(চাবি->ecdsa_nid)) == ফাঁকা) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		যাও out;
 	}
-	if ((r = sshbuf_get_eckey(b, ec)) != 0)
-		goto out;
-	if (sshkey_ec_validate_public(EC_KEY_get0_group(ec),
-	    EC_KEY_get0_public_key(ec)) != 0) {
-		r = SSH_ERR_KEY_INVALID_EC_VALUE;
-		goto out;
+	যদি ((r = sshbuf_get_eckey(b, ec)) != 0)
+		যাও out;
+	যদি (sshkey_ec_validate_public(EC_চাবি_get0_group(ec),
+	    EC_চাবি_get0_public_চাবি(ec)) != 0) {
+		r = SSH_ERR_চাবি_INVALID_EC_মান;
+		যাও out;
 	}
-	if ((pkey = EVP_PKEY_new()) == NULL) {
+	যদি ((pkey = EVP_PKEY_new()) == ফাঁকা) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(pkey, ec) != 1) {
+	যদি (EVP_PKEY_set1_EC_চাবি(pkey, ec) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		যাও out;
 	}
-	EVP_PKEY_free(key->pkey);
-	key->pkey = pkey;
-	pkey = NULL;
+	EVP_PKEY_free(চাবি->pkey);
+	চাবি->pkey = pkey;
+	pkey = ফাঁকা;
 	/* success */
 	r = 0;
 #ifdef DEBUG_PK
 	sshkey_dump_ec_point(
-	    EC_KEY_get0_group(EVP_PKEY_get0_EC_KEY(key->pkey)),
-	    EC_KEY_get0_public_key(EVP_PKEY_get0_EC_KEY(key->pkey)));
+	    EC_চাবি_get0_group(EVP_PKEY_get0_EC_চাবি(চাবি->pkey)),
+	    EC_চাবি_get0_public_চাবি(EVP_PKEY_get0_EC_চাবি(চাবি->pkey)));
 #endif
  out:
-	EC_KEY_free(ec);
+	EC_চাবি_free(ec);
 	EVP_PKEY_free(pkey);
-	free(curve);
-	return r;
+	মুক্ত(curve);
+	ফেরত r;
 }
 
-static int
-ssh_ecdsa_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+স্থির পূর্ণসংখ্যা
+ssh_ecdsa_deserialize_private(ধ্রুবক অক্ষর *ktype, কাঠামো sshbuf *b,
+    কাঠামো sshkey *চাবি)
 {
-	int r;
-	BIGNUM *exponent = NULL;
-	EC_KEY *ec = NULL;
+	পূর্ণসংখ্যা r;
+	BIGNUM *exponent = ফাঁকা;
+	EC_চাবি *ec = ফাঁকা;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_ecdsa_deserialize_public(ktype, b, key)) != 0)
-			return r;
+	যদি (!sshkey_is_cert(চাবি)) {
+		যদি ((r = ssh_ecdsa_deserialize_public(ktype, b, চাবি)) != 0)
+			ফেরত r;
 	}
-	if ((r = sshbuf_get_bignum2(b, &exponent)) != 0)
-		goto out;
-	if ((ec = EVP_PKEY_get1_EC_KEY(key->pkey)) == NULL) {
+	যদি ((r = sshbuf_get_bignum2(b, &exponent)) != 0)
+		যাও out;
+	যদি ((ec = EVP_PKEY_get1_EC_চাবি(চাবি->pkey)) == ফাঁকা) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		যাও out;
 	}
-	if (EC_KEY_set_private_key(ec, exponent) != 1) {
+	যদি (EC_চাবি_set_private_চাবি(ec, exponent) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		যাও out;
 	}
-	if ((r = sshkey_ec_validate_private(ec)) != 0)
-		goto out;
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1) {
+	যদি ((r = sshkey_ec_validate_private(ec)) != 0)
+		যাও out;
+	যদি (EVP_PKEY_set1_EC_চাবি(চাবি->pkey, ec) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		যাও out;
 	}
 	/* success */
 	r = 0;
  out:
 	BN_clear_free(exponent);
-	EC_KEY_free(ec);
-	return r;
+	EC_চাবি_free(ec);
+	ফেরত r;
 }
 
-static int
-ssh_ecdsa_sign(struct sshkey *key,
-    u_char **sigp, size_t *lenp,
-    const u_char *data, size_t dlen,
-    const char *alg, const char *sk_provider, const char *sk_pin, u_int compat)
+স্থির পূর্ণসংখ্যা
+ssh_ecdsa_sign(কাঠামো sshkey *চাবি,
+    u_char **sigp, আকার_t *lenp,
+    ধ্রুবক u_char *তথ্য, আকার_t dlen,
+    ধ্রুবক অক্ষর *alg, ধ্রুবক অক্ষর *sk_provider, ধ্রুবক অক্ষর *sk_pin, u_int compat)
 {
-	ECDSA_SIG *esig = NULL;
-	unsigned char *sigb = NULL;
-	const unsigned char *psig;
-	const BIGNUM *sig_r, *sig_s;
-	int hash_alg;
-	size_t slen = 0;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	ECDSA_SIG *esig = ফাঁকা;
+	unsigned অক্ষর *sigb = ফাঁকা;
+	ধ্রুবক unsigned অক্ষর *psig;
+	ধ্রুবক BIGNUM *sig_r, *sig_s;
+	পূর্ণসংখ্যা hash_alg;
+	আকার_t slen = 0;
+	পূর্ণসংখ্যা ret = SSH_ERR_INTERNAL_ERROR;
 
-	if (lenp != NULL)
+	যদি (lenp != ফাঁকা)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	যদি (sigp != ফাঁকা)
+		*sigp = ফাঁকা;
 
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ECDSA)
-		return SSH_ERR_INVALID_ARGUMENT;
+	যদি (চাবি == ফাঁকা || চাবি->pkey == ফাঁকা ||
+	    sshkey_type_plain(চাবি->type) != চাবি_ECDSA)
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
 
-	if ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
-		return SSH_ERR_INTERNAL_ERROR;
+	যদি ((hash_alg = sshkey_ec_nid_to_hash_alg(চাবি->ecdsa_nid)) == -1)
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 
-	if ((ret = sshkey_pkey_digest_sign(key->pkey, hash_alg, &sigb, &slen,
-	    data, dlen)) != 0)
-		goto out;
+	যদি ((ret = sshkey_pkey_digest_sign(চাবি->pkey, hash_alg, &sigb, &slen,
+	    তথ্য, dlen)) != 0)
+		যাও out;
 
 	psig = sigb;
-	if ((esig = d2i_ECDSA_SIG(NULL, &psig, slen)) == NULL) {
+	যদি ((esig = d2i_ECDSA_SIG(ফাঁকা, &psig, slen)) == ফাঁকা) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		যাও out;
 	}
 	ECDSA_SIG_get0(esig, &sig_r, &sig_s);
 
-	if ((ret = ssh_ecdsa_encode_store_sig(key, sig_r, sig_s,
+	যদি ((ret = ssh_ecdsa_encode_store_sig(চাবি, sig_r, sig_s,
 	    sigp, lenp)) != 0)
-		goto out;
+		যাও out;
 	/* success */
 	ret = 0;
  out:
 	freezero(sigb, slen);
 	ECDSA_SIG_free(esig);
-	return ret;
+	ফেরত ret;
 }
 
-int
-ssh_ecdsa_encode_store_sig(const struct sshkey *key,
-    const BIGNUM *sig_r, const BIGNUM *sig_s,
-    u_char **sigp, size_t *lenp)
+পূর্ণসংখ্যা
+ssh_ecdsa_encode_store_sig(ধ্রুবক কাঠামো sshkey *চাবি,
+    ধ্রুবক BIGNUM *sig_r, ধ্রুবক BIGNUM *sig_s,
+    u_char **sigp, আকার_t *lenp)
 {
-	struct sshbuf *b = NULL, *bb = NULL;
-	int ret;
-	size_t len;
+	কাঠামো sshbuf *b = ফাঁকা, *bb = ফাঁকা;
+	পূর্ণসংখ্যা ret;
+	আকার_t len;
 
-	if (lenp != NULL)
+	যদি (lenp != ফাঁকা)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	যদি (sigp != ফাঁকা)
+		*sigp = ফাঁকা;
 
-	if ((bb = sshbuf_new()) == NULL || (b = sshbuf_new()) == NULL) {
+	যদি ((bb = sshbuf_new()) == ফাঁকা || (b = sshbuf_new()) == ফাঁকা) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if ((ret = sshbuf_put_bignum2(bb, sig_r)) != 0 ||
+	যদি ((ret = sshbuf_put_bignum2(bb, sig_r)) != 0 ||
 	    (ret = sshbuf_put_bignum2(bb, sig_s)) != 0)
-		goto out;
-	if ((ret = sshbuf_put_cstring(b, sshkey_ssh_name_plain(key))) != 0 ||
+		যাও out;
+	যদি ((ret = sshbuf_put_cstring(b, sshkey_ssh_name_plain(চাবি))) != 0 ||
 	    (ret = sshbuf_put_stringb(b, bb)) != 0)
-		goto out;
+		যাও out;
 	len = sshbuf_len(b);
-	if (sigp != NULL) {
-		if ((*sigp = malloc(len)) == NULL) {
+	যদি (sigp != ফাঁকা) {
+		যদি ((*sigp = malloc(len)) == ফাঁকা) {
 			ret = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			যাও out;
 		}
 		memcpy(*sigp, sshbuf_ptr(b), len);
 	}
-	if (lenp != NULL)
+	যদি (lenp != ফাঁকা)
 		*lenp = len;
 	ret = 0;
  out:
 	sshbuf_free(b);
 	sshbuf_free(bb);
-	return ret;
+	ফেরত ret;
 }
 
-static int
-ssh_ecdsa_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+স্থির পূর্ণসংখ্যা
+ssh_ecdsa_verify(ধ্রুবক কাঠামো sshkey *চাবি,
+    ধ্রুবক u_char *sig, আকার_t siglen,
+    ধ্রুবক u_char *তথ্য, আকার_t dlen, ধ্রুবক অক্ষর *alg, u_int compat,
+    কাঠামো sshkey_sig_details **detailsp)
 {
-	ECDSA_SIG *esig = NULL;
-	BIGNUM *sig_r = NULL, *sig_s = NULL;
-	int hash_alg, len = 0;
-	int ret = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *b = NULL, *sigbuf = NULL;
-	char *ktype = NULL;
-	unsigned char *sigb = NULL, *cp;
+	ECDSA_SIG *esig = ফাঁকা;
+	BIGNUM *sig_r = ফাঁকা, *sig_s = ফাঁকা;
+	পূর্ণসংখ্যা hash_alg, len = 0;
+	পূর্ণসংখ্যা ret = SSH_ERR_INTERNAL_ERROR;
+	কাঠামো sshbuf *b = ফাঁকা, *sigbuf = ফাঁকা;
+	অক্ষর *ktype = ফাঁকা;
+	unsigned অক্ষর *sigb = ফাঁকা, *cp;
 
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ECDSA ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	যদি (চাবি == ফাঁকা || চাবি->pkey == ফাঁকা ||
+	    sshkey_type_plain(চাবি->type) != চাবি_ECDSA ||
+	    sig == ফাঁকা || siglen == 0)
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
 
-	if ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
-		return SSH_ERR_INTERNAL_ERROR;
+	যদি ((hash_alg = sshkey_ec_nid_to_hash_alg(চাবি->ecdsa_nid)) == -1)
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 
 	/* fetch signature */
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0 ||
+	যদি ((b = sshbuf_from(sig, siglen)) == ফাঁকা)
+		ফেরত SSH_ERR_ALLOC_FAIL;
+	যদি (sshbuf_get_cstring(b, &ktype, ফাঁকা) != 0 ||
 	    sshbuf_froms(b, &sigbuf) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		যাও out;
 	}
-	if (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
-		ret = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+	যদি (strcmp(sshkey_ssh_name_plain(চাবি), ktype) != 0) {
+		ret = SSH_ERR_চাবি_TYPE_MISMATCH;
+		যাও out;
 	}
-	if (sshbuf_len(b) != 0) {
-		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+	যদি (sshbuf_len(b) != 0) {
+		ret = SSH_ERR_UNEXPECTED_TRAILING_তথ্য;
+		যাও out;
 	}
 
 	/* parse signature */
-	if (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
+	যদি (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
 	    sshbuf_get_bignum2(sigbuf, &sig_s) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		যাও out;
 	}
-	if (sshbuf_len(sigbuf) != 0) {
-		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+	যদি (sshbuf_len(sigbuf) != 0) {
+		ret = SSH_ERR_UNEXPECTED_TRAILING_তথ্য;
+		যাও out;
 	}
 
-	if ((esig = ECDSA_SIG_new()) == NULL) {
+	যদি ((esig = ECDSA_SIG_new()) == ফাঁকা) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
+	যদি (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		যাও out;
 	}
-	sig_r = sig_s = NULL; /* transferred */
+	sig_r = sig_s = ফাঁকা; /* transferred */
 
-	if ((len = i2d_ECDSA_SIG(esig, NULL)) <= 0) {
+	যদি ((len = i2d_ECDSA_SIG(esig, ফাঁকা)) <= 0) {
 		len = 0;
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		যাও out;
 	}
-	if ((sigb = calloc(1, len)) == NULL) {
+	যদি ((sigb = calloc(1, len)) == ফাঁকা) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
 	cp = sigb; /* ASN1_item_i2d increments the pointer past the object */
-	if (i2d_ECDSA_SIG(esig, &cp) != len) {
+	যদি (i2d_ECDSA_SIG(esig, &cp) != len) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		যাও out;
 	}
-	if ((ret = sshkey_pkey_digest_verify(key->pkey, hash_alg,
-	    data, dlen, sigb, len)) != 0)
-		goto out;
+	যদি ((ret = sshkey_pkey_digest_verify(চাবি->pkey, hash_alg,
+	    তথ্য, dlen, sigb, len)) != 0)
+		যাও out;
 	/* success */
  out:
 	freezero(sigb, len);
@@ -484,14 +484,14 @@ ssh_ecdsa_verify(const struct sshkey *key,
 	ECDSA_SIG_free(esig);
 	BN_clear_free(sig_r);
 	BN_clear_free(sig_s);
-	free(ktype);
-	return ret;
+	মুক্ত(ktype);
+	ফেরত ret;
 }
 
 /* NB. not static; used by ECDSA-SK */
-const struct sshkey_impl_funcs sshkey_ecdsa_funcs = {
-	/* .size = */		ssh_ecdsa_size,
-	/* .alloc = */		NULL,
+ধ্রুবক কাঠামো sshkey_impl_funcs sshkey_ecdsa_funcs = {
+	/* .size = */		ssh_ecdsa_আকার,
+	/* .alloc = */		ফাঁকা,
 	/* .cleanup = */	ssh_ecdsa_cleanup,
 	/* .equal = */		ssh_ecdsa_equal,
 	/* .ssh_serialize_public = */ ssh_ecdsa_serialize_public,
@@ -504,11 +504,11 @@ const struct sshkey_impl_funcs sshkey_ecdsa_funcs = {
 	/* .verify = */		ssh_ecdsa_verify,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp256_impl = {
+ধ্রুবক কাঠামো sshkey_impl sshkey_ecdsa_nistp256_impl = {
 	/* .name = */		"ecdsa-sha2-nistp256",
 	/* .shortname = */	"ECDSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA,
+	/* .sigalg = */		ফাঁকা,
+	/* .type = */		চাবি_ECDSA,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -516,11 +516,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp256_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp256_cert_impl = {
+ধ্রুবক কাঠামো sshkey_impl sshkey_ecdsa_nistp256_cert_impl = {
 	/* .name = */		"ecdsa-sha2-nistp256-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_CERT,
+	/* .sigalg = */		ফাঁকা,
+	/* .type = */		চাবি_ECDSA_CERT,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -528,11 +528,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp256_cert_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp384_impl = {
+ধ্রুবক কাঠামো sshkey_impl sshkey_ecdsa_nistp384_impl = {
 	/* .name = */		"ecdsa-sha2-nistp384",
 	/* .shortname = */	"ECDSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA,
+	/* .sigalg = */		ফাঁকা,
+	/* .type = */		চাবি_ECDSA,
 	/* .nid = */		NID_secp384r1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -540,11 +540,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp384_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp384_cert_impl = {
+ধ্রুবক কাঠামো sshkey_impl sshkey_ecdsa_nistp384_cert_impl = {
 	/* .name = */		"ecdsa-sha2-nistp384-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_CERT,
+	/* .sigalg = */		ফাঁকা,
+	/* .type = */		চাবি_ECDSA_CERT,
 	/* .nid = */		NID_secp384r1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -552,11 +552,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp384_cert_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp521_impl = {
+ধ্রুবক কাঠামো sshkey_impl sshkey_ecdsa_nistp521_impl = {
 	/* .name = */		"ecdsa-sha2-nistp521",
 	/* .shortname = */	"ECDSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA,
+	/* .sigalg = */		ফাঁকা,
+	/* .type = */		চাবি_ECDSA,
 	/* .nid = */		NID_secp521r1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -564,11 +564,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp521_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp521_cert_impl = {
+ধ্রুবক কাঠামো sshkey_impl sshkey_ecdsa_nistp521_cert_impl = {
 	/* .name = */		"ecdsa-sha2-nistp521-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_CERT,
+	/* .sigalg = */		ফাঁকা,
+	/* .type = */		চাবি_ECDSA_CERT,
 	/* .nid = */		NID_secp521r1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,

@@ -36,16 +36,16 @@
 
 /* OPENBSD ORIGINAL: lib/libc/hash/sha2.c */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#if !defined(HAVE_SHA256UPDATE) || !defined(HAVE_SHA384UPDATE) || \
+#যদি !defined(HAVE_SHA256UPDATE) || !defined(HAVE_SHA384UPDATE) || \
     !defined(HAVE_SHA512UPDATE)
 
 /* no-op out, similar to DEF_WEAK but only needed here */
-#define MAKE_CLONE(x, y)	void __ssh_compat_make_clone_##x_##y(void)
+#define MAKE_CLONE(x, y)	শূন্য __ssh_compat_make_clone_##x_##y(শূন্য)
 
-#include <string.h>
-#include "openbsd-compat/bsd-sha2.h"
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব "openbsd-compat/bsd-sha2.h"
 
 /*
  * UNROLLED TRANSFORM LOOP NOTE:
@@ -61,7 +61,7 @@
  *
  */
 #ifndef SHA2_SMALL
-#if defined(__amd64__) || defined(__i386__)
+#যদি defined(__amd64__) || defined(__i386__)
 #define SHA2_UNROLL_TRANSFORM
 #endif
 #endif
@@ -94,32 +94,32 @@
  * <machine/endian.h> where the appropriate definitions are actually
  * made).
  */
-#if !defined(BYTE_ORDER) || (BYTE_ORDER != LITTLE_ENDIAN && BYTE_ORDER != BIG_ENDIAN)
+#যদি !defined(BYTE_ORDER) || (BYTE_ORDER != LITTLE_ENDIAN && BYTE_ORDER != BIG_ENDIAN)
 #error Define BYTE_ORDER to be equal to either LITTLE_ENDIAN or BIG_ENDIAN
 #endif
 
 
 /*** SHA-224/256/384/512 Various Length Definitions ***********************/
 /* NOTE: Most of these are in sha2.h */
-#define SHA224_SHORT_BLOCK_LENGTH	(SHA224_BLOCK_LENGTH - 8)
-#define SHA256_SHORT_BLOCK_LENGTH	(SHA256_BLOCK_LENGTH - 8)
-#define SHA384_SHORT_BLOCK_LENGTH	(SHA384_BLOCK_LENGTH - 16)
-#define SHA512_SHORT_BLOCK_LENGTH	(SHA512_BLOCK_LENGTH - 16)
+#define SHA224_SHORT_BLOCK_দৈর্ঘ্য	(SHA224_BLOCK_দৈর্ঘ্য - 8)
+#define SHA256_SHORT_BLOCK_দৈর্ঘ্য	(SHA256_BLOCK_দৈর্ঘ্য - 8)
+#define SHA384_SHORT_BLOCK_দৈর্ঘ্য	(SHA384_BLOCK_দৈর্ঘ্য - 16)
+#define SHA512_SHORT_BLOCK_দৈর্ঘ্য	(SHA512_BLOCK_দৈর্ঘ্য - 16)
 
 /*** ENDIAN SPECIFIC COPY MACROS **************************************/
-#define BE_8_TO_32(dst, cp) do {					\
+#define BE_8_TO_32(dst, cp) করো {					\
 	(dst) = (u_int32_t)(cp)[3] | ((u_int32_t)(cp)[2] << 8) |	\
 	    ((u_int32_t)(cp)[1] << 16) | ((u_int32_t)(cp)[0] << 24);	\
-} while(0)
+} যখন(0)
 
-#define BE_8_TO_64(dst, cp) do {					\
+#define BE_8_TO_64(dst, cp) করো {					\
 	(dst) = (u_int64_t)(cp)[7] | ((u_int64_t)(cp)[6] << 8) |	\
 	    ((u_int64_t)(cp)[5] << 16) | ((u_int64_t)(cp)[4] << 24) |	\
 	    ((u_int64_t)(cp)[3] << 32) | ((u_int64_t)(cp)[2] << 40) |	\
 	    ((u_int64_t)(cp)[1] << 48) | ((u_int64_t)(cp)[0] << 56);	\
-} while (0)
+} যখন (0)
 
-#define BE_64_TO_8(cp, src) do {					\
+#define BE_64_TO_8(cp, src) করো {					\
 	(cp)[0] = (src) >> 56;						\
         (cp)[1] = (src) >> 48;						\
 	(cp)[2] = (src) >> 40;						\
@@ -128,26 +128,26 @@
 	(cp)[5] = (src) >> 16;						\
 	(cp)[6] = (src) >> 8;						\
 	(cp)[7] = (src);						\
-} while (0)
+} যখন (0)
 
-#define BE_32_TO_8(cp, src) do {					\
+#define BE_32_TO_8(cp, src) করো {					\
 	(cp)[0] = (src) >> 24;						\
 	(cp)[1] = (src) >> 16;						\
 	(cp)[2] = (src) >> 8;						\
 	(cp)[3] = (src);						\
-} while (0)
+} যখন (0)
 
 /*
  * Macro for incrementally adding the unsigned 64-bit integer n to the
  * unsigned 128-bit integer (represented using a two-element array of
  * 64-bit words):
  */
-#define ADDINC128(w,n) do {						\
+#define ADDINC128(w,n) করো {						\
 	(w)[0] += (u_int64_t)(n);					\
-	if ((w)[0] < (n)) {						\
+	যদি ((w)[0] < (n)) {						\
 		(w)[1]++;						\
 	}								\
-} while (0)
+} যখন (0)
 
 /*** THE SIX LOGICAL FUNCTIONS ****************************************/
 /*
@@ -184,7 +184,7 @@
 
 /*** SHA-XYZ INITIAL HASH VALUES AND CONSTANTS ************************/
 /* Hash constant words K for SHA-224 and SHA-256: */
-static const u_int32_t K256[64] = {
+স্থির ধ্রুবক u_int32_t K256[64] = {
 	0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL,
 	0x3956c25bUL, 0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL,
 	0xd807aa98UL, 0x12835b01UL, 0x243185beUL, 0x550c7dc3UL,
@@ -204,7 +204,7 @@ static const u_int32_t K256[64] = {
 };
 
 /* Initial hash value H for SHA-256: */
-static const u_int32_t sha256_initial_hash_value[8] = {
+স্থির ধ্রুবক u_int32_t sha256_initial_hash_মান[8] = {
 	0x6a09e667UL,
 	0xbb67ae85UL,
 	0x3c6ef372UL,
@@ -216,7 +216,7 @@ static const u_int32_t sha256_initial_hash_value[8] = {
 };
 
 /* Hash constant words K for SHA-384 and SHA-512: */
-static const u_int64_t K512[80] = {
+স্থির ধ্রুবক u_int64_t K512[80] = {
 	0x428a2f98d728ae22ULL, 0x7137449123ef65cdULL,
 	0xb5c0fbcfec4d3b2fULL, 0xe9b5dba58189dbbcULL,
 	0x3956c25bf348b538ULL, 0x59f111f1b605d019ULL,
@@ -260,7 +260,7 @@ static const u_int64_t K512[80] = {
 };
 
 /* Initial hash value H for SHA-512 */
-static const u_int64_t sha512_initial_hash_value[8] = {
+স্থির ধ্রুবক u_int64_t sha512_initial_hash_মান[8] = {
 	0x6a09e667f3bcc908ULL,
 	0xbb67ae8584caa73bULL,
 	0x3c6ef372fe94f82bULL,
@@ -271,10 +271,10 @@ static const u_int64_t sha512_initial_hash_value[8] = {
 	0x5be0cd19137e2179ULL
 };
 
-#if !defined(SHA2_SMALL)
-#if 0
+#যদি !defined(SHA2_SMALL)
+#যদি 0
 /* Initial hash value H for SHA-224: */
-static const u_int32_t sha224_initial_hash_value[8] = {
+স্থির ধ্রুবক u_int32_t sha224_initial_hash_মান[8] = {
 	0xc1059ed8UL,
 	0x367cd507UL,
 	0x3070dd17UL,
@@ -287,7 +287,7 @@ static const u_int32_t sha224_initial_hash_value[8] = {
 #endif /* 0 */
 
 /* Initial hash value H for SHA-384 */
-static const u_int64_t sha384_initial_hash_value[8] = {
+স্থির ধ্রুবক u_int64_t sha384_initial_hash_মান[8] = {
 	0xcbbb9d5dc1059ed8ULL,
 	0x629a292a367cd507ULL,
 	0x9159015a3070dd17ULL,
@@ -298,9 +298,9 @@ static const u_int64_t sha384_initial_hash_value[8] = {
 	0x47b5481dbefa4fa4ULL
 };
 
-#if 0
+#যদি 0
 /* Initial hash value H for SHA-512-256 */
-static const u_int64_t sha512_256_initial_hash_value[8] = {
+স্থির ধ্রুবক u_int64_t sha512_256_initial_hash_মান[8] = {
 	0x22312194fc2bf72cULL,
 	0x9f555fa3c84c64c2ULL,
 	0x2393b86b6f53b151ULL,
@@ -312,12 +312,12 @@ static const u_int64_t sha512_256_initial_hash_value[8] = {
 };
 
 /*** SHA-224: *********************************************************/
-void
+শূন্য
 SHA224Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st32, sha224_initial_hash_value,
-	    sizeof(sha224_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	memcpy(context->state.st32, sha224_initial_hash_মান,
+	    আকার(sha224_initial_hash_মান));
+	memset(context->বাফার, 0, আকার(context->বাফার));
 	context->bitcount[0] = 0;
 }
 DEF_WEAK(SHA224Init);
@@ -329,33 +329,33 @@ DEF_WEAK(SHA224Transform);
 DEF_WEAK(SHA224Update);
 DEF_WEAK(SHA224Pad);
 
-void
-SHA224Final(u_int8_t digest[SHA224_DIGEST_LENGTH], SHA2_CTX *context)
+শূন্য
+SHA224Final(u_int8_t digest[SHA224_DIGEST_দৈর্ঘ্য], SHA2_CTX *context)
 {
 	SHA224Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#যদি BYTE_ORDER == LITTLE_ENDIAN
+	পূর্ণসংখ্যা	i;
 
 	/* Convert TO host byte order */
-	for (i = 0; i < 7; i++)
+	জন্য (i = 0; i < 7; i++)
 		BE_32_TO_8(digest + i * 4, context->state.st32[i]);
-#else
-	memcpy(digest, context->state.st32, SHA224_DIGEST_LENGTH);
+#অন্যথা
+	memcpy(digest, context->state.st32, SHA224_DIGEST_দৈর্ঘ্য);
 #endif
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, আকার(*context));
 }
 DEF_WEAK(SHA224Final);
 #endif /* !defined(SHA2_SMALL) */
 #endif /* 0 */
 
 /*** SHA-256: *********************************************************/
-void
+শূন্য
 SHA256Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st32, sha256_initial_hash_value,
-	    sizeof(sha256_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	memcpy(context->state.st32, sha256_initial_hash_মান,
+	    আকার(sha256_initial_hash_মান));
+	memset(context->বাফার, 0, আকার(context->বাফার));
 	context->bitcount[0] = 0;
 }
 DEF_WEAK(SHA256Init);
@@ -364,16 +364,16 @@ DEF_WEAK(SHA256Init);
 
 /* Unrolled SHA-256 round macros: */
 
-#define ROUND256_0_TO_15(a,b,c,d,e,f,g,h) do {				    \
-	BE_8_TO_32(W256[j], data);					    \
-	data += 4;							    \
+#define ROUND256_0_TO_15(a,b,c,d,e,f,g,h) করো {				    \
+	BE_8_TO_32(W256[j], তথ্য);					    \
+	তথ্য += 4;							    \
 	T1 = (h) + Sigma1_256((e)) + Ch((e), (f), (g)) + K256[j] + W256[j]; \
 	(d) += T1;							    \
 	(h) = T1 + Sigma0_256((a)) + Maj((a), (b), (c));		    \
 	j++;								    \
-} while(0)
+} যখন(0)
 
-#define ROUND256(a,b,c,d,e,f,g,h) do {					    \
+#define ROUND256(a,b,c,d,e,f,g,h) করো {					    \
 	s0 = W256[(j+1)&0x0f];						    \
 	s0 = sigma0_256(s0);						    \
 	s1 = W256[(j+14)&0x0f];						    \
@@ -383,14 +383,14 @@ DEF_WEAK(SHA256Init);
 	(d) += T1;							    \
 	(h) = T1 + Sigma0_256((a)) + Maj((a), (b), (c));		    \
 	j++;								    \
-} while(0)
+} যখন(0)
 
-void
-SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
+শূন্য
+SHA256Transform(u_int32_t state[8], ধ্রুবক u_int8_t তথ্য[SHA256_BLOCK_দৈর্ঘ্য])
 {
 	u_int32_t	a, b, c, d, e, f, g, h, s0, s1;
 	u_int32_t	T1, W256[16];
-	int		j;
+	পূর্ণসংখ্যা		j;
 
 	/* Initialize registers with the prev. intermediate value */
 	a = state[0];
@@ -403,7 +403,7 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 	h = state[7];
 
 	j = 0;
-	do {
+	করো {
 		/* Rounds 0 to 15 (unrolled): */
 		ROUND256_0_TO_15(a,b,c,d,e,f,g,h);
 		ROUND256_0_TO_15(h,a,b,c,d,e,f,g);
@@ -413,10 +413,10 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 		ROUND256_0_TO_15(d,e,f,g,h,a,b,c);
 		ROUND256_0_TO_15(c,d,e,f,g,h,a,b);
 		ROUND256_0_TO_15(b,c,d,e,f,g,h,a);
-	} while (j < 16);
+	} যখন (j < 16);
 
 	/* Now for the remaining rounds up to 63: */
-	do {
+	করো {
 		ROUND256(a,b,c,d,e,f,g,h);
 		ROUND256(h,a,b,c,d,e,f,g);
 		ROUND256(g,h,a,b,c,d,e,f);
@@ -425,7 +425,7 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 		ROUND256(d,e,f,g,h,a,b,c);
 		ROUND256(c,d,e,f,g,h,a,b);
 		ROUND256(b,c,d,e,f,g,h,a);
-	} while (j < 64);
+	} যখন (j < 64);
 
 	/* Compute the current intermediate hash value */
 	state[0] += a;
@@ -441,14 +441,14 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 	a = b = c = d = e = f = g = h = T1 = 0;
 }
 
-#else /* SHA2_UNROLL_TRANSFORM */
+#অন্যথা /* SHA2_UNROLL_TRANSFORM */
 
-void
-SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
+শূন্য
+SHA256Transform(u_int32_t state[8], ধ্রুবক u_int8_t তথ্য[SHA256_BLOCK_দৈর্ঘ্য])
 {
 	u_int32_t	a, b, c, d, e, f, g, h, s0, s1;
 	u_int32_t	T1, T2, W256[16];
-	int		j;
+	পূর্ণসংখ্যা		j;
 
 	/* Initialize registers with the prev. intermediate value */
 	a = state[0];
@@ -461,9 +461,9 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 	h = state[7];
 
 	j = 0;
-	do {
-		BE_8_TO_32(W256[j], data);
-		data += 4;
+	করো {
+		BE_8_TO_32(W256[j], তথ্য);
+		তথ্য += 4;
 		/* Apply the SHA-256 compression function to update a..h */
 		T1 = h + Sigma1_256(e) + Ch(e, f, g) + K256[j] + W256[j];
 		T2 = Sigma0_256(a) + Maj(a, b, c);
@@ -477,9 +477,9 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 		a = T1 + T2;
 
 		j++;
-	} while (j < 16);
+	} যখন (j < 16);
 
-	do {
+	করো {
 		/* Part of the message block expansion: */
 		s0 = W256[(j+1)&0x0f];
 		s0 = sigma0_256(s0);
@@ -500,7 +500,7 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 		a = T1 + T2;
 
 		j++;
-	} while (j < 64);
+	} যখন (j < 64);
 
 	/* Compute the current intermediate hash value */
 	state[0] += a;
@@ -519,46 +519,46 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 #endif /* SHA2_UNROLL_TRANSFORM */
 DEF_WEAK(SHA256Transform);
 
-void
-SHA256Update(SHA2_CTX *context, const u_int8_t *data, size_t len)
+শূন্য
+SHA256Update(SHA2_CTX *context, ধ্রুবক u_int8_t *তথ্য, আকার_t len)
 {
 	u_int64_t	freespace, usedspace;
 
 	/* Calling with no data is valid (we do nothing) */
-	if (len == 0)
-		return;
+	যদি (len == 0)
+		ফেরত;
 
-	usedspace = (context->bitcount[0] >> 3) % SHA256_BLOCK_LENGTH;
-	if (usedspace > 0) {
+	usedspace = (context->bitcount[0] >> 3) % SHA256_BLOCK_দৈর্ঘ্য;
+	যদি (usedspace > 0) {
 		/* Calculate how much free space is available in the buffer */
-		freespace = SHA256_BLOCK_LENGTH - usedspace;
+		freespace = SHA256_BLOCK_দৈর্ঘ্য - usedspace;
 
-		if (len >= freespace) {
+		যদি (len >= freespace) {
 			/* Fill the buffer completely and process it */
-			memcpy(&context->buffer[usedspace], data, freespace);
+			memcpy(&context->বাফার[usedspace], তথ্য, freespace);
 			context->bitcount[0] += freespace << 3;
 			len -= freespace;
-			data += freespace;
-			SHA256Transform(context->state.st32, context->buffer);
-		} else {
+			তথ্য += freespace;
+			SHA256Transform(context->state.st32, context->বাফার);
+		} অন্যথা {
 			/* The buffer is not yet full */
-			memcpy(&context->buffer[usedspace], data, len);
+			memcpy(&context->বাফার[usedspace], তথ্য, len);
 			context->bitcount[0] += (u_int64_t)len << 3;
 			/* Clean up: */
 			usedspace = freespace = 0;
-			return;
+			ফেরত;
 		}
 	}
-	while (len >= SHA256_BLOCK_LENGTH) {
+	যখন (len >= SHA256_BLOCK_দৈর্ঘ্য) {
 		/* Process as many complete blocks as we can */
-		SHA256Transform(context->state.st32, data);
-		context->bitcount[0] += SHA256_BLOCK_LENGTH << 3;
-		len -= SHA256_BLOCK_LENGTH;
-		data += SHA256_BLOCK_LENGTH;
+		SHA256Transform(context->state.st32, তথ্য);
+		context->bitcount[0] += SHA256_BLOCK_দৈর্ঘ্য << 3;
+		len -= SHA256_BLOCK_দৈর্ঘ্য;
+		তথ্য += SHA256_BLOCK_দৈর্ঘ্য;
 	}
-	if (len > 0) {
+	যদি (len > 0) {
 		/* There's left-overs, so save 'em */
-		memcpy(context->buffer, data, len);
+		memcpy(context->বাফার, তথ্য, len);
 		context->bitcount[0] += len << 3;
 	}
 	/* Clean up: */
@@ -566,76 +566,76 @@ SHA256Update(SHA2_CTX *context, const u_int8_t *data, size_t len)
 }
 DEF_WEAK(SHA256Update);
 
-void
+শূন্য
 SHA256Pad(SHA2_CTX *context)
 {
-	unsigned int	usedspace;
+	unsigned পূর্ণসংখ্যা	usedspace;
 
-	usedspace = (context->bitcount[0] >> 3) % SHA256_BLOCK_LENGTH;
-	if (usedspace > 0) {
+	usedspace = (context->bitcount[0] >> 3) % SHA256_BLOCK_দৈর্ঘ্য;
+	যদি (usedspace > 0) {
 		/* Begin padding with a 1 bit: */
-		context->buffer[usedspace++] = 0x80;
+		context->বাফার[usedspace++] = 0x80;
 
-		if (usedspace <= SHA256_SHORT_BLOCK_LENGTH) {
+		যদি (usedspace <= SHA256_SHORT_BLOCK_দৈর্ঘ্য) {
 			/* Set-up for the last transform: */
-			memset(&context->buffer[usedspace], 0,
-			    SHA256_SHORT_BLOCK_LENGTH - usedspace);
-		} else {
-			if (usedspace < SHA256_BLOCK_LENGTH) {
-				memset(&context->buffer[usedspace], 0,
-				    SHA256_BLOCK_LENGTH - usedspace);
+			memset(&context->বাফার[usedspace], 0,
+			    SHA256_SHORT_BLOCK_দৈর্ঘ্য - usedspace);
+		} অন্যথা {
+			যদি (usedspace < SHA256_BLOCK_দৈর্ঘ্য) {
+				memset(&context->বাফার[usedspace], 0,
+				    SHA256_BLOCK_দৈর্ঘ্য - usedspace);
 			}
 			/* Do second-to-last transform: */
-			SHA256Transform(context->state.st32, context->buffer);
+			SHA256Transform(context->state.st32, context->বাফার);
 
 			/* Prepare for last transform: */
-			memset(context->buffer, 0, SHA256_SHORT_BLOCK_LENGTH);
+			memset(context->বাফার, 0, SHA256_SHORT_BLOCK_দৈর্ঘ্য);
 		}
-	} else {
+	} অন্যথা {
 		/* Set-up for the last transform: */
-		memset(context->buffer, 0, SHA256_SHORT_BLOCK_LENGTH);
+		memset(context->বাফার, 0, SHA256_SHORT_BLOCK_দৈর্ঘ্য);
 
 		/* Begin padding with a 1 bit: */
-		*context->buffer = 0x80;
+		*context->বাফার = 0x80;
 	}
 	/* Store the length of input data (in bits) in big endian format: */
-	BE_64_TO_8(&context->buffer[SHA256_SHORT_BLOCK_LENGTH],
+	BE_64_TO_8(&context->বাফার[SHA256_SHORT_BLOCK_দৈর্ঘ্য],
 	    context->bitcount[0]);
 
 	/* Final transform: */
-	SHA256Transform(context->state.st32, context->buffer);
+	SHA256Transform(context->state.st32, context->বাফার);
 
 	/* Clean up: */
 	usedspace = 0;
 }
 DEF_WEAK(SHA256Pad);
 
-void
-SHA256Final(u_int8_t digest[SHA256_DIGEST_LENGTH], SHA2_CTX *context)
+শূন্য
+SHA256Final(u_int8_t digest[SHA256_DIGEST_দৈর্ঘ্য], SHA2_CTX *context)
 {
 	SHA256Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#যদি BYTE_ORDER == LITTLE_ENDIAN
+	পূর্ণসংখ্যা	i;
 
 	/* Convert TO host byte order */
-	for (i = 0; i < 8; i++)
+	জন্য (i = 0; i < 8; i++)
 		BE_32_TO_8(digest + i * 4, context->state.st32[i]);
-#else
-	memcpy(digest, context->state.st32, SHA256_DIGEST_LENGTH);
+#অন্যথা
+	memcpy(digest, context->state.st32, SHA256_DIGEST_দৈর্ঘ্য);
 #endif
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, আকার(*context));
 }
 DEF_WEAK(SHA256Final);
 
 
 /*** SHA-512: *********************************************************/
-void
+শূন্য
 SHA512Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st64, sha512_initial_hash_value,
-	    sizeof(sha512_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	memcpy(context->state.st64, sha512_initial_hash_মান,
+	    আকার(sha512_initial_hash_মান));
+	memset(context->বাফার, 0, আকার(context->বাফার));
 	context->bitcount[0] = context->bitcount[1] =  0;
 }
 DEF_WEAK(SHA512Init);
@@ -644,17 +644,17 @@ DEF_WEAK(SHA512Init);
 
 /* Unrolled SHA-512 round macros: */
 
-#define ROUND512_0_TO_15(a,b,c,d,e,f,g,h) do {				    \
-	BE_8_TO_64(W512[j], data);					    \
-	data += 8;							    \
+#define ROUND512_0_TO_15(a,b,c,d,e,f,g,h) করো {				    \
+	BE_8_TO_64(W512[j], তথ্য);					    \
+	তথ্য += 8;							    \
 	T1 = (h) + Sigma1_512((e)) + Ch((e), (f), (g)) + K512[j] + W512[j]; \
 	(d) += T1;							    \
 	(h) = T1 + Sigma0_512((a)) + Maj((a), (b), (c));		    \
 	j++;								    \
-} while(0)
+} যখন(0)
 
 
-#define ROUND512(a,b,c,d,e,f,g,h) do {					    \
+#define ROUND512(a,b,c,d,e,f,g,h) করো {					    \
 	s0 = W512[(j+1)&0x0f];						    \
 	s0 = sigma0_512(s0);						    \
 	s1 = W512[(j+14)&0x0f];						    \
@@ -664,14 +664,14 @@ DEF_WEAK(SHA512Init);
 	(d) += T1;							    \
 	(h) = T1 + Sigma0_512((a)) + Maj((a), (b), (c));		    \
 	j++;								    \
-} while(0)
+} যখন(0)
 
-void
-SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
+শূন্য
+SHA512Transform(u_int64_t state[8], ধ্রুবক u_int8_t তথ্য[SHA512_BLOCK_দৈর্ঘ্য])
 {
 	u_int64_t	a, b, c, d, e, f, g, h, s0, s1;
 	u_int64_t	T1, W512[16];
-	int		j;
+	পূর্ণসংখ্যা		j;
 
 	/* Initialize registers with the prev. intermediate value */
 	a = state[0];
@@ -684,7 +684,7 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 	h = state[7];
 
 	j = 0;
-	do {
+	করো {
 		/* Rounds 0 to 15 (unrolled): */
 		ROUND512_0_TO_15(a,b,c,d,e,f,g,h);
 		ROUND512_0_TO_15(h,a,b,c,d,e,f,g);
@@ -694,10 +694,10 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 		ROUND512_0_TO_15(d,e,f,g,h,a,b,c);
 		ROUND512_0_TO_15(c,d,e,f,g,h,a,b);
 		ROUND512_0_TO_15(b,c,d,e,f,g,h,a);
-	} while (j < 16);
+	} যখন (j < 16);
 
 	/* Now for the remaining rounds up to 79: */
-	do {
+	করো {
 		ROUND512(a,b,c,d,e,f,g,h);
 		ROUND512(h,a,b,c,d,e,f,g);
 		ROUND512(g,h,a,b,c,d,e,f);
@@ -706,7 +706,7 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 		ROUND512(d,e,f,g,h,a,b,c);
 		ROUND512(c,d,e,f,g,h,a,b);
 		ROUND512(b,c,d,e,f,g,h,a);
-	} while (j < 80);
+	} যখন (j < 80);
 
 	/* Compute the current intermediate hash value */
 	state[0] += a;
@@ -722,14 +722,14 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 	a = b = c = d = e = f = g = h = T1 = 0;
 }
 
-#else /* SHA2_UNROLL_TRANSFORM */
+#অন্যথা /* SHA2_UNROLL_TRANSFORM */
 
-void
-SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
+শূন্য
+SHA512Transform(u_int64_t state[8], ধ্রুবক u_int8_t তথ্য[SHA512_BLOCK_দৈর্ঘ্য])
 {
 	u_int64_t	a, b, c, d, e, f, g, h, s0, s1;
 	u_int64_t	T1, T2, W512[16];
-	int		j;
+	পূর্ণসংখ্যা		j;
 
 	/* Initialize registers with the prev. intermediate value */
 	a = state[0];
@@ -742,9 +742,9 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 	h = state[7];
 
 	j = 0;
-	do {
-		BE_8_TO_64(W512[j], data);
-		data += 8;
+	করো {
+		BE_8_TO_64(W512[j], তথ্য);
+		তথ্য += 8;
 		/* Apply the SHA-512 compression function to update a..h */
 		T1 = h + Sigma1_512(e) + Ch(e, f, g) + K512[j] + W512[j];
 		T2 = Sigma0_512(a) + Maj(a, b, c);
@@ -758,9 +758,9 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 		a = T1 + T2;
 
 		j++;
-	} while (j < 16);
+	} যখন (j < 16);
 
-	do {
+	করো {
 		/* Part of the message block expansion: */
 		s0 = W512[(j+1)&0x0f];
 		s0 = sigma0_512(s0);
@@ -781,7 +781,7 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 		a = T1 + T2;
 
 		j++;
-	} while (j < 80);
+	} যখন (j < 80);
 
 	/* Compute the current intermediate hash value */
 	state[0] += a;
@@ -800,46 +800,46 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 #endif /* SHA2_UNROLL_TRANSFORM */
 DEF_WEAK(SHA512Transform);
 
-void
-SHA512Update(SHA2_CTX *context, const u_int8_t *data, size_t len)
+শূন্য
+SHA512Update(SHA2_CTX *context, ধ্রুবক u_int8_t *তথ্য, আকার_t len)
 {
-	size_t	freespace, usedspace;
+	আকার_t	freespace, usedspace;
 
 	/* Calling with no data is valid (we do nothing) */
-	if (len == 0)
-		return;
+	যদি (len == 0)
+		ফেরত;
 
-	usedspace = (context->bitcount[0] >> 3) % SHA512_BLOCK_LENGTH;
-	if (usedspace > 0) {
+	usedspace = (context->bitcount[0] >> 3) % SHA512_BLOCK_দৈর্ঘ্য;
+	যদি (usedspace > 0) {
 		/* Calculate how much free space is available in the buffer */
-		freespace = SHA512_BLOCK_LENGTH - usedspace;
+		freespace = SHA512_BLOCK_দৈর্ঘ্য - usedspace;
 
-		if (len >= freespace) {
+		যদি (len >= freespace) {
 			/* Fill the buffer completely and process it */
-			memcpy(&context->buffer[usedspace], data, freespace);
+			memcpy(&context->বাফার[usedspace], তথ্য, freespace);
 			ADDINC128(context->bitcount, freespace << 3);
 			len -= freespace;
-			data += freespace;
-			SHA512Transform(context->state.st64, context->buffer);
-		} else {
+			তথ্য += freespace;
+			SHA512Transform(context->state.st64, context->বাফার);
+		} অন্যথা {
 			/* The buffer is not yet full */
-			memcpy(&context->buffer[usedspace], data, len);
+			memcpy(&context->বাফার[usedspace], তথ্য, len);
 			ADDINC128(context->bitcount, len << 3);
 			/* Clean up: */
 			usedspace = freespace = 0;
-			return;
+			ফেরত;
 		}
 	}
-	while (len >= SHA512_BLOCK_LENGTH) {
+	যখন (len >= SHA512_BLOCK_দৈর্ঘ্য) {
 		/* Process as many complete blocks as we can */
-		SHA512Transform(context->state.st64, data);
-		ADDINC128(context->bitcount, SHA512_BLOCK_LENGTH << 3);
-		len -= SHA512_BLOCK_LENGTH;
-		data += SHA512_BLOCK_LENGTH;
+		SHA512Transform(context->state.st64, তথ্য);
+		ADDINC128(context->bitcount, SHA512_BLOCK_দৈর্ঘ্য << 3);
+		len -= SHA512_BLOCK_দৈর্ঘ্য;
+		তথ্য += SHA512_BLOCK_দৈর্ঘ্য;
 	}
-	if (len > 0) {
+	যদি (len > 0) {
 		/* There's left-overs, so save 'em */
-		memcpy(context->buffer, data, len);
+		memcpy(context->বাফার, তথ্য, len);
 		ADDINC128(context->bitcount, len << 3);
 	}
 	/* Clean up: */
@@ -847,77 +847,77 @@ SHA512Update(SHA2_CTX *context, const u_int8_t *data, size_t len)
 }
 DEF_WEAK(SHA512Update);
 
-void
+শূন্য
 SHA512Pad(SHA2_CTX *context)
 {
-	unsigned int	usedspace;
+	unsigned পূর্ণসংখ্যা	usedspace;
 
-	usedspace = (context->bitcount[0] >> 3) % SHA512_BLOCK_LENGTH;
-	if (usedspace > 0) {
+	usedspace = (context->bitcount[0] >> 3) % SHA512_BLOCK_দৈর্ঘ্য;
+	যদি (usedspace > 0) {
 		/* Begin padding with a 1 bit: */
-		context->buffer[usedspace++] = 0x80;
+		context->বাফার[usedspace++] = 0x80;
 
-		if (usedspace <= SHA512_SHORT_BLOCK_LENGTH) {
+		যদি (usedspace <= SHA512_SHORT_BLOCK_দৈর্ঘ্য) {
 			/* Set-up for the last transform: */
-			memset(&context->buffer[usedspace], 0, SHA512_SHORT_BLOCK_LENGTH - usedspace);
-		} else {
-			if (usedspace < SHA512_BLOCK_LENGTH) {
-				memset(&context->buffer[usedspace], 0, SHA512_BLOCK_LENGTH - usedspace);
+			memset(&context->বাফার[usedspace], 0, SHA512_SHORT_BLOCK_দৈর্ঘ্য - usedspace);
+		} অন্যথা {
+			যদি (usedspace < SHA512_BLOCK_দৈর্ঘ্য) {
+				memset(&context->বাফার[usedspace], 0, SHA512_BLOCK_দৈর্ঘ্য - usedspace);
 			}
 			/* Do second-to-last transform: */
-			SHA512Transform(context->state.st64, context->buffer);
+			SHA512Transform(context->state.st64, context->বাফার);
 
 			/* And set-up for the last transform: */
-			memset(context->buffer, 0, SHA512_BLOCK_LENGTH - 2);
+			memset(context->বাফার, 0, SHA512_BLOCK_দৈর্ঘ্য - 2);
 		}
-	} else {
+	} অন্যথা {
 		/* Prepare for final transform: */
-		memset(context->buffer, 0, SHA512_SHORT_BLOCK_LENGTH);
+		memset(context->বাফার, 0, SHA512_SHORT_BLOCK_দৈর্ঘ্য);
 
 		/* Begin padding with a 1 bit: */
-		*context->buffer = 0x80;
+		*context->বাফার = 0x80;
 	}
 	/* Store the length of input data (in bits) in big endian format: */
-	BE_64_TO_8(&context->buffer[SHA512_SHORT_BLOCK_LENGTH],
+	BE_64_TO_8(&context->বাফার[SHA512_SHORT_BLOCK_দৈর্ঘ্য],
 	    context->bitcount[1]);
-	BE_64_TO_8(&context->buffer[SHA512_SHORT_BLOCK_LENGTH + 8],
+	BE_64_TO_8(&context->বাফার[SHA512_SHORT_BLOCK_দৈর্ঘ্য + 8],
 	    context->bitcount[0]);
 
 	/* Final transform: */
-	SHA512Transform(context->state.st64, context->buffer);
+	SHA512Transform(context->state.st64, context->বাফার);
 
 	/* Clean up: */
 	usedspace = 0;
 }
 DEF_WEAK(SHA512Pad);
 
-void
-SHA512Final(u_int8_t digest[SHA512_DIGEST_LENGTH], SHA2_CTX *context)
+শূন্য
+SHA512Final(u_int8_t digest[SHA512_DIGEST_দৈর্ঘ্য], SHA2_CTX *context)
 {
 	SHA512Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#যদি BYTE_ORDER == LITTLE_ENDIAN
+	পূর্ণসংখ্যা	i;
 
 	/* Convert TO host byte order */
-	for (i = 0; i < 8; i++)
+	জন্য (i = 0; i < 8; i++)
 		BE_64_TO_8(digest + i * 8, context->state.st64[i]);
-#else
-	memcpy(digest, context->state.st64, SHA512_DIGEST_LENGTH);
+#অন্যথা
+	memcpy(digest, context->state.st64, SHA512_DIGEST_দৈর্ঘ্য);
 #endif
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, আকার(*context));
 }
 DEF_WEAK(SHA512Final);
 
-#if !defined(SHA2_SMALL)
+#যদি !defined(SHA2_SMALL)
 
 /*** SHA-384: *********************************************************/
-void
+শূন্য
 SHA384Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st64, sha384_initial_hash_value,
-	    sizeof(sha384_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	memcpy(context->state.st64, sha384_initial_hash_মান,
+	    আকার(sha384_initial_hash_মান));
+	memset(context->বাফার, 0, আকার(context->বাফার));
 	context->bitcount[0] = context->bitcount[1] = 0;
 }
 DEF_WEAK(SHA384Init);
@@ -930,51 +930,51 @@ DEF_WEAK(SHA384Update);
 DEF_WEAK(SHA384Pad);
 
 /* Equivalent of MAKE_CLONE (which is a no-op) for SHA384 funcs */
-void
-SHA384Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
+শূন্য
+SHA384Transform(u_int64_t state[8], ধ্রুবক u_int8_t তথ্য[SHA512_BLOCK_দৈর্ঘ্য])
 {
-	SHA512Transform(state, data);
+	SHA512Transform(state, তথ্য);
 }
 
-void
-SHA384Update(SHA2_CTX *context, const u_int8_t *data, size_t len)
+শূন্য
+SHA384Update(SHA2_CTX *context, ধ্রুবক u_int8_t *তথ্য, আকার_t len)
 {
-	SHA512Update(context, data, len);
+	SHA512Update(context, তথ্য, len);
 }
 
-void
+শূন্য
 SHA384Pad(SHA2_CTX *context)
 {
 	SHA512Pad(context);
 }
 
-void
-SHA384Final(u_int8_t digest[SHA384_DIGEST_LENGTH], SHA2_CTX *context)
+শূন্য
+SHA384Final(u_int8_t digest[SHA384_DIGEST_দৈর্ঘ্য], SHA2_CTX *context)
 {
 	SHA384Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#যদি BYTE_ORDER == LITTLE_ENDIAN
+	পূর্ণসংখ্যা	i;
 
 	/* Convert TO host byte order */
-	for (i = 0; i < 6; i++)
+	জন্য (i = 0; i < 6; i++)
 		BE_64_TO_8(digest + i * 8, context->state.st64[i]);
-#else
-	memcpy(digest, context->state.st64, SHA384_DIGEST_LENGTH);
+#অন্যথা
+	memcpy(digest, context->state.st64, SHA384_DIGEST_দৈর্ঘ্য);
 #endif
 	/* Zero out state data */
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, আকার(*context));
 }
 DEF_WEAK(SHA384Final);
 
-#if 0
+#যদি 0
 /*** SHA-512/256: *********************************************************/
-void
+শূন্য
 SHA512_256Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st64, sha512_256_initial_hash_value,
-	    sizeof(sha512_256_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	memcpy(context->state.st64, sha512_256_initial_hash_মান,
+	    আকার(sha512_256_initial_hash_মান));
+	memset(context->বাফার, 0, আকার(context->বাফার));
 	context->bitcount[0] = context->bitcount[1] = 0;
 }
 DEF_WEAK(SHA512_256Init);
@@ -986,22 +986,22 @@ DEF_WEAK(SHA512_256Transform);
 DEF_WEAK(SHA512_256Update);
 DEF_WEAK(SHA512_256Pad);
 
-void
-SHA512_256Final(u_int8_t digest[SHA512_256_DIGEST_LENGTH], SHA2_CTX *context)
+শূন্য
+SHA512_256Final(u_int8_t digest[SHA512_256_DIGEST_দৈর্ঘ্য], SHA2_CTX *context)
 {
 	SHA512_256Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#যদি BYTE_ORDER == LITTLE_ENDIAN
+	পূর্ণসংখ্যা	i;
 
 	/* Convert TO host byte order */
-	for (i = 0; i < 4; i++)
+	জন্য (i = 0; i < 4; i++)
 		BE_64_TO_8(digest + i * 8, context->state.st64[i]);
-#else
-	memcpy(digest, context->state.st64, SHA512_256_DIGEST_LENGTH);
+#অন্যথা
+	memcpy(digest, context->state.st64, SHA512_256_DIGEST_দৈর্ঘ্য);
 #endif
 	/* Zero out state data */
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, আকার(*context));
 }
 DEF_WEAK(SHA512_256Final);
 #endif /* !defined(SHA2_SMALL) */

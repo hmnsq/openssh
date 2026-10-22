@@ -15,21 +15,21 @@
  */
 
 #define SSH_DONT_OVERLOAD_OPENSSL_FUNCS
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
 #ifdef WITH_OPENSSL
 
-#include <stdarg.h>
-#include <string.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <string.h>
 
 #ifdef USE_OPENSSL_ENGINE
 # include <openssl/engine.h>
 # include <openssl/conf.h>
 #endif
 
-#include "log.h"
+#অন্তর্ভাব "log.h"
 
-#include "openssl-compat.h"
+#অন্তর্ভাব "openssl-compat.h"
 
 /*
  * OpenSSL version numbers: MNNFFPPS: major minor fix patch status.
@@ -40,21 +40,21 @@
  * See https://www.openssl.org/policies/releasestrat.html
  */
 
-int
+পূর্ণসংখ্যা
 ssh_compatible_openssl(long headerver, long libver)
 {
 	long mask, hfix, lfix;
 
 	/* exact match is always OK */
-	if (headerver == libver)
-		return 1;
+	যদি (headerver == libver)
+		ফেরত 1;
 
 	/*
 	 * For versions >= 3.0, only the major must match.
 	 */
-	if (headerver >= 0x30000000) {
+	যদি (headerver >= 0x30000000) {
 		mask = 0xf0000000L; /* major only */
-		return (headerver & mask) == (libver & mask);
+		ফেরত (headerver & mask) == (libver & mask);
 	}
 
 	/*
@@ -64,13 +64,13 @@ ssh_compatible_openssl(long headerver, long libver)
 	mask = 0xfff0000fL; /* major,minor,status */
 	hfix = (headerver & 0x000ff000) >> 12;
 	lfix = (libver & 0x000ff000) >> 12;
-	if ( (headerver & mask) == (libver & mask) && lfix >= hfix)
-		return 1;
-	return 0;
+	যদি ( (headerver & mask) == (libver & mask) && lfix >= hfix)
+		ফেরত 1;
+	ফেরত 0;
 }
 
-int
-ssh_libcrypto_init(void)
+পূর্ণসংখ্যা
+ssh_libcrypto_init(শূন্য)
 {
 	uint64_t opts = OPENSSL_INIT_ADD_ALL_CIPHERS |
 	    OPENSSL_INIT_ADD_ALL_DIGESTS;
@@ -84,32 +84,32 @@ ssh_libcrypto_init(void)
 	opts |= OPENSSL_INIT_LOAD_CONFIG;
 #endif /* USE_OPENSSL_ENGINE */
 
-	return OPENSSL_init_crypto(opts, NULL);
+	ফেরত OPENSSL_init_crypto(opts, ফাঁকা);
 }
 
 #ifndef HAVE_EVP_DIGESTSIGN
-int
-EVP_DigestSign(EVP_MD_CTX *ctx, unsigned char *sigret, size_t *siglen,
-    const unsigned char *tbs, size_t tbslen)
+পূর্ণসংখ্যা
+EVP_DigestSign(EVP_MD_CTX *ctx, unsigned অক্ষর *sigret, আকার_t *siglen,
+    ধ্রুবক unsigned অক্ষর *tbs, আকার_t tbslen)
 {
-	if (sigret != NULL) {
-		if (EVP_DigestSignUpdate(ctx, tbs, tbslen) <= 0)
-			return 0;
+	যদি (sigret != ফাঁকা) {
+		যদি (EVP_DigestSignUpdate(ctx, tbs, tbslen) <= 0)
+			ফেরত 0;
 	}
 
-	return EVP_DigestSignFinal(ctx, sigret, siglen);
+	ফেরত EVP_DigestSignFinal(ctx, sigret, siglen);
 }
 #endif
 
 #ifndef HAVE_EVP_DIGESTVERIFY
-int
-EVP_DigestVerify(EVP_MD_CTX *ctx, const unsigned char *sigret, size_t siglen,
-    const unsigned char *tbs, size_t tbslen)
+পূর্ণসংখ্যা
+EVP_DigestVerify(EVP_MD_CTX *ctx, ধ্রুবক unsigned অক্ষর *sigret, আকার_t siglen,
+    ধ্রুবক unsigned অক্ষর *tbs, আকার_t tbslen)
 {
-	if (EVP_DigestVerifyUpdate(ctx, tbs, tbslen) <= 0)
-		return -1;
+	যদি (EVP_DigestVerifyUpdate(ctx, tbs, tbslen) <= 0)
+		ফেরত -1;
 
-	return EVP_DigestVerifyFinal(ctx, sigret, siglen);
+	ফেরত EVP_DigestVerifyFinal(ctx, sigret, siglen);
 }
 #endif
 

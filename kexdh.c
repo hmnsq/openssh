@@ -23,81 +23,81 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
 #ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#অন্তর্ভাব "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include <stdio.h>
-#include <signal.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <signal.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#অন্তর্ভাব <openssl/bn.h>
+#অন্তর্ভাব <openssl/dh.h>
 
-#include "kex.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "dh.h"
-#include "log.h"
+#অন্তর্ভাব "kex.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "dh.h"
+#অন্তর্ভাব "log.h"
 
-int
-kex_dh_keygen(struct kex *kex)
+পূর্ণসংখ্যা
+kex_dh_keygen(কাঠামো kex *kex)
 {
-	switch (kex->kex_type) {
-	case KEX_DH_GRP1_SHA1:
+	নির্বাচন (kex->kex_type) {
+	ক্ষেত্র KEX_DH_GRP1_SHA1:
 		kex->dh = dh_new_group1();
-		break;
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
+		বিরতি;
+	ক্ষেত্র KEX_DH_GRP14_SHA1:
+	ক্ষেত্র KEX_DH_GRP14_SHA256:
 		kex->dh = dh_new_group14();
-		break;
-	case KEX_DH_GRP16_SHA512:
+		বিরতি;
+	ক্ষেত্র KEX_DH_GRP16_SHA512:
 		kex->dh = dh_new_group16();
-		break;
-	case KEX_DH_GRP18_SHA512:
+		বিরতি;
+	ক্ষেত্র KEX_DH_GRP18_SHA512:
 		kex->dh = dh_new_group18();
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		বিরতি;
+	পূর্বনির্ধারিত:
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (kex->dh == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	return (dh_gen_key(kex->dh, kex->we_need * 8));
+	যদি (kex->dh == ফাঁকা)
+		ফেরত SSH_ERR_ALLOC_FAIL;
+	ফেরত (dh_gen_চাবি(kex->dh, kex->we_need * 8));
 }
 
-int
-kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
+পূর্ণসংখ্যা
+kex_dh_compute_চাবি(কাঠামো kex *kex, BIGNUM *dh_pub, কাঠামো sshbuf *out)
 {
-	BIGNUM *shared_secret = NULL;
-	u_char *kbuf = NULL;
-	size_t klen = 0;
-	int kout, r;
+	BIGNUM *shared_secret = ফাঁকা;
+	u_char *kbuf = ফাঁকা;
+	আকার_t klen = 0;
+	পূর্ণসংখ্যা kout, r;
 
 #ifdef DEBUG_KEXDH
 	fprintf(stderr, "dh_pub= ");
 	BN_print_fp(stderr, dh_pub);
 	fprintf(stderr, "\n");
-	debug("bits %d", BN_num_bits(dh_pub));
+	debug("bits %d", BN_অঙ্ক_bits(dh_pub));
 	DHparams_print_fp(stderr, kex->dh);
 	fprintf(stderr, "\n");
 #endif
 
-	if (!dh_pub_is_valid(kex->dh, dh_pub)) {
+	যদি (!dh_pub_is_valid(kex->dh, dh_pub)) {
 		r = SSH_ERR_MESSAGE_INCOMPLETE;
-		goto out;
+		যাও out;
 	}
-	klen = DH_size(kex->dh);
-	if ((kbuf = malloc(klen)) == NULL ||
-	    (shared_secret = BN_new()) == NULL) {
+	klen = DH_আকার(kex->dh);
+	যদি ((kbuf = malloc(klen)) == ফাঁকা ||
+	    (shared_secret = BN_new()) == ফাঁকা) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if ((kout = DH_compute_key(kbuf, dh_pub, kex->dh)) < 0 ||
-	    BN_bin2bn(kbuf, kout, shared_secret) == NULL) {
+	যদি ((kout = DH_compute_চাবি(kbuf, dh_pub, kex->dh)) < 0 ||
+	    BN_bin2bn(kbuf, kout, shared_secret) == ফাঁকা) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		যাও out;
 	}
 #ifdef DEBUG_KEXDH
 	dump_digest("shared secret", kbuf, kout);
@@ -106,96 +106,96 @@ kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
  out:
 	freezero(kbuf, klen);
 	BN_clear_free(shared_secret);
-	return r;
+	ফেরত r;
 }
 
-int
-kex_dh_keypair(struct kex *kex)
+পূর্ণসংখ্যা
+kex_dh_keypair(কাঠামো kex *kex)
 {
-	const BIGNUM *pub_key;
-	struct sshbuf *buf = NULL;
-	int r;
+	ধ্রুবক BIGNUM *pub_চাবি;
+	কাঠামো sshbuf *buf = ফাঁকা;
+	পূর্ণসংখ্যা r;
 
-	if ((r = kex_dh_keygen(kex)) != 0)
-		return r;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_bignum2(buf, pub_key)) != 0 ||
-	    (r = sshbuf_get_u32(buf, NULL)) != 0)
-		goto out;
+	যদি ((r = kex_dh_keygen(kex)) != 0)
+		ফেরত r;
+	DH_get0_চাবি(kex->dh, &pub_চাবি, ফাঁকা);
+	যদি ((buf = sshbuf_new()) == ফাঁকা)
+		ফেরত SSH_ERR_ALLOC_FAIL;
+	যদি ((r = sshbuf_put_bignum2(buf, pub_চাবি)) != 0 ||
+	    (r = sshbuf_get_u32(buf, ফাঁকা)) != 0)
+		যাও out;
 #ifdef DEBUG_KEXDH
 	DHparams_print_fp(stderr, kex->dh);
 	fprintf(stderr, "pub= ");
-	BN_print_fp(stderr, pub_key);
+	BN_print_fp(stderr, pub_চাবি);
 	fprintf(stderr, "\n");
 #endif
 	kex->client_pub = buf;
-	buf = NULL;
+	buf = ফাঁকা;
  out:
 	sshbuf_free(buf);
-	return r;
+	ফেরত r;
 }
 
-int
-kex_dh_enc(struct kex *kex, const struct sshbuf *client_blob,
-    struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+পূর্ণসংখ্যা
+kex_dh_enc(কাঠামো kex *kex, ধ্রুবক কাঠামো sshbuf *client_blob,
+    কাঠামো sshbuf **server_blobp, কাঠামো sshbuf **shared_secretp)
 {
-	const BIGNUM *pub_key;
-	struct sshbuf *server_blob = NULL;
-	int r;
+	ধ্রুবক BIGNUM *pub_চাবি;
+	কাঠামো sshbuf *server_blob = ফাঁকা;
+	পূর্ণসংখ্যা r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = ফাঁকা;
+	*shared_secretp = ফাঁকা;
 
-	if ((r = kex_dh_keygen(kex)) != 0)
-		goto out;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((server_blob = sshbuf_new()) == NULL) {
+	যদি ((r = kex_dh_keygen(kex)) != 0)
+		যাও out;
+	DH_get0_চাবি(kex->dh, &pub_চাবি, ফাঁকা);
+	যদি ((server_blob = sshbuf_new()) == ফাঁকা) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if ((r = sshbuf_put_bignum2(server_blob, pub_key)) != 0 ||
-	    (r = sshbuf_get_u32(server_blob, NULL)) != 0)
-		goto out;
-	if ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
-		goto out;
+	যদি ((r = sshbuf_put_bignum2(server_blob, pub_চাবি)) != 0 ||
+	    (r = sshbuf_get_u32(server_blob, ফাঁকা)) != 0)
+		যাও out;
+	যদি ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
+		যাও out;
 	*server_blobp = server_blob;
-	server_blob = NULL;
+	server_blob = ফাঁকা;
  out:
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = ফাঁকা;
 	sshbuf_free(server_blob);
-	return r;
+	ফেরত r;
 }
 
-int
-kex_dh_dec(struct kex *kex, const struct sshbuf *dh_blob,
-    struct sshbuf **shared_secretp)
+পূর্ণসংখ্যা
+kex_dh_dec(কাঠামো kex *kex, ধ্রুবক কাঠামো sshbuf *dh_blob,
+    কাঠামো sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	BIGNUM *dh_pub = NULL;
-	int r;
+	কাঠামো sshbuf *buf = ফাঁকা;
+	BIGNUM *dh_pub = ফাঁকা;
+	পূর্ণসংখ্যা r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = ফাঁকা;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	যদি ((buf = sshbuf_new()) == ফাঁকা) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if ((r = sshbuf_put_stringb(buf, dh_blob)) != 0 ||
+	যদি ((r = sshbuf_put_stringb(buf, dh_blob)) != 0 ||
 	    (r = sshbuf_get_bignum2(buf, &dh_pub)) != 0)
-		goto out;
+		যাও out;
 	sshbuf_reset(buf);
-	if ((r = kex_dh_compute_key(kex, dh_pub, buf)) != 0)
-		goto out;
+	যদি ((r = kex_dh_compute_চাবি(kex, dh_pub, buf)) != 0)
+		যাও out;
 	*shared_secretp = buf;
-	buf = NULL;
+	buf = ফাঁকা;
  out:
 	BN_free(dh_pub);
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = ফাঁকা;
 	sshbuf_free(buf);
-	return r;
+	ফেরত r;
 }
 #endif /* WITH_OPENSSL */

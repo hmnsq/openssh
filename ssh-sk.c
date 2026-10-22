@@ -17,437 +17,437 @@
 
 /* #define DEBUG_SK 1 */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
 #ifdef ENABLE_SK
 
-#include <dlfcn.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdio.h>
+#অন্তর্ভাব <dlfcn.h>
+#অন্তর্ভাব <stddef.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <stdio.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/objects.h>
-#include <openssl/ec.h>
-#include <openssl/evp.h>
+#অন্তর্ভাব <openssl/objects.h>
+#অন্তর্ভাব <openssl/ec.h>
+#অন্তর্ভাব <openssl/evp.h>
 #endif /* WITH_OPENSSL */
 
-#include "log.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "ssherr.h"
-#include "digest.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "misc.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "sshkey.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "digest.h"
 
-#include "ssh-sk.h"
-#include "sk-api.h"
-#include "crypto_api.h"
+#অন্তর্ভাব "ssh-sk.h"
+#অন্তর্ভাব "sk-api.h"
+#অন্তর্ভাব "crypto_api.h"
 
-struct sshsk_provider {
-	char *path;
-	void *dlhandle;
+কাঠামো sshsk_provider {
+	অক্ষর *path;
+	শূন্য *dlhandle;
 
 	/* Return the version of the middleware API */
-	uint32_t (*sk_api_version)(void);
+	uint32_t (*sk_api_version)(শূন্য);
 
 	/* Enroll a U2F key (private key generation) */
-	int (*sk_enroll)(int alg, const uint8_t *challenge,
-	    size_t challenge_len, const char *application, uint8_t flags,
-	    const char *pin, struct sk_option **opts,
-	    struct sk_enroll_response **enroll_response);
+	পূর্ণসংখ্যা (*sk_enroll)(পূর্ণসংখ্যা alg, ধ্রুবক uint8_t *challenge,
+	    আকার_t challenge_len, ধ্রুবক অক্ষর *application, uint8_t flags,
+	    ধ্রুবক অক্ষর *pin, কাঠামো sk_option **opts,
+	    কাঠামো sk_enroll_response **enroll_response);
 
 	/* Sign a challenge */
-	int (*sk_sign)(int alg, const uint8_t *message, size_t message_len,
-	    const char *application,
-	    const uint8_t *key_handle, size_t key_handle_len,
-	    uint8_t flags, const char *pin, struct sk_option **opts,
-	    struct sk_sign_response **sign_response);
+	পূর্ণসংখ্যা (*sk_sign)(পূর্ণসংখ্যা alg, ধ্রুবক uint8_t *message, আকার_t message_len,
+	    ধ্রুবক অক্ষর *application,
+	    ধ্রুবক uint8_t *চাবি_handle, আকার_t চাবি_handle_len,
+	    uint8_t flags, ধ্রুবক অক্ষর *pin, কাঠামো sk_option **opts,
+	    কাঠামো sk_sign_response **sign_response);
 
 	/* Enumerate resident keys */
-	int (*sk_load_resident_keys)(const char *pin, struct sk_option **opts,
-	    struct sk_resident_key ***rks, size_t *nrks);
+	পূর্ণসংখ্যা (*sk_load_resident_চাবিগুলি)(ধ্রুবক অক্ষর *pin, কাঠামো sk_option **opts,
+	    কাঠামো sk_resident_চাবি ***rks, আকার_t *nrks);
 };
 
 /* Built-in version */
-int ssh_sk_enroll(int alg, const uint8_t *challenge,
-    size_t challenge_len, const char *application, uint8_t flags,
-    const char *pin, struct sk_option **opts,
-    struct sk_enroll_response **enroll_response);
-int ssh_sk_sign(int alg, const uint8_t *message, size_t message_len,
-    const char *application,
-    const uint8_t *key_handle, size_t key_handle_len,
-    uint8_t flags, const char *pin, struct sk_option **opts,
-    struct sk_sign_response **sign_response);
-int ssh_sk_load_resident_keys(const char *pin, struct sk_option **opts,
-    struct sk_resident_key ***rks, size_t *nrks);
+পূর্ণসংখ্যা ssh_sk_enroll(পূর্ণসংখ্যা alg, ধ্রুবক uint8_t *challenge,
+    আকার_t challenge_len, ধ্রুবক অক্ষর *application, uint8_t flags,
+    ধ্রুবক অক্ষর *pin, কাঠামো sk_option **opts,
+    কাঠামো sk_enroll_response **enroll_response);
+পূর্ণসংখ্যা ssh_sk_sign(পূর্ণসংখ্যা alg, ধ্রুবক uint8_t *message, আকার_t message_len,
+    ধ্রুবক অক্ষর *application,
+    ধ্রুবক uint8_t *চাবি_handle, আকার_t চাবি_handle_len,
+    uint8_t flags, ধ্রুবক অক্ষর *pin, কাঠামো sk_option **opts,
+    কাঠামো sk_sign_response **sign_response);
+পূর্ণসংখ্যা ssh_sk_load_resident_চাবিগুলি(ধ্রুবক অক্ষর *pin, কাঠামো sk_option **opts,
+    কাঠামো sk_resident_চাবি ***rks, আকার_t *nrks);
 
-static void
-sshsk_free(struct sshsk_provider *p)
+স্থির শূন্য
+sshsk_free(কাঠামো sshsk_provider *p)
 {
-	if (p == NULL)
-		return;
-	free(p->path);
-	if (p->dlhandle != NULL)
+	যদি (p == ফাঁকা)
+		ফেরত;
+	মুক্ত(p->path);
+	যদি (p->dlhandle != ফাঁকা)
 		dlclose(p->dlhandle);
-	free(p);
+	মুক্ত(p);
 }
 
-static struct sshsk_provider *
-sshsk_open(const char *path)
+স্থির কাঠামো sshsk_provider *
+sshsk_open(ধ্রুবক অক্ষর *path)
 {
-	struct sshsk_provider *ret = NULL;
+	কাঠামো sshsk_provider *ret = ফাঁকা;
 	uint32_t version;
 
-	if (path == NULL || *path == '\0') {
+	যদি (path == ফাঁকা || *path == '\0') {
 		error("No FIDO SecurityKeyProvider specified");
-		return NULL;
+		ফেরত ফাঁকা;
 	}
-	if ((ret = calloc(1, sizeof(*ret))) == NULL) {
+	যদি ((ret = calloc(1, আকার(*ret))) == ফাঁকা) {
 		error_f("calloc failed");
-		return NULL;
+		ফেরত ফাঁকা;
 	}
-	if ((ret->path = strdup(path)) == NULL) {
+	যদি ((ret->path = strdup(path)) == ফাঁকা) {
 		error_f("strdup failed");
-		goto fail;
+		যাও fail;
 	}
 	/* Skip the rest if we're using the linked in middleware */
-	if (strcasecmp(ret->path, "internal") == 0) {
+	যদি (strcasecmp(ret->path, "internal") == 0) {
 #ifdef ENABLE_SK_INTERNAL
 		ret->sk_enroll = ssh_sk_enroll;
 		ret->sk_sign = ssh_sk_sign;
-		ret->sk_load_resident_keys = ssh_sk_load_resident_keys;
-		return ret;
-#else
+		ret->sk_load_resident_চাবিগুলি = ssh_sk_load_resident_চাবিগুলি;
+		ফেরত ret;
+#অন্যথা
 		error("internal security key support not enabled");
-		goto fail;
+		যাও fail;
 #endif
 	}
-	if (lib_contains_symbol(path, "sk_api_version") != 0) {
+	যদি (lib_contains_প্রতীক(path, "sk_api_version") != 0) {
 		error("provider %s is not an OpenSSH FIDO library", path);
-		goto fail;
+		যাও fail;
 	}
-	if ((ret->dlhandle = dlopen(path, RTLD_NOW)) == NULL)
+	যদি ((ret->dlhandle = dlopen(path, RTLD_NOW)) == ফাঁকা)
 		fatal("Provider \"%s\" dlopen failed: %s", path, dlerror());
-	if ((ret->sk_api_version = dlsym(ret->dlhandle,
-	    "sk_api_version")) == NULL) {
+	যদি ((ret->sk_api_version = dlsym(ret->dlhandle,
+	    "sk_api_version")) == ফাঁকা) {
 		error("Provider \"%s\" dlsym(sk_api_version) failed: %s",
 		    path, dlerror());
-		goto fail;
+		যাও fail;
 	}
 	version = ret->sk_api_version();
 	debug_f("provider %s implements version 0x%08lx", ret->path,
 	    (u_long)version);
-	if ((version & SSH_SK_VERSION_MAJOR_MASK) != SSH_SK_VERSION_MAJOR) {
+	যদি ((version & SSH_SK_VERSION_MAJOR_MASK) != SSH_SK_VERSION_MAJOR) {
 		error("Provider \"%s\" implements unsupported "
 		    "version 0x%08lx (supported: 0x%08lx)",
 		    path, (u_long)version, (u_long)SSH_SK_VERSION_MAJOR);
-		goto fail;
+		যাও fail;
 	}
-	if ((ret->sk_enroll = dlsym(ret->dlhandle, "sk_enroll")) == NULL) {
+	যদি ((ret->sk_enroll = dlsym(ret->dlhandle, "sk_enroll")) == ফাঁকা) {
 		error("Provider %s dlsym(sk_enroll) failed: %s",
 		    path, dlerror());
-		goto fail;
+		যাও fail;
 	}
-	if ((ret->sk_sign = dlsym(ret->dlhandle, "sk_sign")) == NULL) {
+	যদি ((ret->sk_sign = dlsym(ret->dlhandle, "sk_sign")) == ফাঁকা) {
 		error("Provider \"%s\" dlsym(sk_sign) failed: %s",
 		    path, dlerror());
-		goto fail;
+		যাও fail;
 	}
-	if ((ret->sk_load_resident_keys = dlsym(ret->dlhandle,
-	    "sk_load_resident_keys")) == NULL) {
+	যদি ((ret->sk_load_resident_চাবিগুলি = dlsym(ret->dlhandle,
+	    "sk_load_resident_keys")) == ফাঁকা) {
 		error("Provider \"%s\" dlsym(sk_load_resident_keys) "
 		    "failed: %s", path, dlerror());
-		goto fail;
+		যাও fail;
 	}
 	/* success */
-	return ret;
+	ফেরত ret;
 fail:
 	sshsk_free(ret);
-	return NULL;
+	ফেরত ফাঁকা;
 }
 
-static void
-sshsk_free_enroll_response(struct sk_enroll_response *r)
+স্থির শূন্য
+sshsk_free_enroll_response(কাঠামো sk_enroll_response *r)
 {
-	if (r == NULL)
-		return;
-	freezero(r->key_handle, r->key_handle_len);
-	freezero(r->public_key, r->public_key_len);
+	যদি (r == ফাঁকা)
+		ফেরত;
+	freezero(r->চাবি_handle, r->চাবি_handle_len);
+	freezero(r->public_চাবি, r->public_চাবি_len);
 	freezero(r->signature, r->signature_len);
 	freezero(r->attestation_cert, r->attestation_cert_len);
 	freezero(r->authdata, r->authdata_len);
-	freezero(r, sizeof(*r));
+	freezero(r, আকার(*r));
 }
 
-static void
-sshsk_free_sign_response(struct sk_sign_response *r)
+স্থির শূন্য
+sshsk_free_sign_response(কাঠামো sk_sign_response *r)
 {
-	if (r == NULL)
-		return;
+	যদি (r == ফাঁকা)
+		ফেরত;
 	freezero(r->sig_r, r->sig_r_len);
 	freezero(r->sig_s, r->sig_s_len);
-	freezero(r, sizeof(*r));
+	freezero(r, আকার(*r));
 }
 
 #ifdef WITH_OPENSSL
 /* Assemble key from response */
-static int
-sshsk_ecdsa_assemble(struct sk_enroll_response *resp, struct sshkey **keyp)
+স্থির পূর্ণসংখ্যা
+sshsk_ecdsa_assemble(কাঠামো sk_enroll_response *resp, কাঠামো sshkey **keyp)
 {
-	struct sshkey *key = NULL;
-	struct sshbuf *b = NULL;
-	EC_KEY *ecdsa = NULL;
-	EC_POINT *q = NULL;
-	const EC_GROUP *g = NULL;
-	int r;
+	কাঠামো sshkey *চাবি = ফাঁকা;
+	কাঠামো sshbuf *b = ফাঁকা;
+	EC_চাবি *ecdsa = ফাঁকা;
+	EC_POINT *q = ফাঁকা;
+	ধ্রুবক EC_GROUP *g = ফাঁকা;
+	পূর্ণসংখ্যা r;
 
-	*keyp = NULL;
-	if ((key = sshkey_new(KEY_ECDSA_SK)) == NULL) {
+	*keyp = ফাঁকা;
+	যদি ((চাবি = sshkey_new(চাবি_ECDSA_SK)) == ফাঁকা) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	key->ecdsa_nid = NID_X9_62_prime256v1;
-	if ((ecdsa = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL ||
-	    (g = EC_KEY_get0_group(ecdsa)) == NULL ||
-	    (q = EC_POINT_new(g)) == NULL ||
-	    (b = sshbuf_new()) == NULL) {
+	চাবি->ecdsa_nid = NID_X9_62_prime256v1;
+	যদি ((ecdsa = EC_চাবি_new_by_curve_name(চাবি->ecdsa_nid)) == ফাঁকা ||
+	    (g = EC_চাবি_get0_group(ecdsa)) == ফাঁকা ||
+	    (q = EC_POINT_new(g)) == ফাঁকা ||
+	    (b = sshbuf_new()) == ফাঁকা) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if ((r = sshbuf_put_string(b,
-	    resp->public_key, resp->public_key_len)) != 0) {
+	যদি ((r = sshbuf_put_string(b,
+	    resp->public_চাবি, resp->public_চাবি_len)) != 0) {
 		error_fr(r, "sshbuf_put_string");
-		goto out;
+		যাও out;
 	}
-	if ((r = sshbuf_get_ec(b, q, g)) != 0) {
+	যদি ((r = sshbuf_get_ec(b, q, g)) != 0) {
 		error_fr(r, "parse");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		যাও out;
 	}
-	if (sshkey_ec_validate_public(g, q) != 0) {
+	যদি (sshkey_ec_validate_public(g, q) != 0) {
 		error("Authenticator returned invalid ECDSA key");
-		r = SSH_ERR_KEY_INVALID_EC_VALUE;
-		goto out;
+		r = SSH_ERR_চাবি_INVALID_EC_মান;
+		যাও out;
 	}
-	if (EC_KEY_set_public_key(ecdsa, q) != 1) {
+	যদি (EC_চাবি_set_public_চাবি(ecdsa, q) != 1) {
 		/* XXX assume it is a allocation error */
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if ((key->pkey = EVP_PKEY_new()) == NULL) {
+	যদি ((চাবি->pkey = EVP_PKEY_new()) == ফাঁকা) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ecdsa) != 1) {
+	যদি (EVP_PKEY_set1_EC_চাবি(চাবি->pkey, ecdsa) != 1) {
 		error_f("Assigning EC_KEY failed");
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		যাও out;
 	}
 	/* success */
-	*keyp = key;
-	key = NULL; /* transferred */
+	*keyp = চাবি;
+	চাবি = ফাঁকা; /* transferred */
 	r = 0;
  out:
-	sshkey_free(key);
+	sshkey_free(চাবি);
 	sshbuf_free(b);
-	EC_KEY_free(ecdsa);
+	EC_চাবি_free(ecdsa);
 	EC_POINT_free(q);
-	return r;
+	ফেরত r;
 }
 #endif /* WITH_OPENSSL */
 
-static int
-sshsk_ed25519_assemble(struct sk_enroll_response *resp, struct sshkey **keyp)
+স্থির পূর্ণসংখ্যা
+sshsk_ed25519_assemble(কাঠামো sk_enroll_response *resp, কাঠামো sshkey **keyp)
 {
-	struct sshkey *key = NULL;
-	int r;
+	কাঠামো sshkey *চাবি = ফাঁকা;
+	পূর্ণসংখ্যা r;
 
-	*keyp = NULL;
-	if (resp->public_key_len != ED25519_PK_SZ) {
-		error_f("invalid size: %zu", resp->public_key_len);
+	*keyp = ফাঁকা;
+	যদি (resp->public_চাবি_len != ED25519_PK_SZ) {
+		error_f("invalid size: %zu", resp->public_চাবি_len);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		যাও out;
 	}
-	if ((key = sshkey_new(KEY_ED25519_SK)) == NULL) {
+	যদি ((চাবি = sshkey_new(চাবি_ED25519_SK)) == ফাঁকা) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if ((key->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL) {
+	যদি ((চাবি->ed25519_pk = malloc(ED25519_PK_SZ)) == ফাঁকা) {
 		error_f("malloc failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	memcpy(key->ed25519_pk, resp->public_key, ED25519_PK_SZ);
+	memcpy(চাবি->ed25519_pk, resp->public_চাবি, ED25519_PK_SZ);
 	/* success */
-	*keyp = key;
-	key = NULL; /* transferred */
+	*keyp = চাবি;
+	চাবি = ফাঁকা; /* transferred */
 	r = 0;
  out:
-	sshkey_free(key);
-	return r;
+	sshkey_free(চাবি);
+	ফেরত r;
 }
 
-static int
-sshsk_key_from_response(int alg, const char *application, uint8_t flags,
-    struct sk_enroll_response *resp, struct sshkey **keyp)
+স্থির পূর্ণসংখ্যা
+sshsk_চাবি_from_response(পূর্ণসংখ্যা alg, ধ্রুবক অক্ষর *application, uint8_t flags,
+    কাঠামো sk_enroll_response *resp, কাঠামো sshkey **keyp)
 {
-	struct sshkey *key = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	কাঠামো sshkey *চাবি = ফাঁকা;
+	পূর্ণসংখ্যা r = SSH_ERR_INTERNAL_ERROR;
 
-	*keyp = NULL;
+	*keyp = ফাঁকা;
 
 	/* Check response validity */
-	if (resp->public_key == NULL || resp->key_handle == NULL) {
+	যদি (resp->public_চাবি == ফাঁকা || resp->চাবি_handle == ফাঁকা) {
 		error_f("sk_enroll response invalid");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		যাও out;
 	}
-	switch (alg) {
+	নির্বাচন (alg) {
 #ifdef WITH_OPENSSL
-	case SSH_SK_ECDSA:
-		if ((r = sshsk_ecdsa_assemble(resp, &key)) != 0)
-			goto out;
-		break;
+	ক্ষেত্র SSH_SK_ECDSA:
+		যদি ((r = sshsk_ecdsa_assemble(resp, &চাবি)) != 0)
+			যাও out;
+		বিরতি;
 #endif /* WITH_OPENSSL */
-	case SSH_SK_ED25519:
-		if ((r = sshsk_ed25519_assemble(resp, &key)) != 0)
-			goto out;
-		break;
-	default:
+	ক্ষেত্র SSH_SK_ED25519:
+		যদি ((r = sshsk_ed25519_assemble(resp, &চাবি)) != 0)
+			যাও out;
+		বিরতি;
+	পূর্বনির্ধারিত:
 		error_f("unsupported algorithm %d", alg);
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		যাও out;
 	}
-	key->sk_flags = flags;
-	if ((key->sk_key_handle = sshbuf_new()) == NULL ||
-	    (key->sk_reserved = sshbuf_new()) == NULL) {
+	চাবি->sk_flags = flags;
+	যদি ((চাবি->sk_চাবি_handle = sshbuf_new()) == ফাঁকা ||
+	    (চাবি->sk_reserved = sshbuf_new()) == ফাঁকা) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if ((key->sk_application = strdup(application)) == NULL) {
+	যদি ((চাবি->sk_application = strdup(application)) == ফাঁকা) {
 		error_f("strdup application failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if ((r = sshbuf_put(key->sk_key_handle, resp->key_handle,
-	    resp->key_handle_len)) != 0) {
+	যদি ((r = sshbuf_put(চাবি->sk_চাবি_handle, resp->চাবি_handle,
+	    resp->চাবি_handle_len)) != 0) {
 		error_fr(r, "put key handle");
-		goto out;
+		যাও out;
 	}
 	/* success */
 	r = 0;
-	*keyp = key;
-	key = NULL;
+	*keyp = চাবি;
+	চাবি = ফাঁকা;
  out:
-	sshkey_free(key);
-	return r;
+	sshkey_free(চাবি);
+	ফেরত r;
 }
 
-static int
-skerr_to_ssherr(int skerr)
+স্থির পূর্ণসংখ্যা
+skerr_to_ssherr(পূর্ণসংখ্যা skerr)
 {
-	switch (skerr) {
-	case SSH_SK_ERR_UNSUPPORTED:
-		return SSH_ERR_FEATURE_UNSUPPORTED;
-	case SSH_SK_ERR_PIN_REQUIRED:
-		return SSH_ERR_KEY_WRONG_PASSPHRASE;
-	case SSH_SK_ERR_DEVICE_NOT_FOUND:
-		return SSH_ERR_DEVICE_NOT_FOUND;
-	case SSH_SK_ERR_CREDENTIAL_EXISTS:
-		return SSH_ERR_KEY_BAD_PERMISSIONS;
-	case SSH_SK_ERR_GENERAL:
-	default:
-		return SSH_ERR_INVALID_FORMAT;
+	নির্বাচন (skerr) {
+	ক্ষেত্র SSH_SK_ERR_UNSUPPORTED:
+		ফেরত SSH_ERR_FEATURE_UNSUPPORTED;
+	ক্ষেত্র SSH_SK_ERR_PIN_REQUIRED:
+		ফেরত SSH_ERR_চাবি_WRONG_PASSPHRASE;
+	ক্ষেত্র SSH_SK_ERR_DEVICE_NOT_FOUND:
+		ফেরত SSH_ERR_DEVICE_NOT_FOUND;
+	ক্ষেত্র SSH_SK_ERR_CREDENTIAL_EXISTS:
+		ফেরত SSH_ERR_চাবি_BAD_PERMISSIONS;
+	ক্ষেত্র SSH_SK_ERR_GENERAL:
+	পূর্বনির্ধারিত:
+		ফেরত SSH_ERR_INVALID_FORMAT;
 	}
 }
 
-static void
-sshsk_free_options(struct sk_option **opts)
+স্থির শূন্য
+sshsk_free_options(কাঠামো sk_option **opts)
 {
-	size_t i;
+	আকার_t i;
 
-	if (opts == NULL)
-		return;
-	for (i = 0; opts[i] != NULL; i++) {
-		free(opts[i]->name);
-		free(opts[i]->value);
-		free(opts[i]);
+	যদি (opts == ফাঁকা)
+		ফেরত;
+	জন্য (i = 0; opts[i] != ফাঁকা; i++) {
+		মুক্ত(opts[i]->name);
+		মুক্ত(opts[i]->মান);
+		মুক্ত(opts[i]);
 	}
-	free(opts);
+	মুক্ত(opts);
 }
 
-static int
-sshsk_add_option(struct sk_option ***optsp, size_t *noptsp,
-    const char *name, const char *value, uint8_t required)
+স্থির পূর্ণসংখ্যা
+sshsk_add_option(কাঠামো sk_option ***optsp, আকার_t *noptsp,
+    ধ্রুবক অক্ষর *name, ধ্রুবক অক্ষর *মান, uint8_t required)
 {
-	struct sk_option **opts = *optsp;
-	size_t nopts = *noptsp;
+	কাঠামো sk_option **opts = *optsp;
+	আকার_t nopts = *noptsp;
 
-	if ((opts = recallocarray(opts, nopts, nopts + 2, /* extra for NULL */
-	    sizeof(*opts))) == NULL) {
+	যদি ((opts = recallocarray(opts, nopts, nopts + 2, /* extra for NULL */
+	    আকার(*opts))) == ফাঁকা) {
 		error_f("array alloc failed");
-		return SSH_ERR_ALLOC_FAIL;
+		ফেরত SSH_ERR_ALLOC_FAIL;
 	}
 	*optsp = opts;
 	*noptsp = nopts + 1;
-	if ((opts[nopts] = calloc(1, sizeof(**opts))) == NULL) {
+	যদি ((opts[nopts] = calloc(1, আকার(**opts))) == ফাঁকা) {
 		error_f("alloc failed");
-		return SSH_ERR_ALLOC_FAIL;
+		ফেরত SSH_ERR_ALLOC_FAIL;
 	}
-	if ((opts[nopts]->name = strdup(name)) == NULL ||
-	    (opts[nopts]->value = strdup(value)) == NULL) {
+	যদি ((opts[nopts]->name = strdup(name)) == ফাঁকা ||
+	    (opts[nopts]->মান = strdup(মান)) == ফাঁকা) {
 		error_f("alloc failed");
-		return SSH_ERR_ALLOC_FAIL;
+		ফেরত SSH_ERR_ALLOC_FAIL;
 	}
 	opts[nopts]->required = required;
-	return 0;
+	ফেরত 0;
 }
 
-static int
-make_options(const char *device, const char *user_id,
-    struct sk_option ***optsp)
+স্থির পূর্ণসংখ্যা
+make_options(ধ্রুবক অক্ষর *device, ধ্রুবক অক্ষর *user_id,
+    কাঠামো sk_option ***optsp)
 {
-	struct sk_option **opts = NULL;
-	size_t nopts = 0;
-	int r, ret = SSH_ERR_INTERNAL_ERROR;
+	কাঠামো sk_option **opts = ফাঁকা;
+	আকার_t nopts = 0;
+	পূর্ণসংখ্যা r, ret = SSH_ERR_INTERNAL_ERROR;
 
-	if (device != NULL &&
+	যদি (device != ফাঁকা &&
 	    (r = sshsk_add_option(&opts, &nopts, "device", device, 0)) != 0) {
 		ret = r;
-		goto out;
+		যাও out;
 	}
-	if (user_id != NULL &&
+	যদি (user_id != ফাঁকা &&
 	    (r = sshsk_add_option(&opts, &nopts, "user", user_id, 0)) != 0) {
 		ret = r;
-		goto out;
+		যাও out;
 	}
 	/* success */
 	*optsp = opts;
-	opts = NULL;
+	opts = ফাঁকা;
 	nopts = 0;
 	ret = 0;
  out:
 	sshsk_free_options(opts);
-	return ret;
+	ফেরত ret;
 }
 
 
-static int
-fill_attestation_blob(const struct sk_enroll_response *resp,
-    struct sshbuf *attest)
+স্থির পূর্ণসংখ্যা
+fill_attestation_blob(ধ্রুবক কাঠামো sk_enroll_response *resp,
+    কাঠামো sshbuf *attest)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if (attest == NULL)
-		return 0; /* nothing to do */
-	if ((r = sshbuf_put_cstring(attest, "ssh-sk-attest-v01")) != 0 ||
+	যদি (attest == ফাঁকা)
+		ফেরত 0; /* nothing to do */
+	যদি ((r = sshbuf_put_cstring(attest, "ssh-sk-attest-v01")) != 0 ||
 	    (r = sshbuf_put_string(attest,
 	    resp->attestation_cert, resp->attestation_cert_len)) != 0 ||
 	    (r = sshbuf_put_string(attest,
@@ -455,281 +455,281 @@ fill_attestation_blob(const struct sk_enroll_response *resp,
 	    (r = sshbuf_put_string(attest,
 	    resp->authdata, resp->authdata_len)) != 0 ||
 	    (r = sshbuf_put_u32(attest, 0)) != 0 || /* resvd flags */
-	    (r = sshbuf_put_string(attest, NULL, 0)) != 0 /* resvd */) {
+	    (r = sshbuf_put_string(attest, ফাঁকা, 0)) != 0 /* resvd */) {
 		error_fr(r, "compose");
-		return r;
+		ফেরত r;
 	}
 	/* success */
-	return 0;
+	ফেরত 0;
 }
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest)
+পূর্ণসংখ্যা
+sshsk_enroll(পূর্ণসংখ্যা type, ধ্রুবক অক্ষর *provider_path, ধ্রুবক অক্ষর *device,
+    ধ্রুবক অক্ষর *application, ধ্রুবক অক্ষর *userid, uint8_t flags,
+    ধ্রুবক অক্ষর *pin, কাঠামো sshbuf *challenge_buf,
+    কাঠামো sshkey **keyp, কাঠামো sshbuf *attest)
 {
-	struct sshsk_provider *skp = NULL;
-	struct sshkey *key = NULL;
+	কাঠামো sshsk_provider *skp = ফাঁকা;
+	কাঠামো sshkey *চাবি = ফাঁকা;
 	u_char randchall[32];
-	const u_char *challenge;
-	size_t challenge_len;
-	struct sk_enroll_response *resp = NULL;
-	struct sk_option **opts = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int alg;
+	ধ্রুবক u_char *challenge;
+	আকার_t challenge_len;
+	কাঠামো sk_enroll_response *resp = ফাঁকা;
+	কাঠামো sk_option **opts = ফাঁকা;
+	পূর্ণসংখ্যা r = SSH_ERR_INTERNAL_ERROR;
+	পূর্ণসংখ্যা alg;
 
 	debug_f("provider \"%s\", device \"%s\", application \"%s\", "
 	    "userid \"%s\", flags 0x%02x, challenge len %zu%s",
 	    provider_path, device, application, userid, flags,
-	    challenge_buf == NULL ? 0 : sshbuf_len(challenge_buf),
-	    (pin != NULL && *pin != '\0') ? " with-pin" : "");
+	    challenge_buf == ফাঁকা ? 0 : sshbuf_len(challenge_buf),
+	    (pin != ফাঁকা && *pin != '\0') ? " with-pin" : "");
 
-	*keyp = NULL;
-	if (attest)
+	*keyp = ফাঁকা;
+	যদি (attest)
 		sshbuf_reset(attest);
 
-	if ((r = make_options(device, userid, &opts)) != 0)
-		goto out;
+	যদি ((r = make_options(device, userid, &opts)) != 0)
+		যাও out;
 
-	switch (type) {
+	নির্বাচন (type) {
 #ifdef WITH_OPENSSL
-	case KEY_ECDSA_SK:
+	ক্ষেত্র চাবি_ECDSA_SK:
 		alg = SSH_SK_ECDSA;
-		break;
+		বিরতি;
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519_SK:
+	ক্ষেত্র চাবি_ED25519_SK:
 		alg = SSH_SK_ED25519;
-		break;
-	default:
+		বিরতি;
+	পূর্বনির্ধারিত:
 		error_f("unsupported key type");
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		যাও out;
 	}
-	if (provider_path == NULL) {
+	যদি (provider_path == ফাঁকা) {
 		error_f("missing provider");
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		যাও out;
 	}
-	if (application == NULL || *application == '\0') {
+	যদি (application == ফাঁকা || *application == '\0') {
 		error_f("missing application");
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		যাও out;
 	}
-	if (challenge_buf == NULL) {
+	যদি (challenge_buf == ফাঁকা) {
 		debug_f("using random challenge");
-		arc4random_buf(randchall, sizeof(randchall));
+		arc4random_buf(randchall, আকার(randchall));
 		challenge = randchall;
-		challenge_len = sizeof(randchall);
-	} else if (sshbuf_len(challenge_buf) == 0) {
+		challenge_len = আকার(randchall);
+	} অন্যথা যদি (sshbuf_len(challenge_buf) == 0) {
 		error("Missing enrollment challenge");
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
-	} else {
+		যাও out;
+	} অন্যথা {
 		challenge = sshbuf_ptr(challenge_buf);
 		challenge_len = sshbuf_len(challenge_buf);
 		debug3_f("using explicit challenge len=%zd", challenge_len);
 	}
-	if ((skp = sshsk_open(provider_path)) == NULL) {
+	যদি ((skp = sshsk_open(provider_path)) == ফাঁকা) {
 		r = SSH_ERR_INVALID_FORMAT; /* XXX sshsk_open return code? */
-		goto out;
+		যাও out;
 	}
 	/* XXX validate flags? */
 	/* enroll key */
-	if ((r = skp->sk_enroll(alg, challenge, challenge_len, application,
+	যদি ((r = skp->sk_enroll(alg, challenge, challenge_len, application,
 	    flags, pin, opts, &resp)) != 0) {
 		debug_f("provider \"%s\" failure %d", provider_path, r);
 		r = skerr_to_ssherr(r);
-		goto out;
+		যাও out;
 	}
 
-	if ((r = sshsk_key_from_response(alg, application, resp->flags,
-	    resp, &key)) != 0)
-		goto out;
+	যদি ((r = sshsk_চাবি_from_response(alg, application, resp->flags,
+	    resp, &চাবি)) != 0)
+		যাও out;
 
 	/* Optionally fill in the attestation information */
-	if ((r = fill_attestation_blob(resp, attest)) != 0)
-		goto out;
+	যদি ((r = fill_attestation_blob(resp, attest)) != 0)
+		যাও out;
 
 	/* success */
-	*keyp = key;
-	key = NULL; /* transferred */
+	*keyp = চাবি;
+	চাবি = ফাঁকা; /* transferred */
 	r = 0;
  out:
 	sshsk_free_options(opts);
 	sshsk_free(skp);
-	sshkey_free(key);
+	sshkey_free(চাবি);
 	sshsk_free_enroll_response(resp);
-	explicit_bzero(randchall, sizeof(randchall));
-	return r;
+	explicit_bzero(randchall, আকার(randchall));
+	ফেরত r;
 }
 
 #ifdef WITH_OPENSSL
-static int
-sshsk_ecdsa_sig(struct sk_sign_response *resp, struct sshbuf *sig)
+স্থির পূর্ণসংখ্যা
+sshsk_ecdsa_sig(কাঠামো sk_sign_response *resp, কাঠামো sshbuf *sig)
 {
-	struct sshbuf *inner_sig = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	কাঠামো sshbuf *inner_sig = ফাঁকা;
+	পূর্ণসংখ্যা r = SSH_ERR_INTERNAL_ERROR;
 
 	/* Check response validity */
-	if (resp->sig_r == NULL || resp->sig_s == NULL) {
+	যদি (resp->sig_r == ফাঁকা || resp->sig_s == ফাঁকা) {
 		error_f("sk_sign response invalid");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		যাও out;
 	}
-	if ((inner_sig = sshbuf_new()) == NULL) {
+	যদি ((inner_sig = sshbuf_new()) == ফাঁকা) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
 	/* Prepare and append inner signature object */
-	if ((r = sshbuf_put_bignum2_bytes(inner_sig,
+	যদি ((r = sshbuf_put_bignum2_bytes(inner_sig,
 	    resp->sig_r, resp->sig_r_len)) != 0 ||
 	    (r = sshbuf_put_bignum2_bytes(inner_sig,
 	    resp->sig_s, resp->sig_s_len)) != 0) {
 		error_fr(r, "compose inner");
-		goto out;
+		যাও out;
 	}
-	if ((r = sshbuf_put_stringb(sig, inner_sig)) != 0 ||
+	যদি ((r = sshbuf_put_stringb(sig, inner_sig)) != 0 ||
 	    (r = sshbuf_put_u8(sig, resp->flags)) != 0 ||
-	    (r = sshbuf_put_u32(sig, resp->counter)) != 0) {
+	    (r = sshbuf_put_u32(sig, resp->গণক)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		যাও out;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: sig_r:\n", __func__);
-	sshbuf_dump_data(resp->sig_r, resp->sig_r_len, stderr);
+	sshbuf_dump_তথ্য(resp->sig_r, resp->sig_r_len, stderr);
 	fprintf(stderr, "%s: sig_s:\n", __func__);
-	sshbuf_dump_data(resp->sig_s, resp->sig_s_len, stderr);
+	sshbuf_dump_তথ্য(resp->sig_s, resp->sig_s_len, stderr);
 	fprintf(stderr, "%s: inner:\n", __func__);
 	sshbuf_dump(inner_sig, stderr);
 #endif
 	r = 0;
  out:
 	sshbuf_free(inner_sig);
-	return r;
+	ফেরত r;
 }
 #endif /* WITH_OPENSSL */
 
-static int
-sshsk_ed25519_sig(struct sk_sign_response *resp, struct sshbuf *sig)
+স্থির পূর্ণসংখ্যা
+sshsk_ed25519_sig(কাঠামো sk_sign_response *resp, কাঠামো sshbuf *sig)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	পূর্ণসংখ্যা r = SSH_ERR_INTERNAL_ERROR;
 
 	/* Check response validity */
-	if (resp->sig_r == NULL) {
+	যদি (resp->sig_r == ফাঁকা) {
 		error_f("sk_sign response invalid");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		যাও out;
 	}
-	if ((r = sshbuf_put_string(sig,
+	যদি ((r = sshbuf_put_string(sig,
 	    resp->sig_r, resp->sig_r_len)) != 0 ||
 	    (r = sshbuf_put_u8(sig, resp->flags)) != 0 ||
-	    (r = sshbuf_put_u32(sig, resp->counter)) != 0) {
+	    (r = sshbuf_put_u32(sig, resp->গণক)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		যাও out;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: sig_r:\n", __func__);
-	sshbuf_dump_data(resp->sig_r, resp->sig_r_len, stderr);
+	sshbuf_dump_তথ্য(resp->sig_r, resp->sig_r_len, stderr);
 #endif
 	r = 0;
  out:
-	return r;
+	ফেরত r;
 }
 
-int
-sshsk_sign(const char *provider_path, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin)
+পূর্ণসংখ্যা
+sshsk_sign(ধ্রুবক অক্ষর *provider_path, কাঠামো sshkey *চাবি,
+    u_char **sigp, আকার_t *lenp, ধ্রুবক u_char *তথ্য, আকার_t datalen,
+    u_int compat, ধ্রুবক অক্ষর *pin)
 {
-	struct sshsk_provider *skp = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int type, alg;
-	struct sk_sign_response *resp = NULL;
-	struct sshbuf *inner_sig = NULL, *sig = NULL;
-	struct sk_option **opts = NULL;
+	কাঠামো sshsk_provider *skp = ফাঁকা;
+	পূর্ণসংখ্যা r = SSH_ERR_INTERNAL_ERROR;
+	পূর্ণসংখ্যা type, alg;
+	কাঠামো sk_sign_response *resp = ফাঁকা;
+	কাঠামো sshbuf *inner_sig = ফাঁকা, *sig = ফাঁকা;
+	কাঠামো sk_option **opts = ফাঁকা;
 
 	debug_f("provider \"%s\", key %s, flags 0x%02x%s",
-	    provider_path, sshkey_type(key), key->sk_flags,
-	    (pin != NULL && *pin != '\0') ? " with-pin" : "");
+	    provider_path, sshkey_type(চাবি), চাবি->sk_flags,
+	    (pin != ফাঁকা && *pin != '\0') ? " with-pin" : "");
 
-	if (sigp != NULL)
-		*sigp = NULL;
-	if (lenp != NULL)
+	যদি (sigp != ফাঁকা)
+		*sigp = ফাঁকা;
+	যদি (lenp != ফাঁকা)
 		*lenp = 0;
-	type = sshkey_type_plain(key->type);
-	switch (type) {
+	type = sshkey_type_plain(চাবি->type);
+	নির্বাচন (type) {
 #ifdef WITH_OPENSSL
-	case KEY_ECDSA_SK:
+	ক্ষেত্র চাবি_ECDSA_SK:
 		alg = SSH_SK_ECDSA;
-		break;
+		বিরতি;
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519_SK:
+	ক্ষেত্র চাবি_ED25519_SK:
 		alg = SSH_SK_ED25519;
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		বিরতি;
+	পূর্বনির্ধারিত:
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (provider_path == NULL ||
-	    key->sk_key_handle == NULL ||
-	    key->sk_application == NULL || *key->sk_application == '\0') {
+	যদি (provider_path == ফাঁকা ||
+	    চাবি->sk_চাবি_handle == ফাঁকা ||
+	    চাবি->sk_application == ফাঁকা || *চাবি->sk_application == '\0') {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		যাও out;
 	}
-	if ((skp = sshsk_open(provider_path)) == NULL) {
+	যদি ((skp = sshsk_open(provider_path)) == ফাঁকা) {
 		r = SSH_ERR_INVALID_FORMAT; /* XXX sshsk_open return code? */
-		goto out;
+		যাও out;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: sk_flags = 0x%02x, sk_application = \"%s\"\n",
-	    __func__, key->sk_flags, key->sk_application);
+	    __func__, চাবি->sk_flags, চাবি->sk_application);
 	fprintf(stderr, "%s: sk_key_handle:\n", __func__);
-	sshbuf_dump(key->sk_key_handle, stderr);
+	sshbuf_dump(চাবি->sk_চাবি_handle, stderr);
 #endif
-	if ((r = skp->sk_sign(alg, data, datalen, key->sk_application,
-	    sshbuf_ptr(key->sk_key_handle), sshbuf_len(key->sk_key_handle),
-	    key->sk_flags, pin, opts, &resp)) != 0) {
+	যদি ((r = skp->sk_sign(alg, তথ্য, datalen, চাবি->sk_application,
+	    sshbuf_ptr(চাবি->sk_চাবি_handle), sshbuf_len(চাবি->sk_চাবি_handle),
+	    চাবি->sk_flags, pin, opts, &resp)) != 0) {
 		debug_f("sk_sign failed with code %d", r);
 		r = skerr_to_ssherr(r);
-		goto out;
+		যাও out;
 	}
 	/* Assemble signature */
-	if ((sig = sshbuf_new()) == NULL) {
+	যদি ((sig = sshbuf_new()) == ফাঁকা) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if ((r = sshbuf_put_cstring(sig, sshkey_ssh_name_plain(key))) != 0) {
+	যদি ((r = sshbuf_put_cstring(sig, sshkey_ssh_name_plain(চাবি))) != 0) {
 		error_fr(r, "compose outer");
-		goto out;
+		যাও out;
 	}
-	switch (type) {
+	নির্বাচন (type) {
 #ifdef WITH_OPENSSL
-	case KEY_ECDSA_SK:
-		if ((r = sshsk_ecdsa_sig(resp, sig)) != 0)
-			goto out;
-		break;
+	ক্ষেত্র চাবি_ECDSA_SK:
+		যদি ((r = sshsk_ecdsa_sig(resp, sig)) != 0)
+			যাও out;
+		বিরতি;
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519_SK:
-		if ((r = sshsk_ed25519_sig(resp, sig)) != 0)
-			goto out;
-		break;
+	ক্ষেত্র চাবি_ED25519_SK:
+		যদি ((r = sshsk_ed25519_sig(resp, sig)) != 0)
+			যাও out;
+		বিরতি;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
-	    __func__, resp->flags, resp->counter);
+	    __func__, resp->flags, resp->গণক);
 	fprintf(stderr, "%s: data to sign:\n", __func__);
-	sshbuf_dump_data(data, datalen, stderr);
+	sshbuf_dump_তথ্য(তথ্য, datalen, stderr);
 	fprintf(stderr, "%s: sigbuf:\n", __func__);
 	sshbuf_dump(sig, stderr);
 #endif
-	if (sigp != NULL) {
-		if ((*sigp = malloc(sshbuf_len(sig))) == NULL) {
+	যদি (sigp != ফাঁকা) {
+		যদি ((*sigp = malloc(sshbuf_len(sig))) == ফাঁকা) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			যাও out;
 		}
 		memcpy(*sigp, sshbuf_ptr(sig), sshbuf_len(sig));
 	}
-	if (lenp != NULL)
+	যদি (lenp != ফাঁকা)
 		*lenp = sshbuf_len(sig);
 	/* success */
 	r = 0;
@@ -739,145 +739,145 @@ sshsk_sign(const char *provider_path, struct sshkey *key,
 	sshsk_free_sign_response(resp);
 	sshbuf_free(sig);
 	sshbuf_free(inner_sig);
-	return r;
+	ফেরত r;
 }
 
-static void
-sshsk_free_sk_resident_keys(struct sk_resident_key **rks, size_t nrks)
+স্থির শূন্য
+sshsk_free_sk_resident_চাবিগুলি(কাঠামো sk_resident_চাবি **rks, আকার_t nrks)
 {
-	size_t i;
+	আকার_t i;
 
-	if (nrks == 0 || rks == NULL)
-		return;
-	for (i = 0; i < nrks; i++) {
-		free(rks[i]->application);
+	যদি (nrks == 0 || rks == ফাঁকা)
+		ফেরত;
+	জন্য (i = 0; i < nrks; i++) {
+		মুক্ত(rks[i]->application);
 		freezero(rks[i]->user_id, rks[i]->user_id_len);
-		freezero(rks[i]->key.key_handle, rks[i]->key.key_handle_len);
-		freezero(rks[i]->key.public_key, rks[i]->key.public_key_len);
-		freezero(rks[i]->key.signature, rks[i]->key.signature_len);
-		freezero(rks[i]->key.attestation_cert,
-		    rks[i]->key.attestation_cert_len);
-		freezero(rks[i], sizeof(**rks));
+		freezero(rks[i]->চাবি.চাবি_handle, rks[i]->চাবি.চাবি_handle_len);
+		freezero(rks[i]->চাবি.public_চাবি, rks[i]->চাবি.public_চাবি_len);
+		freezero(rks[i]->চাবি.signature, rks[i]->চাবি.signature_len);
+		freezero(rks[i]->চাবি.attestation_cert,
+		    rks[i]->চাবি.attestation_cert_len);
+		freezero(rks[i], আকার(**rks));
 	}
-	free(rks);
+	মুক্ত(rks);
 }
 
-static void
-sshsk_free_resident_key(struct sshsk_resident_key *srk)
+স্থির শূন্য
+sshsk_free_resident_চাবি(কাঠামো sshsk_resident_চাবি *srk)
 {
-	if (srk == NULL)
-		return;
-	sshkey_free(srk->key);
+	যদি (srk == ফাঁকা)
+		ফেরত;
+	sshkey_free(srk->চাবি);
 	freezero(srk->user_id, srk->user_id_len);
-	free(srk);
+	মুক্ত(srk);
 }
 
 
-void
-sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks)
+শূন্য
+sshsk_free_resident_চাবিগুলি(কাঠামো sshsk_resident_চাবি **srks, আকার_t nsrks)
 {
-	size_t i;
+	আকার_t i;
 
-	if (srks == NULL || nsrks == 0)
-		return;
+	যদি (srks == ফাঁকা || nsrks == 0)
+		ফেরত;
 
-	for (i = 0; i < nsrks; i++)
-		sshsk_free_resident_key(srks[i]);
-	free(srks);
+	জন্য (i = 0; i < nsrks; i++)
+		sshsk_free_resident_চাবি(srks[i]);
+	মুক্ত(srks);
 }
 
-int
-sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
-    size_t *nsrksp)
+পূর্ণসংখ্যা
+sshsk_load_resident(ধ্রুবক অক্ষর *provider_path, ধ্রুবক অক্ষর *device,
+    ধ্রুবক অক্ষর *pin, u_int flags, কাঠামো sshsk_resident_চাবি ***srksp,
+    আকার_t *nsrksp)
 {
-	struct sshsk_provider *skp = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sk_resident_key **rks = NULL;
-	size_t i, nrks = 0, nsrks = 0;
-	struct sshkey *key = NULL;
-	struct sshsk_resident_key *srk = NULL, **srks = NULL, **tmp;
+	কাঠামো sshsk_provider *skp = ফাঁকা;
+	পূর্ণসংখ্যা r = SSH_ERR_INTERNAL_ERROR;
+	কাঠামো sk_resident_চাবি **rks = ফাঁকা;
+	আকার_t i, nrks = 0, nsrks = 0;
+	কাঠামো sshkey *চাবি = ফাঁকা;
+	কাঠামো sshsk_resident_চাবি *srk = ফাঁকা, **srks = ফাঁকা, **tmp;
 	uint8_t sk_flags;
-	struct sk_option **opts = NULL;
+	কাঠামো sk_option **opts = ফাঁকা;
 
 	debug_f("provider \"%s\"%s", provider_path,
-	    (pin != NULL && *pin != '\0') ? ", have-pin": "");
+	    (pin != ফাঁকা && *pin != '\0') ? ", have-pin": "");
 
-	if (srksp == NULL || nsrksp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	*srksp = NULL;
+	যদি (srksp == ফাঁকা || nsrksp == ফাঁকা)
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
+	*srksp = ফাঁকা;
 	*nsrksp = 0;
 
-	if ((r = make_options(device, NULL, &opts)) != 0)
-		goto out;
-	if ((skp = sshsk_open(provider_path)) == NULL) {
+	যদি ((r = make_options(device, ফাঁকা, &opts)) != 0)
+		যাও out;
+	যদি ((skp = sshsk_open(provider_path)) == ফাঁকা) {
 		r = SSH_ERR_INVALID_FORMAT; /* XXX sshsk_open return code? */
-		goto out;
+		যাও out;
 	}
-	if ((r = skp->sk_load_resident_keys(pin, opts, &rks, &nrks)) != 0) {
+	যদি ((r = skp->sk_load_resident_চাবিগুলি(pin, opts, &rks, &nrks)) != 0) {
 		error("Provider \"%s\" returned failure %d", provider_path, r);
 		r = skerr_to_ssherr(r);
-		goto out;
+		যাও out;
 	}
-	for (i = 0; i < nrks; i++) {
+	জন্য (i = 0; i < nrks; i++) {
 		debug3_f("rk %zu: slot %zu, alg %d, app \"%s\", uidlen %zu",
 		    i, rks[i]->slot, rks[i]->alg, rks[i]->application,
 		    rks[i]->user_id_len);
 		/* XXX need better filter here */
-		if (strncmp(rks[i]->application, "ssh:", 4) != 0)
-			continue;
-		switch (rks[i]->alg) {
-		case SSH_SK_ECDSA:
-		case SSH_SK_ED25519:
-			break;
-		default:
-			continue;
+		যদি (strncmp(rks[i]->application, "ssh:", 4) != 0)
+			চালু;
+		নির্বাচন (rks[i]->alg) {
+		ক্ষেত্র SSH_SK_ECDSA:
+		ক্ষেত্র SSH_SK_ED25519:
+			বিরতি;
+		পূর্বনির্ধারিত:
+			চালু;
 		}
-		sk_flags = SSH_SK_USER_PRESENCE_REQD|SSH_SK_RESIDENT_KEY;
-		if ((rks[i]->flags & SSH_SK_USER_VERIFICATION_REQD))
+		sk_flags = SSH_SK_USER_PRESENCE_REQD|SSH_SK_RESIDENT_চাবি;
+		যদি ((rks[i]->flags & SSH_SK_USER_VERIFICATION_REQD))
 			sk_flags |= SSH_SK_USER_VERIFICATION_REQD;
-		if ((r = sshsk_key_from_response(rks[i]->alg,
-		    rks[i]->application, sk_flags, &rks[i]->key, &key)) != 0)
-			goto out;
-		if ((srk = calloc(1, sizeof(*srk))) == NULL) {
+		যদি ((r = sshsk_চাবি_from_response(rks[i]->alg,
+		    rks[i]->application, sk_flags, &rks[i]->চাবি, &চাবি)) != 0)
+			যাও out;
+		যদি ((srk = calloc(1, আকার(*srk))) == ফাঁকা) {
 			error_f("calloc failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			যাও out;
 		}
-		srk->key = key;
-		key = NULL; /* transferred */
-		if ((srk->user_id = calloc(1, rks[i]->user_id_len)) == NULL) {
+		srk->চাবি = চাবি;
+		চাবি = ফাঁকা; /* transferred */
+		যদি ((srk->user_id = calloc(1, rks[i]->user_id_len)) == ফাঁকা) {
 			error_f("calloc failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			যাও out;
 		}
 		memcpy(srk->user_id, rks[i]->user_id, rks[i]->user_id_len);
 		srk->user_id_len = rks[i]->user_id_len;
-		if ((tmp = recallocarray(srks, nsrks, nsrks + 1,
-		    sizeof(*tmp))) == NULL) {
+		যদি ((tmp = recallocarray(srks, nsrks, nsrks + 1,
+		    আকার(*tmp))) == ফাঁকা) {
 			error_f("recallocarray failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			যাও out;
 		}
 		srks = tmp;
 		srks[nsrks++] = srk;
-		srk = NULL;
+		srk = ফাঁকা;
 		/* XXX synthesise comment */
 	}
 	/* success */
 	*srksp = srks;
 	*nsrksp = nsrks;
-	srks = NULL;
+	srks = ফাঁকা;
 	nsrks = 0;
 	r = 0;
  out:
 	sshsk_free_options(opts);
 	sshsk_free(skp);
-	sshsk_free_sk_resident_keys(rks, nrks);
-	sshkey_free(key);
-	sshsk_free_resident_key(srk);
-	sshsk_free_resident_keys(srks, nsrks);
-	return r;
+	sshsk_free_sk_resident_চাবিগুলি(rks, nrks);
+	sshkey_free(চাবি);
+	sshsk_free_resident_চাবি(srk);
+	sshsk_free_resident_চাবিগুলি(srks, nsrks);
+	ফেরত r;
 }
 
 #endif /* ENABLE_SK */

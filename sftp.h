@@ -57,7 +57,7 @@
 #define SSH2_FXP_VERSION		2
 #define SSH2_FXP_STATUS			101
 #define SSH2_FXP_HANDLE			102
-#define SSH2_FXP_DATA			103
+#define SSH2_FXP_তথ্য			103
 #define SSH2_FXP_NAME			104
 #define SSH2_FXP_ATTRS			105
 
@@ -65,7 +65,7 @@
 #define SSH2_FXP_EXTENDED_REPLY		201
 
 /* attributes */
-#define SSH2_FILEXFER_ATTR_SIZE		0x00000001
+#define SSH2_FILEXFER_ATTR_আকার		0x00000001
 #define SSH2_FILEXFER_ATTR_UIDGID	0x00000002
 #define SSH2_FILEXFER_ATTR_PERMISSIONS	0x00000004
 #define SSH2_FILEXFER_ATTR_ACMODTIME	0x00000008
@@ -95,7 +95,7 @@
 #define SSH2_FX_OP_UNSUPPORTED		8
 #define SSH2_FX_MAX			8
 
-struct passwd;
+কাঠামো passwd;
 
-int	sftp_server_main(int, char **, struct passwd *);
-void	sftp_server_cleanup_exit(int) __attribute__((noreturn));
+পূর্ণসংখ্যা	sftp_server_main(পূর্ণসংখ্যা, অক্ষর **, কাঠামো passwd *);
+শূন্য	sftp_server_cleanup_exit(পূর্ণসংখ্যা) __attribute__((noreturn));

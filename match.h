@@ -14,17 +14,17 @@
 #ifndef MATCH_H
 #define MATCH_H
 
-int	 match_pattern(const char *, const char *);
-int	 match_pattern_list(const char *, const char *, int);
-int	 match_usergroup_pattern_list(const char *, const char *);
-int	 match_hostname(const char *, const char *);
-int	 match_host_and_ip(const char *, const char *, const char *);
-int	 match_user(const char *, const char *, const char *, const char *);
-char	*match_list(const char *, const char *, u_int *);
-char	*match_filter_denylist(const char *, const char *);
-char	*match_filter_allowlist(const char *, const char *);
+পূর্ণসংখ্যা	 match_pattern(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 match_pattern_list(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, পূর্ণসংখ্যা);
+পূর্ণসংখ্যা	 match_usergroup_pattern_list(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 match_hostname(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 match_host_and_ip(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 match_user(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
+অক্ষর	*match_list(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, u_int *);
+অক্ষর	*match_filter_denylist(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
+অক্ষর	*match_filter_allowlist(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
 
 /* addrmatch.c */
-int	 addr_match_list(const char *, const char *);
-int	 addr_match_cidr_list(const char *, const char *);
+পূর্ণসংখ্যা	 addr_match_list(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 addr_match_cidr_list(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
 #endif

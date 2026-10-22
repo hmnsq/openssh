@@ -16,67 +16,67 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
 #ifndef WITH_OPENSSL
 
-#include <sys/types.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <limits.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
 
-#if 0
-#include <md5.h>
+#যদি 0
+#অন্তর্ভাব <md5.h>
 #endif
 #ifdef HAVE_SHA1_H
-#include <sha1.h>
+#অন্তর্ভাব <sha1.h>
 #endif
 #ifdef HAVE_SHA2_H
-#include <sha2.h>
+#অন্তর্ভাব <sha2.h>
 #endif
 
-#if !defined(SHA256_BLOCK_LENGTH) && defined(SHA256_HMAC_BLOCK_SIZE)
-#define SHA256_BLOCK_LENGTH SHA256_HMAC_BLOCK_SIZE
+#যদি !defined(SHA256_BLOCK_দৈর্ঘ্য) && defined(SHA256_HMAC_BLOCK_আকার)
+#define SHA256_BLOCK_দৈর্ঘ্য SHA256_HMAC_BLOCK_আকার
 #endif
-#if !defined(SHA384_BLOCK_LENGTH) && defined(SHA512_HMAC_BLOCK_SIZE)
-#define SHA384_BLOCK_LENGTH SHA512_HMAC_BLOCK_SIZE
+#যদি !defined(SHA384_BLOCK_দৈর্ঘ্য) && defined(SHA512_HMAC_BLOCK_আকার)
+#define SHA384_BLOCK_দৈর্ঘ্য SHA512_HMAC_BLOCK_আকার
 #endif
-#if !defined(SHA512_BLOCK_LENGTH) && defined(SHA512_HMAC_BLOCK_SIZE)
-#define SHA512_BLOCK_LENGTH SHA512_HMAC_BLOCK_SIZE
+#যদি !defined(SHA512_BLOCK_দৈর্ঘ্য) && defined(SHA512_HMAC_BLOCK_আকার)
+#define SHA512_BLOCK_দৈর্ঘ্য SHA512_HMAC_BLOCK_আকার
 #endif
 
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "digest.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "digest.h"
 
-typedef void md_init_fn(void *mdctx);
-typedef void md_update_fn(void *mdctx, const uint8_t *m, size_t mlen);
-typedef void md_final_fn(uint8_t[], void *mdctx);
+প্রকারলেখ শূন্য md_init_fn(শূন্য *mdctx);
+প্রকারলেখ শূন্য md_update_fn(শূন্য *mdctx, ধ্রুবক uint8_t *m, আকার_t mlen);
+প্রকারলেখ শূন্য md_final_fn(uint8_t[], শূন্য *mdctx);
 
-struct ssh_digest_ctx {
-	int alg;
-	void *mdctx;
+কাঠামো ssh_digest_ctx {
+	পূর্ণসংখ্যা alg;
+	শূন্য *mdctx;
 };
 
-struct ssh_digest {
-	int id;
-	const char *name;
-	size_t block_len;
-	size_t digest_len;
-	size_t ctx_len;
+কাঠামো ssh_digest {
+	পূর্ণসংখ্যা id;
+	ধ্রুবক অক্ষর *name;
+	আকার_t block_len;
+	আকার_t digest_len;
+	আকার_t ctx_len;
 	md_init_fn *md_init;
 	md_update_fn *md_update;
 	md_final_fn *md_final;
 };
 
 /* NB. Indexed directly by algorithm number */
-const struct ssh_digest digests[SSH_DIGEST_MAX] = {
+ধ্রুবক কাঠামো ssh_digest digests[SSH_DIGEST_MAX] = {
 	{
 		SSH_DIGEST_MD5,
 		"MD5",
-		MD5_BLOCK_LENGTH,
-		MD5_DIGEST_LENGTH,
-		sizeof(MD5_CTX),
+		MD5_BLOCK_দৈর্ঘ্য,
+		MD5_DIGEST_দৈর্ঘ্য,
+		আকার(MD5_CTX),
 		(md_init_fn *) MD5Init,
 		(md_update_fn *) MD5Update,
 		(md_final_fn *) MD5Final
@@ -84,9 +84,9 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 	{
 		SSH_DIGEST_SHA1,
 		"SHA1",
-		SHA1_BLOCK_LENGTH,
-		SHA1_DIGEST_LENGTH,
-		sizeof(SHA1_CTX),
+		SHA1_BLOCK_দৈর্ঘ্য,
+		SHA1_DIGEST_দৈর্ঘ্য,
+		আকার(SHA1_CTX),
 		(md_init_fn *) SHA1Init,
 		(md_update_fn *) SHA1Update,
 		(md_final_fn *) SHA1Final
@@ -94,9 +94,9 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 	{
 		SSH_DIGEST_SHA256,
 		"SHA256",
-		SHA256_BLOCK_LENGTH,
-		SHA256_DIGEST_LENGTH,
-		sizeof(SHA2_CTX),
+		SHA256_BLOCK_দৈর্ঘ্য,
+		SHA256_DIGEST_দৈর্ঘ্য,
+		আকার(SHA2_CTX),
 		(md_init_fn *) SHA256Init,
 		(md_update_fn *) SHA256Update,
 		(md_final_fn *) SHA256Final
@@ -104,9 +104,9 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 	{
 		SSH_DIGEST_SHA384,
 		"SHA384",
-		SHA384_BLOCK_LENGTH,
-		SHA384_DIGEST_LENGTH,
-		sizeof(SHA2_CTX),
+		SHA384_BLOCK_দৈর্ঘ্য,
+		SHA384_DIGEST_দৈর্ঘ্য,
+		আকার(SHA2_CTX),
 		(md_init_fn *) SHA384Init,
 		(md_update_fn *) SHA384Update,
 		(md_final_fn *) SHA384Final
@@ -114,154 +114,154 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 	{
 		SSH_DIGEST_SHA512,
 		"SHA512",
-		SHA512_BLOCK_LENGTH,
-		SHA512_DIGEST_LENGTH,
-		sizeof(SHA2_CTX),
+		SHA512_BLOCK_দৈর্ঘ্য,
+		SHA512_DIGEST_দৈর্ঘ্য,
+		আকার(SHA2_CTX),
 		(md_init_fn *) SHA512Init,
 		(md_update_fn *) SHA512Update,
 		(md_final_fn *) SHA512Final
 	}
 };
 
-static const struct ssh_digest *
-ssh_digest_by_alg(int alg)
+স্থির ধ্রুবক কাঠামো ssh_digest *
+ssh_digest_by_alg(পূর্ণসংখ্যা alg)
 {
-	if (alg < 0 || alg >= SSH_DIGEST_MAX)
-		return NULL;
-	if (digests[alg].id != alg) /* sanity */
-		return NULL;
-	return &(digests[alg]);
+	যদি (alg < 0 || alg >= SSH_DIGEST_MAX)
+		ফেরত ফাঁকা;
+	যদি (digests[alg].id != alg) /* sanity */
+		ফেরত ফাঁকা;
+	ফেরত &(digests[alg]);
 }
 
-int
-ssh_digest_alg_by_name(const char *name)
+পূর্ণসংখ্যা
+ssh_digest_alg_by_name(ধ্রুবক অক্ষর *name)
 {
-	int alg;
+	পূর্ণসংখ্যা alg;
 
-	for (alg = 0; alg < SSH_DIGEST_MAX; alg++) {
-		if (strcasecmp(name, digests[alg].name) == 0)
-			return digests[alg].id;
+	জন্য (alg = 0; alg < SSH_DIGEST_MAX; alg++) {
+		যদি (strcasecmp(name, digests[alg].name) == 0)
+			ফেরত digests[alg].id;
 	}
-	return -1;
+	ফেরত -1;
 }
 
-const char *
-ssh_digest_alg_name(int alg)
+ধ্রুবক অক্ষর *
+ssh_digest_alg_name(পূর্ণসংখ্যা alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	ধ্রুবক কাঠামো ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? NULL : digest->name;
+	ফেরত digest == ফাঁকা ? ফাঁকা : digest->name;
 }
 
-size_t
-ssh_digest_bytes(int alg)
+আকার_t
+ssh_digest_bytes(পূর্ণসংখ্যা alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	ধ্রুবক কাঠামো ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? 0 : digest->digest_len;
+	ফেরত digest == ফাঁকা ? 0 : digest->digest_len;
 }
 
-size_t
-ssh_digest_blocksize(struct ssh_digest_ctx *ctx)
+আকার_t
+ssh_digest_blocksize(কাঠামো ssh_digest_ctx *ctx)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	ধ্রুবক কাঠামো ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 
-	return digest == NULL ? 0 : digest->block_len;
+	ফেরত digest == ফাঁকা ? 0 : digest->block_len;
 }
 
-struct ssh_digest_ctx *
-ssh_digest_start(int alg)
+কাঠামো ssh_digest_ctx *
+ssh_digest_start(পূর্ণসংখ্যা alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-	struct ssh_digest_ctx *ret;
+	ধ্রুবক কাঠামো ssh_digest *digest = ssh_digest_by_alg(alg);
+	কাঠামো ssh_digest_ctx *ret;
 
-	if (digest == NULL || (ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
-	if ((ret->mdctx = calloc(1, digest->ctx_len)) == NULL) {
-		free(ret);
-		return NULL;
+	যদি (digest == ফাঁকা || (ret = calloc(1, আকার(*ret))) == ফাঁকা)
+		ফেরত ফাঁকা;
+	যদি ((ret->mdctx = calloc(1, digest->ctx_len)) == ফাঁকা) {
+		মুক্ত(ret);
+		ফেরত ফাঁকা;
 	}
 	ret->alg = alg;
 	digest->md_init(ret->mdctx);
-	return ret;
+	ফেরত ret;
 }
 
-int
-ssh_digest_copy_state(struct ssh_digest_ctx *from, struct ssh_digest_ctx *to)
+পূর্ণসংখ্যা
+ssh_digest_copy_state(কাঠামো ssh_digest_ctx *from, কাঠামো ssh_digest_ctx *to)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(from->alg);
+	ধ্রুবক কাঠামো ssh_digest *digest = ssh_digest_by_alg(from->alg);
 
-	if (digest == NULL || from->alg != to->alg)
-		return SSH_ERR_INVALID_ARGUMENT;
+	যদি (digest == ফাঁকা || from->alg != to->alg)
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
 	memcpy(to->mdctx, from->mdctx, digest->ctx_len);
-	return 0;
+	ফেরত 0;
 }
 
-int
-ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
+পূর্ণসংখ্যা
+ssh_digest_update(কাঠামো ssh_digest_ctx *ctx, ধ্রুবক শূন্য *m, আকার_t mlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	ধ্রুবক কাঠামো ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	যদি (digest == ফাঁকা)
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
 	digest->md_update(ctx->mdctx, m, mlen);
-	return 0;
+	ফেরত 0;
 }
 
-int
-ssh_digest_update_buffer(struct ssh_digest_ctx *ctx, const struct sshbuf *b)
+পূর্ণসংখ্যা
+ssh_digest_update_বাফার(কাঠামো ssh_digest_ctx *ctx, ধ্রুবক কাঠামো sshbuf *b)
 {
-	return ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
+	ফেরত ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
 }
 
-int
-ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
+পূর্ণসংখ্যা
+ssh_digest_final(কাঠামো ssh_digest_ctx *ctx, u_char *d, আকার_t dlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	ধ্রুবক কাঠামো ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len) /* No truncation allowed */
-		return SSH_ERR_INVALID_ARGUMENT;
+	যদি (digest == ফাঁকা)
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
+	যদি (dlen > UINT_MAX)
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
+	যদি (dlen < digest->digest_len) /* No truncation allowed */
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
 	digest->md_final(d, ctx->mdctx);
-	return 0;
+	ফেরত 0;
 }
 
-void
-ssh_digest_free(struct ssh_digest_ctx *ctx)
+শূন্য
+ssh_digest_free(কাঠামো ssh_digest_ctx *ctx)
 {
-	const struct ssh_digest *digest;
+	ধ্রুবক কাঠামো ssh_digest *digest;
 
-	if (ctx != NULL) {
+	যদি (ctx != ফাঁকা) {
 		digest = ssh_digest_by_alg(ctx->alg);
-		if (digest) {
+		যদি (digest) {
 			explicit_bzero(ctx->mdctx, digest->ctx_len);
-			free(ctx->mdctx);
-			freezero(ctx, sizeof(*ctx));
+			মুক্ত(ctx->mdctx);
+			freezero(ctx, আকার(*ctx));
 		}
 	}
 }
 
-int
-ssh_digest_memory(int alg, const void *m, size_t mlen, u_char *d, size_t dlen)
+পূর্ণসংখ্যা
+ssh_digest_memory(পূর্ণসংখ্যা alg, ধ্রুবক শূন্য *m, আকার_t mlen, u_char *d, আকার_t dlen)
 {
-	struct ssh_digest_ctx *ctx = ssh_digest_start(alg);
-	int ret = 0;
+	কাঠামো ssh_digest_ctx *ctx = ssh_digest_start(alg);
+	পূর্ণসংখ্যা ret = 0;
 
-	if (ctx == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (ssh_digest_update(ctx, m, mlen) != 0 ||
+	যদি (ctx == ফাঁকা)
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
+	যদি (ssh_digest_update(ctx, m, mlen) != 0 ||
 	    ssh_digest_final(ctx, d, dlen) != 0)
 		ret = SSH_ERR_INVALID_ARGUMENT;
 	ssh_digest_free(ctx);
-	return ret;
+	ফেরত ret;
 }
 
-int
-ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+পূর্ণসংখ্যা
+ssh_digest_বাফার(পূর্ণসংখ্যা alg, ধ্রুবক কাঠামো sshbuf *b, u_char *d, আকার_t dlen)
 {
-	return ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
+	ফেরত ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
 }
 #endif /* !WITH_OPENSSL */

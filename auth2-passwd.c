@@ -23,54 +23,54 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdio.h>
 
-#include "packet.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
+#অন্তর্ভাব "packet.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "sshkey.h"
+#অন্তর্ভাব "hostfile.h"
+#অন্তর্ভাব "auth.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#অন্তর্ভাব "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
-#include "misc.h"
-#include "servconf.h"
+#অন্তর্ভাব "monitor_wrap.h"
+#অন্তর্ভাব "misc.h"
+#অন্তর্ভাব "servconf.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_passwd;
+বাহ্যিক ServerOptions options;
+বাহ্যিক কাঠামো authmethod_cfg methodcfg_passwd;
 
-static int
-userauth_passwd(struct ssh *ssh, const char *method)
+স্থির পূর্ণসংখ্যা
+userauth_passwd(কাঠামো ssh *ssh, ধ্রুবক অক্ষর *method)
 {
-	char *password = NULL;
-	int authenticated = 0, r;
+	অক্ষর *password = ফাঁকা;
+	পূর্ণসংখ্যা authenticated = 0, r;
 	u_char change;
-	size_t len = 0;
+	আকার_t len = 0;
 
-	if ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
+	যদি ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &password, &len)) != 0 ||
-	    (change && (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0) ||
+	    (change && (r = sshpkt_get_cstring(ssh, ফাঁকা, ফাঁকা)) != 0) ||
 	    (r = sshpkt_get_end(ssh)) != 0) {
 		freezero(password, len);
 		fatal_fr(r, "parse packet");
 	}
 
-	if (change)
+	যদি (change)
 		logit("password change not supported");
-	else if (mm_auth_password(ssh, password) == 1)
+	অন্যথা যদি (mm_auth_password(ssh, password) == 1)
 		authenticated = 1;
 	freezero(password, len);
-	return authenticated;
+	ফেরত authenticated;
 }
 
 Authmethod method_passwd = {

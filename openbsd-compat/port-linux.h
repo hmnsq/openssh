@@ -18,25 +18,25 @@
 #define _PORT_LINUX_H
 
 #ifdef WITH_SELINUX
-int ssh_selinux_enabled(void);
-void ssh_selinux_setup_pty(char *, const char *);
-void ssh_selinux_setup_exec_context(char *);
-void ssh_selinux_change_context(const char *);
-void ssh_selinux_setfscreatecon(const char *);
+পূর্ণসংখ্যা ssh_selinux_enabled(শূন্য);
+শূন্য ssh_selinux_setup_pty(অক্ষর *, ধ্রুবক অক্ষর *);
+শূন্য ssh_selinux_setup_exec_context(অক্ষর *);
+শূন্য ssh_selinux_change_context(ধ্রুবক অক্ষর *);
+শূন্য ssh_selinux_setfscreatecon(ধ্রুবক অক্ষর *);
 #endif
 
 #ifdef LINUX_OOM_ADJUST
-void oom_adjust_restore(void);
-void oom_adjust_setup(void);
+শূন্য oom_adjust_restore(শূন্য);
+শূন্য oom_adjust_setup(শূন্য);
 #endif
 
 #ifdef LINUX_MEMLOCK_ONFAULT
-void memlock_onfault_setup(void);
+শূন্য memlock_onfault_setup(শূন্য);
 #endif
 
 #ifdef SYSTEMD_NOTIFY
-void ssh_systemd_notify_ready(void);
-void ssh_systemd_notify_reload(void);
+শূন্য ssh_systemd_notify_ready(শূন্য);
+শূন্য ssh_systemd_notify_reload(শূন্য);
 #endif
 
 #endif /* ! _PORT_LINUX_H */

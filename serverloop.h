@@ -21,8 +21,8 @@
 #ifndef SERVERLOOP_H
 #define SERVERLOOP_H
 
-struct ssh;
+কাঠামো ssh;
 
-void    server_loop2(struct ssh *, Authctxt *);
+শূন্য    server_loop2(কাঠামো ssh *, Authctxt *);
 
 #endif

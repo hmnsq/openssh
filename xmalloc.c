@@ -13,104 +13,104 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
 
-#include "xmalloc.h"
-#include "log.h"
+#অন্তর্ভাব "xmalloc.h"
+#অন্তর্ভাব "log.h"
 
-#if defined(__OpenBSD__)
-const char * const malloc_options = "S";
+#যদি defined(__OpenBSD__)
+ধ্রুবক অক্ষর * ধ্রুবক malloc_options = "S";
 #endif /* __OpenBSD__ */
 
-void *
-xmalloc(size_t size)
+শূন্য *
+xmalloc(আকার_t আকার_2)
 {
-	void *ptr;
+	শূন্য *ptr;
 
-	if (size == 0)
+	যদি (আকার_2 == 0)
 		fatal("xmalloc: zero size");
-	ptr = malloc(size);
-	if (ptr == NULL)
-		fatal("xmalloc: out of memory (allocating %zu bytes)", size);
-	return ptr;
+	ptr = malloc(আকার_2);
+	যদি (ptr == ফাঁকা)
+		fatal("xmalloc: out of memory (allocating %zu bytes)", আকার_2);
+	ফেরত ptr;
 }
 
-void *
-xcalloc(size_t nmemb, size_t size)
+শূন্য *
+xcalloc(আকার_t nmemb, আকার_t আকার_2)
 {
-	void *ptr;
+	শূন্য *ptr;
 
-	if (size == 0 || nmemb == 0)
+	যদি (আকার_2 == 0 || nmemb == 0)
 		fatal("xcalloc: zero size");
-	if (SIZE_MAX / nmemb < size)
+	যদি (SIZE_MAX / nmemb < আকার_2)
 		fatal("xcalloc: nmemb * size > SIZE_MAX");
-	ptr = calloc(nmemb, size);
-	if (ptr == NULL)
+	ptr = calloc(nmemb, আকার_2);
+	যদি (ptr == ফাঁকা)
 		fatal("xcalloc: out of memory (allocating %zu bytes)",
-		    size * nmemb);
-	return ptr;
+		    আকার_2 * nmemb);
+	ফেরত ptr;
 }
 
-void *
-xreallocarray(void *ptr, size_t nmemb, size_t size)
+শূন্য *
+xreallocarray(শূন্য *ptr, আকার_t nmemb, আকার_t আকার_2)
 {
-	void *new_ptr;
+	শূন্য *new_ptr;
 
-	new_ptr = reallocarray(ptr, nmemb, size);
-	if (new_ptr == NULL)
+	new_ptr = reallocarray(ptr, nmemb, আকার_2);
+	যদি (new_ptr == ফাঁকা)
 		fatal("xreallocarray: out of memory (%zu elements of %zu bytes)",
-		    nmemb, size);
-	return new_ptr;
+		    nmemb, আকার_2);
+	ফেরত new_ptr;
 }
 
-void *
-xrecallocarray(void *ptr, size_t onmemb, size_t nmemb, size_t size)
+শূন্য *
+xrecallocarray(শূন্য *ptr, আকার_t onmemb, আকার_t nmemb, আকার_t আকার_2)
 {
-	void *new_ptr;
+	শূন্য *new_ptr;
 
-	new_ptr = recallocarray(ptr, onmemb, nmemb, size);
-	if (new_ptr == NULL)
+	new_ptr = recallocarray(ptr, onmemb, nmemb, আকার_2);
+	যদি (new_ptr == ফাঁকা)
 		fatal("xrecallocarray: out of memory (%zu elements of %zu bytes)",
-		    nmemb, size);
-	return new_ptr;
+		    nmemb, আকার_2);
+	ফেরত new_ptr;
 }
 
-char *
-xstrdup(const char *str)
+অক্ষর *
+xstrdup(ধ্রুবক অক্ষর *str)
 {
-	size_t len;
-	char *cp;
+	আকার_t len;
+	অক্ষর *cp;
 
 	len = strlen(str) + 1;
 	cp = xmalloc(len);
-	return memcpy(cp, str, len);
+	ফেরত memcpy(cp, str, len);
 }
 
-int
-xvasprintf(char **ret, const char *fmt, va_list ap)
+পূর্ণসংখ্যা
+xvasprintf(অক্ষর **ret, ধ্রুবক অক্ষর *fmt, va_list ap)
 {
-	int i;
+	পূর্ণসংখ্যা i;
 
 	i = vasprintf(ret, fmt, ap);
-	if (i < 0 || *ret == NULL)
+	যদি (i < 0 || *ret == ফাঁকা)
 		fatal("xvasprintf: could not allocate memory");
-	return i;
+	ফেরত i;
 }
 
-int
-xasprintf(char **ret, const char *fmt, ...)
+পূর্ণসংখ্যা
+xasprintf(অক্ষর **ret, ধ্রুবক অক্ষর *fmt, ...)
 {
 	va_list ap;
-	int i;
+	পূর্ণসংখ্যা i;
 
 	va_start(ap, fmt);
 	i = xvasprintf(ret, fmt, ap);
 	va_end(ap);
-	return i;
+	ফেরত i;
 }

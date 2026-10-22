@@ -27,67 +27,67 @@
 #ifndef _OPENBSD_COMPAT_H
 #define _OPENBSD_COMPAT_H
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <pwd.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <pwd.h>
 
-#include <sys/socket.h>
+#অন্তর্ভাব <sys/socket.h>
 
-#include <stddef.h>  /* for wchar_t */
+#অন্তর্ভাব <stddef.h>  /* for wchar_t */
 
 /* OpenBSD function replacements */
-#include "base64.h"
-#include "sigact.h"
-#include "readpassphrase.h"
-#include "vis.h"
-#include "getrrsetbyname.h"
-#include "sha1.h"
-#include "bsd-sha2.h"
-#include "md5.h"
-#include "blf.h"
-#include "fnmatch.h"
+#অন্তর্ভাব "base64.h"
+#অন্তর্ভাব "sigact.h"
+#অন্তর্ভাব "readpassphrase.h"
+#অন্তর্ভাব "vis.h"
+#অন্তর্ভাব "getrrsetbyname.h"
+#অন্তর্ভাব "sha1.h"
+#অন্তর্ভাব "bsd-sha2.h"
+#অন্তর্ভাব "md5.h"
+#অন্তর্ভাব "blf.h"
+#অন্তর্ভাব "fnmatch.h"
 
 #ifndef __THROW
-# if defined __cplusplus
+# যদি defined __cplusplus
 #  define __THROW throw()
-# else
+# অন্যথা
 #  define __THROW
 # endif
 #endif
 
-#if defined(HAVE_LOGIN_CAP) && !defined(HAVE_LOGIN_GETPWCLASS)
+#যদি defined(HAVE_LOGIN_CAP) && !defined(HAVE_LOGIN_GETPWCLASS)
 # include <login_cap.h>
 # define login_getpwclass(pw) login_getclass(pw->pw_class)
 #endif
 
 #ifndef HAVE_BASENAME
-char *basename(const char *path);
+অক্ষর *basename(ধ্রুবক অক্ষর *path);
 #endif
 
 #ifndef HAVE_BINDRESVPORT_SA
-int bindresvport_sa(int sd, struct sockaddr *sa);
+পূর্ণসংখ্যা bindresvport_sa(পূর্ণসংখ্যা sd, কাঠামো sockaddr *sa);
 #endif
 
 #ifndef HAVE_CLOSEFROM
-void closefrom(int);
+শূন্য closefrom(পূর্ণসংখ্যা);
 #endif
 
-#if defined(HAVE_DECL_FTRUNCATE) && HAVE_DECL_FTRUNCATE == 0
-int ftruncate(int filedes, off_t length);
+#যদি defined(HAVE_DECL_FTRUNCATE) && HAVE_DECL_FTRUNCATE == 0
+পূর্ণসংখ্যা ftruncate(পূর্ণসংখ্যা filedes, off_t দৈর্ঘ্য);
 #endif
 
 #ifndef HAVE_GETLINE
-#include <stdio.h>
-ssize_t getline(char **, size_t *, FILE *);
+#অন্তর্ভাব <stdio.h>
+ssize_t getline(অক্ষর **, আকার_t *, FILE *);
 #endif
 
 #ifndef HAVE_GETPAGESIZE
-int getpagesize(void);
+পূর্ণসংখ্যা getpagesize(শূন্য);
 #endif
 
 #ifndef HAVE_GETCWD
-char *getcwd(char *pt, size_t size);
+অক্ষর *getcwd(অক্ষর *pt, আকার_t আকার_2);
 #endif
 
 #ifndef HAVE_GETEXECPATH
@@ -96,146 +96,146 @@ char *getcwd(char *pt, size_t size);
 #endif
 
 #ifndef HAVE_KILLPG
-int killpg(pid_t, int);
+পূর্ণসংখ্যা killpg(pid_t, পূর্ণসংখ্যা);
 #endif
 
-#if defined(HAVE_DECL_MEMMEM) && HAVE_DECL_MEMMEM == 0
-void *memmem(const void *, size_t, const void *, size_t);
+#যদি defined(HAVE_DECL_MEMMEM) && HAVE_DECL_MEMMEM == 0
+শূন্য *memmem(ধ্রুবক শূন্য *, আকার_t, ধ্রুবক শূন্য *, আকার_t);
 #endif
 
 #ifndef HAVE_REALLOCARRAY
-void *reallocarray(void *, size_t, size_t);
+শূন্য *reallocarray(শূন্য *, আকার_t, আকার_t);
 #endif
 
 #ifndef HAVE_RECALLOCARRAY
-void *recallocarray(void *, size_t, size_t, size_t);
+শূন্য *recallocarray(শূন্য *, আকার_t, আকার_t, আকার_t);
 #endif
 
 #ifndef HAVE_RRESVPORT_AF
-int rresvport_af(int *alport, sa_family_t af);
+পূর্ণসংখ্যা rresvport_af(পূর্ণসংখ্যা *alport, sa_family_t af);
 #endif
 
 #ifndef HAVE_STRLCPY
-size_t strlcpy(char *dst, const char *src, size_t siz);
+আকার_t strlcpy(অক্ষর *dst, ধ্রুবক অক্ষর *src, আকার_t siz);
 #endif
 
 #ifndef HAVE_STRLCAT
-size_t strlcat(char *dst, const char *src, size_t siz);
+আকার_t strlcat(অক্ষর *dst, ধ্রুবক অক্ষর *src, আকার_t siz);
 #endif
 
 #ifndef HAVE_STRCASESTR
-char *strcasestr(const char *, const char *);
+অক্ষর *strcasestr(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
 #endif
 
 #ifndef HAVE_STRNLEN
-size_t strnlen(const char *, size_t);
+আকার_t strnlen(ধ্রুবক অক্ষর *, আকার_t);
 #endif
 
 #ifndef HAVE_STRNDUP
-char *strndup(const char *s, size_t n);
+অক্ষর *strndup(ধ্রুবক অক্ষর *s, আকার_t n);
 #endif
 
 #ifndef HAVE_SETENV
-int setenv(register const char *name, register const char *value, int rewrite);
+পূর্ণসংখ্যা setenv(নিবন্ধ ধ্রুবক অক্ষর *name, নিবন্ধ ধ্রুবক অক্ষর *মান, পূর্ণসংখ্যা rewrite);
 #endif
 
 #ifndef HAVE_STRMODE
-void strmode(int mode, char *p);
+শূন্য strmode(পূর্ণসংখ্যা mode, অক্ষর *p);
 #endif
 
 #ifndef HAVE_STRPTIME
-#include  <time.h>
-char *strptime(const char *buf, const char *fmt, struct tm *tm);
+#অন্তর্ভাব  <time.h>
+অক্ষর *strptime(ধ্রুবক অক্ষর *buf, ধ্রুবক অক্ষর *fmt, কাঠামো tm *tm);
 #endif
 
-#if !defined(HAVE_MKDTEMP)
-int mkstemps(char *path, int slen);
-int mkstemp(char *path);
-char *mkdtemp(char *path);
+#যদি !defined(HAVE_MKDTEMP)
+পূর্ণসংখ্যা mkstemps(অক্ষর *path, পূর্ণসংখ্যা slen);
+পূর্ণসংখ্যা mkstemp(অক্ষর *path);
+অক্ষর *mkdtemp(অক্ষর *path);
 #endif
 
 #define mkstemp(x) _ssh_mkstemp(x)
-int _ssh_mkstemp(char *);
+পূর্ণসংখ্যা _ssh_mkstemp(অক্ষর *);
 
 #ifndef HAVE_DAEMON
-int daemon(int nochdir, int noclose);
+পূর্ণসংখ্যা daemon(পূর্ণসংখ্যা nochdir, পূর্ণসংখ্যা noclose);
 #endif
 
 #ifndef HAVE_DIRNAME
-char *dirname(const char *path);
+অক্ষর *dirname(ধ্রুবক অক্ষর *path);
 #endif
 
 #ifndef HAVE_FMT_SCALED
 #define	FMT_SCALED_STRSIZE	7
-int	fmt_scaled(long long number, char *result);
+পূর্ণসংখ্যা	fmt_scaled(long long সংখ্যা, অক্ষর *ফলাফল);
 #endif
 
 #ifndef HAVE_SCAN_SCALED
-int	scan_scaled(char *, long long *);
+পূর্ণসংখ্যা	scan_scaled(অক্ষর *, long long *);
 #endif
 
-#if defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
-char *inet_ntoa(struct in_addr in);
+#যদি defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
+অক্ষর *inet_ntoa(কাঠামো in_addr in);
 #endif
 
 #ifndef HAVE_INET_NTOP
-const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
+ধ্রুবক অক্ষর *inet_ntop(পূর্ণসংখ্যা af, ধ্রুবক শূন্য *src, অক্ষর *dst, socklen_t আকার_2);
 #endif
 
 #ifndef HAVE_INET_ATON
-int inet_aton(const char *cp, struct in_addr *addr);
+পূর্ণসংখ্যা inet_aton(ধ্রুবক অক্ষর *cp, কাঠামো in_addr *addr);
 #endif
 
 #ifndef HAVE_STRSEP
-char *strsep(char **stringp, const char *delim);
+অক্ষর *strsep(অক্ষর **stringp, ধ্রুবক অক্ষর *delim);
 #endif
 
 #ifndef HAVE_SETPROCTITLE
-void setproctitle(const char *fmt, ...);
-void compat_init_setproctitle(int argc, char *argv[]);
+শূন্য setproctitle(ধ্রুবক অক্ষর *fmt, ...);
+শূন্য compat_init_setproctitle(পূর্ণসংখ্যা argc, অক্ষর *argv[]);
 #endif
 
 #ifndef HAVE_GETGROUPLIST
-int getgrouplist(const char *, gid_t, gid_t *, int *);
+পূর্ণসংখ্যা getgrouplist(ধ্রুবক অক্ষর *, gid_t, gid_t *, পূর্ণসংখ্যা *);
 #endif
 
-#if !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
-int BSDgetopt(int argc, char * const *argv, const char *opts) __THROW;
-#include "openbsd-compat/getopt.h"
+#যদি !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
+পূর্ণসংখ্যা BSDgetopt(পূর্ণসংখ্যা argc, অক্ষর * ধ্রুবক *argv, ধ্রুবক অক্ষর *opts) __THROW;
+#অন্তর্ভাব "openbsd-compat/getopt.h"
 #endif
 
-#if ((defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0) || \
+#যদি ((defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0) || \
     (defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0))
 # include <sys/types.h>
 # include <sys/uio.h>
 
-# if defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0
-int readv(int, struct iovec *, int);
+# যদি defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0
+পূর্ণসংখ্যা readv(পূর্ণসংখ্যা, কাঠামো iovec *, পূর্ণসংখ্যা);
 # endif
 
-# if defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0
-int writev(int, struct iovec *, int);
+# যদি defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0
+পূর্ণসংখ্যা writev(পূর্ণসংখ্যা, কাঠামো iovec *, পূর্ণসংখ্যা);
 # endif
 #endif
 
 /* Home grown routines */
-#include "bsd-signal.h"
-#include "bsd-misc.h"
-#include "bsd-setres_id.h"
-#include "bsd-statvfs.h"
-#include "bsd-waitpid.h"
-#include "bsd-poll.h"
+#অন্তর্ভাব "bsd-signal.h"
+#অন্তর্ভাব "bsd-misc.h"
+#অন্তর্ভাব "bsd-setres_id.h"
+#অন্তর্ভাব "bsd-statvfs.h"
+#অন্তর্ভাব "bsd-waitpid.h"
+#অন্তর্ভাব "bsd-poll.h"
 
-#if defined(HAVE_DECL_GETPEEREID) && HAVE_DECL_GETPEEREID == 0
-int getpeereid(int , uid_t *, gid_t *);
+#যদি defined(HAVE_DECL_GETPEEREID) && HAVE_DECL_GETPEEREID == 0
+পূর্ণসংখ্যা getpeereid(পূর্ণসংখ্যা , uid_t *, gid_t *);
 #endif
 
 #ifndef HAVE_ARC4RANDOM
-uint32_t arc4random(void);
+uint32_t arc4random(শূন্য);
 #endif /* !HAVE_ARC4RANDOM */
 
 #ifndef HAVE_ARC4RANDOM_BUF
-void arc4random_buf(void *, size_t);
+শূন্য arc4random_buf(শূন্য *, আকার_t);
 #endif
 
 #ifndef HAVE_ARC4RANDOM_STIR
@@ -247,33 +247,33 @@ uint32_t arc4random_uniform(uint32_t);
 #endif
 
 #ifndef HAVE_ASPRINTF
-int asprintf(char **, const char *, ...);
+পূর্ণসংখ্যা asprintf(অক্ষর **, ধ্রুবক অক্ষর *, ...);
 #endif
 
 #ifndef HAVE_OPENPTY
 # include <sys/ioctl.h>	/* for struct winsize */
-int openpty(int *, int *, char *, const struct termios *,
-    const struct winsize *);
+পূর্ণসংখ্যা openpty(পূর্ণসংখ্যা *, পূর্ণসংখ্যা *, অক্ষর *, ধ্রুবক কাঠামো termios *,
+    ধ্রুবক কাঠামো winsize *);
 #endif /* HAVE_OPENPTY */
 
 #ifndef HAVE_SNPRINTF
-int snprintf(char *, size_t, SNPRINTF_CONST char *, ...);
+পূর্ণসংখ্যা snprintf(অক্ষর *, আকার_t, SNPRINTF_CONST অক্ষর *, ...);
 #endif
 
 #ifndef HAVE_STRTOLL
-long long strtoll(const char *, char **, int);
+long long strtoll(ধ্রুবক অক্ষর *, অক্ষর **, পূর্ণসংখ্যা);
 #endif
 
 #ifndef HAVE_STRTOUL
-unsigned long strtoul(const char *, char **, int);
+unsigned long strtoul(ধ্রুবক অক্ষর *, অক্ষর **, পূর্ণসংখ্যা);
 #endif
 
 #ifndef HAVE_STRTOULL
-unsigned long long strtoull(const char *, char **, int);
+unsigned long long strtoull(ধ্রুবক অক্ষর *, অক্ষর **, পূর্ণসংখ্যা);
 #endif
 
 #ifndef HAVE_STRTONUM
-long long strtonum(const char *, long long, long long, const char **);
+long long strtonum(ধ্রুবক অক্ষর *, long long, long long, ধ্রুবক অক্ষর **);
 #endif
 
 /* multibyte character support */
@@ -294,10 +294,10 @@ long long strtonum(const char *, long long, long long, const char **);
 #endif
 
 #ifndef HAVE_MBTOWC
-int mbtowc(wchar_t *, const char*, size_t);
+পূর্ণসংখ্যা mbtowc(wchar_t *, ধ্রুবক অক্ষর*, আকার_t);
 #endif
 
-#if !defined(HAVE_VASPRINTF) || !defined(HAVE_VSNPRINTF)
+#যদি !defined(HAVE_VASPRINTF) || !defined(HAVE_VSNPRINTF)
 # include <stdarg.h>
 #endif
 
@@ -309,85 +309,85 @@ int mbtowc(wchar_t *, const char*, size_t);
 #ifndef VA_COPY
 # ifdef HAVE_VA_COPY
 #  define VA_COPY(dest, src) va_copy(dest, src)
-# else
+# অন্যথা
 #  ifdef HAVE___VA_COPY
 #   define VA_COPY(dest, src) __va_copy(dest, src)
-#  else
+#  অন্যথা
 #   define VA_COPY(dest, src) (dest) = (src)
 #  endif
 # endif
 #endif
 
 #ifndef HAVE_VASPRINTF
-int vasprintf(char **, const char *, va_list);
+পূর্ণসংখ্যা vasprintf(অক্ষর **, ধ্রুবক অক্ষর *, va_list);
 #endif
 
 #ifndef HAVE_VSNPRINTF
-int vsnprintf(char *, size_t, const char *, va_list);
+পূর্ণসংখ্যা vsnprintf(অক্ষর *, আকার_t, ধ্রুবক অক্ষর *, va_list);
 #endif
 
 #ifndef HAVE_USER_FROM_UID
-char *user_from_uid(uid_t, int);
+অক্ষর *user_from_uid(uid_t, পূর্ণসংখ্যা);
 #endif
 
 #ifndef HAVE_GROUP_FROM_GID
-char *group_from_gid(gid_t, int);
+অক্ষর *group_from_gid(gid_t, পূর্ণসংখ্যা);
 #endif
 
 #ifndef HAVE_TIMINGSAFE_BCMP
-int timingsafe_bcmp(const void *, const void *, size_t);
+পূর্ণসংখ্যা timingsafe_bcmp(ধ্রুবক শূন্য *, ধ্রুবক শূন্য *, আকার_t);
 #endif
 
 #ifndef HAVE_BCRYPT_PBKDF
-int	bcrypt_pbkdf(const char *, size_t, const uint8_t *, size_t,
-    uint8_t *, size_t, unsigned int);
+পূর্ণসংখ্যা	bcrypt_pbkdf(ধ্রুবক অক্ষর *, আকার_t, ধ্রুবক uint8_t *, আকার_t,
+    uint8_t *, আকার_t, unsigned পূর্ণসংখ্যা);
 #endif
 
 #ifndef HAVE_EXPLICIT_BZERO
-void explicit_bzero(void *p, size_t n);
+শূন্য explicit_bzero(শূন্য *p, আকার_t n);
 #endif
 
 #ifndef HAVE_FREEZERO
-void freezero(void *, size_t);
+শূন্য freezero(শূন্য *, আকার_t);
 #endif
 
 #ifndef HAVE_LOCALTIME_R
-struct tm *localtime_r(const time_t *, struct tm *);
+কাঠামো tm *localtime_r(ধ্রুবক time_t *, কাঠামো tm *);
 #endif
 
 #ifndef HAVE_TIMEGM
-#include <time.h>
-time_t timegm(struct tm *);
+#অন্তর্ভাব <time.h>
+time_t timegm(কাঠামো tm *);
 #endif
 
-char *xcrypt(const char *password, const char *salt);
-char *shadow_pw(struct passwd *pw);
+অক্ষর *xcrypt(ধ্রুবক অক্ষর *password, ধ্রুবক অক্ষর *salt);
+অক্ষর *shadow_pw(কাঠামো passwd *pw);
 
 /* rfc2553 socket API replacements */
-#include "fake-rfc2553.h"
+#অন্তর্ভাব "fake-rfc2553.h"
 
 /* Routines for a single OS platform */
-#include "bsd-cygwin_util.h"
+#অন্তর্ভাব "bsd-cygwin_util.h"
 
-#include "port-aix.h"
-#include "port-irix.h"
-#include "port-linux.h"
-#include "port-solaris.h"
-#include "port-net.h"
-#include "port-uw.h"
+#অন্তর্ভাব "port-aix.h"
+#অন্তর্ভাব "port-irix.h"
+#অন্তর্ভাব "port-linux.h"
+#অন্তর্ভাব "port-solaris.h"
+#অন্তর্ভাব "port-net.h"
+#অন্তর্ভাব "port-uw.h"
 
 /* _FORTIFY_SOURCE breaks FD_ISSET(n)/FD_SET(n) for n > FD_SETSIZE. Avoid. */
-#if defined(HAVE_FEATURES_H) && defined(_FORTIFY_SOURCE)
+#যদি defined(HAVE_FEATURES_H) && defined(_FORTIFY_SOURCE)
 # include <features.h>
-# if defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
-#  if __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0)
+# যদি defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
+#  যদি __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0)
 #   include <sys/socket.h>  /* Ensure include guard is defined */
 #   undef FD_SET
 #   undef FD_ISSET
 #   define FD_SET(n, set)	kludge_FD_SET(n, set)
 #   define FD_ISSET(n, set)	kludge_FD_ISSET(n, set)
-void kludge_FD_SET(int, fd_set *);
-int kludge_FD_ISSET(int, fd_set *);
+শূন্য kludge_FD_SET(পূর্ণসংখ্যা, fd_set *);
+পূর্ণসংখ্যা kludge_FD_ISSET(পূর্ণসংখ্যা, fd_set *);
 #  endif /* __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0) */
 # endif /* __GNU_LIBRARY__ && __GLIBC_PREREQ */
 #endif /* HAVE_FEATURES_H && _FORTIFY_SOURCE */

@@ -16,43 +16,43 @@
 
 /* $OpenBSD$ */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 #ifdef HAVE_SYS_STATVFS_H
 # include <sys/statvfs.h>
 #endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <errno.h>
 
-static void
-usage(void)
+স্থির শূন্য
+usage(শূন্য)
 {
 	fprintf(stderr, "check-setuid [path]\n");
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+পূর্ণসংখ্যা
+প্রধান(পূর্ণসংখ্যা argc, অক্ষর **argv)
 {
-	const char *path = ".";
-	struct statvfs sb;
+	ধ্রুবক অক্ষর *path = ".";
+	কাঠামো statvfs sb;
 
-	if (argc > 2)
+	যদি (argc > 2)
 		usage();
-	else if (argc == 2)
+	অন্যথা যদি (argc == 2)
 		path = argv[1];
 
-	if (statvfs(path, &sb) != 0) {
+	যদি (statvfs(path, &sb) != 0) {
 		/* Don't return an error if the host doesn't support statvfs */
-		if (errno == ENOSYS)
-			return 0;
+		যদি (errno == ENOSYS)
+			ফেরত 0;
 		fprintf(stderr, "statvfs for \"%s\" failed: %s\n",
 		     path, strerror(errno));
 	}
-	return (sb.f_flag & ST_NOSUID) ? 1 : 0;
+	ফেরত (sb.f_flag & ST_NOSUID) ? 1 : 0;
 }
 
 

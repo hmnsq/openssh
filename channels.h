@@ -87,31 +87,31 @@
 #define CHANNEL_BULK_NOTTY	"direct-*,forwarded-*,dynamic-*," \
 				"tun-*,x11-*,session*,stdio-forward"
 
-struct ssh;
-struct Channel;
-typedef struct Channel Channel;
-struct channel_connect;
+কাঠামো ssh;
+কাঠামো Channel;
+প্রকারলেখ কাঠামো Channel Channel;
+কাঠামো channel_connect;
 
-typedef void channel_open_fn(struct ssh *, int, int, void *);
-typedef void channel_callback_fn(struct ssh *, int, int, void *);
-typedef int channel_infilter_fn(struct ssh *, struct Channel *, char *, int);
-typedef void channel_filter_cleanup_fn(struct ssh *, int, void *);
-typedef u_char *channel_outfilter_fn(struct ssh *, struct Channel *,
-    u_char **, size_t *);
+প্রকারলেখ শূন্য channel_open_fn(কাঠামো ssh *, পূর্ণসংখ্যা, পূর্ণসংখ্যা, শূন্য *);
+প্রকারলেখ শূন্য channel_callback_fn(কাঠামো ssh *, পূর্ণসংখ্যা, পূর্ণসংখ্যা, শূন্য *);
+প্রকারলেখ পূর্ণসংখ্যা channel_infilter_fn(কাঠামো ssh *, কাঠামো Channel *, অক্ষর *, পূর্ণসংখ্যা);
+প্রকারলেখ শূন্য channel_filter_cleanup_fn(কাঠামো ssh *, পূর্ণসংখ্যা, শূন্য *);
+প্রকারলেখ u_char *channel_outfilter_fn(কাঠামো ssh *, কাঠামো Channel *,
+    u_char **, আকার_t *);
 
 /* Channel success/failure callbacks */
-typedef void channel_confirm_cb(struct ssh *, int, struct Channel *, void *);
-typedef void channel_confirm_abandon_cb(struct ssh *, struct Channel *, void *);
-struct channel_confirm {
+প্রকারলেখ শূন্য channel_confirm_cb(কাঠামো ssh *, পূর্ণসংখ্যা, কাঠামো Channel *, শূন্য *);
+প্রকারলেখ শূন্য channel_confirm_abandon_cb(কাঠামো ssh *, কাঠামো Channel *, শূন্য *);
+কাঠামো channel_confirm {
 	TAILQ_ENTRY(channel_confirm) entry;
 	channel_confirm_cb *cb;
 	channel_confirm_abandon_cb *abandon_cb;
-	void *ctx;
+	শূন্য *ctx;
 };
 TAILQ_HEAD(channel_confirms, channel_confirm);
 
 /* Callbacks for mux channels back into client-specific code */
-typedef int mux_callback_fn(struct ssh *, struct Channel *);
+প্রকারলেখ পূর্ণসংখ্যা mux_callback_fn(কাঠামো ssh *, কাঠামো Channel *);
 
 /*
  * NB. channel IDs on the wire and in c->remote_id are uint32, but local
@@ -120,53 +120,53 @@ typedef int mux_callback_fn(struct ssh *, struct Channel *);
  * a dedicated "have_remote_id" flag to indicate their validity.
  */
 
-struct Channel {
-	int     type;		/* channel type/state */
+কাঠামো Channel {
+	পূর্ণসংখ্যা     type;		/* channel type/state */
 
-	int     self;		/* my own channel identifier */
+	পূর্ণসংখ্যা     self;		/* my own channel identifier */
 	uint32_t remote_id;	/* channel identifier for remote peer */
-	int	have_remote_id;	/* non-zero if remote_id is valid */
+	পূর্ণসংখ্যা	have_remote_id;	/* non-zero if remote_id is valid */
 
 	u_int   istate;		/* input from channel (state of receive half) */
 	u_int   ostate;		/* output to channel  (state of transmit half) */
-	int     flags;		/* close sent/rcvd */
-	int     rfd;		/* read fd */
-	int     wfd;		/* write fd */
-	int     efd;		/* extended fd */
-	int     sock;		/* sock fd */
+	পূর্ণসংখ্যা     flags;		/* close sent/rcvd */
+	পূর্ণসংখ্যা     rfd;		/* read fd */
+	পূর্ণসংখ্যা     wfd;		/* write fd */
+	পূর্ণসংখ্যা     efd;		/* extended fd */
+	পূর্ণসংখ্যা     sock;		/* sock fd */
 	u_int	io_want;	/* bitmask of SSH_CHAN_IO_* */
 	u_int	io_ready;	/* bitmask of SSH_CHAN_IO_* */
-	int	pfds[4];	/* pollfd entries for rfd/wfd/efd/sock */
-	int     ctl_chan;	/* control channel (multiplexed connections) */
+	পূর্ণসংখ্যা	pfds[4];	/* pollfd entries for rfd/wfd/efd/sock */
+	পূর্ণসংখ্যা     ctl_chan;	/* control channel (multiplexed connections) */
 	uint32_t ctl_child_id;	/* child session for mux controllers */
-	int	have_ctl_child_id;/* non-zero if ctl_child_id is valid */
-	int     remote_has_tty;	/* remote side has a tty */
-	int     isatty;		/* rfd is a tty */
+	পূর্ণসংখ্যা	have_ctl_child_id;/* non-zero if ctl_child_id is valid */
+	পূর্ণসংখ্যা     remote_has_tty;	/* remote side has a tty */
+	পূর্ণসংখ্যা     isatty;		/* rfd is a tty */
 #ifdef _AIX
-	int     wfd_isatty;	/* wfd is a tty */
+	পূর্ণসংখ্যা     wfd_isatty;	/* wfd is a tty */
 #endif
-	int	client_tty;	/* (client) TTY has been requested */
-	int     force_drain;	/* force close on iEOF */
-	double	notbefore;	/* Pause IO until deadline (time_t) */
-	int     delayed;	/* post-IO handlers for newly created
+	পূর্ণসংখ্যা	client_tty;	/* (client) TTY has been requested */
+	পূর্ণসংখ্যা     force_drain;	/* force close on iEOF */
+	দ্বিগুণ	notbefore;	/* Pause IO until deadline (time_t) */
+	পূর্ণসংখ্যা     delayed;	/* post-IO handlers for newly created
 				 * channels are delayed until the first call
 				 * to a matching pre-IO handler.
 				 * this way post-IO handlers are not
 				 * accidentally called if a FD gets reused */
-	int	restore_block;	/* fd mask to restore blocking status */
-	int	restore_flags[3];/* flags to restore */
-	struct sshbuf *input;	/* data read from socket, to be sent over
+	পূর্ণসংখ্যা	restore_block;	/* fd mask to restore blocking status */
+	পূর্ণসংখ্যা	restore_flags[3];/* flags to restore */
+	কাঠামো sshbuf *প্রবেশ;	/* data read from socket, to be sent over
 				 * encrypted connection */
-	struct sshbuf *output;	/* data received over encrypted connection for
+	কাঠামো sshbuf *output;	/* data received over encrypted connection for
 				 * send on socket */
-	struct sshbuf *extended;
+	কাঠামো sshbuf *extended;
 
-	char    *path;
+	অক্ষর    *path;
 		/* path for unix domain sockets, or host name for forwards */
-	int     listening_port;	/* port being listened for forwards */
-	char   *listening_addr;	/* addr being listened for forwards */
-	int     host_port;	/* remote port to connect for forwards */
-	char   *remote_name;	/* remote hostname */
+	পূর্ণসংখ্যা     listening_port;	/* port being listened for forwards */
+	অক্ষর   *listening_addr;	/* addr being listened for forwards */
+	পূর্ণসংখ্যা     host_port;	/* remote port to connect for forwards */
+	অক্ষর   *remote_name;	/* remote hostname */
 
 	u_int	remote_window;
 	u_int	remote_maxpacket;
@@ -175,45 +175,45 @@ struct Channel {
 	u_int	local_window_max;
 	u_int	local_consumed;
 	u_int	local_maxpacket;
-	int     extended_usage;
-	int	agent_new;	/* For agent listeners, use RFC 9987 requests */
-	int	single_connection;
+	পূর্ণসংখ্যা     extended_usage;
+	পূর্ণসংখ্যা	agent_new;	/* For agent listeners, use RFC 9987 requests */
+	পূর্ণসংখ্যা	single_connection;
 
-	char   *ctype;		/* const type - NB. not freed on channel_free */
-	char   *xctype;		/* extended type */
-	int	bulk;		/* channel is non-interactive */
+	অক্ষর   *ctype;		/* const type - NB. not freed on channel_free */
+	অক্ষর   *xctype;		/* extended type */
+	পূর্ণসংখ্যা	bulk;		/* channel is non-interactive */
 
 	/* callback */
 	channel_open_fn		*open_confirm;
-	void			*open_confirm_ctx;
+	শূন্য			*open_confirm_ctx;
 	channel_callback_fn	*detach_user;
-	int			detach_close;
-	struct channel_confirms	status_confirms;
+	পূর্ণসংখ্যা			detach_close;
+	কাঠামো channel_confirms	status_confirms;
 
 	/* filter */
-	channel_infilter_fn	*input_filter;
+	channel_infilter_fn	*প্রবেশ_filter;
 	channel_outfilter_fn	*output_filter;
-	void			*filter_ctx;
+	শূন্য			*filter_ctx;
 	channel_filter_cleanup_fn *filter_cleanup;
 
 	/* keep boundaries */
-	int			datagram;
+	পূর্ণসংখ্যা			datagram;
 
 	/* non-blocking connect */
-	struct channel_connect	*connect_ctx;
+	কাঠামো channel_connect	*connect_ctx;
 
 	/* multiplexing protocol hook, called for each packet received */
 	mux_callback_fn		*mux_rcb;
-	void			*mux_ctx;
-	int			mux_pause;
-	int			mux_downstream_id;
+	শূন্য			*mux_ctx;
+	পূর্ণসংখ্যা			mux_pause;
+	পূর্ণসংখ্যা			mux_downstream_id;
 
 	/* Inactivity timeouts */
 
 	/* Last traffic seen for OPEN channels */
-	double			lastused;
+	দ্বিগুণ			lastused;
 	/* Inactivity timeout deadline in seconds (0 = no timeout) */
-	double			inactive_deadline;
+	দ্বিগুণ			inactive_deadline;
 };
 
 #define CHAN_EXTENDED_IGNORE		0
@@ -229,10 +229,10 @@ struct Channel {
 #define CHAN_X11_WINDOW_DEFAULT	(4*CHAN_X11_PACKET_DEFAULT)
 
 /* possible input states */
-#define CHAN_INPUT_OPEN			0
-#define CHAN_INPUT_WAIT_DRAIN		1
-#define CHAN_INPUT_WAIT_OCLOSE		2
-#define CHAN_INPUT_CLOSED		3
+#define CHAN_প্রবেশ_OPEN			0
+#define CHAN_প্রবেশ_WAIT_DRAIN		1
+#define CHAN_প্রবেশ_WAIT_OCLOSE		2
+#define CHAN_প্রবেশ_CLOSED		3
 
 /* possible output states */
 #define CHAN_OUTPUT_OPEN		0
@@ -263,13 +263,13 @@ struct Channel {
 #define CHANNEL_MAX_READ	CHAN_SES_PACKET_DEFAULT
 
 /* Maximum channel input buffer size */
-#define CHAN_INPUT_MAX	(16*1024*1024)
+#define CHAN_প্রবেশ_MAX	(16*1024*1024)
 
 /* Hard limit on number of channels */
 #define CHANNELS_MAX_CHANNELS	(16*1024)
 
 /* check whether 'efd' is still in use */
-#define CHANNEL_EFD_INPUT_ACTIVE(c) \
+#define CHANNEL_EFD_প্রবেশ_ACTIVE(c) \
 	(c->extended_usage == CHAN_EXTENDED_READ && \
 	(c->efd != -1 || \
 	sshbuf_len(c->extended) > 0))
@@ -279,133 +279,133 @@ struct Channel {
 	sshbuf_len(c->extended) > 0))
 
 /* Add/remove channel management structures to/from SSH transport instance */
-void channel_init_channels(struct ssh *ssh);
-void channel_free_channels(struct ssh *ssh);
+শূন্য channel_init_channels(কাঠামো ssh *ssh);
+শূন্য channel_free_channels(কাঠামো ssh *ssh);
 
 /* channel management */
 
-Channel	*channel_by_id(struct ssh *, int);
-Channel	*channel_by_remote_id(struct ssh *, u_int);
-Channel	*channel_lookup(struct ssh *, int);
-Channel *channel_new(struct ssh *, char *, int, int, int, int,
-	    u_int, u_int, int, const char *, int);
-void	 channel_set_fds(struct ssh *, int, int, int, int, int,
-	    int, int, u_int);
-void	 channel_set_tty(struct ssh *, Channel *);
-void	 channel_free(struct ssh *, Channel *);
-void	 channel_free_all(struct ssh *);
-void	 channel_stop_listening(struct ssh *);
-void	 channel_force_close(struct ssh *, Channel *, int);
-void	 channel_set_xtype(struct ssh *, int, const char *);
+Channel	*channel_by_id(কাঠামো ssh *, পূর্ণসংখ্যা);
+Channel	*channel_by_remote_id(কাঠামো ssh *, u_int);
+Channel	*channel_lookup(কাঠামো ssh *, পূর্ণসংখ্যা);
+Channel *channel_new(কাঠামো ssh *, অক্ষর *, পূর্ণসংখ্যা, পূর্ণসংখ্যা, পূর্ণসংখ্যা, পূর্ণসংখ্যা,
+	    u_int, u_int, পূর্ণসংখ্যা, ধ্রুবক অক্ষর *, পূর্ণসংখ্যা);
+শূন্য	 channel_set_fds(কাঠামো ssh *, পূর্ণসংখ্যা, পূর্ণসংখ্যা, পূর্ণসংখ্যা, পূর্ণসংখ্যা, পূর্ণসংখ্যা,
+	    পূর্ণসংখ্যা, পূর্ণসংখ্যা, u_int);
+শূন্য	 channel_set_tty(কাঠামো ssh *, Channel *);
+শূন্য	 channel_free(কাঠামো ssh *, Channel *);
+শূন্য	 channel_free_all(কাঠামো ssh *);
+শূন্য	 channel_stop_listening(কাঠামো ssh *);
+শূন্য	 channel_force_close(কাঠামো ssh *, Channel *, পূর্ণসংখ্যা);
+শূন্য	 channel_set_xtype(কাঠামো ssh *, পূর্ণসংখ্যা, ধ্রুবক অক্ষর *);
 
-void	 channel_send_open(struct ssh *, int);
-void	 channel_request_start(struct ssh *, int, const char *, int);
-void	 channel_register_cleanup(struct ssh *, int,
-	    channel_callback_fn *, int);
-void	 channel_register_open_confirm(struct ssh *, int,
-	    channel_open_fn *, void *);
-void	 channel_register_filter(struct ssh *, int, channel_infilter_fn *,
-	    channel_outfilter_fn *, channel_filter_cleanup_fn *, void *);
-void	 channel_register_status_confirm(struct ssh *, int,
-	    channel_confirm_cb *, channel_confirm_abandon_cb *, void *);
-void	 channel_cancel_cleanup(struct ssh *, int);
-int	 channel_close_fd(struct ssh *, Channel *, int *);
-void	 channel_send_window_changes(struct ssh *);
-int	 channel_has_bulk(struct ssh *);
-void	 channel_set_tcp_keepalives(struct ssh *, int);
+শূন্য	 channel_send_open(কাঠামো ssh *, পূর্ণসংখ্যা);
+শূন্য	 channel_request_start(কাঠামো ssh *, পূর্ণসংখ্যা, ধ্রুবক অক্ষর *, পূর্ণসংখ্যা);
+শূন্য	 channel_register_cleanup(কাঠামো ssh *, পূর্ণসংখ্যা,
+	    channel_callback_fn *, পূর্ণসংখ্যা);
+শূন্য	 channel_register_open_confirm(কাঠামো ssh *, পূর্ণসংখ্যা,
+	    channel_open_fn *, শূন্য *);
+শূন্য	 channel_register_filter(কাঠামো ssh *, পূর্ণসংখ্যা, channel_infilter_fn *,
+	    channel_outfilter_fn *, channel_filter_cleanup_fn *, শূন্য *);
+শূন্য	 channel_register_status_confirm(কাঠামো ssh *, পূর্ণসংখ্যা,
+	    channel_confirm_cb *, channel_confirm_abandon_cb *, শূন্য *);
+শূন্য	 channel_cancel_cleanup(কাঠামো ssh *, পূর্ণসংখ্যা);
+পূর্ণসংখ্যা	 channel_close_fd(কাঠামো ssh *, Channel *, পূর্ণসংখ্যা *);
+শূন্য	 channel_send_window_changes(কাঠামো ssh *);
+পূর্ণসংখ্যা	 channel_has_bulk(কাঠামো ssh *);
+শূন্য	 channel_set_tcp_keepalives(কাঠামো ssh *, পূর্ণসংখ্যা);
 
 /* channel inactivity timeouts */
-void channel_add_timeout(struct ssh *, const char *, double);
-void channel_clear_timeouts(struct ssh *);
+শূন্য channel_add_timeout(কাঠামো ssh *, ধ্রুবক অক্ষর *, দ্বিগুণ);
+শূন্য channel_clear_timeouts(কাঠামো ssh *);
 
 /* mux proxy support */
 
-int	 channel_proxy_downstream(struct ssh *, Channel *mc);
-int	 channel_proxy_upstream(Channel *, int, uint32_t, struct ssh *);
+পূর্ণসংখ্যা	 channel_proxy_downstream(কাঠামো ssh *, Channel *mc);
+পূর্ণসংখ্যা	 channel_proxy_upstream(Channel *, পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
 
 /* protocol handler */
 
-int	 channel_input_data(int, uint32_t, struct ssh *);
-int	 channel_input_extended_data(int, uint32_t, struct ssh *);
-int	 channel_input_ieof(int, uint32_t, struct ssh *);
-int	 channel_input_oclose(int, uint32_t, struct ssh *);
-int	 channel_input_open_confirmation(int, uint32_t, struct ssh *);
-int	 channel_input_open_failure(int, uint32_t, struct ssh *);
-int	 channel_input_window_adjust(int, uint32_t, struct ssh *);
-int	 channel_input_status_confirm(int, uint32_t, struct ssh *);
+পূর্ণসংখ্যা	 channel_প্রবেশ_তথ্য(পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
+পূর্ণসংখ্যা	 channel_প্রবেশ_extended_তথ্য(পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
+পূর্ণসংখ্যা	 channel_প্রবেশ_ieof(পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
+পূর্ণসংখ্যা	 channel_প্রবেশ_oclose(পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
+পূর্ণসংখ্যা	 channel_প্রবেশ_open_confirmation(পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
+পূর্ণসংখ্যা	 channel_প্রবেশ_open_failure(পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
+পূর্ণসংখ্যা	 channel_প্রবেশ_window_adjust(পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
+পূর্ণসংখ্যা	 channel_প্রবেশ_status_confirm(পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
 
 /* file descriptor handling (read/write) */
-struct pollfd;
-struct timespec;
+কাঠামো pollfd;
+কাঠামো timespec;
 
-void	 channel_prepare_poll(struct ssh *, struct pollfd **,
-	    u_int *, u_int *, u_int, struct timespec *);
-void	 channel_after_poll(struct ssh *, struct pollfd *, u_int);
-int	 channel_output_poll(struct ssh *);
+শূন্য	 channel_prepare_poll(কাঠামো ssh *, কাঠামো pollfd **,
+	    u_int *, u_int *, u_int, কাঠামো timespec *);
+শূন্য	 channel_after_poll(কাঠামো ssh *, কাঠামো pollfd *, u_int);
+পূর্ণসংখ্যা	 channel_output_poll(কাঠামো ssh *);
 
-int      channel_not_very_much_buffered_data(struct ssh *);
-void     channel_close_all(struct ssh *);
-int      channel_still_open(struct ssh *);
-int	 channel_tty_open(struct ssh *);
-const char *channel_format_extended_usage(const Channel *);
-char	*channel_open_message(struct ssh *);
-void	 channel_report_open(struct ssh *, int);
-int	 channel_find_open(struct ssh *);
+পূর্ণসংখ্যা      channel_not_very_much_buffered_তথ্য(কাঠামো ssh *);
+শূন্য     channel_close_all(কাঠামো ssh *);
+পূর্ণসংখ্যা      channel_still_open(কাঠামো ssh *);
+পূর্ণসংখ্যা	 channel_tty_open(কাঠামো ssh *);
+ধ্রুবক অক্ষর *channel_format_extended_usage(ধ্রুবক Channel *);
+অক্ষর	*channel_open_message(কাঠামো ssh *);
+শূন্য	 channel_report_open(কাঠামো ssh *, পূর্ণসংখ্যা);
+পূর্ণসংখ্যা	 channel_find_open(কাঠামো ssh *);
 
 /* tcp forwarding */
-struct Forward;
-struct ForwardOptions;
-void	 channel_set_af(struct ssh *, int af);
-void     channel_permit_all(struct ssh *, int);
-void	 channel_add_permission(struct ssh *, int, int, char *, int);
-void	 channel_clear_permission(struct ssh *, int, int);
-void	 channel_disable_admin(struct ssh *, int);
-void	 channel_update_permission(struct ssh *, int, int);
-Channel	*channel_connect_to_port(struct ssh *, const char *, u_short,
-	    char *, char *, int *, const char **);
-Channel *channel_connect_to_path(struct ssh *, const char *, char *, char *);
-Channel	*channel_connect_stdio_fwd(struct ssh *, const char*,
-	    int, int, int, int);
-Channel	*channel_connect_by_listen_address(struct ssh *, const char *,
-	    u_short, char *, char *);
-Channel	*channel_connect_by_listen_path(struct ssh *, const char *,
-	    char *, char *);
-int	 channel_request_remote_forwarding(struct ssh *, struct Forward *);
-int	 channel_setup_local_fwd_listener(struct ssh *, struct Forward *,
-	    struct ForwardOptions *);
-int	 channel_request_rforward_cancel(struct ssh *, struct Forward *);
-int	 channel_setup_remote_fwd_listener(struct ssh *, struct Forward *,
-	    int *, struct ForwardOptions *);
-int	 channel_cancel_rport_listener(struct ssh *, struct Forward *);
-int	 channel_cancel_lport_listener(struct ssh *, struct Forward *,
-	    int, struct ForwardOptions *);
-int	 permitopen_port(const char *);
+কাঠামো Forward;
+কাঠামো ForwardOptions;
+শূন্য	 channel_set_af(কাঠামো ssh *, পূর্ণসংখ্যা af);
+শূন্য     channel_permit_all(কাঠামো ssh *, পূর্ণসংখ্যা);
+শূন্য	 channel_add_permission(কাঠামো ssh *, পূর্ণসংখ্যা, পূর্ণসংখ্যা, অক্ষর *, পূর্ণসংখ্যা);
+শূন্য	 channel_clear_permission(কাঠামো ssh *, পূর্ণসংখ্যা, পূর্ণসংখ্যা);
+শূন্য	 channel_disable_admin(কাঠামো ssh *, পূর্ণসংখ্যা);
+শূন্য	 channel_update_permission(কাঠামো ssh *, পূর্ণসংখ্যা, পূর্ণসংখ্যা);
+Channel	*channel_connect_to_port(কাঠামো ssh *, ধ্রুবক অক্ষর *, u_short,
+	    অক্ষর *, অক্ষর *, পূর্ণসংখ্যা *, ধ্রুবক অক্ষর **);
+Channel *channel_connect_to_path(কাঠামো ssh *, ধ্রুবক অক্ষর *, অক্ষর *, অক্ষর *);
+Channel	*channel_connect_stdio_fwd(কাঠামো ssh *, ধ্রুবক অক্ষর*,
+	    পূর্ণসংখ্যা, পূর্ণসংখ্যা, পূর্ণসংখ্যা, পূর্ণসংখ্যা);
+Channel	*channel_connect_by_listen_address(কাঠামো ssh *, ধ্রুবক অক্ষর *,
+	    u_short, অক্ষর *, অক্ষর *);
+Channel	*channel_connect_by_listen_path(কাঠামো ssh *, ধ্রুবক অক্ষর *,
+	    অক্ষর *, অক্ষর *);
+পূর্ণসংখ্যা	 channel_request_remote_forwarding(কাঠামো ssh *, কাঠামো Forward *);
+পূর্ণসংখ্যা	 channel_setup_local_fwd_listener(কাঠামো ssh *, কাঠামো Forward *,
+	    কাঠামো ForwardOptions *);
+পূর্ণসংখ্যা	 channel_request_rforward_cancel(কাঠামো ssh *, কাঠামো Forward *);
+পূর্ণসংখ্যা	 channel_setup_remote_fwd_listener(কাঠামো ssh *, কাঠামো Forward *,
+	    পূর্ণসংখ্যা *, কাঠামো ForwardOptions *);
+পূর্ণসংখ্যা	 channel_cancel_rport_listener(কাঠামো ssh *, কাঠামো Forward *);
+পূর্ণসংখ্যা	 channel_cancel_lport_listener(কাঠামো ssh *, কাঠামো Forward *,
+	    পূর্ণসংখ্যা, কাঠামো ForwardOptions *);
+পূর্ণসংখ্যা	 permitopen_port(ধ্রুবক অক্ষর *);
 
 /* x11 forwarding */
 
-void	 channel_set_x11_refuse_time(struct ssh *, double);
-int	 x11_connect_display(struct ssh *);
-int	 x11_create_display_inet(struct ssh *, int, int, int, u_int *, int **);
-void	 x11_request_forwarding_with_spoofing(struct ssh *, int,
-	    const char *, const char *, const char *, int);
-int      x11_channel_used_recently(struct ssh *ssh);
+শূন্য	 channel_set_x11_refuse_time(কাঠামো ssh *, দ্বিগুণ);
+পূর্ণসংখ্যা	 x11_connect_display(কাঠামো ssh *);
+পূর্ণসংখ্যা	 x11_create_display_inet(কাঠামো ssh *, পূর্ণসংখ্যা, পূর্ণসংখ্যা, পূর্ণসংখ্যা, u_int *, পূর্ণসংখ্যা **);
+শূন্য	 x11_request_forwarding_with_spoofing(কাঠামো ssh *, পূর্ণসংখ্যা,
+	    ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, পূর্ণসংখ্যা);
+পূর্ণসংখ্যা      x11_channel_used_recently(কাঠামো ssh *ssh);
 
 /* channel close */
 
-int	 chan_is_dead(struct ssh *, Channel *, int);
-void	 chan_mark_dead(struct ssh *, Channel *);
+পূর্ণসংখ্যা	 chan_is_dead(কাঠামো ssh *, Channel *, পূর্ণসংখ্যা);
+শূন্য	 chan_mark_dead(কাঠামো ssh *, Channel *);
 
 /* agent forwarding */
-void	 client_channel_request_agent_forwarding(struct ssh *, int);
+শূন্য	 client_channel_request_agent_forwarding(কাঠামো ssh *, পূর্ণসংখ্যা);
 
 /* channel events */
 
-void	 chan_rcvd_oclose(struct ssh *, Channel *);
-void	 chan_rcvd_eow(struct ssh *, Channel *);
-void	 chan_read_failed(struct ssh *, Channel *);
-void	 chan_ibuf_empty(struct ssh *, Channel *);
-void	 chan_rcvd_ieof(struct ssh *, Channel *);
-void	 chan_write_failed(struct ssh *, Channel *);
-void	 chan_obuf_empty(struct ssh *, Channel *);
+শূন্য	 chan_rcvd_oclose(কাঠামো ssh *, Channel *);
+শূন্য	 chan_rcvd_eow(কাঠামো ssh *, Channel *);
+শূন্য	 chan_read_failed(কাঠামো ssh *, Channel *);
+শূন্য	 chan_ibuf_empty(কাঠামো ssh *, Channel *);
+শূন্য	 chan_rcvd_ieof(কাঠামো ssh *, Channel *);
+শূন্য	 chan_write_failed(কাঠামো ssh *, Channel *);
+শূন্য	 chan_obuf_empty(কাঠামো ssh *, Channel *);
 
 #endif

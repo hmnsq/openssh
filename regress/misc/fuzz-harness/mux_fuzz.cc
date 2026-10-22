@@ -10,14 +10,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stddef.h>
-#include <stdint.h>
+#অন্তর্ভাব <stddef.h>
+#অন্তর্ভাব <stdint.h>
 
-extern "C" void fuzz_mux_one(const uint8_t *data, size_t size);
+বাহ্যিক "C" শূন্য fuzz_mux_one(ধ্রুবক uint8_t *তথ্য, আকার_t আকার_2);
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+বাহ্যিক "C" পূর্ণসংখ্যা
+LLVMFuzzer_Test_One_প্রবেশ(ধ্রুবক uint8_t *তথ্য, আকার_t আকার_2)
 {
-	fuzz_mux_one(data, size);
-	return 0;
+	fuzz_mux_one(তথ্য, আকার_2);
+	ফেরত 0;
 }

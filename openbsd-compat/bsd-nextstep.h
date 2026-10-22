@@ -23,11 +23,11 @@
  *
  */
 
-#ifndef _NEXT_POSIX_H
-#define _NEXT_POSIX_H
+#ifndef পরবর্তী_POSIX_H
+#define পরবর্তী_POSIX_H
 
-#ifdef HAVE_NEXT
-#include <sys/dir.h>
+#ifdef HAVE_পরবর্তী
+#অন্তর্ভাব <sys/dir.h>
 
 /* NGROUPS_MAX is behind -lposix.  Use the BSD version which is NGROUPS */
 #undef NGROUPS_MAX
@@ -37,21 +37,21 @@
 #define dirent direct
 
 /* Swap out NeXT's BSD wait() for a more POSIX compliant one */
-pid_t posix_wait(int *);
+pid_t posix_wait(পূর্ণসংখ্যা *);
 #define wait(a) posix_wait(a)
 
 /* #ifdef wrapped functions that need defining for clean compiling */
-pid_t getppid(void);
-void vhangup(void);
-int innetgr(const char *, const char *, const char *, const char *);
+pid_t getppid(শূন্য);
+শূন্য vhangup(শূন্য);
+পূর্ণসংখ্যা innetgr(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
 
 /* TERMCAP */
-int tcgetattr(int, struct termios *);
-int tcsetattr(int, int, const struct termios *);
-int tcsetpgrp(int, pid_t);
-speed_t cfgetospeed(const struct termios *);
-speed_t cfgetispeed(const struct termios *);
-int cfsetospeed(struct termios *, int);
-int cfsetispeed(struct termios *, int);
+পূর্ণসংখ্যা tcgetattr(পূর্ণসংখ্যা, কাঠামো termios *);
+পূর্ণসংখ্যা tcsetattr(পূর্ণসংখ্যা, পূর্ণসংখ্যা, ধ্রুবক কাঠামো termios *);
+পূর্ণসংখ্যা tcsetpgrp(পূর্ণসংখ্যা, pid_t);
+speed_t cfgetospeed(ধ্রুবক কাঠামো termios *);
+speed_t cfgetispeed(ধ্রুবক কাঠামো termios *);
+পূর্ণসংখ্যা cfsetospeed(কাঠামো termios *, পূর্ণসংখ্যা);
+পূর্ণসংখ্যা cfsetispeed(কাঠামো termios *, পূর্ণসংখ্যা);
 #endif /* HAVE_NEXT */
 #endif /* _NEXT_POSIX_H */

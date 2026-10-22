@@ -15,12 +15,12 @@
 #ifndef _CANOHOST_H
 #define _CANOHOST_H
 
-char		*get_peer_ipaddr(int);
-int		 get_peer_port(int);
-char		*get_local_ipaddr(int);
-char		*get_local_name(int);
-int		get_local_port(int);
+অক্ষর		*get_peer_ipaddr(পূর্ণসংখ্যা);
+পূর্ণসংখ্যা		 get_peer_port(পূর্ণসংখ্যা);
+অক্ষর		*get_local_ipaddr(পূর্ণসংখ্যা);
+অক্ষর		*get_local_name(পূর্ণসংখ্যা);
+পূর্ণসংখ্যা		get_local_port(পূর্ণসংখ্যা);
 
 #endif /* _CANOHOST_H */
 
-void		 ipv64_normalise_mapped(struct sockaddr_storage *, socklen_t *);
+শূন্য		 ipv64_normalise_mapped(কাঠামো sockaddr_storage *, socklen_t *);

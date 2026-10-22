@@ -24,204 +24,204 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include <stdlib.h>
-#include <errno.h>
-#include <paths.h>
-#include <pwd.h>
-#include <glob.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <limits.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <paths.h>
+#অন্তর্ভাব <pwd.h>
+#অন্তর্ভাব <glob.h>
+#অন্তর্ভাব <signal.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <time.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <limits.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "packet.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "compat.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "pathnames.h"
-#include "uidswap.h"
-#include "auth-options.h"
-#include "canohost.h"
+#অন্তর্ভাব "xmalloc.h"
+#অন্তর্ভাব "ssh.h"
+#অন্তর্ভাব "ssh2.h"
+#অন্তর্ভাব "packet.h"
+#অন্তর্ভাব "kex.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "misc.h"
+#অন্তর্ভাব "servconf.h"
+#অন্তর্ভাব "compat.h"
+#অন্তর্ভাব "sshkey.h"
+#অন্তর্ভাব "hostfile.h"
+#অন্তর্ভাব "auth.h"
+#অন্তর্ভাব "pathnames.h"
+#অন্তর্ভাব "uidswap.h"
+#অন্তর্ভাব "auth-options.h"
+#অন্তর্ভাব "canohost.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#অন্তর্ভাব "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
-#include "authfile.h"
-#include "match.h"
-#include "ssherr.h"
-#include "channels.h" /* XXX for session.h */
-#include "session.h" /* XXX for child_set_env(); refactor? */
-#include "sk-api.h"
+#অন্তর্ভাব "monitor_wrap.h"
+#অন্তর্ভাব "authfile.h"
+#অন্তর্ভাব "match.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "channels.h" /* XXX for session.h */
+#অন্তর্ভাব "session.h" /* XXX for child_set_env(); refactor? */
+#অন্তর্ভাব "sk-api.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_pubkey;
+বাহ্যিক ServerOptions options;
+বাহ্যিক কাঠামো authmethod_cfg methodcfg_pubkey;
 
-static char *
-format_key(const struct sshkey *key)
+স্থির অক্ষর *
+format_চাবি(ধ্রুবক কাঠামো sshkey *চাবি)
 {
-	char *ret, *fp = sshkey_fingerprint(key,
+	অক্ষর *ret, *fp = sshkey_fingerprint(চাবি,
 	    options.fingerprint_hash, SSH_FP_DEFAULT);
 
-	xasprintf(&ret, "%s %s", sshkey_type(key), fp);
-	free(fp);
-	return ret;
+	xasprintf(&ret, "%s %s", sshkey_type(চাবি), fp);
+	মুক্ত(fp);
+	ফেরত ret;
 }
 
 /*
  * Verify that the hostkey in a publickey-hostbound-v00@openssh.com userauth
  * request matches the hostkey that was negotiated during initial KEX.
  */
-static void
-check_hostbound_hostkey(struct ssh *ssh)
+স্থির শূন্য
+check_hostbound_hostkey(কাঠামো ssh *ssh)
 {
-	int r;
-	struct sshbuf *our_hostkey_blob, *their_hostkey_blob;
+	পূর্ণসংখ্যা r;
+	কাঠামো sshbuf *our_hostkey_blob, *their_hostkey_blob;
 
-	if (ssh->kex->initial_hostkey == NULL)
+	যদি (ssh->kex->initial_hostkey == ফাঁকা)
 		fatal_f("internal error: initial hostkey not recorded");
-	if ((our_hostkey_blob = sshbuf_new()) == NULL)
+	যদি ((our_hostkey_blob = sshbuf_new()) == ফাঁকা)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshpkt_getb_froms(ssh, &their_hostkey_blob)) != 0)
+	যদি ((r = sshpkt_getb_froms(ssh, &their_hostkey_blob)) != 0)
 		fatal_fr(r, "parse hostkey");
-	if ((r = sshkey_putb(ssh->kex->initial_hostkey, our_hostkey_blob)) != 0)
+	যদি ((r = sshkey_putb(ssh->kex->initial_hostkey, our_hostkey_blob)) != 0)
 		fatal_fr(r, "serialise hostkey");
-	if ((r = sshbuf_equals(our_hostkey_blob, their_hostkey_blob)) != 0)
+	যদি ((r = sshbuf_equals(our_hostkey_blob, their_hostkey_blob)) != 0)
 		fatal_f("packet contained wrong host key");
 	sshbuf_free(our_hostkey_blob);
 	sshbuf_free(their_hostkey_blob);
 }
 
-static int
-userauth_pubkey(struct ssh *ssh, const char *method)
+স্থির পূর্ণসংখ্যা
+userauth_pubkey(কাঠামো ssh *ssh, ধ্রুবক অক্ষর *method)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct passwd *pw = authctxt->pw;
-	struct sshbuf *keyblob = NULL, *b = NULL;
-	struct sshkey *key = NULL, *hostkey = NULL;
-	char *pkalg = NULL, *userstyle = NULL, *key_s = NULL, *ca_s = NULL;
-	char *keystring = NULL;
-	u_char *sig = NULL, have_sig;
-	size_t slen;
-	int hostbound, r, pktype;
-	int req_presence = 0, req_verify = 0, authenticated = 0;
-	struct sshauthopt *authopts = NULL;
-	struct sshkey_sig_details *sig_details = NULL;
+	কাঠামো passwd *pw = authctxt->pw;
+	কাঠামো sshbuf *keyblob = ফাঁকা, *b = ফাঁকা;
+	কাঠামো sshkey *চাবি = ফাঁকা, *hostkey = ফাঁকা;
+	অক্ষর *pkalg = ফাঁকা, *userstyle = ফাঁকা, *চাবি_s = ফাঁকা, *ca_s = ফাঁকা;
+	অক্ষর *keystring = ফাঁকা;
+	u_char *sig = ফাঁকা, have_sig;
+	আকার_t slen;
+	পূর্ণসংখ্যা hostbound, r, pktype;
+	পূর্ণসংখ্যা req_presence = 0, req_verify = 0, authenticated = 0;
+	কাঠামো sshauthopt *authopts = ফাঁকা;
+	কাঠামো sshkey_sig_details *sig_details = ফাঁকা;
 
 	hostbound = strcmp(method, "publickey-hostbound-v00@openssh.com") == 0;
 
-	if ((r = sshpkt_get_u8(ssh, &have_sig)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &pkalg, NULL)) != 0 ||
+	যদি ((r = sshpkt_get_u8(ssh, &have_sig)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &pkalg, ফাঁকা)) != 0 ||
 	    (r = sshpkt_getb_froms(ssh, &keyblob)) != 0)
 		fatal_fr(r, "parse %s packet", method);
 
 	/* hostbound auth includes the hostkey offered at initial KEX */
-	if (hostbound)
+	যদি (hostbound)
 		check_hostbound_hostkey(ssh); /* fatals on error */
 
-	if (log_level_get() >= SYSLOG_LEVEL_DEBUG2) {
-		if ((b = sshbuf_fromb(keyblob)) == NULL)
+	যদি (log_level_get() >= SYSLOG_LEVEL_DEBUG2) {
+		যদি ((b = sshbuf_fromb(keyblob)) == ফাঁকা)
 			fatal_f("sshbuf_fromb failed");
-		if ((keystring = sshbuf_dtob64_string(b, 0)) == NULL)
+		যদি ((keystring = sshbuf_dtob64_string(b, 0)) == ফাঁকা)
 			fatal_f("sshbuf_dtob64 failed");
 		debug2_f("%s user %s %s public key %s %s",
 		    authctxt->valid ? "valid" : "invalid", authctxt->user,
 		    have_sig ? "attempting" : "querying", pkalg, keystring);
 		sshbuf_free(b);
-		b = NULL;
+		b = ফাঁকা;
 	}
 
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC) {
+	যদি (pktype == চাবি_UNSPEC) {
 		/* this is perfectly legal */
 		verbose_f("unsupported public key algorithm: %s", pkalg);
-		goto done;
+		যাও done;
 	}
-	if (match_pattern_list(pkalg, options.pubkey_accepted_algos, 0) != 1) {
+	যদি (match_pattern_list(pkalg, options.pubkey_accepted_algos, 0) != 1) {
 		logit_f("signature algorithm %s not in "
 		    "PubkeyAcceptedAlgorithms", pkalg);
-		goto done;
+		যাও done;
 	}
-	if ((b = sshbuf_fromb(keyblob)) == NULL)
+	যদি ((b = sshbuf_fromb(keyblob)) == ফাঁকা)
 		fatal_f("sshbuf_fromb failed");
-	switch ((r = sshkey_fromb_allowlist(b, &key,
+	নির্বাচন ((r = sshkey_fromb_allowlist(b, &চাবি,
 	    options.pubkey_accepted_algos, options.ca_sign_algorithms))) {
-	case 0:
+	ক্ষেত্র 0:
 		/* ok */
-		break;
-	case SSH_ERR_KEY_ALG_UNSUPPORTED:
+		বিরতি;
+	ক্ষেত্র SSH_ERR_চাবি_ALG_UNSUPPORTED:
 		/* This shouldn't happen unless the client is being weird */
 		logit_f("key algorithm differs from signature algorithm %s and "
 		    "is not in PubkeyAcceptedAlgorithms", pkalg);
-		goto done;
-	case SSH_ERR_SIGN_ALG_UNSUPPORTED:
+		যাও done;
+	ক্ষেত্র SSH_ERR_SIGN_ALG_UNSUPPORTED:
 		logit_fr(r, "certificate signature algorithm not in "
 		    "CASignatureAlgorithm");
-		goto done;
-	default:
+		যাও done;
+	পূর্বনির্ধারিত:
 		error_fr(r, "parse key");
-		goto done;
+		যাও done;
 	}
 	sshbuf_free(b);
-	b = NULL;
+	b = ফাঁকা;
 
 	/* USERAUTH_REQUEST signature type should match key's type */
-	if (key->type != pktype || (sshkey_type_plain(pktype) == KEY_ECDSA &&
-	    sshkey_ecdsa_nid_from_name(pkalg) != key->ecdsa_nid)) {
+	যদি (চাবি->type != pktype || (sshkey_type_plain(pktype) == চাবি_ECDSA &&
+	    sshkey_ecdsa_nid_from_name(pkalg) != চাবি->ecdsa_nid)) {
 		error_f("key type mismatch for decoded key "
-		    "(received %s, expected %s)", sshkey_ssh_name(key), pkalg);
-		goto done;
+		    "(received %s, expected %s)", sshkey_ssh_name(চাবি), pkalg);
+		যাও done;
 	}
-	if (auth2_key_already_used(authctxt, key)) {
-		logit("refusing previously-used %s key", sshkey_type(key));
-		goto done;
+	যদি (auth2_চাবি_already_used(authctxt, চাবি)) {
+		logit("refusing previously-used %s key", sshkey_type(চাবি));
+		যাও done;
 	}
-	if ((r = sshkey_check_rsa_length(key,
-	    options.required_rsa_size)) != 0) {
-		logit_r(r, "refusing %s key", sshkey_type(key));
-		goto done;
+	যদি ((r = sshkey_check_rsa_দৈর্ঘ্য(চাবি,
+	    options.required_rsa_আকার)) != 0) {
+		logit_r(r, "refusing %s key", sshkey_type(চাবি));
+		যাও done;
 	}
-	key_s = format_key(key);
-	if (sshkey_is_cert(key))
-		ca_s = format_key(key->cert->signature_key);
+	চাবি_s = format_চাবি(চাবি);
+	যদি (sshkey_is_cert(চাবি))
+		ca_s = format_চাবি(চাবি->cert->signature_চাবি);
 
-	if (have_sig) {
+	যদি (have_sig) {
 		debug3_f("%s have %s signature for %s%s%s",
-		    method, pkalg, key_s,
-		    ca_s == NULL ? "" : " CA ", ca_s == NULL ? "" : ca_s);
-		if ((r = sshpkt_get_string(ssh, &sig, &slen)) != 0 ||
+		    method, pkalg, চাবি_s,
+		    ca_s == ফাঁকা ? "" : " CA ", ca_s == ফাঁকা ? "" : ca_s);
+		যদি ((r = sshpkt_get_string(ssh, &sig, &slen)) != 0 ||
 		    (r = sshpkt_get_end(ssh)) != 0)
 			fatal_fr(r, "parse signature packet");
-		if ((b = sshbuf_new()) == NULL)
+		যদি ((b = sshbuf_new()) == ফাঁকা)
 			fatal_f("sshbuf_new failed");
-		if ((r = sshbuf_put_stringb(b,
+		যদি ((r = sshbuf_put_stringb(b,
 		    ssh->kex->session_id)) != 0)
 			fatal_fr(r, "put session id");
-		if (!authctxt->valid || authctxt->user == NULL) {
+		যদি (!authctxt->valid || authctxt->user == ফাঁকা) {
 			debug2_f("disabled because of invalid user");
-			goto done;
+			যাও done;
 		}
 		/* reconstruct packet */
 		xasprintf(&userstyle, "%s%s%s", authctxt->user,
 		    authctxt->style ? ":" : "",
 		    authctxt->style ? authctxt->style : "");
-		if ((r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+		যদি ((r = sshbuf_put_u8(b, SSH2_বার্তা_USERAUTH_REQUEST)) != 0 ||
 		    (r = sshbuf_put_cstring(b, userstyle)) != 0 ||
 		    (r = sshbuf_put_cstring(b, authctxt->service)) != 0 ||
 		    (r = sshbuf_put_cstring(b, method)) != 0 ||
@@ -229,7 +229,7 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 		    (r = sshbuf_put_cstring(b, pkalg)) != 0 ||
 		    (r = sshbuf_put_stringb(b, keyblob)) != 0)
 			fatal_fr(r, "reconstruct %s packet", method);
-		if (hostbound &&
+		যদি (hostbound &&
 		    (r = sshkey_puts(ssh->kex->initial_hostkey, b)) != 0)
 			fatal_fr(r, "reconstruct %s packet", method);
 #ifdef DEBUG_PK
@@ -237,54 +237,54 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 #endif
 		/* test for correct signature */
 		authenticated = 0;
-		if (mm_user_key_allowed(ssh, pw, key, 1, &authopts) &&
-		    mm_sshkey_verify(key, sig, slen,
+		যদি (mm_user_চাবি_allowed(ssh, pw, চাবি, 1, &authopts) &&
+		    mm_sshkey_verify(চাবি, sig, slen,
 		    sshbuf_ptr(b), sshbuf_len(b),
-		    (ssh->compat & SSH_BUG_SIGTYPE) == 0 ? pkalg : NULL,
+		    (ssh->compat & SSH_BUG_SIGTYPE) == 0 ? pkalg : ফাঁকা,
 		    ssh->compat, &sig_details) == 0) {
 			authenticated = 1;
 		}
-		if (authenticated == 1 && sig_details != NULL) {
+		যদি (authenticated == 1 && sig_details != ফাঁকা) {
 			auth2_record_info(authctxt, "signature count = %u",
-			    sig_details->sk_counter);
+			    sig_details->sk_গণক);
 			debug_f("sk_counter = %u, sk_flags = 0x%02x",
-			    sig_details->sk_counter, sig_details->sk_flags);
+			    sig_details->sk_গণক, sig_details->sk_flags);
 			req_presence = (options.pubkey_auth_options &
 			    PUBKEYAUTH_TOUCH_REQUIRED) ||
 			    !authopts->no_require_user_presence;
-			if (req_presence && (sig_details->sk_flags &
+			যদি (req_presence && (sig_details->sk_flags &
 			    SSH_SK_USER_PRESENCE_REQD) == 0) {
 				error("public key %s signature for %s%s from "
 				    "%.128s port %d rejected: user presence "
 				    "(authenticator touch) requirement "
-				    "not met ", key_s,
+				    "not met ", চাবি_s,
 				    authctxt->valid ? "" : "invalid user ",
 				    authctxt->user, ssh_remote_ipaddr(ssh),
 				    ssh_remote_port(ssh));
 				authenticated = 0;
-				goto done;
+				যাও done;
 			}
 			req_verify = (options.pubkey_auth_options &
 			    PUBKEYAUTH_VERIFY_REQUIRED) ||
 			    authopts->require_verify;
-			if (req_verify && (sig_details->sk_flags &
+			যদি (req_verify && (sig_details->sk_flags &
 			    SSH_SK_USER_VERIFICATION_REQD) == 0) {
 				error("public key %s signature for %s%s from "
 				    "%.128s port %d rejected: user "
-				    "verification requirement not met ", key_s,
+				    "verification requirement not met ", চাবি_s,
 				    authctxt->valid ? "" : "invalid user ",
 				    authctxt->user, ssh_remote_ipaddr(ssh),
 				    ssh_remote_port(ssh));
 				authenticated = 0;
-				goto done;
+				যাও done;
 			}
 		}
-		auth2_record_key(authctxt, authenticated, key);
-	} else {
-		debug_f("%s test pkalg %s pkblob %s%s%s", method, pkalg, key_s,
-		    ca_s == NULL ? "" : " CA ", ca_s == NULL ? "" : ca_s);
+		auth2_record_চাবি(authctxt, authenticated, চাবি);
+	} অন্যথা {
+		debug_f("%s test pkalg %s pkblob %s%s%s", method, pkalg, চাবি_s,
+		    ca_s == ফাঁকা ? "" : " CA ", ca_s == ফাঁকা ? "" : ca_s);
 
-		if ((r = sshpkt_get_end(ssh)) != 0)
+		যদি ((r = sshpkt_get_end(ssh)) != 0)
 			fatal_fr(r, "parse packet");
 
 		/* XXX fake reply and always send PK_OK ? */
@@ -295,9 +295,9 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 		 * if a user is not allowed to login. is this an
 		 * issue? -markus
 		 */
-		if (authctxt->valid && authctxt->user != NULL &&
-		    mm_user_key_allowed(ssh, pw, key, 0, NULL)) {
-			if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_PK_OK))
+		যদি (authctxt->valid && authctxt->user != ফাঁকা &&
+		    mm_user_চাবি_allowed(ssh, pw, চাবি, 0, ফাঁকা)) {
+			যদি ((r = sshpkt_start(ssh, SSH2_বার্তা_USERAUTH_PK_OK))
 			    != 0 ||
 			    (r = sshpkt_put_cstring(ssh, pkalg)) != 0 ||
 			    (r = sshpkt_put_stringb(ssh, keyblob)) != 0 ||
@@ -305,7 +305,7 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 			    (r = ssh_packet_write_wait(ssh)) != 0)
 				fatal_fr(r, "send packet");
 			authctxt->postponed = 1;
-		} else {
+		} অন্যথা {
 			/*
 			 * NB. invalid users must be accounted for in exactly
 			 * the same way as valid users whose key was refused,
@@ -316,7 +316,7 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 			 * unless we have already used up the separate
 			 * max-pk-ok budget (if any).
 			 */
-			if (authctxt->pk_ok_failures++ < options.max_pubkey_ok)
+			যদি (authctxt->pk_ok_failures++ < options.max_pubkey_ok)
 				authctxt->auth_failure_already_counted = 1;
 			debug3_f("pubkey test %d of %d%s",
 			    authctxt->pk_ok_failures, options.max_pubkey_ok,
@@ -325,7 +325,7 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 		 }
 	}
 done:
-	if (authenticated == 1 && auth_activate_options(ssh, authopts) != 0) {
+	যদি (authenticated == 1 && auth_activate_options(ssh, authopts) != 0) {
 		debug_f("key options inconsistent with existing");
 		authenticated = 0;
 	}
@@ -334,98 +334,98 @@ done:
 	sshbuf_free(b);
 	sshbuf_free(keyblob);
 	sshauthopt_free(authopts);
-	sshkey_free(key);
+	sshkey_free(চাবি);
 	sshkey_free(hostkey);
-	free(keystring);
-	free(userstyle);
-	free(pkalg);
-	free(key_s);
-	free(ca_s);
-	free(sig);
+	মুক্ত(keystring);
+	মুক্ত(userstyle);
+	মুক্ত(pkalg);
+	মুক্ত(চাবি_s);
+	মুক্ত(ca_s);
+	মুক্ত(sig);
 	sshkey_sig_details_free(sig_details);
-	return authenticated;
+	ফেরত authenticated;
 }
 
-static int
-match_principals_file(struct passwd *pw, char *file,
-    struct sshkey_cert *cert, struct sshauthopt **authoptsp)
+স্থির পূর্ণসংখ্যা
+match_principals_file(কাঠামো passwd *pw, অক্ষর *file,
+    কাঠামো sshkey_cert *cert, কাঠামো sshauthopt **authoptsp)
 {
 	FILE *f;
-	int r, success = 0;
-	size_t i;
+	পূর্ণসংখ্যা r, success = 0;
+	আকার_t i;
 	glob_t gl;
-	struct sshauthopt *opts = NULL;
+	কাঠামো sshauthopt *opts = ফাঁকা;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	যদি (authoptsp != ফাঁকা)
+		*authoptsp = ফাঁকা;
 
 	temporarily_use_uid(pw);
-	r = glob(file, 0, NULL, &gl);
+	r = glob(file, 0, ফাঁকা, &gl);
 	restore_uid();
-	if (r != 0) {
-		if (r != GLOB_NOMATCH) {
+	যদি (r != 0) {
+		যদি (r != GLOB_NOMATCH) {
 			logit_f("glob \"%s\" failed", file);
 		}
-		return 0;
-	} else if (gl.gl_pathc > INT_MAX) {
+		ফেরত 0;
+	} অন্যথা যদি (gl.gl_pathc > INT_MAX) {
 		fatal_f("too many glob results for \"%s\"", file);
-	} else if (gl.gl_pathc > 1) {
+	} অন্যথা যদি (gl.gl_pathc > 1) {
 		debug2_f("glob \"%s\" returned %zu matches", file,
 		    gl.gl_pathc);
 	}
-	for (i = 0; !success && i < gl.gl_pathc; i++) {
+	জন্য (i = 0; !success && i < gl.gl_pathc; i++) {
 		temporarily_use_uid(pw);
 		debug("trying authorized principals file %s", file);
-		if ((f = auth_openprincipals(gl.gl_pathv[i], pw,
-		    options.strict_modes)) == NULL) {
+		যদি ((f = auth_openprincipals(gl.gl_pathv[i], pw,
+		    options.strict_modes)) == ফাঁকা) {
 			restore_uid();
-			continue;
+			চালু;
 		}
 		success = auth_process_principals(f, gl.gl_pathv[i],
 		    cert, &opts);
 		fclose(f);
 		restore_uid();
-		if (!success) {
+		যদি (!success) {
 			sshauthopt_free(opts);
-			opts = NULL;
+			opts = ফাঁকা;
 		}
 	}
 	globfree(&gl);
-	if (success && authoptsp != NULL) {
+	যদি (success && authoptsp != ফাঁকা) {
 		*authoptsp = opts;
-		opts = NULL;
+		opts = ফাঁকা;
 	}
 	sshauthopt_free(opts);
-	return success;
+	ফেরত success;
 }
 
 /*
  * Checks whether principal is allowed in output of command.
  * returns 1 if the principal is allowed or 0 otherwise.
  */
-static int
-match_principals_command(struct passwd *user_pw, const struct sshkey *key,
-    const char *conn_id, const char *rdomain, struct sshauthopt **authoptsp)
+স্থির পূর্ণসংখ্যা
+match_principals_command(কাঠামো passwd *user_pw, ধ্রুবক কাঠামো sshkey *চাবি,
+    ধ্রুবক অক্ষর *conn_id, ধ্রুবক অক্ষর *rdomain, কাঠামো sshauthopt **authoptsp)
 {
-	struct passwd *runas_pw = NULL;
-	const struct sshkey_cert *cert = key->cert;
-	FILE *f = NULL;
-	int r, ok, found_principal = 0;
-	int i, ac = 0, uid_swapped = 0;
+	কাঠামো passwd *runas_pw = ফাঁকা;
+	ধ্রুবক কাঠামো sshkey_cert *cert = চাবি->cert;
+	FILE *f = ফাঁকা;
+	পূর্ণসংখ্যা r, ok, found_principal = 0;
+	পূর্ণসংখ্যা i, ac = 0, uid_swapped = 0;
 	pid_t pid;
-	char *tmp, *username = NULL, *command = NULL, **av = NULL;
-	char *ca_fp = NULL, *key_fp = NULL, *catext = NULL, *keytext = NULL;
-	char serial_s[32], uidstr[32];
-	void (*osigchld)(int);
+	অক্ষর *tmp, *username = ফাঁকা, *command = ফাঁকা, **av = ফাঁকা;
+	অক্ষর *ca_fp = ফাঁকা, *চাবি_fp = ফাঁকা, *catext = ফাঁকা, *keytext = ফাঁকা;
+	অক্ষর serial_s[32], uidstr[32];
+	শূন্য (*osigchld)(পূর্ণসংখ্যা);
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
-	if (options.authorized_principals_command == NULL)
-		return 0;
-	if (options.authorized_principals_command_user == NULL) {
+	যদি (authoptsp != ফাঁকা)
+		*authoptsp = ফাঁকা;
+	যদি (options.authorized_principals_command == ফাঁকা)
+		ফেরত 0;
+	যদি (options.authorized_principals_command_user == ফাঁকা) {
 		error("No user for AuthorizedPrincipalsCommand specified, "
 		    "skipping");
-		return 0;
+		ফেরত 0;
 	}
 
 	/*
@@ -436,77 +436,77 @@ match_principals_command(struct passwd *user_pw, const struct sshkey *key,
 
 	/* Prepare and verify the user for the command */
 	username = percent_expand(options.authorized_principals_command_user,
-	    "u", user_pw->pw_name, (char *)NULL);
+	    "u", user_pw->pw_name, (অক্ষর *)ফাঁকা);
 	runas_pw = getpwnam(username);
-	if (runas_pw == NULL) {
+	যদি (runas_pw == ফাঁকা) {
 		error("AuthorizedPrincipalsCommandUser \"%s\" not found: %s",
 		    username, strerror(errno));
-		goto out;
+		যাও out;
 	}
 
 	/* Turn the command into an argument vector */
-	if (argv_split(options.authorized_principals_command,
+	যদি (argv_split(options.authorized_principals_command,
 	    &ac, &av, 0) != 0) {
 		error("AuthorizedPrincipalsCommand \"%s\" contains "
 		    "invalid quotes", options.authorized_principals_command);
-		goto out;
+		যাও out;
 	}
-	if (ac == 0) {
+	যদি (ac == 0) {
 		error("AuthorizedPrincipalsCommand \"%s\" yielded no arguments",
 		    options.authorized_principals_command);
-		goto out;
+		যাও out;
 	}
-	if ((ca_fp = sshkey_fingerprint(cert->signature_key,
-	    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
+	যদি ((ca_fp = sshkey_fingerprint(cert->signature_চাবি,
+	    options.fingerprint_hash, SSH_FP_DEFAULT)) == ফাঁকা) {
 		error_f("sshkey_fingerprint failed");
-		goto out;
+		যাও out;
 	}
-	if ((key_fp = sshkey_fingerprint(key,
-	    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
+	যদি ((চাবি_fp = sshkey_fingerprint(চাবি,
+	    options.fingerprint_hash, SSH_FP_DEFAULT)) == ফাঁকা) {
 		error_f("sshkey_fingerprint failed");
-		goto out;
+		যাও out;
 	}
-	if ((r = sshkey_to_base64(cert->signature_key, &catext)) != 0) {
+	যদি ((r = sshkey_to_base64(cert->signature_চাবি, &catext)) != 0) {
 		error_fr(r, "sshkey_to_base64 failed");
-		goto out;
+		যাও out;
 	}
-	if ((r = sshkey_to_base64(key, &keytext)) != 0) {
+	যদি ((r = sshkey_to_base64(চাবি, &keytext)) != 0) {
 		error_fr(r, "sshkey_to_base64 failed");
-		goto out;
+		যাও out;
 	}
-	snprintf(serial_s, sizeof(serial_s), "%llu",
+	snprintf(serial_s, আকার(serial_s), "%llu",
 	    (unsigned long long)cert->serial);
-	snprintf(uidstr, sizeof(uidstr), "%llu",
+	snprintf(uidstr, আকার(uidstr), "%llu",
 	    (unsigned long long)user_pw->pw_uid);
-	for (i = 1; i < ac; i++) {
+	জন্য (i = 1; i < ac; i++) {
 		tmp = percent_expand(av[i],
 		    "C", conn_id,
 		    "D", rdomain,
 		    "U", uidstr,
 		    "u", user_pw->pw_name,
 		    "h", user_pw->pw_dir,
-		    "t", sshkey_ssh_name(key),
-		    "T", sshkey_ssh_name(cert->signature_key),
-		    "f", key_fp,
+		    "t", sshkey_ssh_name(চাবি),
+		    "T", sshkey_ssh_name(cert->signature_চাবি),
+		    "f", চাবি_fp,
 		    "F", ca_fp,
 		    "k", keytext,
 		    "K", catext,
-		    "i", cert->key_id,
+		    "i", cert->চাবি_id,
 		    "s", serial_s,
-		    (char *)NULL);
-		if (tmp == NULL)
+		    (অক্ষর *)ফাঁকা);
+		যদি (tmp == ফাঁকা)
 			fatal_f("percent_expand failed");
-		free(av[i]);
+		মুক্ত(av[i]);
 		av[i] = tmp;
 	}
 	/* Prepare a printable command for logs, etc. */
 	command = argv_assemble(ac, av);
 
-	if ((pid = subprocess("AuthorizedPrincipalsCommand", command,
+	যদি ((pid = subprocess("AuthorizedPrincipalsCommand", command,
 	    ac, av, &f,
 	    SSH_SUBPROCESS_STDOUT_CAPTURE|SSH_SUBPROCESS_STDERR_DISCARD,
 	    runas_pw, temporarily_use_uid, restore_uid)) == 0)
-		goto out;
+		যাও out;
 
 	uid_swapped = 1;
 	temporarily_use_uid(runas_pw);
@@ -514,195 +514,195 @@ match_principals_command(struct passwd *user_pw, const struct sshkey *key,
 	ok = auth_process_principals(f, "(command)", cert, authoptsp);
 
 	fclose(f);
-	f = NULL;
+	f = ফাঁকা;
 
-	if (exited_cleanly(pid, "AuthorizedPrincipalsCommand", command, 0) != 0)
-		goto out;
+	যদি (exited_cleanly(pid, "AuthorizedPrincipalsCommand", command, 0) != 0)
+		যাও out;
 
 	/* Read completed successfully */
 	found_principal = ok;
  out:
-	if (f != NULL)
+	যদি (f != ফাঁকা)
 		fclose(f);
 	ssh_signal(SIGCHLD, osigchld);
-	for (i = 0; i < ac; i++)
-		free(av[i]);
-	free(av);
-	if (uid_swapped)
+	জন্য (i = 0; i < ac; i++)
+		মুক্ত(av[i]);
+	মুক্ত(av);
+	যদি (uid_swapped)
 		restore_uid();
-	free(command);
-	free(username);
-	free(ca_fp);
-	free(key_fp);
-	free(catext);
-	free(keytext);
-	return found_principal;
+	মুক্ত(command);
+	মুক্ত(username);
+	মুক্ত(ca_fp);
+	মুক্ত(চাবি_fp);
+	মুক্ত(catext);
+	মুক্ত(keytext);
+	ফেরত found_principal;
 }
 
 /* Authenticate a certificate key against TrustedUserCAKeys */
-static int
-user_cert_trusted_ca(struct passwd *pw, struct sshkey *key,
-    const char *remote_ip, const char *remote_host,
-    const char *conn_id, const char *rdomain, struct sshauthopt **authoptsp)
+স্থির পূর্ণসংখ্যা
+user_cert_trusted_ca(কাঠামো passwd *pw, কাঠামো sshkey *চাবি,
+    ধ্রুবক অক্ষর *remote_ip, ধ্রুবক অক্ষর *remote_host,
+    ধ্রুবক অক্ষর *conn_id, ধ্রুবক অক্ষর *rdomain, কাঠামো sshauthopt **authoptsp)
 {
-	char *ca_fp, *principals_file = NULL;
-	const char *reason;
-	struct sshauthopt *principals_opts = NULL, *cert_opts = NULL;
-	struct sshauthopt *final_opts = NULL;
-	int r, ret = 0, found_principal = 0, use_authorized_principals;
+	অক্ষর *ca_fp, *principals_file = ফাঁকা;
+	ধ্রুবক অক্ষর *reason;
+	কাঠামো sshauthopt *principals_opts = ফাঁকা, *cert_opts = ফাঁকা;
+	কাঠামো sshauthopt *final_opts = ফাঁকা;
+	পূর্ণসংখ্যা r, ret = 0, found_principal = 0, use_authorized_principals;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	যদি (authoptsp != ফাঁকা)
+		*authoptsp = ফাঁকা;
 
-	if (!sshkey_is_cert(key) || options.trusted_user_ca_keys == NULL)
-		return 0;
+	যদি (!sshkey_is_cert(চাবি) || options.trusted_user_ca_চাবিগুলি == ফাঁকা)
+		ফেরত 0;
 
-	if ((ca_fp = sshkey_fingerprint(key->cert->signature_key,
-	    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
-		return 0;
+	যদি ((ca_fp = sshkey_fingerprint(চাবি->cert->signature_চাবি,
+	    options.fingerprint_hash, SSH_FP_DEFAULT)) == ফাঁকা)
+		ফেরত 0;
 
-	if ((r = sshkey_in_file(key->cert->signature_key,
-	    options.trusted_user_ca_keys, 1, 0)) != 0) {
+	যদি ((r = sshkey_in_file(চাবি->cert->signature_চাবি,
+	    options.trusted_user_ca_চাবিগুলি, 1, 0)) != 0) {
 		debug2_fr(r, "CA %s %s is not listed in %s",
-		    sshkey_type(key->cert->signature_key), ca_fp,
-		    options.trusted_user_ca_keys);
-		goto out;
+		    sshkey_type(চাবি->cert->signature_চাবি), ca_fp,
+		    options.trusted_user_ca_চাবিগুলি);
+		যাও out;
 	}
 	/*
 	 * If AuthorizedPrincipals is in use, then compare the certificate
 	 * principals against the names in that file rather than matching
 	 * against the username.
 	 */
-	if ((principals_file = authorized_principals_file(pw)) != NULL) {
-		if (match_principals_file(pw, principals_file,
-		    key->cert, &principals_opts))
+	যদি ((principals_file = authorized_principals_file(pw)) != ফাঁকা) {
+		যদি (match_principals_file(pw, principals_file,
+		    চাবি->cert, &principals_opts))
 			found_principal = 1;
 	}
 	/* Try querying command if specified */
-	if (!found_principal && match_principals_command(pw, key,
+	যদি (!found_principal && match_principals_command(pw, চাবি,
 	    conn_id, rdomain, &principals_opts))
 		found_principal = 1;
 	/* If principals file or command is specified, then require a match */
-	use_authorized_principals = principals_file != NULL ||
-	    options.authorized_principals_command != NULL;
-	if (!found_principal && use_authorized_principals) {
+	use_authorized_principals = principals_file != ফাঁকা ||
+	    options.authorized_principals_command != ফাঁকা;
+	যদি (!found_principal && use_authorized_principals) {
 		reason = "Certificate does not contain an authorized principal";
-		goto fail_reason;
+		যাও fail_reason;
 	}
-	if (use_authorized_principals && principals_opts == NULL)
+	যদি (use_authorized_principals && principals_opts == ফাঁকা)
 		fatal_f("internal error: missing principals_opts");
-	if (sshkey_cert_check_authority_now(key, 0, 0,
-	    use_authorized_principals ? NULL : pw->pw_name, &reason) != 0)
-		goto fail_reason;
+	যদি (sshkey_cert_check_authority_now(চাবি, 0, 0,
+	    use_authorized_principals ? ফাঁকা : pw->pw_name, &reason) != 0)
+		যাও fail_reason;
 
 	/* Check authority from options in key and from principals file/cmd */
-	if ((cert_opts = sshauthopt_from_cert(key)) == NULL) {
+	যদি ((cert_opts = sshauthopt_from_cert(চাবি)) == ফাঁকা) {
 		reason = "Invalid certificate options";
-		goto fail_reason;
+		যাও fail_reason;
 	}
-	if (auth_authorise_keyopts(pw, cert_opts, 0,
+	যদি (auth_authorise_keyopts(pw, cert_opts, 0,
 	    remote_ip, remote_host, "cert") != 0) {
 		reason = "Refused by certificate options";
-		goto fail_reason;
+		যাও fail_reason;
 	}
-	if (principals_opts == NULL) {
+	যদি (principals_opts == ফাঁকা) {
 		final_opts = cert_opts;
-		cert_opts = NULL;
-	} else {
-		if (auth_authorise_keyopts(pw, principals_opts, 0,
+		cert_opts = ফাঁকা;
+	} অন্যথা {
+		যদি (auth_authorise_keyopts(pw, principals_opts, 0,
 		    remote_ip, remote_host, "principals") != 0) {
 			reason = "Refused by certificate principals options";
-			goto fail_reason;
+			যাও fail_reason;
 		}
-		if ((final_opts = sshauthopt_merge(principals_opts,
-		    cert_opts, &reason)) == NULL) {
+		যদি ((final_opts = sshauthopt_merge(principals_opts,
+		    cert_opts, &reason)) == ফাঁকা) {
  fail_reason:
 			error("Refusing certificate ID \"%s\" serial=%llu "
-			    "signed by %s CA %s: %s", key->cert->key_id,
-			    (unsigned long long)key->cert->serial,
-			    sshkey_type(key->cert->signature_key), ca_fp,
+			    "signed by %s CA %s: %s", চাবি->cert->চাবি_id,
+			    (unsigned long long)চাবি->cert->serial,
+			    sshkey_type(চাবি->cert->signature_চাবি), ca_fp,
 			    reason);
 			auth_debug_add("Refused Certificate ID \"%s\" "
-			    "serial=%llu: %s", key->cert->key_id,
-			    (unsigned long long)key->cert->serial, reason);
-			goto out;
+			    "serial=%llu: %s", চাবি->cert->চাবি_id,
+			    (unsigned long long)চাবি->cert->serial, reason);
+			যাও out;
 		}
 	}
 
 	/* Success */
 	verbose("Accepted certificate ID \"%s\" (serial %llu) signed by "
-	    "%s CA %s via %s", key->cert->key_id,
-	    (unsigned long long)key->cert->serial,
-	    sshkey_type(key->cert->signature_key), ca_fp,
-	    options.trusted_user_ca_keys);
-	if (authoptsp != NULL) {
+	    "%s CA %s via %s", চাবি->cert->চাবি_id,
+	    (unsigned long long)চাবি->cert->serial,
+	    sshkey_type(চাবি->cert->signature_চাবি), ca_fp,
+	    options.trusted_user_ca_চাবিগুলি);
+	যদি (authoptsp != ফাঁকা) {
 		*authoptsp = final_opts;
-		final_opts = NULL;
+		final_opts = ফাঁকা;
 	}
 	ret = 1;
  out:
 	sshauthopt_free(principals_opts);
 	sshauthopt_free(cert_opts);
 	sshauthopt_free(final_opts);
-	free(principals_file);
-	free(ca_fp);
-	return ret;
+	মুক্ত(principals_file);
+	মুক্ত(ca_fp);
+	ফেরত ret;
 }
 
 /*
  * Checks whether key is allowed in file.
  * returns 1 if the key is allowed or 0 otherwise.
  */
-static int
-user_key_allowed2(struct passwd *pw, struct sshkey *key,
-    char *file, const char *remote_ip, const char *remote_host,
-    struct sshauthopt **authoptsp)
+স্থির পূর্ণসংখ্যা
+user_চাবি_allowed2(কাঠামো passwd *pw, কাঠামো sshkey *চাবি,
+    অক্ষর *file, ধ্রুবক অক্ষর *remote_ip, ধ্রুবক অক্ষর *remote_host,
+    কাঠামো sshauthopt **authoptsp)
 {
 	FILE *f;
-	int found_key = 0;
+	পূর্ণসংখ্যা found_চাবি = 0;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	যদি (authoptsp != ফাঁকা)
+		*authoptsp = ফাঁকা;
 
 	/* Temporarily use the user's uid. */
 	temporarily_use_uid(pw);
 
 	debug("trying public key file %s", file);
-	if ((f = auth_openkeyfile(file, pw, options.strict_modes)) != NULL) {
-		found_key = auth_check_authkeys_file(pw, f, file,
-		    key, remote_ip, remote_host, authoptsp);
+	যদি ((f = auth_openkeyfile(file, pw, options.strict_modes)) != ফাঁকা) {
+		found_চাবি = auth_check_authkeys_file(pw, f, file,
+		    চাবি, remote_ip, remote_host, authoptsp);
 		fclose(f);
 	}
 
 	restore_uid();
-	return found_key;
+	ফেরত found_চাবি;
 }
 
 /*
  * Checks whether key is allowed in output of command.
  * returns 1 if the key is allowed or 0 otherwise.
  */
-static int
-user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
-    const char *remote_ip, const char *remote_host,
-    const char *conn_id, const char *rdomain, struct sshauthopt **authoptsp)
+স্থির পূর্ণসংখ্যা
+user_চাবি_command_allowed2(কাঠামো passwd *user_pw, কাঠামো sshkey *চাবি,
+    ধ্রুবক অক্ষর *remote_ip, ধ্রুবক অক্ষর *remote_host,
+    ধ্রুবক অক্ষর *conn_id, ধ্রুবক অক্ষর *rdomain, কাঠামো sshauthopt **authoptsp)
 {
-	struct passwd *runas_pw = NULL;
-	FILE *f = NULL;
-	int r, ok, found_key = 0;
-	int i, uid_swapped = 0, ac = 0;
+	কাঠামো passwd *runas_pw = ফাঁকা;
+	FILE *f = ফাঁকা;
+	পূর্ণসংখ্যা r, ok, found_চাবি = 0;
+	পূর্ণসংখ্যা i, uid_swapped = 0, ac = 0;
 	pid_t pid;
-	char *username = NULL, *key_fp = NULL, *keytext = NULL;
-	char uidstr[32], *tmp, *command = NULL, **av = NULL;
-	void (*osigchld)(int);
+	অক্ষর *username = ফাঁকা, *চাবি_fp = ফাঁকা, *keytext = ফাঁকা;
+	অক্ষর uidstr[32], *tmp, *command = ফাঁকা, **av = ফাঁকা;
+	শূন্য (*osigchld)(পূর্ণসংখ্যা);
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
-	if (options.authorized_keys_command == NULL)
-		return 0;
-	if (options.authorized_keys_command_user == NULL) {
+	যদি (authoptsp != ফাঁকা)
+		*authoptsp = ফাঁকা;
+	যদি (options.authorized_চাবিগুলি_command == ফাঁকা)
+		ফেরত 0;
+	যদি (options.authorized_চাবিগুলি_command_user == ফাঁকা) {
 		error("No user for AuthorizedKeysCommand specified, skipping");
-		return 0;
+		ফেরত 0;
 	}
 
 	/*
@@ -712,53 +712,53 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
 
 	/* Prepare and verify the user for the command */
-	username = percent_expand(options.authorized_keys_command_user,
-	    "u", user_pw->pw_name, (char *)NULL);
+	username = percent_expand(options.authorized_চাবিগুলি_command_user,
+	    "u", user_pw->pw_name, (অক্ষর *)ফাঁকা);
 	runas_pw = getpwnam(username);
-	if (runas_pw == NULL) {
+	যদি (runas_pw == ফাঁকা) {
 		error("AuthorizedKeysCommandUser \"%s\" not found: %s",
 		    username, strerror(errno));
-		goto out;
+		যাও out;
 	}
 
 	/* Prepare AuthorizedKeysCommand */
-	if ((key_fp = sshkey_fingerprint(key, options.fingerprint_hash,
-	    SSH_FP_DEFAULT)) == NULL) {
+	যদি ((চাবি_fp = sshkey_fingerprint(চাবি, options.fingerprint_hash,
+	    SSH_FP_DEFAULT)) == ফাঁকা) {
 		error_f("sshkey_fingerprint failed");
-		goto out;
+		যাও out;
 	}
-	if ((r = sshkey_to_base64(key, &keytext)) != 0) {
+	যদি ((r = sshkey_to_base64(চাবি, &keytext)) != 0) {
 		error_fr(r, "sshkey_to_base64 failed");
-		goto out;
+		যাও out;
 	}
 
 	/* Turn the command into an argument vector */
-	if (argv_split(options.authorized_keys_command, &ac, &av, 0) != 0) {
+	যদি (argv_split(options.authorized_চাবিগুলি_command, &ac, &av, 0) != 0) {
 		error("AuthorizedKeysCommand \"%s\" contains invalid quotes",
-		    options.authorized_keys_command);
-		goto out;
+		    options.authorized_চাবিগুলি_command);
+		যাও out;
 	}
-	if (ac == 0) {
+	যদি (ac == 0) {
 		error("AuthorizedKeysCommand \"%s\" yielded no arguments",
-		    options.authorized_keys_command);
-		goto out;
+		    options.authorized_চাবিগুলি_command);
+		যাও out;
 	}
-	snprintf(uidstr, sizeof(uidstr), "%llu",
+	snprintf(uidstr, আকার(uidstr), "%llu",
 	    (unsigned long long)user_pw->pw_uid);
-	for (i = 1; i < ac; i++) {
+	জন্য (i = 1; i < ac; i++) {
 		tmp = percent_expand(av[i],
 		    "C", conn_id,
 		    "D", rdomain,
 		    "U", uidstr,
 		    "u", user_pw->pw_name,
 		    "h", user_pw->pw_dir,
-		    "t", sshkey_ssh_name(key),
-		    "f", key_fp,
+		    "t", sshkey_ssh_name(চাবি),
+		    "f", চাবি_fp,
 		    "k", keytext,
-		    (char *)NULL);
-		if (tmp == NULL)
+		    (অক্ষর *)ফাঁকা);
+		যদি (tmp == ফাঁকা)
 			fatal_f("percent_expand failed");
-		free(av[i]);
+		মুক্ত(av[i]);
 		av[i] = tmp;
 	}
 	/* Prepare a printable command for logs, etc. */
@@ -769,74 +769,74 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
 	 * then fall back to the old behaviour of passing the
 	 * target username as a single argument.
 	 */
-	if (ac == 1) {
-		av = xreallocarray(av, ac + 2, sizeof(*av));
+	যদি (ac == 1) {
+		av = xreallocarray(av, ac + 2, আকার(*av));
 		av[1] = xstrdup(user_pw->pw_name);
-		av[2] = NULL;
+		av[2] = ফাঁকা;
 		/* Fix up command too, since it is used in log messages */
-		free(command);
+		মুক্ত(command);
 		xasprintf(&command, "%s %s", av[0], av[1]);
 	}
 
-	if ((pid = subprocess("AuthorizedKeysCommand", command,
+	যদি ((pid = subprocess("AuthorizedKeysCommand", command,
 	    ac, av, &f,
 	    SSH_SUBPROCESS_STDOUT_CAPTURE|SSH_SUBPROCESS_STDERR_DISCARD,
 	    runas_pw, temporarily_use_uid, restore_uid)) == 0)
-		goto out;
+		যাও out;
 
 	uid_swapped = 1;
 	temporarily_use_uid(runas_pw);
 
 	ok = auth_check_authkeys_file(user_pw, f,
-	    options.authorized_keys_command, key, remote_ip,
+	    options.authorized_চাবিগুলি_command, চাবি, remote_ip,
 	    remote_host, authoptsp);
 
 	fclose(f);
-	f = NULL;
+	f = ফাঁকা;
 
-	if (exited_cleanly(pid, "AuthorizedKeysCommand", command, 0) != 0)
-		goto out;
+	যদি (exited_cleanly(pid, "AuthorizedKeysCommand", command, 0) != 0)
+		যাও out;
 
 	/* Read completed successfully */
-	found_key = ok;
+	found_চাবি = ok;
  out:
-	if (f != NULL)
+	যদি (f != ফাঁকা)
 		fclose(f);
 	ssh_signal(SIGCHLD, osigchld);
-	for (i = 0; i < ac; i++)
-		free(av[i]);
-	free(av);
-	if (uid_swapped)
+	জন্য (i = 0; i < ac; i++)
+		মুক্ত(av[i]);
+	মুক্ত(av);
+	যদি (uid_swapped)
 		restore_uid();
-	free(command);
-	free(username);
-	free(key_fp);
-	free(keytext);
-	return found_key;
+	মুক্ত(command);
+	মুক্ত(username);
+	মুক্ত(চাবি_fp);
+	মুক্ত(keytext);
+	ফেরত found_চাবি;
 }
 
 /*
  * Check whether key authenticates and authorises the user.
  */
-int
-user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
-    int auth_attempt, struct sshauthopt **authoptsp)
+পূর্ণসংখ্যা
+user_চাবি_allowed(কাঠামো ssh *ssh, কাঠামো passwd *pw, কাঠামো sshkey *চাবি,
+    পূর্ণসংখ্যা auth_attempt, কাঠামো sshauthopt **authoptsp)
 {
 	u_int success = 0, i, j;
-	char *file = NULL, *conn_id;
-	struct sshauthopt *opts = NULL;
-	const char *rdomain, *remote_ip, *remote_host;
+	অক্ষর *file = ফাঁকা, *conn_id;
+	কাঠামো sshauthopt *opts = ফাঁকা;
+	ধ্রুবক অক্ষর *rdomain, *remote_ip, *remote_host;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	যদি (authoptsp != ফাঁকা)
+		*authoptsp = ফাঁকা;
 
-	if (auth_key_is_revoked(key))
-		return 0;
-	if (sshkey_is_cert(key) &&
-	    auth_key_is_revoked(key->cert->signature_key))
-		return 0;
+	যদি (auth_চাবি_is_revoked(চাবি))
+		ফেরত 0;
+	যদি (sshkey_is_cert(চাবি) &&
+	    auth_চাবি_is_revoked(চাবি->cert->signature_চাবি))
+		ফেরত 0;
 
-	if ((rdomain = ssh_packet_rdomain_in(ssh)) == NULL)
+	যদি ((rdomain = ssh_packet_rdomain_in(ssh)) == ফাঁকা)
 		rdomain = "";
 	remote_ip = ssh_remote_ipaddr(ssh);
 	remote_host = auth_get_canonical_hostname(ssh, options.use_dns);
@@ -844,65 +844,65 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
 	    ssh_local_ipaddr(ssh), ssh_local_port(ssh),
 	    remote_ip, ssh_remote_port(ssh));
 
-	for (i = 0; !success && i < options.num_authkeys_files; i++) {
-		int r;
+	জন্য (i = 0; !success && i < options.অঙ্ক_authkeys_files; i++) {
+		পূর্ণসংখ্যা r;
 		glob_t gl;
 
-		if (strcasecmp(options.authorized_keys_files[i], "none") == 0)
-			continue;
-		file = expand_authorized_keys(
-		    options.authorized_keys_files[i], pw);
+		যদি (strcasecmp(options.authorized_চাবিগুলি_files[i], "none") == 0)
+			চালু;
+		file = expand_authorized_চাবিগুলি(
+		    options.authorized_চাবিগুলি_files[i], pw);
 		temporarily_use_uid(pw);
-		r = glob(file, 0, NULL, &gl);
+		r = glob(file, 0, ফাঁকা, &gl);
 		restore_uid();
-		if (r != 0) {
-			if (r != GLOB_NOMATCH) {
+		যদি (r != 0) {
+			যদি (r != GLOB_NOMATCH) {
 				logit_f("glob \"%s\" failed", file);
 			}
-			free(file);
-			file = NULL;
-			continue;
-		} else if (gl.gl_pathc > INT_MAX) {
+			মুক্ত(file);
+			file = ফাঁকা;
+			চালু;
+		} অন্যথা যদি (gl.gl_pathc > INT_MAX) {
 			fatal_f("too many glob results for \"%s\"", file);
-		} else if (gl.gl_pathc > 1) {
+		} অন্যথা যদি (gl.gl_pathc > 1) {
 			debug2_f("glob \"%s\" returned %zu matches", file,
 			    gl.gl_pathc);
 		}
-		for (j = 0; !success && j < gl.gl_pathc; j++) {
-			success = user_key_allowed2(pw, key, gl.gl_pathv[j],
+		জন্য (j = 0; !success && j < gl.gl_pathc; j++) {
+			success = user_চাবি_allowed2(pw, চাবি, gl.gl_pathv[j],
 			    remote_ip, remote_host, &opts);
-			if (!success) {
+			যদি (!success) {
 				sshauthopt_free(opts);
-				opts = NULL;
+				opts = ফাঁকা;
 			}
 		}
-		free(file);
-		file = NULL;
+		মুক্ত(file);
+		file = ফাঁকা;
 		globfree(&gl);
 	}
-	if (success)
-		goto out;
+	যদি (success)
+		যাও out;
 
-	if ((success = user_cert_trusted_ca(pw, key, remote_ip, remote_host,
+	যদি ((success = user_cert_trusted_ca(pw, চাবি, remote_ip, remote_host,
 	    conn_id, rdomain, &opts)) != 0)
-		goto out;
+		যাও out;
 	sshauthopt_free(opts);
-	opts = NULL;
+	opts = ফাঁকা;
 
-	if ((success = user_key_command_allowed2(pw, key, remote_ip,
+	যদি ((success = user_চাবি_command_allowed2(pw, চাবি, remote_ip,
 	    remote_host, conn_id, rdomain, &opts)) != 0)
-		goto out;
+		যাও out;
 	sshauthopt_free(opts);
-	opts = NULL;
+	opts = ফাঁকা;
 
  out:
-	free(conn_id);
-	if (success && authoptsp != NULL) {
+	মুক্ত(conn_id);
+	যদি (success && authoptsp != ফাঁকা) {
 		*authoptsp = opts;
-		opts = NULL;
+		opts = ফাঁকা;
 	}
 	sshauthopt_free(opts);
-	return success;
+	ফেরত success;
 }
 
 Authmethod method_pubkey = {

@@ -25,13 +25,13 @@
 #ifndef _SSH_AUDIT_H
 # define _SSH_AUDIT_H
 
-#include "loginrec.h"
+#অন্তর্ভাব "loginrec.h"
 
-struct ssh;
+কাঠামো ssh;
 
-enum ssh_audit_event_type {
+গণনা ssh_audit_event_type {
 	SSH_LOGIN_EXCEED_MAXTRIES,
-	SSH_LOGIN_ROOT_DENIED,
+	SSH_LOGIN_মূল_DENIED,
 	SSH_AUTH_SUCCESS,
 	SSH_AUTH_FAIL_NONE,
 	SSH_AUTH_FAIL_PASSWD,
@@ -45,13 +45,13 @@ enum ssh_audit_event_type {
 	SSH_CONNECTION_ABANDON,	/* closed without completing auth */
 	SSH_AUDIT_UNKNOWN
 };
-typedef enum ssh_audit_event_type ssh_audit_event_t;
+প্রকারলেখ গণনা ssh_audit_event_type ssh_audit_event_t;
 
-void	audit_connection_from(const char *, int);
-void	audit_event(struct ssh *, ssh_audit_event_t);
-void	audit_session_open(struct logininfo *);
-void	audit_session_close(struct logininfo *);
-void	audit_run_command(const char *);
-ssh_audit_event_t audit_classify_auth(const char *);
+শূন্য	audit_connection_from(ধ্রুবক অক্ষর *, পূর্ণসংখ্যা);
+শূন্য	audit_event(কাঠামো ssh *, ssh_audit_event_t);
+শূন্য	audit_session_open(কাঠামো logininfo *);
+শূন্য	audit_session_close(কাঠামো logininfo *);
+শূন্য	audit_run_command(ধ্রুবক অক্ষর *);
+ssh_audit_event_t audit_classify_auth(ধ্রুবক অক্ষর *);
 
 #endif /* _SSH_AUDIT_H */

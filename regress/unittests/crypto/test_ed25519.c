@@ -5,27 +5,27 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "crypto_api.h"
-#include "xmalloc.h"
+#অন্তর্ভাব "../test_helper/test_helper.h"
+#অন্তর্ভাব "crypto_api.h"
+#অন্তর্ভাব "xmalloc.h"
 
-struct ed25519_kat {
-	const char *sk;
-	const char *pk;
-	const char *msg;
-	const char *sig;
+কাঠামো ed25519_kat {
+	ধ্রুবক অক্ষর *sk;
+	ধ্রুবক অক্ষর *pk;
+	ধ্রুবক অক্ষর *বার্তা;
+	ধ্রুবক অক্ষর *sig;
 };
 
-static const struct ed25519_kat ed25519_kats[] = {
+স্থির ধ্রুবক কাঠামো ed25519_kat ed25519_kats[] = {
 	{
 		"9d61b19deffd5a60ba844af492ec2cc44449c569"
 		"7b326919703bac031cae7f60",
@@ -61,18 +61,18 @@ static const struct ed25519_kat ed25519_kats[] = {
 	}
 };
 
-void ed25519_tests(void);
+শূন্য ed25519_tests(শূন্য);
 
-void
-ed25519_tests(void)
+শূন্য
+ed25519_tests(শূন্য)
 {
 	uint8_t pk[32], sk[64], seed[32], sig[64];
 	uint8_t expected_pk[32], expected_sig[64];
-	uint8_t *msg;
-	size_t i, msglen;
+	uint8_t *বার্তা;
+	আকার_t i, msglen;
 	unsigned long long smlen;
 
-	for (i = 0; i < sizeof(ed25519_kats)/sizeof(ed25519_kats[0]); i++) {
+	জন্য (i = 0; i < আকার(ed25519_kats)/আকার(ed25519_kats[0]); i++) {
 		TEST_START("Ed25519 keypair from seed");
 		hex2bin(seed, ed25519_kats[i].sk, 32);
 		hex2bin(expected_pk, ed25519_kats[i].pk, 32);
@@ -81,19 +81,19 @@ ed25519_tests(void)
 		TEST_DONE();
 
 		TEST_START("Ed25519 sign/verify KAT");
-		msglen = strlen(ed25519_kats[i].msg) / 2;
-		ASSERT_PTR_NE(msg = malloc(msglen == 0 ? 1 : msglen), NULL);
-		hex2bin(msg, ed25519_kats[i].msg, msglen);
+		msglen = strlen(ed25519_kats[i].বার্তা) / 2;
+		ASSERT_PTR_NE(বার্তা = malloc(msglen == 0 ? 1 : msglen), ফাঁকা);
+		hex2bin(বার্তা, ed25519_kats[i].বার্তা, msglen);
 		hex2bin(expected_sig, ed25519_kats[i].sig, 64);
 
 		ASSERT_INT_EQ(crypto_sign_ed25519_detached(sig, &smlen,
-		    msg, msglen, sk), 0);
+		    বার্তা, msglen, sk), 0);
 		ASSERT_INT_EQ(smlen, 64);
 		ASSERT_MEM_EQ(sig, expected_sig, 64);
 
 		ASSERT_INT_EQ(crypto_sign_ed25519_verify_detached(sig,
-		    msg, msglen, pk), 0);
-		free(msg);
+		    বার্তা, msglen, pk), 0);
+		মুক্ত(বার্তা);
 		TEST_DONE();
 	}
 }

@@ -22,25 +22,25 @@
  * so that they'll sort into chronological order.
  */
 
-#include <sys/time.h>
+#অন্তর্ভাব <sys/time.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <time.h>
 
-int
-main(void)
+পূর্ণসংখ্যা
+প্রধান(শূন্য)
 {
-	struct timeval tv;
-	struct tm *tm;
-	char buf[1024];
+	কাঠামো timeval tv;
+	কাঠামো tm *tm;
+	অক্ষর buf[1024];
 
-	if (gettimeofday(&tv, NULL) != 0)
+	যদি (gettimeofday(&tv, ফাঁকা) != 0)
 		exit(1);
-	if ((tm = localtime(&tv.tv_sec)) == NULL)
+	যদি ((tm = localtime(&tv.tv_sec)) == ফাঁকা)
 		exit(2);
-	if (strftime(buf, sizeof buf, "%Y%m%dT%H%M%S", tm) <= 0)
+	যদি (strftime(buf, আকার buf, "%Y%m%dT%H%M%S", tm) <= 0)
 		exit(3);
-	printf("%s.%06d\n", buf, (int)tv.tv_usec);
+	printf("%s.%06d\n", buf, (পূর্ণসংখ্যা)tv.tv_usec);
 	exit(0);
 }

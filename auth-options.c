@@ -15,226 +15,226 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <sys/queue.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <sys/queue.h>
 
-#include <stdlib.h>
-#include <netdb.h>
-#include <pwd.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <limits.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <netdb.h>
+#অন্তর্ভাব <pwd.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <ctype.h>
+#অন্তর্ভাব <limits.h>
 
-#include "xmalloc.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "sshkey.h"
-#include "match.h"
-#include "ssh2.h"
-#include "auth-options.h"
+#অন্তর্ভাব "xmalloc.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "misc.h"
+#অন্তর্ভাব "sshkey.h"
+#অন্তর্ভাব "match.h"
+#অন্তর্ভাব "ssh2.h"
+#অন্তর্ভাব "auth-options.h"
 
-static int
-dup_strings(char ***dstp, size_t *ndstp, char **src, size_t nsrc)
+স্থির পূর্ণসংখ্যা
+dup_strings(অক্ষর ***dstp, আকার_t *ndstp, অক্ষর **src, আকার_t nsrc)
 {
-	char **dst;
-	size_t i, j;
+	অক্ষর **dst;
+	আকার_t i, j;
 
-	*dstp = NULL;
+	*dstp = ফাঁকা;
 	*ndstp = 0;
 
-	if (nsrc == 0)
-		return 0;
-	if (nsrc >= SIZE_MAX / sizeof(*src) ||
-	    (dst = calloc(nsrc, sizeof(*src))) == NULL)
-		return -1;
-	for (i = 0; i < nsrc; i++) {
-		if ((dst[i] = strdup(src[i])) == NULL) {
-			for (j = 0; j < i; j++)
-				free(dst[j]);
-			free(dst);
-			return -1;
+	যদি (nsrc == 0)
+		ফেরত 0;
+	যদি (nsrc >= SIZE_MAX / আকার(*src) ||
+	    (dst = calloc(nsrc, আকার(*src))) == ফাঁকা)
+		ফেরত -1;
+	জন্য (i = 0; i < nsrc; i++) {
+		যদি ((dst[i] = strdup(src[i])) == ফাঁকা) {
+			জন্য (j = 0; j < i; j++)
+				মুক্ত(dst[j]);
+			মুক্ত(dst);
+			ফেরত -1;
 		}
 	}
 	/* success */
 	*dstp = dst;
 	*ndstp = nsrc;
-	return 0;
+	ফেরত 0;
 }
 
 #define OPTIONS_CRITICAL	1
 #define OPTIONS_EXTENSIONS	2
-static int
-cert_option_list(struct sshauthopt *opts, struct sshbuf *oblob,
-    u_int which, int crit)
+স্থির পূর্ণসংখ্যা
+cert_option_list(কাঠামো sshauthopt *opts, কাঠামো sshbuf *oblob,
+    u_int which, পূর্ণসংখ্যা crit)
 {
-	char *command, *allowed;
-	char *name = NULL;
-	struct sshbuf *c = NULL, *data = NULL;
-	int r, ret = -1, found;
+	অক্ষর *command, *allowed;
+	অক্ষর *name = ফাঁকা;
+	কাঠামো sshbuf *c = ফাঁকা, *তথ্য = ফাঁকা;
+	পূর্ণসংখ্যা r, ret = -1, found;
 
-	if ((c = sshbuf_fromb(oblob)) == NULL) {
+	যদি ((c = sshbuf_fromb(oblob)) == ফাঁকা) {
 		error_f("sshbuf_fromb failed");
-		goto out;
+		যাও out;
 	}
 
-	while (sshbuf_len(c) > 0) {
-		sshbuf_free(data);
-		data = NULL;
-		if ((r = sshbuf_get_cstring(c, &name, NULL)) != 0 ||
-		    (r = sshbuf_froms(c, &data)) != 0) {
+	যখন (sshbuf_len(c) > 0) {
+		sshbuf_free(তথ্য);
+		তথ্য = ফাঁকা;
+		যদি ((r = sshbuf_get_cstring(c, &name, ফাঁকা)) != 0 ||
+		    (r = sshbuf_froms(c, &তথ্য)) != 0) {
 			error_r(r, "Unable to parse certificate options");
-			goto out;
+			যাও out;
 		}
 		debug3("found certificate option \"%.100s\" len %zu",
-		    name, sshbuf_len(data));
+		    name, sshbuf_len(তথ্য));
 		found = 0;
-		if ((which & OPTIONS_EXTENSIONS) != 0) {
-			if (strcmp(name, "no-touch-required") == 0) {
+		যদি ((which & OPTIONS_EXTENSIONS) != 0) {
+			যদি (strcmp(name, "no-touch-required") == 0) {
 				opts->no_require_user_presence = 1;
 				found = 1;
-			} else if (strcmp(name, "permit-X11-forwarding") == 0) {
+			} অন্যথা যদি (strcmp(name, "permit-X11-forwarding") == 0) {
 				opts->permit_x11_forwarding_flag = 1;
 				found = 1;
-			} else if (strcmp(name,
+			} অন্যথা যদি (strcmp(name,
 			    "permit-agent-forwarding") == 0) {
 				opts->permit_agent_forwarding_flag = 1;
 				found = 1;
-			} else if (strcmp(name,
+			} অন্যথা যদি (strcmp(name,
 			    "permit-port-forwarding") == 0) {
 				opts->permit_port_forwarding_flag = 1;
 				found = 1;
-			} else if (strcmp(name, "permit-pty") == 0) {
+			} অন্যথা যদি (strcmp(name, "permit-pty") == 0) {
 				opts->permit_pty_flag = 1;
 				found = 1;
-			} else if (strcmp(name, "permit-user-rc") == 0) {
+			} অন্যথা যদি (strcmp(name, "permit-user-rc") == 0) {
 				opts->permit_user_rc = 1;
 				found = 1;
 			}
 		}
-		if (!found && (which & OPTIONS_CRITICAL) != 0) {
-			if (strcmp(name, "verify-required") == 0) {
+		যদি (!found && (which & OPTIONS_CRITICAL) != 0) {
+			যদি (strcmp(name, "verify-required") == 0) {
 				opts->require_verify = 1;
 				found = 1;
-			} else if (strcmp(name, "force-command") == 0) {
-				if ((r = sshbuf_get_cstring(data, &command,
-				    NULL)) != 0) {
+			} অন্যথা যদি (strcmp(name, "force-command") == 0) {
+				যদি ((r = sshbuf_get_cstring(তথ্য, &command,
+				    ফাঁকা)) != 0) {
 					error_r(r, "Unable to parse \"%s\" "
 					    "section", name);
-					goto out;
+					যাও out;
 				}
-				if (opts->force_command != NULL) {
+				যদি (opts->force_command != ফাঁকা) {
 					error("Certificate has multiple "
 					    "force-command options");
-					free(command);
-					goto out;
+					মুক্ত(command);
+					যাও out;
 				}
 				opts->force_command = command;
 				found = 1;
-			} else if (strcmp(name, "source-address") == 0) {
-				if ((r = sshbuf_get_cstring(data, &allowed,
-				    NULL)) != 0) {
+			} অন্যথা যদি (strcmp(name, "source-address") == 0) {
+				যদি ((r = sshbuf_get_cstring(তথ্য, &allowed,
+				    ফাঁকা)) != 0) {
 					error_r(r, "Unable to parse \"%s\" "
 					    "section", name);
-					goto out;
+					যাও out;
 				}
-				if (opts->required_from_host_cert != NULL) {
+				যদি (opts->required_from_host_cert != ফাঁকা) {
 					error("Certificate has multiple "
 					    "source-address options");
-					free(allowed);
-					goto out;
+					মুক্ত(allowed);
+					যাও out;
 				}
 				/* Check syntax */
-				if (addr_match_cidr_list(NULL, allowed) == -1) {
+				যদি (addr_match_cidr_list(ফাঁকা, allowed) == -1) {
 					error("Certificate source-address "
 					    "contents invalid");
-					free(allowed);
-					goto out;
+					মুক্ত(allowed);
+					যাও out;
 				}
 				opts->required_from_host_cert = allowed;
 				found = 1;
 			}
 		}
 
-		if (!found) {
-			if (crit) {
+		যদি (!found) {
+			যদি (crit) {
 				error("Certificate critical option \"%s\" "
 				    "is not supported", name);
-				goto out;
-			} else {
+				যাও out;
+			} অন্যথা {
 				logit("Certificate extension \"%s\" "
 				    "is not supported", name);
 			}
-		} else if (sshbuf_len(data) != 0) {
+		} অন্যথা যদি (sshbuf_len(তথ্য) != 0) {
 			error("Certificate option \"%s\" corrupt "
 			    "(extra data)", name);
-			goto out;
+			যাও out;
 		}
-		free(name);
-		name = NULL;
+		মুক্ত(name);
+		name = ফাঁকা;
 	}
 	/* successfully parsed all options */
 	ret = 0;
 
  out:
-	free(name);
-	sshbuf_free(data);
+	মুক্ত(name);
+	sshbuf_free(তথ্য);
 	sshbuf_free(c);
-	return ret;
+	ফেরত ret;
 }
 
-struct sshauthopt *
-sshauthopt_new(void)
+কাঠামো sshauthopt *
+sshauthopt_new(শূন্য)
 {
-	struct sshauthopt *ret;
+	কাঠামো sshauthopt *ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
+	যদি ((ret = calloc(1, আকার(*ret))) == ফাঁকা)
+		ফেরত ফাঁকা;
 	ret->force_tun_device = -1;
-	return ret;
+	ফেরত ret;
 }
 
-void
-sshauthopt_free(struct sshauthopt *opts)
+শূন্য
+sshauthopt_free(কাঠামো sshauthopt *opts)
 {
-	size_t i;
+	আকার_t i;
 
-	if (opts == NULL)
-		return;
+	যদি (opts == ফাঁকা)
+		ফেরত;
 
-	free(opts->cert_principals);
-	free(opts->force_command);
-	free(opts->required_from_host_cert);
-	free(opts->required_from_host_keys);
+	মুক্ত(opts->cert_principals);
+	মুক্ত(opts->force_command);
+	মুক্ত(opts->required_from_host_cert);
+	মুক্ত(opts->required_from_host_চাবিগুলি);
 
-	for (i = 0; i < opts->nenv; i++)
-		free(opts->env[i]);
-	free(opts->env);
+	জন্য (i = 0; i < opts->nenv; i++)
+		মুক্ত(opts->env[i]);
+	মুক্ত(opts->env);
 
-	for (i = 0; i < opts->npermitopen; i++)
-		free(opts->permitopen[i]);
-	free(opts->permitopen);
+	জন্য (i = 0; i < opts->npermitopen; i++)
+		মুক্ত(opts->permitopen[i]);
+	মুক্ত(opts->permitopen);
 
-	for (i = 0; i < opts->npermitlisten; i++)
-		free(opts->permitlisten[i]);
-	free(opts->permitlisten);
+	জন্য (i = 0; i < opts->npermitlisten; i++)
+		মুক্ত(opts->permitlisten[i]);
+	মুক্ত(opts->permitlisten);
 
-	freezero(opts, sizeof(*opts));
+	freezero(opts, আকার(*opts));
 }
 
-struct sshauthopt *
-sshauthopt_new_with_keys_defaults(void)
+কাঠামো sshauthopt *
+sshauthopt_new_with_চাবিগুলি_defaults(শূন্য)
 {
-	struct sshauthopt *ret = NULL;
+	কাঠামো sshauthopt *ret = ফাঁকা;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	যদি ((ret = sshauthopt_new()) == ফাঁকা)
+		ফেরত ফাঁকা;
 
 	/* Defaults for authorized_keys flags */
 	ret->permit_port_forwarding_flag = 1;
@@ -242,355 +242,355 @@ sshauthopt_new_with_keys_defaults(void)
 	ret->permit_x11_forwarding_flag = 1;
 	ret->permit_pty_flag = 1;
 	ret->permit_user_rc = 1;
-	return ret;
+	ফেরত ret;
 }
 
 /*
  * Parse and record a permitopen/permitlisten directive.
  * Return 0 on success. Return -1 on failure and sets *errstrp to error reason.
  */
-static int
-handle_permit(const char **optsp, int allow_bare_port,
-    char ***permitsp, size_t *npermitsp, const char **errstrp)
+স্থির পূর্ণসংখ্যা
+handle_permit(ধ্রুবক অক্ষর **optsp, পূর্ণসংখ্যা allow_bare_port,
+    অক্ষর ***permitsp, আকার_t *npermitsp, ধ্রুবক অক্ষর **errstrp)
 {
-	char *opt, *tmp, *cp, *host, **permits = *permitsp;
-	size_t npermits = *npermitsp;
-	const char *errstr = "unknown error";
+	অক্ষর *opt, *tmp, *cp, *host, **permits = *permitsp;
+	আকার_t npermits = *npermitsp;
+	ধ্রুবক অক্ষর *errstr = "unknown error";
 
-	if (npermits > SSH_AUTHOPT_PERMIT_MAX) {
+	যদি (npermits > SSH_AUTHOPT_PERMIT_MAX) {
 		*errstrp = "too many permission directives";
-		return -1;
+		ফেরত -1;
 	}
-	if ((opt = opt_dequote(optsp, &errstr)) == NULL) {
-		return -1;
+	যদি ((opt = opt_dequote(optsp, &errstr)) == ফাঁকা) {
+		ফেরত -1;
 	}
-	if (allow_bare_port && strchr(opt, ':') == NULL) {
+	যদি (allow_bare_port && strchr(opt, ':') == ফাঁকা) {
 		/*
 		 * Allow a bare port number in permitlisten to indicate a
 		 * listen_host wildcard.
 		 */
-		if (asprintf(&tmp, "*:%s", opt) == -1) {
-			free(opt);
+		যদি (asprintf(&tmp, "*:%s", opt) == -1) {
+			মুক্ত(opt);
 			*errstrp = "memory allocation failed";
-			return -1;
+			ফেরত -1;
 		}
-		free(opt);
+		মুক্ত(opt);
 		opt = tmp;
 	}
-	if ((tmp = strdup(opt)) == NULL) {
-		free(opt);
+	যদি ((tmp = strdup(opt)) == ফাঁকা) {
+		মুক্ত(opt);
 		*errstrp = "memory allocation failed";
-		return -1;
+		ফেরত -1;
 	}
 	cp = tmp;
 	/* validate syntax before recording it. */
-	host = hpdelim2(&cp, NULL);
-	if (host == NULL || strlen(host) >= NI_MAXHOST) {
-		free(tmp);
-		free(opt);
+	host = hpdelim2(&cp, ফাঁকা);
+	যদি (host == ফাঁকা || strlen(host) >= NI_MAXHOST) {
+		মুক্ত(tmp);
+		মুক্ত(opt);
 		*errstrp = "invalid permission hostname";
-		return -1;
+		ফেরত -1;
 	}
 	/*
 	 * don't want to use permitopen_port to avoid
 	 * dependency on channels.[ch] here.
 	 */
-	if (cp == NULL ||
+	যদি (cp == ফাঁকা ||
 	    (strcmp(cp, "*") != 0 && a2port(cp) <= 0)) {
-		free(tmp);
-		free(opt);
+		মুক্ত(tmp);
+		মুক্ত(opt);
 		*errstrp = "invalid permission port";
-		return -1;
+		ফেরত -1;
 	}
 	/* XXX - add streamlocal support */
-	free(tmp);
+	মুক্ত(tmp);
 	/* Record it */
-	if ((permits = recallocarray(permits, npermits, npermits + 1,
-	    sizeof(*permits))) == NULL) {
-		free(opt);
+	যদি ((permits = recallocarray(permits, npermits, npermits + 1,
+	    আকার(*permits))) == ফাঁকা) {
+		মুক্ত(opt);
 		/* NB. don't update *permitsp if alloc fails */
 		*errstrp = "memory allocation failed";
-		return -1;
+		ফেরত -1;
 	}
 	permits[npermits++] = opt;
 	*permitsp = permits;
 	*npermitsp = npermits;
-	return 0;
+	ফেরত 0;
 }
 
-struct sshauthopt *
-sshauthopt_parse(const char *opts, const char **errstrp)
+কাঠামো sshauthopt *
+sshauthopt_parse(ধ্রুবক অক্ষর *opts, ধ্রুবক অক্ষর **errstrp)
 {
-	char **oarray, *opt, *cp, *tmp;
-	int r;
-	struct sshauthopt *ret = NULL;
-	const char *errstr = "unknown error";
+	অক্ষর **oarray, *opt, *cp, *tmp;
+	পূর্ণসংখ্যা r;
+	কাঠামো sshauthopt *ret = ফাঁকা;
+	ধ্রুবক অক্ষর *errstr = "unknown error";
 	uint64_t valid_before;
-	size_t i, l;
+	আকার_t i, l;
 
-	if (errstrp != NULL)
-		*errstrp = NULL;
-	if ((ret = sshauthopt_new_with_keys_defaults()) == NULL)
-		goto alloc_fail;
+	যদি (errstrp != ফাঁকা)
+		*errstrp = ফাঁকা;
+	যদি ((ret = sshauthopt_new_with_চাবিগুলি_defaults()) == ফাঁকা)
+		যাও alloc_fail;
 
-	if (opts == NULL)
-		return ret;
+	যদি (opts == ফাঁকা)
+		ফেরত ret;
 
-	while (*opts && *opts != ' ' && *opts != '\t') {
+	যখন (*opts && *opts != ' ' && *opts != '\t') {
 		/* flag options */
-		if ((r = opt_flag("restrict", 0, &opts)) != -1) {
+		যদি ((r = opt_flag("restrict", 0, &opts)) != -1) {
 			ret->restricted = 1;
 			ret->permit_port_forwarding_flag = 0;
 			ret->permit_agent_forwarding_flag = 0;
 			ret->permit_x11_forwarding_flag = 0;
 			ret->permit_pty_flag = 0;
 			ret->permit_user_rc = 0;
-		} else if ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
+		} অন্যথা যদি ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
 			ret->cert_authority = r;
-		} else if ((r = opt_flag("port-forwarding", 1, &opts)) != -1) {
+		} অন্যথা যদি ((r = opt_flag("port-forwarding", 1, &opts)) != -1) {
 			ret->permit_port_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("agent-forwarding", 1, &opts)) != -1) {
+		} অন্যথা যদি ((r = opt_flag("agent-forwarding", 1, &opts)) != -1) {
 			ret->permit_agent_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("x11-forwarding", 1, &opts)) != -1) {
+		} অন্যথা যদি ((r = opt_flag("x11-forwarding", 1, &opts)) != -1) {
 			ret->permit_x11_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("touch-required", 1, &opts)) != -1) {
+		} অন্যথা যদি ((r = opt_flag("touch-required", 1, &opts)) != -1) {
 			ret->no_require_user_presence = r != 1; /* NB. flip */
-		} else if ((r = opt_flag("verify-required", 1, &opts)) != -1) {
+		} অন্যথা যদি ((r = opt_flag("verify-required", 1, &opts)) != -1) {
 			ret->require_verify = r == 1;
-		} else if ((r = opt_flag("pty", 1, &opts)) != -1) {
+		} অন্যথা যদি ((r = opt_flag("pty", 1, &opts)) != -1) {
 			ret->permit_pty_flag = r == 1;
-		} else if ((r = opt_flag("user-rc", 1, &opts)) != -1) {
+		} অন্যথা যদি ((r = opt_flag("user-rc", 1, &opts)) != -1) {
 			ret->permit_user_rc = r == 1;
-		} else if (opt_match(&opts, "command")) {
-			if (ret->force_command != NULL) {
+		} অন্যথা যদি (opt_match(&opts, "command")) {
+			যদি (ret->force_command != ফাঁকা) {
 				errstr = "multiple \"command\" clauses";
-				goto fail;
+				যাও fail;
 			}
 			ret->force_command = opt_dequote(&opts, &errstr);
-			if (ret->force_command == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "principals")) {
-			if (ret->cert_principals != NULL) {
+			যদি (ret->force_command == ফাঁকা)
+				যাও fail;
+		} অন্যথা যদি (opt_match(&opts, "principals")) {
+			যদি (ret->cert_principals != ফাঁকা) {
 				errstr = "multiple \"principals\" clauses";
-				goto fail;
+				যাও fail;
 			}
 			ret->cert_principals = opt_dequote(&opts, &errstr);
-			if (ret->cert_principals == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "from")) {
-			if (ret->required_from_host_keys != NULL) {
+			যদি (ret->cert_principals == ফাঁকা)
+				যাও fail;
+		} অন্যথা যদি (opt_match(&opts, "from")) {
+			যদি (ret->required_from_host_চাবিগুলি != ফাঁকা) {
 				errstr = "multiple \"from\" clauses";
-				goto fail;
+				যাও fail;
 			}
-			ret->required_from_host_keys = opt_dequote(&opts,
+			ret->required_from_host_চাবিগুলি = opt_dequote(&opts,
 			    &errstr);
-			if (ret->required_from_host_keys == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "expiry-time")) {
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			if (parse_absolute_time(opt, &valid_before) != 0 ||
+			যদি (ret->required_from_host_চাবিগুলি == ফাঁকা)
+				যাও fail;
+		} অন্যথা যদি (opt_match(&opts, "expiry-time")) {
+			যদি ((opt = opt_dequote(&opts, &errstr)) == ফাঁকা)
+				যাও fail;
+			যদি (parse_absolute_time(opt, &valid_before) != 0 ||
 			    valid_before == 0) {
-				free(opt);
+				মুক্ত(opt);
 				errstr = "invalid expires time";
-				goto fail;
+				যাও fail;
 			}
-			free(opt);
-			if (ret->valid_before == 0 ||
+			মুক্ত(opt);
+			যদি (ret->valid_before == 0 ||
 			    valid_before < ret->valid_before)
 				ret->valid_before = valid_before;
-		} else if (opt_match(&opts, "environment")) {
-			if (ret->nenv > SSH_AUTHOPT_ENV_MAX) {
+		} অন্যথা যদি (opt_match(&opts, "environment")) {
+			যদি (ret->nenv > SSH_AUTHOPT_ENV_MAX) {
 				errstr = "too many environment strings";
-				goto fail;
+				যাও fail;
 			}
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
+			যদি ((opt = opt_dequote(&opts, &errstr)) == ফাঁকা)
+				যাও fail;
 			/* env name must be alphanumeric and followed by '=' */
-			if ((tmp = strchr(opt, '=')) == NULL) {
-				free(opt);
+			যদি ((tmp = strchr(opt, '=')) == ফাঁকা) {
+				মুক্ত(opt);
 				errstr = "invalid environment string";
-				goto fail;
+				যাও fail;
 			}
-			if ((cp = strdup(opt)) == NULL) {
-				free(opt);
-				goto alloc_fail;
+			যদি ((cp = strdup(opt)) == ফাঁকা) {
+				মুক্ত(opt);
+				যাও alloc_fail;
 			}
-			l = (size_t)(tmp - opt);
+			l = (আকার_t)(tmp - opt);
 			cp[l] = '\0'; /* truncate at '=' */
-			if (!valid_env_name(cp)) {
-				free(cp);
-				free(opt);
+			যদি (!valid_env_name(cp)) {
+				মুক্ত(cp);
+				মুক্ত(opt);
 				errstr = "invalid environment string";
-				goto fail;
+				যাও fail;
 			}
 			/* Check for duplicates; XXX O(n*log(n)) */
-			for (i = 0; i < ret->nenv; i++) {
-				if (strncmp(ret->env[i], cp, l) == 0 &&
+			জন্য (i = 0; i < ret->nenv; i++) {
+				যদি (strncmp(ret->env[i], cp, l) == 0 &&
 				    ret->env[i][l] == '=')
-					break;
+					বিরতি;
 			}
-			free(cp);
+			মুক্ত(cp);
 			/* First match wins */
-			if (i >= ret->nenv) {
+			যদি (i >= ret->nenv) {
 				/* Append it. */
 				oarray = ret->env;
-				if ((ret->env = recallocarray(ret->env,
+				যদি ((ret->env = recallocarray(ret->env,
 				    ret->nenv, ret->nenv + 1,
-				    sizeof(*ret->env))) == NULL) {
-					free(opt);
+				    আকার(*ret->env))) == ফাঁকা) {
+					মুক্ত(opt);
 					/* put it back for cleanup */
 					ret->env = oarray;
-					goto alloc_fail;
+					যাও alloc_fail;
 				}
 				ret->env[ret->nenv++] = opt;
-				opt = NULL; /* transferred */
+				opt = ফাঁকা; /* transferred */
 			}
-			free(opt);
-		} else if (opt_match(&opts, "permitopen")) {
-			if (handle_permit(&opts, 0, &ret->permitopen,
+			মুক্ত(opt);
+		} অন্যথা যদি (opt_match(&opts, "permitopen")) {
+			যদি (handle_permit(&opts, 0, &ret->permitopen,
 			    &ret->npermitopen, &errstr) != 0)
-				goto fail;
-		} else if (opt_match(&opts, "permitlisten")) {
-			if (handle_permit(&opts, 1, &ret->permitlisten,
+				যাও fail;
+		} অন্যথা যদি (opt_match(&opts, "permitlisten")) {
+			যদি (handle_permit(&opts, 1, &ret->permitlisten,
 			    &ret->npermitlisten, &errstr) != 0)
-				goto fail;
-		} else if (opt_match(&opts, "tunnel")) {
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			ret->force_tun_device = a2tun(opt, NULL);
-			free(opt);
-			if (ret->force_tun_device == SSH_TUNID_ERR) {
+				যাও fail;
+		} অন্যথা যদি (opt_match(&opts, "tunnel")) {
+			যদি ((opt = opt_dequote(&opts, &errstr)) == ফাঁকা)
+				যাও fail;
+			ret->force_tun_device = a2tun(opt, ফাঁকা);
+			মুক্ত(opt);
+			যদি (ret->force_tun_device == SSH_TUNID_ERR) {
 				errstr = "invalid tun device";
-				goto fail;
+				যাও fail;
 			}
 		}
 		/*
 		 * Skip the comma, and move to the next option
 		 * (or break out if there are no more).
 		 */
-		if (*opts == '\0' || *opts == ' ' || *opts == '\t')
-			break;		/* End of options. */
+		যদি (*opts == '\0' || *opts == ' ' || *opts == '\t')
+			বিরতি;		/* End of options. */
 		/* Anything other than a comma is an unknown option */
-		if (*opts != ',') {
+		যদি (*opts != ',') {
 			errstr = "unknown key option";
-			goto fail;
+			যাও fail;
 		}
 		opts++;
-		if (*opts == '\0') {
+		যদি (*opts == '\0') {
 			errstr = "unexpected end-of-options";
-			goto fail;
+			যাও fail;
 		}
 	}
 
 	/* success */
-	if (errstrp != NULL)
-		*errstrp = NULL;
-	return ret;
+	যদি (errstrp != ফাঁকা)
+		*errstrp = ফাঁকা;
+	ফেরত ret;
 
 alloc_fail:
 	errstr = "memory allocation failed";
 fail:
 	sshauthopt_free(ret);
-	if (errstrp != NULL)
+	যদি (errstrp != ফাঁকা)
 		*errstrp = errstr;
-	return NULL;
+	ফেরত ফাঁকা;
 }
 
-struct sshauthopt *
-sshauthopt_from_cert(struct sshkey *k)
+কাঠামো sshauthopt *
+sshauthopt_from_cert(কাঠামো sshkey *k)
 {
-	struct sshauthopt *ret;
+	কাঠামো sshauthopt *ret;
 
-	if (k == NULL || !sshkey_type_is_cert(k->type) || k->cert == NULL ||
+	যদি (k == ফাঁকা || !sshkey_type_is_cert(k->type) || k->cert == ফাঁকা ||
 	    k->cert->type != SSH2_CERT_TYPE_USER)
-		return NULL;
+		ফেরত ফাঁকা;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	যদি ((ret = sshauthopt_new()) == ফাঁকা)
+		ফেরত ফাঁকা;
 
 	/* Handle options and critical extensions separately */
-	if (cert_option_list(ret, k->cert->critical,
+	যদি (cert_option_list(ret, k->cert->critical,
 	    OPTIONS_CRITICAL, 1) == -1) {
 		sshauthopt_free(ret);
-		return NULL;
+		ফেরত ফাঁকা;
 	}
-	if (cert_option_list(ret, k->cert->extensions,
+	যদি (cert_option_list(ret, k->cert->extensions,
 	    OPTIONS_EXTENSIONS, 0) == -1) {
 		sshauthopt_free(ret);
-		return NULL;
+		ফেরত ফাঁকা;
 	}
 	/* success */
-	return ret;
+	ফেরত ret;
 }
 
 /*
  * Merges "additional" options to "primary" and returns the result.
  * NB. Some options from primary have primacy.
  */
-struct sshauthopt *
-sshauthopt_merge(const struct sshauthopt *primary,
-    const struct sshauthopt *additional, const char **errstrp)
+কাঠামো sshauthopt *
+sshauthopt_merge(ধ্রুবক কাঠামো sshauthopt *primary,
+    ধ্রুবক কাঠামো sshauthopt *additional, ধ্রুবক অক্ষর **errstrp)
 {
-	struct sshauthopt *ret;
-	const char *errstr = "internal error";
-	const char *tmp;
+	কাঠামো sshauthopt *ret;
+	ধ্রুবক অক্ষর *errstr = "internal error";
+	ধ্রুবক অক্ষর *tmp;
 
-	if (errstrp != NULL)
-		*errstrp = NULL;
+	যদি (errstrp != ফাঁকা)
+		*errstrp = ফাঁকা;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		goto alloc_fail;
+	যদি ((ret = sshauthopt_new()) == ফাঁকা)
+		যাও alloc_fail;
 
 	/* cert_authority and cert_principals are cleared in result */
 
 	/* Prefer access lists from primary. */
 	/* XXX err is both set and mismatch? */
 	tmp = primary->required_from_host_cert;
-	if (tmp == NULL)
+	যদি (tmp == ফাঁকা)
 		tmp = additional->required_from_host_cert;
-	if (tmp != NULL && (ret->required_from_host_cert = strdup(tmp)) == NULL)
-		goto alloc_fail;
-	tmp = primary->required_from_host_keys;
-	if (tmp == NULL)
-		tmp = additional->required_from_host_keys;
-	if (tmp != NULL && (ret->required_from_host_keys = strdup(tmp)) == NULL)
-		goto alloc_fail;
+	যদি (tmp != ফাঁকা && (ret->required_from_host_cert = strdup(tmp)) == ফাঁকা)
+		যাও alloc_fail;
+	tmp = primary->required_from_host_চাবিগুলি;
+	যদি (tmp == ফাঁকা)
+		tmp = additional->required_from_host_চাবিগুলি;
+	যদি (tmp != ফাঁকা && (ret->required_from_host_চাবিগুলি = strdup(tmp)) == ফাঁকা)
+		যাও alloc_fail;
 
 	/*
 	 * force_tun_device, permitopen/permitlisten and environment all
 	 * prefer the primary.
 	 */
 	ret->force_tun_device = primary->force_tun_device;
-	if (ret->force_tun_device == -1)
+	যদি (ret->force_tun_device == -1)
 		ret->force_tun_device = additional->force_tun_device;
-	if (primary->nenv > 0) {
-		if (dup_strings(&ret->env, &ret->nenv,
+	যদি (primary->nenv > 0) {
+		যদি (dup_strings(&ret->env, &ret->nenv,
 		    primary->env, primary->nenv) != 0)
-			goto alloc_fail;
-	} else if (additional->nenv) {
-		if (dup_strings(&ret->env, &ret->nenv,
+			যাও alloc_fail;
+	} অন্যথা যদি (additional->nenv) {
+		যদি (dup_strings(&ret->env, &ret->nenv,
 		    additional->env, additional->nenv) != 0)
-			goto alloc_fail;
+			যাও alloc_fail;
 	}
-	if (primary->npermitopen > 0) {
-		if (dup_strings(&ret->permitopen, &ret->npermitopen,
+	যদি (primary->npermitopen > 0) {
+		যদি (dup_strings(&ret->permitopen, &ret->npermitopen,
 		    primary->permitopen, primary->npermitopen) != 0)
-			goto alloc_fail;
-	} else if (additional->npermitopen > 0) {
-		if (dup_strings(&ret->permitopen, &ret->npermitopen,
+			যাও alloc_fail;
+	} অন্যথা যদি (additional->npermitopen > 0) {
+		যদি (dup_strings(&ret->permitopen, &ret->npermitopen,
 		    additional->permitopen, additional->npermitopen) != 0)
-			goto alloc_fail;
+			যাও alloc_fail;
 	}
 
-	if (primary->npermitlisten > 0) {
-		if (dup_strings(&ret->permitlisten, &ret->npermitlisten,
+	যদি (primary->npermitlisten > 0) {
+		যদি (dup_strings(&ret->permitlisten, &ret->npermitlisten,
 		    primary->permitlisten, primary->npermitlisten) != 0)
-			goto alloc_fail;
-	} else if (additional->npermitlisten > 0) {
-		if (dup_strings(&ret->permitlisten, &ret->npermitlisten,
+			যাও alloc_fail;
+	} অন্যথা যদি (additional->npermitlisten > 0) {
+		যদি (dup_strings(&ret->permitlisten, &ret->npermitlisten,
 		    additional->permitlisten, additional->npermitlisten) != 0)
-			goto alloc_fail;
+			যাও alloc_fail;
 	}
 
 #define OPTFLAG_AND(x) ret->x = (primary->x == 1) && (additional->x == 1)
@@ -608,9 +608,9 @@ sshauthopt_merge(const struct sshauthopt *primary,
 #undef OPTFLAG_AND
 
 	/* Earliest expiry time should win */
-	if (primary->valid_before != 0)
+	যদি (primary->valid_before != 0)
 		ret->valid_before = primary->valid_before;
-	if (additional->valid_before != 0 &&
+	যদি (additional->valid_before != 0 &&
 	    additional->valid_before < ret->valid_before)
 		ret->valid_before = additional->valid_before;
 
@@ -618,51 +618,51 @@ sshauthopt_merge(const struct sshauthopt *primary,
 	 * When both multiple forced-command are specified, only
 	 * proceed if they are identical, otherwise fail.
 	 */
-	if (primary->force_command != NULL &&
-	    additional->force_command != NULL) {
-		if (strcmp(primary->force_command,
+	যদি (primary->force_command != ফাঁকা &&
+	    additional->force_command != ফাঁকা) {
+		যদি (strcmp(primary->force_command,
 		    additional->force_command) == 0) {
 			/* ok */
 			ret->force_command = strdup(primary->force_command);
-			if (ret->force_command == NULL)
-				goto alloc_fail;
-		} else {
+			যদি (ret->force_command == ফাঁকা)
+				যাও alloc_fail;
+		} অন্যথা {
 			errstr = "forced command options do not match";
-			goto fail;
+			যাও fail;
 		}
-	} else if (primary->force_command != NULL) {
-		if ((ret->force_command = strdup(
-		    primary->force_command)) == NULL)
-			goto alloc_fail;
-	} else if (additional->force_command != NULL) {
-		if ((ret->force_command = strdup(
-		    additional->force_command)) == NULL)
-			goto alloc_fail;
+	} অন্যথা যদি (primary->force_command != ফাঁকা) {
+		যদি ((ret->force_command = strdup(
+		    primary->force_command)) == ফাঁকা)
+			যাও alloc_fail;
+	} অন্যথা যদি (additional->force_command != ফাঁকা) {
+		যদি ((ret->force_command = strdup(
+		    additional->force_command)) == ফাঁকা)
+			যাও alloc_fail;
 	}
 	/* success */
-	if (errstrp != NULL)
-		*errstrp = NULL;
-	return ret;
+	যদি (errstrp != ফাঁকা)
+		*errstrp = ফাঁকা;
+	ফেরত ret;
 
  alloc_fail:
 	errstr = "memory allocation failed";
  fail:
-	if (errstrp != NULL)
+	যদি (errstrp != ফাঁকা)
 		*errstrp = errstr;
 	sshauthopt_free(ret);
-	return NULL;
+	ফেরত ফাঁকা;
 }
 
 /*
  * Copy options
  */
-struct sshauthopt *
-sshauthopt_copy(const struct sshauthopt *orig)
+কাঠামো sshauthopt *
+sshauthopt_copy(ধ্রুবক কাঠামো sshauthopt *orig)
 {
-	struct sshauthopt *ret;
+	কাঠামো sshauthopt *ret;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	যদি ((ret = sshauthopt_new()) == ফাঁকা)
+		ফেরত ফাঁকা;
 
 #define OPTSCALAR(x) ret->x = orig->x
 	OPTSCALAR(permit_port_forwarding_flag);
@@ -678,129 +678,129 @@ sshauthopt_copy(const struct sshauthopt *orig)
 	OPTSCALAR(require_verify);
 #undef OPTSCALAR
 #define OPTSTRING(x) \
-	do { \
-		if (orig->x != NULL && (ret->x = strdup(orig->x)) == NULL) { \
+	করো { \
+		যদি (orig->x != ফাঁকা && (ret->x = strdup(orig->x)) == ফাঁকা) { \
 			sshauthopt_free(ret); \
-			return NULL; \
+			ফেরত ফাঁকা; \
 		} \
-	} while (0)
+	} যখন (0)
 	OPTSTRING(cert_principals);
 	OPTSTRING(force_command);
 	OPTSTRING(required_from_host_cert);
-	OPTSTRING(required_from_host_keys);
+	OPTSTRING(required_from_host_চাবিগুলি);
 #undef OPTSTRING
 
-	if (dup_strings(&ret->env, &ret->nenv, orig->env, orig->nenv) != 0 ||
+	যদি (dup_strings(&ret->env, &ret->nenv, orig->env, orig->nenv) != 0 ||
 	    dup_strings(&ret->permitopen, &ret->npermitopen,
 	    orig->permitopen, orig->npermitopen) != 0 ||
 	    dup_strings(&ret->permitlisten, &ret->npermitlisten,
 	    orig->permitlisten, orig->npermitlisten) != 0) {
 		sshauthopt_free(ret);
-		return NULL;
+		ফেরত ফাঁকা;
 	}
-	return ret;
+	ফেরত ret;
 }
 
-static int
-serialise_array(struct sshbuf *m, char **a, size_t n)
+স্থির পূর্ণসংখ্যা
+serialise_array(কাঠামো sshbuf *m, অক্ষর **a, আকার_t n)
 {
-	struct sshbuf *b;
-	size_t i;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	কাঠামো sshbuf *b;
+	আকার_t i;
+	পূর্ণসংখ্যা r = SSH_ERR_INTERNAL_ERROR;
 
-	if (n > INT_MAX)
-		return SSH_ERR_INTERNAL_ERROR;
+	যদি (n > INT_MAX)
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 
-	if ((b = sshbuf_new()) == NULL) {
-		return SSH_ERR_ALLOC_FAIL;
+	যদি ((b = sshbuf_new()) == ফাঁকা) {
+		ফেরত SSH_ERR_ALLOC_FAIL;
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_put_cstring(b, a[i])) != 0)
-			goto out;
+	জন্য (i = 0; i < n; i++) {
+		যদি ((r = sshbuf_put_cstring(b, a[i])) != 0)
+			যাও out;
 	}
-	if ((r = sshbuf_put_u32(m, n)) != 0 ||
+	যদি ((r = sshbuf_put_u32(m, n)) != 0 ||
 	    (r = sshbuf_put_stringb(m, b)) != 0)
-		goto out;
+		যাও out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	ফেরত r;
 }
 
-static int
-deserialise_array(struct sshbuf *m, char ***ap, size_t *np)
+স্থির পূর্ণসংখ্যা
+deserialise_array(কাঠামো sshbuf *m, অক্ষর ***ap, আকার_t *np)
 {
-	char **a = NULL;
-	size_t i, n = 0;
-	struct sshbuf *b = NULL;
+	অক্ষর **a = ফাঁকা;
+	আকার_t i, n = 0;
+	কাঠামো sshbuf *b = ফাঁকা;
 	u_int tmp;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	পূর্ণসংখ্যা r = SSH_ERR_INTERNAL_ERROR;
 
-	if ((r = sshbuf_get_u32(m, &tmp)) != 0 ||
+	যদি ((r = sshbuf_get_u32(m, &tmp)) != 0 ||
 	    (r = sshbuf_froms(m, &b)) != 0)
-		goto out;
-	if (tmp > INT_MAX) {
+		যাও out;
+	যদি (tmp > INT_MAX) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		যাও out;
 	}
 	n = tmp;
-	if (n > 0 && (a = calloc(n, sizeof(*a))) == NULL) {
+	যদি (n > 0 && (a = calloc(n, আকার(*a))) == ফাঁকা) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_get_cstring(b, &a[i], NULL)) != 0)
-			goto out;
+	জন্য (i = 0; i < n; i++) {
+		যদি ((r = sshbuf_get_cstring(b, &a[i], ফাঁকা)) != 0)
+			যাও out;
 	}
 	/* success */
 	r = 0;
 	*ap = a;
-	a = NULL;
+	a = ফাঁকা;
 	*np = n;
 	n = 0;
  out:
-	if (a != NULL) {
-		for (i = 0; i < n; i++)
-			free(a[i]);
-		free(a);
+	যদি (a != ফাঁকা) {
+		জন্য (i = 0; i < n; i++)
+			মুক্ত(a[i]);
+		মুক্ত(a);
 	}
 	sshbuf_free(b);
-	return r;
+	ফেরত r;
 }
 
-static int
-serialise_nullable_string(struct sshbuf *m, const char *s)
+স্থির পূর্ণসংখ্যা
+serialise_nullable_string(কাঠামো sshbuf *m, ধ্রুবক অক্ষর *s)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if ((r = sshbuf_put_u8(m, s == NULL)) != 0 ||
+	যদি ((r = sshbuf_put_u8(m, s == ফাঁকা)) != 0 ||
 	    (r = sshbuf_put_cstring(m, s)) != 0)
-		return r;
-	return 0;
+		ফেরত r;
+	ফেরত 0;
 }
 
-static int
-deserialise_nullable_string(struct sshbuf *m, char **sp)
+স্থির পূর্ণসংখ্যা
+deserialise_nullable_string(কাঠামো sshbuf *m, অক্ষর **sp)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 	u_char flag;
 
-	*sp = NULL;
-	if ((r = sshbuf_get_u8(m, &flag)) != 0 ||
-	    (r = sshbuf_get_cstring(m, flag ? NULL : sp, NULL)) != 0)
-		return r;
-	return 0;
+	*sp = ফাঁকা;
+	যদি ((r = sshbuf_get_u8(m, &flag)) != 0 ||
+	    (r = sshbuf_get_cstring(m, flag ? ফাঁকা : sp, ফাঁকা)) != 0)
+		ফেরত r;
+	ফেরত 0;
 }
 
-int
-sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m,
-    int untrusted)
+পূর্ণসংখ্যা
+sshauthopt_serialise(ধ্রুবক কাঠামো sshauthopt *opts, কাঠামো sshbuf *m,
+    পূর্ণসংখ্যা untrusted)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	পূর্ণসংখ্যা r = SSH_ERR_INTERNAL_ERROR;
 
 	/* Flag options */
-	if ((r = sshbuf_put_u8(m, opts->permit_port_forwarding_flag)) != 0 ||
+	যদি ((r = sshbuf_put_u8(m, opts->permit_port_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_agent_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_x11_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_pty_flag)) != 0 ||
@@ -809,60 +809,60 @@ sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m,
 	    (r = sshbuf_put_u8(m, opts->cert_authority)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->no_require_user_presence)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->require_verify)) != 0)
-		return r;
+		ফেরত r;
 
 	/* Simple integer options */
-	if ((r = sshbuf_put_u64(m, opts->valid_before)) != 0)
-		return r;
+	যদি ((r = sshbuf_put_u64(m, opts->valid_before)) != 0)
+		ফেরত r;
 
 	/* tunnel number can be negative to indicate "unset" */
-	if ((r = sshbuf_put_u8(m, opts->force_tun_device == -1)) != 0 ||
+	যদি ((r = sshbuf_put_u8(m, opts->force_tun_device == -1)) != 0 ||
 	    (r = sshbuf_put_u32(m, (opts->force_tun_device < 0) ?
 	    0 : (u_int)opts->force_tun_device)) != 0)
-		return r;
+		ফেরত r;
 
 	/* String options; these may be NULL */
-	if ((r = serialise_nullable_string(m,
+	যদি ((r = serialise_nullable_string(m,
 	    untrusted ? "yes" : opts->cert_principals)) != 0 ||
 	    (r = serialise_nullable_string(m,
 	    untrusted ? "true" : opts->force_command)) != 0 ||
 	    (r = serialise_nullable_string(m,
-	    untrusted ? NULL : opts->required_from_host_cert)) != 0 ||
+	    untrusted ? ফাঁকা : opts->required_from_host_cert)) != 0 ||
 	    (r = serialise_nullable_string(m,
-	    untrusted ? NULL : opts->required_from_host_keys)) != 0)
-		return r;
+	    untrusted ? ফাঁকা : opts->required_from_host_চাবিগুলি)) != 0)
+		ফেরত r;
 
 	/* Array options */
-	if ((r = serialise_array(m, opts->env,
+	যদি ((r = serialise_array(m, opts->env,
 	    untrusted ? 0 : opts->nenv)) != 0 ||
 	    (r = serialise_array(m, opts->permitopen,
 	    untrusted ? 0 : opts->npermitopen)) != 0 ||
 	    (r = serialise_array(m, opts->permitlisten,
 	    untrusted ? 0 : opts->npermitlisten)) != 0)
-		return r;
+		ফেরত r;
 
 	/* success */
-	return 0;
+	ফেরত 0;
 }
 
-int
-sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **optsp)
+পূর্ণসংখ্যা
+sshauthopt_deserialise(কাঠামো sshbuf *m, কাঠামো sshauthopt **optsp)
 {
-	struct sshauthopt *opts = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	কাঠামো sshauthopt *opts = ফাঁকা;
+	পূর্ণসংখ্যা r = SSH_ERR_INTERNAL_ERROR;
 	u_char f;
 	u_int tmp;
 
-	if ((opts = calloc(1, sizeof(*opts))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	যদি ((opts = calloc(1, আকার(*opts))) == ফাঁকা)
+		ফেরত SSH_ERR_ALLOC_FAIL;
 
 	/* Flag options */
 #define OPT_FLAG(x) \
-	do { \
-		if ((r = sshbuf_get_u8(m, &f)) != 0) \
-			goto out; \
+	করো { \
+		যদি ((r = sshbuf_get_u8(m, &f)) != 0) \
+			যাও out; \
 		opts->x = f; \
-	} while (0)
+	} যখন (0)
 	OPT_FLAG(permit_port_forwarding_flag);
 	OPT_FLAG(permit_agent_forwarding_flag);
 	OPT_FLAG(permit_x11_forwarding_flag);
@@ -875,37 +875,37 @@ sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **optsp)
 #undef OPT_FLAG
 
 	/* Simple integer options */
-	if ((r = sshbuf_get_u64(m, &opts->valid_before)) != 0)
-		goto out;
+	যদি ((r = sshbuf_get_u64(m, &opts->valid_before)) != 0)
+		যাও out;
 
 	/* tunnel number can be negative to indicate "unset" */
-	if ((r = sshbuf_get_u8(m, &f)) != 0 ||
+	যদি ((r = sshbuf_get_u8(m, &f)) != 0 ||
 	    (r = sshbuf_get_u32(m, &tmp)) != 0)
-		goto out;
-	opts->force_tun_device = f ? -1 : (int)tmp;
+		যাও out;
+	opts->force_tun_device = f ? -1 : (পূর্ণসংখ্যা)tmp;
 
 	/* String options may be NULL */
-	if ((r = deserialise_nullable_string(m, &opts->cert_principals)) != 0 ||
+	যদি ((r = deserialise_nullable_string(m, &opts->cert_principals)) != 0 ||
 	    (r = deserialise_nullable_string(m, &opts->force_command)) != 0 ||
 	    (r = deserialise_nullable_string(m,
 	    &opts->required_from_host_cert)) != 0 ||
 	    (r = deserialise_nullable_string(m,
-	    &opts->required_from_host_keys)) != 0)
-		goto out;
+	    &opts->required_from_host_চাবিগুলি)) != 0)
+		যাও out;
 
 	/* Array options */
-	if ((r = deserialise_array(m, &opts->env, &opts->nenv)) != 0 ||
+	যদি ((r = deserialise_array(m, &opts->env, &opts->nenv)) != 0 ||
 	    (r = deserialise_array(m,
 	    &opts->permitopen, &opts->npermitopen)) != 0 ||
 	    (r = deserialise_array(m,
 	    &opts->permitlisten, &opts->npermitlisten)) != 0)
-		goto out;
+		যাও out;
 
 	/* success */
 	r = 0;
 	*optsp = opts;
-	opts = NULL;
+	opts = ফাঁকা;
  out:
 	sshauthopt_free(opts);
-	return r;
+	ফেরত r;
 }

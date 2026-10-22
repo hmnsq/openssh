@@ -23,43 +23,43 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 #ifndef HAVE_PSELECT
 
-#include <sys/types.h>
-#include <sys/time.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <sys/time.h>
 #ifdef HAVE_SYS_SELECT_H
 # include <sys/select.h>
 #endif
 
-#include <errno.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <fcntl.h>
+#অন্তর্ভাব <signal.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
 
-#include "log.h"
+#অন্তর্ভাব "log.h"
 
 #ifndef HAVE_SIGHANDLER_T
-typedef void (*sighandler_t)(int);
+প্রকারলেখ শূন্য (*sighandler_t)(পূর্ণসংখ্যা);
 #endif
 
-static sighandler_t saved_sighandler[_NSIG];
-static int notify_pipe[2];	/* 0 = read end, 1 = write end */
+স্থির sighandler_t saved_sighandler[_NSIG];
+স্থির পূর্ণসংখ্যা notify_pipe[2];	/* 0 = read end, 1 = write end */
 
 /*
  * Because the debugging for this is so noisy, we only output on the first
  * call, and suppress it thereafter.
  */
-static int suppress_debug;
+স্থির পূর্ণসংখ্যা suppress_debug;
 
-static void
-pselect_set_nonblock(int fd)
+স্থির শূন্য
+pselect_set_nonblock(পূর্ণসংখ্যা fd)
 {
-	int val;
+	পূর্ণসংখ্যা val;
 
-	if ((val = fcntl(fd, F_GETFL)) == -1 ||
+	যদি ((val = fcntl(fd, F_GETFL)) == -1 ||
 	     fcntl(fd, F_SETFL, val|O_NONBLOCK) == -1)
 		error_f("fcntl: %s", strerror(errno));
 }
@@ -68,54 +68,54 @@ pselect_set_nonblock(int fd)
  * we write to this pipe if a SIGCHLD is caught in order to avoid
  * the race between select() and child_terminated.
  */
-static int
-pselect_notify_setup(void)
+স্থির পূর্ণসংখ্যা
+pselect_notify_setup(শূন্য)
 {
-	if (pipe(notify_pipe) == -1) {
+	যদি (pipe(notify_pipe) == -1) {
 		error("pipe(notify_pipe) failed %s", strerror(errno));
 		notify_pipe[0] = notify_pipe[1] = -1;
-		return -1;
+		ফেরত -1;
 	}
 	pselect_set_nonblock(notify_pipe[0]);
 	pselect_set_nonblock(notify_pipe[1]);
-	if (!suppress_debug)
+	যদি (!suppress_debug)
 		debug3_f("pipe0 %d pipe1 %d", notify_pipe[0], notify_pipe[1]);
-	return 0;
+	ফেরত 0;
 }
-static void
-pselect_notify_parent(void)
+স্থির শূন্য
+pselect_notify_parent(শূন্য)
 {
-	if (notify_pipe[1] != -1)
-		(void)write(notify_pipe[1], "", 1);
+	যদি (notify_pipe[1] != -1)
+		(শূন্য)লিখ(notify_pipe[1], "", 1);
 }
-static void
+স্থির শূন্য
 pselect_notify_prepare(fd_set *readset)
 {
-	if (notify_pipe[0] != -1)
+	যদি (notify_pipe[0] != -1)
 		FD_SET(notify_pipe[0], readset);
 }
-static void
+স্থির শূন্য
 pselect_notify_done(fd_set *readset)
 {
-	char c;
+	অক্ষর c;
 
-	if (notify_pipe[0] != -1 && FD_ISSET(notify_pipe[0], readset)) {
-		while (read(notify_pipe[0], &c, 1) != -1)
+	যদি (notify_pipe[0] != -1 && FD_ISSET(notify_pipe[0], readset)) {
+		যখন (পঠ(notify_pipe[0], &c, 1) != -1)
 			debug2_f("reading");
 		FD_CLR(notify_pipe[0], readset);
 	}
-	(void)close(notify_pipe[0]);
-	(void)close(notify_pipe[1]);
+	(শূন্য)close(notify_pipe[0]);
+	(শূন্য)close(notify_pipe[1]);
 }
 
 /*ARGSUSED*/
-static void
-pselect_sig_handler(int sig)
+স্থির শূন্য
+pselect_sig_handler(পূর্ণসংখ্যা sig)
 {
-	int save_errno = errno;
+	পূর্ণসংখ্যা save_errno = errno;
 
 	pselect_notify_parent();
-	if (saved_sighandler[sig] != NULL)
+	যদি (saved_sighandler[sig] != ফাঁকা)
 		(*saved_sighandler[sig])(sig);  /* call original handler */
 	errno = save_errno;
 }
@@ -124,34 +124,34 @@ pselect_sig_handler(int sig)
  * A minimal implementation of pselect(2), built on top of select(2).
  */
 
-int
-pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
-    const struct timespec *timeout, const sigset_t *mask)
+পূর্ণসংখ্যা
+pselect(পূর্ণসংখ্যা nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
+    ধ্রুবক কাঠামো timespec *timeout, ধ্রুবক sigset_t *mask)
 {
-	int ret, sig, saved_errno, unmasked = 0;
+	পূর্ণসংখ্যা ret, sig, saved_errno, unmasked = 0;
 	sigset_t osig;
-	struct sigaction sa, osa;
-	struct timeval tv, *tvp = NULL;
+	কাঠামো sigaction sa, osa;
+	কাঠামো timeval tv, *tvp = ফাঁকা;
 
-	if (timeout != NULL) {
+	যদি (timeout != ফাঁকা) {
 		tv.tv_sec = timeout->tv_sec;
 		tv.tv_usec = timeout->tv_nsec / 1000;
 		tvp = &tv;
 	}
-	if (mask == NULL)  /* no signal mask, just call select */
-		return select(nfds, readfds, writefds, exceptfds, tvp);
+	যদি (mask == ফাঁকা)  /* no signal mask, just call select */
+		ফেরত select(nfds, readfds, writefds, exceptfds, tvp);
 
 	/* For each signal unmasked, save old handler and install ours. */
-	for (sig = 0; sig < _NSIG; sig++) {
-		saved_sighandler[sig] = NULL;
-		if (sig == SIGKILL || sig == SIGSTOP || sigismember(mask, sig))
-			continue;
-		if (sigaction(sig, NULL, &sa) == 0 &&
+	জন্য (sig = 0; sig < _NSIG; sig++) {
+		saved_sighandler[sig] = ফাঁকা;
+		যদি (sig == SIGKILL || sig == SIGSTOP || sigismember(mask, sig))
+			চালু;
+		যদি (sigaction(sig, ফাঁকা, &sa) == 0 &&
 		    sa.sa_handler != SIG_IGN && sa.sa_handler != SIG_DFL) {
 			unmasked = 1;
 			sa.sa_handler = pselect_sig_handler;
-			if (sigaction(sig, &sa, &osa) == 0) {
-				if (!suppress_debug)
+			যদি (sigaction(sig, &sa, &osa) == 0) {
+				যদি (!suppress_debug)
 					debug3_f("installed signal handler for"
 					    " %s, previous 0x%p",
 					    strsignal(sig), osa.sa_handler);
@@ -159,10 +159,10 @@ pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
 			}
 		}
 	}
-	if (unmasked) {
-		if ((ret = pselect_notify_setup()) == -1) {
+	যদি (unmasked) {
+		যদি ((ret = pselect_notify_setup()) == -1) {
 			saved_errno = ENOMEM;
-			goto out;
+			যাও out;
 		}
 		pselect_notify_prepare(readfds);
 		nfds = MAX(nfds, notify_pipe[0] + 1);
@@ -172,23 +172,23 @@ pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
 	sigprocmask(SIG_SETMASK, mask, &osig);
 	ret = select(nfds, readfds, writefds, exceptfds, tvp);
 	saved_errno = errno;
-	sigprocmask(SIG_SETMASK, &osig, NULL);
+	sigprocmask(SIG_SETMASK, &osig, ফাঁকা);
 
-	if (unmasked)
+	যদি (unmasked)
 		pselect_notify_done(readfds);
 
  out:
 	/* Restore signal handlers. */
-	for (sig = 0; sig < _NSIG; sig++) {
-		if (saved_sighandler[sig] == NULL)
-			continue;
-		if (sigaction(sig, NULL, &sa) == 0) {
+	জন্য (sig = 0; sig < _NSIG; sig++) {
+		যদি (saved_sighandler[sig] == ফাঁকা)
+			চালু;
+		যদি (sigaction(sig, ফাঁকা, &sa) == 0) {
 			sa.sa_handler = saved_sighandler[sig];
-			if (sigaction(sig, &sa, NULL) == 0) {
-				if (!suppress_debug)
+			যদি (sigaction(sig, &sa, ফাঁকা) == 0) {
+				যদি (!suppress_debug)
 					debug3_f("restored signal handler for "
 					    "%s", strsignal(sig));
-			} else {
+			} অন্যথা {
 				error_f("failed to restore signal handler for "
 				    "%s: %s", strsignal(sig), strerror(errno));
 			}
@@ -196,6 +196,6 @@ pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
 	}
 	suppress_debug = 1;
 	errno = saved_errno;
-	return ret;
+	ফেরত ret;
 }
 #endif

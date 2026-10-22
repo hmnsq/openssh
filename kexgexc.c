@@ -24,42 +24,42 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
 #ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#অন্তর্ভাব "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#অন্তর্ভাব <openssl/bn.h>
+#অন্তর্ভাব <openssl/dh.h>
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <signal.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <signal.h>
 
-#include "sshkey.h"
-#include "digest.h"
-#include "kex.h"
-#include "log.h"
-#include "packet.h"
-#include "dh.h"
-#include "ssh2.h"
-#include "compat.h"
-#include "dispatch.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "misc.h"
+#অন্তর্ভাব "sshkey.h"
+#অন্তর্ভাব "digest.h"
+#অন্তর্ভাব "kex.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "packet.h"
+#অন্তর্ভাব "dh.h"
+#অন্তর্ভাব "ssh2.h"
+#অন্তর্ভাব "compat.h"
+#অন্তর্ভাব "dispatch.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "misc.h"
 
-static int input_kex_dh_gex_group(int, uint32_t, struct ssh *);
-static int input_kex_dh_gex_reply(int, uint32_t, struct ssh *);
+স্থির পূর্ণসংখ্যা প্রবেশ_kex_dh_gex_group(পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
+স্থির পূর্ণসংখ্যা প্রবেশ_kex_dh_gex_reply(পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
 
-int
-kexgex_client(struct ssh *ssh)
+পূর্ণসংখ্যা
+kexgex_client(কাঠামো ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r;
+	কাঠামো kex *kex = ssh->kex;
+	পূর্ণসংখ্যা r;
 	u_int nbits;
 
 	nbits = dh_estimate(kex->dh_need * 8);
@@ -67,15 +67,15 @@ kexgex_client(struct ssh *ssh)
 	kex->min = DH_GRP_MIN;
 	kex->max = DH_GRP_MAX;
 	kex->nbits = nbits;
-	if (ssh->compat & SSH_BUG_DHGEX_LARGE)
+	যদি (ssh->compat & SSH_BUG_DHGEX_LARGE)
 		kex->nbits = MINIMUM(kex->nbits, 4096);
 	/* New GEX request */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_REQUEST)) != 0 ||
+	যদি ((r = sshpkt_start(ssh, SSH2_বার্তা_KEX_DH_GEX_REQUEST)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, kex->min)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, kex->nbits)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, kex->max)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		goto out;
+		যাও out;
 	debug("SSH2_MSG_KEX_DH_GEX_REQUEST(%u<%u<%u) sent",
 	    kex->min, kex->nbits, kex->max);
 #ifdef DEBUG_KEXDH
@@ -83,159 +83,159 @@ kexgex_client(struct ssh *ssh)
 	    kex->min, kex->nbits, kex->max);
 #endif
 	debug("expecting SSH2_MSG_KEX_DH_GEX_GROUP");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_GROUP,
-	    &input_kex_dh_gex_group);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_KEX_DH_GEX_GROUP,
+	    &প্রবেশ_kex_dh_gex_group);
 	r = 0;
  out:
-	return r;
+	ফেরত r;
 }
 
-static int
-input_kex_dh_gex_group(int type, uint32_t seq, struct ssh *ssh)
+স্থির পূর্ণসংখ্যা
+প্রবেশ_kex_dh_gex_group(পূর্ণসংখ্যা type, uint32_t seq, কাঠামো ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	BIGNUM *p = NULL, *g = NULL;
-	const BIGNUM *pub_key;
-	int r, bits;
+	কাঠামো kex *kex = ssh->kex;
+	BIGNUM *p = ফাঁকা, *g = ফাঁকা;
+	ধ্রুবক BIGNUM *pub_চাবি;
+	পূর্ণসংখ্যা r, bits;
 
 	debug("SSH2_MSG_KEX_DH_GEX_GROUP received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_GROUP, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_KEX_DH_GEX_GROUP, &kex_protocol_error);
 
-	if ((r = sshpkt_get_bignum2(ssh, &p)) != 0 ||
+	যদি ((r = sshpkt_get_bignum2(ssh, &p)) != 0 ||
 	    (r = sshpkt_get_bignum2(ssh, &g)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
-	if ((bits = BN_num_bits(p)) < 0 ||
+		যাও out;
+	যদি ((bits = BN_অঙ্ক_bits(p)) < 0 ||
 	    (u_int)bits < kex->min || (u_int)bits > kex->max) {
 		r = SSH_ERR_DH_GEX_OUT_OF_RANGE;
-		goto out;
+		যাও out;
 	}
-	if ((kex->dh = dh_new_group(g, p)) == NULL) {
+	যদি ((kex->dh = dh_new_group(g, p)) == ফাঁকা) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	p = g = NULL; /* belong to kex->dh now */
+	p = g = ফাঁকা; /* belong to kex->dh now */
 
 	/* generate and send 'e', client DH public key */
-	if ((r = dh_gen_key(kex->dh, kex->we_need * 8)) != 0)
-		goto out;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_INIT)) != 0 ||
-	    (r = sshpkt_put_bignum2(ssh, pub_key)) != 0 ||
+	যদি ((r = dh_gen_চাবি(kex->dh, kex->we_need * 8)) != 0)
+		যাও out;
+	DH_get0_চাবি(kex->dh, &pub_চাবি, ফাঁকা);
+	যদি ((r = sshpkt_start(ssh, SSH2_বার্তা_KEX_DH_GEX_INIT)) != 0 ||
+	    (r = sshpkt_put_bignum2(ssh, pub_চাবি)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		goto out;
+		যাও out;
 	debug("SSH2_MSG_KEX_DH_GEX_INIT sent");
 #ifdef DEBUG_KEXDH
 	DHparams_print_fp(stderr, kex->dh);
 	fprintf(stderr, "pub= ");
-	BN_print_fp(stderr, pub_key);
+	BN_print_fp(stderr, pub_চাবি);
 	fprintf(stderr, "\n");
 #endif
 	debug("expecting SSH2_MSG_KEX_DH_GEX_REPLY");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_REPLY, &input_kex_dh_gex_reply);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_KEX_DH_GEX_REPLY, &প্রবেশ_kex_dh_gex_reply);
 	r = 0;
 out:
 	BN_clear_free(p);
 	BN_clear_free(g);
-	return r;
+	ফেরত r;
 }
 
-static int
-input_kex_dh_gex_reply(int type, uint32_t seq, struct ssh *ssh)
+স্থির পূর্ণসংখ্যা
+প্রবেশ_kex_dh_gex_reply(পূর্ণসংখ্যা type, uint32_t seq, কাঠামো ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	BIGNUM *dh_server_pub = NULL;
-	const BIGNUM *pub_key, *dh_p, *dh_g;
-	struct sshbuf *shared_secret = NULL;
-	struct sshbuf *tmp = NULL, *server_host_key_blob = NULL;
-	struct sshkey *server_host_key = NULL;
-	u_char *signature = NULL;
-	u_char hash[SSH_DIGEST_MAX_LENGTH];
-	size_t slen, hashlen;
-	int r;
+	কাঠামো kex *kex = ssh->kex;
+	BIGNUM *dh_server_pub = ফাঁকা;
+	ধ্রুবক BIGNUM *pub_চাবি, *dh_p, *dh_g;
+	কাঠামো sshbuf *shared_secret = ফাঁকা;
+	কাঠামো sshbuf *tmp = ফাঁকা, *server_host_চাবি_blob = ফাঁকা;
+	কাঠামো sshkey *server_host_চাবি = ফাঁকা;
+	u_char *signature = ফাঁকা;
+	u_char hash[SSH_DIGEST_MAX_দৈর্ঘ্য];
+	আকার_t slen, hashlen;
+	পূর্ণসংখ্যা r;
 
 	debug("SSH2_MSG_KEX_DH_GEX_REPLY received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_REPLY, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_KEX_DH_GEX_REPLY, &kex_protocol_error);
 
 	/* key, cert */
-	if ((r = sshpkt_getb_froms(ssh, &server_host_key_blob)) != 0)
-		goto out;
+	যদি ((r = sshpkt_getb_froms(ssh, &server_host_চাবি_blob)) != 0)
+		যাও out;
 	/* sshkey_fromb() consumes its buffer, so make a copy */
-	if ((tmp = sshbuf_fromb(server_host_key_blob)) == NULL) {
+	যদি ((tmp = sshbuf_fromb(server_host_চাবি_blob)) == ফাঁকা) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if ((r = sshkey_fromb_allowlist(tmp, &server_host_key,
-	    kex->hostkey_alg, NULL)) != 0 ||
-	    (r = kex_verify_host_key(ssh, server_host_key)) != 0)
-		goto out;
+	যদি ((r = sshkey_fromb_allowlist(tmp, &server_host_চাবি,
+	    kex->hostkey_alg, ফাঁকা)) != 0 ||
+	    (r = kex_verify_host_চাবি(ssh, server_host_চাবি)) != 0)
+		যাও out;
 	/* DH parameter f, server public DH key, signed H */
-	if ((r = sshpkt_get_bignum2(ssh, &dh_server_pub)) != 0 ||
+	যদি ((r = sshpkt_get_bignum2(ssh, &dh_server_pub)) != 0 ||
 	    (r = sshpkt_get_string(ssh, &signature, &slen)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
-	if ((shared_secret = sshbuf_new()) == NULL) {
+		যাও out;
+	যদি ((shared_secret = sshbuf_new()) == ফাঁকা) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		যাও out;
 	}
-	if ((r = kex_dh_compute_key(kex, dh_server_pub, shared_secret)) != 0)
-		goto out;
-	if (ssh->compat & SSH_OLD_DHGEX)
+	যদি ((r = kex_dh_compute_চাবি(kex, dh_server_pub, shared_secret)) != 0)
+		যাও out;
+	যদি (ssh->compat & SSH_OLD_DHGEX)
 		kex->min = kex->max = -1;
 
 	/* calc and verify H */
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	DH_get0_pqg(kex->dh, &dh_p, NULL, &dh_g);
-	hashlen = sizeof(hash);
-	if ((r = kexgex_hash(
+	DH_get0_চাবি(kex->dh, &pub_চাবি, ফাঁকা);
+	DH_get0_pqg(kex->dh, &dh_p, ফাঁকা, &dh_g);
+	hashlen = আকার(hash);
+	যদি ((r = kexgex_hash(
 	    kex->hash_alg,
 	    kex->client_version,
 	    kex->server_version,
 	    kex->my,
 	    kex->peer,
-	    server_host_key_blob,
+	    server_host_চাবি_blob,
 	    kex->min, kex->nbits, kex->max,
 	    dh_p, dh_g,
-	    pub_key,
+	    pub_চাবি,
 	    dh_server_pub,
 	    sshbuf_ptr(shared_secret), sshbuf_len(shared_secret),
 	    hash, &hashlen)) != 0)
-		goto out;
+		যাও out;
 
-	if ((r = sshkey_verify(server_host_key, signature, slen, hash,
-	    hashlen, kex->hostkey_alg, ssh->compat, NULL)) != 0)
-		goto out;
+	যদি ((r = sshkey_verify(server_host_চাবি, signature, slen, hash,
+	    hashlen, kex->hostkey_alg, ssh->compat, ফাঁকা)) != 0)
+		যাও out;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	যদি ((r = kex_derive_চাবিগুলি(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
-		goto out;
+		যাও out;
 
 	/* save initial signature and hostkey */
-	if ((kex->flags & KEX_INITIAL) != 0) {
-		if (kex->initial_hostkey != NULL || kex->initial_sig != NULL) {
+	যদি ((kex->flags & KEX_INITIAL) != 0) {
+		যদি (kex->initial_hostkey != ফাঁকা || kex->initial_sig != ফাঁকা) {
 			r = SSH_ERR_INTERNAL_ERROR;
-			goto out;
+			যাও out;
 		}
-		if ((kex->initial_sig = sshbuf_new()) == NULL) {
+		যদি ((kex->initial_sig = sshbuf_new()) == ফাঁকা) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			যাও out;
 		}
-		if ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
-			goto out;
-		kex->initial_hostkey = server_host_key;
-		server_host_key = NULL;
+		যদি ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
+			যাও out;
+		kex->initial_hostkey = server_host_চাবি;
+		server_host_চাবি = ফাঁকা;
 	}
 	/* success */
  out:
-	explicit_bzero(hash, sizeof(hash));
+	explicit_bzero(hash, আকার(hash));
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = ফাঁকা;
 	BN_clear_free(dh_server_pub);
 	sshbuf_free(shared_secret);
-	sshkey_free(server_host_key);
+	sshkey_free(server_host_চাবি);
 	sshbuf_free(tmp);
-	sshbuf_free(server_host_key_blob);
-	free(signature);
-	return r;
+	sshbuf_free(server_host_চাবি_blob);
+	মুক্ত(signature);
+	ফেরত r;
 }
 #endif /* WITH_OPENSSL */

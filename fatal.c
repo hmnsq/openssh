@@ -23,24 +23,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include <stdarg.h>
+#অন্তর্ভাব <stdarg.h>
 
-#include "log.h"
+#অন্তর্ভাব "log.h"
 
 /* Fatal messages.  This function never returns. */
 
-void
-sshfatal(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+শূন্য
+sshfatal(ধ্রুবক অক্ষর *file, ধ্রুবক অক্ষর *func, পূর্ণসংখ্যা সারি, পূর্ণসংখ্যা showfunc,
+    LogLevel level, ধ্রুবক অক্ষর *suffix, ধ্রুবক অক্ষর *fmt, ...)
 {
 	va_list args;
 
 	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
+	sshlogv(file, func, সারি, showfunc, level, suffix, fmt, args);
 	va_end(args);
 	cleanup_exit(255);
 }

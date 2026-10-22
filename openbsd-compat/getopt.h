@@ -34,9 +34,9 @@
 #define _GETOPT_H_
 
 #ifndef __THROW
-# if defined __cplusplus
+# যদি defined __cplusplus
 #  define __THROW throw()
-# else
+# অন্যথা
 #  define __THROW
 # endif
 #endif
@@ -48,38 +48,38 @@
 #define required_argument  1
 #define optional_argument  2
 
-#if 0
-struct option {
+#যদি 0
+কাঠামো option {
 	/* name of long option */
-	const char *name;
+	ধ্রুবক অক্ষর *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	পূর্ণসংখ্যা has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	পূর্ণসংখ্যা *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	পূর্ণসংখ্যা val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
+পূর্ণসংখ্যা	 getopt_long(পূর্ণসংখ্যা, অক্ষর * ধ্রুবক *, ধ্রুবক অক্ষর *,
+	    ধ্রুবক কাঠামো option *, পূর্ণসংখ্যা *);
+পূর্ণসংখ্যা	 getopt_long_only(পূর্ণসংখ্যা, অক্ষর * ধ্রুবক *, ধ্রুবক অক্ষর *,
+	    ধ্রুবক কাঠামো option *, পূর্ণসংখ্যা *);
 #endif
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+পূর্ণসংখ্যা	 getopt(পূর্ণসংখ্যা, অক্ষর * ধ্রুবক *, ধ্রুবক অক্ষর *) __THROW;
+পূর্ণসংখ্যা	 getsubopt(অক্ষর **, অক্ষর * ধ্রুবক *, অক্ষর **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
+বাহ্যিক   অক্ষর *optarg;                  /* getopt(3) external variables */
+বাহ্যিক   পূর্ণসংখ্যা opterr;
+বাহ্যিক   পূর্ণসংখ্যা optind;
+বাহ্যিক   পূর্ণসংখ্যা optopt;
+বাহ্যিক   পূর্ণসংখ্যা optreset;
+বাহ্যিক   অক্ষর *suboptarg;               /* getsubopt(3) external variable */
 #endif
  
 #endif /* !_GETOPT_H_ */

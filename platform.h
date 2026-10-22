@@ -14,27 +14,27 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include <pwd.h>
+#অন্তর্ভাব <pwd.h>
 
-void platform_pre_listen(void);
-void platform_pre_fork(void);
-void platform_pre_restart(void);
-void platform_post_listen(void);
-void platform_post_fork_parent(pid_t child_pid);
-void platform_post_fork_child(void);
-void platform_pre_session_start(void);
-int  platform_privileged_uidswap(void);
-void platform_setusercontext(struct passwd *);
-void platform_setusercontext_post_groups(struct passwd *);
-char *platform_get_krb5_client(const char *);
-char *platform_krb5_get_principal_name(const char *);
-int platform_locked_account(struct passwd *);
-int platform_sys_dir_uid(uid_t);
-void platform_disable_tracing(int);
+শূন্য platform_pre_listen(শূন্য);
+শূন্য platform_pre_fork(শূন্য);
+শূন্য platform_pre_restart(শূন্য);
+শূন্য platform_post_listen(শূন্য);
+শূন্য platform_post_fork_parent(pid_t child_pid);
+শূন্য platform_post_fork_child(শূন্য);
+শূন্য platform_pre_session_start(শূন্য);
+পূর্ণসংখ্যা  platform_privileged_uidswap(শূন্য);
+শূন্য platform_setusercontext(কাঠামো passwd *);
+শূন্য platform_setusercontext_post_groups(কাঠামো passwd *);
+অক্ষর *platform_get_krb5_client(ধ্রুবক অক্ষর *);
+অক্ষর *platform_krb5_get_principal_name(ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা platform_locked_account(কাঠামো passwd *);
+পূর্ণসংখ্যা platform_sys_dir_uid(uid_t);
+শূন্য platform_disable_tracing(পূর্ণসংখ্যা);
 
 /* in platform-pledge.c */
-void platform_pledge_agent(void);
-void platform_pledge_sftp_server(void);
-void platform_pledge_mux(void);
+শূন্য platform_pledge_agent(শূন্য);
+শূন্য platform_pledge_sftp_server(শূন্য);
+শূন্য platform_pledge_mux(শূন্য);

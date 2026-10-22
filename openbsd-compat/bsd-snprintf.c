@@ -92,31 +92,31 @@
  *
  **************************************************************/
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#if defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
+#যদি defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
 # undef HAVE_SNPRINTF
 # undef HAVE_VSNPRINTF
 #endif
 
-#if !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
+#যদি !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
 
-#include <ctype.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
-#include <errno.h>
+#অন্তর্ভাব <ctype.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <limits.h>
+#অন্তর্ভাব <errno.h>
 
 #ifdef HAVE_LONG_DOUBLE
-# define LDOUBLE long double
-#else
-# define LDOUBLE double
+# define LDOUBLE long দ্বিগুণ
+#অন্যথা
+# define LDOUBLE দ্বিগুণ
 #endif
 
 #ifdef HAVE_LONG_LONG
 # define LLONG long long
-#else
+#অন্যথা
 # define LLONG long
 #endif
 
@@ -138,7 +138,7 @@
 #define DP_F_MINUS	(1 << 0)
 #define DP_F_PLUS	(1 << 1)
 #define DP_F_SPACE	(1 << 2)
-#define DP_F_NUM	(1 << 3)
+#define DP_F_অঙ্ক	(1 << 3)
 #define DP_F_ZERO	(1 << 4)
 #define DP_F_UP		(1 << 5)
 #define DP_F_UNSIGNED	(1 << 6)
@@ -148,7 +148,7 @@
 #define DP_C_LONG    2
 #define DP_C_LDOUBLE 3
 #define DP_C_LLONG   4
-#define DP_C_SIZE    5
+#define DP_C_আকার    5
 #define DP_C_INTMAX  6
 
 #define char_to_int(p) ((p)- '0')
@@ -157,38 +157,38 @@
 #endif
 
 #define DOPR_OUTCH(buf, pos, buflen, thechar) \
-	do { \
-		if (pos + 1 >= INT_MAX) { \
+	করো { \
+		যদি (pos + 1 >= INT_MAX) { \
 			errno = ERANGE; \
-			return -1; \
+			ফেরত -1; \
 		} \
-		if (pos < buflen) \
+		যদি (pos < buflen) \
 			buf[pos] = thechar; \
 		(pos)++; \
-	} while (0)
+	} যখন (0)
 
-static int dopr(char *buffer, size_t maxlen, const char *format,
+স্থির পূর্ণসংখ্যা dopr(অক্ষর *বাফার, আকার_t maxlen, ধ্রুবক অক্ষর *format,
     va_list args_in);
-static int fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max);
-static int fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags);
-static int fmtfp(char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags);
+স্থির পূর্ণসংখ্যা fmtstr(অক্ষর *বাফার, আকার_t *currlen, আকার_t maxlen,
+    অক্ষর *মান, পূর্ণসংখ্যা flags, পূর্ণসংখ্যা min, পূর্ণসংখ্যা max);
+স্থির পূর্ণসংখ্যা fmtint(অক্ষর *বাফার, আকার_t *currlen, আকার_t maxlen,
+    intmax_t মান, পূর্ণসংখ্যা base, পূর্ণসংখ্যা min, পূর্ণসংখ্যা max, পূর্ণসংখ্যা flags);
+স্থির পূর্ণসংখ্যা fmtfp(অক্ষর *বাফার, আকার_t *currlen, আকার_t maxlen,
+    LDOUBLE fvalue, পূর্ণসংখ্যা min, পূর্ণসংখ্যা max, পূর্ণসংখ্যা flags);
 
-static int
-dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
+স্থির পূর্ণসংখ্যা
+dopr(অক্ষর *বাফার, আকার_t maxlen, ধ্রুবক অক্ষর *format, va_list args_in)
 {
-	char ch;
-	intmax_t value;
+	অক্ষর ch;
+	intmax_t মান;
 	LDOUBLE fvalue;
-	char *strvalue;
-	int min;
-	int max;
-	int state;
-	int flags;
-	int cflags;
-	size_t currlen;
+	অক্ষর *strvalue;
+	পূর্ণসংখ্যা min;
+	পূর্ণসংখ্যা max;
+	পূর্ণসংখ্যা state;
+	পূর্ণসংখ্যা flags;
+	পূর্ণসংখ্যা cflags;
+	আকার_t currlen;
 	va_list args;
 
 	VA_COPY(args, args_in);
@@ -198,395 +198,395 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 	max = -1;
 	ch = *format++;
 
-	while (state != DP_S_DONE) {
-		if (ch == '\0')
+	যখন (state != DP_S_DONE) {
+		যদি (ch == '\0')
 			state = DP_S_DONE;
 
-		switch(state) {
-		case DP_S_DEFAULT:
-			if (ch == '%')
+		নির্বাচন(state) {
+		ক্ষেত্র DP_S_DEFAULT:
+			যদি (ch == '%')
 				state = DP_S_FLAGS;
-			else
-				DOPR_OUTCH(buffer, currlen, maxlen, ch);
+			অন্যথা
+				DOPR_OUTCH(বাফার, currlen, maxlen, ch);
 			ch = *format++;
-			break;
-		case DP_S_FLAGS:
-			switch (ch) {
-			case '-':
+			বিরতি;
+		ক্ষেত্র DP_S_FLAGS:
+			নির্বাচন (ch) {
+			ক্ষেত্র '-':
 				flags |= DP_F_MINUS;
 				ch = *format++;
-				break;
-			case '+':
+				বিরতি;
+			ক্ষেত্র '+':
 				flags |= DP_F_PLUS;
 				ch = *format++;
-				break;
-			case ' ':
+				বিরতি;
+			ক্ষেত্র ' ':
 				flags |= DP_F_SPACE;
 				ch = *format++;
-				break;
-			case '#':
-				flags |= DP_F_NUM;
+				বিরতি;
+			ক্ষেত্র '#':
+				flags |= DP_F_অঙ্ক;
 				ch = *format++;
-				break;
-			case '0':
+				বিরতি;
+			ক্ষেত্র '0':
 				flags |= DP_F_ZERO;
 				ch = *format++;
-				break;
-			default:
+				বিরতি;
+			পূর্বনির্ধারিত:
 				state = DP_S_MIN;
-				break;
+				বিরতি;
 			}
-			break;
-		case DP_S_MIN:
-			if (isdigit((unsigned char)ch)) {
+			বিরতি;
+		ক্ষেত্র DP_S_MIN:
+			যদি (isdigit((unsigned অক্ষর)ch)) {
 				min = 10*min + char_to_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				min = va_arg (args, int);
+			} অন্যথা যদি (ch == '*') {
+				min = va_arg (args, পূর্ণসংখ্যা);
 				ch = *format++;
 				state = DP_S_DOT;
-			} else {
+			} অন্যথা {
 				state = DP_S_DOT;
 			}
-			break;
-		case DP_S_DOT:
-			if (ch == '.') {
+			বিরতি;
+		ক্ষেত্র DP_S_DOT:
+			যদি (ch == '.') {
 				state = DP_S_MAX;
 				ch = *format++;
-			} else {
+			} অন্যথা {
 				state = DP_S_MOD;
 			}
-			break;
-		case DP_S_MAX:
-			if (isdigit((unsigned char)ch)) {
-				if (max < 0)
+			বিরতি;
+		ক্ষেত্র DP_S_MAX:
+			যদি (isdigit((unsigned অক্ষর)ch)) {
+				যদি (max < 0)
 					max = 0;
 				max = 10*max + char_to_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				max = va_arg (args, int);
+			} অন্যথা যদি (ch == '*') {
+				max = va_arg (args, পূর্ণসংখ্যা);
 				ch = *format++;
 				state = DP_S_MOD;
-			} else {
+			} অন্যথা {
 				state = DP_S_MOD;
 			}
-			break;
-		case DP_S_MOD:
-			switch (ch) {
-			case 'h':
+			বিরতি;
+		ক্ষেত্র DP_S_MOD:
+			নির্বাচন (ch) {
+			ক্ষেত্র 'h':
 				cflags = DP_C_SHORT;
 				ch = *format++;
-				break;
-			case 'j':
+				বিরতি;
+			ক্ষেত্র 'j':
 				cflags = DP_C_INTMAX;
 				ch = *format++;
-				break;
-			case 'l':
+				বিরতি;
+			ক্ষেত্র 'l':
 				cflags = DP_C_LONG;
 				ch = *format++;
-				if (ch == 'l') {	/* It's a long long */
+				যদি (ch == 'l') {	/* It's a long long */
 					cflags = DP_C_LLONG;
 					ch = *format++;
 				}
-				break;
-			case 'L':
+				বিরতি;
+			ক্ষেত্র 'L':
 				cflags = DP_C_LDOUBLE;
 				ch = *format++;
-				break;
-			case 'z':
-				cflags = DP_C_SIZE;
+				বিরতি;
+			ক্ষেত্র 'z':
+				cflags = DP_C_আকার;
 				ch = *format++;
-				break;
-			default:
-				break;
+				বিরতি;
+			পূর্বনির্ধারিত:
+				বিরতি;
 			}
 			state = DP_S_CONV;
-			break;
-		case DP_S_CONV:
-			switch (ch) {
-			case 'd':
-			case 'i':
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, int);
-				else if (cflags == DP_C_LONG)
-					value = va_arg (args, long int);
-				else if (cflags == DP_C_LLONG)
-					value = va_arg (args, LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, ssize_t);
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, intmax_t);
-				else
-					value = va_arg (args, int);
-				if (fmtint(buffer, &currlen, maxlen,
-				    value, 10, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'o':
+			বিরতি;
+		ক্ষেত্র DP_S_CONV:
+			নির্বাচন (ch) {
+			ক্ষেত্র 'd':
+			ক্ষেত্র 'i':
+				যদি (cflags == DP_C_SHORT)
+					মান = va_arg (args, পূর্ণসংখ্যা);
+				অন্যথা যদি (cflags == DP_C_LONG)
+					মান = va_arg (args, long পূর্ণসংখ্যা);
+				অন্যথা যদি (cflags == DP_C_LLONG)
+					মান = va_arg (args, LLONG);
+				অন্যথা যদি (cflags == DP_C_আকার)
+					মান = va_arg (args, ssize_t);
+				অন্যথা যদি (cflags == DP_C_INTMAX)
+					মান = va_arg (args, intmax_t);
+				অন্যথা
+					মান = va_arg (args, পূর্ণসংখ্যা);
+				যদি (fmtint(বাফার, &currlen, maxlen,
+				    মান, 10, min, max, flags) == -1)
+					যাও fail;
+				বিরতি;
+			ক্ষেত্র 'o':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (long)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
+				যদি (cflags == DP_C_SHORT)
+					মান = va_arg (args, unsigned পূর্ণসংখ্যা);
+				অন্যথা যদি (cflags == DP_C_LONG)
+					মান = (long)va_arg (args, unsigned long পূর্ণসংখ্যা);
+				অন্যথা যদি (cflags == DP_C_LLONG)
+					মান = (long)va_arg (args, unsigned LLONG);
+				অন্যথা যদি (cflags == DP_C_আকার)
+					মান = va_arg (args, আকার_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
+				অন্যথা যদি (cflags == DP_C_INTMAX)
+					মান = va_arg (args, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				অন্যথা
+					মান = (long)va_arg (args, unsigned পূর্ণসংখ্যা);
+				যদি (fmtint(বাফার, &currlen, maxlen, মান,
 				    8, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'u':
+					যাও fail;
+				বিরতি;
+			ক্ষেত্র 'u':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
+				যদি (cflags == DP_C_SHORT)
+					মান = va_arg (args, unsigned পূর্ণসংখ্যা);
+				অন্যথা যদি (cflags == DP_C_LONG)
+					মান = (long)va_arg (args, unsigned long পূর্ণসংখ্যা);
+				অন্যথা যদি (cflags == DP_C_LLONG)
+					মান = (LLONG)va_arg (args, unsigned LLONG);
+				অন্যথা যদি (cflags == DP_C_আকার)
+					মান = va_arg (args, আকার_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
+				অন্যথা যদি (cflags == DP_C_INTMAX)
+					মান = va_arg (args, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				অন্যথা
+					মান = (long)va_arg (args, unsigned পূর্ণসংখ্যা);
+				যদি (fmtint(বাফার, &currlen, maxlen, মান,
 				    10, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'X':
+					যাও fail;
+				বিরতি;
+			ক্ষেত্র 'X':
 				flags |= DP_F_UP;
-			case 'x':
+			ক্ষেত্র 'x':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
+				যদি (cflags == DP_C_SHORT)
+					মান = va_arg (args, unsigned পূর্ণসংখ্যা);
+				অন্যথা যদি (cflags == DP_C_LONG)
+					মান = (long)va_arg (args, unsigned long পূর্ণসংখ্যা);
+				অন্যথা যদি (cflags == DP_C_LLONG)
+					মান = (LLONG)va_arg (args, unsigned LLONG);
+				অন্যথা যদি (cflags == DP_C_আকার)
+					মান = va_arg (args, আকার_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
+				অন্যথা যদি (cflags == DP_C_INTMAX)
+					মান = va_arg (args, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				অন্যথা
+					মান = (long)va_arg (args, unsigned পূর্ণসংখ্যা);
+				যদি (fmtint(বাফার, &currlen, maxlen, মান,
 				    16, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'f':
-				if (cflags == DP_C_LDOUBLE)
+					যাও fail;
+				বিরতি;
+			ক্ষেত্র 'f':
+				যদি (cflags == DP_C_LDOUBLE)
 					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+				অন্যথা
+					fvalue = va_arg (args, দ্বিগুণ);
+				যদি (fmtfp(বাফার, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'E':
+					যাও fail;
+				বিরতি;
+			ক্ষেত্র 'E':
 				flags |= DP_F_UP;
-			case 'e':
-				if (cflags == DP_C_LDOUBLE)
+			ক্ষেত্র 'e':
+				যদি (cflags == DP_C_LDOUBLE)
 					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+				অন্যথা
+					fvalue = va_arg (args, দ্বিগুণ);
+				যদি (fmtfp(বাফার, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'G':
+					যাও fail;
+				বিরতি;
+			ক্ষেত্র 'G':
 				flags |= DP_F_UP;
-			case 'g':
-				if (cflags == DP_C_LDOUBLE)
+			ক্ষেত্র 'g':
+				যদি (cflags == DP_C_LDOUBLE)
 					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+				অন্যথা
+					fvalue = va_arg (args, দ্বিগুণ);
+				যদি (fmtfp(বাফার, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'c':
-				DOPR_OUTCH(buffer, currlen, maxlen,
-				    va_arg (args, int));
-				break;
-			case 's':
-				strvalue = va_arg (args, char *);
-				if (!strvalue) strvalue = "(NULL)";
-				if (max == -1) {
+					যাও fail;
+				বিরতি;
+			ক্ষেত্র 'c':
+				DOPR_OUTCH(বাফার, currlen, maxlen,
+				    va_arg (args, পূর্ণসংখ্যা));
+				বিরতি;
+			ক্ষেত্র 's':
+				strvalue = va_arg (args, অক্ষর *);
+				যদি (!strvalue) strvalue = "(NULL)";
+				যদি (max == -1) {
 					max = strlen(strvalue);
 				}
-				if (min > 0 && max >= 0 && min > max) max = min;
-				if (fmtstr(buffer, &currlen, maxlen,
+				যদি (min > 0 && max >= 0 && min > max) max = min;
+				যদি (fmtstr(বাফার, &currlen, maxlen,
 				    strvalue, flags, min, max) == -1)
-					goto fail;
-				break;
-			case 'p':
-				strvalue = va_arg (args, void *);
-				if (fmtint(buffer, &currlen, maxlen,
+					যাও fail;
+				বিরতি;
+			ক্ষেত্র 'p':
+				strvalue = va_arg (args, শূন্য *);
+				যদি (fmtint(বাফার, &currlen, maxlen,
 				    (long) strvalue, 16, min, max, flags) == -1)
-					goto fail;
-				break;
-#if we_dont_want_this_in_openssh
-			case 'n':
-				if (cflags == DP_C_SHORT) {
-					short int *num;
-					num = va_arg (args, short int *);
-					*num = currlen;
-				} else if (cflags == DP_C_LONG) {
-					long int *num;
-					num = va_arg (args, long int *);
-					*num = (long int)currlen;
-				} else if (cflags == DP_C_LLONG) {
-					LLONG *num;
-					num = va_arg (args, LLONG *);
-					*num = (LLONG)currlen;
-				} else if (cflags == DP_C_SIZE) {
-					ssize_t *num;
-					num = va_arg (args, ssize_t *);
-					*num = (ssize_t)currlen;
-				} else if (cflags == DP_C_INTMAX) {
-					intmax_t *num;
-					num = va_arg (args, intmax_t *);
-					*num = (intmax_t)currlen;
-				} else {
-					int *num;
-					num = va_arg (args, int *);
-					*num = currlen;
+					যাও fail;
+				বিরতি;
+#যদি we_dont_want_this_in_openssh
+			ক্ষেত্র 'n':
+				যদি (cflags == DP_C_SHORT) {
+					short পূর্ণসংখ্যা *অঙ্ক;
+					অঙ্ক = va_arg (args, short পূর্ণসংখ্যা *);
+					*অঙ্ক = currlen;
+				} অন্যথা যদি (cflags == DP_C_LONG) {
+					long পূর্ণসংখ্যা *অঙ্ক;
+					অঙ্ক = va_arg (args, long পূর্ণসংখ্যা *);
+					*অঙ্ক = (long পূর্ণসংখ্যা)currlen;
+				} অন্যথা যদি (cflags == DP_C_LLONG) {
+					LLONG *অঙ্ক;
+					অঙ্ক = va_arg (args, LLONG *);
+					*অঙ্ক = (LLONG)currlen;
+				} অন্যথা যদি (cflags == DP_C_আকার) {
+					ssize_t *অঙ্ক;
+					অঙ্ক = va_arg (args, ssize_t *);
+					*অঙ্ক = (ssize_t)currlen;
+				} অন্যথা যদি (cflags == DP_C_INTMAX) {
+					intmax_t *অঙ্ক;
+					অঙ্ক = va_arg (args, intmax_t *);
+					*অঙ্ক = (intmax_t)currlen;
+				} অন্যথা {
+					পূর্ণসংখ্যা *অঙ্ক;
+					অঙ্ক = va_arg (args, পূর্ণসংখ্যা *);
+					*অঙ্ক = currlen;
 				}
-				break;
+				বিরতি;
 #endif
-			case '%':
-				DOPR_OUTCH(buffer, currlen, maxlen, ch);
-				break;
-			default:
+			ক্ষেত্র '%':
+				DOPR_OUTCH(বাফার, currlen, maxlen, ch);
+				বিরতি;
+			পূর্বনির্ধারিত:
 				/* Unknown, skip */
-				break;
+				বিরতি;
 			}
 			ch = *format++;
 			state = DP_S_DEFAULT;
 			flags = cflags = min = 0;
 			max = -1;
-			break;
-		case DP_S_DONE:
-			break;
-		default:
+			বিরতি;
+		ক্ষেত্র DP_S_DONE:
+			বিরতি;
+		পূর্বনির্ধারিত:
 			/* hmm? */
-			break; /* some picky compilers need this */
+			বিরতি; /* some picky compilers need this */
 		}
 	}
-	if (maxlen != 0) {
-		if (currlen < maxlen - 1)
-			buffer[currlen] = '\0';
-		else if (maxlen > 0)
-			buffer[maxlen - 1] = '\0';
+	যদি (maxlen != 0) {
+		যদি (currlen < maxlen - 1)
+			বাফার[currlen] = '\0';
+		অন্যথা যদি (maxlen > 0)
+			বাফার[maxlen - 1] = '\0';
 	}
 	va_end(args);
-	return currlen < INT_MAX ? (int)currlen : -1;
+	ফেরত currlen < INT_MAX ? (পূর্ণসংখ্যা)currlen : -1;
  fail:
 	va_end(args);
-	return -1;
+	ফেরত -1;
 }
 
-static int
-fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max)
+স্থির পূর্ণসংখ্যা
+fmtstr(অক্ষর *বাফার, আকার_t *currlen, আকার_t maxlen,
+    অক্ষর *মান, পূর্ণসংখ্যা flags, পূর্ণসংখ্যা min, পূর্ণসংখ্যা max)
 {
-	int padlen, strln;     /* amount to pad */
-	int cnt = 0;
+	পূর্ণসংখ্যা padlen, strln;     /* amount to pad */
+	পূর্ণসংখ্যা cnt = 0;
 
 #ifdef DEBUG_SNPRINTF
-	printf("fmtstr min=%d max=%d s=[%s]\n", min, max, value);
+	printf("fmtstr min=%d max=%d s=[%s]\n", min, max, মান);
 #endif
-	if (value == 0) {
-		value = "<NULL>";
+	যদি (মান == 0) {
+		মান = "<NULL>";
 	}
 
-	for (strln = 0; strln < max && value[strln]; ++strln); /* strlen */
+	জন্য (strln = 0; strln < max && মান[strln]; ++strln); /* strlen */
 	padlen = min - strln;
-	if (padlen < 0)
+	যদি (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	যদি (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justify */
 
-	while ((padlen > 0) && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	যখন ((padlen > 0) && (cnt < max)) {
+		DOPR_OUTCH(বাফার, *currlen, maxlen, ' ');
 		--padlen;
 		++cnt;
 	}
-	while (*value && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, *value);
-		value++;
+	যখন (*মান && (cnt < max)) {
+		DOPR_OUTCH(বাফার, *currlen, maxlen, *মান);
+		মান++;
 		++cnt;
 	}
-	while ((padlen < 0) && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	যখন ((padlen < 0) && (cnt < max)) {
+		DOPR_OUTCH(বাফার, *currlen, maxlen, ' ');
 		++padlen;
 		++cnt;
 	}
-	return 0;
+	ফেরত 0;
 }
 
 /* Have to handle DP_F_NUM (ie 0x and 0 alternates) */
 
-static int
-fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags)
+স্থির পূর্ণসংখ্যা
+fmtint(অক্ষর *বাফার, আকার_t *currlen, আকার_t maxlen,
+    intmax_t মান, পূর্ণসংখ্যা base, পূর্ণসংখ্যা min, পূর্ণসংখ্যা max, পূর্ণসংখ্যা flags)
 {
-	int signvalue = 0;
+	পূর্ণসংখ্যা signvalue = 0;
 	unsigned LLONG uvalue;
-	char convert[20];
-	int place = 0;
-	int spadlen = 0; /* amount to space pad */
-	int zpadlen = 0; /* amount to zero pad */
-	int caps = 0;
+	অক্ষর convert[20];
+	পূর্ণসংখ্যা place = 0;
+	পূর্ণসংখ্যা spadlen = 0; /* amount to space pad */
+	পূর্ণসংখ্যা zpadlen = 0; /* amount to zero pad */
+	পূর্ণসংখ্যা caps = 0;
 
-	if (max < 0)
+	যদি (max < 0)
 		max = 0;
 
-	uvalue = value;
+	uvalue = মান;
 
-	if(!(flags & DP_F_UNSIGNED)) {
-		if( value < 0 ) {
+	যদি(!(flags & DP_F_UNSIGNED)) {
+		যদি( মান < 0 ) {
 			signvalue = '-';
-			uvalue = -value;
-		} else {
-			if (flags & DP_F_PLUS)  /* Do a sign (+/i) */
+			uvalue = -মান;
+		} অন্যথা {
+			যদি (flags & DP_F_PLUS)  /* Do a sign (+/i) */
 				signvalue = '+';
-			else if (flags & DP_F_SPACE)
+			অন্যথা যদি (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
+	যদি (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
 
-	do {
+	করো {
 		convert[place++] =
 			(caps? "0123456789ABCDEF":"0123456789abcdef")
 			[uvalue % (unsigned)base  ];
 		uvalue = (uvalue / (unsigned)base );
-	} while(uvalue && (place < 20));
-	if (place == 20) place--;
+	} যখন(uvalue && (place < 20));
+	যদি (place == 20) place--;
 	convert[place] = 0;
 
 	zpadlen = max - place;
 	spadlen = min - MAX (max, place) - (signvalue ? 1 : 0);
-	if (zpadlen < 0) zpadlen = 0;
-	if (spadlen < 0) spadlen = 0;
-	if (flags & DP_F_ZERO) {
+	যদি (zpadlen < 0) zpadlen = 0;
+	যদি (spadlen < 0) spadlen = 0;
+	যদি (flags & DP_F_ZERO) {
 		zpadlen = MAX(zpadlen, spadlen);
 		spadlen = 0;
 	}
-	if (flags & DP_F_MINUS)
+	যদি (flags & DP_F_MINUS)
 		spadlen = -spadlen; /* Left Justifty */
 
 #ifdef DEBUG_SNPRINTF
@@ -595,235 +595,235 @@ fmtint(char *buffer, size_t *currlen, size_t maxlen,
 #endif
 
 	/* Spaces */
-	while (spadlen > 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	যখন (spadlen > 0) {
+		DOPR_OUTCH(বাফার, *currlen, maxlen, ' ');
 		--spadlen;
 	}
 
 	/* Sign */
-	if (signvalue)
-		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
+	যদি (signvalue)
+		DOPR_OUTCH(বাফার, *currlen, maxlen, signvalue);
 
 	/* Zeros */
-	if (zpadlen > 0) {
-		while (zpadlen > 0) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
+	যদি (zpadlen > 0) {
+		যখন (zpadlen > 0) {
+			DOPR_OUTCH(বাফার, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 	}
 
 	/* Digits */
-	while (place > 0) {
+	যখন (place > 0) {
 		--place;
-		DOPR_OUTCH(buffer, *currlen, maxlen, convert[place]);
+		DOPR_OUTCH(বাফার, *currlen, maxlen, convert[place]);
 	}
 
 	/* Left Justified spaces */
-	while (spadlen < 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	যখন (spadlen < 0) {
+		DOPR_OUTCH(বাফার, *currlen, maxlen, ' ');
 		++spadlen;
 	}
-	return 0;
+	ফেরত 0;
 }
 
-static LDOUBLE abs_val(LDOUBLE value)
+স্থির LDOUBLE abs_val(LDOUBLE মান)
 {
-	LDOUBLE result = value;
+	LDOUBLE ফলাফল = মান;
 
-	if (value < 0)
-		result = -value;
+	যদি (মান < 0)
+		ফলাফল = -মান;
 
-	return result;
+	ফেরত ফলাফল;
 }
 
-static LDOUBLE POW10(int val)
+স্থির LDOUBLE POW10(পূর্ণসংখ্যা val)
 {
-	LDOUBLE result = 1;
+	LDOUBLE ফলাফল = 1;
 
-	while (val) {
-		result *= 10;
+	যখন (val) {
+		ফলাফল *= 10;
 		val--;
 	}
 
-	return result;
+	ফেরত ফলাফল;
 }
 
-static LLONG ROUND(LDOUBLE value)
+স্থির LLONG ROUND(LDOUBLE মান)
 {
 	LLONG intpart;
 
-	intpart = (LLONG)value;
-	value = value - intpart;
-	if (value >= 0.5) intpart++;
+	intpart = (LLONG)মান;
+	মান = মান - intpart;
+	যদি (মান >= 0.5) intpart++;
 
-	return intpart;
+	ফেরত intpart;
 }
 
 /* a replacement for modf that doesn't need the math library. Should
    be portable, but slow */
-static double my_modf(double x0, double *iptr)
+স্থির দ্বিগুণ my_modf(দ্বিগুণ x0, দ্বিগুণ *iptr)
 {
-	int i;
+	পূর্ণসংখ্যা i;
 	long l;
-	double x = x0;
-	double f = 1.0;
+	দ্বিগুণ x = x0;
+	দ্বিগুণ f = 1.0;
 
-	for (i=0;i<100;i++) {
+	জন্য (i=0;i<100;i++) {
 		l = (long)x;
-		if (l <= (x+1) && l >= (x-1)) break;
+		যদি (l <= (x+1) && l >= (x-1)) বিরতি;
 		x *= 0.1;
 		f *= 10.0;
 	}
 
-	if (i == 100) {
+	যদি (i == 100) {
 		/*
 		 * yikes! the number is beyond what we can handle.
 		 * What do we do?
 		 */
 		(*iptr) = 0;
-		return 0;
+		ফেরত 0;
 	}
 
-	if (i != 0) {
-		double i2;
-		double ret;
+	যদি (i != 0) {
+		দ্বিগুণ i2;
+		দ্বিগুণ ret;
 
 		ret = my_modf(x0-l*f, &i2);
 		(*iptr) = l*f + i2;
-		return ret;
+		ফেরত ret;
 	}
 
 	(*iptr) = l;
-	return x - (*iptr);
+	ফেরত x - (*iptr);
 }
 
 
-static int
-fmtfp (char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags)
+স্থির পূর্ণসংখ্যা
+fmtfp (অক্ষর *বাফার, আকার_t *currlen, আকার_t maxlen,
+    LDOUBLE fvalue, পূর্ণসংখ্যা min, পূর্ণসংখ্যা max, পূর্ণসংখ্যা flags)
 {
-	int signvalue = 0;
-	double ufvalue;
-	char iconvert[311];
-	char fconvert[311];
-	int iplace = 0;
-	int fplace = 0;
-	int padlen = 0; /* amount to pad */
-	int zpadlen = 0;
-#if 0
-	int caps = 0;
+	পূর্ণসংখ্যা signvalue = 0;
+	দ্বিগুণ ufvalue;
+	অক্ষর iconvert[311];
+	অক্ষর fconvert[311];
+	পূর্ণসংখ্যা iplace = 0;
+	পূর্ণসংখ্যা fplace = 0;
+	পূর্ণসংখ্যা padlen = 0; /* amount to pad */
+	পূর্ণসংখ্যা zpadlen = 0;
+#যদি 0
+	পূর্ণসংখ্যা caps = 0;
 #endif
-	int idx;
-	double intpart;
-	double fracpart;
-	double temp;
+	পূর্ণসংখ্যা idx;
+	দ্বিগুণ intpart;
+	দ্বিগুণ fracpart;
+	দ্বিগুণ অস্থায়ী;
 
 	/*
 	 * AIX manpage says the default is 0, but Solaris says the default
 	 * is 6, and sprintf on AIX defaults to 6
 	 */
-	if (max < 0)
+	যদি (max < 0)
 		max = 6;
 
 	ufvalue = abs_val (fvalue);
 
-	if (fvalue < 0) {
+	যদি (fvalue < 0) {
 		signvalue = '-';
-	} else {
-		if (flags & DP_F_PLUS) { /* Do a sign (+/i) */
+	} অন্যথা {
+		যদি (flags & DP_F_PLUS) { /* Do a sign (+/i) */
 			signvalue = '+';
-		} else {
-			if (flags & DP_F_SPACE)
+		} অন্যথা {
+			যদি (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-#if 0
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
+#যদি 0
+	যদি (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
 #endif
 
-#if 0
-	 if (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
+#যদি 0
+	 যদি (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
 #endif
 
 	/*
 	 * Sorry, we only support 16 digits past the decimal because of our
 	 * conversion method
 	 */
-	if (max > 16)
+	যদি (max > 16)
 		max = 16;
 
 	/* We "cheat" by converting the fractional part to integer by
 	 * multiplying by a factor of 10
 	 */
 
-	temp = ufvalue;
-	my_modf(temp, &intpart);
+	অস্থায়ী = ufvalue;
+	my_modf(অস্থায়ী, &intpart);
 
 	fracpart = ROUND((POW10(max)) * (ufvalue - intpart));
 
-	if (fracpart >= POW10(max)) {
+	যদি (fracpart >= POW10(max)) {
 		intpart++;
 		fracpart -= POW10(max);
 	}
 
 	/* Convert integer part */
-	do {
-		temp = intpart*0.1;
-		my_modf(temp, &intpart);
-		idx = (int) ((temp -intpart +0.05)* 10.0);
+	করো {
+		অস্থায়ী = intpart*0.1;
+		my_modf(অস্থায়ী, &intpart);
+		idx = (পূর্ণসংখ্যা) ((অস্থায়ী -intpart +0.05)* 10.0);
 		/* idx = (int) (((double)(temp*0.1) -intpart +0.05) *10.0); */
 		/* printf ("%llf, %f, %x\n", temp, intpart, idx); */
 		iconvert[iplace++] = "0123456789"[idx];
-	} while (intpart && (iplace < 311));
-	if (iplace == 311) iplace--;
+	} যখন (intpart && (iplace < 311));
+	যদি (iplace == 311) iplace--;
 	iconvert[iplace] = 0;
 
 	/* Convert fractional part */
-	if (fracpart)
+	যদি (fracpart)
 	{
-		do {
-			temp = fracpart*0.1;
-			my_modf(temp, &fracpart);
-			idx = (int) ((temp -fracpart +0.05)* 10.0);
+		করো {
+			অস্থায়ী = fracpart*0.1;
+			my_modf(অস্থায়ী, &fracpart);
+			idx = (পূর্ণসংখ্যা) ((অস্থায়ী -fracpart +0.05)* 10.0);
 			/* idx = (int) ((((temp/10) -fracpart) +0.05) *10); */
 			/* printf ("%lf, %lf, %ld\n", temp, fracpart, idx ); */
 			fconvert[fplace++] = "0123456789"[idx];
-		} while(fracpart && (fplace < 311));
-		if (fplace == 311) fplace--;
+		} যখন(fracpart && (fplace < 311));
+		যদি (fplace == 311) fplace--;
 	}
 	fconvert[fplace] = 0;
 
 	/* -1 for decimal point, another -1 if we are printing a sign */
 	padlen = min - iplace - max - 1 - ((signvalue) ? 1 : 0);
 	zpadlen = max - fplace;
-	if (zpadlen < 0) zpadlen = 0;
-	if (padlen < 0)
+	যদি (zpadlen < 0) zpadlen = 0;
+	যদি (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	যদি (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justifty */
 
-	if ((flags & DP_F_ZERO) && (padlen > 0)) {
-		if (signvalue) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
+	যদি ((flags & DP_F_ZERO) && (padlen > 0)) {
+		যদি (signvalue) {
+			DOPR_OUTCH(বাফার, *currlen, maxlen, signvalue);
 			--padlen;
 			signvalue = 0;
 		}
-		while (padlen > 0) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
+		যখন (padlen > 0) {
+			DOPR_OUTCH(বাফার, *currlen, maxlen, '0');
 			--padlen;
 		}
 	}
-	while (padlen > 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	যখন (padlen > 0) {
+		DOPR_OUTCH(বাফার, *currlen, maxlen, ' ');
 		--padlen;
 	}
-	if (signvalue)
-		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
+	যদি (signvalue)
+		DOPR_OUTCH(বাফার, *currlen, maxlen, signvalue);
 
-	while (iplace > 0) {
+	যখন (iplace > 0) {
 		--iplace;
-		DOPR_OUTCH(buffer, *currlen, maxlen, iconvert[iplace]);
+		DOPR_OUTCH(বাফার, *currlen, maxlen, iconvert[iplace]);
 	}
 
 #ifdef DEBUG_SNPRINTF
@@ -834,46 +834,46 @@ fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 	 * Decimal point.  This should probably use locale to find the correct
 	 * char to print out.
 	 */
-	if (max > 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, '.');
+	যদি (max > 0) {
+		DOPR_OUTCH(বাফার, *currlen, maxlen, '.');
 
-		while (zpadlen > 0) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
+		যখন (zpadlen > 0) {
+			DOPR_OUTCH(বাফার, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 
-		while (fplace > 0) {
+		যখন (fplace > 0) {
 			--fplace;
-			DOPR_OUTCH(buffer, *currlen, maxlen, fconvert[fplace]);
+			DOPR_OUTCH(বাফার, *currlen, maxlen, fconvert[fplace]);
 		}
 	}
 
-	while (padlen < 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	যখন (padlen < 0) {
+		DOPR_OUTCH(বাফার, *currlen, maxlen, ' ');
 		++padlen;
 	}
-	return 0;
+	ফেরত 0;
 }
 #endif /* !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF) */
 
-#if !defined(HAVE_VSNPRINTF)
-int
-vsnprintf (char *str, size_t count, const char *fmt, va_list args)
+#যদি !defined(HAVE_VSNPRINTF)
+পূর্ণসংখ্যা
+vsnprintf (অক্ষর *str, আকার_t গুনতি, ধ্রুবক অক্ষর *fmt, va_list args)
 {
-	return dopr(str, count, fmt, args);
+	ফেরত dopr(str, গুনতি, fmt, args);
 }
 #endif
 
-#if !defined(HAVE_SNPRINTF)
-int
-snprintf(char *str, size_t count, SNPRINTF_CONST char *fmt, ...)
+#যদি !defined(HAVE_SNPRINTF)
+পূর্ণসংখ্যা
+snprintf(অক্ষর *str, আকার_t গুনতি, SNPRINTF_CONST অক্ষর *fmt, ...)
 {
-	size_t ret;
+	আকার_t ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
+	ret = vsnprintf(str, গুনতি, fmt, ap);
 	va_end(ap);
-	return ret;
+	ফেরত ret;
 }
 #endif

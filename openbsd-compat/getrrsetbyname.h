@@ -48,15 +48,15 @@
 #ifndef _GETRRSETBYNAME_H
 #define _GETRRSETBYNAME_H
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
 #ifndef HAVE_GETRRSETBYNAME
 
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/nameser.h>
-#include <netdb.h>
-#include <resolv.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <netinet/in.h>
+#অন্তর্ভাব <arpa/nameser.h>
+#অন্তর্ভাব <netdb.h>
+#অন্তর্ভাব <resolv.h>
 
 #ifndef HFIXEDSZ
 #define HFIXEDSZ 12
@@ -85,25 +85,25 @@
 # define ERRSET_NODATA		5
 #endif
 
-struct rdatainfo {
-	unsigned int		rdi_length;	/* length of data */
-	unsigned char		*rdi_data;	/* record data */
+কাঠামো rdatainfo {
+	unsigned পূর্ণসংখ্যা		rdi_দৈর্ঘ্য;	/* length of data */
+	unsigned অক্ষর		*rdi_তথ্য;	/* record data */
 };
 
-struct rrsetinfo {
-	unsigned int		rri_flags;	/* RRSET_VALIDATED ... */
-	unsigned int		rri_rdclass;	/* class number */
-	unsigned int		rri_rdtype;	/* RR type number */
-	unsigned int		rri_ttl;	/* time to live */
-	unsigned int		rri_nrdatas;	/* size of rdatas array */
-	unsigned int		rri_nsigs;	/* size of sigs array */
-	char			*rri_name;	/* canonical name */
-	struct rdatainfo	*rri_rdatas;	/* individual records */
-	struct rdatainfo	*rri_sigs;	/* individual signatures */
+কাঠামো rrsetinfo {
+	unsigned পূর্ণসংখ্যা		rri_flags;	/* RRSET_VALIDATED ... */
+	unsigned পূর্ণসংখ্যা		rri_rdclass;	/* class number */
+	unsigned পূর্ণসংখ্যা		rri_rdtype;	/* RR type number */
+	unsigned পূর্ণসংখ্যা		rri_ttl;	/* time to live */
+	unsigned পূর্ণসংখ্যা		rri_nrdatas;	/* size of rdatas array */
+	unsigned পূর্ণসংখ্যা		rri_nsigs;	/* size of sigs array */
+	অক্ষর			*rri_name;	/* canonical name */
+	কাঠামো rdatainfo	*rri_rdatas;	/* individual records */
+	কাঠামো rdatainfo	*rri_sigs;	/* individual signatures */
 };
 
-int		getrrsetbyname(const char *, unsigned int, unsigned int, unsigned int, struct rrsetinfo **);
-void		freerrset(struct rrsetinfo *);
+পূর্ণসংখ্যা		getrrsetbyname(ধ্রুবক অক্ষর *, unsigned পূর্ণসংখ্যা, unsigned পূর্ণসংখ্যা, unsigned পূর্ণসংখ্যা, কাঠামো rrsetinfo **);
+শূন্য		freerrset(কাঠামো rrsetinfo *);
 
 #endif /* !defined(HAVE_GETRRSETBYNAME) */
 

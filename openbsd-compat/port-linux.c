@@ -19,25 +19,25 @@
  * Linux-specific portability code
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#if defined(LINUX_OOM_ADJUST) || defined(SYSTEMD_NOTIFY)
-#include <sys/socket.h>
-#include <sys/un.h>
+#যদি defined(LINUX_OOM_ADJUST) || defined(SYSTEMD_NOTIFY)
+#অন্তর্ভাব <sys/socket.h>
+#অন্তর্ভাব <sys/un.h>
 
-#include <errno.h>
-#include <inttypes.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <inttypes.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <time.h>
+#অন্তর্ভাব <unistd.h>
 
-#include "log.h"
-#include "xmalloc.h"
-#include "port-linux.h"
-#include "misc.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "xmalloc.h"
+#অন্তর্ভাব "port-linux.h"
+#অন্তর্ভাব "misc.h"
 
 #ifdef LINUX_OOM_ADJUST
 /*
@@ -46,163 +46,163 @@
  * http://lxr.linux.no/#linux+v2.6.36/Documentation/filesystems/proc.txt
  */
 
-static int oom_adj_save = INT_MIN;
-static char *oom_adj_path = NULL;
-struct {
-	char *path;
-	int value;
+স্থির পূর্ণসংখ্যা oom_adj_save = INT_MIN;
+স্থির অক্ষর *oom_adj_path = ফাঁকা;
+কাঠামো {
+	অক্ষর *path;
+	পূর্ণসংখ্যা মান;
 } oom_adjust[] = {
 	{"/proc/self/oom_score_adj", -1000},	/* kernels >= 2.6.36 */
 	{"/proc/self/oom_adj", -17},		/* kernels <= 2.6.35 */
-	{NULL, 0},
+	{ফাঁকা, 0},
 };
 
 /*
  * Tell the kernel's out-of-memory killer to avoid sshd.
  * Returns the previous oom_adj value or zero.
  */
-void
-oom_adjust_setup(void)
+শূন্য
+oom_adjust_setup(শূন্য)
 {
-	int i, value;
+	পূর্ণসংখ্যা i, মান;
 	FILE *fp;
 
 	debug3("%s", __func__);
-	 for (i = 0; oom_adjust[i].path != NULL; i++) {
+	 জন্য (i = 0; oom_adjust[i].path != ফাঁকা; i++) {
 		oom_adj_path = oom_adjust[i].path;
-		value = oom_adjust[i].value;
-		if ((fp = fopen(oom_adj_path, "r+")) != NULL) {
-			if (fscanf(fp, "%d", &oom_adj_save) != 1)
+		মান = oom_adjust[i].মান;
+		যদি ((fp = fopen(oom_adj_path, "r+")) != ফাঁকা) {
+			যদি (fscanf(fp, "%d", &oom_adj_save) != 1)
 				verbose("error reading %s: %s", oom_adj_path,
 				    strerror(errno));
-			else {
+			অন্যথা {
 				rewind(fp);
-				if (fprintf(fp, "%d\n", value) <= 0)
+				যদি (fprintf(fp, "%d\n", মান) <= 0)
 					verbose("error writing %s: %s",
 					   oom_adj_path, strerror(errno));
-				else
+				অন্যথা
 					debug("Set %s from %d to %d",
-					   oom_adj_path, oom_adj_save, value);
+					   oom_adj_path, oom_adj_save, মান);
 			}
 			fclose(fp);
-			return;
+			ফেরত;
 		}
 	}
-	oom_adj_path = NULL;
+	oom_adj_path = ফাঁকা;
 }
 
 /* Restore the saved OOM adjustment */
-void
-oom_adjust_restore(void)
+শূন্য
+oom_adjust_restore(শূন্য)
 {
 	FILE *fp;
 
 	debug3("%s", __func__);
-	if (oom_adj_save == INT_MIN || oom_adj_path == NULL ||
-	    (fp = fopen(oom_adj_path, "w")) == NULL)
-		return;
+	যদি (oom_adj_save == INT_MIN || oom_adj_path == ফাঁকা ||
+	    (fp = fopen(oom_adj_path, "w")) == ফাঁকা)
+		ফেরত;
 
-	if (fprintf(fp, "%d\n", oom_adj_save) <= 0)
+	যদি (fprintf(fp, "%d\n", oom_adj_save) <= 0)
 		verbose("error writing %s: %s", oom_adj_path, strerror(errno));
-	else
+	অন্যথা
 		debug("Set %s to %d", oom_adj_path, oom_adj_save);
 
 	fclose(fp);
-	return;
+	ফেরত;
 }
 #endif /* LINUX_OOM_ADJUST */
 
 #ifdef LINUX_MEMLOCK_ONFAULT
-#include <sys/mman.h>
+#অন্তর্ভাব <sys/mman.h>
 
-void
-memlock_onfault_setup(void)
+শূন্য
+memlock_onfault_setup(শূন্য)
 {
-	if (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0)
+	যদি (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0)
 		verbose("unable to lock memory: %s", strerror(errno));
-	else
+	অন্যথা
 		debug("memory locked");
 }
 #endif /* LINUX_MEMLOCK_ONFAULT */
 
 #ifdef SYSTEMD_NOTIFY
 
-static void ssh_systemd_notify(const char *, ...)
+স্থির শূন্য ssh_systemd_notify(ধ্রুবক অক্ষর *, ...)
     __attribute__((__format__ (printf, 1, 2))) __attribute__((__nonnull__ (1)));
 
-static void
-ssh_systemd_notify(const char *fmt, ...)
+স্থির শূন্য
+ssh_systemd_notify(ধ্রুবক অক্ষর *fmt, ...)
 {
-	char *s = NULL;
-	const char *path;
-	struct stat sb;
-	struct sockaddr_un addr;
-	int fd = -1;
+	অক্ষর *s = ফাঁকা;
+	ধ্রুবক অক্ষর *path;
+	কাঠামো stat sb;
+	কাঠামো sockaddr_un addr;
+	পূর্ণসংখ্যা fd = -1;
 	va_list ap;
 
-	if ((path = getenv("NOTIFY_SOCKET")) == NULL || strlen(path) == 0)
-		return;
+	যদি ((path = getenv("NOTIFY_SOCKET")) == ফাঁকা || strlen(path) == 0)
+		ফেরত;
 
 	va_start(ap, fmt);
 	xvasprintf(&s, fmt, ap);
 	va_end(ap);
 
 	/* Only AF_UNIX is supported, with path or abstract sockets */
-	if (path[0] != '/' && path[0] != '@') {
+	যদি (path[0] != '/' && path[0] != '@') {
 		error_f("socket \"%s\" is not compatible with AF_UNIX", path);
-		goto out;
+		যাও out;
 	}
 
-	if (path[0] == '/' && stat(path, &sb) != 0) {
+	যদি (path[0] == '/' && stat(path, &sb) != 0) {
 		error_f("socket \"%s\" stat: %s", path, strerror(errno));
-		goto out;
+		যাও out;
 	}
 
-	memset(&addr, 0, sizeof(addr));
+	memset(&addr, 0, আকার(addr));
 	addr.sun_family = AF_UNIX;
-	if (strlcpy(addr.sun_path, path,
-	    sizeof(addr.sun_path)) >= sizeof(addr.sun_path)) {
+	যদি (strlcpy(addr.sun_path, path,
+	    আকার(addr.sun_path)) >= আকার(addr.sun_path)) {
 		error_f("socket path \"%s\" too long", path);
-		goto out;
+		যাও out;
 	}
 	/* Support for abstract socket */
-	if (addr.sun_path[0] == '@')
+	যদি (addr.sun_path[0] == '@')
 		addr.sun_path[0] = 0;
-	if ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) == -1) {
+	যদি ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) == -1) {
 		error_f("socket \"%s\": %s", path, strerror(errno));
-		goto out;
+		যাও out;
 	}
-	if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
+	যদি (connect(fd, (কাঠামো sockaddr *)&addr, আকার(addr)) != 0) {
 		error_f("socket \"%s\" connect: %s", path, strerror(errno));
-		goto out;
+		যাও out;
 	}
-	if (write(fd, s, strlen(s)) != (ssize_t)strlen(s)) {
+	যদি (লিখ(fd, s, strlen(s)) != (ssize_t)strlen(s)) {
 		error_f("socket \"%s\" write: %s", path, strerror(errno));
-		goto out;
+		যাও out;
 	}
 	debug_f("socket \"%s\" notified %s", path, s);
  out:
-	if (fd != -1)
+	যদি (fd != -1)
 		close(fd);
-	free(s);
+	মুক্ত(s);
 }
 
-void
-ssh_systemd_notify_ready(void)
+শূন্য
+ssh_systemd_notify_ready(শূন্য)
 {
 	ssh_systemd_notify("READY=1");
 }
 
-void
-ssh_systemd_notify_reload(void)
+শূন্য
+ssh_systemd_notify_reload(শূন্য)
 {
-	struct timespec now;
+	কাঠামো timespec now;
 
 	monotime_ts(&now);
-	if (now.tv_sec < 0 || now.tv_nsec < 0) {
+	যদি (now.tv_sec < 0 || now.tv_nsec < 0) {
 		error_f("monotime returned negative value");
 		ssh_systemd_notify("RELOADING=1");
-	} else {
+	} অন্যথা {
 		ssh_systemd_notify("RELOADING=1\nMONOTONIC_USEC=%llu",
 		    ((uint64_t)now.tv_sec * 1000000ULL) +
 		    ((uint64_t)now.tv_nsec / 1000ULL));

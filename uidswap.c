@@ -12,20 +12,20 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <errno.h>
-#include <grp.h>
-#include <pwd.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
-#include <stdarg.h>
-#include <stdlib.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <grp.h>
+#অন্তর্ভাব <pwd.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <limits.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdlib.h>
 
-#include "log.h"
-#include "uidswap.h"
-#include "xmalloc.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "uidswap.h"
+#অন্তর্ভাব "xmalloc.h"
 
 /*
  * Note: all these functions must work in all of the following cases:
@@ -36,28 +36,28 @@
  * POSIX saved uids or not.
  */
 
-#if defined(_POSIX_SAVED_IDS) && !defined(BROKEN_SAVED_UIDS)
+#যদি defined(_POSIX_SAVED_IDS) && !defined(BROKEN_SAVED_UIDS)
 /* Lets assume that posix saved ids also work with seteuid, even though that
    is not part of the posix specification. */
 #define SAVED_IDS_WORK_WITH_SETEUID
 /* Saved effective uid. */
-static uid_t	saved_euid = 0;
-static gid_t	saved_egid = 0;
+স্থির uid_t	saved_euid = 0;
+স্থির gid_t	saved_egid = 0;
 #endif
 
 /* Saved effective uid. */
-static int	privileged = 0;
-static int	temporarily_use_uid_effective = 0;
-static uid_t	user_groups_uid;
-static gid_t	*saved_egroups = NULL, *user_groups = NULL;
-static int	saved_egroupslen = -1, user_groupslen = -1;
+স্থির পূর্ণসংখ্যা	privileged = 0;
+স্থির পূর্ণসংখ্যা	temporarily_use_uid_effective = 0;
+স্থির uid_t	user_groups_uid;
+স্থির gid_t	*saved_egroups = ফাঁকা, *user_groups = ফাঁকা;
+স্থির পূর্ণসংখ্যা	saved_egroupslen = -1, user_groupslen = -1;
 
 /*
  * Temporarily changes to the given uid.  If the effective user
  * id is not root, this does nothing.  This call cannot be nested.
  */
-void
-temporarily_use_uid(struct passwd *pw)
+শূন্য
+temporarily_use_uid(কাঠামো passwd *pw)
 {
 	/* Save the current euid, and egroups. */
 #ifdef SAVED_IDS_WORK_WITH_SETEUID
@@ -67,69 +67,69 @@ temporarily_use_uid(struct passwd *pw)
 	    (u_int)pw->pw_uid, (u_int)pw->pw_gid,
 	    (u_int)saved_euid, (u_int)saved_egid);
 #ifndef HAVE_CYGWIN
-	if (saved_euid != 0) {
+	যদি (saved_euid != 0) {
 		privileged = 0;
-		return;
+		ফেরত;
 	}
 #endif
-#else
-	if (geteuid() != 0) {
+#অন্যথা
+	যদি (geteuid() != 0) {
 		privileged = 0;
-		return;
+		ফেরত;
 	}
 #endif /* SAVED_IDS_WORK_WITH_SETEUID */
 
 	privileged = 1;
 	temporarily_use_uid_effective = 1;
 
-	saved_egroupslen = getgroups(0, NULL);
-	if (saved_egroupslen == -1)
+	saved_egroupslen = getgroups(0, ফাঁকা);
+	যদি (saved_egroupslen == -1)
 		fatal("getgroups: %.100s", strerror(errno));
-	if (saved_egroupslen > 0) {
+	যদি (saved_egroupslen > 0) {
 		saved_egroups = xreallocarray(saved_egroups,
-		    saved_egroupslen, sizeof(gid_t));
-		if (getgroups(saved_egroupslen, saved_egroups) == -1)
+		    saved_egroupslen, আকার(gid_t));
+		যদি (getgroups(saved_egroupslen, saved_egroups) == -1)
 			fatal("getgroups: %.100s", strerror(errno));
-	} else { /* saved_egroupslen == 0 */
-		free(saved_egroups);
-		saved_egroups = NULL;
+	} অন্যথা { /* saved_egroupslen == 0 */
+		মুক্ত(saved_egroups);
+		saved_egroups = ফাঁকা;
 	}
 
 	/* set and save the user's groups */
-	if (user_groupslen == -1 || user_groups_uid != pw->pw_uid) {
-		if (initgroups(pw->pw_name, pw->pw_gid) == -1)
+	যদি (user_groupslen == -1 || user_groups_uid != pw->pw_uid) {
+		যদি (initgroups(pw->pw_name, pw->pw_gid) == -1)
 			fatal("initgroups: %s: %.100s", pw->pw_name,
 			    strerror(errno));
 
-		user_groupslen = getgroups(0, NULL);
-		if (user_groupslen == -1)
+		user_groupslen = getgroups(0, ফাঁকা);
+		যদি (user_groupslen == -1)
 			fatal("getgroups: %.100s", strerror(errno));
-		if (user_groupslen > 0) {
+		যদি (user_groupslen > 0) {
 			user_groups = xreallocarray(user_groups,
-			    user_groupslen, sizeof(gid_t));
-			if (getgroups(user_groupslen, user_groups) == -1)
+			    user_groupslen, আকার(gid_t));
+			যদি (getgroups(user_groupslen, user_groups) == -1)
 				fatal("getgroups: %.100s", strerror(errno));
-		} else { /* user_groupslen == 0 */
-			free(user_groups);
-			user_groups = NULL;
+		} অন্যথা { /* user_groupslen == 0 */
+			মুক্ত(user_groups);
+			user_groups = ফাঁকা;
 		}
 		user_groups_uid = pw->pw_uid;
 	}
 	/* Set the effective uid to the given (unprivileged) uid. */
-	if (setgroups(user_groupslen, user_groups) == -1)
+	যদি (setgroups(user_groupslen, user_groups) == -1)
 		fatal("setgroups: %.100s", strerror(errno));
 #ifndef SAVED_IDS_WORK_WITH_SETEUID
 	/* Propagate the privileged gid to all of our gids. */
-	if (setgid(getegid()) == -1)
+	যদি (setgid(getegid()) == -1)
 		debug("setgid %u: %.100s", (u_int) getegid(), strerror(errno));
 	/* Propagate the privileged uid to all of our uids. */
-	if (setuid(geteuid()) == -1)
+	যদি (setuid(geteuid()) == -1)
 		debug("setuid %u: %.100s", (u_int) geteuid(), strerror(errno));
 #endif /* SAVED_IDS_WORK_WITH_SETEUID */
-	if (setegid(pw->pw_gid) == -1)
+	যদি (setegid(pw->pw_gid) == -1)
 		fatal("setegid %u: %.100s", (u_int)pw->pw_gid,
 		    strerror(errno));
-	if (seteuid(pw->pw_uid) == -1)
+	যদি (seteuid(pw->pw_uid) == -1)
 		fatal("seteuid %u: %.100s", (u_int)pw->pw_uid,
 		    strerror(errno));
 }
@@ -137,37 +137,37 @@ temporarily_use_uid(struct passwd *pw)
 /*
  * Restores to the original (privileged) uid.
  */
-void
-restore_uid(void)
+শূন্য
+restore_uid(শূন্য)
 {
 	/* it's a no-op unless privileged */
-	if (!privileged) {
+	যদি (!privileged) {
 		debug("restore_uid: (unprivileged)");
-		return;
+		ফেরত;
 	}
-	if (!temporarily_use_uid_effective)
+	যদি (!temporarily_use_uid_effective)
 		fatal("restore_uid: temporarily_use_uid not effective");
 
 #ifdef SAVED_IDS_WORK_WITH_SETEUID
 	debug("restore_uid: %u/%u", (u_int)saved_euid, (u_int)saved_egid);
 	/* Set the effective uid back to the saved privileged uid. */
-	if (seteuid(saved_euid) == -1)
+	যদি (seteuid(saved_euid) == -1)
 		fatal("seteuid %u: %.100s", (u_int)saved_euid, strerror(errno));
-	if (setegid(saved_egid) == -1)
+	যদি (setegid(saved_egid) == -1)
 		fatal("setegid %u: %.100s", (u_int)saved_egid, strerror(errno));
-#else /* SAVED_IDS_WORK_WITH_SETEUID */
+#অন্যথা /* SAVED_IDS_WORK_WITH_SETEUID */
 	/*
 	 * We are unable to restore the real uid to its unprivileged value.
 	 * Propagate the real uid (usually more privileged) to effective uid
 	 * as well.
 	 */
-	if (setuid(getuid()) == -1)
+	যদি (setuid(getuid()) == -1)
 		fatal_f("setuid failed: %s", strerror(errno));
-	if (setgid(getgid()) == -1)
+	যদি (setgid(getgid()) == -1)
 		fatal_f("setgid failed: %s", strerror(errno));
 #endif /* SAVED_IDS_WORK_WITH_SETEUID */
 
-	if (setgroups(saved_egroupslen, saved_egroups) == -1)
+	যদি (setgroups(saved_egroupslen, saved_egroups) == -1)
 		fatal("setgroups: %.100s", strerror(errno));
 	temporarily_use_uid_effective = 0;
 }
@@ -176,22 +176,22 @@ restore_uid(void)
  * Permanently sets all uids to the given uid.  This cannot be
  * called while temporarily_use_uid is effective.
  */
-void
-permanently_set_uid(struct passwd *pw)
+শূন্য
+permanently_set_uid(কাঠামো passwd *pw)
 {
 #ifndef NO_UID_RESTORATION_TEST
 	uid_t old_uid = getuid();
 	gid_t old_gid = getgid();
 #endif
 
-	if (pw == NULL)
+	যদি (pw == ফাঁকা)
 		fatal("permanently_set_uid: no user given");
-	if (temporarily_use_uid_effective)
+	যদি (temporarily_use_uid_effective)
 		fatal("permanently_set_uid: temporarily_use_uid effective");
 	debug("permanently_set_uid: %u/%u", (u_int)pw->pw_uid,
 	    (u_int)pw->pw_gid);
 
-	if (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) == -1)
+	যদি (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) == -1)
 		fatal("setresgid %u: %.100s", (u_int)pw->pw_gid, strerror(errno));
 
 #ifdef __APPLE__
@@ -199,23 +199,23 @@ permanently_set_uid(struct passwd *pw)
 	 * OS X requires initgroups after setgid to opt back into
 	 * memberd support for >16 supplemental groups.
 	 */
-	if (initgroups(pw->pw_name, pw->pw_gid) == -1)
+	যদি (initgroups(pw->pw_name, pw->pw_gid) == -1)
 		fatal("initgroups %.100s %u: %.100s",
 		    pw->pw_name, (u_int)pw->pw_gid, strerror(errno));
 #endif
 
-	if (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1)
+	যদি (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1)
 		fatal("setresuid %u: %.100s", (u_int)pw->pw_uid, strerror(errno));
 
 #ifndef NO_UID_RESTORATION_TEST
 	/* Try restoration of GID if changed (test clearing of saved gid) */
-	if (old_gid != pw->pw_gid && pw->pw_uid != 0 &&
+	যদি (old_gid != pw->pw_gid && pw->pw_uid != 0 &&
 	    (setgid(old_gid) != -1 || setegid(old_gid) != -1))
 		fatal_f("was able to restore old [e]gid");
 #endif
 
 	/* Verify GID drop was successful */
-	if (getgid() != pw->pw_gid || getegid() != pw->pw_gid) {
+	যদি (getgid() != pw->pw_gid || getegid() != pw->pw_gid) {
 		fatal("%s: egid incorrect gid:%u egid:%u (should be %u)",
 		    __func__, (u_int)getgid(), (u_int)getegid(),
 		    (u_int)pw->pw_gid);
@@ -223,13 +223,13 @@ permanently_set_uid(struct passwd *pw)
 
 #ifndef NO_UID_RESTORATION_TEST
 	/* Try restoration of UID if changed (test clearing of saved uid) */
-	if (old_uid != pw->pw_uid &&
+	যদি (old_uid != pw->pw_uid &&
 	    (setuid(old_uid) != -1 || seteuid(old_uid) != -1))
 		fatal_f("was able to restore old [e]uid");
 #endif
 
 	/* Verify UID drop was successful */
-	if (getuid() != pw->pw_uid || geteuid() != pw->pw_uid) {
+	যদি (getuid() != pw->pw_uid || geteuid() != pw->pw_uid) {
 		fatal("%s: euid incorrect uid:%u euid:%u (should be %u)",
 		    __func__, (u_int)getuid(), (u_int)geteuid(),
 		    (u_int)pw->pw_uid);

@@ -5,74 +5,74 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/objects.h>
-#include <openssl/ec.h>
+#অন্তর্ভাব <openssl/bn.h>
+#অন্তর্ভাব <openssl/objects.h>
+#অন্তর্ভাব <openssl/ec.h>
 #endif
 
-#include "../test_helper/test_helper.h"
-#include "ssherr.h"
-#include "sshbuf.h"
+#অন্তর্ভাব "../test_helper/test_helper.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "sshbuf.h"
 
-void sshbuf_getput_fuzz_tests(void);
+শূন্য sshbuf_getput_fuzz_tests(শূন্য);
 
-static void
-attempt_parse_blob(u_char *blob, size_t len)
+স্থির শূন্য
+attempt_parse_blob(u_char *blob, আকার_t len)
 {
-	struct sshbuf *p1;
+	কাঠামো sshbuf *p1;
 #ifdef WITH_OPENSSL
 	BIGNUM *bn;
-	EC_KEY *eck;
+	EC_চাবি *eck;
 #endif /* WITH_OPENSSL */
 	u_char *s;
-	size_t l;
+	আকার_t l;
 	uint8_t u8;
 	uint16_t u16;
 	uint32_t u32;
 	uint64_t u64;
 
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, ফাঁকা);
 	ASSERT_INT_EQ(sshbuf_put(p1, blob, len), 0);
 	ASSERT_INT_EQ(sshbuf_get_u8(p1, &u8), 0);
 	ASSERT_INT_EQ(sshbuf_get_u16(p1, &u16), 0);
 	ASSERT_INT_EQ(sshbuf_get_u32(p1, &u32), 0);
 	ASSERT_INT_EQ(sshbuf_get_u64(p1, &u64), 0);
-	if (sshbuf_get_string(p1, &s, &l) == 0) {
+	যদি (sshbuf_get_string(p1, &s, &l) == 0) {
 		bzero(s, l);
-		free(s);
+		মুক্ত(s);
 	}
 #ifdef WITH_OPENSSL
-	bn = NULL;
+	bn = ফাঁকা;
 	ASSERT_INT_EQ(sshbuf_get_bignum2(p1, &bn), 0);
 	BN_clear_free(bn);
-	eck = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
-	ASSERT_PTR_NE(eck, NULL);
+	eck = EC_চাবি_new_by_curve_name(NID_X9_62_prime256v1);
+	ASSERT_PTR_NE(eck, ফাঁকা);
 	ASSERT_INT_EQ(sshbuf_get_eckey(p1, eck), 0);
-	EC_KEY_free(eck);
+	EC_চাবি_free(eck);
 #endif /* WITH_OPENSSL */
 	sshbuf_free(p1);
 }
 
 
-static void
-onerror(void *fuzz)
+স্থির শূন্য
+onerror(শূন্য *fuzz)
 {
 	fprintf(stderr, "Failed during fuzz:\n");
-	fuzz_dump((struct fuzz *)fuzz);
+	fuzz_dump((কাঠামো fuzz *)fuzz);
 }
 
-void
-sshbuf_getput_fuzz_tests(void)
+শূন্য
+sshbuf_getput_fuzz_tests(শূন্য)
 {
 	u_char blob[] = {
 		/* u8 */
@@ -104,21 +104,21 @@ sshbuf_getput_fuzz_tests(void)
 		0xc8, 0xf9, 0xa3, 0x5e, 0x42, 0xbd, 0xd0, 0x47,
 		0x55, 0x0f, 0x69, 0xd8, 0x0e, 0xc2, 0x3c, 0xd4,
 	};
-	struct fuzz *fuzz;
+	কাঠামো fuzz *fuzz;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_2_BIT_FLIP |
 	    FUZZ_1_BYTE_FLIP | FUZZ_2_BYTE_FLIP |
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
-	if (test_is_fast())
+	যদি (test_is_fast())
 		fuzzers &= ~(FUZZ_2_BYTE_FLIP|FUZZ_2_BIT_FLIP);
 
 	TEST_START("fuzz blob parsing");
-	fuzz = fuzz_begin(fuzzers, blob, sizeof(blob));
+	fuzz = fuzz_begin(fuzzers, blob, আকার(blob));
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz))
-		attempt_parse_blob(blob, sizeof(blob));
+	জন্য(; !fuzz_done(fuzz); fuzz_পরবর্তী(fuzz))
+		attempt_parse_blob(blob, আকার(blob));
 	fuzz_cleanup(fuzz);
 	TEST_DONE();
-	TEST_ONERROR(NULL, NULL);
+	TEST_ONERROR(ফাঁকা, ফাঁকা);
 }
 

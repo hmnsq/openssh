@@ -1,15 +1,15 @@
 // cc_fuzz_target test for ssh-agent.
-extern "C" {
+বাহ্যিক "C" {
 
-#include <stdint.h>
-#include <sys/types.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <sys/types.h>
 
-extern void test_one(const uint8_t* s, size_t slen);
+বাহ্যিক শূন্য test_one(ধ্রুবক uint8_t* s, আকার_t slen);
 
-int LLVMFuzzerTestOneInput(const uint8_t* s, size_t slen)
+পূর্ণসংখ্যা LLVMFuzzer_Test_One_প্রবেশ(ধ্রুবক uint8_t* s, আকার_t slen)
 {
 	test_one(s, slen);
-	return 0;
+	ফেরত 0;
 }
 
 } // extern

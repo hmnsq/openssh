@@ -27,58 +27,58 @@
 #define SESSION_H
 
 #define TTYSZ 64
-typedef struct Session Session;
-struct Session {
-	int	used;
-	int	self;
-	int	next_unused;
-	struct passwd *pw;
+প্রকারলেখ কাঠামো Session Session;
+কাঠামো Session {
+	পূর্ণসংখ্যা	used;
+	পূর্ণসংখ্যা	self;
+	পূর্ণসংখ্যা	পরবর্তী_unused;
+	কাঠামো passwd *pw;
 	Authctxt *authctxt;
 	pid_t	pid;
-	int	forced;
+	পূর্ণসংখ্যা	forced;
 
 	/* tty */
-	char	*term;
-	int	ptyfd, ttyfd, ptymaster;
+	অক্ষর	*term;
+	পূর্ণসংখ্যা	ptyfd, ttyfd, ptymaster;
 	u_int	row, col, xpixel, ypixel;
-	char	tty[TTYSZ];
+	অক্ষর	tty[TTYSZ];
 
 	/* X11 */
-	u_int	display_number;
-	char	*display;
+	u_int	display_সংখ্যা;
+	অক্ষর	*display;
 	u_int	screen;
-	char	*auth_display;
-	char	*auth_proto;
-	char	*auth_data;
-	int	single_connection;
+	অক্ষর	*auth_display;
+	অক্ষর	*auth_proto;
+	অক্ষর	*auth_তথ্য;
+	পূর্ণসংখ্যা	single_connection;
 
-	int	chanid;
-	int	*x11_chanids;
-	int	is_subsystem;
-	char	*subsys;
-	u_int	num_env;
-	struct {
-		char	*name;
-		char	*val;
+	পূর্ণসংখ্যা	chanid;
+	পূর্ণসংখ্যা	*x11_chanids;
+	পূর্ণসংখ্যা	is_subsystem;
+	অক্ষর	*subsys;
+	u_int	অঙ্ক_env;
+	কাঠামো {
+		অক্ষর	*name;
+		অক্ষর	*val;
 	} *env;
 };
 
-void	 do_authenticated(struct ssh *, Authctxt *);
-void	 do_cleanup(struct ssh *, Authctxt *);
+শূন্য	 do_authenticated(কাঠামো ssh *, Authctxt *);
+শূন্য	 do_cleanup(কাঠামো ssh *, Authctxt *);
 
-int	 session_open(Authctxt *, int);
-void	 session_unused(int);
-int	 session_input_channel_req(struct ssh *, Channel *, const char *);
-void	 session_close_by_pid(struct ssh *ssh, pid_t, int);
-void	 session_close_by_channel(struct ssh *, int, int, void *);
-void	 session_destroy_all(struct ssh *, void (*)(Session *));
-void	 session_pty_cleanup2(Session *);
+পূর্ণসংখ্যা	 session_open(Authctxt *, পূর্ণসংখ্যা);
+শূন্য	 session_unused(পূর্ণসংখ্যা);
+পূর্ণসংখ্যা	 session_প্রবেশ_channel_req(কাঠামো ssh *, Channel *, ধ্রুবক অক্ষর *);
+শূন্য	 session_close_by_pid(কাঠামো ssh *ssh, pid_t, পূর্ণসংখ্যা);
+শূন্য	 session_close_by_channel(কাঠামো ssh *, পূর্ণসংখ্যা, পূর্ণসংখ্যা, শূন্য *);
+শূন্য	 session_destroy_all(কাঠামো ssh *, শূন্য (*)(Session *));
+শূন্য	 session_pty_cleanup2(Session *);
 
-Session	*session_new(void);
-Session	*session_by_tty(char *);
-void	 session_close(struct ssh *, Session *);
-void	 do_setusercontext(struct passwd *);
+Session	*session_new(শূন্য);
+Session	*session_by_tty(অক্ষর *);
+শূন্য	 session_close(কাঠামো ssh *, Session *);
+শূন্য	 do_setusercontext(কাঠামো passwd *);
 
-const char	*session_get_remote_name_or_ip(struct ssh *, u_int, int);
+ধ্রুবক অক্ষর	*session_get_remote_name_or_ip(কাঠামো ssh *, u_int, পূর্ণসংখ্যা);
 
 #endif

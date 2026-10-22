@@ -15,170 +15,170 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/ec.h>
+#অন্তর্ভাব <openssl/bn.h>
+#অন্তর্ভাব <openssl/ec.h>
 
-#include "ssherr.h"
+#অন্তর্ভাব "ssherr.h"
 #define SSHBUF_INTERNAL
-#include "sshbuf.h"
+#অন্তর্ভাব "sshbuf.h"
 
-int
-sshbuf_get_bignum2(struct sshbuf *buf, BIGNUM **valp)
+পূর্ণসংখ্যা
+sshbuf_get_bignum2(কাঠামো sshbuf *buf, BIGNUM **valp)
 {
 	BIGNUM *v;
-	const u_char *d;
-	size_t len;
-	int r;
+	ধ্রুবক u_char *d;
+	আকার_t len;
+	পূর্ণসংখ্যা r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if ((r = sshbuf_get_bignum2_bytes_direct(buf, &d, &len)) != 0)
-		return r;
-	if (valp != NULL) {
-		if ((v = BN_new()) == NULL ||
-		    BN_bin2bn(d, len, v) == NULL) {
+	যদি (valp != ফাঁকা)
+		*valp = ফাঁকা;
+	যদি ((r = sshbuf_get_bignum2_bytes_direct(buf, &d, &len)) != 0)
+		ফেরত r;
+	যদি (valp != ফাঁকা) {
+		যদি ((v = BN_new()) == ফাঁকা ||
+		    BN_bin2bn(d, len, v) == ফাঁকা) {
 			BN_clear_free(v);
-			return SSH_ERR_ALLOC_FAIL;
+			ফেরত SSH_ERR_ALLOC_FAIL;
 		}
 		*valp = v;
 	}
-	return 0;
+	ফেরত 0;
 }
 
-static int
-get_ec(const u_char *d, size_t len, EC_POINT *v, const EC_GROUP *g)
+স্থির পূর্ণসংখ্যা
+get_ec(ধ্রুবক u_char *d, আকার_t len, EC_POINT *v, ধ্রুবক EC_GROUP *g)
 {
 	/* Refuse overlong bignums */
-	if (len == 0 || len > SSHBUF_MAX_ECPOINT)
-		return SSH_ERR_ECPOINT_TOO_LARGE;
+	যদি (len == 0 || len > SSHBUF_MAX_ECPOINT)
+		ফেরত SSH_ERR_ECPOINT_TOO_LARGE;
 	/* Only handle uncompressed points */
-	if (*d != POINT_CONVERSION_UNCOMPRESSED)
-		return SSH_ERR_INVALID_FORMAT;
-	if (v != NULL && EC_POINT_oct2point(g, v, d, len, NULL) != 1)
-		return SSH_ERR_INVALID_FORMAT; /* XXX assumption */
-	return 0;
+	যদি (*d != POINT_CONVERSION_UNCOMPRESSED)
+		ফেরত SSH_ERR_INVALID_FORMAT;
+	যদি (v != ফাঁকা && EC_POINT_oct2point(g, v, d, len, ফাঁকা) != 1)
+		ফেরত SSH_ERR_INVALID_FORMAT; /* XXX assumption */
+	ফেরত 0;
 }
 
-int
-sshbuf_get_ec(struct sshbuf *buf, EC_POINT *v, const EC_GROUP *g)
+পূর্ণসংখ্যা
+sshbuf_get_ec(কাঠামো sshbuf *buf, EC_POINT *v, ধ্রুবক EC_GROUP *g)
 {
-	const u_char *d;
-	size_t len;
-	int r;
+	ধ্রুবক u_char *d;
+	আকার_t len;
+	পূর্ণসংখ্যা r;
 
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0)
-		return r;
-	if ((r = get_ec(d, len, v, g)) != 0)
-		return r;
+	যদি ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0)
+		ফেরত r;
+	যদি ((r = get_ec(d, len, v, g)) != 0)
+		ফেরত r;
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	যদি (sshbuf_get_string_direct(buf, ফাঁকা, ফাঁকা) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	ফেরত 0;
 }
 
-int
-sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v)
+পূর্ণসংখ্যা
+sshbuf_get_eckey(কাঠামো sshbuf *buf, EC_চাবি *v)
 {
-	EC_POINT *pt = EC_POINT_new(EC_KEY_get0_group(v));
-	int r;
-	const u_char *d;
-	size_t len;
+	EC_POINT *pt = EC_POINT_new(EC_চাবি_get0_group(v));
+	পূর্ণসংখ্যা r;
+	ধ্রুবক u_char *d;
+	আকার_t len;
 
-	if (pt == NULL) {
+	যদি (pt == ফাঁকা) {
 		SSHBUF_DBG(("SSH_ERR_ALLOC_FAIL"));
-		return SSH_ERR_ALLOC_FAIL;
+		ফেরত SSH_ERR_ALLOC_FAIL;
 	}
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0) {
+	যদি ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0) {
 		EC_POINT_free(pt);
-		return r;
+		ফেরত r;
 	}
-	if ((r = get_ec(d, len, pt, EC_KEY_get0_group(v))) != 0) {
+	যদি ((r = get_ec(d, len, pt, EC_চাবি_get0_group(v))) != 0) {
 		EC_POINT_free(pt);
-		return r;
+		ফেরত r;
 	}
-	if (EC_KEY_set_public_key(v, pt) != 1) {
+	যদি (EC_চাবি_set_public_চাবি(v, pt) != 1) {
 		EC_POINT_free(pt);
-		return SSH_ERR_ALLOC_FAIL; /* XXX assumption */
+		ফেরত SSH_ERR_ALLOC_FAIL; /* XXX assumption */
 	}
 	EC_POINT_free(pt);
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	যদি (sshbuf_get_string_direct(buf, ফাঁকা, ফাঁকা) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		ফেরত SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	ফেরত 0;
 }
 
-int
-sshbuf_put_bignum2(struct sshbuf *buf, const BIGNUM *v)
+পূর্ণসংখ্যা
+sshbuf_put_bignum2(কাঠামো sshbuf *buf, ধ্রুবক BIGNUM *v)
 {
 	u_char d[SSHBUF_MAX_BIGNUM + 1];
-	int len = BN_num_bytes(v), prepend = 0, r;
+	পূর্ণসংখ্যা len = BN_অঙ্ক_bytes(v), prepend = 0, r;
 
-	if (len < 0 || len > SSHBUF_MAX_BIGNUM)
-		return SSH_ERR_INVALID_ARGUMENT;
+	যদি (len < 0 || len > SSHBUF_MAX_BIGNUM)
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
 	*d = '\0';
-	if (BN_bn2bin(v, d + 1) != len)
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+	যদি (BN_bn2bin(v, d + 1) != len)
+		ফেরত SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
 	/* If MSB is set, prepend a \0 */
-	if (len > 0 && (d[1] & 0x80) != 0)
+	যদি (len > 0 && (d[1] & 0x80) != 0)
 		prepend = 1;
-	if ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
-		explicit_bzero(d, sizeof(d));
-		return r;
+	যদি ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
+		explicit_bzero(d, আকার(d));
+		ফেরত r;
 	}
-	explicit_bzero(d, sizeof(d));
-	return 0;
+	explicit_bzero(d, আকার(d));
+	ফেরত 0;
 }
 
-int
-sshbuf_put_ec(struct sshbuf *buf, const EC_POINT *v, const EC_GROUP *g)
+পূর্ণসংখ্যা
+sshbuf_put_ec(কাঠামো sshbuf *buf, ধ্রুবক EC_POINT *v, ধ্রুবক EC_GROUP *g)
 {
 	u_char d[SSHBUF_MAX_ECPOINT];
-	size_t len;
-	int ret;
+	আকার_t len;
+	পূর্ণসংখ্যা ret;
 
-	if ((len = EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
-	    NULL, 0, NULL)) > SSHBUF_MAX_ECPOINT) {
-		return SSH_ERR_INVALID_ARGUMENT;
+	যদি ((len = EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
+	    ফাঁকা, 0, ফাঁকা)) > SSHBUF_MAX_ECPOINT) {
+		ফেরত SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
-	    d, len, NULL) != len) {
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+	যদি (EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
+	    d, len, ফাঁকা) != len) {
+		ফেরত SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
 	}
 	ret = sshbuf_put_string(buf, d, len);
 	explicit_bzero(d, len);
-	return ret;
+	ফেরত ret;
 }
 
-int
-sshbuf_put_eckey(struct sshbuf *buf, const EC_KEY *v)
+পূর্ণসংখ্যা
+sshbuf_put_eckey(কাঠামো sshbuf *buf, ধ্রুবক EC_চাবি *v)
 {
-	return sshbuf_put_ec(buf, EC_KEY_get0_public_key(v),
-	    EC_KEY_get0_group(v));
+	ফেরত sshbuf_put_ec(buf, EC_চাবি_get0_public_চাবি(v),
+	    EC_চাবি_get0_group(v));
 }
 
-int
-sshbuf_put_ec_pkey(struct sshbuf *buf, EVP_PKEY *pkey)
+পূর্ণসংখ্যা
+sshbuf_put_ec_pkey(কাঠামো sshbuf *buf, EVP_PKEY *pkey)
 {
-	const EC_KEY *ec;
+	ধ্রুবক EC_চাবি *ec;
 
-	if ((ec = EVP_PKEY_get0_EC_KEY(pkey)) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return sshbuf_put_eckey(buf, ec);
+	যদি ((ec = EVP_PKEY_get0_EC_চাবি(pkey)) == ফাঁকা)
+		ফেরত SSH_ERR_LIBCRYPTO_ERROR;
+	ফেরত sshbuf_put_eckey(buf, ec);
 }
 #endif /* WITH_OPENSSL */

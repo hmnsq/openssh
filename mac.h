@@ -26,28 +26,28 @@
 #ifndef SSHMAC_H
 #define SSHMAC_H
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-struct sshmac {
-	char	*name;
-	int	enabled;
+কাঠামো sshmac {
+	অক্ষর	*name;
+	পূর্ণসংখ্যা	enabled;
 	u_int	mac_len;
-	u_char	*key;
-	u_int	key_len;
-	int	type;
-	int	etm;		/* Encrypt-then-MAC */
-	struct ssh_hmac_ctx	*hmac_ctx;
-	struct umac_ctx		*umac_ctx;
+	u_char	*চাবি;
+	u_int	চাবি_len;
+	পূর্ণসংখ্যা	type;
+	পূর্ণসংখ্যা	etm;		/* Encrypt-then-MAC */
+	কাঠামো ssh_hmac_ctx	*hmac_ctx;
+	কাঠামো umac_ctx		*umac_ctx;
 };
 
-int	 mac_valid(const char *);
-char	*mac_alg_list(char);
-int	 mac_setup(struct sshmac *, char *);
-int	 mac_init(struct sshmac *);
-int	 mac_compute(struct sshmac *, uint32_t, const u_char *, int,
-    u_char *, size_t);
-int	 mac_check(struct sshmac *, uint32_t, const u_char *, size_t,
-    const u_char *, size_t);
-void	 mac_clear(struct sshmac *);
+পূর্ণসংখ্যা	 mac_valid(ধ্রুবক অক্ষর *);
+অক্ষর	*mac_alg_list(অক্ষর);
+পূর্ণসংখ্যা	 mac_setup(কাঠামো sshmac *, অক্ষর *);
+পূর্ণসংখ্যা	 mac_init(কাঠামো sshmac *);
+পূর্ণসংখ্যা	 mac_compute(কাঠামো sshmac *, uint32_t, ধ্রুবক u_char *, পূর্ণসংখ্যা,
+    u_char *, আকার_t);
+পূর্ণসংখ্যা	 mac_check(কাঠামো sshmac *, uint32_t, ধ্রুবক u_char *, আকার_t,
+    ধ্রুবক u_char *, আকার_t);
+শূন্য	 mac_clear(কাঠামো sshmac *);
 
 #endif /* SSHMAC_H */

@@ -30,17 +30,17 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/setenv.c */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#if !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
+#যদি !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
 
-extern char **environ;
+বাহ্যিক অক্ষর **environ;
 #ifndef HAVE_SETENV
-static char **lastenv;				/* last value of environ */
+স্থির অক্ষর **lastenv;				/* last value of environ */
 #endif
 
 /* OpenSSH Portable: __findenv is from getenv.c rev 1.8, made static */
@@ -54,72 +54,72 @@ static char **lastenv;				/* last value of environ */
  *
  *	This routine *should* be a static; don't use it.
  */
-static char *
-__findenv(const char *name, int len, int *offset)
+স্থির অক্ষর *
+__findenv(ধ্রুবক অক্ষর *name, পূর্ণসংখ্যা len, পূর্ণসংখ্যা *offset)
 {
-	extern char **environ;
-	int i;
-	const char *np;
-	char **p, *cp;
+	বাহ্যিক অক্ষর **environ;
+	পূর্ণসংখ্যা i;
+	ধ্রুবক অক্ষর *np;
+	অক্ষর **p, *cp;
 
-	if (name == NULL || environ == NULL)
-		return (NULL);
-	for (p = environ + *offset; (cp = *p) != NULL; ++p) {
-		for (np = name, i = len; i && *cp; i--)
-			if (*cp++ != *np++)
-				break;
-		if (i == 0 && *cp++ == '=') {
+	যদি (name == ফাঁকা || environ == ফাঁকা)
+		ফেরত (ফাঁকা);
+	জন্য (p = environ + *offset; (cp = *p) != ফাঁকা; ++p) {
+		জন্য (np = name, i = len; i && *cp; i--)
+			যদি (*cp++ != *np++)
+				বিরতি;
+		যদি (i == 0 && *cp++ == '=') {
 			*offset = p - environ;
-			return (cp);
+			ফেরত (cp);
 		}
 	}
-	return (NULL);
+	ফেরত (ফাঁকা);
 }
 
-#if 0 /* nothing uses putenv */
+#যদি 0 /* nothing uses putenv */
 /*
  * putenv --
  *	Add a name=value string directly to the environmental, replacing
  *	any current value.
  */
-int
-putenv(char *str)
+পূর্ণসংখ্যা
+putenv(অক্ষর *str)
 {
-	char **P, *cp;
-	size_t cnt;
-	int offset = 0;
+	অক্ষর **P, *cp;
+	আকার_t cnt;
+	পূর্ণসংখ্যা offset = 0;
 
-	for (cp = str; *cp && *cp != '='; ++cp)
+	জন্য (cp = str; *cp && *cp != '='; ++cp)
 		;
-	if (*cp != '=') {
+	যদি (*cp != '=') {
 		errno = EINVAL;
-		return (-1);			/* missing `=' in string */
+		ফেরত (-1);			/* missing `=' in string */
 	}
 
-	if (__findenv(str, (int)(cp - str), &offset) != NULL) {
+	যদি (__findenv(str, (পূর্ণসংখ্যা)(cp - str), &offset) != ফাঁকা) {
 		environ[offset++] = str;
 		/* could be set multiple times */
-		while (__findenv(str, (int)(cp - str), &offset)) {
-			for (P = &environ[offset];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		যখন (__findenv(str, (পূর্ণসংখ্যা)(cp - str), &offset)) {
+			জন্য (P = &environ[offset];; ++P)
+				যদি (!(*P = *(P + 1)))
+					বিরতি;
 		}
-		return (0);
+		ফেরত (0);
 	}
 
 	/* create new slot for string */
-	for (P = environ; *P != NULL; P++)
+	জন্য (P = environ; *P != ফাঁকা; P++)
 		;
 	cnt = P - environ;
-	P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-	if (!P)
-		return (-1);
-	if (lastenv != environ)
-		memcpy(P, environ, cnt * sizeof(char *));
+	P = (অক্ষর **)realloc(lastenv, আকার(অক্ষর *) * (cnt + 2));
+	যদি (!P)
+		ফেরত (-1);
+	যদি (lastenv != environ)
+		memcpy(P, environ, cnt * আকার(অক্ষর *));
 	lastenv = environ = P;
 	environ[cnt] = str;
-	environ[cnt + 1] = NULL;
-	return (0);
+	environ[cnt + 1] = ফাঁকা;
+	ফেরত (0);
 }
 
 #endif
@@ -130,63 +130,63 @@ putenv(char *str)
  *	Set the value of the environmental variable "name" to be
  *	"value".  If rewrite is set, replace any current value.
  */
-int
-setenv(const char *name, const char *value, int rewrite)
+পূর্ণসংখ্যা
+setenv(ধ্রুবক অক্ষর *name, ধ্রুবক অক্ষর *মান, পূর্ণসংখ্যা rewrite)
 {
-	char *C, **P;
-	const char *np;
-	int l_value, offset = 0;
+	অক্ষর *C, **P;
+	ধ্রুবক অক্ষর *np;
+	পূর্ণসংখ্যা l_মান, offset = 0;
 
-	for (np = name; *np && *np != '='; ++np)
+	জন্য (np = name; *np && *np != '='; ++np)
 		;
 #ifdef notyet
-	if (*np) {
+	যদি (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		ফেরত (-1);			/* has `=' in name */
 	}
 #endif
 
-	l_value = strlen(value);
-	if ((C = __findenv(name, (int)(np - name), &offset)) != NULL) {
-		int tmpoff = offset + 1;
-		if (!rewrite)
-			return (0);
-#if 0 /* XXX - existing entry may not be writable */
-		if (strlen(C) >= l_value) {	/* old larger; copy over */
-			while ((*C++ = *value++))
+	l_মান = strlen(মান);
+	যদি ((C = __findenv(name, (পূর্ণসংখ্যা)(np - name), &offset)) != ফাঁকা) {
+		পূর্ণসংখ্যা tmpoff = offset + 1;
+		যদি (!rewrite)
+			ফেরত (0);
+#যদি 0 /* XXX - existing entry may not be writable */
+		যদি (strlen(C) >= l_মান) {	/* old larger; copy over */
+			যখন ((*C++ = *মান++))
 				;
-			return (0);
+			ফেরত (0);
 		}
 #endif
 		/* could be set multiple times */
-		while (__findenv(name, (int)(np - name), &tmpoff)) {
-			for (P = &environ[tmpoff];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		যখন (__findenv(name, (পূর্ণসংখ্যা)(np - name), &tmpoff)) {
+			জন্য (P = &environ[tmpoff];; ++P)
+				যদি (!(*P = *(P + 1)))
+					বিরতি;
 		}
-	} else {					/* create new slot */
-		size_t cnt;
+	} অন্যথা {					/* create new slot */
+		আকার_t cnt;
 
-		for (P = environ; *P != NULL; P++)
+		জন্য (P = environ; *P != ফাঁকা; P++)
 			;
 		cnt = P - environ;
-		P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-		if (!P)
-			return (-1);
-		if (lastenv != environ)
-			memcpy(P, environ, cnt * sizeof(char *));
+		P = (অক্ষর **)realloc(lastenv, আকার(অক্ষর *) * (cnt + 2));
+		যদি (!P)
+			ফেরত (-1);
+		যদি (lastenv != environ)
+			memcpy(P, environ, cnt * আকার(অক্ষর *));
 		lastenv = environ = P;
 		offset = cnt;
-		environ[cnt + 1] = NULL;
+		environ[cnt + 1] = ফাঁকা;
 	}
-	if (!(environ[offset] =			/* name + `=' + value */
-	    malloc((size_t)((int)(np - name) + l_value + 2))))
-		return (-1);
-	for (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
+	যদি (!(environ[offset] =			/* name + `=' + value */
+	    malloc((আকার_t)((পূর্ণসংখ্যা)(np - name) + l_মান + 2))))
+		ফেরত (-1);
+	জন্য (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
 		;
-	for (*C++ = '='; (*C++ = *value++); )
+	জন্য (*C++ = '='; (*C++ = *মান++); )
 		;
-	return (0);
+	ফেরত (0);
 }
 
 #endif /* HAVE_SETENV */
@@ -196,31 +196,31 @@ setenv(const char *name, const char *value, int rewrite)
  * unsetenv(name) --
  *	Delete environmental variable "name".
  */
-int
-unsetenv(const char *name)
+পূর্ণসংখ্যা
+unsetenv(ধ্রুবক অক্ষর *name)
 {
-	char **P;
-	const char *np;
-	int offset = 0;
+	অক্ষর **P;
+	ধ্রুবক অক্ষর *np;
+	পূর্ণসংখ্যা offset = 0;
 
-	if (!name || !*name) {
+	যদি (!name || !*name) {
 		errno = EINVAL;
-		return (-1);
+		ফেরত (-1);
 	}
-	for (np = name; *np && *np != '='; ++np)
+	জন্য (np = name; *np && *np != '='; ++np)
 		;
-	if (*np) {
+	যদি (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		ফেরত (-1);			/* has `=' in name */
 	}
 
 	/* could be set multiple times */
-	while (__findenv(name, (int)(np - name), &offset)) {
-		for (P = &environ[offset];; ++P)
-			if (!(*P = *(P + 1)))
-				break;
+	যখন (__findenv(name, (পূর্ণসংখ্যা)(np - name), &offset)) {
+		জন্য (P = &environ[offset];; ++P)
+			যদি (!(*P = *(P + 1)))
+				বিরতি;
 	}
-	return (0);
+	ফেরত (0);
 }
 #endif /* HAVE_UNSETENV */
 

@@ -5,95 +5,95 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
+#অন্তর্ভাব <openssl/bn.h>
 #endif
 
-#include "../test_helper/test_helper.h"
+#অন্তর্ভাব "../test_helper/test_helper.h"
 
-#include "bitmap.h"
+#অন্তর্ভাব "bitmap.h"
 
 #define DEFAULT_NTESTS 131
 
-void
-tests(void)
+শূন্য
+tests(শূন্য)
 {
 #ifdef WITH_OPENSSL
-	struct bitmap *b;
+	কাঠামো bitmap *b;
 	BIGNUM *bn;
-	size_t len;
-	int i, j, k, n, ntests = DEFAULT_NTESTS;
+	আকার_t len;
+	পূর্ণসংখ্যা i, j, k, n, ntests = DEFAULT_NTESTS;
 	u_char bbuf[1024], bnbuf[1024];
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if (test_is_fast())
+	যদি (test_is_fast())
 		ntests /= 4;
-	else if (test_is_slow())
+	অন্যথা যদি (test_is_slow())
 		ntests *= 2;
 
 	TEST_START("bitmap_new");
 	b = bitmap_new();
-	ASSERT_PTR_NE(b, NULL);
+	ASSERT_PTR_NE(b, ফাঁকা);
 	bn = BN_new();
-	ASSERT_PTR_NE(bn, NULL);
+	ASSERT_PTR_NE(bn, ফাঁকা);
 	TEST_DONE();
 
 	TEST_START("bitmap_set_bit / bitmap_test_bit");
-	for (i = -1; i < ntests; i++) {
-		for (j = -1; j < ntests; j++) {
-			for (k = -1; k < ntests; k++) {
+	জন্য (i = -1; i < ntests; i++) {
+		জন্য (j = -1; j < ntests; j++) {
+			জন্য (k = -1; k < ntests; k++) {
 				bitmap_zero(b);
 				BN_clear(bn);
 
 				test_subtest_info("set %d/%d/%d", i, j, k);
 				/* Set bits */
-				if (i >= 0) {
+				যদি (i >= 0) {
 					ASSERT_INT_EQ(bitmap_set_bit(b, i), 0);
 					ASSERT_INT_EQ(BN_set_bit(bn, i), 1);
 				}
-				if (j >= 0) {
+				যদি (j >= 0) {
 					ASSERT_INT_EQ(bitmap_set_bit(b, j), 0);
 					ASSERT_INT_EQ(BN_set_bit(bn, j), 1);
 				}
-				if (k >= 0) {
+				যদি (k >= 0) {
 					ASSERT_INT_EQ(bitmap_set_bit(b, k), 0);
 					ASSERT_INT_EQ(BN_set_bit(bn, k), 1);
 				}
 
 				/* Check perfect match between bitmap and bn */
 				test_subtest_info("match %d/%d/%d", i, j, k);
-				for (n = 0; n < ntests; n++) {
+				জন্য (n = 0; n < ntests; n++) {
 					ASSERT_INT_EQ(BN_is_bit_set(bn, n),
 					    bitmap_test_bit(b, n));
 				}
 
 				/* Test length calculations */
 				test_subtest_info("length %d/%d/%d", i, j, k);
-				ASSERT_INT_EQ(BN_num_bits(bn),
-				    (int)bitmap_nbits(b));
-				ASSERT_INT_EQ(BN_num_bytes(bn),
-				    (int)bitmap_nbytes(b));
+				ASSERT_INT_EQ(BN_অঙ্ক_bits(bn),
+				    (পূর্ণসংখ্যা)bitmap_nbits(b));
+				ASSERT_INT_EQ(BN_অঙ্ক_bytes(bn),
+				    (পূর্ণসংখ্যা)bitmap_nbytes(b));
 
 				/* Test serialisation */
 				test_subtest_info("serialise %d/%d/%d",
 				    i, j, k);
 				len = bitmap_nbytes(b);
-				memset(bbuf, 0xfc, sizeof(bbuf));
+				memset(bbuf, 0xfc, আকার(bbuf));
 				ASSERT_INT_EQ(bitmap_to_string(b, bbuf,
-				    sizeof(bbuf)), 0);
-				for (n = len; n < (int)sizeof(bbuf); n++)
+				    আকার(bbuf)), 0);
+				জন্য (n = len; n < (পূর্ণসংখ্যা)আকার(bbuf); n++)
 					ASSERT_U8_EQ(bbuf[n], 0xfc);
 				r = BN_bn2bin(bn, bnbuf);
 				ASSERT_INT_GE(r, 0);
-				ASSERT_INT_EQ(r, (int)len);
+				ASSERT_INT_EQ(r, (পূর্ণসংখ্যা)len);
 				ASSERT_MEM_EQ(bbuf, bnbuf, len);
 
 				/* Test deserialisation */
@@ -102,7 +102,7 @@ tests(void)
 				bitmap_zero(b);
 				ASSERT_INT_EQ(bitmap_from_string(b, bnbuf,
 				    len), 0);
-				for (n = 0; n < ntests; n++) {
+				জন্য (n = 0; n < ntests; n++) {
 					ASSERT_INT_EQ(BN_is_bit_set(bn, n),
 					    bitmap_test_bit(b, n));
 				}
@@ -110,23 +110,23 @@ tests(void)
 				/* Test clearing bits */
 				test_subtest_info("clear %d/%d/%d",
 				    i, j, k);
-				for (n = 0; n < ntests; n++) {
+				জন্য (n = 0; n < ntests; n++) {
 					ASSERT_INT_EQ(bitmap_set_bit(b, n), 0);
 					ASSERT_INT_EQ(BN_set_bit(bn, n), 1);
 				}
-				if (i >= 0) {
+				যদি (i >= 0) {
 					bitmap_clear_bit(b, i);
 					BN_clear_bit(bn, i);
 				}
-				if (j >= 0) {
+				যদি (j >= 0) {
 					bitmap_clear_bit(b, j);
 					BN_clear_bit(bn, j);
 				}
-				if (k >= 0) {
+				যদি (k >= 0) {
 					bitmap_clear_bit(b, k);
 					BN_clear_bit(bn, k);
 				}
-				for (n = 0; n < ntests; n++) {
+				জন্য (n = 0; n < ntests; n++) {
 					ASSERT_INT_EQ(BN_is_bit_set(bn, n),
 					    bitmap_test_bit(b, n));
 				}
@@ -139,8 +139,8 @@ tests(void)
 #endif
 }
 
-void
-benchmarks(void)
+শূন্য
+benchmarks(শূন্য)
 {
 	printf("no benchmarks\n");
 }

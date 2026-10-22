@@ -40,89 +40,89 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <sys/utsname.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <sys/socket.h>
+#অন্তর্ভাব <sys/stat.h>
+#অন্তর্ভাব <sys/wait.h>
+#অন্তর্ভাব <sys/utsname.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
-#include <locale.h>
+#অন্তর্ভাব <ctype.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <fcntl.h>
+#অন্তর্ভাব <netdb.h>
+#অন্তর্ভাব <paths.h>
+#অন্তর্ভাব <pwd.h>
+#অন্তর্ভাব <signal.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stddef.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <limits.h>
+#অন্তর্ভাব <locale.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#অন্তর্ভাব <netinet/in.h>
+#অন্তর্ভাব <arpa/inet.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#include <openssl/err.h>
+#অন্তর্ভাব <openssl/evp.h>
+#অন্তর্ভাব <openssl/err.h>
 #endif
-#include "openbsd-compat/openssl-compat.h"
+#অন্তর্ভাব "openbsd-compat/openssl-compat.h"
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "compat.h"
-#include "cipher.h"
-#include "packet.h"
-#include "sshbuf.h"
-#include "channels.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "authfile.h"
-#include "pathnames.h"
-#include "clientloop.h"
-#include "log.h"
-#include "misc.h"
-#include "readconf.h"
-#include "sshconnect.h"
-#include "kex.h"
-#include "mac.h"
-#include "match.h"
-#include "version.h"
-#include "ssherr.h"
-#include "utf8.h"
+#অন্তর্ভাব "xmalloc.h"
+#অন্তর্ভাব "ssh.h"
+#অন্তর্ভাব "ssh2.h"
+#অন্তর্ভাব "compat.h"
+#অন্তর্ভাব "cipher.h"
+#অন্তর্ভাব "packet.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "channels.h"
+#অন্তর্ভাব "sshkey.h"
+#অন্তর্ভাব "authfd.h"
+#অন্তর্ভাব "authfile.h"
+#অন্তর্ভাব "pathnames.h"
+#অন্তর্ভাব "clientloop.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "misc.h"
+#অন্তর্ভাব "readconf.h"
+#অন্তর্ভাব "sshconnect.h"
+#অন্তর্ভাব "kex.h"
+#অন্তর্ভাব "mac.h"
+#অন্তর্ভাব "match.h"
+#অন্তর্ভাব "version.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "utf8.h"
 
 #ifdef ENABLE_PKCS11
-#include "ssh-pkcs11.h"
+#অন্তর্ভাব "ssh-pkcs11.h"
 #endif
 
-extern char *__progname;
+বাহ্যিক অক্ষর *__progname;
 
 /* Saves a copy of argv for setproctitle emulation */
 #ifndef HAVE_SETPROCTITLE
-static char **saved_av;
+স্থির অক্ষর **saved_av;
 #endif
 
 /* Flag indicating whether debug mode is on.  May be set on the command line. */
-int debug_flag = 0;
+পূর্ণসংখ্যা debug_flag = 0;
 
 /* Flag indicating whether a tty should be requested */
-int tty_flag = 0;
+পূর্ণসংখ্যা tty_flag = 0;
 
 /*
  * Flag indicating that the current process should be backgrounded and
  * a new mux-client launched in the foreground for ControlPersist.
  */
-static int need_controlpersist_detach = 0;
+স্থির পূর্ণসংখ্যা need_controlpersist_detach = 0;
 
 /* Copies of flags for ControlPersist foreground mux-client */
-static int ostdin_null_flag, osession_type, otty_flag, orequest_tty;
-static int ofork_after_authentication;
+স্থির পূর্ণসংখ্যা ostdin_null_flag, osession_type, otty_flag, orequest_tty;
+স্থির পূর্ণসংখ্যা ofork_after_authentication;
 
 /*
  * General data structure for command line options and options configurable
@@ -131,41 +131,41 @@ static int ofork_after_authentication;
 Options options;
 
 /* optional user configfile */
-char *config = NULL;
+অক্ষর *config = ফাঁকা;
 
 /*
  * Name of the host we are connecting to.  This is the name given on the
  * command line, or the Hostname specified for the user-supplied name in a
  * configuration file.
  */
-char *host;
+অক্ষর *host;
 
 /*
  * A config can specify a path to forward, overriding SSH_AUTH_SOCK. If this is
  * not NULL, forward the socket at this path instead.
  */
-char *forward_agent_sock_path = NULL;
+অক্ষর *forward_agent_sock_path = ফাঁকা;
 
 /* socket address the host resolves to */
-struct sockaddr_storage hostaddr;
+কাঠামো sockaddr_storage hostaddr;
 
 /* Private host keys. */
-Sensitive sensitive_data;
+Sensitive sensitive_তথ্য;
 
 /* command to be executed */
-struct sshbuf *command;
+কাঠামো sshbuf *command;
 
 /* # of replies received for global requests */
-static int forward_confirms_pending = -1;
+স্থির পূর্ণসংখ্যা forward_confirms_pending = -1;
 
 /* mux.c */
-extern int muxserver_sock;
-extern u_int muxclient_command;
+বাহ্যিক পূর্ণসংখ্যা muxserver_sock;
+বাহ্যিক u_int muxclient_command;
 
 /* Prints a help message to the user.  This function never returns. */
 
-static void
-usage(void)
+স্থির শূন্য
+usage(শূন্য)
 {
 	fprintf(stderr,
 "usage: ssh [-46AaCfGgKkMNnqsTtVvXxYyZ] [-B bind_interface] [-b bind_address]\n"
@@ -180,20 +180,20 @@ usage(void)
 	exit(255);
 }
 
-static int ssh_session2(struct ssh *, const struct ssh_conn_info *);
-static void load_public_identity_files(const struct ssh_conn_info *);
-static void main_sigchld_handler(int);
+স্থির পূর্ণসংখ্যা ssh_session2(কাঠামো ssh *, ধ্রুবক কাঠামো ssh_conn_info *);
+স্থির শূন্য load_public_identity_files(ধ্রুবক কাঠামো ssh_conn_info *);
+স্থির শূন্য main_sigchld_handler(পূর্ণসংখ্যা);
 
 /* ~/ expand a list of paths. NB. assumes path[n] is heap-allocated. */
-static void
-tilde_expand_paths(char **paths, u_int num_paths)
+স্থির শূন্য
+tilde_expand_paths(অক্ষর **paths, u_int অঙ্ক_paths)
 {
 	u_int i;
-	char *cp;
+	অক্ষর *cp;
 
-	for (i = 0; i < num_paths; i++) {
+	জন্য (i = 0; i < অঙ্ক_paths; i++) {
 		cp = tilde_expand_filename(paths[i], getuid());
-		free(paths[i]);
+		মুক্ত(paths[i]);
 		paths[i] = cp;
 	}
 }
@@ -203,13 +203,13 @@ tilde_expand_paths(char **paths, u_int num_paths)
  * in the client that support percent expansion.
  * Caller must free returned string.
  */
-static char *
-default_client_percent_expand(const char *str,
-    const struct ssh_conn_info *cinfo)
+স্থির অক্ষর *
+default_client_percent_expand(ধ্রুবক অক্ষর *str,
+    ধ্রুবক কাঠামো ssh_conn_info *cinfo)
 {
-	return percent_expand(str,
+	ফেরত percent_expand(str,
 	    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(cinfo),
-	    (char *)NULL);
+	    (অক্ষর *)ফাঁকা);
 }
 
 /*
@@ -217,18 +217,18 @@ default_client_percent_expand(const char *str,
  * AND perform environment variable substitution.
  * Caller must free returned string.
  */
-static char *
-default_client_percent_dollar_expand(const char *str,
-    const struct ssh_conn_info *cinfo)
+স্থির অক্ষর *
+default_client_percent_dollar_expand(ধ্রুবক অক্ষর *str,
+    ধ্রুবক কাঠামো ssh_conn_info *cinfo)
 {
-	char *ret;
+	অক্ষর *ret;
 
 	ret = percent_dollar_expand(str,
 	    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(cinfo),
-	    (char *)NULL);
-	if (ret == NULL)
+	    (অক্ষর *)ফাঁকা);
+	যদি (ret == ফাঁকা)
 		fatal("invalid environment variable expansion");
-	return ret;
+	ফেরত ret;
 }
 
 /*
@@ -237,81 +237,81 @@ default_client_percent_dollar_expand(const char *str,
  * Returns NULL on failure.
  * NB. this function must operate with a options having undefined members.
  */
-static struct addrinfo *
-resolve_host(const char *name, int port, int logerr, char *cname, size_t clen)
+স্থির কাঠামো addrinfo *
+resolve_host(ধ্রুবক অক্ষর *name, পূর্ণসংখ্যা port, পূর্ণসংখ্যা logerr, অক্ষর *cname, আকার_t clen)
 {
-	char strport[NI_MAXSERV];
-	const char *errstr = NULL;
-	struct addrinfo hints, *res;
-	int gaierr;
+	অক্ষর strport[NI_MAXSERV];
+	ধ্রুবক অক্ষর *errstr = ফাঁকা;
+	কাঠামো addrinfo hints, *res;
+	পূর্ণসংখ্যা gaierr;
 	LogLevel loglevel = SYSLOG_LEVEL_DEBUG1;
 
-	if (port <= 0)
+	যদি (port <= 0)
 		port = default_ssh_port();
-	if (cname != NULL)
+	যদি (cname != ফাঁকা)
 		*cname = '\0';
 	debug3_f("lookup %s:%d", name, port);
 
-	snprintf(strport, sizeof strport, "%d", port);
-	memset(&hints, 0, sizeof(hints));
+	snprintf(strport, আকার strport, "%d", port);
+	memset(&hints, 0, আকার(hints));
 	hints.ai_family = options.address_family == -1 ?
 	    AF_UNSPEC : options.address_family;
 	hints.ai_socktype = SOCK_STREAM;
-	if (cname != NULL)
+	যদি (cname != ফাঁকা)
 		hints.ai_flags = AI_CANONNAME;
-	if ((gaierr = getaddrinfo(name, strport, &hints, &res)) != 0) {
-		if (logerr || (gaierr != EAI_NONAME && gaierr != EAI_NODATA))
+	যদি ((gaierr = getaddrinfo(name, strport, &hints, &res)) != 0) {
+		যদি (logerr || (gaierr != EAI_NONAME && gaierr != EAI_NODATA))
 			loglevel = SYSLOG_LEVEL_ERROR;
 		do_log2(loglevel, "%s: Could not resolve hostname %.100s: %s",
 		    __progname, name, ssh_gai_strerror(gaierr));
-		return NULL;
+		ফেরত ফাঁকা;
 	}
-	if (cname != NULL && res->ai_canonname != NULL) {
-		if (!valid_domain(res->ai_canonname, 0, &errstr)) {
+	যদি (cname != ফাঁকা && res->ai_canonname != ফাঁকা) {
+		যদি (!valid_domain(res->ai_canonname, 0, &errstr)) {
 			error("ignoring bad CNAME \"%s\" for host \"%s\": %s",
 			    res->ai_canonname, name, errstr);
-		} else if (strlcpy(cname, res->ai_canonname, clen) >= clen) {
+		} অন্যথা যদি (strlcpy(cname, res->ai_canonname, clen) >= clen) {
 			error_f("host \"%s\" cname \"%s\" too long (max %lu)",
 			    name,  res->ai_canonname, (u_long)clen);
-			if (clen > 0)
+			যদি (clen > 0)
 				*cname = '\0';
 		}
 	}
-	return res;
+	ফেরত res;
 }
 
 /* Returns non-zero if name can only be an address and not a hostname */
-static int
-is_addr_fast(const char *name)
+স্থির পূর্ণসংখ্যা
+is_addr_fast(ধ্রুবক অক্ষর *name)
 {
-	return (strchr(name, '%') != NULL || strchr(name, ':') != NULL ||
+	ফেরত (strchr(name, '%') != ফাঁকা || strchr(name, ':') != ফাঁকা ||
 	    strspn(name, "0123456789.") == strlen(name));
 }
 
 /* Returns non-zero if name represents a valid, single address */
-static int
-is_addr(const char *name)
+স্থির পূর্ণসংখ্যা
+is_addr(ধ্রুবক অক্ষর *name)
 {
-	char strport[NI_MAXSERV];
-	struct addrinfo hints, *res;
+	অক্ষর strport[NI_MAXSERV];
+	কাঠামো addrinfo hints, *res;
 
-	if (is_addr_fast(name))
-		return 1;
+	যদি (is_addr_fast(name))
+		ফেরত 1;
 
-	snprintf(strport, sizeof strport, "%u", default_ssh_port());
-	memset(&hints, 0, sizeof(hints));
+	snprintf(strport, আকার strport, "%u", default_ssh_port());
+	memset(&hints, 0, আকার(hints));
 	hints.ai_family = options.address_family == -1 ?
 	    AF_UNSPEC : options.address_family;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_NUMERICHOST|AI_NUMERICSERV;
-	if (getaddrinfo(name, strport, &hints, &res) != 0)
-		return 0;
-	if (res == NULL || res->ai_next != NULL) {
+	যদি (getaddrinfo(name, strport, &hints, &res) != 0)
+		ফেরত 0;
+	যদি (res == ফাঁকা || res->ai_next != ফাঁকা) {
 		freeaddrinfo(res);
-		return 0;
+		ফেরত 0;
 	}
 	freeaddrinfo(res);
-	return 1;
+	ফেরত 1;
 }
 
 /*
@@ -320,50 +320,50 @@ is_addr(const char *name)
  * Returns NULL on failure.
  * NB. this function must operate with a options having undefined members.
  */
-static struct addrinfo *
-resolve_addr(const char *name, int port, char *caddr, size_t clen)
+স্থির কাঠামো addrinfo *
+resolve_addr(ধ্রুবক অক্ষর *name, পূর্ণসংখ্যা port, অক্ষর *caddr, আকার_t clen)
 {
-	char addr[NI_MAXHOST], strport[NI_MAXSERV];
-	struct addrinfo hints, *res;
-	int gaierr;
+	অক্ষর addr[NI_MAXHOST], strport[NI_MAXSERV];
+	কাঠামো addrinfo hints, *res;
+	পূর্ণসংখ্যা gaierr;
 
-	if (port <= 0)
+	যদি (port <= 0)
 		port = default_ssh_port();
-	snprintf(strport, sizeof strport, "%u", port);
-	memset(&hints, 0, sizeof(hints));
+	snprintf(strport, আকার strport, "%u", port);
+	memset(&hints, 0, আকার(hints));
 	hints.ai_family = options.address_family == -1 ?
 	    AF_UNSPEC : options.address_family;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_NUMERICHOST|AI_NUMERICSERV;
-	if ((gaierr = getaddrinfo(name, strport, &hints, &res)) != 0) {
+	যদি ((gaierr = getaddrinfo(name, strport, &hints, &res)) != 0) {
 		debug2_f("could not resolve name %.100s as address: %s",
 		    name, ssh_gai_strerror(gaierr));
-		return NULL;
+		ফেরত ফাঁকা;
 	}
-	if (res == NULL) {
+	যদি (res == ফাঁকা) {
 		debug_f("getaddrinfo %.100s returned no addresses", name);
-		return NULL;
+		ফেরত ফাঁকা;
 	}
-	if (res->ai_next != NULL) {
+	যদি (res->ai_next != ফাঁকা) {
 		debug_f("getaddrinfo %.100s returned multiple addresses", name);
-		goto fail;
+		যাও fail;
 	}
-	if ((gaierr = getnameinfo(res->ai_addr, res->ai_addrlen,
-	    addr, sizeof(addr), NULL, 0, NI_NUMERICHOST)) != 0) {
+	যদি ((gaierr = getnameinfo(res->ai_addr, res->ai_addrlen,
+	    addr, আকার(addr), ফাঁকা, 0, NI_NUMERICHOST)) != 0) {
 		debug_f("Could not format address for name %.100s: %s",
 		    name, ssh_gai_strerror(gaierr));
-		goto fail;
+		যাও fail;
 	}
-	if (strlcpy(caddr, addr, clen) >= clen) {
+	যদি (strlcpy(caddr, addr, clen) >= clen) {
 		error_f("host \"%s\" addr \"%s\" too long (max %lu)",
 		    name,  addr, (u_long)clen);
-		if (clen > 0)
+		যদি (clen > 0)
 			*caddr = '\0';
  fail:
 		freeaddrinfo(res);
-		return NULL;
+		ফেরত ফাঁকা;
 	}
-	return res;
+	ফেরত res;
 }
 
 /*
@@ -371,38 +371,38 @@ resolve_addr(const char *name, int port, char *caddr, size_t clen)
  * and perform the replacement if it is.
  * NB. this function must operate with a options having undefined members.
  */
-static int
-check_follow_cname(int direct, char **namep, const char *cname)
+স্থির পূর্ণসংখ্যা
+check_follow_cname(পূর্ণসংখ্যা direct, অক্ষর **namep, ধ্রুবক অক্ষর *cname)
 {
-	int i;
-	struct allowed_cname *rule;
+	পূর্ণসংখ্যা i;
+	কাঠামো allowed_cname *rule;
 
-	if (*cname == '\0' || !config_has_permitted_cnames(&options) ||
+	যদি (*cname == '\0' || !config_has_permitted_cnames(&options) ||
 	    strcmp(*namep, cname) == 0)
-		return 0;
-	if (options.canonicalize_hostname == SSH_CANONICALISE_NO)
-		return 0;
+		ফেরত 0;
+	যদি (options.canonicalize_hostname == SSH_CANONICALISE_NO)
+		ফেরত 0;
 	/*
 	 * Don't attempt to canonicalize names that will be interpreted by
 	 * a proxy or jump host unless the user specifically requests so.
 	 */
-	if (!direct &&
+	যদি (!direct &&
 	    options.canonicalize_hostname != SSH_CANONICALISE_ALWAYS)
-		return 0;
+		ফেরত 0;
 	debug3_f("check \"%s\" CNAME \"%s\"", *namep, cname);
-	for (i = 0; i < options.num_permitted_cnames; i++) {
+	জন্য (i = 0; i < options.অঙ্ক_permitted_cnames; i++) {
 		rule = options.permitted_cnames + i;
-		if (match_pattern_list(*namep, rule->source_list, 1) != 1 ||
+		যদি (match_pattern_list(*namep, rule->source_list, 1) != 1 ||
 		    match_pattern_list(cname, rule->target_list, 1) != 1)
-			continue;
+			চালু;
 		verbose("Canonicalized DNS aliased hostname "
 		    "\"%s\" => \"%s\"", *namep, cname);
-		free(*namep);
+		মুক্ত(*namep);
 		*namep = xstrdup(cname);
 		lowercase(*namep);
-		return 1;
+		ফেরত 1;
 	}
-	return 0;
+	ফেরত 0;
 }
 
 /*
@@ -411,27 +411,27 @@ check_follow_cname(int direct, char **namep, const char *cname)
  * if no name was found after canonicalization.
  * NB. this function must operate with a options having undefined members.
  */
-static struct addrinfo *
-resolve_canonicalize(char **hostp, int port)
+স্থির কাঠামো addrinfo *
+resolve_canonicalize(অক্ষর **hostp, পূর্ণসংখ্যা port)
 {
-	int i, direct, ndots;
-	char *cp, *fullhost, newname[NI_MAXHOST];
-	struct addrinfo *addrs;
+	পূর্ণসংখ্যা i, direct, ndots;
+	অক্ষর *cp, *fullhost, newname[NI_MAXHOST];
+	কাঠামো addrinfo *addrs;
 
 	/*
 	 * Attempt to canonicalise addresses, regardless of
 	 * whether hostname canonicalisation was requested
 	 */
-	if ((addrs = resolve_addr(*hostp, port,
-	    newname, sizeof(newname))) != NULL) {
+	যদি ((addrs = resolve_addr(*hostp, port,
+	    newname, আকার(newname))) != ফাঁকা) {
 		debug2_f("hostname %.100s is address", *hostp);
-		if (strcasecmp(*hostp, newname) != 0) {
+		যদি (strcasecmp(*hostp, newname) != 0) {
 			debug2_f("canonicalised address \"%s\" => \"%s\"",
 			    *hostp, newname);
-			free(*hostp);
+			মুক্ত(*hostp);
 			*hostp = xstrdup(newname);
 		}
-		return addrs;
+		ফেরত addrs;
 	}
 
 	/*
@@ -439,13 +439,13 @@ resolve_canonicalize(char **hostp, int port)
 	 * be an address with an invalid interface scope. Skip further
 	 * attempts at canonicalisation.
 	 */
-	if (is_addr_fast(*hostp)) {
+	যদি (is_addr_fast(*hostp)) {
 		debug_f("hostname %.100s is an unrecognised address", *hostp);
-		return NULL;
+		ফেরত ফাঁকা;
 	}
 
-	if (options.canonicalize_hostname == SSH_CANONICALISE_NO)
-		return NULL;
+	যদি (options.canonicalize_hostname == SSH_CANONICALISE_NO)
+		ফেরত ফাঁকা;
 
 	/*
 	 * Don't attempt to canonicalize names that will be interpreted by
@@ -453,106 +453,106 @@ resolve_canonicalize(char **hostp, int port)
 	 */
 	direct = option_clear_or_none(options.proxy_command) &&
 	    option_clear_or_none(options.jump_host);
-	if (!direct &&
+	যদি (!direct &&
 	    options.canonicalize_hostname != SSH_CANONICALISE_ALWAYS)
-		return NULL;
+		ফেরত ফাঁকা;
 
 	/* If domain name is anchored, then resolve it now */
-	if ((*hostp)[strlen(*hostp) - 1] == '.') {
+	যদি ((*hostp)[strlen(*hostp) - 1] == '.') {
 		debug3_f("name is fully qualified");
 		fullhost = xstrdup(*hostp);
-		if ((addrs = resolve_host(fullhost, port, 0,
-		    newname, sizeof(newname))) != NULL)
-			goto found;
-		free(fullhost);
-		goto notfound;
+		যদি ((addrs = resolve_host(fullhost, port, 0,
+		    newname, আকার(newname))) != ফাঁকা)
+			যাও found;
+		মুক্ত(fullhost);
+		যাও notfound;
 	}
 
 	/* Don't apply canonicalization to sufficiently-qualified hostnames */
 	ndots = 0;
-	for (cp = *hostp; *cp != '\0'; cp++) {
-		if (*cp == '.')
+	জন্য (cp = *hostp; *cp != '\0'; cp++) {
+		যদি (*cp == '.')
 			ndots++;
 	}
-	if (ndots > options.canonicalize_max_dots) {
+	যদি (ndots > options.canonicalize_max_dots) {
 		debug3_f("not canonicalizing hostname \"%s\" (max dots %d)",
 		    *hostp, options.canonicalize_max_dots);
-		return NULL;
+		ফেরত ফাঁকা;
 	}
 	/* Attempt each supplied suffix */
-	for (i = 0; i < options.num_canonical_domains; i++) {
-		if (strcasecmp(options.canonical_domains[i], "none") == 0)
-			break;
+	জন্য (i = 0; i < options.অঙ্ক_canonical_domains; i++) {
+		যদি (strcasecmp(options.canonical_domains[i], "none") == 0)
+			বিরতি;
 		xasprintf(&fullhost, "%s.%s.", *hostp,
 		    options.canonical_domains[i]);
 		debug3_f("attempting \"%s\" => \"%s\"", *hostp, fullhost);
-		if ((addrs = resolve_host(fullhost, port, 0,
-		    newname, sizeof(newname))) == NULL) {
-			free(fullhost);
-			continue;
+		যদি ((addrs = resolve_host(fullhost, port, 0,
+		    newname, আকার(newname))) == ফাঁকা) {
+			মুক্ত(fullhost);
+			চালু;
 		}
  found:
 		/* Remove trailing '.' */
 		fullhost[strlen(fullhost) - 1] = '\0';
 		/* Follow CNAME if requested */
-		if (!check_follow_cname(direct, &fullhost, newname)) {
+		যদি (!check_follow_cname(direct, &fullhost, newname)) {
 			debug("Canonicalized hostname \"%s\" => \"%s\"",
 			    *hostp, fullhost);
 		}
-		free(*hostp);
+		মুক্ত(*hostp);
 		*hostp = fullhost;
-		return addrs;
+		ফেরত addrs;
 	}
  notfound:
-	if (!options.canonicalize_fallback_local)
+	যদি (!options.canonicalize_fallback_local)
 		fatal("%s: Could not resolve host \"%s\"", __progname, *hostp);
 	debug2_f("host %s not found in any suffix", *hostp);
-	return NULL;
+	ফেরত ফাঁকা;
 }
 
 /*
  * Check the result of hostkey loading, ignoring some errors and either
  * discarding the key or fatal()ing for others.
  */
-static void
-check_load(int r, struct sshkey **k, const char *path, const char *message)
+স্থির শূন্য
+check_load(পূর্ণসংখ্যা r, কাঠামো sshkey **k, ধ্রুবক অক্ষর *path, ধ্রুবক অক্ষর *message)
 {
-	char *fp;
+	অক্ষর *fp;
 
-	switch (r) {
-	case 0:
-		if (k == NULL || *k == NULL)
-			return;
+	নির্বাচন (r) {
+	ক্ষেত্র 0:
+		যদি (k == ফাঁকা || *k == ফাঁকা)
+			ফেরত;
 		/* Check RSA keys size and discard if undersized */
-		if ((r = sshkey_check_rsa_length(*k,
-		    options.required_rsa_size)) != 0) {
+		যদি ((r = sshkey_check_rsa_দৈর্ঘ্য(*k,
+		    options.required_rsa_আকার)) != 0) {
 			error_r(r, "load %s \"%s\"", message, path);
-			free(*k);
-			*k = NULL;
-			break;
+			মুক্ত(*k);
+			*k = ফাঁকা;
+			বিরতি;
 		}
-		if ((fp = sshkey_fingerprint(*k,
-		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
+		যদি ((fp = sshkey_fingerprint(*k,
+		    options.fingerprint_hash, SSH_FP_DEFAULT)) == ফাঁকা) {
 			fatal_f("failed to fingerprint %s %s key from %s",
 			    sshkey_type(*k), message, path);
 		}
 		debug("loaded %s from %s: %s %s", message, path,
 		    sshkey_type(*k), fp);
-		free(fp);
-		break;
-	case SSH_ERR_INTERNAL_ERROR:
-	case SSH_ERR_ALLOC_FAIL:
+		মুক্ত(fp);
+		বিরতি;
+	ক্ষেত্র SSH_ERR_INTERNAL_ERROR:
+	ক্ষেত্র SSH_ERR_ALLOC_FAIL:
 		fatal_r(r, "load %s \"%s\"", message, path);
-	case SSH_ERR_SYSTEM_ERROR:
+	ক্ষেত্র SSH_ERR_SYSTEM_ERROR:
 		/* Ignore missing files */
-		if (errno == ENOENT)
-			break;
+		যদি (errno == ENOENT)
+			বিরতি;
 		/* FALLTHROUGH */
-	default:
+	পূর্বনির্ধারিত:
 		error_r(r, "load %s \"%s\"", message, path);
-		break;
+		বিরতি;
 	}
-	if (k != NULL && *k == NULL)
+	যদি (k != ফাঁকা && *k == ফাঁকা)
 		debug("no %s loaded from %s", message, path);
 }
 
@@ -560,55 +560,55 @@ check_load(int r, struct sshkey **k, const char *path, const char *message)
  * Read per-user configuration file.  Ignore the system wide config
  * file if the user specifies a config file on the command line.
  */
-static void
-process_config_files(const char *host_name, struct passwd *pw,
-    int final_pass, int *want_final_pass)
+স্থির শূন্য
+process_config_files(ধ্রুবক অক্ষর *host_name, কাঠামো passwd *pw,
+    পূর্ণসংখ্যা final_pass, পূর্ণসংখ্যা *want_final_pass)
 {
-	char *cmd, buf[PATH_MAX];
-	int r;
+	অক্ষর *cmd, buf[PATH_MAX];
+	পূর্ণসংখ্যা r;
 
-	if ((cmd = sshbuf_dup_string(command)) == NULL)
+	যদি ((cmd = sshbuf_dup_string(command)) == ফাঁকা)
 		fatal_f("sshbuf_dup_string failed");
-	if (config != NULL) {
-		if (strcasecmp(config, "none") != 0 &&
+	যদি (config != ফাঁকা) {
+		যদি (strcasecmp(config, "none") != 0 &&
 		    !read_config_file(config, pw, host, host_name, cmd,
 		    &options,
 		    SSHCONF_USERCONF | (final_pass ? SSHCONF_FINAL : 0),
 		    want_final_pass))
 			fatal("Can't open user config file %.100s: "
 			    "%.100s", config, strerror(errno));
-	} else {
-		r = snprintf(buf, sizeof buf, "%s/%s", pw->pw_dir,
+	} অন্যথা {
+		r = snprintf(buf, আকার buf, "%s/%s", pw->pw_dir,
 		    _PATH_SSH_USER_CONFFILE);
-		if (r > 0 && (size_t)r < sizeof(buf))
-			(void)read_config_file(buf, pw, host, host_name, cmd,
+		যদি (r > 0 && (আকার_t)r < আকার(buf))
+			(শূন্য)read_config_file(buf, pw, host, host_name, cmd,
 			    &options, SSHCONF_CHECKPERM | SSHCONF_USERCONF |
 			    (final_pass ? SSHCONF_FINAL : 0), want_final_pass);
 
 		/* Read systemwide configuration file after user config. */
-		(void)read_config_file(_PATH_HOST_CONFIG_FILE, pw,
+		(শূন্য)read_config_file(_PATH_HOST_CONFIG_FILE, pw,
 		    host, host_name, cmd, &options,
 		    final_pass ? SSHCONF_FINAL : 0, want_final_pass);
 	}
-	free(cmd);
+	মুক্ত(cmd);
 }
 
 /* Rewrite the port number in an addrinfo list of addresses */
-static void
-set_addrinfo_port(struct addrinfo *addrs, int port)
+স্থির শূন্য
+set_addrinfo_port(কাঠামো addrinfo *addrs, পূর্ণসংখ্যা port)
 {
-	struct addrinfo *addr;
+	কাঠামো addrinfo *addr;
 
-	for (addr = addrs; addr != NULL; addr = addr->ai_next) {
-		switch (addr->ai_family) {
-		case AF_INET:
-			((struct sockaddr_in *)addr->ai_addr)->
+	জন্য (addr = addrs; addr != ফাঁকা; addr = addr->ai_next) {
+		নির্বাচন (addr->ai_family) {
+		ক্ষেত্র AF_INET:
+			((কাঠামো sockaddr_in *)addr->ai_addr)->
 			    sin_port = htons(port);
-			break;
-		case AF_INET6:
-			((struct sockaddr_in6 *)addr->ai_addr)->
+			বিরতি;
+		ক্ষেত্র AF_INET6:
+			((কাঠামো sockaddr_in6 *)addr->ai_addr)->
 			    sin6_port = htons(port);
-			break;
+			বিরতি;
 		}
 	}
 }
@@ -616,25 +616,25 @@ set_addrinfo_port(struct addrinfo *addrs, int port)
 /*
  * Main program for the ssh client.
  */
-int
-main(int ac, char **av)
+পূর্ণসংখ্যা
+প্রধান(পূর্ণসংখ্যা ac, অক্ষর **av)
 {
-	struct ssh *ssh = NULL;
-	int i, r, opt, exit_status, use_syslog, direct, timeout_ms;
-	int was_addr, config_test = 0, dump_pubkeys = 0, opt_terminated = 0, want_final_pass = 0;
-	int user_on_commandline = 0, user_was_default = 0, user_expanded = 0;
-	char *p, *cp, *line, *argv0, *logfile, *args;
-	char cname[NI_MAXHOST], thishost[NI_MAXHOST];
-	struct stat st;
-	struct passwd *pw;
-	extern int optind, optreset;
-	extern char *optarg;
-	struct Forward fwd;
-	struct addrinfo *addrs = NULL;
-	size_t n, len;
+	কাঠামো ssh *ssh = ফাঁকা;
+	পূর্ণসংখ্যা i, r, opt, exit_status, use_syslog, direct, timeout_ms;
+	পূর্ণসংখ্যা was_addr, config_test = 0, dump_pubkeys = 0, opt_terminated = 0, want_final_pass = 0;
+	পূর্ণসংখ্যা user_on_commandline = 0, user_was_default = 0, user_expanded = 0;
+	অক্ষর *p, *cp, *সারি, *argv0, *logfile, *args;
+	অক্ষর cname[NI_MAXHOST], thishost[NI_MAXHOST];
+	কাঠামো stat st;
+	কাঠামো passwd *pw;
+	বাহ্যিক পূর্ণসংখ্যা optind, optreset;
+	বাহ্যিক অক্ষর *optarg;
+	কাঠামো Forward fwd;
+	কাঠামো addrinfo *addrs = ফাঁকা;
+	আকার_t n, len;
 	u_int j;
-	struct utsname utsname;
-	struct ssh_conn_info *cinfo = NULL;
+	কাঠামো utsname utsname;
+	কাঠামো ssh_conn_info *cinfo = ফাঁকা;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
@@ -650,10 +650,10 @@ main(int ac, char **av)
 #ifndef HAVE_SETPROCTITLE
 	/* Prepare for later setproctitle emulation */
 	/* Save argv so it isn't clobbered by setproctitle() emulation */
-	saved_av = xcalloc(ac + 1, sizeof(*saved_av));
-	for (i = 0; i < ac; i++)
+	saved_av = xcalloc(ac + 1, আকার(*saved_av));
+	জন্য (i = 0; i < ac; i++)
 		saved_av[i] = xstrdup(av[i]);
-	saved_av[i] = NULL;
+	saved_av[i] = ফাঁকা;
 	compat_init_setproctitle(ac, av);
 	av = saved_av;
 #endif
@@ -662,7 +662,7 @@ main(int ac, char **av)
 
 	/* Get user data. */
 	pw = getpwuid(getuid());
-	if (!pw) {
+	যদি (!pw) {
 		logit("No user exists for uid %lu", (u_long)getuid());
 		exit(255);
 	}
@@ -688,118 +688,118 @@ main(int ac, char **av)
 	/*
 	 * Prepare main ssh transport/connection structures
 	 */
-	if ((ssh = ssh_alloc_session_state()) == NULL)
+	যদি ((ssh = ssh_alloc_session_state()) == ফাঁকা)
 		fatal("Couldn't allocate session state");
 	channel_init_channels(ssh);
 
 	/* Parse command-line arguments. */
 	args = argv_assemble(ac, av); /* logged later */
-	host = NULL;
+	host = ফাঁকা;
 	use_syslog = 0;
-	logfile = NULL;
+	logfile = ফাঁকা;
 	argv0 = av[0];
 
  again:
 	/* remaining: HUdhjruz */
-	while ((opt = getopt(ac, av, "1246ACGKMNTVXYZafgknqstvxy"
+	যখন ((opt = getopt(ac, av, "1246ACGKMNTVXYZafgknqstvxy"
 	    "B:D:E:F:I:J:L:O:P:Q:R:S:W:b:c:e:i:l:m:o:p:w:")) != -1) {
-		switch (opt) {
-		case '1':
+		নির্বাচন (opt) {
+		ক্ষেত্র '1':
 			fatal("SSH protocol v.1 is no longer supported");
-			break;
-		case '2':
+			বিরতি;
+		ক্ষেত্র '2':
 			/* Ignored */
-			break;
-		case '4':
+			বিরতি;
+		ক্ষেত্র '4':
 			options.address_family = AF_INET;
-			break;
-		case '6':
+			বিরতি;
+		ক্ষেত্র '6':
 			options.address_family = AF_INET6;
-			break;
-		case 'n':
+			বিরতি;
+		ক্ষেত্র 'n':
 			options.stdin_null = 1;
-			break;
-		case 'f':
+			বিরতি;
+		ক্ষেত্র 'f':
 			options.fork_after_authentication = 1;
 			options.stdin_null = 1;
-			break;
-		case 'x':
+			বিরতি;
+		ক্ষেত্র 'x':
 			options.forward_x11 = 0;
-			break;
-		case 'X':
+			বিরতি;
+		ক্ষেত্র 'X':
 			options.forward_x11 = 1;
-			break;
-		case 'y':
+			বিরতি;
+		ক্ষেত্র 'y':
 			use_syslog = 1;
-			break;
-		case 'E':
+			বিরতি;
+		ক্ষেত্র 'E':
 			logfile = optarg;
-			break;
-		case 'G':
+			বিরতি;
+		ক্ষেত্র 'G':
 			config_test = 1;
-			break;
-		case 'Y':
+			বিরতি;
+		ক্ষেত্র 'Y':
 			options.forward_x11 = 1;
 			options.forward_x11_trusted = 1;
-			break;
-		case 'Z':
+			বিরতি;
+		ক্ষেত্র 'Z':
 			dump_pubkeys = 1;
-			break;
-		case 'g':
+			বিরতি;
+		ক্ষেত্র 'g':
 			options.fwd_opts.gateway_ports = 1;
-			break;
-		case 'O':
-			if (options.stdio_forward_host != NULL)
+			বিরতি;
+		ক্ষেত্র 'O':
+			যদি (options.stdio_forward_host != ফাঁকা)
 				fatal("Cannot specify multiplexing "
 				    "command with -W");
-			else if (muxclient_command != 0)
+			অন্যথা যদি (muxclient_command != 0)
 				fatal("Multiplexing command already specified");
-			if (strcmp(optarg, "check") == 0)
+			যদি (strcmp(optarg, "check") == 0)
 				muxclient_command = SSHMUX_COMMAND_ALIVE_CHECK;
-			else if (strcmp(optarg, "conninfo") == 0)
+			অন্যথা যদি (strcmp(optarg, "conninfo") == 0)
 				muxclient_command = SSHMUX_COMMAND_CONNINFO;
-			else if (strcmp(optarg, "channels") == 0)
+			অন্যথা যদি (strcmp(optarg, "channels") == 0)
 				muxclient_command = SSHMUX_COMMAND_CHANINFO;
-			else if (strcmp(optarg, "forward") == 0)
+			অন্যথা যদি (strcmp(optarg, "forward") == 0)
 				muxclient_command = SSHMUX_COMMAND_FORWARD;
-			else if (strcmp(optarg, "exit") == 0)
+			অন্যথা যদি (strcmp(optarg, "exit") == 0)
 				muxclient_command = SSHMUX_COMMAND_TERMINATE;
-			else if (strcmp(optarg, "stop") == 0)
+			অন্যথা যদি (strcmp(optarg, "stop") == 0)
 				muxclient_command = SSHMUX_COMMAND_STOP;
-			else if (strcmp(optarg, "cancel") == 0)
+			অন্যথা যদি (strcmp(optarg, "cancel") == 0)
 				muxclient_command = SSHMUX_COMMAND_CANCEL_FWD;
-			else if (strcmp(optarg, "proxy") == 0)
+			অন্যথা যদি (strcmp(optarg, "proxy") == 0)
 				muxclient_command = SSHMUX_COMMAND_PROXY;
-			else
+			অন্যথা
 				fatal("Invalid multiplex command.");
-			break;
-		case 'P':
-			if (options.tag == NULL)
+			বিরতি;
+		ক্ষেত্র 'P':
+			যদি (options.tag == ফাঁকা)
 				options.tag = xstrdup(optarg);
-			break;
-		case 'Q':
-			cp = NULL;
-			if (strcmp(optarg, "cipher") == 0 ||
+			বিরতি;
+		ক্ষেত্র 'Q':
+			cp = ফাঁকা;
+			যদি (strcmp(optarg, "cipher") == 0 ||
 			    strcasecmp(optarg, "Ciphers") == 0)
 				cp = cipher_alg_list('\n', 0);
-			else if (strcmp(optarg, "cipher-auth") == 0)
+			অন্যথা যদি (strcmp(optarg, "cipher-auth") == 0)
 				cp = cipher_alg_list('\n', 1);
-			else if (strcmp(optarg, "mac") == 0 ||
+			অন্যথা যদি (strcmp(optarg, "mac") == 0 ||
 			    strcasecmp(optarg, "MACs") == 0)
 				cp = mac_alg_list('\n');
-			else if (strcmp(optarg, "kex") == 0 ||
+			অন্যথা যদি (strcmp(optarg, "kex") == 0 ||
 			    strcasecmp(optarg, "KexAlgorithms") == 0)
 				cp = kex_alg_list('\n');
-			else if (strcmp(optarg, "key") == 0)
+			অন্যথা যদি (strcmp(optarg, "key") == 0)
 				cp = sshkey_alg_list(0, 0, 0, '\n');
-			else if (strcmp(optarg, "key-cert") == 0)
+			অন্যথা যদি (strcmp(optarg, "key-cert") == 0)
 				cp = sshkey_alg_list(1, 0, 0, '\n');
-			else if (strcmp(optarg, "key-plain") == 0)
+			অন্যথা যদি (strcmp(optarg, "key-plain") == 0)
 				cp = sshkey_alg_list(0, 1, 0, '\n');
-			else if (strcmp(optarg, "key-ca-sign") == 0 ||
+			অন্যথা যদি (strcmp(optarg, "key-ca-sign") == 0 ||
 			    strcasecmp(optarg, "CASignatureAlgorithms") == 0)
 				cp = sshkey_alg_list(0, 1, 1, '\n');
-			else if (strcmp(optarg, "key-sig") == 0 ||
+			অন্যথা যদি (strcmp(optarg, "key-sig") == 0 ||
 			    strcasecmp(optarg, "PubkeyAcceptedKeyTypes") == 0 || /* deprecated name */
 			    strcasecmp(optarg, "PubkeyAcceptedAlgorithms") == 0 ||
 			    strcasecmp(optarg, "HostKeyAlgorithms") == 0 ||
@@ -807,115 +807,115 @@ main(int ac, char **av)
 			    strcasecmp(optarg, "HostbasedAcceptedKeyTypes") == 0 || /* deprecated name */
 			    strcasecmp(optarg, "HostbasedAcceptedAlgorithms") == 0)
 				cp = sshkey_alg_list(0, 0, 1, '\n');
-			else if (strcmp(optarg, "sig") == 0)
+			অন্যথা যদি (strcmp(optarg, "sig") == 0)
 				cp = sshkey_alg_list(0, 1, 1, '\n');
-			else if (strcmp(optarg, "protocol-version") == 0)
+			অন্যথা যদি (strcmp(optarg, "protocol-version") == 0)
 				cp = xstrdup("2");
-			else if (strcmp(optarg, "compression") == 0) {
+			অন্যথা যদি (strcmp(optarg, "compression") == 0) {
 				cp = xstrdup(compression_alg_list(0));
 				len = strlen(cp);
-				for (n = 0; n < len; n++)
-					if (cp[n] == ',')
+				জন্য (n = 0; n < len; n++)
+					যদি (cp[n] == ',')
 						cp[n] = '\n';
-			} else if (strcmp(optarg, "help") == 0) {
+			} অন্যথা যদি (strcmp(optarg, "help") == 0) {
 				cp = xstrdup(
 				    "cipher\ncipher-auth\ncompression\nkex\n"
 				    "key\nkey-cert\nkey-plain\nkey-sig\nmac\n"
 				    "protocol-version\nsig");
 			}
-			if (cp == NULL)
+			যদি (cp == ফাঁকা)
 				fatal("Unsupported query \"%s\"", optarg);
 			printf("%s\n", cp);
-			free(cp);
+			মুক্ত(cp);
 			exit(0);
-			break;
-		case 'a':
+			বিরতি;
+		ক্ষেত্র 'a':
 			options.forward_agent = 0;
-			break;
-		case 'A':
+			বিরতি;
+		ক্ষেত্র 'A':
 			options.forward_agent = 1;
-			break;
-		case 'k':
+			বিরতি;
+		ক্ষেত্র 'k':
 			options.gss_deleg_creds = 0;
-			break;
-		case 'K':
+			বিরতি;
+		ক্ষেত্র 'K':
 			options.gss_authentication = 1;
 			options.gss_deleg_creds = 1;
-			break;
-		case 'i':
+			বিরতি;
+		ক্ষেত্র 'i':
 			p = tilde_expand_filename(optarg, getuid());
-			if (stat(p, &st) == -1)
+			যদি (stat(p, &st) == -1)
 				fprintf(stderr, "Warning: Identity file %s "
 				    "not accessible: %s.\n", p,
 				    strerror(errno));
-			else
-				add_identity_file(&options, NULL, p, 1);
-			free(p);
-			break;
-		case 'I':
+			অন্যথা
+				add_identity_file(&options, ফাঁকা, p, 1);
+			মুক্ত(p);
+			বিরতি;
+		ক্ষেত্র 'I':
 #ifdef ENABLE_PKCS11
-			free(options.pkcs11_provider);
+			মুক্ত(options.pkcs11_provider);
 			options.pkcs11_provider = xstrdup(optarg);
-#else
+#অন্যথা
 			fprintf(stderr, "no support for PKCS#11.\n");
 #endif
-			break;
-		case 'J':
-			if (options.jump_host != NULL) {
+			বিরতি;
+		ক্ষেত্র 'J':
+			যদি (options.jump_host != ফাঁকা) {
 				fatal("Only a single -J option is permitted "
 				    "(use commas to separate multiple "
 				    "jump hops)");
 			}
-			if (options.proxy_command != NULL)
+			যদি (options.proxy_command != ফাঁকা)
 				fatal("Cannot specify -J with ProxyCommand");
-			if (parse_jump(optarg, &options, 1, 1) == -1)
+			যদি (parse_jump(optarg, &options, 1, 1) == -1)
 
 				fatal("Invalid -J argument");
-			break;
-		case 't':
-			if (options.request_tty == REQUEST_TTY_YES)
+			বিরতি;
+		ক্ষেত্র 't':
+			যদি (options.request_tty == REQUEST_TTY_YES)
 				options.request_tty = REQUEST_TTY_FORCE;
-			else
+			অন্যথা
 				options.request_tty = REQUEST_TTY_YES;
-			break;
-		case 'v':
-			if (debug_flag == 0) {
+			বিরতি;
+		ক্ষেত্র 'v':
+			যদি (debug_flag == 0) {
 				debug_flag = 1;
 				options.log_level = SYSLOG_LEVEL_DEBUG1;
-			} else {
-				if (options.log_level < SYSLOG_LEVEL_DEBUG3) {
+			} অন্যথা {
+				যদি (options.log_level < SYSLOG_LEVEL_DEBUG3) {
 					debug_flag++;
 					options.log_level++;
 				}
 			}
-			break;
-		case 'V':
+			বিরতি;
+		ক্ষেত্র 'V':
 			fprintf(stderr, "%s, %s\n",
 			    SSH_RELEASE, SSH_OPENSSL_VERSION);
 			exit(0);
-			break;
-		case 'w':
-			if (options.tun_open == -1)
+			বিরতি;
+		ক্ষেত্র 'w':
+			যদি (options.tun_open == -1)
 				options.tun_open = SSH_TUNMODE_DEFAULT;
 			options.tun_local = a2tun(optarg, &options.tun_remote);
-			if (options.tun_local == SSH_TUNID_ERR) {
+			যদি (options.tun_local == SSH_TUNID_ERR) {
 				fprintf(stderr,
 				    "Bad tun device '%s'\n", optarg);
 				exit(255);
 			}
-			break;
-		case 'W':
-			if (options.stdio_forward_host != NULL)
+			বিরতি;
+		ক্ষেত্র 'W':
+			যদি (options.stdio_forward_host != ফাঁকা)
 				fatal("stdio forward already specified");
-			if (muxclient_command != 0)
+			যদি (muxclient_command != 0)
 				fatal("Cannot specify stdio forward with -O");
-			if (parse_forward(&fwd, optarg, 1, 0)) {
+			যদি (parse_forward(&fwd, optarg, 1, 0)) {
 				options.stdio_forward_host =
 				    fwd.listen_port == PORT_STREAMLOCAL ?
 				    fwd.listen_path : fwd.listen_host;
 				options.stdio_forward_port = fwd.listen_port;
-				free(fwd.connect_host);
-			} else {
+				মুক্ত(fwd.connect_host);
+			} অন্যথা {
 				fprintf(stderr,
 				    "Bad stdio forwarding specification '%s'\n",
 				    optarg);
@@ -923,216 +923,216 @@ main(int ac, char **av)
 			}
 			options.request_tty = REQUEST_TTY_NO;
 			options.session_type = SESSION_TYPE_NONE;
-			break;
-		case 'q':
+			বিরতি;
+		ক্ষেত্র 'q':
 			options.log_level = SYSLOG_LEVEL_QUIET;
-			break;
-		case 'e':
-			if (strlen(optarg) == 2 && optarg[0] == '^' &&
+			বিরতি;
+		ক্ষেত্র 'e':
+			যদি (strlen(optarg) == 2 && optarg[0] == '^' &&
 			    (u_char) optarg[1] >= 64 &&
 			    (u_char) optarg[1] < 128)
 				options.escape_char = (u_char) optarg[1] & 31;
-			else if (strlen(optarg) == 1)
+			অন্যথা যদি (strlen(optarg) == 1)
 				options.escape_char = (u_char) optarg[0];
-			else if (strcmp(optarg, "none") == 0)
+			অন্যথা যদি (strcmp(optarg, "none") == 0)
 				options.escape_char = SSH_ESCAPECHAR_NONE;
-			else {
+			অন্যথা {
 				fprintf(stderr, "Bad escape character '%s'.\n",
 				    optarg);
 				exit(255);
 			}
-			break;
-		case 'c':
-			if (!ciphers_valid(*optarg == '+' || *optarg == '^' ?
+			বিরতি;
+		ক্ষেত্র 'c':
+			যদি (!ciphers_valid(*optarg == '+' || *optarg == '^' ?
 			    optarg + 1 : optarg)) {
 				fprintf(stderr, "Unknown cipher type '%s'\n",
 				    optarg);
 				exit(255);
 			}
-			free(options.ciphers);
+			মুক্ত(options.ciphers);
 			options.ciphers = xstrdup(optarg);
-			break;
-		case 'm':
-			if (mac_valid(optarg)) {
-				free(options.macs);
+			বিরতি;
+		ক্ষেত্র 'm':
+			যদি (mac_valid(optarg)) {
+				মুক্ত(options.macs);
 				options.macs = xstrdup(optarg);
-			} else {
+			} অন্যথা {
 				fprintf(stderr, "Unknown mac type '%s'\n",
 				    optarg);
 				exit(255);
 			}
-			break;
-		case 'M':
-			if (options.control_master == SSHCTL_MASTER_YES)
+			বিরতি;
+		ক্ষেত্র 'M':
+			যদি (options.control_master == SSHCTL_MASTER_YES)
 				options.control_master = SSHCTL_MASTER_ASK;
-			else
+			অন্যথা
 				options.control_master = SSHCTL_MASTER_YES;
-			break;
-		case 'p':
-			if (options.port == -1) {
+			বিরতি;
+		ক্ষেত্র 'p':
+			যদি (options.port == -1) {
 				options.port = a2port(optarg);
-				if (options.port <= 0) {
+				যদি (options.port <= 0) {
 					fprintf(stderr, "Bad port '%s'\n",
 					    optarg);
 					exit(255);
 				}
 			}
-			break;
-		case 'l':
-			if (options.user == NULL) {
+			বিরতি;
+		ক্ষেত্র 'l':
+			যদি (options.user == ফাঁকা) {
 				options.user = xstrdup(optarg);
 				user_on_commandline = 1;
 			}
-			break;
+			বিরতি;
 
-		case 'L':
-			if (parse_forward(&fwd, optarg, 0, 0))
+		ক্ষেত্র 'L':
+			যদি (parse_forward(&fwd, optarg, 0, 0))
 				add_local_forward(&options, &fwd);
-			else {
+			অন্যথা {
 				fprintf(stderr,
 				    "Bad local forwarding specification '%s'\n",
 				    optarg);
 				exit(255);
 			}
-			break;
+			বিরতি;
 
-		case 'R':
-			if (parse_forward(&fwd, optarg, 0, 1) ||
+		ক্ষেত্র 'R':
+			যদি (parse_forward(&fwd, optarg, 0, 1) ||
 			    parse_forward(&fwd, optarg, 1, 1)) {
 				add_remote_forward(&options, &fwd);
-			} else {
+			} অন্যথা {
 				fprintf(stderr,
 				    "Bad remote forwarding specification "
 				    "'%s'\n", optarg);
 				exit(255);
 			}
-			break;
+			বিরতি;
 
-		case 'D':
-			if (parse_forward(&fwd, optarg, 1, 0)) {
+		ক্ষেত্র 'D':
+			যদি (parse_forward(&fwd, optarg, 1, 0)) {
 				add_local_forward(&options, &fwd);
-			} else {
+			} অন্যথা {
 				fprintf(stderr,
 				    "Bad dynamic forwarding specification "
 				    "'%s'\n", optarg);
 				exit(255);
 			}
-			break;
+			বিরতি;
 
-		case 'C':
+		ক্ষেত্র 'C':
 #ifdef WITH_ZLIB
 			options.compression = 1;
-#else
+#অন্যথা
 			error("Compression not supported, disabling.");
 #endif
-			break;
-		case 'N':
-			if (options.session_type != -1 &&
+			বিরতি;
+		ক্ষেত্র 'N':
+			যদি (options.session_type != -1 &&
 			    options.session_type != SESSION_TYPE_NONE)
 				fatal("Cannot specify -N with -s/SessionType");
 			options.session_type = SESSION_TYPE_NONE;
 			options.request_tty = REQUEST_TTY_NO;
-			break;
-		case 'T':
+			বিরতি;
+		ক্ষেত্র 'T':
 			options.request_tty = REQUEST_TTY_NO;
-			break;
-		case 'o':
-			line = xstrdup(optarg);
-			if (process_config_line(&options, pw,
-			    host ? host : "", host ? host : "", "", line,
-			    "command-line", 0, NULL, SSHCONF_USERCONF) != 0)
+			বিরতি;
+		ক্ষেত্র 'o':
+			সারি = xstrdup(optarg);
+			যদি (process_config_সারি(&options, pw,
+			    host ? host : "", host ? host : "", "", সারি,
+			    "command-line", 0, ফাঁকা, SSHCONF_USERCONF) != 0)
 				exit(255);
-			free(line);
-			break;
-		case 's':
-			if (options.session_type != -1 &&
+			মুক্ত(সারি);
+			বিরতি;
+		ক্ষেত্র 's':
+			যদি (options.session_type != -1 &&
 			    options.session_type != SESSION_TYPE_SUBSYSTEM)
 				fatal("Cannot specify -s with -N/SessionType");
 			options.session_type = SESSION_TYPE_SUBSYSTEM;
-			break;
-		case 'S':
-			free(options.control_path);
+			বিরতি;
+		ক্ষেত্র 'S':
+			মুক্ত(options.control_path);
 			options.control_path = xstrdup(optarg);
-			break;
-		case 'b':
+			বিরতি;
+		ক্ষেত্র 'b':
 			options.bind_address = optarg;
-			break;
-		case 'B':
+			বিরতি;
+		ক্ষেত্র 'B':
 			options.bind_interface = optarg;
-			break;
-		case 'F':
+			বিরতি;
+		ক্ষেত্র 'F':
 			config = optarg;
-			break;
-		default:
+			বিরতি;
+		পূর্বনির্ধারিত:
 			usage();
 		}
 	}
 
-	if (optind > 1 && strcmp(av[optind - 1], "--") == 0)
+	যদি (optind > 1 && strcmp(av[optind - 1], "--") == 0)
 		opt_terminated = 1;
 
 	ac -= optind;
 	av += optind;
 
-	if (ac > 0 && !host) {
-		int tport;
-		char *tuser;
-		switch (parse_ssh_uri(*av, &tuser, &host, &tport)) {
-		case -1:
+	যদি (ac > 0 && !host) {
+		পূর্ণসংখ্যা tport;
+		অক্ষর *tuser;
+		নির্বাচন (parse_ssh_uri(*av, &tuser, &host, &tport)) {
+		ক্ষেত্র -1:
 			usage();
-			break;
-		case 0:
-			if (options.user == NULL) {
+			বিরতি;
+		ক্ষেত্র 0:
+			যদি (options.user == ফাঁকা) {
 				options.user = tuser;
-				tuser = NULL;
+				tuser = ফাঁকা;
 				user_on_commandline = 1;
 			}
-			free(tuser);
-			if (options.port == -1 && tport != -1)
+			মুক্ত(tuser);
+			যদি (options.port == -1 && tport != -1)
 				options.port = tport;
-			break;
-		default:
+			বিরতি;
+		পূর্বনির্ধারিত:
 			p = xstrdup(*av);
 			cp = strrchr(p, '@');
-			if (cp != NULL) {
-				if (cp == p)
+			যদি (cp != ফাঁকা) {
+				যদি (cp == p)
 					usage();
-				if (options.user == NULL) {
+				যদি (options.user == ফাঁকা) {
 					options.user = p;
-					p = NULL;
+					p = ফাঁকা;
 					user_on_commandline = 1;
 				}
 				*cp++ = '\0';
 				host = xstrdup(cp);
-				free(p);
-			} else
+				মুক্ত(p);
+			} অন্যথা
 				host = p;
-			break;
+			বিরতি;
 		}
-		if (ac > 1 && !opt_terminated) {
+		যদি (ac > 1 && !opt_terminated) {
 			optind = optreset = 1;
-			goto again;
+			যাও again;
 		}
 		ac--, av++;
 	}
 
 	/* Check that we got a host name. */
-	if (!host)
+	যদি (!host)
 		usage();
 
 	/*
 	 * Validate commandline-specified values that end up in %tokens
 	 * before they are used in config parsing.
 	 */
-	if (options.user != NULL && !ssh_valid_ruser(options.user))
+	যদি (options.user != ফাঁকা && !ssh_valid_ruser(options.user))
 		fatal("remote username contains invalid characters");
-	if (!ssh_valid_hostname(host))
+	যদি (!ssh_valid_hostname(host))
 		fatal("hostname contains invalid characters");
 
 	options.host_arg = xstrdup(host);
 
 	/* Initialize the command to execute on remote host. */
-	if ((command = sshbuf_new()) == NULL)
+	যদি ((command = sshbuf_new()) == ফাঁকা)
 		fatal("sshbuf_new failed");
 
 	/*
@@ -1140,17 +1140,17 @@ main(int ac, char **av)
 	 * is no limit on the length of the command, except by the maximum
 	 * packet size.  Also sets the tty flag if there is no command.
 	 */
-	if (!ac) {
+	যদি (!ac) {
 		/* No command specified - execute shell on a tty. */
-		if (options.session_type == SESSION_TYPE_SUBSYSTEM) {
+		যদি (options.session_type == SESSION_TYPE_SUBSYSTEM) {
 			fprintf(stderr,
 			    "You must specify a subsystem to invoke.\n");
 			usage();
 		}
-	} else {
+	} অন্যথা {
 		/* A command has been specified.  Store it into the buffer. */
-		for (i = 0; i < ac; i++) {
-			if ((r = sshbuf_putf(command, "%s%s",
+		জন্য (i = 0; i < ac; i++) {
+			যদি ((r = sshbuf_putf(command, "%s%s",
 			    i ? " " : "", av[i])) != 0)
 				fatal_fr(r, "buffer error");
 		}
@@ -1162,9 +1162,9 @@ main(int ac, char **av)
 	 * Initialize "log" output.  Since we are the client all output
 	 * goes to stderr unless otherwise specified by -y or -E.
 	 */
-	if (use_syslog && logfile != NULL)
+	যদি (use_syslog && logfile != ফাঁকা)
 		fatal("Can't specify both -y and -E");
-	if (logfile != NULL)
+	যদি (logfile != ফাঁকা)
 		log_redirect_stderr_to(logfile);
 	log_init(argv0,
 	    options.log_level == SYSLOG_LEVEL_NOT_SET ?
@@ -1174,43 +1174,43 @@ main(int ac, char **av)
 	    !use_syslog);
 
 	debug("%s, %s", SSH_RELEASE, SSH_OPENSSL_VERSION);
-	if (uname(&utsname) != 0) {
-		memset(&utsname, 0, sizeof(utsname));
-		strlcpy(utsname.sysname, "UNKNOWN", sizeof(utsname.sysname));
+	যদি (uname(&utsname) != 0) {
+		memset(&utsname, 0, আকার(utsname));
+		strlcpy(utsname.sysname, "UNKNOWN", আকার(utsname.sysname));
 	}
 	debug3("Running on %s %s %s %s", utsname.sysname, utsname.release,
 	    utsname.version, utsname.machine);
 	debug3("Started with: %s", args);
-	free(args);
+	মুক্ত(args);
 
 	/* Parse the configuration files */
 	process_config_files(options.host_arg, pw, 0, &want_final_pass);
-	if (want_final_pass)
+	যদি (want_final_pass)
 		debug("configuration requests final Match pass");
 
 	/* Hostname canonicalisation needs a few options filled. */
 	fill_default_options_for_canonicalization(&options);
 
 	/* If the user has replaced the hostname then take it into use now */
-	if (options.hostname != NULL) {
+	যদি (options.hostname != ফাঁকা) {
 		/* NB. Please keep in sync with readconf.c:match_cfg_line() */
 		cp = percent_expand(options.hostname,
-		    "h", host, (char *)NULL);
-		free(host);
+		    "h", host, (অক্ষর *)ফাঁকা);
+		মুক্ত(host);
 		host = cp;
-		free(options.hostname);
+		মুক্ত(options.hostname);
 		options.hostname = xstrdup(host);
 	}
 
 	/* Don't lowercase addresses, they will be explicitly canonicalised */
-	if ((was_addr = is_addr(host)) == 0)
+	যদি ((was_addr = is_addr(host)) == 0)
 		lowercase(host);
 
 	/*
 	 * Try to canonicalize if requested by configuration or the
 	 * hostname is an address.
 	 */
-	if (options.canonicalize_hostname != SSH_CANONICALISE_NO || was_addr)
+	যদি (options.canonicalize_hostname != SSH_CANONICALISE_NO || was_addr)
 		addrs = resolve_canonicalize(&host, options.port);
 
 	/*
@@ -1228,14 +1228,14 @@ main(int ac, char **av)
 	 */
 	direct = option_clear_or_none(options.proxy_command) &&
 	    option_clear_or_none(options.jump_host);
-	if (addrs == NULL && config_has_permitted_cnames(&options) && (direct ||
+	যদি (addrs == ফাঁকা && config_has_permitted_cnames(&options) && (direct ||
 	    options.canonicalize_hostname == SSH_CANONICALISE_ALWAYS)) {
-		if ((addrs = resolve_host(host, options.port,
-		    direct, cname, sizeof(cname))) == NULL) {
+		যদি ((addrs = resolve_host(host, options.port,
+		    direct, cname, আকার(cname))) == ফাঁকা) {
 			/* Don't fatal proxied host names not in the DNS */
-			if (direct)
+			যদি (direct)
 				cleanup_exit(255); /* logged in resolve_host */
-		} else
+		} অন্যথা
 			check_follow_cname(direct, &host, cname);
 	}
 
@@ -1243,31 +1243,31 @@ main(int ac, char **av)
 	 * If canonicalisation is enabled then re-parse the configuration
 	 * files as new stanzas may match.
 	 */
-	if (options.canonicalize_hostname != 0 && !want_final_pass) {
+	যদি (options.canonicalize_hostname != 0 && !want_final_pass) {
 		debug("hostname canonicalisation enabled, "
 		    "will re-parse configuration");
 		want_final_pass = 1;
 	}
 
-	if (want_final_pass) {
+	যদি (want_final_pass) {
 		debug("re-parsing configuration");
-		free(options.hostname);
+		মুক্ত(options.hostname);
 		options.hostname = xstrdup(host);
-		process_config_files(options.host_arg, pw, 1, NULL);
+		process_config_files(options.host_arg, pw, 1, ফাঁকা);
 		/*
 		 * Address resolution happens early with canonicalisation
 		 * enabled and the port number may have changed since, so
 		 * reset it in address list
 		 */
-		if (addrs != NULL && options.port > 0)
+		যদি (addrs != ফাঁকা && options.port > 0)
 			set_addrinfo_port(addrs, options.port);
 	}
 
 	/* Fill configuration defaults. */
-	if (fill_default_options(&options) != 0)
+	যদি (fill_default_options(&options) != 0)
 		cleanup_exit(255);
 
-	if (options.user == NULL) {
+	যদি (options.user == ফাঁকা) {
 		user_was_default = 1;
 		options.user = xstrdup(pw->pw_name);
 	}
@@ -1275,18 +1275,18 @@ main(int ac, char **av)
 	/*
 	 * If ProxyJump option specified, then construct a ProxyCommand now.
 	 */
-	if (options.jump_host != NULL) {
-		char port_s[8];
-		const char *jumpuser = options.jump_user, *sshbin = argv0;
-		int port = options.port, jumpport = options.jump_port;
+	যদি (options.jump_host != ফাঁকা) {
+		অক্ষর port_s[8];
+		ধ্রুবক অক্ষর *jumpuser = options.jump_user, *sshbin = argv0;
+		পূর্ণসংখ্যা port = options.port, jumpport = options.jump_port;
 
-		if (port <= 0)
+		যদি (port <= 0)
 			port = default_ssh_port();
-		if (jumpport <= 0)
+		যদি (jumpport <= 0)
 			jumpport = default_ssh_port();
-		if (jumpuser == NULL)
+		যদি (jumpuser == ফাঁকা)
 			jumpuser = options.user;
-		if (strcmp(options.jump_host, host) == 0 && port == jumpport &&
+		যদি (strcmp(options.jump_host, host) == 0 && port == jumpport &&
 		    strcmp(options.user, jumpuser) == 0)
 			fatal("jumphost loop via %s", options.jump_host);
 
@@ -1294,31 +1294,31 @@ main(int ac, char **av)
 		 * Try to use SSH indicated by argv[0], but fall back to
 		 * "ssh" if it appears unavailable.
 		 */
-		if (strchr(argv0, '/') != NULL && access(argv0, X_OK) != 0)
+		যদি (strchr(argv0, '/') != ফাঁকা && access(argv0, X_OK) != 0)
 			sshbin = "ssh";
 
 		/* Consistency check */
-		if (options.proxy_command != NULL &&
+		যদি (options.proxy_command != ফাঁকা &&
 		    strcasecmp(options.proxy_command, "none") != 0)
 			fatal("inconsistent options: ProxyCommand+ProxyJump");
 		/* Never use FD passing for ProxyJump */
 		options.proxy_use_fdpass = 0;
-		snprintf(port_s, sizeof(port_s), "%d", options.jump_port);
+		snprintf(port_s, আকার(port_s), "%d", options.jump_port);
 		xasprintf(&options.proxy_command,
 		    "%s%s%s%s%s%s%s%s%s%s%.*s -W '[%%h]:%%p' %s",
 		    sshbin,
 		    /* Optional "-l user" argument if jump_user set */
-		    options.jump_user == NULL ? "" : " -l ",
-		    options.jump_user == NULL ? "" : options.jump_user,
+		    options.jump_user == ফাঁকা ? "" : " -l ",
+		    options.jump_user == ফাঁকা ? "" : options.jump_user,
 		    /* Optional "-p port" argument if jump_port set */
 		    options.jump_port <= 0 ? "" : " -p ",
 		    options.jump_port <= 0 ? "" : port_s,
 		    /* Optional additional jump hosts ",..." */
-		    options.jump_extra == NULL ? "" : " -J ",
-		    options.jump_extra == NULL ? "" : options.jump_extra,
+		    options.jump_extra == ফাঁকা ? "" : " -J ",
+		    options.jump_extra == ফাঁকা ? "" : options.jump_extra,
 		    /* Optional "-F" argument if -F specified */
-		    config == NULL ? "" : " -F ",
-		    config == NULL ? "" : config,
+		    config == ফাঁকা ? "" : " -F ",
+		    config == ফাঁকা ? "" : config,
 		    /* Optional "-v" arguments if -v set */
 		    debug_flag ? " -" : "",
 		    debug_flag, "vvv",
@@ -1328,81 +1328,81 @@ main(int ac, char **av)
 		    options.proxy_command);
 	}
 
-	if (options.port == 0)
+	যদি (options.port == 0)
 		options.port = default_ssh_port();
 	channel_set_af(ssh, options.address_family);
 	ssh_packet_set_qos(ssh, options.ip_qos_interactive,
 	    options.ip_qos_bulk);
 
 	/* Tidy and check options */
-	if (options.host_key_alias != NULL)
-		lowercase(options.host_key_alias);
-	if (options.proxy_command != NULL &&
+	যদি (options.host_চাবি_alias != ফাঁকা)
+		lowercase(options.host_চাবি_alias);
+	যদি (options.proxy_command != ফাঁকা &&
 	    strcmp(options.proxy_command, "-") == 0 &&
 	    options.proxy_use_fdpass)
 		fatal("ProxyCommand=- and ProxyUseFDPass are incompatible");
-	if (options.update_hostkeys == SSH_UPDATE_HOSTKEYS_ASK) {
-		if (options.control_persist && options.control_path != NULL) {
+	যদি (options.update_hostkeys == SSH_UPDATE_HOSTKEYS_ASK) {
+		যদি (options.control_persist && options.control_path != ফাঁকা) {
 			debug("UpdateHostKeys=ask is incompatible with "
 			    "ControlPersist; disabling");
 			options.update_hostkeys = 0;
-		} else if (sshbuf_len(command) != 0 ||
-		    options.remote_command != NULL ||
+		} অন্যথা যদি (sshbuf_len(command) != 0 ||
+		    options.remote_command != ফাঁকা ||
 		    options.request_tty == REQUEST_TTY_NO) {
 			debug("UpdateHostKeys=ask is incompatible with "
 			    "remote command execution; disabling");
 			options.update_hostkeys = 0;
-		} else if (options.log_level < SYSLOG_LEVEL_INFO) {
+		} অন্যথা যদি (options.log_level < SYSLOG_LEVEL_INFO) {
 			/* no point logging anything; user won't see it */
 			options.update_hostkeys = 0;
 		}
 	}
-	if (options.connection_attempts <= 0)
+	যদি (options.connection_attempts <= 0)
 		fatal("Invalid number of ConnectionAttempts");
 
-	if (sshbuf_len(command) != 0 && options.remote_command != NULL)
+	যদি (sshbuf_len(command) != 0 && options.remote_command != ফাঁকা)
 		fatal("Cannot execute command-line and remote command.");
 
 	/* Cannot fork to background if no command. */
-	if (options.fork_after_authentication && sshbuf_len(command) == 0 &&
-	    options.remote_command == NULL &&
+	যদি (options.fork_after_authentication && sshbuf_len(command) == 0 &&
+	    options.remote_command == ফাঁকা &&
 	    options.session_type != SESSION_TYPE_NONE)
 		fatal("Cannot fork into background without a command "
 		    "to execute.");
 
 	/* reinit */
 	log_init(argv0, options.log_level, options.log_facility, !use_syslog);
-	for (j = 0; j < options.num_log_verbose; j++) {
-		if (strcasecmp(options.log_verbose[j], "none") == 0)
-			break;
+	জন্য (j = 0; j < options.অঙ্ক_log_verbose; j++) {
+		যদি (strcasecmp(options.log_verbose[j], "none") == 0)
+			বিরতি;
 		log_verbose_add(options.log_verbose[j]);
 	}
 
-	if (options.request_tty == REQUEST_TTY_YES ||
+	যদি (options.request_tty == REQUEST_TTY_YES ||
 	    options.request_tty == REQUEST_TTY_FORCE)
 		tty_flag = 1;
 
 	/* Allocate a tty by default if no command specified. */
-	if (sshbuf_len(command) == 0 && options.remote_command == NULL)
+	যদি (sshbuf_len(command) == 0 && options.remote_command == ফাঁকা)
 		tty_flag = options.request_tty != REQUEST_TTY_NO;
 
 	/* Force no tty */
-	if (options.request_tty == REQUEST_TTY_NO ||
+	যদি (options.request_tty == REQUEST_TTY_NO ||
 	    (muxclient_command && muxclient_command != SSHMUX_COMMAND_PROXY) ||
 	    options.session_type == SESSION_TYPE_NONE)
 		tty_flag = 0;
 	/* Do not allocate a tty if stdin is not a tty. */
-	if ((!isatty(fileno(stdin)) || options.stdin_null) &&
+	যদি ((!isatty(fileno(stdin)) || options.stdin_null) &&
 	    options.request_tty != REQUEST_TTY_FORCE) {
-		if (tty_flag)
+		যদি (tty_flag)
 			logit("Pseudo-terminal will not be allocated because "
 			    "stdin is not a terminal.");
 		tty_flag = 0;
 	}
 
 	/* Set up strings used to percent_expand() arguments */
-	cinfo = xcalloc(1, sizeof(*cinfo));
-	if (gethostname(thishost, sizeof(thishost)) == -1)
+	cinfo = xcalloc(1, আকার(*cinfo));
+	যদি (gethostname(thishost, আকার(thishost)) == -1)
 		fatal("gethostname: %s", strerror(errno));
 	cinfo->thishost = xstrdup(thishost);
 	thishost[strcspn(thishost, ".")] = '\0';
@@ -1410,13 +1410,13 @@ main(int ac, char **av)
 	xasprintf(&cinfo->portstr, "%d", options.port);
 	xasprintf(&cinfo->uidstr, "%llu",
 	    (unsigned long long)pw->pw_uid);
-	cinfo->keyalias = xstrdup(options.host_key_alias ?
-	    options.host_key_alias : options.host_arg);
+	cinfo->keyalias = xstrdup(options.host_চাবি_alias ?
+	    options.host_চাবি_alias : options.host_arg);
 	cinfo->host_arg = xstrdup(options.host_arg);
 	cinfo->remhost = xstrdup(host);
 	cinfo->homedir = xstrdup(pw->pw_dir);
 	cinfo->locuser = xstrdup(pw->pw_name);
-	cinfo->jmphost = xstrdup(options.jump_host == NULL ?
+	cinfo->jmphost = xstrdup(options.jump_host == ফাঁকা ?
 	    "" : options.jump_host);
 
 	/*
@@ -1424,13 +1424,13 @@ main(int ac, char **av)
 	 * to expand it. It cannot contain %r (itself) or %C since User is
 	 * a component of the hash.
 	 */
-	if (!user_on_commandline && !user_was_default) {
-		if ((p = percent_dollar_expand(options.user,
+	যদি (!user_on_commandline && !user_was_default) {
+		যদি ((p = percent_dollar_expand(options.user,
 		    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(cinfo),
-		    (char *)NULL)) == NULL)
+		    (অক্ষর *)ফাঁকা)) == ফাঁকা)
 			fatal("invalid environment variable expansion");
 		user_expanded = strcmp(p, options.user) != 0;
-		free(options.user);
+		মুক্ত(options.user);
 		options.user = p;
 	}
 
@@ -1440,7 +1440,7 @@ main(int ac, char **av)
 	 * Conversely, usernames from getpwnam(3) or specified as literals
 	 * via configuration (i.e. not expanded) are not subject to validation.
 	 */
-	if ((user_on_commandline || user_expanded) &&
+	যদি ((user_on_commandline || user_expanded) &&
 	    !ssh_valid_ruser(options.user))
 		fatal("remote username contains invalid characters");
 
@@ -1454,191 +1454,191 @@ main(int ac, char **av)
 	 * after port-forwarding is set up, so it may pick up any local
 	 * tunnel interface name allocated.
 	 */
-	if (options.remote_command != NULL) {
+	যদি (options.remote_command != ফাঁকা) {
 		debug3("expanding RemoteCommand: %s", options.remote_command);
 		cp = options.remote_command;
 		options.remote_command = default_client_percent_expand(cp,
 		    cinfo);
 		debug3("expanded RemoteCommand: %s", options.remote_command);
-		free(cp);
-		if ((r = sshbuf_put(command, options.remote_command,
+		মুক্ত(cp);
+		যদি ((r = sshbuf_put(command, options.remote_command,
 		    strlen(options.remote_command))) != 0)
 			fatal_fr(r, "buffer error");
 	}
 
-	if (options.control_path != NULL) {
+	যদি (options.control_path != ফাঁকা) {
 		cp = tilde_expand_filename(options.control_path, getuid());
-		free(options.control_path);
+		মুক্ত(options.control_path);
 		options.control_path = default_client_percent_dollar_expand(cp,
 		    cinfo);
-		free(cp);
+		মুক্ত(cp);
 	}
 
-	if (options.identity_agent != NULL) {
+	যদি (options.identity_agent != ফাঁকা) {
 		p = tilde_expand_filename(options.identity_agent, getuid());
 		cp = default_client_percent_dollar_expand(p, cinfo);
-		free(p);
-		free(options.identity_agent);
+		মুক্ত(p);
+		মুক্ত(options.identity_agent);
 		options.identity_agent = cp;
 	}
 
-	for (j = 0; j < options.num_revoked_host_keys; j++) {
-		p = tilde_expand_filename(options.revoked_host_keys[j],
+	জন্য (j = 0; j < options.অঙ্ক_revoked_host_চাবিগুলি; j++) {
+		p = tilde_expand_filename(options.revoked_host_চাবিগুলি[j],
 		    getuid());
 		cp = default_client_percent_dollar_expand(p, cinfo);
-		free(p);
-		free(options.revoked_host_keys[j]);
-		options.revoked_host_keys[j] = cp;
+		মুক্ত(p);
+		মুক্ত(options.revoked_host_চাবিগুলি[j]);
+		options.revoked_host_চাবিগুলি[j] = cp;
 	}
 
-	if (options.forward_agent_sock_path != NULL) {
+	যদি (options.forward_agent_sock_path != ফাঁকা) {
 		p = tilde_expand_filename(options.forward_agent_sock_path,
 		    getuid());
 		cp = default_client_percent_dollar_expand(p, cinfo);
-		free(p);
-		free(options.forward_agent_sock_path);
+		মুক্ত(p);
+		মুক্ত(options.forward_agent_sock_path);
 		options.forward_agent_sock_path = cp;
-		if (stat(options.forward_agent_sock_path, &st) != 0) {
+		যদি (stat(options.forward_agent_sock_path, &st) != 0) {
 			error("Cannot forward agent socket path \"%s\": %s",
 			    options.forward_agent_sock_path, strerror(errno));
-			if (options.exit_on_forward_failure)
+			যদি (options.exit_on_forward_failure)
 				cleanup_exit(255);
 		}
 	}
 
-	if (options.version_addendum != NULL) {
+	যদি (options.version_addendum != ফাঁকা) {
 		cp = default_client_percent_dollar_expand(
 		    options.version_addendum, cinfo);
-		free(options.version_addendum);
+		মুক্ত(options.version_addendum);
 		options.version_addendum = cp;
 	}
 
-	if (options.num_system_hostfiles > 0 &&
+	যদি (options.অঙ্ক_system_hostfiles > 0 &&
 	    strcasecmp(options.system_hostfiles[0], "none") == 0) {
-		if (options.num_system_hostfiles > 1)
+		যদি (options.অঙ্ক_system_hostfiles > 1)
 			fatal("Invalid GlobalKnownHostsFiles: \"none\" "
 			    "appears with other entries");
-		free(options.system_hostfiles[0]);
-		options.system_hostfiles[0] = NULL;
-		options.num_system_hostfiles = 0;
+		মুক্ত(options.system_hostfiles[0]);
+		options.system_hostfiles[0] = ফাঁকা;
+		options.অঙ্ক_system_hostfiles = 0;
 	}
 
-	if (options.num_user_hostfiles > 0 &&
+	যদি (options.অঙ্ক_user_hostfiles > 0 &&
 	    strcasecmp(options.user_hostfiles[0], "none") == 0) {
-		if (options.num_user_hostfiles > 1)
+		যদি (options.অঙ্ক_user_hostfiles > 1)
 			fatal("Invalid UserKnownHostsFiles: \"none\" "
 			    "appears with other entries");
-		free(options.user_hostfiles[0]);
-		options.user_hostfiles[0] = NULL;
-		options.num_user_hostfiles = 0;
+		মুক্ত(options.user_hostfiles[0]);
+		options.user_hostfiles[0] = ফাঁকা;
+		options.অঙ্ক_user_hostfiles = 0;
 	}
-	for (j = 0; j < options.num_user_hostfiles; j++) {
-		if (options.user_hostfiles[j] == NULL)
-			continue;
+	জন্য (j = 0; j < options.অঙ্ক_user_hostfiles; j++) {
+		যদি (options.user_hostfiles[j] == ফাঁকা)
+			চালু;
 		cp = tilde_expand_filename(options.user_hostfiles[j], getuid());
 		p = default_client_percent_dollar_expand(cp, cinfo);
-		if (strcmp(options.user_hostfiles[j], p) != 0)
+		যদি (strcmp(options.user_hostfiles[j], p) != 0)
 			debug3("expanded UserKnownHostsFile '%s' -> "
 			    "'%s'", options.user_hostfiles[j], p);
-		free(options.user_hostfiles[j]);
-		free(cp);
+		মুক্ত(options.user_hostfiles[j]);
+		মুক্ত(cp);
 		options.user_hostfiles[j] = p;
 	}
 
-	for (j = 0; j < options.num_setenv; j++) {
-		char *name = options.setenv[j], *value;
+	জন্য (j = 0; j < options.অঙ্ক_setenv; j++) {
+		অক্ষর *name = options.setenv[j], *মান;
 
-		if (name == NULL)
-			continue;
+		যদি (name == ফাঁকা)
+			চালু;
 		/* Expand only the value portion, not the variable name. */
-		if ((value = strchr(name, '=')) == NULL) {
+		যদি ((মান = strchr(name, '=')) == ফাঁকা) {
 			/* shouldn't happen; vars are checked in readconf.c */
 			fatal("Invalid config SetEnv: %s", name);
 		}
-		*value++ = '\0';
-		cp = default_client_percent_dollar_expand(value, cinfo);
+		*মান++ = '\0';
+		cp = default_client_percent_dollar_expand(মান, cinfo);
 		xasprintf(&p, "%s=%s", name, cp);
-		if (strcmp(value, p) != 0) {
+		যদি (strcmp(মান, p) != 0) {
 			debug3("expanded SetEnv '%s' '%s' -> '%s'",
-			    name, value, cp);
+			    name, মান, cp);
 		}
-		free(options.setenv[j]);
-		free(cp);
+		মুক্ত(options.setenv[j]);
+		মুক্ত(cp);
 		options.setenv[j] = p;
 	}
 
-	for (i = 0; i < options.num_local_forwards; i++) {
-		if (options.local_forwards[i].listen_path != NULL) {
+	জন্য (i = 0; i < options.অঙ্ক_local_forwards; i++) {
+		যদি (options.local_forwards[i].listen_path != ফাঁকা) {
 			cp = options.local_forwards[i].listen_path;
 			p = options.local_forwards[i].listen_path =
 			    default_client_percent_expand(cp, cinfo);
-			if (strcmp(cp, p) != 0)
+			যদি (strcmp(cp, p) != 0)
 				debug3("expanded LocalForward listen path "
 				    "'%s' -> '%s'", cp, p);
-			free(cp);
+			মুক্ত(cp);
 		}
-		if (options.local_forwards[i].connect_path != NULL) {
+		যদি (options.local_forwards[i].connect_path != ফাঁকা) {
 			cp = options.local_forwards[i].connect_path;
 			p = options.local_forwards[i].connect_path =
 			    default_client_percent_expand(cp, cinfo);
-			if (strcmp(cp, p) != 0)
+			যদি (strcmp(cp, p) != 0)
 				debug3("expanded LocalForward connect path "
 				    "'%s' -> '%s'", cp, p);
-			free(cp);
+			মুক্ত(cp);
 		}
 	}
 
-	for (i = 0; i < options.num_remote_forwards; i++) {
-		if (options.remote_forwards[i].listen_path != NULL) {
+	জন্য (i = 0; i < options.অঙ্ক_remote_forwards; i++) {
+		যদি (options.remote_forwards[i].listen_path != ফাঁকা) {
 			cp = options.remote_forwards[i].listen_path;
 			p = options.remote_forwards[i].listen_path =
 			    default_client_percent_expand(cp, cinfo);
-			if (strcmp(cp, p) != 0)
+			যদি (strcmp(cp, p) != 0)
 				debug3("expanded RemoteForward listen path "
 				    "'%s' -> '%s'", cp, p);
-			free(cp);
+			মুক্ত(cp);
 		}
-		if (options.remote_forwards[i].connect_path != NULL) {
+		যদি (options.remote_forwards[i].connect_path != ফাঁকা) {
 			cp = options.remote_forwards[i].connect_path;
 			p = options.remote_forwards[i].connect_path =
 			    default_client_percent_expand(cp, cinfo);
-			if (strcmp(cp, p) != 0)
+			যদি (strcmp(cp, p) != 0)
 				debug3("expanded RemoteForward connect path "
 				    "'%s' -> '%s'", cp, p);
-			free(cp);
+			মুক্ত(cp);
 		}
 	}
 
-	if (config_test) {
+	যদি (config_test) {
 		dump_client_config(&options, host);
 		exit(0);
 	}
 
 	/* Expand SecurityKeyProvider if it refers to an environment variable */
-	if (options.sk_provider != NULL && *options.sk_provider == '$' &&
+	যদি (options.sk_provider != ফাঁকা && *options.sk_provider == '$' &&
 	    strlen(options.sk_provider) > 1) {
-		if ((cp = getenv(options.sk_provider + 1)) == NULL) {
+		যদি ((cp = getenv(options.sk_provider + 1)) == ফাঁকা) {
 			debug("Authenticator provider %s did not resolve; "
 			    "disabling", options.sk_provider);
-			free(options.sk_provider);
-			options.sk_provider = NULL;
-		} else {
+			মুক্ত(options.sk_provider);
+			options.sk_provider = ফাঁকা;
+		} অন্যথা {
 			debug2("resolved SecurityKeyProvider %s => %s",
 			    options.sk_provider, cp);
-			free(options.sk_provider);
+			মুক্ত(options.sk_provider);
 			options.sk_provider = xstrdup(cp);
 		}
 	}
 
-	if (muxclient_command != 0 && options.control_path == NULL)
+	যদি (muxclient_command != 0 && options.control_path == ফাঁকা)
 		fatal("No ControlPath specified for \"-O\" command");
-	if (options.control_path != NULL) {
-		int sock;
-		if ((sock = muxclient(options.control_path)) >= 0) {
-			if (ssh_packet_set_connection(ssh, sock, sock) == NULL)
+	যদি (options.control_path != ফাঁকা) {
+		পূর্ণসংখ্যা sock;
+		যদি ((sock = muxclient(options.control_path)) >= 0) {
+			যদি (ssh_packet_set_connection(ssh, sock, sock) == ফাঁকা)
 				fatal("ssh_packet_set_connection failed");
 			ssh_packet_set_mux(ssh);
-			goto skip_connect;
+			যাও skip_connect;
 		}
 	}
 
@@ -1646,30 +1646,30 @@ main(int ac, char **av)
 	load_public_identity_files(cinfo);
 
 	/* optionally set the SSH_AUTHSOCKET_ENV_NAME variable */
-	if (options.identity_agent &&
+	যদি (options.identity_agent &&
 	    strcmp(options.identity_agent, SSH_AUTHSOCKET_ENV_NAME) != 0) {
-		if (strcmp(options.identity_agent, "none") == 0) {
+		যদি (strcmp(options.identity_agent, "none") == 0) {
 			unsetenv(SSH_AUTHSOCKET_ENV_NAME);
-		} else {
+		} অন্যথা {
 			cp = options.identity_agent;
 			/* legacy (limited) format */
-			if (cp[0] == '$' && cp[1] != '{') {
-				if (!valid_env_name(cp + 1)) {
+			যদি (cp[0] == '$' && cp[1] != '{') {
+				যদি (!valid_env_name(cp + 1)) {
 					fatal("Invalid IdentityAgent "
 					    "environment variable name %s", cp);
 				}
-				if ((p = getenv(cp + 1)) == NULL)
+				যদি ((p = getenv(cp + 1)) == ফাঁকা)
 					unsetenv(SSH_AUTHSOCKET_ENV_NAME);
-				else
+				অন্যথা
 					setenv(SSH_AUTHSOCKET_ENV_NAME, p, 1);
-			} else {
+			} অন্যথা {
 				/* identity_agent specifies a path directly */
 				setenv(SSH_AUTHSOCKET_ENV_NAME, cp, 1);
 			}
 		}
 	}
 
-	if (dump_pubkeys) {
+	যদি (dump_pubkeys) {
 		pubkey_dump(ssh);
 		exit(0);
 	}
@@ -1678,47 +1678,47 @@ main(int ac, char **av)
 	 * If hostname canonicalisation was not enabled, then we may not
 	 * have yet resolved the hostname. Do so now.
 	 */
-	if (addrs == NULL && options.proxy_command == NULL) {
+	যদি (addrs == ফাঁকা && options.proxy_command == ফাঁকা) {
 		debug2("resolving \"%s\" port %d", host, options.port);
-		if ((addrs = resolve_host(host, options.port, 1,
-		    cname, sizeof(cname))) == NULL)
+		যদি ((addrs = resolve_host(host, options.port, 1,
+		    cname, আকার(cname))) == ফাঁকা)
 			cleanup_exit(255); /* resolve_host logs the error */
 	}
 
-	if (options.connection_timeout >= INT_MAX/1000)
+	যদি (options.connection_timeout >= INT_MAX/1000)
 		timeout_ms = INT_MAX;
-	else
+	অন্যথা
 		timeout_ms = options.connection_timeout * 1000;
 
 	/* Apply channels timeouts, if set */
 	channel_clear_timeouts(ssh);
-	for (j = 0; j < options.num_channel_timeouts; j++) {
-		double timeout;
+	জন্য (j = 0; j < options.অঙ্ক_channel_timeouts; j++) {
+		দ্বিগুণ timeout;
 
 		debug3("applying channel timeout %s",
 		    options.channel_timeouts[j]);
-		if (parse_pattern_interval(options.channel_timeouts[j],
+		যদি (parse_pattern_interval(options.channel_timeouts[j],
 		    &cp, &timeout) != 0) {
 			fatal_f("internal error: bad timeout %s",
 			    options.channel_timeouts[j]);
 		}
 		channel_add_timeout(ssh, cp, timeout);
-		free(cp);
+		মুক্ত(cp);
 	}
 	channel_set_tcp_keepalives(ssh,
 	    options.tcp_keep_alive == SSH_KEEPALIVES_ALL);
 
 	/* Open a connection to the remote host. */
-	if (ssh_connect(ssh, host, options.host_arg, addrs, &hostaddr,
+	যদি (ssh_connect(ssh, host, options.host_arg, addrs, &hostaddr,
 	    options.port, options.connection_attempts,
 	    &timeout_ms, options.tcp_keep_alive) != 0)
 		exit(255);
 
 
 	ssh_packet_set_timeout(ssh, options.server_alive_interval,
-	    options.server_alive_count_max);
+	    options.server_alive_গুনতি_max);
 
-	if (timeout_ms > 0)
+	যদি (timeout_ms > 0)
 		debug3("timeout: %d ms remain after connect", timeout_ms);
 
 	/*
@@ -1726,110 +1726,110 @@ main(int ac, char **av)
 	 * enabled, load the public keys so we can later use the ssh-keysign
 	 * helper to sign challenges.
 	 */
-	sensitive_data.nkeys = 0;
-	sensitive_data.keys = NULL;
-	if (options.hostbased_authentication) {
-		int loaded = 0;
+	sensitive_তথ্য.nkeys = 0;
+	sensitive_তথ্য.চাবিগুলি = ফাঁকা;
+	যদি (options.hostbased_authentication) {
+		পূর্ণসংখ্যা loaded = 0;
 
-		sensitive_data.nkeys = 10;
-		sensitive_data.keys = xcalloc(sensitive_data.nkeys,
-		    sizeof(*sensitive_data.keys));
+		sensitive_তথ্য.nkeys = 10;
+		sensitive_তথ্য.চাবিগুলি = xcalloc(sensitive_তথ্য.nkeys,
+		    আকার(*sensitive_তথ্য.চাবিগুলি));
 
 		/* XXX check errors? */
-#define L_PUBKEY(p,o) do { \
-	if ((o) >= sensitive_data.nkeys) \
+#define L_PUBKEY(p,o) করো { \
+	যদি ((o) >= sensitive_তথ্য.nkeys) \
 		fatal_f("pubkey out of array bounds"); \
-	check_load(sshkey_load_public(p, &(sensitive_data.keys[o]), NULL), \
-	    &(sensitive_data.keys[o]), p, "hostbased pubkey"); \
-	if (sensitive_data.keys[o] != NULL) { \
+	check_load(sshkey_load_public(p, &(sensitive_তথ্য.চাবিগুলি[o]), ফাঁকা), \
+	    &(sensitive_তথ্য.চাবিগুলি[o]), p, "hostbased pubkey"); \
+	যদি (sensitive_তথ্য.চাবিগুলি[o] != ফাঁকা) { \
 		debug2("hostbased pubkey \"%s\" in slot %d", p, o); \
 		loaded++; \
 	} \
-} while (0)
-#define L_CERT(p,o) do { \
-	if ((o) >= sensitive_data.nkeys) \
+} যখন (0)
+#define L_CERT(p,o) করো { \
+	যদি ((o) >= sensitive_তথ্য.nkeys) \
 		fatal_f("cert out of array bounds"); \
-	check_load(sshkey_load_cert(p, &(sensitive_data.keys[o])), \
-	    &(sensitive_data.keys[o]), p, "hostbased cert"); \
-	if (sensitive_data.keys[o] != NULL) { \
+	check_load(sshkey_load_cert(p, &(sensitive_তথ্য.চাবিগুলি[o])), \
+	    &(sensitive_তথ্য.চাবিগুলি[o]), p, "hostbased cert"); \
+	যদি (sensitive_তথ্য.চাবিগুলি[o] != ফাঁকা) { \
 		debug2("hostbased cert \"%s\" in slot %d", p, o); \
 		loaded++; \
 	} \
-} while (0)
+} যখন (0)
 
-		if (options.hostbased_authentication == 1) {
-			L_CERT(_PATH_HOST_ECDSA_KEY_FILE, 0);
-			L_CERT(_PATH_HOST_ED25519_KEY_FILE, 1);
-			L_CERT(_PATH_HOST_RSA_KEY_FILE, 2);
-			L_CERT(_PATH_HOST_MLDSA44_ED25519_KEY_FILE, 3);
-			L_PUBKEY(_PATH_HOST_ECDSA_KEY_FILE, 4);
-			L_PUBKEY(_PATH_HOST_ED25519_KEY_FILE, 5);
-			L_PUBKEY(_PATH_HOST_RSA_KEY_FILE, 6);
-			L_PUBKEY(_PATH_HOST_MLDSA44_ED25519_KEY_FILE, 7);
-			if (loaded == 0)
+		যদি (options.hostbased_authentication == 1) {
+			L_CERT(PATH_HOST_ECDSA_চাবি_FILE, 0);
+			L_CERT(PATH_HOST_ED25519_চাবি_FILE, 1);
+			L_CERT(PATH_HOST_RSA_চাবি_FILE, 2);
+			L_CERT(PATH_HOST_MLDSA44_ED25519_চাবি_FILE, 3);
+			L_PUBKEY(PATH_HOST_ECDSA_চাবি_FILE, 4);
+			L_PUBKEY(PATH_HOST_ED25519_চাবি_FILE, 5);
+			L_PUBKEY(PATH_HOST_RSA_চাবি_FILE, 6);
+			L_PUBKEY(PATH_HOST_MLDSA44_ED25519_চাবি_FILE, 7);
+			যদি (loaded == 0)
 				debug("HostbasedAuthentication enabled but no "
 				   "local public host keys could be loaded.");
 		}
 	}
 
-	if (options.forward_agent && options.forward_agent_sock_path != NULL) {
+	যদি (options.forward_agent && options.forward_agent_sock_path != ফাঁকা) {
 		cp = options.forward_agent_sock_path;
-		if (cp[0] == '$') {
-			if (!valid_env_name(cp + 1)) {
+		যদি (cp[0] == '$') {
+			যদি (!valid_env_name(cp + 1)) {
 				fatal("Invalid ForwardAgent environment variable name %s", cp);
 			}
-			if ((p = getenv(cp + 1)) != NULL)
+			যদি ((p = getenv(cp + 1)) != ফাঁকা)
 				forward_agent_sock_path = xstrdup(p);
-			else
+			অন্যথা
 				options.forward_agent = 0;
-			free(cp);
-		} else {
+			মুক্ত(cp);
+		} অন্যথা {
 			forward_agent_sock_path = cp;
 		}
 	}
 
 	/* Expand ~ in known host file names. */
 	tilde_expand_paths(options.system_hostfiles,
-	    options.num_system_hostfiles);
-	tilde_expand_paths(options.user_hostfiles, options.num_user_hostfiles);
+	    options.অঙ্ক_system_hostfiles);
+	tilde_expand_paths(options.user_hostfiles, options.অঙ্ক_user_hostfiles);
 
 	ssh_signal(SIGCHLD, main_sigchld_handler);
 
 	/* Log into the remote system.  Never returns if the login fails. */
-	ssh_login(ssh, &sensitive_data, host, &hostaddr, options.port,
+	ssh_login(ssh, &sensitive_তথ্য, host, &hostaddr, options.port,
 	    pw, timeout_ms, cinfo);
 
 	/* We no longer need the private host keys.  Clear them now. */
-	if (sensitive_data.nkeys != 0) {
-		for (i = 0; i < sensitive_data.nkeys; i++) {
-			if (sensitive_data.keys[i] != NULL) {
+	যদি (sensitive_তথ্য.nkeys != 0) {
+		জন্য (i = 0; i < sensitive_তথ্য.nkeys; i++) {
+			যদি (sensitive_তথ্য.চাবিগুলি[i] != ফাঁকা) {
 				/* Destroys contents safely */
 				debug3("clear hostkey %d", i);
-				sshkey_free(sensitive_data.keys[i]);
-				sensitive_data.keys[i] = NULL;
+				sshkey_free(sensitive_তথ্য.চাবিগুলি[i]);
+				sensitive_তথ্য.চাবিগুলি[i] = ফাঁকা;
 			}
 		}
-		free(sensitive_data.keys);
+		মুক্ত(sensitive_তথ্য.চাবিগুলি);
 	}
-	for (i = 0; i < options.num_identity_files; i++) {
-		free(options.identity_files[i]);
-		options.identity_files[i] = NULL;
-		if (options.identity_keys[i]) {
-			sshkey_free(options.identity_keys[i]);
-			options.identity_keys[i] = NULL;
+	জন্য (i = 0; i < options.অঙ্ক_identity_files; i++) {
+		মুক্ত(options.identity_files[i]);
+		options.identity_files[i] = ফাঁকা;
+		যদি (options.identity_চাবিগুলি[i]) {
+			sshkey_free(options.identity_চাবিগুলি[i]);
+			options.identity_চাবিগুলি[i] = ফাঁকা;
 		}
 	}
-	for (i = 0; i < options.num_certificate_files; i++) {
-		free(options.certificate_files[i]);
-		options.certificate_files[i] = NULL;
+	জন্য (i = 0; i < options.অঙ্ক_certificate_files; i++) {
+		মুক্ত(options.certificate_files[i]);
+		options.certificate_files[i] = ফাঁকা;
 	}
 
 #ifdef ENABLE_PKCS11
-	(void)pkcs11_del_provider(options.pkcs11_provider);
+	(শূন্য)pkcs11_del_provider(options.pkcs11_provider);
 #endif
 
  skip_connect:
-	if (addrs != NULL)
+	যদি (addrs != ফাঁকা)
 		freeaddrinfo(addrs);
 	exit_status = ssh_session2(ssh, cinfo);
 	ssh_conn_info_free(cinfo);
@@ -1837,17 +1837,17 @@ main(int ac, char **av)
 	ssh_packet_free(ssh);
 	pwfree(pw);
 
-	if (options.control_path != NULL && muxserver_sock != -1)
+	যদি (options.control_path != ফাঁকা && muxserver_sock != -1)
 		unlink(options.control_path);
 
 	/* Kill ProxyCommand if it is running. */
 	ssh_kill_proxy_command();
 
-	return exit_status;
+	ফেরত exit_status;
 }
 
-static void
-control_persist_detach(void)
+স্থির শূন্য
+control_persist_detach(শূন্য)
 {
 	pid_t pid;
 
@@ -1857,13 +1857,13 @@ control_persist_detach(void)
 	 * master (current process) into the background, and make the
 	 * foreground process a client of the backgrounded master.
 	 */
-	switch ((pid = fork())) {
-	case -1:
+	নির্বাচন ((pid = fork())) {
+	ক্ষেত্র -1:
 		fatal_f("fork: %s", strerror(errno));
-	case 0:
+	ক্ষেত্র 0:
 		/* Child: master process continues mainloop */
-		break;
-	default:
+		বিরতি;
+	পূর্বনির্ধারিত:
 		/*
 		 * Parent: set up mux client to connect to backgrounded
 		 * master.
@@ -1877,85 +1877,85 @@ control_persist_detach(void)
 		close(muxserver_sock);
 		muxserver_sock = -1;
 		options.control_master = SSHCTL_MASTER_NO;
-		(void)muxclient(options.control_path);
+		(শূন্য)muxclient(options.control_path);
 		/* muxclient() doesn't return on success. */
 		fatal("Failed to connect to new control master");
 	}
-	if (stdfd_devnull(1, 1, !(log_is_on_stderr() && debug_flag)) == -1)
+	যদি (stdfd_devnull(1, 1, !(log_is_on_stderr() && debug_flag)) == -1)
 		error_f("stdfd_devnull failed");
 	daemon(1, 1);
 	setproctitle("%s [mux]", options.control_path);
 }
 
 /* Do fork() after authentication. Used by "ssh -f" */
-static void
-fork_postauth(void)
+স্থির শূন্য
+fork_postauth(শূন্য)
 {
-	if (need_controlpersist_detach)
+	যদি (need_controlpersist_detach)
 		control_persist_detach();
 	debug("forking to background");
 	options.fork_after_authentication = 0;
-	if (daemon(1, 1) == -1)
+	যদি (daemon(1, 1) == -1)
 		fatal("daemon() failed: %.200s", strerror(errno));
-	if (stdfd_devnull(1, 1, !(log_is_on_stderr() && debug_flag)) == -1)
+	যদি (stdfd_devnull(1, 1, !(log_is_on_stderr() && debug_flag)) == -1)
 		error_f("stdfd_devnull failed");
 }
 
-static void
-forwarding_success(void)
+স্থির শূন্য
+forwarding_success(শূন্য)
 {
-	if (forward_confirms_pending == -1)
-		return;
-	if (--forward_confirms_pending == 0) {
+	যদি (forward_confirms_pending == -1)
+		ফেরত;
+	যদি (--forward_confirms_pending == 0) {
 		debug_f("all expected forwarding replies received");
-		if (options.fork_after_authentication)
+		যদি (options.fork_after_authentication)
 			fork_postauth();
-	} else {
+	} অন্যথা {
 		debug2_f("%d expected forwarding replies remaining",
 		    forward_confirms_pending);
 	}
 }
 
-struct rfwd_confirm_ctx {
-	int fid;
+কাঠামো rfwd_confirm_ctx {
+	পূর্ণসংখ্যা fid;
 };
 
 /* Callback for remote forward global requests */
-static void
-ssh_confirm_remote_forward(struct ssh *ssh, int type, uint32_t seq, void *ctxt)
+স্থির শূন্য
+ssh_confirm_remote_forward(কাঠামো ssh *ssh, পূর্ণসংখ্যা type, uint32_t seq, শূন্য *ctxt)
 {
-	struct rfwd_confirm_ctx *rctx = (struct rfwd_confirm_ctx *)ctxt;
-	struct Forward *rfwd;
+	কাঠামো rfwd_confirm_ctx *rctx = (কাঠামো rfwd_confirm_ctx *)ctxt;
+	কাঠামো Forward *rfwd;
 	u_int port;
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if (rctx->fid < 0 || rctx->fid >= options.num_remote_forwards)
+	যদি (rctx->fid < 0 || rctx->fid >= options.অঙ্ক_remote_forwards)
 		fatal_f("invalid forwarding ID %d", rctx->fid);
 	rfwd = &options.remote_forwards[rctx->fid];
-	freezero(rctx, sizeof(*rctx));
+	freezero(rctx, আকার(*rctx));
 
 	/* XXX verbose() on failure? */
 	debug("remote forward %s for: listen %s%s%d, connect %s:%d",
-	    type == SSH2_MSG_REQUEST_SUCCESS ? "success" : "failure",
+	    type == SSH2_বার্তা_REQUEST_SUCCESS ? "success" : "failure",
 	    rfwd->listen_path ? rfwd->listen_path :
 	    rfwd->listen_host ? rfwd->listen_host : "",
 	    (rfwd->listen_path || rfwd->listen_host) ? ":" : "",
 	    rfwd->listen_port, rfwd->connect_path ? rfwd->connect_path :
 	    rfwd->connect_host, rfwd->connect_port);
-	if (rfwd->listen_path == NULL && rfwd->listen_port == 0) {
-		if (type == SSH2_MSG_REQUEST_SUCCESS) {
-			if ((r = sshpkt_get_u32(ssh, &port)) != 0)
+	যদি (rfwd->listen_path == ফাঁকা && rfwd->listen_port == 0) {
+		যদি (type == SSH2_বার্তা_REQUEST_SUCCESS) {
+			যদি ((r = sshpkt_get_u32(ssh, &port)) != 0)
 				fatal_fr(r, "parse packet");
-			if (port > 65535) {
+			যদি (port > 65535) {
 				error("Invalid allocated port %u for remote "
 				    "forward to %s:%d", port,
 				    rfwd->connect_host, rfwd->connect_port);
 				/* Ensure failure processing runs below */
-				type = SSH2_MSG_REQUEST_FAILURE;
+				type = SSH2_বার্তা_REQUEST_FAILURE;
 				channel_update_permission(ssh,
 				    rfwd->handle, -1);
-			} else {
-				rfwd->allocated_port = (int)port;
+			} অন্যথা {
+				rfwd->allocated_port = (পূর্ণসংখ্যা)port;
 				logit("Allocated port %u for remote "
 				    "forward to %s:%d",
 				    rfwd->allocated_port, rfwd->connect_path ?
@@ -1964,24 +1964,24 @@ ssh_confirm_remote_forward(struct ssh *ssh, int type, uint32_t seq, void *ctxt)
 				channel_update_permission(ssh,
 				    rfwd->handle, rfwd->allocated_port);
 			}
-		} else {
+		} অন্যথা {
 			channel_update_permission(ssh, rfwd->handle, -1);
 		}
 	}
 
-	if (type == SSH2_MSG_REQUEST_FAILURE) {
-		if (options.exit_on_forward_failure) {
-			if (rfwd->listen_path != NULL)
+	যদি (type == SSH2_বার্তা_REQUEST_FAILURE) {
+		যদি (options.exit_on_forward_failure) {
+			যদি (rfwd->listen_path != ফাঁকা)
 				fatal("Error: remote port forwarding failed "
 				    "for listen path %s", rfwd->listen_path);
-			else
+			অন্যথা
 				fatal("Error: remote port forwarding failed "
 				    "for listen port %d", rfwd->listen_port);
-		} else {
-			if (rfwd->listen_path != NULL)
+		} অন্যথা {
+			যদি (rfwd->listen_path != ফাঁকা)
 				logit("Warning: remote port forwarding failed "
 				    "for listen path %s", rfwd->listen_path);
-			else
+			অন্যথা
 				logit("Warning: remote port forwarding failed "
 				    "for listen port %d", rfwd->listen_port);
 		}
@@ -1989,26 +1989,26 @@ ssh_confirm_remote_forward(struct ssh *ssh, int type, uint32_t seq, void *ctxt)
 	forwarding_success();
 }
 
-static void
-client_cleanup_stdio_fwd(struct ssh *ssh, int id, int force, void *arg)
+স্থির শূন্য
+client_cleanup_stdio_fwd(কাঠামো ssh *ssh, পূর্ণসংখ্যা id, পূর্ণসংখ্যা force, শূন্য *arg)
 {
 	debug("stdio forwarding: done");
 	cleanup_exit(0);
 }
 
-static void
-ssh_stdio_confirm(struct ssh *ssh, int id, int success, void *arg)
+স্থির শূন্য
+ssh_stdio_confirm(কাঠামো ssh *ssh, পূর্ণসংখ্যা id, পূর্ণসংখ্যা success, শূন্য *arg)
 {
-	if (!success)
+	যদি (!success)
 		fatal("stdio forwarding failed");
 }
 
-static void
-ssh_tun_confirm(struct ssh *ssh, int id, int success, void *arg)
+স্থির শূন্য
+ssh_tun_confirm(কাঠামো ssh *ssh, পূর্ণসংখ্যা id, পূর্ণসংখ্যা success, শূন্য *arg)
 {
-	if (!success) {
+	যদি (!success) {
 		error("Tunnel forwarding failed");
-		if (options.exit_on_forward_failure)
+		যদি (options.exit_on_forward_failure)
 			cleanup_exit(255);
 	}
 
@@ -2016,218 +2016,218 @@ ssh_tun_confirm(struct ssh *ssh, int id, int success, void *arg)
 	forwarding_success();
 }
 
-static void
-ssh_init_stdio_forwarding(struct ssh *ssh)
+স্থির শূন্য
+ssh_init_stdio_forwarding(কাঠামো ssh *ssh)
 {
 	Channel *c;
-	int in, out;
+	পূর্ণসংখ্যা in, out;
 
-	if (options.stdio_forward_host == NULL)
-		return;
+	যদি (options.stdio_forward_host == ফাঁকা)
+		ফেরত;
 
 	debug3_f("%s:%d", options.stdio_forward_host,
 	    options.stdio_forward_port);
 
-	if ((in = dup(STDIN_FILENO)) == -1 ||
+	যদি ((in = dup(STDIN_FILENO)) == -1 ||
 	    (out = dup(STDOUT_FILENO)) == -1)
 		fatal_f("dup() in/out failed");
-	if ((c = channel_connect_stdio_fwd(ssh, options.stdio_forward_host,
+	যদি ((c = channel_connect_stdio_fwd(ssh, options.stdio_forward_host,
 	    options.stdio_forward_port, in, out,
-	    CHANNEL_NONBLOCK_STDIO)) == NULL)
+	    CHANNEL_NONBLOCK_STDIO)) == ফাঁকা)
 		fatal_f("channel_connect_stdio_fwd failed");
 	channel_register_cleanup(ssh, c->self, client_cleanup_stdio_fwd, 0);
-	channel_register_open_confirm(ssh, c->self, ssh_stdio_confirm, NULL);
+	channel_register_open_confirm(ssh, c->self, ssh_stdio_confirm, ফাঁকা);
 }
 
-static void
-ssh_init_forward_permissions(struct ssh *ssh, const char *what, char **opens,
-    u_int num_opens)
+স্থির শূন্য
+ssh_init_forward_permissions(কাঠামো ssh *ssh, ধ্রুবক অক্ষর *what, অক্ষর **opens,
+    u_int অঙ্ক_opens)
 {
 	u_int i;
-	int port;
-	char *addr, *arg, *oarg;
-	int where = FORWARD_LOCAL;
+	পূর্ণসংখ্যা port;
+	অক্ষর *addr, *arg, *oarg;
+	পূর্ণসংখ্যা where = FORWARD_LOCAL;
 
 	channel_clear_permission(ssh, FORWARD_ADM, where);
-	if (num_opens == 0)
-		return; /* permit any */
+	যদি (অঙ্ক_opens == 0)
+		ফেরত; /* permit any */
 
 	/* handle keywords: "any" / "none" */
-	if (num_opens == 1 && strcmp(opens[0], "any") == 0)
-		return;
-	if (num_opens == 1 && strcmp(opens[0], "none") == 0) {
+	যদি (অঙ্ক_opens == 1 && strcmp(opens[0], "any") == 0)
+		ফেরত;
+	যদি (অঙ্ক_opens == 1 && strcmp(opens[0], "none") == 0) {
 		channel_disable_admin(ssh, where);
-		return;
+		ফেরত;
 	}
 	/* Otherwise treat it as a list of permitted host:port */
-	for (i = 0; i < num_opens; i++) {
+	জন্য (i = 0; i < অঙ্ক_opens; i++) {
 		oarg = arg = xstrdup(opens[i]);
 		addr = hpdelim(&arg);
-		if (addr == NULL)
+		যদি (addr == ফাঁকা)
 			fatal_f("missing host in %s", what);
 		addr = cleanhostname(addr);
-		if (arg == NULL || ((port = permitopen_port(arg)) < 0))
+		যদি (arg == ফাঁকা || ((port = permitopen_port(arg)) < 0))
 			fatal_f("bad port number in %s", what);
 		/* Send it to channels layer */
 		channel_add_permission(ssh, FORWARD_ADM,
 		    where, addr, port);
-		free(oarg);
+		মুক্ত(oarg);
 	}
 }
 
-static void
-ssh_init_forwarding(struct ssh *ssh, char **ifname)
+স্থির শূন্য
+ssh_init_forwarding(কাঠামো ssh *ssh, অক্ষর **ifname)
 {
-	int success = 0;
-	int i;
+	পূর্ণসংখ্যা success = 0;
+	পূর্ণসংখ্যা i;
 
 	ssh_init_forward_permissions(ssh, "permitremoteopen",
 	    options.permitted_remote_opens,
-	    options.num_permitted_remote_opens);
+	    options.অঙ্ক_permitted_remote_opens);
 
-	if (options.exit_on_forward_failure)
+	যদি (options.exit_on_forward_failure)
 		forward_confirms_pending = 0; /* track pending requests */
 	/* Initiate local TCP/IP port forwardings. */
-	for (i = 0; i < options.num_local_forwards; i++) {
+	জন্য (i = 0; i < options.অঙ্ক_local_forwards; i++) {
 		debug("Local connections to %.200s:%d forwarded to remote "
 		    "address %.200s:%d",
-		    (options.local_forwards[i].listen_path != NULL) ?
+		    (options.local_forwards[i].listen_path != ফাঁকা) ?
 		    options.local_forwards[i].listen_path :
-		    (options.local_forwards[i].listen_host == NULL) ?
+		    (options.local_forwards[i].listen_host == ফাঁকা) ?
 		    (options.fwd_opts.gateway_ports ? "*" : "LOCALHOST") :
 		    options.local_forwards[i].listen_host,
 		    options.local_forwards[i].listen_port,
-		    (options.local_forwards[i].connect_path != NULL) ?
+		    (options.local_forwards[i].connect_path != ফাঁকা) ?
 		    options.local_forwards[i].connect_path :
 		    options.local_forwards[i].connect_host,
 		    options.local_forwards[i].connect_port);
 		success += channel_setup_local_fwd_listener(ssh,
 		    &options.local_forwards[i], &options.fwd_opts);
 	}
-	if (i > 0 && success != i && options.exit_on_forward_failure)
+	যদি (i > 0 && success != i && options.exit_on_forward_failure)
 		fatal("Could not request local forwarding.");
-	if (i > 0 && success == 0)
+	যদি (i > 0 && success == 0)
 		error("Could not request local forwarding.");
 
 	/* Initiate remote TCP/IP port forwardings. */
-	for (i = 0; i < options.num_remote_forwards; i++) {
-		struct rfwd_confirm_ctx *rctx;
+	জন্য (i = 0; i < options.অঙ্ক_remote_forwards; i++) {
+		কাঠামো rfwd_confirm_ctx *rctx;
 
 		debug("Remote connections from %.200s:%d forwarded to "
 		    "local address %.200s:%d",
-		    (options.remote_forwards[i].listen_path != NULL) ?
+		    (options.remote_forwards[i].listen_path != ফাঁকা) ?
 		    options.remote_forwards[i].listen_path :
-		    (options.remote_forwards[i].listen_host == NULL) ?
+		    (options.remote_forwards[i].listen_host == ফাঁকা) ?
 		    "LOCALHOST" : options.remote_forwards[i].listen_host,
 		    options.remote_forwards[i].listen_port,
-		    (options.remote_forwards[i].connect_path != NULL) ?
+		    (options.remote_forwards[i].connect_path != ফাঁকা) ?
 		    options.remote_forwards[i].connect_path :
 		    options.remote_forwards[i].connect_host,
 		    options.remote_forwards[i].connect_port);
-		if ((options.remote_forwards[i].handle =
+		যদি ((options.remote_forwards[i].handle =
 		    channel_request_remote_forwarding(ssh,
 		    &options.remote_forwards[i])) >= 0) {
-			rctx = xcalloc(1, sizeof(*rctx));
+			rctx = xcalloc(1, আকার(*rctx));
 			rctx->fid = i;
 			client_register_global_confirm(
 			    ssh_confirm_remote_forward, rctx);
 			forward_confirms_pending++;
-		} else if (options.exit_on_forward_failure)
+		} অন্যথা যদি (options.exit_on_forward_failure)
 			fatal("Could not request remote forwarding.");
-		else
+		অন্যথা
 			logit("Warning: Could not request remote forwarding.");
 	}
 
 	/* Initiate tunnel forwarding. */
-	if (options.tun_open != SSH_TUNMODE_NO) {
-		if ((*ifname = client_request_tun_fwd(ssh,
+	যদি (options.tun_open != SSH_TUNMODE_NO) {
+		যদি ((*ifname = client_request_tun_fwd(ssh,
 		    options.tun_open, options.tun_local,
-		    options.tun_remote, ssh_tun_confirm, NULL)) != NULL)
+		    options.tun_remote, ssh_tun_confirm, ফাঁকা)) != ফাঁকা)
 			forward_confirms_pending++;
-		else if (options.exit_on_forward_failure)
+		অন্যথা যদি (options.exit_on_forward_failure)
 			fatal("Could not request tunnel forwarding.");
-		else
+		অন্যথা
 			error("Could not request tunnel forwarding.");
 	}
-	if (forward_confirms_pending > 0) {
+	যদি (forward_confirms_pending > 0) {
 		debug_f("expecting replies for %d forwards",
 		    forward_confirms_pending);
 	}
 }
 
-static void
-check_agent_present(void)
+স্থির শূন্য
+check_agent_present(শূন্য)
 {
-	int r;
+	পূর্ণসংখ্যা r;
 
-	if (options.forward_agent) {
+	যদি (options.forward_agent) {
 		/* Clear agent forwarding if we don't have an agent. */
-		if ((r = ssh_get_authentication_socket(NULL)) != 0) {
+		যদি ((r = ssh_get_authentication_socket(ফাঁকা)) != 0) {
 			options.forward_agent = 0;
-			if (r != SSH_ERR_AGENT_NOT_PRESENT)
+			যদি (r != SSH_ERR_AGENT_NOT_PRESENT)
 				debug_r(r, "ssh_get_authentication_socket");
 		}
 	}
 }
 
-static void
-ssh_session2_setup(struct ssh *ssh, int id, int success, void *arg)
+স্থির শূন্য
+ssh_session2_setup(কাঠামো ssh *ssh, পূর্ণসংখ্যা id, পূর্ণসংখ্যা success, শূন্য *arg)
 {
-	extern char **environ;
-	const char *display, *term;
-	char *proto = NULL, *data = NULL;
+	বাহ্যিক অক্ষর **environ;
+	ধ্রুবক অক্ষর *display, *term;
+	অক্ষর *proto = ফাঁকা, *তথ্য = ফাঁকা;
 
-	if (!success)
-		return; /* No need for error message, channels code sends one */
+	যদি (!success)
+		ফেরত; /* No need for error message, channels code sends one */
 
 	display = getenv("DISPLAY");
-	if (display == NULL && options.forward_x11)
+	যদি (display == ফাঁকা && options.forward_x11)
 		debug("X11 forwarding requested but DISPLAY not set");
-	if (options.forward_x11 && client_x11_get_proto(ssh, display,
+	যদি (options.forward_x11 && client_x11_get_proto(ssh, display,
 	    options.xauth_location, options.forward_x11_trusted,
-	    options.forward_x11_timeout, &proto, &data) == 0) {
+	    options.forward_x11_timeout, &proto, &তথ্য) == 0) {
 		/* Request forwarding with authentication spoofing. */
 		debug("Requesting X11 forwarding with authentication "
 		    "spoofing.");
 		x11_request_forwarding_with_spoofing(ssh, id, display, proto,
-		    data, 1);
+		    তথ্য, 1);
 		client_expect_confirm(ssh, id, "X11 forwarding", CONFIRM_WARN);
 		/* XXX exit_on_forward_failure */
 	}
 
 	check_agent_present();
-	if (options.forward_agent)
+	যদি (options.forward_agent)
 		client_channel_request_agent_forwarding(ssh, id);
 
-	if ((term = lookup_env_in_list("TERM", options.setenv,
-	    options.num_setenv)) == NULL || *term == '\0')
+	যদি ((term = lookup_env_in_list("TERM", options.setenv,
+	    options.অঙ্ক_setenv)) == ফাঁকা || *term == '\0')
 		term = getenv("TERM");
 	client_session2_setup(ssh, id, tty_flag,
 	    options.session_type == SESSION_TYPE_SUBSYSTEM, term,
-	    NULL, fileno(stdin), command, environ);
+	    ফাঁকা, fileno(stdin), command, environ);
 }
 
 /* open new channel for a session */
-static int
-ssh_session2_open(struct ssh *ssh)
+স্থির পূর্ণসংখ্যা
+ssh_session2_open(কাঠামো ssh *ssh)
 {
 	Channel *c;
-	int window, packetmax, in, out, err;
+	পূর্ণসংখ্যা window, packetmax, in, out, err;
 
-	if (options.stdin_null) {
+	যদি (options.stdin_null) {
 		in = open(_PATH_DEVNULL, O_RDONLY);
-	} else {
+	} অন্যথা {
 		in = dup(STDIN_FILENO);
 	}
 	out = dup(STDOUT_FILENO);
 	err = dup(STDERR_FILENO);
 
-	if (in == -1 || out == -1 || err == -1)
+	যদি (in == -1 || out == -1 || err == -1)
 		fatal("dup() in/out/err failed");
 
 	window = CHAN_SES_WINDOW_DEFAULT;
 	packetmax = CHAN_SES_PACKET_DEFAULT;
-	if (tty_flag) {
+	যদি (tty_flag) {
 		window >>= 1;
 		packetmax >>= 1;
 	}
@@ -2235,43 +2235,43 @@ ssh_session2_open(struct ssh *ssh)
 	    "session", SSH_CHANNEL_OPENING, in, out, err,
 	    window, packetmax, CHAN_EXTENDED_WRITE,
 	    "client-session", CHANNEL_NONBLOCK_STDIO);
-	if (tty_flag)
+	যদি (tty_flag)
 		channel_set_tty(ssh, c);
 	debug3_f("channel_new: %d%s", c->self, tty_flag ? " (tty)" : "");
 
 	channel_send_open(ssh, c->self);
-	if (options.session_type != SESSION_TYPE_NONE)
+	যদি (options.session_type != SESSION_TYPE_NONE)
 		channel_register_open_confirm(ssh, c->self,
-		    ssh_session2_setup, NULL);
+		    ssh_session2_setup, ফাঁকা);
 
-	return c->self;
+	ফেরত c->self;
 }
 
-static int
-ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
+স্থির পূর্ণসংখ্যা
+ssh_session2(কাঠামো ssh *ssh, ধ্রুবক কাঠামো ssh_conn_info *cinfo)
 {
-	int r, id = -1;
-	char *cp, *tun_fwd_ifname = NULL;
+	পূর্ণসংখ্যা r, id = -1;
+	অক্ষর *cp, *tun_fwd_ifname = ফাঁকা;
 
 	/* XXX should be pre-session */
-	if (!options.control_persist)
+	যদি (!options.control_persist)
 		ssh_init_stdio_forwarding(ssh);
 
 	ssh_init_forwarding(ssh, &tun_fwd_ifname);
 
-	if (options.local_command != NULL) {
+	যদি (options.local_command != ফাঁকা) {
 		debug3("expanding LocalCommand: %s", options.local_command);
 		cp = options.local_command;
 		options.local_command = percent_expand(cp,
 		    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(cinfo),
-		    "T", tun_fwd_ifname == NULL ? "NONE" : tun_fwd_ifname,
-		    (char *)NULL);
+		    "T", tun_fwd_ifname == ফাঁকা ? "NONE" : tun_fwd_ifname,
+		    (অক্ষর *)ফাঁকা);
 		debug3("expanded LocalCommand: %s", options.local_command);
-		free(cp);
+		মুক্ত(cp);
 	}
 
 	/* Start listening for multiplex clients */
-	if (!ssh_packet_get_mux(ssh))
+	যদি (!ssh_packet_get_mux(ssh))
 		muxserver_listen(ssh);
 
 	/*
@@ -2283,7 +2283,7 @@ ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
 	 * after the connection is fully established (in particular,
 	 * async rfwd replies have been received for ExitOnForwardFailure).
 	 */
-	if (options.control_persist && muxserver_sock != -1) {
+	যদি (options.control_persist && muxserver_sock != -1) {
 		ostdin_null_flag = options.stdin_null;
 		osession_type = options.session_type;
 		orequest_tty = options.request_tty;
@@ -2292,8 +2292,8 @@ ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
 		options.stdin_null = 1;
 		options.session_type = SESSION_TYPE_NONE;
 		tty_flag = 0;
-		if ((osession_type != SESSION_TYPE_NONE ||
-		    options.stdio_forward_host != NULL))
+		যদি ((osession_type != SESSION_TYPE_NONE ||
+		    options.stdio_forward_host != ফাঁকা))
 			need_controlpersist_detach = 1;
 		options.fork_after_authentication = 1;
 	}
@@ -2301,17 +2301,17 @@ ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
 	 * ControlPersist mux listen socket setup failed, attempt the
 	 * stdio forward setup that we skipped earlier.
 	 */
-	if (options.control_persist && muxserver_sock == -1)
+	যদি (options.control_persist && muxserver_sock == -1)
 		ssh_init_stdio_forwarding(ssh);
 
-	if (options.session_type != SESSION_TYPE_NONE)
+	যদি (options.session_type != SESSION_TYPE_NONE)
 		id = ssh_session2_open(ssh);
 
 	/* If we don't expect to open a new session, then disallow it */
-	if (options.control_master == SSHCTL_MASTER_NO &&
+	যদি (options.control_master == SSHCTL_MASTER_NO &&
 	    (ssh->compat & SSH_NEW_OPENSSH)) {
 		debug("Requesting no-more-sessions@openssh.com");
-		if ((r = sshpkt_start(ssh, SSH2_MSG_GLOBAL_REQUEST)) != 0 ||
+		যদি ((r = sshpkt_start(ssh, SSH2_বার্তা_GLOBAL_REQUEST)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh,
 		    "no-more-sessions@openssh.com")) != 0 ||
 		    (r = sshpkt_put_u8(ssh, 0)) != 0 ||
@@ -2320,7 +2320,7 @@ ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
 	}
 
 	/* Execute a local command */
-	if (options.local_command != NULL &&
+	যদি (options.local_command != ফাঁকা &&
 	    options.permit_local_command)
 		ssh_local_cmd(options.local_command);
 
@@ -2330,180 +2330,180 @@ ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
 	 * NB. this can only happen after LocalCommand has completed,
 	 * as it may want to write to stdout.
 	 */
-	if (!need_controlpersist_detach && stdfd_devnull(0, 1, 0) == -1)
+	যদি (!need_controlpersist_detach && stdfd_devnull(0, 1, 0) == -1)
 		error_f("stdfd_devnull failed");
 
 	/*
 	 * If requested and we are not interested in replies to remote
 	 * forwarding requests, then let ssh continue in the background.
 	 */
-	if (options.fork_after_authentication) {
-		if (options.exit_on_forward_failure &&
-		    options.num_remote_forwards > 0) {
+	যদি (options.fork_after_authentication) {
+		যদি (options.exit_on_forward_failure &&
+		    options.অঙ্ক_remote_forwards > 0) {
 			debug("deferring postauth fork until remote forward "
 			    "confirmation received");
-		} else
+		} অন্যথা
 			fork_postauth();
 	}
 
-	return client_loop(ssh, tty_flag, tty_flag ?
+	ফেরত client_loop(ssh, tty_flag, tty_flag ?
 	    options.escape_char : SSH_ESCAPECHAR_NONE, id);
 }
 
 /* Loads all IdentityFile and CertificateFile keys */
-static void
-load_public_identity_files(const struct ssh_conn_info *cinfo)
+স্থির শূন্য
+load_public_identity_files(ধ্রুবক কাঠামো ssh_conn_info *cinfo)
 {
-	char *filename, *cp;
-	struct sshkey *public;
-	int i;
+	অক্ষর *filename, *cp;
+	কাঠামো sshkey *সর্বজনীন;
+	পূর্ণসংখ্যা i;
 	u_int n_ids, n_certs;
-	char *identity_files[SSH_MAX_IDENTITY_FILES];
-	struct sshkey *identity_keys[SSH_MAX_IDENTITY_FILES];
-	int identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
-	char *certificate_files[SSH_MAX_CERTIFICATE_FILES];
-	struct sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
-	int certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
+	অক্ষর *identity_files[SSH_MAX_IDENTITY_FILES];
+	কাঠামো sshkey *identity_চাবিগুলি[SSH_MAX_IDENTITY_FILES];
+	পূর্ণসংখ্যা identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
+	অক্ষর *certificate_files[SSH_MAX_CERTIFICATE_FILES];
+	কাঠামো sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
+	পূর্ণসংখ্যা certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
 #ifdef ENABLE_PKCS11
-	struct sshkey **keys = NULL;
-	char **comments = NULL;
-	int nkeys;
+	কাঠামো sshkey **চাবিগুলি = ফাঁকা;
+	অক্ষর **comments = ফাঁকা;
+	পূর্ণসংখ্যা nkeys;
 #endif /* PKCS11 */
 
 	n_ids = n_certs = 0;
-	memset(identity_files, 0, sizeof(identity_files));
-	memset(identity_keys, 0, sizeof(identity_keys));
+	memset(identity_files, 0, আকার(identity_files));
+	memset(identity_চাবিগুলি, 0, আকার(identity_চাবিগুলি));
 	memset(identity_file_userprovided, 0,
-	    sizeof(identity_file_userprovided));
-	memset(certificate_files, 0, sizeof(certificate_files));
-	memset(certificates, 0, sizeof(certificates));
+	    আকার(identity_file_userprovided));
+	memset(certificate_files, 0, আকার(certificate_files));
+	memset(certificates, 0, আকার(certificates));
 	memset(certificate_file_userprovided, 0,
-	    sizeof(certificate_file_userprovided));
+	    আকার(certificate_file_userprovided));
 
 #ifdef ENABLE_PKCS11
-	if (options.pkcs11_provider != NULL &&
-	    options.num_identity_files < SSH_MAX_IDENTITY_FILES &&
+	যদি (options.pkcs11_provider != ফাঁকা &&
+	    options.অঙ্ক_identity_files < SSH_MAX_IDENTITY_FILES &&
 	    (pkcs11_init(!options.batch_mode) == 0) &&
-	    (nkeys = pkcs11_add_provider(options.pkcs11_provider, NULL,
-	    &keys, &comments)) > 0) {
-		for (i = 0; i < nkeys; i++) {
-			if (n_ids >= SSH_MAX_IDENTITY_FILES) {
-				sshkey_free(keys[i]);
-				free(comments[i]);
-				continue;
+	    (nkeys = pkcs11_add_provider(options.pkcs11_provider, ফাঁকা,
+	    &চাবিগুলি, &comments)) > 0) {
+		জন্য (i = 0; i < nkeys; i++) {
+			যদি (n_ids >= SSH_MAX_IDENTITY_FILES) {
+				sshkey_free(চাবিগুলি[i]);
+				মুক্ত(comments[i]);
+				চালু;
 			}
-			identity_keys[n_ids] = keys[i];
+			identity_চাবিগুলি[n_ids] = চাবিগুলি[i];
 			identity_files[n_ids] = comments[i]; /* transferred */
 			n_ids++;
 		}
-		free(keys);
-		free(comments);
+		মুক্ত(চাবিগুলি);
+		মুক্ত(comments);
 	}
 #endif /* ENABLE_PKCS11 */
-	for (i = 0; i < options.num_identity_files; i++) {
-		if (n_ids >= SSH_MAX_IDENTITY_FILES ||
+	জন্য (i = 0; i < options.অঙ্ক_identity_files; i++) {
+		যদি (n_ids >= SSH_MAX_IDENTITY_FILES ||
 		    strcasecmp(options.identity_files[i], "none") == 0) {
-			free(options.identity_files[i]);
-			options.identity_files[i] = NULL;
-			continue;
+			মুক্ত(options.identity_files[i]);
+			options.identity_files[i] = ফাঁকা;
+			চালু;
 		}
 		cp = tilde_expand_filename(options.identity_files[i], getuid());
 		filename = default_client_percent_dollar_expand(cp, cinfo);
-		free(cp);
-		check_load(sshkey_load_public(filename, &public, NULL),
-		    &public, filename, "pubkey");
+		মুক্ত(cp);
+		check_load(sshkey_load_public(filename, &সর্বজনীন, ফাঁকা),
+		    &সর্বজনীন, filename, "pubkey");
 		debug("identity file %s type %d", filename,
-		    public ? public->type : -1);
-		free(options.identity_files[i]);
+		    সর্বজনীন ? সর্বজনীন->type : -1);
+		মুক্ত(options.identity_files[i]);
 		identity_files[n_ids] = filename;
-		identity_keys[n_ids] = public;
+		identity_চাবিগুলি[n_ids] = সর্বজনীন;
 		identity_file_userprovided[n_ids] =
 		    options.identity_file_userprovided[i];
-		if (++n_ids >= SSH_MAX_IDENTITY_FILES)
-			continue;
+		যদি (++n_ids >= SSH_MAX_IDENTITY_FILES)
+			চালু;
 
 		/*
 		 * If no certificates have been explicitly listed then try
 		 * to add the default certificate variant too.
 		 */
-		if (options.num_certificate_files != 0)
-			continue;
+		যদি (options.অঙ্ক_certificate_files != 0)
+			চালু;
 		xasprintf(&cp, "%s-cert", filename);
-		check_load(sshkey_load_public(cp, &public, NULL),
-		    &public, filename, "identity pubkey");
-		if (public == NULL) {
-			free(cp);
-			continue;
+		check_load(sshkey_load_public(cp, &সর্বজনীন, ফাঁকা),
+		    &সর্বজনীন, filename, "identity pubkey");
+		যদি (সর্বজনীন == ফাঁকা) {
+			মুক্ত(cp);
+			চালু;
 		}
-		if (!sshkey_is_cert(public)) {
+		যদি (!sshkey_is_cert(সর্বজনীন)) {
 			debug_f("key %s type %s is not a certificate",
-			    cp, sshkey_type(public));
-			sshkey_free(public);
-			free(cp);
-			continue;
+			    cp, sshkey_type(সর্বজনীন));
+			sshkey_free(সর্বজনীন);
+			মুক্ত(cp);
+			চালু;
 		}
-		free(cp);
+		মুক্ত(cp);
 		/* NB. leave filename pointing to private key */
 		identity_files[n_ids] = xstrdup(filename);
-		identity_keys[n_ids] = public;
+		identity_চাবিগুলি[n_ids] = সর্বজনীন;
 		identity_file_userprovided[n_ids] =
 		    options.identity_file_userprovided[i];
 		n_ids++;
 	}
 
-	if (options.num_certificate_files > SSH_MAX_CERTIFICATE_FILES)
+	যদি (options.অঙ্ক_certificate_files > SSH_MAX_CERTIFICATE_FILES)
 		fatal_f("too many certificates");
-	for (i = 0; i < options.num_certificate_files; i++) {
+	জন্য (i = 0; i < options.অঙ্ক_certificate_files; i++) {
 		cp = tilde_expand_filename(options.certificate_files[i],
 		    getuid());
 		filename = default_client_percent_dollar_expand(cp, cinfo);
-		free(cp);
+		মুক্ত(cp);
 
-		check_load(sshkey_load_public(filename, &public, NULL),
-		    &public, filename, "identity cert");
-		free(options.certificate_files[i]);
-		options.certificate_files[i] = NULL;
-		if (public == NULL) {
-			free(filename);
-			continue;
+		check_load(sshkey_load_public(filename, &সর্বজনীন, ফাঁকা),
+		    &সর্বজনীন, filename, "identity cert");
+		মুক্ত(options.certificate_files[i]);
+		options.certificate_files[i] = ফাঁকা;
+		যদি (সর্বজনীন == ফাঁকা) {
+			মুক্ত(filename);
+			চালু;
 		}
-		if (!sshkey_is_cert(public)) {
+		যদি (!sshkey_is_cert(সর্বজনীন)) {
 			debug_f("key %s type %s is not a certificate",
-			    filename, sshkey_type(public));
-			sshkey_free(public);
-			free(filename);
-			continue;
+			    filename, sshkey_type(সর্বজনীন));
+			sshkey_free(সর্বজনীন);
+			মুক্ত(filename);
+			চালু;
 		}
 		certificate_files[n_certs] = filename;
-		certificates[n_certs] = public;
+		certificates[n_certs] = সর্বজনীন;
 		certificate_file_userprovided[n_certs] =
 		    options.certificate_file_userprovided[i];
 		++n_certs;
 	}
 
-	options.num_identity_files = n_ids;
-	memcpy(options.identity_files, identity_files, sizeof(identity_files));
-	memcpy(options.identity_keys, identity_keys, sizeof(identity_keys));
+	options.অঙ্ক_identity_files = n_ids;
+	memcpy(options.identity_files, identity_files, আকার(identity_files));
+	memcpy(options.identity_চাবিগুলি, identity_চাবিগুলি, আকার(identity_চাবিগুলি));
 	memcpy(options.identity_file_userprovided,
-	    identity_file_userprovided, sizeof(identity_file_userprovided));
+	    identity_file_userprovided, আকার(identity_file_userprovided));
 
-	options.num_certificate_files = n_certs;
+	options.অঙ্ক_certificate_files = n_certs;
 	memcpy(options.certificate_files,
-	    certificate_files, sizeof(certificate_files));
-	memcpy(options.certificates, certificates, sizeof(certificates));
+	    certificate_files, আকার(certificate_files));
+	memcpy(options.certificates, certificates, আকার(certificates));
 	memcpy(options.certificate_file_userprovided,
 	    certificate_file_userprovided,
-	    sizeof(certificate_file_userprovided));
+	    আকার(certificate_file_userprovided));
 }
 
-static void
-main_sigchld_handler(int sig)
+স্থির শূন্য
+main_sigchld_handler(পূর্ণসংখ্যা sig)
 {
-	int save_errno = errno;
+	পূর্ণসংখ্যা save_errno = errno;
 	pid_t pid;
-	int status;
+	পূর্ণসংখ্যা status;
 
-	while ((pid = waitpid(-1, &status, WNOHANG)) > 0 ||
+	যখন ((pid = waitpid(-1, &status, WNOHANG)) > 0 ||
 	    (pid == -1 && errno == EINTR))
 		;
 	errno = save_errno;

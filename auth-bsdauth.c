@@ -23,105 +23,105 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdio.h>
 
 #ifdef BSD_AUTH
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "log.h"
+#অন্তর্ভাব "xmalloc.h"
+#অন্তর্ভাব "sshkey.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "hostfile.h"
+#অন্তর্ভাব "auth.h"
+#অন্তর্ভাব "log.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#অন্তর্ভাব "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
+#অন্তর্ভাব "monitor_wrap.h"
 
-static void *
+স্থির শূন্য *
 bsdauth_init_ctx(Authctxt *authctxt)
 {
-	return authctxt;
+	ফেরত authctxt;
 }
 
-int
-bsdauth_query(void *ctx, char **name, char **infotxt,
-   u_int *numprompts, char ***prompts, u_int **echo_on)
+পূর্ণসংখ্যা
+bsdauth_query(শূন্য *ctx, অক্ষর **name, অক্ষর **infotxt,
+   u_int *numprompts, অক্ষর ***prompts, u_int **echo_on)
 {
 	Authctxt *authctxt = ctx;
-	char *challenge = NULL;
+	অক্ষর *challenge = ফাঁকা;
 
-	*infotxt = NULL;
+	*infotxt = ফাঁকা;
 	*numprompts = 0;
-	*prompts = NULL;
-	*echo_on = NULL;
+	*prompts = ফাঁকা;
+	*echo_on = ফাঁকা;
 
-	if (authctxt->as != NULL) {
+	যদি (authctxt->as != ফাঁকা) {
 		debug2("bsdauth_query: try reuse session");
 		challenge = auth_getitem(authctxt->as, AUTHV_CHALLENGE);
-		if (challenge == NULL) {
+		যদি (challenge == ফাঁকা) {
 			auth_close(authctxt->as);
-			authctxt->as = NULL;
+			authctxt->as = ফাঁকা;
 		}
 	}
 
-	if (challenge == NULL) {
+	যদি (challenge == ফাঁকা) {
 		debug2("bsdauth_query: new bsd auth session");
 		debug3("bsdauth_query: style %s",
 		    authctxt->style ? authctxt->style : "<default>");
 		authctxt->as = auth_userchallenge(authctxt->user,
 		    authctxt->style, "auth-ssh", &challenge);
-		if (authctxt->as == NULL)
-			challenge = NULL;
+		যদি (authctxt->as == ফাঁকা)
+			challenge = ফাঁকা;
 		debug2("bsdauth_query: <%s>", challenge ? challenge : "empty");
 	}
 
-	if (challenge == NULL)
-		return -1;
+	যদি (challenge == ফাঁকা)
+		ফেরত -1;
 
 	*name = xstrdup("");
 	*infotxt = xstrdup("");
 	*numprompts = 1;
-	*prompts = xcalloc(*numprompts, sizeof(char *));
-	*echo_on = xcalloc(*numprompts, sizeof(u_int));
+	*prompts = xcalloc(*numprompts, আকার(অক্ষর *));
+	*echo_on = xcalloc(*numprompts, আকার(u_int));
 	(*prompts)[0] = xstrdup(challenge);
 
-	return 0;
+	ফেরত 0;
 }
 
-int
-bsdauth_respond(void *ctx, u_int numresponses, char **responses)
+পূর্ণসংখ্যা
+bsdauth_respond(শূন্য *ctx, u_int numresponses, অক্ষর **responses)
 {
 	Authctxt *authctxt = ctx;
-	int authok;
+	পূর্ণসংখ্যা authok;
 
-	if (!authctxt->valid)
-		return -1;
+	যদি (!authctxt->valid)
+		ফেরত -1;
 
-	if (authctxt->as == NULL)
+	যদি (authctxt->as == ফাঁকা)
 		error("bsdauth_respond: no bsd auth session");
 
-	if (numresponses != 1)
-		return -1;
+	যদি (numresponses != 1)
+		ফেরত -1;
 
 	authok = auth_userresponse(authctxt->as, responses[0], 0);
-	authctxt->as = NULL;
+	authctxt->as = ফাঁকা;
 	debug3("bsdauth_respond: <%s> = <%d>", responses[0], authok);
 
-	return (authok == 0) ? -1 : 0;
+	ফেরত (authok == 0) ? -1 : 0;
 }
 
-static void
-bsdauth_free_ctx(void *ctx)
+স্থির শূন্য
+bsdauth_free_ctx(শূন্য *ctx)
 {
 	Authctxt *authctxt = ctx;
 
-	if (authctxt && authctxt->as) {
+	যদি (authctxt && authctxt->as) {
 		auth_close(authctxt->as);
-		authctxt->as = NULL;
+		authctxt->as = ফাঁকা;
 	}
 }
 

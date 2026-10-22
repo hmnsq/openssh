@@ -26,19 +26,19 @@
 #ifndef KEX_H
 #define KEX_H
 
-#include "mac.h"
-#include "crypto_api.h"
+#অন্তর্ভাব "mac.h"
+#অন্তর্ভাব "crypto_api.h"
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/dh.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#else /* OPENSSL */
-#define BIGNUM		void
-#define DH		void
-#define EC_KEY		void
-#define EC_GROUP	void
+#অন্তর্ভাব <openssl/bn.h>
+#অন্তর্ভাব <openssl/dh.h>
+#অন্তর্ভাব <openssl/ec.h>
+#অন্তর্ভাব <openssl/ecdsa.h>
+#অন্যথা /* OPENSSL */
+#define BIGNUM		শূন্য
+#define DH		শূন্য
+#define EC_চাবি		শূন্য
+#define EC_GROUP	শূন্য
 #endif /* WITH_OPENSSL */
 
 #define KEX_COOKIE_LEN	16
@@ -63,11 +63,11 @@
 #define COMP_NONE	0
 #define COMP_DELAYED	2
 
-#define CURVE25519_SIZE 32
+#define CURVE25519_আকার 32
 
-enum kex_init_proposals {
+গণনা kex_init_proposals {
 	PROPOSAL_KEX_ALGS,
-	PROPOSAL_SERVER_HOST_KEY_ALGS,
+	PROPOSAL_SERVER_HOST_চাবি_ALGS,
 	PROPOSAL_ENC_ALGS_CTOS,
 	PROPOSAL_ENC_ALGS_STOC,
 	PROPOSAL_MAC_ALGS_CTOS,
@@ -79,13 +79,13 @@ enum kex_init_proposals {
 	PROPOSAL_MAX
 };
 
-enum kex_modes {
+গণনা kex_modes {
 	MODE_IN,
 	MODE_OUT,
 	MODE_MAX
 };
 
-enum kex_exchange {
+গণনা kex_exchange {
 	KEX_DH_GRP1_SHA1 = 1,
 	KEX_DH_GRP14_SHA1,
 	KEX_DH_GRP14_SHA256,
@@ -116,184 +116,184 @@ enum kex_exchange {
 #define KEX_NOT_PQ			0
 #define KEX_IS_PQ			1
 
-struct sshenc {
-	char	*name;
-	const struct sshcipher *cipher;
-	int	enabled;
-	u_int	key_len;
+কাঠামো sshenc {
+	অক্ষর	*name;
+	ধ্রুবক কাঠামো sshcipher *cipher;
+	পূর্ণসংখ্যা	enabled;
+	u_int	চাবি_len;
 	u_int	iv_len;
-	u_int	block_size;
-	u_char	*key;
+	u_int	block_আকার;
+	u_char	*চাবি;
 	u_char	*iv;
 };
-struct sshcomp {
+কাঠামো sshcomp {
 	u_int	type;
-	int	enabled;
-	char	*name;
+	পূর্ণসংখ্যা	enabled;
+	অক্ষর	*name;
 };
-struct newkeys {
-	struct sshenc	enc;
-	struct sshmac	mac;
-	struct sshcomp  comp;
+কাঠামো newkeys {
+	কাঠামো sshenc	enc;
+	কাঠামো sshmac	mac;
+	কাঠামো sshcomp  comp;
 };
 
-struct ssh;
-struct sshbuf;
+কাঠামো ssh;
+কাঠামো sshbuf;
 
-struct kex {
-	struct newkeys	*newkeys[MODE_MAX];
+কাঠামো kex {
+	কাঠামো newkeys	*newkeys[MODE_MAX];
 	u_int	we_need;
 	u_int	dh_need;
-	int	server;
-	char	*name;
-	char	*hostkey_alg;
-	int	hostkey_type;
-	int	hostkey_nid;
+	পূর্ণসংখ্যা	server;
+	অক্ষর	*name;
+	অক্ষর	*hostkey_alg;
+	পূর্ণসংখ্যা	hostkey_type;
+	পূর্ণসংখ্যা	hostkey_nid;
 	u_int	kex_type;
-	char	*server_sig_algs;
-	int	ext_info_c;
-	int	ext_info_s;
-	int	kex_strict;
-	int	ext_info_received;
-	struct sshbuf *my;
-	struct sshbuf *peer;
-	struct sshbuf *client_version;
-	struct sshbuf *server_version;
-	struct sshbuf *session_id;
-	struct sshbuf *initial_sig;
-	struct sshkey *initial_hostkey;
+	অক্ষর	*server_sig_algs;
+	পূর্ণসংখ্যা	ext_info_c;
+	পূর্ণসংখ্যা	ext_info_s;
+	পূর্ণসংখ্যা	kex_strict;
+	পূর্ণসংখ্যা	ext_info_received;
+	কাঠামো sshbuf *my;
+	কাঠামো sshbuf *peer;
+	কাঠামো sshbuf *client_version;
+	কাঠামো sshbuf *server_version;
+	কাঠামো sshbuf *session_id;
+	কাঠামো sshbuf *initial_sig;
+	কাঠামো sshkey *initial_hostkey;
 	sig_atomic_t done;
 	u_int	flags;
 	u_int	warn_weak_crypto;
 	u_int	pq_kex_negotiated;
 	u_int	non_pq_kex_warned;
-	int	hash_alg;
-	int	ec_nid;
-	char	*failed_choice;
-	int	(*verify_host_key)(struct sshkey *, struct ssh *);
-	struct sshkey *(*load_host_public_key)(int, int, struct ssh *);
-	struct sshkey *(*load_host_private_key)(int, int, struct ssh *);
-	int	(*host_key_index)(struct sshkey *, int, struct ssh *);
-	int	(*sign)(struct ssh *, struct sshkey *, struct sshkey *,
-	    u_char **, size_t *, const u_char *, size_t, const char *);
-	int	(*kex[KEX_MAX])(struct ssh *);
+	পূর্ণসংখ্যা	hash_alg;
+	পূর্ণসংখ্যা	ec_nid;
+	অক্ষর	*failed_choice;
+	পূর্ণসংখ্যা	(*verify_host_চাবি)(কাঠামো sshkey *, কাঠামো ssh *);
+	কাঠামো sshkey *(*load_host_public_চাবি)(পূর্ণসংখ্যা, পূর্ণসংখ্যা, কাঠামো ssh *);
+	কাঠামো sshkey *(*load_host_private_চাবি)(পূর্ণসংখ্যা, পূর্ণসংখ্যা, কাঠামো ssh *);
+	পূর্ণসংখ্যা	(*host_চাবি_সূচক)(কাঠামো sshkey *, পূর্ণসংখ্যা, কাঠামো ssh *);
+	পূর্ণসংখ্যা	(*sign)(কাঠামো ssh *, কাঠামো sshkey *, কাঠামো sshkey *,
+	    u_char **, আকার_t *, ধ্রুবক u_char *, আকার_t, ধ্রুবক অক্ষর *);
+	পূর্ণসংখ্যা	(*kex[KEX_MAX])(কাঠামো ssh *);
 	/* kex specific state */
 	DH	*dh;			/* DH */
 	u_int	min, max, nbits;	/* GEX */
-	EC_KEY	*ec_client_key;		/* ECDH */
-	const EC_GROUP *ec_group;	/* ECDH */
-	u_char c25519_client_key[CURVE25519_SIZE]; /* 25519 + KEM */
-	u_char c25519_client_pubkey[CURVE25519_SIZE]; /* 25519 */
-	u_char sntrup761_client_key[crypto_kem_sntrup761_SECRETKEYBYTES]; /* KEM */
-	u_char mlkem768_client_key[crypto_kem_mlkem768_SECRETKEYBYTES]; /* KEM */
-	struct sshbuf *client_pub;
+	EC_চাবি	*ec_client_চাবি;		/* ECDH */
+	ধ্রুবক EC_GROUP *ec_group;	/* ECDH */
+	u_char c25519_client_চাবি[CURVE25519_আকার]; /* 25519 + KEM */
+	u_char c25519_client_pubkey[CURVE25519_আকার]; /* 25519 */
+	u_char sntrup761_client_চাবি[crypto_kem_sntrup761_SECRETKEYBYTES]; /* KEM */
+	u_char mlkem768_client_চাবি[crypto_kem_mlkem768_SECRETKEYBYTES]; /* KEM */
+	কাঠামো sshbuf *client_pub;
 };
 
-int	 kex_name_valid(const char *);
-u_int	 kex_type_from_name(const char *);
-int	 kex_hash_from_name(const char *);
-int	 kex_nid_from_name(const char *);
-int	 kex_is_pq_from_name(const char *);
-int	 kex_names_valid(const char *);
-char	*kex_alg_list(char);
-char	*kex_names_cat(const char *, const char *);
-int	 kex_has_any_alg(const char *, const char *);
-int	 kex_assemble_names(char **, const char *, const char *);
-void	 kex_proposal_populate_entries(struct ssh *, char *prop[PROPOSAL_MAX],
-    const char *, const char *, const char *, const char *, const char *);
-void	 kex_proposal_free_entries(char *prop[PROPOSAL_MAX]);
+পূর্ণসংখ্যা	 kex_name_valid(ধ্রুবক অক্ষর *);
+u_int	 kex_type_from_name(ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 kex_hash_from_name(ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 kex_nid_from_name(ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 kex_is_pq_from_name(ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 kex_names_valid(ধ্রুবক অক্ষর *);
+অক্ষর	*kex_alg_list(অক্ষর);
+অক্ষর	*kex_names_cat(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 kex_has_any_alg(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 kex_assemble_names(অক্ষর **, ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
+শূন্য	 kex_proposal_populate_entries(কাঠামো ssh *, অক্ষর *prop[PROPOSAL_MAX],
+    ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
+শূন্য	 kex_proposal_free_entries(অক্ষর *prop[PROPOSAL_MAX]);
 
-int	 kex_exchange_identification(struct ssh *, int, const char *);
+পূর্ণসংখ্যা	 kex_exchange_identification(কাঠামো ssh *, পূর্ণসংখ্যা, ধ্রুবক অক্ষর *);
 
-struct kex *kex_new(void);
-int	 kex_ready(struct ssh *, char *[PROPOSAL_MAX]);
-int	 kex_setup(struct ssh *, char *[PROPOSAL_MAX]);
-void	 kex_free_newkeys(struct newkeys *);
-void	 kex_free(struct kex *);
+কাঠামো kex *kex_new(শূন্য);
+পূর্ণসংখ্যা	 kex_ready(কাঠামো ssh *, অক্ষর *[PROPOSAL_MAX]);
+পূর্ণসংখ্যা	 kex_setup(কাঠামো ssh *, অক্ষর *[PROPOSAL_MAX]);
+শূন্য	 kex_free_newkeys(কাঠামো newkeys *);
+শূন্য	 kex_free(কাঠামো kex *);
 
-int	 kex_buf2prop(struct sshbuf *, int *, char ***);
-int	 kex_prop2buf(struct sshbuf *, char *proposal[PROPOSAL_MAX]);
-void	 kex_prop_free(char **);
-int	 kex_load_hostkey(struct ssh *, struct sshkey **, struct sshkey **);
-int	 kex_verify_host_key(struct ssh *, struct sshkey *);
+পূর্ণসংখ্যা	 kex_buf2prop(কাঠামো sshbuf *, পূর্ণসংখ্যা *, অক্ষর ***);
+পূর্ণসংখ্যা	 kex_prop2buf(কাঠামো sshbuf *, অক্ষর *proposal[PROPOSAL_MAX]);
+শূন্য	 kex_prop_free(অক্ষর **);
+পূর্ণসংখ্যা	 kex_load_hostkey(কাঠামো ssh *, কাঠামো sshkey **, কাঠামো sshkey **);
+পূর্ণসংখ্যা	 kex_verify_host_চাবি(কাঠামো ssh *, কাঠামো sshkey *);
 
-int	 kex_send_kexinit(struct ssh *);
-int	 kex_input_kexinit(int, uint32_t, struct ssh *);
-int	 kex_input_ext_info(int, uint32_t, struct ssh *);
-int	 kex_protocol_error(int, uint32_t, struct ssh *);
-int	 kex_derive_keys(struct ssh *, u_char *, u_int, const struct sshbuf *);
-int	 kex_send_newkeys(struct ssh *);
-int	 kex_start_rekex(struct ssh *);
-int	 kex_server_update_ext_info(struct ssh *);
-void	 kex_set_server_sig_algs(struct ssh *, const char *);
-void	 kex_set_warn_weak_crypto(struct ssh *, int);
-void	 kex_check_warn_weak_crypto(struct ssh *);
+পূর্ণসংখ্যা	 kex_send_kexinit(কাঠামো ssh *);
+পূর্ণসংখ্যা	 kex_প্রবেশ_kexinit(পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
+পূর্ণসংখ্যা	 kex_প্রবেশ_ext_info(পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
+পূর্ণসংখ্যা	 kex_protocol_error(পূর্ণসংখ্যা, uint32_t, কাঠামো ssh *);
+পূর্ণসংখ্যা	 kex_derive_চাবিগুলি(কাঠামো ssh *, u_char *, u_int, ধ্রুবক কাঠামো sshbuf *);
+পূর্ণসংখ্যা	 kex_send_newkeys(কাঠামো ssh *);
+পূর্ণসংখ্যা	 kex_start_rekex(কাঠামো ssh *);
+পূর্ণসংখ্যা	 kex_server_update_ext_info(কাঠামো ssh *);
+শূন্য	 kex_set_server_sig_algs(কাঠামো ssh *, ধ্রুবক অক্ষর *);
+শূন্য	 kex_set_warn_weak_crypto(কাঠামো ssh *, পূর্ণসংখ্যা);
+শূন্য	 kex_check_warn_weak_crypto(কাঠামো ssh *);
 
-int	 kexgex_client(struct ssh *);
-int	 kexgex_server(struct ssh *);
-int	 kex_gen_client(struct ssh *);
-int	 kex_gen_server(struct ssh *);
+পূর্ণসংখ্যা	 kexgex_client(কাঠামো ssh *);
+পূর্ণসংখ্যা	 kexgex_server(কাঠামো ssh *);
+পূর্ণসংখ্যা	 kex_gen_client(কাঠামো ssh *);
+পূর্ণসংখ্যা	 kex_gen_server(কাঠামো ssh *);
 
-int	 kex_dh_keypair(struct kex *);
-int	 kex_dh_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
-    struct sshbuf **);
-int	 kex_dh_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+পূর্ণসংখ্যা	 kex_dh_keypair(কাঠামো kex *);
+পূর্ণসংখ্যা	 kex_dh_enc(কাঠামো kex *, ধ্রুবক কাঠামো sshbuf *, কাঠামো sshbuf **,
+    কাঠামো sshbuf **);
+পূর্ণসংখ্যা	 kex_dh_dec(কাঠামো kex *, ধ্রুবক কাঠামো sshbuf *, কাঠামো sshbuf **);
 
-int	 kex_ecdh_dec_key_group(struct kex *, const struct sshbuf *, EC_KEY *key,
-	    const EC_GROUP *, int, struct sshbuf **);
+পূর্ণসংখ্যা	 kex_ecdh_dec_চাবি_group(কাঠামো kex *, ধ্রুবক কাঠামো sshbuf *, EC_চাবি *চাবি,
+	    ধ্রুবক EC_GROUP *, পূর্ণসংখ্যা, কাঠামো sshbuf **);
 
-int	 kex_ecdh_keypair(struct kex *);
-int	 kex_ecdh_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
-    struct sshbuf **);
-int	 kex_ecdh_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+পূর্ণসংখ্যা	 kex_ecdh_keypair(কাঠামো kex *);
+পূর্ণসংখ্যা	 kex_ecdh_enc(কাঠামো kex *, ধ্রুবক কাঠামো sshbuf *, কাঠামো sshbuf **,
+    কাঠামো sshbuf **);
+পূর্ণসংখ্যা	 kex_ecdh_dec(কাঠামো kex *, ধ্রুবক কাঠামো sshbuf *, কাঠামো sshbuf **);
 
-int	 kex_c25519_keypair(struct kex *);
-int	 kex_c25519_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
-    struct sshbuf **);
-int	 kex_c25519_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+পূর্ণসংখ্যা	 kex_c25519_keypair(কাঠামো kex *);
+পূর্ণসংখ্যা	 kex_c25519_enc(কাঠামো kex *, ধ্রুবক কাঠামো sshbuf *, কাঠামো sshbuf **,
+    কাঠামো sshbuf **);
+পূর্ণসংখ্যা	 kex_c25519_dec(কাঠামো kex *, ধ্রুবক কাঠামো sshbuf *, কাঠামো sshbuf **);
 
-int	 kex_kem_sntrup761x25519_keypair(struct kex *);
-int	 kex_kem_sntrup761x25519_enc(struct kex *, const struct sshbuf *,
-    struct sshbuf **, struct sshbuf **);
-int	 kex_kem_sntrup761x25519_dec(struct kex *, const struct sshbuf *,
-    struct sshbuf **);
+পূর্ণসংখ্যা	 kex_kem_sntrup761x25519_keypair(কাঠামো kex *);
+পূর্ণসংখ্যা	 kex_kem_sntrup761x25519_enc(কাঠামো kex *, ধ্রুবক কাঠামো sshbuf *,
+    কাঠামো sshbuf **, কাঠামো sshbuf **);
+পূর্ণসংখ্যা	 kex_kem_sntrup761x25519_dec(কাঠামো kex *, ধ্রুবক কাঠামো sshbuf *,
+    কাঠামো sshbuf **);
 
-int	 kex_kem_mlkem768x25519_keypair(struct kex *);
-int	 kex_kem_mlkem768x25519_enc(struct kex *, const struct sshbuf *,
-    struct sshbuf **, struct sshbuf **);
-int	 kex_kem_mlkem768x25519_dec(struct kex *, const struct sshbuf *,
-    struct sshbuf **);
+পূর্ণসংখ্যা	 kex_kem_mlkem768x25519_keypair(কাঠামো kex *);
+পূর্ণসংখ্যা	 kex_kem_mlkem768x25519_enc(কাঠামো kex *, ধ্রুবক কাঠামো sshbuf *,
+    কাঠামো sshbuf **, কাঠামো sshbuf **);
+পূর্ণসংখ্যা	 kex_kem_mlkem768x25519_dec(কাঠামো kex *, ধ্রুবক কাঠামো sshbuf *,
+    কাঠামো sshbuf **);
 
-int	 kex_kem_mlkem768ecdh_keypair(struct kex *);
-int	 kex_kem_mlkem768ecdh_enc(struct kex *, const struct sshbuf *,
-    struct sshbuf **, struct sshbuf **);
-int	 kex_kem_mlkem768ecdh_dec(struct kex *, const struct sshbuf *,
-    struct sshbuf **);
+পূর্ণসংখ্যা	 kex_kem_mlkem768ecdh_keypair(কাঠামো kex *);
+পূর্ণসংখ্যা	 kex_kem_mlkem768ecdh_enc(কাঠামো kex *, ধ্রুবক কাঠামো sshbuf *,
+    কাঠামো sshbuf **, কাঠামো sshbuf **);
+পূর্ণসংখ্যা	 kex_kem_mlkem768ecdh_dec(কাঠামো kex *, ধ্রুবক কাঠামো sshbuf *,
+    কাঠামো sshbuf **);
 
-int	 kex_dh_keygen(struct kex *);
-int	 kex_dh_compute_key(struct kex *, BIGNUM *, struct sshbuf *);
+পূর্ণসংখ্যা	 kex_dh_keygen(কাঠামো kex *);
+পূর্ণসংখ্যা	 kex_dh_compute_চাবি(কাঠামো kex *, BIGNUM *, কাঠামো sshbuf *);
 
-int	 kexgex_hash(int, const struct sshbuf *, const struct sshbuf *,
-    const struct sshbuf *, const struct sshbuf *, const struct sshbuf *,
-    int, int, int,
-    const BIGNUM *, const BIGNUM *, const BIGNUM *,
-    const BIGNUM *, const u_char *, size_t,
-    u_char *, size_t *);
+পূর্ণসংখ্যা	 kexgex_hash(পূর্ণসংখ্যা, ধ্রুবক কাঠামো sshbuf *, ধ্রুবক কাঠামো sshbuf *,
+    ধ্রুবক কাঠামো sshbuf *, ধ্রুবক কাঠামো sshbuf *, ধ্রুবক কাঠামো sshbuf *,
+    পূর্ণসংখ্যা, পূর্ণসংখ্যা, পূর্ণসংখ্যা,
+    ধ্রুবক BIGNUM *, ধ্রুবক BIGNUM *, ধ্রুবক BIGNUM *,
+    ধ্রুবক BIGNUM *, ধ্রুবক u_char *, আকার_t,
+    u_char *, আকার_t *);
 
-void	kexc25519_keygen(u_char key[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
-	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
-	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
-int	kexc25519_shared_key(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out)
-	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
-	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
-int	kexc25519_shared_key_ext(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out, int)
-	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
-	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
+শূন্য	kexc25519_keygen(u_char চাবি[CURVE25519_আকার], u_char pub[CURVE25519_আকার])
+	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_আকার)))
+	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_আকার)));
+পূর্ণসংখ্যা	kexc25519_shared_চাবি(ধ্রুবক u_char চাবি[CURVE25519_আকার],
+    ধ্রুবক u_char pub[CURVE25519_আকার], কাঠামো sshbuf *out)
+	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_আকার)))
+	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_আকার)));
+পূর্ণসংখ্যা	kexc25519_shared_চাবি_ext(ধ্রুবক u_char চাবি[CURVE25519_আকার],
+    ধ্রুবক u_char pub[CURVE25519_আকার], কাঠামো sshbuf *out, পূর্ণসংখ্যা)
+	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_আকার)))
+	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_আকার)));
 
-#if defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
-void	dump_digest(const char *, const u_char *, int);
+#যদি defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
+শূন্য	dump_digest(ধ্রুবক অক্ষর *, ধ্রুবক u_char *, পূর্ণসংখ্যা);
 #endif
 
 #endif

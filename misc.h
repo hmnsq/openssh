@@ -15,11 +15,11 @@
 #ifndef _MISC_H
 #define _MISC_H
 
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <stdio.h>
-#include <signal.h>
+#অন্তর্ভাব <sys/time.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <sys/socket.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <signal.h>
 
 /* special-case port number meaning allow any port */
 #define FWD_PERMIT_ANY_PORT	0
@@ -28,124 +28,124 @@
 #define FWD_PERMIT_ANY_HOST	"*"
 
 /* Data structure for representing a forwarding request. */
-struct Forward {
-	char	 *listen_host;		/* Host (address) to listen on. */
-	int	  listen_port;		/* Port to forward. */
-	char	 *listen_path;		/* Path to bind domain socket. */
-	char	 *connect_host;		/* Host to connect. */
-	int	  connect_port;		/* Port to connect on connect_host. */
-	char	 *connect_path;		/* Path to connect domain socket. */
-	int	  allocated_port;	/* Dynamically allocated listen port */
-	int	  handle;		/* Handle for dynamic listen ports */
+কাঠামো Forward {
+	অক্ষর	 *listen_host;		/* Host (address) to listen on. */
+	পূর্ণসংখ্যা	  listen_port;		/* Port to forward. */
+	অক্ষর	 *listen_path;		/* Path to bind domain socket. */
+	অক্ষর	 *connect_host;		/* Host to connect. */
+	পূর্ণসংখ্যা	  connect_port;		/* Port to connect on connect_host. */
+	অক্ষর	 *connect_path;		/* Path to connect domain socket. */
+	পূর্ণসংখ্যা	  allocated_port;	/* Dynamically allocated listen port */
+	পূর্ণসংখ্যা	  handle;		/* Handle for dynamic listen ports */
 };
 
-int forward_equals(const struct Forward *, const struct Forward *);
-int permitopen_port(const char *p);
+পূর্ণসংখ্যা forward_equals(ধ্রুবক কাঠামো Forward *, ধ্রুবক কাঠামো Forward *);
+পূর্ণসংখ্যা permitopen_port(ধ্রুবক অক্ষর *p);
 
-int daemonized(void);
+পূর্ণসংখ্যা daemonized(শূন্য);
 
 /* Common server and client forwarding options. */
-struct ForwardOptions {
-	int	 gateway_ports; /* Allow remote connects to forwarded ports. */
+কাঠামো ForwardOptions {
+	পূর্ণসংখ্যা	 gateway_ports; /* Allow remote connects to forwarded ports. */
 	mode_t	 streamlocal_bind_mask; /* umask for streamlocal binds */
-	int	 streamlocal_bind_unlink; /* unlink socket before bind */
+	পূর্ণসংখ্যা	 streamlocal_bind_unlink; /* unlink socket before bind */
 };
 
 /* misc.c */
 
-char	*chop(char *);
-void	 rtrim(char *);
-void	skip_space(char **);
-const char *strprefix(const char *, const char *, int);
-char	*strdelim(char **);
-char	*strdelimw(char **);
-void	 stringlist_append(char ***listp, const char *s);
-void	 stringlist_free(char **list);
-int	 set_nonblock(int);
-int	 unset_nonblock(int);
-void	 set_nodelay(int);
-int	 set_reuseaddr(int);
-int	 set_keepalive(int);
-char	*get_rdomain(int);
-int	 set_rdomain(int, const char *);
-int	 get_sock_af(int);
-void	 set_sock_tos(int, int);
-int	 waitrfd(int, int *, volatile sig_atomic_t *);
-int	 timeout_connect(int, const struct sockaddr *, socklen_t, int *);
-int	 a2port(const char *);
-int	 a2tun(const char *, int *);
-char	*put_host_port(const char *, u_short);
-char	*hpdelim2(char **, char *);
-char	*hpdelim(char **);
-char	*cleanhostname(char *);
-char	*colon(char *);
-int	 parse_user_host_path(const char *, char **, char **, char **);
-int	 parse_user_host_port(const char *, char **, char **, int *);
-int	 parse_uri(const char *, const char *, char **, char **, int *, char **);
-double	 convtime_double(const char *);
-int	 convtime(const char *);
-double	 convtime_double(const char *);
-const char *fmt_timeframe(time_t t);
-int	 tilde_expand(const char *, uid_t, char **);
-char	*tilde_expand_filename(const char *, uid_t);
+অক্ষর	*chop(অক্ষর *);
+শূন্য	 rtrim(অক্ষর *);
+শূন্য	skip_space(অক্ষর **);
+ধ্রুবক অক্ষর *strprefix(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, পূর্ণসংখ্যা);
+অক্ষর	*strdelim(অক্ষর **);
+অক্ষর	*strdelimw(অক্ষর **);
+শূন্য	 stringlist_append(অক্ষর ***listp, ধ্রুবক অক্ষর *s);
+শূন্য	 stringlist_free(অক্ষর **list);
+পূর্ণসংখ্যা	 set_nonblock(পূর্ণসংখ্যা);
+পূর্ণসংখ্যা	 unset_nonblock(পূর্ণসংখ্যা);
+শূন্য	 set_nodelay(পূর্ণসংখ্যা);
+পূর্ণসংখ্যা	 set_reuseaddr(পূর্ণসংখ্যা);
+পূর্ণসংখ্যা	 set_keepalive(পূর্ণসংখ্যা);
+অক্ষর	*get_rdomain(পূর্ণসংখ্যা);
+পূর্ণসংখ্যা	 set_rdomain(পূর্ণসংখ্যা, ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 get_sock_af(পূর্ণসংখ্যা);
+শূন্য	 set_sock_tos(পূর্ণসংখ্যা, পূর্ণসংখ্যা);
+পূর্ণসংখ্যা	 waitrfd(পূর্ণসংখ্যা, পূর্ণসংখ্যা *, অস্থির sig_atomic_t *);
+পূর্ণসংখ্যা	 timeout_connect(পূর্ণসংখ্যা, ধ্রুবক কাঠামো sockaddr *, socklen_t, পূর্ণসংখ্যা *);
+পূর্ণসংখ্যা	 a2port(ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 a2tun(ধ্রুবক অক্ষর *, পূর্ণসংখ্যা *);
+অক্ষর	*put_host_port(ধ্রুবক অক্ষর *, u_short);
+অক্ষর	*hpdelim2(অক্ষর **, অক্ষর *);
+অক্ষর	*hpdelim(অক্ষর **);
+অক্ষর	*cleanhostname(অক্ষর *);
+অক্ষর	*colon(অক্ষর *);
+পূর্ণসংখ্যা	 parse_user_host_path(ধ্রুবক অক্ষর *, অক্ষর **, অক্ষর **, অক্ষর **);
+পূর্ণসংখ্যা	 parse_user_host_port(ধ্রুবক অক্ষর *, অক্ষর **, অক্ষর **, পূর্ণসংখ্যা *);
+পূর্ণসংখ্যা	 parse_uri(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, অক্ষর **, অক্ষর **, পূর্ণসংখ্যা *, অক্ষর **);
+দ্বিগুণ	 convtime_double(ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 convtime(ধ্রুবক অক্ষর *);
+দ্বিগুণ	 convtime_double(ধ্রুবক অক্ষর *);
+ধ্রুবক অক্ষর *fmt_timeframe(time_t t);
+পূর্ণসংখ্যা	 tilde_expand(ধ্রুবক অক্ষর *, uid_t, অক্ষর **);
+অক্ষর	*tilde_expand_filename(ধ্রুবক অক্ষর *, uid_t);
 
-char	*dollar_expand(int *, const char *string, ...);
-char	*percent_expand(const char *, ...) __attribute__((__sentinel__));
-char	*percent_dollar_expand(const char *, ...) __attribute__((__sentinel__));
-char	*tohex(const void *, size_t);
-void	 xextendf(char **s, const char *sep, const char *fmt, ...)
+অক্ষর	*dollar_expand(পূর্ণসংখ্যা *, ধ্রুবক অক্ষর *string, ...);
+অক্ষর	*percent_expand(ধ্রুবক অক্ষর *, ...) __attribute__((__sentinel__));
+অক্ষর	*percent_dollar_expand(ধ্রুবক অক্ষর *, ...) __attribute__((__sentinel__));
+অক্ষর	*tohex(ধ্রুবক শূন্য *, আকার_t);
+শূন্য	 xextendf(অক্ষর **s, ধ্রুবক অক্ষর *sep, ধ্রুবক অক্ষর *fmt, ...)
     __attribute__((__format__ (printf, 3, 4))) __attribute__((__nonnull__ (3)));
-void	 sanitise_stdfd(void);
-void	 ms_subtract_diff(struct timeval *, int *);
-void	 ms_to_timespec(struct timespec *, int);
-void	 monotime_ts(struct timespec *);
-void	 monotime_tv(struct timeval *);
-time_t	 monotime(void);
-double	 monotime_double(void);
-void	 lowercase(char *s);
-int	 unix_listener(const char *, int, int);
-int	 valid_domain(char *, int, const char **);
-int	 valid_env_name(const char *);
-const char *atoi_err(const char *, int *);
-int	 parse_absolute_time(const char *, uint64_t *);
-void	 format_absolute_time(uint64_t, char *, size_t);
-int	 parse_pattern_interval(const char *, char **, double *);
-int	 path_absolute(const char *);
-int	 stdfd_devnull(int, int, int);
-int	 lib_contains_symbol(const char *, const char *);
-char	*get_homedir(void);
-int	 mkdir_path(const char *, mode_t);
+শূন্য	 sanitise_stdfd(শূন্য);
+শূন্য	 ms_subtract_diff(কাঠামো timeval *, পূর্ণসংখ্যা *);
+শূন্য	 ms_to_timespec(কাঠামো timespec *, পূর্ণসংখ্যা);
+শূন্য	 monotime_ts(কাঠামো timespec *);
+শূন্য	 monotime_tv(কাঠামো timeval *);
+time_t	 monotime(শূন্য);
+দ্বিগুণ	 monotime_double(শূন্য);
+শূন্য	 lowercase(অক্ষর *s);
+পূর্ণসংখ্যা	 unix_listener(ধ্রুবক অক্ষর *, পূর্ণসংখ্যা, পূর্ণসংখ্যা);
+পূর্ণসংখ্যা	 valid_domain(অক্ষর *, পূর্ণসংখ্যা, ধ্রুবক অক্ষর **);
+পূর্ণসংখ্যা	 valid_env_name(ধ্রুবক অক্ষর *);
+ধ্রুবক অক্ষর *atoi_err(ধ্রুবক অক্ষর *, পূর্ণসংখ্যা *);
+পূর্ণসংখ্যা	 parse_absolute_time(ধ্রুবক অক্ষর *, uint64_t *);
+শূন্য	 format_absolute_time(uint64_t, অক্ষর *, আকার_t);
+পূর্ণসংখ্যা	 parse_pattern_interval(ধ্রুবক অক্ষর *, অক্ষর **, দ্বিগুণ *);
+পূর্ণসংখ্যা	 path_absolute(ধ্রুবক অক্ষর *);
+পূর্ণসংখ্যা	 stdfd_devnull(পূর্ণসংখ্যা, পূর্ণসংখ্যা, পূর্ণসংখ্যা);
+পূর্ণসংখ্যা	 lib_contains_প্রতীক(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
+অক্ষর	*get_homedir(শূন্য);
+পূর্ণসংখ্যা	 mkdir_path(ধ্রুবক অক্ষর *, mode_t);
 
-void	 sock_set_v6only(int);
+শূন্য	 sock_set_v6only(পূর্ণসংখ্যা);
 
-struct passwd *pwcopy(struct passwd *);
-void	 pwfree(struct passwd *); /* NB. only use with pwcopy */
+কাঠামো passwd *pwcopy(কাঠামো passwd *);
+শূন্য	 pwfree(কাঠামো passwd *); /* NB. only use with pwcopy */
 
-const char *ssh_gai_strerror(int);
+ধ্রুবক অক্ষর *ssh_gai_strerror(পূর্ণসংখ্যা);
 
-typedef void privdrop_fn(struct passwd *);
-typedef void privrestore_fn(void);
+প্রকারলেখ শূন্য privdrop_fn(কাঠামো passwd *);
+প্রকারলেখ শূন্য privrestore_fn(শূন্য);
 #define	SSH_SUBPROCESS_STDOUT_DISCARD	(1)     /* Discard stdout */
 #define	SSH_SUBPROCESS_STDOUT_CAPTURE	(1<<1)  /* Redirect stdout */
 #define	SSH_SUBPROCESS_STDERR_DISCARD	(1<<2)  /* Discard stderr */
 #define	SSH_SUBPROCESS_UNSAFE_PATH	(1<<3)	/* Don't check for safe cmd */
 #define	SSH_SUBPROCESS_PRESERVE_ENV	(1<<4)	/* Keep parent environment */
-pid_t subprocess(const char *, const char *, int, char **, FILE **, u_int,
-    struct passwd *, privdrop_fn *, privrestore_fn *);
+pid_t subprocess(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, পূর্ণসংখ্যা, অক্ষর **, FILE **, u_int,
+    কাঠামো passwd *, privdrop_fn *, privrestore_fn *);
 
-typedef struct arglist arglist;
-struct arglist {
-	char    **list;
-	u_int   num;
+প্রকারলেখ কাঠামো arglist arglist;
+কাঠামো arglist {
+	অক্ষর    **list;
+	u_int   অঙ্ক;
 	u_int   nalloc;
 };
-void	 addargs(arglist *, char *, ...)
+শূন্য	 addargs(arglist *, অক্ষর *, ...)
 	    __attribute__((format(printf, 2, 3)));
-void	 replacearg(arglist *, u_int, char *, ...)
+শূন্য	 replacearg(arglist *, u_int, অক্ষর *, ...)
 	    __attribute__((format(printf, 3, 4)));
-void	 freeargs(arglist *);
+শূন্য	 freeargs(arglist *);
 
-int	 tun_open(int, int, char **);
+পূর্ণসংখ্যা	 tun_open(পূর্ণসংখ্যা, পূর্ণসংখ্যা, অক্ষর **);
 
 /* Common definitions for ssh tunnel device forwarding */
 #define SSH_TUNMODE_NO		0x00
@@ -162,92 +162,92 @@ int	 tun_open(int, int, char **);
 #define PORT_STREAMLOCAL	-2
 
 /* Functions to extract or store big-endian words of various sizes */
-uint64_t	get_u64(const void *)
+uint64_t	get_u64(ধ্রুবক শূন্য *)
     __attribute__((__bounded__( __minbytes__, 1, 8)));
-uint32_t	get_u32(const void *)
+uint32_t	get_u32(ধ্রুবক শূন্য *)
     __attribute__((__bounded__( __minbytes__, 1, 4)));
-uint16_t	get_u16(const void *)
+uint16_t	get_u16(ধ্রুবক শূন্য *)
     __attribute__((__bounded__( __minbytes__, 1, 2)));
-void		put_u64(void *, uint64_t)
+শূন্য		put_u64(শূন্য *, uint64_t)
     __attribute__((__bounded__( __minbytes__, 1, 8)));
-void		put_u32(void *, uint32_t)
+শূন্য		put_u32(শূন্য *, uint32_t)
     __attribute__((__bounded__( __minbytes__, 1, 4)));
-void		put_u16(void *, uint16_t)
+শূন্য		put_u16(শূন্য *, uint16_t)
     __attribute__((__bounded__( __minbytes__, 1, 2)));
 
 /* Little-endian store/load, used by umac.c */
-uint32_t	get_u32_le(const void *)
+uint32_t	get_u32_le(ধ্রুবক শূন্য *)
     __attribute__((__bounded__(__minbytes__, 1, 4)));
-void		put_u32_le(void *, uint32_t)
+শূন্য		put_u32_le(শূন্য *, uint32_t)
     __attribute__((__bounded__(__minbytes__, 1, 4)));
 
-struct bwlimit {
-	size_t buflen;
+কাঠামো bwlimit {
+	আকার_t buflen;
 	uint64_t rate;		/* desired rate in kbit/s */
 	uint64_t thresh;	/* threshold after which we'll check timers */
 	uint64_t lamt;		/* amount written in last timer interval */
-	struct timeval bwstart, bwend;
+	কাঠামো timeval bwstart, bwend;
 };
 
-void bandwidth_limit_init(struct bwlimit *, uint64_t, size_t);
-void bandwidth_limit(struct bwlimit *, size_t);
+শূন্য bandwidth_limit_init(কাঠামো bwlimit *, uint64_t, আকার_t);
+শূন্য bandwidth_limit(কাঠামো bwlimit *, আকার_t);
 
-int parse_ipqos(const char *);
-const char *iptos2str(int);
-void mktemp_proto(char *, size_t);
+পূর্ণসংখ্যা parse_ipqos(ধ্রুবক অক্ষর *);
+ধ্রুবক অক্ষর *iptos2str(পূর্ণসংখ্যা);
+শূন্য mktemp_proto(অক্ষর *, আকার_t);
 
-void	 child_set_env(char ***envp, u_int *envsizep, const char *name,
-	    const char *value);
-const char *lookup_env_in_list(const char *env,
-	    char * const *envs, size_t nenvs);
-const char *lookup_setenv_in_list(const char *env,
-	    char * const *envs, size_t nenvs);
+শূন্য	 child_set_env(অক্ষর ***envp, u_int *envsizep, ধ্রুবক অক্ষর *name,
+	    ধ্রুবক অক্ষর *মান);
+ধ্রুবক অক্ষর *lookup_env_in_list(ধ্রুবক অক্ষর *env,
+	    অক্ষর * ধ্রুবক *envs, আকার_t nenvs);
+ধ্রুবক অক্ষর *lookup_setenv_in_list(ধ্রুবক অক্ষর *env,
+	    অক্ষর * ধ্রুবক *envs, আকার_t nenvs);
 
-int	 argv_split(const char *, int *, char ***, int);
-char	*argv_assemble(int, char **argv);
-char	*argv_next(int *, char ***);
-void	 argv_consume(int *);
-void	 argv_free(char **, int);
+পূর্ণসংখ্যা	 argv_split(ধ্রুবক অক্ষর *, পূর্ণসংখ্যা *, অক্ষর ***, পূর্ণসংখ্যা);
+অক্ষর	*argv_assemble(পূর্ণসংখ্যা, অক্ষর **argv);
+অক্ষর	*argv_পরবর্তী(পূর্ণসংখ্যা *, অক্ষর ***);
+শূন্য	 argv_consume(পূর্ণসংখ্যা *);
+শূন্য	 argv_free(অক্ষর **, পূর্ণসংখ্যা);
 
-int	 exited_cleanly(pid_t, const char *, const char *, int);
+পূর্ণসংখ্যা	 exited_cleanly(pid_t, ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, পূর্ণসংখ্যা);
 
-struct stat;
-int	 safe_path(const char *, struct stat *, const char *, uid_t,
-	    char *, size_t);
-int	 safe_path_fd(int, const char *, struct passwd *,
-	    char *err, size_t errlen);
+কাঠামো stat;
+পূর্ণসংখ্যা	 safe_path(ধ্রুবক অক্ষর *, কাঠামো stat *, ধ্রুবক অক্ষর *, uid_t,
+	    অক্ষর *, আকার_t);
+পূর্ণসংখ্যা	 safe_path_fd(পূর্ণসংখ্যা, ধ্রুবক অক্ষর *, কাঠামো passwd *,
+	    অক্ষর *err, আকার_t errlen);
 
 /* authorized_key-style options parsing helpers */
-int	opt_flag(const char *opt, int allow_negate, const char **optsp);
-char	*opt_dequote(const char **sp, const char **errstrp);
-int	opt_match(const char **opts, const char *term);
+পূর্ণসংখ্যা	opt_flag(ধ্রুবক অক্ষর *opt, পূর্ণসংখ্যা allow_negate, ধ্রুবক অক্ষর **optsp);
+অক্ষর	*opt_dequote(ধ্রুবক অক্ষর **sp, ধ্রুবক অক্ষর **errstrp);
+পূর্ণসংখ্যা	opt_match(ধ্রুবক অক্ষর **opts, ধ্রুবক অক্ষর *term);
 
 /* readconf/servconf option lists */
-void	opt_array_append(const char *file, const int line,
-	    const char *directive, char ***array, u_int *lp, const char *s);
-void	opt_array_append2(const char *file, const int line,
-	    const char *directive, char ***array, int **iarray, u_int *lp,
-	    const char *s, int i);
-void	opt_array_free2(char **array, int **iarray, u_int l);
+শূন্য	opt_array_append(ধ্রুবক অক্ষর *file, ধ্রুবক পূর্ণসংখ্যা সারি,
+	    ধ্রুবক অক্ষর *directive, অক্ষর ***array, u_int *lp, ধ্রুবক অক্ষর *s);
+শূন্য	opt_array_append2(ধ্রুবক অক্ষর *file, ধ্রুবক পূর্ণসংখ্যা সারি,
+	    ধ্রুবক অক্ষর *directive, অক্ষর ***array, পূর্ণসংখ্যা **iarray, u_int *lp,
+	    ধ্রুবক অক্ষর *s, পূর্ণসংখ্যা i);
+শূন্য	opt_array_free2(অক্ষর **array, পূর্ণসংখ্যা **iarray, u_int l);
 
-struct timespec;
-void ptimeout_init(struct timespec *pt);
-void ptimeout_deadline_sec(struct timespec *pt, long sec);
-void ptimeout_deadline_ms(struct timespec *pt, long ms);
-void ptimeout_deadline_sec_double(struct timespec *pt, double sec);
-void ptimeout_deadline_monotime_tsp(struct timespec *pt, struct timespec *when);
-void ptimeout_deadline_monotime(struct timespec *pt, time_t when);
-void ptimeout_deadline_monotime_double(struct timespec *pt, double when);
-int ptimeout_get_ms(struct timespec *pt);
-struct timespec *ptimeout_get_tsp(struct timespec *pt);
-int ptimeout_isset(struct timespec *pt);
+কাঠামো timespec;
+শূন্য ptimeout_init(কাঠামো timespec *pt);
+শূন্য ptimeout_deadline_sec(কাঠামো timespec *pt, long sec);
+শূন্য ptimeout_deadline_ms(কাঠামো timespec *pt, long ms);
+শূন্য ptimeout_deadline_sec_double(কাঠামো timespec *pt, দ্বিগুণ sec);
+শূন্য ptimeout_deadline_monotime_tsp(কাঠামো timespec *pt, কাঠামো timespec *when);
+শূন্য ptimeout_deadline_monotime(কাঠামো timespec *pt, time_t when);
+শূন্য ptimeout_deadline_monotime_double(কাঠামো timespec *pt, দ্বিগুণ when);
+পূর্ণসংখ্যা ptimeout_get_ms(কাঠামো timespec *pt);
+কাঠামো timespec *ptimeout_get_tsp(কাঠামো timespec *pt);
+পূর্ণসংখ্যা ptimeout_isset(কাঠামো timespec *pt);
 
 /* misc-agent.c */
-int	 agent_listener(const char *, const char *, uid_t, const char *,
-	    pid_t, const char *, int *, char **, char **);
-void	 agent_cleanup_stale(const char *, const char *, uid_t,
-	    const char *, int);
-int	 agent_listener_cleanup(const char *, const char *, const char *);
+পূর্ণসংখ্যা	 agent_listener(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, uid_t, ধ্রুবক অক্ষর *,
+	    pid_t, ধ্রুবক অক্ষর *, পূর্ণসংখ্যা *, অক্ষর **, অক্ষর **);
+শূন্য	 agent_cleanup_stale(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, uid_t,
+	    ধ্রুবক অক্ষর *, পূর্ণসংখ্যা);
+পূর্ণসংখ্যা	 agent_listener_cleanup(ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *, ধ্রুবক অক্ষর *);
 
 /* readpass.c */
 
@@ -256,30 +256,30 @@ int	 agent_listener_cleanup(const char *, const char *, const char *);
 #define RP_ALLOW_EOF		0x0004
 #define RP_USE_ASKPASS		0x0008
 
-struct notifier_ctx;
+কাঠামো notifier_ctx;
 
-char	*read_passphrase(const char *, int);
-int	 ask_permission(const char *, ...) __attribute__((format(printf, 1, 2)));
-struct notifier_ctx *notify_start(int, const char *, ...)
+অক্ষর	*read_passphrase(ধ্রুবক অক্ষর *, পূর্ণসংখ্যা);
+পূর্ণসংখ্যা	 ask_permission(ধ্রুবক অক্ষর *, ...) __attribute__((format(printf, 1, 2)));
+কাঠামো notifier_ctx *notify_start(পূর্ণসংখ্যা, ধ্রুবক অক্ষর *, ...)
 	__attribute__((format(printf, 2, 3)));
-void	notify_complete(struct notifier_ctx *, const char *, ...)
+শূন্য	notify_complete(কাঠামো notifier_ctx *, ধ্রুবক অক্ষর *, ...)
 	__attribute__((format(printf, 2, 3)));
 
 #define MINIMUM(a, b)	(((a) < (b)) ? (a) : (b))
 #define MAXIMUM(a, b)	(((a) > (b)) ? (a) : (b))
 #define ROUNDUP(x, y)   ((((x)+((y)-1))/(y))*(y))
 
-typedef void (*sshsig_t)(int);
-sshsig_t ssh_signal(int, sshsig_t);
-int signal_is_crash(int);
+প্রকারলেখ শূন্য (*sshsig_t)(পূর্ণসংখ্যা);
+sshsig_t ssh_signal(পূর্ণসংখ্যা, sshsig_t);
+পূর্ণসংখ্যা signal_is_crash(পূর্ণসংখ্যা);
 
 /* On OpenBSD time_t is int64_t which is long long. */
 /* #define SSH_TIME_T_MAX LLONG_MAX */
 
-#define FD_CLOSEONEXEC(x) do { \
-	if (fcntl(x, F_SETFD, FD_CLOEXEC) == -1) \
+#define FD_CLOSEONEXEC(x) করো { \
+	যদি (fcntl(x, F_SETFD, FD_CLOEXEC) == -1) \
 		fatal_f("fcntl(%d, F_SETFD, FD_CLOEXEC): %s", x, \
 		    strerror(errno)); \
-} while (0)
+} যখন (0)
 
 #endif /* _MISC_H */

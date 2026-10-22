@@ -38,120 +38,120 @@ limitations under the License.
  * reclaimed before the next call.
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#অন্তর্ভাব <stddef.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <sys/socket.h>
+#অন্তর্ভাব <sys/types.h>
 
-extern "C" {
-#include "includes.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "authfd.h"
-#include "log.h"
+বাহ্যিক "C" {
+#অন্তর্ভাব "includes.h"
+#অন্তর্ভাব "sshkey.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "authfd.h"
+#অন্তর্ভাব "log.h"
 
-void fuzz_arena_begin(void);
-void fuzz_arena_cleanup(void);
+শূন্য fuzz_arena_begin(শূন্য);
+শূন্য fuzz_arena_cleanup(শূন্য);
 }
 
-#include "fixed-keys.h"
+#অন্তর্ভাব "fixed-keys.h"
 
-static struct sshkey *test_keys[3] = { NULL, NULL, NULL };
-static int initialized = 0;
+স্থির কাঠামো sshkey *test_চাবিগুলি[3] = { ফাঁকা, ফাঁকা, ফাঁকা };
+স্থির পূর্ণসংখ্যা initialized = 0;
 
-static struct sshkey *
-load_pubkey_or_die(const char *txt)
+স্থির কাঠামো sshkey *
+load_pubkey_or_die(ধ্রুবক অক্ষর *txt)
 {
-	char *tmp, *cp;
-	struct sshkey *k;
+	অক্ষর *tmp, *cp;
+	কাঠামো sshkey *k;
 
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL)
+	যদি ((k = sshkey_new(চাবি_UNSPEC)) == ফাঁকা)
 		abort();
-	if ((tmp = cp = strdup(txt)) == NULL)
+	যদি ((tmp = cp = strdup(txt)) == ফাঁকা)
 		abort();
-	if (sshkey_read(k, &cp) != 0)
+	যদি (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	মুক্ত(tmp);
+	ফেরত k;
 }
 
-static void
-setup(void)
+স্থির শূন্য
+setup(শূন্য)
 {
-	if (initialized)
-		return;
+	যদি (initialized)
+		ফেরত;
 	initialized = 1;
 	log_init("authfd_reply_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
-	test_keys[0] = load_pubkey_or_die(PUB_RSA);
-	test_keys[1] = load_pubkey_or_die(PUB_ECDSA);
-	test_keys[2] = load_pubkey_or_die(PUB_ED25519);
+	test_চাবিগুলি[0] = load_pubkey_or_die(PUB_RSA);
+	test_চাবিগুলি[1] = load_pubkey_or_die(PUB_ECDSA);
+	test_চাবিগুলি[2] = load_pubkey_or_die(PUB_ED25519);
 }
 
-enum {
+গণনা {
 	API_FETCH_IDENTITYLIST,
 	API_AGENT_SIGN,
-	API_AGENT_HAS_KEY,
+	API_AGENT_HAS_চাবি,
 	API_QUERY_EXTENSIONS,
 	API_LOCK_AGENT,
 };
 
-static void
-run_one(int api, struct sshkey *k, int lock_arg,
-    const uint8_t *body, size_t bsize)
+স্থির শূন্য
+run_one(পূর্ণসংখ্যা api, কাঠামো sshkey *k, পূর্ণসংখ্যা lock_arg,
+    ধ্রুবক uint8_t *body, আকার_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	পূর্ণসংখ্যা sv[2] = { -1, -1 };
+	যদি (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		ফেরত;
 
 	uint32_t blen = (uint32_t)bsize;
 	uint8_t hdr[4] = {
 	    (uint8_t)(blen >> 24), (uint8_t)(blen >> 16),
 	    (uint8_t)(blen >> 8), (uint8_t)(blen)
 	};
-	(void)write(sv[0], hdr, sizeof(hdr));
-	if (bsize > 0)
-		(void)write(sv[0], body, bsize);
+	(শূন্য)লিখ(sv[0], hdr, আকার(hdr));
+	যদি (bsize > 0)
+		(শূন্য)লিখ(sv[0], body, bsize);
 
 	fuzz_arena_begin();
 
-	switch (api) {
-	case API_FETCH_IDENTITYLIST: {
-		struct ssh_identitylist *idl = NULL;
-		(void)ssh_fetch_identitylist(sv[1], &idl);
+	নির্বাচন (api) {
+	ক্ষেত্র API_FETCH_IDENTITYLIST: {
+		কাঠামো ssh_identitylist *idl = ফাঁকা;
+		(শূন্য)ssh_fetch_identitylist(sv[1], &idl);
 		ssh_free_identitylist(idl);
-		break;
+		বিরতি;
 	}
-	case API_AGENT_SIGN: {
-		const u_char msg[16] = { 0 };
-		u_char *sig = NULL;
-		size_t siglen = 0;
-		(void)ssh_agent_sign(sv[1], k, &sig, &siglen,
-		    msg, sizeof(msg), NULL, 0);
-		free(sig);
-		break;
+	ক্ষেত্র API_AGENT_SIGN: {
+		ধ্রুবক u_char বার্তা[16] = { 0 };
+		u_char *sig = ফাঁকা;
+		আকার_t siglen = 0;
+		(শূন্য)ssh_agent_sign(sv[1], k, &sig, &siglen,
+		    বার্তা, আকার(বার্তা), ফাঁকা, 0);
+		মুক্ত(sig);
+		বিরতি;
 	}
-	case API_AGENT_HAS_KEY:
-		(void)ssh_agent_has_key(sv[1], k);
-		break;
-	case API_QUERY_EXTENSIONS: {
-		char **exts = NULL;
-		int n = ssh_agent_query_extensions(sv[1], &exts);
-		if (n == 0 && exts != NULL) {
-			for (int i = 0; exts[i] != NULL; i++)
-				free(exts[i]);
-			free(exts);
+	ক্ষেত্র API_AGENT_HAS_চাবি:
+		(শূন্য)ssh_agent_has_চাবি(sv[1], k);
+		বিরতি;
+	ক্ষেত্র API_QUERY_EXTENSIONS: {
+		অক্ষর **exts = ফাঁকা;
+		পূর্ণসংখ্যা n = ssh_agent_query_extensions(sv[1], &exts);
+		যদি (n == 0 && exts != ফাঁকা) {
+			জন্য (পূর্ণসংখ্যা i = 0; exts[i] != ফাঁকা; i++)
+				মুক্ত(exts[i]);
+			মুক্ত(exts);
 		}
-		break;
+		বিরতি;
 	}
-	case API_LOCK_AGENT:
-		(void)ssh_lock_agent(sv[1], lock_arg, "fuzz");
-		break;
+	ক্ষেত্র API_LOCK_AGENT:
+		(শূন্য)ssh_lock_agent(sv[1], lock_arg, "fuzz");
+		বিরতি;
 	}
 
 	fuzz_arena_cleanup();
@@ -160,21 +160,21 @@ run_one(int api, struct sshkey *k, int lock_arg,
 	close(sv[1]);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+বাহ্যিক "C" পূর্ণসংখ্যা
+LLVMFuzzer_Test_One_প্রবেশ(ধ্রুবক uint8_t *তথ্য, আকার_t আকার_2)
 {
 	setup();
 
-	if (size > 65536)
-		return 0;
+	যদি (আকার_2 > 65536)
+		ফেরত 0;
 
-	run_one(API_FETCH_IDENTITYLIST, NULL,           0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[0],   0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[1],   0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[2],   0, data, size);
-	run_one(API_AGENT_HAS_KEY,      test_keys[2],   0, data, size);
-	run_one(API_QUERY_EXTENSIONS,   NULL,           0, data, size);
-	run_one(API_LOCK_AGENT,         NULL,           1, data, size);
+	run_one(API_FETCH_IDENTITYLIST, ফাঁকা,           0, তথ্য, আকার_2);
+	run_one(API_AGENT_SIGN,         test_চাবিগুলি[0],   0, তথ্য, আকার_2);
+	run_one(API_AGENT_SIGN,         test_চাবিগুলি[1],   0, তথ্য, আকার_2);
+	run_one(API_AGENT_SIGN,         test_চাবিগুলি[2],   0, তথ্য, আকার_2);
+	run_one(API_AGENT_HAS_চাবি,      test_চাবিগুলি[2],   0, তথ্য, আকার_2);
+	run_one(API_QUERY_EXTENSIONS,   ফাঁকা,           0, তথ্য, আকার_2);
+	run_one(API_LOCK_AGENT,         ফাঁকা,           1, তথ্য, আকার_2);
 
-	return 0;
+	ফেরত 0;
 }

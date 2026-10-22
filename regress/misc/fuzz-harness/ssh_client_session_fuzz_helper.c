@@ -34,163 +34,163 @@ limitations under the License.
  * - __wrap_read_passphrase (real one reads /dev/tty)
  */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#অন্তর্ভাব <setjmp.h>
+#অন্তর্ভাব <signal.h>
+#অন্তর্ভাব <stddef.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
 
-#include "log.h"
-#include "digest.h"
-#include "misc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssh_api.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "readconf.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "digest.h"
+#অন্তর্ভাব "misc.h"
+#অন্তর্ভাব "ssh.h"
+#অন্তর্ভাব "ssh2.h"
+#অন্তর্ভাব "ssh_api.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "sshkey.h"
+#অন্তর্ভাব "packet.h"
+#অন্তর্ভাব "myproposal.h"
+#অন্তর্ভাব "kex.h"
+#অন্তর্ভাব "xmalloc.h"
+#অন্তর্ভাব "authfile.h"
+#অন্তর্ভাব "readconf.h"
 
 Options options;
-int debug_flag = 0;
+পূর্ণসংখ্যা debug_flag = 0;
 
-struct ssh;
+কাঠামো ssh;
 
-int
-__wrap_ssh_packet_write_wait(struct ssh *ssh)
+পূর্ণসংখ্যা
+__wrap_ssh_packet_write_wait(কাঠামো ssh *ssh)
 {
-	(void)ssh;
-	return 0;
+	(শূন্য)ssh;
+	ফেরত 0;
 }
 
-char *
-__wrap_read_passphrase(const char *prompt, int flags)
+অক্ষর *
+__wrap_read_passphrase(ধ্রুবক অক্ষর *prompt, পূর্ণসংখ্যা flags)
 {
-	(void)prompt;
-	(void)flags;
-	return strdup("fuzz");
+	(শূন্য)prompt;
+	(শূন্য)flags;
+	ফেরত strdup("fuzz");
 }
 
-#include "../../../sshconnect2.c"
-#include "fixed-keys.h"
+#অন্তর্ভাব "../../../sshconnect2.c"
+#অন্তর্ভাব "fixed-keys.h"
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+স্থির jmp_buf fuzz_env;
+স্থির অস্থির পূর্ণসংখ্যা in_fuzz = 0;
 
-void
-cleanup_exit(int code)
+শূন্য
+cleanup_exit(পূর্ণসংখ্যা code)
 {
-	if (in_fuzz)
+	যদি (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
 
-static struct sshkey *
-load_private(const char *str)
+স্থির কাঠামো sshkey *
+load_private(ধ্রুবক অক্ষর *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	কাঠামো sshbuf *b = sshbuf_from(str, strlen(str));
+	কাঠামো sshkey *k = ফাঁকা;
+	যদি (b == ফাঁকা || sshkey_parse_private_fileblob(b, "", &k, ফাঁকা) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	ফেরত k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+স্থির কাঠামো sshkey *
+load_public(ধ্রুবক অক্ষর *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	অক্ষর *tmp, *cp;
+	কাঠামো sshkey *k = sshkey_new(চাবি_UNSPEC);
+	যদি (k == ফাঁকা)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	যদি (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	মুক্ত(tmp);
+	ফেরত k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+স্থির পূর্ণসংখ্যা
+pump(কাঠামো ssh *from, কাঠামো ssh *to, আকার_t *transferred)
 {
-	const u_char *buf;
-	size_t len;
+	ধ্রুবক u_char *buf;
+	আকার_t len;
 	u_char type;
-	int r;
+	পূর্ণসংখ্যা r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	যদি ((r = ssh_packet_পরবর্তী(from, &type)) != 0)
+		ফেরত r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	যদি (len == 0)
+		ফেরত 0;
+	যদি ((r = ssh_প্রবেশ_append(to, buf, len)) != 0)
+		ফেরত r;
+	যদি ((r = ssh_output_consume(from, len)) != 0)
+		ফেরত r;
 	*transferred = len;
-	return 0;
+	ফেরত 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+স্থির পূর্ণসংখ্যা
+run_kex(কাঠামো ssh *client, কাঠামো ssh *server)
 {
-	int r;
-	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	পূর্ণসংখ্যা r;
+	আকার_t cn, sn;
+	জন্য (পূর্ণসংখ্যা i = 0; i < 100; i++) {
+		যদি ((r = pump(server, client, &sn)) != 0) ফেরত r;
+		যদি ((r = pump(client, server, &cn)) != 0) ফেরত r;
+		যদি (server->kex->done && client->kex->done)
+			ফেরত 0;
+		যদি (cn == 0 && sn == 0)
+			ফেরত SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	ফেরত SSH_ERR_PROTOCOL_ERROR;
 }
 
-static Sensitive g_sensitive = { NULL, 0 };
-static Authctxt g_authctxt;
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
+স্থির Sensitive g_sensitive = { ফাঁকা, 0 };
+স্থির Authctxt g_authctxt;
+স্থির কাঠামো ssh *g_client = ফাঁকা;
+স্থির কাঠামো ssh *g_server = ফাঁকা;
+স্থির পূর্ণসংখ্যা g_init = 0;
 
-static void
-fuzz_reset_authctxt(struct ssh *ssh)
+স্থির শূন্য
+fuzz_reset_authctxt(কাঠামো ssh *ssh)
 {
-	free(g_authctxt.authlist);
-	g_authctxt.authlist = NULL;
-	if (ssh->authctxt == &g_authctxt)
+	মুক্ত(g_authctxt.authlist);
+	g_authctxt.authlist = ফাঁকা;
+	যদি (ssh->authctxt == &g_authctxt)
 		pubkey_cleanup(ssh);
 
-	memset(&g_authctxt, 0, sizeof(g_authctxt));
-	g_authctxt.server_user = (char *)"fuzz";
-	g_authctxt.local_user = (char *)"fuzz";
-	g_authctxt.host = (char *)"127.0.0.1";
-	g_authctxt.service = (char *)"ssh-connection";
+	memset(&g_authctxt, 0, আকার(g_authctxt));
+	g_authctxt.server_user = (অক্ষর *)"fuzz";
+	g_authctxt.local_user = (অক্ষর *)"fuzz";
+	g_authctxt.host = (অক্ষর *)"127.0.0.1";
+	g_authctxt.service = (অক্ষর *)"ssh-connection";
 	g_authctxt.success = 0;
 	g_authctxt.method = authmethod_lookup("none");
-	g_authctxt.authlist = NULL;
-	g_authctxt.methoddata = NULL;
+	g_authctxt.authlist = ফাঁকা;
+	g_authctxt.methoddata = ফাঁকা;
 	g_authctxt.sensitive = &g_sensitive;
-	g_authctxt.active_ktype = NULL;
-	g_authctxt.oktypes = NULL;
-	g_authctxt.ktypes = NULL;
+	g_authctxt.active_ktype = ফাঁকা;
+	g_authctxt.oktypes = ফাঁকা;
+	g_authctxt.ktypes = ফাঁকা;
 	g_authctxt.info_req_seen = 0;
 	g_authctxt.attempt_kbdint = 0;
 	g_authctxt.attempt_passwd = 0;
 	g_authctxt.agent_fd = -1;
-	TAILQ_INIT(&g_authctxt.keys);
+	TAILQ_INIT(&g_authctxt.চাবিগুলি);
 	ssh->authctxt = &g_authctxt;
 }
 
-static void
-fuzz_setup(struct ssh *ssh)
+স্থির শূন্য
+fuzz_setup(কাঠামো ssh *ssh)
 {
 	initialize_options(&options);
 	options.batch_mode = 1;
@@ -201,109 +201,109 @@ fuzz_setup(struct ssh *ssh)
 	options.gss_authentication = 0;
 	options.preferred_authentications = strdup("none");
 	options.user = strdup("fuzz");
-	options.number_of_password_prompts = 0;
+	options.সংখ্যা_of_password_prompts = 0;
 	options.log_level = SYSLOG_LEVEL_ERROR;
 	options.fingerprint_hash = SSH_DIGEST_SHA256;
-	(void)fill_default_options(&options);
+	(শূন্য)fill_default_options(&options);
 
 	fuzz_reset_authctxt(ssh);
 
 	ssh_dispatch_init(ssh, &dispatch_protocol_ignore);
 
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_SERVICE_ACCEPT, &input_userauth_service_accept);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_SUCCESS, &input_userauth_success);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_FAILURE, &input_userauth_failure);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_BANNER, &input_userauth_banner);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST, &input_userauth_info_req);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PK_OK, &input_userauth_pk_ok);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ, &input_userauth_passwd_changereq);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_EXT_INFO, kex_প্রবেশ_ext_info);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_SERVICE_ACCEPT, &প্রবেশ_userauth_service_accept);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_USERAUTH_SUCCESS, &প্রবেশ_userauth_success);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_USERAUTH_FAILURE, &প্রবেশ_userauth_failure);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_USERAUTH_BANNER, &প্রবেশ_userauth_banner);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_USERAUTH_INFO_REQUEST, &প্রবেশ_userauth_info_req);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_USERAUTH_PK_OK, &প্রবেশ_userauth_pk_ok);
+	ssh_dispatch_set(ssh, SSH2_বার্তা_USERAUTH_PASSWD_CHANGEREQ, &প্রবেশ_userauth_passwd_changereq);
 }
 
-static int
-init_once(void)
+স্থির পূর্ণসংখ্যা
+init_once(শূন্য)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	যদি (g_init)
+		ফেরত 0;
+	সংকেত(SIGPIPE, SIG_IGN);
 	log_init("ssh_client_session_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	কাঠামো sshkey *priv = load_private(PRIV_ED25519);
+	কাঠামো sshkey *pub = load_public(PUB_ED25519);
+	অক্ষর *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	ধ্রুবক অক্ষর *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	অক্ষর *proposal[PROPOSAL_MAX] = { 0 };
+	পূর্ণসংখ্যা i;
+	জন্য (i = 0; i < PROPOSAL_MAX; i++) {
+		ধ্রুবক অক্ষর *p = defaults[i];
+		যদি (i == PROPOSAL_SERVER_HOST_চাবি_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		অন্যথা যদি (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		অন্যথা যদি (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		অন্যথা যদি (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	কাঠামো kex_params kp;
+	memcpy(kp.proposal, proposal, আকার(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	যদি (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		ফেরত -1;
+	যদি (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		ফেরত -1;
+	যদি (run_kex(g_client, g_server) != 0)
+		ফেরত -1;
 
 	fuzz_setup(g_client);
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	মুক্ত(keyname);
+	জন্য (i = 0; i < PROPOSAL_MAX; i++)
+		মুক্ত(proposal[i]);
 	g_init = 1;
-	return 0;
+	ফেরত 0;
 }
 
-static const uint8_t k_msg_types[] = {
-	SSH2_MSG_DISCONNECT, SSH2_MSG_IGNORE, SSH2_MSG_UNIMPLEMENTED,
-	SSH2_MSG_DEBUG, SSH2_MSG_SERVICE_ACCEPT, SSH2_MSG_EXT_INFO,
-	SSH2_MSG_USERAUTH_FAILURE, SSH2_MSG_USERAUTH_SUCCESS,
-	SSH2_MSG_USERAUTH_BANNER, SSH2_MSG_USERAUTH_INFO_REQUEST,
-	SSH2_MSG_USERAUTH_PK_OK, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ,
+স্থির ধ্রুবক uint8_t k_বার্তা_types[] = {
+	SSH2_বার্তা_DISCONNECT, SSH2_বার্তা_IGNORE, SSH2_বার্তা_UNIMPLEMENTED,
+	SSH2_বার্তা_DEBUG, SSH2_বার্তা_SERVICE_ACCEPT, SSH2_বার্তা_EXT_INFO,
+	SSH2_বার্তা_USERAUTH_FAILURE, SSH2_বার্তা_USERAUTH_SUCCESS,
+	SSH2_বার্তা_USERAUTH_BANNER, SSH2_বার্তা_USERAUTH_INFO_REQUEST,
+	SSH2_বার্তা_USERAUTH_PK_OK, SSH2_বার্তা_USERAUTH_PASSWD_CHANGEREQ,
 };
 
-void
-fuzz_one_message(const uint8_t *data, size_t size)
+শূন্য
+fuzz_one_message(ধ্রুবক uint8_t *তথ্য, আকার_t আকার_2)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	যদি (init_once() != 0)
+		ফেরত;
+	যদি (আকার_2 > 65000)
+		ফেরত;
 
-	uint8_t selector = size > 0 ? data[0] : 0;
-	const uint8_t *payload = size > 0 ? data + 1 : NULL;
-	size_t plen = size > 0 ? size - 1 : 0;
+	uint8_t selector = আকার_2 > 0 ? তথ্য[0] : 0;
+	ধ্রুবক uint8_t *payload = আকার_2 > 0 ? তথ্য + 1 : ফাঁকা;
+	আকার_t plen = আকার_2 > 0 ? আকার_2 - 1 : 0;
 
-	uint8_t msg_type = k_msg_types[selector %
-	    (sizeof(k_msg_types) / sizeof(k_msg_types[0]))];
+	uint8_t বার্তা_type = k_বার্তা_types[selector %
+	    (আকার(k_বার্তা_types) / আকার(k_বার্তা_types[0]))];
 
 	fuzz_reset_authctxt(g_client);
 
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
-		size_t transferred;
-		if (ssh_packet_put(g_server, msg_type, payload, plen) != 0)
-			goto done;
-		if (pump(g_server, g_client, &transferred) != 0)
-			goto done;
-		(void)ssh_dispatch_run(g_client, DISPATCH_NONBLOCK, NULL);
+	যদি (setjmp(fuzz_env) == 0) {
+		আকার_t transferred;
+		যদি (ssh_packet_put(g_server, বার্তা_type, payload, plen) != 0)
+			যাও done;
+		যদি (pump(g_server, g_client, &transferred) != 0)
+			যাও done;
+		(শূন্য)ssh_dispatch_run(g_client, DISPATCH_NONBLOCK, ফাঁকা);
 	done:
 		;
 	}

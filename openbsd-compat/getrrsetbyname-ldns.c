@@ -43,63 +43,63 @@
  * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#if !defined (HAVE_GETRRSETBYNAME) && defined (HAVE_LDNS)
+#যদি !defined (HAVE_GETRRSETBYNAME) && defined (HAVE_LDNS)
 
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
 
-#include <ldns/ldns.h>
+#অন্তর্ভাব <ldns/ldns.h>
 
-#include "getrrsetbyname.h"
-#include "log.h"
-#include "xmalloc.h"
+#অন্তর্ভাব "getrrsetbyname.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "xmalloc.h"
 
 #define malloc(x)	(xmalloc(x))
 #define calloc(x, y)	(xcalloc((x),(y)))
 
-int
-getrrsetbyname(const char *hostname, unsigned int rdclass,
-	       unsigned int rdtype, unsigned int flags,
-	       struct rrsetinfo **res)
+পূর্ণসংখ্যা
+getrrsetbyname(ধ্রুবক অক্ষর *hostname, unsigned পূর্ণসংখ্যা rdclass,
+	       unsigned পূর্ণসংখ্যা rdtype, unsigned পূর্ণসংখ্যা flags,
+	       কাঠামো rrsetinfo **res)
 {
-	int result;
-	unsigned int i, j, index_ans, index_sig;
-	struct rrsetinfo *rrset = NULL;
-	struct rdatainfo *rdata;
-	size_t len;
-	ldns_resolver *ldns_res = NULL;
-	ldns_rdf *domain = NULL;
-	ldns_pkt *pkt = NULL;
-	ldns_rr_list *rrsigs = NULL, *rrdata = NULL;
+	পূর্ণসংখ্যা ফলাফল;
+	unsigned পূর্ণসংখ্যা i, j, সূচক_ans, সূচক_sig;
+	কাঠামো rrsetinfo *rrset = ফাঁকা;
+	কাঠামো rdatainfo *rdata;
+	আকার_t len;
+	ldns_resolver *ldns_res = ফাঁকা;
+	ldns_rdf *domain = ফাঁকা;
+	ldns_pkt *pkt = ফাঁকা;
+	ldns_rr_list *rrsigs = ফাঁকা, *rrdata = ফাঁকা;
 	ldns_status err;
 	ldns_rr *rr;
 
 	/* check for invalid class and type */
-	if (rdclass > 0xffff || rdtype > 0xffff) {
-		result = ERRSET_INVAL;
-		goto fail;
+	যদি (rdclass > 0xffff || rdtype > 0xffff) {
+		ফলাফল = ERRSET_INVAL;
+		যাও fail;
 	}
 
 	/* don't allow queries of class or type ANY */
-	if (rdclass == 0xff || rdtype == 0xff) {
-		result = ERRSET_INVAL;
-		goto fail;
+	যদি (rdclass == 0xff || rdtype == 0xff) {
+		ফলাফল = ERRSET_INVAL;
+		যাও fail;
 	}
 
 	/* don't allow flags yet, unimplemented */
-	if (flags) {
-		result = ERRSET_INVAL;
-		goto fail;
+	যদি (flags) {
+		ফলাফল = ERRSET_INVAL;
+		যাও fail;
 	}
 
 	/* Initialize resolver from resolv.conf */
 	domain = ldns_dname_new_frm_str(hostname);
-	if ((err = ldns_resolver_new_frm_file(&ldns_res, NULL)) != \
+	যদি ((err = ldns_resolver_new_frm_file(&ldns_res, ফাঁকা)) != \
 	    LDNS_STATUS_OK) {
-		result = ERRSET_FAIL;
-		goto fail;
+		ফলাফল = ERRSET_FAIL;
+		যাও fail;
 	}
 
 #ifdef LDNS_DEBUG
@@ -112,33 +112,33 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	pkt = ldns_resolver_query(ldns_res, domain, rdtype, rdclass, LDNS_RD);
 
 	/*** TODO: finer errcodes -- see original **/
-	if (!pkt || ldns_pkt_ancount(pkt) < 1) {
-		result = ERRSET_FAIL;
-		goto fail;
+	যদি (!pkt || ldns_pkt_ancount(pkt) < 1) {
+		ফলাফল = ERRSET_FAIL;
+		যাও fail;
 	}
 
 	/* initialize rrset */
-	rrset = calloc(1, sizeof(struct rrsetinfo));
-	if (rrset == NULL) {
-		result = ERRSET_NOMEMORY;
-		goto fail;
+	rrset = calloc(1, আকার(কাঠামো rrsetinfo));
+	যদি (rrset == ফাঁকা) {
+		ফলাফল = ERRSET_NOMEMORY;
+		যাও fail;
 	}
 
 	rrdata = ldns_pkt_rr_list_by_type(pkt, rdtype, LDNS_SECTION_ANSWER);
-	rrset->rri_nrdatas = ldns_rr_list_rr_count(rrdata);
-	if (!rrset->rri_nrdatas) {
-		result = ERRSET_NODATA;
-		goto fail;
+	rrset->rri_nrdatas = ldns_rr_list_rr_গুনতি(rrdata);
+	যদি (!rrset->rri_nrdatas) {
+		ফলাফল = ERRSET_NODATA;
+		যাও fail;
 	}
 
 	/* copy name from answer section */
-	len = ldns_rdf_size(ldns_rr_owner(ldns_rr_list_rr(rrdata, 0)));
-	if ((rrset->rri_name = malloc(len)) == NULL) {
-		result = ERRSET_NOMEMORY;
-		goto fail;
+	len = ldns_rdf_আকার(ldns_rr_owner(ldns_rr_list_rr(rrdata, 0)));
+	যদি ((rrset->rri_name = malloc(len)) == ফাঁকা) {
+		ফলাফল = ERRSET_NOMEMORY;
+		যাও fail;
 	}
 	memcpy(rrset->rri_name,
-	    ldns_rdf_data(ldns_rr_owner(ldns_rr_list_rr(rrdata, 0))), len);
+	    ldns_rdf_তথ্য(ldns_rr_owner(ldns_rr_list_rr(rrdata, 0))), len);
 
 	rrset->rri_rdclass = ldns_rr_get_class(ldns_rr_list_rr(rrdata, 0));
 	rrset->rri_rdtype = ldns_rr_get_type(ldns_rr_list_rr(rrdata, 0));
@@ -147,96 +147,96 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	debug2("ldns: got %u answers from DNS", rrset->rri_nrdatas);
 
 	/* Check for authenticated data */
-	if (ldns_pkt_ad(pkt)) {
+	যদি (ldns_pkt_ad(pkt)) {
 		rrset->rri_flags |= RRSET_VALIDATED;
-	} else { /* AD is not set, try autonomous validation */
-		ldns_rr_list * trusted_keys = ldns_rr_list_new();
+	} অন্যথা { /* AD is not set, try autonomous validation */
+		ldns_rr_list * trusted_চাবিগুলি = ldns_rr_list_new();
 
 		debug2("ldns: trying to validate RRset");
 		/* Get eventual sigs */
 		rrsigs = ldns_pkt_rr_list_by_type(pkt, LDNS_RR_TYPE_RRSIG,
 		    LDNS_SECTION_ANSWER);
 
-		rrset->rri_nsigs = ldns_rr_list_rr_count(rrsigs);
+		rrset->rri_nsigs = ldns_rr_list_rr_গুনতি(rrsigs);
 		debug2("ldns: got %u signature(s) (RRTYPE %u) from DNS",
 		       rrset->rri_nsigs, LDNS_RR_TYPE_RRSIG);
 
-		if ((err = ldns_verify_trusted(ldns_res, rrdata, rrsigs,
-		     trusted_keys)) == LDNS_STATUS_OK) {
+		যদি ((err = ldns_verify_trusted(ldns_res, rrdata, rrsigs,
+		     trusted_চাবিগুলি)) == LDNS_STATUS_OK) {
 			rrset->rri_flags |= RRSET_VALIDATED;
 			debug2("ldns: RRset is signed with a valid key");
-		} else {
+		} অন্যথা {
 			debug2("ldns: RRset validation failed: %s",
 			    ldns_get_errorstr_by_id(err));
 		}
 
-		ldns_rr_list_deep_free(trusted_keys);
+		ldns_rr_list_deep_free(trusted_চাবিগুলি);
 	}
 
 	/* allocate memory for answers */
 	rrset->rri_rdatas = calloc(rrset->rri_nrdatas,
-	   sizeof(struct rdatainfo));
+	   আকার(কাঠামো rdatainfo));
 
-	if (rrset->rri_rdatas == NULL) {
-		result = ERRSET_NOMEMORY;
-		goto fail;
+	যদি (rrset->rri_rdatas == ফাঁকা) {
+		ফলাফল = ERRSET_NOMEMORY;
+		যাও fail;
 	}
 
 	/* allocate memory for signatures */
-	if (rrset->rri_nsigs > 0) {
+	যদি (rrset->rri_nsigs > 0) {
 		rrset->rri_sigs = calloc(rrset->rri_nsigs,
-		    sizeof(struct rdatainfo));
+		    আকার(কাঠামো rdatainfo));
 
-		if (rrset->rri_sigs == NULL) {
-			result = ERRSET_NOMEMORY;
-			goto fail;
+		যদি (rrset->rri_sigs == ফাঁকা) {
+			ফলাফল = ERRSET_NOMEMORY;
+			যাও fail;
 		}
 	}
 
 	/* copy answers & signatures */
-	for (i=0, index_ans=0, index_sig=0; i< pkt->_header->_ancount; i++) {
-		rdata = NULL;
+	জন্য (i=0, সূচক_ans=0, সূচক_sig=0; i< pkt->_header->_ancount; i++) {
+		rdata = ফাঁকা;
 		rr = ldns_rr_list_rr(ldns_pkt_answer(pkt), i);
 
-		if (ldns_rr_get_class(rr) == rrset->rri_rdclass &&
+		যদি (ldns_rr_get_class(rr) == rrset->rri_rdclass &&
 		    ldns_rr_get_type(rr) == rrset->rri_rdtype) {
-			rdata = &rrset->rri_rdatas[index_ans++];
+			rdata = &rrset->rri_rdatas[সূচক_ans++];
 		}
 
-		if (rr->_rr_class == rrset->rri_rdclass &&
+		যদি (rr->_rr_class == rrset->rri_rdclass &&
 		    rr->_rr_type == LDNS_RR_TYPE_RRSIG &&
 		    rrset->rri_sigs) {
-			rdata = &rrset->rri_sigs[index_sig++];
+			rdata = &rrset->rri_sigs[সূচক_sig++];
 		}
 
-		if (rdata) {
-			size_t rdata_offset = 0;
+		যদি (rdata) {
+			আকার_t rdata_offset = 0;
 
-			rdata->rdi_length = 0;
-			for (j=0; j< rr->_rd_count; j++) {
-				rdata->rdi_length +=
-				    ldns_rdf_size(ldns_rr_rdf(rr, j));
+			rdata->rdi_দৈর্ঘ্য = 0;
+			জন্য (j=0; j< rr->rd_গুনতি; j++) {
+				rdata->rdi_দৈর্ঘ্য +=
+				    ldns_rdf_আকার(ldns_rr_rdf(rr, j));
 			}
 
-			rdata->rdi_data = malloc(rdata->rdi_length);
-			if (rdata->rdi_data == NULL) {
-				result = ERRSET_NOMEMORY;
-				goto fail;
+			rdata->rdi_তথ্য = malloc(rdata->rdi_দৈর্ঘ্য);
+			যদি (rdata->rdi_তথ্য == ফাঁকা) {
+				ফলাফল = ERRSET_NOMEMORY;
+				যাও fail;
 			}
 
 			/* Re-create the raw DNS RDATA */
-			for (j=0; j< rr->_rd_count; j++) {
-				len = ldns_rdf_size(ldns_rr_rdf(rr, j));
-				memcpy(rdata->rdi_data + rdata_offset,
-				       ldns_rdf_data(ldns_rr_rdf(rr, j)), len);
+			জন্য (j=0; j< rr->rd_গুনতি; j++) {
+				len = ldns_rdf_আকার(ldns_rr_rdf(rr, j));
+				memcpy(rdata->rdi_তথ্য + rdata_offset,
+				       ldns_rdf_তথ্য(ldns_rr_rdf(rr, j)), len);
 				rdata_offset += len;
 			}
 		}
 	}
 
 	*res = rrset;
-	rrset = NULL; /* transferred */
-	result = ERRSET_SUCCESS;
+	rrset = ফাঁকা; /* transferred */
+	ফলাফল = ERRSET_SUCCESS;
 
 fail:
 	freerrset(rrset);
@@ -246,39 +246,39 @@ fail:
 	ldns_rr_list_deep_free(rrdata);
 	ldns_resolver_deep_free(ldns_res);
 
-	return result;
+	ফেরত ফলাফল;
 }
 
 
-void
-freerrset(struct rrsetinfo *rrset)
+শূন্য
+freerrset(কাঠামো rrsetinfo *rrset)
 {
 	u_int16_t i;
 
-	if (rrset == NULL)
-		return;
+	যদি (rrset == ফাঁকা)
+		ফেরত;
 
-	if (rrset->rri_rdatas) {
-		for (i = 0; i < rrset->rri_nrdatas; i++) {
-			if (rrset->rri_rdatas[i].rdi_data == NULL)
-				break;
-			free(rrset->rri_rdatas[i].rdi_data);
+	যদি (rrset->rri_rdatas) {
+		জন্য (i = 0; i < rrset->rri_nrdatas; i++) {
+			যদি (rrset->rri_rdatas[i].rdi_তথ্য == ফাঁকা)
+				বিরতি;
+			মুক্ত(rrset->rri_rdatas[i].rdi_তথ্য);
 		}
-		free(rrset->rri_rdatas);
+		মুক্ত(rrset->rri_rdatas);
 	}
 
-	if (rrset->rri_sigs) {
-		for (i = 0; i < rrset->rri_nsigs; i++) {
-			if (rrset->rri_sigs[i].rdi_data == NULL)
-				break;
-			free(rrset->rri_sigs[i].rdi_data);
+	যদি (rrset->rri_sigs) {
+		জন্য (i = 0; i < rrset->rri_nsigs; i++) {
+			যদি (rrset->rri_sigs[i].rdi_তথ্য == ফাঁকা)
+				বিরতি;
+			মুক্ত(rrset->rri_sigs[i].rdi_তথ্য);
 		}
-		free(rrset->rri_sigs);
+		মুক্ত(rrset->rri_sigs);
 	}
 
-	if (rrset->rri_name)
-		free(rrset->rri_name);
-	free(rrset);
+	যদি (rrset->rri_name)
+		মুক্ত(rrset->rri_name);
+	মুক্ত(rrset);
 }
 
 

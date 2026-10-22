@@ -30,18 +30,18 @@
 
 /* OPENBSD ORIGINAL: lib/libc/rpc/bindresvport.c */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
 #ifndef HAVE_BINDRESVPORT_SA
-#include <sys/types.h>
-#include <sys/socket.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <sys/socket.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#অন্তর্ভাব <netinet/in.h>
+#অন্তর্ভাব <arpa/inet.h>
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
 
 #define STARTPORT 600
 #define ENDPORT (IPPORT_RESERVED - 1)
@@ -50,71 +50,71 @@
 /*
  * Bind a socket to a privileged IP port
  */
-int
-bindresvport_sa(int sd, struct sockaddr *sa)
+পূর্ণসংখ্যা
+bindresvport_sa(পূর্ণসংখ্যা sd, কাঠামো sockaddr *sa)
 {
-	int error, af;
-	struct sockaddr_storage myaddr;
-	struct sockaddr_in *in;
-	struct sockaddr_in6 *in6;
+	পূর্ণসংখ্যা error, af;
+	কাঠামো sockaddr_storage myaddr;
+	কাঠামো sockaddr_in *in;
+	কাঠামো sockaddr_in6 *in6;
 	u_int16_t *portp;
 	u_int16_t port;
 	socklen_t salen;
-	int i;
+	পূর্ণসংখ্যা i;
 
-	if (sa == NULL) {
-		memset(&myaddr, 0, sizeof(myaddr));
-		sa = (struct sockaddr *)&myaddr;
-		salen = sizeof(myaddr);
+	যদি (sa == ফাঁকা) {
+		memset(&myaddr, 0, আকার(myaddr));
+		sa = (কাঠামো sockaddr *)&myaddr;
+		salen = আকার(myaddr);
 
-		if (getsockname(sd, sa, &salen) == -1)
-			return -1;	/* errno is correctly set */
+		যদি (getsockname(sd, sa, &salen) == -1)
+			ফেরত -1;	/* errno is correctly set */
 
 		af = sa->sa_family;
 		memset(&myaddr, 0, salen);
-	} else
+	} অন্যথা
 		af = sa->sa_family;
 
-	if (af == AF_INET) {
-		in = (struct sockaddr_in *)sa;
-		salen = sizeof(struct sockaddr_in);
+	যদি (af == AF_INET) {
+		in = (কাঠামো sockaddr_in *)sa;
+		salen = আকার(কাঠামো sockaddr_in);
 		portp = &in->sin_port;
-	} else if (af == AF_INET6) {
-		in6 = (struct sockaddr_in6 *)sa;
-		salen = sizeof(struct sockaddr_in6);
+	} অন্যথা যদি (af == AF_INET6) {
+		in6 = (কাঠামো sockaddr_in6 *)sa;
+		salen = আকার(কাঠামো sockaddr_in6);
 		portp = &in6->sin6_port;
-	} else {
+	} অন্যথা {
 		errno = EPFNOSUPPORT;
-		return (-1);
+		ফেরত (-1);
 	}
 	sa->sa_family = af;
 
 	port = ntohs(*portp);
-	if (port == 0)
+	যদি (port == 0)
 		port = arc4random_uniform(NPORTS) + STARTPORT;
 
 	/* Avoid warning */
 	error = -1;
 
-	for(i = 0; i < NPORTS; i++) {
+	জন্য(i = 0; i < NPORTS; i++) {
 		*portp = htons(port);
 		
 		error = bind(sd, sa, salen);
 
 		/* Terminate on success */
-		if (error == 0)
-			break;
+		যদি (error == 0)
+			বিরতি;
 			
 		/* Terminate on errors, except "address already in use" */
-		if ((error < 0) && !((errno == EADDRINUSE) || (errno == EINVAL)))
-			break;
+		যদি ((error < 0) && !((errno == EADDRINUSE) || (errno == EINVAL)))
+			বিরতি;
 			
 		port++;
-		if (port > ENDPORT)
+		যদি (port > ENDPORT)
 			port = STARTPORT;
 	}
 
-	return (error);
+	ফেরত (error);
 }
 
 #endif /* HAVE_BINDRESVPORT_SA */
