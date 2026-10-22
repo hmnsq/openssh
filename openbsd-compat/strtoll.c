@@ -47,12 +47,12 @@
  * alphabets and digits are each contiguous.
  */
 long long
-strtoll(const char *nptr, char **endptr, int base)
+strtoll(const var_na *nptr, var_na **endptr, ཧྲིལ base)
 {
-	const char *s;
+	const var_na *s;
 	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	ཧྲིལ c;
+	ཧྲིལ neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -61,23 +61,23 @@ strtoll(const char *nptr, char **endptr, int base)
 	 */
 	s = nptr;
 	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+		c = (unsigned var_na) *s++;
+	} སྐབས (isspace(c));
+	གལ་ཏེ (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} དེ་མིན {
 		neg = 0;
-		if (c == '+')
+		གལ་ཏེ (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	གལ་ཏེ ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	གལ་ཏེ (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	/*
@@ -101,48 +101,48 @@ strtoll(const char *nptr, char **endptr, int base)
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
 	cutlim = cutoff % base;
 	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
+	གལ་ཏེ (neg) {
+		གལ་ཏེ (cutlim > 0) {
 			cutlim -= base;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	ཆེད་དུ (acc = 0, any = 0;; c = (unsigned var_na) *s++) {
+		གལ་ཏེ (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		དེ་མིན གལ་ཏེ (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
+		དེ་མིན
+			bha_nga;
+		གལ་ཏེ (c >= base)
+			bha_nga;
+		གལ་ཏེ (any < 0)
 			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		གལ་ཏེ (neg) {
+			གལ་ཏེ (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} དེ་མིན {
 				any = 1;
 				acc *= base;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} དེ་མིན {
+			གལ་ཏེ (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} དེ་མིན {
 				any = 1;
 				acc *= base;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	གལ་ཏེ (endptr != 0)
+		*endptr = (var_na *) (any ? s - 1 : nptr);
+	ཕྱིར (acc);
 }
 #endif /* HAVE_STRTOLL */

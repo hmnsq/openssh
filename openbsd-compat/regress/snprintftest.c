@@ -25,16 +25,16 @@
 #include <stdarg.h>
 #include <string.h>
 
-static int failed = 0;
+static ཧྲིལ failed = 0;
 
 static void
-fail(const char *m)
+fail(const var_na *m)
 {
 	fprintf(stderr, "snprintftest: %s\n", m);
 	failed = 1;
 }
 
-int x_snprintf(char *str, size_t count, const char *fmt, ...)
+ཧྲིལ x_snprintf(var_na *str, size_t count, const var_na *fmt, ...)
 {
 	size_t ret;
 	va_list ap;
@@ -42,37 +42,37 @@ int x_snprintf(char *str, size_t count, const char *fmt, ...)
 	va_start(ap, fmt);
 	ret = vsnprintf(str, count, fmt, ap);
 	va_end(ap);
-	return ret;
+	ཕྱིར ret;
 }
 
-int
-main(void)
+ཧྲིལ
+གཙོ(void)
 {
-	char b[5];
-	char *src = NULL;
-	int ret;
+	var_na b[5];
+	var_na *src = NULL;
+	ཧྲིལ ret;
 
-	memset(b, 'X', sizeof(b));
+	memset(b, 'X', parimaa_na(b));
 	ret = snprintf(b, 5, "123456789");
-	if (ret != 9 || b[4] != '\0')
+	གལ་ཏེ (ret != 9 || b[4] != '\0')
 		fail("snprintf does not correctly terminate long strings");
 
 	/* check for read overrun on unterminated string */
-	if ((src = malloc(BUFSZ)) == NULL) {
+	གལ་ཏེ ((src = malloc(BUFSZ)) == NULL) {
 		fail("malloc failed");
-	} else {
+	} དེ་མིན {
 		memset(src, 'a', BUFSZ);
-		snprintf(b, sizeof(b), "%.*s", 1, src);
-		if (strcmp(b, "a") != 0)
+		snprintf(b, parimaa_na(b), "%.*s", 1, src);
+		གལ་ཏེ (strcmp(b, "a") != 0)
 			fail("failed with length limit '%%.s'");
 	}
 
 	/* check that snprintf and vsnprintf return sane values */
-	if (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	གལ་ཏེ (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("snprintf does not return required length");
-	if (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	གལ་ཏེ (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("vsnprintf does not return required length");
 
 	free(src);
-	return failed;
+	ཕྱིར failed;
 }

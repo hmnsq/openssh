@@ -22,14 +22,14 @@
  * return 1 if the specified uid is a uid that may own a system directory
  * otherwise 0.
  */
-int
+ཧྲིལ
 platform_sys_dir_uid(uid_t uid)
 {
-	if (uid == 0)
-		return 1;
+	གལ་ཏེ (uid == 0)
+		ཕྱིར 1;
 #ifdef PLATFORM_SYS_DIR_UID
-	if (uid == PLATFORM_SYS_DIR_UID)
-		return 1;
+	གལ་ཏེ (uid == PLATFORM_SYS_DIR_UID)
+		ཕྱིར 1;
 #endif
-	return 0;
+	ཕྱིར 0;
 }

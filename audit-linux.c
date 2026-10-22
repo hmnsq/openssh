@@ -26,7 +26,7 @@
  */
 
 #include "includes.h"
-#if defined(USE_LINUX_AUDIT)
+#གལ་ཏེ defined(USE_LINUX_AUDIT)
 #include <libaudit.h>
 #include <unistd.h>
 #include <string.h>
@@ -36,22 +36,22 @@
 #include "canohost.h"
 #include "packet.h"
 
-const char *audit_username(void);
+const var_na *audit_username(void);
 
-int
-linux_audit_record_event(int uid, const char *username, const char *hostname,
-    const char *ip, const char *ttyn, int success)
+ཧྲིལ
+linux_audit_record_event(ཧྲིལ uid, const var_na *username, const var_na *hostname,
+    const var_na *ip, const var_na *ttyn, ཧྲིལ success)
 {
-	int audit_fd, rc, saved_errno;
+	ཧྲིལ audit_fd, rc, saved_errno;
 
-	if ((audit_fd = audit_open()) < 0) {
-		if (errno == EINVAL || errno == EPROTONOSUPPORT ||
+	གལ་ཏེ ((audit_fd = audit_open()) < 0) {
+		གལ་ཏེ (errno == EINVAL || errno == EPROTONOSUPPORT ||
 		    errno == EAFNOSUPPORT)
-			return 1; /* No audit support in kernel */
-		else
-			return 0; /* Must prevent login */
+			ཕྱིར 1; /* No audit support in kernel */
+		དེ་མིན
+			ཕྱིར 0; /* Must prevent login */
 	}
-        if (hostname != NULL && strcmp(hostname, "UNKNOWN") == 0)
+        གལ་ཏེ (hostname != NULL && strcmp(hostname, "UNKNOWN") == 0)
                 hostname = NULL;
 	rc = audit_log_acct_message(audit_fd, AUDIT_USER_LOGIN,
 	    NULL, "login", username ? username : "(unknown)",
@@ -63,64 +63,64 @@ linux_audit_record_event(int uid, const char *username, const char *hostname,
 	 * Do not report error if the error is EPERM and sshd is run as non
 	 * root user.
 	 */
-	if ((rc == -EPERM) && (geteuid() != 0))
+	གལ་ཏེ ((rc == -EPERM) && (geteuid() != 0))
 		rc = 0;
 	errno = saved_errno;
 
-	return rc >= 0;
+	ཕྱིར rc >= 0;
 }
 
 /* Below is the sshd audit API code */
 
 void
-audit_connection_from(const char *host, int port)
+audit_connection_from(const var_na *host, ཧྲིལ port)
 {
 	/* not implemented */
 }
 
 void
-audit_run_command(const char *command)
+audit_run_command(const var_na *command)
 {
 	/* not implemented */
 }
 
 void
-audit_session_open(struct logininfo *li)
+audit_session_open(sa_nracanaa logininfo *li)
 {
-	if (linux_audit_record_event(li->uid, NULL, li->hostname, NULL,
+	གལ་ཏེ (linux_audit_record_event(li->uid, NULL, li->hostname, NULL,
 	    li->line, 1) == 0)
 		fatal("linux_audit_write_entry failed: %s", strerror(errno));
 }
 
 void
-audit_session_close(struct logininfo *li)
+audit_session_close(sa_nracanaa logininfo *li)
 {
 	/* not implemented */
 }
 
 void
-audit_event(struct ssh *ssh, ssh_audit_event_t event)
+audit_event(sa_nracanaa ssh *ssh, ssh_audit_event_t event)
 {
 	switch(event) {
-	case SSH_AUTH_SUCCESS:
-	case SSH_CONNECTION_CLOSE:
-	case SSH_NOLOGIN:
-	case SSH_LOGIN_EXCEED_MAXTRIES:
-	case SSH_LOGIN_ROOT_DENIED:
-		break;
-	case SSH_AUTH_FAIL_NONE:
-	case SSH_AUTH_FAIL_PASSWD:
-	case SSH_AUTH_FAIL_KBDINT:
-	case SSH_AUTH_FAIL_PUBKEY:
-	case SSH_AUTH_FAIL_HOSTBASED:
-	case SSH_AUTH_FAIL_GSSAPI:
-	case SSH_INVALID_USER:
+	pak_sa SSH_AUTH_SUCCESS:
+	pak_sa SSH_CONNECTION_CLOSE:
+	pak_sa SSH_NOLOGIN:
+	pak_sa SSH_LOGIN_EXCEED_MAXTRIES:
+	pak_sa SSH_LOGIN_ROOT_DENIED:
+		bha_nga;
+	pak_sa SSH_AUTH_FAIL_NONE:
+	pak_sa SSH_AUTH_FAIL_PASSWD:
+	pak_sa SSH_AUTH_FAIL_KBDINT:
+	pak_sa SSH_AUTH_FAIL_PUBKEY:
+	pak_sa SSH_AUTH_FAIL_HOSTBASED:
+	pak_sa SSH_AUTH_FAIL_GSSAPI:
+	pak_sa SSH_INVALID_USER:
 		linux_audit_record_event(-1, audit_username(), NULL,
 		    ssh_remote_ipaddr(ssh), "sshd", 0);
-		break;
+		bha_nga;
 	default:
 		debug_f("unhandled event %d", event);
-		break;
+		bha_nga;
 	}
 }
 #endif /* USE_LINUX_AUDIT */

@@ -24,8 +24,8 @@
 #include "xmalloc.h"
 #include "log.h"
 
-#if defined(__OpenBSD__)
-const char * const malloc_options = "S";
+#གལ་ཏེ defined(__OpenBSD__)
+const var_na * const malloc_options = "S";
 #endif /* __OpenBSD__ */
 
 void *
@@ -33,12 +33,12 @@ xmalloc(size_t size)
 {
 	void *ptr;
 
-	if (size == 0)
+	གལ་ཏེ (size == 0)
 		fatal("xmalloc: zero size");
 	ptr = malloc(size);
-	if (ptr == NULL)
+	གལ་ཏེ (ptr == NULL)
 		fatal("xmalloc: out of memory (allocating %zu bytes)", size);
-	return ptr;
+	ཕྱིར ptr;
 }
 
 void *
@@ -46,15 +46,15 @@ xcalloc(size_t nmemb, size_t size)
 {
 	void *ptr;
 
-	if (size == 0 || nmemb == 0)
+	གལ་ཏེ (size == 0 || nmemb == 0)
 		fatal("xcalloc: zero size");
-	if (SIZE_MAX / nmemb < size)
+	གལ་ཏེ (SIZE_MAX / nmemb < size)
 		fatal("xcalloc: nmemb * size > SIZE_MAX");
 	ptr = calloc(nmemb, size);
-	if (ptr == NULL)
+	གལ་ཏེ (ptr == NULL)
 		fatal("xcalloc: out of memory (allocating %zu bytes)",
 		    size * nmemb);
-	return ptr;
+	ཕྱིར ptr;
 }
 
 void *
@@ -63,10 +63,10 @@ xreallocarray(void *ptr, size_t nmemb, size_t size)
 	void *new_ptr;
 
 	new_ptr = reallocarray(ptr, nmemb, size);
-	if (new_ptr == NULL)
+	གལ་ཏེ (new_ptr == NULL)
 		fatal("xreallocarray: out of memory (%zu elements of %zu bytes)",
 		    nmemb, size);
-	return new_ptr;
+	ཕྱིར new_ptr;
 }
 
 void *
@@ -75,42 +75,42 @@ xrecallocarray(void *ptr, size_t onmemb, size_t nmemb, size_t size)
 	void *new_ptr;
 
 	new_ptr = recallocarray(ptr, onmemb, nmemb, size);
-	if (new_ptr == NULL)
+	གལ་ཏེ (new_ptr == NULL)
 		fatal("xrecallocarray: out of memory (%zu elements of %zu bytes)",
 		    nmemb, size);
-	return new_ptr;
+	ཕྱིར new_ptr;
 }
 
-char *
-xstrdup(const char *str)
+var_na *
+xstrdup(const var_na *str)
 {
 	size_t len;
-	char *cp;
+	var_na *cp;
 
 	len = strlen(str) + 1;
 	cp = xmalloc(len);
-	return memcpy(cp, str, len);
+	ཕྱིར memcpy(cp, str, len);
 }
 
-int
-xvasprintf(char **ret, const char *fmt, va_list ap)
+ཧྲིལ
+xvasprintf(var_na **ret, const var_na *fmt, va_list ap)
 {
-	int i;
+	ཧྲིལ i;
 
 	i = vasprintf(ret, fmt, ap);
-	if (i < 0 || *ret == NULL)
+	གལ་ཏེ (i < 0 || *ret == NULL)
 		fatal("xvasprintf: could not allocate memory");
-	return i;
+	ཕྱིར i;
 }
 
-int
-xasprintf(char **ret, const char *fmt, ...)
+ཧྲིལ
+xasprintf(var_na **ret, const var_na *fmt, ...)
 {
 	va_list ap;
-	int i;
+	ཧྲིལ i;
 
 	va_start(ap, fmt);
 	i = xvasprintf(ret, fmt, ap);
 	va_end(ap);
-	return i;
+	ཕྱིར i;
 }

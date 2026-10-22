@@ -23,7 +23,7 @@ void test_misc(void);
 static void
 test_chop(void)
 {
-	char *s;
+	var_na *s;
 
 	TEST_START("chop newline");
 	s = xstrdup("hello\n");
@@ -83,7 +83,7 @@ test_chop(void)
 static void
 test_rtrim(void)
 {
-	char *s;
+	var_na *s;
 
 	TEST_START("rtrim trailing space");
 	s = xstrdup("hello  ");
@@ -138,7 +138,7 @@ test_rtrim(void)
 static void
 test_strprefix(void)
 {
-	const char *s;
+	const var_na *s;
 
 	TEST_START("strprefix basic match");
 	s = strprefix("hello world", "hello", 0);
@@ -216,7 +216,7 @@ test_arglist(void)
 	arglist args;
 	u_int i;
 
-	memset(&args, 0, sizeof(args));
+	memset(&args, 0, parimaa_na(args));
 
 	TEST_START("addargs initial");
 	addargs(&args, "one");
@@ -285,7 +285,7 @@ test_arglist(void)
 	TEST_DONE();
 
 	TEST_START("addargs reallocation");
-	for (i = args.num; i < 33; i++)
+	ཆེད་དུ (i = args.num; i < 33; i++)
 		addargs(&args, "pad-%d", i);
 	ASSERT_U_INT_EQ(args.num, 33);
 	ASSERT_U_INT_GE(args.nalloc, 33);
@@ -305,7 +305,7 @@ test_arglist(void)
 	TEST_DONE();
 
 	TEST_START("freeargs on empty");
-	memset(&args, 0, sizeof(args));
+	memset(&args, 0, parimaa_na(args));
 	freeargs(&args);
 	ASSERT_U_INT_EQ(args.num, 0);
 	ASSERT_U_INT_EQ(args.nalloc, 0);
@@ -316,7 +316,7 @@ test_arglist(void)
 static void
 test_tohex(void)
 {
-	char *hex;
+	var_na *hex;
 
 	TEST_START("tohex simple");
 	hex = tohex("foo", 3);
@@ -340,7 +340,7 @@ test_tohex(void)
 static void
 test_lowercase(void)
 {
-	char *s;
+	var_na *s;
 
 	TEST_START("lowercase mixed");
 	s = xstrdup("HeLlO WoRlD 123");
@@ -376,7 +376,7 @@ test_path_absolute(void)
 static void
 test_stringlist(void)
 {
-	char **list = NULL;
+	var_na **list = NULL;
 
 	TEST_START("stringlist_append initial");
 	stringlist_append(&list, "one");
@@ -414,7 +414,7 @@ test_stringlist(void)
 static void
 test_skip_space(void)
 {
-	char *s, *p;
+	var_na *s, *p;
 
 	TEST_START("skip_space leading spaces");
 	s = p = xstrdup("  hello");

@@ -24,75 +24,75 @@
 
 #include "log.h"
 
-#if !defined(HAVE_SETRESGID) || defined(BROKEN_SETRESGID)
-int
+#གལ་ཏེ !defined(HAVE_SETRESGID) || defined(BROKEN_SETRESGID)
+ཧྲིལ
 setresgid(gid_t rgid, gid_t egid, gid_t sgid)
 {
-	int ret = 0, saved_errno;
+	ཧྲིལ ret = 0, saved_errno;
 
-	if (rgid != sgid) {
+	གལ་ཏེ (rgid != sgid) {
 		errno = ENOSYS;
-		return -1;
+		ཕྱིར -1;
 	}
-#if defined(HAVE_SETREGID) && !defined(BROKEN_SETREGID)
-	if (setregid(rgid, egid) < 0) {
+#གལ་ཏེ defined(HAVE_SETREGID) && !defined(BROKEN_SETREGID)
+	གལ་ཏེ (setregid(rgid, egid) < 0) {
 		saved_errno = errno;
 		error("setregid %lu: %.100s", (u_long)rgid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-#else
-	if (setegid(egid) < 0) {
+#དེ་མིན
+	གལ་ཏེ (setegid(egid) < 0) {
 		saved_errno = errno;
 		error("setegid %lu: %.100s", (u_long)egid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-	if (setgid(rgid) < 0) {
+	གལ་ཏེ (setgid(rgid) < 0) {
 		saved_errno = errno;
 		error("setgid %lu: %.100s", (u_long)rgid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
 #endif
-	return ret;
+	ཕྱིར ret;
 }
 #endif
 
-#if !defined(HAVE_SETRESUID) || defined(BROKEN_SETRESUID)
-int
+#གལ་ཏེ !defined(HAVE_SETRESUID) || defined(BROKEN_SETRESUID)
+ཧྲིལ
 setresuid(uid_t ruid, uid_t euid, uid_t suid)
 {
-	int ret = 0, saved_errno;
+	ཧྲིལ ret = 0, saved_errno;
 
-	if (ruid != suid) {
+	གལ་ཏེ (ruid != suid) {
 		errno = ENOSYS;
-		return -1;
+		ཕྱིར -1;
 	}
-#if defined(HAVE_SETREUID) && !defined(BROKEN_SETREUID)
-	if (setreuid(ruid, euid) < 0) {
+#གལ་ཏེ defined(HAVE_SETREUID) && !defined(BROKEN_SETREUID)
+	གལ་ཏེ (setreuid(ruid, euid) < 0) {
 		saved_errno = errno;
 		error("setreuid %lu: %.100s", (u_long)ruid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-#else
+#དེ་མིན
 
 # ifndef SETEUID_BREAKS_SETUID
-	if (seteuid(euid) < 0) {
+	གལ་ཏེ (seteuid(euid) < 0) {
 		saved_errno = errno;
 		error("seteuid %lu: %.100s", (u_long)euid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
 # endif
-	if (setuid(ruid) < 0) {
+	གལ་ཏེ (setuid(ruid) < 0) {
 		saved_errno = errno;
 		error("setuid %lu: %.100s", (u_long)ruid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
 #endif
-	return ret;
+	ཕྱིར ret;
 }
 #endif

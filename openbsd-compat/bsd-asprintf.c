@@ -23,7 +23,7 @@
  * Don't let systems with broken printf(3) avoid our replacements
  * via asprintf(3)/vasprintf(3) calling libc internally.
  */
-#if defined(BROKEN_SNPRINTF)
+#གལ་ཏེ defined(BROKEN_SNPRINTF)
 # undef HAVE_VASPRINTF
 # undef HAVE_ASPRINTF
 #endif
@@ -37,63 +37,63 @@
 
 #define INIT_SZ	128
 
-int
-vasprintf(char **str, const char *fmt, va_list ap)
+ཧྲིལ
+vasprintf(var_na **str, const var_na *fmt, va_list ap)
 {
-	int ret = -1;
+	ཧྲིལ ret = -1;
 	va_list ap2;
-	char *string, *newstr;
+	var_na *string, *newstr;
 	size_t len;
 
 	VA_COPY(ap2, ap);
-	if ((string = malloc(INIT_SZ)) == NULL)
+	གལ་ཏེ ((string = malloc(INIT_SZ)) == NULL)
 		goto fail;
 
 	ret = vsnprintf(string, INIT_SZ, fmt, ap2);
-	if (ret >= 0 && ret < INIT_SZ) { /* succeeded with initial alloc */
+	གལ་ཏེ (ret >= 0 && ret < INIT_SZ) { /* succeeded with initial alloc */
 		*str = string;
-	} else if (ret == INT_MAX || ret < 0) { /* Bad length */
+	} དེ་མིན གལ་ཏེ (ret == INT_MAX || ret < 0) { /* Bad length */
 		free(string);
 		goto fail;
-	} else {	/* bigger than initial, realloc allowing for nul */
+	} དེ་མིན {	/* bigger than initial, realloc allowing for nul */
 		len = (size_t)ret + 1;
-		if ((newstr = realloc(string, len)) == NULL) {
+		གལ་ཏེ ((newstr = realloc(string, len)) == NULL) {
 			free(string);
 			goto fail;
-		} else {
+		} དེ་མིན {
 			va_end(ap2);
 			VA_COPY(ap2, ap);
 			ret = vsnprintf(newstr, len, fmt, ap2);
-			if (ret >= 0 && (size_t)ret < len) {
+			གལ་ཏེ (ret >= 0 && (size_t)ret < len) {
 				*str = newstr;
-			} else { /* failed with realloc'ed string, give up */
+			} དེ་མིན { /* failed with realloc'ed string, give up */
 				free(newstr);
 				goto fail;
 			}
 		}
 	}
 	va_end(ap2);
-	return (ret);
+	ཕྱིར (ret);
 
 fail:
 	*str = NULL;
 	errno = ENOMEM;
 	va_end(ap2);
-	return (-1);
+	ཕྱིར (-1);
 }
 #endif
 
 #ifndef HAVE_ASPRINTF
-int asprintf(char **str, const char *fmt, ...)
+ཧྲིལ asprintf(var_na **str, const var_na *fmt, ...)
 {
 	va_list ap;
-	int ret;
+	ཧྲིལ ret;
 
 	*str = NULL;
 	va_start(ap, fmt);
 	ret = vasprintf(str, fmt, ap);
 	va_end(ap);
 
-	return ret;
+	ཕྱིར ret;
 }
 #endif

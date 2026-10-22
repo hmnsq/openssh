@@ -10,20 +10,20 @@
 #include "log.h"
 
 void
-sshlogv(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, va_list args)
+sshlogv(const var_na *file, const var_na *func, ཧྲིལ line, ཧྲིལ showfunc,
+    LogLevel level, const var_na *suffix, const var_na *fmt, va_list args)
 {
-	if (showfunc)
+	གལ་ཏེ (showfunc)
 		fprintf(stderr, "%s: ", func);
 	vfprintf(stderr, fmt, args);
-	if (suffix != NULL)
+	གལ་ཏེ (suffix != NULL)
 		fprintf(stderr, ": %s", suffix);
 	fputc('\n', stderr);
 }
 
 void
-sshlog(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+sshlog(const var_na *file, const var_na *func, ཧྲིལ line, ཧྲིལ showfunc,
+    LogLevel level, const var_na *suffix, const var_na *fmt, ...)
 {
 	va_list args;
 
@@ -33,8 +33,8 @@ sshlog(const char *file, const char *func, int line, int showfunc,
 }
 
 void
-sshfatal(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+sshfatal(const var_na *file, const var_na *func, ཧྲིལ line, ཧྲིལ showfunc,
+    LogLevel level, const var_na *suffix, const var_na *fmt, ...)
 {
 	va_list args;
 

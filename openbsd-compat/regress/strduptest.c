@@ -19,29 +19,29 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int fail = 0;
+static ཧྲིལ fail = 0;
 
 void
-test(const char *a)
+test(const var_na *a)
 {
-	char *b;
+	var_na *b;
 
 	b = strdup(a);
-	if (b == 0) {
+	གལ་ཏེ (b == 0) {
 		fail = 1;
-		return;
+		ཕྱིར;
 	}
-	if (strcmp(a, b) != 0)
+	གལ་ཏེ (strcmp(a, b) != 0)
 		fail = 1;
 	free(b);
 }
 
-int
-main(void)
+ཧྲིལ
+གཙོ(void)
 {
 	test("");
 	test("a");
 	test("\0");
 	test("abcdefghijklmnopqrstuvwxyz");
-	return fail;
+	ཕྱིར fail;
 }

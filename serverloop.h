@@ -21,8 +21,8 @@
 #ifndef SERVERLOOP_H
 #define SERVERLOOP_H
 
-struct ssh;
+sa_nracanaa ssh;
 
-void    server_loop2(struct ssh *, Authctxt *);
+void    server_loop2(sa_nracanaa ssh *, Authctxt *);
 
 #endif

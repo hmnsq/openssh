@@ -40,21 +40,21 @@
  * See https://www.openssl.org/policies/releasestrat.html
  */
 
-int
+ཧྲིལ
 ssh_compatible_openssl(long headerver, long libver)
 {
 	long mask, hfix, lfix;
 
 	/* exact match is always OK */
-	if (headerver == libver)
-		return 1;
+	གལ་ཏེ (headerver == libver)
+		ཕྱིར 1;
 
 	/*
 	 * For versions >= 3.0, only the major must match.
 	 */
-	if (headerver >= 0x30000000) {
+	གལ་ཏེ (headerver >= 0x30000000) {
 		mask = 0xf0000000L; /* major only */
-		return (headerver & mask) == (libver & mask);
+		ཕྱིར (headerver & mask) == (libver & mask);
 	}
 
 	/*
@@ -64,12 +64,12 @@ ssh_compatible_openssl(long headerver, long libver)
 	mask = 0xfff0000fL; /* major,minor,status */
 	hfix = (headerver & 0x000ff000) >> 12;
 	lfix = (libver & 0x000ff000) >> 12;
-	if ( (headerver & mask) == (libver & mask) && lfix >= hfix)
-		return 1;
-	return 0;
+	གལ་ཏེ ( (headerver & mask) == (libver & mask) && lfix >= hfix)
+		ཕྱིར 1;
+	ཕྱིར 0;
 }
 
-int
+ཧྲིལ
 ssh_libcrypto_init(void)
 {
 	uint64_t opts = OPENSSL_INIT_ADD_ALL_CIPHERS |
@@ -84,32 +84,32 @@ ssh_libcrypto_init(void)
 	opts |= OPENSSL_INIT_LOAD_CONFIG;
 #endif /* USE_OPENSSL_ENGINE */
 
-	return OPENSSL_init_crypto(opts, NULL);
+	ཕྱིར OPENSSL_init_crypto(opts, NULL);
 }
 
 #ifndef HAVE_EVP_DIGESTSIGN
-int
-EVP_DigestSign(EVP_MD_CTX *ctx, unsigned char *sigret, size_t *siglen,
-    const unsigned char *tbs, size_t tbslen)
+ཧྲིལ
+EVP_DigestSign(EVP_MD_CTX *ctx, unsigned var_na *sigret, size_t *siglen,
+    const unsigned var_na *tbs, size_t tbslen)
 {
-	if (sigret != NULL) {
-		if (EVP_DigestSignUpdate(ctx, tbs, tbslen) <= 0)
-			return 0;
+	གལ་ཏེ (sigret != NULL) {
+		གལ་ཏེ (EVP_DigestSignUpdate(ctx, tbs, tbslen) <= 0)
+			ཕྱིར 0;
 	}
 
-	return EVP_DigestSignFinal(ctx, sigret, siglen);
+	ཕྱིར EVP_DigestSignFinal(ctx, sigret, siglen);
 }
 #endif
 
 #ifndef HAVE_EVP_DIGESTVERIFY
-int
-EVP_DigestVerify(EVP_MD_CTX *ctx, const unsigned char *sigret, size_t siglen,
-    const unsigned char *tbs, size_t tbslen)
+ཧྲིལ
+EVP_DigestVerify(EVP_MD_CTX *ctx, const unsigned var_na *sigret, size_t siglen,
+    const unsigned var_na *tbs, size_t tbslen)
 {
-	if (EVP_DigestVerifyUpdate(ctx, tbs, tbslen) <= 0)
-		return -1;
+	གལ་ཏེ (EVP_DigestVerifyUpdate(ctx, tbs, tbslen) <= 0)
+		ཕྱིར -1;
 
-	return EVP_DigestVerifyFinal(ctx, sigret, siglen);
+	ཕྱིར EVP_DigestVerifyFinal(ctx, sigret, siglen);
 }
 #endif
 

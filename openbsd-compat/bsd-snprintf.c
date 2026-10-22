@@ -94,12 +94,12 @@
 
 #include "includes.h"
 
-#if defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
+#གལ་ཏེ defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
 # undef HAVE_SNPRINTF
 # undef HAVE_VSNPRINTF
 #endif
 
-#if !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
+#གལ་ཏེ !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
 
 #include <ctype.h>
 #include <stdarg.h>
@@ -109,14 +109,14 @@
 #include <errno.h>
 
 #ifdef HAVE_LONG_DOUBLE
-# define LDOUBLE long double
-#else
-# define LDOUBLE double
+# define LDOUBLE long dviguu_na
+#དེ་མིན
+# define LDOUBLE dviguu_na
 #endif
 
 #ifdef HAVE_LONG_LONG
 # define LLONG long long
-#else
+#དེ་མིན
 # define LLONG long
 #endif
 
@@ -158,36 +158,36 @@
 
 #define DOPR_OUTCH(buf, pos, buflen, thechar) \
 	do { \
-		if (pos + 1 >= INT_MAX) { \
+		གལ་ཏེ (pos + 1 >= INT_MAX) { \
 			errno = ERANGE; \
-			return -1; \
+			ཕྱིར -1; \
 		} \
-		if (pos < buflen) \
+		གལ་ཏེ (pos < buflen) \
 			buf[pos] = thechar; \
 		(pos)++; \
-	} while (0)
+	} སྐབས (0)
 
-static int dopr(char *buffer, size_t maxlen, const char *format,
+static ཧྲིལ dopr(var_na *buffer, size_t maxlen, const var_na *format,
     va_list args_in);
-static int fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max);
-static int fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags);
-static int fmtfp(char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags);
+static ཧྲིལ fmtstr(var_na *buffer, size_t *currlen, size_t maxlen,
+    var_na *value, ཧྲིལ flags, ཧྲིལ min, ཧྲིལ max);
+static ཧྲིལ fmtint(var_na *buffer, size_t *currlen, size_t maxlen,
+    intmax_t value, ཧྲིལ base, ཧྲིལ min, ཧྲིལ max, ཧྲིལ flags);
+static ཧྲིལ fmtfp(var_na *buffer, size_t *currlen, size_t maxlen,
+    LDOUBLE fvalue, ཧྲིལ min, ཧྲིལ max, ཧྲིལ flags);
 
-static int
-dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
+static ཧྲིལ
+dopr(var_na *buffer, size_t maxlen, const var_na *format, va_list args_in)
 {
-	char ch;
+	var_na ch;
 	intmax_t value;
 	LDOUBLE fvalue;
-	char *strvalue;
-	int min;
-	int max;
-	int state;
-	int flags;
-	int cflags;
+	var_na *strvalue;
+	ཧྲིལ min;
+	ཧྲིལ max;
+	ཧྲིལ state;
+	ཧྲིལ flags;
+	ཧྲིལ cflags;
 	size_t currlen;
 	va_list args;
 
@@ -198,395 +198,395 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 	max = -1;
 	ch = *format++;
 
-	while (state != DP_S_DONE) {
-		if (ch == '\0')
+	སྐབས (state != DP_S_DONE) {
+		གལ་ཏེ (ch == '\0')
 			state = DP_S_DONE;
 
 		switch(state) {
-		case DP_S_DEFAULT:
-			if (ch == '%')
+		pak_sa DP_S_DEFAULT:
+			གལ་ཏེ (ch == '%')
 				state = DP_S_FLAGS;
-			else
+			དེ་མིན
 				DOPR_OUTCH(buffer, currlen, maxlen, ch);
 			ch = *format++;
-			break;
-		case DP_S_FLAGS:
+			bha_nga;
+		pak_sa DP_S_FLAGS:
 			switch (ch) {
-			case '-':
+			pak_sa '-':
 				flags |= DP_F_MINUS;
 				ch = *format++;
-				break;
-			case '+':
+				bha_nga;
+			pak_sa '+':
 				flags |= DP_F_PLUS;
 				ch = *format++;
-				break;
-			case ' ':
+				bha_nga;
+			pak_sa ' ':
 				flags |= DP_F_SPACE;
 				ch = *format++;
-				break;
-			case '#':
+				bha_nga;
+			pak_sa '#':
 				flags |= DP_F_NUM;
 				ch = *format++;
-				break;
-			case '0':
+				bha_nga;
+			pak_sa '0':
 				flags |= DP_F_ZERO;
 				ch = *format++;
-				break;
+				bha_nga;
 			default:
 				state = DP_S_MIN;
-				break;
+				bha_nga;
 			}
-			break;
-		case DP_S_MIN:
-			if (isdigit((unsigned char)ch)) {
+			bha_nga;
+		pak_sa DP_S_MIN:
+			གལ་ཏེ (isdigit((unsigned var_na)ch)) {
 				min = 10*min + char_to_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				min = va_arg (args, int);
+			} དེ་མིན གལ་ཏེ (ch == '*') {
+				min = va_arg (args, ཧྲིལ);
 				ch = *format++;
 				state = DP_S_DOT;
-			} else {
+			} དེ་མིན {
 				state = DP_S_DOT;
 			}
-			break;
-		case DP_S_DOT:
-			if (ch == '.') {
+			bha_nga;
+		pak_sa DP_S_DOT:
+			གལ་ཏེ (ch == '.') {
 				state = DP_S_MAX;
 				ch = *format++;
-			} else {
+			} དེ་མིན {
 				state = DP_S_MOD;
 			}
-			break;
-		case DP_S_MAX:
-			if (isdigit((unsigned char)ch)) {
-				if (max < 0)
+			bha_nga;
+		pak_sa DP_S_MAX:
+			གལ་ཏེ (isdigit((unsigned var_na)ch)) {
+				གལ་ཏེ (max < 0)
 					max = 0;
 				max = 10*max + char_to_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				max = va_arg (args, int);
+			} དེ་མིན གལ་ཏེ (ch == '*') {
+				max = va_arg (args, ཧྲིལ);
 				ch = *format++;
 				state = DP_S_MOD;
-			} else {
+			} དེ་མིན {
 				state = DP_S_MOD;
 			}
-			break;
-		case DP_S_MOD:
+			bha_nga;
+		pak_sa DP_S_MOD:
 			switch (ch) {
-			case 'h':
+			pak_sa 'h':
 				cflags = DP_C_SHORT;
 				ch = *format++;
-				break;
-			case 'j':
+				bha_nga;
+			pak_sa 'j':
 				cflags = DP_C_INTMAX;
 				ch = *format++;
-				break;
-			case 'l':
+				bha_nga;
+			pak_sa 'l':
 				cflags = DP_C_LONG;
 				ch = *format++;
-				if (ch == 'l') {	/* It's a long long */
+				གལ་ཏེ (ch == 'l') {	/* It's a long long */
 					cflags = DP_C_LLONG;
 					ch = *format++;
 				}
-				break;
-			case 'L':
+				bha_nga;
+			pak_sa 'L':
 				cflags = DP_C_LDOUBLE;
 				ch = *format++;
-				break;
-			case 'z':
+				bha_nga;
+			pak_sa 'z':
 				cflags = DP_C_SIZE;
 				ch = *format++;
-				break;
+				bha_nga;
 			default:
-				break;
+				bha_nga;
 			}
 			state = DP_S_CONV;
-			break;
-		case DP_S_CONV:
+			bha_nga;
+		pak_sa DP_S_CONV:
 			switch (ch) {
-			case 'd':
-			case 'i':
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, int);
-				else if (cflags == DP_C_LONG)
-					value = va_arg (args, long int);
-				else if (cflags == DP_C_LLONG)
+			pak_sa 'd':
+			pak_sa 'i':
+				གལ་ཏེ (cflags == DP_C_SHORT)
+					value = va_arg (args, ཧྲིལ);
+				དེ་མིན གལ་ཏེ (cflags == DP_C_LONG)
+					value = va_arg (args, long ཧྲིལ);
+				དེ་མིན གལ་ཏེ (cflags == DP_C_LLONG)
 					value = va_arg (args, LLONG);
-				else if (cflags == DP_C_SIZE)
+				དེ་མིན གལ་ཏེ (cflags == DP_C_SIZE)
 					value = va_arg (args, ssize_t);
-				else if (cflags == DP_C_INTMAX)
+				དེ་མིན གལ་ཏེ (cflags == DP_C_INTMAX)
 					value = va_arg (args, intmax_t);
-				else
-					value = va_arg (args, int);
-				if (fmtint(buffer, &currlen, maxlen,
+				དེ་མིན
+					value = va_arg (args, ཧྲིལ);
+				གལ་ཏེ (fmtint(buffer, &currlen, maxlen,
 				    value, 10, min, max, flags) == -1)
 					goto fail;
-				break;
-			case 'o':
+				bha_nga;
+			pak_sa 'o':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
+				གལ་ཏེ (cflags == DP_C_SHORT)
+					value = va_arg (args, unsigned ཧྲིལ);
+				དེ་མིན གལ་ཏེ (cflags == DP_C_LONG)
+					value = (long)va_arg (args, unsigned long ཧྲིལ);
+				དེ་མིན གལ་ཏེ (cflags == DP_C_LLONG)
 					value = (long)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
+				དེ་མིན གལ་ཏེ (cflags == DP_C_SIZE)
 					value = va_arg (args, size_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
+				དེ་མིན གལ་ཏེ (cflags == DP_C_INTMAX)
 					value = va_arg (args, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				དེ་མིན
+					value = (long)va_arg (args, unsigned ཧྲིལ);
+				གལ་ཏེ (fmtint(buffer, &currlen, maxlen, value,
 				    8, min, max, flags) == -1)
 					goto fail;
-				break;
-			case 'u':
+				bha_nga;
+			pak_sa 'u':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
+				གལ་ཏེ (cflags == DP_C_SHORT)
+					value = va_arg (args, unsigned ཧྲིལ);
+				དེ་མིན གལ་ཏེ (cflags == DP_C_LONG)
+					value = (long)va_arg (args, unsigned long ཧྲིལ);
+				དེ་མིན གལ་ཏེ (cflags == DP_C_LLONG)
 					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
+				དེ་མིན གལ་ཏེ (cflags == DP_C_SIZE)
 					value = va_arg (args, size_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
+				དེ་མིན གལ་ཏེ (cflags == DP_C_INTMAX)
 					value = va_arg (args, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				དེ་མིན
+					value = (long)va_arg (args, unsigned ཧྲིལ);
+				གལ་ཏེ (fmtint(buffer, &currlen, maxlen, value,
 				    10, min, max, flags) == -1)
 					goto fail;
-				break;
-			case 'X':
+				bha_nga;
+			pak_sa 'X':
 				flags |= DP_F_UP;
-			case 'x':
+			pak_sa 'x':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
+				གལ་ཏེ (cflags == DP_C_SHORT)
+					value = va_arg (args, unsigned ཧྲིལ);
+				དེ་མིན གལ་ཏེ (cflags == DP_C_LONG)
+					value = (long)va_arg (args, unsigned long ཧྲིལ);
+				དེ་མིན གལ་ཏེ (cflags == DP_C_LLONG)
 					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
+				དེ་མིན གལ་ཏེ (cflags == DP_C_SIZE)
 					value = va_arg (args, size_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
+				དེ་མིན གལ་ཏེ (cflags == DP_C_INTMAX)
 					value = va_arg (args, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				དེ་མིན
+					value = (long)va_arg (args, unsigned ཧྲིལ);
+				གལ་ཏེ (fmtint(buffer, &currlen, maxlen, value,
 				    16, min, max, flags) == -1)
 					goto fail;
-				break;
-			case 'f':
-				if (cflags == DP_C_LDOUBLE)
+				bha_nga;
+			pak_sa 'f':
+				གལ་ཏེ (cflags == DP_C_LDOUBLE)
 					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+				དེ་མིན
+					fvalue = va_arg (args, dviguu_na);
+				གལ་ཏེ (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
 					goto fail;
-				break;
-			case 'E':
+				bha_nga;
+			pak_sa 'E':
 				flags |= DP_F_UP;
-			case 'e':
-				if (cflags == DP_C_LDOUBLE)
+			pak_sa 'e':
+				གལ་ཏེ (cflags == DP_C_LDOUBLE)
 					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+				དེ་མིན
+					fvalue = va_arg (args, dviguu_na);
+				གལ་ཏེ (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
 					goto fail;
-				break;
-			case 'G':
+				bha_nga;
+			pak_sa 'G':
 				flags |= DP_F_UP;
-			case 'g':
-				if (cflags == DP_C_LDOUBLE)
+			pak_sa 'g':
+				གལ་ཏེ (cflags == DP_C_LDOUBLE)
 					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+				དེ་མིན
+					fvalue = va_arg (args, dviguu_na);
+				གལ་ཏེ (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
 					goto fail;
-				break;
-			case 'c':
+				bha_nga;
+			pak_sa 'c':
 				DOPR_OUTCH(buffer, currlen, maxlen,
-				    va_arg (args, int));
-				break;
-			case 's':
-				strvalue = va_arg (args, char *);
-				if (!strvalue) strvalue = "(NULL)";
-				if (max == -1) {
+				    va_arg (args, ཧྲིལ));
+				bha_nga;
+			pak_sa 's':
+				strvalue = va_arg (args, var_na *);
+				གལ་ཏེ (!strvalue) strvalue = "(NULL)";
+				གལ་ཏེ (max == -1) {
 					max = strlen(strvalue);
 				}
-				if (min > 0 && max >= 0 && min > max) max = min;
-				if (fmtstr(buffer, &currlen, maxlen,
+				གལ་ཏེ (min > 0 && max >= 0 && min > max) max = min;
+				གལ་ཏེ (fmtstr(buffer, &currlen, maxlen,
 				    strvalue, flags, min, max) == -1)
 					goto fail;
-				break;
-			case 'p':
+				bha_nga;
+			pak_sa 'p':
 				strvalue = va_arg (args, void *);
-				if (fmtint(buffer, &currlen, maxlen,
+				གལ་ཏེ (fmtint(buffer, &currlen, maxlen,
 				    (long) strvalue, 16, min, max, flags) == -1)
 					goto fail;
-				break;
-#if we_dont_want_this_in_openssh
-			case 'n':
-				if (cflags == DP_C_SHORT) {
-					short int *num;
-					num = va_arg (args, short int *);
+				bha_nga;
+#གལ་ཏེ we_dont_want_this_in_openssh
+			pak_sa 'n':
+				གལ་ཏེ (cflags == DP_C_SHORT) {
+					short ཧྲིལ *num;
+					num = va_arg (args, short ཧྲིལ *);
 					*num = currlen;
-				} else if (cflags == DP_C_LONG) {
-					long int *num;
-					num = va_arg (args, long int *);
-					*num = (long int)currlen;
-				} else if (cflags == DP_C_LLONG) {
+				} དེ་མིན གལ་ཏེ (cflags == DP_C_LONG) {
+					long ཧྲིལ *num;
+					num = va_arg (args, long ཧྲིལ *);
+					*num = (long ཧྲིལ)currlen;
+				} དེ་མིན གལ་ཏེ (cflags == DP_C_LLONG) {
 					LLONG *num;
 					num = va_arg (args, LLONG *);
 					*num = (LLONG)currlen;
-				} else if (cflags == DP_C_SIZE) {
+				} དེ་མིན གལ་ཏེ (cflags == DP_C_SIZE) {
 					ssize_t *num;
 					num = va_arg (args, ssize_t *);
 					*num = (ssize_t)currlen;
-				} else if (cflags == DP_C_INTMAX) {
+				} དེ་མིན གལ་ཏེ (cflags == DP_C_INTMAX) {
 					intmax_t *num;
 					num = va_arg (args, intmax_t *);
 					*num = (intmax_t)currlen;
-				} else {
-					int *num;
-					num = va_arg (args, int *);
+				} དེ་མིན {
+					ཧྲིལ *num;
+					num = va_arg (args, ཧྲིལ *);
 					*num = currlen;
 				}
-				break;
+				bha_nga;
 #endif
-			case '%':
+			pak_sa '%':
 				DOPR_OUTCH(buffer, currlen, maxlen, ch);
-				break;
+				bha_nga;
 			default:
 				/* Unknown, skip */
-				break;
+				bha_nga;
 			}
 			ch = *format++;
 			state = DP_S_DEFAULT;
 			flags = cflags = min = 0;
 			max = -1;
-			break;
-		case DP_S_DONE:
-			break;
+			bha_nga;
+		pak_sa DP_S_DONE:
+			bha_nga;
 		default:
 			/* hmm? */
-			break; /* some picky compilers need this */
+			bha_nga; /* some picky compilers need this */
 		}
 	}
-	if (maxlen != 0) {
-		if (currlen < maxlen - 1)
+	གལ་ཏེ (maxlen != 0) {
+		གལ་ཏེ (currlen < maxlen - 1)
 			buffer[currlen] = '\0';
-		else if (maxlen > 0)
+		དེ་མིན གལ་ཏེ (maxlen > 0)
 			buffer[maxlen - 1] = '\0';
 	}
 	va_end(args);
-	return currlen < INT_MAX ? (int)currlen : -1;
+	ཕྱིར currlen < INT_MAX ? (ཧྲིལ)currlen : -1;
  fail:
 	va_end(args);
-	return -1;
+	ཕྱིར -1;
 }
 
-static int
-fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max)
+static ཧྲིལ
+fmtstr(var_na *buffer, size_t *currlen, size_t maxlen,
+    var_na *value, ཧྲིལ flags, ཧྲིལ min, ཧྲིལ max)
 {
-	int padlen, strln;     /* amount to pad */
-	int cnt = 0;
+	ཧྲིལ padlen, strln;     /* amount to pad */
+	ཧྲིལ cnt = 0;
 
 #ifdef DEBUG_SNPRINTF
 	printf("fmtstr min=%d max=%d s=[%s]\n", min, max, value);
 #endif
-	if (value == 0) {
+	གལ་ཏེ (value == 0) {
 		value = "<NULL>";
 	}
 
-	for (strln = 0; strln < max && value[strln]; ++strln); /* strlen */
+	ཆེད་དུ (strln = 0; strln < max && value[strln]; ++strln); /* strlen */
 	padlen = min - strln;
-	if (padlen < 0)
+	གལ་ཏེ (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	གལ་ཏེ (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justify */
 
-	while ((padlen > 0) && (cnt < max)) {
+	སྐབས ((padlen > 0) && (cnt < max)) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		--padlen;
 		++cnt;
 	}
-	while (*value && (cnt < max)) {
+	སྐབས (*value && (cnt < max)) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, *value);
 		value++;
 		++cnt;
 	}
-	while ((padlen < 0) && (cnt < max)) {
+	སྐབས ((padlen < 0) && (cnt < max)) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		++padlen;
 		++cnt;
 	}
-	return 0;
+	ཕྱིར 0;
 }
 
 /* Have to handle DP_F_NUM (ie 0x and 0 alternates) */
 
-static int
-fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags)
+static ཧྲིལ
+fmtint(var_na *buffer, size_t *currlen, size_t maxlen,
+    intmax_t value, ཧྲིལ base, ཧྲིལ min, ཧྲིལ max, ཧྲིལ flags)
 {
-	int signvalue = 0;
+	ཧྲིལ signvalue = 0;
 	unsigned LLONG uvalue;
-	char convert[20];
-	int place = 0;
-	int spadlen = 0; /* amount to space pad */
-	int zpadlen = 0; /* amount to zero pad */
-	int caps = 0;
+	var_na convert[20];
+	ཧྲིལ place = 0;
+	ཧྲིལ spadlen = 0; /* amount to space pad */
+	ཧྲིལ zpadlen = 0; /* amount to zero pad */
+	ཧྲིལ caps = 0;
 
-	if (max < 0)
+	གལ་ཏེ (max < 0)
 		max = 0;
 
 	uvalue = value;
 
-	if(!(flags & DP_F_UNSIGNED)) {
-		if( value < 0 ) {
+	གལ་ཏེ(!(flags & DP_F_UNSIGNED)) {
+		གལ་ཏེ( value < 0 ) {
 			signvalue = '-';
 			uvalue = -value;
-		} else {
-			if (flags & DP_F_PLUS)  /* Do a sign (+/i) */
+		} དེ་མིན {
+			གལ་ཏེ (flags & DP_F_PLUS)  /* Do a sign (+/i) */
 				signvalue = '+';
-			else if (flags & DP_F_SPACE)
+			དེ་མིན གལ་ཏེ (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
+	གལ་ཏེ (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
 
 	do {
 		convert[place++] =
 			(caps? "0123456789ABCDEF":"0123456789abcdef")
 			[uvalue % (unsigned)base  ];
 		uvalue = (uvalue / (unsigned)base );
-	} while(uvalue && (place < 20));
-	if (place == 20) place--;
+	} སྐབས(uvalue && (place < 20));
+	གལ་ཏེ (place == 20) place--;
 	convert[place] = 0;
 
 	zpadlen = max - place;
 	spadlen = min - MAX (max, place) - (signvalue ? 1 : 0);
-	if (zpadlen < 0) zpadlen = 0;
-	if (spadlen < 0) spadlen = 0;
-	if (flags & DP_F_ZERO) {
+	གལ་ཏེ (zpadlen < 0) zpadlen = 0;
+	གལ་ཏེ (spadlen < 0) spadlen = 0;
+	གལ་ཏེ (flags & DP_F_ZERO) {
 		zpadlen = MAX(zpadlen, spadlen);
 		spadlen = 0;
 	}
-	if (flags & DP_F_MINUS)
+	གལ་ཏེ (flags & DP_F_MINUS)
 		spadlen = -spadlen; /* Left Justifty */
 
 #ifdef DEBUG_SNPRINTF
@@ -595,57 +595,57 @@ fmtint(char *buffer, size_t *currlen, size_t maxlen,
 #endif
 
 	/* Spaces */
-	while (spadlen > 0) {
+	སྐབས (spadlen > 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		--spadlen;
 	}
 
 	/* Sign */
-	if (signvalue)
+	གལ་ཏེ (signvalue)
 		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
 
 	/* Zeros */
-	if (zpadlen > 0) {
-		while (zpadlen > 0) {
+	གལ་ཏེ (zpadlen > 0) {
+		སྐབས (zpadlen > 0) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 	}
 
 	/* Digits */
-	while (place > 0) {
+	སྐབས (place > 0) {
 		--place;
 		DOPR_OUTCH(buffer, *currlen, maxlen, convert[place]);
 	}
 
 	/* Left Justified spaces */
-	while (spadlen < 0) {
+	སྐབས (spadlen < 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		++spadlen;
 	}
-	return 0;
+	ཕྱིར 0;
 }
 
 static LDOUBLE abs_val(LDOUBLE value)
 {
 	LDOUBLE result = value;
 
-	if (value < 0)
+	གལ་ཏེ (value < 0)
 		result = -value;
 
-	return result;
+	ཕྱིར result;
 }
 
-static LDOUBLE POW10(int val)
+static LDOUBLE POW10(ཧྲིལ val)
 {
 	LDOUBLE result = 1;
 
-	while (val) {
+	སྐབས (val) {
 		result *= 10;
 		val--;
 	}
 
-	return result;
+	ཕྱིར result;
 }
 
 static LLONG ROUND(LDOUBLE value)
@@ -654,103 +654,103 @@ static LLONG ROUND(LDOUBLE value)
 
 	intpart = (LLONG)value;
 	value = value - intpart;
-	if (value >= 0.5) intpart++;
+	གལ་ཏེ (value >= 0.5) intpart++;
 
-	return intpart;
+	ཕྱིར intpart;
 }
 
 /* a replacement for modf that doesn't need the math library. Should
    be portable, but slow */
-static double my_modf(double x0, double *iptr)
+static dviguu_na my_modf(dviguu_na x0, dviguu_na *iptr)
 {
-	int i;
+	ཧྲིལ i;
 	long l;
-	double x = x0;
-	double f = 1.0;
+	dviguu_na x = x0;
+	dviguu_na f = 1.0;
 
-	for (i=0;i<100;i++) {
+	ཆེད་དུ (i=0;i<100;i++) {
 		l = (long)x;
-		if (l <= (x+1) && l >= (x-1)) break;
+		གལ་ཏེ (l <= (x+1) && l >= (x-1)) bha_nga;
 		x *= 0.1;
 		f *= 10.0;
 	}
 
-	if (i == 100) {
+	གལ་ཏེ (i == 100) {
 		/*
 		 * yikes! the number is beyond what we can handle.
 		 * What do we do?
 		 */
 		(*iptr) = 0;
-		return 0;
+		ཕྱིར 0;
 	}
 
-	if (i != 0) {
-		double i2;
-		double ret;
+	གལ་ཏེ (i != 0) {
+		dviguu_na i2;
+		dviguu_na ret;
 
 		ret = my_modf(x0-l*f, &i2);
 		(*iptr) = l*f + i2;
-		return ret;
+		ཕྱིར ret;
 	}
 
 	(*iptr) = l;
-	return x - (*iptr);
+	ཕྱིར x - (*iptr);
 }
 
 
-static int
-fmtfp (char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags)
+static ཧྲིལ
+fmtfp (var_na *buffer, size_t *currlen, size_t maxlen,
+    LDOUBLE fvalue, ཧྲིལ min, ཧྲིལ max, ཧྲིལ flags)
 {
-	int signvalue = 0;
-	double ufvalue;
-	char iconvert[311];
-	char fconvert[311];
-	int iplace = 0;
-	int fplace = 0;
-	int padlen = 0; /* amount to pad */
-	int zpadlen = 0;
-#if 0
-	int caps = 0;
+	ཧྲིལ signvalue = 0;
+	dviguu_na ufvalue;
+	var_na iconvert[311];
+	var_na fconvert[311];
+	ཧྲིལ iplace = 0;
+	ཧྲིལ fplace = 0;
+	ཧྲིལ padlen = 0; /* amount to pad */
+	ཧྲིལ zpadlen = 0;
+#གལ་ཏེ 0
+	ཧྲིལ caps = 0;
 #endif
-	int idx;
-	double intpart;
-	double fracpart;
-	double temp;
+	ཧྲིལ idx;
+	dviguu_na intpart;
+	dviguu_na fracpart;
+	dviguu_na temp;
 
 	/*
 	 * AIX manpage says the default is 0, but Solaris says the default
 	 * is 6, and sprintf on AIX defaults to 6
 	 */
-	if (max < 0)
+	གལ་ཏེ (max < 0)
 		max = 6;
 
 	ufvalue = abs_val (fvalue);
 
-	if (fvalue < 0) {
+	གལ་ཏེ (fvalue < 0) {
 		signvalue = '-';
-	} else {
-		if (flags & DP_F_PLUS) { /* Do a sign (+/i) */
+	} དེ་མིན {
+		གལ་ཏེ (flags & DP_F_PLUS) { /* Do a sign (+/i) */
 			signvalue = '+';
-		} else {
-			if (flags & DP_F_SPACE)
+		} དེ་མིན {
+			གལ་ཏེ (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-#if 0
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
+#གལ་ཏེ 0
+	གལ་ཏེ (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
 #endif
 
-#if 0
-	 if (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
+#གལ་ཏེ 0
+	 གལ་ཏེ (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
 #endif
 
 	/*
 	 * Sorry, we only support 16 digits past the decimal because of our
 	 * conversion method
 	 */
-	if (max > 16)
+	གལ་ཏེ (max > 16)
 		max = 16;
 
 	/* We "cheat" by converting the fractional part to integer by
@@ -762,7 +762,7 @@ fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 
 	fracpart = ROUND((POW10(max)) * (ufvalue - intpart));
 
-	if (fracpart >= POW10(max)) {
+	གལ་ཏེ (fracpart >= POW10(max)) {
 		intpart++;
 		fracpart -= POW10(max);
 	}
@@ -771,57 +771,57 @@ fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 	do {
 		temp = intpart*0.1;
 		my_modf(temp, &intpart);
-		idx = (int) ((temp -intpart +0.05)* 10.0);
+		idx = (ཧྲིལ) ((temp -intpart +0.05)* 10.0);
 		/* idx = (int) (((double)(temp*0.1) -intpart +0.05) *10.0); */
 		/* printf ("%llf, %f, %x\n", temp, intpart, idx); */
 		iconvert[iplace++] = "0123456789"[idx];
-	} while (intpart && (iplace < 311));
-	if (iplace == 311) iplace--;
+	} སྐབས (intpart && (iplace < 311));
+	གལ་ཏེ (iplace == 311) iplace--;
 	iconvert[iplace] = 0;
 
 	/* Convert fractional part */
-	if (fracpart)
+	གལ་ཏེ (fracpart)
 	{
 		do {
 			temp = fracpart*0.1;
 			my_modf(temp, &fracpart);
-			idx = (int) ((temp -fracpart +0.05)* 10.0);
+			idx = (ཧྲིལ) ((temp -fracpart +0.05)* 10.0);
 			/* idx = (int) ((((temp/10) -fracpart) +0.05) *10); */
 			/* printf ("%lf, %lf, %ld\n", temp, fracpart, idx ); */
 			fconvert[fplace++] = "0123456789"[idx];
-		} while(fracpart && (fplace < 311));
-		if (fplace == 311) fplace--;
+		} སྐབས(fracpart && (fplace < 311));
+		གལ་ཏེ (fplace == 311) fplace--;
 	}
 	fconvert[fplace] = 0;
 
 	/* -1 for decimal point, another -1 if we are printing a sign */
 	padlen = min - iplace - max - 1 - ((signvalue) ? 1 : 0);
 	zpadlen = max - fplace;
-	if (zpadlen < 0) zpadlen = 0;
-	if (padlen < 0)
+	གལ་ཏེ (zpadlen < 0) zpadlen = 0;
+	གལ་ཏེ (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	གལ་ཏེ (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justifty */
 
-	if ((flags & DP_F_ZERO) && (padlen > 0)) {
-		if (signvalue) {
+	གལ་ཏེ ((flags & DP_F_ZERO) && (padlen > 0)) {
+		གལ་ཏེ (signvalue) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
 			--padlen;
 			signvalue = 0;
 		}
-		while (padlen > 0) {
+		སྐབས (padlen > 0) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
 			--padlen;
 		}
 	}
-	while (padlen > 0) {
+	སྐབས (padlen > 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		--padlen;
 	}
-	if (signvalue)
+	གལ་ཏེ (signvalue)
 		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
 
-	while (iplace > 0) {
+	སྐབས (iplace > 0) {
 		--iplace;
 		DOPR_OUTCH(buffer, *currlen, maxlen, iconvert[iplace]);
 	}
@@ -834,39 +834,39 @@ fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 	 * Decimal point.  This should probably use locale to find the correct
 	 * char to print out.
 	 */
-	if (max > 0) {
+	གལ་ཏེ (max > 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, '.');
 
-		while (zpadlen > 0) {
+		སྐབས (zpadlen > 0) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 
-		while (fplace > 0) {
+		སྐབས (fplace > 0) {
 			--fplace;
 			DOPR_OUTCH(buffer, *currlen, maxlen, fconvert[fplace]);
 		}
 	}
 
-	while (padlen < 0) {
+	སྐབས (padlen < 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		++padlen;
 	}
-	return 0;
+	ཕྱིར 0;
 }
 #endif /* !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF) */
 
-#if !defined(HAVE_VSNPRINTF)
-int
-vsnprintf (char *str, size_t count, const char *fmt, va_list args)
+#གལ་ཏེ !defined(HAVE_VSNPRINTF)
+ཧྲིལ
+vsnprintf (var_na *str, size_t count, const var_na *fmt, va_list args)
 {
-	return dopr(str, count, fmt, args);
+	ཕྱིར dopr(str, count, fmt, args);
 }
 #endif
 
-#if !defined(HAVE_SNPRINTF)
-int
-snprintf(char *str, size_t count, SNPRINTF_CONST char *fmt, ...)
+#གལ་ཏེ !defined(HAVE_SNPRINTF)
+ཧྲིལ
+snprintf(var_na *str, size_t count, SNPRINTF_CONST var_na *fmt, ...)
 {
 	size_t ret;
 	va_list ap;
@@ -874,6 +874,6 @@ snprintf(char *str, size_t count, SNPRINTF_CONST char *fmt, ...)
 	va_start(ap, fmt);
 	ret = vsnprintf(str, count, fmt, ap);
 	va_end(ap);
-	return ret;
+	ཕྱིར ret;
 }
 #endif

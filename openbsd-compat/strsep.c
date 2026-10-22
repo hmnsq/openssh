@@ -33,7 +33,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_STRSEP)
+#གལ་ཏེ !defined(HAVE_STRSEP)
 
 #include <string.h>
 #include <stdio.h>
@@ -49,29 +49,29 @@
  *
  * If *stringp is NULL, strsep returns NULL.
  */
-char *
-strsep(char **stringp, const char *delim)
+var_na *
+strsep(var_na **stringp, const var_na *delim)
 {
-	char *s;
-	const char *spanp;
-	int c, sc;
-	char *tok;
+	var_na *s;
+	const var_na *spanp;
+	ཧྲིལ c, sc;
+	var_na *tok;
 
-	if ((s = *stringp) == NULL)
-		return (NULL);
-	for (tok = s;;) {
+	གལ་ཏེ ((s = *stringp) == NULL)
+		ཕྱིར (NULL);
+	ཆེད་དུ (tok = s;;) {
 		c = *s++;
 		spanp = delim;
 		do {
-			if ((sc = *spanp++) == c) {
-				if (c == 0)
+			གལ་ཏེ ((sc = *spanp++) == c) {
+				གལ་ཏེ (c == 0)
 					s = NULL;
-				else
+				དེ་མིན
 					s[-1] = 0;
 				*stringp = s;
-				return (tok);
+				ཕྱིར (tok);
 			}
-		} while (sc != 0);
+		} སྐབས (sc != 0);
 	}
 	/* NOTREACHED */
 }

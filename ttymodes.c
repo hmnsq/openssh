@@ -68,89 +68,89 @@
  * Converts POSIX speed_t to a baud rate.  The values of the
  * constants for speed_t are not themselves portable.
  */
-static int
+static ཧྲིལ
 speed_to_baud(speed_t speed)
 {
 	switch (speed) {
-	case B0:
-		return 0;
-	case B50:
-		return 50;
-	case B75:
-		return 75;
-	case B110:
-		return 110;
-	case B134:
-		return 134;
-	case B150:
-		return 150;
-	case B200:
-		return 200;
-	case B300:
-		return 300;
-	case B600:
-		return 600;
-	case B1200:
-		return 1200;
-	case B1800:
-		return 1800;
-	case B2400:
-		return 2400;
-	case B4800:
-		return 4800;
-	case B9600:
-		return 9600;
+	pak_sa B0:
+		ཕྱིར 0;
+	pak_sa B50:
+		ཕྱིར 50;
+	pak_sa B75:
+		ཕྱིར 75;
+	pak_sa B110:
+		ཕྱིར 110;
+	pak_sa B134:
+		ཕྱིར 134;
+	pak_sa B150:
+		ཕྱིར 150;
+	pak_sa B200:
+		ཕྱིར 200;
+	pak_sa B300:
+		ཕྱིར 300;
+	pak_sa B600:
+		ཕྱིར 600;
+	pak_sa B1200:
+		ཕྱིར 1200;
+	pak_sa B1800:
+		ཕྱིར 1800;
+	pak_sa B2400:
+		ཕྱིར 2400;
+	pak_sa B4800:
+		ཕྱིར 4800;
+	pak_sa B9600:
+		ཕྱིར 9600;
 
 #ifdef B19200
-	case B19200:
-		return 19200;
-#else /* B19200 */
+	pak_sa B19200:
+		ཕྱིར 19200;
+#དེ་མིན /* B19200 */
 #ifdef EXTA
-	case EXTA:
-		return 19200;
+	pak_sa EXTA:
+		ཕྱིར 19200;
 #endif /* EXTA */
 #endif /* B19200 */
 
 #ifdef B38400
-	case B38400:
-		return 38400;
-#else /* B38400 */
+	pak_sa B38400:
+		ཕྱིར 38400;
+#དེ་མིན /* B38400 */
 #ifdef EXTB
-	case EXTB:
-		return 38400;
+	pak_sa EXTB:
+		ཕྱིར 38400;
 #endif /* EXTB */
 #endif /* B38400 */
 
 #ifdef B7200
-	case B7200:
-		return 7200;
+	pak_sa B7200:
+		ཕྱིར 7200;
 #endif /* B7200 */
 #ifdef B14400
-	case B14400:
-		return 14400;
+	pak_sa B14400:
+		ཕྱིར 14400;
 #endif /* B14400 */
 #ifdef B28800
-	case B28800:
-		return 28800;
+	pak_sa B28800:
+		ཕྱིར 28800;
 #endif /* B28800 */
 #ifdef B57600
-	case B57600:
-		return 57600;
+	pak_sa B57600:
+		ཕྱིར 57600;
 #endif /* B57600 */
 #ifdef B76800
-	case B76800:
-		return 76800;
+	pak_sa B76800:
+		ཕྱིར 76800;
 #endif /* B76800 */
 #ifdef B115200
-	case B115200:
-		return 115200;
+	pak_sa B115200:
+		ཕྱིར 115200;
 #endif /* B115200 */
 #ifdef B230400
-	case B230400:
-		return 230400;
+	pak_sa B230400:
+		ཕྱིར 230400;
 #endif /* B230400 */
 	default:
-		return 9600;
+		ཕྱིར 9600;
 	}
 }
 
@@ -158,88 +158,88 @@ speed_to_baud(speed_t speed)
  * Converts a numeric baud rate to a POSIX speed_t.
  */
 static speed_t
-baud_to_speed(int baud)
+baud_to_speed(ཧྲིལ baud)
 {
 	switch (baud) {
-	case 0:
-		return B0;
-	case 50:
-		return B50;
-	case 75:
-		return B75;
-	case 110:
-		return B110;
-	case 134:
-		return B134;
-	case 150:
-		return B150;
-	case 200:
-		return B200;
-	case 300:
-		return B300;
-	case 600:
-		return B600;
-	case 1200:
-		return B1200;
-	case 1800:
-		return B1800;
-	case 2400:
-		return B2400;
-	case 4800:
-		return B4800;
-	case 9600:
-		return B9600;
+	pak_sa 0:
+		ཕྱིར B0;
+	pak_sa 50:
+		ཕྱིར B50;
+	pak_sa 75:
+		ཕྱིར B75;
+	pak_sa 110:
+		ཕྱིར B110;
+	pak_sa 134:
+		ཕྱིར B134;
+	pak_sa 150:
+		ཕྱིར B150;
+	pak_sa 200:
+		ཕྱིར B200;
+	pak_sa 300:
+		ཕྱིར B300;
+	pak_sa 600:
+		ཕྱིར B600;
+	pak_sa 1200:
+		ཕྱིར B1200;
+	pak_sa 1800:
+		ཕྱིར B1800;
+	pak_sa 2400:
+		ཕྱིར B2400;
+	pak_sa 4800:
+		ཕྱིར B4800;
+	pak_sa 9600:
+		ཕྱིར B9600;
 
 #ifdef B19200
-	case 19200:
-		return B19200;
-#else /* B19200 */
+	pak_sa 19200:
+		ཕྱིར B19200;
+#དེ་མིན /* B19200 */
 #ifdef EXTA
-	case 19200:
-		return EXTA;
+	pak_sa 19200:
+		ཕྱིར EXTA;
 #endif /* EXTA */
 #endif /* B19200 */
 
 #ifdef B38400
-	case 38400:
-		return B38400;
-#else /* B38400 */
+	pak_sa 38400:
+		ཕྱིར B38400;
+#དེ་མིན /* B38400 */
 #ifdef EXTB
-	case 38400:
-		return EXTB;
+	pak_sa 38400:
+		ཕྱིར EXTB;
 #endif /* EXTB */
 #endif /* B38400 */
 
 #ifdef B7200
-	case 7200:
-		return B7200;
+	pak_sa 7200:
+		ཕྱིར B7200;
 #endif /* B7200 */
 #ifdef B14400
-	case 14400:
-		return B14400;
+	pak_sa 14400:
+		ཕྱིར B14400;
 #endif /* B14400 */
 #ifdef B28800
-	case 28800:
-		return B28800;
+	pak_sa 28800:
+		ཕྱིར B28800;
 #endif /* B28800 */
 #ifdef B57600
-	case 57600:
-		return B57600;
+	pak_sa 57600:
+		ཕྱིར B57600;
 #endif /* B57600 */
 #ifdef B76800
-	case 76800:
-		return B76800;
+	pak_sa 76800:
+		ཕྱིར B76800;
 #endif /* B76800 */
 #ifdef B115200
-	case 115200:
-		return B115200;
+	pak_sa 115200:
+		ཕྱིར B115200;
 #endif /* B115200 */
 #ifdef B230400
-	case 230400:
-		return B230400;
+	pak_sa 230400:
+		ཕྱིར B230400;
 #endif /* B230400 */
 	default:
-		return B9600;
+		ཕྱིར B9600;
 	}
 }
 
@@ -250,10 +250,10 @@ static u_int
 special_char_encode(cc_t c)
 {
 #ifdef _POSIX_VDISABLE
-	if (c == _POSIX_VDISABLE)
-		return 255;
+	གལ་ཏེ (c == _POSIX_VDISABLE)
+		ཕྱིར 255;
 #endif /* _POSIX_VDISABLE */
-	return c;
+	ཕྱིར c;
 }
 
 /*
@@ -263,10 +263,10 @@ static cc_t
 special_char_decode(u_int c)
 {
 #ifdef _POSIX_VDISABLE
-	if (c == 255)
-		return _POSIX_VDISABLE;
+	གལ་ཏེ (c == 255)
+		ཕྱིར _POSIX_VDISABLE;
 #endif /* _POSIX_VDISABLE */
-	return c;
+	ཕྱིར c;
 }
 
 /*
@@ -275,31 +275,31 @@ special_char_decode(u_int c)
  * being constructed.
  */
 void
-ssh_tty_make_modes(struct ssh *ssh, int fd, struct termios *tiop)
+ssh_tty_make_modes(sa_nracanaa ssh *ssh, ཧྲིལ fd, sa_nracanaa termios *tiop)
 {
-	struct termios tio;
-	struct sshbuf *buf;
-	int r, ibaud, obaud;
+	sa_nracanaa termios tio;
+	sa_nracanaa sshbuf *buf;
+	ཧྲིལ r, ibaud, obaud;
 
-	if ((buf = sshbuf_new()) == NULL)
+	གལ་ཏེ ((buf = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
-	if (tiop == NULL) {
-		if (fd == -1) {
+	གལ་ཏེ (tiop == NULL) {
+		གལ་ཏེ (fd == -1) {
 			debug_f("no fd or tio");
 			goto end;
 		}
-		if (tcgetattr(fd, &tio) == -1) {
+		གལ་ཏེ (tcgetattr(fd, &tio) == -1) {
 			logit("tcgetattr: %.100s", strerror(errno));
 			goto end;
 		}
-	} else
+	} དེ་མིན
 		tio = *tiop;
 
 	/* Store input and output baud rates. */
 	obaud = speed_to_baud(cfgetospeed(&tio));
 	ibaud = speed_to_baud(cfgetispeed(&tio));
-	if ((r = sshbuf_put_u8(buf, TTY_OP_OSPEED)) != 0 ||
+	གལ་ཏེ ((r = sshbuf_put_u8(buf, TTY_OP_OSPEED)) != 0 ||
 	    (r = sshbuf_put_u32(buf, obaud)) != 0 ||
 	    (r = sshbuf_put_u8(buf, TTY_OP_ISPEED)) != 0 ||
 	    (r = sshbuf_put_u32(buf, ibaud)) != 0)
@@ -307,7 +307,7 @@ ssh_tty_make_modes(struct ssh *ssh, int fd, struct termios *tiop)
 
 	/* Store values of mode flags. */
 #define TTYCHAR(NAME, OP) \
-	if ((r = sshbuf_put_u8(buf, OP)) != 0 || \
+	གལ་ཏེ ((r = sshbuf_put_u8(buf, OP)) != 0 || \
 	    (r = sshbuf_put_u32(buf, \
 	    special_char_encode(tio.c_cc[NAME]))) != 0) \
 		fatal_fr(r, "compose %s", #NAME);
@@ -315,9 +315,9 @@ ssh_tty_make_modes(struct ssh *ssh, int fd, struct termios *tiop)
 #define SSH_TTYMODE_IUTF8 42  /* for SSH_BUG_UTF8TTYMODE */
 
 #define TTYMODE(NAME, FIELD, OP) \
-	if (OP == SSH_TTYMODE_IUTF8 && (ssh->compat & SSH_BUG_UTF8TTYMODE)) { \
+	གལ་ཏེ (OP == SSH_TTYMODE_IUTF8 && (ssh->compat & SSH_BUG_UTF8TTYMODE)) { \
 		debug3_f("SSH_BUG_UTF8TTYMODE"); \
-	} else if ((r = sshbuf_put_u8(buf, OP)) != 0 || \
+	} དེ་མིན གལ་ཏེ ((r = sshbuf_put_u8(buf, OP)) != 0 || \
 	    (r = sshbuf_put_u32(buf, ((tio.FIELD & NAME) != 0))) != 0) \
 		fatal_fr(r, "compose %s", #NAME);
 
@@ -328,7 +328,7 @@ ssh_tty_make_modes(struct ssh *ssh, int fd, struct termios *tiop)
 
 end:
 	/* Mark end of mode data. */
-	if ((r = sshbuf_put_u8(buf, TTY_OP_END)) != 0 ||
+	གལ་ཏེ ((r = sshbuf_put_u8(buf, TTY_OP_END)) != 0 ||
 	    (r = sshpkt_put_stringb(ssh, buf)) != 0)
 		fatal_fr(r, "compose end");
 	sshbuf_free(buf);
@@ -339,23 +339,23 @@ end:
  * manner from a packet being read.
  */
 void
-ssh_tty_parse_modes(struct ssh *ssh, int fd)
+ssh_tty_parse_modes(sa_nracanaa ssh *ssh, ཧྲིལ fd)
 {
-	struct termios tio;
-	struct sshbuf *buf;
+	sa_nracanaa termios tio;
+	sa_nracanaa sshbuf *buf;
 	const u_char *data;
 	u_char opcode;
 	u_int baud, u;
-	int r, failure = 0;
+	ཧྲིལ r, failure = 0;
 	size_t len;
 
-	if ((r = sshpkt_get_string_direct(ssh, &data, &len)) != 0)
+	གལ་ཏེ ((r = sshpkt_get_string_direct(ssh, &data, &len)) != 0)
 		fatal_fr(r, "parse");
-	if (len == 0)
-		return;
-	if ((buf = sshbuf_from(data, len)) == NULL) {
+	གལ་ཏེ (len == 0)
+		ཕྱིར;
+	གལ་ཏེ ((buf = sshbuf_from(data, len)) == NULL) {
 		error_f("sshbuf_from failed");
-		return;
+		ཕྱིར;
 	}
 
 	/*
@@ -363,49 +363,49 @@ ssh_tty_parse_modes(struct ssh *ssh, int fd)
 	 * flags. I am hoping that if there are any machine-specific
 	 * modes, they will initially have reasonable values.
 	 */
-	if (tcgetattr(fd, &tio) == -1) {
+	གལ་ཏེ (tcgetattr(fd, &tio) == -1) {
 		logit("tcgetattr: %.100s", strerror(errno));
 		failure = -1;
 	}
 
-	while (sshbuf_len(buf) > 0) {
-		if ((r = sshbuf_get_u8(buf, &opcode)) != 0)
+	སྐབས (sshbuf_len(buf) > 0) {
+		གལ་ཏེ ((r = sshbuf_get_u8(buf, &opcode)) != 0)
 			fatal_fr(r, "parse opcode");
 		switch (opcode) {
-		case TTY_OP_END:
+		pak_sa TTY_OP_END:
 			goto set;
 
-		case TTY_OP_ISPEED:
-			if ((r = sshbuf_get_u32(buf, &baud)) != 0)
+		pak_sa TTY_OP_ISPEED:
+			གལ་ཏེ ((r = sshbuf_get_u32(buf, &baud)) != 0)
 				fatal_fr(r, "parse ispeed");
-			if (failure != -1 &&
+			གལ་ཏེ (failure != -1 &&
 			    cfsetispeed(&tio, baud_to_speed(baud)) == -1)
 				error("cfsetispeed failed for %d", baud);
-			break;
+			bha_nga;
 
-		case TTY_OP_OSPEED:
-			if ((r = sshbuf_get_u32(buf, &baud)) != 0)
+		pak_sa TTY_OP_OSPEED:
+			གལ་ཏེ ((r = sshbuf_get_u32(buf, &baud)) != 0)
 				fatal_fr(r, "parse ospeed");
-			if (failure != -1 &&
+			གལ་ཏེ (failure != -1 &&
 			    cfsetospeed(&tio, baud_to_speed(baud)) == -1)
 				error("cfsetospeed failed for %d", baud);
-			break;
+			bha_nga;
 
 #define TTYCHAR(NAME, OP) \
-		case OP: \
-			if ((r = sshbuf_get_u32(buf, &u)) != 0) \
+		pak_sa OP: \
+			གལ་ཏེ ((r = sshbuf_get_u32(buf, &u)) != 0) \
 				fatal_fr(r, "parse %s", #NAME); \
 			tio.c_cc[NAME] = special_char_decode(u); \
-			break;
+			bha_nga;
 #define TTYMODE(NAME, FIELD, OP) \
-		case OP: \
-			if ((r = sshbuf_get_u32(buf, &u)) != 0) \
+		pak_sa OP: \
+			གལ་ཏེ ((r = sshbuf_get_u32(buf, &u)) != 0) \
 				fatal_fr(r, "parse %s", #NAME); \
-			if (u) \
+			གལ་ཏེ (u) \
 				tio.FIELD |= NAME; \
-			else \
+			དེ་མིན \
 				tio.FIELD &= ~NAME; \
-			break;
+			bha_nga;
 
 #include "ttymodes.h"
 
@@ -422,11 +422,11 @@ ssh_tty_parse_modes(struct ssh *ssh, int fd)
 			 * Opcodes 160 to 255 are undefined and cause parsing
 			 * to stop.
 			 */
-			if (opcode > 0 && opcode < 160) {
-				if ((r = sshbuf_get_u32(buf, NULL)) != 0)
+			གལ་ཏེ (opcode > 0 && opcode < 160) {
+				གལ་ཏེ ((r = sshbuf_get_u32(buf, NULL)) != 0)
 					fatal_fr(r, "parse arg");
-				break;
-			} else {
+				bha_nga;
+			} དེ་མིན {
 				logit_f("unknown opcode %d", opcode);
 				goto set;
 			}
@@ -436,14 +436,14 @@ ssh_tty_parse_modes(struct ssh *ssh, int fd)
 set:
 	len = sshbuf_len(buf);
 	sshbuf_free(buf);
-	if (len > 0) {
+	གལ་ཏེ (len > 0) {
 		logit_f("%zu bytes left", len);
-		return;		/* Don't process bytes passed */
+		ཕྱིར;		/* Don't process bytes passed */
 	}
-	if (failure == -1)
-		return;		/* Packet parsed ok but tcgetattr() failed */
+	གལ་ཏེ (failure == -1)
+		ཕྱིར;		/* Packet parsed ok but tcgetattr() failed */
 
 	/* Set the new modes for the terminal. */
-	if (tcsetattr(fd, TCSANOW, &tio) == -1)
+	གལ་ཏེ (tcsetattr(fd, TCSANOW, &tio) == -1)
 		logit("Setting tty modes failed: %.100s", strerror(errno));
 }

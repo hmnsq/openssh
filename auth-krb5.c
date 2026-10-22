@@ -54,22 +54,22 @@
 
 extern ServerOptions	 options;
 
-static int
+static ཧྲིལ
 krb5_init(void *context)
 {
 	Authctxt *authctxt = (Authctxt *)context;
 	krb5_error_code problem;
 
-	if (authctxt->krb5_ctx == NULL) {
+	གལ་ཏེ (authctxt->krb5_ctx == NULL) {
 		problem = krb5_init_context(&authctxt->krb5_ctx);
-		if (problem)
-			return (problem);
+		གལ་ཏེ (problem)
+			ཕྱིར (problem);
 	}
-	return (0);
+	ཕྱིར (0);
 }
 
-int
-auth_krb5_password(Authctxt *authctxt, const char *password)
+ཧྲིལ
+auth_krb5_password(Authctxt *authctxt, const var_na *password)
 {
 #ifndef HEIMDAL
 	krb5_creds creds;
@@ -77,9 +77,9 @@ auth_krb5_password(Authctxt *authctxt, const char *password)
 #endif
 	krb5_error_code problem;
 	krb5_ccache ccache = NULL;
-	int len;
-	char *client, *platform_client;
-	const char *errmsg;
+	ཧྲིལ len;
+	var_na *client, *platform_client;
+	const var_na *errmsg;
 
 	/* get platform-specific kerberos client principal name (if it exists) */
 	platform_client = platform_krb5_get_principal_name(authctxt->pw->pw_name);
@@ -88,27 +88,27 @@ auth_krb5_password(Authctxt *authctxt, const char *password)
 	temporarily_use_uid(authctxt->pw);
 
 	problem = krb5_init(authctxt);
-	if (problem)
+	གལ་ཏེ (problem)
 		goto out;
 
 	problem = krb5_parse_name(authctxt->krb5_ctx, client,
 		    &authctxt->krb5_user);
-	if (problem)
+	གལ་ཏེ (problem)
 		goto out;
 
 #ifdef HEIMDAL
 # ifdef HAVE_KRB5_CC_NEW_UNIQUE
 	problem = krb5_cc_new_unique(authctxt->krb5_ctx,
 	    krb5_mcc_ops.prefix, NULL, &ccache);
-# else
+# དེ་མིན
 	problem = krb5_cc_gen_new(authctxt->krb5_ctx, &krb5_mcc_ops, &ccache);
 # endif
-	if (problem)
+	གལ་ཏེ (problem)
 		goto out;
 
 	problem = krb5_cc_initialize(authctxt->krb5_ctx, ccache,
 		authctxt->krb5_user);
-	if (problem)
+	གལ་ཏེ (problem)
 		goto out;
 
 	restore_uid();
@@ -118,35 +118,35 @@ auth_krb5_password(Authctxt *authctxt, const char *password)
 
 	temporarily_use_uid(authctxt->pw);
 
-	if (problem)
+	གལ་ཏེ (problem)
 		goto out;
 
 # ifdef HAVE_KRB5_CC_NEW_UNIQUE
 	problem = krb5_cc_new_unique(authctxt->krb5_ctx,
 	    krb5_fcc_ops.prefix, NULL, &authctxt->krb5_fwd_ccache);
-# else
+# དེ་མིན
 	problem = krb5_cc_gen_new(authctxt->krb5_ctx, &krb5_fcc_ops,
 	    &authctxt->krb5_fwd_ccache);
 # endif
-	if (problem)
+	གལ་ཏེ (problem)
 		goto out;
 
 	problem = krb5_cc_copy_cache(authctxt->krb5_ctx, ccache,
 	    authctxt->krb5_fwd_ccache);
 	krb5_cc_destroy(authctxt->krb5_ctx, ccache);
 	ccache = NULL;
-	if (problem)
+	གལ་ཏེ (problem)
 		goto out;
 
-#else
+#དེ་མིན
 	problem = krb5_get_init_creds_password(authctxt->krb5_ctx, &creds,
-	    authctxt->krb5_user, (char *)password, NULL, NULL, 0, NULL, NULL);
-	if (problem)
+	    authctxt->krb5_user, (var_na *)password, NULL, NULL, 0, NULL, NULL);
+	གལ་ཏེ (problem)
 		goto out;
 
 	problem = krb5_sname_to_principal(authctxt->krb5_ctx, NULL, NULL,
 	    KRB5_NT_SRV_HST, &server);
-	if (problem)
+	གལ་ཏེ (problem)
 		goto out;
 
 	restore_uid();
@@ -154,10 +154,10 @@ auth_krb5_password(Authctxt *authctxt, const char *password)
 	    NULL, NULL, NULL);
 	krb5_free_principal(authctxt->krb5_ctx, server);
 	temporarily_use_uid(authctxt->pw);
-	if (problem)
+	གལ་ཏེ (problem)
 		goto out;
 
-	if (!krb5_kuserok(authctxt->krb5_ctx, authctxt->krb5_user,
+	གལ་ཏེ (!krb5_kuserok(authctxt->krb5_ctx, authctxt->krb5_user,
 	    authctxt->pw->pw_name)) {
 		problem = -1;
 		goto out;
@@ -165,21 +165,21 @@ auth_krb5_password(Authctxt *authctxt, const char *password)
 
 	problem = ssh_krb5_cc_gen(authctxt->krb5_ctx,
 	    &authctxt->krb5_fwd_ccache);
-	if (problem)
+	གལ་ཏེ (problem)
 		goto out;
 
 	problem = krb5_cc_initialize(authctxt->krb5_ctx,
 	    authctxt->krb5_fwd_ccache, authctxt->krb5_user);
-	if (problem)
+	གལ་ཏེ (problem)
 		goto out;
 
 	problem = krb5_cc_store_cred(authctxt->krb5_ctx,
 	    authctxt->krb5_fwd_ccache, &creds);
-	if (problem)
+	གལ་ཏེ (problem)
 		goto out;
 #endif
 
-	authctxt->krb5_ticket_file = (char *)krb5_cc_get_name(authctxt->krb5_ctx, authctxt->krb5_fwd_ccache);
+	authctxt->krb5_ticket_file = (var_na *)krb5_cc_get_name(authctxt->krb5_ctx, authctxt->krb5_fwd_ccache);
 
 	len = strlen(authctxt->krb5_ticket_file) + 6;
 	authctxt->krb5_ccname = xmalloc(len);
@@ -187,7 +187,7 @@ auth_krb5_password(Authctxt *authctxt, const char *password)
 	    authctxt->krb5_ticket_file);
 
 #ifdef USE_PAM
-	if (options.use_pam)
+	གལ་ཏེ (options.use_pam)
 		do_pam_putenv("KRB5CCNAME", authctxt->krb5_ccname);
 #endif
 
@@ -196,43 +196,43 @@ auth_krb5_password(Authctxt *authctxt, const char *password)
 	
 	free(platform_client);
 
-	if (problem) {
-		if (ccache)
+	གལ་ཏེ (problem) {
+		གལ་ཏེ (ccache)
 			krb5_cc_destroy(authctxt->krb5_ctx, ccache);
 
-		if (authctxt->krb5_ctx != NULL && problem!=-1) {
+		གལ་ཏེ (authctxt->krb5_ctx != NULL && problem!=-1) {
 			errmsg = krb5_get_error_message(authctxt->krb5_ctx,
 			    problem);
 			debug("Kerberos password authentication failed: %s",
 			    errmsg);
 			krb5_free_error_message(authctxt->krb5_ctx, errmsg);
-		} else
+		} དེ་མིན
 			debug("Kerberos password authentication failed: %d",
 			    problem);
 
 		krb5_cleanup_proc(authctxt);
 
-		if (options.kerberos_or_local_passwd)
-			return (-1);
-		else
-			return (0);
+		གལ་ཏེ (options.kerberos_or_local_passwd)
+			ཕྱིར (-1);
+		དེ་མིན
+			ཕྱིར (0);
 	}
-	return (authctxt->valid ? 1 : 0);
+	ཕྱིར (authctxt->valid ? 1 : 0);
 }
 
 void
 krb5_cleanup_proc(Authctxt *authctxt)
 {
 	debug("krb5_cleanup_proc called");
-	if (authctxt->krb5_fwd_ccache) {
+	གལ་ཏེ (authctxt->krb5_fwd_ccache) {
 		krb5_cc_destroy(authctxt->krb5_ctx, authctxt->krb5_fwd_ccache);
 		authctxt->krb5_fwd_ccache = NULL;
 	}
-	if (authctxt->krb5_user) {
+	གལ་ཏེ (authctxt->krb5_user) {
 		krb5_free_principal(authctxt->krb5_ctx, authctxt->krb5_user);
 		authctxt->krb5_user = NULL;
 	}
-	if (authctxt->krb5_ctx) {
+	གལ་ཏེ (authctxt->krb5_ctx) {
 		krb5_free_context(authctxt->krb5_ctx);
 		authctxt->krb5_ctx = NULL;
 	}
@@ -241,33 +241,33 @@ krb5_cleanup_proc(Authctxt *authctxt)
 #ifndef HEIMDAL
 krb5_error_code
 ssh_krb5_cc_gen(krb5_context ctx, krb5_ccache *ccache) {
-	int tmpfd, ret, oerrno;
-	char ccname[40];
+	ཧྲིལ tmpfd, ret, oerrno;
+	var_na ccname[40];
 	mode_t old_umask;
 
-	ret = snprintf(ccname, sizeof(ccname),
+	ret = snprintf(ccname, parimaa_na(ccname),
 	    "FILE:/tmp/krb5cc_%d_XXXXXXXXXX", geteuid());
-	if (ret < 0 || (size_t)ret >= sizeof(ccname))
-		return ENOMEM;
+	གལ་ཏེ (ret < 0 || (size_t)ret >= parimaa_na(ccname))
+		ཕྱིར ENOMEM;
 
 	old_umask = umask(0177);
 	tmpfd = mkstemp(ccname + strlen("FILE:"));
 	oerrno = errno;
 	umask(old_umask);
-	if (tmpfd == -1) {
+	གལ་ཏེ (tmpfd == -1) {
 		logit("mkstemp(): %.100s", strerror(oerrno));
-		return oerrno;
+		ཕྱིར oerrno;
 	}
 
-	if (fchmod(tmpfd,S_IRUSR | S_IWUSR) == -1) {
+	གལ་ཏེ (fchmod(tmpfd,S_IRUSR | S_IWUSR) == -1) {
 		oerrno = errno;
 		logit("fchmod(): %.100s", strerror(oerrno));
 		close(tmpfd);
-		return oerrno;
+		ཕྱིར oerrno;
 	}
 	close(tmpfd);
 
-	return (krb5_cc_resolve(ctx, ccname, ccache));
+	ཕྱིར (krb5_cc_resolve(ctx, ccname, ccache));
 }
 #endif /* !HEIMDAL */
 #endif /* KRB5 */

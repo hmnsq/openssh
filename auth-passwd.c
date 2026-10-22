@@ -56,7 +56,7 @@
 #include "auth.h"
 #include "auth-options.h"
 
-extern struct sshbuf *loginmsg;
+extern sa_nracanaa sshbuf *loginmsg;
 extern ServerOptions options;
 
 #ifdef HAVE_LOGIN_CAP
@@ -73,31 +73,31 @@ extern login_cap_t *lc;
  * Tries to authenticate the user using password.  Returns true if
  * authentication succeeds.
  */
-int
-auth_password(struct ssh *ssh, const char *password)
+ཧྲིལ
+auth_password(sa_nracanaa ssh *ssh, const var_na *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct passwd *pw = authctxt->pw;
-	int result, ok = authctxt->valid;
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
-	static int expire_checked = 0;
+	sa_nracanaa passwd *pw = authctxt->pw;
+	ཧྲིལ result, ok = authctxt->valid;
+#གལ་ཏེ defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+	static ཧྲིལ expire_checked = 0;
 #endif
 
-	if (strlen(password) > MAX_PASSWORD_LEN)
-		return 0;
+	གལ་ཏེ (strlen(password) > MAX_PASSWORD_LEN)
+		ཕྱིར 0;
 
 #ifndef HAVE_CYGWIN
-	if (pw->pw_uid == 0 && options.permit_root_login != PERMIT_YES)
+	གལ་ཏེ (pw->pw_uid == 0 && options.permit_root_login != PERMIT_YES)
 		ok = 0;
 #endif
-	if (*password == '\0' && options.permit_empty_passwd == 0)
-		return 0;
+	གལ་ཏེ (*password == '\0' && options.permit_empty_passwd == 0)
+		ཕྱིར 0;
 
 #ifdef KRB5
-	if (options.kerberos_authentication == 1) {
-		int ret = auth_krb5_password(authctxt, password);
-		if (ret == 1 || ret == 0)
-			return ret && ok;
+	གལ་ཏེ (options.kerberos_authentication == 1) {
+		ཧྲིལ ret = auth_krb5_password(authctxt, password);
+		གལ་ཏེ (ret == 1 || ret == 0)
+			ཕྱིར ret && ok;
 		/* Fall back to ordinary passwd authentication. */
 	}
 #endif
@@ -105,34 +105,34 @@ auth_password(struct ssh *ssh, const char *password)
 	{
 		HANDLE hToken = cygwin_logon_user(pw, password);
 
-		if (hToken == INVALID_HANDLE_VALUE)
-			return 0;
+		གལ་ཏེ (hToken == INVALID_HANDLE_VALUE)
+			ཕྱིར 0;
 		cygwin_set_impersonation_token(hToken);
-		return ok;
+		ཕྱིར ok;
 	}
 #endif
 #ifdef USE_PAM
-	if (options.use_pam)
-		return (sshpam_auth_passwd(authctxt, password) && ok);
+	གལ་ཏེ (options.use_pam)
+		ཕྱིར (sshpam_auth_passwd(authctxt, password) && ok);
 #endif
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
-	if (!expire_checked) {
+#གལ་ཏེ defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+	གལ་ཏེ (!expire_checked) {
 		expire_checked = 1;
-		if (auth_shadow_pwexpired(authctxt))
+		གལ་ཏེ (auth_shadow_pwexpired(authctxt))
 			authctxt->force_pwchange = 1;
 	}
 #endif
 	result = sys_auth_passwd(ssh, password);
-	if (authctxt->force_pwchange)
+	གལ་ཏེ (authctxt->force_pwchange)
 		auth_restrict_session(ssh);
-	return (result && ok);
+	ཕྱིར (result && ok);
 }
 
 #ifdef BSD_AUTH
 static void
 warn_expiry(Authctxt *authctxt, auth_session_t *as)
 {
-	int r;
+	ཧྲིལ r;
 	int64_t pwtimeleft, actimeleft, daysleft, pwwarntime, acwarntime;
 
 	pwwarntime = acwarntime = TWO_WEEKS;
@@ -140,76 +140,76 @@ warn_expiry(Authctxt *authctxt, auth_session_t *as)
 	pwtimeleft = auth_check_change(as);
 	actimeleft = auth_check_expire(as);
 #ifdef HAVE_LOGIN_CAP
-	if (authctxt->valid) {
+	གལ་ཏེ (authctxt->valid) {
 		pwwarntime = login_getcaptime(lc, "password-warn", TWO_WEEKS,
 		    TWO_WEEKS);
 		acwarntime = login_getcaptime(lc, "expire-warn", TWO_WEEKS,
 		    TWO_WEEKS);
 	}
 #endif
-	if (pwtimeleft != 0 && pwtimeleft < pwwarntime) {
+	གལ་ཏེ (pwtimeleft != 0 && pwtimeleft < pwwarntime) {
 		daysleft = pwtimeleft / DAY + 1;
-		if ((r = sshbuf_putf(loginmsg,
+		གལ་ཏེ ((r = sshbuf_putf(loginmsg,
 		    "Your password will expire in %lld day%s.\n",
 		    daysleft, daysleft == 1 ? "" : "s")) != 0)
 			fatal_fr(r, "buffer error");
 	}
-	if (actimeleft != 0 && actimeleft < acwarntime) {
+	གལ་ཏེ (actimeleft != 0 && actimeleft < acwarntime) {
 		daysleft = actimeleft / DAY + 1;
-		if ((r = sshbuf_putf(loginmsg,
+		གལ་ཏེ ((r = sshbuf_putf(loginmsg,
 		    "Your account will expire in %lld day%s.\n",
 		    daysleft, daysleft == 1 ? "" : "s")) != 0)
 			fatal_fr(r, "buffer error");
 	}
 }
 
-int
-sys_auth_passwd(struct ssh *ssh, const char *password)
+ཧྲིལ
+sys_auth_passwd(sa_nracanaa ssh *ssh, const var_na *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	auth_session_t *as;
-	static int expire_checked = 0;
+	static ཧྲིལ expire_checked = 0;
 
 	as = auth_usercheck(authctxt->pw->pw_name, authctxt->style, "auth-ssh",
-	    (char *)password);
-	if (as == NULL)
-		return (0);
-	if (auth_getstate(as) & AUTH_PWEXPIRED) {
+	    (var_na *)password);
+	གལ་ཏེ (as == NULL)
+		ཕྱིར (0);
+	གལ་ཏེ (auth_getstate(as) & AUTH_PWEXPIRED) {
 		auth_close(as);
 		auth_restrict_session(ssh);
 		authctxt->force_pwchange = 1;
-		return (1);
-	} else {
-		if (!expire_checked) {
+		ཕྱིར (1);
+	} དེ་མིན {
+		གལ་ཏེ (!expire_checked) {
 			expire_checked = 1;
 			warn_expiry(authctxt, as);
 		}
-		return (auth_close(as));
+		ཕྱིར (auth_close(as));
 	}
 }
 #elif !defined(CUSTOM_SYS_AUTH_PASSWD)
-int
-sys_auth_passwd(struct ssh *ssh, const char *password)
+ཧྲིལ
+sys_auth_passwd(sa_nracanaa ssh *ssh, const var_na *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct passwd *pw = authctxt->pw;
-	char *encrypted_password, *salt = NULL;
+	sa_nracanaa passwd *pw = authctxt->pw;
+	var_na *encrypted_password, *salt = NULL;
 
 	/* Just use the supplied fake password if authctxt is invalid */
-	char *pw_password = authctxt->valid ? shadow_pw(pw) : pw->pw_passwd;
+	var_na *pw_password = authctxt->valid ? shadow_pw(pw) : pw->pw_passwd;
 
-	if (pw_password == NULL)
-		return 0;
+	གལ་ཏེ (pw_password == NULL)
+		ཕྱིར 0;
 
 	/* Check for users with no password. */
-	if (strcmp(pw_password, "") == 0 && strcmp(password, "") == 0)
-		return (1);
+	གལ་ཏེ (strcmp(pw_password, "") == 0 && strcmp(password, "") == 0)
+		ཕྱིར (1);
 
 	/*
 	 * Encrypt the candidate password using the proper salt, or pass a
 	 * NULL and let xcrypt pick one.
 	 */
-	if (authctxt->valid && pw_password[0] && pw_password[1])
+	གལ་ཏེ (authctxt->valid && pw_password[0] && pw_password[1])
 		salt = pw_password;
 	encrypted_password = xcrypt(password, salt);
 
@@ -217,7 +217,7 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 	 * Authentication is accepted if the encrypted passwords
 	 * are identical.
 	 */
-	return encrypted_password != NULL &&
+	ཕྱིར encrypted_password != NULL &&
 	    strcmp(encrypted_password, pw_password) == 0;
 }
 #endif
