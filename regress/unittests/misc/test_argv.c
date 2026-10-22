@@ -23,15 +23,15 @@ void test_argv(void);
 void
 test_argv(void)
 {
-	char **av = NULL;
-	int ac = 0;
+	var_na **av = NULL;
+	පූර්ණ_සංඛ්‍යා ac = 0;
 
 #define RESET_ARGV() \
 	do { \
 		argv_free(av, ac); \
 		av = NULL; \
 		ac = -1; \
-	} while (0)
+	} අතරතුර (0)
 
 	TEST_START("empty args");
 	ASSERT_INT_EQ(argv_split("", &ac, &av, 0), 0);

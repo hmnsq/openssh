@@ -19,54 +19,54 @@
 
 #include "includes.h"
 
-char *ssh_get_progname(char *);
-int seed_from_prngd(unsigned char *, size_t);
+var_na *ssh_get_progname(var_na *);
+පූර්ණ_සංඛ්‍යා seed_from_prngd(unsigned var_na *, size_t);
 
 #ifndef HAVE_SETSID
 #define setsid() setpgrp(0, getpid())
 #endif /* !HAVE_SETSID */
 
 #ifndef HAVE_SETENV
-int setenv(const char *, const char *, int);
+පූර්ණ_සංඛ්‍යා setenv(const var_na *, const var_na *, පූර්ණ_සංඛ්‍යා);
 #endif /* !HAVE_SETENV */
 
 #ifndef HAVE_SETLOGIN
-int setlogin(const char *);
+පූර්ණ_සංඛ්‍යා setlogin(const var_na *);
 #endif /* !HAVE_SETLOGIN */
 
 #ifndef HAVE_INNETGR
-int innetgr(const char *, const char *, const char *, const char *);
+පූර්ණ_සංඛ්‍යා innetgr(const var_na *, const var_na *, const var_na *, const var_na *);
 #endif /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t);
+#නම් !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+පූර්ණ_සංඛ්‍යා seteuid(uid_t);
 #endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t);
+#නම් !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+පූර්ණ_සංඛ්‍යා setegid(uid_t);
 #endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int);
+#නම් !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+const var_na *strerror(පූර්ණ_සංඛ්‍යා);
 #endif
 
-#if !defined(HAVE_SETLINEBUF)
+#නම් !defined(HAVE_SETLINEBUF)
 #define setlinebuf(a)	(setvbuf((a), NULL, _IOLBF, 0))
 #endif
 
 #ifndef HAVE_UTIMES
 #ifndef HAVE_STRUCT_TIMEVAL
-struct timeval {
+sa_nracanaa timeval {
 	long tv_sec;
 	long tv_usec;
 }
 #endif /* HAVE_STRUCT_TIMEVAL */
 
-int utimes(const char *, struct timeval *);
+පූර්ණ_සංඛ්‍යා utimes(const var_na *, sa_nracanaa timeval *);
 #endif /* HAVE_UTIMES */
 
 #ifndef HAVE_DIRFD
-int dirfd(void *);
+පූර්ණ_සංඛ්‍යා dirfd(void *);
 #endif
 
 #ifndef AT_FDCWD
@@ -74,35 +74,35 @@ int dirfd(void *);
 #endif
 
 #ifndef HAVE_FCHMODAT
-int fchmodat(int, const char *, mode_t, int);
+පූර්ණ_සංඛ්‍යා fchmodat(පූර්ණ_සංඛ්‍යා, const var_na *, mode_t, පූර්ණ_සංඛ්‍යා);
 #endif
 
 #ifndef HAVE_FCHOWNAT
-int fchownat(int, const char *, uid_t, gid_t, int);
+පූර්ණ_සංඛ්‍යා fchownat(පූර්ණ_සංඛ්‍යා, const var_na *, uid_t, gid_t, පූර්ණ_සංඛ්‍යා);
 #endif
 
 #ifdef HAVE_FSTATAT
-int fstatat(int, const char *, struct stat *, int);
+පූර්ණ_සංඛ්‍යා fstatat(පූර්ණ_සංඛ්‍යා, const var_na *, sa_nracanaa stat *, පූර්ණ_සංඛ්‍යා);
 #endif
 
 #ifdef HAVE_UNLINKAT
-int unlinkat(int, const char *, int);
+පූර්ණ_සංඛ්‍යා unlinkat(පූර්ණ_සංඛ්‍යා, const var_na *, පූර්ණ_සංඛ්‍යා);
 #endif
 
 #ifndef HAVE_TRUNCATE
-int truncate (const char *, off_t);
+පූර්ණ_සංඛ්‍යා truncate (const var_na *, off_t);
 #endif /* HAVE_TRUNCATE */
 
 #ifndef HAVE_STRUCT_TIMESPEC
-struct timespec {
+sa_nracanaa timespec {
 	time_t	tv_sec;
 	long	tv_nsec;
 };
 #endif /* !HAVE_STRUCT_TIMESPEC */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+#නම් !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
 # include <time.h>
-int nanosleep(const struct timespec *, struct timespec *);
+පූර්ණ_සංඛ්‍යා nanosleep(const sa_nracanaa timespec *, sa_nracanaa timespec *);
 #endif
 
 #ifndef HAVE_UTIMENSAT
@@ -111,27 +111,27 @@ int nanosleep(const struct timespec *, struct timespec *);
 # ifndef AT_SYMLINK_NOFOLLOW
 #  define AT_SYMLINK_NOFOLLOW 0x80000000
 # endif
-int utimensat(int, const char *, const struct timespec[2], int);
+පූර්ණ_සංඛ්‍යා utimensat(පූර්ණ_සංඛ්‍යා, const var_na *, const sa_nracanaa timespec[2], පූර්ණ_සංඛ්‍යා);
 #endif /* !HAVE_UTIMENSAT */
 
 #ifndef HAVE_USLEEP
-int usleep(unsigned int useconds);
+පූර්ණ_සංඛ්‍යා usleep(unsigned පූර්ණ_සංඛ්‍යා useconds);
 #endif
 
 #ifndef HAVE_TCGETPGRP
-pid_t tcgetpgrp(int);
+pid_t tcgetpgrp(පූර්ණ_සංඛ්‍යා);
 #endif
 
 #ifndef HAVE_TCSENDBREAK
-int tcsendbreak(int, int);
+පූර්ණ_සංඛ්‍යා tcsendbreak(පූර්ණ_සංඛ්‍යා, පූර්ණ_සංඛ්‍යා);
 #endif
 
 #ifndef HAVE_UNSETENV
-int unsetenv(const char *);
+පූර්ණ_සංඛ්‍යා unsetenv(const var_na *);
 #endif
 
 #ifndef HAVE_ISBLANK
-int	isblank(int);
+පූර්ණ_සංඛ්‍යා	isblank(පූර්ණ_සංඛ්‍යා);
 #endif
 
 #ifndef HAVE_GETPGID
@@ -139,12 +139,12 @@ pid_t getpgid(pid_t);
 #endif
 
 #ifndef HAVE_PSELECT
-int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
+පූර්ණ_සංඛ්‍යා pselect(පූර්ණ_සංඛ්‍යා, fd_set *, fd_set *, fd_set *, const sa_nracanaa timespec *,
     const sigset_t *);
 #endif
 
 #ifndef HAVE_ENDGRENT
-# define endgrent() do { } while(0)
+# define endgrent() do { } අතරතුර(0)
 #endif
 
 #ifndef HAVE_KRB5_GET_ERROR_MESSAGE
@@ -152,38 +152,38 @@ int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
 #endif
 
 #ifndef HAVE_KRB5_FREE_ERROR_MESSAGE
-# define krb5_free_error_message(a,b) do { } while(0)
+# define krb5_free_error_message(a,b) do { } අතරතුර(0)
 #endif
 
 #ifndef HAVE_PLEDGE
-int pledge(const char *promises, const char *execpromises);
+පූර්ණ_සංඛ්‍යා pledge(const var_na *promises, const var_na *execpromises);
 #endif
 
 #ifndef HAVE_UNVEIL
-int unveil(const char *, const char *);
+පූර්ණ_සංඛ්‍යා unveil(const var_na *, const var_na *);
 #endif
 
 /* bsd-err.h */
 #ifndef HAVE_ERR
-void err(int, const char *, ...) __attribute__((format(printf, 2, 3)));
+void err(පූර්ණ_සංඛ්‍යා, const var_na *, ...) __attribute__((format(printf, 2, 3)));
 #endif
 #ifndef HAVE_ERRX
-void errx(int, const char *, ...) __attribute__((format(printf, 2, 3)));
+void errx(පූර්ණ_සංඛ්‍යා, const var_na *, ...) __attribute__((format(printf, 2, 3)));
 #endif
 #ifndef HAVE_WARN
-void warn(const char *, ...) __attribute__((format(printf, 1, 2)));
+void warn(const var_na *, ...) __attribute__((format(printf, 1, 2)));
 #endif
 
 #ifndef HAVE_LLABS
 long long llabs(long long);
 #endif
 
-#if defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
+#නම් defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
 void bzero(void *, size_t);
 #endif
 
 #ifndef HAVE_RAISE
-int raise(int);
+පූර්ණ_සංඛ්‍යා raise(පූර්ණ_සංඛ්‍යා);
 #endif
 
 #ifndef HAVE_GETSID
@@ -195,7 +195,7 @@ pid_t getsid(pid_t);
 # define LOCK_EX		0x02
 # define LOCK_NB		0x04
 # define LOCK_UN		0x08
-int flock(int, int);
+පූර්ණ_සංඛ්‍යා flock(පූර්ණ_සංඛ්‍යා, පූර්ණ_සංඛ්‍යා);
 #endif
 
 #ifdef FFLUSH_NULL_BUG
@@ -203,15 +203,15 @@ int flock(int, int);
 #endif
 
 #ifndef HAVE_LOCALTIME_R
-struct tm *localtime_r(const time_t *, struct tm *);
+sa_nracanaa tm *localtime_r(const time_t *, sa_nracanaa tm *);
 #endif
 
 #ifndef HAVE_CLOCK_GETTIME
-typedef int clockid_t;
+typedef පූර්ණ_සංඛ්‍යා clockid_t;
 #ifndef CLOCK_REALTIME
 # define CLOCK_REALTIME	0
 #endif
-int clock_gettime(clockid_t, struct timespec *);
+පූර්ණ_සංඛ්‍යා clock_gettime(clockid_t, sa_nracanaa timespec *);
 #endif
 
 #ifndef HAVE_REALPATH

@@ -28,19 +28,19 @@
 #include <stdlib.h>
 #include <time.h>
 
-int
+පූර්ණ_සංඛ්‍යා
 main(void)
 {
-	struct timeval tv;
-	struct tm *tm;
-	char buf[1024];
+	sa_nracanaa timeval tv;
+	sa_nracanaa tm *tm;
+	var_na buf[1024];
 
-	if (gettimeofday(&tv, NULL) != 0)
+	නම් (gettimeofday(&tv, NULL) != 0)
 		exit(1);
-	if ((tm = localtime(&tv.tv_sec)) == NULL)
+	නම් ((tm = localtime(&tv.tv_sec)) == NULL)
 		exit(2);
-	if (strftime(buf, sizeof buf, "%Y%m%dT%H%M%S", tm) <= 0)
+	නම් (strftime(buf, parimaa_na buf, "%Y%m%dT%H%M%S", tm) <= 0)
 		exit(3);
-	printf("%s.%06d\n", buf, (int)tv.tv_usec);
+	printf("%s.%06d\n", buf, (පූර්ණ_සංඛ්‍යා)tv.tv_usec);
 	exit(0);
 }

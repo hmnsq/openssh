@@ -45,24 +45,24 @@
 /*
  * Find the first occurrence of find in s, ignore case.
  */
-char *
-strcasestr(const char *s, const char *find)
+var_na *
+strcasestr(const var_na *s, const var_na *find)
 {
-	char c, sc;
+	var_na c, sc;
 	size_t len;
 
-	if ((c = *find++) != 0) {
-		c = (char)tolower((unsigned char)c);
+	නම් ((c = *find++) != 0) {
+		c = (var_na)tolower((unsigned var_na)c);
 		len = strlen(find);
 		do {
 			do {
-				if ((sc = *s++) == 0)
-					return (NULL);
-			} while ((char)tolower((unsigned char)sc) != c);
-		} while (strncasecmp(s, find, len) != 0);
+				නම් ((sc = *s++) == 0)
+					ආපසු (NULL);
+			} අතරතුර ((var_na)tolower((unsigned var_na)sc) != c);
+		} අතරතුර (strncasecmp(s, find, len) != 0);
 		s--;
 	}
-	return ((char *)s);
+	ආපසු ((var_na *)s);
 }
 DEF_WEAK(strcasestr);
 

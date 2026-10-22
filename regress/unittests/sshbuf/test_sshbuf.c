@@ -28,12 +28,12 @@ void sshbuf_tests(void);
 void
 sshbuf_tests(void)
 {
-	struct sshbuf *p1, *p2, *p3;
+	sa_nracanaa sshbuf *p1, *p2, *p3;
 	u_int v32;
 	const u_char *cdp;
 	u_char *dp;
 	size_t sz;
-	int r;
+	පූර්ණ_සංඛ්‍යා r;
 
 	TEST_START("allocate sshbuf");
 	p1 = sshbuf_new();

@@ -28,14 +28,14 @@
 #include <openssl/ecdsa.h>
 #include <openssl/dh.h>
 
-int ssh_compatible_openssl(long, long);
-int ssh_libcrypto_init(void);
+පූර්ණ_සංඛ්‍යා ssh_compatible_openssl(long, long);
+පූර්ණ_සංඛ්‍යා ssh_libcrypto_init(void);
 
-#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#නම් (OPENSSL_VERSION_NUMBER < 0x10100000L)
 # error OpenSSL 1.1.0 or greater is required
 #endif
 #ifdef LIBRESSL_VERSION_NUMBER
-# if LIBRESSL_VERSION_NUMBER < 0x3010000fL
+# නම් LIBRESSL_VERSION_NUMBER < 0x3010000fL
 #  error LibreSSL 3.1.0 or greater is required
 # endif
 #endif
@@ -45,12 +45,12 @@ int ssh_libcrypto_init(void);
 #endif
 
 #ifdef LIBRESSL_VERSION_NUMBER
-# if LIBRESSL_VERSION_NUMBER < 0x3010000fL
+# නම් LIBRESSL_VERSION_NUMBER < 0x3010000fL
 #  define HAVE_BROKEN_CHACHA20
 # endif
 #endif
 
-#if defined(OPENSSL_IS_BORINGSSL) || defined(OPENSSL_IS_AWSLC)
+#නම් defined(OPENSSL_IS_BORINGSSL) || defined(OPENSSL_IS_AWSLC)
 /*
  * BoringSSL and AWS-LC (rightly) got rid of the BN_FLG_CONSTTIME flag, along with
  * the entire BN_set_flags() interface.
@@ -76,25 +76,25 @@ int ssh_libcrypto_init(void);
 #ifndef HAVE_EVP_CIPHER_CTX_GET_IV
 # ifdef HAVE_EVP_CIPHER_CTX_GET_UPDATED_IV
 #  define EVP_CIPHER_CTX_get_iv EVP_CIPHER_CTX_get_updated_iv
-# else /* HAVE_EVP_CIPHER_CTX_GET_UPDATED_IV */
-int EVP_CIPHER_CTX_get_iv(const EVP_CIPHER_CTX *ctx,
-    unsigned char *iv, size_t len);
+# නැතහොත් /* HAVE_EVP_CIPHER_CTX_GET_UPDATED_IV */
+පූර්ණ_සංඛ්‍යා EVP_CIPHER_CTX_get_iv(const EVP_CIPHER_CTX *ctx,
+    unsigned var_na *iv, size_t len);
 # endif /* HAVE_EVP_CIPHER_CTX_GET_UPDATED_IV */
 #endif /* HAVE_EVP_CIPHER_CTX_GET_IV */
 
 #ifndef HAVE_EVP_CIPHER_CTX_SET_IV
-int EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx,
-    const unsigned char *iv, size_t len);
+පූර්ණ_සංඛ්‍යා EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx,
+    const unsigned var_na *iv, size_t len);
 #endif /* HAVE_EVP_CIPHER_CTX_SET_IV */
 
 #ifndef HAVE_EVP_DIGESTSIGN
-int EVP_DigestSign(EVP_MD_CTX *, unsigned char *, size_t *,
-    const unsigned char *, size_t);
+පූර්ණ_සංඛ්‍යා EVP_DigestSign(EVP_MD_CTX *, unsigned var_na *, size_t *,
+    const unsigned var_na *, size_t);
 #endif
 
 #ifndef HAVE_EVP_DIGESTVERIFY
-int EVP_DigestVerify(EVP_MD_CTX *, const unsigned char *, size_t,
-    const unsigned char *, size_t);
+පූර්ණ_සංඛ්‍යා EVP_DigestVerify(EVP_MD_CTX *, const unsigned var_na *, size_t,
+    const unsigned var_na *, size_t);
 #endif
 
 #endif /* WITH_OPENSSL */

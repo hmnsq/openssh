@@ -42,13 +42,13 @@
 #include <unistd.h>
 #include <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+පූර්ණ_සංඛ්‍යා
+getgrouplist(const var_na *uname, gid_t agroup, gid_t *groups, පූර්ණ_සංඛ්‍යා *grpcnt)
 {
-	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	sa_nracanaa group *grp;
+	පූර්ණ_සංඛ්‍යා i, ngroups;
+	පූර්ණ_සංඛ්‍යා ret, maxgroups;
+	පූර්ණ_සංඛ්‍යා bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	නම් (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		ආපසු (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,29 +67,29 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
+	අතරතුර ((grp = getgrent())) {
+		නම් (grp->gr_gid == agroup)
 			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+		සඳහා (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			නම් (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
+		නම් (bail)
 			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		සඳහා (i = 0; grp->gr_mem[i]; i++) {
+			නම් (!strcmp(grp->gr_mem[i], uname)) {
+				නම් (ngroups >= maxgroups) {
 					ret = -1;
 					goto out;
 				}
 				groups[ngroups++] = grp->gr_gid;
-				break;
+				bha_nga;
 			}
 		}
 	}
 out:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	ආපසු (ret);
 }
 
 #endif /* HAVE_GETGROUPLIST */

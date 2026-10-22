@@ -35,58 +35,58 @@
 
 /* OpenSSH compatibility glue for the small libsodium API subset below. */
 #define ACQUIRE_FENCE (void)0
-#define COMPILER_ASSERT(x) (void)sizeof(char[(x) ? 1 : -1])
+#define COMPILER_ASSERT(x) (void)parimaa_na(var_na[(x) ? 1 : -1])
 
 #ifdef WITH_OPENSSL
 # include <openssl/sha.h>
 typedef SHA512_CTX crypto_hash_sha512_state;
-#else
+#නැතහොත්
 typedef SHA2_CTX crypto_hash_sha512_state;
 #endif
 
-static int
+static පූර්ණ_සංඛ්‍යා
 crypto_hash_sha512_init(crypto_hash_sha512_state *state)
 {
 #ifdef WITH_OPENSSL
 	SHA512_Init(state);
-#else
+#නැතහොත්
 	SHA512Init(state);
 #endif
-	return 0;
+	ආපසු 0;
 }
 
-static int
+static පූර්ණ_සංඛ්‍යා
 crypto_hash_sha512_update(crypto_hash_sha512_state *state,
-    const unsigned char *in, unsigned long long inlen)
+    const unsigned var_na *in, unsigned long long inlen)
 {
 #ifdef WITH_OPENSSL
 	SHA512_Update(state, in, inlen);
-#else
+#නැතහොත්
 	SHA512Update(state, in, inlen);
 #endif
-	return 0;
+	ආපසු 0;
 }
 
-static int
-crypto_hash_sha512_final(crypto_hash_sha512_state *state, unsigned char *out)
+static පූර්ණ_සංඛ්‍යා
+crypto_hash_sha512_final(crypto_hash_sha512_state *state, unsigned var_na *out)
 {
 #ifdef WITH_OPENSSL
 	SHA512_Final(out, state);
-#else
+#නැතහොත්
 	SHA512Final(out, state);
 #endif
-	return 0;
+	ආපසු 0;
 }
 
-static int
-sodium_is_zero(const unsigned char *n, size_t nlen)
+static පූර්ණ_සංඛ්‍යා
+sodium_is_zero(const unsigned var_na *n, size_t nlen)
 {
 	size_t i;
-	volatile unsigned char d = 0;
+	ca_ncala unsigned var_na d = 0;
 
-	for (i = 0; i < nlen; i++)
+	සඳහා (i = 0; i < nlen; i++)
 		d |= n[i];
-	return 1 & ((d - 1) >> 8);
+	ආපසු 1 & ((d - 1) >> 8);
 }
 
 #ifndef ed25519_ref10_H
@@ -101,16 +101,16 @@ sodium_is_zero(const unsigned char *n, size_t nlen)
 
 #ifdef HAVE_TI_MODE
 typedef uint64_t fe25519[5];
-#else
+#නැතහොත්
 typedef int32_t fe25519[10];
 #endif
 
 static void fe25519_invert(fe25519 out, const fe25519 z);
-static void fe25519_frombytes(fe25519 h, const unsigned char *s);
-static void fe25519_tobytes(unsigned char *s, const fe25519 h);
+static void fe25519_frombytes(fe25519 h, const unsigned var_na *s);
+static void fe25519_tobytes(unsigned var_na *s, const fe25519 h);
 
 #ifdef HAVE_TI_MODE
-#else
+#නැතහොත්
 #endif
 
 /*
@@ -127,33 +127,33 @@ static void fe25519_tobytes(unsigned char *s, const fe25519 h);
  ge25519_precomp (Duif): (y+x,y-x,2dxy)
  */
 
-typedef struct {
+typedef sa_nracanaa {
     fe25519 X;
     fe25519 Y;
     fe25519 Z;
 } ge25519_p2;
 
-typedef struct {
+typedef sa_nracanaa {
     fe25519 X;
     fe25519 Y;
     fe25519 Z;
     fe25519 T;
 } ge25519_p3;
 
-typedef struct {
+typedef sa_nracanaa {
     fe25519 X;
     fe25519 Y;
     fe25519 Z;
     fe25519 T;
 } ge25519_p1p1;
 
-typedef struct {
+typedef sa_nracanaa {
     fe25519 yplusx;
     fe25519 yminusx;
     fe25519 xy2d;
 } ge25519_precomp;
 
-typedef struct {
+typedef sa_nracanaa {
     fe25519 YplusX;
     fe25519 YminusX;
     fe25519 Z;
@@ -161,11 +161,11 @@ typedef struct {
 } ge25519_cached;
 
 
-static void ge25519_p3_tobytes(unsigned char *s, const ge25519_p3 *h);
+static void ge25519_p3_tobytes(unsigned var_na *s, const ge25519_p3 *h);
 
-static int ge25519_frombytes(ge25519_p3 *h, const unsigned char *s);
+static පූර්ණ_සංඛ්‍යා ge25519_frombytes(ge25519_p3 *h, const unsigned var_na *s);
 
-static int ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s);
+static පූර්ණ_සංඛ්‍යා ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned var_na *s);
 
 static void ge25519_p1p1_to_p2(ge25519_p2 *r, const ge25519_p1p1 *p);
 
@@ -177,19 +177,19 @@ static void ge25519_p3_add(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 
 
 static void ge25519_p3_sub(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q);
 
-static void ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a);
+static void ge25519_scalarmult_base(ge25519_p3 *h, const unsigned var_na *a);
 
-static void ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
+static void ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned var_na *a,
                                        const ge25519_p3 *A,
-                                       const unsigned char *b);
+                                       const unsigned var_na *b);
 
 
 
-static int ge25519_is_canonical(const unsigned char *s);
+static පූර්ණ_සංඛ්‍යා ge25519_is_canonical(const unsigned var_na *s);
 
 
 
-static int ge25519_has_small_order(const ge25519_p3 *p);
+static පූර්ණ_සංඛ්‍යා ge25519_has_small_order(const ge25519_p3 *p);
 
 
 
@@ -206,13 +206,13 @@ static int ge25519_has_small_order(const ge25519_p3 *p);
  */
 
 
-static void sc25519_reduce(unsigned char s[64]);
+static void sc25519_reduce(unsigned var_na s[64]);
 
 
-static void sc25519_muladd(unsigned char s[32], const unsigned char a[32],
-                    const unsigned char b[32], const unsigned char c[32]);
+static void sc25519_muladd(unsigned var_na s[32], const unsigned var_na a[32],
+                    const unsigned var_na b[32], const unsigned var_na c[32]);
 
-static int sc25519_is_canonical(const unsigned char s[32]);
+static පූර්ණ_සංඛ්‍යා sc25519_is_canonical(const unsigned var_na s[32]);
 
 #endif
 
@@ -221,22 +221,22 @@ static int sc25519_is_canonical(const unsigned char s[32]);
  h = 0
  */
 
-static inline void
+static anta_hstha void
 fe25519_0(fe25519 h)
 {
-    memset(&h[0], 0, 10 * sizeof h[0]);
+    memset(&h[0], 0, 10 * parimaa_na h[0]);
 }
 
 /*
  h = 1
  */
 
-static inline void
+static anta_hstha void
 fe25519_1(fe25519 h)
 {
     h[0] = 1;
     h[1] = 0;
-    memset(&h[2], 0, 8 * sizeof h[0]);
+    memset(&h[2], 0, 8 * parimaa_na h[0]);
 }
 
 /*
@@ -251,7 +251,7 @@ fe25519_1(fe25519 h)
  |h| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static inline void
+static anta_hstha void
 fe25519_add(fe25519 h, const fe25519 f, const fe25519 g)
 {
     int32_t h0 = f[0] + g[0];
@@ -325,7 +325,7 @@ fe25519_sub(fe25519 h, const fe25519 f, const fe25519 g)
  |h| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
  */
 
-static inline void
+static anta_hstha void
 fe25519_neg(fe25519 h, const fe25519 f)
 {
     int32_t h0 = -f[0];
@@ -359,7 +359,7 @@ fe25519_neg(fe25519 h, const fe25519 f)
  */
 
 static void
-fe25519_cmov(fe25519 f, const fe25519 g, unsigned int b)
+fe25519_cmov(fe25519 f, const fe25519 g, unsigned පූර්ණ_සංඛ්‍යා b)
 {
     uint32_t mask = (uint32_t) (-(int32_t) b);
     int32_t  f0, f1, f2, f3, f4, f5, f6, f7, f8, f9;
@@ -419,10 +419,10 @@ fe25519_cmov(fe25519 f, const fe25519 g, unsigned int b)
  h = f
  */
 
-static inline void
+static anta_hstha void
 fe25519_copy(fe25519 h, const fe25519 f)
 {
-    memcpy(h, f, 10 * sizeof h[0]);
+    memcpy(h, f, 10 * parimaa_na h[0]);
 }
 
 /*
@@ -433,14 +433,14 @@ fe25519_copy(fe25519 h, const fe25519 f)
  |f| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static inline int
+static anta_hstha පූර්ණ_සංඛ්‍යා
 fe25519_isnegative(const fe25519 f)
 {
-    unsigned char s[32];
+    unsigned var_na s[32];
 
     fe25519_tobytes(s, f);
 
-    return s[0] & 1;
+    ආපසු s[0] & 1;
 }
 
 /*
@@ -451,14 +451,14 @@ fe25519_isnegative(const fe25519 f)
  |f| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static inline int
+static anta_hstha පූර්ණ_සංඛ්‍යා
 fe25519_iszero(const fe25519 f)
 {
-    unsigned char s[32];
+    unsigned var_na s[32];
 
     fe25519_tobytes(s, f);
 
-    return sodium_is_zero(s, 32);
+    ආපසු sodium_is_zero(s, 32);
 }
 
 /*
@@ -1109,8 +1109,8 @@ fe25519_sq2(fe25519 h, const fe25519 f)
 
 
 
-static inline uint64_t
-load_3(const unsigned char *in)
+static anta_hstha uint64_t
+load_3(const unsigned var_na *in)
 {
     uint64_t result;
 
@@ -1118,11 +1118,11 @@ load_3(const unsigned char *in)
     result |= ((uint64_t) in[1]) << 8;
     result |= ((uint64_t) in[2]) << 16;
 
-    return result;
+    ආපසු result;
 }
 
-static inline uint64_t
-load_4(const unsigned char *in)
+static anta_hstha uint64_t
+load_4(const unsigned var_na *in)
 {
     uint64_t result;
 
@@ -1131,7 +1131,7 @@ load_4(const unsigned char *in)
     result |= ((uint64_t) in[2]) << 16;
     result |= ((uint64_t) in[3]) << 24;
 
-    return result;
+    ආපසු result;
 }
 
 /*
@@ -1144,7 +1144,7 @@ load_4(const unsigned char *in)
  */
 
 #ifdef HAVE_TI_MODE
-#else
+#නැතහොත්
 /* sqrt(-1) */
 static const fe25519 fe25519_sqrtm1 = {
     -32595792, -7943725,  9377950,  3500415, 12389472, -272473, -25146209, -2005654, 326686, 11406482
@@ -1178,7 +1178,7 @@ static const fe25519 ed25519_d2 = {
  */
 
 void
-fe25519_frombytes(fe25519 h, const unsigned char *s)
+fe25519_frombytes(fe25519 h, const unsigned var_na *s)
 {
     int64_t h0 = load_4(s);
     int64_t h1 = load_3(s + 4) << 6;
@@ -1355,7 +1355,7 @@ fe25519_reduce(fe25519 h, const fe25519 f)
  */
 
 void
-fe25519_tobytes(unsigned char *s, const fe25519 h)
+fe25519_tobytes(unsigned var_na *s, const fe25519 h)
 {
     fe25519 t;
 
@@ -1403,7 +1403,7 @@ void
 fe25519_invert(fe25519 out, const fe25519 z)
 {
     fe25519 t0, t1, t2, t3;
-    int     i;
+    පූර්ණ_සංඛ්‍යා     i;
 
     fe25519_sq(t0, z);
     fe25519_sq(t1, t0);
@@ -1413,39 +1413,39 @@ fe25519_invert(fe25519 out, const fe25519 z)
     fe25519_sq(t2, t0);
     fe25519_mul(t1, t1, t2);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 5; ++i) {
+    සඳහා (i = 1; i < 5; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 10; ++i) {
+    සඳහා (i = 1; i < 10; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t2, t2, t1);
     fe25519_sq(t3, t2);
-    for (i = 1; i < 20; ++i) {
+    සඳහා (i = 1; i < 20; ++i) {
         fe25519_sq(t3, t3);
     }
     fe25519_mul(t2, t3, t2);
-    for (i = 1; i < 11; ++i) {
+    සඳහා (i = 1; i < 11; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 50; ++i) {
+    සඳහා (i = 1; i < 50; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t2, t2, t1);
     fe25519_sq(t3, t2);
-    for (i = 1; i < 100; ++i) {
+    සඳහා (i = 1; i < 100; ++i) {
         fe25519_sq(t3, t3);
     }
     fe25519_mul(t2, t3, t2);
-    for (i = 1; i < 51; ++i) {
+    සඳහා (i = 1; i < 51; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 6; ++i) {
+    සඳහා (i = 1; i < 6; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(out, t1, t0);
@@ -1459,7 +1459,7 @@ static void
 fe25519_pow22523(fe25519 out, const fe25519 z)
 {
     fe25519 t0, t1, t2;
-    int     i;
+    පූර්ණ_සංඛ්‍යා     i;
 
     fe25519_sq(t0, z);
     fe25519_sq(t1, t0);
@@ -1469,35 +1469,35 @@ fe25519_pow22523(fe25519 out, const fe25519 z)
     fe25519_sq(t0, t0);
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 5; ++i) {
+    සඳහා (i = 1; i < 5; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 10; ++i) {
+    සඳහා (i = 1; i < 10; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t1, t1, t0);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 20; ++i) {
+    සඳහා (i = 1; i < 20; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 11; ++i) {
+    සඳහා (i = 1; i < 11; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 50; ++i) {
+    සඳහා (i = 1; i < 50; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t1, t1, t0);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 100; ++i) {
+    සඳහා (i = 1; i < 100; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 51; ++i) {
+    සඳහා (i = 1; i < 51; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
@@ -1534,40 +1534,40 @@ ge25519_add_cached(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_cached *q
 }
 
 static void
-slide_vartime(signed char *r, const unsigned char *a)
+slide_vartime(signed var_na *r, const unsigned var_na *a)
 {
-    int i;
-    int b;
-    int k;
-    int ribs;
-    int cmp;
+    පූර්ණ_සංඛ්‍යා i;
+    පූර්ණ_සංඛ්‍යා b;
+    පූර්ණ_සංඛ්‍යා k;
+    පූර්ණ_සංඛ්‍යා ribs;
+    පූර්ණ_සංඛ්‍යා cmp;
 
-    for (i = 0; i < 256; ++i) {
+    සඳහා (i = 0; i < 256; ++i) {
         r[i] = 1 & (a[i >> 3] >> (i & 7));
     }
-    for (i = 0; i < 256; ++i) {
-        if (! r[i]) {
+    සඳහා (i = 0; i < 256; ++i) {
+        නම් (! r[i]) {
             continue;
         }
-        for (b = 1; b <= 6 && i + b < 256; ++b) {
-            if (! r[i + b]) {
+        සඳහා (b = 1; b <= 6 && i + b < 256; ++b) {
+            නම් (! r[i + b]) {
                 continue;
             }
             ribs = r[i + b] << b;
             cmp = r[i] + ribs;
-            if (cmp <= 15) {
+            නම් (cmp <= 15) {
                 r[i] = cmp;
                 r[i + b] = 0;
-            } else {
+            } නැතහොත් {
                 cmp = r[i] - ribs;
-                if (cmp < -15) {
-                    break;
+                නම් (cmp < -15) {
+                    bha_nga;
                 }
                 r[i] = cmp;
-                for (k = i + b; k < 256; ++k) {
-                    if (! r[k]) {
+                සඳහා (k = i + b; k < 256; ++k) {
+                    නම් (! r[k]) {
                         r[k] = 1;
-                        break;
+                        bha_nga;
                     }
                     r[k] = 0;
                 }
@@ -1576,10 +1576,10 @@ slide_vartime(signed char *r, const unsigned char *a)
     }
 }
 
-static volatile unsigned char optblocker_u8;
+static ca_ncala unsigned var_na optblocker_u8;
 
-int
-ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
+පූර්ණ_සංඛ්‍යා
+ge25519_frombytes(ge25519_p3 *h, const unsigned var_na *s)
 {
     fe25519 u;
     fe25519 v;
@@ -1587,7 +1587,7 @@ ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
     fe25519 m_root_check, p_root_check;
     fe25519 negx;
     fe25519 x_sqrtm1;
-    int     has_m_root, has_p_root;
+    පූර්ණ_සංඛ්‍යා     has_m_root, has_p_root;
 
     fe25519_frombytes(h->Y, s);
     fe25519_1(h->Z);
@@ -1613,11 +1613,11 @@ ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
     fe25519_cmov(h->X, negx, fe25519_isnegative(h->X) ^ (((s[31] >> 5) ^ optblocker_u8) >> 2));
     fe25519_mul(h->T, h->X, h->Y);
 
-    return (has_m_root | has_p_root) - 1;
+    ආපසු (has_m_root | has_p_root) - 1;
 }
 
-int
-ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s)
+පූර්ණ_සංඛ්‍යා
+ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned var_na *s)
 {
     fe25519 u;
     fe25519 v;
@@ -1645,20 +1645,20 @@ ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s)
     fe25519_sq(vxx, h->X);
     fe25519_mul(vxx, vxx, v);
     fe25519_sub(m_root_check, vxx, u); /* vx^2-u */
-    if (fe25519_iszero(m_root_check) == 0) {
+    නම් (fe25519_iszero(m_root_check) == 0) {
         fe25519_add(p_root_check, vxx, u); /* vx^2+u */
-        if (fe25519_iszero(p_root_check) == 0) {
-            return -1;
+        නම් (fe25519_iszero(p_root_check) == 0) {
+            ආපසු -1;
         }
         fe25519_mul(h->X, h->X, fe25519_sqrtm1);
     }
 
-    if (fe25519_isnegative(h->X) == (s[31] >> 7)) { /* vartime function - compiler optimization is fine */
+    නම් (fe25519_isnegative(h->X) == (s[31] >> 7)) { /* vartime function - compiler optimization is fine */
         fe25519_neg(h->X, h->X);
     }
     fe25519_mul(h->T, h->X, h->Y);
 
-    return 0;
+    ආපසු 0;
 }
 
 /*
@@ -1805,7 +1805,7 @@ ge25519_p3_to_p2(ge25519_p2 *r, const ge25519_p3 *p)
 }
 
 void
-ge25519_p3_tobytes(unsigned char *s, const ge25519_p3 *h)
+ge25519_p3_tobytes(unsigned var_na *s, const ge25519_p3 *h)
 {
     fe25519 recip;
     fe25519 x;
@@ -1838,46 +1838,46 @@ ge25519_precomp_0(ge25519_precomp *h)
     fe25519_0(h->xy2d);
 }
 
-static unsigned char
-equal(signed char b, signed char c)
+static unsigned var_na
+equal(signed var_na b, signed var_na c)
 {
-#if defined(HAVE_INLINE_ASM) && defined(__x86_64__)
+#නම් defined(HAVE_INLINE_ASM) && defined(__x86_64__)
     int32_t b32 = (int32_t) b, c32 = (int32_t) c, q32, z32;
     __asm__ ("xorl %0,%0\n movl $1,%1\n cmpb %b3,%b2\n cmovel %1,%0" :
              "=&r"(z32), "=&r"(q32) : "q"(b32), "q"(c32) : "cc");
-    return (unsigned char) z32;
+    ආපසු (unsigned var_na) z32;
 #elif defined(HAVE_INLINE_ASM) && defined(__aarch64__)
-    unsigned char z;
+    unsigned var_na z;
     __asm__ ("and %w0,%w1,255\n cmp %w0,%w2,uxtb\n cset %w0,eq" :
              "=&r"(z) : "r"(b), "r"(c) : "cc");
-    return z;
-#else
-    const unsigned char x  = (unsigned char) b ^ (unsigned char) c; /* 0: yes; 1..255: no */
+    ආපසු z;
+#නැතහොත්
+    const unsigned var_na x  = (unsigned var_na) b ^ (unsigned var_na) c; /* 0: yes; 1..255: no */
     uint32_t            y  = (uint32_t) x; /* 0: yes; 1..255: no */
 
     y--;
-    return ((y >> 29) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
+    ආපසු ((y >> 29) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
 #endif
 }
 
-static unsigned char
-negative(signed char b)
+static unsigned var_na
+negative(signed var_na b)
 {
-#if defined(HAVE_INLINE_ASM) && defined(__x86_64__)
+#නම් defined(HAVE_INLINE_ASM) && defined(__x86_64__)
     __asm__ ("shrb $7,%0" : "+r"(b) : : "cc");
-    return b;
+    ආපසු b;
 #elif defined(HAVE_INLINE_ASM) && defined(__aarch64__)
     uint8_t x;
     __asm__ ("ubfx %w0,%w1,7,1" : "=r"(x) : "r"(b) : );
-    return x;
-#else
+    ආපසු x;
+#නැතහොත්
     const uint8_t x = (uint8_t) b; /* 0..127: no 128..255: yes */
-    return ((x >> 5) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
+    ආපසු ((x >> 5) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
 #endif
 }
 
 static void
-ge25519_cmov(ge25519_precomp *t, const ge25519_precomp *u, unsigned char b)
+ge25519_cmov(ge25519_precomp *t, const ge25519_precomp *u, unsigned var_na b)
 {
     fe25519_cmov(t->yplusx, u->yplusx, b);
     fe25519_cmov(t->yminusx, u->yminusx, b);
@@ -1886,11 +1886,11 @@ ge25519_cmov(ge25519_precomp *t, const ge25519_precomp *u, unsigned char b)
 
 
 static void
-ge25519_cmov8(ge25519_precomp *t, const ge25519_precomp precomp[8], const signed char b)
+ge25519_cmov8(ge25519_precomp *t, const ge25519_precomp precomp[8], const signed var_na b)
 {
     ge25519_precomp     minust;
-    const unsigned char bnegative = negative(b);
-    const unsigned char babs      = b - (((-bnegative) & b) * ((signed char) 1 << 1));
+    const unsigned var_na bnegative = negative(b);
+    const unsigned var_na babs      = b - (((-bnegative) & b) * ((signed var_na) 1 << 1));
 
     ge25519_precomp_0(t);
     ge25519_cmov(t, &precomp[0], equal(babs, 1));
@@ -1908,11 +1908,11 @@ ge25519_cmov8(ge25519_precomp *t, const ge25519_precomp precomp[8], const signed
 }
 
 static void
-ge25519_cmov8_base(ge25519_precomp *t, const int pos, const signed char b)
+ge25519_cmov8_base(ge25519_precomp *t, const පූර්ණ_සංඛ්‍යා pos, const signed var_na b)
 {
     static const ge25519_precomp base[32][8] = { /* base[i][j] = (j+1)*256^i*B */
 #ifdef HAVE_TI_MODE
-#else
+#නැතහොත්
 { /* 0/31 */
   {
     { 25967493, -14356035, 29566456, 3660896, -12694345, 4014787, 27544626, -11754271, -6079156, 2047605 },
@@ -3298,12 +3298,12 @@ ge25519_sub_cached(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_cached *q
  */
 
 void
-ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
-                                  const ge25519_p3 *A, const unsigned char *b)
+ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned var_na *a,
+                                  const ge25519_p3 *A, const unsigned var_na *b)
 {
     static const ge25519_precomp Bi[8] = {
 #ifdef HAVE_TI_MODE
-#else
+#නැතහොත්
 {
   { 25967493, -14356035, 29566456, 3660896, -12694345, 4014787, 27544626, -11754271, -6079156, 2047605 },
   { -12545711, 934262, -2722910, 3049990, -727428, 9406986, 12720692, 5043384, 19500929, -15469378 },
@@ -3346,13 +3346,13 @@ ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
 }
 #endif
     };
-    signed char    aslide[256];
-    signed char    bslide[256];
+    signed var_na    aslide[256];
+    signed var_na    bslide[256];
     ge25519_cached Ai[8]; /* A,3A,5A,7A,9A,11A,13A,15A */
     ge25519_p1p1   t;
     ge25519_p3     u;
     ge25519_p3     A2;
-    int            i;
+    පූර්ණ_සංඛ්‍යා            i;
 
     slide_vartime(aslide, a);
     slide_vartime(bslide, b);
@@ -3392,27 +3392,27 @@ ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
 
     ge25519_p2_0(r);
 
-    for (i = 255; i >= 0; --i) {
-        if (aslide[i] || bslide[i]) {
-            break;
+    සඳහා (i = 255; i >= 0; --i) {
+        නම් (aslide[i] || bslide[i]) {
+            bha_nga;
         }
     }
 
-    for (; i >= 0; --i) {
+    සඳහා (; i >= 0; --i) {
         ge25519_p2_dbl(&t, r);
 
-        if (aslide[i] > 0) {
+        නම් (aslide[i] > 0) {
             ge25519_p1p1_to_p3(&u, &t);
             ge25519_add_cached(&t, &u, &Ai[aslide[i] / 2]);
-        } else if (aslide[i] < 0) {
+        } නැතහොත් නම් (aslide[i] < 0) {
             ge25519_p1p1_to_p3(&u, &t);
             ge25519_sub_cached(&t, &u, &Ai[(-aslide[i]) / 2]);
         }
 
-        if (bslide[i] > 0) {
+        නම් (bslide[i] > 0) {
             ge25519_p1p1_to_p3(&u, &t);
             ge25519_add_precomp(&t, &u, &Bi[bslide[i] / 2]);
-        } else if (bslide[i] < 0) {
+        } නැතහොත් නම් (bslide[i] < 0) {
             ge25519_p1p1_to_p3(&u, &t);
             ge25519_sub_precomp(&t, &u, &Bi[(-bslide[i]) / 2]);
         }
@@ -3443,16 +3443,16 @@ ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
  */
 
 void
-ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a)
+ge25519_scalarmult_base(ge25519_p3 *h, const unsigned var_na *a)
 {
-    signed char     e[64];
-    signed char     carry;
+    signed var_na     e[64];
+    signed var_na     carry;
     ge25519_p1p1    r;
     ge25519_p2      s;
     ge25519_precomp t;
-    int             i;
+    පූර්ණ_සංඛ්‍යා             i;
 
-    for (i = 0; i < 32; ++i) {
+    සඳහා (i = 0; i < 32; ++i) {
         e[2 * i + 0] = (a[i] >> 0) & 15;
         e[2 * i + 1] = (a[i] >> 4) & 15;
     }
@@ -3460,18 +3460,18 @@ ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a)
     /* e[63] is between 0 and 7 */
 
     carry = 0;
-    for (i = 0; i < 63; ++i) {
+    සඳහා (i = 0; i < 63; ++i) {
         e[i] += carry;
         carry = e[i] + 8;
         carry >>= 4;
-        e[i] -= carry * ((signed char) 1 << 4);
+        e[i] -= carry * ((signed var_na) 1 << 4);
     }
     e[63] += carry;
     /* each e[i] is between -8 and 8 */
 
     ge25519_p3_0(h);
 
-    for (i = 1; i < 64; i += 2) {
+    සඳහා (i = 1; i < 64; i += 2) {
         ge25519_cmov8_base(&t, i / 2, e[i]);
         ge25519_add_precomp(&r, h, &t);
         ge25519_p1p1_to_p3(h, &r);
@@ -3486,7 +3486,7 @@ ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a)
     ge25519_p2_dbl(&r, &s);
     ge25519_p1p1_to_p3(h, &r);
 
-    for (i = 0; i < 64; i += 2) {
+    සඳහා (i = 0; i < 64; i += 2) {
         ge25519_cmov8_base(&t, i / 2, e[i]);
         ge25519_add_precomp(&r, h, &t);
         ge25519_p1p1_to_p3(h, &r);
@@ -3533,29 +3533,29 @@ ge25519_p3_sub(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q)
 
 
 
-int
-ge25519_is_canonical(const unsigned char *s)
+පූර්ණ_සංඛ්‍යා
+ge25519_is_canonical(const unsigned var_na *s)
 {
-    unsigned char c;
-    unsigned char d;
-    unsigned int  i;
+    unsigned var_na c;
+    unsigned var_na d;
+    unsigned පූර්ණ_සංඛ්‍යා  i;
 
     c = (s[31] & 0x7f) ^ 0x7f;
-    for (i = 30; i > 0; i--) {
+    සඳහා (i = 30; i > 0; i--) {
         c |= s[i] ^ 0xff;
     }
-    c = (((unsigned int) c) - 1U) >> 8;
-    d = (0xed - 1U - (unsigned int) s[0]) >> 8;
+    c = (((unsigned පූර්ණ_සංඛ්‍යා) c) - 1U) >> 8;
+    d = (0xed - 1U - (unsigned පූර්ණ_සංඛ්‍යා) s[0]) >> 8;
 
-    return 1 - (c & d & 1);
+    ආපසු 1 - (c & d & 1);
 }
 
-int
+පූර්ණ_සංඛ්‍යා
 ge25519_has_small_order(const ge25519_p3 *p)
 {
     fe25519 y_sqrtm1;
     fe25519 c;
-    int     ret = 0;
+    පූර්ණ_සංඛ්‍යා     ret = 0;
 
     ret |= fe25519_iszero(p->X);
     ret |= fe25519_iszero(p->Y);
@@ -3566,7 +3566,7 @@ ge25519_has_small_order(const ge25519_p3 *p)
     fe25519_add(c, y_sqrtm1, p->X);
     ret |= fe25519_iszero(c);
 
-    return ret;
+    ආපසු ret;
 }
 
 /*
@@ -3592,8 +3592,8 @@ ge25519_has_small_order(const ge25519_p3 *p)
  */
 
 void
-sc25519_muladd(unsigned char s[32], const unsigned char a[32],
-               const unsigned char b[32], const unsigned char c[32])
+sc25519_muladd(unsigned var_na s[32], const unsigned var_na a[32],
+               const unsigned var_na b[32], const unsigned var_na c[32])
 {
     int64_t a0  = 2097151 & load_3(a);
     int64_t a1  = 2097151 & (load_4(a + 2) >> 5);
@@ -4102,7 +4102,7 @@ sc25519_muladd(unsigned char s[32], const unsigned char a[32],
  */
 
 void
-sc25519_reduce(unsigned char s[64])
+sc25519_reduce(unsigned var_na s[64])
 {
     int64_t s0  = 2097151 & load_3(s);
     int64_t s1  = 2097151 & (load_4(s + 2) >> 5);
@@ -4425,26 +4425,26 @@ sc25519_reduce(unsigned char s[64])
     s[31] = s11 >> 17;
 }
 
-int
-sc25519_is_canonical(const unsigned char s[32])
+පූර්ණ_සංඛ්‍යා
+sc25519_is_canonical(const unsigned var_na s[32])
 {
     /* 2^252+27742317777372353535851937790883648493 */
-    static const unsigned char L[32] = {
+    static const unsigned var_na L[32] = {
         0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58, 0xd6, 0x9c, 0xf7,
         0xa2, 0xde, 0xf9, 0xde, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10
     };
-    unsigned char c = 0;
-    unsigned char n = 1;
-    unsigned int  i = 32;
+    unsigned var_na c = 0;
+    unsigned var_na n = 1;
+    unsigned පූර්ණ_සංඛ්‍යා  i = 32;
 
     do {
         i--;
         c |= ((s[i] - L[i]) >> 8) & n;
         n &= ((s[i] ^ L[i]) - 1) >> 8;
-    } while (i != 0);
+    } අතරතුර (i != 0);
 
-    return (c != 0);
+    ආපසු (c != 0);
 }
 
 /* montgomery to edwards */
@@ -4466,26 +4466,26 @@ sc25519_is_canonical(const unsigned char s[32])
 
 
 static void _crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs,
-                                      int prehashed);
+                                      පූර්ණ_සංඛ්‍යා prehashed);
 
-static int _crypto_sign_ed25519_detached(unsigned char *sig,
+static පූර්ණ_සංඛ්‍යා _crypto_sign_ed25519_detached(unsigned var_na *sig,
                                   unsigned long long *siglen_p,
-                                  const unsigned char *m,
+                                  const unsigned var_na *m,
                                   unsigned long long mlen,
-                                  const unsigned char *sk, int prehashed);
+                                  const unsigned var_na *sk, පූර්ණ_සංඛ්‍යා prehashed);
 
-static int _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-                                         const unsigned char *m,
+static පූර්ණ_සංඛ්‍යා _crypto_sign_ed25519_verify_detached(const unsigned var_na *sig,
+                                         const unsigned var_na *m,
                                          unsigned long long   mlen,
-                                         const unsigned char *pk,
-                                         int prehashed);
+                                         const unsigned var_na *pk,
+                                         පූර්ණ_සංඛ්‍යා prehashed);
 #endif
 
 
 
-int
-crypto_sign_ed25519_seed_keypair(unsigned char *pk, unsigned char *sk,
-                                 const unsigned char *seed)
+පූර්ණ_සංඛ්‍යා
+crypto_sign_ed25519_seed_keypair(unsigned var_na *pk, unsigned var_na *sk,
+                                 const unsigned var_na *seed)
 {
     ge25519_p3 A;
 
@@ -4500,29 +4500,29 @@ crypto_sign_ed25519_seed_keypair(unsigned char *pk, unsigned char *sk,
     memmove(sk, seed, 32);
     memmove(sk + 32, pk, 32);
 
-    return 0;
+    ආපසු 0;
 }
 
-int
-crypto_sign_ed25519_keypair(unsigned char *pk, unsigned char *sk)
+පූර්ණ_සංඛ්‍යා
+crypto_sign_ed25519_keypair(unsigned var_na *pk, unsigned var_na *sk)
 {
-    unsigned char seed[32];
-    int           ret;
+    unsigned var_na seed[32];
+    පූර්ණ_සංඛ්‍යා           ret;
 
-    arc4random_buf(seed, sizeof seed);
+    arc4random_buf(seed, parimaa_na seed);
     ret = crypto_sign_ed25519_seed_keypair(pk, sk, seed);
-    explicit_bzero(seed, sizeof seed);
+    explicit_bzero(seed, parimaa_na seed);
 
-    return ret;
+    ආපසු ret;
 }
 
 
 
 
 static void
-_crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, int prehashed)
+_crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, පූර්ණ_සංඛ්‍යා prehashed)
 {
-    static const unsigned char DOM2PREFIX[32 + 2] = {
+    static const unsigned var_na DOM2PREFIX[32 + 2] = {
         'S', 'i', 'g', 'E', 'd', '2', '5', '5', '1', '9', ' ',
         'n', 'o', ' ',
         'E', 'd', '2', '5', '5', '1', '9', ' ',
@@ -4530,13 +4530,13 @@ _crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, int prehashed)
     };
 
     crypto_hash_sha512_init(hs);
-    if (prehashed) {
-        crypto_hash_sha512_update(hs, DOM2PREFIX, sizeof DOM2PREFIX);
+    නම් (prehashed) {
+        crypto_hash_sha512_update(hs, DOM2PREFIX, parimaa_na DOM2PREFIX);
     }
 }
 
-static inline void
-_crypto_sign_ed25519_clamp(unsigned char k[32])
+static anta_hstha void
+_crypto_sign_ed25519_clamp(unsigned var_na k[32])
 {
     k[0] &= 248;
     k[31] &= 127;
@@ -4547,8 +4547,8 @@ _crypto_sign_ed25519_clamp(unsigned char k[32])
 /* r = hash(k || K || noise || pad || M) (mod q) */
 static void
 _crypto_sign_ed25519_synthetic_r_hv(crypto_hash_sha512_state *hs,
-                                    unsigned char tmp[64],
-                                    const unsigned char az[64])
+                                    unsigned var_na tmp[64],
+                                    const unsigned var_na az[64])
 {
     crypto_hash_sha512_update(hs, az, 64);
     randombytes_buf(tmp, 32);
@@ -4557,15 +4557,15 @@ _crypto_sign_ed25519_synthetic_r_hv(crypto_hash_sha512_state *hs,
 }
 #endif
 
-int
-_crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
-                              const unsigned char *m, unsigned long long mlen,
-                              const unsigned char *sk, int prehashed)
+පූර්ණ_සංඛ්‍යා
+_crypto_sign_ed25519_detached(unsigned var_na *sig, unsigned long long *siglen_p,
+                              const unsigned var_na *m, unsigned long long mlen,
+                              const unsigned var_na *sk, පූර්ණ_සංඛ්‍යා prehashed)
 {
     crypto_hash_sha512_state hs;
-    unsigned char            az[64];
-    unsigned char            nonce[64];
-    unsigned char            hram[64];
+    unsigned var_na            az[64];
+    unsigned var_na            nonce[64];
+    unsigned var_na            hram[64];
     ge25519_p3               R;
 
     _crypto_sign_ed25519_ref10_hinit(&hs, prehashed);
@@ -4573,7 +4573,7 @@ _crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
     crypto_hash_sha512(az, sk, 32);
 #ifdef ED25519_NONDETERMINISTIC
     _crypto_sign_ed25519_synthetic_r_hv(&hs, nonce /* tmp */, az);
-#else
+#නැතහොත්
     crypto_hash_sha512_update(&hs, az + 32, 32);
 #endif
 
@@ -4595,35 +4595,35 @@ _crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
     _crypto_sign_ed25519_clamp(az);
     sc25519_muladd(sig + 32, hram, az, nonce);
 
-    explicit_bzero(az, sizeof az);
-    explicit_bzero(nonce, sizeof nonce);
+    explicit_bzero(az, parimaa_na az);
+    explicit_bzero(nonce, parimaa_na nonce);
 
-    if (siglen_p != NULL) {
+    නම් (siglen_p != NULL) {
         *siglen_p = 64U;
     }
-    return 0;
+    ආපසු 0;
 }
 
-int
-crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
-                             const unsigned char *m, unsigned long long mlen,
-                             const unsigned char *sk)
+පූර්ණ_සංඛ්‍යා
+crypto_sign_ed25519_detached(unsigned var_na *sig, unsigned long long *siglen_p,
+                             const unsigned var_na *m, unsigned long long mlen,
+                             const unsigned var_na *sk)
 {
-    return _crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, sk, 0);
+    ආපසු _crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, sk, 0);
 }
 
 
 
 
-int
-_crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-                                     const unsigned char *m,
+පූර්ණ_සංඛ්‍යා
+_crypto_sign_ed25519_verify_detached(const unsigned var_na *sig,
+                                     const unsigned var_na *m,
                                      unsigned long long   mlen,
-                                     const unsigned char *pk,
-                                     int prehashed)
+                                     const unsigned var_na *pk,
+                                     පූර්ණ_සංඛ්‍යා prehashed)
 {
     crypto_hash_sha512_state hs;
-    unsigned char            h[64];
+    unsigned var_na            h[64];
     ge25519_p3               check;
     ge25519_p3               expected_r;
     ge25519_p3               A;
@@ -4632,25 +4632,25 @@ _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
 
     ACQUIRE_FENCE;
 #ifdef ED25519_COMPAT
-    if (sig[63] & 224) {
-        return -1;
+    නම් (sig[63] & 224) {
+        ආපසු -1;
     }
-#else
-    if ((sig[63] & 240) != 0 &&
+#නැතහොත්
+    නම් ((sig[63] & 240) != 0 &&
         sc25519_is_canonical(sig + 32) == 0) {
-        return -1;
+        ආපසු -1;
     }
-    if (ge25519_is_canonical(pk) == 0) {
-        return -1;
+    නම් (ge25519_is_canonical(pk) == 0) {
+        ආපසු -1;
     }
 #endif
-    if (ge25519_frombytes_negate_vartime(&A, pk) != 0 ||
+    නම් (ge25519_frombytes_negate_vartime(&A, pk) != 0 ||
         ge25519_has_small_order(&A) != 0) {
-        return -1;
+        ආපසු -1;
     }
-    if (ge25519_frombytes(&expected_r, sig) != 0 ||
+    නම් (ge25519_frombytes(&expected_r, sig) != 0 ||
         ge25519_has_small_order(&expected_r) != 0) {
-        return -1;
+        ආපසු -1;
     }
     _crypto_sign_ed25519_ref10_hinit(&hs, prehashed);
     crypto_hash_sha512_update(&hs, sig, 32);
@@ -4663,16 +4663,16 @@ _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
     ge25519_p2_to_p3(&sb_ah, &sb_ah_p2);
     ge25519_p3_sub(&check, &expected_r, &sb_ah);
 
-    return ge25519_has_small_order(&check) - 1;
+    ආපසු ge25519_has_small_order(&check) - 1;
 }
 
-int
-crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-                                    const unsigned char *m,
+පූර්ණ_සංඛ්‍යා
+crypto_sign_ed25519_verify_detached(const unsigned var_na *sig,
+                                    const unsigned var_na *m,
                                     unsigned long long   mlen,
-                                    const unsigned char *pk)
+                                    const unsigned var_na *pk)
 {
-    return _crypto_sign_ed25519_verify_detached(sig, m, mlen, pk, 0);
+    ආපසු _crypto_sign_ed25519_verify_detached(sig, m, mlen, pk, 0);
 }
 
 

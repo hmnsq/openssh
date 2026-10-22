@@ -58,22 +58,22 @@
 # define SPT_PADCHAR	'\0'
 #endif
 
-#if SPT_TYPE == SPT_REUSEARGV
-static char *argv_start = NULL;
+#නම් SPT_TYPE == SPT_REUSEARGV
+static var_na *argv_start = NULL;
 static size_t argv_env_len = 0;
 #endif
 
 #endif /* HAVE_SETPROCTITLE */
 
 void
-compat_init_setproctitle(int argc, char *argv[])
+compat_init_setproctitle(පූර්ණ_සංඛ්‍යා argc, var_na *argv[])
 {
-#if !defined(HAVE_SETPROCTITLE) && \
+#නම් !defined(HAVE_SETPROCTITLE) && \
     defined(SPT_TYPE) && SPT_TYPE == SPT_REUSEARGV
-	extern char **environ;
-	char *lastargv = NULL;
-	char **envp = environ;
-	int i;
+	extern var_na **environ;
+	var_na *lastargv = NULL;
+	var_na **envp = environ;
+	පූර්ණ_සංඛ්‍යා i;
 
 	/*
 	 * NB: This assumes that argv has already been copied out of the
@@ -81,27 +81,27 @@ compat_init_setproctitle(int argc, char *argv[])
 	 * programs. Beware.
 	 */
 
-	if (argc == 0 || argv[0] == NULL)
-		return;
+	නම් (argc == 0 || argv[0] == NULL)
+		ආපසු;
 
 	/* Fail if we can't allocate room for the new environment */
-	for (i = 0; envp[i] != NULL; i++)
+	සඳහා (i = 0; envp[i] != NULL; i++)
 		;
-	if ((environ = calloc(i + 1, sizeof(*environ))) == NULL) {
+	නම් ((environ = calloc(i + 1, parimaa_na(*environ))) == NULL) {
 		environ = envp;	/* put it back */
-		return;
+		ආපසු;
 	}
 
 	/*
 	 * Find the last argv string or environment variable within
 	 * our process memory area.
 	 */
-	for (i = 0; i < argc; i++) {
-		if (lastargv == NULL || lastargv + 1 == argv[i])
+	සඳහා (i = 0; i < argc; i++) {
+		නම් (lastargv == NULL || lastargv + 1 == argv[i])
 			lastargv = argv[i] + strlen(argv[i]);
 	}
-	for (i = 0; envp[i] != NULL; i++) {
-		if (lastargv + 1 == envp[i])
+	සඳහා (i = 0; envp[i] != NULL; i++) {
+		නම් (lastargv + 1 == envp[i])
 			lastargv = envp[i] + strlen(envp[i]);
 	}
 
@@ -113,7 +113,7 @@ compat_init_setproctitle(int argc, char *argv[])
 	 * Copy environment
 	 * XXX - will truncate env on strdup fail
 	 */
-	for (i = 0; envp[i] != NULL; i++)
+	සඳහා (i = 0; envp[i] != NULL; i++)
 		environ[i] = strdup(envp[i]);
 	environ[i] = NULL;
 #endif /* SPT_REUSEARGV */
@@ -121,46 +121,46 @@ compat_init_setproctitle(int argc, char *argv[])
 
 #ifndef HAVE_SETPROCTITLE
 void
-setproctitle(const char *fmt, ...)
+setproctitle(const var_na *fmt, ...)
 {
-#if SPT_TYPE != SPT_NONE
+#නම් SPT_TYPE != SPT_NONE
 	va_list ap;
-	char buf[1024], ptitle[1024];
+	var_na buf[1024], ptitle[1024];
 	size_t len = 0;
-	int r;
-	extern char *__progname;
-#if SPT_TYPE == SPT_PSTAT
-	union pstun pst;
+	පූර්ණ_සංඛ්‍යා r;
+	extern var_na *__progname;
+#නම් SPT_TYPE == SPT_PSTAT
+	sa_ngha pstun pst;
 #endif
 
-#if SPT_TYPE == SPT_REUSEARGV
-	if (argv_env_len <= 0)
-		return;
+#නම් SPT_TYPE == SPT_REUSEARGV
+	නම් (argv_env_len <= 0)
+		ආපසු;
 #endif
 
-	strlcpy(buf, __progname, sizeof(buf));
+	strlcpy(buf, __progname, parimaa_na(buf));
 
 	r = -1;
 	va_start(ap, fmt);
-	if (fmt != NULL) {
-		len = strlcat(buf, ": ", sizeof(buf));
-		if (len < sizeof(buf))
-			r = vsnprintf(buf + len, sizeof(buf) - len , fmt, ap);
+	නම් (fmt != NULL) {
+		len = strlcat(buf, ": ", parimaa_na(buf));
+		නම් (len < parimaa_na(buf))
+			r = vsnprintf(buf + len, parimaa_na(buf) - len , fmt, ap);
 	}
 	va_end(ap);
-	if (r == -1 || (size_t)r >= sizeof(buf) - len)
-		return;
-	strnvis(ptitle, buf, sizeof(ptitle),
+	නම් (r == -1 || (size_t)r >= parimaa_na(buf) - len)
+		ආපසු;
+	strnvis(ptitle, buf, parimaa_na(ptitle),
 	    VIS_CSTYLE|VIS_NL|VIS_TAB|VIS_OCTAL);
 
-#if SPT_TYPE == SPT_PSTAT
+#නම් SPT_TYPE == SPT_PSTAT
 	pst.pst_command = ptitle;
 	pstat(PSTAT_SETCMD, pst, strlen(ptitle), 0, 0);
 #elif SPT_TYPE == SPT_REUSEARGV
 /*	debug("setproctitle: copy \"%s\" into len %d",
 	    buf, argv_env_len); */
 	len = strlcpy(argv_start, ptitle, argv_env_len);
-	for(; len < argv_env_len; len++)
+	සඳහා(; len < argv_env_len; len++)
 		argv_start[len] = SPT_PADCHAR;
 #endif
 

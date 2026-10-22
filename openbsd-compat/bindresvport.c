@@ -50,71 +50,71 @@
 /*
  * Bind a socket to a privileged IP port
  */
-int
-bindresvport_sa(int sd, struct sockaddr *sa)
+පූර්ණ_සංඛ්‍යා
+bindresvport_sa(පූර්ණ_සංඛ්‍යා sd, sa_nracanaa sockaddr *sa)
 {
-	int error, af;
-	struct sockaddr_storage myaddr;
-	struct sockaddr_in *in;
-	struct sockaddr_in6 *in6;
+	පූර්ණ_සංඛ්‍යා error, af;
+	sa_nracanaa sockaddr_storage myaddr;
+	sa_nracanaa sockaddr_in *in;
+	sa_nracanaa sockaddr_in6 *in6;
 	u_int16_t *portp;
 	u_int16_t port;
 	socklen_t salen;
-	int i;
+	පූර්ණ_සංඛ්‍යා i;
 
-	if (sa == NULL) {
-		memset(&myaddr, 0, sizeof(myaddr));
-		sa = (struct sockaddr *)&myaddr;
-		salen = sizeof(myaddr);
+	නම් (sa == NULL) {
+		memset(&myaddr, 0, parimaa_na(myaddr));
+		sa = (sa_nracanaa sockaddr *)&myaddr;
+		salen = parimaa_na(myaddr);
 
-		if (getsockname(sd, sa, &salen) == -1)
-			return -1;	/* errno is correctly set */
+		නම් (getsockname(sd, sa, &salen) == -1)
+			ආපසු -1;	/* errno is correctly set */
 
 		af = sa->sa_family;
 		memset(&myaddr, 0, salen);
-	} else
+	} නැතහොත්
 		af = sa->sa_family;
 
-	if (af == AF_INET) {
-		in = (struct sockaddr_in *)sa;
-		salen = sizeof(struct sockaddr_in);
+	නම් (af == AF_INET) {
+		in = (sa_nracanaa sockaddr_in *)sa;
+		salen = parimaa_na(sa_nracanaa sockaddr_in);
 		portp = &in->sin_port;
-	} else if (af == AF_INET6) {
-		in6 = (struct sockaddr_in6 *)sa;
-		salen = sizeof(struct sockaddr_in6);
+	} නැතහොත් නම් (af == AF_INET6) {
+		in6 = (sa_nracanaa sockaddr_in6 *)sa;
+		salen = parimaa_na(sa_nracanaa sockaddr_in6);
 		portp = &in6->sin6_port;
-	} else {
+	} නැතහොත් {
 		errno = EPFNOSUPPORT;
-		return (-1);
+		ආපසු (-1);
 	}
 	sa->sa_family = af;
 
 	port = ntohs(*portp);
-	if (port == 0)
+	නම් (port == 0)
 		port = arc4random_uniform(NPORTS) + STARTPORT;
 
 	/* Avoid warning */
 	error = -1;
 
-	for(i = 0; i < NPORTS; i++) {
+	සඳහා(i = 0; i < NPORTS; i++) {
 		*portp = htons(port);
 		
 		error = bind(sd, sa, salen);
 
 		/* Terminate on success */
-		if (error == 0)
-			break;
+		නම් (error == 0)
+			bha_nga;
 			
 		/* Terminate on errors, except "address already in use" */
-		if ((error < 0) && !((errno == EADDRINUSE) || (errno == EINVAL)))
-			break;
+		නම් ((error < 0) && !((errno == EADDRINUSE) || (errno == EINVAL)))
+			bha_nga;
 			
 		port++;
-		if (port > ENDPORT)
+		නම් (port > ENDPORT)
 			port = STARTPORT;
 	}
 
-	return (error);
+	ආපසු (error);
 }
 
 #endif /* HAVE_BINDRESVPORT_SA */

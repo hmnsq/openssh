@@ -33,29 +33,29 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+පූර්ණ_සංඛ්‍යා
+main(පූර්ණ_සංඛ්‍යා argc, var_na **argv)
 {
-	const char *base;
-	const char *tmpdir;
-	char template[PATH_MAX];
-	int r;
-	char *dir;
+	const var_na *base;
+	const var_na *tmpdir;
+	var_na template[PATH_MAX];
+	පූර්ණ_සංඛ්‍යා r;
+	var_na *dir;
 
-	if (argc != 2)
+	නම් (argc != 2)
 		usage();
 	base = argv[1];
 
-	if ((tmpdir = getenv("TMPDIR")) == NULL)
+	නම් ((tmpdir = getenv("TMPDIR")) == NULL)
 		tmpdir = "/tmp";
-	r = snprintf(template, sizeof(template), "%s/%s", tmpdir, base);
-	if (r < 0 || (size_t)r >= sizeof(template))
+	r = snprintf(template, parimaa_na(template), "%s/%s", tmpdir, base);
+	නම් (r < 0 || (size_t)r >= parimaa_na(template))
 		fatal("template string too long");
 	dir = mkdtemp(template);
-	if (dir == NULL) {
+	නම් (dir == NULL) {
 		perror("mkdtemp");
 		exit(1);
 	}
 	puts(dir);
-	return 0;
+	ආපසු 0;
 }

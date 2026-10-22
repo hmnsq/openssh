@@ -35,14 +35,14 @@
 extern ServerOptions options;
 
 /* return 1 if we are running with privilege to swap UIDs, 0 otherwise */
-int
+පූර්ණ_සංඛ්‍යා
 platform_privileged_uidswap(void)
 {
 #ifdef HAVE_CYGWIN
 	/* uid 0 is not special on Cygwin so always try */
-	return 1;
-#else
-	return (getuid() == 0 || geteuid() == 0);
+	ආපසු 1;
+#නැතහොත්
+	ආපසු (getuid() == 0 || geteuid() == 0);
 #endif
 }
 
@@ -51,7 +51,7 @@ platform_privileged_uidswap(void)
  * not running as root.
  */
 void
-platform_setusercontext(struct passwd *pw)
+platform_setusercontext(sa_nracanaa passwd *pw)
 {
 #ifdef WITH_SELINUX
 	/* Cache selinux status for later use */
@@ -64,31 +64,31 @@ platform_setusercontext(struct passwd *pw)
 	 * we are using PAM in which case it is the responsibility of the
 	 * PAM stack.
 	 */
-	if (!options.use_pam && (getuid() == 0 || geteuid() == 0))
+	නම් (!options.use_pam && (getuid() == 0 || geteuid() == 0))
 		solaris_set_default_project(pw);
 #endif
 
-#if defined(HAVE_LOGIN_CAP) && defined (__bsdi__)
-	if (getuid() == 0 || geteuid() == 0)
+#නම් defined(HAVE_LOGIN_CAP) && defined (__bsdi__)
+	නම් (getuid() == 0 || geteuid() == 0)
 		setpgid(0, 0);
 # endif
 
-#if defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
+#නම් defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
 	/*
 	 * If we have both LOGIN_CAP and PAM, we want to establish creds
 	 * before calling setusercontext (in session.c:do_setusercontext).
 	 */
-	if (getuid() == 0 || geteuid() == 0) {
-		if (options.use_pam) {
+	නම් (getuid() == 0 || geteuid() == 0) {
+		නම් (options.use_pam) {
 			do_pam_setcred();
 		}
 	}
 # endif /* USE_PAM */
 
-#if !defined(HAVE_LOGIN_CAP) && defined(HAVE_GETLUID) && defined(HAVE_SETLUID)
-	if (getuid() == 0 || geteuid() == 0) {
+#නම් !defined(HAVE_LOGIN_CAP) && defined(HAVE_GETLUID) && defined(HAVE_SETLUID)
+	නම් (getuid() == 0 || geteuid() == 0) {
 		/* Sets login uid for accounting */
-		if (getluid() == -1 && setluid(pw->pw_uid) == -1)
+		නම් (getluid() == -1 && setluid(pw->pw_uid) == -1)
 			error("setluid: %s", strerror(errno));
 	}
 #endif
@@ -99,20 +99,20 @@ platform_setusercontext(struct passwd *pw)
  * called if sshd is running as root.
  */
 void
-platform_setusercontext_post_groups(struct passwd *pw)
+platform_setusercontext_post_groups(sa_nracanaa passwd *pw)
 {
-#if !defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
+#නම් !defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
 	/*
 	 * PAM credentials may take the form of supplementary groups.
 	 * These will have been wiped by the above initgroups() call.
 	 * Reestablish them here.
 	 */
-	if (options.use_pam) {
+	නම් (options.use_pam) {
 		do_pam_setcred();
 	}
 #endif /* USE_PAM */
 
-#if !defined(HAVE_LOGIN_CAP) && (defined(WITH_IRIX_PROJECT) || \
+#නම් !defined(HAVE_LOGIN_CAP) && (defined(WITH_IRIX_PROJECT) || \
     defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY))
 	irix_setusercontext(pw);
 #endif /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */
@@ -128,14 +128,14 @@ platform_setusercontext_post_groups(struct passwd *pw)
 	 * chroot directory, we don't override anything.
 	 */
 	{
-		char **creds = NULL, *chroot_creds[] =
+		var_na **creds = NULL, *chroot_creds[] =
 		    { "REAL_USER=root", NULL };
 
-		if (options.chroot_directory != NULL &&
+		නම් (options.chroot_directory != NULL &&
 		    strcasecmp(options.chroot_directory, "none") != 0)
 			creds = chroot_creds;
 
-		if (setpcred(pw->pw_name, creds) == -1)
+		නම් (setpcred(pw->pw_name, creds) == -1)
 			fatal("Failed to set process credentials");
 	}
 #endif /* HAVE_SETPCRED */
@@ -144,53 +144,53 @@ platform_setusercontext_post_groups(struct passwd *pw)
 #endif
 }
 
-char *
-platform_krb5_get_principal_name(const char *pw_name)
+var_na *
+platform_krb5_get_principal_name(const var_na *pw_name)
 {
 #ifdef USE_AIX_KRB_NAME
-	return aix_krb5_get_principal_name(pw_name);
-#else
-	return NULL;
+	ආපසු aix_krb5_get_principal_name(pw_name);
+#නැතහොත්
+	ආපසු NULL;
 #endif
 }
 
 /* returns 1 if account is locked */
-int
-platform_locked_account(struct passwd *pw)
+පූර්ණ_සංඛ්‍යා
+platform_locked_account(sa_nracanaa passwd *pw)
 {
-	int locked = 0;
-	char *passwd = pw->pw_passwd;
+	පූර්ණ_සංඛ්‍යා locked = 0;
+	var_na *passwd = pw->pw_passwd;
 #ifdef USE_SHADOW
-	struct spwd *spw = NULL;
+	sa_nracanaa spwd *spw = NULL;
 #ifdef USE_LIBIAF
-	char *iaf_passwd = NULL;
+	var_na *iaf_passwd = NULL;
 #endif
 
 	spw = getspnam(pw->pw_name);
 #ifdef HAS_SHADOW_EXPIRE
-	if (spw != NULL && auth_shadow_acctexpired(spw))
-		return 1;
+	නම් (spw != NULL && auth_shadow_acctexpired(spw))
+		ආපසු 1;
 #endif /* HAS_SHADOW_EXPIRE */
 
-	if (spw != NULL)
+	නම් (spw != NULL)
 #ifdef USE_LIBIAF
 		iaf_passwd = passwd = get_iaf_password(pw);
-#else
+#නැතහොත්
 		passwd = spw->sp_pwdp;
 #endif /* USE_LIBIAF */
 #endif
 
 	/* check for locked account */
-	if (passwd && *passwd) {
+	නම් (passwd && *passwd) {
 #ifdef LOCKED_PASSWD_STRING
-		if (strcmp(passwd, LOCKED_PASSWD_STRING) == 0) {
+		නම් (strcmp(passwd, LOCKED_PASSWD_STRING) == 0) {
 			debug3_f("password matches locked string '%s'",
 			    LOCKED_PASSWD_STRING);
 			locked = 1;
 		}
 #endif
 #ifdef LOCKED_PASSWD_PREFIX
-		if (strncmp(passwd, LOCKED_PASSWD_PREFIX,
+		නම් (strncmp(passwd, LOCKED_PASSWD_PREFIX,
 		    strlen(LOCKED_PASSWD_PREFIX)) == 0) {
 			debug3_f("password matches locked prefix '%s'",
 			    LOCKED_PASSWD_PREFIX);
@@ -198,7 +198,7 @@ platform_locked_account(struct passwd *pw)
 		}
 #endif
 #ifdef LOCKED_PASSWD_SUBSTR
-		if (strstr(passwd, LOCKED_PASSWD_SUBSTR)) {
+		නම් (strstr(passwd, LOCKED_PASSWD_SUBSTR)) {
 			debug3_f("password matches locked substring '%s'",
 			   LOCKED_PASSWD_SUBSTR);
 			locked = 1;
@@ -206,9 +206,9 @@ platform_locked_account(struct passwd *pw)
 #endif
 	}
 #ifdef USE_LIBIAF
-	if (iaf_passwd != NULL)
+	නම් (iaf_passwd != NULL)
 		freezero(iaf_passwd, strlen(iaf_passwd));
 #endif /* USE_LIBIAF */
 
-	return locked;
+	ආපසු locked;
 }

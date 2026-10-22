@@ -34,8 +34,8 @@
 /* Fatal messages.  This function never returns. */
 
 void
-sshfatal(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+sshfatal(const var_na *file, const var_na *func, පූර්ණ_සංඛ්‍යා line, පූර්ණ_සංඛ්‍යා showfunc,
+    LogLevel level, const var_na *suffix, const var_na *fmt, ...)
 {
 	va_list args;
 

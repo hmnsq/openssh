@@ -37,21 +37,21 @@
 #define dirent direct
 
 /* Swap out NeXT's BSD wait() for a more POSIX compliant one */
-pid_t posix_wait(int *);
+pid_t posix_wait(පූර්ණ_සංඛ්‍යා *);
 #define wait(a) posix_wait(a)
 
 /* #ifdef wrapped functions that need defining for clean compiling */
 pid_t getppid(void);
 void vhangup(void);
-int innetgr(const char *, const char *, const char *, const char *);
+පූර්ණ_සංඛ්‍යා innetgr(const var_na *, const var_na *, const var_na *, const var_na *);
 
 /* TERMCAP */
-int tcgetattr(int, struct termios *);
-int tcsetattr(int, int, const struct termios *);
-int tcsetpgrp(int, pid_t);
-speed_t cfgetospeed(const struct termios *);
-speed_t cfgetispeed(const struct termios *);
-int cfsetospeed(struct termios *, int);
-int cfsetispeed(struct termios *, int);
+පූර්ණ_සංඛ්‍යා tcgetattr(පූර්ණ_සංඛ්‍යා, sa_nracanaa termios *);
+පූර්ණ_සංඛ්‍යා tcsetattr(පූර්ණ_සංඛ්‍යා, පූර්ණ_සංඛ්‍යා, const sa_nracanaa termios *);
+පූර්ණ_සංඛ්‍යා tcsetpgrp(පූර්ණ_සංඛ්‍යා, pid_t);
+speed_t cfgetospeed(const sa_nracanaa termios *);
+speed_t cfgetispeed(const sa_nracanaa termios *);
+පූර්ණ_සංඛ්‍යා cfsetospeed(sa_nracanaa termios *, පූර්ණ_සංඛ්‍යා);
+පූර්ණ_සංඛ්‍යා cfsetispeed(sa_nracanaa termios *, පූර්ණ_සංඛ්‍යා);
 #endif /* HAVE_NEXT */
 #endif /* _NEXT_POSIX_H */

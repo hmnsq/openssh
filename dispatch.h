@@ -29,21 +29,21 @@
 
 #define DISPATCH_MAX	255
 
-enum {
+ga_nanaa {
 	DISPATCH_BLOCK,
 	DISPATCH_NONBLOCK
 };
 
-struct ssh;
+sa_nracanaa ssh;
 
-typedef int dispatch_fn(int, uint32_t, struct ssh *);
+typedef පූර්ණ_සංඛ්‍යා dispatch_fn(පූර්ණ_සංඛ්‍යා, uint32_t, sa_nracanaa ssh *);
 
-int	dispatch_protocol_error(int, uint32_t, struct ssh *);
-int	dispatch_protocol_ignore(int, uint32_t, struct ssh *);
-void	ssh_dispatch_init(struct ssh *, dispatch_fn *);
-void	ssh_dispatch_set(struct ssh *, int, dispatch_fn *);
-void	ssh_dispatch_range(struct ssh *, u_int, u_int, dispatch_fn *);
-int	ssh_dispatch_run(struct ssh *, int, volatile sig_atomic_t *);
-void	ssh_dispatch_run_fatal(struct ssh *, int, volatile sig_atomic_t *);
+පූර්ණ_සංඛ්‍යා	dispatch_protocol_error(පූර්ණ_සංඛ්‍යා, uint32_t, sa_nracanaa ssh *);
+පූර්ණ_සංඛ්‍යා	dispatch_protocol_ignore(පූර්ණ_සංඛ්‍යා, uint32_t, sa_nracanaa ssh *);
+void	ssh_dispatch_init(sa_nracanaa ssh *, dispatch_fn *);
+void	ssh_dispatch_set(sa_nracanaa ssh *, පූර්ණ_සංඛ්‍යා, dispatch_fn *);
+void	ssh_dispatch_range(sa_nracanaa ssh *, u_int, u_int, dispatch_fn *);
+පූර්ණ_සංඛ්‍යා	ssh_dispatch_run(sa_nracanaa ssh *, පූර්ණ_සංඛ්‍යා, ca_ncala sig_atomic_t *);
+void	ssh_dispatch_run_fatal(sa_nracanaa ssh *, පූර්ණ_සංඛ්‍යා, ca_ncala sig_atomic_t *);
 
 #endif

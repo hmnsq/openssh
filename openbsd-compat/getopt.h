@@ -34,9 +34,9 @@
 #define _GETOPT_H_
 
 #ifndef __THROW
-# if defined __cplusplus
+# නම් defined __cplusplus
 #  define __THROW throw()
-# else
+# නැතහොත්
 #  define __THROW
 # endif
 #endif
@@ -48,38 +48,38 @@
 #define required_argument  1
 #define optional_argument  2
 
-#if 0
-struct option {
+#නම් 0
+sa_nracanaa option {
 	/* name of long option */
-	const char *name;
+	const var_na *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	පූර්ණ_සංඛ්‍යා has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	පූර්ණ_සංඛ්‍යා *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	පූර්ණ_සංඛ්‍යා val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
+පූර්ණ_සංඛ්‍යා	 getopt_long(පූර්ණ_සංඛ්‍යා, var_na * const *, const var_na *,
+	    const sa_nracanaa option *, පූර්ණ_සංඛ්‍යා *);
+පූර්ණ_සංඛ්‍යා	 getopt_long_only(පූර්ණ_සංඛ්‍යා, var_na * const *, const var_na *,
+	    const sa_nracanaa option *, පූර්ණ_සංඛ්‍යා *);
 #endif
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+පූර්ණ_සංඛ්‍යා	 getopt(පූර්ණ_සංඛ්‍යා, var_na * const *, const var_na *) __THROW;
+පූර්ණ_සංඛ්‍යා	 getsubopt(var_na **, var_na * const *, var_na **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
+extern   var_na *optarg;                  /* getopt(3) external variables */
+extern   පූර්ණ_සංඛ්‍යා opterr;
+extern   පූර්ණ_සංඛ්‍යා optind;
+extern   පූර්ණ_සංඛ්‍යා optopt;
+extern   පූර්ණ_සංඛ්‍යා optreset;
+extern   var_na *suboptarg;               /* getsubopt(3) external variable */
 #endif
  
 #endif /* !_GETOPT_H_ */

@@ -18,58 +18,58 @@
 #include "match.h"
 
 /* Original match_pattern() implementation; has bad worst-case behaviour */
-static int
-match_pattern_original(const char *s, const char *pattern)
+static පූර්ණ_සංඛ්‍යා
+match_pattern_original(const var_na *s, const var_na *pattern)
 {
-	for (;;) {
+	සඳහා (;;) {
 		/* If at end of pattern, accept if also at end of string. */
-		if (!*pattern)
-			return !*s;
+		නම් (!*pattern)
+			ආපසු !*s;
 
-		if (*pattern == '*') {
+		නම් (*pattern == '*') {
 			/* Skip this and any consecutive asterisks. */
-			while (*pattern == '*')
+			අතරතුර (*pattern == '*')
 				pattern++;
 
 			/* If at end of pattern, accept immediately. */
-			if (!*pattern)
-				return 1;
+			නම් (!*pattern)
+				ආපසු 1;
 
 			/* If next character in pattern is known, optimize. */
-			if (*pattern != '?' && *pattern != '*') {
+			නම් (*pattern != '?' && *pattern != '*') {
 				/*
 				 * Look instances of the next character in
 				 * pattern, and try to match starting from
 				 * those.
 				 */
-				for (; *s; s++)
-					if (*s == *pattern &&
+				සඳහා (; *s; s++)
+					නම් (*s == *pattern &&
 					    match_pattern_original(s + 1,
 					    pattern + 1))
-						return 1;
+						ආපසු 1;
 				/* Failed. */
-				return 0;
+				ආපසු 0;
 			}
 			/*
 			 * Move ahead one character at a time and try to
 			 * match at each position.
 			 */
-			for (; *s; s++)
-				if (match_pattern_original(s, pattern))
-					return 1;
+			සඳහා (; *s; s++)
+				නම් (match_pattern_original(s, pattern))
+					ආපසු 1;
 			/* Failed. */
-			return 0;
+			ආපසු 0;
 		}
 		/*
 		 * There must be at least one more character in the string.
 		 * If we are at the end, fail.
 		 */
-		if (!*s)
-			return 0;
+		නම් (!*s)
+			ආපසු 0;
 
 		/* Check if the next character of the string is acceptable. */
-		if (*pattern != '?' && *pattern != *s)
-			return 0;
+		නම් (*pattern != '?' && *pattern != *s)
+			ආපසු 0;
 
 		/* Move to the next character, both in string and in pattern. */
 		s++;
@@ -85,20 +85,20 @@ pow_size(size_t base, size_t exp)
 	size_t r = 1;
 
 	ASSERT_SIZE_T_NE(base, 0);
-	while (exp-- != 0) {
+	අතරතුර (exp-- != 0) {
 		ASSERT_SIZE_T_LE(r, SIZE_MAX / base);
 		r *= base;
 	}
-	return r;
+	ආපසු r;
 }
 
 static void
-make_word(size_t v, const char *alphabet, size_t alphabet_len,
-    char *word, size_t wordlen)
+make_word(size_t v, const var_na *alphabet, size_t alphabet_len,
+    var_na *word, size_t wordlen)
 {
 	size_t i;
 
-	for (i = 0; i < wordlen; i++) {
+	සඳහා (i = 0; i < wordlen; i++) {
 		word[i] = alphabet[v % alphabet_len];
 		v /= alphabet_len;
 	}
@@ -109,16 +109,16 @@ make_word(size_t v, const char *alphabet, size_t alphabet_len,
 #define INPUT_LEN	7
 
 static void
-match_pattern_check_one_input(const char *input, const char *pattern_alphabet)
+match_pattern_check_one_input(const var_na *input, const var_na *pattern_alphabet)
 {
-	char pattern[PATTERN_LEN];
+	var_na pattern[PATTERN_LEN];
 	size_t len, i, npatterns;
-	int actual, expected;
+	පූර්ණ_සංඛ්‍යා actual, expected;
 
-	for (len = 0; len < sizeof(pattern); len++) {
+	සඳහා (len = 0; len < parimaa_na(pattern); len++) {
 		/* Check with all patterns of this size using alphabet */
 		npatterns = pow_size(strlen(pattern_alphabet), len);
-		for (i = 0; i < npatterns; i++) {
+		සඳහා (i = 0; i < npatterns; i++) {
 			make_word(i, pattern_alphabet,
 			    strlen(pattern_alphabet), pattern, len);
 			actual = match_pattern(input, pattern);
@@ -137,15 +137,15 @@ match_pattern_check_one_input(const char *input, const char *pattern_alphabet)
 static void
 match_pattern_exhaustive_original(void)
 {
-	const char *pattern_alphabet = "abx?*";
-	const char *input_alphabet = "abc";
-	char input[INPUT_LEN];
+	const var_na *pattern_alphabet = "abx?*";
+	const var_na *input_alphabet = "abc";
+	var_na input[INPUT_LEN];
 	size_t len, i, ninputs;
 
-	for (len = 0; len < sizeof(input); len++) {
+	සඳහා (len = 0; len < parimaa_na(input); len++) {
 		/* Check every possible input from alphabet of this size */
 		ninputs = pow_size(strlen(input_alphabet), len);
-		for (i = 0; i < ninputs; i++) {
+		සඳහා (i = 0; i < ninputs; i++) {
 			make_word(i, input_alphabet,
 			    strlen(input_alphabet), input, len);
 			match_pattern_check_one_input(input, pattern_alphabet);
@@ -300,10 +300,10 @@ tests(void)
 
 #define CHECK_FILTER(string,filter,expected) \
 	do { \
-		char *result = match_filter_denylist((string), (filter)); \
+		var_na *result = match_filter_denylist((string), (filter)); \
 		ASSERT_STRING_EQ(result, expected); \
 		free(result); \
-	} while (0)
+	} අතරතුර (0)
 
 	TEST_START("match_filter_list");
 	CHECK_FILTER("a,b,c", "", "a,b,c");

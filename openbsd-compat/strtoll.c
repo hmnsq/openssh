@@ -47,12 +47,12 @@
  * alphabets and digits are each contiguous.
  */
 long long
-strtoll(const char *nptr, char **endptr, int base)
+strtoll(const var_na *nptr, var_na **endptr, පූර්ණ_සංඛ්‍යා base)
 {
-	const char *s;
+	const var_na *s;
 	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	පූර්ණ_සංඛ්‍යා c;
+	පූර්ණ_සංඛ්‍යා neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -61,23 +61,23 @@ strtoll(const char *nptr, char **endptr, int base)
 	 */
 	s = nptr;
 	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+		c = (unsigned var_na) *s++;
+	} අතරතුර (isspace(c));
+	නම් (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} නැතහොත් {
 		neg = 0;
-		if (c == '+')
+		නම් (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	නම් ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	නම් (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	/*
@@ -101,48 +101,48 @@ strtoll(const char *nptr, char **endptr, int base)
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
 	cutlim = cutoff % base;
 	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
+	නම් (neg) {
+		නම් (cutlim > 0) {
 			cutlim -= base;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	සඳහා (acc = 0, any = 0;; c = (unsigned var_na) *s++) {
+		නම් (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		නැතහොත් නම් (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
+		නැතහොත්
+			bha_nga;
+		නම් (c >= base)
+			bha_nga;
+		නම් (any < 0)
 			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		නම් (neg) {
+			නම් (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} නැතහොත් {
 				any = 1;
 				acc *= base;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} නැතහොත් {
+			නම් (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} නැතහොත් {
 				any = 1;
 				acc *= base;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	නම් (endptr != 0)
+		*endptr = (var_na *) (any ? s - 1 : nptr);
+	ආපසු (acc);
 }
 #endif /* HAVE_STRTOLL */

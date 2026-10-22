@@ -46,34 +46,34 @@
 # include <unistd.h>
 #endif
 
-int
-daemon(int nochdir, int noclose)
+පූර්ණ_සංඛ්‍යා
+daemon(පූර්ණ_සංඛ්‍යා nochdir, පූර්ණ_සංඛ්‍යා noclose)
 {
-	int fd;
+	පූර්ණ_සංඛ්‍යා fd;
 
 	switch (fork()) {
-	case -1:
-		return (-1);
-	case 0:
-		break;
+	pak_sa -1:
+		ආපසු (-1);
+	pak_sa 0:
+		bha_nga;
 	default:
 		_exit(0);
 	}
 
-	if (setsid() == -1)
-		return (-1);
+	නම් (setsid() == -1)
+		ආපසු (-1);
 
-	if (!nochdir)
+	නම් (!nochdir)
 		(void)chdir("/");
 
-	if (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
+	නම් (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
 		(void)dup2(fd, STDIN_FILENO);
 		(void)dup2(fd, STDOUT_FILENO);
 		(void)dup2(fd, STDERR_FILENO);
-		if (fd > 2)
+		නම් (fd > 2)
 			(void)close (fd);
 	}
-	return (0);
+	ආපසු (0);
 }
 
 #endif /* !HAVE_DAEMON */

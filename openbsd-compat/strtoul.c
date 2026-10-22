@@ -45,64 +45,64 @@
  * alphabets and digits are each contiguous.
  */
 unsigned long
-strtoul(const char *nptr, char **endptr, int base)
+strtoul(const var_na *nptr, var_na **endptr, පූර්ණ_සංඛ්‍යා base)
 {
-	const char *s;
+	const var_na *s;
 	unsigned long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	පූර්ණ_සංඛ්‍යා c;
+	පූර්ණ_සංඛ්‍යා neg, any, cutlim;
 
 	/*
 	 * See strtol for comments as to the logic used.
 	 */
 	s = nptr;
 	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+		c = (unsigned var_na) *s++;
+	} අතරතුර (isspace(c));
+	නම් (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} නැතහොත් {
 		neg = 0;
-		if (c == '+')
+		නම් (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	නම් ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	නම් (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	cutoff = ULONG_MAX / (unsigned long)base;
 	cutlim = ULONG_MAX % (unsigned long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	සඳහා (acc = 0, any = 0;; c = (unsigned var_na) *s++) {
+		නම් (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		නැතහොත් නම් (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
+		නැතහොත්
+			bha_nga;
+		නම් (c >= base)
+			bha_nga;
+		නම් (any < 0)
 			continue;
-		if (acc > cutoff || acc == cutoff && c > cutlim) {
+		නම් (acc > cutoff || acc == cutoff && c > cutlim) {
 			any = -1;
 			acc = ULONG_MAX;
 			errno = ERANGE;
-		} else {
+		} නැතහොත් {
 			any = 1;
 			acc *= (unsigned long)base;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	නම් (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	නම් (endptr != 0)
+		*endptr = (var_na *) (any ? s - 1 : nptr);
+	ආපසු (acc);
 }
 #endif /* !HAVE_STRTOUL */

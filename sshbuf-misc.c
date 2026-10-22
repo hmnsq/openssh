@@ -40,20 +40,20 @@ sshbuf_dump_data(const void *s, size_t len, FILE *f)
 	size_t i, j;
 	const u_char *p = (const u_char *)s;
 
-	for (i = 0; i < len; i += 16) {
+	සඳහා (i = 0; i < len; i += 16) {
 		fprintf(f, "%.4zu: ", i);
-		for (j = i; j < i + 16; j++) {
-			if (j < len)
+		සඳහා (j = i; j < i + 16; j++) {
+			නම් (j < len)
 				fprintf(f, "%02x ", p[j]);
-			else
+			නැතහොත්
 				fprintf(f, "   ");
 		}
 		fprintf(f, " ");
-		for (j = i; j < i + 16; j++) {
-			if (j < len) {
-				if  (isascii(p[j]) && isprint(p[j]))
+		සඳහා (j = i; j < i + 16; j++) {
+			නම් (j < len) {
+				නම්  (isascii(p[j]) && isprint(p[j]))
 					fprintf(f, "%c", p[j]);
-				else
+				නැතහොත්
 					fprintf(f, ".");
 			}
 		}
@@ -62,298 +62,298 @@ sshbuf_dump_data(const void *s, size_t len, FILE *f)
 }
 
 void
-sshbuf_dump(const struct sshbuf *buf, FILE *f)
+sshbuf_dump(const sa_nracanaa sshbuf *buf, FILE *f)
 {
 	fprintf(f, "buffer len = %zu\n", sshbuf_len(buf));
 	sshbuf_dump_data(sshbuf_ptr(buf), sshbuf_len(buf), f);
 }
 
-char *
-sshbuf_dtob16(const struct sshbuf *buf)
+var_na *
+sshbuf_dtob16(const sa_nracanaa sshbuf *buf)
 {
 	size_t i, j, len = sshbuf_len(buf);
 	const u_char *p = sshbuf_ptr(buf);
-	char *ret;
-	const char hex[] = "0123456789abcdef";
+	var_na *ret;
+	const var_na hex[] = "0123456789abcdef";
 
-	if (len == 0)
-		return strdup("");
-	if (SIZE_MAX / 2 <= len || (ret = malloc(len * 2 + 1)) == NULL)
-		return NULL;
-	for (i = j = 0; i < len; i++) {
+	නම් (len == 0)
+		ආපසු strdup("");
+	නම් (SIZE_MAX / 2 <= len || (ret = malloc(len * 2 + 1)) == NULL)
+		ආපසු NULL;
+	සඳහා (i = j = 0; i < len; i++) {
 		ret[j++] = hex[(p[i] >> 4) & 0xf];
 		ret[j++] = hex[p[i] & 0xf];
 	}
 	ret[j] = '\0';
-	return ret;
+	ආපසු ret;
 }
 
-static int
-b16tod(const char v)
+static පූර්ණ_සංඛ්‍යා
+b16tod(const var_na v)
 {
-	if (v >= '0' && v <= '9')
-		return v - '0';
-	if (v >= 'a' && v <= 'f')
-		return 10 + v - 'a';
-	if (v >= 'A' && v <= 'F')
-		return 10 + v - 'A';
-	return -1;
+	නම් (v >= '0' && v <= '9')
+		ආපසු v - '0';
+	නම් (v >= 'a' && v <= 'f')
+		ආපසු 10 + v - 'a';
+	නම් (v >= 'A' && v <= 'F')
+		ආපසු 10 + v - 'A';
+	ආපසු -1;
 }
 
-struct sshbuf *
-sshbuf_b16tod(const char *b16)
+sa_nracanaa sshbuf *
+sshbuf_b16tod(const var_na *b16)
 {
-	struct sshbuf *ret;
+	sa_nracanaa sshbuf *ret;
 	size_t o;
-	int r, v1, v2;
+	පූර්ණ_සංඛ්‍යා r, v1, v2;
 
-	if ((ret = sshbuf_new()) == NULL)
-		return NULL;
-	for (o = 0; b16[o] != '\0'; o += 2) {
-		if ((v1 = b16tod(b16[o])) == -1 ||
+	නම් ((ret = sshbuf_new()) == NULL)
+		ආපසු NULL;
+	සඳහා (o = 0; b16[o] != '\0'; o += 2) {
+		නම් ((v1 = b16tod(b16[o])) == -1 ||
 		    (v2 = b16tod(b16[o + 1])) == -1) {
 			sshbuf_free(ret);
-			return NULL;
+			ආපසු NULL;
 		}
-		if ((r = sshbuf_put_u8(ret, (u_char)((v1 << 4) | v2))) != 0) {
+		නම් ((r = sshbuf_put_u8(ret, (u_char)((v1 << 4) | v2))) != 0) {
 			sshbuf_free(ret);
-			return NULL;
+			ආපසු NULL;
 		}
 	}
 	/* success */
-	return ret;
+	ආපසු ret;
 }
 
-int
-sshbuf_dtob64(const struct sshbuf *d, struct sshbuf *b64, int wrap)
+පූර්ණ_සංඛ්‍යා
+sshbuf_dtob64(const sa_nracanaa sshbuf *d, sa_nracanaa sshbuf *b64, පූර්ණ_සංඛ්‍යා wrap)
 {
 	size_t i, slen = 0;
-	char *s = NULL;
-	int r;
+	var_na *s = NULL;
+	පූර්ණ_සංඛ්‍යා r;
 
-	if (d == NULL || b64 == NULL || sshbuf_len(d) >= SIZE_MAX / 2)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (sshbuf_len(d) == 0)
-		return 0;
+	නම් (d == NULL || b64 == NULL || sshbuf_len(d) >= SIZE_MAX / 2)
+		ආපසු SSH_ERR_INVALID_ARGUMENT;
+	නම් (sshbuf_len(d) == 0)
+		ආපසු 0;
 	slen = ((sshbuf_len(d) + 2) / 3) * 4 + 1;
-	if ((s = malloc(slen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (b64_ntop(sshbuf_ptr(d), sshbuf_len(d), s, slen) == -1) {
+	නම් ((s = malloc(slen)) == NULL)
+		ආපසු SSH_ERR_ALLOC_FAIL;
+	නම් (b64_ntop(sshbuf_ptr(d), sshbuf_len(d), s, slen) == -1) {
 		r = SSH_ERR_INTERNAL_ERROR;
 		goto fail;
 	}
-	if (wrap) {
-		for (i = 0; s[i] != '\0'; i++) {
-			if ((r = sshbuf_put_u8(b64, s[i])) != 0)
+	නම් (wrap) {
+		සඳහා (i = 0; s[i] != '\0'; i++) {
+			නම් ((r = sshbuf_put_u8(b64, s[i])) != 0)
 				goto fail;
-			if (i % 70 == 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
+			නම් (i % 70 == 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
 				goto fail;
 		}
-		if ((i - 1) % 70 != 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
+		නම් ((i - 1) % 70 != 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
 			goto fail;
-	} else {
-		if ((r = sshbuf_put(b64, s, strlen(s))) != 0)
+	} නැතහොත් {
+		නම් ((r = sshbuf_put(b64, s, strlen(s))) != 0)
 			goto fail;
 	}
 	/* Success */
 	r = 0;
  fail:
 	freezero(s, slen);
-	return r;
+	ආපසු r;
 }
 
-char *
-sshbuf_dtob64_string(const struct sshbuf *buf, int wrap)
+var_na *
+sshbuf_dtob64_string(const sa_nracanaa sshbuf *buf, පූර්ණ_සංඛ්‍යා wrap)
 {
-	struct sshbuf *tmp;
-	char *ret;
+	sa_nracanaa sshbuf *tmp;
+	var_na *ret;
 
-	if ((tmp = sshbuf_new()) == NULL)
-		return NULL;
-	if (sshbuf_dtob64(buf, tmp, wrap) != 0) {
+	නම් ((tmp = sshbuf_new()) == NULL)
+		ආපසු NULL;
+	නම් (sshbuf_dtob64(buf, tmp, wrap) != 0) {
 		sshbuf_free(tmp);
-		return NULL;
+		ආපසු NULL;
 	}
 	ret = sshbuf_dup_string(tmp);
 	sshbuf_free(tmp);
-	return ret;
+	ආපසු ret;
 }
 
-int
-sshbuf_b64tod(struct sshbuf *buf, const char *b64)
+පූර්ණ_සංඛ්‍යා
+sshbuf_b64tod(sa_nracanaa sshbuf *buf, const var_na *b64)
 {
 	size_t plen = strlen(b64);
-	int nlen, r;
+	පූර්ණ_සංඛ්‍යා nlen, r;
 	u_char *p;
 
-	if (plen == 0)
-		return 0;
-	if ((p = malloc(plen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((nlen = b64_pton(b64, p, plen)) < 0) {
+	නම් (plen == 0)
+		ආපසු 0;
+	නම් ((p = malloc(plen)) == NULL)
+		ආපසු SSH_ERR_ALLOC_FAIL;
+	නම් ((nlen = b64_pton(b64, p, plen)) < 0) {
 		freezero(p, plen);
-		return SSH_ERR_INVALID_FORMAT;
+		ආපසු SSH_ERR_INVALID_FORMAT;
 	}
-	if ((r = sshbuf_put(buf, p, nlen)) < 0) {
+	නම් ((r = sshbuf_put(buf, p, nlen)) < 0) {
 		freezero(p, plen);
-		return r;
+		ආපසු r;
 	}
 	freezero(p, plen);
-	return 0;
+	ආපසු 0;
 }
 
-int
-sshbuf_dtourlb64(const struct sshbuf *d, struct sshbuf *b64, int wrap)
+පූර්ණ_සංඛ්‍යා
+sshbuf_dtourlb64(const sa_nracanaa sshbuf *d, sa_nracanaa sshbuf *b64, පූර්ණ_සංඛ්‍යා wrap)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	පූර්ණ_සංඛ්‍යා r = SSH_ERR_INTERNAL_ERROR;
 	u_char *p;
-	struct sshbuf *b = NULL;
+	sa_nracanaa sshbuf *b = NULL;
 	size_t i, l;
 
-	if (sshbuf_len(d) == 0)
-		return 0;
+	නම් (sshbuf_len(d) == 0)
+		ආපසු 0;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	නම් ((b = sshbuf_new()) == NULL)
+		ආපසු SSH_ERR_ALLOC_FAIL;
 	/* Encode using regular base64; we'll transform it once done */
-	if ((r = sshbuf_dtob64(d, b, wrap)) != 0)
+	නම් ((r = sshbuf_dtob64(d, b, wrap)) != 0)
 		goto out;
 	/* remove padding from end of encoded string*/
-	for (;;) {
+	සඳහා (;;) {
 		l = sshbuf_len(b);
-		if (l <= 1 || sshbuf_ptr(b) == NULL) {
+		නම් (l <= 1 || sshbuf_ptr(b) == NULL) {
 			r = SSH_ERR_INTERNAL_ERROR;
 			goto out;
 		}
-		if (sshbuf_ptr(b)[l - 1] != '=')
-			break;
-		if ((r = sshbuf_consume_end(b, 1)) != 0)
+		නම් (sshbuf_ptr(b)[l - 1] != '=')
+			bha_nga;
+		නම් ((r = sshbuf_consume_end(b, 1)) != 0)
 			goto out;
 	}
 	/* Replace characters with rfc4648 equivalents */
 	l = sshbuf_len(b);
-	if ((p = sshbuf_mutable_ptr(b)) == NULL) {
+	නම් ((p = sshbuf_mutable_ptr(b)) == NULL) {
 		r = SSH_ERR_INTERNAL_ERROR;
 		goto out;
 	}
-	for (i = 0; i < l; i++) {
-		if (p[i] == '+')
+	සඳහා (i = 0; i < l; i++) {
+		නම් (p[i] == '+')
 			p[i] = '-';
-		else if (p[i] == '/')
+		නැතහොත් නම් (p[i] == '/')
 			p[i] = '_';
 	}
 	r = sshbuf_putb(b64, b);
  out:
 	sshbuf_free(b);
-	return r;
+	ආපසු r;
 }
 
-char *
-sshbuf_dup_string(struct sshbuf *buf)
+var_na *
+sshbuf_dup_string(sa_nracanaa sshbuf *buf)
 {
 	const u_char *p = NULL, *s = sshbuf_ptr(buf);
 	size_t l = sshbuf_len(buf);
-	char *r;
+	var_na *r;
 
-	if (s == NULL || l >= SIZE_MAX)
-		return NULL;
+	නම් (s == NULL || l >= SIZE_MAX)
+		ආපසු NULL;
 	/* accept a nul only as the last character in the buffer */
-	if (l > 0 && (p = memchr(s, '\0', l)) != NULL) {
-		if (p != s + l - 1)
-			return NULL;
+	නම් (l > 0 && (p = memchr(s, '\0', l)) != NULL) {
+		නම් (p != s + l - 1)
+			ආපසු NULL;
 		l--; /* the nul is put back below */
 	}
-	if ((r = malloc(l + 1)) == NULL)
-		return NULL;
-	if (l > 0)
+	නම් ((r = malloc(l + 1)) == NULL)
+		ආපසු NULL;
+	නම් (l > 0)
 		memcpy(r, s, l);
 	r[l] = '\0';
-	return r;
+	ආපසු r;
 }
 
-int
-sshbuf_cmp(const struct sshbuf *b, size_t offset,
+පූර්ණ_සංඛ්‍යා
+sshbuf_cmp(const sa_nracanaa sshbuf *b, size_t offset,
     const void *s, size_t len)
 {
-	if (sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (offset + len > sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if (timingsafe_bcmp(sshbuf_ptr(b) + offset, s, len) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	නම් (sshbuf_ptr(b) == NULL)
+		ආපසු SSH_ERR_INTERNAL_ERROR;
+	නම් (offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
+		ආපසු SSH_ERR_INVALID_ARGUMENT;
+	නම් (offset + len > sshbuf_len(b))
+		ආපසු SSH_ERR_MESSAGE_INCOMPLETE;
+	නම් (timingsafe_bcmp(sshbuf_ptr(b) + offset, s, len) != 0)
+		ආපසු SSH_ERR_INVALID_FORMAT;
+	ආපසු 0;
 }
 
-int
-sshbuf_equals(const struct sshbuf *a, const struct sshbuf *b)
+පූර්ණ_සංඛ්‍යා
+sshbuf_equals(const sa_nracanaa sshbuf *a, const sa_nracanaa sshbuf *b)
 {
-	if (sshbuf_ptr(a) == NULL || sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (sshbuf_len(a) != sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if (sshbuf_len(a) == 0)
-		return 0;
-	if (memcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	නම් (sshbuf_ptr(a) == NULL || sshbuf_ptr(b) == NULL)
+		ආපසු SSH_ERR_INTERNAL_ERROR;
+	නම් (sshbuf_len(a) != sshbuf_len(b))
+		ආපසු SSH_ERR_MESSAGE_INCOMPLETE;
+	නම් (sshbuf_len(a) == 0)
+		ආපසු 0;
+	නම් (memcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
+		ආපසු SSH_ERR_INVALID_FORMAT;
+	ආපසු 0;
 }
 
-int
-sshbuf_find(const struct sshbuf *b, size_t start_offset,
+පූර්ණ_සංඛ්‍යා
+sshbuf_find(const sa_nracanaa sshbuf *b, size_t start_offset,
     const void *s, size_t len, size_t *offsetp)
 {
 	void *p;
 
-	if (offsetp != NULL)
+	නම් (offsetp != NULL)
 		*offsetp = 0;
-	if (sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (start_offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (start_offset > sshbuf_len(b) || start_offset + len > sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if ((p = memmem(sshbuf_ptr(b) + start_offset,
+	නම් (sshbuf_ptr(b) == NULL)
+		ආපසු SSH_ERR_INTERNAL_ERROR;
+	නම් (start_offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
+		ආපසු SSH_ERR_INVALID_ARGUMENT;
+	නම් (start_offset > sshbuf_len(b) || start_offset + len > sshbuf_len(b))
+		ආපසු SSH_ERR_MESSAGE_INCOMPLETE;
+	නම් ((p = memmem(sshbuf_ptr(b) + start_offset,
 	    sshbuf_len(b) - start_offset, s, len)) == NULL)
-		return SSH_ERR_INVALID_FORMAT;
-	if (offsetp != NULL)
+		ආපසු SSH_ERR_INVALID_FORMAT;
+	නම් (offsetp != NULL)
 		*offsetp = (const u_char *)p - sshbuf_ptr(b);
-	return 0;
+	ආපසු 0;
 }
 
-int
-sshbuf_read(int fd, struct sshbuf *buf, size_t maxlen, size_t *rlen)
+පූර්ණ_සංඛ්‍යා
+sshbuf_read(පූර්ණ_සංඛ්‍යා fd, sa_nracanaa sshbuf *buf, size_t maxlen, size_t *rlen)
 {
-	int r, oerrno;
+	පූර්ණ_සංඛ්‍යා r, oerrno;
 	size_t adjust;
 	ssize_t rr;
 	u_char *d;
 
-	if (rlen != NULL)
+	නම් (rlen != NULL)
 		*rlen = 0;
-	if ((r = sshbuf_reserve(buf, maxlen, &d)) != 0)
-		return r;
+	නම් ((r = sshbuf_reserve(buf, maxlen, &d)) != 0)
+		ආපසු r;
 	rr = read(fd, d, maxlen);
 	oerrno = errno;
 
 	/* Adjust the buffer to include only what was actually read */
-	if ((adjust = maxlen - (rr > 0 ? rr : 0)) != 0) {
-		if ((r = sshbuf_consume_end(buf, adjust)) != 0) {
+	නම් ((adjust = maxlen - (rr > 0 ? rr : 0)) != 0) {
+		නම් ((r = sshbuf_consume_end(buf, adjust)) != 0) {
 			/* avoid returning uninitialised data to caller */
 			memset(d + rr, '\0', adjust);
-			return SSH_ERR_INTERNAL_ERROR; /* shouldn't happen */
+			ආපසු SSH_ERR_INTERNAL_ERROR; /* shouldn't happen */
 		}
 	}
-	if (rr < 0) {
+	නම් (rr < 0) {
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
-	} else if (rr == 0) {
+		ආපසු SSH_ERR_SYSTEM_ERROR;
+	} නැතහොත් නම් (rr == 0) {
 		errno = EPIPE;
-		return SSH_ERR_SYSTEM_ERROR;
+		ආපසු SSH_ERR_SYSTEM_ERROR;
 	}
 	/* success */
-	if (rlen != NULL)
+	නම් (rlen != NULL)
 		*rlen = (size_t)rr;
-	return 0;
+	ආපසු 0;
 }

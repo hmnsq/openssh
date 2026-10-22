@@ -25,8 +25,8 @@
 #ifndef SSH_MSG_H
 #define SSH_MSG_H
 
-struct sshbuf;
-int	 ssh_msg_send(int, u_char, struct sshbuf *);
-int	 ssh_msg_recv(int, struct sshbuf *);
+sa_nracanaa sshbuf;
+පූර්ණ_සංඛ්‍යා	 ssh_msg_send(පූර්ණ_සංඛ්‍යා, u_char, sa_nracanaa sshbuf *);
+පූර්ණ_සංඛ්‍යා	 ssh_msg_recv(පූර්ණ_සංඛ්‍යා, sa_nracanaa sshbuf *);
 
 #endif

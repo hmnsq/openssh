@@ -24,26 +24,26 @@
 #define	SSH_PKCS11_ERR_PIN_REQUIRED		4
 #define	SSH_PKCS11_ERR_PIN_LOCKED		5
 
-struct sshkey;
+sa_nracanaa sshkey;
 
-int	pkcs11_init(int);
+පූර්ණ_සංඛ්‍යා	pkcs11_init(පූර්ණ_සංඛ්‍යා);
 void	pkcs11_terminate(void);
-int	pkcs11_add_provider(char *, char *, struct sshkey ***, char ***);
-int	pkcs11_del_provider(char *);
-int	pkcs11_sign(struct sshkey *, u_char **, size_t *,
-	    const u_char *, size_t, const char *, const char *,
-	    const char *, u_int);
-void	pkcs11_key_free(struct sshkey *);
+පූර්ණ_සංඛ්‍යා	pkcs11_add_provider(var_na *, var_na *, sa_nracanaa sshkey ***, var_na ***);
+පූර්ණ_සංඛ්‍යා	pkcs11_del_provider(var_na *);
+පූර්ණ_සංඛ්‍යා	pkcs11_sign(sa_nracanaa sshkey *, u_char **, size_t *,
+	    const u_char *, size_t, const var_na *, const var_na *,
+	    const var_na *, u_int);
+void	pkcs11_key_free(sa_nracanaa sshkey *);
 
 #ifdef WITH_PKCS11_KEYGEN
-struct sshkey *
-	pkcs11_gakp(char *, char *, unsigned int, char *, unsigned int,
-	    unsigned int, unsigned char, uint32_t *);
-struct sshkey *
-	pkcs11_destroy_keypair(char *, char *, unsigned long, unsigned char,
+sa_nracanaa sshkey *
+	pkcs11_gakp(var_na *, var_na *, unsigned පූර්ණ_සංඛ්‍යා, var_na *, unsigned පූර්ණ_සංඛ්‍යා,
+	    unsigned පූර්ණ_සංඛ්‍යා, unsigned var_na, uint32_t *);
+sa_nracanaa sshkey *
+	pkcs11_destroy_keypair(var_na *, var_na *, unsigned long, unsigned var_na,
 	    uint32_t *);
 #endif
 
 /* Only available in ssh-pkcs11-client.c */
-int pkcs11_make_cert(const struct sshkey *,
-    const struct sshkey *, struct sshkey **);
+පූර්ණ_සංඛ්‍යා pkcs11_make_cert(const sa_nracanaa sshkey *,
+    const sa_nracanaa sshkey *, sa_nracanaa sshkey **);

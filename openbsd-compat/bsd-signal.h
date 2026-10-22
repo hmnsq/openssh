@@ -24,13 +24,13 @@
 #ifndef _NSIG
 # ifdef NSIG
 #  define _NSIG NSIG
-# else
+# නැතහොත්
 #  define _NSIG 128
 # endif
 #endif
 
-#if !defined(HAVE_STRSIGNAL)
-char *strsignal(int);
+#නම් !defined(HAVE_STRSIGNAL)
+var_na *strsignal(පූර්ණ_සංඛ්‍යා);
 #endif
 
 #endif /* _BSD_SIGNAL_H */

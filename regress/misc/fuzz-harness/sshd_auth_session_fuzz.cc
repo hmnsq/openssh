@@ -15,9 +15,9 @@ limitations under the License.
 
 extern "C" void fuzz_userauth_one(const uint8_t *data, size_t size);
 
-extern "C" int
+extern "C" පූර්ණ_සංඛ්‍යා
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
 	fuzz_userauth_one(data, size);
-	return 0;
+	ආපසු 0;
 }

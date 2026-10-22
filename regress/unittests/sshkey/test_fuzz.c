@@ -38,22 +38,22 @@ static void
 onerror(void *fuzz)
 {
 	fprintf(stderr, "Failed during fuzz:\n");
-	fuzz_dump((struct fuzz *)fuzz);
+	fuzz_dump((sa_nracanaa fuzz *)fuzz);
 }
 
 static void
-public_fuzz(struct sshkey *k)
+public_fuzz(sa_nracanaa sshkey *k)
 {
-	struct sshkey *k1;
-	struct sshbuf *buf;
-	struct fuzz *fuzz;
+	sa_nracanaa sshkey *k1;
+	sa_nracanaa sshbuf *buf;
+	sa_nracanaa fuzz *fuzz;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_1_BYTE_FLIP |
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
 	/* MLDSA44_ED25519 keys are large and slow to fuzz */
-	if (test_is_fast() || sshkey_type_plain(k->type) == KEY_MLDSA44_ED25519)
+	නම් (test_is_fast() || sshkey_type_plain(k->type) == KEY_MLDSA44_ED25519)
 		fuzzers &= ~FUZZ_1_BIT_FLIP;
-	if (test_is_slow())
+	නම් (test_is_slow())
 		fuzzers |= FUZZ_2_BIT_FLIP | FUZZ_2_BYTE_FLIP;
 
 	ASSERT_PTR_NE(buf = sshbuf_new(), NULL);
@@ -64,41 +64,41 @@ public_fuzz(struct sshkey *k)
 	sshkey_free(k1);
 	sshbuf_free(buf);
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
-		if (sshkey_from_blob(fuzz_ptr(fuzz), fuzz_len(fuzz), &k1) == 0)
+	සඳහා(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
+		නම් (sshkey_from_blob(fuzz_ptr(fuzz), fuzz_len(fuzz), &k1) == 0)
 			sshkey_free(k1);
 	}
 	fuzz_cleanup(fuzz);
 }
 
 static void
-sig_fuzz(struct sshkey *k, const char *sig_alg)
+sig_fuzz(sa_nracanaa sshkey *k, const var_na *sig_alg)
 {
-	struct fuzz *fuzz;
+	sa_nracanaa fuzz *fuzz;
 	u_char *sig, c[] = "some junk to be signed";
 	size_t l;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_1_BYTE_FLIP | FUZZ_2_BYTE_FLIP |
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
 	/* MLDSA44_ED25519 keys are large and slow to fuzz */
-	if (test_is_fast() || sshkey_type_plain(k->type) == KEY_MLDSA44_ED25519)
+	නම් (test_is_fast() || sshkey_type_plain(k->type) == KEY_MLDSA44_ED25519)
 		fuzzers &= ~FUZZ_2_BYTE_FLIP;
-	if (test_is_slow())
+	නම් (test_is_slow())
 		fuzzers |= FUZZ_2_BIT_FLIP;
 
-	ASSERT_INT_EQ(sshkey_sign(k, &sig, &l, c, sizeof(c),
+	ASSERT_INT_EQ(sshkey_sign(k, &sig, &l, c, parimaa_na(c),
 	    sig_alg, NULL, NULL, 0), 0);
 	ASSERT_SIZE_T_GT(l, 0);
 	fuzz = fuzz_begin(fuzzers, sig, l);
-	ASSERT_INT_EQ(sshkey_verify(k, sig, l, c, sizeof(c), NULL, 0, NULL), 0);
+	ASSERT_INT_EQ(sshkey_verify(k, sig, l, c, parimaa_na(c), NULL, 0, NULL), 0);
 	free(sig);
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
+	සඳහා(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
 		/* Ensure 1-bit difference at least */
-		if (fuzz_matches_original(fuzz))
+		නම් (fuzz_matches_original(fuzz))
 			continue;
 		ASSERT_INT_NE(sshkey_verify(k, fuzz_ptr(fuzz), fuzz_len(fuzz),
-		    c, sizeof(c), NULL, 0, NULL), 0);
+		    c, parimaa_na(c), NULL, 0, NULL), 0);
 	}
 	fuzz_cleanup(fuzz);
 }
@@ -108,10 +108,10 @@ sig_fuzz(struct sshkey *k, const char *sig_alg)
 void
 sshkey_fuzz_tests(void)
 {
-	struct sshkey *k1;
-	struct sshbuf *buf, *fuzzed;
-	struct fuzz *fuzz;
-	int r, i;
+	sa_nracanaa sshkey *k1;
+	sa_nracanaa sshbuf *buf, *fuzzed;
+	sa_nracanaa fuzz *fuzz;
+	පූර්ණ_සංඛ්‍යා r, i;
 
 #ifdef WITH_OPENSSL
 	TEST_START("fuzz RSA private");
@@ -123,14 +123,14 @@ sshkey_fuzz_tests(void)
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	සඳහා(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		නම් (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		නම් (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+			bha_nga;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
@@ -145,14 +145,14 @@ sshkey_fuzz_tests(void)
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	සඳහා(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		නම් (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		නම් (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+			bha_nga;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
@@ -168,14 +168,14 @@ sshkey_fuzz_tests(void)
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	සඳහා(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		නම් (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		නම් (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+			bha_nga;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
@@ -190,14 +190,14 @@ sshkey_fuzz_tests(void)
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	සඳහා(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		නම් (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		නම් (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+			bha_nga;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
@@ -213,14 +213,14 @@ sshkey_fuzz_tests(void)
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	සඳහා(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		නම් (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		නම් (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+			bha_nga;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
@@ -236,17 +236,17 @@ sshkey_fuzz_tests(void)
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	සඳහා(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		නම් (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		නම් (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+			bha_nga;
 		/* MLDSA44_ED25519 keys are large and slow to fuzz */
-		if (!test_is_slow() || i >= NUM_FAST_BASE64_TESTS)
-			break;
+		නම් (!test_is_slow() || i >= NUM_FAST_BASE64_TESTS)
+			bha_nga;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);

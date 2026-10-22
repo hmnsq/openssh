@@ -43,90 +43,90 @@
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#නම් !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+පූර්ණ_සංඛ්‍යා
+sigaction(පූර්ණ_සංඛ්‍යා sig, sa_nracanaa sigaction *sigact, sa_nracanaa sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
+	ආපසු sigvec(sig, sigact ? &sigact->sv : NULL,
 	    osigact ? &osigact->sv : NULL);
 }
 
-int
+පූර්ණ_සංඛ්‍යා
 sigemptyset (sigset_t *mask)
 {
-	if (!mask) {
+	නම් (!mask) {
 		errno = EINVAL;
-		return -1;
+		ආපසු -1;
 	}
 	*mask = 0;
-	return 0;
+	ආපසු 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+පූර්ණ_සංඛ්‍යා
+sigprocmask (පූර්ණ_සංඛ්‍යා mode, sigset_t *mask, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
+	නම් (!mask) {
 		errno = EINVAL;
-		return -1;
+		ආපසු -1;
 	}
 
-	if (omask)
+	නම් (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
+	නම් (mode == SIG_BLOCK)
 		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
+	නැතහොත් නම් (mode == SIG_UNBLOCK)
 		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
+	නැතහොත් නම් (mode == SIG_SETMASK)
 	current = *mask;
 
 	sigsetmask(current);
-	return 0;
+	ආපසු 0;
 }
 
-int
+පූර්ණ_සංඛ්‍යා
 sigsuspend (sigset_t *mask)
 {
-	if (!mask) {
+	නම් (!mask) {
 		errno = EINVAL;
-		return -1;
+		ආපසු -1;
 	}
-	return sigpause(*mask);
+	ආපසු sigpause(*mask);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+පූර්ණ_සංඛ්‍යා
+sigdelset (sigset_t *mask, පූර්ණ_සංඛ්‍යා sig)
 {
-	if (!mask) {
+	නම් (!mask) {
 		errno = EINVAL;
-		return -1;
+		ආපසු -1;
 	}
 	*mask &= ~sigmask(sig);
-	return 0;
+	ආපසු 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+පූර්ණ_සංඛ්‍යා
+sigaddset (sigset_t *mask, පූර්ණ_සංඛ්‍යා sig)
 {
-	if (!mask) {
+	නම් (!mask) {
 		errno = EINVAL;
-		return -1;
+		ආපසු -1;
 	}
 	*mask |= sigmask(sig);
-	return 0;
+	ආපසු 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+පූර්ණ_සංඛ්‍යා
+sigismember (sigset_t *mask, පූර්ණ_සංඛ්‍යා sig)
 {
-	if (!mask) {
+	නම් (!mask) {
 		errno = EINVAL;
-		return -1;
+		ආපසු -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	ආපසු (*mask & sigmask(sig)) != 0;
 }
 
 #endif

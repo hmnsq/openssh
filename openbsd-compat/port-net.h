@@ -17,32 +17,32 @@
 #ifndef _PORT_TUN_H
 #define _PORT_TUN_H
 
-struct Channel;
-struct ssh;
+sa_nracanaa Channel;
+sa_nracanaa ssh;
 
-#if defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
+#නම් defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
 # define CUSTOM_SYS_TUN_OPEN
-int	  sys_tun_open(int, int, char **);
+පූර්ණ_සංඛ්‍යා	  sys_tun_open(පූර්ණ_සංඛ්‍යා, පූර්ණ_සංඛ්‍යා, var_na **);
 #endif
 
-#if defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
+#නම් defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
 # define SSH_TUN_FILTER
-int	 sys_tun_infilter(struct ssh *, struct Channel *, char *, int);
-u_char	*sys_tun_outfilter(struct ssh *, struct Channel *, u_char **, size_t *);
+පූර්ණ_සංඛ්‍යා	 sys_tun_infilter(sa_nracanaa ssh *, sa_nracanaa Channel *, var_na *, පූර්ණ_සංඛ්‍යා);
+u_char	*sys_tun_outfilter(sa_nracanaa ssh *, sa_nracanaa Channel *, u_char **, size_t *);
 #endif
 
-#if defined(SYS_RDOMAIN_LINUX)
+#නම් defined(SYS_RDOMAIN_LINUX)
 # define HAVE_SYS_GET_RDOMAIN
 # define HAVE_SYS_SET_RDOMAIN
 # define HAVE_SYS_VALID_RDOMAIN
-char *sys_get_rdomain(int fd);
-int sys_set_rdomain(int fd, const char *name);
-int sys_valid_rdomain(const char *name);
+var_na *sys_get_rdomain(පූර්ණ_සංඛ්‍යා fd);
+පූර්ණ_සංඛ්‍යා sys_set_rdomain(පූර්ණ_සංඛ්‍යා fd, const var_na *name);
+පූර්ණ_සංඛ්‍යා sys_valid_rdomain(const var_na *name);
 #endif
 
-#if defined(SYS_RDOMAIN_XXX)
+#නම් defined(SYS_RDOMAIN_XXX)
 # define HAVE_SYS_SET_PROCESS_RDOMAIN
-void sys_set_process_rdomain(const char *name);
+void sys_set_process_rdomain(const var_na *name);
 #endif
 
 #endif

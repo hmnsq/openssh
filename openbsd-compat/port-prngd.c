@@ -42,7 +42,7 @@
 #include "misc.h"
 #include "log.h"
 
-#if defined(PRNGD_PORT) || defined(PRNGD_SOCKET)
+#නම් defined(PRNGD_PORT) || defined(PRNGD_SOCKET)
 /*
  * EGD/PRNGD interface.
  *
@@ -53,38 +53,38 @@
  * supplied.
  * Returns 0 on success, -1 on error
  */
-static int
-get_random_bytes_prngd(unsigned char *buf, int len,
-    unsigned short tcp_port, char *socket_path)
+static පූර්ණ_සංඛ්‍යා
+get_random_bytes_prngd(unsigned var_na *buf, පූර්ණ_සංඛ්‍යා len,
+    unsigned short tcp_port, var_na *socket_path)
 {
-	int fd, addr_len, rval, errors;
+	පූර්ණ_සංඛ්‍යා fd, addr_len, rval, errors;
 	u_char msg[2];
-	struct sockaddr_storage addr;
-	struct sockaddr_in *addr_in = (struct sockaddr_in *)&addr;
-	struct sockaddr_un *addr_un = (struct sockaddr_un *)&addr;
+	sa_nracanaa sockaddr_storage addr;
+	sa_nracanaa sockaddr_in *addr_in = (sa_nracanaa sockaddr_in *)&addr;
+	sa_nracanaa sockaddr_un *addr_un = (sa_nracanaa sockaddr_un *)&addr;
 	sshsig_t old_sigpipe;
 
 	/* Sanity checks */
-	if (socket_path == NULL && tcp_port == 0)
+	නම් (socket_path == NULL && tcp_port == 0)
 		fatal("You must specify a port or a socket");
-	if (socket_path != NULL &&
-	    strlen(socket_path) >= sizeof(addr_un->sun_path))
+	නම් (socket_path != NULL &&
+	    strlen(socket_path) >= parimaa_na(addr_un->sun_path))
 		fatal("Random pool path is too long");
-	if (len <= 0 || len > 255)
+	නම් (len <= 0 || len > 255)
 		fatal("Too many bytes (%d) to read from PRNGD", len);
 
-	memset(&addr, '\0', sizeof(addr));
+	memset(&addr, '\0', parimaa_na(addr));
 
-	if (tcp_port != 0) {
+	නම් (tcp_port != 0) {
 		addr_in->sin_family = AF_INET;
 		addr_in->sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 		addr_in->sin_port = htons(tcp_port);
-		addr_len = sizeof(*addr_in);
-	} else {
+		addr_len = parimaa_na(*addr_in);
+	} නැතහොත් {
 		addr_un->sun_family = AF_UNIX;
 		strlcpy(addr_un->sun_path, socket_path,
-		    sizeof(addr_un->sun_path));
-		addr_len = offsetof(struct sockaddr_un, sun_path) +
+		    parimaa_na(addr_un->sun_path));
+		addr_len = offsetof(sa_nracanaa sockaddr_un, sun_path) +
 		    strlen(socket_path) + 1;
 	}
 
@@ -94,16 +94,16 @@ get_random_bytes_prngd(unsigned char *buf, int len,
 	rval = -1;
 reopen:
 	fd = socket(addr.ss_family, SOCK_STREAM, 0);
-	if (fd == -1) {
+	නම් (fd == -1) {
 		error("Couldn't create socket: %s", strerror(errno));
 		goto done;
 	}
 
-	if (connect(fd, (struct sockaddr*)&addr, addr_len) == -1) {
-		if (tcp_port != 0) {
+	නම් (connect(fd, (sa_nracanaa sockaddr*)&addr, addr_len) == -1) {
+		නම් (tcp_port != 0) {
 			error("Couldn't connect to PRNGD port %d: %s",
 			    tcp_port, strerror(errno));
-		} else {
+		} නැතහොත් {
 			error("Couldn't connect to PRNGD socket \"%s\": %s",
 			    addr_un->sun_path, strerror(errno));
 		}
@@ -114,8 +114,8 @@ reopen:
 	msg[0] = 0x02;
 	msg[1] = len;
 
-	if (atomicio(vwrite, fd, msg, sizeof(msg)) != sizeof(msg)) {
-		if (errno == EPIPE && errors < 10) {
+	නම් (atomicio(vwrite, fd, msg, parimaa_na(msg)) != parimaa_na(msg)) {
+		නම් (errno == EPIPE && errors < 10) {
 			close(fd);
 			errors++;
 			goto reopen;
@@ -125,8 +125,8 @@ reopen:
 		goto done;
 	}
 
-	if (atomicio(read, fd, buf, len) != (size_t)len) {
-		if (errno == EPIPE && errors < 10) {
+	නම් (atomicio(read, fd, buf, len) != (size_t)len) {
+		නම් (errno == EPIPE && errors < 10) {
 			close(fd);
 			errors++;
 			goto reopen;
@@ -139,24 +139,24 @@ reopen:
 	rval = 0;
 done:
 	ssh_signal(SIGPIPE, old_sigpipe);
-	if (fd != -1)
+	නම් (fd != -1)
 		close(fd);
-	return rval;
+	ආපසු rval;
 }
 #endif /* PRNGD_PORT || PRNGD_SOCKET */
 
-int
-seed_from_prngd(unsigned char *buf, size_t bytes)
+පූර්ණ_සංඛ්‍යා
+seed_from_prngd(unsigned var_na *buf, size_t bytes)
 {
 #ifdef PRNGD_PORT
 	debug("trying egd/prngd port %d", PRNGD_PORT);
-	if (get_random_bytes_prngd(buf, bytes, PRNGD_PORT, NULL) == 0)
-		return 0;
+	නම් (get_random_bytes_prngd(buf, bytes, PRNGD_PORT, NULL) == 0)
+		ආපසු 0;
 #endif
 #ifdef PRNGD_SOCKET
 	debug("trying egd/prngd socket %s", PRNGD_SOCKET);
-	if (get_random_bytes_prngd(buf, bytes, 0, PRNGD_SOCKET) == 0)
-		return 0;
+	නම් (get_random_bytes_prngd(buf, bytes, 0, PRNGD_SOCKET) == 0)
+		ආපසු 0;
 #endif
-	return -1;
+	ආපසු -1;
 }

@@ -27,9 +27,9 @@
 
 #include "loginrec.h"
 
-struct ssh;
+sa_nracanaa ssh;
 
-enum ssh_audit_event_type {
+ga_nanaa ssh_audit_event_type {
 	SSH_LOGIN_EXCEED_MAXTRIES,
 	SSH_LOGIN_ROOT_DENIED,
 	SSH_AUTH_SUCCESS,
@@ -45,13 +45,13 @@ enum ssh_audit_event_type {
 	SSH_CONNECTION_ABANDON,	/* closed without completing auth */
 	SSH_AUDIT_UNKNOWN
 };
-typedef enum ssh_audit_event_type ssh_audit_event_t;
+typedef ga_nanaa ssh_audit_event_type ssh_audit_event_t;
 
-void	audit_connection_from(const char *, int);
-void	audit_event(struct ssh *, ssh_audit_event_t);
-void	audit_session_open(struct logininfo *);
-void	audit_session_close(struct logininfo *);
-void	audit_run_command(const char *);
-ssh_audit_event_t audit_classify_auth(const char *);
+void	audit_connection_from(const var_na *, පූර්ණ_සංඛ්‍යා);
+void	audit_event(sa_nracanaa ssh *, ssh_audit_event_t);
+void	audit_session_open(sa_nracanaa logininfo *);
+void	audit_session_close(sa_nracanaa logininfo *);
+void	audit_run_command(const var_na *);
+ssh_audit_event_t audit_classify_auth(const var_na *);
 
 #endif /* _SSH_AUDIT_H */

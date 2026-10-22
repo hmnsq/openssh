@@ -16,26 +16,26 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_GETPEEREID)
+#නම් !defined(HAVE_GETPEEREID)
 
 #include <sys/types.h>
 #include <sys/socket.h>
 
 #include <unistd.h>
 
-#if defined(SO_PEERCRED)
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+#නම් defined(SO_PEERCRED)
+පූර්ණ_සංඛ්‍යා
+getpeereid(පූර්ණ_සංඛ්‍යා s, uid_t *euid, gid_t *gid)
 {
-	struct ucred cred;
-	socklen_t len = sizeof(cred);
+	sa_nracanaa ucred cred;
+	socklen_t len = parimaa_na(cred);
 
-	if (getsockopt(s, SOL_SOCKET, SO_PEERCRED, &cred, &len) < 0)
-		return (-1);
+	නම් (getsockopt(s, SOL_SOCKET, SO_PEERCRED, &cred, &len) < 0)
+		ආපසු (-1);
 	*euid = cred.uid;
 	*gid = cred.gid;
 
-	return (0);
+	ආපසු (0);
 }
 #elif defined(HAVE_GETPEERUCRED)
 
@@ -43,30 +43,30 @@ getpeereid(int s, uid_t *euid, gid_t *gid)
 # include <ucred.h>
 #endif
 
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+පූර්ණ_සංඛ්‍යා
+getpeereid(පූර්ණ_සංඛ්‍යා s, uid_t *euid, gid_t *gid)
 {
 	ucred_t *ucred = NULL;
 
-	if (getpeerucred(s, &ucred) == -1)
-		return (-1);
-	if ((*euid = ucred_geteuid(ucred)) == -1)
-		return (-1);
-	if ((*gid = ucred_getrgid(ucred)) == -1)
-		return (-1);
+	නම් (getpeerucred(s, &ucred) == -1)
+		ආපසු (-1);
+	නම් ((*euid = ucred_geteuid(ucred)) == -1)
+		ආපසු (-1);
+	නම් ((*gid = ucred_getrgid(ucred)) == -1)
+		ආපසු (-1);
 
 	ucred_free(ucred);
 
-	return (0);
+	ආපසු (0);
 }
-#else
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+#නැතහොත්
+පූර්ණ_සංඛ්‍යා
+getpeereid(පූර්ණ_සංඛ්‍යා s, uid_t *euid, gid_t *gid)
 {
 	*euid = geteuid();
 	*gid = getgid();
 
-	return (0);
+	ආපසු (0);
 }
 #endif /* defined(SO_PEERCRED) */
 

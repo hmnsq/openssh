@@ -15,14 +15,14 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-int	 vasnmprintf(char **, size_t, int *, const char *, va_list);
-int	 mprintf(const char *, ...)
+පූර්ණ_සංඛ්‍යා	 vasnmprintf(var_na **, size_t, පූර්ණ_සංඛ්‍යා *, const var_na *, va_list);
+පූර්ණ_සංඛ්‍යා	 mprintf(const var_na *, ...)
 	    __attribute__((format(printf, 1, 2)));
-int	 fmprintf(FILE *, const char *, ...)
+පූර්ණ_සංඛ්‍යා	 fmprintf(FILE *, const var_na *, ...)
 	    __attribute__((format(printf, 2, 3)));
-int	 vfmprintf(FILE *, const char *, va_list);
-int	 snmprintf(char *, size_t, int *, const char *, ...)
+පූර්ණ_සංඛ්‍යා	 vfmprintf(FILE *, const var_na *, va_list);
+පූර්ණ_සංඛ්‍යා	 snmprintf(var_na *, size_t, පූර්ණ_සංඛ්‍යා *, const var_na *, ...)
 	    __attribute__((format(printf, 4, 5)));
-int	 asmprintf(char **, size_t, int *, const char *, ...)
+පූර්ණ_සංඛ්‍යා	 asmprintf(var_na **, size_t, පූර්ණ_සංඛ්‍යා *, const var_na *, ...)
 	    __attribute__((format(printf, 4, 5)));
 void	 msetlocale(void);
