@@ -5,23 +5,23 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <string.h>
 
-#include "../test_helper/test_helper.h"
+#अन्तर्भाव "../test_helper/test_helper.h"
 
-#include "misc.h"
+#अन्तर्भाव "misc.h"
 
-void
-tests(void)
+शून्य
+tests(शून्य)
 {
-	char buf[1024];
+	वर्ण buf[1024];
 
 	TEST_START("conversion_convtime");
 	ASSERT_INT_EQ(convtime("0"), 0);
@@ -38,20 +38,20 @@ tests(void)
 	ASSERT_INT_EQ(convtime("-9d"), -1);
 	
 	/* overflow */
-	snprintf(buf, sizeof buf, "%llu", (unsigned long long)INT_MAX);
+	snprintf(buf, परिमाण buf, "%llu", (unsigned long long)INT_MAX);
 	ASSERT_INT_EQ(convtime(buf), INT_MAX);
-	snprintf(buf, sizeof buf, "%llu", (unsigned long long)INT_MAX + 1);
+	snprintf(buf, परिमाण buf, "%llu", (unsigned long long)INT_MAX + 1);
 	ASSERT_INT_EQ(convtime(buf), -1);
 
 	/* overflow with multiplier */
-	snprintf(buf, sizeof buf, "%lluM", (unsigned long long)INT_MAX/60 + 1);
+	snprintf(buf, परिमाण buf, "%lluM", (unsigned long long)INT_MAX/60 + 1);
 	ASSERT_INT_EQ(convtime(buf), -1);
 	ASSERT_INT_EQ(convtime("1000000000000000000000w"), -1);
 	TEST_DONE();
 }
 
-void
-benchmarks(void)
+शून्य
+benchmarks(शून्य)
 {
 	printf("no benchmarks\n");
 }

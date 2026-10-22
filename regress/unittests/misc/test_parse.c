@@ -5,85 +5,85 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-#include "../test_helper/test_helper.h"
+#अन्तर्भाव "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "misc.h"
 
-void test_parse(void);
+शून्य test_parse(शून्य);
 
-void
-test_parse(void)
+शून्य
+test_parse(शून्य)
 {
-	int port;
-	char *user, *host, *path;
+	पूर्णाङ्क port;
+	वर्ण *user, *host, *path;
 
 	TEST_START("misc_parse_user_host_path");
-	user = host = path = NULL;
+	user = host = path = रिक्त;
 	ASSERT_INT_EQ(parse_user_host_path("someuser@some.host:some/path",
 	    &user, &host, &path), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "some.host");
 	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
+	मुक्त(user); मुक्त(host); मुक्त(path);
 	TEST_DONE();
 
 	TEST_START("misc_parse_user_ipv4_path");
-	user = host = path = NULL;
+	user = host = path = रिक्त;
 	ASSERT_INT_EQ(parse_user_host_path("someuser@1.22.33.144:some/path",
 	    &user, &host, &path), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "1.22.33.144");
 	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
+	मुक्त(user); मुक्त(host); मुक्त(path);
 	TEST_DONE();
 
 	TEST_START("misc_parse_user_[ipv4]_path");
-	user = host = path = NULL;
+	user = host = path = रिक्त;
 	ASSERT_INT_EQ(parse_user_host_path("someuser@[1.22.33.144]:some/path",
 	    &user, &host, &path), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "1.22.33.144");
 	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
+	मुक्त(user); मुक्त(host); मुक्त(path);
 	TEST_DONE();
 
 	TEST_START("misc_parse_user_[ipv4]_nopath");
-	user = host = path = NULL;
+	user = host = path = रिक्त;
 	ASSERT_INT_EQ(parse_user_host_path("someuser@[1.22.33.144]:",
 	    &user, &host, &path), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "1.22.33.144");
 	ASSERT_STRING_EQ(path, ".");
-	free(user); free(host); free(path);
+	मुक्त(user); मुक्त(host); मुक्त(path);
 	TEST_DONE();
 
 	TEST_START("misc_parse_user_ipv6_path");
-	user = host = path = NULL;
+	user = host = path = रिक्त;
 	ASSERT_INT_EQ(parse_user_host_path("someuser@[::1]:some/path",
 	    &user, &host, &path), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "::1");
 	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
+	मुक्त(user); मुक्त(host); मुक्त(path);
 	TEST_DONE();
 
 	TEST_START("misc_parse_uri");
-	user = host = path = NULL;
+	user = host = path = रिक्त;
 	ASSERT_INT_EQ(parse_uri("ssh", "ssh://someuser@some.host:22/some/path",
 	    &user, &host, &port, &path), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "some.host");
 	ASSERT_INT_EQ(port, 22);
 	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
+	मुक्त(user); मुक्त(host); मुक्त(path);
 	TEST_DONE();
 }
