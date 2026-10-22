@@ -18,13 +18,13 @@
 #ifndef SSHSIG_H
 #define SSHSIG_H
 
-struct sshbuf;
-struct sshkey;
-struct sshsigopt;
-struct sshkey_sig_details;
+sa_nracanaa sshbuf;
+sa_nracanaa sshkey;
+sa_nracanaa sshsigopt;
+sa_nracanaa sshkey_sig_details;
 
-typedef int sshsig_signer(struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *, const char *,
+typedef puur_naa_nka sshsig_signer(sa_nracanaa sshkey *, u_char **, size_t *,
+    const u_char *, size_t, const var_na *, const var_na *, const var_na *,
     u_int, void *);
 
 /* Buffer-oriented API */
@@ -34,9 +34,9 @@ typedef int sshsig_signer(struct sshkey *, u_char **, size_t *,
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  * out is populated with the detached signature, or NULL on failure.
  */
-int sshsig_signb(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin, const struct sshbuf *message,
-    const char *sig_namespace, struct sshbuf **out,
+puur_naa_nka sshsig_signb(sa_nracanaa sshkey *key, const var_na *hashalg,
+    const var_na *sk_provider, const var_na *sk_pin, const sa_nracanaa sshbuf *message,
+    const var_na *sig_namespace, sa_nracanaa sshbuf **out,
     sshsig_signer *signer, void *signer_ctx);
 
 /*
@@ -44,9 +44,9 @@ int sshsig_signb(struct sshkey *key, const char *hashalg,
  * used to sign via argument.
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  */
-int sshsig_verifyb(struct sshbuf *signature,
-    const struct sshbuf *message, const char *sig_namespace,
-    struct sshkey **sign_keyp, struct sshkey_sig_details **sig_details);
+puur_naa_nka sshsig_verifyb(sa_nracanaa sshbuf *signature,
+    const sa_nracanaa sshbuf *message, const var_na *sig_namespace,
+    sa_nracanaa sshkey **sign_keyp, sa_nracanaa sshkey_sig_details **sig_details);
 
 /* File/FD-oriented API */
 
@@ -55,57 +55,57 @@ int sshsig_verifyb(struct sshbuf *signature,
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  * out is populated with the detached signature, or NULL on failure.
  */
-int sshsig_sign_fd(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin,
-    int fd, const char *sig_namespace,
-    struct sshbuf **out, sshsig_signer *signer, void *signer_ctx);
+puur_naa_nka sshsig_sign_fd(sa_nracanaa sshkey *key, const var_na *hashalg,
+    const var_na *sk_provider, const var_na *sk_pin,
+    puur_naa_nka fd, const var_na *sig_namespace,
+    sa_nracanaa sshbuf **out, sshsig_signer *signer, void *signer_ctx);
 
 /*
  * Verifies that a detached signature over a file is valid and optionally
  * returns key used to sign via argument.
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  */
-int sshsig_verify_fd(struct sshbuf *signature, int fd,
-    const char *sig_namespace, struct sshkey **sign_keyp,
-    struct sshkey_sig_details **sig_details);
+puur_naa_nka sshsig_verify_fd(sa_nracanaa sshbuf *signature, puur_naa_nka fd,
+    const var_na *sig_namespace, sa_nracanaa sshkey **sign_keyp,
+    sa_nracanaa sshkey_sig_details **sig_details);
 
 /* Utility functions */
 
 /*
  * Return a base64 encoded "ASCII armoured" version of a raw signature.
  */
-int sshsig_armor(const struct sshbuf *blob, struct sshbuf **out);
+puur_naa_nka sshsig_armor(const sa_nracanaa sshbuf *blob, sa_nracanaa sshbuf **out);
 
 /*
  * Decode a base64 encoded armoured signature to a raw signature.
  */
-int sshsig_dearmor(struct sshbuf *sig, struct sshbuf **out);
+puur_naa_nka sshsig_dearmor(sa_nracanaa sshbuf *sig, sa_nracanaa sshbuf **out);
 
 /*
  * Checks whether a particular key/principal/namespace is permitted by
  * an allowed_keys file. Returns 0 on success.
  */
-int sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
-    const char *principal, const char *ns, uint64_t verify_time);
+puur_naa_nka sshsig_check_allowed_keys(const var_na *path, const sa_nracanaa sshkey *sign_key,
+    const var_na *principal, const var_na *ns, uint64_t verify_time);
 
 /* Parse zero or more allowed_keys signature options */
-struct sshsigopt *sshsigopt_parse(const char *opts,
-    const char *path, u_long linenum, const char **errstrp);
+sa_nracanaa sshsigopt *sshsigopt_parse(const var_na *opts,
+    const var_na *path, u_long linenum, const var_na **errstrp);
 
 /* Free signature options */
-void sshsigopt_free(struct sshsigopt *opts);
+void sshsigopt_free(sa_nracanaa sshsigopt *opts);
 
 /* Get public key from signature */
-int sshsig_get_pubkey(struct sshbuf *signature, struct sshkey **pubkey);
+puur_naa_nka sshsig_get_pubkey(sa_nracanaa sshbuf *signature, sa_nracanaa sshkey **pubkey);
 
 /* Find principal in allowed_keys file, given a sshkey. Returns
  * 0 on success.
  */
-int sshsig_find_principals(const char *path, const struct sshkey *sign_key,
-    uint64_t verify_time, char **principal);
+puur_naa_nka sshsig_find_principals(const var_na *path, const sa_nracanaa sshkey *sign_key,
+    uint64_t verify_time, var_na **principal);
 
 /* Find all principals in allowed_keys file matching *principal */
-int sshsig_match_principals(const char *path,
-	const char *principal, char ***principalsp, size_t *nprincipalsp);
+puur_naa_nka sshsig_match_principals(const var_na *path,
+	const var_na *principal, var_na ***principalsp, size_t *nprincipalsp);
 
 #endif /* SSHSIG_H */

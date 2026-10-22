@@ -51,39 +51,39 @@
 #define SSH_GSSAPI_MAX_MECHS	2048
 
 extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_gssapi;
+extern sa_nracanaa authmethod_cfg methodcfg_gssapi;
 
-static int input_gssapi_token(int type, uint32_t plen, struct ssh *ssh);
-static int input_gssapi_mic(int type, uint32_t plen, struct ssh *ssh);
-static int input_gssapi_exchange_complete(int type, uint32_t plen, struct ssh *ssh);
-static int input_gssapi_errtok(int, uint32_t, struct ssh *);
+static puur_naa_nka input_gssapi_token(puur_naa_nka type, uint32_t plen, sa_nracanaa ssh *ssh);
+static puur_naa_nka input_gssapi_mic(puur_naa_nka type, uint32_t plen, sa_nracanaa ssh *ssh);
+static puur_naa_nka input_gssapi_exchange_complete(puur_naa_nka type, uint32_t plen, sa_nracanaa ssh *ssh);
+static puur_naa_nka input_gssapi_errtok(puur_naa_nka, uint32_t, sa_nracanaa ssh *);
 
 /*
  * We only support those mechanisms that we know about (ie ones that we know
  * how to check local user kuserok and the like)
  */
-static int
-userauth_gssapi(struct ssh *ssh, const char *method)
+static puur_naa_nka
+userauth_gssapi(sa_nracanaa ssh *ssh, const var_na *method)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	gss_OID_desc goid = {0, NULL};
 	Gssctxt *ctxt = NULL;
-	int r, present;
+	puur_naa_nka r, present;
 	u_int mechs;
 	OM_uint32 ms;
 	size_t len;
 	u_char *doid = NULL;
 
-	if ((r = sshpkt_get_u32(ssh, &mechs)) != 0)
+	ᰀᰧ ((r = sshpkt_get_u32(ssh, &mechs)) != 0)
 		fatal_fr(r, "parse packet");
 
-	if (mechs == 0) {
+	ᰀᰧ (mechs == 0) {
 		logit_f("mechanism negotiation is not supported");
-		return (0);
-	} else if (mechs > SSH_GSSAPI_MAX_MECHS) {
+		ᰀᰧᰌ (0);
+	} ᰀᰧᰀ ᰀᰧ (mechs > SSH_GSSAPI_MAX_MECHS) {
 		logit_f("too many mechanisms requested %u > %u", mechs,
 		    SSH_GSSAPI_MAX_MECHS);
-		return (0);
+		ᰀᰧᰌ (0);
 	}
 
 	do {
@@ -92,37 +92,37 @@ userauth_gssapi(struct ssh *ssh, const char *method)
 		free(doid);
 
 		present = 0;
-		if ((r = sshpkt_get_string(ssh, &doid, &len)) != 0)
+		ᰀᰧ ((r = sshpkt_get_string(ssh, &doid, &len)) != 0)
 			fatal_fr(r, "parse oid");
 
-		if (len > 2 && doid[0] == SSH_GSS_OIDTYPE &&
+		ᰀᰧ (len > 2 && doid[0] == SSH_GSS_OIDTYPE &&
 		    doid[1] == len - 2) {
 			goid.elements = doid + 2;
 			goid.length   = len - 2;
 			ssh_gssapi_test_oid_supported(&ms, &goid, &present);
-		} else {
+		} ᰀᰧᰀ {
 			logit_f("badly formed OID received");
 		}
-	} while (mechs > 0 && !present);
+	} ᰀᰬ (mechs > 0 && !present);
 
-	if (!present) {
+	ᰀᰧ (!present) {
 		free(doid);
 		authctxt->server_caused_failure = 1;
-		return (0);
+		ᰀᰧᰌ (0);
 	}
 
-	if (GSS_ERROR(mm_ssh_gssapi_server_ctx(&ctxt, &goid))) {
-		if (ctxt != NULL)
+	ᰀᰧ (GSS_ERROR(mm_ssh_gssapi_server_ctx(&ctxt, &goid))) {
+		ᰀᰧ (ctxt != NULL)
 			ssh_gssapi_delete_ctx(&ctxt);
 		free(doid);
 		authctxt->server_caused_failure = 1;
-		return (0);
+		ᰀᰧᰌ (0);
 	}
 
 	authctxt->methoddata = (void *)ctxt;
 
 	/* Return the OID that we received */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_GSSAPI_RESPONSE)) != 0 ||
+	ᰀᰧ ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_GSSAPI_RESPONSE)) != 0 ||
 	    (r = sshpkt_put_string(ssh, doid, len)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
@@ -133,11 +133,11 @@ userauth_gssapi(struct ssh *ssh, const char *method)
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, &input_gssapi_errtok);
 	authctxt->postponed = 1;
 
-	return (0);
+	ᰀᰧᰌ (0);
 }
 
-static int
-input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
+static puur_naa_nka
+input_gssapi_token(puur_naa_nka type, uint32_t plen, sa_nracanaa ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt;
@@ -146,13 +146,13 @@ input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
 	OM_uint32 maj_status, min_status, flags;
 	u_char *p;
 	size_t len;
-	int r;
+	puur_naa_nka r;
 
-	if (authctxt == NULL)
+	ᰀᰧ (authctxt == NULL)
 		fatal("No authentication or GSSAPI context");
 
 	gssctxt = authctxt->methoddata;
-	if ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
+	ᰀᰧ ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
@@ -163,9 +163,9 @@ input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
 
 	free(p);
 
-	if (GSS_ERROR(maj_status)) {
-		if (send_tok.length != 0) {
-			if ((r = sshpkt_start(ssh,
+	ᰀᰧ (GSS_ERROR(maj_status)) {
+		ᰀᰧ (send_tok.length != 0) {
+			ᰀᰧ ((r = sshpkt_start(ssh,
 			    SSH2_MSG_USERAUTH_GSSAPI_ERRTOK)) != 0 ||
 			    (r = sshpkt_put_string(ssh, send_tok.value,
 			    send_tok.length)) != 0 ||
@@ -181,24 +181,24 @@ input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
 		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
 		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, NULL);
 		userauth_finish(ssh, 0, "gssapi-with-mic", NULL);
-	} else {
-		if (send_tok.length != 0) {
-			if ((r = sshpkt_start(ssh,
+	} ᰀᰧᰀ {
+		ᰀᰧ (send_tok.length != 0) {
+			ᰀᰧ ((r = sshpkt_start(ssh,
 			    SSH2_MSG_USERAUTH_GSSAPI_TOKEN)) != 0 ||
 			    (r = sshpkt_put_string(ssh, send_tok.value,
 			    send_tok.length)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0)
 				fatal_fr(r, "send TOKEN packet");
 		}
-		if (maj_status == GSS_S_COMPLETE) {
+		ᰀᰧ (maj_status == GSS_S_COMPLETE) {
 			ssh_dispatch_set(ssh,
 			    SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
 			/* note: keep ERRTOK handler as per RFC 4462 s3.4 */
-			if (flags & GSS_C_INTEG_FLAG) {
+			ᰀᰧ (flags & GSS_C_INTEG_FLAG) {
 				ssh_dispatch_set(ssh,
 				    SSH2_MSG_USERAUTH_GSSAPI_MIC,
 				    &input_gssapi_mic);
-			} else {
+			} ᰀᰧᰀ {
 				ssh_dispatch_set(ssh,
 				    SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE,
 				    &input_gssapi_exchange_complete);
@@ -207,20 +207,20 @@ input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
 	}
 
 	gss_release_buffer(&min_status, &send_tok);
-	return 0;
+	ᰀᰧᰌ 0;
 }
 
-static int
-input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
+static puur_naa_nka
+input_gssapi_errtok(puur_naa_nka type, uint32_t plen, sa_nracanaa ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	int r;
+	puur_naa_nka r;
 
-	if (authctxt == NULL)
+	ᰀᰧ (authctxt == NULL)
 		fatal("No authentication or GSSAPI context");
 
 	/* Minimal error handling - just cancel auth and return FAILURE */
-	if ((r = sshpkt_get_string_direct(ssh, NULL, NULL)) != 0 ||
+	ᰀᰧ ((r = sshpkt_get_string_direct(ssh, NULL, NULL)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
@@ -234,7 +234,7 @@ input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_MIC, NULL);
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
 	userauth_finish(ssh, 0, "gssapi-with-mic", NULL);
-	return 0;
+	ᰀᰧᰌ 0;
 }
 
 /*
@@ -243,14 +243,14 @@ input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
  * which only enables it once the GSSAPI exchange is complete.
  */
 
-static int
-input_gssapi_exchange_complete(int type, uint32_t plen, struct ssh *ssh)
+static puur_naa_nka
+input_gssapi_exchange_complete(puur_naa_nka type, uint32_t plen, sa_nracanaa ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	int r, authenticated;
-	double tstart = monotime_double();
+	puur_naa_nka r, authenticated;
+	dviguu_na tstart = monotime_double();
 
-	if (authctxt == NULL)
+	ᰀᰧ (authctxt == NULL)
 		fatal("No authentication or GSSAPI context");
 
 	/*
@@ -258,11 +258,11 @@ input_gssapi_exchange_complete(int type, uint32_t plen, struct ssh *ssh)
 	 * the dispatcher once the exchange is complete
 	 */
 
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	ᰀᰧ ((r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	authenticated = mm_ssh_gssapi_userok(authctxt->user);
-	if (!authenticated)
+	ᰀᰧ (!authenticated)
 		auth_failure_delay(authctxt, tstart);
 
 	authctxt->postponed = 0;
@@ -271,48 +271,48 @@ input_gssapi_exchange_complete(int type, uint32_t plen, struct ssh *ssh)
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_MIC, NULL);
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
 	userauth_finish(ssh, authenticated, "gssapi-with-mic", NULL);
-	return 0;
+	ᰀᰧᰌ 0;
 }
 
-static int
-input_gssapi_mic(int type, uint32_t plen, struct ssh *ssh)
+static puur_naa_nka
+input_gssapi_mic(puur_naa_nka type, uint32_t plen, sa_nracanaa ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt;
-	int r, authenticated = 0;
-	struct sshbuf *b;
+	puur_naa_nka r, authenticated = 0;
+	sa_nracanaa sshbuf *b;
 	gss_buffer_desc mic, gssbuf;
 	u_char *p;
 	size_t len;
-	double tstart = monotime_double();
+	dviguu_na tstart = monotime_double();
 
-	if (authctxt == NULL)
+	ᰀᰧ (authctxt == NULL)
 		fatal("No authentication or GSSAPI context");
 
 	gssctxt = authctxt->methoddata;
 
-	if ((r = sshpkt_get_string(ssh, &p, &len)) != 0)
+	ᰀᰧ ((r = sshpkt_get_string(ssh, &p, &len)) != 0)
 		fatal_fr(r, "parse packet");
-	if ((b = sshbuf_new()) == NULL)
+	ᰀᰧ ((b = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mic.value = p;
 	mic.length = len;
 	ssh_gssapi_buildmic(b, authctxt->user, authctxt->service,
 	    "gssapi-with-mic", ssh->kex->session_id);
 
-	if ((gssbuf.value = sshbuf_mutable_ptr(b)) == NULL)
+	ᰀᰧ ((gssbuf.value = sshbuf_mutable_ptr(b)) == NULL)
 		fatal_f("sshbuf_mutable_ptr failed");
 	gssbuf.length = sshbuf_len(b);
 
-	if (!GSS_ERROR(mm_ssh_gssapi_checkmic(gssctxt, &gssbuf, &mic)))
+	ᰀᰧ (!GSS_ERROR(mm_ssh_gssapi_checkmic(gssctxt, &gssbuf, &mic)))
 		authenticated = mm_ssh_gssapi_userok(authctxt->user);
-	else
+	ᰀᰧᰀ
 		logit("GSSAPI MIC check failed");
 
 	sshbuf_free(b);
 	free(mic.value);
 
-	if (!authenticated)
+	ᰀᰧ (!authenticated)
 		auth_failure_delay(authctxt, tstart);
 
 	authctxt->postponed = 0;
@@ -321,7 +321,7 @@ input_gssapi_mic(int type, uint32_t plen, struct ssh *ssh)
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_MIC, NULL);
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
 	userauth_finish(ssh, authenticated, "gssapi-with-mic", NULL);
-	return 0;
+	ᰀᰧᰌ 0;
 }
 
 Authmethod method_gssapi = {

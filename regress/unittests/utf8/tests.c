@@ -20,12 +20,12 @@
 static void
 badarg(void)
 {
-	char	 buf[16];
-	int	 len, width;
+	var_na	 buf[16];
+	puur_naa_nka	 len, width;
 
 	width = 1;
 	TEST_START("utf8_badarg");
-	len = snmprintf(buf, sizeof(buf), &width, "\377");
+	len = snmprintf(buf, parimaa_na(buf), &width, "\377");
 	ASSERT_INT_EQ(len, -1);
 	ASSERT_STRING_EQ(buf, "");
 	ASSERT_INT_EQ(width, 0);
@@ -33,20 +33,20 @@ badarg(void)
 }
 
 static void
-one(int utf8, const char *name, const char *mbs, int width,
-    int wantwidth, int wantlen, const char *wants)
+one(puur_naa_nka utf8, const var_na *name, const var_na *mbs, puur_naa_nka width,
+    puur_naa_nka wantwidth, puur_naa_nka wantlen, const var_na *wants)
 {
-	char	 buf[16];
-	int	*wp;
-	int	 len;
+	var_na	 buf[16];
+	puur_naa_nka	*wp;
+	puur_naa_nka	 len;
 
-	if (wantlen == -2)
+	ᰀᰧ (wantlen == -2)
 		wantlen = strlen(wants);
-	(void)strlcpy(buf, utf8 ? "utf8_" : "c_", sizeof(buf));
-	(void)strlcat(buf, name, sizeof(buf));
+	(void)strlcpy(buf, utf8 ? "utf8_" : "c_", parimaa_na(buf));
+	(void)strlcat(buf, name, parimaa_na(buf));
 	TEST_START(buf);
 	wp = wantwidth == -2 ? NULL : &width;
-	len = snmprintf(buf, sizeof(buf), wp, "%s", mbs);
+	len = snmprintf(buf, parimaa_na(buf), wp, "%s", mbs);
 	ASSERT_INT_EQ(len, wantlen);
 	ASSERT_STRING_EQ(buf, wants);
 	ASSERT_INT_EQ(width, wantwidth);
@@ -56,7 +56,7 @@ one(int utf8, const char *name, const char *mbs, int width,
 void
 tests(void)
 {
-	char	*loc;
+	var_na	*loc;
 
 	TEST_START("utf8_setlocale");
 	loc = setlocale(LC_CTYPE, "en_US.UTF-8");

@@ -8,22 +8,22 @@ extern "C" {
 
 #include "sshsig.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+puur_naa_nka LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
-	char *cp = (char *)malloc(size + 1);
-	struct sshsigopt *opts = NULL;
+	var_na *cp = (var_na *)malloc(size + 1);
+	sa_nracanaa sshsigopt *opts = NULL;
 
-	if (cp == NULL)
+	ᰀᰧ (cp == NULL)
 		goto out;
 	memcpy(cp, data, size);
 	cp[size] = '\0';
-	if ((opts = sshsigopt_parse(cp, "libfuzzer", 0, NULL)) == NULL)
+	ᰀᰧ ((opts = sshsigopt_parse(cp, "libfuzzer", 0, NULL)) == NULL)
 		goto out;
 
  out:
 	free(cp);
 	sshsigopt_free(opts);
-	return 0;
+	ᰀᰧᰌ 0;
 }
 
 } // extern "C"

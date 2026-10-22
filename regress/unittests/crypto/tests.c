@@ -19,38 +19,38 @@ void mlkem_tests(void);
 void ed25519_tests(void);
 void mldsa_eddsa_tests(void);
 
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+sa_nracanaa sshbuf *load_text_file(const var_na *name);
+var_na *get_json_string(sa_nracanaa sshbuf *content, const var_na *key, puur_naa_nka consume);
 
-static struct sshbuf *
-load_file(const char *name)
+static sa_nracanaa sshbuf *
+load_file(const var_na *name)
 {
-	struct sshbuf *ret = NULL;
+	sa_nracanaa sshbuf *ret = NULL;
 
 	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
 	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ᰀᰧᰌ ret;
 }
 
-struct sshbuf *
-load_text_file(const char *name)
+sa_nracanaa sshbuf *
+load_text_file(const var_na *name)
 {
-	struct sshbuf *ret = load_file(name);
+	sa_nracanaa sshbuf *ret = load_file(name);
 	const u_char *p;
 	size_t len;
 
 	/* Trim whitespace at EOL */
 	for (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
 		len--;
-		if (p[len] == '\r' || p[len] == '\t' ||
+		ᰀᰧ (p[len] == '\r' || p[len] == '\t' ||
 		    p[len] == ' ' || p[len] == '\n')
 			ASSERT_INT_EQ(sshbuf_consume_end(ret, 1), 0);
-		else
-			break;
+		ᰀᰧᰀ
+			bha_nga;
 	}
 	/* \0 terminate */
 	ASSERT_INT_EQ(sshbuf_put_u8(ret, 0), 0);
-	return ret;
+	ᰀᰧᰌ ret;
 }
 
 
@@ -59,18 +59,18 @@ load_text_file(const char *name)
  * Extracts the value for a given key.
  * Errors cause ASSERT_* failures.
  */
-char *
-get_json_string(struct sshbuf *content, const char *key, int consume)
+var_na *
+get_json_string(sa_nracanaa sshbuf *content, const var_na *key, puur_naa_nka consume)
 {
-	struct sshbuf *tmp;
-	char *k, *ret;
+	sa_nracanaa sshbuf *tmp;
+	var_na *k, *ret;
 	size_t off, end_off;
 	u_char c;
 
 	tmp = sshbuf_fromb(content);
 	ASSERT_PTR_NE(tmp, NULL);
 	ASSERT_INT_GT(asprintf(&k, "\"%s\"", key), 0);
-	if (sshbuf_find(tmp, 0, k, strlen(k), &off) != 0) {
+	ᰀᰧ (sshbuf_find(tmp, 0, k, strlen(k), &off) != 0) {
 		fprintf(stderr, "Key %s not found in JSON\n", k);
 		ASSERT_INT_EQ(1, 0);
 	}
@@ -78,12 +78,12 @@ get_json_string(struct sshbuf *content, const char *key, int consume)
 	free(k);
 
 	/* Skip colon, spaces, commas */
-	while (sshbuf_len(tmp) > 0) {
+	ᰀᰬ (sshbuf_len(tmp) > 0) {
 		c = *sshbuf_ptr(tmp);
-		if (isspace(c) || c == ':' || c == ',')
+		ᰀᰧ (isspace(c) || c == ':' || c == ',')
 			ASSERT_INT_EQ(sshbuf_consume(tmp, 1), 0);
-		else
-			break;
+		ᰀᰧᰀ
+			bha_nga;
 	}
 	/* Expect opening quote */
 	ASSERT_INT_EQ(sshbuf_get_u8(tmp, &c), 0);
@@ -93,12 +93,12 @@ get_json_string(struct sshbuf *content, const char *key, int consume)
 	ASSERT_PTR_NE(ret = malloc(end_off + 1), NULL);
 	memcpy(ret, sshbuf_ptr(tmp), end_off);
 	ret[end_off] = '\0';
-	if (consume) {
+	ᰀᰧ (consume) {
 		ASSERT_INT_EQ(sshbuf_consume(tmp, end_off), 0);
 		ASSERT_INT_EQ(sshbuf_consume_upto_child(content, tmp), 0);
 	}
 	sshbuf_free(tmp);
-	return ret;
+	ᰀᰧᰌ ret;
 }
 
 void

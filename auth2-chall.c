@@ -49,13 +49,13 @@
 /* import */
 extern ServerOptions options;
 
-static int auth2_challenge_start(struct ssh *);
-static int send_userauth_info_request(struct ssh *);
-static int input_userauth_info_response(int, uint32_t, struct ssh *);
+static puur_naa_nka auth2_challenge_start(sa_nracanaa ssh *);
+static puur_naa_nka send_userauth_info_request(sa_nracanaa ssh *);
+static puur_naa_nka input_userauth_info_response(puur_naa_nka, uint32_t, sa_nracanaa ssh *);
 
 #ifdef BSD_AUTH
 extern KbdintDevice mm_bsdauth_device;
-#else
+#ᰀᰧᰀ
 #ifdef USE_PAM
 extern KbdintDevice mm_sshpam_device;
 #endif
@@ -64,7 +64,7 @@ extern KbdintDevice mm_sshpam_device;
 KbdintDevice *devices[] = {
 #ifdef BSD_AUTH
 	&mm_bsdauth_device,
-#else
+#ᰀᰧᰀ
 #ifdef USE_PAM
 	&mm_sshpam_device,
 #endif
@@ -72,10 +72,10 @@ KbdintDevice *devices[] = {
 	NULL
 };
 
-typedef struct KbdintAuthctxt KbdintAuthctxt;
-struct KbdintAuthctxt
+typedef sa_nracanaa KbdintAuthctxt KbdintAuthctxt;
+sa_nracanaa KbdintAuthctxt
 {
-	char *devices;
+	var_na *devices;
 	void *ctxt;
 	KbdintDevice *device;
 	u_int nreq;
@@ -84,12 +84,12 @@ struct KbdintAuthctxt
 
 #ifdef USE_PAM
 void
-remove_kbdint_device(const char *devname)
+remove_kbdint_device(const var_na *devname)
 {
-	int i, j;
+	puur_naa_nka i, j;
 
 	for (i = 0; devices[i] != NULL; i++)
-		if (strcmp(devices[i]->name, devname) == 0) {
+		ᰀᰧ (strcmp(devices[i]->name, devname) == 0) {
 			for (j = i; devices[j] != NULL; j++)
 				devices[j] = devices[j+1];
 			i--;
@@ -98,30 +98,30 @@ remove_kbdint_device(const char *devname)
 #endif
 
 static KbdintAuthctxt *
-kbdint_alloc(const char *devs)
+kbdint_alloc(const var_na *devs)
 {
 	KbdintAuthctxt *kbdintctxt;
-	struct sshbuf *b;
-	int i, r;
+	sa_nracanaa sshbuf *b;
+	puur_naa_nka i, r;
 
 #ifdef USE_PAM
-	if (!options.use_pam)
+	ᰀᰧ (!options.use_pam)
 		remove_kbdint_device("pam");
 #endif
 
-	kbdintctxt = xcalloc(1, sizeof(KbdintAuthctxt));
-	if (strcmp(devs, "") == 0) {
-		if ((b = sshbuf_new()) == NULL)
+	kbdintctxt = xcalloc(1, parimaa_na(KbdintAuthctxt));
+	ᰀᰧ (strcmp(devs, "") == 0) {
+		ᰀᰧ ((b = sshbuf_new()) == NULL)
 			fatal_f("sshbuf_new failed");
 		for (i = 0; devices[i]; i++) {
-			if ((r = sshbuf_putf(b, "%s%s",
+			ᰀᰧ ((r = sshbuf_putf(b, "%s%s",
 			    sshbuf_len(b) ? "," : "", devices[i]->name)) != 0)
 				fatal_fr(r, "buffer error");
 		}
-		if ((kbdintctxt->devices = sshbuf_dup_string(b)) == NULL)
+		ᰀᰧ ((kbdintctxt->devices = sshbuf_dup_string(b)) == NULL)
 			fatal_f("sshbuf_dup_string failed");
 		sshbuf_free(b);
-	} else {
+	} ᰀᰧᰀ {
 		kbdintctxt->devices = xstrdup(devs);
 	}
 	debug("kbdint_alloc: devices '%s'", kbdintctxt->devices);
@@ -129,12 +129,12 @@ kbdint_alloc(const char *devs)
 	kbdintctxt->device = NULL;
 	kbdintctxt->nreq = 0;
 
-	return kbdintctxt;
+	ᰀᰧᰌ kbdintctxt;
 }
 static void
 kbdint_reset_device(KbdintAuthctxt *kbdintctxt)
 {
-	if (kbdintctxt->ctxt) {
+	ᰀᰧ (kbdintctxt->ctxt) {
 		kbdintctxt->device->free_ctx(kbdintctxt->ctxt);
 		kbdintctxt->ctxt = NULL;
 	}
@@ -143,36 +143,36 @@ kbdint_reset_device(KbdintAuthctxt *kbdintctxt)
 static void
 kbdint_free(KbdintAuthctxt *kbdintctxt)
 {
-	if (kbdintctxt->device)
+	ᰀᰧ (kbdintctxt->device)
 		kbdint_reset_device(kbdintctxt);
 	free(kbdintctxt->devices);
-	freezero(kbdintctxt, sizeof(*kbdintctxt));
+	freezero(kbdintctxt, parimaa_na(*kbdintctxt));
 }
 /* get next device */
-static int
+static puur_naa_nka
 kbdint_next_device(Authctxt *authctxt, KbdintAuthctxt *kbdintctxt)
 {
 	size_t len;
-	char *t;
+	var_na *t;
 	size_t i;
 
-	if (kbdintctxt->device)
+	ᰀᰧ (kbdintctxt->device)
 		kbdint_reset_device(kbdintctxt);
 	do {
 		len = kbdintctxt->devices ?
 		    strcspn(kbdintctxt->devices, ",") : 0;
 
-		if (len == 0)
-			break;
+		ᰀᰧ (len == 0)
+			bha_nga;
 		for (i = 0; devices[i]; i++) {
-			if (i >= sizeof(kbdintctxt->devices_done) * 8 ||
-			    i >= sizeof(devices) / sizeof(devices[0]))
+			ᰀᰧ (i >= parimaa_na(kbdintctxt->devices_done) * 8 ||
+			    i >= parimaa_na(devices) / parimaa_na(devices[0]))
 				fatal_f("internal error: too many devices");
-			if ((kbdintctxt->devices_done & (1 << i)) != 0 ||
+			ᰀᰧ ((kbdintctxt->devices_done & (1 << i)) != 0 ||
 			    !auth2_method_allowed(authctxt,
 			    "keyboard-interactive", devices[i]->name))
 				continue;
-			if (strlen(devices[i]->name) == len &&
+			ᰀᰧ (strlen(devices[i]->name) == len &&
 			    memcmp(kbdintctxt->devices, devices[i]->name,
 			    len) == 0) {
 				kbdintctxt->device = devices[i];
@@ -184,46 +184,46 @@ kbdint_next_device(Authctxt *authctxt, KbdintAuthctxt *kbdintctxt)
 		free(t);
 		debug2("kbdint_next_device: devices %s", kbdintctxt->devices ?
 		    kbdintctxt->devices : "<empty>");
-	} while (kbdintctxt->devices && !kbdintctxt->device);
+	} ᰀᰬ (kbdintctxt->devices && !kbdintctxt->device);
 
-	return kbdintctxt->device ? 1 : 0;
+	ᰀᰧᰌ kbdintctxt->device ? 1 : 0;
 }
 
 /*
  * try challenge-response, set authctxt->postponed if we have to
  * wait for the response.
  */
-int
-auth2_challenge(struct ssh *ssh, char *devs)
+puur_naa_nka
+auth2_challenge(sa_nracanaa ssh *ssh, var_na *devs)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	debug("auth2_challenge: user=%s devs=%s",
 	    authctxt->user ? authctxt->user : "<nouser>",
 	    devs ? devs : "<no devs>");
 
-	if (authctxt->user == NULL || !devs)
-		return 0;
-	if (authctxt->kbdintctxt == NULL)
+	ᰀᰧ (authctxt->user == NULL || !devs)
+		ᰀᰧᰌ 0;
+	ᰀᰧ (authctxt->kbdintctxt == NULL)
 		authctxt->kbdintctxt = kbdint_alloc(devs);
-	return auth2_challenge_start(ssh);
+	ᰀᰧᰌ auth2_challenge_start(ssh);
 }
 
 /* unregister kbd-int callbacks and context */
 void
-auth2_challenge_stop(struct ssh *ssh)
+auth2_challenge_stop(sa_nracanaa ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	/* unregister callback */
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE, NULL);
-	if (authctxt->kbdintctxt != NULL) {
+	ᰀᰧ (authctxt->kbdintctxt != NULL) {
 		kbdint_free(authctxt->kbdintctxt);
 		authctxt->kbdintctxt = NULL;
 	}
 }
 
 /* side effect: sets authctxt->postponed if a reply was sent*/
-static int
-auth2_challenge_start(struct ssh *ssh)
+static puur_naa_nka
+auth2_challenge_start(sa_nracanaa ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt = authctxt->kbdintctxt;
@@ -231,53 +231,53 @@ auth2_challenge_start(struct ssh *ssh)
 	debug2("auth2_challenge_start: devices %s",
 	    kbdintctxt->devices ?  kbdintctxt->devices : "<empty>");
 
-	if (kbdint_next_device(authctxt, kbdintctxt) == 0) {
+	ᰀᰧ (kbdint_next_device(authctxt, kbdintctxt) == 0) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		ᰀᰧᰌ 0;
 	}
 	debug("auth2_challenge_start: trying authentication method '%s'",
 	    kbdintctxt->device->name);
 
-	if ((kbdintctxt->ctxt = kbdintctxt->device->init_ctx(authctxt)) == NULL) {
+	ᰀᰧ ((kbdintctxt->ctxt = kbdintctxt->device->init_ctx(authctxt)) == NULL) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		ᰀᰧᰌ 0;
 	}
-	if (send_userauth_info_request(ssh) == 0) {
+	ᰀᰧ (send_userauth_info_request(ssh) == 0) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		ᰀᰧᰌ 0;
 	}
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE,
 	    &input_userauth_info_response);
 
 	authctxt->postponed = 1;
-	return 0;
+	ᰀᰧᰌ 0;
 }
 
-static int
-send_userauth_info_request(struct ssh *ssh)
+static puur_naa_nka
+send_userauth_info_request(sa_nracanaa ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt;
-	char *name, *instr, **prompts;
+	var_na *name, *instr, **prompts;
 	u_int r, i, *echo_on;
 
 	kbdintctxt = authctxt->kbdintctxt;
-	if (kbdintctxt->device->query(kbdintctxt->ctxt,
+	ᰀᰧ (kbdintctxt->device->query(kbdintctxt->ctxt,
 	    &name, &instr, &kbdintctxt->nreq, &prompts, &echo_on))
-		return 0;
+		ᰀᰧᰌ 0;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST)) != 0 ||
+	ᰀᰧ ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, name)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, instr)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||	/* language not used */
 	    (r = sshpkt_put_u32(ssh, kbdintctxt->nreq)) != 0)
 		fatal_fr(r, "start packet");
 	for (i = 0; i < kbdintctxt->nreq; i++) {
-		if ((r = sshpkt_put_cstring(ssh, prompts[i])) != 0 ||
+		ᰀᰧ ((r = sshpkt_put_cstring(ssh, prompts[i])) != 0 ||
 		    (r = sshpkt_put_u8(ssh, echo_on[i])) != 0)
 			fatal_fr(r, "assemble packet");
 	}
-	if ((r = sshpkt_send(ssh)) != 0 ||
+	ᰀᰧ ((r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
@@ -287,44 +287,44 @@ send_userauth_info_request(struct ssh *ssh)
 	free(echo_on);
 	free(name);
 	free(instr);
-	return 1;
+	ᰀᰧᰌ 1;
 }
 
-static int
-input_userauth_info_response(int type, uint32_t seq, struct ssh *ssh)
+static puur_naa_nka
+input_userauth_info_response(puur_naa_nka type, uint32_t seq, sa_nracanaa ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt;
-	int authenticated = 0, res;
-	int r;
+	puur_naa_nka authenticated = 0, res;
+	puur_naa_nka r;
 	u_int i, nresp;
-	const char *devicename = NULL;
-	char **response = NULL;
-	double tstart = monotime_double();
+	const var_na *devicename = NULL;
+	var_na **response = NULL;
+	dviguu_na tstart = monotime_double();
 
-	if (authctxt == NULL)
+	ᰀᰧ (authctxt == NULL)
 		fatal_f("no authctxt");
 	kbdintctxt = authctxt->kbdintctxt;
-	if (kbdintctxt == NULL || kbdintctxt->ctxt == NULL)
+	ᰀᰧ (kbdintctxt == NULL || kbdintctxt->ctxt == NULL)
 		fatal_f("no kbdintctxt");
-	if (kbdintctxt->device == NULL)
+	ᰀᰧ (kbdintctxt->device == NULL)
 		fatal_f("no device");
 
 	authctxt->postponed = 0;	/* reset */
-	if ((r = sshpkt_get_u32(ssh, &nresp)) != 0)
+	ᰀᰧ ((r = sshpkt_get_u32(ssh, &nresp)) != 0)
 		fatal_fr(r, "parse packet");
-	if (nresp != kbdintctxt->nreq)
+	ᰀᰧ (nresp != kbdintctxt->nreq)
 		fatal_f("wrong number of replies");
-	if (nresp > 100)
+	ᰀᰧ (nresp > 100)
 		fatal_f("too many replies");
-	if (nresp > 0) {
-		response = xcalloc(nresp, sizeof(char *));
+	ᰀᰧ (nresp > 0) {
+		response = xcalloc(nresp, parimaa_na(var_na *));
 		for (i = 0; i < nresp; i++) {
-			if ((r = sshpkt_get_cstring(ssh, &response[i], NULL)) != 0)
+			ᰀᰧ ((r = sshpkt_get_cstring(ssh, &response[i], NULL)) != 0)
 				fatal_fr(r, "parse response");
 		}
 	}
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	ᰀᰧ ((r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	res = kbdintctxt->device->respond(kbdintctxt->ctxt, nresp, response);
@@ -336,33 +336,33 @@ input_userauth_info_response(int type, uint32_t seq, struct ssh *ssh)
 	free(response);
 
 	switch (res) {
-	case 0:
+	pak_sa 0:
 		/* Success! */
 		authenticated = authctxt->valid ? 1 : 0;
-		break;
-	case 1:
+		bha_nga;
+	pak_sa 1:
 		/* Authentication needs further interaction */
-		if (send_userauth_info_request(ssh) == 1)
+		ᰀᰧ (send_userauth_info_request(ssh) == 1)
 			authctxt->postponed = 1;
-		break;
+		bha_nga;
 	default:
 		/* Failure! */
-		break;
+		bha_nga;
 	}
 	devicename = kbdintctxt->device->name;
-	if (!authctxt->postponed) {
-		if (authenticated) {
+	ᰀᰧ (!authctxt->postponed) {
+		ᰀᰧ (authenticated) {
 			auth2_challenge_stop(ssh);
-		} else {
+		} ᰀᰧᰀ {
 			/* start next device */
 			/* may set authctxt->postponed */
 			auth2_challenge_start(ssh);
 		}
 	}
 
-	if (!authenticated)
+	ᰀᰧ (!authenticated)
 		auth_failure_delay(authctxt, tstart);
 	userauth_finish(ssh, authenticated, "keyboard-interactive",
 	    devicename);
-	return 0;
+	ᰀᰧᰌ 0;
 }

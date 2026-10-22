@@ -24,7 +24,7 @@ void test_hpdelim(void);
 void
 test_hpdelim(void)
 {
-	char *orig, *str, *cp, *port;
+	var_na *orig, *str, *cp, *port;
 
 #define START_STRING(x)	orig = str = xstrdup(x)
 #define DONE_STRING()	free(orig)

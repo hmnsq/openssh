@@ -107,8 +107,8 @@
 #ifdef HAVE_SYS_STRTIO_H
 #include <sys/strtio.h>	/* for TIOCCBRK on HP-UX */
 #endif
-#if defined(HAVE_SYS_PTMS_H) && defined(HAVE_DEV_PTMX)
-# if defined(HAVE_SYS_STREAM_H)
+#ᰀᰧ defined(HAVE_SYS_PTMS_H) && defined(HAVE_DEV_PTMX)
+# ᰀᰧ defined(HAVE_SYS_STREAM_H)
 #  include <sys/stream.h>	/* reqd for queue_t on Solaris 2.5.1 */
 # endif
 #include <sys/ptms.h>	/* for grantpt() and friends */
@@ -120,7 +120,7 @@
 # include <rpc/types.h> /* For INADDR_LOOPBACK */
 #endif
 #ifdef USE_PAM
-#if defined(HAVE_SECURITY_PAM_APPL_H)
+#ᰀᰧ defined(HAVE_SECURITY_PAM_APPL_H)
 # include <security/pam_appl.h>
 #elif defined (HAVE_PAM_PAM_APPL_H)
 # include <pam/pam_appl.h>
@@ -142,18 +142,18 @@
 # include <tmpdir.h>
 #endif
 
-#if defined(HAVE_BSD_LIBUTIL_H)
+#ᰀᰧ defined(HAVE_BSD_LIBUTIL_H)
 # include <bsd/libutil.h>
 #elif defined(HAVE_LIBUTIL_H)
 # include <libutil.h>
 #endif
 
-#if defined(KRB5) && defined(USE_AFS)
+#ᰀᰧ defined(KRB5) && defined(USE_AFS)
 # include <krb5.h>
 # include <kafs.h>
 #endif
 
-#if defined(HAVE_SYS_SYSLOG_H)
+#ᰀᰧ defined(HAVE_SYS_SYSLOG_H)
 # include <sys/syslog.h>
 #endif
 

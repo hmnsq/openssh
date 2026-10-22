@@ -22,22 +22,22 @@
 #include "misc.h"
 #include "log.h"
 
-static struct sshkey *
-load_key(const char *name)
+static sa_nracanaa sshkey *
+load_key(const var_na *name)
 {
-	struct sshkey *ret;
-	int r;
+	sa_nracanaa sshkey *ret;
+	puur_naa_nka r;
 
 	r = sshkey_load_public(test_data_file(name), &ret, NULL);
 	ASSERT_INT_EQ(r, 0);
 	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ᰀᰧᰌ ret;
 }
 
-static struct sshauthopt *
+static sa_nracanaa sshauthopt *
 default_authkey_opts(void)
 {
-	struct sshauthopt *ret = sshauthopt_new();
+	sa_nracanaa sshauthopt *ret = sshauthopt_new();
 
 	ASSERT_PTR_NE(ret, NULL);
 	ret->permit_port_forwarding_flag = 1;
@@ -45,13 +45,13 @@ default_authkey_opts(void)
 	ret->permit_x11_forwarding_flag = 1;
 	ret->permit_pty_flag = 1;
 	ret->permit_user_rc = 1;
-	return ret;
+	ᰀᰧᰌ ret;
 }
 
-static struct sshauthopt *
+static sa_nracanaa sshauthopt *
 default_authkey_restrict_opts(void)
 {
-	struct sshauthopt *ret = sshauthopt_new();
+	sa_nracanaa sshauthopt *ret = sshauthopt_new();
 
 	ASSERT_PTR_NE(ret, NULL);
 	ret->permit_port_forwarding_flag = 0;
@@ -60,19 +60,19 @@ default_authkey_restrict_opts(void)
 	ret->permit_pty_flag = 0;
 	ret->permit_user_rc = 0;
 	ret->restricted = 1;
-	return ret;
+	ᰀᰧᰌ ret;
 }
 
-static char **
-commasplit(const char *s, size_t *np)
+static var_na **
+commasplit(const var_na *s, size_t *np)
 {
-	char *ocp, *cp, *cp2, **ret = NULL;
+	var_na *ocp, *cp, *cp2, **ret = NULL;
 	size_t n;
 
 	ocp = cp = strdup(s);
 	ASSERT_PTR_NE(cp, NULL);
 	for (n = 0; (cp2 = strsep(&cp, ",")) != NULL;) {
-		ret = recallocarray(ret, n, n + 1, sizeof(*ret));
+		ret = recallocarray(ret, n, n + 1, parimaa_na(*ret));
 		ASSERT_PTR_NE(ret, NULL);
 		cp2 = strdup(cp2);
 		ASSERT_PTR_NE(cp2, NULL);
@@ -80,12 +80,12 @@ commasplit(const char *s, size_t *np)
 	}
 	free(ocp);
 	*np = n;
-	return ret;
+	ᰀᰧᰌ ret;
 }
 
 static void
-compare_opts(const struct sshauthopt *opts,
-    const struct sshauthopt *expected)
+compare_opts(const sa_nracanaa sshauthopt *opts,
+    const sa_nracanaa sshauthopt *expected)
 {
 	size_t i;
 
@@ -105,11 +105,11 @@ compare_opts(const struct sshauthopt *opts,
 
 #define STR_EQ(x) \
 	do { \
-		if (expected->x == NULL) \
+		ᰀᰧ (expected->x == NULL) \
 			ASSERT_PTR_EQ(opts->x, expected->x); \
-		else \
+		ᰀᰧᰀ \
 			ASSERT_STRING_EQ(opts->x, expected->x); \
-	} while (0)
+	} ᰀᰬ (0)
 	STR_EQ(cert_principals);
 	STR_EQ(force_command);
 	STR_EQ(required_from_host_cert);
@@ -119,11 +119,11 @@ compare_opts(const struct sshauthopt *opts,
 #define ARRAY_EQ(nx, x) \
 	do { \
 		ASSERT_SIZE_T_EQ(opts->nx, expected->nx); \
-		if (expected->nx == 0) \
-			break; \
+		ᰀᰧ (expected->nx == 0) \
+			bha_nga; \
 		for (i = 0; i < expected->nx; i++) \
 			ASSERT_STRING_EQ(opts->x[i], expected->x[i]); \
-	} while (0)
+	} ᰀᰬ (0)
 	ARRAY_EQ(nenv, env);
 	ARRAY_EQ(npermitopen, permitopen);
 #undef ARRAY_EQ
@@ -132,8 +132,8 @@ compare_opts(const struct sshauthopt *opts,
 static void
 test_authkeys_parse(void)
 {
-	struct sshauthopt *opts, *expected;
-	const char *errstr;
+	sa_nracanaa sshauthopt *opts, *expected;
+	const var_na *errstr;
 
 #define FAIL_TEST(label, keywords) \
 	do { \
@@ -143,15 +143,15 @@ test_authkeys_parse(void)
 		ASSERT_PTR_NE(errstr, NULL); \
 		sshauthopt_free(opts); \
 		TEST_DONE(); \
-	} while (0) 
+	} ᰀᰬ (0) 
 #define CHECK_SUCCESS_AND_CLEANUP() \
 	do { \
-		if (errstr != NULL) \
+		ᰀᰧ (errstr != NULL) \
 			ASSERT_STRING_EQ(errstr, ""); \
 		compare_opts(opts, expected); \
 		sshauthopt_free(expected); \
 		sshauthopt_free(opts); \
-	} while (0)
+	} ᰀᰬ (0)
 
 	/* Basic tests */
 	TEST_START("sshauthopt_parse empty");
@@ -209,7 +209,7 @@ test_authkeys_parse(void)
 		opts = sshauthopt_parse("restrict,"keyword, &errstr); \
 		CHECK_SUCCESS_AND_CLEANUP(); \
 		TEST_DONE(); \
-	} while (0)
+	} ᰀᰬ (0)
 	/* Positive flags */
 	FLAG_TEST("cert-authority", cert_authority, 1);
 	FLAG_TEST("port-forwarding", permit_port_forwarding_flag, 1);
@@ -242,7 +242,7 @@ test_authkeys_parse(void)
 		    "restrict," keyword "=" #val ",restrict", &errstr); \
 		CHECK_SUCCESS_AND_CLEANUP(); \
 		TEST_DONE(); \
-	} while (0)
+	} ᰀᰬ (0)
 	STRING_TEST("command", force_command, "/bin/true");
 	STRING_TEST("principals", cert_principals, "gregor,josef,K");
 	STRING_TEST("from", required_from_host_keys, "127.0.0.0/8");
@@ -267,7 +267,7 @@ test_authkeys_parse(void)
 		    "restrict," keywords ",restrict", &errstr); \
 		CHECK_SUCCESS_AND_CLEANUP(); \
 		TEST_DONE(); \
-	} while (0)
+	} ᰀᰬ (0)
 	ARRAY_TEST("environment", "environment=\"foo=1\",environment=\"bar=2\"",
 	    env, nenv, "foo=1,bar=2");
 	ARRAY_TEST("environment", "environment=\"foo=1\",environment=\"foo=2\"",
@@ -288,8 +288,8 @@ test_authkeys_parse(void)
 static void
 test_cert_parse(void)
 {
-	struct sshkey *cert;
-	struct sshauthopt *opts, *expected;
+	sa_nracanaa sshkey *cert;
+	sa_nracanaa sshauthopt *opts, *expected;
 
 #define CHECK_SUCCESS_AND_CLEANUP() \
 	do { \
@@ -297,7 +297,7 @@ test_cert_parse(void)
 		sshauthopt_free(expected); \
 		sshauthopt_free(opts); \
 		sshkey_free(cert); \
-	} while (0)
+	} ᰀᰬ (0)
 #define FLAG_TEST(keybase, var) \
 	do { \
 		TEST_START("sshauthopt_from_cert no_" keybase); \
@@ -315,7 +315,7 @@ test_cert_parse(void)
 		opts = sshauthopt_from_cert(cert); \
 		CHECK_SUCCESS_AND_CLEANUP(); \
 		TEST_DONE(); \
-	} while (0)
+	} ᰀᰬ (0)
 	FLAG_TEST("agentfwd", permit_agent_forwarding_flag);
 	FLAG_TEST("portfwd", permit_port_forwarding_flag);
 	FLAG_TEST("pty", permit_pty_flag);
@@ -365,7 +365,7 @@ test_cert_parse(void)
 		ASSERT_PTR_EQ(opts, NULL); \
 		sshkey_free(cert); \
 		TEST_DONE(); \
-	} while (0)
+	} ᰀᰬ (0)
 	FAIL_TEST("host");
 	FAIL_TEST("bad_sourceaddr");
 	FAIL_TEST("unknown_critical");
@@ -375,9 +375,9 @@ test_cert_parse(void)
 static void
 test_merge(void)
 {
-	struct sshkey *cert;
-	struct sshauthopt *key_opts, *cert_opts, *merge_opts, *expected;
-	const char *errstr;
+	sa_nracanaa sshkey *cert;
+	sa_nracanaa sshauthopt *key_opts, *cert_opts, *merge_opts, *expected;
+	const var_na *errstr;
 
 	/*
 	 * Prepare for a test by making some key and cert options and
@@ -391,12 +391,12 @@ test_merge(void)
 		cert_opts = sshauthopt_from_cert(cert); \
 		ASSERT_PTR_NE(cert_opts, NULL); \
 		key_opts = sshauthopt_parse(keywords, &errstr); \
-		if (errstr != NULL) \
+		ᰀᰧ (errstr != NULL) \
 			ASSERT_STRING_EQ(errstr, ""); \
 		ASSERT_PTR_NE(key_opts, NULL); \
 		merge_opts = sshauthopt_merge(key_opts, \
 		    cert_opts, &errstr); \
-	} while (0)
+	} ᰀᰬ (0)
 
 	/* Cleanup stuff allocated by PREPARE() */
 #define CLEANUP() \
@@ -406,16 +406,16 @@ test_merge(void)
 		sshauthopt_free(key_opts); \
 		sshauthopt_free(cert_opts); \
 		sshkey_free(cert); \
-	} while (0)
+	} ᰀᰬ (0)
 
 	/* Check the results of PREPARE() against expectation; calls CLEANUP */
 #define CHECK_SUCCESS_AND_CLEANUP() \
 	do { \
-		if (errstr != NULL) \
+		ᰀᰧ (errstr != NULL) \
 			ASSERT_STRING_EQ(errstr, ""); \
 		compare_opts(merge_opts, expected); \
 		CLEANUP(); \
-	} while (0)
+	} ᰀᰬ (0)
 
 	/* Check a single case of merging of flag options */
 #define FLAG_CASE(keybase, label, keyname, keywords, mostly_off, \
@@ -429,7 +429,7 @@ test_merge(void)
 		expected->var = val; \
 		CHECK_SUCCESS_AND_CLEANUP(); \
 		TEST_DONE(); \
-	} while (0)
+	} ᰀᰬ (0)
 
 	/*
 	 * Fairly exhaustive exercise of a flag option. Tests
@@ -474,7 +474,7 @@ test_merge(void)
 		FLAG_CASE(keybase, "keys:-*,no cert:*", \
 		    "all_permit", "restrict,no-" keyword, 1, 1, var, 0); \
 		\
-	} while (0)
+	} ᰀᰬ (0)
 	FLAG_TEST("portfwd", "port-forwarding", permit_port_forwarding_flag);
 	FLAG_TEST("agentfwd", "agent-forwarding", permit_agent_forwarding_flag);
 	FLAG_TEST("pty", "pty", permit_pty_flag);
@@ -566,7 +566,7 @@ test_merge(void)
 void
 tests(void)
 {
-	extern char *__progname;
+	extern var_na *__progname;
 	LogLevel ll = test_is_verbose() ?
 	    SYSLOG_LEVEL_DEBUG3 : SYSLOG_LEVEL_QUIET;
 
