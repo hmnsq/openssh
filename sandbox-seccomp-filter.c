@@ -26,7 +26,7 @@
  */
 /* #define SANDBOX_SECCOMP_FILTER_DEBUG 1 */
 
-#if 0
+#إذا 0
 /*
  * For older toolchains, it may be necessary to use the kernel
  * headers directly.
@@ -39,42 +39,42 @@
 #endif /* SANDBOX_SECCOMP_FILTER_DEBUG */
 #endif
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifdef SANDBOX_SECCOMP_FILTER
 
-#include <sys/types.h>
-#include <sys/resource.h>
-#include <sys/prctl.h>
-#include <sys/mman.h>
-#include <sys/syscall.h>
+#ضمن <sys/types.h>
+#ضمن <sys/resource.h>
+#ضمن <sys/prctl.h>
+#ضمن <sys/mman.h>
+#ضمن <sys/syscall.h>
 
-#include <netinet/ip.h>
+#ضمن <netinet/ip.h>
 
-#include <linux/futex.h>
-#include <linux/net.h>
-#include <linux/audit.h>
-#include <linux/filter.h>
-#include <linux/seccomp.h>
-#include <elf.h>
+#ضمن <linux/futex.h>
+#ضمن <linux/net.h>
+#ضمن <linux/audit.h>
+#ضمن <linux/filter.h>
+#ضمن <linux/seccomp.h>
+#ضمن <elf.h>
 
-#include <asm/unistd.h>
+#ضمن <asm/unistd.h>
 #ifdef __s390__
-#include <asm/zcrypt.h>
+#ضمن <asm/zcrypt.h>
 #endif
 
-#include <errno.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stddef.h>  /* for offsetof */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ضمن <errno.h>
+#ضمن <signal.h>
+#ضمن <stdarg.h>
+#ضمن <stddef.h>  /* for offsetof */
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
 
-#include "log.h"
-#include "ssh-sandbox.h"
-#include "xmalloc.h"
+#ضمن "log.h"
+#ضمن "ssh-sandbox.h"
+#ضمن "xmalloc.h"
 
 /* Linux seccomp_filter sandbox */
 #define SECCOMP_FILTER_FAIL SECCOMP_RET_KILL
@@ -85,13 +85,13 @@
 # define SECCOMP_FILTER_FAIL SECCOMP_RET_TRAP
 #endif /* SANDBOX_SECCOMP_FILTER_DEBUG */
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#إذا __BYTE_ORDER == __LITTLE_ENDIAN
 # define ARG_LO_OFFSET  0
-# define ARG_HI_OFFSET  sizeof(uint32_t)
-#elif __BYTE_ORDER == __BIG_ENDIAN
-# define ARG_LO_OFFSET  sizeof(uint32_t)
+# define ARG_HI_OFFSET  حجم(uint32_t)
+#وإلاإذا __BYTE_ORDER == __BIG_ENDIAN
+# define ARG_LO_OFFSET  حجم(uint32_t)
 # define ARG_HI_OFFSET  0
-#else
+#وإلا
 #error "Unknown endianness"
 #endif
 
@@ -106,70 +106,70 @@
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, (_nr), 0, 6), \
 	/* load and test syscall argument, low word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[(_arg_nr)]) + ARG_LO_OFFSET), \
+	    offsetof(بنية seccomp_data, وسائط[(_arg_nr)]) + ARG_LO_OFFSET), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, \
 	    ((_arg_val) & 0xFFFFFFFF), 0, 3), \
 	/* load and test syscall argument, high word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[(_arg_nr)]) + ARG_HI_OFFSET), \
+	    offsetof(بنية seccomp_data, وسائط[(_arg_nr)]) + ARG_HI_OFFSET), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, \
 	    (((uint32_t)((uint64_t)(_arg_val) >> 32)) & 0xFFFFFFFF), 0, 1), \
 	BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW), \
 	/* reload syscall number; all rules expect it in accumulator */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-		offsetof(struct seccomp_data, nr))
+		offsetof(بنية seccomp_data, nr))
 /* Allow if syscall argument contains only values in mask */
 #define SC_ALLOW_ARG_MASK(_nr, _arg_nr, _arg_mask) \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, (_nr), 0, 8), \
 	/* load, mask and test syscall argument, low word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[(_arg_nr)]) + ARG_LO_OFFSET), \
+	    offsetof(بنية seccomp_data, وسائط[(_arg_nr)]) + ARG_LO_OFFSET), \
 	BPF_STMT(BPF_ALU+BPF_AND+BPF_K, ~((_arg_mask) & 0xFFFFFFFF)), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0, 0, 4), \
 	/* load, mask and test syscall argument, high word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[(_arg_nr)]) + ARG_HI_OFFSET), \
+	    offsetof(بنية seccomp_data, وسائط[(_arg_nr)]) + ARG_HI_OFFSET), \
 	BPF_STMT(BPF_ALU+BPF_AND+BPF_K, \
 	    ~(((uint32_t)((uint64_t)(_arg_mask) >> 32)) & 0xFFFFFFFF)), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0, 0, 1), \
 	BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW), \
 	/* reload syscall number; all rules expect it in accumulator */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-		offsetof(struct seccomp_data, nr))
+		offsetof(بنية seccomp_data, nr))
 /* Deny unless syscall argument contains only values in mask */
 #define SC_DENY_UNLESS_ARG_MASK(_nr, _arg_nr, _arg_mask, _errno) \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, (_nr), 0, 8), \
 	/* load, mask and test syscall argument, low word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[(_arg_nr)]) + ARG_LO_OFFSET), \
+	    offsetof(بنية seccomp_data, وسائط[(_arg_nr)]) + ARG_LO_OFFSET), \
 	BPF_STMT(BPF_ALU+BPF_AND+BPF_K, ~((_arg_mask) & 0xFFFFFFFF)), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0, 0, 3), \
 	/* load, mask and test syscall argument, high word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[(_arg_nr)]) + ARG_HI_OFFSET), \
+	    offsetof(بنية seccomp_data, وسائط[(_arg_nr)]) + ARG_HI_OFFSET), \
 	BPF_STMT(BPF_ALU+BPF_AND+BPF_K, \
 	    ~(((uint32_t)((uint64_t)(_arg_mask) >> 32)) & 0xFFFFFFFF)), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0, 1, 0), \
 	BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ERRNO|(_errno)), \
 	/* reload syscall number; all rules expect it in accumulator */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-		offsetof(struct seccomp_data, nr))
+		offsetof(بنية seccomp_data, nr))
 #define SC_DENY_UNLESS_MASK(_nr, _arg_nr, _arg_val, _errno) \
 /* Special handling for futex(2) that combines a bitmap and operation number */
-#if defined(__NR_futex) || defined(__NR_futex_time64)
+#إذا defined(__NR_futex) || defined(__NR_futex_time64)
 #define SC_FUTEX_MASK (FUTEX_PRIVATE_FLAG|FUTEX_CLOCK_REALTIME)
 #define SC_ALLOW_FUTEX_OP(_nr, _op) \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, (_nr), 0, 8), \
 	/* load syscall argument, low word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[1]) + ARG_LO_OFFSET), \
+	    offsetof(بنية seccomp_data, وسائط[1]) + ARG_LO_OFFSET), \
 	/* mask off allowed bitmap values, low word */ \
 	BPF_STMT(BPF_ALU+BPF_AND+BPF_K, ~(SC_FUTEX_MASK & 0xFFFFFFFF)), \
 	/* test operation number, low word */ \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, ((_op) & 0xFFFFFFFF), 0, 4), \
 	/* load syscall argument, high word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[1]) + ARG_HI_OFFSET), \
+	    offsetof(بنية seccomp_data, وسائط[1]) + ARG_HI_OFFSET), \
 	/* mask off allowed bitmap values, high word */ \
 	BPF_STMT(BPF_ALU+BPF_AND+BPF_K, \
 	    ~(((uint32_t)((uint64_t)SC_FUTEX_MASK >> 32)) & 0xFFFFFFFF)), \
@@ -178,7 +178,7 @@
 	    (((uint32_t)((uint64_t)(_op) >> 32)) & 0xFFFFFFFF), 0, 1), \
 	BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW), \
 	/* reload syscall number; all rules expect it in accumulator */ \
-	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, offsetof(struct seccomp_data, nr))
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, offsetof(بنية seccomp_data, nr))
 
 /* Use this for both __NR_futex and __NR_futex_time64 */
 # define SC_FUTEX(_nr) \
@@ -190,10 +190,10 @@
 	SC_ALLOW_FUTEX_OP(_nr, FUTEX_CMP_REQUEUE)
 #endif /* __NR_futex || __NR_futex_time64 */
 
-#if defined(__NR_mmap) || defined(__NR_mmap2)
+#إذا defined(__NR_mmap) || defined(__NR_mmap2)
 # ifdef MAP_FIXED_NOREPLACE
 #  define SC_MMAP_FLAGS MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED|MAP_FIXED_NOREPLACE
-# else
+# وإلا
 #  define SC_MMAP_FLAGS MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED
 # endif /* MAP_FIXED_NOREPLACE */
 /* Use this for both __NR_mmap and __NR_mmap2 variants */
@@ -207,37 +207,37 @@
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, __NR_setsockopt, 0, 10), \
 	/* load and test level, low word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[1]) + ARG_LO_OFFSET), \
+	    offsetof(بنية seccomp_data, وسائط[1]) + ARG_LO_OFFSET), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, \
 	    ((_level) & 0xFFFFFFFF), 0, 7), \
 	/* load and test level high word is zero */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[1]) + ARG_HI_OFFSET), \
+	    offsetof(بنية seccomp_data, وسائط[1]) + ARG_HI_OFFSET), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0, 0, 5), \
 	/* load and test optname, low word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[2]) + ARG_LO_OFFSET), \
+	    offsetof(بنية seccomp_data, وسائط[2]) + ARG_LO_OFFSET), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, \
 	    ((_optname) & 0xFFFFFFFF), 0, 3), \
 	/* load and test level high word is zero */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[2]) + ARG_HI_OFFSET), \
+	    offsetof(بنية seccomp_data, وسائط[2]) + ARG_HI_OFFSET), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0, 0, 1), \
 	BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW), \
 	/* reload syscall number; all rules expect it in accumulator */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-		offsetof(struct seccomp_data, nr))
+		offsetof(بنية seccomp_data, nr))
 
 /* Syscall filtering set for preauth. */
-static const struct sock_filter preauth_insns[] = {
+ساكن ثابت بنية sock_filter preauth_insns[] = {
 	/* Ensure the syscall arch convention is as expected. */
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS,
-		offsetof(struct seccomp_data, arch)),
+		offsetof(بنية seccomp_data, arch)),
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, SECCOMP_AUDIT_ARCH, 1, 0),
 	BPF_STMT(BPF_RET+BPF_K, SECCOMP_FILTER_FAIL),
 	/* Load the syscall number for checking. */
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS,
-		offsetof(struct seccomp_data, nr)),
+		offsetof(بنية seccomp_data, nr)),
 
 	/* Syscalls to non-fatally deny */
 #ifdef __NR_lstat
@@ -455,7 +455,7 @@ static const struct sock_filter preauth_insns[] = {
 	SC_ALLOW_ARG(__NR_socketcall, 0, SYS_SHUTDOWN),
 	SC_DENY(__NR_socketcall, EACCES),
 #endif
-#if defined(__NR_ioctl) && defined(__s390__)
+#إذا defined(__NR_ioctl) && defined(__s390__)
 	/* Allow ioctls for ICA crypto card on s390 */
 	SC_ALLOW_ARG(__NR_ioctl, 1, Z90STAT_STATUS_MASK),
 	SC_ALLOW_ARG(__NR_ioctl, 1, ICARSAMODEXPO),
@@ -464,7 +464,7 @@ static const struct sock_filter preauth_insns[] = {
 	/* Allow ioctls for EP11 crypto card on s390 */
 	SC_ALLOW_ARG(__NR_ioctl, 1, ZSENDEP11CPRB),
 #endif
-#if defined(__x86_64__) && defined(__ILP32__) && defined(__X32_SYSCALL_BIT)
+#إذا defined(__x86_64__) && defined(__ILP32__) && defined(__X32_SYSCALL_BIT)
 	/*
 	 * On Linux x32, the clock_gettime VDSO falls back to the
 	 * x86-64 syscall under some circumstances, e.g.
@@ -477,84 +477,84 @@ static const struct sock_filter preauth_insns[] = {
 	BPF_STMT(BPF_RET+BPF_K, SECCOMP_FILTER_FAIL),
 };
 
-static const struct sock_fprog preauth_program = {
-	.len = (unsigned short)(sizeof(preauth_insns)/sizeof(preauth_insns[0])),
-	.filter = (struct sock_filter *)preauth_insns,
+ساكن ثابت بنية sock_fprog preauth_program = {
+	.len = (unsigned short)(حجم(preauth_insns)/حجم(preauth_insns[0])),
+	.filter = (بنية sock_filter *)preauth_insns,
 };
 
-struct ssh_sandbox {
-	int junk;
+بنية ssh_sandbox {
+	صحيح junk;
 };
 
-struct ssh_sandbox *
-ssh_sandbox_init(struct monitor *monitor)
+بنية ssh_sandbox *
+ssh_sandbox_init(بنية monitor *monitor)
 {
-	struct ssh_sandbox *box;
+	بنية ssh_sandbox *box;
 
 	/*
 	 * Strictly, we don't need to maintain any state here but we need
 	 * to return non-NULL to satisfy the API.
 	 */
 	debug3_f("preparing seccomp filter sandbox");
-	box = xcalloc(1, sizeof(*box));
-	return box;
+	box = xcalloc(1, حجم(*box));
+	أرجع box;
 }
 
 #ifdef SANDBOX_SECCOMP_FILTER_DEBUG
-extern struct monitor *pmonitor;
-void mm_log_handler(LogLevel level, int forced, const char *msg, void *ctx);
+خارجي بنية monitor *pmonitor;
+فراغ mm_log_handler(LogLevel level, صحيح forced, ثابت حرف *رسالة, فراغ *ctx);
 
-static void
-ssh_sandbox_violation(int signum, siginfo_t *info, void *void_context)
+ساكن فراغ
+ssh_sandbox_violation(صحيح signum, siginfo_t *info, فراغ *void_context)
 {
-	char msg[256];
+	حرف رسالة[256];
 
-	snprintf(msg, sizeof(msg),
+	snprintf(رسالة, حجم(رسالة),
 	    "%s: unexpected system call (arch:0x%x,syscall:%d @ %p)",
 	    __func__, info->si_arch, info->si_syscall, info->si_call_addr);
-	mm_log_handler(SYSLOG_LEVEL_FATAL, 0, msg, pmonitor);
+	mm_log_handler(SYSLOG_LEVEL_FATAL, 0, رسالة, pmonitor);
 	_exit(1);
 }
 
-static void
-ssh_sandbox_child_debugging(void)
+ساكن فراغ
+ssh_sandbox_child_debugging(فراغ)
 {
-	struct sigaction act;
+	بنية sigaction act;
 	sigset_t mask;
 
 	debug3_f("installing SIGSYS handler");
-	memset(&act, 0, sizeof(act));
+	memset(&act, 0, حجم(act));
 	sigemptyset(&mask);
 	sigaddset(&mask, SIGSYS);
 
 	act.sa_sigaction = &ssh_sandbox_violation;
 	act.sa_flags = SA_SIGINFO;
-	if (sigaction(SIGSYS, &act, NULL) == -1)
+	إذا (sigaction(SIGSYS, &act, عدم) == -1)
 		fatal_f("sigaction(SIGSYS): %s", strerror(errno));
-	if (sigprocmask(SIG_UNBLOCK, &mask, NULL) == -1)
+	إذا (sigprocmask(SIG_UNBLOCK, &mask, عدم) == -1)
 		fatal("%s: sigprocmask(SIGSYS): %s",
 		    __func__, strerror(errno));
 }
 #endif /* SANDBOX_SECCOMP_FILTER_DEBUG */
 
-void
-ssh_sandbox_child(struct ssh_sandbox *box)
+فراغ
+ssh_sandbox_child(بنية ssh_sandbox *box)
 {
-	struct rlimit rl_zero, rl_one = {.rlim_cur = 1, .rlim_max = 1};
+	بنية rlimit rl_zero, rl_one = {.rlim_cur = 1, .rlim_max = 1};
 
 	/* Set rlimits for completeness if possible. */
 	rl_zero.rlim_cur = rl_zero.rlim_max = 0;
-	if (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
+	إذا (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
 		fatal("%s: setrlimit(RLIMIT_FSIZE, { 0, 0 }): %s",
 			__func__, strerror(errno));
 	/*
 	 * Cannot use zero for nfds, because poll(2) will fail with
 	 * errno=EINVAL if npfds>RLIMIT_NOFILE.
 	 */
-	if (setrlimit(RLIMIT_NOFILE, &rl_one) == -1)
+	إذا (setrlimit(RLIMIT_NOFILE, &rl_one) == -1)
 		fatal("%s: setrlimit(RLIMIT_NOFILE, { 0, 0 }): %s",
 			__func__, strerror(errno));
-	if (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
+	إذا (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
 		fatal("%s: setrlimit(RLIMIT_NPROC, { 0, 0 }): %s",
 			__func__, strerror(errno));
 
@@ -563,10 +563,10 @@ ssh_sandbox_child(struct ssh_sandbox *box)
 #endif /* SANDBOX_SECCOMP_FILTER_DEBUG */
 
 	debug3_f("setting PR_SET_NO_NEW_PRIVS");
-	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) == -1)
+	إذا (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) == -1)
 		fatal_f("prctl(PR_SET_NO_NEW_PRIVS): %s", strerror(errno));
 	debug3_f("attaching seccomp filter program");
-	if (prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &preauth_program) == -1)
+	إذا (prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &preauth_program) == -1)
 		fatal_f("prctl(PR_SET_SECCOMP): %s", strerror(errno));
 }
 

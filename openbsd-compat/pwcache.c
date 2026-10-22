@@ -30,85 +30,85 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/pwcache.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <grp.h>
+#ضمن <pwd.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
 #define	NCACHE	64			/* power of 2 */
 #define	MASK	(NCACHE - 1)		/* bits to store with */
 
 #ifndef HAVE_USER_FROM_UID
-char *
-user_from_uid(uid_t uid, int nouser)
+حرف *
+user_from_uid(uid_t uid, صحيح nouser)
 {
-	static struct ncache {
+	ساكن بنية ncache {
 		uid_t	uid;
-		char	*name;
+		حرف	*name;
 	} c_uid[NCACHE];
-	static int pwopen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct passwd *pw;
-	struct ncache *cp;
+	ساكن صحيح pwopen;
+	ساكن حرف nbuf[15];		/* 32 bits == 10 digits */
+	بنية passwd *pw;
+	بنية ncache *cp;
 
 	cp = c_uid + (uid & MASK);
-	if (cp->uid != uid || cp->name == NULL) {
-		if (pwopen == 0) {
+	إذا (cp->uid != uid || cp->name == عدم) {
+		إذا (pwopen == 0) {
 #ifdef HAVE_SETPASSENT
 			setpassent(1);
 #endif
 			pwopen = 1;
 		}
-		if ((pw = getpwuid(uid)) == NULL) {
-			if (nouser)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)uid);
+		إذا ((pw = getpwuid(uid)) == عدم) {
+			إذا (nouser)
+				أرجع (عدم);
+			(فراغ)snprintf(nbuf, حجم(nbuf), "%lu", (u_long)uid);
 		}
 		cp->uid = uid;
-		if (cp->name != NULL)
-			free(cp->name);
+		إذا (cp->name != عدم)
+			حرر(cp->name);
 		cp->name = strdup(pw ? pw->pw_name : nbuf);
 	}
-	return (cp->name);
+	أرجع (cp->name);
 }
 #endif
 
 #ifndef HAVE_GROUP_FROM_GID
-char *
-group_from_gid(gid_t gid, int nogroup)
+حرف *
+group_from_gid(gid_t gid, صحيح nogroup)
 {
-	static struct ncache {
+	ساكن بنية ncache {
 		gid_t	gid;
-		char	*name;
+		حرف	*name;
 	} c_gid[NCACHE];
-	static int gropen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct group *gr;
-	struct ncache *cp;
+	ساكن صحيح gropen;
+	ساكن حرف nbuf[15];		/* 32 bits == 10 digits */
+	بنية group *gr;
+	بنية ncache *cp;
 
 	cp = c_gid + (gid & MASK);
-	if (cp->gid != gid || cp->name == NULL) {
-		if (gropen == 0) {
+	إذا (cp->gid != gid || cp->name == عدم) {
+		إذا (gropen == 0) {
 #ifdef HAVE_SETGROUPENT
 			setgroupent(1);
 #endif
 			gropen = 1;
 		}
-		if ((gr = getgrgid(gid)) == NULL) {
-			if (nogroup)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)gid);
+		إذا ((gr = getgrgid(gid)) == عدم) {
+			إذا (nogroup)
+				أرجع (عدم);
+			(فراغ)snprintf(nbuf, حجم(nbuf), "%lu", (u_long)gid);
 		}
 		cp->gid = gid;
-		if (cp->name != NULL)
-			free(cp->name);
+		إذا (cp->name != عدم)
+			حرر(cp->name);
 		cp->name = strdup(gr ? gr->gr_name : nbuf);
 	}
-	return (cp->name);
+	أرجع (cp->name);
 }
 #endif
