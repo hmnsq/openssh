@@ -54,7 +54,7 @@
 #ifndef PKCS11_H
 #define PKCS11_H 1
 
-#if defined(__cplusplus)
+#якщо defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -79,18 +79,18 @@ extern "C" {
 
 /* System dependencies.  */
 
-#if defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
+#якщо defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
 
 /* There is a matching pop below.  */
 #pragma pack(push, cryptoki, 1)
 
 #ifdef CRYPTOKI_EXPORTS
 #define CK_SPEC __declspec(dllexport)
-#else
+#інакше
 #define CK_SPEC __declspec(dllimport)
 #endif
 
-#else
+#інакше
 
 #define CK_SPEC
 
@@ -1711,8 +1711,8 @@ typedef unsigned char CK_BYTE;
 typedef unsigned char CK_CHAR;
 typedef unsigned char CK_UTF8CHAR;
 typedef unsigned char CK_BBOOL;
-typedef unsigned long int CK_ULONG;
-typedef long int CK_LONG;
+typedef unsigned long ціле CK_ULONG;
+typedef long ціле CK_LONG;
 typedef CK_BYTE *CK_BYTE_PTR;
 typedef CK_CHAR *CK_CHAR_PTR;
 typedef CK_UTF8CHAR *CK_UTF8CHAR_PTR;
@@ -1890,11 +1890,11 @@ typedef struct ck_c_initialize_args *CK_C_INITIALIZE_ARGS_PTR;
 #endif	/* CRYPTOKI_COMPAT */
 
 /* System dependencies.  */
-#if defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
+#якщо defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
 #pragma pack(pop, cryptoki)
 #endif
 
-#if defined(__cplusplus)
+#якщо defined(__cplusplus)
 }
 #endif
 

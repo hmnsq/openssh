@@ -31,7 +31,7 @@
 /* OPENBSD ORIGINAL: lib/libc/gen/vis.c */
 
 #include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#якщо !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
 #include <sys/types.h>
 #include <errno.h>
@@ -59,18 +59,18 @@
  * vis - visually encode characters
  */
 char *
-vis(char *dst, int c, int flag, int nextc)
+vis(char *dst, ціле c, ціле flag, ціле nextc)
 {
-	if (isvisible(c, flag)) {
-		if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	якщо (isvisible(c, flag)) {
+		якщо ((c == '"' && (flag & VIS_DQ) != 0) ||
 		    (c == '\\' && (flag & VIS_NOSLASH) == 0))
 			*dst++ = '\\';
 		*dst++ = c;
 		*dst = '\0';
-		return (dst);
+		повернути (dst);
 	}
 
-	if (flag & VIS_CSTYLE) {
+	якщо (flag & VIS_CSTYLE) {
 		switch(c) {
 		case '\n':
 			*dst++ = '\\';
@@ -107,14 +107,14 @@ vis(char *dst, int c, int flag, int nextc)
 		case '\0':
 			*dst++ = '\\';
 			*dst++ = '0';
-			if (isoctal(nextc)) {
+			якщо (isoctal(nextc)) {
 				*dst++ = '0';
 				*dst++ = '0';
 			}
 			goto done;
 		}
 	}
-	if (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
+	якщо (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
 	    ((flag & VIS_GLOB) && (c == '*' || c == '?' || c == '[' || c == '#'))) {
 		*dst++ = '\\';
 		*dst++ = ((u_char)c >> 6 & 07) + '0';
@@ -122,25 +122,25 @@ vis(char *dst, int c, int flag, int nextc)
 		*dst++ = ((u_char)c & 07) + '0';
 		goto done;
 	}
-	if ((flag & VIS_NOSLASH) == 0)
+	якщо ((flag & VIS_NOSLASH) == 0)
 		*dst++ = '\\';
-	if (c & 0200) {
+	якщо (c & 0200) {
 		c &= 0177;
 		*dst++ = 'M';
 	}
-	if (iscntrl((u_char)c)) {
+	якщо (iscntrl((u_char)c)) {
 		*dst++ = '^';
-		if (c == 0177)
+		якщо (c == 0177)
 			*dst++ = '?';
-		else
+		інакше
 			*dst++ = c + '@';
-	} else {
+	} інакше {
 		*dst++ = '-';
 		*dst++ = c;
 	}
 done:
 	*dst = '\0';
-	return (dst);
+	повернути (dst);
 }
 DEF_WEAK(vis);
 
@@ -157,33 +157,33 @@ DEF_WEAK(vis);
  *	Strvisx encodes exactly len bytes from src into dst.
  *	This is useful for encoding a block of data.
  */
-int
-strvis(char *dst, const char *src, int flag)
+ціле
+strvis(char *dst, const char *src, ціле flag)
 {
 	char c;
 	char *start;
 
-	for (start = dst; (c = *src);)
+	для (start = dst; (c = *src);)
 		dst = vis(dst, c, flag, *++src);
 	*dst = '\0';
-	return (dst - start);
+	повернути (dst - start);
 }
 DEF_WEAK(strvis);
 
-int
-strnvis(char *dst, const char *src, size_t siz, int flag)
+ціле
+strnvis(char *dst, const char *src, size_t siz, ціле flag)
 {
 	char *start, *end;
 	char tbuf[5];
-	int c, i;
+	ціле c, i;
 
 	i = 0;
-	for (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
-		if (isvisible(c, flag)) {
-			if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	для (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
+		якщо (isvisible(c, flag)) {
+			якщо ((c == '"' && (flag & VIS_DQ) != 0) ||
 			    (c == '\\' && (flag & VIS_NOSLASH) == 0)) {
 				/* need space for the extra '\\' */
-				if (dst + 1 >= end) {
+				якщо (dst + 1 >= end) {
 					i = 2;
 					break;
 				}
@@ -192,61 +192,61 @@ strnvis(char *dst, const char *src, size_t siz, int flag)
 			i = 1;
 			*dst++ = c;
 			src++;
-		} else {
+		} інакше {
 			i = vis(tbuf, c, flag, *++src) - tbuf;
-			if (dst + i <= end) {
+			якщо (dst + i <= end) {
 				memcpy(dst, tbuf, i);
 				dst += i;
-			} else {
+			} інакше {
 				src--;
 				break;
 			}
 		}
 	}
-	if (siz > 0)
+	якщо (siz > 0)
 		*dst = '\0';
-	if (dst + i > end) {
+	якщо (dst + i > end) {
 		/* adjust return value for truncation */
-		while ((c = *src))
+		поки ((c = *src))
 			dst += vis(tbuf, c, flag, *++src) - tbuf;
 	}
-	return (dst - start);
+	повернути (dst - start);
 }
 
-#if 0 /* unused in OpenSSH */
-int
-stravis(char **outp, const char *src, int flag)
+#якщо 0 /* unused in OpenSSH */
+ціле
+stravis(char **outp, const char *src, ціле flag)
 {
 	char *buf;
-	int len, serrno;
+	ціле len, serrno;
 
 	buf = reallocarray(NULL, 4, strlen(src) + 1);
-	if (buf == NULL)
-		return -1;
+	якщо (buf == NULL)
+		повернути -1;
 	len = strvis(buf, src, flag);
 	serrno = errno;
 	*outp = realloc(buf, len + 1);
-	if (*outp == NULL) {
+	якщо (*outp == NULL) {
 		*outp = buf;
 		errno = serrno;
 	}
-	return (len);
+	повернути (len);
 }
 
-int
-strvisx(char *dst, const char *src, size_t len, int flag)
+ціле
+strvisx(char *dst, const char *src, size_t len, ціле flag)
 {
 	char c;
 	char *start;
 
-	for (start = dst; len > 1; len--) {
+	для (start = dst; len > 1; len--) {
 		c = *src;
 		dst = vis(dst, c, flag, *++src);
 	}
-	if (len)
+	якщо (len)
 		dst = vis(dst, *src, flag, '\0');
 	*dst = '\0';
-	return (dst - start);
+	повернути (dst - start);
 }
 #endif /* unused */
 

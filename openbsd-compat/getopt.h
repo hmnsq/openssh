@@ -34,9 +34,9 @@
 #define _GETOPT_H_
 
 #ifndef __THROW
-# if defined __cplusplus
+# якщо defined __cplusplus
 #  define __THROW throw()
-# else
+# інакше
 #  define __THROW
 # endif
 #endif
@@ -48,7 +48,7 @@
 #define required_argument  1
 #define optional_argument  2
 
-#if 0
+#якщо 0
 struct option {
 	/* name of long option */
 	const char *name;
@@ -56,29 +56,29 @@ struct option {
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	ціле has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	ціле *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	ціле val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
+ціле	 getopt_long(ціле, char * const *, const char *,
+	    const struct option *, ціле *);
+ціле	 getopt_long_only(ціле, char * const *, const char *,
+	    const struct option *, ціле *);
 #endif
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+ціле	 getopt(ціле, char * const *, const char *) __THROW;
+ціле	 getsubopt(char **, char * const *, char **) __THROW;
 
 extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
+extern   ціле opterr;
+extern   ціле optind;
+extern   ціле optopt;
+extern   ціле optreset;
 extern   char *suboptarg;               /* getsubopt(3) external variable */
 #endif
  

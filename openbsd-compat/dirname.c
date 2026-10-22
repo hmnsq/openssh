@@ -32,40 +32,40 @@ dirname(const char *path)
 	const char *endp;
 
 	/* Empty or NULL string gets treated as "." */
-	if (path == NULL || *path == '\0') {
+	якщо (path == NULL || *path == '\0') {
 		dname[0] = '.';
 		dname[1] = '\0';
-		return (dname);
+		повернути (dname);
 	}
 
 	/* Strip any trailing slashes */
 	endp = path + strlen(path) - 1;
-	while (endp > path && *endp == '/')
+	поки (endp > path && *endp == '/')
 		endp--;
 
 	/* Find the start of the dir */
-	while (endp > path && *endp != '/')
+	поки (endp > path && *endp != '/')
 		endp--;
 
 	/* Either the dir is "/" or there are no slashes */
-	if (endp == path) {
+	якщо (endp == path) {
 		dname[0] = *endp == '/' ? '/' : '.';
 		dname[1] = '\0';
-		return (dname);
-	} else {
+		повернути (dname);
+	} інакше {
 		/* Move forward past the separating slashes */
 		do {
 			endp--;
-		} while (endp > path && *endp == '/');
+		} поки (endp > path && *endp == '/');
 	}
 
 	len = endp - path + 1;
-	if (len >= sizeof(dname)) {
+	якщо (len >= sizeof(dname)) {
 		errno = ENAMETOOLONG;
-		return (NULL);
+		повернути (NULL);
 	}
 	memcpy(dname, path, len);
 	dname[len] = '\0';
-	return (dname);
+	повернути (dname);
 }
 #endif

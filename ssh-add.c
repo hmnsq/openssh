@@ -89,118 +89,118 @@ static char *default_files[] = {
 	NULL
 };
 
-static int fingerprint_hash = SSH_FP_HASH_DEFAULT;
+static ціле fingerprint_hash = SSH_FP_HASH_DEFAULT;
 
 /* Default lifetime (0 == forever) */
-static int lifetime = 0;
+static ціле lifetime = 0;
 
 /* User has to confirm key use */
-static int confirm = 0;
+static ціле confirm = 0;
 
 /* we keep a cache of one passphrase */
 static char *pass = NULL;
 static void
 clear_pass(void)
 {
-	if (pass) {
+	якщо (pass) {
 		freezero(pass, strlen(pass));
 		pass = NULL;
 	}
 }
 
-static int
-delete_one(int agent_fd, const struct sshkey *key, const char *comment,
-    const char *path, int qflag)
+static ціле
+delete_one(ціле agent_fd, const struct sshkey *key, const char *comment,
+    const char *path, ціле qflag)
 {
-	int r;
+	ціле r;
 
-	if ((r = ssh_remove_identity(agent_fd, key)) != 0) {
+	якщо ((r = ssh_remove_identity(agent_fd, key)) != 0) {
 		fprintf(stderr, "Could not remove identity \"%s\": %s\n",
 		    path, ssh_err(r));
-		return r;
+		повернути r;
 	}
-	if (!qflag) {
+	якщо (!qflag) {
 		fprintf(stderr, "Identity removed: %s %s (%s)\n", path,
 		    sshkey_type(key), comment ? comment : "no comment");
 	}
-	return 0;
+	повернути 0;
 }
 
-static int
-delete_stdin(int agent_fd, int qflag, int key_only, int cert_only)
+static ціле
+delete_stdin(ціле agent_fd, ціле qflag, ціле key_only, ціле cert_only)
 {
 	char *line = NULL, *cp;
 	size_t linesize = 0;
 	struct sshkey *key = NULL;
-	int lnum = 0, r, ret = -1;
+	ціле lnum = 0, r, ret = -1;
 
-	while (getline(&line, &linesize, stdin) != -1) {
+	поки (getline(&line, &linesize, stdin) != -1) {
 		lnum++;
 		sshkey_free(key);
 		key = NULL;
 		line[strcspn(line, "\n")] = '\0';
 		cp = line + strspn(line, " \t");
-		if (*cp == '#' || *cp == '\0')
+		якщо (*cp == '#' || *cp == '\0')
 			continue;
-		if ((key = sshkey_new(KEY_UNSPEC)) == NULL)
+		якщо ((key = sshkey_new(KEY_UNSPEC)) == NULL)
 			fatal_f("sshkey_new");
-		if ((r = sshkey_read(key, &cp)) != 0) {
+		якщо ((r = sshkey_read(key, &cp)) != 0) {
 			error_r(r, "(stdin):%d: invalid key", lnum);
 			continue;
 		}
-		if ((!key_only && !cert_only) ||
+		якщо ((!key_only && !cert_only) ||
 		    (key_only && !sshkey_is_cert(key)) ||
 		    (cert_only && sshkey_is_cert(key))) {
-			if (delete_one(agent_fd, key, cp,
+			якщо (delete_one(agent_fd, key, cp,
 			    "(stdin)", qflag) == 0)
 				ret = 0;
 		}
 	}
 	sshkey_free(key);
 	free(line);
-	return ret;
+	повернути ret;
 }
 
-static int
-delete_file(int agent_fd, const char *filename, int key_only,
-    int cert_only, int qflag)
+static ціле
+delete_file(ціле agent_fd, const char *filename, ціле key_only,
+    ціле cert_only, ціле qflag)
 {
 	struct sshkey *public, *cert = NULL;
 	char *certpath = NULL, *comment = NULL;
-	int r, ret = -1;
+	ціле r, ret = -1;
 
-	if (strcmp(filename, "-") == 0)
-		return delete_stdin(agent_fd, qflag, key_only, cert_only);
+	якщо (strcmp(filename, "-") == 0)
+		повернути delete_stdin(agent_fd, qflag, key_only, cert_only);
 
-	if ((r = sshkey_load_public(filename, &public,  &comment)) != 0) {
+	якщо ((r = sshkey_load_public(filename, &public,  &comment)) != 0) {
 		printf("Bad key file %s: %s\n", filename, ssh_err(r));
-		return -1;
+		повернути -1;
 	}
-	if ((!key_only && !cert_only) ||
+	якщо ((!key_only && !cert_only) ||
 	    (key_only && !sshkey_is_cert(public)) ||
 	    (cert_only && sshkey_is_cert(public))) {
-		if (delete_one(agent_fd, public, comment, filename, qflag) == 0)
+		якщо (delete_one(agent_fd, public, comment, filename, qflag) == 0)
 			ret = 0;
 	}
 
-	if (key_only)
+	якщо (key_only)
 		goto out;
 
 	/* Now try to delete the corresponding certificate too */
 	free(comment);
 	comment = NULL;
 	xasprintf(&certpath, "%s-cert.pub", filename);
-	if ((r = sshkey_load_public(certpath, &cert, &comment)) != 0) {
-		if (r != SSH_ERR_SYSTEM_ERROR || errno != ENOENT)
+	якщо ((r = sshkey_load_public(certpath, &cert, &comment)) != 0) {
+		якщо (r != SSH_ERR_SYSTEM_ERROR || errno != ENOENT)
 			error_r(r, "Failed to load certificate \"%s\"", certpath);
 		goto out;
 	}
 
-	if (!sshkey_equal_public(cert, public))
+	якщо (!sshkey_equal_public(cert, public))
 		fatal("Certificate %s does not match private key %s",
 		    certpath, filename);
 
-	if (delete_one(agent_fd, cert, comment, certpath, qflag) == 0)
+	якщо (delete_one(agent_fd, cert, comment, certpath, qflag) == 0)
 		ret = 0;
 
  out:
@@ -209,143 +209,143 @@ delete_file(int agent_fd, const char *filename, int key_only,
 	free(certpath);
 	free(comment);
 
-	return ret;
+	повернути ret;
 }
 
 /* Send a request to remove all identities. */
-static int
-delete_all(int agent_fd, int qflag)
+static ціле
+delete_all(ціле agent_fd, ціле qflag)
 {
-	int ret = -1;
+	ціле ret = -1;
 
 	/*
 	 * Since the agent might be forwarded, old or non-OpenSSH, when asked
 	 * to remove all keys, attempt to remove both protocol v.1 and v.2
 	 * keys.
 	 */
-	if (ssh_remove_all_identities(agent_fd, 2) == 0)
+	якщо (ssh_remove_all_identities(agent_fd, 2) == 0)
 		ret = 0;
 	/* ignore error-code for ssh1 */
 	ssh_remove_all_identities(agent_fd, 1);
 
-	if (ret != 0)
+	якщо (ret != 0)
 		fprintf(stderr, "Failed to remove all identities.\n");
-	else if (!qflag)
+	інакше якщо (!qflag)
 		fprintf(stderr, "All identities removed.\n");
 
-	return ret;
+	повернути ret;
 }
 
-static int
-query_exts(int agent_fd)
+static ціле
+query_exts(ціле agent_fd)
 {
-	int r;
+	ціле r;
 	char **exts = NULL;
 	size_t i;
 
-	if ((r = ssh_agent_query_extensions(agent_fd, &exts)) != 0)
+	якщо ((r = ssh_agent_query_extensions(agent_fd, &exts)) != 0)
 		fatal_r(r, "unable to query supported extensions");
-	for (i = 0; exts != NULL && exts[i] != NULL; i++)
+	для (i = 0; exts != NULL && exts[i] != NULL; i++)
 		puts(exts[i]);
 	stringlist_free(exts);
-	return 0;
+	повернути 0;
 }
 
-static int
-check_cert_lifetime(const struct sshkey *cert, int cert_lifetime)
+static ціле
+check_cert_lifetime(const struct sshkey *cert, ціле cert_lifetime)
 {
 	time_t now;
 	uint64_t n;
 
-	if (cert == NULL || cert->cert == NULL || !sshkey_is_cert(cert) ||
+	якщо (cert == NULL || cert->cert == NULL || !sshkey_is_cert(cert) ||
 	    cert->cert->valid_before == 0xFFFFFFFFFFFFFFFFULL)
-		return cert_lifetime;
-	if ((now = time(NULL)) <= 0)
+		повернути cert_lifetime;
+	якщо ((now = time(NULL)) <= 0)
 		fatal_f("system time is at/before epoch");
-	if ((uint64_t)now > (cert->cert->valid_before + CERT_EXPIRY_GRACE))
-		return -1; /* certificate already expired */
+	якщо ((uint64_t)now > (cert->cert->valid_before + CERT_EXPIRY_GRACE))
+		повернути -1; /* certificate already expired */
 	n = (CERT_EXPIRY_GRACE + cert->cert->valid_before) - (uint64_t)now;
 	n = MINIMUM(n, INT_MAX);
-	if (cert_lifetime <= 0)
-		return (int)n;
-	return MINIMUM(cert_lifetime, (int)n);
+	якщо (cert_lifetime <= 0)
+		повернути (ціле)n;
+	повернути MINIMUM(cert_lifetime, (ціле)n);
 }
 
-static int
-add_file(int agent_fd, const char *filename, int key_only, int cert_only,
-    int qflag, int Nflag, const char *skprovider,
+static ціле
+add_file(ціле agent_fd, const char *filename, ціле key_only, ціле cert_only,
+    ціле qflag, ціле Nflag, const char *skprovider,
     struct dest_constraint **dest_constraints,
     size_t ndest_constraints)
 {
 	struct sshkey *private = NULL, *cert = NULL;
 	char *comment = NULL;
 	char msg[1024], *certpath = NULL;
-	int cert_lifetime, r, fd, ret = -1;
+	ціле cert_lifetime, r, fd, ret = -1;
 	struct sshbuf *keyblob;
 
-	if (strcmp(filename, "-") == 0) {
+	якщо (strcmp(filename, "-") == 0) {
 		fd = STDIN_FILENO;
 		filename = "(stdin)";
-	} else if ((fd = open(filename, O_RDONLY)) == -1) {
+	} інакше якщо ((fd = open(filename, O_RDONLY)) == -1) {
 		perror(filename);
-		return -1;
+		повернути -1;
 	}
 
 	/*
 	 * Since we'll try to load a keyfile multiple times, permission errors
 	 * will occur multiple times, so check perms first and bail if wrong.
 	 */
-	if (fd != STDIN_FILENO) {
-		if (sshkey_perm_ok(fd, filename) != 0) {
+	якщо (fd != STDIN_FILENO) {
+		якщо (sshkey_perm_ok(fd, filename) != 0) {
 			close(fd);
-			return -1;
+			повернути -1;
 		}
 	}
-	if ((r = sshbuf_load_fd(fd, &keyblob)) != 0) {
+	якщо ((r = sshbuf_load_fd(fd, &keyblob)) != 0) {
 		fprintf(stderr, "Error loading key \"%s\": %s\n",
 		    filename, ssh_err(r));
 		sshbuf_free(keyblob);
 		close(fd);
-		return -1;
+		повернути -1;
 	}
 	close(fd);
 
 	/* At first, try empty passphrase */
-	if ((r = sshkey_parse_private_fileblob(keyblob, "", &private,
+	якщо ((r = sshkey_parse_private_fileblob(keyblob, "", &private,
 	    &comment)) != 0 && r != SSH_ERR_KEY_WRONG_PASSPHRASE) {
 		fprintf(stderr, "Error loading key \"%s\": %s\n",
 		    filename, ssh_err(r));
 		goto fail_load;
 	}
 	/* try last */
-	if (private == NULL && pass != NULL) {
-		if ((r = sshkey_parse_private_fileblob(keyblob, pass, &private,
+	якщо (private == NULL && pass != NULL) {
+		якщо ((r = sshkey_parse_private_fileblob(keyblob, pass, &private,
 		    &comment)) != 0 && r != SSH_ERR_KEY_WRONG_PASSPHRASE) {
 			fprintf(stderr, "Error loading key \"%s\": %s\n",
 			    filename, ssh_err(r));
 			goto fail_load;
 		}
 	}
-	if (private == NULL) {
+	якщо (private == NULL) {
 		/* clear passphrase since it did not work */
 		clear_pass();
 		snprintf(msg, sizeof msg, "Enter passphrase for %s%s: ",
 		    filename, confirm ? " (will confirm each use)" : "");
-		for (;;) {
+		для (;;) {
 			pass = read_passphrase(msg, RP_ALLOW_STDIN);
-			if (strcmp(pass, "") == 0)
+			якщо (strcmp(pass, "") == 0)
 				goto fail_load;
-			if ((r = sshkey_parse_private_fileblob(keyblob, pass,
+			якщо ((r = sshkey_parse_private_fileblob(keyblob, pass,
 			    &private, &comment)) == 0)
 				break;
-			else if (r != SSH_ERR_KEY_WRONG_PASSPHRASE) {
+			інакше якщо (r != SSH_ERR_KEY_WRONG_PASSPHRASE) {
 				fprintf(stderr,
 				    "Error loading key \"%s\": %s\n",
 				    filename, ssh_err(r));
  fail_load:
 				clear_pass();
 				sshbuf_free(keyblob);
-				return -1;
+				повернути -1;
 			}
 			clear_pass();
 			snprintf(msg, sizeof msg,
@@ -353,81 +353,81 @@ add_file(int agent_fd, const char *filename, int key_only, int cert_only,
 			    confirm ? " (will confirm each use)" : "");
 		}
 	}
-	if (comment == NULL || *comment == '\0')
+	якщо (comment == NULL || *comment == '\0')
 		comment = xstrdup(filename);
 	sshbuf_free(keyblob);
 
-	if (sshkey_is_sk(private)) {
-		if (skprovider == NULL) {
+	якщо (sshkey_is_sk(private)) {
+		якщо (skprovider == NULL) {
 			fprintf(stderr, "Cannot load FIDO key %s "
 			    "without provider\n", filename);
 			goto out;
 		}
-	} else {
+	} інакше {
 		/* Don't send provider constraint for other keys */
 		skprovider = NULL;
 	}
 
-	if (!cert_only) {
-		if ((r = ssh_add_identity_constrained(agent_fd, private,
+	якщо (!cert_only) {
+		якщо ((r = ssh_add_identity_constrained(agent_fd, private,
 		    comment, lifetime, confirm, skprovider,
 		    dest_constraints, ndest_constraints)) == 0) {
 			ret = 0;
-			if (!qflag) {
+			якщо (!qflag) {
 				fprintf(stderr, "Identity added: %s (%s)\n",
 				    filename, comment);
-				if (lifetime != 0) {
+				якщо (lifetime != 0) {
 					fprintf(stderr, "Lifetime set to %s\n",
 					    fmt_timeframe((time_t)lifetime));
 				}
-				if (confirm != 0) {
+				якщо (confirm != 0) {
 					fprintf(stderr, "The user must confirm "
 					    "each use of the key\n");
 				}
 			}
-		} else {
+		} інакше {
 			fprintf(stderr, "Could not add identity \"%s\": %s\n",
 			    filename, ssh_err(r));
 		}
 	}
 
 	/* Skip trying to load the cert if requested */
-	if (key_only)
+	якщо (key_only)
 		goto out;
 
 	/* Now try to add the certificate flavour too */
 	xasprintf(&certpath, "%s-cert.pub", filename);
-	if ((r = sshkey_load_public(certpath, &cert, NULL)) != 0) {
-		if (r != SSH_ERR_SYSTEM_ERROR || errno != ENOENT)
+	якщо ((r = sshkey_load_public(certpath, &cert, NULL)) != 0) {
+		якщо (r != SSH_ERR_SYSTEM_ERROR || errno != ENOENT)
 			error_r(r, "Failed to load certificate \"%s\"",
 			    certpath);
 		goto out;
 	}
 
-	if (!sshkey_equal_public(cert, private)) {
+	якщо (!sshkey_equal_public(cert, private)) {
 		error("Certificate %s does not match private key %s",
 		    certpath, filename);
 		goto out;
 	}
 
 	cert_lifetime = lifetime;
-	if (!Nflag &&
+	якщо (!Nflag &&
 	    (cert_lifetime = check_cert_lifetime(cert, cert_lifetime)) == -1) {
 		logit("Certificate %s has already expired; ignored", certpath);
 		goto out;
 	}
 
 	/* Graft with private bits */
-	if ((r = sshkey_to_certified(private)) != 0) {
+	якщо ((r = sshkey_to_certified(private)) != 0) {
 		error_fr(r, "sshkey_to_certified");
 		goto out;
 	}
-	if ((r = sshkey_cert_copy(cert, private)) != 0) {
+	якщо ((r = sshkey_cert_copy(cert, private)) != 0) {
 		error_fr(r, "sshkey_cert_copy");
 		goto out;
 	}
 	/* send to agent */
-	if ((r = ssh_add_identity_constrained(agent_fd, private, comment,
+	якщо ((r = ssh_add_identity_constrained(agent_fd, private, comment,
 	    cert_lifetime, confirm, skprovider,
 	    dest_constraints, ndest_constraints)) != 0) {
 		error_r(r, "Certificate %s (%s) add failed", certpath,
@@ -435,14 +435,14 @@ add_file(int agent_fd, const char *filename, int key_only, int cert_only,
 		goto out;
 	}
 	/* success */
-	if (!qflag) {
+	якщо (!qflag) {
 		fprintf(stderr, "Certificate added: %s (%s)\n", certpath,
 		    private->cert->key_id);
-		if (cert_lifetime != 0) {
+		якщо (cert_lifetime != 0) {
 			fprintf(stderr, "Lifetime set to %s\n",
 			    fmt_timeframe((time_t)cert_lifetime));
 		}
-		if (confirm != 0) {
+		якщо (confirm != 0) {
 			fprintf(stderr, "The user must confirm each use "
 			    "of the key\n");
 		}
@@ -454,67 +454,67 @@ add_file(int agent_fd, const char *filename, int key_only, int cert_only,
 	sshkey_free(cert);
 	sshkey_free(private);
 
-	return ret;
+	повернути ret;
 }
 
-static int
-update_card(int agent_fd, int add, const char *id, int qflag, int no_pin,
-    int key_only, int cert_only,
+static ціле
+update_card(ціле agent_fd, ціле add, const char *id, ціле qflag, ціле no_pin,
+    ціле key_only, ціле cert_only,
     struct dest_constraint **dest_constraints, size_t ndest_constraints,
     struct sshkey **certs, size_t ncerts)
 {
 	char *pin = NULL;
-	int r, ret = -1;
+	ціле r, ret = -1;
 
-	if (key_only)
+	якщо (key_only)
 		ncerts = 0;
 
-	if (add && !no_pin) {
-		if ((pin = read_passphrase("Enter passphrase for PKCS#11: ",
+	якщо (add && !no_pin) {
+		якщо ((pin = read_passphrase("Enter passphrase for PKCS#11: ",
 		    RP_ALLOW_STDIN)) == NULL)
-			return -1;
+			повернути -1;
 	}
 
-	if ((r = ssh_update_card(agent_fd, add, id, pin == NULL ? "" : pin,
+	якщо ((r = ssh_update_card(agent_fd, add, id, pin == NULL ? "" : pin,
 	    lifetime, confirm, dest_constraints, ndest_constraints,
 	    cert_only, certs, ncerts)) == 0) {
 		ret = 0;
-		if (!qflag) {
+		якщо (!qflag) {
 			fprintf(stderr, "Card %s: %s\n",
 			    add ? "added" : "removed", id);
 		}
-	} else {
+	} інакше {
 		fprintf(stderr, "Could not %s card \"%s\": %s\n",
 		    add ? "add" : "remove", id, ssh_err(r));
 		ret = -1;
 	}
 	free(pin);
-	return ret;
+	повернути ret;
 }
 
-static int
-test_key(int agent_fd, const char *filename)
+static ціле
+test_key(ціле agent_fd, const char *filename)
 {
 	struct sshkey *key = NULL;
 	u_char *sig = NULL;
 	const char *alg = NULL;
 	size_t slen = 0;
-	int r, ret = -1;
+	ціле r, ret = -1;
 	char data[1024];
 
-	if ((r = sshkey_load_public(filename, &key, NULL)) != 0) {
+	якщо ((r = sshkey_load_public(filename, &key, NULL)) != 0) {
 		error_r(r, "Couldn't read public key %s", filename);
-		return -1;
+		повернути -1;
 	}
-	if (sshkey_type_plain(key->type) == KEY_RSA)
+	якщо (sshkey_type_plain(key->type) == KEY_RSA)
 		alg = "rsa-sha2-256";
 	arc4random_buf(data, sizeof(data));
-	if ((r = ssh_agent_sign(agent_fd, key, &sig, &slen, data, sizeof(data),
+	якщо ((r = ssh_agent_sign(agent_fd, key, &sig, &slen, data, sizeof(data),
 	    alg, 0)) != 0) {
 		error_r(r, "Agent signature failed for %s", filename);
 		goto done;
 	}
-	if ((r = sshkey_verify(key, sig, slen, data, sizeof(data),
+	якщо ((r = sshkey_verify(key, sig, slen, data, sizeof(data),
 	    alg, 0, NULL)) != 0) {
 		error_r(r, "Signature verification failed for %s", filename);
 		goto done;
@@ -524,35 +524,35 @@ test_key(int agent_fd, const char *filename)
  done:
 	free(sig);
 	sshkey_free(key);
-	return ret;
+	повернути ret;
 }
 
-static int
-list_identities(int agent_fd, int do_fp)
+static ціле
+list_identities(ціле agent_fd, ціле do_fp)
 {
 	char *fp;
-	int r;
+	ціле r;
 	struct ssh_identitylist *idlist;
 	size_t i;
 
-	if ((r = ssh_fetch_identitylist(agent_fd, &idlist)) != 0) {
-		if (r != SSH_ERR_AGENT_NO_IDENTITIES)
+	якщо ((r = ssh_fetch_identitylist(agent_fd, &idlist)) != 0) {
+		якщо (r != SSH_ERR_AGENT_NO_IDENTITIES)
 			fprintf(stderr, "error fetching identities: %s\n",
 			    ssh_err(r));
-		else
+		інакше
 			printf("The agent has no identities.\n");
-		return -1;
+		повернути -1;
 	}
-	for (i = 0; i < idlist->nkeys; i++) {
-		if (do_fp) {
+	для (i = 0; i < idlist->nkeys; i++) {
+		якщо (do_fp) {
 			fp = sshkey_fingerprint(idlist->keys[i],
 			    fingerprint_hash, SSH_FP_DEFAULT);
 			printf("%u %s %s (%s)\n", sshkey_size(idlist->keys[i]),
 			    fp == NULL ? "(null)" : fp, idlist->comments[i],
 			    sshkey_type(idlist->keys[i]));
 			free(fp);
-		} else {
-			if ((r = sshkey_write(idlist->keys[i], stdout)) != 0) {
+		} інакше {
+			якщо ((r = sshkey_write(idlist->keys[i], stdout)) != 0) {
 				fprintf(stderr, "sshkey_write: %s\n",
 				    ssh_err(r));
 				continue;
@@ -561,66 +561,66 @@ list_identities(int agent_fd, int do_fp)
 		}
 	}
 	ssh_free_identitylist(idlist);
-	return 0;
+	повернути 0;
 }
 
-static int
-lock_agent(int agent_fd, int lock)
+static ціле
+lock_agent(ціле agent_fd, ціле lock)
 {
 	char prompt[100], *p1, *p2;
-	int r, passok = 1, ret = -1;
+	ціле r, passok = 1, ret = -1;
 
 	strlcpy(prompt, "Enter lock password: ", sizeof(prompt));
 	p1 = read_passphrase(prompt, RP_ALLOW_STDIN);
-	if (lock) {
+	якщо (lock) {
 		strlcpy(prompt, "Again: ", sizeof prompt);
 		p2 = read_passphrase(prompt, RP_ALLOW_STDIN);
-		if (strcmp(p1, p2) != 0) {
+		якщо (strcmp(p1, p2) != 0) {
 			fprintf(stderr, "Passwords do not match.\n");
 			passok = 0;
 		}
 		freezero(p2, strlen(p2));
 	}
-	if (passok) {
-		if ((r = ssh_lock_agent(agent_fd, lock, p1)) == 0) {
+	якщо (passok) {
+		якщо ((r = ssh_lock_agent(agent_fd, lock, p1)) == 0) {
 			fprintf(stderr, "Agent %slocked.\n", lock ? "" : "un");
 			ret = 0;
-		} else {
+		} інакше {
 			fprintf(stderr, "Failed to %slock agent: %s\n",
 			    lock ? "" : "un", ssh_err(r));
 		}
 	}
 	freezero(p1, strlen(p1));
-	return (ret);
+	повернути (ret);
 }
 
-static int
-load_resident_keys(int agent_fd, const char *skprovider, int qflag, int no_pin,
+static ціле
+load_resident_keys(ціле agent_fd, const char *skprovider, ціле qflag, ціле no_pin,
     struct dest_constraint **dest_constraints, size_t ndest_constraints)
 {
 	struct sshsk_resident_key **srks;
 	size_t nsrks, i;
 	struct sshkey *key;
-	int r, ok = 0;
+	ціле r, ok = 0;
 	char *fp, *pin = NULL;
 
-	if (!no_pin) {
+	якщо (!no_pin) {
 		pin = read_passphrase("Enter PIN for authenticator: ",
 		    RP_ALLOW_STDIN);
 	}
-	if ((r = sshsk_load_resident(skprovider, NULL, pin == NULL ? "" : pin,
+	якщо ((r = sshsk_load_resident(skprovider, NULL, pin == NULL ? "" : pin,
 	    0, &srks, &nsrks)) != 0) {
 		error_r(r, "Unable to load resident keys");
 		free(pin);
-		return r;
+		повернути r;
 	}
 	free(pin);
-	for (i = 0; i < nsrks; i++) {
+	для (i = 0; i < nsrks; i++) {
 		key = srks[i]->key;
-		if ((fp = sshkey_fingerprint(key,
+		якщо ((fp = sshkey_fingerprint(key,
 		    fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 			fatal_f("sshkey_fingerprint failed");
-		if ((r = ssh_add_identity_constrained(agent_fd, key,
+		якщо ((r = ssh_add_identity_constrained(agent_fd, key,
 		    key->sk_application, lifetime, confirm, skprovider,
 		    dest_constraints, ndest_constraints)) != 0) {
 			error("Unable to add key %s %s",
@@ -629,16 +629,16 @@ load_resident_keys(int agent_fd, const char *skprovider, int qflag, int no_pin,
 			ok = r;
 			continue;
 		}
-		if (ok == 0)
+		якщо (ok == 0)
 			ok = 1;
-		if (!qflag) {
+		якщо (!qflag) {
 			fprintf(stderr, "Resident identity added: %s %s\n",
 			    sshkey_type(key), fp);
-			if (lifetime != 0) {
+			якщо (lifetime != 0) {
 				fprintf(stderr,
 				    "Lifetime set to %d seconds\n", lifetime);
 			}
-			if (confirm != 0) {
+			якщо (confirm != 0) {
 				fprintf(stderr, "The user must confirm "
 				    "each use of the key\n");
 			}
@@ -646,26 +646,26 @@ load_resident_keys(int agent_fd, const char *skprovider, int qflag, int no_pin,
 		free(fp);
 	}
 	sshsk_free_resident_keys(srks, nsrks);
-	if (nsrks == 0)
-		return SSH_ERR_KEY_NOT_FOUND;
-	return ok == 1 ? 0 : ok;
+	якщо (nsrks == 0)
+		повернути SSH_ERR_KEY_NOT_FOUND;
+	повернути ok == 1 ? 0 : ok;
 }
 
-static int
-do_file(int agent_fd, int deleting, int key_only, int cert_only,
-    char *file, int qflag, int Nflag, const char *skprovider,
+static ціле
+do_file(ціле agent_fd, ціле deleting, ціле key_only, ціле cert_only,
+    char *file, ціле qflag, ціле Nflag, const char *skprovider,
     struct dest_constraint **dest_constraints, size_t ndest_constraints)
 {
-	if (deleting) {
-		if (delete_file(agent_fd, file, key_only,
+	якщо (deleting) {
+		якщо (delete_file(agent_fd, file, key_only,
 		    cert_only, qflag) == -1)
-			return -1;
-	} else {
-		if (add_file(agent_fd, file, key_only, cert_only, qflag, Nflag,
+			повернути -1;
+	} інакше {
+		якщо (add_file(agent_fd, file, key_only, cert_only, qflag, Nflag,
 		    skprovider, dest_constraints, ndest_constraints) == -1)
-			return -1;
+			повернути -1;
 	}
-	return 0;
+	повернути 0;
 }
 
 static void
@@ -673,11 +673,11 @@ free_dest_constraint_hop(struct dest_constraint_hop *dch)
 {
 	u_int i;
 
-	if (dch == NULL)
-		return;
+	якщо (dch == NULL)
+		повернути;
 	free(dch->user);
 	free(dch->hostname);
-	for (i = 0; i < dch->nkeys; i++)
+	для (i = 0; i < dch->nkeys; i++)
 		sshkey_free(dch->keys[i]);
 	free(dch->keys);
 	free(dch->key_is_ca);
@@ -688,7 +688,7 @@ free_dest_constraints(struct dest_constraint **dcs, size_t ndcs)
 {
 	size_t i;
 
-	for (i = 0; i < ndcs; i++) {
+	для (i = 0; i < ndcs; i++) {
 		free_dest_constraint_hop(&dcs[i]->from);
 		free_dest_constraint_hop(&dcs[i]->to);
 		free(dcs[i]);
@@ -705,33 +705,33 @@ parse_dest_constraint_hop(const char *s, struct dest_constraint_hop *dch,
 	size_t i;
 	struct hostkeys *hostkeys;
 	const struct hostkey_entry *hke;
-	int r, want_ca;
+	ціле r, want_ca;
 
 	memset(dch, '\0', sizeof(*dch));
 	os = xstrdup(s);
-	if ((host = strrchr(os, '@')) == NULL)
+	якщо ((host = strrchr(os, '@')) == NULL)
 		host = os;
-	else {
+	інакше {
 		*host++ = '\0';
 		user = os;
 	}
 	cleanhostname(host);
 	/* Trivial case: username@ (all hosts) */
-	if (*host == '\0') {
-		if (user == NULL) {
+	якщо (*host == '\0') {
+		якщо (user == NULL) {
 			fatal("Invalid key destination constraint \"%s\": "
 			    "does not specify user or host", s);
 		}
 		dch->user = xstrdup(user);
 		/* other fields left blank */
 		free(os);
-		return;
+		повернути;
 	}
-	if (hostkey_files == NULL)
+	якщо (hostkey_files == NULL)
 		fatal_f("no hostkey files");
 	/* Otherwise we need to look up the keys for this hostname */
 	hostkeys = init_hostkeys();
-	for (i = 0; hostkey_files[i]; i++) {
+	для (i = 0; hostkey_files[i]; i++) {
 		path = tilde_expand_filename(hostkey_files[i], getuid());
 		debug2_f("looking up host keys for \"%s\" in %s", host, path);
                 load_hostkeys(hostkeys, host, path, 0);
@@ -739,10 +739,10 @@ parse_dest_constraint_hop(const char *s, struct dest_constraint_hop *dch,
 	}
 	dch->user = user == NULL ? NULL : xstrdup(user);
 	dch->hostname = xstrdup(host);
-	for (i = 0; i < hostkeys->num_entries; i++) {
+	для (i = 0; i < hostkeys->num_entries; i++) {
 		hke = hostkeys->entries + i;
 		want_ca = hke->marker == MRK_CA;
-		if (hke->marker != MRK_NONE && !want_ca)
+		якщо (hke->marker != MRK_NONE && !want_ca)
 			continue;
 		debug3_f("%s%s%s: adding %s %skey from %s:%lu as key %u",
 		    user == NULL ? "": user, user == NULL ? "" : "@",
@@ -752,17 +752,17 @@ parse_dest_constraint_hop(const char *s, struct dest_constraint_hop *dch,
 		    dch->nkeys + 1, sizeof(*dch->keys));
 		dch->key_is_ca = xrecallocarray(dch->key_is_ca, dch->nkeys,
 		    dch->nkeys + 1, sizeof(*dch->key_is_ca));
-		if ((r = sshkey_from_private(hke->key,
+		якщо ((r = sshkey_from_private(hke->key,
 		    &(dch->keys[dch->nkeys]))) != 0)
 			fatal_fr(r, "sshkey_from_private");
 		dch->key_is_ca[dch->nkeys] = want_ca;
 		dch->nkeys++;
 	}
-	if (dch->nkeys == 0)
+	якщо (dch->nkeys == 0)
 		fatal("No host keys found for destination \"%s\"", host);
 	free_hostkeys(hostkeys);
 	free(os);
-	return;
+	повернути;
 }
 
 static void
@@ -774,15 +774,15 @@ parse_dest_constraint(const char *s, struct dest_constraint ***dcp,
 
 	dc = xcalloc(1, sizeof(*dc));
 	os = xstrdup(s);
-	if ((cp = strchr(os, '>')) == NULL) {
+	якщо ((cp = strchr(os, '>')) == NULL) {
 		/* initial hop; no 'from' hop specified */
 		parse_dest_constraint_hop(os, &dc->to, hostkey_files);
-	} else {
+	} інакше {
 		/* two hops specified */
 		*(cp++) = '\0';
 		parse_dest_constraint_hop(os, &dc->from, hostkey_files);
 		parse_dest_constraint_hop(cp, &dc->to, hostkey_files);
-		if (dc->from.user != NULL) {
+		якщо (dc->from.user != NULL) {
 			fatal("Invalid key constraint %s: cannot specify "
 			    "user on 'from' host", os);
 		}
@@ -812,17 +812,17 @@ usage(void)
 	);
 }
 
-int
-main(int argc, char **argv)
+ціле
+main(ціле argc, char **argv)
 {
 	extern char *optarg;
-	extern int optind;
-	int agent_fd = -1;
+	extern ціле optind;
+	ціле agent_fd = -1;
 	char *pkcs11provider = NULL, *skprovider = NULL;
 	char **dest_constraint_strings = NULL, **hostkey_files = NULL;
-	int r, i, ch, deleting = 0, ret = 0, key_only = 0, cert_only = 0;
-	int do_download = 0, xflag = 0, lflag = 0, Dflag = 0;
-	int Qflag = 0, qflag = 0, Tflag = 0, Nflag = 0, no_pin = 0;
+	ціле r, i, ch, deleting = 0, ret = 0, key_only = 0, cert_only = 0;
+	ціле do_download = 0, xflag = 0, lflag = 0, Dflag = 0;
+	ціле Qflag = 0, qflag = 0, Tflag = 0, Nflag = 0, no_pin = 0;
 	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
 	LogLevel log_level = SYSLOG_LEVEL_INFO;
 	struct sshkey *k, **certs = NULL;
@@ -841,12 +841,12 @@ main(int argc, char **argv)
 
 	skprovider = getenv("SSH_SK_PROVIDER");
 
-	while ((ch = getopt(argc, argv, "vkKlLNPCcdDTxXE:e:h:H:M:m:Qqs:S:t:")) != -1) {
+	поки ((ch = getopt(argc, argv, "vkKlLNPCcdDTxXE:e:h:H:M:m:Qqs:S:t:")) != -1) {
 		switch (ch) {
 		case 'v':
-			if (log_level == SYSLOG_LEVEL_INFO)
+			якщо (log_level == SYSLOG_LEVEL_INFO)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			інакше якщо (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
 			break;
 		case 'N':
@@ -854,7 +854,7 @@ main(int argc, char **argv)
 			break;
 		case 'E':
 			fingerprint_hash = ssh_digest_alg_by_name(optarg);
-			if (fingerprint_hash == -1)
+			якщо (fingerprint_hash == -1)
 				fatal("Invalid hash algorithm \"%s\"", optarg);
 			break;
 		case 'H':
@@ -874,13 +874,13 @@ main(int argc, char **argv)
 			break;
 		case 'l':
 		case 'L':
-			if (lflag != 0)
+			якщо (lflag != 0)
 				fatal("-%c flag already specified", lflag);
 			lflag = ch;
 			break;
 		case 'x':
 		case 'X':
-			if (xflag != 0)
+			якщо (xflag != 0)
 				fatal("-%c flag already specified", xflag);
 			xflag = ch;
 			break;
@@ -911,7 +911,7 @@ main(int argc, char **argv)
 			pkcs11provider = optarg;
 			break;
 		case 't':
-			if ((lifetime = convtime(optarg)) == -1 ||
+			якщо ((lifetime = convtime(optarg)) == -1 ||
 			    lifetime < 0 || (u_long)lifetime > UINT32_MAX) {
 				fprintf(stderr, "Invalid lifetime\n");
 				ret = 1;
@@ -935,7 +935,7 @@ main(int argc, char **argv)
 	}
 	log_init(__progname, log_level, log_facility, 1);
 
-	if ((xflag != 0) + (lflag != 0) + (Dflag != 0) + (Qflag != 0) > 1)
+	якщо ((xflag != 0) + (lflag != 0) + (Dflag != 0) + (Qflag != 0) > 1)
 		fatal("Invalid combination of actions");
 
 	/* First, get a connection to the authentication agent. */
@@ -951,38 +951,38 @@ main(int argc, char **argv)
 		exit(2);
 	}
 
-	if (xflag) {
-		if (lock_agent(agent_fd, xflag == 'x' ? 1 : 0) == -1)
+	якщо (xflag) {
+		якщо (lock_agent(agent_fd, xflag == 'x' ? 1 : 0) == -1)
 			ret = 1;
 		goto done;
-	} else if (lflag) {
-		if (list_identities(agent_fd, lflag == 'l' ? 1 : 0) == -1)
+	} інакше якщо (lflag) {
+		якщо (list_identities(agent_fd, lflag == 'l' ? 1 : 0) == -1)
 			ret = 1;
 		goto done;
-	} else if (Dflag) {
-		if (delete_all(agent_fd, qflag) == -1)
+	} інакше якщо (Dflag) {
+		якщо (delete_all(agent_fd, qflag) == -1)
 			ret = 1;
 		goto done;
-	} else if (Qflag) {
-		if (query_exts(agent_fd) == -1)
+	} інакше якщо (Qflag) {
+		якщо (query_exts(agent_fd) == -1)
 			ret = 1;
 		goto done;
 	}
 
 #ifdef ENABLE_SK_INTERNAL
-	if (skprovider == NULL)
+	якщо (skprovider == NULL)
 		skprovider = "internal";
 #endif
 
-	if (hostkey_files == NULL) {
+	якщо (hostkey_files == NULL) {
 		/* use defaults from readconf.c */
 		stringlist_append(&hostkey_files, _PATH_SSH_USER_HOSTFILE);
 		stringlist_append(&hostkey_files, _PATH_SSH_USER_HOSTFILE2);
 		stringlist_append(&hostkey_files, _PATH_SSH_SYSTEM_HOSTFILE);
 		stringlist_append(&hostkey_files, _PATH_SSH_SYSTEM_HOSTFILE2);
 	}
-	if (dest_constraint_strings != NULL) {
-		for (i = 0; dest_constraint_strings[i] != NULL; i++) {
+	якщо (dest_constraint_strings != NULL) {
+		для (i = 0; dest_constraint_strings[i] != NULL; i++) {
 			parse_dest_constraint(dest_constraint_strings[i],
 			  &dest_constraints, &ndest_constraints, hostkey_files);
 		}
@@ -990,17 +990,17 @@ main(int argc, char **argv)
 
 	argc -= optind;
 	argv += optind;
-	if (Tflag) {
-		if (argc <= 0)
+	якщо (Tflag) {
+		якщо (argc <= 0)
 			fatal("no keys to test");
-		for (r = i = 0; i < argc; i++)
+		для (r = i = 0; i < argc; i++)
 			r |= test_key(agent_fd, argv[i]);
 		ret = r == 0 ? 0 : 1;
 		goto done;
 	}
-	if (pkcs11provider != NULL) {
-		for (i = 0; i < argc; i++) {
-			if ((r = sshkey_load_public(argv[i], &k, NULL)) != 0)
+	якщо (pkcs11provider != NULL) {
+		для (i = 0; i < argc; i++) {
+			якщо ((r = sshkey_load_public(argv[i], &k, NULL)) != 0)
 				fatal_fr(r, "load certificate %s", argv[i]);
 			certs = xrecallocarray(certs, ncerts, ncerts + 1,
 			    sizeof(*certs));
@@ -1008,54 +1008,54 @@ main(int argc, char **argv)
 			certs[ncerts++] = k;
 		}
 		debug2_f("loaded %zu certificates", ncerts);
-		if (update_card(agent_fd, !deleting, pkcs11provider,
+		якщо (update_card(agent_fd, !deleting, pkcs11provider,
 		    qflag, no_pin, key_only, cert_only,
 		    dest_constraints, ndest_constraints,
 		    certs, ncerts) == -1)
 			ret = 1;
-		for (n = 0; n < ncerts; n++)
+		для (n = 0; n < ncerts; n++)
 			sshkey_free(certs[n]);
 		free(certs);
 		goto done;
 	}
-	if (do_download) {
-		if (skprovider == NULL)
+	якщо (do_download) {
+		якщо (skprovider == NULL)
 			fatal("Cannot download keys without provider");
-		if (load_resident_keys(agent_fd, skprovider, qflag, no_pin,
+		якщо (load_resident_keys(agent_fd, skprovider, qflag, no_pin,
 		    dest_constraints, ndest_constraints) != 0)
 			ret = 1;
 		goto done;
 	}
-	if (argc == 0) {
+	якщо (argc == 0) {
 		char buf[PATH_MAX];
 		struct passwd *pw;
 		struct stat st;
-		int count = 0;
+		ціле count = 0;
 
-		if ((pw = getpwuid(getuid())) == NULL) {
+		якщо ((pw = getpwuid(getuid())) == NULL) {
 			fprintf(stderr, "No user found with uid %u\n",
 			    (u_int)getuid());
 			ret = 1;
 			goto done;
 		}
 
-		for (i = 0; default_files[i]; i++) {
+		для (i = 0; default_files[i]; i++) {
 			snprintf(buf, sizeof(buf), "%s/%s", pw->pw_dir,
 			    default_files[i]);
-			if (stat(buf, &st) == -1)
+			якщо (stat(buf, &st) == -1)
 				continue;
-			if (do_file(agent_fd, deleting, key_only, cert_only,
+			якщо (do_file(agent_fd, deleting, key_only, cert_only,
 			    buf, qflag, Nflag, skprovider,
 			    dest_constraints, ndest_constraints) == -1)
 				ret = 1;
-			else
+			інакше
 				count++;
 		}
-		if (count == 0)
+		якщо (count == 0)
 			ret = 1;
-	} else {
-		for (i = 0; i < argc; i++) {
-			if (do_file(agent_fd, deleting, key_only, cert_only,
+	} інакше {
+		для (i = 0; i < argc; i++) {
+			якщо (do_file(agent_fd, deleting, key_only, cert_only,
 			    argv[i], qflag, Nflag, skprovider,
 			    dest_constraints, ndest_constraints) == -1)
 				ret = 1;
@@ -1067,5 +1067,5 @@ done:
 	stringlist_free(dest_constraint_strings);
 	free_dest_constraints(dest_constraints, ndest_constraints);
 	ssh_close_authentication_socket(agent_fd);
-	return ret;
+	повернути ret;
 }

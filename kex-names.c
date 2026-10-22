@@ -46,9 +46,9 @@
 struct kexalg {
 	char *name;
 	u_int type;
-	int ec_nid;
-	int hash_alg;
-	int pq_alg;
+	ціле ec_nid;
+	ціле hash_alg;
+	ціле pq_alg;
 };
 static const struct kexalg kexalgs[] = {
 #ifdef WITH_OPENSSL
@@ -70,7 +70,7 @@ static const struct kexalg kexalgs[] = {
 	{ KEX_MLKEM768NISTP256_SHA256, KEX_KEM_MLKEM768ECDH_SHA256,
 	    NID_X9_62_prime256v1, SSH_DIGEST_SHA256, KEX_IS_PQ },
 #endif /* WITH_OPENSSL */
-#if defined(HAVE_EVP_SHA256) || !defined(WITH_OPENSSL)
+#якщо defined(HAVE_EVP_SHA256) || !defined(WITH_OPENSSL)
 	{ KEX_CURVE25519_SHA256, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
 	{ KEX_CURVE25519_SHA256_OLD, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
 #ifdef USE_SNTRUP761X25519
@@ -94,10 +94,10 @@ kex_alg_list(char sep)
 	const struct kexalg *k;
 	char sep_str[2] = {sep, '\0'};
 
-	for (k = kexalgs; k->name != NULL; k++)
+	для (k = kexalgs; k->name != NULL; k++)
 		xextendf(&ret, sep_str, "%s", k->name);
 
-	return ret;
+	повернути ret;
 }
 
 static const struct kexalg *
@@ -105,27 +105,27 @@ kex_alg_by_name(const char *name)
 {
 	const struct kexalg *k;
 
-	for (k = kexalgs; k->name != NULL; k++) {
-		if (strcmp(k->name, name) == 0)
-			return k;
+	для (k = kexalgs; k->name != NULL; k++) {
+		якщо (strcmp(k->name, name) == 0)
+			повернути k;
 	}
-	return NULL;
+	повернути NULL;
 }
 
-int
+ціле
 kex_name_valid(const char *name)
 {
-	return kex_alg_by_name(name) != NULL;
+	повернути kex_alg_by_name(name) != NULL;
 }
 
-int
+ціле
 kex_is_pq_from_name(const char *name)
 {
 	const struct kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return 0;
-	return k->pq_alg == KEX_IS_PQ;
+	якщо ((k = kex_alg_by_name(name)) == NULL)
+		повернути 0;
+	повернути k->pq_alg == KEX_IS_PQ;
 }
 
 u_int
@@ -133,64 +133,64 @@ kex_type_from_name(const char *name)
 {
 	const struct kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return 0;
-	return k->type;
+	якщо ((k = kex_alg_by_name(name)) == NULL)
+		повернути 0;
+	повернути k->type;
 }
 
-int
+ціле
 kex_hash_from_name(const char *name)
 {
 	const struct kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return -1;
-	return k->hash_alg;
+	якщо ((k = kex_alg_by_name(name)) == NULL)
+		повернути -1;
+	повернути k->hash_alg;
 }
 
-int
+ціле
 kex_nid_from_name(const char *name)
 {
 	const struct kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return -1;
-	return k->ec_nid;
+	якщо ((k = kex_alg_by_name(name)) == NULL)
+		повернути -1;
+	повернути k->ec_nid;
 }
 
 /* Validate KEX method name list */
-int
+ціле
 kex_names_valid(const char *names)
 {
 	char *s, *cp, *p;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((s = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, ",")); p && *p != '\0';
+	якщо (names == NULL || strcmp(names, "") == 0)
+		повернути 0;
+	якщо ((s = cp = strdup(names)) == NULL)
+		повернути 0;
+	для ((p = strsep(&cp, ",")); p && *p != '\0';
 	    (p = strsep(&cp, ","))) {
-		if (kex_alg_by_name(p) == NULL) {
+		якщо (kex_alg_by_name(p) == NULL) {
 			error("Unsupported KEX algorithm \"%.100s\"", p);
 			free(s);
-			return 0;
+			повернути 0;
 		}
 	}
 	debug3("kex names ok: [%s]", names);
 	free(s);
-	return 1;
+	повернути 1;
 }
 
 /* returns non-zero if proposal contains any algorithm from algs */
-int
+ціле
 kex_has_any_alg(const char *proposal, const char *algs)
 {
 	char *cp;
 
-	if ((cp = match_list(proposal, algs, NULL)) == NULL)
-		return 0;
+	якщо ((cp = match_list(proposal, algs, NULL)) == NULL)
+		повернути 0;
 	free(cp);
-	return 1;
+	повернути 1;
 }
 
 /*
@@ -203,31 +203,31 @@ kex_names_cat(const char *a, const char *b)
 	char *ret = NULL, *tmp = NULL, *cp, *p;
 	size_t len;
 
-	if (a == NULL || *a == '\0')
-		return strdup(b);
-	if (b == NULL || *b == '\0')
-		return strdup(a);
-	if (strlen(b) > 1024*1024)
-		return NULL;
+	якщо (a == NULL || *a == '\0')
+		повернути strdup(b);
+	якщо (b == NULL || *b == '\0')
+		повернути strdup(a);
+	якщо (strlen(b) > 1024*1024)
+		повернути NULL;
 	len = strlen(a) + strlen(b) + 2;
-	if ((tmp = cp = strdup(b)) == NULL ||
+	якщо ((tmp = cp = strdup(b)) == NULL ||
 	    (ret = calloc(1, len)) == NULL) {
 		free(tmp);
-		return NULL;
+		повернути NULL;
 	}
 	strlcpy(ret, a, len);
-	for ((p = strsep(&cp, ",")); p && *p != '\0'; (p = strsep(&cp, ","))) {
-		if (kex_has_any_alg(ret, p))
+	для ((p = strsep(&cp, ",")); p && *p != '\0'; (p = strsep(&cp, ","))) {
+		якщо (kex_has_any_alg(ret, p))
 			continue; /* Algorithm already present */
-		if (strlcat(ret, ",", len) >= len ||
+		якщо (strlcat(ret, ",", len) >= len ||
 		    strlcat(ret, p, len) >= len) {
 			free(tmp);
 			free(ret);
-			return NULL; /* Shouldn't happen */
+			повернути NULL; /* Shouldn't happen */
 		}
 	}
 	free(tmp);
-	return ret;
+	повернути ret;
 }
 
 /*
@@ -237,50 +237,50 @@ kex_names_cat(const char *a, const char *b)
  * specified names should be removed, or '^' that they should be placed
  * at the head.
  */
-int
+ціле
 kex_assemble_names(char **listp, const char *def, const char *all)
 {
 	char *cp, *tmp, *patterns;
 	char *list = NULL, *ret = NULL, *matching = NULL, *opatterns = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ціле r = SSH_ERR_INTERNAL_ERROR;
 
-	if (listp == NULL || def == NULL || all == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	якщо (listp == NULL || def == NULL || all == NULL)
+		повернути SSH_ERR_INVALID_ARGUMENT;
 
-	if (*listp == NULL || **listp == '\0') {
-		if ((*listp = strdup(def)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
+	якщо (*listp == NULL || **listp == '\0') {
+		якщо ((*listp = strdup(def)) == NULL)
+			повернути SSH_ERR_ALLOC_FAIL;
+		повернути 0;
 	}
 
 	list = *listp;
 	*listp = NULL;
-	if (*list == '+') {
+	якщо (*list == '+') {
 		/* Append names to default list */
-		if ((tmp = kex_names_cat(def, list + 1)) == NULL) {
+		якщо ((tmp = kex_names_cat(def, list + 1)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto fail;
 		}
 		free(list);
 		list = tmp;
-	} else if (*list == '-') {
+	} інакше якщо (*list == '-') {
 		/* Remove names from default list */
-		if ((*listp = match_filter_denylist(def, list + 1)) == NULL) {
+		якщо ((*listp = match_filter_denylist(def, list + 1)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto fail;
 		}
 		free(list);
 		/* filtering has already been done */
-		return 0;
-	} else if (*list == '^') {
+		повернути 0;
+	} інакше якщо (*list == '^') {
 		/* Place names at head of default list */
-		if ((tmp = kex_names_cat(list + 1, def)) == NULL) {
+		якщо ((tmp = kex_names_cat(list + 1, def)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto fail;
 		}
 		free(list);
 		list = tmp;
-	} else {
+	} інакше {
 		/* Explicit list, overrides default - just use "list" as is */
 	}
 
@@ -290,30 +290,30 @@ kex_assemble_names(char **listp, const char *def, const char *all)
 	 * cases we need to do it now.
 	 */
 	ret = NULL;
-	if ((patterns = opatterns = strdup(list)) == NULL) {
+	якщо ((patterns = opatterns = strdup(list)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto fail;
 	}
 	/* Apply positive (i.e. non-negated) patterns from the list */
-	while ((cp = strsep(&patterns, ",")) != NULL) {
-		if (*cp == '!') {
+	поки ((cp = strsep(&patterns, ",")) != NULL) {
+		якщо (*cp == '!') {
 			/* negated matches are not supported here */
 			r = SSH_ERR_INVALID_ARGUMENT;
 			goto fail;
 		}
 		free(matching);
-		if ((matching = match_filter_allowlist(all, cp)) == NULL) {
+		якщо ((matching = match_filter_allowlist(all, cp)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto fail;
 		}
-		if ((tmp = kex_names_cat(ret, matching)) == NULL) {
+		якщо ((tmp = kex_names_cat(ret, matching)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto fail;
 		}
 		free(ret);
 		ret = tmp;
 	}
-	if (ret == NULL || *ret == '\0') {
+	якщо (ret == NULL || *ret == '\0') {
 		/* An empty name-list is an error */
 		/* XXX better error code? */
 		r = SSH_ERR_INVALID_ARGUMENT;
@@ -330,5 +330,5 @@ kex_assemble_names(char **listp, const char *def, const char *all)
 	free(opatterns);
 	free(list);
 	free(ret);
-	return r;
+	повернути r;
 }

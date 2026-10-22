@@ -42,9 +42,9 @@ ipv64_normalise_mapped(struct sockaddr_storage *addr, socklen_t *len)
 	struct in_addr inaddr;
 	uint16_t port;
 
-	if (addr->ss_family != AF_INET6 ||
+	якщо (addr->ss_family != AF_INET6 ||
 	    !IN6_IS_ADDR_V4MAPPED(&a6->sin6_addr))
-		return;
+		повернути;
 
 	debug3("Normalising mapped IPv4 in IPv6 address");
 
@@ -64,30 +64,30 @@ ipv64_normalise_mapped(struct sockaddr_storage *addr, socklen_t *len)
  * The returned string must be freed.
  */
 static char *
-get_socket_address(int sock, int remote, int flags)
+get_socket_address(ціле sock, ціле remote, ціле flags)
 {
 	struct sockaddr_storage addr;
 	socklen_t addrlen;
 	char ntop[NI_MAXHOST];
-	int r;
+	ціле r;
 
-	if (sock < 0)
-		return NULL;
+	якщо (sock < 0)
+		повернути NULL;
 
 	/* Get IP address of client. */
 	addrlen = sizeof(addr);
 	memset(&addr, 0, sizeof(addr));
 
-	if (remote) {
-		if (getpeername(sock, (struct sockaddr *)&addr, &addrlen) != 0)
-			return NULL;
-	} else {
-		if (getsockname(sock, (struct sockaddr *)&addr, &addrlen) != 0)
-			return NULL;
+	якщо (remote) {
+		якщо (getpeername(sock, (struct sockaddr *)&addr, &addrlen) != 0)
+			повернути NULL;
+	} інакше {
+		якщо (getsockname(sock, (struct sockaddr *)&addr, &addrlen) != 0)
+			повернути NULL;
 	}
 
 	/* Work around Linux IPv6 weirdness */
-	if (addr.ss_family == AF_INET6) {
+	якщо (addr.ss_family == AF_INET6) {
 		addrlen = sizeof(struct sockaddr_in6);
 		ipv64_normalise_mapped(&addr, &addrlen);
 	}
@@ -96,113 +96,113 @@ get_socket_address(int sock, int remote, int flags)
 	case AF_INET:
 	case AF_INET6:
 		/* Get the address in ascii. */
-		if ((r = getnameinfo((struct sockaddr *)&addr, addrlen, ntop,
+		якщо ((r = getnameinfo((struct sockaddr *)&addr, addrlen, ntop,
 		    sizeof(ntop), NULL, 0, flags)) != 0) {
 			error_f("getnameinfo %d failed: %s",
 			    flags, ssh_gai_strerror(r));
-			return NULL;
+			повернути NULL;
 		}
-		return xstrdup(ntop);
+		повернути xstrdup(ntop);
 	case AF_UNIX:
 		/* Get the Unix domain socket path. */
-		return xstrdup(((struct sockaddr_un *)&addr)->sun_path);
+		повернути xstrdup(((struct sockaddr_un *)&addr)->sun_path);
 	default:
 		/* We can't look up remote Unix domain sockets. */
-		return NULL;
+		повернути NULL;
 	}
 }
 
 char *
-get_peer_ipaddr(int sock)
+get_peer_ipaddr(ціле sock)
 {
 	char *p;
 
-	if ((p = get_socket_address(sock, 1, NI_NUMERICHOST)) != NULL)
-		return p;
-	return xstrdup("UNKNOWN");
+	якщо ((p = get_socket_address(sock, 1, NI_NUMERICHOST)) != NULL)
+		повернути p;
+	повернути xstrdup("UNKNOWN");
 }
 
 char *
-get_local_ipaddr(int sock)
+get_local_ipaddr(ціле sock)
 {
 	char *p;
 
-	if ((p = get_socket_address(sock, 0, NI_NUMERICHOST)) != NULL)
-		return p;
-	return xstrdup("UNKNOWN");
+	якщо ((p = get_socket_address(sock, 0, NI_NUMERICHOST)) != NULL)
+		повернути p;
+	повернути xstrdup("UNKNOWN");
 }
 
 char *
-get_local_name(int fd)
+get_local_name(ціле fd)
 {
 	char *host, myname[NI_MAXHOST];
 
 	/* Assume we were passed a socket */
-	if ((host = get_socket_address(fd, 0, NI_NAMEREQD)) != NULL)
-		return host;
+	якщо ((host = get_socket_address(fd, 0, NI_NAMEREQD)) != NULL)
+		повернути host;
 
 	/* Handle the case where we were passed a pipe */
-	if (gethostname(myname, sizeof(myname)) == -1) {
+	якщо (gethostname(myname, sizeof(myname)) == -1) {
 		verbose_f("gethostname: %s", strerror(errno));
 		host = xstrdup("UNKNOWN");
-	} else {
+	} інакше {
 		host = xstrdup(myname);
 	}
 
-	return host;
+	повернути host;
 }
 
 /* Returns the local/remote port for the socket. */
 
-static int
-get_sock_port(int sock, int local)
+static ціле
+get_sock_port(ціле sock, ціле local)
 {
 	struct sockaddr_storage from;
 	socklen_t fromlen;
 	char strport[NI_MAXSERV];
-	int r;
+	ціле r;
 
-	if (sock < 0)
-		return -1;
+	якщо (sock < 0)
+		повернути -1;
 	/* Get IP address of client. */
 	fromlen = sizeof(from);
 	memset(&from, 0, sizeof(from));
-	if (local) {
-		if (getsockname(sock, (struct sockaddr *)&from, &fromlen) == -1) {
+	якщо (local) {
+		якщо (getsockname(sock, (struct sockaddr *)&from, &fromlen) == -1) {
 			error("getsockname failed: %.100s", strerror(errno));
-			return 0;
+			повернути 0;
 		}
-	} else {
-		if (getpeername(sock, (struct sockaddr *)&from, &fromlen) == -1) {
+	} інакше {
+		якщо (getpeername(sock, (struct sockaddr *)&from, &fromlen) == -1) {
 			debug("getpeername failed: %.100s", strerror(errno));
-			return -1;
+			повернути -1;
 		}
 	}
 
 	/* Work around Linux IPv6 weirdness */
-	if (from.ss_family == AF_INET6)
+	якщо (from.ss_family == AF_INET6)
 		fromlen = sizeof(struct sockaddr_in6);
 
 	/* Non-inet sockets don't have a port number. */
-	if (from.ss_family != AF_INET && from.ss_family != AF_INET6)
-		return 0;
+	якщо (from.ss_family != AF_INET && from.ss_family != AF_INET6)
+		повернути 0;
 
 	/* Return port number. */
-	if ((r = getnameinfo((struct sockaddr *)&from, fromlen, NULL, 0,
+	якщо ((r = getnameinfo((struct sockaddr *)&from, fromlen, NULL, 0,
 	    strport, sizeof(strport), NI_NUMERICSERV)) != 0)
 		fatal_f("getnameinfo NI_NUMERICSERV failed: %s",
 		    ssh_gai_strerror(r));
-	return atoi(strport);
+	повернути atoi(strport);
 }
 
-int
-get_peer_port(int sock)
+ціле
+get_peer_port(ціле sock)
 {
-	return get_sock_port(sock, 0);
+	повернути get_sock_port(sock, 0);
 }
 
-int
-get_local_port(int sock)
+ціле
+get_local_port(ціле sock)
 {
-	return get_sock_port(sock, 1);
+	повернути get_sock_port(sock, 1);
 }

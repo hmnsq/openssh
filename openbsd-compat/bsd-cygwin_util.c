@@ -43,8 +43,8 @@
 
 #include "xmalloc.h"
 
-int
-binary_open(const char *filename, int flags, ...)
+ціле
+binary_open(const char *filename, ціле flags, ...)
 {
 	va_list ap;
 	mode_t mode;
@@ -52,13 +52,13 @@ binary_open(const char *filename, int flags, ...)
 	va_start(ap, flags);
 	mode = va_arg(ap, mode_t);
 	va_end(ap);
-	return (open(filename, flags | O_BINARY, mode));
+	повернути (open(filename, flags | O_BINARY, mode));
 }
 
-int
+ціле
 check_ntsec(const char *filename)
 {
-	return (pathconf(filename, _PC_POSIX_PERMISSIONS));
+	повернути (pathconf(filename, _PC_POSIX_PERMISSIONS));
 }
 
 const char *
@@ -66,15 +66,15 @@ cygwin_ssh_privsep_user()
 {
   static char cyg_privsep_user[DNLEN + UNLEN + 2];
 
-  if (!cyg_privsep_user[0])
+  якщо (!cyg_privsep_user[0])
     {
 #ifdef CW_CYGNAME_FROM_WINNAME
-      if (cygwin_internal (CW_CYGNAME_FROM_WINNAME, "sshd", cyg_privsep_user,
+      якщо (cygwin_internal (CW_CYGNAME_FROM_WINNAME, "sshd", cyg_privsep_user,
 			   sizeof cyg_privsep_user) != 0)
 #endif
 	strlcpy(cyg_privsep_user, "sshd", sizeof(cyg_privsep_user));
     }
-  return cyg_privsep_user;
+  повернути cyg_privsep_user;
 }
 
 #define NL(x) x, (sizeof (x) - 1)
@@ -101,17 +101,17 @@ char **
 fetch_windows_environment(void)
 {
 	char **e, **p;
-	unsigned int i, idx = 0;
+	unsigned ціле i, idx = 0;
 
 	p = xcalloc(WENV_SIZ + 1, sizeof(char *));
-	for (e = environ; *e != NULL; ++e) {
-		for (i = 0; i < WENV_SIZ; ++i) {
-			if (!strncmp(*e, wenv_arr[i].name, wenv_arr[i].namelen))
+	для (e = environ; *e != NULL; ++e) {
+		для (i = 0; i < WENV_SIZ; ++i) {
+			якщо (!strncmp(*e, wenv_arr[i].name, wenv_arr[i].namelen))
 				p[idx++] = *e;
 		}
 	}
 	p[idx] = NULL;
-	return p;
+	повернути p;
 }
 
 void
@@ -128,56 +128,56 @@ free_windows_environment(char **p)
  * Unicode characters into account.
  */
 
-static int
+static ціле
 __match_pattern (const wchar_t *s, const wchar_t *pattern)
 {
-	for (;;) {
+	для (;;) {
 		/* If at end of pattern, accept if also at end of string. */
-		if (!*pattern)
-			return !*s;
+		якщо (!*pattern)
+			повернути !*s;
 
-		if (*pattern == '*') {
+		якщо (*pattern == '*') {
 			/* Skip the asterisk. */
 			pattern++;
 
 			/* If at end of pattern, accept immediately. */
-			if (!*pattern)
-				return 1;
+			якщо (!*pattern)
+				повернути 1;
 
 			/* If next character in pattern is known, optimize. */
-			if (*pattern != '?' && *pattern != '*') {
+			якщо (*pattern != '?' && *pattern != '*') {
 				/*
 				 * Look instances of the next character in
 				 * pattern, and try to match starting from
 				 * those.
 				 */
-				for (; *s; s++)
-					if (*s == *pattern &&
+				для (; *s; s++)
+					якщо (*s == *pattern &&
 					    __match_pattern(s + 1, pattern + 1))
-						return 1;
+						повернути 1;
 				/* Failed. */
-				return 0;
+				повернути 0;
 			}
 			/*
 			 * Move ahead one character at a time and try to
 			 * match at each position.
 			 */
-			for (; *s; s++)
-				if (__match_pattern(s, pattern))
-					return 1;
+			для (; *s; s++)
+				якщо (__match_pattern(s, pattern))
+					повернути 1;
 			/* Failed. */
-			return 0;
+			повернути 0;
 		}
 		/*
 		 * There must be at least one more character in the string.
 		 * If we are at the end, fail.
 		 */
-		if (!*s)
-			return 0;
+		якщо (!*s)
+			повернути 0;
 
 		/* Check if the next character of the string is acceptable. */
-		if (*pattern != '?' && towlower(*pattern) != towlower(*s))
-			return 0;
+		якщо (*pattern != '?' && towlower(*pattern) != towlower(*s))
+			повернути 0;
 
 		/* Move to the next character, both in string and in pattern. */
 		s++;
@@ -186,28 +186,28 @@ __match_pattern (const wchar_t *s, const wchar_t *pattern)
 	/* NOTREACHED */
 }
 
-static int
+static ціле
 _match_pattern(const char *s, const char *pattern)
 {
 	wchar_t *ws;
 	wchar_t *wpattern;
 	size_t len;
-	int ret;
+	ціле ret;
 
-	if ((len = mbstowcs(NULL, s, 0)) == (size_t) -1)
-		return 0;
+	якщо ((len = mbstowcs(NULL, s, 0)) == (size_t) -1)
+		повернути 0;
 	ws = (wchar_t *) xcalloc(len + 1, sizeof (wchar_t));
 	mbstowcs(ws, s, len + 1);
-	if ((len = mbstowcs(NULL, pattern, 0)) == (size_t) -1) {
+	якщо ((len = mbstowcs(NULL, pattern, 0)) == (size_t) -1) {
 		free(ws);
-		return 0;
+		повернути 0;
 	}
 	wpattern = (wchar_t *) xcalloc(len + 1, sizeof (wchar_t));
 	mbstowcs(wpattern, pattern, len + 1);
 	ret = __match_pattern (ws, wpattern);
 	free(ws);
 	free(wpattern);
-	return ret;
+	повернути ret;
 }
 
 /*
@@ -216,47 +216,47 @@ _match_pattern(const char *s, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
+ціле
 cygwin_ug_match_pattern_list(const char *string, const char *pattern)
 {
 	char sub[1024];
-	int negated;
-	int got_positive;
+	ціле negated;
+	ціле got_positive;
 	size_t i, subi, len = strlen(pattern);
 
 	got_positive = 0;
-	for (i = 0; i < len;) {
+	для (i = 0; i < len;) {
 		/* Check if the subpattern is negated. */
-		if (pattern[i] == '!') {
+		якщо (pattern[i] == '!') {
 			negated = 1;
 			i++;
-		} else
+		} інакше
 			negated = 0;
 
 		/*
 		 * Extract the subpattern up to a comma or end.  Convert the
 		 * subpattern to lowercase.
 		 */
-		for (subi = 0;
+		для (subi = 0;
 		    i < len && subi < sizeof(sub) - 1 && pattern[i] != ',';
 		    subi++, i++)
 			sub[subi] = pattern[i];
 		/* If subpattern too long, return failure (no match). */
-		if (subi >= sizeof(sub) - 1)
-			return 0;
+		якщо (subi >= sizeof(sub) - 1)
+			повернути 0;
 
 		/* If the subpattern was terminated by a comma, then skip it. */
-		if (i < len && pattern[i] == ',')
+		якщо (i < len && pattern[i] == ',')
 			i++;
 
 		/* Null-terminate the subpattern. */
 		sub[subi] = '\0';
 
 		/* Try to match the subpattern against the string. */
-		if (_match_pattern(string, sub)) {
-			if (negated)
-				return -1;		/* Negative */
-			else
+		якщо (_match_pattern(string, sub)) {
+			якщо (negated)
+				повернути -1;		/* Negative */
+			інакше
 				got_positive = 1;	/* Positive */
 		}
 	}
@@ -265,7 +265,7 @@ cygwin_ug_match_pattern_list(const char *string, const char *pattern)
 	 * Return success if got a positive match.  If there was a negative
 	 * match, we have already returned -1 and never get here.
 	 */
-	return got_positive;
+	повернути got_positive;
 }
 
 #endif /* HAVE_CYGWIN */

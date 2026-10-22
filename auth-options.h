@@ -34,23 +34,23 @@ struct sshkey;
  */
 struct sshauthopt {
 	/* Feature flags */
-	int permit_port_forwarding_flag;
-	int permit_agent_forwarding_flag;
-	int permit_x11_forwarding_flag;
-	int permit_pty_flag;
-	int permit_user_rc;
+	ціле permit_port_forwarding_flag;
+	ціле permit_agent_forwarding_flag;
+	ціле permit_x11_forwarding_flag;
+	ціле permit_pty_flag;
+	ціле permit_user_rc;
 
 	/* "restrict" keyword was invoked */
-	int restricted;
+	ціле restricted;
 
 	/* key/principal expiry date */
 	uint64_t valid_before;
 
 	/* Certificate-related options */
-	int cert_authority;
+	ціле cert_authority;
 	char *cert_principals;
 
-	int force_tun_device;
+	ціле force_tun_device;
 	char *force_command;
 
 	/* Custom environment */
@@ -73,17 +73,17 @@ struct sshauthopt {
 	char *required_from_host_keys;
 
 	/* Key requires user presence asserted */
-	int no_require_user_presence;
+	ціле no_require_user_presence;
 	/* Key requires user verification (e.g. PIN) */
-	int require_verify;
+	ціле require_verify;
 };
 
 struct sshauthopt *sshauthopt_new(void);
 struct sshauthopt *sshauthopt_new_with_keys_defaults(void);
 void sshauthopt_free(struct sshauthopt *opts);
 struct sshauthopt *sshauthopt_copy(const struct sshauthopt *orig);
-int sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m, int);
-int sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **opts);
+ціле sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m, ціле);
+ціле sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **opts);
 
 /*
  * Parse authorized_keys options. Returns an options structure on success

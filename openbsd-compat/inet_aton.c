@@ -53,14 +53,14 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_INET_ATON)
+#якщо !defined(HAVE_INET_ATON)
 
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <ctype.h>
 
-#if 0
+#якщо 0
 /*
  * Ascii internet address interpretation routine.
  * The value returned is in network order.
@@ -70,9 +70,9 @@ inet_addr(const char *cp)
 {
 	struct in_addr val;
 
-	if (inet_aton(cp, &val))
-		return (val.s_addr);
-	return (INADDR_NONE);
+	якщо (inet_aton(cp, &val))
+		повернути (val.s_addr);
+	повернути (INADDR_NONE);
 }
 #endif
 
@@ -83,62 +83,62 @@ inet_addr(const char *cp)
  * This replaces inet_addr, the return value from which
  * cannot distinguish between failure and a local broadcast address.
  */
-int
+ціле
 inet_aton(const char *cp, struct in_addr *addr)
 {
 	u_int32_t val;
-	int base, n;
+	ціле base, n;
 	char c;
 	u_int parts[4];
 	u_int *pp = parts;
 
 	c = *cp;
-	for (;;) {
+	для (;;) {
 		/*
 		 * Collect number up to ``.''.
 		 * Values are specified as for C:
 		 * 0x=hex, 0=octal, isdigit=decimal.
 		 */
-		if (!isdigit(c))
-			return (0);
+		якщо (!isdigit(c))
+			повернути (0);
 		val = 0; base = 10;
-		if (c == '0') {
+		якщо (c == '0') {
 			c = *++cp;
-			if (c == 'x' || c == 'X')
+			якщо (c == 'x' || c == 'X')
 				base = 16, c = *++cp;
-			else
+			інакше
 				base = 8;
 		}
-		for (;;) {
-			if (isascii(c) && isdigit(c)) {
+		для (;;) {
+			якщо (isascii(c) && isdigit(c)) {
 				val = (val * base) + (c - '0');
 				c = *++cp;
-			} else if (base == 16 && isascii(c) && isxdigit(c)) {
+			} інакше якщо (base == 16 && isascii(c) && isxdigit(c)) {
 				val = (val << 4) |
 					(c + 10 - (islower(c) ? 'a' : 'A'));
 				c = *++cp;
-			} else
+			} інакше
 				break;
 		}
-		if (c == '.') {
+		якщо (c == '.') {
 			/*
 			 * Internet format:
 			 *	a.b.c.d
 			 *	a.b.c	(with c treated as 16 bits)
 			 *	a.b	(with b treated as 24 bits)
 			 */
-			if (pp >= parts + 3)
-				return (0);
+			якщо (pp >= parts + 3)
+				повернути (0);
 			*pp++ = val;
 			c = *++cp;
-		} else
+		} інакше
 			break;
 	}
 	/*
 	 * Check for trailing characters.
 	 */
-	if (c != '\0' && (!isascii(c) || !isspace(c)))
-		return (0);
+	якщо (c != '\0' && (!isascii(c) || !isspace(c)))
+		повернути (0);
 	/*
 	 * Concoct the address according to
 	 * the number of parts specified.
@@ -147,32 +147,32 @@ inet_aton(const char *cp, struct in_addr *addr)
 	switch (n) {
 
 	case 0:
-		return (0);		/* initial nondigit */
+		повернути (0);		/* initial nondigit */
 
 	case 1:				/* a -- 32 bits */
 		break;
 
 	case 2:				/* a.b -- 8.24 bits */
-		if ((val > 0xffffff) || (parts[0] > 0xff))
-			return (0);
+		якщо ((val > 0xffffff) || (parts[0] > 0xff))
+			повернути (0);
 		val |= parts[0] << 24;
 		break;
 
 	case 3:				/* a.b.c -- 8.8.16 bits */
-		if ((val > 0xffff) || (parts[0] > 0xff) || (parts[1] > 0xff))
-			return (0);
+		якщо ((val > 0xffff) || (parts[0] > 0xff) || (parts[1] > 0xff))
+			повернути (0);
 		val |= (parts[0] << 24) | (parts[1] << 16);
 		break;
 
 	case 4:				/* a.b.c.d -- 8.8.8.8 bits */
-		if ((val > 0xff) || (parts[0] > 0xff) || (parts[1] > 0xff) || (parts[2] > 0xff))
-			return (0);
+		якщо ((val > 0xff) || (parts[0] > 0xff) || (parts[1] > 0xff) || (parts[2] > 0xff))
+			повернути (0);
 		val |= (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8);
 		break;
 	}
-	if (addr)
+	якщо (addr)
 		addr->s_addr = htonl(val);
-	return (1);
+	повернути (1);
 }
 
 #endif /* !defined(HAVE_INET_ATON) */

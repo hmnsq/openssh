@@ -40,20 +40,20 @@ sshbuf_dump_data(const void *s, size_t len, FILE *f)
 	size_t i, j;
 	const u_char *p = (const u_char *)s;
 
-	for (i = 0; i < len; i += 16) {
+	для (i = 0; i < len; i += 16) {
 		fprintf(f, "%.4zu: ", i);
-		for (j = i; j < i + 16; j++) {
-			if (j < len)
+		для (j = i; j < i + 16; j++) {
+			якщо (j < len)
 				fprintf(f, "%02x ", p[j]);
-			else
+			інакше
 				fprintf(f, "   ");
 		}
 		fprintf(f, " ");
-		for (j = i; j < i + 16; j++) {
-			if (j < len) {
-				if  (isascii(p[j]) && isprint(p[j]))
+		для (j = i; j < i + 16; j++) {
+			якщо (j < len) {
+				якщо  (isascii(p[j]) && isprint(p[j]))
 					fprintf(f, "%c", p[j]);
-				else
+				інакше
 					fprintf(f, ".");
 			}
 		}
@@ -76,28 +76,28 @@ sshbuf_dtob16(const struct sshbuf *buf)
 	char *ret;
 	const char hex[] = "0123456789abcdef";
 
-	if (len == 0)
-		return strdup("");
-	if (SIZE_MAX / 2 <= len || (ret = malloc(len * 2 + 1)) == NULL)
-		return NULL;
-	for (i = j = 0; i < len; i++) {
+	якщо (len == 0)
+		повернути strdup("");
+	якщо (SIZE_MAX / 2 <= len || (ret = malloc(len * 2 + 1)) == NULL)
+		повернути NULL;
+	для (i = j = 0; i < len; i++) {
 		ret[j++] = hex[(p[i] >> 4) & 0xf];
 		ret[j++] = hex[p[i] & 0xf];
 	}
 	ret[j] = '\0';
-	return ret;
+	повернути ret;
 }
 
-static int
+static ціле
 b16tod(const char v)
 {
-	if (v >= '0' && v <= '9')
-		return v - '0';
-	if (v >= 'a' && v <= 'f')
-		return 10 + v - 'a';
-	if (v >= 'A' && v <= 'F')
-		return 10 + v - 'A';
-	return -1;
+	якщо (v >= '0' && v <= '9')
+		повернути v - '0';
+	якщо (v >= 'a' && v <= 'f')
+		повернути 10 + v - 'a';
+	якщо (v >= 'A' && v <= 'F')
+		повернути 10 + v - 'A';
+	повернути -1;
 }
 
 struct sshbuf *
@@ -105,147 +105,147 @@ sshbuf_b16tod(const char *b16)
 {
 	struct sshbuf *ret;
 	size_t o;
-	int r, v1, v2;
+	ціле r, v1, v2;
 
-	if ((ret = sshbuf_new()) == NULL)
-		return NULL;
-	for (o = 0; b16[o] != '\0'; o += 2) {
-		if ((v1 = b16tod(b16[o])) == -1 ||
+	якщо ((ret = sshbuf_new()) == NULL)
+		повернути NULL;
+	для (o = 0; b16[o] != '\0'; o += 2) {
+		якщо ((v1 = b16tod(b16[o])) == -1 ||
 		    (v2 = b16tod(b16[o + 1])) == -1) {
 			sshbuf_free(ret);
-			return NULL;
+			повернути NULL;
 		}
-		if ((r = sshbuf_put_u8(ret, (u_char)((v1 << 4) | v2))) != 0) {
+		якщо ((r = sshbuf_put_u8(ret, (u_char)((v1 << 4) | v2))) != 0) {
 			sshbuf_free(ret);
-			return NULL;
+			повернути NULL;
 		}
 	}
 	/* success */
-	return ret;
+	повернути ret;
 }
 
-int
-sshbuf_dtob64(const struct sshbuf *d, struct sshbuf *b64, int wrap)
+ціле
+sshbuf_dtob64(const struct sshbuf *d, struct sshbuf *b64, ціле wrap)
 {
 	size_t i, slen = 0;
 	char *s = NULL;
-	int r;
+	ціле r;
 
-	if (d == NULL || b64 == NULL || sshbuf_len(d) >= SIZE_MAX / 2)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (sshbuf_len(d) == 0)
-		return 0;
+	якщо (d == NULL || b64 == NULL || sshbuf_len(d) >= SIZE_MAX / 2)
+		повернути SSH_ERR_INVALID_ARGUMENT;
+	якщо (sshbuf_len(d) == 0)
+		повернути 0;
 	slen = ((sshbuf_len(d) + 2) / 3) * 4 + 1;
-	if ((s = malloc(slen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (b64_ntop(sshbuf_ptr(d), sshbuf_len(d), s, slen) == -1) {
+	якщо ((s = malloc(slen)) == NULL)
+		повернути SSH_ERR_ALLOC_FAIL;
+	якщо (b64_ntop(sshbuf_ptr(d), sshbuf_len(d), s, slen) == -1) {
 		r = SSH_ERR_INTERNAL_ERROR;
 		goto fail;
 	}
-	if (wrap) {
-		for (i = 0; s[i] != '\0'; i++) {
-			if ((r = sshbuf_put_u8(b64, s[i])) != 0)
+	якщо (wrap) {
+		для (i = 0; s[i] != '\0'; i++) {
+			якщо ((r = sshbuf_put_u8(b64, s[i])) != 0)
 				goto fail;
-			if (i % 70 == 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
+			якщо (i % 70 == 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
 				goto fail;
 		}
-		if ((i - 1) % 70 != 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
+		якщо ((i - 1) % 70 != 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
 			goto fail;
-	} else {
-		if ((r = sshbuf_put(b64, s, strlen(s))) != 0)
+	} інакше {
+		якщо ((r = sshbuf_put(b64, s, strlen(s))) != 0)
 			goto fail;
 	}
 	/* Success */
 	r = 0;
  fail:
 	freezero(s, slen);
-	return r;
+	повернути r;
 }
 
 char *
-sshbuf_dtob64_string(const struct sshbuf *buf, int wrap)
+sshbuf_dtob64_string(const struct sshbuf *buf, ціле wrap)
 {
 	struct sshbuf *tmp;
 	char *ret;
 
-	if ((tmp = sshbuf_new()) == NULL)
-		return NULL;
-	if (sshbuf_dtob64(buf, tmp, wrap) != 0) {
+	якщо ((tmp = sshbuf_new()) == NULL)
+		повернути NULL;
+	якщо (sshbuf_dtob64(buf, tmp, wrap) != 0) {
 		sshbuf_free(tmp);
-		return NULL;
+		повернути NULL;
 	}
 	ret = sshbuf_dup_string(tmp);
 	sshbuf_free(tmp);
-	return ret;
+	повернути ret;
 }
 
-int
+ціле
 sshbuf_b64tod(struct sshbuf *buf, const char *b64)
 {
 	size_t plen = strlen(b64);
-	int nlen, r;
+	ціле nlen, r;
 	u_char *p;
 
-	if (plen == 0)
-		return 0;
-	if ((p = malloc(plen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((nlen = b64_pton(b64, p, plen)) < 0) {
+	якщо (plen == 0)
+		повернути 0;
+	якщо ((p = malloc(plen)) == NULL)
+		повернути SSH_ERR_ALLOC_FAIL;
+	якщо ((nlen = b64_pton(b64, p, plen)) < 0) {
 		freezero(p, plen);
-		return SSH_ERR_INVALID_FORMAT;
+		повернути SSH_ERR_INVALID_FORMAT;
 	}
-	if ((r = sshbuf_put(buf, p, nlen)) < 0) {
+	якщо ((r = sshbuf_put(buf, p, nlen)) < 0) {
 		freezero(p, plen);
-		return r;
+		повернути r;
 	}
 	freezero(p, plen);
-	return 0;
+	повернути 0;
 }
 
-int
-sshbuf_dtourlb64(const struct sshbuf *d, struct sshbuf *b64, int wrap)
+ціле
+sshbuf_dtourlb64(const struct sshbuf *d, struct sshbuf *b64, ціле wrap)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ціле r = SSH_ERR_INTERNAL_ERROR;
 	u_char *p;
 	struct sshbuf *b = NULL;
 	size_t i, l;
 
-	if (sshbuf_len(d) == 0)
-		return 0;
+	якщо (sshbuf_len(d) == 0)
+		повернути 0;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	якщо ((b = sshbuf_new()) == NULL)
+		повернути SSH_ERR_ALLOC_FAIL;
 	/* Encode using regular base64; we'll transform it once done */
-	if ((r = sshbuf_dtob64(d, b, wrap)) != 0)
+	якщо ((r = sshbuf_dtob64(d, b, wrap)) != 0)
 		goto out;
 	/* remove padding from end of encoded string*/
-	for (;;) {
+	для (;;) {
 		l = sshbuf_len(b);
-		if (l <= 1 || sshbuf_ptr(b) == NULL) {
+		якщо (l <= 1 || sshbuf_ptr(b) == NULL) {
 			r = SSH_ERR_INTERNAL_ERROR;
 			goto out;
 		}
-		if (sshbuf_ptr(b)[l - 1] != '=')
+		якщо (sshbuf_ptr(b)[l - 1] != '=')
 			break;
-		if ((r = sshbuf_consume_end(b, 1)) != 0)
+		якщо ((r = sshbuf_consume_end(b, 1)) != 0)
 			goto out;
 	}
 	/* Replace characters with rfc4648 equivalents */
 	l = sshbuf_len(b);
-	if ((p = sshbuf_mutable_ptr(b)) == NULL) {
+	якщо ((p = sshbuf_mutable_ptr(b)) == NULL) {
 		r = SSH_ERR_INTERNAL_ERROR;
 		goto out;
 	}
-	for (i = 0; i < l; i++) {
-		if (p[i] == '+')
+	для (i = 0; i < l; i++) {
+		якщо (p[i] == '+')
 			p[i] = '-';
-		else if (p[i] == '/')
+		інакше якщо (p[i] == '/')
 			p[i] = '_';
 	}
 	r = sshbuf_putb(b64, b);
  out:
 	sshbuf_free(b);
-	return r;
+	повернути r;
 }
 
 char *
@@ -255,105 +255,105 @@ sshbuf_dup_string(struct sshbuf *buf)
 	size_t l = sshbuf_len(buf);
 	char *r;
 
-	if (s == NULL || l >= SIZE_MAX)
-		return NULL;
+	якщо (s == NULL || l >= SIZE_MAX)
+		повернути NULL;
 	/* accept a nul only as the last character in the buffer */
-	if (l > 0 && (p = memchr(s, '\0', l)) != NULL) {
-		if (p != s + l - 1)
-			return NULL;
+	якщо (l > 0 && (p = memchr(s, '\0', l)) != NULL) {
+		якщо (p != s + l - 1)
+			повернути NULL;
 		l--; /* the nul is put back below */
 	}
-	if ((r = malloc(l + 1)) == NULL)
-		return NULL;
-	if (l > 0)
+	якщо ((r = malloc(l + 1)) == NULL)
+		повернути NULL;
+	якщо (l > 0)
 		memcpy(r, s, l);
 	r[l] = '\0';
-	return r;
+	повернути r;
 }
 
-int
+ціле
 sshbuf_cmp(const struct sshbuf *b, size_t offset,
     const void *s, size_t len)
 {
-	if (sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (offset + len > sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if (timingsafe_bcmp(sshbuf_ptr(b) + offset, s, len) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	якщо (sshbuf_ptr(b) == NULL)
+		повернути SSH_ERR_INTERNAL_ERROR;
+	якщо (offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
+		повернути SSH_ERR_INVALID_ARGUMENT;
+	якщо (offset + len > sshbuf_len(b))
+		повернути SSH_ERR_MESSAGE_INCOMPLETE;
+	якщо (timingsafe_bcmp(sshbuf_ptr(b) + offset, s, len) != 0)
+		повернути SSH_ERR_INVALID_FORMAT;
+	повернути 0;
 }
 
-int
+ціле
 sshbuf_equals(const struct sshbuf *a, const struct sshbuf *b)
 {
-	if (sshbuf_ptr(a) == NULL || sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (sshbuf_len(a) != sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if (sshbuf_len(a) == 0)
-		return 0;
-	if (memcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	якщо (sshbuf_ptr(a) == NULL || sshbuf_ptr(b) == NULL)
+		повернути SSH_ERR_INTERNAL_ERROR;
+	якщо (sshbuf_len(a) != sshbuf_len(b))
+		повернути SSH_ERR_MESSAGE_INCOMPLETE;
+	якщо (sshbuf_len(a) == 0)
+		повернути 0;
+	якщо (memcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
+		повернути SSH_ERR_INVALID_FORMAT;
+	повернути 0;
 }
 
-int
+ціле
 sshbuf_find(const struct sshbuf *b, size_t start_offset,
     const void *s, size_t len, size_t *offsetp)
 {
 	void *p;
 
-	if (offsetp != NULL)
+	якщо (offsetp != NULL)
 		*offsetp = 0;
-	if (sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (start_offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (start_offset > sshbuf_len(b) || start_offset + len > sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if ((p = memmem(sshbuf_ptr(b) + start_offset,
+	якщо (sshbuf_ptr(b) == NULL)
+		повернути SSH_ERR_INTERNAL_ERROR;
+	якщо (start_offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
+		повернути SSH_ERR_INVALID_ARGUMENT;
+	якщо (start_offset > sshbuf_len(b) || start_offset + len > sshbuf_len(b))
+		повернути SSH_ERR_MESSAGE_INCOMPLETE;
+	якщо ((p = memmem(sshbuf_ptr(b) + start_offset,
 	    sshbuf_len(b) - start_offset, s, len)) == NULL)
-		return SSH_ERR_INVALID_FORMAT;
-	if (offsetp != NULL)
+		повернути SSH_ERR_INVALID_FORMAT;
+	якщо (offsetp != NULL)
 		*offsetp = (const u_char *)p - sshbuf_ptr(b);
-	return 0;
+	повернути 0;
 }
 
-int
-sshbuf_read(int fd, struct sshbuf *buf, size_t maxlen, size_t *rlen)
+ціле
+sshbuf_read(ціле fd, struct sshbuf *buf, size_t maxlen, size_t *rlen)
 {
-	int r, oerrno;
+	ціле r, oerrno;
 	size_t adjust;
 	ssize_t rr;
 	u_char *d;
 
-	if (rlen != NULL)
+	якщо (rlen != NULL)
 		*rlen = 0;
-	if ((r = sshbuf_reserve(buf, maxlen, &d)) != 0)
-		return r;
+	якщо ((r = sshbuf_reserve(buf, maxlen, &d)) != 0)
+		повернути r;
 	rr = read(fd, d, maxlen);
 	oerrno = errno;
 
 	/* Adjust the buffer to include only what was actually read */
-	if ((adjust = maxlen - (rr > 0 ? rr : 0)) != 0) {
-		if ((r = sshbuf_consume_end(buf, adjust)) != 0) {
+	якщо ((adjust = maxlen - (rr > 0 ? rr : 0)) != 0) {
+		якщо ((r = sshbuf_consume_end(buf, adjust)) != 0) {
 			/* avoid returning uninitialised data to caller */
 			memset(d + rr, '\0', adjust);
-			return SSH_ERR_INTERNAL_ERROR; /* shouldn't happen */
+			повернути SSH_ERR_INTERNAL_ERROR; /* shouldn't happen */
 		}
 	}
-	if (rr < 0) {
+	якщо (rr < 0) {
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
-	} else if (rr == 0) {
+		повернути SSH_ERR_SYSTEM_ERROR;
+	} інакше якщо (rr == 0) {
 		errno = EPIPE;
-		return SSH_ERR_SYSTEM_ERROR;
+		повернути SSH_ERR_SYSTEM_ERROR;
 	}
 	/* success */
-	if (rlen != NULL)
+	якщо (rlen != NULL)
 		*rlen = (size_t)rr;
-	return 0;
+	повернути 0;
 }

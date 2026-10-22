@@ -33,7 +33,7 @@ sshbuf_getput_basic_tests(void)
 	u_char v8;
 	size_t s;
 	char *s2;
-	int r;
+	ціле r;
 	u_char bn1[] = { 0x00, 0x00, 0x00 };
 	u_char bn2[] = { 0x00, 0x00, 0x01, 0x02 };
 	u_char bn3[] = { 0x00, 0x80, 0x09 };

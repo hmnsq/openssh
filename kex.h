@@ -34,7 +34,7 @@
 #include <openssl/dh.h>
 #include <openssl/ec.h>
 #include <openssl/ecdsa.h>
-#else /* OPENSSL */
+#інакше /* OPENSSL */
 #define BIGNUM		void
 #define DH		void
 #define EC_KEY		void
@@ -119,7 +119,7 @@ enum kex_exchange {
 struct sshenc {
 	char	*name;
 	const struct sshcipher *cipher;
-	int	enabled;
+	ціле	enabled;
 	u_int	key_len;
 	u_int	iv_len;
 	u_int	block_size;
@@ -128,7 +128,7 @@ struct sshenc {
 };
 struct sshcomp {
 	u_int	type;
-	int	enabled;
+	ціле	enabled;
 	char	*name;
 };
 struct newkeys {
@@ -144,17 +144,17 @@ struct kex {
 	struct newkeys	*newkeys[MODE_MAX];
 	u_int	we_need;
 	u_int	dh_need;
-	int	server;
+	ціле	server;
 	char	*name;
 	char	*hostkey_alg;
-	int	hostkey_type;
-	int	hostkey_nid;
+	ціле	hostkey_type;
+	ціле	hostkey_nid;
 	u_int	kex_type;
 	char	*server_sig_algs;
-	int	ext_info_c;
-	int	ext_info_s;
-	int	kex_strict;
-	int	ext_info_received;
+	ціле	ext_info_c;
+	ціле	ext_info_s;
+	ціле	kex_strict;
+	ціле	ext_info_received;
 	struct sshbuf *my;
 	struct sshbuf *peer;
 	struct sshbuf *client_version;
@@ -167,16 +167,16 @@ struct kex {
 	u_int	warn_weak_crypto;
 	u_int	pq_kex_negotiated;
 	u_int	non_pq_kex_warned;
-	int	hash_alg;
-	int	ec_nid;
+	ціле	hash_alg;
+	ціле	ec_nid;
 	char	*failed_choice;
-	int	(*verify_host_key)(struct sshkey *, struct ssh *);
-	struct sshkey *(*load_host_public_key)(int, int, struct ssh *);
-	struct sshkey *(*load_host_private_key)(int, int, struct ssh *);
-	int	(*host_key_index)(struct sshkey *, int, struct ssh *);
-	int	(*sign)(struct ssh *, struct sshkey *, struct sshkey *,
+	ціле	(*verify_host_key)(struct sshkey *, struct ssh *);
+	struct sshkey *(*load_host_public_key)(ціле, ціле, struct ssh *);
+	struct sshkey *(*load_host_private_key)(ціле, ціле, struct ssh *);
+	ціле	(*host_key_index)(struct sshkey *, ціле, struct ssh *);
+	ціле	(*sign)(struct ssh *, struct sshkey *, struct sshkey *,
 	    u_char **, size_t *, const u_char *, size_t, const char *);
-	int	(*kex[KEX_MAX])(struct ssh *);
+	ціле	(*kex[KEX_MAX])(struct ssh *);
 	/* kex specific state */
 	DH	*dh;			/* DH */
 	u_int	min, max, nbits;	/* GEX */
@@ -189,93 +189,93 @@ struct kex {
 	struct sshbuf *client_pub;
 };
 
-int	 kex_name_valid(const char *);
+ціле	 kex_name_valid(const char *);
 u_int	 kex_type_from_name(const char *);
-int	 kex_hash_from_name(const char *);
-int	 kex_nid_from_name(const char *);
-int	 kex_is_pq_from_name(const char *);
-int	 kex_names_valid(const char *);
+ціле	 kex_hash_from_name(const char *);
+ціле	 kex_nid_from_name(const char *);
+ціле	 kex_is_pq_from_name(const char *);
+ціле	 kex_names_valid(const char *);
 char	*kex_alg_list(char);
 char	*kex_names_cat(const char *, const char *);
-int	 kex_has_any_alg(const char *, const char *);
-int	 kex_assemble_names(char **, const char *, const char *);
+ціле	 kex_has_any_alg(const char *, const char *);
+ціле	 kex_assemble_names(char **, const char *, const char *);
 void	 kex_proposal_populate_entries(struct ssh *, char *prop[PROPOSAL_MAX],
     const char *, const char *, const char *, const char *, const char *);
 void	 kex_proposal_free_entries(char *prop[PROPOSAL_MAX]);
 
-int	 kex_exchange_identification(struct ssh *, int, const char *);
+ціле	 kex_exchange_identification(struct ssh *, ціле, const char *);
 
 struct kex *kex_new(void);
-int	 kex_ready(struct ssh *, char *[PROPOSAL_MAX]);
-int	 kex_setup(struct ssh *, char *[PROPOSAL_MAX]);
+ціле	 kex_ready(struct ssh *, char *[PROPOSAL_MAX]);
+ціле	 kex_setup(struct ssh *, char *[PROPOSAL_MAX]);
 void	 kex_free_newkeys(struct newkeys *);
 void	 kex_free(struct kex *);
 
-int	 kex_buf2prop(struct sshbuf *, int *, char ***);
-int	 kex_prop2buf(struct sshbuf *, char *proposal[PROPOSAL_MAX]);
+ціле	 kex_buf2prop(struct sshbuf *, ціле *, char ***);
+ціле	 kex_prop2buf(struct sshbuf *, char *proposal[PROPOSAL_MAX]);
 void	 kex_prop_free(char **);
-int	 kex_load_hostkey(struct ssh *, struct sshkey **, struct sshkey **);
-int	 kex_verify_host_key(struct ssh *, struct sshkey *);
+ціле	 kex_load_hostkey(struct ssh *, struct sshkey **, struct sshkey **);
+ціле	 kex_verify_host_key(struct ssh *, struct sshkey *);
 
-int	 kex_send_kexinit(struct ssh *);
-int	 kex_input_kexinit(int, uint32_t, struct ssh *);
-int	 kex_input_ext_info(int, uint32_t, struct ssh *);
-int	 kex_protocol_error(int, uint32_t, struct ssh *);
-int	 kex_derive_keys(struct ssh *, u_char *, u_int, const struct sshbuf *);
-int	 kex_send_newkeys(struct ssh *);
-int	 kex_start_rekex(struct ssh *);
-int	 kex_server_update_ext_info(struct ssh *);
+ціле	 kex_send_kexinit(struct ssh *);
+ціле	 kex_input_kexinit(ціле, uint32_t, struct ssh *);
+ціле	 kex_input_ext_info(ціле, uint32_t, struct ssh *);
+ціле	 kex_protocol_error(ціле, uint32_t, struct ssh *);
+ціле	 kex_derive_keys(struct ssh *, u_char *, u_int, const struct sshbuf *);
+ціле	 kex_send_newkeys(struct ssh *);
+ціле	 kex_start_rekex(struct ssh *);
+ціле	 kex_server_update_ext_info(struct ssh *);
 void	 kex_set_server_sig_algs(struct ssh *, const char *);
-void	 kex_set_warn_weak_crypto(struct ssh *, int);
+void	 kex_set_warn_weak_crypto(struct ssh *, ціле);
 void	 kex_check_warn_weak_crypto(struct ssh *);
 
-int	 kexgex_client(struct ssh *);
-int	 kexgex_server(struct ssh *);
-int	 kex_gen_client(struct ssh *);
-int	 kex_gen_server(struct ssh *);
+ціле	 kexgex_client(struct ssh *);
+ціле	 kexgex_server(struct ssh *);
+ціле	 kex_gen_client(struct ssh *);
+ціле	 kex_gen_server(struct ssh *);
 
-int	 kex_dh_keypair(struct kex *);
-int	 kex_dh_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
+ціле	 kex_dh_keypair(struct kex *);
+ціле	 kex_dh_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
     struct sshbuf **);
-int	 kex_dh_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+ціле	 kex_dh_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
 
-int	 kex_ecdh_dec_key_group(struct kex *, const struct sshbuf *, EC_KEY *key,
-	    const EC_GROUP *, int, struct sshbuf **);
+ціле	 kex_ecdh_dec_key_group(struct kex *, const struct sshbuf *, EC_KEY *key,
+	    const EC_GROUP *, ціле, struct sshbuf **);
 
-int	 kex_ecdh_keypair(struct kex *);
-int	 kex_ecdh_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
+ціле	 kex_ecdh_keypair(struct kex *);
+ціле	 kex_ecdh_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
     struct sshbuf **);
-int	 kex_ecdh_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+ціле	 kex_ecdh_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
 
-int	 kex_c25519_keypair(struct kex *);
-int	 kex_c25519_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
+ціле	 kex_c25519_keypair(struct kex *);
+ціле	 kex_c25519_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
     struct sshbuf **);
-int	 kex_c25519_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+ціле	 kex_c25519_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
 
-int	 kex_kem_sntrup761x25519_keypair(struct kex *);
-int	 kex_kem_sntrup761x25519_enc(struct kex *, const struct sshbuf *,
+ціле	 kex_kem_sntrup761x25519_keypair(struct kex *);
+ціле	 kex_kem_sntrup761x25519_enc(struct kex *, const struct sshbuf *,
     struct sshbuf **, struct sshbuf **);
-int	 kex_kem_sntrup761x25519_dec(struct kex *, const struct sshbuf *,
+ціле	 kex_kem_sntrup761x25519_dec(struct kex *, const struct sshbuf *,
     struct sshbuf **);
 
-int	 kex_kem_mlkem768x25519_keypair(struct kex *);
-int	 kex_kem_mlkem768x25519_enc(struct kex *, const struct sshbuf *,
+ціле	 kex_kem_mlkem768x25519_keypair(struct kex *);
+ціле	 kex_kem_mlkem768x25519_enc(struct kex *, const struct sshbuf *,
     struct sshbuf **, struct sshbuf **);
-int	 kex_kem_mlkem768x25519_dec(struct kex *, const struct sshbuf *,
+ціле	 kex_kem_mlkem768x25519_dec(struct kex *, const struct sshbuf *,
     struct sshbuf **);
 
-int	 kex_kem_mlkem768ecdh_keypair(struct kex *);
-int	 kex_kem_mlkem768ecdh_enc(struct kex *, const struct sshbuf *,
+ціле	 kex_kem_mlkem768ecdh_keypair(struct kex *);
+ціле	 kex_kem_mlkem768ecdh_enc(struct kex *, const struct sshbuf *,
     struct sshbuf **, struct sshbuf **);
-int	 kex_kem_mlkem768ecdh_dec(struct kex *, const struct sshbuf *,
+ціле	 kex_kem_mlkem768ecdh_dec(struct kex *, const struct sshbuf *,
     struct sshbuf **);
 
-int	 kex_dh_keygen(struct kex *);
-int	 kex_dh_compute_key(struct kex *, BIGNUM *, struct sshbuf *);
+ціле	 kex_dh_keygen(struct kex *);
+ціле	 kex_dh_compute_key(struct kex *, BIGNUM *, struct sshbuf *);
 
-int	 kexgex_hash(int, const struct sshbuf *, const struct sshbuf *,
+ціле	 kexgex_hash(ціле, const struct sshbuf *, const struct sshbuf *,
     const struct sshbuf *, const struct sshbuf *, const struct sshbuf *,
-    int, int, int,
+    ціле, ціле, ціле,
     const BIGNUM *, const BIGNUM *, const BIGNUM *,
     const BIGNUM *, const u_char *, size_t,
     u_char *, size_t *);
@@ -283,17 +283,17 @@ int	 kexgex_hash(int, const struct sshbuf *, const struct sshbuf *,
 void	kexc25519_keygen(u_char key[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
-int	kexc25519_shared_key(const u_char key[CURVE25519_SIZE],
+ціле	kexc25519_shared_key(const u_char key[CURVE25519_SIZE],
     const u_char pub[CURVE25519_SIZE], struct sshbuf *out)
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
-int	kexc25519_shared_key_ext(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out, int)
+ціле	kexc25519_shared_key_ext(const u_char key[CURVE25519_SIZE],
+    const u_char pub[CURVE25519_SIZE], struct sshbuf *out, ціле)
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
 
-#if defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
-void	dump_digest(const char *, const u_char *, int);
+#якщо defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
+void	dump_digest(const char *, const u_char *, ціле);
 #endif
 
 #endif

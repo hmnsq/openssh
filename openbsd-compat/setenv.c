@@ -32,7 +32,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
+#якщо !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
 
 #include <errno.h>
 #include <stdlib.h>
@@ -55,71 +55,71 @@ static char **lastenv;				/* last value of environ */
  *	This routine *should* be a static; don't use it.
  */
 static char *
-__findenv(const char *name, int len, int *offset)
+__findenv(const char *name, ціле len, ціле *offset)
 {
 	extern char **environ;
-	int i;
+	ціле i;
 	const char *np;
 	char **p, *cp;
 
-	if (name == NULL || environ == NULL)
-		return (NULL);
-	for (p = environ + *offset; (cp = *p) != NULL; ++p) {
-		for (np = name, i = len; i && *cp; i--)
-			if (*cp++ != *np++)
+	якщо (name == NULL || environ == NULL)
+		повернути (NULL);
+	для (p = environ + *offset; (cp = *p) != NULL; ++p) {
+		для (np = name, i = len; i && *cp; i--)
+			якщо (*cp++ != *np++)
 				break;
-		if (i == 0 && *cp++ == '=') {
+		якщо (i == 0 && *cp++ == '=') {
 			*offset = p - environ;
-			return (cp);
+			повернути (cp);
 		}
 	}
-	return (NULL);
+	повернути (NULL);
 }
 
-#if 0 /* nothing uses putenv */
+#якщо 0 /* nothing uses putenv */
 /*
  * putenv --
  *	Add a name=value string directly to the environmental, replacing
  *	any current value.
  */
-int
+ціле
 putenv(char *str)
 {
 	char **P, *cp;
 	size_t cnt;
-	int offset = 0;
+	ціле offset = 0;
 
-	for (cp = str; *cp && *cp != '='; ++cp)
+	для (cp = str; *cp && *cp != '='; ++cp)
 		;
-	if (*cp != '=') {
+	якщо (*cp != '=') {
 		errno = EINVAL;
-		return (-1);			/* missing `=' in string */
+		повернути (-1);			/* missing `=' in string */
 	}
 
-	if (__findenv(str, (int)(cp - str), &offset) != NULL) {
+	якщо (__findenv(str, (ціле)(cp - str), &offset) != NULL) {
 		environ[offset++] = str;
 		/* could be set multiple times */
-		while (__findenv(str, (int)(cp - str), &offset)) {
-			for (P = &environ[offset];; ++P)
-				if (!(*P = *(P + 1)))
+		поки (__findenv(str, (ціле)(cp - str), &offset)) {
+			для (P = &environ[offset];; ++P)
+				якщо (!(*P = *(P + 1)))
 					break;
 		}
-		return (0);
+		повернути (0);
 	}
 
 	/* create new slot for string */
-	for (P = environ; *P != NULL; P++)
+	для (P = environ; *P != NULL; P++)
 		;
 	cnt = P - environ;
 	P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-	if (!P)
-		return (-1);
-	if (lastenv != environ)
+	якщо (!P)
+		повернути (-1);
+	якщо (lastenv != environ)
 		memcpy(P, environ, cnt * sizeof(char *));
 	lastenv = environ = P;
 	environ[cnt] = str;
 	environ[cnt + 1] = NULL;
-	return (0);
+	повернути (0);
 }
 
 #endif
@@ -130,63 +130,63 @@ putenv(char *str)
  *	Set the value of the environmental variable "name" to be
  *	"value".  If rewrite is set, replace any current value.
  */
-int
-setenv(const char *name, const char *value, int rewrite)
+ціле
+setenv(const char *name, const char *value, ціле rewrite)
 {
 	char *C, **P;
 	const char *np;
-	int l_value, offset = 0;
+	ціле l_value, offset = 0;
 
-	for (np = name; *np && *np != '='; ++np)
+	для (np = name; *np && *np != '='; ++np)
 		;
 #ifdef notyet
-	if (*np) {
+	якщо (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		повернути (-1);			/* has `=' in name */
 	}
 #endif
 
 	l_value = strlen(value);
-	if ((C = __findenv(name, (int)(np - name), &offset)) != NULL) {
-		int tmpoff = offset + 1;
-		if (!rewrite)
-			return (0);
-#if 0 /* XXX - existing entry may not be writable */
-		if (strlen(C) >= l_value) {	/* old larger; copy over */
-			while ((*C++ = *value++))
+	якщо ((C = __findenv(name, (ціле)(np - name), &offset)) != NULL) {
+		ціле tmpoff = offset + 1;
+		якщо (!rewrite)
+			повернути (0);
+#якщо 0 /* XXX - existing entry may not be writable */
+		якщо (strlen(C) >= l_value) {	/* old larger; copy over */
+			поки ((*C++ = *value++))
 				;
-			return (0);
+			повернути (0);
 		}
 #endif
 		/* could be set multiple times */
-		while (__findenv(name, (int)(np - name), &tmpoff)) {
-			for (P = &environ[tmpoff];; ++P)
-				if (!(*P = *(P + 1)))
+		поки (__findenv(name, (ціле)(np - name), &tmpoff)) {
+			для (P = &environ[tmpoff];; ++P)
+				якщо (!(*P = *(P + 1)))
 					break;
 		}
-	} else {					/* create new slot */
+	} інакше {					/* create new slot */
 		size_t cnt;
 
-		for (P = environ; *P != NULL; P++)
+		для (P = environ; *P != NULL; P++)
 			;
 		cnt = P - environ;
 		P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-		if (!P)
-			return (-1);
-		if (lastenv != environ)
+		якщо (!P)
+			повернути (-1);
+		якщо (lastenv != environ)
 			memcpy(P, environ, cnt * sizeof(char *));
 		lastenv = environ = P;
 		offset = cnt;
 		environ[cnt + 1] = NULL;
 	}
-	if (!(environ[offset] =			/* name + `=' + value */
-	    malloc((size_t)((int)(np - name) + l_value + 2))))
-		return (-1);
-	for (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
+	якщо (!(environ[offset] =			/* name + `=' + value */
+	    malloc((size_t)((ціле)(np - name) + l_value + 2))))
+		повернути (-1);
+	для (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
 		;
-	for (*C++ = '='; (*C++ = *value++); )
+	для (*C++ = '='; (*C++ = *value++); )
 		;
-	return (0);
+	повернути (0);
 }
 
 #endif /* HAVE_SETENV */
@@ -196,31 +196,31 @@ setenv(const char *name, const char *value, int rewrite)
  * unsetenv(name) --
  *	Delete environmental variable "name".
  */
-int
+ціле
 unsetenv(const char *name)
 {
 	char **P;
 	const char *np;
-	int offset = 0;
+	ціле offset = 0;
 
-	if (!name || !*name) {
+	якщо (!name || !*name) {
 		errno = EINVAL;
-		return (-1);
+		повернути (-1);
 	}
-	for (np = name; *np && *np != '='; ++np)
+	для (np = name; *np && *np != '='; ++np)
 		;
-	if (*np) {
+	якщо (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		повернути (-1);			/* has `=' in name */
 	}
 
 	/* could be set multiple times */
-	while (__findenv(name, (int)(np - name), &offset)) {
-		for (P = &environ[offset];; ++P)
-			if (!(*P = *(P + 1)))
+	поки (__findenv(name, (ціле)(np - name), &offset)) {
+		для (P = &environ[offset];; ++P)
+			якщо (!(*P = *(P + 1)))
 				break;
 	}
-	return (0);
+	повернути (0);
 }
 #endif /* HAVE_UNSETENV */
 

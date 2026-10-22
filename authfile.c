@@ -44,56 +44,56 @@
 #include "krl.h"
 
 /* Save a key blob to a file */
-static int
+static ціле
 sshkey_save_private_blob(struct sshbuf *keybuf, const char *filename)
 {
-	int r;
+	ціле r;
 	mode_t omask;
 
 	omask = umask(077);
 	r = sshbuf_write_file(filename, keybuf);
 	umask(omask);
-	return r;
+	повернути r;
 }
 
-int
+ціле
 sshkey_save_private(struct sshkey *key, const char *filename,
     const char *passphrase, const char *comment,
-    int format, const char *openssh_format_cipher, int openssh_format_rounds)
+    ціле format, const char *openssh_format_cipher, ціле openssh_format_rounds)
 {
 	struct sshbuf *keyblob = NULL;
-	int r;
+	ціле r;
 
-	if ((keyblob = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_private_to_fileblob(key, keyblob, passphrase, comment,
+	якщо ((keyblob = sshbuf_new()) == NULL)
+		повернути SSH_ERR_ALLOC_FAIL;
+	якщо ((r = sshkey_private_to_fileblob(key, keyblob, passphrase, comment,
 	    format, openssh_format_cipher, openssh_format_rounds)) != 0)
 		goto out;
-	if ((r = sshkey_save_private_blob(keyblob, filename)) != 0)
+	якщо ((r = sshkey_save_private_blob(keyblob, filename)) != 0)
 		goto out;
 	r = 0;
  out:
 	sshbuf_free(keyblob);
-	return r;
+	повернути r;
 }
 
 /* XXX remove error() calls from here? */
-int
-sshkey_perm_ok(int fd, const char *filename)
+ціле
+sshkey_perm_ok(ціле fd, const char *filename)
 {
 	struct stat st;
 
-	if (fstat(fd, &st) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	якщо (fstat(fd, &st) == -1)
+		повернути SSH_ERR_SYSTEM_ERROR;
 	/*
 	 * if a key owned by the user is accessed, then we check the
 	 * permissions of the file. if the key owned by a different user,
 	 * then we don't care.
 	 */
 #ifdef HAVE_CYGWIN
-	if (check_ntsec(filename))
+	якщо (check_ntsec(filename))
 #endif
-	if ((st.st_uid == getuid()) && (st.st_mode & 077) != 0) {
+	якщо ((st.st_uid == getuid()) && (st.st_mode & 077) != 0) {
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		error("@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @");
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -101,53 +101,53 @@ sshkey_perm_ok(int fd, const char *filename)
 		    (u_int)st.st_mode & 0777, filename);
 		error("It is required that your private key files are NOT accessible by others.");
 		error("This private key will be ignored.");
-		return SSH_ERR_KEY_BAD_PERMISSIONS;
+		повернути SSH_ERR_KEY_BAD_PERMISSIONS;
 	}
-	return 0;
+	повернути 0;
 }
 
-int
-sshkey_load_private_type(int type, const char *filename, const char *passphrase,
+ціле
+sshkey_load_private_type(ціле type, const char *filename, const char *passphrase,
     struct sshkey **keyp, char **commentp)
 {
-	int fd, r;
+	ціле fd, r;
 
-	if (keyp != NULL)
+	якщо (keyp != NULL)
 		*keyp = NULL;
-	if (commentp != NULL)
+	якщо (commentp != NULL)
 		*commentp = NULL;
 
-	if ((fd = open(filename, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	якщо ((fd = open(filename, O_RDONLY)) == -1)
+		повернути SSH_ERR_SYSTEM_ERROR;
 
 	r = sshkey_perm_ok(fd, filename);
-	if (r != 0)
+	якщо (r != 0)
 		goto out;
 
 	r = sshkey_load_private_type_fd(fd, type, passphrase, keyp, commentp);
  out:
 	close(fd);
-	return r;
+	повернути r;
 }
 
-int
+ціле
 sshkey_load_private(const char *filename, const char *passphrase,
     struct sshkey **keyp, char **commentp)
 {
-	return sshkey_load_private_type(KEY_UNSPEC, filename, passphrase,
+	повернути sshkey_load_private_type(KEY_UNSPEC, filename, passphrase,
 	    keyp, commentp);
 }
 
-int
-sshkey_load_private_type_fd(int fd, int type, const char *passphrase,
+ціле
+sshkey_load_private_type_fd(ціле fd, ціле type, const char *passphrase,
     struct sshkey **keyp, char **commentp)
 {
 	struct sshbuf *buffer = NULL;
-	int r;
+	ціле r;
 
-	if (keyp != NULL)
+	якщо (keyp != NULL)
 		*keyp = NULL;
-	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
+	якщо ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
 	    (r = sshkey_parse_private_fileblob_type(buffer, type,
 	    passphrase, keyp, commentp)) != 0)
 		goto out;
@@ -156,28 +156,28 @@ sshkey_load_private_type_fd(int fd, int type, const char *passphrase,
 	r = 0;
  out:
 	sshbuf_free(buffer);
-	return r;
+	повернути r;
 }
 
 /* Load a pubkey from the unencrypted envelope of a new-format private key */
-static int
+static ціле
 sshkey_load_pubkey_from_private(const char *filename, struct sshkey **pubkeyp)
 {
 	struct sshbuf *buffer = NULL;
 	struct sshkey *pubkey = NULL;
-	int r, fd;
+	ціле r, fd;
 
-	if (pubkeyp != NULL)
+	якщо (pubkeyp != NULL)
 		*pubkeyp = NULL;
 
-	if ((fd = open(filename, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
+	якщо ((fd = open(filename, O_RDONLY)) == -1)
+		повернути SSH_ERR_SYSTEM_ERROR;
+	якщо ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
 	    (r = sshkey_parse_pubkey_from_private_fileblob_type(buffer,
 	    KEY_UNSPEC, &pubkey)) != 0)
 		goto out;
 	/* success */
-	if (pubkeyp != NULL) {
+	якщо (pubkeyp != NULL) {
 		*pubkeyp = pubkey;
 		pubkey = NULL;
 	}
@@ -186,37 +186,37 @@ sshkey_load_pubkey_from_private(const char *filename, struct sshkey **pubkeyp)
 	close(fd);
 	sshbuf_free(buffer);
 	sshkey_free(pubkey);
-	return r;
+	повернути r;
 }
 
-static int
+static ціле
 sshkey_try_load_public(struct sshkey **kp, const char *filename,
     char **commentp)
 {
 	FILE *f;
 	char *line = NULL, *cp;
 	size_t linesize = 0;
-	int r;
+	ціле r;
 	struct stat st;
 	struct sshkey *k = NULL;
 
-	if (kp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	якщо (kp == NULL)
+		повернути SSH_ERR_INVALID_ARGUMENT;
 	*kp = NULL;
-	if (commentp != NULL)
+	якщо (commentp != NULL)
 		*commentp = NULL;
-	if ((f = fopen(filename, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (fstat(fileno(f), &st) == 0 && S_ISREG(st.st_mode) &&
+	якщо ((f = fopen(filename, "r")) == NULL)
+		повернути SSH_ERR_SYSTEM_ERROR;
+	якщо (fstat(fileno(f), &st) == 0 && S_ISREG(st.st_mode) &&
 	    st.st_size > SSHBUF_SIZE_MAX) {
 		fclose(f);
-		return SSH_ERR_INVALID_FORMAT;
+		повернути SSH_ERR_INVALID_FORMAT;
 	}
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL) {
+	якщо ((k = sshkey_new(KEY_UNSPEC)) == NULL) {
 		fclose(f);
-		return SSH_ERR_ALLOC_FAIL;
+		повернути SSH_ERR_ALLOC_FAIL;
 	}
-	while (getline(&line, &linesize, f) != -1) {
+	поки (getline(&line, &linesize, f) != -1) {
 		cp = line;
 		switch (*cp) {
 		case '#':
@@ -225,58 +225,58 @@ sshkey_try_load_public(struct sshkey **kp, const char *filename,
 			continue;
 		}
 		/* Abort loading if this looks like a private key */
-		if (strncmp(cp, "-----BEGIN", 10) == 0 ||
+		якщо (strncmp(cp, "-----BEGIN", 10) == 0 ||
 		    strcmp(cp, "SSH PRIVATE KEY FILE") == 0)
 			break;
 		/* Skip leading whitespace. */
-		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
+		для (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
 			;
-		if (*cp) {
-			if ((r = sshkey_read(k, &cp)) == 0) {
+		якщо (*cp) {
+			якщо ((r = sshkey_read(k, &cp)) == 0) {
 				cp[strcspn(cp, "\r\n")] = '\0';
-				if (commentp) {
+				якщо (commentp) {
 					*commentp = strdup(*cp ?
 					    cp : filename);
-					if (*commentp == NULL)
+					якщо (*commentp == NULL)
 						r = SSH_ERR_ALLOC_FAIL;
 				}
 				/* success */
 				*kp = k;
 				free(line);
 				fclose(f);
-				return r;
+				повернути r;
 			}
 		}
 	}
 	free(k);
 	free(line);
 	fclose(f);
-	return SSH_ERR_INVALID_FORMAT;
+	повернути SSH_ERR_INVALID_FORMAT;
 }
 
 /* load public key from any pubkey file */
-int
+ціле
 sshkey_load_public(const char *filename, struct sshkey **keyp, char **commentp)
 {
 	char *pubfile = NULL;
-	int r, oerrno;
+	ціле r, oerrno;
 
-	if (keyp != NULL)
+	якщо (keyp != NULL)
 		*keyp = NULL;
-	if (commentp != NULL)
+	якщо (commentp != NULL)
 		*commentp = NULL;
 
-	if ((r = sshkey_try_load_public(keyp, filename, commentp)) == 0)
+	якщо ((r = sshkey_try_load_public(keyp, filename, commentp)) == 0)
 		goto out;
 
 	/* try .pub suffix */
-	if (asprintf(&pubfile, "%s.pub", filename) == -1)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_try_load_public(keyp, pubfile, commentp)) == 0)
+	якщо (asprintf(&pubfile, "%s.pub", filename) == -1)
+		повернути SSH_ERR_ALLOC_FAIL;
+	якщо ((r = sshkey_try_load_public(keyp, pubfile, commentp)) == 0)
 		goto out;
 
 	/* finally, try to extract public key from private key file */
-	if ((r = sshkey_load_pubkey_from_private(filename, keyp)) == 0)
+	якщо ((r = sshkey_load_pubkey_from_private(filename, keyp)) == 0)
 		goto out;
 
 	/* Pretend we couldn't find the key */
@@ -287,38 +287,38 @@ sshkey_load_public(const char *filename, struct sshkey **keyp, char **commentp)
 	oerrno = errno;
 	free(pubfile);
 	errno = oerrno;
-	return r;
+	повернути r;
 }
 
 /* Load the certificate associated with the named private key */
-int
+ціле
 sshkey_load_cert(const char *filename, struct sshkey **keyp)
 {
 	struct sshkey *pub = NULL;
 	char *file = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ціле r = SSH_ERR_INTERNAL_ERROR;
 
-	if (keyp != NULL)
+	якщо (keyp != NULL)
 		*keyp = NULL;
 
-	if (asprintf(&file, "%s-cert.pub", filename) == -1)
-		return SSH_ERR_ALLOC_FAIL;
+	якщо (asprintf(&file, "%s-cert.pub", filename) == -1)
+		повернути SSH_ERR_ALLOC_FAIL;
 
 	r = sshkey_try_load_public(keyp, file, NULL);
 	free(file);
 	sshkey_free(pub);
-	return r;
+	повернути r;
 }
 
 /* Load private key and certificate */
-int
-sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
+ціле
+sshkey_load_private_cert(ціле type, const char *filename, const char *passphrase,
     struct sshkey **keyp)
 {
 	struct sshkey *key = NULL, *cert = NULL;
-	int r;
+	ціле r;
 
-	if (keyp != NULL)
+	якщо (keyp != NULL)
 		*keyp = NULL;
 
 	switch (type) {
@@ -331,32 +331,32 @@ sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
 	case KEY_UNSPEC:
 		break;
 	default:
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+		повернути SSH_ERR_KEY_TYPE_UNKNOWN;
 	}
 
-	if ((r = sshkey_load_private_type(type, filename,
+	якщо ((r = sshkey_load_private_type(type, filename,
 	    passphrase, &key, NULL)) != 0 ||
 	    (r = sshkey_load_cert(filename, &cert)) != 0)
 		goto out;
 
 	/* Make sure the private key matches the certificate */
-	if (sshkey_equal_public(key, cert) == 0) {
+	якщо (sshkey_equal_public(key, cert) == 0) {
 		r = SSH_ERR_KEY_CERT_MISMATCH;
 		goto out;
 	}
 
-	if ((r = sshkey_to_certified(key)) != 0 ||
+	якщо ((r = sshkey_to_certified(key)) != 0 ||
 	    (r = sshkey_cert_copy(cert, key)) != 0)
 		goto out;
 	r = 0;
-	if (keyp != NULL) {
+	якщо (keyp != NULL) {
 		*keyp = key;
 		key = NULL;
 	}
  out:
 	sshkey_free(key);
 	sshkey_free(cert);
-	return r;
+	повернути r;
 }
 
 /*
@@ -367,29 +367,29 @@ sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
  * If "check_ca" is set and "key" is a certificate, then its CA key is
  * also checked and sshkey_in_file() will return success if either is found.
  */
-int
-sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
-    int check_ca)
+ціле
+sshkey_in_file(struct sshkey *key, const char *filename, ціле strict_type,
+    ціле check_ca)
 {
 	FILE *f;
 	char *line = NULL, *cp;
 	size_t linesize = 0;
-	int r = 0;
+	ціле r = 0;
 	struct sshkey *pub = NULL;
 
-	int (*sshkey_compare)(const struct sshkey *, const struct sshkey *) =
+	ціле (*sshkey_compare)(const struct sshkey *, const struct sshkey *) =
 	    strict_type ?  sshkey_equal : sshkey_equal_public;
 
-	if ((f = fopen(filename, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
+	якщо ((f = fopen(filename, "r")) == NULL)
+		повернути SSH_ERR_SYSTEM_ERROR;
 
-	while (getline(&line, &linesize, f) != -1) {
+	поки (getline(&line, &linesize, f) != -1) {
 		sshkey_free(pub);
 		pub = NULL;
 		cp = line;
 
 		/* Skip leading whitespace. */
-		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
+		для (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
 			;
 
 		/* Skip comments and empty lines */
@@ -400,7 +400,7 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
 			continue;
 		}
 
-		if ((pub = sshkey_new(KEY_UNSPEC)) == NULL) {
+		якщо ((pub = sshkey_new(KEY_UNSPEC)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
@@ -412,7 +412,7 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
 		default:
 			goto out;
 		}
-		if (sshkey_compare(key, pub) ||
+		якщо (sshkey_compare(key, pub) ||
 		    (check_ca && sshkey_is_cert(key) &&
 		    sshkey_compare(key->cert->signature_key, pub))) {
 			r = 0;
@@ -424,7 +424,7 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
 	free(line);
 	sshkey_free(pub);
 	fclose(f);
-	return r;
+	повернути r;
 }
 
 /*
@@ -434,15 +434,15 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
  * This will check both the key and, if it is a certificate, its CA key too.
  * "revoked_keys_file" may be a KRL or a one-per-line list of public keys.
  */
-int
+ціле
 sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
 {
-	int r;
+	ціле r;
 
 	r = ssh_krl_file_contains_key(revoked_keys_file, key);
 	/* If this was not a KRL to begin with then continue below */
-	if (r != SSH_ERR_KRL_BAD_MAGIC)
-		return r;
+	якщо (r != SSH_ERR_KRL_BAD_MAGIC)
+		повернути r;
 
 	/*
 	 * If the file is not a KRL or we can't handle KRLs then attempt to
@@ -451,13 +451,13 @@ sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
 	switch ((r = sshkey_in_file(key, revoked_keys_file, 0, 1))) {
 	case 0:
 		/* Key found => revoked */
-		return SSH_ERR_KEY_REVOKED;
+		повернути SSH_ERR_KEY_REVOKED;
 	case SSH_ERR_KEY_NOT_FOUND:
 		/* Key not found => not revoked */
-		return 0;
+		повернути 0;
 	default:
 		/* Some other error occurred */
-		return r;
+		повернути r;
 	}
 }
 
@@ -466,56 +466,56 @@ sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
  * whitespace character. Returns 0 on success or -1 on failure (e.g.
  * unterminated quotes).
  */
-int
+ціле
 sshkey_advance_past_options(char **cpp)
 {
 	char *cp = *cpp;
-	int quoted = 0;
+	ціле quoted = 0;
 
-	for (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
-		if (*cp == '\\' && cp[1] == '"')
+	для (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
+		якщо (*cp == '\\' && cp[1] == '"')
 			cp++;	/* Skip both */
-		else if (*cp == '"')
+		інакше якщо (*cp == '"')
 			quoted = !quoted;
 	}
 	*cpp = cp;
 	/* return failure for unterminated quotes */
-	return (*cp == '\0' && quoted) ? -1 : 0;
+	повернути (*cp == '\0' && quoted) ? -1 : 0;
 }
 
 /* Save a public key */
-int
+ціле
 sshkey_save_public(const struct sshkey *key, const char *path,
     const char *comment)
 {
-	int fd, oerrno;
+	ціле fd, oerrno;
 	FILE *f = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ціле r = SSH_ERR_INTERNAL_ERROR;
 
-	if ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((f = fdopen(fd, "w")) == NULL) {
+	якщо ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1)
+		повернути SSH_ERR_SYSTEM_ERROR;
+	якщо ((f = fdopen(fd, "w")) == NULL) {
 		r = SSH_ERR_SYSTEM_ERROR;
 		close(fd);
 		goto fail;
 	}
-	if ((r = sshkey_write(key, f)) != 0)
+	якщо ((r = sshkey_write(key, f)) != 0)
 		goto fail;
 	fprintf(f, " %s\n", comment);
-	if (ferror(f)) {
+	якщо (ferror(f)) {
 		r = SSH_ERR_SYSTEM_ERROR;
 		goto fail;
 	}
-	if (fclose(f) != 0) {
+	якщо (fclose(f) != 0) {
 		r = SSH_ERR_SYSTEM_ERROR;
 		f = NULL;
  fail:
-		if (f != NULL) {
+		якщо (f != NULL) {
 			oerrno = errno;
 			fclose(f);
 			errno = oerrno;
 		}
-		return r;
+		повернути r;
 	}
-	return 0;
+	повернути 0;
 }

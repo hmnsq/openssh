@@ -73,31 +73,31 @@ extern login_cap_t *lc;
  * Tries to authenticate the user using password.  Returns true if
  * authentication succeeds.
  */
-int
+ціле
 auth_password(struct ssh *ssh, const char *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	struct passwd *pw = authctxt->pw;
-	int result, ok = authctxt->valid;
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
-	static int expire_checked = 0;
+	ціле result, ok = authctxt->valid;
+#якщо defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+	static ціле expire_checked = 0;
 #endif
 
-	if (strlen(password) > MAX_PASSWORD_LEN)
-		return 0;
+	якщо (strlen(password) > MAX_PASSWORD_LEN)
+		повернути 0;
 
 #ifndef HAVE_CYGWIN
-	if (pw->pw_uid == 0 && options.permit_root_login != PERMIT_YES)
+	якщо (pw->pw_uid == 0 && options.permit_root_login != PERMIT_YES)
 		ok = 0;
 #endif
-	if (*password == '\0' && options.permit_empty_passwd == 0)
-		return 0;
+	якщо (*password == '\0' && options.permit_empty_passwd == 0)
+		повернути 0;
 
 #ifdef KRB5
-	if (options.kerberos_authentication == 1) {
-		int ret = auth_krb5_password(authctxt, password);
-		if (ret == 1 || ret == 0)
-			return ret && ok;
+	якщо (options.kerberos_authentication == 1) {
+		ціле ret = auth_krb5_password(authctxt, password);
+		якщо (ret == 1 || ret == 0)
+			повернути ret && ok;
 		/* Fall back to ordinary passwd authentication. */
 	}
 #endif
@@ -105,34 +105,34 @@ auth_password(struct ssh *ssh, const char *password)
 	{
 		HANDLE hToken = cygwin_logon_user(pw, password);
 
-		if (hToken == INVALID_HANDLE_VALUE)
-			return 0;
+		якщо (hToken == INVALID_HANDLE_VALUE)
+			повернути 0;
 		cygwin_set_impersonation_token(hToken);
-		return ok;
+		повернути ok;
 	}
 #endif
 #ifdef USE_PAM
-	if (options.use_pam)
-		return (sshpam_auth_passwd(authctxt, password) && ok);
+	якщо (options.use_pam)
+		повернути (sshpam_auth_passwd(authctxt, password) && ok);
 #endif
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
-	if (!expire_checked) {
+#якщо defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+	якщо (!expire_checked) {
 		expire_checked = 1;
-		if (auth_shadow_pwexpired(authctxt))
+		якщо (auth_shadow_pwexpired(authctxt))
 			authctxt->force_pwchange = 1;
 	}
 #endif
 	result = sys_auth_passwd(ssh, password);
-	if (authctxt->force_pwchange)
+	якщо (authctxt->force_pwchange)
 		auth_restrict_session(ssh);
-	return (result && ok);
+	повернути (result && ok);
 }
 
 #ifdef BSD_AUTH
 static void
 warn_expiry(Authctxt *authctxt, auth_session_t *as)
 {
-	int r;
+	ціле r;
 	int64_t pwtimeleft, actimeleft, daysleft, pwwarntime, acwarntime;
 
 	pwwarntime = acwarntime = TWO_WEEKS;
@@ -140,55 +140,55 @@ warn_expiry(Authctxt *authctxt, auth_session_t *as)
 	pwtimeleft = auth_check_change(as);
 	actimeleft = auth_check_expire(as);
 #ifdef HAVE_LOGIN_CAP
-	if (authctxt->valid) {
+	якщо (authctxt->valid) {
 		pwwarntime = login_getcaptime(lc, "password-warn", TWO_WEEKS,
 		    TWO_WEEKS);
 		acwarntime = login_getcaptime(lc, "expire-warn", TWO_WEEKS,
 		    TWO_WEEKS);
 	}
 #endif
-	if (pwtimeleft != 0 && pwtimeleft < pwwarntime) {
+	якщо (pwtimeleft != 0 && pwtimeleft < pwwarntime) {
 		daysleft = pwtimeleft / DAY + 1;
-		if ((r = sshbuf_putf(loginmsg,
+		якщо ((r = sshbuf_putf(loginmsg,
 		    "Your password will expire in %lld day%s.\n",
 		    daysleft, daysleft == 1 ? "" : "s")) != 0)
 			fatal_fr(r, "buffer error");
 	}
-	if (actimeleft != 0 && actimeleft < acwarntime) {
+	якщо (actimeleft != 0 && actimeleft < acwarntime) {
 		daysleft = actimeleft / DAY + 1;
-		if ((r = sshbuf_putf(loginmsg,
+		якщо ((r = sshbuf_putf(loginmsg,
 		    "Your account will expire in %lld day%s.\n",
 		    daysleft, daysleft == 1 ? "" : "s")) != 0)
 			fatal_fr(r, "buffer error");
 	}
 }
 
-int
+ціле
 sys_auth_passwd(struct ssh *ssh, const char *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	auth_session_t *as;
-	static int expire_checked = 0;
+	static ціле expire_checked = 0;
 
 	as = auth_usercheck(authctxt->pw->pw_name, authctxt->style, "auth-ssh",
 	    (char *)password);
-	if (as == NULL)
-		return (0);
-	if (auth_getstate(as) & AUTH_PWEXPIRED) {
+	якщо (as == NULL)
+		повернути (0);
+	якщо (auth_getstate(as) & AUTH_PWEXPIRED) {
 		auth_close(as);
 		auth_restrict_session(ssh);
 		authctxt->force_pwchange = 1;
-		return (1);
-	} else {
-		if (!expire_checked) {
+		повернути (1);
+	} інакше {
+		якщо (!expire_checked) {
 			expire_checked = 1;
 			warn_expiry(authctxt, as);
 		}
-		return (auth_close(as));
+		повернути (auth_close(as));
 	}
 }
 #elif !defined(CUSTOM_SYS_AUTH_PASSWD)
-int
+ціле
 sys_auth_passwd(struct ssh *ssh, const char *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
@@ -198,18 +198,18 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 	/* Just use the supplied fake password if authctxt is invalid */
 	char *pw_password = authctxt->valid ? shadow_pw(pw) : pw->pw_passwd;
 
-	if (pw_password == NULL)
-		return 0;
+	якщо (pw_password == NULL)
+		повернути 0;
 
 	/* Check for users with no password. */
-	if (strcmp(pw_password, "") == 0 && strcmp(password, "") == 0)
-		return (1);
+	якщо (strcmp(pw_password, "") == 0 && strcmp(password, "") == 0)
+		повернути (1);
 
 	/*
 	 * Encrypt the candidate password using the proper salt, or pass a
 	 * NULL and let xcrypt pick one.
 	 */
-	if (authctxt->valid && pw_password[0] && pw_password[1])
+	якщо (authctxt->valid && pw_password[0] && pw_password[1])
 		salt = pw_password;
 	encrypted_password = xcrypt(password, salt);
 
@@ -217,7 +217,7 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 	 * Authentication is accepted if the encrypted passwords
 	 * are identical.
 	 */
-	return encrypted_password != NULL &&
+	повернути encrypted_password != NULL &&
 	    strcmp(encrypted_password, pw_password) == 0;
 }
 #endif

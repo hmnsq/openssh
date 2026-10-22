@@ -173,10 +173,10 @@
  * For details on the use of these macros, see the queue(3) manual page.
  */
 
-#if defined(QUEUE_MACRO_DEBUG) || (defined(_KERNEL) && defined(DIAGNOSTIC))
+#якщо defined(QUEUE_MACRO_DEBUG) || (defined(_KERNEL) && defined(DIAGNOSTIC))
 #define _Q_INVALID ((void *)-1)
 #define _Q_INVALIDATE(a) (a) = _Q_INVALID
-#else
+#інакше
 #define _Q_INVALIDATE(a)
 #endif
 
@@ -205,12 +205,12 @@ struct {								\
 #define	SLIST_NEXT(elm, field)	((elm)->field.sle_next)
 
 #define	SLIST_FOREACH(var, head, field)					\
-	for((var) = SLIST_FIRST(head);					\
+	для((var) = SLIST_FIRST(head);					\
 	    (var) != SLIST_END(head);					\
 	    (var) = SLIST_NEXT(var, field))
 
 #define	SLIST_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = SLIST_FIRST(head);				\
+	для ((var) = SLIST_FIRST(head);				\
 	    (var) && ((tvar) = SLIST_NEXT(var, field), 1);		\
 	    (var) = (tvar))
 
@@ -224,34 +224,34 @@ struct {								\
 #define	SLIST_INSERT_AFTER(slistelm, elm, field) do {			\
 	(elm)->field.sle_next = (slistelm)->field.sle_next;		\
 	(slistelm)->field.sle_next = (elm);				\
-} while (0)
+} поки (0)
 
 #define	SLIST_INSERT_HEAD(head, elm, field) do {			\
 	(elm)->field.sle_next = (head)->slh_first;			\
 	(head)->slh_first = (elm);					\
-} while (0)
+} поки (0)
 
 #define	SLIST_REMOVE_AFTER(elm, field) do {				\
 	(elm)->field.sle_next = (elm)->field.sle_next->field.sle_next;	\
-} while (0)
+} поки (0)
 
 #define	SLIST_REMOVE_HEAD(head, field) do {				\
 	(head)->slh_first = (head)->slh_first->field.sle_next;		\
-} while (0)
+} поки (0)
 
 #define SLIST_REMOVE(head, elm, type, field) do {			\
-	if ((head)->slh_first == (elm)) {				\
+	якщо ((head)->slh_first == (elm)) {				\
 		SLIST_REMOVE_HEAD((head), field);			\
-	} else {							\
+	} інакше {							\
 		struct type *curelm = (head)->slh_first;		\
 									\
-		while (curelm->field.sle_next != (elm))			\
+		поки (curelm->field.sle_next != (elm))			\
 			curelm = curelm->field.sle_next;		\
 		curelm->field.sle_next =				\
 		    curelm->field.sle_next->field.sle_next;		\
 	}								\
 	_Q_INVALIDATE((elm)->field.sle_next);				\
-} while (0)
+} поки (0)
 
 /*
  * List definitions.
@@ -279,12 +279,12 @@ struct {								\
 #define	LIST_NEXT(elm, field)		((elm)->field.le_next)
 
 #define LIST_FOREACH(var, head, field)					\
-	for((var) = LIST_FIRST(head);					\
+	для((var) = LIST_FIRST(head);					\
 	    (var)!= LIST_END(head);					\
 	    (var) = LIST_NEXT(var, field))
 
 #define	LIST_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = LIST_FIRST(head);				\
+	для ((var) = LIST_FIRST(head);				\
 	    (var) && ((tvar) = LIST_NEXT(var, field), 1);		\
 	    (var) = (tvar))
 
@@ -293,48 +293,48 @@ struct {								\
  */
 #define	LIST_INIT(head) do {						\
 	LIST_FIRST(head) = LIST_END(head);				\
-} while (0)
+} поки (0)
 
 #define LIST_INSERT_AFTER(listelm, elm, field) do {			\
-	if (((elm)->field.le_next = (listelm)->field.le_next) != NULL)	\
+	якщо (((elm)->field.le_next = (listelm)->field.le_next) != NULL)	\
 		(listelm)->field.le_next->field.le_prev =		\
 		    &(elm)->field.le_next;				\
 	(listelm)->field.le_next = (elm);				\
 	(elm)->field.le_prev = &(listelm)->field.le_next;		\
-} while (0)
+} поки (0)
 
 #define	LIST_INSERT_BEFORE(listelm, elm, field) do {			\
 	(elm)->field.le_prev = (listelm)->field.le_prev;		\
 	(elm)->field.le_next = (listelm);				\
 	*(listelm)->field.le_prev = (elm);				\
 	(listelm)->field.le_prev = &(elm)->field.le_next;		\
-} while (0)
+} поки (0)
 
 #define LIST_INSERT_HEAD(head, elm, field) do {				\
-	if (((elm)->field.le_next = (head)->lh_first) != NULL)		\
+	якщо (((elm)->field.le_next = (head)->lh_first) != NULL)		\
 		(head)->lh_first->field.le_prev = &(elm)->field.le_next;\
 	(head)->lh_first = (elm);					\
 	(elm)->field.le_prev = &(head)->lh_first;			\
-} while (0)
+} поки (0)
 
 #define LIST_REMOVE(elm, field) do {					\
-	if ((elm)->field.le_next != NULL)				\
+	якщо ((elm)->field.le_next != NULL)				\
 		(elm)->field.le_next->field.le_prev =			\
 		    (elm)->field.le_prev;				\
 	*(elm)->field.le_prev = (elm)->field.le_next;			\
 	_Q_INVALIDATE((elm)->field.le_prev);				\
 	_Q_INVALIDATE((elm)->field.le_next);				\
-} while (0)
+} поки (0)
 
 #define LIST_REPLACE(elm, elm2, field) do {				\
-	if (((elm2)->field.le_next = (elm)->field.le_next) != NULL)	\
+	якщо (((elm2)->field.le_next = (elm)->field.le_next) != NULL)	\
 		(elm2)->field.le_next->field.le_prev =			\
 		    &(elm2)->field.le_next;				\
 	(elm2)->field.le_prev = (elm)->field.le_prev;			\
 	*(elm2)->field.le_prev = (elm2);				\
 	_Q_INVALIDATE((elm)->field.le_prev);				\
 	_Q_INVALIDATE((elm)->field.le_next);				\
-} while (0)
+} поки (0)
 
 /*
  * Simple queue definitions.
@@ -362,12 +362,12 @@ struct {								\
 #define	SIMPLEQ_NEXT(elm, field)    ((elm)->field.sqe_next)
 
 #define SIMPLEQ_FOREACH(var, head, field)				\
-	for((var) = SIMPLEQ_FIRST(head);				\
+	для((var) = SIMPLEQ_FIRST(head);				\
 	    (var) != SIMPLEQ_END(head);					\
 	    (var) = SIMPLEQ_NEXT(var, field))
 
 #define	SIMPLEQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = SIMPLEQ_FIRST(head);				\
+	для ((var) = SIMPLEQ_FIRST(head);				\
 	    (var) && ((tvar) = SIMPLEQ_NEXT(var, field), 1);		\
 	    (var) = (tvar))
 
@@ -377,44 +377,44 @@ struct {								\
 #define	SIMPLEQ_INIT(head) do {						\
 	(head)->sqh_first = NULL;					\
 	(head)->sqh_last = &(head)->sqh_first;				\
-} while (0)
+} поки (0)
 
 #define SIMPLEQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.sqe_next = (head)->sqh_first) == NULL)	\
+	якщо (((elm)->field.sqe_next = (head)->sqh_first) == NULL)	\
 		(head)->sqh_last = &(elm)->field.sqe_next;		\
 	(head)->sqh_first = (elm);					\
-} while (0)
+} поки (0)
 
 #define SIMPLEQ_INSERT_TAIL(head, elm, field) do {			\
 	(elm)->field.sqe_next = NULL;					\
 	*(head)->sqh_last = (elm);					\
 	(head)->sqh_last = &(elm)->field.sqe_next;			\
-} while (0)
+} поки (0)
 
 #define SIMPLEQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.sqe_next = (listelm)->field.sqe_next) == NULL)\
+	якщо (((elm)->field.sqe_next = (listelm)->field.sqe_next) == NULL)\
 		(head)->sqh_last = &(elm)->field.sqe_next;		\
 	(listelm)->field.sqe_next = (elm);				\
-} while (0)
+} поки (0)
 
 #define SIMPLEQ_REMOVE_HEAD(head, field) do {			\
-	if (((head)->sqh_first = (head)->sqh_first->field.sqe_next) == NULL) \
+	якщо (((head)->sqh_first = (head)->sqh_first->field.sqe_next) == NULL) \
 		(head)->sqh_last = &(head)->sqh_first;			\
-} while (0)
+} поки (0)
 
 #define SIMPLEQ_REMOVE_AFTER(head, elm, field) do {			\
-	if (((elm)->field.sqe_next = (elm)->field.sqe_next->field.sqe_next) \
+	якщо (((elm)->field.sqe_next = (elm)->field.sqe_next->field.sqe_next) \
 	    == NULL)							\
 		(head)->sqh_last = &(elm)->field.sqe_next;		\
-} while (0)
+} поки (0)
 
 #define SIMPLEQ_CONCAT(head1, head2) do {				\
-	if (!SIMPLEQ_EMPTY((head2))) {					\
+	якщо (!SIMPLEQ_EMPTY((head2))) {					\
 		*(head1)->sqh_last = (head2)->sqh_first;		\
 		(head1)->sqh_last = (head2)->sqh_last;			\
 		SIMPLEQ_INIT((head2));					\
 	}								\
-} while (0)
+} поки (0)
 
 /*
  * XOR Simple queue definitions.
@@ -443,12 +443,12 @@ struct {								\
 
 
 #define XSIMPLEQ_FOREACH(var, head, field)				\
-	for ((var) = XSIMPLEQ_FIRST(head);				\
+	для ((var) = XSIMPLEQ_FIRST(head);				\
 	    (var) != XSIMPLEQ_END(head);				\
 	    (var) = XSIMPLEQ_NEXT(head, var, field))
 
 #define	XSIMPLEQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = XSIMPLEQ_FIRST(head);				\
+	для ((var) = XSIMPLEQ_FIRST(head);				\
 	    (var) && ((tvar) = XSIMPLEQ_NEXT(head, var, field), 1);	\
 	    (var) = (tvar))
 
@@ -459,41 +459,41 @@ struct {								\
 	arc4random_buf(&(head)->sqx_cookie, sizeof((head)->sqx_cookie)); \
 	(head)->sqx_first = XSIMPLEQ_XOR(head, NULL);			\
 	(head)->sqx_last = XSIMPLEQ_XOR(head, &(head)->sqx_first);	\
-} while (0)
+} поки (0)
 
 #define XSIMPLEQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.sqx_next = (head)->sqx_first) ==		\
+	якщо (((elm)->field.sqx_next = (head)->sqx_first) ==		\
 	    XSIMPLEQ_XOR(head, NULL))					\
 		(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next); \
 	(head)->sqx_first = XSIMPLEQ_XOR(head, (elm));			\
-} while (0)
+} поки (0)
 
 #define XSIMPLEQ_INSERT_TAIL(head, elm, field) do {			\
 	(elm)->field.sqx_next = XSIMPLEQ_XOR(head, NULL);		\
 	*(XSIMPLEQ_XOR(head, (head)->sqx_last)) = XSIMPLEQ_XOR(head, (elm)); \
 	(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next);	\
-} while (0)
+} поки (0)
 
 #define XSIMPLEQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.sqx_next = (listelm)->field.sqx_next) ==	\
+	якщо (((elm)->field.sqx_next = (listelm)->field.sqx_next) ==	\
 	    XSIMPLEQ_XOR(head, NULL))					\
 		(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next); \
 	(listelm)->field.sqx_next = XSIMPLEQ_XOR(head, (elm));		\
-} while (0)
+} поки (0)
 
 #define XSIMPLEQ_REMOVE_HEAD(head, field) do {				\
-	if (((head)->sqx_first = XSIMPLEQ_XOR(head,			\
+	якщо (((head)->sqx_first = XSIMPLEQ_XOR(head,			\
 	    (head)->sqx_first)->field.sqx_next) == XSIMPLEQ_XOR(head, NULL)) \
 		(head)->sqx_last = XSIMPLEQ_XOR(head, &(head)->sqx_first); \
-} while (0)
+} поки (0)
 
 #define XSIMPLEQ_REMOVE_AFTER(head, elm, field) do {			\
-	if (((elm)->field.sqx_next = XSIMPLEQ_XOR(head,			\
+	якщо (((elm)->field.sqx_next = XSIMPLEQ_XOR(head,			\
 	    (elm)->field.sqx_next)->field.sqx_next)			\
 	    == XSIMPLEQ_XOR(head, NULL))				\
 		(head)->sqx_last = 					\
 		    XSIMPLEQ_XOR(head, &(elm)->field.sqx_next);		\
-} while (0)
+} поки (0)
 
 
 /*
@@ -529,24 +529,24 @@ struct {								\
 	(TAILQ_FIRST(head) == TAILQ_END(head))
 
 #define TAILQ_FOREACH(var, head, field)					\
-	for((var) = TAILQ_FIRST(head);					\
+	для((var) = TAILQ_FIRST(head);					\
 	    (var) != TAILQ_END(head);					\
 	    (var) = TAILQ_NEXT(var, field))
 
 #define	TAILQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = TAILQ_FIRST(head);					\
+	для ((var) = TAILQ_FIRST(head);					\
 	    (var) != TAILQ_END(head) &&					\
 	    ((tvar) = TAILQ_NEXT(var, field), 1);			\
 	    (var) = (tvar))
 
 
 #define TAILQ_FOREACH_REVERSE(var, head, headname, field)		\
-	for((var) = TAILQ_LAST(head, headname);				\
+	для((var) = TAILQ_LAST(head, headname);				\
 	    (var) != TAILQ_END(head);					\
 	    (var) = TAILQ_PREV(var, headname, field))
 
 #define	TAILQ_FOREACH_REVERSE_SAFE(var, head, headname, field, tvar)	\
-	for ((var) = TAILQ_LAST(head, headname);			\
+	для ((var) = TAILQ_LAST(head, headname);			\
 	    (var) != TAILQ_END(head) &&					\
 	    ((tvar) = TAILQ_PREV(var, headname, field), 1);		\
 	    (var) = (tvar))
@@ -557,72 +557,72 @@ struct {								\
 #define	TAILQ_INIT(head) do {						\
 	(head)->tqh_first = NULL;					\
 	(head)->tqh_last = &(head)->tqh_first;				\
-} while (0)
+} поки (0)
 
 #define TAILQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.tqe_next = (head)->tqh_first) != NULL)	\
+	якщо (((elm)->field.tqe_next = (head)->tqh_first) != NULL)	\
 		(head)->tqh_first->field.tqe_prev =			\
 		    &(elm)->field.tqe_next;				\
-	else								\
+	інакше								\
 		(head)->tqh_last = &(elm)->field.tqe_next;		\
 	(head)->tqh_first = (elm);					\
 	(elm)->field.tqe_prev = &(head)->tqh_first;			\
-} while (0)
+} поки (0)
 
 #define TAILQ_INSERT_TAIL(head, elm, field) do {			\
 	(elm)->field.tqe_next = NULL;					\
 	(elm)->field.tqe_prev = (head)->tqh_last;			\
 	*(head)->tqh_last = (elm);					\
 	(head)->tqh_last = &(elm)->field.tqe_next;			\
-} while (0)
+} поки (0)
 
 #define TAILQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.tqe_next = (listelm)->field.tqe_next) != NULL)\
+	якщо (((elm)->field.tqe_next = (listelm)->field.tqe_next) != NULL)\
 		(elm)->field.tqe_next->field.tqe_prev =			\
 		    &(elm)->field.tqe_next;				\
-	else								\
+	інакше								\
 		(head)->tqh_last = &(elm)->field.tqe_next;		\
 	(listelm)->field.tqe_next = (elm);				\
 	(elm)->field.tqe_prev = &(listelm)->field.tqe_next;		\
-} while (0)
+} поки (0)
 
 #define	TAILQ_INSERT_BEFORE(listelm, elm, field) do {			\
 	(elm)->field.tqe_prev = (listelm)->field.tqe_prev;		\
 	(elm)->field.tqe_next = (listelm);				\
 	*(listelm)->field.tqe_prev = (elm);				\
 	(listelm)->field.tqe_prev = &(elm)->field.tqe_next;		\
-} while (0)
+} поки (0)
 
 #define TAILQ_REMOVE(head, elm, field) do {				\
-	if (((elm)->field.tqe_next) != NULL)				\
+	якщо (((elm)->field.tqe_next) != NULL)				\
 		(elm)->field.tqe_next->field.tqe_prev =			\
 		    (elm)->field.tqe_prev;				\
-	else								\
+	інакше								\
 		(head)->tqh_last = (elm)->field.tqe_prev;		\
 	*(elm)->field.tqe_prev = (elm)->field.tqe_next;			\
 	_Q_INVALIDATE((elm)->field.tqe_prev);				\
 	_Q_INVALIDATE((elm)->field.tqe_next);				\
-} while (0)
+} поки (0)
 
 #define TAILQ_REPLACE(head, elm, elm2, field) do {			\
-	if (((elm2)->field.tqe_next = (elm)->field.tqe_next) != NULL)	\
+	якщо (((elm2)->field.tqe_next = (elm)->field.tqe_next) != NULL)	\
 		(elm2)->field.tqe_next->field.tqe_prev =		\
 		    &(elm2)->field.tqe_next;				\
-	else								\
+	інакше								\
 		(head)->tqh_last = &(elm2)->field.tqe_next;		\
 	(elm2)->field.tqe_prev = (elm)->field.tqe_prev;			\
 	*(elm2)->field.tqe_prev = (elm2);				\
 	_Q_INVALIDATE((elm)->field.tqe_prev);				\
 	_Q_INVALIDATE((elm)->field.tqe_next);				\
-} while (0)
+} поки (0)
 
 #define TAILQ_CONCAT(head1, head2, field) do {				\
-	if (!TAILQ_EMPTY(head2)) {					\
+	якщо (!TAILQ_EMPTY(head2)) {					\
 		*(head1)->tqh_last = (head2)->tqh_first;		\
 		(head2)->tqh_first->field.tqe_prev = (head1)->tqh_last;	\
 		(head1)->tqh_last = (head2)->tqh_last;			\
 		TAILQ_INIT((head2));					\
 	}								\
-} while (0)
+} поки (0)
 
 #endif	/* !_SYS_QUEUE_H_ */

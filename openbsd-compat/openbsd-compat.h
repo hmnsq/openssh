@@ -49,14 +49,14 @@
 #include "fnmatch.h"
 
 #ifndef __THROW
-# if defined __cplusplus
+# якщо defined __cplusplus
 #  define __THROW throw()
-# else
+# інакше
 #  define __THROW
 # endif
 #endif
 
-#if defined(HAVE_LOGIN_CAP) && !defined(HAVE_LOGIN_GETPWCLASS)
+#якщо defined(HAVE_LOGIN_CAP) && !defined(HAVE_LOGIN_GETPWCLASS)
 # include <login_cap.h>
 # define login_getpwclass(pw) login_getclass(pw->pw_class)
 #endif
@@ -66,15 +66,15 @@ char *basename(const char *path);
 #endif
 
 #ifndef HAVE_BINDRESVPORT_SA
-int bindresvport_sa(int sd, struct sockaddr *sa);
+ціле bindresvport_sa(ціле sd, struct sockaddr *sa);
 #endif
 
 #ifndef HAVE_CLOSEFROM
-void closefrom(int);
+void closefrom(ціле);
 #endif
 
-#if defined(HAVE_DECL_FTRUNCATE) && HAVE_DECL_FTRUNCATE == 0
-int ftruncate(int filedes, off_t length);
+#якщо defined(HAVE_DECL_FTRUNCATE) && HAVE_DECL_FTRUNCATE == 0
+ціле ftruncate(ціле filedes, off_t length);
 #endif
 
 #ifndef HAVE_GETLINE
@@ -83,7 +83,7 @@ ssize_t getline(char **, size_t *, FILE *);
 #endif
 
 #ifndef HAVE_GETPAGESIZE
-int getpagesize(void);
+ціле getpagesize(void);
 #endif
 
 #ifndef HAVE_GETCWD
@@ -96,10 +96,10 @@ char *getcwd(char *pt, size_t size);
 #endif
 
 #ifndef HAVE_KILLPG
-int killpg(pid_t, int);
+ціле killpg(pid_t, ціле);
 #endif
 
-#if defined(HAVE_DECL_MEMMEM) && HAVE_DECL_MEMMEM == 0
+#якщо defined(HAVE_DECL_MEMMEM) && HAVE_DECL_MEMMEM == 0
 void *memmem(const void *, size_t, const void *, size_t);
 #endif
 
@@ -112,7 +112,7 @@ void *recallocarray(void *, size_t, size_t, size_t);
 #endif
 
 #ifndef HAVE_RRESVPORT_AF
-int rresvport_af(int *alport, sa_family_t af);
+ціле rresvport_af(ціле *alport, sa_family_t af);
 #endif
 
 #ifndef HAVE_STRLCPY
@@ -136,11 +136,11 @@ char *strndup(const char *s, size_t n);
 #endif
 
 #ifndef HAVE_SETENV
-int setenv(register const char *name, register const char *value, int rewrite);
+ціле setenv(register const char *name, register const char *value, ціле rewrite);
 #endif
 
 #ifndef HAVE_STRMODE
-void strmode(int mode, char *p);
+void strmode(ціле mode, char *p);
 #endif
 
 #ifndef HAVE_STRPTIME
@@ -148,17 +148,17 @@ void strmode(int mode, char *p);
 char *strptime(const char *buf, const char *fmt, struct tm *tm);
 #endif
 
-#if !defined(HAVE_MKDTEMP)
-int mkstemps(char *path, int slen);
-int mkstemp(char *path);
+#якщо !defined(HAVE_MKDTEMP)
+ціле mkstemps(char *path, ціле slen);
+ціле mkstemp(char *path);
 char *mkdtemp(char *path);
 #endif
 
 #define mkstemp(x) _ssh_mkstemp(x)
-int _ssh_mkstemp(char *);
+ціле _ssh_mkstemp(char *);
 
 #ifndef HAVE_DAEMON
-int daemon(int nochdir, int noclose);
+ціле daemon(ціле nochdir, ціле noclose);
 #endif
 
 #ifndef HAVE_DIRNAME
@@ -167,23 +167,23 @@ char *dirname(const char *path);
 
 #ifndef HAVE_FMT_SCALED
 #define	FMT_SCALED_STRSIZE	7
-int	fmt_scaled(long long number, char *result);
+ціле	fmt_scaled(long long number, char *result);
 #endif
 
 #ifndef HAVE_SCAN_SCALED
-int	scan_scaled(char *, long long *);
+ціле	scan_scaled(char *, long long *);
 #endif
 
-#if defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
+#якщо defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
 char *inet_ntoa(struct in_addr in);
 #endif
 
 #ifndef HAVE_INET_NTOP
-const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
+const char *inet_ntop(ціле af, const void *src, char *dst, socklen_t size);
 #endif
 
 #ifndef HAVE_INET_ATON
-int inet_aton(const char *cp, struct in_addr *addr);
+ціле inet_aton(const char *cp, struct in_addr *addr);
 #endif
 
 #ifndef HAVE_STRSEP
@@ -192,29 +192,29 @@ char *strsep(char **stringp, const char *delim);
 
 #ifndef HAVE_SETPROCTITLE
 void setproctitle(const char *fmt, ...);
-void compat_init_setproctitle(int argc, char *argv[]);
+void compat_init_setproctitle(ціле argc, char *argv[]);
 #endif
 
 #ifndef HAVE_GETGROUPLIST
-int getgrouplist(const char *, gid_t, gid_t *, int *);
+ціле getgrouplist(const char *, gid_t, gid_t *, ціле *);
 #endif
 
-#if !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
-int BSDgetopt(int argc, char * const *argv, const char *opts) __THROW;
+#якщо !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
+ціле BSDgetopt(ціле argc, char * const *argv, const char *opts) __THROW;
 #include "openbsd-compat/getopt.h"
 #endif
 
-#if ((defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0) || \
+#якщо ((defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0) || \
     (defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0))
 # include <sys/types.h>
 # include <sys/uio.h>
 
-# if defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0
-int readv(int, struct iovec *, int);
+# якщо defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0
+ціле readv(ціле, struct iovec *, ціле);
 # endif
 
-# if defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0
-int writev(int, struct iovec *, int);
+# якщо defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0
+ціле writev(ціле, struct iovec *, ціле);
 # endif
 #endif
 
@@ -226,8 +226,8 @@ int writev(int, struct iovec *, int);
 #include "bsd-waitpid.h"
 #include "bsd-poll.h"
 
-#if defined(HAVE_DECL_GETPEEREID) && HAVE_DECL_GETPEEREID == 0
-int getpeereid(int , uid_t *, gid_t *);
+#якщо defined(HAVE_DECL_GETPEEREID) && HAVE_DECL_GETPEEREID == 0
+ціле getpeereid(ціле , uid_t *, gid_t *);
 #endif
 
 #ifndef HAVE_ARC4RANDOM
@@ -247,29 +247,29 @@ uint32_t arc4random_uniform(uint32_t);
 #endif
 
 #ifndef HAVE_ASPRINTF
-int asprintf(char **, const char *, ...);
+ціле asprintf(char **, const char *, ...);
 #endif
 
 #ifndef HAVE_OPENPTY
 # include <sys/ioctl.h>	/* for struct winsize */
-int openpty(int *, int *, char *, const struct termios *,
+ціле openpty(ціле *, ціле *, char *, const struct termios *,
     const struct winsize *);
 #endif /* HAVE_OPENPTY */
 
 #ifndef HAVE_SNPRINTF
-int snprintf(char *, size_t, SNPRINTF_CONST char *, ...);
+ціле snprintf(char *, size_t, SNPRINTF_CONST char *, ...);
 #endif
 
 #ifndef HAVE_STRTOLL
-long long strtoll(const char *, char **, int);
+long long strtoll(const char *, char **, ціле);
 #endif
 
 #ifndef HAVE_STRTOUL
-unsigned long strtoul(const char *, char **, int);
+unsigned long strtoul(const char *, char **, ціле);
 #endif
 
 #ifndef HAVE_STRTOULL
-unsigned long long strtoull(const char *, char **, int);
+unsigned long long strtoull(const char *, char **, ціле);
 #endif
 
 #ifndef HAVE_STRTONUM
@@ -294,10 +294,10 @@ long long strtonum(const char *, long long, long long, const char **);
 #endif
 
 #ifndef HAVE_MBTOWC
-int mbtowc(wchar_t *, const char*, size_t);
+ціле mbtowc(wchar_t *, const char*, size_t);
 #endif
 
-#if !defined(HAVE_VASPRINTF) || !defined(HAVE_VSNPRINTF)
+#якщо !defined(HAVE_VASPRINTF) || !defined(HAVE_VSNPRINTF)
 # include <stdarg.h>
 #endif
 
@@ -309,38 +309,38 @@ int mbtowc(wchar_t *, const char*, size_t);
 #ifndef VA_COPY
 # ifdef HAVE_VA_COPY
 #  define VA_COPY(dest, src) va_copy(dest, src)
-# else
+# інакше
 #  ifdef HAVE___VA_COPY
 #   define VA_COPY(dest, src) __va_copy(dest, src)
-#  else
+#  інакше
 #   define VA_COPY(dest, src) (dest) = (src)
 #  endif
 # endif
 #endif
 
 #ifndef HAVE_VASPRINTF
-int vasprintf(char **, const char *, va_list);
+ціле vasprintf(char **, const char *, va_list);
 #endif
 
 #ifndef HAVE_VSNPRINTF
-int vsnprintf(char *, size_t, const char *, va_list);
+ціле vsnprintf(char *, size_t, const char *, va_list);
 #endif
 
 #ifndef HAVE_USER_FROM_UID
-char *user_from_uid(uid_t, int);
+char *user_from_uid(uid_t, ціле);
 #endif
 
 #ifndef HAVE_GROUP_FROM_GID
-char *group_from_gid(gid_t, int);
+char *group_from_gid(gid_t, ціле);
 #endif
 
 #ifndef HAVE_TIMINGSAFE_BCMP
-int timingsafe_bcmp(const void *, const void *, size_t);
+ціле timingsafe_bcmp(const void *, const void *, size_t);
 #endif
 
 #ifndef HAVE_BCRYPT_PBKDF
-int	bcrypt_pbkdf(const char *, size_t, const uint8_t *, size_t,
-    uint8_t *, size_t, unsigned int);
+ціле	bcrypt_pbkdf(const char *, size_t, const uint8_t *, size_t,
+    uint8_t *, size_t, unsigned ціле);
 #endif
 
 #ifndef HAVE_EXPLICIT_BZERO
@@ -377,17 +377,17 @@ char *shadow_pw(struct passwd *pw);
 #include "port-uw.h"
 
 /* _FORTIFY_SOURCE breaks FD_ISSET(n)/FD_SET(n) for n > FD_SETSIZE. Avoid. */
-#if defined(HAVE_FEATURES_H) && defined(_FORTIFY_SOURCE)
+#якщо defined(HAVE_FEATURES_H) && defined(_FORTIFY_SOURCE)
 # include <features.h>
-# if defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
-#  if __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0)
+# якщо defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
+#  якщо __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0)
 #   include <sys/socket.h>  /* Ensure include guard is defined */
 #   undef FD_SET
 #   undef FD_ISSET
 #   define FD_SET(n, set)	kludge_FD_SET(n, set)
 #   define FD_ISSET(n, set)	kludge_FD_ISSET(n, set)
-void kludge_FD_SET(int, fd_set *);
-int kludge_FD_ISSET(int, fd_set *);
+void kludge_FD_SET(ціле, fd_set *);
+ціле kludge_FD_ISSET(ціле, fd_set *);
 #  endif /* __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0) */
 # endif /* __GNU_LIBRARY__ && __GLIBC_PREREQ */
 #endif /* HAVE_FEATURES_H && _FORTIFY_SOURCE */

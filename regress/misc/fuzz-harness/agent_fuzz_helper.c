@@ -6,16 +6,16 @@
 
 void test_one(const uint8_t* s, size_t slen);
 
-static int
+static ціле
 devnull_or_die(void)
 {
-	int fd;
+	ціле fd;
 
-	if ((fd = open("/dev/null", O_RDWR)) == -1) {
+	якщо ((fd = open("/dev/null", O_RDWR)) == -1) {
 		error_f("open /dev/null: %s", strerror(errno));
 		abort();
 	}
-	return fd;
+	повернути fd;
 }
 
 static struct sshkey *
@@ -23,43 +23,43 @@ pubkey_or_die(const char *s)
 {
 	char *tmp, *cp;
 	struct sshkey *pubkey;
-	int r;
+	ціле r;
 
 	tmp = cp = xstrdup(s);
-	if ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
+	якщо ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
 		abort();
-	if ((r = sshkey_read(pubkey, &cp)) != 0) {
+	якщо ((r = sshkey_read(pubkey, &cp)) != 0) {
 		error_fr(r, "parse");
 		abort();
 	}
 	free(tmp);
-	return pubkey;
+	повернути pubkey;
 }
 
 static struct sshkey *
 privkey_or_die(const char *s)
 {
-	int r;
+	ціле r;
 	struct sshbuf *b;
 	struct sshkey *privkey;
 
-	if ((b = sshbuf_from(s, strlen(s))) == NULL) {
+	якщо ((b = sshbuf_from(s, strlen(s))) == NULL) {
 		error_f("sshbuf_from failed");
 		abort();
 	}
-	if ((r = sshkey_parse_private_fileblob(b, "", &privkey, NULL)) != 0) {
+	якщо ((r = sshkey_parse_private_fileblob(b, "", &privkey, NULL)) != 0) {
 		error_fr(r, "parse");
 		abort();
 	}
 	sshbuf_free(b);
-	return privkey;
+	повернути privkey;
 }
 
 static void
 add_key(const char *privkey, const char *certpath)
 {
 	Identity *id;
-	int r;
+	ціле r;
 	struct sshkey *cert;
 
 	id = xcalloc(1, sizeof(Identity));
@@ -67,7 +67,7 @@ add_key(const char *privkey, const char *certpath)
 	idtab->nentries++;
 	id->key = privkey_or_die(privkey);
 	id->comment = xstrdup("rhododaktulos Eos");
-	if (sshkey_is_sk(id->key))
+	якщо (sshkey_is_sk(id->key))
 		id->sk_provider = xstrdup("internal");
 
 	/* Now the cert too */
@@ -76,17 +76,17 @@ add_key(const char *privkey, const char *certpath)
 	idtab->nentries++;
 	id->key = privkey_or_die(privkey);
 	cert = pubkey_or_die(certpath);
-	if ((r = sshkey_to_certified(id->key)) != 0) {
+	якщо ((r = sshkey_to_certified(id->key)) != 0) {
 		error_fr(r, "sshkey_to_certified");
 		abort();
 	}
-	if ((r = sshkey_cert_copy(cert, id->key)) != 0) {
+	якщо ((r = sshkey_cert_copy(cert, id->key)) != 0) {
 		error_fr(r, "sshkey_cert_copy");
 		abort();
 	}
 	sshkey_free(cert);
 	id->comment = xstrdup("outis");
-	if (sshkey_is_sk(id->key))
+	якщо (sshkey_is_sk(id->key))
 		id->sk_provider = xstrdup("internal");
 }
 
@@ -95,8 +95,8 @@ cleanup_idtab(void)
 {
 	Identity *id;
 
-	if (idtab == NULL) return;
-	for (id = TAILQ_FIRST(&idtab->idlist); id;
+	якщо (idtab == NULL) повернути;
+	для (id = TAILQ_FIRST(&idtab->idlist); id;
 	    id = TAILQ_FIRST(&idtab->idlist)) {
 		TAILQ_REMOVE(&idtab->idlist, id, next);
 		free_identity(id);
@@ -122,8 +122,8 @@ static void
 cleanup_sockettab(void)
 {
 	u_int i;
-	for (i = 0; i < sockets_alloc; i++) {
-		if (sockets[i].type != AUTH_UNUSED)
+	для (i = 0; i < sockets_alloc; i++) {
+		якщо (sockets[i].type != AUTH_UNUSED)
 			close_socket(sockets + i);
 	}
 	free(sockets);
@@ -132,12 +132,12 @@ cleanup_sockettab(void)
 }
 
 static void
-reset_sockettab(int devnull)
+reset_sockettab(ціле devnull)
 {
-	int fd;
+	ціле fd;
 
 	cleanup_sockettab();
-	if ((fd = dup(devnull)) == -1) {
+	якщо ((fd = dup(devnull)) == -1) {
 		error_f("dup: %s", strerror(errno));
 		abort();
 	}
@@ -150,10 +150,10 @@ reset_sockettab(int devnull)
 void
 test_one(const uint8_t* s, size_t slen)
 {
-	static int devnull = -1;
+	static ціле devnull = -1;
 	size_t i, olen, nlen;
 
-	if (devnull == -1) {
+	якщо (devnull == -1) {
 		log_init(__progname, SYSLOG_LEVEL_DEBUG3,
 		    SYSLOG_FACILITY_AUTH, 1);
 		devnull = devnull_or_die();
@@ -165,11 +165,11 @@ test_one(const uint8_t* s, size_t slen)
 	reset_idtab();
 	reset_sockettab(devnull);
 	(void)sshbuf_put(sockets[0].input, s, slen);
-	for (i = 0; i < MAX_MESSAGES; i++) {
+	для (i = 0; i < MAX_MESSAGES; i++) {
 		olen = sshbuf_len(sockets[0].input);
 		process_message(0);
 		nlen = sshbuf_len(sockets[0].input);
-		if (nlen == 0 || nlen == olen)
+		якщо (nlen == 0 || nlen == olen)
 			break;
 	}
 	cleanup_idtab();

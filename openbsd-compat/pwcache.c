@@ -45,70 +45,70 @@
 
 #ifndef HAVE_USER_FROM_UID
 char *
-user_from_uid(uid_t uid, int nouser)
+user_from_uid(uid_t uid, ціле nouser)
 {
 	static struct ncache {
 		uid_t	uid;
 		char	*name;
 	} c_uid[NCACHE];
-	static int pwopen;
+	static ціле pwopen;
 	static char nbuf[15];		/* 32 bits == 10 digits */
 	struct passwd *pw;
 	struct ncache *cp;
 
 	cp = c_uid + (uid & MASK);
-	if (cp->uid != uid || cp->name == NULL) {
-		if (pwopen == 0) {
+	якщо (cp->uid != uid || cp->name == NULL) {
+		якщо (pwopen == 0) {
 #ifdef HAVE_SETPASSENT
 			setpassent(1);
 #endif
 			pwopen = 1;
 		}
-		if ((pw = getpwuid(uid)) == NULL) {
-			if (nouser)
-				return (NULL);
+		якщо ((pw = getpwuid(uid)) == NULL) {
+			якщо (nouser)
+				повернути (NULL);
 			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)uid);
 		}
 		cp->uid = uid;
-		if (cp->name != NULL)
+		якщо (cp->name != NULL)
 			free(cp->name);
 		cp->name = strdup(pw ? pw->pw_name : nbuf);
 	}
-	return (cp->name);
+	повернути (cp->name);
 }
 #endif
 
 #ifndef HAVE_GROUP_FROM_GID
 char *
-group_from_gid(gid_t gid, int nogroup)
+group_from_gid(gid_t gid, ціле nogroup)
 {
 	static struct ncache {
 		gid_t	gid;
 		char	*name;
 	} c_gid[NCACHE];
-	static int gropen;
+	static ціле gropen;
 	static char nbuf[15];		/* 32 bits == 10 digits */
 	struct group *gr;
 	struct ncache *cp;
 
 	cp = c_gid + (gid & MASK);
-	if (cp->gid != gid || cp->name == NULL) {
-		if (gropen == 0) {
+	якщо (cp->gid != gid || cp->name == NULL) {
+		якщо (gropen == 0) {
 #ifdef HAVE_SETGROUPENT
 			setgroupent(1);
 #endif
 			gropen = 1;
 		}
-		if ((gr = getgrgid(gid)) == NULL) {
-			if (nogroup)
-				return (NULL);
+		якщо ((gr = getgrgid(gid)) == NULL) {
+			якщо (nogroup)
+				повернути (NULL);
 			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)gid);
 		}
 		cp->gid = gid;
-		if (cp->name != NULL)
+		якщо (cp->name != NULL)
 			free(cp->name);
 		cp->name = strdup(gr ? gr->gr_name : nbuf);
 	}
-	return (cp->name);
+	повернути (cp->name);
 }
 #endif

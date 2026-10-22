@@ -45,35 +45,35 @@
 #include "sshpty.h"
 
 static struct termios _saved_tio;
-static int _in_raw_mode = 0;
+static ціле _in_raw_mode = 0;
 
 struct termios *
 get_saved_tio(void)
 {
-	return _in_raw_mode ? &_saved_tio : NULL;
+	повернути _in_raw_mode ? &_saved_tio : NULL;
 }
 
 void
-leave_raw_mode(int quiet)
+leave_raw_mode(ціле quiet)
 {
-	if (!_in_raw_mode)
-		return;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
-		if (!quiet)
+	якщо (!_in_raw_mode)
+		повернути;
+	якщо (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
+		якщо (!quiet)
 			perror("tcsetattr");
-	} else
+	} інакше
 		_in_raw_mode = 0;
 }
 
 void
-enter_raw_mode(int quiet)
+enter_raw_mode(ціле quiet)
 {
 	struct termios tio;
 
-	if (tcgetattr(fileno(stdin), &tio) == -1) {
-		if (!quiet)
+	якщо (tcgetattr(fileno(stdin), &tio) == -1) {
+		якщо (!quiet)
 			perror("tcgetattr");
-		return;
+		повернути;
 	}
 	_saved_tio = tio;
 	tio.c_iflag |= IGNPAR;
@@ -88,9 +88,9 @@ enter_raw_mode(int quiet)
 	tio.c_oflag &= ~OPOST;
 	tio.c_cc[VMIN] = 1;
 	tio.c_cc[VTIME] = 0;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
-		if (!quiet)
+	якщо (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
+		якщо (!quiet)
 			perror("tcsetattr");
-	} else
+	} інакше
 		_in_raw_mode = 1;
 }

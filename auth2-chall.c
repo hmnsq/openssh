@@ -49,13 +49,13 @@
 /* import */
 extern ServerOptions options;
 
-static int auth2_challenge_start(struct ssh *);
-static int send_userauth_info_request(struct ssh *);
-static int input_userauth_info_response(int, uint32_t, struct ssh *);
+static ціле auth2_challenge_start(struct ssh *);
+static ціле send_userauth_info_request(struct ssh *);
+static ціле input_userauth_info_response(ціле, uint32_t, struct ssh *);
 
 #ifdef BSD_AUTH
 extern KbdintDevice mm_bsdauth_device;
-#else
+#інакше
 #ifdef USE_PAM
 extern KbdintDevice mm_sshpam_device;
 #endif
@@ -64,7 +64,7 @@ extern KbdintDevice mm_sshpam_device;
 KbdintDevice *devices[] = {
 #ifdef BSD_AUTH
 	&mm_bsdauth_device,
-#else
+#інакше
 #ifdef USE_PAM
 	&mm_sshpam_device,
 #endif
@@ -86,11 +86,11 @@ struct KbdintAuthctxt
 void
 remove_kbdint_device(const char *devname)
 {
-	int i, j;
+	ціле i, j;
 
-	for (i = 0; devices[i] != NULL; i++)
-		if (strcmp(devices[i]->name, devname) == 0) {
-			for (j = i; devices[j] != NULL; j++)
+	для (i = 0; devices[i] != NULL; i++)
+		якщо (strcmp(devices[i]->name, devname) == 0) {
+			для (j = i; devices[j] != NULL; j++)
 				devices[j] = devices[j+1];
 			i--;
 		}
@@ -102,26 +102,26 @@ kbdint_alloc(const char *devs)
 {
 	KbdintAuthctxt *kbdintctxt;
 	struct sshbuf *b;
-	int i, r;
+	ціле i, r;
 
 #ifdef USE_PAM
-	if (!options.use_pam)
+	якщо (!options.use_pam)
 		remove_kbdint_device("pam");
 #endif
 
 	kbdintctxt = xcalloc(1, sizeof(KbdintAuthctxt));
-	if (strcmp(devs, "") == 0) {
-		if ((b = sshbuf_new()) == NULL)
+	якщо (strcmp(devs, "") == 0) {
+		якщо ((b = sshbuf_new()) == NULL)
 			fatal_f("sshbuf_new failed");
-		for (i = 0; devices[i]; i++) {
-			if ((r = sshbuf_putf(b, "%s%s",
+		для (i = 0; devices[i]; i++) {
+			якщо ((r = sshbuf_putf(b, "%s%s",
 			    sshbuf_len(b) ? "," : "", devices[i]->name)) != 0)
 				fatal_fr(r, "buffer error");
 		}
-		if ((kbdintctxt->devices = sshbuf_dup_string(b)) == NULL)
+		якщо ((kbdintctxt->devices = sshbuf_dup_string(b)) == NULL)
 			fatal_f("sshbuf_dup_string failed");
 		sshbuf_free(b);
-	} else {
+	} інакше {
 		kbdintctxt->devices = xstrdup(devs);
 	}
 	debug("kbdint_alloc: devices '%s'", kbdintctxt->devices);
@@ -129,12 +129,12 @@ kbdint_alloc(const char *devs)
 	kbdintctxt->device = NULL;
 	kbdintctxt->nreq = 0;
 
-	return kbdintctxt;
+	повернути kbdintctxt;
 }
 static void
 kbdint_reset_device(KbdintAuthctxt *kbdintctxt)
 {
-	if (kbdintctxt->ctxt) {
+	якщо (kbdintctxt->ctxt) {
 		kbdintctxt->device->free_ctx(kbdintctxt->ctxt);
 		kbdintctxt->ctxt = NULL;
 	}
@@ -143,36 +143,36 @@ kbdint_reset_device(KbdintAuthctxt *kbdintctxt)
 static void
 kbdint_free(KbdintAuthctxt *kbdintctxt)
 {
-	if (kbdintctxt->device)
+	якщо (kbdintctxt->device)
 		kbdint_reset_device(kbdintctxt);
 	free(kbdintctxt->devices);
 	freezero(kbdintctxt, sizeof(*kbdintctxt));
 }
 /* get next device */
-static int
+static ціле
 kbdint_next_device(Authctxt *authctxt, KbdintAuthctxt *kbdintctxt)
 {
 	size_t len;
 	char *t;
 	size_t i;
 
-	if (kbdintctxt->device)
+	якщо (kbdintctxt->device)
 		kbdint_reset_device(kbdintctxt);
 	do {
 		len = kbdintctxt->devices ?
 		    strcspn(kbdintctxt->devices, ",") : 0;
 
-		if (len == 0)
+		якщо (len == 0)
 			break;
-		for (i = 0; devices[i]; i++) {
-			if (i >= sizeof(kbdintctxt->devices_done) * 8 ||
+		для (i = 0; devices[i]; i++) {
+			якщо (i >= sizeof(kbdintctxt->devices_done) * 8 ||
 			    i >= sizeof(devices) / sizeof(devices[0]))
 				fatal_f("internal error: too many devices");
-			if ((kbdintctxt->devices_done & (1 << i)) != 0 ||
+			якщо ((kbdintctxt->devices_done & (1 << i)) != 0 ||
 			    !auth2_method_allowed(authctxt,
 			    "keyboard-interactive", devices[i]->name))
 				continue;
-			if (strlen(devices[i]->name) == len &&
+			якщо (strlen(devices[i]->name) == len &&
 			    memcmp(kbdintctxt->devices, devices[i]->name,
 			    len) == 0) {
 				kbdintctxt->device = devices[i];
@@ -184,16 +184,16 @@ kbdint_next_device(Authctxt *authctxt, KbdintAuthctxt *kbdintctxt)
 		free(t);
 		debug2("kbdint_next_device: devices %s", kbdintctxt->devices ?
 		    kbdintctxt->devices : "<empty>");
-	} while (kbdintctxt->devices && !kbdintctxt->device);
+	} поки (kbdintctxt->devices && !kbdintctxt->device);
 
-	return kbdintctxt->device ? 1 : 0;
+	повернути kbdintctxt->device ? 1 : 0;
 }
 
 /*
  * try challenge-response, set authctxt->postponed if we have to
  * wait for the response.
  */
-int
+ціле
 auth2_challenge(struct ssh *ssh, char *devs)
 {
 	Authctxt *authctxt = ssh->authctxt;
@@ -201,11 +201,11 @@ auth2_challenge(struct ssh *ssh, char *devs)
 	    authctxt->user ? authctxt->user : "<nouser>",
 	    devs ? devs : "<no devs>");
 
-	if (authctxt->user == NULL || !devs)
-		return 0;
-	if (authctxt->kbdintctxt == NULL)
+	якщо (authctxt->user == NULL || !devs)
+		повернути 0;
+	якщо (authctxt->kbdintctxt == NULL)
 		authctxt->kbdintctxt = kbdint_alloc(devs);
-	return auth2_challenge_start(ssh);
+	повернути auth2_challenge_start(ssh);
 }
 
 /* unregister kbd-int callbacks and context */
@@ -215,14 +215,14 @@ auth2_challenge_stop(struct ssh *ssh)
 	Authctxt *authctxt = ssh->authctxt;
 	/* unregister callback */
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE, NULL);
-	if (authctxt->kbdintctxt != NULL) {
+	якщо (authctxt->kbdintctxt != NULL) {
 		kbdint_free(authctxt->kbdintctxt);
 		authctxt->kbdintctxt = NULL;
 	}
 }
 
 /* side effect: sets authctxt->postponed if a reply was sent*/
-static int
+static ціле
 auth2_challenge_start(struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
@@ -231,29 +231,29 @@ auth2_challenge_start(struct ssh *ssh)
 	debug2("auth2_challenge_start: devices %s",
 	    kbdintctxt->devices ?  kbdintctxt->devices : "<empty>");
 
-	if (kbdint_next_device(authctxt, kbdintctxt) == 0) {
+	якщо (kbdint_next_device(authctxt, kbdintctxt) == 0) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		повернути 0;
 	}
 	debug("auth2_challenge_start: trying authentication method '%s'",
 	    kbdintctxt->device->name);
 
-	if ((kbdintctxt->ctxt = kbdintctxt->device->init_ctx(authctxt)) == NULL) {
+	якщо ((kbdintctxt->ctxt = kbdintctxt->device->init_ctx(authctxt)) == NULL) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		повернути 0;
 	}
-	if (send_userauth_info_request(ssh) == 0) {
+	якщо (send_userauth_info_request(ssh) == 0) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		повернути 0;
 	}
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE,
 	    &input_userauth_info_response);
 
 	authctxt->postponed = 1;
-	return 0;
+	повернути 0;
 }
 
-static int
+static ціле
 send_userauth_info_request(struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
@@ -262,74 +262,74 @@ send_userauth_info_request(struct ssh *ssh)
 	u_int r, i, *echo_on;
 
 	kbdintctxt = authctxt->kbdintctxt;
-	if (kbdintctxt->device->query(kbdintctxt->ctxt,
+	якщо (kbdintctxt->device->query(kbdintctxt->ctxt,
 	    &name, &instr, &kbdintctxt->nreq, &prompts, &echo_on))
-		return 0;
+		повернути 0;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST)) != 0 ||
+	якщо ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, name)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, instr)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||	/* language not used */
 	    (r = sshpkt_put_u32(ssh, kbdintctxt->nreq)) != 0)
 		fatal_fr(r, "start packet");
-	for (i = 0; i < kbdintctxt->nreq; i++) {
-		if ((r = sshpkt_put_cstring(ssh, prompts[i])) != 0 ||
+	для (i = 0; i < kbdintctxt->nreq; i++) {
+		якщо ((r = sshpkt_put_cstring(ssh, prompts[i])) != 0 ||
 		    (r = sshpkt_put_u8(ssh, echo_on[i])) != 0)
 			fatal_fr(r, "assemble packet");
 	}
-	if ((r = sshpkt_send(ssh)) != 0 ||
+	якщо ((r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
-	for (i = 0; i < kbdintctxt->nreq; i++)
+	для (i = 0; i < kbdintctxt->nreq; i++)
 		free(prompts[i]);
 	free(prompts);
 	free(echo_on);
 	free(name);
 	free(instr);
-	return 1;
+	повернути 1;
 }
 
-static int
-input_userauth_info_response(int type, uint32_t seq, struct ssh *ssh)
+static ціле
+input_userauth_info_response(ціле type, uint32_t seq, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt;
-	int authenticated = 0, res;
-	int r;
+	ціле authenticated = 0, res;
+	ціле r;
 	u_int i, nresp;
 	const char *devicename = NULL;
 	char **response = NULL;
 	double tstart = monotime_double();
 
-	if (authctxt == NULL)
+	якщо (authctxt == NULL)
 		fatal_f("no authctxt");
 	kbdintctxt = authctxt->kbdintctxt;
-	if (kbdintctxt == NULL || kbdintctxt->ctxt == NULL)
+	якщо (kbdintctxt == NULL || kbdintctxt->ctxt == NULL)
 		fatal_f("no kbdintctxt");
-	if (kbdintctxt->device == NULL)
+	якщо (kbdintctxt->device == NULL)
 		fatal_f("no device");
 
 	authctxt->postponed = 0;	/* reset */
-	if ((r = sshpkt_get_u32(ssh, &nresp)) != 0)
+	якщо ((r = sshpkt_get_u32(ssh, &nresp)) != 0)
 		fatal_fr(r, "parse packet");
-	if (nresp != kbdintctxt->nreq)
+	якщо (nresp != kbdintctxt->nreq)
 		fatal_f("wrong number of replies");
-	if (nresp > 100)
+	якщо (nresp > 100)
 		fatal_f("too many replies");
-	if (nresp > 0) {
+	якщо (nresp > 0) {
 		response = xcalloc(nresp, sizeof(char *));
-		for (i = 0; i < nresp; i++) {
-			if ((r = sshpkt_get_cstring(ssh, &response[i], NULL)) != 0)
+		для (i = 0; i < nresp; i++) {
+			якщо ((r = sshpkt_get_cstring(ssh, &response[i], NULL)) != 0)
 				fatal_fr(r, "parse response");
 		}
 	}
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	якщо ((r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	res = kbdintctxt->device->respond(kbdintctxt->ctxt, nresp, response);
 
-	for (i = 0; i < nresp; i++) {
+	для (i = 0; i < nresp; i++) {
 		explicit_bzero(response[i], strlen(response[i]));
 		free(response[i]);
 	}
@@ -342,7 +342,7 @@ input_userauth_info_response(int type, uint32_t seq, struct ssh *ssh)
 		break;
 	case 1:
 		/* Authentication needs further interaction */
-		if (send_userauth_info_request(ssh) == 1)
+		якщо (send_userauth_info_request(ssh) == 1)
 			authctxt->postponed = 1;
 		break;
 	default:
@@ -350,19 +350,19 @@ input_userauth_info_response(int type, uint32_t seq, struct ssh *ssh)
 		break;
 	}
 	devicename = kbdintctxt->device->name;
-	if (!authctxt->postponed) {
-		if (authenticated) {
+	якщо (!authctxt->postponed) {
+		якщо (authenticated) {
 			auth2_challenge_stop(ssh);
-		} else {
+		} інакше {
 			/* start next device */
 			/* may set authctxt->postponed */
 			auth2_challenge_start(ssh);
 		}
 	}
 
-	if (!authenticated)
+	якщо (!authenticated)
 		auth_failure_delay(authctxt, tstart);
 	userauth_finish(ssh, authenticated, "keyboard-interactive",
 	    devicename);
-	return 0;
+	повернути 0;
 }

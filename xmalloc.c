@@ -24,7 +24,7 @@
 #include "xmalloc.h"
 #include "log.h"
 
-#if defined(__OpenBSD__)
+#якщо defined(__OpenBSD__)
 const char * const malloc_options = "S";
 #endif /* __OpenBSD__ */
 
@@ -33,12 +33,12 @@ xmalloc(size_t size)
 {
 	void *ptr;
 
-	if (size == 0)
+	якщо (size == 0)
 		fatal("xmalloc: zero size");
 	ptr = malloc(size);
-	if (ptr == NULL)
+	якщо (ptr == NULL)
 		fatal("xmalloc: out of memory (allocating %zu bytes)", size);
-	return ptr;
+	повернути ptr;
 }
 
 void *
@@ -46,15 +46,15 @@ xcalloc(size_t nmemb, size_t size)
 {
 	void *ptr;
 
-	if (size == 0 || nmemb == 0)
+	якщо (size == 0 || nmemb == 0)
 		fatal("xcalloc: zero size");
-	if (SIZE_MAX / nmemb < size)
+	якщо (SIZE_MAX / nmemb < size)
 		fatal("xcalloc: nmemb * size > SIZE_MAX");
 	ptr = calloc(nmemb, size);
-	if (ptr == NULL)
+	якщо (ptr == NULL)
 		fatal("xcalloc: out of memory (allocating %zu bytes)",
 		    size * nmemb);
-	return ptr;
+	повернути ptr;
 }
 
 void *
@@ -63,10 +63,10 @@ xreallocarray(void *ptr, size_t nmemb, size_t size)
 	void *new_ptr;
 
 	new_ptr = reallocarray(ptr, nmemb, size);
-	if (new_ptr == NULL)
+	якщо (new_ptr == NULL)
 		fatal("xreallocarray: out of memory (%zu elements of %zu bytes)",
 		    nmemb, size);
-	return new_ptr;
+	повернути new_ptr;
 }
 
 void *
@@ -75,10 +75,10 @@ xrecallocarray(void *ptr, size_t onmemb, size_t nmemb, size_t size)
 	void *new_ptr;
 
 	new_ptr = recallocarray(ptr, onmemb, nmemb, size);
-	if (new_ptr == NULL)
+	якщо (new_ptr == NULL)
 		fatal("xrecallocarray: out of memory (%zu elements of %zu bytes)",
 		    nmemb, size);
-	return new_ptr;
+	повернути new_ptr;
 }
 
 char *
@@ -89,28 +89,28 @@ xstrdup(const char *str)
 
 	len = strlen(str) + 1;
 	cp = xmalloc(len);
-	return memcpy(cp, str, len);
+	повернути memcpy(cp, str, len);
 }
 
-int
+ціле
 xvasprintf(char **ret, const char *fmt, va_list ap)
 {
-	int i;
+	ціле i;
 
 	i = vasprintf(ret, fmt, ap);
-	if (i < 0 || *ret == NULL)
+	якщо (i < 0 || *ret == NULL)
 		fatal("xvasprintf: could not allocate memory");
-	return i;
+	повернути i;
 }
 
-int
+ціле
 xasprintf(char **ret, const char *fmt, ...)
 {
 	va_list ap;
-	int i;
+	ціле i;
 
 	va_start(ap, fmt);
 	i = xvasprintf(ret, fmt, ap);
 	va_end(ap);
-	return i;
+	повернути i;
 }

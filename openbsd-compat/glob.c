@@ -74,7 +74,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#if !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#якщо !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
@@ -112,7 +112,7 @@
 
 typedef u_short Char;
 
-#else
+#інакше
 
 #define	M_QUOTE		0x80
 #define	M_PROTECT	0x40
@@ -150,83 +150,83 @@ struct glob_path_stat {
 	struct stat	*gps_stat;
 };
 
-static int	 compare(const void *, const void *);
-static int	 compare_gps(const void *, const void *);
-static int	 g_Ctoc(const Char *, char *, size_t);
-static int	 g_lstat(Char *, struct stat *, glob_t *);
+static ціле	 compare(const void *, const void *);
+static ціле	 compare_gps(const void *, const void *);
+static ціле	 g_Ctoc(const Char *, char *, size_t);
+static ціле	 g_lstat(Char *, struct stat *, glob_t *);
 static DIR	*g_opendir(Char *, glob_t *);
-static Char	*g_strchr(const Char *, int);
-static int	 g_strncmp(const Char *, const char *, size_t);
-static int	 g_stat(Char *, struct stat *, glob_t *);
-static int	 glob0(const Char *, glob_t *, struct glob_lim *);
-static int	 glob1(Char *, Char *, glob_t *, struct glob_lim *);
-static int	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
+static Char	*g_strchr(const Char *, ціле);
+static ціле	 g_strncmp(const Char *, const char *, size_t);
+static ціле	 g_stat(Char *, struct stat *, glob_t *);
+static ціле	 glob0(const Char *, glob_t *, struct glob_lim *);
+static ціле	 glob1(Char *, Char *, glob_t *, struct glob_lim *);
+static ціле	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
 		    glob_t *, struct glob_lim *);
-static int	 glob3(Char *, Char *, Char *, Char *, Char *,
+static ціле	 glob3(Char *, Char *, Char *, Char *, Char *,
 		    Char *, Char *, glob_t *, struct glob_lim *);
-static int	 globextend(const Char *, glob_t *, struct glob_lim *,
+static ціле	 globextend(const Char *, glob_t *, struct glob_lim *,
 		    struct stat *);
 static const Char *
 		 globtilde(const Char *, Char *, size_t, glob_t *);
-static int	 globexp1(const Char *, glob_t *, struct glob_lim *);
-static int	 globexp2(const Char *, const Char *, glob_t *,
+static ціле	 globexp1(const Char *, glob_t *, struct glob_lim *);
+static ціле	 globexp2(const Char *, const Char *, glob_t *,
 		    struct glob_lim *);
-static int	 match(Char *, Char *, Char *);
+static ціле	 match(Char *, Char *, Char *);
 #ifdef DEBUG
 static void	 qprintf(const char *, Char *);
 #endif
 
-int
-glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
+ціле
+glob(const char *pattern, ціле flags, ціле (*errfunc)(const char *, ціле),
     glob_t *pglob)
 {
 	const u_char *patnext;
-	int c;
+	ціле c;
 	Char *bufnext, *bufend, patbuf[PATH_MAX];
 	struct glob_lim limit = { 0, 0, 0 };
 
 	patnext = (u_char *) pattern;
-	if (!(flags & GLOB_APPEND)) {
+	якщо (!(flags & GLOB_APPEND)) {
 		pglob->gl_pathc = 0;
 		pglob->gl_pathv = NULL;
 		pglob->gl_statv = NULL;
-		if (!(flags & GLOB_DOOFFS))
+		якщо (!(flags & GLOB_DOOFFS))
 			pglob->gl_offs = 0;
 	}
 	pglob->gl_flags = flags & ~GLOB_MAGCHAR;
 	pglob->gl_errfunc = errfunc;
 	pglob->gl_matchc = 0;
 
-	if (strnlen(pattern, PATH_MAX) == PATH_MAX)
-		return(GLOB_NOMATCH);
+	якщо (strnlen(pattern, PATH_MAX) == PATH_MAX)
+		повернути(GLOB_NOMATCH);
 
-	if (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
+	якщо (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX - pglob->gl_offs - 1)
-		return GLOB_NOSPACE;
+		повернути GLOB_NOSPACE;
 
 	bufnext = patbuf;
 	bufend = bufnext + PATH_MAX - 1;
-	if (flags & GLOB_NOESCAPE)
-		while (bufnext < bufend && (c = *patnext++) != EOS)
+	якщо (flags & GLOB_NOESCAPE)
+		поки (bufnext < bufend && (c = *patnext++) != EOS)
 			*bufnext++ = c;
-	else {
+	інакше {
 		/* Protect the quoted characters. */
-		while (bufnext < bufend && (c = *patnext++) != EOS)
-			if (c == QUOTE) {
-				if ((c = *patnext++) == EOS) {
+		поки (bufnext < bufend && (c = *patnext++) != EOS)
+			якщо (c == QUOTE) {
+				якщо ((c = *patnext++) == EOS) {
 					c = QUOTE;
 					--patnext;
 				}
 				*bufnext++ = c | M_PROTECT;
-			} else
+			} інакше
 				*bufnext++ = c;
 	}
 	*bufnext = EOS;
 
-	if (flags & GLOB_BRACE)
-		return globexp1(patbuf, pglob, &limit);
-	else
-		return glob0(patbuf, pglob, &limit);
+	якщо (flags & GLOB_BRACE)
+		повернути globexp1(patbuf, pglob, &limit);
+	інакше
+		повернути glob0(patbuf, pglob, &limit);
 }
 
 /*
@@ -234,19 +234,19 @@ glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
  * invoke the standard globbing routine to glob the rest of the magic
  * characters
  */
-static int
+static ціле
 globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 {
 	const Char* ptr = pattern;
 
 	/* Protect a single {}, for find(1), like csh */
-	if (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
-		return glob0(pattern, pglob, limitp);
+	якщо (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
+		повернути glob0(pattern, pglob, limitp);
 
-	if ((ptr = (const Char *) g_strchr(ptr, LBRACE)) != NULL)
-		return globexp2(ptr, pattern, pglob, limitp);
+	якщо ((ptr = (const Char *) g_strchr(ptr, LBRACE)) != NULL)
+		повернути globexp2(ptr, pattern, pglob, limitp);
 
-	return glob0(pattern, pglob, limitp);
+	повернути glob0(pattern, pglob, limitp);
 }
 
 
@@ -255,53 +255,53 @@ globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
  * If it succeeds then it invokes globexp1 with the new pattern.
  * If it fails then it tries to glob the rest of the pattern and returns.
  */
-static int
+static ціле
 globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
     struct glob_lim *limitp)
 {
-	int     i, rv;
+	ціле     i, rv;
 	Char   *lm, *ls;
 	const Char *pe, *pm, *pl;
 	Char    patbuf[PATH_MAX];
 
 	/* copy part up to the brace */
-	for (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
+	для (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
 		;
 	*lm = EOS;
 	ls = lm;
 
 	/* Find the balanced brace */
-	for (i = 0, pe = ++ptr; *pe; pe++)
-		if (*pe == LBRACKET) {
+	для (i = 0, pe = ++ptr; *pe; pe++)
+		якщо (*pe == LBRACKET) {
 			/* Ignore everything between [] */
-			for (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
+			для (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
 				;
-			if (*pe == EOS) {
+			якщо (*pe == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pe = pm;
 			}
-		} else if (*pe == LBRACE)
+		} інакше якщо (*pe == LBRACE)
 			i++;
-		else if (*pe == RBRACE) {
-			if (i == 0)
+		інакше якщо (*pe == RBRACE) {
+			якщо (i == 0)
 				break;
 			i--;
 		}
 
 	/* Non matching braces; just glob the pattern */
-	if (i != 0 || *pe == EOS)
-		return glob0(patbuf, pglob, limitp);
+	якщо (i != 0 || *pe == EOS)
+		повернути glob0(patbuf, pglob, limitp);
 
-	for (i = 0, pl = pm = ptr; pm <= pe; pm++) {
+	для (i = 0, pl = pm = ptr; pm <= pe; pm++) {
 		switch (*pm) {
 		case LBRACKET:
 			/* Ignore everything between [] */
-			for (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
+			для (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
 				;
-			if (*pm == EOS) {
+			якщо (*pm == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
@@ -315,24 +315,24 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 			break;
 
 		case RBRACE:
-			if (i) {
+			якщо (i) {
 				i--;
 				break;
 			}
 			/* FALLTHROUGH */
 		case COMMA:
-			if (i && *pm == COMMA)
+			якщо (i && *pm == COMMA)
 				break;
-			else {
+			інакше {
 				/* Append the current string */
-				for (lm = ls; (pl < pm); *lm++ = *pl++)
+				для (lm = ls; (pl < pm); *lm++ = *pl++)
 					;
 
 				/*
 				 * Append the rest of the pattern after the
 				 * closing brace
 				 */
-				for (pl = pe + 1; (*lm++ = *pl++) != EOS; )
+				для (pl = pe + 1; (*lm++ = *pl++) != EOS; )
 					;
 
 				/* Expand the current pattern */
@@ -340,8 +340,8 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 				qprintf("globexp2:", patbuf);
 #endif
 				rv = globexp1(patbuf, pglob, limitp);
-				if (rv && rv != GLOB_NOMATCH)
-					return rv;
+				якщо (rv && rv != GLOB_NOMATCH)
+					повернути rv;
 
 				/* move after the comma, to the next string */
 				pl = pm + 1;
@@ -352,7 +352,7 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 			break;
 		}
 	}
-	return 0;
+	повернути 0;
 }
 
 
@@ -368,74 +368,74 @@ globtilde(const Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
 	const Char *p;
 	Char *b, *eb;
 
-	if (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
-		return pattern;
+	якщо (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
+		повернути pattern;
 
 	/* Copy up to the end of the string or / */
 	eb = &patbuf[patbuf_len - 1];
-	for (p = pattern + 1, h = (char *) patbuf;
+	для (p = pattern + 1, h = (char *) patbuf;
 	    h < (char *)eb && *p && *p != SLASH; *h++ = *p++)
 		;
 
 	*h = EOS;
 
-#if 0
-	if (h == (char *)eb)
-		return what;
+#якщо 0
+	якщо (h == (char *)eb)
+		повернути what;
 #endif
 
-	if (((char *) patbuf)[0] == EOS) {
+	якщо (((char *) patbuf)[0] == EOS) {
 		/*
 		 * handle a plain ~ or ~/ by expanding $HOME
 		 * first and then trying the password file
 		 */
-#if 0
-		if (issetugid() != 0 || (h = getenv("HOME")) == NULL) {
+#якщо 0
+		якщо (issetugid() != 0 || (h = getenv("HOME")) == NULL) {
 #endif
-		if ((getuid() != geteuid()) || (h = getenv("HOME")) == NULL) {
-			if ((pwd = getpwuid(getuid())) == NULL)
-				return pattern;
-			else
+		якщо ((getuid() != geteuid()) || (h = getenv("HOME")) == NULL) {
+			якщо ((pwd = getpwuid(getuid())) == NULL)
+				повернути pattern;
+			інакше
 				h = pwd->pw_dir;
 		}
-	} else {
+	} інакше {
 		/*
 		 * Expand a ~user
 		 */
-		if ((pwd = getpwnam((char*) patbuf)) == NULL)
-			return pattern;
-		else
+		якщо ((pwd = getpwnam((char*) patbuf)) == NULL)
+			повернути pattern;
+		інакше
 			h = pwd->pw_dir;
 	}
 
 	/* Copy the home directory */
-	for (b = patbuf; b < eb && *h; *b++ = *h++)
+	для (b = patbuf; b < eb && *h; *b++ = *h++)
 		;
 
 	/* Append the rest of the pattern */
-	while (b < eb && (*b++ = *p++) != EOS)
+	поки (b < eb && (*b++ = *p++) != EOS)
 		;
 	*b = EOS;
 
-	return patbuf;
+	повернути patbuf;
 }
 
-static int
+static ціле
 g_strncmp(const Char *s1, const char *s2, size_t n)
 {
-	int rv = 0;
+	ціле rv = 0;
 
-	while (n--) {
+	поки (n--) {
 		rv = *(Char *)s1 - *(const unsigned char *)s2++;
-		if (rv)
+		якщо (rv)
 			break;
-		if (*s1++ == '\0')
+		якщо (*s1++ == '\0')
 			break;
 	}
-	return rv;
+	повернути rv;
 }
 
-static int
+static ціле
 g_charclass(const Char **patternp, Char **bufnextp)
 {
 	const Char *pattern = *patternp + 1;
@@ -444,22 +444,22 @@ g_charclass(const Char **patternp, Char **bufnextp)
 	struct cclass *cc;
 	size_t len;
 
-	if ((colon = g_strchr(pattern, ':')) == NULL || colon[1] != ']')
-		return 1;	/* not a character class */
+	якщо ((colon = g_strchr(pattern, ':')) == NULL || colon[1] != ']')
+		повернути 1;	/* not a character class */
 
 	len = (size_t)(colon - pattern);
-	for (cc = cclasses; cc->name != NULL; cc++) {
-		if (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
+	для (cc = cclasses; cc->name != NULL; cc++) {
+		якщо (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
 			break;
 	}
-	if (cc->name == NULL)
-		return -1;	/* invalid character class */
+	якщо (cc->name == NULL)
+		повернути -1;	/* invalid character class */
 	*bufnext++ = M_CLASS;
 	*bufnext++ = (Char)(cc - &cclasses[0]);
 	*bufnextp = bufnext;
 	*patternp += len + 3;
 
-	return 0;
+	повернути 0;
 }
 
 /*
@@ -469,11 +469,11 @@ g_charclass(const Char **patternp, Char **bufnextp)
  * if things went well, nonzero if errors occurred.  It is not an error
  * to find no matches.
  */
-static int
+static ціле
 glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 {
 	const Char *qpatnext;
-	int c, err;
+	ціле c, err;
 	size_t oldpathc;
 	Char *bufnext, patbuf[PATH_MAX];
 
@@ -482,46 +482,46 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	bufnext = patbuf;
 
 	/* We don't need to check for buffer overflow any more. */
-	while ((c = *qpatnext++) != EOS) {
+	поки ((c = *qpatnext++) != EOS) {
 		switch (c) {
 		case LBRACKET:
 			c = *qpatnext;
-			if (c == NOT)
+			якщо (c == NOT)
 				++qpatnext;
-			if (*qpatnext == EOS ||
+			якщо (*qpatnext == EOS ||
 			    g_strchr(qpatnext+1, RBRACKET) == NULL) {
 				*bufnext++ = LBRACKET;
-				if (c == NOT)
+				якщо (c == NOT)
 					--qpatnext;
 				break;
 			}
 			*bufnext++ = M_SET;
-			if (c == NOT)
+			якщо (c == NOT)
 				*bufnext++ = M_NOT;
 			c = *qpatnext++;
 			do {
-				if (c == LBRACKET && *qpatnext == ':') {
+				якщо (c == LBRACKET && *qpatnext == ':') {
 					do {
 						err = g_charclass(&qpatnext,
 						    &bufnext);
-						if (err)
+						якщо (err)
 							break;
 						c = *qpatnext++;
-					} while (c == LBRACKET && *qpatnext == ':');
-					if (err == -1 &&
+					} поки (c == LBRACKET && *qpatnext == ':');
+					якщо (err == -1 &&
 					    !(pglob->gl_flags & GLOB_NOCHECK))
-						return GLOB_NOMATCH;
-					if (c == RBRACKET)
+						повернути GLOB_NOMATCH;
+					якщо (c == RBRACKET)
 						break;
 				}
 				*bufnext++ = CHAR(c);
-				if (*qpatnext == RANGE &&
+				якщо (*qpatnext == RANGE &&
 				    (c = qpatnext[1]) != RBRACKET) {
 					*bufnext++ = M_RNG;
 					*bufnext++ = CHAR(c);
 					qpatnext += 2;
 				}
-			} while ((c = *qpatnext++) != RBRACKET);
+			} поки ((c = *qpatnext++) != RBRACKET);
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			*bufnext++ = M_END;
 			break;
@@ -534,7 +534,7 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 			/* collapse adjacent stars to one,
 			 * to avoid exponential behavior
 			 */
-			if (bufnext == patbuf || bufnext[-1] != M_ALL)
+			якщо (bufnext == patbuf || bufnext[-1] != M_ALL)
 				*bufnext++ = M_ALL;
 			break;
 		default:
@@ -547,8 +547,8 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	qprintf("glob0:", patbuf);
 #endif
 
-	if ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
-		return(err);
+	якщо ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
+		повернути(err);
 
 	/*
 	 * If there was no match we are going to append the pattern
@@ -556,67 +556,67 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	 * and the pattern did not contain any magic characters
 	 * GLOB_NOMAGIC is there just for compatibility with csh.
 	 */
-	if (pglob->gl_pathc == oldpathc) {
-		if ((pglob->gl_flags & GLOB_NOCHECK) ||
+	якщо (pglob->gl_pathc == oldpathc) {
+		якщо ((pglob->gl_flags & GLOB_NOCHECK) ||
 		    ((pglob->gl_flags & GLOB_NOMAGIC) &&
 		    !(pglob->gl_flags & GLOB_MAGCHAR)))
-			return(globextend(pattern, pglob, limitp, NULL));
-		else
-			return(GLOB_NOMATCH);
+			повернути(globextend(pattern, pglob, limitp, NULL));
+		інакше
+			повернути(GLOB_NOMATCH);
 	}
-	if (!(pglob->gl_flags & GLOB_NOSORT)) {
-		if ((pglob->gl_flags & GLOB_KEEPSTAT)) {
+	якщо (!(pglob->gl_flags & GLOB_NOSORT)) {
+		якщо ((pglob->gl_flags & GLOB_KEEPSTAT)) {
 			/* Keep the paths and stat info synced during sort */
 			struct glob_path_stat *path_stat;
 			size_t i;
 			size_t n = pglob->gl_pathc - oldpathc;
 			size_t o = pglob->gl_offs + oldpathc;
 
-			if ((path_stat = calloc(n, sizeof(*path_stat))) == NULL)
-				return GLOB_NOSPACE;
-			for (i = 0; i < n; i++) {
+			якщо ((path_stat = calloc(n, sizeof(*path_stat))) == NULL)
+				повернути GLOB_NOSPACE;
+			для (i = 0; i < n; i++) {
 				path_stat[i].gps_path = pglob->gl_pathv[o + i];
 				path_stat[i].gps_stat = pglob->gl_statv[o + i];
 			}
 			qsort(path_stat, n, sizeof(*path_stat), compare_gps);
-			for (i = 0; i < n; i++) {
+			для (i = 0; i < n; i++) {
 				pglob->gl_pathv[o + i] = path_stat[i].gps_path;
 				pglob->gl_statv[o + i] = path_stat[i].gps_stat;
 			}
 			free(path_stat);
-		} else {
+		} інакше {
 			qsort(pglob->gl_pathv + pglob->gl_offs + oldpathc,
 			    pglob->gl_pathc - oldpathc, sizeof(char *),
 			    compare);
 		}
 	}
-	return(0);
+	повернути(0);
 }
 
-static int
+static ціле
 compare(const void *p, const void *q)
 {
-	return(strcmp(*(char **)p, *(char **)q));
+	повернути(strcmp(*(char **)p, *(char **)q));
 }
 
-static int
+static ціле
 compare_gps(const void *_p, const void *_q)
 {
 	const struct glob_path_stat *p = (const struct glob_path_stat *)_p;
 	const struct glob_path_stat *q = (const struct glob_path_stat *)_q;
 
-	return(strcmp(p->gps_path, q->gps_path));
+	повернути(strcmp(p->gps_path, q->gps_path));
 }
 
-static int
+static ціле
 glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
 {
 	Char pathbuf[PATH_MAX];
 
 	/* A null pathname is invalid -- POSIX 1003.1 sect. 2.4. */
-	if (*pattern == EOS)
-		return(0);
-	return(glob2(pathbuf, pathbuf+PATH_MAX-1,
+	якщо (*pattern == EOS)
+		повернути(0);
+	повернути(glob2(pathbuf, pathbuf+PATH_MAX-1,
 	    pathbuf, pathbuf+PATH_MAX-1,
 	    pattern, pattern_last, pglob, limitp));
 }
@@ -626,82 +626,82 @@ glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
  * of recursion for each segment in the pattern that contains one or more
  * meta characters.
  */
-static int
+static ціле
 glob2(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
     Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
 {
 	struct stat sb;
 	Char *p, *q;
-	int anymeta;
+	ціле anymeta;
 
 	/*
 	 * Loop over pattern segments until end of pattern or until
 	 * segment with meta character found.
 	 */
-	for (anymeta = 0;;) {
-		if (*pattern == EOS) {		/* End of pattern? */
+	для (anymeta = 0;;) {
+		якщо (*pattern == EOS) {		/* End of pattern? */
 			*pathend = EOS;
 
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
+			якщо ((pglob->gl_flags & GLOB_LIMIT) &&
 			    limitp->glim_stat++ >= GLOB_LIMIT_STAT) {
 				errno = 0;
 				*pathend++ = SEP;
 				*pathend = EOS;
-				return(GLOB_NOSPACE);
+				повернути(GLOB_NOSPACE);
 			}
-			if (g_lstat(pathbuf, &sb, pglob))
-				return(0);
+			якщо (g_lstat(pathbuf, &sb, pglob))
+				повернути(0);
 
-			if (((pglob->gl_flags & GLOB_MARK) &&
+			якщо (((pglob->gl_flags & GLOB_MARK) &&
 			    pathend[-1] != SEP) && (S_ISDIR(sb.st_mode) ||
 			    (S_ISLNK(sb.st_mode) &&
 			    (g_stat(pathbuf, &sb, pglob) == 0) &&
 			    S_ISDIR(sb.st_mode)))) {
-				if (pathend+1 > pathend_last)
-					return (1);
+				якщо (pathend+1 > pathend_last)
+					повернути (1);
 				*pathend++ = SEP;
 				*pathend = EOS;
 			}
 			++pglob->gl_matchc;
-			return(globextend(pathbuf, pglob, limitp, &sb));
+			повернути(globextend(pathbuf, pglob, limitp, &sb));
 		}
 
 		/* Find end of next segment, copy tentatively to pathend. */
 		q = pathend;
 		p = pattern;
-		while (*p != EOS && *p != SEP) {
-			if (ismeta(*p))
+		поки (*p != EOS && *p != SEP) {
+			якщо (ismeta(*p))
 				anymeta = 1;
-			if (q+1 > pathend_last)
-				return (1);
+			якщо (q+1 > pathend_last)
+				повернути (1);
 			*q++ = *p++;
 		}
 
-		if (!anymeta) {		/* No expansion, do next segment. */
+		якщо (!anymeta) {		/* No expansion, do next segment. */
 			pathend = q;
 			pattern = p;
-			while (*pattern == SEP) {
-				if (pathend+1 > pathend_last)
-					return (1);
+			поки (*pattern == SEP) {
+				якщо (pathend+1 > pathend_last)
+					повернути (1);
 				*pathend++ = *pattern++;
 			}
-		} else
+		} інакше
 			/* Need expansion, recurse. */
-			return(glob3(pathbuf, pathbuf_last, pathend,
+			повернути(glob3(pathbuf, pathbuf_last, pathend,
 			    pathend_last, pattern, p, pattern_last,
 			    pglob, limitp));
 	}
 	/* NOTREACHED */
 }
 
-static int
+static ціле
 glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
     Char *pattern, Char *restpattern, Char *restpattern_last, glob_t *pglob,
     struct glob_lim *limitp)
 {
 	struct dirent *dp;
 	DIR *dirp;
-	int err;
+	ціле err;
 	char buf[PATH_MAX];
 
 	/*
@@ -712,35 +712,35 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
 	 */
 	struct dirent *(*readdirfunc)(void *);
 
-	if (pathend > pathend_last)
-		return (1);
+	якщо (pathend > pathend_last)
+		повернути (1);
 	*pathend = EOS;
 	errno = 0;
 
-	if ((dirp = g_opendir(pathbuf, pglob)) == NULL) {
+	якщо ((dirp = g_opendir(pathbuf, pglob)) == NULL) {
 		/* TODO: don't call for ENOENT or ENOTDIR? */
-		if (pglob->gl_errfunc) {
-			if (g_Ctoc(pathbuf, buf, sizeof(buf)))
-				return(GLOB_ABORTED);
-			if (pglob->gl_errfunc(buf, errno) ||
+		якщо (pglob->gl_errfunc) {
+			якщо (g_Ctoc(pathbuf, buf, sizeof(buf)))
+				повернути(GLOB_ABORTED);
+			якщо (pglob->gl_errfunc(buf, errno) ||
 			    pglob->gl_flags & GLOB_ERR)
-				return(GLOB_ABORTED);
+				повернути(GLOB_ABORTED);
 		}
-		return(0);
+		повернути(0);
 	}
 
 	err = 0;
 
 	/* Search directory for matching names. */
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	якщо (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		readdirfunc = pglob->gl_readdir;
-	else
+	інакше
 		readdirfunc = (struct dirent *(*)(void *))readdir;
-	while ((dp = (*readdirfunc)(dirp))) {
+	поки ((dp = (*readdirfunc)(dirp))) {
 		u_char *sc;
 		Char *dc;
 
-		if ((pglob->gl_flags & GLOB_LIMIT) &&
+		якщо ((pglob->gl_flags & GLOB_LIMIT) &&
 		    limitp->glim_readdir++ >= GLOB_LIMIT_READDIR) {
 			errno = 0;
 			*pathend++ = SEP;
@@ -750,33 +750,33 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
 		}
 
 		/* Initial DOT must be matched literally. */
-		if (dp->d_name[0] == DOT && *pattern != DOT)
+		якщо (dp->d_name[0] == DOT && *pattern != DOT)
 			continue;
 		dc = pathend;
 		sc = (u_char *) dp->d_name;
-		while (dc < pathend_last && (*dc++ = *sc++) != EOS)
+		поки (dc < pathend_last && (*dc++ = *sc++) != EOS)
 			;
-		if (dc >= pathend_last) {
+		якщо (dc >= pathend_last) {
 			*dc = EOS;
 			err = 1;
 			break;
 		}
 
-		if (!match(pathend, pattern, restpattern)) {
+		якщо (!match(pathend, pattern, restpattern)) {
 			*pathend = EOS;
 			continue;
 		}
 		err = glob2(pathbuf, pathbuf_last, --dc, pathend_last,
 		    restpattern, restpattern_last, pglob, limitp);
-		if (err)
+		якщо (err)
 			break;
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	якщо (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		(*pglob->gl_closedir)(dirp);
-	else
+	інакше
 		closedir(dirp);
-	return(err);
+	повернути(err);
 }
 
 
@@ -794,7 +794,7 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
  *	Either gl_pathc is zero and gl_pathv is NULL; or gl_pathc > 0 and
  *	gl_pathv points to (gl_offs + gl_pathc + 1) items.
  */
-static int
+static ціле
 globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
     struct stat *sb)
 {
@@ -805,16 +805,16 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
 	struct stat **statv;
 
 	newn = 2 + pglob->gl_pathc + pglob->gl_offs;
-	if (pglob->gl_offs >= SSIZE_MAX ||
+	якщо (pglob->gl_offs >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX ||
 	    newn >= SSIZE_MAX ||
 	    SIZE_MAX / sizeof(*pathv) <= newn ||
 	    SIZE_MAX / sizeof(*statv) <= newn) {
  nospace:
-		for (i = pglob->gl_offs; i < newn - 2; i++) {
-			if (pglob->gl_pathv && pglob->gl_pathv[i])
+		для (i = pglob->gl_offs; i < newn - 2; i++) {
+			якщо (pglob->gl_pathv && pglob->gl_pathv[i])
 				free(pglob->gl_pathv[i]);
-			if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
+			якщо ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
 			    pglob->gl_pathv && pglob->gl_pathv[i])
 				free(pglob->gl_statv[i]);
 		}
@@ -822,41 +822,41 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
 		pglob->gl_pathv = NULL;
 		free(pglob->gl_statv);
 		pglob->gl_statv = NULL;
-		return(GLOB_NOSPACE);
+		повернути(GLOB_NOSPACE);
 	}
 
 	pathv = reallocarray(pglob->gl_pathv, newn, sizeof(*pathv));
-	if (pathv == NULL)
+	якщо (pathv == NULL)
 		goto nospace;
-	if (pglob->gl_pathv == NULL && pglob->gl_offs > 0) {
+	якщо (pglob->gl_pathv == NULL && pglob->gl_offs > 0) {
 		/* first time around -- clear initial gl_offs items */
 		pathv += pglob->gl_offs;
-		for (i = pglob->gl_offs; i > 0; i--)
+		для (i = pglob->gl_offs; i > 0; i--)
 			*--pathv = NULL;
 	}
 	pglob->gl_pathv = pathv;
 
-	if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
+	якщо ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
 		statv = reallocarray(pglob->gl_statv, newn, sizeof(*statv));
-		if (statv == NULL)
+		якщо (statv == NULL)
 			goto nospace;
-		if (pglob->gl_statv == NULL && pglob->gl_offs > 0) {
+		якщо (pglob->gl_statv == NULL && pglob->gl_offs > 0) {
 			/* first time around -- clear initial gl_offs items */
 			statv += pglob->gl_offs;
-			for (i = pglob->gl_offs; i > 0; i--)
+			для (i = pglob->gl_offs; i > 0; i--)
 				*--statv = NULL;
 		}
 		pglob->gl_statv = statv;
-		if (sb == NULL)
+		якщо (sb == NULL)
 			statv[pglob->gl_offs + pglob->gl_pathc] = NULL;
-		else {
+		інакше {
 			limitp->glim_malloc += sizeof(**statv);
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
+			якщо ((pglob->gl_flags & GLOB_LIMIT) &&
 			    limitp->glim_malloc >= GLOB_LIMIT_MALLOC) {
 				errno = 0;
-				return(GLOB_NOSPACE);
+				повернути(GLOB_NOSPACE);
 			}
-			if ((statv[pglob->gl_offs + pglob->gl_pathc] =
+			якщо ((statv[pglob->gl_offs + pglob->gl_pathc] =
 			    malloc(sizeof(**statv))) == NULL)
 				goto copy_error;
 			memcpy(statv[pglob->gl_offs + pglob->gl_pathc], sb,
@@ -865,27 +865,27 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
 		statv[pglob->gl_offs + pglob->gl_pathc + 1] = NULL;
 	}
 
-	for (p = path; *p++;)
+	для (p = path; *p++;)
 		;
 	len = (size_t)(p - path);
 	limitp->glim_malloc += len;
-	if ((copy = malloc(len)) != NULL) {
-		if (g_Ctoc(path, copy, len)) {
+	якщо ((copy = malloc(len)) != NULL) {
+		якщо (g_Ctoc(path, copy, len)) {
 			free(copy);
-			return(GLOB_NOSPACE);
+			повернути(GLOB_NOSPACE);
 		}
 		pathv[pglob->gl_offs + pglob->gl_pathc++] = copy;
 	}
 	pathv[pglob->gl_offs + pglob->gl_pathc] = NULL;
 
-	if ((pglob->gl_flags & GLOB_LIMIT) &&
+	якщо ((pglob->gl_flags & GLOB_LIMIT) &&
 	    (newn * sizeof(*pathv)) + limitp->glim_malloc >
 	    GLOB_LIMIT_MALLOC) {
 		errno = 0;
-		return(GLOB_NOSPACE);
+		повернути(GLOB_NOSPACE);
 	}
  copy_error:
-	return(copy == NULL ? GLOB_NOSPACE : 0);
+	повернути(copy == NULL ? GLOB_NOSPACE : 0);
 }
 
 
@@ -900,72 +900,72 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
  * from Russ Cox to not go quadratic on cases like a file called
  * ("a" x 100) . "x" matched against a pattern like "a*a*a*a*a*a*a*y".
  */
-static int
+static ціле
 match(Char *name, Char *pat, Char *patend)
 {
-	int ok, negate_range;
+	ціле ok, negate_range;
 	Char c, k;
 	Char *nextp = NULL;
 	Char *nextn = NULL;
 
 loop:
-	while (pat < patend) {
+	поки (pat < patend) {
 		c = *pat++;
 		switch (c & M_MASK) {
 		case M_ALL:
-			while (pat < patend && (*pat & M_MASK) == M_ALL)
+			поки (pat < patend && (*pat & M_MASK) == M_ALL)
 				pat++;	/* eat consecutive '*' */
-			if (pat == patend)
-				return(1);
-			if (*name == EOS)
-				return(0);
+			якщо (pat == patend)
+				повернути(1);
+			якщо (*name == EOS)
+				повернути(0);
 			nextn = name + 1;
 			nextp = pat - 1;
 			break;
 		case M_ONE:
-			if (*name++ == EOS)
+			якщо (*name++ == EOS)
 				goto fail;
 			break;
 		case M_SET:
 			ok = 0;
-			if ((k = *name++) == EOS)
+			якщо ((k = *name++) == EOS)
 				goto fail;
-			if ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
+			якщо ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
 				++pat;
-			while (((c = *pat++) & M_MASK) != M_END) {
-				if ((c & M_MASK) == M_CLASS) {
+			поки (((c = *pat++) & M_MASK) != M_END) {
+				якщо ((c & M_MASK) == M_CLASS) {
 					Char idx = *pat & M_MASK;
-					if (idx < NCCLASSES &&
+					якщо (idx < NCCLASSES &&
 					    cclasses[idx].isctype(k))
 						ok = 1;
 					++pat;
 				}
-				if ((*pat & M_MASK) == M_RNG) {
-					if (c <= k && k <= pat[1])
+				якщо ((*pat & M_MASK) == M_RNG) {
+					якщо (c <= k && k <= pat[1])
 						ok = 1;
 					pat += 2;
-				} else if (c == k)
+				} інакше якщо (c == k)
 					ok = 1;
 			}
-			if (ok == negate_range)
+			якщо (ok == negate_range)
 				goto fail;
 			break;
 		default:
-			if (*name++ != c)
+			якщо (*name++ != c)
 				goto fail;
 			break;
 		}
 	}
-	if (*name == EOS)
-		return(1);
+	якщо (*name == EOS)
+		повернути(1);
 
 fail:
-	if (nextn) {
+	якщо (nextn) {
 		pat = nextp;
 		name = nextn;
 		goto loop;
 	}
-	return(0);
+	повернути(0);
 }
 
 /* Free allocated data belonging to a glob_t structure. */
@@ -975,15 +975,15 @@ globfree(glob_t *pglob)
 	size_t i;
 	char **pp;
 
-	if (pglob->gl_pathv != NULL) {
+	якщо (pglob->gl_pathv != NULL) {
 		pp = pglob->gl_pathv + pglob->gl_offs;
-		for (i = pglob->gl_pathc; i--; ++pp)
+		для (i = pglob->gl_pathc; i--; ++pp)
 			free(*pp);
 		free(pglob->gl_pathv);
 		pglob->gl_pathv = NULL;
 	}
-	if (pglob->gl_statv != NULL) {
-		for (i = 0; i < pglob->gl_pathc; i++) {
+	якщо (pglob->gl_statv != NULL) {
+		для (i = 0; i < pglob->gl_pathc; i++) {
 			free(pglob->gl_statv[i]);
 		}
 		free(pglob->gl_statv);
@@ -996,62 +996,62 @@ g_opendir(Char *str, glob_t *pglob)
 {
 	char buf[PATH_MAX];
 
-	if (!*str)
+	якщо (!*str)
 		strlcpy(buf, ".", sizeof buf);
-	else {
-		if (g_Ctoc(str, buf, sizeof(buf)))
-			return(NULL);
+	інакше {
+		якщо (g_Ctoc(str, buf, sizeof(buf)))
+			повернути(NULL);
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_opendir)(buf));
+	якщо (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		повернути((*pglob->gl_opendir)(buf));
 
-	return(opendir(buf));
+	повернути(opendir(buf));
 }
 
-static int
+static ціле
 g_lstat(Char *fn, struct stat *sb, glob_t *pglob)
 {
 	char buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_lstat)(buf, sb));
-	return(lstat(buf, sb));
+	якщо (g_Ctoc(fn, buf, sizeof(buf)))
+		повернути(-1);
+	якщо (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		повернути((*pglob->gl_lstat)(buf, sb));
+	повернути(lstat(buf, sb));
 }
 
-static int
+static ціле
 g_stat(Char *fn, struct stat *sb, glob_t *pglob)
 {
 	char buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_stat)(buf, sb));
-	return(stat(buf, sb));
+	якщо (g_Ctoc(fn, buf, sizeof(buf)))
+		повернути(-1);
+	якщо (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		повернути((*pglob->gl_stat)(buf, sb));
+	повернути(stat(buf, sb));
 }
 
 static Char *
-g_strchr(const Char *str, int ch)
+g_strchr(const Char *str, ціле ch)
 {
 	do {
-		if (*str == ch)
-			return ((Char *)str);
-	} while (*str++);
-	return (NULL);
+		якщо (*str == ch)
+			повернути ((Char *)str);
+	} поки (*str++);
+	повернути (NULL);
 }
 
-static int
+static ціле
 g_Ctoc(const Char *str, char *buf, size_t len)
 {
 
-	while (len--) {
-		if ((*buf++ = *str++) == EOS)
-			return (0);
+	поки (len--) {
+		якщо ((*buf++ = *str++) == EOS)
+			повернути (0);
 	}
-	return (1);
+	повернути (1);
 }
 
 #ifdef DEBUG
@@ -1061,13 +1061,13 @@ qprintf(const char *str, Char *s)
 	Char *p;
 
 	(void)printf("%s:\n", str);
-	for (p = s; *p; p++)
+	для (p = s; *p; p++)
 		(void)printf("%c", CHAR(*p));
 	(void)printf("\n");
-	for (p = s; *p; p++)
+	для (p = s; *p; p++)
 		(void)printf("%c", *p & M_PROTECT ? '"' : ' ');
 	(void)printf("\n");
-	for (p = s; *p; p++)
+	для (p = s; *p; p++)
 		(void)printf("%c", ismeta(*p) ? '_' : ' ');
 	(void)printf("\n");
 }

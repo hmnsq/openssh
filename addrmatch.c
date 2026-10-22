@@ -42,55 +42,55 @@
  * Returns -1 on negated match found (never returned when addr == NULL).
  * Returns -2 on invalid list entry.
  */
-int
+ціле
 addr_match_list(const char *addr, const char *_list)
 {
 	char *list, *cp, *o;
 	struct xaddr try_addr, match_addr;
 	u_int masklen, neg;
-	int ret = 0, r;
+	ціле ret = 0, r;
 
-	if (addr != NULL && addr_pton(addr, &try_addr) != 0) {
+	якщо (addr != NULL && addr_pton(addr, &try_addr) != 0) {
 		debug2_f("couldn't parse address %.100s", addr);
-		return 0;
+		повернути 0;
 	}
-	if ((o = list = strdup(_list)) == NULL)
-		return -1;
-	while ((cp = strsep(&list, ",")) != NULL) {
+	якщо ((o = list = strdup(_list)) == NULL)
+		повернути -1;
+	поки ((cp = strsep(&list, ",")) != NULL) {
 		neg = *cp == '!';
-		if (neg)
+		якщо (neg)
 			cp++;
-		if (*cp == '\0') {
+		якщо (*cp == '\0') {
 			ret = -2;
 			break;
 		}
 		/* Prefer CIDR address matching */
 		r = addr_pton_cidr(cp, &match_addr, &masklen);
-		if (r == -2) {
+		якщо (r == -2) {
 			debug2_f("inconsistent mask length for "
 			    "match network \"%.100s\"", cp);
 			ret = -2;
 			break;
-		} else if (r == 0) {
-			if (addr != NULL && addr_netmatch(&try_addr,
+		} інакше якщо (r == 0) {
+			якщо (addr != NULL && addr_netmatch(&try_addr,
 			    &match_addr, masklen) == 0) {
  foundit:
-				if (neg) {
+				якщо (neg) {
 					ret = -1;
 					break;
 				}
 				ret = 1;
 			}
 			continue;
-		} else {
+		} інакше {
 			/* If CIDR parse failed, try wildcard string match */
-			if (addr != NULL && match_pattern(addr, cp) == 1)
+			якщо (addr != NULL && match_pattern(addr, cp) == 1)
 				goto foundit;
 		}
 	}
 	free(o);
 
-	return ret;
+	повернути ret;
 }
 
 /*
@@ -102,22 +102,22 @@ addr_match_list(const char *addr, const char *_list)
  * Returns 0 on if no match found, or no errors found when addr == NULL.
  * Returns -1 on error
  */
-int
+ціле
 addr_match_cidr_list(const char *addr, const char *_list)
 {
 	char *list, *cp, *o;
 	struct xaddr try_addr, match_addr;
 	u_int masklen;
-	int ret = 0, r;
+	ціле ret = 0, r;
 
-	if (addr != NULL && addr_pton(addr, &try_addr) != 0) {
+	якщо (addr != NULL && addr_pton(addr, &try_addr) != 0) {
 		debug2_f("couldn't parse address %.100s", addr);
-		return 0;
+		повернути 0;
 	}
-	if ((o = list = strdup(_list)) == NULL)
-		return -1;
-	while ((cp = strsep(&list, ",")) != NULL) {
-		if (*cp == '\0') {
+	якщо ((o = list = strdup(_list)) == NULL)
+		повернути -1;
+	поки ((cp = strsep(&list, ",")) != NULL) {
+		якщо (*cp == '\0') {
 			error_f("empty entry in list \"%.100s\"", o);
 			ret = -1;
 			break;
@@ -130,13 +130,13 @@ addr_match_cidr_list(const char *addr, const char *_list)
 		 */
 
 		/* Stop junk from reaching getaddrinfo. +3 is for masklen */
-		if (strlen(cp) > INET6_ADDRSTRLEN + 3) {
+		якщо (strlen(cp) > INET6_ADDRSTRLEN + 3) {
 			error_f("list entry \"%.100s\" too long", cp);
 			ret = -1;
 			break;
 		}
 #define VALID_CIDR_CHARS "0123456789abcdefABCDEF.:/"
-		if (strspn(cp, VALID_CIDR_CHARS) != strlen(cp)) {
+		якщо (strspn(cp, VALID_CIDR_CHARS) != strlen(cp)) {
 			error_f("list entry \"%.100s\" contains invalid "
 			    "characters", cp);
 			ret = -1;
@@ -144,17 +144,17 @@ addr_match_cidr_list(const char *addr, const char *_list)
 
 		/* Prefer CIDR address matching */
 		r = addr_pton_cidr(cp, &match_addr, &masklen);
-		if (r == -1) {
+		якщо (r == -1) {
 			error("Invalid network entry \"%.100s\"", cp);
 			ret = -1;
 			break;
-		} else if (r == -2) {
+		} інакше якщо (r == -2) {
 			error("Inconsistent mask length for "
 			    "network \"%.100s\"", cp);
 			ret = -1;
 			break;
-		} else if (r == 0 && addr != NULL) {
-			if (addr_netmatch(&try_addr, &match_addr,
+		} інакше якщо (r == 0 && addr != NULL) {
+			якщо (addr_netmatch(&try_addr, &match_addr,
 			    masklen) == 0)
 				ret = 1;
 			continue;
@@ -162,5 +162,5 @@ addr_match_cidr_list(const char *addr, const char *_list)
 	}
 	free(o);
 
-	return ret;
+	повернути ret;
 }

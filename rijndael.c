@@ -312,7 +312,7 @@ static const u32 Te3[256] = {
     0x4141c382U, 0x9999b029U, 0x2d2d775aU, 0x0f0f111eU,
     0xb0b0cb7bU, 0x5454fca8U, 0xbbbbd66dU, 0x16163a2cU,
 };
-#if 0
+#якщо 0
 static const u32 Td0[256] = {
     0x51f4a750U, 0x7e416553U, 0x1a17a4c3U, 0x3a275e96U,
     0x3bab6bcbU, 0x1f9d45f1U, 0xacfa58abU, 0x4be30393U,
@@ -626,18 +626,18 @@ static const u32 rcon[] = {
  *
  * @return	the number of rounds for the given cipher key size.
  */
-int
-rijndaelKeySetupEnc(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], int keyBits)
+ціле
+rijndaelKeySetupEnc(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], ціле keyBits)
 {
-   	int i = 0;
+   	ціле i = 0;
 	u32 temp;
 
 	rk[0] = GETU32(cipherKey     );
 	rk[1] = GETU32(cipherKey +  4);
 	rk[2] = GETU32(cipherKey +  8);
 	rk[3] = GETU32(cipherKey + 12);
-	if (keyBits == 128) {
-		for (;;) {
+	якщо (keyBits == 128) {
+		для (;;) {
 			temp  = rk[3];
 			rk[4] = rk[0] ^
 				(Te2[(temp >> 16) & 0xff] & 0xff000000) ^
@@ -648,16 +648,16 @@ rijndaelKeySetupEnc(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], int keyBits)
 			rk[5] = rk[1] ^ rk[4];
 			rk[6] = rk[2] ^ rk[5];
 			rk[7] = rk[3] ^ rk[6];
-			if (++i == 10) {
-				return 10;
+			якщо (++i == 10) {
+				повернути 10;
 			}
 			rk += 4;
 		}
 	}
 	rk[4] = GETU32(cipherKey + 16);
 	rk[5] = GETU32(cipherKey + 20);
-	if (keyBits == 192) {
-		for (;;) {
+	якщо (keyBits == 192) {
+		для (;;) {
 			temp = rk[ 5];
 			rk[ 6] = rk[ 0] ^
 				(Te2[(temp >> 16) & 0xff] & 0xff000000) ^
@@ -668,8 +668,8 @@ rijndaelKeySetupEnc(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], int keyBits)
 			rk[ 7] = rk[ 1] ^ rk[ 6];
 			rk[ 8] = rk[ 2] ^ rk[ 7];
 			rk[ 9] = rk[ 3] ^ rk[ 8];
-			if (++i == 8) {
-				return 12;
+			якщо (++i == 8) {
+				повернути 12;
 			}
 			rk[10] = rk[ 4] ^ rk[ 9];
 			rk[11] = rk[ 5] ^ rk[10];
@@ -678,8 +678,8 @@ rijndaelKeySetupEnc(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], int keyBits)
 	}
 	rk[6] = GETU32(cipherKey + 24);
 	rk[7] = GETU32(cipherKey + 28);
-	if (keyBits == 256) {
-		for (;;) {
+	якщо (keyBits == 256) {
+		для (;;) {
 			temp = rk[ 7];
 			rk[ 8] = rk[ 0] ^
 				(Te2[(temp >> 16) & 0xff] & 0xff000000) ^
@@ -690,8 +690,8 @@ rijndaelKeySetupEnc(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], int keyBits)
 			rk[ 9] = rk[ 1] ^ rk[ 8];
 			rk[10] = rk[ 2] ^ rk[ 9];
 			rk[11] = rk[ 3] ^ rk[10];
-			if (++i == 7) {
-				return 14;
+			якщо (++i == 7) {
+				повернути 14;
 			}
 			temp = rk[11];
 			rk[12] = rk[ 4] ^
@@ -705,33 +705,33 @@ rijndaelKeySetupEnc(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], int keyBits)
 			rk += 8;
 		}
 	}
-	return 0;
+	повернути 0;
 }
 
-#if 0
+#якщо 0
 /**
  * Expand the cipher key into the decryption key schedule.
  *
  * @return	the number of rounds for the given cipher key size.
  */
-int
-rijndaelKeySetupDec(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], int keyBits)
+ціле
+rijndaelKeySetupDec(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], ціле keyBits)
 {
-	int Nr, i, j;
+	ціле Nr, i, j;
 	u32 temp;
 
 	/* expand the cipher key: */
 	Nr = rijndaelKeySetupEnc(rk, cipherKey, keyBits);
 
 	/* invert the order of the round keys: */
-	for (i = 0, j = 4*Nr; i < j; i += 4, j -= 4) {
+	для (i = 0, j = 4*Nr; i < j; i += 4, j -= 4) {
 		temp = rk[i    ]; rk[i    ] = rk[j    ]; rk[j    ] = temp;
 		temp = rk[i + 1]; rk[i + 1] = rk[j + 1]; rk[j + 1] = temp;
 		temp = rk[i + 2]; rk[i + 2] = rk[j + 2]; rk[j + 2] = temp;
 		temp = rk[i + 3]; rk[i + 3] = rk[j + 3]; rk[j + 3] = temp;
 	}
 	/* apply the inverse MixColumn transform to all round keys but the first and the last: */
-	for (i = 1; i < Nr; i++) {
+	для (i = 1; i < Nr; i++) {
 		rk += 4;
 		rk[0] =
 			Td0[Te1[(rk[0] >> 24)       ] & 0xff] ^
@@ -754,17 +754,17 @@ rijndaelKeySetupDec(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], int keyBits)
 			Td2[Te1[(rk[3] >>  8) & 0xff] & 0xff] ^
 			Td3[Te1[(rk[3]      ) & 0xff] & 0xff];
 	}
-	return Nr;
+	повернути Nr;
 }
 #endif
 
 void
-rijndaelEncrypt(const u32 rk[/*4*(Nr + 1)*/], int Nr, const u8 pt[16],
+rijndaelEncrypt(const u32 rk[/*4*(Nr + 1)*/], ціле Nr, const u8 pt[16],
     u8 ct[16])
 {
 	u32 s0, s1, s2, s3, t0, t1, t2, t3;
 #ifndef FULL_UNROLL
-    int r;
+    ціле r;
 #endif /* ?FULL_UNROLL */
 
     /*
@@ -821,7 +821,7 @@ rijndaelEncrypt(const u32 rk[/*4*(Nr + 1)*/], int Nr, const u8 pt[16],
    	t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >>  8) & 0xff] ^ Te3[s0 & 0xff] ^ rk[37];
    	t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >>  8) & 0xff] ^ Te3[s1 & 0xff] ^ rk[38];
    	t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >>  8) & 0xff] ^ Te3[s2 & 0xff] ^ rk[39];
-    if (Nr > 10) {
+    якщо (Nr > 10) {
 	/* round 10: */
 	s0 = Te0[t0 >> 24] ^ Te1[(t1 >> 16) & 0xff] ^ Te2[(t2 >>  8) & 0xff] ^ Te3[t3 & 0xff] ^ rk[40];
 	s1 = Te0[t1 >> 24] ^ Te1[(t2 >> 16) & 0xff] ^ Te2[(t3 >>  8) & 0xff] ^ Te3[t0 & 0xff] ^ rk[41];
@@ -832,7 +832,7 @@ rijndaelEncrypt(const u32 rk[/*4*(Nr + 1)*/], int Nr, const u8 pt[16],
 	t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >>  8) & 0xff] ^ Te3[s0 & 0xff] ^ rk[45];
 	t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >>  8) & 0xff] ^ Te3[s1 & 0xff] ^ rk[46];
 	t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >>  8) & 0xff] ^ Te3[s2 & 0xff] ^ rk[47];
-	if (Nr > 12) {
+	якщо (Nr > 12) {
 	    /* round 12: */
 	    s0 = Te0[t0 >> 24] ^ Te1[(t1 >> 16) & 0xff] ^ Te2[(t2 >>  8) & 0xff] ^ Te3[t3 & 0xff] ^ rk[48];
 	    s1 = Te0[t1 >> 24] ^ Te1[(t2 >> 16) & 0xff] ^ Te2[(t3 >>  8) & 0xff] ^ Te3[t0 & 0xff] ^ rk[49];
@@ -846,12 +846,12 @@ rijndaelEncrypt(const u32 rk[/*4*(Nr + 1)*/], int Nr, const u8 pt[16],
 	}
     }
     rk += Nr << 2;
-#else  /* !FULL_UNROLL */
+#інакше  /* !FULL_UNROLL */
     /*
 	 * Nr - 1 full rounds:
 	 */
     r = Nr >> 1;
-    for (;;) {
+    для (;;) {
 	t0 =
 	    Te0[(s0 >> 24)       ] ^
 	    Te1[(s1 >> 16) & 0xff] ^
@@ -878,7 +878,7 @@ rijndaelEncrypt(const u32 rk[/*4*(Nr + 1)*/], int Nr, const u8 pt[16],
 	    rk[7];
 
 	rk += 8;
-	if (--r == 0) {
+	якщо (--r == 0) {
 	    break;
 	}
 
@@ -942,14 +942,14 @@ rijndaelEncrypt(const u32 rk[/*4*(Nr + 1)*/], int Nr, const u8 pt[16],
 	PUTU32(ct + 12, s3);
 }
 
-#if 0
+#якщо 0
 static void
-rijndaelDecrypt(const u32 rk[/*4*(Nr + 1)*/], int Nr, const u8 ct[16],
+rijndaelDecrypt(const u32 rk[/*4*(Nr + 1)*/], ціле Nr, const u8 ct[16],
     u8 pt[16])
 {
 	u32 s0, s1, s2, s3, t0, t1, t2, t3;
 #ifndef FULL_UNROLL
-    int r;
+    ціле r;
 #endif /* ?FULL_UNROLL */
 
     /*
@@ -1006,7 +1006,7 @@ rijndaelDecrypt(const u32 rk[/*4*(Nr + 1)*/], int Nr, const u8 ct[16],
     t1 = Td0[s1 >> 24] ^ Td1[(s0 >> 16) & 0xff] ^ Td2[(s3 >>  8) & 0xff] ^ Td3[s2 & 0xff] ^ rk[37];
     t2 = Td0[s2 >> 24] ^ Td1[(s1 >> 16) & 0xff] ^ Td2[(s0 >>  8) & 0xff] ^ Td3[s3 & 0xff] ^ rk[38];
     t3 = Td0[s3 >> 24] ^ Td1[(s2 >> 16) & 0xff] ^ Td2[(s1 >>  8) & 0xff] ^ Td3[s0 & 0xff] ^ rk[39];
-    if (Nr > 10) {
+    якщо (Nr > 10) {
 	/* round 10: */
 	s0 = Td0[t0 >> 24] ^ Td1[(t3 >> 16) & 0xff] ^ Td2[(t2 >>  8) & 0xff] ^ Td3[t1 & 0xff] ^ rk[40];
 	s1 = Td0[t1 >> 24] ^ Td1[(t0 >> 16) & 0xff] ^ Td2[(t3 >>  8) & 0xff] ^ Td3[t2 & 0xff] ^ rk[41];
@@ -1017,7 +1017,7 @@ rijndaelDecrypt(const u32 rk[/*4*(Nr + 1)*/], int Nr, const u8 ct[16],
 	t1 = Td0[s1 >> 24] ^ Td1[(s0 >> 16) & 0xff] ^ Td2[(s3 >>  8) & 0xff] ^ Td3[s2 & 0xff] ^ rk[45];
 	t2 = Td0[s2 >> 24] ^ Td1[(s1 >> 16) & 0xff] ^ Td2[(s0 >>  8) & 0xff] ^ Td3[s3 & 0xff] ^ rk[46];
 	t3 = Td0[s3 >> 24] ^ Td1[(s2 >> 16) & 0xff] ^ Td2[(s1 >>  8) & 0xff] ^ Td3[s0 & 0xff] ^ rk[47];
-	if (Nr > 12) {
+	якщо (Nr > 12) {
 	    /* round 12: */
 	    s0 = Td0[t0 >> 24] ^ Td1[(t3 >> 16) & 0xff] ^ Td2[(t2 >>  8) & 0xff] ^ Td3[t1 & 0xff] ^ rk[48];
 	    s1 = Td0[t1 >> 24] ^ Td1[(t0 >> 16) & 0xff] ^ Td2[(t3 >>  8) & 0xff] ^ Td3[t2 & 0xff] ^ rk[49];
@@ -1031,12 +1031,12 @@ rijndaelDecrypt(const u32 rk[/*4*(Nr + 1)*/], int Nr, const u8 ct[16],
 	}
     }
 	rk += Nr << 2;
-#else  /* !FULL_UNROLL */
+#інакше  /* !FULL_UNROLL */
     /*
      * Nr - 1 full rounds:
      */
     r = Nr >> 1;
-    for (;;) {
+    для (;;) {
 	t0 =
 	    Td0[(s0 >> 24)       ] ^
 	    Td1[(s3 >> 16) & 0xff] ^
@@ -1063,7 +1063,7 @@ rijndaelDecrypt(const u32 rk[/*4*(Nr + 1)*/], int Nr, const u8 ct[16],
 	    rk[7];
 
 	rk += 8;
-	if (--r == 0) {
+	якщо (--r == 0) {
 	    break;
 	}
 

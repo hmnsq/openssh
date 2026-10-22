@@ -30,155 +30,155 @@
 #define SSHBUF_INTERNAL
 #include "sshbuf.h"
 
-int
+ціле
 sshbuf_get_bignum2(struct sshbuf *buf, BIGNUM **valp)
 {
 	BIGNUM *v;
 	const u_char *d;
 	size_t len;
-	int r;
+	ціле r;
 
-	if (valp != NULL)
+	якщо (valp != NULL)
 		*valp = NULL;
-	if ((r = sshbuf_get_bignum2_bytes_direct(buf, &d, &len)) != 0)
-		return r;
-	if (valp != NULL) {
-		if ((v = BN_new()) == NULL ||
+	якщо ((r = sshbuf_get_bignum2_bytes_direct(buf, &d, &len)) != 0)
+		повернути r;
+	якщо (valp != NULL) {
+		якщо ((v = BN_new()) == NULL ||
 		    BN_bin2bn(d, len, v) == NULL) {
 			BN_clear_free(v);
-			return SSH_ERR_ALLOC_FAIL;
+			повернути SSH_ERR_ALLOC_FAIL;
 		}
 		*valp = v;
 	}
-	return 0;
+	повернути 0;
 }
 
-static int
+static ціле
 get_ec(const u_char *d, size_t len, EC_POINT *v, const EC_GROUP *g)
 {
 	/* Refuse overlong bignums */
-	if (len == 0 || len > SSHBUF_MAX_ECPOINT)
-		return SSH_ERR_ECPOINT_TOO_LARGE;
+	якщо (len == 0 || len > SSHBUF_MAX_ECPOINT)
+		повернути SSH_ERR_ECPOINT_TOO_LARGE;
 	/* Only handle uncompressed points */
-	if (*d != POINT_CONVERSION_UNCOMPRESSED)
-		return SSH_ERR_INVALID_FORMAT;
-	if (v != NULL && EC_POINT_oct2point(g, v, d, len, NULL) != 1)
-		return SSH_ERR_INVALID_FORMAT; /* XXX assumption */
-	return 0;
+	якщо (*d != POINT_CONVERSION_UNCOMPRESSED)
+		повернути SSH_ERR_INVALID_FORMAT;
+	якщо (v != NULL && EC_POINT_oct2point(g, v, d, len, NULL) != 1)
+		повернути SSH_ERR_INVALID_FORMAT; /* XXX assumption */
+	повернути 0;
 }
 
-int
+ціле
 sshbuf_get_ec(struct sshbuf *buf, EC_POINT *v, const EC_GROUP *g)
 {
 	const u_char *d;
 	size_t len;
-	int r;
+	ціле r;
 
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0)
-		return r;
-	if ((r = get_ec(d, len, v, g)) != 0)
-		return r;
+	якщо ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0)
+		повернути r;
+	якщо ((r = get_ec(d, len, v, g)) != 0)
+		повернути r;
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	якщо (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		повернути SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	повернути 0;
 }
 
-int
+ціле
 sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v)
 {
 	EC_POINT *pt = EC_POINT_new(EC_KEY_get0_group(v));
-	int r;
+	ціле r;
 	const u_char *d;
 	size_t len;
 
-	if (pt == NULL) {
+	якщо (pt == NULL) {
 		SSHBUF_DBG(("SSH_ERR_ALLOC_FAIL"));
-		return SSH_ERR_ALLOC_FAIL;
+		повернути SSH_ERR_ALLOC_FAIL;
 	}
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0) {
+	якщо ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0) {
 		EC_POINT_free(pt);
-		return r;
+		повернути r;
 	}
-	if ((r = get_ec(d, len, pt, EC_KEY_get0_group(v))) != 0) {
+	якщо ((r = get_ec(d, len, pt, EC_KEY_get0_group(v))) != 0) {
 		EC_POINT_free(pt);
-		return r;
+		повернути r;
 	}
-	if (EC_KEY_set_public_key(v, pt) != 1) {
+	якщо (EC_KEY_set_public_key(v, pt) != 1) {
 		EC_POINT_free(pt);
-		return SSH_ERR_ALLOC_FAIL; /* XXX assumption */
+		повернути SSH_ERR_ALLOC_FAIL; /* XXX assumption */
 	}
 	EC_POINT_free(pt);
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	якщо (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		повернути SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	повернути 0;
 }
 
-int
+ціле
 sshbuf_put_bignum2(struct sshbuf *buf, const BIGNUM *v)
 {
 	u_char d[SSHBUF_MAX_BIGNUM + 1];
-	int len = BN_num_bytes(v), prepend = 0, r;
+	ціле len = BN_num_bytes(v), prepend = 0, r;
 
-	if (len < 0 || len > SSHBUF_MAX_BIGNUM)
-		return SSH_ERR_INVALID_ARGUMENT;
+	якщо (len < 0 || len > SSHBUF_MAX_BIGNUM)
+		повернути SSH_ERR_INVALID_ARGUMENT;
 	*d = '\0';
-	if (BN_bn2bin(v, d + 1) != len)
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+	якщо (BN_bn2bin(v, d + 1) != len)
+		повернути SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
 	/* If MSB is set, prepend a \0 */
-	if (len > 0 && (d[1] & 0x80) != 0)
+	якщо (len > 0 && (d[1] & 0x80) != 0)
 		prepend = 1;
-	if ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
+	якщо ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
 		explicit_bzero(d, sizeof(d));
-		return r;
+		повернути r;
 	}
 	explicit_bzero(d, sizeof(d));
-	return 0;
+	повернути 0;
 }
 
-int
+ціле
 sshbuf_put_ec(struct sshbuf *buf, const EC_POINT *v, const EC_GROUP *g)
 {
 	u_char d[SSHBUF_MAX_ECPOINT];
 	size_t len;
-	int ret;
+	ціле ret;
 
-	if ((len = EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
+	якщо ((len = EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
 	    NULL, 0, NULL)) > SSHBUF_MAX_ECPOINT) {
-		return SSH_ERR_INVALID_ARGUMENT;
+		повернути SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
+	якщо (EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
 	    d, len, NULL) != len) {
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+		повернути SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
 	}
 	ret = sshbuf_put_string(buf, d, len);
 	explicit_bzero(d, len);
-	return ret;
+	повернути ret;
 }
 
-int
+ціле
 sshbuf_put_eckey(struct sshbuf *buf, const EC_KEY *v)
 {
-	return sshbuf_put_ec(buf, EC_KEY_get0_public_key(v),
+	повернути sshbuf_put_ec(buf, EC_KEY_get0_public_key(v),
 	    EC_KEY_get0_group(v));
 }
 
-int
+ціле
 sshbuf_put_ec_pkey(struct sshbuf *buf, EVP_PKEY *pkey)
 {
 	const EC_KEY *ec;
 
-	if ((ec = EVP_PKEY_get0_EC_KEY(pkey)) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return sshbuf_put_eckey(buf, ec);
+	якщо ((ec = EVP_PKEY_get0_EC_KEY(pkey)) == NULL)
+		повернути SSH_ERR_LIBCRYPTO_ERROR;
+	повернути sshbuf_put_eckey(buf, ec);
 }
 #endif /* WITH_OPENSSL */

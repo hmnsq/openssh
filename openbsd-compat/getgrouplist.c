@@ -42,13 +42,13 @@
 #include <unistd.h>
 #include <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+ціле
+getgrouplist(const char *uname, gid_t agroup, gid_t *groups, ціле *grpcnt)
 {
 	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	ціле i, ngroups;
+	ціле ret, maxgroups;
+	ціле bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	якщо (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		повернути (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,17 +67,17 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
+	поки ((grp = getgrent())) {
+		якщо (grp->gr_gid == agroup)
 			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+		для (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			якщо (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
+		якщо (bail)
 			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		для (i = 0; grp->gr_mem[i]; i++) {
+			якщо (!strcmp(grp->gr_mem[i], uname)) {
+				якщо (ngroups >= maxgroups) {
 					ret = -1;
 					goto out;
 				}
@@ -89,7 +89,7 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 out:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	повернути (ret);
 }
 
 #endif /* HAVE_GETGROUPLIST */

@@ -36,26 +36,26 @@ limitations under the License.
 #include "readconf.h"
 
 /* Externs that mux.c declares. */
-int tty_flag = 0;
+ціле tty_flag = 0;
 Options options;
 char *host = NULL;
 struct sshbuf *command = NULL;
 volatile sig_atomic_t quit_pending = 0;
 
 /* Temporary: LSan off while upstream mux.c parse-chain leaks remain. */
-int
+ціле
 __lsan_is_turned_off(void)
 {
-	return 1;
+	повернути 1;
 }
 
 static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+static volatile ціле in_fuzz = 0;
 
 void
-cleanup_exit(int code)
+cleanup_exit(ціле code)
 {
-	if (in_fuzz)
+	якщо (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
@@ -65,67 +65,67 @@ __wrap_ssh_packet_disconnect(struct ssh *ssh, const char *fmt, ...)
 {
 	(void)ssh;
 	(void)fmt;
-	if (in_fuzz)
+	якщо (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(1);
 }
 
-int
-__wrap_sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+ціле
+__wrap_sshpkt_fatal(struct ssh *ssh, ціле r, const char *fmt, ...)
 {
 	(void)ssh;
 	(void)fmt;
-	if (in_fuzz)
+	якщо (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(r ? r : 1);
 }
 
 /* Block the only interactive prompt by always granting permission. */
-int
+ціле
 __wrap_ask_permission(const char *fmt, ...)
 {
 	(void)fmt;
-	return 1;
+	повернути 1;
 }
 
 /* Socket-opening side effects we must neutralise. */
-int
+ціле
 __wrap_channel_setup_local_fwd_listener(struct ssh *ssh,
     struct Forward *fwd, struct ForwardOptions *fwd_opts)
 {
 	(void)ssh; (void)fwd; (void)fwd_opts;
-	return 1;
+	повернути 1;
 }
 
-int
+ціле
 __wrap_channel_connect_stdio_fwd(struct ssh *ssh, const char *host_arg,
-    int port, int in_fd, int out_fd, int nonblock)
+    ціле port, ціле in_fd, ціле out_fd, ціле nonblock)
 {
 	(void)ssh; (void)host_arg; (void)port;
 	(void)in_fd; (void)out_fd; (void)nonblock;
-	return -1;
+	повернути -1;
 }
 
-int
+ціле
 __wrap_channel_request_remote_forwarding(struct ssh *ssh, struct Forward *fwd)
 {
 	(void)ssh; (void)fwd;
-	return 0;
+	повернути 0;
 }
 
-int
+ціле
 __wrap_channel_request_rforward_cancel(struct ssh *ssh, struct Forward *fwd)
 {
 	(void)ssh; (void)fwd;
-	return 0;
+	повернути 0;
 }
 
-int
+ціле
 __wrap_channel_cancel_lport_listener(struct ssh *ssh, struct Forward *fwd,
-    int cport, struct ForwardOptions *fwd_opts)
+    ціле cport, struct ForwardOptions *fwd_opts)
 {
 	(void)ssh; (void)fwd; (void)cport; (void)fwd_opts;
-	return 0;
+	повернути 0;
 }
 
 static struct sshkey *
@@ -133,10 +133,10 @@ load_private(const char *str)
 {
 	struct sshbuf *b = sshbuf_from(str, strlen(str));
 	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	якщо (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	повернути k;
 }
 
 static struct sshkey *
@@ -144,65 +144,65 @@ load_public(const char *str)
 {
 	char *tmp, *cp;
 	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	якщо (k == NULL)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	якщо (sshkey_read(k, &cp) != 0)
 		abort();
 	free(tmp);
-	return k;
+	повернути k;
 }
 
-static int
+static ціле
 pump(struct ssh *from, struct ssh *to, size_t *transferred)
 {
 	const u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	ціле r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	якщо ((r = ssh_packet_next(from, &type)) != 0)
+		повернути r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	якщо (len == 0)
+		повернути 0;
+	якщо ((r = ssh_input_append(to, buf, len)) != 0)
+		повернути r;
+	якщо ((r = ssh_output_consume(from, len)) != 0)
+		повернути r;
 	*transferred = len;
-	return 0;
+	повернути 0;
 }
 
-static int
+static ціле
 run_kex(struct ssh *client, struct ssh *server)
 {
-	int r;
+	ціле r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	для (ціле i = 0; i < 100; i++) {
+		якщо ((r = pump(server, client, &sn)) != 0) повернути r;
+		якщо ((r = pump(client, server, &cn)) != 0) повернути r;
+		якщо (server->kex->done && client->kex->done)
+			повернути 0;
+		якщо (cn == 0 && sn == 0)
+			повернути SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	повернути SSH_ERR_PROTOCOL_ERROR;
 }
 
 #include "fixed-keys.h"
 
 /* Forward decl of the static handler we drive; defined when mux.c is included. */
-static int mux_master_read_cb(struct ssh *ssh, Channel *c);
+static ціле mux_master_read_cb(struct ssh *ssh, Channel *c);
 
 #include "../../../mux.c"
 
 /* Stubs for clientloop.c / channels.h symbols mux.o references but we don't link. */
 void *
-client_new_escape_filter_ctx(int escape_char)
+client_new_escape_filter_ctx(ціле escape_char)
 {
 	(void)escape_char;
-	return NULL;
+	повернути NULL;
 }
 
 void
@@ -212,14 +212,14 @@ client_register_global_confirm(global_confirm_cb *cb, void *ctx)
 }
 
 void
-client_expect_confirm(struct ssh *ssh, int id, const char *reason,
+client_expect_confirm(struct ssh *ssh, ціле id, const char *reason,
     enum confirm_action action)
 {
 	(void)ssh; (void)id; (void)reason; (void)action;
 }
 
 void
-client_channel_request_agent_forwarding(struct ssh *ssh, int chanid)
+client_channel_request_agent_forwarding(struct ssh *ssh, ціле chanid)
 {
 	(void)ssh; (void)chanid;
 }
@@ -229,36 +229,36 @@ client_stop_mux(void)
 {
 }
 
-int
-client_simple_escape_filter(struct ssh *ssh, Channel *c, char *buf, int len)
+ціле
+client_simple_escape_filter(struct ssh *ssh, Channel *c, char *buf, ціле len)
 {
 	(void)ssh; (void)c; (void)buf; (void)len;
-	return 0;
+	повернути 0;
 }
 
 void
-client_filter_cleanup(struct ssh *ssh, int cid, void *ctx)
+client_filter_cleanup(struct ssh *ssh, ціле cid, void *ctx)
 {
 	(void)ssh; (void)cid; (void)ctx;
 }
 
-int
+ціле
 client_x11_get_proto(struct ssh *ssh, const char *display,
     const char *xauth_path, u_int trusted, u_int timeout,
     char **_proto, char **_data)
 {
 	(void)ssh; (void)display; (void)xauth_path;
 	(void)trusted; (void)timeout;
-	if (_proto != NULL)
+	якщо (_proto != NULL)
 		*_proto = NULL;
-	if (_data != NULL)
+	якщо (_data != NULL)
 		*_data = NULL;
-	return 0;
+	повернути 0;
 }
 
 void
-client_session2_setup(struct ssh *ssh, int id, int want_tty, int want_subsys,
-    const char *term, struct termios *tiop, int in_fd, struct sshbuf *cmd,
+client_session2_setup(struct ssh *ssh, ціле id, ціле want_tty, ціле want_subsys,
+    const char *term, struct termios *tiop, ціле in_fd, struct sshbuf *cmd,
     char **env)
 {
 	(void)ssh; (void)id; (void)want_tty; (void)want_subsys;
@@ -266,21 +266,21 @@ client_session2_setup(struct ssh *ssh, int id, int want_tty, int want_subsys,
 }
 
 void
-enter_raw_mode(int quiet)
+enter_raw_mode(ціле quiet)
 {
 	(void)quiet;
 }
 
 void
-leave_raw_mode(int quiet)
+leave_raw_mode(ціле quiet)
 {
 	(void)quiet;
 }
 
 static struct ssh *g_client = NULL;
 static struct ssh *g_server = NULL;
-static int g_init = 0;
-static int g_mux_channel_id = -1;
+static ціле g_init = 0;
+static ціле g_mux_channel_id = -1;
 static struct sshbuf *g_mux_in = NULL;
 static struct sshbuf *g_mux_out = NULL;
 
@@ -289,36 +289,36 @@ static void
 fuzz_drive_mux(struct ssh *ssh, Channel *c)
 {
 	u_int type, rid, i;
-	int r;
+	ціле r;
 	const u_char *body;
 	size_t blen;
 	struct mux_master_state *state;
 
 	state = (struct mux_master_state *)c->mux_ctx;
-	if (state == NULL)
-		return;
+	якщо (state == NULL)
+		повернути;
 
 	sshbuf_reset(g_mux_in);
 	sshbuf_reset(g_mux_out);
 
-	if ((r = sshbuf_get_string_direct(c->input, &body, &blen)) != 0)
-		return;
-	if (sshbuf_put(g_mux_in, body, blen) != 0)
-		return;
-	if ((r = sshbuf_get_u32(g_mux_in, &type)) != 0)
-		return;
+	якщо ((r = sshbuf_get_string_direct(c->input, &body, &blen)) != 0)
+		повернути;
+	якщо (sshbuf_put(g_mux_in, body, blen) != 0)
+		повернути;
+	якщо ((r = sshbuf_get_u32(g_mux_in, &type)) != 0)
+		повернути;
 
-	if (type == MUX_MSG_HELLO) {
+	якщо (type == MUX_MSG_HELLO) {
 		rid = 0;
-	} else {
-		if (!state->hello_rcvd)
-			return;
-		if ((r = sshbuf_get_u32(g_mux_in, &rid)) != 0)
-			return;
+	} інакше {
+		якщо (!state->hello_rcvd)
+			повернути;
+		якщо ((r = sshbuf_get_u32(g_mux_in, &rid)) != 0)
+			повернути;
 	}
 
-	for (i = 0; mux_master_handlers[i].handler != NULL; i++) {
-		if (type == mux_master_handlers[i].type) {
+	для (i = 0; mux_master_handlers[i].handler != NULL; i++) {
+		якщо (type == mux_master_handlers[i].type) {
 			(void)mux_master_handlers[i].handler(ssh, rid, c,
 			    g_mux_in, g_mux_out);
 			break;
@@ -326,11 +326,11 @@ fuzz_drive_mux(struct ssh *ssh, Channel *c)
 	}
 }
 
-static int
+static ціле
 init_once(void)
 {
-	if (g_init)
-		return 0;
+	якщо (g_init)
+		повернути 0;
 	signal(SIGPIPE, SIG_IGN);
 	log_init("mux_fuzz", SYSLOG_LEVEL_ERROR, SYSLOG_FACILITY_AUTH, 0);
 
@@ -352,17 +352,17 @@ init_once(void)
 
 	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
 	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
+	ціле i;
+	для (i = 0; i < PROPOSAL_MAX; i++) {
 		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+		якщо (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		інакше якщо (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		інакше якщо (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		інакше якщо (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
@@ -370,22 +370,22 @@ init_once(void)
 	struct kex_params kp;
 	memcpy(kp.proposal, proposal, sizeof(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	якщо (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		повернути -1;
+	якщо (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		повернути -1;
+	якщо (run_kex(g_client, g_server) != 0)
+		повернути -1;
 
 	channel_init_channels(g_client);
 
 	Channel *c = channel_new(g_client, "mux-control",
 	    SSH_CHANNEL_MUX_CLIENT, -1, -1, -1, 65536, 65536, 0,
 	    "mux-control", 1);
-	if (c == NULL)
-		return -1;
+	якщо (c == NULL)
+		повернути -1;
 	c->mux_rcb = mux_master_read_cb;
 	c->flags |= CHAN_LOCAL;
 	g_mux_channel_id = c->self;
@@ -395,31 +395,31 @@ init_once(void)
 
 	/* Skip the hello handshake so every iter goes straight to dispatch. */
 	struct mux_master_state *st = (struct mux_master_state *)c->mux_ctx;
-	if (st != NULL)
+	якщо (st != NULL)
 		st->hello_rcvd = 1;
 
-	if ((g_mux_in = sshbuf_new()) == NULL ||
+	якщо ((g_mux_in = sshbuf_new()) == NULL ||
 	    (g_mux_out = sshbuf_new()) == NULL)
-		return -1;
+		повернути -1;
 
 	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
+	для (i = 0; i < PROPOSAL_MAX; i++)
 		free(proposal[i]);
 	g_init = 1;
-	return 0;
+	повернути 0;
 }
 
 void
 fuzz_mux_one(const uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	якщо (init_once() != 0)
+		повернути;
+	якщо (size > 65000)
+		повернути;
 
 	Channel *c = channel_by_id(g_client, g_mux_channel_id);
-	if (c == NULL || c->mux_ctx == NULL || c->input == NULL)
-		return;
+	якщо (c == NULL || c->mux_ctx == NULL || c->input == NULL)
+		повернути;
 
 	/* mux protocol: outer length-prefixed string containing the body. */
 	sshbuf_reset(c->input);
@@ -428,18 +428,18 @@ fuzz_mux_one(const uint8_t *data, size_t size)
 	hdr[1] = (u_char)(size >> 16);
 	hdr[2] = (u_char)(size >> 8);
 	hdr[3] = (u_char)size;
-	if (sshbuf_put(c->input, hdr, 4) != 0)
-		return;
-	if (size > 0 && sshbuf_put(c->input, data, size) != 0)
-		return;
+	якщо (sshbuf_put(c->input, hdr, 4) != 0)
+		повернути;
+	якщо (size > 0 && sshbuf_put(c->input, data, size) != 0)
+		повернути;
 
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
+	якщо (setjmp(fuzz_env) == 0) {
 		fuzz_drive_mux(g_client, c);
 	}
 	in_fuzz = 0;
 
 	/* Drain anything the handler enqueued. */
-	if (c->output != NULL)
+	якщо (c->output != NULL)
 		sshbuf_reset(c->output);
 }

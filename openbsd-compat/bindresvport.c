@@ -50,71 +50,71 @@
 /*
  * Bind a socket to a privileged IP port
  */
-int
-bindresvport_sa(int sd, struct sockaddr *sa)
+ціле
+bindresvport_sa(ціле sd, struct sockaddr *sa)
 {
-	int error, af;
+	ціле error, af;
 	struct sockaddr_storage myaddr;
 	struct sockaddr_in *in;
 	struct sockaddr_in6 *in6;
 	u_int16_t *portp;
 	u_int16_t port;
 	socklen_t salen;
-	int i;
+	ціле i;
 
-	if (sa == NULL) {
+	якщо (sa == NULL) {
 		memset(&myaddr, 0, sizeof(myaddr));
 		sa = (struct sockaddr *)&myaddr;
 		salen = sizeof(myaddr);
 
-		if (getsockname(sd, sa, &salen) == -1)
-			return -1;	/* errno is correctly set */
+		якщо (getsockname(sd, sa, &salen) == -1)
+			повернути -1;	/* errno is correctly set */
 
 		af = sa->sa_family;
 		memset(&myaddr, 0, salen);
-	} else
+	} інакше
 		af = sa->sa_family;
 
-	if (af == AF_INET) {
+	якщо (af == AF_INET) {
 		in = (struct sockaddr_in *)sa;
 		salen = sizeof(struct sockaddr_in);
 		portp = &in->sin_port;
-	} else if (af == AF_INET6) {
+	} інакше якщо (af == AF_INET6) {
 		in6 = (struct sockaddr_in6 *)sa;
 		salen = sizeof(struct sockaddr_in6);
 		portp = &in6->sin6_port;
-	} else {
+	} інакше {
 		errno = EPFNOSUPPORT;
-		return (-1);
+		повернути (-1);
 	}
 	sa->sa_family = af;
 
 	port = ntohs(*portp);
-	if (port == 0)
+	якщо (port == 0)
 		port = arc4random_uniform(NPORTS) + STARTPORT;
 
 	/* Avoid warning */
 	error = -1;
 
-	for(i = 0; i < NPORTS; i++) {
+	для(i = 0; i < NPORTS; i++) {
 		*portp = htons(port);
 		
 		error = bind(sd, sa, salen);
 
 		/* Terminate on success */
-		if (error == 0)
+		якщо (error == 0)
 			break;
 			
 		/* Terminate on errors, except "address already in use" */
-		if ((error < 0) && !((errno == EADDRINUSE) || (errno == EINVAL)))
+		якщо ((error < 0) && !((errno == EADDRINUSE) || (errno == EINVAL)))
 			break;
 			
 		port++;
-		if (port > ENDPORT)
+		якщо (port > ENDPORT)
 			port = STARTPORT;
 	}
 
-	return (error);
+	повернути (error);
 }
 
 #endif /* HAVE_BINDRESVPORT_SA */

@@ -17,11 +17,11 @@
 #include <termios.h>
 
 struct termios *get_saved_tio(void);
-void	 leave_raw_mode(int);
-void	 enter_raw_mode(int);
+void	 leave_raw_mode(ціле);
+void	 enter_raw_mode(ціле);
 
-int	 pty_allocate(int *, int *, char *, size_t);
+ціле	 pty_allocate(ціле *, ціле *, char *, size_t);
 void	 pty_release(const char *);
-void	 pty_make_controlling_tty(int *, const char *);
-void	 pty_change_window_size(int, u_int, u_int, u_int, u_int);
+void	 pty_make_controlling_tty(ціле *, const char *);
+void	 pty_change_window_size(ціле, u_int, u_int, u_int, u_int);
 void	 pty_setowner(struct passwd *, const char *);

@@ -26,7 +26,7 @@
 
 #include "includes.h"
 
-#if defined(WITH_OPENSSL)
+#якщо defined(WITH_OPENSSL)
 #include "openbsd-compat/openssl-compat.h"
 
 #include <sys/types.h>
@@ -43,22 +43,22 @@
 #define SSHKEY_INTERNAL
 #include "sshkey.h"
 
-int
+ціле
 sshkey_ecdsa_fixup_group(EVP_PKEY *k)
 {
-	int nids[] = {
+	ціле nids[] = {
 		NID_X9_62_prime256v1,
 		NID_secp384r1,
 		NID_secp521r1,
 		-1
 	};
-	int nid = -1;
+	ціле nid = -1;
 	u_int i;
 	const EC_GROUP *g;
 	EC_KEY *ec = NULL;
 	EC_GROUP *eg = NULL;
 
-	if ((ec = EVP_PKEY_get1_EC_KEY(k)) == NULL ||
+	якщо ((ec = EVP_PKEY_get1_EC_KEY(k)) == NULL ||
 	    (g = EC_KEY_get0_group(ec)) == NULL)
 		goto out;
 	/*
@@ -69,23 +69,23 @@ sshkey_ecdsa_fixup_group(EVP_PKEY *k)
 	 * it out for the other case by comparing against all the groups that
 	 * are supported.
 	 */
-	if ((nid = EC_GROUP_get_curve_name(g)) > 0)
+	якщо ((nid = EC_GROUP_get_curve_name(g)) > 0)
 		goto out;
 	nid = -1;
-	for (i = 0; nids[i] != -1; i++) {
-		if ((eg = EC_GROUP_new_by_curve_name(nids[i])) == NULL)
+	для (i = 0; nids[i] != -1; i++) {
+		якщо ((eg = EC_GROUP_new_by_curve_name(nids[i])) == NULL)
 			goto out;
-		if (EC_GROUP_cmp(g, eg, NULL) == 0)
+		якщо (EC_GROUP_cmp(g, eg, NULL) == 0)
 			break;
 		EC_GROUP_free(eg);
 		eg = NULL;
 	}
-	if (nids[i] == -1)
+	якщо (nids[i] == -1)
 		goto out;
 
 	/* Use the group with the NID attached */
 	EC_GROUP_set_asn1_flag(eg, OPENSSL_EC_NAMED_CURVE);
-	if (EC_KEY_set_group(ec, eg) != 1 ||
+	якщо (EC_KEY_set_group(ec, eg) != 1 ||
 	    EVP_PKEY_set1_EC_KEY(k, ec) != 1)
 		goto out;
 	/* success */
@@ -93,7 +93,7 @@ sshkey_ecdsa_fixup_group(EVP_PKEY *k)
  out:
 	EC_KEY_free(ec);
 	EC_GROUP_free(eg);
-	return nid;
+	повернути nid;
 }
 
 static u_int
@@ -101,13 +101,13 @@ ssh_ecdsa_size(const struct sshkey *key)
 {
 	switch (key->ecdsa_nid) {
 	case NID_X9_62_prime256v1:
-		return 256;
+		повернути 256;
 	case NID_secp384r1:
-		return 384;
+		повернути 384;
 	case NID_secp521r1:
-		return 521;
+		повернути 521;
 	default:
-		return 0;
+		повернути 0;
 	}
 }
 
@@ -118,60 +118,60 @@ ssh_ecdsa_cleanup(struct sshkey *k)
 	k->pkey = NULL;
 }
 
-static int
+static ціле
 ssh_ecdsa_equal(const struct sshkey *a, const struct sshkey *b)
 {
-	if (a->pkey == NULL || b->pkey == NULL)
-		return 0;
-	return EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
+	якщо (a->pkey == NULL || b->pkey == NULL)
+		повернути 0;
+	повернути EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
 }
 
-static int
+static ціле
 ssh_ecdsa_serialize_public(const struct sshkey *key, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
-	int r;
+	ціле r;
 
-	if (key->pkey == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_cstring(b,
+	якщо (key->pkey == NULL)
+		повернути SSH_ERR_INVALID_ARGUMENT;
+	якщо ((r = sshbuf_put_cstring(b,
 	    sshkey_curve_nid_to_name(key->ecdsa_nid))) != 0 ||
 	    (r = sshbuf_put_ec_pkey(b, key->pkey)) != 0)
-		return r;
+		повернути r;
 
-	return 0;
+	повернути 0;
 }
 
-static int
+static ціле
 ssh_ecdsa_serialize_private(const struct sshkey *key, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
-	int r;
+	ціле r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_ecdsa_serialize_public(key, b, opts)) != 0)
-			return r;
+	якщо (!sshkey_is_cert(key)) {
+		якщо ((r = ssh_ecdsa_serialize_public(key, b, opts)) != 0)
+			повернути r;
 	}
-	if ((r = sshbuf_put_bignum2(b,
+	якщо ((r = sshbuf_put_bignum2(b,
 	    EC_KEY_get0_private_key(EVP_PKEY_get0_EC_KEY(key->pkey)))) != 0)
-		return r;
-	return 0;
+		повернути r;
+	повернути 0;
 }
 
-static int
-ssh_ecdsa_generate(struct sshkey *k, int bits)
+static ціле
+ssh_ecdsa_generate(struct sshkey *k, ціле bits)
 {
 	EVP_PKEY *res = NULL;
 	EVP_PKEY_CTX *ctx = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	ціле ret = SSH_ERR_INTERNAL_ERROR;
 
-	if ((k->ecdsa_nid = sshkey_ecdsa_bits_to_nid(bits)) == -1)
-		return SSH_ERR_KEY_LENGTH;
+	якщо ((k->ecdsa_nid = sshkey_ecdsa_bits_to_nid(bits)) == -1)
+		повернути SSH_ERR_KEY_LENGTH;
 
-	if ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	якщо ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL)) == NULL)
+		повернути SSH_ERR_ALLOC_FAIL;
 
-	if (EVP_PKEY_keygen_init(ctx) <= 0 ||
+	якщо (EVP_PKEY_keygen_init(ctx) <= 0 ||
 	    EVP_PKEY_CTX_set_ec_paramgen_curve_nid(ctx, k->ecdsa_nid) <= 0 ||
 	    EVP_PKEY_keygen(ctx, &res) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
@@ -184,76 +184,76 @@ ssh_ecdsa_generate(struct sshkey *k, int bits)
  out:
 	EVP_PKEY_free(res);
 	EVP_PKEY_CTX_free(ctx);
-	return ret;
+	повернути ret;
 }
 
-static int
+static ціле
 ssh_ecdsa_copy_public(const struct sshkey *from, struct sshkey *to)
 {
 	const EC_KEY *ec_from;
 	EC_KEY *ec_to = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	ціле ret = SSH_ERR_INTERNAL_ERROR;
 
 	ec_from = EVP_PKEY_get0_EC_KEY(from->pkey);
-	if (ec_from == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	якщо (ec_from == NULL)
+		повернути SSH_ERR_LIBCRYPTO_ERROR;
 
 	to->ecdsa_nid = from->ecdsa_nid;
-	if ((ec_to = EC_KEY_new_by_curve_name(from->ecdsa_nid)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (EC_KEY_set_public_key(ec_to,
+	якщо ((ec_to = EC_KEY_new_by_curve_name(from->ecdsa_nid)) == NULL)
+		повернути SSH_ERR_ALLOC_FAIL;
+	якщо (EC_KEY_set_public_key(ec_to,
 	    EC_KEY_get0_public_key(ec_from)) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	EVP_PKEY_free(to->pkey);
-	if ((to->pkey = EVP_PKEY_new()) == NULL) {
+	якщо ((to->pkey = EVP_PKEY_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(to->pkey, ec_to) != 1) {
+	якщо (EVP_PKEY_set1_EC_KEY(to->pkey, ec_to) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	ret = 0;
  out:
 	EC_KEY_free(ec_to);
-	return ret;
+	повернути ret;
 }
 
-static int
+static ціле
 ssh_ecdsa_deserialize_public(const char *ktype, struct sshbuf *b,
     struct sshkey *key)
 {
-	int r;
+	ціле r;
 	char *curve = NULL;
 	EVP_PKEY *pkey = NULL;
 	EC_KEY *ec = NULL;
 
-	if ((key->ecdsa_nid = sshkey_ecdsa_nid_from_name(ktype)) == -1)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_get_cstring(b, &curve, NULL)) != 0)
+	якщо ((key->ecdsa_nid = sshkey_ecdsa_nid_from_name(ktype)) == -1)
+		повернути SSH_ERR_INVALID_ARGUMENT;
+	якщо ((r = sshbuf_get_cstring(b, &curve, NULL)) != 0)
 		goto out;
-	if (key->ecdsa_nid != sshkey_curve_name_to_nid(curve)) {
+	якщо (key->ecdsa_nid != sshkey_curve_name_to_nid(curve)) {
 		r = SSH_ERR_EC_CURVE_MISMATCH;
 		goto out;
 	}
-	if ((ec = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL) {
+	якщо ((ec = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if ((r = sshbuf_get_eckey(b, ec)) != 0)
+	якщо ((r = sshbuf_get_eckey(b, ec)) != 0)
 		goto out;
-	if (sshkey_ec_validate_public(EC_KEY_get0_group(ec),
+	якщо (sshkey_ec_validate_public(EC_KEY_get0_group(ec),
 	    EC_KEY_get0_public_key(ec)) != 0) {
 		r = SSH_ERR_KEY_INVALID_EC_VALUE;
 		goto out;
 	}
-	if ((pkey = EVP_PKEY_new()) == NULL) {
+	якщо ((pkey = EVP_PKEY_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(pkey, ec) != 1) {
+	якщо (EVP_PKEY_set1_EC_KEY(pkey, ec) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
@@ -271,34 +271,34 @@ ssh_ecdsa_deserialize_public(const char *ktype, struct sshbuf *b,
 	EC_KEY_free(ec);
 	EVP_PKEY_free(pkey);
 	free(curve);
-	return r;
+	повернути r;
 }
 
-static int
+static ціле
 ssh_ecdsa_deserialize_private(const char *ktype, struct sshbuf *b,
     struct sshkey *key)
 {
-	int r;
+	ціле r;
 	BIGNUM *exponent = NULL;
 	EC_KEY *ec = NULL;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_ecdsa_deserialize_public(ktype, b, key)) != 0)
-			return r;
+	якщо (!sshkey_is_cert(key)) {
+		якщо ((r = ssh_ecdsa_deserialize_public(ktype, b, key)) != 0)
+			повернути r;
 	}
-	if ((r = sshbuf_get_bignum2(b, &exponent)) != 0)
+	якщо ((r = sshbuf_get_bignum2(b, &exponent)) != 0)
 		goto out;
-	if ((ec = EVP_PKEY_get1_EC_KEY(key->pkey)) == NULL) {
+	якщо ((ec = EVP_PKEY_get1_EC_KEY(key->pkey)) == NULL) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if (EC_KEY_set_private_key(ec, exponent) != 1) {
+	якщо (EC_KEY_set_private_key(ec, exponent) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if ((r = sshkey_ec_validate_private(ec)) != 0)
+	якщо ((r = sshkey_ec_validate_private(ec)) != 0)
 		goto out;
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1) {
+	якщо (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
@@ -307,10 +307,10 @@ ssh_ecdsa_deserialize_private(const char *ktype, struct sshbuf *b,
  out:
 	BN_clear_free(exponent);
 	EC_KEY_free(ec);
-	return r;
+	повернути r;
 }
 
-static int
+static ціле
 ssh_ecdsa_sign(struct sshkey *key,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t dlen,
@@ -320,34 +320,34 @@ ssh_ecdsa_sign(struct sshkey *key,
 	unsigned char *sigb = NULL;
 	const unsigned char *psig;
 	const BIGNUM *sig_r, *sig_s;
-	int hash_alg;
+	ціле hash_alg;
 	size_t slen = 0;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	ціле ret = SSH_ERR_INTERNAL_ERROR;
 
-	if (lenp != NULL)
+	якщо (lenp != NULL)
 		*lenp = 0;
-	if (sigp != NULL)
+	якщо (sigp != NULL)
 		*sigp = NULL;
 
-	if (key == NULL || key->pkey == NULL ||
+	якщо (key == NULL || key->pkey == NULL ||
 	    sshkey_type_plain(key->type) != KEY_ECDSA)
-		return SSH_ERR_INVALID_ARGUMENT;
+		повернути SSH_ERR_INVALID_ARGUMENT;
 
-	if ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
-		return SSH_ERR_INTERNAL_ERROR;
+	якщо ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
+		повернути SSH_ERR_INTERNAL_ERROR;
 
-	if ((ret = sshkey_pkey_digest_sign(key->pkey, hash_alg, &sigb, &slen,
+	якщо ((ret = sshkey_pkey_digest_sign(key->pkey, hash_alg, &sigb, &slen,
 	    data, dlen)) != 0)
 		goto out;
 
 	psig = sigb;
-	if ((esig = d2i_ECDSA_SIG(NULL, &psig, slen)) == NULL) {
+	якщо ((esig = d2i_ECDSA_SIG(NULL, &psig, slen)) == NULL) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	ECDSA_SIG_get0(esig, &sig_r, &sig_s);
 
-	if ((ret = ssh_ecdsa_encode_store_sig(key, sig_r, sig_s,
+	якщо ((ret = ssh_ecdsa_encode_store_sig(key, sig_r, sig_s,
 	    sigp, lenp)) != 0)
 		goto out;
 	/* success */
@@ -355,51 +355,51 @@ ssh_ecdsa_sign(struct sshkey *key,
  out:
 	freezero(sigb, slen);
 	ECDSA_SIG_free(esig);
-	return ret;
+	повернути ret;
 }
 
-int
+ціле
 ssh_ecdsa_encode_store_sig(const struct sshkey *key,
     const BIGNUM *sig_r, const BIGNUM *sig_s,
     u_char **sigp, size_t *lenp)
 {
 	struct sshbuf *b = NULL, *bb = NULL;
-	int ret;
+	ціле ret;
 	size_t len;
 
-	if (lenp != NULL)
+	якщо (lenp != NULL)
 		*lenp = 0;
-	if (sigp != NULL)
+	якщо (sigp != NULL)
 		*sigp = NULL;
 
-	if ((bb = sshbuf_new()) == NULL || (b = sshbuf_new()) == NULL) {
+	якщо ((bb = sshbuf_new()) == NULL || (b = sshbuf_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((ret = sshbuf_put_bignum2(bb, sig_r)) != 0 ||
+	якщо ((ret = sshbuf_put_bignum2(bb, sig_r)) != 0 ||
 	    (ret = sshbuf_put_bignum2(bb, sig_s)) != 0)
 		goto out;
-	if ((ret = sshbuf_put_cstring(b, sshkey_ssh_name_plain(key))) != 0 ||
+	якщо ((ret = sshbuf_put_cstring(b, sshkey_ssh_name_plain(key))) != 0 ||
 	    (ret = sshbuf_put_stringb(b, bb)) != 0)
 		goto out;
 	len = sshbuf_len(b);
-	if (sigp != NULL) {
-		if ((*sigp = malloc(len)) == NULL) {
+	якщо (sigp != NULL) {
+		якщо ((*sigp = malloc(len)) == NULL) {
 			ret = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
 		memcpy(*sigp, sshbuf_ptr(b), len);
 	}
-	if (lenp != NULL)
+	якщо (lenp != NULL)
 		*lenp = len;
 	ret = 0;
  out:
 	sshbuf_free(b);
 	sshbuf_free(bb);
-	return ret;
+	повернути ret;
 }
 
-static int
+static ціле
 ssh_ecdsa_verify(const struct sshkey *key,
     const u_char *sig, size_t siglen,
     const u_char *data, size_t dlen, const char *alg, u_int compat,
@@ -407,73 +407,73 @@ ssh_ecdsa_verify(const struct sshkey *key,
 {
 	ECDSA_SIG *esig = NULL;
 	BIGNUM *sig_r = NULL, *sig_s = NULL;
-	int hash_alg, len = 0;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	ціле hash_alg, len = 0;
+	ціле ret = SSH_ERR_INTERNAL_ERROR;
 	struct sshbuf *b = NULL, *sigbuf = NULL;
 	char *ktype = NULL;
 	unsigned char *sigb = NULL, *cp;
 
-	if (key == NULL || key->pkey == NULL ||
+	якщо (key == NULL || key->pkey == NULL ||
 	    sshkey_type_plain(key->type) != KEY_ECDSA ||
 	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+		повернути SSH_ERR_INVALID_ARGUMENT;
 
-	if ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
-		return SSH_ERR_INTERNAL_ERROR;
+	якщо ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
+		повернути SSH_ERR_INTERNAL_ERROR;
 
 	/* fetch signature */
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0 ||
+	якщо ((b = sshbuf_from(sig, siglen)) == NULL)
+		повернути SSH_ERR_ALLOC_FAIL;
+	якщо (sshbuf_get_cstring(b, &ktype, NULL) != 0 ||
 	    sshbuf_froms(b, &sigbuf) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
+	якщо (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
 		ret = SSH_ERR_KEY_TYPE_MISMATCH;
 		goto out;
 	}
-	if (sshbuf_len(b) != 0) {
+	якщо (sshbuf_len(b) != 0) {
 		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
 		goto out;
 	}
 
 	/* parse signature */
-	if (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
+	якщо (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
 	    sshbuf_get_bignum2(sigbuf, &sig_s) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (sshbuf_len(sigbuf) != 0) {
+	якщо (sshbuf_len(sigbuf) != 0) {
 		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
 		goto out;
 	}
 
-	if ((esig = ECDSA_SIG_new()) == NULL) {
+	якщо ((esig = ECDSA_SIG_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
+	якщо (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	sig_r = sig_s = NULL; /* transferred */
 
-	if ((len = i2d_ECDSA_SIG(esig, NULL)) <= 0) {
+	якщо ((len = i2d_ECDSA_SIG(esig, NULL)) <= 0) {
 		len = 0;
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if ((sigb = calloc(1, len)) == NULL) {
+	якщо ((sigb = calloc(1, len)) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 	cp = sigb; /* ASN1_item_i2d increments the pointer past the object */
-	if (i2d_ECDSA_SIG(esig, &cp) != len) {
+	якщо (i2d_ECDSA_SIG(esig, &cp) != len) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if ((ret = sshkey_pkey_digest_verify(key->pkey, hash_alg,
+	якщо ((ret = sshkey_pkey_digest_verify(key->pkey, hash_alg,
 	    data, dlen, sigb, len)) != 0)
 		goto out;
 	/* success */
@@ -485,7 +485,7 @@ ssh_ecdsa_verify(const struct sshkey *key,
 	BN_clear_free(sig_r);
 	BN_clear_free(sig_s);
 	free(ktype);
-	return ret;
+	повернути ret;
 }
 
 /* NB. not static; used by ECDSA-SK */

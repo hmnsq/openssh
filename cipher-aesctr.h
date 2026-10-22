@@ -23,7 +23,7 @@
 #define AES_BLOCK_SIZE 16
 
 typedef struct aesctr_ctx {
-	int	rounds;				/* keylen-dependent #rounds */
+	ціле	rounds;				/* keylen-dependent #rounds */
 	u32	ek[4*(AES_MAXROUNDS + 1)];	/* encrypt key schedule */
 	u8	ctr[AES_BLOCK_SIZE];		/* counter */
 } aesctr_ctx;

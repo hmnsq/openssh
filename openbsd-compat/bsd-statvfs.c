@@ -16,7 +16,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
+#якщо !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
 
 #ifdef HAVE_SYS_MOUNT_H
 # include <sys/mount.h>
@@ -47,7 +47,7 @@ copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
 	to->f_fsid = 0;			/* XXX fix me */
 #ifdef HAVE_STRUCT_STATFS_F_FLAGS
 	to->f_flag = from->f_flags;
-#else
+#інакше
 	to->f_flag = 0;
 #endif
 	to->f_namemax = MNAMELEN;
@@ -55,37 +55,37 @@ copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
 #endif
 
 # ifndef HAVE_STATVFS
-int statvfs(const char *path, struct statvfs *buf)
+ціле statvfs(const char *path, struct statvfs *buf)
 {
-#  if defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
+#  якщо defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
 	struct statfs fs;
 
 	memset(&fs, 0, sizeof(fs));
-	if (statfs(path, &fs) == -1)
-		return -1;
+	якщо (statfs(path, &fs) == -1)
+		повернути -1;
 	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
+	повернути 0;
+#  інакше
 	errno = ENOSYS;
-	return -1;
+	повернути -1;
 #  endif
 }
 # endif
 
 # ifndef HAVE_FSTATVFS
-int fstatvfs(int fd, struct statvfs *buf)
+ціле fstatvfs(ціле fd, struct statvfs *buf)
 {
-#  if defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
+#  якщо defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
 	struct statfs fs;
 
 	memset(&fs, 0, sizeof(fs));
-	if (fstatfs(fd, &fs) == -1)
-		return -1;
+	якщо (fstatfs(fd, &fs) == -1)
+		повернути -1;
 	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
+	повернути 0;
+#  інакше
 	errno = ENOSYS;
-	return -1;
+	повернути -1;
 #  endif
 }
 # endif

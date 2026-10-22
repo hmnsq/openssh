@@ -43,90 +43,90 @@
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#якщо !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+ціле
+sigaction(ціле sig, struct sigaction *sigact, struct sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
+	повернути sigvec(sig, sigact ? &sigact->sv : NULL,
 	    osigact ? &osigact->sv : NULL);
 }
 
-int
+ціле
 sigemptyset (sigset_t *mask)
 {
-	if (!mask) {
+	якщо (!mask) {
 		errno = EINVAL;
-		return -1;
+		повернути -1;
 	}
 	*mask = 0;
-	return 0;
+	повернути 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+ціле
+sigprocmask (ціле mode, sigset_t *mask, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
+	якщо (!mask) {
 		errno = EINVAL;
-		return -1;
+		повернути -1;
 	}
 
-	if (omask)
+	якщо (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
+	якщо (mode == SIG_BLOCK)
 		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
+	інакше якщо (mode == SIG_UNBLOCK)
 		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
+	інакше якщо (mode == SIG_SETMASK)
 	current = *mask;
 
 	sigsetmask(current);
-	return 0;
+	повернути 0;
 }
 
-int
+ціле
 sigsuspend (sigset_t *mask)
 {
-	if (!mask) {
+	якщо (!mask) {
 		errno = EINVAL;
-		return -1;
+		повернути -1;
 	}
-	return sigpause(*mask);
+	повернути sigpause(*mask);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+ціле
+sigdelset (sigset_t *mask, ціле sig)
 {
-	if (!mask) {
+	якщо (!mask) {
 		errno = EINVAL;
-		return -1;
+		повернути -1;
 	}
 	*mask &= ~sigmask(sig);
-	return 0;
+	повернути 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+ціле
+sigaddset (sigset_t *mask, ціле sig)
 {
-	if (!mask) {
+	якщо (!mask) {
 		errno = EINVAL;
-		return -1;
+		повернути -1;
 	}
 	*mask |= sigmask(sig);
-	return 0;
+	повернути 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+ціле
+sigismember (sigset_t *mask, ціле sig)
 {
-	if (!mask) {
+	якщо (!mask) {
 		errno = EINVAL;
-		return -1;
+		повернути -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	повернути (*mask & sigmask(sig)) != 0;
 }
 
 #endif

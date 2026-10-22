@@ -37,7 +37,7 @@
 #ifdef mkstemp
 #undef mkstemp
 #endif
-int mkstemp(char *);
+ціле mkstemp(char *);
 
 /*
  * From glibc man page: 'In glibc versions 2.06 and earlier, the file is
@@ -45,19 +45,19 @@ int mkstemp(char *);
  * Provide a wrapper to make sure the mask is reasonable (POSIX requires
  * mode 0600, so mask off any other bits).
  */
-int
+ціле
 _ssh_mkstemp(char *template)
 {
 	mode_t mask;
-	int ret;
+	ціле ret;
 
 	mask = umask(0177);
 	ret = mkstemp(template);
 	(void)umask(mask);
-	return ret;
+	повернути ret;
 }
 
-#if !defined(HAVE_MKDTEMP)
+#якщо !defined(HAVE_MKDTEMP)
 
 #define MKTEMP_NAME	0
 #define MKTEMP_FILE	1
@@ -66,68 +66,68 @@ _ssh_mkstemp(char *template)
 #define TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 #define NUM_CHARS	(sizeof(TEMPCHARS) - 1)
 
-static int
-mktemp_internal(char *path, int slen, int mode)
+static ціле
+mktemp_internal(char *path, ціле slen, ціле mode)
 {
 	char *start, *cp, *ep;
 	const char *tempchars = TEMPCHARS;
-	unsigned int r, tries;
+	unsigned ціле r, tries;
 	struct stat sb;
 	size_t len;
-	int fd;
+	ціле fd;
 
 	len = strlen(path);
-	if (len == 0 || slen < 0 || (size_t)slen >= len) {
+	якщо (len == 0 || slen < 0 || (size_t)slen >= len) {
 		errno = EINVAL;
-		return(-1);
+		повернути(-1);
 	}
 	ep = path + len - slen;
 
 	tries = 1;
-	for (start = ep; start > path && start[-1] == 'X'; start--) {
-		if (tries < INT_MAX / NUM_CHARS)
+	для (start = ep; start > path && start[-1] == 'X'; start--) {
+		якщо (tries < INT_MAX / NUM_CHARS)
 			tries *= NUM_CHARS;
 	}
 	tries *= 2;
 
 	do {
-		for (cp = start; cp != ep; cp++) {
+		для (cp = start; cp != ep; cp++) {
 			r = arc4random_uniform(NUM_CHARS);
 			*cp = tempchars[r];
 		}
 
 		switch (mode) {
 		case MKTEMP_NAME:
-			if (lstat(path, &sb) != 0)
-				return(errno == ENOENT ? 0 : -1);
+			якщо (lstat(path, &sb) != 0)
+				повернути(errno == ENOENT ? 0 : -1);
 			break;
 		case MKTEMP_FILE:
 			fd = open(path, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
-			if (fd != -1 || errno != EEXIST)
-				return(fd);
+			якщо (fd != -1 || errno != EEXIST)
+				повернути(fd);
 			break;
 		case MKTEMP_DIR:
-			if (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
-				return(0);
-			if (errno != EEXIST)
-				return(-1);
+			якщо (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
+				повернути(0);
+			якщо (errno != EEXIST)
+				повернути(-1);
 			break;
 		}
-	} while (--tries);
+	} поки (--tries);
 
 	errno = EEXIST;
-	return(-1);
+	повернути(-1);
 }
 
-#if 0
+#якщо 0
 char *_mktemp(char *);
 
 char *
 _mktemp(char *path)
 {
-	if (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
-		return(NULL);
-	return(path);
+	якщо (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
+		повернути(NULL);
+	повернути(path);
 }
 
 __warn_references(mktemp,
@@ -136,29 +136,29 @@ __warn_references(mktemp,
 char *
 mktemp(char *path)
 {
-	return(_mktemp(path));
+	повернути(_mktemp(path));
 }
 #endif
 
-int
+ціле
 mkstemp(char *path)
 {
-	return(mktemp_internal(path, 0, MKTEMP_FILE));
+	повернути(mktemp_internal(path, 0, MKTEMP_FILE));
 }
 
-int
-mkstemps(char *path, int slen)
+ціле
+mkstemps(char *path, ціле slen)
 {
-	return(mktemp_internal(path, slen, MKTEMP_FILE));
+	повернути(mktemp_internal(path, slen, MKTEMP_FILE));
 }
 
 char *
 mkdtemp(char *path)
 {
-	int error;
+	ціле error;
 
 	error = mktemp_internal(path, 0, MKTEMP_DIR);
-	return(error ? NULL : path);
+	повернути(error ? NULL : path);
 }
 
 #endif /* !defined(HAVE_MKDTEMP) */

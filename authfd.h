@@ -30,44 +30,44 @@ struct ssh_identitylist {
 struct dest_constraint_hop {
 	char *user;	/* wildcards allowed */
 	char *hostname; /* used to matching cert principals and for display */
-	int is_ca;
+	ціле is_ca;
 	u_int nkeys;	/* number of entries in *both* 'keys' and 'key_is_ca' */
 	struct sshkey **keys;
-	int *key_is_ca;
+	ціле *key_is_ca;
 };
 struct dest_constraint {
 	struct dest_constraint_hop from;
 	struct dest_constraint_hop to;
 };
 
-int	ssh_get_authentication_socket(int *fdp);
-int	ssh_get_authentication_socket_path(const char *authsocket, int *fdp);
-void	ssh_close_authentication_socket(int sock);
+ціле	ssh_get_authentication_socket(ціле *fdp);
+ціле	ssh_get_authentication_socket_path(const char *authsocket, ціле *fdp);
+void	ssh_close_authentication_socket(ціле sock);
 
-int	ssh_lock_agent(int sock, int lock, const char *password);
-int	ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp);
+ціле	ssh_lock_agent(ціле sock, ціле lock, const char *password);
+ціле	ssh_fetch_identitylist(ціле sock, struct ssh_identitylist **idlp);
 void	ssh_free_identitylist(struct ssh_identitylist *idl);
-int	ssh_add_identity_constrained(int sock, struct sshkey *key,
+ціле	ssh_add_identity_constrained(ціле sock, struct sshkey *key,
     const char *comment, u_int life, u_int confirm, const char *provider,
     struct dest_constraint **dest_constraints, size_t ndest_constraints);
-int	ssh_agent_has_key(int sock, const struct sshkey *key);
-int	ssh_remove_identity(int sock, const struct sshkey *key);
-int	ssh_update_card(int sock, int add, const char *reader_id,
+ціле	ssh_agent_has_key(ціле sock, const struct sshkey *key);
+ціле	ssh_remove_identity(ціле sock, const struct sshkey *key);
+ціле	ssh_update_card(ціле sock, ціле add, const char *reader_id,
 	    const char *pin, u_int life, u_int confirm,
 	    struct dest_constraint **dest_constraints,
 	    size_t ndest_constraints,
-	    int cert_only, struct sshkey **certs, size_t ncerts);
-int	ssh_remove_all_identities(int sock, int version);
+	    ціле cert_only, struct sshkey **certs, size_t ncerts);
+ціле	ssh_remove_all_identities(ціле sock, ціле version);
 
-int	ssh_agent_sign(int sock, const struct sshkey *key,
+ціле	ssh_agent_sign(ціле sock, const struct sshkey *key,
 	    u_char **sigp, size_t *lenp,
 	    const u_char *data, size_t datalen, const char *alg, u_int compat);
 
-int	ssh_agent_bind_hostkey(int sock, const struct sshkey *key,
+ціле	ssh_agent_bind_hostkey(ціле sock, const struct sshkey *key,
     const struct sshbuf *session_id, const struct sshbuf *signature,
-    int forwarding);
+    ціле forwarding);
 
-int	ssh_agent_query_extensions(int sock, char ***exts);
+ціле	ssh_agent_query_extensions(ціле sock, char ***exts);
 
 /* Messages for the authentication agent connection. */
 #define SSH_AGENTC_REQUEST_RSA_IDENTITIES	1

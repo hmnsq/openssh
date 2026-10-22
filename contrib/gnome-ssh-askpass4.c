@@ -64,7 +64,7 @@ typedef struct _PromptState {
 	GApplication *app;
 	char* message;
 	PromptType type;
-	int exit_status;
+	ціле exit_status;
 } PromptState;
 
 static PromptState *
@@ -75,7 +75,7 @@ prompt_state_new(GApplication *app, char* message, PromptType type)
 	state->message = g_strdup(message);
 	state->type = type;
 	state->exit_status = -1;
-	return state;
+	повернути state;
 }
 
 static void
@@ -102,21 +102,21 @@ prompt_password_done(GObject *source_object, GAsyncResult *res,
 	 */
 	const char *pw = gcr_prompt_password_finish(prompt, res, &error);
 
-	if ((!pw && !error) || (error && error->code == G_IO_ERROR_CANCELLED)) {
+	якщо ((!pw && !error) || (error && error->code == G_IO_ERROR_CANCELLED)) {
 		/* Operation was cancelled or timed out. */
 		state->exit_status = -1;
-	} else if (error) {
+	} інакше якщо (error) {
 		warnx("Failed to prompt for ssh-askpass: %s", error->message);
 		state->exit_status = 1;
-	} else {
+	} інакше {
 		/* Report passphrase if user selected Continue. */
 		g_autofree char *local = g_locale_from_utf8(pw, strlen(pw),
 		    NULL, NULL, NULL);
 
-		if (local != NULL) {
+		якщо (local != NULL) {
 			puts(local);
 			memset(local, '\0', strlen(local));
-		} else {
+		} інакше {
 			puts(pw);
 		}
 		state->exit_status = 0;
@@ -134,23 +134,23 @@ prompt_confirm_done(GObject *source_object, GAsyncResult *res,
 	g_autoptr(GError) error = NULL;
 
 	GcrPromptReply reply = gcr_prompt_confirm_finish(prompt, res, &error);
-	if (error) {
-		if (error->code == G_IO_ERROR_CANCELLED) {
+	якщо (error) {
+		якщо (error->code == G_IO_ERROR_CANCELLED) {
 			/* Operation was cancelled or timed out. */
 			state->exit_status = -1;
-		} else {
+		} інакше {
 			state->exit_status = 1;
 			warnx("Failed to prompt for ssh-askpass: %s",
 			    error->message);
 		}
-	} else if (reply == GCR_PROMPT_REPLY_CONTINUE ||
+	} інакше якщо (reply == GCR_PROMPT_REPLY_CONTINUE ||
 	    state->type == PROMPT_NONE) {
 		/*
 		 * Since Gcr doesn’t yet support one button message
 		 * boxes treat Cancel the same as Continue.
 		 */
 		state->exit_status = 0;
-	} else {
+	} інакше {
 		/* GCR_PROMPT_REPLY_CANCEL */
 		state->exit_status = -1;
 	}
@@ -158,7 +158,7 @@ prompt_confirm_done(GObject *source_object, GAsyncResult *res,
 	g_application_release(state->app);
 }
 
-static int
+static ціле
 command_line(GApplication* app, G_GNUC_UNUSED GApplicationCommandLine *cmdline,
     gpointer user_data)
 {
@@ -168,24 +168,24 @@ command_line(GApplication* app, G_GNUC_UNUSED GApplicationCommandLine *cmdline,
 	g_application_hold(app);
 
 	/* Wait indefinitely. */
-	int timeout_seconds = -1;
+	ціле timeout_seconds = -1;
 	g_autoptr(GError) error = NULL;
 	GcrPrompt* prompt = gcr_system_prompt_open(timeout_seconds, NULL, &error);
 
-	if (!prompt) {
-		if (error->code == GCR_SYSTEM_PROMPT_IN_PROGRESS) {
+	якщо (!prompt) {
+		якщо (error->code == GCR_SYSTEM_PROMPT_IN_PROGRESS) {
 			/*
 			 * This means the timeout elapsed, but no prompt
 			 * was ever shown.
 			 */
 			warnx("Timeout: the Gcr system prompter was "
 			    "already in use.");
-		} else {
+		} інакше {
 			warnx("Couldn’t create prompt for ssh-askpass: %s",
 			    error->message);
 		}
 
-		return 1;
+		повернути 1;
 	}
 
 	gcr_prompt_set_message(prompt, "OpenSSH");
@@ -195,36 +195,36 @@ command_line(GApplication* app, G_GNUC_UNUSED GApplicationCommandLine *cmdline,
 	 * XXX: Remove the Cancel button for PROMPT_NONE when GCR
 	 * supports that.
 	 */
-	if (state->type == PROMPT_ENTRY) {
+	якщо (state->type == PROMPT_ENTRY) {
 		gcr_prompt_password_async(prompt, NULL, prompt_password_done, state);
-	} else {
+	} інакше {
 		gcr_prompt_confirm_async(prompt, NULL, prompt_confirm_done, state);
 	}
 
 	/* The exit status will be changed in the async callbacks. */
-	return 1;
+	повернути 1;
 }
 
-int
-main(int argc, char **argv)
+ціле
+main(ціле argc, char **argv)
 {
 	g_autoptr(GApplication) app = g_application_new(
 	    "com.openssh.gnome-ssh-askpass4",
 	    G_APPLICATION_HANDLES_COMMAND_LINE);
 	g_autofree char *message = NULL;
 
-	if (argc > 1) {
+	якщо (argc > 1) {
 		message = g_strjoinv(" ", argv + 1);
-	} else {
+	} інакше {
 		message = g_strdup("Enter your OpenSSH passphrase:");
 	}
 
 	const char *prompt_mode = getenv("SSH_ASKPASS_PROMPT");
 	PromptType type = PROMPT_ENTRY;
-	if (prompt_mode != NULL) {
-		if (strcasecmp(prompt_mode, "confirm") == 0) {
+	якщо (prompt_mode != NULL) {
+		якщо (strcasecmp(prompt_mode, "confirm") == 0) {
 			type = PROMPT_CONFIRM;
-		} else if (strcasecmp(prompt_mode, "none") == 0) {
+		} інакше якщо (strcasecmp(prompt_mode, "none") == 0) {
 			type = PROMPT_NONE;
 		}
 	}
@@ -245,5 +245,5 @@ main(int argc, char **argv)
 	 */
 	(void)(g_application_run(app, argc, argv));
 
-	return state->exit_status;
+	повернути state->exit_status;
 }

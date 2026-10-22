@@ -48,19 +48,19 @@
 extern ServerOptions options;
 extern struct authmethod_cfg methodcfg_none;
 
-extern int none_enabled;
+extern ціле none_enabled;
 
-static int
+static ціле
 userauth_none(struct ssh *ssh, const char *method)
 {
-	int r;
+	ціле r;
 
 	none_enabled = 0;
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	якщо ((r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
-	if (options.permit_empty_passwd && options.password_authentication)
-		return mm_auth_password(ssh, "");
-	return (0);
+	якщо (options.permit_empty_passwd && options.password_authentication)
+		повернути mm_auth_password(ssh, "");
+	повернути (0);
 }
 
 Authmethod method_none = {

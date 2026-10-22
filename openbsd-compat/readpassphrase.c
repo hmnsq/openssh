@@ -42,47 +42,47 @@
 #endif
 
 /* SunOS 4.x which lacks _POSIX_VDISABLE, but has VDISABLE */
-#if !defined(_POSIX_VDISABLE) && defined(VDISABLE)
+#якщо !defined(_POSIX_VDISABLE) && defined(VDISABLE)
 #  define _POSIX_VDISABLE       VDISABLE
 #endif
 
 static volatile sig_atomic_t signo[_NSIG];
 
-static void handler(int);
+static void handler(ціле);
 
 /* Like sigaction(2) but preserves SIG_IGN */
 static void
-sigaction_except_ign(int signum, struct sigaction *act, struct sigaction *old)
+sigaction_except_ign(ціле signum, struct sigaction *act, struct sigaction *old)
 {
 	struct sigaction sabuf;
 
-	if (old == NULL)
+	якщо (old == NULL)
 		old = &sabuf;
 
 	(void)sigaction(signum, act, old);
 	/* Reinstate SIG_IGN; we don't want to override this */
-	if (old->sa_handler == SIG_IGN && act->sa_handler != SIG_IGN)
+	якщо (old->sa_handler == SIG_IGN && act->sa_handler != SIG_IGN)
 		(void)sigaction(signum, old, NULL);
 }
 
 char *
-readpassphrase(const char *prompt, char *buf, size_t bufsiz, int flags)
+readpassphrase(const char *prompt, char *buf, size_t bufsiz, ціле flags)
 {
 	ssize_t nr;
-	int input, output, save_errno, i, need_restart;
+	ціле input, output, save_errno, i, need_restart;
 	char ch, *p, *end;
 	struct termios term, oterm;
 	struct sigaction sa, savealrm, saveint, savehup, savequit, saveterm;
 	struct sigaction savetstp, savettin, savettou, savepipe;
 
 	/* I suppose we could alloc on demand in this case (XXX). */
-	if (bufsiz == 0) {
+	якщо (bufsiz == 0) {
 		errno = EINVAL;
-		return(NULL);
+		повернути(NULL);
 	}
 
 restart:
-	for (i = 0; i < _NSIG; i++)
+	для (i = 0; i < _NSIG; i++)
 		signo[i] = 0;
 	nr = -1;
 	save_errno = 0;
@@ -94,11 +94,11 @@ restart:
 #ifndef O_CLOEXEC
 # define O_CLOEXEC 0
 #endif
-	if ((flags & RPP_STDIN) ||
+	якщо ((flags & RPP_STDIN) ||
 	    (input = output = open(_PATH_TTY, O_RDWR | O_CLOEXEC)) == -1) {
-		if (flags & RPP_REQUIRE_TTY) {
+		якщо (flags & RPP_REQUIRE_TTY) {
 			errno = ENOTTY;
-			return(NULL);
+			повернути(NULL);
 		}
 		input = STDIN_FILENO;
 		output = STDERR_FILENO;
@@ -109,16 +109,16 @@ restart:
 	 * If we are using a tty but are not the foreground pgrp this will
 	 * generate SIGTTOU, so do it *before* installing the signal handlers.
 	 */
-	if (input != STDIN_FILENO && tcgetattr(input, &oterm) == 0) {
+	якщо (input != STDIN_FILENO && tcgetattr(input, &oterm) == 0) {
 		memcpy(&term, &oterm, sizeof(term));
-		if (!(flags & RPP_ECHO_ON))
+		якщо (!(flags & RPP_ECHO_ON))
 			term.c_lflag &= ~(ECHO | ECHONL);
 #ifdef VSTATUS
-		if (term.c_cc[VSTATUS] != _POSIX_VDISABLE)
+		якщо (term.c_cc[VSTATUS] != _POSIX_VDISABLE)
 			term.c_cc[VSTATUS] = _POSIX_VDISABLE;
 #endif
 		(void)tcsetattr(input, TCSAFLUSH|TCSASOFT, &term);
-	} else {
+	} інакше {
 		memset(&term, 0, sizeof(term));
 		term.c_lflag |= ECHO;
 		memset(&oterm, 0, sizeof(oterm));
@@ -143,18 +143,18 @@ restart:
 	sigaction_except_ign(SIGTTIN, &sa, &savettin);
 	sigaction_except_ign(SIGTTOU, &sa, &savettou);
 
-	if (!(flags & RPP_STDIN))
+	якщо (!(flags & RPP_STDIN))
 		(void)write(output, prompt, strlen(prompt));
 	end = buf + bufsiz - 1;
 	p = buf;
-	while ((nr = read(input, &ch, 1)) == 1 && ch != '\n' && ch != '\r') {
-		if (p < end) {
-			if ((flags & RPP_SEVENBIT))
+	поки ((nr = read(input, &ch, 1)) == 1 && ch != '\n' && ch != '\r') {
+		якщо (p < end) {
+			якщо ((flags & RPP_SEVENBIT))
 				ch &= 0x7f;
-			if (isalpha((unsigned char)ch)) {
-				if ((flags & RPP_FORCELOWER))
+			якщо (isalpha((unsigned char)ch)) {
+				якщо ((flags & RPP_FORCELOWER))
 					ch = (char)tolower((unsigned char)ch);
-				if ((flags & RPP_FORCEUPPER))
+				якщо ((flags & RPP_FORCEUPPER))
 					ch = (char)toupper((unsigned char)ch);
 			}
 			*p++ = ch;
@@ -162,15 +162,15 @@ restart:
 	}
 	*p = '\0';
 	save_errno = errno;
-	if (!(term.c_lflag & ECHO) && !(nr == -1 && errno == EINTR))
+	якщо (!(term.c_lflag & ECHO) && !(nr == -1 && errno == EINTR))
 		(void)write(output, "\n", 1);
 
 	/* Restore old terminal settings and signals. */
-	if (memcmp(&term, &oterm, sizeof(term)) != 0) {
-		const int sigttou = signo[SIGTTOU];
+	якщо (memcmp(&term, &oterm, sizeof(term)) != 0) {
+		const ціле sigttou = signo[SIGTTOU];
 
 		/* Ignore SIGTTOU generated when we are not the fg pgrp. */
-		while (tcsetattr(input, TCSAFLUSH|TCSASOFT, &oterm) == -1 &&
+		поки (tcsetattr(input, TCSAFLUSH|TCSASOFT, &oterm) == -1 &&
 		    errno == EINTR && !signo[SIGTTOU])
 			continue;
 		signo[SIGTTOU] = sigttou;
@@ -184,15 +184,15 @@ restart:
 	sigaction_except_ign(SIGTSTP, &savetstp, NULL);
 	sigaction_except_ign(SIGTTIN, &savettin, NULL);
 	sigaction_except_ign(SIGTTOU, &savettou, NULL);
-	if (input != STDIN_FILENO)
+	якщо (input != STDIN_FILENO)
 		(void)close(input);
 
 	/*
 	 * If we were interrupted by a signal, resend it to ourselves
 	 * now that we have restored the signal handlers.
 	 */
-	for (i = 0; i < _NSIG; i++) {
-		if (signo[i]) {
+	для (i = 0; i < _NSIG; i++) {
+		якщо (signo[i]) {
 			kill(getpid(), i);
 			switch (i) {
 			case SIGTSTP:
@@ -202,26 +202,26 @@ restart:
 			}
 		}
 	}
-	if (need_restart)
+	якщо (need_restart)
 		goto restart;
 
-	if (save_errno)
+	якщо (save_errno)
 		errno = save_errno;
-	return(nr == -1 ? NULL : buf);
+	повернути(nr == -1 ? NULL : buf);
 }
 DEF_WEAK(readpassphrase);
 
-#if 0
+#якщо 0
 char *
 getpass(const char *prompt)
 {
 	static char buf[_PASSWORD_LEN + 1];
 
-	return(readpassphrase(prompt, buf, sizeof(buf), RPP_ECHO_OFF));
+	повернути(readpassphrase(prompt, buf, sizeof(buf), RPP_ECHO_OFF));
 }
 #endif
 
-static void handler(int s)
+static void handler(ціле s)
 {
 
 	signo[s] = 1;

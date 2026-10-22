@@ -34,7 +34,7 @@
 #include <openssl/ecdsa.h>
 #include <openssl/evp.h>
 #define SSH_OPENSSL_VERSION OpenSSL_version(OPENSSL_VERSION)
-#else /* OPENSSL */
+#інакше /* OPENSSL */
 #define BIGNUM		void
 #define RSA		void
 #define EC_KEY		void
@@ -111,10 +111,10 @@ struct sshkey_cert {
 
 /* XXX opacify? */
 struct sshkey {
-	int	 type;
-	int	 flags;
+	ціле	 type;
+	ціле	 flags;
 	/* KEY_ECDSA and KEY_ECDSA_SK */
-	int	 ecdsa_nid;	/* NID of curve */
+	ціле	 ecdsa_nid;	/* NID of curve */
 	/* libcrypto-backed keys */
 	EVP_PKEY *pkey;
 	/* KEY_ED25519 and KEY_ED25519_SK */
@@ -148,23 +148,23 @@ struct sshkey_sig_details {
 
 struct sshkey_impl_funcs {
 	u_int (*size)(const struct sshkey *);	/* optional */
-	int (*alloc)(struct sshkey *);		/* optional */
+	ціле (*alloc)(struct sshkey *);		/* optional */
 	void (*cleanup)(struct sshkey *);	/* optional */
-	int (*equal)(const struct sshkey *, const struct sshkey *);
-	int (*serialize_public)(const struct sshkey *, struct sshbuf *,
+	ціле (*equal)(const struct sshkey *, const struct sshkey *);
+	ціле (*serialize_public)(const struct sshkey *, struct sshbuf *,
 	    enum sshkey_serialize_rep);
-	int (*deserialize_public)(const char *, struct sshbuf *,
+	ціле (*deserialize_public)(const char *, struct sshbuf *,
 	    struct sshkey *);
-	int (*serialize_private)(const struct sshkey *, struct sshbuf *,
+	ціле (*serialize_private)(const struct sshkey *, struct sshbuf *,
 	    enum sshkey_serialize_rep);
-	int (*deserialize_private)(const char *, struct sshbuf *,
+	ціле (*deserialize_private)(const char *, struct sshbuf *,
 	    struct sshkey *);
-	int (*generate)(struct sshkey *, int);	/* optional */
-	int (*copy_public)(const struct sshkey *, struct sshkey *);
-	int (*sign)(struct sshkey *, u_char **, size_t *,
+	ціле (*generate)(struct sshkey *, ціле);	/* optional */
+	ціле (*copy_public)(const struct sshkey *, struct sshkey *);
+	ціле (*sign)(struct sshkey *, u_char **, size_t *,
 	    const u_char *, size_t, const char *,
 	    const char *, const char *, u_int); /* optional */
-	int (*verify)(const struct sshkey *, const u_char *, size_t,
+	ціле (*verify)(const struct sshkey *, const u_char *, size_t,
 	    const u_char *, size_t, const char *, u_int,
 	    struct sshkey_sig_details **);
 };
@@ -173,109 +173,109 @@ struct sshkey_impl {
 	const char *name;
 	const char *shortname;
 	const char *sigalg;
-	int type;
-	int nid;
-	int cert;
-	int sigonly;
-	int keybits;
+	ціле type;
+	ціле nid;
+	ціле cert;
+	ціле sigonly;
+	ціле keybits;
 	const struct sshkey_impl_funcs *funcs;
 };
 
-struct sshkey	*sshkey_new(int);
+struct sshkey	*sshkey_new(ціле);
 void		 sshkey_free(struct sshkey *);
-int		 sshkey_equal_public(const struct sshkey *,
+ціле		 sshkey_equal_public(const struct sshkey *,
     const struct sshkey *);
-int		 sshkey_equal(const struct sshkey *, const struct sshkey *);
+ціле		 sshkey_equal(const struct sshkey *, const struct sshkey *);
 char		*sshkey_fingerprint(const struct sshkey *,
-    int, enum sshkey_fp_rep);
-int		 sshkey_fingerprint_raw(const struct sshkey *k,
-    int, u_char **retp, size_t *lenp);
+    ціле, enum sshkey_fp_rep);
+ціле		 sshkey_fingerprint_raw(const struct sshkey *k,
+    ціле, u_char **retp, size_t *lenp);
 const char	*sshkey_type(const struct sshkey *);
 const char	*sshkey_cert_type(const struct sshkey *);
-int		 sshkey_format_text(const struct sshkey *, struct sshbuf *);
-int		 sshkey_write(const struct sshkey *, FILE *);
-int		 sshkey_read(struct sshkey *, char **);
+ціле		 sshkey_format_text(const struct sshkey *, struct sshbuf *);
+ціле		 sshkey_write(const struct sshkey *, FILE *);
+ціле		 sshkey_read(struct sshkey *, char **);
 u_int		 sshkey_size(const struct sshkey *);
 
-int		 sshkey_generate(int type, u_int bits, struct sshkey **keyp);
-int		 sshkey_from_private(const struct sshkey *, struct sshkey **);
+ціле		 sshkey_generate(ціле type, u_int bits, struct sshkey **keyp);
+ціле		 sshkey_from_private(const struct sshkey *, struct sshkey **);
 
-int		 sshkey_is_shielded(struct sshkey *);
-int		 sshkey_shield_private(struct sshkey *);
-int		 sshkey_unshield_private(struct sshkey *);
+ціле		 sshkey_is_shielded(struct sshkey *);
+ціле		 sshkey_shield_private(struct sshkey *);
+ціле		 sshkey_unshield_private(struct sshkey *);
 
-int	 sshkey_type_from_name(const char *);
-int	 sshkey_type_from_shortname(const char *);
-int	 sshkey_is_cert(const struct sshkey *);
-int	 sshkey_is_sk(const struct sshkey *);
-int	 sshkey_type_is_cert(int);
-int	 sshkey_type_plain(int);
+ціле	 sshkey_type_from_name(const char *);
+ціле	 sshkey_type_from_shortname(const char *);
+ціле	 sshkey_is_cert(const struct sshkey *);
+ціле	 sshkey_is_sk(const struct sshkey *);
+ціле	 sshkey_type_is_cert(ціле);
+ціле	 sshkey_type_plain(ціле);
 
 /* Returns non-zero if key name match sigalgs pattern list. (handles RSA) */
-int	 sshkey_match_keyname_to_sigalgs(const char *, const char *);
+ціле	 sshkey_match_keyname_to_sigalgs(const char *, const char *);
 
-int	 sshkey_to_certified(struct sshkey *);
-int	 sshkey_drop_cert(struct sshkey *);
-int	 sshkey_cert_copy(const struct sshkey *, struct sshkey *);
-int	 sshkey_cert_check_authority(const struct sshkey *, int, int,
+ціле	 sshkey_to_certified(struct sshkey *);
+ціле	 sshkey_drop_cert(struct sshkey *);
+ціле	 sshkey_cert_copy(const struct sshkey *, struct sshkey *);
+ціле	 sshkey_cert_check_authority(const struct sshkey *, ціле, ціле,
     uint64_t, const char *, const char **);
-int	 sshkey_cert_check_authority_now(const struct sshkey *, int, int,
+ціле	 sshkey_cert_check_authority_now(const struct sshkey *, ціле, ціле,
     const char *, const char **);
-int	 sshkey_cert_check_host(const struct sshkey *, const char *,
+ціле	 sshkey_cert_check_host(const struct sshkey *, const char *,
     const char *, const char **);
 size_t	 sshkey_format_cert_validity(const struct sshkey_cert *,
     char *, size_t) __attribute__((__bounded__(__string__, 2, 3)));
-int	 sshkey_check_cert_sigtype(const struct sshkey *, const char *);
+ціле	 sshkey_check_cert_sigtype(const struct sshkey *, const char *);
 
-int	 sshkey_certify(struct sshkey *, struct sshkey *,
+ціле	 sshkey_certify(struct sshkey *, struct sshkey *,
     const char *, const char *, const char *);
 /* Variant allowing use of a custom signature function (e.g. for ssh-agent) */
-typedef int sshkey_certify_signer(struct sshkey *, u_char **, size_t *,
+typedef ціле sshkey_certify_signer(struct sshkey *, u_char **, size_t *,
     const u_char *, size_t, const char *, const char *, const char *,
     u_int, void *);
-int	 sshkey_certify_custom(struct sshkey *, struct sshkey *, const char *,
+ціле	 sshkey_certify_custom(struct sshkey *, struct sshkey *, const char *,
     const char *, const char *, sshkey_certify_signer *, void *);
 
-int		 sshkey_ecdsa_nid_from_name(const char *);
-int		 sshkey_curve_name_to_nid(const char *);
-const char *	 sshkey_curve_nid_to_name(int);
-u_int		 sshkey_curve_nid_to_bits(int);
-int		 sshkey_ecdsa_bits_to_nid(int);
-int		 sshkey_ecdsa_key_to_nid(const EC_KEY *);
-int		 sshkey_ecdsa_pkey_to_nid(EVP_PKEY *);
-int		 sshkey_ec_nid_to_hash_alg(int nid);
-int		 sshkey_ec_validate_public(const EC_GROUP *, const EC_POINT *);
-int		 sshkey_ec_validate_private(const EC_KEY *);
+ціле		 sshkey_ecdsa_nid_from_name(const char *);
+ціле		 sshkey_curve_name_to_nid(const char *);
+const char *	 sshkey_curve_nid_to_name(ціле);
+u_int		 sshkey_curve_nid_to_bits(ціле);
+ціле		 sshkey_ecdsa_bits_to_nid(ціле);
+ціле		 sshkey_ecdsa_key_to_nid(const EC_KEY *);
+ціле		 sshkey_ecdsa_pkey_to_nid(EVP_PKEY *);
+ціле		 sshkey_ec_nid_to_hash_alg(ціле nid);
+ціле		 sshkey_ec_validate_public(const EC_GROUP *, const EC_POINT *);
+ціле		 sshkey_ec_validate_private(const EC_KEY *);
 const char	*sshkey_ssh_name(const struct sshkey *);
 const char	*sshkey_ssh_name_plain(const struct sshkey *);
-int		 sshkey_names_valid2(const char *, int, int);
-char		*sshkey_alg_list(int, int, int, char);
+ціле		 sshkey_names_valid2(const char *, ціле, ціле);
+char		*sshkey_alg_list(ціле, ціле, ціле, char);
 
-int	 sshkey_from_blob(const u_char *, size_t, struct sshkey **);
-int	 sshkey_fromb(struct sshbuf *, struct sshkey **);
-int	 sshkey_fromb_allowlist(struct sshbuf *, struct sshkey **,
+ціле	 sshkey_from_blob(const u_char *, size_t, struct sshkey **);
+ціле	 sshkey_fromb(struct sshbuf *, struct sshkey **);
+ціле	 sshkey_fromb_allowlist(struct sshbuf *, struct sshkey **,
     const char *, const char *);
-int	 sshkey_froms(struct sshbuf *, struct sshkey **);
-int	 sshkey_to_blob(const struct sshkey *, u_char **, size_t *);
-int	 sshkey_to_base64(const struct sshkey *, char **);
-int	 sshkey_putb(const struct sshkey *, struct sshbuf *);
-int	 sshkey_puts(const struct sshkey *, struct sshbuf *);
-int	 sshkey_plain_to_blob(const struct sshkey *, u_char **, size_t *);
-int	 sshkey_putb_plain(const struct sshkey *, struct sshbuf *);
-int	 sshkey_puts_plain(const struct sshkey *, struct sshbuf *);
+ціле	 sshkey_froms(struct sshbuf *, struct sshkey **);
+ціле	 sshkey_to_blob(const struct sshkey *, u_char **, size_t *);
+ціле	 sshkey_to_base64(const struct sshkey *, char **);
+ціле	 sshkey_putb(const struct sshkey *, struct sshbuf *);
+ціле	 sshkey_puts(const struct sshkey *, struct sshbuf *);
+ціле	 sshkey_plain_to_blob(const struct sshkey *, u_char **, size_t *);
+ціле	 sshkey_putb_plain(const struct sshkey *, struct sshbuf *);
+ціле	 sshkey_puts_plain(const struct sshkey *, struct sshbuf *);
 
-int	 sshkey_sign(struct sshkey *, u_char **, size_t *,
+ціле	 sshkey_sign(struct sshkey *, u_char **, size_t *,
     const u_char *, size_t, const char *, const char *, const char *, u_int);
-int	 sshkey_verify(const struct sshkey *, const u_char *, size_t,
+ціле	 sshkey_verify(const struct sshkey *, const u_char *, size_t,
     const u_char *, size_t, const char *, u_int, struct sshkey_sig_details **);
-int	 sshkey_check_sigtype(const u_char *, size_t, const char *);
+ціле	 sshkey_check_sigtype(const u_char *, size_t, const char *);
 const char *sshkey_sigalg_by_name(const char *);
-int	 sshkey_get_sigtype(const u_char *, size_t, char **);
+ціле	 sshkey_get_sigtype(const u_char *, size_t, char **);
 
 /* Signing and verification backend for libcrypto-backed keys */
-int	sshkey_pkey_digest_sign(EVP_PKEY*, int, u_char **,
+ціле	sshkey_pkey_digest_sign(EVP_PKEY*, ціле, u_char **,
     size_t *, const u_char *, size_t);
-int	sshkey_pkey_digest_verify(EVP_PKEY *, int, const u_char *,
+ціле	sshkey_pkey_digest_verify(EVP_PKEY *, ціле, const u_char *,
     size_t, u_char *, size_t);
 
 /* for debug */
@@ -283,50 +283,50 @@ void	sshkey_dump_ec_point(const EC_GROUP *, const EC_POINT *);
 void	sshkey_dump_ec_key(const EC_KEY *);
 
 /* private key parsing and serialisation */
-int	sshkey_private_serialize(struct sshkey *key, struct sshbuf *buf);
-int	sshkey_private_deserialize(struct sshbuf *buf,  struct sshkey **keyp);
+ціле	sshkey_private_serialize(struct sshkey *key, struct sshbuf *buf);
+ціле	sshkey_private_deserialize(struct sshbuf *buf,  struct sshkey **keyp);
 
 /* private key file format parsing and serialisation */
-int	sshkey_private_to_fileblob(struct sshkey *key, struct sshbuf *blob,
+ціле	sshkey_private_to_fileblob(struct sshkey *key, struct sshbuf *blob,
     const char *passphrase, const char *comment,
-    int format, const char *openssh_format_cipher, int openssh_format_rounds);
-int	sshkey_parse_private_fileblob(struct sshbuf *buffer,
+    ціле format, const char *openssh_format_cipher, ціле openssh_format_rounds);
+ціле	sshkey_parse_private_fileblob(struct sshbuf *buffer,
     const char *passphrase, struct sshkey **keyp, char **commentp);
-int	sshkey_parse_private_fileblob_type(struct sshbuf *blob, int type,
+ціле	sshkey_parse_private_fileblob_type(struct sshbuf *blob, ціле type,
     const char *passphrase, struct sshkey **keyp, char **commentp);
-int	sshkey_parse_pubkey_from_private_fileblob_type(struct sshbuf *blob,
-    int type, struct sshkey **pubkeyp);
+ціле	sshkey_parse_pubkey_from_private_fileblob_type(struct sshbuf *blob,
+    ціле type, struct sshkey **pubkeyp);
 
-int sshkey_check_rsa_length(const struct sshkey *, int);
-int	ssh_rsa_hash_id_from_keyname(const char *);
-const char *ssh_rsa_hash_alg_ident(int);
-int	ssh_rsa_encode_store_sig(int, const u_char *, size_t,
+ціле sshkey_check_rsa_length(const struct sshkey *, ціле);
+ціле	ssh_rsa_hash_id_from_keyname(const char *);
+const char *ssh_rsa_hash_alg_ident(ціле);
+ціле	ssh_rsa_encode_store_sig(ціле, const u_char *, size_t,
 	    u_char **, size_t *);
-int	ssh_ecdsa_encode_store_sig(const struct sshkey *,
+ціле	ssh_ecdsa_encode_store_sig(const struct sshkey *,
 	    const BIGNUM *, const BIGNUM *, u_char **, size_t *);
-int	ssh_ed25519_encode_store_sig(const u_char *, size_t,
+ціле	ssh_ed25519_encode_store_sig(const u_char *, size_t,
 	    u_char **, size_t *);
 /* XXX should be internal, but used by ssh-keygen */
-int ssh_rsa_complete_crt_parameters(const BIGNUM *, const BIGNUM *,
+ціле ssh_rsa_complete_crt_parameters(const BIGNUM *, const BIGNUM *,
     const BIGNUM *, const BIGNUM *, BIGNUM **, BIGNUM **);
 
 void	 sshkey_sig_details_free(struct sshkey_sig_details *);
 
 #ifdef WITH_OPENSSL
-int	sshkey_ecdsa_fixup_group(EVP_PKEY *k); /* ssh-ecdsa.c */
+ціле	sshkey_ecdsa_fixup_group(EVP_PKEY *k); /* ssh-ecdsa.c */
 #endif
 
 #ifdef SSHKEY_INTERNAL
-int	sshkey_sk_fields_equal(const struct sshkey *a, const struct sshkey *b);
+ціле	sshkey_sk_fields_equal(const struct sshkey *a, const struct sshkey *b);
 void	sshkey_sk_cleanup(struct sshkey *k);
-int	sshkey_serialize_sk(const struct sshkey *key, struct sshbuf *b);
-int	sshkey_copy_public_sk(const struct sshkey *from, struct sshkey *to);
-int	sshkey_deserialize_sk(struct sshbuf *b, struct sshkey *key);
-int	sshkey_serialize_private_sk(const struct sshkey *key,
+ціле	sshkey_serialize_sk(const struct sshkey *key, struct sshbuf *b);
+ціле	sshkey_copy_public_sk(const struct sshkey *from, struct sshkey *to);
+ціле	sshkey_deserialize_sk(struct sshbuf *b, struct sshkey *key);
+ціле	sshkey_serialize_private_sk(const struct sshkey *key,
     struct sshbuf *buf);
-int	sshkey_private_deserialize_sk(struct sshbuf *buf, struct sshkey *k);
+ціле	sshkey_private_deserialize_sk(struct sshbuf *buf, struct sshkey *k);
 #ifdef WITH_OPENSSL
-int	check_rsa_length(const RSA *rsa); /* XXX remove */
+ціле	check_rsa_length(const RSA *rsa); /* XXX remove */
 #endif
 #endif
 

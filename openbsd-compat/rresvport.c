@@ -46,21 +46,21 @@
 #include <string.h>
 #include <unistd.h>
 
-#if 0
-int
-rresvport(int *alport)
+#якщо 0
+ціле
+rresvport(ціле *alport)
 {
-	return rresvport_af(alport, AF_INET);
+	повернути rresvport_af(alport, AF_INET);
 }
 #endif
 
-int
-rresvport_af(int *alport, sa_family_t af)
+ціле
+rresvport_af(ціле *alport, sa_family_t af)
 {
 	struct sockaddr_storage ss;
 	struct sockaddr *sa;
 	u_int16_t *portp;
-	int s;
+	ціле s;
 	socklen_t salen;
 
 	memset(&ss, '\0', sizeof ss);
@@ -77,32 +77,32 @@ rresvport_af(int *alport, sa_family_t af)
 		break;
 	default:
 		errno = EPFNOSUPPORT;
-		return (-1);
+		повернути (-1);
 	}
 	sa->sa_family = af;
 	
 	s = socket(af, SOCK_STREAM, 0);
-	if (s < 0)
-		return (-1);
+	якщо (s < 0)
+		повернути (-1);
 
 	*portp = htons(*alport);
-	if (*alport < IPPORT_RESERVED - 1) {
-		if (bind(s, sa, salen) >= 0)
-			return (s);
-		if (errno != EADDRINUSE) {
+	якщо (*alport < IPPORT_RESERVED - 1) {
+		якщо (bind(s, sa, salen) >= 0)
+			повернути (s);
+		якщо (errno != EADDRINUSE) {
 			(void)close(s);
-			return (-1);
+			повернути (-1);
 		}
 	}
 
 	*portp = 0;
 	sa->sa_family = af;
-	if (bindresvport_sa(s, sa) == -1) {
+	якщо (bindresvport_sa(s, sa) == -1) {
 		(void)close(s);
-		return (-1);
+		повернути (-1);
 	}
 	*alport = ntohs(*portp);
-	return (s);
+	повернути (s);
 }
 
 #endif /* HAVE_RRESVPORT_AF */

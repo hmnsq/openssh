@@ -50,29 +50,29 @@ ssh_askpass(char *askpass, const char *msg, const char *env_hint)
 	pid_t pid, ret;
 	size_t len;
 	char *pass;
-	int p[2], status;
+	ціле p[2], status;
 	char buf[1024];
-	void (*osigchld)(int);
+	void (*osigchld)(ціле);
 
-	if (fflush(stdout) != 0)
+	якщо (fflush(stdout) != 0)
 		error_f("fflush: %s", strerror(errno));
-	if (askpass == NULL)
+	якщо (askpass == NULL)
 		fatal("internal error: askpass undefined");
-	if (pipe(p) == -1) {
+	якщо (pipe(p) == -1) {
 		error_f("pipe: %s", strerror(errno));
-		return NULL;
+		повернути NULL;
 	}
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if ((pid = fork()) == -1) {
+	якщо ((pid = fork()) == -1) {
 		error_f("fork: %s", strerror(errno));
 		ssh_signal(SIGCHLD, osigchld);
-		return NULL;
+		повернути NULL;
 	}
-	if (pid == 0) {
+	якщо (pid == 0) {
 		close(p[0]);
-		if (dup2(p[1], STDOUT_FILENO) == -1)
+		якщо (dup2(p[1], STDOUT_FILENO) == -1)
 			fatal_f("dup2: %s", strerror(errno));
-		if (env_hint != NULL)
+		якщо (env_hint != NULL)
 			setenv("SSH_ASKPASS_PROMPT", env_hint, 1);
 		execlp(askpass, askpass, msg, (char *)NULL);
 		fatal_f("exec(%s): %s", askpass, strerror(errno));
@@ -83,28 +83,28 @@ ssh_askpass(char *askpass, const char *msg, const char *env_hint)
 	do {
 		ssize_t r = read(p[0], buf + len, sizeof(buf) - 1 - len);
 
-		if (r == -1 && errno == EINTR)
+		якщо (r == -1 && errno == EINTR)
 			continue;
-		if (r <= 0)
+		якщо (r <= 0)
 			break;
 		len += r;
-	} while (len < sizeof(buf) - 1);
+	} поки (len < sizeof(buf) - 1);
 	buf[len] = '\0';
 
 	close(p[0]);
-	while ((ret = waitpid(pid, &status, 0)) == -1)
-		if (errno != EINTR)
+	поки ((ret = waitpid(pid, &status, 0)) == -1)
+		якщо (errno != EINTR)
 			break;
 	ssh_signal(SIGCHLD, osigchld);
-	if (ret == -1 || !WIFEXITED(status) || WEXITSTATUS(status) != 0) {
+	якщо (ret == -1 || !WIFEXITED(status) || WEXITSTATUS(status) != 0) {
 		explicit_bzero(buf, sizeof(buf));
-		return NULL;
+		повернути NULL;
 	}
 
 	buf[strcspn(buf, "\r\n")] = '\0';
 	pass = xstrdup(buf);
 	explicit_bzero(buf, sizeof(buf));
-	return pass;
+	повернути pass;
 }
 
 /* private/internal read_passphrase flags */
@@ -117,40 +117,40 @@ ssh_askpass(char *askpass, const char *msg, const char *env_hint)
  * tty is or askpass program is available
  */
 char *
-read_passphrase(const char *prompt, int flags)
+read_passphrase(const char *prompt, ціле flags)
 {
 	char cr = '\r', *askpass = NULL, *ret, buf[1024];
-	int rppflags, ttyfd, use_askpass = 0, allow_askpass = 0;
+	ціле rppflags, ttyfd, use_askpass = 0, allow_askpass = 0;
 	const char *askpass_hint = NULL;
 	const char *s;
 
-	if (((s = getenv("DISPLAY")) != NULL && *s != '\0') ||
+	якщо (((s = getenv("DISPLAY")) != NULL && *s != '\0') ||
 	    ((s = getenv("WAYLAND_DISPLAY")) != NULL && *s != '\0'))
 		allow_askpass = 1;
-	if ((s = getenv(SSH_ASKPASS_REQUIRE_ENV)) != NULL) {
-		if (strcasecmp(s, "force") == 0) {
+	якщо ((s = getenv(SSH_ASKPASS_REQUIRE_ENV)) != NULL) {
+		якщо (strcasecmp(s, "force") == 0) {
 			use_askpass = 1;
 			allow_askpass = 1;
-		} else if (strcasecmp(s, "prefer") == 0)
+		} інакше якщо (strcasecmp(s, "prefer") == 0)
 			use_askpass = allow_askpass;
-		else if (strcasecmp(s, "never") == 0)
+		інакше якщо (strcasecmp(s, "never") == 0)
 			allow_askpass = 0;
 	}
 
 	rppflags = (flags & RP_ECHO) ? RPP_ECHO_ON : RPP_ECHO_OFF;
-	if (use_askpass)
+	якщо (use_askpass)
 		debug_f("requested to askpass");
-	else if (flags & RP_USE_ASKPASS)
+	інакше якщо (flags & RP_USE_ASKPASS)
 		use_askpass = 1;
-	else if (flags & RP_ALLOW_STDIN) {
-		if (!isatty(STDIN_FILENO)) {
+	інакше якщо (flags & RP_ALLOW_STDIN) {
+		якщо (!isatty(STDIN_FILENO)) {
 			debug_f("stdin is not a tty");
 			use_askpass = 1;
 		}
-	} else {
+	} інакше {
 		rppflags |= RPP_REQUIRE_TTY;
 		ttyfd = open(_PATH_TTY, O_RDWR);
-		if (ttyfd >= 0) {
+		якщо (ttyfd >= 0) {
 			/*
 			 * If we're on a tty, ensure that show the prompt at
 			 * the beginning of the line. This will hopefully
@@ -159,46 +159,46 @@ read_passphrase(const char *prompt, int flags)
 			 */
 			(void)write(ttyfd, &cr, 1);
 			close(ttyfd);
-		} else {
+		} інакше {
 			debug_f("can't open %s: %s", _PATH_TTY,
 			    strerror(errno));
 			use_askpass = 1;
 		}
 	}
 
-	if ((flags & RP_USE_ASKPASS) && !allow_askpass)
-		return (flags & RP_ALLOW_EOF) ? NULL : xstrdup("");
+	якщо ((flags & RP_USE_ASKPASS) && !allow_askpass)
+		повернути (flags & RP_ALLOW_EOF) ? NULL : xstrdup("");
 
-	if (use_askpass && allow_askpass) {
-		if (getenv(SSH_ASKPASS_ENV))
+	якщо (use_askpass && allow_askpass) {
+		якщо (getenv(SSH_ASKPASS_ENV))
 			askpass = getenv(SSH_ASKPASS_ENV);
-		else
+		інакше
 			askpass = _PATH_SSH_ASKPASS_DEFAULT;
-		if ((flags & RP_ASK_PERMISSION) != 0)
+		якщо ((flags & RP_ASK_PERMISSION) != 0)
 			askpass_hint = "confirm";
-		if ((ret = ssh_askpass(askpass, prompt, askpass_hint)) == NULL)
-			if (!(flags & RP_ALLOW_EOF))
-				return xstrdup("");
-		return ret;
+		якщо ((ret = ssh_askpass(askpass, prompt, askpass_hint)) == NULL)
+			якщо (!(flags & RP_ALLOW_EOF))
+				повернути xstrdup("");
+		повернути ret;
 	}
 
-	if (readpassphrase(prompt, buf, sizeof buf, rppflags) == NULL) {
-		if (flags & RP_ALLOW_EOF)
-			return NULL;
-		return xstrdup("");
+	якщо (readpassphrase(prompt, buf, sizeof buf, rppflags) == NULL) {
+		якщо (flags & RP_ALLOW_EOF)
+			повернути NULL;
+		повернути xstrdup("");
 	}
 
 	ret = xstrdup(buf);
 	explicit_bzero(buf, sizeof(buf));
-	return ret;
+	повернути ret;
 }
 
-int
+ціле
 ask_permission(const char *fmt, ...)
 {
 	va_list args;
 	char *p, prompt[1024];
-	int allowed = 0;
+	ціле allowed = 0;
 
 	va_start(args, fmt);
 	vsnprintf(prompt, sizeof(prompt), fmt, args);
@@ -206,18 +206,18 @@ ask_permission(const char *fmt, ...)
 
 	p = read_passphrase(prompt,
 	    RP_USE_ASKPASS|RP_ALLOW_EOF|RP_ASK_PERMISSION);
-	if (p != NULL) {
+	якщо (p != NULL) {
 		/*
 		 * Accept empty responses and responses consisting
 		 * of the word "yes" as affirmative.
 		 */
-		if (*p == '\0' || *p == '\n' ||
+		якщо (*p == '\0' || *p == '\n' ||
 		    strcasecmp(p, "yes") == 0)
 			allowed = 1;
 		free(p);
 	}
 
-	return (allowed);
+	повернути (allowed);
 }
 
 static void
@@ -230,16 +230,16 @@ writemsg(const char *msg)
 
 struct notifier_ctx {
 	pid_t pid;
-	void (*osigchld)(int);
+	void (*osigchld)(ціле);
 };
 
 struct notifier_ctx *
-notify_start(int force_askpass, const char *fmt, ...)
+notify_start(ціле force_askpass, const char *fmt, ...)
 {
 	va_list args;
 	char *prompt = NULL;
 	pid_t pid = -1;
-	void (*osigchld)(int) = NULL;
+	void (*osigchld)(ціле) = NULL;
 	const char *askpass, *s;
 	struct notifier_ctx *ret = NULL;
 
@@ -247,33 +247,33 @@ notify_start(int force_askpass, const char *fmt, ...)
 	xvasprintf(&prompt, fmt, args);
 	va_end(args);
 
-	if (fflush(NULL) != 0)
+	якщо (fflush(NULL) != 0)
 		error_f("fflush: %s", strerror(errno));
-	if (!force_askpass && isatty(STDERR_FILENO)) {
+	якщо (!force_askpass && isatty(STDERR_FILENO)) {
 		writemsg(prompt);
 		goto out_ctx;
 	}
-	if ((askpass = getenv("SSH_ASKPASS")) == NULL)
+	якщо ((askpass = getenv("SSH_ASKPASS")) == NULL)
 		askpass = _PATH_SSH_ASKPASS_DEFAULT;
-	if (*askpass == '\0') {
+	якщо (*askpass == '\0') {
 		debug3_f("cannot notify: no askpass");
 		goto out;
 	}
-	if (getenv("DISPLAY") == NULL && getenv("WAYLAND_DISPLAY") == NULL &&
+	якщо (getenv("DISPLAY") == NULL && getenv("WAYLAND_DISPLAY") == NULL &&
 	    ((s = getenv(SSH_ASKPASS_REQUIRE_ENV)) == NULL ||
 	    strcmp(s, "force") != 0)) {
 		debug3_f("cannot notify: no display");
 		goto out;
 	}
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if ((pid = fork()) == -1) {
+	якщо ((pid = fork()) == -1) {
 		error_f("fork: %s", strerror(errno));
 		ssh_signal(SIGCHLD, osigchld);
 		free(prompt);
-		return NULL;
+		повернути NULL;
 	}
-	if (pid == 0) {
-		if (stdfd_devnull(1, 1, 0) == -1)
+	якщо (pid == 0) {
+		якщо (stdfd_devnull(1, 1, 0) == -1)
 			fatal_f("stdfd_devnull failed");
 		closefrom(STDERR_FILENO + 1);
 		setenv("SSH_ASKPASS_PROMPT", "none", 1); /* hint to UI */
@@ -283,8 +283,8 @@ notify_start(int force_askpass, const char *fmt, ...)
 		/* NOTREACHED */
 	}
  out_ctx:
-	if ((ret = calloc(1, sizeof(*ret))) == NULL) {
-		if (pid != -1)
+	якщо ((ret = calloc(1, sizeof(*ret))) == NULL) {
+		якщо (pid != -1)
 			kill(pid, SIGTERM);
 		fatal_f("calloc failed");
 	}
@@ -292,17 +292,17 @@ notify_start(int force_askpass, const char *fmt, ...)
 	ret->osigchld = osigchld;
  out:
 	free(prompt);
-	return ret;
+	повернути ret;
 }
 
 void
 notify_complete(struct notifier_ctx *ctx, const char *fmt, ...)
 {
-	int ret;
+	ціле ret;
 	char *msg = NULL;
 	va_list args;
 
-	if (ctx != NULL && fmt != NULL && ctx->pid == -1) {
+	якщо (ctx != NULL && fmt != NULL && ctx->pid == -1) {
 		/*
 		 * notify_start wrote to stderr, so send conclusion message
 		 * there too
@@ -314,16 +314,16 @@ notify_complete(struct notifier_ctx *ctx, const char *fmt, ...)
 		free(msg);
 	}
 
-	if (ctx == NULL || ctx->pid <= 0) {
+	якщо (ctx == NULL || ctx->pid <= 0) {
 		free(ctx);
-		return;
+		повернути;
 	}
 	kill(ctx->pid, SIGTERM);
-	while ((ret = waitpid(ctx->pid, NULL, 0)) == -1) {
-		if (errno != EINTR)
+	поки ((ret = waitpid(ctx->pid, NULL, 0)) == -1) {
+		якщо (errno != EINTR)
 			break;
 	}
-	if (ret == -1)
+	якщо (ret == -1)
 		fatal_f("waitpid: %s", strerror(errno));
 	ssh_signal(SIGCHLD, ctx->osigchld);
 	free(ctx);
