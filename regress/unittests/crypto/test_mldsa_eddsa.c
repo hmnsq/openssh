@@ -5,77 +5,77 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifdef USE_MLDSA
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <fcntl.h>
-#include <unistd.h>
+#ضمن <sys/types.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <ctype.h>
+#ضمن <fcntl.h>
+#ضمن <unistd.h>
 
-#include "../test_helper/test_helper.h"
-#include "crypto_api.h"
-#include "ssherr.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "log.h"
+#ضمن "../test_helper/test_helper.h"
+#ضمن "crypto_api.h"
+#ضمن "ssherr.h"
+#ضمن "sshkey.h"
+#ضمن "sshbuf.h"
+#ضمن "log.h"
 
 /* in tests.c */
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+بنية sshbuf *load_text_file(ثابت حرف *name);
+حرف *get_json_string(بنية sshbuf *content, ثابت حرف *مفتاح, صحيح consume);
 
-void mldsa_eddsa_tests(void);
+فراغ mldsa_eddsa_tests(فراغ);
 
 /*
  * Simple JSON-ish parser for tvec.json.
  * Extracts the base64 value for a given key and decodes it into a new sshbuf.
  * Errors cause ASSERT_* failures.
  */
-static struct sshbuf *
-get_json_b64(struct sshbuf *content, const char *key)
+ساكن بنية sshbuf *
+get_json_b64(بنية sshbuf *content, ثابت حرف *مفتاح)
 {
-	char *b64;
-	struct sshbuf *ret;
+	حرف *b64;
+	بنية sshbuf *ret;
 
-	b64 = get_json_string(content, key, 0);
-	ASSERT_PTR_NE(ret = sshbuf_new(), NULL);
+	b64 = get_json_string(content, مفتاح, 0);
+	ASSERT_PTR_NE(ret = sshbuf_new(), عدم);
 	ASSERT_INT_EQ(sshbuf_b64tod(ret, b64), 0);
-	free(b64);
-	return ret;
+	حرر(b64);
+	أرجع ret;
 }
 
-static void
-onerror(void *fuzz)
+ساكن فراغ
+onerror(فراغ *fuzz)
 {
 	fprintf(stderr, "Failed during fuzz:\n");
-	fuzz_dump((struct fuzz *)fuzz);
+	fuzz_dump((بنية fuzz *)fuzz);
 }
 
-static void
-sig_fuzz(const uint8_t *m, size_t m_len, const uint8_t *ctx, size_t ctx_len,
-    const uint8_t *pk, const uint8_t *s)
+ساكن فراغ
+sig_fuzz(ثابت uint8_t *m, size_t m_len, ثابت uint8_t *ctx, size_t ctx_len,
+    ثابت uint8_t *pk, ثابت uint8_t *s)
 {
-	struct fuzz *fuzz;
+	بنية fuzz *fuzz;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_1_BYTE_FLIP;
 
-	if (test_is_fast())
+	إذا (test_is_fast())
 		fuzzers &= ~FUZZ_1_BIT_FLIP;
-	if (test_is_slow())
+	إذا (test_is_slow())
 		fuzzers |= FUZZ_2_BYTE_FLIP; /* FUZZ_2_BIT_FLIP much too slow */
 
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(s, m, m_len,
 	    ctx, ctx_len, pk), 0);
 	fuzz = fuzz_begin(fuzzers, s, MLDSA44_ED25519_SIG_SZ);
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
+	لكل(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
 		/* Ensure 1-bit difference at least */
-		if (fuzz_matches_original(fuzz))
-			continue;
+		إذا (fuzz_matches_original(fuzz))
+			استمر;
 		ASSERT_INT_NE(crypto_sign_mldsa44_ed25519_verify(fuzz_ptr(fuzz),
 		    m, m_len, ctx, ctx_len, pk), 0);
 	}
@@ -83,23 +83,23 @@ sig_fuzz(const uint8_t *m, size_t m_len, const uint8_t *ctx, size_t ctx_len,
 }
 
 
-void
-mldsa_eddsa_tests(void)
+فراغ
+mldsa_eddsa_tests(فراغ)
 {
 	uint8_t pk[MLDSA44_ED25519_PK_SZ];
 	uint8_t sk[MLDSA44_ED25519_SK_SZ];
 	uint8_t sig[MLDSA44_ED25519_SIG_SZ];
-	struct sshbuf *b_m = NULL, *b_ctx = NULL, *b_pk = NULL;
-	struct sshbuf *b_sk = NULL, *b_s = NULL, *b_sWithContext = NULL;
-	struct sshbuf *json_buf = NULL;
-	const uint8_t *tvec_m;
+	بنية sshbuf *b_m = عدم, *b_ctx = عدم, *b_pk = عدم;
+	بنية sshbuf *b_sk = عدم, *b_s = عدم, *b_sWithContext = عدم;
+	بنية sshbuf *json_buf = عدم;
+	ثابت uint8_t *tvec_m;
 	size_t tvec_m_len;
-	const uint8_t *tvec_ctx;
+	ثابت uint8_t *tvec_ctx;
 	size_t tvec_ctx_len;
-	const uint8_t *tvec_pk;
-	const uint8_t *tvec_sk;
-	const uint8_t *tvec_s;
-	const uint8_t *tvec_sWithContext;
+	ثابت uint8_t *tvec_pk;
+	ثابت uint8_t *tvec_sk;
+	ثابت uint8_t *tvec_s;
+	ثابت uint8_t *tvec_sWithContext;
 
 	TEST_START("MLDSA44-Ed25519-SHA512 load test vectors");
 	json_buf = load_text_file("draft-ietf-lamps-pq-composite-sigs.json");
@@ -146,7 +146,7 @@ mldsa_eddsa_tests(void)
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw KAT verify (no context)");
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(tvec_s, tvec_m,
-	    tvec_m_len, NULL, 0, tvec_pk), 0);
+	    tvec_m_len, عدم, 0, tvec_pk), 0);
 	TEST_DONE();
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw KAT verify (with context)");
@@ -156,9 +156,9 @@ mldsa_eddsa_tests(void)
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw round-trip (no context)");
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_sign(sig, tvec_m, tvec_m_len,
-	    NULL, 0, tvec_sk), 0);
+	    عدم, 0, tvec_sk), 0);
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(sig,
-	    tvec_m, tvec_m_len, NULL, 0, tvec_pk), 0);
+	    tvec_m, tvec_m_len, عدم, 0, tvec_pk), 0);
 	TEST_DONE();
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw round-trip (with context)");
@@ -170,13 +170,13 @@ mldsa_eddsa_tests(void)
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw KAT verify (no context)");
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(tvec_s, tvec_m,
-	    tvec_m_len, NULL, 0, tvec_pk), 0);
+	    tvec_m_len, عدم, 0, tvec_pk), 0);
 	TEST_DONE();
 
 	TEST_START("MLDSA44-Ed25519-SHA512 fuzz raw verify (with context)");
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(tvec_sWithContext,
 	    tvec_m, tvec_m_len, tvec_ctx, tvec_ctx_len, tvec_pk), 0);
-	sig_fuzz(tvec_m, tvec_m_len, NULL, 0, tvec_pk, tvec_s);
+	sig_fuzz(tvec_m, tvec_m_len, عدم, 0, tvec_pk, tvec_s);
 	TEST_DONE();
 
 	TEST_START("MLDSA44-Ed25519-SHA512 fuzz raw verify (with context)");
