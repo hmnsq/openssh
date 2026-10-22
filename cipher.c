@@ -35,38 +35,38 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdio.h>
 
-#include "cipher.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "ssherr.h"
+#अन्तर्भाव "cipher.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "ssherr.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#अन्तर्भाव "openbsd-compat/openssl-compat.h"
 
 #ifndef WITH_OPENSSL
-#define EVP_CIPHER_CTX void
+#define EVP_CIPHER_CTX शून्य
 #endif
 
-struct sshcipher_ctx {
-	int	plaintext;
-	int	encrypt;
+संरचना sshcipher_ctx {
+	पूर्णाङ्क	plaintext;
+	पूर्णाङ्क	encrypt;
 	EVP_CIPHER_CTX *evp;
-	struct chachapoly_ctx *cp_ctx;
-	struct aesctr_ctx ac_ctx; /* XXX union with evp? */
-	const struct sshcipher *cipher;
+	संरचना chachapoly_ctx *cp_ctx;
+	संरचना aesctr_ctx ac_ctx; /* XXX union with evp? */
+	अचर संरचना sshcipher *cipher;
 };
 
-struct sshcipher {
-	char	*name;
+संरचना sshcipher {
+	वर्ण	*name;
 	u_int	block_size;
-	u_int	key_len;
+	u_int	साँचो_len;
 	u_int	iv_len;		/* defaults to block_size */
 	u_int	auth_len;
 	u_int	flags;
@@ -76,13 +76,13 @@ struct sshcipher {
 #define CFLAG_NONE		(1<<3)
 #define CFLAG_INTERNAL		CFLAG_NONE /* Don't use "none" for packets */
 #ifdef WITH_OPENSSL
-	const EVP_CIPHER	*(*evptype)(void);
-#else
-	void	*ignored;
+	अचर EVP_CIPHER	*(*evptype)(शून्य);
+#अन्यथा
+	शून्य	*ignored;
 #endif
 };
 
-static const struct sshcipher ciphers[] = {
+स्थिर अचर संरचना sshcipher ciphers[] = {
 #ifdef WITH_OPENSSL
 #ifndef OPENSSL_NO_DES
 	{ "3des-cbc",		8, 24, 0, 0, CFLAG_CBC, EVP_des_ede3_cbc },
@@ -97,236 +97,236 @@ static const struct sshcipher ciphers[] = {
 				16, 16, 12, 16, 0, EVP_aes_128_gcm },
 	{ "aes256-gcm@openssh.com",
 				16, 32, 12, 16, 0, EVP_aes_256_gcm },
-#else
-	{ "aes128-ctr",		16, 16, 0, 0, CFLAG_AESCTR, NULL },
-	{ "aes192-ctr",		16, 24, 0, 0, CFLAG_AESCTR, NULL },
-	{ "aes256-ctr",		16, 32, 0, 0, CFLAG_AESCTR, NULL },
+#अन्यथा
+	{ "aes128-ctr",		16, 16, 0, 0, CFLAG_AESCTR, रिक्त },
+	{ "aes192-ctr",		16, 24, 0, 0, CFLAG_AESCTR, रिक्त },
+	{ "aes256-ctr",		16, 32, 0, 0, CFLAG_AESCTR, रिक्त },
 #endif
 	{ "chacha20-poly1305@openssh.com",
-				8, 64, 0, 16, CFLAG_CHACHAPOLY, NULL },
-	{ "none",		8, 0, 0, 0, CFLAG_NONE, NULL },
+				8, 64, 0, 16, CFLAG_CHACHAPOLY, रिक्त },
+	{ "none",		8, 0, 0, 0, CFLAG_NONE, रिक्त },
 
-	{ NULL,			0, 0, 0, 0, 0, NULL }
+	{ रिक्त,			0, 0, 0, 0, 0, रिक्त }
 };
 
 /*--*/
 
 /* Returns a comma-separated list of supported ciphers. */
-char *
-cipher_alg_list(char sep, int auth_only)
+वर्ण *
+cipher_alg_list(वर्ण sep, पूर्णाङ्क auth_only)
 {
-	char *ret = NULL;
-	const struct sshcipher *c;
-	char sep_str[2] = {sep, '\0'};
+	वर्ण *ret = रिक्त;
+	अचर संरचना sshcipher *c;
+	वर्ण sep_str[2] = {sep, '\0'};
 
-	for (c = ciphers; c->name != NULL; c++) {
-		if ((c->flags & CFLAG_INTERNAL) != 0)
-			continue;
-		if (auth_only && c->auth_len == 0)
-			continue;
+	लागि (c = ciphers; c->name != रिक्त; c++) {
+		यदि ((c->flags & CFLAG_INTERNAL) != 0)
+			जारी;
+		यदि (auth_only && c->auth_len == 0)
+			जारी;
 		xextendf(&ret, sep_str, "%s", c->name);
 	}
-	return ret;
+	फर्काऊ ret;
 }
 
-const char *
-compression_alg_list(int compression)
+अचर वर्ण *
+compression_alg_list(पूर्णाङ्क compression)
 {
 #ifdef WITH_ZLIB
-	return compression ? "zlib@openssh.com,none" :
+	फर्काऊ compression ? "zlib@openssh.com,none" :
 	    "none,zlib@openssh.com";
-#else
-	return "none";
+#अन्यथा
+	फर्काऊ "none";
 #endif
 }
 
 u_int
-cipher_blocksize(const struct sshcipher *c)
+cipher_blocksize(अचर संरचना sshcipher *c)
 {
-	return (c->block_size);
+	फर्काऊ (c->block_size);
 }
 
 u_int
-cipher_keylen(const struct sshcipher *c)
+cipher_keylen(अचर संरचना sshcipher *c)
 {
-	return (c->key_len);
+	फर्काऊ (c->साँचो_len);
 }
 
 u_int
-cipher_seclen(const struct sshcipher *c)
+cipher_seclen(अचर संरचना sshcipher *c)
 {
-	if (strcmp("3des-cbc", c->name) == 0)
-		return 14;
-	return cipher_keylen(c);
+	यदि (म_भेद("3des-cbc", c->name) == 0)
+		फर्काऊ 14;
+	फर्काऊ cipher_keylen(c);
 }
 
 u_int
-cipher_authlen(const struct sshcipher *c)
+cipher_authlen(अचर संरचना sshcipher *c)
 {
-	return (c->auth_len);
+	फर्काऊ (c->auth_len);
 }
 
 u_int
-cipher_ivlen(const struct sshcipher *c)
+cipher_ivlen(अचर संरचना sshcipher *c)
 {
 	/*
 	 * Default is cipher block size, except for chacha20+poly1305 that
 	 * needs no IV. XXX make iv_len == -1 default?
 	 */
-	return (c->iv_len != 0 || (c->flags & CFLAG_CHACHAPOLY) != 0) ?
+	फर्काऊ (c->iv_len != 0 || (c->flags & CFLAG_CHACHAPOLY) != 0) ?
 	    c->iv_len : c->block_size;
 }
 
 u_int
-cipher_is_cbc(const struct sshcipher *c)
+cipher_is_cbc(अचर संरचना sshcipher *c)
 {
-	return (c->flags & CFLAG_CBC) != 0;
+	फर्काऊ (c->flags & CFLAG_CBC) != 0;
 }
 
 u_int
-cipher_is_internal(const struct sshcipher *c)
+cipher_is_internal(अचर संरचना sshcipher *c)
 {
-	return (c->flags & CFLAG_INTERNAL) != 0;
+	फर्काऊ (c->flags & CFLAG_INTERNAL) != 0;
 }
 
 u_int
-cipher_ctx_is_plaintext(struct sshcipher_ctx *cc)
+cipher_ctx_is_plaintext(संरचना sshcipher_ctx *cc)
 {
-	return cc->plaintext;
+	फर्काऊ cc->plaintext;
 }
 
-const struct sshcipher *
-cipher_by_name(const char *name)
+अचर संरचना sshcipher *
+cipher_by_name(अचर वर्ण *name)
 {
-	const struct sshcipher *c;
-	for (c = ciphers; c->name != NULL; c++)
-		if (strcmp(c->name, name) == 0)
-			return c;
-	return NULL;
+	अचर संरचना sshcipher *c;
+	लागि (c = ciphers; c->name != रिक्त; c++)
+		यदि (म_भेद(c->name, name) == 0)
+			फर्काऊ c;
+	फर्काऊ रिक्त;
 }
 
 #define	CIPHER_SEP	","
-int
-ciphers_valid(const char *names)
+पूर्णाङ्क
+ciphers_valid(अचर वर्ण *names)
 {
-	const struct sshcipher *c;
-	char *cipher_list, *cp;
-	char *p;
-	int found = 0;
+	अचर संरचना sshcipher *c;
+	वर्ण *cipher_list, *cp;
+	वर्ण *p;
+	पूर्णाङ्क found = 0;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((cipher_list = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, CIPHER_SEP)); p && *p != '\0';
+	यदि (names == रिक्त || म_भेद(names, "") == 0)
+		फर्काऊ 0;
+	यदि ((cipher_list = cp = strdup(names)) == रिक्त)
+		फर्काऊ 0;
+	लागि ((p = strsep(&cp, CIPHER_SEP)); p && *p != '\0';
 	    (p = strsep(&cp, CIPHER_SEP))) {
 		c = cipher_by_name(p);
-		if (c == NULL || (c->flags & CFLAG_INTERNAL) != 0) {
-			free(cipher_list);
-			return 0;
-		} else
+		यदि (c == रिक्त || (c->flags & CFLAG_INTERNAL) != 0) {
+			मुक्त(cipher_list);
+			फर्काऊ 0;
+		} अन्यथा
 			found = 1;
 	}
-	free(cipher_list);
-	return found;
+	मुक्त(cipher_list);
+	फर्काऊ found;
 }
 
-const char *
-cipher_warning_message(const struct sshcipher_ctx *cc)
+अचर वर्ण *
+cipher_warning_message(अचर संरचना sshcipher_ctx *cc)
 {
-	if (cc == NULL || cc->cipher == NULL)
-		return NULL;
+	यदि (cc == रिक्त || cc->cipher == रिक्त)
+		फर्काऊ रिक्त;
 	/* XXX repurpose for CBC warning */
-	return NULL;
+	फर्काऊ रिक्त;
 }
 
-int
-cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
-    const u_char *key, u_int keylen, const u_char *iv, u_int ivlen,
-    int do_encrypt)
+पूर्णाङ्क
+cipher_init(संरचना sshcipher_ctx **ccp, अचर संरचना sshcipher *cipher,
+    अचर u_char *साँचो, u_int keylen, अचर u_char *iv, u_int ivlen,
+    पूर्णाङ्क do_encrypt)
 {
-	struct sshcipher_ctx *cc = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshcipher_ctx *cc = रिक्त;
+	पूर्णाङ्क ret = SSH_ERR_INTERNAL_ERROR;
 #ifdef WITH_OPENSSL
-	const EVP_CIPHER *type;
-	int klen;
+	अचर EVP_CIPHER *type;
+	पूर्णाङ्क klen;
 #endif
 
-	*ccp = NULL;
-	if ((cc = calloc(1, sizeof(*cc))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	*ccp = रिक्त;
+	यदि ((cc = सुस्मृति(1, परिमाण(*cc))) == रिक्त)
+		फर्काऊ SSH_ERR_ALLOC_FAIL;
 
 	cc->plaintext = (cipher->flags & CFLAG_NONE) != 0;
 	cc->encrypt = do_encrypt;
 
-	if (keylen < cipher->key_len ||
-	    (iv != NULL && ivlen < cipher_ivlen(cipher))) {
+	यदि (keylen < cipher->साँचो_len ||
+	    (iv != रिक्त && ivlen < cipher_ivlen(cipher))) {
 		ret = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		गच्छ out;
 	}
 
 	cc->cipher = cipher;
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		cc->cp_ctx = chachapoly_new(key, keylen);
-		ret = cc->cp_ctx != NULL ? 0 : SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+	यदि ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		cc->cp_ctx = chachapoly_new(साँचो, keylen);
+		ret = cc->cp_ctx != रिक्त ? 0 : SSH_ERR_INVALID_ARGUMENT;
+		गच्छ out;
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0) {
+	यदि ((cc->cipher->flags & CFLAG_NONE) != 0) {
 		ret = 0;
-		goto out;
+		गच्छ out;
 	}
 #ifndef WITH_OPENSSL
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		aesctr_keysetup(&cc->ac_ctx, key, 8 * keylen, 8 * ivlen);
+	यदि ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		aesctr_keysetup(&cc->ac_ctx, साँचो, 8 * keylen, 8 * ivlen);
 		aesctr_ivsetup(&cc->ac_ctx, iv);
 		ret = 0;
-		goto out;
+		गच्छ out;
 	}
 	ret = SSH_ERR_INVALID_ARGUMENT;
-	goto out;
-#else /* WITH_OPENSSL */
+	गच्छ out;
+#अन्यथा /* WITH_OPENSSL */
 	type = (*cipher->evptype)();
-	if ((cc->evp = EVP_CIPHER_CTX_new()) == NULL) {
+	यदि ((cc->evp = EVP_CIPHER_CTX_new()) == रिक्त) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if (EVP_CipherInit(cc->evp, type, NULL, (u_char *)iv,
+	यदि (EVP_CipherInit(cc->evp, type, रिक्त, (u_char *)iv,
 	    (do_encrypt == CIPHER_ENCRYPT)) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ out;
 	}
-	if (cipher_authlen(cipher) &&
+	यदि (cipher_authlen(cipher) &&
 	    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_SET_IV_FIXED,
 	    -1, (u_char *)iv) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ out;
 	}
-	klen = EVP_CIPHER_CTX_key_length(cc->evp);
-	if (klen > 0 && keylen != (u_int)klen) {
-		if (EVP_CIPHER_CTX_set_key_length(cc->evp, keylen) == 0) {
+	klen = EVP_CIPHER_CTX_साँचो_length(cc->evp);
+	यदि (klen > 0 && keylen != (u_int)klen) {
+		यदि (EVP_CIPHER_CTX_set_साँचो_length(cc->evp, keylen) == 0) {
 			ret = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			गच्छ out;
 		}
 	}
-	if (EVP_CipherInit(cc->evp, NULL, (u_char *)key, NULL, -1) == 0) {
+	यदि (EVP_CipherInit(cc->evp, रिक्त, (u_char *)साँचो, रिक्त, -1) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ out;
 	}
 	ret = 0;
 #endif /* WITH_OPENSSL */
  out:
-	if (ret == 0) {
+	यदि (ret == 0) {
 		/* success */
 		*ccp = cc;
-	} else {
-		if (cc != NULL) {
+	} अन्यथा {
+		यदि (cc != रिक्त) {
 #ifdef WITH_OPENSSL
 			EVP_CIPHER_CTX_free(cc->evp);
 #endif /* WITH_OPENSSL */
-			freezero(cc, sizeof(*cc));
+			freezero(cc, परिमाण(*cc));
 		}
 	}
-	return ret;
+	फर्काऊ ret;
 }
 
 /*
@@ -339,135 +339,135 @@ cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
  * This tag is written on encryption and verified on decryption.
  * Both 'aadlen' and 'authlen' can be set to 0.
  */
-int
-cipher_crypt(struct sshcipher_ctx *cc, u_int seqnr, u_char *dest,
-   const u_char *src, u_int len, u_int aadlen, u_int authlen)
+पूर्णाङ्क
+cipher_crypt(संरचना sshcipher_ctx *cc, u_int seqnr, u_char *dest,
+   अचर u_char *src, u_int len, u_int aadlen, u_int authlen)
 {
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		return chachapoly_crypt(cc->cp_ctx, seqnr, dest, src,
+	यदि ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		फर्काऊ chachapoly_crypt(cc->cp_ctx, seqnr, dest, src,
 		    len, aadlen, authlen, cc->encrypt);
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0) {
-		memcpy(dest, src, aadlen + len);
-		return 0;
+	यदि ((cc->cipher->flags & CFLAG_NONE) != 0) {
+		स_नकल(dest, src, aadlen + len);
+		फर्काऊ 0;
 	}
 #ifndef WITH_OPENSSL
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		if (aadlen)
-			memcpy(dest, src, aadlen);
+	यदि ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		यदि (aadlen)
+			स_नकल(dest, src, aadlen);
 		aesctr_encrypt_bytes(&cc->ac_ctx, src + aadlen,
 		    dest + aadlen, len);
-		return 0;
+		फर्काऊ 0;
 	}
-	return SSH_ERR_INVALID_ARGUMENT;
-#else
-	if (authlen) {
+	फर्काऊ SSH_ERR_INVALID_ARGUMENT;
+#अन्यथा
+	यदि (authlen) {
 		u_char lastiv[1];
 
-		if (authlen != cipher_authlen(cc->cipher))
-			return SSH_ERR_INVALID_ARGUMENT;
+		यदि (authlen != cipher_authlen(cc->cipher))
+			फर्काऊ SSH_ERR_INVALID_ARGUMENT;
 		/* increment IV */
-		if (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN,
+		यदि (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN,
 		    1, lastiv) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			फर्काऊ SSH_ERR_LIBCRYPTO_ERROR;
 		/* set tag on decryption */
-		if (!cc->encrypt &&
+		यदि (!cc->encrypt &&
 		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_SET_TAG,
 		    authlen, (u_char *)src + aadlen + len) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			फर्काऊ SSH_ERR_LIBCRYPTO_ERROR;
 	}
-	if (aadlen) {
-		if (authlen &&
-		    EVP_Cipher(cc->evp, NULL, (u_char *)src, aadlen) < 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
-		memcpy(dest, src, aadlen);
+	यदि (aadlen) {
+		यदि (authlen &&
+		    EVP_Cipher(cc->evp, रिक्त, (u_char *)src, aadlen) < 0)
+			फर्काऊ SSH_ERR_LIBCRYPTO_ERROR;
+		स_नकल(dest, src, aadlen);
 	}
-	if (len % cc->cipher->block_size)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_Cipher(cc->evp, dest + aadlen, (u_char *)src + aadlen,
+	यदि (len % cc->cipher->block_size)
+		फर्काऊ SSH_ERR_INVALID_ARGUMENT;
+	यदि (EVP_Cipher(cc->evp, dest + aadlen, (u_char *)src + aadlen,
 	    len) < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (authlen) {
+		फर्काऊ SSH_ERR_LIBCRYPTO_ERROR;
+	यदि (authlen) {
 		/* compute tag (on encrypt) or verify tag (on decrypt) */
-		if (EVP_Cipher(cc->evp, NULL, NULL, 0) < 0)
-			return cc->encrypt ?
+		यदि (EVP_Cipher(cc->evp, रिक्त, रिक्त, 0) < 0)
+			फर्काऊ cc->encrypt ?
 			    SSH_ERR_LIBCRYPTO_ERROR : SSH_ERR_MAC_INVALID;
-		if (cc->encrypt &&
+		यदि (cc->encrypt &&
 		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_GET_TAG,
 		    authlen, dest + aadlen + len) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			फर्काऊ SSH_ERR_LIBCRYPTO_ERROR;
 	}
-	return 0;
+	फर्काऊ 0;
 #endif
 }
 
 /* Extract the packet length, including any decryption necessary beforehand */
-int
-cipher_get_length(struct sshcipher_ctx *cc, u_int *plenp, u_int seqnr,
-    const u_char *cp, u_int len)
+पूर्णाङ्क
+cipher_get_length(संरचना sshcipher_ctx *cc, u_int *plenp, u_int seqnr,
+    अचर u_char *cp, u_int len)
 {
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0)
-		return chachapoly_get_length(cc->cp_ctx, plenp, seqnr,
+	यदि ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0)
+		फर्काऊ chachapoly_get_length(cc->cp_ctx, plenp, seqnr,
 		    cp, len);
-	if (len < 4)
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+	यदि (len < 4)
+		फर्काऊ SSH_ERR_MESSAGE_INCOMPLETE;
 	*plenp = PEEK_U32(cp);
-	return 0;
+	फर्काऊ 0;
 }
 
-void
-cipher_free(struct sshcipher_ctx *cc)
+शून्य
+cipher_free(संरचना sshcipher_ctx *cc)
 {
-	if (cc == NULL)
-		return;
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+	यदि (cc == रिक्त)
+		फर्काऊ;
+	यदि ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
 		chachapoly_free(cc->cp_ctx);
-		cc->cp_ctx = NULL;
-	} else if ((cc->cipher->flags & CFLAG_AESCTR) != 0)
-		explicit_bzero(&cc->ac_ctx, sizeof(cc->ac_ctx));
+		cc->cp_ctx = रिक्त;
+	} अन्यथा यदि ((cc->cipher->flags & CFLAG_AESCTR) != 0)
+		explicit_bzero(&cc->ac_ctx, परिमाण(cc->ac_ctx));
 #ifdef WITH_OPENSSL
 	EVP_CIPHER_CTX_free(cc->evp);
-	cc->evp = NULL;
+	cc->evp = रिक्त;
 #endif
-	freezero(cc, sizeof(*cc));
+	freezero(cc, परिमाण(*cc));
 }
 
-int
-cipher_get_keyiv(struct sshcipher_ctx *cc, u_char *iv, size_t len)
+पूर्णाङ्क
+cipher_get_keyiv(संरचना sshcipher_ctx *cc, u_char *iv, माप_प्रकार len)
 {
 #ifdef WITH_OPENSSL
-	const struct sshcipher *c = cc->cipher;
-	int evplen;
+	अचर संरचना sshcipher *c = cc->cipher;
+	पूर्णाङ्क evplen;
 #endif
 
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		if (len != 0)
-			return SSH_ERR_INVALID_ARGUMENT;
-		return 0;
+	यदि ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		यदि (len != 0)
+			फर्काऊ SSH_ERR_INVALID_ARGUMENT;
+		फर्काऊ 0;
 	}
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		if (len != sizeof(cc->ac_ctx.ctr))
-			return SSH_ERR_INVALID_ARGUMENT;
-		memcpy(iv, cc->ac_ctx.ctr, len);
-		return 0;
+	यदि ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		यदि (len != परिमाण(cc->ac_ctx.ctr))
+			फर्काऊ SSH_ERR_INVALID_ARGUMENT;
+		स_नकल(iv, cc->ac_ctx.ctr, len);
+		फर्काऊ 0;
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0)
-		return 0;
+	यदि ((cc->cipher->flags & CFLAG_NONE) != 0)
+		फर्काऊ 0;
 
 #ifdef WITH_OPENSSL
 	evplen = EVP_CIPHER_CTX_iv_length(cc->evp);
-	if (evplen == 0)
-		return 0;
-	else if (evplen < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if ((size_t)evplen != len)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (cipher_authlen(c)) {
-		if (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN, len,
+	यदि (evplen == 0)
+		फर्काऊ 0;
+	अन्यथा यदि (evplen < 0)
+		फर्काऊ SSH_ERR_LIBCRYPTO_ERROR;
+	यदि ((माप_प्रकार)evplen != len)
+		फर्काऊ SSH_ERR_INVALID_ARGUMENT;
+	यदि (cipher_authlen(c)) {
+		यदि (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN, len,
 		    iv) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
-	} else if (EVP_CIPHER_CTX_get_iv(cc->evp, iv, len) <= 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+			फर्काऊ SSH_ERR_LIBCRYPTO_ERROR;
+	} अन्यथा यदि (EVP_CIPHER_CTX_get_iv(cc->evp, iv, len) <= 0)
+		फर्काऊ SSH_ERR_LIBCRYPTO_ERROR;
 #endif
-	return 0;
+	फर्काऊ 0;
 }

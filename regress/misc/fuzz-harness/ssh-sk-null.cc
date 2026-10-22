@@ -15,38 +15,38 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-extern "C" {
+बाह्य "C" {
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include "ssherr.h"
-#include "ssh-sk.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "ssh-sk.h"
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest)
+पूर्णाङ्क
+sshsk_enroll(पूर्णाङ्क type, अचर वर्ण *provider_path, अचर वर्ण *device,
+    अचर वर्ण *application, अचर वर्ण *userid, uint8_t flags,
+    अचर वर्ण *pin, संरचना sshbuf *challenge_buf,
+    संरचना sshkey **keyp, संरचना sshbuf *attest)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	फर्काऊ SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
-int
-sshsk_sign(const char *provider_path, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin)
+पूर्णाङ्क
+sshsk_sign(अचर वर्ण *provider_path, संरचना sshkey *साँचो,
+    u_char **sigp, माप_प्रकार *lenp, अचर u_char *data, माप_प्रकार datalen,
+    u_int compat, अचर वर्ण *pin)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	फर्काऊ SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
-int
-sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
-    size_t *nsrksp)
+पूर्णाङ्क
+sshsk_load_resident(अचर वर्ण *provider_path, अचर वर्ण *device,
+    अचर वर्ण *pin, u_int flags, संरचना sshsk_resident_साँचो ***srksp,
+    माप_प्रकार *nsrksp)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	फर्काऊ SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
 };

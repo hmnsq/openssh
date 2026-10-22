@@ -22,25 +22,25 @@
  * so that they'll sort into chronological order.
  */
 
-#include <sys/time.h>
+#अन्तर्भाव <sys/time.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <time.h>
 
-int
-main(void)
+पूर्णाङ्क
+main(शून्य)
 {
-	struct timeval tv;
-	struct tm *tm;
-	char buf[1024];
+	संरचना timeval tv;
+	संरचना पंचांग *पंचांग;
+	वर्ण buf[1024];
 
-	if (gettimeofday(&tv, NULL) != 0)
-		exit(1);
-	if ((tm = localtime(&tv.tv_sec)) == NULL)
-		exit(2);
-	if (strftime(buf, sizeof buf, "%Y%m%dT%H%M%S", tm) <= 0)
-		exit(3);
-	printf("%s.%06d\n", buf, (int)tv.tv_usec);
-	exit(0);
+	यदि (gettimeofday(&tv, रिक्त) != 0)
+		निकास(1);
+	यदि ((पंचांग = स_स्थानीय(&tv.tv_sec)) == रिक्त)
+		निकास(2);
+	यदि (स_माला(buf, परिमाण buf, "%Y%m%dT%H%M%S", पंचांग) <= 0)
+		निकास(3);
+	म_लिखो("%s.%06d\n", buf, (पूर्णाङ्क)tv.tv_usec);
+	निकास(0);
 }

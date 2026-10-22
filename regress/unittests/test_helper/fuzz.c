@@ -17,212 +17,212 @@
 
 /* Utility functions/framework for fuzz tests */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/uio.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/uio.h>
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <unistd.h>
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <ctype.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <signal.h>
+#अन्तर्भाव <unistd.h>
 
-#include "test_helper.h"
-#include "atomicio.h"
+#अन्तर्भाव "test_helper.h"
+#अन्तर्भाव "atomicio.h"
 
 /* #define FUZZ_DEBUG */
 
 #ifdef FUZZ_DEBUG
-# define FUZZ_DBG(x) do { \
-		printf("%s:%d %s: ", __FILE__, __LINE__, __func__); \
-		printf x; \
-		printf("\n"); \
-		fflush(stdout); \
-	} while (0)
-#else
+# define FUZZ_DBG(x) गर { \
+		म_लिखो("%s:%d %s: ", __FILE__, __LINE__, __func__); \
+		म_लिखो x; \
+		म_लिखो("\n"); \
+		ख_साफ(मानक_निकास); \
+	} जबसम्म (0)
+#अन्यथा
 # define FUZZ_DBG(x)
 #endif
 
 /* For brevity later */
-typedef unsigned long long fuzz_ullong;
+प्रकारनिर्देश अचिन्हित दीर्घ दीर्घ fuzz_ullong;
 
 /* For base-64 fuzzing */
-static const char fuzz_b64chars[] =
+स्थिर अचर वर्ण fuzz_b64chars[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-struct fuzz {
+संरचना fuzz {
 	/* Fuzz method currently in use */
-	int strategy;
+	पूर्णाङ्क strategy;
 
 	/* Fuzz methods remaining */
-	int strategies;
+	पूर्णाङ्क strategies;
 
 	/* Original seed data blob */
-	void *seed;
-	size_t slen;
+	शून्य *seed;
+	माप_प्रकार slen;
 
 	/* Current working copy of seed with fuzz mutations applied */
 	u_char *fuzzed;
 
 	/* Used by fuzz methods */
-	size_t o1, o2;
+	माप_प्रकार o1, o2;
 };
 
-static const char *
+स्थिर अचर वर्ण *
 fuzz_ntop(u_int n)
 {
-	switch (n) {
-	case 0:
-		return "NONE";
-	case FUZZ_1_BIT_FLIP:
-		return "FUZZ_1_BIT_FLIP";
-	case FUZZ_2_BIT_FLIP:
-		return "FUZZ_2_BIT_FLIP";
-	case FUZZ_1_BYTE_FLIP:
-		return "FUZZ_1_BYTE_FLIP";
-	case FUZZ_2_BYTE_FLIP:
-		return "FUZZ_2_BYTE_FLIP";
-	case FUZZ_TRUNCATE_START:
-		return "FUZZ_TRUNCATE_START";
-	case FUZZ_TRUNCATE_END:
-		return "FUZZ_TRUNCATE_END";
-	case FUZZ_BASE64:
-		return "FUZZ_BASE64";
-	default:
-		abort();
+	विकल्प (n) {
+	पक्ष 0:
+		फर्काऊ "NONE";
+	पक्ष FUZZ_1_BIT_FLIP:
+		फर्काऊ "FUZZ_1_BIT_FLIP";
+	पक्ष FUZZ_2_BIT_FLIP:
+		फर्काऊ "FUZZ_2_BIT_FLIP";
+	पक्ष FUZZ_1_BYTE_FLIP:
+		फर्काऊ "FUZZ_1_BYTE_FLIP";
+	पक्ष FUZZ_2_BYTE_FLIP:
+		फर्काऊ "FUZZ_2_BYTE_FLIP";
+	पक्ष FUZZ_TRUNCATE_START:
+		फर्काऊ "FUZZ_TRUNCATE_START";
+	पक्ष FUZZ_TRUNCATE_END:
+		फर्काऊ "FUZZ_TRUNCATE_END";
+	पक्ष FUZZ_BASE64:
+		फर्काऊ "FUZZ_BASE64";
+	स्वभाव:
+		पात();
 	}
 }
 
-static int
-fuzz_fmt(struct fuzz *fuzz, char *s, size_t n)
+स्थिर पूर्णाङ्क
+fuzz_fmt(संरचना fuzz *fuzz, वर्ण *s, माप_प्रकार n)
 {
-	if (fuzz == NULL)
-		return -1;
+	यदि (fuzz == रिक्त)
+		फर्काऊ -1;
 
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
+	विकल्प (fuzz->strategy) {
+	पक्ष FUZZ_1_BIT_FLIP:
 		snprintf(s, n, "%s case %zu of %zu (bit: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen * 8, fuzz->o1);
-		return 0;
-	case FUZZ_2_BIT_FLIP:
+		फर्काऊ 0;
+	पक्ष FUZZ_2_BIT_FLIP:
 		snprintf(s, n, "%s case %llu of %llu (bits: %zu, %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (((fuzz_ullong)fuzz->o2) * fuzz->slen * 8) + fuzz->o1,
 		    ((fuzz_ullong)fuzz->slen * 8) * fuzz->slen * 8,
 		    fuzz->o1, fuzz->o2);
-		return 0;
-	case FUZZ_1_BYTE_FLIP:
+		फर्काऊ 0;
+	पक्ष FUZZ_1_BYTE_FLIP:
 		snprintf(s, n, "%s case %zu of %zu (byte: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_2_BYTE_FLIP:
+		फर्काऊ 0;
+	पक्ष FUZZ_2_BYTE_FLIP:
 		snprintf(s, n, "%s case %llu of %llu (bytes: %zu, %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (((fuzz_ullong)fuzz->o2) * fuzz->slen) + fuzz->o1,
 		    ((fuzz_ullong)fuzz->slen) * fuzz->slen,
 		    fuzz->o1, fuzz->o2);
-		return 0;
-	case FUZZ_TRUNCATE_START:
+		फर्काऊ 0;
+	पक्ष FUZZ_TRUNCATE_START:
 		snprintf(s, n, "%s case %zu of %zu (offset: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_TRUNCATE_END:
+		फर्काऊ 0;
+	पक्ष FUZZ_TRUNCATE_END:
 		snprintf(s, n, "%s case %zu of %zu (offset: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_BASE64:
-		assert(fuzz->o2 < sizeof(fuzz_b64chars) - 1);
+		फर्काऊ 0;
+	पक्ष FUZZ_BASE64:
+		प्रतिज्ञा(fuzz->o2 < परिमाण(fuzz_b64chars) - 1);
 		snprintf(s, n, "%s case %llu of %llu (offset: %zu char: %c)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (fuzz->o1 * (fuzz_ullong)64) + fuzz->o2,
 		    fuzz->slen * (fuzz_ullong)64, fuzz->o1,
 		    fuzz_b64chars[fuzz->o2]);
-		return 0;
-	default:
-		return -1;
+		फर्काऊ 0;
+	स्वभाव:
+		फर्काऊ -1;
 	}
 }
 
-static void
-dump(u_char *p, size_t len)
+स्थिर शून्य
+dump(u_char *p, माप_प्रकार len)
 {
-	size_t i, j;
+	माप_प्रकार i, j;
 
-	for (i = 0; i < len; i += 16) {
-		fprintf(stderr, "%.4zd: ", i);
-		for (j = i; j < i + 16; j++) {
-			if (j < len)
-				fprintf(stderr, "%02x ", p[j]);
-			else
-				fprintf(stderr, "   ");
+	लागि (i = 0; i < len; i += 16) {
+		ख_लिखो(मानक_त्रुटि, "%.4zd: ", i);
+		लागि (j = i; j < i + 16; j++) {
+			यदि (j < len)
+				ख_लिखो(मानक_त्रुटि, "%02x ", p[j]);
+			अन्यथा
+				ख_लिखो(मानक_त्रुटि, "   ");
 		}
-		fprintf(stderr, " ");
-		for (j = i; j < i + 16; j++) {
-			if (j < len) {
-				if  (isascii(p[j]) && isprint(p[j]))
-					fprintf(stderr, "%c", p[j]);
-				else
-					fprintf(stderr, ".");
+		ख_लिखो(मानक_त्रुटि, " ");
+		लागि (j = i; j < i + 16; j++) {
+			यदि (j < len) {
+				यदि  (isascii(p[j]) && है_छाप(p[j]))
+					ख_लिखो(मानक_त्रुटि, "%c", p[j]);
+				अन्यथा
+					ख_लिखो(मानक_त्रुटि, ".");
 			}
 		}
-		fprintf(stderr, "\n");
+		ख_लिखो(मानक_त्रुटि, "\n");
 	}
 }
 
-void
-fuzz_dump(struct fuzz *fuzz)
+शून्य
+fuzz_dump(संरचना fuzz *fuzz)
 {
-	char buf[256];
+	वर्ण buf[256];
 
-	if (fuzz_fmt(fuzz, buf, sizeof(buf)) != 0) {
-		fprintf(stderr, "%s: fuzz invalid\n", __func__);
-		abort();
+	यदि (fuzz_fmt(fuzz, buf, परिमाण(buf)) != 0) {
+		ख_लिखो(मानक_त्रुटि, "%s: fuzz invalid\n", __func__);
+		पात();
 	}
-	fputs(buf, stderr);
-	fprintf(stderr, "fuzz original %p len = %zu\n", fuzz->seed, fuzz->slen);
+	ख_माला_दो(buf, मानक_त्रुटि);
+	ख_लिखो(मानक_त्रुटि, "fuzz original %p len = %zu\n", fuzz->seed, fuzz->slen);
 	dump(fuzz->seed, fuzz->slen);
-	fprintf(stderr, "fuzz context %p len = %zu\n", fuzz, fuzz_len(fuzz));
+	ख_लिखो(मानक_त्रुटि, "fuzz context %p len = %zu\n", fuzz, fuzz_len(fuzz));
 	dump(fuzz_ptr(fuzz), fuzz_len(fuzz));
 }
 
-static struct fuzz *last_fuzz;
+स्थिर संरचना fuzz *last_fuzz;
 
-static void
-siginfo(int unused __attribute__((__unused__)))
+स्थिर शून्य
+siginfo(पूर्णाङ्क unused __attribute__((__unused__)))
 {
-	char buf[256];
+	वर्ण buf[256];
 
-	test_info(buf, sizeof(buf));
-	atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
-	if (last_fuzz != NULL) {
-		fuzz_fmt(last_fuzz, buf, sizeof(buf));
-		atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
+	test_info(buf, परिमाण(buf));
+	atomicio(vwrite, STDERR_FILENO, buf, म_माप(buf));
+	यदि (last_fuzz != रिक्त) {
+		fuzz_fmt(last_fuzz, buf, परिमाण(buf));
+		atomicio(vwrite, STDERR_FILENO, buf, म_माप(buf));
 	}
 }
 
-struct fuzz *
-fuzz_begin(u_int strategies, const void *p, size_t l)
+संरचना fuzz *
+fuzz_begin(u_int strategies, अचर शून्य *p, माप_प्रकार l)
 {
-	struct fuzz *ret = calloc(1, sizeof(*ret));
+	संरचना fuzz *ret = सुस्मृति(1, परिमाण(*ret));
 
-	assert(p != NULL);
-	assert(ret != NULL);
-	ret->seed = malloc(l);
-	assert(ret->seed != NULL);
-	memcpy(ret->seed, p, l);
+	प्रतिज्ञा(p != रिक्त);
+	प्रतिज्ञा(ret != रिक्त);
+	ret->seed = दो_स्मृति(l);
+	प्रतिज्ञा(ret->seed != रिक्त);
+	स_नकल(ret->seed, p, l);
 	ret->slen = l;
 	ret->strategies = strategies;
 
-	assert(ret->slen < SIZE_MAX / 8);
-	assert(ret->strategies <= (FUZZ_MAX|(FUZZ_MAX-1)));
+	प्रतिज्ञा(ret->slen < SIZE_MAX / 8);
+	प्रतिज्ञा(ret->strategies <= (FUZZ_MAX|(FUZZ_MAX-1)));
 
 	FUZZ_DBG(("begin, ret = %p", ret));
 
@@ -230,55 +230,55 @@ fuzz_begin(u_int strategies, const void *p, size_t l)
 
 	last_fuzz = ret;
 #ifdef SIGINFO
-	signal(SIGINFO, siginfo);
+	सङ्केत(SIGINFO, siginfo);
 #endif
-	signal(SIGUSR1, siginfo);
+	सङ्केत(SIGUSR1, siginfo);
 
-	return ret;
+	फर्काऊ ret;
 }
 
-void
-fuzz_cleanup(struct fuzz *fuzz)
+शून्य
+fuzz_cleanup(संरचना fuzz *fuzz)
 {
 	FUZZ_DBG(("cleanup, fuzz = %p", fuzz));
-	last_fuzz = NULL;
+	last_fuzz = रिक्त;
 #ifdef SIGINFO
-	signal(SIGINFO, SIG_DFL);
+	सङ्केत(SIGINFO, संक_पूर्व);
 #endif
-	signal(SIGUSR1, SIG_DFL);
-	assert(fuzz != NULL);
-	assert(fuzz->seed != NULL);
-	assert(fuzz->fuzzed != NULL);
-	free(fuzz->seed);
-	free(fuzz->fuzzed);
-	free(fuzz);
+	सङ्केत(SIGUSR1, संक_पूर्व);
+	प्रतिज्ञा(fuzz != रिक्त);
+	प्रतिज्ञा(fuzz->seed != रिक्त);
+	प्रतिज्ञा(fuzz->fuzzed != रिक्त);
+	मुक्त(fuzz->seed);
+	मुक्त(fuzz->fuzzed);
+	मुक्त(fuzz);
 }
 
-static int
-fuzz_strategy_done(struct fuzz *fuzz)
+स्थिर पूर्णाङ्क
+fuzz_strategy_done(संरचना fuzz *fuzz)
 {
 	FUZZ_DBG(("fuzz = %p, strategy = %s, o1 = %zu, o2 = %zu, slen = %zu",
 	    fuzz, fuzz_ntop(fuzz->strategy), fuzz->o1, fuzz->o2, fuzz->slen));
 
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-		return fuzz->o1 >= fuzz->slen * 8;
-	case FUZZ_2_BIT_FLIP:
-		return fuzz->o2 >= fuzz->slen * 8;
-	case FUZZ_2_BYTE_FLIP:
-		return fuzz->o2 >= fuzz->slen;
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
-	case FUZZ_BASE64:
-		return fuzz->o1 >= fuzz->slen;
-	default:
-		abort();
+	विकल्प (fuzz->strategy) {
+	पक्ष FUZZ_1_BIT_FLIP:
+		फर्काऊ fuzz->o1 >= fuzz->slen * 8;
+	पक्ष FUZZ_2_BIT_FLIP:
+		फर्काऊ fuzz->o2 >= fuzz->slen * 8;
+	पक्ष FUZZ_2_BYTE_FLIP:
+		फर्काऊ fuzz->o2 >= fuzz->slen;
+	पक्ष FUZZ_1_BYTE_FLIP:
+	पक्ष FUZZ_TRUNCATE_START:
+	पक्ष FUZZ_TRUNCATE_END:
+	पक्ष FUZZ_BASE64:
+		फर्काऊ fuzz->o1 >= fuzz->slen;
+	स्वभाव:
+		पात();
 	}
 }
 
-void
-fuzz_next(struct fuzz *fuzz)
+शून्य
+fuzz_next(संरचना fuzz *fuzz)
 {
 	u_int i;
 
@@ -286,87 +286,87 @@ fuzz_next(struct fuzz *fuzz)
 	    "o1 = %zu, o2 = %zu, slen = %zu", fuzz, fuzz_ntop(fuzz->strategy),
 	    (u_long)fuzz->strategies, fuzz->o1, fuzz->o2, fuzz->slen));
 
-	if (fuzz->strategy == 0 || fuzz_strategy_done(fuzz)) {
+	यदि (fuzz->strategy == 0 || fuzz_strategy_done(fuzz)) {
 		/* If we are just starting out, we need to allocate too */
-		if (fuzz->fuzzed == NULL) {
+		यदि (fuzz->fuzzed == रिक्त) {
 			FUZZ_DBG(("alloc"));
-			fuzz->fuzzed = calloc(fuzz->slen, 1);
+			fuzz->fuzzed = सुस्मृति(fuzz->slen, 1);
 		}
 		/* Pick next strategy */
 		FUZZ_DBG(("advance"));
-		for (i = 1; i <= FUZZ_MAX; i <<= 1) {
-			if ((fuzz->strategies & i) != 0) {
+		लागि (i = 1; i <= FUZZ_MAX; i <<= 1) {
+			यदि ((fuzz->strategies & i) != 0) {
 				fuzz->strategy = i;
-				break;
+				रोक;
 			}
 		}
 		FUZZ_DBG(("selected = %u", fuzz->strategy));
-		if (fuzz->strategy == 0) {
+		यदि (fuzz->strategy == 0) {
 			FUZZ_DBG(("done, no more strategies"));
-			return;
+			फर्काऊ;
 		}
 		fuzz->strategies &= ~(fuzz->strategy);
 		fuzz->o1 = fuzz->o2 = 0;
 	}
 
-	assert(fuzz->fuzzed != NULL);
+	प्रतिज्ञा(fuzz->fuzzed != रिक्त);
 
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-		assert(fuzz->o1 / 8 < fuzz->slen);
-		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
+	विकल्प (fuzz->strategy) {
+	पक्ष FUZZ_1_BIT_FLIP:
+		प्रतिज्ञा(fuzz->o1 / 8 < fuzz->slen);
+		स_नकल(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1 / 8] ^= 1 << (fuzz->o1 % 8);
 		fuzz->o1++;
-		break;
-	case FUZZ_2_BIT_FLIP:
-		assert(fuzz->o1 / 8 < fuzz->slen);
-		assert(fuzz->o2 / 8 < fuzz->slen);
-		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
+		रोक;
+	पक्ष FUZZ_2_BIT_FLIP:
+		प्रतिज्ञा(fuzz->o1 / 8 < fuzz->slen);
+		प्रतिज्ञा(fuzz->o2 / 8 < fuzz->slen);
+		स_नकल(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1 / 8] ^= 1 << (fuzz->o1 % 8);
 		fuzz->fuzzed[fuzz->o2 / 8] ^= 1 << (fuzz->o2 % 8);
 		fuzz->o1++;
-		if (fuzz->o1 >= fuzz->slen * 8) {
+		यदि (fuzz->o1 >= fuzz->slen * 8) {
 			fuzz->o1 = 0;
 			fuzz->o2++;
 		}
-		break;
-	case FUZZ_1_BYTE_FLIP:
-		assert(fuzz->o1 < fuzz->slen);
-		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
+		रोक;
+	पक्ष FUZZ_1_BYTE_FLIP:
+		प्रतिज्ञा(fuzz->o1 < fuzz->slen);
+		स_नकल(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] ^= 0xff;
 		fuzz->o1++;
-		break;
-	case FUZZ_2_BYTE_FLIP:
-		assert(fuzz->o1 < fuzz->slen);
-		assert(fuzz->o2 < fuzz->slen);
-		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
+		रोक;
+	पक्ष FUZZ_2_BYTE_FLIP:
+		प्रतिज्ञा(fuzz->o1 < fuzz->slen);
+		प्रतिज्ञा(fuzz->o2 < fuzz->slen);
+		स_नकल(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] ^= 0xff;
 		fuzz->fuzzed[fuzz->o2] ^= 0xff;
 		fuzz->o1++;
-		if (fuzz->o1 >= fuzz->slen) {
+		यदि (fuzz->o1 >= fuzz->slen) {
 			fuzz->o1 = 0;
 			fuzz->o2++;
 		}
-		break;
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
-		assert(fuzz->o1 < fuzz->slen);
-		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
+		रोक;
+	पक्ष FUZZ_TRUNCATE_START:
+	पक्ष FUZZ_TRUNCATE_END:
+		प्रतिज्ञा(fuzz->o1 < fuzz->slen);
+		स_नकल(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->o1++;
-		break;
-	case FUZZ_BASE64:
-		assert(fuzz->o1 < fuzz->slen);
-		assert(fuzz->o2 < sizeof(fuzz_b64chars) - 1);
-		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
+		रोक;
+	पक्ष FUZZ_BASE64:
+		प्रतिज्ञा(fuzz->o1 < fuzz->slen);
+		प्रतिज्ञा(fuzz->o2 < परिमाण(fuzz_b64chars) - 1);
+		स_नकल(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] = fuzz_b64chars[fuzz->o2];
 		fuzz->o2++;
-		if (fuzz->o2 >= sizeof(fuzz_b64chars) - 1) {
+		यदि (fuzz->o2 >= परिमाण(fuzz_b64chars) - 1) {
 			fuzz->o2 = 0;
 			fuzz->o1++;
 		}
-		break;
-	default:
-		abort();
+		रोक;
+	स्वभाव:
+		पात();
 	}
 
 	FUZZ_DBG(("done, fuzz = %p, strategy = %s, strategies = 0x%lx, "
@@ -374,62 +374,62 @@ fuzz_next(struct fuzz *fuzz)
 	    (u_long)fuzz->strategies, fuzz->o1, fuzz->o2, fuzz->slen));
 }
 
-int
-fuzz_matches_original(struct fuzz *fuzz)
+पूर्णाङ्क
+fuzz_matches_original(संरचना fuzz *fuzz)
 {
-	if (fuzz_len(fuzz) != fuzz->slen)
-		return 0;
-	return memcmp(fuzz_ptr(fuzz), fuzz->seed, fuzz->slen) == 0;
+	यदि (fuzz_len(fuzz) != fuzz->slen)
+		फर्काऊ 0;
+	फर्काऊ स_भेद(fuzz_ptr(fuzz), fuzz->seed, fuzz->slen) == 0;
 }
 
-int
-fuzz_done(struct fuzz *fuzz)
+पूर्णाङ्क
+fuzz_done(संरचना fuzz *fuzz)
 {
 	FUZZ_DBG(("fuzz = %p, strategies = 0x%lx", fuzz,
 	    (u_long)fuzz->strategies));
 
-	return fuzz_strategy_done(fuzz) && fuzz->strategies == 0;
+	फर्काऊ fuzz_strategy_done(fuzz) && fuzz->strategies == 0;
 }
 
-size_t
-fuzz_len(struct fuzz *fuzz)
+माप_प्रकार
+fuzz_len(संरचना fuzz *fuzz)
 {
-	assert(fuzz->fuzzed != NULL);
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-	case FUZZ_2_BIT_FLIP:
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_2_BYTE_FLIP:
-	case FUZZ_BASE64:
-		return fuzz->slen;
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
-		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->slen - fuzz->o1;
-	default:
-		abort();
+	प्रतिज्ञा(fuzz->fuzzed != रिक्त);
+	विकल्प (fuzz->strategy) {
+	पक्ष FUZZ_1_BIT_FLIP:
+	पक्ष FUZZ_2_BIT_FLIP:
+	पक्ष FUZZ_1_BYTE_FLIP:
+	पक्ष FUZZ_2_BYTE_FLIP:
+	पक्ष FUZZ_BASE64:
+		फर्काऊ fuzz->slen;
+	पक्ष FUZZ_TRUNCATE_START:
+	पक्ष FUZZ_TRUNCATE_END:
+		प्रतिज्ञा(fuzz->o1 <= fuzz->slen);
+		फर्काऊ fuzz->slen - fuzz->o1;
+	स्वभाव:
+		पात();
 	}
 }
 
 u_char *
-fuzz_ptr(struct fuzz *fuzz)
+fuzz_ptr(संरचना fuzz *fuzz)
 {
-	assert(fuzz->fuzzed != NULL);
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-	case FUZZ_2_BIT_FLIP:
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_2_BYTE_FLIP:
-	case FUZZ_BASE64:
-		return fuzz->fuzzed;
-	case FUZZ_TRUNCATE_START:
-		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->fuzzed + fuzz->o1;
-	case FUZZ_TRUNCATE_END:
-		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->fuzzed;
-	default:
-		abort();
+	प्रतिज्ञा(fuzz->fuzzed != रिक्त);
+	विकल्प (fuzz->strategy) {
+	पक्ष FUZZ_1_BIT_FLIP:
+	पक्ष FUZZ_2_BIT_FLIP:
+	पक्ष FUZZ_1_BYTE_FLIP:
+	पक्ष FUZZ_2_BYTE_FLIP:
+	पक्ष FUZZ_BASE64:
+		फर्काऊ fuzz->fuzzed;
+	पक्ष FUZZ_TRUNCATE_START:
+		प्रतिज्ञा(fuzz->o1 <= fuzz->slen);
+		फर्काऊ fuzz->fuzzed + fuzz->o1;
+	पक्ष FUZZ_TRUNCATE_END:
+		प्रतिज्ञा(fuzz->o1 <= fuzz->slen);
+		फर्काऊ fuzz->fuzzed;
+	स्वभाव:
+		पात();
 	}
 }
 

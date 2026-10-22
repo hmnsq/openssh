@@ -15,44 +15,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #ifdef SANDBOX_NULL
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
 
-#include "log.h"
-#include "ssh-sandbox.h"
-#include "xmalloc.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "ssh-sandbox.h"
+#अन्तर्भाव "xmalloc.h"
 
 /* dummy sandbox */
 
-struct ssh_sandbox {
-	int junk;
+संरचना ssh_sandbox {
+	पूर्णाङ्क junk;
 };
 
-struct ssh_sandbox *
-ssh_sandbox_init(struct monitor *monitor)
+संरचना ssh_sandbox *
+ssh_sandbox_init(संरचना monitor *monitor)
 {
-	struct ssh_sandbox *box;
+	संरचना ssh_sandbox *box;
 
 	/*
 	 * Strictly, we don't need to maintain any state here but we need
 	 * to return non-NULL to satisfy the API.
 	 */
-	box = xcalloc(1, sizeof(*box));
-	return box;
+	box = xcalloc(1, परिमाण(*box));
+	फर्काऊ box;
 }
 
-void
-ssh_sandbox_child(struct ssh_sandbox *box)
+शून्य
+ssh_sandbox_child(संरचना ssh_sandbox *box)
 {
 	/* Nothing to do here */
 }

@@ -56,7 +56,7 @@
 #define UMAC_OUTPUT_LEN     8  /* Allowable: 4, 8, 12, 16                  */
 #endif
 
-#if UMAC_OUTPUT_LEN != 4 && UMAC_OUTPUT_LEN != 8 && \
+#यदि UMAC_OUTPUT_LEN != 4 && UMAC_OUTPUT_LEN != 8 && \
     UMAC_OUTPUT_LEN != 12 && UMAC_OUTPUT_LEN != 16
 # error UMAC_OUTPUT_LEN must be defined to 4, 8, 12 or 16
 #endif
@@ -71,44 +71,44 @@
 /* -- Global Includes --------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <endian.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <stddef.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <endian.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stddef.h>
 
-#include "xmalloc.h"
-#include "umac.h"
-#include "misc.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "umac.h"
+#अन्तर्भाव "misc.h"
 
 /* ---------------------------------------------------------------------- */
 /* --- Primitive Data Types ---                                           */
 /* ---------------------------------------------------------------------- */
 
 /* The following assumptions may need change on your system */
-typedef uint8_t	UINT8;  /* 1 byte   */
-typedef uint16_t	UINT16; /* 2 byte   */
-typedef uint32_t	UINT32; /* 4 byte   */
-typedef uint64_t	UINT64; /* 8 bytes  */
-typedef unsigned int	UWORD;  /* Register */
+प्रकारनिर्देश uint8_t	UINT8;  /* 1 byte   */
+प्रकारनिर्देश uint16_t	UINT16; /* 2 byte   */
+प्रकारनिर्देश uint32_t	UINT32; /* 4 byte   */
+प्रकारनिर्देश uint64_t	UINT64; /* 8 bytes  */
+प्रकारनिर्देश अचिन्हित पूर्णाङ्क	UWORD;  /* Register */
 
 /* ---------------------------------------------------------------------- */
 /* --- Constants -------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
-#define UMAC_KEY_LEN           16  /* UMAC takes 16 bytes of external key */
+#define UMAC_साँचो_LEN           16  /* UMAC takes 16 bytes of external key */
 
 /* Message "words" are read from memory in an endian-specific manner.     */
 /* For this implementation to behave correctly, __LITTLE_ENDIAN__ must    */
 /* be set true if the host computer is little-endian.                     */
 
-#if BYTE_ORDER == LITTLE_ENDIAN
+#यदि BYTE_ORDER == LITTLE_ENDIAN
 #define __LITTLE_ENDIAN__ 1
-#else
+#अन्यथा
 #define __LITTLE_ENDIAN__ 0
 #endif
 
@@ -136,10 +136,10 @@ typedef unsigned int	UWORD;  /* Register */
 /* --- Endian Conversion --- Forcing assembly on some platforms           */
 /* ---------------------------------------------------------------------- */
 
-#if (__LITTLE_ENDIAN__)
+#यदि (__LITTLE_ENDIAN__)
 #define LOAD_UINT32_REVERSED(p)		get_u32(p)
 #define STORE_UINT32_REVERSED(p,v)	put_u32(p,v)
-#else
+#अन्यथा
 #define LOAD_UINT32_REVERSED(p)		get_u32_le(p)
 #define STORE_UINT32_REVERSED(p,v)	put_u32_le(p,v)
 #endif
@@ -158,24 +158,24 @@ typedef unsigned int	UWORD;  /* Register */
 
 /* OpenSSL's AES */
 #ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#अन्तर्भाव "openbsd-compat/openssl-compat.h"
 #ifndef USE_BUILTIN_RIJNDAEL
 # include <openssl/aes.h>
 #endif
-typedef AES_KEY aes_int_key[1];
-#define aes_encryption(in,out,int_key)                  \
-  AES_encrypt((u_char *)(in),(u_char *)(out),(AES_KEY *)int_key)
-#define aes_key_setup(key,int_key)                      \
-  AES_set_encrypt_key((const u_char *)(key),UMAC_KEY_LEN*8,int_key)
-#else
-#include "rijndael.h"
-#define AES_ROUNDS ((UMAC_KEY_LEN / 4) + 6)
-typedef UINT8 aes_int_key[AES_ROUNDS+1][4][4];	/* AES internal */
-#define aes_encryption(in,out,int_key) \
-  rijndaelEncrypt((u32 *)(int_key), AES_ROUNDS, (u8 *)(in), (u8 *)(out))
-#define aes_key_setup(key,int_key) \
-  rijndaelKeySetupEnc((u32 *)(int_key), (const unsigned char *)(key), \
-  UMAC_KEY_LEN*8)
+प्रकारनिर्देश AES_साँचो aes_int_साँचो[1];
+#define aes_encryption(in,out,int_साँचो)                  \
+  AES_encrypt((u_char *)(in),(u_char *)(out),(AES_साँचो *)int_साँचो)
+#define aes_साँचो_setup(साँचो,int_साँचो)                      \
+  AES_set_encrypt_साँचो((अचर u_char *)(साँचो),UMAC_साँचो_LEN*8,int_साँचो)
+#अन्यथा
+#अन्तर्भाव "rijndael.h"
+#define AES_ROUNDS ((UMAC_साँचो_LEN / 4) + 6)
+प्रकारनिर्देश UINT8 aes_int_साँचो[AES_ROUNDS+1][4][4];	/* AES internal */
+#define aes_encryption(in,out,int_साँचो) \
+  rijndaelEncrypt((u32 *)(int_साँचो), AES_ROUNDS, (u8 *)(in), (u8 *)(out))
+#define aes_साँचो_setup(साँचो,int_साँचो) \
+  rijndael_साँचो_Setup_Enc((u32 *)(int_साँचो), (अचर अचिन्हित वर्ण *)(साँचो), \
+  UMAC_साँचो_LEN*8)
 #endif
 
 /* The user-supplied UMAC key is stretched using AES in a counter
@@ -184,30 +184,30 @@ typedef UINT8 aes_int_key[AES_ROUNDS+1][4][4];	/* AES internal */
  * 'nbytes' bytes to the memory pointed at by 'bufp'. Each distinct
  * 'ndx' causes a distinct byte stream.
  */
-static void kdf(void *bufp, aes_int_key key, UINT8 ndx, int nbytes)
+स्थिर शून्य kdf(शून्य *bufp, aes_int_साँचो साँचो, UINT8 ndx, पूर्णाङ्क nbytes)
 {
     UINT8 in_buf[AES_BLOCK_LEN] = {0};
     UINT8 out_buf[AES_BLOCK_LEN];
     UINT8 *dst_buf = (UINT8 *)bufp;
-    int i;
+    पूर्णाङ्क i;
 
     /* Setup the initial value */
     in_buf[AES_BLOCK_LEN-9] = ndx;
     in_buf[AES_BLOCK_LEN-1] = i = 1;
 
-    while (nbytes >= AES_BLOCK_LEN) {
-        aes_encryption(in_buf, out_buf, key);
-        memcpy(dst_buf,out_buf,AES_BLOCK_LEN);
+    जबसम्म (nbytes >= AES_BLOCK_LEN) {
+        aes_encryption(in_buf, out_buf, साँचो);
+        स_नकल(dst_buf,out_buf,AES_BLOCK_LEN);
         in_buf[AES_BLOCK_LEN-1] = ++i;
         nbytes -= AES_BLOCK_LEN;
         dst_buf += AES_BLOCK_LEN;
     }
-    if (nbytes) {
-        aes_encryption(in_buf, out_buf, key);
-        memcpy(dst_buf,out_buf,nbytes);
+    यदि (nbytes) {
+        aes_encryption(in_buf, out_buf, साँचो);
+        स_नकल(dst_buf,out_buf,nbytes);
     }
-    explicit_bzero(in_buf, sizeof(in_buf));
-    explicit_bzero(out_buf, sizeof(out_buf));
+    explicit_bzero(in_buf, परिमाण(in_buf));
+    explicit_bzero(out_buf, परिमाण(out_buf));
 }
 
 /* The final UHASH result is XOR'd with the output of a pseudorandom
@@ -216,26 +216,26 @@ static void kdf(void *bufp, aes_int_key key, UINT8 ndx, int nbytes)
  * This scheme is optimized for sequential, increasing big-endian nonces.
  */
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     UINT8 cache[AES_BLOCK_LEN];  /* Previous AES output is saved      */
     UINT8 nonce[AES_BLOCK_LEN];  /* The AES input making above cache  */
-    aes_int_key prf_key;         /* Expanded AES key for PDF          */
+    aes_int_साँचो prf_साँचो;         /* Expanded AES key for PDF          */
 } pdf_ctx;
 
-static void pdf_init(pdf_ctx *pc, aes_int_key prf_key)
+स्थिर शून्य pdf_init(pdf_ctx *pc, aes_int_साँचो prf_साँचो)
 {
-    UINT8 buf[UMAC_KEY_LEN];
+    UINT8 buf[UMAC_साँचो_LEN];
 
-    kdf(buf, prf_key, 0, UMAC_KEY_LEN);
-    aes_key_setup(buf, pc->prf_key);
+    kdf(buf, prf_साँचो, 0, UMAC_साँचो_LEN);
+    aes_साँचो_setup(buf, pc->prf_साँचो);
 
     /* Initialize pdf and cache */
-    memset(pc->nonce, 0, sizeof(pc->nonce));
-    aes_encryption(pc->nonce, pc->cache, pc->prf_key);
-    explicit_bzero(buf, sizeof(buf));
+    स_रखो(pc->nonce, 0, परिमाण(pc->nonce));
+    aes_encryption(pc->nonce, pc->cache, pc->prf_साँचो);
+    explicit_bzero(buf, परिमाण(buf));
 }
 
-static void pdf_gen_xor(pdf_ctx *pc, const UINT8 nonce[8],
+स्थिर शून्य pdf_gen_xor(pdf_ctx *pc, अचर UINT8 nonce[8],
     UINT8 buf[UMAC_OUTPUT_LEN])
 {
     /* 'ndx' indicates that we'll be using the 0th or 1st eight bytes
@@ -243,39 +243,39 @@ static void pdf_gen_xor(pdf_ctx *pc, const UINT8 nonce[8],
      * element, then we may have the result in the cache already.
      */
 
-#if (UMAC_OUTPUT_LEN == 4)
-#define LOW_BIT_MASK 3
-#elif (UMAC_OUTPUT_LEN == 8)
-#define LOW_BIT_MASK 1
-#elif (UMAC_OUTPUT_LEN > 8)
-#define LOW_BIT_MASK 0
+#यदि (UMAC_OUTPUT_LEN == 4)
+#define तल्लो_BIT_MASK 3
+#अथवायदि (UMAC_OUTPUT_LEN == 8)
+#define तल्लो_BIT_MASK 1
+#अथवायदि (UMAC_OUTPUT_LEN > 8)
+#define तल्लो_BIT_MASK 0
 #endif
-    union {
+    सङ्घ {
         UINT8 tmp_nonce_lo[4];
         UINT32 align;
     } t;
-#if LOW_BIT_MASK != 0
-    int ndx = nonce[7] & LOW_BIT_MASK;
+#यदि तल्लो_BIT_MASK != 0
+    पूर्णाङ्क ndx = nonce[7] & तल्लो_BIT_MASK;
 #endif
-    *(UINT32 *)t.tmp_nonce_lo = ((const UINT32 *)nonce)[1];
-    t.tmp_nonce_lo[3] &= ~LOW_BIT_MASK; /* zero last bit */
+    *(UINT32 *)t.tmp_nonce_lo = ((अचर UINT32 *)nonce)[1];
+    t.tmp_nonce_lo[3] &= ~तल्लो_BIT_MASK; /* zero last bit */
 
-    if ( (((UINT32 *)t.tmp_nonce_lo)[0] != ((UINT32 *)pc->nonce)[1]) ||
-         (((const UINT32 *)nonce)[0] != ((UINT32 *)pc->nonce)[0]) )
+    यदि ( (((UINT32 *)t.tmp_nonce_lo)[0] != ((UINT32 *)pc->nonce)[1]) ||
+         (((अचर UINT32 *)nonce)[0] != ((UINT32 *)pc->nonce)[0]) )
     {
-        ((UINT32 *)pc->nonce)[0] = ((const UINT32 *)nonce)[0];
+        ((UINT32 *)pc->nonce)[0] = ((अचर UINT32 *)nonce)[0];
         ((UINT32 *)pc->nonce)[1] = ((UINT32 *)t.tmp_nonce_lo)[0];
-        aes_encryption(pc->nonce, pc->cache, pc->prf_key);
+        aes_encryption(pc->nonce, pc->cache, pc->prf_साँचो);
     }
 
-#if (UMAC_OUTPUT_LEN == 4)
+#यदि (UMAC_OUTPUT_LEN == 4)
     *((UINT32 *)buf) ^= ((UINT32 *)pc->cache)[ndx];
-#elif (UMAC_OUTPUT_LEN == 8)
+#अथवायदि (UMAC_OUTPUT_LEN == 8)
     *((UINT64 *)buf) ^= ((UINT64 *)pc->cache)[ndx];
-#elif (UMAC_OUTPUT_LEN == 12)
+#अथवायदि (UMAC_OUTPUT_LEN == 12)
     ((UINT64 *)buf)[0] ^= ((UINT64 *)pc->cache)[0];
     ((UINT32 *)buf)[2] ^= ((UINT32 *)pc->cache)[2];
-#elif (UMAC_OUTPUT_LEN == 16)
+#अथवायदि (UMAC_OUTPUT_LEN == 16)
     ((UINT64 *)buf)[0] ^= ((UINT64 *)pc->cache)[0];
     ((UINT64 *)buf)[1] ^= ((UINT64 *)pc->cache)[1];
 #endif
@@ -314,24 +314,24 @@ static void pdf_gen_xor(pdf_ctx *pc, const UINT8 nonce[8],
   */
 
 #define STREAMS (UMAC_OUTPUT_LEN / 4) /* Number of times hash is applied  */
-#define L1_KEY_LEN         1024     /* Internal key bytes                 */
-#define L1_KEY_SHIFT         16     /* Toeplitz key shift between streams */
+#define L1_साँचो_LEN         1024     /* Internal key bytes                 */
+#define L1_साँचो_SHIFT         16     /* Toeplitz key shift between streams */
 #define L1_PAD_BOUNDARY      32     /* pad message to boundary multiple   */
 #define ALLOC_BOUNDARY       16     /* Keep buffers aligned to this       */
 #define HASH_BUF_BYTES       64     /* nh_aux_hb buffer multiple          */
 
-typedef struct {
-    UINT8  nh_key [L1_KEY_LEN + L1_KEY_SHIFT * (STREAMS - 1)]; /* NH Key */
+प्रकारनिर्देश संरचना {
+    UINT8  nh_साँचो [L1_साँचो_LEN + L1_साँचो_SHIFT * (STREAMS - 1)]; /* NH Key */
     UINT8  data   [HASH_BUF_BYTES];    /* Incoming data buffer           */
-    int next_data_empty;    /* Bookkeeping variable for data buffer.     */
-    int bytes_hashed;       /* Bytes (out of L1_KEY_LEN) incorporated.   */
+    पूर्णाङ्क next_data_empty;    /* Bookkeeping variable for data buffer.     */
+    पूर्णाङ्क bytes_hashed;       /* Bytes (out of L1_KEY_LEN) incorporated.   */
     UINT64 state[STREAMS];               /* on-line state     */
 } nh_ctx;
 
 
-#if (UMAC_OUTPUT_LEN == 4)
+#यदि (UMAC_OUTPUT_LEN == 4)
 
-static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
+स्थिर शून्य nh_aux(शून्य *kp, अचर शून्य *dp, शून्य *hp, UINT32 dlen)
 /* NH hashing primitive. Previous (partial) hash result is loaded and
 * then stored via hp pointer. The length of the data pointed at by "dp",
 * "dlen", is guaranteed to be divisible by L1_PAD_BOUNDARY (32).  Key
@@ -341,12 +341,12 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
     UINT64 h;
     UWORD c = dlen / 32;
     UINT32 *k = (UINT32 *)kp;
-    const UINT32 *d = (const UINT32 *)dp;
+    अचर UINT32 *d = (अचर UINT32 *)dp;
     UINT32 d0,d1,d2,d3,d4,d5,d6,d7;
     UINT32 k0,k1,k2,k3,k4,k5,k6,k7;
 
     h = *((UINT64 *)hp);
-    do {
+    गर {
         d0 = LOAD_UINT32_LITTLE(d+0); d1 = LOAD_UINT32_LITTLE(d+1);
         d2 = LOAD_UINT32_LITTLE(d+2); d3 = LOAD_UINT32_LITTLE(d+3);
         d4 = LOAD_UINT32_LITTLE(d+4); d5 = LOAD_UINT32_LITTLE(d+5);
@@ -360,13 +360,13 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 
         d += 8;
         k += 8;
-    } while (--c);
+    } जबसम्म (--c);
   *((UINT64 *)hp) = h;
 }
 
-#elif (UMAC_OUTPUT_LEN == 8)
+#अथवायदि (UMAC_OUTPUT_LEN == 8)
 
-static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
+स्थिर शून्य nh_aux(शून्य *kp, अचर शून्य *dp, शून्य *hp, UINT32 dlen)
 /* Same as previous nh_aux, but two streams are handled in one pass,
  * reading and writing 16 bytes of hash-state per call.
  */
@@ -374,7 +374,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
   UINT64 h1,h2;
   UWORD c = dlen / 32;
   UINT32 *k = (UINT32 *)kp;
-  const UINT32 *d = (const UINT32 *)dp;
+  अचर UINT32 *d = (अचर UINT32 *)dp;
   UINT32 d0,d1,d2,d3,d4,d5,d6,d7;
   UINT32 k0,k1,k2,k3,k4,k5,k6,k7,
         k8,k9,k10,k11;
@@ -382,7 +382,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
   h1 = *((UINT64 *)hp);
   h2 = *((UINT64 *)hp + 1);
   k0 = *(k+0); k1 = *(k+1); k2 = *(k+2); k3 = *(k+3);
-  do {
+  गर {
     d0 = LOAD_UINT32_LITTLE(d+0); d1 = LOAD_UINT32_LITTLE(d+1);
     d2 = LOAD_UINT32_LITTLE(d+2); d3 = LOAD_UINT32_LITTLE(d+3);
     d4 = LOAD_UINT32_LITTLE(d+4); d5 = LOAD_UINT32_LITTLE(d+5);
@@ -406,14 +406,14 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 
     d += 8;
     k += 8;
-  } while (--c);
+  } जबसम्म (--c);
   ((UINT64 *)hp)[0] = h1;
   ((UINT64 *)hp)[1] = h2;
 }
 
-#elif (UMAC_OUTPUT_LEN == 12)
+#अथवायदि (UMAC_OUTPUT_LEN == 12)
 
-static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
+स्थिर शून्य nh_aux(शून्य *kp, अचर शून्य *dp, शून्य *hp, UINT32 dlen)
 /* Same as previous nh_aux, but two streams are handled in one pass,
  * reading and writing 24 bytes of hash-state per call.
 */
@@ -421,7 +421,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
     UINT64 h1,h2,h3;
     UWORD c = dlen / 32;
     UINT32 *k = (UINT32 *)kp;
-    const UINT32 *d = (const UINT32 *)dp;
+    अचर UINT32 *d = (अचर UINT32 *)dp;
     UINT32 d0,d1,d2,d3,d4,d5,d6,d7;
     UINT32 k0,k1,k2,k3,k4,k5,k6,k7,
         k8,k9,k10,k11,k12,k13,k14,k15;
@@ -431,7 +431,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
     h3 = *((UINT64 *)hp + 2);
     k0 = *(k+0); k1 = *(k+1); k2 = *(k+2); k3 = *(k+3);
     k4 = *(k+4); k5 = *(k+5); k6 = *(k+6); k7 = *(k+7);
-    do {
+    गर {
         d0 = LOAD_UINT32_LITTLE(d+0); d1 = LOAD_UINT32_LITTLE(d+1);
         d2 = LOAD_UINT32_LITTLE(d+2); d3 = LOAD_UINT32_LITTLE(d+3);
         d4 = LOAD_UINT32_LITTLE(d+4); d5 = LOAD_UINT32_LITTLE(d+5);
@@ -460,15 +460,15 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 
         d += 8;
         k += 8;
-    } while (--c);
+    } जबसम्म (--c);
     ((UINT64 *)hp)[0] = h1;
     ((UINT64 *)hp)[1] = h2;
     ((UINT64 *)hp)[2] = h3;
 }
 
-#elif (UMAC_OUTPUT_LEN == 16)
+#अथवायदि (UMAC_OUTPUT_LEN == 16)
 
-static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
+स्थिर शून्य nh_aux(शून्य *kp, अचर शून्य *dp, शून्य *hp, UINT32 dlen)
 /* Same as previous nh_aux, but two streams are handled in one pass,
  * reading and writing 24 bytes of hash-state per call.
 */
@@ -476,7 +476,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
     UINT64 h1,h2,h3,h4;
     UWORD c = dlen / 32;
     UINT32 *k = (UINT32 *)kp;
-    const UINT32 *d = (const UINT32 *)dp;
+    अचर UINT32 *d = (अचर UINT32 *)dp;
     UINT32 d0,d1,d2,d3,d4,d5,d6,d7;
     UINT32 k0,k1,k2,k3,k4,k5,k6,k7,
         k8,k9,k10,k11,k12,k13,k14,k15,
@@ -488,7 +488,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
     h4 = *((UINT64 *)hp + 3);
     k0 = *(k+0); k1 = *(k+1); k2 = *(k+2); k3 = *(k+3);
     k4 = *(k+4); k5 = *(k+5); k6 = *(k+6); k7 = *(k+7);
-    do {
+    गर {
         d0 = LOAD_UINT32_LITTLE(d+0); d1 = LOAD_UINT32_LITTLE(d+1);
         d2 = LOAD_UINT32_LITTLE(d+2); d3 = LOAD_UINT32_LITTLE(d+3);
         d4 = LOAD_UINT32_LITTLE(d+4); d5 = LOAD_UINT32_LITTLE(d+5);
@@ -523,7 +523,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 
         d += 8;
         k += 8;
-    } while (--c);
+    } जबसम्म (--c);
     ((UINT64 *)hp)[0] = h1;
     ((UINT64 *)hp)[1] = h2;
     ((UINT64 *)hp)[2] = h3;
@@ -537,64 +537,64 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 
 /* ---------------------------------------------------------------------- */
 
-static void nh_transform(nh_ctx *hc, const UINT8 *buf, UINT32 nbytes)
+स्थिर शून्य nh_transform(nh_ctx *hc, अचर UINT8 *buf, UINT32 nbytes)
 /* This function is a wrapper for the primitive NH hash functions. It takes
  * as argument "hc" the current hash context and a buffer which must be a
  * multiple of L1_PAD_BOUNDARY. The key passed to nh_aux is offset
  * appropriately according to how much message has been hashed already.
  */
 {
-    UINT8 *key;
+    UINT8 *साँचो;
 
-    key = hc->nh_key + hc->bytes_hashed;
-    nh_aux(key, buf, hc->state, nbytes);
+    साँचो = hc->nh_साँचो + hc->bytes_hashed;
+    nh_aux(साँचो, buf, hc->state, nbytes);
 }
 
 /* ---------------------------------------------------------------------- */
 
-#if (__LITTLE_ENDIAN__)
-static void endian_convert(void *buf, UWORD bpw, UINT32 num_bytes)
+#यदि (__LITTLE_ENDIAN__)
+स्थिर शून्य endian_convert(शून्य *buf, UWORD bpw, UINT32 अङ्क_bytes)
 /* We endian convert the keys on little-endian computers to               */
 /* compensate for the lack of big-endian memory reads during hashing.     */
 {
-    UWORD iters = num_bytes / bpw;
-    if (bpw == 4) {
+    UWORD iters = अङ्क_bytes / bpw;
+    यदि (bpw == 4) {
         UINT32 *p = (UINT32 *)buf;
-        do {
+        गर {
             *p = LOAD_UINT32_REVERSED(p);
             p++;
-        } while (--iters);
-    } else if (bpw == 8) {
+        } जबसम्म (--iters);
+    } अन्यथा यदि (bpw == 8) {
         UINT32 *p = (UINT32 *)buf;
         UINT32 t;
-        do {
+        गर {
             t = LOAD_UINT32_REVERSED(p+1);
             p[1] = LOAD_UINT32_REVERSED(p);
             p[0] = t;
             p += 2;
-        } while (--iters);
+        } जबसम्म (--iters);
     }
 }
 #define endian_convert_if_le(x,y,z) endian_convert((x),(y),(z))
-#else
-#define endian_convert_if_le(x,y,z) do{}while(0)  /* Do nothing */
+#अन्यथा
+#define endian_convert_if_le(x,y,z) गर{}जबसम्म(0)  /* Do nothing */
 #endif
 
 /* ---------------------------------------------------------------------- */
 
-static void nh_reset(nh_ctx *hc)
+स्थिर शून्य nh_reset(nh_ctx *hc)
 /* Reset nh_ctx to ready for hashing of new data */
 {
     hc->bytes_hashed = 0;
     hc->next_data_empty = 0;
     hc->state[0] = 0;
-#if (UMAC_OUTPUT_LEN >= 8)
+#यदि (UMAC_OUTPUT_LEN >= 8)
     hc->state[1] = 0;
 #endif
-#if (UMAC_OUTPUT_LEN >= 12)
+#यदि (UMAC_OUTPUT_LEN >= 12)
     hc->state[2] = 0;
 #endif
-#if (UMAC_OUTPUT_LEN == 16)
+#यदि (UMAC_OUTPUT_LEN == 16)
     hc->state[3] = 0;
 #endif
 
@@ -602,33 +602,33 @@ static void nh_reset(nh_ctx *hc)
 
 /* ---------------------------------------------------------------------- */
 
-static void nh_init(nh_ctx *hc, aes_int_key prf_key)
+स्थिर शून्य nh_init(nh_ctx *hc, aes_int_साँचो prf_साँचो)
 /* Generate nh_key, endian convert and reset to be ready for hashing.   */
 {
-    kdf(hc->nh_key, prf_key, 1, sizeof(hc->nh_key));
-    endian_convert_if_le(hc->nh_key, 4, sizeof(hc->nh_key));
+    kdf(hc->nh_साँचो, prf_साँचो, 1, परिमाण(hc->nh_साँचो));
+    endian_convert_if_le(hc->nh_साँचो, 4, परिमाण(hc->nh_साँचो));
     nh_reset(hc);
 }
 
 /* ---------------------------------------------------------------------- */
 
-static void nh_update(nh_ctx *hc, const UINT8 *buf, UINT32 nbytes)
+स्थिर शून्य nh_update(nh_ctx *hc, अचर UINT8 *buf, UINT32 nbytes)
 /* Incorporate nbytes of data into a nh_ctx, buffer whatever is not an    */
 /* even multiple of HASH_BUF_BYTES.                                       */
 {
     UINT32 i,j;
 
     j = hc->next_data_empty;
-    if ((j + nbytes) >= HASH_BUF_BYTES) {
-        if (j) {
+    यदि ((j + nbytes) >= HASH_BUF_BYTES) {
+        यदि (j) {
             i = HASH_BUF_BYTES - j;
-            memcpy(hc->data+j, buf, i);
+            स_नकल(hc->data+j, buf, i);
             nh_transform(hc,hc->data,HASH_BUF_BYTES);
             nbytes -= i;
             buf += i;
             hc->bytes_hashed += HASH_BUF_BYTES;
         }
-        if (nbytes >= HASH_BUF_BYTES) {
+        यदि (nbytes >= HASH_BUF_BYTES) {
             i = nbytes & ~(HASH_BUF_BYTES - 1);
             nh_transform(hc, buf, i);
             nbytes -= i;
@@ -637,28 +637,28 @@ static void nh_update(nh_ctx *hc, const UINT8 *buf, UINT32 nbytes)
         }
         j = 0;
     }
-    memcpy(hc->data + j, buf, nbytes);
+    स_नकल(hc->data + j, buf, nbytes);
     hc->next_data_empty = j + nbytes;
 }
 
 /* ---------------------------------------------------------------------- */
 
-static void zero_pad(UINT8 *p, int nbytes)
+स्थिर शून्य zero_pad(UINT8 *p, पूर्णाङ्क nbytes)
 {
 /* Write "nbytes" of zeroes, beginning at "p" */
-    if (nbytes >= (int)sizeof(UWORD)) {
-        while ((ptrdiff_t)p % sizeof(UWORD)) {
+    यदि (nbytes >= (पूर्णाङ्क)परिमाण(UWORD)) {
+        जबसम्म ((सूचक_भेद_प्रकार)p % परिमाण(UWORD)) {
             *p = 0;
             nbytes--;
             p++;
         }
-        while (nbytes >= (int)sizeof(UWORD)) {
+        जबसम्म (nbytes >= (पूर्णाङ्क)परिमाण(UWORD)) {
             *(UWORD *)p = 0;
-            nbytes -= sizeof(UWORD);
-            p += sizeof(UWORD);
+            nbytes -= परिमाण(UWORD);
+            p += परिमाण(UWORD);
         }
     }
-    while (nbytes) {
+    जबसम्म (nbytes) {
         *p = 0;
         nbytes--;
         p++;
@@ -667,7 +667,7 @@ static void zero_pad(UINT8 *p, int nbytes)
 
 /* ---------------------------------------------------------------------- */
 
-static void nh_final(nh_ctx *hc, UINT8 *result)
+स्थिर शून्य nh_final(nh_ctx *hc, UINT8 *result)
 /* After passing some number of data buffers to nh_update() for integration
  * into an NH context, nh_final is called to produce a hash result. If any
  * bytes are in the buffer hc->data, incorporate them into the
@@ -676,16 +676,16 @@ static void nh_final(nh_ctx *hc, UINT8 *result)
  * If nh_update was never called, L1_PAD_BOUNDARY zeroes are incorporated.
  */
 {
-    int nh_len, nbits;
+    पूर्णाङ्क nh_len, nbits;
 
-    if (hc->next_data_empty != 0) {
+    यदि (hc->next_data_empty != 0) {
         nh_len = ((hc->next_data_empty + (L1_PAD_BOUNDARY - 1)) &
                                                 ~(L1_PAD_BOUNDARY - 1));
         zero_pad(hc->data + hc->next_data_empty,
                                           nh_len - hc->next_data_empty);
         nh_transform(hc, hc->data, nh_len);
         hc->bytes_hashed += hc->next_data_empty;
-    } else if (hc->bytes_hashed == 0) {
+    } अन्यथा यदि (hc->bytes_hashed == 0) {
 	nh_len = L1_PAD_BOUNDARY;
         zero_pad(hc->data, L1_PAD_BOUNDARY);
         nh_transform(hc, hc->data, nh_len);
@@ -693,13 +693,13 @@ static void nh_final(nh_ctx *hc, UINT8 *result)
 
     nbits = (hc->bytes_hashed << 3);
     ((UINT64 *)result)[0] = ((UINT64 *)hc->state)[0] + nbits;
-#if (UMAC_OUTPUT_LEN >= 8)
+#यदि (UMAC_OUTPUT_LEN >= 8)
     ((UINT64 *)result)[1] = ((UINT64 *)hc->state)[1] + nbits;
 #endif
-#if (UMAC_OUTPUT_LEN >= 12)
+#यदि (UMAC_OUTPUT_LEN >= 12)
     ((UINT64 *)result)[2] = ((UINT64 *)hc->state)[2] + nbits;
 #endif
-#if (UMAC_OUTPUT_LEN == 16)
+#यदि (UMAC_OUTPUT_LEN == 16)
     ((UINT64 *)result)[3] = ((UINT64 *)hc->state)[3] + nbits;
 #endif
     nh_reset(hc);
@@ -707,7 +707,7 @@ static void nh_final(nh_ctx *hc, UINT8 *result)
 
 /* ---------------------------------------------------------------------- */
 
-static void nh(nh_ctx *hc, const UINT8 *buf, UINT32 padded_len,
+स्थिर शून्य nh(nh_ctx *hc, अचर UINT8 *buf, UINT32 padded_len,
                UINT32 unpadded_len, UINT8 *result)
 /* All-in-one nh_update() and nh_final() equivalent.
  * Assumes that padded_len is divisible by L1_PAD_BOUNDARY and result is
@@ -720,17 +720,17 @@ static void nh(nh_ctx *hc, const UINT8 *buf, UINT32 padded_len,
     nbits = (unpadded_len << 3);
 
     ((UINT64 *)result)[0] = nbits;
-#if (UMAC_OUTPUT_LEN >= 8)
+#यदि (UMAC_OUTPUT_LEN >= 8)
     ((UINT64 *)result)[1] = nbits;
 #endif
-#if (UMAC_OUTPUT_LEN >= 12)
+#यदि (UMAC_OUTPUT_LEN >= 12)
     ((UINT64 *)result)[2] = nbits;
 #endif
-#if (UMAC_OUTPUT_LEN == 16)
+#यदि (UMAC_OUTPUT_LEN == 16)
     ((UINT64 *)result)[3] = nbits;
 #endif
 
-    nh_aux(hc->nh_key, buf, result, padded_len);
+    nh_aux(hc->nh_साँचो, buf, result, padded_len);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -775,16 +775,16 @@ static void nh(nh_ctx *hc, const UINT8 *buf, UINT32 padded_len,
 
 /* ---------------------------------------------------------------------- */
 
-typedef struct uhash_ctx {
+प्रकारनिर्देश संरचना uhash_ctx {
     nh_ctx hash;                          /* Hash context for L1 NH hash  */
-    UINT64 poly_key_8[STREAMS];           /* p64 poly keys                */
+    UINT64 poly_साँचो_8[STREAMS];           /* p64 poly keys                */
     UINT64 poly_accum[STREAMS];           /* poly hash result             */
-    UINT64 ip_keys[STREAMS*4];            /* Inner-product keys           */
+    UINT64 ip_साँचोहरू[STREAMS*4];            /* Inner-product keys           */
     UINT32 ip_trans[STREAMS];             /* Inner-product translation    */
-    UINT32 msg_len;                       /* Total length of data passed  */
+    UINT32 सन्देश_len;                       /* Total length of data passed  */
                                           /* to uhash */
 } uhash_ctx;
-typedef struct uhash_ctx *uhash_ctx_t;
+प्रकारनिर्देश संरचना uhash_ctx *uhash_ctx_t;
 
 /* ---------------------------------------------------------------------- */
 
@@ -797,32 +797,32 @@ typedef struct uhash_ctx *uhash_ctx_t;
  * patches any errant values.
  */
 
-static UINT64 poly64(UINT64 cur, UINT64 key, UINT64 data)
+स्थिर UINT64 poly64(UINT64 cur, UINT64 साँचो, UINT64 data)
 {
-    UINT32 key_hi = (UINT32)(key >> 32),
-           key_lo = (UINT32)key,
+    UINT32 साँचो_hi = (UINT32)(साँचो >> 32),
+           साँचो_lo = (UINT32)साँचो,
            cur_hi = (UINT32)(cur >> 32),
            cur_lo = (UINT32)cur,
            x_lo,
            x_hi;
     UINT64 X,T,res;
 
-    X =  MUL64(key_hi, cur_lo) + MUL64(cur_hi, key_lo);
+    X =  MUL64(साँचो_hi, cur_lo) + MUL64(cur_hi, साँचो_lo);
     x_lo = (UINT32)X;
     x_hi = (UINT32)(X >> 32);
 
-    res = (MUL64(key_hi, cur_hi) + x_hi) * 59 + MUL64(key_lo, cur_lo);
+    res = (MUL64(साँचो_hi, cur_hi) + x_hi) * 59 + MUL64(साँचो_lo, cur_lo);
 
     T = ((UINT64)x_lo << 32);
     res += T;
-    if (res < T)
+    यदि (res < T)
         res += 59;
 
     res += data;
-    if (res < data)
+    यदि (res < data)
         res += 59;
 
-    return res;
+    फर्काऊ res;
 }
 
 
@@ -832,20 +832,20 @@ static UINT64 poly64(UINT64 cur, UINT64 key, UINT64 data)
  * 2^14 poly_hash() invocations per stream (for a total capacity of 2^24
  * bytes input to UMAC per tag, ie. 16MB).
  */
-static void poly_hash(uhash_ctx_t hc, UINT32 data_in[])
+स्थिर शून्य poly_hash(uhash_ctx_t hc, UINT32 data_in[])
 {
-    int i;
+    पूर्णाङ्क i;
     UINT64 *data=(UINT64*)data_in;
 
-    for (i = 0; i < STREAMS; i++) {
-        if ((UINT32)(data[i] >> 32) == 0xfffffffful) {
+    लागि (i = 0; i < STREAMS; i++) {
+        यदि ((UINT32)(data[i] >> 32) == 0xfffffffful) {
             hc->poly_accum[i] = poly64(hc->poly_accum[i],
-                                       hc->poly_key_8[i], p64 - 1);
+                                       hc->poly_साँचो_8[i], p64 - 1);
             hc->poly_accum[i] = poly64(hc->poly_accum[i],
-                                       hc->poly_key_8[i], (data[i] - 59));
-        } else {
+                                       hc->poly_साँचो_8[i], (data[i] - 59));
+        } अन्यथा {
             hc->poly_accum[i] = poly64(hc->poly_accum[i],
-                                       hc->poly_key_8[i], data[i]);
+                                       hc->poly_साँचो_8[i], data[i]);
         }
     }
 }
@@ -860,27 +860,27 @@ static void poly_hash(uhash_ctx_t hc, UINT32 data_in[])
  * multiplies each with a 36 bit key.
  */
 
-static UINT64 ip_aux(UINT64 t, UINT64 *ipkp, UINT64 data)
+स्थिर UINT64 ip_aux(UINT64 t, UINT64 *ipkp, UINT64 data)
 {
     t = t + ipkp[0] * (UINT64)(UINT16)(data >> 48);
     t = t + ipkp[1] * (UINT64)(UINT16)(data >> 32);
     t = t + ipkp[2] * (UINT64)(UINT16)(data >> 16);
     t = t + ipkp[3] * (UINT64)(UINT16)(data);
 
-    return t;
+    फर्काऊ t;
 }
 
-static UINT32 ip_reduce_p36(UINT64 t)
+स्थिर UINT32 ip_reduce_p36(UINT64 t)
 {
 /* Divisionless modular reduction */
     UINT64 ret;
 
     ret = (t & m36) + 5 * (t >> 36);
-    if (ret >= p36)
+    यदि (ret >= p36)
         ret -= p36;
 
     /* return least significant 32 bits */
-    return (UINT32)(ret);
+    फर्काऊ (UINT32)(ret);
 }
 
 
@@ -888,23 +888,23 @@ static UINT32 ip_reduce_p36(UINT64 t)
  * the polyhash stage is skipped and ip_short is applied directly to the
  * NH output.
  */
-static void ip_short(uhash_ctx_t ahc, UINT8 *nh_res, u_char *res)
+स्थिर शून्य ip_short(uhash_ctx_t ahc, UINT8 *nh_res, u_char *res)
 {
     UINT64 t;
     UINT64 *nhp = (UINT64 *)nh_res;
 
-    t  = ip_aux(0,ahc->ip_keys, nhp[0]);
+    t  = ip_aux(0,ahc->ip_साँचोहरू, nhp[0]);
     STORE_UINT32_BIG((UINT32 *)res+0, ip_reduce_p36(t) ^ ahc->ip_trans[0]);
-#if (UMAC_OUTPUT_LEN >= 8)
-    t  = ip_aux(0,ahc->ip_keys+4, nhp[1]);
+#यदि (UMAC_OUTPUT_LEN >= 8)
+    t  = ip_aux(0,ahc->ip_साँचोहरू+4, nhp[1]);
     STORE_UINT32_BIG((UINT32 *)res+1, ip_reduce_p36(t) ^ ahc->ip_trans[1]);
 #endif
-#if (UMAC_OUTPUT_LEN >= 12)
-    t  = ip_aux(0,ahc->ip_keys+8, nhp[2]);
+#यदि (UMAC_OUTPUT_LEN >= 12)
+    t  = ip_aux(0,ahc->ip_साँचोहरू+8, nhp[2]);
     STORE_UINT32_BIG((UINT32 *)res+2, ip_reduce_p36(t) ^ ahc->ip_trans[2]);
 #endif
-#if (UMAC_OUTPUT_LEN == 16)
-    t  = ip_aux(0,ahc->ip_keys+12, nhp[3]);
+#यदि (UMAC_OUTPUT_LEN == 16)
+    t  = ip_aux(0,ahc->ip_साँचोहरू+12, nhp[3]);
     STORE_UINT32_BIG((UINT32 *)res+3, ip_reduce_p36(t) ^ ahc->ip_trans[3]);
 #endif
 }
@@ -913,16 +913,16 @@ static void ip_short(uhash_ctx_t ahc, UINT8 *nh_res, u_char *res)
  * the polyhash stage is not skipped and ip_long is applied to the
  * polyhash output.
  */
-static void ip_long(uhash_ctx_t ahc, u_char *res)
+स्थिर शून्य ip_long(uhash_ctx_t ahc, u_char *res)
 {
-    int i;
+    पूर्णाङ्क i;
     UINT64 t;
 
-    for (i = 0; i < STREAMS; i++) {
+    लागि (i = 0; i < STREAMS; i++) {
         /* fix polyhash output not in Z_p64 */
-        if (ahc->poly_accum[i] >= p64)
+        यदि (ahc->poly_accum[i] >= p64)
             ahc->poly_accum[i] -= p64;
-        t  = ip_aux(0,ahc->ip_keys+(i*4), ahc->poly_accum[i]);
+        t  = ip_aux(0,ahc->ip_साँचोहरू+(i*4), ahc->poly_accum[i]);
         STORE_UINT32_BIG((UINT32 *)res+i,
                          ip_reduce_p36(t) ^ ahc->ip_trans[i]);
     }
@@ -934,21 +934,21 @@ static void ip_long(uhash_ctx_t ahc, u_char *res)
 /* ---------------------------------------------------------------------- */
 
 /* Reset uhash context for next hash session */
-static int uhash_reset(uhash_ctx_t pc)
+स्थिर पूर्णाङ्क uhash_reset(uhash_ctx_t pc)
 {
     nh_reset(&pc->hash);
-    pc->msg_len = 0;
+    pc->सन्देश_len = 0;
     pc->poly_accum[0] = 1;
-#if (UMAC_OUTPUT_LEN >= 8)
+#यदि (UMAC_OUTPUT_LEN >= 8)
     pc->poly_accum[1] = 1;
 #endif
-#if (UMAC_OUTPUT_LEN >= 12)
+#यदि (UMAC_OUTPUT_LEN >= 12)
     pc->poly_accum[2] = 1;
 #endif
-#if (UMAC_OUTPUT_LEN == 16)
+#यदि (UMAC_OUTPUT_LEN == 16)
     pc->poly_accum[3] = 1;
 #endif
-    return 1;
+    फर्काऊ 1;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -958,95 +958,95 @@ static int uhash_reset(uhash_ctx_t pc)
  * product hashing. All keys are endian adjusted in memory so that native
  * loads cause correct keys to be in registers during calculation.
  */
-static void uhash_init(uhash_ctx_t ahc, aes_int_key prf_key)
+स्थिर शून्य uhash_init(uhash_ctx_t ahc, aes_int_साँचो prf_साँचो)
 {
-    int i;
-    UINT8 buf[(8*STREAMS+4)*sizeof(UINT64)];
+    पूर्णाङ्क i;
+    UINT8 buf[(8*STREAMS+4)*परिमाण(UINT64)];
 
     /* Zero the entire uhash context */
-    memset(ahc, 0, sizeof(uhash_ctx));
+    स_रखो(ahc, 0, परिमाण(uhash_ctx));
 
     /* Initialize the L1 hash */
-    nh_init(&ahc->hash, prf_key);
+    nh_init(&ahc->hash, prf_साँचो);
 
     /* Setup L2 hash variables */
-    kdf(buf, prf_key, 2, sizeof(buf));    /* Fill buffer with index 1 key */
-    for (i = 0; i < STREAMS; i++) {
+    kdf(buf, prf_साँचो, 2, परिमाण(buf));    /* Fill buffer with index 1 key */
+    लागि (i = 0; i < STREAMS; i++) {
         /* Fill keys from the buffer, skipping bytes in the buffer not
          * used by this implementation. Endian reverse the keys if on a
          * little-endian computer.
          */
-        memcpy(ahc->poly_key_8+i, buf+24*i, 8);
-        endian_convert_if_le(ahc->poly_key_8+i, 8, 8);
+        स_नकल(ahc->poly_साँचो_8+i, buf+24*i, 8);
+        endian_convert_if_le(ahc->poly_साँचो_8+i, 8, 8);
         /* Mask the 64-bit keys to their special domain */
-        ahc->poly_key_8[i] &= ((UINT64)0x01ffffffu << 32) + 0x01ffffffu;
+        ahc->poly_साँचो_8[i] &= ((UINT64)0x01ffffffu << 32) + 0x01ffffffu;
         ahc->poly_accum[i] = 1;  /* Our polyhash prepends a non-zero word */
     }
 
     /* Setup L3-1 hash variables */
-    kdf(buf, prf_key, 3, sizeof(buf)); /* Fill buffer with index 2 key */
-    for (i = 0; i < STREAMS; i++)
-          memcpy(ahc->ip_keys+4*i, buf+(8*i+4)*sizeof(UINT64),
-                                                 4*sizeof(UINT64));
-    endian_convert_if_le(ahc->ip_keys, sizeof(UINT64),
-                                                  sizeof(ahc->ip_keys));
-    for (i = 0; i < STREAMS*4; i++)
-        ahc->ip_keys[i] %= p36;  /* Bring into Z_p36 */
+    kdf(buf, prf_साँचो, 3, परिमाण(buf)); /* Fill buffer with index 2 key */
+    लागि (i = 0; i < STREAMS; i++)
+          स_नकल(ahc->ip_साँचोहरू+4*i, buf+(8*i+4)*परिमाण(UINT64),
+                                                 4*परिमाण(UINT64));
+    endian_convert_if_le(ahc->ip_साँचोहरू, परिमाण(UINT64),
+                                                  परिमाण(ahc->ip_साँचोहरू));
+    लागि (i = 0; i < STREAMS*4; i++)
+        ahc->ip_साँचोहरू[i] %= p36;  /* Bring into Z_p36 */
 
     /* Setup L3-2 hash variables    */
     /* Fill buffer with index 4 key */
-    kdf(ahc->ip_trans, prf_key, 4, STREAMS * sizeof(UINT32));
-    endian_convert_if_le(ahc->ip_trans, sizeof(UINT32),
-                         STREAMS * sizeof(UINT32));
-    explicit_bzero(buf, sizeof(buf));
+    kdf(ahc->ip_trans, prf_साँचो, 4, STREAMS * परिमाण(UINT32));
+    endian_convert_if_le(ahc->ip_trans, परिमाण(UINT32),
+                         STREAMS * परिमाण(UINT32));
+    explicit_bzero(buf, परिमाण(buf));
 }
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
-static uhash_ctx_t uhash_alloc(u_char key[])
+#यदि 0
+स्थिर uhash_ctx_t uhash_alloc(u_char साँचो[])
 {
 /* Allocate memory and force to a 16-byte boundary. */
     uhash_ctx_t ctx;
     u_char bytes_to_add;
-    aes_int_key prf_key;
+    aes_int_साँचो prf_साँचो;
 
-    ctx = (uhash_ctx_t)malloc(sizeof(uhash_ctx)+ALLOC_BOUNDARY);
-    if (ctx) {
-        if (ALLOC_BOUNDARY) {
+    ctx = (uhash_ctx_t)दो_स्मृति(परिमाण(uhash_ctx)+ALLOC_BOUNDARY);
+    यदि (ctx) {
+        यदि (ALLOC_BOUNDARY) {
             bytes_to_add = ALLOC_BOUNDARY -
-                              ((ptrdiff_t)ctx & (ALLOC_BOUNDARY -1));
+                              ((सूचक_भेद_प्रकार)ctx & (ALLOC_BOUNDARY -1));
             ctx = (uhash_ctx_t)((u_char *)ctx + bytes_to_add);
             *((u_char *)ctx - 1) = bytes_to_add;
         }
-        aes_key_setup(key,prf_key);
-        uhash_init(ctx, prf_key);
+        aes_साँचो_setup(साँचो,prf_साँचो);
+        uhash_init(ctx, prf_साँचो);
     }
-    return (ctx);
+    फर्काऊ (ctx);
 }
 #endif
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
-static int uhash_free(uhash_ctx_t ctx)
+#यदि 0
+स्थिर पूर्णाङ्क uhash_free(uhash_ctx_t ctx)
 {
 /* Free memory allocated by uhash_alloc */
     u_char bytes_to_sub;
 
-    if (ctx) {
-        if (ALLOC_BOUNDARY) {
+    यदि (ctx) {
+        यदि (ALLOC_BOUNDARY) {
             bytes_to_sub = *((u_char *)ctx - 1);
             ctx = (uhash_ctx_t)((u_char *)ctx - bytes_to_sub);
         }
-        free(ctx);
+        मुक्त(ctx);
     }
-    return (1);
+    फर्काऊ (1);
 }
 #endif
 /* ---------------------------------------------------------------------- */
 
-static int uhash_update(uhash_ctx_t ctx, const u_char *input, long len)
+स्थिर पूर्णाङ्क uhash_update(uhash_ctx_t ctx, अचर u_char *आगत, दीर्घ len)
 /* Given len bytes of data, we parse it into L1_KEY_LEN chunks and
  * hash each one with NH, calling the polyhash on each NH output.
  */
@@ -1055,111 +1055,111 @@ static int uhash_update(uhash_ctx_t ctx, const u_char *input, long len)
     UINT64 result_buf[STREAMS];
     UINT8 *nh_result = (UINT8 *)&result_buf;
 
-    if (ctx->msg_len + len <= L1_KEY_LEN) {
-        nh_update(&ctx->hash, (const UINT8 *)input, len);
-        ctx->msg_len += len;
-    } else {
+    यदि (ctx->सन्देश_len + len <= L1_साँचो_LEN) {
+        nh_update(&ctx->hash, (अचर UINT8 *)आगत, len);
+        ctx->सन्देश_len += len;
+    } अन्यथा {
 
-         bytes_hashed = ctx->msg_len % L1_KEY_LEN;
-         if (ctx->msg_len == L1_KEY_LEN)
-             bytes_hashed = L1_KEY_LEN;
+         bytes_hashed = ctx->सन्देश_len % L1_साँचो_LEN;
+         यदि (ctx->सन्देश_len == L1_साँचो_LEN)
+             bytes_hashed = L1_साँचो_LEN;
 
-         if (bytes_hashed + len >= L1_KEY_LEN) {
+         यदि (bytes_hashed + len >= L1_साँचो_LEN) {
 
              /* If some bytes have been passed to the hash function      */
              /* then we want to pass at most (L1_KEY_LEN - bytes_hashed) */
              /* bytes to complete the current nh_block.                  */
-             if (bytes_hashed) {
-                 bytes_remaining = (L1_KEY_LEN - bytes_hashed);
-                 nh_update(&ctx->hash, (const UINT8 *)input, bytes_remaining);
+             यदि (bytes_hashed) {
+                 bytes_remaining = (L1_साँचो_LEN - bytes_hashed);
+                 nh_update(&ctx->hash, (अचर UINT8 *)आगत, bytes_remaining);
                  nh_final(&ctx->hash, nh_result);
-                 ctx->msg_len += bytes_remaining;
+                 ctx->सन्देश_len += bytes_remaining;
                  poly_hash(ctx,(UINT32 *)nh_result);
                  len -= bytes_remaining;
-                 input += bytes_remaining;
+                 आगत += bytes_remaining;
              }
 
              /* Hash directly from input stream if enough bytes */
-             while (len >= L1_KEY_LEN) {
-                 nh(&ctx->hash, (const UINT8 *)input, L1_KEY_LEN,
-                                   L1_KEY_LEN, nh_result);
-                 ctx->msg_len += L1_KEY_LEN;
-                 len -= L1_KEY_LEN;
-                 input += L1_KEY_LEN;
+             जबसम्म (len >= L1_साँचो_LEN) {
+                 nh(&ctx->hash, (अचर UINT8 *)आगत, L1_साँचो_LEN,
+                                   L1_साँचो_LEN, nh_result);
+                 ctx->सन्देश_len += L1_साँचो_LEN;
+                 len -= L1_साँचो_LEN;
+                 आगत += L1_साँचो_LEN;
                  poly_hash(ctx,(UINT32 *)nh_result);
              }
          }
 
          /* pass remaining < L1_KEY_LEN bytes of input data to NH */
-         if (len > 0 && (unsigned long)len <= UINT32_MAX) {
-             nh_update(&ctx->hash, (const UINT8 *)input, len);
-             ctx->msg_len += len;
+         यदि (len > 0 && (अचिन्हित दीर्घ)len <= UINT32_MAX) {
+             nh_update(&ctx->hash, (अचर UINT8 *)आगत, len);
+             ctx->सन्देश_len += len;
          }
      }
 
-    return (1);
+    फर्काऊ (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
-static int uhash_final(uhash_ctx_t ctx, u_char *res)
+स्थिर पूर्णाङ्क uhash_final(uhash_ctx_t ctx, u_char *res)
 /* Incorporate any pending data, pad, and generate tag */
 {
     UINT64 result_buf[STREAMS];
     UINT8 *nh_result = (UINT8 *)&result_buf;
 
-    if (ctx->msg_len > L1_KEY_LEN) {
-        if (ctx->msg_len % L1_KEY_LEN) {
+    यदि (ctx->सन्देश_len > L1_साँचो_LEN) {
+        यदि (ctx->सन्देश_len % L1_साँचो_LEN) {
             nh_final(&ctx->hash, nh_result);
             poly_hash(ctx,(UINT32 *)nh_result);
         }
         ip_long(ctx, res);
-    } else {
+    } अन्यथा {
         nh_final(&ctx->hash, nh_result);
         ip_short(ctx,nh_result, res);
     }
     uhash_reset(ctx);
-    return (1);
+    फर्काऊ (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
-static int uhash(uhash_ctx_t ahc, u_char *msg, long len, u_char *res)
+#यदि 0
+स्थिर पूर्णाङ्क uhash(uhash_ctx_t ahc, u_char *सन्देश, दीर्घ len, u_char *res)
 /* assumes that msg is in a writable buffer of length divisible by */
 /* L1_PAD_BOUNDARY. Bytes beyond msg[len] may be zeroed.           */
 {
-    UINT8 nh_result[STREAMS*sizeof(UINT64)];
+    UINT8 nh_result[STREAMS*परिमाण(UINT64)];
     UINT32 nh_len;
-    int extra_zeroes_needed;
+    पूर्णाङ्क extra_zeroes_needed;
 
     /* If the message to be hashed is no longer than L1_HASH_LEN, we skip
      * the polyhash.
      */
-    if (len <= L1_KEY_LEN) {
-	if (len == 0)                  /* If zero length messages will not */
+    यदि (len <= L1_साँचो_LEN) {
+	यदि (len == 0)                  /* If zero length messages will not */
 		nh_len = L1_PAD_BOUNDARY;  /* be seen, comment out this case   */
-	else
+	अन्यथा
 		nh_len = ((len + (L1_PAD_BOUNDARY - 1)) & ~(L1_PAD_BOUNDARY - 1));
         extra_zeroes_needed = nh_len - len;
-        zero_pad((UINT8 *)msg + len, extra_zeroes_needed);
-        nh(&ahc->hash, (UINT8 *)msg, nh_len, len, nh_result);
+        zero_pad((UINT8 *)सन्देश + len, extra_zeroes_needed);
+        nh(&ahc->hash, (UINT8 *)सन्देश, nh_len, len, nh_result);
         ip_short(ahc,nh_result, res);
-    } else {
+    } अन्यथा {
         /* Otherwise, we hash each L1_KEY_LEN chunk with NH, passing the NH
          * output to poly_hash().
          */
-        do {
-            nh(&ahc->hash, (UINT8 *)msg, L1_KEY_LEN, L1_KEY_LEN, nh_result);
+        गर {
+            nh(&ahc->hash, (UINT8 *)सन्देश, L1_साँचो_LEN, L1_साँचो_LEN, nh_result);
             poly_hash(ahc,(UINT32 *)nh_result);
-            len -= L1_KEY_LEN;
-            msg += L1_KEY_LEN;
-        } while (len >= L1_KEY_LEN);
-        if (len) {
+            len -= L1_साँचो_LEN;
+            सन्देश += L1_साँचो_LEN;
+        } जबसम्म (len >= L1_साँचो_LEN);
+        यदि (len) {
             nh_len = ((len + (L1_PAD_BOUNDARY - 1)) & ~(L1_PAD_BOUNDARY - 1));
             extra_zeroes_needed = nh_len - len;
-            zero_pad((UINT8 *)msg + len, extra_zeroes_needed);
-            nh(&ahc->hash, (UINT8 *)msg, nh_len, len, nh_result);
+            zero_pad((UINT8 *)सन्देश + len, extra_zeroes_needed);
+            nh(&ahc->hash, (UINT8 *)सन्देश, nh_len, len, nh_result);
             poly_hash(ahc,(UINT32 *)nh_result);
         }
 
@@ -1167,7 +1167,7 @@ static int uhash(uhash_ctx_t ahc, u_char *msg, long len, u_char *res)
     }
 
     uhash_reset(ahc);
-    return 1;
+    फर्काऊ 1;
 }
 #endif
 
@@ -1183,98 +1183,98 @@ static int uhash(uhash_ctx_t ahc, u_char *msg, long len, u_char *res)
  * time. The all-at-once is more optimized than the sequential version and
  * should be preferred when the sequential interface is not required.
  */
-struct umac_ctx {
+संरचना umac_ctx {
     uhash_ctx hash;          /* Hash function for message compression    */
     pdf_ctx pdf;             /* PDF for hashed output                    */
-    void *free_ptr;          /* Address to free this struct via          */
+    शून्य *free_ptr;          /* Address to free this struct via          */
 } umac_ctx;
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
-int umac_reset(struct umac_ctx *ctx)
+#यदि 0
+पूर्णाङ्क umac_reset(संरचना umac_ctx *ctx)
 /* Reset the hash function to begin a new authentication.        */
 {
     uhash_reset(&ctx->hash);
-    return (1);
+    फर्काऊ (1);
 }
 #endif
 
 /* ---------------------------------------------------------------------- */
 
-int umac_delete(struct umac_ctx *ctx)
+पूर्णाङ्क umac_delete(संरचना umac_ctx *ctx)
 /* Deallocate the ctx structure */
 {
-    if (ctx) {
-        if (ALLOC_BOUNDARY)
-            ctx = (struct umac_ctx *)ctx->free_ptr;
-        freezero(ctx, sizeof(*ctx) + ALLOC_BOUNDARY);
+    यदि (ctx) {
+        यदि (ALLOC_BOUNDARY)
+            ctx = (संरचना umac_ctx *)ctx->free_ptr;
+        freezero(ctx, परिमाण(*ctx) + ALLOC_BOUNDARY);
     }
-    return (1);
+    फर्काऊ (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
-struct umac_ctx *umac_new(const u_char key[])
+संरचना umac_ctx *umac_new(अचर u_char साँचो[])
 /* Dynamically allocate a umac_ctx struct, initialize variables,
  * generate subkeys from key. Align to 16-byte boundary.
  */
 {
-    struct umac_ctx *ctx, *octx;
-    size_t bytes_to_add;
-    aes_int_key prf_key;
+    संरचना umac_ctx *ctx, *octx;
+    माप_प्रकार bytes_to_add;
+    aes_int_साँचो prf_साँचो;
 
-    octx = ctx = xcalloc(1, sizeof(*ctx) + ALLOC_BOUNDARY);
-    if (ctx) {
-        if (ALLOC_BOUNDARY) {
+    octx = ctx = xcalloc(1, परिमाण(*ctx) + ALLOC_BOUNDARY);
+    यदि (ctx) {
+        यदि (ALLOC_BOUNDARY) {
             bytes_to_add = ALLOC_BOUNDARY -
-                              ((ptrdiff_t)ctx & (ALLOC_BOUNDARY - 1));
-            ctx = (struct umac_ctx *)((u_char *)ctx + bytes_to_add);
+                              ((सूचक_भेद_प्रकार)ctx & (ALLOC_BOUNDARY - 1));
+            ctx = (संरचना umac_ctx *)((u_char *)ctx + bytes_to_add);
         }
         ctx->free_ptr = octx;
-        aes_key_setup(key, prf_key);
-        pdf_init(&ctx->pdf, prf_key);
-        uhash_init(&ctx->hash, prf_key);
-        explicit_bzero(prf_key, sizeof(prf_key));
+        aes_साँचो_setup(साँचो, prf_साँचो);
+        pdf_init(&ctx->pdf, prf_साँचो);
+        uhash_init(&ctx->hash, prf_साँचो);
+        explicit_bzero(prf_साँचो, परिमाण(prf_साँचो));
     }
 
-    return (ctx);
+    फर्काऊ (ctx);
 }
 
 /* ---------------------------------------------------------------------- */
 
-int umac_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8])
+पूर्णाङ्क umac_final(संरचना umac_ctx *ctx, u_char tag[], अचर u_char nonce[8])
 /* Incorporate any pending data, pad, and generate tag */
 {
     uhash_final(&ctx->hash, (u_char *)tag);
-    pdf_gen_xor(&ctx->pdf, (const UINT8 *)nonce, (UINT8 *)tag);
+    pdf_gen_xor(&ctx->pdf, (अचर UINT8 *)nonce, (UINT8 *)tag);
 
-    return (1);
+    फर्काऊ (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
-int umac_update(struct umac_ctx *ctx, const u_char *input, long len)
+पूर्णाङ्क umac_update(संरचना umac_ctx *ctx, अचर u_char *आगत, दीर्घ len)
 /* Given len bytes of data, we parse it into L1_KEY_LEN chunks and   */
 /* hash each one, calling the PDF on the hashed output whenever the hash- */
 /* output buffer is full.                                                 */
 {
-    uhash_update(&ctx->hash, input, len);
-    return (1);
+    uhash_update(&ctx->hash, आगत, len);
+    फर्काऊ (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
-int umac(struct umac_ctx *ctx, u_char *input,
-         long len, u_char tag[],
+#यदि 0
+पूर्णाङ्क umac(संरचना umac_ctx *ctx, u_char *आगत,
+         दीर्घ len, u_char tag[],
          u_char nonce[8])
 /* All-in-one version simply calls umac_update() and umac_final().        */
 {
-    uhash(&ctx->hash, input, len, (u_char *)tag);
+    uhash(&ctx->hash, आगत, len, (u_char *)tag);
     pdf_gen_xor(&ctx->pdf, (UINT8 *)nonce, (UINT8 *)tag);
 
-    return (1);
+    फर्काऊ (1);
 }
 #endif
 

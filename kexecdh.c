@@ -24,195 +24,195 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#if defined(WITH_OPENSSL)
+#यदि defined(WITH_OPENSSL)
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <stdio.h>
-#include <signal.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <signal.h>
 
-#include <openssl/bn.h>
-#include <openssl/ecdh.h>
+#अन्तर्भाव <openssl/bn.h>
+#अन्तर्भाव <openssl/ecdh.h>
 
-#include "sshkey.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "ssherr.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "kex.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "ssherr.h"
 
-int
-kex_ecdh_keypair(struct kex *kex)
+पूर्णाङ्क
+kex_ecdh_keypair(संरचना kex *kex)
 {
-	EC_KEY *client_key = NULL;
-	const EC_GROUP *group;
-	const EC_POINT *public_key;
-	struct sshbuf *buf = NULL;
-	int r;
+	EC_साँचो *client_साँचो = रिक्त;
+	अचर EC_GROUP *group;
+	अचर EC_POINT *public_साँचो;
+	संरचना sshbuf *buf = रिक्त;
+	पूर्णाङ्क r;
 
-	if ((client_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
+	यदि ((client_साँचो = EC_साँचो_new_by_curve_name(kex->ec_nid)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if (EC_KEY_generate_key(client_key) != 1) {
+	यदि (EC_साँचो_generate_साँचो(client_साँचो) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ out;
 	}
-	group = EC_KEY_get0_group(client_key);
-	public_key = EC_KEY_get0_public_key(client_key);
+	group = EC_साँचो_get0_group(client_साँचो);
+	public_साँचो = EC_साँचो_get0_public_साँचो(client_साँचो);
 
-	if ((buf = sshbuf_new()) == NULL) {
+	यदि ((buf = sshbuf_new()) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = sshbuf_put_ec(buf, public_key, group)) != 0 ||
-	    (r = sshbuf_get_u32(buf, NULL)) != 0)
-		goto out;
+	यदि ((r = sshbuf_put_ec(buf, public_साँचो, group)) != 0 ||
+	    (r = sshbuf_get_u32(buf, रिक्त)) != 0)
+		गच्छ out;
 #ifdef DEBUG_KEXECDH
-	fputs("client private key:\n", stderr);
-	sshkey_dump_ec_key(client_key);
+	ख_माला_दो("client private key:\n", मानक_त्रुटि);
+	sshkey_dump_ec_साँचो(client_साँचो);
 #endif
-	kex->ec_client_key = client_key;
+	kex->ec_client_साँचो = client_साँचो;
 	kex->ec_group = group;
-	client_key = NULL;	/* owned by the kex */
+	client_साँचो = रिक्त;	/* owned by the kex */
 	kex->client_pub = buf;
-	buf = NULL;
+	buf = रिक्त;
  out:
-	EC_KEY_free(client_key);
+	EC_साँचो_free(client_साँचो);
 	sshbuf_free(buf);
-	return r;
+	फर्काऊ r;
 }
 
-int
-kex_ecdh_enc(struct kex *kex, const struct sshbuf *client_blob,
-    struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+पूर्णाङ्क
+kex_ecdh_enc(संरचना kex *kex, अचर संरचना sshbuf *client_blob,
+    संरचना sshbuf **server_blobp, संरचना sshbuf **shared_secretp)
 {
-	const EC_GROUP *group;
-	const EC_POINT *pub_key;
-	EC_KEY *server_key = NULL;
-	struct sshbuf *server_blob = NULL;
-	int r;
+	अचर EC_GROUP *group;
+	अचर EC_POINT *pub_साँचो;
+	EC_साँचो *server_साँचो = रिक्त;
+	संरचना sshbuf *server_blob = रिक्त;
+	पूर्णाङ्क r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = रिक्त;
+	*shared_secretp = रिक्त;
 
-	if ((server_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
+	यदि ((server_साँचो = EC_साँचो_new_by_curve_name(kex->ec_nid)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if (EC_KEY_generate_key(server_key) != 1) {
+	यदि (EC_साँचो_generate_साँचो(server_साँचो) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ out;
 	}
-	group = EC_KEY_get0_group(server_key);
+	group = EC_साँचो_get0_group(server_साँचो);
 
 #ifdef DEBUG_KEXECDH
-	fputs("server private key:\n", stderr);
-	sshkey_dump_ec_key(server_key);
+	ख_माला_दो("server private key:\n", मानक_त्रुटि);
+	sshkey_dump_ec_साँचो(server_साँचो);
 #endif
-	pub_key = EC_KEY_get0_public_key(server_key);
-	if ((server_blob = sshbuf_new()) == NULL) {
+	pub_साँचो = EC_साँचो_get0_public_साँचो(server_साँचो);
+	यदि ((server_blob = sshbuf_new()) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = sshbuf_put_ec(server_blob, pub_key, group)) != 0 ||
-	    (r = sshbuf_get_u32(server_blob, NULL)) != 0)
-		goto out;
-	if ((r = kex_ecdh_dec_key_group(kex, client_blob, server_key, group,
+	यदि ((r = sshbuf_put_ec(server_blob, pub_साँचो, group)) != 0 ||
+	    (r = sshbuf_get_u32(server_blob, रिक्त)) != 0)
+		गच्छ out;
+	यदि ((r = kex_ecdh_dec_साँचो_group(kex, client_blob, server_साँचो, group,
 	    0, shared_secretp)) != 0)
-		goto out;
+		गच्छ out;
 	*server_blobp = server_blob;
-	server_blob = NULL;
+	server_blob = रिक्त;
  out:
-	EC_KEY_free(server_key);
+	EC_साँचो_free(server_साँचो);
 	sshbuf_free(server_blob);
-	return r;
+	फर्काऊ r;
 }
 
-int
-kex_ecdh_dec_key_group(struct kex *kex, const struct sshbuf *ec_blob,
-    EC_KEY *key, const EC_GROUP *group, int raw, struct sshbuf **shared_secretp)
+पूर्णाङ्क
+kex_ecdh_dec_साँचो_group(संरचना kex *kex, अचर संरचना sshbuf *ec_blob,
+    EC_साँचो *साँचो, अचर EC_GROUP *group, पूर्णाङ्क raw, संरचना sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	BIGNUM *shared_secret = NULL;
-	EC_POINT *dh_pub = NULL;
-	u_char *kbuf = NULL;
-	size_t klen = 0;
-	int r;
+	संरचना sshbuf *buf = रिक्त;
+	BIGNUM *shared_secret = रिक्त;
+	EC_POINT *dh_pub = रिक्त;
+	u_char *kbuf = रिक्त;
+	माप_प्रकार klen = 0;
+	पूर्णाङ्क r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = रिक्त;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	यदि ((buf = sshbuf_new()) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = sshbuf_put_stringb(buf, ec_blob)) != 0)
-		goto out;
-	if ((dh_pub = EC_POINT_new(group)) == NULL) {
+	यदि ((r = sshbuf_put_stringb(buf, ec_blob)) != 0)
+		गच्छ out;
+	यदि ((dh_pub = EC_POINT_new(group)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = sshbuf_get_ec(buf, dh_pub, group)) != 0) {
-		goto out;
+	यदि ((r = sshbuf_get_ec(buf, dh_pub, group)) != 0) {
+		गच्छ out;
 	}
 	sshbuf_reset(buf);
 
 #ifdef DEBUG_KEXECDH
-	fputs("public key:\n", stderr);
+	ख_माला_दो("public key:\n", मानक_त्रुटि);
 	sshkey_dump_ec_point(group, dh_pub);
 #endif
-	if (sshkey_ec_validate_public(group, dh_pub) != 0) {
+	यदि (sshkey_ec_validate_public(group, dh_pub) != 0) {
 		r = SSH_ERR_MESSAGE_INCOMPLETE;
-		goto out;
+		गच्छ out;
 	}
 	klen = (EC_GROUP_get_degree(group) + 7) / 8;
-	if ((kbuf = malloc(klen)) == NULL) {
+	यदि ((kbuf = दो_स्मृति(klen)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if (ECDH_compute_key(kbuf, klen, dh_pub, key, NULL) != (int)klen) {
+	यदि (ECDH_compute_साँचो(kbuf, klen, dh_pub, साँचो, रिक्त) != (पूर्णाङ्क)klen) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ out;
 	}
 #ifdef DEBUG_KEXECDH
 	dump_digest("shared secret", kbuf, klen);
 #endif
-	if (raw) {
-		if ((r = sshbuf_put(buf, kbuf, klen)) != 0)
-			goto out;
-	} else {
-		if ((shared_secret = BN_new()) == NULL) {
+	यदि (raw) {
+		यदि ((r = sshbuf_put(buf, kbuf, klen)) != 0)
+			गच्छ out;
+	} अन्यथा {
+		यदि ((shared_secret = BN_new()) == रिक्त) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			गच्छ out;
 		}
-		if (BN_bin2bn(kbuf, klen, shared_secret) == NULL) {
+		यदि (BN_bin2bn(kbuf, klen, shared_secret) == रिक्त) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			गच्छ out;
 		}
-		if ((r = sshbuf_put_bignum2(buf, shared_secret)) != 0)
-			goto out;
+		यदि ((r = sshbuf_put_bignum2(buf, shared_secret)) != 0)
+			गच्छ out;
 	}
 	*shared_secretp = buf;
-	buf = NULL;
+	buf = रिक्त;
  out:
 	EC_POINT_clear_free(dh_pub);
 	BN_clear_free(shared_secret);
 	freezero(kbuf, klen);
 	sshbuf_free(buf);
-	return r;
+	फर्काऊ r;
 }
 
-int
-kex_ecdh_dec(struct kex *kex, const struct sshbuf *server_blob,
-    struct sshbuf **shared_secretp)
+पूर्णाङ्क
+kex_ecdh_dec(संरचना kex *kex, अचर संरचना sshbuf *server_blob,
+    संरचना sshbuf **shared_secretp)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	r = kex_ecdh_dec_key_group(kex, server_blob, kex->ec_client_key,
+	r = kex_ecdh_dec_साँचो_group(kex, server_blob, kex->ec_client_साँचो,
 	    kex->ec_group, 0, shared_secretp);
-	EC_KEY_free(kex->ec_client_key);
-	kex->ec_client_key = NULL;
-	return r;
+	EC_साँचो_free(kex->ec_client_साँचो);
+	kex->ec_client_साँचो = रिक्त;
+	फर्काऊ r;
 }
 
 #endif /* WITH_OPENSSL */

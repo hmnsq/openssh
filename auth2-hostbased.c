@@ -23,54 +23,54 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <stdlib.h>
-#include <pwd.h>
-#include <string.h>
-#include <stdarg.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <pwd.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdarg.h>
 
-#include "xmalloc.h"
-#include "ssh2.h"
-#include "packet.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "canohost.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "ssh2.h"
+#अन्तर्भाव "packet.h"
+#अन्तर्भाव "kex.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "servconf.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "hostfile.h"
+#अन्तर्भाव "auth.h"
+#अन्तर्भाव "canohost.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#अन्तर्भाव "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
-#include "pathnames.h"
-#include "ssherr.h"
-#include "match.h"
+#अन्तर्भाव "monitor_wrap.h"
+#अन्तर्भाव "pathnames.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "match.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_hostbased;
+बाह्य ServerOptions options;
+बाह्य संरचना authmethod_cfg methodcfg_hostbased;
 
-static int
-userauth_hostbased(struct ssh *ssh, const char *method)
+स्थिर पूर्णाङ्क
+userauth_hostbased(संरचना ssh *ssh, अचर वर्ण *method)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct sshbuf *keyblob = NULL, *b = NULL;
-	struct sshkey *key = NULL;
-	char *pkalg, *cuser, *chost;
+	संरचना sshbuf *keyblob = रिक्त, *b = रिक्त;
+	संरचना sshkey *साँचो = रिक्त;
+	वर्ण *pkalg, *cuser, *chost;
 	u_char *sig;
-	size_t alen, slen;
-	int r, pktype, authenticated = 0;
+	माप_प्रकार alen, slen;
+	पूर्णाङ्क r, pktype, authenticated = 0;
 
-	if ((r = sshpkt_get_cstring(ssh, &pkalg, &alen)) != 0 ||
+	यदि ((r = sshpkt_get_cstring(ssh, &pkalg, &alen)) != 0 ||
 	    (r = sshpkt_getb_froms(ssh, &keyblob)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &chost, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &cuser, NULL)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &chost, रिक्त)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &cuser, रिक्त)) != 0 ||
 	    (r = sshpkt_get_string(ssh, &sig, &slen)) != 0)
 		fatal_fr(r, "parse packet");
 
@@ -78,66 +78,66 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 	    cuser, chost, pkalg, slen);
 #ifdef DEBUG_PK
 	debug("signature:");
-	sshbuf_dump_data(sig, slen, stderr);
+	sshbuf_dump_data(sig, slen, मानक_त्रुटि);
 #endif
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC) {
+	यदि (pktype == साँचो_UNSPEC) {
 		/* this is perfectly legal */
 		logit_f("unsupported public key algorithm: %s",
 		    pkalg);
-		goto done;
+		गच्छ done;
 	}
-	if (match_pattern_list(pkalg,
+	यदि (match_pattern_list(pkalg,
 	    options.hostbased_accepted_algos, 0) != 1) {
 		logit_f("signature algorithm %s not in "
 		    "HostbasedAcceptedAlgorithms", pkalg);
-		goto done;
+		गच्छ done;
 	}
-	if ((b = sshbuf_fromb(keyblob)) == NULL)
+	यदि ((b = sshbuf_fromb(keyblob)) == रिक्त)
 		fatal_f("sshbuf_fromb failed");
-	switch ((r = sshkey_fromb_allowlist(b, &key,
+	विकल्प ((r = sshkey_fromb_allowlist(b, &साँचो,
 	    options.hostbased_accepted_algos, options.ca_sign_algorithms))) {
-	case 0:
+	पक्ष 0:
 		/* ok */
-		break;
-	case SSH_ERR_KEY_ALG_UNSUPPORTED:
+		रोक;
+	पक्ष SSH_ERR_साँचो_ALG_UNSUPPORTED:
 		/* This shouldn't happen unless the client is being weird */
 		logit_f("key algorithm differs from signature algorithm %s and "
 		    "is not in HostbasedAcceptedAlgorithms", pkalg);
-		goto done;
-	case SSH_ERR_SIGN_ALG_UNSUPPORTED:
+		गच्छ done;
+	पक्ष SSH_ERR_SIGN_ALG_UNSUPPORTED:
 		logit_fr(r, "certificate signature algorithm not in "
 		    "CASignatureAlgorithms");
-		goto done;
-	default:
+		गच्छ done;
+	स्वभाव:
 		error_fr(r, "parse key");
-		goto done;
+		गच्छ done;
 	}
 	sshbuf_free(b);
-	b = NULL;
+	b = रिक्त;
 
-	if (key->type != pktype || (sshkey_type_plain(pktype) == KEY_ECDSA &&
-	    sshkey_ecdsa_nid_from_name(pkalg) != key->ecdsa_nid)) {
+	यदि (साँचो->type != pktype || (sshkey_type_plain(pktype) == साँचो_ECDSA &&
+	    sshkey_ecdsa_nid_from_name(pkalg) != साँचो->ecdsa_nid)) {
 		error_f("key type mismatch for decoded key "
-		    "(received %s, expected %s)", sshkey_ssh_name(key), pkalg);
-		goto done;
+		    "(received %s, expected %s)", sshkey_ssh_name(साँचो), pkalg);
+		गच्छ done;
 	}
-	if ((r = sshkey_check_rsa_length(key,
+	यदि ((r = sshkey_check_rsa_length(साँचो,
 	    options.required_rsa_size)) != 0) {
-		logit_r(r, "refusing %s key", sshkey_type(key));
-		goto done;
+		logit_r(r, "refusing %s key", sshkey_type(साँचो));
+		गच्छ done;
 	}
 
-	if (!authctxt->valid || authctxt->user == NULL) {
+	यदि (!authctxt->valid || authctxt->user == रिक्त) {
 		debug2_f("disabled because of invalid user");
-		goto done;
+		गच्छ done;
 	}
 
-	if ((b = sshbuf_new()) == NULL)
+	यदि ((b = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 	/* reconstruct packet */
-	if ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	यदि ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_सन्देश_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->service)) != 0 ||
 	    (r = sshbuf_put_cstring(b, method)) != 0 ||
@@ -147,7 +147,7 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 	    (r = sshbuf_put_cstring(b, cuser)) != 0)
 		fatal_fr(r, "reconstruct packet");
 #ifdef DEBUG_PK
-	sshbuf_dump(b, stderr);
+	sshbuf_dump(b, मानक_त्रुटि);
 #endif
 
 	auth2_record_info(authctxt,
@@ -155,37 +155,37 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 
 	/* test for allowed key and correct signature */
 	authenticated = 0;
-	if (mm_hostbased_key_allowed(ssh, authctxt->pw, cuser,
-	    chost, key) &&
-	    mm_sshkey_verify(key, sig, slen,
-	    sshbuf_ptr(b), sshbuf_len(b), pkalg, ssh->compat, NULL) == 0)
+	यदि (mm_hostbased_साँचो_allowed(ssh, authctxt->pw, cuser,
+	    chost, साँचो) &&
+	    mm_sshkey_verify(साँचो, sig, slen,
+	    sshbuf_ptr(b), sshbuf_len(b), pkalg, ssh->compat, रिक्त) == 0)
 		authenticated = 1;
 
-	auth2_record_key(authctxt, authenticated, key);
+	auth2_record_साँचो(authctxt, authenticated, साँचो);
 done:
 	debug2_f("authenticated %d", authenticated);
-	sshkey_free(key);
+	sshkey_free(साँचो);
 	sshbuf_free(b);
 	sshbuf_free(keyblob);
-	free(pkalg);
-	free(cuser);
-	free(chost);
-	free(sig);
-	return authenticated;
+	मुक्त(pkalg);
+	मुक्त(cuser);
+	मुक्त(chost);
+	मुक्त(sig);
+	फर्काऊ authenticated;
 }
 
 /* return 1 if given hostkey is allowed */
-int
-hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
-    const char *cuser, char *chost, struct sshkey *key)
+पूर्णाङ्क
+hostbased_साँचो_allowed(संरचना ssh *ssh, संरचना passwd *pw,
+    अचर वर्ण *cuser, वर्ण *chost, संरचना sshkey *साँचो)
 {
-	const char *resolvedname, *ipaddr, *lookup, *reason;
+	अचर वर्ण *resolvedname, *ipaddr, *lookup, *reason;
 	HostStatus host_status;
-	int len;
-	char *fp;
+	पूर्णाङ्क len;
+	वर्ण *fp;
 
-	if (auth_key_is_revoked(key))
-		return 0;
+	यदि (auth_साँचो_is_revoked(साँचो))
+		फर्काऊ 0;
 
 	resolvedname = auth_get_canonical_hostname(ssh, options.use_dns);
 	ipaddr = ssh_remote_ipaddr(ssh);
@@ -193,81 +193,81 @@ hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
 	debug2_f("chost %s resolvedname %s ipaddr %s",
 	    chost, resolvedname, ipaddr);
 
-	if (((len = strlen(chost)) > 0) && chost[len - 1] == '.') {
+	यदि (((len = म_माप(chost)) > 0) && chost[len - 1] == '.') {
 		debug2("stripping trailing dot from chost %s", chost);
 		chost[len - 1] = '\0';
 	}
 
-	if (options.hostbased_uses_name_from_packet_only) {
-		if (auth_rhosts2(pw, cuser, chost, chost) == 0) {
+	यदि (options.hostbased_uses_name_from_packet_only) {
+		यदि (auth_rhosts2(pw, cuser, chost, chost) == 0) {
 			debug2_f("auth_rhosts2 refused user \"%.100s\" "
 			    "host \"%.100s\" (from packet)", cuser, chost);
-			return 0;
+			फर्काऊ 0;
 		}
 		lookup = chost;
-	} else {
-		if (strcasecmp(resolvedname, chost) != 0)
+	} अन्यथा {
+		यदि (strcasecmp(resolvedname, chost) != 0)
 			logit("userauth_hostbased mismatch: "
 			    "client sends %s, but we resolve %s to %s",
 			    chost, ipaddr, resolvedname);
-		if (auth_rhosts2(pw, cuser, resolvedname, ipaddr) == 0) {
+		यदि (auth_rhosts2(pw, cuser, resolvedname, ipaddr) == 0) {
 			debug2_f("auth_rhosts2 refused "
 			    "user \"%.100s\" host \"%.100s\" addr \"%.100s\"",
 			    cuser, resolvedname, ipaddr);
-			return 0;
+			फर्काऊ 0;
 		}
 		lookup = resolvedname;
 	}
 	debug2_f("access allowed by auth_rhosts2");
 
-	if (sshkey_is_cert(key) && sshkey_cert_check_host(key, lookup,
+	यदि (sshkey_is_cert(साँचो) && sshkey_cert_check_host(साँचो, lookup,
 	     options.ca_sign_algorithms, &reason) != 0) {
-		if ((fp = sshkey_fingerprint(key->cert->signature_key,
-		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
+		यदि ((fp = sshkey_fingerprint(साँचो->cert->signature_साँचो,
+		    options.fingerprint_hash, SSH_FP_DEFAULT)) == रिक्त)
 			fatal_f("sshkey_fingerprint fail");
 		error("Refusing certificate ID \"%s\" serial=%llu signed by "
-		    "%s CA %s: %s", key->cert->key_id,
-		    (unsigned long long)key->cert->serial,
-		    sshkey_type(key->cert->signature_key), fp, reason);
+		    "%s CA %s: %s", साँचो->cert->साँचो_id,
+		    (अचिन्हित दीर्घ दीर्घ)साँचो->cert->serial,
+		    sshkey_type(साँचो->cert->signature_साँचो), fp, reason);
 		auth_debug_add("Refused Certificate ID \"%s\" serial=%llu: %s",
-		    key->cert->key_id, (unsigned long long)key->cert->serial,
+		    साँचो->cert->साँचो_id, (अचिन्हित दीर्घ दीर्घ)साँचो->cert->serial,
 		    reason);
-		free(fp);
-		return 0;
+		मुक्त(fp);
+		फर्काऊ 0;
 	}
 
-	host_status = check_key_in_hostfiles(pw, key, lookup,
+	host_status = check_साँचो_in_hostfiles(pw, साँचो, lookup,
 	    _PATH_SSH_SYSTEM_HOSTFILE,
-	    options.ignore_user_known_hosts ? NULL : _PATH_SSH_USER_HOSTFILE);
+	    options.ignore_user_known_hosts ? रिक्त : _PATH_SSH_USER_HOSTFILE);
 
 	/* backward compat if no key has been found. */
-	if (host_status == HOST_NEW) {
-		host_status = check_key_in_hostfiles(pw, key, lookup,
+	यदि (host_status == HOST_NEW) {
+		host_status = check_साँचो_in_hostfiles(pw, साँचो, lookup,
 		    _PATH_SSH_SYSTEM_HOSTFILE2,
-		    options.ignore_user_known_hosts ? NULL :
+		    options.ignore_user_known_hosts ? रिक्त :
 		    _PATH_SSH_USER_HOSTFILE2);
 	}
 
-	if (host_status == HOST_OK) {
-		if (sshkey_is_cert(key)) {
-			if ((fp = sshkey_fingerprint(key->cert->signature_key,
-			    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
+	यदि (host_status == HOST_OK) {
+		यदि (sshkey_is_cert(साँचो)) {
+			यदि ((fp = sshkey_fingerprint(साँचो->cert->signature_साँचो,
+			    options.fingerprint_hash, SSH_FP_DEFAULT)) == रिक्त)
 				fatal_f("sshkey_fingerprint fail");
 			verbose("Accepted certificate ID \"%s\" signed by "
-			    "%s CA %s from %s@%s", key->cert->key_id,
-			    sshkey_type(key->cert->signature_key), fp,
+			    "%s CA %s from %s@%s", साँचो->cert->साँचो_id,
+			    sshkey_type(साँचो->cert->signature_साँचो), fp,
 			    cuser, lookup);
-		} else {
-			if ((fp = sshkey_fingerprint(key,
-			    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
+		} अन्यथा {
+			यदि ((fp = sshkey_fingerprint(साँचो,
+			    options.fingerprint_hash, SSH_FP_DEFAULT)) == रिक्त)
 				fatal_f("sshkey_fingerprint fail");
 			verbose("Accepted %s public key %s from %s@%s",
-			    sshkey_type(key), fp, cuser, lookup);
+			    sshkey_type(साँचो), fp, cuser, lookup);
 		}
-		free(fp);
+		मुक्त(fp);
 	}
 
-	return (host_status == HOST_OK);
+	फर्काऊ (host_status == HOST_OK);
 }
 
 Authmethod method_hostbased = {

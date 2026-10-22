@@ -7,20 +7,20 @@
  * function compiled without _FORTIFY_SOURCE.
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#if defined(HAVE_FEATURES_H) && defined(_FORTIFY_SOURCE)
+#यदि defined(HAVE_FEATURES_H) && defined(_FORTIFY_SOURCE)
 # include <features.h>
-# if defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
-#  if __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0)
+# यदि defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
+#  यदि __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0)
 #   undef _FORTIFY_SOURCE
 #   undef __USE_FORTIFY_LEVEL
 #   include <sys/socket.h>
-void kludge_FD_SET(int n, fd_set *set) {
+शून्य kludge_FD_SET(पूर्णाङ्क n, fd_set *set) {
 	FD_SET(n, set);
 }
-int kludge_FD_ISSET(int n, fd_set *set) {
-	return FD_ISSET(n, set);
+पूर्णाङ्क kludge_FD_ISSET(पूर्णाङ्क n, fd_set *set) {
+	फर्काऊ FD_ISSET(n, set);
 }
 #  endif /* __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0) */
 # endif /* __GNU_LIBRARY__ && __GLIBC_PREREQ */

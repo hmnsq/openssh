@@ -34,9 +34,9 @@
 #define _GETOPT_H_
 
 #ifndef __THROW
-# if defined __cplusplus
+# यदि defined __cplusplus
 #  define __THROW throw()
-# else
+# अन्यथा
 #  define __THROW
 # endif
 #endif
@@ -48,38 +48,38 @@
 #define required_argument  1
 #define optional_argument  2
 
-#if 0
-struct option {
+#यदि 0
+संरचना option {
 	/* name of long option */
-	const char *name;
+	अचर वर्ण *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	पूर्णाङ्क has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	पूर्णाङ्क *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	पूर्णाङ्क val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
+पूर्णाङ्क	 getopt_long(पूर्णाङ्क, वर्ण * अचर *, अचर वर्ण *,
+	    अचर संरचना option *, पूर्णाङ्क *);
+पूर्णाङ्क	 getopt_long_only(पूर्णाङ्क, वर्ण * अचर *, अचर वर्ण *,
+	    अचर संरचना option *, पूर्णाङ्क *);
 #endif
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+पूर्णाङ्क	 getopt(पूर्णाङ्क, वर्ण * अचर *, अचर वर्ण *) __THROW;
+पूर्णाङ्क	 getsubopt(वर्ण **, वर्ण * अचर *, वर्ण **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
+बाह्य   वर्ण *optarg;                  /* getopt(3) external variables */
+बाह्य   पूर्णाङ्क opterr;
+बाह्य   पूर्णाङ्क optind;
+बाह्य   पूर्णाङ्क optopt;
+बाह्य   पूर्णाङ्क optreset;
+बाह्य   वर्ण *suboptarg;               /* getsubopt(3) external variable */
 #endif
  
 #endif /* !_GETOPT_H_ */

@@ -1,45 +1,45 @@
 /* public domain */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <unistd.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <unistd.h>
 
-#include "log.h"
+#अन्तर्भाव "log.h"
 
-void
-sshlogv(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, va_list args)
+शून्य
+sshlogv(अचर वर्ण *file, अचर वर्ण *func, पूर्णाङ्क पङ्क्ति, पूर्णाङ्क showfunc,
+    LogLevel level, अचर वर्ण *suffix, अचर वर्ण *fmt, बहु_सूची args)
 {
-	if (showfunc)
-		fprintf(stderr, "%s: ", func);
-	vfprintf(stderr, fmt, args);
-	if (suffix != NULL)
-		fprintf(stderr, ": %s", suffix);
-	fputc('\n', stderr);
+	यदि (showfunc)
+		ख_लिखो(मानक_त्रुटि, "%s: ", func);
+	भख_लिखो(मानक_त्रुटि, fmt, args);
+	यदि (suffix != रिक्त)
+		ख_लिखो(मानक_त्रुटि, ": %s", suffix);
+	ख_अक्षर_दो('\n', मानक_त्रुटि);
 }
 
-void
-sshlog(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+शून्य
+sshlog(अचर वर्ण *file, अचर वर्ण *func, पूर्णाङ्क पङ्क्ति, पूर्णाङ्क showfunc,
+    LogLevel level, अचर वर्ण *suffix, अचर वर्ण *fmt, ...)
 {
-	va_list args;
+	बहु_सूची args;
 
-	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
-	va_end(args);
+	बहु_शुरू(args, fmt);
+	sshlogv(file, func, पङ्क्ति, showfunc, level, suffix, fmt, args);
+	बहु_पूर्ण(args);
 }
 
-void
-sshfatal(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+शून्य
+sshfatal(अचर वर्ण *file, अचर वर्ण *func, पूर्णाङ्क पङ्क्ति, पूर्णाङ्क showfunc,
+    LogLevel level, अचर वर्ण *suffix, अचर वर्ण *fmt, ...)
 {
-	va_list args;
+	बहु_सूची args;
 
-	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
-	va_end(args);
+	बहु_शुरू(args, fmt);
+	sshlogv(file, func, पङ्क्ति, showfunc, level, suffix, fmt, args);
+	बहु_पूर्ण(args);
 	_exit(1);
 }

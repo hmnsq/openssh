@@ -18,11 +18,11 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strlcat.c */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 #ifndef HAVE_STRLCAT
 
-#include <sys/types.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <string.h>
 
 /*
  * Appends src to string dst of size siz (unlike strncat, siz is the
@@ -31,24 +31,24 @@
  * Returns strlen(src) + MIN(siz, strlen(initial dst)).
  * If retval >= siz, truncation occurred.
  */
-size_t
-strlcat(char *dst, const char *src, size_t siz)
+माप_प्रकार
+strlcat(वर्ण *dst, अचर वर्ण *src, माप_प्रकार siz)
 {
-	char *d = dst;
-	const char *s = src;
-	size_t n = siz;
-	size_t dlen;
+	वर्ण *d = dst;
+	अचर वर्ण *s = src;
+	माप_प्रकार n = siz;
+	माप_प्रकार dlen;
 
 	/* Find the end of dst and adjust bytes left but don't go past end */
-	while (n-- != 0 && *d != '\0')
+	जबसम्म (n-- != 0 && *d != '\0')
 		d++;
 	dlen = d - dst;
 	n = siz - dlen;
 
-	if (n == 0)
-		return(dlen + strlen(s));
-	while (*s != '\0') {
-		if (n != 1) {
+	यदि (n == 0)
+		फर्काऊ(dlen + म_माप(s));
+	जबसम्म (*s != '\0') {
+		यदि (n != 1) {
 			*d++ = *s;
 			n--;
 		}
@@ -56,7 +56,7 @@ strlcat(char *dst, const char *src, size_t siz)
 	}
 	*d = '\0';
 
-	return(dlen + (s - src));	/* count does not include NUL */
+	फर्काऊ(dlen + (s - src));	/* count does not include NUL */
 }
 
 #endif /* !HAVE_STRLCAT */

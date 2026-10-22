@@ -16,43 +16,43 @@
 
 /* $OpenBSD$ */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 #ifdef HAVE_SYS_STATVFS_H
 # include <sys/statvfs.h>
 #endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <errno.h>
 
-static void
-usage(void)
+स्थिर शून्य
+usage(शून्य)
 {
-	fprintf(stderr, "check-setuid [path]\n");
-	exit(1);
+	ख_लिखो(मानक_त्रुटि, "check-setuid [path]\n");
+	निकास(1);
 }
 
-int
-main(int argc, char **argv)
+पूर्णाङ्क
+main(पूर्णाङ्क argc, वर्ण **argv)
 {
-	const char *path = ".";
-	struct statvfs sb;
+	अचर वर्ण *path = ".";
+	संरचना statvfs sb;
 
-	if (argc > 2)
+	यदि (argc > 2)
 		usage();
-	else if (argc == 2)
+	अन्यथा यदि (argc == 2)
 		path = argv[1];
 
-	if (statvfs(path, &sb) != 0) {
+	यदि (statvfs(path, &sb) != 0) {
 		/* Don't return an error if the host doesn't support statvfs */
-		if (errno == ENOSYS)
-			return 0;
-		fprintf(stderr, "statvfs for \"%s\" failed: %s\n",
-		     path, strerror(errno));
+		यदि (त्रुटि_सं == ENOSYS)
+			फर्काऊ 0;
+		ख_लिखो(मानक_त्रुटि, "statvfs for \"%s\" failed: %s\n",
+		     path, म_त्रुटि(त्रुटि_सं));
 	}
-	return (sb.f_flag & ST_NOSUID) ? 1 : 0;
+	फर्काऊ (sb.f_flag & ST_NOSUID) ? 1 : 0;
 }
 
 

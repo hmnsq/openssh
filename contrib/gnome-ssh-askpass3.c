@@ -52,101 +52,101 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
 
-#include <X11/Xlib.h>
-#include <gtk/gtk.h>
-#include <gdk/gdkx.h>
-#include <gdk/gdkkeysyms.h>
+#अन्तर्भाव <X11/Xlib.h>
+#अन्तर्भाव <gtk/gtk.h>
+#अन्तर्भाव <gdk/gdkx.h>
+#अन्तर्भाव <gdk/gdkkeysyms.h>
 
-static void
+स्थिर शून्य
 ok_dialog(GtkWidget *entry, gpointer dialog)
 {
 	g_return_if_fail(GTK_IS_DIALOG(dialog));
 	gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 }
 
-static gboolean
-check_none(GtkWidget *widget, GdkEventKey *event, gpointer dialog)
+स्थिर gboolean
+check_none(GtkWidget *widget, Gdk_Event_साँचो *event, gpointer dialog)
 {
-	switch (event->keyval) {
-	case GDK_KEY_Escape:
+	विकल्प (event->keyval) {
+	पक्ष GDK_साँचो_Escape:
 		/* esc -> close dialog */
 		gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE);
-		return TRUE;
-	case GDK_KEY_Tab:
+		फर्काऊ TRUE;
+	पक्ष GDK_साँचो_Tab:
 		/* tab -> focus close button */
 		gtk_widget_grab_focus(gtk_dialog_get_widget_for_response(
 		    dialog, GTK_RESPONSE_CLOSE));
-		return TRUE;
-	default:
+		फर्काऊ TRUE;
+	स्वभाव:
 		/* eat all other key events */
-		return TRUE;
+		फर्काऊ TRUE;
 	}
 }
 
-static int
-parse_env_hex_color(const char *env, GdkColor *c)
+स्थिर पूर्णाङ्क
+parse_env_hex_color(अचर वर्ण *env, GdkColor *c)
 {
-	const char *s;
-	unsigned long ul;
-	char *ep;
-	size_t n;
+	अचर वर्ण *s;
+	अचिन्हित दीर्घ ul;
+	वर्ण *ep;
+	माप_प्रकार n;
 
-	if ((s = getenv(env)) == NULL)
-		return 0;
+	यदि ((s = दो_पर्या(env)) == रिक्त)
+		फर्काऊ 0;
 
-	memset(c, 0, sizeof(*c));
+	स_रखो(c, 0, परिमाण(*c));
 
 	/* Permit hex rgb or rrggbb optionally prefixed by '#' or '0x' */
-	if (*s == '#')
+	यदि (*s == '#')
 		s++;
-	else if (strncmp(s, "0x", 2) == 0)
+	अन्यथा यदि (म_भेदन(s, "0x", 2) == 0)
 		s += 2;
-	n = strlen(s);
-	if (n != 3 && n != 6)
-		goto bad;
-	ul = strtoul(s, &ep, 16);
-	if (*ep != '\0' || ul > 0xffffff) {
+	n = म_माप(s);
+	यदि (n != 3 && n != 6)
+		गच्छ bad;
+	ul = म_से_अदीर्घ(s, &ep, 16);
+	यदि (*ep != '\0' || ul > 0xffffff) {
  bad:
-		fprintf(stderr, "Invalid $%s - invalid hex color code\n", env);
-		return 0;
+		ख_लिखो(मानक_त्रुटि, "Invalid $%s - invalid hex color code\n", env);
+		फर्काऊ 0;
 	}
 	/* Valid hex sequence; expand into a GdkColor */
-	if (n == 3) {
+	यदि (n == 3) {
 		/* 4-bit RGB */
 		c->red = ((ul >> 8) & 0xf) << 12;
 		c->green = ((ul >> 4) & 0xf) << 12;
 		c->blue = (ul & 0xf) << 12;
-	} else {
+	} अन्यथा {
 		/* 8-bit RGB */
 		c->red = ((ul >> 16) & 0xff) << 8;
 		c->green = ((ul >> 8) & 0xff) << 8;
 		c->blue = (ul & 0xff) << 8;
 	}
-	return 1;
+	फर्काऊ 1;
 }
 
-static int
-passphrase_dialog(char *message, int prompt_type)
+स्थिर पूर्णाङ्क
+passphrase_dialog(वर्ण *message, पूर्णाङ्क prompt_type)
 {
-	const char *failed;
-	char *passphrase, *local;
-	int result, grab_tries, grab_server, grab_pointer;
-	int buttons, default_response;
+	अचर वर्ण *failed;
+	वर्ण *passphrase, *local;
+	पूर्णाङ्क result, grab_tries, grab_server, grab_pointer;
+	पूर्णाङ्क buttons, default_response;
 	GtkWidget *parent_window, *dialog, *entry, *err;
 	GdkGrabStatus status;
 	GdkColor fg, bg;
 	GdkSeat *seat;
 	GdkDisplay *display;
 	GdkSeatCapabilities caps;
-	int fg_set = 0, bg_set = 0;
+	पूर्णाङ्क fg_set = 0, bg_set = 0;
 
-	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != NULL);
-	grab_pointer = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != NULL);
+	grab_server = (दो_पर्या("GNOME_SSH_ASKPASS_GRAB_SERVER") != रिक्त);
+	grab_pointer = (दो_पर्या("GNOME_SSH_ASKPASS_GRAB_POINTER") != रिक्त);
 	grab_tries = 0;
 
 	fg_set = parse_env_hex_color("GNOME_SSH_ASKPASS_FG_COLOR", &fg);
@@ -156,19 +156,19 @@ passphrase_dialog(char *message, int prompt_type)
 	 * complain.  */
 	parent_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-	switch (prompt_type) {
-	case PROMPT_CONFIRM:
+	विकल्प (prompt_type) {
+	पक्ष PROMPT_CONFIRM:
 		buttons = GTK_BUTTONS_YES_NO;
 		default_response = GTK_RESPONSE_YES;
-		break;
-	case PROMPT_NONE:
+		रोक;
+	पक्ष PROMPT_NONE:
 		buttons = GTK_BUTTONS_CLOSE;
 		default_response = GTK_RESPONSE_CLOSE;
-		break;
-	default:
+		रोक;
+	स्वभाव:
 		buttons = GTK_BUTTONS_OK_CANCEL;
 		default_response = GTK_RESPONSE_OK;
-		break;
+		रोक;
 	}
 
 	dialog = gtk_message_dialog_new(GTK_WINDOW(parent_window), 0,
@@ -180,28 +180,28 @@ passphrase_dialog(char *message, int prompt_type)
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), default_response);
 	gtk_window_set_keep_above(GTK_WINDOW(dialog), TRUE);
 
-	if (fg_set)
+	यदि (fg_set)
 		gtk_widget_modify_fg(dialog, GTK_STATE_NORMAL, &fg);
-	if (bg_set)
+	यदि (bg_set)
 		gtk_widget_modify_bg(dialog, GTK_STATE_NORMAL, &bg);
 
-	if (prompt_type == PROMPT_ENTRY || prompt_type == PROMPT_NONE) {
+	यदि (prompt_type == PROMPT_ENTRY || prompt_type == PROMPT_NONE) {
 		entry = gtk_entry_new();
-		if (fg_set)
+		यदि (fg_set)
 			gtk_widget_modify_fg(entry, GTK_STATE_NORMAL, &fg);
-		if (bg_set)
+		यदि (bg_set)
 			gtk_widget_modify_bg(entry, GTK_STATE_NORMAL, &bg);
 		gtk_box_pack_start(
 		    GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 		    entry, FALSE, FALSE, 0);
 		gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 		gtk_widget_grab_focus(entry);
-		if (prompt_type == PROMPT_ENTRY) {
+		यदि (prompt_type == PROMPT_ENTRY) {
 			gtk_widget_show(entry);
 			/* Make <enter> close dialog */
 			g_signal_connect(G_OBJECT(entry), "activate",
 					 G_CALLBACK(ok_dialog), dialog);
-		} else {
+		} अन्यथा {
 			/*
 			 * Ensure the 'close' button is not focused by default
 			 * but is still reachable via tab. This is a bit of a
@@ -218,18 +218,18 @@ passphrase_dialog(char *message, int prompt_type)
 	display = gtk_widget_get_display(GTK_WIDGET(dialog));
 	seat = gdk_display_get_default_seat(display);
 	caps = GDK_SEAT_CAPABILITY_KEYBOARD;
-	if (grab_pointer)
+	यदि (grab_pointer)
 		caps |= GDK_SEAT_CAPABILITY_ALL_POINTING;
-	if (grab_server)
+	यदि (grab_server)
 		caps = GDK_SEAT_CAPABILITY_ALL;
-	for (;;) {
+	लागि (;;) {
 		status = gdk_seat_grab(seat, gtk_widget_get_window(dialog),
-		    caps, TRUE, NULL, NULL, NULL, NULL);
-		if (status == GDK_GRAB_SUCCESS)
-			break;
+		    caps, TRUE, रिक्त, रिक्त, रिक्त, रिक्त);
+		यदि (status == GDK_GRAB_SUCCESS)
+			रोक;
 		usleep(GRAB_WAIT * 1000);
-		if (++grab_tries > GRAB_TRIES)
-			goto nograb;
+		यदि (++grab_tries > GRAB_TRIES)
+			गच्छ nograb;
 	}
 
 	result = gtk_dialog_run(GTK_DIALOG(dialog));
@@ -239,30 +239,30 @@ passphrase_dialog(char *message, int prompt_type)
 	gdk_display_flush(display);
 
 	/* Report passphrase if user selected OK */
-	if (prompt_type == PROMPT_ENTRY) {
+	यदि (prompt_type == PROMPT_ENTRY) {
 		passphrase = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
-		if (result == GTK_RESPONSE_OK) {
+		यदि (result == GTK_RESPONSE_OK) {
 			local = g_locale_from_utf8(passphrase,
-			    strlen(passphrase), NULL, NULL, NULL);
-			if (local != NULL) {
-				puts(local);
-				memset(local, '\0', strlen(local));
+			    म_माप(passphrase), रिक्त, रिक्त, रिक्त);
+			यदि (local != रिक्त) {
+				माला_दो(local);
+				स_रखो(local, '\0', म_माप(local));
 				g_free(local);
-			} else {
-				puts(passphrase);
+			} अन्यथा {
+				माला_दो(passphrase);
 			}
 		}
 		/* Zero passphrase in memory */
-		memset(passphrase, '\b', strlen(passphrase));
+		स_रखो(passphrase, '\b', म_माप(passphrase));
 		gtk_entry_set_text(GTK_ENTRY(entry), passphrase);
-		memset(passphrase, '\0', strlen(passphrase));
+		स_रखो(passphrase, '\0', म_माप(passphrase));
 		g_free(passphrase);
 	}
 
 	gtk_widget_destroy(dialog);
-	if (result != GTK_RESPONSE_OK && result != GTK_RESPONSE_YES)
-		return -1;
-	return 0;
+	यदि (result != GTK_RESPONSE_OK && result != GTK_RESPONSE_YES)
+		फर्काऊ -1;
+	फर्काऊ 0;
 
  nograb:
 	gtk_widget_destroy(dialog);
@@ -273,33 +273,33 @@ passphrase_dialog(char *message, int prompt_type)
 	gtk_window_set_position(GTK_WINDOW(err), GTK_WIN_POS_CENTER);
 	gtk_dialog_run(GTK_DIALOG(err));
 	gtk_widget_destroy(err);
-	return -1;
+	फर्काऊ -1;
 }
 
-int
-main(int argc, char **argv)
+पूर्णाङ्क
+main(पूर्णाङ्क argc, वर्ण **argv)
 {
-	char *message, *prompt_mode;
-	int result, prompt_type = PROMPT_ENTRY;
+	वर्ण *message, *prompt_mode;
+	पूर्णाङ्क result, prompt_type = PROMPT_ENTRY;
 
 	gtk_init(&argc, &argv);
 
-	if (argc > 1) {
+	यदि (argc > 1) {
 		message = g_strjoinv(" ", argv + 1);
-	} else {
+	} अन्यथा {
 		message = g_strdup("Enter your OpenSSH passphrase:");
 	}
 
-	if ((prompt_mode = getenv("SSH_ASKPASS_PROMPT")) != NULL) {
-		if (strcasecmp(prompt_mode, "confirm") == 0)
+	यदि ((prompt_mode = दो_पर्या("SSH_ASKPASS_PROMPT")) != रिक्त) {
+		यदि (strcasecmp(prompt_mode, "confirm") == 0)
 			prompt_type = PROMPT_CONFIRM;
-		else if (strcasecmp(prompt_mode, "none") == 0)
+		अन्यथा यदि (strcasecmp(prompt_mode, "none") == 0)
 			prompt_type = PROMPT_NONE;
 	}
 
-	setvbuf(stdout, 0, _IONBF, 0);
+	रखो_भबफ(मानक_निकास, 0, _IONBF, 0);
 	result = passphrase_dialog(message, prompt_type);
 	g_free(message);
 
-	return (result);
+	फर्काऊ (result);
 }

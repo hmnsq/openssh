@@ -13,104 +13,104 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-#include "xmalloc.h"
-#include "log.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "log.h"
 
-#if defined(__OpenBSD__)
-const char * const malloc_options = "S";
+#यदि defined(__OpenBSD__)
+अचर वर्ण * अचर malloc_options = "S";
 #endif /* __OpenBSD__ */
 
-void *
-xmalloc(size_t size)
+शून्य *
+xmalloc(माप_प्रकार size)
 {
-	void *ptr;
+	शून्य *ptr;
 
-	if (size == 0)
+	यदि (size == 0)
 		fatal("xmalloc: zero size");
-	ptr = malloc(size);
-	if (ptr == NULL)
+	ptr = दो_स्मृति(size);
+	यदि (ptr == रिक्त)
 		fatal("xmalloc: out of memory (allocating %zu bytes)", size);
-	return ptr;
+	फर्काऊ ptr;
 }
 
-void *
-xcalloc(size_t nmemb, size_t size)
+शून्य *
+xcalloc(माप_प्रकार nmemb, माप_प्रकार size)
 {
-	void *ptr;
+	शून्य *ptr;
 
-	if (size == 0 || nmemb == 0)
+	यदि (size == 0 || nmemb == 0)
 		fatal("xcalloc: zero size");
-	if (SIZE_MAX / nmemb < size)
+	यदि (SIZE_MAX / nmemb < size)
 		fatal("xcalloc: nmemb * size > SIZE_MAX");
-	ptr = calloc(nmemb, size);
-	if (ptr == NULL)
+	ptr = सुस्मृति(nmemb, size);
+	यदि (ptr == रिक्त)
 		fatal("xcalloc: out of memory (allocating %zu bytes)",
 		    size * nmemb);
-	return ptr;
+	फर्काऊ ptr;
 }
 
-void *
-xreallocarray(void *ptr, size_t nmemb, size_t size)
+शून्य *
+xreallocarray(शून्य *ptr, माप_प्रकार nmemb, माप_प्रकार size)
 {
-	void *new_ptr;
+	शून्य *new_ptr;
 
 	new_ptr = reallocarray(ptr, nmemb, size);
-	if (new_ptr == NULL)
+	यदि (new_ptr == रिक्त)
 		fatal("xreallocarray: out of memory (%zu elements of %zu bytes)",
 		    nmemb, size);
-	return new_ptr;
+	फर्काऊ new_ptr;
 }
 
-void *
-xrecallocarray(void *ptr, size_t onmemb, size_t nmemb, size_t size)
+शून्य *
+xrecallocarray(शून्य *ptr, माप_प्रकार onmemb, माप_प्रकार nmemb, माप_प्रकार size)
 {
-	void *new_ptr;
+	शून्य *new_ptr;
 
 	new_ptr = recallocarray(ptr, onmemb, nmemb, size);
-	if (new_ptr == NULL)
+	यदि (new_ptr == रिक्त)
 		fatal("xrecallocarray: out of memory (%zu elements of %zu bytes)",
 		    nmemb, size);
-	return new_ptr;
+	फर्काऊ new_ptr;
 }
 
-char *
-xstrdup(const char *str)
+वर्ण *
+xstrdup(अचर वर्ण *str)
 {
-	size_t len;
-	char *cp;
+	माप_प्रकार len;
+	वर्ण *cp;
 
-	len = strlen(str) + 1;
+	len = म_माप(str) + 1;
 	cp = xmalloc(len);
-	return memcpy(cp, str, len);
+	फर्काऊ स_नकल(cp, str, len);
 }
 
-int
-xvasprintf(char **ret, const char *fmt, va_list ap)
+पूर्णाङ्क
+xvasprintf(वर्ण **ret, अचर वर्ण *fmt, बहु_सूची ap)
 {
-	int i;
+	पूर्णाङ्क i;
 
 	i = vasprintf(ret, fmt, ap);
-	if (i < 0 || *ret == NULL)
+	यदि (i < 0 || *ret == रिक्त)
 		fatal("xvasprintf: could not allocate memory");
-	return i;
+	फर्काऊ i;
 }
 
-int
-xasprintf(char **ret, const char *fmt, ...)
+पूर्णाङ्क
+xasprintf(वर्ण **ret, अचर वर्ण *fmt, ...)
 {
-	va_list ap;
-	int i;
+	बहु_सूची ap;
+	पूर्णाङ्क i;
 
-	va_start(ap, fmt);
+	बहु_शुरू(ap, fmt);
 	i = xvasprintf(ret, fmt, ap);
-	va_end(ap);
-	return i;
+	बहु_पूर्ण(ap);
+	फर्काऊ i;
 }

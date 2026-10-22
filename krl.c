@@ -15,33 +15,33 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/tree.h>
-#include <sys/queue.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/tree.h>
+#अन्तर्भाव <sys/queue.h>
 
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <time.h>
 
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "sshkey.h"
-#include "misc.h"
-#include "log.h"
-#include "digest.h"
-#include "bitmap.h"
-#include "utf8.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "digest.h"
+#अन्तर्भाव "bitmap.h"
+#अन्तर्भाव "utf8.h"
 
-#include "krl.h"
+#अन्तर्भाव "krl.h"
 
 /* #define DEBUG_KRL */
 #ifdef DEBUG_KRL
 # define KRL_DBG(x) debug3_f x
-#else
+#अन्यथा
 # define KRL_DBG(x)
 #endif
 
@@ -51,235 +51,235 @@
  */
 
 /* Tree of serial numbers. XXX make smarter: really need a real sparse bitmap */
-struct revoked_serial {
+संरचना revoked_serial {
 	uint64_t lo, hi;
-	RB_ENTRY(revoked_serial) tree_entry;
+	RB_ENTRY(revoked_serial) रूख_entry;
 };
-static int serial_cmp(struct revoked_serial *a, struct revoked_serial *b);
-RB_HEAD(revoked_serial_tree, revoked_serial);
-RB_GENERATE_STATIC(revoked_serial_tree, revoked_serial, tree_entry, serial_cmp)
+स्थिर पूर्णाङ्क serial_cmp(संरचना revoked_serial *a, संरचना revoked_serial *b);
+RB_HEAD(revoked_serial_रूख, revoked_serial);
+RB_GENERATE_STATIC(revoked_serial_रूख, revoked_serial, रूख_entry, serial_cmp)
 
 /* Tree of key IDs */
-struct revoked_key_id {
-	char *key_id;
-	RB_ENTRY(revoked_key_id) tree_entry;
+संरचना revoked_साँचो_id {
+	वर्ण *साँचो_id;
+	RB_ENTRY(revoked_साँचो_id) रूख_entry;
 };
-static int key_id_cmp(struct revoked_key_id *a, struct revoked_key_id *b);
-RB_HEAD(revoked_key_id_tree, revoked_key_id);
-RB_GENERATE_STATIC(revoked_key_id_tree, revoked_key_id, tree_entry, key_id_cmp)
+स्थिर पूर्णाङ्क साँचो_id_cmp(संरचना revoked_साँचो_id *a, संरचना revoked_साँचो_id *b);
+RB_HEAD(revoked_साँचो_id_रूख, revoked_साँचो_id);
+RB_GENERATE_STATIC(revoked_साँचो_id_रूख, revoked_साँचो_id, रूख_entry, साँचो_id_cmp)
 
 /* Tree of blobs (used for keys and fingerprints) */
-struct revoked_blob {
+संरचना revoked_blob {
 	u_char *blob;
-	size_t len;
-	RB_ENTRY(revoked_blob) tree_entry;
+	माप_प्रकार len;
+	RB_ENTRY(revoked_blob) रूख_entry;
 };
-static int blob_cmp(struct revoked_blob *a, struct revoked_blob *b);
-RB_HEAD(revoked_blob_tree, revoked_blob);
-RB_GENERATE_STATIC(revoked_blob_tree, revoked_blob, tree_entry, blob_cmp)
+स्थिर पूर्णाङ्क blob_cmp(संरचना revoked_blob *a, संरचना revoked_blob *b);
+RB_HEAD(revoked_blob_रूख, revoked_blob);
+RB_GENERATE_STATIC(revoked_blob_रूख, revoked_blob, रूख_entry, blob_cmp)
 
 /* Tracks revoked certs for a single CA */
-struct revoked_certs {
-	struct sshkey *ca_key;
-	struct revoked_serial_tree revoked_serials;
-	struct revoked_key_id_tree revoked_key_ids;
+संरचना revoked_certs {
+	संरचना sshkey *ca_साँचो;
+	संरचना revoked_serial_रूख revoked_serials;
+	संरचना revoked_साँचो_id_रूख revoked_साँचो_ids;
 	TAILQ_ENTRY(revoked_certs) entry;
 };
 TAILQ_HEAD(revoked_certs_list, revoked_certs);
 
-struct ssh_krl {
+संरचना ssh_krl {
 	uint64_t krl_version;
 	uint64_t generated_date;
 	uint64_t flags;
-	char *comment;
-	struct revoked_blob_tree revoked_keys;
-	struct revoked_blob_tree revoked_sha1s;
-	struct revoked_blob_tree revoked_sha256s;
-	struct revoked_certs_list revoked_certs;
+	वर्ण *comment;
+	संरचना revoked_blob_रूख revoked_साँचोहरू;
+	संरचना revoked_blob_रूख revoked_sha1s;
+	संरचना revoked_blob_रूख revoked_sha256s;
+	संरचना revoked_certs_list revoked_certs;
 };
 
 /* Return equal if a and b overlap */
-static int
-serial_cmp(struct revoked_serial *a, struct revoked_serial *b)
+स्थिर पूर्णाङ्क
+serial_cmp(संरचना revoked_serial *a, संरचना revoked_serial *b)
 {
-	if (a->hi >= b->lo && a->lo <= b->hi)
-		return 0;
-	return a->lo < b->lo ? -1 : 1;
+	यदि (a->hi >= b->lo && a->lo <= b->hi)
+		फर्काऊ 0;
+	फर्काऊ a->lo < b->lo ? -1 : 1;
 }
 
-static int
-key_id_cmp(struct revoked_key_id *a, struct revoked_key_id *b)
+स्थिर पूर्णाङ्क
+साँचो_id_cmp(संरचना revoked_साँचो_id *a, संरचना revoked_साँचो_id *b)
 {
-	return strcmp(a->key_id, b->key_id);
+	फर्काऊ म_भेद(a->साँचो_id, b->साँचो_id);
 }
 
-static int
-blob_cmp(struct revoked_blob *a, struct revoked_blob *b)
+स्थिर पूर्णाङ्क
+blob_cmp(संरचना revoked_blob *a, संरचना revoked_blob *b)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if (a->len != b->len) {
-		if ((r = memcmp(a->blob, b->blob, MINIMUM(a->len, b->len))) != 0)
-			return r;
-		return a->len > b->len ? 1 : -1;
-	} else
-		return memcmp(a->blob, b->blob, a->len);
+	यदि (a->len != b->len) {
+		यदि ((r = स_भेद(a->blob, b->blob, MINIMUM(a->len, b->len))) != 0)
+			फर्काऊ r;
+		फर्काऊ a->len > b->len ? 1 : -1;
+	} अन्यथा
+		फर्काऊ स_भेद(a->blob, b->blob, a->len);
 }
 
-struct ssh_krl *
-ssh_krl_init(void)
+संरचना ssh_krl *
+ssh_krl_init(शून्य)
 {
-	struct ssh_krl *krl;
+	संरचना ssh_krl *krl;
 
-	if ((krl = calloc(1, sizeof(*krl))) == NULL)
-		return NULL;
-	RB_INIT(&krl->revoked_keys);
+	यदि ((krl = सुस्मृति(1, परिमाण(*krl))) == रिक्त)
+		फर्काऊ रिक्त;
+	RB_INIT(&krl->revoked_साँचोहरू);
 	RB_INIT(&krl->revoked_sha1s);
 	RB_INIT(&krl->revoked_sha256s);
 	TAILQ_INIT(&krl->revoked_certs);
-	return krl;
+	फर्काऊ krl;
 }
 
-static void
-revoked_certs_free(struct revoked_certs *rc)
+स्थिर शून्य
+revoked_certs_free(संरचना revoked_certs *rc)
 {
-	struct revoked_serial *rs, *trs;
-	struct revoked_key_id *rki, *trki;
+	संरचना revoked_serial *rs, *trs;
+	संरचना revoked_साँचो_id *rki, *trki;
 
-	if (rc == NULL)
-		return;
-	RB_FOREACH_SAFE(rs, revoked_serial_tree, &rc->revoked_serials, trs) {
-		RB_REMOVE(revoked_serial_tree, &rc->revoked_serials, rs);
-		free(rs);
+	यदि (rc == रिक्त)
+		फर्काऊ;
+	RB_FOREACH_SAFE(rs, revoked_serial_रूख, &rc->revoked_serials, trs) {
+		RB_REMOVE(revoked_serial_रूख, &rc->revoked_serials, rs);
+		मुक्त(rs);
 	}
-	RB_FOREACH_SAFE(rki, revoked_key_id_tree, &rc->revoked_key_ids, trki) {
-		RB_REMOVE(revoked_key_id_tree, &rc->revoked_key_ids, rki);
-		free(rki->key_id);
-		free(rki);
+	RB_FOREACH_SAFE(rki, revoked_साँचो_id_रूख, &rc->revoked_साँचो_ids, trki) {
+		RB_REMOVE(revoked_साँचो_id_रूख, &rc->revoked_साँचो_ids, rki);
+		मुक्त(rki->साँचो_id);
+		मुक्त(rki);
 	}
-	sshkey_free(rc->ca_key);
-	freezero(rc, sizeof(*rc));
+	sshkey_free(rc->ca_साँचो);
+	freezero(rc, परिमाण(*rc));
 }
 
-void
-ssh_krl_free(struct ssh_krl *krl)
+शून्य
+ssh_krl_free(संरचना ssh_krl *krl)
 {
-	struct revoked_blob *rb, *trb;
-	struct revoked_certs *rc, *trc;
+	संरचना revoked_blob *rb, *trb;
+	संरचना revoked_certs *rc, *trc;
 
-	if (krl == NULL)
-		return;
+	यदि (krl == रिक्त)
+		फर्काऊ;
 
-	free(krl->comment);
-	RB_FOREACH_SAFE(rb, revoked_blob_tree, &krl->revoked_keys, trb) {
-		RB_REMOVE(revoked_blob_tree, &krl->revoked_keys, rb);
-		free(rb->blob);
-		free(rb);
+	मुक्त(krl->comment);
+	RB_FOREACH_SAFE(rb, revoked_blob_रूख, &krl->revoked_साँचोहरू, trb) {
+		RB_REMOVE(revoked_blob_रूख, &krl->revoked_साँचोहरू, rb);
+		मुक्त(rb->blob);
+		मुक्त(rb);
 	}
-	RB_FOREACH_SAFE(rb, revoked_blob_tree, &krl->revoked_sha1s, trb) {
-		RB_REMOVE(revoked_blob_tree, &krl->revoked_sha1s, rb);
-		free(rb->blob);
-		free(rb);
+	RB_FOREACH_SAFE(rb, revoked_blob_रूख, &krl->revoked_sha1s, trb) {
+		RB_REMOVE(revoked_blob_रूख, &krl->revoked_sha1s, rb);
+		मुक्त(rb->blob);
+		मुक्त(rb);
 	}
-	RB_FOREACH_SAFE(rb, revoked_blob_tree, &krl->revoked_sha256s, trb) {
-		RB_REMOVE(revoked_blob_tree, &krl->revoked_sha256s, rb);
-		free(rb->blob);
-		free(rb);
+	RB_FOREACH_SAFE(rb, revoked_blob_रूख, &krl->revoked_sha256s, trb) {
+		RB_REMOVE(revoked_blob_रूख, &krl->revoked_sha256s, rb);
+		मुक्त(rb->blob);
+		मुक्त(rb);
 	}
 	TAILQ_FOREACH_SAFE(rc, &krl->revoked_certs, entry, trc) {
 		TAILQ_REMOVE(&krl->revoked_certs, rc, entry);
 		revoked_certs_free(rc);
 	}
-	free(krl);
+	मुक्त(krl);
 }
 
-void
-ssh_krl_set_version(struct ssh_krl *krl, uint64_t version)
+शून्य
+ssh_krl_set_version(संरचना ssh_krl *krl, uint64_t version)
 {
 	krl->krl_version = version;
 }
 
-int
-ssh_krl_set_comment(struct ssh_krl *krl, const char *comment)
+पूर्णाङ्क
+ssh_krl_set_comment(संरचना ssh_krl *krl, अचर वर्ण *comment)
 {
-	free(krl->comment);
-	if ((krl->comment = strdup(comment)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	return 0;
+	मुक्त(krl->comment);
+	यदि ((krl->comment = strdup(comment)) == रिक्त)
+		फर्काऊ SSH_ERR_ALLOC_FAIL;
+	फर्काऊ 0;
 }
 
 /*
  * Find the revoked_certs struct for a CA key. If allow_create is set then
  * create a new one in the tree if one did not exist already.
  */
-static int
-revoked_certs_for_ca_key(struct ssh_krl *krl, const struct sshkey *ca_key,
-    struct revoked_certs **rcp, int allow_create)
+स्थिर पूर्णाङ्क
+revoked_certs_for_ca_साँचो(संरचना ssh_krl *krl, अचर संरचना sshkey *ca_साँचो,
+    संरचना revoked_certs **rcp, पूर्णाङ्क allow_create)
 {
-	struct revoked_certs *rc;
-	int r;
+	संरचना revoked_certs *rc;
+	पूर्णाङ्क r;
 
-	*rcp = NULL;
+	*rcp = रिक्त;
 	TAILQ_FOREACH(rc, &krl->revoked_certs, entry) {
-		if ((ca_key == NULL && rc->ca_key == NULL) ||
-		    sshkey_equal(rc->ca_key, ca_key)) {
+		यदि ((ca_साँचो == रिक्त && rc->ca_साँचो == रिक्त) ||
+		    sshkey_equal(rc->ca_साँचो, ca_साँचो)) {
 			*rcp = rc;
-			return 0;
+			फर्काऊ 0;
 		}
 	}
-	if (!allow_create)
-		return 0;
+	यदि (!allow_create)
+		फर्काऊ 0;
 	/* If this CA doesn't exist in the list then add it now */
-	if ((rc = calloc(1, sizeof(*rc))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (ca_key == NULL)
-		rc->ca_key = NULL;
-	else if ((r = sshkey_from_private(ca_key, &rc->ca_key)) != 0) {
-		free(rc);
-		return r;
+	यदि ((rc = सुस्मृति(1, परिमाण(*rc))) == रिक्त)
+		फर्काऊ SSH_ERR_ALLOC_FAIL;
+	यदि (ca_साँचो == रिक्त)
+		rc->ca_साँचो = रिक्त;
+	अन्यथा यदि ((r = sshkey_from_private(ca_साँचो, &rc->ca_साँचो)) != 0) {
+		मुक्त(rc);
+		फर्काऊ r;
 	}
 	RB_INIT(&rc->revoked_serials);
-	RB_INIT(&rc->revoked_key_ids);
+	RB_INIT(&rc->revoked_साँचो_ids);
 	TAILQ_INSERT_TAIL(&krl->revoked_certs, rc, entry);
-	KRL_DBG(("new CA %s", ca_key == NULL ? "*" : sshkey_type(ca_key)));
+	KRL_DBG(("new CA %s", ca_साँचो == रिक्त ? "*" : sshkey_type(ca_साँचो)));
 	*rcp = rc;
-	return 0;
+	फर्काऊ 0;
 }
 
-static int
-insert_serial_range(struct revoked_serial_tree *rt, uint64_t lo, uint64_t hi)
+स्थिर पूर्णाङ्क
+घुसाउ_serial_range(संरचना revoked_serial_रूख *rt, uint64_t lo, uint64_t hi)
 {
-	struct revoked_serial rs, *ers, *crs, *irs;
+	संरचना revoked_serial rs, *ers, *crs, *irs;
 
 	KRL_DBG(("insert %llu:%llu",
-	    (unsigned long long)lo, (unsigned long long)hi));
-	memset(&rs, 0, sizeof(rs));
+	    (अचिन्हित दीर्घ दीर्घ)lo, (अचिन्हित दीर्घ दीर्घ)hi));
+	स_रखो(&rs, 0, परिमाण(rs));
 	rs.lo = lo;
 	rs.hi = hi;
-	ers = RB_NFIND(revoked_serial_tree, rt, &rs);
-	if (ers == NULL || serial_cmp(ers, &rs) != 0) {
+	ers = RB_NFIND(revoked_serial_रूख, rt, &rs);
+	यदि (ers == रिक्त || serial_cmp(ers, &rs) != 0) {
 		/* No entry matches. Just insert */
-		if ((irs = malloc(sizeof(rs))) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		memcpy(irs, &rs, sizeof(*irs));
-		ers = RB_INSERT(revoked_serial_tree, rt, irs);
-		if (ers != NULL) {
+		यदि ((irs = दो_स्मृति(परिमाण(rs))) == रिक्त)
+			फर्काऊ SSH_ERR_ALLOC_FAIL;
+		स_नकल(irs, &rs, परिमाण(*irs));
+		ers = RB_घुसाउ(revoked_serial_रूख, rt, irs);
+		यदि (ers != रिक्त) {
 			KRL_DBG(("bad: ers != NULL"));
 			/* Shouldn't happen */
-			free(irs);
-			return SSH_ERR_INTERNAL_ERROR;
+			मुक्त(irs);
+			फर्काऊ SSH_ERR_INTERNAL_ERROR;
 		}
 		ers = irs;
-	} else {
+	} अन्यथा {
 		KRL_DBG(("overlap found %llu:%llu",
-		    (unsigned long long)ers->lo, (unsigned long long)ers->hi));
+		    (अचिन्हित दीर्घ दीर्घ)ers->lo, (अचिन्हित दीर्घ दीर्घ)ers->hi));
 		/*
 		 * The inserted entry overlaps an existing one. Grow the
 		 * existing entry.
 		 */
-		if (ers->lo > lo)
+		यदि (ers->lo > lo)
 			ers->lo = lo;
-		if (ers->hi < hi)
+		यदि (ers->hi < hi)
 			ers->hi = hi;
 	}
 
@@ -289,189 +289,189 @@ insert_serial_range(struct revoked_serial_tree *rt, uint64_t lo, uint64_t hi)
 	 */
 
 	/* Check predecessors */
-	while ((crs = RB_PREV(revoked_serial_tree, rt, ers)) != NULL) {
+	जबसम्म ((crs = RB_PREV(revoked_serial_रूख, rt, ers)) != रिक्त) {
 		KRL_DBG(("pred %llu:%llu",
-		    (unsigned long long)crs->lo, (unsigned long long)crs->hi));
-		if (ers->lo != 0 && crs->hi < ers->lo - 1)
-			break;
+		    (अचिन्हित दीर्घ दीर्घ)crs->lo, (अचिन्हित दीर्घ दीर्घ)crs->hi));
+		यदि (ers->lo != 0 && crs->hi < ers->lo - 1)
+			रोक;
 		/* This entry overlaps. */
-		if (crs->lo < ers->lo) {
+		यदि (crs->lo < ers->lo) {
 			ers->lo = crs->lo;
 			KRL_DBG(("pred extend %llu:%llu",
-			    (unsigned long long)ers->lo,
-			    (unsigned long long)ers->hi));
+			    (अचिन्हित दीर्घ दीर्घ)ers->lo,
+			    (अचिन्हित दीर्घ दीर्घ)ers->hi));
 		}
-		RB_REMOVE(revoked_serial_tree, rt, crs);
-		free(crs);
+		RB_REMOVE(revoked_serial_रूख, rt, crs);
+		मुक्त(crs);
 	}
 	/* Check successors */
-	while ((crs = RB_NEXT(revoked_serial_tree, rt, ers)) != NULL) {
+	जबसम्म ((crs = RB_NEXT(revoked_serial_रूख, rt, ers)) != रिक्त) {
 		KRL_DBG(("succ %llu:%llu",
-		    (unsigned long long)crs->lo, (unsigned long long)crs->hi));
-		if (ers->hi != (uint64_t)-1 && crs->lo > ers->hi + 1)
-			break;
+		    (अचिन्हित दीर्घ दीर्घ)crs->lo, (अचिन्हित दीर्घ दीर्घ)crs->hi));
+		यदि (ers->hi != (uint64_t)-1 && crs->lo > ers->hi + 1)
+			रोक;
 		/* This entry overlaps. */
-		if (crs->hi > ers->hi) {
+		यदि (crs->hi > ers->hi) {
 			ers->hi = crs->hi;
 			KRL_DBG(("succ extend %llu:%llu",
-			    (unsigned long long)ers->lo,
-			    (unsigned long long)ers->hi));
+			    (अचिन्हित दीर्घ दीर्घ)ers->lo,
+			    (अचिन्हित दीर्घ दीर्घ)ers->hi));
 		}
-		RB_REMOVE(revoked_serial_tree, rt, crs);
-		free(crs);
+		RB_REMOVE(revoked_serial_रूख, rt, crs);
+		मुक्त(crs);
 	}
 	KRL_DBG(("done, final %llu:%llu",
-	    (unsigned long long)ers->lo, (unsigned long long)ers->hi));
-	return 0;
+	    (अचिन्हित दीर्घ दीर्घ)ers->lo, (अचिन्हित दीर्घ दीर्घ)ers->hi));
+	फर्काऊ 0;
 }
 
-int
-ssh_krl_revoke_cert_by_serial(struct ssh_krl *krl, const struct sshkey *ca_key,
+पूर्णाङ्क
+ssh_krl_revoke_cert_by_serial(संरचना ssh_krl *krl, अचर संरचना sshkey *ca_साँचो,
     uint64_t serial)
 {
-	return ssh_krl_revoke_cert_by_serial_range(krl, ca_key, serial, serial);
+	फर्काऊ ssh_krl_revoke_cert_by_serial_range(krl, ca_साँचो, serial, serial);
 }
 
-int
-ssh_krl_revoke_cert_by_serial_range(struct ssh_krl *krl,
-    const struct sshkey *ca_key, uint64_t lo, uint64_t hi)
+पूर्णाङ्क
+ssh_krl_revoke_cert_by_serial_range(संरचना ssh_krl *krl,
+    अचर संरचना sshkey *ca_साँचो, uint64_t lo, uint64_t hi)
 {
-	struct revoked_certs *rc;
-	int r;
+	संरचना revoked_certs *rc;
+	पूर्णाङ्क r;
 
-	if (lo > hi || lo == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = revoked_certs_for_ca_key(krl, ca_key, &rc, 1)) != 0)
-		return r;
-	return insert_serial_range(&rc->revoked_serials, lo, hi);
+	यदि (lo > hi || lo == 0)
+		फर्काऊ SSH_ERR_INVALID_ARGUMENT;
+	यदि ((r = revoked_certs_for_ca_साँचो(krl, ca_साँचो, &rc, 1)) != 0)
+		फर्काऊ r;
+	फर्काऊ घुसाउ_serial_range(&rc->revoked_serials, lo, hi);
 }
 
-int
-ssh_krl_revoke_cert_by_key_id(struct ssh_krl *krl, const struct sshkey *ca_key,
-    const char *key_id)
+पूर्णाङ्क
+ssh_krl_revoke_cert_by_साँचो_id(संरचना ssh_krl *krl, अचर संरचना sshkey *ca_साँचो,
+    अचर वर्ण *साँचो_id)
 {
-	struct revoked_key_id *rki, *erki;
-	struct revoked_certs *rc;
-	int r;
+	संरचना revoked_साँचो_id *rki, *erki;
+	संरचना revoked_certs *rc;
+	पूर्णाङ्क r;
 
-	if ((r = revoked_certs_for_ca_key(krl, ca_key, &rc, 1)) != 0)
-		return r;
+	यदि ((r = revoked_certs_for_ca_साँचो(krl, ca_साँचो, &rc, 1)) != 0)
+		फर्काऊ r;
 
-	KRL_DBG(("revoke %s", key_id));
-	if ((rki = calloc(1, sizeof(*rki))) == NULL ||
-	    (rki->key_id = strdup(key_id)) == NULL) {
-		free(rki);
-		return SSH_ERR_ALLOC_FAIL;
+	KRL_DBG(("revoke %s", साँचो_id));
+	यदि ((rki = सुस्मृति(1, परिमाण(*rki))) == रिक्त ||
+	    (rki->साँचो_id = strdup(साँचो_id)) == रिक्त) {
+		मुक्त(rki);
+		फर्काऊ SSH_ERR_ALLOC_FAIL;
 	}
-	erki = RB_INSERT(revoked_key_id_tree, &rc->revoked_key_ids, rki);
-	if (erki != NULL) {
-		free(rki->key_id);
-		free(rki);
+	erki = RB_घुसाउ(revoked_साँचो_id_रूख, &rc->revoked_साँचो_ids, rki);
+	यदि (erki != रिक्त) {
+		मुक्त(rki->साँचो_id);
+		मुक्त(rki);
 	}
-	return 0;
+	फर्काऊ 0;
 }
 
 /* Convert "key" to a public key blob without any certificate information */
-static int
-plain_key_blob(const struct sshkey *key, u_char **blob, size_t *blen)
+स्थिर पूर्णाङ्क
+plain_साँचो_blob(अचर संरचना sshkey *साँचो, u_char **blob, माप_प्रकार *blen)
 {
-	struct sshkey *kcopy;
-	int r;
+	संरचना sshkey *kcopy;
+	पूर्णाङ्क r;
 
-	if ((r = sshkey_from_private(key, &kcopy)) != 0)
-		return r;
-	if (sshkey_is_cert(kcopy)) {
-		if ((r = sshkey_drop_cert(kcopy)) != 0) {
+	यदि ((r = sshkey_from_private(साँचो, &kcopy)) != 0)
+		फर्काऊ r;
+	यदि (sshkey_is_cert(kcopy)) {
+		यदि ((r = sshkey_drop_cert(kcopy)) != 0) {
 			sshkey_free(kcopy);
-			return r;
+			फर्काऊ r;
 		}
 	}
 	r = sshkey_to_blob(kcopy, blob, blen);
 	sshkey_free(kcopy);
-	return r;
+	फर्काऊ r;
 }
 
 /* Revoke a key blob. Ownership of blob is transferred to the tree */
-static int
-revoke_blob(struct revoked_blob_tree *rbt, u_char *blob, size_t len)
+स्थिर पूर्णाङ्क
+revoke_blob(संरचना revoked_blob_रूख *rbt, u_char *blob, माप_प्रकार len)
 {
-	struct revoked_blob *rb, *erb;
+	संरचना revoked_blob *rb, *erb;
 
-	if ((rb = calloc(1, sizeof(*rb))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	यदि ((rb = सुस्मृति(1, परिमाण(*rb))) == रिक्त)
+		फर्काऊ SSH_ERR_ALLOC_FAIL;
 	rb->blob = blob;
 	rb->len = len;
-	erb = RB_INSERT(revoked_blob_tree, rbt, rb);
-	if (erb != NULL) {
-		free(rb->blob);
-		free(rb);
+	erb = RB_घुसाउ(revoked_blob_रूख, rbt, rb);
+	यदि (erb != रिक्त) {
+		मुक्त(rb->blob);
+		मुक्त(rb);
 	}
-	return 0;
+	फर्काऊ 0;
 }
 
-int
-ssh_krl_revoke_key_explicit(struct ssh_krl *krl, const struct sshkey *key)
+पूर्णाङ्क
+ssh_krl_revoke_साँचो_explicit(संरचना ssh_krl *krl, अचर संरचना sshkey *साँचो)
 {
 	u_char *blob;
-	size_t len;
-	int r;
+	माप_प्रकार len;
+	पूर्णाङ्क r;
 
-	debug3_f("revoke type %s", sshkey_type(key));
-	if ((r = plain_key_blob(key, &blob, &len)) != 0)
-		return r;
-	return revoke_blob(&krl->revoked_keys, blob, len);
+	debug3_f("revoke type %s", sshkey_type(साँचो));
+	यदि ((r = plain_साँचो_blob(साँचो, &blob, &len)) != 0)
+		फर्काऊ r;
+	फर्काऊ revoke_blob(&krl->revoked_साँचोहरू, blob, len);
 }
 
-static int
-revoke_by_hash(struct revoked_blob_tree *target, const u_char *p, size_t len)
+स्थिर पूर्णाङ्क
+revoke_by_hash(संरचना revoked_blob_रूख *target, अचर u_char *p, माप_प्रकार len)
 {
 	u_char *blob;
-	int r;
+	पूर्णाङ्क r;
 
 	/* need to copy hash, as revoke_blob steals ownership */
-	if ((blob = malloc(len)) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
-	memcpy(blob, p, len);
-	if ((r = revoke_blob(target, blob, len)) != 0) {
-		free(blob);
-		return r;
+	यदि ((blob = दो_स्मृति(len)) == रिक्त)
+		फर्काऊ SSH_ERR_SYSTEM_ERROR;
+	स_नकल(blob, p, len);
+	यदि ((r = revoke_blob(target, blob, len)) != 0) {
+		मुक्त(blob);
+		फर्काऊ r;
 	}
-	return 0;
+	फर्काऊ 0;
 }
 
-int
-ssh_krl_revoke_key_sha1(struct ssh_krl *krl, const u_char *p, size_t len)
+पूर्णाङ्क
+ssh_krl_revoke_साँचो_sha1(संरचना ssh_krl *krl, अचर u_char *p, माप_प्रकार len)
 {
 	debug3_f("revoke by sha1");
-	if (len != 20)
-		return SSH_ERR_INVALID_FORMAT;
-	return revoke_by_hash(&krl->revoked_sha1s, p, len);
+	यदि (len != 20)
+		फर्काऊ SSH_ERR_INVALID_FORMAT;
+	फर्काऊ revoke_by_hash(&krl->revoked_sha1s, p, len);
 }
 
-int
-ssh_krl_revoke_key_sha256(struct ssh_krl *krl, const u_char *p, size_t len)
+पूर्णाङ्क
+ssh_krl_revoke_साँचो_sha256(संरचना ssh_krl *krl, अचर u_char *p, माप_प्रकार len)
 {
 	debug3_f("revoke by sha256");
-	if (len != 32)
-		return SSH_ERR_INVALID_FORMAT;
-	return revoke_by_hash(&krl->revoked_sha256s, p, len);
+	यदि (len != 32)
+		फर्काऊ SSH_ERR_INVALID_FORMAT;
+	फर्काऊ revoke_by_hash(&krl->revoked_sha256s, p, len);
 }
 
-int
-ssh_krl_revoke_key(struct ssh_krl *krl, const struct sshkey *key)
+पूर्णाङ्क
+ssh_krl_revoke_साँचो(संरचना ssh_krl *krl, अचर संरचना sshkey *साँचो)
 {
 	/* XXX replace with SHA256? */
-	if (!sshkey_is_cert(key))
-		return ssh_krl_revoke_key_explicit(krl, key);
+	यदि (!sshkey_is_cert(साँचो))
+		फर्काऊ ssh_krl_revoke_साँचो_explicit(krl, साँचो);
 
-	if (key->cert->serial == 0) {
-		return ssh_krl_revoke_cert_by_key_id(krl,
-		    key->cert->signature_key,
-		    key->cert->key_id);
-	} else {
-		return ssh_krl_revoke_cert_by_serial(krl,
-		    key->cert->signature_key,
-		    key->cert->serial);
+	यदि (साँचो->cert->serial == 0) {
+		फर्काऊ ssh_krl_revoke_cert_by_साँचो_id(krl,
+		    साँचो->cert->signature_साँचो,
+		    साँचो->cert->साँचो_id);
+	} अन्यथा {
+		फर्काऊ ssh_krl_revoke_cert_by_serial(krl,
+		    साँचो->cert->signature_साँचो,
+		    साँचो->cert->serial);
 	}
 }
 
@@ -482,12 +482,12 @@ ssh_krl_revoke_key(struct ssh_krl *krl, const struct sshkey *key)
  * Applies a mostly-accurate bit cost model to select the section type
  * that will minimise the size of the resultant KRL.
  */
-static int
-choose_next_state(int current_state, uint64_t contig, int final,
-    uint64_t last_gap, uint64_t next_gap, size_t bitmap_len,
-    int *force_new_section)
+स्थिर पूर्णाङ्क
+choose_next_state(पूर्णाङ्क current_state, uint64_t contig, पूर्णाङ्क final,
+    uint64_t last_gap, uint64_t next_gap, माप_प्रकार bitmap_len,
+    पूर्णाङ्क *force_new_section)
 {
-	int new_state;
+	पूर्णाङ्क new_state;
 	uint64_t cost, cost_list, cost_range, cost_bitmap, cost_bitmap_restart;
 
 	/*
@@ -505,16 +505,16 @@ choose_next_state(int current_state, uint64_t contig, int final,
 	 */
 	cost_list = cost_bitmap = cost_bitmap_restart = 0;
 	cost_range = 8;
-	switch (current_state) {
-	case KRL_SECTION_CERT_SERIAL_LIST:
+	विकल्प (current_state) {
+	पक्ष KRL_SECTION_CERT_SERIAL_LIST:
 		cost_bitmap_restart = cost_bitmap = 8 + 64;
-		break;
-	case KRL_SECTION_CERT_SERIAL_BITMAP:
+		रोक;
+	पक्ष KRL_SECTION_CERT_SERIAL_BITMAP:
 		cost_list = 8;
 		cost_bitmap_restart = 8 + 64;
-		break;
-	case KRL_SECTION_CERT_SERIAL_RANGE:
-	case 0:
+		रोक;
+	पक्ष KRL_SECTION_CERT_SERIAL_RANGE:
+	पक्ष 0:
 		cost_bitmap_restart = cost_bitmap = 8 + 64;
 		cost_list = 8;
 	}
@@ -532,9 +532,9 @@ choose_next_state(int current_state, uint64_t contig, int final,
 	cost_range = (cost_range + 7) / 8;
 
 	/* Ensure that we never emit a bitmap larger than sshbuf can handle */
-	if (bitmap_len + cost_bitmap >= SSHBUF_MAX_BIGNUM) {
+	यदि (bitmap_len + cost_bitmap >= SSHBUF_MAX_BIGNUM) {
 		KRL_DBG(("bitmap overfull len=%zu cost=%llu max=%u",
-		    bitmap_len, (unsigned long long)cost_bitmap,
+		    bitmap_len, (अचिन्हित दीर्घ दीर्घ)cost_bitmap,
 		    SSHBUF_MAX_BIGNUM));
 		cost_bitmap = (uint64_t)-1;
 	}
@@ -543,88 +543,88 @@ choose_next_state(int current_state, uint64_t contig, int final,
 	*force_new_section = 0;
 	new_state = KRL_SECTION_CERT_SERIAL_BITMAP;
 	cost = cost_bitmap;
-	if (cost_range < cost) {
+	यदि (cost_range < cost) {
 		new_state = KRL_SECTION_CERT_SERIAL_RANGE;
 		cost = cost_range;
 	}
-	if (cost_list < cost) {
+	यदि (cost_list < cost) {
 		new_state = KRL_SECTION_CERT_SERIAL_LIST;
 		cost = cost_list;
 	}
-	if (cost_bitmap_restart < cost) {
+	यदि (cost_bitmap_restart < cost) {
 		new_state = KRL_SECTION_CERT_SERIAL_BITMAP;
 		*force_new_section = 1;
 		cost = cost_bitmap_restart;
 	}
 	KRL_DBG(("contig %llu last_gap %llu next_gap %llu final %d, costs:"
 	    "list %llu range %llu bitmap %llu new bitmap %llu, "
-	    "selected 0x%02x%s", (long long unsigned)contig,
-	    (long long unsigned)last_gap, (long long unsigned)next_gap, final,
-	    (long long unsigned)cost_list, (long long unsigned)cost_range,
-	    (long long unsigned)cost_bitmap,
-	    (long long unsigned)cost_bitmap_restart, new_state,
+	    "selected 0x%02x%s", (दीर्घ दीर्घ अचिन्हित)contig,
+	    (दीर्घ दीर्घ अचिन्हित)last_gap, (दीर्घ दीर्घ अचिन्हित)next_gap, final,
+	    (दीर्घ दीर्घ अचिन्हित)cost_list, (दीर्घ दीर्घ अचिन्हित)cost_range,
+	    (दीर्घ दीर्घ अचिन्हित)cost_bitmap,
+	    (दीर्घ दीर्घ अचिन्हित)cost_bitmap_restart, new_state,
 	    *force_new_section ? " restart" : ""));
-	return new_state;
+	फर्काऊ new_state;
 }
 
-static int
-put_bitmap(struct sshbuf *buf, struct bitmap *bitmap)
+स्थिर पूर्णाङ्क
+put_bitmap(संरचना sshbuf *buf, संरचना bitmap *bitmap)
 {
-	size_t len;
+	माप_प्रकार len;
 	u_char *blob;
-	int r;
+	पूर्णाङ्क r;
 
 	len = bitmap_nbytes(bitmap);
-	if ((blob = malloc(len)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (bitmap_to_string(bitmap, blob, len) != 0) {
-		free(blob);
-		return SSH_ERR_INTERNAL_ERROR;
+	यदि ((blob = दो_स्मृति(len)) == रिक्त)
+		फर्काऊ SSH_ERR_ALLOC_FAIL;
+	यदि (bitmap_to_string(bitmap, blob, len) != 0) {
+		मुक्त(blob);
+		फर्काऊ SSH_ERR_INTERNAL_ERROR;
 	}
 	r = sshbuf_put_bignum2_bytes(buf, blob, len);
-	free(blob);
-	return r;
+	मुक्त(blob);
+	फर्काऊ r;
 }
 
 /* Generate a KRL_SECTION_CERTIFICATES KRL section */
-static int
-revoked_certs_generate(struct revoked_certs *rc, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+revoked_certs_generate(संरचना revoked_certs *rc, संरचना sshbuf *buf)
 {
-	int final, force_new_sect, r = SSH_ERR_INTERNAL_ERROR;
+	पूर्णाङ्क final, force_new_sect, r = SSH_ERR_INTERNAL_ERROR;
 	uint64_t i, contig, gap, last = 0, bitmap_start = 0;
-	struct revoked_serial *rs, *nrs;
-	struct revoked_key_id *rki;
-	int next_state, state = 0;
-	size_t bitmap_len;
-	struct sshbuf *sect;
-	struct bitmap *bitmap = NULL;
+	संरचना revoked_serial *rs, *nrs;
+	संरचना revoked_साँचो_id *rki;
+	पूर्णाङ्क next_state, state = 0;
+	माप_प्रकार bitmap_len;
+	संरचना sshbuf *sect;
+	संरचना bitmap *bitmap = रिक्त;
 
-	if ((sect = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	यदि ((sect = sshbuf_new()) == रिक्त)
+		फर्काऊ SSH_ERR_ALLOC_FAIL;
 
 	/* Store the header: optional CA scope key, reserved */
-	if (rc->ca_key == NULL) {
-		if ((r = sshbuf_put_string(buf, NULL, 0)) != 0)
-			goto out;
-	} else {
-		if ((r = sshkey_puts(rc->ca_key, buf)) != 0)
-			goto out;
+	यदि (rc->ca_साँचो == रिक्त) {
+		यदि ((r = sshbuf_put_string(buf, रिक्त, 0)) != 0)
+			गच्छ out;
+	} अन्यथा {
+		यदि ((r = sshkey_puts(rc->ca_साँचो, buf)) != 0)
+			गच्छ out;
 	}
-	if ((r = sshbuf_put_string(buf, NULL, 0)) != 0)
-		goto out;
+	यदि ((r = sshbuf_put_string(buf, रिक्त, 0)) != 0)
+		गच्छ out;
 
 	/* Store the revoked serials.  */
-	for (rs = RB_MIN(revoked_serial_tree, &rc->revoked_serials);
-	     rs != NULL;
-	     rs = RB_NEXT(revoked_serial_tree, &rc->revoked_serials, rs)) {
+	लागि (rs = RB_MIN(revoked_serial_रूख, &rc->revoked_serials);
+	     rs != रिक्त;
+	     rs = RB_NEXT(revoked_serial_रूख, &rc->revoked_serials, rs)) {
 		KRL_DBG(("serial %llu:%llu state 0x%02x",
-		    (long long unsigned)rs->lo, (long long unsigned)rs->hi,
+		    (दीर्घ दीर्घ अचिन्हित)rs->lo, (दीर्घ दीर्घ अचिन्हित)rs->hi,
 		    state));
 
 		/* Check contiguous length and gap to next section (if any) */
-		nrs = RB_NEXT(revoked_serial_tree, &rc->revoked_serials, rs);
-		final = nrs == NULL;
-		gap = nrs == NULL ? 0 : nrs->lo - rs->hi;
+		nrs = RB_NEXT(revoked_serial_रूख, &rc->revoked_serials, rs);
+		final = nrs == रिक्त;
+		gap = nrs == रिक्त ? 0 : nrs->lo - rs->hi;
 		contig = 1 + (rs->hi - rs->lo);
 
 		bitmap_len = state == KRL_SECTION_CERT_SERIAL_BITMAP ?
@@ -639,529 +639,529 @@ revoked_certs_generate(struct revoked_certs *rc, struct sshbuf *buf)
 		 * If the current section is a range section or has a different
 		 * type to the next section, then finish it off now.
 		 */
-		if (state != 0 && (force_new_sect || next_state != state ||
+		यदि (state != 0 && (force_new_sect || next_state != state ||
 		    state == KRL_SECTION_CERT_SERIAL_RANGE)) {
 			KRL_DBG(("finish state 0x%02x", state));
-			switch (state) {
-			case KRL_SECTION_CERT_SERIAL_LIST:
-			case KRL_SECTION_CERT_SERIAL_RANGE:
-				break;
-			case KRL_SECTION_CERT_SERIAL_BITMAP:
-				if ((r = put_bitmap(sect, bitmap)) != 0)
-					goto out;
+			विकल्प (state) {
+			पक्ष KRL_SECTION_CERT_SERIAL_LIST:
+			पक्ष KRL_SECTION_CERT_SERIAL_RANGE:
+				रोक;
+			पक्ष KRL_SECTION_CERT_SERIAL_BITMAP:
+				यदि ((r = put_bitmap(sect, bitmap)) != 0)
+					गच्छ out;
 				bitmap_free(bitmap);
-				bitmap = NULL;
-				break;
+				bitmap = रिक्त;
+				रोक;
 			}
-			if ((r = sshbuf_put_u8(buf, state)) != 0 ||
+			यदि ((r = sshbuf_put_u8(buf, state)) != 0 ||
 			    (r = sshbuf_put_stringb(buf, sect)) != 0)
-				goto out;
+				गच्छ out;
 			sshbuf_reset(sect);
 		}
 
 		/* If we are starting a new section then prepare it now */
-		if (next_state != state || force_new_sect) {
+		यदि (next_state != state || force_new_sect) {
 			KRL_DBG(("start state 0x%02x",
 			    next_state));
 			state = next_state;
 			sshbuf_reset(sect);
-			switch (state) {
-			case KRL_SECTION_CERT_SERIAL_LIST:
-			case KRL_SECTION_CERT_SERIAL_RANGE:
-				break;
-			case KRL_SECTION_CERT_SERIAL_BITMAP:
-				if ((bitmap = bitmap_new()) == NULL) {
+			विकल्प (state) {
+			पक्ष KRL_SECTION_CERT_SERIAL_LIST:
+			पक्ष KRL_SECTION_CERT_SERIAL_RANGE:
+				रोक;
+			पक्ष KRL_SECTION_CERT_SERIAL_BITMAP:
+				यदि ((bitmap = bitmap_new()) == रिक्त) {
 					r = SSH_ERR_ALLOC_FAIL;
-					goto out;
+					गच्छ out;
 				}
 				bitmap_start = rs->lo;
-				if ((r = sshbuf_put_u64(sect,
+				यदि ((r = sshbuf_put_u64(sect,
 				    bitmap_start)) != 0)
-					goto out;
-				break;
+					गच्छ out;
+				रोक;
 			}
 		}
 
 		/* Perform section-specific processing */
-		switch (state) {
-		case KRL_SECTION_CERT_SERIAL_LIST:
-			for (i = 0; i < contig; i++) {
-				if ((r = sshbuf_put_u64(sect, rs->lo + i)) != 0)
-					goto out;
+		विकल्प (state) {
+		पक्ष KRL_SECTION_CERT_SERIAL_LIST:
+			लागि (i = 0; i < contig; i++) {
+				यदि ((r = sshbuf_put_u64(sect, rs->lo + i)) != 0)
+					गच्छ out;
 			}
-			break;
-		case KRL_SECTION_CERT_SERIAL_RANGE:
-			if ((r = sshbuf_put_u64(sect, rs->lo)) != 0 ||
+			रोक;
+		पक्ष KRL_SECTION_CERT_SERIAL_RANGE:
+			यदि ((r = sshbuf_put_u64(sect, rs->lo)) != 0 ||
 			    (r = sshbuf_put_u64(sect, rs->hi)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_CERT_SERIAL_BITMAP:
-			if (rs->lo - bitmap_start > INT_MAX) {
+				गच्छ out;
+			रोक;
+		पक्ष KRL_SECTION_CERT_SERIAL_BITMAP:
+			यदि (rs->lo - bitmap_start > पूर्णांक_उच्च) {
 				r = SSH_ERR_INVALID_FORMAT;
 				error_f("insane bitmap gap");
-				goto out;
+				गच्छ out;
 			}
-			for (i = 0; i < contig; i++) {
-				if (bitmap_set_bit(bitmap,
+			लागि (i = 0; i < contig; i++) {
+				यदि (bitmap_set_bit(bitmap,
 				    rs->lo + i - bitmap_start) != 0) {
 					r = SSH_ERR_ALLOC_FAIL;
-					goto out;
+					गच्छ out;
 				}
 			}
-			break;
+			रोक;
 		}
 		last = rs->hi;
 	}
 	/* Flush the remaining section, if any */
-	if (state != 0) {
+	यदि (state != 0) {
 		KRL_DBG(("serial final flush for state 0x%02x", state));
-		switch (state) {
-		case KRL_SECTION_CERT_SERIAL_LIST:
-		case KRL_SECTION_CERT_SERIAL_RANGE:
-			break;
-		case KRL_SECTION_CERT_SERIAL_BITMAP:
-			if ((r = put_bitmap(sect, bitmap)) != 0)
-				goto out;
+		विकल्प (state) {
+		पक्ष KRL_SECTION_CERT_SERIAL_LIST:
+		पक्ष KRL_SECTION_CERT_SERIAL_RANGE:
+			रोक;
+		पक्ष KRL_SECTION_CERT_SERIAL_BITMAP:
+			यदि ((r = put_bitmap(sect, bitmap)) != 0)
+				गच्छ out;
 			bitmap_free(bitmap);
-			bitmap = NULL;
-			break;
+			bitmap = रिक्त;
+			रोक;
 		}
-		if ((r = sshbuf_put_u8(buf, state)) != 0 ||
+		यदि ((r = sshbuf_put_u8(buf, state)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			गच्छ out;
 	}
 	KRL_DBG(("serial done "));
 
 	/* Now output a section for any revocations by key ID */
 	sshbuf_reset(sect);
-	RB_FOREACH(rki, revoked_key_id_tree, &rc->revoked_key_ids) {
-		KRL_DBG(("key ID %s", rki->key_id));
-		if ((r = sshbuf_put_cstring(sect, rki->key_id)) != 0)
-			goto out;
+	RB_FOREACH(rki, revoked_साँचो_id_रूख, &rc->revoked_साँचो_ids) {
+		KRL_DBG(("key ID %s", rki->साँचो_id));
+		यदि ((r = sshbuf_put_cstring(sect, rki->साँचो_id)) != 0)
+			गच्छ out;
 	}
-	if (sshbuf_len(sect) != 0) {
-		if ((r = sshbuf_put_u8(buf, KRL_SECTION_CERT_KEY_ID)) != 0 ||
+	यदि (sshbuf_len(sect) != 0) {
+		यदि ((r = sshbuf_put_u8(buf, KRL_SECTION_CERT_साँचो_ID)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			गच्छ out;
 	}
 	r = 0;
  out:
 	bitmap_free(bitmap);
 	sshbuf_free(sect);
-	return r;
+	फर्काऊ r;
 }
 
-int
-ssh_krl_to_blob(struct ssh_krl *krl, struct sshbuf *buf)
+पूर्णाङ्क
+ssh_krl_to_blob(संरचना ssh_krl *krl, संरचना sshbuf *buf)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct revoked_certs *rc;
-	struct revoked_blob *rb;
-	struct sshbuf *sect;
-	u_char *sblob = NULL;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
+	संरचना revoked_certs *rc;
+	संरचना revoked_blob *rb;
+	संरचना sshbuf *sect;
+	u_char *sblob = रिक्त;
 
-	if (krl->generated_date == 0)
-		krl->generated_date = time(NULL);
+	यदि (krl->generated_date == 0)
+		krl->generated_date = समय(रिक्त);
 
-	if ((sect = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	यदि ((sect = sshbuf_new()) == रिक्त)
+		फर्काऊ SSH_ERR_ALLOC_FAIL;
 
 	/* Store the header */
-	if ((r = sshbuf_put(buf, KRL_MAGIC, sizeof(KRL_MAGIC) - 1)) != 0 ||
+	यदि ((r = sshbuf_put(buf, KRL_MAGIC, परिमाण(KRL_MAGIC) - 1)) != 0 ||
 	    (r = sshbuf_put_u32(buf, KRL_FORMAT_VERSION)) != 0 ||
 	    (r = sshbuf_put_u64(buf, krl->krl_version)) != 0 ||
 	    (r = sshbuf_put_u64(buf, krl->generated_date)) != 0 ||
 	    (r = sshbuf_put_u64(buf, krl->flags)) != 0 ||
-	    (r = sshbuf_put_string(buf, NULL, 0)) != 0 ||
+	    (r = sshbuf_put_string(buf, रिक्त, 0)) != 0 ||
 	    (r = sshbuf_put_cstring(buf, krl->comment)) != 0)
-		goto out;
+		गच्छ out;
 
 	/* Store sections for revoked certificates */
 	TAILQ_FOREACH(rc, &krl->revoked_certs, entry) {
 		sshbuf_reset(sect);
-		if ((r = revoked_certs_generate(rc, sect)) != 0)
-			goto out;
-		if ((r = sshbuf_put_u8(buf, KRL_SECTION_CERTIFICATES)) != 0 ||
+		यदि ((r = revoked_certs_generate(rc, sect)) != 0)
+			गच्छ out;
+		यदि ((r = sshbuf_put_u8(buf, KRL_SECTION_CERTIFICATES)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			गच्छ out;
 	}
 
 	/* Finally, output sections for revocations by public key/hash */
 	sshbuf_reset(sect);
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_keys) {
+	RB_FOREACH(rb, revoked_blob_रूख, &krl->revoked_साँचोहरू) {
 		KRL_DBG(("key len %zu ", rb->len));
-		if ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
-			goto out;
+		यदि ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
+			गच्छ out;
 	}
-	if (sshbuf_len(sect) != 0) {
-		if ((r = sshbuf_put_u8(buf, KRL_SECTION_EXPLICIT_KEY)) != 0 ||
+	यदि (sshbuf_len(sect) != 0) {
+		यदि ((r = sshbuf_put_u8(buf, KRL_SECTION_EXPLICIT_साँचो)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			गच्छ out;
 	}
 	sshbuf_reset(sect);
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha1s) {
+	RB_FOREACH(rb, revoked_blob_रूख, &krl->revoked_sha1s) {
 		KRL_DBG(("hash len %zu ", rb->len));
-		if ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
-			goto out;
+		यदि ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
+			गच्छ out;
 	}
-	if (sshbuf_len(sect) != 0) {
-		if ((r = sshbuf_put_u8(buf,
+	यदि (sshbuf_len(sect) != 0) {
+		यदि ((r = sshbuf_put_u8(buf,
 		    KRL_SECTION_FINGERPRINT_SHA1)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			गच्छ out;
 	}
 	sshbuf_reset(sect);
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha256s) {
+	RB_FOREACH(rb, revoked_blob_रूख, &krl->revoked_sha256s) {
 		KRL_DBG(("hash len %zu ", rb->len));
-		if ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
-			goto out;
+		यदि ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
+			गच्छ out;
 	}
-	if (sshbuf_len(sect) != 0) {
-		if ((r = sshbuf_put_u8(buf,
+	यदि (sshbuf_len(sect) != 0) {
+		यदि ((r = sshbuf_put_u8(buf,
 		    KRL_SECTION_FINGERPRINT_SHA256)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			गच्छ out;
 	}
 	/* success */
 	r = 0;
  out:
-	free(sblob);
+	मुक्त(sblob);
 	sshbuf_free(sect);
-	return r;
+	फर्काऊ r;
 }
 
-static void
-format_timestamp(uint64_t timestamp, char *ts, size_t nts)
+स्थिर शून्य
+format_timestamp(uint64_t timestamp, वर्ण *ts, माप_प्रकार nts)
 {
-	time_t t;
-	struct tm *tm;
+	समय_प्रकार t;
+	संरचना पंचांग *पंचांग;
 
 	t = timestamp;
-	tm = localtime(&t);
-	if (tm == NULL)
+	पंचांग = स_स्थानीय(&t);
+	यदि (पंचांग == रिक्त)
 		strlcpy(ts, "<INVALID>", nts);
-	else {
+	अन्यथा {
 		*ts = '\0';
-		strftime(ts, nts, "%Y%m%dT%H%M%S", tm);
+		स_माला(ts, nts, "%Y%m%dT%H%M%S", पंचांग);
 	}
 }
 
-static int
-cert_extension_subsection(struct sshbuf *subsect, struct ssh_krl *krl)
+स्थिर पूर्णाङ्क
+cert_extension_subsection(संरचना sshbuf *subsect, संरचना ssh_krl *krl)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 	u_char critical = 1;
-	struct sshbuf *value = NULL;
-	char *name = NULL;
+	संरचना sshbuf *मान = रिक्त;
+	वर्ण *name = रिक्त;
 
-	if ((r = sshbuf_get_cstring(subsect, &name, NULL)) != 0 ||
+	यदि ((r = sshbuf_get_cstring(subsect, &name, रिक्त)) != 0 ||
 	    (r = sshbuf_get_u8(subsect, &critical)) != 0 ||
-	    (r = sshbuf_froms(subsect, &value)) != 0) {
+	    (r = sshbuf_froms(subsect, &मान)) != 0) {
 		debug_fr(r, "parse");
 		error("KRL has invalid certificate extension subsection");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
-	if (sshbuf_len(subsect) != 0) {
+	यदि (sshbuf_len(subsect) != 0) {
 		error("KRL has invalid certificate extension subsection: "
 		    "trailing data");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 	debug_f("cert extension %s critical %u len %zu",
-	    name, critical, sshbuf_len(value));
+	    name, critical, sshbuf_len(मान));
 	/* no extensions are currently supported */
-	if (critical) {
+	यदि (critical) {
 		error("KRL contains unsupported critical certificate "
 		    "subsection \"%s\"", name);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		गच्छ out;
 	}
 	/* success */
 	r = 0;
  out:
-	free(name);
-	sshbuf_free(value);
-	return r;
+	मुक्त(name);
+	sshbuf_free(मान);
+	फर्काऊ r;
 }
 
-static int
-parse_revoked_certs(struct sshbuf *buf, struct ssh_krl *krl)
+स्थिर पूर्णाङ्क
+parse_revoked_certs(संरचना sshbuf *buf, संरचना ssh_krl *krl)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 	u_char type;
-	const u_char *blob;
-	size_t blen, nbits;
-	struct sshbuf *subsect = NULL;
+	अचर u_char *blob;
+	माप_प्रकार blen, nbits;
+	संरचना sshbuf *subsect = रिक्त;
 	uint64_t serial, serial_lo, serial_hi;
-	struct bitmap *bitmap = NULL;
-	char *key_id = NULL;
-	struct sshkey *ca_key = NULL;
+	संरचना bitmap *bitmap = रिक्त;
+	वर्ण *साँचो_id = रिक्त;
+	संरचना sshkey *ca_साँचो = रिक्त;
 
-	if ((subsect = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	यदि ((subsect = sshbuf_new()) == रिक्त)
+		फर्काऊ SSH_ERR_ALLOC_FAIL;
 
 	/* Header: key, reserved */
-	if ((r = sshbuf_get_string_direct(buf, &blob, &blen)) != 0 ||
+	यदि ((r = sshbuf_get_string_direct(buf, &blob, &blen)) != 0 ||
 	    (r = sshbuf_skip_string(buf)) != 0)
-		goto out;
-	if (blen != 0 && (r = sshkey_from_blob(blob, blen, &ca_key)) != 0)
-		goto out;
+		गच्छ out;
+	यदि (blen != 0 && (r = sshkey_from_blob(blob, blen, &ca_साँचो)) != 0)
+		गच्छ out;
 
-	while (sshbuf_len(buf) > 0) {
+	जबसम्म (sshbuf_len(buf) > 0) {
 		sshbuf_free(subsect);
-		subsect = NULL;
-		if ((r = sshbuf_get_u8(buf, &type)) != 0 ||
+		subsect = रिक्त;
+		यदि ((r = sshbuf_get_u8(buf, &type)) != 0 ||
 		    (r = sshbuf_froms(buf, &subsect)) != 0)
-			goto out;
+			गच्छ out;
 		KRL_DBG(("subsection type 0x%02x", type));
 		/* sshbuf_dump(subsect, stderr); */
 
-		switch (type) {
-		case KRL_SECTION_CERT_SERIAL_LIST:
-			while (sshbuf_len(subsect) > 0) {
-				if ((r = sshbuf_get_u64(subsect, &serial)) != 0)
-					goto out;
-				if ((r = ssh_krl_revoke_cert_by_serial(krl,
-				    ca_key, serial)) != 0)
-					goto out;
+		विकल्प (type) {
+		पक्ष KRL_SECTION_CERT_SERIAL_LIST:
+			जबसम्म (sshbuf_len(subsect) > 0) {
+				यदि ((r = sshbuf_get_u64(subsect, &serial)) != 0)
+					गच्छ out;
+				यदि ((r = ssh_krl_revoke_cert_by_serial(krl,
+				    ca_साँचो, serial)) != 0)
+					गच्छ out;
 			}
-			break;
-		case KRL_SECTION_CERT_SERIAL_RANGE:
-			if ((r = sshbuf_get_u64(subsect, &serial_lo)) != 0 ||
+			रोक;
+		पक्ष KRL_SECTION_CERT_SERIAL_RANGE:
+			यदि ((r = sshbuf_get_u64(subsect, &serial_lo)) != 0 ||
 			    (r = sshbuf_get_u64(subsect, &serial_hi)) != 0)
-				goto out;
-			if ((r = ssh_krl_revoke_cert_by_serial_range(krl,
-			    ca_key, serial_lo, serial_hi)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_CERT_SERIAL_BITMAP:
-			if ((bitmap = bitmap_new()) == NULL) {
+				गच्छ out;
+			यदि ((r = ssh_krl_revoke_cert_by_serial_range(krl,
+			    ca_साँचो, serial_lo, serial_hi)) != 0)
+				गच्छ out;
+			रोक;
+		पक्ष KRL_SECTION_CERT_SERIAL_BITMAP:
+			यदि ((bitmap = bitmap_new()) == रिक्त) {
 				r = SSH_ERR_ALLOC_FAIL;
-				goto out;
+				गच्छ out;
 			}
-			if ((r = sshbuf_get_u64(subsect, &serial_lo)) != 0 ||
+			यदि ((r = sshbuf_get_u64(subsect, &serial_lo)) != 0 ||
 			    (r = sshbuf_get_bignum2_bytes_direct(subsect,
 			    &blob, &blen)) != 0)
-				goto out;
-			if (bitmap_from_string(bitmap, blob, blen) != 0) {
+				गच्छ out;
+			यदि (bitmap_from_string(bitmap, blob, blen) != 0) {
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				गच्छ out;
 			}
 			nbits = bitmap_nbits(bitmap);
-			for (serial = 0; serial < (uint64_t)nbits; serial++) {
-				if (serial > 0 && serial_lo + serial == 0) {
+			लागि (serial = 0; serial < (uint64_t)nbits; serial++) {
+				यदि (serial > 0 && serial_lo + serial == 0) {
 					error_f("bitmap wraps u64");
 					r = SSH_ERR_INVALID_FORMAT;
-					goto out;
+					गच्छ out;
 				}
-				if (!bitmap_test_bit(bitmap, serial))
-					continue;
-				if ((r = ssh_krl_revoke_cert_by_serial(krl,
-				    ca_key, serial_lo + serial)) != 0)
-					goto out;
+				यदि (!bitmap_test_bit(bitmap, serial))
+					जारी;
+				यदि ((r = ssh_krl_revoke_cert_by_serial(krl,
+				    ca_साँचो, serial_lo + serial)) != 0)
+					गच्छ out;
 			}
 			bitmap_free(bitmap);
-			bitmap = NULL;
-			break;
-		case KRL_SECTION_CERT_KEY_ID:
-			while (sshbuf_len(subsect) > 0) {
-				if ((r = sshbuf_get_cstring(subsect,
-				    &key_id, NULL)) != 0)
-					goto out;
-				if ((r = ssh_krl_revoke_cert_by_key_id(krl,
-				    ca_key, key_id)) != 0)
-					goto out;
-				free(key_id);
-				key_id = NULL;
+			bitmap = रिक्त;
+			रोक;
+		पक्ष KRL_SECTION_CERT_साँचो_ID:
+			जबसम्म (sshbuf_len(subsect) > 0) {
+				यदि ((r = sshbuf_get_cstring(subsect,
+				    &साँचो_id, रिक्त)) != 0)
+					गच्छ out;
+				यदि ((r = ssh_krl_revoke_cert_by_साँचो_id(krl,
+				    ca_साँचो, साँचो_id)) != 0)
+					गच्छ out;
+				मुक्त(साँचो_id);
+				साँचो_id = रिक्त;
 			}
-			break;
-		case KRL_SECTION_CERT_EXTENSION:
-			if ((r = cert_extension_subsection(subsect, krl)) != 0)
-				goto out;
-			break;
-		default:
+			रोक;
+		पक्ष KRL_SECTION_CERT_EXTENSION:
+			यदि ((r = cert_extension_subsection(subsect, krl)) != 0)
+				गच्छ out;
+			रोक;
+		स्वभाव:
 			error("Unsupported KRL certificate section %u", type);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
-		if (sshbuf_len(subsect) > 0) {
+		यदि (sshbuf_len(subsect) > 0) {
 			error("KRL certificate section contains unparsed data");
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
 	}
 
 	r = 0;
  out:
-	if (bitmap != NULL)
+	यदि (bitmap != रिक्त)
 		bitmap_free(bitmap);
-	free(key_id);
-	sshkey_free(ca_key);
+	मुक्त(साँचो_id);
+	sshkey_free(ca_साँचो);
 	sshbuf_free(subsect);
-	return r;
+	फर्काऊ r;
 }
 
-static int
-blob_section(struct sshbuf *sect, struct revoked_blob_tree *target_tree,
-    size_t expected_len)
+स्थिर पूर्णाङ्क
+blob_section(संरचना sshbuf *sect, संरचना revoked_blob_रूख *target_रूख,
+    माप_प्रकार expected_len)
 {
-	u_char *rdata = NULL;
-	size_t rlen = 0;
-	int r;
+	u_char *rdata = रिक्त;
+	माप_प्रकार rlen = 0;
+	पूर्णाङ्क r;
 
-	while (sshbuf_len(sect) > 0) {
-		if ((r = sshbuf_get_string(sect, &rdata, &rlen)) != 0)
-			return r;
-		if (expected_len != 0 && rlen != expected_len) {
+	जबसम्म (sshbuf_len(sect) > 0) {
+		यदि ((r = sshbuf_get_string(sect, &rdata, &rlen)) != 0)
+			फर्काऊ r;
+		यदि (expected_len != 0 && rlen != expected_len) {
 			error_f("bad length");
-			free(rdata);
-			return SSH_ERR_INVALID_FORMAT;
+			मुक्त(rdata);
+			फर्काऊ SSH_ERR_INVALID_FORMAT;
 		}
-		if ((r = revoke_blob(target_tree, rdata, rlen)) != 0) {
-			free(rdata);
-			return r;
+		यदि ((r = revoke_blob(target_रूख, rdata, rlen)) != 0) {
+			मुक्त(rdata);
+			फर्काऊ r;
 		}
 	}
-	return 0;
+	फर्काऊ 0;
 }
 
-static int
-extension_section(struct sshbuf *sect, struct ssh_krl *krl)
+स्थिर पूर्णाङ्क
+extension_section(संरचना sshbuf *sect, संरचना ssh_krl *krl)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 	u_char critical = 1;
-	struct sshbuf *value = NULL;
-	char *name = NULL;
+	संरचना sshbuf *मान = रिक्त;
+	वर्ण *name = रिक्त;
 
-	if ((r = sshbuf_get_cstring(sect, &name, NULL)) != 0 ||
+	यदि ((r = sshbuf_get_cstring(sect, &name, रिक्त)) != 0 ||
 	    (r = sshbuf_get_u8(sect, &critical)) != 0 ||
-	    (r = sshbuf_froms(sect, &value)) != 0) {
+	    (r = sshbuf_froms(sect, &मान)) != 0) {
 		debug_fr(r, "parse");
 		error("KRL has invalid extension section");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
-	if (sshbuf_len(sect) != 0) {
+	यदि (sshbuf_len(sect) != 0) {
 		error("KRL has invalid extension section: trailing data");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 	debug_f("extension %s critical %u len %zu",
-	    name, critical, sshbuf_len(value));
+	    name, critical, sshbuf_len(मान));
 	/* no extensions are currently supported */
-	if (critical) {
+	यदि (critical) {
 		error("KRL contains unsupported critical section \"%s\"", name);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		गच्छ out;
 	}
 	/* success */
 	r = 0;
  out:
-	free(name);
-	sshbuf_free(value);
-	return r;
+	मुक्त(name);
+	sshbuf_free(मान);
+	फर्काऊ r;
 }
 
 /* Attempt to parse a KRL */
-int
-ssh_krl_from_blob(struct sshbuf *buf, struct ssh_krl **krlp)
+पूर्णाङ्क
+ssh_krl_from_blob(संरचना sshbuf *buf, संरचना ssh_krl **krlp)
 {
-	struct sshbuf *copy = NULL, *sect = NULL;
-	struct ssh_krl *krl = NULL;
-	char timestamp[64];
-	int r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshbuf *copy = रिक्त, *sect = रिक्त;
+	संरचना ssh_krl *krl = रिक्त;
+	वर्ण timestamp[64];
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 	u_char type;
 	u_int format_version;
 
-	*krlp = NULL;
+	*krlp = रिक्त;
 
 	/* KRL must begin with magic string */
-	if ((r = sshbuf_cmp(buf, 0, KRL_MAGIC, sizeof(KRL_MAGIC) - 1)) != 0) {
+	यदि ((r = sshbuf_cmp(buf, 0, KRL_MAGIC, परिमाण(KRL_MAGIC) - 1)) != 0) {
 		debug2_f("bad KRL magic header");
-		return SSH_ERR_KRL_BAD_MAGIC;
+		फर्काऊ SSH_ERR_KRL_BAD_MAGIC;
 	}
 
-	if ((krl = ssh_krl_init()) == NULL) {
+	यदि ((krl = ssh_krl_init()) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
 		error_f("alloc failed");
-		goto out;
+		गच्छ out;
 	}
 	/* Don't modify buffer */
-	if ((copy = sshbuf_fromb(buf)) == NULL) {
+	यदि ((copy = sshbuf_fromb(buf)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = sshbuf_consume(copy, sizeof(KRL_MAGIC) - 1)) != 0 ||
+	यदि ((r = sshbuf_consume(copy, परिमाण(KRL_MAGIC) - 1)) != 0 ||
 	    (r = sshbuf_get_u32(copy, &format_version)) != 0)
-		goto out;
-	if (format_version != KRL_FORMAT_VERSION) {
+		गच्छ out;
+	यदि (format_version != KRL_FORMAT_VERSION) {
 		error_f("unsupported KRL format version %u", format_version);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = sshbuf_get_u64(copy, &krl->krl_version)) != 0 ||
+	यदि ((r = sshbuf_get_u64(copy, &krl->krl_version)) != 0 ||
 	    (r = sshbuf_get_u64(copy, &krl->generated_date)) != 0 ||
 	    (r = sshbuf_get_u64(copy, &krl->flags)) != 0 ||
 	    (r = sshbuf_skip_string(copy)) != 0 ||
-	    (r = sshbuf_get_cstring(copy, &krl->comment, NULL)) != 0) {
+	    (r = sshbuf_get_cstring(copy, &krl->comment, रिक्त)) != 0) {
 		error_fr(r, "parse KRL header");
-		goto out;
+		गच्छ out;
 	}
-	format_timestamp(krl->generated_date, timestamp, sizeof(timestamp));
+	format_timestamp(krl->generated_date, timestamp, परिमाण(timestamp));
 	debug("KRL version %llu generated at %s%s%s",
-	    (long long unsigned)krl->krl_version, timestamp,
+	    (दीर्घ दीर्घ अचिन्हित)krl->krl_version, timestamp,
 	    *krl->comment ? ": " : "", krl->comment);
 
 	/* Parse and load the KRL sections. */
-	while (sshbuf_len(copy) > 0) {
+	जबसम्म (sshbuf_len(copy) > 0) {
 		sshbuf_free(sect);
-		sect = NULL;
-		if ((r = sshbuf_get_u8(copy, &type)) != 0 ||
+		sect = रिक्त;
+		यदि ((r = sshbuf_get_u8(copy, &type)) != 0 ||
 		    (r = sshbuf_froms(copy, &sect)) != 0)
-			goto out;
+			गच्छ out;
 		KRL_DBG(("section 0x%02x", type));
 
-		switch (type) {
-		case KRL_SECTION_CERTIFICATES:
-			if ((r = parse_revoked_certs(sect, krl)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_EXPLICIT_KEY:
-			if ((r = blob_section(sect,
-			    &krl->revoked_keys, 0)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_FINGERPRINT_SHA1:
-			if ((r = blob_section(sect,
+		विकल्प (type) {
+		पक्ष KRL_SECTION_CERTIFICATES:
+			यदि ((r = parse_revoked_certs(sect, krl)) != 0)
+				गच्छ out;
+			रोक;
+		पक्ष KRL_SECTION_EXPLICIT_साँचो:
+			यदि ((r = blob_section(sect,
+			    &krl->revoked_साँचोहरू, 0)) != 0)
+				गच्छ out;
+			रोक;
+		पक्ष KRL_SECTION_FINGERPRINT_SHA1:
+			यदि ((r = blob_section(sect,
 			    &krl->revoked_sha1s, 20)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_FINGERPRINT_SHA256:
-			if ((r = blob_section(sect,
+				गच्छ out;
+			रोक;
+		पक्ष KRL_SECTION_FINGERPRINT_SHA256:
+			यदि ((r = blob_section(sect,
 			    &krl->revoked_sha256s, 32)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_EXTENSION:
-			if ((r = extension_section(sect, krl)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_SIGNATURE:
+				गच्छ out;
+			रोक;
+		पक्ष KRL_SECTION_EXTENSION:
+			यदि ((r = extension_section(sect, krl)) != 0)
+				गच्छ out;
+			रोक;
+		पक्ष KRL_SECTION_SIGNATURE:
 			/* Handled above, but still need to stay in synch */
 			sshbuf_free(sect);
-			sect = NULL;
-			if ((r = sshbuf_skip_string(copy)) != 0)
-				goto out;
-			break;
-		default:
+			sect = रिक्त;
+			यदि ((r = sshbuf_skip_string(copy)) != 0)
+				गच्छ out;
+			रोक;
+		स्वभाव:
 			error("Unsupported KRL section %u", type);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
-		if (sect != NULL && sshbuf_len(sect) > 0) {
+		यदि (sect != रिक्त && sshbuf_len(sect) > 0) {
 			error("KRL section contains unparsed data");
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
 	}
 
@@ -1169,244 +1169,244 @@ ssh_krl_from_blob(struct sshbuf *buf, struct ssh_krl **krlp)
 	*krlp = krl;
 	r = 0;
  out:
-	if (r != 0)
+	यदि (r != 0)
 		ssh_krl_free(krl);
 	sshbuf_free(copy);
 	sshbuf_free(sect);
-	return r;
+	फर्काऊ r;
 }
 
 /* Checks certificate serial number and key ID revocation */
-static int
-is_cert_revoked(const struct sshkey *key, struct revoked_certs *rc)
+स्थिर पूर्णाङ्क
+is_cert_revoked(अचर संरचना sshkey *साँचो, संरचना revoked_certs *rc)
 {
-	struct revoked_serial rs, *ers;
-	struct revoked_key_id rki, *erki;
+	संरचना revoked_serial rs, *ers;
+	संरचना revoked_साँचो_id rki, *erki;
 
 	/* Check revocation by cert key ID */
-	memset(&rki, 0, sizeof(rki));
-	rki.key_id = key->cert->key_id;
-	erki = RB_FIND(revoked_key_id_tree, &rc->revoked_key_ids, &rki);
-	if (erki != NULL) {
+	स_रखो(&rki, 0, परिमाण(rki));
+	rki.साँचो_id = साँचो->cert->साँचो_id;
+	erki = RB_FIND(revoked_साँचो_id_रूख, &rc->revoked_साँचो_ids, &rki);
+	यदि (erki != रिक्त) {
 		KRL_DBG(("revoked by key ID"));
-		return SSH_ERR_KEY_REVOKED;
+		फर्काऊ SSH_ERR_साँचो_REVOKED;
 	}
 
 	/*
 	 * Zero serials numbers are ignored (it's the default when the
 	 * CA doesn't specify one).
 	 */
-	if (key->cert->serial == 0)
-		return 0;
+	यदि (साँचो->cert->serial == 0)
+		फर्काऊ 0;
 
-	memset(&rs, 0, sizeof(rs));
-	rs.lo = rs.hi = key->cert->serial;
-	ers = RB_FIND(revoked_serial_tree, &rc->revoked_serials, &rs);
-	if (ers != NULL) {
+	स_रखो(&rs, 0, परिमाण(rs));
+	rs.lo = rs.hi = साँचो->cert->serial;
+	ers = RB_FIND(revoked_serial_रूख, &rc->revoked_serials, &rs);
+	यदि (ers != रिक्त) {
 		KRL_DBG(("revoked serial %llu matched %llu:%llu",
-		    (unsigned long long)key->cert->serial,
-		    (unsigned long long)ers->lo,
-		    (unsigned long long)ers->hi));
-		return SSH_ERR_KEY_REVOKED;
+		    (अचिन्हित दीर्घ दीर्घ)साँचो->cert->serial,
+		    (अचिन्हित दीर्घ दीर्घ)ers->lo,
+		    (अचिन्हित दीर्घ दीर्घ)ers->hi));
+		फर्काऊ SSH_ERR_साँचो_REVOKED;
 	}
-	return 0;
+	फर्काऊ 0;
 }
 
 /* Checks whether a given key/cert is revoked. Does not check its CA */
-static int
-is_key_revoked(struct ssh_krl *krl, const struct sshkey *key)
+स्थिर पूर्णाङ्क
+is_साँचो_revoked(संरचना ssh_krl *krl, अचर संरचना sshkey *साँचो)
 {
-	struct revoked_blob rb, *erb;
-	struct revoked_certs *rc;
-	int r;
+	संरचना revoked_blob rb, *erb;
+	संरचना revoked_certs *rc;
+	पूर्णाङ्क r;
 
 	/* Check explicitly revoked hashes first */
-	memset(&rb, 0, sizeof(rb));
-	if ((r = sshkey_fingerprint_raw(key, SSH_DIGEST_SHA1,
+	स_रखो(&rb, 0, परिमाण(rb));
+	यदि ((r = sshkey_fingerprint_raw(साँचो, SSH_DIGEST_SHA1,
 	    &rb.blob, &rb.len)) != 0)
-		return r;
-	erb = RB_FIND(revoked_blob_tree, &krl->revoked_sha1s, &rb);
-	free(rb.blob);
-	if (erb != NULL) {
+		फर्काऊ r;
+	erb = RB_FIND(revoked_blob_रूख, &krl->revoked_sha1s, &rb);
+	मुक्त(rb.blob);
+	यदि (erb != रिक्त) {
 		KRL_DBG(("revoked by key SHA1"));
-		return SSH_ERR_KEY_REVOKED;
+		फर्काऊ SSH_ERR_साँचो_REVOKED;
 	}
-	memset(&rb, 0, sizeof(rb));
-	if ((r = sshkey_fingerprint_raw(key, SSH_DIGEST_SHA256,
+	स_रखो(&rb, 0, परिमाण(rb));
+	यदि ((r = sshkey_fingerprint_raw(साँचो, SSH_DIGEST_SHA256,
 	    &rb.blob, &rb.len)) != 0)
-		return r;
-	erb = RB_FIND(revoked_blob_tree, &krl->revoked_sha256s, &rb);
-	free(rb.blob);
-	if (erb != NULL) {
+		फर्काऊ r;
+	erb = RB_FIND(revoked_blob_रूख, &krl->revoked_sha256s, &rb);
+	मुक्त(rb.blob);
+	यदि (erb != रिक्त) {
 		KRL_DBG(("revoked by key SHA256"));
-		return SSH_ERR_KEY_REVOKED;
+		फर्काऊ SSH_ERR_साँचो_REVOKED;
 	}
 
 	/* Next, explicit keys */
-	memset(&rb, 0, sizeof(rb));
-	if ((r = plain_key_blob(key, &rb.blob, &rb.len)) != 0)
-		return r;
-	erb = RB_FIND(revoked_blob_tree, &krl->revoked_keys, &rb);
-	free(rb.blob);
-	if (erb != NULL) {
+	स_रखो(&rb, 0, परिमाण(rb));
+	यदि ((r = plain_साँचो_blob(साँचो, &rb.blob, &rb.len)) != 0)
+		फर्काऊ r;
+	erb = RB_FIND(revoked_blob_रूख, &krl->revoked_साँचोहरू, &rb);
+	मुक्त(rb.blob);
+	यदि (erb != रिक्त) {
 		KRL_DBG(("revoked by explicit key"));
-		return SSH_ERR_KEY_REVOKED;
+		फर्काऊ SSH_ERR_साँचो_REVOKED;
 	}
 
-	if (!sshkey_is_cert(key))
-		return 0;
+	यदि (!sshkey_is_cert(साँचो))
+		फर्काऊ 0;
 
 	/* Check cert revocation for the specified CA */
-	if ((r = revoked_certs_for_ca_key(krl, key->cert->signature_key,
+	यदि ((r = revoked_certs_for_ca_साँचो(krl, साँचो->cert->signature_साँचो,
 	    &rc, 0)) != 0)
-		return r;
-	if (rc != NULL) {
-		if ((r = is_cert_revoked(key, rc)) != 0)
-			return r;
+		फर्काऊ r;
+	यदि (rc != रिक्त) {
+		यदि ((r = is_cert_revoked(साँचो, rc)) != 0)
+			फर्काऊ r;
 	}
 	/* Check cert revocation for the wildcard CA */
-	if ((r = revoked_certs_for_ca_key(krl, NULL, &rc, 0)) != 0)
-		return r;
-	if (rc != NULL) {
-		if ((r = is_cert_revoked(key, rc)) != 0)
-			return r;
+	यदि ((r = revoked_certs_for_ca_साँचो(krl, रिक्त, &rc, 0)) != 0)
+		फर्काऊ r;
+	यदि (rc != रिक्त) {
+		यदि ((r = is_cert_revoked(साँचो, rc)) != 0)
+			फर्काऊ r;
 	}
 
-	KRL_DBG(("%llu no match", (unsigned long long)key->cert->serial));
-	return 0;
+	KRL_DBG(("%llu no match", (अचिन्हित दीर्घ दीर्घ)साँचो->cert->serial));
+	फर्काऊ 0;
 }
 
-int
-ssh_krl_check_key(struct ssh_krl *krl, const struct sshkey *key)
+पूर्णाङ्क
+ssh_krl_check_साँचो(संरचना ssh_krl *krl, अचर संरचना sshkey *साँचो)
 {
-	int r;
+	पूर्णाङ्क r;
 
 	KRL_DBG(("checking key"));
-	if ((r = is_key_revoked(krl, key)) != 0)
-		return r;
-	if (sshkey_is_cert(key)) {
+	यदि ((r = is_साँचो_revoked(krl, साँचो)) != 0)
+		फर्काऊ r;
+	यदि (sshkey_is_cert(साँचो)) {
 		debug2_f("checking CA key");
-		if ((r = is_key_revoked(krl, key->cert->signature_key)) != 0)
-			return r;
+		यदि ((r = is_साँचो_revoked(krl, साँचो->cert->signature_साँचो)) != 0)
+			फर्काऊ r;
 	}
 	KRL_DBG(("key okay"));
-	return 0;
+	फर्काऊ 0;
 }
 
-int
-ssh_krl_file_contains_key(const char *path, const struct sshkey *key)
+पूर्णाङ्क
+ssh_krl_file_contains_साँचो(अचर वर्ण *path, अचर संरचना sshkey *साँचो)
 {
-	struct sshbuf *krlbuf = NULL;
-	struct ssh_krl *krl = NULL;
-	int oerrno = 0, r;
+	संरचना sshbuf *krlbuf = रिक्त;
+	संरचना ssh_krl *krl = रिक्त;
+	पूर्णाङ्क oerrno = 0, r;
 
-	if (path == NULL)
-		return 0;
-	if ((r = sshbuf_load_file(path, &krlbuf)) != 0) {
-		oerrno = errno;
-		goto out;
+	यदि (path == रिक्त)
+		फर्काऊ 0;
+	यदि ((r = sshbuf_load_file(path, &krlbuf)) != 0) {
+		oerrno = त्रुटि_सं;
+		गच्छ out;
 	}
-	if ((r = ssh_krl_from_blob(krlbuf, &krl)) != 0)
-		goto out;
+	यदि ((r = ssh_krl_from_blob(krlbuf, &krl)) != 0)
+		गच्छ out;
 	debug2_f("checking KRL %s", path);
-	r = ssh_krl_check_key(krl, key);
+	r = ssh_krl_check_साँचो(krl, साँचो);
  out:
 	sshbuf_free(krlbuf);
 	ssh_krl_free(krl);
-	if (r != 0)
-		errno = oerrno;
-	return r;
+	यदि (r != 0)
+		त्रुटि_सं = oerrno;
+	फर्काऊ r;
 }
 
-int
-krl_dump(struct ssh_krl *krl, FILE *f)
+पूर्णाङ्क
+krl_dump(संरचना ssh_krl *krl, खाता *f)
 {
-	struct sshkey *key = NULL;
-	struct revoked_blob *rb;
-	struct revoked_certs *rc;
-	struct revoked_serial *rs;
-	struct revoked_key_id *rki;
-	int r, ret = 0;
-	char *fp, timestamp[64];
+	संरचना sshkey *साँचो = रिक्त;
+	संरचना revoked_blob *rb;
+	संरचना revoked_certs *rc;
+	संरचना revoked_serial *rs;
+	संरचना revoked_साँचो_id *rki;
+	पूर्णाङ्क r, ret = 0;
+	वर्ण *fp, timestamp[64];
 
 	/* Try to print in a KRL spec-compatible format */
-	format_timestamp(krl->generated_date, timestamp, sizeof(timestamp));
-	fprintf(f, "# KRL version %llu\n", (unsigned long long)krl->krl_version);
-	fprintf(f, "# Generated at %s\n", timestamp);
-	if (krl->comment != NULL && *krl->comment != '\0') {
-		r = INT_MAX;
-		asmprintf(&fp, INT_MAX, &r, "%s", krl->comment);
-		fprintf(f, "# Comment: %s\n", fp);
-		free(fp);
+	format_timestamp(krl->generated_date, timestamp, परिमाण(timestamp));
+	ख_लिखो(f, "# KRL version %llu\n", (अचिन्हित दीर्घ दीर्घ)krl->krl_version);
+	ख_लिखो(f, "# Generated at %s\n", timestamp);
+	यदि (krl->comment != रिक्त && *krl->comment != '\0') {
+		r = पूर्णांक_उच्च;
+		asmprintf(&fp, पूर्णांक_उच्च, &r, "%s", krl->comment);
+		ख_लिखो(f, "# Comment: %s\n", fp);
+		मुक्त(fp);
 	}
-	fputc('\n', f);
+	ख_अक्षर_दो('\n', f);
 
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_keys) {
-		if ((r = sshkey_from_blob(rb->blob, rb->len, &key)) != 0) {
+	RB_FOREACH(rb, revoked_blob_रूख, &krl->revoked_साँचोहरू) {
+		यदि ((r = sshkey_from_blob(rb->blob, rb->len, &साँचो)) != 0) {
 			ret = SSH_ERR_INVALID_FORMAT;
 			error_r(r, "parse KRL key");
-			continue;
+			जारी;
 		}
-		if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL) {
+		यदि ((fp = sshkey_fingerprint(साँचो, SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == रिक्त) {
 			ret = SSH_ERR_INVALID_FORMAT;
 			error("sshkey_fingerprint failed");
-			continue;
+			जारी;
 		}
-		fprintf(f, "hash: %s # %s\n", fp, sshkey_ssh_name(key));
-		free(fp);
-		free(key);
+		ख_लिखो(f, "hash: %s # %s\n", fp, sshkey_ssh_name(साँचो));
+		मुक्त(fp);
+		मुक्त(साँचो);
 	}
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha256s) {
+	RB_FOREACH(rb, revoked_blob_रूख, &krl->revoked_sha256s) {
 		fp = tohex(rb->blob, rb->len);
-		fprintf(f, "hash: SHA256:%s\n", fp);
-		free(fp);
+		ख_लिखो(f, "hash: SHA256:%s\n", fp);
+		मुक्त(fp);
 	}
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha1s) {
+	RB_FOREACH(rb, revoked_blob_रूख, &krl->revoked_sha1s) {
 		/*
 		 * There is not KRL spec keyword for raw SHA1 hashes, so
 		 * print them as comments.
 		 */
 		fp = tohex(rb->blob, rb->len);
-		fprintf(f, "# hash SHA1:%s\n", fp);
-		free(fp);
+		ख_लिखो(f, "# hash SHA1:%s\n", fp);
+		मुक्त(fp);
 	}
 
 	TAILQ_FOREACH(rc, &krl->revoked_certs, entry) {
-		fputc('\n', f);
-		if (rc->ca_key == NULL)
-			fprintf(f, "# Wildcard CA\n");
-		else {
-			if ((fp = sshkey_fingerprint(rc->ca_key,
-			    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == NULL) {
+		ख_अक्षर_दो('\n', f);
+		यदि (rc->ca_साँचो == रिक्त)
+			ख_लिखो(f, "# Wildcard CA\n");
+		अन्यथा {
+			यदि ((fp = sshkey_fingerprint(rc->ca_साँचो,
+			    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == रिक्त) {
 				ret = SSH_ERR_INVALID_FORMAT;
 				error("sshkey_fingerprint failed");
-				continue;
+				जारी;
 			}
-			fprintf(f, "# CA key %s %s\n",
-			    sshkey_ssh_name(rc->ca_key), fp);
-			free(fp);
+			ख_लिखो(f, "# CA key %s %s\n",
+			    sshkey_ssh_name(rc->ca_साँचो), fp);
+			मुक्त(fp);
 		}
-		RB_FOREACH(rs, revoked_serial_tree, &rc->revoked_serials) {
-			if (rs->lo == rs->hi) {
-				fprintf(f, "serial: %llu\n",
-				    (unsigned long long)rs->lo);
-			} else {
-				fprintf(f, "serial: %llu-%llu\n",
-				    (unsigned long long)rs->lo,
-				    (unsigned long long)rs->hi);
+		RB_FOREACH(rs, revoked_serial_रूख, &rc->revoked_serials) {
+			यदि (rs->lo == rs->hi) {
+				ख_लिखो(f, "serial: %llu\n",
+				    (अचिन्हित दीर्घ दीर्घ)rs->lo);
+			} अन्यथा {
+				ख_लिखो(f, "serial: %llu-%llu\n",
+				    (अचिन्हित दीर्घ दीर्घ)rs->lo,
+				    (अचिन्हित दीर्घ दीर्घ)rs->hi);
 			}
 		}
-		RB_FOREACH(rki, revoked_key_id_tree, &rc->revoked_key_ids) {
+		RB_FOREACH(rki, revoked_साँचो_id_रूख, &rc->revoked_साँचो_ids) {
 			/*
 			 * We don't want key IDs with embedded newlines to
 			 * mess up the display.
 			 */
-			r = INT_MAX;
-			asmprintf(&fp, INT_MAX, &r, "%s", rki->key_id);
-			fprintf(f, "id: %s\n", fp);
-			free(fp);
+			r = पूर्णांक_उच्च;
+			asmprintf(&fp, पूर्णांक_उच्च, &r, "%s", rki->साँचो_id);
+			ख_लिखो(f, "id: %s\n", fp);
+			मुक्त(fp);
 		}
 	}
-	return ret;
+	फर्काऊ ret;
 }
