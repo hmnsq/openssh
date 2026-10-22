@@ -22,14 +22,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <pwd.h>
+#ضمن <sys/types.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <pwd.h>
 
-# if defined(HAVE_CRYPT_H) && !defined(HAVE_SECUREWARE)
+# ܐܢ defined(HAVE_CRYPT_H) && !defined(HAVE_SECUREWARE)
 #  include <crypt.h>
 # endif
 
@@ -44,17 +44,17 @@
 #  include <prot.h>
 # endif
 
-# if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+# ܐܢ defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
 #  include <shadow.h>
 # endif
 
-# if defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
+# ܐܢ defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
 #  include <sys/label.h>
 #  include <sys/audit.h>
 #  include <pwdadj.h>
 # endif
 
-# if defined(WITH_OPENSSL) && !defined(HAVE_CRYPT) && defined(HAVE_DES_CRYPT)
+# ܐܢ defined(WITH_OPENSSL) && !defined(HAVE_CRYPT) && defined(HAVE_DES_CRYPT)
 #  include <openssl/des.h>
 #  define crypt DES_crypt
 # endif
@@ -67,57 +67,57 @@
  * salt.  Usually this will be root unless the root account is locked out.
  * If we don't find one we return a traditional DES-based salt.
  */
-static const char *
-pick_salt(void)
+ساكن ثابت حرف *
+pick_salt(فراغ)
 {
-	struct passwd *pw;
-	char *passwd, *p;
+	بنية passwd *pw;
+	حرف *passwd, *p;
 	size_t typelen;
-	static char salt[32];
+	ساكن حرف salt[32];
 
-	if (salt[0] != '\0')
-		return salt;
-	strlcpy(salt, "xx", sizeof(salt));
+	ܐܢ (salt[0] != '\0')
+		ܦܢܐ salt;
+	strlcpy(salt, "xx", حجم(salt));
 	setpwent();
-	while ((pw = getpwent()) != NULL) {
-		if ((passwd = shadow_pw(pw)) == NULL)
-			continue;
-		if (passwd[0] == '$' && (p = strrchr(passwd+1, '$')) != NULL) {
+	ܟܡܐ ((pw = getpwent()) != عدم) {
+		ܐܢ ((passwd = shadow_pw(pw)) == عدم)
+			استمر;
+		ܐܢ (passwd[0] == '$' && (p = strrchr(passwd+1, '$')) != عدم) {
 			typelen = p - passwd + 1;
-			strlcpy(salt, passwd, MINIMUM(typelen, sizeof(salt)));
+			strlcpy(salt, passwd, MINIMUM(typelen, حجم(salt)));
 			explicit_bzero(passwd, strlen(passwd));
-			goto out;
+			اذهب out;
 		}
 	}
  out:
 	endpwent();
-	return salt;
+	ܦܢܐ salt;
 }
 
-char *
-xcrypt(const char *password, const char *salt)
+حرف *
+xcrypt(ثابت حرف *password, ثابت حرف *salt)
 {
-	char *crypted;
+	حرف *crypted;
 
 	/*
 	 * If we don't have a salt we are encrypting a fake password for
 	 * for timing purposes.  Pick an appropriate salt.
 	 */
-	if (salt == NULL)
+	ܐܢ (salt == عدم)
 		salt = pick_salt();
 
-#if defined(__hpux) && !defined(HAVE_SECUREWARE)
-	if (iscomsec())
+#ܐܢ defined(__hpux) && !defined(HAVE_SECUREWARE)
+	ܐܢ (iscomsec())
 		crypted = bigcrypt(password, salt);
-	else
+	ܐܚܪܢܐ
 		crypted = crypt(password, salt);
 # elif defined(HAVE_SECUREWARE)
 	crypted = bigcrypt(password, salt);
-# else
+# ܐܚܪܢܐ
 	crypted = crypt(password, salt);
 #endif
 
-	return crypted;
+	ܦܢܐ crypted;
 }
 
 /*
@@ -125,32 +125,32 @@ xcrypt(const char *password, const char *salt)
  * version.
  */
 
-char *
-shadow_pw(struct passwd *pw)
+حرف *
+shadow_pw(بنية passwd *pw)
 {
-	char *pw_password = pw->pw_passwd;
+	حرف *pw_password = pw->pw_passwd;
 
-# if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
-	struct spwd *spw = getspnam(pw->pw_name);
+# ܐܢ defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+	بنية spwd *spw = getspnam(pw->pw_name);
 
-	if (spw != NULL)
+	ܐܢ (spw != عدم)
 		pw_password = spw->sp_pwdp;
 # endif
 
 #ifdef USE_LIBIAF
-	return(get_iaf_password(pw));
+	ܦܢܐ(get_iaf_password(pw));
 #endif
 
-# if defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
-	struct passwd_adjunct *spw;
-	if (issecure() && (spw = getpwanam(pw->pw_name)) != NULL)
+# ܐܢ defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
+	بنية passwd_adjunct *spw;
+	ܐܢ (issecure() && (spw = getpwanam(pw->pw_name)) != عدم)
 		pw_password = spw->pwa_passwd;
 # elif defined(HAVE_SECUREWARE)
-	struct pr_passwd *spw = getprpwnam(pw->pw_name);
+	بنية pr_passwd *spw = getprpwnam(pw->pw_name);
 
-	if (spw != NULL)
+	ܐܢ (spw != عدم)
 		pw_password = spw->ufld.fd_encrypt;
 # endif
 
-	return pw_password;
+	ܦܢܐ pw_password;
 }

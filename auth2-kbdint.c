@@ -23,46 +23,46 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
+#ضمن <stdarg.h>
 
-#include "xmalloc.h"
-#include "packet.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "ssherr.h"
+#ضمن "xmalloc.h"
+#ضمن "packet.h"
+#ضمن "hostfile.h"
+#ضمن "auth.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "servconf.h"
+#ضمن "ssherr.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_kbdint;
+خارجي ServerOptions options;
+خارجي بنية authmethod_cfg methodcfg_kbdint;
 
-static int
-userauth_kbdint(struct ssh *ssh, const char *method)
+ساكن صحيح
+userauth_kbdint(بنية ssh *ssh, ثابت حرف *method)
 {
-	int r, authenticated = 0;
-	char *lang, *devs;
+	صحيح r, authenticated = 0;
+	حرف *lang, *devs;
 
-	if ((r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &devs, NULL)) != 0 ||
+	ܐܢ ((r = sshpkt_get_cstring(ssh, &lang, عدم)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &devs, عدم)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	debug("keyboard-interactive devs %s", devs);
 
-	if (options.kbd_interactive_authentication)
+	ܐܢ (options.kbd_interactive_authentication)
 		authenticated = auth2_challenge(ssh, devs);
 
-	free(devs);
-	free(lang);
-	return authenticated;
+	حرر(devs);
+	حرر(lang);
+	ܦܢܐ authenticated;
 }
 
 Authmethod method_kbdint = {

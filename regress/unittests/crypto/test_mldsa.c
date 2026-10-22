@@ -5,47 +5,47 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifdef USE_MLDSA
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "crypto_api.h"
-#include "xmalloc.h"
-#include "sshbuf.h"
+#ضمن "../test_helper/test_helper.h"
+#ضمن "crypto_api.h"
+#ضمن "xmalloc.h"
+#ضمن "sshbuf.h"
 
 /* in tests.c */
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+بنية sshbuf *load_text_file(ثابت حرف *name);
+حرف *get_json_string(بنية sshbuf *content, ثابت حرف *key, صحيح consume);
 
-void mldsa_tests(void);
+فراغ mldsa_tests(فراغ);
 
-struct kat {
-	char *seed;
-	char *pk_hash;
-	char *sk_hash;
-	char *msg;
-	char *rand;
-	char *sig_hash;
+بنية kat {
+	حرف *seed;
+	حرف *pk_hash;
+	حرف *sk_hash;
+	حرف *msg;
+	حرف *rand;
+	حرف *sig_hash;
 };
 
-static void
-load_kats(const char *file, struct kat ***katsp, size_t *nkatsp)
+ساكن فراغ
+load_kats(ثابت حرف *file, بنية kat ***katsp, size_t *nkatsp)
 {
-	struct sshbuf *json_buf;
-	struct kat *kat = NULL, **kats = NULL;
+	بنية sshbuf *json_buf;
+	بنية kat *kat = عدم, **kats = عدم;
 	size_t nkats = 0;
 
 	json_buf = load_text_file(file);
-	while (sshbuf_find(json_buf, 0, "key_generation_seed",
-	    strlen("key_generation_seed"), NULL) == 0) {
-		kat = xcalloc(1, sizeof(*kat));
+	ܟܡܐ (sshbuf_find(json_buf, 0, "key_generation_seed",
+	    strlen("key_generation_seed"), عدم) == 0) {
+		kat = xcalloc(1, حجم(*kat));
 		kat->seed = get_json_string(json_buf, "key_generation_seed", 1);
 		kat->pk_hash = get_json_string(json_buf,
 		    "sha3_256_hash_of_verification_key", 1);
@@ -55,7 +55,7 @@ load_kats(const char *file, struct kat ***katsp, size_t *nkatsp)
 		kat->rand = get_json_string(json_buf, "signing_randomness", 1);
 		kat->sig_hash = get_json_string(json_buf,
 		    "sha3_256_hash_of_signature", 1);
-		kats = xrecallocarray(kats, nkats, nkats + 1, sizeof(*kats));
+		kats = xrecallocarray(kats, nkats, nkats + 1, حجم(*kats));
 		kats[nkats++] = kat;
 	}
 	*katsp = kats;
@@ -63,27 +63,27 @@ load_kats(const char *file, struct kat ***katsp, size_t *nkatsp)
 	sshbuf_free(json_buf);
 }
 
-static void
-free_kats(struct kat **kats, size_t nkats)
+ساكن فراغ
+free_kats(بنية kat **kats, size_t nkats)
 {
 	size_t i;
-	struct kat *kat;
+	بنية kat *kat;
 
-	for (i = 0; i < nkats; i++) {
+	لكل (i = 0; i < nkats; i++) {
 		kat = kats[i];
-		free(kat->seed);
-		free(kat->pk_hash);
-		free(kat->sk_hash);
-		free(kat->msg);
-		free(kat->rand);
-		free(kat->sig_hash);
-		free(kat);
+		حرر(kat->seed);
+		حرر(kat->pk_hash);
+		حرر(kat->sk_hash);
+		حرر(kat->msg);
+		حرر(kat->rand);
+		حرر(kat->sig_hash);
+		حرر(kat);
 	}
-	free(kats);
+	حرر(kats);
 }
 
-void
-mldsa_tests(void)
+فراغ
+mldsa_tests(فراغ)
 {
 	uint8_t pk[MLDSA44_PUBLICKEYBYTES];
 	uint8_t sk[MLDSA44_SECRETKEYBYTES];
@@ -94,11 +94,11 @@ mldsa_tests(void)
 	uint8_t seed[32], rand[32];
 	uint8_t *msg;
 	size_t nkats, i, msglen;
-	struct kat **kats, *kat;
+	بنية kat **kats, *kat;
 
 	TEST_START("ML-DSA 44 KATs");
 	load_kats("nistkats-44.json", &kats, &nkats);
-	for (i = 0; i < nkats; i++) {
+	لكل (i = 0; i < nkats; i++) {
 		kat = kats[i];
 		test_subtest_info("vector %zu", i);
 
@@ -110,29 +110,29 @@ mldsa_tests(void)
 		ASSERT_INT_EQ(crypto_sign_mldsa44_keypair_seeded(pk,
 		    sk, seed), 0);
 
-		sha3_256(pk_hash, pk, sizeof(pk));
-		sha3_256(sk_hash, sk, sizeof(sk));
+		sha3_256(pk_hash, pk, حجم(pk));
+		sha3_256(sk_hash, sk, حجم(sk));
 
 		ASSERT_MEM_EQ(pk_hash, expected_pk_hash, 32);
 		ASSERT_MEM_EQ(sk_hash, expected_sk_hash, 32);
 
 		msglen = strlen(kat->msg) / 2;
-		ASSERT_PTR_NE(msg = malloc(msglen), NULL);
+		ASSERT_PTR_NE(msg = malloc(msglen), عدم);
 		hex2bin(msg, kat->msg, msglen);
 		hex2bin(rand, kat->rand, 32);
 		hex2bin(expected_sig_hash, kat->sig_hash, 32);
 
 		/* Signing */
 		ASSERT_INT_EQ(crypto_sign_mldsa44_seeded(sig, msg,
-		    msglen, NULL, 0, sk, rand), 0);
+		    msglen, عدم, 0, sk, rand), 0);
 
-		sha3_256(sig_hash, sig, sizeof(sig));
+		sha3_256(sig_hash, sig, حجم(sig));
 		ASSERT_MEM_EQ(sig_hash, expected_sig_hash, 32);
 
 		/* Verification */
 		ASSERT_INT_EQ(crypto_sign_mldsa44_verify(sig, msg,
-		    msglen, NULL, 0, pk), 0);
-		free(msg);
+		    msglen, عدم, 0, pk), 0);
+		حرر(msg);
 	}
 	free_kats(kats, nkats);
 	TEST_DONE();

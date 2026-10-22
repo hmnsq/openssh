@@ -25,24 +25,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h>
 
-#include <netdb.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#ضمن <netdb.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ضمن <stdlib.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "dns.h"
-#include "log.h"
-#include "digest.h"
+#ضمن "xmalloc.h"
+#ضمن "sshkey.h"
+#ضمن "dns.h"
+#ضمن "log.h"
+#ضمن "digest.h"
 
-static const char * const errset_text[] = {
+ساكن ثابت حرف * ثابت errset_text[] = {
 	"success",		/* 0 ERRSET_SUCCESS */
 	"out of memory",	/* 1 ERRSET_NOMEMORY */
 	"general failure",	/* 2 ERRSET_FAIL */
@@ -51,24 +51,24 @@ static const char * const errset_text[] = {
 	"data does not exist",	/* 5 ERRSET_NODATA */
 };
 
-static const char *
-dns_result_totext(unsigned int res)
+ساكن ثابت حرف *
+dns_result_totext(unsigned صحيح res)
 {
-	switch (res) {
-	case ERRSET_SUCCESS:
-		return errset_text[ERRSET_SUCCESS];
-	case ERRSET_NOMEMORY:
-		return errset_text[ERRSET_NOMEMORY];
-	case ERRSET_FAIL:
-		return errset_text[ERRSET_FAIL];
-	case ERRSET_INVAL:
-		return errset_text[ERRSET_INVAL];
-	case ERRSET_NONAME:
-		return errset_text[ERRSET_NONAME];
-	case ERRSET_NODATA:
-		return errset_text[ERRSET_NODATA];
-	default:
-		return "unknown error";
+	بدل (res) {
+	حالة ERRSET_SUCCESS:
+		ܦܢܐ errset_text[ERRSET_SUCCESS];
+	حالة ERRSET_NOMEMORY:
+		ܦܢܐ errset_text[ERRSET_NOMEMORY];
+	حالة ERRSET_FAIL:
+		ܦܢܐ errset_text[ERRSET_FAIL];
+	حالة ERRSET_INVAL:
+		ܦܢܐ errset_text[ERRSET_INVAL];
+	حالة ERRSET_NONAME:
+		ܦܢܐ errset_text[ERRSET_NONAME];
+	حالة ERRSET_NODATA:
+		ܦܢܐ errset_text[ERRSET_NODATA];
+	افتراضي:
+		ܦܢܐ "unknown error";
 	}
 }
 
@@ -76,122 +76,122 @@ dns_result_totext(unsigned int res)
  * Read SSHFP parameters from key buffer.
  * Caller must free digest which is allocated by sshkey_fingerprint_raw().
  */
-static int
+ساكن صحيح
 dns_read_key(uint8_t *algorithm, uint8_t *digest_type,
-    u_char **digest, size_t *digest_len, struct sshkey *key)
+    u_char **digest, size_t *digest_len, بنية sshkey *key)
 {
-	int r, success = 0;
-	int fp_alg = -1;
+	صحيح r, success = 0;
+	صحيح fp_alg = -1;
 
-	switch (key->type) {
-	case KEY_RSA:
+	بدل (key->type) {
+	حالة KEY_RSA:
 		*algorithm = SSHFP_KEY_RSA;
-		break;
-	case KEY_ECDSA:
+		اكسر;
+	حالة KEY_ECDSA:
 		*algorithm = SSHFP_KEY_ECDSA;
-		break;
-	case KEY_ED25519:
+		اكسر;
+	حالة KEY_ED25519:
 		*algorithm = SSHFP_KEY_ED25519;
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		*algorithm = SSHFP_KEY_RESERVED; /* 0 */
 	}
 
-	switch (*digest_type) {
-	case SSHFP_HASH_SHA1:
+	بدل (*digest_type) {
+	حالة SSHFP_HASH_SHA1:
 		fp_alg = SSH_DIGEST_SHA1;
-		break;
-	case SSHFP_HASH_SHA256:
+		اكسر;
+	حالة SSHFP_HASH_SHA256:
 		fp_alg = SSH_DIGEST_SHA256;
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		*digest_type = SSHFP_HASH_RESERVED; /* 0 */
 	}
 
-	if (*algorithm && *digest_type) {
-		if ((r = sshkey_fingerprint_raw(key, fp_alg, digest,
+	ܐܢ (*algorithm && *digest_type) {
+		ܐܢ ((r = sshkey_fingerprint_raw(key, fp_alg, digest,
 		    digest_len)) != 0)
 			fatal_fr(r, "sshkey_fingerprint_raw");
 		success = 1;
-	} else {
-		*digest = NULL;
+	} ܐܚܪܢܐ {
+		*digest = عدم;
 		*digest_len = 0;
 	}
 
-	return success;
+	ܦܢܐ success;
 }
 
 /*
  * Read SSHFP parameters from rdata buffer.
  */
-static int
+ساكن صحيح
 dns_read_rdata(uint8_t *algorithm, uint8_t *digest_type,
-    u_char **digest, size_t *digest_len, u_char *rdata, int rdata_len)
+    u_char **digest, size_t *digest_len, u_char *rdata, صحيح rdata_len)
 {
-	int success = 0;
+	صحيح success = 0;
 
 	*algorithm = SSHFP_KEY_RESERVED;
 	*digest_type = SSHFP_HASH_RESERVED;
 
-	if (rdata_len >= 2) {
+	ܐܢ (rdata_len >= 2) {
 		*algorithm = rdata[0];
 		*digest_type = rdata[1];
 		*digest_len = rdata_len - 2;
 
-		if (*digest_len > 0) {
+		ܐܢ (*digest_len > 0) {
 			*digest = xmalloc(*digest_len);
 			memcpy(*digest, rdata + 2, *digest_len);
-		} else {
+		} ܐܚܪܢܐ {
 			*digest = (u_char *)xstrdup("");
 		}
 
 		success = 1;
 	}
 
-	return success;
+	ܦܢܐ success;
 }
 
 /*
  * Check if hostname is numerical.
  * Returns -1 if hostname is numeric, 0 otherwise
  */
-static int
-is_numeric_hostname(const char *hostname)
+ساكن صحيح
+is_numeric_hostname(ثابت حرف *hostname)
 {
-	struct addrinfo hints, *ai;
+	بنية addrinfo hints, *ai;
 
 	/*
 	 * We shouldn't ever get a null host but if we do then log an error
 	 * and return -1 which stops DNS key fingerprint processing.
 	 */
-	if (hostname == NULL) {
+	ܐܢ (hostname == عدم) {
 		error("is_numeric_hostname called with NULL hostname");
-		return -1;
+		ܦܢܐ -1;
 	}
 
-	memset(&hints, 0, sizeof(hints));
+	memset(&hints, 0, حجم(hints));
 	hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (getaddrinfo(hostname, NULL, &hints, &ai) == 0) {
+	ܐܢ (getaddrinfo(hostname, عدم, &hints, &ai) == 0) {
 		freeaddrinfo(ai);
-		return -1;
+		ܦܢܐ -1;
 	}
 
-	return 0;
+	ܦܢܐ 0;
 }
 
 /*
  * Verify the given hostname, address and host key using DNS.
  * Returns 0 if lookup succeeds, -1 otherwise
  */
-int
-verify_host_key_dns(const char *hostname, struct sockaddr *address,
-    struct sshkey *hostkey, int *flags)
+صحيح
+verify_host_key_dns(ثابت حرف *hostname, بنية sockaddr *address,
+    بنية sshkey *hostkey, صحيح *flags)
 {
 	u_int counter;
-	int result;
-	struct rrsetinfo *fingerprints = NULL;
+	صحيح result;
+	بنية rrsetinfo *fingerprints = عدم;
 
 	uint8_t hostkey_algorithm;
 	u_char *hostkey_digest;
@@ -205,133 +205,133 @@ verify_host_key_dns(const char *hostname, struct sockaddr *address,
 	*flags = 0;
 
 	debug3("verify_host_key_dns");
-	if (hostkey == NULL)
+	ܐܢ (hostkey == عدم)
 		fatal("No key to look up!");
 
-	if (is_numeric_hostname(hostname)) {
+	ܐܢ (is_numeric_hostname(hostname)) {
 		debug("skipped DNS lookup for numerical hostname");
-		return -1;
+		ܦܢܐ -1;
 	}
 
 	result = getrrsetbyname(hostname, DNS_RDATACLASS_IN,
 	    DNS_RDATATYPE_SSHFP, 0, &fingerprints);
-	if (result) {
+	ܐܢ (result) {
 		verbose("DNS lookup error: %s", dns_result_totext(result));
-		return -1;
+		ܦܢܐ -1;
 	}
 
-	if (fingerprints->rri_flags & RRSET_VALIDATED) {
+	ܐܢ (fingerprints->rri_flags & RRSET_VALIDATED) {
 		*flags |= DNS_VERIFY_SECURE;
 		debug("found %d secure fingerprints in DNS",
 		    fingerprints->rri_nrdatas);
-	} else {
+	} ܐܚܪܢܐ {
 		debug("found %d insecure fingerprints in DNS",
 		    fingerprints->rri_nrdatas);
 	}
 
-	if (fingerprints->rri_nrdatas)
+	ܐܢ (fingerprints->rri_nrdatas)
 		*flags |= DNS_VERIFY_FOUND;
 
-	for (counter = 0; counter < fingerprints->rri_nrdatas; counter++) {
+	لكل (counter = 0; counter < fingerprints->rri_nrdatas; counter++) {
 		/*
 		 * Extract the key from the answer. Ignore any badly
 		 * formatted fingerprints.
 		 */
-		if (!dns_read_rdata(&dnskey_algorithm, &dnskey_digest_type,
+		ܐܢ (!dns_read_rdata(&dnskey_algorithm, &dnskey_digest_type,
 		    &dnskey_digest, &dnskey_digest_len,
 		    fingerprints->rri_rdatas[counter].rdi_data,
 		    fingerprints->rri_rdatas[counter].rdi_length)) {
 			verbose("Error parsing fingerprint from DNS.");
-			continue;
+			استمر;
 		}
 		debug3_f("checking SSHFP type %d fptype %d", dnskey_algorithm,
 		    dnskey_digest_type);
 
 		/* Calculate host key fingerprint. */
-		if (!dns_read_key(&hostkey_algorithm, &dnskey_digest_type,
+		ܐܢ (!dns_read_key(&hostkey_algorithm, &dnskey_digest_type,
 		    &hostkey_digest, &hostkey_digest_len, hostkey)) {
 			error("Error calculating key fingerprint.");
-			free(dnskey_digest);
+			حرر(dnskey_digest);
 			freerrset(fingerprints);
-			return -1;
+			ܦܢܐ -1;
 		}
 
 		/* Check if the current key is the same as the given key */
-		if (hostkey_algorithm == dnskey_algorithm &&
+		ܐܢ (hostkey_algorithm == dnskey_algorithm &&
 		    hostkey_digest_len == dnskey_digest_len) {
-			if (timingsafe_bcmp(hostkey_digest, dnskey_digest,
+			ܐܢ (timingsafe_bcmp(hostkey_digest, dnskey_digest,
 			    hostkey_digest_len) == 0) {
 				debug_f("matched SSHFP type %d fptype %d",
 				    dnskey_algorithm, dnskey_digest_type);
 				*flags |= DNS_VERIFY_MATCH;
-			} else {
+			} ܐܚܪܢܐ {
 				debug_f("failed SSHFP type %d fptype %d",
 				    dnskey_algorithm, dnskey_digest_type);
 				*flags |= DNS_VERIFY_FAILED;
 			}
 		}
-		free(dnskey_digest);
-		free(hostkey_digest); /* from sshkey_fingerprint_raw() */
+		حرر(dnskey_digest);
+		حرر(hostkey_digest); /* from sshkey_fingerprint_raw() */
 	}
 
 	freerrset(fingerprints);
 
 	/* If any fingerprint failed to validate, return failure. */
-	if (*flags & DNS_VERIFY_FAILED)
+	ܐܢ (*flags & DNS_VERIFY_FAILED)
 		*flags &= ~DNS_VERIFY_MATCH;
 
-	if (*flags & DNS_VERIFY_FOUND)
-		if (*flags & DNS_VERIFY_MATCH)
+	ܐܢ (*flags & DNS_VERIFY_FOUND)
+		ܐܢ (*flags & DNS_VERIFY_MATCH)
 			debug("matching host key fingerprint found in DNS");
-		else
+		ܐܚܪܢܐ
 			debug("mismatching host key fingerprint found in DNS");
-	else
+	ܐܚܪܢܐ
 		debug("no host key fingerprint found in DNS");
 
-	return 0;
+	ܦܢܐ 0;
 }
 
 /*
  * Export the fingerprint of a key as a DNS resource record
  */
-int
-export_dns_rr(const char *hostname, struct sshkey *key, FILE *f, int generic,
-    int alg)
+صحيح
+export_dns_rr(ثابت حرف *hostname, بنية sshkey *key, FILE *f, صحيح generic,
+    صحيح alg)
 {
 	uint8_t rdata_pubkey_algorithm = 0;
 	uint8_t rdata_digest_type = SSHFP_HASH_RESERVED;
 	uint8_t dtype;
 	u_char *rdata_digest;
 	size_t i, rdata_digest_len;
-	int success = 0;
+	صحيح success = 0;
 
-	for (dtype = SSHFP_HASH_SHA1; dtype < SSHFP_HASH_MAX; dtype++) {
-		if (alg != -1 && dtype != alg)
-			continue;
+	لكل (dtype = SSHFP_HASH_SHA1; dtype < SSHFP_HASH_MAX; dtype++) {
+		ܐܢ (alg != -1 && dtype != alg)
+			استمر;
 		rdata_digest_type = dtype;
-		if (dns_read_key(&rdata_pubkey_algorithm, &rdata_digest_type,
+		ܐܢ (dns_read_key(&rdata_pubkey_algorithm, &rdata_digest_type,
 		    &rdata_digest, &rdata_digest_len, key)) {
-			if (generic) {
+			ܐܢ (generic) {
 				fprintf(f, "%s IN TYPE%d \\# %zu %02x %02x ",
 				    hostname, DNS_RDATATYPE_SSHFP,
 				    2 + rdata_digest_len,
 				    rdata_pubkey_algorithm, rdata_digest_type);
-			} else {
+			} ܐܚܪܢܐ {
 				fprintf(f, "%s IN SSHFP %d %d ", hostname,
 				    rdata_pubkey_algorithm, rdata_digest_type);
 			}
-			for (i = 0; i < rdata_digest_len; i++)
+			لكل (i = 0; i < rdata_digest_len; i++)
 				fprintf(f, "%02x", rdata_digest[i]);
 			fprintf(f, "\n");
-			free(rdata_digest); /* from sshkey_fingerprint_raw() */
+			حرر(rdata_digest); /* from sshkey_fingerprint_raw() */
 			success = 1;
 		}
 	}
 
 	/* No SSHFP record was generated at all */
-	if (success == 0) {
+	ܐܢ (success == 0) {
 		error_f("unsupported algorithm and/or digest_type");
 	}
 
-	return success;
+	ܦܢܐ success;
 }

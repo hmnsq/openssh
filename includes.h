@@ -16,14 +16,14 @@
 #ifndef INCLUDES_H
 #define INCLUDES_H
 
-#include "config.h"
+#ضمن "config.h"
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE /* activate extra prototypes for glibc */
 #endif
 
-#include <sys/types.h>
-#include <sys/socket.h> /* For CMSG_* */
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h> /* For CMSG_* */
 
 #ifdef HAVE_LIMITS_H
 # include <limits.h> /* For PATH_MAX, _POSIX_HOST_NAME_MAX */
@@ -85,7 +85,7 @@
 #ifdef HAVE_STDINT_H
 # include <stdint.h>
 #endif
-#include <termios.h>
+#ضمن <termios.h>
 #ifdef HAVE_SYS_BITYPES_H
 # include <sys/bitypes.h> /* For u_intXX_t */
 #endif
@@ -102,27 +102,27 @@
 # include <sys/time.h> /* for timespeccmp if present */
 #endif
 #ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h> /* for MAP_ANONYMOUS */
+#ضمن <sys/mman.h> /* for MAP_ANONYMOUS */
 #endif
 #ifdef HAVE_SYS_STRTIO_H
-#include <sys/strtio.h>	/* for TIOCCBRK on HP-UX */
+#ضمن <sys/strtio.h>	/* for TIOCCBRK on HP-UX */
 #endif
-#if defined(HAVE_SYS_PTMS_H) && defined(HAVE_DEV_PTMX)
-# if defined(HAVE_SYS_STREAM_H)
+#ܐܢ defined(HAVE_SYS_PTMS_H) && defined(HAVE_DEV_PTMX)
+# ܐܢ defined(HAVE_SYS_STREAM_H)
 #  include <sys/stream.h>	/* reqd for queue_t on Solaris 2.5.1 */
 # endif
-#include <sys/ptms.h>	/* for grantpt() and friends */
+#ضمن <sys/ptms.h>	/* for grantpt() and friends */
 #endif
 
-#include <netinet/in.h>
-#include <netinet/in_systm.h> /* For typedefs */
+#ضمن <netinet/in.h>
+#ضمن <netinet/in_systm.h> /* For typedefs */
 #ifdef HAVE_RPC_TYPES_H
 # include <rpc/types.h> /* For INADDR_LOOPBACK */
 #endif
 #ifdef USE_PAM
-#if defined(HAVE_SECURITY_PAM_APPL_H)
+#ܐܢ defined(HAVE_SECURITY_PAM_APPL_H)
 # include <security/pam_appl.h>
-#elif defined (HAVE_PAM_PAM_APPL_H)
+#وإلاإذا defined (HAVE_PAM_PAM_APPL_H)
 # include <pam/pam_appl.h>
 #endif
 #endif
@@ -142,22 +142,22 @@
 # include <tmpdir.h>
 #endif
 
-#if defined(HAVE_BSD_LIBUTIL_H)
+#ܐܢ defined(HAVE_BSD_LIBUTIL_H)
 # include <bsd/libutil.h>
-#elif defined(HAVE_LIBUTIL_H)
+#وإلاإذا defined(HAVE_LIBUTIL_H)
 # include <libutil.h>
 #endif
 
-#if defined(KRB5) && defined(USE_AFS)
+#ܐܢ defined(KRB5) && defined(USE_AFS)
 # include <krb5.h>
 # include <kafs.h>
 #endif
 
-#if defined(HAVE_SYS_SYSLOG_H)
+#ܐܢ defined(HAVE_SYS_SYSLOG_H)
 # include <sys/syslog.h>
 #endif
 
-#include <errno.h>
+#ضمن <errno.h>
 
 /*
  * On HP-UX 11.11, shadow.h and prot.h provide conflicting declarations
@@ -170,15 +170,15 @@
 #endif
 
 #ifdef WITH_OPENSSL
-#include <openssl/opensslv.h> /* For OPENSSL_VERSION_NUMBER */
+#ضمن <openssl/opensslv.h> /* For OPENSSL_VERSION_NUMBER */
 #endif
 
-#include "defines.h"
+#ضمن "defines.h"
 
-#include "platform.h"
-#include "openbsd-compat/openbsd-compat.h"
-#include "openbsd-compat/bsd-nextstep.h"
+#ضمن "platform.h"
+#ضمن "openbsd-compat/openbsd-compat.h"
+#ضمن "openbsd-compat/bsd-nextstep.h"
 
-#include "entropy.h"
+#ضمن "entropy.h"
 
 #endif /* INCLUDES_H */

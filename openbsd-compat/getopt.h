@@ -34,9 +34,9 @@
 #define _GETOPT_H_
 
 #ifndef __THROW
-# if defined __cplusplus
+# ܐܢ defined __cplusplus
 #  define __THROW throw()
-# else
+# ܐܚܪܢܐ
 #  define __THROW
 # endif
 #endif
@@ -48,38 +48,38 @@
 #define required_argument  1
 #define optional_argument  2
 
-#if 0
-struct option {
+#ܐܢ 0
+بنية option {
 	/* name of long option */
-	const char *name;
+	ثابت حرف *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	صحيح has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	صحيح *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	صحيح val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
+صحيح	 getopt_long(صحيح, حرف * ثابت *, ثابت حرف *,
+	    ثابت بنية option *, صحيح *);
+صحيح	 getopt_long_only(صحيح, حرف * ثابت *, ثابت حرف *,
+	    ثابت بنية option *, صحيح *);
 #endif
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+صحيح	 getopt(صحيح, حرف * ثابت *, ثابت حرف *) __THROW;
+صحيح	 getsubopt(حرف **, حرف * ثابت *, حرف **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
+خارجي   حرف *optarg;                  /* getopt(3) external variables */
+خارجي   صحيح opterr;
+خارجي   صحيح optind;
+خارجي   صحيح optopt;
+خارجي   صحيح optreset;
+خارجي   حرف *suboptarg;               /* getsubopt(3) external variable */
 #endif
  
 #endif /* !_GETOPT_H_ */

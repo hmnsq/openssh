@@ -22,82 +22,82 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifdef HAVE_NEXT
-#include <errno.h>
-#include <sys/wait.h>
-#include "bsd-nextstep.h"
+#ضمن <errno.h>
+#ضمن <sys/wait.h>
+#ضمن "bsd-nextstep.h"
 
 pid_t
-posix_wait(int *status)
+posix_wait(صحيح *status)
 {
-	union wait statusp;
+	اتحاد wait statusp;
 	pid_t wait_pid;
 
 	#undef wait			/* Use NeXT's wait() function */
 	wait_pid = wait(&statusp);
-	if (status)
-		*status = (int) statusp.w_status;
+	ܐܢ (status)
+		*status = (صحيح) statusp.w_status;
 
-	return (wait_pid);
+	ܦܢܐ (wait_pid);
 }
 
-int
-tcgetattr(int fd, struct termios *t)
+صحيح
+tcgetattr(صحيح fd, بنية termios *t)
 {
-	return (ioctl(fd, TIOCGETA, t));
+	ܦܢܐ (ioctl(fd, TIOCGETA, t));
 }
 
-int
-tcsetattr(int fd, int opt, const struct termios *t)
+صحيح
+tcsetattr(صحيح fd, صحيح opt, ثابت بنية termios *t)
 {
-	struct termios localterm;
+	بنية termios localterm;
 
-	if (opt & TCSASOFT) {
+	ܐܢ (opt & TCSASOFT) {
 		localterm = *t;
 		localterm.c_cflag |= CIGNORE;
 		t = &localterm;
 	}
-	switch (opt & ~TCSASOFT) {
-	case TCSANOW:
-		return (ioctl(fd, TIOCSETA, t));
-	case TCSADRAIN:
-		return (ioctl(fd, TIOCSETAW, t));
-	case TCSAFLUSH:
-		return (ioctl(fd, TIOCSETAF, t));
-	default:
+	بدل (opt & ~TCSASOFT) {
+	حالة TCSANOW:
+		ܦܢܐ (ioctl(fd, TIOCSETA, t));
+	حالة TCSADRAIN:
+		ܦܢܐ (ioctl(fd, TIOCSETAW, t));
+	حالة TCSAFLUSH:
+		ܦܢܐ (ioctl(fd, TIOCSETAF, t));
+	افتراضي:
 		errno = EINVAL;
-		return (-1);
+		ܦܢܐ (-1);
 	}
 }
 
-int tcsetpgrp(int fd, pid_t pgrp)
+صحيح tcsetpgrp(صحيح fd, pid_t pgrp)
 {
-	return (ioctl(fd, TIOCSPGRP, &pgrp));
+	ܦܢܐ (ioctl(fd, TIOCSPGRP, &pgrp));
 }
 
-speed_t cfgetospeed(const struct termios *t)
+speed_t cfgetospeed(ثابت بنية termios *t)
 {
-	return (t->c_ospeed);
+	ܦܢܐ (t->c_ospeed);
 }
 
-speed_t cfgetispeed(const struct termios *t)
+speed_t cfgetispeed(ثابت بنية termios *t)
 {
-	return (t->c_ispeed);
+	ܦܢܐ (t->c_ispeed);
 }
 
-int
-cfsetospeed(struct termios *t,int speed)
+صحيح
+cfsetospeed(بنية termios *t,صحيح speed)
 {
 	t->c_ospeed = speed;
-	return (0);
+	ܦܢܐ (0);
 }
 
-int
-cfsetispeed(struct termios *t, int speed)
+صحيح
+cfsetispeed(بنية termios *t, صحيح speed)
 {
 	t->c_ispeed = speed;
-	return (0);
+	ܦܢܐ (0);
 }
 #endif /* HAVE_NEXT */

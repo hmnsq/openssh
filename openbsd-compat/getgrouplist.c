@@ -30,25 +30,25 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getgrouplist.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifndef HAVE_GETGROUPLIST
 
 /*
  * get credential
  */
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <grp.h>
+#ضمن <sys/types.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+صحيح
+getgrouplist(ثابت حرف *uname, gid_t agroup, gid_t *groups, صحيح *grpcnt)
 {
-	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	بنية group *grp;
+	صحيح i, ngroups;
+	صحيح ret, maxgroups;
+	صحيح bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	ܐܢ (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		ܦܢܐ (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,29 +67,29 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
-			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+	ܟܡܐ ((grp = getgrent())) {
+		ܐܢ (grp->gr_gid == agroup)
+			استمر;
+		لكل (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			ܐܢ (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
-			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		ܐܢ (bail)
+			استمر;
+		لكل (i = 0; grp->gr_mem[i]; i++) {
+			ܐܢ (!strcmp(grp->gr_mem[i], uname)) {
+				ܐܢ (ngroups >= maxgroups) {
 					ret = -1;
-					goto out;
+					اذهب out;
 				}
 				groups[ngroups++] = grp->gr_gid;
-				break;
+				اكسر;
 			}
 		}
 	}
 out:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	ܦܢܐ (ret);
 }
 
 #endif /* HAVE_GETGROUPLIST */

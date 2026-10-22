@@ -24,68 +24,68 @@
  */
 
 #ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
+#ضمن <sys/mman.h>
 #endif
 
-#include <signal.h>
+#ضمن <signal.h>
 
 /* OpenSSH isn't multithreaded */
 #define _ARC4_LOCK()
 #define _ARC4_UNLOCK()
 #define _ARC4_ATFORK(f)
 
-static inline void
-_getentropy_fail(void)
+ساكن مضمن فراغ
+_getentropy_fail(فراغ)
 {
 	fatal("getentropy failed");
 }
 
-static volatile sig_atomic_t _rs_forked;
+ساكن متطاير sig_atomic_t _rs_forked;
 
-static inline void
-_rs_forkhandler(void)
+ساكن مضمن فراغ
+_rs_forkhandler(فراغ)
 {
 	_rs_forked = 1;
 }
 
-static inline void
-_rs_forkdetect(void)
+ساكن مضمن فراغ
+_rs_forkdetect(فراغ)
 {
-	static pid_t _rs_pid = 0;
+	ساكن pid_t _rs_pid = 0;
 	pid_t pid = getpid();
 
-	if (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
+	ܐܢ (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
 		_rs_pid = pid;
 		_rs_forked = 0;
-		if (rs)
-			memset(rs, 0, sizeof(*rs));
+		ܐܢ (rs)
+			memset(rs, 0, حجم(*rs));
 	}
 }
 
-static inline int
-_rs_allocate(struct _rs **rsp, struct _rsx **rsxp)
+ساكن مضمن صحيح
+_rs_allocate(بنية _rs **rsp, بنية _rsx **rsxp)
 {
-#if defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
-	if ((*rsp = mmap(NULL, sizeof(**rsp), PROT_READ|PROT_WRITE,
+#ܐܢ defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
+	ܐܢ ((*rsp = mmap(عدم, حجم(**rsp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED)
-		return (-1);
+		ܦܢܐ (-1);
 
-	if ((*rsxp = mmap(NULL, sizeof(**rsxp), PROT_READ|PROT_WRITE,
+	ܐܢ ((*rsxp = mmap(عدم, حجم(**rsxp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED) {
-		munmap(*rsp, sizeof(**rsp));
-		*rsp = NULL;
-		return (-1);
+		munmap(*rsp, حجم(**rsp));
+		*rsp = عدم;
+		ܦܢܐ (-1);
 	}
-#else
-	if ((*rsp = calloc(1, sizeof(**rsp))) == NULL)
-		return (-1);
-	if ((*rsxp = calloc(1, sizeof(**rsxp))) == NULL) {
-		free(*rsp);
-		*rsp = NULL;
-		return (-1);
+#ܐܚܪܢܐ
+	ܐܢ ((*rsp = calloc(1, حجم(**rsp))) == عدم)
+		ܦܢܐ (-1);
+	ܐܢ ((*rsxp = calloc(1, حجم(**rsxp))) == عدم) {
+		حرر(*rsp);
+		*rsp = عدم;
+		ܦܢܐ (-1);
 	}
 #endif /* HAVE_MMAP et al */
 
 	_ARC4_ATFORK(_rs_forkhandler);
-	return (0);
+	ܦܢܐ (0);
 }

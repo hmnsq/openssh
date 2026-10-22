@@ -17,15 +17,15 @@
  * will fill a supplied 16-byte array with the digest.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifndef WITH_OPENSSL
 
-#include <sys/types.h>
-#include <string.h>
-#include "md5.h"
+#ضمن <sys/types.h>
+#ضمن <string.h>
+#ضمن "md5.h"
 
-#define PUT_64BIT_LE(cp, value) do {					\
+#define PUT_64BIT_LE(cp, value) ܥܒܕ {					\
 	(cp)[7] = (value) >> 56;					\
 	(cp)[6] = (value) >> 48;					\
 	(cp)[5] = (value) >> 40;					\
@@ -33,15 +33,15 @@
 	(cp)[3] = (value) >> 24;					\
 	(cp)[2] = (value) >> 16;					\
 	(cp)[1] = (value) >> 8;						\
-	(cp)[0] = (value); } while (0)
+	(cp)[0] = (value); } ܟܡܐ (0)
 
-#define PUT_32BIT_LE(cp, value) do {					\
+#define PUT_32BIT_LE(cp, value) ܥܒܕ {					\
 	(cp)[3] = (value) >> 24;					\
 	(cp)[2] = (value) >> 16;					\
 	(cp)[1] = (value) >> 8;						\
-	(cp)[0] = (value); } while (0)
+	(cp)[0] = (value); } ܟܡܐ (0)
 
-static u_int8_t PADDING[MD5_BLOCK_LENGTH] = {
+ساكن u_int8_t PADDING[MD5_BLOCK_LENGTH] = {
 	0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -51,7 +51,7 @@ static u_int8_t PADDING[MD5_BLOCK_LENGTH] = {
  * Start MD5 accumulation.  Set bit count to 0 and buffer to mysterious
  * initialization constants.
  */
-void
+فراغ
 MD5Init(MD5_CTX *ctx)
 {
 	ctx->count = 0;
@@ -65,8 +65,8 @@ MD5Init(MD5_CTX *ctx)
  * Update context to reflect the concatenation of another buffer full
  * of bytes.
  */
-void
-MD5Update(MD5_CTX *ctx, const unsigned char *input, size_t len)
+فراغ
+MD5Update(MD5_CTX *ctx, ثابت unsigned حرف *input, size_t len)
 {
 	size_t have, need;
 
@@ -77,8 +77,8 @@ MD5Update(MD5_CTX *ctx, const unsigned char *input, size_t len)
 	/* Update bitcount */
 	ctx->count += (u_int64_t)len << 3;
 
-	if (len >= need) {
-		if (have != 0) {
+	ܐܢ (len >= need) {
+		ܐܢ (have != 0) {
 			memcpy(ctx->buffer + have, input, need);
 			MD5Transform(ctx->state, ctx->buffer);
 			input += need;
@@ -87,7 +87,7 @@ MD5Update(MD5_CTX *ctx, const unsigned char *input, size_t len)
 		}
 
 		/* Process data in MD5_BLOCK_LENGTH-byte chunks. */
-		while (len >= MD5_BLOCK_LENGTH) {
+		ܟܡܐ (len >= MD5_BLOCK_LENGTH) {
 			MD5Transform(ctx->state, input);
 			input += MD5_BLOCK_LENGTH;
 			len -= MD5_BLOCK_LENGTH;
@@ -95,7 +95,7 @@ MD5Update(MD5_CTX *ctx, const unsigned char *input, size_t len)
 	}
 
 	/* Handle any remaining bytes of data. */
-	if (len != 0)
+	ܐܢ (len != 0)
 		memcpy(ctx->buffer + have, input, len);
 }
 
@@ -103,7 +103,7 @@ MD5Update(MD5_CTX *ctx, const unsigned char *input, size_t len)
  * Pad pad to 64-byte boundary with the bit pattern
  * 1 0* (64-bit count of bits processed, MSB-first)
  */
-void
+فراغ
 MD5Pad(MD5_CTX *ctx)
 {
 	u_int8_t count[8];
@@ -115,7 +115,7 @@ MD5Pad(MD5_CTX *ctx)
 	/* Pad out to 56 mod 64. */
 	padlen = MD5_BLOCK_LENGTH -
 	    ((ctx->count >> 3) & (MD5_BLOCK_LENGTH - 1));
-	if (padlen < 1 + 8)
+	ܐܢ (padlen < 1 + 8)
 		padlen += MD5_BLOCK_LENGTH;
 	MD5Update(ctx, PADDING, padlen - 8);		/* padlen - 8 <= 64 */
 	MD5Update(ctx, count, 8);
@@ -124,15 +124,15 @@ MD5Pad(MD5_CTX *ctx)
 /*
  * Final wrapup--call MD5Pad, fill in digest and zero out ctx.
  */
-void
-MD5Final(unsigned char digest[MD5_DIGEST_LENGTH], MD5_CTX *ctx)
+فراغ
+MD5Final(unsigned حرف digest[MD5_DIGEST_LENGTH], MD5_CTX *ctx)
 {
-	int i;
+	صحيح i;
 
 	MD5Pad(ctx);
-	for (i = 0; i < 4; i++)
+	لكل (i = 0; i < 4; i++)
 		PUT_32BIT_LE(digest + i * 4, ctx->state[i]);
-	memset(ctx, 0, sizeof(*ctx));
+	memset(ctx, 0, حجم(*ctx));
 }
 
 
@@ -153,15 +153,15 @@ MD5Final(unsigned char digest[MD5_DIGEST_LENGTH], MD5_CTX *ctx)
  * reflect the addition of 16 longwords of new data.  MD5Update blocks
  * the data and converts bytes into longwords for this routine.
  */
-void
-MD5Transform(u_int32_t state[4], const u_int8_t block[MD5_BLOCK_LENGTH])
+فراغ
+MD5Transform(u_int32_t state[4], ثابت u_int8_t block[MD5_BLOCK_LENGTH])
 {
 	u_int32_t a, b, c, d, in[MD5_BLOCK_LENGTH / 4];
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	memcpy(in, block, sizeof(in));
-#else
-	for (a = 0; a < MD5_BLOCK_LENGTH / 4; a++) {
+#ܐܢ BYTE_ORDER == LITTLE_ENDIAN
+	memcpy(in, block, حجم(in));
+#ܐܚܪܢܐ
+	لكل (a = 0; a < MD5_BLOCK_LENGTH / 4; a++) {
 		in[a] = (u_int32_t)(
 		    (u_int32_t)(block[a * 4 + 0]) |
 		    (u_int32_t)(block[a * 4 + 1]) <<  8 |

@@ -15,170 +15,170 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
+#ضمن <string.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/ec.h>
+#ضمن <openssl/bn.h>
+#ضمن <openssl/ec.h>
 
-#include "ssherr.h"
+#ضمن "ssherr.h"
 #define SSHBUF_INTERNAL
-#include "sshbuf.h"
+#ضمن "sshbuf.h"
 
-int
-sshbuf_get_bignum2(struct sshbuf *buf, BIGNUM **valp)
+صحيح
+sshbuf_get_bignum2(بنية sshbuf *buf, BIGNUM **valp)
 {
 	BIGNUM *v;
-	const u_char *d;
+	ثابت u_char *d;
 	size_t len;
-	int r;
+	صحيح r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if ((r = sshbuf_get_bignum2_bytes_direct(buf, &d, &len)) != 0)
-		return r;
-	if (valp != NULL) {
-		if ((v = BN_new()) == NULL ||
-		    BN_bin2bn(d, len, v) == NULL) {
+	ܐܢ (valp != عدم)
+		*valp = عدم;
+	ܐܢ ((r = sshbuf_get_bignum2_bytes_direct(buf, &d, &len)) != 0)
+		ܦܢܐ r;
+	ܐܢ (valp != عدم) {
+		ܐܢ ((v = BN_new()) == عدم ||
+		    BN_bin2bn(d, len, v) == عدم) {
 			BN_clear_free(v);
-			return SSH_ERR_ALLOC_FAIL;
+			ܦܢܐ SSH_ERR_ALLOC_FAIL;
 		}
 		*valp = v;
 	}
-	return 0;
+	ܦܢܐ 0;
 }
 
-static int
-get_ec(const u_char *d, size_t len, EC_POINT *v, const EC_GROUP *g)
+ساكن صحيح
+get_ec(ثابت u_char *d, size_t len, EC_POINT *v, ثابت EC_GROUP *g)
 {
 	/* Refuse overlong bignums */
-	if (len == 0 || len > SSHBUF_MAX_ECPOINT)
-		return SSH_ERR_ECPOINT_TOO_LARGE;
+	ܐܢ (len == 0 || len > SSHBUF_MAX_ECPOINT)
+		ܦܢܐ SSH_ERR_ECPOINT_TOO_LARGE;
 	/* Only handle uncompressed points */
-	if (*d != POINT_CONVERSION_UNCOMPRESSED)
-		return SSH_ERR_INVALID_FORMAT;
-	if (v != NULL && EC_POINT_oct2point(g, v, d, len, NULL) != 1)
-		return SSH_ERR_INVALID_FORMAT; /* XXX assumption */
-	return 0;
+	ܐܢ (*d != POINT_CONVERSION_UNCOMPRESSED)
+		ܦܢܐ SSH_ERR_INVALID_FORMAT;
+	ܐܢ (v != عدم && EC_POINT_oct2point(g, v, d, len, عدم) != 1)
+		ܦܢܐ SSH_ERR_INVALID_FORMAT; /* XXX assumption */
+	ܦܢܐ 0;
 }
 
-int
-sshbuf_get_ec(struct sshbuf *buf, EC_POINT *v, const EC_GROUP *g)
+صحيح
+sshbuf_get_ec(بنية sshbuf *buf, EC_POINT *v, ثابت EC_GROUP *g)
 {
-	const u_char *d;
+	ثابت u_char *d;
 	size_t len;
-	int r;
+	صحيح r;
 
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0)
-		return r;
-	if ((r = get_ec(d, len, v, g)) != 0)
-		return r;
+	ܐܢ ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0)
+		ܦܢܐ r;
+	ܐܢ ((r = get_ec(d, len, v, g)) != 0)
+		ܦܢܐ r;
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	ܐܢ (sshbuf_get_string_direct(buf, عدم, عدم) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		ܦܢܐ SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	ܦܢܐ 0;
 }
 
-int
-sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v)
+صحيح
+sshbuf_get_eckey(بنية sshbuf *buf, EC_KEY *v)
 {
 	EC_POINT *pt = EC_POINT_new(EC_KEY_get0_group(v));
-	int r;
-	const u_char *d;
+	صحيح r;
+	ثابت u_char *d;
 	size_t len;
 
-	if (pt == NULL) {
+	ܐܢ (pt == عدم) {
 		SSHBUF_DBG(("SSH_ERR_ALLOC_FAIL"));
-		return SSH_ERR_ALLOC_FAIL;
+		ܦܢܐ SSH_ERR_ALLOC_FAIL;
 	}
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0) {
+	ܐܢ ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0) {
 		EC_POINT_free(pt);
-		return r;
+		ܦܢܐ r;
 	}
-	if ((r = get_ec(d, len, pt, EC_KEY_get0_group(v))) != 0) {
+	ܐܢ ((r = get_ec(d, len, pt, EC_KEY_get0_group(v))) != 0) {
 		EC_POINT_free(pt);
-		return r;
+		ܦܢܐ r;
 	}
-	if (EC_KEY_set_public_key(v, pt) != 1) {
+	ܐܢ (EC_KEY_set_public_key(v, pt) != 1) {
 		EC_POINT_free(pt);
-		return SSH_ERR_ALLOC_FAIL; /* XXX assumption */
+		ܦܢܐ SSH_ERR_ALLOC_FAIL; /* XXX assumption */
 	}
 	EC_POINT_free(pt);
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	ܐܢ (sshbuf_get_string_direct(buf, عدم, عدم) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		ܦܢܐ SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	ܦܢܐ 0;
 }
 
-int
-sshbuf_put_bignum2(struct sshbuf *buf, const BIGNUM *v)
+صحيح
+sshbuf_put_bignum2(بنية sshbuf *buf, ثابت BIGNUM *v)
 {
 	u_char d[SSHBUF_MAX_BIGNUM + 1];
-	int len = BN_num_bytes(v), prepend = 0, r;
+	صحيح len = BN_num_bytes(v), prepend = 0, r;
 
-	if (len < 0 || len > SSHBUF_MAX_BIGNUM)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ܐܢ (len < 0 || len > SSHBUF_MAX_BIGNUM)
+		ܦܢܐ SSH_ERR_INVALID_ARGUMENT;
 	*d = '\0';
-	if (BN_bn2bin(v, d + 1) != len)
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+	ܐܢ (BN_bn2bin(v, d + 1) != len)
+		ܦܢܐ SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
 	/* If MSB is set, prepend a \0 */
-	if (len > 0 && (d[1] & 0x80) != 0)
+	ܐܢ (len > 0 && (d[1] & 0x80) != 0)
 		prepend = 1;
-	if ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
-		explicit_bzero(d, sizeof(d));
-		return r;
+	ܐܢ ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
+		explicit_bzero(d, حجم(d));
+		ܦܢܐ r;
 	}
-	explicit_bzero(d, sizeof(d));
-	return 0;
+	explicit_bzero(d, حجم(d));
+	ܦܢܐ 0;
 }
 
-int
-sshbuf_put_ec(struct sshbuf *buf, const EC_POINT *v, const EC_GROUP *g)
+صحيح
+sshbuf_put_ec(بنية sshbuf *buf, ثابت EC_POINT *v, ثابت EC_GROUP *g)
 {
 	u_char d[SSHBUF_MAX_ECPOINT];
 	size_t len;
-	int ret;
+	صحيح ret;
 
-	if ((len = EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
-	    NULL, 0, NULL)) > SSHBUF_MAX_ECPOINT) {
-		return SSH_ERR_INVALID_ARGUMENT;
+	ܐܢ ((len = EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
+	    عدم, 0, عدم)) > SSHBUF_MAX_ECPOINT) {
+		ܦܢܐ SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
-	    d, len, NULL) != len) {
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+	ܐܢ (EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
+	    d, len, عدم) != len) {
+		ܦܢܐ SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
 	}
 	ret = sshbuf_put_string(buf, d, len);
 	explicit_bzero(d, len);
-	return ret;
+	ܦܢܐ ret;
 }
 
-int
-sshbuf_put_eckey(struct sshbuf *buf, const EC_KEY *v)
+صحيح
+sshbuf_put_eckey(بنية sshbuf *buf, ثابت EC_KEY *v)
 {
-	return sshbuf_put_ec(buf, EC_KEY_get0_public_key(v),
+	ܦܢܐ sshbuf_put_ec(buf, EC_KEY_get0_public_key(v),
 	    EC_KEY_get0_group(v));
 }
 
-int
-sshbuf_put_ec_pkey(struct sshbuf *buf, EVP_PKEY *pkey)
+صحيح
+sshbuf_put_ec_pkey(بنية sshbuf *buf, EVP_PKEY *pkey)
 {
-	const EC_KEY *ec;
+	ثابت EC_KEY *ec;
 
-	if ((ec = EVP_PKEY_get0_EC_KEY(pkey)) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return sshbuf_put_eckey(buf, ec);
+	ܐܢ ((ec = EVP_PKEY_get0_EC_KEY(pkey)) == عدم)
+		ܦܢܐ SSH_ERR_LIBCRYPTO_ERROR;
+	ܦܢܐ sshbuf_put_eckey(buf, ec);
 }
 #endif /* WITH_OPENSSL */

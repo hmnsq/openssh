@@ -23,123 +23,123 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <grp.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+#ضمن <grp.h>
+#ضمن <unistd.h>
+#ضمن <stdarg.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <limits.h>
 
-#include "xmalloc.h"
-#include "groupaccess.h"
-#include "match.h"
-#include "log.h"
+#ضمن "xmalloc.h"
+#ضمن "groupaccess.h"
+#ضمن "match.h"
+#ضمن "log.h"
 
-static int ngroups;
-static char **groups_byname;
+ساكن صحيح ngroups;
+ساكن حرف **groups_byname;
 
 /*
  * Initialize group access list for user with primary (base) and
  * supplementary groups.  Return the number of groups in the list.
  */
-int
-ga_init(const char *user, gid_t base)
+صحيح
+ga_init(ثابت حرف *user, gid_t base)
 {
 	gid_t *groups_bygid;
-	int ongroups, i, j, retry = 0;
-	struct group *gr;
+	صحيح ongroups, i, j, retry = 0;
+	بنية group *gr;
 
-	if (ngroups > 0)
+	ܐܢ (ngroups > 0)
 		ga_free();
 
 	ongroups = ngroups = NGROUPS_MAX;
-#if defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
+#ܐܢ defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
 	ongroups = ngroups = MAX(NGROUPS_MAX, sysconf(_SC_NGROUPS_MAX));
 #endif
 
-	groups_bygid = xcalloc(ngroups, sizeof(*groups_bygid));
-	while (getgrouplist(user, base, groups_bygid, &ngroups) == -1) {
-		if (ngroups <= ongroups) {
+	groups_bygid = xcalloc(ngroups, حجم(*groups_bygid));
+	ܟܡܐ (getgrouplist(user, base, groups_bygid, &ngroups) == -1) {
+		ܐܢ (ngroups <= ongroups) {
 			error("getgrouplist(\"%s\", %ld): failed",
 			    user, (long)base);
-			free(groups_bygid);
-			groups_bygid = NULL;
+			حرر(groups_bygid);
+			groups_bygid = عدم;
 			ngroups = 0;
-			return 0;
+			ܦܢܐ 0;
 		}
-		if (retry++ > 0) {
+		ܐܢ (retry++ > 0) {
 			fatal("getgrouplist(\"%s\", %ld): groups list too big "
 			    "(have %ld, need %ld)", user, (long)base,
 			    (long)ongroups, (long)ngroups);
 		}
 		groups_bygid = xreallocarray(groups_bygid, ngroups,
-		    sizeof(*groups_bygid));
+		    حجم(*groups_bygid));
 	}
-	groups_byname = xcalloc(ngroups, sizeof(*groups_byname));
+	groups_byname = xcalloc(ngroups, حجم(*groups_byname));
 
-	for (i = 0, j = 0; i < ngroups; i++)
-		if ((gr = getgrgid(groups_bygid[i])) != NULL)
+	لكل (i = 0, j = 0; i < ngroups; i++)
+		ܐܢ ((gr = getgrgid(groups_bygid[i])) != عدم)
 			groups_byname[j++] = xstrdup(gr->gr_name);
-	free(groups_bygid);
-	return (ngroups = j);
+	حرر(groups_bygid);
+	ܦܢܐ (ngroups = j);
 }
 
 /*
  * Return 1 if one of user's groups is contained in groups.
  * Return 0 otherwise.  Use match_pattern() for string comparison.
  */
-int
-ga_match(char * const *groups, int n)
+صحيح
+ga_match(حرف * ثابت *groups, صحيح n)
 {
-	int i, j;
+	صحيح i, j;
 
-	for (i = 0; i < ngroups; i++)
-		for (j = 0; j < n; j++)
-			if (match_pattern(groups_byname[i], groups[j]))
-				return 1;
-	return 0;
+	لكل (i = 0; i < ngroups; i++)
+		لكل (j = 0; j < n; j++)
+			ܐܢ (match_pattern(groups_byname[i], groups[j]))
+				ܦܢܐ 1;
+	ܦܢܐ 0;
 }
 
 /*
  * Return 1 if one of user's groups matches group_pattern list.
  * Return 0 on negated or no match.
  */
-int
-ga_match_pattern_list(const char *group_pattern)
+صحيح
+ga_match_pattern_list(ثابت حرف *group_pattern)
 {
-	int i, found = 0;
+	صحيح i, found = 0;
 
-	for (i = 0; i < ngroups; i++) {
-		switch (match_usergroup_pattern_list(groups_byname[i],
+	لكل (i = 0; i < ngroups; i++) {
+		بدل (match_usergroup_pattern_list(groups_byname[i],
 		    group_pattern)) {
-		case -1:
-			return 0;	/* Negated match wins */
-		case 0:
-			continue;
-		case 1:
+		حالة -1:
+			ܦܢܐ 0;	/* Negated match wins */
+		حالة 0:
+			استمر;
+		حالة 1:
 			found = 1;
 		}
 	}
-	return found;
+	ܦܢܐ found;
 }
 
 /*
  * Free memory allocated for group access list.
  */
-void
-ga_free(void)
+فراغ
+ga_free(فراغ)
 {
-	int i;
+	صحيح i;
 
-	if (ngroups > 0) {
-		for (i = 0; i < ngroups; i++)
-			free(groups_byname[i]);
+	ܐܢ (ngroups > 0) {
+		لكل (i = 0; i < ngroups; i++)
+			حرر(groups_byname[i]);
 		ngroups = 0;
-		free(groups_byname);
-		groups_byname = NULL;
+		حرر(groups_byname);
+		groups_byname = عدم;
 	}
 }

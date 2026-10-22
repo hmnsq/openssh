@@ -3,80 +3,80 @@
 // Will write to ./sntrup761_pubkey_corpus (for sntrup761_enc_fuzz) and
 // to ./sntrup761_ciphertext_corpus (for sntrup761_dec_fuzz)
 
-#include <sys/stat.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <err.h>
-#include <errno.h>
+#ضمن <sys/stat.h>
+#ضمن <stddef.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <err.h>
+#ضمن <errno.h>
 
-#include "crypto_api.h"
-#include "hash.c"
+#ضمن "crypto_api.h"
+#ضمن "hash.c"
 
 #undef randombytes
 #define USE_SNTRUP761X25519 1
-void randombytes(unsigned char *ptr, size_t l);
-volatile crypto_int16 crypto_int16_optblocker = 0;
-volatile crypto_int32 crypto_int32_optblocker = 0;
-volatile crypto_int64 crypto_int64_optblocker = 0;
-#include "sntrup761.c"
+فراغ randombytes(unsigned حرف *ptr, size_t l);
+متطاير crypto_int16 crypto_int16_optblocker = 0;
+متطاير crypto_int32 crypto_int32_optblocker = 0;
+متطاير crypto_int64 crypto_int64_optblocker = 0;
+#ضمن "sntrup761.c"
 
 #define NSEEDS 1000
 
-static int real_random;
+ساكن صحيح real_random;
 
-void
-randombytes(unsigned char *ptr, size_t l)
+فراغ
+randombytes(unsigned حرف *ptr, size_t l)
 {
-	if (real_random)
+	ܐܢ (real_random)
 		arc4random_buf(ptr, l);
-	else
+	ܐܚܪܢܐ
 		memset(ptr, 0, l);
 }
 
-void write_blob(const char *path, int n, const char *suffix,
-    const void *ptr, size_t l)
+فراغ write_blob(ثابت حرف *path, صحيح n, ثابت حرف *suffix,
+    ثابت فراغ *ptr, size_t l)
 {
-	char name[256];
+	حرف name[256];
 	FILE *f;
 
-	snprintf(name, sizeof(name), "%s/%06d.%s", path, n, suffix);
-	if ((f = fopen(name, "wb+")) == NULL)
+	snprintf(name, حجم(name), "%s/%06d.%s", path, n, suffix);
+	ܐܢ ((f = fopen(name, "wb+")) == عدم)
 		err(1, "fopen %s", name);
-	if (fwrite(ptr, l, 1, f) != 1)
+	ܐܢ (fwrite(ptr, l, 1, f) != 1)
 		err(1, "write %s", name);
 	fclose(f);
 }
 
-int main(void)
+صحيح main(فراغ)
 {
-	int i;
-	unsigned char pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
-	unsigned char sk[crypto_kem_sntrup761_SECRETKEYBYTES];
-	unsigned char ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
-	unsigned char secret[crypto_kem_sntrup761_BYTES];
+	صحيح i;
+	unsigned حرف pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
+	unsigned حرف sk[crypto_kem_sntrup761_SECRETKEYBYTES];
+	unsigned حرف ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
+	unsigned حرف secret[crypto_kem_sntrup761_BYTES];
 
-	if (mkdir("sntrup761_pubkey_corpus", 0777) != 0 && errno != EEXIST)
+	ܐܢ (mkdir("sntrup761_pubkey_corpus", 0777) != 0 && errno != EEXIST)
 		err(1, "mkdir sntrup761_pubkey_corpus");
-	if (mkdir("sntrup761_ciphertext_corpus", 0777) != 0 && errno != EEXIST)
+	ܐܢ (mkdir("sntrup761_ciphertext_corpus", 0777) != 0 && errno != EEXIST)
 		err(1, "mkdir sntrup761_ciphertext_corpus");
 
 	fprintf(stderr, "making: ");
-	for (i = 0; i < NSEEDS; i++) {
+	لكل (i = 0; i < NSEEDS; i++) {
 		real_random = i != 0;
-		if (crypto_kem_sntrup761_keypair(pk, sk) != 0)
+		ܐܢ (crypto_kem_sntrup761_keypair(pk, sk) != 0)
 			errx(1, "crypto_kem_sntrup761_keypair failed");
-		write_blob("sntrup761_pubkey_corpus", i, "pk", pk, sizeof(pk));
-		if (crypto_kem_sntrup761_enc(ciphertext, secret, pk) != 0)
+		write_blob("sntrup761_pubkey_corpus", i, "pk", pk, حجم(pk));
+		ܐܢ (crypto_kem_sntrup761_enc(ciphertext, secret, pk) != 0)
 			errx(1, "crypto_kem_sntrup761_enc failed");
 		write_blob("sntrup761_ciphertext_corpus", i, "ct",
-		    ciphertext, sizeof(ciphertext));
-		if (i % 20 == 0)
+		    ciphertext, حجم(ciphertext));
+		ܐܢ (i % 20 == 0)
 			fprintf(stderr, ".");
 	}
 	fprintf(stderr, "\n");
-	return 0;
+	ܦܢܐ 0;
 }

@@ -16,51 +16,51 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifndef WITH_OPENSSL
 
-#include <sys/types.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <limits.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#if 0
-#include <md5.h>
+#ܐܢ 0
+#ضمن <md5.h>
 #endif
 #ifdef HAVE_SHA1_H
-#include <sha1.h>
+#ضمن <sha1.h>
 #endif
 #ifdef HAVE_SHA2_H
-#include <sha2.h>
+#ضمن <sha2.h>
 #endif
 
-#if !defined(SHA256_BLOCK_LENGTH) && defined(SHA256_HMAC_BLOCK_SIZE)
+#ܐܢ !defined(SHA256_BLOCK_LENGTH) && defined(SHA256_HMAC_BLOCK_SIZE)
 #define SHA256_BLOCK_LENGTH SHA256_HMAC_BLOCK_SIZE
 #endif
-#if !defined(SHA384_BLOCK_LENGTH) && defined(SHA512_HMAC_BLOCK_SIZE)
+#ܐܢ !defined(SHA384_BLOCK_LENGTH) && defined(SHA512_HMAC_BLOCK_SIZE)
 #define SHA384_BLOCK_LENGTH SHA512_HMAC_BLOCK_SIZE
 #endif
-#if !defined(SHA512_BLOCK_LENGTH) && defined(SHA512_HMAC_BLOCK_SIZE)
+#ܐܢ !defined(SHA512_BLOCK_LENGTH) && defined(SHA512_HMAC_BLOCK_SIZE)
 #define SHA512_BLOCK_LENGTH SHA512_HMAC_BLOCK_SIZE
 #endif
 
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "digest.h"
+#ضمن "ssherr.h"
+#ضمن "sshbuf.h"
+#ضمن "digest.h"
 
-typedef void md_init_fn(void *mdctx);
-typedef void md_update_fn(void *mdctx, const uint8_t *m, size_t mlen);
-typedef void md_final_fn(uint8_t[], void *mdctx);
+تعريفنوع فراغ md_init_fn(فراغ *mdctx);
+تعريفنوع فراغ md_update_fn(فراغ *mdctx, ثابت uint8_t *m, size_t mlen);
+تعريفنوع فراغ md_final_fn(uint8_t[], فراغ *mdctx);
 
-struct ssh_digest_ctx {
-	int alg;
-	void *mdctx;
+بنية ssh_digest_ctx {
+	صحيح alg;
+	فراغ *mdctx;
 };
 
-struct ssh_digest {
-	int id;
-	const char *name;
+بنية ssh_digest {
+	صحيح id;
+	ثابت حرف *name;
 	size_t block_len;
 	size_t digest_len;
 	size_t ctx_len;
@@ -70,13 +70,13 @@ struct ssh_digest {
 };
 
 /* NB. Indexed directly by algorithm number */
-const struct ssh_digest digests[SSH_DIGEST_MAX] = {
+ثابت بنية ssh_digest digests[SSH_DIGEST_MAX] = {
 	{
 		SSH_DIGEST_MD5,
 		"MD5",
 		MD5_BLOCK_LENGTH,
 		MD5_DIGEST_LENGTH,
-		sizeof(MD5_CTX),
+		حجم(MD5_CTX),
 		(md_init_fn *) MD5Init,
 		(md_update_fn *) MD5Update,
 		(md_final_fn *) MD5Final
@@ -86,7 +86,7 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 		"SHA1",
 		SHA1_BLOCK_LENGTH,
 		SHA1_DIGEST_LENGTH,
-		sizeof(SHA1_CTX),
+		حجم(SHA1_CTX),
 		(md_init_fn *) SHA1Init,
 		(md_update_fn *) SHA1Update,
 		(md_final_fn *) SHA1Final
@@ -96,7 +96,7 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 		"SHA256",
 		SHA256_BLOCK_LENGTH,
 		SHA256_DIGEST_LENGTH,
-		sizeof(SHA2_CTX),
+		حجم(SHA2_CTX),
 		(md_init_fn *) SHA256Init,
 		(md_update_fn *) SHA256Update,
 		(md_final_fn *) SHA256Final
@@ -106,7 +106,7 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 		"SHA384",
 		SHA384_BLOCK_LENGTH,
 		SHA384_DIGEST_LENGTH,
-		sizeof(SHA2_CTX),
+		حجم(SHA2_CTX),
 		(md_init_fn *) SHA384Init,
 		(md_update_fn *) SHA384Update,
 		(md_final_fn *) SHA384Final
@@ -116,152 +116,152 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 		"SHA512",
 		SHA512_BLOCK_LENGTH,
 		SHA512_DIGEST_LENGTH,
-		sizeof(SHA2_CTX),
+		حجم(SHA2_CTX),
 		(md_init_fn *) SHA512Init,
 		(md_update_fn *) SHA512Update,
 		(md_final_fn *) SHA512Final
 	}
 };
 
-static const struct ssh_digest *
-ssh_digest_by_alg(int alg)
+ساكن ثابت بنية ssh_digest *
+ssh_digest_by_alg(صحيح alg)
 {
-	if (alg < 0 || alg >= SSH_DIGEST_MAX)
-		return NULL;
-	if (digests[alg].id != alg) /* sanity */
-		return NULL;
-	return &(digests[alg]);
+	ܐܢ (alg < 0 || alg >= SSH_DIGEST_MAX)
+		ܦܢܐ عدم;
+	ܐܢ (digests[alg].id != alg) /* sanity */
+		ܦܢܐ عدم;
+	ܦܢܐ &(digests[alg]);
 }
 
-int
-ssh_digest_alg_by_name(const char *name)
+صحيح
+ssh_digest_alg_by_name(ثابت حرف *name)
 {
-	int alg;
+	صحيح alg;
 
-	for (alg = 0; alg < SSH_DIGEST_MAX; alg++) {
-		if (strcasecmp(name, digests[alg].name) == 0)
-			return digests[alg].id;
+	لكل (alg = 0; alg < SSH_DIGEST_MAX; alg++) {
+		ܐܢ (strcasecmp(name, digests[alg].name) == 0)
+			ܦܢܐ digests[alg].id;
 	}
-	return -1;
+	ܦܢܐ -1;
 }
 
-const char *
-ssh_digest_alg_name(int alg)
+ثابت حرف *
+ssh_digest_alg_name(صحيح alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	ثابت بنية ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? NULL : digest->name;
-}
-
-size_t
-ssh_digest_bytes(int alg)
-{
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-
-	return digest == NULL ? 0 : digest->digest_len;
+	ܦܢܐ digest == عدم ? عدم : digest->name;
 }
 
 size_t
-ssh_digest_blocksize(struct ssh_digest_ctx *ctx)
+ssh_digest_bytes(صحيح alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	ثابت بنية ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? 0 : digest->block_len;
+	ܦܢܐ digest == عدم ? 0 : digest->digest_len;
 }
 
-struct ssh_digest_ctx *
-ssh_digest_start(int alg)
+size_t
+ssh_digest_blocksize(بنية ssh_digest_ctx *ctx)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-	struct ssh_digest_ctx *ret;
+	ثابت بنية ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 
-	if (digest == NULL || (ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
-	if ((ret->mdctx = calloc(1, digest->ctx_len)) == NULL) {
-		free(ret);
-		return NULL;
+	ܦܢܐ digest == عدم ? 0 : digest->block_len;
+}
+
+بنية ssh_digest_ctx *
+ssh_digest_start(صحيح alg)
+{
+	ثابت بنية ssh_digest *digest = ssh_digest_by_alg(alg);
+	بنية ssh_digest_ctx *ret;
+
+	ܐܢ (digest == عدم || (ret = calloc(1, حجم(*ret))) == عدم)
+		ܦܢܐ عدم;
+	ܐܢ ((ret->mdctx = calloc(1, digest->ctx_len)) == عدم) {
+		حرر(ret);
+		ܦܢܐ عدم;
 	}
 	ret->alg = alg;
 	digest->md_init(ret->mdctx);
-	return ret;
+	ܦܢܐ ret;
 }
 
-int
-ssh_digest_copy_state(struct ssh_digest_ctx *from, struct ssh_digest_ctx *to)
+صحيح
+ssh_digest_copy_state(بنية ssh_digest_ctx *from, بنية ssh_digest_ctx *to)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(from->alg);
+	ثابت بنية ssh_digest *digest = ssh_digest_by_alg(from->alg);
 
-	if (digest == NULL || from->alg != to->alg)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ܐܢ (digest == عدم || from->alg != to->alg)
+		ܦܢܐ SSH_ERR_INVALID_ARGUMENT;
 	memcpy(to->mdctx, from->mdctx, digest->ctx_len);
-	return 0;
+	ܦܢܐ 0;
 }
 
-int
-ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
+صحيح
+ssh_digest_update(بنية ssh_digest_ctx *ctx, ثابت فراغ *m, size_t mlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	ثابت بنية ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ܐܢ (digest == عدم)
+		ܦܢܐ SSH_ERR_INVALID_ARGUMENT;
 	digest->md_update(ctx->mdctx, m, mlen);
-	return 0;
+	ܦܢܐ 0;
 }
 
-int
-ssh_digest_update_buffer(struct ssh_digest_ctx *ctx, const struct sshbuf *b)
+صحيح
+ssh_digest_update_buffer(بنية ssh_digest_ctx *ctx, ثابت بنية sshbuf *b)
 {
-	return ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
+	ܦܢܐ ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
 }
 
-int
-ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
+صحيح
+ssh_digest_final(بنية ssh_digest_ctx *ctx, u_char *d, size_t dlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	ثابت بنية ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len) /* No truncation allowed */
-		return SSH_ERR_INVALID_ARGUMENT;
+	ܐܢ (digest == عدم)
+		ܦܢܐ SSH_ERR_INVALID_ARGUMENT;
+	ܐܢ (dlen > UINT_MAX)
+		ܦܢܐ SSH_ERR_INVALID_ARGUMENT;
+	ܐܢ (dlen < digest->digest_len) /* No truncation allowed */
+		ܦܢܐ SSH_ERR_INVALID_ARGUMENT;
 	digest->md_final(d, ctx->mdctx);
-	return 0;
+	ܦܢܐ 0;
 }
 
-void
-ssh_digest_free(struct ssh_digest_ctx *ctx)
+فراغ
+ssh_digest_free(بنية ssh_digest_ctx *ctx)
 {
-	const struct ssh_digest *digest;
+	ثابت بنية ssh_digest *digest;
 
-	if (ctx != NULL) {
+	ܐܢ (ctx != عدم) {
 		digest = ssh_digest_by_alg(ctx->alg);
-		if (digest) {
+		ܐܢ (digest) {
 			explicit_bzero(ctx->mdctx, digest->ctx_len);
-			free(ctx->mdctx);
-			freezero(ctx, sizeof(*ctx));
+			حرر(ctx->mdctx);
+			freezero(ctx, حجم(*ctx));
 		}
 	}
 }
 
-int
-ssh_digest_memory(int alg, const void *m, size_t mlen, u_char *d, size_t dlen)
+صحيح
+ssh_digest_memory(صحيح alg, ثابت فراغ *m, size_t mlen, u_char *d, size_t dlen)
 {
-	struct ssh_digest_ctx *ctx = ssh_digest_start(alg);
-	int ret = 0;
+	بنية ssh_digest_ctx *ctx = ssh_digest_start(alg);
+	صحيح ret = 0;
 
-	if (ctx == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (ssh_digest_update(ctx, m, mlen) != 0 ||
+	ܐܢ (ctx == عدم)
+		ܦܢܐ SSH_ERR_INVALID_ARGUMENT;
+	ܐܢ (ssh_digest_update(ctx, m, mlen) != 0 ||
 	    ssh_digest_final(ctx, d, dlen) != 0)
 		ret = SSH_ERR_INVALID_ARGUMENT;
 	ssh_digest_free(ctx);
-	return ret;
+	ܦܢܐ ret;
 }
 
-int
-ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+صحيح
+ssh_digest_buffer(صحيح alg, ثابت بنية sshbuf *b, u_char *d, size_t dlen)
 {
-	return ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
+	ܦܢܐ ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
 }
 #endif /* !WITH_OPENSSL */

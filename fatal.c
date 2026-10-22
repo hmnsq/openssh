@@ -23,19 +23,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <stdarg.h>
+#ضمن <stdarg.h>
 
-#include "log.h"
+#ضمن "log.h"
 
 /* Fatal messages.  This function never returns. */
 
-void
-sshfatal(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+فراغ
+sshfatal(ثابت حرف *file, ثابت حرف *func, صحيح line, صحيح showfunc,
+    LogLevel level, ثابت حرف *suffix, ثابت حرف *fmt, ...)
 {
 	va_list args;
 

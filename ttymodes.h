@@ -61,11 +61,11 @@
 TTYCHAR(VINTR, 1)
 TTYCHAR(VQUIT, 2)
 TTYCHAR(VERASE, 3)
-#if defined(VKILL)
+#ܐܢ defined(VKILL)
 TTYCHAR(VKILL, 4)
 #endif /* VKILL */
 TTYCHAR(VEOF, 5)
-#if defined(VEOL)
+#ܐܢ defined(VEOL)
 TTYCHAR(VEOL, 6)
 #endif /* VEOL */
 #ifdef VEOL2
@@ -73,28 +73,28 @@ TTYCHAR(VEOL2, 7)
 #endif /* VEOL2 */
 TTYCHAR(VSTART, 8)
 TTYCHAR(VSTOP, 9)
-#if defined(VSUSP)
+#ܐܢ defined(VSUSP)
 TTYCHAR(VSUSP, 10)
 #endif /* VSUSP */
-#if defined(VDSUSP)
+#ܐܢ defined(VDSUSP)
 TTYCHAR(VDSUSP, 11)
 #endif /* VDSUSP */
-#if defined(VREPRINT)
+#ܐܢ defined(VREPRINT)
 TTYCHAR(VREPRINT, 12)
 #endif /* VREPRINT */
-#if defined(VWERASE)
+#ܐܢ defined(VWERASE)
 TTYCHAR(VWERASE, 13)
 #endif /* VWERASE */
-#if defined(VLNEXT)
+#ܐܢ defined(VLNEXT)
 TTYCHAR(VLNEXT, 14)
 #endif /* VLNEXT */
-#if defined(VFLUSH)
+#ܐܢ defined(VFLUSH)
 TTYCHAR(VFLUSH, 15)
 #endif /* VFLUSH */
 #ifdef VSWTCH
 TTYCHAR(VSWTCH, 16)
 #endif /* VSWTCH */
-#if defined(VSTATUS)
+#ܐܢ defined(VSTATUS)
 TTYCHAR(VSTATUS, 17)
 #endif /* VSTATUS */
 #ifdef VDISCARD
@@ -109,7 +109,7 @@ TTYMODE(ISTRIP,	c_iflag, 33)
 TTYMODE(INLCR,	c_iflag, 34)
 TTYMODE(IGNCR,	c_iflag, 35)
 TTYMODE(ICRNL,	c_iflag, 36)
-#if defined(IUCLC)
+#ܐܢ defined(IUCLC)
 TTYMODE(IUCLC,	c_iflag, 37)
 #endif
 TTYMODE(IXON,	c_iflag, 38)
@@ -136,18 +136,18 @@ TTYMODE(TOSTOP,	c_lflag, 58)
 #ifdef IEXTEN
 TTYMODE(IEXTEN, c_lflag, 59)
 #endif /* IEXTEN */
-#if defined(ECHOCTL)
+#ܐܢ defined(ECHOCTL)
 TTYMODE(ECHOCTL,c_lflag, 60)
 #endif /* ECHOCTL */
 #ifdef ECHOKE
 TTYMODE(ECHOKE,	c_lflag, 61)
 #endif /* ECHOKE */
-#if defined(PENDIN)
+#ܐܢ defined(PENDIN)
 TTYMODE(PENDIN,	c_lflag, 62)
 #endif /* PENDIN */
 
 TTYMODE(OPOST,	c_oflag, 70)
-#if defined(OLCUC)
+#ܐܢ defined(OLCUC)
 TTYMODE(OLCUC,	c_oflag, 71)
 #endif
 #ifdef ONLCR

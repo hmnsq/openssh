@@ -32,15 +32,15 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
-#if !defined(HAVE_OPENPTY)
+#ضمن "includes.h"
+#ܐܢ !defined(HAVE_OPENPTY)
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <stdlib.h>
-#include <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
 
-#include <sys/stat.h>
+#ضمن <sys/stat.h>
 #ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
 #endif
@@ -49,67 +49,67 @@
 # include <fcntl.h>
 #endif
 
-#include <util.h>
+#ضمن <util.h>
 
 #ifdef HAVE_PTY_H
 # include <pty.h>
 #endif
-#if defined(HAVE_DEV_PTMX) && defined(HAVE_SYS_STROPTS_H)
+#ܐܢ defined(HAVE_DEV_PTMX) && defined(HAVE_SYS_STROPTS_H)
 # include <sys/stropts.h>
 #endif
 
-#include <signal.h>
-#include <string.h>
-#include <unistd.h>
+#ضمن <signal.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
 
-#include "misc.h"
-#include "log.h"
+#ضمن "misc.h"
+#ضمن "log.h"
 
 #ifndef O_NOCTTY
 #define O_NOCTTY 0
 #endif
 
-#if defined(HAVE_DEV_PTMX) && !defined(HAVE__GETPTY)
-static int
-openpty_streams(int *amaster, int *aslave)
+#ܐܢ defined(HAVE_DEV_PTMX) && !defined(HAVE__GETPTY)
+ساكن صحيح
+openpty_streams(صحيح *amaster, صحيح *aslave)
 {
 	/*
 	 * This code is used e.g. on Solaris 2.x.  (Note that Solaris 2.3
 	 * also has bsd-style ptys, but they simply do not work.)
 	 */
-	int ptm;
-	char *pts;
+	صحيح ptm;
+	حرف *pts;
 	sshsig_t old_signal;
 
-	if ((ptm = open("/dev/ptmx", O_RDWR | O_NOCTTY)) == -1)
-		return (-1);
+	ܐܢ ((ptm = open("/dev/ptmx", O_RDWR | O_NOCTTY)) == -1)
+		ܦܢܐ (-1);
 
 	/* XXX: need to close ptm on error? */
 	old_signal = ssh_signal(SIGCHLD, SIG_DFL);
-	if (grantpt(ptm) < 0)
-		return (-1);
+	ܐܢ (grantpt(ptm) < 0)
+		ܦܢܐ (-1);
 	ssh_signal(SIGCHLD, old_signal);
 
-	if (unlockpt(ptm) < 0)
-		return (-1);
+	ܐܢ (unlockpt(ptm) < 0)
+		ܦܢܐ (-1);
 
-	if ((pts = ptsname(ptm)) == NULL)
-		return (-1);
+	ܐܢ ((pts = ptsname(ptm)) == عدم)
+		ܦܢܐ (-1);
 	*amaster = ptm;
 
 	/* Open the slave side. */
-	if ((*aslave = open(pts, O_RDWR | O_NOCTTY)) == -1) {
+	ܐܢ ((*aslave = open(pts, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		ܦܢܐ (-1);
 	}
 
-# if defined(I_FIND) && defined(__SVR4)
+# ܐܢ defined(I_FIND) && defined(__SVR4)
 	/*
 	 * If the streams modules have already been pushed then there
 	 * is no more work to do here.
 	 */
-	if (ioctl(*aslave, I_FIND, "ptem") != 0)
-		return 0;
+	ܐܢ (ioctl(*aslave, I_FIND, "ptem") != 0)
+		ܦܢܐ 0;
 # endif
 
 	/*
@@ -121,32 +121,32 @@ openpty_streams(int *amaster, int *aslave)
 # ifndef __hpux
 	ioctl(*aslave, I_PUSH, "ttcompat");
 # endif /* __hpux */
-	return (0);
+	ܦܢܐ (0);
 }
 #endif
 
-int
-openpty(int *amaster, int *aslave, char *name, const struct termios *termp,
-   const struct winsize *winp)
+صحيح
+openpty(صحيح *amaster, صحيح *aslave, حرف *name, ثابت بنية termios *termp,
+   ثابت بنية winsize *winp)
 {
-#if defined(HAVE__GETPTY)
+#ܐܢ defined(HAVE__GETPTY)
 	/*
 	 * _getpty(3) exists in SGI Irix 4.x, 5.x & 6.x -- it generates more
 	 * pty's automagically when needed
 	 */
-	char *slave;
+	حرف *slave;
 
-	if ((slave = _getpty(amaster, O_RDWR, 0622, 0)) == NULL)
-		return (-1);
+	ܐܢ ((slave = _getpty(amaster, O_RDWR, 0622, 0)) == عدم)
+		ܦܢܐ (-1);
 
 	/* Open the slave side. */
-	if ((*aslave = open(slave, O_RDWR | O_NOCTTY)) == -1) {
+	ܐܢ ((*aslave = open(slave, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		ܦܢܐ (-1);
 	}
-	return (0);
+	ܦܢܐ (0);
 
-#elif defined(HAVE_DEV_PTMX)
+#وإلاإذا defined(HAVE_DEV_PTMX)
 
 #ifdef SSHD_ACQUIRES_CTTY
 	/*
@@ -159,79 +159,79 @@ openpty(int *amaster, int *aslave, char *name, const struct termios *termp,
 	 * different session and is available to become controlling terminal
 	 * for the client's subprocess.  See bugzilla #245 for details.
 	 */
-	int r, fd;
-	static int junk_ptyfd = -1, junk_ttyfd;
-	char *junk_name;
+	صحيح r, fd;
+	ساكن صحيح junk_ptyfd = -1, junk_ttyfd;
+	حرف *junk_name;
 
 	r = openpty_streams(amaster, aslave);
-	if (junk_ptyfd == -1 && (fd = open(_PATH_TTY, O_RDWR|O_NOCTTY)) >= 0) {
+	ܐܢ (junk_ptyfd == -1 && (fd = open(_PATH_TTY, O_RDWR|O_NOCTTY)) >= 0) {
 		close(fd);
 		junk_ptyfd = *amaster;
 		junk_ttyfd = *aslave;
 		junk_name = ttyname(junk_ttyfd);
 		debug("STREAMS bug workaround pty %d tty %d name %s",
 		    junk_ptyfd, junk_ttyfd, junk_name ? junk_name : "<none>");
-	} else
-		return r;
+	} ܐܚܪܢܐ
+		ܦܢܐ r;
 #endif
 
-	return openpty_streams(amaster, aslave);
+	ܦܢܐ openpty_streams(amaster, aslave);
 
-#elif defined(HAVE_DEV_PTS_AND_PTC)
+#وإلاإذا defined(HAVE_DEV_PTS_AND_PTC)
 	/* AIX-style pty code. */
-	const char *ttname;
+	ثابت حرف *ttname;
 
-	if ((*amaster = open("/dev/ptc", O_RDWR | O_NOCTTY)) == -1)
-		return (-1);
-	if ((ttname = ttyname(*amaster)) == NULL)
-		return (-1);
-	if ((*aslave = open(ttname, O_RDWR | O_NOCTTY)) == -1) {
+	ܐܢ ((*amaster = open("/dev/ptc", O_RDWR | O_NOCTTY)) == -1)
+		ܦܢܐ (-1);
+	ܐܢ ((ttname = ttyname(*amaster)) == عدم)
+		ܦܢܐ (-1);
+	ܐܢ ((*aslave = open(ttname, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		ܦܢܐ (-1);
 	}
-	return (0);
+	ܦܢܐ (0);
 
-#else
+#ܐܚܪܢܐ
 	/* BSD-style pty code. */
-	char ptbuf[64], ttbuf[64];
-	int i;
-	const char *ptymajors = "pqrstuvwxyzabcdefghijklmno"
+	حرف ptbuf[64], ttbuf[64];
+	صحيح i;
+	ثابت حرف *ptymajors = "pqrstuvwxyzabcdefghijklmno"
 	    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	const char *ptyminors = "0123456789abcdef";
-	int num_minors = strlen(ptyminors);
-	int num_ptys = strlen(ptymajors) * num_minors;
-	struct termios tio;
+	ثابت حرف *ptyminors = "0123456789abcdef";
+	صحيح num_minors = strlen(ptyminors);
+	صحيح num_ptys = strlen(ptymajors) * num_minors;
+	بنية termios tio;
 
-	for (i = 0; i < num_ptys; i++) {
-		snprintf(ptbuf, sizeof(ptbuf), "/dev/pty%c%c",
+	لكل (i = 0; i < num_ptys; i++) {
+		snprintf(ptbuf, حجم(ptbuf), "/dev/pty%c%c",
 		    ptymajors[i / num_minors], ptyminors[i % num_minors]);
-		snprintf(ttbuf, sizeof(ttbuf), "/dev/tty%c%c",
+		snprintf(ttbuf, حجم(ttbuf), "/dev/tty%c%c",
 		    ptymajors[i / num_minors], ptyminors[i % num_minors]);
 
-		if ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1) {
+		ܐܢ ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1) {
 			/* Try SCO style naming */
-			snprintf(ptbuf, sizeof(ptbuf), "/dev/ptyp%d", i);
-			snprintf(ttbuf, sizeof(ttbuf), "/dev/ttyp%d", i);
-			if ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1)
-				continue;
+			snprintf(ptbuf, حجم(ptbuf), "/dev/ptyp%d", i);
+			snprintf(ttbuf, حجم(ttbuf), "/dev/ttyp%d", i);
+			ܐܢ ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1)
+				استمر;
 		}
 
 		/* Open the slave side. */
-		if ((*aslave = open(ttbuf, O_RDWR | O_NOCTTY)) == -1) {
+		ܐܢ ((*aslave = open(ttbuf, O_RDWR | O_NOCTTY)) == -1) {
 			close(*amaster);
-			return (-1);
+			ܦܢܐ (-1);
 		}
 		/* set tty modes to a sane state for broken clients */
-		if (tcgetattr(*amaster, &tio) != -1) {
+		ܐܢ (tcgetattr(*amaster, &tio) != -1) {
 			tio.c_lflag |= (ECHO | ISIG | ICANON);
 			tio.c_oflag |= (OPOST | ONLCR);
 			tio.c_iflag |= ICRNL;
 			tcsetattr(*amaster, TCSANOW, &tio);
 		}
 
-		return (0);
+		ܦܢܐ (0);
 	}
-	return (-1);
+	ܦܢܐ (-1);
 #endif
 }
 

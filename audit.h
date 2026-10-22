@@ -25,11 +25,11 @@
 #ifndef _SSH_AUDIT_H
 # define _SSH_AUDIT_H
 
-#include "loginrec.h"
+#ضمن "loginrec.h"
 
-struct ssh;
+بنية ssh;
 
-enum ssh_audit_event_type {
+تعداد ssh_audit_event_type {
 	SSH_LOGIN_EXCEED_MAXTRIES,
 	SSH_LOGIN_ROOT_DENIED,
 	SSH_AUTH_SUCCESS,
@@ -45,13 +45,13 @@ enum ssh_audit_event_type {
 	SSH_CONNECTION_ABANDON,	/* closed without completing auth */
 	SSH_AUDIT_UNKNOWN
 };
-typedef enum ssh_audit_event_type ssh_audit_event_t;
+تعريفنوع تعداد ssh_audit_event_type ssh_audit_event_t;
 
-void	audit_connection_from(const char *, int);
-void	audit_event(struct ssh *, ssh_audit_event_t);
-void	audit_session_open(struct logininfo *);
-void	audit_session_close(struct logininfo *);
-void	audit_run_command(const char *);
-ssh_audit_event_t audit_classify_auth(const char *);
+فراغ	audit_connection_from(ثابت حرف *, صحيح);
+فراغ	audit_event(بنية ssh *, ssh_audit_event_t);
+فراغ	audit_session_open(بنية logininfo *);
+فراغ	audit_session_close(بنية logininfo *);
+فراغ	audit_run_command(ثابت حرف *);
+ssh_audit_event_t audit_classify_auth(ثابت حرف *);
 
 #endif /* _SSH_AUDIT_H */

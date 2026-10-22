@@ -38,53 +38,53 @@ limitations under the License.
  * reclaimed before the next call.
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#ضمن <stddef.h>
+#ضمن <stdint.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <sys/socket.h>
+#ضمن <sys/types.h>
 
-extern "C" {
-#include "includes.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "authfd.h"
-#include "log.h"
+خارجي "C" {
+#ضمن "includes.h"
+#ضمن "sshkey.h"
+#ضمن "sshbuf.h"
+#ضمن "ssherr.h"
+#ضمن "authfd.h"
+#ضمن "log.h"
 
-void fuzz_arena_begin(void);
-void fuzz_arena_cleanup(void);
+فراغ fuzz_arena_begin(فراغ);
+فراغ fuzz_arena_cleanup(فراغ);
 }
 
-#include "fixed-keys.h"
+#ضمن "fixed-keys.h"
 
-static struct sshkey *test_keys[3] = { NULL, NULL, NULL };
-static int initialized = 0;
+ساكن بنية sshkey *test_keys[3] = { عدم, عدم, عدم };
+ساكن صحيح initialized = 0;
 
-static struct sshkey *
-load_pubkey_or_die(const char *txt)
+ساكن بنية sshkey *
+load_pubkey_or_die(ثابت حرف *txt)
 {
-	char *tmp, *cp;
-	struct sshkey *k;
+	حرف *tmp, *cp;
+	بنية sshkey *k;
 
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL)
+	ܐܢ ((k = sshkey_new(KEY_UNSPEC)) == عدم)
 		abort();
-	if ((tmp = cp = strdup(txt)) == NULL)
+	ܐܢ ((tmp = cp = strdup(txt)) == عدم)
 		abort();
-	if (sshkey_read(k, &cp) != 0)
+	ܐܢ (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	حرر(tmp);
+	ܦܢܐ k;
 }
 
-static void
-setup(void)
+ساكن فراغ
+setup(فراغ)
 {
-	if (initialized)
-		return;
+	ܐܢ (initialized)
+		ܦܢܐ;
 	initialized = 1;
 	log_init("authfd_reply_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
@@ -93,7 +93,7 @@ setup(void)
 	test_keys[2] = load_pubkey_or_die(PUB_ED25519);
 }
 
-enum {
+تعداد {
 	API_FETCH_IDENTITYLIST,
 	API_AGENT_SIGN,
 	API_AGENT_HAS_KEY,
@@ -101,57 +101,57 @@ enum {
 	API_LOCK_AGENT,
 };
 
-static void
-run_one(int api, struct sshkey *k, int lock_arg,
-    const uint8_t *body, size_t bsize)
+ساكن فراغ
+run_one(صحيح api, بنية sshkey *k, صحيح lock_arg,
+    ثابت uint8_t *body, size_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	صحيح sv[2] = { -1, -1 };
+	ܐܢ (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		ܦܢܐ;
 
 	uint32_t blen = (uint32_t)bsize;
 	uint8_t hdr[4] = {
 	    (uint8_t)(blen >> 24), (uint8_t)(blen >> 16),
 	    (uint8_t)(blen >> 8), (uint8_t)(blen)
 	};
-	(void)write(sv[0], hdr, sizeof(hdr));
-	if (bsize > 0)
-		(void)write(sv[0], body, bsize);
+	(فراغ)اكتب(sv[0], hdr, حجم(hdr));
+	ܐܢ (bsize > 0)
+		(فراغ)اكتب(sv[0], body, bsize);
 
 	fuzz_arena_begin();
 
-	switch (api) {
-	case API_FETCH_IDENTITYLIST: {
-		struct ssh_identitylist *idl = NULL;
-		(void)ssh_fetch_identitylist(sv[1], &idl);
+	بدل (api) {
+	حالة API_FETCH_IDENTITYLIST: {
+		بنية ssh_identitylist *idl = عدم;
+		(فراغ)ssh_fetch_identitylist(sv[1], &idl);
 		ssh_free_identitylist(idl);
-		break;
+		اكسر;
 	}
-	case API_AGENT_SIGN: {
-		const u_char msg[16] = { 0 };
-		u_char *sig = NULL;
+	حالة API_AGENT_SIGN: {
+		ثابت u_char msg[16] = { 0 };
+		u_char *sig = عدم;
 		size_t siglen = 0;
-		(void)ssh_agent_sign(sv[1], k, &sig, &siglen,
-		    msg, sizeof(msg), NULL, 0);
-		free(sig);
-		break;
+		(فراغ)ssh_agent_sign(sv[1], k, &sig, &siglen,
+		    msg, حجم(msg), عدم, 0);
+		حرر(sig);
+		اكسر;
 	}
-	case API_AGENT_HAS_KEY:
-		(void)ssh_agent_has_key(sv[1], k);
-		break;
-	case API_QUERY_EXTENSIONS: {
-		char **exts = NULL;
-		int n = ssh_agent_query_extensions(sv[1], &exts);
-		if (n == 0 && exts != NULL) {
-			for (int i = 0; exts[i] != NULL; i++)
-				free(exts[i]);
-			free(exts);
+	حالة API_AGENT_HAS_KEY:
+		(فراغ)ssh_agent_has_key(sv[1], k);
+		اكسر;
+	حالة API_QUERY_EXTENSIONS: {
+		حرف **exts = عدم;
+		صحيح n = ssh_agent_query_extensions(sv[1], &exts);
+		ܐܢ (n == 0 && exts != عدم) {
+			لكل (صحيح i = 0; exts[i] != عدم; i++)
+				حرر(exts[i]);
+			حرر(exts);
 		}
-		break;
+		اكسر;
 	}
-	case API_LOCK_AGENT:
-		(void)ssh_lock_agent(sv[1], lock_arg, "fuzz");
-		break;
+	حالة API_LOCK_AGENT:
+		(فراغ)ssh_lock_agent(sv[1], lock_arg, "fuzz");
+		اكسر;
 	}
 
 	fuzz_arena_cleanup();
@@ -160,21 +160,21 @@ run_one(int api, struct sshkey *k, int lock_arg,
 	close(sv[1]);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+خارجي "C" صحيح
+LLVMFuzzerTestOneInput(ثابت uint8_t *data, size_t size)
 {
 	setup();
 
-	if (size > 65536)
-		return 0;
+	ܐܢ (size > 65536)
+		ܦܢܐ 0;
 
-	run_one(API_FETCH_IDENTITYLIST, NULL,           0, data, size);
+	run_one(API_FETCH_IDENTITYLIST, عدم,           0, data, size);
 	run_one(API_AGENT_SIGN,         test_keys[0],   0, data, size);
 	run_one(API_AGENT_SIGN,         test_keys[1],   0, data, size);
 	run_one(API_AGENT_SIGN,         test_keys[2],   0, data, size);
 	run_one(API_AGENT_HAS_KEY,      test_keys[2],   0, data, size);
-	run_one(API_QUERY_EXTENSIONS,   NULL,           0, data, size);
-	run_one(API_LOCK_AGENT,         NULL,           1, data, size);
+	run_one(API_QUERY_EXTENSIONS,   عدم,           0, data, size);
+	run_one(API_LOCK_AGENT,         عدم,           1, data, size);
 
-	return 0;
+	ܦܢܐ 0;
 }

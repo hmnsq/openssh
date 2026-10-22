@@ -31,78 +31,78 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/rresvport.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifndef HAVE_RRESVPORT_AF
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ضمن <netinet/in.h>
+#ضمن <arpa/inet.h>
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ضمن <errno.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
 
-#if 0
-int
-rresvport(int *alport)
+#ܐܢ 0
+صحيح
+rresvport(صحيح *alport)
 {
-	return rresvport_af(alport, AF_INET);
+	ܦܢܐ rresvport_af(alport, AF_INET);
 }
 #endif
 
-int
-rresvport_af(int *alport, sa_family_t af)
+صحيح
+rresvport_af(صحيح *alport, sa_family_t af)
 {
-	struct sockaddr_storage ss;
-	struct sockaddr *sa;
+	بنية sockaddr_storage ss;
+	بنية sockaddr *sa;
 	u_int16_t *portp;
-	int s;
+	صحيح s;
 	socklen_t salen;
 
-	memset(&ss, '\0', sizeof ss);
-	sa = (struct sockaddr *)&ss;
+	memset(&ss, '\0', حجم ss);
+	sa = (بنية sockaddr *)&ss;
 
-	switch (af) {
-	case AF_INET:
-		salen = sizeof(struct sockaddr_in);
-		portp = &((struct sockaddr_in *)sa)->sin_port;
-		break;
-	case AF_INET6:
-		salen = sizeof(struct sockaddr_in6);
-		portp = &((struct sockaddr_in6 *)sa)->sin6_port;
-		break;
-	default:
+	بدل (af) {
+	حالة AF_INET:
+		salen = حجم(بنية sockaddr_in);
+		portp = &((بنية sockaddr_in *)sa)->sin_port;
+		اكسر;
+	حالة AF_INET6:
+		salen = حجم(بنية sockaddr_in6);
+		portp = &((بنية sockaddr_in6 *)sa)->sin6_port;
+		اكسر;
+	افتراضي:
 		errno = EPFNOSUPPORT;
-		return (-1);
+		ܦܢܐ (-1);
 	}
 	sa->sa_family = af;
 	
 	s = socket(af, SOCK_STREAM, 0);
-	if (s < 0)
-		return (-1);
+	ܐܢ (s < 0)
+		ܦܢܐ (-1);
 
 	*portp = htons(*alport);
-	if (*alport < IPPORT_RESERVED - 1) {
-		if (bind(s, sa, salen) >= 0)
-			return (s);
-		if (errno != EADDRINUSE) {
-			(void)close(s);
-			return (-1);
+	ܐܢ (*alport < IPPORT_RESERVED - 1) {
+		ܐܢ (bind(s, sa, salen) >= 0)
+			ܦܢܐ (s);
+		ܐܢ (errno != EADDRINUSE) {
+			(فراغ)close(s);
+			ܦܢܐ (-1);
 		}
 	}
 
 	*portp = 0;
 	sa->sa_family = af;
-	if (bindresvport_sa(s, sa) == -1) {
-		(void)close(s);
-		return (-1);
+	ܐܢ (bindresvport_sa(s, sa) == -1) {
+		(فراغ)close(s);
+		ܦܢܐ (-1);
 	}
 	*alport = ntohs(*portp);
-	return (s);
+	ܦܢܐ (s);
 }
 
 #endif /* HAVE_RRESVPORT_AF */

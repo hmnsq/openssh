@@ -22,71 +22,71 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifndef OPENSSL_HAS_ED25519
 
-#include <sys/types.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "crypto_api.h"
+#ضمن "crypto_api.h"
 
 /* OpenSSH compatibility glue for the small libsodium API subset below. */
-#define ACQUIRE_FENCE (void)0
-#define COMPILER_ASSERT(x) (void)sizeof(char[(x) ? 1 : -1])
+#define ACQUIRE_FENCE (فراغ)0
+#define COMPILER_ASSERT(x) (فراغ)حجم(حرف[(x) ? 1 : -1])
 
 #ifdef WITH_OPENSSL
 # include <openssl/sha.h>
-typedef SHA512_CTX crypto_hash_sha512_state;
-#else
-typedef SHA2_CTX crypto_hash_sha512_state;
+تعريفنوع SHA512_CTX crypto_hash_sha512_state;
+#ܐܚܪܢܐ
+تعريفنوع SHA2_CTX crypto_hash_sha512_state;
 #endif
 
-static int
+ساكن صحيح
 crypto_hash_sha512_init(crypto_hash_sha512_state *state)
 {
 #ifdef WITH_OPENSSL
 	SHA512_Init(state);
-#else
+#ܐܚܪܢܐ
 	SHA512Init(state);
 #endif
-	return 0;
+	ܦܢܐ 0;
 }
 
-static int
+ساكن صحيح
 crypto_hash_sha512_update(crypto_hash_sha512_state *state,
-    const unsigned char *in, unsigned long long inlen)
+    ثابت unsigned حرف *in, unsigned long long inlen)
 {
 #ifdef WITH_OPENSSL
 	SHA512_Update(state, in, inlen);
-#else
+#ܐܚܪܢܐ
 	SHA512Update(state, in, inlen);
 #endif
-	return 0;
+	ܦܢܐ 0;
 }
 
-static int
-crypto_hash_sha512_final(crypto_hash_sha512_state *state, unsigned char *out)
+ساكن صحيح
+crypto_hash_sha512_final(crypto_hash_sha512_state *state, unsigned حرف *out)
 {
 #ifdef WITH_OPENSSL
 	SHA512_Final(out, state);
-#else
+#ܐܚܪܢܐ
 	SHA512Final(out, state);
 #endif
-	return 0;
+	ܦܢܐ 0;
 }
 
-static int
-sodium_is_zero(const unsigned char *n, size_t nlen)
+ساكن صحيح
+sodium_is_zero(ثابت unsigned حرف *n, size_t nlen)
 {
 	size_t i;
-	volatile unsigned char d = 0;
+	متطاير unsigned حرف d = 0;
 
-	for (i = 0; i < nlen; i++)
+	لكل (i = 0; i < nlen; i++)
 		d |= n[i];
-	return 1 & ((d - 1) >> 8);
+	ܦܢܐ 1 & ((d - 1) >> 8);
 }
 
 #ifndef ed25519_ref10_H
@@ -100,17 +100,17 @@ sodium_is_zero(const unsigned char *n, size_t nlen)
  */
 
 #ifdef HAVE_TI_MODE
-typedef uint64_t fe25519[5];
-#else
-typedef int32_t fe25519[10];
+تعريفنوع uint64_t fe25519[5];
+#ܐܚܪܢܐ
+تعريفنوع int32_t fe25519[10];
 #endif
 
-static void fe25519_invert(fe25519 out, const fe25519 z);
-static void fe25519_frombytes(fe25519 h, const unsigned char *s);
-static void fe25519_tobytes(unsigned char *s, const fe25519 h);
+ساكن فراغ fe25519_invert(fe25519 out, ثابت fe25519 z);
+ساكن فراغ fe25519_frombytes(fe25519 h, ثابت unsigned حرف *s);
+ساكن فراغ fe25519_tobytes(unsigned حرف *s, ثابت fe25519 h);
 
 #ifdef HAVE_TI_MODE
-#else
+#ܐܚܪܢܐ
 #endif
 
 /*
@@ -127,33 +127,33 @@ static void fe25519_tobytes(unsigned char *s, const fe25519 h);
  ge25519_precomp (Duif): (y+x,y-x,2dxy)
  */
 
-typedef struct {
+تعريفنوع بنية {
     fe25519 X;
     fe25519 Y;
     fe25519 Z;
 } ge25519_p2;
 
-typedef struct {
+تعريفنوع بنية {
     fe25519 X;
     fe25519 Y;
     fe25519 Z;
     fe25519 T;
 } ge25519_p3;
 
-typedef struct {
+تعريفنوع بنية {
     fe25519 X;
     fe25519 Y;
     fe25519 Z;
     fe25519 T;
 } ge25519_p1p1;
 
-typedef struct {
+تعريفنوع بنية {
     fe25519 yplusx;
     fe25519 yminusx;
     fe25519 xy2d;
 } ge25519_precomp;
 
-typedef struct {
+تعريفنوع بنية {
     fe25519 YplusX;
     fe25519 YminusX;
     fe25519 Z;
@@ -161,35 +161,35 @@ typedef struct {
 } ge25519_cached;
 
 
-static void ge25519_p3_tobytes(unsigned char *s, const ge25519_p3 *h);
+ساكن فراغ ge25519_p3_tobytes(unsigned حرف *s, ثابت ge25519_p3 *h);
 
-static int ge25519_frombytes(ge25519_p3 *h, const unsigned char *s);
+ساكن صحيح ge25519_frombytes(ge25519_p3 *h, ثابت unsigned حرف *s);
 
-static int ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s);
+ساكن صحيح ge25519_frombytes_negate_vartime(ge25519_p3 *h, ثابت unsigned حرف *s);
 
-static void ge25519_p1p1_to_p2(ge25519_p2 *r, const ge25519_p1p1 *p);
+ساكن فراغ ge25519_p1p1_to_p2(ge25519_p2 *r, ثابت ge25519_p1p1 *p);
 
-static void ge25519_p1p1_to_p3(ge25519_p3 *r, const ge25519_p1p1 *p);
+ساكن فراغ ge25519_p1p1_to_p3(ge25519_p3 *r, ثابت ge25519_p1p1 *p);
 
-static void ge25519_p2_to_p3(ge25519_p3 *r, const ge25519_p2 *p);
+ساكن فراغ ge25519_p2_to_p3(ge25519_p3 *r, ثابت ge25519_p2 *p);
 
-static void ge25519_p3_add(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q);
+ساكن فراغ ge25519_p3_add(ge25519_p3 *r, ثابت ge25519_p3 *p, ثابت ge25519_p3 *q);
 
-static void ge25519_p3_sub(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q);
+ساكن فراغ ge25519_p3_sub(ge25519_p3 *r, ثابت ge25519_p3 *p, ثابت ge25519_p3 *q);
 
-static void ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a);
+ساكن فراغ ge25519_scalarmult_base(ge25519_p3 *h, ثابت unsigned حرف *a);
 
-static void ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
-                                       const ge25519_p3 *A,
-                                       const unsigned char *b);
-
-
-
-static int ge25519_is_canonical(const unsigned char *s);
+ساكن فراغ ge25519_double_scalarmult_vartime(ge25519_p2 *r, ثابت unsigned حرف *a,
+                                       ثابت ge25519_p3 *A,
+                                       ثابت unsigned حرف *b);
 
 
 
-static int ge25519_has_small_order(const ge25519_p3 *p);
+ساكن صحيح ge25519_is_canonical(ثابت unsigned حرف *s);
+
+
+
+ساكن صحيح ge25519_has_small_order(ثابت ge25519_p3 *p);
 
 
 
@@ -206,13 +206,13 @@ static int ge25519_has_small_order(const ge25519_p3 *p);
  */
 
 
-static void sc25519_reduce(unsigned char s[64]);
+ساكن فراغ sc25519_reduce(unsigned حرف s[64]);
 
 
-static void sc25519_muladd(unsigned char s[32], const unsigned char a[32],
-                    const unsigned char b[32], const unsigned char c[32]);
+ساكن فراغ sc25519_muladd(unsigned حرف s[32], ثابت unsigned حرف a[32],
+                    ثابت unsigned حرف b[32], ثابت unsigned حرف c[32]);
 
-static int sc25519_is_canonical(const unsigned char s[32]);
+ساكن صحيح sc25519_is_canonical(ثابت unsigned حرف s[32]);
 
 #endif
 
@@ -221,22 +221,22 @@ static int sc25519_is_canonical(const unsigned char s[32]);
  h = 0
  */
 
-static inline void
+ساكن مضمن فراغ
 fe25519_0(fe25519 h)
 {
-    memset(&h[0], 0, 10 * sizeof h[0]);
+    memset(&h[0], 0, 10 * حجم h[0]);
 }
 
 /*
  h = 1
  */
 
-static inline void
+ساكن مضمن فراغ
 fe25519_1(fe25519 h)
 {
     h[0] = 1;
     h[1] = 0;
-    memset(&h[2], 0, 8 * sizeof h[0]);
+    memset(&h[2], 0, 8 * حجم h[0]);
 }
 
 /*
@@ -251,8 +251,8 @@ fe25519_1(fe25519 h)
  |h| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static inline void
-fe25519_add(fe25519 h, const fe25519 f, const fe25519 g)
+ساكن مضمن فراغ
+fe25519_add(fe25519 h, ثابت fe25519 f, ثابت fe25519 g)
 {
     int32_t h0 = f[0] + g[0];
     int32_t h1 = f[1] + g[1];
@@ -289,8 +289,8 @@ fe25519_add(fe25519 h, const fe25519 f, const fe25519 g)
  |h| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static void
-fe25519_sub(fe25519 h, const fe25519 f, const fe25519 g)
+ساكن فراغ
+fe25519_sub(fe25519 h, ثابت fe25519 f, ثابت fe25519 g)
 {
     int32_t h0 = f[0] - g[0];
     int32_t h1 = f[1] - g[1];
@@ -325,8 +325,8 @@ fe25519_sub(fe25519 h, const fe25519 f, const fe25519 g)
  |h| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
  */
 
-static inline void
-fe25519_neg(fe25519 h, const fe25519 f)
+ساكن مضمن فراغ
+fe25519_neg(fe25519 h, ثابت fe25519 f)
 {
     int32_t h0 = -f[0];
     int32_t h1 = -f[1];
@@ -358,8 +358,8 @@ fe25519_neg(fe25519 h, const fe25519 f)
  Preconditions: b in {0,1}.
  */
 
-static void
-fe25519_cmov(fe25519 f, const fe25519 g, unsigned int b)
+ساكن فراغ
+fe25519_cmov(fe25519 f, ثابت fe25519 g, unsigned صحيح b)
 {
     uint32_t mask = (uint32_t) (-(int32_t) b);
     int32_t  f0, f1, f2, f3, f4, f5, f6, f7, f8, f9;
@@ -419,10 +419,10 @@ fe25519_cmov(fe25519 f, const fe25519 g, unsigned int b)
  h = f
  */
 
-static inline void
-fe25519_copy(fe25519 h, const fe25519 f)
+ساكن مضمن فراغ
+fe25519_copy(fe25519 h, ثابت fe25519 f)
 {
-    memcpy(h, f, 10 * sizeof h[0]);
+    memcpy(h, f, 10 * حجم h[0]);
 }
 
 /*
@@ -433,14 +433,14 @@ fe25519_copy(fe25519 h, const fe25519 f)
  |f| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static inline int
-fe25519_isnegative(const fe25519 f)
+ساكن مضمن صحيح
+fe25519_isnegative(ثابت fe25519 f)
 {
-    unsigned char s[32];
+    unsigned حرف s[32];
 
     fe25519_tobytes(s, f);
 
-    return s[0] & 1;
+    ܦܢܐ s[0] & 1;
 }
 
 /*
@@ -451,14 +451,14 @@ fe25519_isnegative(const fe25519 f)
  |f| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static inline int
-fe25519_iszero(const fe25519 f)
+ساكن مضمن صحيح
+fe25519_iszero(ثابت fe25519 f)
 {
-    unsigned char s[32];
+    unsigned حرف s[32];
 
     fe25519_tobytes(s, f);
 
-    return sodium_is_zero(s, 32);
+    ܦܢܐ sodium_is_zero(s, 32);
 }
 
 /*
@@ -493,8 +493,8 @@ fe25519_iszero(const fe25519 f)
  With tighter constraints on inputs can squeeze carries into int32.
  */
 
-static void
-fe25519_mul(fe25519 h, const fe25519 f, const fe25519 g)
+ساكن فراغ
+fe25519_mul(fe25519 h, ثابت fe25519 f, ثابت fe25519 g)
 {
     int32_t f0 = f[0];
     int32_t f1 = f[1];
@@ -763,8 +763,8 @@ fe25519_mul(fe25519 h, const fe25519 f, const fe25519 g)
  |h| bounded by 1.01*2^25,1.01*2^24,1.01*2^25,1.01*2^24,etc.
  */
 
-static void
-fe25519_sq(fe25519 h, const fe25519 f)
+ساكن فراغ
+fe25519_sq(fe25519 h, ثابت fe25519 f)
 {
     int32_t f0 = f[0];
     int32_t f1 = f[1];
@@ -935,8 +935,8 @@ fe25519_sq(fe25519 h, const fe25519 f)
  |h| bounded by 1.01*2^25,1.01*2^24,1.01*2^25,1.01*2^24,etc.
  */
 
-static void
-fe25519_sq2(fe25519 h, const fe25519 f)
+ساكن فراغ
+fe25519_sq2(fe25519 h, ثابت fe25519 f)
 {
     int32_t f0 = f[0];
     int32_t f1 = f[1];
@@ -1109,8 +1109,8 @@ fe25519_sq2(fe25519 h, const fe25519 f)
 
 
 
-static inline uint64_t
-load_3(const unsigned char *in)
+ساكن مضمن uint64_t
+load_3(ثابت unsigned حرف *in)
 {
     uint64_t result;
 
@@ -1118,11 +1118,11 @@ load_3(const unsigned char *in)
     result |= ((uint64_t) in[1]) << 8;
     result |= ((uint64_t) in[2]) << 16;
 
-    return result;
+    ܦܢܐ result;
 }
 
-static inline uint64_t
-load_4(const unsigned char *in)
+ساكن مضمن uint64_t
+load_4(ثابت unsigned حرف *in)
 {
     uint64_t result;
 
@@ -1131,7 +1131,7 @@ load_4(const unsigned char *in)
     result |= ((uint64_t) in[2]) << 16;
     result |= ((uint64_t) in[3]) << 24;
 
-    return result;
+    ܦܢܐ result;
 }
 
 /*
@@ -1144,23 +1144,23 @@ load_4(const unsigned char *in)
  */
 
 #ifdef HAVE_TI_MODE
-#else
+#ܐܚܪܢܐ
 /* sqrt(-1) */
-static const fe25519 fe25519_sqrtm1 = {
+ساكن ثابت fe25519 fe25519_sqrtm1 = {
     -32595792, -7943725,  9377950,  3500415, 12389472, -272473, -25146209, -2005654, 326686, 11406482
 };
 
 /* sqrt(-486664) */
 
 /* 37095705934669439343138083508754565189542113879843219016388785533085940283555 */
-static const fe25519 ed25519_d = {
+ساكن ثابت fe25519 ed25519_d = {
     -10913610, 13857413, -15372611, 6949391,   114729, -8787816, -6275908, -3247719, -18696448, -12055116
 };
 
 /* 2 * d =
  * 16295367250680780974490674513165176452449235426866156013048779062215315747161
  */
-static const fe25519 ed25519_d2 = {
+ساكن ثابت fe25519 ed25519_d2 = {
     -21827239, -5839606,  -30745221, 13898782, 229458, 15978800, -12551817, -6495438, 29715968, 9444199 };
 
 /* A = 486662 */
@@ -1177,8 +1177,8 @@ static const fe25519 ed25519_d2 = {
  Ignores top bit of s.
  */
 
-void
-fe25519_frombytes(fe25519 h, const unsigned char *s)
+فراغ
+fe25519_frombytes(fe25519 h, ثابت unsigned حرف *s)
 {
     int64_t h0 = load_4(s);
     int64_t h1 = load_3(s + 4) << 6;
@@ -1271,8 +1271,8 @@ fe25519_frombytes(fe25519 h, const unsigned char *s)
  so floor(2^(-255)(h + 19 2^(-25) h9 + 2^(-1))) = q.
 */
 
-static void
-fe25519_reduce(fe25519 h, const fe25519 f)
+ساكن فراغ
+fe25519_reduce(fe25519 h, ثابت fe25519 f)
 {
     int32_t h0 = f[0];
     int32_t h1 = f[1];
@@ -1354,8 +1354,8 @@ fe25519_reduce(fe25519 h, const fe25519 f)
  Goal: Output h0+...+2^230 h9.
  */
 
-void
-fe25519_tobytes(unsigned char *s, const fe25519 h)
+فراغ
+fe25519_tobytes(unsigned حرف *s, ثابت fe25519 h)
 {
     fe25519 t;
 
@@ -1399,11 +1399,11 @@ fe25519_tobytes(unsigned char *s, const fe25519 h)
 /*
  * Inversion - sets out to 0 if z=0
  */
-void
-fe25519_invert(fe25519 out, const fe25519 z)
+فراغ
+fe25519_invert(fe25519 out, ثابت fe25519 z)
 {
     fe25519 t0, t1, t2, t3;
-    int     i;
+    صحيح     i;
 
     fe25519_sq(t0, z);
     fe25519_sq(t1, t0);
@@ -1413,39 +1413,39 @@ fe25519_invert(fe25519 out, const fe25519 z)
     fe25519_sq(t2, t0);
     fe25519_mul(t1, t1, t2);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 5; ++i) {
+    لكل (i = 1; i < 5; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 10; ++i) {
+    لكل (i = 1; i < 10; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t2, t2, t1);
     fe25519_sq(t3, t2);
-    for (i = 1; i < 20; ++i) {
+    لكل (i = 1; i < 20; ++i) {
         fe25519_sq(t3, t3);
     }
     fe25519_mul(t2, t3, t2);
-    for (i = 1; i < 11; ++i) {
+    لكل (i = 1; i < 11; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 50; ++i) {
+    لكل (i = 1; i < 50; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t2, t2, t1);
     fe25519_sq(t3, t2);
-    for (i = 1; i < 100; ++i) {
+    لكل (i = 1; i < 100; ++i) {
         fe25519_sq(t3, t3);
     }
     fe25519_mul(t2, t3, t2);
-    for (i = 1; i < 51; ++i) {
+    لكل (i = 1; i < 51; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 6; ++i) {
+    لكل (i = 1; i < 6; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(out, t1, t0);
@@ -1455,11 +1455,11 @@ fe25519_invert(fe25519 out, const fe25519 z)
  * returns z^((p-5)/8) = z^(2^252-3)
  * used to compute square roots since we have p=5 (mod 8); see Cohen and Frey.
  */
-static void
-fe25519_pow22523(fe25519 out, const fe25519 z)
+ساكن فراغ
+fe25519_pow22523(fe25519 out, ثابت fe25519 z)
 {
     fe25519 t0, t1, t2;
-    int     i;
+    صحيح     i;
 
     fe25519_sq(t0, z);
     fe25519_sq(t1, t0);
@@ -1469,35 +1469,35 @@ fe25519_pow22523(fe25519 out, const fe25519 z)
     fe25519_sq(t0, t0);
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 5; ++i) {
+    لكل (i = 1; i < 5; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 10; ++i) {
+    لكل (i = 1; i < 10; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t1, t1, t0);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 20; ++i) {
+    لكل (i = 1; i < 20; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 11; ++i) {
+    لكل (i = 1; i < 11; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 50; ++i) {
+    لكل (i = 1; i < 50; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t1, t1, t0);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 100; ++i) {
+    لكل (i = 1; i < 100; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 51; ++i) {
+    لكل (i = 1; i < 51; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
@@ -1515,8 +1515,8 @@ fe25519_pow22523(fe25519 out, const fe25519 z)
  r = p + q
  */
 
-static void
-ge25519_add_cached(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_cached *q)
+ساكن فراغ
+ge25519_add_cached(ge25519_p1p1 *r, ثابت ge25519_p3 *p, ثابت ge25519_cached *q)
 {
     fe25519 t0;
 
@@ -1533,41 +1533,41 @@ ge25519_add_cached(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_cached *q
     fe25519_sub(r->T, t0, r->T);
 }
 
-static void
-slide_vartime(signed char *r, const unsigned char *a)
+ساكن فراغ
+slide_vartime(signed حرف *r, ثابت unsigned حرف *a)
 {
-    int i;
-    int b;
-    int k;
-    int ribs;
-    int cmp;
+    صحيح i;
+    صحيح b;
+    صحيح k;
+    صحيح ribs;
+    صحيح cmp;
 
-    for (i = 0; i < 256; ++i) {
+    لكل (i = 0; i < 256; ++i) {
         r[i] = 1 & (a[i >> 3] >> (i & 7));
     }
-    for (i = 0; i < 256; ++i) {
-        if (! r[i]) {
-            continue;
+    لكل (i = 0; i < 256; ++i) {
+        ܐܢ (! r[i]) {
+            استمر;
         }
-        for (b = 1; b <= 6 && i + b < 256; ++b) {
-            if (! r[i + b]) {
-                continue;
+        لكل (b = 1; b <= 6 && i + b < 256; ++b) {
+            ܐܢ (! r[i + b]) {
+                استمر;
             }
             ribs = r[i + b] << b;
             cmp = r[i] + ribs;
-            if (cmp <= 15) {
+            ܐܢ (cmp <= 15) {
                 r[i] = cmp;
                 r[i + b] = 0;
-            } else {
+            } ܐܚܪܢܐ {
                 cmp = r[i] - ribs;
-                if (cmp < -15) {
-                    break;
+                ܐܢ (cmp < -15) {
+                    اكسر;
                 }
                 r[i] = cmp;
-                for (k = i + b; k < 256; ++k) {
-                    if (! r[k]) {
+                لكل (k = i + b; k < 256; ++k) {
+                    ܐܢ (! r[k]) {
                         r[k] = 1;
-                        break;
+                        اكسر;
                     }
                     r[k] = 0;
                 }
@@ -1576,10 +1576,10 @@ slide_vartime(signed char *r, const unsigned char *a)
     }
 }
 
-static volatile unsigned char optblocker_u8;
+ساكن متطاير unsigned حرف optblocker_u8;
 
-int
-ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
+صحيح
+ge25519_frombytes(ge25519_p3 *h, ثابت unsigned حرف *s)
 {
     fe25519 u;
     fe25519 v;
@@ -1587,7 +1587,7 @@ ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
     fe25519 m_root_check, p_root_check;
     fe25519 negx;
     fe25519 x_sqrtm1;
-    int     has_m_root, has_p_root;
+    صحيح     has_m_root, has_p_root;
 
     fe25519_frombytes(h->Y, s);
     fe25519_1(h->Z);
@@ -1613,11 +1613,11 @@ ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
     fe25519_cmov(h->X, negx, fe25519_isnegative(h->X) ^ (((s[31] >> 5) ^ optblocker_u8) >> 2));
     fe25519_mul(h->T, h->X, h->Y);
 
-    return (has_m_root | has_p_root) - 1;
+    ܦܢܐ (has_m_root | has_p_root) - 1;
 }
 
-int
-ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s)
+صحيح
+ge25519_frombytes_negate_vartime(ge25519_p3 *h, ثابت unsigned حرف *s)
 {
     fe25519 u;
     fe25519 v;
@@ -1645,28 +1645,28 @@ ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s)
     fe25519_sq(vxx, h->X);
     fe25519_mul(vxx, vxx, v);
     fe25519_sub(m_root_check, vxx, u); /* vx^2-u */
-    if (fe25519_iszero(m_root_check) == 0) {
+    ܐܢ (fe25519_iszero(m_root_check) == 0) {
         fe25519_add(p_root_check, vxx, u); /* vx^2+u */
-        if (fe25519_iszero(p_root_check) == 0) {
-            return -1;
+        ܐܢ (fe25519_iszero(p_root_check) == 0) {
+            ܦܢܐ -1;
         }
         fe25519_mul(h->X, h->X, fe25519_sqrtm1);
     }
 
-    if (fe25519_isnegative(h->X) == (s[31] >> 7)) { /* vartime function - compiler optimization is fine */
+    ܐܢ (fe25519_isnegative(h->X) == (s[31] >> 7)) { /* vartime function - compiler optimization is fine */
         fe25519_neg(h->X, h->X);
     }
     fe25519_mul(h->T, h->X, h->Y);
 
-    return 0;
+    ܦܢܐ 0;
 }
 
 /*
  r = p + q
  */
 
-static void
-ge25519_add_precomp(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_precomp *q)
+ساكن فراغ
+ge25519_add_precomp(ge25519_p1p1 *r, ثابت ge25519_p3 *p, ثابت ge25519_precomp *q)
 {
     fe25519 t0;
 
@@ -1686,8 +1686,8 @@ ge25519_add_precomp(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_precomp 
  r = p - q
  */
 
-static void
-ge25519_sub_precomp(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_precomp *q)
+ساكن فراغ
+ge25519_sub_precomp(ge25519_p1p1 *r, ثابت ge25519_p3 *p, ثابت ge25519_precomp *q)
 {
     fe25519 t0;
 
@@ -1707,8 +1707,8 @@ ge25519_sub_precomp(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_precomp 
  r = p
  */
 
-void
-ge25519_p1p1_to_p2(ge25519_p2 *r, const ge25519_p1p1 *p)
+فراغ
+ge25519_p1p1_to_p2(ge25519_p2 *r, ثابت ge25519_p1p1 *p)
 {
     fe25519_mul(r->X, p->X, p->T);
     fe25519_mul(r->Y, p->Y, p->Z);
@@ -1719,8 +1719,8 @@ ge25519_p1p1_to_p2(ge25519_p2 *r, const ge25519_p1p1 *p)
  r = p
  */
 
-void
-ge25519_p1p1_to_p3(ge25519_p3 *r, const ge25519_p1p1 *p)
+فراغ
+ge25519_p1p1_to_p3(ge25519_p3 *r, ثابت ge25519_p1p1 *p)
 {
     fe25519_mul(r->X, p->X, p->T);
     fe25519_mul(r->Y, p->Y, p->Z);
@@ -1731,8 +1731,8 @@ ge25519_p1p1_to_p3(ge25519_p3 *r, const ge25519_p1p1 *p)
 /*
  r = p
  */
-void
-ge25519_p2_to_p3(ge25519_p3 *r, const ge25519_p2 *p)
+فراغ
+ge25519_p2_to_p3(ge25519_p3 *r, ثابت ge25519_p2 *p)
 {
     fe25519_copy(r->X, p->X);
     fe25519_copy(r->Y, p->Y);
@@ -1740,7 +1740,7 @@ ge25519_p2_to_p3(ge25519_p3 *r, const ge25519_p2 *p)
     fe25519_mul(r->T, p->X, p->Y);
 }
 
-static void
+ساكن فراغ
 ge25519_p2_0(ge25519_p2 *h)
 {
     fe25519_0(h->X);
@@ -1752,8 +1752,8 @@ ge25519_p2_0(ge25519_p2 *h)
  r = 2 * p
  */
 
-static void
-ge25519_p2_dbl(ge25519_p1p1 *r, const ge25519_p2 *p)
+ساكن فراغ
+ge25519_p2_dbl(ge25519_p1p1 *r, ثابت ge25519_p2 *p)
 {
     fe25519 t0;
 
@@ -1768,7 +1768,7 @@ ge25519_p2_dbl(ge25519_p1p1 *r, const ge25519_p2 *p)
     fe25519_sub(r->T, r->T, r->Z);
 }
 
-static void
+ساكن فراغ
 ge25519_p3_0(ge25519_p3 *h)
 {
     fe25519_0(h->X);
@@ -1782,8 +1782,8 @@ ge25519_p3_0(ge25519_p3 *h)
  r = p
  */
 
-static void
-ge25519_p3_to_cached(ge25519_cached *r, const ge25519_p3 *p)
+ساكن فراغ
+ge25519_p3_to_cached(ge25519_cached *r, ثابت ge25519_p3 *p)
 {
     fe25519_add(r->YplusX, p->Y, p->X);
     fe25519_sub(r->YminusX, p->Y, p->X);
@@ -1796,16 +1796,16 @@ ge25519_p3_to_cached(ge25519_cached *r, const ge25519_p3 *p)
  r = p
  */
 
-static void
-ge25519_p3_to_p2(ge25519_p2 *r, const ge25519_p3 *p)
+ساكن فراغ
+ge25519_p3_to_p2(ge25519_p2 *r, ثابت ge25519_p3 *p)
 {
     fe25519_copy(r->X, p->X);
     fe25519_copy(r->Y, p->Y);
     fe25519_copy(r->Z, p->Z);
 }
 
-void
-ge25519_p3_tobytes(unsigned char *s, const ge25519_p3 *h)
+فراغ
+ge25519_p3_tobytes(unsigned حرف *s, ثابت ge25519_p3 *h)
 {
     fe25519 recip;
     fe25519 x;
@@ -1822,15 +1822,15 @@ ge25519_p3_tobytes(unsigned char *s, const ge25519_p3 *h)
  r = 2 * p
  */
 
-static void
-ge25519_p3_dbl(ge25519_p1p1 *r, const ge25519_p3 *p)
+ساكن فراغ
+ge25519_p3_dbl(ge25519_p1p1 *r, ثابت ge25519_p3 *p)
 {
     ge25519_p2 q;
     ge25519_p3_to_p2(&q, p);
     ge25519_p2_dbl(r, &q);
 }
 
-static void
+ساكن فراغ
 ge25519_precomp_0(ge25519_precomp *h)
 {
     fe25519_1(h->yplusx);
@@ -1838,46 +1838,46 @@ ge25519_precomp_0(ge25519_precomp *h)
     fe25519_0(h->xy2d);
 }
 
-static unsigned char
-equal(signed char b, signed char c)
+ساكن unsigned حرف
+equal(signed حرف b, signed حرف c)
 {
-#if defined(HAVE_INLINE_ASM) && defined(__x86_64__)
+#ܐܢ defined(HAVE_INLINE_ASM) && defined(__x86_64__)
     int32_t b32 = (int32_t) b, c32 = (int32_t) c, q32, z32;
     __asm__ ("xorl %0,%0\n movl $1,%1\n cmpb %b3,%b2\n cmovel %1,%0" :
              "=&r"(z32), "=&r"(q32) : "q"(b32), "q"(c32) : "cc");
-    return (unsigned char) z32;
-#elif defined(HAVE_INLINE_ASM) && defined(__aarch64__)
-    unsigned char z;
+    ܦܢܐ (unsigned حرف) z32;
+#وإلاإذا defined(HAVE_INLINE_ASM) && defined(__aarch64__)
+    unsigned حرف z;
     __asm__ ("and %w0,%w1,255\n cmp %w0,%w2,uxtb\n cset %w0,eq" :
              "=&r"(z) : "r"(b), "r"(c) : "cc");
-    return z;
-#else
-    const unsigned char x  = (unsigned char) b ^ (unsigned char) c; /* 0: yes; 1..255: no */
+    ܦܢܐ z;
+#ܐܚܪܢܐ
+    ثابت unsigned حرف x  = (unsigned حرف) b ^ (unsigned حرف) c; /* 0: yes; 1..255: no */
     uint32_t            y  = (uint32_t) x; /* 0: yes; 1..255: no */
 
     y--;
-    return ((y >> 29) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
+    ܦܢܐ ((y >> 29) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
 #endif
 }
 
-static unsigned char
-negative(signed char b)
+ساكن unsigned حرف
+negative(signed حرف b)
 {
-#if defined(HAVE_INLINE_ASM) && defined(__x86_64__)
+#ܐܢ defined(HAVE_INLINE_ASM) && defined(__x86_64__)
     __asm__ ("shrb $7,%0" : "+r"(b) : : "cc");
-    return b;
-#elif defined(HAVE_INLINE_ASM) && defined(__aarch64__)
+    ܦܢܐ b;
+#وإلاإذا defined(HAVE_INLINE_ASM) && defined(__aarch64__)
     uint8_t x;
     __asm__ ("ubfx %w0,%w1,7,1" : "=r"(x) : "r"(b) : );
-    return x;
-#else
-    const uint8_t x = (uint8_t) b; /* 0..127: no 128..255: yes */
-    return ((x >> 5) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
+    ܦܢܐ x;
+#ܐܚܪܢܐ
+    ثابت uint8_t x = (uint8_t) b; /* 0..127: no 128..255: yes */
+    ܦܢܐ ((x >> 5) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
 #endif
 }
 
-static void
-ge25519_cmov(ge25519_precomp *t, const ge25519_precomp *u, unsigned char b)
+ساكن فراغ
+ge25519_cmov(ge25519_precomp *t, ثابت ge25519_precomp *u, unsigned حرف b)
 {
     fe25519_cmov(t->yplusx, u->yplusx, b);
     fe25519_cmov(t->yminusx, u->yminusx, b);
@@ -1885,12 +1885,12 @@ ge25519_cmov(ge25519_precomp *t, const ge25519_precomp *u, unsigned char b)
 }
 
 
-static void
-ge25519_cmov8(ge25519_precomp *t, const ge25519_precomp precomp[8], const signed char b)
+ساكن فراغ
+ge25519_cmov8(ge25519_precomp *t, ثابت ge25519_precomp precomp[8], ثابت signed حرف b)
 {
     ge25519_precomp     minust;
-    const unsigned char bnegative = negative(b);
-    const unsigned char babs      = b - (((-bnegative) & b) * ((signed char) 1 << 1));
+    ثابت unsigned حرف bnegative = negative(b);
+    ثابت unsigned حرف babs      = b - (((-bnegative) & b) * ((signed حرف) 1 << 1));
 
     ge25519_precomp_0(t);
     ge25519_cmov(t, &precomp[0], equal(babs, 1));
@@ -1907,12 +1907,12 @@ ge25519_cmov8(ge25519_precomp *t, const ge25519_precomp precomp[8], const signed
     ge25519_cmov(t, &minust, bnegative);
 }
 
-static void
-ge25519_cmov8_base(ge25519_precomp *t, const int pos, const signed char b)
+ساكن فراغ
+ge25519_cmov8_base(ge25519_precomp *t, ثابت صحيح pos, ثابت signed حرف b)
 {
-    static const ge25519_precomp base[32][8] = { /* base[i][j] = (j+1)*256^i*B */
+    ساكن ثابت ge25519_precomp base[32][8] = { /* base[i][j] = (j+1)*256^i*B */
 #ifdef HAVE_TI_MODE
-#else
+#ܐܚܪܢܐ
 { /* 0/31 */
   {
     { 25967493, -14356035, 29566456, 3660896, -12694345, 4014787, 27544626, -11754271, -6079156, 2047605 },
@@ -3267,8 +3267,8 @@ ge25519_cmov8_base(ge25519_precomp *t, const int pos, const signed char b)
  r = p - q
  */
 
-static void
-ge25519_sub_cached(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_cached *q)
+ساكن فراغ
+ge25519_sub_cached(ge25519_p1p1 *r, ثابت ge25519_p3 *p, ثابت ge25519_cached *q)
 {
     fe25519 t0;
 
@@ -3297,13 +3297,13 @@ ge25519_sub_cached(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_cached *q
  Only used for signatures verification.
  */
 
-void
-ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
-                                  const ge25519_p3 *A, const unsigned char *b)
+فراغ
+ge25519_double_scalarmult_vartime(ge25519_p2 *r, ثابت unsigned حرف *a,
+                                  ثابت ge25519_p3 *A, ثابت unsigned حرف *b)
 {
-    static const ge25519_precomp Bi[8] = {
+    ساكن ثابت ge25519_precomp Bi[8] = {
 #ifdef HAVE_TI_MODE
-#else
+#ܐܚܪܢܐ
 {
   { 25967493, -14356035, 29566456, 3660896, -12694345, 4014787, 27544626, -11754271, -6079156, 2047605 },
   { -12545711, 934262, -2722910, 3049990, -727428, 9406986, 12720692, 5043384, 19500929, -15469378 },
@@ -3346,13 +3346,13 @@ ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
 }
 #endif
     };
-    signed char    aslide[256];
-    signed char    bslide[256];
+    signed حرف    aslide[256];
+    signed حرف    bslide[256];
     ge25519_cached Ai[8]; /* A,3A,5A,7A,9A,11A,13A,15A */
     ge25519_p1p1   t;
     ge25519_p3     u;
     ge25519_p3     A2;
-    int            i;
+    صحيح            i;
 
     slide_vartime(aslide, a);
     slide_vartime(bslide, b);
@@ -3392,27 +3392,27 @@ ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
 
     ge25519_p2_0(r);
 
-    for (i = 255; i >= 0; --i) {
-        if (aslide[i] || bslide[i]) {
-            break;
+    لكل (i = 255; i >= 0; --i) {
+        ܐܢ (aslide[i] || bslide[i]) {
+            اكسر;
         }
     }
 
-    for (; i >= 0; --i) {
+    لكل (; i >= 0; --i) {
         ge25519_p2_dbl(&t, r);
 
-        if (aslide[i] > 0) {
+        ܐܢ (aslide[i] > 0) {
             ge25519_p1p1_to_p3(&u, &t);
             ge25519_add_cached(&t, &u, &Ai[aslide[i] / 2]);
-        } else if (aslide[i] < 0) {
+        } ܐܚܪܢܐ ܐܢ (aslide[i] < 0) {
             ge25519_p1p1_to_p3(&u, &t);
             ge25519_sub_cached(&t, &u, &Ai[(-aslide[i]) / 2]);
         }
 
-        if (bslide[i] > 0) {
+        ܐܢ (bslide[i] > 0) {
             ge25519_p1p1_to_p3(&u, &t);
             ge25519_add_precomp(&t, &u, &Bi[bslide[i] / 2]);
-        } else if (bslide[i] < 0) {
+        } ܐܚܪܢܐ ܐܢ (bslide[i] < 0) {
             ge25519_p1p1_to_p3(&u, &t);
             ge25519_sub_precomp(&t, &u, &Bi[(-bslide[i]) / 2]);
         }
@@ -3442,17 +3442,17 @@ ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
  a[31] <= 127
  */
 
-void
-ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a)
+فراغ
+ge25519_scalarmult_base(ge25519_p3 *h, ثابت unsigned حرف *a)
 {
-    signed char     e[64];
-    signed char     carry;
+    signed حرف     e[64];
+    signed حرف     carry;
     ge25519_p1p1    r;
     ge25519_p2      s;
     ge25519_precomp t;
-    int             i;
+    صحيح             i;
 
-    for (i = 0; i < 32; ++i) {
+    لكل (i = 0; i < 32; ++i) {
         e[2 * i + 0] = (a[i] >> 0) & 15;
         e[2 * i + 1] = (a[i] >> 4) & 15;
     }
@@ -3460,18 +3460,18 @@ ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a)
     /* e[63] is between 0 and 7 */
 
     carry = 0;
-    for (i = 0; i < 63; ++i) {
+    لكل (i = 0; i < 63; ++i) {
         e[i] += carry;
         carry = e[i] + 8;
         carry >>= 4;
-        e[i] -= carry * ((signed char) 1 << 4);
+        e[i] -= carry * ((signed حرف) 1 << 4);
     }
     e[63] += carry;
     /* each e[i] is between -8 and 8 */
 
     ge25519_p3_0(h);
 
-    for (i = 1; i < 64; i += 2) {
+    لكل (i = 1; i < 64; i += 2) {
         ge25519_cmov8_base(&t, i / 2, e[i]);
         ge25519_add_precomp(&r, h, &t);
         ge25519_p1p1_to_p3(h, &r);
@@ -3486,7 +3486,7 @@ ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a)
     ge25519_p2_dbl(&r, &s);
     ge25519_p1p1_to_p3(h, &r);
 
-    for (i = 0; i < 64; i += 2) {
+    لكل (i = 0; i < 64; i += 2) {
         ge25519_cmov8_base(&t, i / 2, e[i]);
         ge25519_add_precomp(&r, h, &t);
         ge25519_p1p1_to_p3(h, &r);
@@ -3496,8 +3496,8 @@ ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a)
 /* r = 2p */
 
 /* r = -p */
-static void
-ge25519_p3_neg(ge25519_p3 *r, const ge25519_p3 *p)
+ساكن فراغ
+ge25519_p3_neg(ge25519_p3 *r, ثابت ge25519_p3 *p)
 {
     fe25519_neg(r->X, p->X);
     fe25519_copy(r->Y, p->Y);
@@ -3506,8 +3506,8 @@ ge25519_p3_neg(ge25519_p3 *r, const ge25519_p3 *p)
 }
 
 /* r = p+q */
-void
-ge25519_p3_add(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q)
+فراغ
+ge25519_p3_add(ge25519_p3 *r, ثابت ge25519_p3 *p, ثابت ge25519_p3 *q)
 {
     ge25519_cached q_cached;
     ge25519_p1p1   p1p1;
@@ -3518,8 +3518,8 @@ ge25519_p3_add(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q)
 }
 
 /* r = p-q */
-void
-ge25519_p3_sub(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q)
+فراغ
+ge25519_p3_sub(ge25519_p3 *r, ثابت ge25519_p3 *p, ثابت ge25519_p3 *q)
 {
     ge25519_p3 q_neg;
 
@@ -3533,29 +3533,29 @@ ge25519_p3_sub(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q)
 
 
 
-int
-ge25519_is_canonical(const unsigned char *s)
+صحيح
+ge25519_is_canonical(ثابت unsigned حرف *s)
 {
-    unsigned char c;
-    unsigned char d;
-    unsigned int  i;
+    unsigned حرف c;
+    unsigned حرف d;
+    unsigned صحيح  i;
 
     c = (s[31] & 0x7f) ^ 0x7f;
-    for (i = 30; i > 0; i--) {
+    لكل (i = 30; i > 0; i--) {
         c |= s[i] ^ 0xff;
     }
-    c = (((unsigned int) c) - 1U) >> 8;
-    d = (0xed - 1U - (unsigned int) s[0]) >> 8;
+    c = (((unsigned صحيح) c) - 1U) >> 8;
+    d = (0xed - 1U - (unsigned صحيح) s[0]) >> 8;
 
-    return 1 - (c & d & 1);
+    ܦܢܐ 1 - (c & d & 1);
 }
 
-int
-ge25519_has_small_order(const ge25519_p3 *p)
+صحيح
+ge25519_has_small_order(ثابت ge25519_p3 *p)
 {
     fe25519 y_sqrtm1;
     fe25519 c;
-    int     ret = 0;
+    صحيح     ret = 0;
 
     ret |= fe25519_iszero(p->X);
     ret |= fe25519_iszero(p->Y);
@@ -3566,7 +3566,7 @@ ge25519_has_small_order(const ge25519_p3 *p)
     fe25519_add(c, y_sqrtm1, p->X);
     ret |= fe25519_iszero(c);
 
-    return ret;
+    ܦܢܐ ret;
 }
 
 /*
@@ -3591,9 +3591,9 @@ ge25519_has_small_order(const ge25519_p3 *p)
  where l = 2^252 + 27742317777372353535851937790883648493.
  */
 
-void
-sc25519_muladd(unsigned char s[32], const unsigned char a[32],
-               const unsigned char b[32], const unsigned char c[32])
+فراغ
+sc25519_muladd(unsigned حرف s[32], ثابت unsigned حرف a[32],
+               ثابت unsigned حرف b[32], ثابت unsigned حرف c[32])
 {
     int64_t a0  = 2097151 & load_3(a);
     int64_t a1  = 2097151 & (load_4(a + 2) >> 5);
@@ -4101,8 +4101,8 @@ sc25519_muladd(unsigned char s[32], const unsigned char a[32],
  Overwrites s in place.
  */
 
-void
-sc25519_reduce(unsigned char s[64])
+فراغ
+sc25519_reduce(unsigned حرف s[64])
 {
     int64_t s0  = 2097151 & load_3(s);
     int64_t s1  = 2097151 & (load_4(s + 2) >> 5);
@@ -4425,26 +4425,26 @@ sc25519_reduce(unsigned char s[64])
     s[31] = s11 >> 17;
 }
 
-int
-sc25519_is_canonical(const unsigned char s[32])
+صحيح
+sc25519_is_canonical(ثابت unsigned حرف s[32])
 {
     /* 2^252+27742317777372353535851937790883648493 */
-    static const unsigned char L[32] = {
+    ساكن ثابت unsigned حرف L[32] = {
         0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58, 0xd6, 0x9c, 0xf7,
         0xa2, 0xde, 0xf9, 0xde, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10
     };
-    unsigned char c = 0;
-    unsigned char n = 1;
-    unsigned int  i = 32;
+    unsigned حرف c = 0;
+    unsigned حرف n = 1;
+    unsigned صحيح  i = 32;
 
-    do {
+    ܥܒܕ {
         i--;
         c |= ((s[i] - L[i]) >> 8) & n;
         n &= ((s[i] ^ L[i]) - 1) >> 8;
-    } while (i != 0);
+    } ܟܡܐ (i != 0);
 
-    return (c != 0);
+    ܦܢܐ (c != 0);
 }
 
 /* montgomery to edwards */
@@ -4465,27 +4465,27 @@ sc25519_is_canonical(const unsigned char s[32])
 #define sign_ed25519_ref10_H
 
 
-static void _crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs,
-                                      int prehashed);
+ساكن فراغ _crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs,
+                                      صحيح prehashed);
 
-static int _crypto_sign_ed25519_detached(unsigned char *sig,
+ساكن صحيح _crypto_sign_ed25519_detached(unsigned حرف *sig,
                                   unsigned long long *siglen_p,
-                                  const unsigned char *m,
+                                  ثابت unsigned حرف *m,
                                   unsigned long long mlen,
-                                  const unsigned char *sk, int prehashed);
+                                  ثابت unsigned حرف *sk, صحيح prehashed);
 
-static int _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-                                         const unsigned char *m,
+ساكن صحيح _crypto_sign_ed25519_verify_detached(ثابت unsigned حرف *sig,
+                                         ثابت unsigned حرف *m,
                                          unsigned long long   mlen,
-                                         const unsigned char *pk,
-                                         int prehashed);
+                                         ثابت unsigned حرف *pk,
+                                         صحيح prehashed);
 #endif
 
 
 
-int
-crypto_sign_ed25519_seed_keypair(unsigned char *pk, unsigned char *sk,
-                                 const unsigned char *seed)
+صحيح
+crypto_sign_ed25519_seed_keypair(unsigned حرف *pk, unsigned حرف *sk,
+                                 ثابت unsigned حرف *seed)
 {
     ge25519_p3 A;
 
@@ -4500,29 +4500,29 @@ crypto_sign_ed25519_seed_keypair(unsigned char *pk, unsigned char *sk,
     memmove(sk, seed, 32);
     memmove(sk + 32, pk, 32);
 
-    return 0;
+    ܦܢܐ 0;
 }
 
-int
-crypto_sign_ed25519_keypair(unsigned char *pk, unsigned char *sk)
+صحيح
+crypto_sign_ed25519_keypair(unsigned حرف *pk, unsigned حرف *sk)
 {
-    unsigned char seed[32];
-    int           ret;
+    unsigned حرف seed[32];
+    صحيح           ret;
 
-    arc4random_buf(seed, sizeof seed);
+    arc4random_buf(seed, حجم seed);
     ret = crypto_sign_ed25519_seed_keypair(pk, sk, seed);
-    explicit_bzero(seed, sizeof seed);
+    explicit_bzero(seed, حجم seed);
 
-    return ret;
+    ܦܢܐ ret;
 }
 
 
 
 
-static void
-_crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, int prehashed)
+ساكن فراغ
+_crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, صحيح prehashed)
 {
-    static const unsigned char DOM2PREFIX[32 + 2] = {
+    ساكن ثابت unsigned حرف DOM2PREFIX[32 + 2] = {
         'S', 'i', 'g', 'E', 'd', '2', '5', '5', '1', '9', ' ',
         'n', 'o', ' ',
         'E', 'd', '2', '5', '5', '1', '9', ' ',
@@ -4530,13 +4530,13 @@ _crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, int prehashed)
     };
 
     crypto_hash_sha512_init(hs);
-    if (prehashed) {
-        crypto_hash_sha512_update(hs, DOM2PREFIX, sizeof DOM2PREFIX);
+    ܐܢ (prehashed) {
+        crypto_hash_sha512_update(hs, DOM2PREFIX, حجم DOM2PREFIX);
     }
 }
 
-static inline void
-_crypto_sign_ed25519_clamp(unsigned char k[32])
+ساكن مضمن فراغ
+_crypto_sign_ed25519_clamp(unsigned حرف k[32])
 {
     k[0] &= 248;
     k[31] &= 127;
@@ -4545,10 +4545,10 @@ _crypto_sign_ed25519_clamp(unsigned char k[32])
 
 #ifdef ED25519_NONDETERMINISTIC
 /* r = hash(k || K || noise || pad || M) (mod q) */
-static void
+ساكن فراغ
 _crypto_sign_ed25519_synthetic_r_hv(crypto_hash_sha512_state *hs,
-                                    unsigned char tmp[64],
-                                    const unsigned char az[64])
+                                    unsigned حرف tmp[64],
+                                    ثابت unsigned حرف az[64])
 {
     crypto_hash_sha512_update(hs, az, 64);
     randombytes_buf(tmp, 32);
@@ -4557,15 +4557,15 @@ _crypto_sign_ed25519_synthetic_r_hv(crypto_hash_sha512_state *hs,
 }
 #endif
 
-int
-_crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
-                              const unsigned char *m, unsigned long long mlen,
-                              const unsigned char *sk, int prehashed)
+صحيح
+_crypto_sign_ed25519_detached(unsigned حرف *sig, unsigned long long *siglen_p,
+                              ثابت unsigned حرف *m, unsigned long long mlen,
+                              ثابت unsigned حرف *sk, صحيح prehashed)
 {
     crypto_hash_sha512_state hs;
-    unsigned char            az[64];
-    unsigned char            nonce[64];
-    unsigned char            hram[64];
+    unsigned حرف            az[64];
+    unsigned حرف            nonce[64];
+    unsigned حرف            hram[64];
     ge25519_p3               R;
 
     _crypto_sign_ed25519_ref10_hinit(&hs, prehashed);
@@ -4573,7 +4573,7 @@ _crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
     crypto_hash_sha512(az, sk, 32);
 #ifdef ED25519_NONDETERMINISTIC
     _crypto_sign_ed25519_synthetic_r_hv(&hs, nonce /* tmp */, az);
-#else
+#ܐܚܪܢܐ
     crypto_hash_sha512_update(&hs, az + 32, 32);
 #endif
 
@@ -4595,35 +4595,35 @@ _crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
     _crypto_sign_ed25519_clamp(az);
     sc25519_muladd(sig + 32, hram, az, nonce);
 
-    explicit_bzero(az, sizeof az);
-    explicit_bzero(nonce, sizeof nonce);
+    explicit_bzero(az, حجم az);
+    explicit_bzero(nonce, حجم nonce);
 
-    if (siglen_p != NULL) {
+    ܐܢ (siglen_p != عدم) {
         *siglen_p = 64U;
     }
-    return 0;
+    ܦܢܐ 0;
 }
 
-int
-crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
-                             const unsigned char *m, unsigned long long mlen,
-                             const unsigned char *sk)
+صحيح
+crypto_sign_ed25519_detached(unsigned حرف *sig, unsigned long long *siglen_p,
+                             ثابت unsigned حرف *m, unsigned long long mlen,
+                             ثابت unsigned حرف *sk)
 {
-    return _crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, sk, 0);
+    ܦܢܐ _crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, sk, 0);
 }
 
 
 
 
-int
-_crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-                                     const unsigned char *m,
+صحيح
+_crypto_sign_ed25519_verify_detached(ثابت unsigned حرف *sig,
+                                     ثابت unsigned حرف *m,
                                      unsigned long long   mlen,
-                                     const unsigned char *pk,
-                                     int prehashed)
+                                     ثابت unsigned حرف *pk,
+                                     صحيح prehashed)
 {
     crypto_hash_sha512_state hs;
-    unsigned char            h[64];
+    unsigned حرف            h[64];
     ge25519_p3               check;
     ge25519_p3               expected_r;
     ge25519_p3               A;
@@ -4632,25 +4632,25 @@ _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
 
     ACQUIRE_FENCE;
 #ifdef ED25519_COMPAT
-    if (sig[63] & 224) {
-        return -1;
+    ܐܢ (sig[63] & 224) {
+        ܦܢܐ -1;
     }
-#else
-    if ((sig[63] & 240) != 0 &&
+#ܐܚܪܢܐ
+    ܐܢ ((sig[63] & 240) != 0 &&
         sc25519_is_canonical(sig + 32) == 0) {
-        return -1;
+        ܦܢܐ -1;
     }
-    if (ge25519_is_canonical(pk) == 0) {
-        return -1;
+    ܐܢ (ge25519_is_canonical(pk) == 0) {
+        ܦܢܐ -1;
     }
 #endif
-    if (ge25519_frombytes_negate_vartime(&A, pk) != 0 ||
+    ܐܢ (ge25519_frombytes_negate_vartime(&A, pk) != 0 ||
         ge25519_has_small_order(&A) != 0) {
-        return -1;
+        ܦܢܐ -1;
     }
-    if (ge25519_frombytes(&expected_r, sig) != 0 ||
+    ܐܢ (ge25519_frombytes(&expected_r, sig) != 0 ||
         ge25519_has_small_order(&expected_r) != 0) {
-        return -1;
+        ܦܢܐ -1;
     }
     _crypto_sign_ed25519_ref10_hinit(&hs, prehashed);
     crypto_hash_sha512_update(&hs, sig, 32);
@@ -4663,16 +4663,16 @@ _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
     ge25519_p2_to_p3(&sb_ah, &sb_ah_p2);
     ge25519_p3_sub(&check, &expected_r, &sb_ah);
 
-    return ge25519_has_small_order(&check) - 1;
+    ܦܢܐ ge25519_has_small_order(&check) - 1;
 }
 
-int
-crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-                                    const unsigned char *m,
+صحيح
+crypto_sign_ed25519_verify_detached(ثابت unsigned حرف *sig,
+                                    ثابت unsigned حرف *m,
                                     unsigned long long   mlen,
-                                    const unsigned char *pk)
+                                    ثابت unsigned حرف *pk)
 {
-    return _crypto_sign_ed25519_verify_detached(sig, m, mlen, pk, 0);
+    ܦܢܐ _crypto_sign_ed25519_verify_detached(sig, m, mlen, pk, 0);
 }
 
 

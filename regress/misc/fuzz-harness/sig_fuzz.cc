@@ -1,62 +1,62 @@
 // cc_fuzz_target test for public key parsing.
 
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <stddef.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-extern "C" {
+خارجي "C" {
 
-#include "includes.h"
-#include "sshkey.h"
-#include "ssherr.h"
+#ضمن "includes.h"
+#ضمن "sshkey.h"
+#ضمن "ssherr.h"
 
-static struct sshkey *generate_or_die(int type, unsigned bits) {
-  int r;
-  struct sshkey *ret;
-  if ((r = sshkey_generate(type, bits, &ret)) != 0) {
+ساكن بنية sshkey *generate_or_die(صحيح type, unsigned bits) {
+  صحيح r;
+  بنية sshkey *ret;
+  ܐܢ ((r = sshkey_generate(type, bits, &ret)) != 0) {
     fprintf(stderr, "generate(%d, %u): %s", type, bits, ssh_err(r));
     abort();
   }
-  return ret;
+  ܦܢܐ ret;
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
+صحيح LLVMFuzzerTestOneInput(ثابت uint8_t* sig, size_t slen)
 {
 #ifdef WITH_OPENSSL
-  static struct sshkey *rsa = generate_or_die(KEY_RSA, 2048);
-  static struct sshkey *ecdsa256 = generate_or_die(KEY_ECDSA, 256);
-  static struct sshkey *ecdsa384 = generate_or_die(KEY_ECDSA, 384);
-  static struct sshkey *ecdsa521 = generate_or_die(KEY_ECDSA, 521);
+  ساكن بنية sshkey *rsa = generate_or_die(KEY_RSA, 2048);
+  ساكن بنية sshkey *ecdsa256 = generate_or_die(KEY_ECDSA, 256);
+  ساكن بنية sshkey *ecdsa384 = generate_or_die(KEY_ECDSA, 384);
+  ساكن بنية sshkey *ecdsa521 = generate_or_die(KEY_ECDSA, 521);
 #endif
-  struct sshkey_sig_details *details = NULL;
-  static struct sshkey *ed25519 = generate_or_die(KEY_ED25519, 0);
-  static const char *data = "If everyone started announcing his nose had "
+  بنية sshkey_sig_details *details = عدم;
+  ساكن بنية sshkey *ed25519 = generate_or_die(KEY_ED25519, 0);
+  ساكن ثابت حرف *data = "If everyone started announcing his nose had "
       "run away, I don’t know how it would all end";
-  static const size_t dlen = strlen(data);
+  ساكن ثابت size_t dlen = strlen(data);
 
 #ifdef WITH_OPENSSL
-  sshkey_verify(rsa, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+  sshkey_verify(rsa, sig, slen, (ثابت u_char *)data, dlen, عدم, 0, &details);
   sshkey_sig_details_free(details);
-  details = NULL;
+  details = عدم;
 
-  sshkey_verify(ecdsa256, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+  sshkey_verify(ecdsa256, sig, slen, (ثابت u_char *)data, dlen, عدم, 0, &details);
   sshkey_sig_details_free(details);
-  details = NULL;
+  details = عدم;
 
-  sshkey_verify(ecdsa384, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+  sshkey_verify(ecdsa384, sig, slen, (ثابت u_char *)data, dlen, عدم, 0, &details);
   sshkey_sig_details_free(details);
-  details = NULL;
+  details = عدم;
 
-  sshkey_verify(ecdsa521, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+  sshkey_verify(ecdsa521, sig, slen, (ثابت u_char *)data, dlen, عدم, 0, &details);
   sshkey_sig_details_free(details);
-  details = NULL;
+  details = عدم;
 #endif
 
-  sshkey_verify(ed25519, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+  sshkey_verify(ed25519, sig, slen, (ثابت u_char *)data, dlen, عدم, 0, &details);
   sshkey_sig_details_free(details);
-  return 0;
+  ܦܢܐ 0;
 }
 
 } // extern
