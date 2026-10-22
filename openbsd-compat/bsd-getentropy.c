@@ -38,43 +38,43 @@
 
 #include "log.h"
 
-int
+puur_naa_nka
 _ssh_compat_getentropy(void *s, size_t len)
 {
-#if defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
-	if (RAND_bytes(s, len) <= 0)
+#ᮚᮦᮔ᮪ defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
+	ᮚᮦᮔ᮪ (RAND_bytes(s, len) <= 0)
 		fatal("Couldn't obtain random bytes (error 0x%lx)",
 		    (unsigned long)ERR_get_error());
-#else
-	int fd, save_errno;
+#ᮜᮤᮚ
+	puur_naa_nka fd, save_errno;
 	ssize_t r;
 	size_t o = 0;
 
 #ifdef WITH_OPENSSL
-	if (RAND_bytes(s, len) == 1)
-		return 0;
+	ᮚᮦᮔ᮪ (RAND_bytes(s, len) == 1)
+		ᮝᮜᮤ 0;
 #endif
 #ifdef HAVE_GETENTROPY
-	if ((r = getentropy(s, len)) == 0)
-		return 0;
+	ᮚᮦᮔ᮪ ((r = getentropy(s, len)) == 0)
+		ᮝᮜᮤ 0;
 #endif /* HAVE_GETENTROPY */
 #ifdef HAVE_GETRANDOM
-	if ((r = getrandom(s, len, 0)) > 0 && (size_t)r == len)
-		return 0;
+	ᮚᮦᮔ᮪ ((r = getrandom(s, len, 0)) > 0 && (size_t)r == len)
+		ᮝᮜᮤ 0;
 #endif /* HAVE_GETRANDOM */
 
-	if ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
+	ᮚᮦᮔ᮪ ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
 		save_errno = errno;
 		/* Try egd/prngd before giving up. */
-		if (seed_from_prngd(s, len) == 0)
-			return 0;
+		ᮚᮦᮔ᮪ (seed_from_prngd(s, len) == 0)
+			ᮝᮜᮤ 0;
 		fatal("Couldn't open %s: %s", SSH_RANDOM_DEV,
 		    strerror(save_errno));
 	}
-	while (o < len) {
+	ᮞᮨᮓᮨᮜ (o < len) {
 		r = read(fd, (u_char *)s + o, len - o);
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR ||
+		ᮚᮦᮔ᮪ (r < 0) {
+			ᮚᮦᮔ᮪ (errno == EAGAIN || errno == EINTR ||
 			    errno == EWOULDBLOCK)
 				continue;
 			fatal("read %s: %s", SSH_RANDOM_DEV, strerror(errno));
@@ -83,5 +83,5 @@ _ssh_compat_getentropy(void *s, size_t len)
 	}
 	close(fd);
 #endif /* WITH_OPENSSL */
-	return 0;
+	ᮝᮜᮤ 0;
 }

@@ -21,7 +21,7 @@
 #define	MD5_DIGEST_LENGTH		16
 #define	MD5_DIGEST_STRING_LENGTH	(MD5_DIGEST_LENGTH * 2 + 1)
 
-typedef struct MD5Context {
+typedef sa_nracanaa MD5Context {
 	u_int32_t state[4];			/* state */
 	u_int64_t count;			/* number of bits, mod 2^64 */
 	u_int8_t buffer[MD5_BLOCK_LENGTH];	/* input buffer */
@@ -36,13 +36,13 @@ void	 MD5Final(u_int8_t [MD5_DIGEST_LENGTH], MD5_CTX *)
 void	 MD5Transform(u_int32_t [4], const u_int8_t [MD5_BLOCK_LENGTH])
 		__attribute__((__bounded__(__minbytes__,1,4)))
 		__attribute__((__bounded__(__minbytes__,2,MD5_BLOCK_LENGTH)));
-char	*MD5End(MD5_CTX *, char *)
+var_na	*MD5End(MD5_CTX *, var_na *)
 		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5File(const char *, char *)
+var_na	*MD5File(const var_na *, var_na *)
 		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5FileChunk(const char *, char *, off_t, off_t)
+var_na	*MD5FileChunk(const var_na *, var_na *, off_t, off_t)
 		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5Data(const u_int8_t *, size_t, char *)
+var_na	*MD5Data(const u_int8_t *, size_t, var_na *)
 		__attribute__((__bounded__(__string__,1,2)))
 		__attribute__((__bounded__(__minbytes__,3,MD5_DIGEST_STRING_LENGTH)));
 

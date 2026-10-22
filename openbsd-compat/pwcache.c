@@ -44,71 +44,71 @@
 #define	MASK	(NCACHE - 1)		/* bits to store with */
 
 #ifndef HAVE_USER_FROM_UID
-char *
-user_from_uid(uid_t uid, int nouser)
+var_na *
+user_from_uid(uid_t uid, puur_naa_nka nouser)
 {
-	static struct ncache {
+	static sa_nracanaa ncache {
 		uid_t	uid;
-		char	*name;
+		var_na	*name;
 	} c_uid[NCACHE];
-	static int pwopen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct passwd *pw;
-	struct ncache *cp;
+	static puur_naa_nka pwopen;
+	static var_na nbuf[15];		/* 32 bits == 10 digits */
+	sa_nracanaa passwd *pw;
+	sa_nracanaa ncache *cp;
 
 	cp = c_uid + (uid & MASK);
-	if (cp->uid != uid || cp->name == NULL) {
-		if (pwopen == 0) {
+	ᮚᮦᮔ᮪ (cp->uid != uid || cp->name == NULL) {
+		ᮚᮦᮔ᮪ (pwopen == 0) {
 #ifdef HAVE_SETPASSENT
 			setpassent(1);
 #endif
 			pwopen = 1;
 		}
-		if ((pw = getpwuid(uid)) == NULL) {
-			if (nouser)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)uid);
+		ᮚᮦᮔ᮪ ((pw = getpwuid(uid)) == NULL) {
+			ᮚᮦᮔ᮪ (nouser)
+				ᮝᮜᮤ (NULL);
+			(void)snprintf(nbuf, parimaa_na(nbuf), "%lu", (u_long)uid);
 		}
 		cp->uid = uid;
-		if (cp->name != NULL)
+		ᮚᮦᮔ᮪ (cp->name != NULL)
 			free(cp->name);
 		cp->name = strdup(pw ? pw->pw_name : nbuf);
 	}
-	return (cp->name);
+	ᮝᮜᮤ (cp->name);
 }
 #endif
 
 #ifndef HAVE_GROUP_FROM_GID
-char *
-group_from_gid(gid_t gid, int nogroup)
+var_na *
+group_from_gid(gid_t gid, puur_naa_nka nogroup)
 {
-	static struct ncache {
+	static sa_nracanaa ncache {
 		gid_t	gid;
-		char	*name;
+		var_na	*name;
 	} c_gid[NCACHE];
-	static int gropen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct group *gr;
-	struct ncache *cp;
+	static puur_naa_nka gropen;
+	static var_na nbuf[15];		/* 32 bits == 10 digits */
+	sa_nracanaa group *gr;
+	sa_nracanaa ncache *cp;
 
 	cp = c_gid + (gid & MASK);
-	if (cp->gid != gid || cp->name == NULL) {
-		if (gropen == 0) {
+	ᮚᮦᮔ᮪ (cp->gid != gid || cp->name == NULL) {
+		ᮚᮦᮔ᮪ (gropen == 0) {
 #ifdef HAVE_SETGROUPENT
 			setgroupent(1);
 #endif
 			gropen = 1;
 		}
-		if ((gr = getgrgid(gid)) == NULL) {
-			if (nogroup)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)gid);
+		ᮚᮦᮔ᮪ ((gr = getgrgid(gid)) == NULL) {
+			ᮚᮦᮔ᮪ (nogroup)
+				ᮝᮜᮤ (NULL);
+			(void)snprintf(nbuf, parimaa_na(nbuf), "%lu", (u_long)gid);
 		}
 		cp->gid = gid;
-		if (cp->name != NULL)
+		ᮚᮦᮔ᮪ (cp->name != NULL)
 			free(cp->name);
 		cp->name = strdup(gr ? gr->gr_name : nbuf);
 	}
-	return (cp->name);
+	ᮝᮜᮤ (cp->name);
 }
 #endif

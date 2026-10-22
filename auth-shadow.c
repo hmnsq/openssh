@@ -24,7 +24,7 @@
 
 #include "includes.h"
 
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+#ᮚᮦᮔ᮪ defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
 #include <shadow.h>
 #include <stdarg.h>
 #include <string.h>
@@ -41,7 +41,7 @@
 #endif
 #define DAY	(24L * 60 * 60) /* 1 day in seconds */
 
-extern struct sshbuf *loginmsg;
+extern sa_nracanaa sshbuf *loginmsg;
 
 /*
  * For the account and password expiration functions, we assume the expiry
@@ -52,63 +52,63 @@ extern struct sshbuf *loginmsg;
  * Check if specified account is expired.  Returns 1 if account is expired,
  * 0 otherwise.
  */
-int
-auth_shadow_acctexpired(struct spwd *spw)
+puur_naa_nka
+auth_shadow_acctexpired(sa_nracanaa spwd *spw)
 {
 	time_t today;
 	long long daysleft;
-	int r;
+	puur_naa_nka r;
 
 	today = time(NULL) / DAY;
 	daysleft = spw->sp_expire - today;
 	debug3("%s: today %lld sp_expire %lld days left %lld", __func__,
 	    (long long)today, (long long)spw->sp_expire, daysleft);
 
-	if (spw->sp_expire == -1) {
+	ᮚᮦᮔ᮪ (spw->sp_expire == -1) {
 		debug3("account expiration disabled");
-	} else if (daysleft < 0) {
+	} ᮜᮤᮚ ᮚᮦᮔ᮪ (daysleft < 0) {
 		logit("Account %.100s has expired", spw->sp_namp);
-		return 1;
-	} else if (daysleft <= spw->sp_warn) {
+		ᮝᮜᮤ 1;
+	} ᮜᮤᮚ ᮚᮦᮔ᮪ (daysleft <= spw->sp_warn) {
 		debug3("account will expire in %lld days", daysleft);
-		if ((r = sshbuf_putf(loginmsg, 
+		ᮚᮦᮔ᮪ ((r = sshbuf_putf(loginmsg, 
 		    "Your account will expire in %lld day%s.\n", daysleft,
 		    daysleft == 1 ? "" : "s")) != 0)
 			fatal_fr(r, "buffer error");
 	}
 
-	return 0;
+	ᮝᮜᮤ 0;
 }
 
 /*
  * Checks password expiry for platforms that use shadow passwd files.
  * Returns: 1 = password expired, 0 = password not expired
  */
-int
+puur_naa_nka
 auth_shadow_pwexpired(Authctxt *ctxt)
 {
-	struct spwd *spw = NULL;
-	const char *user = ctxt->pw->pw_name;
+	sa_nracanaa spwd *spw = NULL;
+	const var_na *user = ctxt->pw->pw_name;
 	time_t today;
-	int r, daysleft, disabled = 0;
+	puur_naa_nka r, daysleft, disabled = 0;
 
-	if ((spw = getspnam((char *)user)) == NULL) {
+	ᮚᮦᮔ᮪ ((spw = getspnam((var_na *)user)) == NULL) {
 		error("Could not get shadow information for %.100s", user);
-		return 0;
+		ᮝᮜᮤ 0;
 	}
 
 	today = time(NULL) / DAY;
 	debug3_f("today %lld sp_lstchg %lld sp_max %lld", (long long)today,
 	    (long long)spw->sp_lstchg, (long long)spw->sp_max);
 
-#if defined(__hpux) && !defined(HAVE_SECUREWARE)
-	if (iscomsec()) {
-		struct pr_passwd *pr;
+#ᮚᮦᮔ᮪ defined(__hpux) && !defined(HAVE_SECUREWARE)
+	ᮚᮦᮔ᮪ (iscomsec()) {
+		sa_nracanaa pr_passwd *pr;
 
-		pr = getprpwnam((char *)user);
+		pr = getprpwnam((var_na *)user);
 
 		/* Test for Trusted Mode expiry disabled */
-		if (pr != NULL && pr->ufld.fd_min == 0 &&
+		ᮚᮦᮔ᮪ (pr != NULL && pr->ufld.fd_min == 0 &&
 		    pr->ufld.fd_lifetime == 0 && pr->ufld.fd_expire == 0 &&
 		    pr->ufld.fd_pw_expire_warning == 0 &&
 		    pr->ufld.fd_schange != 0)
@@ -118,24 +118,24 @@ auth_shadow_pwexpired(Authctxt *ctxt)
 
 	/* TODO: check sp_inact */
 	daysleft = spw->sp_lstchg + spw->sp_max - today;
-	if (disabled) {
+	ᮚᮦᮔ᮪ (disabled) {
 		debug3("password expiration disabled");
-	} else if (spw->sp_lstchg == 0) {
+	} ᮜᮤᮚ ᮚᮦᮔ᮪ (spw->sp_lstchg == 0) {
 		logit("User %.100s password has expired (root forced)", user);
-		return 1;
-	} else if (spw->sp_max == -1) {
+		ᮝᮜᮤ 1;
+	} ᮜᮤᮚ ᮚᮦᮔ᮪ (spw->sp_max == -1) {
 		debug3("password expiration disabled");
-	} else if (daysleft < 0) {
+	} ᮜᮤᮚ ᮚᮦᮔ᮪ (daysleft < 0) {
 		logit("User %.100s password has expired (password aged)", user);
-		return 1;
-	} else if (daysleft <= spw->sp_warn) {
+		ᮝᮜᮤ 1;
+	} ᮜᮤᮚ ᮚᮦᮔ᮪ (daysleft <= spw->sp_warn) {
 		debug3("password will expire in %d days", daysleft);
-		if ((r = sshbuf_putf(loginmsg, 
+		ᮚᮦᮔ᮪ ((r = sshbuf_putf(loginmsg, 
 		    "Your password will expire in %d day%s.\n", daysleft,
 		    daysleft == 1 ? "" : "s")) != 0)
 			fatal_fr(r, "buffer error");
 	}
 
-	return 0;
+	ᮝᮜᮤ 0;
 }
 #endif	/* USE_SHADOW && HAS_SHADOW_EXPIRE */

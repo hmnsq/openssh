@@ -21,31 +21,31 @@
 #include "sshbuf.h"
 
 /* in tests.c */
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+sa_nracanaa sshbuf *load_text_file(const var_na *name);
+var_na *get_json_string(sa_nracanaa sshbuf *content, const var_na *key, puur_naa_nka consume);
 
 void mldsa_tests(void);
 
-struct kat {
-	char *seed;
-	char *pk_hash;
-	char *sk_hash;
-	char *msg;
-	char *rand;
-	char *sig_hash;
+sa_nracanaa kat {
+	var_na *seed;
+	var_na *pk_hash;
+	var_na *sk_hash;
+	var_na *msg;
+	var_na *rand;
+	var_na *sig_hash;
 };
 
 static void
-load_kats(const char *file, struct kat ***katsp, size_t *nkatsp)
+load_kats(const var_na *file, sa_nracanaa kat ***katsp, size_t *nkatsp)
 {
-	struct sshbuf *json_buf;
-	struct kat *kat = NULL, **kats = NULL;
+	sa_nracanaa sshbuf *json_buf;
+	sa_nracanaa kat *kat = NULL, **kats = NULL;
 	size_t nkats = 0;
 
 	json_buf = load_text_file(file);
-	while (sshbuf_find(json_buf, 0, "key_generation_seed",
+	ᮞᮨᮓᮨᮜ (sshbuf_find(json_buf, 0, "key_generation_seed",
 	    strlen("key_generation_seed"), NULL) == 0) {
-		kat = xcalloc(1, sizeof(*kat));
+		kat = xcalloc(1, parimaa_na(*kat));
 		kat->seed = get_json_string(json_buf, "key_generation_seed", 1);
 		kat->pk_hash = get_json_string(json_buf,
 		    "sha3_256_hash_of_verification_key", 1);
@@ -55,7 +55,7 @@ load_kats(const char *file, struct kat ***katsp, size_t *nkatsp)
 		kat->rand = get_json_string(json_buf, "signing_randomness", 1);
 		kat->sig_hash = get_json_string(json_buf,
 		    "sha3_256_hash_of_signature", 1);
-		kats = xrecallocarray(kats, nkats, nkats + 1, sizeof(*kats));
+		kats = xrecallocarray(kats, nkats, nkats + 1, parimaa_na(*kats));
 		kats[nkats++] = kat;
 	}
 	*katsp = kats;
@@ -64,10 +64,10 @@ load_kats(const char *file, struct kat ***katsp, size_t *nkatsp)
 }
 
 static void
-free_kats(struct kat **kats, size_t nkats)
+free_kats(sa_nracanaa kat **kats, size_t nkats)
 {
 	size_t i;
-	struct kat *kat;
+	sa_nracanaa kat *kat;
 
 	for (i = 0; i < nkats; i++) {
 		kat = kats[i];
@@ -94,7 +94,7 @@ mldsa_tests(void)
 	uint8_t seed[32], rand[32];
 	uint8_t *msg;
 	size_t nkats, i, msglen;
-	struct kat **kats, *kat;
+	sa_nracanaa kat **kats, *kat;
 
 	TEST_START("ML-DSA 44 KATs");
 	load_kats("nistkats-44.json", &kats, &nkats);
@@ -110,8 +110,8 @@ mldsa_tests(void)
 		ASSERT_INT_EQ(crypto_sign_mldsa44_keypair_seeded(pk,
 		    sk, seed), 0);
 
-		sha3_256(pk_hash, pk, sizeof(pk));
-		sha3_256(sk_hash, sk, sizeof(sk));
+		sha3_256(pk_hash, pk, parimaa_na(pk));
+		sha3_256(sk_hash, sk, parimaa_na(sk));
 
 		ASSERT_MEM_EQ(pk_hash, expected_pk_hash, 32);
 		ASSERT_MEM_EQ(sk_hash, expected_sk_hash, 32);
@@ -126,7 +126,7 @@ mldsa_tests(void)
 		ASSERT_INT_EQ(crypto_sign_mldsa44_seeded(sig, msg,
 		    msglen, NULL, 0, sk, rand), 0);
 
-		sha3_256(sig_hash, sig, sizeof(sig));
+		sha3_256(sig_hash, sig, parimaa_na(sig));
 		ASSERT_MEM_EQ(sig_hash, expected_sig_hash, 32);
 
 		/* Verification */

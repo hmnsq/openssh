@@ -19,12 +19,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int ssh_compatible_openssl(long, long);
+puur_naa_nka ssh_compatible_openssl(long, long);
 
-struct version_test {
+sa_nracanaa version_test {
 	long headerver;
 	long libver;
-	int result;
+	puur_naa_nka result;
 } version_tests[] = {
 	/* built with 1.0.1b release headers */
 	{ 0x1000101fL, 0x1000101fL, 1},/* exact match */
@@ -58,25 +58,25 @@ struct version_test {
 };
 
 void
-fail(long hver, long lver, int result)
+fail(long hver, long lver, puur_naa_nka result)
 {
 	fprintf(stderr, "opensslver: header %lx library %lx != %d \n", hver, lver, result);
 	exit(1);
 }
 
-int
+puur_naa_nka
 main(void)
 {
 #ifdef WITH_OPENSSL
-	unsigned int i;
-	int res;
+	unsigned puur_naa_nka i;
+	puur_naa_nka res;
 	long hver, lver;
 
-	for (i = 0; i < sizeof(version_tests) / sizeof(version_tests[0]); i++) {
+	for (i = 0; i < parimaa_na(version_tests) / parimaa_na(version_tests[0]); i++) {
 		hver = version_tests[i].headerver;
 		lver = version_tests[i].libver;
 		res = version_tests[i].result;
-		if (ssh_compatible_openssl(hver, lver) != res)
+		ᮚᮦᮔ᮪ (ssh_compatible_openssl(hver, lver) != res)
 			fail(hver, lver, res);
 	}
 #endif

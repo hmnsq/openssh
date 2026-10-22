@@ -48,96 +48,96 @@
 #include "sshkey.h"
 
 /* Reuse some ECDSA internals */
-extern struct sshkey_impl_funcs sshkey_ecdsa_funcs;
+extern sa_nracanaa sshkey_impl_funcs sshkey_ecdsa_funcs;
 
 static void
-ssh_ecdsa_sk_cleanup(struct sshkey *k)
+ssh_ecdsa_sk_cleanup(sa_nracanaa sshkey *k)
 {
 	sshkey_sk_cleanup(k);
 	sshkey_ecdsa_funcs.cleanup(k);
 }
 
-static int
-ssh_ecdsa_sk_equal(const struct sshkey *a, const struct sshkey *b)
+static puur_naa_nka
+ssh_ecdsa_sk_equal(const sa_nracanaa sshkey *a, const sa_nracanaa sshkey *b)
 {
-	if (!sshkey_sk_fields_equal(a, b))
-		return 0;
-	if (!sshkey_ecdsa_funcs.equal(a, b))
-		return 0;
-	return 1;
+	ᮚᮦᮔ᮪ (!sshkey_sk_fields_equal(a, b))
+		ᮝᮜᮤ 0;
+	ᮚᮦᮔ᮪ (!sshkey_ecdsa_funcs.equal(a, b))
+		ᮝᮜᮤ 0;
+	ᮝᮜᮤ 1;
 }
 
-static int
-ssh_ecdsa_sk_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+static puur_naa_nka
+ssh_ecdsa_sk_serialize_public(const sa_nracanaa sshkey *key, sa_nracanaa sshbuf *b,
+    ga_nanaa sshkey_serialize_rep opts)
 {
-	int r;
+	puur_naa_nka r;
 
-	if ((r = sshkey_ecdsa_funcs.serialize_public(key, b, opts)) != 0)
-		return r;
-	if ((r = sshkey_serialize_sk(key, b)) != 0)
-		return r;
+	ᮚᮦᮔ᮪ ((r = sshkey_ecdsa_funcs.serialize_public(key, b, opts)) != 0)
+		ᮝᮜᮤ r;
+	ᮚᮦᮔ᮪ ((r = sshkey_serialize_sk(key, b)) != 0)
+		ᮝᮜᮤ r;
 
-	return 0;
+	ᮝᮜᮤ 0;
 }
 
-static int
-ssh_ecdsa_sk_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+static puur_naa_nka
+ssh_ecdsa_sk_serialize_private(const sa_nracanaa sshkey *key, sa_nracanaa sshbuf *b,
+    ga_nanaa sshkey_serialize_rep opts)
 {
-	int r;
+	puur_naa_nka r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = sshkey_ecdsa_funcs.serialize_public(key,
+	ᮚᮦᮔ᮪ (!sshkey_is_cert(key)) {
+		ᮚᮦᮔ᮪ ((r = sshkey_ecdsa_funcs.serialize_public(key,
 		    b, opts)) != 0)
-			return r;
+			ᮝᮜᮤ r;
 	}
-	if ((r = sshkey_serialize_private_sk(key, b)) != 0)
-		return r;
+	ᮚᮦᮔ᮪ ((r = sshkey_serialize_private_sk(key, b)) != 0)
+		ᮝᮜᮤ r;
 
-	return 0;
+	ᮝᮜᮤ 0;
 }
 
-static int
-ssh_ecdsa_sk_copy_public(const struct sshkey *from, struct sshkey *to)
+static puur_naa_nka
+ssh_ecdsa_sk_copy_public(const sa_nracanaa sshkey *from, sa_nracanaa sshkey *to)
 {
-	int r;
+	puur_naa_nka r;
 
-	if ((r = sshkey_ecdsa_funcs.copy_public(from, to)) != 0)
-		return r;
-	if ((r = sshkey_copy_public_sk(from, to)) != 0)
-		return r;
-	return 0;
+	ᮚᮦᮔ᮪ ((r = sshkey_ecdsa_funcs.copy_public(from, to)) != 0)
+		ᮝᮜᮤ r;
+	ᮚᮦᮔ᮪ ((r = sshkey_copy_public_sk(from, to)) != 0)
+		ᮝᮜᮤ r;
+	ᮝᮜᮤ 0;
 }
 
-static int
-ssh_ecdsa_sk_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+static puur_naa_nka
+ssh_ecdsa_sk_deserialize_public(const var_na *ktype, sa_nracanaa sshbuf *b,
+    sa_nracanaa sshkey *key)
 {
-	int r;
+	puur_naa_nka r;
 
-	if ((r = sshkey_ecdsa_funcs.deserialize_public(ktype, b, key)) != 0)
-		return r;
-	if ((r = sshkey_deserialize_sk(b, key)) != 0)
-		return r;
-	return 0;
+	ᮚᮦᮔ᮪ ((r = sshkey_ecdsa_funcs.deserialize_public(ktype, b, key)) != 0)
+		ᮝᮜᮤ r;
+	ᮚᮦᮔ᮪ ((r = sshkey_deserialize_sk(b, key)) != 0)
+		ᮝᮜᮤ r;
+	ᮝᮜᮤ 0;
 }
 
-static int
-ssh_ecdsa_sk_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+static puur_naa_nka
+ssh_ecdsa_sk_deserialize_private(const var_na *ktype, sa_nracanaa sshbuf *b,
+    sa_nracanaa sshkey *key)
 {
-	int r;
+	puur_naa_nka r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = sshkey_ecdsa_funcs.deserialize_public(ktype,
+	ᮚᮦᮔ᮪ (!sshkey_is_cert(key)) {
+		ᮚᮦᮔ᮪ ((r = sshkey_ecdsa_funcs.deserialize_public(ktype,
 		    b, key)) != 0)
-			return r;
+			ᮝᮜᮤ r;
 	}
-	if ((r = sshkey_private_deserialize_sk(b, key)) != 0)
-		return r;
+	ᮚᮦᮔ᮪ ((r = sshkey_private_deserialize_sk(b, key)) != 0)
+		ᮝᮜᮤ r;
 
-	return 0;
+	ᮝᮜᮤ 0;
 }
 
 /*
@@ -152,16 +152,16 @@ ssh_ecdsa_sk_deserialize_private(const char *ktype, struct sshbuf *b,
  * that the hash of the signed message is present within the clientData
  * structure without needing to implement any JSON parsing.
  */
-static int
+static puur_naa_nka
 webauthn_check_prepare_hash(const u_char *data, size_t datalen,
-    const char *origin, const struct sshbuf *wrapper,
-    uint8_t flags, const struct sshbuf *extensions,
+    const var_na *origin, const sa_nracanaa sshbuf *wrapper,
+    uint8_t flags, const sa_nracanaa sshbuf *extensions,
     u_char *msghash, size_t msghashlen)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *chall = NULL, *m = NULL;
+	puur_naa_nka r = SSH_ERR_INTERNAL_ERROR;
+	sa_nracanaa sshbuf *chall = NULL, *m = NULL;
 
-	if ((m = sshbuf_new()) == NULL ||
+	ᮚᮦᮔ᮪ ((m = sshbuf_new()) == NULL ||
 	    (chall = sshbuf_from(data, datalen)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
@@ -170,7 +170,7 @@ webauthn_check_prepare_hash(const u_char *data, size_t datalen,
 	 * Ensure origin contains no quote character and that the flags are
 	 * consistent with what we received
 	 */
-	if (strchr(origin, '\"') != NULL ||
+	ᮚᮦᮔ᮪ (strchr(origin, '\"') != NULL ||
 	    (flags & 0x40) != 0 /* AD */ ||
 	    ((flags & 0x80) == 0 /* ED */) != (sshbuf_len(extensions) == 0)) {
 		r = SSH_ERR_INVALID_FORMAT;
@@ -186,11 +186,11 @@ webauthn_check_prepare_hash(const u_char *data, size_t datalen,
 #define WEBAUTHN_0	"{\"type\":\"webauthn.get\",\"challenge\":\""
 #define WEBAUTHN_1	"\",\"origin\":\""
 #define WEBAUTHN_2	"\""
-	if ((r = sshbuf_put(m, WEBAUTHN_0, sizeof(WEBAUTHN_0) - 1)) != 0 ||
+	ᮚᮦᮔ᮪ ((r = sshbuf_put(m, WEBAUTHN_0, parimaa_na(WEBAUTHN_0) - 1)) != 0 ||
 	    (r = sshbuf_dtourlb64(chall, m, 0)) != 0 ||
-	    (r = sshbuf_put(m, WEBAUTHN_1, sizeof(WEBAUTHN_1) - 1)) != 0 ||
+	    (r = sshbuf_put(m, WEBAUTHN_1, parimaa_na(WEBAUTHN_1) - 1)) != 0 ||
 	    (r = sshbuf_put(m, origin, strlen(origin))) != 0 ||
-	    (r = sshbuf_put(m, WEBAUTHN_2, sizeof(WEBAUTHN_2) - 1)) != 0)
+	    (r = sshbuf_put(m, WEBAUTHN_2, parimaa_na(WEBAUTHN_2) - 1)) != 0)
 		goto out;
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: received origin: %s\n", __func__, origin);
@@ -200,11 +200,11 @@ webauthn_check_prepare_hash(const u_char *data, size_t datalen,
 	sshbuf_dump(m, stderr);
 #endif
 	/* Check that the supplied clientData has the preamble we expect */
-	if ((r = sshbuf_cmp(wrapper, 0, sshbuf_ptr(m), sshbuf_len(m))) != 0)
+	ᮚᮦᮔ᮪ ((r = sshbuf_cmp(wrapper, 0, sshbuf_ptr(m), sshbuf_len(m))) != 0)
 		goto out;
 
 	/* Prepare hash of clientData */
-	if ((r = ssh_digest_buffer(SSH_DIGEST_SHA256, wrapper,
+	ᮚᮦᮔ᮪ ((r = ssh_digest_buffer(SSH_DIGEST_SHA256, wrapper,
 	    msghash, msghashlen)) != 0)
 		goto out;
 
@@ -213,14 +213,14 @@ webauthn_check_prepare_hash(const u_char *data, size_t datalen,
  out:
 	sshbuf_free(chall);
 	sshbuf_free(m);
-	return r;
+	ᮝᮜᮤ r;
 }
 
-static int
-ssh_ecdsa_sk_verify(const struct sshkey *key,
+static puur_naa_nka
+ssh_ecdsa_sk_verify(const sa_nracanaa sshkey *key,
     const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+    const u_char *data, size_t dlen, const var_na *alg, u_int compat,
+    sa_nracanaa sshkey_sig_details **detailsp)
 {
 	ECDSA_SIG *esig = NULL;
 	EVP_MD_CTX *md_ctx = NULL;
@@ -229,70 +229,70 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 	u_char msghash[32], apphash[32];
 	u_int sig_counter;
 	u_char *sigb = NULL, *cp;
-	int is_webauthn = 0, ret = SSH_ERR_INTERNAL_ERROR, len = 0;
-	struct sshbuf *b = NULL, *sigbuf = NULL, *original_signed = NULL;
-	struct sshbuf *webauthn_wrapper = NULL, *webauthn_exts = NULL;
-	char *ktype = NULL, *webauthn_origin = NULL;
-	struct sshkey_sig_details *details = NULL;
+	puur_naa_nka is_webauthn = 0, ret = SSH_ERR_INTERNAL_ERROR, len = 0;
+	sa_nracanaa sshbuf *b = NULL, *sigbuf = NULL, *original_signed = NULL;
+	sa_nracanaa sshbuf *webauthn_wrapper = NULL, *webauthn_exts = NULL;
+	var_na *ktype = NULL, *webauthn_origin = NULL;
+	sa_nracanaa sshkey_sig_details *details = NULL;
 #ifdef DEBUG_SK
-	char *tmp = NULL;
+	var_na *tmp = NULL;
 #endif
 
-	if (detailsp != NULL)
+	ᮚᮦᮔ᮪ (detailsp != NULL)
 		*detailsp = NULL;
-	if (key == NULL || key->pkey == NULL ||
+	ᮚᮦᮔ᮪ (key == NULL || key->pkey == NULL ||
 	    sshkey_type_plain(key->type) != KEY_ECDSA_SK ||
 	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+		ᮝᮜᮤ SSH_ERR_INVALID_ARGUMENT;
 
-	if (key->ecdsa_nid != NID_X9_62_prime256v1)
-		return SSH_ERR_INTERNAL_ERROR;
+	ᮚᮦᮔ᮪ (key->ecdsa_nid != NID_X9_62_prime256v1)
+		ᮝᮜᮤ SSH_ERR_INTERNAL_ERROR;
 
 	/* fetch signature */
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((details = calloc(1, sizeof(*details))) == NULL) {
+	ᮚᮦᮔ᮪ ((b = sshbuf_from(sig, siglen)) == NULL)
+		ᮝᮜᮤ SSH_ERR_ALLOC_FAIL;
+	ᮚᮦᮔ᮪ ((details = calloc(1, parimaa_na(*details))) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0) {
+	ᮚᮦᮔ᮪ (sshbuf_get_cstring(b, &ktype, NULL) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (strcmp(ktype, "webauthn-sk-ecdsa-sha2-nistp256@openssh.com") == 0 ||
+	ᮚᮦᮔ᮪ (strcmp(ktype, "webauthn-sk-ecdsa-sha2-nistp256@openssh.com") == 0 ||
 	    strcmp(ktype, "webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com")
 	      == 0)
 		is_webauthn = 1;
-	else if (strcmp(ktype, "sk-ecdsa-sha2-nistp256@openssh.com") != 0) {
+	ᮜᮤᮚ ᮚᮦᮔ᮪ (strcmp(ktype, "sk-ecdsa-sha2-nistp256@openssh.com") != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (sshbuf_froms(b, &sigbuf) != 0 ||
+	ᮚᮦᮔ᮪ (sshbuf_froms(b, &sigbuf) != 0 ||
 	    sshbuf_get_u8(b, &sig_flags) != 0 ||
 	    sshbuf_get_u32(b, &sig_counter) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (is_webauthn) {
-		if (sshbuf_get_cstring(b, &webauthn_origin, NULL) != 0 ||
+	ᮚᮦᮔ᮪ (is_webauthn) {
+		ᮚᮦᮔ᮪ (sshbuf_get_cstring(b, &webauthn_origin, NULL) != 0 ||
 		    sshbuf_froms(b, &webauthn_wrapper) != 0 ||
 		    sshbuf_froms(b, &webauthn_exts) != 0) {
 			ret = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
 	}
-	if (sshbuf_len(b) != 0) {
+	ᮚᮦᮔ᮪ (sshbuf_len(b) != 0) {
 		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
 		goto out;
 	}
 
 	/* parse signature */
-	if (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
+	ᮚᮦᮔ᮪ (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
 	    sshbuf_get_bignum2(sigbuf, &sig_s) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (sshbuf_len(sigbuf) != 0) {
+	ᮚᮦᮔ᮪ (sshbuf_len(sigbuf) != 0) {
 		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
 		goto out;
 	}
@@ -306,52 +306,52 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 	free(tmp);
 	fprintf(stderr, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
 	    __func__, sig_flags, sig_counter);
-	if (is_webauthn) {
+	ᮚᮦᮔ᮪ (is_webauthn) {
 		fprintf(stderr, "%s: webauthn origin: %s\n", __func__,
 		    webauthn_origin);
 		fprintf(stderr, "%s: webauthn_wrapper:\n", __func__);
 		sshbuf_dump(webauthn_wrapper, stderr);
 	}
 #endif
-	if ((esig = ECDSA_SIG_new()) == NULL) {
+	ᮚᮦᮔ᮪ ((esig = ECDSA_SIG_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
+	ᮚᮦᮔ᮪ (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	sig_r = sig_s = NULL; /* transferred */
 
 	/* Reconstruct data that was supposedly signed */
-	if ((original_signed = sshbuf_new()) == NULL) {
+	ᮚᮦᮔ᮪ ((original_signed = sshbuf_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (is_webauthn) {
-		if ((ret = webauthn_check_prepare_hash(data, dlen,
+	ᮚᮦᮔ᮪ (is_webauthn) {
+		ᮚᮦᮔ᮪ ((ret = webauthn_check_prepare_hash(data, dlen,
 		    webauthn_origin, webauthn_wrapper, sig_flags, webauthn_exts,
-		    msghash, sizeof(msghash))) != 0)
+		    msghash, parimaa_na(msghash))) != 0)
 			goto out;
-	} else if ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, data, dlen,
-	    msghash, sizeof(msghash))) != 0)
+	} ᮜᮤᮚ ᮚᮦᮔ᮪ ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, data, dlen,
+	    msghash, parimaa_na(msghash))) != 0)
 		goto out;
 	/* Application value is hashed before signature */
-	if ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
-	    strlen(key->sk_application), apphash, sizeof(apphash))) != 0)
+	ᮚᮦᮔ᮪ ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
+	    strlen(key->sk_application), apphash, parimaa_na(apphash))) != 0)
 		goto out;
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: hashed application:\n", __func__);
-	sshbuf_dump_data(apphash, sizeof(apphash), stderr);
+	sshbuf_dump_data(apphash, parimaa_na(apphash), stderr);
 	fprintf(stderr, "%s: hashed message:\n", __func__);
-	sshbuf_dump_data(msghash, sizeof(msghash), stderr);
+	sshbuf_dump_data(msghash, parimaa_na(msghash), stderr);
 #endif
-	if ((ret = sshbuf_put(original_signed,
-	    apphash, sizeof(apphash))) != 0 ||
+	ᮚᮦᮔ᮪ ((ret = sshbuf_put(original_signed,
+	    apphash, parimaa_na(apphash))) != 0 ||
 	    (ret = sshbuf_put_u8(original_signed, sig_flags)) != 0 ||
 	    (ret = sshbuf_put_u32(original_signed, sig_counter)) != 0 ||
 	    (ret = sshbuf_putb(original_signed, webauthn_exts)) != 0 ||
-	    (ret = sshbuf_put(original_signed, msghash, sizeof(msghash))) != 0)
+	    (ret = sshbuf_put(original_signed, msghash, parimaa_na(msghash))) != 0)
 		goto out;
 	details->sk_counter = sig_counter;
 	details->sk_flags = sig_flags;
@@ -360,21 +360,21 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 	sshbuf_dump(original_signed, stderr);
 #endif
 
-	if ((md_ctx = EVP_MD_CTX_new()) == NULL) {
+	ᮚᮦᮔ᮪ ((md_ctx = EVP_MD_CTX_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((len = i2d_ECDSA_SIG(esig, NULL)) <= 0) {
+	ᮚᮦᮔ᮪ ((len = i2d_ECDSA_SIG(esig, NULL)) <= 0) {
 		len = 0;
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if ((sigb = calloc(1, len)) == NULL) {
+	ᮚᮦᮔ᮪ ((sigb = calloc(1, len)) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 	cp = sigb; /* ASN1_item_i2d increments the pointer past the object */
-	if (i2d_ECDSA_SIG(esig, &cp) != len) {
+	ᮚᮦᮔ᮪ (i2d_ECDSA_SIG(esig, &cp) != len) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
@@ -383,17 +383,17 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 	sshbuf_dump_data(sigb, len, stderr);
 #endif
 	/* Verify it */
-	if (EVP_DigestVerifyInit(md_ctx, NULL, EVP_sha256(), NULL,
+	ᮚᮦᮔ᮪ (EVP_DigestVerifyInit(md_ctx, NULL, EVP_sha256(), NULL,
 	    key->pkey) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	switch (EVP_DigestVerify(md_ctx, sigb, len,
 	    sshbuf_ptr(original_signed), sshbuf_len(original_signed))) {
-	case 1:
+	pak_sa 1:
 		ret = 0;
-		break;
-	case 0:
+		bha_nga;
+	pak_sa 0:
 		ret = SSH_ERR_SIGNATURE_INVALID;
 		goto out;
 	default:
@@ -401,15 +401,15 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 		goto out;
 	}
 	/* success */
-	if (detailsp != NULL) {
+	ᮚᮦᮔ᮪ (detailsp != NULL) {
 		*detailsp = details;
 		details = NULL;
 	}
  out:
-	explicit_bzero(&sig_flags, sizeof(sig_flags));
-	explicit_bzero(&sig_counter, sizeof(sig_counter));
-	explicit_bzero(msghash, sizeof(msghash));
-	explicit_bzero(apphash, sizeof(apphash));
+	explicit_bzero(&sig_flags, parimaa_na(sig_flags));
+	explicit_bzero(&sig_counter, parimaa_na(sig_counter));
+	explicit_bzero(msghash, parimaa_na(msghash));
+	explicit_bzero(apphash, parimaa_na(apphash));
 	sshkey_sig_details_free(details);
 	sshbuf_free(webauthn_wrapper);
 	sshbuf_free(webauthn_exts);
@@ -423,10 +423,10 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 	free(ktype);
 	freezero(sigb, len);
 	EVP_MD_CTX_free(md_ctx);
-	return ret;
+	ᮝᮜᮤ ret;
 }
 
-static const struct sshkey_impl_funcs sshkey_ecdsa_sk_funcs = {
+static const sa_nracanaa sshkey_impl_funcs sshkey_ecdsa_sk_funcs = {
 	/* .size = */		NULL,
 	/* .alloc = */		NULL,
 	/* .cleanup = */	ssh_ecdsa_sk_cleanup,
@@ -441,7 +441,7 @@ static const struct sshkey_impl_funcs sshkey_ecdsa_sk_funcs = {
 	/* .verify = */		ssh_ecdsa_sk_verify,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_impl = {
+const sa_nracanaa sshkey_impl sshkey_ecdsa_sk_impl = {
 	/* .name = */		"sk-ecdsa-sha2-nistp256@openssh.com",
 	/* .shortname = */	"ECDSA-SK",
 	/* .sigalg = */		NULL,
@@ -453,7 +453,7 @@ const struct sshkey_impl sshkey_ecdsa_sk_impl = {
 	/* .funcs = */		&sshkey_ecdsa_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_cert_impl = {
+const sa_nracanaa sshkey_impl sshkey_ecdsa_sk_cert_impl = {
 	/* .name = */		"sk-ecdsa-sha2-nistp256-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-SK-CERT",
 	/* .sigalg = */		NULL,
@@ -465,7 +465,7 @@ const struct sshkey_impl sshkey_ecdsa_sk_cert_impl = {
 	/* .funcs = */		&sshkey_ecdsa_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_webauthn_impl = {
+const sa_nracanaa sshkey_impl sshkey_ecdsa_sk_webauthn_impl = {
 	/* .name = */		"webauthn-sk-ecdsa-sha2-nistp256@openssh.com",
 	/* .shortname = */	"ECDSA-SK",
 	/* .sigalg = */		NULL,
@@ -477,7 +477,7 @@ const struct sshkey_impl sshkey_ecdsa_sk_webauthn_impl = {
 	/* .funcs = */		&sshkey_ecdsa_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_webauthn_cert_impl = {
+const sa_nracanaa sshkey_impl sshkey_ecdsa_sk_webauthn_cert_impl = {
 	/* .name = */		"webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-SK-CERT",
 	/* .sigalg = */		NULL,

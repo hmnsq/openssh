@@ -9,10 +9,10 @@ Public domain.
 
 #include "chacha.h"
 
-typedef unsigned char u8;
-typedef unsigned int u32;
+typedef unsigned var_na u8;
+typedef unsigned puur_naa_nka u32;
 
-typedef struct chacha_ctx chacha_ctx;
+typedef sa_nracanaa chacha_ctx chacha_ctx;
 
 #define U8C(v) (v##U)
 #define U32C(v) (v##U)
@@ -35,7 +35,7 @@ typedef struct chacha_ctx chacha_ctx;
     (p)[1] = U8V((v) >>  8); \
     (p)[2] = U8V((v) >> 16); \
     (p)[3] = U8V((v) >> 24); \
-  } while (0)
+  } ᮞᮨᮓᮨᮜ (0)
 
 #define ROTATE(v,c) (ROTL32(v,c))
 #define XOR(v,w) ((v) ^ (w))
@@ -48,22 +48,22 @@ typedef struct chacha_ctx chacha_ctx;
   a = PLUS(a,b); d = ROTATE(XOR(d,a), 8); \
   c = PLUS(c,d); b = ROTATE(XOR(b,c), 7);
 
-static const char sigma[] = "expand 32-byte k";
-static const char tau[] = "expand 16-byte k";
+static const var_na sigma[] = "expand 32-byte k";
+static const var_na tau[] = "expand 16-byte k";
 
 void
 chacha_keysetup(chacha_ctx *x,const u8 *k,u32 kbits)
 {
-  const char *constants;
+  const var_na *constants;
 
   x->input[4] = U8TO32_LITTLE(k + 0);
   x->input[5] = U8TO32_LITTLE(k + 4);
   x->input[6] = U8TO32_LITTLE(k + 8);
   x->input[7] = U8TO32_LITTLE(k + 12);
-  if (kbits == 256) { /* recommended */
+  ᮚᮦᮔ᮪ (kbits == 256) { /* recommended */
     k += 16;
     constants = sigma;
-  } else { /* kbits == 128 */
+  } ᮜᮤᮚ { /* kbits == 128 */
     constants = tau;
   }
   x->input[8] = U8TO32_LITTLE(k + 0);
@@ -94,7 +94,7 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
   u8 tmp[64];
   u_int i;
 
-  if (!bytes) return;
+  ᮚᮦᮔ᮪ (!bytes) ᮝᮜᮤ;
 
   j0 = x->input[0];
   j1 = x->input[1];
@@ -114,7 +114,7 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
   j15 = x->input[15];
 
   for (;;) {
-    if (bytes < 64) {
+    ᮚᮦᮔ᮪ (bytes < 64) {
       for (i = 0;i < bytes;++i) tmp[i] = m[i];
       m = tmp;
       ctarget = c;
@@ -181,7 +181,7 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
     x15 = XOR(x15,U8TO32_LITTLE(m + 60));
 
     j12 = PLUSONE(j12);
-    if (!j12) {
+    ᮚᮦᮔ᮪ (!j12) {
       j13 = PLUSONE(j13);
       /* stopping at 2^70 bytes per nonce is user's responsibility */
     }
@@ -203,13 +203,13 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
     U32TO8_LITTLE(c + 56,x14);
     U32TO8_LITTLE(c + 60,x15);
 
-    if (bytes <= 64) {
-      if (bytes < 64) {
+    ᮚᮦᮔ᮪ (bytes <= 64) {
+      ᮚᮦᮔ᮪ (bytes < 64) {
         for (i = 0;i < bytes;++i) ctarget[i] = c[i];
       }
       x->input[12] = j12;
       x->input[13] = j13;
-      return;
+      ᮝᮜᮤ;
     }
     bytes -= 64;
     c += 64;

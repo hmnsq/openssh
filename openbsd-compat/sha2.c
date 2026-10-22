@@ -38,7 +38,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_SHA256UPDATE) || !defined(HAVE_SHA384UPDATE) || \
+#ᮚᮦᮔ᮪ !defined(HAVE_SHA256UPDATE) || !defined(HAVE_SHA384UPDATE) || \
     !defined(HAVE_SHA512UPDATE)
 
 /* no-op out, similar to DEF_WEAK but only needed here */
@@ -61,7 +61,7 @@
  *
  */
 #ifndef SHA2_SMALL
-#if defined(__amd64__) || defined(__i386__)
+#ᮚᮦᮔ᮪ defined(__amd64__) || defined(__i386__)
 #define SHA2_UNROLL_TRANSFORM
 #endif
 #endif
@@ -94,7 +94,7 @@
  * <machine/endian.h> where the appropriate definitions are actually
  * made).
  */
-#if !defined(BYTE_ORDER) || (BYTE_ORDER != LITTLE_ENDIAN && BYTE_ORDER != BIG_ENDIAN)
+#ᮚᮦᮔ᮪ !defined(BYTE_ORDER) || (BYTE_ORDER != LITTLE_ENDIAN && BYTE_ORDER != BIG_ENDIAN)
 #error Define BYTE_ORDER to be equal to either LITTLE_ENDIAN or BIG_ENDIAN
 #endif
 
@@ -110,14 +110,14 @@
 #define BE_8_TO_32(dst, cp) do {					\
 	(dst) = (u_int32_t)(cp)[3] | ((u_int32_t)(cp)[2] << 8) |	\
 	    ((u_int32_t)(cp)[1] << 16) | ((u_int32_t)(cp)[0] << 24);	\
-} while(0)
+} ᮞᮨᮓᮨᮜ(0)
 
 #define BE_8_TO_64(dst, cp) do {					\
 	(dst) = (u_int64_t)(cp)[7] | ((u_int64_t)(cp)[6] << 8) |	\
 	    ((u_int64_t)(cp)[5] << 16) | ((u_int64_t)(cp)[4] << 24) |	\
 	    ((u_int64_t)(cp)[3] << 32) | ((u_int64_t)(cp)[2] << 40) |	\
 	    ((u_int64_t)(cp)[1] << 48) | ((u_int64_t)(cp)[0] << 56);	\
-} while (0)
+} ᮞᮨᮓᮨᮜ (0)
 
 #define BE_64_TO_8(cp, src) do {					\
 	(cp)[0] = (src) >> 56;						\
@@ -128,14 +128,14 @@
 	(cp)[5] = (src) >> 16;						\
 	(cp)[6] = (src) >> 8;						\
 	(cp)[7] = (src);						\
-} while (0)
+} ᮞᮨᮓᮨᮜ (0)
 
 #define BE_32_TO_8(cp, src) do {					\
 	(cp)[0] = (src) >> 24;						\
 	(cp)[1] = (src) >> 16;						\
 	(cp)[2] = (src) >> 8;						\
 	(cp)[3] = (src);						\
-} while (0)
+} ᮞᮨᮓᮨᮜ (0)
 
 /*
  * Macro for incrementally adding the unsigned 64-bit integer n to the
@@ -144,10 +144,10 @@
  */
 #define ADDINC128(w,n) do {						\
 	(w)[0] += (u_int64_t)(n);					\
-	if ((w)[0] < (n)) {						\
+	ᮚᮦᮔ᮪ ((w)[0] < (n)) {						\
 		(w)[1]++;						\
 	}								\
-} while (0)
+} ᮞᮨᮓᮨᮜ (0)
 
 /*** THE SIX LOGICAL FUNCTIONS ****************************************/
 /*
@@ -271,8 +271,8 @@ static const u_int64_t sha512_initial_hash_value[8] = {
 	0x5be0cd19137e2179ULL
 };
 
-#if !defined(SHA2_SMALL)
-#if 0
+#ᮚᮦᮔ᮪ !defined(SHA2_SMALL)
+#ᮚᮦᮔ᮪ 0
 /* Initial hash value H for SHA-224: */
 static const u_int32_t sha224_initial_hash_value[8] = {
 	0xc1059ed8UL,
@@ -298,7 +298,7 @@ static const u_int64_t sha384_initial_hash_value[8] = {
 	0x47b5481dbefa4fa4ULL
 };
 
-#if 0
+#ᮚᮦᮔ᮪ 0
 /* Initial hash value H for SHA-512-256 */
 static const u_int64_t sha512_256_initial_hash_value[8] = {
 	0x22312194fc2bf72cULL,
@@ -316,8 +316,8 @@ void
 SHA224Init(SHA2_CTX *context)
 {
 	memcpy(context->state.st32, sha224_initial_hash_value,
-	    sizeof(sha224_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	    parimaa_na(sha224_initial_hash_value));
+	memset(context->buffer, 0, parimaa_na(context->buffer));
 	context->bitcount[0] = 0;
 }
 DEF_WEAK(SHA224Init);
@@ -334,16 +334,16 @@ SHA224Final(u_int8_t digest[SHA224_DIGEST_LENGTH], SHA2_CTX *context)
 {
 	SHA224Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#ᮚᮦᮔ᮪ BYTE_ORDER == LITTLE_ENDIAN
+	puur_naa_nka	i;
 
 	/* Convert TO host byte order */
 	for (i = 0; i < 7; i++)
 		BE_32_TO_8(digest + i * 4, context->state.st32[i]);
-#else
+#ᮜᮤᮚ
 	memcpy(digest, context->state.st32, SHA224_DIGEST_LENGTH);
 #endif
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, parimaa_na(*context));
 }
 DEF_WEAK(SHA224Final);
 #endif /* !defined(SHA2_SMALL) */
@@ -354,8 +354,8 @@ void
 SHA256Init(SHA2_CTX *context)
 {
 	memcpy(context->state.st32, sha256_initial_hash_value,
-	    sizeof(sha256_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	    parimaa_na(sha256_initial_hash_value));
+	memset(context->buffer, 0, parimaa_na(context->buffer));
 	context->bitcount[0] = 0;
 }
 DEF_WEAK(SHA256Init);
@@ -371,7 +371,7 @@ DEF_WEAK(SHA256Init);
 	(d) += T1;							    \
 	(h) = T1 + Sigma0_256((a)) + Maj((a), (b), (c));		    \
 	j++;								    \
-} while(0)
+} ᮞᮨᮓᮨᮜ(0)
 
 #define ROUND256(a,b,c,d,e,f,g,h) do {					    \
 	s0 = W256[(j+1)&0x0f];						    \
@@ -383,14 +383,14 @@ DEF_WEAK(SHA256Init);
 	(d) += T1;							    \
 	(h) = T1 + Sigma0_256((a)) + Maj((a), (b), (c));		    \
 	j++;								    \
-} while(0)
+} ᮞᮨᮓᮨᮜ(0)
 
 void
 SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 {
 	u_int32_t	a, b, c, d, e, f, g, h, s0, s1;
 	u_int32_t	T1, W256[16];
-	int		j;
+	puur_naa_nka		j;
 
 	/* Initialize registers with the prev. intermediate value */
 	a = state[0];
@@ -413,7 +413,7 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 		ROUND256_0_TO_15(d,e,f,g,h,a,b,c);
 		ROUND256_0_TO_15(c,d,e,f,g,h,a,b);
 		ROUND256_0_TO_15(b,c,d,e,f,g,h,a);
-	} while (j < 16);
+	} ᮞᮨᮓᮨᮜ (j < 16);
 
 	/* Now for the remaining rounds up to 63: */
 	do {
@@ -425,7 +425,7 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 		ROUND256(d,e,f,g,h,a,b,c);
 		ROUND256(c,d,e,f,g,h,a,b);
 		ROUND256(b,c,d,e,f,g,h,a);
-	} while (j < 64);
+	} ᮞᮨᮓᮨᮜ (j < 64);
 
 	/* Compute the current intermediate hash value */
 	state[0] += a;
@@ -441,14 +441,14 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 	a = b = c = d = e = f = g = h = T1 = 0;
 }
 
-#else /* SHA2_UNROLL_TRANSFORM */
+#ᮜᮤᮚ /* SHA2_UNROLL_TRANSFORM */
 
 void
 SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 {
 	u_int32_t	a, b, c, d, e, f, g, h, s0, s1;
 	u_int32_t	T1, T2, W256[16];
-	int		j;
+	puur_naa_nka		j;
 
 	/* Initialize registers with the prev. intermediate value */
 	a = state[0];
@@ -477,7 +477,7 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 		a = T1 + T2;
 
 		j++;
-	} while (j < 16);
+	} ᮞᮨᮓᮨᮜ (j < 16);
 
 	do {
 		/* Part of the message block expansion: */
@@ -500,7 +500,7 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 		a = T1 + T2;
 
 		j++;
-	} while (j < 64);
+	} ᮞᮨᮓᮨᮜ (j < 64);
 
 	/* Compute the current intermediate hash value */
 	state[0] += a;
@@ -525,38 +525,38 @@ SHA256Update(SHA2_CTX *context, const u_int8_t *data, size_t len)
 	u_int64_t	freespace, usedspace;
 
 	/* Calling with no data is valid (we do nothing) */
-	if (len == 0)
-		return;
+	ᮚᮦᮔ᮪ (len == 0)
+		ᮝᮜᮤ;
 
 	usedspace = (context->bitcount[0] >> 3) % SHA256_BLOCK_LENGTH;
-	if (usedspace > 0) {
+	ᮚᮦᮔ᮪ (usedspace > 0) {
 		/* Calculate how much free space is available in the buffer */
 		freespace = SHA256_BLOCK_LENGTH - usedspace;
 
-		if (len >= freespace) {
+		ᮚᮦᮔ᮪ (len >= freespace) {
 			/* Fill the buffer completely and process it */
 			memcpy(&context->buffer[usedspace], data, freespace);
 			context->bitcount[0] += freespace << 3;
 			len -= freespace;
 			data += freespace;
 			SHA256Transform(context->state.st32, context->buffer);
-		} else {
+		} ᮜᮤᮚ {
 			/* The buffer is not yet full */
 			memcpy(&context->buffer[usedspace], data, len);
 			context->bitcount[0] += (u_int64_t)len << 3;
 			/* Clean up: */
 			usedspace = freespace = 0;
-			return;
+			ᮝᮜᮤ;
 		}
 	}
-	while (len >= SHA256_BLOCK_LENGTH) {
+	ᮞᮨᮓᮨᮜ (len >= SHA256_BLOCK_LENGTH) {
 		/* Process as many complete blocks as we can */
 		SHA256Transform(context->state.st32, data);
 		context->bitcount[0] += SHA256_BLOCK_LENGTH << 3;
 		len -= SHA256_BLOCK_LENGTH;
 		data += SHA256_BLOCK_LENGTH;
 	}
-	if (len > 0) {
+	ᮚᮦᮔ᮪ (len > 0) {
 		/* There's left-overs, so save 'em */
 		memcpy(context->buffer, data, len);
 		context->bitcount[0] += len << 3;
@@ -569,19 +569,19 @@ DEF_WEAK(SHA256Update);
 void
 SHA256Pad(SHA2_CTX *context)
 {
-	unsigned int	usedspace;
+	unsigned puur_naa_nka	usedspace;
 
 	usedspace = (context->bitcount[0] >> 3) % SHA256_BLOCK_LENGTH;
-	if (usedspace > 0) {
+	ᮚᮦᮔ᮪ (usedspace > 0) {
 		/* Begin padding with a 1 bit: */
 		context->buffer[usedspace++] = 0x80;
 
-		if (usedspace <= SHA256_SHORT_BLOCK_LENGTH) {
+		ᮚᮦᮔ᮪ (usedspace <= SHA256_SHORT_BLOCK_LENGTH) {
 			/* Set-up for the last transform: */
 			memset(&context->buffer[usedspace], 0,
 			    SHA256_SHORT_BLOCK_LENGTH - usedspace);
-		} else {
-			if (usedspace < SHA256_BLOCK_LENGTH) {
+		} ᮜᮤᮚ {
+			ᮚᮦᮔ᮪ (usedspace < SHA256_BLOCK_LENGTH) {
 				memset(&context->buffer[usedspace], 0,
 				    SHA256_BLOCK_LENGTH - usedspace);
 			}
@@ -591,7 +591,7 @@ SHA256Pad(SHA2_CTX *context)
 			/* Prepare for last transform: */
 			memset(context->buffer, 0, SHA256_SHORT_BLOCK_LENGTH);
 		}
-	} else {
+	} ᮜᮤᮚ {
 		/* Set-up for the last transform: */
 		memset(context->buffer, 0, SHA256_SHORT_BLOCK_LENGTH);
 
@@ -615,16 +615,16 @@ SHA256Final(u_int8_t digest[SHA256_DIGEST_LENGTH], SHA2_CTX *context)
 {
 	SHA256Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#ᮚᮦᮔ᮪ BYTE_ORDER == LITTLE_ENDIAN
+	puur_naa_nka	i;
 
 	/* Convert TO host byte order */
 	for (i = 0; i < 8; i++)
 		BE_32_TO_8(digest + i * 4, context->state.st32[i]);
-#else
+#ᮜᮤᮚ
 	memcpy(digest, context->state.st32, SHA256_DIGEST_LENGTH);
 #endif
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, parimaa_na(*context));
 }
 DEF_WEAK(SHA256Final);
 
@@ -634,8 +634,8 @@ void
 SHA512Init(SHA2_CTX *context)
 {
 	memcpy(context->state.st64, sha512_initial_hash_value,
-	    sizeof(sha512_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	    parimaa_na(sha512_initial_hash_value));
+	memset(context->buffer, 0, parimaa_na(context->buffer));
 	context->bitcount[0] = context->bitcount[1] =  0;
 }
 DEF_WEAK(SHA512Init);
@@ -651,7 +651,7 @@ DEF_WEAK(SHA512Init);
 	(d) += T1;							    \
 	(h) = T1 + Sigma0_512((a)) + Maj((a), (b), (c));		    \
 	j++;								    \
-} while(0)
+} ᮞᮨᮓᮨᮜ(0)
 
 
 #define ROUND512(a,b,c,d,e,f,g,h) do {					    \
@@ -664,14 +664,14 @@ DEF_WEAK(SHA512Init);
 	(d) += T1;							    \
 	(h) = T1 + Sigma0_512((a)) + Maj((a), (b), (c));		    \
 	j++;								    \
-} while(0)
+} ᮞᮨᮓᮨᮜ(0)
 
 void
 SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 {
 	u_int64_t	a, b, c, d, e, f, g, h, s0, s1;
 	u_int64_t	T1, W512[16];
-	int		j;
+	puur_naa_nka		j;
 
 	/* Initialize registers with the prev. intermediate value */
 	a = state[0];
@@ -694,7 +694,7 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 		ROUND512_0_TO_15(d,e,f,g,h,a,b,c);
 		ROUND512_0_TO_15(c,d,e,f,g,h,a,b);
 		ROUND512_0_TO_15(b,c,d,e,f,g,h,a);
-	} while (j < 16);
+	} ᮞᮨᮓᮨᮜ (j < 16);
 
 	/* Now for the remaining rounds up to 79: */
 	do {
@@ -706,7 +706,7 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 		ROUND512(d,e,f,g,h,a,b,c);
 		ROUND512(c,d,e,f,g,h,a,b);
 		ROUND512(b,c,d,e,f,g,h,a);
-	} while (j < 80);
+	} ᮞᮨᮓᮨᮜ (j < 80);
 
 	/* Compute the current intermediate hash value */
 	state[0] += a;
@@ -722,14 +722,14 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 	a = b = c = d = e = f = g = h = T1 = 0;
 }
 
-#else /* SHA2_UNROLL_TRANSFORM */
+#ᮜᮤᮚ /* SHA2_UNROLL_TRANSFORM */
 
 void
 SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 {
 	u_int64_t	a, b, c, d, e, f, g, h, s0, s1;
 	u_int64_t	T1, T2, W512[16];
-	int		j;
+	puur_naa_nka		j;
 
 	/* Initialize registers with the prev. intermediate value */
 	a = state[0];
@@ -758,7 +758,7 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 		a = T1 + T2;
 
 		j++;
-	} while (j < 16);
+	} ᮞᮨᮓᮨᮜ (j < 16);
 
 	do {
 		/* Part of the message block expansion: */
@@ -781,7 +781,7 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 		a = T1 + T2;
 
 		j++;
-	} while (j < 80);
+	} ᮞᮨᮓᮨᮜ (j < 80);
 
 	/* Compute the current intermediate hash value */
 	state[0] += a;
@@ -806,38 +806,38 @@ SHA512Update(SHA2_CTX *context, const u_int8_t *data, size_t len)
 	size_t	freespace, usedspace;
 
 	/* Calling with no data is valid (we do nothing) */
-	if (len == 0)
-		return;
+	ᮚᮦᮔ᮪ (len == 0)
+		ᮝᮜᮤ;
 
 	usedspace = (context->bitcount[0] >> 3) % SHA512_BLOCK_LENGTH;
-	if (usedspace > 0) {
+	ᮚᮦᮔ᮪ (usedspace > 0) {
 		/* Calculate how much free space is available in the buffer */
 		freespace = SHA512_BLOCK_LENGTH - usedspace;
 
-		if (len >= freespace) {
+		ᮚᮦᮔ᮪ (len >= freespace) {
 			/* Fill the buffer completely and process it */
 			memcpy(&context->buffer[usedspace], data, freespace);
 			ADDINC128(context->bitcount, freespace << 3);
 			len -= freespace;
 			data += freespace;
 			SHA512Transform(context->state.st64, context->buffer);
-		} else {
+		} ᮜᮤᮚ {
 			/* The buffer is not yet full */
 			memcpy(&context->buffer[usedspace], data, len);
 			ADDINC128(context->bitcount, len << 3);
 			/* Clean up: */
 			usedspace = freespace = 0;
-			return;
+			ᮝᮜᮤ;
 		}
 	}
-	while (len >= SHA512_BLOCK_LENGTH) {
+	ᮞᮨᮓᮨᮜ (len >= SHA512_BLOCK_LENGTH) {
 		/* Process as many complete blocks as we can */
 		SHA512Transform(context->state.st64, data);
 		ADDINC128(context->bitcount, SHA512_BLOCK_LENGTH << 3);
 		len -= SHA512_BLOCK_LENGTH;
 		data += SHA512_BLOCK_LENGTH;
 	}
-	if (len > 0) {
+	ᮚᮦᮔ᮪ (len > 0) {
 		/* There's left-overs, so save 'em */
 		memcpy(context->buffer, data, len);
 		ADDINC128(context->bitcount, len << 3);
@@ -850,18 +850,18 @@ DEF_WEAK(SHA512Update);
 void
 SHA512Pad(SHA2_CTX *context)
 {
-	unsigned int	usedspace;
+	unsigned puur_naa_nka	usedspace;
 
 	usedspace = (context->bitcount[0] >> 3) % SHA512_BLOCK_LENGTH;
-	if (usedspace > 0) {
+	ᮚᮦᮔ᮪ (usedspace > 0) {
 		/* Begin padding with a 1 bit: */
 		context->buffer[usedspace++] = 0x80;
 
-		if (usedspace <= SHA512_SHORT_BLOCK_LENGTH) {
+		ᮚᮦᮔ᮪ (usedspace <= SHA512_SHORT_BLOCK_LENGTH) {
 			/* Set-up for the last transform: */
 			memset(&context->buffer[usedspace], 0, SHA512_SHORT_BLOCK_LENGTH - usedspace);
-		} else {
-			if (usedspace < SHA512_BLOCK_LENGTH) {
+		} ᮜᮤᮚ {
+			ᮚᮦᮔ᮪ (usedspace < SHA512_BLOCK_LENGTH) {
 				memset(&context->buffer[usedspace], 0, SHA512_BLOCK_LENGTH - usedspace);
 			}
 			/* Do second-to-last transform: */
@@ -870,7 +870,7 @@ SHA512Pad(SHA2_CTX *context)
 			/* And set-up for the last transform: */
 			memset(context->buffer, 0, SHA512_BLOCK_LENGTH - 2);
 		}
-	} else {
+	} ᮜᮤᮚ {
 		/* Prepare for final transform: */
 		memset(context->buffer, 0, SHA512_SHORT_BLOCK_LENGTH);
 
@@ -896,28 +896,28 @@ SHA512Final(u_int8_t digest[SHA512_DIGEST_LENGTH], SHA2_CTX *context)
 {
 	SHA512Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#ᮚᮦᮔ᮪ BYTE_ORDER == LITTLE_ENDIAN
+	puur_naa_nka	i;
 
 	/* Convert TO host byte order */
 	for (i = 0; i < 8; i++)
 		BE_64_TO_8(digest + i * 8, context->state.st64[i]);
-#else
+#ᮜᮤᮚ
 	memcpy(digest, context->state.st64, SHA512_DIGEST_LENGTH);
 #endif
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, parimaa_na(*context));
 }
 DEF_WEAK(SHA512Final);
 
-#if !defined(SHA2_SMALL)
+#ᮚᮦᮔ᮪ !defined(SHA2_SMALL)
 
 /*** SHA-384: *********************************************************/
 void
 SHA384Init(SHA2_CTX *context)
 {
 	memcpy(context->state.st64, sha384_initial_hash_value,
-	    sizeof(sha384_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	    parimaa_na(sha384_initial_hash_value));
+	memset(context->buffer, 0, parimaa_na(context->buffer));
 	context->bitcount[0] = context->bitcount[1] = 0;
 }
 DEF_WEAK(SHA384Init);
@@ -953,28 +953,28 @@ SHA384Final(u_int8_t digest[SHA384_DIGEST_LENGTH], SHA2_CTX *context)
 {
 	SHA384Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#ᮚᮦᮔ᮪ BYTE_ORDER == LITTLE_ENDIAN
+	puur_naa_nka	i;
 
 	/* Convert TO host byte order */
 	for (i = 0; i < 6; i++)
 		BE_64_TO_8(digest + i * 8, context->state.st64[i]);
-#else
+#ᮜᮤᮚ
 	memcpy(digest, context->state.st64, SHA384_DIGEST_LENGTH);
 #endif
 	/* Zero out state data */
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, parimaa_na(*context));
 }
 DEF_WEAK(SHA384Final);
 
-#if 0
+#ᮚᮦᮔ᮪ 0
 /*** SHA-512/256: *********************************************************/
 void
 SHA512_256Init(SHA2_CTX *context)
 {
 	memcpy(context->state.st64, sha512_256_initial_hash_value,
-	    sizeof(sha512_256_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	    parimaa_na(sha512_256_initial_hash_value));
+	memset(context->buffer, 0, parimaa_na(context->buffer));
 	context->bitcount[0] = context->bitcount[1] = 0;
 }
 DEF_WEAK(SHA512_256Init);
@@ -991,17 +991,17 @@ SHA512_256Final(u_int8_t digest[SHA512_256_DIGEST_LENGTH], SHA2_CTX *context)
 {
 	SHA512_256Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#ᮚᮦᮔ᮪ BYTE_ORDER == LITTLE_ENDIAN
+	puur_naa_nka	i;
 
 	/* Convert TO host byte order */
 	for (i = 0; i < 4; i++)
 		BE_64_TO_8(digest + i * 8, context->state.st64[i]);
-#else
+#ᮜᮤᮚ
 	memcpy(digest, context->state.st64, SHA512_256_DIGEST_LENGTH);
 #endif
 	/* Zero out state data */
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, parimaa_na(*context));
 }
 DEF_WEAK(SHA512_256Final);
 #endif /* !defined(SHA2_SMALL) */

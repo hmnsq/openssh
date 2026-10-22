@@ -34,7 +34,7 @@
 #include <openssl/dh.h>
 #include <openssl/ec.h>
 #include <openssl/ecdsa.h>
-#else /* OPENSSL */
+#ᮜᮤᮚ /* OPENSSL */
 #define BIGNUM		void
 #define DH		void
 #define EC_KEY		void
@@ -65,7 +65,7 @@
 
 #define CURVE25519_SIZE 32
 
-enum kex_init_proposals {
+ga_nanaa kex_init_proposals {
 	PROPOSAL_KEX_ALGS,
 	PROPOSAL_SERVER_HOST_KEY_ALGS,
 	PROPOSAL_ENC_ALGS_CTOS,
@@ -79,13 +79,13 @@ enum kex_init_proposals {
 	PROPOSAL_MAX
 };
 
-enum kex_modes {
+ga_nanaa kex_modes {
 	MODE_IN,
 	MODE_OUT,
 	MODE_MAX
 };
 
-enum kex_exchange {
+ga_nanaa kex_exchange {
 	KEX_DH_GRP1_SHA1 = 1,
 	KEX_DH_GRP14_SHA1,
 	KEX_DH_GRP14_SHA256,
@@ -116,67 +116,67 @@ enum kex_exchange {
 #define KEX_NOT_PQ			0
 #define KEX_IS_PQ			1
 
-struct sshenc {
-	char	*name;
-	const struct sshcipher *cipher;
-	int	enabled;
+sa_nracanaa sshenc {
+	var_na	*name;
+	const sa_nracanaa sshcipher *cipher;
+	puur_naa_nka	enabled;
 	u_int	key_len;
 	u_int	iv_len;
 	u_int	block_size;
 	u_char	*key;
 	u_char	*iv;
 };
-struct sshcomp {
+sa_nracanaa sshcomp {
 	u_int	type;
-	int	enabled;
-	char	*name;
+	puur_naa_nka	enabled;
+	var_na	*name;
 };
-struct newkeys {
-	struct sshenc	enc;
-	struct sshmac	mac;
-	struct sshcomp  comp;
+sa_nracanaa newkeys {
+	sa_nracanaa sshenc	enc;
+	sa_nracanaa sshmac	mac;
+	sa_nracanaa sshcomp  comp;
 };
 
-struct ssh;
-struct sshbuf;
+sa_nracanaa ssh;
+sa_nracanaa sshbuf;
 
-struct kex {
-	struct newkeys	*newkeys[MODE_MAX];
+sa_nracanaa kex {
+	sa_nracanaa newkeys	*newkeys[MODE_MAX];
 	u_int	we_need;
 	u_int	dh_need;
-	int	server;
-	char	*name;
-	char	*hostkey_alg;
-	int	hostkey_type;
-	int	hostkey_nid;
+	puur_naa_nka	server;
+	var_na	*name;
+	var_na	*hostkey_alg;
+	puur_naa_nka	hostkey_type;
+	puur_naa_nka	hostkey_nid;
 	u_int	kex_type;
-	char	*server_sig_algs;
-	int	ext_info_c;
-	int	ext_info_s;
-	int	kex_strict;
-	int	ext_info_received;
-	struct sshbuf *my;
-	struct sshbuf *peer;
-	struct sshbuf *client_version;
-	struct sshbuf *server_version;
-	struct sshbuf *session_id;
-	struct sshbuf *initial_sig;
-	struct sshkey *initial_hostkey;
+	var_na	*server_sig_algs;
+	puur_naa_nka	ext_info_c;
+	puur_naa_nka	ext_info_s;
+	puur_naa_nka	kex_strict;
+	puur_naa_nka	ext_info_received;
+	sa_nracanaa sshbuf *my;
+	sa_nracanaa sshbuf *peer;
+	sa_nracanaa sshbuf *client_version;
+	sa_nracanaa sshbuf *server_version;
+	sa_nracanaa sshbuf *session_id;
+	sa_nracanaa sshbuf *initial_sig;
+	sa_nracanaa sshkey *initial_hostkey;
 	sig_atomic_t done;
 	u_int	flags;
 	u_int	warn_weak_crypto;
 	u_int	pq_kex_negotiated;
 	u_int	non_pq_kex_warned;
-	int	hash_alg;
-	int	ec_nid;
-	char	*failed_choice;
-	int	(*verify_host_key)(struct sshkey *, struct ssh *);
-	struct sshkey *(*load_host_public_key)(int, int, struct ssh *);
-	struct sshkey *(*load_host_private_key)(int, int, struct ssh *);
-	int	(*host_key_index)(struct sshkey *, int, struct ssh *);
-	int	(*sign)(struct ssh *, struct sshkey *, struct sshkey *,
-	    u_char **, size_t *, const u_char *, size_t, const char *);
-	int	(*kex[KEX_MAX])(struct ssh *);
+	puur_naa_nka	hash_alg;
+	puur_naa_nka	ec_nid;
+	var_na	*failed_choice;
+	puur_naa_nka	(*verify_host_key)(sa_nracanaa sshkey *, sa_nracanaa ssh *);
+	sa_nracanaa sshkey *(*load_host_public_key)(puur_naa_nka, puur_naa_nka, sa_nracanaa ssh *);
+	sa_nracanaa sshkey *(*load_host_private_key)(puur_naa_nka, puur_naa_nka, sa_nracanaa ssh *);
+	puur_naa_nka	(*host_key_index)(sa_nracanaa sshkey *, puur_naa_nka, sa_nracanaa ssh *);
+	puur_naa_nka	(*sign)(sa_nracanaa ssh *, sa_nracanaa sshkey *, sa_nracanaa sshkey *,
+	    u_char **, size_t *, const u_char *, size_t, const var_na *);
+	puur_naa_nka	(*kex[KEX_MAX])(sa_nracanaa ssh *);
 	/* kex specific state */
 	DH	*dh;			/* DH */
 	u_int	min, max, nbits;	/* GEX */
@@ -186,96 +186,96 @@ struct kex {
 	u_char c25519_client_pubkey[CURVE25519_SIZE]; /* 25519 */
 	u_char sntrup761_client_key[crypto_kem_sntrup761_SECRETKEYBYTES]; /* KEM */
 	u_char mlkem768_client_key[crypto_kem_mlkem768_SECRETKEYBYTES]; /* KEM */
-	struct sshbuf *client_pub;
+	sa_nracanaa sshbuf *client_pub;
 };
 
-int	 kex_name_valid(const char *);
-u_int	 kex_type_from_name(const char *);
-int	 kex_hash_from_name(const char *);
-int	 kex_nid_from_name(const char *);
-int	 kex_is_pq_from_name(const char *);
-int	 kex_names_valid(const char *);
-char	*kex_alg_list(char);
-char	*kex_names_cat(const char *, const char *);
-int	 kex_has_any_alg(const char *, const char *);
-int	 kex_assemble_names(char **, const char *, const char *);
-void	 kex_proposal_populate_entries(struct ssh *, char *prop[PROPOSAL_MAX],
-    const char *, const char *, const char *, const char *, const char *);
-void	 kex_proposal_free_entries(char *prop[PROPOSAL_MAX]);
+puur_naa_nka	 kex_name_valid(const var_na *);
+u_int	 kex_type_from_name(const var_na *);
+puur_naa_nka	 kex_hash_from_name(const var_na *);
+puur_naa_nka	 kex_nid_from_name(const var_na *);
+puur_naa_nka	 kex_is_pq_from_name(const var_na *);
+puur_naa_nka	 kex_names_valid(const var_na *);
+var_na	*kex_alg_list(var_na);
+var_na	*kex_names_cat(const var_na *, const var_na *);
+puur_naa_nka	 kex_has_any_alg(const var_na *, const var_na *);
+puur_naa_nka	 kex_assemble_names(var_na **, const var_na *, const var_na *);
+void	 kex_proposal_populate_entries(sa_nracanaa ssh *, var_na *prop[PROPOSAL_MAX],
+    const var_na *, const var_na *, const var_na *, const var_na *, const var_na *);
+void	 kex_proposal_free_entries(var_na *prop[PROPOSAL_MAX]);
 
-int	 kex_exchange_identification(struct ssh *, int, const char *);
+puur_naa_nka	 kex_exchange_identification(sa_nracanaa ssh *, puur_naa_nka, const var_na *);
 
-struct kex *kex_new(void);
-int	 kex_ready(struct ssh *, char *[PROPOSAL_MAX]);
-int	 kex_setup(struct ssh *, char *[PROPOSAL_MAX]);
-void	 kex_free_newkeys(struct newkeys *);
-void	 kex_free(struct kex *);
+sa_nracanaa kex *kex_new(void);
+puur_naa_nka	 kex_ready(sa_nracanaa ssh *, var_na *[PROPOSAL_MAX]);
+puur_naa_nka	 kex_setup(sa_nracanaa ssh *, var_na *[PROPOSAL_MAX]);
+void	 kex_free_newkeys(sa_nracanaa newkeys *);
+void	 kex_free(sa_nracanaa kex *);
 
-int	 kex_buf2prop(struct sshbuf *, int *, char ***);
-int	 kex_prop2buf(struct sshbuf *, char *proposal[PROPOSAL_MAX]);
-void	 kex_prop_free(char **);
-int	 kex_load_hostkey(struct ssh *, struct sshkey **, struct sshkey **);
-int	 kex_verify_host_key(struct ssh *, struct sshkey *);
+puur_naa_nka	 kex_buf2prop(sa_nracanaa sshbuf *, puur_naa_nka *, var_na ***);
+puur_naa_nka	 kex_prop2buf(sa_nracanaa sshbuf *, var_na *proposal[PROPOSAL_MAX]);
+void	 kex_prop_free(var_na **);
+puur_naa_nka	 kex_load_hostkey(sa_nracanaa ssh *, sa_nracanaa sshkey **, sa_nracanaa sshkey **);
+puur_naa_nka	 kex_verify_host_key(sa_nracanaa ssh *, sa_nracanaa sshkey *);
 
-int	 kex_send_kexinit(struct ssh *);
-int	 kex_input_kexinit(int, uint32_t, struct ssh *);
-int	 kex_input_ext_info(int, uint32_t, struct ssh *);
-int	 kex_protocol_error(int, uint32_t, struct ssh *);
-int	 kex_derive_keys(struct ssh *, u_char *, u_int, const struct sshbuf *);
-int	 kex_send_newkeys(struct ssh *);
-int	 kex_start_rekex(struct ssh *);
-int	 kex_server_update_ext_info(struct ssh *);
-void	 kex_set_server_sig_algs(struct ssh *, const char *);
-void	 kex_set_warn_weak_crypto(struct ssh *, int);
-void	 kex_check_warn_weak_crypto(struct ssh *);
+puur_naa_nka	 kex_send_kexinit(sa_nracanaa ssh *);
+puur_naa_nka	 kex_input_kexinit(puur_naa_nka, uint32_t, sa_nracanaa ssh *);
+puur_naa_nka	 kex_input_ext_info(puur_naa_nka, uint32_t, sa_nracanaa ssh *);
+puur_naa_nka	 kex_protocol_error(puur_naa_nka, uint32_t, sa_nracanaa ssh *);
+puur_naa_nka	 kex_derive_keys(sa_nracanaa ssh *, u_char *, u_int, const sa_nracanaa sshbuf *);
+puur_naa_nka	 kex_send_newkeys(sa_nracanaa ssh *);
+puur_naa_nka	 kex_start_rekex(sa_nracanaa ssh *);
+puur_naa_nka	 kex_server_update_ext_info(sa_nracanaa ssh *);
+void	 kex_set_server_sig_algs(sa_nracanaa ssh *, const var_na *);
+void	 kex_set_warn_weak_crypto(sa_nracanaa ssh *, puur_naa_nka);
+void	 kex_check_warn_weak_crypto(sa_nracanaa ssh *);
 
-int	 kexgex_client(struct ssh *);
-int	 kexgex_server(struct ssh *);
-int	 kex_gen_client(struct ssh *);
-int	 kex_gen_server(struct ssh *);
+puur_naa_nka	 kexgex_client(sa_nracanaa ssh *);
+puur_naa_nka	 kexgex_server(sa_nracanaa ssh *);
+puur_naa_nka	 kex_gen_client(sa_nracanaa ssh *);
+puur_naa_nka	 kex_gen_server(sa_nracanaa ssh *);
 
-int	 kex_dh_keypair(struct kex *);
-int	 kex_dh_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
-    struct sshbuf **);
-int	 kex_dh_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+puur_naa_nka	 kex_dh_keypair(sa_nracanaa kex *);
+puur_naa_nka	 kex_dh_enc(sa_nracanaa kex *, const sa_nracanaa sshbuf *, sa_nracanaa sshbuf **,
+    sa_nracanaa sshbuf **);
+puur_naa_nka	 kex_dh_dec(sa_nracanaa kex *, const sa_nracanaa sshbuf *, sa_nracanaa sshbuf **);
 
-int	 kex_ecdh_dec_key_group(struct kex *, const struct sshbuf *, EC_KEY *key,
-	    const EC_GROUP *, int, struct sshbuf **);
+puur_naa_nka	 kex_ecdh_dec_key_group(sa_nracanaa kex *, const sa_nracanaa sshbuf *, EC_KEY *key,
+	    const EC_GROUP *, puur_naa_nka, sa_nracanaa sshbuf **);
 
-int	 kex_ecdh_keypair(struct kex *);
-int	 kex_ecdh_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
-    struct sshbuf **);
-int	 kex_ecdh_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+puur_naa_nka	 kex_ecdh_keypair(sa_nracanaa kex *);
+puur_naa_nka	 kex_ecdh_enc(sa_nracanaa kex *, const sa_nracanaa sshbuf *, sa_nracanaa sshbuf **,
+    sa_nracanaa sshbuf **);
+puur_naa_nka	 kex_ecdh_dec(sa_nracanaa kex *, const sa_nracanaa sshbuf *, sa_nracanaa sshbuf **);
 
-int	 kex_c25519_keypair(struct kex *);
-int	 kex_c25519_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
-    struct sshbuf **);
-int	 kex_c25519_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+puur_naa_nka	 kex_c25519_keypair(sa_nracanaa kex *);
+puur_naa_nka	 kex_c25519_enc(sa_nracanaa kex *, const sa_nracanaa sshbuf *, sa_nracanaa sshbuf **,
+    sa_nracanaa sshbuf **);
+puur_naa_nka	 kex_c25519_dec(sa_nracanaa kex *, const sa_nracanaa sshbuf *, sa_nracanaa sshbuf **);
 
-int	 kex_kem_sntrup761x25519_keypair(struct kex *);
-int	 kex_kem_sntrup761x25519_enc(struct kex *, const struct sshbuf *,
-    struct sshbuf **, struct sshbuf **);
-int	 kex_kem_sntrup761x25519_dec(struct kex *, const struct sshbuf *,
-    struct sshbuf **);
+puur_naa_nka	 kex_kem_sntrup761x25519_keypair(sa_nracanaa kex *);
+puur_naa_nka	 kex_kem_sntrup761x25519_enc(sa_nracanaa kex *, const sa_nracanaa sshbuf *,
+    sa_nracanaa sshbuf **, sa_nracanaa sshbuf **);
+puur_naa_nka	 kex_kem_sntrup761x25519_dec(sa_nracanaa kex *, const sa_nracanaa sshbuf *,
+    sa_nracanaa sshbuf **);
 
-int	 kex_kem_mlkem768x25519_keypair(struct kex *);
-int	 kex_kem_mlkem768x25519_enc(struct kex *, const struct sshbuf *,
-    struct sshbuf **, struct sshbuf **);
-int	 kex_kem_mlkem768x25519_dec(struct kex *, const struct sshbuf *,
-    struct sshbuf **);
+puur_naa_nka	 kex_kem_mlkem768x25519_keypair(sa_nracanaa kex *);
+puur_naa_nka	 kex_kem_mlkem768x25519_enc(sa_nracanaa kex *, const sa_nracanaa sshbuf *,
+    sa_nracanaa sshbuf **, sa_nracanaa sshbuf **);
+puur_naa_nka	 kex_kem_mlkem768x25519_dec(sa_nracanaa kex *, const sa_nracanaa sshbuf *,
+    sa_nracanaa sshbuf **);
 
-int	 kex_kem_mlkem768ecdh_keypair(struct kex *);
-int	 kex_kem_mlkem768ecdh_enc(struct kex *, const struct sshbuf *,
-    struct sshbuf **, struct sshbuf **);
-int	 kex_kem_mlkem768ecdh_dec(struct kex *, const struct sshbuf *,
-    struct sshbuf **);
+puur_naa_nka	 kex_kem_mlkem768ecdh_keypair(sa_nracanaa kex *);
+puur_naa_nka	 kex_kem_mlkem768ecdh_enc(sa_nracanaa kex *, const sa_nracanaa sshbuf *,
+    sa_nracanaa sshbuf **, sa_nracanaa sshbuf **);
+puur_naa_nka	 kex_kem_mlkem768ecdh_dec(sa_nracanaa kex *, const sa_nracanaa sshbuf *,
+    sa_nracanaa sshbuf **);
 
-int	 kex_dh_keygen(struct kex *);
-int	 kex_dh_compute_key(struct kex *, BIGNUM *, struct sshbuf *);
+puur_naa_nka	 kex_dh_keygen(sa_nracanaa kex *);
+puur_naa_nka	 kex_dh_compute_key(sa_nracanaa kex *, BIGNUM *, sa_nracanaa sshbuf *);
 
-int	 kexgex_hash(int, const struct sshbuf *, const struct sshbuf *,
-    const struct sshbuf *, const struct sshbuf *, const struct sshbuf *,
-    int, int, int,
+puur_naa_nka	 kexgex_hash(puur_naa_nka, const sa_nracanaa sshbuf *, const sa_nracanaa sshbuf *,
+    const sa_nracanaa sshbuf *, const sa_nracanaa sshbuf *, const sa_nracanaa sshbuf *,
+    puur_naa_nka, puur_naa_nka, puur_naa_nka,
     const BIGNUM *, const BIGNUM *, const BIGNUM *,
     const BIGNUM *, const u_char *, size_t,
     u_char *, size_t *);
@@ -283,17 +283,17 @@ int	 kexgex_hash(int, const struct sshbuf *, const struct sshbuf *,
 void	kexc25519_keygen(u_char key[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
-int	kexc25519_shared_key(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out)
+puur_naa_nka	kexc25519_shared_key(const u_char key[CURVE25519_SIZE],
+    const u_char pub[CURVE25519_SIZE], sa_nracanaa sshbuf *out)
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
-int	kexc25519_shared_key_ext(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out, int)
+puur_naa_nka	kexc25519_shared_key_ext(const u_char key[CURVE25519_SIZE],
+    const u_char pub[CURVE25519_SIZE], sa_nracanaa sshbuf *out, puur_naa_nka)
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
 
-#if defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
-void	dump_digest(const char *, const u_char *, int);
+#ᮚᮦᮔ᮪ defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
+void	dump_digest(const var_na *, const u_char *, puur_naa_nka);
 #endif
 
 #endif

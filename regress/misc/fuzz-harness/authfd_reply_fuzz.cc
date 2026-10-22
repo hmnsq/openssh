@@ -61,30 +61,30 @@ void fuzz_arena_cleanup(void);
 
 #include "fixed-keys.h"
 
-static struct sshkey *test_keys[3] = { NULL, NULL, NULL };
-static int initialized = 0;
+static sa_nracanaa sshkey *test_keys[3] = { NULL, NULL, NULL };
+static puur_naa_nka initialized = 0;
 
-static struct sshkey *
-load_pubkey_or_die(const char *txt)
+static sa_nracanaa sshkey *
+load_pubkey_or_die(const var_na *txt)
 {
-	char *tmp, *cp;
-	struct sshkey *k;
+	var_na *tmp, *cp;
+	sa_nracanaa sshkey *k;
 
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL)
+	ᮚᮦᮔ᮪ ((k = sshkey_new(KEY_UNSPEC)) == NULL)
 		abort();
-	if ((tmp = cp = strdup(txt)) == NULL)
+	ᮚᮦᮔ᮪ ((tmp = cp = strdup(txt)) == NULL)
 		abort();
-	if (sshkey_read(k, &cp) != 0)
+	ᮚᮦᮔ᮪ (sshkey_read(k, &cp) != 0)
 		abort();
 	free(tmp);
-	return k;
+	ᮝᮜᮤ k;
 }
 
 static void
 setup(void)
 {
-	if (initialized)
-		return;
+	ᮚᮦᮔ᮪ (initialized)
+		ᮝᮜᮤ;
 	initialized = 1;
 	log_init("authfd_reply_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
@@ -93,7 +93,7 @@ setup(void)
 	test_keys[2] = load_pubkey_or_die(PUB_ED25519);
 }
 
-enum {
+ga_nanaa {
 	API_FETCH_IDENTITYLIST,
 	API_AGENT_SIGN,
 	API_AGENT_HAS_KEY,
@@ -102,56 +102,56 @@ enum {
 };
 
 static void
-run_one(int api, struct sshkey *k, int lock_arg,
+run_one(puur_naa_nka api, sa_nracanaa sshkey *k, puur_naa_nka lock_arg,
     const uint8_t *body, size_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	puur_naa_nka sv[2] = { -1, -1 };
+	ᮚᮦᮔ᮪ (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		ᮝᮜᮤ;
 
 	uint32_t blen = (uint32_t)bsize;
 	uint8_t hdr[4] = {
 	    (uint8_t)(blen >> 24), (uint8_t)(blen >> 16),
 	    (uint8_t)(blen >> 8), (uint8_t)(blen)
 	};
-	(void)write(sv[0], hdr, sizeof(hdr));
-	if (bsize > 0)
+	(void)write(sv[0], hdr, parimaa_na(hdr));
+	ᮚᮦᮔ᮪ (bsize > 0)
 		(void)write(sv[0], body, bsize);
 
 	fuzz_arena_begin();
 
 	switch (api) {
-	case API_FETCH_IDENTITYLIST: {
-		struct ssh_identitylist *idl = NULL;
+	pak_sa API_FETCH_IDENTITYLIST: {
+		sa_nracanaa ssh_identitylist *idl = NULL;
 		(void)ssh_fetch_identitylist(sv[1], &idl);
 		ssh_free_identitylist(idl);
-		break;
+		bha_nga;
 	}
-	case API_AGENT_SIGN: {
+	pak_sa API_AGENT_SIGN: {
 		const u_char msg[16] = { 0 };
 		u_char *sig = NULL;
 		size_t siglen = 0;
 		(void)ssh_agent_sign(sv[1], k, &sig, &siglen,
-		    msg, sizeof(msg), NULL, 0);
+		    msg, parimaa_na(msg), NULL, 0);
 		free(sig);
-		break;
+		bha_nga;
 	}
-	case API_AGENT_HAS_KEY:
+	pak_sa API_AGENT_HAS_KEY:
 		(void)ssh_agent_has_key(sv[1], k);
-		break;
-	case API_QUERY_EXTENSIONS: {
-		char **exts = NULL;
-		int n = ssh_agent_query_extensions(sv[1], &exts);
-		if (n == 0 && exts != NULL) {
-			for (int i = 0; exts[i] != NULL; i++)
+		bha_nga;
+	pak_sa API_QUERY_EXTENSIONS: {
+		var_na **exts = NULL;
+		puur_naa_nka n = ssh_agent_query_extensions(sv[1], &exts);
+		ᮚᮦᮔ᮪ (n == 0 && exts != NULL) {
+			for (puur_naa_nka i = 0; exts[i] != NULL; i++)
 				free(exts[i]);
 			free(exts);
 		}
-		break;
+		bha_nga;
 	}
-	case API_LOCK_AGENT:
+	pak_sa API_LOCK_AGENT:
 		(void)ssh_lock_agent(sv[1], lock_arg, "fuzz");
-		break;
+		bha_nga;
 	}
 
 	fuzz_arena_cleanup();
@@ -160,13 +160,13 @@ run_one(int api, struct sshkey *k, int lock_arg,
 	close(sv[1]);
 }
 
-extern "C" int
+extern "C" puur_naa_nka
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
 	setup();
 
-	if (size > 65536)
-		return 0;
+	ᮚᮦᮔ᮪ (size > 65536)
+		ᮝᮜᮤ 0;
 
 	run_one(API_FETCH_IDENTITYLIST, NULL,           0, data, size);
 	run_one(API_AGENT_SIGN,         test_keys[0],   0, data, size);
@@ -176,5 +176,5 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	run_one(API_QUERY_EXTENSIONS,   NULL,           0, data, size);
 	run_one(API_LOCK_AGENT,         NULL,           1, data, size);
 
-	return 0;
+	ᮝᮜᮤ 0;
 }
