@@ -39,59 +39,59 @@ limitations under the License.
  * so LSan sees zero per-iteration leaks.
  */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#అన్తర్భావ <setjmp.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <sys/types.h>
 
-extern "C" {
-#include "includes.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sftp.h"
-#include "sftp-common.h"
-#include "sftp-client.h"
+బాహ్య "C" {
+#అన్తర్భావ "includes.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "sftp.h"
+#అన్తర్భావ "sftp-common.h"
+#అన్తర్భావ "sftp-client.h"
 
-void fuzz_arena_begin(void);
-void fuzz_arena_cleanup(void);
+శూన్య fuzz_arena_begin(శూన్య);
+శూన్య fuzz_arena_cleanup(శూన్య);
 }
 
-extern "C" volatile sig_atomic_t interrupted = 0;
-extern "C" int showprogress = 0;
-extern "C" void start_progress_meter(const char *file, off_t filesize,
-    off_t *ctr) { (void)file; (void)filesize; (void)ctr; }
-extern "C" void refresh_progress_meter(int force_update) { (void)force_update; }
-extern "C" void stop_progress_meter(void) { }
+బాహ్య "C" అస్థిర sig_atomic_t interrupted = 0;
+బాహ్య "C" పూర్ణాంకం showprogress = 0;
+బాహ్య "C" శూన్య ప్రారంభం_పురోగతి_meter(స్థిరరాశి అక్షరం *file, off_t filesize,
+    off_t *ctr) { (శూన్య)file; (శూన్య)filesize; (శూన్య)ctr; }
+బాహ్య "C" శూన్య refresh_పురోగతి_meter(పూర్ణాంకం force_update) { (శూన్య)force_update; }
+బాహ్య "C" శూన్య stop_పురోగతి_meter(శూన్య) { }
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+స్థిర jmp_buf fuzz_env;
+స్థిర అస్థిర పూర్ణాంకం లోపల_fuzz = 0;
 
-extern "C" void
-cleanup_exit(int code)
+బాహ్య "C" శూన్య
+cleanup_exit(పూర్ణాంకం సంకేతం_2)
 {
-	if (in_fuzz)
-		longjmp(fuzz_env, code ? code : 1);
-	_exit(code);
+	ఒకవేళ (లోపల_fuzz)
+		longjmp(fuzz_env, సంకేతం_2 ? సంకేతం_2 : 1);
+	_exit(సంకేతం_2);
 }
 
-static const uint8_t k_version_reply[] = {
+స్థిర స్థిరరాశి uint8_t k_సంస్కరణ_జవాబు[] = {
     0x00, 0x00, 0x00, 0x05,
     0x02,
     0x00, 0x00, 0x00, 0x03,
 };
 
-enum {
+గణన {
 	API_STAT,
 	API_LSTAT,
 	API_REALPATH,
-	API_EXPAND_PATH,
+	API_EXPAND_మార్గం,
 	API_READDIR,
 	API_STATVFS,
 	API_GET_LIMITS,
@@ -100,111 +100,111 @@ enum {
 	API_RMDIR,
 	API_RENAME,
 	API_SYMLINK,
-	API_COUNT,
+	API_లెక్క,
 };
 
-static void
-run_one(int api, const uint8_t *body, size_t bsize)
+స్థిర శూన్య
+నిరంతరం_one(పూర్ణాంకం api, స్థిరరాశి uint8_t *body, కొలత_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	పూర్ణాంకం sv[2] = { -1, -1 };
+	ఒకవేళ (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		తిరిగి;
 
-	ssize_t w = write(sv[0], k_version_reply, sizeof(k_version_reply));
-	(void)w;
-	if (bsize > 0)
-		w = write(sv[0], body, bsize);
-	(void)w;
+	ssize_t w = లిఖ(sv[0], k_సంస్కరణ_జవాబు, పరిమాణం(k_సంస్కరణ_జవాబు));
+	(శూన్య)w;
+	ఒకవేళ (bsize > 0)
+		w = లిఖ(sv[0], body, bsize);
+	(శూన్య)w;
 	shutdown(sv[0], SHUT_WR);
 
 	fuzz_arena_begin();
-	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
-		struct sftp_conn *conn = sftp_init(sv[1], sv[1], 32768, 64, 0);
-		if (conn != NULL) {
+	లోపల_fuzz = 1;
+	ఒకవేళ (setjmp(fuzz_env) == 0) {
+		నిర్మాణం sftp_conn *conn = sftp_init(sv[1], sv[1], 32768, 64, 0);
+		ఒకవేళ (conn != ఖాళీ) {
 			Attrib attr;
 			attrib_clear(&attr);
 
-			switch (api) {
-			case API_STAT: {
+			ఎంపిక (api) {
+			స్థితి API_STAT: {
 				Attrib a;
-				(void)sftp_stat(conn, "/fuzz", 1, &a);
-				break;
+				(శూన్య)sftp_stat(conn, "/fuzz", 1, &a);
+				ఆపు;
 			}
-			case API_LSTAT: {
+			స్థితి API_LSTAT: {
 				Attrib a;
-				(void)sftp_lstat(conn, "/fuzz", 1, &a);
-				break;
+				(శూన్య)sftp_lstat(conn, "/fuzz", 1, &a);
+				ఆపు;
 			}
-			case API_REALPATH: {
-				char *p = sftp_realpath(conn, "/fuzz");
-				free(p);
-				break;
+			స్థితి API_REALPATH: {
+				అక్షరం *p = sftp_realpath(conn, "/fuzz");
+				విడుదల(p);
+				ఆపు;
 			}
-			case API_EXPAND_PATH: {
-				char *p = sftp_expand_path(conn, "~");
-				free(p);
-				break;
+			స్థితి API_EXPAND_మార్గం: {
+				అక్షరం *p = sftp_expand_మార్గం(conn, "~");
+				విడుదల(p);
+				ఆపు;
 			}
-			case API_READDIR: {
-				SFTP_DIRENT **dir = NULL;
-				(void)sftp_readdir(conn, "/fuzz", &dir);
-				if (dir != NULL)
+			స్థితి API_READDIR: {
+				SFTP_DIRENT **dir = ఖాళీ;
+				(శూన్య)sftp_readdir(conn, "/fuzz", &dir);
+				ఒకవేళ (dir != ఖాళీ)
 					sftp_free_dirents(dir);
-				break;
+				ఆపు;
 			}
-			case API_STATVFS: {
-				struct sftp_statvfs vfs;
-				(void)sftp_statvfs(conn, "/fuzz", &vfs, 1);
-				break;
+			స్థితి API_STATVFS: {
+				నిర్మాణం sftp_statvfs vfs;
+				(శూన్య)sftp_statvfs(conn, "/fuzz", &vfs, 1);
+				ఆపు;
 			}
-			case API_GET_LIMITS: {
-				struct sftp_limits lim;
-				(void)sftp_get_limits(conn, &lim);
-				break;
+			స్థితి API_GET_LIMITS: {
+				నిర్మాణం sftp_limits lim;
+				(శూన్య)sftp_get_limits(conn, &lim);
+				ఆపు;
 			}
-			case API_RM:
-				(void)sftp_rm(conn, "/fuzz");
-				break;
-			case API_MKDIR:
-				(void)sftp_mkdir(conn, "/fuzz", &attr, 0);
-				break;
-			case API_RMDIR:
-				(void)sftp_rmdir(conn, "/fuzz");
-				break;
-			case API_RENAME:
-				(void)sftp_rename(conn, "/a", "/b", 0);
-				break;
-			case API_SYMLINK:
-				(void)sftp_symlink(conn, "/a", "/b");
-				break;
+			స్థితి API_RM:
+				(శూన్య)sftp_rm(conn, "/fuzz");
+				ఆపు;
+			స్థితి API_MKDIR:
+				(శూన్య)sftp_mkdir(conn, "/fuzz", &attr, 0);
+				ఆపు;
+			స్థితి API_RMDIR:
+				(శూన్య)sftp_rmdir(conn, "/fuzz");
+				ఆపు;
+			స్థితి API_RENAME:
+				(శూన్య)sftp_rename(conn, "/a", "/b", 0);
+				ఆపు;
+			స్థితి API_SYMLINK:
+				(శూన్య)sftp_symlink(conn, "/a", "/b");
+				ఆపు;
 			}
 
 			sftp_free(conn);
 		}
 	}
-	in_fuzz = 0;
+	లోపల_fuzz = 0;
 	fuzz_arena_cleanup();
 
 	close(sv[0]);
 	close(sv[1]);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+బాహ్య "C" పూర్ణాంకం
+LLVMFuzzer_Test_One_ఆదానం(స్థిరరాశి uint8_t *దత్తాంశం, కొలత_t కొలత)
 {
-	static int initialized = 0;
-	if (!initialized) {
+	స్థిర పూర్ణాంకం initialized = 0;
+	ఒకవేళ (!initialized) {
 		initialized = 1;
 		log_init("sftp_client_fuzz", SYSLOG_LEVEL_ERROR,
 		    SYSLOG_FACILITY_AUTH, 0);
 	}
 
-	if (size > 65536)
-		return 0;
+	ఒకవేళ (కొలత > 65536)
+		తిరిగి 0;
 
-	for (int api = 0; api < API_COUNT; api++)
-		run_one(api, data, size);
+	కొరకు (పూర్ణాంకం api = 0; api < API_లెక్క; api++)
+		నిరంతరం_one(api, దత్తాంశం, కొలత);
 
-	return 0;
+	తిరిగి 0;
 }

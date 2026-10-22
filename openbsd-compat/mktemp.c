@@ -21,23 +21,23 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdio/mktemp.c */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <unistd.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <unistd.h>
 
-#ifdef mkstemp
-#undef mkstemp
-#endif
-int mkstemp(char *);
+#నిర్వచితమైతే mkstemp
+#నిర్వచనం_రద్దు mkstemp
+#అయితే_ముగింపు
+పూర్ణాంకం mkstemp(అక్షరం *);
 
 /*
  * From glibc man page: 'In glibc versions 2.06 and earlier, the file is
@@ -45,120 +45,120 @@ int mkstemp(char *);
  * Provide a wrapper to make sure the mask is reasonable (POSIX requires
  * mode 0600, so mask off any other bits).
  */
-int
-_ssh_mkstemp(char *template)
+పూర్ణాంకం
+_ssh_mkstemp(అక్షరం *మూస)
 {
-	mode_t mask;
-	int ret;
+	బహుళకం_t ముసుగు;
+	పూర్ణాంకం ret;
 
-	mask = umask(0177);
-	ret = mkstemp(template);
-	(void)umask(mask);
-	return ret;
+	ముసుగు = umask(0177);
+	ret = mkstemp(మూస);
+	(శూన్య)umask(ముసుగు);
+	తిరిగి ret;
 }
 
-#if !defined(HAVE_MKDTEMP)
+#ఒకవేళ !defined(HAVE_MKDTEMP)
 
-#define MKTEMP_NAME	0
-#define MKTEMP_FILE	1
-#define MKTEMP_DIR	2
+#నిర్వచించు MKTEMP_NAME	0
+#నిర్వచించు MKTEMP_FILE	1
+#నిర్వచించు MKTEMP_DIR	2
 
-#define TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-#define NUM_CHARS	(sizeof(TEMPCHARS) - 1)
+#నిర్వచించు TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+#నిర్వచించు అంకె_CHARS	(పరిమాణం(TEMPCHARS) - 1)
 
-static int
-mktemp_internal(char *path, int slen, int mode)
+స్థిర పూర్ణాంకం
+mktemp_అంతర్గత(అక్షరం *మార్గం, పూర్ణాంకం slen, పూర్ణాంకం బహుళకం)
 {
-	char *start, *cp, *ep;
-	const char *tempchars = TEMPCHARS;
-	unsigned int r, tries;
-	struct stat sb;
-	size_t len;
-	int fd;
+	అక్షరం *ప్రారంభం, *cp, *ep;
+	స్థిరరాశి అక్షరం *tempchars = TEMPCHARS;
+	గుర్తులేని పూర్ణాంకం r, tries;
+	నిర్మాణం stat sb;
+	కొలత_t len;
+	పూర్ణాంకం fd;
 
-	len = strlen(path);
-	if (len == 0 || slen < 0 || (size_t)slen >= len) {
+	len = అక్షరశ్రేణి_పొడవు(మార్గం);
+	ఒకవేళ (len == 0 || slen < 0 || (కొలత_t)slen >= len) {
 		errno = EINVAL;
-		return(-1);
+		తిరిగి(-1);
 	}
-	ep = path + len - slen;
+	ep = మార్గం + len - slen;
 
 	tries = 1;
-	for (start = ep; start > path && start[-1] == 'X'; start--) {
-		if (tries < INT_MAX / NUM_CHARS)
-			tries *= NUM_CHARS;
+	కొరకు (ప్రారంభం = ep; ప్రారంభం > మార్గం && ప్రారంభం[-1] == 'X'; ప్రారంభం--) {
+		ఒకవేళ (tries < గరిష్ఠ_పూర్ణాంకం / అంకె_CHARS)
+			tries *= అంకె_CHARS;
 	}
 	tries *= 2;
 
-	do {
-		for (cp = start; cp != ep; cp++) {
-			r = arc4random_uniform(NUM_CHARS);
+	చేయి {
+		కొరకు (cp = ప్రారంభం; cp != ep; cp++) {
+			r = arc4random_ఏకరీతి(అంకె_CHARS);
 			*cp = tempchars[r];
 		}
 
-		switch (mode) {
-		case MKTEMP_NAME:
-			if (lstat(path, &sb) != 0)
-				return(errno == ENOENT ? 0 : -1);
-			break;
-		case MKTEMP_FILE:
-			fd = open(path, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
-			if (fd != -1 || errno != EEXIST)
-				return(fd);
-			break;
-		case MKTEMP_DIR:
-			if (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
-				return(0);
-			if (errno != EEXIST)
-				return(-1);
-			break;
+		ఎంపిక (బహుళకం) {
+		స్థితి MKTEMP_NAME:
+			ఒకవేళ (lstat(మార్గం, &sb) != 0)
+				తిరిగి(errno == ENOENT ? 0 : -1);
+			ఆపు;
+		స్థితి MKTEMP_FILE:
+			fd = open(మార్గం, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
+			ఒకవేళ (fd != -1 || errno != EEXIST)
+				తిరిగి(fd);
+			ఆపు;
+		స్థితి MKTEMP_DIR:
+			ఒకవేళ (mkdir(మార్గం, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
+				తిరిగి(0);
+			ఒకవేళ (errno != EEXIST)
+				తిరిగి(-1);
+			ఆపు;
 		}
-	} while (--tries);
+	} అయితే (--tries);
 
 	errno = EEXIST;
-	return(-1);
+	తిరిగి(-1);
 }
 
-#if 0
-char *_mktemp(char *);
+#ఒకవేళ 0
+అక్షరం *_mktemp(అక్షరం *);
 
-char *
-_mktemp(char *path)
+అక్షరం *
+_mktemp(అక్షరం *మార్గం)
 {
-	if (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
-		return(NULL);
-	return(path);
+	ఒకవేళ (mktemp_అంతర్గత(మార్గం, 0, MKTEMP_NAME) == -1)
+		తిరిగి(ఖాళీ);
+	తిరిగి(మార్గం);
 }
 
 __warn_references(mktemp,
     "warning: mktemp() possibly used unsafely; consider using mkstemp()");
 
-char *
-mktemp(char *path)
+అక్షరం *
+mktemp(అక్షరం *మార్గం)
 {
-	return(_mktemp(path));
+	తిరిగి(_mktemp(మార్గం));
 }
-#endif
+#అయితే_ముగింపు
 
-int
-mkstemp(char *path)
+పూర్ణాంకం
+mkstemp(అక్షరం *మార్గం)
 {
-	return(mktemp_internal(path, 0, MKTEMP_FILE));
-}
-
-int
-mkstemps(char *path, int slen)
-{
-	return(mktemp_internal(path, slen, MKTEMP_FILE));
+	తిరిగి(mktemp_అంతర్గత(మార్గం, 0, MKTEMP_FILE));
 }
 
-char *
-mkdtemp(char *path)
+పూర్ణాంకం
+mkstemps(అక్షరం *మార్గం, పూర్ణాంకం slen)
 {
-	int error;
-
-	error = mktemp_internal(path, 0, MKTEMP_DIR);
-	return(error ? NULL : path);
+	తిరిగి(mktemp_అంతర్గత(మార్గం, slen, MKTEMP_FILE));
 }
 
-#endif /* !defined(HAVE_MKDTEMP) */
+అక్షరం *
+mkdtemp(అక్షరం *మార్గం)
+{
+	పూర్ణాంకం error;
+
+	error = mktemp_అంతర్గత(మార్గం, 0, MKTEMP_DIR);
+	తిరిగి(error ? ఖాళీ : మార్గం);
+}
+
+#అయితే_ముగింపు /* !defined(HAVE_MKDTEMP) */

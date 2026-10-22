@@ -15,24 +15,24 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _HMAC_H
-#define _HMAC_H
+#నిర్వచితం_కాకపోతే _HMAC_H
+#నిర్వచించు _HMAC_H
 
 /* Returns the algorithm's digest length in bytes or 0 for invalid algorithm */
-size_t ssh_hmac_bytes(int alg);
+కొలత_t ssh_hmac_బైట్లు(పూర్ణాంకం alg);
 
-struct sshbuf;
-struct ssh_hmac_ctx;
-struct ssh_hmac_ctx *ssh_hmac_start(int alg);
+నిర్మాణం sshbuf;
+నిర్మాణం ssh_hmac_ctx;
+నిర్మాణం ssh_hmac_ctx *ssh_hmac_ప్రారంభం(పూర్ణాంకం alg);
 
 /* Sets the state of the HMAC or resets the state if key == NULL */
-int ssh_hmac_init(struct ssh_hmac_ctx *ctx, const void *key, size_t klen)
+పూర్ణాంకం ssh_hmac_init(నిర్మాణం ssh_hmac_ctx *ctx, స్థిరరాశి శూన్య *కీలకం, కొలత_t klen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_hmac_update(struct ssh_hmac_ctx *ctx, const void *m, size_t mlen)
+పూర్ణాంకం ssh_hmac_update(నిర్మాణం ssh_hmac_ctx *ctx, స్థిరరాశి శూన్య *m, కొలత_t mlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_hmac_update_buffer(struct ssh_hmac_ctx *ctx, const struct sshbuf *b);
-int ssh_hmac_final(struct ssh_hmac_ctx *ctx, u_char *d, size_t dlen)
+పూర్ణాంకం ssh_hmac_update_బఫరు(నిర్మాణం ssh_hmac_ctx *ctx, స్థిరరాశి నిర్మాణం sshbuf *b);
+పూర్ణాంకం ssh_hmac_final(నిర్మాణం ssh_hmac_ctx *ctx, u_char *d, కొలత_t dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-void ssh_hmac_free(struct ssh_hmac_ctx *ctx);
+శూన్య ssh_hmac_free(నిర్మాణం ssh_hmac_ctx *ctx);
 
-#endif /* _HMAC_H */
+#అయితే_ముగింపు /* _HMAC_H */

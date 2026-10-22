@@ -23,310 +23,310 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ "openbsd-compat/openssl-compat.h"
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <limits.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#అన్తర్భావ <openssl/bn.h>
+#అన్తర్భావ <openssl/dh.h>
 
-#include "dh.h"
-#include "pathnames.h"
-#include "log.h"
-#include "misc.h"
-#include "ssherr.h"
+#అన్తర్భావ "dh.h"
+#అన్తర్భావ "pathnames.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "ssherr.h"
 
-static const char *moduli_filename;
+స్థిర స్థిరరాశి అక్షరం *moduli_filename;
 
-void dh_set_moduli_file(const char *filename)
+శూన్య dh_సమితి_moduli_file(స్థిరరాశి అక్షరం *filename)
 {
 	moduli_filename = filename;
 }
 
-static const char * get_moduli_filename(void)
+స్థిర స్థిరరాశి అక్షరం * get_moduli_filename(శూన్య)
 {
-	return moduli_filename ? moduli_filename : _PATH_DH_MODULI;
+	తిరిగి moduli_filename ? moduli_filename : మార్గం_DH_MODULI;
 }
 
-static int
-parse_prime(int linenum, char *line, struct dhgroup *dhg)
+స్థిర పూర్ణాంకం
+parse_ప్రధానసంఖ్య(పూర్ణాంకం linenum, అక్షరం *పంక్తి, నిర్మాణం dhgroup *dhg)
 {
-	char *cp, *arg;
-	char *strsize, *gen, *prime;
-	const char *errstr = NULL;
-	long long n;
+	అక్షరం *cp, *arg;
+	అక్షరం *strsize, *gen, *ప్రధానసంఖ్య;
+	స్థిరరాశి అక్షరం *errstr = ఖాళీ;
+	దీర్ఘ దీర్ఘ n;
 
-	dhg->p = dhg->g = NULL;
-	cp = line;
-	if ((arg = strdelim(&cp)) == NULL)
-		return 0;
+	dhg->p = dhg->g = ఖాళీ;
+	cp = పంక్తి;
+	ఒకవేళ ((arg = strdelim(&cp)) == ఖాళీ)
+		తిరిగి 0;
 	/* Ignore leading whitespace */
-	if (*arg == '\0')
+	ఒకవేళ (*arg == '\0')
 		arg = strdelim(&cp);
-	if (!arg || !*arg || *arg == '#')
-		return 0;
+	ఒకవేళ (!arg || !*arg || *arg == '#')
+		తిరిగి 0;
 
-	/* time */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	/*సమయం*/
+	ఒకవేళ (cp == ఖాళీ || *arg == '\0')
+		వెళ్ళు truncated;
 	arg = strsep(&cp, " "); /* type */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	ఒకవేళ (cp == ఖాళీ || *arg == '\0')
+		వెళ్ళు truncated;
 	/* Ensure this is a safe prime */
 	n = strtonum(arg, 0, 5, &errstr);
-	if (errstr != NULL || n != MODULI_TYPE_SAFE) {
-		error("moduli:%d: type is not %d", linenum, MODULI_TYPE_SAFE);
-		goto fail;
+	ఒకవేళ (errstr != ఖాళీ || n != MODULI_TYPE_సురక్షిత) {
+		error("moduli:%d: type is not %d", linenum, MODULI_TYPE_సురక్షిత);
+		వెళ్ళు fail;
 	}
 	arg = strsep(&cp, " "); /* tests */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	ఒకవేళ (cp == ఖాళీ || *arg == '\0')
+		వెళ్ళు truncated;
 	/* Ensure prime has been tested and is not composite */
 	n = strtonum(arg, 0, 0x1f, &errstr);
-	if (errstr != NULL ||
-	    (n & MODULI_TESTS_COMPOSITE) || !(n & ~MODULI_TESTS_COMPOSITE)) {
+	ఒకవేళ (errstr != ఖాళీ ||
+	    (n & MODULI_TESTS_సంయుక్త) || !(n & ~MODULI_TESTS_సంయుక్త)) {
 		error("moduli:%d: invalid moduli tests flag", linenum);
-		goto fail;
+		వెళ్ళు fail;
 	}
 	arg = strsep(&cp, " "); /* tries */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	ఒకవేళ (cp == ఖాళీ || *arg == '\0')
+		వెళ్ళు truncated;
 	n = strtonum(arg, 0, 1<<30, &errstr);
-	if (errstr != NULL || n == 0) {
+	ఒకవేళ (errstr != ఖాళీ || n == 0) {
 		error("moduli:%d: invalid primality trial count", linenum);
-		goto fail;
+		వెళ్ళు fail;
 	}
-	strsize = strsep(&cp, " "); /* size */
-	if (cp == NULL || *strsize == '\0' ||
-	    (dhg->size = (int)strtonum(strsize, 0, 64*1024, &errstr)) == 0 ||
+	strsize = strsep(&cp, " "); /*కొలత*/
+	ఒకవేళ (cp == ఖాళీ || *strsize == '\0' ||
+	    (dhg->కొలత = (పూర్ణాంకం)strtonum(strsize, 0, 64*1024, &errstr)) == 0 ||
 	    errstr) {
 		error("moduli:%d: invalid prime length", linenum);
-		goto fail;
+		వెళ్ళు fail;
 	}
 	/* The whole group is one bit larger */
-	dhg->size++;
+	dhg->కొలత++;
 	gen = strsep(&cp, " "); /* gen */
-	if (cp == NULL || *gen == '\0')
-		goto truncated;
-	prime = strsep(&cp, " "); /* prime */
-	if (cp != NULL || *prime == '\0') {
+	ఒకవేళ (cp == ఖాళీ || *gen == '\0')
+		వెళ్ళు truncated;
+	ప్రధానసంఖ్య = strsep(&cp, " "); /*ప్రధానసంఖ్య*/
+	ఒకవేళ (cp != ఖాళీ || *ప్రధానసంఖ్య == '\0') {
  truncated:
 		error("moduli:%d: truncated", linenum);
-		goto fail;
+		వెళ్ళు fail;
 	}
 
-	if ((dhg->g = BN_new()) == NULL ||
-	    (dhg->p = BN_new()) == NULL) {
+	ఒకవేళ ((dhg->g = BN_new()) == ఖాళీ ||
+	    (dhg->p = BN_new()) == ఖాళీ) {
 		error("parse_prime: BN_new failed");
-		goto fail;
+		వెళ్ళు fail;
 	}
-	if (BN_hex2bn(&dhg->g, gen) == 0) {
+	ఒకవేళ (BN_hex2bn(&dhg->g, gen) == 0) {
 		error("moduli:%d: could not parse generator value", linenum);
-		goto fail;
+		వెళ్ళు fail;
 	}
-	if (BN_hex2bn(&dhg->p, prime) == 0) {
+	ఒకవేళ (BN_hex2bn(&dhg->p, ప్రధానసంఖ్య) == 0) {
 		error("moduli:%d: could not parse prime value", linenum);
-		goto fail;
+		వెళ్ళు fail;
 	}
-	if (BN_num_bits(dhg->p) != dhg->size) {
+	ఒకవేళ (BN_అంకె_బిట్లు(dhg->p) != dhg->కొలత) {
 		error("moduli:%d: prime has wrong size: actual %d listed %d",
-		    linenum, BN_num_bits(dhg->p), dhg->size - 1);
-		goto fail;
+		    linenum, BN_అంకె_బిట్లు(dhg->p), dhg->కొలత - 1);
+		వెళ్ళు fail;
 	}
-	if (BN_cmp(dhg->g, BN_value_one()) <= 0) {
+	ఒకవేళ (BN_cmp(dhg->g, BN_విలువ_one()) <= 0) {
 		error("moduli:%d: generator is invalid", linenum);
-		goto fail;
+		వెళ్ళు fail;
 	}
-	return 1;
+	తిరిగి 1;
 
  fail:
 	BN_clear_free(dhg->g);
 	BN_clear_free(dhg->p);
-	dhg->g = dhg->p = NULL;
-	return 0;
+	dhg->g = dhg->p = ఖాళీ;
+	తిరిగి 0;
 }
 
 DH *
-choose_dh(int min, int wantbits, int max)
+ఎంచుకో_dh(పూర్ణాంకం min, పూర్ణాంకం wantbits, పూర్ణాంకం max)
 {
 	FILE *f;
-	char *line = NULL;
-	size_t linesize = 0;
-	int best, bestcount, which, linenum;
-	struct dhgroup dhg;
+	అక్షరం *పంక్తి = ఖాళీ;
+	కొలత_t linesize = 0;
+	పూర్ణాంకం ఉత్తమ, bestcount, which, linenum;
+	నిర్మాణం dhgroup dhg;
 
-	if ((f = fopen(get_moduli_filename(), "r")) == NULL) {
+	ఒకవేళ ((f = fopen(get_moduli_filename(), "r")) == ఖాళీ) {
 		logit("WARNING: could not open %s (%s), using fixed modulus",
 		    get_moduli_filename(), strerror(errno));
-		return (dh_new_group_fallback(max));
+		తిరిగి (dh_new_సమూహం_fallback(max));
 	}
 
 	linenum = 0;
-	best = bestcount = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	ఉత్తమ = bestcount = 0;
+	అయితే (getline(&పంక్తి, &linesize, f) != -1) {
 		linenum++;
-		if (!parse_prime(linenum, line, &dhg))
-			continue;
+		ఒకవేళ (!parse_ప్రధానసంఖ్య(linenum, పంక్తి, &dhg))
+			కొనసాగు;
 		BN_clear_free(dhg.g);
 		BN_clear_free(dhg.p);
 
-		if (dhg.size > max || dhg.size < min)
-			continue;
+		ఒకవేళ (dhg.కొలత > max || dhg.కొలత < min)
+			కొనసాగు;
 
-		if ((dhg.size > wantbits && dhg.size < best) ||
-		    (dhg.size > best && best < wantbits)) {
-			best = dhg.size;
+		ఒకవేళ ((dhg.కొలత > wantbits && dhg.కొలత < ఉత్తమ) ||
+		    (dhg.కొలత > ఉత్తమ && ఉత్తమ < wantbits)) {
+			ఉత్తమ = dhg.కొలత;
 			bestcount = 0;
 		}
-		if (dhg.size == best)
+		ఒకవేళ (dhg.కొలత == ఉత్తమ)
 			bestcount++;
 	}
-	free(line);
-	line = NULL;
+	విడుదల(పంక్తి);
+	పంక్తి = ఖాళీ;
 	linesize = 0;
 	rewind(f);
 
-	if (bestcount == 0) {
+	ఒకవేళ (bestcount == 0) {
 		fclose(f);
 		logit("WARNING: no suitable primes (size %d/%d/%d) in %s",
 		    min, wantbits, max, get_moduli_filename());
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	which = arc4random_uniform(bestcount);
+	which = arc4random_ఏకరీతి(bestcount);
 
 	linenum = 0;
 	bestcount = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	అయితే (getline(&పంక్తి, &linesize, f) != -1) {
 		linenum++;
-		if (!parse_prime(linenum, line, &dhg))
-			continue;
-		if ((dhg.size > max || dhg.size < min) ||
-		    dhg.size != best ||
+		ఒకవేళ (!parse_ప్రధానసంఖ్య(linenum, పంక్తి, &dhg))
+			కొనసాగు;
+		ఒకవేళ ((dhg.కొలత > max || dhg.కొలత < min) ||
+		    dhg.కొలత != ఉత్తమ ||
 		    bestcount++ != which) {
 			BN_clear_free(dhg.g);
 			BN_clear_free(dhg.p);
-			continue;
+			కొనసాగు;
 		}
-		break;
+		ఆపు;
 	}
-	free(line);
-	line = NULL;
+	విడుదల(పంక్తి);
+	పంక్తి = ఖాళీ;
 	fclose(f);
-	if (bestcount != which + 1) {
+	ఒకవేళ (bestcount != which + 1) {
 		logit("WARNING: selected prime disappeared in %s, giving up",
 		    get_moduli_filename());
-		return (dh_new_group_fallback(max));
+		తిరిగి (dh_new_సమూహం_fallback(max));
 	}
 
-	return (dh_new_group(dhg.g, dhg.p));
+	తిరిగి (dh_new_సమూహం(dhg.g, dhg.p));
 }
 
 /* diffie-hellman-groupN-sha1 */
 
-int
-dh_pub_is_valid(const DH *dh, const BIGNUM *dh_pub)
+పూర్ణాంకం
+dh_pub_is_valid(స్థిరరాశి DH *dh, స్థిరరాశి BIGNUM *dh_pub)
 {
-	int i;
-	int n = BN_num_bits(dh_pub);
-	int bits_set = 0;
+	పూర్ణాంకం i;
+	పూర్ణాంకం n = BN_అంకె_బిట్లు(dh_pub);
+	పూర్ణాంకం బిట్లు_సమితి = 0;
 	BIGNUM *tmp;
-	const BIGNUM *dh_p;
+	స్థిరరాశి BIGNUM *dh_p;
 
-	DH_get0_pqg(dh, &dh_p, NULL, NULL);
+	DH_get0_pqg(dh, &dh_p, ఖాళీ, ఖాళీ);
 
-	if (BN_is_negative(dh_pub)) {
+	ఒకవేళ (BN_is_negative(dh_pub)) {
 		logit("invalid public DH value: negative");
-		return 0;
+		తిరిగి 0;
 	}
-	if (BN_cmp(dh_pub, BN_value_one()) != 1) {	/* pub_exp <= 1 */
+	ఒకవేళ (BN_cmp(dh_pub, BN_విలువ_one()) != 1) {	/* pub_exp <= 1 */
 		logit("invalid public DH value: <= 1");
-		return 0;
+		తిరిగి 0;
 	}
 
-	if ((tmp = BN_new()) == NULL) {
+	ఒకవేళ ((tmp = BN_new()) == ఖాళీ) {
 		error_f("BN_new failed");
-		return 0;
+		తిరిగి 0;
 	}
-	if (!BN_sub(tmp, dh_p, BN_value_one()) ||
+	ఒకవేళ (!BN_sub(tmp, dh_p, BN_విలువ_one()) ||
 	    BN_cmp(dh_pub, tmp) != -1) {		/* pub_exp > p-2 */
 		BN_clear_free(tmp);
 		logit("invalid public DH value: >= p-1");
-		return 0;
+		తిరిగి 0;
 	}
 	BN_clear_free(tmp);
 
-	for (i = 0; i <= n; i++)
-		if (BN_is_bit_set(dh_pub, i))
-			bits_set++;
-	debug2("bits set: %d/%d", bits_set, BN_num_bits(dh_p));
+	కొరకు (i = 0; i <= n; i++)
+		ఒకవేళ (BN_is_బిట్టు_సమితి(dh_pub, i))
+			బిట్లు_సమితి++;
+	debug2("bits set: %d/%d", బిట్లు_సమితి, BN_అంకె_బిట్లు(dh_p));
 
 	/*
 	 * if g==2 and bits_set==1 then computing log_g(dh_pub) is trivial
 	 */
-	if (bits_set < 4) {
+	ఒకవేళ (బిట్లు_సమితి < 4) {
 		logit("invalid public DH value (%d/%d)",
-		    bits_set, BN_num_bits(dh_p));
-		return 0;
+		    బిట్లు_సమితి, BN_అంకె_బిట్లు(dh_p));
+		తిరిగి 0;
 	}
-	return 1;
+	తిరిగి 1;
 }
 
-int
-dh_gen_key(DH *dh, int need)
+పూర్ణాంకం
+dh_gen_కీలకం(DH *dh, పూర్ణాంకం need)
 {
-	int pbits;
-	const BIGNUM *dh_p, *pub_key;
+	పూర్ణాంకం pbits;
+	స్థిరరాశి BIGNUM *dh_p, *pub_కీలకం;
 
-	DH_get0_pqg(dh, &dh_p, NULL, NULL);
+	DH_get0_pqg(dh, &dh_p, ఖాళీ, ఖాళీ);
 
-	if (need < 0 || dh_p == NULL ||
-	    (pbits = BN_num_bits(dh_p)) <= 0 ||
-	    need > INT_MAX / 2 || 2 * need > pbits)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (need < 256)
+	ఒకవేళ (need < 0 || dh_p == ఖాళీ ||
+	    (pbits = BN_అంకె_బిట్లు(dh_p)) <= 0 ||
+	    need > గరిష్ఠ_పూర్ణాంకం / 2 || 2 * need > pbits)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ (need < 256)
 		need = 256;
 	/*
 	 * Pollard Rho, Big step/Little Step attacks are O(sqrt(n)),
 	 * so double requested need here.
 	 */
-	if (!DH_set_length(dh, MINIMUM(need * 2, pbits - 1)))
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	ఒకవేళ (!DH_సమితి_నిడివి(dh, MINIMUM(need * 2, pbits - 1)))
+		తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
 
-	if (DH_generate_key(dh) == 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	DH_get0_key(dh, &pub_key, NULL);
-	if (!dh_pub_is_valid(dh, pub_key))
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	ఒకవేళ (DH_generate_కీలకం(dh) == 0)
+		తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
+	DH_get0_కీలకం(dh, &pub_కీలకం, ఖాళీ);
+	ఒకవేళ (!dh_pub_is_valid(dh, pub_కీలకం))
+		తిరిగి SSH_ERR_INVALID_FORMAT;
+	తిరిగి 0;
 }
 
 DH *
-dh_new_group_asc(const char *gen, const char *modulus)
+dh_new_సమూహం_asc(స్థిరరాశి అక్షరం *gen, స్థిరరాశి అక్షరం *modulus)
 {
 	DH *dh;
-	BIGNUM *dh_p = NULL, *dh_g = NULL;
+	BIGNUM *dh_p = ఖాళీ, *dh_g = ఖాళీ;
 
-	if ((dh = DH_new()) == NULL)
-		return NULL;
-	if (BN_hex2bn(&dh_p, modulus) == 0 ||
+	ఒకవేళ ((dh = DH_new()) == ఖాళీ)
+		తిరిగి ఖాళీ;
+	ఒకవేళ (BN_hex2bn(&dh_p, modulus) == 0 ||
 	    BN_hex2bn(&dh_g, gen) == 0)
-		goto fail;
-	if (!DH_set0_pqg(dh, dh_p, NULL, dh_g))
-		goto fail;
-	return dh;
+		వెళ్ళు fail;
+	ఒకవేళ (!DH_set0_pqg(dh, dh_p, ఖాళీ, dh_g))
+		వెళ్ళు fail;
+	తిరిగి dh;
  fail:
 	DH_free(dh);
 	BN_clear_free(dh_p);
 	BN_clear_free(dh_g);
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
 /*
@@ -334,25 +334,25 @@ dh_new_group_asc(const char *gen, const char *modulus)
  * value.
  */
 DH *
-dh_new_group(BIGNUM *gen, BIGNUM *modulus)
+dh_new_సమూహం(BIGNUM *gen, BIGNUM *modulus)
 {
 	DH *dh;
 
-	if ((dh = DH_new()) == NULL)
-		return NULL;
-	if (!DH_set0_pqg(dh, modulus, NULL, gen)) {
+	ఒకవేళ ((dh = DH_new()) == ఖాళీ)
+		తిరిగి ఖాళీ;
+	ఒకవేళ (!DH_set0_pqg(dh, modulus, ఖాళీ, gen)) {
 		DH_free(dh);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	return dh;
+	తిరిగి dh;
 }
 
 /* rfc2409 "Second Oakley Group" (1024 bits) */
 DH *
-dh_new_group1(void)
+dh_new_group1(శూన్య)
 {
-	static char *gen = "2", *group1 =
+	స్థిర అక్షరం *gen = "2", *group1 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -360,14 +360,14 @@ dh_new_group1(void)
 	    "EE386BFB" "5A899FA5" "AE9F2411" "7C4B1FE6" "49286651" "ECE65381"
 	    "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group1));
+	తిరిగి (dh_new_సమూహం_asc(gen, group1));
 }
 
 /* rfc3526 group 14 "2048-bit MODP Group" */
 DH *
-dh_new_group14(void)
+dh_new_group14(శూన్య)
 {
-	static char *gen = "2", *group14 =
+	స్థిర అక్షరం *gen = "2", *group14 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -380,14 +380,14 @@ dh_new_group14(void)
 	    "DE2BCBF6" "95581718" "3995497C" "EA956AE5" "15D22618" "98FA0510"
 	    "15728E5A" "8AACAA68" "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group14));
+	తిరిగి (dh_new_సమూహం_asc(gen, group14));
 }
 
 /* rfc3526 group 16 "4096-bit MODP Group" */
 DH *
-dh_new_group16(void)
+dh_new_group16(శూన్య)
 {
-	static char *gen = "2", *group16 =
+	స్థిర అక్షరం *gen = "2", *group16 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -411,14 +411,14 @@ dh_new_group16(void)
 	    "93B4EA98" "8D8FDDC1" "86FFB7DC" "90A6C08F" "4DF435C9" "34063199"
 	    "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group16));
+	తిరిగి (dh_new_సమూహం_asc(gen, group16));
 }
 
 /* rfc3526 group 18 "8192-bit MODP Group" */
 DH *
-dh_new_group18(void)
+dh_new_group18(శూన్య)
 {
-	static char *gen = "2", *group18 =
+	స్థిర అక్షరం *gen = "2", *group18 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -463,23 +463,23 @@ dh_new_group18(void)
 	    "9558E447" "5677E9AA" "9E3050E2" "765694DF" "C81F56E8" "80B96E71"
 	    "60C980DD" "98EDD3DF" "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group18));
+	తిరిగి (dh_new_సమూహం_asc(gen, group18));
 }
 
 /* Select fallback group used by DH-GEX if moduli file cannot be read. */
 DH *
-dh_new_group_fallback(int max)
+dh_new_సమూహం_fallback(పూర్ణాంకం max)
 {
 	debug3_f("requested max size %d", max);
-	if (max < 3072) {
+	ఒకవేళ (max < 3072) {
 		debug3("using 2k bit group 14");
-		return dh_new_group14();
-	} else if (max < 6144) {
+		తిరిగి dh_new_group14();
+	} లేకపోతే ఒకవేళ (max < 6144) {
 		debug3("using 4k bit group 16");
-		return dh_new_group16();
+		తిరిగి dh_new_group16();
 	}
 	debug3("using 8k bit group 18");
-	return dh_new_group18();
+	తిరిగి dh_new_group18();
 }
 
 /*
@@ -490,15 +490,15 @@ dh_new_group_fallback(int max)
  * from RFC4419 section 3.
  */
 u_int
-dh_estimate(int bits)
+dh_estimate(పూర్ణాంకం బిట్లు)
 {
-	if (bits <= 112)
-		return 2048;
-	if (bits <= 128)
-		return 3072;
-	if (bits <= 192)
-		return 7680;
-	return 8192;
+	ఒకవేళ (బిట్లు <= 112)
+		తిరిగి 2048;
+	ఒకవేళ (బిట్లు <= 128)
+		తిరిగి 3072;
+	ఒకవేళ (బిట్లు <= 192)
+		తిరిగి 7680;
+	తిరిగి 8192;
 }
 
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */

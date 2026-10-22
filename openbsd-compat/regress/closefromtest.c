@@ -14,50 +14,50 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
 
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <unistd.h>
 
-#define NUM_OPENS 10
+#నిర్వచించు అంకె_OPENS 10
 
-void
-fail(char *msg)
+శూన్య
+fail(అక్షరం *సందేశం)
 {
-	fprintf(stderr, "closefrom: %s\n", msg);
-	exit(1);
+	fprintf(stderr, "closefrom: %s\n", సందేశం);
+	నిష్క్రమించు(1);
 }
 
-int
-main(void)
+పూర్ణాంకం
+ప్రధాన(శూన్య)
 {
-	int i, max, fds[NUM_OPENS];
-	char buf[512];
+	పూర్ణాంకం i, max, fds[అంకె_OPENS];
+	అక్షరం buf[512];
 
-	for (i = 0; i < NUM_OPENS; i++)
-		if ((fds[i] = open("/dev/null", O_RDONLY)) == -1)
-			exit(0);	/* can't test */
+	కొరకు (i = 0; i < అంకె_OPENS; i++)
+		ఒకవేళ ((fds[i] = open("/dev/null", O_RDONLY)) == -1)
+			నిష్క్రమించు(0);	/* can't test */
 	max = i - 1;
 
 	/* should close last fd only */
 	closefrom(fds[max]);
-	if (close(fds[max]) != -1)
+	ఒకవేళ (close(fds[max]) != -1)
 		fail("failed to close highest fd");
 
 	/* make sure we can still use remaining descriptors */
-	for (i = 0; i < max; i++)
-		if (read(fds[i], buf, sizeof(buf)) == -1)
+	కొరకు (i = 0; i < max; i++)
+		ఒకవేళ (పఠ(fds[i], buf, పరిమాణం(buf)) == -1)
 			fail("closed descriptors it should not have");
 
 	/* should close all fds */
 	closefrom(fds[0]);
-	for (i = 0; i < NUM_OPENS; i++)
-		if (close(fds[i]) != -1)
+	కొరకు (i = 0; i < అంకె_OPENS; i++)
+		ఒకవేళ (close(fds[i]) != -1)
 			fail("failed to close from lowest fd");
-	return 0;
+	తిరిగి 0;
 }

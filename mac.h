@@ -23,31 +23,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SSHMAC_H
-#define SSHMAC_H
+#నిర్వచితం_కాకపోతే SSHMAC_H
+#నిర్వచించు SSHMAC_H
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-struct sshmac {
-	char	*name;
-	int	enabled;
+నిర్మాణం sshmac {
+	అక్షరం	*name;
+	పూర్ణాంకం	enabled;
 	u_int	mac_len;
-	u_char	*key;
-	u_int	key_len;
-	int	type;
-	int	etm;		/* Encrypt-then-MAC */
-	struct ssh_hmac_ctx	*hmac_ctx;
-	struct umac_ctx		*umac_ctx;
+	u_char	*కీలకం;
+	u_int	కీలకం_len;
+	పూర్ణాంకం	type;
+	పూర్ణాంకం	etm;		/* Encrypt-then-MAC */
+	నిర్మాణం ssh_hmac_ctx	*hmac_ctx;
+	నిర్మాణం umac_ctx		*umac_ctx;
 };
 
-int	 mac_valid(const char *);
-char	*mac_alg_list(char);
-int	 mac_setup(struct sshmac *, char *);
-int	 mac_init(struct sshmac *);
-int	 mac_compute(struct sshmac *, uint32_t, const u_char *, int,
-    u_char *, size_t);
-int	 mac_check(struct sshmac *, uint32_t, const u_char *, size_t,
-    const u_char *, size_t);
-void	 mac_clear(struct sshmac *);
+పూర్ణాంకం	 mac_valid(స్థిరరాశి అక్షరం *);
+అక్షరం	*mac_alg_list(అక్షరం);
+పూర్ణాంకం	 mac_అమరిక(నిర్మాణం sshmac *, అక్షరం *);
+పూర్ణాంకం	 mac_init(నిర్మాణం sshmac *);
+పూర్ణాంకం	 mac_compute(నిర్మాణం sshmac *, uint32_t, స్థిరరాశి u_char *, పూర్ణాంకం,
+    u_char *, కొలత_t);
+పూర్ణాంకం	 mac_check(నిర్మాణం sshmac *, uint32_t, స్థిరరాశి u_char *, కొలత_t,
+    స్థిరరాశి u_char *, కొలత_t);
+శూన్య	 mac_clear(నిర్మాణం sshmac *);
 
-#endif /* SSHMAC_H */
+#అయితే_ముగింపు /* SSHMAC_H */

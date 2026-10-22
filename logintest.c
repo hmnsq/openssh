@@ -27,39 +27,39 @@
  **               and lastlog retrieval
  **/
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/socket.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/wait.h>
+#అన్తర్భావ <sys/socket.h>
 
-#include <netinet/in.h>
+#అన్తర్భావ <netinet/in.h>
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <pwd.h>
-#include <netdb.h>
-#include <time.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <pwd.h>
+#అన్తర్భావ <netdb.h>
+#అన్తర్భావ <time.h>
 
-#include "loginrec.h"
+#అన్తర్భావ "loginrec.h"
 
-extern char *__progname;
+బాహ్య అక్షరం *__progname;
 
-#define PAUSE_BEFORE_LOGOUT 3
+#నిర్వచించు PAUSE_BEFORE_LOGOUT 3
 
-int nologtest = 0;
-int compile_opts_only = 0;
-int be_verbose = 0;
+పూర్ణాంకం nologtest = 0;
+పూర్ణాంకం compile_opts_only = 0;
+పూర్ణాంకం be_verbose = 0;
 
 
 /* Dump a logininfo to stdout. Assumes a tab size of 8 chars. */
-void
-dump_logininfo(struct logininfo *li, char *descname)
+శూన్య
+dump_logininfo(నిర్మాణం logininfo *li, అక్షరం *descname)
 {
 	/* yes I know how nasty this is */
-	printf("struct logininfo %s = {\n\t"
+	రాయి("struct logininfo %s = {\n\t"
 	    "progname\t'%s'\n\ttype\t\t%d\n\t"
 	    "pid\t\t%d\n\tuid\t\t%d\n\t"
 	    "line\t\t'%s'\n\tusername\t'%s'\n\t"
@@ -71,105 +71,105 @@ dump_logininfo(struct logininfo *li, char *descname)
 	    "\t}\n"
 	    "}\n",
 	    descname, li->progname, li->type,
-	    li->pid, li->uid, li->line,
-	    li->username, li->hostname, li->exit,
+	    li->pid, li->uid, li->పంక్తి,
+	    li->username, li->hostname, li->నిష్క్రమించు,
 	    li->termination, li->tv_sec, li->tv_usec,
 	    li->hostaddr.sa.sa_family);
 }
 
 
-int
+పూర్ణాంకం
 testAPI()
 {
-	struct logininfo *li1;
-	struct passwd *pw;
-	struct hostent *he;
-	struct sockaddr_in sa_in4;
-	char cmdstring[256], stripline[8];
-	char username[32];
-#ifdef HAVE_TIME_H
+	నిర్మాణం logininfo *li1;
+	నిర్మాణం passwd *pw;
+	నిర్మాణం hostent *he;
+	నిర్మాణం sockaddr_in sa_in4;
+	అక్షరం cmdstring[256], stripline[8];
+	అక్షరం username[32];
+#నిర్వచితమైతే HAVE_సమయం_H
 	time_t t0, t1, t2, logintime, logouttime;
-	char s_t0[64],s_t1[64],s_t2[64];
-	char s_logintime[64], s_logouttime[64]; /* ctime() strings */
-#endif
+	అక్షరం s_t0[64],s_t1[64],s_t2[64];
+	అక్షరం s_logintime[64], s_logouttime[64]; /* ctime() strings */
+#అయితే_ముగింపు
 
-	printf("**\n** Testing the API...\n**\n");
+	రాయి("**\n** Testing the API...\n**\n");
 
 	pw = getpwuid(getuid());
-	strlcpy(username, pw->pw_name, sizeof(username));
+	strlcpy(username, pw->pw_name, పరిమాణం(username));
 
 	/* gethostname(hostname, sizeof(hostname)); */
 
-	printf("login_alloc_entry test (no host info):\n");
+	రాయి("login_alloc_entry test (no host info):\n");
 
 	/* FIXME fake tty more effectively - this could upset some platforms */
-	li1 = login_alloc_entry((int)getpid(), username, NULL, ttyname(0));
-	strlcpy(li1->progname, "OpenSSH-logintest", sizeof(li1->progname));
+	li1 = login_alloc_నమోదు((పూర్ణాంకం)getpid(), username, ఖాళీ, ttyname(0));
+	strlcpy(li1->progname, "OpenSSH-logintest", పరిమాణం(li1->progname));
 
-	if (be_verbose)
+	ఒకవేళ (be_verbose)
 		dump_logininfo(li1, "li1");
 
-	printf("Setting host address info for 'localhost' (may call out):\n");
-	if (! (he = gethostbyname("localhost"))) {
-		printf("Couldn't set hostname(lookup failed)\n");
-	} else {
+	రాయి("Setting host address info for 'localhost' (may call out):\n");
+	ఒకవేళ (! (he = gethostbyname("localhost"))) {
+		రాయి("Couldn't set hostname(lookup failed)\n");
+	} లేకపోతే {
 		/* NOTE: this is messy, but typically a program wouldn't have to set
 		 *  any of this, a sockaddr_in* would be already prepared */
-		memcpy((void *)&(sa_in4.sin_addr), (void *)&(he->h_addr_list[0][0]),
-		    sizeof(struct in_addr));
-		login_set_addr(li1, (struct sockaddr *) &sa_in4, sizeof(sa_in4));
-		strlcpy(li1->hostname, "localhost", sizeof(li1->hostname));
+		జ్ఞాపకం_నకలు((శూన్య *)&(sa_in4.sin_addr), (శూన్య *)&(he->h_addr_list[0][0]),
+		    పరిమాణం(నిర్మాణం in_addr));
+		login_సమితి_addr(li1, (నిర్మాణం sockaddr *) &sa_in4, పరిమాణం(sa_in4));
+		strlcpy(li1->hostname, "localhost", పరిమాణం(li1->hostname));
 	}
-	if (be_verbose)
+	ఒకవేళ (be_verbose)
 		dump_logininfo(li1, "li1");
 
-	if ((int)geteuid() != 0) {
-		printf("NOT RUNNING LOGIN TESTS - you are not root!\n");
-		return 1;
+	ఒకవేళ ((పూర్ణాంకం)geteuid() != 0) {
+		రాయి("NOT RUNNING LOGIN TESTS - you are not root!\n");
+		తిరిగి 1;
 	}
 
-	if (nologtest)
-		return 1;
+	ఒకవేళ (nologtest)
+		తిరిగి 1;
 
-	line_stripname(stripline, li1->line, sizeof(stripline));
+	పంక్తి_stripname(stripline, li1->పంక్తి, పరిమాణం(stripline));
 
-	printf("Performing an invalid login attempt (no type field)\n--\n");
+	రాయి("Performing an invalid login attempt (no type field)\n--\n");
 	login_write(li1);
-	printf("--\n(Should have written errors to stderr)\n");
+	రాయి("--\n(Should have written errors to stderr)\n");
 
-#ifdef HAVE_TIME_H
-	(void)time(&t0);
-	strlcpy(s_t0, ctime(&t0), sizeof(s_t0));
-	t1 = login_get_lastlog_time(getuid());
-	strlcpy(s_t1, ctime(&t1), sizeof(s_t1));
-	printf("Before logging in:\n\tcurrent time is %d - %s\t"
+#నిర్వచితమైతే HAVE_సమయం_H
+	(శూన్య)time(&t0);
+	strlcpy(s_t0, ctime(&t0), పరిమాణం(s_t0));
+	t1 = login_get_lastlog_సమయం(getuid());
+	strlcpy(s_t1, ctime(&t1), పరిమాణం(s_t1));
+	రాయి("Before logging in:\n\tcurrent time is %d - %s\t"
 	    "lastlog time is %d - %s\n",
-	    (int)t0, s_t0, (int)t1, s_t1);
-#endif
+	    (పూర్ణాంకం)t0, s_t0, (పూర్ణాంకం)t1, s_t1);
+#అయితే_ముగింపు
 
-	printf("Performing a login on line %s ", stripline);
-#ifdef HAVE_TIME_H
-	(void)time(&logintime);
-	strlcpy(s_logintime, ctime(&logintime), sizeof(s_logintime));
-	printf("at %d - %s", (int)logintime, s_logintime);
-#endif
-	printf("--\n");
+	రాయి("Performing a login on line %s ", stripline);
+#నిర్వచితమైతే HAVE_సమయం_H
+	(శూన్య)time(&logintime);
+	strlcpy(s_logintime, ctime(&logintime), పరిమాణం(s_logintime));
+	రాయి("at %d - %s", (పూర్ణాంకం)logintime, s_logintime);
+#అయితే_ముగింపు
+	రాయి("--\n");
 	login_login(li1);
 
-	snprintf(cmdstring, sizeof(cmdstring), "who | grep '%s '",
+	snprintf(cmdstring, పరిమాణం(cmdstring), "who | grep '%s '",
 		 stripline);
 	system(cmdstring);
 
-	printf("--\nPausing for %d second(s)...\n", PAUSE_BEFORE_LOGOUT);
+	రాయి("--\nPausing for %d second(s)...\n", PAUSE_BEFORE_LOGOUT);
 	sleep(PAUSE_BEFORE_LOGOUT);
 
-	printf("Performing a logout ");
-#ifdef HAVE_TIME_H
-	(void)time(&logouttime);
-	strlcpy(s_logouttime, ctime(&logouttime), sizeof(s_logouttime));
-	printf("at %d - %s", (int)logouttime, s_logouttime);
-#endif
-	printf("\nThe root login shown above should be gone.\n"
+	రాయి("Performing a logout ");
+#నిర్వచితమైతే HAVE_సమయం_H
+	(శూన్య)time(&logouttime);
+	strlcpy(s_logouttime, ctime(&logouttime), పరిమాణం(s_logouttime));
+	రాయి("at %d - %s", (పూర్ణాంకం)logouttime, s_logouttime);
+#అయితే_ముగింపు
+	రాయి("\nThe root login shown above should be gone.\n"
 	    "If the root login hasn't gone, but another user on the same\n"
 	    "pty has, this is OK - we're hacking it here, and there\n"
 	    "shouldn't be two users on one pty in reality...\n"
@@ -177,130 +177,130 @@ testAPI()
 	login_logout(li1);
 
 	system(cmdstring);
-	printf("-- ('who' output ends)\n");
+	రాయి("-- ('who' output ends)\n");
 
-#ifdef HAVE_TIME_H
-	t2 = login_get_lastlog_time(getuid());
-	strlcpy(s_t2, ctime(&t2), sizeof(s_t2));
-	printf("After logging in, lastlog time is %d - %s\n", (int)t2, s_t2);
-	if (t1 == t2)
-		printf("The lastlog times before and after logging in are the "
+#నిర్వచితమైతే HAVE_సమయం_H
+	t2 = login_get_lastlog_సమయం(getuid());
+	strlcpy(s_t2, ctime(&t2), పరిమాణం(s_t2));
+	రాయి("After logging in, lastlog time is %d - %s\n", (పూర్ణాంకం)t2, s_t2);
+	ఒకవేళ (t1 == t2)
+		రాయి("The lastlog times before and after logging in are the "
 		    "same.\nThis indicates that lastlog is ** NOT WORKING "
 		    "CORRECTLY **\n");
-	else if (t0 != t2)
+	లేకపోతే ఒకవేళ (t0 != t2)
 		/* We can be off by a second or so, even when recording works fine.
 		 * I'm not 100% sure why, but it's true. */
-		printf("** The login time and the lastlog time differ.\n"
+		రాయి("** The login time and the lastlog time differ.\n"
 		    "** This indicates that lastlog is either recording the "
 		    "wrong time,\n** or retrieving the wrong entry.\n"
 		    "If it's off by less than %d second(s) "
 		    "run the test again.\n", PAUSE_BEFORE_LOGOUT);
-	else
-		printf("lastlog agrees with the login time. This is a good thing.\n");
+	లేకపోతే
+		రాయి("lastlog agrees with the login time. This is a good thing.\n");
 
-#endif
+#అయితే_ముగింపు
 
-	printf("--\nThe output of 'last' shown next should have "
+	రాయి("--\nThe output of 'last' shown next should have "
 	    "an entry for root \n  on %s for the time shown above:\n--\n",
 	    stripline);
-	snprintf(cmdstring, sizeof(cmdstring), "last | grep '%s ' | head -3",
+	snprintf(cmdstring, పరిమాణం(cmdstring), "last | grep '%s ' | head -3",
 		 stripline);
 	system(cmdstring);
 
-	printf("--\nEnd of login test.\n");
+	రాయి("--\nEnd of login test.\n");
 
-	login_free_entry(li1);
+	login_free_నమోదు(li1);
 
-	return 1;
+	తిరిగి 1;
 } /* testAPI() */
 
 
-void
-testLineName(char *line)
+శూన్య
+test_పంక్తి_Name(అక్షరం *పంక్తి)
 {
 	/* have to null-terminate - these functions are designed for
 	 * structures with fixed-length char arrays, and don't null-term.*/
-	char full[17], strip[9], abbrev[5];
+	అక్షరం నిండిన[17], strip[9], abbrev[5];
 
-	memset(full, '\0', sizeof(full));
-	memset(strip, '\0', sizeof(strip));
-	memset(abbrev, '\0', sizeof(abbrev));
+	memset(నిండిన, '\0', పరిమాణం(నిండిన));
+	memset(strip, '\0', పరిమాణం(strip));
+	memset(abbrev, '\0', పరిమాణం(abbrev));
 
-	line_fullname(full, line, sizeof(full)-1);
-	line_stripname(strip, full, sizeof(strip)-1);
-	line_abbrevname(abbrev, full, sizeof(abbrev)-1);
-	printf("%s: %s, %s, %s\n", line, full, strip, abbrev);
+	పంక్తి_fullname(నిండిన, పంక్తి, పరిమాణం(నిండిన)-1);
+	పంక్తి_stripname(strip, నిండిన, పరిమాణం(strip)-1);
+	పంక్తి_abbrevname(abbrev, నిండిన, పరిమాణం(abbrev)-1);
+	రాయి("%s: %s, %s, %s\n", పంక్తి, నిండిన, strip, abbrev);
 
 } /* testLineName() */
 
 
-int
+పూర్ణాంకం
 testOutput()
 {
-	printf("**\n** Testing linename functions\n**\n");
-	testLineName("/dev/pts/1");
-	testLineName("pts/1");
-	testLineName("pts/999");
-	testLineName("/dev/ttyp00");
-	testLineName("ttyp00");
+	రాయి("**\n** Testing linename functions\n**\n");
+	test_పంక్తి_Name("/dev/pts/1");
+	test_పంక్తి_Name("pts/1");
+	test_పంక్తి_Name("pts/999");
+	test_పంక్తి_Name("/dev/ttyp00");
+	test_పంక్తి_Name("ttyp00");
 
-	return 1;
+	తిరిగి 1;
 } /* testOutput() */
 
 
 /* show which options got compiled in */
-void
-showOptions(void)
+శూన్య
+showOptions(శూన్య)
 {
-	printf("**\n** Compile-time options\n**\n");
+	రాయి("**\n** Compile-time options\n**\n");
 
-	printf("login recording methods selected:\n");
-#ifdef USE_LOGIN
-	printf("\tUSE_LOGIN\n");
-#endif
-#ifdef USE_UTMP
-	printf("\tUSE_UTMP (UTMP_FILE=%s)\n", UTMP_FILE);
-#endif
-#ifdef USE_UTMPX
-	printf("\tUSE_UTMPX\n");
-#endif
-#ifdef USE_WTMP
-	printf("\tUSE_WTMP (WTMP_FILE=%s)\n", WTMP_FILE);
-#endif
-#ifdef USE_WTMPX
-	printf("\tUSE_WTMPX (WTMPX_FILE=%s)\n", WTMPX_FILE);
-#endif
-#ifdef USE_LASTLOG
-	printf("\tUSE_LASTLOG (LASTLOG_FILE=%s)\n", LASTLOG_FILE);
-#endif
-	printf("\n");
+	రాయి("login recording methods selected:\n");
+#నిర్వచితమైతే USE_LOGIN
+	రాయి("\tUSE_LOGIN\n");
+#అయితే_ముగింపు
+#నిర్వచితమైతే USE_UTMP
+	రాయి("\tUSE_UTMP (UTMP_FILE=%s)\n", UTMP_FILE);
+#అయితే_ముగింపు
+#నిర్వచితమైతే USE_UTMPX
+	రాయి("\tUSE_UTMPX\n");
+#అయితే_ముగింపు
+#నిర్వచితమైతే USE_WTMP
+	రాయి("\tUSE_WTMP (WTMP_FILE=%s)\n", WTMP_FILE);
+#అయితే_ముగింపు
+#నిర్వచితమైతే USE_WTMPX
+	రాయి("\tUSE_WTMPX (WTMPX_FILE=%s)\n", WTMPX_FILE);
+#అయితే_ముగింపు
+#నిర్వచితమైతే USE_LASTLOG
+	రాయి("\tUSE_LASTLOG (LASTLOG_FILE=%s)\n", LASTLOG_FILE);
+#అయితే_ముగింపు
+	రాయి("\n");
 
 } /* showOptions() */
 
 
-int
-main(int argc, char *argv[])
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం *argv[])
 {
-	printf("Platform-independent login recording test driver\n");
+	రాయి("Platform-independent login recording test driver\n");
 
 	__progname = ssh_get_progname(argv[0]);
-	if (argc == 2) {
-		if (strncmp(argv[1], "-i", 3) == 0)
+	ఒకవేళ (argc == 2) {
+		ఒకవేళ (అక్షరశ్రేణి_పోలిక(argv[1], "-i", 3) == 0)
 			compile_opts_only = 1;
-		else if (strncmp(argv[1], "-v", 3) == 0)
+		లేకపోతే ఒకవేళ (అక్షరశ్రేణి_పోలిక(argv[1], "-v", 3) == 0)
 			be_verbose=1;
 	}
 
-	if (!compile_opts_only) {
-		if (be_verbose && !testOutput())
-			return 1;
+	ఒకవేళ (!compile_opts_only) {
+		ఒకవేళ (be_verbose && !testOutput())
+			తిరిగి 1;
 
-		if (!testAPI())
-			return 1;
+		ఒకవేళ (!testAPI())
+			తిరిగి 1;
 	}
 
 	showOptions();
 
-	return 0;
+	తిరిగి 0;
 } /* main() */
 

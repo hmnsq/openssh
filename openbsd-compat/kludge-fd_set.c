@@ -7,22 +7,22 @@
  * function compiled without _FORTIFY_SOURCE.
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#if defined(HAVE_FEATURES_H) && defined(_FORTIFY_SOURCE)
+#ఒకవేళ defined(HAVE_FEATURES_H) && defined(FORTIFY_ఆధారం)
 # include <features.h>
-# if defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
-#  if __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0)
-#   undef _FORTIFY_SOURCE
+# ఒకవేళ defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
+#  ఒకవేళ __GLIBC_PREREQ(2, 15) && (FORTIFY_ఆధారం > 0)
+#   undef FORTIFY_ఆధారం
 #   undef __USE_FORTIFY_LEVEL
 #   include <sys/socket.h>
-void kludge_FD_SET(int n, fd_set *set) {
-	FD_SET(n, set);
+శూన్య kludge_FD_సమితి(పూర్ణాంకం n, fd_set *సమితి) {
+	FD_SET(n, సమితి);
 }
-int kludge_FD_ISSET(int n, fd_set *set) {
-	return FD_ISSET(n, set);
+పూర్ణాంకం kludge_FD_ISSET(పూర్ణాంకం n, fd_set *సమితి) {
+	తిరిగి FD_ISSET(n, సమితి);
 }
 #  endif /* __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0) */
 # endif /* __GNU_LIBRARY__ && __GLIBC_PREREQ */
-#endif /* HAVE_FEATURES_H && _FORTIFY_SOURCE */
+#అయితే_ముగింపు /* HAVE_FEATURES_H && _FORTIFY_SOURCE */
 

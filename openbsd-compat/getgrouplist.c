@@ -30,25 +30,25 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getgrouplist.c */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifndef HAVE_GETGROUPLIST
+#నిర్వచితం_కాకపోతే HAVE_GETGROUPLIST
 
 /*
  * get credential
  */
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <grp.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+పూర్ణాంకం
+getgrouplist(స్థిరరాశి అక్షరం *uname, gid_t agroup, gid_t *groups, పూర్ణాంకం *grpcnt)
 {
-	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	నిర్మాణం సమూహం *grp;
+	పూర్ణాంకం i, ngroups;
+	పూర్ణాంకం ret, maxgroups;
+	పూర్ణాంకం bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	ఒకవేళ (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		తిరిగి (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,29 +67,29 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
-			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+	అయితే ((grp = getgrent())) {
+		ఒకవేళ (grp->gr_gid == agroup)
+			కొనసాగు;
+		కొరకు (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			ఒకవేళ (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
-			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		ఒకవేళ (bail)
+			కొనసాగు;
+		కొరకు (i = 0; grp->gr_mem[i]; i++) {
+			ఒకవేళ (!strcmp(grp->gr_mem[i], uname)) {
+				ఒకవేళ (ngroups >= maxgroups) {
 					ret = -1;
-					goto out;
+					వెళ్ళు బహిర్గతం;
 				}
 				groups[ngroups++] = grp->gr_gid;
-				break;
+				ఆపు;
 			}
 		}
 	}
-out:
+బహిర్గతం:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	తిరిగి (ret);
 }
 
-#endif /* HAVE_GETGROUPLIST */
+#అయితే_ముగింపు /* HAVE_GETGROUPLIST */

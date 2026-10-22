@@ -36,12 +36,12 @@
  * you don't trust your X server. We grab the keyboard always.
  */
 
-#define GRAB_TRIES	16
-#define GRAB_WAIT	250 /* milliseconds */
+#నిర్వచించు GRAB_TRIES	16
+#నిర్వచించు GRAB_WAIT	250 /* milliseconds */
 
-#define PROMPT_ENTRY	0
-#define PROMPT_CONFIRM	1
-#define PROMPT_NONE	2
+#నిర్వచించు PROMPT_నమోదు	0
+#నిర్వచించు PROMPT_CONFIRM	1
+#నిర్వచించు PROMPT_NONE	2
 
 /*
  * Compile with:
@@ -52,164 +52,164 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-#include <X11/Xlib.h>
-#include <gtk/gtk.h>
-#include <gdk/gdkx.h>
-#include <gdk/gdkkeysyms.h>
+#అన్తర్భావ <X11/Xlib.h>
+#అన్తర్భావ <gtk/gtk.h>
+#అన్తర్భావ <gdk/gdkx.h>
+#అన్తర్భావ <gdk/gdkkeysyms.h>
 
-static void
-ok_dialog(GtkWidget *entry, gpointer dialog)
+స్థిర శూన్య
+ok_dialog(GtkWidget *నమోదు_2, gpointer dialog)
 {
 	g_return_if_fail(GTK_IS_DIALOG(dialog));
 	gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 }
 
-static gboolean
-check_none(GtkWidget *widget, GdkEventKey *event, gpointer dialog)
+స్థిర gboolean
+check_none(GtkWidget *widget, Gdk_Event_కీలకం *event, gpointer dialog)
 {
-	switch (event->keyval) {
-	case GDK_KEY_Escape:
+	ఎంపిక (event->keyval) {
+	స్థితి GDK_కీలకం_Escape:
 		/* esc -> close dialog */
 		gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE);
-		return TRUE;
-	case GDK_KEY_Tab:
+		తిరిగి TRUE;
+	స్థితి GDK_కీలకం_Tab:
 		/* tab -> focus close button */
 		gtk_widget_grab_focus(gtk_dialog_get_widget_for_response(
 		    dialog, GTK_RESPONSE_CLOSE));
-		return TRUE;
-	default:
+		తిరిగి TRUE;
+	అప్రమేయ:
 		/* eat all other key events */
-		return TRUE;
+		తిరిగి TRUE;
 	}
 }
 
-static int
-parse_env_hex_color(const char *env, GdkColor *c)
+స్థిర పూర్ణాంకం
+parse_env_hex_color(స్థిరరాశి అక్షరం *env, GdkColor *c)
 {
-	const char *s;
-	unsigned long ul;
-	char *ep;
-	size_t n;
+	స్థిరరాశి అక్షరం *s;
+	గుర్తులేని దీర్ఘ ul;
+	అక్షరం *ep;
+	కొలత_t n;
 
-	if ((s = getenv(env)) == NULL)
-		return 0;
+	ఒకవేళ ((s = getenv(env)) == ఖాళీ)
+		తిరిగి 0;
 
-	memset(c, 0, sizeof(*c));
+	memset(c, 0, పరిమాణం(*c));
 
 	/* Permit hex rgb or rrggbb optionally prefixed by '#' or '0x' */
-	if (*s == '#')
+	ఒకవేళ (*s == '#')
 		s++;
-	else if (strncmp(s, "0x", 2) == 0)
+	లేకపోతే ఒకవేళ (అక్షరశ్రేణి_పోలిక(s, "0x", 2) == 0)
 		s += 2;
-	n = strlen(s);
-	if (n != 3 && n != 6)
-		goto bad;
+	n = అక్షరశ్రేణి_పొడవు(s);
+	ఒకవేళ (n != 3 && n != 6)
+		వెళ్ళు bad;
 	ul = strtoul(s, &ep, 16);
-	if (*ep != '\0' || ul > 0xffffff) {
+	ఒకవేళ (*ep != '\0' || ul > 0xffffff) {
  bad:
 		fprintf(stderr, "Invalid $%s - invalid hex color code\n", env);
-		return 0;
+		తిరిగి 0;
 	}
 	/* Valid hex sequence; expand into a GdkColor */
-	if (n == 3) {
+	ఒకవేళ (n == 3) {
 		/* 4-bit RGB */
 		c->red = ((ul >> 8) & 0xf) << 12;
 		c->green = ((ul >> 4) & 0xf) << 12;
 		c->blue = (ul & 0xf) << 12;
-	} else {
+	} లేకపోతే {
 		/* 8-bit RGB */
 		c->red = ((ul >> 16) & 0xff) << 8;
 		c->green = ((ul >> 8) & 0xff) << 8;
 		c->blue = (ul & 0xff) << 8;
 	}
-	return 1;
+	తిరిగి 1;
 }
 
-static int
-passphrase_dialog(char *message, int prompt_type)
+స్థిర పూర్ణాంకం
+passphrase_dialog(అక్షరం *సందేశం_2, పూర్ణాంకం prompt_type)
 {
-	const char *failed;
-	char *passphrase, *local;
-	int result, grab_tries, grab_server, grab_pointer;
-	int buttons, default_response;
-	GtkWidget *parent_window, *dialog, *entry, *err;
-	GdkGrabStatus status;
+	స్థిరరాశి అక్షరం *failed;
+	అక్షరం *passphrase, *local;
+	పూర్ణాంకం ఫలితం, grab_tries, grab_server, grab_సూచిక;
+	పూర్ణాంకం buttons, default_response;
+	GtkWidget *మాతృ_కిటికీ, *dialog, *నమోదు_2, *err;
+	Gdk_Grab_స్థితి స్థితి_2;
 	GdkColor fg, bg;
 	GdkSeat *seat;
 	GdkDisplay *display;
 	GdkSeatCapabilities caps;
-	int fg_set = 0, bg_set = 0;
+	పూర్ణాంకం fg_సమితి = 0, bg_సమితి = 0;
 
-	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != NULL);
-	grab_pointer = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != NULL);
+	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != ఖాళీ);
+	grab_సూచిక = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != ఖాళీ);
 	grab_tries = 0;
 
-	fg_set = parse_env_hex_color("GNOME_SSH_ASKPASS_FG_COLOR", &fg);
-	bg_set = parse_env_hex_color("GNOME_SSH_ASKPASS_BG_COLOR", &bg);
+	fg_సమితి = parse_env_hex_color("GNOME_SSH_ASKPASS_FG_COLOR", &fg);
+	bg_సమితి = parse_env_hex_color("GNOME_SSH_ASKPASS_BG_COLOR", &bg);
 
 	/* Create an invisible parent window so that GtkDialog doesn't
 	 * complain.  */
-	parent_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	మాతృ_కిటికీ = gtk_కిటికీ_new(GTK_కిటికీ_TOPLEVEL);
 
-	switch (prompt_type) {
-	case PROMPT_CONFIRM:
+	ఎంపిక (prompt_type) {
+	స్థితి PROMPT_CONFIRM:
 		buttons = GTK_BUTTONS_YES_NO;
 		default_response = GTK_RESPONSE_YES;
-		break;
-	case PROMPT_NONE:
+		ఆపు;
+	స్థితి PROMPT_NONE:
 		buttons = GTK_BUTTONS_CLOSE;
 		default_response = GTK_RESPONSE_CLOSE;
-		break;
-	default:
+		ఆపు;
+	అప్రమేయ:
 		buttons = GTK_BUTTONS_OK_CANCEL;
 		default_response = GTK_RESPONSE_OK;
-		break;
+		ఆపు;
 	}
 
-	dialog = gtk_message_dialog_new(GTK_WINDOW(parent_window), 0,
-	    GTK_MESSAGE_QUESTION, buttons, "%s", message);
+	dialog = gtk_సందేశం_dialog_new(GTK_కిటికీ(మాతృ_కిటికీ), 0,
+	    GTK_సందేశం_QUESTION, buttons, "%s", సందేశం_2);
 
-	gtk_window_set_title(GTK_WINDOW(dialog), "OpenSSH");
-	gtk_window_set_position (GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-	gtk_window_set_keep_above(GTK_WINDOW(dialog), TRUE);
-	gtk_dialog_set_default_response(GTK_DIALOG(dialog), default_response);
-	gtk_window_set_keep_above(GTK_WINDOW(dialog), TRUE);
+	gtk_కిటికీ_సమితి_title(GTK_కిటికీ(dialog), "OpenSSH");
+	gtk_కిటికీ_సమితి_position (GTK_కిటికీ(dialog), GTK_WIN_POS_CENTER);
+	gtk_కిటికీ_సమితి_keep_above(GTK_కిటికీ(dialog), TRUE);
+	gtk_dialog_సమితి_default_response(GTK_DIALOG(dialog), default_response);
+	gtk_కిటికీ_సమితి_keep_above(GTK_కిటికీ(dialog), TRUE);
 
-	if (fg_set)
-		gtk_widget_modify_fg(dialog, GTK_STATE_NORMAL, &fg);
-	if (bg_set)
-		gtk_widget_modify_bg(dialog, GTK_STATE_NORMAL, &bg);
+	ఒకవేళ (fg_సమితి)
+		gtk_widget_modify_fg(dialog, GTK_STATE_సాధారణ, &fg);
+	ఒకవేళ (bg_సమితి)
+		gtk_widget_modify_bg(dialog, GTK_STATE_సాధారణ, &bg);
 
-	if (prompt_type == PROMPT_ENTRY || prompt_type == PROMPT_NONE) {
-		entry = gtk_entry_new();
-		if (fg_set)
-			gtk_widget_modify_fg(entry, GTK_STATE_NORMAL, &fg);
-		if (bg_set)
-			gtk_widget_modify_bg(entry, GTK_STATE_NORMAL, &bg);
-		gtk_box_pack_start(
+	ఒకవేళ (prompt_type == PROMPT_నమోదు || prompt_type == PROMPT_NONE) {
+		నమోదు_2 = gtk_నమోదు_new();
+		ఒకవేళ (fg_సమితి)
+			gtk_widget_modify_fg(నమోదు_2, GTK_STATE_సాధారణ, &fg);
+		ఒకవేళ (bg_సమితి)
+			gtk_widget_modify_bg(నమోదు_2, GTK_STATE_సాధారణ, &bg);
+		gtk_box_pack_ప్రారంభం(
 		    GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-		    entry, FALSE, FALSE, 0);
-		gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-		gtk_widget_grab_focus(entry);
-		if (prompt_type == PROMPT_ENTRY) {
-			gtk_widget_show(entry);
+		    నమోదు_2, FALSE, FALSE, 0);
+		gtk_నమోదు_సమితి_visibility(GTK_నమోదు(నమోదు_2), FALSE);
+		gtk_widget_grab_focus(నమోదు_2);
+		ఒకవేళ (prompt_type == PROMPT_నమోదు) {
+			gtk_widget_show(నమోదు_2);
 			/* Make <enter> close dialog */
-			g_signal_connect(G_OBJECT(entry), "activate",
+			g_signal_connect(G_OBJECT(నమోదు_2), "activate",
 					 G_CALLBACK(ok_dialog), dialog);
-		} else {
+		} లేకపోతే {
 			/*
 			 * Ensure the 'close' button is not focused by default
 			 * but is still reachable via tab. This is a bit of a
 			 * hack - it uses a hidden entry that responds to a
 			 * couple of keypress events (escape and tab only).
 			 */
-			gtk_widget_realize(entry);
-			g_signal_connect(G_OBJECT(entry), "key_press_event",
+			gtk_widget_realize(నమోదు_2);
+			g_signal_connect(G_OBJECT(నమోదు_2), "key_press_event",
 			    G_CALLBACK(check_none), dialog);
 		}
 	}
@@ -218,88 +218,88 @@ passphrase_dialog(char *message, int prompt_type)
 	display = gtk_widget_get_display(GTK_WIDGET(dialog));
 	seat = gdk_display_get_default_seat(display);
 	caps = GDK_SEAT_CAPABILITY_KEYBOARD;
-	if (grab_pointer)
+	ఒకవేళ (grab_సూచిక)
 		caps |= GDK_SEAT_CAPABILITY_ALL_POINTING;
-	if (grab_server)
+	ఒకవేళ (grab_server)
 		caps = GDK_SEAT_CAPABILITY_ALL;
-	for (;;) {
-		status = gdk_seat_grab(seat, gtk_widget_get_window(dialog),
-		    caps, TRUE, NULL, NULL, NULL, NULL);
-		if (status == GDK_GRAB_SUCCESS)
-			break;
+	కొరకు (;;) {
+		స్థితి_2 = gdk_seat_grab(seat, gtk_widget_get_కిటికీ(dialog),
+		    caps, TRUE, ఖాళీ, ఖాళీ, ఖాళీ, ఖాళీ);
+		ఒకవేళ (స్థితి_2 == GDK_GRAB_SUCCESS)
+			ఆపు;
 		usleep(GRAB_WAIT * 1000);
-		if (++grab_tries > GRAB_TRIES)
-			goto nograb;
+		ఒకవేళ (++grab_tries > GRAB_TRIES)
+			వెళ్ళు nograb;
 	}
 
-	result = gtk_dialog_run(GTK_DIALOG(dialog));
+	ఫలితం = gtk_dialog_నిరంతరం(GTK_DIALOG(dialog));
 
 	/* Ungrab */
 	gdk_seat_ungrab(seat);
 	gdk_display_flush(display);
 
 	/* Report passphrase if user selected OK */
-	if (prompt_type == PROMPT_ENTRY) {
-		passphrase = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
-		if (result == GTK_RESPONSE_OK) {
+	ఒకవేళ (prompt_type == PROMPT_నమోదు) {
+		passphrase = g_strdup(gtk_నమోదు_get_పాఠ్యం(GTK_నమోదు(నమోదు_2)));
+		ఒకవేళ (ఫలితం == GTK_RESPONSE_OK) {
 			local = g_locale_from_utf8(passphrase,
-			    strlen(passphrase), NULL, NULL, NULL);
-			if (local != NULL) {
+			    అక్షరశ్రేణి_పొడవు(passphrase), ఖాళీ, ఖాళీ, ఖాళీ);
+			ఒకవేళ (local != ఖాళీ) {
 				puts(local);
-				memset(local, '\0', strlen(local));
+				memset(local, '\0', అక్షరశ్రేణి_పొడవు(local));
 				g_free(local);
-			} else {
+			} లేకపోతే {
 				puts(passphrase);
 			}
 		}
 		/* Zero passphrase in memory */
-		memset(passphrase, '\b', strlen(passphrase));
-		gtk_entry_set_text(GTK_ENTRY(entry), passphrase);
-		memset(passphrase, '\0', strlen(passphrase));
+		memset(passphrase, '\b', అక్షరశ్రేణి_పొడవు(passphrase));
+		gtk_నమోదు_సమితి_పాఠ్యం(GTK_నమోదు(నమోదు_2), passphrase);
+		memset(passphrase, '\0', అక్షరశ్రేణి_పొడవు(passphrase));
 		g_free(passphrase);
 	}
 
 	gtk_widget_destroy(dialog);
-	if (result != GTK_RESPONSE_OK && result != GTK_RESPONSE_YES)
-		return -1;
-	return 0;
+	ఒకవేళ (ఫలితం != GTK_RESPONSE_OK && ఫలితం != GTK_RESPONSE_YES)
+		తిరిగి -1;
+	తిరిగి 0;
 
  nograb:
 	gtk_widget_destroy(dialog);
-	err = gtk_message_dialog_new(GTK_WINDOW(parent_window), 0,
-	    GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
+	err = gtk_సందేశం_dialog_new(GTK_కిటికీ(మాతృ_కిటికీ), 0,
+	    GTK_సందేశం_ERROR, GTK_BUTTONS_CLOSE,
 	    "Could not grab input. A malicious client may be eavesdropping "
 	    "on your session.");
-	gtk_window_set_position(GTK_WINDOW(err), GTK_WIN_POS_CENTER);
-	gtk_dialog_run(GTK_DIALOG(err));
+	gtk_కిటికీ_సమితి_position(GTK_కిటికీ(err), GTK_WIN_POS_CENTER);
+	gtk_dialog_నిరంతరం(GTK_DIALOG(err));
 	gtk_widget_destroy(err);
-	return -1;
+	తిరిగి -1;
 }
 
-int
-main(int argc, char **argv)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	char *message, *prompt_mode;
-	int result, prompt_type = PROMPT_ENTRY;
+	అక్షరం *సందేశం_2, *prompt_బహుళకం;
+	పూర్ణాంకం ఫలితం, prompt_type = PROMPT_నమోదు;
 
 	gtk_init(&argc, &argv);
 
-	if (argc > 1) {
-		message = g_strjoinv(" ", argv + 1);
-	} else {
-		message = g_strdup("Enter your OpenSSH passphrase:");
+	ఒకవేళ (argc > 1) {
+		సందేశం_2 = g_strjoinv(" ", argv + 1);
+	} లేకపోతే {
+		సందేశం_2 = g_strdup("Enter your OpenSSH passphrase:");
 	}
 
-	if ((prompt_mode = getenv("SSH_ASKPASS_PROMPT")) != NULL) {
-		if (strcasecmp(prompt_mode, "confirm") == 0)
+	ఒకవేళ ((prompt_బహుళకం = getenv("SSH_ASKPASS_PROMPT")) != ఖాళీ) {
+		ఒకవేళ (strcasecmp(prompt_బహుళకం, "confirm") == 0)
 			prompt_type = PROMPT_CONFIRM;
-		else if (strcasecmp(prompt_mode, "none") == 0)
+		లేకపోతే ఒకవేళ (strcasecmp(prompt_బహుళకం, "none") == 0)
 			prompt_type = PROMPT_NONE;
 	}
 
 	setvbuf(stdout, 0, _IONBF, 0);
-	result = passphrase_dialog(message, prompt_type);
-	g_free(message);
+	ఫలితం = passphrase_dialog(సందేశం_2, prompt_type);
+	g_free(సందేశం_2);
 
-	return (result);
+	తిరిగి (ఫలితం);
 }

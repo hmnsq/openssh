@@ -14,18 +14,18 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
 
-int ssh_compatible_openssl(long, long);
+పూర్ణాంకం ssh_compatible_openssl(దీర్ఘ, దీర్ఘ);
 
-struct version_test {
-	long headerver;
-	long libver;
-	int result;
-} version_tests[] = {
+నిర్మాణం సంస్కరణ_test {
+	దీర్ఘ headerver;
+	దీర్ఘ libver;
+	పూర్ణాంకం ఫలితం;
+} సంస్కరణ_tests[] = {
 	/* built with 1.0.1b release headers */
 	{ 0x1000101fL, 0x1000101fL, 1},/* exact match */
 	{ 0x1000101fL, 0x1000102fL, 1},	/* newer library patch version: ok */
@@ -57,28 +57,28 @@ struct version_test {
 	{ 0x3010101fL, 0x4010101fL, 0},	/* newer library major version: NO */
 };
 
-void
-fail(long hver, long lver, int result)
+శూన్య
+fail(దీర్ఘ hver, దీర్ఘ lver, పూర్ణాంకం ఫలితం)
 {
-	fprintf(stderr, "opensslver: header %lx library %lx != %d \n", hver, lver, result);
-	exit(1);
+	fprintf(stderr, "opensslver: header %lx library %lx != %d \n", hver, lver, ఫలితం);
+	నిష్క్రమించు(1);
 }
 
-int
-main(void)
+పూర్ణాంకం
+ప్రధాన(శూన్య)
 {
-#ifdef WITH_OPENSSL
-	unsigned int i;
-	int res;
-	long hver, lver;
+#నిర్వచితమైతే WITH_OPENSSL
+	గుర్తులేని పూర్ణాంకం i;
+	పూర్ణాంకం res;
+	దీర్ఘ hver, lver;
 
-	for (i = 0; i < sizeof(version_tests) / sizeof(version_tests[0]); i++) {
-		hver = version_tests[i].headerver;
-		lver = version_tests[i].libver;
-		res = version_tests[i].result;
-		if (ssh_compatible_openssl(hver, lver) != res)
+	కొరకు (i = 0; i < పరిమాణం(సంస్కరణ_tests) / పరిమాణం(సంస్కరణ_tests[0]); i++) {
+		hver = సంస్కరణ_tests[i].headerver;
+		lver = సంస్కరణ_tests[i].libver;
+		res = సంస్కరణ_tests[i].ఫలితం;
+		ఒకవేళ (ssh_compatible_openssl(hver, lver) != res)
 			fail(hver, lver, res);
 	}
-#endif
-	exit(0);
+#అయితే_ముగింపు
+	నిష్క్రమించు(0);
 }

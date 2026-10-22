@@ -43,130 +43,130 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <gnome.h>
-#include <X11/Xlib.h>
-#include <gdk/gdkx.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <gnome.h>
+#అన్తర్భావ <X11/Xlib.h>
+#అన్తర్భావ <gdk/gdkx.h>
 
-void
-report_failed_grab (void)
+శూన్య
+report_failed_grab (శూన్య)
 {
 	GtkWidget *err;
 
-	err = gnome_message_box_new("Could not grab keyboard or mouse.\n"
+	err = gnome_సందేశం_box_new("Could not grab keyboard or mouse.\n"
 		"A malicious client may be eavesdropping on your session.",
-				    GNOME_MESSAGE_BOX_ERROR, "EXIT", NULL);
-	gtk_window_set_position(GTK_WINDOW(err), GTK_WIN_POS_CENTER);
-	gtk_object_set(GTK_OBJECT(err), "type", GTK_WINDOW_POPUP, NULL);
+				    GNOME_సందేశం_BOX_ERROR, "EXIT", ఖాళీ);
+	gtk_కిటికీ_సమితి_position(GTK_కిటికీ(err), GTK_WIN_POS_CENTER);
+	gtk_object_సమితి(GTK_OBJECT(err), "type", GTK_కిటికీ_POPUP, ఖాళీ);
 
-	gnome_dialog_run_and_close(GNOME_DIALOG(err));
+	gnome_dialog_నిరంతరం_and_close(GNOME_DIALOG(err));
 }
 
-int
-passphrase_dialog(char *message)
+పూర్ణాంకం
+passphrase_dialog(అక్షరం *సందేశం_2)
 {
-	char *passphrase;
-	char **messages;
-	int result, i, grab_server, grab_pointer;
-	GtkWidget *dialog, *entry, *label;
+	అక్షరం *passphrase;
+	అక్షరం **messages;
+	పూర్ణాంకం ఫలితం, i, grab_server, grab_సూచిక;
+	GtkWidget *dialog, *నమోదు_2, *label;
 
-	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != NULL);
-	grab_pointer = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != NULL);
+	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != ఖాళీ);
+	grab_సూచిక = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != ఖాళీ);
 
 	dialog = gnome_dialog_new("OpenSSH", GNOME_STOCK_BUTTON_OK,
-	    GNOME_STOCK_BUTTON_CANCEL, NULL);
+	    GNOME_STOCK_BUTTON_CANCEL, ఖాళీ);
 
-	messages = g_strsplit(message, "\\n", 0);
-	if (messages)
-		for(i = 0; messages[i]; i++) {
+	messages = g_strsplit(సందేశం_2, "\\n", 0);
+	ఒకవేళ (messages)
+		కొరకు(i = 0; messages[i]; i++) {
 			label = gtk_label_new(messages[i]);
-			gtk_box_pack_start(GTK_BOX(GNOME_DIALOG(dialog)->vbox),
+			gtk_box_pack_ప్రారంభం(GTK_BOX(GNOME_DIALOG(dialog)->vbox),
 			    label, FALSE, FALSE, 0);
 		}
 
-	entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(GNOME_DIALOG(dialog)->vbox), entry, FALSE,
+	నమోదు_2 = gtk_నమోదు_new();
+	gtk_box_pack_ప్రారంభం(GTK_BOX(GNOME_DIALOG(dialog)->vbox), నమోదు_2, FALSE,
 	    FALSE, 0);
-	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-	gtk_widget_grab_focus(entry);
+	gtk_నమోదు_సమితి_visibility(GTK_నమోదు(నమోదు_2), FALSE);
+	gtk_widget_grab_focus(నమోదు_2);
 
 	/* Center window and prepare for grab */
-	gtk_object_set(GTK_OBJECT(dialog), "type", GTK_WINDOW_POPUP, NULL);
-	gnome_dialog_set_default(GNOME_DIALOG(dialog), 0);
-	gtk_window_set_position (GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-	gtk_window_set_policy(GTK_WINDOW(dialog), FALSE, FALSE, TRUE);
+	gtk_object_సమితి(GTK_OBJECT(dialog), "type", GTK_కిటికీ_POPUP, ఖాళీ);
+	gnome_dialog_సమితి_default(GNOME_DIALOG(dialog), 0);
+	gtk_కిటికీ_సమితి_position (GTK_కిటికీ(dialog), GTK_WIN_POS_CENTER);
+	gtk_కిటికీ_సమితి_policy(GTK_కిటికీ(dialog), FALSE, FALSE, TRUE);
 	gnome_dialog_close_hides(GNOME_DIALOG(dialog), TRUE);
-	gtk_container_set_border_width(GTK_CONTAINER(GNOME_DIALOG(dialog)->vbox),
+	gtk_container_సమితి_border_వెడల్పు(GTK_CONTAINER(GNOME_DIALOG(dialog)->vbox),
 	    GNOME_PAD);
 	gtk_widget_show_all(dialog);
 
 	/* Grab focus */
-	if (grab_server)
+	ఒకవేళ (grab_server)
 		XGrabServer(GDK_DISPLAY());
-	if (grab_pointer && gdk_pointer_grab(dialog->window, TRUE, 0,
-	    NULL, NULL, GDK_CURRENT_TIME))
-		goto nograb;
-	if (gdk_keyboard_grab(dialog->window, FALSE, GDK_CURRENT_TIME))
-		goto nograbkb;
+	ఒకవేళ (grab_సూచిక && gdk_సూచిక_grab(dialog->కిటికీ, TRUE, 0,
+	    ఖాళీ, ఖాళీ, GDK_CURRENT_సమయం))
+		వెళ్ళు nograb;
+	ఒకవేళ (gdk_keyboard_grab(dialog->కిటికీ, FALSE, GDK_CURRENT_సమయం))
+		వెళ్ళు nograbkb;
 
 	/* Make <enter> close dialog */
-	gnome_dialog_editable_enters(GNOME_DIALOG(dialog), GTK_EDITABLE(entry));
+	gnome_dialog_editable_enters(GNOME_DIALOG(dialog), GTK_EDITABLE(నమోదు_2));
 
 	/* Run dialog */
-	result = gnome_dialog_run(GNOME_DIALOG(dialog));
+	ఫలితం = gnome_dialog_నిరంతరం(GNOME_DIALOG(dialog));
 
 	/* Ungrab */
-	if (grab_server)
+	ఒకవేళ (grab_server)
 		XUngrabServer(GDK_DISPLAY());
-	if (grab_pointer)
-		gdk_pointer_ungrab(GDK_CURRENT_TIME);
-	gdk_keyboard_ungrab(GDK_CURRENT_TIME);
+	ఒకవేళ (grab_సూచిక)
+		gdk_సూచిక_ungrab(GDK_CURRENT_సమయం);
+	gdk_keyboard_ungrab(GDK_CURRENT_సమయం);
 	gdk_flush();
 
 	/* Report passphrase if user selected OK */
-	passphrase = gtk_entry_get_text(GTK_ENTRY(entry));
-	if (result == 0)
+	passphrase = gtk_నమోదు_get_పాఠ్యం(GTK_నమోదు(నమోదు_2));
+	ఒకవేళ (ఫలితం == 0)
 		puts(passphrase);
 		
 	/* Zero passphrase in memory */
-	memset(passphrase, '\0', strlen(passphrase));
-	gtk_entry_set_text(GTK_ENTRY(entry), passphrase);
+	memset(passphrase, '\0', అక్షరశ్రేణి_పొడవు(passphrase));
+	gtk_నమోదు_సమితి_పాఠ్యం(GTK_నమోదు(నమోదు_2), passphrase);
 			
 	gnome_dialog_close(GNOME_DIALOG(dialog));
-	return (result == 0 ? 0 : -1);
+	తిరిగి (ఫలితం == 0 ? 0 : -1);
 
 	/*
 	 * At least one grab failed - ungrab what we got, and report the
 	 * failure to the user. Note that XGrabServer() cannot fail.
 	 */
  nograbkb:
-	gdk_pointer_ungrab(GDK_CURRENT_TIME);
+	gdk_సూచిక_ungrab(GDK_CURRENT_సమయం);
  nograb:
-	if (grab_server)
+	ఒకవేళ (grab_server)
 		XUngrabServer(GDK_DISPLAY());
 	gnome_dialog_close(GNOME_DIALOG(dialog));
 	
 	report_failed_grab();
-	return (-1);
+	తిరిగి (-1);
 }
 
-int
-main(int argc, char **argv)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	char *message;
-	int result;
+	అక్షరం *సందేశం_2;
+	పూర్ణాంకం ఫలితం;
 
 	gnome_init("GNOME ssh-askpass", "0.1", argc, argv);
 
-	if (argc == 2)
-		message = argv[1];
-	else
-		message = "Enter your OpenSSH passphrase:";
+	ఒకవేళ (argc == 2)
+		సందేశం_2 = argv[1];
+	లేకపోతే
+		సందేశం_2 = "Enter your OpenSSH passphrase:";
 
 	setvbuf(stdout, 0, _IONBF, 0);
-	result = passphrase_dialog(message);
+	ఫలితం = passphrase_dialog(సందేశం_2);
 
-	return (result);
+	తిరిగి (ఫలితం);
 }

@@ -15,12 +15,12 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <stddef.h>
+#అన్తర్భావ <stddef.h>
 
-#include "ssherr.h"
+#అన్తర్భావ "ssherr.h"
 
-const char *
-ssherr_libcrypto(void)
+స్థిరరాశి అక్షరం *
+ssherr_libcrypto(శూన్య)
 {
-	return NULL;
+	తిరిగి ఖాళీ;
 }

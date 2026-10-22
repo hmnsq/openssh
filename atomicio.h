@@ -26,28 +26,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _ATOMICIO_H
-#define _ATOMICIO_H
+#నిర్వచితం_కాకపోతే _ATOMICIO_H
+#నిర్వచించు _ATOMICIO_H
 
-struct iovec;
+నిర్మాణం iovec;
 
 /*
  * Ensure all of data on socket comes through. f==read || f==vwrite
  */
-size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *);
-size_t	atomicio(ssize_t (*)(int, void *, size_t), int, void *, size_t);
+కొలత_t
+atomicio6(ssize_t (*f) (పూర్ణాంకం, శూన్య *, కొలత_t), పూర్ణాంకం fd, శూన్య *_s, కొలత_t n,
+    పూర్ణాంకం (*cb)(శూన్య *, కొలత_t), శూన్య *);
+కొలత_t	atomicio(ssize_t (*)(పూర్ణాంకం, శూన్య *, కొలత_t), పూర్ణాంకం, శూన్య *, కొలత_t);
 
-#define vwrite (ssize_t (*)(int, void *, size_t))write
+#నిర్వచించు vwrite (ssize_t (*)(పూర్ణాంకం, శూన్య *, కొలత_t))లిఖ
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
-size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt, int (*cb)(void *, size_t), void *);
-size_t	atomiciov(ssize_t (*)(int, const struct iovec *, int),
-    int, const struct iovec *, int);
+కొలత_t
+atomiciov6(ssize_t (*f) (పూర్ణాంకం, స్థిరరాశి నిర్మాణం iovec *, పూర్ణాంకం), పూర్ణాంకం fd,
+    స్థిరరాశి నిర్మాణం iovec *_iov, పూర్ణాంకం iovcnt, పూర్ణాంకం (*cb)(శూన్య *, కొలత_t), శూన్య *);
+కొలత_t	atomiciov(ssize_t (*)(పూర్ణాంకం, స్థిరరాశి నిర్మాణం iovec *, పూర్ణాంకం),
+    పూర్ణాంకం, స్థిరరాశి నిర్మాణం iovec *, పూర్ణాంకం);
 
-#endif /* _ATOMICIO_H */
+#అయితే_ముగింపు /* _ATOMICIO_H */

@@ -14,63 +14,63 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#ifdef HAVE_SYS_PROCCTL_H
-#include <sys/procctl.h>
-#endif
-#if defined(HAVE_SYS_PRCTL_H)
-#include <sys/prctl.h>	/* For prctl() and PR_SET_DUMPABLE */
-#endif
-#ifdef HAVE_SYS_PTRACE_H
-#include <sys/ptrace.h>
-#endif
-#ifdef HAVE_PRIV_H
-#include <priv.h> /* For setpflags() and __PROC_PROTECT  */
-#endif
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <sys/types.h>
+#నిర్వచితమైతే HAVE_SYS_PROCCTL_H
+#అన్తర్భావ <sys/procctl.h>
+#అయితే_ముగింపు
+#ఒకవేళ defined(HAVE_SYS_PRCTL_H)
+#అన్తర్భావ <sys/prctl.h>	/* For prctl() and PR_SET_DUMPABLE */
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_SYS_PTRACE_H
+#అన్తర్భావ <sys/ptrace.h>
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_PRIV_H
+#అన్తర్భావ <priv.h> /* For setpflags() and __PROC_PROTECT  */
+#అయితే_ముగింపు
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-#include "log.h"
+#అన్తర్భావ "log.h"
 
-void
-platform_disable_tracing(int strict)
+శూన్య
+platform_disable_tracing(పూర్ణాంకం strict)
 {
-#if defined(HAVE_PROCCTL) && defined(PROC_TRACE_CTL)
+#ఒకవేళ defined(HAVE_PROCCTL) && defined(PROC_TRACE_CTL)
 	/* On FreeBSD, we should make this process untraceable */
-	int disable_trace = PROC_TRACE_CTL_DISABLE;
+	పూర్ణాంకం disable_trace = PROC_TRACE_CTL_DISABLE;
 
 	/*
 	 * On FreeBSD, we should make this process untraceable.
 	 * pid=0 means "this process" but some older kernels do not
 	 * understand that so retry with our own pid before failing.
 	 */
-	if (procctl(P_PID, 0, PROC_TRACE_CTL, &disable_trace) == 0)
-		return;
-	if (procctl(P_PID, getpid(), PROC_TRACE_CTL, &disable_trace) == 0)
-		return;
-	if (strict)
+	ఒకవేళ (procctl(P_PID, 0, PROC_TRACE_CTL, &disable_trace) == 0)
+		తిరిగి;
+	ఒకవేళ (procctl(P_PID, getpid(), PROC_TRACE_CTL, &disable_trace) == 0)
+		తిరిగి;
+	ఒకవేళ (strict)
 		fatal("unable to make the process untraceable: %s",
 		    strerror(errno));
-#endif
-#if defined(HAVE_PRCTL) && defined(PR_SET_DUMPABLE)
+#అయితే_ముగింపు
+#ఒకవేళ defined(HAVE_PRCTL) && defined(PR_సమితి_DUMPABLE)
 	/* Disable ptrace on Linux without sgid bit */
-	if (prctl(PR_SET_DUMPABLE, 0) != 0 && strict)
+	ఒకవేళ (prctl(PR_సమితి_DUMPABLE, 0) != 0 && strict)
 		fatal("unable to make the process undumpable: %s",
 		    strerror(errno));
-#endif
-#if defined(HAVE_SETPFLAGS) && defined(__PROC_PROTECT)
+#అయితే_ముగింపు
+#ఒకవేళ defined(HAVE_SETPFLAGS) && defined(__PROC_PROTECT)
 	/* On Solaris, we should make this process untraceable */
-	if (setpflags(__PROC_PROTECT, 1) != 0 && strict)
+	ఒకవేళ (setpflags(__PROC_PROTECT, 1) != 0 && strict)
 		fatal("unable to make the process untraceable: %s",
 		    strerror(errno));
-#endif
-#ifdef PT_DENY_ATTACH
+#అయితే_ముగింపు
+#నిర్వచితమైతే PT_DENY_ATTACH
 	/* Mac OS X */
-	if (ptrace(PT_DENY_ATTACH, 0, 0, 0) == -1 && strict)
+	ఒకవేళ (ptrace(PT_DENY_ATTACH, 0, 0, 0) == -1 && strict)
 		fatal("unable to set PT_DENY_ATTACH: %s", strerror(errno));
-#endif
+#అయితే_ముగింపు
 }

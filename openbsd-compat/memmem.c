@@ -25,80 +25,80 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/memmem.c */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifndef HAVE_MEMMEM
+#నిర్వచితం_కాకపోతే HAVE_MEMMEM
 
-#include <string.h>
-#include <stdint.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdint.h>
 
-static char *
-twobyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+స్థిర అక్షరం *
+twobyte_memmem(స్థిరరాశి గుర్తులేని అక్షరం *h, కొలత_t k, స్థిరరాశి గుర్తులేని అక్షరం *n)
 {
 	uint16_t nw = n[0]<<8 | n[1], hw = h[0]<<8 | h[1];
-	for (h+=2, k-=2; k; k--, hw = hw<<8 | *h++)
-		if (hw == nw) return (char *)h-2;
-	return hw == nw ? (char *)h-2 : 0;
+	కొరకు (h+=2, k-=2; k; k--, hw = hw<<8 | *h++)
+		ఒకవేళ (hw == nw) తిరిగి (అక్షరం *)h-2;
+	తిరిగి hw == nw ? (అక్షరం *)h-2 : 0;
 }
 
-static char *
-threebyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+స్థిర అక్షరం *
+threebyte_memmem(స్థిరరాశి గుర్తులేని అక్షరం *h, కొలత_t k, స్థిరరాశి గుర్తులేని అక్షరం *n)
 {
 	uint32_t nw = n[0]<<24 | n[1]<<16 | n[2]<<8;
 	uint32_t hw = h[0]<<24 | h[1]<<16 | h[2]<<8;
-	for (h+=3, k-=3; k; k--, hw = (hw|*h++)<<8)
-		if (hw == nw) return (char *)h-3;
-	return hw == nw ? (char *)h-3 : 0;
+	కొరకు (h+=3, k-=3; k; k--, hw = (hw|*h++)<<8)
+		ఒకవేళ (hw == nw) తిరిగి (అక్షరం *)h-3;
+	తిరిగి hw == nw ? (అక్షరం *)h-3 : 0;
 }
 
-static char *
-fourbyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+స్థిర అక్షరం *
+fourbyte_memmem(స్థిరరాశి గుర్తులేని అక్షరం *h, కొలత_t k, స్థిరరాశి గుర్తులేని అక్షరం *n)
 {
 	uint32_t nw = n[0]<<24 | n[1]<<16 | n[2]<<8 | n[3];
 	uint32_t hw = h[0]<<24 | h[1]<<16 | h[2]<<8 | h[3];
-	for (h+=4, k-=4; k; k--, hw = hw<<8 | *h++)
-		if (hw == nw) return (char *)h-4;
-	return hw == nw ? (char *)h-4 : 0;
+	కొరకు (h+=4, k-=4; k; k--, hw = hw<<8 | *h++)
+		ఒకవేళ (hw == nw) తిరిగి (అక్షరం *)h-4;
+	తిరిగి hw == nw ? (అక్షరం *)h-4 : 0;
 }
 
-#if 0
+#ఒకవేళ 0
 /* In -portable, defines.h ensures that these are already defined. */
-#define MAX(a,b) ((a)>(b)?(a):(b))
-#define MIN(a,b) ((a)<(b)?(a):(b))
-#endif
+#నిర్వచించు MAX(a,b) ((a)>(b)?(a):(b))
+#నిర్వచించు MIN(a,b) ((a)<(b)?(a):(b))
+#అయితే_ముగింపు
 
-#define BITOP(a,b,op) \
- ((a)[(size_t)(b)/(8*sizeof *(a))] op (size_t)1<<((size_t)(b)%(8*sizeof *(a))))
+#నిర్వచించు BITOP(a,b,op) \
+ ((a)[(కొలత_t)(b)/(8*పరిమాణం *(a))] op (కొలత_t)1<<((కొలత_t)(b)%(8*పరిమాణం *(a))))
 
 /*
  * Maxime Crochemore and Dominique Perrin, Two-way string-matching,
  * Journal of the ACM, 38(3):651-675, July 1991.
  */
-static char *
-twoway_memmem(const unsigned char *h, const unsigned char *z,
-    const unsigned char *n, size_t l)
+స్థిర అక్షరం *
+twoway_memmem(స్థిరరాశి గుర్తులేని అక్షరం *h, స్థిరరాశి గుర్తులేని అక్షరం *z,
+    స్థిరరాశి గుర్తులేని అక్షరం *n, కొలత_t l)
 {
-	size_t i, ip, jp, k, p, ms, p0, mem, mem0;
-	size_t byteset[32 / sizeof(size_t)] = { 0 };
-	size_t shift[256];
+	కొలత_t i, ip, jp, k, p, ms, p0, mem, mem0;
+	కొలత_t byteset[32 / పరిమాణం(కొలత_t)] = { 0 };
+	కొలత_t జరుపు[256];
 
 	/* Computing length of needle and fill shift table */
-	for (i=0; i<l; i++)
-		BITOP(byteset, n[i], |=), shift[n[i]] = i+1;
+	కొరకు (i=0; i<l; i++)
+		BITOP(byteset, n[i], |=), జరుపు[n[i]] = i+1;
 
 	/* Compute maximal suffix */
 	ip = -1; jp = 0; k = p = 1;
-	while (jp+k<l) {
-		if (n[ip+k] == n[jp+k]) {
-			if (k == p) {
+	అయితే (jp+k<l) {
+		ఒకవేళ (n[ip+k] == n[jp+k]) {
+			ఒకవేళ (k == p) {
 				jp += p;
 				k = 1;
-			} else k++;
-		} else if (n[ip+k] > n[jp+k]) {
+			} లేకపోతే k++;
+		} లేకపోతే ఒకవేళ (n[ip+k] > n[jp+k]) {
 			jp += k;
 			k = 1;
 			p = jp - ip;
-		} else {
+		} లేకపోతే {
 			ip = jp++;
 			k = p = 1;
 		}
@@ -108,87 +108,87 @@ twoway_memmem(const unsigned char *h, const unsigned char *z,
 
 	/* And with the opposite comparison */
 	ip = -1; jp = 0; k = p = 1;
-	while (jp+k<l) {
-		if (n[ip+k] == n[jp+k]) {
-			if (k == p) {
+	అయితే (jp+k<l) {
+		ఒకవేళ (n[ip+k] == n[jp+k]) {
+			ఒకవేళ (k == p) {
 				jp += p;
 				k = 1;
-			} else k++;
-		} else if (n[ip+k] < n[jp+k]) {
+			} లేకపోతే k++;
+		} లేకపోతే ఒకవేళ (n[ip+k] < n[jp+k]) {
 			jp += k;
 			k = 1;
 			p = jp - ip;
-		} else {
+		} లేకపోతే {
 			ip = jp++;
 			k = p = 1;
 		}
 	}
-	if (ip+1 > ms+1) ms = ip;
-	else p = p0;
+	ఒకవేళ (ip+1 > ms+1) ms = ip;
+	లేకపోతే p = p0;
 
 	/* Periodic needle? */
-	if (memcmp(n, n+p, ms+1)) {
+	ఒకవేళ (memcmp(n, n+p, ms+1)) {
 		mem0 = 0;
 		p = MAX(ms, l-ms-1) + 1;
-	} else mem0 = l-p;
+	} లేకపోతే mem0 = l-p;
 	mem = 0;
 
 	/* Search loop */
-	for (;;) {
+	కొరకు (;;) {
 		/* If remainder of haystack is shorter than needle, done */
-		if (z-h < l) return 0;
+		ఒకవేళ (z-h < l) తిరిగి 0;
 
 		/* Check last byte first; advance by shift on mismatch */
-		if (BITOP(byteset, h[l-1], &)) {
-			k = l-shift[h[l-1]];
-			if (k) {
-				if (k < mem) k = mem;
+		ఒకవేళ (BITOP(byteset, h[l-1], &)) {
+			k = l-జరుపు[h[l-1]];
+			ఒకవేళ (k) {
+				ఒకవేళ (k < mem) k = mem;
 				h += k;
 				mem = 0;
-				continue;
+				కొనసాగు;
 			}
-		} else {
+		} లేకపోతే {
 			h += l;
 			mem = 0;
-			continue;
+			కొనసాగు;
 		}
 
 		/* Compare right half */
-		for (k=MAX(ms+1,mem); k<l && n[k] == h[k]; k++);
-		if (k < l) {
+		కొరకు (k=MAX(ms+1,mem); k<l && n[k] == h[k]; k++);
+		ఒకవేళ (k < l) {
 			h += k-ms;
 			mem = 0;
-			continue;
+			కొనసాగు;
 		}
 		/* Compare left half */
-		for (k=ms+1; k>mem && n[k-1] == h[k-1]; k--);
-		if (k <= mem) return (char *)h;
+		కొరకు (k=ms+1; k>mem && n[k-1] == h[k-1]; k--);
+		ఒకవేళ (k <= mem) తిరిగి (అక్షరం *)h;
 		h += p;
 		mem = mem0;
 	}
 }
 
-void *
-memmem(const void *h0, size_t k, const void *n0, size_t l)
+శూన్య *
+memmem(స్థిరరాశి శూన్య *h0, కొలత_t k, స్థిరరాశి శూన్య *n0, కొలత_t l)
 {
-	const unsigned char *h = h0, *n = n0;
+	స్థిరరాశి గుర్తులేని అక్షరం *h = h0, *n = n0;
 
 	/* Return immediately on empty needle */
-	if (!l) return (void *)h;
+	ఒకవేళ (!l) తిరిగి (శూన్య *)h;
 
 	/* Return immediately when needle is longer than haystack */
-	if (k<l) return 0;
+	ఒకవేళ (k<l) తిరిగి 0;
 
 	/* Use faster algorithms for short needles */
 	h = memchr(h0, *n, k);
-	if (!h || l==1) return (void *)h;
-	k -= h - (const unsigned char *)h0;
-	if (k<l) return 0;
-	if (l==2) return twobyte_memmem(h, k, n);
-	if (l==3) return threebyte_memmem(h, k, n);
-	if (l==4) return fourbyte_memmem(h, k, n);
+	ఒకవేళ (!h || l==1) తిరిగి (శూన్య *)h;
+	k -= h - (స్థిరరాశి గుర్తులేని అక్షరం *)h0;
+	ఒకవేళ (k<l) తిరిగి 0;
+	ఒకవేళ (l==2) తిరిగి twobyte_memmem(h, k, n);
+	ఒకవేళ (l==3) తిరిగి threebyte_memmem(h, k, n);
+	ఒకవేళ (l==4) తిరిగి fourbyte_memmem(h, k, n);
 
-	return twoway_memmem(h, h+k, n, l);
+	తిరిగి twoway_memmem(h, h+k, n, l);
 }
 DEF_WEAK(memmem);
-#endif /* HAVE_MEMMEM */
+#అయితే_ముగింపు /* HAVE_MEMMEM */

@@ -10,61 +10,61 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-extern "C" {
+బాహ్య "C" {
 
-#include "hostfile.h"
-#include "sshkey.h"
-#include "log.h"
+#అన్తర్భావ "hostfile.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "log.h"
 
-static int log_initialized = 0;
+స్థిర పూర్ణాంకం log_initialized = 0;
 
-static int
-noop_cb(struct hostkey_foreach_line *l, void *ctx)
+స్థిర పూర్ణాంకం
+noop_cb(నిర్మాణం hostkey_foreach_పంక్తి *l, శూన్య *ctx)
 {
-	(void)l; (void)ctx;
-	return 0;
+	(శూన్య)l; (శూన్య)ctx;
+	తిరిగి 0;
 }
 
-int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+పూర్ణాంకం
+LLVMFuzzer_Test_One_ఆదానం(స్థిరరాశి uint8_t *దత్తాంశం, కొలత_t కొలత)
 {
-	if (!log_initialized) {
+	ఒకవేళ (!log_initialized) {
 		log_init("hostfile_fuzz", SYSLOG_LEVEL_QUIET,
 		    SYSLOG_FACILITY_AUTH, 0);
 		log_initialized = 1;
 	}
 
 	/* Drive every HKF_WANT_* combination on each input. */
-	static const u_int flag_combos[] = {
+	స్థిర స్థిరరాశి u_int flag_combos[] = {
 		0,
-		HKF_WANT_MATCH,
-		HKF_WANT_PARSE_KEY,
-		HKF_WANT_MATCH | HKF_WANT_PARSE_KEY,
+		HKF_WANT_సరిపోలిక,
+		HKF_WANT_PARSE_కీలకం,
+		HKF_WANT_సరిపోలిక | HKF_WANT_PARSE_కీలకం,
 	};
-	for (size_t i = 0; i < sizeof(flag_combos)/sizeof(flag_combos[0]); i++) {
-		FILE *f = fmemopen((void *)data, size, "r");
-		if (f == NULL)
-			continue;
-		const char *host = (flag_combos[i] & HKF_WANT_MATCH) ?
-		    "example.com" : NULL;
-		(void)hostkeys_foreach_file("/fuzz", f, noop_cb, NULL,
+	కొరకు (కొలత_t i = 0; i < పరిమాణం(flag_combos)/పరిమాణం(flag_combos[0]); i++) {
+		FILE *f = fmemopen((శూన్య *)దత్తాంశం, కొలత, "r");
+		ఒకవేళ (f == ఖాళీ)
+			కొనసాగు;
+		స్థిరరాశి అక్షరం *host = (flag_combos[i] & HKF_WANT_సరిపోలిక) ?
+		    "example.com" : ఖాళీ;
+		(శూన్య)hostkeys_foreach_file("/fuzz", f, noop_cb, ఖాళీ,
 		    host, "127.0.0.1", flag_combos[i], 0);
 		fclose(f);
 	}
 
 	/* Higher-level wrapper that adds record_hostkey on top of foreach. */
 	{
-		FILE *f = fmemopen((void *)data, size, "r");
-		if (f != NULL) {
-			struct hostkeys *hk = init_hostkeys();
-			if (hk != NULL) {
-				load_hostkeys_file(hk, "example.com",
+		FILE *f = fmemopen((శూన్య *)దత్తాంశం, కొలత, "r");
+		ఒకవేళ (f != ఖాళీ) {
+			నిర్మాణం hostkeys *hk = init_hostkeys();
+			ఒకవేళ (hk != ఖాళీ) {
+				ఎక్కించు_hostkeys_file(hk, "example.com",
 				    "/fuzz", f, 0);
 				free_hostkeys(hk);
 			}
@@ -73,19 +73,19 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	}
 
 	/* Drive host_hash + extract_salt on a bounded hostname-shaped slice. */
-	if (size > 0) {
-		size_t n = size < 256 ? size : 256;
-		char *hb = (char *)malloc(n + 1);
-		if (hb != NULL) {
-			memcpy(hb, data, n);
+	ఒకవేళ (కొలత > 0) {
+		కొలత_t n = కొలత < 256 ? కొలత : 256;
+		అక్షరం *hb = (అక్షరం *)జ్ఞాపకం_ఇవ్వు(n + 1);
+		ఒకవేళ (hb != ఖాళీ) {
+			జ్ఞాపకం_నకలు(hb, దత్తాంశం, n);
 			hb[n] = '\0';
-			char *h = host_hash("example.com", hb, 0);
-			free(h);
-			free(hb);
+			అక్షరం *h = host_hash("example.com", hb, 0);
+			విడుదల(h);
+			విడుదల(hb);
 		}
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
 } // extern "C"

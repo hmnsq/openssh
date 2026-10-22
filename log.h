@@ -12,20 +12,20 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#ifndef SSH_LOG_H
-#define SSH_LOG_H
+#నిర్వచితం_కాకపోతే SSH_LOG_H
+#నిర్వచించు SSH_LOG_H
 
-#include <stdarg.h> /* va_list */
-#include "ssherr.h" /* ssh_err() */
+#అన్తర్భావ <stdarg.h> /* va_list */
+#అన్తర్భావ "ssherr.h" /* ssh_err() */
 
 /* Supported syslog facilities and levels. */
-typedef enum {
+రకనిర్వచనం గణన {
 	SYSLOG_FACILITY_DAEMON,
 	SYSLOG_FACILITY_USER,
 	SYSLOG_FACILITY_AUTH,
-#ifdef LOG_AUTHPRIV
+#నిర్వచితమైతే LOG_AUTHPRIV
 	SYSLOG_FACILITY_AUTHPRIV,
-#endif
+#అయితే_ముగింపు
 	SYSLOG_FACILITY_LOCAL0,
 	SYSLOG_FACILITY_LOCAL1,
 	SYSLOG_FACILITY_LOCAL2,
@@ -34,10 +34,10 @@ typedef enum {
 	SYSLOG_FACILITY_LOCAL5,
 	SYSLOG_FACILITY_LOCAL6,
 	SYSLOG_FACILITY_LOCAL7,
-	SYSLOG_FACILITY_NOT_SET = -1
+	SYSLOG_FACILITY_NOT_సమితి = -1
 }       SyslogFacility;
 
-typedef enum {
+రకనిర్వచనం గణన {
 	SYSLOG_LEVEL_QUIET,
 	SYSLOG_LEVEL_FATAL,
 	SYSLOG_LEVEL_ERROR,
@@ -46,104 +46,104 @@ typedef enum {
 	SYSLOG_LEVEL_DEBUG1,
 	SYSLOG_LEVEL_DEBUG2,
 	SYSLOG_LEVEL_DEBUG3,
-	SYSLOG_LEVEL_NOT_SET = -1
+	SYSLOG_LEVEL_NOT_సమితి = -1
 }       LogLevel;
 
-typedef void (log_handler_fn)(LogLevel, int, const char *, void *);
+రకనిర్వచనం శూన్య (log_handler_fn)(LogLevel, పూర్ణాంకం, స్థిరరాశి అక్షరం *, శూన్య *);
 
-void     log_init(const char *, LogLevel, SyslogFacility, int);
-LogLevel log_level_get(void);
-int      log_change_level(LogLevel);
-int      log_is_on_stderr(void);
-void     log_redirect_stderr_to(const char *);
-void	 log_verbose_add(const char *);
-void	 log_verbose_reset(void);
+శూన్య     log_init(స్థిరరాశి అక్షరం *, LogLevel, SyslogFacility, పూర్ణాంకం);
+LogLevel log_level_get(శూన్య);
+పూర్ణాంకం      log_change_level(LogLevel);
+పూర్ణాంకం      log_is_on_stderr(శూన్య);
+శూన్య     log_redirect_stderr_గమ్యం(స్థిరరాశి అక్షరం *);
+శూన్య	 log_verbose_కూడు(స్థిరరాశి అక్షరం *);
+శూన్య	 log_verbose_reset(శూన్య);
 
-SyslogFacility	log_facility_number(char *);
-const char *	log_facility_name(SyslogFacility);
-LogLevel	log_level_number(char *);
-const char *	log_level_name(LogLevel);
+SyslogFacility	log_facility_సంఖ్య(అక్షరం *);
+స్థిరరాశి అక్షరం *	log_facility_name(SyslogFacility);
+LogLevel	log_level_సంఖ్య(అక్షరం *);
+స్థిరరాశి అక్షరం *	log_level_name(LogLevel);
 
-void	 set_log_handler(log_handler_fn *, void *);
-void	 cleanup_exit(int) __attribute__((noreturn));
+శూన్య	 సమితి_log_handler(log_handler_fn *, శూన్య *);
+శూన్య	 cleanup_exit(పూర్ణాంకం) __attribute__((noreturn));
 
-void	 sshlog(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...)
-    __attribute__((format(printf, 7, 8)));
-void	 sshlogv(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, va_list);
-void	 sshlogdie(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...) __attribute__((noreturn))
-    __attribute__((format(printf, 7, 8)));
-void	 sshfatal(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...) __attribute__((noreturn))
-    __attribute__((format(printf, 7, 8)));
-void	 sshlogdirect(LogLevel, int, const char *, ...)
-    __attribute__((format(printf, 3, 4)));
+శూన్య	 sshlog(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, పూర్ణాంకం, పూర్ణాంకం,
+    LogLevel, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, ...)
+    __attribute__((format(రాయి, 7, 8)));
+శూన్య	 sshlogv(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, పూర్ణాంకం, పూర్ణాంకం,
+    LogLevel, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, va_list);
+శూన్య	 sshlogdie(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, పూర్ణాంకం, పూర్ణాంకం,
+    LogLevel, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, ...) __attribute__((noreturn))
+    __attribute__((format(రాయి, 7, 8)));
+శూన్య	 sshfatal(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, పూర్ణాంకం, పూర్ణాంకం,
+    LogLevel, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, ...) __attribute__((noreturn))
+    __attribute__((format(రాయి, 7, 8)));
+శూన్య	 sshlogdirect(LogLevel, పూర్ణాంకం, స్థిరరాశి అక్షరం *, ...)
+    __attribute__((format(రాయి, 3, 4)));
 
-struct log_ratelimit_ctx {
+నిర్మాణం log_ratelimit_ctx {
 	/* configuration */
-	u_int threshold;	/* events per second */
+	u_int పరిమితి;	/* events per second */
 	u_int max_accum;	/* max events to accumulate */
 	u_int hysteresis;	/* seconds */
 	u_int log_every;	/* seconds */
 
 	/* state */
-	time_t last_event;
+	time_t చివరి_event;
 	u_int accumulated_events; /* used for threshold comparisons */
 
 	/* state while actively rate-limiting */
-	int ratelimit_active;
-	time_t ratelimit_start;
-	time_t last_log;
-	time_t hysteresis_start;
+	పూర్ణాంకం ratelimit_చురుకైన;
+	time_t ratelimit_ప్రారంభం;
+	time_t చివరి_log;
+	time_t hysteresis_ప్రారంభం;
 	u_int ratelimited_events;
 };
 
-void log_ratelimit_init(struct log_ratelimit_ctx *rl, u_int threshold,
+శూన్య log_ratelimit_init(నిర్మాణం log_ratelimit_ctx *rl, u_int పరిమితి,
     u_int max_accum, u_int hysteresis, u_int log_every);
-int log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
+పూర్ణాంకం log_ratelimit(నిర్మాణం log_ratelimit_ctx *rl, time_t now, పూర్ణాంకం *చురుకైన,
     u_int *events_dropped);
 
-#define do_log2(level, ...)	sshlog(__FILE__, __func__, __LINE__, 0, level, NULL, __VA_ARGS__)
-#define debug3(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG3, NULL, __VA_ARGS__)
-#define debug2(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG2, NULL, __VA_ARGS__)
-#define debug(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG1, NULL, __VA_ARGS__)
-#define verbose(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_VERBOSE, NULL, __VA_ARGS__)
-#define logit(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_INFO, NULL, __VA_ARGS__)
-#define error(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
-#define fatal(...)		sshfatal(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_FATAL, NULL, __VA_ARGS__)
-#define logdie(...)		sshlogdie(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
+#నిర్వచించు do_log2(level, ...)	sshlog(__FILE__, __func__, __LINE__, 0, level, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు debug3(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG3, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు debug2(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG2, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు debug(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG1, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు verbose(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_VERBOSE, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు logit(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_INFO, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు error(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు fatal(...)		sshfatal(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_FATAL, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు logdie(...)		sshlogdie(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, ఖాళీ, __VA_ARGS__)
 
 /* Variants that prepend the caller's function */
-#define do_log2_f(level, ...)	sshlog(__FILE__, __func__, __LINE__, 1, level, NULL, __VA_ARGS__)
-#define debug3_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG3, NULL, __VA_ARGS__)
-#define debug2_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG2, NULL, __VA_ARGS__)
-#define debug_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG1, NULL, __VA_ARGS__)
-#define verbose_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_VERBOSE, NULL, __VA_ARGS__)
-#define logit_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_INFO, NULL, __VA_ARGS__)
-#define error_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
-#define fatal_f(...)		sshfatal(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_FATAL, NULL, __VA_ARGS__)
-#define logdie_f(...)		sshlogdie(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
+#నిర్వచించు do_log2_f(level, ...)	sshlog(__FILE__, __func__, __LINE__, 1, level, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు debug3_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG3, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు debug2_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG2, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు debug_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG1, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు verbose_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_VERBOSE, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు logit_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_INFO, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు error_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు fatal_f(...)		sshfatal(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_FATAL, ఖాళీ, __VA_ARGS__)
+#నిర్వచించు logdie_f(...)		sshlogdie(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, ఖాళీ, __VA_ARGS__)
 
 /* Variants that appends a ssh_err message */
-#define do_log2_r(r, level, ...) sshlog(__FILE__, __func__, __LINE__, 0, level, ssh_err(r), __VA_ARGS__)
-#define debug3_r(r, ...)	sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG3, ssh_err(r), __VA_ARGS__)
-#define debug2_r(r, ...)	sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG2, ssh_err(r), __VA_ARGS__)
-#define debug_r(r, ...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG1, ssh_err(r), __VA_ARGS__)
-#define verbose_r(r, ...)	sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_VERBOSE, ssh_err(r), __VA_ARGS__)
-#define logit_r(r, ...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_INFO, ssh_err(r), __VA_ARGS__)
-#define error_r(r, ...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
-#define fatal_r(r, ...)		sshfatal(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_FATAL, ssh_err(r), __VA_ARGS__)
-#define logdie_r(r, ...)	sshlogdie(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
-#define do_log2_fr(r, level, ...) sshlog(__FILE__, __func__, __LINE__, 1, level, ssh_err(r), __VA_ARGS__)
-#define debug3_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG3, ssh_err(r), __VA_ARGS__)
-#define debug2_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG2, ssh_err(r), __VA_ARGS__)
-#define debug_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG1, ssh_err(r), __VA_ARGS__)
-#define verbose_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_VERBOSE, ssh_err(r), __VA_ARGS__)
-#define logit_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_INFO, ssh_err(r), __VA_ARGS__)
-#define error_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
-#define fatal_fr(r, ...)	sshfatal(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_FATAL, ssh_err(r), __VA_ARGS__)
-#define logdie_fr(r, ...)	sshlogdie(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు do_log2_r(r, level, ...) sshlog(__FILE__, __func__, __LINE__, 0, level, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు debug3_r(r, ...)	sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG3, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు debug2_r(r, ...)	sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG2, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు debug_r(r, ...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG1, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు verbose_r(r, ...)	sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_VERBOSE, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు logit_r(r, ...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_INFO, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు error_r(r, ...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు fatal_r(r, ...)		sshfatal(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_FATAL, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు logdie_r(r, ...)	sshlogdie(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు do_log2_fr(r, level, ...) sshlog(__FILE__, __func__, __LINE__, 1, level, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు debug3_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG3, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు debug2_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG2, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు debug_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG1, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు verbose_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_VERBOSE, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు logit_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_INFO, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు error_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు fatal_fr(r, ...)	sshfatal(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_FATAL, ssh_err(r), __VA_ARGS__)
+#నిర్వచించు logdie_fr(r, ...)	sshlogdie(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
 
-#endif
+#అయితే_ముగింపు

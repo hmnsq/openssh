@@ -23,69 +23,69 @@
  * Stub functions for portability.  From LibreSSL with some adaptations.
  */
 
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
-#endif
+#నిర్వచితమైతే HAVE_SYS_MMAN_H
+#అన్తర్భావ <sys/mman.h>
+#అయితే_ముగింపు
 
-#include <signal.h>
+#అన్తర్భావ <signal.h>
 
 /* OpenSSH isn't multithreaded */
-#define _ARC4_LOCK()
-#define _ARC4_UNLOCK()
-#define _ARC4_ATFORK(f)
+#నిర్వచించు ARC4_తాళం()
+#నిర్వచించు _ARC4_UNLOCK()
+#నిర్వచించు _ARC4_ATFORK(f)
 
-static inline void
-_getentropy_fail(void)
+స్థిర అంతఃవరుస శూన్య
+_getentropy_fail(శూన్య)
 {
 	fatal("getentropy failed");
 }
 
-static volatile sig_atomic_t _rs_forked;
+స్థిర అస్థిర sig_atomic_t _rs_forked;
 
-static inline void
-_rs_forkhandler(void)
+స్థిర అంతఃవరుస శూన్య
+_rs_forkhandler(శూన్య)
 {
 	_rs_forked = 1;
 }
 
-static inline void
-_rs_forkdetect(void)
+స్థిర అంతఃవరుస శూన్య
+_rs_forkdetect(శూన్య)
 {
-	static pid_t _rs_pid = 0;
+	స్థిర pid_t _rs_pid = 0;
 	pid_t pid = getpid();
 
-	if (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
+	ఒకవేళ (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
 		_rs_pid = pid;
 		_rs_forked = 0;
-		if (rs)
-			memset(rs, 0, sizeof(*rs));
+		ఒకవేళ (rs)
+			memset(rs, 0, పరిమాణం(*rs));
 	}
 }
 
-static inline int
-_rs_allocate(struct _rs **rsp, struct _rsx **rsxp)
+స్థిర అంతఃవరుస పూర్ణాంకం
+_rs_allocate(నిర్మాణం _rs **rsp, నిర్మాణం _rsx **rsxp)
 {
-#if defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
-	if ((*rsp = mmap(NULL, sizeof(**rsp), PROT_READ|PROT_WRITE,
+#ఒకవేళ defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
+	ఒకవేళ ((*rsp = mmap(ఖాళీ, పరిమాణం(**rsp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED)
-		return (-1);
+		తిరిగి (-1);
 
-	if ((*rsxp = mmap(NULL, sizeof(**rsxp), PROT_READ|PROT_WRITE,
+	ఒకవేళ ((*rsxp = mmap(ఖాళీ, పరిమాణం(**rsxp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED) {
-		munmap(*rsp, sizeof(**rsp));
-		*rsp = NULL;
-		return (-1);
+		munmap(*rsp, పరిమాణం(**rsp));
+		*rsp = ఖాళీ;
+		తిరిగి (-1);
 	}
-#else
-	if ((*rsp = calloc(1, sizeof(**rsp))) == NULL)
-		return (-1);
-	if ((*rsxp = calloc(1, sizeof(**rsxp))) == NULL) {
-		free(*rsp);
-		*rsp = NULL;
-		return (-1);
+#లేకపోతే
+	ఒకవేళ ((*rsp = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(**rsp))) == ఖాళీ)
+		తిరిగి (-1);
+	ఒకవేళ ((*rsxp = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(**rsxp))) == ఖాళీ) {
+		విడుదల(*rsp);
+		*rsp = ఖాళీ;
+		తిరిగి (-1);
 	}
-#endif /* HAVE_MMAP et al */
+#అయితే_ముగింపు /* HAVE_MMAP et al */
 
 	_ARC4_ATFORK(_rs_forkhandler);
-	return (0);
+	తిరిగి (0);
 }

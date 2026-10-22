@@ -5,18 +5,18 @@
  * poly1305-donna-unrolled.c from https://github.com/floodyberry/poly1305-donna
  */
 
-#ifndef POLY1305_H
-#define POLY1305_H
+#నిర్వచితం_కాకపోతే POLY1305_H
+#నిర్వచించు POLY1305_H
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#define POLY1305_KEYLEN		32
-#define POLY1305_TAGLEN		16
+#నిర్వచించు POLY1305_KEYLEN		32
+#నిర్వచించు POLY1305_TAGLEN		16
 
-void poly1305_auth(u_char out[POLY1305_TAGLEN], const u_char *m, size_t inlen,
-    const u_char key[POLY1305_KEYLEN])
+శూన్య poly1305_auth(u_char బహిర్గతం[POLY1305_TAGLEN], స్థిరరాశి u_char *m, కొలత_t inlen,
+    స్థిరరాశి u_char కీలకం[POLY1305_KEYLEN])
     __attribute__((__bounded__(__minbytes__, 1, POLY1305_TAGLEN)))
     __attribute__((__bounded__(__buffer__, 2, 3)))
     __attribute__((__bounded__(__minbytes__, 4, POLY1305_KEYLEN)));
 
-#endif	/* POLY1305_H */
+#అయితే_ముగింపు	/* POLY1305_H */

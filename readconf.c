@@ -12,51 +12,51 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
-#include <sys/un.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <sys/wait.h>
+#అన్తర్భావ <sys/un.h>
 
-#include <net/if.h>
-#include <netinet/in.h>
-#include <netinet/ip.h>
-#include <arpa/inet.h>
+#అన్తర్భావ <net/if.h>
+#అన్తర్భావ <netinet/in.h>
+#అన్తర్భావ <netinet/ip.h>
+#అన్తర్భావ <arpa/inet.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <glob.h>
-#include <ifaddrs.h>
-#include <limits.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <util.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <glob.h>
+#అన్తర్భావ <ifaddrs.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <netdb.h>
+#అన్తర్భావ <paths.h>
+#అన్తర్భావ <pwd.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <util.h>
+#ఒకవేళ defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
-#endif
+#అయితే_ముగింపు
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "cipher.h"
-#include "pathnames.h"
-#include "log.h"
-#include "sshkey.h"
-#include "misc.h"
-#include "readconf.h"
-#include "match.h"
-#include "kex.h"
-#include "mac.h"
-#include "myproposal.h"
-#include "digest.h"
-#include "version.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "ssh.h"
+#అన్తర్భావ "cipher.h"
+#అన్తర్భావ "pathnames.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "readconf.h"
+#అన్తర్భావ "match.h"
+#అన్తర్భావ "kex.h"
+#అన్తర్భావ "mac.h"
+#అన్తర్భావ "myproposal.h"
+#అన్తర్భావ "digest.h"
+#అన్తర్భావ "version.h"
 
 /* Format of the configuration file:
 
@@ -119,61 +119,61 @@
 
 */
 
-static int read_config_file_depth(const char *filename, struct passwd *pw,
-    const char *host, const char *original_host, const char *remote_command,
-    Options *options, int flags, int *activep, int *want_final_pass, int depth);
-static int process_config_line_depth(Options *options, struct passwd *pw,
-    const char *host, const char *original_host, const char *remote_command,
-    char *line, const char *filename, int linenum, int *activep, int flags,
-    int *want_final_pass, int depth);
+స్థిర పూర్ణాంకం read_config_file_లోతు(స్థిరరాశి అక్షరం *filename, నిర్మాణం passwd *pw,
+    స్థిరరాశి అక్షరం *host, స్థిరరాశి అక్షరం *original_host, స్థిరరాశి అక్షరం *remote_command,
+    Options *options, పూర్ణాంకం flags, పూర్ణాంకం *activep, పూర్ణాంకం *want_final_pass, పూర్ణాంకం లోతు);
+స్థిర పూర్ణాంకం process_config_పంక్తి_లోతు(Options *options, నిర్మాణం passwd *pw,
+    స్థిరరాశి అక్షరం *host, స్థిరరాశి అక్షరం *original_host, స్థిరరాశి అక్షరం *remote_command,
+    అక్షరం *పంక్తి, స్థిరరాశి అక్షరం *filename, పూర్ణాంకం linenum, పూర్ణాంకం *activep, పూర్ణాంకం flags,
+    పూర్ణాంకం *want_final_pass, పూర్ణాంకం లోతు);
 
 /* Keyword tokens. */
 
-typedef enum {
+రకనిర్వచనం గణన {
 	oBadOption,
-	oHost, oMatch, oInclude, oTag,
+	oHost, o_సరిపోలిక, oInclude, o_ట్యాగ్,
 	oForwardAgent, oForwardX11, oForwardX11Trusted, oForwardX11Timeout,
 	oGatewayPorts, oExitOnForwardFailure,
 	oPasswordAuthentication,
 	oXAuthLocation,
-	oIdentityFile, oHostname, oPort, oRemoteForward, oLocalForward,
+	o_తటస్థం_File, oHostname, o_పోర్టు, oRemoteForward, oLocalForward,
 	oPermitRemoteOpen,
-	oCertificateFile, oAddKeysToAgent, oIdentityAgent,
+	oCertificateFile, o_కూడు_కీలకాలు_గమ్యం_Agent, o_తటస్థం_Agent,
 	oUser, oEscapeChar, oProxyCommand,
-	oGlobalKnownHostsFile, oUserKnownHostsFile, oConnectionAttempts,
-	oBatchMode, oCheckHostIP, oStrictHostKeyChecking, oCompression,
-	oTCPKeepAlive, oNumberOfPasswordPrompts,
+	o_Global_తెలిసిన_Hosts_File, o_User_తెలిసిన_Hosts_File, oConnectionAttempts,
+	o_Batch_బహుళకం, oCheckHostIP, o_Strict_Host_కీలకం_Checking, oCompression,
+	oTCPKeepAlive, o_సంఖ్య_యొక్క_Password_Prompts,
 	oLogFacility, oLogLevel, oLogVerbose, oCiphers, oMacs,
 	oPubkeyAuthentication,
-	oKbdInteractiveAuthentication, oKbdInteractiveDevices, oHostKeyAlias,
+	oKbdInteractiveAuthentication, oKbdInteractiveDevices, o_Host_కీలకం_Alias,
 	oDynamicForward, oPreferredAuthentications, oHostbasedAuthentication,
-	oHostKeyAlgorithms, oBindAddress, oBindInterface, oPKCS11Provider,
+	o_Host_కీలకం_Algorithms, o_Bind_చిరునామా, oBindInterface, oPKCS11Provider,
 	oClearAllForwardings, oNoHostAuthenticationForLocalhost,
-	oEnableSSHKeysign, oRekeyLimit, oVerifyHostKeyDNS, oConnectTimeout,
-	oAddressFamily, oGssAuthentication, oGssDelegateCreds,
-	oServerAliveInterval, oServerAliveCountMax, oIdentitiesOnly,
-	oSendEnv, oSetEnv, oControlPath, oControlMaster, oControlPersist,
-	oHashKnownHosts,
+	oEnableSSHKeysign, o_Rekey_హద్దు, o_Verify_Host_కీలకం_DNS, oConnectTimeout,
+	o_చిరునామా_Family, oGssAuthentication, oGssDelegateCreds,
+	oServerAliveInterval, o_Server_Alive_లెక్క_Max, oIdentitiesOnly,
+	oSendEnv, o_సమితి_Env, o_Control_మార్గం, oControlMaster, oControlPersist,
+	o_Hash_తెలిసిన_Hosts,
 	oTunnel, oTunnelDevice,
 	oLocalCommand, oPermitLocalCommand, oRemoteCommand,
-	oVisualHostKey,
+	o_Visual_Host_కీలకం,
 	oKexAlgorithms, oIPQoS, oRequestTTY, oSessionType, oStdinNull,
 	oForkAfterAuthentication, oIgnoreUnknown, oProxyUseFdpass,
 	oCanonicalDomains, oCanonicalizeHostname, oCanonicalizeMaxDots,
 	oCanonicalizeFallbackLocal, oCanonicalizePermittedCNAMEs,
-	oStreamLocalBindMask, oStreamLocalBindUnlink, oRevokedHostKeys,
+	o_ప్రవాహం_Local_Bind_ముసుగు, o_ప్రవాహం_Local_Bind_Unlink, o_Revoked_Host_కీలకాలు,
 	oFingerprintHash, oUpdateHostkeys, oHostbasedAcceptedAlgorithms,
 	oPubkeyAcceptedAlgorithms, oCASignatureAlgorithms, oProxyJump,
-	oSecurityKeyProvider, oKnownHostsCommand, oRequiredRSASize,
+	o_Security_కీలకం_Provider, o_తెలిసిన_Hosts_Command, oRequiredRSASize,
 	oEnableEscapeCommandline, oObscureKeystrokeTiming, oChannelTimeout,
-	oVersionAddendum, oRefuseConnection, oWarnWeakCrypto,
+	o_సంస్కరణ_Addendum, oRefuseConnection, oWarnWeakCrypto,
 	oIgnore, oIgnoredUnknownOption, oDeprecated, oUnsupported
 } OpCodes;
 
 /* Textual representations of the tokens. */
 
-static struct {
-	const char *name;
+స్థిర నిర్మాణం {
+	స్థిరరాశి అక్షరం *name;
 	OpCodes opcode;
 } keywords[] = {
 	/* Deprecated options */
@@ -196,20 +196,20 @@ static struct {
 	{ "compressionlevel", oUnsupported },
 
 	/* Sometimes-unsupported options */
-#if defined(GSSAPI)
+#ఒకవేళ defined(GSSAPI)
 	{ "gssapiauthentication", oGssAuthentication },
 	{ "gssapidelegatecredentials", oGssDelegateCreds },
-# else
+# లేకపోతే
 	{ "gssapiauthentication", oUnsupported },
 	{ "gssapidelegatecredentials", oUnsupported },
-#endif
-#ifdef ENABLE_PKCS11
+#అయితే_ముగింపు
+#నిర్వచితమైతే ENABLE_PKCS11
 	{ "pkcs11provider", oPKCS11Provider },
 	{ "smartcarddevice", oPKCS11Provider },
-# else
+# లేకపోతే
 	{ "smartcarddevice", oUnsupported },
 	{ "pkcs11provider", oUnsupported },
-#endif
+#అయితే_ముగింపు
 
 	{ "forwardagent", oForwardAgent },
 	{ "forwardx11", oForwardX11 },
@@ -227,16 +227,16 @@ static struct {
 	{ "pubkeyauthentication", oPubkeyAuthentication },
 	{ "dsaauthentication", oPubkeyAuthentication },		    /* alias */
 	{ "hostbasedauthentication", oHostbasedAuthentication },
-	{ "identityfile", oIdentityFile },
-	{ "identityfile2", oIdentityFile },			/* obsolete */
+	{ "identityfile", o_తటస్థం_File },
+	{ "identityfile2", o_తటస్థం_File },			/* obsolete */
 	{ "identitiesonly", oIdentitiesOnly },
 	{ "certificatefile", oCertificateFile },
-	{ "addkeystoagent", oAddKeysToAgent },
-	{ "identityagent", oIdentityAgent },
+	{ "addkeystoagent", o_కూడు_కీలకాలు_గమ్యం_Agent },
+	{ "identityagent", o_తటస్థం_Agent },
 	{ "hostname", oHostname },
-	{ "hostkeyalias", oHostKeyAlias },
+	{ "hostkeyalias", o_Host_కీలకం_Alias },
 	{ "proxycommand", oProxyCommand },
-	{ "port", oPort },
+	{ "port", o_పోర్టు },
 	{ "ciphers", oCiphers },
 	{ "macs", oMacs },
 	{ "remoteforward", oRemoteForward },
@@ -244,50 +244,50 @@ static struct {
 	{ "permitremoteopen", oPermitRemoteOpen },
 	{ "user", oUser },
 	{ "host", oHost },
-	{ "match", oMatch },
-	{ "tag", oTag },
+	{ "match", o_సరిపోలిక },
+	{ "tag", o_ట్యాగ్ },
 	{ "escapechar", oEscapeChar },
-	{ "globalknownhostsfile", oGlobalKnownHostsFile },
-	{ "userknownhostsfile", oUserKnownHostsFile },
+	{ "globalknownhostsfile", o_Global_తెలిసిన_Hosts_File },
+	{ "userknownhostsfile", o_User_తెలిసిన_Hosts_File },
 	{ "connectionattempts", oConnectionAttempts },
-	{ "batchmode", oBatchMode },
+	{ "batchmode", o_Batch_బహుళకం },
 	{ "checkhostip", oCheckHostIP },
-	{ "stricthostkeychecking", oStrictHostKeyChecking },
+	{ "stricthostkeychecking", o_Strict_Host_కీలకం_Checking },
 	{ "compression", oCompression },
 	{ "tcpkeepalive", oTCPKeepAlive },
 	{ "keepalive", oTCPKeepAlive },				/* obsolete */
-	{ "numberofpasswordprompts", oNumberOfPasswordPrompts },
+	{ "numberofpasswordprompts", o_సంఖ్య_యొక్క_Password_Prompts },
 	{ "syslogfacility", oLogFacility },
 	{ "loglevel", oLogLevel },
 	{ "logverbose", oLogVerbose },
 	{ "dynamicforward", oDynamicForward },
 	{ "preferredauthentications", oPreferredAuthentications },
-	{ "hostkeyalgorithms", oHostKeyAlgorithms },
+	{ "hostkeyalgorithms", o_Host_కీలకం_Algorithms },
 	{ "casignaturealgorithms", oCASignatureAlgorithms },
-	{ "bindaddress", oBindAddress },
+	{ "bindaddress", o_Bind_చిరునామా },
 	{ "bindinterface", oBindInterface },
 	{ "clearallforwardings", oClearAllForwardings },
 	{ "enablesshkeysign", oEnableSSHKeysign },
-	{ "verifyhostkeydns", oVerifyHostKeyDNS },
+	{ "verifyhostkeydns", o_Verify_Host_కీలకం_DNS },
 	{ "nohostauthenticationforlocalhost", oNoHostAuthenticationForLocalhost },
-	{ "rekeylimit", oRekeyLimit },
+	{ "rekeylimit", o_Rekey_హద్దు },
 	{ "connecttimeout", oConnectTimeout },
-	{ "addressfamily", oAddressFamily },
+	{ "addressfamily", o_చిరునామా_Family },
 	{ "serveraliveinterval", oServerAliveInterval },
-	{ "serveralivecountmax", oServerAliveCountMax },
+	{ "serveralivecountmax", o_Server_Alive_లెక్క_Max },
 	{ "sendenv", oSendEnv },
-	{ "setenv", oSetEnv },
-	{ "controlpath", oControlPath },
+	{ "setenv", o_సమితి_Env },
+	{ "controlpath", o_Control_మార్గం },
 	{ "controlmaster", oControlMaster },
 	{ "controlpersist", oControlPersist },
-	{ "hashknownhosts", oHashKnownHosts },
+	{ "hashknownhosts", o_Hash_తెలిసిన_Hosts },
 	{ "include", oInclude },
 	{ "tunnel", oTunnel },
 	{ "tunneldevice", oTunnelDevice },
 	{ "localcommand", oLocalCommand },
 	{ "permitlocalcommand", oPermitLocalCommand },
 	{ "remotecommand", oRemoteCommand },
-	{ "visualhostkey", oVisualHostKey },
+	{ "visualhostkey", o_Visual_Host_కీలకం },
 	{ "kexalgorithms", oKexAlgorithms },
 	{ "ipqos", oIPQoS },
 	{ "requesttty", oRequestTTY },
@@ -300,9 +300,9 @@ static struct {
 	{ "canonicalizehostname", oCanonicalizeHostname },
 	{ "canonicalizemaxdots", oCanonicalizeMaxDots },
 	{ "canonicalizepermittedcnames", oCanonicalizePermittedCNAMEs },
-	{ "streamlocalbindmask", oStreamLocalBindMask },
-	{ "streamlocalbindunlink", oStreamLocalBindUnlink },
-	{ "revokedhostkeys", oRevokedHostKeys },
+	{ "streamlocalbindmask", o_ప్రవాహం_Local_Bind_ముసుగు },
+	{ "streamlocalbindunlink", o_ప్రవాహం_Local_Bind_Unlink },
+	{ "revokedhostkeys", o_Revoked_Host_కీలకాలు },
 	{ "fingerprinthash", oFingerprintHash },
 	{ "updatehostkeys", oUpdateHostkeys },
 	{ "hostbasedacceptedalgorithms", oHostbasedAcceptedAlgorithms },
@@ -311,53 +311,53 @@ static struct {
 	{ "pubkeyacceptedkeytypes", oPubkeyAcceptedAlgorithms }, /* obsolete */
 	{ "ignoreunknown", oIgnoreUnknown },
 	{ "proxyjump", oProxyJump },
-	{ "securitykeyprovider", oSecurityKeyProvider },
-	{ "knownhostscommand", oKnownHostsCommand },
+	{ "securitykeyprovider", o_Security_కీలకం_Provider },
+	{ "knownhostscommand", o_తెలిసిన_Hosts_Command },
 	{ "requiredrsasize", oRequiredRSASize },
 	{ "enableescapecommandline", oEnableEscapeCommandline },
 	{ "obscurekeystroketiming", oObscureKeystrokeTiming },
 	{ "channeltimeout", oChannelTimeout },
-	{ "versionaddendum", oVersionAddendum },
+	{ "versionaddendum", o_సంస్కరణ_Addendum },
 	{ "refuseconnection", oRefuseConnection },
 	{ "warnweakcrypto", oWarnWeakCrypto },
 
-	{ NULL, oBadOption }
+	{ ఖాళీ, oBadOption }
 };
 
-static const char *lookup_opcode_name(OpCodes code);
+స్థిర స్థిరరాశి అక్షరం *lookup_opcode_name(OpCodes సంకేతం_2);
 
-const char *
-kex_default_pk_alg(void)
+స్థిరరాశి అక్షరం *
+kex_default_pk_alg(శూన్య)
 {
-	static char *pkalgs;
+	స్థిర అక్షరం *pkalgs;
 
-	if (pkalgs == NULL) {
-		char *all_key;
+	ఒకవేళ (pkalgs == ఖాళీ) {
+		అక్షరం *all_కీలకం;
 
-		all_key = sshkey_alg_list(0, 0, 1, ',');
-		pkalgs = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_key);
-		free(all_key);
+		all_కీలకం = sshkey_alg_list(0, 0, 1, ',');
+		pkalgs = సరిపోలిక_filter_allowlist(KEX_DEFAULT_PK_ALG, all_కీలకం);
+		విడుదల(all_కీలకం);
 	}
-	return pkalgs;
+	తిరిగి pkalgs;
 }
 
-char *
-ssh_connection_hash(const char *thishost, const char *host, const char *portstr,
-    const char *user, const char *jumphost)
+అక్షరం *
+ssh_connection_hash(స్థిరరాశి అక్షరం *thishost, స్థిరరాశి అక్షరం *host, స్థిరరాశి అక్షరం *portstr,
+    స్థిరరాశి అక్షరం *user, స్థిరరాశి అక్షరం *jumphost)
 {
-	struct ssh_digest_ctx *md;
-	u_char conn_hash[SSH_DIGEST_MAX_LENGTH];
+	నిర్మాణం ssh_digest_ctx *md;
+	u_char conn_hash[SSH_DIGEST_MAX_నిడివి];
 
-	if ((md = ssh_digest_start(SSH_DIGEST_SHA1)) == NULL ||
-	    ssh_digest_update(md, thishost, strlen(thishost)) < 0 ||
-	    ssh_digest_update(md, host, strlen(host)) < 0 ||
-	    ssh_digest_update(md, portstr, strlen(portstr)) < 0 ||
-	    ssh_digest_update(md, user, strlen(user)) < 0 ||
-	    ssh_digest_update(md, jumphost, strlen(jumphost)) < 0 ||
-	    ssh_digest_final(md, conn_hash, sizeof(conn_hash)) < 0)
+	ఒకవేళ ((md = ssh_digest_ప్రారంభం(SSH_DIGEST_SHA1)) == ఖాళీ ||
+	    ssh_digest_update(md, thishost, అక్షరశ్రేణి_పొడవు(thishost)) < 0 ||
+	    ssh_digest_update(md, host, అక్షరశ్రేణి_పొడవు(host)) < 0 ||
+	    ssh_digest_update(md, portstr, అక్షరశ్రేణి_పొడవు(portstr)) < 0 ||
+	    ssh_digest_update(md, user, అక్షరశ్రేణి_పొడవు(user)) < 0 ||
+	    ssh_digest_update(md, jumphost, అక్షరశ్రేణి_పొడవు(jumphost)) < 0 ||
+	    ssh_digest_final(md, conn_hash, పరిమాణం(conn_hash)) < 0)
 		fatal_f("mux digest failed");
 	ssh_digest_free(md);
-	return tohex(conn_hash, ssh_digest_bytes(SSH_DIGEST_SHA1));
+	తిరిగి tohex(conn_hash, ssh_digest_బైట్లు(SSH_DIGEST_SHA1));
 }
 
 /*
@@ -365,28 +365,28 @@ ssh_connection_hash(const char *thishost, const char *host, const char *portstr,
  * error.
  */
 
-void
-add_local_forward(Options *options, const struct Forward *newfwd)
+శూన్య
+కూడు_local_forward(Options *options, స్థిరరాశి నిర్మాణం Forward *newfwd)
 {
-	struct Forward *fwd;
-	int i;
+	నిర్మాణం Forward *fwd;
+	పూర్ణాంకం i;
 
 	/* Don't add duplicates */
-	for (i = 0; i < options->num_local_forwards; i++) {
-		if (forward_equals(newfwd, options->local_forwards + i))
-			return;
+	కొరకు (i = 0; i < options->అంకె_local_forwards; i++) {
+		ఒకవేళ (forward_equals(newfwd, options->local_forwards + i))
+			తిరిగి;
 	}
 	options->local_forwards = xreallocarray(options->local_forwards,
-	    options->num_local_forwards + 1,
-	    sizeof(*options->local_forwards));
-	fwd = &options->local_forwards[options->num_local_forwards++];
+	    options->అంకె_local_forwards + 1,
+	    పరిమాణం(*options->local_forwards));
+	fwd = &options->local_forwards[options->అంకె_local_forwards++];
 
 	fwd->listen_host = newfwd->listen_host;
-	fwd->listen_port = newfwd->listen_port;
-	fwd->listen_path = newfwd->listen_path;
+	fwd->listen_పోర్టు = newfwd->listen_పోర్టు;
+	fwd->listen_మార్గం = newfwd->listen_మార్గం;
 	fwd->connect_host = newfwd->connect_host;
-	fwd->connect_port = newfwd->connect_port;
-	fwd->connect_path = newfwd->connect_path;
+	fwd->connect_పోర్టు = newfwd->connect_పోర్టు;
+	fwd->connect_మార్గం = newfwd->connect_మార్గం;
 }
 
 /*
@@ -394,145 +394,145 @@ add_local_forward(Options *options, const struct Forward *newfwd)
  * an error.
  */
 
-void
-add_remote_forward(Options *options, const struct Forward *newfwd)
+శూన్య
+కూడు_remote_forward(Options *options, స్థిరరాశి నిర్మాణం Forward *newfwd)
 {
-	struct Forward *fwd;
-	int i;
+	నిర్మాణం Forward *fwd;
+	పూర్ణాంకం i;
 
 	/* Don't add duplicates */
-	for (i = 0; i < options->num_remote_forwards; i++) {
-		if (forward_equals(newfwd, options->remote_forwards + i))
-			return;
+	కొరకు (i = 0; i < options->అంకె_remote_forwards; i++) {
+		ఒకవేళ (forward_equals(newfwd, options->remote_forwards + i))
+			తిరిగి;
 	}
 	options->remote_forwards = xreallocarray(options->remote_forwards,
-	    options->num_remote_forwards + 1,
-	    sizeof(*options->remote_forwards));
-	fwd = &options->remote_forwards[options->num_remote_forwards++];
+	    options->అంకె_remote_forwards + 1,
+	    పరిమాణం(*options->remote_forwards));
+	fwd = &options->remote_forwards[options->అంకె_remote_forwards++];
 
 	fwd->listen_host = newfwd->listen_host;
-	fwd->listen_port = newfwd->listen_port;
-	fwd->listen_path = newfwd->listen_path;
+	fwd->listen_పోర్టు = newfwd->listen_పోర్టు;
+	fwd->listen_మార్గం = newfwd->listen_మార్గం;
 	fwd->connect_host = newfwd->connect_host;
-	fwd->connect_port = newfwd->connect_port;
-	fwd->connect_path = newfwd->connect_path;
+	fwd->connect_పోర్టు = newfwd->connect_పోర్టు;
+	fwd->connect_మార్గం = newfwd->connect_మార్గం;
 	fwd->handle = newfwd->handle;
-	fwd->allocated_port = 0;
+	fwd->allocated_పోర్టు = 0;
 }
 
-static void
+స్థిర శూన్య
 clear_forwardings(Options *options)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	for (i = 0; i < options->num_local_forwards; i++) {
-		free(options->local_forwards[i].listen_host);
-		free(options->local_forwards[i].listen_path);
-		free(options->local_forwards[i].connect_host);
-		free(options->local_forwards[i].connect_path);
+	కొరకు (i = 0; i < options->అంకె_local_forwards; i++) {
+		విడుదల(options->local_forwards[i].listen_host);
+		విడుదల(options->local_forwards[i].listen_మార్గం);
+		విడుదల(options->local_forwards[i].connect_host);
+		విడుదల(options->local_forwards[i].connect_మార్గం);
 	}
-	if (options->num_local_forwards > 0) {
-		free(options->local_forwards);
-		options->local_forwards = NULL;
+	ఒకవేళ (options->అంకె_local_forwards > 0) {
+		విడుదల(options->local_forwards);
+		options->local_forwards = ఖాళీ;
 	}
-	options->num_local_forwards = 0;
-	for (i = 0; i < options->num_remote_forwards; i++) {
-		free(options->remote_forwards[i].listen_host);
-		free(options->remote_forwards[i].listen_path);
-		free(options->remote_forwards[i].connect_host);
-		free(options->remote_forwards[i].connect_path);
+	options->అంకె_local_forwards = 0;
+	కొరకు (i = 0; i < options->అంకె_remote_forwards; i++) {
+		విడుదల(options->remote_forwards[i].listen_host);
+		విడుదల(options->remote_forwards[i].listen_మార్గం);
+		విడుదల(options->remote_forwards[i].connect_host);
+		విడుదల(options->remote_forwards[i].connect_మార్గం);
 	}
-	if (options->num_remote_forwards > 0) {
-		free(options->remote_forwards);
-		options->remote_forwards = NULL;
+	ఒకవేళ (options->అంకె_remote_forwards > 0) {
+		విడుదల(options->remote_forwards);
+		options->remote_forwards = ఖాళీ;
 	}
-	options->num_remote_forwards = 0;
+	options->అంకె_remote_forwards = 0;
 	options->tun_open = SSH_TUNMODE_NO;
 }
 
-void
-add_certificate_file(Options *options, const char *path, int userprovided)
+శూన్య
+కూడు_certificate_file(Options *options, స్థిరరాశి అక్షరం *మార్గం, పూర్ణాంకం userprovided)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	if (options->num_certificate_files >= SSH_MAX_CERTIFICATE_FILES)
+	ఒకవేళ (options->అంకె_certificate_files >= SSH_MAX_CERTIFICATE_FILES)
 		fatal("Too many certificate files specified (max %d)",
 		    SSH_MAX_CERTIFICATE_FILES);
 
 	/* Avoid registering duplicates */
-	for (i = 0; i < options->num_certificate_files; i++) {
-		if (options->certificate_file_userprovided[i] == userprovided &&
-		    strcmp(options->certificate_files[i], path) == 0) {
-			debug2_f("ignoring duplicate key %s", path);
-			return;
+	కొరకు (i = 0; i < options->అంకె_certificate_files; i++) {
+		ఒకవేళ (options->certificate_file_userprovided[i] == userprovided &&
+		    strcmp(options->certificate_files[i], మార్గం) == 0) {
+			debug2_f("ignoring duplicate key %s", మార్గం);
+			తిరిగి;
 		}
 	}
 
-	options->certificate_file_userprovided[options->num_certificate_files] =
+	options->certificate_file_userprovided[options->అంకె_certificate_files] =
 	    userprovided;
-	options->certificate_files[options->num_certificate_files++] =
-	    xstrdup(path);
+	options->certificate_files[options->అంకె_certificate_files++] =
+	    xstrdup(మార్గం);
 }
 
-void
-add_identity_file(Options *options, const char *dir, const char *filename,
-    int userprovided)
+శూన్య
+కూడు_తటస్థం_file(Options *options, స్థిరరాశి అక్షరం *dir, స్థిరరాశి అక్షరం *filename,
+    పూర్ణాంకం userprovided)
 {
-	char *path;
-	int i;
+	అక్షరం *మార్గం;
+	పూర్ణాంకం i;
 
-	if (options->num_identity_files >= SSH_MAX_IDENTITY_FILES)
+	ఒకవేళ (options->అంకె_తటస్థం_files >= SSH_MAX_తటస్థం_FILES)
 		fatal("Too many identity files specified (max %d)",
-		    SSH_MAX_IDENTITY_FILES);
+		    SSH_MAX_తటస్థం_FILES);
 
-	if (dir == NULL) /* no dir, filename is absolute */
-		path = xstrdup(filename);
-	else if (xasprintf(&path, "%s%s", dir, filename) >= PATH_MAX)
-		fatal("Identity file path %s too long", path);
+	ఒకవేళ (dir == ఖాళీ) /* no dir, filename is absolute */
+		మార్గం = xstrdup(filename);
+	లేకపోతే ఒకవేళ (xasprintf(&మార్గం, "%s%s", dir, filename) >= PATH_MAX)
+		fatal("Identity file path %s too long", మార్గం);
 
 	/* Avoid registering duplicates */
-	for (i = 0; i < options->num_identity_files; i++) {
-		if (options->identity_file_userprovided[i] == userprovided &&
-		    strcmp(options->identity_files[i], path) == 0) {
-			debug2_f("ignoring duplicate key %s", path);
-			free(path);
-			return;
+	కొరకు (i = 0; i < options->అంకె_తటస్థం_files; i++) {
+		ఒకవేళ (options->తటస్థం_file_userprovided[i] == userprovided &&
+		    strcmp(options->తటస్థం_files[i], మార్గం) == 0) {
+			debug2_f("ignoring duplicate key %s", మార్గం);
+			విడుదల(మార్గం);
+			తిరిగి;
 		}
 	}
 
-	options->identity_file_userprovided[options->num_identity_files] =
+	options->తటస్థం_file_userprovided[options->అంకె_తటస్థం_files] =
 	    userprovided;
-	options->identity_files[options->num_identity_files++] = path;
+	options->తటస్థం_files[options->అంకె_తటస్థం_files++] = మార్గం;
 }
 
-int
-default_ssh_port(void)
+పూర్ణాంకం
+default_ssh_పోర్టు(శూన్య)
 {
-	static int port;
-	struct servent *sp;
+	స్థిర పూర్ణాంకం పోర్టు;
+	నిర్మాణం servent *sp;
 
-	if (port == 0) {
+	ఒకవేళ (పోర్టు == 0) {
 		sp = getservbyname(SSH_SERVICE_NAME, "tcp");
-		port = sp ? ntohs(sp->s_port) : SSH_DEFAULT_PORT;
+		పోర్టు = sp ? ntohs(sp->s_port) : SSH_DEFAULT_పోర్టు;
 	}
-	return port;
+	తిరిగి పోర్టు;
 }
 
 /*
  * Execute a command in a shell.
  * Return its exit status or -1 on abnormal exit.
  */
-static int
-execute_in_shell(const char *cmd)
+స్థిర పూర్ణాంకం
+execute_లోపల_shell(స్థిరరాశి అక్షరం *cmd)
 {
-	char *shell;
+	అక్షరం *shell;
 	pid_t pid;
-	int status;
+	పూర్ణాంకం స్థితి_2;
 
-	if ((shell = getenv("SHELL")) == NULL)
+	ఒకవేళ ((shell = getenv("SHELL")) == ఖాళీ)
 		shell = _PATH_BSHELL;
 
-	if (access(shell, X_OK) == -1) {
+	ఒకవేళ (access(shell, X_OK) == -1) {
 		fatal("Shell \"%s\" is not executable: %s",
 		    shell, strerror(errno));
 	}
@@ -540,17 +540,17 @@ execute_in_shell(const char *cmd)
 	debug("Executing command: '%.500s'", cmd);
 
 	/* Fork and execute the command. */
-	if ((pid = fork()) == 0) {
-		char *argv[4];
+	ఒకవేళ ((pid = fork()) == 0) {
+		అక్షరం *argv[4];
 
-		if (stdfd_devnull(1, 1, 0) == -1)
+		ఒకవేళ (stdfd_devnull(1, 1, 0) == -1)
 			fatal_f("stdfd_devnull failed");
 		closefrom(STDERR_FILENO + 1);
 
 		argv[0] = shell;
 		argv[1] = "-c";
 		argv[2] = xstrdup(cmd);
-		argv[3] = NULL;
+		argv[3] = ఖాళీ;
 
 		execv(argv[0], argv);
 		error("Unable to execute '%.100s': %s", cmd, strerror(errno));
@@ -560,121 +560,121 @@ execute_in_shell(const char *cmd)
 		_exit(1);
 	}
 	/* Parent. */
-	if (pid == -1)
+	ఒకవేళ (pid == -1)
 		fatal_f("fork: %.100s", strerror(errno));
 
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno != EINTR && errno != EAGAIN)
+	అయితే (waitpid(pid, &స్థితి_2, 0) == -1) {
+		ఒకవేళ (errno != EINTR && errno != EAGAIN)
 			fatal_f("waitpid: %s", strerror(errno));
 	}
-	if (!WIFEXITED(status)) {
+	ఒకవేళ (!WIFEXITED(స్థితి_2)) {
 		error("command '%.100s' exited abnormally", cmd);
-		return -1;
+		తిరిగి -1;
 	}
-	debug3("command returned status %d", WEXITSTATUS(status));
-	return WEXITSTATUS(status);
+	debug3("command returned status %d", WEXITSTATUS(స్థితి_2));
+	తిరిగి WEXITSTATUS(స్థితి_2);
 }
 
 /*
  * Check whether a local network interface address appears in CIDR pattern-
  * list 'addrlist'. Returns 1 if matched or 0 otherwise.
  */
-static int
-check_match_ifaddrs(const char *addrlist)
+స్థిర పూర్ణాంకం
+check_సరిపోలిక_ifaddrs(స్థిరరాశి అక్షరం *addrlist)
 {
-#ifdef HAVE_IFADDRS_H
-	struct ifaddrs *ifa, *ifaddrs = NULL;
-	int r, found = 0;
-	char addr[NI_MAXHOST];
+#నిర్వచితమైతే HAVE_IFADDRS_H
+	నిర్మాణం ifaddrs *ifa, *ifaddrs = ఖాళీ;
+	పూర్ణాంకం r, దొరికింది = 0;
+	అక్షరం addr[NI_MAXHOST];
 	socklen_t salen;
 
-	if (getifaddrs(&ifaddrs) != 0) {
+	ఒకవేళ (getifaddrs(&ifaddrs) != 0) {
 		error("match localnetwork: getifaddrs failed: %s",
 		    strerror(errno));
-		return 0;
+		తిరిగి 0;
 	}
-	for (ifa = ifaddrs; ifa != NULL; ifa = ifa->ifa_next) {
-		if (ifa->ifa_addr == NULL || ifa->ifa_name == NULL ||
+	కొరకు (ifa = ifaddrs; ifa != ఖాళీ; ifa = ifa->ifa_తదుపరి) {
+		ఒకవేళ (ifa->ifa_addr == ఖాళీ || ifa->ifa_name == ఖాళీ ||
 		    (ifa->ifa_flags & IFF_UP) == 0)
-			continue;
-		switch (ifa->ifa_addr->sa_family) {
-		case AF_INET:
-			salen = sizeof(struct sockaddr_in);
-			break;
-		case AF_INET6:
-			salen = sizeof(struct sockaddr_in6);
-			break;
-#ifdef AF_LINK
-		case AF_LINK:
+			కొనసాగు;
+		ఎంపిక (ifa->ifa_addr->sa_family) {
+		స్థితి AF_INET:
+			salen = పరిమాణం(నిర్మాణం sockaddr_in);
+			ఆపు;
+		స్థితి AF_INET6:
+			salen = పరిమాణం(నిర్మాణం sockaddr_in6);
+			ఆపు;
+#నిర్వచితమైతే AF_LINK
+		స్థితి AF_LINK:
 			/* ignore */
-			continue;
-#endif /* AF_LINK */
-		default:
+			కొనసాగు;
+#అయితే_ముగింపు /* AF_LINK */
+		అప్రమేయ:
 			debug2_f("interface %s: unsupported address family %d",
 			    ifa->ifa_name, ifa->ifa_addr->sa_family);
-			continue;
+			కొనసాగు;
 		}
-		if ((r = getnameinfo(ifa->ifa_addr, salen, addr, sizeof(addr),
-		    NULL, 0, NI_NUMERICHOST)) != 0) {
+		ఒకవేళ ((r = getnameinfo(ifa->ifa_addr, salen, addr, పరిమాణం(addr),
+		    ఖాళీ, 0, NI_NUMERICHOST)) != 0) {
 			debug2_f("interface %s getnameinfo failed: %s",
 			    ifa->ifa_name, gai_strerror(r));
-			continue;
+			కొనసాగు;
 		}
 		debug3_f("interface %s addr %s", ifa->ifa_name, addr);
-		if (addr_match_cidr_list(addr, addrlist) == 1) {
+		ఒకవేళ (addr_సరిపోలిక_cidr_list(addr, addrlist) == 1) {
 			debug3_f("matched interface %s: address %s in %s",
 			    ifa->ifa_name, addr, addrlist);
-			found = 1;
-			break;
+			దొరికింది = 1;
+			ఆపు;
 		}
 	}
 	freeifaddrs(ifaddrs);
-	return found;
-#else /* HAVE_IFADDRS_H */
+	తిరిగి దొరికింది;
+#లేకపోతే /* HAVE_IFADDRS_H */
 	error("match localnetwork: not supported on this platform");
-	return 0;
-#endif /* HAVE_IFADDRS_H */
+	తిరిగి 0;
+#అయితే_ముగింపు /* HAVE_IFADDRS_H */
 }
 
 /*
  * Expand a "match exec" command or an Include path, caller must free returned
  * value.
  */
-static char *
-expand_match_exec_or_include_path(const char *path, Options *options,
-    struct passwd *pw, const char *host_arg, const char *original_host,
-    int final_pass, int is_include_path)
+స్థిర అక్షరం *
+expand_సరిపోలిక_exec_or_include_మార్గం(స్థిరరాశి అక్షరం *మార్గం, Options *options,
+    నిర్మాణం passwd *pw, స్థిరరాశి అక్షరం *host_arg, స్థిరరాశి అక్షరం *original_host,
+    పూర్ణాంకం final_pass, పూర్ణాంకం is_include_మార్గం)
 {
-	char thishost[NI_MAXHOST], shorthost[NI_MAXHOST], portstr[NI_MAXSERV];
-	char uidstr[32], *conn_hash_hex, *keyalias, *jmphost, *ruser;
-	char *host, *ret;
-	int port;
+	అక్షరం thishost[NI_MAXHOST], shorthost[NI_MAXHOST], portstr[NI_MAXSERV];
+	అక్షరం uidstr[32], *conn_hash_hex, *keyalias, *jmphost, *ruser;
+	అక్షరం *host, *ret;
+	పూర్ణాంకం పోర్టు;
 
-	port = options->port <= 0 ? default_ssh_port() : options->port;
-	ruser = options->user == NULL ? pw->pw_name : options->user;
-	if (final_pass) {
+	పోర్టు = options->పోర్టు <= 0 ? default_ssh_పోర్టు() : options->పోర్టు;
+	ruser = options->user == ఖాళీ ? pw->pw_name : options->user;
+	ఒకవేళ (final_pass) {
 		host = xstrdup(options->hostname);
-	} else if (options->hostname != NULL) {
+	} లేకపోతే ఒకవేళ (options->hostname != ఖాళీ) {
 		/* NB. Please keep in sync with ssh.c:main() */
 		host = percent_expand(options->hostname,
-		    "h", host_arg, (char *)NULL);
-	} else {
+		    "h", host_arg, (అక్షరం *)ఖాళీ);
+	} లేకపోతే {
 		host = xstrdup(host_arg);
 	}
-	if (gethostname(thishost, sizeof(thishost)) == -1)
+	ఒకవేళ (gethostname(thishost, పరిమాణం(thishost)) == -1)
 		fatal("gethostname: %s", strerror(errno));
 	jmphost = option_clear_or_none(options->jump_host) ?
 	    "" : options->jump_host;
-	strlcpy(shorthost, thishost, sizeof(shorthost));
+	strlcpy(shorthost, thishost, పరిమాణం(shorthost));
 	shorthost[strcspn(thishost, ".")] = '\0';
-	snprintf(portstr, sizeof(portstr), "%d", port);
-	snprintf(uidstr, sizeof(uidstr), "%llu",
-	    (unsigned long long)pw->pw_uid);
+	snprintf(portstr, పరిమాణం(portstr), "%d", పోర్టు);
+	snprintf(uidstr, పరిమాణం(uidstr), "%llu",
+	    (గుర్తులేని దీర్ఘ దీర్ఘ)pw->pw_uid);
 	conn_hash_hex = ssh_connection_hash(thishost, host,
 	    portstr, ruser, jmphost);
-	keyalias = options->host_key_alias ?  options->host_key_alias : host;
+	keyalias = options->host_కీలకం_alias ?  options->host_కీలకం_alias : host;
 
-	ret = (is_include_path ? percent_dollar_expand : percent_expand)(path,
+	ret = (is_include_మార్గం ? percent_dollar_expand : percent_expand)(మార్గం,
 	    "C", conn_hash_hex,
 	    "L", shorthost,
 	    "d", pw->pw_dir,
@@ -687,108 +687,108 @@ expand_match_exec_or_include_path(const char *path, Options *options,
 	    "u", pw->pw_name,
 	    "i", uidstr,
 	    "j", jmphost,
-	    (char *)NULL);
-	free(host);
-	free(conn_hash_hex);
-	return ret;
+	    (అక్షరం *)ఖాళీ);
+	విడుదల(host);
+	విడుదల(conn_hash_hex);
+	తిరిగి ret;
 }
 
 /*
  * Parse and execute a Match directive.
  */
-static int
-match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
-    struct passwd *pw, const char *host_arg, const char *original_host,
-    const char *remote_command, int final_pass, int *want_final_pass,
-    const char *filename, int linenum)
+స్థిర పూర్ణాంకం
+సరిపోలిక_cfg_పంక్తి(Options *options, స్థిరరాశి అక్షరం *నిండిన_పంక్తి, పూర్ణాంకం *acp, అక్షరం ***avp,
+    నిర్మాణం passwd *pw, స్థిరరాశి అక్షరం *host_arg, స్థిరరాశి అక్షరం *original_host,
+    స్థిరరాశి అక్షరం *remote_command, పూర్ణాంకం final_pass, పూర్ణాంకం *want_final_pass,
+    స్థిరరాశి అక్షరం *filename, పూర్ణాంకం linenum)
 {
-	char *arg, *oattrib = NULL, *attrib = NULL, *cmd, *host, *criteria;
-	const char *ruser;
-	int r, this_result, result = 1, attributes = 0, negate;
+	అక్షరం *arg, *oattrib = ఖాళీ, *attrib = ఖాళీ, *cmd, *host, *criteria;
+	స్థిరరాశి అక్షరం *ruser;
+	పూర్ణాంకం r, this_ఫలితం, ఫలితం = 1, లక్షణాలు = 0, negate;
 
 	/*
 	 * Configuration is likely to be incomplete at this point so we
 	 * must be prepared to use default values.
 	 */
-	ruser = options->user == NULL ? pw->pw_name : options->user;
-	if (final_pass) {
+	ruser = options->user == ఖాళీ ? pw->pw_name : options->user;
+	ఒకవేళ (final_pass) {
 		host = xstrdup(options->hostname);
-	} else if (options->hostname != NULL) {
+	} లేకపోతే ఒకవేళ (options->hostname != ఖాళీ) {
 		/* NB. Please keep in sync with ssh.c:main() */
 		host = percent_expand(options->hostname,
-		    "h", host_arg, (char *)NULL);
-	} else {
+		    "h", host_arg, (అక్షరం *)ఖాళీ);
+	} లేకపోతే {
 		host = xstrdup(host_arg);
 	}
 
 	debug2("checking match for '%s' host %s originally %s",
-	    full_line, host, original_host);
-	while ((attrib = argv_next(acp, avp)) != NULL) {
+	    నిండిన_పంక్తి, host, original_host);
+	అయితే ((attrib = argv_తదుపరి(acp, avp)) != ఖాళీ) {
 		/* Terminate on comment */
-		if (*attrib == '#') {
+		ఒకవేళ (*attrib == '#') {
 			argv_consume(acp);
-			break;
+			ఆపు;
 		}
 		attrib = oattrib = xstrdup(attrib);
-		arg = criteria = NULL;
-		this_result = 1;
-		if ((negate = (attrib[0] == '!')))
+		arg = criteria = ఖాళీ;
+		this_ఫలితం = 1;
+		ఒకవేళ ((negate = (attrib[0] == '!')))
 			attrib++;
 		/* Criterion "all" has no argument and must appear alone */
-		if (strcasecmp(attrib, "all") == 0) {
-			if (attributes > 1 ||
-			    ((arg = argv_next(acp, avp)) != NULL &&
+		ఒకవేళ (strcasecmp(attrib, "all") == 0) {
+			ఒకవేళ (లక్షణాలు > 1 ||
+			    ((arg = argv_తదుపరి(acp, avp)) != ఖాళీ &&
 			    *arg != '\0' && *arg != '#')) {
 				error("%.200s line %d: '%s' cannot be combined "
 				    "with other Match attributes",
 				    filename, linenum, oattrib);
-				result = -1;
-				goto out;
+				ఫలితం = -1;
+				వెళ్ళు బహిర్గతం;
 			}
-			if (arg != NULL && *arg == '#')
+			ఒకవేళ (arg != ఖాళీ && *arg == '#')
 				argv_consume(acp); /* consume remaining args */
-			if (result)
-				result = negate ? 0 : 1;
-			goto out;
+			ఒకవేళ (ఫలితం)
+				ఫలితం = negate ? 0 : 1;
+			వెళ్ళు బహిర్గతం;
 		}
-		attributes++;
+		లక్షణాలు++;
 		/* criteria "final" and "canonical" have no argument */
-		if (strcasecmp(attrib, "canonical") == 0 ||
+		ఒకవేళ (strcasecmp(attrib, "canonical") == 0 ||
 		    strcasecmp(attrib, "final") == 0) {
 			/*
 			 * If the config requests "Match final" without
 			 * negation then remember this so we can perform a
 			 * second pass later.
 			 */
-			if (strcasecmp(attrib, "final") == 0 &&
-			    want_final_pass != NULL)
+			ఒకవేళ (strcasecmp(attrib, "final") == 0 &&
+			    want_final_pass != ఖాళీ)
 				*want_final_pass |= !negate;
 			r = !!final_pass;  /* force bitmask member to boolean */
-			if (r == (negate ? 1 : 0))
-				this_result = result = 0;
+			ఒకవేళ (r == (negate ? 1 : 0))
+				this_ఫలితం = ఫలితం = 0;
 			debug3("%.200s line %d: %smatched '%s'",
 			    filename, linenum,
-			    this_result ? "" : "not ", oattrib);
-			goto next;
+			    this_ఫలితం ? "" : "not ", oattrib);
+			వెళ్ళు తదుపరి;
 		}
 
 		/* Keep this list in sync with below */
-		if (strprefix(attrib, "host=", 1)  != NULL ||
-		    strprefix(attrib, "originalhost=", 1) != NULL ||
-		    strprefix(attrib, "user=", 1) != NULL ||
-		    strprefix(attrib, "localuser=", 1) != NULL ||
-		    strprefix(attrib, "localnetwork=", 1) != NULL ||
-		    strprefix(attrib, "version=", 1) != NULL ||
-		    strprefix(attrib, "tagged=", 1) != NULL ||
-		    strprefix(attrib, "command=", 1) != NULL ||
-		    strprefix(attrib, "exec=", 1) != NULL) {
+		ఒకవేళ (strprefix(attrib, "host=", 1)  != ఖాళీ ||
+		    strprefix(attrib, "originalhost=", 1) != ఖాళీ ||
+		    strprefix(attrib, "user=", 1) != ఖాళీ ||
+		    strprefix(attrib, "localuser=", 1) != ఖాళీ ||
+		    strprefix(attrib, "localnetwork=", 1) != ఖాళీ ||
+		    strprefix(attrib, "version=", 1) != ఖాళీ ||
+		    strprefix(attrib, "tagged=", 1) != ఖాళీ ||
+		    strprefix(attrib, "command=", 1) != ఖాళీ ||
+		    strprefix(attrib, "exec=", 1) != ఖాళీ) {
 			arg = strchr(attrib, '=');
 			*(arg++) = '\0';
-		} else if ((arg = argv_next(acp, avp)) == NULL) {
+		} లేకపోతే ఒకవేళ ((arg = argv_తదుపరి(acp, avp)) == ఖాళీ) {
 			error("%.200s line %d: missing argument for Match '%s'",
 			    filename, linenum, oattrib);
-			result = -1;
-			goto out;
+			ఫలితం = -1;
+			వెళ్ళు బహిర్గతం;
 		}
 
 		/*
@@ -796,217 +796,217 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 		 * be the empty string for the "tagged" and "command"
 		 * options.
 		 */
-		if (*arg == '\0' &&
+		ఒకవేళ (*arg == '\0' &&
 		    strcasecmp(attrib, "tagged") != 0 &&
 		    strcasecmp(attrib, "command") != 0)
-			arg = NULL;
-		if (arg == NULL || *arg == '#') {
+			arg = ఖాళీ;
+		ఒకవేళ (arg == ఖాళీ || *arg == '#') {
 			error("Missing Match criteria for %s", attrib);
-			result = -1;
-			goto out;
+			ఫలితం = -1;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (strcasecmp(attrib, "host") == 0) {
+		ఒకవేళ (strcasecmp(attrib, "host") == 0) {
 			criteria = xstrdup(host);
-			r = match_hostname(host, arg) == 1;
-			if (r == (negate ? 1 : 0))
-				this_result = result = 0;
-		} else if (strcasecmp(attrib, "originalhost") == 0) {
+			r = సరిపోలిక_hostname(host, arg) == 1;
+			ఒకవేళ (r == (negate ? 1 : 0))
+				this_ఫలితం = ఫలితం = 0;
+		} లేకపోతే ఒకవేళ (strcasecmp(attrib, "originalhost") == 0) {
 			criteria = xstrdup(original_host);
-			r = match_hostname(original_host, arg) == 1;
-			if (r == (negate ? 1 : 0))
-				this_result = result = 0;
-		} else if (strcasecmp(attrib, "user") == 0) {
+			r = సరిపోలిక_hostname(original_host, arg) == 1;
+			ఒకవేళ (r == (negate ? 1 : 0))
+				this_ఫలితం = ఫలితం = 0;
+		} లేకపోతే ఒకవేళ (strcasecmp(attrib, "user") == 0) {
 			criteria = xstrdup(ruser);
-			r = match_pattern_list(ruser, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
-				this_result = result = 0;
-		} else if (strcasecmp(attrib, "localuser") == 0) {
+			r = సరిపోలిక_నమూనా_list(ruser, arg, 0) == 1;
+			ఒకవేళ (r == (negate ? 1 : 0))
+				this_ఫలితం = ఫలితం = 0;
+		} లేకపోతే ఒకవేళ (strcasecmp(attrib, "localuser") == 0) {
 			criteria = xstrdup(pw->pw_name);
-			r = match_pattern_list(pw->pw_name, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
-				this_result = result = 0;
-		} else if (strcasecmp(attrib, "localnetwork") == 0) {
-			if (addr_match_cidr_list(NULL, arg) == -1) {
+			r = సరిపోలిక_నమూనా_list(pw->pw_name, arg, 0) == 1;
+			ఒకవేళ (r == (negate ? 1 : 0))
+				this_ఫలితం = ఫలితం = 0;
+		} లేకపోతే ఒకవేళ (strcasecmp(attrib, "localnetwork") == 0) {
+			ఒకవేళ (addr_సరిపోలిక_cidr_list(ఖాళీ, arg) == -1) {
 				/* Error already printed */
-				result = -1;
-				goto out;
+				ఫలితం = -1;
+				వెళ్ళు బహిర్గతం;
 			}
-			r = check_match_ifaddrs(arg) == 1;
-			if (r == (negate ? 1 : 0))
-				this_result = result = 0;
-		} else if (strcasecmp(attrib, "version") == 0) {
+			r = check_సరిపోలిక_ifaddrs(arg) == 1;
+			ఒకవేళ (r == (negate ? 1 : 0))
+				this_ఫలితం = ఫలితం = 0;
+		} లేకపోతే ఒకవేళ (strcasecmp(attrib, "version") == 0) {
 			criteria = xstrdup(SSH_RELEASE);
-			r = match_pattern_list(SSH_RELEASE, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
-				this_result = result = 0;
-		} else if (strcasecmp(attrib, "tagged") == 0) {
-			criteria = xstrdup(options->tag == NULL ? "" :
-			    options->tag);
+			r = సరిపోలిక_నమూనా_list(SSH_RELEASE, arg, 0) == 1;
+			ఒకవేళ (r == (negate ? 1 : 0))
+				this_ఫలితం = ఫలితం = 0;
+		} లేకపోతే ఒకవేళ (strcasecmp(attrib, "tagged") == 0) {
+			criteria = xstrdup(options->ట్యాగ్ == ఖాళీ ? "" :
+			    options->ట్యాగ్);
 			/* Special case: empty criteria matches empty arg */
 			r = (*criteria == '\0') ? *arg == '\0' :
-			    match_pattern_list(criteria, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
-				this_result = result = 0;
-		} else if (strcasecmp(attrib, "command") == 0) {
-			criteria = xstrdup(remote_command == NULL ?
+			    సరిపోలిక_నమూనా_list(criteria, arg, 0) == 1;
+			ఒకవేళ (r == (negate ? 1 : 0))
+				this_ఫలితం = ఫలితం = 0;
+		} లేకపోతే ఒకవేళ (strcasecmp(attrib, "command") == 0) {
+			criteria = xstrdup(remote_command == ఖాళీ ?
 			    "" : remote_command);
 			/* Special case: empty criteria matches empty arg */
 			r = (*criteria == '\0') ? *arg == '\0' :
-			    match_pattern_list(criteria, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
-				this_result = result = 0;
-		} else if (strcasecmp(attrib, "sessiontype") == 0) {
-			if (options->session_type == SESSION_TYPE_SUBSYSTEM)
+			    సరిపోలిక_నమూనా_list(criteria, arg, 0) == 1;
+			ఒకవేళ (r == (negate ? 1 : 0))
+				this_ఫలితం = ఫలితం = 0;
+		} లేకపోతే ఒకవేళ (strcasecmp(attrib, "sessiontype") == 0) {
+			ఒకవేళ (options->session_type == SESSION_TYPE_SUBSYSTEM)
 				criteria = xstrdup("subsystem");
-			else if (options->session_type == SESSION_TYPE_NONE)
+			లేకపోతే ఒకవేళ (options->session_type == SESSION_TYPE_NONE)
 				criteria = xstrdup("none");
-			else if (remote_command != NULL &&
+			లేకపోతే ఒకవేళ (remote_command != ఖాళీ &&
 			    *remote_command != '\0')
 				criteria = xstrdup("exec");
-			else
+			లేకపోతే
 				criteria = xstrdup("shell");
-			r = match_pattern_list(criteria, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
-				this_result = result = 0;
-		} else if (strcasecmp(attrib, "exec") == 0) {
-			if ((cmd = expand_match_exec_or_include_path(arg,
+			r = సరిపోలిక_నమూనా_list(criteria, arg, 0) == 1;
+			ఒకవేళ (r == (negate ? 1 : 0))
+				this_ఫలితం = ఫలితం = 0;
+		} లేకపోతే ఒకవేళ (strcasecmp(attrib, "exec") == 0) {
+			ఒకవేళ ((cmd = expand_సరిపోలిక_exec_or_include_మార్గం(arg,
 			    options, pw, host_arg, original_host,
-			    final_pass, 0)) == NULL) {
+			    final_pass, 0)) == ఖాళీ) {
 				fatal("%.200s line %d: failed to expand match "
 				    "exec '%.100s'", filename, linenum, arg);
 			}
-			if (result != 1) {
+			ఒకవేళ (ఫలితం != 1) {
 				/* skip execution if prior predicate failed */
 				debug3("%.200s line %d: skipped exec "
 				    "\"%.100s\"", filename, linenum, cmd);
-				free(cmd);
-				goto next;
+				విడుదల(cmd);
+				వెళ్ళు తదుపరి;
 			}
-			r = execute_in_shell(cmd);
-			if (r == -1) {
+			r = execute_లోపల_shell(cmd);
+			ఒకవేళ (r == -1) {
 				fatal("%.200s line %d: match exec "
 				    "'%.100s' error", filename,
 				    linenum, cmd);
 			}
 			criteria = xstrdup(cmd);
-			free(cmd);
+			విడుదల(cmd);
 			/* Force exit status to boolean */
 			r = r == 0;
-			if (r == (negate ? 1 : 0))
-				this_result = result = 0;
-		} else {
+			ఒకవేళ (r == (negate ? 1 : 0))
+				this_ఫలితం = ఫలితం = 0;
+		} లేకపోతే {
 			error("Unsupported Match attribute %s", attrib);
-			result = -1;
-			goto out;
+			ఫలితం = -1;
+			వెళ్ళు బహిర్గతం;
 		}
 		debug3("%.200s line %d: %smatched '%s%s%.100s%s' ",
-		    filename, linenum, this_result ? "": "not ", oattrib,
-		    criteria == NULL ? "" : " \"",
-		    criteria == NULL ? "" : criteria,
-		    criteria == NULL ? "" : "\"");
- next:
-		free(criteria);
-		free(oattrib);
-		oattrib = attrib = NULL;
+		    filename, linenum, this_ఫలితం ? "": "not ", oattrib,
+		    criteria == ఖాళీ ? "" : " \"",
+		    criteria == ఖాళీ ? "" : criteria,
+		    criteria == ఖాళీ ? "" : "\"");
+ తదుపరి:
+		విడుదల(criteria);
+		విడుదల(oattrib);
+		oattrib = attrib = ఖాళీ;
 	}
-	if (attributes == 0) {
+	ఒకవేళ (లక్షణాలు == 0) {
 		error("One or more attributes required for Match");
-		result = -1;
-		goto out;
+		ఫలితం = -1;
+		వెళ్ళు బహిర్గతం;
 	}
- out:
-	if (result != -1)
-		debug2("match %sfound", result ? "" : "not ");
-	free(oattrib);
-	free(host);
-	return result;
+ బహిర్గతం:
+	ఒకవేళ (ఫలితం != -1)
+		debug2("match %sfound", ఫలితం ? "" : "not ");
+	విడుదల(oattrib);
+	విడుదల(host);
+	తిరిగి ఫలితం;
 }
 
 /* Remove environment variable by pattern */
-static void
-rm_env(Options *options, const char *arg, const char *filename, int linenum)
+స్థిర శూన్య
+rm_env(Options *options, స్థిరరాశి అక్షరం *arg, స్థిరరాశి అక్షరం *filename, పూర్ణాంకం linenum)
 {
-	u_int i, j, onum_send_env = options->num_send_env;
+	u_int i, j, onum_send_env = options->అంకె_send_env;
 
 	/* Remove an environment variable */
-	for (i = 0; i < options->num_send_env; ) {
-		if (!match_pattern(options->send_env[i], arg + 1)) {
+	కొరకు (i = 0; i < options->అంకె_send_env; ) {
+		ఒకవేళ (!సరిపోలిక_నమూనా(options->send_env[i], arg + 1)) {
 			i++;
-			continue;
+			కొనసాగు;
 		}
 		debug3("%s line %d: removing environment %s",
 		    filename, linenum, options->send_env[i]);
-		free(options->send_env[i]);
-		options->send_env[i] = NULL;
-		for (j = i; j < options->num_send_env - 1; j++) {
+		విడుదల(options->send_env[i]);
+		options->send_env[i] = ఖాళీ;
+		కొరకు (j = i; j < options->అంకె_send_env - 1; j++) {
 			options->send_env[j] = options->send_env[j + 1];
-			options->send_env[j + 1] = NULL;
+			options->send_env[j + 1] = ఖాళీ;
 		}
-		options->num_send_env--;
+		options->అంకె_send_env--;
 		/* NB. don't increment i */
 	}
-	if (onum_send_env != options->num_send_env) {
+	ఒకవేళ (onum_send_env != options->అంకె_send_env) {
 		options->send_env = xrecallocarray(options->send_env,
-		    onum_send_env, options->num_send_env,
-		    sizeof(*options->send_env));
+		    onum_send_env, options->అంకె_send_env,
+		    పరిమాణం(*options->send_env));
 	}
 }
 
 /*
  * Returns the number of the token pointed to by cp or oBadOption.
  */
-static OpCodes
-parse_token(const char *cp, const char *filename, int linenum,
-    const char *ignored_unknown)
+స్థిర OpCodes
+parse_token(స్థిరరాశి అక్షరం *cp, స్థిరరాశి అక్షరం *filename, పూర్ణాంకం linenum,
+    స్థిరరాశి అక్షరం *ignored_unknown)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	for (i = 0; keywords[i].name; i++)
-		if (strcmp(cp, keywords[i].name) == 0)
-			return keywords[i].opcode;
-	if (ignored_unknown != NULL &&
-	    match_pattern_list(cp, ignored_unknown, 1) == 1)
-		return oIgnoredUnknownOption;
+	కొరకు (i = 0; keywords[i].name; i++)
+		ఒకవేళ (strcmp(cp, keywords[i].name) == 0)
+			తిరిగి keywords[i].opcode;
+	ఒకవేళ (ignored_unknown != ఖాళీ &&
+	    సరిపోలిక_నమూనా_list(cp, ignored_unknown, 1) == 1)
+		తిరిగి oIgnoredUnknownOption;
 	error("%s: line %d: Bad configuration option: %s",
 	    filename, linenum, cp);
-	return oBadOption;
+	తిరిగి oBadOption;
 }
 
-static void
-free_canon_cnames(struct allowed_cname *cnames, u_int n)
+స్థిర శూన్య
+free_canon_cnames(నిర్మాణం allowed_cname *cnames, u_int n)
 {
 	u_int i;
 
-	if (cnames == NULL || n == 0)
-		return;
-	for (i = 0; i < n; i++) {
-		free(cnames[i].source_list);
-		free(cnames[i].target_list);
+	ఒకవేళ (cnames == ఖాళీ || n == 0)
+		తిరిగి;
+	కొరకు (i = 0; i < n; i++) {
+		విడుదల(cnames[i].ఆధారం_list);
+		విడుదల(cnames[i].లక్ష్యం_list);
 	}
-	free(cnames);
+	విడుదల(cnames);
 }
 
 /* Multistate option parsing */
-struct multistate {
-	char *key;
-	int value;
+నిర్మాణం multistate {
+	అక్షరం *కీలకం;
+	పూర్ణాంకం విలువ;
 };
-static const struct multistate multistate_flag[] = {
+స్థిర స్థిరరాశి నిర్మాణం multistate multistate_flag[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
 	{ "no",				0 },
-	{ NULL, -1 }
+	{ ఖాళీ, -1 }
 };
-static const struct multistate multistate_yesnoask[] = {
+స్థిర స్థిరరాశి నిర్మాణం multistate multistate_yesnoask[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
 	{ "no",				0 },
 	{ "ask",			2 },
-	{ NULL, -1 }
+	{ ఖాళీ, -1 }
 };
-static const struct multistate multistate_strict_hostkey[] = {
+స్థిర స్థిరరాశి నిర్మాణం multistate multistate_strict_hostkey[] = {
 	{ "true",			SSH_STRICT_HOSTKEY_YES },
 	{ "false",			SSH_STRICT_HOSTKEY_OFF },
 	{ "yes",			SSH_STRICT_HOSTKEY_YES },
@@ -1014,24 +1014,24 @@ static const struct multistate multistate_strict_hostkey[] = {
 	{ "ask",			SSH_STRICT_HOSTKEY_ASK },
 	{ "off",			SSH_STRICT_HOSTKEY_OFF },
 	{ "accept-new",			SSH_STRICT_HOSTKEY_NEW },
-	{ NULL, -1 }
+	{ ఖాళీ, -1 }
 };
-static const struct multistate multistate_yesnoaskconfirm[] = {
+స్థిర స్థిరరాశి నిర్మాణం multistate multistate_yesnoaskconfirm[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
 	{ "no",				0 },
 	{ "ask",			2 },
 	{ "confirm",			3 },
-	{ NULL, -1 }
+	{ ఖాళీ, -1 }
 };
-static const struct multistate multistate_addressfamily[] = {
+స్థిర స్థిరరాశి నిర్మాణం multistate multistate_addressfamily[] = {
 	{ "inet",			AF_INET },
 	{ "inet6",			AF_INET6 },
 	{ "any",			AF_UNSPEC },
-	{ NULL, -1 }
+	{ ఖాళీ, -1 }
 };
-static const struct multistate multistate_controlmaster[] = {
+స్థిర స్థిరరాశి నిర్మాణం multistate multistate_controlmaster[] = {
 	{ "true",			SSHCTL_MASTER_YES },
 	{ "yes",			SSHCTL_MASTER_YES },
 	{ "false",			SSHCTL_MASTER_NO },
@@ -1039,761 +1039,761 @@ static const struct multistate multistate_controlmaster[] = {
 	{ "auto",			SSHCTL_MASTER_AUTO },
 	{ "ask",			SSHCTL_MASTER_ASK },
 	{ "autoask",			SSHCTL_MASTER_AUTO_ASK },
-	{ NULL, -1 }
+	{ ఖాళీ, -1 }
 };
-static const struct multistate multistate_tunnel[] = {
+స్థిర స్థిరరాశి నిర్మాణం multistate multistate_tunnel[] = {
 	{ "ethernet",			SSH_TUNMODE_ETHERNET },
 	{ "point-to-point",		SSH_TUNMODE_POINTOPOINT },
 	{ "true",			SSH_TUNMODE_DEFAULT },
 	{ "yes",			SSH_TUNMODE_DEFAULT },
 	{ "false",			SSH_TUNMODE_NO },
 	{ "no",				SSH_TUNMODE_NO },
-	{ NULL, -1 }
+	{ ఖాళీ, -1 }
 };
-static const struct multistate multistate_requesttty[] = {
+స్థిర స్థిరరాశి నిర్మాణం multistate multistate_requesttty[] = {
 	{ "true",			REQUEST_TTY_YES },
 	{ "yes",			REQUEST_TTY_YES },
 	{ "false",			REQUEST_TTY_NO },
 	{ "no",				REQUEST_TTY_NO },
 	{ "force",			REQUEST_TTY_FORCE },
 	{ "auto",			REQUEST_TTY_AUTO },
-	{ NULL, -1 }
+	{ ఖాళీ, -1 }
 };
-static const struct multistate multistate_sessiontype[] = {
+స్థిర స్థిరరాశి నిర్మాణం multistate multistate_sessiontype[] = {
 	{ "none",			SESSION_TYPE_NONE },
 	{ "subsystem",			SESSION_TYPE_SUBSYSTEM },
 	{ "default",			SESSION_TYPE_DEFAULT },
-	{ NULL, -1 }
+	{ ఖాళీ, -1 }
 };
-static const struct multistate multistate_canonicalizehostname[] = {
+స్థిర స్థిరరాశి నిర్మాణం multistate multistate_canonicalizehostname[] = {
 	{ "true",			SSH_CANONICALISE_YES },
 	{ "false",			SSH_CANONICALISE_NO },
 	{ "yes",			SSH_CANONICALISE_YES },
 	{ "no",				SSH_CANONICALISE_NO },
 	{ "always",			SSH_CANONICALISE_ALWAYS },
-	{ NULL, -1 }
+	{ ఖాళీ, -1 }
 };
-static const struct multistate multistate_pubkey_auth[] = {
+స్థిర స్థిరరాశి నిర్మాణం multistate multistate_pubkey_auth[] = {
 	{ "true",			SSH_PUBKEY_AUTH_ALL },
 	{ "false",			SSH_PUBKEY_AUTH_NO },
 	{ "yes",			SSH_PUBKEY_AUTH_ALL },
 	{ "no",				SSH_PUBKEY_AUTH_NO },
 	{ "unbound",			SSH_PUBKEY_AUTH_UNBOUND },
 	{ "host-bound",			SSH_PUBKEY_AUTH_HBOUND },
-	{ NULL, -1 }
+	{ ఖాళీ, -1 }
 };
-static const struct multistate multistate_compression[] = {
-#ifdef WITH_ZLIB
+స్థిర స్థిరరాశి నిర్మాణం multistate multistate_compression[] = {
+#నిర్వచితమైతే WITH_ZLIB
 	{ "yes",			COMP_DELAYED },
-#endif
+#అయితే_ముగింపు
 	{ "no",				COMP_NONE },
-	{ NULL, -1 }
+	{ ఖాళీ, -1 }
 };
-static const struct multistate multistate_keepalives[] = {
+స్థిర స్థిరరాశి నిర్మాణం multistate multistate_keepalives[] = {
 	{ "true",			SSH_KEEPALIVES_TRANSPORT },
 	{ "false",			SSH_KEEPALIVES_OFF },
 	{ "yes",			SSH_KEEPALIVES_TRANSPORT },
 	{ "no",				SSH_KEEPALIVES_OFF },
 	{ "transport",			SSH_KEEPALIVES_TRANSPORT },
 	{ "all",			SSH_KEEPALIVES_ALL },
-	{ NULL, -1 }
+	{ ఖాళీ, -1 }
 };
 /* XXX this will need to be replaced with a bitmask if we add more flags */
-static const struct multistate multistate_warnweakcrypto[] = {
+స్థిర స్థిరరాశి నిర్మాణం multistate multistate_warnweakcrypto[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
 	{ "no",				0 },
 	{ "no-pq-kex",			0 },
-	{ NULL, -1 }
+	{ ఖాళీ, -1 }
 };
 
-static int
-parse_multistate_value(const char *arg, const char *filename, int linenum,
-    const struct multistate *multistate_ptr)
+స్థిర పూర్ణాంకం
+parse_multistate_విలువ(స్థిరరాశి అక్షరం *arg, స్థిరరాశి అక్షరం *filename, పూర్ణాంకం linenum,
+    స్థిరరాశి నిర్మాణం multistate *multistate_ptr)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	if (!arg || *arg == '\0') {
+	ఒకవేళ (!arg || *arg == '\0') {
 		error("%s line %d: missing argument.", filename, linenum);
-		return -1;
+		తిరిగి -1;
 	}
-	for (i = 0; multistate_ptr[i].key != NULL; i++) {
-		if (strcasecmp(arg, multistate_ptr[i].key) == 0)
-			return multistate_ptr[i].value;
+	కొరకు (i = 0; multistate_ptr[i].కీలకం != ఖాళీ; i++) {
+		ఒకవేళ (strcasecmp(arg, multistate_ptr[i].కీలకం) == 0)
+			తిరిగి multistate_ptr[i].విలువ;
 	}
-	return -1;
+	తిరిగి -1;
 }
 
 /*
  * Processes a single option line as used in the configuration files. This
  * only sets those values that have not already been set.
  */
-int
-process_config_line(Options *options, struct passwd *pw, const char *host,
-    const char *original_host, const char *remote_command, char *line,
-    const char *filename, int linenum, int *activep, int flags)
+పూర్ణాంకం
+process_config_పంక్తి(Options *options, నిర్మాణం passwd *pw, స్థిరరాశి అక్షరం *host,
+    స్థిరరాశి అక్షరం *original_host, స్థిరరాశి అక్షరం *remote_command, అక్షరం *పంక్తి,
+    స్థిరరాశి అక్షరం *filename, పూర్ణాంకం linenum, పూర్ణాంకం *activep, పూర్ణాంకం flags)
 {
-	return process_config_line_depth(options, pw, host, original_host,
-	    remote_command, line, filename, linenum, activep, flags, NULL, 0);
+	తిరిగి process_config_పంక్తి_లోతు(options, pw, host, original_host,
+	    remote_command, పంక్తి, filename, linenum, activep, flags, ఖాళీ, 0);
 }
 
-#define WHITESPACE " \t\r\n"
-static int
-process_config_line_depth(Options *options, struct passwd *pw, const char *host,
-    const char *original_host, const char *remote_command, char *line,
-    const char *filename, int linenum, int *activep, int flags,
-    int *want_final_pass, int depth)
+#నిర్వచించు WHITESPACE " \t\r\n"
+స్థిర పూర్ణాంకం
+process_config_పంక్తి_లోతు(Options *options, నిర్మాణం passwd *pw, స్థిరరాశి అక్షరం *host,
+    స్థిరరాశి అక్షరం *original_host, స్థిరరాశి అక్షరం *remote_command, అక్షరం *పంక్తి,
+    స్థిరరాశి అక్షరం *filename, పూర్ణాంకం linenum, పూర్ణాంకం *activep, పూర్ణాంకం flags,
+    పూర్ణాంకం *want_final_pass, పూర్ణాంకం లోతు)
 {
-	char *str, **charptr, *endofnumber, *keyword, *arg, *arg2, *p;
-	char **cpptr, ***cppptr, fwdarg[256];
+	అక్షరం *str, **charptr, *endofnumber, *keyword, *arg, *arg2, *p;
+	అక్షరం **cpptr, ***cppptr, fwdarg[256];
 	u_int i, *uintptr, max_entries = 0;
-	int r, oactive, negated, opcode, *intptr, value, value2, cmdline = 0;
-	int remotefwd, dynamicfwd, ca_only = 0, found = 0;
+	పూర్ణాంకం r, oactive, negated, opcode, *intptr, విలువ, value2, cmdline = 0;
+	పూర్ణాంకం remotefwd, dynamicfwd, ca_only = 0, దొరికింది = 0;
 	LogLevel *log_level_ptr;
 	SyslogFacility *log_facility_ptr;
-	long long val64;
-	size_t len;
-	struct Forward fwd;
-	const struct multistate *multistate_ptr;
+	దీర్ఘ దీర్ఘ val64;
+	కొలత_t len;
+	నిర్మాణం Forward fwd;
+	స్థిరరాశి నిర్మాణం multistate *multistate_ptr;
 	glob_t gl;
-	const char *errstr;
-	char **oav = NULL, **av;
-	int oac = 0, ac;
-	int ret = -1;
-	struct allowed_cname *cnames = NULL;
+	స్థిరరాశి అక్షరం *errstr;
+	అక్షరం **oav = ఖాళీ, **av;
+	పూర్ణాంకం oac = 0, ac;
+	పూర్ణాంకం ret = -1;
+	నిర్మాణం allowed_cname *cnames = ఖాళీ;
 	u_int ncnames = 0;
-	char **strs = NULL; /* string array arguments; freed implicitly */
+	అక్షరం **strs = ఖాళీ; /* string array arguments; freed implicitly */
 	u_int nstrs = 0;
 
-	if (activep == NULL) { /* We are processing a command line directive */
+	ఒకవేళ (activep == ఖాళీ) { /* We are processing a command line directive */
 		cmdline = 1;
 		activep = &cmdline;
 	}
 
 	/* Strip trailing whitespace. Allow \f (form feed) at EOL only */
-	if ((len = strlen(line)) == 0)
-		return 0;
-	for (len--; len > 0; len--) {
-		if (strchr(WHITESPACE "\f", line[len]) == NULL)
-			break;
-		line[len] = '\0';
+	ఒకవేళ ((len = అక్షరశ్రేణి_పొడవు(పంక్తి)) == 0)
+		తిరిగి 0;
+	కొరకు (len--; len > 0; len--) {
+		ఒకవేళ (strchr(WHITESPACE "\f", పంక్తి[len]) == ఖాళీ)
+			ఆపు;
+		పంక్తి[len] = '\0';
 	}
 
-	str = line;
+	str = పంక్తి;
 	/* Get the keyword. (Each line is supposed to begin with a keyword). */
-	if ((keyword = strdelim(&str)) == NULL)
-		return 0;
+	ఒకవేళ ((keyword = strdelim(&str)) == ఖాళీ)
+		తిరిగి 0;
 	/* Ignore leading whitespace. */
-	if (*keyword == '\0')
+	ఒకవేళ (*keyword == '\0')
 		keyword = strdelim(&str);
-	if (keyword == NULL || !*keyword || *keyword == '\n' || *keyword == '#')
-		return 0;
+	ఒకవేళ (keyword == ఖాళీ || !*keyword || *keyword == '\n' || *keyword == '#')
+		తిరిగి 0;
 	/* Match lowercase keyword */
 	lowercase(keyword);
 
 	/* Prepare to parse remainder of line */
-	if (str != NULL)
+	ఒకవేళ (str != ఖాళీ)
 		str += strspn(str, WHITESPACE);
-	if (str == NULL || *str == '\0') {
+	ఒకవేళ (str == ఖాళీ || *str == '\0') {
 		error("%s line %d: no argument after keyword \"%s\"",
 		    filename, linenum, keyword);
-		return -1;
+		తిరిగి -1;
 	}
 	opcode = parse_token(keyword, filename, linenum,
 	    options->ignored_unknown);
-	if (argv_split(str, &oac, &oav, 1) != 0) {
+	ఒకవేళ (argv_విభజించు(str, &oac, &oav, 1) != 0) {
 		error("%s line %d: invalid quotes", filename, linenum);
-		return -1;
+		తిరిగి -1;
 	}
 	ac = oac;
 	av = oav;
 
-	switch (opcode) {
-	case oBadOption:
+	ఎంపిక (opcode) {
+	స్థితి oBadOption:
 		/* don't panic, but count bad options */
-		goto out;
-	case oIgnore:
+		వెళ్ళు బహిర్గతం;
+	స్థితి oIgnore:
 		argv_consume(&ac);
-		break;
-	case oIgnoredUnknownOption:
+		ఆపు;
+	స్థితి oIgnoredUnknownOption:
 		debug("%s line %d: Ignored unknown option \"%s\"",
 		    filename, linenum, keyword);
 		argv_consume(&ac);
-		break;
-	case oConnectTimeout:
+		ఆపు;
+	స్థితి oConnectTimeout:
 		intptr = &options->connection_timeout;
-parse_time:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+parse_సమయం:
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%s line %d: missing time value.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (strcmp(arg, "none") == 0)
-			value = -1;
-		else if ((value = convtime(arg)) == -1) {
+		ఒకవేళ (strcmp(arg, "none") == 0)
+			విలువ = -1;
+		లేకపోతే ఒకవేళ ((విలువ = convtime(arg)) == -1) {
 			error("%s line %d: invalid time value.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ఒకవేళ (*activep && *intptr == -1)
+			*intptr = విలువ;
+		ఆపు;
 
-	case oForwardAgent:
+	స్థితి oForwardAgent:
 		intptr = &options->forward_agent;
 
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%s line %d: missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 
-		value = -1;
+		విలువ = -1;
 		multistate_ptr = multistate_flag;
-		for (i = 0; multistate_ptr[i].key != NULL; i++) {
-			if (strcasecmp(arg, multistate_ptr[i].key) == 0) {
-				value = multistate_ptr[i].value;
-				break;
+		కొరకు (i = 0; multistate_ptr[i].కీలకం != ఖాళీ; i++) {
+			ఒకవేళ (strcasecmp(arg, multistate_ptr[i].కీలకం) == 0) {
+				విలువ = multistate_ptr[i].విలువ;
+				ఆపు;
 			}
 		}
-		if (value != -1) {
-			if (*activep && *intptr == -1)
-				*intptr = value;
-			break;
+		ఒకవేళ (విలువ != -1) {
+			ఒకవేళ (*activep && *intptr == -1)
+				*intptr = విలువ;
+			ఆపు;
 		}
 		/* ForwardAgent wasn't 'yes' or 'no', assume a path */
-		if (*activep && *intptr == -1)
+		ఒకవేళ (*activep && *intptr == -1)
 			*intptr = 1;
 
-		charptr = &options->forward_agent_sock_path;
-		goto parse_agent_path;
+		charptr = &options->forward_agent_sock_మార్గం;
+		వెళ్ళు parse_agent_మార్గం;
 
-	case oForwardX11:
+	స్థితి oForwardX11:
 		intptr = &options->forward_x11;
  parse_flag:
 		multistate_ptr = multistate_flag;
  parse_multistate:
-		arg = argv_next(&ac, &av);
-		if ((value = parse_multistate_value(arg, filename, linenum,
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ ((విలువ = parse_multistate_విలువ(arg, filename, linenum,
 		    multistate_ptr)) == -1) {
 			error("%s line %d: unsupported option \"%s\".",
 			    filename, linenum, arg);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ఒకవేళ (*activep && *intptr == -1)
+			*intptr = విలువ;
+		ఆపు;
 
-	case oForwardX11Trusted:
+	స్థితి oForwardX11Trusted:
 		intptr = &options->forward_x11_trusted;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oForwardX11Timeout:
+	స్థితి oForwardX11Timeout:
 		intptr = &options->forward_x11_timeout;
-		goto parse_time;
+		వెళ్ళు parse_సమయం;
 
-	case oGatewayPorts:
+	స్థితి oGatewayPorts:
 		intptr = &options->fwd_opts.gateway_ports;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oExitOnForwardFailure:
+	స్థితి oExitOnForwardFailure:
 		intptr = &options->exit_on_forward_failure;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oPasswordAuthentication:
+	స్థితి oPasswordAuthentication:
 		intptr = &options->password_authentication;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oKbdInteractiveAuthentication:
+	స్థితి oKbdInteractiveAuthentication:
 		intptr = &options->kbd_interactive_authentication;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oKbdInteractiveDevices:
+	స్థితి oKbdInteractiveDevices:
 		charptr = &options->kbd_interactive_devices;
-		goto parse_string;
+		వెళ్ళు parse_string;
 
-	case oPubkeyAuthentication:
+	స్థితి oPubkeyAuthentication:
 		multistate_ptr = multistate_pubkey_auth;
 		intptr = &options->pubkey_authentication;
-		goto parse_multistate;
+		వెళ్ళు parse_multistate;
 
-	case oHostbasedAuthentication:
+	స్థితి oHostbasedAuthentication:
 		intptr = &options->hostbased_authentication;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oGssAuthentication:
+	స్థితి oGssAuthentication:
 		intptr = &options->gss_authentication;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oGssDelegateCreds:
+	స్థితి oGssDelegateCreds:
 		intptr = &options->gss_deleg_creds;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oBatchMode:
-		intptr = &options->batch_mode;
-		goto parse_flag;
+	స్థితి o_Batch_బహుళకం:
+		intptr = &options->batch_బహుళకం;
+		వెళ్ళు parse_flag;
 
-	case oCheckHostIP:
+	స్థితి oCheckHostIP:
 		intptr = &options->check_host_ip;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oVerifyHostKeyDNS:
-		intptr = &options->verify_host_key_dns;
+	స్థితి o_Verify_Host_కీలకం_DNS:
+		intptr = &options->verify_host_కీలకం_dns;
 		multistate_ptr = multistate_yesnoask;
-		goto parse_multistate;
+		వెళ్ళు parse_multistate;
 
-	case oStrictHostKeyChecking:
-		intptr = &options->strict_host_key_checking;
+	స్థితి o_Strict_Host_కీలకం_Checking:
+		intptr = &options->strict_host_కీలకం_checking;
 		multistate_ptr = multistate_strict_hostkey;
-		goto parse_multistate;
+		వెళ్ళు parse_multistate;
 
-	case oCompression:
+	స్థితి oCompression:
 		intptr = &options->compression;
 		multistate_ptr = multistate_compression;
-		goto parse_multistate;
+		వెళ్ళు parse_multistate;
 
-	case oTCPKeepAlive:
+	స్థితి oTCPKeepAlive:
 		intptr = &options->tcp_keep_alive;
 		multistate_ptr = multistate_keepalives;
-		goto parse_multistate;
+		వెళ్ళు parse_multistate;
 
-	case oNoHostAuthenticationForLocalhost:
+	స్థితి oNoHostAuthenticationForLocalhost:
 		intptr = &options->no_host_authentication_for_localhost;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oNumberOfPasswordPrompts:
-		intptr = &options->number_of_password_prompts;
-		goto parse_int;
+	స్థితి o_సంఖ్య_యొక్క_Password_Prompts:
+		intptr = &options->సంఖ్య_యొక్క_password_prompts;
+		వెళ్ళు parse_int;
 
-	case oRekeyLimit:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+	స్థితి o_Rekey_హద్దు:
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.", filename,
 			    linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (strcmp(arg, "default") == 0) {
+		ఒకవేళ (strcmp(arg, "default") == 0) {
 			val64 = 0;
-		} else {
-			if (scan_scaled(arg, &val64) == -1) {
+		} లేకపోతే {
+			ఒకవేళ (పరిశీలన_scaled(arg, &val64) == -1) {
 				error("%.200s line %d: Bad number '%s': %s",
 				    filename, linenum, arg, strerror(errno));
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
-			if (val64 != 0 && val64 < 16) {
+			ఒకవేళ (val64 != 0 && val64 < 16) {
 				error("%.200s line %d: RekeyLimit too small",
 				    filename, linenum);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 		}
-		if (*activep && options->rekey_limit == -1)
-			options->rekey_limit = val64;
-		if (ac != 0) { /* optional rekey interval present */
-			if (strcmp(av[0], "none") == 0) {
-				(void)argv_next(&ac, &av);	/* discard */
-				break;
+		ఒకవేళ (*activep && options->rekey_హద్దు == -1)
+			options->rekey_హద్దు = val64;
+		ఒకవేళ (ac != 0) { /* optional rekey interval present */
+			ఒకవేళ (strcmp(av[0], "none") == 0) {
+				(శూన్య)argv_తదుపరి(&ac, &av);	/* discard */
+				ఆపు;
 			}
 			intptr = &options->rekey_interval;
-			goto parse_time;
+			వెళ్ళు parse_సమయం;
 		}
-		break;
+		ఆపు;
 
-	case oIdentityFile:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+	స్థితి o_తటస్థం_File:
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep) {
-			intptr = &options->num_identity_files;
-			if (*intptr >= SSH_MAX_IDENTITY_FILES) {
+		ఒకవేళ (*activep) {
+			intptr = &options->అంకె_తటస్థం_files;
+			ఒకవేళ (*intptr >= SSH_MAX_తటస్థం_FILES) {
 				error("%.200s line %d: Too many identity files "
 				    "specified (max %d).", filename, linenum,
-				    SSH_MAX_IDENTITY_FILES);
-				goto out;
+				    SSH_MAX_తటస్థం_FILES);
+				వెళ్ళు బహిర్గతం;
 			}
-			add_identity_file(options, NULL,
+			కూడు_తటస్థం_file(options, ఖాళీ,
 			    arg, flags & SSHCONF_USERCONF);
 		}
-		break;
+		ఆపు;
 
-	case oCertificateFile:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+	స్థితి oCertificateFile:
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep) {
-			intptr = &options->num_certificate_files;
-			if (*intptr >= SSH_MAX_CERTIFICATE_FILES) {
+		ఒకవేళ (*activep) {
+			intptr = &options->అంకె_certificate_files;
+			ఒకవేళ (*intptr >= SSH_MAX_CERTIFICATE_FILES) {
 				error("%.200s line %d: Too many certificate "
 				    "files specified (max %d).",
 				    filename, linenum,
 				    SSH_MAX_CERTIFICATE_FILES);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
-			add_certificate_file(options, arg,
+			కూడు_certificate_file(options, arg,
 			    flags & SSHCONF_USERCONF);
 		}
-		break;
+		ఆపు;
 
-	case oXAuthLocation:
+	స్థితి oXAuthLocation:
 		charptr=&options->xauth_location;
-		goto parse_string;
+		వెళ్ళు parse_string;
 
-	case oUser:
+	స్థితి oUser:
 		charptr = &options->user;
 parse_string:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && *charptr == NULL)
+		ఒకవేళ (*activep && *charptr == ఖాళీ)
 			*charptr = xstrdup(arg);
-		break;
+		ఆపు;
 
-	case oGlobalKnownHostsFile:
-		cpptr = (char **)&options->system_hostfiles;
-		uintptr = &options->num_system_hostfiles;
+	స్థితి o_Global_తెలిసిన_Hosts_File:
+		cpptr = (అక్షరం **)&options->system_hostfiles;
+		uintptr = &options->అంకె_system_hostfiles;
 		max_entries = SSH_MAX_HOSTS_FILES;
 parse_char_array:
 		i = 0;
-		value = *uintptr == 0; /* was array empty when we started? */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		విలువ = *uintptr == 0; /* was array empty when we started? */
+		అయితే ((arg = argv_తదుపరి(&ac, &av)) != ఖాళీ) {
+			ఒకవేళ (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (i > 0 || ac > 0) {
+			ఒకవేళ (strcasecmp(arg, "none") == 0) {
+				ఒకవేళ (i > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					వెళ్ళు బహిర్గతం;
 				}
 			}
 			i++;
-			if (*activep && value) {
-				if ((*uintptr) >= max_entries) {
+			ఒకవేళ (*activep && విలువ) {
+				ఒకవేళ ((*uintptr) >= max_entries) {
 					error("%s line %d: too many %s "
 					    "entries.", filename, linenum,
 					    keyword);
-					goto out;
+					వెళ్ళు బహిర్గతం;
 				}
 				cpptr[(*uintptr)++] = xstrdup(arg);
 			}
 		}
-		break;
+		ఆపు;
 
-	case oUserKnownHostsFile:
-		cpptr = (char **)&options->user_hostfiles;
-		uintptr = &options->num_user_hostfiles;
+	స్థితి o_User_తెలిసిన_Hosts_File:
+		cpptr = (అక్షరం **)&options->user_hostfiles;
+		uintptr = &options->అంకె_user_hostfiles;
 		max_entries = SSH_MAX_HOSTS_FILES;
-		goto parse_char_array;
+		వెళ్ళు parse_char_array;
 
-	case oHostname:
+	స్థితి oHostname:
 		charptr = &options->hostname;
-		goto parse_string;
+		వెళ్ళు parse_string;
 
-	case oTag:
-		charptr = &options->tag;
-		goto parse_string;
+	స్థితి o_ట్యాగ్:
+		charptr = &options->ట్యాగ్;
+		వెళ్ళు parse_string;
 
-	case oHostKeyAlias:
-		charptr = &options->host_key_alias;
-		goto parse_string;
+	స్థితి o_Host_కీలకం_Alias:
+		charptr = &options->host_కీలకం_alias;
+		వెళ్ళు parse_string;
 
-	case oPreferredAuthentications:
+	స్థితి oPreferredAuthentications:
 		charptr = &options->preferred_authentications;
-		goto parse_string;
+		వెళ్ళు parse_string;
 
-	case oBindAddress:
-		charptr = &options->bind_address;
-		goto parse_string;
+	స్థితి o_Bind_చిరునామా:
+		charptr = &options->bind_చిరునామా;
+		వెళ్ళు parse_string;
 
-	case oBindInterface:
+	స్థితి oBindInterface:
 		charptr = &options->bind_interface;
-		goto parse_string;
+		వెళ్ళు parse_string;
 
-	case oPKCS11Provider:
+	స్థితి oPKCS11Provider:
 		charptr = &options->pkcs11_provider;
-		goto parse_string;
+		వెళ్ళు parse_string;
 
-	case oSecurityKeyProvider:
+	స్థితి o_Security_కీలకం_Provider:
 		charptr = &options->sk_provider;
-		goto parse_string;
+		వెళ్ళు parse_string;
 
-	case oKnownHostsCommand:
-		charptr = &options->known_hosts_command;
-		goto parse_command;
+	స్థితి o_తెలిసిన_Hosts_Command:
+		charptr = &options->తెలిసిన_hosts_command;
+		వెళ్ళు parse_command;
 
-	case oProxyCommand:
+	స్థితి oProxyCommand:
 		charptr = &options->proxy_command;
 parse_command:
-		if (str == NULL) {
+		ఒకవేళ (str == ఖాళీ) {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		len = strspn(str, WHITESPACE "=");
-		if (*activep && *charptr == NULL)
+		ఒకవేళ (*activep && *charptr == ఖాళీ)
 			*charptr = xstrdup(str + len);
 		argv_consume(&ac);
-		break;
+		ఆపు;
 
-	case oProxyJump:
-		if (str == NULL) {
+	స్థితి oProxyJump:
+		ఒకవేళ (str == ఖాళీ) {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		len = strspn(str, WHITESPACE "=");
 		/* XXX use argv? */
-		if (parse_jump(str + len, options, cmdline, *activep) == -1) {
+		ఒకవేళ (parse_jump(str + len, options, cmdline, *activep) == -1) {
 			error("%.200s line %d: Invalid ProxyJump \"%s\"",
 			    filename, linenum, str + len);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		argv_consume(&ac);
-		break;
+		ఆపు;
 
-	case oPort:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+	స్థితి o_పోర్టు:
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		value = a2port(arg);
-		if (value <= 0) {
+		విలువ = a2port(arg);
+		ఒకవేళ (విలువ <= 0) {
 			error("%.200s line %d: Bad port '%s'.",
 			    filename, linenum, arg);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && options->port == -1)
-			options->port = value;
-		break;
+		ఒకవేళ (*activep && options->పోర్టు == -1)
+			options->పోర్టు = విలువ;
+		ఆపు;
 
-	case oConnectionAttempts:
+	స్థితి oConnectionAttempts:
 		intptr = &options->connection_attempts;
 parse_int:
-		arg = argv_next(&ac, &av);
-		if ((errstr = atoi_err(arg, &value)) != NULL) {
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ ((errstr = atoi_err(arg, &విలువ)) != ఖాళీ) {
 			error("%s line %d: integer value %s.",
 			    filename, linenum, errstr);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ఒకవేళ (*activep && *intptr == -1)
+			*intptr = విలువ;
+		ఆపు;
 
-	case oCiphers:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+	స్థితి oCiphers:
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*arg != '-' &&
+		ఒకవేళ (*arg != '-' &&
 		    !ciphers_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg)){
 			error("%.200s line %d: Bad SSH2 cipher spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && options->ciphers == NULL)
+		ఒకవేళ (*activep && options->ciphers == ఖాళీ)
 			options->ciphers = xstrdup(arg);
-		break;
+		ఆపు;
 
-	case oMacs:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+	స్థితి oMacs:
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*arg != '-' &&
+		ఒకవేళ (*arg != '-' &&
 		    !mac_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg)) {
 			error("%.200s line %d: Bad SSH2 MAC spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && options->macs == NULL)
+		ఒకవేళ (*activep && options->macs == ఖాళీ)
 			options->macs = xstrdup(arg);
-		break;
+		ఆపు;
 
-	case oKexAlgorithms:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+	స్థితి oKexAlgorithms:
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*arg != '-' &&
-		    !kex_names_valid(*arg == '+' || *arg == '^' ?
+		ఒకవేళ (*arg != '-' &&
+		    !kex_పేర్లు_valid(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg)) {
 			error("%.200s line %d: Bad SSH2 KexAlgorithms '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && options->kex_algorithms == NULL)
+		ఒకవేళ (*activep && options->kex_algorithms == ఖాళీ)
 			options->kex_algorithms = xstrdup(arg);
-		break;
+		ఆపు;
 
-	case oHostKeyAlgorithms:
+	స్థితి o_Host_కీలకం_Algorithms:
 		charptr = &options->hostkeyalgorithms;
 		ca_only = 0;
 parse_pubkey_algos:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*arg != '-' &&
-		    !sshkey_names_valid2(*arg == '+' || *arg == '^' ?
+		ఒకవేళ (*arg != '-' &&
+		    !sshkey_పేర్లు_valid2(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg, 1, ca_only)) {
 			error("%s line %d: Bad key types '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && *charptr == NULL)
+		ఒకవేళ (*activep && *charptr == ఖాళీ)
 			*charptr = xstrdup(arg);
-		break;
+		ఆపు;
 
-	case oCASignatureAlgorithms:
+	స్థితి oCASignatureAlgorithms:
 		charptr = &options->ca_sign_algorithms;
 		ca_only = 1;
-		goto parse_pubkey_algos;
+		వెళ్ళు parse_pubkey_algos;
 
-	case oLogLevel:
+	స్థితి oLogLevel:
 		log_level_ptr = &options->log_level;
-		arg = argv_next(&ac, &av);
-		value = log_level_number(arg);
-		if (value == SYSLOG_LEVEL_NOT_SET) {
+		arg = argv_తదుపరి(&ac, &av);
+		విలువ = log_level_సంఖ్య(arg);
+		ఒకవేళ (విలువ == SYSLOG_LEVEL_NOT_సమితి) {
 			error("%.200s line %d: unsupported log level '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && *log_level_ptr == SYSLOG_LEVEL_NOT_SET)
-			*log_level_ptr = (LogLevel) value;
-		break;
+		ఒకవేళ (*activep && *log_level_ptr == SYSLOG_LEVEL_NOT_సమితి)
+			*log_level_ptr = (LogLevel) విలువ;
+		ఆపు;
 
-	case oLogFacility:
+	స్థితి oLogFacility:
 		log_facility_ptr = &options->log_facility;
-		arg = argv_next(&ac, &av);
-		value = log_facility_number(arg);
-		if (value == SYSLOG_FACILITY_NOT_SET) {
+		arg = argv_తదుపరి(&ac, &av);
+		విలువ = log_facility_సంఖ్య(arg);
+		ఒకవేళ (విలువ == SYSLOG_FACILITY_NOT_సమితి) {
 			error("%.200s line %d: unsupported log facility '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*log_facility_ptr == -1)
-			*log_facility_ptr = (SyslogFacility) value;
-		break;
+		ఒకవేళ (*log_facility_ptr == -1)
+			*log_facility_ptr = (SyslogFacility) విలువ;
+		ఆపు;
 
-	case oLogVerbose:
+	స్థితి oLogVerbose:
 		cppptr = &options->log_verbose;
-		uintptr = &options->num_log_verbose;
+		uintptr = &options->అంకె_log_verbose;
 		i = 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		అయితే ((arg = argv_తదుపరి(&ac, &av)) != ఖాళీ) {
+			ఒకవేళ (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (i > 0 || ac > 0) {
+			ఒకవేళ (strcasecmp(arg, "none") == 0) {
+				ఒకవేళ (i > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					వెళ్ళు బహిర్గతం;
 				}
 			}
 			i++;
-			if (*activep && *uintptr == 0) {
+			ఒకవేళ (*activep && *uintptr == 0) {
 				*cppptr = xrecallocarray(*cppptr, *uintptr,
-				    *uintptr + 1, sizeof(**cppptr));
+				    *uintptr + 1, పరిమాణం(**cppptr));
 				(*cppptr)[(*uintptr)++] = xstrdup(arg);
 			}
 		}
-		break;
+		ఆపు;
 
-	case oLocalForward:
-	case oRemoteForward:
-	case oDynamicForward:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+	స్థితి oLocalForward:
+	స్థితి oRemoteForward:
+	స్థితి oDynamicForward:
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 
 		remotefwd = (opcode == oRemoteForward);
 		dynamicfwd = (opcode == oDynamicForward);
 
-		if (!dynamicfwd) {
-			arg2 = argv_next(&ac, &av);
-			if (arg2 == NULL || *arg2 == '\0') {
-				if (remotefwd)
+		ఒకవేళ (!dynamicfwd) {
+			arg2 = argv_తదుపరి(&ac, &av);
+			ఒకవేళ (arg2 == ఖాళీ || *arg2 == '\0') {
+				ఒకవేళ (remotefwd)
 					dynamicfwd = 1;
-				else {
+				లేకపోతే {
 					error("%.200s line %d: Missing target "
 					    "argument.", filename, linenum);
-					goto out;
+					వెళ్ళు బహిర్గతం;
 				}
-			} else {
+			} లేకపోతే {
 				/* construct a string for parse_forward */
-				snprintf(fwdarg, sizeof(fwdarg), "%s:%s", arg,
+				snprintf(fwdarg, పరిమాణం(fwdarg), "%s:%s", arg,
 				    arg2);
 			}
 		}
-		if (dynamicfwd)
-			strlcpy(fwdarg, arg, sizeof(fwdarg));
+		ఒకవేళ (dynamicfwd)
+			strlcpy(fwdarg, arg, పరిమాణం(fwdarg));
 
-		if (parse_forward(&fwd, fwdarg, dynamicfwd, remotefwd) == 0) {
+		ఒకవేళ (parse_forward(&fwd, fwdarg, dynamicfwd, remotefwd) == 0) {
 			error("%.200s line %d: Bad forwarding specification.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 
-		if (*activep) {
-			if (remotefwd) {
-				add_remote_forward(options, &fwd);
-			} else {
-				add_local_forward(options, &fwd);
+		ఒకవేళ (*activep) {
+			ఒకవేళ (remotefwd) {
+				కూడు_remote_forward(options, &fwd);
+			} లేకపోతే {
+				కూడు_local_forward(options, &fwd);
 			}
 		}
-		break;
+		ఆపు;
 
-	case oPermitRemoteOpen:
-		uintptr = &options->num_permitted_remote_opens;
+	స్థితి oPermitRemoteOpen:
+		uintptr = &options->అంకె_permitted_remote_opens;
 		cppptr = &options->permitted_remote_opens;
-		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+		దొరికింది = *uintptr == 0;
+		అయితే ((arg = argv_తదుపరి(&ac, &av)) != ఖాళీ) {
 			arg2 = xstrdup(arg);
 			/* Allow any/none only in first position */
-			if (strcasecmp(arg, "none") == 0 ||
+			ఒకవేళ (strcasecmp(arg, "none") == 0 ||
 			    strcasecmp(arg, "any") == 0) {
-				if (nstrs > 0 || ac > 0) {
+				ఒకవేళ (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"%s\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword, arg);
-					free(arg2);
-					goto out;
+					విడుదల(arg2);
+					వెళ్ళు బహిర్గతం;
 				}
-			} else {
+			} లేకపోతే {
 				p = hpdelim(&arg);
-				if (p == NULL) {
+				ఒకవేళ (p == ఖాళీ) {
 					fatal("%s line %d: missing host in %s",
 					    filename, linenum,
 					    lookup_opcode_name(opcode));
@@ -1803,7 +1803,7 @@ parse_pubkey_algos:
 				 * don't want to use permitopen_port to avoid
 				 * dependency on channels.[ch] here.
 				 */
-				if (arg == NULL || (strcmp(arg, "*") != 0 &&
+				ఒకవేళ (arg == ఖాళీ || (strcmp(arg, "*") != 0 &&
 				    a2port(arg) <= 0)) {
 					fatal("%s line %d: bad port number "
 					    "in %s", filename, linenum,
@@ -1813,283 +1813,283 @@ parse_pubkey_algos:
 			opt_array_append(filename, linenum,
 			    lookup_opcode_name(opcode),
 			    &strs, &nstrs, arg2);
-			free(arg2);
+			విడుదల(arg2);
 		}
-		if (nstrs == 0)
+		ఒకవేళ (nstrs == 0)
 			fatal("%s line %d: missing %s specification",
 			    filename, linenum, lookup_opcode_name(opcode));
-		if (found && *activep) {
+		ఒకవేళ (దొరికింది && *activep) {
 			*cppptr = strs;
 			*uintptr = nstrs;
-			strs = NULL; /* transferred */
+			strs = ఖాళీ; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ఆపు;
 
-	case oClearAllForwardings:
+	స్థితి oClearAllForwardings:
 		intptr = &options->clear_forwardings;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oHost:
-		if (cmdline) {
+	స్థితి oHost:
+		ఒకవేళ (cmdline) {
 			error("Host directive not supported as a command-line "
 			    "option");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		*activep = 0;
-		arg2 = NULL;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		arg2 = ఖాళీ;
+		అయితే ((arg = argv_తదుపరి(&ac, &av)) != ఖాళీ) {
+			ఒకవేళ (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
-			if ((flags & SSHCONF_NEVERMATCH) != 0) {
+			ఒకవేళ ((flags & SSHCONF_NEVERMATCH) != 0) {
 				argv_consume(&ac);
-				break;
+				ఆపు;
 			}
 			negated = *arg == '!';
-			if (negated)
+			ఒకవేళ (negated)
 				arg++;
-			if (match_pattern(host, arg)) {
-				if (negated) {
+			ఒకవేళ (సరిపోలిక_నమూనా(host, arg)) {
+				ఒకవేళ (negated) {
 					debug("%.200s line %d: Skipping Host "
 					    "block because of negated match "
 					    "for %.100s", filename, linenum,
 					    arg);
 					*activep = 0;
 					argv_consume(&ac);
-					break;
+					ఆపు;
 				}
-				if (!*activep)
+				ఒకవేళ (!*activep)
 					arg2 = arg; /* logged below */
 				*activep = 1;
 			}
 		}
-		if (*activep)
+		ఒకవేళ (*activep)
 			debug("%.200s line %d: Applying options for %.100s",
 			    filename, linenum, arg2);
-		break;
+		ఆపు;
 
-	case oMatch:
-		if (cmdline) {
+	స్థితి o_సరిపోలిక:
+		ఒకవేళ (cmdline) {
 			error("Match directive not supported as a command-line "
 			    "option");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		value = match_cfg_line(options, str, &ac, &av, pw, host,
+		విలువ = సరిపోలిక_cfg_పంక్తి(options, str, &ac, &av, pw, host,
 		    original_host, remote_command, flags & SSHCONF_FINAL,
 		    want_final_pass, filename, linenum);
-		if (value < 0) {
+		ఒకవేళ (విలువ < 0) {
 			error("%.200s line %d: Bad Match condition", filename,
 			    linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		*activep = (flags & SSHCONF_NEVERMATCH) ? 0 : value;
-		break;
+		*activep = (flags & SSHCONF_NEVERMATCH) ? 0 : విలువ;
+		ఆపు;
 
-	case oEscapeChar:
+	స్థితి oEscapeChar:
 		intptr = &options->escape_char;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (strcmp(arg, "none") == 0)
-			value = SSH_ESCAPECHAR_NONE;
-		else if (arg[1] == '\0')
-			value = (u_char) arg[0];
-		else if (arg[0] == '^' && arg[2] == 0 &&
+		ఒకవేళ (strcmp(arg, "none") == 0)
+			విలువ = SSH_ESCAPECHAR_NONE;
+		లేకపోతే ఒకవేళ (arg[1] == '\0')
+			విలువ = (u_char) arg[0];
+		లేకపోతే ఒకవేళ (arg[0] == '^' && arg[2] == 0 &&
 		    (u_char) arg[1] >= 64 && (u_char) arg[1] < 128)
-			value = (u_char) arg[1] & 31;
-		else {
+			విలువ = (u_char) arg[1] & 31;
+		లేకపోతే {
 			error("%.200s line %d: Bad escape character.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ఒకవేళ (*activep && *intptr == -1)
+			*intptr = విలువ;
+		ఆపు;
 
-	case oAddressFamily:
-		intptr = &options->address_family;
+	స్థితి o_చిరునామా_Family:
+		intptr = &options->చిరునామా_family;
 		multistate_ptr = multistate_addressfamily;
-		goto parse_multistate;
+		వెళ్ళు parse_multistate;
 
-	case oEnableSSHKeysign:
+	స్థితి oEnableSSHKeysign:
 		intptr = &options->enable_ssh_keysign;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oIdentitiesOnly:
+	స్థితి oIdentitiesOnly:
 		intptr = &options->identities_only;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oServerAliveInterval:
+	స్థితి oServerAliveInterval:
 		intptr = &options->server_alive_interval;
-		goto parse_time;
+		వెళ్ళు parse_సమయం;
 
-	case oServerAliveCountMax:
-		intptr = &options->server_alive_count_max;
-		goto parse_int;
+	స్థితి o_Server_Alive_లెక్క_Max:
+		intptr = &options->server_alive_లెక్క_max;
+		వెళ్ళు parse_int;
 
-	case oSendEnv:
+	స్థితి oSendEnv:
 		/* XXX appends to list; doesn't respect first-match-wins */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' || strchr(arg, '=') != NULL) {
+		అయితే ((arg = argv_తదుపరి(&ac, &av)) != ఖాళీ) {
+			ఒకవేళ (*arg == '\0' || strchr(arg, '=') != ఖాళీ) {
 				error("%s line %d: Invalid environment name.",
 				    filename, linenum);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
-			found = 1;
-			if (!*activep)
-				continue;
-			if (*arg == '-') {
+			దొరికింది = 1;
+			ఒకవేళ (!*activep)
+				కొనసాగు;
+			ఒకవేళ (*arg == '-') {
 				/* Removing an env var */
 				rm_env(options, arg, filename, linenum);
-				continue;
+				కొనసాగు;
 			}
 			opt_array_append(filename, linenum,
 			    lookup_opcode_name(opcode),
-			    &options->send_env, &options->num_send_env, arg);
+			    &options->send_env, &options->అంకె_send_env, arg);
 		}
-		if (!found) {
+		ఒకవేళ (!దొరికింది) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		ఆపు;
 
-	case oSetEnv:
-		found = options->num_setenv == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strchr(arg, '=') == NULL) {
+	స్థితి o_సమితి_Env:
+		దొరికింది = options->అంకె_setenv == 0;
+		అయితే ((arg = argv_తదుపరి(&ac, &av)) != ఖాళీ) {
+			ఒకవేళ (strchr(arg, '=') == ఖాళీ) {
 				error("%s line %d: Invalid SetEnv.",
 				    filename, linenum);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
-			if (lookup_setenv_in_list(arg, strs, nstrs) != NULL) {
+			ఒకవేళ (lookup_setenv_లోపల_list(arg, strs, nstrs) != ఖాళీ) {
 				debug2("%s line %d: ignoring duplicate env "
 				    "name \"%.64s\"", filename, linenum, arg);
-				continue;
+				కొనసాగు;
 			}
 			opt_array_append(filename, linenum,
 			    lookup_opcode_name(opcode),
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ఒకవేళ (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ఒకవేళ (దొరికింది && *activep) {
 			options->setenv = strs;
-			options->num_setenv = nstrs;
-			strs = NULL; /* transferred */
+			options->అంకె_setenv = nstrs;
+			strs = ఖాళీ; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ఆపు;
 
-	case oControlPath:
-		charptr = &options->control_path;
-		goto parse_string;
+	స్థితి o_Control_మార్గం:
+		charptr = &options->control_మార్గం;
+		వెళ్ళు parse_string;
 
-	case oControlMaster:
+	స్థితి oControlMaster:
 		intptr = &options->control_master;
 		multistate_ptr = multistate_controlmaster;
-		goto parse_multistate;
+		వెళ్ళు parse_multistate;
 
-	case oControlPersist:
+	స్థితి oControlPersist:
 		/* no/false/yes/true, or a time spec */
 		intptr = &options->control_persist;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing ControlPersist"
 			    " argument.", filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		value = 0;
+		విలువ = 0;
 		value2 = 0;	/* timeout */
-		if (strcmp(arg, "no") == 0 || strcmp(arg, "false") == 0)
-			value = 0;
-		else if (strcmp(arg, "yes") == 0 || strcmp(arg, "true") == 0)
-			value = 1;
-		else if ((value2 = convtime(arg)) >= 0)
-			value = 1;
-		else {
+		ఒకవేళ (strcmp(arg, "no") == 0 || strcmp(arg, "false") == 0)
+			విలువ = 0;
+		లేకపోతే ఒకవేళ (strcmp(arg, "yes") == 0 || strcmp(arg, "true") == 0)
+			విలువ = 1;
+		లేకపోతే ఒకవేళ ((value2 = convtime(arg)) >= 0)
+			విలువ = 1;
+		లేకపోతే {
 			error("%.200s line %d: Bad ControlPersist argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && *intptr == -1) {
-			*intptr = value;
+		ఒకవేళ (*activep && *intptr == -1) {
+			*intptr = విలువ;
 			options->control_persist_timeout = value2;
 		}
-		break;
+		ఆపు;
 
-	case oHashKnownHosts:
-		intptr = &options->hash_known_hosts;
-		goto parse_flag;
+	స్థితి o_Hash_తెలిసిన_Hosts:
+		intptr = &options->hash_తెలిసిన_hosts;
+		వెళ్ళు parse_flag;
 
-	case oTunnel:
+	స్థితి oTunnel:
 		intptr = &options->tun_open;
 		multistate_ptr = multistate_tunnel;
-		goto parse_multistate;
+		వెళ్ళు parse_multistate;
 
-	case oTunnelDevice:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+	స్థితి oTunnelDevice:
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		value = a2tun(arg, &value2);
-		if (value == SSH_TUNID_ERR) {
+		విలువ = a2tun(arg, &value2);
+		ఒకవేళ (విలువ == SSH_TUNID_ERR) {
 			error("%.200s line %d: Bad tun device.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && options->tun_local == -1) {
-			options->tun_local = value;
+		ఒకవేళ (*activep && options->tun_local == -1) {
+			options->tun_local = విలువ;
 			options->tun_remote = value2;
 		}
-		break;
+		ఆపు;
 
-	case oLocalCommand:
+	స్థితి oLocalCommand:
 		charptr = &options->local_command;
-		goto parse_command;
+		వెళ్ళు parse_command;
 
-	case oPermitLocalCommand:
+	స్థితి oPermitLocalCommand:
 		intptr = &options->permit_local_command;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oRemoteCommand:
+	స్థితి oRemoteCommand:
 		charptr = &options->remote_command;
-		goto parse_command;
+		వెళ్ళు parse_command;
 
-	case oVisualHostKey:
-		intptr = &options->visual_host_key;
-		goto parse_flag;
+	స్థితి o_Visual_Host_కీలకం:
+		intptr = &options->visual_host_కీలకం;
+		వెళ్ళు parse_flag;
 
-	case oInclude:
-		if (cmdline) {
+	స్థితి oInclude:
+		ఒకవేళ (cmdline) {
 			error("Include directive not supported as a "
 			    "command-line option");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		value = 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		విలువ = 0;
+		అయితే ((arg = argv_తదుపరి(&ac, &av)) != ఖాళీ) {
+			ఒకవేళ (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 			/* Expand %tokens and environment variables */
-			if ((p = expand_match_exec_or_include_path(arg,
+			ఒకవేళ ((p = expand_సరిపోలిక_exec_or_include_మార్గం(arg,
 			    options, pw, host, original_host,
-			    flags & SSHCONF_FINAL, 1)) == NULL) {
+			    flags & SSHCONF_FINAL, 1)) == ఖాళీ) {
 				error("%.200s line %d: Unable to expand user "
 				    "config file '%.100s'",
 				    filename, linenum, arg);
-				continue;
+				కొనసాగు;
 			}
 			/*
 			 * Ensure all paths are anchored. User configuration
@@ -2098,516 +2098,516 @@ parse_pubkey_algos:
 			 * as living in ~/.ssh for user configurations or
 			 * /etc/ssh for system ones.
 			 */
-			if (*p == '~' && (flags & SSHCONF_USERCONF) == 0) {
+			ఒకవేళ (*p == '~' && (flags & SSHCONF_USERCONF) == 0) {
 				error("%.200s line %d: bad include path %s.",
 				    filename, linenum, p);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
-			if (!path_absolute(p) && *p != '~') {
+			ఒకవేళ (!మార్గం_absolute(p) && *p != '~') {
 				xasprintf(&arg2, "%s/%s",
 				    (flags & SSHCONF_USERCONF) ?
-				    "~/" _PATH_SSH_USER_DIR : SSHDIR, p);
-			} else {
+				    "~/" మార్గం_SSH_USER_DIR : SSHDIR, p);
+			} లేకపోతే {
 				arg2 = xstrdup(p);
 			}
-			free(p);
-			memset(&gl, 0, sizeof(gl));
-			r = glob(arg2, GLOB_TILDE, NULL, &gl);
-			if (r == GLOB_NOMATCH) {
+			విడుదల(p);
+			memset(&gl, 0, పరిమాణం(gl));
+			r = glob(arg2, GLOB_TILDE, ఖాళీ, &gl);
+			ఒకవేళ (r == GLOB_NOMATCH) {
 				debug("%.200s line %d: include %s matched no "
 				    "files",filename, linenum, arg2);
-				free(arg2);
-				continue;
-			} else if (r != 0) {
+				విడుదల(arg2);
+				కొనసాగు;
+			} లేకపోతే ఒకవేళ (r != 0) {
 				error("%.200s line %d: glob failed for %s.",
 				    filename, linenum, arg2);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
-			free(arg2);
+			విడుదల(arg2);
 			oactive = *activep;
-			for (i = 0; i < gl.gl_pathc; i++) {
+			కొరకు (i = 0; i < gl.gl_pathc; i++) {
 				debug3("%.200s line %d: Including file %s "
 				    "depth %d%s", filename, linenum,
-				    gl.gl_pathv[i], depth,
+				    gl.gl_pathv[i], లోతు,
 				    oactive ? "" : " (parse only)");
-				r = read_config_file_depth(gl.gl_pathv[i],
+				r = read_config_file_లోతు(gl.gl_pathv[i],
 				    pw, host, original_host, remote_command,
 				    options, flags | SSHCONF_CHECKPERM |
 				    (oactive ? 0 : SSHCONF_NEVERMATCH),
-				    activep, want_final_pass, depth + 1);
-				if (r != 1 && errno != ENOENT) {
+				    activep, want_final_pass, లోతు + 1);
+				ఒకవేళ (r != 1 && errno != ENOENT) {
 					error("%.200s line %d: Can't open user "
 					    "config file %.100s: %.100s",
 					    filename, linenum, gl.gl_pathv[i],
 					    strerror(errno));
 					globfree(&gl);
-					goto out;
+					వెళ్ళు బహిర్గతం;
 				}
 				/*
 				 * don't let Match in includes clobber the
 				 * containing file's Match state.
 				 */
 				*activep = oactive;
-				if (r != 1)
-					value = -1;
+				ఒకవేళ (r != 1)
+					విలువ = -1;
 			}
 			globfree(&gl);
 		}
-		if (value != 0)
-			ret = value;
-		break;
+		ఒకవేళ (విలువ != 0)
+			ret = విలువ;
+		ఆపు;
 
-	case oIPQoS:
-		arg = argv_next(&ac, &av);
-		if ((value = parse_ipqos(arg)) == -1) {
+	స్థితి oIPQoS:
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ ((విలువ = parse_ipqos(arg)) == -1) {
 			error("%s line %d: Bad IPQoS value: %s",
 			    filename, linenum, arg);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (value == INT_MIN) {
+		ఒకవేళ (విలువ == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
-			value = INT_MAX;
+			విలువ = గరిష్ఠ_పూర్ణాంకం;
 		}
-		arg = argv_next(&ac, &av);
-		if (arg == NULL)
-			value2 = value;
-		else if ((value2 = parse_ipqos(arg)) == -1) {
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (arg == ఖాళీ)
+			value2 = విలువ;
+		లేకపోతే ఒకవేళ ((value2 = parse_ipqos(arg)) == -1) {
 			error("%s line %d: Bad IPQoS value: %s",
 			    filename, linenum, arg);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (value2 == INT_MIN) {
+		ఒకవేళ (value2 == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
-			value2 = INT_MAX;
+			value2 = గరిష్ఠ_పూర్ణాంకం;
 		}
-		if (*activep && options->ip_qos_interactive == -1) {
-			options->ip_qos_interactive = value;
+		ఒకవేళ (*activep && options->ip_qos_interactive == -1) {
+			options->ip_qos_interactive = విలువ;
 			options->ip_qos_bulk = value2;
 		}
-		break;
+		ఆపు;
 
-	case oRequestTTY:
+	స్థితి oRequestTTY:
 		intptr = &options->request_tty;
 		multistate_ptr = multistate_requesttty;
-		goto parse_multistate;
+		వెళ్ళు parse_multistate;
 
-	case oSessionType:
+	స్థితి oSessionType:
 		intptr = &options->session_type;
 		multistate_ptr = multistate_sessiontype;
-		goto parse_multistate;
+		వెళ్ళు parse_multistate;
 
-	case oStdinNull:
+	స్థితి oStdinNull:
 		intptr = &options->stdin_null;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oForkAfterAuthentication:
+	స్థితి oForkAfterAuthentication:
 		intptr = &options->fork_after_authentication;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oIgnoreUnknown:
+	స్థితి oIgnoreUnknown:
 		charptr = &options->ignored_unknown;
-		goto parse_string;
+		వెళ్ళు parse_string;
 
-	case oProxyUseFdpass:
+	స్థితి oProxyUseFdpass:
 		intptr = &options->proxy_use_fdpass;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oCanonicalDomains:
-		found = options->num_canonical_domains == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+	స్థితి oCanonicalDomains:
+		దొరికింది = options->అంకె_canonical_domains == 0;
+		అయితే ((arg = argv_తదుపరి(&ac, &av)) != ఖాళీ) {
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			ఒకవేళ (strcasecmp(arg, "none") == 0) {
+				ఒకవేళ (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					వెళ్ళు బహిర్గతం;
 				}
 			}
-			if (!valid_domain(arg, 1, &errstr)) {
+			ఒకవేళ (!valid_domain(arg, 1, &errstr)) {
 				error("%s line %d: %s", filename, linenum,
 				    errstr);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ఒకవేళ (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ఒకవేళ (దొరికింది && *activep) {
 			options->canonical_domains = strs;
-			options->num_canonical_domains = nstrs;
-			strs = NULL; /* transferred */
+			options->అంకె_canonical_domains = nstrs;
+			strs = ఖాళీ; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ఆపు;
 
-	case oCanonicalizePermittedCNAMEs:
-		found = options->num_permitted_cnames == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+	స్థితి oCanonicalizePermittedCNAMEs:
+		దొరికింది = options->అంకె_permitted_cnames == 0;
+		అయితే ((arg = argv_తదుపరి(&ac, &av)) != ఖాళీ) {
 			/*
 			 * Either 'none' (only in first position), '*' for
 			 * everything or 'list:list'
 			 */
-			if (strcasecmp(arg, "none") == 0) {
-				if (ncnames > 0 || ac > 0) {
+			ఒకవేళ (strcasecmp(arg, "none") == 0) {
+				ఒకవేళ (ncnames > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					వెళ్ళు బహిర్గతం;
 				}
 				arg2 = "";
-			} else if (strcmp(arg, "*") == 0) {
+			} లేకపోతే ఒకవేళ (strcmp(arg, "*") == 0) {
 				arg2 = arg;
-			} else {
+			} లేకపోతే {
 				lowercase(arg);
-				if ((arg2 = strchr(arg, ':')) == NULL ||
+				ఒకవేళ ((arg2 = strchr(arg, ':')) == ఖాళీ ||
 				    arg2[1] == '\0') {
 					error("%s line %d: "
 					    "Invalid permitted CNAME \"%s\"",
 					    filename, linenum, arg);
-					goto out;
+					వెళ్ళు బహిర్గతం;
 				}
 				*arg2 = '\0';
 				arg2++;
 			}
 			cnames = xrecallocarray(cnames, ncnames, ncnames + 1,
-			    sizeof(*cnames));
-			cnames[ncnames].source_list = xstrdup(arg);
-			cnames[ncnames].target_list = xstrdup(arg2);
+			    పరిమాణం(*cnames));
+			cnames[ncnames].ఆధారం_list = xstrdup(arg);
+			cnames[ncnames].లక్ష్యం_list = xstrdup(arg2);
 			ncnames++;
 		}
-		if (ncnames == 0) {
+		ఒకవేళ (ncnames == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ఒకవేళ (దొరికింది && *activep) {
 			options->permitted_cnames = cnames;
-			options->num_permitted_cnames = ncnames;
-			cnames = NULL; /* transferred */
+			options->అంకె_permitted_cnames = ncnames;
+			cnames = ఖాళీ; /* transferred */
 			ncnames = 0;
 		}
 		/* un-transferred cnames is cleaned up before exit */
-		break;
+		ఆపు;
 
-	case oCanonicalizeHostname:
+	స్థితి oCanonicalizeHostname:
 		intptr = &options->canonicalize_hostname;
 		multistate_ptr = multistate_canonicalizehostname;
-		goto parse_multistate;
+		వెళ్ళు parse_multistate;
 
-	case oCanonicalizeMaxDots:
+	స్థితి oCanonicalizeMaxDots:
 		intptr = &options->canonicalize_max_dots;
-		goto parse_int;
+		వెళ్ళు parse_int;
 
-	case oCanonicalizeFallbackLocal:
+	స్థితి oCanonicalizeFallbackLocal:
 		intptr = &options->canonicalize_fallback_local;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oStreamLocalBindMask:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+	స్థితి o_ప్రవాహం_Local_Bind_ముసుగు:
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing StreamLocalBindMask "
 			    "argument.", filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		/* Parse mode in octal format */
-		value = strtol(arg, &endofnumber, 8);
-		if (arg == endofnumber || value < 0 || value > 0777) {
+		విలువ = strtol(arg, &endofnumber, 8);
+		ఒకవేళ (arg == endofnumber || విలువ < 0 || విలువ > 0777) {
 			error("%.200s line %d: Bad mask.", filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep &&
-		    options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
-			options->fwd_opts.streamlocal_bind_mask = (mode_t)value;
-		break;
+		ఒకవేళ (*activep &&
+		    options->fwd_opts.streamlocal_bind_ముసుగు == (బహుళకం_t)-1)
+			options->fwd_opts.streamlocal_bind_ముసుగు = (బహుళకం_t)విలువ;
+		ఆపు;
 
-	case oStreamLocalBindUnlink:
+	స్థితి o_ప్రవాహం_Local_Bind_Unlink:
 		intptr = &options->fwd_opts.streamlocal_bind_unlink;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oRevokedHostKeys:
-		uintptr = &options->num_revoked_host_keys;
-		cppptr = &options->revoked_host_keys;
-		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+	స్థితి o_Revoked_Host_కీలకాలు:
+		uintptr = &options->అంకె_revoked_host_కీలకాలు;
+		cppptr = &options->revoked_host_కీలకాలు;
+		దొరికింది = *uintptr == 0;
+		అయితే ((arg = argv_తదుపరి(&ac, &av)) != ఖాళీ) {
+			ఒకవేళ (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			ఒకవేళ (strcasecmp(arg, "none") == 0) {
+				ఒకవేళ (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					వెళ్ళు బహిర్గతం;
 				}
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ఒకవేళ (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ఒకవేళ (దొరికింది && *activep) {
 			*cppptr = strs;
 			*uintptr = nstrs;
-			strs = NULL; /* transferred */
+			strs = ఖాళీ; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ఆపు;
 
-	case oFingerprintHash:
+	స్థితి oFingerprintHash:
 		intptr = &options->fingerprint_hash;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if ((value = ssh_digest_alg_by_name(arg)) == -1) {
+		ఒకవేళ ((విలువ = ssh_digest_alg_by_name(arg)) == -1) {
 			error("%.200s line %d: Invalid hash algorithm \"%s\".",
 			    filename, linenum, arg);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ఒకవేళ (*activep && *intptr == -1)
+			*intptr = విలువ;
+		ఆపు;
 
-	case oUpdateHostkeys:
+	స్థితి oUpdateHostkeys:
 		intptr = &options->update_hostkeys;
 		multistate_ptr = multistate_yesnoask;
-		goto parse_multistate;
+		వెళ్ళు parse_multistate;
 
-	case oHostbasedAcceptedAlgorithms:
+	స్థితి oHostbasedAcceptedAlgorithms:
 		charptr = &options->hostbased_accepted_algos;
 		ca_only = 0;
-		goto parse_pubkey_algos;
+		వెళ్ళు parse_pubkey_algos;
 
-	case oPubkeyAcceptedAlgorithms:
+	స్థితి oPubkeyAcceptedAlgorithms:
 		charptr = &options->pubkey_accepted_algos;
 		ca_only = 0;
-		goto parse_pubkey_algos;
+		వెళ్ళు parse_pubkey_algos;
 
-	case oAddKeysToAgent:
-		arg = argv_next(&ac, &av);
-		arg2 = argv_next(&ac, &av);
-		value = parse_multistate_value(arg, filename, linenum,
+	స్థితి o_కూడు_కీలకాలు_గమ్యం_Agent:
+		arg = argv_తదుపరి(&ac, &av);
+		arg2 = argv_తదుపరి(&ac, &av);
+		విలువ = parse_multistate_విలువ(arg, filename, linenum,
 		    multistate_yesnoaskconfirm);
 		value2 = 0; /* unlimited lifespan by default */
-		if (value == 3 && arg2 != NULL) {
+		ఒకవేళ (విలువ == 3 && arg2 != ఖాళీ) {
 			/* allow "AddKeysToAgent confirm 5m" */
-			if ((value2 = convtime(arg2)) == -1) {
+			ఒకవేళ ((value2 = convtime(arg2)) == -1) {
 				error("%s line %d: invalid time value.",
 				    filename, linenum);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
-		} else if (value == -1 && arg2 == NULL) {
-			if ((value2 = convtime(arg)) == -1) {
+		} లేకపోతే ఒకవేళ (విలువ == -1 && arg2 == ఖాళీ) {
+			ఒకవేళ ((value2 = convtime(arg)) == -1) {
 				error("%s line %d: unsupported option",
 				    filename, linenum);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
-			value = 1; /* yes */
-		} else if (value == -1 || arg2 != NULL) {
+			విలువ = 1; /* yes */
+		} లేకపోతే ఒకవేళ (విలువ == -1 || arg2 != ఖాళీ) {
 			error("%s line %d: unsupported option",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && options->add_keys_to_agent == -1) {
-			options->add_keys_to_agent = value;
-			options->add_keys_to_agent_lifespan = value2;
+		ఒకవేళ (*activep && options->కూడు_కీలకాలు_గమ్యం_agent == -1) {
+			options->కూడు_కీలకాలు_గమ్యం_agent = విలువ;
+			options->కూడు_కీలకాలు_గమ్యం_agent_lifespan = value2;
 		}
-		break;
+		ఆపు;
 
-	case oIdentityAgent:
-		charptr = &options->identity_agent;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+	స్థితి o_తటస్థం_Agent:
+		charptr = &options->తటస్థం_agent;
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-  parse_agent_path:
+  parse_agent_మార్గం:
 		/* Extra validation if the string represents an env var. */
-		if ((arg2 = dollar_expand(&r, arg)) == NULL || r) {
+		ఒకవేళ ((arg2 = dollar_expand(&r, arg)) == ఖాళీ || r) {
 			error("%.200s line %d: Invalid environment expansion "
 			    "%s.", filename, linenum, arg);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		free(arg2);
+		విడుదల(arg2);
 		/* check for legacy environment format */
-		if (arg[0] == '$' && arg[1] != '{' &&
+		ఒకవేళ (arg[0] == '$' && arg[1] != '{' &&
 		    !valid_env_name(arg + 1)) {
 			error("%.200s line %d: Invalid environment name %s.",
 			    filename, linenum, arg);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep && *charptr == NULL)
+		ఒకవేళ (*activep && *charptr == ఖాళీ)
 			*charptr = xstrdup(arg);
-		break;
+		ఆపు;
 
-	case oEnableEscapeCommandline:
+	స్థితి oEnableEscapeCommandline:
 		intptr = &options->enable_escape_commandline;
-		goto parse_flag;
+		వెళ్ళు parse_flag;
 
-	case oRequiredRSASize:
-		intptr = &options->required_rsa_size;
-		goto parse_int;
+	స్థితి oRequiredRSASize:
+		intptr = &options->required_rsa_కొలత;
+		వెళ్ళు parse_int;
 
-	case oWarnWeakCrypto:
+	స్థితి oWarnWeakCrypto:
 		intptr = &options->warn_weak_crypto;
 		multistate_ptr = multistate_warnweakcrypto;
-		goto parse_multistate;
+		వెళ్ళు parse_multistate;
 
-	case oObscureKeystrokeTiming:
-		value = -1;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (value != -1) {
+	స్థితి oObscureKeystrokeTiming:
+		విలువ = -1;
+		అయితే ((arg = argv_తదుపరి(&ac, &av)) != ఖాళీ) {
+			ఒకవేళ (విలువ != -1) {
 				error("%s line %d: invalid arguments",
 				    filename, linenum);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
-			if (strcmp(arg, "yes") == 0 ||
+			ఒకవేళ (strcmp(arg, "yes") == 0 ||
 			    strcmp(arg, "true") == 0)
-				value = SSH_KEYSTROKE_DEFAULT_INTERVAL_MS;
-			else if (strcmp(arg, "no") == 0 ||
+				విలువ = SSH_KEYSTROKE_DEFAULT_INTERVAL_MS;
+			లేకపోతే ఒకవేళ (strcmp(arg, "no") == 0 ||
 			    strcmp(arg, "false") == 0)
-				value = 0;
-			else if (strncmp(arg, "interval:", 9) == 0) {
-				if ((errstr = atoi_err(arg + 9,
-				    &value)) != NULL) {
+				విలువ = 0;
+			లేకపోతే ఒకవేళ (అక్షరశ్రేణి_పోలిక(arg, "interval:", 9) == 0) {
+				ఒకవేళ ((errstr = atoi_err(arg + 9,
+				    &విలువ)) != ఖాళీ) {
 					error("%s line %d: integer value %s.",
 					    filename, linenum, errstr);
-					goto out;
+					వెళ్ళు బహిర్గతం;
 				}
-				if (value <= 0 || value > 1000) {
+				ఒకవేళ (విలువ <= 0 || విలువ > 1000) {
 					error("%s line %d: value out of range.",
 					    filename, linenum);
-					goto out;
+					వెళ్ళు బహిర్గతం;
 				}
-			} else {
+			} లేకపోతే {
 				error("%s line %d: unsupported argument \"%s\"",
 				    filename, linenum, arg);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 		}
-		if (value == -1) {
+		ఒకవేళ (విలువ == -1) {
 			error("%s line %d: missing argument",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		intptr = &options->obscure_keystroke_timing_interval;
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ఒకవేళ (*activep && *intptr == -1)
+			*intptr = విలువ;
+		ఆపు;
 
-	case oChannelTimeout:
-		found = options->num_channel_timeouts == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+	స్థితి oChannelTimeout:
+		దొరికింది = options->అంకె_channel_timeouts == 0;
+		అయితే ((arg = argv_తదుపరి(&ac, &av)) != ఖాళీ) {
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			ఒకవేళ (strcasecmp(arg, "none") == 0) {
+				ఒకవేళ (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					వెళ్ళు బహిర్గతం;
 				}
-			} else if (parse_pattern_interval(arg,
-			    NULL, NULL) != 0) {
+			} లేకపోతే ఒకవేళ (parse_నమూనా_interval(arg,
+			    ఖాళీ, ఖాళీ) != 0) {
 				fatal("%s line %d: invalid channel timeout %s",
 				    filename, linenum, arg);
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ఒకవేళ (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ఒకవేళ (దొరికింది && *activep) {
 			options->channel_timeouts = strs;
-			options->num_channel_timeouts = nstrs;
-			strs = NULL; /* transferred */
+			options->అంకె_channel_timeouts = nstrs;
+			strs = ఖాళీ; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ఆపు;
 
-	case oVersionAddendum:
-		if (str == NULL || *str == '\0')
+	స్థితి o_సంస్కరణ_Addendum:
+		ఒకవేళ (str == ఖాళీ || *str == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		len = strspn(str, WHITESPACE);
-		if (strchr(str + len, '\r') != NULL) {
+		ఒకవేళ (strchr(str + len, '\r') != ఖాళీ) {
 			fatal("%.200s line %d: Invalid %s argument",
 			    filename, linenum, keyword);
 		}
-		if ((arg = strchr(line, '#')) != NULL) {
+		ఒకవేళ ((arg = strchr(పంక్తి, '#')) != ఖాళీ) {
 			*arg = '\0';
-			rtrim(line);
+			rtrim(పంక్తి);
 		}
-		if (*activep && options->version_addendum == NULL) {
-			if (strcasecmp(str + len, "none") == 0)
-				options->version_addendum = xstrdup("");
-			else
-				options->version_addendum = xstrdup(str + len);
+		ఒకవేళ (*activep && options->సంస్కరణ_addendum == ఖాళీ) {
+			ఒకవేళ (strcasecmp(str + len, "none") == 0)
+				options->సంస్కరణ_addendum = xstrdup("");
+			లేకపోతే
+				options->సంస్కరణ_addendum = xstrdup(str + len);
 		}
 		argv_consume(&ac);
-		break;
+		ఆపు;
 
-	case oRefuseConnection:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+	స్థితి oRefuseConnection:
+		arg = argv_తదుపరి(&ac, &av);
+		ఒకవేళ (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*activep) {
+		ఒకవేళ (*activep) {
 			fatal("%.200s line %d: RefuseConnection: %s",
 			    filename, linenum, arg);
 		}
-		break;
+		ఆపు;
 
-	case oDeprecated:
+	స్థితి oDeprecated:
 		debug("%s line %d: Deprecated option \"%s\"",
 		    filename, linenum, keyword);
 		argv_consume(&ac);
-		break;
+		ఆపు;
 
-	case oUnsupported:
+	స్థితి oUnsupported:
 		error("%s line %d: Unsupported option \"%s\"",
 		    filename, linenum, keyword);
 		argv_consume(&ac);
-		break;
+		ఆపు;
 
-	default:
+	అప్రమేయ:
 		error("%s line %d: Unimplemented opcode %d",
 		    filename, linenum, opcode);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Check that there is no garbage at end of line. */
-	if (ac > 0) {
+	ఒకవేళ (ac > 0) {
 		error("%.200s line %d: keyword %s extra arguments "
 		    "at end of line", filename, linenum, keyword);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* success */
 	ret = 0;
- out:
+ బహిర్గతం:
 	free_canon_cnames(cnames, ncnames);
-	opt_array_free2(strs, NULL, nstrs);
+	opt_array_free2(strs, ఖాళీ, nstrs);
 	argv_free(oav, oac);
-	return ret;
+	తిరిగి ret;
 }
 
 /*
@@ -2615,41 +2615,41 @@ parse_pubkey_algos:
  * should already be initialized before this call.  This never returns if
  * there is an error.  If the file does not exist, this returns 0.
  */
-int
-read_config_file(const char *filename, struct passwd *pw, const char *host,
-    const char *original_host, const char *remote_command, Options *options, int flags,
-    int *want_final_pass)
+పూర్ణాంకం
+read_config_file(స్థిరరాశి అక్షరం *filename, నిర్మాణం passwd *pw, స్థిరరాశి అక్షరం *host,
+    స్థిరరాశి అక్షరం *original_host, స్థిరరాశి అక్షరం *remote_command, Options *options, పూర్ణాంకం flags,
+    పూర్ణాంకం *want_final_pass)
 {
-	int active = 1;
+	పూర్ణాంకం చురుకైన = 1;
 
-	return read_config_file_depth(filename, pw, host, original_host,
-	    remote_command, options, flags, &active, want_final_pass, 0);
+	తిరిగి read_config_file_లోతు(filename, pw, host, original_host,
+	    remote_command, options, flags, &చురుకైన, want_final_pass, 0);
 }
 
-#define READCONF_MAX_DEPTH	16
-static int
-read_config_file_depth(const char *filename, struct passwd *pw,
-    const char *host, const char *original_host, const char *remote_command,
-    Options *options, int flags, int *activep, int *want_final_pass, int depth)
+#నిర్వచించు READCONF_MAX_లోతు	16
+స్థిర పూర్ణాంకం
+read_config_file_లోతు(స్థిరరాశి అక్షరం *filename, నిర్మాణం passwd *pw,
+    స్థిరరాశి అక్షరం *host, స్థిరరాశి అక్షరం *original_host, స్థిరరాశి అక్షరం *remote_command,
+    Options *options, పూర్ణాంకం flags, పూర్ణాంకం *activep, పూర్ణాంకం *want_final_pass, పూర్ణాంకం లోతు)
 {
 	FILE *f;
-	char *line = NULL;
-	size_t linesize = 0;
-	int linenum;
-	int bad_options = 0;
+	అక్షరం *పంక్తి = ఖాళీ;
+	కొలత_t linesize = 0;
+	పూర్ణాంకం linenum;
+	పూర్ణాంకం bad_options = 0;
 
-	if (depth < 0 || depth > READCONF_MAX_DEPTH)
+	ఒకవేళ (లోతు < 0 || లోతు > READCONF_MAX_లోతు)
 		fatal("Too many recursive configuration includes");
 
-	if ((f = fopen(filename, "r")) == NULL)
-		return 0;
+	ఒకవేళ ((f = fopen(filename, "r")) == ఖాళీ)
+		తిరిగి 0;
 
-	if (flags & SSHCONF_CHECKPERM) {
-		struct stat sb;
+	ఒకవేళ (flags & SSHCONF_CHECKPERM) {
+		నిర్మాణం stat sb;
 
-		if (fstat(fileno(f), &sb) == -1)
+		ఒకవేళ (fstat(fileno(f), &sb) == -1)
 			fatal("fstat %s: %s", filename, strerror(errno));
-		if (((sb.st_uid != 0 && sb.st_uid != getuid()) ||
+		ఒకవేళ (((sb.st_uid != 0 && sb.st_uid != getuid()) ||
 		    (sb.st_mode & 022) != 0))
 			fatal("Bad owner or permissions on %s", filename);
 	}
@@ -2661,7 +2661,7 @@ read_config_file_depth(const char *filename, struct passwd *pw,
 	 * on/off by Host specifications.
 	 */
 	linenum = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	అయితే (getline(&పంక్తి, &linesize, f) != -1) {
 		/* Update line number counter. */
 		linenum++;
 		/*
@@ -2669,38 +2669,38 @@ read_config_file_depth(const char *filename, struct passwd *pw,
 		 * NB - preserve newlines, they are needed to reproduce
 		 * line numbers later for error messages.
 		 */
-		if (process_config_line_depth(options, pw, host, original_host,
-		    remote_command, line, filename, linenum, activep, flags,
-		    want_final_pass, depth) != 0)
+		ఒకవేళ (process_config_పంక్తి_లోతు(options, pw, host, original_host,
+		    remote_command, పంక్తి, filename, linenum, activep, flags,
+		    want_final_pass, లోతు) != 0)
 			bad_options++;
 	}
-	free(line);
+	విడుదల(పంక్తి);
 	fclose(f);
-	if (bad_options > 0)
+	ఒకవేళ (bad_options > 0)
 		fatal("%s: terminating, %d bad configuration options",
 		    filename, bad_options);
-	return 1;
+	తిరిగి 1;
 }
 
 /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-int
-option_clear_or_none(const char *o)
+పూర్ణాంకం
+option_clear_or_none(స్థిరరాశి అక్షరం *o)
 {
-	return o == NULL || strcasecmp(o, "none") == 0;
+	తిరిగి o == ఖాళీ || strcasecmp(o, "none") == 0;
 }
 
 /*
  * Returns 1 if CanonicalizePermittedCNAMEs have been specified, 0 otherwise.
  * Allowed to be called on non-final configuration.
  */
-int
+పూర్ణాంకం
 config_has_permitted_cnames(Options *options)
 {
-	if (options->num_permitted_cnames == 1 &&
-	    strcasecmp(options->permitted_cnames[0].source_list, "none") == 0 &&
-	    strcmp(options->permitted_cnames[0].target_list, "") == 0)
-		return 0;
-	return options->num_permitted_cnames > 0;
+	ఒకవేళ (options->అంకె_permitted_cnames == 1 &&
+	    strcasecmp(options->permitted_cnames[0].ఆధారం_list, "none") == 0 &&
+	    strcmp(options->permitted_cnames[0].లక్ష్యం_list, "") == 0)
+		తిరిగి 0;
+	తిరిగి options->అంకె_permitted_cnames > 0;
 }
 
 /*
@@ -2710,103 +2710,103 @@ config_has_permitted_cnames(Options *options)
  * system config file.  Last, fill_default_options is called.
  */
 
-void
+శూన్య
 initialize_options(Options * options)
 {
-	memset(options, 'X', sizeof(*options));
-	options->host_arg = NULL;
+	memset(options, 'X', పరిమాణం(*options));
+	options->host_arg = ఖాళీ;
 	options->forward_agent = -1;
-	options->forward_agent_sock_path = NULL;
+	options->forward_agent_sock_మార్గం = ఖాళీ;
 	options->forward_x11 = -1;
 	options->forward_x11_trusted = -1;
 	options->forward_x11_timeout = -1;
-	options->stdio_forward_host = NULL;
-	options->stdio_forward_port = 0;
+	options->stdio_forward_host = ఖాళీ;
+	options->stdio_forward_పోర్టు = 0;
 	options->clear_forwardings = -1;
 	options->exit_on_forward_failure = -1;
-	options->xauth_location = NULL;
+	options->xauth_location = ఖాళీ;
 	options->fwd_opts.gateway_ports = -1;
-	options->fwd_opts.streamlocal_bind_mask = (mode_t)-1;
+	options->fwd_opts.streamlocal_bind_ముసుగు = (బహుళకం_t)-1;
 	options->fwd_opts.streamlocal_bind_unlink = -1;
 	options->pubkey_authentication = -1;
 	options->gss_authentication = -1;
 	options->gss_deleg_creds = -1;
 	options->password_authentication = -1;
 	options->kbd_interactive_authentication = -1;
-	options->kbd_interactive_devices = NULL;
+	options->kbd_interactive_devices = ఖాళీ;
 	options->hostbased_authentication = -1;
-	options->batch_mode = -1;
+	options->batch_బహుళకం = -1;
 	options->check_host_ip = -1;
-	options->strict_host_key_checking = -1;
+	options->strict_host_కీలకం_checking = -1;
 	options->compression = -1;
 	options->tcp_keep_alive = -1;
-	options->port = -1;
-	options->address_family = -1;
+	options->పోర్టు = -1;
+	options->చిరునామా_family = -1;
 	options->connection_attempts = -1;
 	options->connection_timeout = -1;
-	options->number_of_password_prompts = -1;
-	options->ciphers = NULL;
-	options->macs = NULL;
-	options->kex_algorithms = NULL;
-	options->hostkeyalgorithms = NULL;
-	options->ca_sign_algorithms = NULL;
-	options->num_identity_files = 0;
-	memset(options->identity_keys, 0, sizeof(options->identity_keys));
-	options->num_certificate_files = 0;
-	memset(options->certificates, 0, sizeof(options->certificates));
-	options->hostname = NULL;
-	options->host_key_alias = NULL;
-	options->proxy_command = NULL;
-	options->jump_user = NULL;
-	options->jump_host = NULL;
-	options->jump_port = -1;
-	options->jump_extra = NULL;
-	options->user = NULL;
+	options->సంఖ్య_యొక్క_password_prompts = -1;
+	options->ciphers = ఖాళీ;
+	options->macs = ఖాళీ;
+	options->kex_algorithms = ఖాళీ;
+	options->hostkeyalgorithms = ఖాళీ;
+	options->ca_sign_algorithms = ఖాళీ;
+	options->అంకె_తటస్థం_files = 0;
+	memset(options->తటస్థం_కీలకాలు, 0, పరిమాణం(options->తటస్థం_కీలకాలు));
+	options->అంకె_certificate_files = 0;
+	memset(options->certificates, 0, పరిమాణం(options->certificates));
+	options->hostname = ఖాళీ;
+	options->host_కీలకం_alias = ఖాళీ;
+	options->proxy_command = ఖాళీ;
+	options->jump_user = ఖాళీ;
+	options->jump_host = ఖాళీ;
+	options->jump_పోర్టు = -1;
+	options->jump_extra = ఖాళీ;
+	options->user = ఖాళీ;
 	options->escape_char = -1;
-	options->num_system_hostfiles = 0;
-	options->num_user_hostfiles = 0;
-	options->local_forwards = NULL;
-	options->num_local_forwards = 0;
-	options->remote_forwards = NULL;
-	options->num_remote_forwards = 0;
-	options->permitted_remote_opens = NULL;
-	options->num_permitted_remote_opens = 0;
-	options->log_facility = SYSLOG_FACILITY_NOT_SET;
-	options->log_level = SYSLOG_LEVEL_NOT_SET;
-	options->num_log_verbose = 0;
-	options->log_verbose = NULL;
-	options->preferred_authentications = NULL;
-	options->bind_address = NULL;
-	options->bind_interface = NULL;
-	options->pkcs11_provider = NULL;
-	options->sk_provider = NULL;
+	options->అంకె_system_hostfiles = 0;
+	options->అంకె_user_hostfiles = 0;
+	options->local_forwards = ఖాళీ;
+	options->అంకె_local_forwards = 0;
+	options->remote_forwards = ఖాళీ;
+	options->అంకె_remote_forwards = 0;
+	options->permitted_remote_opens = ఖాళీ;
+	options->అంకె_permitted_remote_opens = 0;
+	options->log_facility = SYSLOG_FACILITY_NOT_సమితి;
+	options->log_level = SYSLOG_LEVEL_NOT_సమితి;
+	options->అంకె_log_verbose = 0;
+	options->log_verbose = ఖాళీ;
+	options->preferred_authentications = ఖాళీ;
+	options->bind_చిరునామా = ఖాళీ;
+	options->bind_interface = ఖాళీ;
+	options->pkcs11_provider = ఖాళీ;
+	options->sk_provider = ఖాళీ;
 	options->enable_ssh_keysign = -1;
 	options->no_host_authentication_for_localhost = -1;
 	options->identities_only = -1;
-	options->rekey_limit = -1;
+	options->rekey_హద్దు = -1;
 	options->rekey_interval = -1;
-	options->verify_host_key_dns = -1;
+	options->verify_host_కీలకం_dns = -1;
 	options->server_alive_interval = -1;
-	options->server_alive_count_max = -1;
-	options->send_env = NULL;
-	options->num_send_env = 0;
-	options->setenv = NULL;
-	options->num_setenv = 0;
-	options->control_path = NULL;
+	options->server_alive_లెక్క_max = -1;
+	options->send_env = ఖాళీ;
+	options->అంకె_send_env = 0;
+	options->setenv = ఖాళీ;
+	options->అంకె_setenv = 0;
+	options->control_మార్గం = ఖాళీ;
 	options->control_master = -1;
 	options->control_persist = -1;
 	options->control_persist_timeout = 0;
-	options->hash_known_hosts = -1;
+	options->hash_తెలిసిన_hosts = -1;
 	options->tun_open = -1;
 	options->tun_local = -1;
 	options->tun_remote = -1;
-	options->local_command = NULL;
+	options->local_command = ఖాళీ;
 	options->permit_local_command = -1;
-	options->remote_command = NULL;
-	options->add_keys_to_agent = -1;
-	options->add_keys_to_agent_lifespan = -1;
-	options->identity_agent = NULL;
-	options->visual_host_key = -1;
+	options->remote_command = ఖాళీ;
+	options->కూడు_కీలకాలు_గమ్యం_agent = -1;
+	options->కూడు_కీలకాలు_గమ్యం_agent_lifespan = -1;
+	options->తటస్థం_agent = ఖాళీ;
+	options->visual_host_కీలకం = -1;
 	options->ip_qos_interactive = -1;
 	options->ip_qos_bulk = -1;
 	options->request_tty = -1;
@@ -2814,41 +2814,41 @@ initialize_options(Options * options)
 	options->stdin_null = -1;
 	options->fork_after_authentication = -1;
 	options->proxy_use_fdpass = -1;
-	options->ignored_unknown = NULL;
-	options->num_canonical_domains = 0;
-	options->num_permitted_cnames = 0;
+	options->ignored_unknown = ఖాళీ;
+	options->అంకె_canonical_domains = 0;
+	options->అంకె_permitted_cnames = 0;
 	options->canonicalize_max_dots = -1;
 	options->canonicalize_fallback_local = -1;
 	options->canonicalize_hostname = -1;
-	options->revoked_host_keys = NULL;
-	options->num_revoked_host_keys = 0;
+	options->revoked_host_కీలకాలు = ఖాళీ;
+	options->అంకె_revoked_host_కీలకాలు = 0;
 	options->fingerprint_hash = -1;
 	options->update_hostkeys = -1;
-	options->hostbased_accepted_algos = NULL;
-	options->pubkey_accepted_algos = NULL;
-	options->known_hosts_command = NULL;
-	options->required_rsa_size = -1;
+	options->hostbased_accepted_algos = ఖాళీ;
+	options->pubkey_accepted_algos = ఖాళీ;
+	options->తెలిసిన_hosts_command = ఖాళీ;
+	options->required_rsa_కొలత = -1;
 	options->warn_weak_crypto = -1;
 	options->enable_escape_commandline = -1;
 	options->obscure_keystroke_timing_interval = -1;
-	options->tag = NULL;
-	options->channel_timeouts = NULL;
-	options->num_channel_timeouts = 0;
-	options->version_addendum = NULL;
+	options->ట్యాగ్ = ఖాళీ;
+	options->channel_timeouts = ఖాళీ;
+	options->అంకె_channel_timeouts = 0;
+	options->సంస్కరణ_addendum = ఖాళీ;
 }
 
 /*
  * A petite version of fill_default_options() that just fills the options
  * needed for hostname canonicalization to proceed.
  */
-void
+శూన్య
 fill_default_options_for_canonicalization(Options *options)
 {
-	if (options->canonicalize_max_dots == -1)
+	ఒకవేళ (options->canonicalize_max_dots == -1)
 		options->canonicalize_max_dots = 1;
-	if (options->canonicalize_fallback_local == -1)
+	ఒకవేళ (options->canonicalize_fallback_local == -1)
 		options->canonicalize_fallback_local = 1;
-	if (options->canonicalize_hostname == -1)
+	ఒకవేళ (options->canonicalize_hostname == -1)
 		options->canonicalize_hostname = SSH_CANONICALISE_NO;
 }
 
@@ -2856,186 +2856,186 @@ fill_default_options_for_canonicalization(Options *options)
  * Called after processing other sources of option data, this fills those
  * options for which no value has been specified with their default values.
  */
-int
+పూర్ణాంకం
 fill_default_options(Options * options)
 {
-	char *all_cipher, *all_mac, *all_kex, *all_key, *all_sig;
-	char *def_cipher, *def_mac, *def_kex, *def_key, *def_sig;
-	int ret = -1, r;
+	అక్షరం *all_cipher, *all_mac, *all_kex, *all_కీలకం, *all_sig;
+	అక్షరం *def_cipher, *def_mac, *def_kex, *def_కీలకం, *def_sig;
+	పూర్ణాంకం ret = -1, r;
 
-	if (options->forward_agent == -1)
+	ఒకవేళ (options->forward_agent == -1)
 		options->forward_agent = 0;
-	if (options->forward_x11 == -1)
+	ఒకవేళ (options->forward_x11 == -1)
 		options->forward_x11 = 0;
-	if (options->forward_x11_trusted == -1)
+	ఒకవేళ (options->forward_x11_trusted == -1)
 		options->forward_x11_trusted = 0;
-	if (options->forward_x11_timeout == -1)
+	ఒకవేళ (options->forward_x11_timeout == -1)
 		options->forward_x11_timeout = 1200;
 	/*
 	 * stdio forwarding (-W) changes the default for these but we defer
 	 * setting the values so they can be overridden.
 	 */
-	if (options->exit_on_forward_failure == -1)
+	ఒకవేళ (options->exit_on_forward_failure == -1)
 		options->exit_on_forward_failure =
-		    options->stdio_forward_host != NULL ? 1 : 0;
-	if (options->clear_forwardings == -1)
+		    options->stdio_forward_host != ఖాళీ ? 1 : 0;
+	ఒకవేళ (options->clear_forwardings == -1)
 		options->clear_forwardings =
-		    options->stdio_forward_host != NULL ? 1 : 0;
-	if (options->clear_forwardings == 1)
+		    options->stdio_forward_host != ఖాళీ ? 1 : 0;
+	ఒకవేళ (options->clear_forwardings == 1)
 		clear_forwardings(options);
 
-	if (options->xauth_location == NULL)
-		options->xauth_location = xstrdup(_PATH_XAUTH);
-	if (options->fwd_opts.gateway_ports == -1)
+	ఒకవేళ (options->xauth_location == ఖాళీ)
+		options->xauth_location = xstrdup(మార్గం_XAUTH);
+	ఒకవేళ (options->fwd_opts.gateway_ports == -1)
 		options->fwd_opts.gateway_ports = 0;
-	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
-		options->fwd_opts.streamlocal_bind_mask = 0177;
-	if (options->fwd_opts.streamlocal_bind_unlink == -1)
+	ఒకవేళ (options->fwd_opts.streamlocal_bind_ముసుగు == (బహుళకం_t)-1)
+		options->fwd_opts.streamlocal_bind_ముసుగు = 0177;
+	ఒకవేళ (options->fwd_opts.streamlocal_bind_unlink == -1)
 		options->fwd_opts.streamlocal_bind_unlink = 0;
-	if (options->pubkey_authentication == -1)
+	ఒకవేళ (options->pubkey_authentication == -1)
 		options->pubkey_authentication = SSH_PUBKEY_AUTH_ALL;
-	if (options->gss_authentication == -1)
+	ఒకవేళ (options->gss_authentication == -1)
 		options->gss_authentication = 0;
-	if (options->gss_deleg_creds == -1)
+	ఒకవేళ (options->gss_deleg_creds == -1)
 		options->gss_deleg_creds = 0;
-	if (options->password_authentication == -1)
+	ఒకవేళ (options->password_authentication == -1)
 		options->password_authentication = 1;
-	if (options->kbd_interactive_authentication == -1)
+	ఒకవేళ (options->kbd_interactive_authentication == -1)
 		options->kbd_interactive_authentication = 1;
-	if (options->hostbased_authentication == -1)
+	ఒకవేళ (options->hostbased_authentication == -1)
 		options->hostbased_authentication = 0;
-	if (options->batch_mode == -1)
-		options->batch_mode = 0;
-	if (options->check_host_ip == -1)
+	ఒకవేళ (options->batch_బహుళకం == -1)
+		options->batch_బహుళకం = 0;
+	ఒకవేళ (options->check_host_ip == -1)
 		options->check_host_ip = 0;
-	if (options->strict_host_key_checking == -1)
-		options->strict_host_key_checking = SSH_STRICT_HOSTKEY_ASK;
-	if (options->compression == -1)
+	ఒకవేళ (options->strict_host_కీలకం_checking == -1)
+		options->strict_host_కీలకం_checking = SSH_STRICT_HOSTKEY_ASK;
+	ఒకవేళ (options->compression == -1)
 		options->compression = 0;
-	if (options->tcp_keep_alive == -1)
+	ఒకవేళ (options->tcp_keep_alive == -1)
 		options->tcp_keep_alive = SSH_KEEPALIVES_TRANSPORT;
-	if (options->port == -1)
-		options->port = 0;	/* Filled in ssh_connect. */
-	if (options->address_family == -1)
-		options->address_family = AF_UNSPEC;
-	if (options->connection_attempts == -1)
+	ఒకవేళ (options->పోర్టు == -1)
+		options->పోర్టు = 0;	/* Filled in ssh_connect. */
+	ఒకవేళ (options->చిరునామా_family == -1)
+		options->చిరునామా_family = AF_UNSPEC;
+	ఒకవేళ (options->connection_attempts == -1)
 		options->connection_attempts = 1;
-	if (options->number_of_password_prompts == -1)
-		options->number_of_password_prompts = 3;
+	ఒకవేళ (options->సంఖ్య_యొక్క_password_prompts == -1)
+		options->సంఖ్య_యొక్క_password_prompts = 3;
 	/* options->hostkeyalgorithms, default set in myproposals.h */
-	if (options->add_keys_to_agent == -1) {
-		options->add_keys_to_agent = 0;
-		options->add_keys_to_agent_lifespan = 0;
+	ఒకవేళ (options->కూడు_కీలకాలు_గమ్యం_agent == -1) {
+		options->కూడు_కీలకాలు_గమ్యం_agent = 0;
+		options->కూడు_కీలకాలు_గమ్యం_agent_lifespan = 0;
 	}
-	if (options->num_identity_files == 0) {
-		add_identity_file(options, "~/", _PATH_SSH_CLIENT_ID_RSA, 0);
-		add_identity_file(options, "~/", _PATH_SSH_CLIENT_ID_ECDSA, 0);
-		add_identity_file(options, "~/",
-		    _PATH_SSH_CLIENT_ID_ECDSA_SK, 0);
-		add_identity_file(options, "~/",
-		    _PATH_SSH_CLIENT_ID_ED25519, 0);
-		add_identity_file(options, "~/",
-		    _PATH_SSH_CLIENT_ID_ED25519_SK, 0);
-		add_identity_file(options, "~/",
-		    _PATH_SSH_CLIENT_ID_MLDSA44_ED25519, 0);
+	ఒకవేళ (options->అంకె_తటస్థం_files == 0) {
+		కూడు_తటస్థం_file(options, "~/", మార్గం_SSH_CLIENT_ID_RSA, 0);
+		కూడు_తటస్థం_file(options, "~/", మార్గం_SSH_CLIENT_ID_ECDSA, 0);
+		కూడు_తటస్థం_file(options, "~/",
+		    మార్గం_SSH_CLIENT_ID_ECDSA_SK, 0);
+		కూడు_తటస్థం_file(options, "~/",
+		    మార్గం_SSH_CLIENT_ID_ED25519, 0);
+		కూడు_తటస్థం_file(options, "~/",
+		    మార్గం_SSH_CLIENT_ID_ED25519_SK, 0);
+		కూడు_తటస్థం_file(options, "~/",
+		    మార్గం_SSH_CLIENT_ID_MLDSA44_ED25519, 0);
 	}
-	if (options->escape_char == -1)
+	ఒకవేళ (options->escape_char == -1)
 		options->escape_char = '~';
-	if (options->num_system_hostfiles == 0) {
-		options->system_hostfiles[options->num_system_hostfiles++] =
-		    xstrdup(_PATH_SSH_SYSTEM_HOSTFILE);
-		options->system_hostfiles[options->num_system_hostfiles++] =
-		    xstrdup(_PATH_SSH_SYSTEM_HOSTFILE2);
+	ఒకవేళ (options->అంకె_system_hostfiles == 0) {
+		options->system_hostfiles[options->అంకె_system_hostfiles++] =
+		    xstrdup(మార్గం_SSH_SYSTEM_HOSTFILE);
+		options->system_hostfiles[options->అంకె_system_hostfiles++] =
+		    xstrdup(మార్గం_SSH_SYSTEM_HOSTFILE2);
 	}
-	if (options->update_hostkeys == -1) {
-		if (options->verify_host_key_dns <= 0 &&
-		    (options->num_user_hostfiles == 0 ||
-		    (options->num_user_hostfiles == 1 && strcmp(options->
-		    user_hostfiles[0], _PATH_SSH_USER_HOSTFILE) == 0)))
+	ఒకవేళ (options->update_hostkeys == -1) {
+		ఒకవేళ (options->verify_host_కీలకం_dns <= 0 &&
+		    (options->అంకె_user_hostfiles == 0 ||
+		    (options->అంకె_user_hostfiles == 1 && strcmp(options->
+		    user_hostfiles[0], మార్గం_SSH_USER_HOSTFILE) == 0)))
 			options->update_hostkeys = SSH_UPDATE_HOSTKEYS_YES;
-		else
+		లేకపోతే
 			options->update_hostkeys = SSH_UPDATE_HOSTKEYS_NO;
 	}
-	if (options->num_user_hostfiles == 0) {
-		options->user_hostfiles[options->num_user_hostfiles++] =
-		    xstrdup(_PATH_SSH_USER_HOSTFILE);
-		options->user_hostfiles[options->num_user_hostfiles++] =
-		    xstrdup(_PATH_SSH_USER_HOSTFILE2);
+	ఒకవేళ (options->అంకె_user_hostfiles == 0) {
+		options->user_hostfiles[options->అంకె_user_hostfiles++] =
+		    xstrdup(మార్గం_SSH_USER_HOSTFILE);
+		options->user_hostfiles[options->అంకె_user_hostfiles++] =
+		    xstrdup(మార్గం_SSH_USER_HOSTFILE2);
 	}
-	if (options->log_level == SYSLOG_LEVEL_NOT_SET)
+	ఒకవేళ (options->log_level == SYSLOG_LEVEL_NOT_సమితి)
 		options->log_level = SYSLOG_LEVEL_INFO;
-	if (options->log_facility == SYSLOG_FACILITY_NOT_SET)
+	ఒకవేళ (options->log_facility == SYSLOG_FACILITY_NOT_సమితి)
 		options->log_facility = SYSLOG_FACILITY_USER;
-	if (options->no_host_authentication_for_localhost == -1)
+	ఒకవేళ (options->no_host_authentication_for_localhost == -1)
 		options->no_host_authentication_for_localhost = 0;
-	if (options->identities_only == -1)
+	ఒకవేళ (options->identities_only == -1)
 		options->identities_only = 0;
-	if (options->enable_ssh_keysign == -1)
+	ఒకవేళ (options->enable_ssh_keysign == -1)
 		options->enable_ssh_keysign = 0;
-	if (options->rekey_limit == -1)
-		options->rekey_limit = 0;
-	if (options->rekey_interval == -1)
+	ఒకవేళ (options->rekey_హద్దు == -1)
+		options->rekey_హద్దు = 0;
+	ఒకవేళ (options->rekey_interval == -1)
 		options->rekey_interval = 0;
-	if (options->verify_host_key_dns == -1)
-		options->verify_host_key_dns = 0;
-	if (options->server_alive_interval == -1)
+	ఒకవేళ (options->verify_host_కీలకం_dns == -1)
+		options->verify_host_కీలకం_dns = 0;
+	ఒకవేళ (options->server_alive_interval == -1)
 		options->server_alive_interval = 0;
-	if (options->server_alive_count_max == -1)
-		options->server_alive_count_max = 3;
-	if (options->control_master == -1)
+	ఒకవేళ (options->server_alive_లెక్క_max == -1)
+		options->server_alive_లెక్క_max = 3;
+	ఒకవేళ (options->control_master == -1)
 		options->control_master = 0;
-	if (options->control_persist == -1) {
+	ఒకవేళ (options->control_persist == -1) {
 		options->control_persist = 0;
 		options->control_persist_timeout = 0;
 	}
-	if (options->hash_known_hosts == -1)
-		options->hash_known_hosts = 0;
-	if (options->tun_open == -1)
+	ఒకవేళ (options->hash_తెలిసిన_hosts == -1)
+		options->hash_తెలిసిన_hosts = 0;
+	ఒకవేళ (options->tun_open == -1)
 		options->tun_open = SSH_TUNMODE_NO;
-	if (options->tun_local == -1)
+	ఒకవేళ (options->tun_local == -1)
 		options->tun_local = SSH_TUNID_ANY;
-	if (options->tun_remote == -1)
+	ఒకవేళ (options->tun_remote == -1)
 		options->tun_remote = SSH_TUNID_ANY;
-	if (options->permit_local_command == -1)
+	ఒకవేళ (options->permit_local_command == -1)
 		options->permit_local_command = 0;
-	if (options->visual_host_key == -1)
-		options->visual_host_key = 0;
-	if (options->ip_qos_interactive == -1)
+	ఒకవేళ (options->visual_host_కీలకం == -1)
+		options->visual_host_కీలకం = 0;
+	ఒకవేళ (options->ip_qos_interactive == -1)
 		options->ip_qos_interactive = IPTOS_DSCP_EF;
-	if (options->ip_qos_bulk == -1)
+	ఒకవేళ (options->ip_qos_bulk == -1)
 		options->ip_qos_bulk = IPTOS_DSCP_CS0;
-	if (options->request_tty == -1)
+	ఒకవేళ (options->request_tty == -1)
 		options->request_tty = REQUEST_TTY_AUTO;
-	if (options->session_type == -1)
+	ఒకవేళ (options->session_type == -1)
 		options->session_type = SESSION_TYPE_DEFAULT;
-	if (options->stdin_null == -1)
+	ఒకవేళ (options->stdin_null == -1)
 		options->stdin_null = 0;
-	if (options->fork_after_authentication == -1)
+	ఒకవేళ (options->fork_after_authentication == -1)
 		options->fork_after_authentication = 0;
-	if (options->proxy_use_fdpass == -1)
+	ఒకవేళ (options->proxy_use_fdpass == -1)
 		options->proxy_use_fdpass = 0;
-	if (options->canonicalize_max_dots == -1)
+	ఒకవేళ (options->canonicalize_max_dots == -1)
 		options->canonicalize_max_dots = 1;
-	if (options->canonicalize_fallback_local == -1)
+	ఒకవేళ (options->canonicalize_fallback_local == -1)
 		options->canonicalize_fallback_local = 1;
-	if (options->canonicalize_hostname == -1)
+	ఒకవేళ (options->canonicalize_hostname == -1)
 		options->canonicalize_hostname = SSH_CANONICALISE_NO;
-	if (options->fingerprint_hash == -1)
+	ఒకవేళ (options->fingerprint_hash == -1)
 		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
-#ifdef ENABLE_SK_INTERNAL
-	if (options->sk_provider == NULL)
+#నిర్వచితమైతే ENABLE_SK_అంతర్గత
+	ఒకవేళ (options->sk_provider == ఖాళీ)
 		options->sk_provider = xstrdup("internal");
-#else
-	if (options->sk_provider == NULL)
+#లేకపోతే
+	ఒకవేళ (options->sk_provider == ఖాళీ)
 		options->sk_provider = xstrdup("$SSH_SK_PROVIDER");
-#endif
-	if (options->required_rsa_size == -1)
-		options->required_rsa_size = SSH_RSA_MINIMUM_MODULUS_SIZE;
-	if (options->warn_weak_crypto == -1)
+#అయితే_ముగింపు
+	ఒకవేళ (options->required_rsa_కొలత == -1)
+		options->required_rsa_కొలత = SSH_RSA_MINIMUM_MODULUS_కొలత;
+	ఒకవేళ (options->warn_weak_crypto == -1)
 		options->warn_weak_crypto = 1;
-	if (options->enable_escape_commandline == -1)
+	ఒకవేళ (options->enable_escape_commandline == -1)
 		options->enable_escape_commandline = 0;
-	if (options->obscure_keystroke_timing_interval == -1) {
+	ఒకవేళ (options->obscure_keystroke_timing_interval == -1) {
 		options->obscure_keystroke_timing_interval =
 		    SSH_KEYSTROKE_DEFAULT_INTERVAL_MS;
 	}
@@ -3044,73 +3044,73 @@ fill_default_options(Options * options)
 	all_cipher = cipher_alg_list(',', 0);
 	all_mac = mac_alg_list(',');
 	all_kex = kex_alg_list(',');
-	all_key = sshkey_alg_list(0, 0, 1, ',');
+	all_కీలకం = sshkey_alg_list(0, 0, 1, ',');
 	all_sig = sshkey_alg_list(0, 1, 1, ',');
 	/* remove unsupported algos from default lists */
-	def_cipher = match_filter_allowlist(KEX_CLIENT_ENCRYPT, all_cipher);
-	def_mac = match_filter_allowlist(KEX_CLIENT_MAC, all_mac);
-	def_kex = match_filter_allowlist(KEX_CLIENT_KEX, all_kex);
-	def_key = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_key);
-	def_sig = match_filter_allowlist(SSH_ALLOWED_CA_SIGALGS, all_sig);
-#define ASSEMBLE(what, defaults, all) \
-	do { \
-		if ((r = kex_assemble_names(&options->what, \
+	def_cipher = సరిపోలిక_filter_allowlist(KEX_CLIENT_ENCRYPT, all_cipher);
+	def_mac = సరిపోలిక_filter_allowlist(KEX_CLIENT_MAC, all_mac);
+	def_kex = సరిపోలిక_filter_allowlist(KEX_CLIENT_KEX, all_kex);
+	def_కీలకం = సరిపోలిక_filter_allowlist(KEX_DEFAULT_PK_ALG, all_కీలకం);
+	def_sig = సరిపోలిక_filter_allowlist(SSH_ALLOWED_CA_SIGALGS, all_sig);
+#నిర్వచించు ASSEMBLE(what, defaults, all) \
+	చేయి { \
+		ఒకవేళ ((r = kex_assemble_పేర్లు(&options->what, \
 		    defaults, all)) != 0) { \
 			error_fr(r, "%s", #what); \
-			goto fail; \
+			వెళ్ళు fail; \
 		} \
-	} while (0)
-	options->kex_algorithms_set = options->kex_algorithms != NULL;
+	} అయితే (0)
+	options->kex_algorithms_సమితి = options->kex_algorithms != ఖాళీ;
 	ASSEMBLE(ciphers, def_cipher, all_cipher);
 	ASSEMBLE(macs, def_mac, all_mac);
 	ASSEMBLE(kex_algorithms, def_kex, all_kex);
-	ASSEMBLE(hostbased_accepted_algos, def_key, all_key);
-	ASSEMBLE(pubkey_accepted_algos, def_key, all_key);
+	ASSEMBLE(hostbased_accepted_algos, def_కీలకం, all_కీలకం);
+	ASSEMBLE(pubkey_accepted_algos, def_కీలకం, all_కీలకం);
 	ASSEMBLE(ca_sign_algorithms, def_sig, all_sig);
-#undef ASSEMBLE
+#నిర్వచనం_రద్దు ASSEMBLE
 
-#define CLEAR_ON_NONE(v) \
-	do { \
-		if (option_clear_or_none(v)) { \
-			free(v); \
-			v = NULL; \
+#నిర్వచించు CLEAR_ON_NONE(v) \
+	చేయి { \
+		ఒకవేళ (option_clear_or_none(v)) { \
+			విడుదల(v); \
+			v = ఖాళీ; \
 		} \
-	} while(0)
-#define CLEAR_ON_NONE_ARRAY(v, nv, none) \
-	do { \
-		if (options->nv == 1 && \
+	} అయితే(0)
+#నిర్వచించు CLEAR_ON_NONE_ARRAY(v, nv, none) \
+	చేయి { \
+		ఒకవేళ (options->nv == 1 && \
 		    strcasecmp(options->v[0], none) == 0) { \
-			free(options->v[0]); \
-			free(options->v); \
-			options->v = NULL; \
+			విడుదల(options->v[0]); \
+			విడుదల(options->v); \
+			options->v = ఖాళీ; \
 			options->nv = 0; \
 		} \
-	} while (0)
+	} అయితే (0)
 	CLEAR_ON_NONE(options->local_command);
 	CLEAR_ON_NONE(options->remote_command);
 	CLEAR_ON_NONE(options->proxy_command);
-	CLEAR_ON_NONE(options->control_path);
+	CLEAR_ON_NONE(options->control_మార్గం);
 	CLEAR_ON_NONE(options->pkcs11_provider);
 	CLEAR_ON_NONE(options->sk_provider);
-	CLEAR_ON_NONE(options->known_hosts_command);
-	CLEAR_ON_NONE_ARRAY(channel_timeouts, num_channel_timeouts, "none");
-	CLEAR_ON_NONE_ARRAY(revoked_host_keys, num_revoked_host_keys, "none");
-#undef CLEAR_ON_NONE
-#undef CLEAR_ON_NONE_ARRAY
-	if (options->jump_host != NULL &&
+	CLEAR_ON_NONE(options->తెలిసిన_hosts_command);
+	CLEAR_ON_NONE_ARRAY(channel_timeouts, అంకె_channel_timeouts, "none");
+	CLEAR_ON_NONE_ARRAY(revoked_host_కీలకాలు, అంకె_revoked_host_కీలకాలు, "none");
+#నిర్వచనం_రద్దు CLEAR_ON_NONE
+#నిర్వచనం_రద్దు CLEAR_ON_NONE_ARRAY
+	ఒకవేళ (options->jump_host != ఖాళీ &&
 	    strcmp(options->jump_host, "none") == 0 &&
-	    options->jump_port == 0 && options->jump_user == NULL) {
-		free(options->jump_host);
-		options->jump_host = NULL;
+	    options->jump_పోర్టు == 0 && options->jump_user == ఖాళీ) {
+		విడుదల(options->jump_host);
+		options->jump_host = ఖాళీ;
 	}
-	if (options->num_permitted_cnames == 1 &&
+	ఒకవేళ (options->అంకె_permitted_cnames == 1 &&
 	    !config_has_permitted_cnames(options)) {
 		/* clean up CanonicalizePermittedCNAMEs=none */
-		free(options->permitted_cnames[0].source_list);
-		free(options->permitted_cnames[0].target_list);
+		విడుదల(options->permitted_cnames[0].ఆధారం_list);
+		విడుదల(options->permitted_cnames[0].లక్ష్యం_list);
 		memset(options->permitted_cnames, '\0',
-		    sizeof(*options->permitted_cnames));
-		options->num_permitted_cnames = 0;
+		    పరిమాణం(*options->permitted_cnames));
+		options->అంకె_permitted_cnames = 0;
 	}
 	/* options->identity_agent distinguishes NULL from 'none' */
 	/* options->user will be set in the main program if appropriate */
@@ -3121,105 +3121,105 @@ fill_default_options(Options * options)
 	/* success */
 	ret = 0;
  fail:
-	free(all_cipher);
-	free(all_mac);
-	free(all_kex);
-	free(all_key);
-	free(all_sig);
-	free(def_cipher);
-	free(def_mac);
-	free(def_kex);
-	free(def_key);
-	free(def_sig);
-	return ret;
+	విడుదల(all_cipher);
+	విడుదల(all_mac);
+	విడుదల(all_kex);
+	విడుదల(all_కీలకం);
+	విడుదల(all_sig);
+	విడుదల(def_cipher);
+	విడుదల(def_mac);
+	విడుదల(def_kex);
+	విడుదల(def_కీలకం);
+	విడుదల(def_sig);
+	తిరిగి ret;
 }
 
-void
+శూన్య
 free_options(Options *o)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	if (o == NULL)
-		return;
+	ఒకవేళ (o == ఖాళీ)
+		తిరిగి;
 
-#define FREE_ARRAY(type, n, a) \
-	do { \
+#నిర్వచించు FREE_ARRAY(type, n, a) \
+	చేయి { \
 		type _i; \
-		for (_i = 0; _i < (n); _i++) \
-			free((a)[_i]); \
-	} while (0)
+		కొరకు (_i = 0; _i < (n); _i++) \
+			విడుదల((a)[_i]); \
+	} అయితే (0)
 
-	free(o->forward_agent_sock_path);
-	free(o->xauth_location);
-	FREE_ARRAY(u_int, o->num_log_verbose, o->log_verbose);
-	free(o->log_verbose);
-	free(o->ciphers);
-	free(o->macs);
-	free(o->hostkeyalgorithms);
-	free(o->kex_algorithms);
-	free(o->ca_sign_algorithms);
-	free(o->hostname);
-	free(o->host_key_alias);
-	free(o->proxy_command);
-	free(o->user);
-	FREE_ARRAY(u_int, o->num_system_hostfiles, o->system_hostfiles);
-	FREE_ARRAY(u_int, o->num_user_hostfiles, o->user_hostfiles);
-	free(o->preferred_authentications);
-	free(o->bind_address);
-	free(o->bind_interface);
-	free(o->pkcs11_provider);
-	free(o->sk_provider);
-	for (i = 0; i < o->num_identity_files; i++) {
-		free(o->identity_files[i]);
-		sshkey_free(o->identity_keys[i]);
+	విడుదల(o->forward_agent_sock_మార్గం);
+	విడుదల(o->xauth_location);
+	FREE_ARRAY(u_int, o->అంకె_log_verbose, o->log_verbose);
+	విడుదల(o->log_verbose);
+	విడుదల(o->ciphers);
+	విడుదల(o->macs);
+	విడుదల(o->hostkeyalgorithms);
+	విడుదల(o->kex_algorithms);
+	విడుదల(o->ca_sign_algorithms);
+	విడుదల(o->hostname);
+	విడుదల(o->host_కీలకం_alias);
+	విడుదల(o->proxy_command);
+	విడుదల(o->user);
+	FREE_ARRAY(u_int, o->అంకె_system_hostfiles, o->system_hostfiles);
+	FREE_ARRAY(u_int, o->అంకె_user_hostfiles, o->user_hostfiles);
+	విడుదల(o->preferred_authentications);
+	విడుదల(o->bind_చిరునామా);
+	విడుదల(o->bind_interface);
+	విడుదల(o->pkcs11_provider);
+	విడుదల(o->sk_provider);
+	కొరకు (i = 0; i < o->అంకె_తటస్థం_files; i++) {
+		విడుదల(o->తటస్థం_files[i]);
+		sshkey_free(o->తటస్థం_కీలకాలు[i]);
 	}
-	for (i = 0; i < o->num_certificate_files; i++) {
-		free(o->certificate_files[i]);
+	కొరకు (i = 0; i < o->అంకె_certificate_files; i++) {
+		విడుదల(o->certificate_files[i]);
 		sshkey_free(o->certificates[i]);
 	}
-	free(o->identity_agent);
-	for (i = 0; i < o->num_local_forwards; i++) {
-		free(o->local_forwards[i].listen_host);
-		free(o->local_forwards[i].listen_path);
-		free(o->local_forwards[i].connect_host);
-		free(o->local_forwards[i].connect_path);
+	విడుదల(o->తటస్థం_agent);
+	కొరకు (i = 0; i < o->అంకె_local_forwards; i++) {
+		విడుదల(o->local_forwards[i].listen_host);
+		విడుదల(o->local_forwards[i].listen_మార్గం);
+		విడుదల(o->local_forwards[i].connect_host);
+		విడుదల(o->local_forwards[i].connect_మార్గం);
 	}
-	free(o->local_forwards);
-	for (i = 0; i < o->num_remote_forwards; i++) {
-		free(o->remote_forwards[i].listen_host);
-		free(o->remote_forwards[i].listen_path);
-		free(o->remote_forwards[i].connect_host);
-		free(o->remote_forwards[i].connect_path);
+	విడుదల(o->local_forwards);
+	కొరకు (i = 0; i < o->అంకె_remote_forwards; i++) {
+		విడుదల(o->remote_forwards[i].listen_host);
+		విడుదల(o->remote_forwards[i].listen_మార్గం);
+		విడుదల(o->remote_forwards[i].connect_host);
+		విడుదల(o->remote_forwards[i].connect_మార్గం);
 	}
-	free(o->remote_forwards);
-	free(o->stdio_forward_host);
-	FREE_ARRAY(u_int, o->num_send_env, o->send_env);
-	free(o->send_env);
-	FREE_ARRAY(u_int, o->num_setenv, o->setenv);
-	free(o->setenv);
-	free(o->control_path);
-	free(o->local_command);
-	free(o->remote_command);
-	FREE_ARRAY(int, o->num_canonical_domains, o->canonical_domains);
-	for (i = 0; i < o->num_permitted_cnames; i++) {
-		free(o->permitted_cnames[i].source_list);
-		free(o->permitted_cnames[i].target_list);
+	విడుదల(o->remote_forwards);
+	విడుదల(o->stdio_forward_host);
+	FREE_ARRAY(u_int, o->అంకె_send_env, o->send_env);
+	విడుదల(o->send_env);
+	FREE_ARRAY(u_int, o->అంకె_setenv, o->setenv);
+	విడుదల(o->setenv);
+	విడుదల(o->control_మార్గం);
+	విడుదల(o->local_command);
+	విడుదల(o->remote_command);
+	FREE_ARRAY(పూర్ణాంకం, o->అంకె_canonical_domains, o->canonical_domains);
+	కొరకు (i = 0; i < o->అంకె_permitted_cnames; i++) {
+		విడుదల(o->permitted_cnames[i].ఆధారం_list);
+		విడుదల(o->permitted_cnames[i].లక్ష్యం_list);
 	}
-	FREE_ARRAY(u_int, o->num_revoked_host_keys, o->revoked_host_keys);
-	free(o->revoked_host_keys);
-	free(o->hostbased_accepted_algos);
-	free(o->pubkey_accepted_algos);
-	free(o->jump_user);
-	free(o->jump_host);
-	free(o->jump_extra);
-	free(o->ignored_unknown);
-	explicit_bzero(o, sizeof(*o));
-#undef FREE_ARRAY
+	FREE_ARRAY(u_int, o->అంకె_revoked_host_కీలకాలు, o->revoked_host_కీలకాలు);
+	విడుదల(o->revoked_host_కీలకాలు);
+	విడుదల(o->hostbased_accepted_algos);
+	విడుదల(o->pubkey_accepted_algos);
+	విడుదల(o->jump_user);
+	విడుదల(o->jump_host);
+	విడుదల(o->jump_extra);
+	విడుదల(o->ignored_unknown);
+	explicit_bzero(o, పరిమాణం(*o));
+#నిర్వచనం_రద్దు FREE_ARRAY
 }
 
-struct fwdarg {
-	char *arg;
-	int ispath;
+నిర్మాణం fwdarg {
+	అక్షరం *arg;
+	పూర్ణాంకం ispath;
 };
 
 /*
@@ -3229,60 +3229,60 @@ struct fwdarg {
  * or sets it to NULL at end of string.
  * returns 0 on success, else non-zero.
  */
-static int
-parse_fwd_field(char **p, struct fwdarg *fwd)
+స్థిర పూర్ణాంకం
+parse_fwd_క్షేత్రం(అక్షరం **p, నిర్మాణం fwdarg *fwd)
 {
-	char *ep, *cp = *p;
-	int ispath = 0;
+	అక్షరం *ep, *cp = *p;
+	పూర్ణాంకం ispath = 0;
 
-	if (*cp == '\0') {
-		*p = NULL;
-		return -1;	/* end of string */
+	ఒకవేళ (*cp == '\0') {
+		*p = ఖాళీ;
+		తిరిగి -1;	/* end of string */
 	}
 
 	/*
 	 * A field escaped with square brackets is used literally.
 	 * XXX - allow ']' to be escaped via backslash?
 	 */
-	if (*cp == '[') {
+	ఒకవేళ (*cp == '[') {
 		/* find matching ']' */
-		for (ep = cp + 1; *ep != ']' && *ep != '\0'; ep++) {
-			if (*ep == '/')
+		కొరకు (ep = cp + 1; *ep != ']' && *ep != '\0'; ep++) {
+			ఒకవేళ (*ep == '/')
 				ispath = 1;
 		}
 		/* no matching ']' or not at end of field. */
-		if (ep[0] != ']' || (ep[1] != ':' && ep[1] != '\0'))
-			return -1;
+		ఒకవేళ (ep[0] != ']' || (ep[1] != ':' && ep[1] != '\0'))
+			తిరిగి -1;
 		/* NUL terminate the field and advance p past the colon */
 		*ep++ = '\0';
-		if (*ep != '\0')
+		ఒకవేళ (*ep != '\0')
 			*ep++ = '\0';
 		fwd->arg = cp + 1;
 		fwd->ispath = ispath;
 		*p = ep;
-		return 0;
+		తిరిగి 0;
 	}
 
-	for (cp = *p; *cp != '\0'; cp++) {
-		switch (*cp) {
-		case '\\':
-			memmove(cp, cp + 1, strlen(cp + 1) + 1);
-			if (*cp == '\0')
-				return -1;
-			break;
-		case '/':
+	కొరకు (cp = *p; *cp != '\0'; cp++) {
+		ఎంపిక (*cp) {
+		స్థితి '\\':
+			memmove(cp, cp + 1, అక్షరశ్రేణి_పొడవు(cp + 1) + 1);
+			ఒకవేళ (*cp == '\0')
+				తిరిగి -1;
+			ఆపు;
+		స్థితి '/':
 			ispath = 1;
-			break;
-		case ':':
+			ఆపు;
+		స్థితి ':':
 			*cp++ = '\0';
-			goto done;
+			వెళ్ళు పూర్తి;
 		}
 	}
-done:
+పూర్తి:
 	fwd->arg = *p;
 	fwd->ispath = ispath;
 	*p = cp;
-	return 0;
+	తిరిగి 0;
 }
 
 /*
@@ -3295,15 +3295,15 @@ done:
  *	[listenhost:]listenport
  * returns number of arguments parsed or zero on error
  */
-int
-parse_forward(struct Forward *fwd, const char *fwdspec, int dynamicfwd, int remotefwd)
+పూర్ణాంకం
+parse_forward(నిర్మాణం Forward *fwd, స్థిరరాశి అక్షరం *fwdspec, పూర్ణాంకం dynamicfwd, పూర్ణాంకం remotefwd)
 {
-	struct fwdarg fwdargs[4];
-	char *p, *cp;
-	int i, err;
+	నిర్మాణం fwdarg fwdargs[4];
+	అక్షరం *p, *cp;
+	పూర్ణాంకం i, err;
 
-	memset(fwd, 0, sizeof(*fwd));
-	memset(fwdargs, 0, sizeof(fwdargs));
+	memset(fwd, 0, పరిమాణం(*fwd));
+	memset(fwdargs, 0, పరిమాణం(fwdargs));
 
 	/*
 	 * We expand environment variables before checking if we think they're
@@ -3311,435 +3311,435 @@ parse_forward(struct Forward *fwd, const char *fwdspec, int dynamicfwd, int remo
 	 * treated as a path.
 	 */
 	cp = p = dollar_expand(&err, fwdspec);
-	if (p == NULL || err)
-		return 0;
+	ఒకవేళ (p == ఖాళీ || err)
+		తిరిగి 0;
 
 	/* skip leading spaces */
-	while (isspace((u_char)*cp))
+	అయితే (ఖాళీనా((u_char)*cp))
 		cp++;
 
-	for (i = 0; i < 4; ++i) {
-		if (parse_fwd_field(&cp, &fwdargs[i]) != 0)
-			break;
+	కొరకు (i = 0; i < 4; ++i) {
+		ఒకవేళ (parse_fwd_క్షేత్రం(&cp, &fwdargs[i]) != 0)
+			ఆపు;
 	}
 
 	/* Check for trailing garbage */
-	if (cp != NULL && *cp != '\0') {
+	ఒకవేళ (cp != ఖాళీ && *cp != '\0') {
 		i = 0;	/* failure */
 	}
 
-	switch (i) {
-	case 1:
-		if (fwdargs[0].ispath) {
-			fwd->listen_path = xstrdup(fwdargs[0].arg);
-			fwd->listen_port = PORT_STREAMLOCAL;
-		} else {
-			fwd->listen_host = NULL;
-			fwd->listen_port = a2port(fwdargs[0].arg);
+	ఎంపిక (i) {
+	స్థితి 1:
+		ఒకవేళ (fwdargs[0].ispath) {
+			fwd->listen_మార్గం = xstrdup(fwdargs[0].arg);
+			fwd->listen_పోర్టు = పోర్టు_STREAMLOCAL;
+		} లేకపోతే {
+			fwd->listen_host = ఖాళీ;
+			fwd->listen_పోర్టు = a2port(fwdargs[0].arg);
 		}
 		fwd->connect_host = xstrdup("socks");
-		break;
+		ఆపు;
 
-	case 2:
-		if (fwdargs[0].ispath && fwdargs[1].ispath) {
-			fwd->listen_path = xstrdup(fwdargs[0].arg);
-			fwd->listen_port = PORT_STREAMLOCAL;
-			fwd->connect_path = xstrdup(fwdargs[1].arg);
-			fwd->connect_port = PORT_STREAMLOCAL;
-		} else if (fwdargs[1].ispath) {
-			fwd->listen_host = NULL;
-			fwd->listen_port = a2port(fwdargs[0].arg);
-			fwd->connect_path = xstrdup(fwdargs[1].arg);
-			fwd->connect_port = PORT_STREAMLOCAL;
-		} else {
+	స్థితి 2:
+		ఒకవేళ (fwdargs[0].ispath && fwdargs[1].ispath) {
+			fwd->listen_మార్గం = xstrdup(fwdargs[0].arg);
+			fwd->listen_పోర్టు = పోర్టు_STREAMLOCAL;
+			fwd->connect_మార్గం = xstrdup(fwdargs[1].arg);
+			fwd->connect_పోర్టు = పోర్టు_STREAMLOCAL;
+		} లేకపోతే ఒకవేళ (fwdargs[1].ispath) {
+			fwd->listen_host = ఖాళీ;
+			fwd->listen_పోర్టు = a2port(fwdargs[0].arg);
+			fwd->connect_మార్గం = xstrdup(fwdargs[1].arg);
+			fwd->connect_పోర్టు = పోర్టు_STREAMLOCAL;
+		} లేకపోతే {
 			fwd->listen_host = xstrdup(fwdargs[0].arg);
-			fwd->listen_port = a2port(fwdargs[1].arg);
+			fwd->listen_పోర్టు = a2port(fwdargs[1].arg);
 			fwd->connect_host = xstrdup("socks");
 		}
-		break;
+		ఆపు;
 
-	case 3:
-		if (fwdargs[0].ispath) {
-			fwd->listen_path = xstrdup(fwdargs[0].arg);
-			fwd->listen_port = PORT_STREAMLOCAL;
+	స్థితి 3:
+		ఒకవేళ (fwdargs[0].ispath) {
+			fwd->listen_మార్గం = xstrdup(fwdargs[0].arg);
+			fwd->listen_పోర్టు = పోర్టు_STREAMLOCAL;
 			fwd->connect_host = xstrdup(fwdargs[1].arg);
-			fwd->connect_port = a2port(fwdargs[2].arg);
-		} else if (fwdargs[2].ispath) {
+			fwd->connect_పోర్టు = a2port(fwdargs[2].arg);
+		} లేకపోతే ఒకవేళ (fwdargs[2].ispath) {
 			fwd->listen_host = xstrdup(fwdargs[0].arg);
-			fwd->listen_port = a2port(fwdargs[1].arg);
-			fwd->connect_path = xstrdup(fwdargs[2].arg);
-			fwd->connect_port = PORT_STREAMLOCAL;
-		} else {
-			fwd->listen_host = NULL;
-			fwd->listen_port = a2port(fwdargs[0].arg);
+			fwd->listen_పోర్టు = a2port(fwdargs[1].arg);
+			fwd->connect_మార్గం = xstrdup(fwdargs[2].arg);
+			fwd->connect_పోర్టు = పోర్టు_STREAMLOCAL;
+		} లేకపోతే {
+			fwd->listen_host = ఖాళీ;
+			fwd->listen_పోర్టు = a2port(fwdargs[0].arg);
 			fwd->connect_host = xstrdup(fwdargs[1].arg);
-			fwd->connect_port = a2port(fwdargs[2].arg);
+			fwd->connect_పోర్టు = a2port(fwdargs[2].arg);
 		}
-		break;
+		ఆపు;
 
-	case 4:
+	స్థితి 4:
 		fwd->listen_host = xstrdup(fwdargs[0].arg);
-		fwd->listen_port = a2port(fwdargs[1].arg);
+		fwd->listen_పోర్టు = a2port(fwdargs[1].arg);
 		fwd->connect_host = xstrdup(fwdargs[2].arg);
-		fwd->connect_port = a2port(fwdargs[3].arg);
-		break;
-	default:
+		fwd->connect_పోర్టు = a2port(fwdargs[3].arg);
+		ఆపు;
+	అప్రమేయ:
 		i = 0; /* failure */
 	}
 
-	free(p);
+	విడుదల(p);
 
-	if (dynamicfwd) {
-		if (!(i == 1 || i == 2))
-			goto fail_free;
-	} else {
-		if (!(i == 3 || i == 4)) {
-			if (fwd->connect_path == NULL &&
-			    fwd->listen_path == NULL)
-				goto fail_free;
+	ఒకవేళ (dynamicfwd) {
+		ఒకవేళ (!(i == 1 || i == 2))
+			వెళ్ళు fail_free;
+	} లేకపోతే {
+		ఒకవేళ (!(i == 3 || i == 4)) {
+			ఒకవేళ (fwd->connect_మార్గం == ఖాళీ &&
+			    fwd->listen_మార్గం == ఖాళీ)
+				వెళ్ళు fail_free;
 		}
-		if (fwd->connect_port <= 0 && fwd->connect_path == NULL)
-			goto fail_free;
+		ఒకవేళ (fwd->connect_పోర్టు <= 0 && fwd->connect_మార్గం == ఖాళీ)
+			వెళ్ళు fail_free;
 	}
 
-	if ((fwd->listen_port < 0 && fwd->listen_path == NULL) ||
-	    (!remotefwd && fwd->listen_port == 0))
-		goto fail_free;
-	if (fwd->connect_host != NULL &&
-	    strlen(fwd->connect_host) >= NI_MAXHOST)
-		goto fail_free;
+	ఒకవేళ ((fwd->listen_పోర్టు < 0 && fwd->listen_మార్గం == ఖాళీ) ||
+	    (!remotefwd && fwd->listen_పోర్టు == 0))
+		వెళ్ళు fail_free;
+	ఒకవేళ (fwd->connect_host != ఖాళీ &&
+	    అక్షరశ్రేణి_పొడవు(fwd->connect_host) >= NI_MAXHOST)
+		వెళ్ళు fail_free;
 	/*
 	 * XXX - if connecting to a remote socket, max sun len may not
 	 * match this host
 	 */
-	if (fwd->connect_path != NULL &&
-	    strlen(fwd->connect_path) >= PATH_MAX_SUN)
-		goto fail_free;
-	if (fwd->listen_host != NULL &&
-	    strlen(fwd->listen_host) >= NI_MAXHOST)
-		goto fail_free;
-	if (fwd->listen_path != NULL &&
-	    strlen(fwd->listen_path) >= PATH_MAX_SUN)
-		goto fail_free;
+	ఒకవేళ (fwd->connect_మార్గం != ఖాళీ &&
+	    అక్షరశ్రేణి_పొడవు(fwd->connect_మార్గం) >= మార్గం_MAX_SUN)
+		వెళ్ళు fail_free;
+	ఒకవేళ (fwd->listen_host != ఖాళీ &&
+	    అక్షరశ్రేణి_పొడవు(fwd->listen_host) >= NI_MAXHOST)
+		వెళ్ళు fail_free;
+	ఒకవేళ (fwd->listen_మార్గం != ఖాళీ &&
+	    అక్షరశ్రేణి_పొడవు(fwd->listen_మార్గం) >= మార్గం_MAX_SUN)
+		వెళ్ళు fail_free;
 
-	return (i);
+	తిరిగి (i);
 
  fail_free:
-	free(fwd->connect_host);
-	fwd->connect_host = NULL;
-	free(fwd->connect_path);
-	fwd->connect_path = NULL;
-	free(fwd->listen_host);
-	fwd->listen_host = NULL;
-	free(fwd->listen_path);
-	fwd->listen_path = NULL;
-	return (0);
+	విడుదల(fwd->connect_host);
+	fwd->connect_host = ఖాళీ;
+	విడుదల(fwd->connect_మార్గం);
+	fwd->connect_మార్గం = ఖాళీ;
+	విడుదల(fwd->listen_host);
+	fwd->listen_host = ఖాళీ;
+	విడుదల(fwd->listen_మార్గం);
+	fwd->listen_మార్గం = ఖాళీ;
+	తిరిగి (0);
 }
 
-int
-ssh_valid_hostname(const char *s)
+పూర్ణాంకం
+ssh_valid_hostname(స్థిరరాశి అక్షరం *s)
 {
-	size_t i;
+	కొలత_t i;
 
-	if (*s == '-')
-		return 0;
-	for (i = 0; s[i] != 0; i++) {
-		if (strchr("'`\"$\\;&<>|(){},", s[i]) != NULL ||
-		    isspace((u_char)s[i]) || iscntrl((u_char)s[i]))
-			return 0;
+	ఒకవేళ (*s == '-')
+		తిరిగి 0;
+	కొరకు (i = 0; s[i] != 0; i++) {
+		ఒకవేళ (strchr("'`\"$\\;&<>|(){},", s[i]) != ఖాళీ ||
+		    ఖాళీనా((u_char)s[i]) || iscntrl((u_char)s[i]))
+			తిరిగి 0;
 	}
-	return 1;
+	తిరిగి 1;
 }
 
-int
-ssh_valid_ruser(const char *s)
+పూర్ణాంకం
+ssh_valid_ruser(స్థిరరాశి అక్షరం *s)
 {
-	size_t i;
+	కొలత_t i;
 
-	if (*s == '-')
-		return 0;
-	for (i = 0; s[i] != 0; i++) {
-		if (iscntrl((u_char)s[i]))
-			return 0;
-		if (strchr("'`\";&<>|(){}$\\", s[i]) != NULL)
-			return 0;
+	ఒకవేళ (*s == '-')
+		తిరిగి 0;
+	కొరకు (i = 0; s[i] != 0; i++) {
+		ఒకవేళ (iscntrl((u_char)s[i]))
+			తిరిగి 0;
+		ఒకవేళ (strchr("'`\";&<>|(){}$\\", s[i]) != ఖాళీ)
+			తిరిగి 0;
 		/* Disallow '-' after whitespace */
-		if (isspace((u_char)s[i]) && s[i + 1] == '-')
-			return 0;
+		ఒకవేళ (ఖాళీనా((u_char)s[i]) && s[i + 1] == '-')
+			తిరిగి 0;
 	}
-	return 1;
+	తిరిగి 1;
 }
 
-int
-parse_jump(const char *s, Options *o, int strict, int active)
+పూర్ణాంకం
+parse_jump(స్థిరరాశి అక్షరం *s, Options *o, పూర్ణాంకం strict, పూర్ణాంకం చురుకైన)
 {
-	char *orig = NULL, *sdup = NULL, *cp;
-	char *tmp_user = NULL, *tmp_host = NULL, *host = NULL, *user = NULL;
-	int r, ret = -1, tmp_port = -1, port = -1, first = 1;
+	అక్షరం *orig = ఖాళీ, *sdup = ఖాళీ, *cp;
+	అక్షరం *tmp_user = ఖాళీ, *tmp_host = ఖాళీ, *host = ఖాళీ, *user = ఖాళీ;
+	పూర్ణాంకం r, ret = -1, tmp_పోర్టు = -1, పోర్టు = -1, మొదటి = 1;
 
-	if (strcasecmp(s, "none") == 0) {
-		if (active && o->jump_host == NULL) {
+	ఒకవేళ (strcasecmp(s, "none") == 0) {
+		ఒకవేళ (చురుకైన && o->jump_host == ఖాళీ) {
 			o->jump_host = xstrdup("none");
-			o->jump_port = 0;
+			o->jump_పోర్టు = 0;
 		}
-		return 0;
+		తిరిగి 0;
 	}
 
 	orig = xstrdup(s);
-	if ((cp = strchr(orig, '#')) != NULL)
+	ఒకవేళ ((cp = strchr(orig, '#')) != ఖాళీ)
 		*cp = '\0';
 	rtrim(orig);
 
-	active &= o->proxy_command == NULL && o->jump_host == NULL;
+	చురుకైన &= o->proxy_command == ఖాళీ && o->jump_host == ఖాళీ;
 	sdup = xstrdup(orig);
-	do {
+	చేయి {
 		/* Work backwards through string */
-		if ((cp = strrchr(sdup, ',')) == NULL)
-			cp = sdup; /* last */
-		else
+		ఒకవేళ ((cp = strrchr(sdup, ',')) == ఖాళీ)
+			cp = sdup; /*చివరి*/
+		లేకపోతే
 			*cp++ = '\0';
 
-		r = parse_ssh_uri(cp, &tmp_user, &tmp_host, &tmp_port);
-		if (r == -1 || (r == 1 && parse_user_host_port(cp,
-		    &tmp_user, &tmp_host, &tmp_port) != 0))
-			goto out; /* error already logged */
-		if (strict) {
-			if (!ssh_valid_hostname(tmp_host)) {
+		r = parse_ssh_uri(cp, &tmp_user, &tmp_host, &tmp_పోర్టు);
+		ఒకవేళ (r == -1 || (r == 1 && parse_user_host_పోర్టు(cp,
+		    &tmp_user, &tmp_host, &tmp_పోర్టు) != 0))
+			వెళ్ళు బహిర్గతం; /* error already logged */
+		ఒకవేళ (strict) {
+			ఒకవేళ (!ssh_valid_hostname(tmp_host)) {
 				error_f("invalid hostname \"%s\"", tmp_host);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
-			if (tmp_user != NULL && !ssh_valid_ruser(tmp_user)) {
+			ఒకవేళ (tmp_user != ఖాళీ && !ssh_valid_ruser(tmp_user)) {
 				error_f("invalid username \"%s\"", tmp_user);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 		}
-		if (first) {
+		ఒకవేళ (మొదటి) {
 			user = tmp_user;
 			host = tmp_host;
-			port = tmp_port;
-			tmp_user = tmp_host = NULL; /* transferred */
+			పోర్టు = tmp_పోర్టు;
+			tmp_user = tmp_host = ఖాళీ; /* transferred */
 		}
-		first = 0; /* only check syntax for subsequent hosts */
-		free(tmp_user);
-		free(tmp_host);
-		tmp_user = tmp_host = NULL;
-		tmp_port = -1;
-	} while (cp != sdup);
+		మొదటి = 0; /* only check syntax for subsequent hosts */
+		విడుదల(tmp_user);
+		విడుదల(tmp_host);
+		tmp_user = tmp_host = ఖాళీ;
+		tmp_పోర్టు = -1;
+	} అయితే (cp != sdup);
 
 	/* success */
-	if (active) {
+	ఒకవేళ (చురుకైన) {
 		o->jump_user = user;
 		o->jump_host = host;
-		o->jump_port = port;
+		o->jump_పోర్టు = పోర్టు;
 		o->proxy_command = xstrdup("none");
-		user = host = NULL; /* transferred */
-		if (orig != NULL && (cp = strrchr(orig, ',')) != NULL) {
+		user = host = ఖాళీ; /* transferred */
+		ఒకవేళ (orig != ఖాళీ && (cp = strrchr(orig, ',')) != ఖాళీ) {
 			o->jump_extra = xstrdup(orig);
 			o->jump_extra[cp - orig] = '\0';
 		}
 	}
 	ret = 0;
- out:
-	free(orig);
-	free(sdup);
-	free(tmp_user);
-	free(tmp_host);
-	free(user);
-	free(host);
-	return ret;
+ బహిర్గతం:
+	విడుదల(orig);
+	విడుదల(sdup);
+	విడుదల(tmp_user);
+	విడుదల(tmp_host);
+	విడుదల(user);
+	విడుదల(host);
+	తిరిగి ret;
 }
 
-int
-parse_ssh_uri(const char *uri, char **userp, char **hostp, int *portp)
+పూర్ణాంకం
+parse_ssh_uri(స్థిరరాశి అక్షరం *uri, అక్షరం **userp, అక్షరం **hostp, పూర్ణాంకం *portp)
 {
-	char *user = NULL, *host = NULL, *path = NULL;
-	int r, port;
+	అక్షరం *user = ఖాళీ, *host = ఖాళీ, *మార్గం = ఖాళీ;
+	పూర్ణాంకం r, పోర్టు;
 
-	r = parse_uri("ssh", uri, &user, &host, &port, &path);
-	if (r == 0 && path != NULL)
+	r = parse_uri("ssh", uri, &user, &host, &పోర్టు, &మార్గం);
+	ఒకవేళ (r == 0 && మార్గం != ఖాళీ)
 		r = -1;		/* path not allowed */
-	if (r == 0) {
-		if (userp != NULL) {
+	ఒకవేళ (r == 0) {
+		ఒకవేళ (userp != ఖాళీ) {
 			*userp = user;
-			user = NULL;
+			user = ఖాళీ;
 		}
-		if (hostp != NULL) {
+		ఒకవేళ (hostp != ఖాళీ) {
 			*hostp = host;
-			host = NULL;
+			host = ఖాళీ;
 		}
-		if (portp != NULL)
-			*portp = port;
+		ఒకవేళ (portp != ఖాళీ)
+			*portp = పోర్టు;
 	}
-	free(user);
-	free(host);
-	free(path);
-	return r;
+	విడుదల(user);
+	విడుదల(host);
+	విడుదల(మార్గం);
+	తిరిగి r;
 }
 
 /* XXX the following is a near-verbatim copy from servconf.c; refactor */
-static const char *
-fmt_multistate_int(int val, const struct multistate *m)
+స్థిర స్థిరరాశి అక్షరం *
+fmt_multistate_int(పూర్ణాంకం val, స్థిరరాశి నిర్మాణం multistate *m)
 {
 	u_int i;
 
-	for (i = 0; m[i].key != NULL; i++) {
-		if (m[i].value == val)
-			return m[i].key;
+	కొరకు (i = 0; m[i].కీలకం != ఖాళీ; i++) {
+		ఒకవేళ (m[i].విలువ == val)
+			తిరిగి m[i].కీలకం;
 	}
-	return "UNKNOWN";
+	తిరిగి "UNKNOWN";
 }
 
-static const char *
-fmt_intarg(OpCodes code, int val)
+స్థిర స్థిరరాశి అక్షరం *
+fmt_intarg(OpCodes సంకేతం_2, పూర్ణాంకం val)
 {
-	if (val == -1)
-		return "unset";
-	switch (code) {
-	case oAddressFamily:
-		return fmt_multistate_int(val, multistate_addressfamily);
-	case oCompression:
-		return fmt_multistate_int(val, multistate_compression);
-	case oVerifyHostKeyDNS:
-	case oUpdateHostkeys:
-		return fmt_multistate_int(val, multistate_yesnoask);
-	case oStrictHostKeyChecking:
-		return fmt_multistate_int(val, multistate_strict_hostkey);
-	case oControlMaster:
-		return fmt_multistate_int(val, multistate_controlmaster);
-	case oTunnel:
-		return fmt_multistate_int(val, multistate_tunnel);
-	case oRequestTTY:
-		return fmt_multistate_int(val, multistate_requesttty);
-	case oSessionType:
-		return fmt_multistate_int(val, multistate_sessiontype);
-	case oCanonicalizeHostname:
-		return fmt_multistate_int(val, multistate_canonicalizehostname);
-	case oAddKeysToAgent:
-		return fmt_multistate_int(val, multistate_yesnoaskconfirm);
-	case oPubkeyAuthentication:
-		return fmt_multistate_int(val, multistate_pubkey_auth);
-	case oTCPKeepAlive:
-		return fmt_multistate_int(val, multistate_keepalives);
-	case oFingerprintHash:
-		return ssh_digest_alg_name(val);
-	default:
-		switch (val) {
-		case 0:
-			return "no";
-		case 1:
-			return "yes";
-		default:
-			return "UNKNOWN";
+	ఒకవేళ (val == -1)
+		తిరిగి "unset";
+	ఎంపిక (సంకేతం_2) {
+	స్థితి o_చిరునామా_Family:
+		తిరిగి fmt_multistate_int(val, multistate_addressfamily);
+	స్థితి oCompression:
+		తిరిగి fmt_multistate_int(val, multistate_compression);
+	స్థితి o_Verify_Host_కీలకం_DNS:
+	స్థితి oUpdateHostkeys:
+		తిరిగి fmt_multistate_int(val, multistate_yesnoask);
+	స్థితి o_Strict_Host_కీలకం_Checking:
+		తిరిగి fmt_multistate_int(val, multistate_strict_hostkey);
+	స్థితి oControlMaster:
+		తిరిగి fmt_multistate_int(val, multistate_controlmaster);
+	స్థితి oTunnel:
+		తిరిగి fmt_multistate_int(val, multistate_tunnel);
+	స్థితి oRequestTTY:
+		తిరిగి fmt_multistate_int(val, multistate_requesttty);
+	స్థితి oSessionType:
+		తిరిగి fmt_multistate_int(val, multistate_sessiontype);
+	స్థితి oCanonicalizeHostname:
+		తిరిగి fmt_multistate_int(val, multistate_canonicalizehostname);
+	స్థితి o_కూడు_కీలకాలు_గమ్యం_Agent:
+		తిరిగి fmt_multistate_int(val, multistate_yesnoaskconfirm);
+	స్థితి oPubkeyAuthentication:
+		తిరిగి fmt_multistate_int(val, multistate_pubkey_auth);
+	స్థితి oTCPKeepAlive:
+		తిరిగి fmt_multistate_int(val, multistate_keepalives);
+	స్థితి oFingerprintHash:
+		తిరిగి ssh_digest_alg_name(val);
+	అప్రమేయ:
+		ఎంపిక (val) {
+		స్థితి 0:
+			తిరిగి "no";
+		స్థితి 1:
+			తిరిగి "yes";
+		అప్రమేయ:
+			తిరిగి "UNKNOWN";
 		}
 	}
 }
 
-static const char *
-lookup_opcode_name(OpCodes code)
+స్థిర స్థిరరాశి అక్షరం *
+lookup_opcode_name(OpCodes సంకేతం_2)
 {
 	u_int i;
 
-	for (i = 0; keywords[i].name != NULL; i++)
-		if (keywords[i].opcode == code)
-			return(keywords[i].name);
-	return "UNKNOWN";
+	కొరకు (i = 0; keywords[i].name != ఖాళీ; i++)
+		ఒకవేళ (keywords[i].opcode == సంకేతం_2)
+			తిరిగి(keywords[i].name);
+	తిరిగి "UNKNOWN";
 }
 
-static void
-dump_cfg_int(OpCodes code, int val)
+స్థిర శూన్య
+dump_cfg_int(OpCodes సంకేతం_2, పూర్ణాంకం val)
 {
-	if (code == oObscureKeystrokeTiming) {
-		if (val == 0) {
-			printf("%s no\n", lookup_opcode_name(code));
-			return;
-		} else if (val == SSH_KEYSTROKE_DEFAULT_INTERVAL_MS) {
-			printf("%s yes\n", lookup_opcode_name(code));
-			return;
+	ఒకవేళ (సంకేతం_2 == oObscureKeystrokeTiming) {
+		ఒకవేళ (val == 0) {
+			రాయి("%s no\n", lookup_opcode_name(సంకేతం_2));
+			తిరిగి;
+		} లేకపోతే ఒకవేళ (val == SSH_KEYSTROKE_DEFAULT_INTERVAL_MS) {
+			రాయి("%s yes\n", lookup_opcode_name(సంకేతం_2));
+			తిరిగి;
 		}
 		/* FALLTHROUGH */
 	}
-	printf("%s %d\n", lookup_opcode_name(code), val);
+	రాయి("%s %d\n", lookup_opcode_name(సంకేతం_2), val);
 }
 
-static void
-dump_cfg_fmtint(OpCodes code, int val)
+స్థిర శూన్య
+dump_cfg_fmtint(OpCodes సంకేతం_2, పూర్ణాంకం val)
 {
-	printf("%s %s\n", lookup_opcode_name(code), fmt_intarg(code, val));
+	రాయి("%s %s\n", lookup_opcode_name(సంకేతం_2), fmt_intarg(సంకేతం_2, val));
 }
 
-static void
-dump_cfg_string(OpCodes code, const char *val)
+స్థిర శూన్య
+dump_cfg_string(OpCodes సంకేతం_2, స్థిరరాశి అక్షరం *val)
 {
-	if (val == NULL)
-		return;
-	printf("%s %s\n", lookup_opcode_name(code), val);
+	ఒకవేళ (val == ఖాళీ)
+		తిరిగి;
+	రాయి("%s %s\n", lookup_opcode_name(సంకేతం_2), val);
 }
 
-static void
-dump_cfg_strarray(OpCodes code, u_int count, char **vals)
-{
-	u_int i;
-
-	for (i = 0; i < count; i++)
-		printf("%s %s\n", lookup_opcode_name(code), vals[i]);
-}
-
-static void
-dump_cfg_strarray_oneline(OpCodes code, u_int count, char **vals)
+స్థిర శూన్య
+dump_cfg_strarray(OpCodes సంకేతం_2, u_int లెక్క, అక్షరం **vals)
 {
 	u_int i;
 
-	printf("%s", lookup_opcode_name(code));
-	if (count == 0)
-		printf(" none");
-	for (i = 0; i < count; i++)
-		printf(" %s",  vals[i]);
-	printf("\n");
+	కొరకు (i = 0; i < లెక్క; i++)
+		రాయి("%s %s\n", lookup_opcode_name(సంకేతం_2), vals[i]);
 }
 
-static void
-dump_cfg_forwards(OpCodes code, u_int count, const struct Forward *fwds)
+స్థిర శూన్య
+dump_cfg_strarray_oneline(OpCodes సంకేతం_2, u_int లెక్క, అక్షరం **vals)
 {
-	const struct Forward *fwd;
+	u_int i;
+
+	రాయి("%s", lookup_opcode_name(సంకేతం_2));
+	ఒకవేళ (లెక్క == 0)
+		రాయి(" none");
+	కొరకు (i = 0; i < లెక్క; i++)
+		రాయి(" %s",  vals[i]);
+	రాయి("\n");
+}
+
+స్థిర శూన్య
+dump_cfg_forwards(OpCodes సంకేతం_2, u_int లెక్క, స్థిరరాశి నిర్మాణం Forward *fwds)
+{
+	స్థిరరాశి నిర్మాణం Forward *fwd;
 	u_int i;
 
 	/* oDynamicForward */
-	for (i = 0; i < count; i++) {
+	కొరకు (i = 0; i < లెక్క; i++) {
 		fwd = &fwds[i];
-		if (code == oDynamicForward && fwd->connect_host != NULL &&
+		ఒకవేళ (సంకేతం_2 == oDynamicForward && fwd->connect_host != ఖాళీ &&
 		    strcmp(fwd->connect_host, "socks") != 0)
-			continue;
-		if (code == oLocalForward && fwd->connect_host != NULL &&
+			కొనసాగు;
+		ఒకవేళ (సంకేతం_2 == oLocalForward && fwd->connect_host != ఖాళీ &&
 		    strcmp(fwd->connect_host, "socks") == 0)
-			continue;
-		printf("%s", lookup_opcode_name(code));
-		if (fwd->listen_port == PORT_STREAMLOCAL)
-			printf(" %s", fwd->listen_path);
-		else if (fwd->listen_host == NULL)
-			printf(" %d", fwd->listen_port);
-		else {
-			printf(" [%s]:%d",
-			    fwd->listen_host, fwd->listen_port);
+			కొనసాగు;
+		రాయి("%s", lookup_opcode_name(సంకేతం_2));
+		ఒకవేళ (fwd->listen_పోర్టు == పోర్టు_STREAMLOCAL)
+			రాయి(" %s", fwd->listen_మార్గం);
+		లేకపోతే ఒకవేళ (fwd->listen_host == ఖాళీ)
+			రాయి(" %d", fwd->listen_పోర్టు);
+		లేకపోతే {
+			రాయి(" [%s]:%d",
+			    fwd->listen_host, fwd->listen_పోర్టు);
 		}
-		if (code != oDynamicForward) {
-			if (fwd->connect_port == PORT_STREAMLOCAL)
-				printf(" %s", fwd->connect_path);
-			else if (fwd->connect_host == NULL)
-				printf(" %d", fwd->connect_port);
-			else {
-				printf(" [%s]:%d",
-				    fwd->connect_host, fwd->connect_port);
+		ఒకవేళ (సంకేతం_2 != oDynamicForward) {
+			ఒకవేళ (fwd->connect_పోర్టు == పోర్టు_STREAMLOCAL)
+				రాయి(" %s", fwd->connect_మార్గం);
+			లేకపోతే ఒకవేళ (fwd->connect_host == ఖాళీ)
+				రాయి(" %d", fwd->connect_పోర్టు);
+			లేకపోతే {
+				రాయి(" [%s]:%d",
+				    fwd->connect_host, fwd->connect_పోర్టు);
 			}
 		}
-		printf("\n");
+		రాయి("\n");
 	}
 }
 
-void
-dump_client_config(Options *o, const char *host)
+శూన్య
+dump_client_config(Options *o, స్థిరరాశి అక్షరం *host)
 {
-	int i, r;
-	char buf[8], *all_key;
+	పూర్ణాంకం i, r;
+	అక్షరం buf[8], *all_కీలకం;
 
 	/*
 	 * Expand HostKeyAlgorithms name lists. This isn't handled in
@@ -3747,21 +3747,21 @@ dump_client_config(Options *o, const char *host)
 	 * the host key algorithms are by default dynamically chosen based
 	 * on the host's keys found in known_hosts.
 	 */
-	all_key = sshkey_alg_list(0, 0, 1, ',');
-	if ((r = kex_assemble_names(&o->hostkeyalgorithms, kex_default_pk_alg(),
-	    all_key)) != 0)
+	all_కీలకం = sshkey_alg_list(0, 0, 1, ',');
+	ఒకవేళ ((r = kex_assemble_పేర్లు(&o->hostkeyalgorithms, kex_default_pk_alg(),
+	    all_కీలకం)) != 0)
 		fatal_fr(r, "expand HostKeyAlgorithms");
-	free(all_key);
+	విడుదల(all_కీలకం);
 
 	/* Most interesting options first: user, host, port */
 	dump_cfg_string(oHost, o->host_arg);
 	dump_cfg_string(oUser, o->user);
 	dump_cfg_string(oHostname, host);
-	dump_cfg_int(oPort, o->port);
+	dump_cfg_int(o_పోర్టు, o->పోర్టు);
 
 	/* Flag options */
-	dump_cfg_fmtint(oAddressFamily, o->address_family);
-	dump_cfg_fmtint(oBatchMode, o->batch_mode);
+	dump_cfg_fmtint(o_చిరునామా_Family, o->చిరునామా_family);
+	dump_cfg_fmtint(o_Batch_బహుళకం, o->batch_బహుళకం);
 	dump_cfg_fmtint(oCanonicalizeFallbackLocal, o->canonicalize_fallback_local);
 	dump_cfg_fmtint(oCanonicalizeHostname, o->canonicalize_hostname);
 	dump_cfg_fmtint(oCheckHostIP, o->check_host_ip);
@@ -3774,11 +3774,11 @@ dump_client_config(Options *o, const char *host)
 	dump_cfg_fmtint(oForwardX11, o->forward_x11);
 	dump_cfg_fmtint(oForwardX11Trusted, o->forward_x11_trusted);
 	dump_cfg_fmtint(oGatewayPorts, o->fwd_opts.gateway_ports);
-#ifdef GSSAPI
+#నిర్వచితమైతే GSSAPI
 	dump_cfg_fmtint(oGssAuthentication, o->gss_authentication);
 	dump_cfg_fmtint(oGssDelegateCreds, o->gss_deleg_creds);
-#endif /* GSSAPI */
-	dump_cfg_fmtint(oHashKnownHosts, o->hash_known_hosts);
+#అయితే_ముగింపు /* GSSAPI */
+	dump_cfg_fmtint(o_Hash_తెలిసిన_Hosts, o->hash_తెలిసిన_hosts);
 	dump_cfg_fmtint(oHostbasedAuthentication, o->hostbased_authentication);
 	dump_cfg_fmtint(oIdentitiesOnly, o->identities_only);
 	dump_cfg_fmtint(oKbdInteractiveAuthentication, o->kbd_interactive_authentication);
@@ -3791,12 +3791,12 @@ dump_client_config(Options *o, const char *host)
 	dump_cfg_fmtint(oSessionType, o->session_type);
 	dump_cfg_fmtint(oStdinNull, o->stdin_null);
 	dump_cfg_fmtint(oForkAfterAuthentication, o->fork_after_authentication);
-	dump_cfg_fmtint(oStreamLocalBindUnlink, o->fwd_opts.streamlocal_bind_unlink);
-	dump_cfg_fmtint(oStrictHostKeyChecking, o->strict_host_key_checking);
+	dump_cfg_fmtint(o_ప్రవాహం_Local_Bind_Unlink, o->fwd_opts.streamlocal_bind_unlink);
+	dump_cfg_fmtint(o_Strict_Host_కీలకం_Checking, o->strict_host_కీలకం_checking);
 	dump_cfg_fmtint(oTCPKeepAlive, o->tcp_keep_alive);
 	dump_cfg_fmtint(oTunnel, o->tun_open);
-	dump_cfg_fmtint(oVerifyHostKeyDNS, o->verify_host_key_dns);
-	dump_cfg_fmtint(oVisualHostKey, o->visual_host_key);
+	dump_cfg_fmtint(o_Verify_Host_కీలకం_DNS, o->verify_host_కీలకం_dns);
+	dump_cfg_fmtint(o_Visual_Host_కీలకం, o->visual_host_కీలకం);
 	dump_cfg_fmtint(oUpdateHostkeys, o->update_hostkeys);
 	dump_cfg_fmtint(oEnableEscapeCommandline, o->enable_escape_commandline);
 	dump_cfg_fmtint(oWarnWeakCrypto, o->warn_weak_crypto);
@@ -3805,22 +3805,22 @@ dump_client_config(Options *o, const char *host)
 	dump_cfg_int(oCanonicalizeMaxDots, o->canonicalize_max_dots);
 	dump_cfg_int(oConnectionAttempts, o->connection_attempts);
 	dump_cfg_int(oForwardX11Timeout, o->forward_x11_timeout);
-	dump_cfg_int(oNumberOfPasswordPrompts, o->number_of_password_prompts);
-	dump_cfg_int(oServerAliveCountMax, o->server_alive_count_max);
+	dump_cfg_int(o_సంఖ్య_యొక్క_Password_Prompts, o->సంఖ్య_యొక్క_password_prompts);
+	dump_cfg_int(o_Server_Alive_లెక్క_Max, o->server_alive_లెక్క_max);
 	dump_cfg_int(oServerAliveInterval, o->server_alive_interval);
-	dump_cfg_int(oRequiredRSASize, o->required_rsa_size);
+	dump_cfg_int(oRequiredRSASize, o->required_rsa_కొలత);
 	dump_cfg_int(oObscureKeystrokeTiming,
 	    o->obscure_keystroke_timing_interval);
 
 	/* String options */
-	dump_cfg_string(oBindAddress, o->bind_address);
+	dump_cfg_string(o_Bind_చిరునామా, o->bind_చిరునామా);
 	dump_cfg_string(oBindInterface, o->bind_interface);
 	dump_cfg_string(oCiphers, o->ciphers);
-	dump_cfg_string(oControlPath, o->control_path);
-	dump_cfg_string(oHostKeyAlgorithms, o->hostkeyalgorithms);
-	dump_cfg_string(oHostKeyAlias, o->host_key_alias);
+	dump_cfg_string(o_Control_మార్గం, o->control_మార్గం);
+	dump_cfg_string(o_Host_కీలకం_Algorithms, o->hostkeyalgorithms);
+	dump_cfg_string(o_Host_కీలకం_Alias, o->host_కీలకం_alias);
 	dump_cfg_string(oHostbasedAcceptedAlgorithms, o->hostbased_accepted_algos);
-	dump_cfg_string(oIdentityAgent, o->identity_agent);
+	dump_cfg_string(o_తటస్థం_Agent, o->తటస్థం_agent);
 	dump_cfg_string(oIgnoreUnknown, o->ignored_unknown);
 	dump_cfg_string(oKbdInteractiveDevices, o->kbd_interactive_devices);
 	dump_cfg_string(oKexAlgorithms, o->kex_algorithms);
@@ -3829,132 +3829,132 @@ dump_client_config(Options *o, const char *host)
 	dump_cfg_string(oRemoteCommand, o->remote_command);
 	dump_cfg_string(oLogLevel, log_level_name(o->log_level));
 	dump_cfg_string(oMacs, o->macs);
-#ifdef ENABLE_PKCS11
+#నిర్వచితమైతే ENABLE_PKCS11
 	dump_cfg_string(oPKCS11Provider, o->pkcs11_provider);
-#endif
-	dump_cfg_string(oSecurityKeyProvider, o->sk_provider);
+#అయితే_ముగింపు
+	dump_cfg_string(o_Security_కీలకం_Provider, o->sk_provider);
 	dump_cfg_string(oPreferredAuthentications, o->preferred_authentications);
 	dump_cfg_string(oPubkeyAcceptedAlgorithms, o->pubkey_accepted_algos);
 	dump_cfg_string(oXAuthLocation, o->xauth_location);
-	dump_cfg_string(oKnownHostsCommand, o->known_hosts_command);
-	dump_cfg_string(oTag, o->tag);
-	dump_cfg_string(oVersionAddendum, o->version_addendum);
+	dump_cfg_string(o_తెలిసిన_Hosts_Command, o->తెలిసిన_hosts_command);
+	dump_cfg_string(o_ట్యాగ్, o->ట్యాగ్);
+	dump_cfg_string(o_సంస్కరణ_Addendum, o->సంస్కరణ_addendum);
 
 	/* Forwards */
-	dump_cfg_forwards(oDynamicForward, o->num_local_forwards, o->local_forwards);
-	dump_cfg_forwards(oLocalForward, o->num_local_forwards, o->local_forwards);
-	dump_cfg_forwards(oRemoteForward, o->num_remote_forwards, o->remote_forwards);
+	dump_cfg_forwards(oDynamicForward, o->అంకె_local_forwards, o->local_forwards);
+	dump_cfg_forwards(oLocalForward, o->అంకె_local_forwards, o->local_forwards);
+	dump_cfg_forwards(oRemoteForward, o->అంకె_remote_forwards, o->remote_forwards);
 
 	/* String array options */
-	dump_cfg_strarray(oIdentityFile, o->num_identity_files, o->identity_files);
-	dump_cfg_strarray_oneline(oCanonicalDomains, o->num_canonical_domains, o->canonical_domains);
-	dump_cfg_strarray(oCertificateFile, o->num_certificate_files, o->certificate_files);
-	dump_cfg_strarray_oneline(oGlobalKnownHostsFile, o->num_system_hostfiles, o->system_hostfiles);
-	dump_cfg_strarray_oneline(oUserKnownHostsFile, o->num_user_hostfiles, o->user_hostfiles);
-	dump_cfg_strarray_oneline(oRevokedHostKeys, o->num_revoked_host_keys, o->revoked_host_keys);
-	dump_cfg_strarray(oSendEnv, o->num_send_env, o->send_env);
-	dump_cfg_strarray(oSetEnv, o->num_setenv, o->setenv);
+	dump_cfg_strarray(o_తటస్థం_File, o->అంకె_తటస్థం_files, o->తటస్థం_files);
+	dump_cfg_strarray_oneline(oCanonicalDomains, o->అంకె_canonical_domains, o->canonical_domains);
+	dump_cfg_strarray(oCertificateFile, o->అంకె_certificate_files, o->certificate_files);
+	dump_cfg_strarray_oneline(o_Global_తెలిసిన_Hosts_File, o->అంకె_system_hostfiles, o->system_hostfiles);
+	dump_cfg_strarray_oneline(o_User_తెలిసిన_Hosts_File, o->అంకె_user_hostfiles, o->user_hostfiles);
+	dump_cfg_strarray_oneline(o_Revoked_Host_కీలకాలు, o->అంకె_revoked_host_కీలకాలు, o->revoked_host_కీలకాలు);
+	dump_cfg_strarray(oSendEnv, o->అంకె_send_env, o->send_env);
+	dump_cfg_strarray(o_సమితి_Env, o->అంకె_setenv, o->setenv);
 	dump_cfg_strarray_oneline(oLogVerbose,
-	    o->num_log_verbose, o->log_verbose);
+	    o->అంకె_log_verbose, o->log_verbose);
 	dump_cfg_strarray_oneline(oChannelTimeout,
-	    o->num_channel_timeouts, o->channel_timeouts);
+	    o->అంకె_channel_timeouts, o->channel_timeouts);
 
 	/* Special cases */
 
 	/* PermitRemoteOpen */
-	if (o->num_permitted_remote_opens == 0)
-		printf("%s any\n", lookup_opcode_name(oPermitRemoteOpen));
-	else
+	ఒకవేళ (o->అంకె_permitted_remote_opens == 0)
+		రాయి("%s any\n", lookup_opcode_name(oPermitRemoteOpen));
+	లేకపోతే
 		dump_cfg_strarray_oneline(oPermitRemoteOpen,
-		    o->num_permitted_remote_opens, o->permitted_remote_opens);
+		    o->అంకె_permitted_remote_opens, o->permitted_remote_opens);
 
 	/* AddKeysToAgent */
-	if (o->add_keys_to_agent_lifespan <= 0)
-		dump_cfg_fmtint(oAddKeysToAgent, o->add_keys_to_agent);
-	else {
-		printf("addkeystoagent%s %d\n",
-		    o->add_keys_to_agent == 3 ? " confirm" : "",
-		    o->add_keys_to_agent_lifespan);
+	ఒకవేళ (o->కూడు_కీలకాలు_గమ్యం_agent_lifespan <= 0)
+		dump_cfg_fmtint(o_కూడు_కీలకాలు_గమ్యం_Agent, o->కూడు_కీలకాలు_గమ్యం_agent);
+	లేకపోతే {
+		రాయి("addkeystoagent%s %d\n",
+		    o->కూడు_కీలకాలు_గమ్యం_agent == 3 ? " confirm" : "",
+		    o->కూడు_కీలకాలు_గమ్యం_agent_lifespan);
 	}
 
 	/* oForwardAgent */
-	if (o->forward_agent_sock_path == NULL)
+	ఒకవేళ (o->forward_agent_sock_మార్గం == ఖాళీ)
 		dump_cfg_fmtint(oForwardAgent, o->forward_agent);
-	else
-		dump_cfg_string(oForwardAgent, o->forward_agent_sock_path);
+	లేకపోతే
+		dump_cfg_string(oForwardAgent, o->forward_agent_sock_మార్గం);
 
 	/* oConnectTimeout */
-	if (o->connection_timeout == -1)
-		printf("connecttimeout none\n");
-	else
+	ఒకవేళ (o->connection_timeout == -1)
+		రాయి("connecttimeout none\n");
+	లేకపోతే
 		dump_cfg_int(oConnectTimeout, o->connection_timeout);
 
 	/* oTunnelDevice */
-	printf("tunneldevice");
-	if (o->tun_local == SSH_TUNID_ANY)
-		printf(" any");
-	else
-		printf(" %d", o->tun_local);
-	if (o->tun_remote == SSH_TUNID_ANY)
-		printf(":any");
-	else
-		printf(":%d", o->tun_remote);
-	printf("\n");
+	రాయి("tunneldevice");
+	ఒకవేళ (o->tun_local == SSH_TUNID_ANY)
+		రాయి(" any");
+	లేకపోతే
+		రాయి(" %d", o->tun_local);
+	ఒకవేళ (o->tun_remote == SSH_TUNID_ANY)
+		రాయి(":any");
+	లేకపోతే
+		రాయి(":%d", o->tun_remote);
+	రాయి("\n");
 
 	/* oCanonicalizePermittedCNAMEs */
-	printf("canonicalizepermittedcnames");
-	if (o->num_permitted_cnames == 0)
-		printf(" none");
-	for (i = 0; i < o->num_permitted_cnames; i++) {
-		printf(" %s:%s", o->permitted_cnames[i].source_list,
-		    o->permitted_cnames[i].target_list);
+	రాయి("canonicalizepermittedcnames");
+	ఒకవేళ (o->అంకె_permitted_cnames == 0)
+		రాయి(" none");
+	కొరకు (i = 0; i < o->అంకె_permitted_cnames; i++) {
+		రాయి(" %s:%s", o->permitted_cnames[i].ఆధారం_list,
+		    o->permitted_cnames[i].లక్ష్యం_list);
 	}
-	printf("\n");
+	రాయి("\n");
 
 	/* oControlPersist */
-	if (o->control_persist == 0 || o->control_persist_timeout == 0)
+	ఒకవేళ (o->control_persist == 0 || o->control_persist_timeout == 0)
 		dump_cfg_fmtint(oControlPersist, o->control_persist);
-	else
+	లేకపోతే
 		dump_cfg_int(oControlPersist, o->control_persist_timeout);
 
 	/* oEscapeChar */
-	if (o->escape_char == SSH_ESCAPECHAR_NONE)
-		printf("escapechar none\n");
-	else {
+	ఒకవేళ (o->escape_char == SSH_ESCAPECHAR_NONE)
+		రాయి("escapechar none\n");
+	లేకపోతే {
 		vis(buf, o->escape_char, VIS_WHITE, 0);
-		printf("escapechar %s\n", buf);
+		రాయి("escapechar %s\n", buf);
 	}
 
 	/* oIPQoS */
-	printf("ipqos %s ", iptos2str(o->ip_qos_interactive));
-	printf("%s\n", iptos2str(o->ip_qos_bulk));
+	రాయి("ipqos %s ", iptos2str(o->ip_qos_interactive));
+	రాయి("%s\n", iptos2str(o->ip_qos_bulk));
 
 	/* oRekeyLimit */
-	printf("rekeylimit %llu %d\n",
-	    (unsigned long long)o->rekey_limit, o->rekey_interval);
+	రాయి("rekeylimit %llu %d\n",
+	    (గుర్తులేని దీర్ఘ దీర్ఘ)o->rekey_హద్దు, o->rekey_interval);
 
 	/* oStreamLocalBindMask */
-	printf("streamlocalbindmask 0%o\n",
-	    o->fwd_opts.streamlocal_bind_mask);
+	రాయి("streamlocalbindmask 0%o\n",
+	    o->fwd_opts.streamlocal_bind_ముసుగు);
 
 	/* oLogFacility */
-	printf("syslogfacility %s\n", log_facility_name(o->log_facility));
+	రాయి("syslogfacility %s\n", log_facility_name(o->log_facility));
 
 	/* oProxyCommand / oProxyJump */
-	if (o->jump_host == NULL)
+	ఒకవేళ (o->jump_host == ఖాళీ)
 		dump_cfg_string(oProxyCommand, o->proxy_command);
-	else {
+	లేకపోతే {
 		/* Check for numeric addresses */
-		i = strchr(o->jump_host, ':') != NULL ||
-		    strspn(o->jump_host, "1234567890.") == strlen(o->jump_host);
-		snprintf(buf, sizeof(buf), "%d", o->jump_port);
-		printf("proxyjump %s%s%s%s%s%s%s%s%s\n",
+		i = strchr(o->jump_host, ':') != ఖాళీ ||
+		    strspn(o->jump_host, "1234567890.") == అక్షరశ్రేణి_పొడవు(o->jump_host);
+		snprintf(buf, పరిమాణం(buf), "%d", o->jump_పోర్టు);
+		రాయి("proxyjump %s%s%s%s%s%s%s%s%s\n",
 		    /* optional additional jump spec */
-		    o->jump_extra == NULL ? "" : o->jump_extra,
-		    o->jump_extra == NULL ? "" : ",",
+		    o->jump_extra == ఖాళీ ? "" : o->jump_extra,
+		    o->jump_extra == ఖాళీ ? "" : ",",
 		    /* optional user */
-		    o->jump_user == NULL ? "" : o->jump_user,
-		    o->jump_user == NULL ? "" : "@",
+		    o->jump_user == ఖాళీ ? "" : o->jump_user,
+		    o->jump_user == ఖాళీ ? "" : "@",
 		    /* opening [ if hostname is numeric */
 		    i ? "[" : "",
 		    /* mandatory hostname */
@@ -3962,7 +3962,7 @@ dump_client_config(Options *o, const char *host)
 		    /* closing ] if hostname is numeric */
 		    i ? "]" : "",
 		    /* optional port number */
-		    o->jump_port <= 0 ? "" : ":",
-		    o->jump_port <= 0 ? "" : buf);
+		    o->jump_పోర్టు <= 0 ? "" : ":",
+		    o->jump_పోర్టు <= 0 ? "" : buf);
 	}
 }

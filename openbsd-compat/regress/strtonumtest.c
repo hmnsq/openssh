@@ -17,47 +17,47 @@
 
 /* OPENBSD ORIGINAL: regress/lib/libc/strtonum/strtonumtest.c */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
 
 /* LLONG_MAX is known as LONGLONG_MAX on AIX */
-#if defined(LONGLONG_MAX) && !defined(LLONG_MAX)
+#ఒకవేళ defined(LONGLONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONGLONG_MAX
 # define LLONG_MIN LONGLONG_MIN
-#endif
+#అయితే_ముగింపు
 
 /* LLONG_MAX is known as LONG_LONG_MAX on HP-UX */
-#if defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
+#ఒకవేళ defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONG_LONG_MAX
 # define LLONG_MIN LONG_LONG_MIN
-#endif
+#అయితే_ముగింపు
 
-long long strtonum(const char *, long long, long long, const char **);
+దీర్ఘ దీర్ఘ strtonum(స్థిరరాశి అక్షరం *, దీర్ఘ దీర్ఘ, దీర్ఘ దీర్ఘ, స్థిరరాశి అక్షరం **);
 
-int fail;
+పూర్ణాంకం fail;
 
-void
-test(const char *p, long long lb, long long ub, int ok)
+శూన్య
+test(స్థిరరాశి అక్షరం *p, దీర్ఘ దీర్ఘ lb, దీర్ఘ దీర్ఘ ub, పూర్ణాంకం ok)
 {
-	long long val;
-	const char *q;
+	దీర్ఘ దీర్ఘ val;
+	స్థిరరాశి అక్షరం *q;
 
 	val = strtonum(p, lb, ub, &q);
-	if (ok && q != NULL) {
+	ఒకవేళ (ok && q != ఖాళీ) {
 		fprintf(stderr, "%s [%lld-%lld] ", p, lb, ub);
 		fprintf(stderr, "NUMBER NOT ACCEPTED %s\n", q);
 		fail = 1;
-	} else if (!ok && q == NULL) {
+	} లేకపోతే ఒకవేళ (!ok && q == ఖాళీ) {
 		fprintf(stderr, "%s [%lld-%lld] %lld ", p, lb, ub, val);
 		fprintf(stderr, "NUMBER ACCEPTED\n");
 		fail = 1;
 	}
 }
 
-int main(void)
+పూర్ణాంకం ప్రధాన(శూన్య)
 {
 	test("1", 0, 10, 1);
 	test("0", -2, 5, 1);
@@ -77,6 +77,6 @@ int main(void)
 	test("-20", -10, -1, 0);
 	test("20", -10, -1, 0);
 
-	return (fail);
+	తిరిగి (fail);
 }
 

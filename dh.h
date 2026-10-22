@@ -23,62 +23,62 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DH_H
-#define DH_H
+#నిర్వచితం_కాకపోతే DH_H
+#నిర్వచించు DH_H
 
-#ifdef WITH_OPENSSL
+#నిర్వచితమైతే WITH_OPENSSL
 
-struct dhgroup {
-	int size;
+నిర్మాణం dhgroup {
+	పూర్ణాంకం కొలత;
 	BIGNUM *g;
 	BIGNUM *p;
 };
 
-DH	*choose_dh(int, int, int);
-DH	*dh_new_group_asc(const char *, const char *);
-DH	*dh_new_group(BIGNUM *, BIGNUM *);
-DH	*dh_new_group1(void);
-DH	*dh_new_group14(void);
-DH	*dh_new_group16(void);
-DH	*dh_new_group18(void);
-DH	*dh_new_group_fallback(int);
+DH	*ఎంచుకో_dh(పూర్ణాంకం, పూర్ణాంకం, పూర్ణాంకం);
+DH	*dh_new_సమూహం_asc(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
+DH	*dh_new_సమూహం(BIGNUM *, BIGNUM *);
+DH	*dh_new_group1(శూన్య);
+DH	*dh_new_group14(శూన్య);
+DH	*dh_new_group16(శూన్య);
+DH	*dh_new_group18(శూన్య);
+DH	*dh_new_సమూహం_fallback(పూర్ణాంకం);
 
-int	 dh_gen_key(DH *, int);
-int	 dh_pub_is_valid(const DH *, const BIGNUM *);
+పూర్ణాంకం	 dh_gen_కీలకం(DH *, పూర్ణాంకం);
+పూర్ణాంకం	 dh_pub_is_valid(స్థిరరాశి DH *, స్థిరరాశి BIGNUM *);
 
-u_int	 dh_estimate(int);
-void	 dh_set_moduli_file(const char *);
+u_int	 dh_estimate(పూర్ణాంకం);
+శూన్య	 dh_సమితి_moduli_file(స్థిరరాశి అక్షరం *);
 
 /*
  * Max value from RFC4419.
  * Min value from RFC8270.
  */
-#define DH_GRP_MIN	2048
-#define DH_GRP_MAX	8192
+#నిర్వచించు DH_GRP_MIN	2048
+#నిర్వచించు DH_GRP_MAX	8192
 
 /*
  * Values for "type" field of moduli(5)
  * Specifies the internal structure of the prime modulus.
  */
-#define MODULI_TYPE_UNKNOWN		(0)
-#define MODULI_TYPE_UNSTRUCTURED	(1)
-#define MODULI_TYPE_SAFE		(2)
-#define MODULI_TYPE_SCHNORR		(3)
-#define MODULI_TYPE_SOPHIE_GERMAIN	(4)
-#define MODULI_TYPE_STRONG		(5)
+#నిర్వచించు MODULI_TYPE_UNKNOWN		(0)
+#నిర్వచించు MODULI_TYPE_UNSTRUCTURED	(1)
+#నిర్వచించు MODULI_TYPE_సురక్షిత		(2)
+#నిర్వచించు MODULI_TYPE_SCHNORR		(3)
+#నిర్వచించు MODULI_TYPE_SOPHIE_GERMAIN	(4)
+#నిర్వచించు MODULI_TYPE_STRONG		(5)
 
 /*
  * Values for "tests" field of moduli(5)
  * Specifies the methods used in checking for primality.
  * Usually, more than one test is used.
  */
-#define MODULI_TESTS_UNTESTED		(0x00)
-#define MODULI_TESTS_COMPOSITE		(0x01)
-#define MODULI_TESTS_SIEVE		(0x02)
-#define MODULI_TESTS_MILLER_RABIN	(0x04)
-#define MODULI_TESTS_JACOBI		(0x08)
-#define MODULI_TESTS_ELLIPTIC		(0x10)
+#నిర్వచించు MODULI_TESTS_UNTESTED		(0x00)
+#నిర్వచించు MODULI_TESTS_సంయుక్త		(0x01)
+#నిర్వచించు MODULI_TESTS_SIEVE		(0x02)
+#నిర్వచించు MODULI_TESTS_MILLER_RABIN	(0x04)
+#నిర్వచించు MODULI_TESTS_JACOBI		(0x08)
+#నిర్వచించు MODULI_TESTS_ELLIPTIC		(0x10)
 
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */
 
-#endif /* DH_H */
+#అయితే_ముగింపు /* DH_H */

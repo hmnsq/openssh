@@ -36,16 +36,16 @@
 
 /* OPENBSD ORIGINAL: lib/libc/hash/sha2.c */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#if !defined(HAVE_SHA256UPDATE) || !defined(HAVE_SHA384UPDATE) || \
+#ఒకవేళ !defined(HAVE_SHA256UPDATE) || !defined(HAVE_SHA384UPDATE) || \
     !defined(HAVE_SHA512UPDATE)
 
 /* no-op out, similar to DEF_WEAK but only needed here */
-#define MAKE_CLONE(x, y)	void __ssh_compat_make_clone_##x_##y(void)
+#నిర్వచించు MAKE_CLONE(x, y)	శూన్య __ssh_compat_make_clone_##x_##y(శూన్య)
 
-#include <string.h>
-#include "openbsd-compat/bsd-sha2.h"
+#అన్తర్భావ <string.h>
+#అన్తర్భావ "openbsd-compat/bsd-sha2.h"
 
 /*
  * UNROLLED TRANSFORM LOOP NOTE:
@@ -60,11 +60,11 @@
  *   #define SHA2_UNROLL_TRANSFORM
  *
  */
-#ifndef SHA2_SMALL
-#if defined(__amd64__) || defined(__i386__)
-#define SHA2_UNROLL_TRANSFORM
-#endif
-#endif
+#నిర్వచితం_కాకపోతే SHA2_SMALL
+#ఒకవేళ defined(__amd64__) || defined(__i386__)
+#నిర్వచించు SHA2_UNROLL_TRANSFORM
+#అయితే_ముగింపు
+#అయితే_ముగింపు
 
 /*** SHA-224/256/384/512 Machine Architecture Definitions *****************/
 /*
@@ -94,32 +94,32 @@
  * <machine/endian.h> where the appropriate definitions are actually
  * made).
  */
-#if !defined(BYTE_ORDER) || (BYTE_ORDER != LITTLE_ENDIAN && BYTE_ORDER != BIG_ENDIAN)
-#error Define BYTE_ORDER to be equal to either LITTLE_ENDIAN or BIG_ENDIAN
-#endif
+#ఒకవేళ !defined(BYTE_ORDER) || (BYTE_ORDER != LITTLE_ENDIAN && BYTE_ORDER != BIG_ENDIAN)
+#దోషం Define BYTE_ORDER గమ్యం be equal గమ్యం either LITTLE_ENDIAN or BIG_ENDIAN
+#అయితే_ముగింపు
 
 
 /*** SHA-224/256/384/512 Various Length Definitions ***********************/
 /* NOTE: Most of these are in sha2.h */
-#define SHA224_SHORT_BLOCK_LENGTH	(SHA224_BLOCK_LENGTH - 8)
-#define SHA256_SHORT_BLOCK_LENGTH	(SHA256_BLOCK_LENGTH - 8)
-#define SHA384_SHORT_BLOCK_LENGTH	(SHA384_BLOCK_LENGTH - 16)
-#define SHA512_SHORT_BLOCK_LENGTH	(SHA512_BLOCK_LENGTH - 16)
+#నిర్వచించు SHA224_SHORT_ఖండం_నిడివి	(SHA224_ఖండం_నిడివి - 8)
+#నిర్వచించు SHA256_SHORT_ఖండం_నిడివి	(SHA256_ఖండం_నిడివి - 8)
+#నిర్వచించు SHA384_SHORT_ఖండం_నిడివి	(SHA384_ఖండం_నిడివి - 16)
+#నిర్వచించు SHA512_SHORT_ఖండం_నిడివి	(SHA512_ఖండం_నిడివి - 16)
 
 /*** ENDIAN SPECIFIC COPY MACROS **************************************/
-#define BE_8_TO_32(dst, cp) do {					\
+#నిర్వచించు BE_8_గమ్యం_32(dst, cp) చేయి {					\
 	(dst) = (u_int32_t)(cp)[3] | ((u_int32_t)(cp)[2] << 8) |	\
 	    ((u_int32_t)(cp)[1] << 16) | ((u_int32_t)(cp)[0] << 24);	\
-} while(0)
+} అయితే(0)
 
-#define BE_8_TO_64(dst, cp) do {					\
+#నిర్వచించు BE_8_గమ్యం_64(dst, cp) చేయి {					\
 	(dst) = (u_int64_t)(cp)[7] | ((u_int64_t)(cp)[6] << 8) |	\
 	    ((u_int64_t)(cp)[5] << 16) | ((u_int64_t)(cp)[4] << 24) |	\
 	    ((u_int64_t)(cp)[3] << 32) | ((u_int64_t)(cp)[2] << 40) |	\
 	    ((u_int64_t)(cp)[1] << 48) | ((u_int64_t)(cp)[0] << 56);	\
-} while (0)
+} అయితే (0)
 
-#define BE_64_TO_8(cp, src) do {					\
+#నిర్వచించు BE_64_గమ్యం_8(cp, src) చేయి {					\
 	(cp)[0] = (src) >> 56;						\
         (cp)[1] = (src) >> 48;						\
 	(cp)[2] = (src) >> 40;						\
@@ -128,26 +128,26 @@
 	(cp)[5] = (src) >> 16;						\
 	(cp)[6] = (src) >> 8;						\
 	(cp)[7] = (src);						\
-} while (0)
+} అయితే (0)
 
-#define BE_32_TO_8(cp, src) do {					\
+#నిర్వచించు BE_32_గమ్యం_8(cp, src) చేయి {					\
 	(cp)[0] = (src) >> 24;						\
 	(cp)[1] = (src) >> 16;						\
 	(cp)[2] = (src) >> 8;						\
 	(cp)[3] = (src);						\
-} while (0)
+} అయితే (0)
 
 /*
  * Macro for incrementally adding the unsigned 64-bit integer n to the
  * unsigned 128-bit integer (represented using a two-element array of
  * 64-bit words):
  */
-#define ADDINC128(w,n) do {						\
+#నిర్వచించు ADDINC128(w,n) చేయి {						\
 	(w)[0] += (u_int64_t)(n);					\
-	if ((w)[0] < (n)) {						\
+	ఒకవేళ ((w)[0] < (n)) {						\
 		(w)[1]++;						\
 	}								\
-} while (0)
+} అయితే (0)
 
 /*** THE SIX LOGICAL FUNCTIONS ****************************************/
 /*
@@ -159,32 +159,32 @@
  *   same "backwards" definition.
  */
 /* Shift-right (used in SHA-224, SHA-256, SHA-384, and SHA-512): */
-#define R(b,x)		((x) >> (b))
+#నిర్వచించు R(b,x)		((x) >> (b))
 /* 32-bit Rotate-right (used in SHA-224 and SHA-256): */
-#define S32(b,x)	(((x) >> (b)) | ((x) << (32 - (b))))
+#నిర్వచించు S32(b,x)	(((x) >> (b)) | ((x) << (32 - (b))))
 /* 64-bit Rotate-right (used in SHA-384 and SHA-512): */
-#define S64(b,x)	(((x) >> (b)) | ((x) << (64 - (b))))
+#నిర్వచించు S64(b,x)	(((x) >> (b)) | ((x) << (64 - (b))))
 
 /* Two of six logical functions used in SHA-224, SHA-256, SHA-384, and SHA-512: */
-#define Ch(x,y,z)	(((x) & (y)) ^ ((~(x)) & (z)))
-#define Maj(x,y,z)	(((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
+#నిర్వచించు Ch(x,y,z)	(((x) & (y)) ^ ((~(x)) & (z)))
+#నిర్వచించు Maj(x,y,z)	(((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
 
 /* Four of six logical functions used in SHA-224 and SHA-256: */
-#define Sigma0_256(x)	(S32(2,  (x)) ^ S32(13, (x)) ^ S32(22, (x)))
-#define Sigma1_256(x)	(S32(6,  (x)) ^ S32(11, (x)) ^ S32(25, (x)))
-#define sigma0_256(x)	(S32(7,  (x)) ^ S32(18, (x)) ^ R(3 ,   (x)))
-#define sigma1_256(x)	(S32(17, (x)) ^ S32(19, (x)) ^ R(10,   (x)))
+#నిర్వచించు Sigma0_256(x)	(S32(2,  (x)) ^ S32(13, (x)) ^ S32(22, (x)))
+#నిర్వచించు Sigma1_256(x)	(S32(6,  (x)) ^ S32(11, (x)) ^ S32(25, (x)))
+#నిర్వచించు sigma0_256(x)	(S32(7,  (x)) ^ S32(18, (x)) ^ R(3 ,   (x)))
+#నిర్వచించు sigma1_256(x)	(S32(17, (x)) ^ S32(19, (x)) ^ R(10,   (x)))
 
 /* Four of six logical functions used in SHA-384 and SHA-512: */
-#define Sigma0_512(x)	(S64(28, (x)) ^ S64(34, (x)) ^ S64(39, (x)))
-#define Sigma1_512(x)	(S64(14, (x)) ^ S64(18, (x)) ^ S64(41, (x)))
-#define sigma0_512(x)	(S64( 1, (x)) ^ S64( 8, (x)) ^ R( 7,   (x)))
-#define sigma1_512(x)	(S64(19, (x)) ^ S64(61, (x)) ^ R( 6,   (x)))
+#నిర్వచించు Sigma0_512(x)	(S64(28, (x)) ^ S64(34, (x)) ^ S64(39, (x)))
+#నిర్వచించు Sigma1_512(x)	(S64(14, (x)) ^ S64(18, (x)) ^ S64(41, (x)))
+#నిర్వచించు sigma0_512(x)	(S64( 1, (x)) ^ S64( 8, (x)) ^ R( 7,   (x)))
+#నిర్వచించు sigma1_512(x)	(S64(19, (x)) ^ S64(61, (x)) ^ R( 6,   (x)))
 
 
 /*** SHA-XYZ INITIAL HASH VALUES AND CONSTANTS ************************/
 /* Hash constant words K for SHA-224 and SHA-256: */
-static const u_int32_t K256[64] = {
+స్థిర స్థిరరాశి u_int32_t K256[64] = {
 	0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL,
 	0x3956c25bUL, 0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL,
 	0xd807aa98UL, 0x12835b01UL, 0x243185beUL, 0x550c7dc3UL,
@@ -204,7 +204,7 @@ static const u_int32_t K256[64] = {
 };
 
 /* Initial hash value H for SHA-256: */
-static const u_int32_t sha256_initial_hash_value[8] = {
+స్థిర స్థిరరాశి u_int32_t sha256_initial_hash_విలువ[8] = {
 	0x6a09e667UL,
 	0xbb67ae85UL,
 	0x3c6ef372UL,
@@ -216,7 +216,7 @@ static const u_int32_t sha256_initial_hash_value[8] = {
 };
 
 /* Hash constant words K for SHA-384 and SHA-512: */
-static const u_int64_t K512[80] = {
+స్థిర స్థిరరాశి u_int64_t K512[80] = {
 	0x428a2f98d728ae22ULL, 0x7137449123ef65cdULL,
 	0xb5c0fbcfec4d3b2fULL, 0xe9b5dba58189dbbcULL,
 	0x3956c25bf348b538ULL, 0x59f111f1b605d019ULL,
@@ -260,7 +260,7 @@ static const u_int64_t K512[80] = {
 };
 
 /* Initial hash value H for SHA-512 */
-static const u_int64_t sha512_initial_hash_value[8] = {
+స్థిర స్థిరరాశి u_int64_t sha512_initial_hash_విలువ[8] = {
 	0x6a09e667f3bcc908ULL,
 	0xbb67ae8584caa73bULL,
 	0x3c6ef372fe94f82bULL,
@@ -271,10 +271,10 @@ static const u_int64_t sha512_initial_hash_value[8] = {
 	0x5be0cd19137e2179ULL
 };
 
-#if !defined(SHA2_SMALL)
-#if 0
+#ఒకవేళ !defined(SHA2_SMALL)
+#ఒకవేళ 0
 /* Initial hash value H for SHA-224: */
-static const u_int32_t sha224_initial_hash_value[8] = {
+స్థిర స్థిరరాశి u_int32_t sha224_initial_hash_విలువ[8] = {
 	0xc1059ed8UL,
 	0x367cd507UL,
 	0x3070dd17UL,
@@ -284,10 +284,10 @@ static const u_int32_t sha224_initial_hash_value[8] = {
 	0x64f98fa7UL,
 	0xbefa4fa4UL
 };
-#endif /* 0 */
+#అయితే_ముగింపు /* 0 */
 
 /* Initial hash value H for SHA-384 */
-static const u_int64_t sha384_initial_hash_value[8] = {
+స్థిర స్థిరరాశి u_int64_t sha384_initial_hash_విలువ[8] = {
 	0xcbbb9d5dc1059ed8ULL,
 	0x629a292a367cd507ULL,
 	0x9159015a3070dd17ULL,
@@ -298,9 +298,9 @@ static const u_int64_t sha384_initial_hash_value[8] = {
 	0x47b5481dbefa4fa4ULL
 };
 
-#if 0
+#ఒకవేళ 0
 /* Initial hash value H for SHA-512-256 */
-static const u_int64_t sha512_256_initial_hash_value[8] = {
+స్థిర స్థిరరాశి u_int64_t sha512_256_initial_hash_విలువ[8] = {
 	0x22312194fc2bf72cULL,
 	0x9f555fa3c84c64c2ULL,
 	0x2393b86b6f53b151ULL,
@@ -312,12 +312,12 @@ static const u_int64_t sha512_256_initial_hash_value[8] = {
 };
 
 /*** SHA-224: *********************************************************/
-void
+శూన్య
 SHA224Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st32, sha224_initial_hash_value,
-	    sizeof(sha224_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	జ్ఞాపకం_నకలు(context->state.st32, sha224_initial_hash_విలువ,
+	    పరిమాణం(sha224_initial_hash_విలువ));
+	memset(context->బఫరు, 0, పరిమాణం(context->బఫరు));
 	context->bitcount[0] = 0;
 }
 DEF_WEAK(SHA224Init);
@@ -329,51 +329,51 @@ DEF_WEAK(SHA224Transform);
 DEF_WEAK(SHA224Update);
 DEF_WEAK(SHA224Pad);
 
-void
-SHA224Final(u_int8_t digest[SHA224_DIGEST_LENGTH], SHA2_CTX *context)
+శూన్య
+SHA224Final(u_int8_t digest[SHA224_DIGEST_నిడివి], SHA2_CTX *context)
 {
 	SHA224Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#ఒకవేళ BYTE_ORDER == LITTLE_ENDIAN
+	పూర్ణాంకం	i;
 
 	/* Convert TO host byte order */
-	for (i = 0; i < 7; i++)
-		BE_32_TO_8(digest + i * 4, context->state.st32[i]);
-#else
-	memcpy(digest, context->state.st32, SHA224_DIGEST_LENGTH);
-#endif
-	explicit_bzero(context, sizeof(*context));
+	కొరకు (i = 0; i < 7; i++)
+		BE_32_గమ్యం_8(digest + i * 4, context->state.st32[i]);
+#లేకపోతే
+	జ్ఞాపకం_నకలు(digest, context->state.st32, SHA224_DIGEST_నిడివి);
+#అయితే_ముగింపు
+	explicit_bzero(context, పరిమాణం(*context));
 }
 DEF_WEAK(SHA224Final);
-#endif /* !defined(SHA2_SMALL) */
-#endif /* 0 */
+#అయితే_ముగింపు /* !defined(SHA2_SMALL) */
+#అయితే_ముగింపు /* 0 */
 
 /*** SHA-256: *********************************************************/
-void
+శూన్య
 SHA256Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st32, sha256_initial_hash_value,
-	    sizeof(sha256_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	జ్ఞాపకం_నకలు(context->state.st32, sha256_initial_hash_విలువ,
+	    పరిమాణం(sha256_initial_hash_విలువ));
+	memset(context->బఫరు, 0, పరిమాణం(context->బఫరు));
 	context->bitcount[0] = 0;
 }
 DEF_WEAK(SHA256Init);
 
-#ifdef SHA2_UNROLL_TRANSFORM
+#నిర్వచితమైతే SHA2_UNROLL_TRANSFORM
 
 /* Unrolled SHA-256 round macros: */
 
-#define ROUND256_0_TO_15(a,b,c,d,e,f,g,h) do {				    \
-	BE_8_TO_32(W256[j], data);					    \
-	data += 4;							    \
+#నిర్వచించు ROUND256_0_గమ్యం_15(a,b,c,d,e,f,g,h) చేయి {				    \
+	BE_8_గమ్యం_32(W256[j], దత్తాంశం);					    \
+	దత్తాంశం += 4;							    \
 	T1 = (h) + Sigma1_256((e)) + Ch((e), (f), (g)) + K256[j] + W256[j]; \
 	(d) += T1;							    \
 	(h) = T1 + Sigma0_256((a)) + Maj((a), (b), (c));		    \
 	j++;								    \
-} while(0)
+} అయితే(0)
 
-#define ROUND256(a,b,c,d,e,f,g,h) do {					    \
+#నిర్వచించు ROUND256(a,b,c,d,e,f,g,h) చేయి {					    \
 	s0 = W256[(j+1)&0x0f];						    \
 	s0 = sigma0_256(s0);						    \
 	s1 = W256[(j+14)&0x0f];						    \
@@ -383,14 +383,14 @@ DEF_WEAK(SHA256Init);
 	(d) += T1;							    \
 	(h) = T1 + Sigma0_256((a)) + Maj((a), (b), (c));		    \
 	j++;								    \
-} while(0)
+} అయితే(0)
 
-void
-SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
+శూన్య
+SHA256Transform(u_int32_t state[8], స్థిరరాశి u_int8_t దత్తాంశం[SHA256_ఖండం_నిడివి])
 {
 	u_int32_t	a, b, c, d, e, f, g, h, s0, s1;
 	u_int32_t	T1, W256[16];
-	int		j;
+	పూర్ణాంకం		j;
 
 	/* Initialize registers with the prev. intermediate value */
 	a = state[0];
@@ -403,20 +403,20 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 	h = state[7];
 
 	j = 0;
-	do {
+	చేయి {
 		/* Rounds 0 to 15 (unrolled): */
-		ROUND256_0_TO_15(a,b,c,d,e,f,g,h);
-		ROUND256_0_TO_15(h,a,b,c,d,e,f,g);
-		ROUND256_0_TO_15(g,h,a,b,c,d,e,f);
-		ROUND256_0_TO_15(f,g,h,a,b,c,d,e);
-		ROUND256_0_TO_15(e,f,g,h,a,b,c,d);
-		ROUND256_0_TO_15(d,e,f,g,h,a,b,c);
-		ROUND256_0_TO_15(c,d,e,f,g,h,a,b);
-		ROUND256_0_TO_15(b,c,d,e,f,g,h,a);
-	} while (j < 16);
+		ROUND256_0_గమ్యం_15(a,b,c,d,e,f,g,h);
+		ROUND256_0_గమ్యం_15(h,a,b,c,d,e,f,g);
+		ROUND256_0_గమ్యం_15(g,h,a,b,c,d,e,f);
+		ROUND256_0_గమ్యం_15(f,g,h,a,b,c,d,e);
+		ROUND256_0_గమ్యం_15(e,f,g,h,a,b,c,d);
+		ROUND256_0_గమ్యం_15(d,e,f,g,h,a,b,c);
+		ROUND256_0_గమ్యం_15(c,d,e,f,g,h,a,b);
+		ROUND256_0_గమ్యం_15(b,c,d,e,f,g,h,a);
+	} అయితే (j < 16);
 
 	/* Now for the remaining rounds up to 63: */
-	do {
+	చేయి {
 		ROUND256(a,b,c,d,e,f,g,h);
 		ROUND256(h,a,b,c,d,e,f,g);
 		ROUND256(g,h,a,b,c,d,e,f);
@@ -425,7 +425,7 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 		ROUND256(d,e,f,g,h,a,b,c);
 		ROUND256(c,d,e,f,g,h,a,b);
 		ROUND256(b,c,d,e,f,g,h,a);
-	} while (j < 64);
+	} అయితే (j < 64);
 
 	/* Compute the current intermediate hash value */
 	state[0] += a;
@@ -441,14 +441,14 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 	a = b = c = d = e = f = g = h = T1 = 0;
 }
 
-#else /* SHA2_UNROLL_TRANSFORM */
+#లేకపోతే /* SHA2_UNROLL_TRANSFORM */
 
-void
-SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
+శూన్య
+SHA256Transform(u_int32_t state[8], స్థిరరాశి u_int8_t దత్తాంశం[SHA256_ఖండం_నిడివి])
 {
 	u_int32_t	a, b, c, d, e, f, g, h, s0, s1;
 	u_int32_t	T1, T2, W256[16];
-	int		j;
+	పూర్ణాంకం		j;
 
 	/* Initialize registers with the prev. intermediate value */
 	a = state[0];
@@ -461,9 +461,9 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 	h = state[7];
 
 	j = 0;
-	do {
-		BE_8_TO_32(W256[j], data);
-		data += 4;
+	చేయి {
+		BE_8_గమ్యం_32(W256[j], దత్తాంశం);
+		దత్తాంశం += 4;
 		/* Apply the SHA-256 compression function to update a..h */
 		T1 = h + Sigma1_256(e) + Ch(e, f, g) + K256[j] + W256[j];
 		T2 = Sigma0_256(a) + Maj(a, b, c);
@@ -477,9 +477,9 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 		a = T1 + T2;
 
 		j++;
-	} while (j < 16);
+	} అయితే (j < 16);
 
-	do {
+	చేయి {
 		/* Part of the message block expansion: */
 		s0 = W256[(j+1)&0x0f];
 		s0 = sigma0_256(s0);
@@ -500,7 +500,7 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 		a = T1 + T2;
 
 		j++;
-	} while (j < 64);
+	} అయితే (j < 64);
 
 	/* Compute the current intermediate hash value */
 	state[0] += a;
@@ -516,49 +516,49 @@ SHA256Transform(u_int32_t state[8], const u_int8_t data[SHA256_BLOCK_LENGTH])
 	a = b = c = d = e = f = g = h = T1 = T2 = 0;
 }
 
-#endif /* SHA2_UNROLL_TRANSFORM */
+#అయితే_ముగింపు /* SHA2_UNROLL_TRANSFORM */
 DEF_WEAK(SHA256Transform);
 
-void
-SHA256Update(SHA2_CTX *context, const u_int8_t *data, size_t len)
+శూన్య
+SHA256Update(SHA2_CTX *context, స్థిరరాశి u_int8_t *దత్తాంశం, కొలత_t len)
 {
 	u_int64_t	freespace, usedspace;
 
 	/* Calling with no data is valid (we do nothing) */
-	if (len == 0)
-		return;
+	ఒకవేళ (len == 0)
+		తిరిగి;
 
-	usedspace = (context->bitcount[0] >> 3) % SHA256_BLOCK_LENGTH;
-	if (usedspace > 0) {
+	usedspace = (context->bitcount[0] >> 3) % SHA256_ఖండం_నిడివి;
+	ఒకవేళ (usedspace > 0) {
 		/* Calculate how much free space is available in the buffer */
-		freespace = SHA256_BLOCK_LENGTH - usedspace;
+		freespace = SHA256_ఖండం_నిడివి - usedspace;
 
-		if (len >= freespace) {
+		ఒకవేళ (len >= freespace) {
 			/* Fill the buffer completely and process it */
-			memcpy(&context->buffer[usedspace], data, freespace);
+			జ్ఞాపకం_నకలు(&context->బఫరు[usedspace], దత్తాంశం, freespace);
 			context->bitcount[0] += freespace << 3;
 			len -= freespace;
-			data += freespace;
-			SHA256Transform(context->state.st32, context->buffer);
-		} else {
+			దత్తాంశం += freespace;
+			SHA256Transform(context->state.st32, context->బఫరు);
+		} లేకపోతే {
 			/* The buffer is not yet full */
-			memcpy(&context->buffer[usedspace], data, len);
+			జ్ఞాపకం_నకలు(&context->బఫరు[usedspace], దత్తాంశం, len);
 			context->bitcount[0] += (u_int64_t)len << 3;
 			/* Clean up: */
 			usedspace = freespace = 0;
-			return;
+			తిరిగి;
 		}
 	}
-	while (len >= SHA256_BLOCK_LENGTH) {
+	అయితే (len >= SHA256_ఖండం_నిడివి) {
 		/* Process as many complete blocks as we can */
-		SHA256Transform(context->state.st32, data);
-		context->bitcount[0] += SHA256_BLOCK_LENGTH << 3;
-		len -= SHA256_BLOCK_LENGTH;
-		data += SHA256_BLOCK_LENGTH;
+		SHA256Transform(context->state.st32, దత్తాంశం);
+		context->bitcount[0] += SHA256_ఖండం_నిడివి << 3;
+		len -= SHA256_ఖండం_నిడివి;
+		దత్తాంశం += SHA256_ఖండం_నిడివి;
 	}
-	if (len > 0) {
+	ఒకవేళ (len > 0) {
 		/* There's left-overs, so save 'em */
-		memcpy(context->buffer, data, len);
+		జ్ఞాపకం_నకలు(context->బఫరు, దత్తాంశం, len);
 		context->bitcount[0] += len << 3;
 	}
 	/* Clean up: */
@@ -566,95 +566,95 @@ SHA256Update(SHA2_CTX *context, const u_int8_t *data, size_t len)
 }
 DEF_WEAK(SHA256Update);
 
-void
+శూన్య
 SHA256Pad(SHA2_CTX *context)
 {
-	unsigned int	usedspace;
+	గుర్తులేని పూర్ణాంకం	usedspace;
 
-	usedspace = (context->bitcount[0] >> 3) % SHA256_BLOCK_LENGTH;
-	if (usedspace > 0) {
+	usedspace = (context->bitcount[0] >> 3) % SHA256_ఖండం_నిడివి;
+	ఒకవేళ (usedspace > 0) {
 		/* Begin padding with a 1 bit: */
-		context->buffer[usedspace++] = 0x80;
+		context->బఫరు[usedspace++] = 0x80;
 
-		if (usedspace <= SHA256_SHORT_BLOCK_LENGTH) {
+		ఒకవేళ (usedspace <= SHA256_SHORT_ఖండం_నిడివి) {
 			/* Set-up for the last transform: */
-			memset(&context->buffer[usedspace], 0,
-			    SHA256_SHORT_BLOCK_LENGTH - usedspace);
-		} else {
-			if (usedspace < SHA256_BLOCK_LENGTH) {
-				memset(&context->buffer[usedspace], 0,
-				    SHA256_BLOCK_LENGTH - usedspace);
+			memset(&context->బఫరు[usedspace], 0,
+			    SHA256_SHORT_ఖండం_నిడివి - usedspace);
+		} లేకపోతే {
+			ఒకవేళ (usedspace < SHA256_ఖండం_నిడివి) {
+				memset(&context->బఫరు[usedspace], 0,
+				    SHA256_ఖండం_నిడివి - usedspace);
 			}
 			/* Do second-to-last transform: */
-			SHA256Transform(context->state.st32, context->buffer);
+			SHA256Transform(context->state.st32, context->బఫరు);
 
 			/* Prepare for last transform: */
-			memset(context->buffer, 0, SHA256_SHORT_BLOCK_LENGTH);
+			memset(context->బఫరు, 0, SHA256_SHORT_ఖండం_నిడివి);
 		}
-	} else {
+	} లేకపోతే {
 		/* Set-up for the last transform: */
-		memset(context->buffer, 0, SHA256_SHORT_BLOCK_LENGTH);
+		memset(context->బఫరు, 0, SHA256_SHORT_ఖండం_నిడివి);
 
 		/* Begin padding with a 1 bit: */
-		*context->buffer = 0x80;
+		*context->బఫరు = 0x80;
 	}
 	/* Store the length of input data (in bits) in big endian format: */
-	BE_64_TO_8(&context->buffer[SHA256_SHORT_BLOCK_LENGTH],
+	BE_64_గమ్యం_8(&context->బఫరు[SHA256_SHORT_ఖండం_నిడివి],
 	    context->bitcount[0]);
 
 	/* Final transform: */
-	SHA256Transform(context->state.st32, context->buffer);
+	SHA256Transform(context->state.st32, context->బఫరు);
 
 	/* Clean up: */
 	usedspace = 0;
 }
 DEF_WEAK(SHA256Pad);
 
-void
-SHA256Final(u_int8_t digest[SHA256_DIGEST_LENGTH], SHA2_CTX *context)
+శూన్య
+SHA256Final(u_int8_t digest[SHA256_DIGEST_నిడివి], SHA2_CTX *context)
 {
 	SHA256Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#ఒకవేళ BYTE_ORDER == LITTLE_ENDIAN
+	పూర్ణాంకం	i;
 
 	/* Convert TO host byte order */
-	for (i = 0; i < 8; i++)
-		BE_32_TO_8(digest + i * 4, context->state.st32[i]);
-#else
-	memcpy(digest, context->state.st32, SHA256_DIGEST_LENGTH);
-#endif
-	explicit_bzero(context, sizeof(*context));
+	కొరకు (i = 0; i < 8; i++)
+		BE_32_గమ్యం_8(digest + i * 4, context->state.st32[i]);
+#లేకపోతే
+	జ్ఞాపకం_నకలు(digest, context->state.st32, SHA256_DIGEST_నిడివి);
+#అయితే_ముగింపు
+	explicit_bzero(context, పరిమాణం(*context));
 }
 DEF_WEAK(SHA256Final);
 
 
 /*** SHA-512: *********************************************************/
-void
+శూన్య
 SHA512Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st64, sha512_initial_hash_value,
-	    sizeof(sha512_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	జ్ఞాపకం_నకలు(context->state.st64, sha512_initial_hash_విలువ,
+	    పరిమాణం(sha512_initial_hash_విలువ));
+	memset(context->బఫరు, 0, పరిమాణం(context->బఫరు));
 	context->bitcount[0] = context->bitcount[1] =  0;
 }
 DEF_WEAK(SHA512Init);
 
-#ifdef SHA2_UNROLL_TRANSFORM
+#నిర్వచితమైతే SHA2_UNROLL_TRANSFORM
 
 /* Unrolled SHA-512 round macros: */
 
-#define ROUND512_0_TO_15(a,b,c,d,e,f,g,h) do {				    \
-	BE_8_TO_64(W512[j], data);					    \
-	data += 8;							    \
+#నిర్వచించు ROUND512_0_గమ్యం_15(a,b,c,d,e,f,g,h) చేయి {				    \
+	BE_8_గమ్యం_64(W512[j], దత్తాంశం);					    \
+	దత్తాంశం += 8;							    \
 	T1 = (h) + Sigma1_512((e)) + Ch((e), (f), (g)) + K512[j] + W512[j]; \
 	(d) += T1;							    \
 	(h) = T1 + Sigma0_512((a)) + Maj((a), (b), (c));		    \
 	j++;								    \
-} while(0)
+} అయితే(0)
 
 
-#define ROUND512(a,b,c,d,e,f,g,h) do {					    \
+#నిర్వచించు ROUND512(a,b,c,d,e,f,g,h) చేయి {					    \
 	s0 = W512[(j+1)&0x0f];						    \
 	s0 = sigma0_512(s0);						    \
 	s1 = W512[(j+14)&0x0f];						    \
@@ -664,14 +664,14 @@ DEF_WEAK(SHA512Init);
 	(d) += T1;							    \
 	(h) = T1 + Sigma0_512((a)) + Maj((a), (b), (c));		    \
 	j++;								    \
-} while(0)
+} అయితే(0)
 
-void
-SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
+శూన్య
+SHA512Transform(u_int64_t state[8], స్థిరరాశి u_int8_t దత్తాంశం[SHA512_ఖండం_నిడివి])
 {
 	u_int64_t	a, b, c, d, e, f, g, h, s0, s1;
 	u_int64_t	T1, W512[16];
-	int		j;
+	పూర్ణాంకం		j;
 
 	/* Initialize registers with the prev. intermediate value */
 	a = state[0];
@@ -684,20 +684,20 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 	h = state[7];
 
 	j = 0;
-	do {
+	చేయి {
 		/* Rounds 0 to 15 (unrolled): */
-		ROUND512_0_TO_15(a,b,c,d,e,f,g,h);
-		ROUND512_0_TO_15(h,a,b,c,d,e,f,g);
-		ROUND512_0_TO_15(g,h,a,b,c,d,e,f);
-		ROUND512_0_TO_15(f,g,h,a,b,c,d,e);
-		ROUND512_0_TO_15(e,f,g,h,a,b,c,d);
-		ROUND512_0_TO_15(d,e,f,g,h,a,b,c);
-		ROUND512_0_TO_15(c,d,e,f,g,h,a,b);
-		ROUND512_0_TO_15(b,c,d,e,f,g,h,a);
-	} while (j < 16);
+		ROUND512_0_గమ్యం_15(a,b,c,d,e,f,g,h);
+		ROUND512_0_గమ్యం_15(h,a,b,c,d,e,f,g);
+		ROUND512_0_గమ్యం_15(g,h,a,b,c,d,e,f);
+		ROUND512_0_గమ్యం_15(f,g,h,a,b,c,d,e);
+		ROUND512_0_గమ్యం_15(e,f,g,h,a,b,c,d);
+		ROUND512_0_గమ్యం_15(d,e,f,g,h,a,b,c);
+		ROUND512_0_గమ్యం_15(c,d,e,f,g,h,a,b);
+		ROUND512_0_గమ్యం_15(b,c,d,e,f,g,h,a);
+	} అయితే (j < 16);
 
 	/* Now for the remaining rounds up to 79: */
-	do {
+	చేయి {
 		ROUND512(a,b,c,d,e,f,g,h);
 		ROUND512(h,a,b,c,d,e,f,g);
 		ROUND512(g,h,a,b,c,d,e,f);
@@ -706,7 +706,7 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 		ROUND512(d,e,f,g,h,a,b,c);
 		ROUND512(c,d,e,f,g,h,a,b);
 		ROUND512(b,c,d,e,f,g,h,a);
-	} while (j < 80);
+	} అయితే (j < 80);
 
 	/* Compute the current intermediate hash value */
 	state[0] += a;
@@ -722,14 +722,14 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 	a = b = c = d = e = f = g = h = T1 = 0;
 }
 
-#else /* SHA2_UNROLL_TRANSFORM */
+#లేకపోతే /* SHA2_UNROLL_TRANSFORM */
 
-void
-SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
+శూన్య
+SHA512Transform(u_int64_t state[8], స్థిరరాశి u_int8_t దత్తాంశం[SHA512_ఖండం_నిడివి])
 {
 	u_int64_t	a, b, c, d, e, f, g, h, s0, s1;
 	u_int64_t	T1, T2, W512[16];
-	int		j;
+	పూర్ణాంకం		j;
 
 	/* Initialize registers with the prev. intermediate value */
 	a = state[0];
@@ -742,9 +742,9 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 	h = state[7];
 
 	j = 0;
-	do {
-		BE_8_TO_64(W512[j], data);
-		data += 8;
+	చేయి {
+		BE_8_గమ్యం_64(W512[j], దత్తాంశం);
+		దత్తాంశం += 8;
 		/* Apply the SHA-512 compression function to update a..h */
 		T1 = h + Sigma1_512(e) + Ch(e, f, g) + K512[j] + W512[j];
 		T2 = Sigma0_512(a) + Maj(a, b, c);
@@ -758,9 +758,9 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 		a = T1 + T2;
 
 		j++;
-	} while (j < 16);
+	} అయితే (j < 16);
 
-	do {
+	చేయి {
 		/* Part of the message block expansion: */
 		s0 = W512[(j+1)&0x0f];
 		s0 = sigma0_512(s0);
@@ -781,7 +781,7 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 		a = T1 + T2;
 
 		j++;
-	} while (j < 80);
+	} అయితే (j < 80);
 
 	/* Compute the current intermediate hash value */
 	state[0] += a;
@@ -797,49 +797,49 @@ SHA512Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
 	a = b = c = d = e = f = g = h = T1 = T2 = 0;
 }
 
-#endif /* SHA2_UNROLL_TRANSFORM */
+#అయితే_ముగింపు /* SHA2_UNROLL_TRANSFORM */
 DEF_WEAK(SHA512Transform);
 
-void
-SHA512Update(SHA2_CTX *context, const u_int8_t *data, size_t len)
+శూన్య
+SHA512Update(SHA2_CTX *context, స్థిరరాశి u_int8_t *దత్తాంశం, కొలత_t len)
 {
-	size_t	freespace, usedspace;
+	కొలత_t	freespace, usedspace;
 
 	/* Calling with no data is valid (we do nothing) */
-	if (len == 0)
-		return;
+	ఒకవేళ (len == 0)
+		తిరిగి;
 
-	usedspace = (context->bitcount[0] >> 3) % SHA512_BLOCK_LENGTH;
-	if (usedspace > 0) {
+	usedspace = (context->bitcount[0] >> 3) % SHA512_ఖండం_నిడివి;
+	ఒకవేళ (usedspace > 0) {
 		/* Calculate how much free space is available in the buffer */
-		freespace = SHA512_BLOCK_LENGTH - usedspace;
+		freespace = SHA512_ఖండం_నిడివి - usedspace;
 
-		if (len >= freespace) {
+		ఒకవేళ (len >= freespace) {
 			/* Fill the buffer completely and process it */
-			memcpy(&context->buffer[usedspace], data, freespace);
+			జ్ఞాపకం_నకలు(&context->బఫరు[usedspace], దత్తాంశం, freespace);
 			ADDINC128(context->bitcount, freespace << 3);
 			len -= freespace;
-			data += freespace;
-			SHA512Transform(context->state.st64, context->buffer);
-		} else {
+			దత్తాంశం += freespace;
+			SHA512Transform(context->state.st64, context->బఫరు);
+		} లేకపోతే {
 			/* The buffer is not yet full */
-			memcpy(&context->buffer[usedspace], data, len);
+			జ్ఞాపకం_నకలు(&context->బఫరు[usedspace], దత్తాంశం, len);
 			ADDINC128(context->bitcount, len << 3);
 			/* Clean up: */
 			usedspace = freespace = 0;
-			return;
+			తిరిగి;
 		}
 	}
-	while (len >= SHA512_BLOCK_LENGTH) {
+	అయితే (len >= SHA512_ఖండం_నిడివి) {
 		/* Process as many complete blocks as we can */
-		SHA512Transform(context->state.st64, data);
-		ADDINC128(context->bitcount, SHA512_BLOCK_LENGTH << 3);
-		len -= SHA512_BLOCK_LENGTH;
-		data += SHA512_BLOCK_LENGTH;
+		SHA512Transform(context->state.st64, దత్తాంశం);
+		ADDINC128(context->bitcount, SHA512_ఖండం_నిడివి << 3);
+		len -= SHA512_ఖండం_నిడివి;
+		దత్తాంశం += SHA512_ఖండం_నిడివి;
 	}
-	if (len > 0) {
+	ఒకవేళ (len > 0) {
 		/* There's left-overs, so save 'em */
-		memcpy(context->buffer, data, len);
+		జ్ఞాపకం_నకలు(context->బఫరు, దత్తాంశం, len);
 		ADDINC128(context->bitcount, len << 3);
 	}
 	/* Clean up: */
@@ -847,77 +847,77 @@ SHA512Update(SHA2_CTX *context, const u_int8_t *data, size_t len)
 }
 DEF_WEAK(SHA512Update);
 
-void
+శూన్య
 SHA512Pad(SHA2_CTX *context)
 {
-	unsigned int	usedspace;
+	గుర్తులేని పూర్ణాంకం	usedspace;
 
-	usedspace = (context->bitcount[0] >> 3) % SHA512_BLOCK_LENGTH;
-	if (usedspace > 0) {
+	usedspace = (context->bitcount[0] >> 3) % SHA512_ఖండం_నిడివి;
+	ఒకవేళ (usedspace > 0) {
 		/* Begin padding with a 1 bit: */
-		context->buffer[usedspace++] = 0x80;
+		context->బఫరు[usedspace++] = 0x80;
 
-		if (usedspace <= SHA512_SHORT_BLOCK_LENGTH) {
+		ఒకవేళ (usedspace <= SHA512_SHORT_ఖండం_నిడివి) {
 			/* Set-up for the last transform: */
-			memset(&context->buffer[usedspace], 0, SHA512_SHORT_BLOCK_LENGTH - usedspace);
-		} else {
-			if (usedspace < SHA512_BLOCK_LENGTH) {
-				memset(&context->buffer[usedspace], 0, SHA512_BLOCK_LENGTH - usedspace);
+			memset(&context->బఫరు[usedspace], 0, SHA512_SHORT_ఖండం_నిడివి - usedspace);
+		} లేకపోతే {
+			ఒకవేళ (usedspace < SHA512_ఖండం_నిడివి) {
+				memset(&context->బఫరు[usedspace], 0, SHA512_ఖండం_నిడివి - usedspace);
 			}
 			/* Do second-to-last transform: */
-			SHA512Transform(context->state.st64, context->buffer);
+			SHA512Transform(context->state.st64, context->బఫరు);
 
 			/* And set-up for the last transform: */
-			memset(context->buffer, 0, SHA512_BLOCK_LENGTH - 2);
+			memset(context->బఫరు, 0, SHA512_ఖండం_నిడివి - 2);
 		}
-	} else {
+	} లేకపోతే {
 		/* Prepare for final transform: */
-		memset(context->buffer, 0, SHA512_SHORT_BLOCK_LENGTH);
+		memset(context->బఫరు, 0, SHA512_SHORT_ఖండం_నిడివి);
 
 		/* Begin padding with a 1 bit: */
-		*context->buffer = 0x80;
+		*context->బఫరు = 0x80;
 	}
 	/* Store the length of input data (in bits) in big endian format: */
-	BE_64_TO_8(&context->buffer[SHA512_SHORT_BLOCK_LENGTH],
+	BE_64_గమ్యం_8(&context->బఫరు[SHA512_SHORT_ఖండం_నిడివి],
 	    context->bitcount[1]);
-	BE_64_TO_8(&context->buffer[SHA512_SHORT_BLOCK_LENGTH + 8],
+	BE_64_గమ్యం_8(&context->బఫరు[SHA512_SHORT_ఖండం_నిడివి + 8],
 	    context->bitcount[0]);
 
 	/* Final transform: */
-	SHA512Transform(context->state.st64, context->buffer);
+	SHA512Transform(context->state.st64, context->బఫరు);
 
 	/* Clean up: */
 	usedspace = 0;
 }
 DEF_WEAK(SHA512Pad);
 
-void
-SHA512Final(u_int8_t digest[SHA512_DIGEST_LENGTH], SHA2_CTX *context)
+శూన్య
+SHA512Final(u_int8_t digest[SHA512_DIGEST_నిడివి], SHA2_CTX *context)
 {
 	SHA512Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#ఒకవేళ BYTE_ORDER == LITTLE_ENDIAN
+	పూర్ణాంకం	i;
 
 	/* Convert TO host byte order */
-	for (i = 0; i < 8; i++)
-		BE_64_TO_8(digest + i * 8, context->state.st64[i]);
-#else
-	memcpy(digest, context->state.st64, SHA512_DIGEST_LENGTH);
-#endif
-	explicit_bzero(context, sizeof(*context));
+	కొరకు (i = 0; i < 8; i++)
+		BE_64_గమ్యం_8(digest + i * 8, context->state.st64[i]);
+#లేకపోతే
+	జ్ఞాపకం_నకలు(digest, context->state.st64, SHA512_DIGEST_నిడివి);
+#అయితే_ముగింపు
+	explicit_bzero(context, పరిమాణం(*context));
 }
 DEF_WEAK(SHA512Final);
 
-#if !defined(SHA2_SMALL)
+#ఒకవేళ !defined(SHA2_SMALL)
 
 /*** SHA-384: *********************************************************/
-void
+శూన్య
 SHA384Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st64, sha384_initial_hash_value,
-	    sizeof(sha384_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	జ్ఞాపకం_నకలు(context->state.st64, sha384_initial_hash_విలువ,
+	    పరిమాణం(sha384_initial_hash_విలువ));
+	memset(context->బఫరు, 0, పరిమాణం(context->బఫరు));
 	context->bitcount[0] = context->bitcount[1] = 0;
 }
 DEF_WEAK(SHA384Init);
@@ -930,51 +930,51 @@ DEF_WEAK(SHA384Update);
 DEF_WEAK(SHA384Pad);
 
 /* Equivalent of MAKE_CLONE (which is a no-op) for SHA384 funcs */
-void
-SHA384Transform(u_int64_t state[8], const u_int8_t data[SHA512_BLOCK_LENGTH])
+శూన్య
+SHA384Transform(u_int64_t state[8], స్థిరరాశి u_int8_t దత్తాంశం[SHA512_ఖండం_నిడివి])
 {
-	SHA512Transform(state, data);
+	SHA512Transform(state, దత్తాంశం);
 }
 
-void
-SHA384Update(SHA2_CTX *context, const u_int8_t *data, size_t len)
+శూన్య
+SHA384Update(SHA2_CTX *context, స్థిరరాశి u_int8_t *దత్తాంశం, కొలత_t len)
 {
-	SHA512Update(context, data, len);
+	SHA512Update(context, దత్తాంశం, len);
 }
 
-void
+శూన్య
 SHA384Pad(SHA2_CTX *context)
 {
 	SHA512Pad(context);
 }
 
-void
-SHA384Final(u_int8_t digest[SHA384_DIGEST_LENGTH], SHA2_CTX *context)
+శూన్య
+SHA384Final(u_int8_t digest[SHA384_DIGEST_నిడివి], SHA2_CTX *context)
 {
 	SHA384Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#ఒకవేళ BYTE_ORDER == LITTLE_ENDIAN
+	పూర్ణాంకం	i;
 
 	/* Convert TO host byte order */
-	for (i = 0; i < 6; i++)
-		BE_64_TO_8(digest + i * 8, context->state.st64[i]);
-#else
-	memcpy(digest, context->state.st64, SHA384_DIGEST_LENGTH);
-#endif
+	కొరకు (i = 0; i < 6; i++)
+		BE_64_గమ్యం_8(digest + i * 8, context->state.st64[i]);
+#లేకపోతే
+	జ్ఞాపకం_నకలు(digest, context->state.st64, SHA384_DIGEST_నిడివి);
+#అయితే_ముగింపు
 	/* Zero out state data */
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, పరిమాణం(*context));
 }
 DEF_WEAK(SHA384Final);
 
-#if 0
+#ఒకవేళ 0
 /*** SHA-512/256: *********************************************************/
-void
+శూన్య
 SHA512_256Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st64, sha512_256_initial_hash_value,
-	    sizeof(sha512_256_initial_hash_value));
-	memset(context->buffer, 0, sizeof(context->buffer));
+	జ్ఞాపకం_నకలు(context->state.st64, sha512_256_initial_hash_విలువ,
+	    పరిమాణం(sha512_256_initial_hash_విలువ));
+	memset(context->బఫరు, 0, పరిమాణం(context->బఫరు));
 	context->bitcount[0] = context->bitcount[1] = 0;
 }
 DEF_WEAK(SHA512_256Init);
@@ -986,25 +986,25 @@ DEF_WEAK(SHA512_256Transform);
 DEF_WEAK(SHA512_256Update);
 DEF_WEAK(SHA512_256Pad);
 
-void
-SHA512_256Final(u_int8_t digest[SHA512_256_DIGEST_LENGTH], SHA2_CTX *context)
+శూన్య
+SHA512_256Final(u_int8_t digest[SHA512_256_DIGEST_నిడివి], SHA2_CTX *context)
 {
 	SHA512_256Pad(context);
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	int	i;
+#ఒకవేళ BYTE_ORDER == LITTLE_ENDIAN
+	పూర్ణాంకం	i;
 
 	/* Convert TO host byte order */
-	for (i = 0; i < 4; i++)
-		BE_64_TO_8(digest + i * 8, context->state.st64[i]);
-#else
-	memcpy(digest, context->state.st64, SHA512_256_DIGEST_LENGTH);
-#endif
+	కొరకు (i = 0; i < 4; i++)
+		BE_64_గమ్యం_8(digest + i * 8, context->state.st64[i]);
+#లేకపోతే
+	జ్ఞాపకం_నకలు(digest, context->state.st64, SHA512_256_DIGEST_నిడివి);
+#అయితే_ముగింపు
 	/* Zero out state data */
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, పరిమాణం(*context));
 }
 DEF_WEAK(SHA512_256Final);
-#endif /* !defined(SHA2_SMALL) */
-#endif /* 0 */
+#అయితే_ముగింపు /* !defined(SHA2_SMALL) */
+#అయితే_ముగింపు /* 0 */
 
-#endif /* HAVE_SHA{256,384,512}UPDATE */
+#అయితే_ముగింపు /* HAVE_SHA{256,384,512}UPDATE */

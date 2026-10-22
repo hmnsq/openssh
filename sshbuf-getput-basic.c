@@ -15,655 +15,655 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdint.h>
 
-#include "ssherr.h"
-#define SSHBUF_INTERNAL
-#include "sshbuf.h"
+#అన్తర్భావ "ssherr.h"
+#నిర్వచించు SSHBUF_అంతర్గత
+#అన్తర్భావ "sshbuf.h"
 
-int
-sshbuf_get(struct sshbuf *buf, void *v, size_t len)
+పూర్ణాంకం
+sshbuf_get(నిర్మాణం sshbuf *buf, శూన్య *v, కొలత_t len)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	స్థిరరాశి u_char *p = sshbuf_ptr(buf);
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_consume(buf, len)) < 0)
-		return r;
-	if (v != NULL && len != 0)
-		memcpy(v, p, len);
-	return 0;
+	ఒకవేళ ((r = sshbuf_consume(buf, len)) < 0)
+		తిరిగి r;
+	ఒకవేళ (v != ఖాళీ && len != 0)
+		జ్ఞాపకం_నకలు(v, p, len);
+	తిరిగి 0;
 }
 
-int
-sshbuf_get_u64(struct sshbuf *buf, uint64_t *valp)
+పూర్ణాంకం
+sshbuf_get_u64(నిర్మాణం sshbuf *buf, uint64_t *valp)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	స్థిరరాశి u_char *p = sshbuf_ptr(buf);
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_consume(buf, 8)) < 0)
-		return r;
-	if (valp != NULL)
+	ఒకవేళ ((r = sshbuf_consume(buf, 8)) < 0)
+		తిరిగి r;
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = PEEK_U64(p);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_get_u32(struct sshbuf *buf, uint32_t *valp)
+పూర్ణాంకం
+sshbuf_get_u32(నిర్మాణం sshbuf *buf, uint32_t *valp)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	స్థిరరాశి u_char *p = sshbuf_ptr(buf);
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_consume(buf, 4)) < 0)
-		return r;
-	if (valp != NULL)
+	ఒకవేళ ((r = sshbuf_consume(buf, 4)) < 0)
+		తిరిగి r;
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = PEEK_U32(p);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_get_u16(struct sshbuf *buf, uint16_t *valp)
+పూర్ణాంకం
+sshbuf_get_u16(నిర్మాణం sshbuf *buf, uint16_t *valp)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	స్థిరరాశి u_char *p = sshbuf_ptr(buf);
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_consume(buf, 2)) < 0)
-		return r;
-	if (valp != NULL)
+	ఒకవేళ ((r = sshbuf_consume(buf, 2)) < 0)
+		తిరిగి r;
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = PEEK_U16(p);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_get_u8(struct sshbuf *buf, u_char *valp)
+పూర్ణాంకం
+sshbuf_get_u8(నిర్మాణం sshbuf *buf, u_char *valp)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	స్థిరరాశి u_char *p = sshbuf_ptr(buf);
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_consume(buf, 1)) < 0)
-		return r;
-	if (valp != NULL)
+	ఒకవేళ ((r = sshbuf_consume(buf, 1)) < 0)
+		తిరిగి r;
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = (uint8_t)*p;
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-check_offset(const struct sshbuf *buf, int wr, size_t offset, size_t len)
+స్థిర పూర్ణాంకం
+check_స్థానభ్రంశం(స్థిరరాశి నిర్మాణం sshbuf *buf, పూర్ణాంకం wr, కొలత_t స్థానభ్రంశం, కొలత_t len)
 {
-	if (sshbuf_ptr(buf) == NULL) /* calls sshbuf_check_sanity() */
-		return SSH_ERR_INTERNAL_ERROR;
-	if (offset >= SIZE_MAX - len)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (offset + len > sshbuf_len(buf)) {
-		return wr ?
-		    SSH_ERR_NO_BUFFER_SPACE : SSH_ERR_MESSAGE_INCOMPLETE;
+	ఒకవేళ (sshbuf_ptr(buf) == ఖాళీ) /* calls sshbuf_check_sanity() */
+		తిరిగి SSH_ERR_అంతర్గత_ERROR;
+	ఒకవేళ (స్థానభ్రంశం >= SIZE_MAX - len)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ (స్థానభ్రంశం + len > sshbuf_len(buf)) {
+		తిరిగి wr ?
+		    SSH_ERR_NO_బఫరు_SPACE : SSH_ERR_సందేశం_INCOMPLETE;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-check_roffset(const struct sshbuf *buf, size_t offset, size_t len,
-    const u_char **p)
+స్థిర పూర్ణాంకం
+check_roffset(స్థిరరాశి నిర్మాణం sshbuf *buf, కొలత_t స్థానభ్రంశం, కొలత_t len,
+    స్థిరరాశి u_char **p)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	*p = NULL;
-	if ((r = check_offset(buf, 0, offset, len)) != 0)
-		return r;
-	*p = sshbuf_ptr(buf) + offset;
-	return 0;
+	*p = ఖాళీ;
+	ఒకవేళ ((r = check_స్థానభ్రంశం(buf, 0, స్థానభ్రంశం, len)) != 0)
+		తిరిగి r;
+	*p = sshbuf_ptr(buf) + స్థానభ్రంశం;
+	తిరిగి 0;
 }
 
-int
-sshbuf_peek_u64(const struct sshbuf *buf, size_t offset, uint64_t *valp)
+పూర్ణాంకం
+sshbuf_peek_u64(స్థిరరాశి నిర్మాణం sshbuf *buf, కొలత_t స్థానభ్రంశం, uint64_t *valp)
 {
-	const u_char *p = NULL;
-	int r;
+	స్థిరరాశి u_char *p = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if (valp != NULL)
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = 0;
-	if ((r = check_roffset(buf, offset, 8, &p)) != 0)
-		return r;
-	if (valp != NULL)
+	ఒకవేళ ((r = check_roffset(buf, స్థానభ్రంశం, 8, &p)) != 0)
+		తిరిగి r;
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = PEEK_U64(p);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_peek_u32(const struct sshbuf *buf, size_t offset, uint32_t *valp)
+పూర్ణాంకం
+sshbuf_peek_u32(స్థిరరాశి నిర్మాణం sshbuf *buf, కొలత_t స్థానభ్రంశం, uint32_t *valp)
 {
-	const u_char *p = NULL;
-	int r;
+	స్థిరరాశి u_char *p = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if (valp != NULL)
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = 0;
-	if ((r = check_roffset(buf, offset, 4, &p)) != 0)
-		return r;
-	if (valp != NULL)
+	ఒకవేళ ((r = check_roffset(buf, స్థానభ్రంశం, 4, &p)) != 0)
+		తిరిగి r;
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = PEEK_U32(p);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_peek_u16(const struct sshbuf *buf, size_t offset, uint16_t *valp)
+పూర్ణాంకం
+sshbuf_peek_u16(స్థిరరాశి నిర్మాణం sshbuf *buf, కొలత_t స్థానభ్రంశం, uint16_t *valp)
 {
-	const u_char *p = NULL;
-	int r;
+	స్థిరరాశి u_char *p = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if (valp != NULL)
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = 0;
-	if ((r = check_roffset(buf, offset, 2, &p)) != 0)
-		return r;
-	if (valp != NULL)
+	ఒకవేళ ((r = check_roffset(buf, స్థానభ్రంశం, 2, &p)) != 0)
+		తిరిగి r;
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = PEEK_U16(p);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_peek_u8(const struct sshbuf *buf, size_t offset, u_char *valp)
+పూర్ణాంకం
+sshbuf_peek_u8(స్థిరరాశి నిర్మాణం sshbuf *buf, కొలత_t స్థానభ్రంశం, u_char *valp)
 {
-	const u_char *p = NULL;
-	int r;
+	స్థిరరాశి u_char *p = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if (valp != NULL)
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = 0;
-	if ((r = check_roffset(buf, offset, 1, &p)) != 0)
-		return r;
-	if (valp != NULL)
+	ఒకవేళ ((r = check_roffset(buf, స్థానభ్రంశం, 1, &p)) != 0)
+		తిరిగి r;
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = *p;
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_get_string(struct sshbuf *buf, u_char **valp, size_t *lenp)
+పూర్ణాంకం
+sshbuf_get_string(నిర్మాణం sshbuf *buf, u_char **valp, కొలత_t *lenp)
 {
-	const u_char *val;
-	size_t len;
-	int r;
+	స్థిరరాశి u_char *val;
+	కొలత_t len;
+	పూర్ణాంకం r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	ఒకవేళ (valp != ఖాళీ)
+		*valp = ఖాళీ;
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = 0;
-	if ((r = sshbuf_get_string_direct(buf, &val, &len)) < 0)
-		return r;
-	if (valp != NULL) {
-		if ((*valp = malloc(len + 1)) == NULL) {
+	ఒకవేళ ((r = sshbuf_get_string_ప్రత్యక్ష(buf, &val, &len)) < 0)
+		తిరిగి r;
+	ఒకవేళ (valp != ఖాళీ) {
+		ఒకవేళ ((*valp = జ్ఞాపకం_ఇవ్వు(len + 1)) == ఖాళీ) {
 			SSHBUF_DBG(("SSH_ERR_ALLOC_FAIL"));
-			return SSH_ERR_ALLOC_FAIL;
+			తిరిగి SSH_ERR_ALLOC_FAIL;
 		}
-		if (len != 0)
-			memcpy(*valp, val, len);
+		ఒకవేళ (len != 0)
+			జ్ఞాపకం_నకలు(*valp, val, len);
 		(*valp)[len] = '\0';
 	}
-	if (lenp != NULL)
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = len;
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_get_string_direct(struct sshbuf *buf, const u_char **valp, size_t *lenp)
+పూర్ణాంకం
+sshbuf_get_string_ప్రత్యక్ష(నిర్మాణం sshbuf *buf, స్థిరరాశి u_char **valp, కొలత_t *lenp)
 {
-	size_t len;
-	const u_char *p;
-	int r;
+	కొలత_t len;
+	స్థిరరాశి u_char *p;
+	పూర్ణాంకం r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	ఒకవేళ (valp != ఖాళీ)
+		*valp = ఖాళీ;
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = 0;
-	if ((r = sshbuf_peek_string_direct(buf, &p, &len)) < 0)
-		return r;
-	if (valp != NULL)
+	ఒకవేళ ((r = sshbuf_peek_string_ప్రత్యక్ష(buf, &p, &len)) < 0)
+		తిరిగి r;
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = p;
-	if (lenp != NULL)
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = len;
-	if (sshbuf_consume(buf, len + 4) != 0) {
+	ఒకవేళ (sshbuf_consume(buf, len + 4) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		తిరిగి SSH_ERR_అంతర్గత_ERROR;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_peek_string_direct(const struct sshbuf *buf, const u_char **valp,
-    size_t *lenp)
+పూర్ణాంకం
+sshbuf_peek_string_ప్రత్యక్ష(స్థిరరాశి నిర్మాణం sshbuf *buf, స్థిరరాశి u_char **valp,
+    కొలత_t *lenp)
 {
 	uint32_t len;
-	const u_char *p = sshbuf_ptr(buf);
+	స్థిరరాశి u_char *p = sshbuf_ptr(buf);
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	ఒకవేళ (valp != ఖాళీ)
+		*valp = ఖాళీ;
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = 0;
-	if (sshbuf_len(buf) < 4) {
+	ఒకవేళ (sshbuf_len(buf) < 4) {
 		SSHBUF_DBG(("SSH_ERR_MESSAGE_INCOMPLETE"));
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+		తిరిగి SSH_ERR_సందేశం_INCOMPLETE;
 	}
 	len = PEEK_U32(p);
-	if (len > SSHBUF_SIZE_MAX - 4) {
+	ఒకవేళ (len > SSHBUF_కొలత_MAX - 4) {
 		SSHBUF_DBG(("SSH_ERR_STRING_TOO_LARGE"));
-		return SSH_ERR_STRING_TOO_LARGE;
+		తిరిగి SSH_ERR_STRING_TOO_LARGE;
 	}
-	if (sshbuf_len(buf) - 4 < len) {
+	ఒకవేళ (sshbuf_len(buf) - 4 < len) {
 		SSHBUF_DBG(("SSH_ERR_MESSAGE_INCOMPLETE"));
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+		తిరిగి SSH_ERR_సందేశం_INCOMPLETE;
 	}
-	if (valp != NULL)
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = p + 4;
-	if (lenp != NULL)
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = len;
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_get_cstring(struct sshbuf *buf, char **valp, size_t *lenp)
+పూర్ణాంకం
+sshbuf_get_cstring(నిర్మాణం sshbuf *buf, అక్షరం **valp, కొలత_t *lenp)
 {
-	size_t len;
-	const u_char *p, *z;
-	int r;
+	కొలత_t len;
+	స్థిరరాశి u_char *p, *z;
+	పూర్ణాంకం r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	ఒకవేళ (valp != ఖాళీ)
+		*valp = ఖాళీ;
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = 0;
-	if ((r = sshbuf_peek_string_direct(buf, &p, &len)) != 0)
-		return r;
+	ఒకవేళ ((r = sshbuf_peek_string_ప్రత్యక్ష(buf, &p, &len)) != 0)
+		తిరిగి r;
 	/* Allow a \0 only at the end of the string */
-	if (len > 0 &&
-	    (z = memchr(p , '\0', len)) != NULL && z < p + len - 1) {
+	ఒకవేళ (len > 0 &&
+	    (z = memchr(p , '\0', len)) != ఖాళీ && z < p + len - 1) {
 		SSHBUF_DBG(("SSH_ERR_INVALID_FORMAT"));
-		return SSH_ERR_INVALID_FORMAT;
+		తిరిగి SSH_ERR_INVALID_FORMAT;
 	}
-	if ((r = sshbuf_skip_string(buf)) != 0)
-		return -1;
-	if (valp != NULL) {
-		if ((*valp = malloc(len + 1)) == NULL) {
+	ఒకవేళ ((r = sshbuf_skip_string(buf)) != 0)
+		తిరిగి -1;
+	ఒకవేళ (valp != ఖాళీ) {
+		ఒకవేళ ((*valp = జ్ఞాపకం_ఇవ్వు(len + 1)) == ఖాళీ) {
 			SSHBUF_DBG(("SSH_ERR_ALLOC_FAIL"));
-			return SSH_ERR_ALLOC_FAIL;
+			తిరిగి SSH_ERR_ALLOC_FAIL;
 		}
-		if (len != 0)
-			memcpy(*valp, p, len);
+		ఒకవేళ (len != 0)
+			జ్ఞాపకం_నకలు(*valp, p, len);
 		(*valp)[len] = '\0';
 	}
-	if (lenp != NULL)
-		*lenp = (size_t)len;
-	return 0;
+	ఒకవేళ (lenp != ఖాళీ)
+		*lenp = (కొలత_t)len;
+	తిరిగి 0;
 }
 
-int
-sshbuf_get_stringb(struct sshbuf *buf, struct sshbuf *v)
+పూర్ణాంకం
+sshbuf_get_stringb(నిర్మాణం sshbuf *buf, నిర్మాణం sshbuf *v)
 {
 	uint32_t len;
 	u_char *p;
-	int r;
+	పూర్ణాంకం r;
 
 	/*
 	 * Use sshbuf_peek_string_direct() to figure out if there is
 	 * a complete string in 'buf' and copy the string directly
 	 * into 'v'.
 	 */
-	if ((r = sshbuf_peek_string_direct(buf, NULL, NULL)) != 0 ||
+	ఒకవేళ ((r = sshbuf_peek_string_ప్రత్యక్ష(buf, ఖాళీ, ఖాళీ)) != 0 ||
 	    (r = sshbuf_get_u32(buf, &len)) != 0 ||
 	    (r = sshbuf_reserve(v, len, &p)) != 0 ||
 	    (r = sshbuf_get(buf, p, len)) != 0)
-		return r;
-	return 0;
+		తిరిగి r;
+	తిరిగి 0;
 }
 
-int
-sshbuf_put(struct sshbuf *buf, const void *v, size_t len)
+పూర్ణాంకం
+sshbuf_put(నిర్మాణం sshbuf *buf, స్థిరరాశి శూన్య *v, కొలత_t len)
 {
 	u_char *p;
-	int r;
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_reserve(buf, len, &p)) < 0)
-		return r;
-	if (len != 0)
-		memcpy(p, v, len);
-	return 0;
+	ఒకవేళ ((r = sshbuf_reserve(buf, len, &p)) < 0)
+		తిరిగి r;
+	ఒకవేళ (len != 0)
+		జ్ఞాపకం_నకలు(p, v, len);
+	తిరిగి 0;
 }
 
-int
-sshbuf_putb(struct sshbuf *buf, const struct sshbuf *v)
+పూర్ణాంకం
+sshbuf_putb(నిర్మాణం sshbuf *buf, స్థిరరాశి నిర్మాణం sshbuf *v)
 {
-	if (v == NULL)
-		return 0;
-	return sshbuf_put(buf, sshbuf_ptr(v), sshbuf_len(v));
+	ఒకవేళ (v == ఖాళీ)
+		తిరిగి 0;
+	తిరిగి sshbuf_put(buf, sshbuf_ptr(v), sshbuf_len(v));
 }
 
-int
-sshbuf_putf(struct sshbuf *buf, const char *fmt, ...)
+పూర్ణాంకం
+sshbuf_putf(నిర్మాణం sshbuf *buf, స్థిరరాశి అక్షరం *fmt, ...)
 {
 	va_list ap;
-	int r;
+	పూర్ణాంకం r;
 
 	va_start(ap, fmt);
 	r = sshbuf_putfv(buf, fmt, ap);
 	va_end(ap);
-	return r;
+	తిరిగి r;
 }
 
-int
-sshbuf_putfv(struct sshbuf *buf, const char *fmt, va_list ap)
+పూర్ణాంకం
+sshbuf_putfv(నిర్మాణం sshbuf *buf, స్థిరరాశి అక్షరం *fmt, va_list ap)
 {
 	va_list ap2;
-	int r, len;
+	పూర్ణాంకం r, len;
 	u_char *p;
 
 	VA_COPY(ap2, ap);
-	if ((len = vsnprintf(NULL, 0, fmt, ap2)) < 0) {
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+	ఒకవేళ ((len = vsnprintf(ఖాళీ, 0, fmt, ap2)) < 0) {
+		r = SSH_ERR_INVALID_వాదం;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (len == 0) {
+	ఒకవేళ (len == 0) {
 		r = 0;
-		goto out; /* Nothing to do */
+		వెళ్ళు బహిర్గతం; /* Nothing to do */
 	}
 	va_end(ap2);
 	VA_COPY(ap2, ap);
-	if ((r = sshbuf_reserve(buf, (size_t)len + 1, &p)) < 0)
-		goto out;
-	if ((r = vsnprintf((char *)p, len + 1, fmt, ap2)) != len) {
-		r = SSH_ERR_INTERNAL_ERROR;
-		goto out; /* Shouldn't happen */
+	ఒకవేళ ((r = sshbuf_reserve(buf, (కొలత_t)len + 1, &p)) < 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = vsnprintf((అక్షరం *)p, len + 1, fmt, ap2)) != len) {
+		r = SSH_ERR_అంతర్గత_ERROR;
+		వెళ్ళు బహిర్గతం; /* Shouldn't happen */
 	}
 	/* Consume terminating \0 */
-	if ((r = sshbuf_consume_end(buf, 1)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshbuf_consume_చివర(buf, 1)) != 0)
+		వెళ్ళు బహిర్గతం;
 	r = 0;
- out:
+ బహిర్గతం:
 	va_end(ap2);
-	return r;
+	తిరిగి r;
 }
 
-int
-sshbuf_put_u64(struct sshbuf *buf, uint64_t val)
+పూర్ణాంకం
+sshbuf_put_u64(నిర్మాణం sshbuf *buf, uint64_t val)
 {
 	u_char *p;
-	int r;
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_reserve(buf, 8, &p)) < 0)
-		return r;
+	ఒకవేళ ((r = sshbuf_reserve(buf, 8, &p)) < 0)
+		తిరిగి r;
 	POKE_U64(p, val);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_put_u32(struct sshbuf *buf, uint32_t val)
+పూర్ణాంకం
+sshbuf_put_u32(నిర్మాణం sshbuf *buf, uint32_t val)
 {
 	u_char *p;
-	int r;
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_reserve(buf, 4, &p)) < 0)
-		return r;
+	ఒకవేళ ((r = sshbuf_reserve(buf, 4, &p)) < 0)
+		తిరిగి r;
 	POKE_U32(p, val);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_put_u16(struct sshbuf *buf, uint16_t val)
+పూర్ణాంకం
+sshbuf_put_u16(నిర్మాణం sshbuf *buf, uint16_t val)
 {
 	u_char *p;
-	int r;
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_reserve(buf, 2, &p)) < 0)
-		return r;
+	ఒకవేళ ((r = sshbuf_reserve(buf, 2, &p)) < 0)
+		తిరిగి r;
 	POKE_U16(p, val);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_put_u8(struct sshbuf *buf, u_char val)
+పూర్ణాంకం
+sshbuf_put_u8(నిర్మాణం sshbuf *buf, u_char val)
 {
 	u_char *p;
-	int r;
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_reserve(buf, 1, &p)) < 0)
-		return r;
+	ఒకవేళ ((r = sshbuf_reserve(buf, 1, &p)) < 0)
+		తిరిగి r;
 	p[0] = val;
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-check_woffset(struct sshbuf *buf, size_t offset, size_t len, u_char **p)
+స్థిర పూర్ణాంకం
+check_woffset(నిర్మాణం sshbuf *buf, కొలత_t స్థానభ్రంశం, కొలత_t len, u_char **p)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	*p = NULL;
-	if ((r = check_offset(buf, 1, offset, len)) != 0)
-		return r;
-	if (sshbuf_mutable_ptr(buf) == NULL)
-		return SSH_ERR_BUFFER_READ_ONLY;
-	*p = sshbuf_mutable_ptr(buf) + offset;
-	return 0;
+	*p = ఖాళీ;
+	ఒకవేళ ((r = check_స్థానభ్రంశం(buf, 1, స్థానభ్రంశం, len)) != 0)
+		తిరిగి r;
+	ఒకవేళ (sshbuf_mutable_ptr(buf) == ఖాళీ)
+		తిరిగి SSH_ERR_బఫరు_READ_ONLY;
+	*p = sshbuf_mutable_ptr(buf) + స్థానభ్రంశం;
+	తిరిగి 0;
 }
 
-int
-sshbuf_poke_u64(struct sshbuf *buf, size_t offset, uint64_t val)
+పూర్ణాంకం
+sshbuf_poke_u64(నిర్మాణం sshbuf *buf, కొలత_t స్థానభ్రంశం, uint64_t val)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if ((r = check_woffset(buf, offset, 8, &p)) != 0)
-		return r;
+	ఒకవేళ ((r = check_woffset(buf, స్థానభ్రంశం, 8, &p)) != 0)
+		తిరిగి r;
 	POKE_U64(p, val);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_poke_u32(struct sshbuf *buf, size_t offset, uint32_t val)
+పూర్ణాంకం
+sshbuf_poke_u32(నిర్మాణం sshbuf *buf, కొలత_t స్థానభ్రంశం, uint32_t val)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if ((r = check_woffset(buf, offset, 4, &p)) != 0)
-		return r;
+	ఒకవేళ ((r = check_woffset(buf, స్థానభ్రంశం, 4, &p)) != 0)
+		తిరిగి r;
 	POKE_U32(p, val);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_poke_u16(struct sshbuf *buf, size_t offset, uint16_t val)
+పూర్ణాంకం
+sshbuf_poke_u16(నిర్మాణం sshbuf *buf, కొలత_t స్థానభ్రంశం, uint16_t val)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if ((r = check_woffset(buf, offset, 2, &p)) != 0)
-		return r;
+	ఒకవేళ ((r = check_woffset(buf, స్థానభ్రంశం, 2, &p)) != 0)
+		తిరిగి r;
 	POKE_U16(p, val);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_poke_u8(struct sshbuf *buf, size_t offset, u_char val)
+పూర్ణాంకం
+sshbuf_poke_u8(నిర్మాణం sshbuf *buf, కొలత_t స్థానభ్రంశం, u_char val)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if ((r = check_woffset(buf, offset, 1, &p)) != 0)
-		return r;
+	ఒకవేళ ((r = check_woffset(buf, స్థానభ్రంశం, 1, &p)) != 0)
+		తిరిగి r;
 	*p = val;
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_poke(struct sshbuf *buf, size_t offset, void *v, size_t len)
+పూర్ణాంకం
+sshbuf_poke(నిర్మాణం sshbuf *buf, కొలత_t స్థానభ్రంశం, శూన్య *v, కొలత_t len)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if ((r = check_woffset(buf, offset, len, &p)) != 0)
-		return r;
-	memcpy(p, v, len);
-	return 0;
+	ఒకవేళ ((r = check_woffset(buf, స్థానభ్రంశం, len, &p)) != 0)
+		తిరిగి r;
+	జ్ఞాపకం_నకలు(p, v, len);
+	తిరిగి 0;
 }
 
-int
-sshbuf_put_string(struct sshbuf *buf, const void *v, size_t len)
+పూర్ణాంకం
+sshbuf_put_string(నిర్మాణం sshbuf *buf, స్థిరరాశి శూన్య *v, కొలత_t len)
 {
 	u_char *d;
-	int r;
+	పూర్ణాంకం r;
 
-	if (len > SSHBUF_SIZE_MAX - 4) {
+	ఒకవేళ (len > SSHBUF_కొలత_MAX - 4) {
 		SSHBUF_DBG(("SSH_ERR_NO_BUFFER_SPACE"));
-		return SSH_ERR_NO_BUFFER_SPACE;
+		తిరిగి SSH_ERR_NO_బఫరు_SPACE;
 	}
-	if ((r = sshbuf_reserve(buf, len + 4, &d)) < 0)
-		return r;
+	ఒకవేళ ((r = sshbuf_reserve(buf, len + 4, &d)) < 0)
+		తిరిగి r;
 	POKE_U32(d, len);
-	if (len != 0)
-		memcpy(d + 4, v, len);
-	return 0;
+	ఒకవేళ (len != 0)
+		జ్ఞాపకం_నకలు(d + 4, v, len);
+	తిరిగి 0;
 }
 
-int
-sshbuf_put_cstring(struct sshbuf *buf, const char *v)
+పూర్ణాంకం
+sshbuf_put_cstring(నిర్మాణం sshbuf *buf, స్థిరరాశి అక్షరం *v)
 {
-	return sshbuf_put_string(buf, v, v == NULL ? 0 : strlen(v));
+	తిరిగి sshbuf_put_string(buf, v, v == ఖాళీ ? 0 : అక్షరశ్రేణి_పొడవు(v));
 }
 
-int
-sshbuf_put_stringb(struct sshbuf *buf, const struct sshbuf *v)
+పూర్ణాంకం
+sshbuf_put_stringb(నిర్మాణం sshbuf *buf, స్థిరరాశి నిర్మాణం sshbuf *v)
 {
-	if (v == NULL)
-		return sshbuf_put_string(buf, NULL, 0);
+	ఒకవేళ (v == ఖాళీ)
+		తిరిగి sshbuf_put_string(buf, ఖాళీ, 0);
 
-	return sshbuf_put_string(buf, sshbuf_ptr(v), sshbuf_len(v));
+	తిరిగి sshbuf_put_string(buf, sshbuf_ptr(v), sshbuf_len(v));
 }
 
-int
-sshbuf_froms(struct sshbuf *buf, struct sshbuf **bufp)
+పూర్ణాంకం
+sshbuf_froms(నిర్మాణం sshbuf *buf, నిర్మాణం sshbuf **bufp)
 {
-	const u_char *p;
-	size_t len;
-	struct sshbuf *ret;
-	int r;
+	స్థిరరాశి u_char *p;
+	కొలత_t len;
+	నిర్మాణం sshbuf *ret;
+	పూర్ణాంకం r;
 
-	if (buf == NULL || bufp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	*bufp = NULL;
-	if ((r = sshbuf_peek_string_direct(buf, &p, &len)) != 0)
-		return r;
-	if ((ret = sshbuf_from(p, len)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_consume(buf, len + 4)) != 0 ||  /* Shouldn't happen */
-	    (r = sshbuf_set_parent(ret, buf)) != 0) {
+	ఒకవేళ (buf == ఖాళీ || bufp == ఖాళీ)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	*bufp = ఖాళీ;
+	ఒకవేళ ((r = sshbuf_peek_string_ప్రత్యక్ష(buf, &p, &len)) != 0)
+		తిరిగి r;
+	ఒకవేళ ((ret = sshbuf_from(p, len)) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshbuf_consume(buf, len + 4)) != 0 ||  /* Shouldn't happen */
+	    (r = sshbuf_సమితి_మాతృ(ret, buf)) != 0) {
 		sshbuf_free(ret);
-		return r;
+		తిరిగి r;
 	}
 	*bufp = ret;
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_put_bignum2_bytes(struct sshbuf *buf, const void *v, size_t len)
+పూర్ణాంకం
+sshbuf_put_bignum2_బైట్లు(నిర్మాణం sshbuf *buf, స్థిరరాశి శూన్య *v, కొలత_t len)
 {
 	u_char *d;
-	const u_char *s = (const u_char *)v;
-	int r, prepend;
+	స్థిరరాశి u_char *s = (స్థిరరాశి u_char *)v;
+	పూర్ణాంకం r, prepend;
 
-	if (len > SSHBUF_SIZE_MAX - 5) {
+	ఒకవేళ (len > SSHBUF_కొలత_MAX - 5) {
 		SSHBUF_DBG(("SSH_ERR_NO_BUFFER_SPACE"));
-		return SSH_ERR_NO_BUFFER_SPACE;
+		తిరిగి SSH_ERR_NO_బఫరు_SPACE;
 	}
 	/* Skip leading zero bytes */
-	for (; len > 0 && *s == 0; len--, s++)
+	కొరకు (; len > 0 && *s == 0; len--, s++)
 		;
 	/*
 	 * If most significant bit is set then prepend a zero byte to
 	 * avoid interpretation as a negative number.
 	 */
 	prepend = len > 0 && (s[0] & 0x80) != 0;
-	if ((r = sshbuf_reserve(buf, len + 4 + prepend, &d)) < 0)
-		return r;
+	ఒకవేళ ((r = sshbuf_reserve(buf, len + 4 + prepend, &d)) < 0)
+		తిరిగి r;
 	POKE_U32(d, len + prepend);
-	if (prepend)
+	ఒకవేళ (prepend)
 		d[4] = 0;
-	if (len != 0)
-		memcpy(d + 4 + prepend, s, len);
-	return 0;
+	ఒకవేళ (len != 0)
+		జ్ఞాపకం_నకలు(d + 4 + prepend, s, len);
+	తిరిగి 0;
 }
 
-int
-sshbuf_get_bignum2_bytes_direct(struct sshbuf *buf,
-    const u_char **valp, size_t *lenp)
+పూర్ణాంకం
+sshbuf_get_bignum2_బైట్లు_ప్రత్యక్ష(నిర్మాణం sshbuf *buf,
+    స్థిరరాశి u_char **valp, కొలత_t *lenp)
 {
-	const u_char *d;
-	size_t len, olen;
-	int r;
+	స్థిరరాశి u_char *d;
+	కొలత_t len, olen;
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_peek_string_direct(buf, &d, &olen)) < 0)
-		return r;
+	ఒకవేళ ((r = sshbuf_peek_string_ప్రత్యక్ష(buf, &d, &olen)) < 0)
+		తిరిగి r;
 	len = olen;
 	/* Refuse negative (MSB set) bignums */
-	if ((len != 0 && (*d & 0x80) != 0))
-		return SSH_ERR_BIGNUM_IS_NEGATIVE;
+	ఒకవేళ ((len != 0 && (*d & 0x80) != 0))
+		తిరిగి SSH_ERR_BIGNUM_IS_NEGATIVE;
 	/* Refuse overlong bignums, allow prepended \0 to avoid MSB set */
-	if (len > SSHBUF_MAX_BIGNUM + 1 ||
+	ఒకవేళ (len > SSHBUF_MAX_BIGNUM + 1 ||
 	    (len == SSHBUF_MAX_BIGNUM + 1 && *d != 0))
-		return SSH_ERR_BIGNUM_TOO_LARGE;
+		తిరిగి SSH_ERR_BIGNUM_TOO_LARGE;
 	/* Trim leading zeros */
-	while (len > 0 && *d == 0x00) {
+	అయితే (len > 0 && *d == 0x00) {
 		d++;
 		len--;
 	}
-	if (valp != NULL)
+	ఒకవేళ (valp != ఖాళీ)
 		*valp = d;
-	if (lenp != NULL)
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = len;
-	if (sshbuf_consume(buf, olen + 4) != 0) {
+	ఒకవేళ (sshbuf_consume(buf, olen + 4) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		తిరిగి SSH_ERR_అంతర్గత_ERROR;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshbuf_get_nulterminated_string(struct sshbuf *buf, size_t maxlen,
-    char **valp, size_t *lenp)
+పూర్ణాంకం
+sshbuf_get_nulterminated_string(నిర్మాణం sshbuf *buf, కొలత_t maxlen,
+    అక్షరం **valp, కొలత_t *lenp)
 {
-	const u_char zero = 0;
-	char *val = NULL;
-	size_t len = 0;
-	int r;
+	స్థిరరాశి u_char zero = 0;
+	అక్షరం *val = ఖాళీ;
+	కొలత_t len = 0;
+	పూర్ణాంకం r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	ఒకవేళ (valp != ఖాళీ)
+		*valp = ఖాళీ;
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = 0;
-	if ((r = sshbuf_find(buf, 0, &zero, sizeof(zero), &len)) != 0) {
-		if (r == SSH_ERR_INVALID_FORMAT && sshbuf_len(buf) < maxlen)
-			return SSH_ERR_MESSAGE_INCOMPLETE;
-		return r;
+	ఒకవేళ ((r = sshbuf_కనుగొను(buf, 0, &zero, పరిమాణం(zero), &len)) != 0) {
+		ఒకవేళ (r == SSH_ERR_INVALID_FORMAT && sshbuf_len(buf) < maxlen)
+			తిరిగి SSH_ERR_సందేశం_INCOMPLETE;
+		తిరిగి r;
 	}
-	if (len > maxlen)
-		return SSH_ERR_INVALID_FORMAT;
+	ఒకవేళ (len > maxlen)
+		తిరిగి SSH_ERR_INVALID_FORMAT;
 	/* can strdup() because it's definitely nul-terminated */
-	if ((val = strdup(sshbuf_ptr(buf))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_consume(buf, len + 1)) != 0)
-		goto out;
+	ఒకవేళ ((val = strdup(sshbuf_ptr(buf))) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshbuf_consume(buf, len + 1)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
-	if (valp != NULL) {
+	ఒకవేళ (valp != ఖాళీ) {
 		*valp = val;
-		val = NULL;
+		val = ఖాళీ;
 	}
-	if (lenp != NULL)
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = len;
- out:
-	free(val);
-	return r;
+ బహిర్గతం:
+	విడుదల(val);
+	తిరిగి r;
 }

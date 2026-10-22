@@ -16,19 +16,19 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <netinet/in.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <netinet/in.h>
 
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdarg.h>
 
-#include "addr.h"
-#include "match.h"
-#include "log.h"
+#అన్తర్భావ "addr.h"
+#అన్తర్భావ "match.h"
+#అన్తర్భావ "log.h"
 
 /*
  * Match "addr" against list pattern list "_list", which may contain a
@@ -42,55 +42,55 @@
  * Returns -1 on negated match found (never returned when addr == NULL).
  * Returns -2 on invalid list entry.
  */
-int
-addr_match_list(const char *addr, const char *_list)
+పూర్ణాంకం
+addr_సరిపోలిక_list(స్థిరరాశి అక్షరం *addr, స్థిరరాశి అక్షరం *_list)
 {
-	char *list, *cp, *o;
-	struct xaddr try_addr, match_addr;
+	అక్షరం *list, *cp, *o;
+	నిర్మాణం xaddr try_addr, సరిపోలిక_addr;
 	u_int masklen, neg;
-	int ret = 0, r;
+	పూర్ణాంకం ret = 0, r;
 
-	if (addr != NULL && addr_pton(addr, &try_addr) != 0) {
+	ఒకవేళ (addr != ఖాళీ && addr_pton(addr, &try_addr) != 0) {
 		debug2_f("couldn't parse address %.100s", addr);
-		return 0;
+		తిరిగి 0;
 	}
-	if ((o = list = strdup(_list)) == NULL)
-		return -1;
-	while ((cp = strsep(&list, ",")) != NULL) {
+	ఒకవేళ ((o = list = strdup(_list)) == ఖాళీ)
+		తిరిగి -1;
+	అయితే ((cp = strsep(&list, ",")) != ఖాళీ) {
 		neg = *cp == '!';
-		if (neg)
+		ఒకవేళ (neg)
 			cp++;
-		if (*cp == '\0') {
+		ఒకవేళ (*cp == '\0') {
 			ret = -2;
-			break;
+			ఆపు;
 		}
 		/* Prefer CIDR address matching */
-		r = addr_pton_cidr(cp, &match_addr, &masklen);
-		if (r == -2) {
+		r = addr_pton_cidr(cp, &సరిపోలిక_addr, &masklen);
+		ఒకవేళ (r == -2) {
 			debug2_f("inconsistent mask length for "
 			    "match network \"%.100s\"", cp);
 			ret = -2;
-			break;
-		} else if (r == 0) {
-			if (addr != NULL && addr_netmatch(&try_addr,
-			    &match_addr, masklen) == 0) {
+			ఆపు;
+		} లేకపోతే ఒకవేళ (r == 0) {
+			ఒకవేళ (addr != ఖాళీ && addr_netmatch(&try_addr,
+			    &సరిపోలిక_addr, masklen) == 0) {
  foundit:
-				if (neg) {
+				ఒకవేళ (neg) {
 					ret = -1;
-					break;
+					ఆపు;
 				}
 				ret = 1;
 			}
-			continue;
-		} else {
+			కొనసాగు;
+		} లేకపోతే {
 			/* If CIDR parse failed, try wildcard string match */
-			if (addr != NULL && match_pattern(addr, cp) == 1)
-				goto foundit;
+			ఒకవేళ (addr != ఖాళీ && సరిపోలిక_నమూనా(addr, cp) == 1)
+				వెళ్ళు foundit;
 		}
 	}
-	free(o);
+	విడుదల(o);
 
-	return ret;
+	తిరిగి ret;
 }
 
 /*
@@ -102,25 +102,25 @@ addr_match_list(const char *addr, const char *_list)
  * Returns 0 on if no match found, or no errors found when addr == NULL.
  * Returns -1 on error
  */
-int
-addr_match_cidr_list(const char *addr, const char *_list)
+పూర్ణాంకం
+addr_సరిపోలిక_cidr_list(స్థిరరాశి అక్షరం *addr, స్థిరరాశి అక్షరం *_list)
 {
-	char *list, *cp, *o;
-	struct xaddr try_addr, match_addr;
+	అక్షరం *list, *cp, *o;
+	నిర్మాణం xaddr try_addr, సరిపోలిక_addr;
 	u_int masklen;
-	int ret = 0, r;
+	పూర్ణాంకం ret = 0, r;
 
-	if (addr != NULL && addr_pton(addr, &try_addr) != 0) {
+	ఒకవేళ (addr != ఖాళీ && addr_pton(addr, &try_addr) != 0) {
 		debug2_f("couldn't parse address %.100s", addr);
-		return 0;
+		తిరిగి 0;
 	}
-	if ((o = list = strdup(_list)) == NULL)
-		return -1;
-	while ((cp = strsep(&list, ",")) != NULL) {
-		if (*cp == '\0') {
+	ఒకవేళ ((o = list = strdup(_list)) == ఖాళీ)
+		తిరిగి -1;
+	అయితే ((cp = strsep(&list, ",")) != ఖాళీ) {
+		ఒకవేళ (*cp == '\0') {
 			error_f("empty entry in list \"%.100s\"", o);
 			ret = -1;
-			break;
+			ఆపు;
 		}
 
 		/*
@@ -130,37 +130,37 @@ addr_match_cidr_list(const char *addr, const char *_list)
 		 */
 
 		/* Stop junk from reaching getaddrinfo. +3 is for masklen */
-		if (strlen(cp) > INET6_ADDRSTRLEN + 3) {
+		ఒకవేళ (అక్షరశ్రేణి_పొడవు(cp) > INET6_ADDRSTRLEN + 3) {
 			error_f("list entry \"%.100s\" too long", cp);
 			ret = -1;
-			break;
+			ఆపు;
 		}
-#define VALID_CIDR_CHARS "0123456789abcdefABCDEF.:/"
-		if (strspn(cp, VALID_CIDR_CHARS) != strlen(cp)) {
+#నిర్వచించు VALID_CIDR_CHARS "0123456789abcdefABCDEF.:/"
+		ఒకవేళ (strspn(cp, VALID_CIDR_CHARS) != అక్షరశ్రేణి_పొడవు(cp)) {
 			error_f("list entry \"%.100s\" contains invalid "
 			    "characters", cp);
 			ret = -1;
 		}
 
 		/* Prefer CIDR address matching */
-		r = addr_pton_cidr(cp, &match_addr, &masklen);
-		if (r == -1) {
+		r = addr_pton_cidr(cp, &సరిపోలిక_addr, &masklen);
+		ఒకవేళ (r == -1) {
 			error("Invalid network entry \"%.100s\"", cp);
 			ret = -1;
-			break;
-		} else if (r == -2) {
+			ఆపు;
+		} లేకపోతే ఒకవేళ (r == -2) {
 			error("Inconsistent mask length for "
 			    "network \"%.100s\"", cp);
 			ret = -1;
-			break;
-		} else if (r == 0 && addr != NULL) {
-			if (addr_netmatch(&try_addr, &match_addr,
+			ఆపు;
+		} లేకపోతే ఒకవేళ (r == 0 && addr != ఖాళీ) {
+			ఒకవేళ (addr_netmatch(&try_addr, &సరిపోలిక_addr,
 			    masklen) == 0)
 				ret = 1;
-			continue;
+			కొనసాగు;
 		}
 	}
-	free(o);
+	విడుదల(o);
 
-	return ret;
+	తిరిగి ret;
 }

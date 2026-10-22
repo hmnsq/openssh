@@ -19,132 +19,132 @@
  * Linux-specific portability code: SELinux support
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifdef WITH_SELINUX
+#నిర్వచితమైతే WITH_SELINUX
 
-#include <sys/socket.h>
-#include <sys/un.h>
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <sys/un.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "log.h"
-#include "xmalloc.h"
-#include "port-linux.h"
-#include "misc.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "port-linux.h"
+#అన్తర్భావ "misc.h"
 
-#include <selinux/selinux.h>
-#include <selinux/label.h>
-#include <selinux/get_context_list.h>
+#అన్తర్భావ <selinux/selinux.h>
+#అన్తర్భావ <selinux/label.h>
+#అన్తర్భావ <selinux/get_context_list.h>
 
-#ifndef SSH_SELINUX_UNCONFINED_TYPE
+#నిర్వచితం_కాకపోతే SSH_SELINUX_UNCONFINED_TYPE
 # define SSH_SELINUX_UNCONFINED_TYPE ":unconfined_t:"
-#endif
+#అయితే_ముగింపు
 
 /* Wrapper around is_selinux_enabled() to log its return value once only */
-int
-ssh_selinux_enabled(void)
+పూర్ణాంకం
+ssh_selinux_enabled(శూన్య)
 {
-	static int enabled = -1;
+	స్థిర పూర్ణాంకం enabled = -1;
 
-	if (enabled == -1) {
+	ఒకవేళ (enabled == -1) {
 		enabled = (is_selinux_enabled() == 1);
 		debug("SELinux support %s", enabled ? "enabled" : "disabled");
 	}
 
-	return (enabled);
+	తిరిగి (enabled);
 }
 
 /* Return the default security context for the given username */
-static char *
-ssh_selinux_getctxbyname(char *pwname)
+స్థిర అక్షరం *
+ssh_selinux_getctxbyname(అక్షరం *pwname)
 {
-	char *sc = NULL, *sename = NULL, *lvl = NULL;
-	int r;
+	అక్షరం *sc = ఖాళీ, *sename = ఖాళీ, *lvl = ఖాళీ;
+	పూర్ణాంకం r;
 
-#ifdef HAVE_GETSEUSERBYNAME
-	if (getseuserbyname(pwname, &sename, &lvl) != 0)
-		return NULL;
-#else
+#నిర్వచితమైతే HAVE_GETSEUSERBYNAME
+	ఒకవేళ (getseuserbyname(pwname, &sename, &lvl) != 0)
+		తిరిగి ఖాళీ;
+#లేకపోతే
 	sename = pwname;
-	lvl = NULL;
-#endif
+	lvl = ఖాళీ;
+#అయితే_ముగింపు
 
-#ifdef HAVE_GET_DEFAULT_CONTEXT_WITH_LEVEL
-	r = get_default_context_with_level(sename, lvl, NULL, &sc);
-#else
-	r = get_default_context(sename, NULL, &sc);
-#endif
+#నిర్వచితమైతే HAVE_GET_DEFAULT_CONTEXT_WITH_LEVEL
+	r = get_default_context_with_level(sename, lvl, ఖాళీ, &sc);
+#లేకపోతే
+	r = get_default_context(sename, ఖాళీ, &sc);
+#అయితే_ముగింపు
 
-	if (r != 0) {
-		switch (security_getenforce()) {
-		case -1:
+	ఒకవేళ (r != 0) {
+		ఎంపిక (security_getenforce()) {
+		స్థితి -1:
 			fatal("%s: ssh_selinux_getctxbyname: "
 			    "security_getenforce() failed", __func__);
-		case 0:
+		స్థితి 0:
 			error("%s: Failed to get default SELinux security "
 			    "context for %s", __func__, pwname);
-			sc = NULL;
-			break;
-		default:
+			sc = ఖాళీ;
+			ఆపు;
+		అప్రమేయ:
 			fatal("%s: Failed to get default SELinux security "
 			    "context for %s (in enforcing mode)",
 			    __func__, pwname);
 		}
 	}
 
-#ifdef HAVE_GETSEUSERBYNAME
-	free(sename);
-	free(lvl);
-#endif
+#నిర్వచితమైతే HAVE_GETSEUSERBYNAME
+	విడుదల(sename);
+	విడుదల(lvl);
+#అయితే_ముగింపు
 
-	return sc;
+	తిరిగి sc;
 }
 
 /* Set the execution context to the default for the specified user */
-void
-ssh_selinux_setup_exec_context(char *pwname)
+శూన్య
+ssh_selinux_అమరిక_exec_context(అక్షరం *pwname)
 {
-	char *user_ctx = NULL;
+	అక్షరం *user_ctx = ఖాళీ;
 
-	if (!ssh_selinux_enabled())
-		return;
+	ఒకవేళ (!ssh_selinux_enabled())
+		తిరిగి;
 
 	debug3("%s: setting execution context", __func__);
 
 	user_ctx = ssh_selinux_getctxbyname(pwname);
-	if (setexeccon(user_ctx) != 0) {
-		switch (security_getenforce()) {
-		case -1:
+	ఒకవేళ (setexeccon(user_ctx) != 0) {
+		ఎంపిక (security_getenforce()) {
+		స్థితి -1:
 			fatal("%s: security_getenforce() failed", __func__);
-		case 0:
+		స్థితి 0:
 			error("%s: Failed to set SELinux execution "
 			    "context for %s", __func__, pwname);
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			fatal("%s: Failed to set SELinux execution context "
 			    "for %s (in enforcing mode)", __func__, pwname);
 		}
 	}
-	if (user_ctx != NULL)
+	ఒకవేళ (user_ctx != ఖాళీ)
 		freecon(user_ctx);
 
 	debug3("%s: done", __func__);
 }
 
 /* Set the TTY context for the specified user */
-void
-ssh_selinux_setup_pty(char *pwname, const char *tty)
+శూన్య
+ssh_selinux_అమరిక_pty(అక్షరం *pwname, స్థిరరాశి అక్షరం *tty)
 {
-	char *new_tty_ctx = NULL, *user_ctx = NULL, *old_tty_ctx = NULL;
+	అక్షరం *new_tty_ctx = ఖాళీ, *user_ctx = ఖాళీ, *old_tty_ctx = ఖాళీ;
 	security_class_t chrclass;
 
-	if (!ssh_selinux_enabled())
-		return;
+	ఒకవేళ (!ssh_selinux_enabled())
+		తిరిగి;
 
 	debug3("%s: setting TTY context on %s", __func__, tty);
 
@@ -152,92 +152,92 @@ ssh_selinux_setup_pty(char *pwname, const char *tty)
 
 	/* XXX: should these calls fatal() upon failure in enforcing mode? */
 
-	if (getfilecon(tty, &old_tty_ctx) == -1) {
+	ఒకవేళ (getfilecon(tty, &old_tty_ctx) == -1) {
 		error("%s: getfilecon: %s", __func__, strerror(errno));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((chrclass = string_to_security_class("chr_file")) == 0) {
+	ఒకవేళ ((chrclass = string_గమ్యం_security_class("chr_file")) == 0) {
 		error("%s: couldn't get security class for chr_file", __func__);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (security_compute_relabel(user_ctx, old_tty_ctx,
+	ఒకవేళ (security_compute_relabel(user_ctx, old_tty_ctx,
 	    chrclass, &new_tty_ctx) != 0) {
 		error("%s: security_compute_relabel: %s",
 		    __func__, strerror(errno));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if (setfilecon(tty, new_tty_ctx) != 0)
+	ఒకవేళ (setfilecon(tty, new_tty_ctx) != 0)
 		error("%s: setfilecon: %s", __func__, strerror(errno));
- out:
-	if (new_tty_ctx != NULL)
+ బహిర్గతం:
+	ఒకవేళ (new_tty_ctx != ఖాళీ)
 		freecon(new_tty_ctx);
-	if (old_tty_ctx != NULL)
+	ఒకవేళ (old_tty_ctx != ఖాళీ)
 		freecon(old_tty_ctx);
-	if (user_ctx != NULL)
+	ఒకవేళ (user_ctx != ఖాళీ)
 		freecon(user_ctx);
 	debug3("%s: done", __func__);
 }
 
-void
-ssh_selinux_change_context(const char *newname)
+శూన్య
+ssh_selinux_change_context(స్థిరరాశి అక్షరం *newname)
 {
-	char *oldctx, *newctx, *cx, *cx2;
+	అక్షరం *oldctx, *newctx, *cx, *cx2;
 	LogLevel log_level = SYSLOG_LEVEL_INFO;
 
-	if (!ssh_selinux_enabled())
-		return;
+	ఒకవేళ (!ssh_selinux_enabled())
+		తిరిగి;
 
-	if (getcon(&oldctx) < 0) {
+	ఒకవేళ (getcon(&oldctx) < 0) {
 		logit_f("getcon failed with %s", strerror(errno));
-		return;
+		తిరిగి;
 	}
-	if ((cx = strchr(oldctx, ':')) == NULL ||
-	    (cx = strchr(cx + 1, ':')) == NULL ||
-	    (cx - oldctx) >= INT_MAX) {
+	ఒకవేళ ((cx = strchr(oldctx, ':')) == ఖాళీ ||
+	    (cx = strchr(cx + 1, ':')) == ఖాళీ ||
+	    (cx - oldctx) >= గరిష్ఠ_పూర్ణాంకం) {
 		logit_f("unparsable context %s", oldctx);
-		return;
+		తిరిగి;
 	}
 
 	/*
 	 * Check whether we are attempting to switch away from an unconfined
 	 * security context.
 	 */
-	if (strncmp(cx, SSH_SELINUX_UNCONFINED_TYPE,
-	    sizeof(SSH_SELINUX_UNCONFINED_TYPE) - 1) == 0)
+	ఒకవేళ (అక్షరశ్రేణి_పోలిక(cx, SSH_SELINUX_UNCONFINED_TYPE,
+	    పరిమాణం(SSH_SELINUX_UNCONFINED_TYPE) - 1) == 0)
 		log_level = SYSLOG_LEVEL_DEBUG3;
 
 	cx2 = strchr(cx + 1, ':');
-	xasprintf(&newctx, "%.*s%s%s", (int)(cx - oldctx + 1), oldctx,
-	    newname, cx2 == NULL ? "" : cx2);
+	xasprintf(&newctx, "%.*s%s%s", (పూర్ణాంకం)(cx - oldctx + 1), oldctx,
+	    newname, cx2 == ఖాళీ ? "" : cx2);
 
 	debug3_f("setting context from '%s' to '%s'", oldctx, newctx);
-	if (setcon(newctx) < 0)
+	ఒకవేళ (setcon(newctx) < 0)
 		do_log2_f(log_level, "setcon %s from %s failed with %s",
 		    newctx, oldctx, strerror(errno));
-	free(oldctx);
-	free(newctx);
+	విడుదల(oldctx);
+	విడుదల(newctx);
 }
 
-void
-ssh_selinux_setfscreatecon(const char *path)
+శూన్య
+ssh_selinux_setfscreatecon(స్థిరరాశి అక్షరం *మార్గం)
 {
-	char *context;
-	struct selabel_handle *shandle = NULL;
+	అక్షరం *context;
+	నిర్మాణం selabel_handle *shandle = ఖాళీ;
 
-	if (!ssh_selinux_enabled())
-		return;
-	if (path == NULL) {
-		setfscreatecon(NULL);
-		return;
+	ఒకవేళ (!ssh_selinux_enabled())
+		తిరిగి;
+	ఒకవేళ (మార్గం == ఖాళీ) {
+		setfscreatecon(ఖాళీ);
+		తిరిగి;
 	}
-	if ((shandle = selabel_open(SELABEL_CTX_FILE, NULL, 0)) == NULL) {
+	ఒకవేళ ((shandle = selabel_open(SELABEL_CTX_FILE, ఖాళీ, 0)) == ఖాళీ) {
 		debug_f("selabel_open failed");
-		return;
+		తిరిగి;
 	}
-	if (selabel_lookup(shandle, &context, path, 0700) == 0)
+	ఒకవేళ (selabel_lookup(shandle, &context, మార్గం, 0700) == 0)
 		setfscreatecon(context);
 	selabel_close(shandle);
 }
 
-#endif /* WITH_SELINUX */
+#అయితే_ముగింపు /* WITH_SELINUX */

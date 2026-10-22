@@ -26,13 +26,13 @@
 
 /* OPENBSD ORIGINAL: sys/sys/tree.h */
 
-#include "config.h"
-#ifdef NO_ATTRIBUTE_ON_RETURN_TYPE
+#అన్తర్భావ "config.h"
+#నిర్వచితమైతే NO_ATTRIBUTE_ON_RETURN_TYPE
 # define __attribute__(x)
-#endif
+#అయితే_ముగింపు
 
-#ifndef	_SYS_TREE_H_
-#define	_SYS_TREE_H_
+#నిర్వచితం_కాకపోతే	SYS_వృక్షం_H
+#నిర్వచించు	SYS_వృక్షం_H
 
 /*
  * This file defines data structures for different types of trees:
@@ -61,695 +61,695 @@
  * The maximum height of a red-black tree is 2lg (n+1).
  */
 
-#define SPLAY_HEAD(name, type)						\
-struct name {								\
-	struct type *sph_root; /* root of the tree */			\
+#నిర్వచించు SPLAY_తల(name, type)						\
+నిర్మాణం name {								\
+	నిర్మాణం type *sph_మూలం; /* root of the tree */			\
 }
 
-#define SPLAY_INITIALIZER(root)						\
-	{ NULL }
+#నిర్వచించు SPLAY_INITIALIZER(మూలం)						\
+	{ ఖాళీ }
 
-#define SPLAY_INIT(root) do {						\
-	(root)->sph_root = NULL;					\
-} while (0)
+#నిర్వచించు SPLAY_INIT(మూలం) చేయి {						\
+	(మూలం)->sph_మూలం = ఖాళీ;					\
+} అయితే (0)
 
-#define SPLAY_ENTRY(type)						\
-struct {								\
-	struct type *spe_left; /* left element */			\
-	struct type *spe_right; /* right element */			\
+#నిర్వచించు SPLAY_నమోదు(type)						\
+నిర్మాణం {								\
+	నిర్మాణం type *spe_ఎడమ; /* left element */			\
+	నిర్మాణం type *spe_కుడి; /* right element */			\
 }
 
-#define SPLAY_LEFT(elm, field)		(elm)->field.spe_left
-#define SPLAY_RIGHT(elm, field)		(elm)->field.spe_right
-#define SPLAY_ROOT(head)		(head)->sph_root
-#define SPLAY_EMPTY(head)		(SPLAY_ROOT(head) == NULL)
+#నిర్వచించు SPLAY_ఎడమ(elm, క్షేత్రం)		(elm)->క్షేత్రం.spe_ఎడమ
+#నిర్వచించు SPLAY_కుడి(elm, క్షేత్రం)		(elm)->క్షేత్రం.spe_కుడి
+#నిర్వచించు SPLAY_మూలం(తల)		(తల)->sph_మూలం
+#నిర్వచించు SPLAY_ఖాళీలు(తల)		(SPLAY_మూలం(తల) == ఖాళీ)
 
 /* SPLAY_ROTATE_{LEFT,RIGHT} expect that tmp hold SPLAY_{RIGHT,LEFT} */
-#define SPLAY_ROTATE_RIGHT(head, tmp, field) do {			\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(tmp, field);	\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
-} while (0)
+#నిర్వచించు SPLAY_ROTATE_కుడి(తల, tmp, క్షేత్రం) చేయి {			\
+	SPLAY_ఎడమ((తల)->sph_మూలం, క్షేత్రం) = SPLAY_కుడి(tmp, క్షేత్రం);	\
+	SPLAY_కుడి(tmp, క్షేత్రం) = (తల)->sph_మూలం;			\
+	(తల)->sph_మూలం = tmp;						\
+} అయితే (0)
 	
-#define SPLAY_ROTATE_LEFT(head, tmp, field) do {			\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(tmp, field);	\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
-} while (0)
+#నిర్వచించు SPLAY_ROTATE_ఎడమ(తల, tmp, క్షేత్రం) చేయి {			\
+	SPLAY_కుడి((తల)->sph_మూలం, క్షేత్రం) = SPLAY_ఎడమ(tmp, క్షేత్రం);	\
+	SPLAY_ఎడమ(tmp, క్షేత్రం) = (తల)->sph_మూలం;			\
+	(తల)->sph_మూలం = tmp;						\
+} అయితే (0)
 
-#define SPLAY_LINKLEFT(head, tmp, field) do {				\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);		\
-} while (0)
+#నిర్వచించు SPLAY_LINKLEFT(తల, tmp, క్షేత్రం) చేయి {				\
+	SPLAY_ఎడమ(tmp, క్షేత్రం) = (తల)->sph_మూలం;			\
+	tmp = (తల)->sph_మూలం;						\
+	(తల)->sph_మూలం = SPLAY_ఎడమ((తల)->sph_మూలం, క్షేత్రం);		\
+} అయితే (0)
 
-#define SPLAY_LINKRIGHT(head, tmp, field) do {				\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);	\
-} while (0)
+#నిర్వచించు SPLAY_LINKRIGHT(తల, tmp, క్షేత్రం) చేయి {				\
+	SPLAY_కుడి(tmp, క్షేత్రం) = (తల)->sph_మూలం;			\
+	tmp = (తల)->sph_మూలం;						\
+	(తల)->sph_మూలం = SPLAY_కుడి((తల)->sph_మూలం, క్షేత్రం);	\
+} అయితే (0)
 
-#define SPLAY_ASSEMBLE(head, node, left, right, field) do {		\
-	SPLAY_RIGHT(left, field) = SPLAY_LEFT((head)->sph_root, field);	\
-	SPLAY_LEFT(right, field) = SPLAY_RIGHT((head)->sph_root, field);\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(node, field);	\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(node, field);	\
-} while (0)
+#నిర్వచించు SPLAY_ASSEMBLE(తల, కణుపు, ఎడమ, కుడి, క్షేత్రం) చేయి {		\
+	SPLAY_కుడి(ఎడమ, క్షేత్రం) = SPLAY_ఎడమ((తల)->sph_మూలం, క్షేత్రం);	\
+	SPLAY_ఎడమ(కుడి, క్షేత్రం) = SPLAY_కుడి((తల)->sph_మూలం, క్షేత్రం);\
+	SPLAY_ఎడమ((తల)->sph_మూలం, క్షేత్రం) = SPLAY_కుడి(కణుపు, క్షేత్రం);	\
+	SPLAY_కుడి((తల)->sph_మూలం, క్షేత్రం) = SPLAY_ఎడమ(కణుపు, క్షేత్రం);	\
+} అయితే (0)
 
 /* Generates prototypes and inline functions */
 
-#define SPLAY_PROTOTYPE(name, type, field, cmp)				\
-void name##_SPLAY(struct name *, struct type *);			\
-void name##_SPLAY_MINMAX(struct name *, int);				\
-struct type *name##_SPLAY_INSERT(struct name *, struct type *);		\
-struct type *name##_SPLAY_REMOVE(struct name *, struct type *);		\
+#నిర్వచించు SPLAY_PROTOTYPE(name, type, క్షేత్రం, cmp)				\
+శూన్య name##_SPLAY(నిర్మాణం name *, నిర్మాణం type *);			\
+శూన్య name##_SPLAY_MINMAX(నిర్మాణం name *, పూర్ణాంకం);				\
+నిర్మాణం type *name##_SPLAY_INSERT(నిర్మాణం name *, నిర్మాణం type *);		\
+నిర్మాణం type *name##_SPLAY_REMOVE(నిర్మాణం name *, నిర్మాణం type *);		\
 									\
 /* Finds the node with the same key as elm */				\
-static __inline struct type *						\
-name##_SPLAY_FIND(struct name *head, struct type *elm)			\
+స్థిర __inline నిర్మాణం type *						\
+name##_SPLAY_FIND(నిర్మాణం name *తల, నిర్మాణం type *elm)			\
 {									\
-	if (SPLAY_EMPTY(head))						\
-		return(NULL);						\
-	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0)				\
-		return (head->sph_root);				\
-	return (NULL);							\
+	ఒకవేళ (SPLAY_ఖాళీలు(తల))						\
+		తిరిగి(ఖాళీ);						\
+	name##_SPLAY(తల, elm);					\
+	ఒకవేళ ((cmp)(elm, (తల)->sph_మూలం) == 0)				\
+		తిరిగి (తల->sph_మూలం);				\
+	తిరిగి (ఖాళీ);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_NEXT(struct name *head, struct type *elm)			\
+స్థిర __inline నిర్మాణం type *						\
+name##_SPLAY_NEXT(నిర్మాణం name *తల, నిర్మాణం type *elm)			\
 {									\
-	name##_SPLAY(head, elm);					\
-	if (SPLAY_RIGHT(elm, field) != NULL) {				\
-		elm = SPLAY_RIGHT(elm, field);				\
-		while (SPLAY_LEFT(elm, field) != NULL) {		\
-			elm = SPLAY_LEFT(elm, field);			\
+	name##_SPLAY(తల, elm);					\
+	ఒకవేళ (SPLAY_కుడి(elm, క్షేత్రం) != ఖాళీ) {				\
+		elm = SPLAY_కుడి(elm, క్షేత్రం);				\
+		అయితే (SPLAY_ఎడమ(elm, క్షేత్రం) != ఖాళీ) {		\
+			elm = SPLAY_ఎడమ(elm, క్షేత్రం);			\
 		}							\
-	} else								\
-		elm = NULL;						\
-	return (elm);							\
+	} లేకపోతే								\
+		elm = ఖాళీ;						\
+	తిరిగి (elm);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_MIN_MAX(struct name *head, int val)			\
+స్థిర __inline నిర్మాణం type *						\
+name##_SPLAY_MIN_MAX(నిర్మాణం name *తల, పూర్ణాంకం val)			\
 {									\
-	name##_SPLAY_MINMAX(head, val);					\
-        return (SPLAY_ROOT(head));					\
+	name##_SPLAY_MINMAX(తల, val);					\
+        తిరిగి (SPLAY_మూలం(తల));					\
 }
 
 /* Main splay operation.
  * Moves node close to the key of elm to top
  */
-#define SPLAY_GENERATE(name, type, field, cmp)				\
-struct type *								\
-name##_SPLAY_INSERT(struct name *head, struct type *elm)		\
+#నిర్వచించు SPLAY_GENERATE(name, type, క్షేత్రం, cmp)				\
+నిర్మాణం type *								\
+name##_SPLAY_INSERT(నిర్మాణం name *తల, నిర్మాణం type *elm)		\
 {									\
-    if (SPLAY_EMPTY(head)) {						\
-	    SPLAY_LEFT(elm, field) = SPLAY_RIGHT(elm, field) = NULL;	\
-    } else {								\
-	    int __comp;							\
-	    name##_SPLAY(head, elm);					\
-	    __comp = (cmp)(elm, (head)->sph_root);			\
-	    if(__comp < 0) {						\
-		    SPLAY_LEFT(elm, field) = SPLAY_LEFT((head)->sph_root, field);\
-		    SPLAY_RIGHT(elm, field) = (head)->sph_root;		\
-		    SPLAY_LEFT((head)->sph_root, field) = NULL;		\
-	    } else if (__comp > 0) {					\
-		    SPLAY_RIGHT(elm, field) = SPLAY_RIGHT((head)->sph_root, field);\
-		    SPLAY_LEFT(elm, field) = (head)->sph_root;		\
-		    SPLAY_RIGHT((head)->sph_root, field) = NULL;	\
-	    } else							\
-		    return ((head)->sph_root);				\
+    ఒకవేళ (SPLAY_ఖాళీలు(తల)) {						\
+	    SPLAY_ఎడమ(elm, క్షేత్రం) = SPLAY_కుడి(elm, క్షేత్రం) = ఖాళీ;	\
+    } లేకపోతే {								\
+	    పూర్ణాంకం __comp;							\
+	    name##_SPLAY(తల, elm);					\
+	    __comp = (cmp)(elm, (తల)->sph_మూలం);			\
+	    ఒకవేళ(__comp < 0) {						\
+		    SPLAY_ఎడమ(elm, క్షేత్రం) = SPLAY_ఎడమ((తల)->sph_మూలం, క్షేత్రం);\
+		    SPLAY_కుడి(elm, క్షేత్రం) = (తల)->sph_మూలం;		\
+		    SPLAY_ఎడమ((తల)->sph_మూలం, క్షేత్రం) = ఖాళీ;		\
+	    } లేకపోతే ఒకవేళ (__comp > 0) {					\
+		    SPLAY_కుడి(elm, క్షేత్రం) = SPLAY_కుడి((తల)->sph_మూలం, క్షేత్రం);\
+		    SPLAY_ఎడమ(elm, క్షేత్రం) = (తల)->sph_మూలం;		\
+		    SPLAY_కుడి((తల)->sph_మూలం, క్షేత్రం) = ఖాళీ;	\
+	    } లేకపోతే							\
+		    తిరిగి ((తల)->sph_మూలం);				\
     }									\
-    (head)->sph_root = (elm);						\
-    return (NULL);							\
+    (తల)->sph_మూలం = (elm);						\
+    తిరిగి (ఖాళీ);							\
 }									\
 									\
-struct type *								\
-name##_SPLAY_REMOVE(struct name *head, struct type *elm)		\
+నిర్మాణం type *								\
+name##_SPLAY_REMOVE(నిర్మాణం name *తల, నిర్మాణం type *elm)		\
 {									\
-	struct type *__tmp;						\
-	if (SPLAY_EMPTY(head))						\
-		return (NULL);						\
-	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0) {			\
-		if (SPLAY_LEFT((head)->sph_root, field) == NULL) {	\
-			(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);\
-		} else {						\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);\
-			name##_SPLAY(head, elm);			\
-			SPLAY_RIGHT((head)->sph_root, field) = __tmp;	\
+	నిర్మాణం type *__tmp;						\
+	ఒకవేళ (SPLAY_ఖాళీలు(తల))						\
+		తిరిగి (ఖాళీ);						\
+	name##_SPLAY(తల, elm);					\
+	ఒకవేళ ((cmp)(elm, (తల)->sph_మూలం) == 0) {			\
+		ఒకవేళ (SPLAY_ఎడమ((తల)->sph_మూలం, క్షేత్రం) == ఖాళీ) {	\
+			(తల)->sph_మూలం = SPLAY_కుడి((తల)->sph_మూలం, క్షేత్రం);\
+		} లేకపోతే {						\
+			__tmp = SPLAY_కుడి((తల)->sph_మూలం, క్షేత్రం);	\
+			(తల)->sph_మూలం = SPLAY_ఎడమ((తల)->sph_మూలం, క్షేత్రం);\
+			name##_SPLAY(తల, elm);			\
+			SPLAY_కుడి((తల)->sph_మూలం, క్షేత్రం) = __tmp;	\
 		}							\
-		return (elm);						\
+		తిరిగి (elm);						\
 	}								\
-	return (NULL);							\
+	తిరిగి (ఖాళీ);							\
 }									\
 									\
-void									\
-name##_SPLAY(struct name *head, struct type *elm)			\
+శూన్య									\
+name##_SPLAY(నిర్మాణం name *తల, నిర్మాణం type *elm)			\
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
-	int __comp;							\
+	నిర్మాణం type __node, *__left, *__right, *__tmp;			\
+	పూర్ణాంకం __comp;							\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_ఎడమ(&__node, క్షేత్రం) = SPLAY_కుడి(&__node, క్షేత్రం) = ఖాళీ;\
 	__left = __right = &__node;					\
 \
-	while ((__comp = (cmp)(elm, (head)->sph_root))) {		\
-		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) < 0){			\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+	అయితే ((__comp = (cmp)(elm, (తల)->sph_మూలం))) {		\
+		ఒకవేళ (__comp < 0) {					\
+			__tmp = SPLAY_ఎడమ((తల)->sph_మూలం, క్షేత్రం);	\
+			ఒకవేళ (__tmp == ఖాళీ)				\
+				ఆపు;					\
+			ఒకవేళ ((cmp)(elm, __tmp) < 0){			\
+				SPLAY_ROTATE_కుడి(తల, __tmp, క్షేత్రం);	\
+				ఒకవేళ (SPLAY_ఎడమ((తల)->sph_మూలం, క్షేత్రం) == ఖాళీ)\
+					ఆపు;				\
 			}						\
-			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) > 0){			\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+			SPLAY_LINKLEFT(తల, __right, క్షేత్రం);		\
+		} లేకపోతే ఒకవేళ (__comp > 0) {				\
+			__tmp = SPLAY_కుడి((తల)->sph_మూలం, క్షేత్రం);	\
+			ఒకవేళ (__tmp == ఖాళీ)				\
+				ఆపు;					\
+			ఒకవేళ ((cmp)(elm, __tmp) > 0){			\
+				SPLAY_ROTATE_ఎడమ(తల, __tmp, క్షేత్రం);	\
+				ఒకవేళ (SPLAY_కుడి((తల)->sph_మూలం, క్షేత్రం) == ఖాళీ)\
+					ఆపు;				\
 			}						\
-			SPLAY_LINKRIGHT(head, __left, field);		\
+			SPLAY_LINKRIGHT(తల, __left, క్షేత్రం);		\
 		}							\
 	}								\
-	SPLAY_ASSEMBLE(head, &__node, __left, __right, field);		\
+	SPLAY_ASSEMBLE(తల, &__node, __left, __right, క్షేత్రం);		\
 }									\
 									\
 /* Splay with either the minimum or the maximum element			\
  * Used to find minimum or maximum element in tree.			\
  */									\
-void name##_SPLAY_MINMAX(struct name *head, int __comp) \
+శూన్య name##_SPLAY_MINMAX(నిర్మాణం name *తల, పూర్ణాంకం __comp) \
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
+	నిర్మాణం type __node, *__left, *__right, *__tmp;			\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_ఎడమ(&__node, క్షేత్రం) = SPLAY_కుడి(&__node, క్షేత్రం) = ఖాళీ;\
 	__left = __right = &__node;					\
 \
-	while (1) {							\
-		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp < 0){				\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+	అయితే (1) {							\
+		ఒకవేళ (__comp < 0) {					\
+			__tmp = SPLAY_ఎడమ((తల)->sph_మూలం, క్షేత్రం);	\
+			ఒకవేళ (__tmp == ఖాళీ)				\
+				ఆపు;					\
+			ఒకవేళ (__comp < 0){				\
+				SPLAY_ROTATE_కుడి(తల, __tmp, క్షేత్రం);	\
+				ఒకవేళ (SPLAY_ఎడమ((తల)->sph_మూలం, క్షేత్రం) == ఖాళీ)\
+					ఆపు;				\
 			}						\
-			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp > 0) {				\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+			SPLAY_LINKLEFT(తల, __right, క్షేత్రం);		\
+		} లేకపోతే ఒకవేళ (__comp > 0) {				\
+			__tmp = SPLAY_కుడి((తల)->sph_మూలం, క్షేత్రం);	\
+			ఒకవేళ (__tmp == ఖాళీ)				\
+				ఆపు;					\
+			ఒకవేళ (__comp > 0) {				\
+				SPLAY_ROTATE_ఎడమ(తల, __tmp, క్షేత్రం);	\
+				ఒకవేళ (SPLAY_కుడి((తల)->sph_మూలం, క్షేత్రం) == ఖాళీ)\
+					ఆపు;				\
 			}						\
-			SPLAY_LINKRIGHT(head, __left, field);		\
+			SPLAY_LINKRIGHT(తల, __left, క్షేత్రం);		\
 		}							\
 	}								\
-	SPLAY_ASSEMBLE(head, &__node, __left, __right, field);		\
+	SPLAY_ASSEMBLE(తల, &__node, __left, __right, క్షేత్రం);		\
 }
 
-#define SPLAY_NEGINF	-1
-#define SPLAY_INF	1
+#నిర్వచించు SPLAY_NEGINF	-1
+#నిర్వచించు SPLAY_INF	1
 
-#define SPLAY_INSERT(name, x, y)	name##_SPLAY_INSERT(x, y)
-#define SPLAY_REMOVE(name, x, y)	name##_SPLAY_REMOVE(x, y)
-#define SPLAY_FIND(name, x, y)		name##_SPLAY_FIND(x, y)
-#define SPLAY_NEXT(name, x, y)		name##_SPLAY_NEXT(x, y)
-#define SPLAY_MIN(name, x)		(SPLAY_EMPTY(x) ? NULL	\
+#నిర్వచించు SPLAY_చొప్పించు(name, x, y)	name##_SPLAY_INSERT(x, y)
+#నిర్వచించు SPLAY_REMOVE(name, x, y)	name##_SPLAY_REMOVE(x, y)
+#నిర్వచించు SPLAY_కనుగొను(name, x, y)		name##_SPLAY_FIND(x, y)
+#నిర్వచించు SPLAY_తదుపరి(name, x, y)		name##_SPLAY_NEXT(x, y)
+#నిర్వచించు SPLAY_MIN(name, x)		(SPLAY_ఖాళీలు(x) ? ఖాళీ	\
 					: name##_SPLAY_MIN_MAX(x, SPLAY_NEGINF))
-#define SPLAY_MAX(name, x)		(SPLAY_EMPTY(x) ? NULL	\
+#నిర్వచించు SPLAY_MAX(name, x)		(SPLAY_ఖాళీలు(x) ? ఖాళీ	\
 					: name##_SPLAY_MIN_MAX(x, SPLAY_INF))
 
-#define SPLAY_FOREACH(x, name, head)					\
-	for ((x) = SPLAY_MIN(name, head);				\
-	     (x) != NULL;						\
-	     (x) = SPLAY_NEXT(name, head, x))
+#నిర్వచించు SPLAY_FOREACH(x, name, తల)					\
+	కొరకు ((x) = SPLAY_MIN(name, తల);				\
+	     (x) != ఖాళీ;						\
+	     (x) = SPLAY_తదుపరి(name, తల, x))
 
 /* Macros that define a red-black tree */
-#define RB_HEAD(name, type)						\
-struct name {								\
-	struct type *rbh_root; /* root of the tree */			\
+#నిర్వచించు RB_తల(name, type)						\
+నిర్మాణం name {								\
+	నిర్మాణం type *rbh_మూలం; /* root of the tree */			\
 }
 
-#define RB_INITIALIZER(root)						\
-	{ NULL }
+#నిర్వచించు RB_INITIALIZER(మూలం)						\
+	{ ఖాళీ }
 
-#define RB_INIT(root) do {						\
-	(root)->rbh_root = NULL;					\
-} while (0)
+#నిర్వచించు RB_INIT(మూలం) చేయి {						\
+	(మూలం)->rbh_మూలం = ఖాళీ;					\
+} అయితే (0)
 
-#define RB_BLACK	0
-#define RB_RED		1
-#define RB_ENTRY(type)							\
-struct {								\
-	struct type *rbe_left;		/* left element */		\
-	struct type *rbe_right;		/* right element */		\
-	struct type *rbe_parent;	/* parent element */		\
-	int rbe_color;			/* node color */		\
+#నిర్వచించు RB_BLACK	0
+#నిర్వచించు RB_RED		1
+#నిర్వచించు RB_నమోదు(type)							\
+నిర్మాణం {								\
+	నిర్మాణం type *rbe_ఎడమ;		/* left element */		\
+	నిర్మాణం type *rbe_కుడి;		/* right element */		\
+	నిర్మాణం type *rbe_మాతృ;	/* parent element */		\
+	పూర్ణాంకం rbe_color;			/* node color */		\
 }
 
-#define RB_LEFT(elm, field)		(elm)->field.rbe_left
-#define RB_RIGHT(elm, field)		(elm)->field.rbe_right
-#define RB_PARENT(elm, field)		(elm)->field.rbe_parent
-#define RB_COLOR(elm, field)		(elm)->field.rbe_color
-#define RB_ROOT(head)			(head)->rbh_root
-#define RB_EMPTY(head)			(RB_ROOT(head) == NULL)
+#నిర్వచించు RB_ఎడమ(elm, క్షేత్రం)		(elm)->క్షేత్రం.rbe_ఎడమ
+#నిర్వచించు RB_కుడి(elm, క్షేత్రం)		(elm)->క్షేత్రం.rbe_కుడి
+#నిర్వచించు RB_మాతృ(elm, క్షేత్రం)		(elm)->క్షేత్రం.rbe_మాతృ
+#నిర్వచించు RB_COLOR(elm, క్షేత్రం)		(elm)->క్షేత్రం.rbe_color
+#నిర్వచించు RB_మూలం(తల)			(తల)->rbh_మూలం
+#నిర్వచించు RB_ఖాళీలు(తల)			(RB_మూలం(తల) == ఖాళీ)
 
-#define RB_SET(elm, parent, field) do {					\
-	RB_PARENT(elm, field) = parent;					\
-	RB_LEFT(elm, field) = RB_RIGHT(elm, field) = NULL;		\
-	RB_COLOR(elm, field) = RB_RED;					\
-} while (0)
+#నిర్వచించు RB_సమితి(elm, మాతృ, క్షేత్రం) చేయి {					\
+	RB_మాతృ(elm, క్షేత్రం) = మాతృ;					\
+	RB_ఎడమ(elm, క్షేత్రం) = RB_కుడి(elm, క్షేత్రం) = ఖాళీ;		\
+	RB_COLOR(elm, క్షేత్రం) = RB_RED;					\
+} అయితే (0)
 
-#define RB_SET_BLACKRED(black, red, field) do {				\
-	RB_COLOR(black, field) = RB_BLACK;				\
-	RB_COLOR(red, field) = RB_RED;					\
-} while (0)
+#నిర్వచించు RB_సమితి_BLACKRED(black, red, క్షేత్రం) చేయి {				\
+	RB_COLOR(black, క్షేత్రం) = RB_BLACK;				\
+	RB_COLOR(red, క్షేత్రం) = RB_RED;					\
+} అయితే (0)
 
-#ifndef RB_AUGMENT
-#define RB_AUGMENT(x)	do {} while (0)
-#endif
+#నిర్వచితం_కాకపోతే RB_AUGMENT
+#నిర్వచించు RB_AUGMENT(x)	చేయి {} అయితే (0)
+#అయితే_ముగింపు
 
-#define RB_ROTATE_LEFT(head, elm, tmp, field) do {			\
-	(tmp) = RB_RIGHT(elm, field);					\
-	if ((RB_RIGHT(elm, field) = RB_LEFT(tmp, field))) {		\
-		RB_PARENT(RB_LEFT(tmp, field), field) = (elm);		\
+#నిర్వచించు RB_ROTATE_ఎడమ(తల, elm, tmp, క్షేత్రం) చేయి {			\
+	(tmp) = RB_కుడి(elm, క్షేత్రం);					\
+	ఒకవేళ ((RB_కుడి(elm, క్షేత్రం) = RB_ఎడమ(tmp, క్షేత్రం))) {		\
+		RB_మాతృ(RB_ఎడమ(tmp, క్షేత్రం), క్షేత్రం) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_LEFT(tmp, field) = (elm);					\
-	RB_PARENT(elm, field) = (tmp);					\
+	ఒకవేళ ((RB_మాతృ(tmp, క్షేత్రం) = RB_మాతృ(elm, క్షేత్రం))) {		\
+		ఒకవేళ ((elm) == RB_ఎడమ(RB_మాతృ(elm, క్షేత్రం), క్షేత్రం))	\
+			RB_ఎడమ(RB_మాతృ(elm, క్షేత్రం), క్షేత్రం) = (tmp);	\
+		లేకపోతే							\
+			RB_కుడి(RB_మాతృ(elm, క్షేత్రం), క్షేత్రం) = (tmp);	\
+	} లేకపోతే								\
+		(తల)->rbh_మూలం = (tmp);				\
+	RB_ఎడమ(tmp, క్షేత్రం) = (elm);					\
+	RB_మాతృ(elm, క్షేత్రం) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
-		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+	ఒకవేళ ((RB_మాతృ(tmp, క్షేత్రం)))					\
+		RB_AUGMENT(RB_మాతృ(tmp, క్షేత్రం));			\
+} అయితే (0)
 
-#define RB_ROTATE_RIGHT(head, elm, tmp, field) do {			\
-	(tmp) = RB_LEFT(elm, field);					\
-	if ((RB_LEFT(elm, field) = RB_RIGHT(tmp, field))) {		\
-		RB_PARENT(RB_RIGHT(tmp, field), field) = (elm);		\
+#నిర్వచించు RB_ROTATE_కుడి(తల, elm, tmp, క్షేత్రం) చేయి {			\
+	(tmp) = RB_ఎడమ(elm, క్షేత్రం);					\
+	ఒకవేళ ((RB_ఎడమ(elm, క్షేత్రం) = RB_కుడి(tmp, క్షేత్రం))) {		\
+		RB_మాతృ(RB_కుడి(tmp, క్షేత్రం), క్షేత్రం) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_RIGHT(tmp, field) = (elm);					\
-	RB_PARENT(elm, field) = (tmp);					\
+	ఒకవేళ ((RB_మాతృ(tmp, క్షేత్రం) = RB_మాతృ(elm, క్షేత్రం))) {		\
+		ఒకవేళ ((elm) == RB_ఎడమ(RB_మాతృ(elm, క్షేత్రం), క్షేత్రం))	\
+			RB_ఎడమ(RB_మాతృ(elm, క్షేత్రం), క్షేత్రం) = (tmp);	\
+		లేకపోతే							\
+			RB_కుడి(RB_మాతృ(elm, క్షేత్రం), క్షేత్రం) = (tmp);	\
+	} లేకపోతే								\
+		(తల)->rbh_మూలం = (tmp);				\
+	RB_కుడి(tmp, క్షేత్రం) = (elm);					\
+	RB_మాతృ(elm, క్షేత్రం) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
-		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+	ఒకవేళ ((RB_మాతృ(tmp, క్షేత్రం)))					\
+		RB_AUGMENT(RB_మాతృ(tmp, క్షేత్రం));			\
+} అయితే (0)
 
 /* Generates prototypes and inline functions */
-#define	RB_PROTOTYPE(name, type, field, cmp)				\
-	RB_PROTOTYPE_INTERNAL(name, type, field, cmp,)
-#define	RB_PROTOTYPE_STATIC(name, type, field, cmp)			\
-	RB_PROTOTYPE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
-#define RB_PROTOTYPE_INTERNAL(name, type, field, cmp, attr)		\
-attr void name##_RB_INSERT_COLOR(struct name *, struct type *);		\
-attr void name##_RB_REMOVE_COLOR(struct name *, struct type *, struct type *);\
-attr struct type *name##_RB_REMOVE(struct name *, struct type *);	\
-attr struct type *name##_RB_INSERT(struct name *, struct type *);	\
-attr struct type *name##_RB_FIND(struct name *, struct type *);		\
-attr struct type *name##_RB_NFIND(struct name *, struct type *);	\
-attr struct type *name##_RB_NEXT(struct type *);			\
-attr struct type *name##_RB_PREV(struct type *);			\
-attr struct type *name##_RB_MINMAX(struct name *, int);			\
+#నిర్వచించు	RB_PROTOTYPE(name, type, క్షేత్రం, cmp)				\
+	RB_PROTOTYPE_అంతర్గత(name, type, క్షేత్రం, cmp,)
+#నిర్వచించు	RB_PROTOTYPE_STATIC(name, type, క్షేత్రం, cmp)			\
+	RB_PROTOTYPE_అంతర్గత(name, type, క్షేత్రం, cmp, __attribute__((__unused__)) స్థిర)
+#నిర్వచించు RB_PROTOTYPE_అంతర్గత(name, type, క్షేత్రం, cmp, attr)		\
+attr శూన్య name##_RB_INSERT_COLOR(నిర్మాణం name *, నిర్మాణం type *);		\
+attr శూన్య name##_RB_REMOVE_COLOR(నిర్మాణం name *, నిర్మాణం type *, నిర్మాణం type *);\
+attr నిర్మాణం type *name##_RB_REMOVE(నిర్మాణం name *, నిర్మాణం type *);	\
+attr నిర్మాణం type *name##_RB_INSERT(నిర్మాణం name *, నిర్మాణం type *);	\
+attr నిర్మాణం type *name##_RB_FIND(నిర్మాణం name *, నిర్మాణం type *);		\
+attr నిర్మాణం type *name##_RB_NFIND(నిర్మాణం name *, నిర్మాణం type *);	\
+attr నిర్మాణం type *name##_RB_NEXT(నిర్మాణం type *);			\
+attr నిర్మాణం type *name##_RB_PREV(నిర్మాణం type *);			\
+attr నిర్మాణం type *name##_RB_MINMAX(నిర్మాణం name *, పూర్ణాంకం);			\
 									\
 
 /* Main rb operation.
  * Moves node close to the key of elm to top
  */
-#define	RB_GENERATE(name, type, field, cmp)				\
-	RB_GENERATE_INTERNAL(name, type, field, cmp,)
-#define	RB_GENERATE_STATIC(name, type, field, cmp)			\
-	RB_GENERATE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
-#define RB_GENERATE_INTERNAL(name, type, field, cmp, attr)		\
-attr void								\
-name##_RB_INSERT_COLOR(struct name *head, struct type *elm)		\
+#నిర్వచించు	RB_GENERATE(name, type, క్షేత్రం, cmp)				\
+	RB_GENERATE_అంతర్గత(name, type, క్షేత్రం, cmp,)
+#నిర్వచించు	RB_GENERATE_STATIC(name, type, క్షేత్రం, cmp)			\
+	RB_GENERATE_అంతర్గత(name, type, క్షేత్రం, cmp, __attribute__((__unused__)) స్థిర)
+#నిర్వచించు RB_GENERATE_అంతర్గత(name, type, క్షేత్రం, cmp, attr)		\
+attr శూన్య								\
+name##_RB_INSERT_COLOR(నిర్మాణం name *తల, నిర్మాణం type *elm)		\
 {									\
-	struct type *parent, *gparent, *tmp;				\
-	while ((parent = RB_PARENT(elm, field)) &&			\
-	    RB_COLOR(parent, field) == RB_RED) {			\
-		gparent = RB_PARENT(parent, field);			\
-		if (parent == RB_LEFT(gparent, field)) {		\
-			tmp = RB_RIGHT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
-				RB_COLOR(tmp, field) = RB_BLACK;	\
-				RB_SET_BLACKRED(parent, gparent, field);\
+	నిర్మాణం type *మాతృ, *gparent, *tmp;				\
+	అయితే ((మాతృ = RB_మాతృ(elm, క్షేత్రం)) &&			\
+	    RB_COLOR(మాతృ, క్షేత్రం) == RB_RED) {			\
+		gparent = RB_మాతృ(మాతృ, క్షేత్రం);			\
+		ఒకవేళ (మాతృ == RB_ఎడమ(gparent, క్షేత్రం)) {		\
+			tmp = RB_కుడి(gparent, క్షేత్రం);			\
+			ఒకవేళ (tmp && RB_COLOR(tmp, క్షేత్రం) == RB_RED) {	\
+				RB_COLOR(tmp, క్షేత్రం) = RB_BLACK;	\
+				RB_సమితి_BLACKRED(మాతృ, gparent, క్షేత్రం);\
 				elm = gparent;				\
-				continue;				\
+				కొనసాగు;				\
 			}						\
-			if (RB_RIGHT(parent, field) == elm) {		\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				tmp = parent;				\
-				parent = elm;				\
+			ఒకవేళ (RB_కుడి(మాతృ, క్షేత్రం) == elm) {		\
+				RB_ROTATE_ఎడమ(తల, మాతృ, tmp, క్షేత్రం);\
+				tmp = మాతృ;				\
+				మాతృ = elm;				\
 				elm = tmp;				\
 			}						\
-			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_RIGHT(head, gparent, tmp, field);	\
-		} else {						\
-			tmp = RB_LEFT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
-				RB_COLOR(tmp, field) = RB_BLACK;	\
-				RB_SET_BLACKRED(parent, gparent, field);\
+			RB_సమితి_BLACKRED(మాతృ, gparent, క్షేత్రం);	\
+			RB_ROTATE_కుడి(తల, gparent, tmp, క్షేత్రం);	\
+		} లేకపోతే {						\
+			tmp = RB_ఎడమ(gparent, క్షేత్రం);			\
+			ఒకవేళ (tmp && RB_COLOR(tmp, క్షేత్రం) == RB_RED) {	\
+				RB_COLOR(tmp, క్షేత్రం) = RB_BLACK;	\
+				RB_సమితి_BLACKRED(మాతృ, gparent, క్షేత్రం);\
 				elm = gparent;				\
-				continue;				\
+				కొనసాగు;				\
 			}						\
-			if (RB_LEFT(parent, field) == elm) {		\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				tmp = parent;				\
-				parent = elm;				\
+			ఒకవేళ (RB_ఎడమ(మాతృ, క్షేత్రం) == elm) {		\
+				RB_ROTATE_కుడి(తల, మాతృ, tmp, క్షేత్రం);\
+				tmp = మాతృ;				\
+				మాతృ = elm;				\
 				elm = tmp;				\
 			}						\
-			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_LEFT(head, gparent, tmp, field);	\
+			RB_సమితి_BLACKRED(మాతృ, gparent, క్షేత్రం);	\
+			RB_ROTATE_ఎడమ(తల, gparent, tmp, క్షేత్రం);	\
 		}							\
 	}								\
-	RB_COLOR(head->rbh_root, field) = RB_BLACK;			\
+	RB_COLOR(తల->rbh_మూలం, క్షేత్రం) = RB_BLACK;			\
 }									\
 									\
-attr void								\
-name##_RB_REMOVE_COLOR(struct name *head, struct type *parent, struct type *elm) \
+attr శూన్య								\
+name##_RB_REMOVE_COLOR(నిర్మాణం name *తల, నిర్మాణం type *మాతృ, నిర్మాణం type *elm) \
 {									\
-	struct type *tmp;						\
-	while ((elm == NULL || RB_COLOR(elm, field) == RB_BLACK) &&	\
-	    elm != RB_ROOT(head)) {					\
-		if (RB_LEFT(parent, field) == elm) {			\
-			tmp = RB_RIGHT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
-				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				tmp = RB_RIGHT(parent, field);		\
+	నిర్మాణం type *tmp;						\
+	అయితే ((elm == ఖాళీ || RB_COLOR(elm, క్షేత్రం) == RB_BLACK) &&	\
+	    elm != RB_మూలం(తల)) {					\
+		ఒకవేళ (RB_ఎడమ(మాతృ, క్షేత్రం) == elm) {			\
+			tmp = RB_కుడి(మాతృ, క్షేత్రం);			\
+			ఒకవేళ (RB_COLOR(tmp, క్షేత్రం) == RB_RED) {		\
+				RB_సమితి_BLACKRED(tmp, మాతృ, క్షేత్రం);	\
+				RB_ROTATE_ఎడమ(తల, మాతృ, tmp, క్షేత్రం);\
+				tmp = RB_కుడి(మాతృ, క్షేత్రం);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
-				RB_COLOR(tmp, field) = RB_RED;		\
-				elm = parent;				\
-				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_RIGHT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK) {\
-					struct type *oleft;		\
-					if ((oleft = RB_LEFT(tmp, field)))\
-						RB_COLOR(oleft, field) = RB_BLACK;\
-					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_RIGHT(head, tmp, oleft, field);\
-					tmp = RB_RIGHT(parent, field);	\
+			ఒకవేళ ((RB_ఎడమ(tmp, క్షేత్రం) == ఖాళీ ||		\
+			    RB_COLOR(RB_ఎడమ(tmp, క్షేత్రం), క్షేత్రం) == RB_BLACK) &&\
+			    (RB_కుడి(tmp, క్షేత్రం) == ఖాళీ ||		\
+			    RB_COLOR(RB_కుడి(tmp, క్షేత్రం), క్షేత్రం) == RB_BLACK)) {\
+				RB_COLOR(tmp, క్షేత్రం) = RB_RED;		\
+				elm = మాతృ;				\
+				మాతృ = RB_మాతృ(elm, క్షేత్రం);		\
+			} లేకపోతే {					\
+				ఒకవేళ (RB_కుడి(tmp, క్షేత్రం) == ఖాళీ ||	\
+				    RB_COLOR(RB_కుడి(tmp, క్షేత్రం), క్షేత్రం) == RB_BLACK) {\
+					నిర్మాణం type *oleft;		\
+					ఒకవేళ ((oleft = RB_ఎడమ(tmp, క్షేత్రం)))\
+						RB_COLOR(oleft, క్షేత్రం) = RB_BLACK;\
+					RB_COLOR(tmp, క్షేత్రం) = RB_RED;	\
+					RB_ROTATE_కుడి(తల, tmp, oleft, క్షేత్రం);\
+					tmp = RB_కుడి(మాతృ, క్షేత్రం);	\
 				}					\
-				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
-				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_RIGHT(tmp, field))		\
-					RB_COLOR(RB_RIGHT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
-				break;					\
+				RB_COLOR(tmp, క్షేత్రం) = RB_COLOR(మాతృ, క్షేత్రం);\
+				RB_COLOR(మాతృ, క్షేత్రం) = RB_BLACK;	\
+				ఒకవేళ (RB_కుడి(tmp, క్షేత్రం))		\
+					RB_COLOR(RB_కుడి(tmp, క్షేత్రం), క్షేత్రం) = RB_BLACK;\
+				RB_ROTATE_ఎడమ(తల, మాతృ, tmp, క్షేత్రం);\
+				elm = RB_మూలం(తల);			\
+				ఆపు;					\
 			}						\
-		} else {						\
-			tmp = RB_LEFT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
-				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				tmp = RB_LEFT(parent, field);		\
+		} లేకపోతే {						\
+			tmp = RB_ఎడమ(మాతృ, క్షేత్రం);			\
+			ఒకవేళ (RB_COLOR(tmp, క్షేత్రం) == RB_RED) {		\
+				RB_సమితి_BLACKRED(tmp, మాతృ, క్షేత్రం);	\
+				RB_ROTATE_కుడి(తల, మాతృ, tmp, క్షేత్రం);\
+				tmp = RB_ఎడమ(మాతృ, క్షేత్రం);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
-				RB_COLOR(tmp, field) = RB_RED;		\
-				elm = parent;				\
-				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_LEFT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) {\
-					struct type *oright;		\
-					if ((oright = RB_RIGHT(tmp, field)))\
-						RB_COLOR(oright, field) = RB_BLACK;\
-					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_LEFT(head, tmp, oright, field);\
-					tmp = RB_LEFT(parent, field);	\
+			ఒకవేళ ((RB_ఎడమ(tmp, క్షేత్రం) == ఖాళీ ||		\
+			    RB_COLOR(RB_ఎడమ(tmp, క్షేత్రం), క్షేత్రం) == RB_BLACK) &&\
+			    (RB_కుడి(tmp, క్షేత్రం) == ఖాళీ ||		\
+			    RB_COLOR(RB_కుడి(tmp, క్షేత్రం), క్షేత్రం) == RB_BLACK)) {\
+				RB_COLOR(tmp, క్షేత్రం) = RB_RED;		\
+				elm = మాతృ;				\
+				మాతృ = RB_మాతృ(elm, క్షేత్రం);		\
+			} లేకపోతే {					\
+				ఒకవేళ (RB_ఎడమ(tmp, క్షేత్రం) == ఖాళీ ||	\
+				    RB_COLOR(RB_ఎడమ(tmp, క్షేత్రం), క్షేత్రం) == RB_BLACK) {\
+					నిర్మాణం type *oright;		\
+					ఒకవేళ ((oright = RB_కుడి(tmp, క్షేత్రం)))\
+						RB_COLOR(oright, క్షేత్రం) = RB_BLACK;\
+					RB_COLOR(tmp, క్షేత్రం) = RB_RED;	\
+					RB_ROTATE_ఎడమ(తల, tmp, oright, క్షేత్రం);\
+					tmp = RB_ఎడమ(మాతృ, క్షేత్రం);	\
 				}					\
-				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
-				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_LEFT(tmp, field))		\
-					RB_COLOR(RB_LEFT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
-				break;					\
+				RB_COLOR(tmp, క్షేత్రం) = RB_COLOR(మాతృ, క్షేత్రం);\
+				RB_COLOR(మాతృ, క్షేత్రం) = RB_BLACK;	\
+				ఒకవేళ (RB_ఎడమ(tmp, క్షేత్రం))		\
+					RB_COLOR(RB_ఎడమ(tmp, క్షేత్రం), క్షేత్రం) = RB_BLACK;\
+				RB_ROTATE_కుడి(తల, మాతృ, tmp, క్షేత్రం);\
+				elm = RB_మూలం(తల);			\
+				ఆపు;					\
 			}						\
 		}							\
 	}								\
-	if (elm)							\
-		RB_COLOR(elm, field) = RB_BLACK;			\
+	ఒకవేళ (elm)							\
+		RB_COLOR(elm, క్షేత్రం) = RB_BLACK;			\
 }									\
 									\
-attr struct type *							\
-name##_RB_REMOVE(struct name *head, struct type *elm)			\
+attr నిర్మాణం type *							\
+name##_RB_REMOVE(నిర్మాణం name *తల, నిర్మాణం type *elm)			\
 {									\
-	struct type *child, *parent, *old = elm;			\
-	int color;							\
-	if (RB_LEFT(elm, field) == NULL)				\
-		child = RB_RIGHT(elm, field);				\
-	else if (RB_RIGHT(elm, field) == NULL)				\
-		child = RB_LEFT(elm, field);				\
-	else {								\
-		struct type *left;					\
-		elm = RB_RIGHT(elm, field);				\
-		while ((left = RB_LEFT(elm, field)))			\
-			elm = left;					\
-		child = RB_RIGHT(elm, field);				\
-		parent = RB_PARENT(elm, field);				\
-		color = RB_COLOR(elm, field);				\
-		if (child)						\
-			RB_PARENT(child, field) = parent;		\
-		if (parent) {						\
-			if (RB_LEFT(parent, field) == elm)		\
-				RB_LEFT(parent, field) = child;		\
-			else						\
-				RB_RIGHT(parent, field) = child;	\
-			RB_AUGMENT(parent);				\
-		} else							\
-			RB_ROOT(head) = child;				\
-		if (RB_PARENT(elm, field) == old)			\
-			parent = elm;					\
-		(elm)->field = (old)->field;				\
-		if (RB_PARENT(old, field)) {				\
-			if (RB_LEFT(RB_PARENT(old, field), field) == old)\
-				RB_LEFT(RB_PARENT(old, field), field) = elm;\
-			else						\
-				RB_RIGHT(RB_PARENT(old, field), field) = elm;\
-			RB_AUGMENT(RB_PARENT(old, field));		\
-		} else							\
-			RB_ROOT(head) = elm;				\
-		RB_PARENT(RB_LEFT(old, field), field) = elm;		\
-		if (RB_RIGHT(old, field))				\
-			RB_PARENT(RB_RIGHT(old, field), field) = elm;	\
-		if (parent) {						\
-			left = parent;					\
-			do {						\
-				RB_AUGMENT(left);			\
-			} while ((left = RB_PARENT(left, field)));	\
+	నిర్మాణం type *బిడ్డ, *మాతృ, *old = elm;			\
+	పూర్ణాంకం color;							\
+	ఒకవేళ (RB_ఎడమ(elm, క్షేత్రం) == ఖాళీ)				\
+		బిడ్డ = RB_కుడి(elm, క్షేత్రం);				\
+	లేకపోతే ఒకవేళ (RB_కుడి(elm, క్షేత్రం) == ఖాళీ)				\
+		బిడ్డ = RB_ఎడమ(elm, క్షేత్రం);				\
+	లేకపోతే {								\
+		నిర్మాణం type *ఎడమ;					\
+		elm = RB_కుడి(elm, క్షేత్రం);				\
+		అయితే ((ఎడమ = RB_ఎడమ(elm, క్షేత్రం)))			\
+			elm = ఎడమ;					\
+		బిడ్డ = RB_కుడి(elm, క్షేత్రం);				\
+		మాతృ = RB_మాతృ(elm, క్షేత్రం);				\
+		color = RB_COLOR(elm, క్షేత్రం);				\
+		ఒకవేళ (బిడ్డ)						\
+			RB_మాతృ(బిడ్డ, క్షేత్రం) = మాతృ;		\
+		ఒకవేళ (మాతృ) {						\
+			ఒకవేళ (RB_ఎడమ(మాతృ, క్షేత్రం) == elm)		\
+				RB_ఎడమ(మాతృ, క్షేత్రం) = బిడ్డ;		\
+			లేకపోతే						\
+				RB_కుడి(మాతృ, క్షేత్రం) = బిడ్డ;	\
+			RB_AUGMENT(మాతృ);				\
+		} లేకపోతే							\
+			RB_మూలం(తల) = బిడ్డ;				\
+		ఒకవేళ (RB_మాతృ(elm, క్షేత్రం) == old)			\
+			మాతృ = elm;					\
+		(elm)->క్షేత్రం = (old)->క్షేత్రం;				\
+		ఒకవేళ (RB_మాతృ(old, క్షేత్రం)) {				\
+			ఒకవేళ (RB_ఎడమ(RB_మాతృ(old, క్షేత్రం), క్షేత్రం) == old)\
+				RB_ఎడమ(RB_మాతృ(old, క్షేత్రం), క్షేత్రం) = elm;\
+			లేకపోతే						\
+				RB_కుడి(RB_మాతృ(old, క్షేత్రం), క్షేత్రం) = elm;\
+			RB_AUGMENT(RB_మాతృ(old, క్షేత్రం));		\
+		} లేకపోతే							\
+			RB_మూలం(తల) = elm;				\
+		RB_మాతృ(RB_ఎడమ(old, క్షేత్రం), క్షేత్రం) = elm;		\
+		ఒకవేళ (RB_కుడి(old, క్షేత్రం))				\
+			RB_మాతృ(RB_కుడి(old, క్షేత్రం), క్షేత్రం) = elm;	\
+		ఒకవేళ (మాతృ) {						\
+			ఎడమ = మాతృ;					\
+			చేయి {						\
+				RB_AUGMENT(ఎడమ);			\
+			} అయితే ((ఎడమ = RB_మాతృ(ఎడమ, క్షేత్రం)));	\
 		}							\
-		goto color;						\
+		వెళ్ళు color;						\
 	}								\
-	parent = RB_PARENT(elm, field);					\
-	color = RB_COLOR(elm, field);					\
-	if (child)							\
-		RB_PARENT(child, field) = parent;			\
-	if (parent) {							\
-		if (RB_LEFT(parent, field) == elm)			\
-			RB_LEFT(parent, field) = child;			\
-		else							\
-			RB_RIGHT(parent, field) = child;		\
-		RB_AUGMENT(parent);					\
-	} else								\
-		RB_ROOT(head) = child;					\
+	మాతృ = RB_మాతృ(elm, క్షేత్రం);					\
+	color = RB_COLOR(elm, క్షేత్రం);					\
+	ఒకవేళ (బిడ్డ)							\
+		RB_మాతృ(బిడ్డ, క్షేత్రం) = మాతృ;			\
+	ఒకవేళ (మాతృ) {							\
+		ఒకవేళ (RB_ఎడమ(మాతృ, క్షేత్రం) == elm)			\
+			RB_ఎడమ(మాతృ, క్షేత్రం) = బిడ్డ;			\
+		లేకపోతే							\
+			RB_కుడి(మాతృ, క్షేత్రం) = బిడ్డ;		\
+		RB_AUGMENT(మాతృ);					\
+	} లేకపోతే								\
+		RB_మూలం(తల) = బిడ్డ;					\
 color:									\
-	if (color == RB_BLACK)						\
-		name##_RB_REMOVE_COLOR(head, parent, child);		\
-	return (old);							\
+	ఒకవేళ (color == RB_BLACK)						\
+		name##_RB_REMOVE_COLOR(తల, మాతృ, బిడ్డ);		\
+	తిరిగి (old);							\
 }									\
 									\
 /* Inserts a node into the RB tree */					\
-attr struct type *							\
-name##_RB_INSERT(struct name *head, struct type *elm)			\
+attr నిర్మాణం type *							\
+name##_RB_INSERT(నిర్మాణం name *తల, నిర్మాణం type *elm)			\
 {									\
-	struct type *tmp;						\
-	struct type *parent = NULL;					\
-	int comp = 0;							\
-	tmp = RB_ROOT(head);						\
-	while (tmp) {							\
-		parent = tmp;						\
-		comp = (cmp)(elm, parent);				\
-		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+	నిర్మాణం type *tmp;						\
+	నిర్మాణం type *మాతృ = ఖాళీ;					\
+	పూర్ణాంకం comp = 0;							\
+	tmp = RB_మూలం(తల);						\
+	అయితే (tmp) {							\
+		మాతృ = tmp;						\
+		comp = (cmp)(elm, మాతృ);				\
+		ఒకవేళ (comp < 0)						\
+			tmp = RB_ఎడమ(tmp, క్షేత్రం);			\
+		లేకపోతే ఒకవేళ (comp > 0)					\
+			tmp = RB_కుడి(tmp, క్షేత్రం);			\
+		లేకపోతే							\
+			తిరిగి (tmp);					\
 	}								\
-	RB_SET(elm, parent, field);					\
-	if (parent != NULL) {						\
-		if (comp < 0)						\
-			RB_LEFT(parent, field) = elm;			\
-		else							\
-			RB_RIGHT(parent, field) = elm;			\
-		RB_AUGMENT(parent);					\
-	} else								\
-		RB_ROOT(head) = elm;					\
-	name##_RB_INSERT_COLOR(head, elm);				\
-	return (NULL);							\
+	RB_సమితి(elm, మాతృ, క్షేత్రం);					\
+	ఒకవేళ (మాతృ != ఖాళీ) {						\
+		ఒకవేళ (comp < 0)						\
+			RB_ఎడమ(మాతృ, క్షేత్రం) = elm;			\
+		లేకపోతే							\
+			RB_కుడి(మాతృ, క్షేత్రం) = elm;			\
+		RB_AUGMENT(మాతృ);					\
+	} లేకపోతే								\
+		RB_మూలం(తల) = elm;					\
+	name##_RB_INSERT_COLOR(తల, elm);				\
+	తిరిగి (ఖాళీ);							\
 }									\
 									\
 /* Finds the node with the same key as elm */				\
-attr struct type *							\
-name##_RB_FIND(struct name *head, struct type *elm)			\
+attr నిర్మాణం type *							\
+name##_RB_FIND(నిర్మాణం name *తల, నిర్మాణం type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	int comp;							\
-	while (tmp) {							\
+	నిర్మాణం type *tmp = RB_మూలం(తల);				\
+	పూర్ణాంకం comp;							\
+	అయితే (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		ఒకవేళ (comp < 0)						\
+			tmp = RB_ఎడమ(tmp, క్షేత్రం);			\
+		లేకపోతే ఒకవేళ (comp > 0)					\
+			tmp = RB_కుడి(tmp, క్షేత్రం);			\
+		లేకపోతే							\
+			తిరిగి (tmp);					\
 	}								\
-	return (NULL);							\
+	తిరిగి (ఖాళీ);							\
 }									\
 									\
 /* Finds the first node greater than or equal to the search key */	\
-attr struct type *							\
-name##_RB_NFIND(struct name *head, struct type *elm)			\
+attr నిర్మాణం type *							\
+name##_RB_NFIND(నిర్మాణం name *తల, నిర్మాణం type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *res = NULL;					\
-	int comp;							\
-	while (tmp) {							\
+	నిర్మాణం type *tmp = RB_మూలం(తల);				\
+	నిర్మాణం type *res = ఖాళీ;					\
+	పూర్ణాంకం comp;							\
+	అయితే (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0) {						\
+		ఒకవేళ (comp < 0) {						\
 			res = tmp;					\
-			tmp = RB_LEFT(tmp, field);			\
+			tmp = RB_ఎడమ(tmp, క్షేత్రం);			\
 		}							\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		లేకపోతే ఒకవేళ (comp > 0)					\
+			tmp = RB_కుడి(tmp, క్షేత్రం);			\
+		లేకపోతే							\
+			తిరిగి (tmp);					\
 	}								\
-	return (res);							\
+	తిరిగి (res);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_NEXT(struct type *elm)					\
+attr నిర్మాణం type *							\
+name##_RB_NEXT(నిర్మాణం type *elm)					\
 {									\
-	if (RB_RIGHT(elm, field)) {					\
-		elm = RB_RIGHT(elm, field);				\
-		while (RB_LEFT(elm, field))				\
-			elm = RB_LEFT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_LEFT(RB_PARENT(elm, field), field)))	\
-			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))\
-				elm = RB_PARENT(elm, field);		\
-			elm = RB_PARENT(elm, field);			\
+	ఒకవేళ (RB_కుడి(elm, క్షేత్రం)) {					\
+		elm = RB_కుడి(elm, క్షేత్రం);				\
+		అయితే (RB_ఎడమ(elm, క్షేత్రం))				\
+			elm = RB_ఎడమ(elm, క్షేత్రం);			\
+	} లేకపోతే {							\
+		ఒకవేళ (RB_మాతృ(elm, క్షేత్రం) &&				\
+		    (elm == RB_ఎడమ(RB_మాతృ(elm, క్షేత్రం), క్షేత్రం)))	\
+			elm = RB_మాతృ(elm, క్షేత్రం);			\
+		లేకపోతే {							\
+			అయితే (RB_మాతృ(elm, క్షేత్రం) &&			\
+			    (elm == RB_కుడి(RB_మాతృ(elm, క్షేత్రం), క్షేత్రం)))\
+				elm = RB_మాతృ(elm, క్షేత్రం);		\
+			elm = RB_మాతృ(elm, క్షేత్రం);			\
 		}							\
 	}								\
-	return (elm);							\
+	తిరిగి (elm);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_PREV(struct type *elm)					\
+attr నిర్మాణం type *							\
+name##_RB_PREV(నిర్మాణం type *elm)					\
 {									\
-	if (RB_LEFT(elm, field)) {					\
-		elm = RB_LEFT(elm, field);				\
-		while (RB_RIGHT(elm, field))				\
-			elm = RB_RIGHT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))	\
-			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_LEFT(RB_PARENT(elm, field), field)))\
-				elm = RB_PARENT(elm, field);		\
-			elm = RB_PARENT(elm, field);			\
+	ఒకవేళ (RB_ఎడమ(elm, క్షేత్రం)) {					\
+		elm = RB_ఎడమ(elm, క్షేత్రం);				\
+		అయితే (RB_కుడి(elm, క్షేత్రం))				\
+			elm = RB_కుడి(elm, క్షేత్రం);			\
+	} లేకపోతే {							\
+		ఒకవేళ (RB_మాతృ(elm, క్షేత్రం) &&				\
+		    (elm == RB_కుడి(RB_మాతృ(elm, క్షేత్రం), క్షేత్రం)))	\
+			elm = RB_మాతృ(elm, క్షేత్రం);			\
+		లేకపోతే {							\
+			అయితే (RB_మాతృ(elm, క్షేత్రం) &&			\
+			    (elm == RB_ఎడమ(RB_మాతృ(elm, క్షేత్రం), క్షేత్రం)))\
+				elm = RB_మాతృ(elm, క్షేత్రం);		\
+			elm = RB_మాతృ(elm, క్షేత్రం);			\
 		}							\
 	}								\
-	return (elm);							\
+	తిరిగి (elm);							\
 }									\
 									\
-attr struct type *							\
-name##_RB_MINMAX(struct name *head, int val)				\
+attr నిర్మాణం type *							\
+name##_RB_MINMAX(నిర్మాణం name *తల, పూర్ణాంకం val)				\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *parent = NULL;					\
-	while (tmp) {							\
-		parent = tmp;						\
-		if (val < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else							\
-			tmp = RB_RIGHT(tmp, field);			\
+	నిర్మాణం type *tmp = RB_మూలం(తల);				\
+	నిర్మాణం type *మాతృ = ఖాళీ;					\
+	అయితే (tmp) {							\
+		మాతృ = tmp;						\
+		ఒకవేళ (val < 0)						\
+			tmp = RB_ఎడమ(tmp, క్షేత్రం);			\
+		లేకపోతే							\
+			tmp = RB_కుడి(tmp, క్షేత్రం);			\
 	}								\
-	return (parent);						\
+	తిరిగి (మాతృ);						\
 }
 
-#define RB_NEGINF	-1
-#define RB_INF	1
+#నిర్వచించు RB_NEGINF	-1
+#నిర్వచించు RB_INF	1
 
-#define RB_INSERT(name, x, y)	name##_RB_INSERT(x, y)
-#define RB_REMOVE(name, x, y)	name##_RB_REMOVE(x, y)
-#define RB_FIND(name, x, y)	name##_RB_FIND(x, y)
-#define RB_NFIND(name, x, y)	name##_RB_NFIND(x, y)
-#define RB_NEXT(name, x, y)	name##_RB_NEXT(y)
-#define RB_PREV(name, x, y)	name##_RB_PREV(y)
-#define RB_MIN(name, x)		name##_RB_MINMAX(x, RB_NEGINF)
-#define RB_MAX(name, x)		name##_RB_MINMAX(x, RB_INF)
+#నిర్వచించు RB_చొప్పించు(name, x, y)	name##_RB_INSERT(x, y)
+#నిర్వచించు RB_REMOVE(name, x, y)	name##_RB_REMOVE(x, y)
+#నిర్వచించు RB_కనుగొను(name, x, y)	name##_RB_FIND(x, y)
+#నిర్వచించు RB_NFIND(name, x, y)	name##_RB_NFIND(x, y)
+#నిర్వచించు RB_తదుపరి(name, x, y)	name##_RB_NEXT(y)
+#నిర్వచించు RB_PREV(name, x, y)	name##_RB_PREV(y)
+#నిర్వచించు RB_MIN(name, x)		name##_RB_MINMAX(x, RB_NEGINF)
+#నిర్వచించు RB_MAX(name, x)		name##_RB_MINMAX(x, RB_INF)
 
-#define RB_FOREACH(x, name, head)					\
-	for ((x) = RB_MIN(name, head);					\
-	     (x) != NULL;						\
+#నిర్వచించు RB_FOREACH(x, name, తల)					\
+	కొరకు ((x) = RB_MIN(name, తల);					\
+	     (x) != ఖాళీ;						\
 	     (x) = name##_RB_NEXT(x))
 
-#define RB_FOREACH_SAFE(x, name, head, y)				\
-	for ((x) = RB_MIN(name, head);					\
-	    ((x) != NULL) && ((y) = name##_RB_NEXT(x), 1);		\
+#నిర్వచించు RB_FOREACH_సురక్షిత(x, name, తల, y)				\
+	కొరకు ((x) = RB_MIN(name, తల);					\
+	    ((x) != ఖాళీ) && ((y) = name##_RB_NEXT(x), 1);		\
 	     (x) = (y))
 
-#define RB_FOREACH_REVERSE(x, name, head)				\
-	for ((x) = RB_MAX(name, head);					\
-	     (x) != NULL;						\
+#నిర్వచించు RB_FOREACH_తిరగేయి(x, name, తల)				\
+	కొరకు ((x) = RB_MAX(name, తల);					\
+	     (x) != ఖాళీ;						\
 	     (x) = name##_RB_PREV(x))
 
-#define RB_FOREACH_REVERSE_SAFE(x, name, head, y)			\
-	for ((x) = RB_MAX(name, head);					\
-	    ((x) != NULL) && ((y) = name##_RB_PREV(x), 1);		\
+#నిర్వచించు RB_FOREACH_తిరగేయి_సురక్షిత(x, name, తల, y)			\
+	కొరకు ((x) = RB_MAX(name, తల);					\
+	    ((x) != ఖాళీ) && ((y) = name##_RB_PREV(x), 1);		\
 	     (x) = (y))
 
-#endif	/* _SYS_TREE_H_ */
+#అయితే_ముగింపు	/* _SYS_TREE_H_ */

@@ -5,83 +5,83 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <poll.h>
-#include <time.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <poll.h>
+#అన్తర్భావ <time.h>
 
-#include "../test_helper/test_helper.h"
+#అన్తర్భావ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
 
-void test_ptimeout(void);
+శూన్య test_ptimeout(శూన్య);
 
-void
-test_ptimeout(void)
+శూన్య
+test_ptimeout(శూన్య)
 {
-	struct timespec pt, *ts;
+	నిర్మాణం timespec pt, *ts;
 
-	TEST_START("ptimeout_init");
+	TEST_ప్రారంభం("ptimeout_init");
 	ptimeout_init(&pt);
-	ASSERT_PTR_EQ(ptimeout_get_tsp(&pt), NULL);
+	ASSERT_PTR_EQ(ptimeout_get_tsp(&pt), ఖాళీ);
 	ASSERT_INT_EQ(ptimeout_get_ms(&pt), -1);
-	TEST_DONE();
+	TEST_పూర్తి();
 
-	TEST_START("ptimeout_deadline_sec");
+	TEST_ప్రారంభం("ptimeout_deadline_sec");
 	ptimeout_deadline_sec(&pt, 100);
 	ptimeout_deadline_sec(&pt, 200);
 	ASSERT_INT_EQ(ptimeout_get_ms(&pt), 100 * 1000);
 	ts = ptimeout_get_tsp(&pt);
-	ASSERT_PTR_NE(ts, NULL);
+	ASSERT_PTR_NE(ts, ఖాళీ);
 	ASSERT_LONG_EQ(ts->tv_nsec, 0);
 	ASSERT_LONG_EQ(ts->tv_sec, 100);
-	TEST_DONE();
+	TEST_పూర్తి();
 
-	TEST_START("ptimeout_deadline_ms");
+	TEST_ప్రారంభం("ptimeout_deadline_ms");
 	ptimeout_deadline_ms(&pt, 50123);
 	ptimeout_deadline_ms(&pt, 50500);
 	ASSERT_INT_EQ(ptimeout_get_ms(&pt), 50123);
 	ts = ptimeout_get_tsp(&pt);
-	ASSERT_PTR_NE(ts, NULL);
+	ASSERT_PTR_NE(ts, ఖాళీ);
 	ASSERT_LONG_EQ(ts->tv_nsec, 123 * 1000000);
 	ASSERT_LONG_EQ(ts->tv_sec, 50);
-	TEST_DONE();
+	TEST_పూర్తి();
 
-	TEST_START("ptimeout zero");
+	TEST_ప్రారంభం("ptimeout zero");
 	ptimeout_init(&pt);
 	ptimeout_deadline_ms(&pt, 0);
 	ASSERT_INT_EQ(ptimeout_get_ms(&pt), 0);
 	ts = ptimeout_get_tsp(&pt);
-	ASSERT_PTR_NE(ts, NULL);
+	ASSERT_PTR_NE(ts, ఖాళీ);
 	ASSERT_LONG_EQ(ts->tv_nsec, 0);
 	ASSERT_LONG_EQ(ts->tv_sec, 0);
-	TEST_DONE();
+	TEST_పూర్తి();
 
-	TEST_START("ptimeout_deadline_monotime");
+	TEST_ప్రారంభం("ptimeout_deadline_monotime");
 	ptimeout_init(&pt);
 	ptimeout_deadline_monotime(&pt, monotime() + 100);
 	ASSERT_INT_GT(ptimeout_get_ms(&pt), 50000);
 	ASSERT_INT_LT(ptimeout_get_ms(&pt), 200000);
 	ts = ptimeout_get_tsp(&pt);
-	ASSERT_PTR_NE(ts, NULL);
+	ASSERT_PTR_NE(ts, ఖాళీ);
 	ASSERT_LONG_GT(ts->tv_sec, 50);
 	ASSERT_LONG_LT(ts->tv_sec, 200);
-	TEST_DONE();
+	TEST_పూర్తి();
 
-	TEST_START("ptimeout_deadline_monotime past");
+	TEST_ప్రారంభం("ptimeout_deadline_monotime past");
 	ptimeout_init(&pt);
 	ptimeout_deadline_monotime(&pt, monotime() + 100);
 	ptimeout_deadline_monotime(&pt, monotime() - 100);
 	ASSERT_INT_EQ(ptimeout_get_ms(&pt), 0);
 	ts = ptimeout_get_tsp(&pt);
-	ASSERT_PTR_NE(ts, NULL);
+	ASSERT_PTR_NE(ts, ఖాళీ);
 	ASSERT_LONG_EQ(ts->tv_nsec, 0);
 	ASSERT_LONG_EQ(ts->tv_sec, 0);
-	TEST_DONE();
+	TEST_పూర్తి();
 }

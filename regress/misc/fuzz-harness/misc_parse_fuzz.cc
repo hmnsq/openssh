@@ -36,132 +36,132 @@ limitations under the License.
  *   match_host_and_ip, match_user (match.c)
  */
 
-#include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <sys/types.h>
 
-extern "C" {
-#include "addr.h"
-#include "match.h"
-#include "misc.h"
-#include "log.h"
+బాహ్య "C" {
+#అన్తర్భావ "addr.h"
+#అన్తర్భావ "match.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "log.h"
 }
 
-static int log_initialized = 0;
+స్థిర పూర్ణాంకం log_initialized = 0;
 
-static char *
-dup_n(const uint8_t *body, size_t blen)
+స్థిర అక్షరం *
+dup_n(స్థిరరాశి uint8_t *body, కొలత_t blen)
 {
-	char *s = (char *)malloc(blen + 1);
-	if (s == NULL)
-		return NULL;
-	memcpy(s, body, blen);
+	అక్షరం *s = (అక్షరం *)జ్ఞాపకం_ఇవ్వు(blen + 1);
+	ఒకవేళ (s == ఖాళీ)
+		తిరిగి ఖాళీ;
+	జ్ఞాపకం_నకలు(s, body, blen);
 	s[blen] = '\0';
-	return s;
+	తిరిగి s;
 }
 
-static void
-split_two(const uint8_t *body, size_t blen, char **a, char **b)
+స్థిర శూన్య
+విభజించు_two(స్థిరరాశి uint8_t *body, కొలత_t blen, అక్షరం **a, అక్షరం **b)
 {
-	const uint8_t *nul = (const uint8_t *)memchr(body, 0, blen);
-	*a = NULL;
-	*b = NULL;
-	if (nul == NULL) {
+	స్థిరరాశి uint8_t *nul = (స్థిరరాశి uint8_t *)memchr(body, 0, blen);
+	*a = ఖాళీ;
+	*b = ఖాళీ;
+	ఒకవేళ (nul == ఖాళీ) {
 		*a = dup_n(body, blen);
 		*b = strdup("");
-		return;
+		తిరిగి;
 	}
-	size_t alen = (size_t)(nul - body);
+	కొలత_t alen = (కొలత_t)(nul - body);
 	*a = dup_n(body, alen);
 	*b = dup_n(nul + 1, blen - alen - 1);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+బాహ్య "C" పూర్ణాంకం
+LLVMFuzzer_Test_One_ఆదానం(స్థిరరాశి uint8_t *దత్తాంశం, కొలత_t కొలత)
 {
-	if (!log_initialized) {
+	ఒకవేళ (!log_initialized) {
 		log_init("misc_parse_fuzz", SYSLOG_LEVEL_QUIET,
 		    SYSLOG_FACILITY_AUTH, 0);
 		log_initialized = 1;
 	}
-	if (size == 0)
-		return 0;
+	ఒకవేళ (కొలత == 0)
+		తిరిగి 0;
 
-	char *s = dup_n(data, size);
-	char *a = NULL, *b = NULL;
-	split_two(data, size, &a, &b);
-	if (s == NULL || a == NULL || b == NULL) {
-		free(s);
-		free(a);
-		free(b);
-		return 0;
+	అక్షరం *s = dup_n(దత్తాంశం, కొలత);
+	అక్షరం *a = ఖాళీ, *b = ఖాళీ;
+	విభజించు_two(దత్తాంశం, కొలత, &a, &b);
+	ఒకవేళ (s == ఖాళీ || a == ఖాళీ || b == ఖాళీ) {
+		విడుదల(s);
+		విడుదల(a);
+		విడుదల(b);
+		తిరిగి 0;
 	}
 
 	{
-		char *u = NULL, *h = NULL;
-		int port = 0;
-		if (parse_user_host_port(s, &u, &h, &port) == 0) {
-			free(u);
-			free(h);
+		అక్షరం *u = ఖాళీ, *h = ఖాళీ;
+		పూర్ణాంకం పోర్టు = 0;
+		ఒకవేళ (parse_user_host_పోర్టు(s, &u, &h, &పోర్టు) == 0) {
+			విడుదల(u);
+			విడుదల(h);
 		}
 	}
 	{
-		char *u = NULL, *h = NULL, *p = NULL;
-		int port = 0;
-		if (parse_uri("ssh", s, &u, &h, &port, &p) == 0) {
-			free(u);
-			free(h);
-			free(p);
+		అక్షరం *u = ఖాళీ, *h = ఖాళీ, *p = ఖాళీ;
+		పూర్ణాంకం పోర్టు = 0;
+		ఒకవేళ (parse_uri("ssh", s, &u, &h, &పోర్టు, &p) == 0) {
+			విడుదల(u);
+			విడుదల(h);
+			విడుదల(p);
 		}
 	}
-	(void)convtime(s);
-	(void)a2port(s);
+	(శూన్య)convtime(s);
+	(శూన్య)a2port(s);
 	{
-		int tun = 0;
-		(void)a2tun(s, &tun);
+		పూర్ణాంకం tun = 0;
+		(శూన్య)a2tun(s, &tun);
 	}
 	{
-		int ac = 0;
-		char **av = NULL;
-		if (argv_split(s, &ac, &av, 1) == 0) {
-			char *back = argv_assemble(ac, av);
-			free(back);
+		పూర్ణాంకం ac = 0;
+		అక్షరం **av = ఖాళీ;
+		ఒకవేళ (argv_విభజించు(s, &ac, &av, 1) == 0) {
+			అక్షరం *వెనుక = argv_assemble(ac, av);
+			విడుదల(వెనుక);
 			argv_free(av, ac);
 		}
 	}
 	{
-		const char *err = NULL;
-		(void)valid_domain(s, 0, &err);
+		స్థిరరాశి అక్షరం *err = ఖాళీ;
+		(శూన్య)valid_domain(s, 0, &err);
 	}
-	(void)valid_env_name(s);
+	(శూన్య)valid_env_name(s);
 	{
 		uint64_t t = 0;
-		(void)parse_absolute_time(s, &t);
+		(శూన్య)parse_absolute_సమయం(s, &t);
 	}
 
 	{
-		struct xaddr n;
-		(void)addr_pton(s, &n);
+		నిర్మాణం xaddr n;
+		(శూన్య)addr_pton(s, &n);
 	}
 	{
-		struct xaddr n;
-		u_int prefix = 0;
-		(void)addr_pton_cidr(s, &n, &prefix);
+		నిర్మాణం xaddr n;
+		u_int ఉపసర్గ = 0;
+		(శూన్య)addr_pton_cidr(s, &n, &ఉపసర్గ);
 	}
 
-	(void)addr_match_list(a, b);
-	(void)addr_match_cidr_list(a, b);
-	(void)match_pattern(a, b);
-	(void)match_pattern_list(a, b, 0);
-	(void)match_hostname(a, b);
-	(void)match_host_and_ip(a, "127.0.0.1", b);
-	(void)match_user("fuzz", a, "127.0.0.1", b);
+	(శూన్య)addr_సరిపోలిక_list(a, b);
+	(శూన్య)addr_సరిపోలిక_cidr_list(a, b);
+	(శూన్య)సరిపోలిక_నమూనా(a, b);
+	(శూన్య)సరిపోలిక_నమూనా_list(a, b, 0);
+	(శూన్య)సరిపోలిక_hostname(a, b);
+	(శూన్య)సరిపోలిక_host_and_ip(a, "127.0.0.1", b);
+	(శూన్య)సరిపోలిక_user("fuzz", a, "127.0.0.1", b);
 
-	free(s);
-	free(a);
-	free(b);
-	return 0;
+	విడుదల(s);
+	విడుదల(a);
+	విడుదల(b);
+	తిరిగి 0;
 }

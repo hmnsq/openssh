@@ -16,130 +16,130 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifdef ENABLE_SK_INTERNAL
+#నిర్వచితమైతే ENABLE_SK_అంతర్గత
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <stdarg.h>
-#include <time.h>
-#ifdef HAVE_SHA2_H
-#include <sha2.h>
-#endif
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <time.h>
+#నిర్వచితమైతే HAVE_SHA2_H
+#అన్తర్భావ <sha2.h>
+#అయితే_ముగింపు
 
-#ifdef WITH_OPENSSL
-#include <openssl/opensslv.h>
-#include <openssl/crypto.h>
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/evp.h>
-#include "openbsd-compat/openssl-compat.h"
-#endif /* WITH_OPENSSL */
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ <openssl/opensslv.h>
+#అన్తర్భావ <openssl/crypto.h>
+#అన్తర్భావ <openssl/bn.h>
+#అన్తర్భావ <openssl/ec.h>
+#అన్తర్భావ <openssl/ecdsa.h>
+#అన్తర్భావ <openssl/evp.h>
+#అన్తర్భావ "openbsd-compat/openssl-compat.h"
+#అయితే_ముగింపు /* WITH_OPENSSL */
 
-#include <fido.h>
-#include <fido/credman.h>
+#అన్తర్భావ <fido.h>
+#అన్తర్భావ <fido/credman.h>
 
 /* backwards compat for libfido2 */
-#ifndef HAVE_FIDO_CRED_PROT
-#define fido_cred_prot(x) (0)
-#endif
-#ifndef HAVE_FIDO_CRED_SET_PROT
-#define fido_cred_set_prot(x, y) (FIDO_ERR_UNSUPPORTED_OPTION)
-#endif
-#ifndef HAVE_FIDO_DEV_SUPPORTS_CRED_PROT
-#define fido_dev_supports_cred_prot(x) (0)
-#endif
-#ifndef HAVE_FIDO_DEV_GET_TOUCH_BEGIN
-#define fido_dev_get_touch_begin(x) (FIDO_ERR_UNSUPPORTED_OPTION)
-#endif
-#ifndef HAVE_FIDO_DEV_GET_TOUCH_STATUS
-#define fido_dev_get_touch_status(x, y, z) (FIDO_ERR_UNSUPPORTED_OPTION)
-#endif
-#ifndef FIDO_CRED_PROT_UV_REQUIRED
-#define FIDO_CRED_PROT_UV_REQUIRED 0
-#endif
-#ifndef FIDO_CRED_PROT_UV_OPTIONAL_WITH_ID
-#define FIDO_CRED_PROT_UV_OPTIONAL_WITH_ID 0
-#endif
+#నిర్వచితం_కాకపోతే HAVE_FIDO_CRED_PROT
+#నిర్వచించు fido_cred_prot(x) (0)
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే HAVE_FIDO_CRED_సమితి_PROT
+#నిర్వచించు fido_cred_సమితి_prot(x, y) (FIDO_ERR_UNSUPPORTED_OPTION)
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే HAVE_FIDO_DEV_SUPPORTS_CRED_PROT
+#నిర్వచించు fido_dev_supports_cred_prot(x) (0)
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే HAVE_FIDO_DEV_GET_TOUCH_BEGIN
+#నిర్వచించు fido_dev_get_touch_begin(x) (FIDO_ERR_UNSUPPORTED_OPTION)
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే HAVE_FIDO_DEV_GET_TOUCH_స్థితి
+#నిర్వచించు fido_dev_get_touch_స్థితి(x, y, z) (FIDO_ERR_UNSUPPORTED_OPTION)
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే FIDO_CRED_PROT_UV_REQUIRED
+#నిర్వచించు FIDO_CRED_PROT_UV_REQUIRED 0
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే FIDO_CRED_PROT_UV_OPTIONAL_WITH_ID
+#నిర్వచించు FIDO_CRED_PROT_UV_OPTIONAL_WITH_ID 0
+#అయితే_ముగింపు
 
 # include "misc.h"
 
-#ifndef SK_STANDALONE
+#నిర్వచితం_కాకపోతే SK_STANDALONE
 # include "log.h"
 # include "xmalloc.h"
 /*
  * If building as part of OpenSSH, then rename exported functions.
  * This must be done before including sk-api.h.
  */
-# define sk_api_version		ssh_sk_api_version
+# define sk_api_సంస్కరణ		ssh_sk_api_సంస్కరణ
 # define sk_enroll		ssh_sk_enroll
 # define sk_sign		ssh_sk_sign
-# define sk_load_resident_keys	ssh_sk_load_resident_keys
-#endif /* !SK_STANDALONE */
+# define sk_ఎక్కించు_resident_కీలకాలు	ssh_sk_ఎక్కించు_resident_కీలకాలు
+#అయితే_ముగింపు /* !SK_STANDALONE */
 
-#include "sk-api.h"
+#అన్తర్భావ "sk-api.h"
 
 /* #define SK_DEBUG 1 */
 
-#ifdef SK_DEBUG
-#define SSH_FIDO_INIT_ARG	FIDO_DEBUG
-#else
-#define SSH_FIDO_INIT_ARG	0
-#endif
+#నిర్వచితమైతే SK_DEBUG
+#నిర్వచించు SSH_FIDO_INIT_ARG	FIDO_DEBUG
+#లేకపోతే
+#నిర్వచించు SSH_FIDO_INIT_ARG	0
+#అయితే_ముగింపు
 
-#define MAX_FIDO_DEVICES	8
-#define FIDO_POLL_MS		50
-#define SELECT_MS		15000
-#define POLL_SLEEP_NS		200000000
+#నిర్వచించు MAX_FIDO_DEVICES	8
+#నిర్వచించు FIDO_POLL_MS		50
+#నిర్వచించు SELECT_MS		15000
+#నిర్వచించు POLL_SLEEP_NS		200000000
 
-#ifndef FIDO_ERR_OPERATION_DENIED
-#define FIDO_ERR_OPERATION_DENIED 0x27
-#endif
+#నిర్వచితం_కాకపోతే FIDO_ERR_OPERATION_DENIED
+#నిర్వచించు FIDO_ERR_OPERATION_DENIED 0x27
+#అయితే_ముగింపు
 
-struct sk_usbhid {
+నిర్మాణం sk_usbhid {
 	fido_dev_t *dev;
-	char *path;
+	అక్షరం *మార్గం;
 };
 
 /* Return the version of the middleware API */
-uint32_t sk_api_version(void);
+uint32_t sk_api_సంస్కరణ(శూన్య);
 
 /* Enroll a U2F key (private key generation) */
-int sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
-    const char *application, uint8_t flags, const char *pin,
-    struct sk_option **options, struct sk_enroll_response **enroll_response);
+పూర్ణాంకం sk_enroll(uint32_t alg, స్థిరరాశి uint8_t *challenge, కొలత_t challenge_len,
+    స్థిరరాశి అక్షరం *application, uint8_t flags, స్థిరరాశి అక్షరం *pin,
+    నిర్మాణం sk_option **options, నిర్మాణం sk_enroll_response **enroll_response);
 
 /* Sign a challenge */
-int sk_sign(uint32_t alg, const uint8_t *data, size_t data_len,
-    const char *application, const uint8_t *key_handle, size_t key_handle_len,
-    uint8_t flags, const char *pin, struct sk_option **options,
-    struct sk_sign_response **sign_response);
+పూర్ణాంకం sk_sign(uint32_t alg, స్థిరరాశి uint8_t *దత్తాంశం, కొలత_t దత్తాంశం_len,
+    స్థిరరాశి అక్షరం *application, స్థిరరాశి uint8_t *కీలకం_handle, కొలత_t కీలకం_handle_len,
+    uint8_t flags, స్థిరరాశి అక్షరం *pin, నిర్మాణం sk_option **options,
+    నిర్మాణం sk_sign_response **sign_response);
 
 /* Load resident keys */
-int sk_load_resident_keys(const char *pin, struct sk_option **options,
-    struct sk_resident_key ***rks, size_t *nrks);
+పూర్ణాంకం sk_ఎక్కించు_resident_కీలకాలు(స్థిరరాశి అక్షరం *pin, నిర్మాణం sk_option **options,
+    నిర్మాణం sk_resident_కీలకం ***rks, కొలత_t *nrks);
 
-static void skdebug(const char *func, const char *fmt, ...)
-    __attribute__((__format__ (printf, 2, 3)));
+స్థిర శూన్య skdebug(స్థిరరాశి అక్షరం *func, స్థిరరాశి అక్షరం *fmt, ...)
+    __attribute__((__format__ (రాయి, 2, 3)));
 
-static void
-skdebug(const char *func, const char *fmt, ...)
+స్థిర శూన్య
+skdebug(స్థిరరాశి అక్షరం *func, స్థిరరాశి అక్షరం *fmt, ...)
 {
-#if !defined(SK_STANDALONE)
-	char *msg;
+#ఒకవేళ !defined(SK_STANDALONE)
+	అక్షరం *సందేశం;
 	va_list ap;
 
 	va_start(ap, fmt);
-	xvasprintf(&msg, fmt, ap);
+	xvasprintf(&సందేశం, fmt, ap);
 	va_end(ap);
-	debug("%s: %s", func, msg);
-	free(msg);
-#elif defined(SK_DEBUG)
+	debug("%s: %s", func, సందేశం);
+	విడుదల(సందేశం);
+#లేదావేళ defined(SK_DEBUG)
 	va_list ap;
 
 	va_start(ap, fmt);
@@ -147,1326 +147,1326 @@ skdebug(const char *func, const char *fmt, ...)
 	vfprintf(stderr, fmt, ap);
 	fputc('\n', stderr);
 	va_end(ap);
-#else
-	(void)func; /* XXX */
-	(void)fmt; /* XXX */
-#endif
+#లేకపోతే
+	(శూన్య)func; /* XXX */
+	(శూన్య)fmt; /* XXX */
+#అయితే_ముగింపు
 }
 
 uint32_t
-sk_api_version(void)
+sk_api_సంస్కరణ(శూన్య)
 {
-	return SSH_SK_VERSION_MAJOR;
+	తిరిగి SSH_SK_సంస్కరణ_MAJOR;
 }
 
-static struct sk_usbhid *
-sk_open(const char *path)
+స్థిర నిర్మాణం sk_usbhid *
+sk_open(స్థిరరాశి అక్షరం *మార్గం)
 {
-	struct sk_usbhid *sk;
-	int r;
+	నిర్మాణం sk_usbhid *sk;
+	పూర్ణాంకం r;
 
-	if (path == NULL) {
+	ఒకవేళ (మార్గం == ఖాళీ) {
 		skdebug(__func__, "path == NULL");
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	if ((sk = calloc(1, sizeof(*sk))) == NULL) {
+	ఒకవేళ ((sk = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*sk))) == ఖాళీ) {
 		skdebug(__func__, "calloc sk failed");
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	if ((sk->path = strdup(path)) == NULL) {
+	ఒకవేళ ((sk->మార్గం = strdup(మార్గం)) == ఖాళీ) {
 		skdebug(__func__, "strdup path failed");
-		free(sk);
-		return NULL;
+		విడుదల(sk);
+		తిరిగి ఖాళీ;
 	}
-	if ((sk->dev = fido_dev_new()) == NULL) {
+	ఒకవేళ ((sk->dev = fido_dev_new()) == ఖాళీ) {
 		skdebug(__func__, "fido_dev_new failed");
-		free(sk->path);
-		free(sk);
-		return NULL;
+		విడుదల(sk->మార్గం);
+		విడుదల(sk);
+		తిరిగి ఖాళీ;
 	}
-	if ((r = fido_dev_open(sk->dev, sk->path)) != FIDO_OK) {
-		skdebug(__func__, "fido_dev_open %s failed: %s", sk->path,
+	ఒకవేళ ((r = fido_dev_open(sk->dev, sk->మార్గం)) != FIDO_OK) {
+		skdebug(__func__, "fido_dev_open %s failed: %s", sk->మార్గం,
 		    fido_strerr(r));
 		fido_dev_free(&sk->dev);
-		free(sk->path);
-		free(sk);
-		return NULL;
+		విడుదల(sk->మార్గం);
+		విడుదల(sk);
+		తిరిగి ఖాళీ;
 	}
-	return sk;
+	తిరిగి sk;
 }
 
-static void
-sk_close(struct sk_usbhid *sk)
+స్థిర శూన్య
+sk_close(నిర్మాణం sk_usbhid *sk)
 {
-	if (sk == NULL)
-		return;
+	ఒకవేళ (sk == ఖాళీ)
+		తిరిగి;
 	fido_dev_cancel(sk->dev); /* cancel any pending operation */
 	fido_dev_close(sk->dev);
 	fido_dev_free(&sk->dev);
-	free(sk->path);
-	free(sk);
+	విడుదల(sk->మార్గం);
+	విడుదల(sk);
 }
 
-static struct sk_usbhid **
-sk_openv(const fido_dev_info_t *devlist, size_t ndevs, size_t *nopen)
+స్థిర నిర్మాణం sk_usbhid **
+sk_openv(స్థిరరాశి fido_dev_info_t *devlist, కొలత_t ndevs, కొలత_t *nopen)
 {
-	const fido_dev_info_t *di;
-	struct sk_usbhid **skv;
-	size_t i;
+	స్థిరరాశి fido_dev_info_t *di;
+	నిర్మాణం sk_usbhid **skv;
+	కొలత_t i;
 
 	*nopen = 0;
-	if ((skv = calloc(ndevs, sizeof(*skv))) == NULL) {
+	ఒకవేళ ((skv = సున్నా_జ్ఞాపకం_ఇవ్వు(ndevs, పరిమాణం(*skv))) == ఖాళీ) {
 		skdebug(__func__, "calloc skv failed");
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	for (i = 0; i < ndevs; i++) {
-		if ((di = fido_dev_info_ptr(devlist, i)) == NULL)
+	కొరకు (i = 0; i < ndevs; i++) {
+		ఒకవేళ ((di = fido_dev_info_ptr(devlist, i)) == ఖాళీ)
 			skdebug(__func__, "fido_dev_info_ptr failed");
-		else if ((skv[*nopen] = sk_open(fido_dev_info_path(di))) == NULL)
+		లేకపోతే ఒకవేళ ((skv[*nopen] = sk_open(fido_dev_info_మార్గం(di))) == ఖాళీ)
 			skdebug(__func__, "sk_open failed");
-		else
+		లేకపోతే
 			(*nopen)++;
 	}
-	if (*nopen == 0) {
-		for (i = 0; i < ndevs; i++)
+	ఒకవేళ (*nopen == 0) {
+		కొరకు (i = 0; i < ndevs; i++)
 			sk_close(skv[i]);
-		free(skv);
-		skv = NULL;
+		విడుదల(skv);
+		skv = ఖాళీ;
 	}
 
-	return skv;
+	తిరిగి skv;
 }
 
-static void
-sk_closev(struct sk_usbhid **skv, size_t nsk)
+స్థిర శూన్య
+sk_closev(నిర్మాణం sk_usbhid **skv, కొలత_t nsk)
 {
-	size_t i;
+	కొలత_t i;
 
-	for (i = 0; i < nsk; i++)
+	కొరకు (i = 0; i < nsk; i++)
 		sk_close(skv[i]);
-	free(skv);
+	విడుదల(skv);
 }
 
-static int
-sk_touch_begin(struct sk_usbhid **skv, size_t nsk)
+స్థిర పూర్ణాంకం
+sk_touch_begin(నిర్మాణం sk_usbhid **skv, కొలత_t nsk)
 {
-	size_t i, ok = 0;
-	int r;
+	కొలత_t i, ok = 0;
+	పూర్ణాంకం r;
 
-	for (i = 0; i < nsk; i++)
-		if ((r = fido_dev_get_touch_begin(skv[i]->dev)) != FIDO_OK)
+	కొరకు (i = 0; i < nsk; i++)
+		ఒకవేళ ((r = fido_dev_get_touch_begin(skv[i]->dev)) != FIDO_OK)
 			skdebug(__func__, "fido_dev_get_touch_begin %s failed:"
-			    " %s", skv[i]->path, fido_strerr(r));
-		else
+			    " %s", skv[i]->మార్గం, fido_strerr(r));
+		లేకపోతే
 			ok++;
 
-	return ok ? 0 : -1;
+	తిరిగి ok ? 0 : -1;
 }
 
-static int
-sk_touch_poll(struct sk_usbhid **skv, size_t nsk, int *touch, size_t *idx)
+స్థిర పూర్ణాంకం
+sk_touch_poll(నిర్మాణం sk_usbhid **skv, కొలత_t nsk, పూర్ణాంకం *touch, కొలత_t *idx)
 {
-	struct timespec ts_pause;
-	size_t npoll, i;
-	int r;
+	నిర్మాణం timespec ts_pause;
+	కొలత_t npoll, i;
+	పూర్ణాంకం r;
 
 	ts_pause.tv_sec = 0;
 	ts_pause.tv_nsec = POLL_SLEEP_NS;
-	nanosleep(&ts_pause, NULL);
+	nanosleep(&ts_pause, ఖాళీ);
 	npoll = nsk;
-	for (i = 0; i < nsk; i++) {
-		if (skv[i] == NULL)
-			continue; /* device discarded */
-		skdebug(__func__, "polling %s", skv[i]->path);
-		if ((r = fido_dev_get_touch_status(skv[i]->dev, touch,
+	కొరకు (i = 0; i < nsk; i++) {
+		ఒకవేళ (skv[i] == ఖాళీ)
+			కొనసాగు; /* device discarded */
+		skdebug(__func__, "polling %s", skv[i]->మార్గం);
+		ఒకవేళ ((r = fido_dev_get_touch_స్థితి(skv[i]->dev, touch,
 		    FIDO_POLL_MS)) != FIDO_OK) {
 			skdebug(__func__, "fido_dev_get_touch_status %s: %s",
-			    skv[i]->path, fido_strerr(r));
+			    skv[i]->మార్గం, fido_strerr(r));
 			sk_close(skv[i]); /* discard device */
-			skv[i] = NULL;
-			if (--npoll == 0) {
+			skv[i] = ఖాళీ;
+			ఒకవేళ (--npoll == 0) {
 				skdebug(__func__, "no device left to poll");
-				return -1;
+				తిరిగి -1;
 			}
-		} else if (*touch) {
+		} లేకపోతే ఒకవేళ (*touch) {
 			*idx = i;
-			return 0;
+			తిరిగి 0;
 		}
 	}
 	*touch = 0;
-	return 0;
+	తిరిగి 0;
 }
 
-#if !defined(HAVE_FIDO_ASSERT_SET_CLIENTDATA) || \
-    !defined(HAVE_FIDO_CRED_SET_CLIENTDATA)
+#ఒకవేళ !defined(HAVE_FIDO_ASSERT_సమితి_CLIENTDATA) || \
+    !defined(HAVE_FIDO_CRED_సమితి_CLIENTDATA)
 /* Calculate SHA256(m) */
-static int
-sha256_mem(const void *m, size_t mlen, u_char *d, size_t dlen)
+స్థిర పూర్ణాంకం
+sha256_mem(స్థిరరాశి శూన్య *m, కొలత_t mlen, u_char *d, కొలత_t dlen)
 {
-#ifdef WITH_OPENSSL
+#నిర్వచితమైతే WITH_OPENSSL
 	u_int mdlen;
-#else
+#లేకపోతే
 	SHA2_CTX ctx;
-#endif
+#అయితే_ముగింపు
 
-	if (dlen != 32)
-		return -1;
-#ifdef WITH_OPENSSL
+	ఒకవేళ (dlen != 32)
+		తిరిగి -1;
+#నిర్వచితమైతే WITH_OPENSSL
 	mdlen = dlen;
-	if (!EVP_Digest(m, mlen, d, &mdlen, EVP_sha256(), NULL))
-		return -1;
-#else
+	ఒకవేళ (!EVP_Digest(m, mlen, d, &mdlen, EVP_sha256(), ఖాళీ))
+		తిరిగి -1;
+#లేకపోతే
 	SHA256Init(&ctx);
-	SHA256Update(&ctx, (const uint8_t *)m, mlen);
+	SHA256Update(&ctx, (స్థిరరాశి uint8_t *)m, mlen);
 	SHA256Final(d, &ctx);
-#endif
-	return 0;
+#అయితే_ముగింపు
+	తిరిగి 0;
 }
-#endif /* !HAVE_FIDO_ASSERT_SET_CLIENTDATA || !HAVE_FIDO_CRED_SET_CLIENTDATA */
+#అయితే_ముగింపు /* !HAVE_FIDO_ASSERT_SET_CLIENTDATA || !HAVE_FIDO_CRED_SET_CLIENTDATA */
 
-#ifndef HAVE_FIDO_CRED_SET_CLIENTDATA
-static int
-fido_cred_set_clientdata(fido_cred_t *cred, const u_char *ptr, size_t len)
+#నిర్వచితం_కాకపోతే HAVE_FIDO_CRED_సమితి_CLIENTDATA
+స్థిర పూర్ణాంకం
+fido_cred_సమితి_clientdata(fido_cred_t *cred, స్థిరరాశి u_char *ptr, కొలత_t len)
 {
 	uint8_t d[32];
-	int r;
+	పూర్ణాంకం r;
 
-	if (sha256_mem(ptr, len, d, sizeof(d)) != 0) {
+	ఒకవేళ (sha256_mem(ptr, len, d, పరిమాణం(d)) != 0) {
 		skdebug(__func__, "hash challenge failed");
-		return FIDO_ERR_INTERNAL;
+		తిరిగి FIDO_ERR_అంతర్గత;
 	}
-	r = fido_cred_set_clientdata_hash(cred, d, sizeof(d));
-	explicit_bzero(d, sizeof(d));
-	if (r != FIDO_OK) {
+	r = fido_cred_సమితి_clientdata_hash(cred, d, పరిమాణం(d));
+	explicit_bzero(d, పరిమాణం(d));
+	ఒకవేళ (r != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_clientdata_hash failed: %s",
 		    fido_strerr(r));
 	}
-	return r;
+	తిరిగి r;
 }
-#endif /* HAVE_FIDO_CRED_SET_CLIENTDATA */
+#అయితే_ముగింపు /* HAVE_FIDO_CRED_SET_CLIENTDATA */
 
-#ifndef HAVE_FIDO_ASSERT_SET_CLIENTDATA
-static int
-fido_assert_set_clientdata(fido_assert_t *assert, const u_char *ptr, size_t len)
+#నిర్వచితం_కాకపోతే HAVE_FIDO_ASSERT_సమితి_CLIENTDATA
+స్థిర పూర్ణాంకం
+fido_assert_సమితి_clientdata(fido_assert_t *ప్రతిజ్ఞా, స్థిరరాశి u_char *ptr, కొలత_t len)
 {
 	uint8_t d[32];
-	int r;
+	పూర్ణాంకం r;
 
-	if (sha256_mem(ptr, len, d, sizeof(d)) != 0) {
+	ఒకవేళ (sha256_mem(ptr, len, d, పరిమాణం(d)) != 0) {
 		skdebug(__func__, "hash challenge failed");
-		return FIDO_ERR_INTERNAL;
+		తిరిగి FIDO_ERR_అంతర్గత;
 	}
-	r = fido_assert_set_clientdata_hash(assert, d, sizeof(d));
-	explicit_bzero(d, sizeof(d));
-	if (r != FIDO_OK) {
+	r = fido_assert_సమితి_clientdata_hash(ప్రతిజ్ఞా, d, పరిమాణం(d));
+	explicit_bzero(d, పరిమాణం(d));
+	ఒకవేళ (r != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_clientdata_hash failed: %s",
 		    fido_strerr(r));
 	}
-	return r;
+	తిరిగి r;
 }
-#endif /* HAVE_FIDO_ASSERT_SET_CLIENTDATA */
+#అయితే_ముగింపు /* HAVE_FIDO_ASSERT_SET_CLIENTDATA */
 
-#ifndef HAVE_FIDO_DEV_IS_WINHELLO
-static bool
-fido_dev_is_winhello(const fido_dev_t *fdev)
+#నిర్వచితం_కాకపోతే HAVE_FIDO_DEV_IS_WINHELLO
+స్థిర bool
+fido_dev_is_winhello(స్థిరరాశి fido_dev_t *fdev)
 {
-	return 0;
+	తిరిగి 0;
 }
-#endif /* HAVE_FIDO_DEV_IS_WINHELLO */
+#అయితే_ముగింపు /* HAVE_FIDO_DEV_IS_WINHELLO */
 
 /* Check if the specified key handle exists on a given sk. */
-static int
-sk_try(const struct sk_usbhid *sk, const char *application,
-    const uint8_t *key_handle, size_t key_handle_len)
+స్థిర పూర్ణాంకం
+sk_try(స్థిరరాశి నిర్మాణం sk_usbhid *sk, స్థిరరాశి అక్షరం *application,
+    స్థిరరాశి uint8_t *కీలకం_handle, కొలత_t కీలకం_handle_len)
 {
-	fido_assert_t *assert = NULL;
-	int r = FIDO_ERR_INTERNAL;
-	uint8_t message[32];
+	fido_assert_t *ప్రతిజ్ఞా = ఖాళీ;
+	పూర్ణాంకం r = FIDO_ERR_అంతర్గత;
+	uint8_t సందేశం_2[32];
 
-	memset(message, '\0', sizeof(message));
-	if ((assert = fido_assert_new()) == NULL) {
+	memset(సందేశం_2, '\0', పరిమాణం(సందేశం_2));
+	ఒకవేళ ((ప్రతిజ్ఞా = fido_assert_new()) == ఖాళీ) {
 		skdebug(__func__, "fido_assert_new failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* generate an invalid signature on FIDO2 tokens */
-	if ((r = fido_assert_set_clientdata(assert, message,
-	    sizeof(message))) != FIDO_OK) {
+	ఒకవేళ ((r = fido_assert_సమితి_clientdata(ప్రతిజ్ఞా, సందేశం_2,
+	    పరిమాణం(సందేశం_2))) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_clientdata: %s",
 		    fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_assert_set_rp(assert, application)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_assert_సమితి_rp(ప్రతిజ్ఞా, application)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_rp: %s", fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_assert_allow_cred(assert, key_handle,
-	    key_handle_len)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_assert_allow_cred(ప్రతిజ్ఞా, కీలకం_handle,
+	    కీలకం_handle_len)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_allow_cred: %s", fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_assert_set_up(assert, FIDO_OPT_FALSE)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_assert_సమితి_పైకి(ప్రతిజ్ఞా, FIDO_OPT_FALSE)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_up: %s", fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	r = fido_dev_get_assert(sk->dev, assert, NULL);
+	r = fido_dev_get_assert(sk->dev, ప్రతిజ్ఞా, ఖాళీ);
 	skdebug(__func__, "fido_dev_get_assert: %s", fido_strerr(r));
-	if (r == FIDO_ERR_USER_PRESENCE_REQUIRED) {
+	ఒకవేళ (r == FIDO_ERR_USER_PRESENCE_REQUIRED) {
 		/* U2F tokens may return this */
 		r = FIDO_OK;
 	}
- out:
-	fido_assert_free(&assert);
+ బహిర్గతం:
+	fido_assert_free(&ప్రతిజ్ఞా);
 
-	return r != FIDO_OK ? -1 : 0;
+	తిరిగి r != FIDO_OK ? -1 : 0;
 }
 
-static int
-check_sk_options(fido_dev_t *dev, const char *opt, int *ret)
+స్థిర పూర్ణాంకం
+check_sk_options(fido_dev_t *dev, స్థిరరాశి అక్షరం *opt, పూర్ణాంకం *ret)
 {
 	fido_cbor_info_t *info;
-	char * const *name;
-	const bool *value;
-	size_t len, i;
-	int r;
+	అక్షరం * స్థిరరాశి *name;
+	స్థిరరాశి bool *విలువ;
+	కొలత_t len, i;
+	పూర్ణాంకం r;
 
 	*ret = -1;
 
-	if (!fido_dev_is_fido2(dev)) {
+	ఒకవేళ (!fido_dev_is_fido2(dev)) {
 		skdebug(__func__, "device is not fido2");
-		return 0;
+		తిరిగి 0;
 	}
-	if ((info = fido_cbor_info_new()) == NULL) {
+	ఒకవేళ ((info = fido_cbor_info_new()) == ఖాళీ) {
 		skdebug(__func__, "fido_cbor_info_new failed");
-		return -1;
+		తిరిగి -1;
 	}
-	if ((r = fido_dev_get_cbor_info(dev, info)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_dev_get_cbor_info(dev, info)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_get_cbor_info: %s", fido_strerr(r));
 		fido_cbor_info_free(&info);
-		return -1;
+		తిరిగి -1;
 	}
 	name = fido_cbor_info_options_name_ptr(info);
-	value = fido_cbor_info_options_value_ptr(info);
+	విలువ = fido_cbor_info_options_విలువ_ptr(info);
 	len = fido_cbor_info_options_len(info);
-	for (i = 0; i < len; i++) {
-		if (!strcmp(name[i], opt)) {
-			*ret = value[i];
-			break;
+	కొరకు (i = 0; i < len; i++) {
+		ఒకవేళ (!strcmp(name[i], opt)) {
+			*ret = విలువ[i];
+			ఆపు;
 		}
 	}
 	fido_cbor_info_free(&info);
-	if (*ret == -1)
+	ఒకవేళ (*ret == -1)
 		skdebug(__func__, "option %s is unknown", opt);
-	else
+	లేకపోతే
 		skdebug(__func__, "option %s is %s", opt, *ret ? "on" : "off");
 
-	return 0;
+	తిరిగి 0;
 }
 
-static struct sk_usbhid *
-sk_select_by_cred(const fido_dev_info_t *devlist, size_t ndevs,
-    const char *application, const uint8_t *key_handle, size_t key_handle_len)
+స్థిర నిర్మాణం sk_usbhid *
+sk_select_by_cred(స్థిరరాశి fido_dev_info_t *devlist, కొలత_t ndevs,
+    స్థిరరాశి అక్షరం *application, స్థిరరాశి uint8_t *కీలకం_handle, కొలత_t కీలకం_handle_len)
 {
-	struct sk_usbhid **skv, *sk;
-	size_t skvcnt, i;
-	int internal_uv;
+	నిర్మాణం sk_usbhid **skv, *sk;
+	కొలత_t skvcnt, i;
+	పూర్ణాంకం అంతర్గత_uv;
 
-	if ((skv = sk_openv(devlist, ndevs, &skvcnt)) == NULL) {
+	ఒకవేళ ((skv = sk_openv(devlist, ndevs, &skvcnt)) == ఖాళీ) {
 		skdebug(__func__, "sk_openv failed");
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	if (skvcnt == 1 && check_sk_options(skv[0]->dev, "uv",
-	    &internal_uv) == 0 && internal_uv != -1) {
+	ఒకవేళ (skvcnt == 1 && check_sk_options(skv[0]->dev, "uv",
+	    &అంతర్గత_uv) == 0 && అంతర్గత_uv != -1) {
 		sk = skv[0];
-		skv[0] = NULL;
-		goto out;
+		skv[0] = ఖాళీ;
+		వెళ్ళు బహిర్గతం;
 	}
-	sk = NULL;
-	for (i = 0; i < skvcnt; i++) {
-		if (sk_try(skv[i], application, key_handle,
-		    key_handle_len) == 0) {
+	sk = ఖాళీ;
+	కొరకు (i = 0; i < skvcnt; i++) {
+		ఒకవేళ (sk_try(skv[i], application, కీలకం_handle,
+		    కీలకం_handle_len) == 0) {
 			sk = skv[i];
-			skv[i] = NULL;
-			skdebug(__func__, "found key in %s", sk->path);
-			break;
+			skv[i] = ఖాళీ;
+			skdebug(__func__, "found key in %s", sk->మార్గం);
+			ఆపు;
 		}
 	}
- out:
+ బహిర్గతం:
 	sk_closev(skv, skvcnt);
-	return sk;
+	తిరిగి sk;
 }
 
-static struct sk_usbhid *
-sk_select_by_touch(const fido_dev_info_t *devlist, size_t ndevs)
+స్థిర నిర్మాణం sk_usbhid *
+sk_select_by_touch(స్థిరరాశి fido_dev_info_t *devlist, కొలత_t ndevs)
 {
-	struct sk_usbhid **skv, *sk;
-	struct timeval tv_start, tv_now, tv_delta;
-	size_t skvcnt, idx;
-	int touch, ms_remain;
+	నిర్మాణం sk_usbhid **skv, *sk;
+	నిర్మాణం timeval tv_ప్రారంభం, tv_now, tv_delta;
+	కొలత_t skvcnt, idx;
+	పూర్ణాంకం touch, ms_remain;
 
-	if ((skv = sk_openv(devlist, ndevs, &skvcnt)) == NULL) {
+	ఒకవేళ ((skv = sk_openv(devlist, ndevs, &skvcnt)) == ఖాళీ) {
 		skdebug(__func__, "sk_openv failed");
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	sk = NULL;
-	if (skvcnt < 2) {
-		if (skvcnt == 1) {
+	sk = ఖాళీ;
+	ఒకవేళ (skvcnt < 2) {
+		ఒకవేళ (skvcnt == 1) {
 			/* single candidate */
 			sk = skv[0];
-			skv[0] = NULL;
+			skv[0] = ఖాళీ;
 		}
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-#ifndef HAVE_FIDO_DEV_GET_TOUCH_STATUS
+#నిర్వచితం_కాకపోతే HAVE_FIDO_DEV_GET_TOUCH_స్థితి
 	skdebug(__func__, "libfido2 version does not support a feature needed for multiple tokens. Please upgrade to >=1.5.0");
-	goto out;
-#endif
+	వెళ్ళు బహిర్గతం;
+#అయితే_ముగింపు
 
-	if (sk_touch_begin(skv, skvcnt) == -1) {
+	ఒకవేళ (sk_touch_begin(skv, skvcnt) == -1) {
 		skdebug(__func__, "sk_touch_begin failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	monotime_tv(&tv_start);
-	do {
-		if (sk_touch_poll(skv, skvcnt, &touch, &idx) == -1) {
+	monotime_tv(&tv_ప్రారంభం);
+	చేయి {
+		ఒకవేళ (sk_touch_poll(skv, skvcnt, &touch, &idx) == -1) {
 			skdebug(__func__, "sk_touch_poll failed");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (touch) {
+		ఒకవేళ (touch) {
 			sk = skv[idx];
-			skv[idx] = NULL;
-			goto out;
+			skv[idx] = ఖాళీ;
+			వెళ్ళు బహిర్గతం;
 		}
 		monotime_tv(&tv_now);
-		timersub(&tv_now, &tv_start, &tv_delta);
+		timersub(&tv_now, &tv_ప్రారంభం, &tv_delta);
 		ms_remain = SELECT_MS - tv_delta.tv_sec * 1000 -
 		    tv_delta.tv_usec / 1000;
-	} while (ms_remain >= FIDO_POLL_MS);
+	} అయితే (ms_remain >= FIDO_POLL_MS);
 	skdebug(__func__, "timeout");
-out:
+బహిర్గతం:
 	sk_closev(skv, skvcnt);
-	return sk;
+	తిరిగి sk;
 }
 
-static struct sk_usbhid *
-sk_probe(const char *application, const uint8_t *key_handle,
-    size_t key_handle_len, int probe_resident)
+స్థిర నిర్మాణం sk_usbhid *
+sk_probe(స్థిరరాశి అక్షరం *application, స్థిరరాశి uint8_t *కీలకం_handle,
+    కొలత_t కీలకం_handle_len, పూర్ణాంకం probe_resident)
 {
-	struct sk_usbhid *sk;
+	నిర్మాణం sk_usbhid *sk;
 	fido_dev_info_t *devlist;
-	size_t ndevs;
-	int r;
+	కొలత_t ndevs;
+	పూర్ణాంకం r;
 
-#ifdef HAVE_CYGWIN
-	if (!probe_resident && (sk = sk_open("windows://hello")) != NULL)
-		return sk;
-#endif /* HAVE_CYGWIN */
-	if ((devlist = fido_dev_info_new(MAX_FIDO_DEVICES)) == NULL) {
+#నిర్వచితమైతే HAVE_CYGWIN
+	ఒకవేళ (!probe_resident && (sk = sk_open("windows://hello")) != ఖాళీ)
+		తిరిగి sk;
+#అయితే_ముగింపు /* HAVE_CYGWIN */
+	ఒకవేళ ((devlist = fido_dev_info_new(MAX_FIDO_DEVICES)) == ఖాళీ) {
 		skdebug(__func__, "fido_dev_info_new failed");
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	if ((r = fido_dev_info_manifest(devlist, MAX_FIDO_DEVICES,
+	ఒకవేళ ((r = fido_dev_info_manifest(devlist, MAX_FIDO_DEVICES,
 	    &ndevs)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_info_manifest failed: %s",
 		    fido_strerr(r));
 		fido_dev_info_free(&devlist, MAX_FIDO_DEVICES);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 	skdebug(__func__, "%zu device(s) detected", ndevs);
-	if (ndevs == 0) {
-		sk = NULL;
-	} else if (application != NULL && key_handle != NULL) {
+	ఒకవేళ (ndevs == 0) {
+		sk = ఖాళీ;
+	} లేకపోతే ఒకవేళ (application != ఖాళీ && కీలకం_handle != ఖాళీ) {
 		skdebug(__func__, "selecting sk by cred");
-		sk = sk_select_by_cred(devlist, ndevs, application, key_handle,
-		    key_handle_len);
-	} else {
+		sk = sk_select_by_cred(devlist, ndevs, application, కీలకం_handle,
+		    కీలకం_handle_len);
+	} లేకపోతే {
 		skdebug(__func__, "selecting sk by touch");
 		sk = sk_select_by_touch(devlist, ndevs);
 	}
 	fido_dev_info_free(&devlist, MAX_FIDO_DEVICES);
-	return sk;
+	తిరిగి sk;
 }
 
-#ifdef WITH_OPENSSL
+#నిర్వచితమైతే WITH_OPENSSL
 /*
  * The key returned via fido_cred_pubkey_ptr() is in affine coordinates,
  * but the API expects a SEC1 octet string.
  */
-static int
-pack_public_key_ecdsa(const fido_cred_t *cred,
-    struct sk_enroll_response *response)
+స్థిర పూర్ణాంకం
+pack_ప్రజా_కీలకం_ecdsa(స్థిరరాశి fido_cred_t *cred,
+    నిర్మాణం sk_enroll_response *response)
 {
-	const uint8_t *ptr;
-	BIGNUM *x = NULL, *y = NULL;
-	EC_POINT *q = NULL;
-	EC_GROUP *g = NULL;
-	int ret = -1;
+	స్థిరరాశి uint8_t *ptr;
+	BIGNUM *x = ఖాళీ, *y = ఖాళీ;
+	EC_బిందువు *q = ఖాళీ;
+	EC_సమూహం *g = ఖాళీ;
+	పూర్ణాంకం ret = -1;
 
-	response->public_key = NULL;
-	response->public_key_len = 0;
+	response->ప్రజా_కీలకం = ఖాళీ;
+	response->ప్రజా_కీలకం_len = 0;
 
-	if ((x = BN_new()) == NULL ||
-	    (y = BN_new()) == NULL ||
-	    (g = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1)) == NULL ||
-	    (q = EC_POINT_new(g)) == NULL) {
+	ఒకవేళ ((x = BN_new()) == ఖాళీ ||
+	    (y = BN_new()) == ఖాళీ ||
+	    (g = EC_సమూహం_new_by_వక్రం_name(NID_X9_62_prime256v1)) == ఖాళీ ||
+	    (q = EC_బిందువు_new(g)) == ఖాళీ) {
 		skdebug(__func__, "libcrypto setup failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
+	ఒకవేళ ((ptr = fido_cred_pubkey_ptr(cred)) == ఖాళీ) {
 		skdebug(__func__, "fido_cred_pubkey_ptr failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (fido_cred_pubkey_len(cred) != 64) {
+	ఒకవేళ (fido_cred_pubkey_len(cred) != 64) {
 		skdebug(__func__, "bad fido_cred_pubkey_len %zu",
 		    fido_cred_pubkey_len(cred));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if (BN_bin2bn(ptr, 32, x) == NULL ||
-	    BN_bin2bn(ptr + 32, 32, y) == NULL) {
+	ఒకవేళ (BN_bin2bn(ptr, 32, x) == ఖాళీ ||
+	    BN_bin2bn(ptr + 32, 32, y) == ఖాళీ) {
 		skdebug(__func__, "BN_bin2bn failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EC_POINT_set_affine_coordinates(g, q, x, y, NULL) != 1) {
+	ఒకవేళ (EC_బిందువు_సమితి_affine_coordinates(g, q, x, y, ఖాళీ) != 1) {
 		skdebug(__func__, "EC_POINT_set_affine_coordinates failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	response->public_key_len = EC_POINT_point2oct(g, q,
-	    POINT_CONVERSION_UNCOMPRESSED, NULL, 0, NULL);
-	if (response->public_key_len == 0 || response->public_key_len > 2048) {
+	response->ప్రజా_కీలకం_len = EC_బిందువు_point2oct(g, q,
+	    బిందువు_CONVERSION_UNCOMPRESSED, ఖాళీ, 0, ఖాళీ);
+	ఒకవేళ (response->ప్రజా_కీలకం_len == 0 || response->ప్రజా_కీలకం_len > 2048) {
 		skdebug(__func__, "bad pubkey length %zu",
-		    response->public_key_len);
-		goto out;
+		    response->ప్రజా_కీలకం_len);
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
+	ఒకవేళ ((response->ప్రజా_కీలకం = జ్ఞాపకం_ఇవ్వు(response->ప్రజా_కీలకం_len)) == ఖాళీ) {
 		skdebug(__func__, "malloc pubkey failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
-	    response->public_key, response->public_key_len, NULL) == 0) {
+	ఒకవేళ (EC_బిందువు_point2oct(g, q, బిందువు_CONVERSION_UNCOMPRESSED,
+	    response->ప్రజా_కీలకం, response->ప్రజా_కీలకం_len, ఖాళీ) == 0) {
 		skdebug(__func__, "EC_POINT_point2oct failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
 	ret = 0;
- out:
-	if (ret != 0 && response->public_key != NULL) {
-		memset(response->public_key, 0, response->public_key_len);
-		free(response->public_key);
-		response->public_key = NULL;
+ బహిర్గతం:
+	ఒకవేళ (ret != 0 && response->ప్రజా_కీలకం != ఖాళీ) {
+		memset(response->ప్రజా_కీలకం, 0, response->ప్రజా_కీలకం_len);
+		విడుదల(response->ప్రజా_కీలకం);
+		response->ప్రజా_కీలకం = ఖాళీ;
 	}
-	EC_POINT_free(q);
-	EC_GROUP_free(g);
+	EC_బిందువు_free(q);
+	EC_సమూహం_free(g);
 	BN_clear_free(x);
 	BN_clear_free(y);
-	return ret;
+	తిరిగి ret;
 }
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */
 
-static int
-pack_public_key_ed25519(const fido_cred_t *cred,
-    struct sk_enroll_response *response)
+స్థిర పూర్ణాంకం
+pack_ప్రజా_కీలకం_ed25519(స్థిరరాశి fido_cred_t *cred,
+    నిర్మాణం sk_enroll_response *response)
 {
-	const uint8_t *ptr;
-	size_t len;
-	int ret = -1;
+	స్థిరరాశి uint8_t *ptr;
+	కొలత_t len;
+	పూర్ణాంకం ret = -1;
 
-	response->public_key = NULL;
-	response->public_key_len = 0;
+	response->ప్రజా_కీలకం = ఖాళీ;
+	response->ప్రజా_కీలకం_len = 0;
 
-	if ((len = fido_cred_pubkey_len(cred)) != 32) {
+	ఒకవేళ ((len = fido_cred_pubkey_len(cred)) != 32) {
 		skdebug(__func__, "bad fido_cred_pubkey_len len %zu", len);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
+	ఒకవేళ ((ptr = fido_cred_pubkey_ptr(cred)) == ఖాళీ) {
 		skdebug(__func__, "fido_cred_pubkey_ptr failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	response->public_key_len = len;
-	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
+	response->ప్రజా_కీలకం_len = len;
+	ఒకవేళ ((response->ప్రజా_కీలకం = జ్ఞాపకం_ఇవ్వు(response->ప్రజా_కీలకం_len)) == ఖాళీ) {
 		skdebug(__func__, "malloc pubkey failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	memcpy(response->public_key, ptr, len);
+	జ్ఞాపకం_నకలు(response->ప్రజా_కీలకం, ptr, len);
 	ret = 0;
- out:
-	if (ret != 0)
-		free(response->public_key);
-	return ret;
+ బహిర్గతం:
+	ఒకవేళ (ret != 0)
+		విడుదల(response->ప్రజా_కీలకం);
+	తిరిగి ret;
 }
 
-static int
-pack_public_key(uint32_t alg, const fido_cred_t *cred,
-    struct sk_enroll_response *response)
+స్థిర పూర్ణాంకం
+pack_ప్రజా_కీలకం(uint32_t alg, స్థిరరాశి fido_cred_t *cred,
+    నిర్మాణం sk_enroll_response *response)
 {
-	switch(alg) {
-#ifdef WITH_OPENSSL
-	case SSH_SK_ECDSA:
-		return pack_public_key_ecdsa(cred, response);
-#endif /* WITH_OPENSSL */
-	case SSH_SK_ED25519:
-		return pack_public_key_ed25519(cred, response);
-	default:
-		return -1;
+	ఎంపిక(alg) {
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థితి SSH_SK_ECDSA:
+		తిరిగి pack_ప్రజా_కీలకం_ecdsa(cred, response);
+#అయితే_ముగింపు /* WITH_OPENSSL */
+	స్థితి SSH_SK_ED25519:
+		తిరిగి pack_ప్రజా_కీలకం_ed25519(cred, response);
+	అప్రమేయ:
+		తిరిగి -1;
 	}
 }
 
-static int
-fidoerr_to_skerr(int fidoerr)
+స్థిర పూర్ణాంకం
+fidoerr_గమ్యం_skerr(పూర్ణాంకం fidoerr)
 {
-	switch (fidoerr) {
-	case FIDO_ERR_UNSUPPORTED_OPTION:
-	case FIDO_ERR_UNSUPPORTED_ALGORITHM:
-		return SSH_SK_ERR_UNSUPPORTED;
-	case FIDO_ERR_PIN_REQUIRED:
-	case FIDO_ERR_PIN_INVALID:
-	case FIDO_ERR_OPERATION_DENIED:
-		return SSH_SK_ERR_PIN_REQUIRED;
-	default:
-		return -1;
+	ఎంపిక (fidoerr) {
+	స్థితి FIDO_ERR_UNSUPPORTED_OPTION:
+	స్థితి FIDO_ERR_UNSUPPORTED_ALGORITHM:
+		తిరిగి SSH_SK_ERR_UNSUPPORTED;
+	స్థితి FIDO_ERR_PIN_REQUIRED:
+	స్థితి FIDO_ERR_PIN_INVALID:
+	స్థితి FIDO_ERR_OPERATION_DENIED:
+		తిరిగి SSH_SK_ERR_PIN_REQUIRED;
+	అప్రమేయ:
+		తిరిగి -1;
 	}
 }
 
-static int
-check_enroll_options(struct sk_option **options, char **devicep,
-    uint8_t *user_id, size_t user_id_len)
+స్థిర పూర్ణాంకం
+check_enroll_options(నిర్మాణం sk_option **options, అక్షరం **devicep,
+    uint8_t *user_id, కొలత_t user_id_len)
 {
-	size_t i;
+	కొలత_t i;
 
-	if (options == NULL)
-		return 0;
-	for (i = 0; options[i] != NULL; i++) {
-		if (strcmp(options[i]->name, "device") == 0) {
-			if ((*devicep = strdup(options[i]->value)) == NULL) {
+	ఒకవేళ (options == ఖాళీ)
+		తిరిగి 0;
+	కొరకు (i = 0; options[i] != ఖాళీ; i++) {
+		ఒకవేళ (strcmp(options[i]->name, "device") == 0) {
+			ఒకవేళ ((*devicep = strdup(options[i]->విలువ)) == ఖాళీ) {
 				skdebug(__func__, "strdup device failed");
-				return -1;
+				తిరిగి -1;
 			}
 			skdebug(__func__, "requested device %s", *devicep);
-		} else if (strcmp(options[i]->name, "user") == 0) {
-			if (strlcpy(user_id, options[i]->value, user_id_len) >=
+		} లేకపోతే ఒకవేళ (strcmp(options[i]->name, "user") == 0) {
+			ఒకవేళ (strlcpy(user_id, options[i]->విలువ, user_id_len) >=
 			    user_id_len) {
 				skdebug(__func__, "user too long");
-				return -1;
+				తిరిగి -1;
 			}
 			skdebug(__func__, "requested user %s",
-			    (char *)user_id);
-		} else {
+			    (అక్షరం *)user_id);
+		} లేకపోతే {
 			skdebug(__func__, "requested unsupported option %s",
 			    options[i]->name);
-			if (options[i]->required) {
+			ఒకవేళ (options[i]->required) {
 				skdebug(__func__, "unknown required option");
-				return -1;
+				తిరిగి -1;
 			}
 		}
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-key_lookup(fido_dev_t *dev, const char *application, const uint8_t *user_id,
-    size_t user_id_len, const char *pin)
+స్థిర పూర్ణాంకం
+కీలకం_lookup(fido_dev_t *dev, స్థిరరాశి అక్షరం *application, స్థిరరాశి uint8_t *user_id,
+    కొలత_t user_id_len, స్థిరరాశి అక్షరం *pin)
 {
-	fido_assert_t *assert = NULL;
-	uint8_t message[32];
-	int r = FIDO_ERR_INTERNAL;
-	int sk_supports_uv, uv;
-	size_t i;
+	fido_assert_t *ప్రతిజ్ఞా = ఖాళీ;
+	uint8_t సందేశం_2[32];
+	పూర్ణాంకం r = FIDO_ERR_అంతర్గత;
+	పూర్ణాంకం sk_supports_uv, uv;
+	కొలత_t i;
 
-	memset(message, '\0', sizeof(message));
-	if ((assert = fido_assert_new()) == NULL) {
+	memset(సందేశం_2, '\0', పరిమాణం(సందేశం_2));
+	ఒకవేళ ((ప్రతిజ్ఞా = fido_assert_new()) == ఖాళీ) {
 		skdebug(__func__, "fido_assert_new failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* generate an invalid signature on FIDO2 tokens */
-	if ((r = fido_assert_set_clientdata(assert, message,
-	    sizeof(message))) != FIDO_OK) {
+	ఒకవేళ ((r = fido_assert_సమితి_clientdata(ప్రతిజ్ఞా, సందేశం_2,
+	    పరిమాణం(సందేశం_2))) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_clientdata: %s",
 		    fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_assert_set_rp(assert, application)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_assert_సమితి_rp(ప్రతిజ్ఞా, application)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_rp: %s", fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_assert_set_up(assert, FIDO_OPT_FALSE)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_assert_సమితి_పైకి(ప్రతిజ్ఞా, FIDO_OPT_FALSE)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_up: %s", fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	uv = FIDO_OPT_OMIT;
-	if (pin == NULL && check_sk_options(dev, "uv", &sk_supports_uv) == 0 &&
+	ఒకవేళ (pin == ఖాళీ && check_sk_options(dev, "uv", &sk_supports_uv) == 0 &&
 	    sk_supports_uv != -1)
 		uv = FIDO_OPT_TRUE;
-	if ((r = fido_assert_set_uv(assert, uv)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_assert_సమితి_uv(ప్రతిజ్ఞా, uv)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_uv: %s", fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_dev_get_assert(dev, assert, pin)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_dev_get_assert(dev, ప్రతిజ్ఞా, pin)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_get_assert: %s", fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	r = FIDO_ERR_NO_CREDENTIALS;
-	skdebug(__func__, "%zu signatures returned", fido_assert_count(assert));
-	for (i = 0; i < fido_assert_count(assert); i++) {
-		if (fido_assert_user_id_len(assert, i) == user_id_len &&
-		    memcmp(fido_assert_user_id_ptr(assert, i), user_id,
+	skdebug(__func__, "%zu signatures returned", fido_assert_లెక్క(ప్రతిజ్ఞా));
+	కొరకు (i = 0; i < fido_assert_లెక్క(ప్రతిజ్ఞా); i++) {
+		ఒకవేళ (fido_assert_user_id_len(ప్రతిజ్ఞా, i) == user_id_len &&
+		    memcmp(fido_assert_user_id_ptr(ప్రతిజ్ఞా, i), user_id,
 		    user_id_len) == 0) {
 			skdebug(__func__, "credential exists");
 			r = FIDO_OK;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 	}
- out:
-	fido_assert_free(&assert);
+ బహిర్గతం:
+	fido_assert_free(&ప్రతిజ్ఞా);
 
-	return r;
+	తిరిగి r;
 }
 
-int
-sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
-    const char *application, uint8_t flags, const char *pin,
-    struct sk_option **options, struct sk_enroll_response **enroll_response)
+పూర్ణాంకం
+sk_enroll(uint32_t alg, స్థిరరాశి uint8_t *challenge, కొలత_t challenge_len,
+    స్థిరరాశి అక్షరం *application, uint8_t flags, స్థిరరాశి అక్షరం *pin,
+    నిర్మాణం sk_option **options, నిర్మాణం sk_enroll_response **enroll_response)
 {
-	fido_cred_t *cred = NULL;
-	const uint8_t *ptr;
+	fido_cred_t *cred = ఖాళీ;
+	స్థిరరాశి uint8_t *ptr;
 	uint8_t user_id[32];
-	struct sk_usbhid *sk = NULL;
-	struct sk_enroll_response *response = NULL;
-	size_t len;
-	int credprot;
-	int cose_alg;
-	int ret = SSH_SK_ERR_GENERAL;
-	int r;
-	char *device = NULL;
+	నిర్మాణం sk_usbhid *sk = ఖాళీ;
+	నిర్మాణం sk_enroll_response *response = ఖాళీ;
+	కొలత_t len;
+	పూర్ణాంకం credprot;
+	పూర్ణాంకం cose_alg;
+	పూర్ణాంకం ret = SSH_SK_ERR_GENERAL;
+	పూర్ణాంకం r;
+	అక్షరం *device = ఖాళీ;
 
 	fido_init(SSH_FIDO_INIT_ARG);
 
-	if (enroll_response == NULL) {
+	ఒకవేళ (enroll_response == ఖాళీ) {
 		skdebug(__func__, "enroll_response == NULL");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	*enroll_response = NULL;
-	memset(user_id, 0, sizeof(user_id));
-	if (check_enroll_options(options, &device, user_id,
-	    sizeof(user_id)) != 0)
-		goto out; /* error already logged */
+	*enroll_response = ఖాళీ;
+	memset(user_id, 0, పరిమాణం(user_id));
+	ఒకవేళ (check_enroll_options(options, &device, user_id,
+	    పరిమాణం(user_id)) != 0)
+		వెళ్ళు బహిర్గతం; /* error already logged */
 
-	switch(alg) {
-#ifdef WITH_OPENSSL
-	case SSH_SK_ECDSA:
+	ఎంపిక(alg) {
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థితి SSH_SK_ECDSA:
 		cose_alg = COSE_ES256;
-		break;
-#endif /* WITH_OPENSSL */
-	case SSH_SK_ED25519:
+		ఆపు;
+#అయితే_ముగింపు /* WITH_OPENSSL */
+	స్థితి SSH_SK_ED25519:
 		cose_alg = COSE_EDDSA;
-		break;
-	default:
+		ఆపు;
+	అప్రమేయ:
 		skdebug(__func__, "unsupported key type %d", alg);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (device != NULL)
+	ఒకవేళ (device != ఖాళీ)
 		sk = sk_open(device);
-	else
-		sk = sk_probe(NULL, NULL, 0, 0);
-	if (sk == NULL) {
-		ret = SSH_SK_ERR_DEVICE_NOT_FOUND;
+	లేకపోతే
+		sk = sk_probe(ఖాళీ, ఖాళీ, 0, 0);
+	ఒకవేళ (sk == ఖాళీ) {
+		ret = SSH_SK_ERR_DEVICE_NOT_దొరికింది;
 		skdebug(__func__, "failed to find sk");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	skdebug(__func__, "using device %s", sk->path);
-	if ((flags & SSH_SK_RESIDENT_KEY) != 0 &&
+	skdebug(__func__, "using device %s", sk->మార్గం);
+	ఒకవేళ ((flags & SSH_SK_RESIDENT_కీలకం) != 0 &&
 	    (flags & SSH_SK_FORCE_OPERATION) == 0 &&
-	    (r = key_lookup(sk->dev, application, user_id, sizeof(user_id),
+	    (r = కీలకం_lookup(sk->dev, application, user_id, పరిమాణం(user_id),
 	    pin)) != FIDO_ERR_NO_CREDENTIALS) {
-		if (r != FIDO_OK) {
-			ret = fidoerr_to_skerr(r);
+		ఒకవేళ (r != FIDO_OK) {
+			ret = fidoerr_గమ్యం_skerr(r);
 			skdebug(__func__, "key_lookup failed");
-		} else {
+		} లేకపోతే {
 			ret = SSH_SK_ERR_CREDENTIAL_EXISTS;
 			skdebug(__func__, "key exists");
 		}
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((cred = fido_cred_new()) == NULL) {
+	ఒకవేళ ((cred = fido_cred_new()) == ఖాళీ) {
 		skdebug(__func__, "fido_cred_new failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_cred_set_type(cred, cose_alg)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_cred_సమితి_type(cred, cose_alg)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_type: %s", fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_cred_set_clientdata(cred,
+	ఒకవేళ ((r = fido_cred_సమితి_clientdata(cred,
 	    challenge, challenge_len)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_clientdata: %s",
 		    fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_cred_set_rk(cred, (flags & SSH_SK_RESIDENT_KEY) != 0 ?
+	ఒకవేళ ((r = fido_cred_సమితి_rk(cred, (flags & SSH_SK_RESIDENT_కీలకం) != 0 ?
 	    FIDO_OPT_TRUE : FIDO_OPT_OMIT)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_rk: %s", fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_cred_set_user(cred, user_id, sizeof(user_id),
-	    "openssh", "openssh", NULL)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_cred_సమితి_user(cred, user_id, పరిమాణం(user_id),
+	    "openssh", "openssh", ఖాళీ)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_user: %s", fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_cred_set_rp(cred, application, NULL)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_cred_సమితి_rp(cred, application, ఖాళీ)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_rp: %s", fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((flags & (SSH_SK_RESIDENT_KEY|SSH_SK_USER_VERIFICATION_REQD)) != 0) {
-#if !defined(HAVE_FIDO_DEV_SUPPORTS_CRED_PROT) || \
-    !defined(HAVE_FIDO_CRED_SET_PROT)
+	ఒకవేళ ((flags & (SSH_SK_RESIDENT_కీలకం|SSH_SK_USER_VERIFICATION_REQD)) != 0) {
+#ఒకవేళ !defined(HAVE_FIDO_DEV_SUPPORTS_CRED_PROT) || \
+    !defined(HAVE_FIDO_CRED_సమితి_PROT)
 		skdebug(__func__, "libfido2 version does not support a feature required for this operation. Please upgrade to >=1.5.0");
 		ret = SSH_SK_ERR_UNSUPPORTED;
-		goto out;
-		credprot = 0; (void)credprot; /* avoid warning */
-#endif
-		if (!fido_dev_supports_cred_prot(sk->dev)) {
+		వెళ్ళు బహిర్గతం;
+		credprot = 0; (శూన్య)credprot; /* avoid warning */
+#అయితే_ముగింపు
+		ఒకవేళ (!fido_dev_supports_cred_prot(sk->dev)) {
 			skdebug(__func__, "%s does not support credprot, "
 			    "refusing to create unprotected "
-			    "resident/verify-required key", sk->path);
+			    "resident/verify-required key", sk->మార్గం);
 			ret = SSH_SK_ERR_UNSUPPORTED;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if ((flags & SSH_SK_USER_VERIFICATION_REQD))
+		ఒకవేళ ((flags & SSH_SK_USER_VERIFICATION_REQD))
 			credprot = FIDO_CRED_PROT_UV_REQUIRED;
-		else
+		లేకపోతే
 			credprot = FIDO_CRED_PROT_UV_OPTIONAL_WITH_ID;
 
-		if ((r = fido_cred_set_prot(cred, credprot)) != FIDO_OK) {
+		ఒకవేళ ((r = fido_cred_సమితి_prot(cred, credprot)) != FIDO_OK) {
 			skdebug(__func__, "fido_cred_set_prot: %s",
 			    fido_strerr(r));
-			ret = fidoerr_to_skerr(r);
-			goto out;
+			ret = fidoerr_గమ్యం_skerr(r);
+			వెళ్ళు బహిర్గతం;
 		}
 	}
-	if ((r = fido_dev_make_cred(sk->dev, cred, pin)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_dev_make_cred(sk->dev, cred, pin)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_make_cred: %s", fido_strerr(r));
-		ret = fidoerr_to_skerr(r);
-		goto out;
+		ret = fidoerr_గమ్యం_skerr(r);
+		వెళ్ళు బహిర్గతం;
 	}
-	if (fido_cred_x5c_ptr(cred) != NULL) {
-		if ((r = fido_cred_verify(cred)) != FIDO_OK) {
+	ఒకవేళ (fido_cred_x5c_ptr(cred) != ఖాళీ) {
+		ఒకవేళ ((r = fido_cred_verify(cred)) != FIDO_OK) {
 			skdebug(__func__, "fido_cred_verify: %s",
 			    fido_strerr(r));
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-	} else if (strcmp(fido_cred_fmt(cred), "none") != 0) {
+	} లేకపోతే ఒకవేళ (strcmp(fido_cred_fmt(cred), "none") != 0) {
 		skdebug(__func__, "self-attested credential");
-		if ((r = fido_cred_verify_self(cred)) != FIDO_OK) {
+		ఒకవేళ ((r = fido_cred_verify_self(cred)) != FIDO_OK) {
 			skdebug(__func__, "fido_cred_verify_self: %s",
 			    fido_strerr(r));
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-	} else {
+	} లేకపోతే {
 		skdebug(__func__, "no attestation data");
 	}
-	if ((response = calloc(1, sizeof(*response))) == NULL) {
+	ఒకవేళ ((response = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*response))) == ఖాళీ) {
 		skdebug(__func__, "calloc response failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	response->flags = flags;
-	if (pack_public_key(alg, cred, response) != 0) {
+	ఒకవేళ (pack_ప్రజా_కీలకం(alg, cred, response) != 0) {
 		skdebug(__func__, "pack_public_key failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((ptr = fido_cred_id_ptr(cred)) != NULL) {
+	ఒకవేళ ((ptr = fido_cred_id_ptr(cred)) != ఖాళీ) {
 		len = fido_cred_id_len(cred);
-		if ((response->key_handle = calloc(1, len)) == NULL) {
+		ఒకవేళ ((response->కీలకం_handle = సున్నా_జ్ఞాపకం_ఇవ్వు(1, len)) == ఖాళీ) {
 			skdebug(__func__, "calloc key handle failed");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		memcpy(response->key_handle, ptr, len);
-		response->key_handle_len = len;
+		జ్ఞాపకం_నకలు(response->కీలకం_handle, ptr, len);
+		response->కీలకం_handle_len = len;
 	}
-	if ((ptr = fido_cred_sig_ptr(cred)) != NULL) {
+	ఒకవేళ ((ptr = fido_cred_sig_ptr(cred)) != ఖాళీ) {
 		len = fido_cred_sig_len(cred);
-		if ((response->signature = calloc(1, len)) == NULL) {
+		ఒకవేళ ((response->signature = సున్నా_జ్ఞాపకం_ఇవ్వు(1, len)) == ఖాళీ) {
 			skdebug(__func__, "calloc signature failed");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		memcpy(response->signature, ptr, len);
+		జ్ఞాపకం_నకలు(response->signature, ptr, len);
 		response->signature_len = len;
 	}
-	if ((ptr = fido_cred_x5c_ptr(cred)) != NULL) {
+	ఒకవేళ ((ptr = fido_cred_x5c_ptr(cred)) != ఖాళీ) {
 		len = fido_cred_x5c_len(cred);
 		skdebug(__func__, "attestation cert len=%zu", len);
-		if ((response->attestation_cert = calloc(1, len)) == NULL) {
+		ఒకవేళ ((response->attestation_cert = సున్నా_జ్ఞాపకం_ఇవ్వు(1, len)) == ఖాళీ) {
 			skdebug(__func__, "calloc attestation cert failed");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		memcpy(response->attestation_cert, ptr, len);
+		జ్ఞాపకం_నకలు(response->attestation_cert, ptr, len);
 		response->attestation_cert_len = len;
 	}
-	if ((ptr = fido_cred_authdata_ptr(cred)) != NULL) {
+	ఒకవేళ ((ptr = fido_cred_authdata_ptr(cred)) != ఖాళీ) {
 		len = fido_cred_authdata_len(cred);
 		skdebug(__func__, "authdata len=%zu", len);
-		if ((response->authdata = calloc(1, len)) == NULL) {
+		ఒకవేళ ((response->authdata = సున్నా_జ్ఞాపకం_ఇవ్వు(1, len)) == ఖాళీ) {
 			skdebug(__func__, "calloc authdata failed");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		memcpy(response->authdata, ptr, len);
+		జ్ఞాపకం_నకలు(response->authdata, ptr, len);
 		response->authdata_len = len;
 	}
 	*enroll_response = response;
-	response = NULL;
+	response = ఖాళీ;
 	ret = 0;
- out:
-	free(device);
-	if (response != NULL) {
-		free(response->public_key);
-		free(response->key_handle);
-		free(response->signature);
-		free(response->attestation_cert);
-		free(response->authdata);
-		free(response);
+ బహిర్గతం:
+	విడుదల(device);
+	ఒకవేళ (response != ఖాళీ) {
+		విడుదల(response->ప్రజా_కీలకం);
+		విడుదల(response->కీలకం_handle);
+		విడుదల(response->signature);
+		విడుదల(response->attestation_cert);
+		విడుదల(response->authdata);
+		విడుదల(response);
 	}
 	sk_close(sk);
 	fido_cred_free(&cred);
-	return ret;
+	తిరిగి ret;
 }
 
-#ifdef WITH_OPENSSL
-static int
-pack_sig_ecdsa(fido_assert_t *assert, struct sk_sign_response *response)
+#నిర్వచితమైతే WITH_OPENSSL
+స్థిర పూర్ణాంకం
+pack_sig_ecdsa(fido_assert_t *ప్రతిజ్ఞా, నిర్మాణం sk_sign_response *response)
 {
-	ECDSA_SIG *sig = NULL;
-	const BIGNUM *sig_r, *sig_s;
-	const unsigned char *cp;
-	size_t sig_len;
-	int ret = -1;
+	ECDSA_SIG *sig = ఖాళీ;
+	స్థిరరాశి BIGNUM *sig_r, *sig_s;
+	స్థిరరాశి గుర్తులేని అక్షరం *cp;
+	కొలత_t sig_len;
+	పూర్ణాంకం ret = -1;
 
-	cp = fido_assert_sig_ptr(assert, 0);
-	sig_len = fido_assert_sig_len(assert, 0);
-	if ((sig = d2i_ECDSA_SIG(NULL, &cp, sig_len)) == NULL) {
+	cp = fido_assert_sig_ptr(ప్రతిజ్ఞా, 0);
+	sig_len = fido_assert_sig_len(ప్రతిజ్ఞా, 0);
+	ఒకవేళ ((sig = d2i_ECDSA_SIG(ఖాళీ, &cp, sig_len)) == ఖాళీ) {
 		skdebug(__func__, "d2i_ECDSA_SIG failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	ECDSA_SIG_get0(sig, &sig_r, &sig_s);
-	response->sig_r_len = BN_num_bytes(sig_r);
-	response->sig_s_len = BN_num_bytes(sig_s);
-	if ((response->sig_r = calloc(1, response->sig_r_len)) == NULL ||
-	    (response->sig_s = calloc(1, response->sig_s_len)) == NULL) {
+	response->sig_r_len = BN_అంకె_బైట్లు(sig_r);
+	response->sig_s_len = BN_అంకె_బైట్లు(sig_s);
+	ఒకవేళ ((response->sig_r = సున్నా_జ్ఞాపకం_ఇవ్వు(1, response->sig_r_len)) == ఖాళీ ||
+	    (response->sig_s = సున్నా_జ్ఞాపకం_ఇవ్వు(1, response->sig_s_len)) == ఖాళీ) {
 		skdebug(__func__, "calloc signature failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	BN_bn2bin(sig_r, response->sig_r);
 	BN_bn2bin(sig_s, response->sig_s);
 	ret = 0;
- out:
+ బహిర్గతం:
 	ECDSA_SIG_free(sig);
-	if (ret != 0) {
-		free(response->sig_r);
-		free(response->sig_s);
-		response->sig_r = NULL;
-		response->sig_s = NULL;
+	ఒకవేళ (ret != 0) {
+		విడుదల(response->sig_r);
+		విడుదల(response->sig_s);
+		response->sig_r = ఖాళీ;
+		response->sig_s = ఖాళీ;
 	}
-	return ret;
+	తిరిగి ret;
 }
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */
 
-static int
-pack_sig_ed25519(fido_assert_t *assert, struct sk_sign_response *response)
+స్థిర పూర్ణాంకం
+pack_sig_ed25519(fido_assert_t *ప్రతిజ్ఞా, నిర్మాణం sk_sign_response *response)
 {
-	const unsigned char *ptr;
-	size_t len;
-	int ret = -1;
+	స్థిరరాశి గుర్తులేని అక్షరం *ptr;
+	కొలత_t len;
+	పూర్ణాంకం ret = -1;
 
-	ptr = fido_assert_sig_ptr(assert, 0);
-	len = fido_assert_sig_len(assert, 0);
-	if (len != 64) {
+	ptr = fido_assert_sig_ptr(ప్రతిజ్ఞా, 0);
+	len = fido_assert_sig_len(ప్రతిజ్ఞా, 0);
+	ఒకవేళ (len != 64) {
 		skdebug(__func__, "bad length %zu", len);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	response->sig_r_len = len;
-	if ((response->sig_r = calloc(1, response->sig_r_len)) == NULL) {
+	ఒకవేళ ((response->sig_r = సున్నా_జ్ఞాపకం_ఇవ్వు(1, response->sig_r_len)) == ఖాళీ) {
 		skdebug(__func__, "calloc signature failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	memcpy(response->sig_r, ptr, len);
+	జ్ఞాపకం_నకలు(response->sig_r, ptr, len);
 	ret = 0;
- out:
-	if (ret != 0) {
-		free(response->sig_r);
-		response->sig_r = NULL;
+ బహిర్గతం:
+	ఒకవేళ (ret != 0) {
+		విడుదల(response->sig_r);
+		response->sig_r = ఖాళీ;
 	}
-	return ret;
+	తిరిగి ret;
 }
 
-static int
-pack_sig(uint32_t  alg, fido_assert_t *assert,
-    struct sk_sign_response *response)
+స్థిర పూర్ణాంకం
+pack_sig(uint32_t  alg, fido_assert_t *ప్రతిజ్ఞా,
+    నిర్మాణం sk_sign_response *response)
 {
-	switch(alg) {
-#ifdef WITH_OPENSSL
-	case SSH_SK_ECDSA:
-		return pack_sig_ecdsa(assert, response);
-#endif /* WITH_OPENSSL */
-	case SSH_SK_ED25519:
-		return pack_sig_ed25519(assert, response);
-	default:
-		return -1;
+	ఎంపిక(alg) {
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థితి SSH_SK_ECDSA:
+		తిరిగి pack_sig_ecdsa(ప్రతిజ్ఞా, response);
+#అయితే_ముగింపు /* WITH_OPENSSL */
+	స్థితి SSH_SK_ED25519:
+		తిరిగి pack_sig_ed25519(ప్రతిజ్ఞా, response);
+	అప్రమేయ:
+		తిరిగి -1;
 	}
 }
 
 /* Checks sk_options for sk_sign() and sk_load_resident_keys() */
-static int
-check_sign_load_resident_options(struct sk_option **options, char **devicep)
+స్థిర పూర్ణాంకం
+check_sign_ఎక్కించు_resident_options(నిర్మాణం sk_option **options, అక్షరం **devicep)
 {
-	size_t i;
+	కొలత_t i;
 
-	if (options == NULL)
-		return 0;
-	for (i = 0; options[i] != NULL; i++) {
-		if (strcmp(options[i]->name, "device") == 0) {
-			if ((*devicep = strdup(options[i]->value)) == NULL) {
+	ఒకవేళ (options == ఖాళీ)
+		తిరిగి 0;
+	కొరకు (i = 0; options[i] != ఖాళీ; i++) {
+		ఒకవేళ (strcmp(options[i]->name, "device") == 0) {
+			ఒకవేళ ((*devicep = strdup(options[i]->విలువ)) == ఖాళీ) {
 				skdebug(__func__, "strdup device failed");
-				return -1;
+				తిరిగి -1;
 			}
 			skdebug(__func__, "requested device %s", *devicep);
-		} else {
+		} లేకపోతే {
 			skdebug(__func__, "requested unsupported option %s",
 			    options[i]->name);
-			if (options[i]->required) {
+			ఒకవేళ (options[i]->required) {
 				skdebug(__func__, "unknown required option");
-				return -1;
+				తిరిగి -1;
 			}
 		}
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
-    const char *application,
-    const uint8_t *key_handle, size_t key_handle_len,
-    uint8_t flags, const char *pin, struct sk_option **options,
-    struct sk_sign_response **sign_response)
+పూర్ణాంకం
+sk_sign(uint32_t alg, స్థిరరాశి uint8_t *దత్తాంశం, కొలత_t datalen,
+    స్థిరరాశి అక్షరం *application,
+    స్థిరరాశి uint8_t *కీలకం_handle, కొలత_t కీలకం_handle_len,
+    uint8_t flags, స్థిరరాశి అక్షరం *pin, నిర్మాణం sk_option **options,
+    నిర్మాణం sk_sign_response **sign_response)
 {
-	fido_assert_t *assert = NULL;
-	char *device = NULL;
-	struct sk_usbhid *sk = NULL;
-	struct sk_sign_response *response = NULL;
-	int ret = SSH_SK_ERR_GENERAL, internal_uv;
-	int r;
+	fido_assert_t *ప్రతిజ్ఞా = ఖాళీ;
+	అక్షరం *device = ఖాళీ;
+	నిర్మాణం sk_usbhid *sk = ఖాళీ;
+	నిర్మాణం sk_sign_response *response = ఖాళీ;
+	పూర్ణాంకం ret = SSH_SK_ERR_GENERAL, అంతర్గత_uv;
+	పూర్ణాంకం r;
 
 	fido_init(SSH_FIDO_INIT_ARG);
 
-	if (sign_response == NULL) {
+	ఒకవేళ (sign_response == ఖాళీ) {
 		skdebug(__func__, "sign_response == NULL");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	*sign_response = NULL;
-	if (check_sign_load_resident_options(options, &device) != 0)
-		goto out; /* error already logged */
-	if (device != NULL)
+	*sign_response = ఖాళీ;
+	ఒకవేళ (check_sign_ఎక్కించు_resident_options(options, &device) != 0)
+		వెళ్ళు బహిర్గతం; /* error already logged */
+	ఒకవేళ (device != ఖాళీ)
 		sk = sk_open(device);
-	else if (pin != NULL || (flags & SSH_SK_USER_VERIFICATION_REQD))
-		sk = sk_probe(NULL, NULL, 0, 0);
-	else
-		sk = sk_probe(application, key_handle, key_handle_len, 0);
-	if (sk == NULL) {
-		ret = SSH_SK_ERR_DEVICE_NOT_FOUND;
+	లేకపోతే ఒకవేళ (pin != ఖాళీ || (flags & SSH_SK_USER_VERIFICATION_REQD))
+		sk = sk_probe(ఖాళీ, ఖాళీ, 0, 0);
+	లేకపోతే
+		sk = sk_probe(application, కీలకం_handle, కీలకం_handle_len, 0);
+	ఒకవేళ (sk == ఖాళీ) {
+		ret = SSH_SK_ERR_DEVICE_NOT_దొరికింది;
 		skdebug(__func__, "failed to find sk");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((assert = fido_assert_new()) == NULL) {
+	ఒకవేళ ((ప్రతిజ్ఞా = fido_assert_new()) == ఖాళీ) {
 		skdebug(__func__, "fido_assert_new failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_assert_set_clientdata(assert,
-	    data, datalen)) != FIDO_OK)  {
+	ఒకవేళ ((r = fido_assert_సమితి_clientdata(ప్రతిజ్ఞా,
+	    దత్తాంశం, datalen)) != FIDO_OK)  {
 		skdebug(__func__, "fido_assert_set_clientdata: %s",
 		    fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_assert_set_rp(assert, application)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_assert_సమితి_rp(ప్రతిజ్ఞా, application)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_rp: %s", fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_assert_allow_cred(assert, key_handle,
-	    key_handle_len)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_assert_allow_cred(ప్రతిజ్ఞా, కీలకం_handle,
+	    కీలకం_handle_len)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_allow_cred: %s", fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_assert_set_up(assert,
+	ఒకవేళ ((r = fido_assert_సమితి_పైకి(ప్రతిజ్ఞా,
 	    (flags & SSH_SK_USER_PRESENCE_REQD) ?
 	    FIDO_OPT_TRUE : FIDO_OPT_FALSE)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_up: %s", fido_strerr(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/*
 	 * WinHello requests the PIN by default.  Make "uv" request explicit
 	 * to allow keys with and without -O verify-required to make sense.
 	 */
-	if (pin == NULL && fido_dev_is_winhello (sk->dev) &&
-	    (r = fido_assert_set_uv(assert, FIDO_OPT_FALSE)) != FIDO_OK) {
+	ఒకవేళ (pin == ఖాళీ && fido_dev_is_winhello (sk->dev) &&
+	    (r = fido_assert_సమితి_uv(ప్రతిజ్ఞా, FIDO_OPT_FALSE)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_uv: %s", fido_strerr(r));
 	}
-	if (pin == NULL && (flags & SSH_SK_USER_VERIFICATION_REQD)) {
-		if (check_sk_options(sk->dev, "uv", &internal_uv) < 0 ||
-		    internal_uv != 1) {
+	ఒకవేళ (pin == ఖాళీ && (flags & SSH_SK_USER_VERIFICATION_REQD)) {
+		ఒకవేళ (check_sk_options(sk->dev, "uv", &అంతర్గత_uv) < 0 ||
+		    అంతర్గత_uv != 1) {
 			skdebug(__func__, "check_sk_options uv");
 			ret = SSH_SK_ERR_PIN_REQUIRED;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if ((r = fido_assert_set_uv(assert,
+		ఒకవేళ ((r = fido_assert_సమితి_uv(ప్రతిజ్ఞా,
 		    FIDO_OPT_TRUE)) != FIDO_OK) {
 			skdebug(__func__, "fido_assert_set_uv: %s",
 			    fido_strerr(r));
-			ret = fidoerr_to_skerr(r);
-			goto out;
+			ret = fidoerr_గమ్యం_skerr(r);
+			వెళ్ళు బహిర్గతం;
 		}
 	}
-	if ((r = fido_dev_get_assert(sk->dev, assert, pin)) != FIDO_OK) {
+	ఒకవేళ ((r = fido_dev_get_assert(sk->dev, ప్రతిజ్ఞా, pin)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_get_assert: %s", fido_strerr(r));
-		ret = fidoerr_to_skerr(r);
-		goto out;
+		ret = fidoerr_గమ్యం_skerr(r);
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((response = calloc(1, sizeof(*response))) == NULL) {
+	ఒకవేళ ((response = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*response))) == ఖాళీ) {
 		skdebug(__func__, "calloc response failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	response->flags = fido_assert_flags(assert, 0);
-	response->counter = fido_assert_sigcount(assert, 0);
-	if (pack_sig(alg, assert, response) != 0) {
+	response->flags = fido_assert_flags(ప్రతిజ్ఞా, 0);
+	response->counter = fido_assert_sigcount(ప్రతిజ్ఞా, 0);
+	ఒకవేళ (pack_sig(alg, ప్రతిజ్ఞా, response) != 0) {
 		skdebug(__func__, "pack_sig failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	*sign_response = response;
-	response = NULL;
+	response = ఖాళీ;
 	ret = 0;
- out:
-	free(device);
-	if (response != NULL) {
-		free(response->sig_r);
-		free(response->sig_s);
-		free(response);
+ బహిర్గతం:
+	విడుదల(device);
+	ఒకవేళ (response != ఖాళీ) {
+		విడుదల(response->sig_r);
+		విడుదల(response->sig_s);
+		విడుదల(response);
 	}
 	sk_close(sk);
-	fido_assert_free(&assert);
-	return ret;
+	fido_assert_free(&ప్రతిజ్ఞా);
+	తిరిగి ret;
 }
 
-static int
-read_rks(struct sk_usbhid *sk, const char *pin,
-    struct sk_resident_key ***rksp, size_t *nrksp)
+స్థిర పూర్ణాంకం
+read_rks(నిర్మాణం sk_usbhid *sk, స్థిరరాశి అక్షరం *pin,
+    నిర్మాణం sk_resident_కీలకం ***rksp, కొలత_t *nrksp)
 {
-	int ret = SSH_SK_ERR_GENERAL, r = -1;
+	పూర్ణాంకం ret = SSH_SK_ERR_GENERAL, r = -1;
 	uint32_t alg;
-	fido_credman_metadata_t *metadata = NULL;
-	fido_credman_rp_t *rp = NULL;
-	fido_credman_rk_t *rk = NULL;
-	size_t i, j, nrp, nrk, user_id_len;
-	const fido_cred_t *cred;
-	const char *rp_id, *rp_name, *user_name;
-	struct sk_resident_key *srk = NULL, **tmp;
-	const u_char *user_id;
+	fido_credman_metadata_t *metadata = ఖాళీ;
+	fido_credman_rp_t *rp = ఖాళీ;
+	fido_credman_rk_t *rk = ఖాళీ;
+	కొలత_t i, j, nrp, nrk, user_id_len;
+	స్థిరరాశి fido_cred_t *cred;
+	స్థిరరాశి అక్షరం *rp_id, *rp_name, *user_name;
+	నిర్మాణం sk_resident_కీలకం *srk = ఖాళీ, **tmp;
+	స్థిరరాశి u_char *user_id;
 
-	if (pin == NULL) {
+	ఒకవేళ (pin == ఖాళీ) {
 		skdebug(__func__, "no PIN specified");
 		ret = SSH_SK_ERR_PIN_REQUIRED;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((metadata = fido_credman_metadata_new()) == NULL) {
+	ఒకవేళ ((metadata = fido_credman_metadata_new()) == ఖాళీ) {
 		skdebug(__func__, "alloc failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_credman_get_dev_metadata(sk->dev, metadata, pin)) != 0) {
-		if (r == FIDO_ERR_INVALID_COMMAND) {
+	ఒకవేళ ((r = fido_credman_get_dev_metadata(sk->dev, metadata, pin)) != 0) {
+		ఒకవేళ (r == FIDO_ERR_INVALID_COMMAND) {
 			skdebug(__func__, "device %s does not support "
-			    "resident keys", sk->path);
+			    "resident keys", sk->మార్గం);
 			ret = 0;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		skdebug(__func__, "get metadata for %s failed: %s",
-		    sk->path, fido_strerr(r));
-		ret = fidoerr_to_skerr(r);
-		goto out;
+		    sk->మార్గం, fido_strerr(r));
+		ret = fidoerr_గమ్యం_skerr(r);
+		వెళ్ళు బహిర్గతం;
 	}
 	skdebug(__func__, "existing %llu, remaining %llu",
-	    (unsigned long long)fido_credman_rk_existing(metadata),
-	    (unsigned long long)fido_credman_rk_remaining(metadata));
-	if ((rp = fido_credman_rp_new()) == NULL) {
+	    (గుర్తులేని దీర్ఘ దీర్ఘ)fido_credman_rk_existing(metadata),
+	    (గుర్తులేని దీర్ఘ దీర్ఘ)fido_credman_rk_మిగిలిన(metadata));
+	ఒకవేళ ((rp = fido_credman_rp_new()) == ఖాళీ) {
 		skdebug(__func__, "alloc rp failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = fido_credman_get_dev_rp(sk->dev, rp, pin)) != 0) {
+	ఒకవేళ ((r = fido_credman_get_dev_rp(sk->dev, rp, pin)) != 0) {
 		skdebug(__func__, "get RPs for %s failed: %s",
-		    sk->path, fido_strerr(r));
-		goto out;
+		    sk->మార్గం, fido_strerr(r));
+		వెళ్ళు బహిర్గతం;
 	}
-	nrp = fido_credman_rp_count(rp);
+	nrp = fido_credman_rp_లెక్క(rp);
 	skdebug(__func__, "Device %s has resident keys for %zu RPs",
-	    sk->path, nrp);
+	    sk->మార్గం, nrp);
 
 	/* Iterate over RP IDs that have resident keys */
-	for (i = 0; i < nrp; i++) {
+	కొరకు (i = 0; i < nrp; i++) {
 		rp_id = fido_credman_rp_id(rp, i);
 		rp_name = fido_credman_rp_name(rp, i);
 		skdebug(__func__, "rp %zu: name=\"%s\" id=\"%s\" hashlen=%zu",
-		    i, rp_name == NULL ? "(none)" : rp_name,
-		    rp_id == NULL ? "(none)" : rp_id,
+		    i, rp_name == ఖాళీ ? "(none)" : rp_name,
+		    rp_id == ఖాళీ ? "(none)" : rp_id,
 		    fido_credman_rp_id_hash_len(rp, i));
 
 		/* Skip non-SSH RP IDs */
-		if (rp_id == NULL ||
+		ఒకవేళ (rp_id == ఖాళీ ||
 		    strncasecmp(fido_credman_rp_id(rp, i), "ssh:", 4) != 0)
-			continue;
+			కొనసాగు;
 
 		fido_credman_rk_free(&rk);
-		if ((rk = fido_credman_rk_new()) == NULL) {
+		ఒకవేళ ((rk = fido_credman_rk_new()) == ఖాళీ) {
 			skdebug(__func__, "alloc rk failed");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if ((r = fido_credman_get_dev_rk(sk->dev,
+		ఒకవేళ ((r = fido_credman_get_dev_rk(sk->dev,
 		    fido_credman_rp_id(rp, i), rk, pin)) != 0) {
 			skdebug(__func__, "get RKs for %s slot %zu failed: %s",
-			    sk->path, i, fido_strerr(r));
-			goto out;
+			    sk->మార్గం, i, fido_strerr(r));
+			వెళ్ళు బహిర్గతం;
 		}
-		nrk = fido_credman_rk_count(rk);
+		nrk = fido_credman_rk_లెక్క(rk);
 		skdebug(__func__, "RP \"%s\" has %zu resident keys",
 		    fido_credman_rp_id(rp, i), nrk);
 
 		/* Iterate over resident keys for this RP ID */
-		for (j = 0; j < nrk; j++) {
-			if ((cred = fido_credman_rk(rk, j)) == NULL) {
+		కొరకు (j = 0; j < nrk; j++) {
+			ఒకవేళ ((cred = fido_credman_rk(rk, j)) == ఖాళీ) {
 				skdebug(__func__, "no RK in slot %zu", j);
-				continue;
+				కొనసాగు;
 			}
-			if ((user_name = fido_cred_user_name(cred)) == NULL)
+			ఒకవేళ ((user_name = fido_cred_user_name(cred)) == ఖాళీ)
 				user_name = "";
 			user_id = fido_cred_user_id_ptr(cred);
 			user_id_len = fido_cred_user_id_len(cred);
 			skdebug(__func__, "Device %s RP \"%s\" user \"%s\" "
 			    "uidlen %zu slot %zu: type %d flags 0x%02x "
-			    "prot 0x%02x", sk->path, rp_id, user_name,
+			    "prot 0x%02x", sk->మార్గం, rp_id, user_name,
 			    user_id_len, j, fido_cred_type(cred),
 			    fido_cred_flags(cred), fido_cred_prot(cred));
 
 			/* Determine key algorithm */
-			switch (fido_cred_type(cred)) {
-			case COSE_ES256:
+			ఎంపిక (fido_cred_type(cred)) {
+			స్థితి COSE_ES256:
 				alg = SSH_SK_ECDSA;
-				break;
-			case COSE_EDDSA:
+				ఆపు;
+			స్థితి COSE_EDDSA:
 				alg = SSH_SK_ED25519;
-				break;
-			default:
+				ఆపు;
+			అప్రమేయ:
 				skdebug(__func__, "unsupported key type %d",
 				    fido_cred_type(cred));
-				continue;
+				కొనసాగు;
 			}
 
 			/* build response entry */
-			if ((srk = calloc(1, sizeof(*srk))) == NULL ||
-			    (srk->key.key_handle = calloc(1,
-			    fido_cred_id_len(cred))) == NULL ||
-			    (srk->application = strdup(rp_id)) == NULL ||
+			ఒకవేళ ((srk = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*srk))) == ఖాళీ ||
+			    (srk->కీలకం.కీలకం_handle = సున్నా_జ్ఞాపకం_ఇవ్వు(1,
+			    fido_cred_id_len(cred))) == ఖాళీ ||
+			    (srk->application = strdup(rp_id)) == ఖాళీ ||
 			    (user_id_len > 0 &&
-			     (srk->user_id = calloc(1, user_id_len)) == NULL)) {
+			     (srk->user_id = సున్నా_జ్ఞాపకం_ఇవ్వు(1, user_id_len)) == ఖాళీ)) {
 				skdebug(__func__, "alloc sk_resident_key");
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 
 			srk->alg = alg;
-			srk->key.key_handle_len = fido_cred_id_len(cred);
-			memcpy(srk->key.key_handle, fido_cred_id_ptr(cred),
-			    srk->key.key_handle_len);
+			srk->కీలకం.కీలకం_handle_len = fido_cred_id_len(cred);
+			జ్ఞాపకం_నకలు(srk->కీలకం.కీలకం_handle, fido_cred_id_ptr(cred),
+			    srk->కీలకం.కీలకం_handle_len);
 			srk->user_id_len = user_id_len;
-			if (srk->user_id_len != 0)
-				memcpy(srk->user_id, user_id, srk->user_id_len);
+			ఒకవేళ (srk->user_id_len != 0)
+				జ్ఞాపకం_నకలు(srk->user_id, user_id, srk->user_id_len);
 
-#ifdef HAVE_FIDO_CRED_PROT
-			if (fido_cred_prot(cred) ==
+#నిర్వచితమైతే HAVE_FIDO_CRED_PROT
+			ఒకవేళ (fido_cred_prot(cred) ==
 			    FIDO_CRED_PROT_UV_REQUIRED)
 				srk->flags |=  SSH_SK_USER_VERIFICATION_REQD;
-#endif
+#అయితే_ముగింపు
 
-			if ((r = pack_public_key(srk->alg, cred,
-			    &srk->key)) != 0) {
+			ఒకవేళ ((r = pack_ప్రజా_కీలకం(srk->alg, cred,
+			    &srk->కీలకం)) != 0) {
 				skdebug(__func__, "pack public key failed");
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 			/* append */
-			if ((tmp = recallocarray(*rksp, *nrksp, (*nrksp) + 1,
-			    sizeof(**rksp))) == NULL) {
+			ఒకవేళ ((tmp = recallocarray(*rksp, *nrksp, (*nrksp) + 1,
+			    పరిమాణం(**rksp))) == ఖాళీ) {
 				skdebug(__func__, "alloc rksp");
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 			*rksp = tmp;
 			(*rksp)[(*nrksp)++] = srk;
-			srk = NULL;
+			srk = ఖాళీ;
 		}
 	}
 	/* Success */
 	ret = 0;
- out:
-	if (srk != NULL) {
-		free(srk->application);
-		freezero(srk->key.public_key, srk->key.public_key_len);
-		freezero(srk->key.key_handle, srk->key.key_handle_len);
+ బహిర్గతం:
+	ఒకవేళ (srk != ఖాళీ) {
+		విడుదల(srk->application);
+		freezero(srk->కీలకం.ప్రజా_కీలకం, srk->కీలకం.ప్రజా_కీలకం_len);
+		freezero(srk->కీలకం.కీలకం_handle, srk->కీలకం.కీలకం_handle_len);
 		freezero(srk->user_id, srk->user_id_len);
-		freezero(srk, sizeof(*srk));
+		freezero(srk, పరిమాణం(*srk));
 	}
 	fido_credman_rp_free(&rp);
 	fido_credman_rk_free(&rk);
 	fido_credman_metadata_free(&metadata);
-	return ret;
+	తిరిగి ret;
 }
 
-int
-sk_load_resident_keys(const char *pin, struct sk_option **options,
-    struct sk_resident_key ***rksp, size_t *nrksp)
+పూర్ణాంకం
+sk_ఎక్కించు_resident_కీలకాలు(స్థిరరాశి అక్షరం *pin, నిర్మాణం sk_option **options,
+    నిర్మాణం sk_resident_కీలకం ***rksp, కొలత_t *nrksp)
 {
-	int ret = SSH_SK_ERR_GENERAL, r = -1;
-	size_t i, nrks = 0;
-	struct sk_resident_key **rks = NULL;
-	struct sk_usbhid *sk = NULL;
-	char *device = NULL;
+	పూర్ణాంకం ret = SSH_SK_ERR_GENERAL, r = -1;
+	కొలత_t i, nrks = 0;
+	నిర్మాణం sk_resident_కీలకం **rks = ఖాళీ;
+	నిర్మాణం sk_usbhid *sk = ఖాళీ;
+	అక్షరం *device = ఖాళీ;
 
-	*rksp = NULL;
+	*rksp = ఖాళీ;
 	*nrksp = 0;
 
 	fido_init(SSH_FIDO_INIT_ARG);
 
-	if (check_sign_load_resident_options(options, &device) != 0)
-		goto out; /* error already logged */
-	if (device != NULL)
+	ఒకవేళ (check_sign_ఎక్కించు_resident_options(options, &device) != 0)
+		వెళ్ళు బహిర్గతం; /* error already logged */
+	ఒకవేళ (device != ఖాళీ)
 		sk = sk_open(device);
-	else
-		sk = sk_probe(NULL, NULL, 0, 1);
-	if (sk == NULL) {
-		ret = SSH_SK_ERR_DEVICE_NOT_FOUND;
+	లేకపోతే
+		sk = sk_probe(ఖాళీ, ఖాళీ, 0, 1);
+	ఒకవేళ (sk == ఖాళీ) {
+		ret = SSH_SK_ERR_DEVICE_NOT_దొరికింది;
 		skdebug(__func__, "failed to find sk");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	skdebug(__func__, "trying %s", sk->path);
-	if ((r = read_rks(sk, pin, &rks, &nrks)) != 0) {
-		skdebug(__func__, "read_rks failed for %s", sk->path);
+	skdebug(__func__, "trying %s", sk->మార్గం);
+	ఒకవేళ ((r = read_rks(sk, pin, &rks, &nrks)) != 0) {
+		skdebug(__func__, "read_rks failed for %s", sk->మార్గం);
 		ret = r;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success, unless we have no keys but a specific error */
-	if (nrks > 0 || ret == SSH_SK_ERR_GENERAL)
+	ఒకవేళ (nrks > 0 || ret == SSH_SK_ERR_GENERAL)
 		ret = 0;
 	*rksp = rks;
 	*nrksp = nrks;
-	rks = NULL;
+	rks = ఖాళీ;
 	nrks = 0;
- out:
+ బహిర్గతం:
 	sk_close(sk);
-	for (i = 0; i < nrks; i++) {
-		free(rks[i]->application);
-		freezero(rks[i]->key.public_key, rks[i]->key.public_key_len);
-		freezero(rks[i]->key.key_handle, rks[i]->key.key_handle_len);
+	కొరకు (i = 0; i < nrks; i++) {
+		విడుదల(rks[i]->application);
+		freezero(rks[i]->కీలకం.ప్రజా_కీలకం, rks[i]->కీలకం.ప్రజా_కీలకం_len);
+		freezero(rks[i]->కీలకం.కీలకం_handle, rks[i]->కీలకం.కీలకం_handle_len);
 		freezero(rks[i]->user_id, rks[i]->user_id_len);
-		freezero(rks[i], sizeof(*rks[i]));
+		freezero(rks[i], పరిమాణం(*rks[i]));
 	}
-	free(device);
-	free(rks);
-	return ret;
+	విడుదల(device);
+	విడుదల(rks);
+	తిరిగి ret;
 }
 
-#endif /* ENABLE_SK_INTERNAL */
+#అయితే_ముగింపు /* ENABLE_SK_INTERNAL */

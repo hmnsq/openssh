@@ -14,22 +14,22 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _PORT_SOLARIS_H
+#నిర్వచితం_కాకపోతే పోర్టు_SOLARIS_H
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <pwd.h>
+#అన్తర్భావ <pwd.h>
 
-void solaris_contract_pre_fork(void);
-void solaris_contract_post_fork_child(void);
-void solaris_contract_post_fork_parent(pid_t pid);
-void solaris_set_default_project(struct passwd *);
+శూన్య solaris_contract_pre_fork(శూన్య);
+శూన్య solaris_contract_post_fork_బిడ్డ(శూన్య);
+శూన్య solaris_contract_post_fork_మాతృ(pid_t pid);
+శూన్య solaris_సమితి_default_project(నిర్మాణం passwd *);
 # ifdef USE_SOLARIS_PRIVS
-#include <priv.h>
-priv_set_t *solaris_basic_privset(void);
-void solaris_drop_privs_pinfo_net_fork_exec(void);
-void solaris_drop_privs_root_pinfo_net(void);
-void solaris_drop_privs_root_pinfo_net_exec(void);
+#అన్తర్భావ <priv.h>
+priv_సమితి_t *solaris_basic_privset(శూన్య);
+శూన్య solaris_drop_privs_pinfo_net_fork_exec(శూన్య);
+శూన్య solaris_drop_privs_మూలం_pinfo_net(శూన్య);
+శూన్య solaris_drop_privs_మూలం_pinfo_net_exec(శూన్య);
 # endif /* USE_SOLARIS_PRIVS */
 
-#endif
+#అయితే_ముగింపు

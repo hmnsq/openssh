@@ -5,36 +5,36 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <stdio.h>
+#అన్తర్భావ <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#అన్తర్భావ "../test_helper/test_helper.h"
 
-void sshbuf_tests(void);
-void sshbuf_getput_basic_tests(void);
-void sshbuf_getput_crypto_tests(void);
-void sshbuf_misc_tests(void);
-void sshbuf_fuzz_tests(void);
-void sshbuf_getput_fuzz_tests(void);
-void sshbuf_fixed(void);
+శూన్య sshbuf_tests(శూన్య);
+శూన్య sshbuf_getput_basic_tests(శూన్య);
+శూన్య sshbuf_getput_crypto_tests(శూన్య);
+శూన్య sshbuf_misc_tests(శూన్య);
+శూన్య sshbuf_fuzz_tests(శూన్య);
+శూన్య sshbuf_getput_fuzz_tests(శూన్య);
+శూన్య sshbuf_fixed(శూన్య);
 
-void
-tests(void)
+శూన్య
+tests(శూన్య)
 {
 	sshbuf_tests();
 	sshbuf_getput_basic_tests();
-#ifdef WITH_OPENSSL
+#నిర్వచితమైతే WITH_OPENSSL
 	sshbuf_getput_crypto_tests();
-#endif
+#అయితే_ముగింపు
 	sshbuf_misc_tests();
 	sshbuf_fuzz_tests();
 	sshbuf_getput_fuzz_tests();
 	sshbuf_fixed();
 }
 
-void
-benchmarks(void)
+శూన్య
+benchmarks(శూన్య)
 {
-	printf("no benchmarks\n");
+	రాయి("no benchmarks\n");
 }

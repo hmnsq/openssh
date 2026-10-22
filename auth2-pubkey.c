@@ -24,267 +24,267 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <stdlib.h>
-#include <errno.h>
-#include <paths.h>
-#include <pwd.h>
-#include <glob.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <limits.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <paths.h>
+#అన్తర్భావ <pwd.h>
+#అన్తర్భావ <glob.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <limits.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "packet.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "compat.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "pathnames.h"
-#include "uidswap.h"
-#include "auth-options.h"
-#include "canohost.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "authfile.h"
-#include "match.h"
-#include "ssherr.h"
-#include "channels.h" /* XXX for session.h */
-#include "session.h" /* XXX for child_set_env(); refactor? */
-#include "sk-api.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "ssh.h"
+#అన్తర్భావ "ssh2.h"
+#అన్తర్భావ "packet.h"
+#అన్తర్భావ "kex.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "servconf.h"
+#అన్తర్భావ "compat.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "hostfile.h"
+#అన్తర్భావ "auth.h"
+#అన్తర్భావ "pathnames.h"
+#అన్తర్భావ "uidswap.h"
+#అన్తర్భావ "auth-options.h"
+#అన్తర్భావ "canohost.h"
+#నిర్వచితమైతే GSSAPI
+#అన్తర్భావ "ssh-gss.h"
+#అయితే_ముగింపు
+#అన్తర్భావ "monitor_wrap.h"
+#అన్తర్భావ "authfile.h"
+#అన్తర్భావ "match.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "channels.h" /* XXX for session.h */
+#అన్తర్భావ "session.h" /* XXX for child_set_env(); refactor? */
+#అన్తర్భావ "sk-api.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_pubkey;
+బాహ్య ServerOptions options;
+బాహ్య నిర్మాణం authmethod_cfg methodcfg_pubkey;
 
-static char *
-format_key(const struct sshkey *key)
+స్థిర అక్షరం *
+format_కీలకం(స్థిరరాశి నిర్మాణం sshkey *కీలకం)
 {
-	char *ret, *fp = sshkey_fingerprint(key,
+	అక్షరం *ret, *fp = sshkey_fingerprint(కీలకం,
 	    options.fingerprint_hash, SSH_FP_DEFAULT);
 
-	xasprintf(&ret, "%s %s", sshkey_type(key), fp);
-	free(fp);
-	return ret;
+	xasprintf(&ret, "%s %s", sshkey_type(కీలకం), fp);
+	విడుదల(fp);
+	తిరిగి ret;
 }
 
 /*
  * Verify that the hostkey in a publickey-hostbound-v00@openssh.com userauth
  * request matches the hostkey that was negotiated during initial KEX.
  */
-static void
-check_hostbound_hostkey(struct ssh *ssh)
+స్థిర శూన్య
+check_hostbound_hostkey(నిర్మాణం ssh *ssh)
 {
-	int r;
-	struct sshbuf *our_hostkey_blob, *their_hostkey_blob;
+	పూర్ణాంకం r;
+	నిర్మాణం sshbuf *our_hostkey_blob, *their_hostkey_blob;
 
-	if (ssh->kex->initial_hostkey == NULL)
+	ఒకవేళ (ssh->kex->initial_hostkey == ఖాళీ)
 		fatal_f("internal error: initial hostkey not recorded");
-	if ((our_hostkey_blob = sshbuf_new()) == NULL)
+	ఒకవేళ ((our_hostkey_blob = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshpkt_getb_froms(ssh, &their_hostkey_blob)) != 0)
+	ఒకవేళ ((r = sshpkt_getb_froms(ssh, &their_hostkey_blob)) != 0)
 		fatal_fr(r, "parse hostkey");
-	if ((r = sshkey_putb(ssh->kex->initial_hostkey, our_hostkey_blob)) != 0)
+	ఒకవేళ ((r = sshkey_putb(ssh->kex->initial_hostkey, our_hostkey_blob)) != 0)
 		fatal_fr(r, "serialise hostkey");
-	if ((r = sshbuf_equals(our_hostkey_blob, their_hostkey_blob)) != 0)
+	ఒకవేళ ((r = sshbuf_equals(our_hostkey_blob, their_hostkey_blob)) != 0)
 		fatal_f("packet contained wrong host key");
 	sshbuf_free(our_hostkey_blob);
 	sshbuf_free(their_hostkey_blob);
 }
 
-static int
-userauth_pubkey(struct ssh *ssh, const char *method)
+స్థిర పూర్ణాంకం
+userauth_pubkey(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *పద్ధతి)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct passwd *pw = authctxt->pw;
-	struct sshbuf *keyblob = NULL, *b = NULL;
-	struct sshkey *key = NULL, *hostkey = NULL;
-	char *pkalg = NULL, *userstyle = NULL, *key_s = NULL, *ca_s = NULL;
-	char *keystring = NULL;
-	u_char *sig = NULL, have_sig;
-	size_t slen;
-	int hostbound, r, pktype;
-	int req_presence = 0, req_verify = 0, authenticated = 0;
-	struct sshauthopt *authopts = NULL;
-	struct sshkey_sig_details *sig_details = NULL;
+	నిర్మాణం passwd *pw = authctxt->pw;
+	నిర్మాణం sshbuf *keyblob = ఖాళీ, *b = ఖాళీ;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ, *hostkey = ఖాళీ;
+	అక్షరం *pkalg = ఖాళీ, *userstyle = ఖాళీ, *కీలకం_s = ఖాళీ, *ca_s = ఖాళీ;
+	అక్షరం *keystring = ఖాళీ;
+	u_char *sig = ఖాళీ, have_sig;
+	కొలత_t slen;
+	పూర్ణాంకం hostbound, r, pktype;
+	పూర్ణాంకం req_presence = 0, req_verify = 0, authenticated = 0;
+	నిర్మాణం sshauthopt *authopts = ఖాళీ;
+	నిర్మాణం sshkey_sig_details *sig_details = ఖాళీ;
 
-	hostbound = strcmp(method, "publickey-hostbound-v00@openssh.com") == 0;
+	hostbound = strcmp(పద్ధతి, "publickey-hostbound-v00@openssh.com") == 0;
 
-	if ((r = sshpkt_get_u8(ssh, &have_sig)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &pkalg, NULL)) != 0 ||
+	ఒకవేళ ((r = sshpkt_get_u8(ssh, &have_sig)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &pkalg, ఖాళీ)) != 0 ||
 	    (r = sshpkt_getb_froms(ssh, &keyblob)) != 0)
-		fatal_fr(r, "parse %s packet", method);
+		fatal_fr(r, "parse %s packet", పద్ధతి);
 
 	/* hostbound auth includes the hostkey offered at initial KEX */
-	if (hostbound)
+	ఒకవేళ (hostbound)
 		check_hostbound_hostkey(ssh); /* fatals on error */
 
-	if (log_level_get() >= SYSLOG_LEVEL_DEBUG2) {
-		if ((b = sshbuf_fromb(keyblob)) == NULL)
+	ఒకవేళ (log_level_get() >= SYSLOG_LEVEL_DEBUG2) {
+		ఒకవేళ ((b = sshbuf_fromb(keyblob)) == ఖాళీ)
 			fatal_f("sshbuf_fromb failed");
-		if ((keystring = sshbuf_dtob64_string(b, 0)) == NULL)
+		ఒకవేళ ((keystring = sshbuf_dtob64_string(b, 0)) == ఖాళీ)
 			fatal_f("sshbuf_dtob64 failed");
 		debug2_f("%s user %s %s public key %s %s",
 		    authctxt->valid ? "valid" : "invalid", authctxt->user,
 		    have_sig ? "attempting" : "querying", pkalg, keystring);
 		sshbuf_free(b);
-		b = NULL;
+		b = ఖాళీ;
 	}
 
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC) {
+	ఒకవేళ (pktype == కీలకం_UNSPEC) {
 		/* this is perfectly legal */
 		verbose_f("unsupported public key algorithm: %s", pkalg);
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
-	if (match_pattern_list(pkalg, options.pubkey_accepted_algos, 0) != 1) {
+	ఒకవేళ (సరిపోలిక_నమూనా_list(pkalg, options.pubkey_accepted_algos, 0) != 1) {
 		logit_f("signature algorithm %s not in "
 		    "PubkeyAcceptedAlgorithms", pkalg);
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
-	if ((b = sshbuf_fromb(keyblob)) == NULL)
+	ఒకవేళ ((b = sshbuf_fromb(keyblob)) == ఖాళీ)
 		fatal_f("sshbuf_fromb failed");
-	switch ((r = sshkey_fromb_allowlist(b, &key,
+	ఎంపిక ((r = sshkey_fromb_allowlist(b, &కీలకం,
 	    options.pubkey_accepted_algos, options.ca_sign_algorithms))) {
-	case 0:
+	స్థితి 0:
 		/* ok */
-		break;
-	case SSH_ERR_KEY_ALG_UNSUPPORTED:
+		ఆపు;
+	స్థితి SSH_ERR_కీలకం_ALG_UNSUPPORTED:
 		/* This shouldn't happen unless the client is being weird */
 		logit_f("key algorithm differs from signature algorithm %s and "
 		    "is not in PubkeyAcceptedAlgorithms", pkalg);
-		goto done;
-	case SSH_ERR_SIGN_ALG_UNSUPPORTED:
+		వెళ్ళు పూర్తి;
+	స్థితి SSH_ERR_SIGN_ALG_UNSUPPORTED:
 		logit_fr(r, "certificate signature algorithm not in "
 		    "CASignatureAlgorithm");
-		goto done;
-	default:
+		వెళ్ళు పూర్తి;
+	అప్రమేయ:
 		error_fr(r, "parse key");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 	sshbuf_free(b);
-	b = NULL;
+	b = ఖాళీ;
 
 	/* USERAUTH_REQUEST signature type should match key's type */
-	if (key->type != pktype || (sshkey_type_plain(pktype) == KEY_ECDSA &&
-	    sshkey_ecdsa_nid_from_name(pkalg) != key->ecdsa_nid)) {
+	ఒకవేళ (కీలకం->type != pktype || (sshkey_type_plain(pktype) == కీలకం_ECDSA &&
+	    sshkey_ecdsa_nid_from_name(pkalg) != కీలకం->ecdsa_nid)) {
 		error_f("key type mismatch for decoded key "
-		    "(received %s, expected %s)", sshkey_ssh_name(key), pkalg);
-		goto done;
+		    "(received %s, expected %s)", sshkey_ssh_name(కీలకం), pkalg);
+		వెళ్ళు పూర్తి;
 	}
-	if (auth2_key_already_used(authctxt, key)) {
-		logit("refusing previously-used %s key", sshkey_type(key));
-		goto done;
+	ఒకవేళ (auth2_కీలకం_already_వాడిన(authctxt, కీలకం)) {
+		logit("refusing previously-used %s key", sshkey_type(కీలకం));
+		వెళ్ళు పూర్తి;
 	}
-	if ((r = sshkey_check_rsa_length(key,
-	    options.required_rsa_size)) != 0) {
-		logit_r(r, "refusing %s key", sshkey_type(key));
-		goto done;
+	ఒకవేళ ((r = sshkey_check_rsa_నిడివి(కీలకం,
+	    options.required_rsa_కొలత)) != 0) {
+		logit_r(r, "refusing %s key", sshkey_type(కీలకం));
+		వెళ్ళు పూర్తి;
 	}
-	key_s = format_key(key);
-	if (sshkey_is_cert(key))
-		ca_s = format_key(key->cert->signature_key);
+	కీలకం_s = format_కీలకం(కీలకం);
+	ఒకవేళ (sshkey_is_cert(కీలకం))
+		ca_s = format_కీలకం(కీలకం->cert->signature_కీలకం);
 
-	if (have_sig) {
+	ఒకవేళ (have_sig) {
 		debug3_f("%s have %s signature for %s%s%s",
-		    method, pkalg, key_s,
-		    ca_s == NULL ? "" : " CA ", ca_s == NULL ? "" : ca_s);
-		if ((r = sshpkt_get_string(ssh, &sig, &slen)) != 0 ||
-		    (r = sshpkt_get_end(ssh)) != 0)
+		    పద్ధతి, pkalg, కీలకం_s,
+		    ca_s == ఖాళీ ? "" : " CA ", ca_s == ఖాళీ ? "" : ca_s);
+		ఒకవేళ ((r = sshpkt_get_string(ssh, &sig, &slen)) != 0 ||
+		    (r = sshpkt_get_చివర(ssh)) != 0)
 			fatal_fr(r, "parse signature packet");
-		if ((b = sshbuf_new()) == NULL)
+		ఒకవేళ ((b = sshbuf_new()) == ఖాళీ)
 			fatal_f("sshbuf_new failed");
-		if ((r = sshbuf_put_stringb(b,
+		ఒకవేళ ((r = sshbuf_put_stringb(b,
 		    ssh->kex->session_id)) != 0)
 			fatal_fr(r, "put session id");
-		if (!authctxt->valid || authctxt->user == NULL) {
+		ఒకవేళ (!authctxt->valid || authctxt->user == ఖాళీ) {
 			debug2_f("disabled because of invalid user");
-			goto done;
+			వెళ్ళు పూర్తి;
 		}
 		/* reconstruct packet */
 		xasprintf(&userstyle, "%s%s%s", authctxt->user,
 		    authctxt->style ? ":" : "",
 		    authctxt->style ? authctxt->style : "");
-		if ((r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+		ఒకవేళ ((r = sshbuf_put_u8(b, SSH2_సందేశం_USERAUTH_REQUEST)) != 0 ||
 		    (r = sshbuf_put_cstring(b, userstyle)) != 0 ||
 		    (r = sshbuf_put_cstring(b, authctxt->service)) != 0 ||
-		    (r = sshbuf_put_cstring(b, method)) != 0 ||
+		    (r = sshbuf_put_cstring(b, పద్ధతి)) != 0 ||
 		    (r = sshbuf_put_u8(b, have_sig)) != 0 ||
 		    (r = sshbuf_put_cstring(b, pkalg)) != 0 ||
 		    (r = sshbuf_put_stringb(b, keyblob)) != 0)
-			fatal_fr(r, "reconstruct %s packet", method);
-		if (hostbound &&
+			fatal_fr(r, "reconstruct %s packet", పద్ధతి);
+		ఒకవేళ (hostbound &&
 		    (r = sshkey_puts(ssh->kex->initial_hostkey, b)) != 0)
-			fatal_fr(r, "reconstruct %s packet", method);
-#ifdef DEBUG_PK
+			fatal_fr(r, "reconstruct %s packet", పద్ధతి);
+#నిర్వచితమైతే DEBUG_PK
 		sshbuf_dump(b, stderr);
-#endif
+#అయితే_ముగింపు
 		/* test for correct signature */
 		authenticated = 0;
-		if (mm_user_key_allowed(ssh, pw, key, 1, &authopts) &&
-		    mm_sshkey_verify(key, sig, slen,
+		ఒకవేళ (mm_user_కీలకం_allowed(ssh, pw, కీలకం, 1, &authopts) &&
+		    mm_sshkey_verify(కీలకం, sig, slen,
 		    sshbuf_ptr(b), sshbuf_len(b),
-		    (ssh->compat & SSH_BUG_SIGTYPE) == 0 ? pkalg : NULL,
+		    (ssh->compat & SSH_BUG_SIGTYPE) == 0 ? pkalg : ఖాళీ,
 		    ssh->compat, &sig_details) == 0) {
 			authenticated = 1;
 		}
-		if (authenticated == 1 && sig_details != NULL) {
-			auth2_record_info(authctxt, "signature count = %u",
+		ఒకవేళ (authenticated == 1 && sig_details != ఖాళీ) {
+			auth2_రికార్డు_info(authctxt, "signature count = %u",
 			    sig_details->sk_counter);
 			debug_f("sk_counter = %u, sk_flags = 0x%02x",
 			    sig_details->sk_counter, sig_details->sk_flags);
 			req_presence = (options.pubkey_auth_options &
 			    PUBKEYAUTH_TOUCH_REQUIRED) ||
 			    !authopts->no_require_user_presence;
-			if (req_presence && (sig_details->sk_flags &
+			ఒకవేళ (req_presence && (sig_details->sk_flags &
 			    SSH_SK_USER_PRESENCE_REQD) == 0) {
 				error("public key %s signature for %s%s from "
 				    "%.128s port %d rejected: user presence "
 				    "(authenticator touch) requirement "
-				    "not met ", key_s,
+				    "not met ", కీలకం_s,
 				    authctxt->valid ? "" : "invalid user ",
 				    authctxt->user, ssh_remote_ipaddr(ssh),
-				    ssh_remote_port(ssh));
+				    ssh_remote_పోర్టు(ssh));
 				authenticated = 0;
-				goto done;
+				వెళ్ళు పూర్తి;
 			}
 			req_verify = (options.pubkey_auth_options &
 			    PUBKEYAUTH_VERIFY_REQUIRED) ||
 			    authopts->require_verify;
-			if (req_verify && (sig_details->sk_flags &
+			ఒకవేళ (req_verify && (sig_details->sk_flags &
 			    SSH_SK_USER_VERIFICATION_REQD) == 0) {
 				error("public key %s signature for %s%s from "
 				    "%.128s port %d rejected: user "
-				    "verification requirement not met ", key_s,
+				    "verification requirement not met ", కీలకం_s,
 				    authctxt->valid ? "" : "invalid user ",
 				    authctxt->user, ssh_remote_ipaddr(ssh),
-				    ssh_remote_port(ssh));
+				    ssh_remote_పోర్టు(ssh));
 				authenticated = 0;
-				goto done;
+				వెళ్ళు పూర్తి;
 			}
 		}
-		auth2_record_key(authctxt, authenticated, key);
-	} else {
-		debug_f("%s test pkalg %s pkblob %s%s%s", method, pkalg, key_s,
-		    ca_s == NULL ? "" : " CA ", ca_s == NULL ? "" : ca_s);
+		auth2_రికార్డు_కీలకం(authctxt, authenticated, కీలకం);
+	} లేకపోతే {
+		debug_f("%s test pkalg %s pkblob %s%s%s", పద్ధతి, pkalg, కీలకం_s,
+		    ca_s == ఖాళీ ? "" : " CA ", ca_s == ఖాళీ ? "" : ca_s);
 
-		if ((r = sshpkt_get_end(ssh)) != 0)
+		ఒకవేళ ((r = sshpkt_get_చివర(ssh)) != 0)
 			fatal_fr(r, "parse packet");
 
 		/* XXX fake reply and always send PK_OK ? */
@@ -295,9 +295,9 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 		 * if a user is not allowed to login. is this an
 		 * issue? -markus
 		 */
-		if (authctxt->valid && authctxt->user != NULL &&
-		    mm_user_key_allowed(ssh, pw, key, 0, NULL)) {
-			if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_PK_OK))
+		ఒకవేళ (authctxt->valid && authctxt->user != ఖాళీ &&
+		    mm_user_కీలకం_allowed(ssh, pw, కీలకం, 0, ఖాళీ)) {
+			ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_USERAUTH_PK_OK))
 			    != 0 ||
 			    (r = sshpkt_put_cstring(ssh, pkalg)) != 0 ||
 			    (r = sshpkt_put_stringb(ssh, keyblob)) != 0 ||
@@ -305,7 +305,7 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 			    (r = ssh_packet_write_wait(ssh)) != 0)
 				fatal_fr(r, "send packet");
 			authctxt->postponed = 1;
-		} else {
+		} లేకపోతే {
 			/*
 			 * NB. invalid users must be accounted for in exactly
 			 * the same way as valid users whose key was refused,
@@ -316,7 +316,7 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 			 * unless we have already used up the separate
 			 * max-pk-ok budget (if any).
 			 */
-			if (authctxt->pk_ok_failures++ < options.max_pubkey_ok)
+			ఒకవేళ (authctxt->pk_ok_failures++ < options.max_pubkey_ok)
 				authctxt->auth_failure_already_counted = 1;
 			debug3_f("pubkey test %d of %d%s",
 			    authctxt->pk_ok_failures, options.max_pubkey_ok,
@@ -324,8 +324,8 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 			    "" : ": treating as authentication failure");
 		 }
 	}
-done:
-	if (authenticated == 1 && auth_activate_options(ssh, authopts) != 0) {
+పూర్తి:
+	ఒకవేళ (authenticated == 1 && auth_activate_options(ssh, authopts) != 0) {
 		debug_f("key options inconsistent with existing");
 		authenticated = 0;
 	}
@@ -334,98 +334,98 @@ done:
 	sshbuf_free(b);
 	sshbuf_free(keyblob);
 	sshauthopt_free(authopts);
-	sshkey_free(key);
+	sshkey_free(కీలకం);
 	sshkey_free(hostkey);
-	free(keystring);
-	free(userstyle);
-	free(pkalg);
-	free(key_s);
-	free(ca_s);
-	free(sig);
+	విడుదల(keystring);
+	విడుదల(userstyle);
+	విడుదల(pkalg);
+	విడుదల(కీలకం_s);
+	విడుదల(ca_s);
+	విడుదల(sig);
 	sshkey_sig_details_free(sig_details);
-	return authenticated;
+	తిరిగి authenticated;
 }
 
-static int
-match_principals_file(struct passwd *pw, char *file,
-    struct sshkey_cert *cert, struct sshauthopt **authoptsp)
+స్థిర పూర్ణాంకం
+సరిపోలిక_principals_file(నిర్మాణం passwd *pw, అక్షరం *file,
+    నిర్మాణం sshkey_cert *cert, నిర్మాణం sshauthopt **authoptsp)
 {
 	FILE *f;
-	int r, success = 0;
-	size_t i;
+	పూర్ణాంకం r, success = 0;
+	కొలత_t i;
 	glob_t gl;
-	struct sshauthopt *opts = NULL;
+	నిర్మాణం sshauthopt *opts = ఖాళీ;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	ఒకవేళ (authoptsp != ఖాళీ)
+		*authoptsp = ఖాళీ;
 
 	temporarily_use_uid(pw);
-	r = glob(file, 0, NULL, &gl);
+	r = glob(file, 0, ఖాళీ, &gl);
 	restore_uid();
-	if (r != 0) {
-		if (r != GLOB_NOMATCH) {
+	ఒకవేళ (r != 0) {
+		ఒకవేళ (r != GLOB_NOMATCH) {
 			logit_f("glob \"%s\" failed", file);
 		}
-		return 0;
-	} else if (gl.gl_pathc > INT_MAX) {
+		తిరిగి 0;
+	} లేకపోతే ఒకవేళ (gl.gl_pathc > గరిష్ఠ_పూర్ణాంకం) {
 		fatal_f("too many glob results for \"%s\"", file);
-	} else if (gl.gl_pathc > 1) {
+	} లేకపోతే ఒకవేళ (gl.gl_pathc > 1) {
 		debug2_f("glob \"%s\" returned %zu matches", file,
 		    gl.gl_pathc);
 	}
-	for (i = 0; !success && i < gl.gl_pathc; i++) {
+	కొరకు (i = 0; !success && i < gl.gl_pathc; i++) {
 		temporarily_use_uid(pw);
 		debug("trying authorized principals file %s", file);
-		if ((f = auth_openprincipals(gl.gl_pathv[i], pw,
-		    options.strict_modes)) == NULL) {
+		ఒకవేళ ((f = auth_openprincipals(gl.gl_pathv[i], pw,
+		    options.strict_modes)) == ఖాళీ) {
 			restore_uid();
-			continue;
+			కొనసాగు;
 		}
 		success = auth_process_principals(f, gl.gl_pathv[i],
 		    cert, &opts);
 		fclose(f);
 		restore_uid();
-		if (!success) {
+		ఒకవేళ (!success) {
 			sshauthopt_free(opts);
-			opts = NULL;
+			opts = ఖాళీ;
 		}
 	}
 	globfree(&gl);
-	if (success && authoptsp != NULL) {
+	ఒకవేళ (success && authoptsp != ఖాళీ) {
 		*authoptsp = opts;
-		opts = NULL;
+		opts = ఖాళీ;
 	}
 	sshauthopt_free(opts);
-	return success;
+	తిరిగి success;
 }
 
 /*
  * Checks whether principal is allowed in output of command.
  * returns 1 if the principal is allowed or 0 otherwise.
  */
-static int
-match_principals_command(struct passwd *user_pw, const struct sshkey *key,
-    const char *conn_id, const char *rdomain, struct sshauthopt **authoptsp)
+స్థిర పూర్ణాంకం
+సరిపోలిక_principals_command(నిర్మాణం passwd *user_pw, స్థిరరాశి నిర్మాణం sshkey *కీలకం,
+    స్థిరరాశి అక్షరం *conn_id, స్థిరరాశి అక్షరం *rdomain, నిర్మాణం sshauthopt **authoptsp)
 {
-	struct passwd *runas_pw = NULL;
-	const struct sshkey_cert *cert = key->cert;
-	FILE *f = NULL;
-	int r, ok, found_principal = 0;
-	int i, ac = 0, uid_swapped = 0;
+	నిర్మాణం passwd *runas_pw = ఖాళీ;
+	స్థిరరాశి నిర్మాణం sshkey_cert *cert = కీలకం->cert;
+	FILE *f = ఖాళీ;
+	పూర్ణాంకం r, ok, దొరికింది_principal = 0;
+	పూర్ణాంకం i, ac = 0, uid_swapped = 0;
 	pid_t pid;
-	char *tmp, *username = NULL, *command = NULL, **av = NULL;
-	char *ca_fp = NULL, *key_fp = NULL, *catext = NULL, *keytext = NULL;
-	char serial_s[32], uidstr[32];
-	void (*osigchld)(int);
+	అక్షరం *tmp, *username = ఖాళీ, *command = ఖాళీ, **av = ఖాళీ;
+	అక్షరం *ca_fp = ఖాళీ, *కీలకం_fp = ఖాళీ, *catext = ఖాళీ, *keytext = ఖాళీ;
+	అక్షరం serial_s[32], uidstr[32];
+	శూన్య (*osigchld)(పూర్ణాంకం);
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
-	if (options.authorized_principals_command == NULL)
-		return 0;
-	if (options.authorized_principals_command_user == NULL) {
+	ఒకవేళ (authoptsp != ఖాళీ)
+		*authoptsp = ఖాళీ;
+	ఒకవేళ (options.authorized_principals_command == ఖాళీ)
+		తిరిగి 0;
+	ఒకవేళ (options.authorized_principals_command_user == ఖాళీ) {
 		error("No user for AuthorizedPrincipalsCommand specified, "
 		    "skipping");
-		return 0;
+		తిరిగి 0;
 	}
 
 	/*
@@ -436,77 +436,77 @@ match_principals_command(struct passwd *user_pw, const struct sshkey *key,
 
 	/* Prepare and verify the user for the command */
 	username = percent_expand(options.authorized_principals_command_user,
-	    "u", user_pw->pw_name, (char *)NULL);
+	    "u", user_pw->pw_name, (అక్షరం *)ఖాళీ);
 	runas_pw = getpwnam(username);
-	if (runas_pw == NULL) {
+	ఒకవేళ (runas_pw == ఖాళీ) {
 		error("AuthorizedPrincipalsCommandUser \"%s\" not found: %s",
 		    username, strerror(errno));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Turn the command into an argument vector */
-	if (argv_split(options.authorized_principals_command,
+	ఒకవేళ (argv_విభజించు(options.authorized_principals_command,
 	    &ac, &av, 0) != 0) {
 		error("AuthorizedPrincipalsCommand \"%s\" contains "
 		    "invalid quotes", options.authorized_principals_command);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (ac == 0) {
+	ఒకవేళ (ac == 0) {
 		error("AuthorizedPrincipalsCommand \"%s\" yielded no arguments",
 		    options.authorized_principals_command);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((ca_fp = sshkey_fingerprint(cert->signature_key,
-	    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
+	ఒకవేళ ((ca_fp = sshkey_fingerprint(cert->signature_కీలకం,
+	    options.fingerprint_hash, SSH_FP_DEFAULT)) == ఖాళీ) {
 		error_f("sshkey_fingerprint failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((key_fp = sshkey_fingerprint(key,
-	    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
+	ఒకవేళ ((కీలకం_fp = sshkey_fingerprint(కీలకం,
+	    options.fingerprint_hash, SSH_FP_DEFAULT)) == ఖాళీ) {
 		error_f("sshkey_fingerprint failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshkey_to_base64(cert->signature_key, &catext)) != 0) {
+	ఒకవేళ ((r = sshkey_గమ్యం_base64(cert->signature_కీలకం, &catext)) != 0) {
 		error_fr(r, "sshkey_to_base64 failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshkey_to_base64(key, &keytext)) != 0) {
+	ఒకవేళ ((r = sshkey_గమ్యం_base64(కీలకం, &keytext)) != 0) {
 		error_fr(r, "sshkey_to_base64 failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	snprintf(serial_s, sizeof(serial_s), "%llu",
-	    (unsigned long long)cert->serial);
-	snprintf(uidstr, sizeof(uidstr), "%llu",
-	    (unsigned long long)user_pw->pw_uid);
-	for (i = 1; i < ac; i++) {
+	snprintf(serial_s, పరిమాణం(serial_s), "%llu",
+	    (గుర్తులేని దీర్ఘ దీర్ఘ)cert->serial);
+	snprintf(uidstr, పరిమాణం(uidstr), "%llu",
+	    (గుర్తులేని దీర్ఘ దీర్ఘ)user_pw->pw_uid);
+	కొరకు (i = 1; i < ac; i++) {
 		tmp = percent_expand(av[i],
 		    "C", conn_id,
 		    "D", rdomain,
 		    "U", uidstr,
 		    "u", user_pw->pw_name,
 		    "h", user_pw->pw_dir,
-		    "t", sshkey_ssh_name(key),
-		    "T", sshkey_ssh_name(cert->signature_key),
-		    "f", key_fp,
+		    "t", sshkey_ssh_name(కీలకం),
+		    "T", sshkey_ssh_name(cert->signature_కీలకం),
+		    "f", కీలకం_fp,
 		    "F", ca_fp,
 		    "k", keytext,
 		    "K", catext,
-		    "i", cert->key_id,
+		    "i", cert->కీలకం_id,
 		    "s", serial_s,
-		    (char *)NULL);
-		if (tmp == NULL)
+		    (అక్షరం *)ఖాళీ);
+		ఒకవేళ (tmp == ఖాళీ)
 			fatal_f("percent_expand failed");
-		free(av[i]);
+		విడుదల(av[i]);
 		av[i] = tmp;
 	}
 	/* Prepare a printable command for logs, etc. */
 	command = argv_assemble(ac, av);
 
-	if ((pid = subprocess("AuthorizedPrincipalsCommand", command,
+	ఒకవేళ ((pid = subprocess("AuthorizedPrincipalsCommand", command,
 	    ac, av, &f,
 	    SSH_SUBPROCESS_STDOUT_CAPTURE|SSH_SUBPROCESS_STDERR_DISCARD,
 	    runas_pw, temporarily_use_uid, restore_uid)) == 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
 	uid_swapped = 1;
 	temporarily_use_uid(runas_pw);
@@ -514,195 +514,195 @@ match_principals_command(struct passwd *user_pw, const struct sshkey *key,
 	ok = auth_process_principals(f, "(command)", cert, authoptsp);
 
 	fclose(f);
-	f = NULL;
+	f = ఖాళీ;
 
-	if (exited_cleanly(pid, "AuthorizedPrincipalsCommand", command, 0) != 0)
-		goto out;
+	ఒకవేళ (exited_cleanly(pid, "AuthorizedPrincipalsCommand", command, 0) != 0)
+		వెళ్ళు బహిర్గతం;
 
 	/* Read completed successfully */
-	found_principal = ok;
- out:
-	if (f != NULL)
+	దొరికింది_principal = ok;
+ బహిర్గతం:
+	ఒకవేళ (f != ఖాళీ)
 		fclose(f);
 	ssh_signal(SIGCHLD, osigchld);
-	for (i = 0; i < ac; i++)
-		free(av[i]);
-	free(av);
-	if (uid_swapped)
+	కొరకు (i = 0; i < ac; i++)
+		విడుదల(av[i]);
+	విడుదల(av);
+	ఒకవేళ (uid_swapped)
 		restore_uid();
-	free(command);
-	free(username);
-	free(ca_fp);
-	free(key_fp);
-	free(catext);
-	free(keytext);
-	return found_principal;
+	విడుదల(command);
+	విడుదల(username);
+	విడుదల(ca_fp);
+	విడుదల(కీలకం_fp);
+	విడుదల(catext);
+	విడుదల(keytext);
+	తిరిగి దొరికింది_principal;
 }
 
 /* Authenticate a certificate key against TrustedUserCAKeys */
-static int
-user_cert_trusted_ca(struct passwd *pw, struct sshkey *key,
-    const char *remote_ip, const char *remote_host,
-    const char *conn_id, const char *rdomain, struct sshauthopt **authoptsp)
+స్థిర పూర్ణాంకం
+user_cert_trusted_ca(నిర్మాణం passwd *pw, నిర్మాణం sshkey *కీలకం,
+    స్థిరరాశి అక్షరం *remote_ip, స్థిరరాశి అక్షరం *remote_host,
+    స్థిరరాశి అక్షరం *conn_id, స్థిరరాశి అక్షరం *rdomain, నిర్మాణం sshauthopt **authoptsp)
 {
-	char *ca_fp, *principals_file = NULL;
-	const char *reason;
-	struct sshauthopt *principals_opts = NULL, *cert_opts = NULL;
-	struct sshauthopt *final_opts = NULL;
-	int r, ret = 0, found_principal = 0, use_authorized_principals;
+	అక్షరం *ca_fp, *principals_file = ఖాళీ;
+	స్థిరరాశి అక్షరం *reason;
+	నిర్మాణం sshauthopt *principals_opts = ఖాళీ, *cert_opts = ఖాళీ;
+	నిర్మాణం sshauthopt *final_opts = ఖాళీ;
+	పూర్ణాంకం r, ret = 0, దొరికింది_principal = 0, use_authorized_principals;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	ఒకవేళ (authoptsp != ఖాళీ)
+		*authoptsp = ఖాళీ;
 
-	if (!sshkey_is_cert(key) || options.trusted_user_ca_keys == NULL)
-		return 0;
+	ఒకవేళ (!sshkey_is_cert(కీలకం) || options.trusted_user_ca_కీలకాలు == ఖాళీ)
+		తిరిగి 0;
 
-	if ((ca_fp = sshkey_fingerprint(key->cert->signature_key,
-	    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
-		return 0;
+	ఒకవేళ ((ca_fp = sshkey_fingerprint(కీలకం->cert->signature_కీలకం,
+	    options.fingerprint_hash, SSH_FP_DEFAULT)) == ఖాళీ)
+		తిరిగి 0;
 
-	if ((r = sshkey_in_file(key->cert->signature_key,
-	    options.trusted_user_ca_keys, 1, 0)) != 0) {
+	ఒకవేళ ((r = sshkey_లోపల_file(కీలకం->cert->signature_కీలకం,
+	    options.trusted_user_ca_కీలకాలు, 1, 0)) != 0) {
 		debug2_fr(r, "CA %s %s is not listed in %s",
-		    sshkey_type(key->cert->signature_key), ca_fp,
-		    options.trusted_user_ca_keys);
-		goto out;
+		    sshkey_type(కీలకం->cert->signature_కీలకం), ca_fp,
+		    options.trusted_user_ca_కీలకాలు);
+		వెళ్ళు బహిర్గతం;
 	}
 	/*
 	 * If AuthorizedPrincipals is in use, then compare the certificate
 	 * principals against the names in that file rather than matching
 	 * against the username.
 	 */
-	if ((principals_file = authorized_principals_file(pw)) != NULL) {
-		if (match_principals_file(pw, principals_file,
-		    key->cert, &principals_opts))
-			found_principal = 1;
+	ఒకవేళ ((principals_file = authorized_principals_file(pw)) != ఖాళీ) {
+		ఒకవేళ (సరిపోలిక_principals_file(pw, principals_file,
+		    కీలకం->cert, &principals_opts))
+			దొరికింది_principal = 1;
 	}
 	/* Try querying command if specified */
-	if (!found_principal && match_principals_command(pw, key,
+	ఒకవేళ (!దొరికింది_principal && సరిపోలిక_principals_command(pw, కీలకం,
 	    conn_id, rdomain, &principals_opts))
-		found_principal = 1;
+		దొరికింది_principal = 1;
 	/* If principals file or command is specified, then require a match */
-	use_authorized_principals = principals_file != NULL ||
-	    options.authorized_principals_command != NULL;
-	if (!found_principal && use_authorized_principals) {
+	use_authorized_principals = principals_file != ఖాళీ ||
+	    options.authorized_principals_command != ఖాళీ;
+	ఒకవేళ (!దొరికింది_principal && use_authorized_principals) {
 		reason = "Certificate does not contain an authorized principal";
-		goto fail_reason;
+		వెళ్ళు fail_reason;
 	}
-	if (use_authorized_principals && principals_opts == NULL)
+	ఒకవేళ (use_authorized_principals && principals_opts == ఖాళీ)
 		fatal_f("internal error: missing principals_opts");
-	if (sshkey_cert_check_authority_now(key, 0, 0,
-	    use_authorized_principals ? NULL : pw->pw_name, &reason) != 0)
-		goto fail_reason;
+	ఒకవేళ (sshkey_cert_check_authority_now(కీలకం, 0, 0,
+	    use_authorized_principals ? ఖాళీ : pw->pw_name, &reason) != 0)
+		వెళ్ళు fail_reason;
 
 	/* Check authority from options in key and from principals file/cmd */
-	if ((cert_opts = sshauthopt_from_cert(key)) == NULL) {
+	ఒకవేళ ((cert_opts = sshauthopt_from_cert(కీలకం)) == ఖాళీ) {
 		reason = "Invalid certificate options";
-		goto fail_reason;
+		వెళ్ళు fail_reason;
 	}
-	if (auth_authorise_keyopts(pw, cert_opts, 0,
+	ఒకవేళ (auth_authorise_keyopts(pw, cert_opts, 0,
 	    remote_ip, remote_host, "cert") != 0) {
 		reason = "Refused by certificate options";
-		goto fail_reason;
+		వెళ్ళు fail_reason;
 	}
-	if (principals_opts == NULL) {
+	ఒకవేళ (principals_opts == ఖాళీ) {
 		final_opts = cert_opts;
-		cert_opts = NULL;
-	} else {
-		if (auth_authorise_keyopts(pw, principals_opts, 0,
+		cert_opts = ఖాళీ;
+	} లేకపోతే {
+		ఒకవేళ (auth_authorise_keyopts(pw, principals_opts, 0,
 		    remote_ip, remote_host, "principals") != 0) {
 			reason = "Refused by certificate principals options";
-			goto fail_reason;
+			వెళ్ళు fail_reason;
 		}
-		if ((final_opts = sshauthopt_merge(principals_opts,
-		    cert_opts, &reason)) == NULL) {
+		ఒకవేళ ((final_opts = sshauthopt_విలీనం(principals_opts,
+		    cert_opts, &reason)) == ఖాళీ) {
  fail_reason:
 			error("Refusing certificate ID \"%s\" serial=%llu "
-			    "signed by %s CA %s: %s", key->cert->key_id,
-			    (unsigned long long)key->cert->serial,
-			    sshkey_type(key->cert->signature_key), ca_fp,
+			    "signed by %s CA %s: %s", కీలకం->cert->కీలకం_id,
+			    (గుర్తులేని దీర్ఘ దీర్ఘ)కీలకం->cert->serial,
+			    sshkey_type(కీలకం->cert->signature_కీలకం), ca_fp,
 			    reason);
-			auth_debug_add("Refused Certificate ID \"%s\" "
-			    "serial=%llu: %s", key->cert->key_id,
-			    (unsigned long long)key->cert->serial, reason);
-			goto out;
+			auth_debug_కూడు("Refused Certificate ID \"%s\" "
+			    "serial=%llu: %s", కీలకం->cert->కీలకం_id,
+			    (గుర్తులేని దీర్ఘ దీర్ఘ)కీలకం->cert->serial, reason);
+			వెళ్ళు బహిర్గతం;
 		}
 	}
 
 	/* Success */
 	verbose("Accepted certificate ID \"%s\" (serial %llu) signed by "
-	    "%s CA %s via %s", key->cert->key_id,
-	    (unsigned long long)key->cert->serial,
-	    sshkey_type(key->cert->signature_key), ca_fp,
-	    options.trusted_user_ca_keys);
-	if (authoptsp != NULL) {
+	    "%s CA %s via %s", కీలకం->cert->కీలకం_id,
+	    (గుర్తులేని దీర్ఘ దీర్ఘ)కీలకం->cert->serial,
+	    sshkey_type(కీలకం->cert->signature_కీలకం), ca_fp,
+	    options.trusted_user_ca_కీలకాలు);
+	ఒకవేళ (authoptsp != ఖాళీ) {
 		*authoptsp = final_opts;
-		final_opts = NULL;
+		final_opts = ఖాళీ;
 	}
 	ret = 1;
- out:
+ బహిర్గతం:
 	sshauthopt_free(principals_opts);
 	sshauthopt_free(cert_opts);
 	sshauthopt_free(final_opts);
-	free(principals_file);
-	free(ca_fp);
-	return ret;
+	విడుదల(principals_file);
+	విడుదల(ca_fp);
+	తిరిగి ret;
 }
 
 /*
  * Checks whether key is allowed in file.
  * returns 1 if the key is allowed or 0 otherwise.
  */
-static int
-user_key_allowed2(struct passwd *pw, struct sshkey *key,
-    char *file, const char *remote_ip, const char *remote_host,
-    struct sshauthopt **authoptsp)
+స్థిర పూర్ణాంకం
+user_కీలకం_allowed2(నిర్మాణం passwd *pw, నిర్మాణం sshkey *కీలకం,
+    అక్షరం *file, స్థిరరాశి అక్షరం *remote_ip, స్థిరరాశి అక్షరం *remote_host,
+    నిర్మాణం sshauthopt **authoptsp)
 {
 	FILE *f;
-	int found_key = 0;
+	పూర్ణాంకం దొరికింది_కీలకం = 0;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	ఒకవేళ (authoptsp != ఖాళీ)
+		*authoptsp = ఖాళీ;
 
 	/* Temporarily use the user's uid. */
 	temporarily_use_uid(pw);
 
 	debug("trying public key file %s", file);
-	if ((f = auth_openkeyfile(file, pw, options.strict_modes)) != NULL) {
-		found_key = auth_check_authkeys_file(pw, f, file,
-		    key, remote_ip, remote_host, authoptsp);
+	ఒకవేళ ((f = auth_openkeyfile(file, pw, options.strict_modes)) != ఖాళీ) {
+		దొరికింది_కీలకం = auth_check_authkeys_file(pw, f, file,
+		    కీలకం, remote_ip, remote_host, authoptsp);
 		fclose(f);
 	}
 
 	restore_uid();
-	return found_key;
+	తిరిగి దొరికింది_కీలకం;
 }
 
 /*
  * Checks whether key is allowed in output of command.
  * returns 1 if the key is allowed or 0 otherwise.
  */
-static int
-user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
-    const char *remote_ip, const char *remote_host,
-    const char *conn_id, const char *rdomain, struct sshauthopt **authoptsp)
+స్థిర పూర్ణాంకం
+user_కీలకం_command_allowed2(నిర్మాణం passwd *user_pw, నిర్మాణం sshkey *కీలకం,
+    స్థిరరాశి అక్షరం *remote_ip, స్థిరరాశి అక్షరం *remote_host,
+    స్థిరరాశి అక్షరం *conn_id, స్థిరరాశి అక్షరం *rdomain, నిర్మాణం sshauthopt **authoptsp)
 {
-	struct passwd *runas_pw = NULL;
-	FILE *f = NULL;
-	int r, ok, found_key = 0;
-	int i, uid_swapped = 0, ac = 0;
+	నిర్మాణం passwd *runas_pw = ఖాళీ;
+	FILE *f = ఖాళీ;
+	పూర్ణాంకం r, ok, దొరికింది_కీలకం = 0;
+	పూర్ణాంకం i, uid_swapped = 0, ac = 0;
 	pid_t pid;
-	char *username = NULL, *key_fp = NULL, *keytext = NULL;
-	char uidstr[32], *tmp, *command = NULL, **av = NULL;
-	void (*osigchld)(int);
+	అక్షరం *username = ఖాళీ, *కీలకం_fp = ఖాళీ, *keytext = ఖాళీ;
+	అక్షరం uidstr[32], *tmp, *command = ఖాళీ, **av = ఖాళీ;
+	శూన్య (*osigchld)(పూర్ణాంకం);
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
-	if (options.authorized_keys_command == NULL)
-		return 0;
-	if (options.authorized_keys_command_user == NULL) {
+	ఒకవేళ (authoptsp != ఖాళీ)
+		*authoptsp = ఖాళీ;
+	ఒకవేళ (options.authorized_కీలకాలు_command == ఖాళీ)
+		తిరిగి 0;
+	ఒకవేళ (options.authorized_కీలకాలు_command_user == ఖాళీ) {
 		error("No user for AuthorizedKeysCommand specified, skipping");
-		return 0;
+		తిరిగి 0;
 	}
 
 	/*
@@ -712,53 +712,53 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
 
 	/* Prepare and verify the user for the command */
-	username = percent_expand(options.authorized_keys_command_user,
-	    "u", user_pw->pw_name, (char *)NULL);
+	username = percent_expand(options.authorized_కీలకాలు_command_user,
+	    "u", user_pw->pw_name, (అక్షరం *)ఖాళీ);
 	runas_pw = getpwnam(username);
-	if (runas_pw == NULL) {
+	ఒకవేళ (runas_pw == ఖాళీ) {
 		error("AuthorizedKeysCommandUser \"%s\" not found: %s",
 		    username, strerror(errno));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Prepare AuthorizedKeysCommand */
-	if ((key_fp = sshkey_fingerprint(key, options.fingerprint_hash,
-	    SSH_FP_DEFAULT)) == NULL) {
+	ఒకవేళ ((కీలకం_fp = sshkey_fingerprint(కీలకం, options.fingerprint_hash,
+	    SSH_FP_DEFAULT)) == ఖాళీ) {
 		error_f("sshkey_fingerprint failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshkey_to_base64(key, &keytext)) != 0) {
+	ఒకవేళ ((r = sshkey_గమ్యం_base64(కీలకం, &keytext)) != 0) {
 		error_fr(r, "sshkey_to_base64 failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Turn the command into an argument vector */
-	if (argv_split(options.authorized_keys_command, &ac, &av, 0) != 0) {
+	ఒకవేళ (argv_విభజించు(options.authorized_కీలకాలు_command, &ac, &av, 0) != 0) {
 		error("AuthorizedKeysCommand \"%s\" contains invalid quotes",
-		    options.authorized_keys_command);
-		goto out;
+		    options.authorized_కీలకాలు_command);
+		వెళ్ళు బహిర్గతం;
 	}
-	if (ac == 0) {
+	ఒకవేళ (ac == 0) {
 		error("AuthorizedKeysCommand \"%s\" yielded no arguments",
-		    options.authorized_keys_command);
-		goto out;
+		    options.authorized_కీలకాలు_command);
+		వెళ్ళు బహిర్గతం;
 	}
-	snprintf(uidstr, sizeof(uidstr), "%llu",
-	    (unsigned long long)user_pw->pw_uid);
-	for (i = 1; i < ac; i++) {
+	snprintf(uidstr, పరిమాణం(uidstr), "%llu",
+	    (గుర్తులేని దీర్ఘ దీర్ఘ)user_pw->pw_uid);
+	కొరకు (i = 1; i < ac; i++) {
 		tmp = percent_expand(av[i],
 		    "C", conn_id,
 		    "D", rdomain,
 		    "U", uidstr,
 		    "u", user_pw->pw_name,
 		    "h", user_pw->pw_dir,
-		    "t", sshkey_ssh_name(key),
-		    "f", key_fp,
+		    "t", sshkey_ssh_name(కీలకం),
+		    "f", కీలకం_fp,
 		    "k", keytext,
-		    (char *)NULL);
-		if (tmp == NULL)
+		    (అక్షరం *)ఖాళీ);
+		ఒకవేళ (tmp == ఖాళీ)
 			fatal_f("percent_expand failed");
-		free(av[i]);
+		విడుదల(av[i]);
 		av[i] = tmp;
 	}
 	/* Prepare a printable command for logs, etc. */
@@ -769,143 +769,143 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
 	 * then fall back to the old behaviour of passing the
 	 * target username as a single argument.
 	 */
-	if (ac == 1) {
-		av = xreallocarray(av, ac + 2, sizeof(*av));
+	ఒకవేళ (ac == 1) {
+		av = xreallocarray(av, ac + 2, పరిమాణం(*av));
 		av[1] = xstrdup(user_pw->pw_name);
-		av[2] = NULL;
+		av[2] = ఖాళీ;
 		/* Fix up command too, since it is used in log messages */
-		free(command);
+		విడుదల(command);
 		xasprintf(&command, "%s %s", av[0], av[1]);
 	}
 
-	if ((pid = subprocess("AuthorizedKeysCommand", command,
+	ఒకవేళ ((pid = subprocess("AuthorizedKeysCommand", command,
 	    ac, av, &f,
 	    SSH_SUBPROCESS_STDOUT_CAPTURE|SSH_SUBPROCESS_STDERR_DISCARD,
 	    runas_pw, temporarily_use_uid, restore_uid)) == 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
 	uid_swapped = 1;
 	temporarily_use_uid(runas_pw);
 
 	ok = auth_check_authkeys_file(user_pw, f,
-	    options.authorized_keys_command, key, remote_ip,
+	    options.authorized_కీలకాలు_command, కీలకం, remote_ip,
 	    remote_host, authoptsp);
 
 	fclose(f);
-	f = NULL;
+	f = ఖాళీ;
 
-	if (exited_cleanly(pid, "AuthorizedKeysCommand", command, 0) != 0)
-		goto out;
+	ఒకవేళ (exited_cleanly(pid, "AuthorizedKeysCommand", command, 0) != 0)
+		వెళ్ళు బహిర్గతం;
 
 	/* Read completed successfully */
-	found_key = ok;
- out:
-	if (f != NULL)
+	దొరికింది_కీలకం = ok;
+ బహిర్గతం:
+	ఒకవేళ (f != ఖాళీ)
 		fclose(f);
 	ssh_signal(SIGCHLD, osigchld);
-	for (i = 0; i < ac; i++)
-		free(av[i]);
-	free(av);
-	if (uid_swapped)
+	కొరకు (i = 0; i < ac; i++)
+		విడుదల(av[i]);
+	విడుదల(av);
+	ఒకవేళ (uid_swapped)
 		restore_uid();
-	free(command);
-	free(username);
-	free(key_fp);
-	free(keytext);
-	return found_key;
+	విడుదల(command);
+	విడుదల(username);
+	విడుదల(కీలకం_fp);
+	విడుదల(keytext);
+	తిరిగి దొరికింది_కీలకం;
 }
 
 /*
  * Check whether key authenticates and authorises the user.
  */
-int
-user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
-    int auth_attempt, struct sshauthopt **authoptsp)
+పూర్ణాంకం
+user_కీలకం_allowed(నిర్మాణం ssh *ssh, నిర్మాణం passwd *pw, నిర్మాణం sshkey *కీలకం,
+    పూర్ణాంకం auth_attempt, నిర్మాణం sshauthopt **authoptsp)
 {
 	u_int success = 0, i, j;
-	char *file = NULL, *conn_id;
-	struct sshauthopt *opts = NULL;
-	const char *rdomain, *remote_ip, *remote_host;
+	అక్షరం *file = ఖాళీ, *conn_id;
+	నిర్మాణం sshauthopt *opts = ఖాళీ;
+	స్థిరరాశి అక్షరం *rdomain, *remote_ip, *remote_host;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	ఒకవేళ (authoptsp != ఖాళీ)
+		*authoptsp = ఖాళీ;
 
-	if (auth_key_is_revoked(key))
-		return 0;
-	if (sshkey_is_cert(key) &&
-	    auth_key_is_revoked(key->cert->signature_key))
-		return 0;
+	ఒకవేళ (auth_కీలకం_is_revoked(కీలకం))
+		తిరిగి 0;
+	ఒకవేళ (sshkey_is_cert(కీలకం) &&
+	    auth_కీలకం_is_revoked(కీలకం->cert->signature_కీలకం))
+		తిరిగి 0;
 
-	if ((rdomain = ssh_packet_rdomain_in(ssh)) == NULL)
+	ఒకవేళ ((rdomain = ssh_packet_rdomain_లోపల(ssh)) == ఖాళీ)
 		rdomain = "";
 	remote_ip = ssh_remote_ipaddr(ssh);
 	remote_host = auth_get_canonical_hostname(ssh, options.use_dns);
 	xasprintf(&conn_id, "%s %d %s %d",
-	    ssh_local_ipaddr(ssh), ssh_local_port(ssh),
-	    remote_ip, ssh_remote_port(ssh));
+	    ssh_local_ipaddr(ssh), ssh_local_పోర్టు(ssh),
+	    remote_ip, ssh_remote_పోర్టు(ssh));
 
-	for (i = 0; !success && i < options.num_authkeys_files; i++) {
-		int r;
+	కొరకు (i = 0; !success && i < options.అంకె_authkeys_files; i++) {
+		పూర్ణాంకం r;
 		glob_t gl;
 
-		if (strcasecmp(options.authorized_keys_files[i], "none") == 0)
-			continue;
-		file = expand_authorized_keys(
-		    options.authorized_keys_files[i], pw);
+		ఒకవేళ (strcasecmp(options.authorized_కీలకాలు_files[i], "none") == 0)
+			కొనసాగు;
+		file = expand_authorized_కీలకాలు(
+		    options.authorized_కీలకాలు_files[i], pw);
 		temporarily_use_uid(pw);
-		r = glob(file, 0, NULL, &gl);
+		r = glob(file, 0, ఖాళీ, &gl);
 		restore_uid();
-		if (r != 0) {
-			if (r != GLOB_NOMATCH) {
+		ఒకవేళ (r != 0) {
+			ఒకవేళ (r != GLOB_NOMATCH) {
 				logit_f("glob \"%s\" failed", file);
 			}
-			free(file);
-			file = NULL;
-			continue;
-		} else if (gl.gl_pathc > INT_MAX) {
+			విడుదల(file);
+			file = ఖాళీ;
+			కొనసాగు;
+		} లేకపోతే ఒకవేళ (gl.gl_pathc > గరిష్ఠ_పూర్ణాంకం) {
 			fatal_f("too many glob results for \"%s\"", file);
-		} else if (gl.gl_pathc > 1) {
+		} లేకపోతే ఒకవేళ (gl.gl_pathc > 1) {
 			debug2_f("glob \"%s\" returned %zu matches", file,
 			    gl.gl_pathc);
 		}
-		for (j = 0; !success && j < gl.gl_pathc; j++) {
-			success = user_key_allowed2(pw, key, gl.gl_pathv[j],
+		కొరకు (j = 0; !success && j < gl.gl_pathc; j++) {
+			success = user_కీలకం_allowed2(pw, కీలకం, gl.gl_pathv[j],
 			    remote_ip, remote_host, &opts);
-			if (!success) {
+			ఒకవేళ (!success) {
 				sshauthopt_free(opts);
-				opts = NULL;
+				opts = ఖాళీ;
 			}
 		}
-		free(file);
-		file = NULL;
+		విడుదల(file);
+		file = ఖాళీ;
 		globfree(&gl);
 	}
-	if (success)
-		goto out;
+	ఒకవేళ (success)
+		వెళ్ళు బహిర్గతం;
 
-	if ((success = user_cert_trusted_ca(pw, key, remote_ip, remote_host,
+	ఒకవేళ ((success = user_cert_trusted_ca(pw, కీలకం, remote_ip, remote_host,
 	    conn_id, rdomain, &opts)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	sshauthopt_free(opts);
-	opts = NULL;
+	opts = ఖాళీ;
 
-	if ((success = user_key_command_allowed2(pw, key, remote_ip,
+	ఒకవేళ ((success = user_కీలకం_command_allowed2(pw, కీలకం, remote_ip,
 	    remote_host, conn_id, rdomain, &opts)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	sshauthopt_free(opts);
-	opts = NULL;
+	opts = ఖాళీ;
 
- out:
-	free(conn_id);
-	if (success && authoptsp != NULL) {
+ బహిర్గతం:
+	విడుదల(conn_id);
+	ఒకవేళ (success && authoptsp != ఖాళీ) {
 		*authoptsp = opts;
-		opts = NULL;
+		opts = ఖాళీ;
 	}
 	sshauthopt_free(opts);
-	return success;
+	తిరిగి success;
 }
 
-Authmethod method_pubkey = {
+Authmethod పద్ధతి_pubkey = {
 	&methodcfg_pubkey,
 	userauth_pubkey,
 };

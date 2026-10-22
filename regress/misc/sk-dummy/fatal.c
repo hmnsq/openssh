@@ -1,45 +1,45 @@
 /* public domain */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <unistd.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <unistd.h>
 
-#include "log.h"
+#అన్తర్భావ "log.h"
 
-void
-sshlogv(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, va_list args)
+శూన్య
+sshlogv(స్థిరరాశి అక్షరం *file, స్థిరరాశి అక్షరం *func, పూర్ణాంకం పంక్తి, పూర్ణాంకం showfunc,
+    LogLevel level, స్థిరరాశి అక్షరం *suffix, స్థిరరాశి అక్షరం *fmt, va_list వాదనలు)
 {
-	if (showfunc)
+	ఒకవేళ (showfunc)
 		fprintf(stderr, "%s: ", func);
-	vfprintf(stderr, fmt, args);
-	if (suffix != NULL)
+	vfprintf(stderr, fmt, వాదనలు);
+	ఒకవేళ (suffix != ఖాళీ)
 		fprintf(stderr, ": %s", suffix);
 	fputc('\n', stderr);
 }
 
-void
-sshlog(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+శూన్య
+sshlog(స్థిరరాశి అక్షరం *file, స్థిరరాశి అక్షరం *func, పూర్ణాంకం పంక్తి, పూర్ణాంకం showfunc,
+    LogLevel level, స్థిరరాశి అక్షరం *suffix, స్థిరరాశి అక్షరం *fmt, ...)
 {
-	va_list args;
+	va_list వాదనలు;
 
-	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
-	va_end(args);
+	va_start(వాదనలు, fmt);
+	sshlogv(file, func, పంక్తి, showfunc, level, suffix, fmt, వాదనలు);
+	va_end(వాదనలు);
 }
 
-void
-sshfatal(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+శూన్య
+sshfatal(స్థిరరాశి అక్షరం *file, స్థిరరాశి అక్షరం *func, పూర్ణాంకం పంక్తి, పూర్ణాంకం showfunc,
+    LogLevel level, స్థిరరాశి అక్షరం *suffix, స్థిరరాశి అక్షరం *fmt, ...)
 {
-	va_list args;
+	va_list వాదనలు;
 
-	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
-	va_end(args);
+	va_start(వాదనలు, fmt);
+	sshlogv(file, func, పంక్తి, showfunc, level, suffix, fmt, వాదనలు);
+	va_end(వాదనలు);
 	_exit(1);
 }

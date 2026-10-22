@@ -19,195 +19,195 @@
  * Linux-specific portability code
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#if defined(LINUX_OOM_ADJUST) || defined(SYSTEMD_NOTIFY)
-#include <sys/socket.h>
-#include <sys/un.h>
+#ఒకవేళ defined(LINUX_OOM_ADJUST) || defined(SYSTEMD_NOTIFY)
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <sys/un.h>
 
-#include <errno.h>
-#include <inttypes.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <inttypes.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <unistd.h>
 
-#include "log.h"
-#include "xmalloc.h"
-#include "port-linux.h"
-#include "misc.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "port-linux.h"
+#అన్తర్భావ "misc.h"
 
-#ifdef LINUX_OOM_ADJUST
+#నిర్వచితమైతే LINUX_OOM_ADJUST
 /*
  * The magic "don't kill me" values, old and new, as documented in eg:
  * http://lxr.linux.no/#linux+v2.6.32/Documentation/filesystems/proc.txt
  * http://lxr.linux.no/#linux+v2.6.36/Documentation/filesystems/proc.txt
  */
 
-static int oom_adj_save = INT_MIN;
-static char *oom_adj_path = NULL;
-struct {
-	char *path;
-	int value;
+స్థిర పూర్ణాంకం oom_adj_save = INT_MIN;
+స్థిర అక్షరం *oom_adj_మార్గం = ఖాళీ;
+నిర్మాణం {
+	అక్షరం *మార్గం;
+	పూర్ణాంకం విలువ;
 } oom_adjust[] = {
 	{"/proc/self/oom_score_adj", -1000},	/* kernels >= 2.6.36 */
 	{"/proc/self/oom_adj", -17},		/* kernels <= 2.6.35 */
-	{NULL, 0},
+	{ఖాళీ, 0},
 };
 
 /*
  * Tell the kernel's out-of-memory killer to avoid sshd.
  * Returns the previous oom_adj value or zero.
  */
-void
-oom_adjust_setup(void)
+శూన్య
+oom_adjust_అమరిక(శూన్య)
 {
-	int i, value;
+	పూర్ణాంకం i, విలువ;
 	FILE *fp;
 
 	debug3("%s", __func__);
-	 for (i = 0; oom_adjust[i].path != NULL; i++) {
-		oom_adj_path = oom_adjust[i].path;
-		value = oom_adjust[i].value;
-		if ((fp = fopen(oom_adj_path, "r+")) != NULL) {
-			if (fscanf(fp, "%d", &oom_adj_save) != 1)
-				verbose("error reading %s: %s", oom_adj_path,
+	 కొరకు (i = 0; oom_adjust[i].మార్గం != ఖాళీ; i++) {
+		oom_adj_మార్గం = oom_adjust[i].మార్గం;
+		విలువ = oom_adjust[i].విలువ;
+		ఒకవేళ ((fp = fopen(oom_adj_మార్గం, "r+")) != ఖాళీ) {
+			ఒకవేళ (fscanf(fp, "%d", &oom_adj_save) != 1)
+				verbose("error reading %s: %s", oom_adj_మార్గం,
 				    strerror(errno));
-			else {
+			లేకపోతే {
 				rewind(fp);
-				if (fprintf(fp, "%d\n", value) <= 0)
+				ఒకవేళ (fprintf(fp, "%d\n", విలువ) <= 0)
 					verbose("error writing %s: %s",
-					   oom_adj_path, strerror(errno));
-				else
+					   oom_adj_మార్గం, strerror(errno));
+				లేకపోతే
 					debug("Set %s from %d to %d",
-					   oom_adj_path, oom_adj_save, value);
+					   oom_adj_మార్గం, oom_adj_save, విలువ);
 			}
 			fclose(fp);
-			return;
+			తిరిగి;
 		}
 	}
-	oom_adj_path = NULL;
+	oom_adj_మార్గం = ఖాళీ;
 }
 
 /* Restore the saved OOM adjustment */
-void
-oom_adjust_restore(void)
+శూన్య
+oom_adjust_restore(శూన్య)
 {
 	FILE *fp;
 
 	debug3("%s", __func__);
-	if (oom_adj_save == INT_MIN || oom_adj_path == NULL ||
-	    (fp = fopen(oom_adj_path, "w")) == NULL)
-		return;
+	ఒకవేళ (oom_adj_save == INT_MIN || oom_adj_మార్గం == ఖాళీ ||
+	    (fp = fopen(oom_adj_మార్గం, "w")) == ఖాళీ)
+		తిరిగి;
 
-	if (fprintf(fp, "%d\n", oom_adj_save) <= 0)
-		verbose("error writing %s: %s", oom_adj_path, strerror(errno));
-	else
-		debug("Set %s to %d", oom_adj_path, oom_adj_save);
+	ఒకవేళ (fprintf(fp, "%d\n", oom_adj_save) <= 0)
+		verbose("error writing %s: %s", oom_adj_మార్గం, strerror(errno));
+	లేకపోతే
+		debug("Set %s to %d", oom_adj_మార్గం, oom_adj_save);
 
 	fclose(fp);
-	return;
+	తిరిగి;
 }
-#endif /* LINUX_OOM_ADJUST */
+#అయితే_ముగింపు /* LINUX_OOM_ADJUST */
 
-#ifdef LINUX_MEMLOCK_ONFAULT
-#include <sys/mman.h>
+#నిర్వచితమైతే LINUX_MEMLOCK_ONFAULT
+#అన్తర్భావ <sys/mman.h>
 
-void
-memlock_onfault_setup(void)
+శూన్య
+memlock_onfault_అమరిక(శూన్య)
 {
-	if (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0)
+	ఒకవేళ (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0)
 		verbose("unable to lock memory: %s", strerror(errno));
-	else
+	లేకపోతే
 		debug("memory locked");
 }
-#endif /* LINUX_MEMLOCK_ONFAULT */
+#అయితే_ముగింపు /* LINUX_MEMLOCK_ONFAULT */
 
-#ifdef SYSTEMD_NOTIFY
+#నిర్వచితమైతే SYSTEMD_NOTIFY
 
-static void ssh_systemd_notify(const char *, ...)
-    __attribute__((__format__ (printf, 1, 2))) __attribute__((__nonnull__ (1)));
+స్థిర శూన్య ssh_systemd_notify(స్థిరరాశి అక్షరం *, ...)
+    __attribute__((__format__ (రాయి, 1, 2))) __attribute__((__nonnull__ (1)));
 
-static void
-ssh_systemd_notify(const char *fmt, ...)
+స్థిర శూన్య
+ssh_systemd_notify(స్థిరరాశి అక్షరం *fmt, ...)
 {
-	char *s = NULL;
-	const char *path;
-	struct stat sb;
-	struct sockaddr_un addr;
-	int fd = -1;
+	అక్షరం *s = ఖాళీ;
+	స్థిరరాశి అక్షరం *మార్గం;
+	నిర్మాణం stat sb;
+	నిర్మాణం sockaddr_un addr;
+	పూర్ణాంకం fd = -1;
 	va_list ap;
 
-	if ((path = getenv("NOTIFY_SOCKET")) == NULL || strlen(path) == 0)
-		return;
+	ఒకవేళ ((మార్గం = getenv("NOTIFY_SOCKET")) == ఖాళీ || అక్షరశ్రేణి_పొడవు(మార్గం) == 0)
+		తిరిగి;
 
 	va_start(ap, fmt);
 	xvasprintf(&s, fmt, ap);
 	va_end(ap);
 
 	/* Only AF_UNIX is supported, with path or abstract sockets */
-	if (path[0] != '/' && path[0] != '@') {
-		error_f("socket \"%s\" is not compatible with AF_UNIX", path);
-		goto out;
+	ఒకవేళ (మార్గం[0] != '/' && మార్గం[0] != '@') {
+		error_f("socket \"%s\" is not compatible with AF_UNIX", మార్గం);
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if (path[0] == '/' && stat(path, &sb) != 0) {
-		error_f("socket \"%s\" stat: %s", path, strerror(errno));
-		goto out;
+	ఒకవేళ (మార్గం[0] == '/' && stat(మార్గం, &sb) != 0) {
+		error_f("socket \"%s\" stat: %s", మార్గం, strerror(errno));
+		వెళ్ళు బహిర్గతం;
 	}
 
-	memset(&addr, 0, sizeof(addr));
+	memset(&addr, 0, పరిమాణం(addr));
 	addr.sun_family = AF_UNIX;
-	if (strlcpy(addr.sun_path, path,
-	    sizeof(addr.sun_path)) >= sizeof(addr.sun_path)) {
-		error_f("socket path \"%s\" too long", path);
-		goto out;
+	ఒకవేళ (strlcpy(addr.sun_మార్గం, మార్గం,
+	    పరిమాణం(addr.sun_మార్గం)) >= పరిమాణం(addr.sun_మార్గం)) {
+		error_f("socket path \"%s\" too long", మార్గం);
+		వెళ్ళు బహిర్గతం;
 	}
 	/* Support for abstract socket */
-	if (addr.sun_path[0] == '@')
-		addr.sun_path[0] = 0;
-	if ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) == -1) {
-		error_f("socket \"%s\": %s", path, strerror(errno));
-		goto out;
+	ఒకవేళ (addr.sun_మార్గం[0] == '@')
+		addr.sun_మార్గం[0] = 0;
+	ఒకవేళ ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) == -1) {
+		error_f("socket \"%s\": %s", మార్గం, strerror(errno));
+		వెళ్ళు బహిర్గతం;
 	}
-	if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
-		error_f("socket \"%s\" connect: %s", path, strerror(errno));
-		goto out;
+	ఒకవేళ (connect(fd, (నిర్మాణం sockaddr *)&addr, పరిమాణం(addr)) != 0) {
+		error_f("socket \"%s\" connect: %s", మార్గం, strerror(errno));
+		వెళ్ళు బహిర్గతం;
 	}
-	if (write(fd, s, strlen(s)) != (ssize_t)strlen(s)) {
-		error_f("socket \"%s\" write: %s", path, strerror(errno));
-		goto out;
+	ఒకవేళ (లిఖ(fd, s, అక్షరశ్రేణి_పొడవు(s)) != (ssize_t)అక్షరశ్రేణి_పొడవు(s)) {
+		error_f("socket \"%s\" write: %s", మార్గం, strerror(errno));
+		వెళ్ళు బహిర్గతం;
 	}
-	debug_f("socket \"%s\" notified %s", path, s);
- out:
-	if (fd != -1)
+	debug_f("socket \"%s\" notified %s", మార్గం, s);
+ బహిర్గతం:
+	ఒకవేళ (fd != -1)
 		close(fd);
-	free(s);
+	విడుదల(s);
 }
 
-void
-ssh_systemd_notify_ready(void)
+శూన్య
+ssh_systemd_notify_ready(శూన్య)
 {
 	ssh_systemd_notify("READY=1");
 }
 
-void
-ssh_systemd_notify_reload(void)
+శూన్య
+ssh_systemd_notify_reload(శూన్య)
 {
-	struct timespec now;
+	నిర్మాణం timespec now;
 
 	monotime_ts(&now);
-	if (now.tv_sec < 0 || now.tv_nsec < 0) {
+	ఒకవేళ (now.tv_sec < 0 || now.tv_nsec < 0) {
 		error_f("monotime returned negative value");
 		ssh_systemd_notify("RELOADING=1");
-	} else {
+	} లేకపోతే {
 		ssh_systemd_notify("RELOADING=1\nMONOTONIC_USEC=%llu",
 		    ((uint64_t)now.tv_sec * 1000000ULL) +
 		    ((uint64_t)now.tv_nsec / 1000ULL));
 	}
 }
-#endif /* SYSTEMD_NOTIFY */
+#అయితే_ముగింపు /* SYSTEMD_NOTIFY */
 
-#endif /* WITH_SELINUX || LINUX_OOM_ADJUST || SYSTEMD_NOTIFY */
+#అయితే_ముగింపు /* WITH_SELINUX || LINUX_OOM_ADJUST || SYSTEMD_NOTIFY */

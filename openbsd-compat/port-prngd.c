@@ -22,27 +22,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <sys/un.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#అన్తర్భావ <netinet/in.h>
+#అన్తర్భావ <arpa/inet.h>
 
-#include <errno.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <stddef.h> /* for offsetof */
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <stddef.h> /* for offsetof */
 
-#include "atomicio.h"
-#include "misc.h"
-#include "log.h"
+#అన్తర్భావ "atomicio.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "log.h"
 
-#if defined(PRNGD_PORT) || defined(PRNGD_SOCKET)
+#ఒకవేళ defined(PRNGD_పోర్టు) || defined(PRNGD_SOCKET)
 /*
  * EGD/PRNGD interface.
  *
@@ -53,39 +53,39 @@
  * supplied.
  * Returns 0 on success, -1 on error
  */
-static int
-get_random_bytes_prngd(unsigned char *buf, int len,
-    unsigned short tcp_port, char *socket_path)
+స్థిర పూర్ణాంకం
+get_random_బైట్లు_prngd(గుర్తులేని అక్షరం *buf, పూర్ణాంకం len,
+    గుర్తులేని పొట్టి tcp_పోర్టు, అక్షరం *socket_మార్గం)
 {
-	int fd, addr_len, rval, errors;
-	u_char msg[2];
-	struct sockaddr_storage addr;
-	struct sockaddr_in *addr_in = (struct sockaddr_in *)&addr;
-	struct sockaddr_un *addr_un = (struct sockaddr_un *)&addr;
+	పూర్ణాంకం fd, addr_len, rval, errors;
+	u_char సందేశం[2];
+	నిర్మాణం sockaddr_storage addr;
+	నిర్మాణం sockaddr_in *addr_లోపల = (నిర్మాణం sockaddr_in *)&addr;
+	నిర్మాణం sockaddr_un *addr_un = (నిర్మాణం sockaddr_un *)&addr;
 	sshsig_t old_sigpipe;
 
 	/* Sanity checks */
-	if (socket_path == NULL && tcp_port == 0)
+	ఒకవేళ (socket_మార్గం == ఖాళీ && tcp_పోర్టు == 0)
 		fatal("You must specify a port or a socket");
-	if (socket_path != NULL &&
-	    strlen(socket_path) >= sizeof(addr_un->sun_path))
+	ఒకవేళ (socket_మార్గం != ఖాళీ &&
+	    అక్షరశ్రేణి_పొడవు(socket_మార్గం) >= పరిమాణం(addr_un->sun_మార్గం))
 		fatal("Random pool path is too long");
-	if (len <= 0 || len > 255)
+	ఒకవేళ (len <= 0 || len > 255)
 		fatal("Too many bytes (%d) to read from PRNGD", len);
 
-	memset(&addr, '\0', sizeof(addr));
+	memset(&addr, '\0', పరిమాణం(addr));
 
-	if (tcp_port != 0) {
-		addr_in->sin_family = AF_INET;
-		addr_in->sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-		addr_in->sin_port = htons(tcp_port);
-		addr_len = sizeof(*addr_in);
-	} else {
+	ఒకవేళ (tcp_పోర్టు != 0) {
+		addr_లోపల->sin_family = AF_INET;
+		addr_లోపల->sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+		addr_లోపల->sin_port = htons(tcp_పోర్టు);
+		addr_len = పరిమాణం(*addr_లోపల);
+	} లేకపోతే {
 		addr_un->sun_family = AF_UNIX;
-		strlcpy(addr_un->sun_path, socket_path,
-		    sizeof(addr_un->sun_path));
-		addr_len = offsetof(struct sockaddr_un, sun_path) +
-		    strlen(socket_path) + 1;
+		strlcpy(addr_un->sun_మార్గం, socket_మార్గం,
+		    పరిమాణం(addr_un->sun_మార్గం));
+		addr_len = offsetof(నిర్మాణం sockaddr_un, sun_మార్గం) +
+		    అక్షరశ్రేణి_పొడవు(socket_మార్గం) + 1;
 	}
 
 	old_sigpipe = ssh_signal(SIGPIPE, SIG_IGN);
@@ -94,69 +94,69 @@ get_random_bytes_prngd(unsigned char *buf, int len,
 	rval = -1;
 reopen:
 	fd = socket(addr.ss_family, SOCK_STREAM, 0);
-	if (fd == -1) {
+	ఒకవేళ (fd == -1) {
 		error("Couldn't create socket: %s", strerror(errno));
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
-	if (connect(fd, (struct sockaddr*)&addr, addr_len) == -1) {
-		if (tcp_port != 0) {
+	ఒకవేళ (connect(fd, (నిర్మాణం sockaddr*)&addr, addr_len) == -1) {
+		ఒకవేళ (tcp_పోర్టు != 0) {
 			error("Couldn't connect to PRNGD port %d: %s",
-			    tcp_port, strerror(errno));
-		} else {
+			    tcp_పోర్టు, strerror(errno));
+		} లేకపోతే {
 			error("Couldn't connect to PRNGD socket \"%s\": %s",
-			    addr_un->sun_path, strerror(errno));
+			    addr_un->sun_మార్గం, strerror(errno));
 		}
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
 	/* Send blocking read request to PRNGD */
-	msg[0] = 0x02;
-	msg[1] = len;
+	సందేశం[0] = 0x02;
+	సందేశం[1] = len;
 
-	if (atomicio(vwrite, fd, msg, sizeof(msg)) != sizeof(msg)) {
-		if (errno == EPIPE && errors < 10) {
+	ఒకవేళ (atomicio(vwrite, fd, సందేశం, పరిమాణం(సందేశం)) != పరిమాణం(సందేశం)) {
+		ఒకవేళ (errno == EPIPE && errors < 10) {
 			close(fd);
 			errors++;
-			goto reopen;
+			వెళ్ళు reopen;
 		}
 		error("Couldn't write to PRNGD socket: %s",
 		    strerror(errno));
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
-	if (atomicio(read, fd, buf, len) != (size_t)len) {
-		if (errno == EPIPE && errors < 10) {
+	ఒకవేళ (atomicio(పఠ, fd, buf, len) != (కొలత_t)len) {
+		ఒకవేళ (errno == EPIPE && errors < 10) {
 			close(fd);
 			errors++;
-			goto reopen;
+			వెళ్ళు reopen;
 		}
 		error("Couldn't read from PRNGD socket: %s",
 		    strerror(errno));
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
 	rval = 0;
-done:
+పూర్తి:
 	ssh_signal(SIGPIPE, old_sigpipe);
-	if (fd != -1)
+	ఒకవేళ (fd != -1)
 		close(fd);
-	return rval;
+	తిరిగి rval;
 }
-#endif /* PRNGD_PORT || PRNGD_SOCKET */
+#అయితే_ముగింపు /* PRNGD_PORT || PRNGD_SOCKET */
 
-int
-seed_from_prngd(unsigned char *buf, size_t bytes)
+పూర్ణాంకం
+విత్తనం_from_prngd(గుర్తులేని అక్షరం *buf, కొలత_t బైట్లు)
 {
-#ifdef PRNGD_PORT
-	debug("trying egd/prngd port %d", PRNGD_PORT);
-	if (get_random_bytes_prngd(buf, bytes, PRNGD_PORT, NULL) == 0)
-		return 0;
-#endif
-#ifdef PRNGD_SOCKET
+#నిర్వచితమైతే PRNGD_పోర్టు
+	debug("trying egd/prngd port %d", PRNGD_పోర్టు);
+	ఒకవేళ (get_random_బైట్లు_prngd(buf, బైట్లు, PRNGD_పోర్టు, ఖాళీ) == 0)
+		తిరిగి 0;
+#అయితే_ముగింపు
+#నిర్వచితమైతే PRNGD_SOCKET
 	debug("trying egd/prngd socket %s", PRNGD_SOCKET);
-	if (get_random_bytes_prngd(buf, bytes, 0, PRNGD_SOCKET) == 0)
-		return 0;
-#endif
-	return -1;
+	ఒకవేళ (get_random_బైట్లు_prngd(buf, బైట్లు, 0, PRNGD_SOCKET) == 0)
+		తిరిగి 0;
+#అయితే_ముగింపు
+	తిరిగి -1;
 }

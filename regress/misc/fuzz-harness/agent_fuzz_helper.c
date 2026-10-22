@@ -1,159 +1,159 @@
-#include "fixed-keys.h"
-#include <assert.h>
+#అన్తర్భావ "fixed-keys.h"
+#అన్తర్భావ <assert.h>
 
-#define main(ac, av) xxxmain(ac, av)
-#include "../../../ssh-agent.c"
+#నిర్వచించు ప్రధాన(ac, av) xxxmain(ac, av)
+#అన్తర్భావ "../../../ssh-agent.c"
 
-void test_one(const uint8_t* s, size_t slen);
+శూన్య test_one(స్థిరరాశి uint8_t* s, కొలత_t slen);
 
-static int
-devnull_or_die(void)
+స్థిర పూర్ణాంకం
+devnull_or_die(శూన్య)
 {
-	int fd;
+	పూర్ణాంకం fd;
 
-	if ((fd = open("/dev/null", O_RDWR)) == -1) {
+	ఒకవేళ ((fd = open("/dev/null", O_RDWR)) == -1) {
 		error_f("open /dev/null: %s", strerror(errno));
 		abort();
 	}
-	return fd;
+	తిరిగి fd;
 }
 
-static struct sshkey *
-pubkey_or_die(const char *s)
+స్థిర నిర్మాణం sshkey *
+pubkey_or_die(స్థిరరాశి అక్షరం *s)
 {
-	char *tmp, *cp;
-	struct sshkey *pubkey;
-	int r;
+	అక్షరం *tmp, *cp;
+	నిర్మాణం sshkey *pubkey;
+	పూర్ణాంకం r;
 
 	tmp = cp = xstrdup(s);
-	if ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
+	ఒకవేళ ((pubkey = sshkey_new(కీలకం_UNSPEC)) == ఖాళీ)
 		abort();
-	if ((r = sshkey_read(pubkey, &cp)) != 0) {
+	ఒకవేళ ((r = sshkey_read(pubkey, &cp)) != 0) {
 		error_fr(r, "parse");
 		abort();
 	}
-	free(tmp);
-	return pubkey;
+	విడుదల(tmp);
+	తిరిగి pubkey;
 }
 
-static struct sshkey *
-privkey_or_die(const char *s)
+స్థిర నిర్మాణం sshkey *
+privkey_or_die(స్థిరరాశి అక్షరం *s)
 {
-	int r;
-	struct sshbuf *b;
-	struct sshkey *privkey;
+	పూర్ణాంకం r;
+	నిర్మాణం sshbuf *b;
+	నిర్మాణం sshkey *privkey;
 
-	if ((b = sshbuf_from(s, strlen(s))) == NULL) {
+	ఒకవేళ ((b = sshbuf_from(s, అక్షరశ్రేణి_పొడవు(s))) == ఖాళీ) {
 		error_f("sshbuf_from failed");
 		abort();
 	}
-	if ((r = sshkey_parse_private_fileblob(b, "", &privkey, NULL)) != 0) {
+	ఒకవేళ ((r = sshkey_parse_వ్యక్తిగత_fileblob(b, "", &privkey, ఖాళీ)) != 0) {
 		error_fr(r, "parse");
 		abort();
 	}
 	sshbuf_free(b);
-	return privkey;
+	తిరిగి privkey;
 }
 
-static void
-add_key(const char *privkey, const char *certpath)
+స్థిర శూన్య
+కూడు_కీలకం(స్థిరరాశి అక్షరం *privkey, స్థిరరాశి అక్షరం *certpath)
 {
-	Identity *id;
-	int r;
-	struct sshkey *cert;
+	తటస్థం *id;
+	పూర్ణాంకం r;
+	నిర్మాణం sshkey *cert;
 
-	id = xcalloc(1, sizeof(Identity));
-	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
+	id = xcalloc(1, పరిమాణం(తటస్థం));
+	TAILQ_INSERT_TAIL(&idtab->idlist, id, తదుపరి);
 	idtab->nentries++;
-	id->key = privkey_or_die(privkey);
+	id->కీలకం = privkey_or_die(privkey);
 	id->comment = xstrdup("rhododaktulos Eos");
-	if (sshkey_is_sk(id->key))
+	ఒకవేళ (sshkey_is_sk(id->కీలకం))
 		id->sk_provider = xstrdup("internal");
 
 	/* Now the cert too */
-	id = xcalloc(1, sizeof(Identity));
-	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
+	id = xcalloc(1, పరిమాణం(తటస్థం));
+	TAILQ_INSERT_TAIL(&idtab->idlist, id, తదుపరి);
 	idtab->nentries++;
-	id->key = privkey_or_die(privkey);
+	id->కీలకం = privkey_or_die(privkey);
 	cert = pubkey_or_die(certpath);
-	if ((r = sshkey_to_certified(id->key)) != 0) {
+	ఒకవేళ ((r = sshkey_గమ్యం_certified(id->కీలకం)) != 0) {
 		error_fr(r, "sshkey_to_certified");
 		abort();
 	}
-	if ((r = sshkey_cert_copy(cert, id->key)) != 0) {
+	ఒకవేళ ((r = sshkey_cert_copy(cert, id->కీలకం)) != 0) {
 		error_fr(r, "sshkey_cert_copy");
 		abort();
 	}
 	sshkey_free(cert);
 	id->comment = xstrdup("outis");
-	if (sshkey_is_sk(id->key))
+	ఒకవేళ (sshkey_is_sk(id->కీలకం))
 		id->sk_provider = xstrdup("internal");
 }
 
-static void
-cleanup_idtab(void)
+స్థిర శూన్య
+cleanup_idtab(శూన్య)
 {
-	Identity *id;
+	తటస్థం *id;
 
-	if (idtab == NULL) return;
-	for (id = TAILQ_FIRST(&idtab->idlist); id;
+	ఒకవేళ (idtab == ఖాళీ) తిరిగి;
+	కొరకు (id = TAILQ_FIRST(&idtab->idlist); id;
 	    id = TAILQ_FIRST(&idtab->idlist)) {
-		TAILQ_REMOVE(&idtab->idlist, id, next);
-		free_identity(id);
+		TAILQ_REMOVE(&idtab->idlist, id, తదుపరి);
+		free_తటస్థం(id);
 	}
-	free(idtab);
-	idtab = NULL;
+	విడుదల(idtab);
+	idtab = ఖాళీ;
 }
 
-static void
-reset_idtab(void)
+స్థిర శూన్య
+reset_idtab(శూన్య)
 {
 	cleanup_idtab();
 	idtab_init();
 	// Load keys.
-	add_key(PRIV_RSA, CERT_RSA);
-	add_key(PRIV_ECDSA, CERT_ECDSA);
-	add_key(PRIV_ED25519, CERT_ED25519);
-	add_key(PRIV_ECDSA_SK, CERT_ECDSA_SK);
-	add_key(PRIV_ED25519_SK, CERT_ED25519_SK);
+	కూడు_కీలకం(PRIV_RSA, CERT_RSA);
+	కూడు_కీలకం(PRIV_ECDSA, CERT_ECDSA);
+	కూడు_కీలకం(PRIV_ED25519, CERT_ED25519);
+	కూడు_కీలకం(PRIV_ECDSA_SK, CERT_ECDSA_SK);
+	కూడు_కీలకం(PRIV_ED25519_SK, CERT_ED25519_SK);
 }
 
-static void
-cleanup_sockettab(void)
+స్థిర శూన్య
+cleanup_sockettab(శూన్య)
 {
 	u_int i;
-	for (i = 0; i < sockets_alloc; i++) {
-		if (sockets[i].type != AUTH_UNUSED)
+	కొరకు (i = 0; i < sockets_alloc; i++) {
+		ఒకవేళ (sockets[i].type != AUTH_వాడని)
 			close_socket(sockets + i);
 	}
-	free(sockets);
-	sockets = NULL;
+	విడుదల(sockets);
+	sockets = ఖాళీ;
 	sockets_alloc = 0;
 }
 
-static void
-reset_sockettab(int devnull)
+స్థిర శూన్య
+reset_sockettab(పూర్ణాంకం devnull)
 {
-	int fd;
+	పూర్ణాంకం fd;
 
 	cleanup_sockettab();
-	if ((fd = dup(devnull)) == -1) {
+	ఒకవేళ ((fd = dup(devnull)) == -1) {
 		error_f("dup: %s", strerror(errno));
 		abort();
 	}
 	new_socket(AUTH_CONNECTION, fd);
-	assert(sockets[0].type == AUTH_CONNECTION);
-	assert(sockets[0].fd == fd);
+	ప్రతిజ్ఞా(sockets[0].type == AUTH_CONNECTION);
+	ప్రతిజ్ఞా(sockets[0].fd == fd);
 }
 
-#define MAX_MESSAGES 256
-void
-test_one(const uint8_t* s, size_t slen)
+#నిర్వచించు MAX_MESSAGES 256
+శూన్య
+test_one(స్థిరరాశి uint8_t* s, కొలత_t slen)
 {
-	static int devnull = -1;
-	size_t i, olen, nlen;
+	స్థిర పూర్ణాంకం devnull = -1;
+	కొలత_t i, olen, nlen;
 
-	if (devnull == -1) {
+	ఒకవేళ (devnull == -1) {
 		log_init(__progname, SYSLOG_LEVEL_DEBUG3,
 		    SYSLOG_FACILITY_AUTH, 1);
 		devnull = devnull_or_die();
@@ -164,13 +164,13 @@ test_one(const uint8_t* s, size_t slen)
 
 	reset_idtab();
 	reset_sockettab(devnull);
-	(void)sshbuf_put(sockets[0].input, s, slen);
-	for (i = 0; i < MAX_MESSAGES; i++) {
-		olen = sshbuf_len(sockets[0].input);
-		process_message(0);
-		nlen = sshbuf_len(sockets[0].input);
-		if (nlen == 0 || nlen == olen)
-			break;
+	(శూన్య)sshbuf_put(sockets[0].ఆదానం, s, slen);
+	కొరకు (i = 0; i < MAX_MESSAGES; i++) {
+		olen = sshbuf_len(sockets[0].ఆదానం);
+		process_సందేశం(0);
+		nlen = sshbuf_len(sockets[0].ఆదానం);
+		ఒకవేళ (nlen == 0 || nlen == olen)
+			ఆపు;
 	}
 	cleanup_idtab();
 	cleanup_sockettab();

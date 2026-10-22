@@ -30,56 +30,56 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _GETOPT_H_
-#define _GETOPT_H_
+#నిర్వచితం_కాకపోతే _GETOPT_H_
+#నిర్వచించు _GETOPT_H_
 
-#ifndef __THROW
-# if defined __cplusplus
+#నిర్వచితం_కాకపోతే __THROW
+# ఒకవేళ defined __cplusplus
 #  define __THROW throw()
-# else
+# లేకపోతే
 #  define __THROW
 # endif
-#endif
+#అయితే_ముగింపు
 
 /*
  * GNU-like getopt_long() and 4.4BSD getsubopt()/optreset extensions
  */
-#define no_argument        0
-#define required_argument  1
-#define optional_argument  2
+#నిర్వచించు no_argument        0
+#నిర్వచించు required_argument  1
+#నిర్వచించు optional_argument  2
 
-#if 0
-struct option {
+#ఒకవేళ 0
+నిర్మాణం option {
 	/* name of long option */
-	const char *name;
+	స్థిరరాశి అక్షరం *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	పూర్ణాంకం has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	పూర్ణాంకం *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	పూర్ణాంకం val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
-#endif
+పూర్ణాంకం	 getopt_long(పూర్ణాంకం, అక్షరం * స్థిరరాశి *, స్థిరరాశి అక్షరం *,
+	    స్థిరరాశి నిర్మాణం option *, పూర్ణాంకం *);
+పూర్ణాంకం	 getopt_long_only(పూర్ణాంకం, అక్షరం * స్థిరరాశి *, స్థిరరాశి అక్షరం *,
+	    స్థిరరాశి నిర్మాణం option *, పూర్ణాంకం *);
+#అయితే_ముగింపు
 
-#ifndef _GETOPT_DEFINED_
-#define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+#నిర్వచితం_కాకపోతే _GETOPT_DEFINED_
+#నిర్వచించు _GETOPT_DEFINED_
+పూర్ణాంకం	 getopt(పూర్ణాంకం, అక్షరం * స్థిరరాశి *, స్థిరరాశి అక్షరం *) __THROW;
+పూర్ణాంకం	 getsubopt(అక్షరం **, అక్షరం * స్థిరరాశి *, అక్షరం **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
-#endif
+బాహ్య   అక్షరం *optarg;                  /* getopt(3) external variables */
+బాహ్య   పూర్ణాంకం opterr;
+బాహ్య   పూర్ణాంకం optind;
+బాహ్య   పూర్ణాంకం optopt;
+బాహ్య   పూర్ణాంకం optreset;
+బాహ్య   అక్షరం *suboptarg;               /* getsubopt(3) external variable */
+#అయితే_ముగింపు
  
-#endif /* !_GETOPT_H_ */
+#అయితే_ముగింపు /* !_GETOPT_H_ */

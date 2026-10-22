@@ -5,85 +5,85 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include "../test_helper/test_helper.h"
+#అన్తర్భావ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
 
-void test_parse(void);
+శూన్య test_parse(శూన్య);
 
-void
-test_parse(void)
+శూన్య
+test_parse(శూన్య)
 {
-	int port;
-	char *user, *host, *path;
+	పూర్ణాంకం పోర్టు;
+	అక్షరం *user, *host, *మార్గం;
 
-	TEST_START("misc_parse_user_host_path");
-	user = host = path = NULL;
-	ASSERT_INT_EQ(parse_user_host_path("someuser@some.host:some/path",
-	    &user, &host, &path), 0);
+	TEST_ప్రారంభం("misc_parse_user_host_path");
+	user = host = మార్గం = ఖాళీ;
+	ASSERT_INT_EQ(parse_user_host_మార్గం("someuser@some.host:some/path",
+	    &user, &host, &మార్గం), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "some.host");
-	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
-	TEST_DONE();
+	ASSERT_STRING_EQ(మార్గం, "some/path");
+	విడుదల(user); విడుదల(host); విడుదల(మార్గం);
+	TEST_పూర్తి();
 
-	TEST_START("misc_parse_user_ipv4_path");
-	user = host = path = NULL;
-	ASSERT_INT_EQ(parse_user_host_path("someuser@1.22.33.144:some/path",
-	    &user, &host, &path), 0);
+	TEST_ప్రారంభం("misc_parse_user_ipv4_path");
+	user = host = మార్గం = ఖాళీ;
+	ASSERT_INT_EQ(parse_user_host_మార్గం("someuser@1.22.33.144:some/path",
+	    &user, &host, &మార్గం), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "1.22.33.144");
-	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
-	TEST_DONE();
+	ASSERT_STRING_EQ(మార్గం, "some/path");
+	విడుదల(user); విడుదల(host); విడుదల(మార్గం);
+	TEST_పూర్తి();
 
-	TEST_START("misc_parse_user_[ipv4]_path");
-	user = host = path = NULL;
-	ASSERT_INT_EQ(parse_user_host_path("someuser@[1.22.33.144]:some/path",
-	    &user, &host, &path), 0);
+	TEST_ప్రారంభం("misc_parse_user_[ipv4]_path");
+	user = host = మార్గం = ఖాళీ;
+	ASSERT_INT_EQ(parse_user_host_మార్గం("someuser@[1.22.33.144]:some/path",
+	    &user, &host, &మార్గం), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "1.22.33.144");
-	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
-	TEST_DONE();
+	ASSERT_STRING_EQ(మార్గం, "some/path");
+	విడుదల(user); విడుదల(host); విడుదల(మార్గం);
+	TEST_పూర్తి();
 
-	TEST_START("misc_parse_user_[ipv4]_nopath");
-	user = host = path = NULL;
-	ASSERT_INT_EQ(parse_user_host_path("someuser@[1.22.33.144]:",
-	    &user, &host, &path), 0);
+	TEST_ప్రారంభం("misc_parse_user_[ipv4]_nopath");
+	user = host = మార్గం = ఖాళీ;
+	ASSERT_INT_EQ(parse_user_host_మార్గం("someuser@[1.22.33.144]:",
+	    &user, &host, &మార్గం), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "1.22.33.144");
-	ASSERT_STRING_EQ(path, ".");
-	free(user); free(host); free(path);
-	TEST_DONE();
+	ASSERT_STRING_EQ(మార్గం, ".");
+	విడుదల(user); విడుదల(host); విడుదల(మార్గం);
+	TEST_పూర్తి();
 
-	TEST_START("misc_parse_user_ipv6_path");
-	user = host = path = NULL;
-	ASSERT_INT_EQ(parse_user_host_path("someuser@[::1]:some/path",
-	    &user, &host, &path), 0);
+	TEST_ప్రారంభం("misc_parse_user_ipv6_path");
+	user = host = మార్గం = ఖాళీ;
+	ASSERT_INT_EQ(parse_user_host_మార్గం("someuser@[::1]:some/path",
+	    &user, &host, &మార్గం), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "::1");
-	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
-	TEST_DONE();
+	ASSERT_STRING_EQ(మార్గం, "some/path");
+	విడుదల(user); విడుదల(host); విడుదల(మార్గం);
+	TEST_పూర్తి();
 
-	TEST_START("misc_parse_uri");
-	user = host = path = NULL;
+	TEST_ప్రారంభం("misc_parse_uri");
+	user = host = మార్గం = ఖాళీ;
 	ASSERT_INT_EQ(parse_uri("ssh", "ssh://someuser@some.host:22/some/path",
-	    &user, &host, &port, &path), 0);
+	    &user, &host, &పోర్టు, &మార్గం), 0);
 	ASSERT_STRING_EQ(user, "someuser");
 	ASSERT_STRING_EQ(host, "some.host");
-	ASSERT_INT_EQ(port, 22);
-	ASSERT_STRING_EQ(path, "some/path");
-	free(user); free(host); free(path);
-	TEST_DONE();
+	ASSERT_INT_EQ(పోర్టు, 22);
+	ASSERT_STRING_EQ(మార్గం, "some/path");
+	విడుదల(user); విడుదల(host); విడుదల(మార్గం);
+	TEST_పూర్తి();
 }

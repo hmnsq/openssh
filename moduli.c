@@ -37,146 +37,146 @@
  * Second step: test primes' safety (processor intensive)
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifdef WITH_OPENSSL
+#నిర్వచితమైతే WITH_OPENSSL
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#అన్తర్భావ <openssl/bn.h>
+#అన్తర్భావ <openssl/dh.h>
 
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <time.h>
-#include <unistd.h>
-#include <limits.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <limits.h>
 
-#include "xmalloc.h"
-#include "dh.h"
-#include "log.h"
-#include "misc.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "dh.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#అన్తర్భావ "openbsd-compat/openssl-compat.h"
 
 /*
  * File output defines
  */
 
 /* need line long enough for largest moduli plus headers */
-#define QLINESIZE		(100+8192)
+#నిర్వచించు QLINESIZE		(100+8192)
 
 /*
  * Size: decimal.
  * Specifies the number of the most significant bit (0 to M).
  * WARNING: internally, usually 1 to N.
  */
-#define QSIZE_MINIMUM		(511)
+#నిర్వచించు QSIZE_MINIMUM		(511)
 
 /*
  * Prime sieving defines
  */
 
 /* Constant: assuming 8 bit bytes and 32 bit words */
-#define SHIFT_BIT	(3)
-#define SHIFT_BYTE	(2)
-#define SHIFT_WORD	(SHIFT_BIT+SHIFT_BYTE)
-#define SHIFT_MEGABYTE	(20)
-#define SHIFT_MEGAWORD	(SHIFT_MEGABYTE-SHIFT_BYTE)
+#నిర్వచించు జరుపు_బిట్టు	(3)
+#నిర్వచించు జరుపు_BYTE	(2)
+#నిర్వచించు జరుపు_మాట	(జరుపు_బిట్టు+జరుపు_BYTE)
+#నిర్వచించు జరుపు_MEGABYTE	(20)
+#నిర్వచించు జరుపు_MEGAWORD	(జరుపు_MEGABYTE-జరుపు_BYTE)
 
 /*
  * Do not increase this number beyond the unsigned integer bit size.
  * Due to a multiple of 4, it must be LESS than 128 (yielding 2**30 bits).
  */
-#define LARGE_MAXIMUM	(127UL)	/* megabytes */
+#నిర్వచించు LARGE_గరిష్ఠ	(127UL)	/* megabytes */
 
 /*
  * Constant: when used with 32-bit integers, the largest sieve prime
  * has to be less than 2**32.
  */
-#define SMALL_MAXIMUM	(0xffffffffUL)
+#నిర్వచించు SMALL_గరిష్ఠ	(0xffffffffUL)
 
 /* Constant: can sieve all primes less than 2**32, as 65537**2 > 2**32-1. */
-#define TINY_NUMBER	(1UL<<16)
+#నిర్వచించు TINY_సంఖ్య	(1UL<<16)
 
 /* Ensure enough bit space for testing 2*q. */
-#define TEST_MAXIMUM	(1UL<<16)
-#define TEST_MINIMUM	(QSIZE_MINIMUM + 1)
+#నిర్వచించు TEST_గరిష్ఠ	(1UL<<16)
+#నిర్వచించు TEST_MINIMUM	(QSIZE_MINIMUM + 1)
 /* real TEST_MINIMUM	(1UL << (SHIFT_WORD - TEST_POWER)) */
-#define TEST_POWER	(3)	/* 2**n, n < SHIFT_WORD */
+#నిర్వచించు TEST_POWER	(3)	/* 2**n, n < SHIFT_WORD */
 
 /* bit operations on 32-bit words */
-#define BIT_CLEAR(a,n)	((a)[(n)>>SHIFT_WORD] &= ~(1L << ((n) & 31)))
-#define BIT_SET(a,n)	((a)[(n)>>SHIFT_WORD] |= (1L << ((n) & 31)))
-#define BIT_TEST(a,n)	((a)[(n)>>SHIFT_WORD] & (1L << ((n) & 31)))
+#నిర్వచించు బిట్టు_CLEAR(a,n)	((a)[(n)>>జరుపు_మాట] &= ~(1L << ((n) & 31)))
+#నిర్వచించు బిట్టు_సమితి(a,n)	((a)[(n)>>జరుపు_మాట] |= (1L << ((n) & 31)))
+#నిర్వచించు బిట్టు_TEST(a,n)	((a)[(n)>>జరుపు_మాట] & (1L << ((n) & 31)))
 
 /*
  * Prime testing defines
  */
 
 /* Minimum number of primality tests to perform */
-#define TRIAL_MINIMUM	(4)
+#నిర్వచించు TRIAL_MINIMUM	(4)
 
 /*
  * Sieving data (XXX - move to struct)
  */
 
 /* sieve 2**16 */
-static uint32_t *TinySieve, tinybits;
+స్థిర uint32_t *TinySieve, tinybits;
 
 /* sieve 2**30 in 2**16 parts */
-static uint32_t *SmallSieve, smallbits, smallbase;
+స్థిర uint32_t *SmallSieve, smallbits, smallbase;
 
 /* sieve relative to the initial value */
-static uint32_t *LargeSieve, largewords, largetries, largenumbers;
-static uint32_t largebits, largememory;	/* megabytes */
-static BIGNUM *largebase;
+స్థిర uint32_t *LargeSieve, largewords, largetries, largenumbers;
+స్థిర uint32_t largebits, largememory;	/* megabytes */
+స్థిర BIGNUM *largebase;
 
-int gen_candidates(FILE *, uint32_t, BIGNUM *);
-int prime_test(FILE *, FILE *, uint32_t, uint32_t, char *, unsigned long,
-    unsigned long);
+పూర్ణాంకం gen_candidates(FILE *, uint32_t, BIGNUM *);
+పూర్ణాంకం ప్రధానసంఖ్య_test(FILE *, FILE *, uint32_t, uint32_t, అక్షరం *, గుర్తులేని దీర్ఘ,
+    గుర్తులేని దీర్ఘ);
 
 /*
  * print moduli out in consistent form,
  */
-static int
+స్థిర పూర్ణాంకం
 qfileout(FILE * ofile, uint32_t otype, uint32_t otests, uint32_t otries,
     uint32_t osize, uint32_t ogenerator, BIGNUM * omodulus)
 {
-	struct tm *gtm;
-	time_t time_now;
-	int res;
+	నిర్మాణం tm *gtm;
+	time_t సమయం_now;
+	పూర్ణాంకం res;
 
-	time(&time_now);
-	gtm = gmtime(&time_now);
-	if (gtm == NULL)
-		return -1;
+	time(&సమయం_now);
+	gtm = gmtime(&సమయం_now);
+	ఒకవేళ (gtm == ఖాళీ)
+		తిరిగి -1;
 
 	res = fprintf(ofile, "%04d%02d%02d%02d%02d%02d %u %u %u %u %x ",
 	    gtm->tm_year + 1900, gtm->tm_mon + 1, gtm->tm_mday,
 	    gtm->tm_hour, gtm->tm_min, gtm->tm_sec,
 	    otype, otests, otries, osize, ogenerator);
 
-	if (res < 0)
-		return (-1);
+	ఒకవేళ (res < 0)
+		తిరిగి (-1);
 
-	if (BN_print_fp(ofile, omodulus) < 1)
-		return (-1);
+	ఒకవేళ (BN_print_fp(ofile, omodulus) < 1)
+		తిరిగి (-1);
 
 	res = fprintf(ofile, "\n");
 	fflush(ofile);
 
-	return (res > 0 ? 0 : -1);
+	తిరిగి (res > 0 ? 0 : -1);
 }
 
 
 /*
  ** Sieve p's and q's with small factors
  */
-static void
+స్థిర శూన్య
 sieve_large(uint32_t s32)
 {
 	uint64_t r, u, s = s32;
@@ -184,48 +184,48 @@ sieve_large(uint32_t s32)
 	debug3("sieve_large %u", s32);
 	largetries++;
 	/* r = largebase mod s */
-	r = BN_mod_word(largebase, s32);
-	if (r == 0)
+	r = BN_mod_మాట(largebase, s32);
+	ఒకవేళ (r == 0)
 		u = 0; /* s divides into largebase exactly */
-	else
+	లేకపోతే
 		u = s - r; /* largebase+u is first entry divisible by s */
 
-	if (u < largebits * 2ULL) {
+	ఒకవేళ (u < largebits * 2ULL) {
 		/*
 		 * The sieve omits p's and q's divisible by 2, so ensure that
 		 * largebase+u is odd. Then, step through the sieve in
 		 * increments of 2*s
 		 */
-		if (u & 0x1)
+		ఒకవేళ (u & 0x1)
 			u += s; /* Make largebase+u odd, and u even */
 
 		/* Mark all multiples of 2*s */
-		for (u /= 2; u < largebits; u += s)
-			BIT_SET(LargeSieve, u);
+		కొరకు (u /= 2; u < largebits; u += s)
+			బిట్టు_సమితి(LargeSieve, u);
 	}
 
 	/* r = p mod s */
 	r = (2 * r + 1) % s;
-	if (r == 0)
+	ఒకవేళ (r == 0)
 		u = 0; /* s divides p exactly */
-	else
+	లేకపోతే
 		u = s - r; /* p+u is first entry divisible by s */
 
-	if (u < largebits * 4ULL) {
+	ఒకవేళ (u < largebits * 4ULL) {
 		/*
 		 * The sieve omits p's divisible by 4, so ensure that
 		 * largebase+u is not. Then, step through the sieve in
 		 * increments of 4*s
 		 */
-		while (u & 0x3) {
-			if (SMALL_MAXIMUM - u < s)
-				return;
+		అయితే (u & 0x3) {
+			ఒకవేళ (SMALL_గరిష్ఠ - u < s)
+				తిరిగి;
 			u += s;
 		}
 
 		/* Mark all multiples of 4*s */
-		for (u /= 4; u < largebits; u += s)
-			BIT_SET(LargeSieve, u);
+		కొరకు (u /= 4; u < largebits; u += s)
+			బిట్టు_సమితి(LargeSieve, u);
 	}
 }
 
@@ -234,86 +234,86 @@ sieve_large(uint32_t s32)
  * to standard output.
  * The list is checked against small known primes (less than 2**30).
  */
-int
-gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
+పూర్ణాంకం
+gen_candidates(FILE *బహిర్గతం, uint32_t power, BIGNUM *ప్రారంభం)
 {
 	BIGNUM *q;
 	uint32_t j, r, s, t;
-	uint32_t smallwords = TINY_NUMBER >> 6;
-	uint32_t tinywords = TINY_NUMBER >> 6;
-	time_t time_start, time_stop;
+	uint32_t smallwords = TINY_సంఖ్య >> 6;
+	uint32_t tinywords = TINY_సంఖ్య >> 6;
+	time_t సమయం_ప్రారంభం, సమయం_stop;
 	uint32_t i;
-	int ret = 0;
+	పూర్ణాంకం ret = 0;
 
 	/*
 	 * Set power to the length in bits of the prime to be generated.
 	 * This is changed to 1 less than the desired safe prime moduli p.
 	 */
-	if (power > TEST_MAXIMUM) {
-		error("Too many bits: %u > %lu", power, TEST_MAXIMUM);
-		return (-1);
-	} else if (power < TEST_MINIMUM) {
+	ఒకవేళ (power > TEST_గరిష్ఠ) {
+		error("Too many bits: %u > %lu", power, TEST_గరిష్ఠ);
+		తిరిగి (-1);
+	} లేకపోతే ఒకవేళ (power < TEST_MINIMUM) {
 		error("Too few bits: %u < %u", power, TEST_MINIMUM);
-		return (-1);
+		తిరిగి (-1);
 	}
 	power--; /* decrement before squaring */
 
 	/* Always use the maximum amount of memory supported by the algorithm. */
-	largememory = LARGE_MAXIMUM;
-	largewords = (largememory << SHIFT_MEGAWORD);
+	largememory = LARGE_గరిష్ఠ;
+	largewords = (largememory << జరుపు_MEGAWORD);
 
-	TinySieve = xcalloc(tinywords, sizeof(uint32_t));
-	tinybits = tinywords << SHIFT_WORD;
+	TinySieve = xcalloc(tinywords, పరిమాణం(uint32_t));
+	tinybits = tinywords << జరుపు_మాట;
 
-	SmallSieve = xcalloc(smallwords, sizeof(uint32_t));
-	smallbits = smallwords << SHIFT_WORD;
+	SmallSieve = xcalloc(smallwords, పరిమాణం(uint32_t));
+	smallbits = smallwords << జరుపు_మాట;
 
-	LargeSieve = xcalloc(largewords, sizeof(uint32_t));
-	largebits = largewords << SHIFT_WORD;
+	LargeSieve = xcalloc(largewords, పరిమాణం(uint32_t));
+	largebits = largewords << జరుపు_మాట;
 	largenumbers = largebits * 2;	/* even numbers excluded */
 
 	/* validation check: count the number of primes tried */
 	largetries = 0;
-	if ((q = BN_new()) == NULL)
+	ఒకవేళ ((q = BN_new()) == ఖాళీ)
 		fatal("BN_new failed");
 
 	/*
 	 * Generate random starting point for subprime search, or use
 	 * specified parameter.
 	 */
-	if ((largebase = BN_new()) == NULL)
+	ఒకవేళ ((largebase = BN_new()) == ఖాళీ)
 		fatal("BN_new failed");
-	if (start == NULL) {
-		if (BN_rand(largebase, power, 1, 1) == 0)
+	ఒకవేళ (ప్రారంభం == ఖాళీ) {
+		ఒకవేళ (BN_rand(largebase, power, 1, 1) == 0)
 			fatal("BN_rand failed");
-	} else {
-		if (BN_copy(largebase, start) == NULL)
+	} లేకపోతే {
+		ఒకవేళ (BN_copy(largebase, ప్రారంభం) == ఖాళీ)
 			fatal("BN_copy: failed");
 	}
 
 	/* ensure odd */
-	if (BN_set_bit(largebase, 0) == 0)
+	ఒకవేళ (BN_సమితి_బిట్టు(largebase, 0) == 0)
 		fatal("BN_set_bit: failed");
 
-	time(&time_start);
+	time(&సమయం_ప్రారంభం);
 
-	logit("%.24s Sieve next %u plus %u-bit", ctime(&time_start),
+	logit("%.24s Sieve next %u plus %u-bit", ctime(&సమయం_ప్రారంభం),
 	    largenumbers, power);
 	debug2("start point: 0x%s", BN_bn2hex(largebase));
 
 	/*
 	 * TinySieve
 	 */
-	for (i = 0; i < tinybits; i++) {
-		if (BIT_TEST(TinySieve, i))
-			continue; /* 2*i+3 is composite */
+	కొరకు (i = 0; i < tinybits; i++) {
+		ఒకవేళ (బిట్టు_TEST(TinySieve, i))
+			కొనసాగు; /* 2*i+3 is composite */
 
 		/* The next tiny prime */
 		t = 2 * i + 3;
 
 		/* Mark all multiples of t */
-		for (j = i + t; j < tinybits; j += t)
-			BIT_SET(TinySieve, j);
+		కొరకు (j = i + t; j < tinybits; j += t)
+			బిట్టు_సమితి(TinySieve, j);
 
 		sieve_large(t);
 	}
@@ -322,20 +322,20 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 	 * Start the small block search at the next possible prime. To avoid
 	 * fencepost errors, the last pass is skipped.
 	 */
-	for (smallbase = TINY_NUMBER + 3;
-	    smallbase < (SMALL_MAXIMUM - TINY_NUMBER);
-	    smallbase += TINY_NUMBER) {
-		for (i = 0; i < tinybits; i++) {
-			if (BIT_TEST(TinySieve, i))
-				continue; /* 2*i+3 is composite */
+	కొరకు (smallbase = TINY_సంఖ్య + 3;
+	    smallbase < (SMALL_గరిష్ఠ - TINY_సంఖ్య);
+	    smallbase += TINY_సంఖ్య) {
+		కొరకు (i = 0; i < tinybits; i++) {
+			ఒకవేళ (బిట్టు_TEST(TinySieve, i))
+				కొనసాగు; /* 2*i+3 is composite */
 
 			/* The next tiny prime */
 			t = 2 * i + 3;
 			r = smallbase % t;
 
-			if (r == 0) {
+			ఒకవేళ (r == 0) {
 				s = 0; /* t divides into smallbase exactly */
-			} else {
+			} లేకపోతే {
 				/* smallbase+s is first entry divisible by t */
 				s = t - r;
 			}
@@ -345,184 +345,184 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 			 * smallbase+s is odd. Then, step through the sieve
 			 * in increments of 2*t
 			 */
-			if (s & 1)
+			ఒకవేళ (s & 1)
 				s += t; /* Make smallbase+s odd, and s even */
 
 			/* Mark all multiples of 2*t */
-			for (s /= 2; s < smallbits; s += t)
-				BIT_SET(SmallSieve, s);
+			కొరకు (s /= 2; s < smallbits; s += t)
+				బిట్టు_సమితి(SmallSieve, s);
 		}
 
 		/*
 		 * SmallSieve
 		 */
-		for (i = 0; i < smallbits; i++) {
-			if (BIT_TEST(SmallSieve, i))
-				continue; /* 2*i+smallbase is composite */
+		కొరకు (i = 0; i < smallbits; i++) {
+			ఒకవేళ (బిట్టు_TEST(SmallSieve, i))
+				కొనసాగు; /* 2*i+smallbase is composite */
 
 			/* The next small prime */
 			sieve_large((2 * i) + smallbase);
 		}
 
-		memset(SmallSieve, 0, smallwords << SHIFT_BYTE);
+		memset(SmallSieve, 0, smallwords << జరుపు_BYTE);
 	}
 
-	time(&time_stop);
+	time(&సమయం_stop);
 
 	logit("%.24s Sieved with %u small primes in %lld seconds",
-	    ctime(&time_stop), largetries, (long long)(time_stop - time_start));
+	    ctime(&సమయం_stop), largetries, (దీర్ఘ దీర్ఘ)(సమయం_stop - సమయం_ప్రారంభం));
 
-	for (j = r = 0; j < largebits; j++) {
-		if (BIT_TEST(LargeSieve, j))
-			continue; /* Definitely composite, skip */
+	కొరకు (j = r = 0; j < largebits; j++) {
+		ఒకవేళ (బిట్టు_TEST(LargeSieve, j))
+			కొనసాగు; /* Definitely composite, skip */
 
 		debug2("test q = largebase+%u", 2 * j);
-		if (BN_set_word(q, 2 * j) == 0)
+		ఒకవేళ (BN_సమితి_మాట(q, 2 * j) == 0)
 			fatal("BN_set_word failed");
-		if (BN_add(q, q, largebase) == 0)
+		ఒకవేళ (BN_కూడు(q, q, largebase) == 0)
 			fatal("BN_add failed");
-		if (qfileout(out, MODULI_TYPE_SOPHIE_GERMAIN,
+		ఒకవేళ (qfileout(బహిర్గతం, MODULI_TYPE_SOPHIE_GERMAIN,
 		    MODULI_TESTS_SIEVE, largetries,
 		    (power - 1) /* MSB */, (0), q) == -1) {
 			ret = -1;
-			break;
+			ఆపు;
 		}
 
 		r++; /* count q */
 	}
 
-	time(&time_stop);
+	time(&సమయం_stop);
 
-	free(LargeSieve);
-	free(SmallSieve);
-	free(TinySieve);
+	విడుదల(LargeSieve);
+	విడుదల(SmallSieve);
+	విడుదల(TinySieve);
 
-	logit("%.24s Found %u candidates", ctime(&time_stop), r);
+	logit("%.24s Found %u candidates", ctime(&సమయం_stop), r);
 
-	return (ret);
+	తిరిగి (ret);
 }
 
-static void
-write_checkpoint(char *cpfile, uint32_t lineno)
+స్థిర శూన్య
+write_checkpoint(అక్షరం *cpfile, uint32_t lineno)
 {
 	FILE *fp;
-	char tmp[PATH_MAX];
-	int r, writeok, closeok;
+	అక్షరం tmp[PATH_MAX];
+	పూర్ణాంకం r, writeok, closeok;
 
-	r = snprintf(tmp, sizeof(tmp), "%s.XXXXXXXXXX", cpfile);
-	if (r < 0 || r >= PATH_MAX) {
+	r = snprintf(tmp, పరిమాణం(tmp), "%s.XXXXXXXXXX", cpfile);
+	ఒకవేళ (r < 0 || r >= PATH_MAX) {
 		logit("write_checkpoint: temp pathname too long");
-		return;
+		తిరిగి;
 	}
-	if ((r = mkstemp(tmp)) == -1) {
+	ఒకవేళ ((r = mkstemp(tmp)) == -1) {
 		logit("mkstemp(%s): %s", tmp, strerror(errno));
-		return;
+		తిరిగి;
 	}
-	if ((fp = fdopen(r, "w")) == NULL) {
+	ఒకవేళ ((fp = fdopen(r, "w")) == ఖాళీ) {
 		logit("write_checkpoint: fdopen: %s", strerror(errno));
 		unlink(tmp);
 		close(r);
-		return;
+		తిరిగి;
 	}
-	writeok = (fprintf(fp, "%lu\n", (unsigned long)lineno) > 0);
+	writeok = (fprintf(fp, "%lu\n", (గుర్తులేని దీర్ఘ)lineno) > 0);
 	closeok = (fclose(fp) == 0);
-	if (writeok && closeok && rename(tmp, cpfile) == 0) {
+	ఒకవేళ (writeok && closeok && rename(tmp, cpfile) == 0) {
 		debug3("wrote checkpoint line %lu to '%s'",
-		    (unsigned long)lineno, cpfile);
-	} else {
+		    (గుర్తులేని దీర్ఘ)lineno, cpfile);
+	} లేకపోతే {
 		logit("failed to write to checkpoint file '%s': %s", cpfile,
 		    strerror(errno));
-		(void)unlink(tmp);
+		(శూన్య)unlink(tmp);
 	}
 }
 
-static unsigned long
-read_checkpoint(char *cpfile)
+స్థిర గుర్తులేని దీర్ఘ
+read_checkpoint(అక్షరం *cpfile)
 {
 	FILE *fp;
-	unsigned long lineno = 0;
+	గుర్తులేని దీర్ఘ lineno = 0;
 
-	if ((fp = fopen(cpfile, "r")) == NULL)
-		return 0;
-	if (fscanf(fp, "%lu\n", &lineno) < 1)
+	ఒకవేళ ((fp = fopen(cpfile, "r")) == ఖాళీ)
+		తిరిగి 0;
+	ఒకవేళ (fscanf(fp, "%lu\n", &lineno) < 1)
 		logit("Failed to load checkpoint from '%s'", cpfile);
-	else
+	లేకపోతే
 		logit("Loaded checkpoint from '%s' line %lu", cpfile, lineno);
 	fclose(fp);
-	return lineno;
+	తిరిగి lineno;
 }
 
-static unsigned long
-count_lines(FILE *f)
+స్థిర గుర్తులేని దీర్ఘ
+లెక్క_పంక్తులు(FILE *f)
 {
-	unsigned long count = 0;
-	char lp[QLINESIZE + 1];
+	గుర్తులేని దీర్ఘ లెక్క = 0;
+	అక్షరం lp[QLINESIZE + 1];
 
-	if (fseek(f, 0, SEEK_SET) != 0) {
+	ఒకవేళ (fseek(f, 0, SEEK_SET) != 0) {
 		debug("input file is not seekable");
-		return ULONG_MAX;
+		తిరిగి ULONG_MAX;
 	}
-	while (fgets(lp, QLINESIZE + 1, f) != NULL)
-		count++;
+	అయితే (fgets(lp, QLINESIZE + 1, f) != ఖాళీ)
+		లెక్క++;
 	rewind(f);
-	debug("input file has %lu lines", count);
-	return count;
+	debug("input file has %lu lines", లెక్క);
+	తిరిగి లెక్క;
 }
 
-static char *
-fmt_time(time_t seconds)
+స్థిర అక్షరం *
+fmt_సమయం(time_t seconds)
 {
-	int day, hr, min;
-	static char buf[128];
+	పూర్ణాంకం day, hr, min;
+	స్థిర అక్షరం buf[128];
 
 	min = (seconds / 60) % 60;
 	hr = (seconds / 60 / 60) % 24;
 	day = seconds / 60 / 60 / 24;
-	if (day > 0)
-		snprintf(buf, sizeof buf, "%dd %d:%02d", day, hr, min);
-	else
-		snprintf(buf, sizeof buf, "%d:%02d", hr, min);
-	return buf;
+	ఒకవేళ (day > 0)
+		snprintf(buf, పరిమాణం buf, "%dd %d:%02d", day, hr, min);
+	లేకపోతే
+		snprintf(buf, పరిమాణం buf, "%d:%02d", hr, min);
+	తిరిగి buf;
 }
 
-static void
-print_progress(unsigned long start_lineno, unsigned long current_lineno,
-    unsigned long end_lineno)
+స్థిర శూన్య
+print_పురోగతి(గుర్తులేని దీర్ఘ ప్రారంభం_lineno, గుర్తులేని దీర్ఘ current_lineno,
+    గుర్తులేని దీర్ఘ చివర_lineno)
 {
-	static time_t time_start, time_prev;
-	time_t time_now, elapsed;
-	unsigned long num_to_process, processed, remaining, percent, eta;
-	double time_per_line;
-	char *eta_str;
+	స్థిర time_t సమయం_ప్రారంభం, సమయం_prev;
+	time_t సమయం_now, elapsed;
+	గుర్తులేని దీర్ఘ అంకె_గమ్యం_process, processed, మిగిలిన, percent, eta;
+	ద్విగుణ సమయం_చొప్పున_పంక్తి;
+	అక్షరం *eta_str;
 
-	time_now = monotime();
-	if (time_start == 0) {
-		time_start = time_prev = time_now;
-		return;
+	సమయం_now = monotime();
+	ఒకవేళ (సమయం_ప్రారంభం == 0) {
+		సమయం_ప్రారంభం = సమయం_prev = సమయం_now;
+		తిరిగి;
 	}
 	/* print progress after 1m then once per 5m */
-	if (time_now - time_prev < 5 * 60)
-		return;
-	time_prev = time_now;
-	elapsed = time_now - time_start;
-	processed = current_lineno - start_lineno;
-	remaining = end_lineno - current_lineno;
-	num_to_process = end_lineno - start_lineno;
-	time_per_line = (double)elapsed / processed;
+	ఒకవేళ (సమయం_now - సమయం_prev < 5 * 60)
+		తిరిగి;
+	సమయం_prev = సమయం_now;
+	elapsed = సమయం_now - సమయం_ప్రారంభం;
+	processed = current_lineno - ప్రారంభం_lineno;
+	మిగిలిన = చివర_lineno - current_lineno;
+	అంకె_గమ్యం_process = చివర_lineno - ప్రారంభం_lineno;
+	సమయం_చొప్పున_పంక్తి = (ద్విగుణ)elapsed / processed;
 	/* if we don't know how many we're processing just report count+time */
-	time(&time_now);
-	if (end_lineno == ULONG_MAX) {
-		logit("%.24s processed %lu in %s", ctime(&time_now),
-		    processed, fmt_time(elapsed));
-		return;
+	time(&సమయం_now);
+	ఒకవేళ (చివర_lineno == ULONG_MAX) {
+		logit("%.24s processed %lu in %s", ctime(&సమయం_now),
+		    processed, fmt_సమయం(elapsed));
+		తిరిగి;
 	}
-	percent = 100 * processed / num_to_process;
-	eta = time_per_line * remaining;
-	eta_str = xstrdup(fmt_time(eta));
+	percent = 100 * processed / అంకె_గమ్యం_process;
+	eta = సమయం_చొప్పున_పంక్తి * మిగిలిన;
+	eta_str = xstrdup(fmt_సమయం(eta));
 	logit("%.24s processed %lu of %lu (%lu%%) in %s, ETA %s",
-	    ctime(&time_now), processed, num_to_process, percent,
-	    fmt_time(elapsed), eta_str);
-	free(eta_str);
+	    ctime(&సమయం_now), processed, అంకె_గమ్యం_process, percent,
+	    fmt_సమయం(elapsed), eta_str);
+	విడుదల(eta_str);
 }
 
 /*
@@ -531,175 +531,175 @@ print_progress(unsigned long start_lineno, unsigned long current_lineno,
  * (checking both q and p)
  * The result is a list of so-call "safe" primes
  */
-int
-prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
-    char *checkpoint_file, unsigned long start_lineno, unsigned long num_lines)
+పూర్ణాంకం
+ప్రధానసంఖ్య_test(FILE *లోపల, FILE *బహిర్గతం, uint32_t trials, uint32_t generator_wanted,
+    అక్షరం *checkpoint_file, గుర్తులేని దీర్ఘ ప్రారంభం_lineno, గుర్తులేని దీర్ఘ అంకె_పంక్తులు)
 {
 	BIGNUM *q, *p, *a;
-	char *cp, *lp;
-	uint32_t count_in = 0, count_out = 0, count_possible = 0;
-	uint32_t generator_known, in_tests, in_tries, in_type, in_size;
-	unsigned long last_processed = 0, end_lineno;
-	time_t time_start, time_stop;
-	int res, is_prime;
+	అక్షరం *cp, *lp;
+	uint32_t లెక్క_లోపల = 0, లెక్క_బహిర్గతం = 0, లెక్క_possible = 0;
+	uint32_t generator_తెలిసిన, లోపల_tests, లోపల_tries, లోపల_type, లోపల_కొలత;
+	గుర్తులేని దీర్ఘ చివరి_processed = 0, చివర_lineno;
+	time_t సమయం_ప్రారంభం, సమయం_stop;
+	పూర్ణాంకం res, is_ప్రధానసంఖ్య;
 
-	if (trials < TRIAL_MINIMUM) {
+	ఒకవేళ (trials < TRIAL_MINIMUM) {
 		error("Minimum primality trials is %d", TRIAL_MINIMUM);
-		return (-1);
+		తిరిగి (-1);
 	}
 
-	if (num_lines == 0)
-		end_lineno = count_lines(in);
-	else
-		end_lineno = start_lineno + num_lines;
+	ఒకవేళ (అంకె_పంక్తులు == 0)
+		చివర_lineno = లెక్క_పంక్తులు(లోపల);
+	లేకపోతే
+		చివర_lineno = ప్రారంభం_lineno + అంకె_పంక్తులు;
 
-	time(&time_start);
+	time(&సమయం_ప్రారంభం);
 
-	if ((p = BN_new()) == NULL)
+	ఒకవేళ ((p = BN_new()) == ఖాళీ)
 		fatal("BN_new failed");
-	if ((q = BN_new()) == NULL)
+	ఒకవేళ ((q = BN_new()) == ఖాళీ)
 		fatal("BN_new failed");
 
 	debug2("%.24s Final %u Miller-Rabin trials (%x generator)",
-	    ctime(&time_start), trials, generator_wanted);
+	    ctime(&సమయం_ప్రారంభం), trials, generator_wanted);
 
-	if (checkpoint_file != NULL)
-		last_processed = read_checkpoint(checkpoint_file);
-	last_processed = start_lineno = MAXIMUM(last_processed, start_lineno);
-	if (end_lineno == ULONG_MAX)
-		debug("process from line %lu from pipe", last_processed);
-	else
-		debug("process from line %lu to line %lu", last_processed,
-		    end_lineno);
+	ఒకవేళ (checkpoint_file != ఖాళీ)
+		చివరి_processed = read_checkpoint(checkpoint_file);
+	చివరి_processed = ప్రారంభం_lineno = గరిష్ఠ(చివరి_processed, ప్రారంభం_lineno);
+	ఒకవేళ (చివర_lineno == ULONG_MAX)
+		debug("process from line %lu from pipe", చివరి_processed);
+	లేకపోతే
+		debug("process from line %lu to line %lu", చివరి_processed,
+		    చివర_lineno);
 
 	res = 0;
 	lp = xmalloc(QLINESIZE + 1);
-	while (fgets(lp, QLINESIZE + 1, in) != NULL && count_in < end_lineno) {
-		count_in++;
-		if (count_in <= last_processed) {
+	అయితే (fgets(lp, QLINESIZE + 1, లోపల) != ఖాళీ && లెక్క_లోపల < చివర_lineno) {
+		లెక్క_లోపల++;
+		ఒకవేళ (లెక్క_లోపల <= చివరి_processed) {
 			debug3("skipping line %u, before checkpoint or "
-			    "specified start line", count_in);
-			continue;
+			    "specified start line", లెక్క_లోపల);
+			కొనసాగు;
 		}
-		if (checkpoint_file != NULL)
-			write_checkpoint(checkpoint_file, count_in);
-		print_progress(start_lineno, count_in, end_lineno);
-		if (strlen(lp) < 14 || *lp == '!' || *lp == '#') {
-			debug2("%10u: comment or short line", count_in);
-			continue;
+		ఒకవేళ (checkpoint_file != ఖాళీ)
+			write_checkpoint(checkpoint_file, లెక్క_లోపల);
+		print_పురోగతి(ప్రారంభం_lineno, లెక్క_లోపల, చివర_lineno);
+		ఒకవేళ (అక్షరశ్రేణి_పొడవు(lp) < 14 || *lp == '!' || *lp == '#') {
+			debug2("%10u: comment or short line", లెక్క_లోపల);
+			కొనసాగు;
 		}
 
 		/* XXX - fragile parser */
-		/* time */
+		/*సమయం*/
 		cp = &lp[14];	/* (skip) */
 
 		/* type */
-		in_type = strtoul(cp, &cp, 10);
+		లోపల_type = strtoul(cp, &cp, 10);
 
 		/* tests */
-		in_tests = strtoul(cp, &cp, 10);
+		లోపల_tests = strtoul(cp, &cp, 10);
 
-		if (in_tests & MODULI_TESTS_COMPOSITE) {
-			debug2("%10u: known composite", count_in);
-			continue;
+		ఒకవేళ (లోపల_tests & MODULI_TESTS_సంయుక్త) {
+			debug2("%10u: known composite", లెక్క_లోపల);
+			కొనసాగు;
 		}
 
 		/* tries */
-		in_tries = strtoul(cp, &cp, 10);
+		లోపల_tries = strtoul(cp, &cp, 10);
 
 		/* size (most significant bit) */
-		in_size = strtoul(cp, &cp, 10);
+		లోపల_కొలత = strtoul(cp, &cp, 10);
 
 		/* generator (hex) */
-		generator_known = strtoul(cp, &cp, 16);
+		generator_తెలిసిన = strtoul(cp, &cp, 16);
 
 		/* Skip white space */
 		cp += strspn(cp, " ");
 
 		/* modulus (hex) */
-		switch (in_type) {
-		case MODULI_TYPE_SOPHIE_GERMAIN:
-			debug2("%10u: (%u) Sophie-Germain", count_in, in_type);
+		ఎంపిక (లోపల_type) {
+		స్థితి MODULI_TYPE_SOPHIE_GERMAIN:
+			debug2("%10u: (%u) Sophie-Germain", లెక్క_లోపల, లోపల_type);
 			a = q;
-			if (BN_hex2bn(&a, cp) == 0)
+			ఒకవేళ (BN_hex2bn(&a, cp) == 0)
 				fatal("BN_hex2bn failed");
 			/* p = 2*q + 1 */
-			if (BN_lshift(p, q, 1) == 0)
+			ఒకవేళ (BN_lshift(p, q, 1) == 0)
 				fatal("BN_lshift failed");
-			if (BN_add_word(p, 1) == 0)
+			ఒకవేళ (BN_కూడు_మాట(p, 1) == 0)
 				fatal("BN_add_word failed");
-			in_size += 1;
-			generator_known = 0;
-			break;
-		case MODULI_TYPE_UNSTRUCTURED:
-		case MODULI_TYPE_SAFE:
-		case MODULI_TYPE_SCHNORR:
-		case MODULI_TYPE_STRONG:
-		case MODULI_TYPE_UNKNOWN:
-			debug2("%10u: (%u)", count_in, in_type);
+			లోపల_కొలత += 1;
+			generator_తెలిసిన = 0;
+			ఆపు;
+		స్థితి MODULI_TYPE_UNSTRUCTURED:
+		స్థితి MODULI_TYPE_సురక్షిత:
+		స్థితి MODULI_TYPE_SCHNORR:
+		స్థితి MODULI_TYPE_STRONG:
+		స్థితి MODULI_TYPE_UNKNOWN:
+			debug2("%10u: (%u)", లెక్క_లోపల, లోపల_type);
 			a = p;
-			if (BN_hex2bn(&a, cp) == 0)
+			ఒకవేళ (BN_hex2bn(&a, cp) == 0)
 				fatal("BN_hex2bn failed");
 			/* q = (p-1) / 2 */
-			if (BN_rshift(q, p, 1) == 0)
+			ఒకవేళ (BN_rshift(q, p, 1) == 0)
 				fatal("BN_rshift failed");
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			debug2("Unknown prime type");
-			break;
+			ఆపు;
 		}
 
 		/*
 		 * due to earlier inconsistencies in interpretation, check
 		 * the proposed bit size.
 		 */
-		if ((uint32_t)BN_num_bits(p) != (in_size + 1)) {
-			debug2("%10u: bit size %u mismatch", count_in, in_size);
-			continue;
+		ఒకవేళ ((uint32_t)BN_అంకె_బిట్లు(p) != (లోపల_కొలత + 1)) {
+			debug2("%10u: bit size %u mismatch", లెక్క_లోపల, లోపల_కొలత);
+			కొనసాగు;
 		}
-		if (in_size < QSIZE_MINIMUM) {
-			debug2("%10u: bit size %u too short", count_in, in_size);
-			continue;
+		ఒకవేళ (లోపల_కొలత < QSIZE_MINIMUM) {
+			debug2("%10u: bit size %u too short", లెక్క_లోపల, లోపల_కొలత);
+			కొనసాగు;
 		}
 
-		if (in_tests & MODULI_TESTS_MILLER_RABIN)
-			in_tries += trials;
-		else
-			in_tries = trials;
+		ఒకవేళ (లోపల_tests & MODULI_TESTS_MILLER_RABIN)
+			లోపల_tries += trials;
+		లేకపోతే
+			లోపల_tries = trials;
 
 		/*
 		 * guess unknown generator
 		 */
-		if (generator_known == 0) {
-			if (BN_mod_word(p, 24) == 11)
-				generator_known = 2;
-			else {
-				uint32_t r = BN_mod_word(p, 10);
+		ఒకవేళ (generator_తెలిసిన == 0) {
+			ఒకవేళ (BN_mod_మాట(p, 24) == 11)
+				generator_తెలిసిన = 2;
+			లేకపోతే {
+				uint32_t r = BN_mod_మాట(p, 10);
 
-				if (r == 3 || r == 7)
-					generator_known = 5;
+				ఒకవేళ (r == 3 || r == 7)
+					generator_తెలిసిన = 5;
 			}
 		}
 		/*
 		 * skip tests when desired generator doesn't match
 		 */
-		if (generator_wanted > 0 &&
-		    generator_wanted != generator_known) {
+		ఒకవేళ (generator_wanted > 0 &&
+		    generator_wanted != generator_తెలిసిన) {
 			debug2("%10u: generator %d != %d",
-			    count_in, generator_known, generator_wanted);
-			continue;
+			    లెక్క_లోపల, generator_తెలిసిన, generator_wanted);
+			కొనసాగు;
 		}
 
 		/*
 		 * Primes with no known generator are useless for DH, so
 		 * skip those.
 		 */
-		if (generator_known == 0) {
-			debug2("%10u: no known generator", count_in);
-			continue;
+		ఒకవేళ (generator_తెలిసిన == 0) {
+			debug2("%10u: no known generator", లెక్క_లోపల);
+			కొనసాగు;
 		}
 
-		count_possible++;
+		లెక్క_possible++;
 
 		/*
 		 * The (1/4)^N performance bound on Miller-Rabin is
@@ -708,13 +708,13 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		 * that p is also prime. A single pass will weed out the
 		 * vast majority of composite q's.
 		 */
-		is_prime = BN_is_prime_ex(q, 1, NULL, NULL);
-		if (is_prime < 0)
+		is_ప్రధానసంఖ్య = BN_is_ప్రధానసంఖ్య_ex(q, 1, ఖాళీ, ఖాళీ);
+		ఒకవేళ (is_ప్రధానసంఖ్య < 0)
 			fatal("BN_is_prime_ex failed");
-		if (is_prime == 0) {
+		ఒకవేళ (is_ప్రధానసంఖ్య == 0) {
 			debug("%10u: q failed first possible prime test",
-			    count_in);
-			continue;
+			    లెక్క_లోపల);
+			కొనసాగు;
 		}
 
 		/*
@@ -724,48 +724,48 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		 * will show up on the first Rabin-Miller iteration so it
 		 * doesn't hurt to specify a high iteration count.
 		 */
-		is_prime = BN_is_prime_ex(p, trials, NULL, NULL);
-		if (is_prime < 0)
+		is_ప్రధానసంఖ్య = BN_is_ప్రధానసంఖ్య_ex(p, trials, ఖాళీ, ఖాళీ);
+		ఒకవేళ (is_ప్రధానసంఖ్య < 0)
 			fatal("BN_is_prime_ex failed");
-		if (is_prime == 0) {
-			debug("%10u: p is not prime", count_in);
-			continue;
+		ఒకవేళ (is_ప్రధానసంఖ్య == 0) {
+			debug("%10u: p is not prime", లెక్క_లోపల);
+			కొనసాగు;
 		}
-		debug("%10u: p is almost certainly prime", count_in);
+		debug("%10u: p is almost certainly prime", లెక్క_లోపల);
 
 		/* recheck q more rigorously */
-		is_prime = BN_is_prime_ex(q, trials - 1, NULL, NULL);
-		if (is_prime < 0)
+		is_ప్రధానసంఖ్య = BN_is_ప్రధానసంఖ్య_ex(q, trials - 1, ఖాళీ, ఖాళీ);
+		ఒకవేళ (is_ప్రధానసంఖ్య < 0)
 			fatal("BN_is_prime_ex failed");
-		if (is_prime == 0) {
-			debug("%10u: q is not prime", count_in);
-			continue;
+		ఒకవేళ (is_ప్రధానసంఖ్య == 0) {
+			debug("%10u: q is not prime", లెక్క_లోపల);
+			కొనసాగు;
 		}
-		debug("%10u: q is almost certainly prime", count_in);
+		debug("%10u: q is almost certainly prime", లెక్క_లోపల);
 
-		if (qfileout(out, MODULI_TYPE_SAFE,
-		    in_tests | MODULI_TESTS_MILLER_RABIN,
-		    in_tries, in_size, generator_known, p)) {
+		ఒకవేళ (qfileout(బహిర్గతం, MODULI_TYPE_సురక్షిత,
+		    లోపల_tests | MODULI_TESTS_MILLER_RABIN,
+		    లోపల_tries, లోపల_కొలత, generator_తెలిసిన, p)) {
 			res = -1;
-			break;
+			ఆపు;
 		}
 
-		count_out++;
+		లెక్క_బహిర్గతం++;
 	}
 
-	time(&time_stop);
-	free(lp);
+	time(&సమయం_stop);
+	విడుదల(lp);
 	BN_free(p);
 	BN_free(q);
 
-	if (checkpoint_file != NULL)
+	ఒకవేళ (checkpoint_file != ఖాళీ)
 		unlink(checkpoint_file);
 
 	logit("%.24s Found %u safe primes of %u candidates in %ld seconds",
-	    ctime(&time_stop), count_out, count_possible,
-	    (long) (time_stop - time_start));
+	    ctime(&సమయం_stop), లెక్క_బహిర్గతం, లెక్క_possible,
+	    (దీర్ఘ) (సమయం_stop - సమయం_ప్రారంభం));
 
-	return (res);
+	తిరిగి (res);
 }
 
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */

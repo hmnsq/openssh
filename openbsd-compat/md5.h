@@ -12,40 +12,40 @@
  * with every copy.
  */
 
-#ifndef _MD5_H_
-#define _MD5_H_
+#నిర్వచితం_కాకపోతే _MD5_H_
+#నిర్వచించు _MD5_H_
 
-#ifndef WITH_OPENSSL
+#నిర్వచితం_కాకపోతే WITH_OPENSSL
 
-#define	MD5_BLOCK_LENGTH		64
-#define	MD5_DIGEST_LENGTH		16
-#define	MD5_DIGEST_STRING_LENGTH	(MD5_DIGEST_LENGTH * 2 + 1)
+#నిర్వచించు	MD5_ఖండం_నిడివి		64
+#నిర్వచించు	MD5_DIGEST_నిడివి		16
+#నిర్వచించు	MD5_DIGEST_STRING_నిడివి	(MD5_DIGEST_నిడివి * 2 + 1)
 
-typedef struct MD5Context {
+రకనిర్వచనం నిర్మాణం MD5Context {
 	u_int32_t state[4];			/* state */
-	u_int64_t count;			/* number of bits, mod 2^64 */
-	u_int8_t buffer[MD5_BLOCK_LENGTH];	/* input buffer */
+	u_int64_t లెక్క;			/* number of bits, mod 2^64 */
+	u_int8_t బఫరు[MD5_ఖండం_నిడివి];	/* input buffer */
 } MD5_CTX;
 
-void	 MD5Init(MD5_CTX *);
-void	 MD5Update(MD5_CTX *, const u_int8_t *, size_t)
+శూన్య	 MD5Init(MD5_CTX *);
+శూన్య	 MD5Update(MD5_CTX *, స్థిరరాశి u_int8_t *, కొలత_t)
 		__attribute__((__bounded__(__string__,2,3)));
-void	 MD5Pad(MD5_CTX *);
-void	 MD5Final(u_int8_t [MD5_DIGEST_LENGTH], MD5_CTX *)
-		__attribute__((__bounded__(__minbytes__,1,MD5_DIGEST_LENGTH)));
-void	 MD5Transform(u_int32_t [4], const u_int8_t [MD5_BLOCK_LENGTH])
+శూన్య	 MD5Pad(MD5_CTX *);
+శూన్య	 MD5Final(u_int8_t [MD5_DIGEST_నిడివి], MD5_CTX *)
+		__attribute__((__bounded__(__minbytes__,1,MD5_DIGEST_నిడివి)));
+శూన్య	 MD5Transform(u_int32_t [4], స్థిరరాశి u_int8_t [MD5_ఖండం_నిడివి])
 		__attribute__((__bounded__(__minbytes__,1,4)))
-		__attribute__((__bounded__(__minbytes__,2,MD5_BLOCK_LENGTH)));
-char	*MD5End(MD5_CTX *, char *)
-		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5File(const char *, char *)
-		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5FileChunk(const char *, char *, off_t, off_t)
-		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5Data(const u_int8_t *, size_t, char *)
+		__attribute__((__bounded__(__minbytes__,2,MD5_ఖండం_నిడివి)));
+అక్షరం	*MD5_చివర(MD5_CTX *, అక్షరం *)
+		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_నిడివి)));
+అక్షరం	*MD5File(స్థిరరాశి అక్షరం *, అక్షరం *)
+		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_నిడివి)));
+అక్షరం	*MD5FileChunk(స్థిరరాశి అక్షరం *, అక్షరం *, off_t, off_t)
+		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_నిడివి)));
+అక్షరం	*MD5_దత్తాంశం(స్థిరరాశి u_int8_t *, కొలత_t, అక్షరం *)
 		__attribute__((__bounded__(__string__,1,2)))
-		__attribute__((__bounded__(__minbytes__,3,MD5_DIGEST_STRING_LENGTH)));
+		__attribute__((__bounded__(__minbytes__,3,MD5_DIGEST_STRING_నిడివి)));
 
-#endif /* !WITH_OPENSSL */
+#అయితే_ముగింపు /* !WITH_OPENSSL */
 
-#endif /* _MD5_H_ */
+#అయితే_ముగింపు /* _MD5_H_ */

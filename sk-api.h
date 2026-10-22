@@ -15,87 +15,87 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _SK_API_H
-#define _SK_API_H 1
+#నిర్వచితం_కాకపోతే _SK_API_H
+#నిర్వచించు _SK_API_H 1
 
-#include <stddef.h>
-#include <stdint.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdint.h>
 
 /* Flags */
-#define SSH_SK_USER_PRESENCE_REQD	0x01
-#define SSH_SK_USER_VERIFICATION_REQD	0x04
-#define SSH_SK_FORCE_OPERATION		0x10
-#define SSH_SK_RESIDENT_KEY		0x20
+#నిర్వచించు SSH_SK_USER_PRESENCE_REQD	0x01
+#నిర్వచించు SSH_SK_USER_VERIFICATION_REQD	0x04
+#నిర్వచించు SSH_SK_FORCE_OPERATION		0x10
+#నిర్వచించు SSH_SK_RESIDENT_కీలకం		0x20
 
 /* Algs */
-#define SSH_SK_ECDSA			0x00
-#define SSH_SK_ED25519			0x01
+#నిర్వచించు SSH_SK_ECDSA			0x00
+#నిర్వచించు SSH_SK_ED25519			0x01
 
 /* Error codes */
-#define SSH_SK_ERR_GENERAL		-1
-#define SSH_SK_ERR_UNSUPPORTED		-2
-#define SSH_SK_ERR_PIN_REQUIRED		-3
-#define SSH_SK_ERR_DEVICE_NOT_FOUND	-4
-#define SSH_SK_ERR_CREDENTIAL_EXISTS	-5
+#నిర్వచించు SSH_SK_ERR_GENERAL		-1
+#నిర్వచించు SSH_SK_ERR_UNSUPPORTED		-2
+#నిర్వచించు SSH_SK_ERR_PIN_REQUIRED		-3
+#నిర్వచించు SSH_SK_ERR_DEVICE_NOT_దొరికింది	-4
+#నిర్వచించు SSH_SK_ERR_CREDENTIAL_EXISTS	-5
 
-struct sk_enroll_response {
+నిర్మాణం sk_enroll_response {
 	uint8_t flags;
-	uint8_t *public_key;
-	size_t public_key_len;
-	uint8_t *key_handle;
-	size_t key_handle_len;
+	uint8_t *ప్రజా_కీలకం;
+	కొలత_t ప్రజా_కీలకం_len;
+	uint8_t *కీలకం_handle;
+	కొలత_t కీలకం_handle_len;
 	uint8_t *signature;
-	size_t signature_len;
+	కొలత_t signature_len;
 	uint8_t *attestation_cert;
-	size_t attestation_cert_len;
+	కొలత_t attestation_cert_len;
 	uint8_t *authdata;
-	size_t authdata_len;
+	కొలత_t authdata_len;
 };
 
-struct sk_sign_response {
+నిర్మాణం sk_sign_response {
 	uint8_t flags;
 	uint32_t counter;
 	uint8_t *sig_r;
-	size_t sig_r_len;
+	కొలత_t sig_r_len;
 	uint8_t *sig_s;
-	size_t sig_s_len;
+	కొలత_t sig_s_len;
 };
 
-struct sk_resident_key {
+నిర్మాణం sk_resident_కీలకం {
 	uint32_t alg;
-	size_t slot;
-	char *application;
-	struct sk_enroll_response key;
+	కొలత_t స్థానం;
+	అక్షరం *application;
+	నిర్మాణం sk_enroll_response కీలకం;
 	uint8_t flags;
 	uint8_t *user_id;
-	size_t user_id_len;
+	కొలత_t user_id_len;
 };
 
-struct sk_option {
-	char *name;
-	char *value;
+నిర్మాణం sk_option {
+	అక్షరం *name;
+	అక్షరం *విలువ;
 	uint8_t required;
 };
 
-#define SSH_SK_VERSION_MAJOR		0x000a0000 /* current API version */
-#define SSH_SK_VERSION_MAJOR_MASK	0xffff0000
+#నిర్వచించు SSH_SK_సంస్కరణ_MAJOR		0x000a0000 /* current API version */
+#నిర్వచించు SSH_SK_సంస్కరణ_MAJOR_ముసుగు	0xffff0000
 
 /* Return the version of the middleware API */
-uint32_t sk_api_version(void);
+uint32_t sk_api_సంస్కరణ(శూన్య);
 
 /* Enroll a U2F key (private key generation) */
-int sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
-    const char *application, uint8_t flags, const char *pin,
-    struct sk_option **options, struct sk_enroll_response **enroll_response);
+పూర్ణాంకం sk_enroll(uint32_t alg, స్థిరరాశి uint8_t *challenge, కొలత_t challenge_len,
+    స్థిరరాశి అక్షరం *application, uint8_t flags, స్థిరరాశి అక్షరం *pin,
+    నిర్మాణం sk_option **options, నిర్మాణం sk_enroll_response **enroll_response);
 
 /* Sign a challenge */
-int sk_sign(uint32_t alg, const uint8_t *data, size_t data_len,
-    const char *application, const uint8_t *key_handle, size_t key_handle_len,
-    uint8_t flags, const char *pin, struct sk_option **options,
-    struct sk_sign_response **sign_response);
+పూర్ణాంకం sk_sign(uint32_t alg, స్థిరరాశి uint8_t *దత్తాంశం, కొలత_t దత్తాంశం_len,
+    స్థిరరాశి అక్షరం *application, స్థిరరాశి uint8_t *కీలకం_handle, కొలత_t కీలకం_handle_len,
+    uint8_t flags, స్థిరరాశి అక్షరం *pin, నిర్మాణం sk_option **options,
+    నిర్మాణం sk_sign_response **sign_response);
 
 /* Enumerate all resident keys */
-int sk_load_resident_keys(const char *pin, struct sk_option **options,
-    struct sk_resident_key ***rks, size_t *nrks);
+పూర్ణాంకం sk_ఎక్కించు_resident_కీలకాలు(స్థిరరాశి అక్షరం *pin, నిర్మాణం sk_option **options,
+    నిర్మాణం sk_resident_కీలకం ***rks, కొలత_t *nrks);
 
-#endif /* _SK_API_H */
+#అయితే_ముగింపు /* _SK_API_H */

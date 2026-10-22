@@ -20,770 +20,770 @@
 /* XXX: remove all logging, only return status codes */
 /* XXX: copy between two remote sites */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/queue.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/statvfs.h>
-#include <sys/uio.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/queue.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <sys/time.h>
+#అన్తర్భావ <sys/statvfs.h>
+#అన్తర్భావ <sys/uio.h>
 
-#include <dirent.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <poll.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <dirent.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <poll.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-#include "xmalloc.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "atomicio.h"
-#include "progressmeter.h"
-#include "misc.h"
-#include "utf8.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "atomicio.h"
+#అన్తర్భావ "progressmeter.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "utf8.h"
 
-#include "sftp.h"
-#include "sftp-common.h"
-#include "sftp-client.h"
+#అన్తర్భావ "sftp.h"
+#అన్తర్భావ "sftp-common.h"
+#అన్తర్భావ "sftp-client.h"
 
-extern volatile sig_atomic_t interrupted;
-extern int showprogress;
+బాహ్య అస్థిర sig_atomic_t interrupted;
+బాహ్య పూర్ణాంకం showprogress;
 
 /* Default size of buffer for up/download (fix sftp.1 scp.1 if changed) */
-#define DEFAULT_COPY_BUFLEN	32768
+#నిర్వచించు DEFAULT_COPY_BUFLEN	32768
 
 /* Default number of concurrent xfer requests (fix sftp.1 scp.1 if changed) */
-#define DEFAULT_NUM_REQUESTS	64
+#నిర్వచించు DEFAULT_అంకె_అభ్యర్థనలు	64
 
 /* Minimum amount of data to read at a time */
-#define MIN_READ_SIZE	512
+#నిర్వచించు MIN_READ_కొలత	512
 
 /* Maximum depth to descend in directory trees */
-#define MAX_DIR_DEPTH 64
+#నిర్వచించు MAX_DIR_లోతు 64
 
 /* Directory separator characters */
-#ifdef HAVE_CYGWIN
+#నిర్వచితమైతే HAVE_CYGWIN
 # define SFTP_DIRECTORY_CHARS      "/\\"
-#else /* HAVE_CYGWIN */
+#లేకపోతే /* HAVE_CYGWIN */
 # define SFTP_DIRECTORY_CHARS      "/"
-#endif /* HAVE_CYGWIN */
+#అయితే_ముగింపు /* HAVE_CYGWIN */
 
-struct sftp_conn {
-	int fd_in;
-	int fd_out;
+నిర్మాణం sftp_conn {
+	పూర్ణాంకం fd_లోపల;
+	పూర్ణాంకం fd_బహిర్గతం;
 	u_int download_buflen;
 	u_int upload_buflen;
-	u_int num_requests;
-	u_int version;
-	u_int msg_id;
-#define SFTP_EXT_POSIX_RENAME		0x00000001
-#define SFTP_EXT_STATVFS		0x00000002
-#define SFTP_EXT_FSTATVFS		0x00000004
-#define SFTP_EXT_HARDLINK		0x00000008
-#define SFTP_EXT_FSYNC			0x00000010
-#define SFTP_EXT_LSETSTAT		0x00000020
-#define SFTP_EXT_LIMITS			0x00000040
-#define SFTP_EXT_PATH_EXPAND		0x00000080
-#define SFTP_EXT_COPY_DATA		0x00000100
-#define SFTP_EXT_GETUSERSGROUPS_BY_ID	0x00000200
+	u_int అంకె_అభ్యర్థనలు;
+	u_int సంస్కరణ;
+	u_int సందేశం_id;
+#నిర్వచించు SFTP_EXT_POSIX_RENAME		0x00000001
+#నిర్వచించు SFTP_EXT_STATVFS		0x00000002
+#నిర్వచించు SFTP_EXT_FSTATVFS		0x00000004
+#నిర్వచించు SFTP_EXT_HARDLINK		0x00000008
+#నిర్వచించు SFTP_EXT_FSYNC			0x00000010
+#నిర్వచించు SFTP_EXT_LSETSTAT		0x00000020
+#నిర్వచించు SFTP_EXT_LIMITS			0x00000040
+#నిర్వచించు SFTP_EXT_మార్గం_EXPAND		0x00000080
+#నిర్వచించు SFTP_EXT_COPY_దత్తాంశం		0x00000100
+#నిర్వచించు SFTP_EXT_GETUSERSGROUPS_BY_ID	0x00000200
 	u_int exts;
-	uint64_t limit_kbps;
-	struct bwlimit bwlimit_in, bwlimit_out;
+	uint64_t హద్దు_kbps;
+	నిర్మాణం bwlimit bwlimit_లోపల, bwlimit_బహిర్గతం;
 };
 
 /* Tracks in-progress requests during file transfers */
-struct request {
+నిర్మాణం request {
 	u_int id;
-	size_t len;
-	uint64_t offset;
+	కొలత_t len;
+	uint64_t స్థానభ్రంశం;
 	TAILQ_ENTRY(request) tq;
 };
-TAILQ_HEAD(requests, request);
+TAILQ_HEAD(అభ్యర్థనలు, request);
 
-static u_char *
-get_handle(struct sftp_conn *conn, u_int expected_id, size_t *len,
-    const char *errfmt, ...) __attribute__((format(printf, 4, 5)));
+స్థిర u_char *
+get_handle(నిర్మాణం sftp_conn *conn, u_int expected_id, కొలత_t *len,
+    స్థిరరాశి అక్షరం *errfmt, ...) __attribute__((format(రాయి, 4, 5)));
 
-static struct request *
-request_enqueue(struct requests *requests, u_int id, size_t len,
-    uint64_t offset)
+స్థిర నిర్మాణం request *
+request_వరుసలో_చేర్చు(నిర్మాణం అభ్యర్థనలు *అభ్యర్థనలు, u_int id, కొలత_t len,
+    uint64_t స్థానభ్రంశం)
 {
-	struct request *req;
+	నిర్మాణం request *req;
 
-	req = xcalloc(1, sizeof(*req));
+	req = xcalloc(1, పరిమాణం(*req));
 	req->id = id;
 	req->len = len;
-	req->offset = offset;
-	TAILQ_INSERT_TAIL(requests, req, tq);
-	return req;
+	req->స్థానభ్రంశం = స్థానభ్రంశం;
+	TAILQ_INSERT_TAIL(అభ్యర్థనలు, req, tq);
+	తిరిగి req;
 }
 
-static struct request *
-request_find(struct requests *requests, u_int id)
+స్థిర నిర్మాణం request *
+request_కనుగొను(నిర్మాణం అభ్యర్థనలు *అభ్యర్థనలు, u_int id)
 {
-	struct request *req;
+	నిర్మాణం request *req;
 
-	for (req = TAILQ_FIRST(requests);
-	    req != NULL && req->id != id;
+	కొరకు (req = TAILQ_FIRST(అభ్యర్థనలు);
+	    req != ఖాళీ && req->id != id;
 	    req = TAILQ_NEXT(req, tq))
 		;
-	return req;
+	తిరిగి req;
 }
 
-static int
-sftpio(void *_bwlimit, size_t amount)
+స్థిర పూర్ణాంకం
+sftpio(శూన్య *_bwlimit, కొలత_t amount)
 {
-	struct bwlimit *bwlimit = (struct bwlimit *)_bwlimit;
+	నిర్మాణం bwlimit *bwlimit = (నిర్మాణం bwlimit *)_bwlimit;
 
-	refresh_progress_meter(0);
-	if (bwlimit != NULL)
-		bandwidth_limit(bwlimit, amount);
-	return 0;
+	refresh_పురోగతి_meter(0);
+	ఒకవేళ (bwlimit != ఖాళీ)
+		bandwidth_హద్దు(bwlimit, amount);
+	తిరిగి 0;
 }
 
-static void
-send_msg(struct sftp_conn *conn, struct sshbuf *m)
+స్థిర శూన్య
+send_సందేశం(నిర్మాణం sftp_conn *conn, నిర్మాణం sshbuf *m)
 {
 	u_char mlen[4];
-	struct iovec iov[2];
+	నిర్మాణం iovec iov[2];
 
-	if (sshbuf_len(m) > SFTP_MAX_MSG_LENGTH)
+	ఒకవేళ (sshbuf_len(m) > SFTP_MAX_సందేశం_నిడివి)
 		fatal("Outbound message too long %zu", sshbuf_len(m));
 
 	/* Send length first */
 	put_u32(mlen, sshbuf_len(m));
 	iov[0].iov_base = mlen;
-	iov[0].iov_len = sizeof(mlen);
+	iov[0].iov_len = పరిమాణం(mlen);
 	iov[1].iov_base = (u_char *)sshbuf_ptr(m);
 	iov[1].iov_len = sshbuf_len(m);
 
-	if (atomiciov6(writev, conn->fd_out, iov, 2, sftpio,
-	    conn->limit_kbps > 0 ? &conn->bwlimit_out : NULL) !=
-	    sshbuf_len(m) + sizeof(mlen))
+	ఒకవేళ (atomiciov6(writev, conn->fd_బహిర్గతం, iov, 2, sftpio,
+	    conn->హద్దు_kbps > 0 ? &conn->bwlimit_బహిర్గతం : ఖాళీ) !=
+	    sshbuf_len(m) + పరిమాణం(mlen))
 		fatal("Couldn't send packet: %s", strerror(errno));
 
 	sshbuf_reset(m);
 }
 
-static void
-get_msg_extended(struct sftp_conn *conn, struct sshbuf *m, int initial)
+స్థిర శూన్య
+get_సందేశం_extended(నిర్మాణం sftp_conn *conn, నిర్మాణం sshbuf *m, పూర్ణాంకం initial)
 {
-	u_int msg_len;
+	u_int సందేశం_len;
 	u_char *p;
-	int r;
+	పూర్ణాంకం r;
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_reserve(m, 4, &p)) != 0)
+	ఒకవేళ ((r = sshbuf_reserve(m, 4, &p)) != 0)
 		fatal_fr(r, "reserve");
-	if (atomicio6(read, conn->fd_in, p, 4, sftpio,
-	    conn->limit_kbps > 0 ? &conn->bwlimit_in : NULL) != 4) {
-		if (errno == EPIPE || errno == ECONNRESET)
+	ఒకవేళ (atomicio6(పఠ, conn->fd_లోపల, p, 4, sftpio,
+	    conn->హద్దు_kbps > 0 ? &conn->bwlimit_లోపల : ఖాళీ) != 4) {
+		ఒకవేళ (errno == EPIPE || errno == ECONNRESET)
 			fatal("Connection closed");
-		else
+		లేకపోతే
 			fatal("Couldn't read packet: %s", strerror(errno));
 	}
 
-	if ((r = sshbuf_get_u32(m, &msg_len)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u32(m, &సందేశం_len)) != 0)
 		fatal_fr(r, "sshbuf_get_u32");
-	if (msg_len > SFTP_MAX_MSG_LENGTH) {
+	ఒకవేళ (సందేశం_len > SFTP_MAX_సందేశం_నిడివి) {
 		do_log2(initial ? SYSLOG_LEVEL_ERROR : SYSLOG_LEVEL_FATAL,
-		    "Received message too long %u", msg_len);
+		    "Received message too long %u", సందేశం_len);
 		fatal("Ensure the remote shell produces no output "
 		    "for non-interactive sessions.");
 	}
 
-	if ((r = sshbuf_reserve(m, msg_len, &p)) != 0)
+	ఒకవేళ ((r = sshbuf_reserve(m, సందేశం_len, &p)) != 0)
 		fatal_fr(r, "reserve");
-	if (atomicio6(read, conn->fd_in, p, msg_len, sftpio,
-	    conn->limit_kbps > 0 ? &conn->bwlimit_in : NULL)
-	    != msg_len) {
-		if (errno == EPIPE)
+	ఒకవేళ (atomicio6(పఠ, conn->fd_లోపల, p, సందేశం_len, sftpio,
+	    conn->హద్దు_kbps > 0 ? &conn->bwlimit_లోపల : ఖాళీ)
+	    != సందేశం_len) {
+		ఒకవేళ (errno == EPIPE)
 			fatal("Connection closed");
-		else
+		లేకపోతే
 			fatal("Read packet: %s", strerror(errno));
 	}
 }
 
-static void
-get_msg(struct sftp_conn *conn, struct sshbuf *m)
+స్థిర శూన్య
+get_సందేశం(నిర్మాణం sftp_conn *conn, నిర్మాణం sshbuf *m)
 {
-	get_msg_extended(conn, m, 0);
+	get_సందేశం_extended(conn, m, 0);
 }
 
-static void
-send_string_request(struct sftp_conn *conn, u_int id, u_int code, const char *s,
+స్థిర శూన్య
+send_string_request(నిర్మాణం sftp_conn *conn, u_int id, u_int సంకేతం_2, స్థిరరాశి అక్షరం *s,
     u_int len)
 {
-	struct sshbuf *msg;
-	int r;
+	నిర్మాణం sshbuf *సందేశం;
+	పూర్ణాంకం r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, code)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_string(msg, s, len)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, సంకేతం_2)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_string(సందేశం, s, len)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
-	debug3("Sent message fd %d T:%u I:%u", conn->fd_out, code, id);
-	sshbuf_free(msg);
+	send_సందేశం(conn, సందేశం);
+	debug3("Sent message fd %d T:%u I:%u", conn->fd_బహిర్గతం, సంకేతం_2, id);
+	sshbuf_free(సందేశం);
 }
 
-static void
-send_string_attrs_request(struct sftp_conn *conn, u_int id, u_int code,
-    const void *s, u_int len, Attrib *a)
+స్థిర శూన్య
+send_string_attrs_request(నిర్మాణం sftp_conn *conn, u_int id, u_int సంకేతం_2,
+    స్థిరరాశి శూన్య *s, u_int len, Attrib *a)
 {
-	struct sshbuf *msg;
-	int r;
+	నిర్మాణం sshbuf *సందేశం;
+	పూర్ణాంకం r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, code)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_string(msg, s, len)) != 0 ||
-	    (r = encode_attrib(msg, a)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, సంకేతం_2)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_string(సందేశం, s, len)) != 0 ||
+	    (r = encode_attrib(సందేశం, a)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
+	send_సందేశం(conn, సందేశం);
 	debug3("Sent message fd %d T:%u I:%u F:0x%04x M:%05o",
-	    conn->fd_out, code, id, a->flags, a->perm);
-	sshbuf_free(msg);
+	    conn->fd_బహిర్గతం, సంకేతం_2, id, a->flags, a->perm);
+	sshbuf_free(సందేశం);
 }
 
-static u_int
-get_status(struct sftp_conn *conn, u_int expected_id)
+స్థిర u_int
+get_స్థితి(నిర్మాణం sftp_conn *conn, u_int expected_id)
 {
-	struct sshbuf *msg;
+	నిర్మాణం sshbuf *సందేశం;
 	u_char type;
-	u_int id, status;
-	int r;
+	u_int id, స్థితి_2;
+	పూర్ణాంకం r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &id)) != 0)
+	get_సందేశం(conn, సందేశం);
+	ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0 ||
+	    (r = sshbuf_get_u32(సందేశం, &id)) != 0)
 		fatal_fr(r, "compose");
 
-	if (id != expected_id)
+	ఒకవేళ (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
-	if (type != SSH2_FXP_STATUS)
+	ఒకవేళ (type != SSH2_FXP_స్థితి)
 		fatal("Expected SSH2_FXP_STATUS(%u) packet, got %u",
-		    SSH2_FXP_STATUS, type);
+		    SSH2_FXP_స్థితి, type);
 
-	if ((r = sshbuf_get_u32(msg, &status)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &స్థితి_2)) != 0)
 		fatal_fr(r, "parse");
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 
-	debug3("SSH2_FXP_STATUS %u", status);
+	debug3("SSH2_FXP_STATUS %u", స్థితి_2);
 
-	return status;
+	తిరిగి స్థితి_2;
 }
 
-static u_char *
-get_handle(struct sftp_conn *conn, u_int expected_id, size_t *len,
-    const char *errfmt, ...)
+స్థిర u_char *
+get_handle(నిర్మాణం sftp_conn *conn, u_int expected_id, కొలత_t *len,
+    స్థిరరాశి అక్షరం *errfmt, ...)
 {
-	struct sshbuf *msg;
-	u_int id, status;
+	నిర్మాణం sshbuf *సందేశం;
+	u_int id, స్థితి_2;
 	u_char type;
 	u_char *handle;
-	char errmsg[256];
-	va_list args;
-	int r;
+	అక్షరం errmsg[256];
+	va_list వాదనలు;
+	పూర్ణాంకం r;
 
-	va_start(args, errfmt);
-	if (errfmt != NULL)
-		vsnprintf(errmsg, sizeof(errmsg), errfmt, args);
-	va_end(args);
+	va_start(వాదనలు, errfmt);
+	ఒకవేళ (errfmt != ఖాళీ)
+		vsnprintf(errmsg, పరిమాణం(errmsg), errfmt, వాదనలు);
+	va_end(వాదనలు);
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &id)) != 0)
+	get_సందేశం(conn, సందేశం);
+	ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0 ||
+	    (r = sshbuf_get_u32(సందేశం, &id)) != 0)
 		fatal_fr(r, "parse");
 
-	if (id != expected_id)
+	ఒకవేళ (id != expected_id)
 		fatal("%s: ID mismatch (%u != %u)",
-		    errfmt == NULL ? __func__ : errmsg, id, expected_id);
-	if (type == SSH2_FXP_STATUS) {
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		    errfmt == ఖాళీ ? __func__ : errmsg, id, expected_id);
+	ఒకవేళ (type == SSH2_FXP_స్థితి) {
+		ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &స్థితి_2)) != 0)
 			fatal_fr(r, "parse status");
-		if (errfmt != NULL)
-			error("%s: %s", errmsg, fx2txt(status));
-		sshbuf_free(msg);
-		return(NULL);
-	} else if (type != SSH2_FXP_HANDLE)
+		ఒకవేళ (errfmt != ఖాళీ)
+			error("%s: %s", errmsg, fx2txt(స్థితి_2));
+		sshbuf_free(సందేశం);
+		తిరిగి(ఖాళీ);
+	} లేకపోతే ఒకవేళ (type != SSH2_FXP_HANDLE)
 		fatal("%s: Expected SSH2_FXP_HANDLE(%u) packet, got %u",
-		    errfmt == NULL ? __func__ : errmsg, SSH2_FXP_HANDLE, type);
+		    errfmt == ఖాళీ ? __func__ : errmsg, SSH2_FXP_HANDLE, type);
 
-	if ((r = sshbuf_get_string(msg, &handle, len)) != 0)
+	ఒకవేళ ((r = sshbuf_get_string(సందేశం, &handle, len)) != 0)
 		fatal_fr(r, "parse handle");
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 
-	return handle;
+	తిరిగి handle;
 }
 
-static int
-get_decode_stat(struct sftp_conn *conn, u_int expected_id, int quiet, Attrib *a)
+స్థిర పూర్ణాంకం
+get_decode_stat(నిర్మాణం sftp_conn *conn, u_int expected_id, పూర్ణాంకం quiet, Attrib *a)
 {
-	struct sshbuf *msg;
+	నిర్మాణం sshbuf *సందేశం;
 	u_int id;
 	u_char type;
-	int r;
+	పూర్ణాంకం r;
 	Attrib attr;
 
-	if (a != NULL)
-		memset(a, '\0', sizeof(*a));
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ (a != ఖాళీ)
+		memset(a, '\0', పరిమాణం(*a));
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	get_msg(conn, msg);
+	get_సందేశం(conn, సందేశం);
 
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &id)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0 ||
+	    (r = sshbuf_get_u32(సందేశం, &id)) != 0)
 		fatal_fr(r, "parse");
 
-	if (id != expected_id)
+	ఒకవేళ (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
-	if (type == SSH2_FXP_STATUS) {
-		u_int status;
+	ఒకవేళ (type == SSH2_FXP_స్థితి) {
+		u_int స్థితి_2;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &స్థితి_2)) != 0)
 			fatal_fr(r, "parse status");
-		if (quiet)
-			debug("stat remote: %s", fx2txt(status));
-		else
-			error("stat remote: %s", fx2txt(status));
-		sshbuf_free(msg);
-		return -1;
-	} else if (type != SSH2_FXP_ATTRS) {
+		ఒకవేళ (quiet)
+			debug("stat remote: %s", fx2txt(స్థితి_2));
+		లేకపోతే
+			error("stat remote: %s", fx2txt(స్థితి_2));
+		sshbuf_free(సందేశం);
+		తిరిగి -1;
+	} లేకపోతే ఒకవేళ (type != SSH2_FXP_ATTRS) {
 		fatal("Expected SSH2_FXP_ATTRS(%u) packet, got %u",
 		    SSH2_FXP_ATTRS, type);
 	}
-	if ((r = decode_attrib(msg, &attr)) != 0) {
+	ఒకవేళ ((r = decode_attrib(సందేశం, &attr)) != 0) {
 		error_fr(r, "decode_attrib");
-		sshbuf_free(msg);
-		return -1;
+		sshbuf_free(సందేశం);
+		తిరిగి -1;
 	}
 	/* success */
-	if (a != NULL)
+	ఒకవేళ (a != ఖాళీ)
 		*a = attr;
 	debug3("Received stat reply T:%u I:%u F:0x%04x M:%05o",
 	    type, id, attr.flags, attr.perm);
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-get_decode_statvfs(struct sftp_conn *conn, struct sftp_statvfs *st,
-    u_int expected_id, int quiet)
+స్థిర పూర్ణాంకం
+get_decode_statvfs(నిర్మాణం sftp_conn *conn, నిర్మాణం sftp_statvfs *st,
+    u_int expected_id, పూర్ణాంకం quiet)
 {
-	struct sshbuf *msg;
+	నిర్మాణం sshbuf *సందేశం;
 	u_char type;
 	u_int id;
 	uint64_t flag;
-	int r;
+	పూర్ణాంకం r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	get_msg(conn, msg);
+	get_సందేశం(conn, సందేశం);
 
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &id)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0 ||
+	    (r = sshbuf_get_u32(సందేశం, &id)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("Received statvfs reply T:%u I:%u", type, id);
-	if (id != expected_id)
+	ఒకవేళ (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
-	if (type == SSH2_FXP_STATUS) {
-		u_int status;
+	ఒకవేళ (type == SSH2_FXP_స్థితి) {
+		u_int స్థితి_2;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &స్థితి_2)) != 0)
 			fatal_fr(r, "parse status");
-		if (quiet)
-			debug("remote statvfs: %s", fx2txt(status));
-		else
-			error("remote statvfs: %s", fx2txt(status));
-		sshbuf_free(msg);
-		return -1;
-	} else if (type != SSH2_FXP_EXTENDED_REPLY) {
+		ఒకవేళ (quiet)
+			debug("remote statvfs: %s", fx2txt(స్థితి_2));
+		లేకపోతే
+			error("remote statvfs: %s", fx2txt(స్థితి_2));
+		sshbuf_free(సందేశం);
+		తిరిగి -1;
+	} లేకపోతే ఒకవేళ (type != SSH2_FXP_EXTENDED_జవాబు) {
 		fatal("Expected SSH2_FXP_EXTENDED_REPLY(%u) packet, got %u",
-		    SSH2_FXP_EXTENDED_REPLY, type);
+		    SSH2_FXP_EXTENDED_జవాబు, type);
 	}
 
-	memset(st, 0, sizeof(*st));
-	if ((r = sshbuf_get_u64(msg, &st->f_bsize)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_frsize)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_blocks)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_bfree)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_bavail)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_files)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_ffree)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_favail)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_fsid)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &flag)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &st->f_namemax)) != 0)
+	memset(st, 0, పరిమాణం(*st));
+	ఒకవేళ ((r = sshbuf_get_u64(సందేశం, &st->f_bsize)) != 0 ||
+	    (r = sshbuf_get_u64(సందేశం, &st->f_frsize)) != 0 ||
+	    (r = sshbuf_get_u64(సందేశం, &st->f_ఖండాలు)) != 0 ||
+	    (r = sshbuf_get_u64(సందేశం, &st->f_bfree)) != 0 ||
+	    (r = sshbuf_get_u64(సందేశం, &st->f_bavail)) != 0 ||
+	    (r = sshbuf_get_u64(సందేశం, &st->f_files)) != 0 ||
+	    (r = sshbuf_get_u64(సందేశం, &st->f_ffree)) != 0 ||
+	    (r = sshbuf_get_u64(సందేశం, &st->f_favail)) != 0 ||
+	    (r = sshbuf_get_u64(సందేశం, &st->f_fsid)) != 0 ||
+	    (r = sshbuf_get_u64(సందేశం, &flag)) != 0 ||
+	    (r = sshbuf_get_u64(సందేశం, &st->f_namemax)) != 0)
 		fatal_fr(r, "parse statvfs");
 
 	st->f_flag = (flag & SSH2_FXE_STATVFS_ST_RDONLY) ? ST_RDONLY : 0;
 	st->f_flag |= (flag & SSH2_FXE_STATVFS_ST_NOSUID) ? ST_NOSUID : 0;
 
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 
-	return 0;
+	తిరిగి 0;
 }
 
-struct sftp_conn *
-sftp_init(int fd_in, int fd_out, u_int transfer_buflen, u_int num_requests,
-    uint64_t limit_kbps)
+నిర్మాణం sftp_conn *
+sftp_init(పూర్ణాంకం fd_లోపల, పూర్ణాంకం fd_బహిర్గతం, u_int transfer_buflen, u_int అంకె_అభ్యర్థనలు,
+    uint64_t హద్దు_kbps)
 {
 	u_char type;
-	struct sshbuf *msg;
-	struct sftp_conn *ret;
-	int r;
+	నిర్మాణం sshbuf *సందేశం;
+	నిర్మాణం sftp_conn *ret;
+	పూర్ణాంకం r;
 
-	ret = xcalloc(1, sizeof(*ret));
-	ret->msg_id = 1;
-	ret->fd_in = fd_in;
-	ret->fd_out = fd_out;
+	ret = xcalloc(1, పరిమాణం(*ret));
+	ret->సందేశం_id = 1;
+	ret->fd_లోపల = fd_లోపల;
+	ret->fd_బహిర్గతం = fd_బహిర్గతం;
 	ret->download_buflen = ret->upload_buflen =
 	    transfer_buflen ? transfer_buflen : DEFAULT_COPY_BUFLEN;
-	ret->num_requests =
-	    num_requests ? num_requests : DEFAULT_NUM_REQUESTS;
+	ret->అంకె_అభ్యర్థనలు =
+	    అంకె_అభ్యర్థనలు ? అంకె_అభ్యర్థనలు : DEFAULT_అంకె_అభ్యర్థనలు;
 	ret->exts = 0;
-	ret->limit_kbps = 0;
+	ret->హద్దు_kbps = 0;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_INIT)) != 0 ||
-	    (r = sshbuf_put_u32(msg, SSH2_FILEXFER_VERSION)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_INIT)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, SSH2_FILEXFER_సంస్కరణ)) != 0)
 		fatal_fr(r, "parse");
 
-	send_msg(ret, msg);
+	send_సందేశం(ret, సందేశం);
 
-	get_msg_extended(ret, msg, 1);
+	get_సందేశం_extended(ret, సందేశం, 1);
 
 	/* Expecting a VERSION reply */
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_FXP_VERSION) {
+	ఒకవేళ (type != SSH2_FXP_సంస్కరణ) {
 		error("Invalid packet back from SSH2_FXP_INIT (type %u)",
 		    type);
-		sshbuf_free(msg);
-		free(ret);
-		return(NULL);
+		sshbuf_free(సందేశం);
+		విడుదల(ret);
+		తిరిగి(ఖాళీ);
 	}
-	if ((r = sshbuf_get_u32(msg, &ret->version)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &ret->సంస్కరణ)) != 0)
 		fatal_fr(r, "parse version");
 
-	debug2("Remote version: %u", ret->version);
+	debug2("Remote version: %u", ret->సంస్కరణ);
 
 	/* Check for extensions */
-	while (sshbuf_len(msg) > 0) {
-		char *name;
-		u_char *value;
-		size_t vlen;
-		int known = 0;
+	అయితే (sshbuf_len(సందేశం) > 0) {
+		అక్షరం *name;
+		u_char *విలువ;
+		కొలత_t vlen;
+		పూర్ణాంకం తెలిసిన = 0;
 
-		if ((r = sshbuf_get_cstring(msg, &name, NULL)) != 0 ||
-		    (r = sshbuf_get_string(msg, &value, &vlen)) != 0)
+		ఒకవేళ ((r = sshbuf_get_cstring(సందేశం, &name, ఖాళీ)) != 0 ||
+		    (r = sshbuf_get_string(సందేశం, &విలువ, &vlen)) != 0)
 			fatal_fr(r, "parse extension");
-		if (strcmp(name, "posix-rename@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		ఒకవేళ (strcmp(name, "posix-rename@openssh.com") == 0 &&
+		    strcmp((అక్షరం *)విలువ, "1") == 0) {
 			ret->exts |= SFTP_EXT_POSIX_RENAME;
-			known = 1;
-		} else if (strcmp(name, "statvfs@openssh.com") == 0 &&
-		    strcmp((char *)value, "2") == 0) {
+			తెలిసిన = 1;
+		} లేకపోతే ఒకవేళ (strcmp(name, "statvfs@openssh.com") == 0 &&
+		    strcmp((అక్షరం *)విలువ, "2") == 0) {
 			ret->exts |= SFTP_EXT_STATVFS;
-			known = 1;
-		} else if (strcmp(name, "fstatvfs@openssh.com") == 0 &&
-		    strcmp((char *)value, "2") == 0) {
+			తెలిసిన = 1;
+		} లేకపోతే ఒకవేళ (strcmp(name, "fstatvfs@openssh.com") == 0 &&
+		    strcmp((అక్షరం *)విలువ, "2") == 0) {
 			ret->exts |= SFTP_EXT_FSTATVFS;
-			known = 1;
-		} else if (strcmp(name, "hardlink@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+			తెలిసిన = 1;
+		} లేకపోతే ఒకవేళ (strcmp(name, "hardlink@openssh.com") == 0 &&
+		    strcmp((అక్షరం *)విలువ, "1") == 0) {
 			ret->exts |= SFTP_EXT_HARDLINK;
-			known = 1;
-		} else if (strcmp(name, "fsync@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+			తెలిసిన = 1;
+		} లేకపోతే ఒకవేళ (strcmp(name, "fsync@openssh.com") == 0 &&
+		    strcmp((అక్షరం *)విలువ, "1") == 0) {
 			ret->exts |= SFTP_EXT_FSYNC;
-			known = 1;
-		} else if (strcmp(name, "lsetstat@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+			తెలిసిన = 1;
+		} లేకపోతే ఒకవేళ (strcmp(name, "lsetstat@openssh.com") == 0 &&
+		    strcmp((అక్షరం *)విలువ, "1") == 0) {
 			ret->exts |= SFTP_EXT_LSETSTAT;
-			known = 1;
-		} else if (strcmp(name, "limits@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+			తెలిసిన = 1;
+		} లేకపోతే ఒకవేళ (strcmp(name, "limits@openssh.com") == 0 &&
+		    strcmp((అక్షరం *)విలువ, "1") == 0) {
 			ret->exts |= SFTP_EXT_LIMITS;
-			known = 1;
-		} else if (strcmp(name, "expand-path@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
-			ret->exts |= SFTP_EXT_PATH_EXPAND;
-			known = 1;
-		} else if (strcmp(name, "copy-data") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
-			ret->exts |= SFTP_EXT_COPY_DATA;
-			known = 1;
-		} else if (strcmp(name,
+			తెలిసిన = 1;
+		} లేకపోతే ఒకవేళ (strcmp(name, "expand-path@openssh.com") == 0 &&
+		    strcmp((అక్షరం *)విలువ, "1") == 0) {
+			ret->exts |= SFTP_EXT_మార్గం_EXPAND;
+			తెలిసిన = 1;
+		} లేకపోతే ఒకవేళ (strcmp(name, "copy-data") == 0 &&
+		    strcmp((అక్షరం *)విలువ, "1") == 0) {
+			ret->exts |= SFTP_EXT_COPY_దత్తాంశం;
+			తెలిసిన = 1;
+		} లేకపోతే ఒకవేళ (strcmp(name,
 		    "users-groups-by-id@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		    strcmp((అక్షరం *)విలువ, "1") == 0) {
 			ret->exts |= SFTP_EXT_GETUSERSGROUPS_BY_ID;
-			known = 1;
+			తెలిసిన = 1;
 		}
-		if (known) {
+		ఒకవేళ (తెలిసిన) {
 			debug2("Server supports extension \"%s\" revision %s",
-			    name, value);
-		} else {
+			    name, విలువ);
+		} లేకపోతే {
 			debug2("Unrecognised server extension \"%s\"", name);
 		}
-		free(name);
-		free(value);
+		విడుదల(name);
+		విడుదల(విలువ);
 	}
 
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 
 	/* Query the server for its limits */
-	if (ret->exts & SFTP_EXT_LIMITS) {
-		struct sftp_limits limits;
-		if (sftp_get_limits(ret, &limits) != 0)
+	ఒకవేళ (ret->exts & SFTP_EXT_LIMITS) {
+		నిర్మాణం sftp_limits limits;
+		ఒకవేళ (sftp_get_limits(ret, &limits) != 0)
 			fatal_f("limits failed");
 
 		/* If the caller did not specify, find a good value */
-		if (transfer_buflen == 0) {
-			ret->download_buflen = MINIMUM(limits.read_length,
-			    SFTP_MAX_MSG_LENGTH - 1024);
-			ret->upload_buflen = MINIMUM(limits.write_length,
-			    SFTP_MAX_MSG_LENGTH - 1024);
-			ret->download_buflen = MAXIMUM(ret->download_buflen, 64);
-			ret->upload_buflen = MAXIMUM(ret->upload_buflen, 64);
+		ఒకవేళ (transfer_buflen == 0) {
+			ret->download_buflen = MINIMUM(limits.read_నిడివి,
+			    SFTP_MAX_సందేశం_నిడివి - 1024);
+			ret->upload_buflen = MINIMUM(limits.write_నిడివి,
+			    SFTP_MAX_సందేశం_నిడివి - 1024);
+			ret->download_buflen = గరిష్ఠ(ret->download_buflen, 64);
+			ret->upload_buflen = గరిష్ఠ(ret->upload_buflen, 64);
 			debug3("server upload/download buffer sizes "
 			    "%llu / %llu; using %u / %u",
-			    (unsigned long long)limits.write_length,
-			    (unsigned long long)limits.read_length,
+			    (గుర్తులేని దీర్ఘ దీర్ఘ)limits.write_నిడివి,
+			    (గుర్తులేని దీర్ఘ దీర్ఘ)limits.read_నిడివి,
 			    ret->upload_buflen, ret->download_buflen);
 		}
 	}
 
 	/* Some filexfer v.0 servers don't support large packets */
-	if (ret->version == 0) {
+	ఒకవేళ (ret->సంస్కరణ == 0) {
 		ret->download_buflen = MINIMUM(ret->download_buflen, 20480);
 		ret->upload_buflen = MINIMUM(ret->upload_buflen, 20480);
 	}
 
-	ret->limit_kbps = limit_kbps;
-	if (ret->limit_kbps > 0) {
-		bandwidth_limit_init(&ret->bwlimit_in, ret->limit_kbps,
+	ret->హద్దు_kbps = హద్దు_kbps;
+	ఒకవేళ (ret->హద్దు_kbps > 0) {
+		bandwidth_హద్దు_init(&ret->bwlimit_లోపల, ret->హద్దు_kbps,
 		    ret->download_buflen);
-		bandwidth_limit_init(&ret->bwlimit_out, ret->limit_kbps,
+		bandwidth_హద్దు_init(&ret->bwlimit_బహిర్గతం, ret->హద్దు_kbps,
 		    ret->upload_buflen);
 	}
 
-	return ret;
+	తిరిగి ret;
 }
 
-void
-sftp_free(struct sftp_conn *conn)
+శూన్య
+sftp_free(నిర్మాణం sftp_conn *conn)
 {
-	if (conn == NULL)
-		return;
-	freezero(conn, sizeof(*conn));
+	ఒకవేళ (conn == ఖాళీ)
+		తిరిగి;
+	freezero(conn, పరిమాణం(*conn));
 }
 
 u_int
-sftp_proto_version(struct sftp_conn *conn)
+sftp_proto_సంస్కరణ(నిర్మాణం sftp_conn *conn)
 {
-	return conn->version;
+	తిరిగి conn->సంస్కరణ;
 }
 
-int
-sftp_get_limits(struct sftp_conn *conn, struct sftp_limits *limits)
+పూర్ణాంకం
+sftp_get_limits(నిర్మాణం sftp_conn *conn, నిర్మాణం sftp_limits *limits)
 {
-	u_int id, msg_id;
+	u_int id, సందేశం_id;
 	u_char type;
-	struct sshbuf *msg;
-	int r;
+	నిర్మాణం sshbuf *సందేశం;
+	పూర్ణాంకం r;
 
-	if ((conn->exts & SFTP_EXT_LIMITS) == 0) {
+	ఒకవేళ ((conn->exts & SFTP_EXT_LIMITS) == 0) {
 		error("Server does not support limits@openssh.com extension");
-		return -1;
+		తిరిగి -1;
 	}
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "limits@openssh.com")) != 0)
+	id = conn->సందేశం_id++;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, "limits@openssh.com")) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
+	send_సందేశం(conn, సందేశం);
 	debug3("Sent message limits@openssh.com I:%u", id);
 
-	get_msg(conn, msg);
+	get_సందేశం(conn, సందేశం);
 
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &msg_id)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0 ||
+	    (r = sshbuf_get_u32(సందేశం, &సందేశం_id)) != 0)
 		fatal_fr(r, "parse");
 
-	debug3("Received limits reply T:%u I:%u", type, msg_id);
-	if (id != msg_id)
-		fatal("ID mismatch (%u != %u)", msg_id, id);
-	if (type != SSH2_FXP_EXTENDED_REPLY) {
+	debug3("Received limits reply T:%u I:%u", type, సందేశం_id);
+	ఒకవేళ (id != సందేశం_id)
+		fatal("ID mismatch (%u != %u)", సందేశం_id, id);
+	ఒకవేళ (type != SSH2_FXP_EXTENDED_జవాబు) {
 		debug_f("expected SSH2_FXP_EXTENDED_REPLY(%u) packet, got %u",
-		    SSH2_FXP_EXTENDED_REPLY, type);
+		    SSH2_FXP_EXTENDED_జవాబు, type);
 		/* Disable the limits extension */
 		conn->exts &= ~SFTP_EXT_LIMITS;
-		sshbuf_free(msg);
-		return -1;
+		sshbuf_free(సందేశం);
+		తిరిగి -1;
 	}
 
-	memset(limits, 0, sizeof(*limits));
-	if ((r = sshbuf_get_u64(msg, &limits->packet_length)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &limits->read_length)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &limits->write_length)) != 0 ||
-	    (r = sshbuf_get_u64(msg, &limits->open_handles)) != 0)
+	memset(limits, 0, పరిమాణం(*limits));
+	ఒకవేళ ((r = sshbuf_get_u64(సందేశం, &limits->packet_నిడివి)) != 0 ||
+	    (r = sshbuf_get_u64(సందేశం, &limits->read_నిడివి)) != 0 ||
+	    (r = sshbuf_get_u64(సందేశం, &limits->write_నిడివి)) != 0 ||
+	    (r = sshbuf_get_u64(సందేశం, &limits->open_handles)) != 0)
 		fatal_fr(r, "parse limits");
 
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sftp_close(struct sftp_conn *conn, const u_char *handle, u_int handle_len)
+పూర్ణాంకం
+sftp_close(నిర్మాణం sftp_conn *conn, స్థిరరాశి u_char *handle, u_int handle_len)
 {
-	u_int id, status;
-	struct sshbuf *msg;
-	int r;
+	u_int id, స్థితి_2;
+	నిర్మాణం sshbuf *సందేశం;
+	పూర్ణాంకం r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_CLOSE)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_string(msg, handle, handle_len)) != 0)
+	id = conn->సందేశం_id++;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_CLOSE)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_string(సందేశం, handle, handle_len)) != 0)
 		fatal_fr(r, "parse");
-	send_msg(conn, msg);
+	send_సందేశం(conn, సందేశం);
 	debug3("Sent message SSH2_FXP_CLOSE I:%u", id);
 
-	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
-		error("close remote: %s", fx2txt(status));
+	స్థితి_2 = get_స్థితి(conn, id);
+	ఒకవేళ (స్థితి_2 != SSH2_FX_OK)
+		error("close remote: %s", fx2txt(స్థితి_2));
 
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
 
-static int
-sftp_lsreaddir(struct sftp_conn *conn, const char *path, int print_flag,
+స్థిర పూర్ణాంకం
+sftp_lsreaddir(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం, పూర్ణాంకం print_flag,
     SFTP_DIRENT ***dir)
 {
-	struct sshbuf *msg;
-	u_int count, id, i, expected_id, ents = 0;
-	size_t handle_len;
+	నిర్మాణం sshbuf *సందేశం;
+	u_int లెక్క, id, i, expected_id, ents = 0;
+	కొలత_t handle_len;
 	u_char type, *handle;
-	int status = SSH2_FX_FAILURE;
-	int r;
+	పూర్ణాంకం స్థితి_2 = SSH2_FX_FAILURE;
+	పూర్ణాంకం r;
 
-	if (dir)
-		*dir = NULL;
+	ఒకవేళ (dir)
+		*dir = ఖాళీ;
 
-	id = conn->msg_id++;
+	id = conn->సందేశం_id++;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_OPENDIR)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, path)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_OPENDIR)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, మార్గం)) != 0)
 		fatal_fr(r, "compose OPENDIR");
-	send_msg(conn, msg);
+	send_సందేశం(conn, సందేశం);
 
 	handle = get_handle(conn, id, &handle_len,
-	    "remote readdir(\"%s\")", path);
-	if (handle == NULL) {
-		sshbuf_free(msg);
-		return -1;
+	    "remote readdir(\"%s\")", మార్గం);
+	ఒకవేళ (handle == ఖాళీ) {
+		sshbuf_free(సందేశం);
+		తిరిగి -1;
 	}
 
-	if (dir) {
+	ఒకవేళ (dir) {
 		ents = 0;
-		*dir = xcalloc(1, sizeof(**dir));
-		(*dir)[0] = NULL;
+		*dir = xcalloc(1, పరిమాణం(**dir));
+		(*dir)[0] = ఖాళీ;
 	}
 
-	for (; !interrupted;) {
-		id = expected_id = conn->msg_id++;
+	కొరకు (; !interrupted;) {
+		id = expected_id = conn->సందేశం_id++;
 
 		debug3("Sending SSH2_FXP_READDIR I:%u", id);
 
-		sshbuf_reset(msg);
-		if ((r = sshbuf_put_u8(msg, SSH2_FXP_READDIR)) != 0 ||
-		    (r = sshbuf_put_u32(msg, id)) != 0 ||
-		    (r = sshbuf_put_string(msg, handle, handle_len)) != 0)
+		sshbuf_reset(సందేశం);
+		ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_READDIR)) != 0 ||
+		    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+		    (r = sshbuf_put_string(సందేశం, handle, handle_len)) != 0)
 			fatal_fr(r, "compose READDIR");
-		send_msg(conn, msg);
+		send_సందేశం(conn, సందేశం);
 
-		sshbuf_reset(msg);
+		sshbuf_reset(సందేశం);
 
-		get_msg(conn, msg);
+		get_సందేశం(conn, సందేశం);
 
-		if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-		    (r = sshbuf_get_u32(msg, &id)) != 0)
+		ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0 ||
+		    (r = sshbuf_get_u32(సందేశం, &id)) != 0)
 			fatal_fr(r, "parse");
 
 		debug3("Received reply T:%u I:%u", type, id);
 
-		if (id != expected_id)
+		ఒకవేళ (id != expected_id)
 			fatal("ID mismatch (%u != %u)", id, expected_id);
 
-		if (type == SSH2_FXP_STATUS) {
+		ఒకవేళ (type == SSH2_FXP_స్థితి) {
 			u_int rstatus;
 
-			if ((r = sshbuf_get_u32(msg, &rstatus)) != 0)
+			ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &rstatus)) != 0)
 				fatal_fr(r, "parse status");
 			debug3("Received SSH2_FXP_STATUS %d", rstatus);
-			if (rstatus == SSH2_FX_EOF)
-				break;
+			ఒకవేళ (rstatus == SSH2_FX_EOF)
+				ఆపు;
 			error("Couldn't read directory: %s", fx2txt(rstatus));
-			goto out;
-		} else if (type != SSH2_FXP_NAME)
+			వెళ్ళు బహిర్గతం;
+		} లేకపోతే ఒకవేళ (type != SSH2_FXP_NAME)
 			fatal("Expected SSH2_FXP_NAME(%u) packet, got %u",
 			    SSH2_FXP_NAME, type);
 
-		if ((r = sshbuf_get_u32(msg, &count)) != 0)
+		ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &లెక్క)) != 0)
 			fatal_fr(r, "parse count");
-		if (count > SSHBUF_SIZE_MAX)
+		ఒకవేళ (లెక్క > SSHBUF_కొలత_MAX)
 			fatal_f("nonsensical number of entries");
-		if (count == 0)
-			break;
-		debug3("Received %d SSH2_FXP_NAME responses", count);
-		for (i = 0; i < count; i++) {
-			char *filename, *longname;
+		ఒకవేళ (లెక్క == 0)
+			ఆపు;
+		debug3("Received %d SSH2_FXP_NAME responses", లెక్క);
+		కొరకు (i = 0; i < లెక్క; i++) {
+			అక్షరం *filename, *longname;
 			Attrib a;
 
-			if ((r = sshbuf_get_cstring(msg, &filename,
-			    NULL)) != 0 ||
-			    (r = sshbuf_get_cstring(msg, &longname,
-			    NULL)) != 0)
+			ఒకవేళ ((r = sshbuf_get_cstring(సందేశం, &filename,
+			    ఖాళీ)) != 0 ||
+			    (r = sshbuf_get_cstring(సందేశం, &longname,
+			    ఖాళీ)) != 0)
 				fatal_fr(r, "parse filenames");
-			if ((r = decode_attrib(msg, &a)) != 0) {
+			ఒకవేళ ((r = decode_attrib(సందేశం, &a)) != 0) {
 				error_fr(r, "couldn't decode attrib");
-				free(filename);
-				free(longname);
-				goto out;
+				విడుదల(filename);
+				విడుదల(longname);
+				వెళ్ళు బహిర్గతం;
 			}
 
-			if (print_flag)
+			ఒకవేళ (print_flag)
 				mprintf("%s\n", longname);
 
 			/*
@@ -791,995 +791,995 @@ sftp_lsreaddir(struct sftp_conn *conn, const char *path, int print_flag,
 			 * These can be used to attack recursive ops
 			 * (e.g. send '../../../../etc/passwd')
 			 */
-			if (*filename == '\0' ||
-			    strpbrk(filename, SFTP_DIRECTORY_CHARS) != NULL) {
+			ఒకవేళ (*filename == '\0' ||
+			    strpbrk(filename, SFTP_DIRECTORY_CHARS) != ఖాళీ) {
 				error("Server sent suspect path \"%s\" "
-				    "during readdir of \"%s\"", filename, path);
-			} else if (dir) {
-				*dir = xreallocarray(*dir, ents + 2, sizeof(**dir));
-				(*dir)[ents] = xcalloc(1, sizeof(***dir));
+				    "during readdir of \"%s\"", filename, మార్గం);
+			} లేకపోతే ఒకవేళ (dir) {
+				*dir = xreallocarray(*dir, ents + 2, పరిమాణం(**dir));
+				(*dir)[ents] = xcalloc(1, పరిమాణం(***dir));
 				(*dir)[ents]->filename = xstrdup(filename);
 				(*dir)[ents]->longname = xstrdup(longname);
-				memcpy(&(*dir)[ents]->a, &a, sizeof(a));
-				(*dir)[++ents] = NULL;
+				జ్ఞాపకం_నకలు(&(*dir)[ents]->a, &a, పరిమాణం(a));
+				(*dir)[++ents] = ఖాళీ;
 			}
-			free(filename);
-			free(longname);
+			విడుదల(filename);
+			విడుదల(longname);
 		}
 	}
-	status = 0;
+	స్థితి_2 = 0;
 
- out:
-	sshbuf_free(msg);
+ బహిర్గతం:
+	sshbuf_free(సందేశం);
 	sftp_close(conn, handle, handle_len);
-	free(handle);
+	విడుదల(handle);
 
-	if (status != 0 && dir != NULL) {
+	ఒకవేళ (స్థితి_2 != 0 && dir != ఖాళీ) {
 		/* Don't return results on error */
 		sftp_free_dirents(*dir);
-		*dir = NULL;
-	} else if (interrupted && dir != NULL && *dir != NULL) {
+		*dir = ఖాళీ;
+	} లేకపోతే ఒకవేళ (interrupted && dir != ఖాళీ && *dir != ఖాళీ) {
 		/* Don't return partial matches on interrupt */
 		sftp_free_dirents(*dir);
-		*dir = xcalloc(1, sizeof(**dir));
-		**dir = NULL;
+		*dir = xcalloc(1, పరిమాణం(**dir));
+		**dir = ఖాళీ;
 	}
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_readdir(struct sftp_conn *conn, const char *path, SFTP_DIRENT ***dir)
+పూర్ణాంకం
+sftp_readdir(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం, SFTP_DIRENT ***dir)
 {
-	return sftp_lsreaddir(conn, path, 0, dir);
+	తిరిగి sftp_lsreaddir(conn, మార్గం, 0, dir);
 }
 
-void sftp_free_dirents(SFTP_DIRENT **s)
+శూన్య sftp_free_dirents(SFTP_DIRENT **s)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	if (s == NULL)
-		return;
-	for (i = 0; s[i]; i++) {
-		free(s[i]->filename);
-		free(s[i]->longname);
-		free(s[i]);
+	ఒకవేళ (s == ఖాళీ)
+		తిరిగి;
+	కొరకు (i = 0; s[i]; i++) {
+		విడుదల(s[i]->filename);
+		విడుదల(s[i]->longname);
+		విడుదల(s[i]);
 	}
-	free(s);
+	విడుదల(s);
 }
 
-int
-sftp_rm(struct sftp_conn *conn, const char *path)
+పూర్ణాంకం
+sftp_rm(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం)
 {
-	u_int status, id;
+	u_int స్థితి_2, id;
 
-	debug2("Sending SSH2_FXP_REMOVE \"%s\"", path);
+	debug2("Sending SSH2_FXP_REMOVE \"%s\"", మార్గం);
 
-	id = conn->msg_id++;
-	send_string_request(conn, id, SSH2_FXP_REMOVE, path, strlen(path));
-	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
-		error("remote delete %s: %s", path, fx2txt(status));
-	return status == SSH2_FX_OK ? 0 : -1;
+	id = conn->సందేశం_id++;
+	send_string_request(conn, id, SSH2_FXP_REMOVE, మార్గం, అక్షరశ్రేణి_పొడవు(మార్గం));
+	స్థితి_2 = get_స్థితి(conn, id);
+	ఒకవేళ (స్థితి_2 != SSH2_FX_OK)
+		error("remote delete %s: %s", మార్గం, fx2txt(స్థితి_2));
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_mkdir(struct sftp_conn *conn, const char *path, Attrib *a, int print_flag)
+పూర్ణాంకం
+sftp_mkdir(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం, Attrib *a, పూర్ణాంకం print_flag)
 {
-	u_int status, id;
+	u_int స్థితి_2, id;
 
-	debug2("Sending SSH2_FXP_MKDIR \"%s\"", path);
+	debug2("Sending SSH2_FXP_MKDIR \"%s\"", మార్గం);
 
-	id = conn->msg_id++;
-	send_string_attrs_request(conn, id, SSH2_FXP_MKDIR, path,
-	    strlen(path), a);
+	id = conn->సందేశం_id++;
+	send_string_attrs_request(conn, id, SSH2_FXP_MKDIR, మార్గం,
+	    అక్షరశ్రేణి_పొడవు(మార్గం), a);
 
-	status = get_status(conn, id);
-	if (status != SSH2_FX_OK && print_flag)
-		error("remote mkdir \"%s\": %s", path, fx2txt(status));
+	స్థితి_2 = get_స్థితి(conn, id);
+	ఒకవేళ (స్థితి_2 != SSH2_FX_OK && print_flag)
+		error("remote mkdir \"%s\": %s", మార్గం, fx2txt(స్థితి_2));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_mkpath(struct sftp_conn *conn, const char *path, Attrib *a, int print_flag)
+పూర్ణాంకం
+sftp_mkpath(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం, Attrib *a, పూర్ణాంకం print_flag)
 {
-	char *slash, *tmp_path;
-	int done;
+	అక్షరం *slash, *tmp_మార్గం;
+	పూర్ణాంకం పూర్తి;
 
-	tmp_path = xstrdup(path);
-	slash = tmp_path;
+	tmp_మార్గం = xstrdup(మార్గం);
+	slash = tmp_మార్గం;
 
-	for (;;) {
+	కొరకు (;;) {
 		slash += strspn(slash, "/");
 		slash += strcspn(slash, "/");
 
-		done = (*slash == '\0');
+		పూర్తి = (*slash == '\0');
 		*slash = '\0';
 
-		if (!sftp_remote_is_dir(conn, tmp_path)) {
-			if (sftp_mkdir(conn, tmp_path, a, print_flag) != 0) {
-				free(tmp_path);
-				return -1;
+		ఒకవేళ (!sftp_remote_is_dir(conn, tmp_మార్గం)) {
+			ఒకవేళ (sftp_mkdir(conn, tmp_మార్గం, a, print_flag) != 0) {
+				విడుదల(tmp_మార్గం);
+				తిరిగి -1;
 			}
 		}
 
-		if (done)
-			break;
+		ఒకవేళ (పూర్తి)
+			ఆపు;
 
 		*slash = '/';
 	}
 
-	free(tmp_path);
-	return 0;
+	విడుదల(tmp_మార్గం);
+	తిరిగి 0;
 }
 
-int
-sftp_rmdir(struct sftp_conn *conn, const char *path)
+పూర్ణాంకం
+sftp_rmdir(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం)
 {
-	u_int status, id;
+	u_int స్థితి_2, id;
 
-	debug2("Sending SSH2_FXP_RMDIR \"%s\"", path);
+	debug2("Sending SSH2_FXP_RMDIR \"%s\"", మార్గం);
 
-	id = conn->msg_id++;
-	send_string_request(conn, id, SSH2_FXP_RMDIR, path,
-	    strlen(path));
+	id = conn->సందేశం_id++;
+	send_string_request(conn, id, SSH2_FXP_RMDIR, మార్గం,
+	    అక్షరశ్రేణి_పొడవు(మార్గం));
 
-	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
-		error("remote rmdir \"%s\": %s", path, fx2txt(status));
+	స్థితి_2 = get_స్థితి(conn, id);
+	ఒకవేళ (స్థితి_2 != SSH2_FX_OK)
+		error("remote rmdir \"%s\": %s", మార్గం, fx2txt(స్థితి_2));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_stat(struct sftp_conn *conn, const char *path, int quiet, Attrib *a)
+పూర్ణాంకం
+sftp_stat(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం, పూర్ణాంకం quiet, Attrib *a)
 {
 	u_int id;
 
-	debug2("Sending SSH2_FXP_STAT \"%s\"", path);
+	debug2("Sending SSH2_FXP_STAT \"%s\"", మార్గం);
 
-	id = conn->msg_id++;
+	id = conn->సందేశం_id++;
 
 	send_string_request(conn, id,
-	    conn->version == 0 ? SSH2_FXP_STAT_VERSION_0 : SSH2_FXP_STAT,
-	    path, strlen(path));
+	    conn->సంస్కరణ == 0 ? SSH2_FXP_STAT_సంస్కరణ_0 : SSH2_FXP_STAT,
+	    మార్గం, అక్షరశ్రేణి_పొడవు(మార్గం));
 
-	return get_decode_stat(conn, id, quiet, a);
+	తిరిగి get_decode_stat(conn, id, quiet, a);
 }
 
-int
-sftp_lstat(struct sftp_conn *conn, const char *path, int quiet, Attrib *a)
+పూర్ణాంకం
+sftp_lstat(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం, పూర్ణాంకం quiet, Attrib *a)
 {
 	u_int id;
 
-	if (conn->version == 0) {
+	ఒకవేళ (conn->సంస్కరణ == 0) {
 		do_log2(quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_INFO,
 		    "Server version does not support lstat operation");
-		return sftp_stat(conn, path, quiet, a);
+		తిరిగి sftp_stat(conn, మార్గం, quiet, a);
 	}
 
-	id = conn->msg_id++;
-	send_string_request(conn, id, SSH2_FXP_LSTAT, path,
-	    strlen(path));
+	id = conn->సందేశం_id++;
+	send_string_request(conn, id, SSH2_FXP_LSTAT, మార్గం,
+	    అక్షరశ్రేణి_పొడవు(మార్గం));
 
-	return get_decode_stat(conn, id, quiet, a);
+	తిరిగి get_decode_stat(conn, id, quiet, a);
 }
 
-#ifdef notyet
-int
-sftp_fstat(struct sftp_conn *conn, const u_char *handle, u_int handle_len,
-    int quiet, Attrib *a)
+#నిర్వచితమైతే notyet
+పూర్ణాంకం
+sftp_fstat(నిర్మాణం sftp_conn *conn, స్థిరరాశి u_char *handle, u_int handle_len,
+    పూర్ణాంకం quiet, Attrib *a)
 {
 	u_int id;
 
 	debug2("Sending SSH2_FXP_FSTAT \"%s\"");
 
-	id = conn->msg_id++;
+	id = conn->సందేశం_id++;
 	send_string_request(conn, id, SSH2_FXP_FSTAT, handle,
 	    handle_len);
 
-	return get_decode_stat(conn, id, quiet, a);
+	తిరిగి get_decode_stat(conn, id, quiet, a);
 }
-#endif
+#అయితే_ముగింపు
 
-int
-sftp_setstat(struct sftp_conn *conn, const char *path, Attrib *a)
+పూర్ణాంకం
+sftp_setstat(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం, Attrib *a)
 {
-	u_int status, id;
+	u_int స్థితి_2, id;
 
-	debug2("Sending SSH2_FXP_SETSTAT \"%s\"", path);
+	debug2("Sending SSH2_FXP_SETSTAT \"%s\"", మార్గం);
 
-	id = conn->msg_id++;
-	send_string_attrs_request(conn, id, SSH2_FXP_SETSTAT, path,
-	    strlen(path), a);
+	id = conn->సందేశం_id++;
+	send_string_attrs_request(conn, id, SSH2_FXP_SETSTAT, మార్గం,
+	    అక్షరశ్రేణి_పొడవు(మార్గం), a);
 
-	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
-		error("remote setstat \"%s\": %s", path, fx2txt(status));
+	స్థితి_2 = get_స్థితి(conn, id);
+	ఒకవేళ (స్థితి_2 != SSH2_FX_OK)
+		error("remote setstat \"%s\": %s", మార్గం, fx2txt(స్థితి_2));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_fsetstat(struct sftp_conn *conn, const u_char *handle, u_int handle_len,
+పూర్ణాంకం
+sftp_fsetstat(నిర్మాణం sftp_conn *conn, స్థిరరాశి u_char *handle, u_int handle_len,
     Attrib *a)
 {
-	u_int status, id;
+	u_int స్థితి_2, id;
 
 	debug2("Sending SSH2_FXP_FSETSTAT");
 
-	id = conn->msg_id++;
+	id = conn->సందేశం_id++;
 	send_string_attrs_request(conn, id, SSH2_FXP_FSETSTAT, handle,
 	    handle_len, a);
 
-	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
-		error("remote fsetstat: %s", fx2txt(status));
+	స్థితి_2 = get_స్థితి(conn, id);
+	ఒకవేళ (స్థితి_2 != SSH2_FX_OK)
+		error("remote fsetstat: %s", fx2txt(స్థితి_2));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
 /* Implements both the realpath and expand-path operations */
-static char *
-sftp_realpath_expand(struct sftp_conn *conn, const char *path, int expand)
+స్థిర అక్షరం *
+sftp_realpath_expand(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం, పూర్ణాంకం expand)
 {
-	struct sshbuf *msg;
-	u_int expected_id, count, id;
-	char *filename, *longname;
+	నిర్మాణం sshbuf *సందేశం;
+	u_int expected_id, లెక్క, id;
+	అక్షరం *filename, *longname;
 	Attrib a;
 	u_char type;
-	int r;
-	const char *what = "SSH2_FXP_REALPATH";
+	పూర్ణాంకం r;
+	స్థిరరాశి అక్షరం *what = "SSH2_FXP_REALPATH";
 
-	if (expand)
+	ఒకవేళ (expand)
 		what = "expand-path@openssh.com";
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 
-	expected_id = id = conn->msg_id++;
-	if (expand) {
+	expected_id = id = conn->సందేశం_id++;
+	ఒకవేళ (expand) {
 		debug2("Sending SSH2_FXP_EXTENDED(expand-path@openssh.com) "
-		    "\"%s\"", path);
-		if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-		    (r = sshbuf_put_u32(msg, id)) != 0 ||
-		    (r = sshbuf_put_cstring(msg,
+		    "\"%s\"", మార్గం);
+		ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_EXTENDED)) != 0 ||
+		    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+		    (r = sshbuf_put_cstring(సందేశం,
 		    "expand-path@openssh.com")) != 0 ||
-		    (r = sshbuf_put_cstring(msg, path)) != 0)
+		    (r = sshbuf_put_cstring(సందేశం, మార్గం)) != 0)
 			fatal_fr(r, "compose %s", what);
-		send_msg(conn, msg);
-	} else {
-		debug2("Sending SSH2_FXP_REALPATH \"%s\"", path);
+		send_సందేశం(conn, సందేశం);
+	} లేకపోతే {
+		debug2("Sending SSH2_FXP_REALPATH \"%s\"", మార్గం);
 		send_string_request(conn, id, SSH2_FXP_REALPATH,
-		    path, strlen(path));
+		    మార్గం, అక్షరశ్రేణి_పొడవు(మార్గం));
 	}
-	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &id)) != 0)
+	get_సందేశం(conn, సందేశం);
+	ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0 ||
+	    (r = sshbuf_get_u32(సందేశం, &id)) != 0)
 		fatal_fr(r, "parse");
 
-	if (id != expected_id)
+	ఒకవేళ (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
 
-	if (type == SSH2_FXP_STATUS) {
-		u_int status;
-		char *errmsg;
+	ఒకవేళ (type == SSH2_FXP_స్థితి) {
+		u_int స్థితి_2;
+		అక్షరం *errmsg;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0 ||
-		    (r = sshbuf_get_cstring(msg, &errmsg, NULL)) != 0)
+		ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &స్థితి_2)) != 0 ||
+		    (r = sshbuf_get_cstring(సందేశం, &errmsg, ఖాళీ)) != 0)
 			fatal_fr(r, "parse status");
 		error("%s %s: %s", expand ? "expand" : "realpath",
-		    path, *errmsg == '\0' ? fx2txt(status) : errmsg);
-		free(errmsg);
-		sshbuf_free(msg);
-		return NULL;
-	} else if (type != SSH2_FXP_NAME)
+		    మార్గం, *errmsg == '\0' ? fx2txt(స్థితి_2) : errmsg);
+		విడుదల(errmsg);
+		sshbuf_free(సందేశం);
+		తిరిగి ఖాళీ;
+	} లేకపోతే ఒకవేళ (type != SSH2_FXP_NAME)
 		fatal("Expected SSH2_FXP_NAME(%u) packet, got %u",
 		    SSH2_FXP_NAME, type);
 
-	if ((r = sshbuf_get_u32(msg, &count)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &లెక్క)) != 0)
 		fatal_fr(r, "parse count");
-	if (count != 1)
-		fatal("Got multiple names (%d) from %s", count, what);
+	ఒకవేళ (లెక్క != 1)
+		fatal("Got multiple names (%d) from %s", లెక్క, what);
 
-	if ((r = sshbuf_get_cstring(msg, &filename, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(msg, &longname, NULL)) != 0 ||
-	    (r = decode_attrib(msg, &a)) != 0)
+	ఒకవేళ ((r = sshbuf_get_cstring(సందేశం, &filename, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_cstring(సందేశం, &longname, ఖాళీ)) != 0 ||
+	    (r = decode_attrib(సందేశం, &a)) != 0)
 		fatal_fr(r, "parse filename/attrib");
 
-	debug3("%s %s -> %s", what, path, filename);
+	debug3("%s %s -> %s", what, మార్గం, filename);
 
-	free(longname);
+	విడుదల(longname);
 
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 
-	return(filename);
+	తిరిగి(filename);
 }
 
-char *
-sftp_realpath(struct sftp_conn *conn, const char *path)
+అక్షరం *
+sftp_realpath(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం)
 {
-	return sftp_realpath_expand(conn, path, 0);
+	తిరిగి sftp_realpath_expand(conn, మార్గం, 0);
 }
 
-int
-sftp_can_expand_path(struct sftp_conn *conn)
+పూర్ణాంకం
+sftp_can_expand_మార్గం(నిర్మాణం sftp_conn *conn)
 {
-	return (conn->exts & SFTP_EXT_PATH_EXPAND) != 0;
+	తిరిగి (conn->exts & SFTP_EXT_మార్గం_EXPAND) != 0;
 }
 
-char *
-sftp_expand_path(struct sftp_conn *conn, const char *path)
+అక్షరం *
+sftp_expand_మార్గం(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం)
 {
-	if (!sftp_can_expand_path(conn)) {
+	ఒకవేళ (!sftp_can_expand_మార్గం(conn)) {
 		debug3_f("no server support, fallback to realpath");
-		return sftp_realpath_expand(conn, path, 0);
+		తిరిగి sftp_realpath_expand(conn, మార్గం, 0);
 	}
-	return sftp_realpath_expand(conn, path, 1);
+	తిరిగి sftp_realpath_expand(conn, మార్గం, 1);
 }
 
-int
-sftp_copy(struct sftp_conn *conn, const char *oldpath, const char *newpath)
+పూర్ణాంకం
+sftp_copy(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *oldpath, స్థిరరాశి అక్షరం *newpath)
 {
 	Attrib junk, attr;
-	struct sshbuf *msg;
+	నిర్మాణం sshbuf *సందేశం;
 	u_char *old_handle, *new_handle;
-	u_int mode, status, id;
-	size_t old_handle_len, new_handle_len;
-	int r;
+	u_int బహుళకం, స్థితి_2, id;
+	కొలత_t old_handle_len, new_handle_len;
+	పూర్ణాంకం r;
 
 	/* Return if the extension is not supported */
-	if ((conn->exts & SFTP_EXT_COPY_DATA) == 0) {
+	ఒకవేళ ((conn->exts & SFTP_EXT_COPY_దత్తాంశం) == 0) {
 		error("Server does not support copy-data extension");
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* Make sure the file exists, and we can copy its perms */
-	if (sftp_stat(conn, oldpath, 0, &attr) != 0)
-		return -1;
+	ఒకవేళ (sftp_stat(conn, oldpath, 0, &attr) != 0)
+		తిరిగి -1;
 
 	/* Do not preserve set[ug]id here, as we do not preserve ownership */
-	if (attr.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		mode = attr.perm & 0777;
+	ఒకవేళ (attr.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		బహుళకం = attr.perm & 0777;
 
-		if (!S_ISREG(attr.perm)) {
+		ఒకవేళ (!S_ISREG(attr.perm)) {
 			error("Cannot copy non-regular file: %s", oldpath);
-			return -1;
+			తిరిగి -1;
 		}
-	} else {
+	} లేకపోతే {
 		/* NB: The user's umask will apply to this */
-		mode = 0666;
+		బహుళకం = 0666;
 	}
 
 	/* Set up the new perms for the new file */
 	attrib_clear(&attr);
-	attr.perm = mode;
+	attr.perm = బహుళకం;
 	attr.flags |= SSH2_FILEXFER_ATTR_PERMISSIONS;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 
 	attrib_clear(&junk); /* Send empty attributes */
 
 	/* Open the old file for reading */
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_OPEN)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, oldpath)) != 0 ||
-	    (r = sshbuf_put_u32(msg, SSH2_FXF_READ)) != 0 ||
-	    (r = encode_attrib(msg, &junk)) != 0)
+	id = conn->సందేశం_id++;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_OPEN)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, oldpath)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, SSH2_FXF_READ)) != 0 ||
+	    (r = encode_attrib(సందేశం, &junk)) != 0)
 		fatal_fr(r, "buffer error");
-	send_msg(conn, msg);
+	send_సందేశం(conn, సందేశం);
 	debug3("Sent message SSH2_FXP_OPEN I:%u P:%s", id, oldpath);
 
-	sshbuf_reset(msg);
+	sshbuf_reset(సందేశం);
 
 	old_handle = get_handle(conn, id, &old_handle_len,
 	    "remote open(\"%s\")", oldpath);
-	if (old_handle == NULL) {
-		sshbuf_free(msg);
-		return -1;
+	ఒకవేళ (old_handle == ఖాళీ) {
+		sshbuf_free(సందేశం);
+		తిరిగి -1;
 	}
 
 	/* Open the new file for writing */
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_OPEN)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, newpath)) != 0 ||
-	    (r = sshbuf_put_u32(msg, SSH2_FXF_WRITE|SSH2_FXF_CREAT|
+	id = conn->సందేశం_id++;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_OPEN)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, newpath)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, SSH2_FXF_WRITE|SSH2_FXF_CREAT|
 	    SSH2_FXF_TRUNC)) != 0 ||
-	    (r = encode_attrib(msg, &attr)) != 0)
+	    (r = encode_attrib(సందేశం, &attr)) != 0)
 		fatal_fr(r, "buffer error");
-	send_msg(conn, msg);
+	send_సందేశం(conn, సందేశం);
 	debug3("Sent message SSH2_FXP_OPEN I:%u P:%s", id, newpath);
 
-	sshbuf_reset(msg);
+	sshbuf_reset(సందేశం);
 
 	new_handle = get_handle(conn, id, &new_handle_len,
 	    "remote open(\"%s\")", newpath);
-	if (new_handle == NULL) {
-		sshbuf_free(msg);
-		free(old_handle);
-		return -1;
+	ఒకవేళ (new_handle == ఖాళీ) {
+		sshbuf_free(సందేశం);
+		విడుదల(old_handle);
+		తిరిగి -1;
 	}
 
 	/* Copy the file data */
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "copy-data")) != 0 ||
-	    (r = sshbuf_put_string(msg, old_handle, old_handle_len)) != 0 ||
-	    (r = sshbuf_put_u64(msg, 0)) != 0 ||
-	    (r = sshbuf_put_u64(msg, 0)) != 0 ||
-	    (r = sshbuf_put_string(msg, new_handle, new_handle_len)) != 0 ||
-	    (r = sshbuf_put_u64(msg, 0)) != 0)
+	id = conn->సందేశం_id++;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, "copy-data")) != 0 ||
+	    (r = sshbuf_put_string(సందేశం, old_handle, old_handle_len)) != 0 ||
+	    (r = sshbuf_put_u64(సందేశం, 0)) != 0 ||
+	    (r = sshbuf_put_u64(సందేశం, 0)) != 0 ||
+	    (r = sshbuf_put_string(సందేశం, new_handle, new_handle_len)) != 0 ||
+	    (r = sshbuf_put_u64(సందేశం, 0)) != 0)
 		fatal_fr(r, "buffer error");
-	send_msg(conn, msg);
+	send_సందేశం(conn, సందేశం);
 	debug3("Sent message copy-data \"%s\" 0 0 -> \"%s\" 0",
 	       oldpath, newpath);
 
-	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	స్థితి_2 = get_స్థితి(conn, id);
+	ఒకవేళ (స్థితి_2 != SSH2_FX_OK)
 		error("Couldn't copy file \"%s\" to \"%s\": %s", oldpath,
-		    newpath, fx2txt(status));
+		    newpath, fx2txt(స్థితి_2));
 
 	/* Clean up everything */
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 	sftp_close(conn, old_handle, old_handle_len);
 	sftp_close(conn, new_handle, new_handle_len);
-	free(old_handle);
-	free(new_handle);
+	విడుదల(old_handle);
+	విడుదల(new_handle);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_rename(struct sftp_conn *conn, const char *oldpath, const char *newpath,
-    int force_legacy)
+పూర్ణాంకం
+sftp_rename(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *oldpath, స్థిరరాశి అక్షరం *newpath,
+    పూర్ణాంకం force_legacy)
 {
-	struct sshbuf *msg;
-	u_int status, id;
-	int r, use_ext = (conn->exts & SFTP_EXT_POSIX_RENAME) && !force_legacy;
+	నిర్మాణం sshbuf *సందేశం;
+	u_int స్థితి_2, id;
+	పూర్ణాంకం r, use_ext = (conn->exts & SFTP_EXT_POSIX_RENAME) && !force_legacy;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 
 	/* Send rename request */
-	id = conn->msg_id++;
-	if (use_ext) {
+	id = conn->సందేశం_id++;
+	ఒకవేళ (use_ext) {
 		debug2("Sending SSH2_FXP_EXTENDED(posix-rename@openssh.com) "
 		    "\"%s\" to \"%s\"", oldpath, newpath);
-		if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-		    (r = sshbuf_put_u32(msg, id)) != 0 ||
-		    (r = sshbuf_put_cstring(msg,
+		ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_EXTENDED)) != 0 ||
+		    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+		    (r = sshbuf_put_cstring(సందేశం,
 		    "posix-rename@openssh.com")) != 0)
 			fatal_fr(r, "compose posix-rename");
-	} else {
+	} లేకపోతే {
 		debug2("Sending SSH2_FXP_RENAME \"%s\" to \"%s\"",
 		    oldpath, newpath);
-		if ((r = sshbuf_put_u8(msg, SSH2_FXP_RENAME)) != 0 ||
-		    (r = sshbuf_put_u32(msg, id)) != 0)
+		ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_RENAME)) != 0 ||
+		    (r = sshbuf_put_u32(సందేశం, id)) != 0)
 			fatal_fr(r, "compose rename");
 	}
-	if ((r = sshbuf_put_cstring(msg, oldpath)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, newpath)) != 0)
+	ఒకవేళ ((r = sshbuf_put_cstring(సందేశం, oldpath)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, newpath)) != 0)
 		fatal_fr(r, "compose paths");
-	send_msg(conn, msg);
+	send_సందేశం(conn, సందేశం);
 	debug3("Sent message %s \"%s\" -> \"%s\"",
 	    use_ext ? "posix-rename@openssh.com" :
 	    "SSH2_FXP_RENAME", oldpath, newpath);
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 
-	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	స్థితి_2 = get_స్థితి(conn, id);
+	ఒకవేళ (స్థితి_2 != SSH2_FX_OK)
 		error("remote rename \"%s\" to \"%s\": %s", oldpath,
-		    newpath, fx2txt(status));
+		    newpath, fx2txt(స్థితి_2));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_hardlink(struct sftp_conn *conn, const char *oldpath, const char *newpath)
+పూర్ణాంకం
+sftp_hardlink(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *oldpath, స్థిరరాశి అక్షరం *newpath)
 {
-	struct sshbuf *msg;
-	u_int status, id;
-	int r;
+	నిర్మాణం sshbuf *సందేశం;
+	u_int స్థితి_2, id;
+	పూర్ణాంకం r;
 
-	if ((conn->exts & SFTP_EXT_HARDLINK) == 0) {
+	ఒకవేళ ((conn->exts & SFTP_EXT_HARDLINK) == 0) {
 		error("Server does not support hardlink@openssh.com extension");
-		return -1;
+		తిరిగి -1;
 	}
 	debug2("Sending SSH2_FXP_EXTENDED(hardlink@openssh.com) "
 	    "\"%s\" to \"%s\"", oldpath, newpath);
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 
 	/* Send link request */
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "hardlink@openssh.com")) != 0 ||
-	    (r = sshbuf_put_cstring(msg, oldpath)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, newpath)) != 0)
+	id = conn->సందేశం_id++;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, "hardlink@openssh.com")) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, oldpath)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, newpath)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
+	send_సందేశం(conn, సందేశం);
 	debug3("Sent message hardlink@openssh.com \"%s\" -> \"%s\"",
 	    oldpath, newpath);
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 
-	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	స్థితి_2 = get_స్థితి(conn, id);
+	ఒకవేళ (స్థితి_2 != SSH2_FX_OK)
 		error("remote link \"%s\" to \"%s\": %s", oldpath,
-		    newpath, fx2txt(status));
+		    newpath, fx2txt(స్థితి_2));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_symlink(struct sftp_conn *conn, const char *oldpath, const char *newpath)
+పూర్ణాంకం
+sftp_symlink(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *oldpath, స్థిరరాశి అక్షరం *newpath)
 {
-	struct sshbuf *msg;
-	u_int status, id;
-	int r;
+	నిర్మాణం sshbuf *సందేశం;
+	u_int స్థితి_2, id;
+	పూర్ణాంకం r;
 
-	if (conn->version < 3) {
+	ఒకవేళ (conn->సంస్కరణ < 3) {
 		error("This server does not support the symlink operation");
-		return(SSH2_FX_OP_UNSUPPORTED);
+		తిరిగి(SSH2_FX_OP_UNSUPPORTED);
 	}
 	debug2("Sending SSH2_FXP_SYMLINK \"%s\" to \"%s\"", oldpath, newpath);
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 
 	/* Send symlink request */
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_SYMLINK)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, oldpath)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, newpath)) != 0)
+	id = conn->సందేశం_id++;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_SYMLINK)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, oldpath)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, newpath)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
+	send_సందేశం(conn, సందేశం);
 	debug3("Sent message SSH2_FXP_SYMLINK \"%s\" -> \"%s\"", oldpath,
 	    newpath);
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 
-	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	స్థితి_2 = get_స్థితి(conn, id);
+	ఒకవేళ (స్థితి_2 != SSH2_FX_OK)
 		error("remote symlink file \"%s\" to \"%s\": %s", oldpath,
-		    newpath, fx2txt(status));
+		    newpath, fx2txt(స్థితి_2));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_fsync(struct sftp_conn *conn, u_char *handle, u_int handle_len)
+పూర్ణాంకం
+sftp_fsync(నిర్మాణం sftp_conn *conn, u_char *handle, u_int handle_len)
 {
-	struct sshbuf *msg;
-	u_int status, id;
-	int r;
+	నిర్మాణం sshbuf *సందేశం;
+	u_int స్థితి_2, id;
+	పూర్ణాంకం r;
 
 	/* Silently return if the extension is not supported */
-	if ((conn->exts & SFTP_EXT_FSYNC) == 0)
-		return -1;
+	ఒకవేళ ((conn->exts & SFTP_EXT_FSYNC) == 0)
+		తిరిగి -1;
 	debug2("Sending SSH2_FXP_EXTENDED(fsync@openssh.com)");
 
 	/* Send fsync request */
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "fsync@openssh.com")) != 0 ||
-	    (r = sshbuf_put_string(msg, handle, handle_len)) != 0)
+	id = conn->సందేశం_id++;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, "fsync@openssh.com")) != 0 ||
+	    (r = sshbuf_put_string(సందేశం, handle, handle_len)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
+	send_సందేశం(conn, సందేశం);
 	debug3("Sent message fsync@openssh.com I:%u", id);
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 
-	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
-		error("remote fsync: %s", fx2txt(status));
+	స్థితి_2 = get_స్థితి(conn, id);
+	ఒకవేళ (స్థితి_2 != SSH2_FX_OK)
+		error("remote fsync: %s", fx2txt(స్థితి_2));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
-#ifdef notyet
-char *
-sftp_readlink(struct sftp_conn *conn, const char *path)
+#నిర్వచితమైతే notyet
+అక్షరం *
+sftp_readlink(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం)
 {
-	struct sshbuf *msg;
-	u_int expected_id, count, id;
-	char *filename, *longname;
+	నిర్మాణం sshbuf *సందేశం;
+	u_int expected_id, లెక్క, id;
+	అక్షరం *filename, *longname;
 	Attrib a;
 	u_char type;
-	int r;
+	పూర్ణాంకం r;
 
-	debug2("Sending SSH2_FXP_READLINK \"%s\"", path);
+	debug2("Sending SSH2_FXP_READLINK \"%s\"", మార్గం);
 
-	expected_id = id = conn->msg_id++;
-	send_string_request(conn, id, SSH2_FXP_READLINK, path, strlen(path));
+	expected_id = id = conn->సందేశం_id++;
+	send_string_request(conn, id, SSH2_FXP_READLINK, మార్గం, అక్షరశ్రేణి_పొడవు(మార్గం));
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 
-	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &id)) != 0)
+	get_సందేశం(conn, సందేశం);
+	ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0 ||
+	    (r = sshbuf_get_u32(సందేశం, &id)) != 0)
 		fatal_fr(r, "parse");
 
-	if (id != expected_id)
+	ఒకవేళ (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
 
-	if (type == SSH2_FXP_STATUS) {
-		u_int status;
+	ఒకవేళ (type == SSH2_FXP_స్థితి) {
+		u_int స్థితి_2;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &స్థితి_2)) != 0)
 			fatal_fr(r, "parse status");
-		error("Couldn't readlink: %s", fx2txt(status));
-		sshbuf_free(msg);
-		return(NULL);
-	} else if (type != SSH2_FXP_NAME)
+		error("Couldn't readlink: %s", fx2txt(స్థితి_2));
+		sshbuf_free(సందేశం);
+		తిరిగి(ఖాళీ);
+	} లేకపోతే ఒకవేళ (type != SSH2_FXP_NAME)
 		fatal("Expected SSH2_FXP_NAME(%u) packet, got %u",
 		    SSH2_FXP_NAME, type);
 
-	if ((r = sshbuf_get_u32(msg, &count)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &లెక్క)) != 0)
 		fatal_fr(r, "parse count");
-	if (count != 1)
-		fatal("Got multiple names (%d) from SSH_FXP_READLINK", count);
+	ఒకవేళ (లెక్క != 1)
+		fatal("Got multiple names (%d) from SSH_FXP_READLINK", లెక్క);
 
-	if ((r = sshbuf_get_cstring(msg, &filename, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(msg, &longname, NULL)) != 0 ||
-	    (r = decode_attrib(msg, &a)) != 0)
+	ఒకవేళ ((r = sshbuf_get_cstring(సందేశం, &filename, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_cstring(సందేశం, &longname, ఖాళీ)) != 0 ||
+	    (r = decode_attrib(సందేశం, &a)) != 0)
 		fatal_fr(r, "parse filenames/attrib");
 
-	debug3("SSH_FXP_READLINK %s -> %s", path, filename);
+	debug3("SSH_FXP_READLINK %s -> %s", మార్గం, filename);
 
-	free(longname);
+	విడుదల(longname);
 
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 
-	return filename;
+	తిరిగి filename;
 }
-#endif
+#అయితే_ముగింపు
 
-int
-sftp_statvfs(struct sftp_conn *conn, const char *path, struct sftp_statvfs *st,
-    int quiet)
+పూర్ణాంకం
+sftp_statvfs(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం, నిర్మాణం sftp_statvfs *st,
+    పూర్ణాంకం quiet)
 {
-	struct sshbuf *msg;
+	నిర్మాణం sshbuf *సందేశం;
 	u_int id;
-	int r;
+	పూర్ణాంకం r;
 
-	if ((conn->exts & SFTP_EXT_STATVFS) == 0) {
+	ఒకవేళ ((conn->exts & SFTP_EXT_STATVFS) == 0) {
 		error("Server does not support statvfs@openssh.com extension");
-		return -1;
+		తిరిగి -1;
 	}
 
-	debug2("Sending SSH2_FXP_EXTENDED(statvfs@openssh.com) \"%s\"", path);
+	debug2("Sending SSH2_FXP_EXTENDED(statvfs@openssh.com) \"%s\"", మార్గం);
 
-	id = conn->msg_id++;
+	id = conn->సందేశం_id++;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "statvfs@openssh.com")) != 0 ||
-	    (r = sshbuf_put_cstring(msg, path)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, "statvfs@openssh.com")) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, మార్గం)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
-	sshbuf_free(msg);
+	send_సందేశం(conn, సందేశం);
+	sshbuf_free(సందేశం);
 
-	return get_decode_statvfs(conn, st, id, quiet);
+	తిరిగి get_decode_statvfs(conn, st, id, quiet);
 }
 
-#ifdef notyet
-int
-sftp_fstatvfs(struct sftp_conn *conn, const u_char *handle, u_int handle_len,
-    struct sftp_statvfs *st, int quiet)
+#నిర్వచితమైతే notyet
+పూర్ణాంకం
+sftp_fstatvfs(నిర్మాణం sftp_conn *conn, స్థిరరాశి u_char *handle, u_int handle_len,
+    నిర్మాణం sftp_statvfs *st, పూర్ణాంకం quiet)
 {
-	struct sshbuf *msg;
+	నిర్మాణం sshbuf *సందేశం;
 	u_int id;
 
-	if ((conn->exts & SFTP_EXT_FSTATVFS) == 0) {
+	ఒకవేళ ((conn->exts & SFTP_EXT_FSTATVFS) == 0) {
 		error("Server does not support fstatvfs@openssh.com extension");
-		return -1;
+		తిరిగి -1;
 	}
 
 	debug2("Sending SSH2_FXP_EXTENDED(fstatvfs@openssh.com)");
 
-	id = conn->msg_id++;
+	id = conn->సందేశం_id++;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "fstatvfs@openssh.com")) != 0 ||
-	    (r = sshbuf_put_string(msg, handle, handle_len)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, "fstatvfs@openssh.com")) != 0 ||
+	    (r = sshbuf_put_string(సందేశం, handle, handle_len)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
-	sshbuf_free(msg);
+	send_సందేశం(conn, సందేశం);
+	sshbuf_free(సందేశం);
 
-	return get_decode_statvfs(conn, st, id, quiet);
+	తిరిగి get_decode_statvfs(conn, st, id, quiet);
 }
-#endif
+#అయితే_ముగింపు
 
-int
-sftp_lsetstat(struct sftp_conn *conn, const char *path, Attrib *a)
+పూర్ణాంకం
+sftp_lsetstat(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం, Attrib *a)
 {
-	struct sshbuf *msg;
-	u_int status, id;
-	int r;
+	నిర్మాణం sshbuf *సందేశం;
+	u_int స్థితి_2, id;
+	పూర్ణాంకం r;
 
-	if ((conn->exts & SFTP_EXT_LSETSTAT) == 0) {
+	ఒకవేళ ((conn->exts & SFTP_EXT_LSETSTAT) == 0) {
 		error("Server does not support lsetstat@openssh.com extension");
-		return -1;
+		తిరిగి -1;
 	}
 
-	debug2("Sending SSH2_FXP_EXTENDED(lsetstat@openssh.com) \"%s\"", path);
+	debug2("Sending SSH2_FXP_EXTENDED(lsetstat@openssh.com) \"%s\"", మార్గం);
 
-	id = conn->msg_id++;
-	if ((msg = sshbuf_new()) == NULL)
+	id = conn->సందేశం_id++;
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "lsetstat@openssh.com")) != 0 ||
-	    (r = sshbuf_put_cstring(msg, path)) != 0 ||
-	    (r = encode_attrib(msg, a)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, "lsetstat@openssh.com")) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, మార్గం)) != 0 ||
+	    (r = encode_attrib(సందేశం, a)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
-	sshbuf_free(msg);
+	send_సందేశం(conn, సందేశం);
+	sshbuf_free(సందేశం);
 
-	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
-		error("remote lsetstat \"%s\": %s", path, fx2txt(status));
+	స్థితి_2 = get_స్థితి(conn, id);
+	ఒకవేళ (స్థితి_2 != SSH2_FX_OK)
+		error("remote lsetstat \"%s\": %s", మార్గం, fx2txt(స్థితి_2));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
-static void
-send_read_request(struct sftp_conn *conn, u_int id, uint64_t offset,
-    u_int len, const u_char *handle, u_int handle_len)
+స్థిర శూన్య
+send_read_request(నిర్మాణం sftp_conn *conn, u_int id, uint64_t స్థానభ్రంశం,
+    u_int len, స్థిరరాశి u_char *handle, u_int handle_len)
 {
-	struct sshbuf *msg;
-	int r;
+	నిర్మాణం sshbuf *సందేశం;
+	పూర్ణాంకం r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_READ)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_string(msg, handle, handle_len)) != 0 ||
-	    (r = sshbuf_put_u64(msg, offset)) != 0 ||
-	    (r = sshbuf_put_u32(msg, len)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_READ)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_string(సందేశం, handle, handle_len)) != 0 ||
+	    (r = sshbuf_put_u64(సందేశం, స్థానభ్రంశం)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, len)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
-	sshbuf_free(msg);
+	send_సందేశం(conn, సందేశం);
+	sshbuf_free(సందేశం);
 }
 
-static int
-send_open(struct sftp_conn *conn, const char *path, const char *tag,
-    u_int openmode, Attrib *a, u_char **handlep, size_t *handle_lenp)
+స్థిర పూర్ణాంకం
+send_open(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం, స్థిరరాశి అక్షరం *ట్యాగ్,
+    u_int openmode, Attrib *a, u_char **handlep, కొలత_t *handle_lenp)
 {
 	Attrib junk;
 	u_char *handle;
-	size_t handle_len;
-	struct sshbuf *msg;
-	int r;
+	కొలత_t handle_len;
+	నిర్మాణం sshbuf *సందేశం;
+	పూర్ణాంకం r;
 	u_int id;
 
-	debug2("Sending SSH2_FXP_OPEN \"%s\"", path);
+	debug2("Sending SSH2_FXP_OPEN \"%s\"", మార్గం);
 
-	*handlep = NULL;
+	*handlep = ఖాళీ;
 	*handle_lenp = 0;
 
-	if (a == NULL) {
+	ఒకవేళ (a == ఖాళీ) {
 		attrib_clear(&junk); /* Send empty attributes */
 		a = &junk;
 	}
 	/* Send open request */
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_OPEN)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, path)) != 0 ||
-	    (r = sshbuf_put_u32(msg, openmode)) != 0 ||
-	    (r = encode_attrib(msg, a)) != 0)
-		fatal_fr(r, "compose %s open", tag);
-	send_msg(conn, msg);
-	sshbuf_free(msg);
+	id = conn->సందేశం_id++;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_OPEN)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, మార్గం)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, openmode)) != 0 ||
+	    (r = encode_attrib(సందేశం, a)) != 0)
+		fatal_fr(r, "compose %s open", ట్యాగ్);
+	send_సందేశం(conn, సందేశం);
+	sshbuf_free(సందేశం);
 	debug3("Sent %s message SSH2_FXP_OPEN I:%u P:%s M:0x%04x",
-	    tag, id, path, openmode);
-	if ((handle = get_handle(conn, id, &handle_len,
-	    "%s open \"%s\"", tag, path)) == NULL)
-		return -1;
+	    ట్యాగ్, id, మార్గం, openmode);
+	ఒకవేళ ((handle = get_handle(conn, id, &handle_len,
+	    "%s open \"%s\"", ట్యాగ్, మార్గం)) == ఖాళీ)
+		తిరిగి -1;
 	/* success */
 	*handlep = handle;
 	*handle_lenp = handle_len;
-	return 0;
+	తిరిగి 0;
 }
 
-static const char *
-progress_meter_path(const char *path)
+స్థిర స్థిరరాశి అక్షరం *
+పురోగతి_meter_మార్గం(స్థిరరాశి అక్షరం *మార్గం)
 {
-	const char *progresspath;
+	స్థిరరాశి అక్షరం *progresspath;
 
-	if ((progresspath = strrchr(path, '/')) == NULL)
-		return path;
+	ఒకవేళ ((progresspath = strrchr(మార్గం, '/')) == ఖాళీ)
+		తిరిగి మార్గం;
 	progresspath++;
-	if (*progresspath == '\0')
-		return path;
-	return progresspath;
+	ఒకవేళ (*progresspath == '\0')
+		తిరిగి మార్గం;
+	తిరిగి progresspath;
 }
 
-int
-sftp_download(struct sftp_conn *conn, const char *remote_path,
-    const char *local_path, Attrib *a, int preserve_flag, int resume_flag,
-    int fsync_flag, int inplace_flag)
+పూర్ణాంకం
+sftp_download(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *remote_మార్గం,
+    స్థిరరాశి అక్షరం *local_మార్గం, Attrib *a, పూర్ణాంకం preserve_flag, పూర్ణాంకం resume_flag,
+    పూర్ణాంకం fsync_flag, పూర్ణాంకం inplace_flag)
 {
-	struct sshbuf *msg;
+	నిర్మాణం sshbuf *సందేశం;
 	u_char *handle;
-	int local_fd = -1, write_error, seen_zerolen = 0;
-	int read_error, write_errno, lmodified = 0, reordered = 0, r;
-	uint64_t offset = 0, size, highwater = 0, maxack = 0;
-	u_int mode, id, buflen, num_req, max_req, status = SSH2_FX_OK;
-	off_t progress_counter;
-	size_t handle_len;
-	struct stat st;
-	struct requests requests;
-	struct request *req;
+	పూర్ణాంకం local_fd = -1, write_error, చూసిన_zerolen = 0;
+	పూర్ణాంకం read_error, write_errno, lmodified = 0, reordered = 0, r;
+	uint64_t స్థానభ్రంశం = 0, కొలత, highwater = 0, maxack = 0;
+	u_int బహుళకం, id, buflen, అంకె_req, max_req, స్థితి_2 = SSH2_FX_OK;
+	off_t పురోగతి_counter;
+	కొలత_t handle_len;
+	నిర్మాణం stat st;
+	నిర్మాణం అభ్యర్థనలు అభ్యర్థనలు;
+	నిర్మాణం request *req;
 	u_char type;
 	Attrib attr;
 
 	debug2_f("download remote \"%s\" to local \"%s\"",
-	    remote_path, local_path);
+	    remote_మార్గం, local_మార్గం);
 
-	TAILQ_INIT(&requests);
+	TAILQ_INIT(&అభ్యర్థనలు);
 
-	if (a == NULL) {
-		if (sftp_stat(conn, remote_path, 0, &attr) != 0)
-			return -1;
+	ఒకవేళ (a == ఖాళీ) {
+		ఒకవేళ (sftp_stat(conn, remote_మార్గం, 0, &attr) != 0)
+			తిరిగి -1;
 		a = &attr;
 	}
 
 	/* Do not preserve set[ug]id here, as we do not preserve ownership */
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
-		mode = a->perm & 0777;
-	else
-		mode = 0666;
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
+		బహుళకం = a->perm & 0777;
+	లేకపోతే
+		బహుళకం = 0666;
 
-	if ((a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) &&
+	ఒకవేళ ((a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) &&
 	    (!S_ISREG(a->perm))) {
-		error("download %s: not a regular file", remote_path);
-		return(-1);
+		error("download %s: not a regular file", remote_మార్గం);
+		తిరిగి(-1);
 	}
 
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE)
-		size = a->size;
-	else
-		size = 0;
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_కొలత)
+		కొలత = a->కొలత;
+	లేకపోతే
+		కొలత = 0;
 
 	buflen = conn->download_buflen;
 
 	/* Send open request */
-	if (send_open(conn, remote_path, "remote", SSH2_FXF_READ, NULL,
+	ఒకవేళ (send_open(conn, remote_మార్గం, "remote", SSH2_FXF_READ, ఖాళీ,
 	    &handle, &handle_len) != 0)
-		return -1;
+		తిరిగి -1;
 
-	local_fd = open(local_path, O_WRONLY | O_CREAT |
-	((resume_flag || inplace_flag) ? 0 : O_TRUNC), mode | S_IWUSR);
-	if (local_fd == -1) {
-		error("open local \"%s\": %s", local_path, strerror(errno));
-		goto fail;
+	local_fd = open(local_మార్గం, O_WRONLY | O_CREAT |
+	((resume_flag || inplace_flag) ? 0 : O_TRUNC), బహుళకం | S_IWUSR);
+	ఒకవేళ (local_fd == -1) {
+		error("open local \"%s\": %s", local_మార్గం, strerror(errno));
+		వెళ్ళు fail;
 	}
-	if (resume_flag) {
-		if (fstat(local_fd, &st) == -1) {
+	ఒకవేళ (resume_flag) {
+		ఒకవేళ (fstat(local_fd, &st) == -1) {
 			error("stat local \"%s\": %s",
-			    local_path, strerror(errno));
-			goto fail;
+			    local_మార్గం, strerror(errno));
+			వెళ్ళు fail;
 		}
-		if (st.st_size < 0) {
-			error("\"%s\" has negative size", local_path);
-			goto fail;
+		ఒకవేళ (st.st_size < 0) {
+			error("\"%s\" has negative size", local_మార్గం);
+			వెళ్ళు fail;
 		}
-		if ((uint64_t)st.st_size > size) {
+		ఒకవేళ ((uint64_t)st.st_size > కొలత) {
 			error("Unable to resume download of \"%s\": "
-			    "local file is larger than remote", local_path);
+			    "local file is larger than remote", local_మార్గం);
  fail:
 			sftp_close(conn, handle, handle_len);
-			free(handle);
-			if (local_fd != -1)
+			విడుదల(handle);
+			ఒకవేళ (local_fd != -1)
 				close(local_fd);
-			return -1;
+			తిరిగి -1;
 		}
-		offset = highwater = maxack = st.st_size;
+		స్థానభ్రంశం = highwater = maxack = st.st_size;
 	}
 
 	/* Read from remote and write to local */
-	write_error = read_error = write_errno = num_req = 0;
+	write_error = read_error = write_errno = అంకె_req = 0;
 	max_req = 1;
-	progress_counter = offset;
+	పురోగతి_counter = స్థానభ్రంశం;
 
-	if (showprogress && size != 0) {
-		start_progress_meter(progress_meter_path(remote_path),
-		    size, &progress_counter);
+	ఒకవేళ (showprogress && కొలత != 0) {
+		ప్రారంభం_పురోగతి_meter(పురోగతి_meter_మార్గం(remote_మార్గం),
+		    కొలత, &పురోగతి_counter);
 	}
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 
-	while (num_req > 0 || max_req > 0) {
-		u_char *data;
-		size_t len;
+	అయితే (అంకె_req > 0 || max_req > 0) {
+		u_char *దత్తాంశం;
+		కొలత_t len;
 
 		/*
 		 * Simulate EOF on interrupt: stop sending new requests and
 		 * allow outstanding requests to drain gracefully
 		 */
-		if (interrupted) {
-			if (num_req == 0) /* If we haven't started yet... */
-				break;
+		ఒకవేళ (interrupted) {
+			ఒకవేళ (అంకె_req == 0) /* If we haven't started yet... */
+				ఆపు;
 			max_req = 0;
 		}
 
 		/* Send some more requests */
-		while (num_req < max_req) {
+		అయితే (అంకె_req < max_req) {
 			debug3("Request range %llu -> %llu (%d/%d)",
-			    (unsigned long long)offset,
-			    (unsigned long long)offset + buflen - 1,
-			    num_req, max_req);
-			req = request_enqueue(&requests, conn->msg_id++,
-			    buflen, offset);
-			offset += buflen;
-			num_req++;
-			send_read_request(conn, req->id, req->offset,
+			    (గుర్తులేని దీర్ఘ దీర్ఘ)స్థానభ్రంశం,
+			    (గుర్తులేని దీర్ఘ దీర్ఘ)స్థానభ్రంశం + buflen - 1,
+			    అంకె_req, max_req);
+			req = request_వరుసలో_చేర్చు(&అభ్యర్థనలు, conn->సందేశం_id++,
+			    buflen, స్థానభ్రంశం);
+			స్థానభ్రంశం += buflen;
+			అంకె_req++;
+			send_read_request(conn, req->id, req->స్థానభ్రంశం,
 			    req->len, handle, handle_len);
 		}
 
-		sshbuf_reset(msg);
-		get_msg(conn, msg);
-		if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-		    (r = sshbuf_get_u32(msg, &id)) != 0)
+		sshbuf_reset(సందేశం);
+		get_సందేశం(conn, సందేశం);
+		ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0 ||
+		    (r = sshbuf_get_u32(సందేశం, &id)) != 0)
 			fatal_fr(r, "parse");
 		debug3("Received reply T:%u I:%u R:%d", type, id, max_req);
 
 		/* Find the request in our queue */
-		if ((req = request_find(&requests, id)) == NULL)
+		ఒకవేళ ((req = request_కనుగొను(&అభ్యర్థనలు, id)) == ఖాళీ)
 			fatal("Unexpected reply %u", id);
 
-		switch (type) {
-		case SSH2_FXP_STATUS:
-			if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		ఎంపిక (type) {
+		స్థితి SSH2_FXP_స్థితి:
+			ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &స్థితి_2)) != 0)
 				fatal_fr(r, "parse status");
-			if (status != SSH2_FX_EOF)
+			ఒకవేళ (స్థితి_2 != SSH2_FX_EOF)
 				read_error = 1;
 			max_req = 0;
-			TAILQ_REMOVE(&requests, req, tq);
-			free(req);
-			num_req--;
-			break;
-		case SSH2_FXP_DATA:
-			if ((r = sshbuf_get_string(msg, &data, &len)) != 0)
+			TAILQ_REMOVE(&అభ్యర్థనలు, req, tq);
+			విడుదల(req);
+			అంకె_req--;
+			ఆపు;
+		స్థితి SSH2_FXP_దత్తాంశం:
+			ఒకవేళ ((r = sshbuf_get_string(సందేశం, &దత్తాంశం, &len)) != 0)
 				fatal_fr(r, "parse data");
 			debug3("Received data %llu -> %llu",
-			    (unsigned long long)req->offset,
-			    (unsigned long long)req->offset + len - 1);
-			if (len > req->len)
+			    (గుర్తులేని దీర్ఘ దీర్ఘ)req->స్థానభ్రంశం,
+			    (గుర్తులేని దీర్ఘ దీర్ఘ)req->స్థానభ్రంశం + len - 1);
+			ఒకవేళ (len > req->len)
 				fatal("Received more data than asked for "
 				    "%zu > %zu", len, req->len);
-			if (len == 0) {
-				if (seen_zerolen)
+			ఒకవేళ (len == 0) {
+				ఒకవేళ (చూసిన_zerolen)
 					fatal_f("server sent zero data length");
-				seen_zerolen = 1;
+				చూసిన_zerolen = 1;
 			}
 			lmodified = 1;
-			if ((lseek(local_fd, req->offset, SEEK_SET) == -1 ||
-			    atomicio(vwrite, local_fd, data, len) != len) &&
+			ఒకవేళ ((lseek(local_fd, req->స్థానభ్రంశం, SEEK_SET) == -1 ||
+			    atomicio(vwrite, local_fd, దత్తాంశం, len) != len) &&
 			    !write_error) {
 				write_errno = errno;
 				write_error = 1;
 				max_req = 0;
-			} else {
+			} లేకపోతే {
 				/*
 				 * Track both the highest offset acknowledged
 				 * and the highest *contiguous* offset
@@ -1787,63 +1787,63 @@ sftp_download(struct sftp_conn *conn, const char *remote_path,
 				 * We'll need the latter for ftruncate()ing
 				 * interrupted transfers.
 				 */
-				if (maxack < req->offset + len)
-					maxack = req->offset + len;
-				if (!reordered && req->offset <= highwater)
+				ఒకవేళ (maxack < req->స్థానభ్రంశం + len)
+					maxack = req->స్థానభ్రంశం + len;
+				ఒకవేళ (!reordered && req->స్థానభ్రంశం <= highwater)
 					highwater = maxack;
-				else if (!reordered && req->offset > highwater)
+				లేకపోతే ఒకవేళ (!reordered && req->స్థానభ్రంశం > highwater)
 					reordered = 1;
 			}
-			progress_counter += len;
-			free(data);
+			పురోగతి_counter += len;
+			విడుదల(దత్తాంశం);
 
-			if (len == req->len) {
-				TAILQ_REMOVE(&requests, req, tq);
-				free(req);
-				num_req--;
-			} else {
+			ఒకవేళ (len == req->len) {
+				TAILQ_REMOVE(&అభ్యర్థనలు, req, tq);
+				విడుదల(req);
+				అంకె_req--;
+			} లేకపోతే {
 				/* Resend the request for the missing data */
 				debug3("Short data block, re-requesting "
 				    "%llu -> %llu (%2d)",
-				    (unsigned long long)req->offset + len,
-				    (unsigned long long)req->offset +
-				    req->len - 1, num_req);
-				req->id = conn->msg_id++;
+				    (గుర్తులేని దీర్ఘ దీర్ఘ)req->స్థానభ్రంశం + len,
+				    (గుర్తులేని దీర్ఘ దీర్ఘ)req->స్థానభ్రంశం +
+				    req->len - 1, అంకె_req);
+				req->id = conn->సందేశం_id++;
 				req->len -= len;
-				req->offset += len;
+				req->స్థానభ్రంశం += len;
 				send_read_request(conn, req->id,
-				    req->offset, req->len, handle, handle_len);
+				    req->స్థానభ్రంశం, req->len, handle, handle_len);
 				/* Reduce the request size */
-				if (len < buflen)
-					buflen = MAXIMUM(MIN_READ_SIZE, len);
+				ఒకవేళ (len < buflen)
+					buflen = గరిష్ఠ(MIN_READ_కొలత, len);
 			}
-			if (max_req > 0) { /* max_req = 0 iff EOF received */
-				if (size > 0 && offset > size) {
+			ఒకవేళ (max_req > 0) { /* max_req = 0 iff EOF received */
+				ఒకవేళ (కొలత > 0 && స్థానభ్రంశం > కొలత) {
 					/* Only one request at a time
 					 * after the expected EOF */
 					debug3("Finish at %llu (%2d)",
-					    (unsigned long long)offset,
-					    num_req);
+					    (గుర్తులేని దీర్ఘ దీర్ఘ)స్థానభ్రంశం,
+					    అంకె_req);
 					max_req = 1;
-				} else if (max_req < conn->num_requests) {
+				} లేకపోతే ఒకవేళ (max_req < conn->అంకె_అభ్యర్థనలు) {
 					++max_req;
 				}
 			}
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			fatal("Expected SSH2_FXP_DATA(%u) packet, got %u",
-			    SSH2_FXP_DATA, type);
+			    SSH2_FXP_దత్తాంశం, type);
 		}
 	}
 
-	if (showprogress && size)
-		stop_progress_meter();
+	ఒకవేళ (showprogress && కొలత)
+		stop_పురోగతి_meter();
 
 	/* Sanity check */
-	if (TAILQ_FIRST(&requests) != NULL)
+	ఒకవేళ (TAILQ_FIRST(&అభ్యర్థనలు) != ఖాళీ)
 		fatal("Transfer complete, but requests still in queue");
 
-	if (!read_error && !write_error && !interrupted) {
+	ఒకవేళ (!read_error && !write_error && !interrupted) {
 		/* we got everything */
 		highwater = maxack;
 	}
@@ -1852,300 +1852,300 @@ sftp_download(struct sftp_conn *conn, const char *remote_path,
 	 * Truncate at highest contiguous point to avoid holes on interrupt,
 	 * or unconditionally if writing in place.
 	 */
-	if (inplace_flag || read_error || write_error || interrupted) {
-		if (reordered && resume_flag &&
+	ఒకవేళ (inplace_flag || read_error || write_error || interrupted) {
+		ఒకవేళ (reordered && resume_flag &&
 		    (read_error || write_error || interrupted)) {
 			error("Unable to resume download of \"%s\": "
-			    "server reordered requests", local_path);
+			    "server reordered requests", local_మార్గం);
 		}
-		debug("truncating at %llu", (unsigned long long)highwater);
-		if (ftruncate(local_fd, highwater) == -1)
-			error("local ftruncate \"%s\": %s", local_path,
+		debug("truncating at %llu", (గుర్తులేని దీర్ఘ దీర్ఘ)highwater);
+		ఒకవేళ (ftruncate(local_fd, highwater) == -1)
+			error("local ftruncate \"%s\": %s", local_మార్గం,
 			    strerror(errno));
 	}
-	if (read_error) {
-		error("read remote \"%s\" : %s", remote_path, fx2txt(status));
-		status = -1;
+	ఒకవేళ (read_error) {
+		error("read remote \"%s\" : %s", remote_మార్గం, fx2txt(స్థితి_2));
+		స్థితి_2 = -1;
 		sftp_close(conn, handle, handle_len);
-	} else if (write_error) {
-		error("write local \"%s\": %s", local_path,
+	} లేకపోతే ఒకవేళ (write_error) {
+		error("write local \"%s\": %s", local_మార్గం,
 		    strerror(write_errno));
-		status = SSH2_FX_FAILURE;
+		స్థితి_2 = SSH2_FX_FAILURE;
 		sftp_close(conn, handle, handle_len);
-	} else {
-		if (sftp_close(conn, handle, handle_len) != 0 || interrupted)
-			status = SSH2_FX_FAILURE;
-		else
-			status = SSH2_FX_OK;
+	} లేకపోతే {
+		ఒకవేళ (sftp_close(conn, handle, handle_len) != 0 || interrupted)
+			స్థితి_2 = SSH2_FX_FAILURE;
+		లేకపోతే
+			స్థితి_2 = SSH2_FX_OK;
 		/* Override umask and utimes if asked */
-#ifdef HAVE_FCHMOD
-		if (preserve_flag && fchmod(local_fd, mode) == -1)
-#else
-		if (preserve_flag && chmod(local_path, mode) == -1)
-#endif /* HAVE_FCHMOD */
-			error("local chmod \"%s\": %s", local_path,
+#నిర్వచితమైతే HAVE_FCHMOD
+		ఒకవేళ (preserve_flag && fchmod(local_fd, బహుళకం) == -1)
+#లేకపోతే
+		ఒకవేళ (preserve_flag && chmod(local_మార్గం, బహుళకం) == -1)
+#అయితే_ముగింపు /* HAVE_FCHMOD */
+			error("local chmod \"%s\": %s", local_మార్గం,
 			    strerror(errno));
-		if (preserve_flag &&
+		ఒకవేళ (preserve_flag &&
 		    (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME)) {
-			struct timeval tv[2];
+			నిర్మాణం timeval tv[2];
 			tv[0].tv_sec = a->atime;
 			tv[1].tv_sec = a->mtime;
 			tv[0].tv_usec = tv[1].tv_usec = 0;
-			if (utimes(local_path, tv) == -1)
+			ఒకవేళ (utimes(local_మార్గం, tv) == -1)
 				error("local set times \"%s\": %s",
-				    local_path, strerror(errno));
+				    local_మార్గం, strerror(errno));
 		}
-		if (resume_flag && !lmodified)
-			logit("File \"%s\" was not modified", local_path);
-		else if (fsync_flag) {
-			debug("syncing \"%s\"", local_path);
-			if (fsync(local_fd) == -1)
+		ఒకవేళ (resume_flag && !lmodified)
+			logit("File \"%s\" was not modified", local_మార్గం);
+		లేకపోతే ఒకవేళ (fsync_flag) {
+			debug("syncing \"%s\"", local_మార్గం);
+			ఒకవేళ (fsync(local_fd) == -1)
 				error("local sync \"%s\": %s",
-				    local_path, strerror(errno));
+				    local_మార్గం, strerror(errno));
 		}
 	}
 	close(local_fd);
-	sshbuf_free(msg);
-	free(handle);
+	sshbuf_free(సందేశం);
+	విడుదల(handle);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
-static int
-download_dir_internal(struct sftp_conn *conn, const char *src, const char *dst,
-    int depth, Attrib *dirattrib, int preserve_flag, int print_flag,
-    int resume_flag, int fsync_flag, int follow_link_flag, int inplace_flag)
+స్థిర పూర్ణాంకం
+download_dir_అంతర్గత(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *src, స్థిరరాశి అక్షరం *dst,
+    పూర్ణాంకం లోతు, Attrib *dirattrib, పూర్ణాంకం preserve_flag, పూర్ణాంకం print_flag,
+    పూర్ణాంకం resume_flag, పూర్ణాంకం fsync_flag, పూర్ణాంకం follow_link_flag, పూర్ణాంకం inplace_flag)
 {
-	int i, ret = 0;
+	పూర్ణాంకం i, ret = 0;
 	SFTP_DIRENT **dir_entries;
-	char *filename, *new_src = NULL, *new_dst = NULL;
-	mode_t mode = 0777, tmpmode = mode;
+	అక్షరం *filename, *new_src = ఖాళీ, *new_dst = ఖాళీ;
+	బహుళకం_t బహుళకం = 0777, tmpmode = బహుళకం;
 	Attrib *a, ldirattrib, lsym;
 
-	if (depth >= MAX_DIR_DEPTH) {
-		error("Maximum directory depth exceeded: %d levels", depth);
-		return -1;
+	ఒకవేళ (లోతు >= MAX_DIR_లోతు) {
+		error("Maximum directory depth exceeded: %d levels", లోతు);
+		తిరిగి -1;
 	}
 
 	debug2_f("download dir remote \"%s\" to local \"%s\"", src, dst);
 
-	if (dirattrib == NULL) {
-		if (sftp_stat(conn, src, 1, &ldirattrib) != 0) {
+	ఒకవేళ (dirattrib == ఖాళీ) {
+		ఒకవేళ (sftp_stat(conn, src, 1, &ldirattrib) != 0) {
 			error("stat remote \"%s\" directory failed", src);
-			return -1;
+			తిరిగి -1;
 		}
 		dirattrib = &ldirattrib;
 	}
-	if (!S_ISDIR(dirattrib->perm)) {
+	ఒకవేళ (!S_ISDIR(dirattrib->perm)) {
 		error("\"%s\" is not a directory", src);
-		return -1;
+		తిరిగి -1;
 	}
-	if (print_flag && print_flag != SFTP_PROGRESS_ONLY)
+	ఒకవేళ (print_flag && print_flag != SFTP_పురోగతి_ONLY)
 		mprintf("Retrieving %s\n", src);
 
-	if (dirattrib->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		mode = dirattrib->perm & 01777;
-		tmpmode = mode | (S_IWUSR|S_IXUSR);
-	} else {
+	ఒకవేళ (dirattrib->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		బహుళకం = dirattrib->perm & 01777;
+		tmpmode = బహుళకం | (S_IWUSR|S_IXUSR);
+	} లేకపోతే {
 		debug("download remote \"%s\": server "
 		    "did not send permissions", dst);
 	}
 
-	if (mkdir(dst, tmpmode) == -1 && errno != EEXIST) {
+	ఒకవేళ (mkdir(dst, tmpmode) == -1 && errno != EEXIST) {
 		error("mkdir %s: %s", dst, strerror(errno));
-		return -1;
+		తిరిగి -1;
 	}
 
-	if (sftp_readdir(conn, src, &dir_entries) == -1) {
+	ఒకవేళ (sftp_readdir(conn, src, &dir_entries) == -1) {
 		error("remote readdir \"%s\" failed", src);
-		return -1;
+		తిరిగి -1;
 	}
 
-	for (i = 0; dir_entries[i] != NULL && !interrupted; i++) {
-		free(new_dst);
-		free(new_src);
+	కొరకు (i = 0; dir_entries[i] != ఖాళీ && !interrupted; i++) {
+		విడుదల(new_dst);
+		విడుదల(new_src);
 
 		filename = dir_entries[i]->filename;
-		new_dst = sftp_path_append(dst, filename);
-		new_src = sftp_path_append(src, filename);
+		new_dst = sftp_మార్గం_append(dst, filename);
+		new_src = sftp_మార్గం_append(src, filename);
 
 		a = &dir_entries[i]->a;
-		if (S_ISLNK(a->perm)) {
-			if (!follow_link_flag) {
+		ఒకవేళ (S_ISLNK(a->perm)) {
+			ఒకవేళ (!follow_link_flag) {
 				logit("download \"%s\": not a regular file",
 				    new_src);
-				continue;
+				కొనసాగు;
 			}
 			/* Replace the stat contents with the symlink target */
-			if (sftp_stat(conn, new_src, 1, &lsym) != 0) {
+			ఒకవేళ (sftp_stat(conn, new_src, 1, &lsym) != 0) {
 				logit("remote stat \"%s\" failed", new_src);
 				ret = -1;
-				continue;
+				కొనసాగు;
 			}
 			a = &lsym;
 		}
 
-		if (S_ISDIR(a->perm)) {
-			if (strcmp(filename, ".") == 0 ||
+		ఒకవేళ (S_ISDIR(a->perm)) {
+			ఒకవేళ (strcmp(filename, ".") == 0 ||
 			    strcmp(filename, "..") == 0)
-				continue;
-			if (download_dir_internal(conn, new_src, new_dst,
-			    depth + 1, a, preserve_flag,
+				కొనసాగు;
+			ఒకవేళ (download_dir_అంతర్గత(conn, new_src, new_dst,
+			    లోతు + 1, a, preserve_flag,
 			    print_flag, resume_flag,
 			    fsync_flag, follow_link_flag, inplace_flag) == -1)
 				ret = -1;
-		} else if (S_ISREG(a->perm)) {
-			if (sftp_download(conn, new_src, new_dst, a,
+		} లేకపోతే ఒకవేళ (S_ISREG(a->perm)) {
+			ఒకవేళ (sftp_download(conn, new_src, new_dst, a,
 			    preserve_flag, resume_flag, fsync_flag,
 			    inplace_flag) == -1) {
 				error("Download of file %s to %s failed",
 				    new_src, new_dst);
 				ret = -1;
 			}
-		} else
+		} లేకపోతే
 			logit("download \"%s\": not a regular file", new_src);
 
 	}
-	free(new_dst);
-	free(new_src);
+	విడుదల(new_dst);
+	విడుదల(new_src);
 
-	if (preserve_flag) {
-		if (dirattrib->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-			struct timeval tv[2];
+	ఒకవేళ (preserve_flag) {
+		ఒకవేళ (dirattrib->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+			నిర్మాణం timeval tv[2];
 			tv[0].tv_sec = dirattrib->atime;
 			tv[1].tv_sec = dirattrib->mtime;
 			tv[0].tv_usec = tv[1].tv_usec = 0;
-			if (utimes(dst, tv) == -1)
+			ఒకవేళ (utimes(dst, tv) == -1)
 				error("local set times on \"%s\": %s",
 				    dst, strerror(errno));
-		} else
+		} లేకపోతే
 			debug("Server did not send times for directory "
 			    "\"%s\"", dst);
 	}
 
-	if (mode != tmpmode && chmod(dst, mode) == -1)
+	ఒకవేళ (బహుళకం != tmpmode && chmod(dst, బహుళకం) == -1)
 		error("local chmod directory \"%s\": %s", dst,
 		    strerror(errno));
 
 	sftp_free_dirents(dir_entries);
 
-	return ret;
+	తిరిగి ret;
 }
 
-int
-sftp_download_dir(struct sftp_conn *conn, const char *src, const char *dst,
-    Attrib *dirattrib, int preserve_flag, int print_flag, int resume_flag,
-    int fsync_flag, int follow_link_flag, int inplace_flag)
+పూర్ణాంకం
+sftp_download_dir(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *src, స్థిరరాశి అక్షరం *dst,
+    Attrib *dirattrib, పూర్ణాంకం preserve_flag, పూర్ణాంకం print_flag, పూర్ణాంకం resume_flag,
+    పూర్ణాంకం fsync_flag, పూర్ణాంకం follow_link_flag, పూర్ణాంకం inplace_flag)
 {
-	char *src_canon;
-	int ret;
+	అక్షరం *src_canon;
+	పూర్ణాంకం ret;
 
-	if ((src_canon = sftp_realpath(conn, src)) == NULL) {
+	ఒకవేళ ((src_canon = sftp_realpath(conn, src)) == ఖాళీ) {
 		error("download \"%s\": path canonicalization failed", src);
-		return -1;
+		తిరిగి -1;
 	}
 
-	ret = download_dir_internal(conn, src_canon, dst, 0,
+	ret = download_dir_అంతర్గత(conn, src_canon, dst, 0,
 	    dirattrib, preserve_flag, print_flag, resume_flag, fsync_flag,
 	    follow_link_flag, inplace_flag);
-	free(src_canon);
-	return ret;
+	విడుదల(src_canon);
+	తిరిగి ret;
 }
 
-int
-sftp_upload(struct sftp_conn *conn, const char *local_path,
-    const char *remote_path, int preserve_flag, int resume,
-    int fsync_flag, int inplace_flag)
+పూర్ణాంకం
+sftp_upload(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *local_మార్గం,
+    స్థిరరాశి అక్షరం *remote_మార్గం, పూర్ణాంకం preserve_flag, పూర్ణాంకం resume,
+    పూర్ణాంకం fsync_flag, పూర్ణాంకం inplace_flag)
 {
-	int r, local_fd;
-	u_int openmode, id, status = SSH2_FX_OK, status2, reordered = 0;
-	off_t offset, progress_counter;
-	u_char type, *handle, *data;
-	struct sshbuf *msg;
-	struct stat sb;
+	పూర్ణాంకం r, local_fd;
+	u_int openmode, id, స్థితి_2 = SSH2_FX_OK, status2, reordered = 0;
+	off_t స్థానభ్రంశం, పురోగతి_counter;
+	u_char type, *handle, *దత్తాంశం;
+	నిర్మాణం sshbuf *సందేశం;
+	నిర్మాణం stat sb;
 	Attrib a, t, c;
 	uint32_t startid, ackid;
 	uint64_t highwater = 0, maxack = 0;
-	struct request *ack = NULL;
-	struct requests acks;
-	size_t handle_len;
+	నిర్మాణం request *ack = ఖాళీ;
+	నిర్మాణం అభ్యర్థనలు acks;
+	కొలత_t handle_len;
 
 	debug2_f("upload local \"%s\" to remote \"%s\"",
-	    local_path, remote_path);
+	    local_మార్గం, remote_మార్గం);
 
 	TAILQ_INIT(&acks);
 
-	if ((local_fd = open(local_path, O_RDONLY)) == -1) {
-		error("open local \"%s\": %s", local_path, strerror(errno));
-		return(-1);
+	ఒకవేళ ((local_fd = open(local_మార్గం, O_RDONLY)) == -1) {
+		error("open local \"%s\": %s", local_మార్గం, strerror(errno));
+		తిరిగి(-1);
 	}
-	if (fstat(local_fd, &sb) == -1) {
-		error("fstat local \"%s\": %s", local_path, strerror(errno));
+	ఒకవేళ (fstat(local_fd, &sb) == -1) {
+		error("fstat local \"%s\": %s", local_మార్గం, strerror(errno));
 		close(local_fd);
-		return(-1);
+		తిరిగి(-1);
 	}
-	if (!S_ISREG(sb.st_mode)) {
-		error("local \"%s\" is not a regular file", local_path);
+	ఒకవేళ (!S_ISREG(sb.st_mode)) {
+		error("local \"%s\" is not a regular file", local_మార్గం);
 		close(local_fd);
-		return(-1);
+		తిరిగి(-1);
 	}
-	stat_to_attrib(&sb, &a);
+	stat_గమ్యం_attrib(&sb, &a);
 
-	a.flags &= ~SSH2_FILEXFER_ATTR_SIZE;
+	a.flags &= ~SSH2_FILEXFER_ATTR_కొలత;
 	a.flags &= ~SSH2_FILEXFER_ATTR_UIDGID;
 	a.perm &= 0777;
-	if (!preserve_flag)
+	ఒకవేళ (!preserve_flag)
 		a.flags &= ~SSH2_FILEXFER_ATTR_ACMODTIME;
 
-	if (resume) {
+	ఒకవేళ (resume) {
 		/* Get remote file size if it exists */
-		if (sftp_stat(conn, remote_path, 0, &c) != 0) {
+		ఒకవేళ (sftp_stat(conn, remote_మార్గం, 0, &c) != 0) {
 			close(local_fd);
-			return -1;
+			తిరిగి -1;
 		}
 
-		if ((off_t)c.size >= sb.st_size) {
+		ఒకవేళ ((off_t)c.కొలత >= sb.st_size) {
 			error("resume \"%s\": destination file "
-			    "same size or larger", local_path);
+			    "same size or larger", local_మార్గం);
 			close(local_fd);
-			return -1;
+			తిరిగి -1;
 		}
 
-		if (lseek(local_fd, (off_t)c.size, SEEK_SET) == -1) {
+		ఒకవేళ (lseek(local_fd, (off_t)c.కొలత, SEEK_SET) == -1) {
 			close(local_fd);
-			return -1;
+			తిరిగి -1;
 		}
-		highwater = c.size;
+		highwater = c.కొలత;
 	}
 
 	openmode = SSH2_FXF_WRITE|SSH2_FXF_CREAT;
-	if (resume)
+	ఒకవేళ (resume)
 		openmode |= SSH2_FXF_APPEND;
-	else if (!inplace_flag)
+	లేకపోతే ఒకవేళ (!inplace_flag)
 		openmode |= SSH2_FXF_TRUNC;
 
 	/* Send open request */
-	if (send_open(conn, remote_path, "dest", openmode, &a,
+	ఒకవేళ (send_open(conn, remote_మార్గం, "dest", openmode, &a,
 	    &handle, &handle_len) != 0) {
 		close(local_fd);
-		return -1;
+		తిరిగి -1;
 	}
 
-	id = conn->msg_id;
+	id = conn->సందేశం_id;
 	startid = ackid = id + 1;
-	data = xmalloc(conn->upload_buflen);
+	దత్తాంశం = xmalloc(conn->upload_buflen);
 
 	/* Read from local and write to remote */
-	offset = progress_counter = (resume ? c.size : 0);
-	if (showprogress) {
-		start_progress_meter(progress_meter_path(local_path),
-		    sb.st_size, &progress_counter);
+	స్థానభ్రంశం = పురోగతి_counter = (resume ? c.కొలత : 0);
+	ఒకవేళ (showprogress) {
+		ప్రారంభం_పురోగతి_meter(పురోగతి_meter_మార్గం(local_మార్గం),
+		    sb.st_size, &పురోగతి_counter);
 	}
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	for (;;) {
-		int len;
+	కొరకు (;;) {
+		పూర్ణాంకం len;
 
 		/*
 		 * Can't use atomicio here because it returns 0 on EOF,
@@ -2153,162 +2153,162 @@ sftp_upload(struct sftp_conn *conn, const char *local_path,
 		 * Simulate an EOF on interrupt, allowing ACKs from the
 		 * server to drain.
 		 */
-		if (interrupted || status != SSH2_FX_OK)
+		ఒకవేళ (interrupted || స్థితి_2 != SSH2_FX_OK)
 			len = 0;
-		else do
-			len = read(local_fd, data, conn->upload_buflen);
-		while ((len == -1) &&
+		లేకపోతే చేయి
+			len = పఠ(local_fd, దత్తాంశం, conn->upload_buflen);
+		అయితే ((len == -1) &&
 		    (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK));
 
-		if (len == -1) {
+		ఒకవేళ (len == -1) {
 			fatal("read local \"%s\": %s",
-			    local_path, strerror(errno));
-		} else if (len != 0) {
-			ack = request_enqueue(&acks, ++id, len, offset);
-			sshbuf_reset(msg);
-			if ((r = sshbuf_put_u8(msg, SSH2_FXP_WRITE)) != 0 ||
-			    (r = sshbuf_put_u32(msg, ack->id)) != 0 ||
-			    (r = sshbuf_put_string(msg, handle,
+			    local_మార్గం, strerror(errno));
+		} లేకపోతే ఒకవేళ (len != 0) {
+			ack = request_వరుసలో_చేర్చు(&acks, ++id, len, స్థానభ్రంశం);
+			sshbuf_reset(సందేశం);
+			ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_WRITE)) != 0 ||
+			    (r = sshbuf_put_u32(సందేశం, ack->id)) != 0 ||
+			    (r = sshbuf_put_string(సందేశం, handle,
 			    handle_len)) != 0 ||
-			    (r = sshbuf_put_u64(msg, offset)) != 0 ||
-			    (r = sshbuf_put_string(msg, data, len)) != 0)
+			    (r = sshbuf_put_u64(సందేశం, స్థానభ్రంశం)) != 0 ||
+			    (r = sshbuf_put_string(సందేశం, దత్తాంశం, len)) != 0)
 				fatal_fr(r, "compose");
-			send_msg(conn, msg);
+			send_సందేశం(conn, సందేశం);
 			debug3("Sent message SSH2_FXP_WRITE I:%u O:%llu S:%u",
-			    id, (unsigned long long)offset, len);
-		} else if (TAILQ_FIRST(&acks) == NULL)
-			break;
+			    id, (గుర్తులేని దీర్ఘ దీర్ఘ)స్థానభ్రంశం, len);
+		} లేకపోతే ఒకవేళ (TAILQ_FIRST(&acks) == ఖాళీ)
+			ఆపు;
 
-		if (ack == NULL)
+		ఒకవేళ (ack == ఖాళీ)
 			fatal("Unexpected ACK %u", id);
 
-		if (id == startid || len == 0 ||
-		    id - ackid >= conn->num_requests) {
+		ఒకవేళ (id == startid || len == 0 ||
+		    id - ackid >= conn->అంకె_అభ్యర్థనలు) {
 			u_int rid;
 
-			sshbuf_reset(msg);
-			get_msg(conn, msg);
-			if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-			    (r = sshbuf_get_u32(msg, &rid)) != 0)
+			sshbuf_reset(సందేశం);
+			get_సందేశం(conn, సందేశం);
+			ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0 ||
+			    (r = sshbuf_get_u32(సందేశం, &rid)) != 0)
 				fatal_fr(r, "parse");
 
-			if (type != SSH2_FXP_STATUS)
+			ఒకవేళ (type != SSH2_FXP_స్థితి)
 				fatal("Expected SSH2_FXP_STATUS(%d) packet, "
-				    "got %d", SSH2_FXP_STATUS, type);
+				    "got %d", SSH2_FXP_స్థితి, type);
 
-			if ((r = sshbuf_get_u32(msg, &status2)) != 0)
+			ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &status2)) != 0)
 				fatal_fr(r, "parse status");
 			debug3("SSH2_FXP_STATUS %u", status2);
-			if (status2 != SSH2_FX_OK)
-				status = status2; /* remember errors */
+			ఒకవేళ (status2 != SSH2_FX_OK)
+				స్థితి_2 = status2; /* remember errors */
 
 			/* Find the request in our queue */
-			if ((ack = request_find(&acks, rid)) == NULL)
+			ఒకవేళ ((ack = request_కనుగొను(&acks, rid)) == ఖాళీ)
 				fatal("Can't find request for ID %u", rid);
 			TAILQ_REMOVE(&acks, ack, tq);
 			debug3("In write loop, ack for %u %zu bytes at %lld",
-			    ack->id, ack->len, (unsigned long long)ack->offset);
+			    ack->id, ack->len, (గుర్తులేని దీర్ఘ దీర్ఘ)ack->స్థానభ్రంశం);
 			++ackid;
-			progress_counter += ack->len;
+			పురోగతి_counter += ack->len;
 			/*
 			 * Track both the highest offset acknowledged and the
 			 * highest *contiguous* offset acknowledged.
 			 * We'll need the latter for ftruncate()ing
 			 * interrupted transfers.
 			 */
-			if (maxack < ack->offset + ack->len)
-				maxack = ack->offset + ack->len;
-			if (!reordered && ack->offset <= highwater)
+			ఒకవేళ (maxack < ack->స్థానభ్రంశం + ack->len)
+				maxack = ack->స్థానభ్రంశం + ack->len;
+			ఒకవేళ (!reordered && ack->స్థానభ్రంశం <= highwater)
 				highwater = maxack;
-			else if (!reordered && ack->offset > highwater) {
+			లేకపోతే ఒకవేళ (!reordered && ack->స్థానభ్రంశం > highwater) {
 				debug3_f("server reordered ACKs");
 				reordered = 1;
 			}
-			free(ack);
+			విడుదల(ack);
 		}
-		offset += len;
-		if (offset < 0)
+		స్థానభ్రంశం += len;
+		ఒకవేళ (స్థానభ్రంశం < 0)
 			fatal_f("offset < 0");
 	}
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 
-	if (showprogress)
-		stop_progress_meter();
-	free(data);
+	ఒకవేళ (showprogress)
+		stop_పురోగతి_meter();
+	విడుదల(దత్తాంశం);
 
-	if (status == SSH2_FX_OK && !interrupted) {
+	ఒకవేళ (స్థితి_2 == SSH2_FX_OK && !interrupted) {
 		/* we got everything */
 		highwater = maxack;
 	}
-	if (status != SSH2_FX_OK) {
-		error("write remote \"%s\": %s", remote_path, fx2txt(status));
-		status = SSH2_FX_FAILURE;
+	ఒకవేళ (స్థితి_2 != SSH2_FX_OK) {
+		error("write remote \"%s\": %s", remote_మార్గం, fx2txt(స్థితి_2));
+		స్థితి_2 = SSH2_FX_FAILURE;
 	}
 
-	if (inplace_flag || (resume && (status != SSH2_FX_OK || interrupted))) {
-		debug("truncating at %llu", (unsigned long long)highwater);
+	ఒకవేళ (inplace_flag || (resume && (స్థితి_2 != SSH2_FX_OK || interrupted))) {
+		debug("truncating at %llu", (గుర్తులేని దీర్ఘ దీర్ఘ)highwater);
 		attrib_clear(&t);
-		t.flags = SSH2_FILEXFER_ATTR_SIZE;
-		t.size = highwater;
+		t.flags = SSH2_FILEXFER_ATTR_కొలత;
+		t.కొలత = highwater;
 		sftp_fsetstat(conn, handle, handle_len, &t);
 	}
 
-	if (close(local_fd) == -1) {
-		error("close local \"%s\": %s", local_path, strerror(errno));
-		status = SSH2_FX_FAILURE;
+	ఒకవేళ (close(local_fd) == -1) {
+		error("close local \"%s\": %s", local_మార్గం, strerror(errno));
+		స్థితి_2 = SSH2_FX_FAILURE;
 	}
 
 	/* Override umask and utimes if asked */
-	if (preserve_flag)
+	ఒకవేళ (preserve_flag)
 		sftp_fsetstat(conn, handle, handle_len, &a);
 
-	if (fsync_flag)
-		(void)sftp_fsync(conn, handle, handle_len);
+	ఒకవేళ (fsync_flag)
+		(శూన్య)sftp_fsync(conn, handle, handle_len);
 
-	if (sftp_close(conn, handle, handle_len) != 0)
-		status = SSH2_FX_FAILURE;
+	ఒకవేళ (sftp_close(conn, handle, handle_len) != 0)
+		స్థితి_2 = SSH2_FX_FAILURE;
 
-	free(handle);
+	విడుదల(handle);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
-static int
-upload_dir_internal(struct sftp_conn *conn, const char *src, const char *dst,
-    int depth, int preserve_flag, int print_flag, int resume, int fsync_flag,
-    int follow_link_flag, int inplace_flag)
+స్థిర పూర్ణాంకం
+upload_dir_అంతర్గత(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *src, స్థిరరాశి అక్షరం *dst,
+    పూర్ణాంకం లోతు, పూర్ణాంకం preserve_flag, పూర్ణాంకం print_flag, పూర్ణాంకం resume, పూర్ణాంకం fsync_flag,
+    పూర్ణాంకం follow_link_flag, పూర్ణాంకం inplace_flag)
 {
-	int created = 0, ret = 0;
+	పూర్ణాంకం created = 0, ret = 0;
 	DIR *dirp;
-	struct dirent *dp;
-	char *filename, *new_src = NULL, *new_dst = NULL;
-	struct stat sb;
+	నిర్మాణం dirent *dp;
+	అక్షరం *filename, *new_src = ఖాళీ, *new_dst = ఖాళీ;
+	నిర్మాణం stat sb;
 	Attrib a, dirattrib;
 	uint32_t saved_perm;
 
 	debug2_f("upload local dir \"%s\" to remote \"%s\"", src, dst);
 
-	if (depth >= MAX_DIR_DEPTH) {
-		error("Maximum directory depth exceeded: %d levels", depth);
-		return -1;
+	ఒకవేళ (లోతు >= MAX_DIR_లోతు) {
+		error("Maximum directory depth exceeded: %d levels", లోతు);
+		తిరిగి -1;
 	}
 
-	if (stat(src, &sb) == -1) {
+	ఒకవేళ (stat(src, &sb) == -1) {
 		error("stat local \"%s\": %s", src, strerror(errno));
-		return -1;
+		తిరిగి -1;
 	}
-	if (!S_ISDIR(sb.st_mode)) {
+	ఒకవేళ (!S_ISDIR(sb.st_mode)) {
 		error("\"%s\" is not a directory", src);
-		return -1;
+		తిరిగి -1;
 	}
-	if (print_flag && print_flag != SFTP_PROGRESS_ONLY)
+	ఒకవేళ (print_flag && print_flag != SFTP_పురోగతి_ONLY)
 		mprintf("Entering %s\n", src);
 
-	stat_to_attrib(&sb, &a);
-	a.flags &= ~SSH2_FILEXFER_ATTR_SIZE;
+	stat_గమ్యం_attrib(&sb, &a);
+	a.flags &= ~SSH2_FILEXFER_ATTR_కొలత;
 	a.flags &= ~SSH2_FILEXFER_ATTR_UIDGID;
 	a.perm &= 01777;
-	if (!preserve_flag)
+	ఒకవేళ (!preserve_flag)
 		a.flags &= ~SSH2_FILEXFER_ATTR_ACMODTIME;
 
 	/*
@@ -2319,144 +2319,144 @@ upload_dir_internal(struct sftp_conn *conn, const char *src, const char *dst,
 	 */
 	saved_perm = a.perm;
 	a.perm |= (S_IWUSR|S_IXUSR);
-	if (sftp_mkdir(conn, dst, &a, 0) == 0)
+	ఒకవేళ (sftp_mkdir(conn, dst, &a, 0) == 0)
 		created = 1;
-	else {
-		if (sftp_stat(conn, dst, 0, &dirattrib) != 0)
-			return -1;
-		if (!S_ISDIR(dirattrib.perm)) {
+	లేకపోతే {
+		ఒకవేళ (sftp_stat(conn, dst, 0, &dirattrib) != 0)
+			తిరిగి -1;
+		ఒకవేళ (!S_ISDIR(dirattrib.perm)) {
 			error("\"%s\" exists but is not a directory", dst);
-			return -1;
+			తిరిగి -1;
 		}
 	}
 	a.perm = saved_perm;
 
-	if ((dirp = opendir(src)) == NULL) {
+	ఒకవేళ ((dirp = opendir(src)) == ఖాళీ) {
 		error("local opendir \"%s\": %s", src, strerror(errno));
-		return -1;
+		తిరిగి -1;
 	}
 
-	while (((dp = readdir(dirp)) != NULL) && !interrupted) {
-		if (dp->d_ino == 0)
-			continue;
-		free(new_dst);
-		free(new_src);
+	అయితే (((dp = readdir(dirp)) != ఖాళీ) && !interrupted) {
+		ఒకవేళ (dp->d_ino == 0)
+			కొనసాగు;
+		విడుదల(new_dst);
+		విడుదల(new_src);
 		filename = dp->d_name;
-		new_dst = sftp_path_append(dst, filename);
-		new_src = sftp_path_append(src, filename);
+		new_dst = sftp_మార్గం_append(dst, filename);
+		new_src = sftp_మార్గం_append(src, filename);
 
-		if (strcmp(filename, ".") == 0 || strcmp(filename, "..") == 0)
-			continue;
-		if (lstat(new_src, &sb) == -1) {
+		ఒకవేళ (strcmp(filename, ".") == 0 || strcmp(filename, "..") == 0)
+			కొనసాగు;
+		ఒకవేళ (lstat(new_src, &sb) == -1) {
 			logit("local lstat \"%s\": %s", filename,
 			    strerror(errno));
 			ret = -1;
-			continue;
+			కొనసాగు;
 		}
-		if (S_ISLNK(sb.st_mode)) {
-			if (!follow_link_flag) {
+		ఒకవేళ (S_ISLNK(sb.st_mode)) {
+			ఒకవేళ (!follow_link_flag) {
 				logit("%s: not a regular file", filename);
-				continue;
+				కొనసాగు;
 			}
 			/* Replace the stat contents with the symlink target */
-			if (stat(new_src, &sb) == -1) {
+			ఒకవేళ (stat(new_src, &sb) == -1) {
 				logit("local stat \"%s\": %s", filename,
 				    strerror(errno));
 				ret = -1;
-				continue;
+				కొనసాగు;
 			}
 		}
-		if (S_ISDIR(sb.st_mode)) {
-			if (upload_dir_internal(conn, new_src, new_dst,
-			    depth + 1, preserve_flag, print_flag, resume,
+		ఒకవేళ (S_ISDIR(sb.st_mode)) {
+			ఒకవేళ (upload_dir_అంతర్గత(conn, new_src, new_dst,
+			    లోతు + 1, preserve_flag, print_flag, resume,
 			    fsync_flag, follow_link_flag, inplace_flag) == -1)
 				ret = -1;
-		} else if (S_ISREG(sb.st_mode)) {
-			if (sftp_upload(conn, new_src, new_dst,
+		} లేకపోతే ఒకవేళ (S_ISREG(sb.st_mode)) {
+			ఒకవేళ (sftp_upload(conn, new_src, new_dst,
 			    preserve_flag, resume, fsync_flag,
 			    inplace_flag) == -1) {
 				error("upload \"%s\" to \"%s\" failed",
 				    new_src, new_dst);
 				ret = -1;
 			}
-		} else
+		} లేకపోతే
 			logit("%s: not a regular file", filename);
 	}
-	free(new_dst);
-	free(new_src);
+	విడుదల(new_dst);
+	విడుదల(new_src);
 
-	if (created || preserve_flag)
+	ఒకవేళ (created || preserve_flag)
 		sftp_setstat(conn, dst, &a);
 
-	(void) closedir(dirp);
-	return ret;
+	(శూన్య) closedir(dirp);
+	తిరిగి ret;
 }
 
-int
-sftp_upload_dir(struct sftp_conn *conn, const char *src, const char *dst,
-    int preserve_flag, int print_flag, int resume, int fsync_flag,
-    int follow_link_flag, int inplace_flag)
+పూర్ణాంకం
+sftp_upload_dir(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *src, స్థిరరాశి అక్షరం *dst,
+    పూర్ణాంకం preserve_flag, పూర్ణాంకం print_flag, పూర్ణాంకం resume, పూర్ణాంకం fsync_flag,
+    పూర్ణాంకం follow_link_flag, పూర్ణాంకం inplace_flag)
 {
-	char *dst_canon;
-	int ret;
+	అక్షరం *dst_canon;
+	పూర్ణాంకం ret;
 
-	if ((dst_canon = sftp_realpath(conn, dst)) == NULL) {
+	ఒకవేళ ((dst_canon = sftp_realpath(conn, dst)) == ఖాళీ) {
 		error("upload \"%s\": path canonicalization failed", dst);
-		return -1;
+		తిరిగి -1;
 	}
 
-	ret = upload_dir_internal(conn, src, dst_canon, 0, preserve_flag,
+	ret = upload_dir_అంతర్గత(conn, src, dst_canon, 0, preserve_flag,
 	    print_flag, resume, fsync_flag, follow_link_flag, inplace_flag);
 
-	free(dst_canon);
-	return ret;
+	విడుదల(dst_canon);
+	తిరిగి ret;
 }
 
-static void
-handle_dest_replies(struct sftp_conn *to, const char *to_path, int synchronous,
+స్థిర శూన్య
+handle_dest_replies(నిర్మాణం sftp_conn *గమ్యం, స్థిరరాశి అక్షరం *గమ్యం_మార్గం, పూర్ణాంకం synchronous,
     u_int *nreqsp, u_int *write_errorp)
 {
-	struct sshbuf *msg;
+	నిర్మాణం sshbuf *సందేశం;
 	u_char type;
-	u_int id, status;
-	int r;
-	struct pollfd pfd;
+	u_int id, స్థితి_2;
+	పూర్ణాంకం r;
+	నిర్మాణం pollfd pfd;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 
 	/* Try to eat replies from the upload side */
-	while (*nreqsp > 0) {
+	అయితే (*nreqsp > 0) {
 		debug3_f("%u outstanding replies", *nreqsp);
-		if (!synchronous) {
+		ఒకవేళ (!synchronous) {
 			/* Bail out if no data is ready to be read */
-			pfd.fd = to->fd_in;
+			pfd.fd = గమ్యం->fd_లోపల;
 			pfd.events = POLLIN;
-			if ((r = poll(&pfd, 1, 0)) == -1) {
-				if (errno == EINTR)
-					break;
+			ఒకవేళ ((r = poll(&pfd, 1, 0)) == -1) {
+				ఒకవేళ (errno == EINTR)
+					ఆపు;
 				fatal_f("poll: %s", strerror(errno));
-			} else if (r == 0)
-				break; /* fd not ready */
+			} లేకపోతే ఒకవేళ (r == 0)
+				ఆపు; /* fd not ready */
 		}
-		sshbuf_reset(msg);
-		get_msg(to, msg);
+		sshbuf_reset(సందేశం);
+		get_సందేశం(గమ్యం, సందేశం);
 
-		if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-		    (r = sshbuf_get_u32(msg, &id)) != 0)
+		ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0 ||
+		    (r = sshbuf_get_u32(సందేశం, &id)) != 0)
 			fatal_fr(r, "dest parse");
 		debug3("Received dest reply T:%u I:%u R:%u", type, id, *nreqsp);
-		if (type != SSH2_FXP_STATUS) {
+		ఒకవేళ (type != SSH2_FXP_స్థితి) {
 			fatal_f("Expected SSH2_FXP_STATUS(%d) packet, got %d",
-			    SSH2_FXP_STATUS, type);
+			    SSH2_FXP_స్థితి, type);
 		}
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &స్థితి_2)) != 0)
 			fatal_fr(r, "parse dest status");
-		debug3("dest SSH2_FXP_STATUS %u", status);
-		if (status != SSH2_FX_OK) {
+		debug3("dest SSH2_FXP_STATUS %u", స్థితి_2);
+		ఒకవేళ (స్థితి_2 != SSH2_FX_OK) {
 			/* record first error */
-			if (*write_errorp == 0)
-				*write_errorp = status;
+			ఒకవేళ (*write_errorp == 0)
+				*write_errorp = స్థితి_2;
 		}
 		/*
 		 * XXX this doesn't do full reply matching like sftp_upload and
@@ -2476,306 +2476,306 @@ handle_dest_replies(struct sftp_conn *to, const char *to_path, int synchronous,
 		(*nreqsp)--;
 	}
 	debug3_f("done: %u outstanding replies", *nreqsp);
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 }
 
-int
-sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
-    const char *from_path, const char *to_path,
-    Attrib *a, int preserve_flag)
+పూర్ణాంకం
+sftp_crossload(నిర్మాణం sftp_conn *from, నిర్మాణం sftp_conn *గమ్యం,
+    స్థిరరాశి అక్షరం *from_మార్గం, స్థిరరాశి అక్షరం *గమ్యం_మార్గం,
+    Attrib *a, పూర్ణాంకం preserve_flag)
 {
-	struct sshbuf *msg;
-	int write_error, read_error, r, seen_zerolen = 0;
-	uint64_t offset = 0, size;
-	u_int id, buflen, num_req, max_req, status = SSH2_FX_OK;
-	u_int num_upload_req;
-	off_t progress_counter;
-	u_char *from_handle, *to_handle;
-	size_t from_handle_len, to_handle_len;
-	struct requests requests;
-	struct request *req;
+	నిర్మాణం sshbuf *సందేశం;
+	పూర్ణాంకం write_error, read_error, r, చూసిన_zerolen = 0;
+	uint64_t స్థానభ్రంశం = 0, కొలత;
+	u_int id, buflen, అంకె_req, max_req, స్థితి_2 = SSH2_FX_OK;
+	u_int అంకె_upload_req;
+	off_t పురోగతి_counter;
+	u_char *from_handle, *గమ్యం_handle;
+	కొలత_t from_handle_len, గమ్యం_handle_len;
+	నిర్మాణం అభ్యర్థనలు అభ్యర్థనలు;
+	నిర్మాణం request *req;
 	u_char type;
 	Attrib attr;
 
-	debug2_f("crossload src \"%s\" to dst \"%s\"", from_path, to_path);
+	debug2_f("crossload src \"%s\" to dst \"%s\"", from_మార్గం, గమ్యం_మార్గం);
 
-	TAILQ_INIT(&requests);
+	TAILQ_INIT(&అభ్యర్థనలు);
 
-	if (a == NULL) {
-		if (sftp_stat(from, from_path, 0, &attr) != 0)
-			return -1;
+	ఒకవేళ (a == ఖాళీ) {
+		ఒకవేళ (sftp_stat(from, from_మార్గం, 0, &attr) != 0)
+			తిరిగి -1;
 		a = &attr;
 	}
 
-	if ((a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) &&
+	ఒకవేళ ((a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) &&
 	    (!S_ISREG(a->perm))) {
-		error("download \"%s\": not a regular file", from_path);
-		return(-1);
+		error("download \"%s\": not a regular file", from_మార్గం);
+		తిరిగి(-1);
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE)
-		size = a->size;
-	else
-		size = 0;
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_కొలత)
+		కొలత = a->కొలత;
+	లేకపోతే
+		కొలత = 0;
 
 	buflen = from->download_buflen;
-	if (buflen > to->upload_buflen)
-		buflen = to->upload_buflen;
+	ఒకవేళ (buflen > గమ్యం->upload_buflen)
+		buflen = గమ్యం->upload_buflen;
 
 	/* Send open request to read side */
-	if (send_open(from, from_path, "origin", SSH2_FXF_READ, NULL,
+	ఒకవేళ (send_open(from, from_మార్గం, "origin", SSH2_FXF_READ, ఖాళీ,
 	    &from_handle, &from_handle_len) != 0)
-		return -1;
+		తిరిగి -1;
 
 	/* Send open request to write side */
-	a->flags &= ~SSH2_FILEXFER_ATTR_SIZE;
+	a->flags &= ~SSH2_FILEXFER_ATTR_కొలత;
 	a->flags &= ~SSH2_FILEXFER_ATTR_UIDGID;
 	a->perm &= 0777;
-	if (!preserve_flag)
+	ఒకవేళ (!preserve_flag)
 		a->flags &= ~SSH2_FILEXFER_ATTR_ACMODTIME;
-	if (send_open(to, to_path, "dest",
+	ఒకవేళ (send_open(గమ్యం, గమ్యం_మార్గం, "dest",
 	    SSH2_FXF_WRITE|SSH2_FXF_CREAT|SSH2_FXF_TRUNC, a,
-	    &to_handle, &to_handle_len) != 0) {
+	    &గమ్యం_handle, &గమ్యం_handle_len) != 0) {
 		sftp_close(from, from_handle, from_handle_len);
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* Read from remote "from" and write to remote "to" */
-	offset = 0;
-	write_error = read_error = num_req = num_upload_req = 0;
+	స్థానభ్రంశం = 0;
+	write_error = read_error = అంకె_req = అంకె_upload_req = 0;
 	max_req = 1;
-	progress_counter = 0;
+	పురోగతి_counter = 0;
 
-	if (showprogress && size != 0) {
-		start_progress_meter(progress_meter_path(from_path),
-		    size, &progress_counter);
+	ఒకవేళ (showprogress && కొలత != 0) {
+		ప్రారంభం_పురోగతి_meter(పురోగతి_meter_మార్గం(from_మార్గం),
+		    కొలత, &పురోగతి_counter);
 	}
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	while (num_req > 0 || max_req > 0) {
-		u_char *data;
-		size_t len;
+	అయితే (అంకె_req > 0 || max_req > 0) {
+		u_char *దత్తాంశం;
+		కొలత_t len;
 
 		/*
 		 * Simulate EOF on interrupt: stop sending new requests and
 		 * allow outstanding requests to drain gracefully
 		 */
-		if (interrupted) {
-			if (num_req == 0) /* If we haven't started yet... */
-				break;
+		ఒకవేళ (interrupted) {
+			ఒకవేళ (అంకె_req == 0) /* If we haven't started yet... */
+				ఆపు;
 			max_req = 0;
 		}
 
 		/* Send some more requests */
-		while (num_req < max_req) {
+		అయితే (అంకె_req < max_req) {
 			debug3("Request range %llu -> %llu (%d/%d)",
-			    (unsigned long long)offset,
-			    (unsigned long long)offset + buflen - 1,
-			    num_req, max_req);
-			req = request_enqueue(&requests, from->msg_id++,
-			    buflen, offset);
-			offset += buflen;
-			num_req++;
-			send_read_request(from, req->id, req->offset,
+			    (గుర్తులేని దీర్ఘ దీర్ఘ)స్థానభ్రంశం,
+			    (గుర్తులేని దీర్ఘ దీర్ఘ)స్థానభ్రంశం + buflen - 1,
+			    అంకె_req, max_req);
+			req = request_వరుసలో_చేర్చు(&అభ్యర్థనలు, from->సందేశం_id++,
+			    buflen, స్థానభ్రంశం);
+			స్థానభ్రంశం += buflen;
+			అంకె_req++;
+			send_read_request(from, req->id, req->స్థానభ్రంశం,
 			    req->len, from_handle, from_handle_len);
 		}
 
 		/* Try to eat replies from the upload side (nonblocking) */
-		handle_dest_replies(to, to_path, 0,
-		    &num_upload_req, &write_error);
+		handle_dest_replies(గమ్యం, గమ్యం_మార్గం, 0,
+		    &అంకె_upload_req, &write_error);
 
-		sshbuf_reset(msg);
-		get_msg(from, msg);
-		if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-		    (r = sshbuf_get_u32(msg, &id)) != 0)
+		sshbuf_reset(సందేశం);
+		get_సందేశం(from, సందేశం);
+		ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0 ||
+		    (r = sshbuf_get_u32(సందేశం, &id)) != 0)
 			fatal_fr(r, "parse");
 		debug3("Received origin reply T:%u I:%u R:%d",
 		    type, id, max_req);
 
 		/* Find the request in our queue */
-		if ((req = request_find(&requests, id)) == NULL)
+		ఒకవేళ ((req = request_కనుగొను(&అభ్యర్థనలు, id)) == ఖాళీ)
 			fatal("Unexpected reply %u", id);
 
-		switch (type) {
-		case SSH2_FXP_STATUS:
-			if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		ఎంపిక (type) {
+		స్థితి SSH2_FXP_స్థితి:
+			ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &స్థితి_2)) != 0)
 				fatal_fr(r, "parse status");
-			if (status != SSH2_FX_EOF)
+			ఒకవేళ (స్థితి_2 != SSH2_FX_EOF)
 				read_error = 1;
 			max_req = 0;
-			TAILQ_REMOVE(&requests, req, tq);
-			free(req);
-			num_req--;
-			break;
-		case SSH2_FXP_DATA:
-			if ((r = sshbuf_get_string(msg, &data, &len)) != 0)
+			TAILQ_REMOVE(&అభ్యర్థనలు, req, tq);
+			విడుదల(req);
+			అంకె_req--;
+			ఆపు;
+		స్థితి SSH2_FXP_దత్తాంశం:
+			ఒకవేళ ((r = sshbuf_get_string(సందేశం, &దత్తాంశం, &len)) != 0)
 				fatal_fr(r, "parse data");
 			debug3("Received data %llu -> %llu",
-			    (unsigned long long)req->offset,
-			    (unsigned long long)req->offset + len - 1);
-			if (len > req->len)
+			    (గుర్తులేని దీర్ఘ దీర్ఘ)req->స్థానభ్రంశం,
+			    (గుర్తులేని దీర్ఘ దీర్ఘ)req->స్థానభ్రంశం + len - 1);
+			ఒకవేళ (len > req->len)
 				fatal("Received more data than asked for "
 				    "%zu > %zu", len, req->len);
-			if (len == 0) {
-				if (seen_zerolen)
+			ఒకవేళ (len == 0) {
+				ఒకవేళ (చూసిన_zerolen)
 					fatal_f("server sent zero data length");
-				seen_zerolen = 1;
+				చూసిన_zerolen = 1;
 			}
 
 			/* Write this chunk out to the destination */
-			sshbuf_reset(msg);
-			if ((r = sshbuf_put_u8(msg, SSH2_FXP_WRITE)) != 0 ||
-			    (r = sshbuf_put_u32(msg, to->msg_id++)) != 0 ||
-			    (r = sshbuf_put_string(msg, to_handle,
-			    to_handle_len)) != 0 ||
-			    (r = sshbuf_put_u64(msg, req->offset)) != 0 ||
-			    (r = sshbuf_put_string(msg, data, len)) != 0)
+			sshbuf_reset(సందేశం);
+			ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_WRITE)) != 0 ||
+			    (r = sshbuf_put_u32(సందేశం, గమ్యం->సందేశం_id++)) != 0 ||
+			    (r = sshbuf_put_string(సందేశం, గమ్యం_handle,
+			    గమ్యం_handle_len)) != 0 ||
+			    (r = sshbuf_put_u64(సందేశం, req->స్థానభ్రంశం)) != 0 ||
+			    (r = sshbuf_put_string(సందేశం, దత్తాంశం, len)) != 0)
 				fatal_fr(r, "compose write");
-			send_msg(to, msg);
+			send_సందేశం(గమ్యం, సందేశం);
 			debug3("Sent message SSH2_FXP_WRITE I:%u O:%llu S:%zu",
-			    id, (unsigned long long)offset, len);
-			num_upload_req++;
-			progress_counter += len;
-			free(data);
+			    id, (గుర్తులేని దీర్ఘ దీర్ఘ)స్థానభ్రంశం, len);
+			అంకె_upload_req++;
+			పురోగతి_counter += len;
+			విడుదల(దత్తాంశం);
 
-			if (len == req->len) {
-				TAILQ_REMOVE(&requests, req, tq);
-				free(req);
-				num_req--;
-			} else {
+			ఒకవేళ (len == req->len) {
+				TAILQ_REMOVE(&అభ్యర్థనలు, req, tq);
+				విడుదల(req);
+				అంకె_req--;
+			} లేకపోతే {
 				/* Resend the request for the missing data */
 				debug3("Short data block, re-requesting "
 				    "%llu -> %llu (%2d)",
-				    (unsigned long long)req->offset + len,
-				    (unsigned long long)req->offset +
-				    req->len - 1, num_req);
-				req->id = from->msg_id++;
+				    (గుర్తులేని దీర్ఘ దీర్ఘ)req->స్థానభ్రంశం + len,
+				    (గుర్తులేని దీర్ఘ దీర్ఘ)req->స్థానభ్రంశం +
+				    req->len - 1, అంకె_req);
+				req->id = from->సందేశం_id++;
 				req->len -= len;
-				req->offset += len;
+				req->స్థానభ్రంశం += len;
 				send_read_request(from, req->id,
-				    req->offset, req->len,
+				    req->స్థానభ్రంశం, req->len,
 				    from_handle, from_handle_len);
 				/* Reduce the request size */
-				if (len < buflen)
-					buflen = MAXIMUM(MIN_READ_SIZE, len);
+				ఒకవేళ (len < buflen)
+					buflen = గరిష్ఠ(MIN_READ_కొలత, len);
 			}
-			if (max_req > 0) { /* max_req = 0 iff EOF received */
-				if (size > 0 && offset > size) {
+			ఒకవేళ (max_req > 0) { /* max_req = 0 iff EOF received */
+				ఒకవేళ (కొలత > 0 && స్థానభ్రంశం > కొలత) {
 					/* Only one request at a time
 					 * after the expected EOF */
 					debug3("Finish at %llu (%2d)",
-					    (unsigned long long)offset,
-					    num_req);
+					    (గుర్తులేని దీర్ఘ దీర్ఘ)స్థానభ్రంశం,
+					    అంకె_req);
 					max_req = 1;
-				} else if (max_req < from->num_requests) {
+				} లేకపోతే ఒకవేళ (max_req < from->అంకె_అభ్యర్థనలు) {
 					++max_req;
 				}
 			}
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			fatal("Expected SSH2_FXP_DATA(%u) packet, got %u",
-			    SSH2_FXP_DATA, type);
+			    SSH2_FXP_దత్తాంశం, type);
 		}
 	}
 
-	if (showprogress && size)
-		stop_progress_meter();
+	ఒకవేళ (showprogress && కొలత)
+		stop_పురోగతి_meter();
 
 	/* Drain replies from the server (blocking) */
-	debug3_f("waiting for %u replies from destination", num_upload_req);
-	handle_dest_replies(to, to_path, 1, &num_upload_req, &write_error);
+	debug3_f("waiting for %u replies from destination", అంకె_upload_req);
+	handle_dest_replies(గమ్యం, గమ్యం_మార్గం, 1, &అంకె_upload_req, &write_error);
 
 	/* Sanity check */
-	if (TAILQ_FIRST(&requests) != NULL)
+	ఒకవేళ (TAILQ_FIRST(&అభ్యర్థనలు) != ఖాళీ)
 		fatal("Transfer complete, but requests still in queue");
 	/* Truncate at 0 length on interrupt or error to avoid holes at dest */
-	if (read_error || write_error || interrupted) {
-		debug("truncating \"%s\" at 0", to_path);
-		sftp_close(to, to_handle, to_handle_len);
-		free(to_handle);
-		if (send_open(to, to_path, "dest",
+	ఒకవేళ (read_error || write_error || interrupted) {
+		debug("truncating \"%s\" at 0", గమ్యం_మార్గం);
+		sftp_close(గమ్యం, గమ్యం_handle, గమ్యం_handle_len);
+		విడుదల(గమ్యం_handle);
+		ఒకవేళ (send_open(గమ్యం, గమ్యం_మార్గం, "dest",
 		    SSH2_FXF_WRITE|SSH2_FXF_CREAT|SSH2_FXF_TRUNC, a,
-		    &to_handle, &to_handle_len) != 0) {
-			error("dest truncate \"%s\" failed", to_path);
-			to_handle = NULL;
+		    &గమ్యం_handle, &గమ్యం_handle_len) != 0) {
+			error("dest truncate \"%s\" failed", గమ్యం_మార్గం);
+			గమ్యం_handle = ఖాళీ;
 		}
 	}
-	if (read_error) {
-		error("read origin \"%s\": %s", from_path, fx2txt(status));
-		status = -1;
+	ఒకవేళ (read_error) {
+		error("read origin \"%s\": %s", from_మార్గం, fx2txt(స్థితి_2));
+		స్థితి_2 = -1;
 		sftp_close(from, from_handle, from_handle_len);
-		if (to_handle != NULL)
-			sftp_close(to, to_handle, to_handle_len);
-	} else if (write_error) {
-		error("write dest \"%s\": %s", to_path, fx2txt(write_error));
-		status = SSH2_FX_FAILURE;
+		ఒకవేళ (గమ్యం_handle != ఖాళీ)
+			sftp_close(గమ్యం, గమ్యం_handle, గమ్యం_handle_len);
+	} లేకపోతే ఒకవేళ (write_error) {
+		error("write dest \"%s\": %s", గమ్యం_మార్గం, fx2txt(write_error));
+		స్థితి_2 = SSH2_FX_FAILURE;
 		sftp_close(from, from_handle, from_handle_len);
-		if (to_handle != NULL)
-			sftp_close(to, to_handle, to_handle_len);
-	} else {
-		if (sftp_close(from, from_handle, from_handle_len) != 0 ||
+		ఒకవేళ (గమ్యం_handle != ఖాళీ)
+			sftp_close(గమ్యం, గమ్యం_handle, గమ్యం_handle_len);
+	} లేకపోతే {
+		ఒకవేళ (sftp_close(from, from_handle, from_handle_len) != 0 ||
 		    interrupted)
-			status = -1;
-		else
-			status = SSH2_FX_OK;
-		if (to_handle != NULL) {
+			స్థితి_2 = -1;
+		లేకపోతే
+			స్థితి_2 = SSH2_FX_OK;
+		ఒకవేళ (గమ్యం_handle != ఖాళీ) {
 			/* Need to resend utimes after write */
-			if (preserve_flag)
-				sftp_fsetstat(to, to_handle, to_handle_len, a);
-			sftp_close(to, to_handle, to_handle_len);
+			ఒకవేళ (preserve_flag)
+				sftp_fsetstat(గమ్యం, గమ్యం_handle, గమ్యం_handle_len, a);
+			sftp_close(గమ్యం, గమ్యం_handle, గమ్యం_handle_len);
 		}
 	}
-	sshbuf_free(msg);
-	free(from_handle);
-	free(to_handle);
+	sshbuf_free(సందేశం);
+	విడుదల(from_handle);
+	విడుదల(గమ్యం_handle);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	తిరిగి స్థితి_2 == SSH2_FX_OK ? 0 : -1;
 }
 
-static int
-crossload_dir_internal(struct sftp_conn *from, struct sftp_conn *to,
-    const char *from_path, const char *to_path,
-    int depth, Attrib *dirattrib, int preserve_flag, int print_flag,
-    int follow_link_flag)
+స్థిర పూర్ణాంకం
+crossload_dir_అంతర్గత(నిర్మాణం sftp_conn *from, నిర్మాణం sftp_conn *గమ్యం,
+    స్థిరరాశి అక్షరం *from_మార్గం, స్థిరరాశి అక్షరం *గమ్యం_మార్గం,
+    పూర్ణాంకం లోతు, Attrib *dirattrib, పూర్ణాంకం preserve_flag, పూర్ణాంకం print_flag,
+    పూర్ణాంకం follow_link_flag)
 {
-	int i, ret = 0, created = 0;
+	పూర్ణాంకం i, ret = 0, created = 0;
 	SFTP_DIRENT **dir_entries;
-	char *filename, *new_from_path = NULL, *new_to_path = NULL;
-	mode_t mode = 0777;
+	అక్షరం *filename, *new_from_మార్గం = ఖాళీ, *new_గమ్యం_మార్గం = ఖాళీ;
+	బహుళకం_t బహుళకం = 0777;
 	Attrib *a, curdir, ldirattrib, newdir, lsym;
 
-	debug2_f("crossload dir src \"%s\" to dst \"%s\"", from_path, to_path);
+	debug2_f("crossload dir src \"%s\" to dst \"%s\"", from_మార్గం, గమ్యం_మార్గం);
 
-	if (depth >= MAX_DIR_DEPTH) {
-		error("Maximum directory depth exceeded: %d levels", depth);
-		return -1;
+	ఒకవేళ (లోతు >= MAX_DIR_లోతు) {
+		error("Maximum directory depth exceeded: %d levels", లోతు);
+		తిరిగి -1;
 	}
 
-	if (dirattrib == NULL) {
-		if (sftp_stat(from, from_path, 1, &ldirattrib) != 0) {
-			error("stat remote \"%s\" failed", from_path);
-			return -1;
+	ఒకవేళ (dirattrib == ఖాళీ) {
+		ఒకవేళ (sftp_stat(from, from_మార్గం, 1, &ldirattrib) != 0) {
+			error("stat remote \"%s\" failed", from_మార్గం);
+			తిరిగి -1;
 		}
 		dirattrib = &ldirattrib;
 	}
-	if (!S_ISDIR(dirattrib->perm)) {
-		error("\"%s\" is not a directory", from_path);
-		return -1;
+	ఒకవేళ (!S_ISDIR(dirattrib->perm)) {
+		error("\"%s\" is not a directory", from_మార్గం);
+		తిరిగి -1;
 	}
-	if (print_flag && print_flag != SFTP_PROGRESS_ONLY)
-		mprintf("Retrieving %s\n", from_path);
+	ఒకవేళ (print_flag && print_flag != SFTP_పురోగతి_ONLY)
+		mprintf("Retrieving %s\n", from_మార్గం);
 
 	curdir = *dirattrib; /* dirattrib will be clobbered */
-	curdir.flags &= ~SSH2_FILEXFER_ATTR_SIZE;
+	curdir.flags &= ~SSH2_FILEXFER_ATTR_కొలత;
 	curdir.flags &= ~SSH2_FILEXFER_ATTR_UIDGID;
-	if ((curdir.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) == 0) {
+	ఒకవేళ ((curdir.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) == 0) {
 		debug("Origin did not send permissions for "
-		    "directory \"%s\"", to_path);
+		    "directory \"%s\"", గమ్యం_మార్గం);
 		curdir.perm = S_IWUSR|S_IXUSR;
 		curdir.flags |= SSH2_FILEXFER_ATTR_PERMISSIONS;
 	}
 	/* We need to be able to write to the directory while we transfer it */
-	mode = curdir.perm & 01777;
-	curdir.perm = mode | (S_IWUSR|S_IXUSR);
+	బహుళకం = curdir.perm & 01777;
+	curdir.perm = బహుళకం | (S_IWUSR|S_IXUSR);
 
 	/*
 	 * sftp lacks a portable status value to match errno EEXIST,
@@ -2783,265 +2783,265 @@ crossload_dir_internal(struct sftp_conn *from, struct sftp_conn *to,
 	 * the path already existed and is a directory.  Ensure we can
 	 * write to the directory we create for the duration of the transfer.
 	 */
-	if (sftp_mkdir(to, to_path, &curdir, 0) == 0)
+	ఒకవేళ (sftp_mkdir(గమ్యం, గమ్యం_మార్గం, &curdir, 0) == 0)
 		created = 1;
-	else {
-		if (sftp_stat(to, to_path, 0, &newdir) != 0)
-			return -1;
-		if (!S_ISDIR(newdir.perm)) {
-			error("\"%s\" exists but is not a directory", to_path);
-			return -1;
+	లేకపోతే {
+		ఒకవేళ (sftp_stat(గమ్యం, గమ్యం_మార్గం, 0, &newdir) != 0)
+			తిరిగి -1;
+		ఒకవేళ (!S_ISDIR(newdir.perm)) {
+			error("\"%s\" exists but is not a directory", గమ్యం_మార్గం);
+			తిరిగి -1;
 		}
 	}
-	curdir.perm = mode;
+	curdir.perm = బహుళకం;
 
-	if (sftp_readdir(from, from_path, &dir_entries) == -1) {
-		error("origin readdir \"%s\" failed", from_path);
-		return -1;
+	ఒకవేళ (sftp_readdir(from, from_మార్గం, &dir_entries) == -1) {
+		error("origin readdir \"%s\" failed", from_మార్గం);
+		తిరిగి -1;
 	}
 
-	for (i = 0; dir_entries[i] != NULL && !interrupted; i++) {
-		free(new_from_path);
-		free(new_to_path);
+	కొరకు (i = 0; dir_entries[i] != ఖాళీ && !interrupted; i++) {
+		విడుదల(new_from_మార్గం);
+		విడుదల(new_గమ్యం_మార్గం);
 
 		filename = dir_entries[i]->filename;
-		new_from_path = sftp_path_append(from_path, filename);
-		new_to_path = sftp_path_append(to_path, filename);
+		new_from_మార్గం = sftp_మార్గం_append(from_మార్గం, filename);
+		new_గమ్యం_మార్గం = sftp_మార్గం_append(గమ్యం_మార్గం, filename);
 
 		a = &dir_entries[i]->a;
-		if (S_ISLNK(a->perm)) {
-			if (!follow_link_flag) {
+		ఒకవేళ (S_ISLNK(a->perm)) {
+			ఒకవేళ (!follow_link_flag) {
 				logit("%s: not a regular file", filename);
-				continue;
+				కొనసాగు;
 			}
 			/* Replace the stat contents with the symlink target */
-			if (sftp_stat(from, new_from_path, 1, &lsym) != 0) {
+			ఒకవేళ (sftp_stat(from, new_from_మార్గం, 1, &lsym) != 0) {
 				logit("remote stat \"%s\" failed",
-				    new_from_path);
+				    new_from_మార్గం);
 				ret = -1;
-				continue;
+				కొనసాగు;
 			}
 			a = &lsym;
 		}
-		if (S_ISDIR(a->perm)) {
-			if (strcmp(filename, ".") == 0 ||
+		ఒకవేళ (S_ISDIR(a->perm)) {
+			ఒకవేళ (strcmp(filename, ".") == 0 ||
 			    strcmp(filename, "..") == 0)
-				continue;
-			if (crossload_dir_internal(from, to,
-			    new_from_path, new_to_path,
-			    depth + 1, a, preserve_flag,
+				కొనసాగు;
+			ఒకవేళ (crossload_dir_అంతర్గత(from, గమ్యం,
+			    new_from_మార్గం, new_గమ్యం_మార్గం,
+			    లోతు + 1, a, preserve_flag,
 			    print_flag, follow_link_flag) == -1)
 				ret = -1;
-		} else if (S_ISREG(a->perm)) {
-			if (sftp_crossload(from, to, new_from_path,
-			    new_to_path, a, preserve_flag) == -1) {
+		} లేకపోతే ఒకవేళ (S_ISREG(a->perm)) {
+			ఒకవేళ (sftp_crossload(from, గమ్యం, new_from_మార్గం,
+			    new_గమ్యం_మార్గం, a, preserve_flag) == -1) {
 				error("crossload \"%s\" to \"%s\" failed",
-				    new_from_path, new_to_path);
+				    new_from_మార్గం, new_గమ్యం_మార్గం);
 				ret = -1;
 			}
-		} else {
+		} లేకపోతే {
 			logit("origin \"%s\": not a regular file",
-			    new_from_path);
+			    new_from_మార్గం);
 		}
 	}
-	free(new_to_path);
-	free(new_from_path);
+	విడుదల(new_గమ్యం_మార్గం);
+	విడుదల(new_from_మార్గం);
 
-	if (created || preserve_flag)
-		sftp_setstat(to, to_path, &curdir);
+	ఒకవేళ (created || preserve_flag)
+		sftp_setstat(గమ్యం, గమ్యం_మార్గం, &curdir);
 
 	sftp_free_dirents(dir_entries);
 
-	return ret;
+	తిరిగి ret;
 }
 
-int
-sftp_crossload_dir(struct sftp_conn *from, struct sftp_conn *to,
-    const char *from_path, const char *to_path,
-    Attrib *dirattrib, int preserve_flag, int print_flag, int follow_link_flag)
+పూర్ణాంకం
+sftp_crossload_dir(నిర్మాణం sftp_conn *from, నిర్మాణం sftp_conn *గమ్యం,
+    స్థిరరాశి అక్షరం *from_మార్గం, స్థిరరాశి అక్షరం *గమ్యం_మార్గం,
+    Attrib *dirattrib, పూర్ణాంకం preserve_flag, పూర్ణాంకం print_flag, పూర్ణాంకం follow_link_flag)
 {
-	char *from_path_canon;
-	int ret;
+	అక్షరం *from_మార్గం_canon;
+	పూర్ణాంకం ret;
 
-	if ((from_path_canon = sftp_realpath(from, from_path)) == NULL) {
+	ఒకవేళ ((from_మార్గం_canon = sftp_realpath(from, from_మార్గం)) == ఖాళీ) {
 		error("crossload \"%s\": path canonicalization failed",
-		    from_path);
-		return -1;
+		    from_మార్గం);
+		తిరిగి -1;
 	}
 
-	ret = crossload_dir_internal(from, to, from_path_canon, to_path, 0,
+	ret = crossload_dir_అంతర్గత(from, గమ్యం, from_మార్గం_canon, గమ్యం_మార్గం, 0,
 	    dirattrib, preserve_flag, print_flag, follow_link_flag);
-	free(from_path_canon);
-	return ret;
+	విడుదల(from_మార్గం_canon);
+	తిరిగి ret;
 }
 
-int
-sftp_can_get_users_groups_by_id(struct sftp_conn *conn)
+పూర్ణాంకం
+sftp_can_get_users_groups_by_id(నిర్మాణం sftp_conn *conn)
 {
-	return (conn->exts & SFTP_EXT_GETUSERSGROUPS_BY_ID) != 0;
+	తిరిగి (conn->exts & SFTP_EXT_GETUSERSGROUPS_BY_ID) != 0;
 }
 
-int
-sftp_get_users_groups_by_id(struct sftp_conn *conn,
-    const u_int *uids, u_int nuids,
-    const u_int *gids, u_int ngids,
-    char ***usernamesp, char ***groupnamesp)
+పూర్ణాంకం
+sftp_get_users_groups_by_id(నిర్మాణం sftp_conn *conn,
+    స్థిరరాశి u_int *uids, u_int nuids,
+    స్థిరరాశి u_int *gids, u_int ngids,
+    అక్షరం ***usernamesp, అక్షరం ***groupnamesp)
 {
-	struct sshbuf *msg, *uidbuf, *gidbuf;
+	నిర్మాణం sshbuf *సందేశం, *uidbuf, *gidbuf;
 	u_int i, expected_id, id;
-	char *name, **usernames = NULL, **groupnames = NULL;
+	అక్షరం *name, **usernames = ఖాళీ, **groupnames = ఖాళీ;
 	u_char type;
-	int r;
+	పూర్ణాంకం r;
 
-	*usernamesp = *groupnamesp = NULL;
-	if (!sftp_can_get_users_groups_by_id(conn))
-		return SSH_ERR_FEATURE_UNSUPPORTED;
+	*usernamesp = *groupnamesp = ఖాళీ;
+	ఒకవేళ (!sftp_can_get_users_groups_by_id(conn))
+		తిరిగి SSH_ERR_FEATURE_UNSUPPORTED;
 
-	if ((msg = sshbuf_new()) == NULL ||
-	    (uidbuf = sshbuf_new()) == NULL ||
-	    (gidbuf = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ ||
+	    (uidbuf = sshbuf_new()) == ఖాళీ ||
+	    (gidbuf = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	expected_id = id = conn->msg_id++;
+	expected_id = id = conn->సందేశం_id++;
 	debug2("Sending SSH2_FXP_EXTENDED(users-groups-by-id@openssh.com)");
-	for (i = 0; i < nuids; i++) {
-		if ((r = sshbuf_put_u32(uidbuf, uids[i])) != 0)
+	కొరకు (i = 0; i < nuids; i++) {
+		ఒకవేళ ((r = sshbuf_put_u32(uidbuf, uids[i])) != 0)
 			fatal_fr(r, "compose uids");
 	}
-	for (i = 0; i < ngids; i++) {
-		if ((r = sshbuf_put_u32(gidbuf, gids[i])) != 0)
+	కొరకు (i = 0; i < ngids; i++) {
+		ఒకవేళ ((r = sshbuf_put_u32(gidbuf, gids[i])) != 0)
 			fatal_fr(r, "compose gids");
 	}
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg,
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_FXP_EXTENDED)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, id)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం,
 	    "users-groups-by-id@openssh.com")) != 0 ||
-	    (r = sshbuf_put_stringb(msg, uidbuf)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, gidbuf)) != 0)
+	    (r = sshbuf_put_stringb(సందేశం, uidbuf)) != 0 ||
+	    (r = sshbuf_put_stringb(సందేశం, gidbuf)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(conn, msg);
-	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
-	    (r = sshbuf_get_u32(msg, &id)) != 0)
+	send_సందేశం(conn, సందేశం);
+	get_సందేశం(conn, సందేశం);
+	ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0 ||
+	    (r = sshbuf_get_u32(సందేశం, &id)) != 0)
 		fatal_fr(r, "parse");
-	if (id != expected_id)
+	ఒకవేళ (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
-	if (type == SSH2_FXP_STATUS) {
-		u_int status;
-		char *errmsg;
+	ఒకవేళ (type == SSH2_FXP_స్థితి) {
+		u_int స్థితి_2;
+		అక్షరం *errmsg;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0 ||
-		    (r = sshbuf_get_cstring(msg, &errmsg, NULL)) != 0)
+		ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &స్థితి_2)) != 0 ||
+		    (r = sshbuf_get_cstring(సందేశం, &errmsg, ఖాళీ)) != 0)
 			fatal_fr(r, "parse status");
 		error("users-groups-by-id %s",
-		    *errmsg == '\0' ? fx2txt(status) : errmsg);
-		free(errmsg);
-		sshbuf_free(msg);
+		    *errmsg == '\0' ? fx2txt(స్థితి_2) : errmsg);
+		విడుదల(errmsg);
+		sshbuf_free(సందేశం);
 		sshbuf_free(uidbuf);
 		sshbuf_free(gidbuf);
-		return -1;
-	} else if (type != SSH2_FXP_EXTENDED_REPLY)
+		తిరిగి -1;
+	} లేకపోతే ఒకవేళ (type != SSH2_FXP_EXTENDED_జవాబు)
 		fatal("Expected SSH2_FXP_EXTENDED_REPLY(%u) packet, got %u",
-		    SSH2_FXP_EXTENDED_REPLY, type);
+		    SSH2_FXP_EXTENDED_జవాబు, type);
 
 	/* reuse */
 	sshbuf_free(uidbuf);
 	sshbuf_free(gidbuf);
-	uidbuf = gidbuf = NULL;
-	if ((r = sshbuf_froms(msg, &uidbuf)) != 0 ||
-	    (r = sshbuf_froms(msg, &gidbuf)) != 0)
+	uidbuf = gidbuf = ఖాళీ;
+	ఒకవేళ ((r = sshbuf_froms(సందేశం, &uidbuf)) != 0 ||
+	    (r = sshbuf_froms(సందేశం, &gidbuf)) != 0)
 		fatal_fr(r, "parse response");
-	if (nuids > 0) {
-		usernames = xcalloc(nuids, sizeof(*usernames));
-		for (i = 0; i < nuids; i++) {
-			if ((r = sshbuf_get_cstring(uidbuf, &name, NULL)) != 0)
+	ఒకవేళ (nuids > 0) {
+		usernames = xcalloc(nuids, పరిమాణం(*usernames));
+		కొరకు (i = 0; i < nuids; i++) {
+			ఒకవేళ ((r = sshbuf_get_cstring(uidbuf, &name, ఖాళీ)) != 0)
 				fatal_fr(r, "parse user name");
 			/* Handle unresolved names */
-			if (*name == '\0') {
-				free(name);
-				name = NULL;
+			ఒకవేళ (*name == '\0') {
+				విడుదల(name);
+				name = ఖాళీ;
 			}
 			usernames[i] = name;
 		}
 	}
-	if (ngids > 0) {
-		groupnames = xcalloc(ngids, sizeof(*groupnames));
-		for (i = 0; i < ngids; i++) {
-			if ((r = sshbuf_get_cstring(gidbuf, &name, NULL)) != 0)
+	ఒకవేళ (ngids > 0) {
+		groupnames = xcalloc(ngids, పరిమాణం(*groupnames));
+		కొరకు (i = 0; i < ngids; i++) {
+			ఒకవేళ ((r = sshbuf_get_cstring(gidbuf, &name, ఖాళీ)) != 0)
 				fatal_fr(r, "parse user name");
 			/* Handle unresolved names */
-			if (*name == '\0') {
-				free(name);
-				name = NULL;
+			ఒకవేళ (*name == '\0') {
+				విడుదల(name);
+				name = ఖాళీ;
 			}
 			groupnames[i] = name;
 		}
 	}
-	if (sshbuf_len(uidbuf) != 0)
+	ఒకవేళ (sshbuf_len(uidbuf) != 0)
 		fatal_f("unexpected extra username data");
-	if (sshbuf_len(gidbuf) != 0)
+	ఒకవేళ (sshbuf_len(gidbuf) != 0)
 		fatal_f("unexpected extra groupname data");
 	sshbuf_free(uidbuf);
 	sshbuf_free(gidbuf);
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 	/* success */
 	*usernamesp = usernames;
 	*groupnamesp = groupnames;
-	return 0;
+	తిరిగి 0;
 }
 
-char *
-sftp_path_append(const char *p1, const char *p2)
+అక్షరం *
+sftp_మార్గం_append(స్థిరరాశి అక్షరం *p1, స్థిరరాశి అక్షరం *p2)
 {
-	char *ret;
-	size_t len = strlen(p1) + strlen(p2) + 2;
+	అక్షరం *ret;
+	కొలత_t len = అక్షరశ్రేణి_పొడవు(p1) + అక్షరశ్రేణి_పొడవు(p2) + 2;
 
 	ret = xmalloc(len);
 	strlcpy(ret, p1, len);
-	if (p1[0] != '\0' && p1[strlen(p1) - 1] != '/')
+	ఒకవేళ (p1[0] != '\0' && p1[అక్షరశ్రేణి_పొడవు(p1) - 1] != '/')
 		strlcat(ret, "/", len);
 	strlcat(ret, p2, len);
 
-	return(ret);
+	తిరిగి(ret);
 }
 
 /*
  * Arg p must be dynamically allocated.  It will either be returned or
  * freed and a replacement allocated.  Caller must free returned string.
  */
-char *
-sftp_make_absolute(char *p, const char *pwd)
+అక్షరం *
+sftp_make_absolute(అక్షరం *p, స్థిరరాశి అక్షరం *pwd)
 {
-	char *abs_str;
+	అక్షరం *abs_str;
 
 	/* Derelativise */
-	if (p && !path_absolute(p)) {
-		abs_str = sftp_path_append(pwd, p);
-		free(p);
-		return(abs_str);
-	} else
-		return(p);
+	ఒకవేళ (p && !మార్గం_absolute(p)) {
+		abs_str = sftp_మార్గం_append(pwd, p);
+		విడుదల(p);
+		తిరిగి(abs_str);
+	} లేకపోతే
+		తిరిగి(p);
 }
 
-int
-sftp_remote_is_dir(struct sftp_conn *conn, const char *path)
+పూర్ణాంకం
+sftp_remote_is_dir(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం)
 {
 	Attrib a;
 
 	/* XXX: report errors? */
-	if (sftp_stat(conn, path, 1, &a) != 0)
-		return(0);
-	if (!(a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS))
-		return(0);
-	return S_ISDIR(a.perm);
+	ఒకవేళ (sftp_stat(conn, మార్గం, 1, &a) != 0)
+		తిరిగి(0);
+	ఒకవేళ (!(a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS))
+		తిరిగి(0);
+	తిరిగి S_ISDIR(a.perm);
 }
 
 
 /* Check whether path returned from glob(..., GLOB_MARK, ...) is a directory */
-int
-sftp_globpath_is_dir(const char *pathname)
+పూర్ణాంకం
+sftp_globpath_is_dir(స్థిరరాశి అక్షరం *pathname)
 {
-	size_t l = strlen(pathname);
+	కొలత_t l = అక్షరశ్రేణి_పొడవు(pathname);
 
-	return l > 0 && pathname[l - 1] == '/';
+	తిరిగి l > 0 && pathname[l - 1] == '/';
 }
 

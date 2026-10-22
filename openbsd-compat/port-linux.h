@@ -14,29 +14,29 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _PORT_LINUX_H
-#define _PORT_LINUX_H
+#నిర్వచితం_కాకపోతే పోర్టు_LINUX_H
+#నిర్వచించు పోర్టు_LINUX_H
 
-#ifdef WITH_SELINUX
-int ssh_selinux_enabled(void);
-void ssh_selinux_setup_pty(char *, const char *);
-void ssh_selinux_setup_exec_context(char *);
-void ssh_selinux_change_context(const char *);
-void ssh_selinux_setfscreatecon(const char *);
-#endif
+#నిర్వచితమైతే WITH_SELINUX
+పూర్ణాంకం ssh_selinux_enabled(శూన్య);
+శూన్య ssh_selinux_అమరిక_pty(అక్షరం *, స్థిరరాశి అక్షరం *);
+శూన్య ssh_selinux_అమరిక_exec_context(అక్షరం *);
+శూన్య ssh_selinux_change_context(స్థిరరాశి అక్షరం *);
+శూన్య ssh_selinux_setfscreatecon(స్థిరరాశి అక్షరం *);
+#అయితే_ముగింపు
 
-#ifdef LINUX_OOM_ADJUST
-void oom_adjust_restore(void);
-void oom_adjust_setup(void);
-#endif
+#నిర్వచితమైతే LINUX_OOM_ADJUST
+శూన్య oom_adjust_restore(శూన్య);
+శూన్య oom_adjust_అమరిక(శూన్య);
+#అయితే_ముగింపు
 
-#ifdef LINUX_MEMLOCK_ONFAULT
-void memlock_onfault_setup(void);
-#endif
+#నిర్వచితమైతే LINUX_MEMLOCK_ONFAULT
+శూన్య memlock_onfault_అమరిక(శూన్య);
+#అయితే_ముగింపు
 
-#ifdef SYSTEMD_NOTIFY
-void ssh_systemd_notify_ready(void);
-void ssh_systemd_notify_reload(void);
-#endif
+#నిర్వచితమైతే SYSTEMD_NOTIFY
+శూన్య ssh_systemd_notify_ready(శూన్య);
+శూన్య ssh_systemd_notify_reload(శూన్య);
+#అయితే_ముగింపు
 
-#endif /* ! _PORT_LINUX_H */
+#అయితే_ముగింపు /* ! _PORT_LINUX_H */

@@ -17,784 +17,784 @@
 
 /* Utility functions/framework for regress tests */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <sys/time.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/uio.h>
+#అన్తర్భావ <sys/time.h>
 
-#include <assert.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <math.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <math.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <unistd.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/err.h>
-#endif
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ <openssl/bn.h>
+#అన్తర్భావ <openssl/err.h>
+#అయితే_ముగింపు
 
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#ఒకవేళ defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
-#endif
+#అయితే_ముగింపు
 
-#include "entropy.h"
-#include "test_helper.h"
-#include "atomicio.h"
-#include "match.h"
-#include "misc.h"
-#include "xmalloc.h"
+#అన్తర్భావ "entropy.h"
+#అన్తర్భావ "test_helper.h"
+#అన్తర్భావ "atomicio.h"
+#అన్తర్భావ "match.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "xmalloc.h"
 
-#define BENCH_FAST_DEADLINE	1
-#define BENCH_NORMAL_DEADLINE	10
-#define BENCH_SLOW_DEADLINE	60
-#define BENCH_SAMPLES_ALLOC	8192
-#define BENCH_COLUMN_WIDTH	40
+#నిర్వచించు BENCH_FAST_DEADLINE	1
+#నిర్వచించు BENCH_సాధారణ_DEADLINE	10
+#నిర్వచించు BENCH_SLOW_DEADLINE	60
+#నిర్వచించు BENCH_SAMPLES_ALLOC	8192
+#నిర్వచించు BENCH_స్తంభం_వెడల్పు	40
 
-#define MINIMUM(a, b)    (((a) < (b)) ? (a) : (b))
+#నిర్వచించు MINIMUM(a, b)    (((a) < (b)) ? (a) : (b))
 
-#define TEST_CHECK_INT(r, pred) do {		\
-		switch (pred) {			\
-		case TEST_EQ:			\
-			if (r == 0)		\
-				return;		\
-			break;			\
-		case TEST_NE:			\
-			if (r != 0)		\
-				return;		\
-			break;			\
-		case TEST_LT:			\
-			if (r < 0)		\
-				return;		\
-			break;			\
-		case TEST_LE:			\
-			if (r <= 0)		\
-				return;		\
-			break;			\
-		case TEST_GT:			\
-			if (r > 0)		\
-				return;		\
-			break;			\
-		case TEST_GE:			\
-			if (r >= 0)		\
-				return;		\
-			break;			\
-		default:			\
+#నిర్వచించు TEST_CHECK_INT(r, pred) చేయి {		\
+		ఎంపిక (pred) {			\
+		స్థితి TEST_EQ:			\
+			ఒకవేళ (r == 0)		\
+				తిరిగి;		\
+			ఆపు;			\
+		స్థితి TEST_NE:			\
+			ఒకవేళ (r != 0)		\
+				తిరిగి;		\
+			ఆపు;			\
+		స్థితి TEST_LT:			\
+			ఒకవేళ (r < 0)		\
+				తిరిగి;		\
+			ఆపు;			\
+		స్థితి TEST_LE:			\
+			ఒకవేళ (r <= 0)		\
+				తిరిగి;		\
+			ఆపు;			\
+		స్థితి TEST_GT:			\
+			ఒకవేళ (r > 0)		\
+				తిరిగి;		\
+			ఆపు;			\
+		స్థితి TEST_GE:			\
+			ఒకవేళ (r >= 0)		\
+				తిరిగి;		\
+			ఆపు;			\
+		అప్రమేయ:			\
 			abort();		\
 		}				\
-	} while (0)
+	} అయితే (0)
 
-#define TEST_CHECK(x1, x2, pred) do {		\
-		switch (pred) {			\
-		case TEST_EQ:			\
-			if (x1 == x2)		\
-				return;		\
-			break;			\
-		case TEST_NE:			\
-			if (x1 != x2)		\
-				return;		\
-			break;			\
-		case TEST_LT:			\
-			if (x1 < x2)		\
-				return;		\
-			break;			\
-		case TEST_LE:			\
-			if (x1 <= x2)		\
-				return;		\
-			break;			\
-		case TEST_GT:			\
-			if (x1 > x2)		\
-				return;		\
-			break;			\
-		case TEST_GE:			\
-			if (x1 >= x2)		\
-				return;		\
-			break;			\
-		default:			\
+#నిర్వచించు TEST_CHECK(x1, x2, pred) చేయి {		\
+		ఎంపిక (pred) {			\
+		స్థితి TEST_EQ:			\
+			ఒకవేళ (x1 == x2)		\
+				తిరిగి;		\
+			ఆపు;			\
+		స్థితి TEST_NE:			\
+			ఒకవేళ (x1 != x2)		\
+				తిరిగి;		\
+			ఆపు;			\
+		స్థితి TEST_LT:			\
+			ఒకవేళ (x1 < x2)		\
+				తిరిగి;		\
+			ఆపు;			\
+		స్థితి TEST_LE:			\
+			ఒకవేళ (x1 <= x2)		\
+				తిరిగి;		\
+			ఆపు;			\
+		స్థితి TEST_GT:			\
+			ఒకవేళ (x1 > x2)		\
+				తిరిగి;		\
+			ఆపు;			\
+		స్థితి TEST_GE:			\
+			ఒకవేళ (x1 >= x2)		\
+				తిరిగి;		\
+			ఆపు;			\
+		అప్రమేయ:			\
 			abort();		\
 		}				\
-	} while (0)
+	} అయితే (0)
 
-extern char *__progname;
+బాహ్య అక్షరం *__progname;
 
-static int verbose_mode = 0;
-static int quiet_mode = 0;
-static char *active_test_name = NULL;
-static u_int test_number = 0;
-static test_onerror_func_t *test_onerror = NULL;
-static void *onerror_ctx = NULL;
-static const char *data_dir = NULL;
-static char subtest_info[512];
-static int fast = 0;
-static int slow = 0;
-static int benchmark_detail_statistics = 0;
+స్థిర పూర్ణాంకం verbose_బహుళకం = 0;
+స్థిర పూర్ణాంకం quiet_బహుళకం = 0;
+స్థిర అక్షరం *చురుకైన_test_name = ఖాళీ;
+స్థిర u_int test_సంఖ్య = 0;
+స్థిర test_onerror_func_t *test_onerror = ఖాళీ;
+స్థిర శూన్య *onerror_ctx = ఖాళీ;
+స్థిర స్థిరరాశి అక్షరం *దత్తాంశం_dir = ఖాళీ;
+స్థిర అక్షరం subtest_info[512];
+స్థిర పూర్ణాంకం fast = 0;
+స్థిర పూర్ణాంకం slow = 0;
+స్థిర పూర్ణాంకం benchmark_detail_statistics = 0;
 
-static int benchmark = 0;
-static const char *bench_name = NULL;
-static char *benchmark_pattern = NULL;
-static struct timespec bench_start_time, bench_finish_time;
-static struct timespec *bench_samples;
-static int bench_skip, bench_nruns, bench_nalloc;
-double bench_accum_secs;
+స్థిర పూర్ణాంకం benchmark = 0;
+స్థిర స్థిరరాశి అక్షరం *bench_name = ఖాళీ;
+స్థిర అక్షరం *benchmark_నమూనా = ఖాళీ;
+స్థిర నిర్మాణం timespec bench_ప్రారంభం_సమయం, bench_ముగింపు_సమయం;
+స్థిర నిర్మాణం timespec *bench_samples;
+స్థిర పూర్ణాంకం bench_skip, bench_nruns, bench_nalloc;
+ద్విగుణ bench_accum_secs;
 
-int
-main(int argc, char **argv)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	int ch;
+	పూర్ణాంకం ch;
 
-	seed_rng();
-#ifdef WITH_OPENSSL
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
-#endif
+	విత్తనం_rng();
+#నిర్వచితమైతే WITH_OPENSSL
+	OPENSSL_init_crypto(OPENSSL_INIT_ఎక్కించు_CRYPTO_అక్షరశ్రేణులు, ఖాళీ);
+#అయితే_ముగింపు
 
 	/* Handle systems without __progname */
-	if (__progname == NULL) {
+	ఒకవేళ (__progname == ఖాళీ) {
 		__progname = strrchr(argv[0], '/');
-		if (__progname == NULL || __progname[1] == '\0')
+		ఒకవేళ (__progname == ఖాళీ || __progname[1] == '\0')
 			__progname = argv[0];	
-		else
+		లేకపోతే
 			__progname++;
-		if ((__progname = strdup(__progname)) == NULL) {
+		ఒకవేళ ((__progname = strdup(__progname)) == ఖాళీ) {
 			fprintf(stderr, "strdup failed\n");
-			exit(1);
+			నిష్క్రమించు(1);
 		}
 	}
 
-	while ((ch = getopt(argc, argv, "O:bBFfvqd:")) != -1) {
-		switch (ch) {
-		case 'b':
+	అయితే ((ch = getopt(argc, argv, "O:bBFfvqd:")) != -1) {
+		ఎంపిక (ch) {
+		స్థితి 'b':
 			benchmark = 1;
-			break;
-		case 'B':
+			ఆపు;
+		స్థితి 'B':
 			benchmark = benchmark_detail_statistics = 1;
-			break;
-		case 'O':
-			benchmark_pattern = xstrdup(optarg);
-			break;
-		case 'F':
+			ఆపు;
+		స్థితి 'O':
+			benchmark_నమూనా = xstrdup(optarg);
+			ఆపు;
+		స్థితి 'F':
 			slow = 1;
-			break;
-		case 'f':
+			ఆపు;
+		స్థితి 'f':
 			fast = 1;
-			break;
-		case 'd':
-			data_dir = optarg;
-			break;
-		case 'q':
-			verbose_mode = 0;
-			quiet_mode = 1;
-			break;
-		case 'v':
-			verbose_mode = 1;
-			quiet_mode = 0;
-			break;
-		default:
+			ఆపు;
+		స్థితి 'd':
+			దత్తాంశం_dir = optarg;
+			ఆపు;
+		స్థితి 'q':
+			verbose_బహుళకం = 0;
+			quiet_బహుళకం = 1;
+			ఆపు;
+		స్థితి 'v':
+			verbose_బహుళకం = 1;
+			quiet_బహుళకం = 0;
+			ఆపు;
+		అప్రమేయ:
 			fprintf(stderr, "Unrecognised command line option\n");
 			fprintf(stderr, "Usage: %s [-vqfFbB] [-d data_dir] "
 			    "[-O pattern]\n", __progname);
-			exit(1);
+			నిష్క్రమించు(1);
 		}
 	}
-	setvbuf(stdout, NULL, _IONBF, 0);
-	if (!quiet_mode)
-		printf("%s: ", __progname);
-	if (verbose_mode)
-		printf("\n");
+	setvbuf(stdout, ఖాళీ, _IONBF, 0);
+	ఒకవేళ (!quiet_బహుళకం)
+		రాయి("%s: ", __progname);
+	ఒకవేళ (verbose_బహుళకం)
+		రాయి("\n");
 
-	if (benchmark)
+	ఒకవేళ (benchmark)
 		benchmarks();
-	else
+	లేకపోతే
 		tests();
 
-	if (!quiet_mode && !benchmark)
-		printf(" %u tests ok\n", test_number);
-	return 0;
+	ఒకవేళ (!quiet_బహుళకం && !benchmark)
+		రాయి(" %u tests ok\n", test_సంఖ్య);
+	తిరిగి 0;
 }
 
-int
-test_is_verbose(void)
+పూర్ణాంకం
+test_is_verbose(శూన్య)
 {
-	return verbose_mode;
+	తిరిగి verbose_బహుళకం;
 }
 
-int
-test_is_quiet(void)
+పూర్ణాంకం
+test_is_quiet(శూన్య)
 {
-	return quiet_mode;
+	తిరిగి quiet_బహుళకం;
 }
 
-int
-test_is_fast(void)
+పూర్ణాంకం
+test_is_fast(శూన్య)
 {
-	return fast;
+	తిరిగి fast;
 }
 
-int
-test_is_slow(void)
+పూర్ణాంకం
+test_is_slow(శూన్య)
 {
-	return slow;
+	తిరిగి slow;
 }
 
-const char *
-test_data_file(const char *name)
+స్థిరరాశి అక్షరం *
+test_దత్తాంశం_file(స్థిరరాశి అక్షరం *name)
 {
-	static char ret[PATH_MAX];
+	స్థిర అక్షరం ret[PATH_MAX];
 
-	if (data_dir != NULL)
-		snprintf(ret, sizeof(ret), "%s/%s", data_dir, name);
-	else
-		strlcpy(ret, name, sizeof(ret));
-	if (access(ret, F_OK) != 0) {
+	ఒకవేళ (దత్తాంశం_dir != ఖాళీ)
+		snprintf(ret, పరిమాణం(ret), "%s/%s", దత్తాంశం_dir, name);
+	లేకపోతే
+		strlcpy(ret, name, పరిమాణం(ret));
+	ఒకవేళ (access(ret, F_OK) != 0) {
 		fprintf(stderr, "Cannot access data file %s: %s\n",
 		    ret, strerror(errno));
-		exit(1);
+		నిష్క్రమించు(1);
 	}
-	return ret;
+	తిరిగి ret;
 }
 
-void
-test_info(char *s, size_t len)
+శూన్య
+test_info(అక్షరం *s, కొలత_t len)
 {
-	snprintf(s, len, "In test %u: \"%s\"%s%s\n", test_number,
-	    active_test_name == NULL ? "<none>" : active_test_name,
+	snprintf(s, len, "In test %u: \"%s\"%s%s\n", test_సంఖ్య,
+	    చురుకైన_test_name == ఖాళీ ? "<none>" : చురుకైన_test_name,
 	    *subtest_info != '\0' ? " - " : "", subtest_info);
 }
 
-static void
-siginfo(int unused __attribute__((__unused__)))
+స్థిర శూన్య
+siginfo(పూర్ణాంకం వాడని __attribute__((__unused__)))
 {
-	char buf[256];
+	అక్షరం buf[256];
 
-	test_info(buf, sizeof(buf));
-	atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
+	test_info(buf, పరిమాణం(buf));
+	atomicio(vwrite, STDERR_FILENO, buf, అక్షరశ్రేణి_పొడవు(buf));
 }
 
-void
-test_start(const char *n)
+శూన్య
+test_ప్రారంభం(స్థిరరాశి అక్షరం *n)
 {
-	assert(active_test_name == NULL);
-	assert((active_test_name = strdup(n)) != NULL);
+	ప్రతిజ్ఞా(చురుకైన_test_name == ఖాళీ);
+	ప్రతిజ్ఞా((చురుకైన_test_name = strdup(n)) != ఖాళీ);
 	*subtest_info = '\0';
-	if (verbose_mode)
-		printf("test %u - \"%s\": ", test_number, active_test_name);
-	test_number++;
-#ifdef SIGINFO
-	signal(SIGINFO, siginfo);
-#endif
-	signal(SIGUSR1, siginfo);
+	ఒకవేళ (verbose_బహుళకం)
+		రాయి("test %u - \"%s\": ", test_సంఖ్య, చురుకైన_test_name);
+	test_సంఖ్య++;
+#నిర్వచితమైతే SIGINFO
+	సంకేతం(SIGINFO, siginfo);
+#అయితే_ముగింపు
+	సంకేతం(SIGUSR1, siginfo);
 }
 
-void
-set_onerror_func(test_onerror_func_t *f, void *ctx)
+శూన్య
+సమితి_onerror_func(test_onerror_func_t *f, శూన్య *ctx)
 {
 	test_onerror = f;
 	onerror_ctx = ctx;
 }
 
-void
-test_done(void)
+శూన్య
+test_పూర్తి(శూన్య)
 {
 	*subtest_info = '\0';
-	assert(active_test_name != NULL);
-	free(active_test_name);
-	active_test_name = NULL;
-	if (verbose_mode)
-		printf("OK\n");
-	else if (!quiet_mode && !benchmark) {
-		printf(".");
+	ప్రతిజ్ఞా(చురుకైన_test_name != ఖాళీ);
+	విడుదల(చురుకైన_test_name);
+	చురుకైన_test_name = ఖాళీ;
+	ఒకవేళ (verbose_బహుళకం)
+		రాయి("OK\n");
+	లేకపోతే ఒకవేళ (!quiet_బహుళకం && !benchmark) {
+		రాయి(".");
 		fflush(stdout);
 	}
 }
 
-void
-test_subtest_info(const char *fmt, ...)
+శూన్య
+test_subtest_info(స్థిరరాశి అక్షరం *fmt, ...)
 {
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsnprintf(subtest_info, sizeof(subtest_info), fmt, ap);
+	vsnprintf(subtest_info, పరిమాణం(subtest_info), fmt, ap);
 	va_end(ap);
 }
 
-int
-test_is_benchmark(void)
+పూర్ణాంకం
+test_is_benchmark(శూన్య)
 {
-	return benchmark;
+	తిరిగి benchmark;
 }
 
-void
-ssl_err_check(const char *file, int line)
+శూన్య
+ssl_err_check(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి)
 {
-#ifdef WITH_OPENSSL
-	long openssl_error = ERR_get_error();
+#నిర్వచితమైతే WITH_OPENSSL
+	దీర్ఘ openssl_error = ERR_get_error();
 
-	if (openssl_error == 0)
-		return;
+	ఒకవేళ (openssl_error == 0)
+		తిరిగి;
 
 	fprintf(stderr, "\n%s:%d: uncaught OpenSSL error: %s",
-	    file, line, ERR_error_string(openssl_error, NULL));
-#else /* WITH_OPENSSL */
+	    file, పంక్తి, ERR_error_string(openssl_error, ఖాళీ));
+#లేకపోతే /* WITH_OPENSSL */
 	fprintf(stderr, "\n%s:%d: uncaught OpenSSL error ",
-	    file, line);
-#endif /* WITH_OPENSSL */
+	    file, పంక్తి);
+#అయితే_ముగింపు /* WITH_OPENSSL */
 	abort();
 }
 
-static const char *
-pred_name(enum test_predicate p)
+స్థిర స్థిరరాశి అక్షరం *
+pred_name(గణన test_predicate p)
 {
-	switch (p) {
-	case TEST_EQ:
-		return "EQ";
-	case TEST_NE:
-		return "NE";
-	case TEST_LT:
-		return "LT";
-	case TEST_LE:
-		return "LE";
-	case TEST_GT:
-		return "GT";
-	case TEST_GE:
-		return "GE";
-	default:
-		return "UNKNOWN";
+	ఎంపిక (p) {
+	స్థితి TEST_EQ:
+		తిరిగి "EQ";
+	స్థితి TEST_NE:
+		తిరిగి "NE";
+	స్థితి TEST_LT:
+		తిరిగి "LT";
+	స్థితి TEST_LE:
+		తిరిగి "LE";
+	స్థితి TEST_GT:
+		తిరిగి "GT";
+	స్థితి TEST_GE:
+		తిరిగి "GE";
+	అప్రమేయ:
+		తిరిగి "UNKNOWN";
 	}
 }
 
-static void
-test_die(void)
+స్థిర శూన్య
+test_die(శూన్య)
 {
-	if (test_onerror != NULL)
+	ఒకవేళ (test_onerror != ఖాళీ)
 		test_onerror(onerror_ctx);
 	abort();
 }
 
-static void
-test_header(const char *file, int line, const char *a1, const char *a2,
-    const char *name, enum test_predicate pred)
+స్థిర శూన్య
+test_శీర్షిక(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    స్థిరరాశి అక్షరం *name, గణన test_predicate pred)
 {
 	fprintf(stderr, "\n%s:%d test #%u \"%s\"%s%s\n", 
-	    file, line, test_number, active_test_name,
+	    file, పంక్తి, test_సంఖ్య, చురుకైన_test_name,
 	    *subtest_info != '\0' ? " - " : "", subtest_info);
 	fprintf(stderr, "ASSERT_%s_%s(%s%s%s) failed:\n",
 	    name, pred_name(pred), a1,
-	    a2 != NULL ? ", " : "", a2 != NULL ? a2 : "");
+	    a2 != ఖాళీ ? ", " : "", a2 != ఖాళీ ? a2 : "");
 }
 
-#ifdef WITH_OPENSSL
-void
-assert_bignum(const char *file, int line, const char *a1, const char *a2,
-    const BIGNUM *aa1, const BIGNUM *aa2, enum test_predicate pred)
+#నిర్వచితమైతే WITH_OPENSSL
+శూన్య
+assert_bignum(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    స్థిరరాశి BIGNUM *aa1, స్థిరరాశి BIGNUM *aa2, గణన test_predicate pred)
 {
-	int r = BN_cmp(aa1, aa2);
+	పూర్ణాంకం r = BN_cmp(aa1, aa2);
 
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "BIGNUM", pred);
+	test_శీర్షిక(file, పంక్తి, a1, a2, "BIGNUM", pred);
 	fprintf(stderr, "%12s = 0x%s\n", a1, BN_bn2hex(aa1));
 	fprintf(stderr, "%12s = 0x%s\n", a2, BN_bn2hex(aa2));
 	test_die();
 }
-#endif
+#అయితే_ముగింపు
 
-void
-assert_string(const char *file, int line, const char *a1, const char *a2,
-    const char *aa1, const char *aa2, enum test_predicate pred)
+శూన్య
+assert_string(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    స్థిరరాశి అక్షరం *aa1, స్థిరరాశి అక్షరం *aa2, గణన test_predicate pred)
 {
-	int r;
+	పూర్ణాంకం r;
 
 	/* Verify pointers are not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
-	assert_ptr(file, line, a2, "NULL", aa2, NULL, TEST_NE);
+	assert_ptr(file, పంక్తి, a1, "NULL", aa1, ఖాళీ, TEST_NE);
+	assert_ptr(file, పంక్తి, a2, "NULL", aa2, ఖాళీ, TEST_NE);
 
 	r = strcmp(aa1, aa2);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "STRING", pred);
-	fprintf(stderr, "%12s = %s (len %zu)\n", a1, aa1, strlen(aa1));
-	fprintf(stderr, "%12s = %s (len %zu)\n", a2, aa2, strlen(aa2));
+	test_శీర్షిక(file, పంక్తి, a1, a2, "STRING", pred);
+	fprintf(stderr, "%12s = %s (len %zu)\n", a1, aa1, అక్షరశ్రేణి_పొడవు(aa1));
+	fprintf(stderr, "%12s = %s (len %zu)\n", a2, aa2, అక్షరశ్రేణి_పొడవు(aa2));
 	test_die();
 }
 
-void
-assert_mem(const char *file, int line, const char *a1, const char *a2,
-    const void *aa1, const void *aa2, size_t l, enum test_predicate pred)
+శూన్య
+assert_mem(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    స్థిరరాశి శూన్య *aa1, స్థిరరాశి శూన్య *aa2, కొలత_t l, గణన test_predicate pred)
 {
-	int r;
-	char *aa1_tohex = NULL;
-	char *aa2_tohex = NULL;
+	పూర్ణాంకం r;
+	అక్షరం *aa1_tohex = ఖాళీ;
+	అక్షరం *aa2_tohex = ఖాళీ;
 
-	if (l == 0)
-		return;
+	ఒకవేళ (l == 0)
+		తిరిగి;
 	/* If length is >0, then verify pointers are not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
-	assert_ptr(file, line, a2, "NULL", aa2, NULL, TEST_NE);
+	assert_ptr(file, పంక్తి, a1, "NULL", aa1, ఖాళీ, TEST_NE);
+	assert_ptr(file, పంక్తి, a2, "NULL", aa2, ఖాళీ, TEST_NE);
 
 	r = memcmp(aa1, aa2, l);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "STRING", pred);
+	test_శీర్షిక(file, పంక్తి, a1, a2, "STRING", pred);
 	aa1_tohex = tohex(aa1, MINIMUM(l, 256));
 	aa2_tohex = tohex(aa2, MINIMUM(l, 256));
 	fprintf(stderr, "%12s = %s (len %zu)\n", a1, aa1_tohex, l);
 	fprintf(stderr, "%12s = %s (len %zu)\n", a2, aa2_tohex, l);
-	free(aa1_tohex);
-	free(aa2_tohex);
+	విడుదల(aa1_tohex);
+	విడుదల(aa2_tohex);
 	test_die();
 }
 
-static int
-memvalcmp(const uint8_t *s, u_char v, size_t l, size_t *where)
+స్థిర పూర్ణాంకం
+memvalcmp(స్థిరరాశి uint8_t *s, u_char v, కొలత_t l, కొలత_t *where)
 {
-	size_t i;
+	కొలత_t i;
 
-	for (i = 0; i < l; i++) {
-		if (s[i] != v) {
+	కొరకు (i = 0; i < l; i++) {
+		ఒకవేళ (s[i] != v) {
 			*where = i;
-			return 1;
+			తిరిగి 1;
 		}
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-void
-assert_mem_filled(const char *file, int line, const char *a1,
-    const void *aa1, u_char v, size_t l, enum test_predicate pred)
+శూన్య
+assert_mem_filled(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1,
+    స్థిరరాశి శూన్య *aa1, u_char v, కొలత_t l, గణన test_predicate pred)
 {
-	size_t where = -1;
-	int r;
-	char tmp[64];
-	char *aa1_tohex = NULL;
+	కొలత_t where = -1;
+	పూర్ణాంకం r;
+	అక్షరం tmp[64];
+	అక్షరం *aa1_tohex = ఖాళీ;
 
-	if (l == 0)
-		return;
+	ఒకవేళ (l == 0)
+		తిరిగి;
 	/* If length is >0, then verify the pointer is not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
+	assert_ptr(file, పంక్తి, a1, "NULL", aa1, ఖాళీ, TEST_NE);
 
 	r = memvalcmp(aa1, v, l, &where);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, NULL, "MEM_ZERO", pred);
+	test_శీర్షిక(file, పంక్తి, a1, ఖాళీ, "MEM_ZERO", pred);
 	aa1_tohex = tohex(aa1, MINIMUM(l, 20));
 	fprintf(stderr, "%20s = %s%s (len %zu)\n", a1,
 	    aa1_tohex, l > 20 ? "..." : "", l);
-	free(aa1_tohex);
-	snprintf(tmp, sizeof(tmp), "(%s)[%zu]", a1, where);
+	విడుదల(aa1_tohex);
+	snprintf(tmp, పరిమాణం(tmp), "(%s)[%zu]", a1, where);
 	fprintf(stderr, "%20s = 0x%02x (expected 0x%02x)\n", tmp,
 	    ((u_char *)aa1)[where], v);
 	test_die();
 }
 
-void
-assert_int(const char *file, int line, const char *a1, const char *a2,
-    int aa1, int aa2, enum test_predicate pred)
+శూన్య
+assert_int(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    పూర్ణాంకం aa1, పూర్ణాంకం aa2, గణన test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "INT", pred);
+	test_శీర్షిక(file, పంక్తి, a1, a2, "INT", pred);
 	fprintf(stderr, "%12s = %d\n", a1, aa1);
 	fprintf(stderr, "%12s = %d\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_size_t(const char *file, int line, const char *a1, const char *a2,
-    size_t aa1, size_t aa2, enum test_predicate pred)
+శూన్య
+assert_కొలత_t(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    కొలత_t aa1, కొలత_t aa2, గణన test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "SIZE_T", pred);
+	test_శీర్షిక(file, పంక్తి, a1, a2, "SIZE_T", pred);
 	fprintf(stderr, "%12s = %zu\n", a1, aa1);
 	fprintf(stderr, "%12s = %zu\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_u_int(const char *file, int line, const char *a1, const char *a2,
-    u_int aa1, u_int aa2, enum test_predicate pred)
+శూన్య
+assert_u_int(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    u_int aa1, u_int aa2, గణన test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U_INT", pred);
+	test_శీర్షిక(file, పంక్తి, a1, a2, "U_INT", pred);
 	fprintf(stderr, "%12s = %u / 0x%x\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %u / 0x%x\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_long(const char *file, int line, const char *a1, const char *a2,
-    long aa1, long aa2, enum test_predicate pred)
+శూన్య
+assert_long(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    దీర్ఘ aa1, దీర్ఘ aa2, గణన test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "LONG", pred);
+	test_శీర్షిక(file, పంక్తి, a1, a2, "LONG", pred);
 	fprintf(stderr, "%12s = %ld / 0x%lx\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %ld / 0x%lx\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_long_long(const char *file, int line, const char *a1, const char *a2,
-    long long aa1, long long aa2, enum test_predicate pred)
+శూన్య
+assert_long_long(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    దీర్ఘ దీర్ఘ aa1, దీర్ఘ దీర్ఘ aa2, గణన test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "LONG LONG", pred);
+	test_శీర్షిక(file, పంక్తి, a1, a2, "LONG LONG", pred);
 	fprintf(stderr, "%12s = %lld / 0x%llx\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %lld / 0x%llx\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_char(const char *file, int line, const char *a1, const char *a2,
-    char aa1, char aa2, enum test_predicate pred)
+శూన్య
+assert_char(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    అక్షరం aa1, అక్షరం aa2, గణన test_predicate pred)
 {
-	char buf[8];
+	అక్షరం buf[8];
 
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "CHAR", pred);
+	test_శీర్షిక(file, పంక్తి, a1, a2, "CHAR", pred);
 	fprintf(stderr, "%12s = '%s' / 0x02%x\n", a1,
-	    vis(buf, aa1, VIS_SAFE|VIS_NL|VIS_TAB|VIS_OCTAL, 0), aa1);
+	    vis(buf, aa1, VIS_సురక్షిత|VIS_NL|VIS_TAB|VIS_OCTAL, 0), aa1);
 	fprintf(stderr, "%12s = '%s' / 0x02%x\n", a1,
-	    vis(buf, aa2, VIS_SAFE|VIS_NL|VIS_TAB|VIS_OCTAL, 0), aa2);
+	    vis(buf, aa2, VIS_సురక్షిత|VIS_NL|VIS_TAB|VIS_OCTAL, 0), aa2);
 	test_die();
 }
 
-void
-assert_u8(const char *file, int line, const char *a1, const char *a2,
-    uint8_t aa1, uint8_t aa2, enum test_predicate pred)
+శూన్య
+assert_u8(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    uint8_t aa1, uint8_t aa2, గణన test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U8", pred);
+	test_శీర్షిక(file, పంక్తి, a1, a2, "U8", pred);
 	fprintf(stderr, "%12s = 0x%02x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%02x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u16(const char *file, int line, const char *a1, const char *a2,
-    uint16_t aa1, uint16_t aa2, enum test_predicate pred)
+శూన్య
+assert_u16(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    uint16_t aa1, uint16_t aa2, గణన test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U16", pred);
+	test_శీర్షిక(file, పంక్తి, a1, a2, "U16", pred);
 	fprintf(stderr, "%12s = 0x%04x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%04x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u32(const char *file, int line, const char *a1, const char *a2,
-    uint32_t aa1, uint32_t aa2, enum test_predicate pred)
+శూన్య
+assert_u32(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    uint32_t aa1, uint32_t aa2, గణన test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U32", pred);
+	test_శీర్షిక(file, పంక్తి, a1, a2, "U32", pred);
 	fprintf(stderr, "%12s = 0x%08x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%08x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u64(const char *file, int line, const char *a1, const char *a2,
-    uint64_t aa1, uint64_t aa2, enum test_predicate pred)
+శూన్య
+assert_u64(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    uint64_t aa1, uint64_t aa2, గణన test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U64", pred);
+	test_శీర్షిక(file, పంక్తి, a1, a2, "U64", pred);
 	fprintf(stderr, "%12s = 0x%016llx %llu\n", a1,
-	    (unsigned long long)aa1, (unsigned long long)aa1);
+	    (గుర్తులేని దీర్ఘ దీర్ఘ)aa1, (గుర్తులేని దీర్ఘ దీర్ఘ)aa1);
 	fprintf(stderr, "%12s = 0x%016llx %llu\n", a2,
-	    (unsigned long long)aa2, (unsigned long long)aa2);
+	    (గుర్తులేని దీర్ఘ దీర్ఘ)aa2, (గుర్తులేని దీర్ఘ దీర్ఘ)aa2);
 	test_die();
 }
 
-void
-assert_double(const char *file, int line, const char *a1, const char *a2,
-    double aa1, double aa2, enum test_predicate pred)
+శూన్య
+assert_double(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    ద్విగుణ aa1, ద్విగుణ aa2, గణన test_predicate pred)
 {
-	const double epsilon = 0.000000001;
+	స్థిరరాశి ద్విగుణ epsilon = 0.000000001;
 
-	switch (pred) {
-	case TEST_EQ:
-		if (fabs(aa1 - aa2) < epsilon)
-			return;
-		break;
-	case TEST_NE:
-		if (fabs(aa1 - aa2) >= epsilon)
-			return;
-		break;
-	case TEST_LT:
-		if (aa1 < aa2)
-			return;
-		break;
-	case TEST_LE:
-		if (aa1 <= aa2)
-			return;
-		break;
-	case TEST_GT:
-		if (aa1 > aa2)
-			return;
-		break;
-	case TEST_GE:
-		if (aa1 >= aa2)
-			return;
-		break;
-	default:
+	ఎంపిక (pred) {
+	స్థితి TEST_EQ:
+		ఒకవేళ (fabs(aa1 - aa2) < epsilon)
+			తిరిగి;
+		ఆపు;
+	స్థితి TEST_NE:
+		ఒకవేళ (fabs(aa1 - aa2) >= epsilon)
+			తిరిగి;
+		ఆపు;
+	స్థితి TEST_LT:
+		ఒకవేళ (aa1 < aa2)
+			తిరిగి;
+		ఆపు;
+	స్థితి TEST_LE:
+		ఒకవేళ (aa1 <= aa2)
+			తిరిగి;
+		ఆపు;
+	స్థితి TEST_GT:
+		ఒకవేళ (aa1 > aa2)
+			తిరిగి;
+		ఆపు;
+	స్థితి TEST_GE:
+		ఒకవేళ (aa1 >= aa2)
+			తిరిగి;
+		ఆపు;
+	అప్రమేయ:
 		abort();
 	}
 
-	test_header(file, line, a1, a2, "DOUBLE", pred);
+	test_శీర్షిక(file, పంక్తి, a1, a2, "DOUBLE", pred);
 	fprintf(stderr, "%12s = %f\n", a1, aa1);
 	fprintf(stderr, "%12s = %f\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_ptr(const char *file, int line, const char *a1, const char *a2,
-    const void *aa1, const void *aa2, enum test_predicate pred)
+శూన్య
+assert_ptr(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    స్థిరరాశి శూన్య *aa1, స్థిరరాశి శూన్య *aa2, గణన test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "PTR", pred);
+	test_శీర్షిక(file, పంక్తి, a1, a2, "PTR", pred);
 	fprintf(stderr, "%12s = %p\n", a1, aa1);
 	fprintf(stderr, "%12s = %p\n", a2, aa2);
 	test_die();
 }
 
-static double
-tstod(const struct timespec *ts)
+స్థిర ద్విగుణ
+tstod(స్థిరరాశి నిర్మాణం timespec *ts)
 {
-	return (double)ts->tv_sec + ((double)ts->tv_nsec / 1000000000.0);
+	తిరిగి (ద్విగుణ)ts->tv_sec + ((ద్విగుణ)ts->tv_nsec / 1000000000.0);
 }
 
-void
-hex2bin(uint8_t *bin, const char *hex, size_t len)
+శూన్య
+hex2bin(uint8_t *bin, స్థిరరాశి అక్షరం *hex, కొలత_t len)
 {
-	size_t i;
-	unsigned int v;
+	కొలత_t i;
+	గుర్తులేని పూర్ణాంకం v;
 
 	/* Don't use %hhx since it's C99 and older platforms don't have it. */
-	for (i = 0; i < len; i++) {
-		ASSERT_INT_EQ(sscanf(hex + i * 2, "%02x", &v), 1);
+	కొరకు (i = 0; i < len; i++) {
+		ASSERT_INT_EQ(అక్షరశ్రేణి_చదువు(hex + i * 2, "%02x", &v), 1);
 		ASSERT_U_INT_LE(v, 256);
 		bin[i] = (uint8_t)v;
 	}
 }
 
-void
-bench_start(const char *file, int line, const char *name)
+శూన్య
+bench_ప్రారంభం(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *name)
 {
-	char *cp;
+	అక్షరం *cp;
 
-	if (bench_name != NULL) {
+	ఒకవేళ (bench_name != ఖాళీ) {
 		fprintf(stderr, "\n%s:%d internal error: BENCH_START() called "
 		    "while previous benchmark \"%s\" incomplete",
-		    file, line, bench_name);
+		    file, పంక్తి, bench_name);
 		abort();
 	}
 	cp = xstrdup(name);
 	lowercase(cp);
-	bench_skip = benchmark_pattern != NULL &&
-	    match_pattern_list(cp, benchmark_pattern, 1) != 1;
-	free(cp);
+	bench_skip = benchmark_నమూనా != ఖాళీ &&
+	    సరిపోలిక_నమూనా_list(cp, benchmark_నమూనా, 1) != 1;
+	విడుదల(cp);
 
 	bench_name = name;
 	bench_nruns = 0;
-	if (bench_skip)
-		return;
-	free(bench_samples);
+	ఒకవేళ (bench_skip)
+		తిరిగి;
+	విడుదల(bench_samples);
 	bench_nalloc = BENCH_SAMPLES_ALLOC;
-	bench_samples = xcalloc(sizeof(*bench_samples), bench_nalloc);
+	bench_samples = xcalloc(పరిమాణం(*bench_samples), bench_nalloc);
 	bench_accum_secs = 0;
 }
 
-int
-bench_done(void)
+పూర్ణాంకం
+bench_పూర్తి(శూన్య)
 {
-	return bench_skip || bench_accum_secs >= (fast ? BENCH_FAST_DEADLINE :
-	    (slow ? BENCH_SLOW_DEADLINE : BENCH_NORMAL_DEADLINE));
+	తిరిగి bench_skip || bench_accum_secs >= (fast ? BENCH_FAST_DEADLINE :
+	    (slow ? BENCH_SLOW_DEADLINE : BENCH_సాధారణ_DEADLINE));
 }
 
-void
-bench_case_start(const char *file, int line)
+శూన్య
+bench_case_ప్రారంభం(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి)
 {
-	clock_gettime(CLOCK_REALTIME, &bench_start_time);
+	clock_gettime(CLOCK_REALTIME, &bench_ప్రారంభం_సమయం);
 }
 
-void
-bench_case_finish(const char *file, int line)
+శూన్య
+bench_case_ముగింపు(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి)
 {
-	struct timespec ts;
+	నిర్మాణం timespec ts;
 
-	clock_gettime(CLOCK_REALTIME, &bench_finish_time);
-	timespecsub(&bench_finish_time, &bench_start_time, &ts);
-	if (bench_nruns >= bench_nalloc) {
-		if (bench_nalloc >= INT_MAX / 2) {
+	clock_gettime(CLOCK_REALTIME, &bench_ముగింపు_సమయం);
+	timespecsub(&bench_ముగింపు_సమయం, &bench_ప్రారంభం_సమయం, &ts);
+	ఒకవేళ (bench_nruns >= bench_nalloc) {
+		ఒకవేళ (bench_nalloc >= గరిష్ఠ_పూర్ణాంకం / 2) {
 			fprintf(stderr, "\n%s:%d benchmark %s too many samples",
 			    __FILE__, __LINE__, bench_name);
 			abort();
 		}
 		bench_samples = xrecallocarray(bench_samples, bench_nalloc,
-		    bench_nalloc * 2, sizeof(*bench_samples));
+		    bench_nalloc * 2, పరిమాణం(*bench_samples));
 		bench_nalloc *= 2;
 	}
 	bench_samples[bench_nruns++] = ts;
 	bench_accum_secs += tstod(&ts);
 }
 
-static int
-tscmp(const void *aa, const void *bb)
+స్థిర పూర్ణాంకం
+tscmp(స్థిరరాశి శూన్య *aa, స్థిరరాశి శూన్య *bb)
 {
-	const struct timespec *a = (const struct timespec *)aa;
-	const struct timespec *b = (const struct timespec *)bb;
+	స్థిరరాశి నిర్మాణం timespec *a = (స్థిరరాశి నిర్మాణం timespec *)aa;
+	స్థిరరాశి నిర్మాణం timespec *b = (స్థిరరాశి నిర్మాణం timespec *)bb;
 
-	if (timespeccmp(a, b, ==))
-		return 0;
-	return timespeccmp(a, b, <) ? -1 : 1;
+	ఒకవేళ (timespeccmp(a, b, ==))
+		తిరిగి 0;
+	తిరిగి timespeccmp(a, b, <) ? -1 : 1;
 }
 
-void
-bench_finish(const char *file, int line, const char *unit)
+శూన్య
+bench_ముగింపు(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *unit)
 {
-	double std_dev = 0, mean_spr, mean_rps, med_spr, med_rps;
-	int i;
+	ద్విగుణ std_dev = 0, సగటు_spr, సగటు_rps, med_spr, med_rps;
+	పూర్ణాంకం i;
 
-	if (bench_skip)
-		goto done;
+	ఒకవేళ (bench_skip)
+		వెళ్ళు పూర్తి;
 
-	if (bench_nruns < 1) {
-		fprintf(stderr, "\n%s:%d benchmark %s never ran", file, line,
+	ఒకవేళ (bench_nruns < 1) {
+		fprintf(stderr, "\n%s:%d benchmark %s never ran", file, పంక్తి,
 		    bench_name);
 		abort();
 	}
 	/* median */
-	qsort(bench_samples, bench_nruns, sizeof(*bench_samples), tscmp);
+	qsort(bench_samples, bench_nruns, పరిమాణం(*bench_samples), tscmp);
 	i = bench_nruns / 2;
 	med_spr = tstod(&bench_samples[i]);
-	if (bench_nruns > 1 && bench_nruns & 1)
+	ఒకవేళ (bench_nruns > 1 && bench_nruns & 1)
 		med_spr = (med_spr + tstod(&bench_samples[i - 1])) / 2.0;
 	med_rps = (med_spr == 0.0) ? INFINITY : 1.0/med_spr;
-	/* mean */
-	mean_spr = bench_accum_secs / (double)bench_nruns;
-	mean_rps = (mean_spr == 0.0) ? INFINITY : 1.0/mean_spr;
+	/*సగటు*/
+	సగటు_spr = bench_accum_secs / (ద్విగుణ)bench_nruns;
+	సగటు_rps = (సగటు_spr == 0.0) ? INFINITY : 1.0/సగటు_spr;
 	/* std. dev */
 	std_dev = 0;
-	for (i = 0; i < bench_nruns; i++) {
-		std_dev = tstod(&bench_samples[i]) - mean_spr;
+	కొరకు (i = 0; i < bench_nruns; i++) {
+		std_dev = tstod(&bench_samples[i]) - సగటు_spr;
 		std_dev *= std_dev;
 	}
-	std_dev /= (double)bench_nruns;
-	std_dev = sqrt(std_dev);
-	if (benchmark_detail_statistics) {
-		printf("%s: %d runs in %0.3fs, %0.03f/%0.03f ms/%s "
+	std_dev /= (ద్విగుణ)bench_nruns;
+	std_dev = వర్గమూలం(std_dev);
+	ఒకవేళ (benchmark_detail_statistics) {
+		రాయి("%s: %d runs in %0.3fs, %0.03f/%0.03f ms/%s "
 		    "(mean/median), std.dev %0.03f ms, "
 		    "%0.2f/%0.2f %s/s (mean/median)\n",
 		    bench_name, bench_nruns, bench_accum_secs,
-		    mean_spr * 1000, med_spr * 1000, unit, std_dev * 1000,
-		    mean_rps, med_rps, unit);
-	} else {
-		printf("%-*s %0.2f %s/s\n", BENCH_COLUMN_WIDTH,
+		    సగటు_spr * 1000, med_spr * 1000, unit, std_dev * 1000,
+		    సగటు_rps, med_rps, unit);
+	} లేకపోతే {
+		రాయి("%-*s %0.2f %s/s\n", BENCH_స్తంభం_వెడల్పు,
 		    bench_name, med_rps, unit);
 	}
- done:
-	bench_name = NULL;
+ పూర్తి:
+	bench_name = ఖాళీ;
 	bench_nruns = 0;
-	free(bench_samples);
-	bench_samples = NULL;
+	విడుదల(bench_samples);
+	bench_samples = ఖాళీ;
 	bench_skip = 0;
 }

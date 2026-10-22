@@ -23,57 +23,57 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
 
-#include "packet.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "misc.h"
-#include "servconf.h"
+#అన్తర్భావ "packet.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "hostfile.h"
+#అన్తర్భావ "auth.h"
+#నిర్వచితమైతే GSSAPI
+#అన్తర్భావ "ssh-gss.h"
+#అయితే_ముగింపు
+#అన్తర్భావ "monitor_wrap.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "servconf.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_passwd;
+బాహ్య ServerOptions options;
+బాహ్య నిర్మాణం authmethod_cfg methodcfg_passwd;
 
-static int
-userauth_passwd(struct ssh *ssh, const char *method)
+స్థిర పూర్ణాంకం
+userauth_passwd(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *పద్ధతి)
 {
-	char *password = NULL;
-	int authenticated = 0, r;
+	అక్షరం *password = ఖాళీ;
+	పూర్ణాంకం authenticated = 0, r;
 	u_char change;
-	size_t len = 0;
+	కొలత_t len = 0;
 
-	if ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
+	ఒకవేళ ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &password, &len)) != 0 ||
-	    (change && (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0) ||
-	    (r = sshpkt_get_end(ssh)) != 0) {
+	    (change && (r = sshpkt_get_cstring(ssh, ఖాళీ, ఖాళీ)) != 0) ||
+	    (r = sshpkt_get_చివర(ssh)) != 0) {
 		freezero(password, len);
 		fatal_fr(r, "parse packet");
 	}
 
-	if (change)
+	ఒకవేళ (change)
 		logit("password change not supported");
-	else if (mm_auth_password(ssh, password) == 1)
+	లేకపోతే ఒకవేళ (mm_auth_password(ssh, password) == 1)
 		authenticated = 1;
 	freezero(password, len);
-	return authenticated;
+	తిరిగి authenticated;
 }
 
-Authmethod method_passwd = {
+Authmethod పద్ధతి_passwd = {
 	&methodcfg_passwd,
 	userauth_passwd,
 };

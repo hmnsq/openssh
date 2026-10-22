@@ -51,30 +51,30 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/inet_addr.c */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#if !defined(HAVE_INET_ATON)
+#ఒకవేళ !defined(HAVE_INET_ATON)
 
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <ctype.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <netinet/in.h>
+#అన్తర్భావ <arpa/inet.h>
+#అన్తర్భావ <ctype.h>
 
-#if 0
+#ఒకవేళ 0
 /*
  * Ascii internet address interpretation routine.
  * The value returned is in network order.
  */
 in_addr_t
-inet_addr(const char *cp)
+inet_addr(స్థిరరాశి అక్షరం *cp)
 {
-	struct in_addr val;
+	నిర్మాణం in_addr val;
 
-	if (inet_aton(cp, &val))
-		return (val.s_addr);
-	return (INADDR_NONE);
+	ఒకవేళ (inet_aton(cp, &val))
+		తిరిగి (val.s_addr);
+	తిరిగి (INADDR_NONE);
 }
-#endif
+#అయితే_ముగింపు
 
 /*
  * Check whether "cp" is a valid ascii representation
@@ -83,96 +83,96 @@ inet_addr(const char *cp)
  * This replaces inet_addr, the return value from which
  * cannot distinguish between failure and a local broadcast address.
  */
-int
-inet_aton(const char *cp, struct in_addr *addr)
+పూర్ణాంకం
+inet_aton(స్థిరరాశి అక్షరం *cp, నిర్మాణం in_addr *addr)
 {
 	u_int32_t val;
-	int base, n;
-	char c;
+	పూర్ణాంకం పునాది, n;
+	అక్షరం c;
 	u_int parts[4];
 	u_int *pp = parts;
 
 	c = *cp;
-	for (;;) {
+	కొరకు (;;) {
 		/*
 		 * Collect number up to ``.''.
 		 * Values are specified as for C:
 		 * 0x=hex, 0=octal, isdigit=decimal.
 		 */
-		if (!isdigit(c))
-			return (0);
-		val = 0; base = 10;
-		if (c == '0') {
+		ఒకవేళ (!అంకెనా(c))
+			తిరిగి (0);
+		val = 0; పునాది = 10;
+		ఒకవేళ (c == '0') {
 			c = *++cp;
-			if (c == 'x' || c == 'X')
-				base = 16, c = *++cp;
-			else
-				base = 8;
+			ఒకవేళ (c == 'x' || c == 'X')
+				పునాది = 16, c = *++cp;
+			లేకపోతే
+				పునాది = 8;
 		}
-		for (;;) {
-			if (isascii(c) && isdigit(c)) {
-				val = (val * base) + (c - '0');
+		కొరకు (;;) {
+			ఒకవేళ (isascii(c) && అంకెనా(c)) {
+				val = (val * పునాది) + (c - '0');
 				c = *++cp;
-			} else if (base == 16 && isascii(c) && isxdigit(c)) {
+			} లేకపోతే ఒకవేళ (పునాది == 16 && isascii(c) && isxdigit(c)) {
 				val = (val << 4) |
 					(c + 10 - (islower(c) ? 'a' : 'A'));
 				c = *++cp;
-			} else
-				break;
+			} లేకపోతే
+				ఆపు;
 		}
-		if (c == '.') {
+		ఒకవేళ (c == '.') {
 			/*
 			 * Internet format:
 			 *	a.b.c.d
 			 *	a.b.c	(with c treated as 16 bits)
 			 *	a.b	(with b treated as 24 bits)
 			 */
-			if (pp >= parts + 3)
-				return (0);
+			ఒకవేళ (pp >= parts + 3)
+				తిరిగి (0);
 			*pp++ = val;
 			c = *++cp;
-		} else
-			break;
+		} లేకపోతే
+			ఆపు;
 	}
 	/*
 	 * Check for trailing characters.
 	 */
-	if (c != '\0' && (!isascii(c) || !isspace(c)))
-		return (0);
+	ఒకవేళ (c != '\0' && (!isascii(c) || !ఖాళీనా(c)))
+		తిరిగి (0);
 	/*
 	 * Concoct the address according to
 	 * the number of parts specified.
 	 */
 	n = pp - parts + 1;
-	switch (n) {
+	ఎంపిక (n) {
 
-	case 0:
-		return (0);		/* initial nondigit */
+	స్థితి 0:
+		తిరిగి (0);		/* initial nondigit */
 
-	case 1:				/* a -- 32 bits */
-		break;
+	స్థితి 1:				/* a -- 32 bits */
+		ఆపు;
 
-	case 2:				/* a.b -- 8.24 bits */
-		if ((val > 0xffffff) || (parts[0] > 0xff))
-			return (0);
+	స్థితి 2:				/* a.b -- 8.24 bits */
+		ఒకవేళ ((val > 0xffffff) || (parts[0] > 0xff))
+			తిరిగి (0);
 		val |= parts[0] << 24;
-		break;
+		ఆపు;
 
-	case 3:				/* a.b.c -- 8.8.16 bits */
-		if ((val > 0xffff) || (parts[0] > 0xff) || (parts[1] > 0xff))
-			return (0);
+	స్థితి 3:				/* a.b.c -- 8.8.16 bits */
+		ఒకవేళ ((val > 0xffff) || (parts[0] > 0xff) || (parts[1] > 0xff))
+			తిరిగి (0);
 		val |= (parts[0] << 24) | (parts[1] << 16);
-		break;
+		ఆపు;
 
-	case 4:				/* a.b.c.d -- 8.8.8.8 bits */
-		if ((val > 0xff) || (parts[0] > 0xff) || (parts[1] > 0xff) || (parts[2] > 0xff))
-			return (0);
+	స్థితి 4:				/* a.b.c.d -- 8.8.8.8 bits */
+		ఒకవేళ ((val > 0xff) || (parts[0] > 0xff) || (parts[1] > 0xff) || (parts[2] > 0xff))
+			తిరిగి (0);
 		val |= (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8);
-		break;
+		ఆపు;
 	}
-	if (addr)
+	ఒకవేళ (addr)
 		addr->s_addr = htonl(val);
-	return (1);
+	తిరిగి (1);
 }
 
-#endif /* !defined(HAVE_INET_ATON) */
+#అయితే_ముగింపు /* !defined(HAVE_INET_ATON) */

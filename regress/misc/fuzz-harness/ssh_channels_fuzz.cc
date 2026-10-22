@@ -41,268 +41,268 @@ limitations under the License.
  * so per-iteration state survives.
  */
 
-#include <fcntl.h>
-#include <setjmp.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <setjmp.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-extern "C" {
-#include "includes.h"
-#include "ssherr.h"
-#include "ssh_api.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "log.h"
-#include "ssh2.h"
-#include "channels.h"
+బాహ్య "C" {
+#అన్తర్భావ "includes.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "ssh_api.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "packet.h"
+#అన్తర్భావ "myproposal.h"
+#అన్తర్భావ "kex.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "authfile.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "ssh2.h"
+#అన్తర్భావ "channels.h"
 }
 
 
-#include "fixed-keys.h"
+#అన్తర్భావ "fixed-keys.h"
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+స్థిర jmp_buf fuzz_env;
+స్థిర అస్థిర పూర్ణాంకం లోపల_fuzz = 0;
 
-static char *g_open_failure_msg = NULL;
+స్థిర అక్షరం *g_open_failure_సందేశం = ఖాళీ;
 
-extern "C" int
-my_channel_input_open_failure(int type, uint32_t seq, struct ssh *ssh)
+బాహ్య "C" పూర్ణాంకం
+my_channel_ఆదానం_open_failure(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
-	(void)type;
-	(void)seq;
+	(శూన్య)type;
+	(శూన్య)seq;
 	uint32_t reason;
-	int r;
-	if ((r = sshpkt_get_u32(ssh, &reason)) != 0)
+	పూర్ణాంకం r;
+	ఒకవేళ ((r = sshpkt_get_u32(ssh, &reason)) != 0)
 		ssh_packet_disconnect(ssh, "Invalid open failure message");
-	if ((r = sshpkt_get_cstring(ssh, &g_open_failure_msg, NULL)) != 0 ||
-	    (r = sshpkt_get_string_direct(ssh, NULL, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	ఒకవేళ ((r = sshpkt_get_cstring(ssh, &g_open_failure_సందేశం, ఖాళీ)) != 0 ||
+	    (r = sshpkt_get_string_ప్రత్యక్ష(ssh, ఖాళీ, ఖాళీ)) != 0 ||
+	    (r = sshpkt_get_చివర(ssh)) != 0)
 		ssh_packet_disconnect(ssh, "Invalid open failure message");
-	return 0;
+	తిరిగి 0;
 }
 
-extern "C" void
-cleanup_exit(int code)
+బాహ్య "C" శూన్య
+cleanup_exit(పూర్ణాంకం సంకేతం_2)
 {
-	if (in_fuzz)
-		longjmp(fuzz_env, code ? code : 1);
-	_exit(code);
+	ఒకవేళ (లోపల_fuzz)
+		longjmp(fuzz_env, సంకేతం_2 ? సంకేతం_2 : 1);
+	_exit(సంకేతం_2);
 }
 
-extern "C" void
-__wrap_ssh_packet_disconnect(struct ssh *ssh, const char *fmt, ...)
+బాహ్య "C" శూన్య
+__wrap_ssh_packet_disconnect(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
+	(శూన్య)ssh;
+	(శూన్య)fmt;
+	ఒకవేళ (లోపల_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(1);
 }
 
-extern "C" int
-__wrap_sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+బాహ్య "C" పూర్ణాంకం
+__wrap_sshpkt_fatal(నిర్మాణం ssh *ssh, పూర్ణాంకం r, స్థిరరాశి అక్షరం *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
+	(శూన్య)ssh;
+	(శూన్య)fmt;
+	ఒకవేళ (లోపల_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(r ? r : 1);
 }
 
-static struct sshkey *
-load_private(const char *str)
+స్థిర నిర్మాణం sshkey *
+ఎక్కించు_వ్యక్తిగత(స్థిరరాశి అక్షరం *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	నిర్మాణం sshbuf *b = sshbuf_from(str, అక్షరశ్రేణి_పొడవు(str));
+	నిర్మాణం sshkey *k = ఖాళీ;
+	ఒకవేళ (b == ఖాళీ || sshkey_parse_వ్యక్తిగత_fileblob(b, "", &k, ఖాళీ) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	తిరిగి k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+స్థిర నిర్మాణం sshkey *
+ఎక్కించు_ప్రజా(స్థిరరాశి అక్షరం *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	అక్షరం *tmp, *cp;
+	నిర్మాణం sshkey *k = sshkey_new(కీలకం_UNSPEC);
+	ఒకవేళ (k == ఖాళీ)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	ఒకవేళ (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	విడుదల(tmp);
+	తిరిగి k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+స్థిర పూర్ణాంకం
+pump(నిర్మాణం ssh *from, నిర్మాణం ssh *గమ్యం, కొలత_t *transferred)
 {
-	const u_char *buf;
-	size_t len;
+	స్థిరరాశి u_char *buf;
+	కొలత_t len;
 	u_char type;
-	int r;
+	పూర్ణాంకం r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	ఒకవేళ ((r = ssh_packet_తదుపరి(from, &type)) != 0)
+		తిరిగి r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	ఒకవేళ (len == 0)
+		తిరిగి 0;
+	ఒకవేళ ((r = ssh_ఆదానం_append(గమ్యం, buf, len)) != 0)
+		తిరిగి r;
+	ఒకవేళ ((r = ssh_output_consume(from, len)) != 0)
+		తిరిగి r;
 	*transferred = len;
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+స్థిర పూర్ణాంకం
+నిరంతరం_kex(నిర్మాణం ssh *client, నిర్మాణం ssh *server)
 {
-	int r;
-	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	పూర్ణాంకం r;
+	కొలత_t cn, sn;
+	కొరకు (పూర్ణాంకం i = 0; i < 100; i++) {
+		ఒకవేళ ((r = pump(server, client, &sn)) != 0) తిరిగి r;
+		ఒకవేళ ((r = pump(client, server, &cn)) != 0) తిరిగి r;
+		ఒకవేళ (server->kex->పూర్తి && client->kex->పూర్తి)
+			తిరిగి 0;
+		ఒకవేళ (cn == 0 && sn == 0)
+			తిరిగి SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	తిరిగి SSH_ERR_PROTOCOL_ERROR;
 }
 
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
-static int g_pipe[2] = { -1, -1 };
+స్థిర నిర్మాణం ssh *g_client = ఖాళీ;
+స్థిర నిర్మాణం ssh *g_server = ఖాళీ;
+స్థిర పూర్ణాంకం g_init = 0;
+స్థిర పూర్ణాంకం g_pipe[2] = { -1, -1 };
 
-static void
-dummy_open_confirm(struct ssh *ssh, int id, int success, void *ctx)
+స్థిర శూన్య
+dummy_open_confirm(నిర్మాణం ssh *ssh, పూర్ణాంకం id, పూర్ణాంకం success, శూన్య *ctx)
 {
-	(void)ssh;
-	(void)id;
-	(void)success;
-	(void)ctx;
+	(శూన్య)ssh;
+	(శూన్య)id;
+	(శూన్య)success;
+	(శూన్య)ctx;
 }
 
-static void
-dummy_status_confirm(struct ssh *ssh, int type, Channel *c, void *ctx)
+స్థిర శూన్య
+dummy_స్థితి_confirm(నిర్మాణం ssh *ssh, పూర్ణాంకం type, Channel *c, శూన్య *ctx)
 {
-	(void)ssh;
-	(void)type;
-	(void)c;
-	(void)ctx;
+	(శూన్య)ssh;
+	(శూన్య)type;
+	(శూన్య)c;
+	(శూన్య)ctx;
 }
 
-static void
-dummy_status_abandon(struct ssh *ssh, Channel *c, void *ctx)
+స్థిర శూన్య
+dummy_స్థితి_abandon(నిర్మాణం ssh *ssh, Channel *c, శూన్య *ctx)
 {
-	(void)ssh;
-	(void)c;
-	(void)ctx;
+	(శూన్య)ssh;
+	(శూన్య)c;
+	(శూన్య)ctx;
 }
 
-static int
-init_once(void)
+స్థిర పూర్ణాంకం
+init_once(శూన్య)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	ఒకవేళ (g_init)
+		తిరిగి 0;
+	సంకేతం(SIGPIPE, SIG_IGN);
 	log_init("ssh_channels_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	int pfd[2];
-	if (pipe(pfd) != 0)
-		return -1;
+	పూర్ణాంకం pfd[2];
+	ఒకవేళ (ప్రణాల(pfd) != 0)
+		తిరిగి -1;
 	g_pipe[0] = fcntl(pfd[0], F_DUPFD_CLOEXEC, 100);
 	g_pipe[1] = fcntl(pfd[1], F_DUPFD_CLOEXEC, 100);
 	close(pfd[0]);
 	close(pfd[1]);
-	if (g_pipe[0] < 0 || g_pipe[1] < 0)
-		return -1;
-	int fl0 = fcntl(g_pipe[0], F_GETFL, 0);
-	int fl1 = fcntl(g_pipe[1], F_GETFL, 0);
-	(void)fcntl(g_pipe[0], F_SETFL, fl0 | O_NONBLOCK);
-	(void)fcntl(g_pipe[1], F_SETFL, fl1 | O_NONBLOCK);
+	ఒకవేళ (g_pipe[0] < 0 || g_pipe[1] < 0)
+		తిరిగి -1;
+	పూర్ణాంకం fl0 = fcntl(g_pipe[0], F_GETFL, 0);
+	పూర్ణాంకం fl1 = fcntl(g_pipe[1], F_GETFL, 0);
+	(శూన్య)fcntl(g_pipe[0], F_SETFL, fl0 | O_NONBLOCK);
+	(శూన్య)fcntl(g_pipe[1], F_SETFL, fl1 | O_NONBLOCK);
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	నిర్మాణం sshkey *priv = ఎక్కించు_వ్యక్తిగత(PRIV_ED25519);
+	నిర్మాణం sshkey *pub = ఎక్కించు_ప్రజా(PUB_ED25519);
+	అక్షరం *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	స్థిరరాశి అక్షరం *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	అక్షరం *proposal[PROPOSAL_MAX] = { 0 };
+	పూర్ణాంకం i;
+	కొరకు (i = 0; i < PROPOSAL_MAX; i++) {
+		స్థిరరాశి అక్షరం *p = defaults[i];
+		ఒకవేళ (i == PROPOSAL_SERVER_HOST_కీలకం_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		లేకపోతే ఒకవేళ (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		లేకపోతే ఒకవేళ (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		లేకపోతే ఒకవేళ (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	నిర్మాణం kex_params kp;
+	జ్ఞాపకం_నకలు(kp.proposal, proposal, పరిమాణం(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	ఒకవేళ (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
-	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		తిరిగి -1;
+	ఒకవేళ (ssh_కూడు_hostkey(g_server, priv) != 0 ||
+	    ssh_కూడు_hostkey(g_client, pub) != 0)
+		తిరిగి -1;
+	ఒకవేళ (నిరంతరం_kex(g_client, g_server) != 0)
+		తిరిగి -1;
 
 	channel_init_channels(g_client);
 
 	ssh_dispatch_init(g_client, &dispatch_protocol_ignore);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_DATA,
-	    &channel_input_data);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_EXTENDED_DATA,
-	    &channel_input_extended_data);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_EOF,
-	    &channel_input_ieof);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_CLOSE,
-	    &channel_input_oclose);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_OPEN_CONFIRMATION,
-	    &channel_input_open_confirmation);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_OPEN_FAILURE,
-	    &my_channel_input_open_failure);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_WINDOW_ADJUST,
-	    &channel_input_window_adjust);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_SUCCESS,
-	    &channel_input_status_confirm);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_FAILURE,
-	    &channel_input_status_confirm);
+	ssh_dispatch_సమితి(g_client, SSH2_సందేశం_CHANNEL_దత్తాంశం,
+	    &channel_ఆదానం_దత్తాంశం);
+	ssh_dispatch_సమితి(g_client, SSH2_సందేశం_CHANNEL_EXTENDED_దత్తాంశం,
+	    &channel_ఆదానం_extended_దత్తాంశం);
+	ssh_dispatch_సమితి(g_client, SSH2_సందేశం_CHANNEL_EOF,
+	    &channel_ఆదానం_ieof);
+	ssh_dispatch_సమితి(g_client, SSH2_సందేశం_CHANNEL_CLOSE,
+	    &channel_ఆదానం_oclose);
+	ssh_dispatch_సమితి(g_client, SSH2_సందేశం_CHANNEL_OPEN_CONFIRMATION,
+	    &channel_ఆదానం_open_confirmation);
+	ssh_dispatch_సమితి(g_client, SSH2_సందేశం_CHANNEL_OPEN_FAILURE,
+	    &my_channel_ఆదానం_open_failure);
+	ssh_dispatch_సమితి(g_client, SSH2_సందేశం_CHANNEL_కిటికీ_ADJUST,
+	    &channel_ఆదానం_కిటికీ_adjust);
+	ssh_dispatch_సమితి(g_client, SSH2_సందేశం_CHANNEL_SUCCESS,
+	    &channel_ఆదానం_స్థితి_confirm);
+	ssh_dispatch_సమితి(g_client, SSH2_సందేశం_CHANNEL_FAILURE,
+	    &channel_ఆదానం_స్థితి_confirm);
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	విడుదల(keyname);
+	కొరకు (i = 0; i < PROPOSAL_MAX; i++)
+		విడుదల(proposal[i]);
 	g_init = 1;
-	return 0;
+	తిరిగి 0;
 }
 
-struct chan_scenario {
-	const char *ctype;
-	int state;
-	int use_pipe;
+నిర్మాణం chan_scenario {
+	స్థిరరాశి అక్షరం *ctype;
+	పూర్ణాంకం state;
+	పూర్ణాంకం use_pipe;
 };
 
-static const struct chan_scenario k_scenarios[] = {
+స్థిర స్థిరరాశి నిర్మాణం chan_scenario k_scenarios[] = {
 	{ "session",         SSH_CHANNEL_OPEN,     0 },
 	{ "session",         SSH_CHANNEL_OPENING,  1 },
 	{ "x11",             SSH_CHANNEL_OPEN,     1 },
@@ -310,85 +310,85 @@ static const struct chan_scenario k_scenarios[] = {
 	{ "direct-tcpip",    SSH_CHANNEL_OPENING,  1 },
 };
 
-static int g_channel_id = -1;
+స్థిర పూర్ణాంకం g_channel_id = -1;
 
-static void
-drain_pipe(void)
+స్థిర శూన్య
+drain_pipe(శూన్య)
 {
-	char buf[4096];
-	if (g_pipe[0] < 0)
-		return;
-	while (read(g_pipe[0], buf, sizeof(buf)) > 0) { }
+	అక్షరం buf[4096];
+	ఒకవేళ (g_pipe[0] < 0)
+		తిరిగి;
+	అయితే (పఠ(g_pipe[0], buf, పరిమాణం(buf)) > 0) { }
 }
 
-static void
-reset_channel(struct ssh *ssh, const struct chan_scenario *s)
+స్థిర శూన్య
+reset_channel(నిర్మాణం ssh *ssh, స్థిరరాశి నిర్మాణం chan_scenario *s)
 {
-	if (g_channel_id >= 0) {
+	ఒకవేళ (g_channel_id >= 0) {
 		Channel *c = channel_lookup(ssh, g_channel_id);
-		if (c != NULL)
+		ఒకవేళ (c != ఖాళీ)
 			channel_free(ssh, c);
 		g_channel_id = -1;
 	}
 	drain_pipe();
 
-	int rfd = s->use_pipe ? g_pipe[1] : -1;
-	int wfd = s->use_pipe ? g_pipe[1] : -1;
-	Channel *c = channel_new(ssh, (char *)s->ctype, s->state,
-	    rfd, wfd, -1, 32768, 32768, 0, (char *)"fuzz", 0);
-	if (c == NULL)
-		return;
+	పూర్ణాంకం rfd = s->use_pipe ? g_pipe[1] : -1;
+	పూర్ణాంకం wfd = s->use_pipe ? g_pipe[1] : -1;
+	Channel *c = channel_new(ssh, (అక్షరం *)s->ctype, s->state,
+	    rfd, wfd, -1, 32768, 32768, 0, (అక్షరం *)"fuzz", 0);
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి;
 	g_channel_id = c->self;
-	channel_register_open_confirm(ssh, g_channel_id,
-	    &dummy_open_confirm, NULL);
-	channel_register_status_confirm(ssh, g_channel_id,
-	    &dummy_status_confirm, &dummy_status_abandon, NULL);
+	channel_రిజిస్టరు_open_confirm(ssh, g_channel_id,
+	    &dummy_open_confirm, ఖాళీ);
+	channel_రిజిస్టరు_స్థితి_confirm(ssh, g_channel_id,
+	    &dummy_స్థితి_confirm, &dummy_స్థితి_abandon, ఖాళీ);
 }
 
-static const uint8_t k_msg_types[] = {
-	SSH2_MSG_CHANNEL_OPEN_CONFIRMATION,
-	SSH2_MSG_CHANNEL_OPEN_FAILURE,
-	SSH2_MSG_CHANNEL_WINDOW_ADJUST,
-	SSH2_MSG_CHANNEL_DATA,
-	SSH2_MSG_CHANNEL_EXTENDED_DATA,
-	SSH2_MSG_CHANNEL_SUCCESS,
-	SSH2_MSG_CHANNEL_FAILURE,
-	SSH2_MSG_CHANNEL_EOF,
-	SSH2_MSG_CHANNEL_CLOSE,
+స్థిర స్థిరరాశి uint8_t k_సందేశం_types[] = {
+	SSH2_సందేశం_CHANNEL_OPEN_CONFIRMATION,
+	SSH2_సందేశం_CHANNEL_OPEN_FAILURE,
+	SSH2_సందేశం_CHANNEL_కిటికీ_ADJUST,
+	SSH2_సందేశం_CHANNEL_దత్తాంశం,
+	SSH2_సందేశం_CHANNEL_EXTENDED_దత్తాంశం,
+	SSH2_సందేశం_CHANNEL_SUCCESS,
+	SSH2_సందేశం_CHANNEL_FAILURE,
+	SSH2_సందేశం_CHANNEL_EOF,
+	SSH2_సందేశం_CHANNEL_CLOSE,
 };
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+బాహ్య "C" పూర్ణాంకం
+LLVMFuzzer_Test_One_ఆదానం(స్థిరరాశి uint8_t *దత్తాంశం, కొలత_t కొలత)
 {
-	if (init_once() != 0)
-		return 0;
-	if (size > 65000)
-		return 0;
+	ఒకవేళ (init_once() != 0)
+		తిరిగి 0;
+	ఒకవేళ (కొలత > 65000)
+		తిరిగి 0;
 
-	const size_t n_scen = sizeof(k_scenarios) / sizeof(k_scenarios[0]);
-	const size_t n_msg = sizeof(k_msg_types) / sizeof(k_msg_types[0]);
+	స్థిరరాశి కొలత_t n_scen = పరిమాణం(k_scenarios) / పరిమాణం(k_scenarios[0]);
+	స్థిరరాశి కొలత_t n_సందేశం = పరిమాణం(k_సందేశం_types) / పరిమాణం(k_సందేశం_types[0]);
 
-	for (size_t s = 0; s < n_scen; s++) {
+	కొరకు (కొలత_t s = 0; s < n_scen; s++) {
 		reset_channel(g_client, &k_scenarios[s]);
-		for (size_t t = 0; t < n_msg; t++) {
-			in_fuzz = 1;
-			if (setjmp(fuzz_env) == 0) {
-				size_t transferred;
-				if (ssh_packet_put(g_server, k_msg_types[t],
-				    data, size) != 0)
-					goto done;
-				if (pump(g_server, g_client,
+		కొరకు (కొలత_t t = 0; t < n_సందేశం; t++) {
+			లోపల_fuzz = 1;
+			ఒకవేళ (setjmp(fuzz_env) == 0) {
+				కొలత_t transferred;
+				ఒకవేళ (ssh_packet_put(g_server, k_సందేశం_types[t],
+				    దత్తాంశం, కొలత) != 0)
+					వెళ్ళు పూర్తి;
+				ఒకవేళ (pump(g_server, g_client,
 				    &transferred) != 0)
-					goto done;
-				(void)ssh_dispatch_run(g_client,
-				    DISPATCH_NONBLOCK, NULL);
-			done:
+					వెళ్ళు పూర్తి;
+				(శూన్య)ssh_dispatch_నిరంతరం(g_client,
+				    DISPATCH_NONBLOCK, ఖాళీ);
+			పూర్తి:
 				;
 			}
-			in_fuzz = 0;
-			free(g_open_failure_msg);
-			g_open_failure_msg = NULL;
+			లోపల_fuzz = 0;
+			విడుదల(g_open_failure_సందేశం);
+			g_open_failure_సందేశం = ఖాళీ;
 		}
 	}
-	return 0;
+	తిరిగి 0;
 }

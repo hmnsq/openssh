@@ -30,18 +30,18 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/setenv.c */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#if !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
+#ఒకవేళ !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-extern char **environ;
-#ifndef HAVE_SETENV
-static char **lastenv;				/* last value of environ */
-#endif
+బాహ్య అక్షరం **environ;
+#నిర్వచితం_కాకపోతే HAVE_SETENV
+స్థిర అక్షరం **lastenv;				/* last value of environ */
+#అయితే_ముగింపు
 
 /* OpenSSH Portable: __findenv is from getenv.c rev 1.8, made static */
 /*
@@ -54,175 +54,175 @@ static char **lastenv;				/* last value of environ */
  *
  *	This routine *should* be a static; don't use it.
  */
-static char *
-__findenv(const char *name, int len, int *offset)
+స్థిర అక్షరం *
+__findenv(స్థిరరాశి అక్షరం *name, పూర్ణాంకం len, పూర్ణాంకం *స్థానభ్రంశం)
 {
-	extern char **environ;
-	int i;
-	const char *np;
-	char **p, *cp;
+	బాహ్య అక్షరం **environ;
+	పూర్ణాంకం i;
+	స్థిరరాశి అక్షరం *np;
+	అక్షరం **p, *cp;
 
-	if (name == NULL || environ == NULL)
-		return (NULL);
-	for (p = environ + *offset; (cp = *p) != NULL; ++p) {
-		for (np = name, i = len; i && *cp; i--)
-			if (*cp++ != *np++)
-				break;
-		if (i == 0 && *cp++ == '=') {
-			*offset = p - environ;
-			return (cp);
+	ఒకవేళ (name == ఖాళీ || environ == ఖాళీ)
+		తిరిగి (ఖాళీ);
+	కొరకు (p = environ + *స్థానభ్రంశం; (cp = *p) != ఖాళీ; ++p) {
+		కొరకు (np = name, i = len; i && *cp; i--)
+			ఒకవేళ (*cp++ != *np++)
+				ఆపు;
+		ఒకవేళ (i == 0 && *cp++ == '=') {
+			*స్థానభ్రంశం = p - environ;
+			తిరిగి (cp);
 		}
 	}
-	return (NULL);
+	తిరిగి (ఖాళీ);
 }
 
-#if 0 /* nothing uses putenv */
+#ఒకవేళ 0 /* nothing uses putenv */
 /*
  * putenv --
  *	Add a name=value string directly to the environmental, replacing
  *	any current value.
  */
-int
-putenv(char *str)
+పూర్ణాంకం
+putenv(అక్షరం *str)
 {
-	char **P, *cp;
-	size_t cnt;
-	int offset = 0;
+	అక్షరం **P, *cp;
+	కొలత_t cnt;
+	పూర్ణాంకం స్థానభ్రంశం = 0;
 
-	for (cp = str; *cp && *cp != '='; ++cp)
+	కొరకు (cp = str; *cp && *cp != '='; ++cp)
 		;
-	if (*cp != '=') {
+	ఒకవేళ (*cp != '=') {
 		errno = EINVAL;
-		return (-1);			/* missing `=' in string */
+		తిరిగి (-1);			/* missing `=' in string */
 	}
 
-	if (__findenv(str, (int)(cp - str), &offset) != NULL) {
-		environ[offset++] = str;
+	ఒకవేళ (__findenv(str, (పూర్ణాంకం)(cp - str), &స్థానభ్రంశం) != ఖాళీ) {
+		environ[స్థానభ్రంశం++] = str;
 		/* could be set multiple times */
-		while (__findenv(str, (int)(cp - str), &offset)) {
-			for (P = &environ[offset];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		అయితే (__findenv(str, (పూర్ణాంకం)(cp - str), &స్థానభ్రంశం)) {
+			కొరకు (P = &environ[స్థానభ్రంశం];; ++P)
+				ఒకవేళ (!(*P = *(P + 1)))
+					ఆపు;
 		}
-		return (0);
+		తిరిగి (0);
 	}
 
 	/* create new slot for string */
-	for (P = environ; *P != NULL; P++)
+	కొరకు (P = environ; *P != ఖాళీ; P++)
 		;
 	cnt = P - environ;
-	P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-	if (!P)
-		return (-1);
-	if (lastenv != environ)
-		memcpy(P, environ, cnt * sizeof(char *));
+	P = (అక్షరం **)realloc(lastenv, పరిమాణం(అక్షరం *) * (cnt + 2));
+	ఒకవేళ (!P)
+		తిరిగి (-1);
+	ఒకవేళ (lastenv != environ)
+		జ్ఞాపకం_నకలు(P, environ, cnt * పరిమాణం(అక్షరం *));
 	lastenv = environ = P;
 	environ[cnt] = str;
-	environ[cnt + 1] = NULL;
-	return (0);
+	environ[cnt + 1] = ఖాళీ;
+	తిరిగి (0);
 }
 
-#endif
+#అయితే_ముగింపు
 
-#ifndef HAVE_SETENV
+#నిర్వచితం_కాకపోతే HAVE_SETENV
 /*
  * setenv --
  *	Set the value of the environmental variable "name" to be
  *	"value".  If rewrite is set, replace any current value.
  */
-int
-setenv(const char *name, const char *value, int rewrite)
+పూర్ణాంకం
+setenv(స్థిరరాశి అక్షరం *name, స్థిరరాశి అక్షరం *విలువ, పూర్ణాంకం rewrite)
 {
-	char *C, **P;
-	const char *np;
-	int l_value, offset = 0;
+	అక్షరం *C, **P;
+	స్థిరరాశి అక్షరం *np;
+	పూర్ణాంకం l_విలువ, స్థానభ్రంశం = 0;
 
-	for (np = name; *np && *np != '='; ++np)
+	కొరకు (np = name; *np && *np != '='; ++np)
 		;
-#ifdef notyet
-	if (*np) {
+#నిర్వచితమైతే notyet
+	ఒకవేళ (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		తిరిగి (-1);			/* has `=' in name */
 	}
-#endif
+#అయితే_ముగింపు
 
-	l_value = strlen(value);
-	if ((C = __findenv(name, (int)(np - name), &offset)) != NULL) {
-		int tmpoff = offset + 1;
-		if (!rewrite)
-			return (0);
-#if 0 /* XXX - existing entry may not be writable */
-		if (strlen(C) >= l_value) {	/* old larger; copy over */
-			while ((*C++ = *value++))
+	l_విలువ = అక్షరశ్రేణి_పొడవు(విలువ);
+	ఒకవేళ ((C = __findenv(name, (పూర్ణాంకం)(np - name), &స్థానభ్రంశం)) != ఖాళీ) {
+		పూర్ణాంకం tmpoff = స్థానభ్రంశం + 1;
+		ఒకవేళ (!rewrite)
+			తిరిగి (0);
+#ఒకవేళ 0 /* XXX - existing entry may not be writable */
+		ఒకవేళ (అక్షరశ్రేణి_పొడవు(C) >= l_విలువ) {	/* old larger; copy over */
+			అయితే ((*C++ = *విలువ++))
 				;
-			return (0);
+			తిరిగి (0);
 		}
-#endif
+#అయితే_ముగింపు
 		/* could be set multiple times */
-		while (__findenv(name, (int)(np - name), &tmpoff)) {
-			for (P = &environ[tmpoff];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		అయితే (__findenv(name, (పూర్ణాంకం)(np - name), &tmpoff)) {
+			కొరకు (P = &environ[tmpoff];; ++P)
+				ఒకవేళ (!(*P = *(P + 1)))
+					ఆపు;
 		}
-	} else {					/* create new slot */
-		size_t cnt;
+	} లేకపోతే {					/* create new slot */
+		కొలత_t cnt;
 
-		for (P = environ; *P != NULL; P++)
+		కొరకు (P = environ; *P != ఖాళీ; P++)
 			;
 		cnt = P - environ;
-		P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-		if (!P)
-			return (-1);
-		if (lastenv != environ)
-			memcpy(P, environ, cnt * sizeof(char *));
+		P = (అక్షరం **)realloc(lastenv, పరిమాణం(అక్షరం *) * (cnt + 2));
+		ఒకవేళ (!P)
+			తిరిగి (-1);
+		ఒకవేళ (lastenv != environ)
+			జ్ఞాపకం_నకలు(P, environ, cnt * పరిమాణం(అక్షరం *));
 		lastenv = environ = P;
-		offset = cnt;
-		environ[cnt + 1] = NULL;
+		స్థానభ్రంశం = cnt;
+		environ[cnt + 1] = ఖాళీ;
 	}
-	if (!(environ[offset] =			/* name + `=' + value */
-	    malloc((size_t)((int)(np - name) + l_value + 2))))
-		return (-1);
-	for (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
+	ఒకవేళ (!(environ[స్థానభ్రంశం] =			/* name + `=' + value */
+	    జ్ఞాపకం_ఇవ్వు((కొలత_t)((పూర్ణాంకం)(np - name) + l_విలువ + 2))))
+		తిరిగి (-1);
+	కొరకు (C = environ[స్థానభ్రంశం]; (*C = *name++) && *C != '='; ++C)
 		;
-	for (*C++ = '='; (*C++ = *value++); )
+	కొరకు (*C++ = '='; (*C++ = *విలువ++); )
 		;
-	return (0);
+	తిరిగి (0);
 }
 
-#endif /* HAVE_SETENV */
+#అయితే_ముగింపు /* HAVE_SETENV */
 
-#ifndef HAVE_UNSETENV
+#నిర్వచితం_కాకపోతే HAVE_UNSETENV
 /*
  * unsetenv(name) --
  *	Delete environmental variable "name".
  */
-int
-unsetenv(const char *name)
+పూర్ణాంకం
+unsetenv(స్థిరరాశి అక్షరం *name)
 {
-	char **P;
-	const char *np;
-	int offset = 0;
+	అక్షరం **P;
+	స్థిరరాశి అక్షరం *np;
+	పూర్ణాంకం స్థానభ్రంశం = 0;
 
-	if (!name || !*name) {
+	ఒకవేళ (!name || !*name) {
 		errno = EINVAL;
-		return (-1);
+		తిరిగి (-1);
 	}
-	for (np = name; *np && *np != '='; ++np)
+	కొరకు (np = name; *np && *np != '='; ++np)
 		;
-	if (*np) {
+	ఒకవేళ (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		తిరిగి (-1);			/* has `=' in name */
 	}
 
 	/* could be set multiple times */
-	while (__findenv(name, (int)(np - name), &offset)) {
-		for (P = &environ[offset];; ++P)
-			if (!(*P = *(P + 1)))
-				break;
+	అయితే (__findenv(name, (పూర్ణాంకం)(np - name), &స్థానభ్రంశం)) {
+		కొరకు (P = &environ[స్థానభ్రంశం];; ++P)
+			ఒకవేళ (!(*P = *(P + 1)))
+				ఆపు;
 	}
-	return (0);
+	తిరిగి (0);
 }
-#endif /* HAVE_UNSETENV */
+#అయితే_ముగింపు /* HAVE_UNSETENV */
 
-#endif /* !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV) */
+#అయితే_ముగింపు /* !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV) */
 

@@ -23,35 +23,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <signal.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/crypto.h>
-#include <openssl/evp.h>
-#endif
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ <openssl/crypto.h>
+#అన్తర్భావ <openssl/evp.h>
+#అయితే_ముగింపు
 
-#include "kex.h"
-#include "log.h"
-#include "match.h"
-#include "digest.h"
-#include "misc.h"
+#అన్తర్భావ "kex.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "match.h"
+#అన్తర్భావ "digest.h"
+#అన్తర్భావ "misc.h"
 
-#include "ssherr.h"
+#అన్తర్భావ "ssherr.h"
 
-struct kexalg {
-	char *name;
+నిర్మాణం kexalg {
+	అక్షరం *name;
 	u_int type;
-	int ec_nid;
-	int hash_alg;
-	int pq_alg;
+	పూర్ణాంకం ec_nid;
+	పూర్ణాంకం hash_alg;
+	పూర్ణాంకం pq_alg;
 };
-static const struct kexalg kexalgs[] = {
-#ifdef WITH_OPENSSL
+స్థిర స్థిరరాశి నిర్మాణం kexalg kexalgs[] = {
+#నిర్వచితమైతే WITH_OPENSSL
 	{ KEX_DH1, KEX_DH_GRP1_SHA1, 0, SSH_DIGEST_SHA1, KEX_NOT_PQ },
 	{ KEX_DH14_SHA1, KEX_DH_GRP14_SHA1, 0, SSH_DIGEST_SHA1, KEX_NOT_PQ },
 	{ KEX_DH14_SHA256, KEX_DH_GRP14_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
@@ -69,165 +69,165 @@ static const struct kexalg kexalgs[] = {
 	    SSH_DIGEST_SHA512, KEX_NOT_PQ },
 	{ KEX_MLKEM768NISTP256_SHA256, KEX_KEM_MLKEM768ECDH_SHA256,
 	    NID_X9_62_prime256v1, SSH_DIGEST_SHA256, KEX_IS_PQ },
-#endif /* WITH_OPENSSL */
-#if defined(HAVE_EVP_SHA256) || !defined(WITH_OPENSSL)
+#అయితే_ముగింపు /* WITH_OPENSSL */
+#ఒకవేళ defined(HAVE_EVP_SHA256) || !defined(WITH_OPENSSL)
 	{ KEX_CURVE25519_SHA256, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
 	{ KEX_CURVE25519_SHA256_OLD, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
-#ifdef USE_SNTRUP761X25519
+#నిర్వచితమైతే USE_SNTRUP761X25519
 	{ KEX_SNTRUP761X25519_SHA512, KEX_KEM_SNTRUP761X25519_SHA512, 0,
 	    SSH_DIGEST_SHA512, KEX_IS_PQ },
 	{ KEX_SNTRUP761X25519_SHA512_OLD, KEX_KEM_SNTRUP761X25519_SHA512, 0,
 	    SSH_DIGEST_SHA512, KEX_IS_PQ },
-#endif
-#ifdef USE_MLKEM768X25519
+#అయితే_ముగింపు
+#నిర్వచితమైతే USE_MLKEM768X25519
 	{ KEX_MLKEM768X25519_SHA256, KEX_KEM_MLKEM768X25519_SHA256, 0,
 	    SSH_DIGEST_SHA256, KEX_IS_PQ },
-#endif
-#endif /* HAVE_EVP_SHA256 || !WITH_OPENSSL */
-	{ NULL, 0, -1, -1, 0 },
+#అయితే_ముగింపు
+#అయితే_ముగింపు /* HAVE_EVP_SHA256 || !WITH_OPENSSL */
+	{ ఖాళీ, 0, -1, -1, 0 },
 };
 
-char *
-kex_alg_list(char sep)
+అక్షరం *
+kex_alg_list(అక్షరం sep)
 {
-	char *ret = NULL;
-	const struct kexalg *k;
-	char sep_str[2] = {sep, '\0'};
+	అక్షరం *ret = ఖాళీ;
+	స్థిరరాశి నిర్మాణం kexalg *k;
+	అక్షరం sep_str[2] = {sep, '\0'};
 
-	for (k = kexalgs; k->name != NULL; k++)
+	కొరకు (k = kexalgs; k->name != ఖాళీ; k++)
 		xextendf(&ret, sep_str, "%s", k->name);
 
-	return ret;
+	తిరిగి ret;
 }
 
-static const struct kexalg *
-kex_alg_by_name(const char *name)
+స్థిర స్థిరరాశి నిర్మాణం kexalg *
+kex_alg_by_name(స్థిరరాశి అక్షరం *name)
 {
-	const struct kexalg *k;
+	స్థిరరాశి నిర్మాణం kexalg *k;
 
-	for (k = kexalgs; k->name != NULL; k++) {
-		if (strcmp(k->name, name) == 0)
-			return k;
+	కొరకు (k = kexalgs; k->name != ఖాళీ; k++) {
+		ఒకవేళ (strcmp(k->name, name) == 0)
+			తిరిగి k;
 	}
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
-int
-kex_name_valid(const char *name)
+పూర్ణాంకం
+kex_name_valid(స్థిరరాశి అక్షరం *name)
 {
-	return kex_alg_by_name(name) != NULL;
+	తిరిగి kex_alg_by_name(name) != ఖాళీ;
 }
 
-int
-kex_is_pq_from_name(const char *name)
+పూర్ణాంకం
+kex_is_pq_from_name(స్థిరరాశి అక్షరం *name)
 {
-	const struct kexalg *k;
+	స్థిరరాశి నిర్మాణం kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return 0;
-	return k->pq_alg == KEX_IS_PQ;
+	ఒకవేళ ((k = kex_alg_by_name(name)) == ఖాళీ)
+		తిరిగి 0;
+	తిరిగి k->pq_alg == KEX_IS_PQ;
 }
 
 u_int
-kex_type_from_name(const char *name)
+kex_type_from_name(స్థిరరాశి అక్షరం *name)
 {
-	const struct kexalg *k;
+	స్థిరరాశి నిర్మాణం kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return 0;
-	return k->type;
+	ఒకవేళ ((k = kex_alg_by_name(name)) == ఖాళీ)
+		తిరిగి 0;
+	తిరిగి k->type;
 }
 
-int
-kex_hash_from_name(const char *name)
+పూర్ణాంకం
+kex_hash_from_name(స్థిరరాశి అక్షరం *name)
 {
-	const struct kexalg *k;
+	స్థిరరాశి నిర్మాణం kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return -1;
-	return k->hash_alg;
+	ఒకవేళ ((k = kex_alg_by_name(name)) == ఖాళీ)
+		తిరిగి -1;
+	తిరిగి k->hash_alg;
 }
 
-int
-kex_nid_from_name(const char *name)
+పూర్ణాంకం
+kex_nid_from_name(స్థిరరాశి అక్షరం *name)
 {
-	const struct kexalg *k;
+	స్థిరరాశి నిర్మాణం kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return -1;
-	return k->ec_nid;
+	ఒకవేళ ((k = kex_alg_by_name(name)) == ఖాళీ)
+		తిరిగి -1;
+	తిరిగి k->ec_nid;
 }
 
 /* Validate KEX method name list */
-int
-kex_names_valid(const char *names)
+పూర్ణాంకం
+kex_పేర్లు_valid(స్థిరరాశి అక్షరం *పేర్లు)
 {
-	char *s, *cp, *p;
+	అక్షరం *s, *cp, *p;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((s = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, ",")); p && *p != '\0';
+	ఒకవేళ (పేర్లు == ఖాళీ || strcmp(పేర్లు, "") == 0)
+		తిరిగి 0;
+	ఒకవేళ ((s = cp = strdup(పేర్లు)) == ఖాళీ)
+		తిరిగి 0;
+	కొరకు ((p = strsep(&cp, ",")); p && *p != '\0';
 	    (p = strsep(&cp, ","))) {
-		if (kex_alg_by_name(p) == NULL) {
+		ఒకవేళ (kex_alg_by_name(p) == ఖాళీ) {
 			error("Unsupported KEX algorithm \"%.100s\"", p);
-			free(s);
-			return 0;
+			విడుదల(s);
+			తిరిగి 0;
 		}
 	}
-	debug3("kex names ok: [%s]", names);
-	free(s);
-	return 1;
+	debug3("kex names ok: [%s]", పేర్లు);
+	విడుదల(s);
+	తిరిగి 1;
 }
 
 /* returns non-zero if proposal contains any algorithm from algs */
-int
-kex_has_any_alg(const char *proposal, const char *algs)
+పూర్ణాంకం
+kex_has_any_alg(స్థిరరాశి అక్షరం *proposal, స్థిరరాశి అక్షరం *algs)
 {
-	char *cp;
+	అక్షరం *cp;
 
-	if ((cp = match_list(proposal, algs, NULL)) == NULL)
-		return 0;
-	free(cp);
-	return 1;
+	ఒకవేళ ((cp = సరిపోలిక_list(proposal, algs, ఖాళీ)) == ఖాళీ)
+		తిరిగి 0;
+	విడుదల(cp);
+	తిరిగి 1;
 }
 
 /*
  * Concatenate algorithm names, avoiding duplicates in the process.
  * Caller must free returned string.
  */
-char *
-kex_names_cat(const char *a, const char *b)
+అక్షరం *
+kex_పేర్లు_cat(స్థిరరాశి అక్షరం *a, స్థిరరాశి అక్షరం *b)
 {
-	char *ret = NULL, *tmp = NULL, *cp, *p;
-	size_t len;
+	అక్షరం *ret = ఖాళీ, *tmp = ఖాళీ, *cp, *p;
+	కొలత_t len;
 
-	if (a == NULL || *a == '\0')
-		return strdup(b);
-	if (b == NULL || *b == '\0')
-		return strdup(a);
-	if (strlen(b) > 1024*1024)
-		return NULL;
-	len = strlen(a) + strlen(b) + 2;
-	if ((tmp = cp = strdup(b)) == NULL ||
-	    (ret = calloc(1, len)) == NULL) {
-		free(tmp);
-		return NULL;
+	ఒకవేళ (a == ఖాళీ || *a == '\0')
+		తిరిగి strdup(b);
+	ఒకవేళ (b == ఖాళీ || *b == '\0')
+		తిరిగి strdup(a);
+	ఒకవేళ (అక్షరశ్రేణి_పొడవు(b) > 1024*1024)
+		తిరిగి ఖాళీ;
+	len = అక్షరశ్రేణి_పొడవు(a) + అక్షరశ్రేణి_పొడవు(b) + 2;
+	ఒకవేళ ((tmp = cp = strdup(b)) == ఖాళీ ||
+	    (ret = సున్నా_జ్ఞాపకం_ఇవ్వు(1, len)) == ఖాళీ) {
+		విడుదల(tmp);
+		తిరిగి ఖాళీ;
 	}
 	strlcpy(ret, a, len);
-	for ((p = strsep(&cp, ",")); p && *p != '\0'; (p = strsep(&cp, ","))) {
-		if (kex_has_any_alg(ret, p))
-			continue; /* Algorithm already present */
-		if (strlcat(ret, ",", len) >= len ||
+	కొరకు ((p = strsep(&cp, ",")); p && *p != '\0'; (p = strsep(&cp, ","))) {
+		ఒకవేళ (kex_has_any_alg(ret, p))
+			కొనసాగు; /* Algorithm already present */
+		ఒకవేళ (strlcat(ret, ",", len) >= len ||
 		    strlcat(ret, p, len) >= len) {
-			free(tmp);
-			free(ret);
-			return NULL; /* Shouldn't happen */
+			విడుదల(tmp);
+			విడుదల(ret);
+			తిరిగి ఖాళీ; /* Shouldn't happen */
 		}
 	}
-	free(tmp);
-	return ret;
+	విడుదల(tmp);
+	తిరిగి ret;
 }
 
 /*
@@ -237,50 +237,50 @@ kex_names_cat(const char *a, const char *b)
  * specified names should be removed, or '^' that they should be placed
  * at the head.
  */
-int
-kex_assemble_names(char **listp, const char *def, const char *all)
+పూర్ణాంకం
+kex_assemble_పేర్లు(అక్షరం **listp, స్థిరరాశి అక్షరం *def, స్థిరరాశి అక్షరం *all)
 {
-	char *cp, *tmp, *patterns;
-	char *list = NULL, *ret = NULL, *matching = NULL, *opatterns = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	అక్షరం *cp, *tmp, *patterns;
+	అక్షరం *list = ఖాళీ, *ret = ఖాళీ, *matching = ఖాళీ, *opatterns = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 
-	if (listp == NULL || def == NULL || all == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ఒకవేళ (listp == ఖాళీ || def == ఖాళీ || all == ఖాళీ)
+		తిరిగి SSH_ERR_INVALID_వాదం;
 
-	if (*listp == NULL || **listp == '\0') {
-		if ((*listp = strdup(def)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
+	ఒకవేళ (*listp == ఖాళీ || **listp == '\0') {
+		ఒకవేళ ((*listp = strdup(def)) == ఖాళీ)
+			తిరిగి SSH_ERR_ALLOC_FAIL;
+		తిరిగి 0;
 	}
 
 	list = *listp;
-	*listp = NULL;
-	if (*list == '+') {
+	*listp = ఖాళీ;
+	ఒకవేళ (*list == '+') {
 		/* Append names to default list */
-		if ((tmp = kex_names_cat(def, list + 1)) == NULL) {
+		ఒకవేళ ((tmp = kex_పేర్లు_cat(def, list + 1)) == ఖాళీ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			వెళ్ళు fail;
 		}
-		free(list);
+		విడుదల(list);
 		list = tmp;
-	} else if (*list == '-') {
+	} లేకపోతే ఒకవేళ (*list == '-') {
 		/* Remove names from default list */
-		if ((*listp = match_filter_denylist(def, list + 1)) == NULL) {
+		ఒకవేళ ((*listp = సరిపోలిక_filter_denylist(def, list + 1)) == ఖాళీ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			వెళ్ళు fail;
 		}
-		free(list);
+		విడుదల(list);
 		/* filtering has already been done */
-		return 0;
-	} else if (*list == '^') {
+		తిరిగి 0;
+	} లేకపోతే ఒకవేళ (*list == '^') {
 		/* Place names at head of default list */
-		if ((tmp = kex_names_cat(list + 1, def)) == NULL) {
+		ఒకవేళ ((tmp = kex_పేర్లు_cat(list + 1, def)) == ఖాళీ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			వెళ్ళు fail;
 		}
-		free(list);
+		విడుదల(list);
 		list = tmp;
-	} else {
+	} లేకపోతే {
 		/* Explicit list, overrides default - just use "list" as is */
 	}
 
@@ -289,46 +289,46 @@ kex_assemble_names(char **listp, const char *def, const char *all)
 	 * the patterns are applied above. For the +list and explicit list
 	 * cases we need to do it now.
 	 */
-	ret = NULL;
-	if ((patterns = opatterns = strdup(list)) == NULL) {
+	ret = ఖాళీ;
+	ఒకవేళ ((patterns = opatterns = strdup(list)) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto fail;
+		వెళ్ళు fail;
 	}
 	/* Apply positive (i.e. non-negated) patterns from the list */
-	while ((cp = strsep(&patterns, ",")) != NULL) {
-		if (*cp == '!') {
+	అయితే ((cp = strsep(&patterns, ",")) != ఖాళీ) {
+		ఒకవేళ (*cp == '!') {
 			/* negated matches are not supported here */
-			r = SSH_ERR_INVALID_ARGUMENT;
-			goto fail;
+			r = SSH_ERR_INVALID_వాదం;
+			వెళ్ళు fail;
 		}
-		free(matching);
-		if ((matching = match_filter_allowlist(all, cp)) == NULL) {
+		విడుదల(matching);
+		ఒకవేళ ((matching = సరిపోలిక_filter_allowlist(all, cp)) == ఖాళీ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			వెళ్ళు fail;
 		}
-		if ((tmp = kex_names_cat(ret, matching)) == NULL) {
+		ఒకవేళ ((tmp = kex_పేర్లు_cat(ret, matching)) == ఖాళీ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			వెళ్ళు fail;
 		}
-		free(ret);
+		విడుదల(ret);
 		ret = tmp;
 	}
-	if (ret == NULL || *ret == '\0') {
+	ఒకవేళ (ret == ఖాళీ || *ret == '\0') {
 		/* An empty name-list is an error */
 		/* XXX better error code? */
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto fail;
+		r = SSH_ERR_INVALID_వాదం;
+		వెళ్ళు fail;
 	}
 
 	/* success */
 	*listp = ret;
-	ret = NULL;
+	ret = ఖాళీ;
 	r = 0;
 
  fail:
-	free(matching);
-	free(opatterns);
-	free(list);
-	free(ret);
-	return r;
+	విడుదల(matching);
+	విడుదల(opatterns);
+	విడుదల(list);
+	విడుదల(ret);
+	తిరిగి r;
 }

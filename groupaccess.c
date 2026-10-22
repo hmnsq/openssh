@@ -23,123 +23,123 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <grp.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+#అన్తర్భావ <grp.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <limits.h>
 
-#include "xmalloc.h"
-#include "groupaccess.h"
-#include "match.h"
-#include "log.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "groupaccess.h"
+#అన్తర్భావ "match.h"
+#అన్తర్భావ "log.h"
 
-static int ngroups;
-static char **groups_byname;
+స్థిర పూర్ణాంకం ngroups;
+స్థిర అక్షరం **groups_byname;
 
 /*
  * Initialize group access list for user with primary (base) and
  * supplementary groups.  Return the number of groups in the list.
  */
-int
-ga_init(const char *user, gid_t base)
+పూర్ణాంకం
+ga_init(స్థిరరాశి అక్షరం *user, gid_t పునాది)
 {
 	gid_t *groups_bygid;
-	int ongroups, i, j, retry = 0;
-	struct group *gr;
+	పూర్ణాంకం ongroups, i, j, retry = 0;
+	నిర్మాణం సమూహం *gr;
 
-	if (ngroups > 0)
+	ఒకవేళ (ngroups > 0)
 		ga_free();
 
 	ongroups = ngroups = NGROUPS_MAX;
-#if defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
+#ఒకవేళ defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
 	ongroups = ngroups = MAX(NGROUPS_MAX, sysconf(_SC_NGROUPS_MAX));
-#endif
+#అయితే_ముగింపు
 
-	groups_bygid = xcalloc(ngroups, sizeof(*groups_bygid));
-	while (getgrouplist(user, base, groups_bygid, &ngroups) == -1) {
-		if (ngroups <= ongroups) {
+	groups_bygid = xcalloc(ngroups, పరిమాణం(*groups_bygid));
+	అయితే (getgrouplist(user, పునాది, groups_bygid, &ngroups) == -1) {
+		ఒకవేళ (ngroups <= ongroups) {
 			error("getgrouplist(\"%s\", %ld): failed",
-			    user, (long)base);
-			free(groups_bygid);
-			groups_bygid = NULL;
+			    user, (దీర్ఘ)పునాది);
+			విడుదల(groups_bygid);
+			groups_bygid = ఖాళీ;
 			ngroups = 0;
-			return 0;
+			తిరిగి 0;
 		}
-		if (retry++ > 0) {
+		ఒకవేళ (retry++ > 0) {
 			fatal("getgrouplist(\"%s\", %ld): groups list too big "
-			    "(have %ld, need %ld)", user, (long)base,
-			    (long)ongroups, (long)ngroups);
+			    "(have %ld, need %ld)", user, (దీర్ఘ)పునాది,
+			    (దీర్ఘ)ongroups, (దీర్ఘ)ngroups);
 		}
 		groups_bygid = xreallocarray(groups_bygid, ngroups,
-		    sizeof(*groups_bygid));
+		    పరిమాణం(*groups_bygid));
 	}
-	groups_byname = xcalloc(ngroups, sizeof(*groups_byname));
+	groups_byname = xcalloc(ngroups, పరిమాణం(*groups_byname));
 
-	for (i = 0, j = 0; i < ngroups; i++)
-		if ((gr = getgrgid(groups_bygid[i])) != NULL)
+	కొరకు (i = 0, j = 0; i < ngroups; i++)
+		ఒకవేళ ((gr = getgrgid(groups_bygid[i])) != ఖాళీ)
 			groups_byname[j++] = xstrdup(gr->gr_name);
-	free(groups_bygid);
-	return (ngroups = j);
+	విడుదల(groups_bygid);
+	తిరిగి (ngroups = j);
 }
 
 /*
  * Return 1 if one of user's groups is contained in groups.
  * Return 0 otherwise.  Use match_pattern() for string comparison.
  */
-int
-ga_match(char * const *groups, int n)
+పూర్ణాంకం
+ga_సరిపోలిక(అక్షరం * స్థిరరాశి *groups, పూర్ణాంకం n)
 {
-	int i, j;
+	పూర్ణాంకం i, j;
 
-	for (i = 0; i < ngroups; i++)
-		for (j = 0; j < n; j++)
-			if (match_pattern(groups_byname[i], groups[j]))
-				return 1;
-	return 0;
+	కొరకు (i = 0; i < ngroups; i++)
+		కొరకు (j = 0; j < n; j++)
+			ఒకవేళ (సరిపోలిక_నమూనా(groups_byname[i], groups[j]))
+				తిరిగి 1;
+	తిరిగి 0;
 }
 
 /*
  * Return 1 if one of user's groups matches group_pattern list.
  * Return 0 on negated or no match.
  */
-int
-ga_match_pattern_list(const char *group_pattern)
+పూర్ణాంకం
+ga_సరిపోలిక_నమూనా_list(స్థిరరాశి అక్షరం *సమూహం_నమూనా)
 {
-	int i, found = 0;
+	పూర్ణాంకం i, దొరికింది = 0;
 
-	for (i = 0; i < ngroups; i++) {
-		switch (match_usergroup_pattern_list(groups_byname[i],
-		    group_pattern)) {
-		case -1:
-			return 0;	/* Negated match wins */
-		case 0:
-			continue;
-		case 1:
-			found = 1;
+	కొరకు (i = 0; i < ngroups; i++) {
+		ఎంపిక (సరిపోలిక_usergroup_నమూనా_list(groups_byname[i],
+		    సమూహం_నమూనా)) {
+		స్థితి -1:
+			తిరిగి 0;	/* Negated match wins */
+		స్థితి 0:
+			కొనసాగు;
+		స్థితి 1:
+			దొరికింది = 1;
 		}
 	}
-	return found;
+	తిరిగి దొరికింది;
 }
 
 /*
  * Free memory allocated for group access list.
  */
-void
-ga_free(void)
+శూన్య
+ga_free(శూన్య)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	if (ngroups > 0) {
-		for (i = 0; i < ngroups; i++)
-			free(groups_byname[i]);
+	ఒకవేళ (ngroups > 0) {
+		కొరకు (i = 0; i < ngroups; i++)
+			విడుదల(groups_byname[i]);
 		ngroups = 0;
-		free(groups_byname);
-		groups_byname = NULL;
+		విడుదల(groups_byname);
+		groups_byname = ఖాళీ;
 	}
 }

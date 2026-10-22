@@ -5,61 +5,61 @@
  * Written by Ted Unangst
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <string.h>
+#అన్తర్భావ <string.h>
 
 /*
  * explicit_bzero - don't let the compiler optimize away bzero
  */
 
-#ifndef HAVE_EXPLICIT_BZERO
+#నిర్వచితం_కాకపోతే HAVE_EXPLICIT_BZERO
 
-#ifdef HAVE_EXPLICIT_MEMSET
+#నిర్వచితమైతే HAVE_EXPLICIT_MEMSET
 
-void
-explicit_bzero(void *p, size_t n)
+శూన్య
+explicit_bzero(శూన్య *p, కొలత_t n)
 {
-	(void)explicit_memset(p, 0, n);
+	(శూన్య)explicit_memset(p, 0, n);
 }
 
-#elif defined(HAVE_MEMSET_S)
+#లేదావేళ defined(HAVE_MEMSET_S)
 
-void
-explicit_bzero(void *p, size_t n)
+శూన్య
+explicit_bzero(శూన్య *p, కొలత_t n)
 {
-	if (n == 0)
-		return;
-	(void)memset_s(p, n, 0, n);
+	ఒకవేళ (n == 0)
+		తిరిగి;
+	(శూన్య)memset_s(p, n, 0, n);
 }
 
-#else /* HAVE_MEMSET_S */
+#లేకపోతే /* HAVE_MEMSET_S */
 
 /*
  * Indirect bzero through a volatile pointer to hopefully avoid
  * dead-store optimisation eliminating the call.
  */
-static void (* volatile ssh_bzero)(void *, size_t) = bzero;
+స్థిర శూన్య (* అస్థిర ssh_bzero)(శూన్య *, కొలత_t) = bzero;
 
-void
-explicit_bzero(void *p, size_t n)
+శూన్య
+explicit_bzero(శూన్య *p, కొలత_t n)
 {
-	if (n == 0)
-		return;
+	ఒకవేళ (n == 0)
+		తిరిగి;
 	/*
 	 * clang -fsanitize=memory needs to intercept memset-like functions
 	 * to correctly detect memory initialisation. Make sure one is called
 	 * directly since our indirection trick above successfully confuses it.
 	 */
-#if defined(__has_feature)
-# if __has_feature(memory_sanitizer)
+#ఒకవేళ defined(__has_feature)
+# ఒకవేళ __has_feature(జ్ఞాపకం_sanitizer)
 	memset(p, 0, n);
 # endif
-#endif
+#అయితే_ముగింపు
 
 	ssh_bzero(p, n);
 }
 
-#endif /* HAVE_MEMSET_S */
+#అయితే_ముగింపు /* HAVE_MEMSET_S */
 
-#endif /* HAVE_EXPLICIT_BZERO */
+#అయితే_ముగింపు /* HAVE_EXPLICIT_BZERO */

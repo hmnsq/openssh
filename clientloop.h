@@ -35,51 +35,51 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <termios.h>
+#అన్తర్భావ <termios.h>
 
-struct ssh;
+నిర్మాణం ssh;
 
 /* Client side main loop for the interactive session. */
-int	 client_loop(struct ssh *, int, int, int);
-int	 client_x11_get_proto(struct ssh *, const char *, const char *,
-	    u_int, u_int, char **, char **);
-void	 client_session2_setup(struct ssh *, int, int, int,
-	    const char *, struct termios *, int, struct sshbuf *, char **);
-char	 *client_request_tun_fwd(struct ssh *, int, int, int,
-    channel_open_fn *, void *);
-void	 client_stop_mux(void);
+పూర్ణాంకం	 client_loop(నిర్మాణం ssh *, పూర్ణాంకం, పూర్ణాంకం, పూర్ణాంకం);
+పూర్ణాంకం	 client_x11_get_proto(నిర్మాణం ssh *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *,
+	    u_int, u_int, అక్షరం **, అక్షరం **);
+శూన్య	 client_session2_అమరిక(నిర్మాణం ssh *, పూర్ణాంకం, పూర్ణాంకం, పూర్ణాంకం,
+	    స్థిరరాశి అక్షరం *, నిర్మాణం termios *, పూర్ణాంకం, నిర్మాణం sshbuf *, అక్షరం **);
+అక్షరం	 *client_request_tun_fwd(నిర్మాణం ssh *, పూర్ణాంకం, పూర్ణాంకం, పూర్ణాంకం,
+    channel_open_fn *, శూన్య *);
+శూన్య	 client_stop_mux(శూన్య);
 
 /* Escape filter for protocol 2 sessions */
-void	*client_new_escape_filter_ctx(int);
-void	 client_filter_cleanup(struct ssh *, int, void *);
-int	 client_simple_escape_filter(struct ssh *, Channel *, char *, int);
+శూన్య	*client_new_escape_filter_ctx(పూర్ణాంకం);
+శూన్య	 client_filter_cleanup(నిర్మాణం ssh *, పూర్ణాంకం, శూన్య *);
+పూర్ణాంకం	 client_simple_escape_filter(నిర్మాణం ssh *, Channel *, అక్షరం *, పూర్ణాంకం);
 
 /* Global request confirmation callbacks */
-typedef void global_confirm_cb(struct ssh *, int, uint32_t, void *);
-void	 client_register_global_confirm(global_confirm_cb *, void *);
+రకనిర్వచనం శూన్య global_confirm_cb(నిర్మాణం ssh *, పూర్ణాంకం, uint32_t, శూన్య *);
+శూన్య	 client_రిజిస్టరు_global_confirm(global_confirm_cb *, శూన్య *);
 
 /* Channel request confirmation callbacks */
-enum confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
-void client_expect_confirm(struct ssh *, int, const char *,
-    enum confirm_action);
+గణన confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
+శూన్య client_expect_confirm(నిర్మాణం ssh *, పూర్ణాంకం, స్థిరరాశి అక్షరం *,
+    గణన confirm_action);
 
 /* Multiplexing protocol version */
-#define SSHMUX_VER			4
+#నిర్వచించు SSHMUX_VER			4
 
 /* Multiplexing control protocol flags */
-#define SSHMUX_COMMAND_OPEN		1	/* Open new connection */
-#define SSHMUX_COMMAND_ALIVE_CHECK	2	/* Check master is alive */
-#define SSHMUX_COMMAND_TERMINATE	3	/* Ask master to exit */
-#define SSHMUX_COMMAND_STDIO_FWD	4	/* Open stdio fwd (ssh -W) */
-#define SSHMUX_COMMAND_FORWARD		5	/* Forward only, no command */
-#define SSHMUX_COMMAND_STOP		6	/* Disable mux but not conn */
-#define SSHMUX_COMMAND_CANCEL_FWD	7	/* Cancel forwarding(s) */
-#define SSHMUX_COMMAND_PROXY		8	/* Open new connection */
-#define SSHMUX_COMMAND_CONNINFO		9	/* Show connection information */
-#define SSHMUX_COMMAND_CHANINFO		10	/* Show channels information */
+#నిర్వచించు SSHMUX_COMMAND_OPEN		1	/* Open new connection */
+#నిర్వచించు SSHMUX_COMMAND_ALIVE_CHECK	2	/* Check master is alive */
+#నిర్వచించు SSHMUX_COMMAND_TERMINATE	3	/* Ask master to exit */
+#నిర్వచించు SSHMUX_COMMAND_STDIO_FWD	4	/* Open stdio fwd (ssh -W) */
+#నిర్వచించు SSHMUX_COMMAND_FORWARD		5	/* Forward only, no command */
+#నిర్వచించు SSHMUX_COMMAND_STOP		6	/* Disable mux but not conn */
+#నిర్వచించు SSHMUX_COMMAND_CANCEL_FWD	7	/* Cancel forwarding(s) */
+#నిర్వచించు SSHMUX_COMMAND_PROXY		8	/* Open new connection */
+#నిర్వచించు SSHMUX_COMMAND_CONNINFO		9	/* Show connection information */
+#నిర్వచించు SSHMUX_COMMAND_CHANINFO		10	/* Show channels information */
 
-void	muxserver_listen(struct ssh *);
-int	muxclient(const char *);
-void	mux_exit_message(struct ssh *, Channel *, int);
-void	mux_tty_alloc_failed(struct ssh *ssh, Channel *);
+శూన్య	muxserver_listen(నిర్మాణం ssh *);
+పూర్ణాంకం	muxclient(స్థిరరాశి అక్షరం *);
+శూన్య	mux_exit_సందేశం(నిర్మాణం ssh *, Channel *, పూర్ణాంకం);
+శూన్య	mux_tty_alloc_failed(నిర్మాణం ssh *ssh, Channel *);
 

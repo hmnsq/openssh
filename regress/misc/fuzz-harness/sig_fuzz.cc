@@ -1,62 +1,62 @@
 // cc_fuzz_target test for public key parsing.
 
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-extern "C" {
+బాహ్య "C" {
 
-#include "includes.h"
-#include "sshkey.h"
-#include "ssherr.h"
+#అన్తర్భావ "includes.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "ssherr.h"
 
-static struct sshkey *generate_or_die(int type, unsigned bits) {
-  int r;
-  struct sshkey *ret;
-  if ((r = sshkey_generate(type, bits, &ret)) != 0) {
-    fprintf(stderr, "generate(%d, %u): %s", type, bits, ssh_err(r));
+స్థిర నిర్మాణం sshkey *generate_or_die(పూర్ణాంకం type, గుర్తులేని బిట్లు) {
+  పూర్ణాంకం r;
+  నిర్మాణం sshkey *ret;
+  ఒకవేళ ((r = sshkey_generate(type, బిట్లు, &ret)) != 0) {
+    fprintf(stderr, "generate(%d, %u): %s", type, బిట్లు, ssh_err(r));
     abort();
   }
-  return ret;
+  తిరిగి ret;
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
+పూర్ణాంకం LLVMFuzzer_Test_One_ఆదానం(స్థిరరాశి uint8_t* sig, కొలత_t slen)
 {
-#ifdef WITH_OPENSSL
-  static struct sshkey *rsa = generate_or_die(KEY_RSA, 2048);
-  static struct sshkey *ecdsa256 = generate_or_die(KEY_ECDSA, 256);
-  static struct sshkey *ecdsa384 = generate_or_die(KEY_ECDSA, 384);
-  static struct sshkey *ecdsa521 = generate_or_die(KEY_ECDSA, 521);
-#endif
-  struct sshkey_sig_details *details = NULL;
-  static struct sshkey *ed25519 = generate_or_die(KEY_ED25519, 0);
-  static const char *data = "If everyone started announcing his nose had "
+#నిర్వచితమైతే WITH_OPENSSL
+  స్థిర నిర్మాణం sshkey *rsa = generate_or_die(కీలకం_RSA, 2048);
+  స్థిర నిర్మాణం sshkey *ecdsa256 = generate_or_die(కీలకం_ECDSA, 256);
+  స్థిర నిర్మాణం sshkey *ecdsa384 = generate_or_die(కీలకం_ECDSA, 384);
+  స్థిర నిర్మాణం sshkey *ecdsa521 = generate_or_die(కీలకం_ECDSA, 521);
+#అయితే_ముగింపు
+  నిర్మాణం sshkey_sig_details *details = ఖాళీ;
+  స్థిర నిర్మాణం sshkey *ed25519 = generate_or_die(కీలకం_ED25519, 0);
+  స్థిర స్థిరరాశి అక్షరం *దత్తాంశం = "If everyone started announcing his nose had "
       "run away, I don’t know how it would all end";
-  static const size_t dlen = strlen(data);
+  స్థిర స్థిరరాశి కొలత_t dlen = అక్షరశ్రేణి_పొడవు(దత్తాంశం);
 
-#ifdef WITH_OPENSSL
-  sshkey_verify(rsa, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+#నిర్వచితమైతే WITH_OPENSSL
+  sshkey_verify(rsa, sig, slen, (స్థిరరాశి u_char *)దత్తాంశం, dlen, ఖాళీ, 0, &details);
   sshkey_sig_details_free(details);
-  details = NULL;
+  details = ఖాళీ;
 
-  sshkey_verify(ecdsa256, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+  sshkey_verify(ecdsa256, sig, slen, (స్థిరరాశి u_char *)దత్తాంశం, dlen, ఖాళీ, 0, &details);
   sshkey_sig_details_free(details);
-  details = NULL;
+  details = ఖాళీ;
 
-  sshkey_verify(ecdsa384, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+  sshkey_verify(ecdsa384, sig, slen, (స్థిరరాశి u_char *)దత్తాంశం, dlen, ఖాళీ, 0, &details);
   sshkey_sig_details_free(details);
-  details = NULL;
+  details = ఖాళీ;
 
-  sshkey_verify(ecdsa521, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+  sshkey_verify(ecdsa521, sig, slen, (స్థిరరాశి u_char *)దత్తాంశం, dlen, ఖాళీ, 0, &details);
   sshkey_sig_details_free(details);
-  details = NULL;
-#endif
+  details = ఖాళీ;
+#అయితే_ముగింపు
 
-  sshkey_verify(ed25519, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+  sshkey_verify(ed25519, sig, slen, (స్థిరరాశి u_char *)దత్తాంశం, dlen, ఖాళీ, 0, &details);
   sshkey_sig_details_free(details);
-  return 0;
+  తిరిగి 0;
 }
 
 } // extern

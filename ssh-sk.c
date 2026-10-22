@@ -17,437 +17,437 @@
 
 /* #define DEBUG_SK 1 */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifdef ENABLE_SK
+#నిర్వచితమైతే ENABLE_SK
 
-#include <dlfcn.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdio.h>
+#అన్తర్భావ <dlfcn.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdio.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/objects.h>
-#include <openssl/ec.h>
-#include <openssl/evp.h>
-#endif /* WITH_OPENSSL */
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ <openssl/objects.h>
+#అన్తర్భావ <openssl/ec.h>
+#అన్తర్భావ <openssl/evp.h>
+#అయితే_ముగింపు /* WITH_OPENSSL */
 
-#include "log.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "ssherr.h"
-#include "digest.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "digest.h"
 
-#include "ssh-sk.h"
-#include "sk-api.h"
-#include "crypto_api.h"
+#అన్తర్భావ "ssh-sk.h"
+#అన్తర్భావ "sk-api.h"
+#అన్తర్భావ "crypto_api.h"
 
-struct sshsk_provider {
-	char *path;
-	void *dlhandle;
+నిర్మాణం sshsk_provider {
+	అక్షరం *మార్గం;
+	శూన్య *dlhandle;
 
 	/* Return the version of the middleware API */
-	uint32_t (*sk_api_version)(void);
+	uint32_t (*sk_api_సంస్కరణ)(శూన్య);
 
 	/* Enroll a U2F key (private key generation) */
-	int (*sk_enroll)(int alg, const uint8_t *challenge,
-	    size_t challenge_len, const char *application, uint8_t flags,
-	    const char *pin, struct sk_option **opts,
-	    struct sk_enroll_response **enroll_response);
+	పూర్ణాంకం (*sk_enroll)(పూర్ణాంకం alg, స్థిరరాశి uint8_t *challenge,
+	    కొలత_t challenge_len, స్థిరరాశి అక్షరం *application, uint8_t flags,
+	    స్థిరరాశి అక్షరం *pin, నిర్మాణం sk_option **opts,
+	    నిర్మాణం sk_enroll_response **enroll_response);
 
 	/* Sign a challenge */
-	int (*sk_sign)(int alg, const uint8_t *message, size_t message_len,
-	    const char *application,
-	    const uint8_t *key_handle, size_t key_handle_len,
-	    uint8_t flags, const char *pin, struct sk_option **opts,
-	    struct sk_sign_response **sign_response);
+	పూర్ణాంకం (*sk_sign)(పూర్ణాంకం alg, స్థిరరాశి uint8_t *సందేశం_2, కొలత_t సందేశం_len_2,
+	    స్థిరరాశి అక్షరం *application,
+	    స్థిరరాశి uint8_t *కీలకం_handle, కొలత_t కీలకం_handle_len,
+	    uint8_t flags, స్థిరరాశి అక్షరం *pin, నిర్మాణం sk_option **opts,
+	    నిర్మాణం sk_sign_response **sign_response);
 
 	/* Enumerate resident keys */
-	int (*sk_load_resident_keys)(const char *pin, struct sk_option **opts,
-	    struct sk_resident_key ***rks, size_t *nrks);
+	పూర్ణాంకం (*sk_ఎక్కించు_resident_కీలకాలు)(స్థిరరాశి అక్షరం *pin, నిర్మాణం sk_option **opts,
+	    నిర్మాణం sk_resident_కీలకం ***rks, కొలత_t *nrks);
 };
 
 /* Built-in version */
-int ssh_sk_enroll(int alg, const uint8_t *challenge,
-    size_t challenge_len, const char *application, uint8_t flags,
-    const char *pin, struct sk_option **opts,
-    struct sk_enroll_response **enroll_response);
-int ssh_sk_sign(int alg, const uint8_t *message, size_t message_len,
-    const char *application,
-    const uint8_t *key_handle, size_t key_handle_len,
-    uint8_t flags, const char *pin, struct sk_option **opts,
-    struct sk_sign_response **sign_response);
-int ssh_sk_load_resident_keys(const char *pin, struct sk_option **opts,
-    struct sk_resident_key ***rks, size_t *nrks);
+పూర్ణాంకం ssh_sk_enroll(పూర్ణాంకం alg, స్థిరరాశి uint8_t *challenge,
+    కొలత_t challenge_len, స్థిరరాశి అక్షరం *application, uint8_t flags,
+    స్థిరరాశి అక్షరం *pin, నిర్మాణం sk_option **opts,
+    నిర్మాణం sk_enroll_response **enroll_response);
+పూర్ణాంకం ssh_sk_sign(పూర్ణాంకం alg, స్థిరరాశి uint8_t *సందేశం_2, కొలత_t సందేశం_len_2,
+    స్థిరరాశి అక్షరం *application,
+    స్థిరరాశి uint8_t *కీలకం_handle, కొలత_t కీలకం_handle_len,
+    uint8_t flags, స్థిరరాశి అక్షరం *pin, నిర్మాణం sk_option **opts,
+    నిర్మాణం sk_sign_response **sign_response);
+పూర్ణాంకం ssh_sk_ఎక్కించు_resident_కీలకాలు(స్థిరరాశి అక్షరం *pin, నిర్మాణం sk_option **opts,
+    నిర్మాణం sk_resident_కీలకం ***rks, కొలత_t *nrks);
 
-static void
-sshsk_free(struct sshsk_provider *p)
+స్థిర శూన్య
+sshsk_free(నిర్మాణం sshsk_provider *p)
 {
-	if (p == NULL)
-		return;
-	free(p->path);
-	if (p->dlhandle != NULL)
+	ఒకవేళ (p == ఖాళీ)
+		తిరిగి;
+	విడుదల(p->మార్గం);
+	ఒకవేళ (p->dlhandle != ఖాళీ)
 		dlclose(p->dlhandle);
-	free(p);
+	విడుదల(p);
 }
 
-static struct sshsk_provider *
-sshsk_open(const char *path)
+స్థిర నిర్మాణం sshsk_provider *
+sshsk_open(స్థిరరాశి అక్షరం *మార్గం)
 {
-	struct sshsk_provider *ret = NULL;
-	uint32_t version;
+	నిర్మాణం sshsk_provider *ret = ఖాళీ;
+	uint32_t సంస్కరణ;
 
-	if (path == NULL || *path == '\0') {
+	ఒకవేళ (మార్గం == ఖాళీ || *మార్గం == '\0') {
 		error("No FIDO SecurityKeyProvider specified");
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	if ((ret = calloc(1, sizeof(*ret))) == NULL) {
+	ఒకవేళ ((ret = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*ret))) == ఖాళీ) {
 		error_f("calloc failed");
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	if ((ret->path = strdup(path)) == NULL) {
+	ఒకవేళ ((ret->మార్గం = strdup(మార్గం)) == ఖాళీ) {
 		error_f("strdup failed");
-		goto fail;
+		వెళ్ళు fail;
 	}
 	/* Skip the rest if we're using the linked in middleware */
-	if (strcasecmp(ret->path, "internal") == 0) {
-#ifdef ENABLE_SK_INTERNAL
+	ఒకవేళ (strcasecmp(ret->మార్గం, "internal") == 0) {
+#నిర్వచితమైతే ENABLE_SK_అంతర్గత
 		ret->sk_enroll = ssh_sk_enroll;
 		ret->sk_sign = ssh_sk_sign;
-		ret->sk_load_resident_keys = ssh_sk_load_resident_keys;
-		return ret;
-#else
+		ret->sk_ఎక్కించు_resident_కీలకాలు = ssh_sk_ఎక్కించు_resident_కీలకాలు;
+		తిరిగి ret;
+#లేకపోతే
 		error("internal security key support not enabled");
-		goto fail;
-#endif
+		వెళ్ళు fail;
+#అయితే_ముగింపు
 	}
-	if (lib_contains_symbol(path, "sk_api_version") != 0) {
-		error("provider %s is not an OpenSSH FIDO library", path);
-		goto fail;
+	ఒకవేళ (lib_కలిగియుంది_చిహ్నం(మార్గం, "sk_api_version") != 0) {
+		error("provider %s is not an OpenSSH FIDO library", మార్గం);
+		వెళ్ళు fail;
 	}
-	if ((ret->dlhandle = dlopen(path, RTLD_NOW)) == NULL)
-		fatal("Provider \"%s\" dlopen failed: %s", path, dlerror());
-	if ((ret->sk_api_version = dlsym(ret->dlhandle,
-	    "sk_api_version")) == NULL) {
+	ఒకవేళ ((ret->dlhandle = dlopen(మార్గం, RTLD_NOW)) == ఖాళీ)
+		fatal("Provider \"%s\" dlopen failed: %s", మార్గం, dlerror());
+	ఒకవేళ ((ret->sk_api_సంస్కరణ = dlsym(ret->dlhandle,
+	    "sk_api_version")) == ఖాళీ) {
 		error("Provider \"%s\" dlsym(sk_api_version) failed: %s",
-		    path, dlerror());
-		goto fail;
+		    మార్గం, dlerror());
+		వెళ్ళు fail;
 	}
-	version = ret->sk_api_version();
-	debug_f("provider %s implements version 0x%08lx", ret->path,
-	    (u_long)version);
-	if ((version & SSH_SK_VERSION_MAJOR_MASK) != SSH_SK_VERSION_MAJOR) {
+	సంస్కరణ = ret->sk_api_సంస్కరణ();
+	debug_f("provider %s implements version 0x%08lx", ret->మార్గం,
+	    (u_long)సంస్కరణ);
+	ఒకవేళ ((సంస్కరణ & SSH_SK_సంస్కరణ_MAJOR_ముసుగు) != SSH_SK_సంస్కరణ_MAJOR) {
 		error("Provider \"%s\" implements unsupported "
 		    "version 0x%08lx (supported: 0x%08lx)",
-		    path, (u_long)version, (u_long)SSH_SK_VERSION_MAJOR);
-		goto fail;
+		    మార్గం, (u_long)సంస్కరణ, (u_long)SSH_SK_సంస్కరణ_MAJOR);
+		వెళ్ళు fail;
 	}
-	if ((ret->sk_enroll = dlsym(ret->dlhandle, "sk_enroll")) == NULL) {
+	ఒకవేళ ((ret->sk_enroll = dlsym(ret->dlhandle, "sk_enroll")) == ఖాళీ) {
 		error("Provider %s dlsym(sk_enroll) failed: %s",
-		    path, dlerror());
-		goto fail;
+		    మార్గం, dlerror());
+		వెళ్ళు fail;
 	}
-	if ((ret->sk_sign = dlsym(ret->dlhandle, "sk_sign")) == NULL) {
+	ఒకవేళ ((ret->sk_sign = dlsym(ret->dlhandle, "sk_sign")) == ఖాళీ) {
 		error("Provider \"%s\" dlsym(sk_sign) failed: %s",
-		    path, dlerror());
-		goto fail;
+		    మార్గం, dlerror());
+		వెళ్ళు fail;
 	}
-	if ((ret->sk_load_resident_keys = dlsym(ret->dlhandle,
-	    "sk_load_resident_keys")) == NULL) {
+	ఒకవేళ ((ret->sk_ఎక్కించు_resident_కీలకాలు = dlsym(ret->dlhandle,
+	    "sk_load_resident_keys")) == ఖాళీ) {
 		error("Provider \"%s\" dlsym(sk_load_resident_keys) "
-		    "failed: %s", path, dlerror());
-		goto fail;
+		    "failed: %s", మార్గం, dlerror());
+		వెళ్ళు fail;
 	}
 	/* success */
-	return ret;
+	తిరిగి ret;
 fail:
 	sshsk_free(ret);
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
-static void
-sshsk_free_enroll_response(struct sk_enroll_response *r)
+స్థిర శూన్య
+sshsk_free_enroll_response(నిర్మాణం sk_enroll_response *r)
 {
-	if (r == NULL)
-		return;
-	freezero(r->key_handle, r->key_handle_len);
-	freezero(r->public_key, r->public_key_len);
+	ఒకవేళ (r == ఖాళీ)
+		తిరిగి;
+	freezero(r->కీలకం_handle, r->కీలకం_handle_len);
+	freezero(r->ప్రజా_కీలకం, r->ప్రజా_కీలకం_len);
 	freezero(r->signature, r->signature_len);
 	freezero(r->attestation_cert, r->attestation_cert_len);
 	freezero(r->authdata, r->authdata_len);
-	freezero(r, sizeof(*r));
+	freezero(r, పరిమాణం(*r));
 }
 
-static void
-sshsk_free_sign_response(struct sk_sign_response *r)
+స్థిర శూన్య
+sshsk_free_sign_response(నిర్మాణం sk_sign_response *r)
 {
-	if (r == NULL)
-		return;
+	ఒకవేళ (r == ఖాళీ)
+		తిరిగి;
 	freezero(r->sig_r, r->sig_r_len);
 	freezero(r->sig_s, r->sig_s_len);
-	freezero(r, sizeof(*r));
+	freezero(r, పరిమాణం(*r));
 }
 
-#ifdef WITH_OPENSSL
+#నిర్వచితమైతే WITH_OPENSSL
 /* Assemble key from response */
-static int
-sshsk_ecdsa_assemble(struct sk_enroll_response *resp, struct sshkey **keyp)
+స్థిర పూర్ణాంకం
+sshsk_ecdsa_assemble(నిర్మాణం sk_enroll_response *resp, నిర్మాణం sshkey **keyp)
 {
-	struct sshkey *key = NULL;
-	struct sshbuf *b = NULL;
-	EC_KEY *ecdsa = NULL;
-	EC_POINT *q = NULL;
-	const EC_GROUP *g = NULL;
-	int r;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ;
+	నిర్మాణం sshbuf *b = ఖాళీ;
+	EC_కీలకం *ecdsa = ఖాళీ;
+	EC_బిందువు *q = ఖాళీ;
+	స్థిరరాశి EC_సమూహం *g = ఖాళీ;
+	పూర్ణాంకం r;
 
-	*keyp = NULL;
-	if ((key = sshkey_new(KEY_ECDSA_SK)) == NULL) {
+	*keyp = ఖాళీ;
+	ఒకవేళ ((కీలకం = sshkey_new(కీలకం_ECDSA_SK)) == ఖాళీ) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	key->ecdsa_nid = NID_X9_62_prime256v1;
-	if ((ecdsa = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL ||
-	    (g = EC_KEY_get0_group(ecdsa)) == NULL ||
-	    (q = EC_POINT_new(g)) == NULL ||
-	    (b = sshbuf_new()) == NULL) {
+	కీలకం->ecdsa_nid = NID_X9_62_prime256v1;
+	ఒకవేళ ((ecdsa = EC_కీలకం_new_by_వక్రం_name(కీలకం->ecdsa_nid)) == ఖాళీ ||
+	    (g = EC_కీలకం_get0_సమూహం(ecdsa)) == ఖాళీ ||
+	    (q = EC_బిందువు_new(g)) == ఖాళీ ||
+	    (b = sshbuf_new()) == ఖాళీ) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_put_string(b,
-	    resp->public_key, resp->public_key_len)) != 0) {
+	ఒకవేళ ((r = sshbuf_put_string(b,
+	    resp->ప్రజా_కీలకం, resp->ప్రజా_కీలకం_len)) != 0) {
 		error_fr(r, "sshbuf_put_string");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_get_ec(b, q, g)) != 0) {
+	ఒకవేళ ((r = sshbuf_get_ec(b, q, g)) != 0) {
 		error_fr(r, "parse");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (sshkey_ec_validate_public(g, q) != 0) {
+	ఒకవేళ (sshkey_ec_validate_ప్రజా(g, q) != 0) {
 		error("Authenticator returned invalid ECDSA key");
-		r = SSH_ERR_KEY_INVALID_EC_VALUE;
-		goto out;
+		r = SSH_ERR_కీలకం_INVALID_EC_విలువ;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EC_KEY_set_public_key(ecdsa, q) != 1) {
+	ఒకవేళ (EC_కీలకం_సమితి_ప్రజా_కీలకం(ecdsa, q) != 1) {
 		/* XXX assume it is a allocation error */
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((key->pkey = EVP_PKEY_new()) == NULL) {
+	ఒకవేళ ((కీలకం->pkey = EVP_PKEY_new()) == ఖాళీ) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ecdsa) != 1) {
+	ఒకవేళ (EVP_PKEY_set1_EC_కీలకం(కీలకం->pkey, ecdsa) != 1) {
 		error_f("Assigning EC_KEY failed");
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
-	*keyp = key;
-	key = NULL; /* transferred */
+	*keyp = కీలకం;
+	కీలకం = ఖాళీ; /* transferred */
 	r = 0;
- out:
-	sshkey_free(key);
+ బహిర్గతం:
+	sshkey_free(కీలకం);
 	sshbuf_free(b);
-	EC_KEY_free(ecdsa);
-	EC_POINT_free(q);
-	return r;
+	EC_కీలకం_free(ecdsa);
+	EC_బిందువు_free(q);
+	తిరిగి r;
 }
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */
 
-static int
-sshsk_ed25519_assemble(struct sk_enroll_response *resp, struct sshkey **keyp)
+స్థిర పూర్ణాంకం
+sshsk_ed25519_assemble(నిర్మాణం sk_enroll_response *resp, నిర్మాణం sshkey **keyp)
 {
-	struct sshkey *key = NULL;
-	int r;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ;
+	పూర్ణాంకం r;
 
-	*keyp = NULL;
-	if (resp->public_key_len != ED25519_PK_SZ) {
-		error_f("invalid size: %zu", resp->public_key_len);
+	*keyp = ఖాళీ;
+	ఒకవేళ (resp->ప్రజా_కీలకం_len != ED25519_PK_SZ) {
+		error_f("invalid size: %zu", resp->ప్రజా_కీలకం_len);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((key = sshkey_new(KEY_ED25519_SK)) == NULL) {
+	ఒకవేళ ((కీలకం = sshkey_new(కీలకం_ED25519_SK)) == ఖాళీ) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((key->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL) {
+	ఒకవేళ ((కీలకం->ed25519_pk = జ్ఞాపకం_ఇవ్వు(ED25519_PK_SZ)) == ఖాళీ) {
 		error_f("malloc failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	memcpy(key->ed25519_pk, resp->public_key, ED25519_PK_SZ);
+	జ్ఞాపకం_నకలు(కీలకం->ed25519_pk, resp->ప్రజా_కీలకం, ED25519_PK_SZ);
 	/* success */
-	*keyp = key;
-	key = NULL; /* transferred */
+	*keyp = కీలకం;
+	కీలకం = ఖాళీ; /* transferred */
 	r = 0;
- out:
-	sshkey_free(key);
-	return r;
+ బహిర్గతం:
+	sshkey_free(కీలకం);
+	తిరిగి r;
 }
 
-static int
-sshsk_key_from_response(int alg, const char *application, uint8_t flags,
-    struct sk_enroll_response *resp, struct sshkey **keyp)
+స్థిర పూర్ణాంకం
+sshsk_కీలకం_from_response(పూర్ణాంకం alg, స్థిరరాశి అక్షరం *application, uint8_t flags,
+    నిర్మాణం sk_enroll_response *resp, నిర్మాణం sshkey **keyp)
 {
-	struct sshkey *key = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 
-	*keyp = NULL;
+	*keyp = ఖాళీ;
 
 	/* Check response validity */
-	if (resp->public_key == NULL || resp->key_handle == NULL) {
+	ఒకవేళ (resp->ప్రజా_కీలకం == ఖాళీ || resp->కీలకం_handle == ఖాళీ) {
 		error_f("sk_enroll response invalid");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	switch (alg) {
-#ifdef WITH_OPENSSL
-	case SSH_SK_ECDSA:
-		if ((r = sshsk_ecdsa_assemble(resp, &key)) != 0)
-			goto out;
-		break;
-#endif /* WITH_OPENSSL */
-	case SSH_SK_ED25519:
-		if ((r = sshsk_ed25519_assemble(resp, &key)) != 0)
-			goto out;
-		break;
-	default:
+	ఎంపిక (alg) {
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థితి SSH_SK_ECDSA:
+		ఒకవేళ ((r = sshsk_ecdsa_assemble(resp, &కీలకం)) != 0)
+			వెళ్ళు బహిర్గతం;
+		ఆపు;
+#అయితే_ముగింపు /* WITH_OPENSSL */
+	స్థితి SSH_SK_ED25519:
+		ఒకవేళ ((r = sshsk_ed25519_assemble(resp, &కీలకం)) != 0)
+			వెళ్ళు బహిర్గతం;
+		ఆపు;
+	అప్రమేయ:
 		error_f("unsupported algorithm %d", alg);
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		r = SSH_ERR_INVALID_వాదం;
+		వెళ్ళు బహిర్గతం;
 	}
-	key->sk_flags = flags;
-	if ((key->sk_key_handle = sshbuf_new()) == NULL ||
-	    (key->sk_reserved = sshbuf_new()) == NULL) {
+	కీలకం->sk_flags = flags;
+	ఒకవేళ ((కీలకం->sk_కీలకం_handle = sshbuf_new()) == ఖాళీ ||
+	    (కీలకం->sk_reserved = sshbuf_new()) == ఖాళీ) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((key->sk_application = strdup(application)) == NULL) {
+	ఒకవేళ ((కీలకం->sk_application = strdup(application)) == ఖాళీ) {
 		error_f("strdup application failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_put(key->sk_key_handle, resp->key_handle,
-	    resp->key_handle_len)) != 0) {
+	ఒకవేళ ((r = sshbuf_put(కీలకం->sk_కీలకం_handle, resp->కీలకం_handle,
+	    resp->కీలకం_handle_len)) != 0) {
 		error_fr(r, "put key handle");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
 	r = 0;
-	*keyp = key;
-	key = NULL;
- out:
-	sshkey_free(key);
-	return r;
+	*keyp = కీలకం;
+	కీలకం = ఖాళీ;
+ బహిర్గతం:
+	sshkey_free(కీలకం);
+	తిరిగి r;
 }
 
-static int
-skerr_to_ssherr(int skerr)
+స్థిర పూర్ణాంకం
+skerr_గమ్యం_ssherr(పూర్ణాంకం skerr)
 {
-	switch (skerr) {
-	case SSH_SK_ERR_UNSUPPORTED:
-		return SSH_ERR_FEATURE_UNSUPPORTED;
-	case SSH_SK_ERR_PIN_REQUIRED:
-		return SSH_ERR_KEY_WRONG_PASSPHRASE;
-	case SSH_SK_ERR_DEVICE_NOT_FOUND:
-		return SSH_ERR_DEVICE_NOT_FOUND;
-	case SSH_SK_ERR_CREDENTIAL_EXISTS:
-		return SSH_ERR_KEY_BAD_PERMISSIONS;
-	case SSH_SK_ERR_GENERAL:
-	default:
-		return SSH_ERR_INVALID_FORMAT;
+	ఎంపిక (skerr) {
+	స్థితి SSH_SK_ERR_UNSUPPORTED:
+		తిరిగి SSH_ERR_FEATURE_UNSUPPORTED;
+	స్థితి SSH_SK_ERR_PIN_REQUIRED:
+		తిరిగి SSH_ERR_కీలకం_WRONG_PASSPHRASE;
+	స్థితి SSH_SK_ERR_DEVICE_NOT_దొరికింది:
+		తిరిగి SSH_ERR_DEVICE_NOT_దొరికింది;
+	స్థితి SSH_SK_ERR_CREDENTIAL_EXISTS:
+		తిరిగి SSH_ERR_కీలకం_BAD_PERMISSIONS;
+	స్థితి SSH_SK_ERR_GENERAL:
+	అప్రమేయ:
+		తిరిగి SSH_ERR_INVALID_FORMAT;
 	}
 }
 
-static void
-sshsk_free_options(struct sk_option **opts)
+స్థిర శూన్య
+sshsk_free_options(నిర్మాణం sk_option **opts)
 {
-	size_t i;
+	కొలత_t i;
 
-	if (opts == NULL)
-		return;
-	for (i = 0; opts[i] != NULL; i++) {
-		free(opts[i]->name);
-		free(opts[i]->value);
-		free(opts[i]);
+	ఒకవేళ (opts == ఖాళీ)
+		తిరిగి;
+	కొరకు (i = 0; opts[i] != ఖాళీ; i++) {
+		విడుదల(opts[i]->name);
+		విడుదల(opts[i]->విలువ);
+		విడుదల(opts[i]);
 	}
-	free(opts);
+	విడుదల(opts);
 }
 
-static int
-sshsk_add_option(struct sk_option ***optsp, size_t *noptsp,
-    const char *name, const char *value, uint8_t required)
+స్థిర పూర్ణాంకం
+sshsk_కూడు_option(నిర్మాణం sk_option ***optsp, కొలత_t *noptsp,
+    స్థిరరాశి అక్షరం *name, స్థిరరాశి అక్షరం *విలువ, uint8_t required)
 {
-	struct sk_option **opts = *optsp;
-	size_t nopts = *noptsp;
+	నిర్మాణం sk_option **opts = *optsp;
+	కొలత_t nopts = *noptsp;
 
-	if ((opts = recallocarray(opts, nopts, nopts + 2, /* extra for NULL */
-	    sizeof(*opts))) == NULL) {
+	ఒకవేళ ((opts = recallocarray(opts, nopts, nopts + 2, /* extra for NULL */
+	    పరిమాణం(*opts))) == ఖాళీ) {
 		error_f("array alloc failed");
-		return SSH_ERR_ALLOC_FAIL;
+		తిరిగి SSH_ERR_ALLOC_FAIL;
 	}
 	*optsp = opts;
 	*noptsp = nopts + 1;
-	if ((opts[nopts] = calloc(1, sizeof(**opts))) == NULL) {
+	ఒకవేళ ((opts[nopts] = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(**opts))) == ఖాళీ) {
 		error_f("alloc failed");
-		return SSH_ERR_ALLOC_FAIL;
+		తిరిగి SSH_ERR_ALLOC_FAIL;
 	}
-	if ((opts[nopts]->name = strdup(name)) == NULL ||
-	    (opts[nopts]->value = strdup(value)) == NULL) {
+	ఒకవేళ ((opts[nopts]->name = strdup(name)) == ఖాళీ ||
+	    (opts[nopts]->విలువ = strdup(విలువ)) == ఖాళీ) {
 		error_f("alloc failed");
-		return SSH_ERR_ALLOC_FAIL;
+		తిరిగి SSH_ERR_ALLOC_FAIL;
 	}
 	opts[nopts]->required = required;
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-make_options(const char *device, const char *user_id,
-    struct sk_option ***optsp)
+స్థిర పూర్ణాంకం
+make_options(స్థిరరాశి అక్షరం *device, స్థిరరాశి అక్షరం *user_id,
+    నిర్మాణం sk_option ***optsp)
 {
-	struct sk_option **opts = NULL;
-	size_t nopts = 0;
-	int r, ret = SSH_ERR_INTERNAL_ERROR;
+	నిర్మాణం sk_option **opts = ఖాళీ;
+	కొలత_t nopts = 0;
+	పూర్ణాంకం r, ret = SSH_ERR_అంతర్గత_ERROR;
 
-	if (device != NULL &&
-	    (r = sshsk_add_option(&opts, &nopts, "device", device, 0)) != 0) {
+	ఒకవేళ (device != ఖాళీ &&
+	    (r = sshsk_కూడు_option(&opts, &nopts, "device", device, 0)) != 0) {
 		ret = r;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (user_id != NULL &&
-	    (r = sshsk_add_option(&opts, &nopts, "user", user_id, 0)) != 0) {
+	ఒకవేళ (user_id != ఖాళీ &&
+	    (r = sshsk_కూడు_option(&opts, &nopts, "user", user_id, 0)) != 0) {
 		ret = r;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
 	*optsp = opts;
-	opts = NULL;
+	opts = ఖాళీ;
 	nopts = 0;
 	ret = 0;
- out:
+ బహిర్గతం:
 	sshsk_free_options(opts);
-	return ret;
+	తిరిగి ret;
 }
 
 
-static int
-fill_attestation_blob(const struct sk_enroll_response *resp,
-    struct sshbuf *attest)
+స్థిర పూర్ణాంకం
+fill_attestation_blob(స్థిరరాశి నిర్మాణం sk_enroll_response *resp,
+    నిర్మాణం sshbuf *attest)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	if (attest == NULL)
-		return 0; /* nothing to do */
-	if ((r = sshbuf_put_cstring(attest, "ssh-sk-attest-v01")) != 0 ||
+	ఒకవేళ (attest == ఖాళీ)
+		తిరిగి 0; /* nothing to do */
+	ఒకవేళ ((r = sshbuf_put_cstring(attest, "ssh-sk-attest-v01")) != 0 ||
 	    (r = sshbuf_put_string(attest,
 	    resp->attestation_cert, resp->attestation_cert_len)) != 0 ||
 	    (r = sshbuf_put_string(attest,
@@ -455,429 +455,429 @@ fill_attestation_blob(const struct sk_enroll_response *resp,
 	    (r = sshbuf_put_string(attest,
 	    resp->authdata, resp->authdata_len)) != 0 ||
 	    (r = sshbuf_put_u32(attest, 0)) != 0 || /* resvd flags */
-	    (r = sshbuf_put_string(attest, NULL, 0)) != 0 /* resvd */) {
+	    (r = sshbuf_put_string(attest, ఖాళీ, 0)) != 0 /* resvd */) {
 		error_fr(r, "compose");
-		return r;
+		తిరిగి r;
 	}
 	/* success */
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest)
+పూర్ణాంకం
+sshsk_enroll(పూర్ణాంకం type, స్థిరరాశి అక్షరం *provider_మార్గం, స్థిరరాశి అక్షరం *device,
+    స్థిరరాశి అక్షరం *application, స్థిరరాశి అక్షరం *userid, uint8_t flags,
+    స్థిరరాశి అక్షరం *pin, నిర్మాణం sshbuf *challenge_buf,
+    నిర్మాణం sshkey **keyp, నిర్మాణం sshbuf *attest)
 {
-	struct sshsk_provider *skp = NULL;
-	struct sshkey *key = NULL;
+	నిర్మాణం sshsk_provider *skp = ఖాళీ;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ;
 	u_char randchall[32];
-	const u_char *challenge;
-	size_t challenge_len;
-	struct sk_enroll_response *resp = NULL;
-	struct sk_option **opts = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int alg;
+	స్థిరరాశి u_char *challenge;
+	కొలత_t challenge_len;
+	నిర్మాణం sk_enroll_response *resp = ఖాళీ;
+	నిర్మాణం sk_option **opts = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
+	పూర్ణాంకం alg;
 
 	debug_f("provider \"%s\", device \"%s\", application \"%s\", "
 	    "userid \"%s\", flags 0x%02x, challenge len %zu%s",
-	    provider_path, device, application, userid, flags,
-	    challenge_buf == NULL ? 0 : sshbuf_len(challenge_buf),
-	    (pin != NULL && *pin != '\0') ? " with-pin" : "");
+	    provider_మార్గం, device, application, userid, flags,
+	    challenge_buf == ఖాళీ ? 0 : sshbuf_len(challenge_buf),
+	    (pin != ఖాళీ && *pin != '\0') ? " with-pin" : "");
 
-	*keyp = NULL;
-	if (attest)
+	*keyp = ఖాళీ;
+	ఒకవేళ (attest)
 		sshbuf_reset(attest);
 
-	if ((r = make_options(device, userid, &opts)) != 0)
-		goto out;
+	ఒకవేళ ((r = make_options(device, userid, &opts)) != 0)
+		వెళ్ళు బహిర్గతం;
 
-	switch (type) {
-#ifdef WITH_OPENSSL
-	case KEY_ECDSA_SK:
+	ఎంపిక (type) {
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థితి కీలకం_ECDSA_SK:
 		alg = SSH_SK_ECDSA;
-		break;
-#endif /* WITH_OPENSSL */
-	case KEY_ED25519_SK:
+		ఆపు;
+#అయితే_ముగింపు /* WITH_OPENSSL */
+	స్థితి కీలకం_ED25519_SK:
 		alg = SSH_SK_ED25519;
-		break;
-	default:
+		ఆపు;
+	అప్రమేయ:
 		error_f("unsupported key type");
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		r = SSH_ERR_INVALID_వాదం;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (provider_path == NULL) {
+	ఒకవేళ (provider_మార్గం == ఖాళీ) {
 		error_f("missing provider");
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		r = SSH_ERR_INVALID_వాదం;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (application == NULL || *application == '\0') {
+	ఒకవేళ (application == ఖాళీ || *application == '\0') {
 		error_f("missing application");
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		r = SSH_ERR_INVALID_వాదం;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (challenge_buf == NULL) {
+	ఒకవేళ (challenge_buf == ఖాళీ) {
 		debug_f("using random challenge");
-		arc4random_buf(randchall, sizeof(randchall));
+		arc4random_buf(randchall, పరిమాణం(randchall));
 		challenge = randchall;
-		challenge_len = sizeof(randchall);
-	} else if (sshbuf_len(challenge_buf) == 0) {
+		challenge_len = పరిమాణం(randchall);
+	} లేకపోతే ఒకవేళ (sshbuf_len(challenge_buf) == 0) {
 		error("Missing enrollment challenge");
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
-	} else {
+		r = SSH_ERR_INVALID_వాదం;
+		వెళ్ళు బహిర్గతం;
+	} లేకపోతే {
 		challenge = sshbuf_ptr(challenge_buf);
 		challenge_len = sshbuf_len(challenge_buf);
 		debug3_f("using explicit challenge len=%zd", challenge_len);
 	}
-	if ((skp = sshsk_open(provider_path)) == NULL) {
+	ఒకవేళ ((skp = sshsk_open(provider_మార్గం)) == ఖాళీ) {
 		r = SSH_ERR_INVALID_FORMAT; /* XXX sshsk_open return code? */
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* XXX validate flags? */
 	/* enroll key */
-	if ((r = skp->sk_enroll(alg, challenge, challenge_len, application,
+	ఒకవేళ ((r = skp->sk_enroll(alg, challenge, challenge_len, application,
 	    flags, pin, opts, &resp)) != 0) {
-		debug_f("provider \"%s\" failure %d", provider_path, r);
-		r = skerr_to_ssherr(r);
-		goto out;
+		debug_f("provider \"%s\" failure %d", provider_మార్గం, r);
+		r = skerr_గమ్యం_ssherr(r);
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if ((r = sshsk_key_from_response(alg, application, resp->flags,
-	    resp, &key)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshsk_కీలకం_from_response(alg, application, resp->flags,
+	    resp, &కీలకం)) != 0)
+		వెళ్ళు బహిర్గతం;
 
 	/* Optionally fill in the attestation information */
-	if ((r = fill_attestation_blob(resp, attest)) != 0)
-		goto out;
+	ఒకవేళ ((r = fill_attestation_blob(resp, attest)) != 0)
+		వెళ్ళు బహిర్గతం;
 
 	/* success */
-	*keyp = key;
-	key = NULL; /* transferred */
+	*keyp = కీలకం;
+	కీలకం = ఖాళీ; /* transferred */
 	r = 0;
- out:
+ బహిర్గతం:
 	sshsk_free_options(opts);
 	sshsk_free(skp);
-	sshkey_free(key);
+	sshkey_free(కీలకం);
 	sshsk_free_enroll_response(resp);
-	explicit_bzero(randchall, sizeof(randchall));
-	return r;
+	explicit_bzero(randchall, పరిమాణం(randchall));
+	తిరిగి r;
 }
 
-#ifdef WITH_OPENSSL
-static int
-sshsk_ecdsa_sig(struct sk_sign_response *resp, struct sshbuf *sig)
+#నిర్వచితమైతే WITH_OPENSSL
+స్థిర పూర్ణాంకం
+sshsk_ecdsa_sig(నిర్మాణం sk_sign_response *resp, నిర్మాణం sshbuf *sig)
 {
-	struct sshbuf *inner_sig = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	నిర్మాణం sshbuf *inner_sig = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 
 	/* Check response validity */
-	if (resp->sig_r == NULL || resp->sig_s == NULL) {
+	ఒకవేళ (resp->sig_r == ఖాళీ || resp->sig_s == ఖాళీ) {
 		error_f("sk_sign response invalid");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((inner_sig = sshbuf_new()) == NULL) {
+	ఒకవేళ ((inner_sig = sshbuf_new()) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* Prepare and append inner signature object */
-	if ((r = sshbuf_put_bignum2_bytes(inner_sig,
+	ఒకవేళ ((r = sshbuf_put_bignum2_బైట్లు(inner_sig,
 	    resp->sig_r, resp->sig_r_len)) != 0 ||
-	    (r = sshbuf_put_bignum2_bytes(inner_sig,
+	    (r = sshbuf_put_bignum2_బైట్లు(inner_sig,
 	    resp->sig_s, resp->sig_s_len)) != 0) {
 		error_fr(r, "compose inner");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_put_stringb(sig, inner_sig)) != 0 ||
+	ఒకవేళ ((r = sshbuf_put_stringb(sig, inner_sig)) != 0 ||
 	    (r = sshbuf_put_u8(sig, resp->flags)) != 0 ||
 	    (r = sshbuf_put_u32(sig, resp->counter)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-#ifdef DEBUG_SK
+#నిర్వచితమైతే DEBUG_SK
 	fprintf(stderr, "%s: sig_r:\n", __func__);
-	sshbuf_dump_data(resp->sig_r, resp->sig_r_len, stderr);
+	sshbuf_dump_దత్తాంశం(resp->sig_r, resp->sig_r_len, stderr);
 	fprintf(stderr, "%s: sig_s:\n", __func__);
-	sshbuf_dump_data(resp->sig_s, resp->sig_s_len, stderr);
+	sshbuf_dump_దత్తాంశం(resp->sig_s, resp->sig_s_len, stderr);
 	fprintf(stderr, "%s: inner:\n", __func__);
 	sshbuf_dump(inner_sig, stderr);
-#endif
+#అయితే_ముగింపు
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(inner_sig);
-	return r;
+	తిరిగి r;
 }
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */
 
-static int
-sshsk_ed25519_sig(struct sk_sign_response *resp, struct sshbuf *sig)
+స్థిర పూర్ణాంకం
+sshsk_ed25519_sig(నిర్మాణం sk_sign_response *resp, నిర్మాణం sshbuf *sig)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 
 	/* Check response validity */
-	if (resp->sig_r == NULL) {
+	ఒకవేళ (resp->sig_r == ఖాళీ) {
 		error_f("sk_sign response invalid");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_put_string(sig,
+	ఒకవేళ ((r = sshbuf_put_string(sig,
 	    resp->sig_r, resp->sig_r_len)) != 0 ||
 	    (r = sshbuf_put_u8(sig, resp->flags)) != 0 ||
 	    (r = sshbuf_put_u32(sig, resp->counter)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-#ifdef DEBUG_SK
+#నిర్వచితమైతే DEBUG_SK
 	fprintf(stderr, "%s: sig_r:\n", __func__);
-	sshbuf_dump_data(resp->sig_r, resp->sig_r_len, stderr);
-#endif
+	sshbuf_dump_దత్తాంశం(resp->sig_r, resp->sig_r_len, stderr);
+#అయితే_ముగింపు
 	r = 0;
- out:
-	return r;
+ బహిర్గతం:
+	తిరిగి r;
 }
 
-int
-sshsk_sign(const char *provider_path, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin)
+పూర్ణాంకం
+sshsk_sign(స్థిరరాశి అక్షరం *provider_మార్గం, నిర్మాణం sshkey *కీలకం,
+    u_char **sigp, కొలత_t *lenp, స్థిరరాశి u_char *దత్తాంశం, కొలత_t datalen,
+    u_int compat, స్థిరరాశి అక్షరం *pin)
 {
-	struct sshsk_provider *skp = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int type, alg;
-	struct sk_sign_response *resp = NULL;
-	struct sshbuf *inner_sig = NULL, *sig = NULL;
-	struct sk_option **opts = NULL;
+	నిర్మాణం sshsk_provider *skp = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
+	పూర్ణాంకం type, alg;
+	నిర్మాణం sk_sign_response *resp = ఖాళీ;
+	నిర్మాణం sshbuf *inner_sig = ఖాళీ, *sig = ఖాళీ;
+	నిర్మాణం sk_option **opts = ఖాళీ;
 
 	debug_f("provider \"%s\", key %s, flags 0x%02x%s",
-	    provider_path, sshkey_type(key), key->sk_flags,
-	    (pin != NULL && *pin != '\0') ? " with-pin" : "");
+	    provider_మార్గం, sshkey_type(కీలకం), కీలకం->sk_flags,
+	    (pin != ఖాళీ && *pin != '\0') ? " with-pin" : "");
 
-	if (sigp != NULL)
-		*sigp = NULL;
-	if (lenp != NULL)
+	ఒకవేళ (sigp != ఖాళీ)
+		*sigp = ఖాళీ;
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = 0;
-	type = sshkey_type_plain(key->type);
-	switch (type) {
-#ifdef WITH_OPENSSL
-	case KEY_ECDSA_SK:
+	type = sshkey_type_plain(కీలకం->type);
+	ఎంపిక (type) {
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థితి కీలకం_ECDSA_SK:
 		alg = SSH_SK_ECDSA;
-		break;
-#endif /* WITH_OPENSSL */
-	case KEY_ED25519_SK:
+		ఆపు;
+#అయితే_ముగింపు /* WITH_OPENSSL */
+	స్థితి కీలకం_ED25519_SK:
 		alg = SSH_SK_ED25519;
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		ఆపు;
+	అప్రమేయ:
+		తిరిగి SSH_ERR_INVALID_వాదం;
 	}
-	if (provider_path == NULL ||
-	    key->sk_key_handle == NULL ||
-	    key->sk_application == NULL || *key->sk_application == '\0') {
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+	ఒకవేళ (provider_మార్గం == ఖాళీ ||
+	    కీలకం->sk_కీలకం_handle == ఖాళీ ||
+	    కీలకం->sk_application == ఖాళీ || *కీలకం->sk_application == '\0') {
+		r = SSH_ERR_INVALID_వాదం;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((skp = sshsk_open(provider_path)) == NULL) {
+	ఒకవేళ ((skp = sshsk_open(provider_మార్గం)) == ఖాళీ) {
 		r = SSH_ERR_INVALID_FORMAT; /* XXX sshsk_open return code? */
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-#ifdef DEBUG_SK
+#నిర్వచితమైతే DEBUG_SK
 	fprintf(stderr, "%s: sk_flags = 0x%02x, sk_application = \"%s\"\n",
-	    __func__, key->sk_flags, key->sk_application);
+	    __func__, కీలకం->sk_flags, కీలకం->sk_application);
 	fprintf(stderr, "%s: sk_key_handle:\n", __func__);
-	sshbuf_dump(key->sk_key_handle, stderr);
-#endif
-	if ((r = skp->sk_sign(alg, data, datalen, key->sk_application,
-	    sshbuf_ptr(key->sk_key_handle), sshbuf_len(key->sk_key_handle),
-	    key->sk_flags, pin, opts, &resp)) != 0) {
+	sshbuf_dump(కీలకం->sk_కీలకం_handle, stderr);
+#అయితే_ముగింపు
+	ఒకవేళ ((r = skp->sk_sign(alg, దత్తాంశం, datalen, కీలకం->sk_application,
+	    sshbuf_ptr(కీలకం->sk_కీలకం_handle), sshbuf_len(కీలకం->sk_కీలకం_handle),
+	    కీలకం->sk_flags, pin, opts, &resp)) != 0) {
 		debug_f("sk_sign failed with code %d", r);
-		r = skerr_to_ssherr(r);
-		goto out;
+		r = skerr_గమ్యం_ssherr(r);
+		వెళ్ళు బహిర్గతం;
 	}
 	/* Assemble signature */
-	if ((sig = sshbuf_new()) == NULL) {
+	ఒకవేళ ((sig = sshbuf_new()) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_put_cstring(sig, sshkey_ssh_name_plain(key))) != 0) {
+	ఒకవేళ ((r = sshbuf_put_cstring(sig, sshkey_ssh_name_plain(కీలకం))) != 0) {
 		error_fr(r, "compose outer");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	switch (type) {
-#ifdef WITH_OPENSSL
-	case KEY_ECDSA_SK:
-		if ((r = sshsk_ecdsa_sig(resp, sig)) != 0)
-			goto out;
-		break;
-#endif /* WITH_OPENSSL */
-	case KEY_ED25519_SK:
-		if ((r = sshsk_ed25519_sig(resp, sig)) != 0)
-			goto out;
-		break;
+	ఎంపిక (type) {
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థితి కీలకం_ECDSA_SK:
+		ఒకవేళ ((r = sshsk_ecdsa_sig(resp, sig)) != 0)
+			వెళ్ళు బహిర్గతం;
+		ఆపు;
+#అయితే_ముగింపు /* WITH_OPENSSL */
+	స్థితి కీలకం_ED25519_SK:
+		ఒకవేళ ((r = sshsk_ed25519_sig(resp, sig)) != 0)
+			వెళ్ళు బహిర్గతం;
+		ఆపు;
 	}
-#ifdef DEBUG_SK
+#నిర్వచితమైతే DEBUG_SK
 	fprintf(stderr, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
 	    __func__, resp->flags, resp->counter);
 	fprintf(stderr, "%s: data to sign:\n", __func__);
-	sshbuf_dump_data(data, datalen, stderr);
+	sshbuf_dump_దత్తాంశం(దత్తాంశం, datalen, stderr);
 	fprintf(stderr, "%s: sigbuf:\n", __func__);
 	sshbuf_dump(sig, stderr);
-#endif
-	if (sigp != NULL) {
-		if ((*sigp = malloc(sshbuf_len(sig))) == NULL) {
+#అయితే_ముగింపు
+	ఒకవేళ (sigp != ఖాళీ) {
+		ఒకవేళ ((*sigp = జ్ఞాపకం_ఇవ్వు(sshbuf_len(sig))) == ఖాళీ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		memcpy(*sigp, sshbuf_ptr(sig), sshbuf_len(sig));
+		జ్ఞాపకం_నకలు(*sigp, sshbuf_ptr(sig), sshbuf_len(sig));
 	}
-	if (lenp != NULL)
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = sshbuf_len(sig);
 	/* success */
 	r = 0;
- out:
+ బహిర్గతం:
 	sshsk_free_options(opts);
 	sshsk_free(skp);
 	sshsk_free_sign_response(resp);
 	sshbuf_free(sig);
 	sshbuf_free(inner_sig);
-	return r;
+	తిరిగి r;
 }
 
-static void
-sshsk_free_sk_resident_keys(struct sk_resident_key **rks, size_t nrks)
+స్థిర శూన్య
+sshsk_free_sk_resident_కీలకాలు(నిర్మాణం sk_resident_కీలకం **rks, కొలత_t nrks)
 {
-	size_t i;
+	కొలత_t i;
 
-	if (nrks == 0 || rks == NULL)
-		return;
-	for (i = 0; i < nrks; i++) {
-		free(rks[i]->application);
+	ఒకవేళ (nrks == 0 || rks == ఖాళీ)
+		తిరిగి;
+	కొరకు (i = 0; i < nrks; i++) {
+		విడుదల(rks[i]->application);
 		freezero(rks[i]->user_id, rks[i]->user_id_len);
-		freezero(rks[i]->key.key_handle, rks[i]->key.key_handle_len);
-		freezero(rks[i]->key.public_key, rks[i]->key.public_key_len);
-		freezero(rks[i]->key.signature, rks[i]->key.signature_len);
-		freezero(rks[i]->key.attestation_cert,
-		    rks[i]->key.attestation_cert_len);
-		freezero(rks[i], sizeof(**rks));
+		freezero(rks[i]->కీలకం.కీలకం_handle, rks[i]->కీలకం.కీలకం_handle_len);
+		freezero(rks[i]->కీలకం.ప్రజా_కీలకం, rks[i]->కీలకం.ప్రజా_కీలకం_len);
+		freezero(rks[i]->కీలకం.signature, rks[i]->కీలకం.signature_len);
+		freezero(rks[i]->కీలకం.attestation_cert,
+		    rks[i]->కీలకం.attestation_cert_len);
+		freezero(rks[i], పరిమాణం(**rks));
 	}
-	free(rks);
+	విడుదల(rks);
 }
 
-static void
-sshsk_free_resident_key(struct sshsk_resident_key *srk)
+స్థిర శూన్య
+sshsk_free_resident_కీలకం(నిర్మాణం sshsk_resident_కీలకం *srk)
 {
-	if (srk == NULL)
-		return;
-	sshkey_free(srk->key);
+	ఒకవేళ (srk == ఖాళీ)
+		తిరిగి;
+	sshkey_free(srk->కీలకం);
 	freezero(srk->user_id, srk->user_id_len);
-	free(srk);
+	విడుదల(srk);
 }
 
 
-void
-sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks)
+శూన్య
+sshsk_free_resident_కీలకాలు(నిర్మాణం sshsk_resident_కీలకం **srks, కొలత_t nsrks)
 {
-	size_t i;
+	కొలత_t i;
 
-	if (srks == NULL || nsrks == 0)
-		return;
+	ఒకవేళ (srks == ఖాళీ || nsrks == 0)
+		తిరిగి;
 
-	for (i = 0; i < nsrks; i++)
-		sshsk_free_resident_key(srks[i]);
-	free(srks);
+	కొరకు (i = 0; i < nsrks; i++)
+		sshsk_free_resident_కీలకం(srks[i]);
+	విడుదల(srks);
 }
 
-int
-sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
-    size_t *nsrksp)
+పూర్ణాంకం
+sshsk_ఎక్కించు_resident(స్థిరరాశి అక్షరం *provider_మార్గం, స్థిరరాశి అక్షరం *device,
+    స్థిరరాశి అక్షరం *pin, u_int flags, నిర్మాణం sshsk_resident_కీలకం ***srksp,
+    కొలత_t *nsrksp)
 {
-	struct sshsk_provider *skp = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sk_resident_key **rks = NULL;
-	size_t i, nrks = 0, nsrks = 0;
-	struct sshkey *key = NULL;
-	struct sshsk_resident_key *srk = NULL, **srks = NULL, **tmp;
+	నిర్మాణం sshsk_provider *skp = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
+	నిర్మాణం sk_resident_కీలకం **rks = ఖాళీ;
+	కొలత_t i, nrks = 0, nsrks = 0;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ;
+	నిర్మాణం sshsk_resident_కీలకం *srk = ఖాళీ, **srks = ఖాళీ, **tmp;
 	uint8_t sk_flags;
-	struct sk_option **opts = NULL;
+	నిర్మాణం sk_option **opts = ఖాళీ;
 
-	debug_f("provider \"%s\"%s", provider_path,
-	    (pin != NULL && *pin != '\0') ? ", have-pin": "");
+	debug_f("provider \"%s\"%s", provider_మార్గం,
+	    (pin != ఖాళీ && *pin != '\0') ? ", have-pin": "");
 
-	if (srksp == NULL || nsrksp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	*srksp = NULL;
+	ఒకవేళ (srksp == ఖాళీ || nsrksp == ఖాళీ)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	*srksp = ఖాళీ;
 	*nsrksp = 0;
 
-	if ((r = make_options(device, NULL, &opts)) != 0)
-		goto out;
-	if ((skp = sshsk_open(provider_path)) == NULL) {
+	ఒకవేళ ((r = make_options(device, ఖాళీ, &opts)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((skp = sshsk_open(provider_మార్గం)) == ఖాళీ) {
 		r = SSH_ERR_INVALID_FORMAT; /* XXX sshsk_open return code? */
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = skp->sk_load_resident_keys(pin, opts, &rks, &nrks)) != 0) {
-		error("Provider \"%s\" returned failure %d", provider_path, r);
-		r = skerr_to_ssherr(r);
-		goto out;
+	ఒకవేళ ((r = skp->sk_ఎక్కించు_resident_కీలకాలు(pin, opts, &rks, &nrks)) != 0) {
+		error("Provider \"%s\" returned failure %d", provider_మార్గం, r);
+		r = skerr_గమ్యం_ssherr(r);
+		వెళ్ళు బహిర్గతం;
 	}
-	for (i = 0; i < nrks; i++) {
+	కొరకు (i = 0; i < nrks; i++) {
 		debug3_f("rk %zu: slot %zu, alg %d, app \"%s\", uidlen %zu",
-		    i, rks[i]->slot, rks[i]->alg, rks[i]->application,
+		    i, rks[i]->స్థానం, rks[i]->alg, rks[i]->application,
 		    rks[i]->user_id_len);
 		/* XXX need better filter here */
-		if (strncmp(rks[i]->application, "ssh:", 4) != 0)
-			continue;
-		switch (rks[i]->alg) {
-		case SSH_SK_ECDSA:
-		case SSH_SK_ED25519:
-			break;
-		default:
-			continue;
+		ఒకవేళ (అక్షరశ్రేణి_పోలిక(rks[i]->application, "ssh:", 4) != 0)
+			కొనసాగు;
+		ఎంపిక (rks[i]->alg) {
+		స్థితి SSH_SK_ECDSA:
+		స్థితి SSH_SK_ED25519:
+			ఆపు;
+		అప్రమేయ:
+			కొనసాగు;
 		}
-		sk_flags = SSH_SK_USER_PRESENCE_REQD|SSH_SK_RESIDENT_KEY;
-		if ((rks[i]->flags & SSH_SK_USER_VERIFICATION_REQD))
+		sk_flags = SSH_SK_USER_PRESENCE_REQD|SSH_SK_RESIDENT_కీలకం;
+		ఒకవేళ ((rks[i]->flags & SSH_SK_USER_VERIFICATION_REQD))
 			sk_flags |= SSH_SK_USER_VERIFICATION_REQD;
-		if ((r = sshsk_key_from_response(rks[i]->alg,
-		    rks[i]->application, sk_flags, &rks[i]->key, &key)) != 0)
-			goto out;
-		if ((srk = calloc(1, sizeof(*srk))) == NULL) {
+		ఒకవేళ ((r = sshsk_కీలకం_from_response(rks[i]->alg,
+		    rks[i]->application, sk_flags, &rks[i]->కీలకం, &కీలకం)) != 0)
+			వెళ్ళు బహిర్గతం;
+		ఒకవేళ ((srk = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*srk))) == ఖాళీ) {
 			error_f("calloc failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		srk->key = key;
-		key = NULL; /* transferred */
-		if ((srk->user_id = calloc(1, rks[i]->user_id_len)) == NULL) {
+		srk->కీలకం = కీలకం;
+		కీలకం = ఖాళీ; /* transferred */
+		ఒకవేళ ((srk->user_id = సున్నా_జ్ఞాపకం_ఇవ్వు(1, rks[i]->user_id_len)) == ఖాళీ) {
 			error_f("calloc failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		memcpy(srk->user_id, rks[i]->user_id, rks[i]->user_id_len);
+		జ్ఞాపకం_నకలు(srk->user_id, rks[i]->user_id, rks[i]->user_id_len);
 		srk->user_id_len = rks[i]->user_id_len;
-		if ((tmp = recallocarray(srks, nsrks, nsrks + 1,
-		    sizeof(*tmp))) == NULL) {
+		ఒకవేళ ((tmp = recallocarray(srks, nsrks, nsrks + 1,
+		    పరిమాణం(*tmp))) == ఖాళీ) {
 			error_f("recallocarray failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		srks = tmp;
 		srks[nsrks++] = srk;
-		srk = NULL;
+		srk = ఖాళీ;
 		/* XXX synthesise comment */
 	}
 	/* success */
 	*srksp = srks;
 	*nsrksp = nsrks;
-	srks = NULL;
+	srks = ఖాళీ;
 	nsrks = 0;
 	r = 0;
- out:
+ బహిర్గతం:
 	sshsk_free_options(opts);
 	sshsk_free(skp);
-	sshsk_free_sk_resident_keys(rks, nrks);
-	sshkey_free(key);
-	sshsk_free_resident_key(srk);
-	sshsk_free_resident_keys(srks, nsrks);
-	return r;
+	sshsk_free_sk_resident_కీలకాలు(rks, nrks);
+	sshkey_free(కీలకం);
+	sshsk_free_resident_కీలకం(srk);
+	sshsk_free_resident_కీలకాలు(srks, nsrks);
+	తిరిగి r;
 }
 
-#endif /* ENABLE_SK */
+#అయితే_ముగింపు /* ENABLE_SK */

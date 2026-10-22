@@ -22,23 +22,23 @@
 
 /* OPENBSD ORIGINAL: include/readpassphrase.h */
 
-#ifndef _READPASSPHRASE_H_
-#define _READPASSPHRASE_H_
+#నిర్వచితం_కాకపోతే _READPASSPHRASE_H_
+#నిర్వచించు _READPASSPHRASE_H_
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifndef HAVE_READPASSPHRASE
+#నిర్వచితం_కాకపోతే HAVE_READPASSPHRASE
 
-#define RPP_ECHO_OFF    0x00		/* Turn off echo (default). */
-#define RPP_ECHO_ON     0x01		/* Leave echo on. */
-#define RPP_REQUIRE_TTY 0x02		/* Fail if there is no tty. */
-#define RPP_FORCELOWER  0x04		/* Force input to lower case. */
-#define RPP_FORCEUPPER  0x08		/* Force input to upper case. */
-#define RPP_SEVENBIT    0x10		/* Strip the high bit from input. */
-#define RPP_STDIN       0x20		/* Read from stdin, not /dev/tty */
+#నిర్వచించు RPP_ECHO_OFF    0x00		/* Turn off echo (default). */
+#నిర్వచించు RPP_ECHO_ON     0x01		/* Leave echo on. */
+#నిర్వచించు RPP_REQUIRE_TTY 0x02		/* Fail if there is no tty. */
+#నిర్వచించు RPP_FORCELOWER  0x04		/* Force input to lower case. */
+#నిర్వచించు RPP_FORCEUPPER  0x08		/* Force input to upper case. */
+#నిర్వచించు RPP_SEVENBIT    0x10		/* Strip the high bit from input. */
+#నిర్వచించు RPP_STDIN       0x20		/* Read from stdin, not /dev/tty */
 
-char * readpassphrase(const char *, char *, size_t, int);
+అక్షరం * readpassphrase(స్థిరరాశి అక్షరం *, అక్షరం *, కొలత_t, పూర్ణాంకం);
 
-#endif /* HAVE_READPASSPHRASE */
+#అయితే_ముగింపు /* HAVE_READPASSPHRASE */
 
-#endif /* !_READPASSPHRASE_H_ */
+#అయితే_ముగింపు /* !_READPASSPHRASE_H_ */

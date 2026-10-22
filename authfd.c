@@ -35,166 +35,166 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/un.h>
-#include <sys/socket.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/un.h>
+#అన్తర్భావ <sys/socket.h>
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <errno.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <errno.h>
 
-#include "ssh.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "log.h"
-#include "misc.h"
-#include "atomicio.h"
-#include "ssherr.h"
-#include "xmalloc.h"
+#అన్తర్భావ "ssh.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "authfd.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "atomicio.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "xmalloc.h"
 
-#define MAX_AGENT_IDENTITIES	2048		/* Max keys in agent reply */
-#define MAX_AGENT_REPLY_LEN	(256 * 1024)	/* Max bytes in agent reply */
+#నిర్వచించు MAX_AGENT_IDENTITIES	2048		/* Max keys in agent reply */
+#నిర్వచించు MAX_AGENT_జవాబు_LEN	(256 * 1024)	/* Max bytes in agent reply */
 
 /* macro to check for "agent failure" message */
-#define agent_failed(x) \
+#నిర్వచించు agent_failed(x) \
     ((x == SSH_AGENT_FAILURE) || \
     (x == SSH_AGENT_EXTENSION_FAILURE) || \
     (x == SSH_COM_AGENT2_FAILURE) || \
     (x == SSH2_AGENT_FAILURE))
 
 /* Convert success/failure response from agent to a err.h status */
-static int
-decode_reply(u_char type)
+స్థిర పూర్ణాంకం
+decode_జవాబు(u_char type)
 {
-	if (agent_failed(type))
-		return SSH_ERR_AGENT_FAILURE;
-	else if (type == SSH_AGENT_SUCCESS)
-		return 0;
-	else
-		return SSH_ERR_INVALID_FORMAT;
+	ఒకవేళ (agent_failed(type))
+		తిరిగి SSH_ERR_AGENT_FAILURE;
+	లేకపోతే ఒకవేళ (type == SSH_AGENT_SUCCESS)
+		తిరిగి 0;
+	లేకపోతే
+		తిరిగి SSH_ERR_INVALID_FORMAT;
 }
 
 /*
  * Opens an authentication socket at the provided path and stores the file
  * descriptor in fdp. Returns 0 on success and an error on failure.
  */
-int
-ssh_get_authentication_socket_path(const char *authsocket, int *fdp)
+పూర్ణాంకం
+ssh_get_authentication_socket_మార్గం(స్థిరరాశి అక్షరం *authsocket, పూర్ణాంకం *fdp)
 {
-	int sock, oerrno;
-	struct sockaddr_un sunaddr;
+	పూర్ణాంకం sock, oerrno;
+	నిర్మాణం sockaddr_un sunaddr;
 
 	debug3_f("path '%s'", authsocket);
-	memset(&sunaddr, 0, sizeof(sunaddr));
+	memset(&sunaddr, 0, పరిమాణం(sunaddr));
 	sunaddr.sun_family = AF_UNIX;
-	strlcpy(sunaddr.sun_path, authsocket, sizeof(sunaddr.sun_path));
+	strlcpy(sunaddr.sun_మార్గం, authsocket, పరిమాణం(sunaddr.sun_మార్గం));
 
-	if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	ఒకవేళ ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
+		తిరిగి SSH_ERR_SYSTEM_ERROR;
 
 	/* close on exec */
-	if (fcntl(sock, F_SETFD, FD_CLOEXEC) == -1 ||
-	    connect(sock, (struct sockaddr *)&sunaddr, sizeof(sunaddr)) == -1) {
+	ఒకవేళ (fcntl(sock, F_SETFD, FD_CLOEXEC) == -1 ||
+	    connect(sock, (నిర్మాణం sockaddr *)&sunaddr, పరిమాణం(sunaddr)) == -1) {
 		oerrno = errno;
 		close(sock);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		తిరిగి SSH_ERR_SYSTEM_ERROR;
 	}
-	if (fdp != NULL)
+	ఒకవేళ (fdp != ఖాళీ)
 		*fdp = sock;
-	else
+	లేకపోతే
 		close(sock);
-	return 0;
+	తిరిగి 0;
 }
 
 /*
  * Opens the default authentication socket and stores the file descriptor in
  * fdp. Returns 0 on success and an error on failure.
  */
-int
-ssh_get_authentication_socket(int *fdp)
+పూర్ణాంకం
+ssh_get_authentication_socket(పూర్ణాంకం *fdp)
 {
-	const char *authsocket;
+	స్థిరరాశి అక్షరం *authsocket;
 
-	if (fdp != NULL)
+	ఒకవేళ (fdp != ఖాళీ)
 		*fdp = -1;
 
 	authsocket = getenv(SSH_AUTHSOCKET_ENV_NAME);
-	if (authsocket == NULL || *authsocket == '\0')
-		return SSH_ERR_AGENT_NOT_PRESENT;
+	ఒకవేళ (authsocket == ఖాళీ || *authsocket == '\0')
+		తిరిగి SSH_ERR_AGENT_NOT_PRESENT;
 
-	return ssh_get_authentication_socket_path(authsocket, fdp);
+	తిరిగి ssh_get_authentication_socket_మార్గం(authsocket, fdp);
 }
 
 /* Communicate with agent: send request and read reply */
-static int
-ssh_request_reply(int sock, struct sshbuf *request, struct sshbuf *reply)
+స్థిర పూర్ణాంకం
+ssh_request_జవాబు(పూర్ణాంకం sock, నిర్మాణం sshbuf *request, నిర్మాణం sshbuf *జవాబు)
 {
-	int r;
-	size_t l, len;
-	char buf[1024];
+	పూర్ణాంకం r;
+	కొలత_t l, len;
+	అక్షరం buf[1024];
 
 	/* Get the length of the message, and format it in the buffer. */
 	len = sshbuf_len(request);
 	POKE_U32(buf, len);
 
 	/* Send the length and then the packet to the agent. */
-	if (atomicio(vwrite, sock, buf, 4) != 4 ||
+	ఒకవేళ (atomicio(vwrite, sock, buf, 4) != 4 ||
 	    atomicio(vwrite, sock, sshbuf_mutable_ptr(request),
 	    sshbuf_len(request)) != sshbuf_len(request))
-		return SSH_ERR_AGENT_COMMUNICATION;
+		తిరిగి SSH_ERR_AGENT_COMMUNICATION;
 	/*
 	 * Wait for response from the agent.  First read the length of the
 	 * response packet.
 	 */
-	if (atomicio(read, sock, buf, 4) != 4)
-	    return SSH_ERR_AGENT_COMMUNICATION;
+	ఒకవేళ (atomicio(పఠ, sock, buf, 4) != 4)
+	    తిరిగి SSH_ERR_AGENT_COMMUNICATION;
 
 	/* Extract the length, and check it for sanity. */
 	len = PEEK_U32(buf);
-	if (len > MAX_AGENT_REPLY_LEN)
-		return SSH_ERR_INVALID_FORMAT;
+	ఒకవేళ (len > MAX_AGENT_జవాబు_LEN)
+		తిరిగి SSH_ERR_INVALID_FORMAT;
 
 	/* Read the rest of the response in to the buffer. */
-	sshbuf_reset(reply);
-	while (len > 0) {
+	sshbuf_reset(జవాబు);
+	అయితే (len > 0) {
 		l = len;
-		if (l > sizeof(buf))
-			l = sizeof(buf);
-		if (atomicio(read, sock, buf, l) != l)
-			return SSH_ERR_AGENT_COMMUNICATION;
-		if ((r = sshbuf_put(reply, buf, l)) != 0)
-			return r;
+		ఒకవేళ (l > పరిమాణం(buf))
+			l = పరిమాణం(buf);
+		ఒకవేళ (atomicio(పఠ, sock, buf, l) != l)
+			తిరిగి SSH_ERR_AGENT_COMMUNICATION;
+		ఒకవేళ ((r = sshbuf_put(జవాబు, buf, l)) != 0)
+			తిరిగి r;
 		len -= l;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 /* Communicate with agent: sent request, read and decode status reply */
-static int
-ssh_request_reply_decode(int sock, struct sshbuf *request)
+స్థిర పూర్ణాంకం
+ssh_request_జవాబు_decode(పూర్ణాంకం sock, నిర్మాణం sshbuf *request)
 {
-	struct sshbuf *reply;
-	int r;
+	నిర్మాణం sshbuf *జవాబు;
+	పూర్ణాంకం r;
 	u_char type;
 
-	if ((reply = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = ssh_request_reply(sock, request, reply)) != 0 ||
-	    (r = sshbuf_get_u8(reply, &type)) != 0 ||
-	    (r = decode_reply(type)) != 0)
-		goto out;
+	ఒకవేళ ((జవాబు = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = ssh_request_జవాబు(sock, request, జవాబు)) != 0 ||
+	    (r = sshbuf_get_u8(జవాబు, &type)) != 0 ||
+	    (r = decode_జవాబు(type)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
- out:
-	sshbuf_free(reply);
-	return r;
+ బహిర్గతం:
+	sshbuf_free(జవాబు);
+	తిరిగి r;
 }
 
 /*
@@ -202,177 +202,177 @@ ssh_request_reply_decode(int sock, struct sshbuf *request)
  * obtained).  The argument must have been returned by
  * ssh_get_authentication_socket().
  */
-void
-ssh_close_authentication_socket(int sock)
+శూన్య
+ssh_close_authentication_socket(పూర్ణాంకం sock)
 {
-	if (sock != -1 && getenv(SSH_AUTHSOCKET_ENV_NAME) != NULL)
+	ఒకవేళ (sock != -1 && getenv(SSH_AUTHSOCKET_ENV_NAME) != ఖాళీ)
 		close(sock);
 }
 
 /* Lock/unlock agent */
-int
-ssh_lock_agent(int sock, int lock, const char *password)
+పూర్ణాంకం
+ssh_తాళం_agent(పూర్ణాంకం sock, పూర్ణాంకం తాళం, స్థిరరాశి అక్షరం *password)
 {
-	int r;
-	u_char type = lock ? SSH_AGENTC_LOCK : SSH_AGENTC_UNLOCK;
-	struct sshbuf *msg;
+	పూర్ణాంకం r;
+	u_char type = తాళం ? SSH_AGENTC_తాళం : SSH_AGENTC_UNLOCK;
+	నిర్మాణం sshbuf *సందేశం;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, password)) != 0 ||
-	    (r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, type)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, password)) != 0 ||
+	    (r = ssh_request_జవాబు_decode(sock, సందేశం)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
- out:
-	sshbuf_free(msg);
-	return r;
+ బహిర్గతం:
+	sshbuf_free(సందేశం);
+	తిరిగి r;
 }
 
 
-static int
-deserialise_identity2(struct sshbuf *ids, struct sshkey **keyp, char **commentp)
+స్థిర పూర్ణాంకం
+deserialise_identity2(నిర్మాణం sshbuf *ids, నిర్మాణం sshkey **keyp, అక్షరం **commentp)
 {
-	int r;
-	char *comment = NULL;
-	const u_char *blob;
-	size_t blen;
+	పూర్ణాంకం r;
+	అక్షరం *comment = ఖాళీ;
+	స్థిరరాశి u_char *blob;
+	కొలత_t blen;
 
-	if ((r = sshbuf_get_string_direct(ids, &blob, &blen)) != 0 ||
-	    (r = sshbuf_get_cstring(ids, &comment, NULL)) != 0)
-		goto out;
-	if ((r = sshkey_from_blob(blob, blen, keyp)) != 0)
-		goto out;
-	if (commentp != NULL) {
+	ఒకవేళ ((r = sshbuf_get_string_ప్రత్యక్ష(ids, &blob, &blen)) != 0 ||
+	    (r = sshbuf_get_cstring(ids, &comment, ఖాళీ)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = sshkey_from_blob(blob, blen, keyp)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (commentp != ఖాళీ) {
 		*commentp = comment;
-		comment = NULL;
+		comment = ఖాళీ;
 	}
 	r = 0;
- out:
-	free(comment);
-	return r;
+ బహిర్గతం:
+	విడుదల(comment);
+	తిరిగి r;
 }
 
 /*
  * Fetch list of identities held by the agent.
  */
-int
-ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp)
+పూర్ణాంకం
+ssh_fetch_identitylist(పూర్ణాంకం sock, నిర్మాణం ssh_identitylist **idlp)
 {
 	u_char type;
-	uint32_t num, i;
-	struct sshbuf *msg;
-	struct ssh_identitylist *idl = NULL;
-	int r;
+	uint32_t అంకె, i;
+	నిర్మాణం sshbuf *సందేశం;
+	నిర్మాణం ssh_identitylist *idl = ఖాళీ;
+	పూర్ణాంకం r;
 
 	/*
 	 * Send a message to the agent requesting for a list of the
 	 * identities it can represent.
 	 */
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENTC_REQUEST_IDENTITIES)) != 0)
-		goto out;
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_AGENTC_REQUEST_IDENTITIES)) != 0)
+		వెళ్ళు బహిర్గతం;
 
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
-		goto out;
+	ఒకవేళ ((r = ssh_request_జవాబు(sock, సందేశం, సందేశం)) != 0)
+		వెళ్ళు బహిర్గతం;
 
 	/* Get message type, and verify that we got a proper answer. */
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
-		goto out;
-	if (agent_failed(type)) {
+	ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
-		goto out;
-	} else if (type != SSH2_AGENT_IDENTITIES_ANSWER) {
+		వెళ్ళు బహిర్గతం;
+	} లేకపోతే ఒకవేళ (type != SSH2_AGENT_IDENTITIES_ANSWER) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Get the number of entries in the response and check it for sanity. */
-	if ((r = sshbuf_get_u32(msg, &num)) != 0)
-		goto out;
-	if (num > MAX_AGENT_IDENTITIES) {
+	ఒకవేళ ((r = sshbuf_get_u32(సందేశం, &అంకె)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (అంకె > MAX_AGENT_IDENTITIES) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (num == 0) {
+	ఒకవేళ (అంకె == 0) {
 		r = SSH_ERR_AGENT_NO_IDENTITIES;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Deserialise the response into a list of keys/comments */
-	if ((idl = calloc(1, sizeof(*idl))) == NULL ||
-	    (idl->keys = calloc(num, sizeof(*idl->keys))) == NULL ||
-	    (idl->comments = calloc(num, sizeof(*idl->comments))) == NULL) {
+	ఒకవేళ ((idl = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*idl))) == ఖాళీ ||
+	    (idl->కీలకాలు = సున్నా_జ్ఞాపకం_ఇవ్వు(అంకె, పరిమాణం(*idl->కీలకాలు))) == ఖాళీ ||
+	    (idl->comments = సున్నా_జ్ఞాపకం_ఇవ్వు(అంకె, పరిమాణం(*idl->comments))) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	for (i = 0; i < num;) {
-		if ((r = deserialise_identity2(msg, &(idl->keys[i]),
+	కొరకు (i = 0; i < అంకె;) {
+		ఒకవేళ ((r = deserialise_identity2(సందేశం, &(idl->కీలకాలు[i]),
 		    &(idl->comments[i]))) != 0) {
-			if (r == SSH_ERR_KEY_TYPE_UNKNOWN) {
+			ఒకవేళ (r == SSH_ERR_కీలకం_TYPE_UNKNOWN) {
 				/* Gracefully skip unknown key types */
-				num--;
-				continue;
-			} else
-				goto out;
+				అంకె--;
+				కొనసాగు;
+			} లేకపోతే
+				వెళ్ళు బహిర్గతం;
 		}
 		i++;
 	}
-	idl->nkeys = num;
+	idl->nkeys = అంకె;
 	*idlp = idl;
-	idl = NULL;
+	idl = ఖాళీ;
 	r = 0;
- out:
-	sshbuf_free(msg);
-	if (idl != NULL)
+ బహిర్గతం:
+	sshbuf_free(సందేశం);
+	ఒకవేళ (idl != ఖాళీ)
 		ssh_free_identitylist(idl);
-	return r;
+	తిరిగి r;
 }
 
-void
-ssh_free_identitylist(struct ssh_identitylist *idl)
+శూన్య
+ssh_free_identitylist(నిర్మాణం ssh_identitylist *idl)
 {
-	size_t i;
+	కొలత_t i;
 
-	if (idl == NULL)
-		return;
-	for (i = 0; i < idl->nkeys; i++) {
-		if (idl->keys != NULL)
-			sshkey_free(idl->keys[i]);
-		if (idl->comments != NULL)
-			free(idl->comments[i]);
+	ఒకవేళ (idl == ఖాళీ)
+		తిరిగి;
+	కొరకు (i = 0; i < idl->nkeys; i++) {
+		ఒకవేళ (idl->కీలకాలు != ఖాళీ)
+			sshkey_free(idl->కీలకాలు[i]);
+		ఒకవేళ (idl->comments != ఖాళీ)
+			విడుదల(idl->comments[i]);
 	}
-	free(idl->keys);
-	free(idl->comments);
-	free(idl);
+	విడుదల(idl->కీలకాలు);
+	విడుదల(idl->comments);
+	విడుదల(idl);
 }
 
 /*
  * Check if the ssh agent has a given key.
  * Returns 0 if found, or a negative SSH_ERR_* error code on failure.
  */
-int
-ssh_agent_has_key(int sock, const struct sshkey *key)
+పూర్ణాంకం
+ssh_agent_has_కీలకం(పూర్ణాంకం sock, స్థిరరాశి నిర్మాణం sshkey *కీలకం)
 {
-	int r, ret = SSH_ERR_KEY_NOT_FOUND;
-	size_t i;
-	struct ssh_identitylist *idlist = NULL;
+	పూర్ణాంకం r, ret = SSH_ERR_కీలకం_NOT_దొరికింది;
+	కొలత_t i;
+	నిర్మాణం ssh_identitylist *idlist = ఖాళీ;
 
-	if ((r = ssh_fetch_identitylist(sock, &idlist)) != 0) {
-		return r;
+	ఒకవేళ ((r = ssh_fetch_identitylist(sock, &idlist)) != 0) {
+		తిరిగి r;
 	}
 
-	for (i = 0; i < idlist->nkeys; i++) {
-		if (sshkey_equal_public(idlist->keys[i], key)) {
+	కొరకు (i = 0; i < idlist->nkeys; i++) {
+		ఒకవేళ (sshkey_equal_ప్రజా(idlist->కీలకాలు[i], కీలకం)) {
 			ret = 0;
-			break;
+			ఆపు;
 		}
 	}
 
 	ssh_free_identitylist(idlist);
-	return ret;
+	తిరిగి ret;
 }
 
 /*
@@ -384,58 +384,58 @@ ssh_agent_has_key(int sock, const struct sshkey *key)
 
 
 /* encode signature algorithm in flag bits, so we can keep the msg format */
-static u_int
-agent_encode_alg(const struct sshkey *key, const char *alg)
+స్థిర u_int
+agent_encode_alg(స్థిరరాశి నిర్మాణం sshkey *కీలకం, స్థిరరాశి అక్షరం *alg)
 {
-	if (alg != NULL && sshkey_type_plain(key->type) == KEY_RSA) {
-		if (strcmp(alg, "rsa-sha2-256") == 0 ||
+	ఒకవేళ (alg != ఖాళీ && sshkey_type_plain(కీలకం->type) == కీలకం_RSA) {
+		ఒకవేళ (strcmp(alg, "rsa-sha2-256") == 0 ||
 		    strcmp(alg, "rsa-sha2-256-cert-v01@openssh.com") == 0)
-			return SSH_AGENT_RSA_SHA2_256;
-		if (strcmp(alg, "rsa-sha2-512") == 0 ||
+			తిరిగి SSH_AGENT_RSA_SHA2_256;
+		ఒకవేళ (strcmp(alg, "rsa-sha2-512") == 0 ||
 		    strcmp(alg, "rsa-sha2-512-cert-v01@openssh.com") == 0)
-			return SSH_AGENT_RSA_SHA2_512;
+			తిరిగి SSH_AGENT_RSA_SHA2_512;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 /* ask agent to sign data, returns err.h code on error, 0 on success */
-int
-ssh_agent_sign(int sock, const struct sshkey *key,
-    u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen, const char *alg, u_int compat)
+పూర్ణాంకం
+ssh_agent_sign(పూర్ణాంకం sock, స్థిరరాశి నిర్మాణం sshkey *కీలకం,
+    u_char **sigp, కొలత_t *lenp,
+    స్థిరరాశి u_char *దత్తాంశం, కొలత_t datalen, స్థిరరాశి అక్షరం *alg, u_int compat)
 {
-	struct sshbuf *msg;
-	u_char *sig = NULL, type = 0;
-	size_t len = 0;
+	నిర్మాణం sshbuf *సందేశం;
+	u_char *sig = ఖాళీ, type = 0;
+	కొలత_t len = 0;
 	u_int flags = 0;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 
-	*sigp = NULL;
+	*sigp = ఖాళీ;
 	*lenp = 0;
 
-	if (datalen > SSH_KEY_MAX_SIGN_DATA_SIZE)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	flags |= agent_encode_alg(key, alg);
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
-	    (r = sshkey_puts(key, msg)) != 0 ||
-	    (r = sshbuf_put_string(msg, data, datalen)) != 0 ||
-	    (r = sshbuf_put_u32(msg, flags)) != 0)
-		goto out;
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
-		goto out;
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
-		goto out;
-	if (agent_failed(type)) {
+	ఒకవేళ (datalen > SSH_కీలకం_MAX_SIGN_దత్తాంశం_కొలత)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	flags |= agent_encode_alg(కీలకం, alg);
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
+	    (r = sshkey_puts(కీలకం, సందేశం)) != 0 ||
+	    (r = sshbuf_put_string(సందేశం, దత్తాంశం, datalen)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, flags)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = ssh_request_జవాబు(sock, సందేశం, సందేశం)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
-		goto out;
-	} else if (type != SSH2_AGENT_SIGN_RESPONSE) {
+		వెళ్ళు బహిర్గతం;
+	} లేకపోతే ఒకవేళ (type != SSH2_AGENT_SIGN_RESPONSE) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_get_string(msg, &sig, &len)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshbuf_get_string(సందేశం, &sig, &len)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/*
 	 * Check what we actually got back from the agent, in case it returned
 	 * an incorrect RSA signature algorithm (e.g. "ssh-rsa" (RSA/SHA1) vs.
@@ -443,276 +443,276 @@ ssh_agent_sign(int sock, const struct sshkey *key,
 	 * We don't do this for FIDO signatures as webauthn vs plain are just
 	 * different signature formats and not entirely different algorithms.
 	 */
-	if (!sshkey_is_sk(key) &&
+	ఒకవేళ (!sshkey_is_sk(కీలకం) &&
 	    (r = sshkey_check_sigtype(sig, len, alg)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	*sigp = sig;
 	*lenp = len;
-	sig = NULL;
+	sig = ఖాళీ;
 	len = 0;
 	r = 0;
- out:
+ బహిర్గతం:
 	freezero(sig, len);
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(సందేశం);
+	తిరిగి r;
 }
 
 /* Encode key for a message to the agent. */
 
-static int
-encode_dest_constraint_hop(struct sshbuf *m,
-    const struct dest_constraint_hop *dch)
+స్థిర పూర్ణాంకం
+encode_dest_constraint_hop(నిర్మాణం sshbuf *m,
+    స్థిరరాశి నిర్మాణం dest_constraint_hop *dch)
 {
-	struct sshbuf *b;
+	నిర్మాణం sshbuf *b;
 	u_int i;
-	int r;
+	పూర్ణాంకం r;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_cstring(b, dch->user)) != 0 ||
+	ఒకవేళ ((b = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshbuf_put_cstring(b, dch->user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, dch->hostname)) != 0 ||
-	    (r = sshbuf_put_string(b, NULL, 0)) != 0) /* reserved */
-		goto out;
-	for (i = 0; i < dch->nkeys; i++) {
-		if ((r = sshkey_puts(dch->keys[i], b)) != 0 ||
-		    (r = sshbuf_put_u8(b, dch->key_is_ca[i] != 0)) != 0)
-			goto out;
+	    (r = sshbuf_put_string(b, ఖాళీ, 0)) != 0) /* reserved */
+		వెళ్ళు బహిర్గతం;
+	కొరకు (i = 0; i < dch->nkeys; i++) {
+		ఒకవేళ ((r = sshkey_puts(dch->కీలకాలు[i], b)) != 0 ||
+		    (r = sshbuf_put_u8(b, dch->కీలకం_is_ca[i] != 0)) != 0)
+			వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_put_stringb(m, b)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshbuf_put_stringb(m, b)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
-	return r;
+	తిరిగి r;
 }
 
-static int
-encode_dest_constraint(struct sshbuf *m, const struct dest_constraint *dc)
+స్థిర పూర్ణాంకం
+encode_dest_constraint(నిర్మాణం sshbuf *m, స్థిరరాశి నిర్మాణం dest_constraint *dc)
 {
-	struct sshbuf *b;
-	int r;
+	నిర్మాణం sshbuf *b;
+	పూర్ణాంకం r;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = encode_dest_constraint_hop(b, &dc->from)) != 0 ||
-	    (r = encode_dest_constraint_hop(b, &dc->to)) != 0 ||
-	    (r = sshbuf_put_string(b, NULL, 0)) != 0) /* reserved */
-		goto out;
-	if ((r = sshbuf_put_stringb(m, b)) != 0)
-		goto out;
+	ఒకవేళ ((b = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = encode_dest_constraint_hop(b, &dc->from)) != 0 ||
+	    (r = encode_dest_constraint_hop(b, &dc->గమ్యం)) != 0 ||
+	    (r = sshbuf_put_string(b, ఖాళీ, 0)) != 0) /* reserved */
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = sshbuf_put_stringb(m, b)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
-	return r;
+	తిరిగి r;
 }
 
-static int
-encode_constraints(struct sshbuf *m, u_int life, u_int confirm,
-    const char *provider,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints,
-    int cert_only, struct sshkey **certs, size_t ncerts)
+స్థిర పూర్ణాంకం
+encode_constraints(నిర్మాణం sshbuf *m, u_int life, u_int confirm,
+    స్థిరరాశి అక్షరం *provider,
+    నిర్మాణం dest_constraint **dest_constraints, కొలత_t ndest_constraints,
+    పూర్ణాంకం cert_only, నిర్మాణం sshkey **certs, కొలత_t ncerts)
 {
-	int r;
-	struct sshbuf *b = NULL;
-	size_t i;
+	పూర్ణాంకం r;
+	నిర్మాణం sshbuf *b = ఖాళీ;
+	కొలత_t i;
 
-	if (life != 0) {
-		if ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_LIFETIME)) != 0 ||
+	ఒకవేళ (life != 0) {
+		ఒకవేళ ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_LIFETIME)) != 0 ||
 		    (r = sshbuf_put_u32(m, life)) != 0)
-			goto out;
+			వెళ్ళు బహిర్గతం;
 	}
-	if (confirm != 0) {
-		if ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_CONFIRM)) != 0)
-			goto out;
+	ఒకవేళ (confirm != 0) {
+		ఒకవేళ ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_CONFIRM)) != 0)
+			వెళ్ళు బహిర్గతం;
 	}
-	if (provider != NULL) {
-		if ((r = sshbuf_put_u8(m,
+	ఒకవేళ (provider != ఖాళీ) {
+		ఒకవేళ ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "sk-provider@openssh.com")) != 0 ||
 		    (r = sshbuf_put_cstring(m, provider)) != 0)
-			goto out;
+			వెళ్ళు బహిర్గతం;
 	}
-	if (dest_constraints != NULL && ndest_constraints > 0) {
-		if ((b = sshbuf_new()) == NULL) {
+	ఒకవేళ (dest_constraints != ఖాళీ && ndest_constraints > 0) {
+		ఒకవేళ ((b = sshbuf_new()) == ఖాళీ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		for (i = 0; i < ndest_constraints; i++) {
-			if ((r = encode_dest_constraint(b,
+		కొరకు (i = 0; i < ndest_constraints; i++) {
+			ఒకవేళ ((r = encode_dest_constraint(b,
 			    dest_constraints[i])) != 0)
-				goto out;
+				వెళ్ళు బహిర్గతం;
 		}
-		if ((r = sshbuf_put_u8(m,
+		ఒకవేళ ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "restrict-destination-v00@openssh.com")) != 0 ||
 		    (r = sshbuf_put_stringb(m, b)) != 0)
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		sshbuf_free(b);
-		b = NULL;
+		b = ఖాళీ;
 	}
-	if (ncerts != 0) {
-		if ((b = sshbuf_new()) == NULL) {
+	ఒకవేళ (ncerts != 0) {
+		ఒకవేళ ((b = sshbuf_new()) == ఖాళీ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		for (i = 0; i < ncerts; i++) {
-			if ((r = sshkey_puts(certs[i], b)) != 0)
-				goto out;
+		కొరకు (i = 0; i < ncerts; i++) {
+			ఒకవేళ ((r = sshkey_puts(certs[i], b)) != 0)
+				వెళ్ళు బహిర్గతం;
 		}
-		if ((r = sshbuf_put_u8(m,
+		ఒకవేళ ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "associated-certs-v00@openssh.com")) != 0 ||
 		    (r = sshbuf_put_u8(m, cert_only != 0)) != 0 ||
 		    (r = sshbuf_put_stringb(m, b)) != 0)
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		sshbuf_free(b);
-		b = NULL;
+		b = ఖాళీ;
 	}
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
-	return r;
+	తిరిగి r;
 }
 
 /*
  * Adds an identity to the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_add_identity_constrained(int sock, struct sshkey *key,
-    const char *comment, u_int life, u_int confirm,
-    const char *provider, struct dest_constraint **dest_constraints,
-    size_t ndest_constraints)
+పూర్ణాంకం
+ssh_కూడు_తటస్థం_constrained(పూర్ణాంకం sock, నిర్మాణం sshkey *కీలకం,
+    స్థిరరాశి అక్షరం *comment, u_int life, u_int confirm,
+    స్థిరరాశి అక్షరం *provider, నిర్మాణం dest_constraint **dest_constraints,
+    కొలత_t ndest_constraints)
 {
-	struct sshbuf *msg;
-	int r, constrained = (life || confirm || provider || dest_constraints);
+	నిర్మాణం sshbuf *సందేశం;
+	పూర్ణాంకం r, constrained = (life || confirm || provider || dest_constraints);
 	u_char type;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
 
-	switch (key->type) {
-#ifdef WITH_OPENSSL
-	case KEY_RSA:
-	case KEY_RSA_CERT:
-	case KEY_ECDSA:
-	case KEY_ECDSA_CERT:
-	case KEY_ECDSA_SK:
-	case KEY_ECDSA_SK_CERT:
-#endif
-	case KEY_ED25519:
-	case KEY_ED25519_CERT:
-	case KEY_MLDSA44_ED25519:
-	case KEY_MLDSA44_ED25519_CERT:
-	case KEY_ED25519_SK:
-	case KEY_ED25519_SK_CERT:
+	ఎంపిక (కీలకం->type) {
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థితి కీలకం_RSA:
+	స్థితి కీలకం_RSA_CERT:
+	స్థితి కీలకం_ECDSA:
+	స్థితి కీలకం_ECDSA_CERT:
+	స్థితి కీలకం_ECDSA_SK:
+	స్థితి కీలకం_ECDSA_SK_CERT:
+#అయితే_ముగింపు
+	స్థితి కీలకం_ED25519:
+	స్థితి కీలకం_ED25519_CERT:
+	స్థితి కీలకం_MLDSA44_ED25519:
+	స్థితి కీలకం_MLDSA44_ED25519_CERT:
+	స్థితి కీలకం_ED25519_SK:
+	స్థితి కీలకం_ED25519_SK_CERT:
 		type = constrained ?
-		    SSH2_AGENTC_ADD_ID_CONSTRAINED :
-		    SSH2_AGENTC_ADD_IDENTITY;
-		if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-		    (r = sshkey_private_serialize(key, msg)) != 0 ||
-		    (r = sshbuf_put_cstring(msg, comment)) != 0)
-			goto out;
-		break;
-	default:
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		    SSH2_AGENTC_కూడు_ID_CONSTRAINED :
+		    SSH2_AGENTC_కూడు_తటస్థం;
+		ఒకవేళ ((r = sshbuf_put_u8(సందేశం, type)) != 0 ||
+		    (r = sshkey_వ్యక్తిగత_serialize(కీలకం, సందేశం)) != 0 ||
+		    (r = sshbuf_put_cstring(సందేశం, comment)) != 0)
+			వెళ్ళు బహిర్గతం;
+		ఆపు;
+	అప్రమేయ:
+		r = SSH_ERR_INVALID_వాదం;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (constrained &&
-	    (r = encode_constraints(msg, life, confirm, provider,
-	    dest_constraints, ndest_constraints, 0, NULL, 0)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	ఒకవేళ (constrained &&
+	    (r = encode_constraints(సందేశం, life, confirm, provider,
+	    dest_constraints, ndest_constraints, 0, ఖాళీ, 0)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = ssh_request_జవాబు_decode(sock, సందేశం)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
- out:
-	sshbuf_free(msg);
-	return r;
+ బహిర్గతం:
+	sshbuf_free(సందేశం);
+	తిరిగి r;
 }
 
 /*
  * Removes an identity from the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_remove_identity(int sock, const struct sshkey *key)
+పూర్ణాంకం
+ssh_remove_తటస్థం(పూర్ణాంకం sock, స్థిరరాశి నిర్మాణం sshkey *కీలకం)
 {
-	struct sshbuf *msg;
-	int r;
-	u_char *blob = NULL;
-	size_t blen;
+	నిర్మాణం sshbuf *సందేశం;
+	పూర్ణాంకం r;
+	u_char *blob = ఖాళీ;
+	కొలత_t blen;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
 
-	if (key->type != KEY_UNSPEC) {
-		if ((r = sshkey_to_blob(key, &blob, &blen)) != 0)
-			goto out;
-		if ((r = sshbuf_put_u8(msg,
-		    SSH2_AGENTC_REMOVE_IDENTITY)) != 0 ||
-		    (r = sshbuf_put_string(msg, blob, blen)) != 0)
-			goto out;
-	} else {
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+	ఒకవేళ (కీలకం->type != కీలకం_UNSPEC) {
+		ఒకవేళ ((r = sshkey_గమ్యం_blob(కీలకం, &blob, &blen)) != 0)
+			వెళ్ళు బహిర్గతం;
+		ఒకవేళ ((r = sshbuf_put_u8(సందేశం,
+		    SSH2_AGENTC_REMOVE_తటస్థం)) != 0 ||
+		    (r = sshbuf_put_string(సందేశం, blob, blen)) != 0)
+			వెళ్ళు బహిర్గతం;
+	} లేకపోతే {
+		r = SSH_ERR_INVALID_వాదం;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	ఒకవేళ ((r = ssh_request_జవాబు_decode(sock, సందేశం)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
- out:
-	if (blob != NULL)
+ బహిర్గతం:
+	ఒకవేళ (blob != ఖాళీ)
 		freezero(blob, blen);
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(సందేశం);
+	తిరిగి r;
 }
 
 /*
  * Add/remove an token-based identity from the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_update_card(int sock, int add, const char *reader_id, const char *pin,
+పూర్ణాంకం
+ssh_update_card(పూర్ణాంకం sock, పూర్ణాంకం కూడు, స్థిరరాశి అక్షరం *reader_id, స్థిరరాశి అక్షరం *pin,
     u_int life, u_int confirm,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints,
-    int cert_only, struct sshkey **certs, size_t ncerts)
+    నిర్మాణం dest_constraint **dest_constraints, కొలత_t ndest_constraints,
+    పూర్ణాంకం cert_only, నిర్మాణం sshkey **certs, కొలత_t ncerts)
 {
-	struct sshbuf *msg;
-	int r, constrained = (life || confirm || dest_constraints || certs);
+	నిర్మాణం sshbuf *సందేశం;
+	పూర్ణాంకం r, constrained = (life || confirm || dest_constraints || certs);
 	u_char type;
 
-	if (add) {
+	ఒకవేళ (కూడు) {
 		type = constrained ?
-		    SSH_AGENTC_ADD_SMARTCARD_KEY_CONSTRAINED :
-		    SSH_AGENTC_ADD_SMARTCARD_KEY;
-	} else
-		type = SSH_AGENTC_REMOVE_SMARTCARD_KEY;
+		    SSH_AGENTC_కూడు_SMARTCARD_కీలకం_CONSTRAINED :
+		    SSH_AGENTC_కూడు_SMARTCARD_కీలకం;
+	} లేకపోతే
+		type = SSH_AGENTC_REMOVE_SMARTCARD_కీలకం;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, reader_id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, pin)) != 0)
-		goto out;
-	if (constrained &&
-	    (r = encode_constraints(msg, life, confirm, NULL,
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, type)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, reader_id)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, pin)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (constrained &&
+	    (r = encode_constraints(సందేశం, life, confirm, ఖాళీ,
 	    dest_constraints, ndest_constraints,
 	    cert_only, certs, ncerts)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = ssh_request_జవాబు_decode(sock, సందేశం)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
- out:
-	sshbuf_free(msg);
-	return r;
+ బహిర్గతం:
+	sshbuf_free(సందేశం);
+	తిరిగి r;
 }
 
 /*
@@ -723,104 +723,104 @@ ssh_update_card(int sock, int add, const char *reader_id, const char *pin,
  * keys from an agent, we generally want to clear both protocol v1 and v2
  * keys.
  */
-int
-ssh_remove_all_identities(int sock, int version)
+పూర్ణాంకం
+ssh_remove_all_identities(పూర్ణాంకం sock, పూర్ణాంకం సంస్కరణ)
 {
-	struct sshbuf *msg;
-	u_char type = (version == 1) ?
+	నిర్మాణం sshbuf *సందేశం;
+	u_char type = (సంస్కరణ == 1) ?
 	    SSH_AGENTC_REMOVE_ALL_RSA_IDENTITIES :
 	    SSH2_AGENTC_REMOVE_ALL_IDENTITIES;
-	int r;
+	పూర్ణాంకం r;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, type)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = ssh_request_జవాబు_decode(sock, సందేశం)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
- out:
-	sshbuf_free(msg);
-	return r;
+ బహిర్గతం:
+	sshbuf_free(సందేశం);
+	తిరిగి r;
 }
 
 /* Binds a session ID to a hostkey via the initial KEX signature. */
-int
-ssh_agent_bind_hostkey(int sock, const struct sshkey *key,
-    const struct sshbuf *session_id, const struct sshbuf *signature,
-    int forwarding)
+పూర్ణాంకం
+ssh_agent_bind_hostkey(పూర్ణాంకం sock, స్థిరరాశి నిర్మాణం sshkey *కీలకం,
+    స్థిరరాశి నిర్మాణం sshbuf *session_id, స్థిరరాశి నిర్మాణం sshbuf *signature,
+    పూర్ణాంకం forwarding)
 {
-	struct sshbuf *msg;
-	int r;
+	నిర్మాణం sshbuf *సందేశం;
+	పూర్ణాంకం r;
 
-	if (key == NULL || session_id == NULL || signature == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH_AGENTC_EXTENSION)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "session-bind@openssh.com")) != 0 ||
-	    (r = sshkey_puts(key, msg)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, session_id)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, signature)) != 0 ||
-	    (r = sshbuf_put_u8(msg, forwarding ? 1 : 0)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	ఒకవేళ (కీలకం == ఖాళీ || session_id == ఖాళీ || signature == ఖాళీ)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH_AGENTC_EXTENSION)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, "session-bind@openssh.com")) != 0 ||
+	    (r = sshkey_puts(కీలకం, సందేశం)) != 0 ||
+	    (r = sshbuf_put_stringb(సందేశం, session_id)) != 0 ||
+	    (r = sshbuf_put_stringb(సందేశం, signature)) != 0 ||
+	    (r = sshbuf_put_u8(సందేశం, forwarding ? 1 : 0)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = ssh_request_జవాబు_decode(sock, సందేశం)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
- out:
-	sshbuf_free(msg);
-	return r;
+ బహిర్గతం:
+	sshbuf_free(సందేశం);
+	తిరిగి r;
 }
 
 /* Queries supported extension request types */
-int
-ssh_agent_query_extensions(int sock, char ***exts)
+పూర్ణాంకం
+ssh_agent_query_extensions(పూర్ణాంకం sock, అక్షరం ***exts)
 {
-	struct sshbuf *msg;
-	int r;
+	నిర్మాణం sshbuf *సందేశం;
+	పూర్ణాంకం r;
 	u_char type;
-	char *cp = NULL, **ret = NULL;
-	size_t i = 0;
+	అక్షరం *cp = ఖాళీ, **ret = ఖాళీ;
+	కొలత_t i = 0;
 
-	*exts = NULL;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH_AGENTC_EXTENSION)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "query")) != 0)
-		goto out;
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
-		goto out;
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
-		goto out;
-	if (agent_failed(type)) {
+	*exts = ఖాళీ;
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH_AGENTC_EXTENSION)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, "query")) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = ssh_request_జవాబు(sock, సందేశం, సందేశం)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = sshbuf_get_u8(సందేశం, &type)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* Reply should start with "query" */
-	if (type != SSH_AGENT_EXTENSION_RESPONSE ||
-	   (r = sshbuf_get_cstring(msg, &cp, NULL)) != 0 ||
+	ఒకవేళ (type != SSH_AGENT_EXTENSION_RESPONSE ||
+	   (r = sshbuf_get_cstring(సందేశం, &cp, ఖాళీ)) != 0 ||
 	   strcmp(cp, "query") != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	ret = xcalloc(1, sizeof(*ret));
-	while (sshbuf_len(msg)) {
-		ret = xrecallocarray(ret, i + 1, i + 2, sizeof(*ret));
-		if ((r = sshbuf_get_cstring(msg, ret + i, NULL)) != 0) {
+	ret = xcalloc(1, పరిమాణం(*ret));
+	అయితే (sshbuf_len(సందేశం)) {
+		ret = xrecallocarray(ret, i + 1, i + 2, పరిమాణం(*ret));
+		ఒకవేళ ((r = sshbuf_get_cstring(సందేశం, ret + i, ఖాళీ)) != 0) {
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		i++;
 	}
 	/* success */
 	r = 0;
 	*exts = ret;
-	ret = NULL; /* transferred */
- out:
-	free(cp);
+	ret = ఖాళీ; /* transferred */
+ బహిర్గతం:
+	విడుదల(cp);
 	stringlist_free(ret);
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(సందేశం);
+	తిరిగి r;
 }

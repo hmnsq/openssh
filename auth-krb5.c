@@ -28,58 +28,58 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <pwd.h>
-#include <stdarg.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <pwd.h>
+#అన్తర్భావ <stdarg.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "packet.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "misc.h"
-#include "servconf.h"
-#include "uidswap.h"
-#include "hostfile.h"
-#include "auth.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "ssh.h"
+#అన్తర్భావ "packet.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "servconf.h"
+#అన్తర్భావ "uidswap.h"
+#అన్తర్భావ "hostfile.h"
+#అన్తర్భావ "auth.h"
 
-#ifdef KRB5
-#include <errno.h>
-#include <unistd.h>
-#include <string.h>
-#include <krb5.h>
+#నిర్వచితమైతే KRB5
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <krb5.h>
 
-extern ServerOptions	 options;
+బాహ్య ServerOptions	 options;
 
-static int
-krb5_init(void *context)
+స్థిర పూర్ణాంకం
+krb5_init(శూన్య *context)
 {
 	Authctxt *authctxt = (Authctxt *)context;
-	krb5_error_code problem;
+	krb5_error_సంకేతం problem;
 
-	if (authctxt->krb5_ctx == NULL) {
+	ఒకవేళ (authctxt->krb5_ctx == ఖాళీ) {
 		problem = krb5_init_context(&authctxt->krb5_ctx);
-		if (problem)
-			return (problem);
+		ఒకవేళ (problem)
+			తిరిగి (problem);
 	}
-	return (0);
+	తిరిగి (0);
 }
 
-int
-auth_krb5_password(Authctxt *authctxt, const char *password)
+పూర్ణాంకం
+auth_krb5_password(Authctxt *authctxt, స్థిరరాశి అక్షరం *password)
 {
-#ifndef HEIMDAL
+#నిర్వచితం_కాకపోతే HEIMDAL
 	krb5_creds creds;
 	krb5_principal server;
-#endif
-	krb5_error_code problem;
-	krb5_ccache ccache = NULL;
-	int len;
-	char *client, *platform_client;
-	const char *errmsg;
+#అయితే_ముగింపు
+	krb5_error_సంకేతం problem;
+	krb5_ccache ccache = ఖాళీ;
+	పూర్ణాంకం len;
+	అక్షరం *client, *platform_client;
+	స్థిరరాశి అక్షరం *errmsg;
 
 	/* get platform-specific kerberos client principal name (if it exists) */
 	platform_client = platform_krb5_get_principal_name(authctxt->pw->pw_name);
@@ -88,186 +88,186 @@ auth_krb5_password(Authctxt *authctxt, const char *password)
 	temporarily_use_uid(authctxt->pw);
 
 	problem = krb5_init(authctxt);
-	if (problem)
-		goto out;
+	ఒకవేళ (problem)
+		వెళ్ళు బహిర్గతం;
 
 	problem = krb5_parse_name(authctxt->krb5_ctx, client,
 		    &authctxt->krb5_user);
-	if (problem)
-		goto out;
+	ఒకవేళ (problem)
+		వెళ్ళు బహిర్గతం;
 
-#ifdef HEIMDAL
+#నిర్వచితమైతే HEIMDAL
 # ifdef HAVE_KRB5_CC_NEW_UNIQUE
 	problem = krb5_cc_new_unique(authctxt->krb5_ctx,
-	    krb5_mcc_ops.prefix, NULL, &ccache);
-# else
+	    krb5_mcc_ops.ఉపసర్గ, ఖాళీ, &ccache);
+# లేకపోతే
 	problem = krb5_cc_gen_new(authctxt->krb5_ctx, &krb5_mcc_ops, &ccache);
 # endif
-	if (problem)
-		goto out;
+	ఒకవేళ (problem)
+		వెళ్ళు బహిర్గతం;
 
 	problem = krb5_cc_initialize(authctxt->krb5_ctx, ccache,
 		authctxt->krb5_user);
-	if (problem)
-		goto out;
+	ఒకవేళ (problem)
+		వెళ్ళు బహిర్గతం;
 
 	restore_uid();
 
 	problem = krb5_verify_user(authctxt->krb5_ctx, authctxt->krb5_user,
-	    ccache, password, 1, NULL);
+	    ccache, password, 1, ఖాళీ);
 
 	temporarily_use_uid(authctxt->pw);
 
-	if (problem)
-		goto out;
+	ఒకవేళ (problem)
+		వెళ్ళు బహిర్గతం;
 
 # ifdef HAVE_KRB5_CC_NEW_UNIQUE
 	problem = krb5_cc_new_unique(authctxt->krb5_ctx,
-	    krb5_fcc_ops.prefix, NULL, &authctxt->krb5_fwd_ccache);
-# else
+	    krb5_fcc_ops.ఉపసర్గ, ఖాళీ, &authctxt->krb5_fwd_ccache);
+# లేకపోతే
 	problem = krb5_cc_gen_new(authctxt->krb5_ctx, &krb5_fcc_ops,
 	    &authctxt->krb5_fwd_ccache);
 # endif
-	if (problem)
-		goto out;
+	ఒకవేళ (problem)
+		వెళ్ళు బహిర్గతం;
 
 	problem = krb5_cc_copy_cache(authctxt->krb5_ctx, ccache,
 	    authctxt->krb5_fwd_ccache);
 	krb5_cc_destroy(authctxt->krb5_ctx, ccache);
-	ccache = NULL;
-	if (problem)
-		goto out;
+	ccache = ఖాళీ;
+	ఒకవేళ (problem)
+		వెళ్ళు బహిర్గతం;
 
-#else
+#లేకపోతే
 	problem = krb5_get_init_creds_password(authctxt->krb5_ctx, &creds,
-	    authctxt->krb5_user, (char *)password, NULL, NULL, 0, NULL, NULL);
-	if (problem)
-		goto out;
+	    authctxt->krb5_user, (అక్షరం *)password, ఖాళీ, ఖాళీ, 0, ఖాళీ, ఖాళీ);
+	ఒకవేళ (problem)
+		వెళ్ళు బహిర్గతం;
 
-	problem = krb5_sname_to_principal(authctxt->krb5_ctx, NULL, NULL,
+	problem = krb5_sname_గమ్యం_principal(authctxt->krb5_ctx, ఖాళీ, ఖాళీ,
 	    KRB5_NT_SRV_HST, &server);
-	if (problem)
-		goto out;
+	ఒకవేళ (problem)
+		వెళ్ళు బహిర్గతం;
 
 	restore_uid();
 	problem = krb5_verify_init_creds(authctxt->krb5_ctx, &creds, server,
-	    NULL, NULL, NULL);
+	    ఖాళీ, ఖాళీ, ఖాళీ);
 	krb5_free_principal(authctxt->krb5_ctx, server);
 	temporarily_use_uid(authctxt->pw);
-	if (problem)
-		goto out;
+	ఒకవేళ (problem)
+		వెళ్ళు బహిర్గతం;
 
-	if (!krb5_kuserok(authctxt->krb5_ctx, authctxt->krb5_user,
+	ఒకవేళ (!krb5_kuserok(authctxt->krb5_ctx, authctxt->krb5_user,
 	    authctxt->pw->pw_name)) {
 		problem = -1;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	problem = ssh_krb5_cc_gen(authctxt->krb5_ctx,
 	    &authctxt->krb5_fwd_ccache);
-	if (problem)
-		goto out;
+	ఒకవేళ (problem)
+		వెళ్ళు బహిర్గతం;
 
 	problem = krb5_cc_initialize(authctxt->krb5_ctx,
 	    authctxt->krb5_fwd_ccache, authctxt->krb5_user);
-	if (problem)
-		goto out;
+	ఒకవేళ (problem)
+		వెళ్ళు బహిర్గతం;
 
 	problem = krb5_cc_store_cred(authctxt->krb5_ctx,
 	    authctxt->krb5_fwd_ccache, &creds);
-	if (problem)
-		goto out;
-#endif
+	ఒకవేళ (problem)
+		వెళ్ళు బహిర్గతం;
+#అయితే_ముగింపు
 
-	authctxt->krb5_ticket_file = (char *)krb5_cc_get_name(authctxt->krb5_ctx, authctxt->krb5_fwd_ccache);
+	authctxt->krb5_ticket_file = (అక్షరం *)krb5_cc_get_name(authctxt->krb5_ctx, authctxt->krb5_fwd_ccache);
 
-	len = strlen(authctxt->krb5_ticket_file) + 6;
+	len = అక్షరశ్రేణి_పొడవు(authctxt->krb5_ticket_file) + 6;
 	authctxt->krb5_ccname = xmalloc(len);
 	snprintf(authctxt->krb5_ccname, len, "FILE:%s",
 	    authctxt->krb5_ticket_file);
 
-#ifdef USE_PAM
-	if (options.use_pam)
+#నిర్వచితమైతే USE_PAM
+	ఒకవేళ (options.use_pam)
 		do_pam_putenv("KRB5CCNAME", authctxt->krb5_ccname);
-#endif
+#అయితే_ముగింపు
 
- out:
+ బహిర్గతం:
 	restore_uid();
 	
-	free(platform_client);
+	విడుదల(platform_client);
 
-	if (problem) {
-		if (ccache)
+	ఒకవేళ (problem) {
+		ఒకవేళ (ccache)
 			krb5_cc_destroy(authctxt->krb5_ctx, ccache);
 
-		if (authctxt->krb5_ctx != NULL && problem!=-1) {
-			errmsg = krb5_get_error_message(authctxt->krb5_ctx,
+		ఒకవేళ (authctxt->krb5_ctx != ఖాళీ && problem!=-1) {
+			errmsg = krb5_get_error_సందేశం(authctxt->krb5_ctx,
 			    problem);
 			debug("Kerberos password authentication failed: %s",
 			    errmsg);
-			krb5_free_error_message(authctxt->krb5_ctx, errmsg);
-		} else
+			krb5_free_error_సందేశం(authctxt->krb5_ctx, errmsg);
+		} లేకపోతే
 			debug("Kerberos password authentication failed: %d",
 			    problem);
 
 		krb5_cleanup_proc(authctxt);
 
-		if (options.kerberos_or_local_passwd)
-			return (-1);
-		else
-			return (0);
+		ఒకవేళ (options.kerberos_or_local_passwd)
+			తిరిగి (-1);
+		లేకపోతే
+			తిరిగి (0);
 	}
-	return (authctxt->valid ? 1 : 0);
+	తిరిగి (authctxt->valid ? 1 : 0);
 }
 
-void
+శూన్య
 krb5_cleanup_proc(Authctxt *authctxt)
 {
 	debug("krb5_cleanup_proc called");
-	if (authctxt->krb5_fwd_ccache) {
+	ఒకవేళ (authctxt->krb5_fwd_ccache) {
 		krb5_cc_destroy(authctxt->krb5_ctx, authctxt->krb5_fwd_ccache);
-		authctxt->krb5_fwd_ccache = NULL;
+		authctxt->krb5_fwd_ccache = ఖాళీ;
 	}
-	if (authctxt->krb5_user) {
+	ఒకవేళ (authctxt->krb5_user) {
 		krb5_free_principal(authctxt->krb5_ctx, authctxt->krb5_user);
-		authctxt->krb5_user = NULL;
+		authctxt->krb5_user = ఖాళీ;
 	}
-	if (authctxt->krb5_ctx) {
+	ఒకవేళ (authctxt->krb5_ctx) {
 		krb5_free_context(authctxt->krb5_ctx);
-		authctxt->krb5_ctx = NULL;
+		authctxt->krb5_ctx = ఖాళీ;
 	}
 }
 
-#ifndef HEIMDAL
-krb5_error_code
+#నిర్వచితం_కాకపోతే HEIMDAL
+krb5_error_సంకేతం
 ssh_krb5_cc_gen(krb5_context ctx, krb5_ccache *ccache) {
-	int tmpfd, ret, oerrno;
-	char ccname[40];
-	mode_t old_umask;
+	పూర్ణాంకం tmpfd, ret, oerrno;
+	అక్షరం ccname[40];
+	బహుళకం_t old_umask;
 
-	ret = snprintf(ccname, sizeof(ccname),
+	ret = snprintf(ccname, పరిమాణం(ccname),
 	    "FILE:/tmp/krb5cc_%d_XXXXXXXXXX", geteuid());
-	if (ret < 0 || (size_t)ret >= sizeof(ccname))
-		return ENOMEM;
+	ఒకవేళ (ret < 0 || (కొలత_t)ret >= పరిమాణం(ccname))
+		తిరిగి ENOMEM;
 
 	old_umask = umask(0177);
-	tmpfd = mkstemp(ccname + strlen("FILE:"));
+	tmpfd = mkstemp(ccname + అక్షరశ్రేణి_పొడవు("FILE:"));
 	oerrno = errno;
 	umask(old_umask);
-	if (tmpfd == -1) {
+	ఒకవేళ (tmpfd == -1) {
 		logit("mkstemp(): %.100s", strerror(oerrno));
-		return oerrno;
+		తిరిగి oerrno;
 	}
 
-	if (fchmod(tmpfd,S_IRUSR | S_IWUSR) == -1) {
+	ఒకవేళ (fchmod(tmpfd,S_IRUSR | S_IWUSR) == -1) {
 		oerrno = errno;
 		logit("fchmod(): %.100s", strerror(oerrno));
 		close(tmpfd);
-		return oerrno;
+		తిరిగి oerrno;
 	}
 	close(tmpfd);
 
-	return (krb5_cc_resolve(ctx, ccname, ccache));
+	తిరిగి (krb5_cc_resolve(ctx, ccname, ccache));
 }
-#endif /* !HEIMDAL */
-#endif /* KRB5 */
+#అయితే_ముగింపు /* !HEIMDAL */
+#అయితే_ముగింపు /* KRB5 */

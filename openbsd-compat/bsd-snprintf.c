@@ -92,788 +92,788 @@
  *
  **************************************************************/
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#if defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
+#ఒకవేళ defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
 # undef HAVE_SNPRINTF
 # undef HAVE_VSNPRINTF
-#endif
+#అయితే_ముగింపు
 
-#if !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
+#ఒకవేళ !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
 
-#include <ctype.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
-#include <errno.h>
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <errno.h>
 
-#ifdef HAVE_LONG_DOUBLE
-# define LDOUBLE long double
-#else
-# define LDOUBLE double
-#endif
+#నిర్వచితమైతే HAVE_LONG_DOUBLE
+# define LDOUBLE దీర్ఘ ద్విగుణ
+#లేకపోతే
+# define LDOUBLE ద్విగుణ
+#అయితే_ముగింపు
 
-#ifdef HAVE_LONG_LONG
-# define LLONG long long
-#else
-# define LLONG long
-#endif
+#నిర్వచితమైతే HAVE_LONG_LONG
+# define LLONG దీర్ఘ దీర్ఘ
+#లేకపోతే
+# define LLONG దీర్ఘ
+#అయితే_ముగింపు
 
 /*
  * dopr(): poor man's version of doprintf
  */
 
 /* format read states */
-#define DP_S_DEFAULT 0
-#define DP_S_FLAGS   1
-#define DP_S_MIN     2
-#define DP_S_DOT     3
-#define DP_S_MAX     4
-#define DP_S_MOD     5
-#define DP_S_CONV    6
-#define DP_S_DONE    7
+#నిర్వచించు DP_S_DEFAULT 0
+#నిర్వచించు DP_S_FLAGS   1
+#నిర్వచించు DP_S_MIN     2
+#నిర్వచించు DP_S_DOT     3
+#నిర్వచించు DP_S_MAX     4
+#నిర్వచించు DP_S_MOD     5
+#నిర్వచించు DP_S_CONV    6
+#నిర్వచించు DP_S_పూర్తి    7
 
 /* format flags - Bits */
-#define DP_F_MINUS	(1 << 0)
-#define DP_F_PLUS	(1 << 1)
-#define DP_F_SPACE	(1 << 2)
-#define DP_F_NUM	(1 << 3)
-#define DP_F_ZERO	(1 << 4)
-#define DP_F_UP		(1 << 5)
-#define DP_F_UNSIGNED	(1 << 6)
+#నిర్వచించు DP_F_MINUS	(1 << 0)
+#నిర్వచించు DP_F_PLUS	(1 << 1)
+#నిర్వచించు DP_F_SPACE	(1 << 2)
+#నిర్వచించు DP_F_అంకె	(1 << 3)
+#నిర్వచించు DP_F_ZERO	(1 << 4)
+#నిర్వచించు DP_F_పైకి		(1 << 5)
+#నిర్వచించు DP_F_UNSIGNED	(1 << 6)
 
 /* Conversion Flags */
-#define DP_C_SHORT   1
-#define DP_C_LONG    2
-#define DP_C_LDOUBLE 3
-#define DP_C_LLONG   4
-#define DP_C_SIZE    5
-#define DP_C_INTMAX  6
+#నిర్వచించు DP_C_SHORT   1
+#నిర్వచించు DP_C_LONG    2
+#నిర్వచించు DP_C_LDOUBLE 3
+#నిర్వచించు DP_C_LLONG   4
+#నిర్వచించు DP_C_కొలత    5
+#నిర్వచించు DP_C_INTMAX  6
 
-#define char_to_int(p) ((p)- '0')
-#ifndef MAX
+#నిర్వచించు char_గమ్యం_int(p) ((p)- '0')
+#నిర్వచితం_కాకపోతే MAX
 # define MAX(p,q) (((p) >= (q)) ? (p) : (q))
-#endif
+#అయితే_ముగింపు
 
-#define DOPR_OUTCH(buf, pos, buflen, thechar) \
-	do { \
-		if (pos + 1 >= INT_MAX) { \
+#నిర్వచించు DOPR_OUTCH(buf, pos, buflen, thechar) \
+	చేయి { \
+		ఒకవేళ (pos + 1 >= గరిష్ఠ_పూర్ణాంకం) { \
 			errno = ERANGE; \
-			return -1; \
+			తిరిగి -1; \
 		} \
-		if (pos < buflen) \
+		ఒకవేళ (pos < buflen) \
 			buf[pos] = thechar; \
 		(pos)++; \
-	} while (0)
+	} అయితే (0)
 
-static int dopr(char *buffer, size_t maxlen, const char *format,
-    va_list args_in);
-static int fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max);
-static int fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags);
-static int fmtfp(char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags);
+స్థిర పూర్ణాంకం dopr(అక్షరం *బఫరు, కొలత_t maxlen, స్థిరరాశి అక్షరం *format,
+    va_list వాదనలు_లోపల);
+స్థిర పూర్ణాంకం fmtstr(అక్షరం *బఫరు, కొలత_t *currlen, కొలత_t maxlen,
+    అక్షరం *విలువ, పూర్ణాంకం flags, పూర్ణాంకం min, పూర్ణాంకం max);
+స్థిర పూర్ణాంకం fmtint(అక్షరం *బఫరు, కొలత_t *currlen, కొలత_t maxlen,
+    intmax_t విలువ, పూర్ణాంకం పునాది, పూర్ణాంకం min, పూర్ణాంకం max, పూర్ణాంకం flags);
+స్థిర పూర్ణాంకం fmtfp(అక్షరం *బఫరు, కొలత_t *currlen, కొలత_t maxlen,
+    LDOUBLE fvalue, పూర్ణాంకం min, పూర్ణాంకం max, పూర్ణాంకం flags);
 
-static int
-dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
+స్థిర పూర్ణాంకం
+dopr(అక్షరం *బఫరు, కొలత_t maxlen, స్థిరరాశి అక్షరం *format, va_list వాదనలు_లోపల)
 {
-	char ch;
-	intmax_t value;
+	అక్షరం ch;
+	intmax_t విలువ;
 	LDOUBLE fvalue;
-	char *strvalue;
-	int min;
-	int max;
-	int state;
-	int flags;
-	int cflags;
-	size_t currlen;
-	va_list args;
+	అక్షరం *strvalue;
+	పూర్ణాంకం min;
+	పూర్ణాంకం max;
+	పూర్ణాంకం state;
+	పూర్ణాంకం flags;
+	పూర్ణాంకం cflags;
+	కొలత_t currlen;
+	va_list వాదనలు;
 
-	VA_COPY(args, args_in);
+	VA_COPY(వాదనలు, వాదనలు_లోపల);
 
 	state = DP_S_DEFAULT;
 	currlen = flags = cflags = min = 0;
 	max = -1;
 	ch = *format++;
 
-	while (state != DP_S_DONE) {
-		if (ch == '\0')
-			state = DP_S_DONE;
+	అయితే (state != DP_S_పూర్తి) {
+		ఒకవేళ (ch == '\0')
+			state = DP_S_పూర్తి;
 
-		switch(state) {
-		case DP_S_DEFAULT:
-			if (ch == '%')
+		ఎంపిక(state) {
+		స్థితి DP_S_DEFAULT:
+			ఒకవేళ (ch == '%')
 				state = DP_S_FLAGS;
-			else
-				DOPR_OUTCH(buffer, currlen, maxlen, ch);
+			లేకపోతే
+				DOPR_OUTCH(బఫరు, currlen, maxlen, ch);
 			ch = *format++;
-			break;
-		case DP_S_FLAGS:
-			switch (ch) {
-			case '-':
+			ఆపు;
+		స్థితి DP_S_FLAGS:
+			ఎంపిక (ch) {
+			స్థితి '-':
 				flags |= DP_F_MINUS;
 				ch = *format++;
-				break;
-			case '+':
+				ఆపు;
+			స్థితి '+':
 				flags |= DP_F_PLUS;
 				ch = *format++;
-				break;
-			case ' ':
+				ఆపు;
+			స్థితి ' ':
 				flags |= DP_F_SPACE;
 				ch = *format++;
-				break;
-			case '#':
-				flags |= DP_F_NUM;
+				ఆపు;
+			స్థితి '#':
+				flags |= DP_F_అంకె;
 				ch = *format++;
-				break;
-			case '0':
+				ఆపు;
+			స్థితి '0':
 				flags |= DP_F_ZERO;
 				ch = *format++;
-				break;
-			default:
+				ఆపు;
+			అప్రమేయ:
 				state = DP_S_MIN;
-				break;
+				ఆపు;
 			}
-			break;
-		case DP_S_MIN:
-			if (isdigit((unsigned char)ch)) {
-				min = 10*min + char_to_int (ch);
+			ఆపు;
+		స్థితి DP_S_MIN:
+			ఒకవేళ (అంకెనా((గుర్తులేని అక్షరం)ch)) {
+				min = 10*min + char_గమ్యం_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				min = va_arg (args, int);
+			} లేకపోతే ఒకవేళ (ch == '*') {
+				min = va_arg (వాదనలు, పూర్ణాంకం);
 				ch = *format++;
 				state = DP_S_DOT;
-			} else {
+			} లేకపోతే {
 				state = DP_S_DOT;
 			}
-			break;
-		case DP_S_DOT:
-			if (ch == '.') {
+			ఆపు;
+		స్థితి DP_S_DOT:
+			ఒకవేళ (ch == '.') {
 				state = DP_S_MAX;
 				ch = *format++;
-			} else {
+			} లేకపోతే {
 				state = DP_S_MOD;
 			}
-			break;
-		case DP_S_MAX:
-			if (isdigit((unsigned char)ch)) {
-				if (max < 0)
+			ఆపు;
+		స్థితి DP_S_MAX:
+			ఒకవేళ (అంకెనా((గుర్తులేని అక్షరం)ch)) {
+				ఒకవేళ (max < 0)
 					max = 0;
-				max = 10*max + char_to_int (ch);
+				max = 10*max + char_గమ్యం_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				max = va_arg (args, int);
+			} లేకపోతే ఒకవేళ (ch == '*') {
+				max = va_arg (వాదనలు, పూర్ణాంకం);
 				ch = *format++;
 				state = DP_S_MOD;
-			} else {
+			} లేకపోతే {
 				state = DP_S_MOD;
 			}
-			break;
-		case DP_S_MOD:
-			switch (ch) {
-			case 'h':
+			ఆపు;
+		స్థితి DP_S_MOD:
+			ఎంపిక (ch) {
+			స్థితి 'h':
 				cflags = DP_C_SHORT;
 				ch = *format++;
-				break;
-			case 'j':
+				ఆపు;
+			స్థితి 'j':
 				cflags = DP_C_INTMAX;
 				ch = *format++;
-				break;
-			case 'l':
+				ఆపు;
+			స్థితి 'l':
 				cflags = DP_C_LONG;
 				ch = *format++;
-				if (ch == 'l') {	/* It's a long long */
+				ఒకవేళ (ch == 'l') {	/* It's a long long */
 					cflags = DP_C_LLONG;
 					ch = *format++;
 				}
-				break;
-			case 'L':
+				ఆపు;
+			స్థితి 'L':
 				cflags = DP_C_LDOUBLE;
 				ch = *format++;
-				break;
-			case 'z':
-				cflags = DP_C_SIZE;
+				ఆపు;
+			స్థితి 'z':
+				cflags = DP_C_కొలత;
 				ch = *format++;
-				break;
-			default:
-				break;
+				ఆపు;
+			అప్రమేయ:
+				ఆపు;
 			}
 			state = DP_S_CONV;
-			break;
-		case DP_S_CONV:
-			switch (ch) {
-			case 'd':
-			case 'i':
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, int);
-				else if (cflags == DP_C_LONG)
-					value = va_arg (args, long int);
-				else if (cflags == DP_C_LLONG)
-					value = va_arg (args, LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, ssize_t);
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, intmax_t);
-				else
-					value = va_arg (args, int);
-				if (fmtint(buffer, &currlen, maxlen,
-				    value, 10, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'o':
+			ఆపు;
+		స్థితి DP_S_CONV:
+			ఎంపిక (ch) {
+			స్థితి 'd':
+			స్థితి 'i':
+				ఒకవేళ (cflags == DP_C_SHORT)
+					విలువ = va_arg (వాదనలు, పూర్ణాంకం);
+				లేకపోతే ఒకవేళ (cflags == DP_C_LONG)
+					విలువ = va_arg (వాదనలు, దీర్ఘ పూర్ణాంకం);
+				లేకపోతే ఒకవేళ (cflags == DP_C_LLONG)
+					విలువ = va_arg (వాదనలు, LLONG);
+				లేకపోతే ఒకవేళ (cflags == DP_C_కొలత)
+					విలువ = va_arg (వాదనలు, ssize_t);
+				లేకపోతే ఒకవేళ (cflags == DP_C_INTMAX)
+					విలువ = va_arg (వాదనలు, intmax_t);
+				లేకపోతే
+					విలువ = va_arg (వాదనలు, పూర్ణాంకం);
+				ఒకవేళ (fmtint(బఫరు, &currlen, maxlen,
+				    విలువ, 10, min, max, flags) == -1)
+					వెళ్ళు fail;
+				ఆపు;
+			స్థితి 'o':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (long)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
-#ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
-#endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				ఒకవేళ (cflags == DP_C_SHORT)
+					విలువ = va_arg (వాదనలు, గుర్తులేని పూర్ణాంకం);
+				లేకపోతే ఒకవేళ (cflags == DP_C_LONG)
+					విలువ = (దీర్ఘ)va_arg (వాదనలు, గుర్తులేని దీర్ఘ పూర్ణాంకం);
+				లేకపోతే ఒకవేళ (cflags == DP_C_LLONG)
+					విలువ = (దీర్ఘ)va_arg (వాదనలు, గుర్తులేని LLONG);
+				లేకపోతే ఒకవేళ (cflags == DP_C_కొలత)
+					విలువ = va_arg (వాదనలు, కొలత_t);
+#నిర్వచితమైతే notyet
+				లేకపోతే ఒకవేళ (cflags == DP_C_INTMAX)
+					విలువ = va_arg (వాదనలు, uintmax_t);
+#అయితే_ముగింపు
+				లేకపోతే
+					విలువ = (దీర్ఘ)va_arg (వాదనలు, గుర్తులేని పూర్ణాంకం);
+				ఒకవేళ (fmtint(బఫరు, &currlen, maxlen, విలువ,
 				    8, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'u':
+					వెళ్ళు fail;
+				ఆపు;
+			స్థితి 'u':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
-#ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
-#endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				ఒకవేళ (cflags == DP_C_SHORT)
+					విలువ = va_arg (వాదనలు, గుర్తులేని పూర్ణాంకం);
+				లేకపోతే ఒకవేళ (cflags == DP_C_LONG)
+					విలువ = (దీర్ఘ)va_arg (వాదనలు, గుర్తులేని దీర్ఘ పూర్ణాంకం);
+				లేకపోతే ఒకవేళ (cflags == DP_C_LLONG)
+					విలువ = (LLONG)va_arg (వాదనలు, గుర్తులేని LLONG);
+				లేకపోతే ఒకవేళ (cflags == DP_C_కొలత)
+					విలువ = va_arg (వాదనలు, కొలత_t);
+#నిర్వచితమైతే notyet
+				లేకపోతే ఒకవేళ (cflags == DP_C_INTMAX)
+					విలువ = va_arg (వాదనలు, uintmax_t);
+#అయితే_ముగింపు
+				లేకపోతే
+					విలువ = (దీర్ఘ)va_arg (వాదనలు, గుర్తులేని పూర్ణాంకం);
+				ఒకవేళ (fmtint(బఫరు, &currlen, maxlen, విలువ,
 				    10, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'X':
-				flags |= DP_F_UP;
-			case 'x':
+					వెళ్ళు fail;
+				ఆపు;
+			స్థితి 'X':
+				flags |= DP_F_పైకి;
+			స్థితి 'x':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
-#ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
-#endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				ఒకవేళ (cflags == DP_C_SHORT)
+					విలువ = va_arg (వాదనలు, గుర్తులేని పూర్ణాంకం);
+				లేకపోతే ఒకవేళ (cflags == DP_C_LONG)
+					విలువ = (దీర్ఘ)va_arg (వాదనలు, గుర్తులేని దీర్ఘ పూర్ణాంకం);
+				లేకపోతే ఒకవేళ (cflags == DP_C_LLONG)
+					విలువ = (LLONG)va_arg (వాదనలు, గుర్తులేని LLONG);
+				లేకపోతే ఒకవేళ (cflags == DP_C_కొలత)
+					విలువ = va_arg (వాదనలు, కొలత_t);
+#నిర్వచితమైతే notyet
+				లేకపోతే ఒకవేళ (cflags == DP_C_INTMAX)
+					విలువ = va_arg (వాదనలు, uintmax_t);
+#అయితే_ముగింపు
+				లేకపోతే
+					విలువ = (దీర్ఘ)va_arg (వాదనలు, గుర్తులేని పూర్ణాంకం);
+				ఒకవేళ (fmtint(బఫరు, &currlen, maxlen, విలువ,
 				    16, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'f':
-				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+					వెళ్ళు fail;
+				ఆపు;
+			స్థితి 'f':
+				ఒకవేళ (cflags == DP_C_LDOUBLE)
+					fvalue = va_arg (వాదనలు, LDOUBLE);
+				లేకపోతే
+					fvalue = va_arg (వాదనలు, ద్విగుణ);
+				ఒకవేళ (fmtfp(బఫరు, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'E':
-				flags |= DP_F_UP;
-			case 'e':
-				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+					వెళ్ళు fail;
+				ఆపు;
+			స్థితి 'E':
+				flags |= DP_F_పైకి;
+			స్థితి 'e':
+				ఒకవేళ (cflags == DP_C_LDOUBLE)
+					fvalue = va_arg (వాదనలు, LDOUBLE);
+				లేకపోతే
+					fvalue = va_arg (వాదనలు, ద్విగుణ);
+				ఒకవేళ (fmtfp(బఫరు, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'G':
-				flags |= DP_F_UP;
-			case 'g':
-				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+					వెళ్ళు fail;
+				ఆపు;
+			స్థితి 'G':
+				flags |= DP_F_పైకి;
+			స్థితి 'g':
+				ఒకవేళ (cflags == DP_C_LDOUBLE)
+					fvalue = va_arg (వాదనలు, LDOUBLE);
+				లేకపోతే
+					fvalue = va_arg (వాదనలు, ద్విగుణ);
+				ఒకవేళ (fmtfp(బఫరు, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'c':
-				DOPR_OUTCH(buffer, currlen, maxlen,
-				    va_arg (args, int));
-				break;
-			case 's':
-				strvalue = va_arg (args, char *);
-				if (!strvalue) strvalue = "(NULL)";
-				if (max == -1) {
-					max = strlen(strvalue);
+					వెళ్ళు fail;
+				ఆపు;
+			స్థితి 'c':
+				DOPR_OUTCH(బఫరు, currlen, maxlen,
+				    va_arg (వాదనలు, పూర్ణాంకం));
+				ఆపు;
+			స్థితి 's':
+				strvalue = va_arg (వాదనలు, అక్షరం *);
+				ఒకవేళ (!strvalue) strvalue = "(NULL)";
+				ఒకవేళ (max == -1) {
+					max = అక్షరశ్రేణి_పొడవు(strvalue);
 				}
-				if (min > 0 && max >= 0 && min > max) max = min;
-				if (fmtstr(buffer, &currlen, maxlen,
+				ఒకవేళ (min > 0 && max >= 0 && min > max) max = min;
+				ఒకవేళ (fmtstr(బఫరు, &currlen, maxlen,
 				    strvalue, flags, min, max) == -1)
-					goto fail;
-				break;
-			case 'p':
-				strvalue = va_arg (args, void *);
-				if (fmtint(buffer, &currlen, maxlen,
-				    (long) strvalue, 16, min, max, flags) == -1)
-					goto fail;
-				break;
-#if we_dont_want_this_in_openssh
-			case 'n':
-				if (cflags == DP_C_SHORT) {
-					short int *num;
-					num = va_arg (args, short int *);
-					*num = currlen;
-				} else if (cflags == DP_C_LONG) {
-					long int *num;
-					num = va_arg (args, long int *);
-					*num = (long int)currlen;
-				} else if (cflags == DP_C_LLONG) {
-					LLONG *num;
-					num = va_arg (args, LLONG *);
-					*num = (LLONG)currlen;
-				} else if (cflags == DP_C_SIZE) {
-					ssize_t *num;
-					num = va_arg (args, ssize_t *);
-					*num = (ssize_t)currlen;
-				} else if (cflags == DP_C_INTMAX) {
-					intmax_t *num;
-					num = va_arg (args, intmax_t *);
-					*num = (intmax_t)currlen;
-				} else {
-					int *num;
-					num = va_arg (args, int *);
-					*num = currlen;
+					వెళ్ళు fail;
+				ఆపు;
+			స్థితి 'p':
+				strvalue = va_arg (వాదనలు, శూన్య *);
+				ఒకవేళ (fmtint(బఫరు, &currlen, maxlen,
+				    (దీర్ఘ) strvalue, 16, min, max, flags) == -1)
+					వెళ్ళు fail;
+				ఆపు;
+#ఒకవేళ we_dont_want_this_లోపల_openssh
+			స్థితి 'n':
+				ఒకవేళ (cflags == DP_C_SHORT) {
+					పొట్టి పూర్ణాంకం *అంకె;
+					అంకె = va_arg (వాదనలు, పొట్టి పూర్ణాంకం *);
+					*అంకె = currlen;
+				} లేకపోతే ఒకవేళ (cflags == DP_C_LONG) {
+					దీర్ఘ పూర్ణాంకం *అంకె;
+					అంకె = va_arg (వాదనలు, దీర్ఘ పూర్ణాంకం *);
+					*అంకె = (దీర్ఘ పూర్ణాంకం)currlen;
+				} లేకపోతే ఒకవేళ (cflags == DP_C_LLONG) {
+					LLONG *అంకె;
+					అంకె = va_arg (వాదనలు, LLONG *);
+					*అంకె = (LLONG)currlen;
+				} లేకపోతే ఒకవేళ (cflags == DP_C_కొలత) {
+					ssize_t *అంకె;
+					అంకె = va_arg (వాదనలు, ssize_t *);
+					*అంకె = (ssize_t)currlen;
+				} లేకపోతే ఒకవేళ (cflags == DP_C_INTMAX) {
+					intmax_t *అంకె;
+					అంకె = va_arg (వాదనలు, intmax_t *);
+					*అంకె = (intmax_t)currlen;
+				} లేకపోతే {
+					పూర్ణాంకం *అంకె;
+					అంకె = va_arg (వాదనలు, పూర్ణాంకం *);
+					*అంకె = currlen;
 				}
-				break;
-#endif
-			case '%':
-				DOPR_OUTCH(buffer, currlen, maxlen, ch);
-				break;
-			default:
+				ఆపు;
+#అయితే_ముగింపు
+			స్థితి '%':
+				DOPR_OUTCH(బఫరు, currlen, maxlen, ch);
+				ఆపు;
+			అప్రమేయ:
 				/* Unknown, skip */
-				break;
+				ఆపు;
 			}
 			ch = *format++;
 			state = DP_S_DEFAULT;
 			flags = cflags = min = 0;
 			max = -1;
-			break;
-		case DP_S_DONE:
-			break;
-		default:
+			ఆపు;
+		స్థితి DP_S_పూర్తి:
+			ఆపు;
+		అప్రమేయ:
 			/* hmm? */
-			break; /* some picky compilers need this */
+			ఆపు; /* some picky compilers need this */
 		}
 	}
-	if (maxlen != 0) {
-		if (currlen < maxlen - 1)
-			buffer[currlen] = '\0';
-		else if (maxlen > 0)
-			buffer[maxlen - 1] = '\0';
+	ఒకవేళ (maxlen != 0) {
+		ఒకవేళ (currlen < maxlen - 1)
+			బఫరు[currlen] = '\0';
+		లేకపోతే ఒకవేళ (maxlen > 0)
+			బఫరు[maxlen - 1] = '\0';
 	}
-	va_end(args);
-	return currlen < INT_MAX ? (int)currlen : -1;
+	va_end(వాదనలు);
+	తిరిగి currlen < గరిష్ఠ_పూర్ణాంకం ? (పూర్ణాంకం)currlen : -1;
  fail:
-	va_end(args);
-	return -1;
+	va_end(వాదనలు);
+	తిరిగి -1;
 }
 
-static int
-fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max)
+స్థిర పూర్ణాంకం
+fmtstr(అక్షరం *బఫరు, కొలత_t *currlen, కొలత_t maxlen,
+    అక్షరం *విలువ, పూర్ణాంకం flags, పూర్ణాంకం min, పూర్ణాంకం max)
 {
-	int padlen, strln;     /* amount to pad */
-	int cnt = 0;
+	పూర్ణాంకం padlen, strln;     /* amount to pad */
+	పూర్ణాంకం cnt = 0;
 
-#ifdef DEBUG_SNPRINTF
-	printf("fmtstr min=%d max=%d s=[%s]\n", min, max, value);
-#endif
-	if (value == 0) {
-		value = "<NULL>";
+#నిర్వచితమైతే DEBUG_SNPRINTF
+	రాయి("fmtstr min=%d max=%d s=[%s]\n", min, max, విలువ);
+#అయితే_ముగింపు
+	ఒకవేళ (విలువ == 0) {
+		విలువ = "<NULL>";
 	}
 
-	for (strln = 0; strln < max && value[strln]; ++strln); /* strlen */
+	కొరకు (strln = 0; strln < max && విలువ[strln]; ++strln); /* strlen */
 	padlen = min - strln;
-	if (padlen < 0)
+	ఒకవేళ (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	ఒకవేళ (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justify */
 
-	while ((padlen > 0) && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	అయితే ((padlen > 0) && (cnt < max)) {
+		DOPR_OUTCH(బఫరు, *currlen, maxlen, ' ');
 		--padlen;
 		++cnt;
 	}
-	while (*value && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, *value);
-		value++;
+	అయితే (*విలువ && (cnt < max)) {
+		DOPR_OUTCH(బఫరు, *currlen, maxlen, *విలువ);
+		విలువ++;
 		++cnt;
 	}
-	while ((padlen < 0) && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	అయితే ((padlen < 0) && (cnt < max)) {
+		DOPR_OUTCH(బఫరు, *currlen, maxlen, ' ');
 		++padlen;
 		++cnt;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 /* Have to handle DP_F_NUM (ie 0x and 0 alternates) */
 
-static int
-fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags)
+స్థిర పూర్ణాంకం
+fmtint(అక్షరం *బఫరు, కొలత_t *currlen, కొలత_t maxlen,
+    intmax_t విలువ, పూర్ణాంకం పునాది, పూర్ణాంకం min, పూర్ణాంకం max, పూర్ణాంకం flags)
 {
-	int signvalue = 0;
-	unsigned LLONG uvalue;
-	char convert[20];
-	int place = 0;
-	int spadlen = 0; /* amount to space pad */
-	int zpadlen = 0; /* amount to zero pad */
-	int caps = 0;
+	పూర్ణాంకం signvalue = 0;
+	గుర్తులేని LLONG uvalue;
+	అక్షరం convert[20];
+	పూర్ణాంకం ఉంచు = 0;
+	పూర్ణాంకం spadlen = 0; /* amount to space pad */
+	పూర్ణాంకం zpadlen = 0; /* amount to zero pad */
+	పూర్ణాంకం caps = 0;
 
-	if (max < 0)
+	ఒకవేళ (max < 0)
 		max = 0;
 
-	uvalue = value;
+	uvalue = విలువ;
 
-	if(!(flags & DP_F_UNSIGNED)) {
-		if( value < 0 ) {
+	ఒకవేళ(!(flags & DP_F_UNSIGNED)) {
+		ఒకవేళ( విలువ < 0 ) {
 			signvalue = '-';
-			uvalue = -value;
-		} else {
-			if (flags & DP_F_PLUS)  /* Do a sign (+/i) */
+			uvalue = -విలువ;
+		} లేకపోతే {
+			ఒకవేళ (flags & DP_F_PLUS)  /* Do a sign (+/i) */
 				signvalue = '+';
-			else if (flags & DP_F_SPACE)
+			లేకపోతే ఒకవేళ (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
+	ఒకవేళ (flags & DP_F_పైకి) caps = 1; /* Should characters be upper case? */
 
-	do {
-		convert[place++] =
+	చేయి {
+		convert[ఉంచు++] =
 			(caps? "0123456789ABCDEF":"0123456789abcdef")
-			[uvalue % (unsigned)base  ];
-		uvalue = (uvalue / (unsigned)base );
-	} while(uvalue && (place < 20));
-	if (place == 20) place--;
-	convert[place] = 0;
+			[uvalue % (గుర్తులేని)పునాది  ];
+		uvalue = (uvalue / (గుర్తులేని)పునాది );
+	} అయితే(uvalue && (ఉంచు < 20));
+	ఒకవేళ (ఉంచు == 20) ఉంచు--;
+	convert[ఉంచు] = 0;
 
-	zpadlen = max - place;
-	spadlen = min - MAX (max, place) - (signvalue ? 1 : 0);
-	if (zpadlen < 0) zpadlen = 0;
-	if (spadlen < 0) spadlen = 0;
-	if (flags & DP_F_ZERO) {
+	zpadlen = max - ఉంచు;
+	spadlen = min - MAX (max, ఉంచు) - (signvalue ? 1 : 0);
+	ఒకవేళ (zpadlen < 0) zpadlen = 0;
+	ఒకవేళ (spadlen < 0) spadlen = 0;
+	ఒకవేళ (flags & DP_F_ZERO) {
 		zpadlen = MAX(zpadlen, spadlen);
 		spadlen = 0;
 	}
-	if (flags & DP_F_MINUS)
+	ఒకవేళ (flags & DP_F_MINUS)
 		spadlen = -spadlen; /* Left Justifty */
 
-#ifdef DEBUG_SNPRINTF
-	printf("zpad: %d, spad: %d, min: %d, max: %d, place: %d\n",
-	    zpadlen, spadlen, min, max, place);
-#endif
+#నిర్వచితమైతే DEBUG_SNPRINTF
+	రాయి("zpad: %d, spad: %d, min: %d, max: %d, place: %d\n",
+	    zpadlen, spadlen, min, max, ఉంచు);
+#అయితే_ముగింపు
 
 	/* Spaces */
-	while (spadlen > 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	అయితే (spadlen > 0) {
+		DOPR_OUTCH(బఫరు, *currlen, maxlen, ' ');
 		--spadlen;
 	}
 
 	/* Sign */
-	if (signvalue)
-		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
+	ఒకవేళ (signvalue)
+		DOPR_OUTCH(బఫరు, *currlen, maxlen, signvalue);
 
 	/* Zeros */
-	if (zpadlen > 0) {
-		while (zpadlen > 0) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
+	ఒకవేళ (zpadlen > 0) {
+		అయితే (zpadlen > 0) {
+			DOPR_OUTCH(బఫరు, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 	}
 
 	/* Digits */
-	while (place > 0) {
-		--place;
-		DOPR_OUTCH(buffer, *currlen, maxlen, convert[place]);
+	అయితే (ఉంచు > 0) {
+		--ఉంచు;
+		DOPR_OUTCH(బఫరు, *currlen, maxlen, convert[ఉంచు]);
 	}
 
 	/* Left Justified spaces */
-	while (spadlen < 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	అయితే (spadlen < 0) {
+		DOPR_OUTCH(బఫరు, *currlen, maxlen, ' ');
 		++spadlen;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static LDOUBLE abs_val(LDOUBLE value)
+స్థిర LDOUBLE abs_val(LDOUBLE విలువ)
 {
-	LDOUBLE result = value;
+	LDOUBLE ఫలితం = విలువ;
 
-	if (value < 0)
-		result = -value;
+	ఒకవేళ (విలువ < 0)
+		ఫలితం = -విలువ;
 
-	return result;
+	తిరిగి ఫలితం;
 }
 
-static LDOUBLE POW10(int val)
+స్థిర LDOUBLE POW10(పూర్ణాంకం val)
 {
-	LDOUBLE result = 1;
+	LDOUBLE ఫలితం = 1;
 
-	while (val) {
-		result *= 10;
+	అయితే (val) {
+		ఫలితం *= 10;
 		val--;
 	}
 
-	return result;
+	తిరిగి ఫలితం;
 }
 
-static LLONG ROUND(LDOUBLE value)
+స్థిర LLONG విడత_2(LDOUBLE విలువ)
 {
 	LLONG intpart;
 
-	intpart = (LLONG)value;
-	value = value - intpart;
-	if (value >= 0.5) intpart++;
+	intpart = (LLONG)విలువ;
+	విలువ = విలువ - intpart;
+	ఒకవేళ (విలువ >= 0.5) intpart++;
 
-	return intpart;
+	తిరిగి intpart;
 }
 
 /* a replacement for modf that doesn't need the math library. Should
    be portable, but slow */
-static double my_modf(double x0, double *iptr)
+స్థిర ద్విగుణ my_modf(ద్విగుణ x0, ద్విగుణ *iptr)
 {
-	int i;
-	long l;
-	double x = x0;
-	double f = 1.0;
+	పూర్ణాంకం i;
+	దీర్ఘ l;
+	ద్విగుణ x = x0;
+	ద్విగుణ f = 1.0;
 
-	for (i=0;i<100;i++) {
-		l = (long)x;
-		if (l <= (x+1) && l >= (x-1)) break;
+	కొరకు (i=0;i<100;i++) {
+		l = (దీర్ఘ)x;
+		ఒకవేళ (l <= (x+1) && l >= (x-1)) ఆపు;
 		x *= 0.1;
 		f *= 10.0;
 	}
 
-	if (i == 100) {
+	ఒకవేళ (i == 100) {
 		/*
 		 * yikes! the number is beyond what we can handle.
 		 * What do we do?
 		 */
 		(*iptr) = 0;
-		return 0;
+		తిరిగి 0;
 	}
 
-	if (i != 0) {
-		double i2;
-		double ret;
+	ఒకవేళ (i != 0) {
+		ద్విగుణ i2;
+		ద్విగుణ ret;
 
 		ret = my_modf(x0-l*f, &i2);
 		(*iptr) = l*f + i2;
-		return ret;
+		తిరిగి ret;
 	}
 
 	(*iptr) = l;
-	return x - (*iptr);
+	తిరిగి x - (*iptr);
 }
 
 
-static int
-fmtfp (char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags)
+స్థిర పూర్ణాంకం
+fmtfp (అక్షరం *బఫరు, కొలత_t *currlen, కొలత_t maxlen,
+    LDOUBLE fvalue, పూర్ణాంకం min, పూర్ణాంకం max, పూర్ణాంకం flags)
 {
-	int signvalue = 0;
-	double ufvalue;
-	char iconvert[311];
-	char fconvert[311];
-	int iplace = 0;
-	int fplace = 0;
-	int padlen = 0; /* amount to pad */
-	int zpadlen = 0;
-#if 0
-	int caps = 0;
-#endif
-	int idx;
-	double intpart;
-	double fracpart;
-	double temp;
+	పూర్ణాంకం signvalue = 0;
+	ద్విగుణ ufvalue;
+	అక్షరం iconvert[311];
+	అక్షరం fconvert[311];
+	పూర్ణాంకం iplace = 0;
+	పూర్ణాంకం fplace = 0;
+	పూర్ణాంకం padlen = 0; /* amount to pad */
+	పూర్ణాంకం zpadlen = 0;
+#ఒకవేళ 0
+	పూర్ణాంకం caps = 0;
+#అయితే_ముగింపు
+	పూర్ణాంకం idx;
+	ద్విగుణ intpart;
+	ద్విగుణ fracpart;
+	ద్విగుణ తాత్కాలిక;
 
 	/*
 	 * AIX manpage says the default is 0, but Solaris says the default
 	 * is 6, and sprintf on AIX defaults to 6
 	 */
-	if (max < 0)
+	ఒకవేళ (max < 0)
 		max = 6;
 
 	ufvalue = abs_val (fvalue);
 
-	if (fvalue < 0) {
+	ఒకవేళ (fvalue < 0) {
 		signvalue = '-';
-	} else {
-		if (flags & DP_F_PLUS) { /* Do a sign (+/i) */
+	} లేకపోతే {
+		ఒకవేళ (flags & DP_F_PLUS) { /* Do a sign (+/i) */
 			signvalue = '+';
-		} else {
-			if (flags & DP_F_SPACE)
+		} లేకపోతే {
+			ఒకవేళ (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-#if 0
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
-#endif
+#ఒకవేళ 0
+	ఒకవేళ (flags & DP_F_పైకి) caps = 1; /* Should characters be upper case? */
+#అయితే_ముగింపు
 
-#if 0
-	 if (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
-#endif
+#ఒకవేళ 0
+	 ఒకవేళ (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
+#అయితే_ముగింపు
 
 	/*
 	 * Sorry, we only support 16 digits past the decimal because of our
 	 * conversion method
 	 */
-	if (max > 16)
+	ఒకవేళ (max > 16)
 		max = 16;
 
 	/* We "cheat" by converting the fractional part to integer by
 	 * multiplying by a factor of 10
 	 */
 
-	temp = ufvalue;
-	my_modf(temp, &intpart);
+	తాత్కాలిక = ufvalue;
+	my_modf(తాత్కాలిక, &intpart);
 
-	fracpart = ROUND((POW10(max)) * (ufvalue - intpart));
+	fracpart = విడత_2((POW10(max)) * (ufvalue - intpart));
 
-	if (fracpart >= POW10(max)) {
+	ఒకవేళ (fracpart >= POW10(max)) {
 		intpart++;
 		fracpart -= POW10(max);
 	}
 
 	/* Convert integer part */
-	do {
-		temp = intpart*0.1;
-		my_modf(temp, &intpart);
-		idx = (int) ((temp -intpart +0.05)* 10.0);
+	చేయి {
+		తాత్కాలిక = intpart*0.1;
+		my_modf(తాత్కాలిక, &intpart);
+		idx = (పూర్ణాంకం) ((తాత్కాలిక -intpart +0.05)* 10.0);
 		/* idx = (int) (((double)(temp*0.1) -intpart +0.05) *10.0); */
 		/* printf ("%llf, %f, %x\n", temp, intpart, idx); */
 		iconvert[iplace++] = "0123456789"[idx];
-	} while (intpart && (iplace < 311));
-	if (iplace == 311) iplace--;
+	} అయితే (intpart && (iplace < 311));
+	ఒకవేళ (iplace == 311) iplace--;
 	iconvert[iplace] = 0;
 
 	/* Convert fractional part */
-	if (fracpart)
+	ఒకవేళ (fracpart)
 	{
-		do {
-			temp = fracpart*0.1;
-			my_modf(temp, &fracpart);
-			idx = (int) ((temp -fracpart +0.05)* 10.0);
+		చేయి {
+			తాత్కాలిక = fracpart*0.1;
+			my_modf(తాత్కాలిక, &fracpart);
+			idx = (పూర్ణాంకం) ((తాత్కాలిక -fracpart +0.05)* 10.0);
 			/* idx = (int) ((((temp/10) -fracpart) +0.05) *10); */
 			/* printf ("%lf, %lf, %ld\n", temp, fracpart, idx ); */
 			fconvert[fplace++] = "0123456789"[idx];
-		} while(fracpart && (fplace < 311));
-		if (fplace == 311) fplace--;
+		} అయితే(fracpart && (fplace < 311));
+		ఒకవేళ (fplace == 311) fplace--;
 	}
 	fconvert[fplace] = 0;
 
 	/* -1 for decimal point, another -1 if we are printing a sign */
 	padlen = min - iplace - max - 1 - ((signvalue) ? 1 : 0);
 	zpadlen = max - fplace;
-	if (zpadlen < 0) zpadlen = 0;
-	if (padlen < 0)
+	ఒకవేళ (zpadlen < 0) zpadlen = 0;
+	ఒకవేళ (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	ఒకవేళ (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justifty */
 
-	if ((flags & DP_F_ZERO) && (padlen > 0)) {
-		if (signvalue) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
+	ఒకవేళ ((flags & DP_F_ZERO) && (padlen > 0)) {
+		ఒకవేళ (signvalue) {
+			DOPR_OUTCH(బఫరు, *currlen, maxlen, signvalue);
 			--padlen;
 			signvalue = 0;
 		}
-		while (padlen > 0) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
+		అయితే (padlen > 0) {
+			DOPR_OUTCH(బఫరు, *currlen, maxlen, '0');
 			--padlen;
 		}
 	}
-	while (padlen > 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	అయితే (padlen > 0) {
+		DOPR_OUTCH(బఫరు, *currlen, maxlen, ' ');
 		--padlen;
 	}
-	if (signvalue)
-		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
+	ఒకవేళ (signvalue)
+		DOPR_OUTCH(బఫరు, *currlen, maxlen, signvalue);
 
-	while (iplace > 0) {
+	అయితే (iplace > 0) {
 		--iplace;
-		DOPR_OUTCH(buffer, *currlen, maxlen, iconvert[iplace]);
+		DOPR_OUTCH(బఫరు, *currlen, maxlen, iconvert[iplace]);
 	}
 
-#ifdef DEBUG_SNPRINTF
-	printf("fmtfp: fplace=%d zpadlen=%d\n", fplace, zpadlen);
-#endif
+#నిర్వచితమైతే DEBUG_SNPRINTF
+	రాయి("fmtfp: fplace=%d zpadlen=%d\n", fplace, zpadlen);
+#అయితే_ముగింపు
 
 	/*
 	 * Decimal point.  This should probably use locale to find the correct
 	 * char to print out.
 	 */
-	if (max > 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, '.');
+	ఒకవేళ (max > 0) {
+		DOPR_OUTCH(బఫరు, *currlen, maxlen, '.');
 
-		while (zpadlen > 0) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
+		అయితే (zpadlen > 0) {
+			DOPR_OUTCH(బఫరు, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 
-		while (fplace > 0) {
+		అయితే (fplace > 0) {
 			--fplace;
-			DOPR_OUTCH(buffer, *currlen, maxlen, fconvert[fplace]);
+			DOPR_OUTCH(బఫరు, *currlen, maxlen, fconvert[fplace]);
 		}
 	}
 
-	while (padlen < 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	అయితే (padlen < 0) {
+		DOPR_OUTCH(బఫరు, *currlen, maxlen, ' ');
 		++padlen;
 	}
-	return 0;
+	తిరిగి 0;
 }
-#endif /* !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF) */
+#అయితే_ముగింపు /* !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF) */
 
-#if !defined(HAVE_VSNPRINTF)
-int
-vsnprintf (char *str, size_t count, const char *fmt, va_list args)
+#ఒకవేళ !defined(HAVE_VSNPRINTF)
+పూర్ణాంకం
+vsnprintf (అక్షరం *str, కొలత_t లెక్క, స్థిరరాశి అక్షరం *fmt, va_list వాదనలు)
 {
-	return dopr(str, count, fmt, args);
+	తిరిగి dopr(str, లెక్క, fmt, వాదనలు);
 }
-#endif
+#అయితే_ముగింపు
 
-#if !defined(HAVE_SNPRINTF)
-int
-snprintf(char *str, size_t count, SNPRINTF_CONST char *fmt, ...)
+#ఒకవేళ !defined(HAVE_SNPRINTF)
+పూర్ణాంకం
+snprintf(అక్షరం *str, కొలత_t లెక్క, SNPRINTF_CONST అక్షరం *fmt, ...)
 {
-	size_t ret;
+	కొలత_t ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
+	ret = vsnprintf(str, లెక్క, fmt, ap);
 	va_end(ap);
-	return ret;
+	తిరిగి ret;
 }
-#endif
+#అయితే_ముగింపు

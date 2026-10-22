@@ -15,38 +15,38 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-extern "C" {
+బాహ్య "C" {
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include "ssherr.h"
-#include "ssh-sk.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "ssh-sk.h"
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest)
+పూర్ణాంకం
+sshsk_enroll(పూర్ణాంకం type, స్థిరరాశి అక్షరం *provider_మార్గం, స్థిరరాశి అక్షరం *device,
+    స్థిరరాశి అక్షరం *application, స్థిరరాశి అక్షరం *userid, uint8_t flags,
+    స్థిరరాశి అక్షరం *pin, నిర్మాణం sshbuf *challenge_buf,
+    నిర్మాణం sshkey **keyp, నిర్మాణం sshbuf *attest)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	తిరిగి SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
-int
-sshsk_sign(const char *provider_path, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin)
+పూర్ణాంకం
+sshsk_sign(స్థిరరాశి అక్షరం *provider_మార్గం, నిర్మాణం sshkey *కీలకం,
+    u_char **sigp, కొలత_t *lenp, స్థిరరాశి u_char *దత్తాంశం, కొలత_t datalen,
+    u_int compat, స్థిరరాశి అక్షరం *pin)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	తిరిగి SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
-int
-sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
-    size_t *nsrksp)
+పూర్ణాంకం
+sshsk_ఎక్కించు_resident(స్థిరరాశి అక్షరం *provider_మార్గం, స్థిరరాశి అక్షరం *device,
+    స్థిరరాశి అక్షరం *pin, u_int flags, నిర్మాణం sshsk_resident_కీలకం ***srksp,
+    కొలత_t *nsrksp)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	తిరిగి SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
 };

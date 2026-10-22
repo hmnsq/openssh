@@ -30,30 +30,30 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/inet_ntoa.c */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#if defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
+#ఒకవేళ defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
 
 /*
  * Convert network-format internet address
  * to base 256 d.d.d.d representation.
  */
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <stdio.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <netinet/in.h>
+#అన్తర్భావ <arpa/inet.h>
+#అన్తర్భావ <stdio.h>
 
-char *
-inet_ntoa(struct in_addr in)
+అక్షరం *
+inet_ntoa(నిర్మాణం in_addr లోపల)
 {
-	static char b[18];
-	char *p;
+	స్థిర అక్షరం b[18];
+	అక్షరం *p;
 
-	p = (char *)&in;
-#define	UC(b)	(((int)b)&0xff)
-	(void)snprintf(b, sizeof(b),
+	p = (అక్షరం *)&లోపల;
+#నిర్వచించు	UC(b)	(((పూర్ణాంకం)b)&0xff)
+	(శూన్య)snprintf(b, పరిమాణం(b),
 	    "%u.%u.%u.%u", UC(p[0]), UC(p[1]), UC(p[2]), UC(p[3]));
-	return (b);
+	తిరిగి (b);
 }
 
-#endif /* defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA) */
+#అయితే_ముగింపు /* defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA) */

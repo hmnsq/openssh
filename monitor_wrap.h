@@ -25,90 +25,90 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _MM_WRAP_H_
-#define _MM_WRAP_H_
+#నిర్వచితం_కాకపోతే _MM_WRAP_H_
+#నిర్వచించు _MM_WRAP_H_
 
-#define MONITOR_MAX_MSGLEN		(4 * 1024 * 1024)
+#నిర్వచించు MONITOR_MAX_MSGLEN		(4 * 1024 * 1024)
 /* The configuration has to fit in a monitor message along with other state */
-#define MONITOR_MAX_CFGLEN		(MONITOR_MAX_MSGLEN - (64 * 1024))
+#నిర్వచించు MONITOR_MAX_CFGLEN		(MONITOR_MAX_MSGLEN - (64 * 1024))
 
-enum mm_keytype { MM_NOKEY, MM_HOSTKEY, MM_USERKEY };
+గణన mm_keytype { MM_NOKEY, MM_HOSTKEY, MM_USERKEY };
 
-struct ssh;
-struct monitor;
-struct Authctxt;
-struct sshkey;
-struct sshauthopt;
-struct sshkey_sig_details;
+నిర్మాణం ssh;
+నిర్మాణం monitor;
+నిర్మాణం Authctxt;
+నిర్మాణం sshkey;
+నిర్మాణం sshauthopt;
+నిర్మాణం sshkey_sig_details;
 
-void mm_log_handler(LogLevel, int, const char *, void *);
-int mm_is_monitor(void);
-#ifdef WITH_OPENSSL
-DH *mm_choose_dh(int, int, int);
-#endif
-void mm_sshkey_setcompat(struct ssh *);
-int mm_sshkey_sign(struct ssh *, struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *,
-    const char *, u_int compat);
-void mm_inform_authserv(char *, char *);
-struct passwd *mm_getpwnamallow(struct ssh *, const char *);
-char *mm_auth2_read_banner(void);
-int mm_auth_password(struct ssh *, char *);
-int mm_key_allowed(enum mm_keytype, const char *, const char *, struct sshkey *,
-    int, struct sshauthopt **);
-int mm_user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *, int,
-    struct sshauthopt **);
-int mm_hostbased_key_allowed(struct ssh *, struct passwd *, const char *,
-    const char *, struct sshkey *);
-int mm_sshkey_verify(const struct sshkey *, const u_char *, size_t,
-    const u_char *, size_t, const char *, u_int, struct sshkey_sig_details **);
+శూన్య mm_log_handler(LogLevel, పూర్ణాంకం, స్థిరరాశి అక్షరం *, శూన్య *);
+పూర్ణాంకం mm_is_monitor(శూన్య);
+#నిర్వచితమైతే WITH_OPENSSL
+DH *mm_ఎంచుకో_dh(పూర్ణాంకం, పూర్ణాంకం, పూర్ణాంకం);
+#అయితే_ముగింపు
+శూన్య mm_sshkey_setcompat(నిర్మాణం ssh *);
+పూర్ణాంకం mm_sshkey_sign(నిర్మాణం ssh *, నిర్మాణం sshkey *, u_char **, కొలత_t *,
+    స్థిరరాశి u_char *, కొలత_t, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *,
+    స్థిరరాశి అక్షరం *, u_int compat);
+శూన్య mm_inform_authserv(అక్షరం *, అక్షరం *);
+నిర్మాణం passwd *mm_getpwnamallow(నిర్మాణం ssh *, స్థిరరాశి అక్షరం *);
+అక్షరం *mm_auth2_read_banner(శూన్య);
+పూర్ణాంకం mm_auth_password(నిర్మాణం ssh *, అక్షరం *);
+పూర్ణాంకం mm_కీలకం_allowed(గణన mm_keytype, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, నిర్మాణం sshkey *,
+    పూర్ణాంకం, నిర్మాణం sshauthopt **);
+పూర్ణాంకం mm_user_కీలకం_allowed(నిర్మాణం ssh *ssh, నిర్మాణం passwd *, నిర్మాణం sshkey *, పూర్ణాంకం,
+    నిర్మాణం sshauthopt **);
+పూర్ణాంకం mm_hostbased_కీలకం_allowed(నిర్మాణం ssh *, నిర్మాణం passwd *, స్థిరరాశి అక్షరం *,
+    స్థిరరాశి అక్షరం *, నిర్మాణం sshkey *);
+పూర్ణాంకం mm_sshkey_verify(స్థిరరాశి నిర్మాణం sshkey *, స్థిరరాశి u_char *, కొలత_t,
+    స్థిరరాశి u_char *, కొలత_t, స్థిరరాశి అక్షరం *, u_int, నిర్మాణం sshkey_sig_details **);
 
-void mm_decode_activate_server_options(struct ssh *ssh, struct sshbuf *m);
+శూన్య mm_decode_activate_server_options(నిర్మాణం ssh *ssh, నిర్మాణం sshbuf *m);
 
-#ifdef GSSAPI
+#నిర్వచితమైతే GSSAPI
 OM_uint32 mm_ssh_gssapi_server_ctx(Gssctxt **, gss_OID);
 OM_uint32 mm_ssh_gssapi_accept_ctx(Gssctxt *,
-   gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
-int mm_ssh_gssapi_userok(char *user);
-OM_uint32 mm_ssh_gssapi_checkmic(Gssctxt *, gss_buffer_t, gss_buffer_t);
-#endif
+   gss_బఫరు_desc *, gss_బఫరు_desc *, OM_uint32 *);
+పూర్ణాంకం mm_ssh_gssapi_userok(అక్షరం *user);
+OM_uint32 mm_ssh_gssapi_checkmic(Gssctxt *, gss_బఫరు_t, gss_బఫరు_t);
+#అయితే_ముగింపు
 
-#ifdef USE_PAM
-void mm_start_pam(struct ssh *ssh);
-u_int mm_do_pam_account(void);
-void *mm_sshpam_init_ctx(struct Authctxt *);
-int mm_sshpam_query(void *, char **, char **, u_int *, char ***, u_int **);
-int mm_sshpam_respond(void *, u_int, char **);
-void mm_sshpam_free_ctx(void *);
-#endif
+#నిర్వచితమైతే USE_PAM
+శూన్య mm_ప్రారంభం_pam(నిర్మాణం ssh *ssh);
+u_int mm_do_pam_account(శూన్య);
+శూన్య *mm_sshpam_init_ctx(నిర్మాణం Authctxt *);
+పూర్ణాంకం mm_sshpam_query(శూన్య *, అక్షరం **, అక్షరం **, u_int *, అక్షరం ***, u_int **);
+పూర్ణాంకం mm_sshpam_respond(శూన్య *, u_int, అక్షరం **);
+శూన్య mm_sshpam_free_ctx(శూన్య *);
+#అయితే_ముగింపు
 
-#ifdef SSH_AUDIT_EVENTS
-#include "audit.h"
-void mm_audit_event(struct ssh *, ssh_audit_event_t);
-void mm_audit_run_command(const char *);
-#endif
+#నిర్వచితమైతే SSH_AUDIT_EVENTS
+#అన్తర్భావ "audit.h"
+శూన్య mm_audit_event(నిర్మాణం ssh *, ssh_audit_event_t);
+శూన్య mm_audit_నిరంతరం_command(స్థిరరాశి అక్షరం *);
+#అయితే_ముగింపు
 
-struct Session;
-void mm_terminate(void);
-int mm_pty_allocate(int *, int *, char *, size_t);
-void mm_session_pty_cleanup2(struct Session *);
+నిర్మాణం Session;
+శూన్య mm_terminate(శూన్య);
+పూర్ణాంకం mm_pty_allocate(పూర్ణాంకం *, పూర్ణాంకం *, అక్షరం *, కొలత_t);
+శూన్య mm_session_pty_cleanup2(నిర్మాణం Session *);
 
-void mm_send_keystate(struct ssh *, struct monitor*);
+శూన్య mm_send_keystate(నిర్మాణం ssh *, నిర్మాణం monitor*);
 
 /* state */
-struct ServerOptions;
-void mm_get_state(struct ssh *, struct ServerOptions *,
-    struct sshbuf **, uint64_t *, struct sshbuf **, struct sshbuf **,
-    u_char **, struct sshbuf **, struct sshbuf **);
+నిర్మాణం ServerOptions;
+శూన్య mm_get_state(నిర్మాణం ssh *, నిర్మాణం ServerOptions *,
+    నిర్మాణం sshbuf **, uint64_t *, నిర్మాణం sshbuf **, నిర్మాణం sshbuf **,
+    u_char **, నిర్మాణం sshbuf **, నిర్మాణం sshbuf **);
 
 /* bsdauth */
-int mm_bsdauth_query(void *, char **, char **, u_int *, char ***, u_int **);
-int mm_bsdauth_respond(void *, u_int, char **);
+పూర్ణాంకం mm_bsdauth_query(శూన్య *, అక్షరం **, అక్షరం **, u_int *, అక్షరం ***, u_int **);
+పూర్ణాంకం mm_bsdauth_respond(శూన్య *, u_int, అక్షరం **);
 
 /* config / channels glue */
-void	 server_process_permitopen(struct ssh *);
-void	 server_process_channel_timeouts(struct ssh *ssh);
-struct connection_info *
-	 server_get_connection_info(struct ssh *, int, int);
+శూన్య	 server_process_permitopen(నిర్మాణం ssh *);
+శూన్య	 server_process_channel_timeouts(నిర్మాణం ssh *ssh);
+నిర్మాణం connection_info *
+	 server_get_connection_info(నిర్మాణం ssh *, పూర్ణాంకం, పూర్ణాంకం);
 
-#endif /* _MM_WRAP_H_ */
+#అయితే_ముగింపు /* _MM_WRAP_H_ */

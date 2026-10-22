@@ -34,44 +34,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CIPHER_H
-#define CIPHER_H
+#నిర్వచితం_కాకపోతే CIPHER_H
+#నిర్వచించు CIPHER_H
 
-#include <sys/types.h>
-#ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#endif
-#include "cipher-chachapoly.h"
-#include "cipher-aesctr.h"
+#అన్తర్భావ <sys/types.h>
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ <openssl/evp.h>
+#అయితే_ముగింపు
+#అన్తర్భావ "cipher-chachapoly.h"
+#అన్తర్భావ "cipher-aesctr.h"
 
-#define CIPHER_ENCRYPT		1
-#define CIPHER_DECRYPT		0
+#నిర్వచించు CIPHER_ENCRYPT		1
+#నిర్వచించు CIPHER_DECRYPT		0
 
-struct sshcipher;
-struct sshcipher_ctx;
+నిర్మాణం sshcipher;
+నిర్మాణం sshcipher_ctx;
 
-const struct sshcipher *cipher_by_name(const char *);
-const char *cipher_warning_message(const struct sshcipher_ctx *);
-int	 ciphers_valid(const char *);
-char	*cipher_alg_list(char, int);
-const char *compression_alg_list(int);
-int	 cipher_init(struct sshcipher_ctx **, const struct sshcipher *,
-    const u_char *, u_int, const u_char *, u_int, int);
-int	 cipher_crypt(struct sshcipher_ctx *, u_int, u_char *, const u_char *,
+స్థిరరాశి నిర్మాణం sshcipher *cipher_by_name(స్థిరరాశి అక్షరం *);
+స్థిరరాశి అక్షరం *cipher_warning_సందేశం(స్థిరరాశి నిర్మాణం sshcipher_ctx *);
+పూర్ణాంకం	 ciphers_valid(స్థిరరాశి అక్షరం *);
+అక్షరం	*cipher_alg_list(అక్షరం, పూర్ణాంకం);
+స్థిరరాశి అక్షరం *compression_alg_list(పూర్ణాంకం);
+పూర్ణాంకం	 cipher_init(నిర్మాణం sshcipher_ctx **, స్థిరరాశి నిర్మాణం sshcipher *,
+    స్థిరరాశి u_char *, u_int, స్థిరరాశి u_char *, u_int, పూర్ణాంకం);
+పూర్ణాంకం	 cipher_crypt(నిర్మాణం sshcipher_ctx *, u_int, u_char *, స్థిరరాశి u_char *,
     u_int, u_int, u_int);
-int	 cipher_get_length(struct sshcipher_ctx *, u_int *, u_int,
-    const u_char *, u_int);
-void	 cipher_free(struct sshcipher_ctx *);
-u_int	 cipher_blocksize(const struct sshcipher *);
-u_int	 cipher_keylen(const struct sshcipher *);
-u_int	 cipher_seclen(const struct sshcipher *);
-u_int	 cipher_authlen(const struct sshcipher *);
-u_int	 cipher_ivlen(const struct sshcipher *);
-u_int	 cipher_is_cbc(const struct sshcipher *);
-u_int	 cipher_is_internal(const struct sshcipher *);
+పూర్ణాంకం	 cipher_get_నిడివి(నిర్మాణం sshcipher_ctx *, u_int *, u_int,
+    స్థిరరాశి u_char *, u_int);
+శూన్య	 cipher_free(నిర్మాణం sshcipher_ctx *);
+u_int	 cipher_blocksize(స్థిరరాశి నిర్మాణం sshcipher *);
+u_int	 cipher_keylen(స్థిరరాశి నిర్మాణం sshcipher *);
+u_int	 cipher_seclen(స్థిరరాశి నిర్మాణం sshcipher *);
+u_int	 cipher_authlen(స్థిరరాశి నిర్మాణం sshcipher *);
+u_int	 cipher_ivlen(స్థిరరాశి నిర్మాణం sshcipher *);
+u_int	 cipher_is_cbc(స్థిరరాశి నిర్మాణం sshcipher *);
+u_int	 cipher_is_అంతర్గత(స్థిరరాశి నిర్మాణం sshcipher *);
 
-u_int	 cipher_ctx_is_plaintext(struct sshcipher_ctx *);
+u_int	 cipher_ctx_is_plaintext(నిర్మాణం sshcipher_ctx *);
 
-int	 cipher_get_keyiv(struct sshcipher_ctx *, u_char *, size_t);
+పూర్ణాంకం	 cipher_get_keyiv(నిర్మాణం sshcipher_ctx *, u_char *, కొలత_t);
 
-#endif				/* CIPHER_H */
+#అయితే_ముగింపు				/* CIPHER_H */

@@ -22,14 +22,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <pwd.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <pwd.h>
 
-# if defined(HAVE_CRYPT_H) && !defined(HAVE_SECUREWARE)
+# ఒకవేళ defined(HAVE_CRYPT_H) && !defined(HAVE_SECUREWARE)
 #  include <crypt.h>
 # endif
 
@@ -44,22 +44,22 @@
 #  include <prot.h>
 # endif
 
-# if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+# ఒకవేళ defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
 #  include <shadow.h>
 # endif
 
-# if defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
+# ఒకవేళ defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
 #  include <sys/label.h>
 #  include <sys/audit.h>
 #  include <pwdadj.h>
 # endif
 
-# if defined(WITH_OPENSSL) && !defined(HAVE_CRYPT) && defined(HAVE_DES_CRYPT)
+# ఒకవేళ defined(WITH_OPENSSL) && !defined(HAVE_CRYPT) && defined(HAVE_DES_CRYPT)
 #  include <openssl/des.h>
 #  define crypt DES_crypt
 # endif
 
-#define MINIMUM(a, b)	(((a) < (b)) ? (a) : (b))
+#నిర్వచించు MINIMUM(a, b)	(((a) < (b)) ? (a) : (b))
 
 /*
  * Pick an appropriate password encryption type and salt for the running
@@ -67,57 +67,57 @@
  * salt.  Usually this will be root unless the root account is locked out.
  * If we don't find one we return a traditional DES-based salt.
  */
-static const char *
-pick_salt(void)
+స్థిర స్థిరరాశి అక్షరం *
+pick_salt(శూన్య)
 {
-	struct passwd *pw;
-	char *passwd, *p;
-	size_t typelen;
-	static char salt[32];
+	నిర్మాణం passwd *pw;
+	అక్షరం *passwd, *p;
+	కొలత_t typelen;
+	స్థిర అక్షరం salt[32];
 
-	if (salt[0] != '\0')
-		return salt;
-	strlcpy(salt, "xx", sizeof(salt));
+	ఒకవేళ (salt[0] != '\0')
+		తిరిగి salt;
+	strlcpy(salt, "xx", పరిమాణం(salt));
 	setpwent();
-	while ((pw = getpwent()) != NULL) {
-		if ((passwd = shadow_pw(pw)) == NULL)
-			continue;
-		if (passwd[0] == '$' && (p = strrchr(passwd+1, '$')) != NULL) {
+	అయితే ((pw = getpwent()) != ఖాళీ) {
+		ఒకవేళ ((passwd = shadow_pw(pw)) == ఖాళీ)
+			కొనసాగు;
+		ఒకవేళ (passwd[0] == '$' && (p = strrchr(passwd+1, '$')) != ఖాళీ) {
 			typelen = p - passwd + 1;
-			strlcpy(salt, passwd, MINIMUM(typelen, sizeof(salt)));
-			explicit_bzero(passwd, strlen(passwd));
-			goto out;
+			strlcpy(salt, passwd, MINIMUM(typelen, పరిమాణం(salt)));
+			explicit_bzero(passwd, అక్షరశ్రేణి_పొడవు(passwd));
+			వెళ్ళు బహిర్గతం;
 		}
 	}
- out:
+ బహిర్గతం:
 	endpwent();
-	return salt;
+	తిరిగి salt;
 }
 
-char *
-xcrypt(const char *password, const char *salt)
+అక్షరం *
+xcrypt(స్థిరరాశి అక్షరం *password, స్థిరరాశి అక్షరం *salt)
 {
-	char *crypted;
+	అక్షరం *crypted;
 
 	/*
 	 * If we don't have a salt we are encrypting a fake password for
 	 * for timing purposes.  Pick an appropriate salt.
 	 */
-	if (salt == NULL)
+	ఒకవేళ (salt == ఖాళీ)
 		salt = pick_salt();
 
-#if defined(__hpux) && !defined(HAVE_SECUREWARE)
-	if (iscomsec())
+#ఒకవేళ defined(__hpux) && !defined(HAVE_SECUREWARE)
+	ఒకవేళ (iscomsec())
 		crypted = bigcrypt(password, salt);
-	else
+	లేకపోతే
 		crypted = crypt(password, salt);
 # elif defined(HAVE_SECUREWARE)
 	crypted = bigcrypt(password, salt);
-# else
+# లేకపోతే
 	crypted = crypt(password, salt);
-#endif
+#అయితే_ముగింపు
 
-	return crypted;
+	తిరిగి crypted;
 }
 
 /*
@@ -125,32 +125,32 @@ xcrypt(const char *password, const char *salt)
  * version.
  */
 
-char *
-shadow_pw(struct passwd *pw)
+అక్షరం *
+shadow_pw(నిర్మాణం passwd *pw)
 {
-	char *pw_password = pw->pw_passwd;
+	అక్షరం *pw_password = pw->pw_passwd;
 
-# if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
-	struct spwd *spw = getspnam(pw->pw_name);
+# ఒకవేళ defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+	నిర్మాణం spwd *spw = getspnam(pw->pw_name);
 
-	if (spw != NULL)
+	ఒకవేళ (spw != ఖాళీ)
 		pw_password = spw->sp_pwdp;
 # endif
 
-#ifdef USE_LIBIAF
-	return(get_iaf_password(pw));
-#endif
+#నిర్వచితమైతే USE_LIBIAF
+	తిరిగి(get_iaf_password(pw));
+#అయితే_ముగింపు
 
-# if defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
-	struct passwd_adjunct *spw;
-	if (issecure() && (spw = getpwanam(pw->pw_name)) != NULL)
+# ఒకవేళ defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
+	నిర్మాణం passwd_adjunct *spw;
+	ఒకవేళ (issecure() && (spw = getpwanam(pw->pw_name)) != ఖాళీ)
 		pw_password = spw->pwa_passwd;
 # elif defined(HAVE_SECUREWARE)
-	struct pr_passwd *spw = getprpwnam(pw->pw_name);
+	నిర్మాణం pr_passwd *spw = getprpwnam(pw->pw_name);
 
-	if (spw != NULL)
+	ఒకవేళ (spw != ఖాళీ)
 		pw_password = spw->ufld.fd_encrypt;
 # endif
 
-	return pw_password;
+	తిరిగి pw_password;
 }

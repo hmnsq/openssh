@@ -27,62 +27,62 @@
  * binary mode on Windows systems.
  */
 
-#define NO_BINARY_OPEN	/* Avoid redefining open to binary_open for this file */
-#include "includes.h"
+#నిర్వచించు NO_ద్విమాన_OPEN	/* Avoid redefining open to binary_open for this file */
+#అన్తర్భావ "includes.h"
 
-#ifdef HAVE_CYGWIN
+#నిర్వచితమైతే HAVE_CYGWIN
 
-#include <sys/types.h>
-#include <fcntl.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <wchar.h>
-#include <wctype.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <wchar.h>
+#అన్తర్భావ <wctype.h>
 
-#include "xmalloc.h"
+#అన్తర్భావ "xmalloc.h"
 
-int
-binary_open(const char *filename, int flags, ...)
+పూర్ణాంకం
+ద్విమాన_open(స్థిరరాశి అక్షరం *filename, పూర్ణాంకం flags, ...)
 {
 	va_list ap;
-	mode_t mode;
+	బహుళకం_t బహుళకం;
 
 	va_start(ap, flags);
-	mode = va_arg(ap, mode_t);
+	బహుళకం = va_arg(ap, బహుళకం_t);
 	va_end(ap);
-	return (open(filename, flags | O_BINARY, mode));
+	తిరిగి (open(filename, flags | O_ద్విమాన, బహుళకం));
 }
 
-int
-check_ntsec(const char *filename)
+పూర్ణాంకం
+check_ntsec(స్థిరరాశి అక్షరం *filename)
 {
-	return (pathconf(filename, _PC_POSIX_PERMISSIONS));
+	తిరిగి (pathconf(filename, _PC_POSIX_PERMISSIONS));
 }
 
-const char *
+స్థిరరాశి అక్షరం *
 cygwin_ssh_privsep_user()
 {
-  static char cyg_privsep_user[DNLEN + UNLEN + 2];
+  స్థిర అక్షరం cyg_privsep_user[DNLEN + UNLEN + 2];
 
-  if (!cyg_privsep_user[0])
+  ఒకవేళ (!cyg_privsep_user[0])
     {
-#ifdef CW_CYGNAME_FROM_WINNAME
-      if (cygwin_internal (CW_CYGNAME_FROM_WINNAME, "sshd", cyg_privsep_user,
-			   sizeof cyg_privsep_user) != 0)
-#endif
-	strlcpy(cyg_privsep_user, "sshd", sizeof(cyg_privsep_user));
+#నిర్వచితమైతే CW_CYGNAME_FROM_WINNAME
+      ఒకవేళ (cygwin_అంతర్గత (CW_CYGNAME_FROM_WINNAME, "sshd", cyg_privsep_user,
+			   పరిమాణం cyg_privsep_user) != 0)
+#అయితే_ముగింపు
+	strlcpy(cyg_privsep_user, "sshd", పరిమాణం(cyg_privsep_user));
     }
-  return cyg_privsep_user;
+  తిరిగి cyg_privsep_user;
 }
 
-#define NL(x) x, (sizeof (x) - 1)
-#define WENV_SIZ (sizeof (wenv_arr) / sizeof (wenv_arr[0]))
+#నిర్వచించు NL(x) x, (పరిమాణం (x) - 1)
+#నిర్వచించు WENV_SIZ (పరిమాణం (wenv_arr) / పరిమాణం (wenv_arr[0]))
 
-static struct wenv {
-	const char *name;
-	size_t namelen;
+స్థిర నిర్మాణం wenv {
+	స్థిరరాశి అక్షరం *name;
+	కొలత_t namelen;
 } wenv_arr[] = {
 	{ NL("ALLUSERSPROFILE=") },
 	{ NL("COMPUTERNAME=") },
@@ -97,27 +97,27 @@ static struct wenv {
 	{ NL("WINDIR=") }
 };
 
-char **
-fetch_windows_environment(void)
+అక్షరం **
+fetch_windows_environment(శూన్య)
 {
-	char **e, **p;
-	unsigned int i, idx = 0;
+	అక్షరం **e, **p;
+	గుర్తులేని పూర్ణాంకం i, idx = 0;
 
-	p = xcalloc(WENV_SIZ + 1, sizeof(char *));
-	for (e = environ; *e != NULL; ++e) {
-		for (i = 0; i < WENV_SIZ; ++i) {
-			if (!strncmp(*e, wenv_arr[i].name, wenv_arr[i].namelen))
+	p = xcalloc(WENV_SIZ + 1, పరిమాణం(అక్షరం *));
+	కొరకు (e = environ; *e != ఖాళీ; ++e) {
+		కొరకు (i = 0; i < WENV_SIZ; ++i) {
+			ఒకవేళ (!అక్షరశ్రేణి_పోలిక(*e, wenv_arr[i].name, wenv_arr[i].namelen))
 				p[idx++] = *e;
 		}
 	}
-	p[idx] = NULL;
-	return p;
+	p[idx] = ఖాళీ;
+	తిరిగి p;
 }
 
-void
-free_windows_environment(char **p)
+శూన్య
+free_windows_environment(అక్షరం **p)
 {
-	free(p);
+	విడుదల(p);
 }
 
 /*
@@ -128,86 +128,86 @@ free_windows_environment(char **p)
  * Unicode characters into account.
  */
 
-static int
-__match_pattern (const wchar_t *s, const wchar_t *pattern)
+స్థిర పూర్ణాంకం
+__match_pattern (స్థిరరాశి wchar_t *s, స్థిరరాశి wchar_t *నమూనా)
 {
-	for (;;) {
+	కొరకు (;;) {
 		/* If at end of pattern, accept if also at end of string. */
-		if (!*pattern)
-			return !*s;
+		ఒకవేళ (!*నమూనా)
+			తిరిగి !*s;
 
-		if (*pattern == '*') {
+		ఒకవేళ (*నమూనా == '*') {
 			/* Skip the asterisk. */
-			pattern++;
+			నమూనా++;
 
 			/* If at end of pattern, accept immediately. */
-			if (!*pattern)
-				return 1;
+			ఒకవేళ (!*నమూనా)
+				తిరిగి 1;
 
 			/* If next character in pattern is known, optimize. */
-			if (*pattern != '?' && *pattern != '*') {
+			ఒకవేళ (*నమూనా != '?' && *నమూనా != '*') {
 				/*
 				 * Look instances of the next character in
 				 * pattern, and try to match starting from
 				 * those.
 				 */
-				for (; *s; s++)
-					if (*s == *pattern &&
-					    __match_pattern(s + 1, pattern + 1))
-						return 1;
+				కొరకు (; *s; s++)
+					ఒకవేళ (*s == *నమూనా &&
+					    __match_pattern(s + 1, నమూనా + 1))
+						తిరిగి 1;
 				/* Failed. */
-				return 0;
+				తిరిగి 0;
 			}
 			/*
 			 * Move ahead one character at a time and try to
 			 * match at each position.
 			 */
-			for (; *s; s++)
-				if (__match_pattern(s, pattern))
-					return 1;
+			కొరకు (; *s; s++)
+				ఒకవేళ (__match_pattern(s, నమూనా))
+					తిరిగి 1;
 			/* Failed. */
-			return 0;
+			తిరిగి 0;
 		}
 		/*
 		 * There must be at least one more character in the string.
 		 * If we are at the end, fail.
 		 */
-		if (!*s)
-			return 0;
+		ఒకవేళ (!*s)
+			తిరిగి 0;
 
 		/* Check if the next character of the string is acceptable. */
-		if (*pattern != '?' && towlower(*pattern) != towlower(*s))
-			return 0;
+		ఒకవేళ (*నమూనా != '?' && towlower(*నమూనా) != towlower(*s))
+			తిరిగి 0;
 
 		/* Move to the next character, both in string and in pattern. */
 		s++;
-		pattern++;
+		నమూనా++;
 	}
 	/* NOTREACHED */
 }
 
-static int
-_match_pattern(const char *s, const char *pattern)
+స్థిర పూర్ణాంకం
+సరిపోలిక_నమూనా_2(స్థిరరాశి అక్షరం *s, స్థిరరాశి అక్షరం *నమూనా)
 {
 	wchar_t *ws;
 	wchar_t *wpattern;
-	size_t len;
-	int ret;
+	కొలత_t len;
+	పూర్ణాంకం ret;
 
-	if ((len = mbstowcs(NULL, s, 0)) == (size_t) -1)
-		return 0;
-	ws = (wchar_t *) xcalloc(len + 1, sizeof (wchar_t));
+	ఒకవేళ ((len = mbstowcs(ఖాళీ, s, 0)) == (కొలత_t) -1)
+		తిరిగి 0;
+	ws = (wchar_t *) xcalloc(len + 1, పరిమాణం (wchar_t));
 	mbstowcs(ws, s, len + 1);
-	if ((len = mbstowcs(NULL, pattern, 0)) == (size_t) -1) {
-		free(ws);
-		return 0;
+	ఒకవేళ ((len = mbstowcs(ఖాళీ, నమూనా, 0)) == (కొలత_t) -1) {
+		విడుదల(ws);
+		తిరిగి 0;
 	}
-	wpattern = (wchar_t *) xcalloc(len + 1, sizeof (wchar_t));
-	mbstowcs(wpattern, pattern, len + 1);
+	wpattern = (wchar_t *) xcalloc(len + 1, పరిమాణం (wchar_t));
+	mbstowcs(wpattern, నమూనా, len + 1);
 	ret = __match_pattern (ws, wpattern);
-	free(ws);
-	free(wpattern);
-	return ret;
+	విడుదల(ws);
+	విడుదల(wpattern);
+	తిరిగి ret;
 }
 
 /*
@@ -216,48 +216,48 @@ _match_pattern(const char *s, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-cygwin_ug_match_pattern_list(const char *string, const char *pattern)
+పూర్ణాంకం
+cygwin_ug_సరిపోలిక_నమూనా_list(స్థిరరాశి అక్షరం *string, స్థిరరాశి అక్షరం *నమూనా)
 {
-	char sub[1024];
-	int negated;
-	int got_positive;
-	size_t i, subi, len = strlen(pattern);
+	అక్షరం sub[1024];
+	పూర్ణాంకం negated;
+	పూర్ణాంకం got_ధనాత్మక;
+	కొలత_t i, subi, len = అక్షరశ్రేణి_పొడవు(నమూనా);
 
-	got_positive = 0;
-	for (i = 0; i < len;) {
+	got_ధనాత్మక = 0;
+	కొరకు (i = 0; i < len;) {
 		/* Check if the subpattern is negated. */
-		if (pattern[i] == '!') {
+		ఒకవేళ (నమూనా[i] == '!') {
 			negated = 1;
 			i++;
-		} else
+		} లేకపోతే
 			negated = 0;
 
 		/*
 		 * Extract the subpattern up to a comma or end.  Convert the
 		 * subpattern to lowercase.
 		 */
-		for (subi = 0;
-		    i < len && subi < sizeof(sub) - 1 && pattern[i] != ',';
+		కొరకు (subi = 0;
+		    i < len && subi < పరిమాణం(sub) - 1 && నమూనా[i] != ',';
 		    subi++, i++)
-			sub[subi] = pattern[i];
+			sub[subi] = నమూనా[i];
 		/* If subpattern too long, return failure (no match). */
-		if (subi >= sizeof(sub) - 1)
-			return 0;
+		ఒకవేళ (subi >= పరిమాణం(sub) - 1)
+			తిరిగి 0;
 
 		/* If the subpattern was terminated by a comma, then skip it. */
-		if (i < len && pattern[i] == ',')
+		ఒకవేళ (i < len && నమూనా[i] == ',')
 			i++;
 
 		/* Null-terminate the subpattern. */
 		sub[subi] = '\0';
 
 		/* Try to match the subpattern against the string. */
-		if (_match_pattern(string, sub)) {
-			if (negated)
-				return -1;		/* Negative */
-			else
-				got_positive = 1;	/* Positive */
+		ఒకవేళ (సరిపోలిక_నమూనా_2(string, sub)) {
+			ఒకవేళ (negated)
+				తిరిగి -1;		/* Negative */
+			లేకపోతే
+				got_ధనాత్మక = 1;	/*ధనాత్మక*/
 		}
 	}
 
@@ -265,7 +265,7 @@ cygwin_ug_match_pattern_list(const char *string, const char *pattern)
 	 * Return success if got a positive match.  If there was a negative
 	 * match, we have already returned -1 and never get here.
 	 */
-	return got_positive;
+	తిరిగి got_ధనాత్మక;
 }
 
-#endif /* HAVE_CYGWIN */
+#అయితే_ముగింపు /* HAVE_CYGWIN */

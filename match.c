@@ -36,19 +36,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
 
-#include "xmalloc.h"
-#include "match.h"
-#include "misc.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "match.h"
+#అన్తర్భావ "misc.h"
 
 /*
  * Computes the epsilon closure of an NFA set.
@@ -57,20 +57,20 @@
  *
  * This function modifies 'states' in place.
  */
-static void
-epsilon_closure(char *states, const char *pattern, size_t M)
+స్థిర శూన్య
+epsilon_సంవృతం(అక్షరం *స్థితులు, స్థిరరాశి అక్షరం *నమూనా, కొలత_t M)
 {
-	size_t i;
+	కొలత_t i;
 
 	/* only need a forward pass as there are no back jumps in our grammar */
-	for (i = 0; i < M; i++) {
-		if (!states[i] || pattern[i] != '*')
-			continue;
+	కొరకు (i = 0; i < M; i++) {
+		ఒకవేళ (!స్థితులు[i] || నమూనా[i] != '*')
+			కొనసాగు;
 		/*
 		 * State i is active, and pattern[i] is '*', so we can
 		 * epsilon-transition to i+1.
 		 */
-		states[i + 1] = 1;
+		స్థితులు[i + 1] = 1;
 	}
 }
 
@@ -78,77 +78,77 @@ epsilon_closure(char *states, const char *pattern, size_t M)
  * Returns true if the given string matches the pattern (which may contain ?
  * and * as wildcards), and zero if it does not match. Uses an NFA internally.
  */
-int
-match_pattern(const char *s, const char *pattern)
+పూర్ణాంకం
+సరిపోలిక_నమూనా(స్థిరరాశి అక్షరం *s, స్థిరరాశి అక్షరం *నమూనా)
 {
-	size_t M;
-	size_t i;
-	char *states, *next_states, *tmp;
-	int active, matched = 0;
+	కొలత_t M;
+	కొలత_t i;
+	అక్షరం *స్థితులు, *తదుపరి_స్థితులు, *tmp;
+	పూర్ణాంకం చురుకైన, matched = 0;
 
 	/* trivial case: empty pattern vs empty input */
-	if ((M = strlen(pattern)) == 0)
-		return *s == '\0';
+	ఒకవేళ ((M = అక్షరశ్రేణి_పొడవు(నమూనా)) == 0)
+		తిరిగి *s == '\0';
 
 	/* A state for each pattern character, plus one final accepting state */
-	states = xcalloc(M + 1, sizeof(*states));
-	next_states = xcalloc(M + 1, sizeof(*next_states));
+	స్థితులు = xcalloc(M + 1, పరిమాణం(*స్థితులు));
+	తదుపరి_స్థితులు = xcalloc(M + 1, పరిమాణం(*తదుపరి_స్థితులు));
 
 	/* Initial state: state 0 is active */
-	states[0] = 1;
+	స్థితులు[0] = 1;
 	/* Other states might be reachable now if the pattern starts with '*' */
-	epsilon_closure(states, pattern, M);
+	epsilon_సంవృతం(స్థితులు, నమూనా, M);
 
-	for (; *s; s++) {
-		memset(next_states, 0, M + 1);
+	కొరకు (; *s; s++) {
+		memset(తదుపరి_స్థితులు, 0, M + 1);
 
 		/* Calculate the reachable next states given the input char */
-		for (i = 0; i < M; i++) {
-			if (!states[i])
-				continue;
-			if (pattern[i] == '*') {
+		కొరకు (i = 0; i < M; i++) {
+			ఒకవేళ (!స్థితులు[i])
+				కొనసాగు;
+			ఒకవేళ (నమూనా[i] == '*') {
 				/*
 				 * '*' matches any character, so we can
 				 * stay in state i
 				 */
-				next_states[i] = 1;
-			} else if (pattern[i] == '?' || pattern[i] == *s) {
+				తదుపరి_స్థితులు[i] = 1;
+			} లేకపోతే ఒకవేళ (నమూనా[i] == '?' || నమూనా[i] == *s) {
 				/*
 				 * '?' matches any character, or we have
 				 * a literal match.
 				 */
-				next_states[i + 1] = 1;
+				తదుపరి_స్థితులు[i + 1] = 1;
 			}
 		}
 
 		/* Expand the reachable next states with epsilon transitions */
-		epsilon_closure(next_states, pattern, M);
+		epsilon_సంవృతం(తదుపరి_స్థితులు, నమూనా, M);
 
 		/* Swap states and next_states */
-		tmp = states;
-		states = next_states;
-		next_states = tmp;
+		tmp = స్థితులు;
+		స్థితులు = తదుపరి_స్థితులు;
+		తదుపరి_స్థితులు = tmp;
 
 		/* Check if we have any active pattern states left */
-		active = 0;
-		for (i = 0; i <= M; i++) {
-			if (states[i]) {
-				active = 1;
-				break;
+		చురుకైన = 0;
+		కొరకు (i = 0; i <= M; i++) {
+			ఒకవేళ (స్థితులు[i]) {
+				చురుకైన = 1;
+				ఆపు;
 			}
 		}
-		if (!active)
-			goto out; /* No active states, fail early */
+		ఒకవేళ (!చురుకైన)
+			వెళ్ళు బహిర్గతం; /* No active states, fail early */
 	}
 	/*
 	 * We matched only if we ended up in the final, accepting state
 	 * after consuming all the input.
 	 */
-	matched = states[M];
- out:
-	free(states);
-	free(next_states);
-	return matched;
+	matched = స్థితులు[M];
+ బహిర్గతం:
+	విడుదల(స్థితులు);
+	విడుదల(తదుపరి_స్థితులు);
+	తిరిగి matched;
 }
 
 /*
@@ -157,49 +157,49 @@ match_pattern(const char *s, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-match_pattern_list(const char *string, const char *pattern, int dolower)
+పూర్ణాంకం
+సరిపోలిక_నమూనా_list(స్థిరరాశి అక్షరం *string, స్థిరరాశి అక్షరం *నమూనా, పూర్ణాంకం dolower)
 {
-	char sub[1024];
-	int negated;
-	int got_positive;
-	u_int i, subi, len = strlen(pattern);
+	అక్షరం sub[1024];
+	పూర్ణాంకం negated;
+	పూర్ణాంకం got_ధనాత్మక;
+	u_int i, subi, len = అక్షరశ్రేణి_పొడవు(నమూనా);
 
-	got_positive = 0;
-	for (i = 0; i < len;) {
+	got_ధనాత్మక = 0;
+	కొరకు (i = 0; i < len;) {
 		/* Check if the subpattern is negated. */
-		if (pattern[i] == '!') {
+		ఒకవేళ (నమూనా[i] == '!') {
 			negated = 1;
 			i++;
-		} else
+		} లేకపోతే
 			negated = 0;
 
 		/*
 		 * Extract the subpattern up to a comma or end.  Convert the
 		 * subpattern to lowercase.
 		 */
-		for (subi = 0;
-		    i < len && subi < sizeof(sub) - 1 && pattern[i] != ',';
+		కొరకు (subi = 0;
+		    i < len && subi < పరిమాణం(sub) - 1 && నమూనా[i] != ',';
 		    subi++, i++)
-			sub[subi] = dolower && isupper((u_char)pattern[i]) ?
-			    tolower((u_char)pattern[i]) : pattern[i];
+			sub[subi] = dolower && isupper((u_char)నమూనా[i]) ?
+			    tolower((u_char)నమూనా[i]) : నమూనా[i];
 		/* If subpattern too long, return failure (no match). */
-		if (subi >= sizeof(sub) - 1)
-			return 0;
+		ఒకవేళ (subi >= పరిమాణం(sub) - 1)
+			తిరిగి 0;
 
 		/* If the subpattern was terminated by a comma, then skip it. */
-		if (i < len && pattern[i] == ',')
+		ఒకవేళ (i < len && నమూనా[i] == ',')
 			i++;
 
 		/* Null-terminate the subpattern. */
 		sub[subi] = '\0';
 
 		/* Try to match the subpattern against the string. */
-		if (match_pattern(string, sub)) {
-			if (negated)
-				return -1;		/* Negative */
-			else
-				got_positive = 1;	/* Positive */
+		ఒకవేళ (సరిపోలిక_నమూనా(string, sub)) {
+			ఒకవేళ (negated)
+				తిరిగి -1;		/* Negative */
+			లేకపోతే
+				got_ధనాత్మక = 1;	/*ధనాత్మక*/
 		}
 	}
 
@@ -207,20 +207,20 @@ match_pattern_list(const char *string, const char *pattern, int dolower)
 	 * Return success if got a positive match.  If there was a negative
 	 * match, we have already returned -1 and never get here.
 	 */
-	return got_positive;
+	తిరిగి got_ధనాత్మక;
 }
 
 /* Match a list representing users or groups. */
-int
-match_usergroup_pattern_list(const char *string, const char *pattern)
+పూర్ణాంకం
+సరిపోలిక_usergroup_నమూనా_list(స్థిరరాశి అక్షరం *string, స్థిరరాశి అక్షరం *నమూనా)
 {
-#ifdef HAVE_CYGWIN
+#నిర్వచితమైతే HAVE_CYGWIN
 	/* Windows usernames may be Unicode and are not case sensitive */
-	return cygwin_ug_match_pattern_list(string, pattern);
-#else
+	తిరిగి cygwin_ug_సరిపోలిక_నమూనా_list(string, నమూనా);
+#లేకపోతే
 	/* Case sensitive match */
-	return match_pattern_list(string, pattern, 0);
-#endif
+	తిరిగి సరిపోలిక_నమూనా_list(string, నమూనా, 0);
+#అయితే_ముగింపు
 }
 
 /*
@@ -229,16 +229,16 @@ match_usergroup_pattern_list(const char *string, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-match_hostname(const char *host, const char *pattern)
+పూర్ణాంకం
+సరిపోలిక_hostname(స్థిరరాశి అక్షరం *host, స్థిరరాశి అక్షరం *నమూనా)
 {
-	char *hostcopy = xstrdup(host);
-	int r;
+	అక్షరం *hostcopy = xstrdup(host);
+	పూర్ణాంకం r;
 
 	lowercase(hostcopy);
-	r = match_pattern_list(hostcopy, pattern, 1);
-	free(hostcopy);
-	return r;
+	r = సరిపోలిక_నమూనా_list(hostcopy, నమూనా, 1);
+	విడుదల(hostcopy);
+	తిరిగి r;
 }
 
 /*
@@ -246,24 +246,24 @@ match_hostname(const char *host, const char *pattern)
  * or if we get no match at all.  returns -1 on error, or 1 on
  * successful match.
  */
-int
-match_host_and_ip(const char *host, const char *ipaddr,
-    const char *patterns)
+పూర్ణాంకం
+సరిపోలిక_host_and_ip(స్థిరరాశి అక్షరం *host, స్థిరరాశి అక్షరం *ipaddr,
+    స్థిరరాశి అక్షరం *patterns)
 {
-	int mhost, mip;
+	పూర్ణాంకం mhost, mip;
 
-	if ((mip = addr_match_list(ipaddr, patterns)) == -2)
-		return -1; /* error in ipaddr match */
-	else if (host == NULL || ipaddr == NULL || mip == -1)
-		return 0; /* negative ip address match, or testing pattern */
+	ఒకవేళ ((mip = addr_సరిపోలిక_list(ipaddr, patterns)) == -2)
+		తిరిగి -1; /* error in ipaddr match */
+	లేకపోతే ఒకవేళ (host == ఖాళీ || ipaddr == ఖాళీ || mip == -1)
+		తిరిగి 0; /* negative ip address match, or testing pattern */
 
 	/* negative hostname match */
-	if ((mhost = match_hostname(host, patterns)) == -1)
-		return 0;
+	ఒకవేళ ((mhost = సరిపోలిక_hostname(host, patterns)) == -1)
+		తిరిగి 0;
 	/* no match at all */
-	if (mhost == 0 && mip == 0)
-		return 0;
-	return 1;
+	ఒకవేళ (mhost == 0 && mip == 0)
+		తిరిగి 0;
+	తిరిగి 1;
 }
 
 /*
@@ -271,82 +271,82 @@ match_host_and_ip(const char *host, const char *ipaddr,
  * If user, host and ipaddr are all NULL then validate pattern/
  * Returns -1 on invalid pattern, 0 on no match, 1 on match.
  */
-int
-match_user(const char *user, const char *host, const char *ipaddr,
-    const char *pattern)
+పూర్ణాంకం
+సరిపోలిక_user(స్థిరరాశి అక్షరం *user, స్థిరరాశి అక్షరం *host, స్థిరరాశి అక్షరం *ipaddr,
+    స్థిరరాశి అక్షరం *నమూనా)
 {
-	char *p, *pat;
-	int ret;
+	అక్షరం *p, *pat;
+	పూర్ణాంకం ret;
 
 	/* test mode */
-	if (user == NULL && host == NULL && ipaddr == NULL) {
-		if ((p = strrchr(pattern, '@')) != NULL &&
-		    match_host_and_ip(NULL, NULL, p + 1) < 0)
-			return -1;
-		return 0;
+	ఒకవేళ (user == ఖాళీ && host == ఖాళీ && ipaddr == ఖాళీ) {
+		ఒకవేళ ((p = strrchr(నమూనా, '@')) != ఖాళీ &&
+		    సరిపోలిక_host_and_ip(ఖాళీ, ఖాళీ, p + 1) < 0)
+			తిరిగి -1;
+		తిరిగి 0;
 	}
 
-	if (user == NULL)
-		return 0; /* shouldn't happen */
+	ఒకవేళ (user == ఖాళీ)
+		తిరిగి 0; /* shouldn't happen */
 
-	if (strrchr(pattern, '@') == NULL)
-		return match_pattern(user, pattern);
+	ఒకవేళ (strrchr(నమూనా, '@') == ఖాళీ)
+		తిరిగి సరిపోలిక_నమూనా(user, నమూనా);
 
-	pat = xstrdup(pattern);
+	pat = xstrdup(నమూనా);
 	p = strrchr(pat, '@');
 	*p++ = '\0';
 
-	if ((ret = match_pattern(user, pat)) == 1)
-		ret = match_host_and_ip(host, ipaddr, p);
-	free(pat);
+	ఒకవేళ ((ret = సరిపోలిక_నమూనా(user, pat)) == 1)
+		ret = సరిపోలిక_host_and_ip(host, ipaddr, p);
+	విడుదల(pat);
 
-	return ret;
+	తిరిగి ret;
 }
 
 /*
  * Returns first item from client-list that is also supported by server-list,
  * caller must free the returned string.
  */
-#define	MAX_PROP	40
-#define	SEP	","
-char *
-match_list(const char *client, const char *server, u_int *next)
+#నిర్వచించు	MAX_PROP	40
+#నిర్వచించు	SEP	","
+అక్షరం *
+సరిపోలిక_list(స్థిరరాశి అక్షరం *client, స్థిరరాశి అక్షరం *server, u_int *తదుపరి)
 {
-	char *sproposals[MAX_PROP];
-	char *c, *s, *p, *ret, *cp, *sp;
-	int i, j, nproposals;
+	అక్షరం *sproposals[MAX_PROP];
+	అక్షరం *c, *s, *p, *ret, *cp, *sp;
+	పూర్ణాంకం i, j, nproposals;
 
 	c = cp = xstrdup(client);
 	s = sp = xstrdup(server);
 
-	for ((p = strsep(&sp, SEP)), i=0; p && *p != '\0';
+	కొరకు ((p = strsep(&sp, SEP)), i=0; p && *p != '\0';
 	    (p = strsep(&sp, SEP)), i++) {
-		if (i < MAX_PROP)
+		ఒకవేళ (i < MAX_PROP)
 			sproposals[i] = p;
-		else
-			break;
+		లేకపోతే
+			ఆపు;
 	}
 	nproposals = i;
 
-	for ((p = strsep(&cp, SEP)), i=0; p && *p != '\0';
+	కొరకు ((p = strsep(&cp, SEP)), i=0; p && *p != '\0';
 	    (p = strsep(&cp, SEP)), i++) {
-		for (j = 0; j < nproposals; j++) {
-			if (strcmp(p, sproposals[j]) == 0) {
+		కొరకు (j = 0; j < nproposals; j++) {
+			ఒకవేళ (strcmp(p, sproposals[j]) == 0) {
 				ret = xstrdup(p);
-				if (next != NULL)
-					*next = (cp == NULL) ?
-					    strlen(c) : (u_int)(cp - c);
-				free(c);
-				free(s);
-				return ret;
+				ఒకవేళ (తదుపరి != ఖాళీ)
+					*తదుపరి = (cp == ఖాళీ) ?
+					    అక్షరశ్రేణి_పొడవు(c) : (u_int)(cp - c);
+				విడుదల(c);
+				విడుదల(s);
+				తిరిగి ret;
 			}
 		}
 	}
-	if (next != NULL)
-		*next = strlen(c);
-	free(c);
-	free(s);
-	return NULL;
+	ఒకవేళ (తదుపరి != ఖాళీ)
+		*తదుపరి = అక్షరశ్రేణి_పొడవు(c);
+	విడుదల(c);
+	విడుదల(s);
+	తిరిగి ఖాళీ;
 }
 
 /*
@@ -356,51 +356,51 @@ match_list(const char *client, const char *server, u_int *next)
  * zero indicates that only items matching filter should be included.
  * returns NULL on allocation error, otherwise caller must free result.
  */
-static char *
-filter_list(const char *proposal, const char *filter, int denylist)
+స్థిర అక్షరం *
+filter_list(స్థిరరాశి అక్షరం *proposal, స్థిరరాశి అక్షరం *filter, పూర్ణాంకం denylist)
 {
-	size_t len = strlen(proposal) + 1;
-	char *fix_prop = malloc(len);
-	char *orig_prop = strdup(proposal);
-	char *cp, *tmp;
-	int r;
+	కొలత_t len = అక్షరశ్రేణి_పొడవు(proposal) + 1;
+	అక్షరం *fix_prop = జ్ఞాపకం_ఇవ్వు(len);
+	అక్షరం *orig_prop = strdup(proposal);
+	అక్షరం *cp, *tmp;
+	పూర్ణాంకం r;
 
-	if (fix_prop == NULL || orig_prop == NULL) {
-		free(orig_prop);
-		free(fix_prop);
-		return NULL;
+	ఒకవేళ (fix_prop == ఖాళీ || orig_prop == ఖాళీ) {
+		విడుదల(orig_prop);
+		విడుదల(fix_prop);
+		తిరిగి ఖాళీ;
 	}
 
 	tmp = orig_prop;
 	*fix_prop = '\0';
-	while ((cp = strsep(&tmp, ",")) != NULL) {
-		r = match_pattern_list(cp, filter, 0);
-		if ((denylist && r != 1) || (!denylist && r == 1)) {
-			if (*fix_prop != '\0')
+	అయితే ((cp = strsep(&tmp, ",")) != ఖాళీ) {
+		r = సరిపోలిక_నమూనా_list(cp, filter, 0);
+		ఒకవేళ ((denylist && r != 1) || (!denylist && r == 1)) {
+			ఒకవేళ (*fix_prop != '\0')
 				strlcat(fix_prop, ",", len);
 			strlcat(fix_prop, cp, len);
 		}
 	}
-	free(orig_prop);
-	return fix_prop;
+	విడుదల(orig_prop);
+	తిరిగి fix_prop;
 }
 
 /*
  * Filters a comma-separated list of strings, excluding any entry matching
  * the 'filter' pattern list. Caller must free returned string.
  */
-char *
-match_filter_denylist(const char *proposal, const char *filter)
+అక్షరం *
+సరిపోలిక_filter_denylist(స్థిరరాశి అక్షరం *proposal, స్థిరరాశి అక్షరం *filter)
 {
-	return filter_list(proposal, filter, 1);
+	తిరిగి filter_list(proposal, filter, 1);
 }
 
 /*
  * Filters a comma-separated list of strings, including only entries matching
  * the 'filter' pattern list. Caller must free returned string.
  */
-char *
-match_filter_allowlist(const char *proposal, const char *filter)
+అక్షరం *
+సరిపోలిక_filter_allowlist(స్థిరరాశి అక్షరం *proposal, స్థిరరాశి అక్షరం *filter)
 {
-	return filter_list(proposal, filter, 0);
+	తిరిగి filter_list(proposal, filter, 0);
 }

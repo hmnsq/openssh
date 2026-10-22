@@ -14,21 +14,21 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "xmalloc.h"
-#include "hostfile.h"
-#include "auth.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "servconf.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "hostfile.h"
+#అన్తర్భావ "auth.h"
 
-extern ServerOptions options;
+బాహ్య ServerOptions options;
 
 /*
  * Configuration of enabled authentication methods. Separate from the rest of
@@ -38,50 +38,50 @@ extern ServerOptions options;
  */
 
 /* "none" is allowed only one time and it is cleared by userauth_none() later */
-int none_enabled = 1;
-struct authmethod_cfg methodcfg_none = {
+పూర్ణాంకం none_enabled = 1;
+నిర్మాణం authmethod_cfg methodcfg_none = {
 	"none",
-	NULL,
+	ఖాళీ,
 	&none_enabled
 };
-struct authmethod_cfg methodcfg_pubkey = {
+నిర్మాణం authmethod_cfg methodcfg_pubkey = {
 	"publickey",
 	"publickey-hostbound-v00@openssh.com",
 	&options.pubkey_authentication
 };
-#ifdef GSSAPI
-struct authmethod_cfg methodcfg_gssapi = {
+#నిర్వచితమైతే GSSAPI
+నిర్మాణం authmethod_cfg methodcfg_gssapi = {
 	"gssapi-with-mic",
-	NULL,
+	ఖాళీ,
 	&options.gss_authentication
 };
-#endif
-struct authmethod_cfg methodcfg_passwd = {
+#అయితే_ముగింపు
+నిర్మాణం authmethod_cfg methodcfg_passwd = {
 	"password",
-	NULL,
+	ఖాళీ,
 	&options.password_authentication
 };
-struct authmethod_cfg methodcfg_kbdint = {
+నిర్మాణం authmethod_cfg methodcfg_kbdint = {
 	"keyboard-interactive",
-	NULL,
+	ఖాళీ,
 	&options.kbd_interactive_authentication
 };
-struct authmethod_cfg methodcfg_hostbased = {
+నిర్మాణం authmethod_cfg methodcfg_hostbased = {
 	"hostbased",
-	NULL,
+	ఖాళీ,
 	&options.hostbased_authentication
 };
 
-static struct authmethod_cfg *authmethod_cfgs[] = {
+స్థిర నిర్మాణం authmethod_cfg *authmethod_cfgs[] = {
 	&methodcfg_none,
 	&methodcfg_pubkey,
-#ifdef GSSAPI
+#నిర్వచితమైతే GSSAPI
 	&methodcfg_gssapi,
-#endif
+#అయితే_ముగింపు
 	&methodcfg_passwd,
 	&methodcfg_kbdint,
 	&methodcfg_hostbased,
-	NULL
+	ఖాళీ
 };
 
 /*
@@ -89,46 +89,46 @@ static struct authmethod_cfg *authmethod_cfgs[] = {
  * non-zero, then also require that the methods are enabled.
  * Returns 0 on success or -1 if the methods list is invalid.
  */
-int
-auth2_methods_valid(const char *_methods, int need_enable)
+పూర్ణాంకం
+auth2_methods_valid(స్థిరరాశి అక్షరం *_methods, పూర్ణాంకం need_enable)
 {
-	char *methods, *omethods, *method, *p;
-	u_int i, found;
-	int ret = -1;
-	const struct authmethod_cfg *cfg;
+	అక్షరం *methods, *omethods, *పద్ధతి, *p;
+	u_int i, దొరికింది;
+	పూర్ణాంకం ret = -1;
+	స్థిరరాశి నిర్మాణం authmethod_cfg *cfg;
 
-	if (*_methods == '\0') {
+	ఒకవేళ (*_methods == '\0') {
 		error("empty authentication method list");
-		return -1;
+		తిరిగి -1;
 	}
 	omethods = methods = xstrdup(_methods);
-	while ((method = strsep(&methods, ",")) != NULL) {
-		for (found = i = 0; !found && authmethod_cfgs[i] != NULL; i++) {
+	అయితే ((పద్ధతి = strsep(&methods, ",")) != ఖాళీ) {
+		కొరకు (దొరికింది = i = 0; !దొరికింది && authmethod_cfgs[i] != ఖాళీ; i++) {
 			cfg = authmethod_cfgs[i];
-			if ((p = strchr(method, ':')) != NULL)
+			ఒకవేళ ((p = strchr(పద్ధతి, ':')) != ఖాళీ)
 				*p = '\0';
-			if (strcmp(method, cfg->name) != 0)
-				continue;
-			if (need_enable) {
-				if (cfg->enabled == NULL ||
+			ఒకవేళ (strcmp(పద్ధతి, cfg->name) != 0)
+				కొనసాగు;
+			ఒకవేళ (need_enable) {
+				ఒకవేళ (cfg->enabled == ఖాళీ ||
 				    *(cfg->enabled) == 0) {
 					error("Disabled method \"%s\" in "
 					    "AuthenticationMethods list \"%s\"",
-					    method, _methods);
-					goto out;
+					    పద్ధతి, _methods);
+					వెళ్ళు బహిర్గతం;
 				}
 			}
-			found = 1;
-			break;
+			దొరికింది = 1;
+			ఆపు;
 		}
-		if (!found) {
+		ఒకవేళ (!దొరికింది) {
 			error("Unknown authentication method \"%s\" in list",
-			    method);
-			goto out;
+			    పద్ధతి);
+			వెళ్ళు బహిర్గతం;
 		}
 	}
 	ret = 0;
- out:
-	free(omethods);
-	return ret;
+ బహిర్గతం:
+	విడుదల(omethods);
+	తిరిగి ret;
 }

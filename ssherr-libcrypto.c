@@ -15,45 +15,45 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <errno.h>
-#include <string.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <string.h>
 
-#include "log.h"
+#అన్తర్భావ "log.h"
 
-#ifdef WITH_OPENSSL
-#include <openssl/err.h>
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ <openssl/err.h>
 
-const char *
-ssherr_libcrypto(void)
+స్థిరరాశి అక్షరం *
+ssherr_libcrypto(శూన్య)
 {
-	unsigned long e;
-	static char buf[512];
-	char msg[4096];
-	const char *reason = NULL, *file, *data;
-	int ln, fl;
+	గుర్తులేని దీర్ఘ e;
+	స్థిర అక్షరం buf[512];
+	అక్షరం సందేశం[4096];
+	స్థిరరాశి అక్షరం *reason = ఖాళీ, *file, *దత్తాంశం;
+	పూర్ణాంకం ln, fl;
 
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
-	while ((e = ERR_get_error_line_data(&file, &ln, &data, &fl)) != 0) {
-		ERR_error_string_n(e, buf, sizeof(buf));
-		snprintf(msg, sizeof(msg), "%s:%s:%d:%s", buf, file, ln,
-		    (fl & ERR_TXT_STRING) ? data : "");
-		debug("libcrypto: '%s'", msg);
-		if ((reason = ERR_reason_error_string(e)) != NULL)
-			snprintf(buf, sizeof(buf), "error in libcrypto: %s",
+	OPENSSL_init_crypto(OPENSSL_INIT_ఎక్కించు_CRYPTO_అక్షరశ్రేణులు, ఖాళీ);
+	అయితే ((e = ERR_get_error_పంక్తి_దత్తాంశం(&file, &ln, &దత్తాంశం, &fl)) != 0) {
+		ERR_error_string_n(e, buf, పరిమాణం(buf));
+		snprintf(సందేశం, పరిమాణం(సందేశం), "%s:%s:%d:%s", buf, file, ln,
+		    (fl & ERR_TXT_STRING) ? దత్తాంశం : "");
+		debug("libcrypto: '%s'", సందేశం);
+		ఒకవేళ ((reason = ERR_reason_error_string(e)) != ఖాళీ)
+			snprintf(buf, పరిమాణం(buf), "error in libcrypto: %s",
 			    reason);
 	}
-	if (reason == NULL)
-		return NULL;
-	return buf;
+	ఒకవేళ (reason == ఖాళీ)
+		తిరిగి ఖాళీ;
+	తిరిగి buf;
 }
-#else
-const char *
-ssherr_libcrypto(void)
+#లేకపోతే
+స్థిరరాశి అక్షరం *
+ssherr_libcrypto(శూన్య)
 {
-	return NULL;
+	తిరిగి ఖాళీ;
 }
-#endif
+#అయితే_ముగింపు

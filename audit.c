@@ -22,73 +22,73 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-#ifdef SSH_AUDIT_EVENTS
+#నిర్వచితమైతే SSH_AUDIT_EVENTS
 
-#include "audit.h"
-#include "log.h"
-#include "hostfile.h"
-#include "auth.h"
+#అన్తర్భావ "audit.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "hostfile.h"
+#అన్తర్భావ "auth.h"
 
 /*
  * Care must be taken when using this since it WILL NOT be initialized when
  * audit_connection_from() is called and MAY NOT be initialized when
  * audit_event(CONNECTION_ABANDON) is called.  Test for NULL before using.
  */
-extern Authctxt *the_authctxt;
+బాహ్య Authctxt *the_authctxt;
 
 /* Maybe add the audit class to struct Authmethod? */
 ssh_audit_event_t
-audit_classify_auth(const char *method)
+audit_classify_auth(స్థిరరాశి అక్షరం *పద్ధతి)
 {
-	if (strcmp(method, "none") == 0)
-		return SSH_AUTH_FAIL_NONE;
-	else if (strcmp(method, "password") == 0)
-		return SSH_AUTH_FAIL_PASSWD;
-	else if (strcmp(method, "publickey") == 0 ||
-	    strcmp(method, "rsa") == 0)
-		return SSH_AUTH_FAIL_PUBKEY;
-	else if (strncmp(method, "keyboard-interactive", 20) == 0 ||
-	    strcmp(method, "challenge-response") == 0)
-		return SSH_AUTH_FAIL_KBDINT;
-	else if (strcmp(method, "hostbased") == 0 ||
-	    strcmp(method, "rhosts-rsa") == 0)
-		return SSH_AUTH_FAIL_HOSTBASED;
-	else if (strcmp(method, "gssapi-with-mic") == 0)
-		return SSH_AUTH_FAIL_GSSAPI;
-	else
-		return SSH_AUDIT_UNKNOWN;
+	ఒకవేళ (strcmp(పద్ధతి, "none") == 0)
+		తిరిగి SSH_AUTH_FAIL_NONE;
+	లేకపోతే ఒకవేళ (strcmp(పద్ధతి, "password") == 0)
+		తిరిగి SSH_AUTH_FAIL_PASSWD;
+	లేకపోతే ఒకవేళ (strcmp(పద్ధతి, "publickey") == 0 ||
+	    strcmp(పద్ధతి, "rsa") == 0)
+		తిరిగి SSH_AUTH_FAIL_PUBKEY;
+	లేకపోతే ఒకవేళ (అక్షరశ్రేణి_పోలిక(పద్ధతి, "keyboard-interactive", 20) == 0 ||
+	    strcmp(పద్ధతి, "challenge-response") == 0)
+		తిరిగి SSH_AUTH_FAIL_KBDINT;
+	లేకపోతే ఒకవేళ (strcmp(పద్ధతి, "hostbased") == 0 ||
+	    strcmp(పద్ధతి, "rhosts-rsa") == 0)
+		తిరిగి SSH_AUTH_FAIL_HOSTBASED;
+	లేకపోతే ఒకవేళ (strcmp(పద్ధతి, "gssapi-with-mic") == 0)
+		తిరిగి SSH_AUTH_FAIL_GSSAPI;
+	లేకపోతే
+		తిరిగి SSH_AUDIT_UNKNOWN;
 }
 
 /* helper to return supplied username */
-const char *
-audit_username(void)
+స్థిరరాశి అక్షరం *
+audit_username(శూన్య)
 {
-	static const char unknownuser[] = "(unknown user)";
-	static const char invaliduser[] = "(invalid user)";
+	స్థిర స్థిరరాశి అక్షరం unknownuser[] = "(unknown user)";
+	స్థిర స్థిరరాశి అక్షరం invaliduser[] = "(invalid user)";
 
-	if (the_authctxt == NULL || the_authctxt->user == NULL)
-		return (unknownuser);
-	if (!the_authctxt->valid)
-		return (invaliduser);
-	return (the_authctxt->user);
+	ఒకవేళ (the_authctxt == ఖాళీ || the_authctxt->user == ఖాళీ)
+		తిరిగి (unknownuser);
+	ఒకవేళ (!the_authctxt->valid)
+		తిరిగి (invaliduser);
+	తిరిగి (the_authctxt->user);
 }
 
-const char *
+స్థిరరాశి అక్షరం *
 audit_event_lookup(ssh_audit_event_t ev)
 {
-	int i;
-	static struct event_lookup_struct {
+	పూర్ణాంకం i;
+	స్థిర నిర్మాణం event_lookup_struct {
 		ssh_audit_event_t event;
-		const char *name;
+		స్థిరరాశి అక్షరం *name;
 	} event_lookup[] = {
 		{SSH_LOGIN_EXCEED_MAXTRIES,	"LOGIN_EXCEED_MAXTRIES"},
-		{SSH_LOGIN_ROOT_DENIED,		"LOGIN_ROOT_DENIED"},
+		{SSH_LOGIN_మూలం_DENIED,		"LOGIN_ROOT_DENIED"},
 		{SSH_AUTH_SUCCESS,		"AUTH_SUCCESS"},
 		{SSH_AUTH_FAIL_NONE,		"AUTH_FAIL_NONE"},
 		{SSH_AUTH_FAIL_PASSWD,		"AUTH_FAIL_PASSWD"},
@@ -103,10 +103,10 @@ audit_event_lookup(ssh_audit_event_t ev)
 		{SSH_AUDIT_UNKNOWN,		"AUDIT_UNKNOWN"}
 	};
 
-	for (i = 0; event_lookup[i].event != SSH_AUDIT_UNKNOWN; i++)
-		if (event_lookup[i].event == ev)
-			break;
-	return(event_lookup[i].name);
+	కొరకు (i = 0; event_lookup[i].event != SSH_AUDIT_UNKNOWN; i++)
+		ఒకవేళ (event_lookup[i].event == ev)
+			ఆపు;
+	తిరిగి(event_lookup[i].name);
 }
 
 # ifndef CUSTOM_SSH_AUDIT_EVENTS
@@ -119,19 +119,19 @@ audit_event_lookup(ssh_audit_event_t ev)
  * Called after a connection has been accepted but before any authentication
  * has been attempted.
  */
-void
-audit_connection_from(const char *host, int port)
+శూన్య
+audit_connection_from(స్థిరరాశి అక్షరం *host, పూర్ణాంకం పోర్టు)
 {
-	debug("audit connection from %s port %d euid %d", host, port,
-	    (int)geteuid());
+	debug("audit connection from %s port %d euid %d", host, పోర్టు,
+	    (పూర్ణాంకం)geteuid());
 }
 
 /*
  * Called when various events occur (see audit.h for a list of possible
  * events and what they mean).
  */
-void
-audit_event(struct ssh *ssh, ssh_audit_event_t event)
+శూన్య
+audit_event(నిర్మాణం ssh *ssh, ssh_audit_event_t event)
 {
 	debug("audit event euid %d user %s event %d (%s)", geteuid(),
 	    audit_username(), event, audit_event_lookup(event));
@@ -144,10 +144,10 @@ audit_event(struct ssh *ssh, ssh_audit_event_t event)
  * Note that this may be called multiple times if multiple sessions are used
  * within a single connection.
  */
-void
-audit_session_open(struct logininfo *li)
+శూన్య
+audit_session_open(నిర్మాణం logininfo *li)
 {
-	const char *t = li->line ? li->line : "(no tty)";
+	స్థిరరాశి అక్షరం *t = li->పంక్తి ? li->పంక్తి : "(no tty)";
 
 	debug("audit session open euid %d user %s tty name %s", geteuid(),
 	    audit_username(), t);
@@ -160,10 +160,10 @@ audit_session_open(struct logininfo *li)
  * Note that this may be called multiple times if multiple sessions are used
  * within a single connection.
  */
-void
-audit_session_close(struct logininfo *li)
+శూన్య
+audit_session_close(నిర్మాణం logininfo *li)
 {
-	const char *t = li->line ? li->line : "(no tty)";
+	స్థిరరాశి అక్షరం *t = li->పంక్తి ? li->పంక్తి : "(no tty)";
 
 	debug("audit session close euid %d user %s tty name %s", geteuid(),
 	    audit_username(), t);
@@ -174,11 +174,11 @@ audit_session_close(struct logininfo *li)
  * it may be called multiple times for a single connection since SSH2 allows
  * multiple sessions within a single connection.
  */
-void
-audit_run_command(const char *command)
+శూన్య
+audit_నిరంతరం_command(స్థిరరాశి అక్షరం *command)
 {
 	debug("audit run command euid %d user %s command '%.200s'", geteuid(),
 	    audit_username(), command);
 }
 # endif  /* !defined CUSTOM_SSH_AUDIT_EVENTS */
-#endif /* SSH_AUDIT_EVENTS */
+#అయితే_ముగింపు /* SSH_AUDIT_EVENTS */

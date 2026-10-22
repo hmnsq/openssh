@@ -22,32 +22,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifndef HAVE_WAITPID
-#include <errno.h>
-#include <sys/wait.h>
-#include "bsd-waitpid.h"
+#నిర్వచితం_కాకపోతే HAVE_WAITPID
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <sys/wait.h>
+#అన్తర్భావ "bsd-waitpid.h"
 
 pid_t
-waitpid(int pid, int *stat_loc, int options)
+waitpid(పూర్ణాంకం pid, పూర్ణాంకం *stat_loc, పూర్ణాంకం options)
 {
-	union wait statusp;
+	సంఘం wait statusp;
 	pid_t wait_pid;
 
-	if (pid <= 0) {
-		if (pid != -1) {
+	ఒకవేళ (pid <= 0) {
+		ఒకవేళ (pid != -1) {
 			errno = EINVAL;
-			return (-1);
+			తిరిగి (-1);
 		}
 		/* wait4() wants pid=0 for indiscriminate wait. */
 		pid = 0;
 	}
-	wait_pid = wait4(pid, &statusp, options, NULL);
-	if (stat_loc)
-		*stat_loc = (int) statusp.w_status;
+	wait_pid = wait4(pid, &statusp, options, ఖాళీ);
+	ఒకవేళ (stat_loc)
+		*stat_loc = (పూర్ణాంకం) statusp.w_స్థితి;
 
-	return (wait_pid);
+	తిరిగి (wait_pid);
 }
 
-#endif /* !HAVE_WAITPID */
+#అయితే_ముగింపు /* !HAVE_WAITPID */

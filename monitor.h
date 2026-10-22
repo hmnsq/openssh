@@ -25,11 +25,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _MONITOR_H_
-#define _MONITOR_H_
+#నిర్వచితం_కాకపోతే _MONITOR_H_
+#నిర్వచించు _MONITOR_H_
 
 /* Please keep *_REQ_* values on even numbers and *_ANS_* on odd numbers */
-enum monitor_reqtype {
+గణన monitor_reqtype {
 	MONITOR_REQ_MODULI = 0, MONITOR_ANS_MODULI = 1,
 	MONITOR_REQ_FREE = 2,
 	MONITOR_REQ_AUTHSERV = 4,
@@ -54,10 +54,10 @@ enum monitor_reqtype {
 	MONITOR_REQ_GSSSTEP = 44, MONITOR_ANS_GSSSTEP = 45,
 	MONITOR_REQ_GSSUSEROK = 46, MONITOR_ANS_GSSUSEROK = 47,
 	MONITOR_REQ_GSSCHECKMIC = 48, MONITOR_ANS_GSSCHECKMIC = 49,
-	MONITOR_REQ_TERM = 50,
+	MONITOR_REQ_పదం = 50,
 	MONITOR_REQ_STATE = 51, MONITOR_ANS_STATE = 52,
 
-	MONITOR_REQ_PAM_START = 100,
+	MONITOR_REQ_PAM_ప్రారంభం = 100,
 	MONITOR_REQ_PAM_ACCOUNT = 102, MONITOR_ANS_PAM_ACCOUNT = 103,
 	MONITOR_REQ_PAM_INIT_CTX = 104, MONITOR_ANS_PAM_INIT_CTX = 105,
 	MONITOR_REQ_PAM_QUERY = 106, MONITOR_ANS_PAM_QUERY = 107,
@@ -67,40 +67,40 @@ enum monitor_reqtype {
 
 };
 
-struct ssh;
-struct sshbuf;
+నిర్మాణం ssh;
+నిర్మాణం sshbuf;
 
-struct monitor {
-	int			 m_recvfd;
-	int			 m_sendfd;
-	int			 m_log_recvfd;
-	int			 m_log_sendfd;
-	struct kex		**m_pkex;
+నిర్మాణం monitor {
+	పూర్ణాంకం			 m_recvfd;
+	పూర్ణాంకం			 m_sendfd;
+	పూర్ణాంకం			 m_log_recvfd;
+	పూర్ణాంకం			 m_log_sendfd;
+	నిర్మాణం kex		**m_pkex;
 	pid_t			 m_pid;
 };
 
-struct monitor *monitor_init(void);
-void monitor_reinit(struct monitor *);
+నిర్మాణం monitor *monitor_init(శూన్య);
+శూన్య monitor_reinit(నిర్మాణం monitor *);
 
-struct Authctxt;
-void monitor_child_preauth(struct ssh *, struct monitor *);
-void monitor_child_postauth(struct ssh *, struct monitor *);
+నిర్మాణం Authctxt;
+శూన్య monitor_బిడ్డ_preauth(నిర్మాణం ssh *, నిర్మాణం monitor *);
+శూన్య monitor_బిడ్డ_postauth(నిర్మాణం ssh *, నిర్మాణం monitor *);
 
-void monitor_clear_keystate(struct ssh *, struct monitor *);
-void monitor_apply_keystate(struct ssh *, struct monitor *);
+శూన్య monitor_clear_keystate(నిర్మాణం ssh *, నిర్మాణం monitor *);
+శూన్య monitor_apply_keystate(నిర్మాణం ssh *, నిర్మాణం monitor *);
 
-int  monitor_auth_attempted(void);
-int  monitor_invalid_user(void);
+పూర్ణాంకం  monitor_auth_attempted(శూన్య);
+పూర్ణాంకం  monitor_invalid_user(శూన్య);
 
 /* Prototypes for request sending and receiving */
-void mm_request_send(int, enum monitor_reqtype, struct sshbuf *);
-void mm_request_receive(int, struct sshbuf *);
-void mm_request_receive_expect(int, enum monitor_reqtype, struct sshbuf *);
-void mm_get_keystate(struct ssh *, struct monitor *);
+శూన్య mm_request_send(పూర్ణాంకం, గణన monitor_reqtype, నిర్మాణం sshbuf *);
+శూన్య mm_request_receive(పూర్ణాంకం, నిర్మాణం sshbuf *);
+శూన్య mm_request_receive_expect(పూర్ణాంకం, గణన monitor_reqtype, నిర్మాణం sshbuf *);
+శూన్య mm_get_keystate(నిర్మాణం ssh *, నిర్మాణం monitor *);
 
 /* XXX: should be returned via a monitor call rather than config_fd */
-void mm_encode_server_options(struct sshbuf *);
+శూన్య mm_encode_server_options(నిర్మాణం sshbuf *);
 
-struct sshbuf *pack_hostkeys(void);
+నిర్మాణం sshbuf *pack_hostkeys(శూన్య);
 
-#endif /* _MONITOR_H_ */
+#అయితే_ముగింపు /* _MONITOR_H_ */

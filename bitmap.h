@@ -15,43 +15,43 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _BITMAP_H
-#define _BITMAP_H
+#నిర్వచితం_కాకపోతే _BITMAP_H
+#నిర్వచించు _BITMAP_H
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
 /* Simple bit vector routines */
 
-struct bitmap;
+నిర్మాణం bitmap;
 
 /* Allocate a new bitmap. Returns NULL on allocation failure. */
-struct bitmap *bitmap_new(void);
+నిర్మాణం bitmap *bitmap_new(శూన్య);
 
 /* Free a bitmap */
-void bitmap_free(struct bitmap *b);
+శూన్య bitmap_free(నిర్మాణం bitmap *b);
 
 /* Zero an existing bitmap */
-void bitmap_zero(struct bitmap *b);
+శూన్య bitmap_zero(నిర్మాణం bitmap *b);
 
 /* Test whether a bit is set in a bitmap. */
-int bitmap_test_bit(struct bitmap *b, u_int n);
+పూర్ణాంకం bitmap_test_బిట్టు(నిర్మాణం bitmap *b, u_int n);
 
 /* Set a bit in a bitmap. Returns 0 on success or -1 on error */
-int bitmap_set_bit(struct bitmap *b, u_int n);
+పూర్ణాంకం bitmap_సమితి_బిట్టు(నిర్మాణం bitmap *b, u_int n);
 
 /* Clear a bit in a bitmap */
-void bitmap_clear_bit(struct bitmap *b, u_int n);
+శూన్య bitmap_clear_బిట్టు(నిర్మాణం bitmap *b, u_int n);
 
 /* Return the number of bits in a bitmap (i.e. the position of the MSB) */
-size_t bitmap_nbits(struct bitmap *b);
+కొలత_t bitmap_nbits(నిర్మాణం bitmap *b);
 
 /* Return the number of bytes needed to represent a bitmap */
-size_t bitmap_nbytes(struct bitmap *b);
+కొలత_t bitmap_nbytes(నిర్మాణం bitmap *b);
 
 /* Convert a bitmap to a big endian byte string */
-int bitmap_to_string(struct bitmap *b, void *p, size_t l);
+పూర్ణాంకం bitmap_గమ్యం_string(నిర్మాణం bitmap *b, శూన్య *p, కొలత_t l);
 
 /* Convert a big endian byte string to a bitmap */
-int bitmap_from_string(struct bitmap *b, const void *p, size_t l);
+పూర్ణాంకం bitmap_from_string(నిర్మాణం bitmap *b, స్థిరరాశి శూన్య *p, కొలత_t l);
 
-#endif /* _BITMAP_H */
+#అయితే_ముగింపు /* _BITMAP_H */

@@ -18,32 +18,32 @@
 /* API for ssh-pkcs11.c and ssh-pkcs11-client.c */
 
 /* Errors for pkcs11_add_provider() */
-#define	SSH_PKCS11_ERR_GENERIC			1
-#define	SSH_PKCS11_ERR_LOGIN_FAIL		2
-#define	SSH_PKCS11_ERR_NO_SLOTS			3
-#define	SSH_PKCS11_ERR_PIN_REQUIRED		4
-#define	SSH_PKCS11_ERR_PIN_LOCKED		5
+#నిర్వచించు	SSH_PKCS11_ERR_GENERIC			1
+#నిర్వచించు	SSH_PKCS11_ERR_LOGIN_FAIL		2
+#నిర్వచించు	SSH_PKCS11_ERR_NO_SLOTS			3
+#నిర్వచించు	SSH_PKCS11_ERR_PIN_REQUIRED		4
+#నిర్వచించు	SSH_PKCS11_ERR_PIN_LOCKED		5
 
-struct sshkey;
+నిర్మాణం sshkey;
 
-int	pkcs11_init(int);
-void	pkcs11_terminate(void);
-int	pkcs11_add_provider(char *, char *, struct sshkey ***, char ***);
-int	pkcs11_del_provider(char *);
-int	pkcs11_sign(struct sshkey *, u_char **, size_t *,
-	    const u_char *, size_t, const char *, const char *,
-	    const char *, u_int);
-void	pkcs11_key_free(struct sshkey *);
+పూర్ణాంకం	pkcs11_init(పూర్ణాంకం);
+శూన్య	pkcs11_terminate(శూన్య);
+పూర్ణాంకం	pkcs11_కూడు_provider(అక్షరం *, అక్షరం *, నిర్మాణం sshkey ***, అక్షరం ***);
+పూర్ణాంకం	pkcs11_del_provider(అక్షరం *);
+పూర్ణాంకం	pkcs11_sign(నిర్మాణం sshkey *, u_char **, కొలత_t *,
+	    స్థిరరాశి u_char *, కొలత_t, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *,
+	    స్థిరరాశి అక్షరం *, u_int);
+శూన్య	pkcs11_కీలకం_free(నిర్మాణం sshkey *);
 
-#ifdef WITH_PKCS11_KEYGEN
-struct sshkey *
-	pkcs11_gakp(char *, char *, unsigned int, char *, unsigned int,
-	    unsigned int, unsigned char, uint32_t *);
-struct sshkey *
-	pkcs11_destroy_keypair(char *, char *, unsigned long, unsigned char,
+#నిర్వచితమైతే WITH_PKCS11_KEYGEN
+నిర్మాణం sshkey *
+	pkcs11_gakp(అక్షరం *, అక్షరం *, గుర్తులేని పూర్ణాంకం, అక్షరం *, గుర్తులేని పూర్ణాంకం,
+	    గుర్తులేని పూర్ణాంకం, గుర్తులేని అక్షరం, uint32_t *);
+నిర్మాణం sshkey *
+	pkcs11_destroy_keypair(అక్షరం *, అక్షరం *, గుర్తులేని దీర్ఘ, గుర్తులేని అక్షరం,
 	    uint32_t *);
-#endif
+#అయితే_ముగింపు
 
 /* Only available in ssh-pkcs11-client.c */
-int pkcs11_make_cert(const struct sshkey *,
-    const struct sshkey *, struct sshkey **);
+పూర్ణాంకం pkcs11_make_cert(స్థిరరాశి నిర్మాణం sshkey *,
+    స్థిరరాశి నిర్మాణం sshkey *, నిర్మాణం sshkey **);

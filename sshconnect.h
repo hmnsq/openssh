@@ -24,35 +24,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-struct sshkey;
+నిర్మాణం sshkey;
 
-typedef struct Sensitive Sensitive;
-struct Sensitive {
-	struct sshkey	**keys;
-	int		nkeys;
+రకనిర్వచనం నిర్మాణం Sensitive Sensitive;
+నిర్మాణం Sensitive {
+	నిర్మాణం sshkey	**కీలకాలు;
+	పూర్ణాంకం		nkeys;
 };
 
-struct ssh_conn_info {
-	char *conn_hash_hex;
-	char *shorthost;
-	char *uidstr;
-	char *keyalias;
-	char *thishost;
-	char *host_arg;
-	char *portstr;
-	char *remhost;
-	char *remuser;
-	char *homedir;
-	char *locuser;
-	char *jmphost;
+నిర్మాణం ssh_conn_info {
+	అక్షరం *conn_hash_hex;
+	అక్షరం *shorthost;
+	అక్షరం *uidstr;
+	అక్షరం *keyalias;
+	అక్షరం *thishost;
+	అక్షరం *host_arg;
+	అక్షరం *portstr;
+	అక్షరం *remhost;
+	అక్షరం *remuser;
+	అక్షరం *homedir;
+	అక్షరం *locuser;
+	అక్షరం *jmphost;
 };
 
-struct addrinfo;
-struct ssh;
-struct hostkeys;
+నిర్మాణం addrinfo;
+నిర్మాణం ssh;
+నిర్మాణం hostkeys;
 
 /* default argument for client percent expansions, minus remote user */
-#define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info) \
+#నిర్వచించు DEFAULT_CLIENT_PERCENT_EXPAND_వాదనలు_NOUSER(conn_info) \
 	"L", conn_info->shorthost, \
 	"i", conn_info->uidstr, \
 	"k", conn_info->keyalias, \
@@ -65,44 +65,44 @@ struct hostkeys;
 	"j", conn_info->jmphost
 
 /* same plus remote user and hash which has user as a component */
-#define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(conn_info) \
-	DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info), \
+#నిర్వచించు DEFAULT_CLIENT_PERCENT_EXPAND_వాదనలు(conn_info) \
+	DEFAULT_CLIENT_PERCENT_EXPAND_వాదనలు_NOUSER(conn_info), \
 	"C", conn_info->conn_hash_hex, \
 	"r", conn_info->remuser
 
-int	 ssh_connect(struct ssh *, const char *, const char *,
-	    struct addrinfo *, struct sockaddr_storage *, u_short,
-	    int, int *, int);
-void	 ssh_kill_proxy_command(void);
+పూర్ణాంకం	 ssh_connect(నిర్మాణం ssh *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *,
+	    నిర్మాణం addrinfo *, నిర్మాణం sockaddr_storage *, u_short,
+	    పూర్ణాంకం, పూర్ణాంకం *, పూర్ణాంకం);
+శూన్య	 ssh_kill_proxy_command(శూన్య);
 
-void	 ssh_login(struct ssh *, Sensitive *, const char *,
-    struct sockaddr_storage *, u_short, struct passwd *, int,
-    const struct ssh_conn_info *);
+శూన్య	 ssh_login(నిర్మాణం ssh *, Sensitive *, స్థిరరాశి అక్షరం *,
+    నిర్మాణం sockaddr_storage *, u_short, నిర్మాణం passwd *, పూర్ణాంకం,
+    స్థిరరాశి నిర్మాణం ssh_conn_info *);
 
-int	 verify_host_key(char *, struct sockaddr *, struct sshkey *,
-    const struct ssh_conn_info *);
+పూర్ణాంకం	 verify_host_కీలకం(అక్షరం *, నిర్మాణం sockaddr *, నిర్మాణం sshkey *,
+    స్థిరరాశి నిర్మాణం ssh_conn_info *);
 
-void	 get_hostfile_hostname_ipaddr(char *, struct sockaddr *, u_short,
-    char **, char **);
+శూన్య	 get_hostfile_hostname_ipaddr(అక్షరం *, నిర్మాణం sockaddr *, u_short,
+    అక్షరం **, అక్షరం **);
 
-void	 ssh_kex2(struct ssh *ssh, char *, struct sockaddr_storage *, u_short,
-    const struct ssh_conn_info *);
+శూన్య	 ssh_kex2(నిర్మాణం ssh *ssh, అక్షరం *, నిర్మాణం sockaddr_storage *, u_short,
+    స్థిరరాశి నిర్మాణం ssh_conn_info *);
 
-void	 ssh_userauth2(struct ssh *ssh, const char *, const char *,
-    char *, Sensitive *);
+శూన్య	 ssh_userauth2(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *,
+    అక్షరం *, Sensitive *);
 
-void	 pubkey_dump(struct ssh *);
+శూన్య	 pubkey_dump(నిర్మాణం ssh *);
 
-int	 ssh_local_cmd(const char *);
+పూర్ణాంకం	 ssh_local_cmd(స్థిరరాశి అక్షరం *);
 
-void	 maybe_add_key_to_agent(const char *, struct sshkey *,
-    const char *, const char *);
+శూన్య	 maybe_కూడు_కీలకం_గమ్యం_agent(స్థిరరాశి అక్షరం *, నిర్మాణం sshkey *,
+    స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
 
-void	 load_hostkeys_command(struct hostkeys *, const char *,
-    const char *, const struct ssh_conn_info *,
-    const struct sshkey *, const char *);
+శూన్య	 ఎక్కించు_hostkeys_command(నిర్మాణం hostkeys *, స్థిరరాశి అక్షరం *,
+    స్థిరరాశి అక్షరం *, స్థిరరాశి నిర్మాణం ssh_conn_info *,
+    స్థిరరాశి నిర్మాణం sshkey *, స్థిరరాశి అక్షరం *);
 
-int hostkey_accepted_by_hostkeyalgs(const struct sshkey *);
+పూర్ణాంకం hostkey_accepted_by_hostkeyalgs(స్థిరరాశి నిర్మాణం sshkey *);
 
-void ssh_conn_info_free(struct ssh_conn_info *);
-struct ssh_conn_info *ssh_conn_info_dup(const struct ssh_conn_info *);
+శూన్య ssh_conn_info_free(నిర్మాణం ssh_conn_info *);
+నిర్మాణం ssh_conn_info *ssh_conn_info_dup(స్థిరరాశి నిర్మాణం ssh_conn_info *);

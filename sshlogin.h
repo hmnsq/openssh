@@ -12,12 +12,12 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-void	record_login(pid_t, const char *, const char *, uid_t,
-    const char *, struct sockaddr *, socklen_t);
-void   record_logout(pid_t, const char *, const char *);
-time_t	get_last_login_time(uid_t, const char *, char *, size_t);
+శూన్య	రికార్డు_login(pid_t, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, uid_t,
+    స్థిరరాశి అక్షరం *, నిర్మాణం sockaddr *, socklen_t);
+శూన్య   రికార్డు_logout(pid_t, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
+time_t	get_చివరి_login_సమయం(uid_t, స్థిరరాశి అక్షరం *, అక్షరం *, కొలత_t);
 
-#ifdef LOGIN_NEEDS_UTMPX
-void	record_utmp_only(pid_t, const char *, const char *, const char *,
-		struct sockaddr *, socklen_t);
-#endif
+#నిర్వచితమైతే LOGIN_NEEDS_UTMPX
+శూన్య	రికార్డు_utmp_only(pid_t, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *,
+		నిర్మాణం sockaddr *, socklen_t);
+#అయితే_ముగింపు

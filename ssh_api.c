@@ -15,93 +15,93 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "ssh_api.h"
-#include "compat.h"
-#include "log.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "dh.h"
-#include "misc.h"
-#include "ssh2.h"
-#include "version.h"
-#include "myproposal.h"
-#include "ssherr.h"
-#include "sshbuf.h"
+#అన్తర్భావ "ssh_api.h"
+#అన్తర్భావ "compat.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "authfile.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "dh.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "ssh2.h"
+#అన్తర్భావ "version.h"
+#అన్తర్భావ "myproposal.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "sshbuf.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#అన్తర్భావ "openbsd-compat/openssl-compat.h"
 
-#include <string.h>
+#అన్తర్భావ <string.h>
 
-int	_ssh_exchange_banner(struct ssh *);
-int	_ssh_send_banner(struct ssh *, struct sshbuf *);
-int	_ssh_read_banner(struct ssh *, struct sshbuf *);
-int	_ssh_order_hostkeyalgs(struct ssh *);
-int	_ssh_verify_host_key(struct sshkey *, struct ssh *);
-struct sshkey *_ssh_host_public_key(int, int, struct ssh *);
-struct sshkey *_ssh_host_private_key(int, int, struct ssh *);
-int	_ssh_host_key_sign(struct ssh *, struct sshkey *, struct sshkey *,
-    u_char **, size_t *, const u_char *, size_t, const char *);
+పూర్ణాంకం	_ssh_exchange_banner(నిర్మాణం ssh *);
+పూర్ణాంకం	_ssh_send_banner(నిర్మాణం ssh *, నిర్మాణం sshbuf *);
+పూర్ణాంకం	_ssh_read_banner(నిర్మాణం ssh *, నిర్మాణం sshbuf *);
+పూర్ణాంకం	ssh_క్రమం_hostkeyalgs(నిర్మాణం ssh *);
+పూర్ణాంకం	ssh_verify_host_కీలకం(నిర్మాణం sshkey *, నిర్మాణం ssh *);
+నిర్మాణం sshkey *ssh_host_ప్రజా_కీలకం(పూర్ణాంకం, పూర్ణాంకం, నిర్మాణం ssh *);
+నిర్మాణం sshkey *ssh_host_వ్యక్తిగత_కీలకం(పూర్ణాంకం, పూర్ణాంకం, నిర్మాణం ssh *);
+పూర్ణాంకం	ssh_host_కీలకం_sign(నిర్మాణం ssh *, నిర్మాణం sshkey *, నిర్మాణం sshkey *,
+    u_char **, కొలత_t *, స్థిరరాశి u_char *, కొలత_t, స్థిరరాశి అక్షరం *);
 
 /*
  * stubs for privsep calls in the server side implementation of kex.
  */
-int	mm_sshkey_sign(struct sshkey *, u_char **, u_int *,
-    const u_char *, u_int, const char *, const char *, const char *, u_int);
+పూర్ణాంకం	mm_sshkey_sign(నిర్మాణం sshkey *, u_char **, u_int *,
+    స్థిరరాశి u_char *, u_int, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, u_int);
 
-#ifdef WITH_OPENSSL
-DH	*mm_choose_dh(int, int, int);
-#endif
+#నిర్వచితమైతే WITH_OPENSSL
+DH	*mm_ఎంచుకో_dh(పూర్ణాంకం, పూర్ణాంకం, పూర్ణాంకం);
+#అయితే_ముగింపు
 
-int
-mm_sshkey_sign(struct sshkey *key, u_char **sigp, u_int *lenp,
-    const u_char *data, u_int datalen, const char *alg,
-    const char *sk_provider, const char *sk_pin, u_int compat)
+పూర్ణాంకం
+mm_sshkey_sign(నిర్మాణం sshkey *కీలకం, u_char **sigp, u_int *lenp,
+    స్థిరరాశి u_char *దత్తాంశం, u_int datalen, స్థిరరాశి అక్షరం *alg,
+    స్థిరరాశి అక్షరం *sk_provider, స్థిరరాశి అక్షరం *sk_pin, u_int compat)
 {
-	size_t slen = 0;
-	int ret;
+	కొలత_t slen = 0;
+	పూర్ణాంకం ret;
 
-	ret = sshkey_sign(key, sigp, &slen, data, datalen, alg,
+	ret = sshkey_sign(కీలకం, sigp, &slen, దత్తాంశం, datalen, alg,
 	    sk_provider, sk_pin, compat);
 	*lenp = slen;
-	return ret;
+	తిరిగి ret;
 }
 
-#ifdef WITH_OPENSSL
+#నిర్వచితమైతే WITH_OPENSSL
 DH *
-mm_choose_dh(int min, int nbits, int max)
+mm_ఎంచుకో_dh(పూర్ణాంకం min, పూర్ణాంకం nbits, పూర్ణాంకం max)
 {
-	return choose_dh(min, nbits, max);
+	తిరిగి ఎంచుకో_dh(min, nbits, max);
 }
-#endif
+#అయితే_ముగింపు
 
 /* API */
 
-int
-ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
+పూర్ణాంకం
+ssh_init(నిర్మాణం ssh **sshp, పూర్ణాంకం is_server, నిర్మాణం kex_params *kex_params)
 {
-	char *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *populated[PROPOSAL_MAX];
-	struct ssh *ssh;
-	char **proposal;
-	static int called;
-	int r;
+	అక్షరం *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
+	అక్షరం *populated[PROPOSAL_MAX];
+	నిర్మాణం ssh *ssh;
+	అక్షరం **proposal;
+	స్థిర పూర్ణాంకం called;
+	పూర్ణాంకం r;
 
-	if (!called) {
-		seed_rng();
+	ఒకవేళ (!called) {
+		విత్తనం_rng();
 		called = 1;
 	}
 
-	if ((ssh = ssh_packet_set_connection(NULL, -1, -1)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (is_server)
-		ssh_packet_set_server(ssh);
+	ఒకవేళ ((ssh = ssh_packet_సమితి_connection(ఖాళీ, -1, -1)) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ (is_server)
+		ssh_packet_సమితి_server(ssh);
 
 	/* Initialize key exchange */
 	proposal = kex_params ? kex_params->proposal : myproposal;
@@ -110,17 +110,17 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 	    proposal[PROPOSAL_ENC_ALGS_CTOS],
 	    proposal[PROPOSAL_MAC_ALGS_CTOS],
 	    proposal[PROPOSAL_COMP_ALGS_CTOS],
-	    proposal[PROPOSAL_SERVER_HOST_KEY_ALGS]);
+	    proposal[PROPOSAL_SERVER_HOST_కీలకం_ALGS]);
 	r = kex_ready(ssh, populated);
 	kex_proposal_free_entries(populated);
-	if (r != 0) {
+	ఒకవేళ (r != 0) {
 		ssh_free(ssh);
-		return r;
+		తిరిగి r;
 	}
 
 	ssh->kex->server = is_server;
-	if (is_server) {
-#ifdef WITH_OPENSSL
+	ఒకవేళ (is_server) {
+#నిర్వచితమైతే WITH_OPENSSL
 		ssh->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_server;
 		ssh->kex->kex[KEX_DH_GRP14_SHA1] = kex_gen_server;
 		ssh->kex->kex[KEX_DH_GRP14_SHA256] = kex_gen_server;
@@ -129,16 +129,16 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 		ssh->kex->kex[KEX_DH_GEX_SHA1] = kexgex_server;
 		ssh->kex->kex[KEX_DH_GEX_SHA256] = kexgex_server;
 		ssh->kex->kex[KEX_ECDH_SHA2] = kex_gen_server;
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */
 		ssh->kex->kex[KEX_C25519_SHA256] = kex_gen_server;
 		ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_server;
 		ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_server;
 		ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_server;
-		ssh->kex->load_host_public_key=&_ssh_host_public_key;
-		ssh->kex->load_host_private_key=&_ssh_host_private_key;
-		ssh->kex->sign=&_ssh_host_key_sign;
-	} else {
-#ifdef WITH_OPENSSL
+		ssh->kex->ఎక్కించు_host_ప్రజా_కీలకం=&ssh_host_ప్రజా_కీలకం;
+		ssh->kex->ఎక్కించు_host_వ్యక్తిగత_కీలకం=&ssh_host_వ్యక్తిగత_కీలకం;
+		ssh->kex->sign=&ssh_host_కీలకం_sign;
+	} లేకపోతే {
+#నిర్వచితమైతే WITH_OPENSSL
 		ssh->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_client;
 		ssh->kex->kex[KEX_DH_GRP14_SHA1] = kex_gen_client;
 		ssh->kex->kex[KEX_DH_GRP14_SHA256] = kex_gen_client;
@@ -147,112 +147,112 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 		ssh->kex->kex[KEX_DH_GEX_SHA1] = kexgex_client;
 		ssh->kex->kex[KEX_DH_GEX_SHA256] = kexgex_client;
 		ssh->kex->kex[KEX_ECDH_SHA2] = kex_gen_client;
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */
 		ssh->kex->kex[KEX_C25519_SHA256] = kex_gen_client;
 		ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_client;
 		ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_client;
 		ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_client;
-		ssh->kex->verify_host_key =&_ssh_verify_host_key;
+		ssh->kex->verify_host_కీలకం =&ssh_verify_host_కీలకం;
 	}
 	*sshp = ssh;
-	return 0;
+	తిరిగి 0;
 }
 
-void
-ssh_free(struct ssh *ssh)
+శూన్య
+ssh_free(నిర్మాణం ssh *ssh)
 {
-	struct key_entry *k;
+	నిర్మాణం కీలకం_నమోదు *k;
 
-	if (ssh == NULL)
-		return;
+	ఒకవేళ (ssh == ఖాళీ)
+		తిరిగి;
 
 	/*
 	 * we've only created the public keys variants in case we
 	 * are a acting as a server.
 	 */
-	while ((k = TAILQ_FIRST(&ssh->public_keys)) != NULL) {
-		TAILQ_REMOVE(&ssh->public_keys, k, next);
-		if (ssh->kex && ssh->kex->server)
-			sshkey_free(k->key);
-		free(k);
+	అయితే ((k = TAILQ_FIRST(&ssh->ప్రజా_కీలకాలు)) != ఖాళీ) {
+		TAILQ_REMOVE(&ssh->ప్రజా_కీలకాలు, k, తదుపరి);
+		ఒకవేళ (ssh->kex && ssh->kex->server)
+			sshkey_free(k->కీలకం);
+		విడుదల(k);
 	}
-	while ((k = TAILQ_FIRST(&ssh->private_keys)) != NULL) {
-		TAILQ_REMOVE(&ssh->private_keys, k, next);
-		free(k);
+	అయితే ((k = TAILQ_FIRST(&ssh->వ్యక్తిగత_కీలకాలు)) != ఖాళీ) {
+		TAILQ_REMOVE(&ssh->వ్యక్తిగత_కీలకాలు, k, తదుపరి);
+		విడుదల(k);
 	}
 	ssh_packet_close(ssh);
-	free(ssh);
+	విడుదల(ssh);
 }
 
-void
-ssh_set_app_data(struct ssh *ssh, void *app_data)
+శూన్య
+ssh_సమితి_app_దత్తాంశం(నిర్మాణం ssh *ssh, శూన్య *app_దత్తాంశం)
 {
-	ssh->app_data = app_data;
+	ssh->app_దత్తాంశం = app_దత్తాంశం;
 }
 
-void *
-ssh_get_app_data(struct ssh *ssh)
+శూన్య *
+ssh_get_app_దత్తాంశం(నిర్మాణం ssh *ssh)
 {
-	return ssh->app_data;
+	తిరిగి ssh->app_దత్తాంశం;
 }
 
 /* Returns < 0 on error, 0 otherwise */
-int
-ssh_add_hostkey(struct ssh *ssh, struct sshkey *key)
+పూర్ణాంకం
+ssh_కూడు_hostkey(నిర్మాణం ssh *ssh, నిర్మాణం sshkey *కీలకం)
 {
-	struct sshkey *pubkey = NULL;
-	struct key_entry *k = NULL, *k_prv = NULL;
-	int r;
+	నిర్మాణం sshkey *pubkey = ఖాళీ;
+	నిర్మాణం కీలకం_నమోదు *k = ఖాళీ, *k_prv = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if (ssh->kex->server) {
-		if ((r = sshkey_from_private(key, &pubkey)) != 0)
-			return r;
-		if ((k = malloc(sizeof(*k))) == NULL ||
-		    (k_prv = malloc(sizeof(*k_prv))) == NULL) {
-			free(k);
+	ఒకవేళ (ssh->kex->server) {
+		ఒకవేళ ((r = sshkey_from_వ్యక్తిగత(కీలకం, &pubkey)) != 0)
+			తిరిగి r;
+		ఒకవేళ ((k = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*k))) == ఖాళీ ||
+		    (k_prv = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*k_prv))) == ఖాళీ) {
+			విడుదల(k);
 			sshkey_free(pubkey);
-			return SSH_ERR_ALLOC_FAIL;
+			తిరిగి SSH_ERR_ALLOC_FAIL;
 		}
-		k_prv->key = key;
-		TAILQ_INSERT_TAIL(&ssh->private_keys, k_prv, next);
+		k_prv->కీలకం = కీలకం;
+		TAILQ_INSERT_TAIL(&ssh->వ్యక్తిగత_కీలకాలు, k_prv, తదుపరి);
 
 		/* add the public key, too */
-		k->key = pubkey;
-		TAILQ_INSERT_TAIL(&ssh->public_keys, k, next);
+		k->కీలకం = pubkey;
+		TAILQ_INSERT_TAIL(&ssh->ప్రజా_కీలకాలు, k, తదుపరి);
 		r = 0;
-	} else {
-		if ((k = malloc(sizeof(*k))) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		k->key = key;
-		TAILQ_INSERT_TAIL(&ssh->public_keys, k, next);
+	} లేకపోతే {
+		ఒకవేళ ((k = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*k))) == ఖాళీ)
+			తిరిగి SSH_ERR_ALLOC_FAIL;
+		k->కీలకం = కీలకం;
+		TAILQ_INSERT_TAIL(&ssh->ప్రజా_కీలకాలు, k, తదుపరి);
 		r = 0;
 	}
 
-	return r;
+	తిరిగి r;
 }
 
-int
-ssh_set_verify_host_key_callback(struct ssh *ssh,
-    int (*cb)(struct sshkey *, struct ssh *))
+పూర్ణాంకం
+ssh_సమితి_verify_host_కీలకం_callback(నిర్మాణం ssh *ssh,
+    పూర్ణాంకం (*cb)(నిర్మాణం sshkey *, నిర్మాణం ssh *))
 {
-	if (cb == NULL || ssh->kex == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ఒకవేళ (cb == ఖాళీ || ssh->kex == ఖాళీ)
+		తిరిగి SSH_ERR_INVALID_వాదం;
 
-	ssh->kex->verify_host_key = cb;
+	ssh->kex->verify_host_కీలకం = cb;
 
-	return 0;
+	తిరిగి 0;
 }
 
-int
-ssh_input_append(struct ssh *ssh, const u_char *data, size_t len)
+పూర్ణాంకం
+ssh_ఆదానం_append(నిర్మాణం ssh *ssh, స్థిరరాశి u_char *దత్తాంశం, కొలత_t len)
 {
-	return sshbuf_put(ssh_packet_get_input(ssh), data, len);
+	తిరిగి sshbuf_put(ssh_packet_get_ఆదానం(ssh), దత్తాంశం, len);
 }
 
-int
-ssh_packet_next(struct ssh *ssh, u_char *typep)
+పూర్ణాంకం
+ssh_packet_తదుపరి(నిర్మాణం ssh *ssh, u_char *typep)
 {
-	int r;
+	పూర్ణాంకం r;
 	uint32_t seqnr;
 	u_char type;
 
@@ -260,10 +260,10 @@ ssh_packet_next(struct ssh *ssh, u_char *typep)
 	 * Try to read a packet. Return SSH_MSG_NONE if no packet or not
 	 * enough data.
 	 */
-	*typep = SSH_MSG_NONE;
-	if (sshbuf_len(ssh->kex->client_version) == 0 ||
-	    sshbuf_len(ssh->kex->server_version) == 0)
-		return _ssh_exchange_banner(ssh);
+	*typep = SSH_సందేశం_NONE;
+	ఒకవేళ (sshbuf_len(ssh->kex->client_సంస్కరణ) == 0 ||
+	    sshbuf_len(ssh->kex->server_సంస్కరణ) == 0)
+		తిరిగి _ssh_exchange_banner(ssh);
 	/*
 	 * If we enough data and a dispatch function then
 	 * call the function and get the next packet.
@@ -275,175 +275,175 @@ ssh_packet_next(struct ssh *ssh, u_char *typep)
 	 *     30-49    Key exchange method specific (numbers can be reused for
 	 *              different authentication methods)
 	 */
-	for (;;) {
-		if ((r = ssh_packet_read_poll2(ssh, &type, &seqnr)) != 0)
-			return r;
-		if (type > 0 && type < DISPATCH_MAX &&
-		    type >= SSH2_MSG_KEXINIT && type <= SSH2_MSG_TRANSPORT_MAX &&
-		    ssh->dispatch[type] != NULL) {
-			if ((r = (*ssh->dispatch[type])(type, seqnr, ssh)) != 0)
-				return r;
-		} else {
+	కొరకు (;;) {
+		ఒకవేళ ((r = ssh_packet_read_poll2(ssh, &type, &seqnr)) != 0)
+			తిరిగి r;
+		ఒకవేళ (type > 0 && type < DISPATCH_MAX &&
+		    type >= SSH2_సందేశం_KEXINIT && type <= SSH2_సందేశం_TRANSPORT_MAX &&
+		    ssh->dispatch[type] != ఖాళీ) {
+			ఒకవేళ ((r = (*ssh->dispatch[type])(type, seqnr, ssh)) != 0)
+				తిరిగి r;
+		} లేకపోతే {
 			*typep = type;
-			return 0;
+			తిరిగి 0;
 		}
 	}
 }
 
-const u_char *
-ssh_packet_payload(struct ssh *ssh, size_t *lenp)
+స్థిరరాశి u_char *
+ssh_packet_payload(నిర్మాణం ssh *ssh, కొలత_t *lenp)
 {
-	return sshpkt_ptr(ssh, lenp);
+	తిరిగి sshpkt_ptr(ssh, lenp);
 }
 
-int
-ssh_packet_put(struct ssh *ssh, int type, const u_char *data, size_t len)
+పూర్ణాంకం
+ssh_packet_put(నిర్మాణం ssh *ssh, పూర్ణాంకం type, స్థిరరాశి u_char *దత్తాంశం, కొలత_t len)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	if ((r = sshpkt_start(ssh, type)) != 0 ||
-	    (r = sshpkt_put(ssh, data, len)) != 0 ||
+	ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, type)) != 0 ||
+	    (r = sshpkt_put(ssh, దత్తాంశం, len)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
-	return 0;
+		తిరిగి r;
+	తిరిగి 0;
 }
 
-const u_char *
-ssh_output_ptr(struct ssh *ssh, size_t *len)
+స్థిరరాశి u_char *
+ssh_output_ptr(నిర్మాణం ssh *ssh, కొలత_t *len)
 {
-	struct sshbuf *output = ssh_packet_get_output(ssh);
+	నిర్మాణం sshbuf *output = ssh_packet_get_output(ssh);
 
 	*len = sshbuf_len(output);
-	return sshbuf_ptr(output);
+	తిరిగి sshbuf_ptr(output);
 }
 
-int
-ssh_output_consume(struct ssh *ssh, size_t len)
+పూర్ణాంకం
+ssh_output_consume(నిర్మాణం ssh *ssh, కొలత_t len)
 {
-	return sshbuf_consume(ssh_packet_get_output(ssh), len);
+	తిరిగి sshbuf_consume(ssh_packet_get_output(ssh), len);
 }
 
-int
-ssh_output_space(struct ssh *ssh, size_t len)
+పూర్ణాంకం
+ssh_output_space(నిర్మాణం ssh *ssh, కొలత_t len)
 {
-	return (0 == sshbuf_check_reserve(ssh_packet_get_output(ssh), len));
+	తిరిగి (0 == sshbuf_check_reserve(ssh_packet_get_output(ssh), len));
 }
 
-int
-ssh_input_space(struct ssh *ssh, size_t len)
+పూర్ణాంకం
+ssh_ఆదానం_space(నిర్మాణం ssh *ssh, కొలత_t len)
 {
-	return (0 == sshbuf_check_reserve(ssh_packet_get_input(ssh), len));
+	తిరిగి (0 == sshbuf_check_reserve(ssh_packet_get_ఆదానం(ssh), len));
 }
 
 /* Read other side's version identification. */
-int
-_ssh_read_banner(struct ssh *ssh, struct sshbuf *banner)
+పూర్ణాంకం
+_ssh_read_banner(నిర్మాణం ssh *ssh, నిర్మాణం sshbuf *banner)
 {
-	struct sshbuf *input = ssh_packet_get_input(ssh);
-	const char *mismatch = "Protocol mismatch.\r\n";
-	const u_char *s = sshbuf_ptr(input);
+	నిర్మాణం sshbuf *ఆదానం = ssh_packet_get_ఆదానం(ssh);
+	స్థిరరాశి అక్షరం *mismatch = "Protocol mismatch.\r\n";
+	స్థిరరాశి u_char *s = sshbuf_ptr(ఆదానం);
 	u_char c;
-	char *cp = NULL, *remote_version = NULL;
-	int r = 0, remote_major, remote_minor, expect_nl;
-	size_t n, j;
+	అక్షరం *cp = ఖాళీ, *remote_సంస్కరణ = ఖాళీ;
+	పూర్ణాంకం r = 0, remote_major, remote_minor, expect_nl;
+	కొలత_t n, j;
 
-	for (j = n = 0;;) {
+	కొరకు (j = n = 0;;) {
 		sshbuf_reset(banner);
 		expect_nl = 0;
-		for (;;) {
-			if (j >= sshbuf_len(input))
-				return 0; /* insufficient data in input buf */
+		కొరకు (;;) {
+			ఒకవేళ (j >= sshbuf_len(ఆదానం))
+				తిరిగి 0; /* insufficient data in input buf */
 			c = s[j++];
-			if (c == '\r') {
+			ఒకవేళ (c == '\r') {
 				expect_nl = 1;
-				continue;
+				కొనసాగు;
 			}
-			if (c == '\n')
-				break;
-			if (expect_nl)
-				goto bad;
-			if ((r = sshbuf_put_u8(banner, c)) != 0)
-				return r;
-			if (sshbuf_len(banner) > SSH_MAX_BANNER_LEN)
-				goto bad;
+			ఒకవేళ (c == '\n')
+				ఆపు;
+			ఒకవేళ (expect_nl)
+				వెళ్ళు bad;
+			ఒకవేళ ((r = sshbuf_put_u8(banner, c)) != 0)
+				తిరిగి r;
+			ఒకవేళ (sshbuf_len(banner) > SSH_MAX_BANNER_LEN)
+				వెళ్ళు bad;
 		}
-		if (sshbuf_len(banner) >= 4 &&
+		ఒకవేళ (sshbuf_len(banner) >= 4 &&
 		    memcmp(sshbuf_ptr(banner), "SSH-", 4) == 0)
-			break;
-		debug_f("%.*s", (int)sshbuf_len(banner),
+			ఆపు;
+		debug_f("%.*s", (పూర్ణాంకం)sshbuf_len(banner),
 		    sshbuf_ptr(banner));
 		/* Accept lines before banner only on client */
-		if (ssh->kex->server || ++n > SSH_MAX_PRE_BANNER_LINES) {
+		ఒకవేళ (ssh->kex->server || ++n > SSH_MAX_PRE_BANNER_పంక్తులు) {
   bad:
-			if ((r = sshbuf_put(ssh_packet_get_output(ssh),
-			    mismatch, strlen(mismatch))) != 0)
-				return r;
-			return SSH_ERR_NO_PROTOCOL_VERSION;
+			ఒకవేళ ((r = sshbuf_put(ssh_packet_get_output(ssh),
+			    mismatch, అక్షరశ్రేణి_పొడవు(mismatch))) != 0)
+				తిరిగి r;
+			తిరిగి SSH_ERR_NO_PROTOCOL_సంస్కరణ;
 		}
 	}
-	if ((r = sshbuf_consume(input, j)) != 0)
-		return r;
+	ఒకవేళ ((r = sshbuf_consume(ఆదానం, j)) != 0)
+		తిరిగి r;
 
 	/* XXX remote version must be the same size as banner for sscanf */
-	if ((cp = sshbuf_dup_string(banner)) == NULL ||
-	    (remote_version = calloc(1, sshbuf_len(banner))) == NULL) {
+	ఒకవేళ ((cp = sshbuf_dup_string(banner)) == ఖాళీ ||
+	    (remote_సంస్కరణ = సున్నా_జ్ఞాపకం_ఇవ్వు(1, sshbuf_len(banner))) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/*
 	 * Check that the versions match.  In future this might accept
 	 * several versions and set appropriate flags to handle them.
 	 */
-	if (sscanf(cp, "SSH-%d.%d-%[^\n]\n",
-	    &remote_major, &remote_minor, remote_version) != 3) {
+	ఒకవేళ (అక్షరశ్రేణి_చదువు(cp, "SSH-%d.%d-%[^\n]\n",
+	    &remote_major, &remote_minor, remote_సంస్కరణ) != 3) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	debug("Remote protocol version %d.%d, remote software version %.100s",
-	    remote_major, remote_minor, remote_version);
+	    remote_major, remote_minor, remote_సంస్కరణ);
 
-	compat_banner(ssh, remote_version);
-	if  (remote_major == 1 && remote_minor == 99) {
+	compat_banner(ssh, remote_సంస్కరణ);
+	ఒకవేళ  (remote_major == 1 && remote_minor == 99) {
 		remote_major = 2;
 		remote_minor = 0;
 	}
-	if (remote_major != 2)
+	ఒకవేళ (remote_major != 2)
 		r = SSH_ERR_PROTOCOL_MISMATCH;
 
 	debug("Remote version string %.100s", cp);
- out:
-	free(cp);
-	free(remote_version);
-	return r;
+ బహిర్గతం:
+	విడుదల(cp);
+	విడుదల(remote_సంస్కరణ);
+	తిరిగి r;
 }
 
 /* Send our own protocol version identification. */
-int
-_ssh_send_banner(struct ssh *ssh, struct sshbuf *banner)
+పూర్ణాంకం
+_ssh_send_banner(నిర్మాణం ssh *ssh, నిర్మాణం sshbuf *banner)
 {
-	char *cp;
-	int r;
+	అక్షరం *cp;
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_putf(banner, "SSH-2.0-%.100s\r\n", SSH_VERSION)) != 0)
-		return r;
-	if ((r = sshbuf_putb(ssh_packet_get_output(ssh), banner)) != 0)
-		return r;
+	ఒకవేళ ((r = sshbuf_putf(banner, "SSH-2.0-%.100s\r\n", SSH_సంస్కరణ)) != 0)
+		తిరిగి r;
+	ఒకవేళ ((r = sshbuf_putb(ssh_packet_get_output(ssh), banner)) != 0)
+		తిరిగి r;
 	/* Remove trailing \r\n */
-	if ((r = sshbuf_consume_end(banner, 2)) != 0)
-		return r;
-	if ((cp = sshbuf_dup_string(banner)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshbuf_consume_చివర(banner, 2)) != 0)
+		తిరిగి r;
+	ఒకవేళ ((cp = sshbuf_dup_string(banner)) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
 	debug("Local version string %.100s", cp);
-	free(cp);
-	return 0;
+	విడుదల(cp);
+	తిరిగి 0;
 }
 
-int
-_ssh_exchange_banner(struct ssh *ssh)
+పూర్ణాంకం
+_ssh_exchange_banner(నిర్మాణం ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r;
+	నిర్మాణం kex *kex = ssh->kex;
+	పూర్ణాంకం r;
 
 	/*
 	 * if _ssh_read_banner() cannot parse a full version string
@@ -451,140 +451,140 @@ _ssh_exchange_banner(struct ssh *ssh)
 	 */
 
 	r = 0;
-	if (kex->server) {
-		if (sshbuf_len(ssh->kex->server_version) == 0)
-			r = _ssh_send_banner(ssh, ssh->kex->server_version);
-		if (r == 0 &&
-		    sshbuf_len(ssh->kex->server_version) != 0 &&
-		    sshbuf_len(ssh->kex->client_version) == 0)
-			r = _ssh_read_banner(ssh, ssh->kex->client_version);
-	} else {
-		if (sshbuf_len(ssh->kex->server_version) == 0)
-			r = _ssh_read_banner(ssh, ssh->kex->server_version);
-		if (r == 0 &&
-		    sshbuf_len(ssh->kex->server_version) != 0 &&
-		    sshbuf_len(ssh->kex->client_version) == 0)
-			r = _ssh_send_banner(ssh, ssh->kex->client_version);
+	ఒకవేళ (kex->server) {
+		ఒకవేళ (sshbuf_len(ssh->kex->server_సంస్కరణ) == 0)
+			r = _ssh_send_banner(ssh, ssh->kex->server_సంస్కరణ);
+		ఒకవేళ (r == 0 &&
+		    sshbuf_len(ssh->kex->server_సంస్కరణ) != 0 &&
+		    sshbuf_len(ssh->kex->client_సంస్కరణ) == 0)
+			r = _ssh_read_banner(ssh, ssh->kex->client_సంస్కరణ);
+	} లేకపోతే {
+		ఒకవేళ (sshbuf_len(ssh->kex->server_సంస్కరణ) == 0)
+			r = _ssh_read_banner(ssh, ssh->kex->server_సంస్కరణ);
+		ఒకవేళ (r == 0 &&
+		    sshbuf_len(ssh->kex->server_సంస్కరణ) != 0 &&
+		    sshbuf_len(ssh->kex->client_సంస్కరణ) == 0)
+			r = _ssh_send_banner(ssh, ssh->kex->client_సంస్కరణ);
 	}
-	if (r != 0)
-		return r;
+	ఒకవేళ (r != 0)
+		తిరిగి r;
 	/* start initial kex as soon as we have exchanged the banners */
-	if (sshbuf_len(ssh->kex->server_version) != 0 &&
-	    sshbuf_len(ssh->kex->client_version) != 0) {
-		if ((r = _ssh_order_hostkeyalgs(ssh)) != 0 ||
+	ఒకవేళ (sshbuf_len(ssh->kex->server_సంస్కరణ) != 0 &&
+	    sshbuf_len(ssh->kex->client_సంస్కరణ) != 0) {
+		ఒకవేళ ((r = ssh_క్రమం_hostkeyalgs(ssh)) != 0 ||
 		    (r = kex_send_kexinit(ssh)) != 0)
-			return r;
+			తిరిగి r;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-struct sshkey *
-_ssh_host_public_key(int type, int nid, struct ssh *ssh)
+నిర్మాణం sshkey *
+ssh_host_ప్రజా_కీలకం(పూర్ణాంకం type, పూర్ణాంకం nid, నిర్మాణం ssh *ssh)
 {
-	struct key_entry *k;
+	నిర్మాణం కీలకం_నమోదు *k;
 
 	debug3_f("need %d", type);
-	TAILQ_FOREACH(k, &ssh->public_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (k->key->type == type &&
-		    (type != KEY_ECDSA || k->key->ecdsa_nid == nid))
-			return (k->key);
+	TAILQ_FOREACH(k, &ssh->ప్రజా_కీలకాలు, తదుపరి) {
+		debug3_f("check %s", sshkey_type(k->కీలకం));
+		ఒకవేళ (k->కీలకం->type == type &&
+		    (type != కీలకం_ECDSA || k->కీలకం->ecdsa_nid == nid))
+			తిరిగి (k->కీలకం);
 	}
-	return (NULL);
+	తిరిగి (ఖాళీ);
 }
 
-struct sshkey *
-_ssh_host_private_key(int type, int nid, struct ssh *ssh)
+నిర్మాణం sshkey *
+ssh_host_వ్యక్తిగత_కీలకం(పూర్ణాంకం type, పూర్ణాంకం nid, నిర్మాణం ssh *ssh)
 {
-	struct key_entry *k;
+	నిర్మాణం కీలకం_నమోదు *k;
 
 	debug3_f("need %d", type);
-	TAILQ_FOREACH(k, &ssh->private_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (k->key->type == type &&
-		    (type != KEY_ECDSA || k->key->ecdsa_nid == nid))
-			return (k->key);
+	TAILQ_FOREACH(k, &ssh->వ్యక్తిగత_కీలకాలు, తదుపరి) {
+		debug3_f("check %s", sshkey_type(k->కీలకం));
+		ఒకవేళ (k->కీలకం->type == type &&
+		    (type != కీలకం_ECDSA || k->కీలకం->ecdsa_nid == nid))
+			తిరిగి (k->కీలకం);
 	}
-	return (NULL);
+	తిరిగి (ఖాళీ);
 }
 
-int
-_ssh_verify_host_key(struct sshkey *hostkey, struct ssh *ssh)
+పూర్ణాంకం
+ssh_verify_host_కీలకం(నిర్మాణం sshkey *hostkey, నిర్మాణం ssh *ssh)
 {
-	struct key_entry *k;
+	నిర్మాణం కీలకం_నమోదు *k;
 
 	debug3_f("need %s", sshkey_type(hostkey));
-	TAILQ_FOREACH(k, &ssh->public_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (sshkey_equal_public(hostkey, k->key))
-			return (0);	/* ok */
+	TAILQ_FOREACH(k, &ssh->ప్రజా_కీలకాలు, తదుపరి) {
+		debug3_f("check %s", sshkey_type(k->కీలకం));
+		ఒకవేళ (sshkey_equal_ప్రజా(hostkey, k->కీలకం))
+			తిరిగి (0);	/* ok */
 	}
-	return (-1);	/* failed */
+	తిరిగి (-1);	/* failed */
 }
 
 /* offer hostkey algorithms in kexinit depending on registered keys */
-int
-_ssh_order_hostkeyalgs(struct ssh *ssh)
+పూర్ణాంకం
+ssh_క్రమం_hostkeyalgs(నిర్మాణం ssh *ssh)
 {
-	struct key_entry *k;
-	char *orig, *avail, *oavail = NULL, *alg, *replace = NULL;
-	char **proposal;
-	size_t maxlen;
-	int ktype, nid, r;
+	నిర్మాణం కీలకం_నమోదు *k;
+	అక్షరం *orig, *avail, *oavail = ఖాళీ, *alg, *replace = ఖాళీ;
+	అక్షరం **proposal;
+	కొలత_t maxlen;
+	పూర్ణాంకం ktype, nid, r;
 
 	/* XXX we de-serialize ssh->kex->my, modify it, and change it */
-	if ((r = kex_buf2prop(ssh->kex->my, NULL, &proposal)) != 0)
-		return r;
-	orig = proposal[PROPOSAL_SERVER_HOST_KEY_ALGS];
-	if ((oavail = avail = strdup(orig)) == NULL) {
+	ఒకవేళ ((r = kex_buf2prop(ssh->kex->my, ఖాళీ, &proposal)) != 0)
+		తిరిగి r;
+	orig = proposal[PROPOSAL_SERVER_HOST_కీలకం_ALGS];
+	ఒకవేళ ((oavail = avail = strdup(orig)) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	maxlen = strlen(avail) + 1;
-	if ((replace = calloc(1, maxlen)) == NULL) {
+	maxlen = అక్షరశ్రేణి_పొడవు(avail) + 1;
+	ఒకవేళ ((replace = సున్నా_జ్ఞాపకం_ఇవ్వు(1, maxlen)) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	*replace = '\0';
-	while ((alg = strsep(&avail, ",")) && *alg != '\0') {
-		if ((ktype = sshkey_type_from_name(alg)) == KEY_UNSPEC)
-			continue;
+	అయితే ((alg = strsep(&avail, ",")) && *alg != '\0') {
+		ఒకవేళ ((ktype = sshkey_type_from_name(alg)) == కీలకం_UNSPEC)
+			కొనసాగు;
 		nid = sshkey_ecdsa_nid_from_name(alg);
-		TAILQ_FOREACH(k, &ssh->public_keys, next) {
-			if (k->key->type != ktype &&
-			    (!sshkey_is_cert(k->key) ||
-			    k->key->type != sshkey_type_plain(ktype)))
-				continue;
-			if (sshkey_type_plain(k->key->type) == KEY_ECDSA &&
-			    k->key->ecdsa_nid != nid)
-				continue;
+		TAILQ_FOREACH(k, &ssh->ప్రజా_కీలకాలు, తదుపరి) {
+			ఒకవేళ (k->కీలకం->type != ktype &&
+			    (!sshkey_is_cert(k->కీలకం) ||
+			    k->కీలకం->type != sshkey_type_plain(ktype)))
+				కొనసాగు;
+			ఒకవేళ (sshkey_type_plain(k->కీలకం->type) == కీలకం_ECDSA &&
+			    k->కీలకం->ecdsa_nid != nid)
+				కొనసాగు;
 			/* Candidate */
-			if (*replace != '\0')
+			ఒకవేళ (*replace != '\0')
 				strlcat(replace, ",", maxlen);
 			strlcat(replace, alg, maxlen);
-			break;
+			ఆపు;
 		}
 	}
-	if (*replace != '\0') {
+	ఒకవేళ (*replace != '\0') {
 		debug2_f("orig/%d    %s", ssh->kex->server, orig);
 		debug2_f("replace/%d %s", ssh->kex->server, replace);
-		free(orig);
-		proposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = replace;
-		replace = NULL;	/* owned by proposal */
+		విడుదల(orig);
+		proposal[PROPOSAL_SERVER_HOST_కీలకం_ALGS] = replace;
+		replace = ఖాళీ;	/* owned by proposal */
 		r = kex_prop2buf(ssh->kex->my, proposal);
 	}
- out:
-	free(oavail);
-	free(replace);
+ బహిర్గతం:
+	విడుదల(oavail);
+	విడుదల(replace);
 	kex_prop_free(proposal);
-	return r;
+	తిరిగి r;
 }
 
-int
-_ssh_host_key_sign(struct ssh *ssh, struct sshkey *privkey,
-    struct sshkey *pubkey, u_char **signature, size_t *slen,
-    const u_char *data, size_t dlen, const char *alg)
+పూర్ణాంకం
+ssh_host_కీలకం_sign(నిర్మాణం ssh *ssh, నిర్మాణం sshkey *privkey,
+    నిర్మాణం sshkey *pubkey, u_char **signature, కొలత_t *slen,
+    స్థిరరాశి u_char *దత్తాంశం, కొలత_t dlen, స్థిరరాశి అక్షరం *alg)
 {
-	return sshkey_sign(privkey, signature, slen, data, dlen,
-	    alg, NULL, NULL, ssh->compat);
+	తిరిగి sshkey_sign(privkey, signature, slen, దత్తాంశం, dlen,
+	    alg, ఖాళీ, ఖాళీ, ssh->compat);
 }

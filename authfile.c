@@ -23,77 +23,77 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-#include "log.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "krl.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "authfile.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "krl.h"
 
 /* Save a key blob to a file */
-static int
-sshkey_save_private_blob(struct sshbuf *keybuf, const char *filename)
+స్థిర పూర్ణాంకం
+sshkey_save_వ్యక్తిగత_blob(నిర్మాణం sshbuf *keybuf, స్థిరరాశి అక్షరం *filename)
 {
-	int r;
-	mode_t omask;
+	పూర్ణాంకం r;
+	బహుళకం_t omask;
 
 	omask = umask(077);
 	r = sshbuf_write_file(filename, keybuf);
 	umask(omask);
-	return r;
+	తిరిగి r;
 }
 
-int
-sshkey_save_private(struct sshkey *key, const char *filename,
-    const char *passphrase, const char *comment,
-    int format, const char *openssh_format_cipher, int openssh_format_rounds)
+పూర్ణాంకం
+sshkey_save_వ్యక్తిగత(నిర్మాణం sshkey *కీలకం, స్థిరరాశి అక్షరం *filename,
+    స్థిరరాశి అక్షరం *passphrase, స్థిరరాశి అక్షరం *comment,
+    పూర్ణాంకం format, స్థిరరాశి అక్షరం *openssh_format_cipher, పూర్ణాంకం openssh_format_విడతలు)
 {
-	struct sshbuf *keyblob = NULL;
-	int r;
+	నిర్మాణం sshbuf *keyblob = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if ((keyblob = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_private_to_fileblob(key, keyblob, passphrase, comment,
-	    format, openssh_format_cipher, openssh_format_rounds)) != 0)
-		goto out;
-	if ((r = sshkey_save_private_blob(keyblob, filename)) != 0)
-		goto out;
+	ఒకవేళ ((keyblob = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshkey_వ్యక్తిగత_గమ్యం_fileblob(కీలకం, keyblob, passphrase, comment,
+	    format, openssh_format_cipher, openssh_format_విడతలు)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = sshkey_save_వ్యక్తిగత_blob(keyblob, filename)) != 0)
+		వెళ్ళు బహిర్గతం;
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(keyblob);
-	return r;
+	తిరిగి r;
 }
 
 /* XXX remove error() calls from here? */
-int
-sshkey_perm_ok(int fd, const char *filename)
+పూర్ణాంకం
+sshkey_perm_ok(పూర్ణాంకం fd, స్థిరరాశి అక్షరం *filename)
 {
-	struct stat st;
+	నిర్మాణం stat st;
 
-	if (fstat(fd, &st) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	ఒకవేళ (fstat(fd, &st) == -1)
+		తిరిగి SSH_ERR_SYSTEM_ERROR;
 	/*
 	 * if a key owned by the user is accessed, then we check the
 	 * permissions of the file. if the key owned by a different user,
 	 * then we don't care.
 	 */
-#ifdef HAVE_CYGWIN
-	if (check_ntsec(filename))
-#endif
-	if ((st.st_uid == getuid()) && (st.st_mode & 077) != 0) {
+#నిర్వచితమైతే HAVE_CYGWIN
+	ఒకవేళ (check_ntsec(filename))
+#అయితే_ముగింపు
+	ఒకవేళ ((st.st_uid == getuid()) && (st.st_mode & 077) != 0) {
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		error("@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @");
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -101,262 +101,262 @@ sshkey_perm_ok(int fd, const char *filename)
 		    (u_int)st.st_mode & 0777, filename);
 		error("It is required that your private key files are NOT accessible by others.");
 		error("This private key will be ignored.");
-		return SSH_ERR_KEY_BAD_PERMISSIONS;
+		తిరిగి SSH_ERR_కీలకం_BAD_PERMISSIONS;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sshkey_load_private_type(int type, const char *filename, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+పూర్ణాంకం
+sshkey_ఎక్కించు_వ్యక్తిగత_type(పూర్ణాంకం type, స్థిరరాశి అక్షరం *filename, స్థిరరాశి అక్షరం *passphrase,
+    నిర్మాణం sshkey **keyp, అక్షరం **commentp)
 {
-	int fd, r;
+	పూర్ణాంకం fd, r;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
+	ఒకవేళ (keyp != ఖాళీ)
+		*keyp = ఖాళీ;
+	ఒకవేళ (commentp != ఖాళీ)
+		*commentp = ఖాళీ;
 
-	if ((fd = open(filename, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	ఒకవేళ ((fd = open(filename, O_RDONLY)) == -1)
+		తిరిగి SSH_ERR_SYSTEM_ERROR;
 
 	r = sshkey_perm_ok(fd, filename);
-	if (r != 0)
-		goto out;
+	ఒకవేళ (r != 0)
+		వెళ్ళు బహిర్గతం;
 
-	r = sshkey_load_private_type_fd(fd, type, passphrase, keyp, commentp);
- out:
+	r = sshkey_ఎక్కించు_వ్యక్తిగత_type_fd(fd, type, passphrase, keyp, commentp);
+ బహిర్గతం:
 	close(fd);
-	return r;
+	తిరిగి r;
 }
 
-int
-sshkey_load_private(const char *filename, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+పూర్ణాంకం
+sshkey_ఎక్కించు_వ్యక్తిగత(స్థిరరాశి అక్షరం *filename, స్థిరరాశి అక్షరం *passphrase,
+    నిర్మాణం sshkey **keyp, అక్షరం **commentp)
 {
-	return sshkey_load_private_type(KEY_UNSPEC, filename, passphrase,
+	తిరిగి sshkey_ఎక్కించు_వ్యక్తిగత_type(కీలకం_UNSPEC, filename, passphrase,
 	    keyp, commentp);
 }
 
-int
-sshkey_load_private_type_fd(int fd, int type, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+పూర్ణాంకం
+sshkey_ఎక్కించు_వ్యక్తిగత_type_fd(పూర్ణాంకం fd, పూర్ణాంకం type, స్థిరరాశి అక్షరం *passphrase,
+    నిర్మాణం sshkey **keyp, అక్షరం **commentp)
 {
-	struct sshbuf *buffer = NULL;
-	int r;
+	నిర్మాణం sshbuf *బఫరు = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
-	    (r = sshkey_parse_private_fileblob_type(buffer, type,
+	ఒకవేళ (keyp != ఖాళీ)
+		*keyp = ఖాళీ;
+	ఒకవేళ ((r = sshbuf_ఎక్కించు_fd(fd, &బఫరు)) != 0 ||
+	    (r = sshkey_parse_వ్యక్తిగత_fileblob_type(బఫరు, type,
 	    passphrase, keyp, commentp)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
 	/* success */
 	r = 0;
- out:
-	sshbuf_free(buffer);
-	return r;
+ బహిర్గతం:
+	sshbuf_free(బఫరు);
+	తిరిగి r;
 }
 
 /* Load a pubkey from the unencrypted envelope of a new-format private key */
-static int
-sshkey_load_pubkey_from_private(const char *filename, struct sshkey **pubkeyp)
+స్థిర పూర్ణాంకం
+sshkey_ఎక్కించు_pubkey_from_వ్యక్తిగత(స్థిరరాశి అక్షరం *filename, నిర్మాణం sshkey **pubkeyp)
 {
-	struct sshbuf *buffer = NULL;
-	struct sshkey *pubkey = NULL;
-	int r, fd;
+	నిర్మాణం sshbuf *బఫరు = ఖాళీ;
+	నిర్మాణం sshkey *pubkey = ఖాళీ;
+	పూర్ణాంకం r, fd;
 
-	if (pubkeyp != NULL)
-		*pubkeyp = NULL;
+	ఒకవేళ (pubkeyp != ఖాళీ)
+		*pubkeyp = ఖాళీ;
 
-	if ((fd = open(filename, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
-	    (r = sshkey_parse_pubkey_from_private_fileblob_type(buffer,
-	    KEY_UNSPEC, &pubkey)) != 0)
-		goto out;
+	ఒకవేళ ((fd = open(filename, O_RDONLY)) == -1)
+		తిరిగి SSH_ERR_SYSTEM_ERROR;
+	ఒకవేళ ((r = sshbuf_ఎక్కించు_fd(fd, &బఫరు)) != 0 ||
+	    (r = sshkey_parse_pubkey_from_వ్యక్తిగత_fileblob_type(బఫరు,
+	    కీలకం_UNSPEC, &pubkey)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* success */
-	if (pubkeyp != NULL) {
+	ఒకవేళ (pubkeyp != ఖాళీ) {
 		*pubkeyp = pubkey;
-		pubkey = NULL;
+		pubkey = ఖాళీ;
 	}
 	r = 0;
- out:
+ బహిర్గతం:
 	close(fd);
-	sshbuf_free(buffer);
+	sshbuf_free(బఫరు);
 	sshkey_free(pubkey);
-	return r;
+	తిరిగి r;
 }
 
-static int
-sshkey_try_load_public(struct sshkey **kp, const char *filename,
-    char **commentp)
+స్థిర పూర్ణాంకం
+sshkey_try_ఎక్కించు_ప్రజా(నిర్మాణం sshkey **kp, స్థిరరాశి అక్షరం *filename,
+    అక్షరం **commentp)
 {
 	FILE *f;
-	char *line = NULL, *cp;
-	size_t linesize = 0;
-	int r;
-	struct stat st;
-	struct sshkey *k = NULL;
+	అక్షరం *పంక్తి = ఖాళీ, *cp;
+	కొలత_t linesize = 0;
+	పూర్ణాంకం r;
+	నిర్మాణం stat st;
+	నిర్మాణం sshkey *k = ఖాళీ;
 
-	if (kp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	*kp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
-	if ((f = fopen(filename, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (fstat(fileno(f), &st) == 0 && S_ISREG(st.st_mode) &&
-	    st.st_size > SSHBUF_SIZE_MAX) {
+	ఒకవేళ (kp == ఖాళీ)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	*kp = ఖాళీ;
+	ఒకవేళ (commentp != ఖాళీ)
+		*commentp = ఖాళీ;
+	ఒకవేళ ((f = fopen(filename, "r")) == ఖాళీ)
+		తిరిగి SSH_ERR_SYSTEM_ERROR;
+	ఒకవేళ (fstat(fileno(f), &st) == 0 && S_ISREG(st.st_mode) &&
+	    st.st_size > SSHBUF_కొలత_MAX) {
 		fclose(f);
-		return SSH_ERR_INVALID_FORMAT;
+		తిరిగి SSH_ERR_INVALID_FORMAT;
 	}
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL) {
+	ఒకవేళ ((k = sshkey_new(కీలకం_UNSPEC)) == ఖాళీ) {
 		fclose(f);
-		return SSH_ERR_ALLOC_FAIL;
+		తిరిగి SSH_ERR_ALLOC_FAIL;
 	}
-	while (getline(&line, &linesize, f) != -1) {
-		cp = line;
-		switch (*cp) {
-		case '#':
-		case '\n':
-		case '\0':
-			continue;
+	అయితే (getline(&పంక్తి, &linesize, f) != -1) {
+		cp = పంక్తి;
+		ఎంపిక (*cp) {
+		స్థితి '#':
+		స్థితి '\n':
+		స్థితి '\0':
+			కొనసాగు;
 		}
 		/* Abort loading if this looks like a private key */
-		if (strncmp(cp, "-----BEGIN", 10) == 0 ||
+		ఒకవేళ (అక్షరశ్రేణి_పోలిక(cp, "-----BEGIN", 10) == 0 ||
 		    strcmp(cp, "SSH PRIVATE KEY FILE") == 0)
-			break;
+			ఆపు;
 		/* Skip leading whitespace. */
-		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
+		కొరకు (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
 			;
-		if (*cp) {
-			if ((r = sshkey_read(k, &cp)) == 0) {
+		ఒకవేళ (*cp) {
+			ఒకవేళ ((r = sshkey_read(k, &cp)) == 0) {
 				cp[strcspn(cp, "\r\n")] = '\0';
-				if (commentp) {
+				ఒకవేళ (commentp) {
 					*commentp = strdup(*cp ?
 					    cp : filename);
-					if (*commentp == NULL)
+					ఒకవేళ (*commentp == ఖాళీ)
 						r = SSH_ERR_ALLOC_FAIL;
 				}
 				/* success */
 				*kp = k;
-				free(line);
+				విడుదల(పంక్తి);
 				fclose(f);
-				return r;
+				తిరిగి r;
 			}
 		}
 	}
-	free(k);
-	free(line);
+	విడుదల(k);
+	విడుదల(పంక్తి);
 	fclose(f);
-	return SSH_ERR_INVALID_FORMAT;
+	తిరిగి SSH_ERR_INVALID_FORMAT;
 }
 
 /* load public key from any pubkey file */
-int
-sshkey_load_public(const char *filename, struct sshkey **keyp, char **commentp)
+పూర్ణాంకం
+sshkey_ఎక్కించు_ప్రజా(స్థిరరాశి అక్షరం *filename, నిర్మాణం sshkey **keyp, అక్షరం **commentp)
 {
-	char *pubfile = NULL;
-	int r, oerrno;
+	అక్షరం *pubfile = ఖాళీ;
+	పూర్ణాంకం r, oerrno;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
+	ఒకవేళ (keyp != ఖాళీ)
+		*keyp = ఖాళీ;
+	ఒకవేళ (commentp != ఖాళీ)
+		*commentp = ఖాళీ;
 
-	if ((r = sshkey_try_load_public(keyp, filename, commentp)) == 0)
-		goto out;
+	ఒకవేళ ((r = sshkey_try_ఎక్కించు_ప్రజా(keyp, filename, commentp)) == 0)
+		వెళ్ళు బహిర్గతం;
 
 	/* try .pub suffix */
-	if (asprintf(&pubfile, "%s.pub", filename) == -1)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_try_load_public(keyp, pubfile, commentp)) == 0)
-		goto out;
+	ఒకవేళ (asprintf(&pubfile, "%s.pub", filename) == -1)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshkey_try_ఎక్కించు_ప్రజా(keyp, pubfile, commentp)) == 0)
+		వెళ్ళు బహిర్గతం;
 
 	/* finally, try to extract public key from private key file */
-	if ((r = sshkey_load_pubkey_from_private(filename, keyp)) == 0)
-		goto out;
+	ఒకవేళ ((r = sshkey_ఎక్కించు_pubkey_from_వ్యక్తిగత(filename, keyp)) == 0)
+		వెళ్ళు బహిర్గతం;
 
 	/* Pretend we couldn't find the key */
 	r = SSH_ERR_SYSTEM_ERROR;
 	errno = ENOENT;
 
- out:
+ బహిర్గతం:
 	oerrno = errno;
-	free(pubfile);
+	విడుదల(pubfile);
 	errno = oerrno;
-	return r;
+	తిరిగి r;
 }
 
 /* Load the certificate associated with the named private key */
-int
-sshkey_load_cert(const char *filename, struct sshkey **keyp)
+పూర్ణాంకం
+sshkey_ఎక్కించు_cert(స్థిరరాశి అక్షరం *filename, నిర్మాణం sshkey **keyp)
 {
-	struct sshkey *pub = NULL;
-	char *file = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	నిర్మాణం sshkey *pub = ఖాళీ;
+	అక్షరం *file = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 
-	if (keyp != NULL)
-		*keyp = NULL;
+	ఒకవేళ (keyp != ఖాళీ)
+		*keyp = ఖాళీ;
 
-	if (asprintf(&file, "%s-cert.pub", filename) == -1)
-		return SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ (asprintf(&file, "%s-cert.pub", filename) == -1)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
 
-	r = sshkey_try_load_public(keyp, file, NULL);
-	free(file);
+	r = sshkey_try_ఎక్కించు_ప్రజా(keyp, file, ఖాళీ);
+	విడుదల(file);
 	sshkey_free(pub);
-	return r;
+	తిరిగి r;
 }
 
 /* Load private key and certificate */
-int
-sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
-    struct sshkey **keyp)
+పూర్ణాంకం
+sshkey_ఎక్కించు_వ్యక్తిగత_cert(పూర్ణాంకం type, స్థిరరాశి అక్షరం *filename, స్థిరరాశి అక్షరం *passphrase,
+    నిర్మాణం sshkey **keyp)
 {
-	struct sshkey *key = NULL, *cert = NULL;
-	int r;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ, *cert = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if (keyp != NULL)
-		*keyp = NULL;
+	ఒకవేళ (keyp != ఖాళీ)
+		*keyp = ఖాళీ;
 
-	switch (type) {
-#ifdef WITH_OPENSSL
-	case KEY_RSA:
-	case KEY_ECDSA:
-#endif /* WITH_OPENSSL */
-	case KEY_ED25519:
-	case KEY_MLDSA44_ED25519:
-	case KEY_UNSPEC:
-		break;
-	default:
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+	ఎంపిక (type) {
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థితి కీలకం_RSA:
+	స్థితి కీలకం_ECDSA:
+#అయితే_ముగింపు /* WITH_OPENSSL */
+	స్థితి కీలకం_ED25519:
+	స్థితి కీలకం_MLDSA44_ED25519:
+	స్థితి కీలకం_UNSPEC:
+		ఆపు;
+	అప్రమేయ:
+		తిరిగి SSH_ERR_కీలకం_TYPE_UNKNOWN;
 	}
 
-	if ((r = sshkey_load_private_type(type, filename,
-	    passphrase, &key, NULL)) != 0 ||
-	    (r = sshkey_load_cert(filename, &cert)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshkey_ఎక్కించు_వ్యక్తిగత_type(type, filename,
+	    passphrase, &కీలకం, ఖాళీ)) != 0 ||
+	    (r = sshkey_ఎక్కించు_cert(filename, &cert)) != 0)
+		వెళ్ళు బహిర్గతం;
 
 	/* Make sure the private key matches the certificate */
-	if (sshkey_equal_public(key, cert) == 0) {
-		r = SSH_ERR_KEY_CERT_MISMATCH;
-		goto out;
+	ఒకవేళ (sshkey_equal_ప్రజా(కీలకం, cert) == 0) {
+		r = SSH_ERR_కీలకం_CERT_MISMATCH;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if ((r = sshkey_to_certified(key)) != 0 ||
-	    (r = sshkey_cert_copy(cert, key)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshkey_గమ్యం_certified(కీలకం)) != 0 ||
+	    (r = sshkey_cert_copy(cert, కీలకం)) != 0)
+		వెళ్ళు బహిర్గతం;
 	r = 0;
-	if (keyp != NULL) {
-		*keyp = key;
-		key = NULL;
+	ఒకవేళ (keyp != ఖాళీ) {
+		*keyp = కీలకం;
+		కీలకం = ఖాళీ;
 	}
- out:
-	sshkey_free(key);
+ బహిర్గతం:
+	sshkey_free(కీలకం);
 	sshkey_free(cert);
-	return r;
+	తిరిగి r;
 }
 
 /*
@@ -367,64 +367,64 @@ sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
  * If "check_ca" is set and "key" is a certificate, then its CA key is
  * also checked and sshkey_in_file() will return success if either is found.
  */
-int
-sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
-    int check_ca)
+పూర్ణాంకం
+sshkey_లోపల_file(నిర్మాణం sshkey *కీలకం, స్థిరరాశి అక్షరం *filename, పూర్ణాంకం strict_type,
+    పూర్ణాంకం check_ca)
 {
 	FILE *f;
-	char *line = NULL, *cp;
-	size_t linesize = 0;
-	int r = 0;
-	struct sshkey *pub = NULL;
+	అక్షరం *పంక్తి = ఖాళీ, *cp;
+	కొలత_t linesize = 0;
+	పూర్ణాంకం r = 0;
+	నిర్మాణం sshkey *pub = ఖాళీ;
 
-	int (*sshkey_compare)(const struct sshkey *, const struct sshkey *) =
-	    strict_type ?  sshkey_equal : sshkey_equal_public;
+	పూర్ణాంకం (*sshkey_compare)(స్థిరరాశి నిర్మాణం sshkey *, స్థిరరాశి నిర్మాణం sshkey *) =
+	    strict_type ?  sshkey_equal : sshkey_equal_ప్రజా;
 
-	if ((f = fopen(filename, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
+	ఒకవేళ ((f = fopen(filename, "r")) == ఖాళీ)
+		తిరిగి SSH_ERR_SYSTEM_ERROR;
 
-	while (getline(&line, &linesize, f) != -1) {
+	అయితే (getline(&పంక్తి, &linesize, f) != -1) {
 		sshkey_free(pub);
-		pub = NULL;
-		cp = line;
+		pub = ఖాళీ;
+		cp = పంక్తి;
 
 		/* Skip leading whitespace. */
-		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
+		కొరకు (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
 			;
 
 		/* Skip comments and empty lines */
-		switch (*cp) {
-		case '#':
-		case '\n':
-		case '\0':
-			continue;
+		ఎంపిక (*cp) {
+		స్థితి '#':
+		స్థితి '\n':
+		స్థితి '\0':
+			కొనసాగు;
 		}
 
-		if ((pub = sshkey_new(KEY_UNSPEC)) == NULL) {
+		ఒకవేళ ((pub = sshkey_new(కీలకం_UNSPEC)) == ఖాళీ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		switch (r = sshkey_read(pub, &cp)) {
-		case 0:
-			break;
-		case SSH_ERR_KEY_LENGTH:
-			continue;
-		default:
-			goto out;
+		ఎంపిక (r = sshkey_read(pub, &cp)) {
+		స్థితి 0:
+			ఆపు;
+		స్థితి SSH_ERR_కీలకం_నిడివి:
+			కొనసాగు;
+		అప్రమేయ:
+			వెళ్ళు బహిర్గతం;
 		}
-		if (sshkey_compare(key, pub) ||
-		    (check_ca && sshkey_is_cert(key) &&
-		    sshkey_compare(key->cert->signature_key, pub))) {
+		ఒకవేళ (sshkey_compare(కీలకం, pub) ||
+		    (check_ca && sshkey_is_cert(కీలకం) &&
+		    sshkey_compare(కీలకం->cert->signature_కీలకం, pub))) {
 			r = 0;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 	}
-	r = SSH_ERR_KEY_NOT_FOUND;
- out:
-	free(line);
+	r = SSH_ERR_కీలకం_NOT_దొరికింది;
+ బహిర్గతం:
+	విడుదల(పంక్తి);
 	sshkey_free(pub);
 	fclose(f);
-	return r;
+	తిరిగి r;
 }
 
 /*
@@ -434,30 +434,30 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
  * This will check both the key and, if it is a certificate, its CA key too.
  * "revoked_keys_file" may be a KRL or a one-per-line list of public keys.
  */
-int
-sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
+పూర్ణాంకం
+sshkey_check_revoked(నిర్మాణం sshkey *కీలకం, స్థిరరాశి అక్షరం *revoked_కీలకాలు_file)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	r = ssh_krl_file_contains_key(revoked_keys_file, key);
+	r = ssh_krl_file_కలిగియుంది_కీలకం(revoked_కీలకాలు_file, కీలకం);
 	/* If this was not a KRL to begin with then continue below */
-	if (r != SSH_ERR_KRL_BAD_MAGIC)
-		return r;
+	ఒకవేళ (r != SSH_ERR_KRL_BAD_MAGIC)
+		తిరిగి r;
 
 	/*
 	 * If the file is not a KRL or we can't handle KRLs then attempt to
 	 * parse the file as a flat list of keys.
 	 */
-	switch ((r = sshkey_in_file(key, revoked_keys_file, 0, 1))) {
-	case 0:
+	ఎంపిక ((r = sshkey_లోపల_file(కీలకం, revoked_కీలకాలు_file, 0, 1))) {
+	స్థితి 0:
 		/* Key found => revoked */
-		return SSH_ERR_KEY_REVOKED;
-	case SSH_ERR_KEY_NOT_FOUND:
+		తిరిగి SSH_ERR_కీలకం_REVOKED;
+	స్థితి SSH_ERR_కీలకం_NOT_దొరికింది:
 		/* Key not found => not revoked */
-		return 0;
-	default:
+		తిరిగి 0;
+	అప్రమేయ:
 		/* Some other error occurred */
-		return r;
+		తిరిగి r;
 	}
 }
 
@@ -466,56 +466,56 @@ sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
  * whitespace character. Returns 0 on success or -1 on failure (e.g.
  * unterminated quotes).
  */
-int
-sshkey_advance_past_options(char **cpp)
+పూర్ణాంకం
+sshkey_advance_past_options(అక్షరం **cpp)
 {
-	char *cp = *cpp;
-	int quoted = 0;
+	అక్షరం *cp = *cpp;
+	పూర్ణాంకం quoted = 0;
 
-	for (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
-		if (*cp == '\\' && cp[1] == '"')
+	కొరకు (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
+		ఒకవేళ (*cp == '\\' && cp[1] == '"')
 			cp++;	/* Skip both */
-		else if (*cp == '"')
+		లేకపోతే ఒకవేళ (*cp == '"')
 			quoted = !quoted;
 	}
 	*cpp = cp;
 	/* return failure for unterminated quotes */
-	return (*cp == '\0' && quoted) ? -1 : 0;
+	తిరిగి (*cp == '\0' && quoted) ? -1 : 0;
 }
 
 /* Save a public key */
-int
-sshkey_save_public(const struct sshkey *key, const char *path,
-    const char *comment)
+పూర్ణాంకం
+sshkey_save_ప్రజా(స్థిరరాశి నిర్మాణం sshkey *కీలకం, స్థిరరాశి అక్షరం *మార్గం,
+    స్థిరరాశి అక్షరం *comment)
 {
-	int fd, oerrno;
-	FILE *f = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	పూర్ణాంకం fd, oerrno;
+	FILE *f = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 
-	if ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((f = fdopen(fd, "w")) == NULL) {
+	ఒకవేళ ((fd = open(మార్గం, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1)
+		తిరిగి SSH_ERR_SYSTEM_ERROR;
+	ఒకవేళ ((f = fdopen(fd, "w")) == ఖాళీ) {
 		r = SSH_ERR_SYSTEM_ERROR;
 		close(fd);
-		goto fail;
+		వెళ్ళు fail;
 	}
-	if ((r = sshkey_write(key, f)) != 0)
-		goto fail;
+	ఒకవేళ ((r = sshkey_write(కీలకం, f)) != 0)
+		వెళ్ళు fail;
 	fprintf(f, " %s\n", comment);
-	if (ferror(f)) {
+	ఒకవేళ (ferror(f)) {
 		r = SSH_ERR_SYSTEM_ERROR;
-		goto fail;
+		వెళ్ళు fail;
 	}
-	if (fclose(f) != 0) {
+	ఒకవేళ (fclose(f) != 0) {
 		r = SSH_ERR_SYSTEM_ERROR;
-		f = NULL;
+		f = ఖాళీ;
  fail:
-		if (f != NULL) {
+		ఒకవేళ (f != ఖాళీ) {
 			oerrno = errno;
 			fclose(f);
 			errno = oerrno;
 		}
-		return r;
+		తిరిగి r;
 	}
-	return 0;
+	తిరిగి 0;
 }

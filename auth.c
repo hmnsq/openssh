@@ -23,66 +23,66 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <sys/wait.h>
 
-#include <netinet/in.h>
+#అన్తర్భావ <netinet/in.h>
 
-#include <stdlib.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <paths.h>
-#include <pwd.h>
-#ifdef HAVE_LOGIN_H
-#include <login.h>
-#endif
-#ifdef USE_SHADOW
-#include <shadow.h>
-#endif
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
-#include <netdb.h>
-#include <time.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <paths.h>
+#అన్తర్భావ <pwd.h>
+#నిర్వచితమైతే HAVE_LOGIN_H
+#అన్తర్భావ <login.h>
+#అయితే_ముగింపు
+#నిర్వచితమైతే USE_SHADOW
+#అన్తర్భావ <shadow.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <netdb.h>
+#అన్తర్భావ <time.h>
 
-#include "xmalloc.h"
-#include "match.h"
-#include "groupaccess.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
-#include "canohost.h"
-#include "uidswap.h"
-#include "packet.h"
-#include "loginrec.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "authfile.h"
-#include "monitor_wrap.h"
-#include "ssherr.h"
-#include "channels.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "match.h"
+#అన్తర్భావ "groupaccess.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "servconf.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "hostfile.h"
+#అన్తర్భావ "auth.h"
+#అన్తర్భావ "auth-options.h"
+#అన్తర్భావ "canohost.h"
+#అన్తర్భావ "uidswap.h"
+#అన్తర్భావ "packet.h"
+#అన్తర్భావ "loginrec.h"
+#నిర్వచితమైతే GSSAPI
+#అన్తర్భావ "ssh-gss.h"
+#అయితే_ముగింపు
+#అన్తర్భావ "authfile.h"
+#అన్తర్భావ "monitor_wrap.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "channels.h"
 
 /* import */
-extern ServerOptions options;
-extern struct include_list includes;
-extern struct sshbuf *loginmsg;
-extern struct passwd *privsep_pw;
-extern struct sshauthopt *auth_opts;
+బాహ్య ServerOptions options;
+బాహ్య నిర్మాణం include_list includes;
+బాహ్య నిర్మాణం sshbuf *loginmsg;
+బాహ్య నిర్మాణం passwd *privsep_pw;
+బాహ్య నిర్మాణం sshauthopt *auth_opts;
 
 /* Debugging messages */
-static struct sshbuf *auth_debug;
+స్థిర నిర్మాణం sshbuf *auth_debug;
 
 /*
  * Check if the user is allowed to log in via ssh. If user is listed
@@ -93,242 +93,242 @@ static struct sshbuf *auth_debug;
  * If the user's shell is not executable, false will be returned.
  * Otherwise true is returned.
  */
-int
-allowed_user(struct ssh *ssh, struct passwd * pw)
+పూర్ణాంకం
+allowed_user(నిర్మాణం ssh *ssh, నిర్మాణం passwd * pw)
 {
-	struct stat st;
-	const char *hostname = NULL, *ipaddr = NULL;
-	int r;
+	నిర్మాణం stat st;
+	స్థిరరాశి అక్షరం *hostname = ఖాళీ, *ipaddr = ఖాళీ;
+	పూర్ణాంకం r;
 	u_int i;
 
 	/* Shouldn't be called if pw is NULL, but better safe than sorry... */
-	if (!pw || !pw->pw_name)
-		return 0;
+	ఒకవేళ (!pw || !pw->pw_name)
+		తిరిగి 0;
 
-	if (!options.use_pam && platform_locked_account(pw)) {
+	ఒకవేళ (!options.use_pam && platform_locked_account(pw)) {
 		logit("User %.100s not allowed because account is locked",
 		    pw->pw_name);
-		return 0;
+		తిరిగి 0;
 	}
 
 	/*
 	 * Deny if shell does not exist or is not executable unless we
 	 * are chrooting.
 	 */
-	if (options.chroot_directory == NULL ||
+	ఒకవేళ (options.chroot_directory == ఖాళీ ||
 	    strcasecmp(options.chroot_directory, "none") == 0) {
-		char *shell = xstrdup((pw->pw_shell[0] == '\0') ?
+		అక్షరం *shell = xstrdup((pw->pw_shell[0] == '\0') ?
 		    _PATH_BSHELL : pw->pw_shell); /* empty = /bin/sh */
 
-		if (stat(shell, &st) == -1) {
+		ఒకవేళ (stat(shell, &st) == -1) {
 			logit("User %.100s not allowed because shell %.100s "
 			    "does not exist", pw->pw_name, shell);
-			free(shell);
-			return 0;
+			విడుదల(shell);
+			తిరిగి 0;
 		}
-		if (S_ISREG(st.st_mode) == 0 ||
+		ఒకవేళ (S_ISREG(st.st_mode) == 0 ||
 		    (st.st_mode & (S_IXOTH|S_IXUSR|S_IXGRP)) == 0) {
 			logit("User %.100s not allowed because shell %.100s "
 			    "is not executable", pw->pw_name, shell);
-			free(shell);
-			return 0;
+			విడుదల(shell);
+			తిరిగి 0;
 		}
-		free(shell);
+		విడుదల(shell);
 	}
 
-	if (options.num_deny_users > 0 || options.num_allow_users > 0 ||
-	    options.num_deny_groups > 0 || options.num_allow_groups > 0) {
+	ఒకవేళ (options.అంకె_deny_users > 0 || options.అంకె_allow_users > 0 ||
+	    options.అంకె_deny_groups > 0 || options.అంకె_allow_groups > 0) {
 		hostname = auth_get_canonical_hostname(ssh, options.use_dns);
 		ipaddr = ssh_remote_ipaddr(ssh);
 	}
 
 	/* Return false if user is listed in DenyUsers */
-	if (options.num_deny_users > 0) {
-		for (i = 0; i < options.num_deny_users; i++) {
-			r = match_user(pw->pw_name, hostname, ipaddr,
+	ఒకవేళ (options.అంకె_deny_users > 0) {
+		కొరకు (i = 0; i < options.అంకె_deny_users; i++) {
+			r = సరిపోలిక_user(pw->pw_name, hostname, ipaddr,
 			    options.deny_users[i]);
-			if (r < 0) {
+			ఒకవేళ (r < 0) {
 				fatal("Invalid DenyUsers pattern \"%.100s\"",
 				    options.deny_users[i]);
-			} else if (r != 0) {
+			} లేకపోతే ఒకవేళ (r != 0) {
 				logit("User %.100s from %.100s not allowed "
 				    "because listed in DenyUsers",
 				    pw->pw_name, hostname);
-				return 0;
+				తిరిగి 0;
 			}
 		}
 	}
 	/* Return false if AllowUsers isn't empty and user isn't listed there */
-	if (options.num_allow_users > 0) {
-		for (i = 0; i < options.num_allow_users; i++) {
-			r = match_user(pw->pw_name, hostname, ipaddr,
+	ఒకవేళ (options.అంకె_allow_users > 0) {
+		కొరకు (i = 0; i < options.అంకె_allow_users; i++) {
+			r = సరిపోలిక_user(pw->pw_name, hostname, ipaddr,
 			    options.allow_users[i]);
-			if (r < 0) {
+			ఒకవేళ (r < 0) {
 				fatal("Invalid AllowUsers pattern \"%.100s\"",
 				    options.allow_users[i]);
-			} else if (r == 1)
-				break;
+			} లేకపోతే ఒకవేళ (r == 1)
+				ఆపు;
 		}
 		/* i < options.num_allow_users iff we break for loop */
-		if (i >= options.num_allow_users) {
+		ఒకవేళ (i >= options.అంకె_allow_users) {
 			logit("User %.100s from %.100s not allowed because "
 			    "not listed in AllowUsers", pw->pw_name, hostname);
-			return 0;
+			తిరిగి 0;
 		}
 	}
-	if (options.num_deny_groups > 0 || options.num_allow_groups > 0) {
+	ఒకవేళ (options.అంకె_deny_groups > 0 || options.అంకె_allow_groups > 0) {
 		/* Get the user's group access list (primary and supplementary) */
-		if (ga_init(pw->pw_name, pw->pw_gid) == 0) {
+		ఒకవేళ (ga_init(pw->pw_name, pw->pw_gid) == 0) {
 			logit("User %.100s from %.100s not allowed because "
 			    "not in any group", pw->pw_name, hostname);
-			return 0;
+			తిరిగి 0;
 		}
 
 		/* Return false if one of user's groups is listed in DenyGroups */
-		if (options.num_deny_groups > 0)
-			if (ga_match(options.deny_groups,
-			    options.num_deny_groups)) {
+		ఒకవేళ (options.అంకె_deny_groups > 0)
+			ఒకవేళ (ga_సరిపోలిక(options.deny_groups,
+			    options.అంకె_deny_groups)) {
 				ga_free();
 				logit("User %.100s from %.100s not allowed "
 				    "because a group is listed in DenyGroups",
 				    pw->pw_name, hostname);
-				return 0;
+				తిరిగి 0;
 			}
 		/*
 		 * Return false if AllowGroups isn't empty and one of user's groups
 		 * isn't listed there
 		 */
-		if (options.num_allow_groups > 0)
-			if (!ga_match(options.allow_groups,
-			    options.num_allow_groups)) {
+		ఒకవేళ (options.అంకె_allow_groups > 0)
+			ఒకవేళ (!ga_సరిపోలిక(options.allow_groups,
+			    options.అంకె_allow_groups)) {
 				ga_free();
 				logit("User %.100s from %.100s not allowed "
 				    "because none of user's groups are listed "
 				    "in AllowGroups", pw->pw_name, hostname);
-				return 0;
+				తిరిగి 0;
 			}
 		ga_free();
 	}
 
-#ifdef CUSTOM_SYS_AUTH_ALLOWED_USER
-	if (!sys_auth_allowed_user(pw, loginmsg))
-		return 0;
-#endif
+#నిర్వచితమైతే CUSTOM_SYS_AUTH_ALLOWED_USER
+	ఒకవేళ (!sys_auth_allowed_user(pw, loginmsg))
+		తిరిగి 0;
+#అయితే_ముగింపు
 
 	/* We found no reason not to let this user try to log on... */
-	return 1;
+	తిరిగి 1;
 }
 
 /*
  * Formats any key left in authctxt->auth_method_key for inclusion in
  * auth_log()'s message. Also includes authxtct->auth_method_info if present.
  */
-static char *
-format_method_key(Authctxt *authctxt)
+స్థిర అక్షరం *
+format_పద్ధతి_కీలకం(Authctxt *authctxt)
 {
-	const struct sshkey *key = authctxt->auth_method_key;
-	const char *methinfo = authctxt->auth_method_info;
-	char *fp, *cafp, *ret = NULL;
+	స్థిరరాశి నిర్మాణం sshkey *కీలకం = authctxt->auth_పద్ధతి_కీలకం;
+	స్థిరరాశి అక్షరం *methinfo = authctxt->auth_పద్ధతి_info;
+	అక్షరం *fp, *cafp, *ret = ఖాళీ;
 
-	if (key == NULL)
-		return NULL;
+	ఒకవేళ (కీలకం == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	if (sshkey_is_cert(key)) {
-		fp = sshkey_fingerprint(key,
+	ఒకవేళ (sshkey_is_cert(కీలకం)) {
+		fp = sshkey_fingerprint(కీలకం,
 		    options.fingerprint_hash, SSH_FP_DEFAULT);
-		cafp = sshkey_fingerprint(key->cert->signature_key,
+		cafp = sshkey_fingerprint(కీలకం->cert->signature_కీలకం,
 		    options.fingerprint_hash, SSH_FP_DEFAULT);
 		xasprintf(&ret, "%s %s ID %s (serial %llu) CA %s %s%s%s",
-		    sshkey_type(key), fp == NULL ? "(null)" : fp,
-		    key->cert->key_id,
-		    (unsigned long long)key->cert->serial,
-		    sshkey_type(key->cert->signature_key),
-		    cafp == NULL ? "(null)" : cafp,
-		    methinfo == NULL ? "" : ", ",
-		    methinfo == NULL ? "" : methinfo);
-		free(fp);
-		free(cafp);
-	} else {
-		fp = sshkey_fingerprint(key, options.fingerprint_hash,
+		    sshkey_type(కీలకం), fp == ఖాళీ ? "(null)" : fp,
+		    కీలకం->cert->కీలకం_id,
+		    (గుర్తులేని దీర్ఘ దీర్ఘ)కీలకం->cert->serial,
+		    sshkey_type(కీలకం->cert->signature_కీలకం),
+		    cafp == ఖాళీ ? "(null)" : cafp,
+		    methinfo == ఖాళీ ? "" : ", ",
+		    methinfo == ఖాళీ ? "" : methinfo);
+		విడుదల(fp);
+		విడుదల(cafp);
+	} లేకపోతే {
+		fp = sshkey_fingerprint(కీలకం, options.fingerprint_hash,
 		    SSH_FP_DEFAULT);
-		xasprintf(&ret, "%s %s%s%s", sshkey_type(key),
-		    fp == NULL ? "(null)" : fp,
-		    methinfo == NULL ? "" : ", ",
-		    methinfo == NULL ? "" : methinfo);
-		free(fp);
+		xasprintf(&ret, "%s %s%s%s", sshkey_type(కీలకం),
+		    fp == ఖాళీ ? "(null)" : fp,
+		    methinfo == ఖాళీ ? "" : ", ",
+		    methinfo == ఖాళీ ? "" : methinfo);
+		విడుదల(fp);
 	}
-	return ret;
+	తిరిగి ret;
 }
 
-void
-auth_log(struct ssh *ssh, int authenticated, int partial,
-    const char *method, const char *submethod)
+శూన్య
+auth_log(నిర్మాణం ssh *ssh, పూర్ణాంకం authenticated, పూర్ణాంకం partial,
+    స్థిరరాశి అక్షరం *పద్ధతి, స్థిరరాశి అక్షరం *submethod)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	int level = SYSLOG_LEVEL_VERBOSE;
-	const char *authmsg;
-	char *extra = NULL;
+	పూర్ణాంకం level = SYSLOG_LEVEL_VERBOSE;
+	స్థిరరాశి అక్షరం *authmsg;
+	అక్షరం *extra = ఖాళీ;
 
-	if (!mm_is_monitor() && !authctxt->postponed)
-		return;
+	ఒకవేళ (!mm_is_monitor() && !authctxt->postponed)
+		తిరిగి;
 
 	/* Raise logging level */
-	if (authenticated == 1 ||
+	ఒకవేళ (authenticated == 1 ||
 	    !authctxt->valid ||
 	    authctxt->failures >= options.max_authtries / 2 ||
-	    strcmp(method, "password") == 0)
+	    strcmp(పద్ధతి, "password") == 0)
 		level = SYSLOG_LEVEL_INFO;
 
-	if (authctxt->postponed)
+	ఒకవేళ (authctxt->postponed)
 		authmsg = "Postponed";
-	else if (partial)
+	లేకపోతే ఒకవేళ (partial)
 		authmsg = "Partial";
-	else
+	లేకపోతే
 		authmsg = authenticated ? "Accepted" : "Failed";
 
-	if ((extra = format_method_key(authctxt)) == NULL) {
-		if (authctxt->auth_method_info != NULL)
-			extra = xstrdup(authctxt->auth_method_info);
+	ఒకవేళ ((extra = format_పద్ధతి_కీలకం(authctxt)) == ఖాళీ) {
+		ఒకవేళ (authctxt->auth_పద్ధతి_info != ఖాళీ)
+			extra = xstrdup(authctxt->auth_పద్ధతి_info);
 	}
 
 	do_log2(level, "%s %s%s%s for %s%.100s from %.200s port %d ssh2%s%s",
 	    authmsg,
-	    method,
-	    submethod != NULL ? "/" : "", submethod == NULL ? "" : submethod,
+	    పద్ధతి,
+	    submethod != ఖాళీ ? "/" : "", submethod == ఖాళీ ? "" : submethod,
 	    authctxt->valid ? "" : "invalid user ",
 	    authctxt->user,
 	    ssh_remote_ipaddr(ssh),
-	    ssh_remote_port(ssh),
-	    extra != NULL ? ": " : "",
-	    extra != NULL ? extra : "");
+	    ssh_remote_పోర్టు(ssh),
+	    extra != ఖాళీ ? ": " : "",
+	    extra != ఖాళీ ? extra : "");
 
-	free(extra);
+	విడుదల(extra);
 
-#if defined(CUSTOM_FAILED_LOGIN) || defined(SSH_AUDIT_EVENTS)
-	if (authenticated == 0 && !(authctxt->postponed || partial)) {
+#ఒకవేళ defined(CUSTOM_FAILED_LOGIN) || defined(SSH_AUDIT_EVENTS)
+	ఒకవేళ (authenticated == 0 && !(authctxt->postponed || partial)) {
 		/* Log failed login attempt */
 # ifdef CUSTOM_FAILED_LOGIN
-		if (strcmp(method, "password") == 0 ||
-		    strncmp(method, "keyboard-interactive", 20) == 0 ||
-		    strcmp(method, "challenge-response") == 0)
-			record_failed_login(ssh, authctxt->user,
+		ఒకవేళ (strcmp(పద్ధతి, "password") == 0 ||
+		    అక్షరశ్రేణి_పోలిక(పద్ధతి, "keyboard-interactive", 20) == 0 ||
+		    strcmp(పద్ధతి, "challenge-response") == 0)
+			రికార్డు_failed_login(ssh, authctxt->user,
 			    auth_get_canonical_hostname(ssh, options.use_dns), "ssh");
 # endif
 # ifdef SSH_AUDIT_EVENTS
-		audit_event(ssh, audit_classify_auth(method));
+		audit_event(ssh, audit_classify_auth(పద్ధతి));
 # endif
 	}
-#endif
-#if defined(CUSTOM_FAILED_LOGIN) && defined(WITH_AIXAUTHENTICATE)
-	if (authenticated)
-		sys_auth_record_login(authctxt->user,
+#అయితే_ముగింపు
+#ఒకవేళ defined(CUSTOM_FAILED_LOGIN) && defined(WITH_AIXAUTHENTICATE)
+	ఒకవేళ (authenticated)
+		sys_auth_రికార్డు_login(authctxt->user,
 		    auth_get_canonical_hostname(ssh, options.use_dns), "ssh",
 		    loginmsg);
-#endif
+#అయితే_ముగింపు
 }
 
-void
-auth_maxtries_exceeded(struct ssh *ssh)
+శూన్య
+auth_maxtries_exceeded(నిర్మాణం ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 
@@ -337,7 +337,7 @@ auth_maxtries_exceeded(struct ssh *ssh)
 	    authctxt->valid ? "" : "invalid user ",
 	    authctxt->user,
 	    ssh_remote_ipaddr(ssh),
-	    ssh_remote_port(ssh));
+	    ssh_remote_పోర్టు(ssh));
 	ssh_packet_disconnect(ssh, "Too many authentication failures");
 	/* NOTREACHED */
 }
@@ -345,28 +345,28 @@ auth_maxtries_exceeded(struct ssh *ssh)
 /*
  * Check whether root logins are disallowed.
  */
-int
-auth_root_allowed(struct ssh *ssh, const char *method)
+పూర్ణాంకం
+auth_మూలం_allowed(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *పద్ధతి)
 {
-	switch (options.permit_root_login) {
-	case PERMIT_YES:
-		return 1;
-	case PERMIT_NO_PASSWD:
-		if (strcmp(method, "publickey") == 0 ||
-		    strcmp(method, "hostbased") == 0 ||
-		    strcmp(method, "gssapi-with-mic") == 0)
-			return 1;
-		break;
-	case PERMIT_FORCED_ONLY:
-		if (auth_opts->force_command != NULL) {
+	ఎంపిక (options.permit_మూలం_login) {
+	స్థితి PERMIT_YES:
+		తిరిగి 1;
+	స్థితి PERMIT_NO_PASSWD:
+		ఒకవేళ (strcmp(పద్ధతి, "publickey") == 0 ||
+		    strcmp(పద్ధతి, "hostbased") == 0 ||
+		    strcmp(పద్ధతి, "gssapi-with-mic") == 0)
+			తిరిగి 1;
+		ఆపు;
+	స్థితి PERMIT_FORCED_ONLY:
+		ఒకవేళ (auth_opts->force_command != ఖాళీ) {
 			logit("Root login accepted for forced command.");
-			return 1;
+			తిరిగి 1;
 		}
-		break;
+		ఆపు;
 	}
 	logit("ROOT LOGIN REFUSED FROM %.200s port %d",
-	    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
-	return 0;
+	    ssh_remote_ipaddr(ssh), ssh_remote_పోర్టు(ssh));
+	తిరిగి 0;
 }
 
 
@@ -377,287 +377,287 @@ auth_root_allowed(struct ssh *ssh, const char *method)
  *
  * This returns a buffer allocated by xmalloc.
  */
-char *
-expand_authorized_keys(const char *filename, struct passwd *pw)
+అక్షరం *
+expand_authorized_కీలకాలు(స్థిరరాశి అక్షరం *filename, నిర్మాణం passwd *pw)
 {
-	char *file, uidstr[32], ret[PATH_MAX];
-	int i;
+	అక్షరం *file, uidstr[32], ret[PATH_MAX];
+	పూర్ణాంకం i;
 
-	snprintf(uidstr, sizeof(uidstr), "%llu",
-	    (unsigned long long)pw->pw_uid);
+	snprintf(uidstr, పరిమాణం(uidstr), "%llu",
+	    (గుర్తులేని దీర్ఘ దీర్ఘ)pw->pw_uid);
 	file = percent_expand(filename, "h", pw->pw_dir,
-	    "u", pw->pw_name, "U", uidstr, (char *)NULL);
+	    "u", pw->pw_name, "U", uidstr, (అక్షరం *)ఖాళీ);
 
 	/*
 	 * Ensure that filename starts anchored. If not, be backward
 	 * compatible and prepend the '%h/'
 	 */
-	if (path_absolute(file))
-		return (file);
+	ఒకవేళ (మార్గం_absolute(file))
+		తిరిగి (file);
 
-	i = snprintf(ret, sizeof(ret), "%s/%s", pw->pw_dir, file);
-	if (i < 0 || (size_t)i >= sizeof(ret))
+	i = snprintf(ret, పరిమాణం(ret), "%s/%s", pw->pw_dir, file);
+	ఒకవేళ (i < 0 || (కొలత_t)i >= పరిమాణం(ret))
 		fatal("expand_authorized_keys: path too long");
-	free(file);
-	return (xstrdup(ret));
+	విడుదల(file);
+	తిరిగి (xstrdup(ret));
 }
 
-char *
-authorized_principals_file(struct passwd *pw)
+అక్షరం *
+authorized_principals_file(నిర్మాణం passwd *pw)
 {
-	if (options.authorized_principals_file == NULL)
-		return NULL;
-	return expand_authorized_keys(options.authorized_principals_file, pw);
+	ఒకవేళ (options.authorized_principals_file == ఖాళీ)
+		తిరిగి ఖాళీ;
+	తిరిగి expand_authorized_కీలకాలు(options.authorized_principals_file, pw);
 }
 
 /* return ok if key exists in sysfile or userfile */
-HostStatus
-check_key_in_hostfiles(struct passwd *pw, struct sshkey *key, const char *host,
-    const char *sysfile, const char *userfile)
+Host_స్థితి
+check_కీలకం_లోపల_hostfiles(నిర్మాణం passwd *pw, నిర్మాణం sshkey *కీలకం, స్థిరరాశి అక్షరం *host,
+    స్థిరరాశి అక్షరం *sysfile, స్థిరరాశి అక్షరం *userfile)
 {
-	char *user_hostfile;
-	struct stat st;
-	HostStatus host_status;
-	struct hostkeys *hostkeys;
-	const struct hostkey_entry *found;
+	అక్షరం *user_hostfile;
+	నిర్మాణం stat st;
+	Host_స్థితి host_స్థితి;
+	నిర్మాణం hostkeys *hostkeys;
+	స్థిరరాశి నిర్మాణం hostkey_నమోదు *దొరికింది;
 
 	hostkeys = init_hostkeys();
-	load_hostkeys(hostkeys, host, sysfile, 0);
-	if (userfile != NULL) {
+	ఎక్కించు_hostkeys(hostkeys, host, sysfile, 0);
+	ఒకవేళ (userfile != ఖాళీ) {
 		user_hostfile = tilde_expand_filename(userfile, pw->pw_uid);
-		if (options.strict_modes &&
+		ఒకవేళ (options.strict_modes &&
 		    (stat(user_hostfile, &st) == 0) &&
 		    ((st.st_uid != 0 && st.st_uid != pw->pw_uid) ||
 		    (st.st_mode & 022) != 0)) {
 			logit("Authentication refused for %.100s: "
 			    "bad owner or modes for %.200s",
 			    pw->pw_name, user_hostfile);
-			auth_debug_add("Ignored %.200s: bad ownership or modes",
+			auth_debug_కూడు("Ignored %.200s: bad ownership or modes",
 			    user_hostfile);
-		} else {
+		} లేకపోతే {
 			temporarily_use_uid(pw);
-			load_hostkeys(hostkeys, host, user_hostfile, 0);
+			ఎక్కించు_hostkeys(hostkeys, host, user_hostfile, 0);
 			restore_uid();
 		}
-		free(user_hostfile);
+		విడుదల(user_hostfile);
 	}
-	host_status = check_key_in_hostkeys(hostkeys, key, &found);
-	if (host_status == HOST_REVOKED)
+	host_స్థితి = check_కీలకం_లోపల_hostkeys(hostkeys, కీలకం, &దొరికింది);
+	ఒకవేళ (host_స్థితి == HOST_REVOKED)
 		error("WARNING: revoked key for %s attempted authentication",
 		    host);
-	else if (host_status == HOST_OK)
+	లేకపోతే ఒకవేళ (host_స్థితి == HOST_OK)
 		debug_f("key for %s found at %s:%ld",
-		    found->host, found->file, found->line);
-	else
+		    దొరికింది->host, దొరికింది->file, దొరికింది->పంక్తి);
+	లేకపోతే
 		debug_f("key for host %s not found", host);
 
 	free_hostkeys(hostkeys);
 
-	return host_status;
+	తిరిగి host_స్థితి;
 }
 
-struct passwd *
-getpwnamallow(struct ssh *ssh, const char *user)
+నిర్మాణం passwd *
+getpwnamallow(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *user)
 {
-#ifdef HAVE_LOGIN_CAP
-	extern login_cap_t *lc;
-#ifdef HAVE_AUTH_HOSTOK
-	const char *from_host, *from_ip;
-#endif
-#ifdef BSD_AUTH
+#నిర్వచితమైతే HAVE_LOGIN_CAP
+	బాహ్య login_cap_t *lc;
+#నిర్వచితమైతే HAVE_AUTH_HOSTOK
+	స్థిరరాశి అక్షరం *from_host, *from_ip;
+#అయితే_ముగింపు
+#నిర్వచితమైతే BSD_AUTH
 	auth_session_t *as;
-#endif
-#endif
-	struct passwd *pw;
-	struct connection_info *ci;
+#అయితే_ముగింపు
+#అయితే_ముగింపు
+	నిర్మాణం passwd *pw;
+	నిర్మాణం connection_info *ci;
 	u_int i;
 
 	ci = server_get_connection_info(ssh, 1, options.use_dns);
 	ci->user = user;
-	ci->user_invalid = getpwnam(user) == NULL;
-	parse_server_match_config(&options, &includes, ci);
+	ci->user_invalid = getpwnam(user) == ఖాళీ;
+	parse_server_సరిపోలిక_config(&options, &includes, ci);
 	log_change_level(options.log_level);
 	log_verbose_reset();
-	for (i = 0; i < options.num_log_verbose; i++)
-		log_verbose_add(options.log_verbose[i]);
+	కొరకు (i = 0; i < options.అంకె_log_verbose; i++)
+		log_verbose_కూడు(options.log_verbose[i]);
 	server_process_channel_timeouts(ssh);
 	server_process_permitopen(ssh);
-	ssh_packet_set_rekey_limits(ssh, options.rekey_limit,
+	ssh_packet_సమితి_rekey_limits(ssh, options.rekey_హద్దు,
 	    options.rekey_interval);
 
-#if defined(_AIX) && defined(HAVE_SETAUTHDB)
+#ఒకవేళ defined(_AIX) && defined(HAVE_SETAUTHDB)
 	aix_setauthdb(user);
-#endif
+#అయితే_ముగింపు
 
 	pw = getpwnam(user);
 
-#if defined(_AIX) && defined(HAVE_SETAUTHDB)
+#ఒకవేళ defined(_AIX) && defined(HAVE_SETAUTHDB)
 	aix_restoreauthdb();
-#endif
-	if (pw == NULL) {
+#అయితే_ముగింపు
+	ఒకవేళ (pw == ఖాళీ) {
 		logit("Invalid user %.100s from %.100s port %d",
-		    user, ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
-#ifdef CUSTOM_FAILED_LOGIN
-		record_failed_login(ssh, user,
+		    user, ssh_remote_ipaddr(ssh), ssh_remote_పోర్టు(ssh));
+#నిర్వచితమైతే CUSTOM_FAILED_LOGIN
+		రికార్డు_failed_login(ssh, user,
 		    auth_get_canonical_hostname(ssh, options.use_dns), "ssh");
-#endif
-#ifdef SSH_AUDIT_EVENTS
+#అయితే_ముగింపు
+#నిర్వచితమైతే SSH_AUDIT_EVENTS
 		audit_event(ssh, SSH_INVALID_USER);
-#endif /* SSH_AUDIT_EVENTS */
-		return (NULL);
+#అయితే_ముగింపు /* SSH_AUDIT_EVENTS */
+		తిరిగి (ఖాళీ);
 	}
-	if (!allowed_user(ssh, pw))
-		return (NULL);
-#ifdef HAVE_LOGIN_CAP
-	if ((lc = login_getpwclass(pw)) == NULL) {
+	ఒకవేళ (!allowed_user(ssh, pw))
+		తిరిగి (ఖాళీ);
+#నిర్వచితమైతే HAVE_LOGIN_CAP
+	ఒకవేళ ((lc = login_getpwclass(pw)) == ఖాళీ) {
 		debug("unable to get login class: %s", user);
-		return (NULL);
+		తిరిగి (ఖాళీ);
 	}
-#ifdef HAVE_AUTH_HOSTOK
+#నిర్వచితమైతే HAVE_AUTH_HOSTOK
 	from_host = auth_get_canonical_hostname(ssh, options.use_dns);
 	from_ip = ssh_remote_ipaddr(ssh);
-	if (!auth_hostok(lc, from_host, from_ip)) {
+	ఒకవేళ (!auth_hostok(lc, from_host, from_ip)) {
 		debug("Denied connection for %.200s from %.200s [%.200s].",
 		      pw->pw_name, from_host, from_ip);
-		return (NULL);
+		తిరిగి (ఖాళీ);
 	}
-#endif /* HAVE_AUTH_HOSTOK */
-#ifdef HAVE_AUTH_TIMEOK
-	if (!auth_timeok(lc, time(NULL))) {
+#అయితే_ముగింపు /* HAVE_AUTH_HOSTOK */
+#నిర్వచితమైతే HAVE_AUTH_TIMEOK
+	ఒకవేళ (!auth_timeok(lc, time(ఖాళీ))) {
 		debug("LOGIN %.200s REFUSED (TIME)", pw->pw_name);
-		return (NULL);
+		తిరిగి (ఖాళీ);
 	}
-#endif /* HAVE_AUTH_TIMEOK */
-#ifdef BSD_AUTH
-	if ((as = auth_open()) == NULL || auth_setpwd(as, pw) != 0 ||
+#అయితే_ముగింపు /* HAVE_AUTH_TIMEOK */
+#నిర్వచితమైతే BSD_AUTH
+	ఒకవేళ ((as = auth_open()) == ఖాళీ || auth_setpwd(as, pw) != 0 ||
 	    auth_approval(as, lc, pw->pw_name, "ssh") <= 0) {
 		debug("Approval failure for %s", user);
-		pw = NULL;
+		pw = ఖాళీ;
 	}
-	if (as != NULL)
+	ఒకవేళ (as != ఖాళీ)
 		auth_close(as);
-#endif
-#endif
-	if (pw != NULL)
-		return (pwcopy(pw));
-	return (NULL);
+#అయితే_ముగింపు
+#అయితే_ముగింపు
+	ఒకవేళ (pw != ఖాళీ)
+		తిరిగి (pwcopy(pw));
+	తిరిగి (ఖాళీ);
 }
 
 /* Returns 1 if key is revoked by revoked_keys_file, 0 otherwise */
-int
-auth_key_is_revoked(struct sshkey *key)
+పూర్ణాంకం
+auth_కీలకం_is_revoked(నిర్మాణం sshkey *కీలకం)
 {
-	char *fp = NULL;
+	అక్షరం *fp = ఖాళీ;
 	u_int i;
-	int r;
+	పూర్ణాంకం r;
 
-	if (options.num_revoked_keys_files == 0)
-		return 0;
-	if ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
-	    SSH_FP_DEFAULT)) == NULL) {
+	ఒకవేళ (options.అంకె_revoked_కీలకాలు_files == 0)
+		తిరిగి 0;
+	ఒకవేళ ((fp = sshkey_fingerprint(కీలకం, options.fingerprint_hash,
+	    SSH_FP_DEFAULT)) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
 		error_fr(r, "fingerprint key");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	for (i = 0; i < options.num_revoked_keys_files; i++) {
-		r = sshkey_check_revoked(key, options.revoked_keys_files[i]);
-		switch (r) {
-		case 0:
-			break; /* not revoked */
-		case SSH_ERR_KEY_REVOKED:
+	కొరకు (i = 0; i < options.అంకె_revoked_కీలకాలు_files; i++) {
+		r = sshkey_check_revoked(కీలకం, options.revoked_కీలకాలు_files[i]);
+		ఎంపిక (r) {
+		స్థితి 0:
+			ఆపు; /* not revoked */
+		స్థితి SSH_ERR_కీలకం_REVOKED:
 			error("Authentication key %s %s revoked by file %s",
-			    sshkey_type(key), fp,
-			    options.revoked_keys_files[i]);
-			goto out;
-		default:
+			    sshkey_type(కీలకం), fp,
+			    options.revoked_కీలకాలు_files[i]);
+			వెళ్ళు బహిర్గతం;
+		అప్రమేయ:
 			error_r(r, "Error checking authentication key %s %s in "
-			    "revoked keys file %s", sshkey_type(key), fp,
-			    options.revoked_keys_files[i]);
-			goto out;
+			    "revoked keys file %s", sshkey_type(కీలకం), fp,
+			    options.revoked_కీలకాలు_files[i]);
+			వెళ్ళు బహిర్గతం;
 		}
 	}
 
 	/* Success */
 	r = 0;
 
- out:
-	free(fp);
-	return r == 0 ? 0 : 1;
+ బహిర్గతం:
+	విడుదల(fp);
+	తిరిగి r == 0 ? 0 : 1;
 }
 
-void
-auth_debug_add(const char *fmt,...)
+శూన్య
+auth_debug_కూడు(స్థిరరాశి అక్షరం *fmt,...)
 {
-	char buf[1024];
-	va_list args;
-	int r;
+	అక్షరం buf[1024];
+	va_list వాదనలు;
+	పూర్ణాంకం r;
 
-	va_start(args, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, args);
-	va_end(args);
+	va_start(వాదనలు, fmt);
+	vsnprintf(buf, పరిమాణం(buf), fmt, వాదనలు);
+	va_end(వాదనలు);
 	debug3("%s", buf);
-	if (auth_debug != NULL)
-		if ((r = sshbuf_put_cstring(auth_debug, buf)) != 0)
+	ఒకవేళ (auth_debug != ఖాళీ)
+		ఒకవేళ ((r = sshbuf_put_cstring(auth_debug, buf)) != 0)
 			fatal_fr(r, "sshbuf_put_cstring");
 }
 
-void
-auth_debug_send(struct ssh *ssh)
+శూన్య
+auth_debug_send(నిర్మాణం ssh *ssh)
 {
-	char *msg;
-	int r;
+	అక్షరం *సందేశం;
+	పూర్ణాంకం r;
 
-	if (auth_debug == NULL)
-		return;
-	while (sshbuf_len(auth_debug) != 0) {
-		if ((r = sshbuf_get_cstring(auth_debug, &msg, NULL)) != 0)
+	ఒకవేళ (auth_debug == ఖాళీ)
+		తిరిగి;
+	అయితే (sshbuf_len(auth_debug) != 0) {
+		ఒకవేళ ((r = sshbuf_get_cstring(auth_debug, &సందేశం, ఖాళీ)) != 0)
 			fatal_fr(r, "sshbuf_get_cstring");
-		ssh_packet_send_debug(ssh, "%s", msg);
-		free(msg);
+		ssh_packet_send_debug(ssh, "%s", సందేశం);
+		విడుదల(సందేశం);
 	}
 }
 
-void
-auth_debug_reset(void)
+శూన్య
+auth_debug_reset(శూన్య)
 {
-	if (auth_debug != NULL)
+	ఒకవేళ (auth_debug != ఖాళీ)
 		sshbuf_reset(auth_debug);
-	else if ((auth_debug = sshbuf_new()) == NULL)
+	లేకపోతే ఒకవేళ ((auth_debug = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 }
 
-struct passwd *
-fakepw(void)
+నిర్మాణం passwd *
+fakepw(శూన్య)
 {
-	static int done = 0;
-	static struct passwd fake;
-	const char hashchars[] = "./ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	స్థిర పూర్ణాంకం పూర్తి = 0;
+	స్థిర నిర్మాణం passwd fake;
+	స్థిరరాశి అక్షరం hashchars[] = "./ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	    "abcdefghijklmnopqrstuvwxyz0123456789"; /* from bcrypt.c */
-	char *cp;
+	అక్షరం *cp;
 
-	if (done)
-		return (&fake);
+	ఒకవేళ (పూర్తి)
+		తిరిగి (&fake);
 
-	memset(&fake, 0, sizeof(fake));
+	memset(&fake, 0, పరిమాణం(fake));
 	fake.pw_name = "NOUSER";
 	fake.pw_passwd = xstrdup("$2a$10$"
 	    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-	for (cp = fake.pw_passwd + 7; *cp != '\0'; cp++)
-		*cp = hashchars[arc4random_uniform(sizeof(hashchars) - 1)];
-#ifdef HAVE_STRUCT_PASSWD_PW_GECOS
+	కొరకు (cp = fake.pw_passwd + 7; *cp != '\0'; cp++)
+		*cp = hashchars[arc4random_ఏకరీతి(పరిమాణం(hashchars) - 1)];
+#నిర్వచితమైతే HAVE_STRUCT_PASSWD_PW_GECOS
 	fake.pw_gecos = "NOUSER";
-#endif
-	fake.pw_uid = privsep_pw == NULL ? (uid_t)-1 : privsep_pw->pw_uid;
-	fake.pw_gid = privsep_pw == NULL ? (gid_t)-1 : privsep_pw->pw_gid;
-#ifdef HAVE_STRUCT_PASSWD_PW_CLASS
+#అయితే_ముగింపు
+	fake.pw_uid = privsep_pw == ఖాళీ ? (uid_t)-1 : privsep_pw->pw_uid;
+	fake.pw_gid = privsep_pw == ఖాళీ ? (gid_t)-1 : privsep_pw->pw_gid;
+#నిర్వచితమైతే HAVE_STRUCT_PASSWD_PW_CLASS
 	fake.pw_class = "";
-#endif
+#అయితే_ముగింపు
 	fake.pw_dir = "/nonexist";
 	fake.pw_shell = "/nonexist";
-	done = 1;
+	పూర్తి = 1;
 
-	return (&fake);
+	తిరిగి (&fake);
 }
 
 /*
@@ -666,45 +666,45 @@ fakepw(void)
  * several times.
  */
 
-const char *
-auth_get_canonical_hostname(struct ssh *ssh, int use_dns)
+స్థిరరాశి అక్షరం *
+auth_get_canonical_hostname(నిర్మాణం ssh *ssh, పూర్ణాంకం use_dns)
 {
-	static char *dnsname;
+	స్థిర అక్షరం *dnsname;
 
-	if (!use_dns)
-		return ssh_remote_ipaddr(ssh);
-	if (dnsname != NULL)
-		return dnsname;
+	ఒకవేళ (!use_dns)
+		తిరిగి ssh_remote_ipaddr(ssh);
+	ఒకవేళ (dnsname != ఖాళీ)
+		తిరిగి dnsname;
 	dnsname = ssh_remote_hostname(ssh);
-	return dnsname;
+	తిరిగి dnsname;
 }
 
 /* These functions link key/cert options to the auth framework */
 
 /* Log sshauthopt options locally and (optionally) for remote transmission */
-void
-auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
+శూన్య
+auth_log_authopts(స్థిరరాశి అక్షరం *loc, స్థిరరాశి నిర్మాణం sshauthopt *opts, పూర్ణాంకం do_remote)
 {
-	int do_env = options.permit_user_env && opts->nenv > 0;
-	int do_permitopen = opts->npermitopen > 0 &&
+	పూర్ణాంకం do_env = options.permit_user_env && opts->nenv > 0;
+	పూర్ణాంకం do_permitopen = opts->npermitopen > 0 &&
 	    (options.allow_tcp_forwarding & FORWARD_LOCAL) != 0;
-	int do_permitlisten = opts->npermitlisten > 0 &&
+	పూర్ణాంకం do_permitlisten = opts->npermitlisten > 0 &&
 	    (options.allow_tcp_forwarding & FORWARD_REMOTE) != 0;
-	size_t i;
-	char msg[1024], buf[64];
+	కొలత_t i;
+	అక్షరం సందేశం[1024], buf[64];
 
-	snprintf(buf, sizeof(buf), "%d", opts->force_tun_device);
+	snprintf(buf, పరిమాణం(buf), "%d", opts->force_tun_device);
 	/* Try to keep this alphabetically sorted */
-	snprintf(msg, sizeof(msg), "key options:%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+	snprintf(సందేశం, పరిమాణం(సందేశం), "key options:%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
 	    opts->permit_agent_forwarding_flag ? " agent-forwarding" : "",
-	    opts->force_command == NULL ? "" : " command",
+	    opts->force_command == ఖాళీ ? "" : " command",
 	    do_env ?  " environment" : "",
 	    opts->valid_before == 0 ? "" : "expires",
 	    opts->no_require_user_presence ? " no-touch-required" : "",
 	    do_permitopen ?  " permitopen" : "",
 	    do_permitlisten ?  " permitlisten" : "",
-	    opts->permit_port_forwarding_flag ? " port-forwarding" : "",
-	    opts->cert_principals == NULL ? "" : " principals",
+	    opts->permit_పోర్టు_forwarding_flag ? " port-forwarding" : "",
+	    opts->cert_principals == ఖాళీ ? "" : " principals",
 	    opts->permit_pty_flag ? " pty" : "",
 	    opts->require_verify ? " uv" : "",
 	    opts->force_tun_device == -1 ? "" : " tun=",
@@ -712,39 +712,39 @@ auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
 	    opts->permit_user_rc ? " user-rc" : "",
 	    opts->permit_x11_forwarding_flag ? " x11-forwarding" : "");
 
-	debug("%s: %s", loc, msg);
-	if (do_remote)
-		auth_debug_add("%s: %s", loc, msg);
+	debug("%s: %s", loc, సందేశం);
+	ఒకవేళ (do_remote)
+		auth_debug_కూడు("%s: %s", loc, సందేశం);
 
-	if (options.permit_user_env) {
-		for (i = 0; i < opts->nenv; i++) {
+	ఒకవేళ (options.permit_user_env) {
+		కొరకు (i = 0; i < opts->nenv; i++) {
 			debug("%s: environment: %s", loc, opts->env[i]);
-			if (do_remote) {
-				auth_debug_add("%s: environment: %s",
+			ఒకవేళ (do_remote) {
+				auth_debug_కూడు("%s: environment: %s",
 				    loc, opts->env[i]);
 			}
 		}
 	}
 
 	/* Go into a little more details for the local logs. */
-	if (opts->valid_before != 0) {
-		format_absolute_time(opts->valid_before, buf, sizeof(buf));
+	ఒకవేళ (opts->valid_before != 0) {
+		format_absolute_సమయం(opts->valid_before, buf, పరిమాణం(buf));
 		debug("%s: expires at %s", loc, buf);
 	}
-	if (opts->cert_principals != NULL) {
+	ఒకవేళ (opts->cert_principals != ఖాళీ) {
 		debug("%s: authorized principals: \"%s\"",
 		    loc, opts->cert_principals);
 	}
-	if (opts->force_command != NULL)
+	ఒకవేళ (opts->force_command != ఖాళీ)
 		debug("%s: forced command: \"%s\"", loc, opts->force_command);
-	if (do_permitopen) {
-		for (i = 0; i < opts->npermitopen; i++) {
+	ఒకవేళ (do_permitopen) {
+		కొరకు (i = 0; i < opts->npermitopen; i++) {
 			debug("%s: permitted open: %s",
 			    loc, opts->permitopen[i]);
 		}
 	}
-	if (do_permitlisten) {
-		for (i = 0; i < opts->npermitlisten; i++) {
+	ఒకవేళ (do_permitlisten) {
+		కొరకు (i = 0; i < opts->npermitlisten; i++) {
 			debug("%s: permitted listen: %s",
 			    loc, opts->permitlisten[i]);
 		}
@@ -752,36 +752,36 @@ auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
 }
 
 /* Activate a new set of key/cert options; merging with what is there. */
-int
-auth_activate_options(struct ssh *ssh, struct sshauthopt *opts)
+పూర్ణాంకం
+auth_activate_options(నిర్మాణం ssh *ssh, నిర్మాణం sshauthopt *opts)
 {
-	struct sshauthopt *old = auth_opts;
-	const char *emsg = NULL;
+	నిర్మాణం sshauthopt *old = auth_opts;
+	స్థిరరాశి అక్షరం *emsg = ఖాళీ;
 
 	debug_f("setting new authentication options");
-	if ((auth_opts = sshauthopt_merge(old, opts, &emsg)) == NULL) {
+	ఒకవేళ ((auth_opts = sshauthopt_విలీనం(old, opts, &emsg)) == ఖాళీ) {
 		error("Inconsistent authentication options: %s", emsg);
-		return -1;
+		తిరిగి -1;
 	}
 	sshauthopt_free(old);
-	return 0;
+	తిరిగి 0;
 }
 
 /* Disable forwarding, etc for the session */
-void
-auth_restrict_session(struct ssh *ssh)
+శూన్య
+auth_restrict_session(నిర్మాణం ssh *ssh)
 {
-	struct sshauthopt *restricted;
+	నిర్మాణం sshauthopt *restricted;
 
 	debug_f("restricting session");
 
 	/* A blank sshauthopt defaults to permitting nothing */
-	if ((restricted = sshauthopt_new()) == NULL)
+	ఒకవేళ ((restricted = sshauthopt_new()) == ఖాళీ)
 		fatal_f("sshauthopt_new failed");
 	restricted->permit_pty_flag = 1;
 	restricted->restricted = 1;
 
-	if (auth_activate_options(ssh, restricted) != 0)
+	ఒకవేళ (auth_activate_options(ssh, restricted) != 0)
 		fatal_f("failed to restrict session");
 	sshauthopt_free(restricted);
 }

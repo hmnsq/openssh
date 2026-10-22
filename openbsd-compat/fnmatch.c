@@ -87,56 +87,56 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/fnmatch.c */
 
-#include "includes.h"
-#ifndef HAVE_FNMATCH
+#అన్తర్భావ "includes.h"
+#నిర్వచితం_కాకపోతే HAVE_FNMATCH
 
-#include <fnmatch.h>
-#include <string.h>
-#include <ctype.h>
+#అన్తర్భావ <fnmatch.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <ctype.h>
 
-#include "charclass.h"
+#అన్తర్భావ "charclass.h"
 
-#define	RANGE_MATCH	1
-#define	RANGE_NOMATCH	0
-#define	RANGE_ERROR	(-1)
+#నిర్వచించు	RANGE_సరిపోలిక	1
+#నిర్వచించు	RANGE_NOMATCH	0
+#నిర్వచించు	RANGE_ERROR	(-1)
 
-static int
-classmatch(const char *pattern, char test, int foldcase, const char **ep)
+స్థిర పూర్ణాంకం
+classmatch(స్థిరరాశి అక్షరం *నమూనా, అక్షరం test, పూర్ణాంకం foldcase, స్థిరరాశి అక్షరం **ep)
 {
-	const char * const mismatch = pattern;
-	const char *colon;
-	struct cclass *cc;
-	int rval = RANGE_NOMATCH;
-	size_t len;
+	స్థిరరాశి అక్షరం * స్థిరరాశి mismatch = నమూనా;
+	స్థిరరాశి అక్షరం *colon;
+	నిర్మాణం cclass *cc;
+	పూర్ణాంకం rval = RANGE_NOMATCH;
+	కొలత_t len;
 
-	if (pattern[0] != '[' || pattern[1] != ':') {
+	ఒకవేళ (నమూనా[0] != '[' || నమూనా[1] != ':') {
 		*ep = mismatch;
-		return RANGE_ERROR;
+		తిరిగి RANGE_ERROR;
 	}
-	pattern += 2;
+	నమూనా += 2;
 
-	if ((colon = strchr(pattern, ':')) == NULL || colon[1] != ']') {
+	ఒకవేళ ((colon = strchr(నమూనా, ':')) == ఖాళీ || colon[1] != ']') {
 		*ep = mismatch;
-		return RANGE_ERROR;
+		తిరిగి RANGE_ERROR;
 	}
 	*ep = colon + 2;
-	len = (size_t)(colon - pattern);
+	len = (కొలత_t)(colon - నమూనా);
 
-	if (foldcase && strncmp(pattern, "upper:]", 7) == 0)
-		pattern = "lower:]";
-	for (cc = cclasses; cc->name != NULL; cc++) {
-		if (!strncmp(pattern, cc->name, len) && cc->name[len] == '\0') {
-			if (cc->isctype((unsigned char)test))
-				rval = RANGE_MATCH;
-			break;
+	ఒకవేళ (foldcase && అక్షరశ్రేణి_పోలిక(నమూనా, "upper:]", 7) == 0)
+		నమూనా = "lower:]";
+	కొరకు (cc = cclasses; cc->name != ఖాళీ; cc++) {
+		ఒకవేళ (!అక్షరశ్రేణి_పోలిక(నమూనా, cc->name, len) && cc->name[len] == '\0') {
+			ఒకవేళ (cc->isctype((గుర్తులేని అక్షరం)test))
+				rval = RANGE_సరిపోలిక;
+			ఆపు;
 		}
 	}
-	if (cc->name == NULL) {
+	ఒకవేళ (cc->name == ఖాళీ) {
 		/* invalid character class, treat as normal text */
 		*ep = mismatch;
 		rval = RANGE_ERROR;
 	}
-	return rval;
+	తిరిగి rval;
 }
 
 /* Most MBCS/collation/case issues handled here.  Wildcard '*' is not handled.
@@ -146,71 +146,71 @@ classmatch(const char *pattern, char test, int foldcase, const char **ep)
  * Both pattern and string are **char to support pointer increment of arbitrary
  * multibyte characters for the given locale, in a later iteration of this code
  */
-static int fnmatch_ch(const char **pattern, const char **string, int flags)
+స్థిర పూర్ణాంకం fnmatch_ch(స్థిరరాశి అక్షరం **నమూనా, స్థిరరాశి అక్షరం **string, పూర్ణాంకం flags)
 {
-	const char * const mismatch = *pattern;
-	const int nocase = !!(flags & FNM_CASEFOLD);
-	const int escape = !(flags & FNM_NOESCAPE);
-	const int slash = !!(flags & FNM_PATHNAME);
-	int result = FNM_NOMATCH;
-	const char *startch;
-	int negate;
+	స్థిరరాశి అక్షరం * స్థిరరాశి mismatch = *నమూనా;
+	స్థిరరాశి పూర్ణాంకం nocase = !!(flags & FNM_CASEFOLD);
+	స్థిరరాశి పూర్ణాంకం escape = !(flags & FNM_NOESCAPE);
+	స్థిరరాశి పూర్ణాంకం slash = !!(flags & FNM_PATHNAME);
+	పూర్ణాంకం ఫలితం = FNM_NOMATCH;
+	స్థిరరాశి అక్షరం *startch;
+	పూర్ణాంకం negate;
 
-	if (**pattern == '[') {
-		++*pattern;
+	ఒకవేళ (**నమూనా == '[') {
+		++*నమూనా;
 
 		/* Handle negation, either leading ! or ^ operators */
-		negate = (**pattern == '!') || (**pattern == '^');
-		if (negate)
-			++*pattern;
+		negate = (**నమూనా == '!') || (**నమూనా == '^');
+		ఒకవేళ (negate)
+			++*నమూనా;
 
 		/* ']' is an ordinary char at the start of the range pattern */
-		if (**pattern == ']')
-			goto leadingclosebrace;
+		ఒకవేళ (**నమూనా == ']')
+			వెళ్ళు leadingclosebrace;
 
-		while (**pattern) {
-			if (**pattern == ']') {
-				++*pattern;
+		అయితే (**నమూనా) {
+			ఒకవేళ (**నమూనా == ']') {
+				++*నమూనా;
 				/* XXX: Fix for MBCS character width */
 				++*string;
-				return (result ^ negate);
+				తిరిగి (ఫలితం ^ negate);
 			}
 
-			if (escape && (**pattern == '\\')) {
-				++*pattern;
+			ఒకవేళ (escape && (**నమూనా == '\\')) {
+				++*నమూనా;
 
 				/* Patterns must terminate with ']', not EOS */
-				if (!**pattern)
-					break;
+				ఒకవేళ (!**నమూనా)
+					ఆపు;
 			}
 
 			/* Patterns must terminate with ']' not '/' */
-			if (slash && (**pattern == '/'))
-				break;
+			ఒకవేళ (slash && (**నమూనా == '/'))
+				ఆపు;
 
 			/* Match character classes. */
-			switch (classmatch(*pattern, **string, nocase, pattern)) {
-			case RANGE_MATCH:
-				result = 0;
-				continue;
-			case RANGE_NOMATCH:
+			ఎంపిక (classmatch(*నమూనా, **string, nocase, నమూనా)) {
+			స్థితి RANGE_సరిపోలిక:
+				ఫలితం = 0;
+				కొనసాగు;
+			స్థితి RANGE_NOMATCH:
 				/* Valid character class but no match. */
-				continue;
-			default:
+				కొనసాగు;
+			అప్రమేయ:
 				/* Not a valid character class. */
-				break;
+				ఆపు;
 			}
-			if (!**pattern)
-				break;
+			ఒకవేళ (!**నమూనా)
+				ఆపు;
 
 leadingclosebrace:
 			/* Look at only well-formed range patterns;
 			 * "x-]" is not allowed unless escaped ("x-\]")
 			 * XXX: Fix for locale/MBCS character width
 			 */
-			if (((*pattern)[1] == '-') && ((*pattern)[2] != ']')) {
-				startch = *pattern;
-				*pattern += (escape && ((*pattern)[2] == '\\')) ? 3 : 2;
+			ఒకవేళ (((*నమూనా)[1] == '-') && ((*నమూనా)[2] != ']')) {
+				startch = *నమూనా;
+				*నమూనా += (escape && ((*నమూనా)[2] == '\\')) ? 3 : 2;
 
 				/*
 				 * NOT a properly balanced [expr] pattern, EOS
@@ -218,101 +218,101 @@ leadingclosebrace:
 				 * FNM_PATHNAME mode pattern fall out to to the
 				 * rewind and test '[' literal code path.
 				 */
-				if (!**pattern || (slash && (**pattern == '/')))
-					break;
+				ఒకవేళ (!**నమూనా || (slash && (**నమూనా == '/')))
+					ఆపు;
 
 				/* XXX: handle locale/MBCS comparison, advance by MBCS char width */
-				if ((**string >= *startch) && (**string <= **pattern))
-					result = 0;
-				else if (nocase &&
-				    (isupper((unsigned char)**string) ||
-				     isupper((unsigned char)*startch) ||
-				     isupper((unsigned char)**pattern)) &&
-				    (tolower((unsigned char)**string) >=
-				     tolower((unsigned char)*startch)) &&
-				    (tolower((unsigned char)**string) <=
-				     tolower((unsigned char)**pattern)))
-					result = 0;
+				ఒకవేళ ((**string >= *startch) && (**string <= **నమూనా))
+					ఫలితం = 0;
+				లేకపోతే ఒకవేళ (nocase &&
+				    (isupper((గుర్తులేని అక్షరం)**string) ||
+				     isupper((గుర్తులేని అక్షరం)*startch) ||
+				     isupper((గుర్తులేని అక్షరం)**నమూనా)) &&
+				    (tolower((గుర్తులేని అక్షరం)**string) >=
+				     tolower((గుర్తులేని అక్షరం)*startch)) &&
+				    (tolower((గుర్తులేని అక్షరం)**string) <=
+				     tolower((గుర్తులేని అక్షరం)**నమూనా)))
+					ఫలితం = 0;
 
-				++*pattern;
-				continue;
+				++*నమూనా;
+				కొనసాగు;
 			}
 
 			/* XXX: handle locale/MBCS comparison, advance by MBCS char width */
-			if ((**string == **pattern))
-				result = 0;
-			else if (nocase && (isupper((unsigned char)**string) ||
-			    isupper((unsigned char)**pattern)) &&
-			    (tolower((unsigned char)**string) ==
-			    tolower((unsigned char)**pattern)))
-				result = 0;
+			ఒకవేళ ((**string == **నమూనా))
+				ఫలితం = 0;
+			లేకపోతే ఒకవేళ (nocase && (isupper((గుర్తులేని అక్షరం)**string) ||
+			    isupper((గుర్తులేని అక్షరం)**నమూనా)) &&
+			    (tolower((గుర్తులేని అక్షరం)**string) ==
+			    tolower((గుర్తులేని అక్షరం)**నమూనా)))
+				ఫలితం = 0;
 
-			++*pattern;
+			++*నమూనా;
 		}
 		/*
 		 * NOT a properly balanced [expr] pattern;
 		 * Rewind and reset result to test '[' literal
 		 */
-		*pattern = mismatch;
-		result = FNM_NOMATCH;
-	} else if (**pattern == '?') {
+		*నమూనా = mismatch;
+		ఫలితం = FNM_NOMATCH;
+	} లేకపోతే ఒకవేళ (**నమూనా == '?') {
 		/* Optimize '?' match before unescaping **pattern */
-		if (!**string || (slash && (**string == '/')))
-			return FNM_NOMATCH;
-		result = 0;
-		goto fnmatch_ch_success;
-	} else if (escape && (**pattern == '\\') && (*pattern)[1]) {
-		++*pattern;
+		ఒకవేళ (!**string || (slash && (**string == '/')))
+			తిరిగి FNM_NOMATCH;
+		ఫలితం = 0;
+		వెళ్ళు fnmatch_ch_success;
+	} లేకపోతే ఒకవేళ (escape && (**నమూనా == '\\') && (*నమూనా)[1]) {
+		++*నమూనా;
 	}
 
 	/* XXX: handle locale/MBCS comparison, advance by the MBCS char width */
-	if (**string == **pattern)
-		result = 0;
-	else if (nocase && (isupper((unsigned char)**string) ||
-	    isupper((unsigned char)**pattern)) &&
-	    (tolower((unsigned char)**string) ==
-	    tolower((unsigned char)**pattern)))
-		result = 0;
+	ఒకవేళ (**string == **నమూనా)
+		ఫలితం = 0;
+	లేకపోతే ఒకవేళ (nocase && (isupper((గుర్తులేని అక్షరం)**string) ||
+	    isupper((గుర్తులేని అక్షరం)**నమూనా)) &&
+	    (tolower((గుర్తులేని అక్షరం)**string) ==
+	    tolower((గుర్తులేని అక్షరం)**నమూనా)))
+		ఫలితం = 0;
 
 	/* Refuse to advance over trailing slash or NULs */
-	if (**string == '\0' || **pattern == '\0' ||
-	    (slash && ((**string == '/') || (**pattern == '/'))))
-		return result;
+	ఒకవేళ (**string == '\0' || **నమూనా == '\0' ||
+	    (slash && ((**string == '/') || (**నమూనా == '/'))))
+		తిరిగి ఫలితం;
 
 fnmatch_ch_success:
-	++*pattern;
+	++*నమూనా;
 	++*string;
-	return result;
+	తిరిగి ఫలితం;
 }
 
 
-int fnmatch(const char *pattern, const char *string, int flags)
+పూర్ణాంకం fnmatch(స్థిరరాశి అక్షరం *నమూనా, స్థిరరాశి అక్షరం *string, పూర్ణాంకం flags)
 {
-	static const char dummystring[2] = {' ', 0};
-	const int escape = !(flags & FNM_NOESCAPE);
-	const int slash = !!(flags & FNM_PATHNAME);
-	const int leading_dir = !!(flags & FNM_LEADING_DIR);
-	const char *dummyptr, *matchptr, *strendseg;
-	int wild;
+	స్థిర స్థిరరాశి అక్షరం dummystring[2] = {' ', 0};
+	స్థిరరాశి పూర్ణాంకం escape = !(flags & FNM_NOESCAPE);
+	స్థిరరాశి పూర్ణాంకం slash = !!(flags & FNM_PATHNAME);
+	స్థిరరాశి పూర్ణాంకం leading_dir = !!(flags & FNM_LEADING_DIR);
+	స్థిరరాశి అక్షరం *dummyptr, *matchptr, *strendseg;
+	పూర్ణాంకం wild;
 	/* For '*' wild processing only; suppress 'used before initialization'
 	 * warnings with dummy initialization values;
 	 */
-	const char *strstartseg = NULL;
-	const char *mismatch = NULL;
-	int matchlen = 0;
+	స్థిరరాశి అక్షరం *strstartseg = ఖాళీ;
+	స్థిరరాశి అక్షరం *mismatch = ఖాళీ;
+	పూర్ణాంకం matchlen = 0;
 
-	if (*pattern == '*')
-		goto firstsegment;
+	ఒకవేళ (*నమూనా == '*')
+		వెళ్ళు firstsegment;
 
-	while (*pattern && *string) {
+	అయితే (*నమూనా && *string) {
 		/*
 		 * Pre-decode "\/" which has no special significance, and
 		 * match balanced slashes, starting a new segment pattern.
 		 */
-		if (slash && escape && (*pattern == '\\') && (pattern[1] == '/'))
-			++pattern;
-		if (slash && (*pattern == '/') && (*string == '/')) {
-			++pattern;
+		ఒకవేళ (slash && escape && (*నమూనా == '\\') && (నమూనా[1] == '/'))
+			++నమూనా;
+		ఒకవేళ (slash && (*నమూనా == '/') && (*string == '/')) {
+			++నమూనా;
 			++string;
 		}
 
@@ -321,13 +321,13 @@ firstsegment:
 		 * At the beginning of each segment, validate leading period
 		 * behavior.
 		 */
-		if ((flags & FNM_PERIOD) && (*string == '.')) {
-		    if (*pattern == '.')
-			    ++pattern;
-		    else if (escape && (*pattern == '\\') && (pattern[1] == '.'))
-			    pattern += 2;
-		    else
-			    return FNM_NOMATCH;
+		ఒకవేళ ((flags & FNM_PERIOD) && (*string == '.')) {
+		    ఒకవేళ (*నమూనా == '.')
+			    ++నమూనా;
+		    లేకపోతే ఒకవేళ (escape && (*నమూనా == '\\') && (నమూనా[1] == '.'))
+			    నమూనా += 2;
+		    లేకపోతే
+			    తిరిగి FNM_NOMATCH;
 		    ++string;
 		}
 
@@ -335,11 +335,11 @@ firstsegment:
 		 * Determine the end of string segment.  Presumes '/'
 		 * character is unique, not composite in any MBCS encoding
 		 */
-		if (slash) {
+		ఒకవేళ (slash) {
 			strendseg = strchr(string, '/');
-			if (!strendseg)
+			ఒకవేళ (!strendseg)
 				strendseg = strchr(string, '\0');
-		} else {
+		} లేకపోతే {
 			strendseg = strchr(string, '\0');
 		}
 
@@ -347,41 +347,41 @@ firstsegment:
 		 * Allow pattern '*' to be consumed even with no remaining
 		 * string to match.
 		 */
-		while (*pattern) {
-			if ((string > strendseg) ||
-			    ((string == strendseg) && (*pattern != '*')))
-				break;
+		అయితే (*నమూనా) {
+			ఒకవేళ ((string > strendseg) ||
+			    ((string == strendseg) && (*నమూనా != '*')))
+				ఆపు;
 
-			if (slash && ((*pattern == '/') ||
-			    (escape && (*pattern == '\\') && (pattern[1] == '/'))))
-				break;
+			ఒకవేళ (slash && ((*నమూనా == '/') ||
+			    (escape && (*నమూనా == '\\') && (నమూనా[1] == '/'))))
+				ఆపు;
 
 			/*
 			 * Reduce groups of '*' and '?' to n '?' matches
 			 * followed by one '*' test for simplicity.
 			 */
-			for (wild = 0; (*pattern == '*') || (*pattern == '?'); ++pattern) {
-				if (*pattern == '*') {
+			కొరకు (wild = 0; (*నమూనా == '*') || (*నమూనా == '?'); ++నమూనా) {
+				ఒకవేళ (*నమూనా == '*') {
 					wild = 1;
-				} else if (string < strendseg) {  /* && (*pattern == '?') */
+				} లేకపోతే ఒకవేళ (string < strendseg) {  /* && (*pattern == '?') */
 					/* XXX: Advance 1 char for MBCS locale */
 					++string;
 				}
-				else {  /* (string >= strendseg) && (*pattern == '?') */
-					return FNM_NOMATCH;
+				లేకపోతే {  /* (string >= strendseg) && (*pattern == '?') */
+					తిరిగి FNM_NOMATCH;
 				}
 			}
 
-			if (wild) {
+			ఒకవేళ (wild) {
 				strstartseg = string;
-				mismatch = pattern;
+				mismatch = నమూనా;
 
 				/*
 				 * Count fixed (non '*') char matches remaining
 				 * in pattern * excluding '/' (or "\/") and '*'.
 				 */
-				for (matchptr = pattern, matchlen = 0; 1; ++matchlen) {
-					if ((*matchptr == '\0') ||
+				కొరకు (matchptr = నమూనా, matchlen = 0; 1; ++matchlen) {
+					ఒకవేళ ((*matchptr == '\0') ||
 					    (slash && ((*matchptr == '/') ||
 					    (escape && (*matchptr == '\\') &&
 					    (matchptr[1] == '/'))))) {
@@ -391,29 +391,29 @@ firstsegment:
 						 * wildcard loop.
 						 */
 						/* XXX: Adjust for MBCS */
-						if (string + matchlen > strendseg)
-							return FNM_NOMATCH;
+						ఒకవేళ (string + matchlen > strendseg)
+							తిరిగి FNM_NOMATCH;
 
 						string = strendseg - matchlen;
 						wild = 0;
-						break;
+						ఆపు;
 					}
 
-					if (*matchptr == '*') {
+					ఒకవేళ (*matchptr == '*') {
 						/*
 						 * Ensure at least this many
 						 * trailing string chars remain
 						 * for the first comparison.
 						 */
 						/* XXX: Adjust for MBCS */
-						if (string + matchlen > strendseg)
-							return FNM_NOMATCH;
+						ఒకవేళ (string + matchlen > strendseg)
+							తిరిగి FNM_NOMATCH;
 
 						/*
 						 * Begin first wild comparison
 						 * at the current position.
 						 */
-						break;
+						ఆపు;
 					}
 
 					/*
@@ -423,37 +423,37 @@ firstsegment:
 					 * "[range]" escape.
 					 */
 					/* XXX: Adjust for MBCS */
-					if (escape && (*matchptr == '\\') &&
+					ఒకవేళ (escape && (*matchptr == '\\') &&
 					    matchptr[1]) {
 						matchptr += 2;
-					} else if (*matchptr == '[') {
+					} లేకపోతే ఒకవేళ (*matchptr == '[') {
 						dummyptr = dummystring;
 						fnmatch_ch(&matchptr, &dummyptr,
 						    flags);
-					} else {
+					} లేకపోతే {
 						++matchptr;
 					}
 				}
 			}
 
 			/* Incrementally match string against the pattern. */
-			while (*pattern && (string < strendseg)) {
+			అయితే (*నమూనా && (string < strendseg)) {
 				/* Success; begin a new wild pattern search. */
-				if (*pattern == '*')
-					break;
+				ఒకవేళ (*నమూనా == '*')
+					ఆపు;
 
-				if (slash && ((*string == '/') ||
-				    (*pattern == '/') || (escape &&
-				    (*pattern == '\\') && (pattern[1] == '/'))))
-					break;
+				ఒకవేళ (slash && ((*string == '/') ||
+				    (*నమూనా == '/') || (escape &&
+				    (*నమూనా == '\\') && (నమూనా[1] == '/'))))
+					ఆపు;
 
 				/*
 				 * Compare ch's (the pattern is advanced over
 				 * "\/" to the '/', but slashes will mismatch,
 				 * and are not consumed).
 				 */
-				if (!fnmatch_ch(&pattern, &string, flags))
-					continue;
+				ఒకవేళ (!fnmatch_ch(&నమూనా, &string, flags))
+					కొనసాగు;
 
 				/*
 				 * Failed to match, loop against next char
@@ -461,35 +461,35 @@ firstsegment:
 				 * string chars remain to match the fixed
 				 * pattern.
 				 */
-				if (wild) {
+				ఒకవేళ (wild) {
 					/* XXX: Advance 1 char for MBCS locale */
 					string = ++strstartseg;
-					if (string + matchlen > strendseg)
-						return FNM_NOMATCH;
+					ఒకవేళ (string + matchlen > strendseg)
+						తిరిగి FNM_NOMATCH;
 
-					pattern = mismatch;
-					continue;
-				} else
-					return FNM_NOMATCH;
+					నమూనా = mismatch;
+					కొనసాగు;
+				} లేకపోతే
+					తిరిగి FNM_NOMATCH;
 			}
 		}
 
-		if (*string && !((slash || leading_dir) && (*string == '/')))
-			return FNM_NOMATCH;
+		ఒకవేళ (*string && !((slash || leading_dir) && (*string == '/')))
+			తిరిగి FNM_NOMATCH;
 
-		if (*pattern && !(slash && ((*pattern == '/') ||
-		    (escape && (*pattern == '\\') && (pattern[1] == '/')))))
-			return FNM_NOMATCH;
+		ఒకవేళ (*నమూనా && !(slash && ((*నమూనా == '/') ||
+		    (escape && (*నమూనా == '\\') && (నమూనా[1] == '/')))))
+			తిరిగి FNM_NOMATCH;
 
-		if (leading_dir && !*pattern && *string == '/')
-			return 0;
+		ఒకవేళ (leading_dir && !*నమూనా && *string == '/')
+			తిరిగి 0;
 	}
 
 	/* Where both pattern and string are at EOS, declare success.  */
-	if (!*string && !*pattern)
-		return 0;
+	ఒకవేళ (!*string && !*నమూనా)
+		తిరిగి 0;
 
 	/* Pattern didn't match to the end of string. */
-	return FNM_NOMATCH;
+	తిరిగి FNM_NOMATCH;
 }
-#endif /* HAVE_FNMATCH */
+#అయితే_ముగింపు /* HAVE_FNMATCH */

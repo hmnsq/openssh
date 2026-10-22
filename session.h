@@ -23,62 +23,62 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SESSION_H
-#define SESSION_H
+#నిర్వచితం_కాకపోతే SESSION_H
+#నిర్వచించు SESSION_H
 
-#define TTYSZ 64
-typedef struct Session Session;
-struct Session {
-	int	used;
-	int	self;
-	int	next_unused;
-	struct passwd *pw;
+#నిర్వచించు TTYSZ 64
+రకనిర్వచనం నిర్మాణం Session Session;
+నిర్మాణం Session {
+	పూర్ణాంకం	వాడిన;
+	పూర్ణాంకం	self;
+	పూర్ణాంకం	తదుపరి_వాడని;
+	నిర్మాణం passwd *pw;
 	Authctxt *authctxt;
 	pid_t	pid;
-	int	forced;
+	పూర్ణాంకం	forced;
 
 	/* tty */
-	char	*term;
-	int	ptyfd, ttyfd, ptymaster;
-	u_int	row, col, xpixel, ypixel;
-	char	tty[TTYSZ];
+	అక్షరం	*పదం;
+	పూర్ణాంకం	ptyfd, ttyfd, ptymaster;
+	u_int	అడ్డువరుస, నిలువు, xpixel, ypixel;
+	అక్షరం	tty[TTYSZ];
 
 	/* X11 */
-	u_int	display_number;
-	char	*display;
+	u_int	display_సంఖ్య;
+	అక్షరం	*display;
 	u_int	screen;
-	char	*auth_display;
-	char	*auth_proto;
-	char	*auth_data;
-	int	single_connection;
+	అక్షరం	*auth_display;
+	అక్షరం	*auth_proto;
+	అక్షరం	*auth_దత్తాంశం;
+	పూర్ణాంకం	single_connection;
 
-	int	chanid;
-	int	*x11_chanids;
-	int	is_subsystem;
-	char	*subsys;
-	u_int	num_env;
-	struct {
-		char	*name;
-		char	*val;
+	పూర్ణాంకం	chanid;
+	పూర్ణాంకం	*x11_chanids;
+	పూర్ణాంకం	is_subsystem;
+	అక్షరం	*subsys;
+	u_int	అంకె_env;
+	నిర్మాణం {
+		అక్షరం	*name;
+		అక్షరం	*val;
 	} *env;
 };
 
-void	 do_authenticated(struct ssh *, Authctxt *);
-void	 do_cleanup(struct ssh *, Authctxt *);
+శూన్య	 do_authenticated(నిర్మాణం ssh *, Authctxt *);
+శూన్య	 do_cleanup(నిర్మాణం ssh *, Authctxt *);
 
-int	 session_open(Authctxt *, int);
-void	 session_unused(int);
-int	 session_input_channel_req(struct ssh *, Channel *, const char *);
-void	 session_close_by_pid(struct ssh *ssh, pid_t, int);
-void	 session_close_by_channel(struct ssh *, int, int, void *);
-void	 session_destroy_all(struct ssh *, void (*)(Session *));
-void	 session_pty_cleanup2(Session *);
+పూర్ణాంకం	 session_open(Authctxt *, పూర్ణాంకం);
+శూన్య	 session_వాడని(పూర్ణాంకం);
+పూర్ణాంకం	 session_ఆదానం_channel_req(నిర్మాణం ssh *, Channel *, స్థిరరాశి అక్షరం *);
+శూన్య	 session_close_by_pid(నిర్మాణం ssh *ssh, pid_t, పూర్ణాంకం);
+శూన్య	 session_close_by_channel(నిర్మాణం ssh *, పూర్ణాంకం, పూర్ణాంకం, శూన్య *);
+శూన్య	 session_destroy_all(నిర్మాణం ssh *, శూన్య (*)(Session *));
+శూన్య	 session_pty_cleanup2(Session *);
 
-Session	*session_new(void);
-Session	*session_by_tty(char *);
-void	 session_close(struct ssh *, Session *);
-void	 do_setusercontext(struct passwd *);
+Session	*session_new(శూన్య);
+Session	*session_by_tty(అక్షరం *);
+శూన్య	 session_close(నిర్మాణం ssh *, Session *);
+శూన్య	 do_setusercontext(నిర్మాణం passwd *);
 
-const char	*session_get_remote_name_or_ip(struct ssh *, u_int, int);
+స్థిరరాశి అక్షరం	*session_get_remote_name_or_ip(నిర్మాణం ssh *, u_int, పూర్ణాంకం);
 
-#endif
+#అయితే_ముగింపు

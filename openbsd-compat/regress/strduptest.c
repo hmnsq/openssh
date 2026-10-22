@@ -14,34 +14,34 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-static int fail = 0;
+స్థిర పూర్ణాంకం fail = 0;
 
-void
-test(const char *a)
+శూన్య
+test(స్థిరరాశి అక్షరం *a)
 {
-	char *b;
+	అక్షరం *b;
 
 	b = strdup(a);
-	if (b == 0) {
+	ఒకవేళ (b == 0) {
 		fail = 1;
-		return;
+		తిరిగి;
 	}
-	if (strcmp(a, b) != 0)
+	ఒకవేళ (strcmp(a, b) != 0)
 		fail = 1;
-	free(b);
+	విడుదల(b);
 }
 
-int
-main(void)
+పూర్ణాంకం
+ప్రధాన(శూన్య)
 {
 	test("");
 	test("a");
 	test("\0");
 	test("abcdefghijklmnopqrstuvwxyz");
-	return fail;
+	తిరిగి fail;
 }

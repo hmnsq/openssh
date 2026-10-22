@@ -5,27 +5,27 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "crypto_api.h"
-#include "xmalloc.h"
+#అన్తర్భావ "../test_helper/test_helper.h"
+#అన్తర్భావ "crypto_api.h"
+#అన్తర్భావ "xmalloc.h"
 
-struct ed25519_kat {
-	const char *sk;
-	const char *pk;
-	const char *msg;
-	const char *sig;
+నిర్మాణం ed25519_kat {
+	స్థిరరాశి అక్షరం *sk;
+	స్థిరరాశి అక్షరం *pk;
+	స్థిరరాశి అక్షరం *సందేశం;
+	స్థిరరాశి అక్షరం *sig;
 };
 
-static const struct ed25519_kat ed25519_kats[] = {
+స్థిర స్థిరరాశి నిర్మాణం ed25519_kat ed25519_kats[] = {
 	{
 		"9d61b19deffd5a60ba844af492ec2cc44449c569"
 		"7b326919703bac031cae7f60",
@@ -61,39 +61,39 @@ static const struct ed25519_kat ed25519_kats[] = {
 	}
 };
 
-void ed25519_tests(void);
+శూన్య ed25519_tests(శూన్య);
 
-void
-ed25519_tests(void)
+శూన్య
+ed25519_tests(శూన్య)
 {
-	uint8_t pk[32], sk[64], seed[32], sig[64];
+	uint8_t pk[32], sk[64], విత్తనం[32], sig[64];
 	uint8_t expected_pk[32], expected_sig[64];
-	uint8_t *msg;
-	size_t i, msglen;
-	unsigned long long smlen;
+	uint8_t *సందేశం;
+	కొలత_t i, msglen;
+	గుర్తులేని దీర్ఘ దీర్ఘ smlen;
 
-	for (i = 0; i < sizeof(ed25519_kats)/sizeof(ed25519_kats[0]); i++) {
-		TEST_START("Ed25519 keypair from seed");
-		hex2bin(seed, ed25519_kats[i].sk, 32);
+	కొరకు (i = 0; i < పరిమాణం(ed25519_kats)/పరిమాణం(ed25519_kats[0]); i++) {
+		TEST_ప్రారంభం("Ed25519 keypair from seed");
+		hex2bin(విత్తనం, ed25519_kats[i].sk, 32);
 		hex2bin(expected_pk, ed25519_kats[i].pk, 32);
-		ASSERT_INT_EQ(crypto_sign_ed25519_seed_keypair(pk, sk, seed), 0);
+		ASSERT_INT_EQ(crypto_sign_ed25519_విత్తనం_keypair(pk, sk, విత్తనం), 0);
 		ASSERT_MEM_EQ(pk, expected_pk, 32);
-		TEST_DONE();
+		TEST_పూర్తి();
 
-		TEST_START("Ed25519 sign/verify KAT");
-		msglen = strlen(ed25519_kats[i].msg) / 2;
-		ASSERT_PTR_NE(msg = malloc(msglen == 0 ? 1 : msglen), NULL);
-		hex2bin(msg, ed25519_kats[i].msg, msglen);
+		TEST_ప్రారంభం("Ed25519 sign/verify KAT");
+		msglen = అక్షరశ్రేణి_పొడవు(ed25519_kats[i].సందేశం) / 2;
+		ASSERT_PTR_NE(సందేశం = జ్ఞాపకం_ఇవ్వు(msglen == 0 ? 1 : msglen), ఖాళీ);
+		hex2bin(సందేశం, ed25519_kats[i].సందేశం, msglen);
 		hex2bin(expected_sig, ed25519_kats[i].sig, 64);
 
 		ASSERT_INT_EQ(crypto_sign_ed25519_detached(sig, &smlen,
-		    msg, msglen, sk), 0);
+		    సందేశం, msglen, sk), 0);
 		ASSERT_INT_EQ(smlen, 64);
 		ASSERT_MEM_EQ(sig, expected_sig, 64);
 
 		ASSERT_INT_EQ(crypto_sign_ed25519_verify_detached(sig,
-		    msg, msglen, pk), 0);
-		free(msg);
-		TEST_DONE();
+		    సందేశం, msglen, pk), 0);
+		విడుదల(సందేశం);
+		TEST_పూర్తి();
 	}
 }

@@ -35,754 +35,754 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
 
-#ifdef WITH_OPENSSL
+#నిర్వచితమైతే WITH_OPENSSL
 # include <openssl/evp.h>
 # include "openbsd-compat/openssl-compat.h"
-#endif
+#అయితే_ముగింపు
 
-#include <errno.h>
-#include <fcntl.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
-#include <time.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <pwd.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <time.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "log.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "authfd.h"
-#include "authfile.h"
-#include "pathnames.h"
-#include "misc.h"
-#include "ssherr.h"
-#include "digest.h"
-#include "ssh-sk.h"
-#include "sk-api.h"
-#include "hostfile.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "ssh.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "authfd.h"
+#అన్తర్భావ "authfile.h"
+#అన్తర్భావ "pathnames.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "digest.h"
+#అన్తర్భావ "ssh-sk.h"
+#అన్తర్భావ "sk-api.h"
+#అన్తర్భావ "hostfile.h"
 
-#define CERT_EXPIRY_GRACE	(5*60)
+#నిర్వచించు CERT_EXPIRY_GRACE	(5*60)
 
 /* argv0 */
-extern char *__progname;
+బాహ్య అక్షరం *__progname;
 
 /* Default files to add */
-static char *default_files[] = {
-#ifdef WITH_OPENSSL
-	_PATH_SSH_CLIENT_ID_RSA,
-	_PATH_SSH_CLIENT_ID_ECDSA,
-	_PATH_SSH_CLIENT_ID_ECDSA_SK,
-#endif /* WITH_OPENSSL */
-	_PATH_SSH_CLIENT_ID_ED25519,
-	_PATH_SSH_CLIENT_ID_ED25519_SK,
-	_PATH_SSH_CLIENT_ID_MLDSA44_ED25519,
-	NULL
+స్థిర అక్షరం *default_files[] = {
+#నిర్వచితమైతే WITH_OPENSSL
+	మార్గం_SSH_CLIENT_ID_RSA,
+	మార్గం_SSH_CLIENT_ID_ECDSA,
+	మార్గం_SSH_CLIENT_ID_ECDSA_SK,
+#అయితే_ముగింపు /* WITH_OPENSSL */
+	మార్గం_SSH_CLIENT_ID_ED25519,
+	మార్గం_SSH_CLIENT_ID_ED25519_SK,
+	మార్గం_SSH_CLIENT_ID_MLDSA44_ED25519,
+	ఖాళీ
 };
 
-static int fingerprint_hash = SSH_FP_HASH_DEFAULT;
+స్థిర పూర్ణాంకం fingerprint_hash = SSH_FP_HASH_DEFAULT;
 
 /* Default lifetime (0 == forever) */
-static int lifetime = 0;
+స్థిర పూర్ణాంకం lifetime = 0;
 
 /* User has to confirm key use */
-static int confirm = 0;
+స్థిర పూర్ణాంకం confirm = 0;
 
 /* we keep a cache of one passphrase */
-static char *pass = NULL;
-static void
-clear_pass(void)
+స్థిర అక్షరం *pass = ఖాళీ;
+స్థిర శూన్య
+clear_pass(శూన్య)
 {
-	if (pass) {
-		freezero(pass, strlen(pass));
-		pass = NULL;
+	ఒకవేళ (pass) {
+		freezero(pass, అక్షరశ్రేణి_పొడవు(pass));
+		pass = ఖాళీ;
 	}
 }
 
-static int
-delete_one(int agent_fd, const struct sshkey *key, const char *comment,
-    const char *path, int qflag)
+స్థిర పూర్ణాంకం
+delete_one(పూర్ణాంకం agent_fd, స్థిరరాశి నిర్మాణం sshkey *కీలకం, స్థిరరాశి అక్షరం *comment,
+    స్థిరరాశి అక్షరం *మార్గం, పూర్ణాంకం qflag)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	if ((r = ssh_remove_identity(agent_fd, key)) != 0) {
+	ఒకవేళ ((r = ssh_remove_తటస్థం(agent_fd, కీలకం)) != 0) {
 		fprintf(stderr, "Could not remove identity \"%s\": %s\n",
-		    path, ssh_err(r));
-		return r;
+		    మార్గం, ssh_err(r));
+		తిరిగి r;
 	}
-	if (!qflag) {
-		fprintf(stderr, "Identity removed: %s %s (%s)\n", path,
-		    sshkey_type(key), comment ? comment : "no comment");
+	ఒకవేళ (!qflag) {
+		fprintf(stderr, "Identity removed: %s %s (%s)\n", మార్గం,
+		    sshkey_type(కీలకం), comment ? comment : "no comment");
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-delete_stdin(int agent_fd, int qflag, int key_only, int cert_only)
+స్థిర పూర్ణాంకం
+delete_stdin(పూర్ణాంకం agent_fd, పూర్ణాంకం qflag, పూర్ణాంకం కీలకం_only, పూర్ణాంకం cert_only)
 {
-	char *line = NULL, *cp;
-	size_t linesize = 0;
-	struct sshkey *key = NULL;
-	int lnum = 0, r, ret = -1;
+	అక్షరం *పంక్తి = ఖాళీ, *cp;
+	కొలత_t linesize = 0;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ;
+	పూర్ణాంకం lnum = 0, r, ret = -1;
 
-	while (getline(&line, &linesize, stdin) != -1) {
+	అయితే (getline(&పంక్తి, &linesize, stdin) != -1) {
 		lnum++;
-		sshkey_free(key);
-		key = NULL;
-		line[strcspn(line, "\n")] = '\0';
-		cp = line + strspn(line, " \t");
-		if (*cp == '#' || *cp == '\0')
-			continue;
-		if ((key = sshkey_new(KEY_UNSPEC)) == NULL)
+		sshkey_free(కీలకం);
+		కీలకం = ఖాళీ;
+		పంక్తి[strcspn(పంక్తి, "\n")] = '\0';
+		cp = పంక్తి + strspn(పంక్తి, " \t");
+		ఒకవేళ (*cp == '#' || *cp == '\0')
+			కొనసాగు;
+		ఒకవేళ ((కీలకం = sshkey_new(కీలకం_UNSPEC)) == ఖాళీ)
 			fatal_f("sshkey_new");
-		if ((r = sshkey_read(key, &cp)) != 0) {
+		ఒకవేళ ((r = sshkey_read(కీలకం, &cp)) != 0) {
 			error_r(r, "(stdin):%d: invalid key", lnum);
-			continue;
+			కొనసాగు;
 		}
-		if ((!key_only && !cert_only) ||
-		    (key_only && !sshkey_is_cert(key)) ||
-		    (cert_only && sshkey_is_cert(key))) {
-			if (delete_one(agent_fd, key, cp,
+		ఒకవేళ ((!కీలకం_only && !cert_only) ||
+		    (కీలకం_only && !sshkey_is_cert(కీలకం)) ||
+		    (cert_only && sshkey_is_cert(కీలకం))) {
+			ఒకవేళ (delete_one(agent_fd, కీలకం, cp,
 			    "(stdin)", qflag) == 0)
 				ret = 0;
 		}
 	}
-	sshkey_free(key);
-	free(line);
-	return ret;
+	sshkey_free(కీలకం);
+	విడుదల(పంక్తి);
+	తిరిగి ret;
 }
 
-static int
-delete_file(int agent_fd, const char *filename, int key_only,
-    int cert_only, int qflag)
+స్థిర పూర్ణాంకం
+delete_file(పూర్ణాంకం agent_fd, స్థిరరాశి అక్షరం *filename, పూర్ణాంకం కీలకం_only,
+    పూర్ణాంకం cert_only, పూర్ణాంకం qflag)
 {
-	struct sshkey *public, *cert = NULL;
-	char *certpath = NULL, *comment = NULL;
-	int r, ret = -1;
+	నిర్మాణం sshkey *బహిరంగ, *cert = ఖాళీ;
+	అక్షరం *certpath = ఖాళీ, *comment = ఖాళీ;
+	పూర్ణాంకం r, ret = -1;
 
-	if (strcmp(filename, "-") == 0)
-		return delete_stdin(agent_fd, qflag, key_only, cert_only);
+	ఒకవేళ (strcmp(filename, "-") == 0)
+		తిరిగి delete_stdin(agent_fd, qflag, కీలకం_only, cert_only);
 
-	if ((r = sshkey_load_public(filename, &public,  &comment)) != 0) {
-		printf("Bad key file %s: %s\n", filename, ssh_err(r));
-		return -1;
+	ఒకవేళ ((r = sshkey_ఎక్కించు_ప్రజా(filename, &బహిరంగ,  &comment)) != 0) {
+		రాయి("Bad key file %s: %s\n", filename, ssh_err(r));
+		తిరిగి -1;
 	}
-	if ((!key_only && !cert_only) ||
-	    (key_only && !sshkey_is_cert(public)) ||
-	    (cert_only && sshkey_is_cert(public))) {
-		if (delete_one(agent_fd, public, comment, filename, qflag) == 0)
+	ఒకవేళ ((!కీలకం_only && !cert_only) ||
+	    (కీలకం_only && !sshkey_is_cert(బహిరంగ)) ||
+	    (cert_only && sshkey_is_cert(బహిరంగ))) {
+		ఒకవేళ (delete_one(agent_fd, బహిరంగ, comment, filename, qflag) == 0)
 			ret = 0;
 	}
 
-	if (key_only)
-		goto out;
+	ఒకవేళ (కీలకం_only)
+		వెళ్ళు బహిర్గతం;
 
 	/* Now try to delete the corresponding certificate too */
-	free(comment);
-	comment = NULL;
+	విడుదల(comment);
+	comment = ఖాళీ;
 	xasprintf(&certpath, "%s-cert.pub", filename);
-	if ((r = sshkey_load_public(certpath, &cert, &comment)) != 0) {
-		if (r != SSH_ERR_SYSTEM_ERROR || errno != ENOENT)
+	ఒకవేళ ((r = sshkey_ఎక్కించు_ప్రజా(certpath, &cert, &comment)) != 0) {
+		ఒకవేళ (r != SSH_ERR_SYSTEM_ERROR || errno != ENOENT)
 			error_r(r, "Failed to load certificate \"%s\"", certpath);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if (!sshkey_equal_public(cert, public))
+	ఒకవేళ (!sshkey_equal_ప్రజా(cert, బహిరంగ))
 		fatal("Certificate %s does not match private key %s",
 		    certpath, filename);
 
-	if (delete_one(agent_fd, cert, comment, certpath, qflag) == 0)
+	ఒకవేళ (delete_one(agent_fd, cert, comment, certpath, qflag) == 0)
 		ret = 0;
 
- out:
+ బహిర్గతం:
 	sshkey_free(cert);
-	sshkey_free(public);
-	free(certpath);
-	free(comment);
+	sshkey_free(బహిరంగ);
+	విడుదల(certpath);
+	విడుదల(comment);
 
-	return ret;
+	తిరిగి ret;
 }
 
 /* Send a request to remove all identities. */
-static int
-delete_all(int agent_fd, int qflag)
+స్థిర పూర్ణాంకం
+delete_all(పూర్ణాంకం agent_fd, పూర్ణాంకం qflag)
 {
-	int ret = -1;
+	పూర్ణాంకం ret = -1;
 
 	/*
 	 * Since the agent might be forwarded, old or non-OpenSSH, when asked
 	 * to remove all keys, attempt to remove both protocol v.1 and v.2
 	 * keys.
 	 */
-	if (ssh_remove_all_identities(agent_fd, 2) == 0)
+	ఒకవేళ (ssh_remove_all_identities(agent_fd, 2) == 0)
 		ret = 0;
 	/* ignore error-code for ssh1 */
 	ssh_remove_all_identities(agent_fd, 1);
 
-	if (ret != 0)
+	ఒకవేళ (ret != 0)
 		fprintf(stderr, "Failed to remove all identities.\n");
-	else if (!qflag)
+	లేకపోతే ఒకవేళ (!qflag)
 		fprintf(stderr, "All identities removed.\n");
 
-	return ret;
+	తిరిగి ret;
 }
 
-static int
-query_exts(int agent_fd)
+స్థిర పూర్ణాంకం
+query_exts(పూర్ణాంకం agent_fd)
 {
-	int r;
-	char **exts = NULL;
-	size_t i;
+	పూర్ణాంకం r;
+	అక్షరం **exts = ఖాళీ;
+	కొలత_t i;
 
-	if ((r = ssh_agent_query_extensions(agent_fd, &exts)) != 0)
+	ఒకవేళ ((r = ssh_agent_query_extensions(agent_fd, &exts)) != 0)
 		fatal_r(r, "unable to query supported extensions");
-	for (i = 0; exts != NULL && exts[i] != NULL; i++)
+	కొరకు (i = 0; exts != ఖాళీ && exts[i] != ఖాళీ; i++)
 		puts(exts[i]);
 	stringlist_free(exts);
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-check_cert_lifetime(const struct sshkey *cert, int cert_lifetime)
+స్థిర పూర్ణాంకం
+check_cert_lifetime(స్థిరరాశి నిర్మాణం sshkey *cert, పూర్ణాంకం cert_lifetime)
 {
 	time_t now;
 	uint64_t n;
 
-	if (cert == NULL || cert->cert == NULL || !sshkey_is_cert(cert) ||
+	ఒకవేళ (cert == ఖాళీ || cert->cert == ఖాళీ || !sshkey_is_cert(cert) ||
 	    cert->cert->valid_before == 0xFFFFFFFFFFFFFFFFULL)
-		return cert_lifetime;
-	if ((now = time(NULL)) <= 0)
+		తిరిగి cert_lifetime;
+	ఒకవేళ ((now = time(ఖాళీ)) <= 0)
 		fatal_f("system time is at/before epoch");
-	if ((uint64_t)now > (cert->cert->valid_before + CERT_EXPIRY_GRACE))
-		return -1; /* certificate already expired */
+	ఒకవేళ ((uint64_t)now > (cert->cert->valid_before + CERT_EXPIRY_GRACE))
+		తిరిగి -1; /* certificate already expired */
 	n = (CERT_EXPIRY_GRACE + cert->cert->valid_before) - (uint64_t)now;
-	n = MINIMUM(n, INT_MAX);
-	if (cert_lifetime <= 0)
-		return (int)n;
-	return MINIMUM(cert_lifetime, (int)n);
+	n = MINIMUM(n, గరిష్ఠ_పూర్ణాంకం);
+	ఒకవేళ (cert_lifetime <= 0)
+		తిరిగి (పూర్ణాంకం)n;
+	తిరిగి MINIMUM(cert_lifetime, (పూర్ణాంకం)n);
 }
 
-static int
-add_file(int agent_fd, const char *filename, int key_only, int cert_only,
-    int qflag, int Nflag, const char *skprovider,
-    struct dest_constraint **dest_constraints,
-    size_t ndest_constraints)
+స్థిర పూర్ణాంకం
+కూడు_file(పూర్ణాంకం agent_fd, స్థిరరాశి అక్షరం *filename, పూర్ణాంకం కీలకం_only, పూర్ణాంకం cert_only,
+    పూర్ణాంకం qflag, పూర్ణాంకం Nflag, స్థిరరాశి అక్షరం *skprovider,
+    నిర్మాణం dest_constraint **dest_constraints,
+    కొలత_t ndest_constraints)
 {
-	struct sshkey *private = NULL, *cert = NULL;
-	char *comment = NULL;
-	char msg[1024], *certpath = NULL;
-	int cert_lifetime, r, fd, ret = -1;
-	struct sshbuf *keyblob;
+	నిర్మాణం sshkey *అంతరంగ = ఖాళీ, *cert = ఖాళీ;
+	అక్షరం *comment = ఖాళీ;
+	అక్షరం సందేశం[1024], *certpath = ఖాళీ;
+	పూర్ణాంకం cert_lifetime, r, fd, ret = -1;
+	నిర్మాణం sshbuf *keyblob;
 
-	if (strcmp(filename, "-") == 0) {
+	ఒకవేళ (strcmp(filename, "-") == 0) {
 		fd = STDIN_FILENO;
 		filename = "(stdin)";
-	} else if ((fd = open(filename, O_RDONLY)) == -1) {
+	} లేకపోతే ఒకవేళ ((fd = open(filename, O_RDONLY)) == -1) {
 		perror(filename);
-		return -1;
+		తిరిగి -1;
 	}
 
 	/*
 	 * Since we'll try to load a keyfile multiple times, permission errors
 	 * will occur multiple times, so check perms first and bail if wrong.
 	 */
-	if (fd != STDIN_FILENO) {
-		if (sshkey_perm_ok(fd, filename) != 0) {
+	ఒకవేళ (fd != STDIN_FILENO) {
+		ఒకవేళ (sshkey_perm_ok(fd, filename) != 0) {
 			close(fd);
-			return -1;
+			తిరిగి -1;
 		}
 	}
-	if ((r = sshbuf_load_fd(fd, &keyblob)) != 0) {
+	ఒకవేళ ((r = sshbuf_ఎక్కించు_fd(fd, &keyblob)) != 0) {
 		fprintf(stderr, "Error loading key \"%s\": %s\n",
 		    filename, ssh_err(r));
 		sshbuf_free(keyblob);
 		close(fd);
-		return -1;
+		తిరిగి -1;
 	}
 	close(fd);
 
 	/* At first, try empty passphrase */
-	if ((r = sshkey_parse_private_fileblob(keyblob, "", &private,
-	    &comment)) != 0 && r != SSH_ERR_KEY_WRONG_PASSPHRASE) {
+	ఒకవేళ ((r = sshkey_parse_వ్యక్తిగత_fileblob(keyblob, "", &అంతరంగ,
+	    &comment)) != 0 && r != SSH_ERR_కీలకం_WRONG_PASSPHRASE) {
 		fprintf(stderr, "Error loading key \"%s\": %s\n",
 		    filename, ssh_err(r));
-		goto fail_load;
+		వెళ్ళు fail_ఎక్కించు;
 	}
 	/* try last */
-	if (private == NULL && pass != NULL) {
-		if ((r = sshkey_parse_private_fileblob(keyblob, pass, &private,
-		    &comment)) != 0 && r != SSH_ERR_KEY_WRONG_PASSPHRASE) {
+	ఒకవేళ (అంతరంగ == ఖాళీ && pass != ఖాళీ) {
+		ఒకవేళ ((r = sshkey_parse_వ్యక్తిగత_fileblob(keyblob, pass, &అంతరంగ,
+		    &comment)) != 0 && r != SSH_ERR_కీలకం_WRONG_PASSPHRASE) {
 			fprintf(stderr, "Error loading key \"%s\": %s\n",
 			    filename, ssh_err(r));
-			goto fail_load;
+			వెళ్ళు fail_ఎక్కించు;
 		}
 	}
-	if (private == NULL) {
+	ఒకవేళ (అంతరంగ == ఖాళీ) {
 		/* clear passphrase since it did not work */
 		clear_pass();
-		snprintf(msg, sizeof msg, "Enter passphrase for %s%s: ",
+		snprintf(సందేశం, పరిమాణం సందేశం, "Enter passphrase for %s%s: ",
 		    filename, confirm ? " (will confirm each use)" : "");
-		for (;;) {
-			pass = read_passphrase(msg, RP_ALLOW_STDIN);
-			if (strcmp(pass, "") == 0)
-				goto fail_load;
-			if ((r = sshkey_parse_private_fileblob(keyblob, pass,
-			    &private, &comment)) == 0)
-				break;
-			else if (r != SSH_ERR_KEY_WRONG_PASSPHRASE) {
+		కొరకు (;;) {
+			pass = read_passphrase(సందేశం, RP_ALLOW_STDIN);
+			ఒకవేళ (strcmp(pass, "") == 0)
+				వెళ్ళు fail_ఎక్కించు;
+			ఒకవేళ ((r = sshkey_parse_వ్యక్తిగత_fileblob(keyblob, pass,
+			    &అంతరంగ, &comment)) == 0)
+				ఆపు;
+			లేకపోతే ఒకవేళ (r != SSH_ERR_కీలకం_WRONG_PASSPHRASE) {
 				fprintf(stderr,
 				    "Error loading key \"%s\": %s\n",
 				    filename, ssh_err(r));
- fail_load:
+ fail_ఎక్కించు:
 				clear_pass();
 				sshbuf_free(keyblob);
-				return -1;
+				తిరిగి -1;
 			}
 			clear_pass();
-			snprintf(msg, sizeof msg,
+			snprintf(సందేశం, పరిమాణం సందేశం,
 			    "Bad passphrase, try again for %s%s: ", filename,
 			    confirm ? " (will confirm each use)" : "");
 		}
 	}
-	if (comment == NULL || *comment == '\0')
+	ఒకవేళ (comment == ఖాళీ || *comment == '\0')
 		comment = xstrdup(filename);
 	sshbuf_free(keyblob);
 
-	if (sshkey_is_sk(private)) {
-		if (skprovider == NULL) {
+	ఒకవేళ (sshkey_is_sk(అంతరంగ)) {
+		ఒకవేళ (skprovider == ఖాళీ) {
 			fprintf(stderr, "Cannot load FIDO key %s "
 			    "without provider\n", filename);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-	} else {
+	} లేకపోతే {
 		/* Don't send provider constraint for other keys */
-		skprovider = NULL;
+		skprovider = ఖాళీ;
 	}
 
-	if (!cert_only) {
-		if ((r = ssh_add_identity_constrained(agent_fd, private,
+	ఒకవేళ (!cert_only) {
+		ఒకవేళ ((r = ssh_కూడు_తటస్థం_constrained(agent_fd, అంతరంగ,
 		    comment, lifetime, confirm, skprovider,
 		    dest_constraints, ndest_constraints)) == 0) {
 			ret = 0;
-			if (!qflag) {
+			ఒకవేళ (!qflag) {
 				fprintf(stderr, "Identity added: %s (%s)\n",
 				    filename, comment);
-				if (lifetime != 0) {
+				ఒకవేళ (lifetime != 0) {
 					fprintf(stderr, "Lifetime set to %s\n",
 					    fmt_timeframe((time_t)lifetime));
 				}
-				if (confirm != 0) {
+				ఒకవేళ (confirm != 0) {
 					fprintf(stderr, "The user must confirm "
 					    "each use of the key\n");
 				}
 			}
-		} else {
+		} లేకపోతే {
 			fprintf(stderr, "Could not add identity \"%s\": %s\n",
 			    filename, ssh_err(r));
 		}
 	}
 
 	/* Skip trying to load the cert if requested */
-	if (key_only)
-		goto out;
+	ఒకవేళ (కీలకం_only)
+		వెళ్ళు బహిర్గతం;
 
 	/* Now try to add the certificate flavour too */
 	xasprintf(&certpath, "%s-cert.pub", filename);
-	if ((r = sshkey_load_public(certpath, &cert, NULL)) != 0) {
-		if (r != SSH_ERR_SYSTEM_ERROR || errno != ENOENT)
+	ఒకవేళ ((r = sshkey_ఎక్కించు_ప్రజా(certpath, &cert, ఖాళీ)) != 0) {
+		ఒకవేళ (r != SSH_ERR_SYSTEM_ERROR || errno != ENOENT)
 			error_r(r, "Failed to load certificate \"%s\"",
 			    certpath);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if (!sshkey_equal_public(cert, private)) {
+	ఒకవేళ (!sshkey_equal_ప్రజా(cert, అంతరంగ)) {
 		error("Certificate %s does not match private key %s",
 		    certpath, filename);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	cert_lifetime = lifetime;
-	if (!Nflag &&
+	ఒకవేళ (!Nflag &&
 	    (cert_lifetime = check_cert_lifetime(cert, cert_lifetime)) == -1) {
 		logit("Certificate %s has already expired; ignored", certpath);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Graft with private bits */
-	if ((r = sshkey_to_certified(private)) != 0) {
+	ఒకవేళ ((r = sshkey_గమ్యం_certified(అంతరంగ)) != 0) {
 		error_fr(r, "sshkey_to_certified");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshkey_cert_copy(cert, private)) != 0) {
+	ఒకవేళ ((r = sshkey_cert_copy(cert, అంతరంగ)) != 0) {
 		error_fr(r, "sshkey_cert_copy");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* send to agent */
-	if ((r = ssh_add_identity_constrained(agent_fd, private, comment,
+	ఒకవేళ ((r = ssh_కూడు_తటస్థం_constrained(agent_fd, అంతరంగ, comment,
 	    cert_lifetime, confirm, skprovider,
 	    dest_constraints, ndest_constraints)) != 0) {
 		error_r(r, "Certificate %s (%s) add failed", certpath,
-		    private->cert->key_id);
-		goto out;
+		    అంతరంగ->cert->కీలకం_id);
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
-	if (!qflag) {
+	ఒకవేళ (!qflag) {
 		fprintf(stderr, "Certificate added: %s (%s)\n", certpath,
-		    private->cert->key_id);
-		if (cert_lifetime != 0) {
+		    అంతరంగ->cert->కీలకం_id);
+		ఒకవేళ (cert_lifetime != 0) {
 			fprintf(stderr, "Lifetime set to %s\n",
 			    fmt_timeframe((time_t)cert_lifetime));
 		}
-		if (confirm != 0) {
+		ఒకవేళ (confirm != 0) {
 			fprintf(stderr, "The user must confirm each use "
 			    "of the key\n");
 		}
 	}
 
- out:
-	free(certpath);
-	free(comment);
+ బహిర్గతం:
+	విడుదల(certpath);
+	విడుదల(comment);
 	sshkey_free(cert);
-	sshkey_free(private);
+	sshkey_free(అంతరంగ);
 
-	return ret;
+	తిరిగి ret;
 }
 
-static int
-update_card(int agent_fd, int add, const char *id, int qflag, int no_pin,
-    int key_only, int cert_only,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints,
-    struct sshkey **certs, size_t ncerts)
+స్థిర పూర్ణాంకం
+update_card(పూర్ణాంకం agent_fd, పూర్ణాంకం కూడు, స్థిరరాశి అక్షరం *id, పూర్ణాంకం qflag, పూర్ణాంకం no_pin,
+    పూర్ణాంకం కీలకం_only, పూర్ణాంకం cert_only,
+    నిర్మాణం dest_constraint **dest_constraints, కొలత_t ndest_constraints,
+    నిర్మాణం sshkey **certs, కొలత_t ncerts)
 {
-	char *pin = NULL;
-	int r, ret = -1;
+	అక్షరం *pin = ఖాళీ;
+	పూర్ణాంకం r, ret = -1;
 
-	if (key_only)
+	ఒకవేళ (కీలకం_only)
 		ncerts = 0;
 
-	if (add && !no_pin) {
-		if ((pin = read_passphrase("Enter passphrase for PKCS#11: ",
-		    RP_ALLOW_STDIN)) == NULL)
-			return -1;
+	ఒకవేళ (కూడు && !no_pin) {
+		ఒకవేళ ((pin = read_passphrase("Enter passphrase for PKCS#11: ",
+		    RP_ALLOW_STDIN)) == ఖాళీ)
+			తిరిగి -1;
 	}
 
-	if ((r = ssh_update_card(agent_fd, add, id, pin == NULL ? "" : pin,
+	ఒకవేళ ((r = ssh_update_card(agent_fd, కూడు, id, pin == ఖాళీ ? "" : pin,
 	    lifetime, confirm, dest_constraints, ndest_constraints,
 	    cert_only, certs, ncerts)) == 0) {
 		ret = 0;
-		if (!qflag) {
+		ఒకవేళ (!qflag) {
 			fprintf(stderr, "Card %s: %s\n",
-			    add ? "added" : "removed", id);
+			    కూడు ? "added" : "removed", id);
 		}
-	} else {
+	} లేకపోతే {
 		fprintf(stderr, "Could not %s card \"%s\": %s\n",
-		    add ? "add" : "remove", id, ssh_err(r));
+		    కూడు ? "add" : "remove", id, ssh_err(r));
 		ret = -1;
 	}
-	free(pin);
-	return ret;
+	విడుదల(pin);
+	తిరిగి ret;
 }
 
-static int
-test_key(int agent_fd, const char *filename)
+స్థిర పూర్ణాంకం
+test_కీలకం(పూర్ణాంకం agent_fd, స్థిరరాశి అక్షరం *filename)
 {
-	struct sshkey *key = NULL;
-	u_char *sig = NULL;
-	const char *alg = NULL;
-	size_t slen = 0;
-	int r, ret = -1;
-	char data[1024];
+	నిర్మాణం sshkey *కీలకం = ఖాళీ;
+	u_char *sig = ఖాళీ;
+	స్థిరరాశి అక్షరం *alg = ఖాళీ;
+	కొలత_t slen = 0;
+	పూర్ణాంకం r, ret = -1;
+	అక్షరం దత్తాంశం[1024];
 
-	if ((r = sshkey_load_public(filename, &key, NULL)) != 0) {
+	ఒకవేళ ((r = sshkey_ఎక్కించు_ప్రజా(filename, &కీలకం, ఖాళీ)) != 0) {
 		error_r(r, "Couldn't read public key %s", filename);
-		return -1;
+		తిరిగి -1;
 	}
-	if (sshkey_type_plain(key->type) == KEY_RSA)
+	ఒకవేళ (sshkey_type_plain(కీలకం->type) == కీలకం_RSA)
 		alg = "rsa-sha2-256";
-	arc4random_buf(data, sizeof(data));
-	if ((r = ssh_agent_sign(agent_fd, key, &sig, &slen, data, sizeof(data),
+	arc4random_buf(దత్తాంశం, పరిమాణం(దత్తాంశం));
+	ఒకవేళ ((r = ssh_agent_sign(agent_fd, కీలకం, &sig, &slen, దత్తాంశం, పరిమాణం(దత్తాంశం),
 	    alg, 0)) != 0) {
 		error_r(r, "Agent signature failed for %s", filename);
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
-	if ((r = sshkey_verify(key, sig, slen, data, sizeof(data),
-	    alg, 0, NULL)) != 0) {
+	ఒకవేళ ((r = sshkey_verify(కీలకం, sig, slen, దత్తాంశం, పరిమాణం(దత్తాంశం),
+	    alg, 0, ఖాళీ)) != 0) {
 		error_r(r, "Signature verification failed for %s", filename);
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 	/* success */
 	ret = 0;
- done:
-	free(sig);
-	sshkey_free(key);
-	return ret;
+ పూర్తి:
+	విడుదల(sig);
+	sshkey_free(కీలకం);
+	తిరిగి ret;
 }
 
-static int
-list_identities(int agent_fd, int do_fp)
+స్థిర పూర్ణాంకం
+list_identities(పూర్ణాంకం agent_fd, పూర్ణాంకం do_fp)
 {
-	char *fp;
-	int r;
-	struct ssh_identitylist *idlist;
-	size_t i;
+	అక్షరం *fp;
+	పూర్ణాంకం r;
+	నిర్మాణం ssh_identitylist *idlist;
+	కొలత_t i;
 
-	if ((r = ssh_fetch_identitylist(agent_fd, &idlist)) != 0) {
-		if (r != SSH_ERR_AGENT_NO_IDENTITIES)
+	ఒకవేళ ((r = ssh_fetch_identitylist(agent_fd, &idlist)) != 0) {
+		ఒకవేళ (r != SSH_ERR_AGENT_NO_IDENTITIES)
 			fprintf(stderr, "error fetching identities: %s\n",
 			    ssh_err(r));
-		else
-			printf("The agent has no identities.\n");
-		return -1;
+		లేకపోతే
+			రాయి("The agent has no identities.\n");
+		తిరిగి -1;
 	}
-	for (i = 0; i < idlist->nkeys; i++) {
-		if (do_fp) {
-			fp = sshkey_fingerprint(idlist->keys[i],
+	కొరకు (i = 0; i < idlist->nkeys; i++) {
+		ఒకవేళ (do_fp) {
+			fp = sshkey_fingerprint(idlist->కీలకాలు[i],
 			    fingerprint_hash, SSH_FP_DEFAULT);
-			printf("%u %s %s (%s)\n", sshkey_size(idlist->keys[i]),
-			    fp == NULL ? "(null)" : fp, idlist->comments[i],
-			    sshkey_type(idlist->keys[i]));
-			free(fp);
-		} else {
-			if ((r = sshkey_write(idlist->keys[i], stdout)) != 0) {
+			రాయి("%u %s %s (%s)\n", sshkey_కొలత(idlist->కీలకాలు[i]),
+			    fp == ఖాళీ ? "(null)" : fp, idlist->comments[i],
+			    sshkey_type(idlist->కీలకాలు[i]));
+			విడుదల(fp);
+		} లేకపోతే {
+			ఒకవేళ ((r = sshkey_write(idlist->కీలకాలు[i], stdout)) != 0) {
 				fprintf(stderr, "sshkey_write: %s\n",
 				    ssh_err(r));
-				continue;
+				కొనసాగు;
 			}
 			fprintf(stdout, " %s\n", idlist->comments[i]);
 		}
 	}
 	ssh_free_identitylist(idlist);
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-lock_agent(int agent_fd, int lock)
+స్థిర పూర్ణాంకం
+తాళం_agent(పూర్ణాంకం agent_fd, పూర్ణాంకం తాళం)
 {
-	char prompt[100], *p1, *p2;
-	int r, passok = 1, ret = -1;
+	అక్షరం prompt[100], *p1, *p2;
+	పూర్ణాంకం r, passok = 1, ret = -1;
 
-	strlcpy(prompt, "Enter lock password: ", sizeof(prompt));
+	strlcpy(prompt, "Enter lock password: ", పరిమాణం(prompt));
 	p1 = read_passphrase(prompt, RP_ALLOW_STDIN);
-	if (lock) {
-		strlcpy(prompt, "Again: ", sizeof prompt);
+	ఒకవేళ (తాళం) {
+		strlcpy(prompt, "Again: ", పరిమాణం prompt);
 		p2 = read_passphrase(prompt, RP_ALLOW_STDIN);
-		if (strcmp(p1, p2) != 0) {
+		ఒకవేళ (strcmp(p1, p2) != 0) {
 			fprintf(stderr, "Passwords do not match.\n");
 			passok = 0;
 		}
-		freezero(p2, strlen(p2));
+		freezero(p2, అక్షరశ్రేణి_పొడవు(p2));
 	}
-	if (passok) {
-		if ((r = ssh_lock_agent(agent_fd, lock, p1)) == 0) {
-			fprintf(stderr, "Agent %slocked.\n", lock ? "" : "un");
+	ఒకవేళ (passok) {
+		ఒకవేళ ((r = ssh_తాళం_agent(agent_fd, తాళం, p1)) == 0) {
+			fprintf(stderr, "Agent %slocked.\n", తాళం ? "" : "un");
 			ret = 0;
-		} else {
+		} లేకపోతే {
 			fprintf(stderr, "Failed to %slock agent: %s\n",
-			    lock ? "" : "un", ssh_err(r));
+			    తాళం ? "" : "un", ssh_err(r));
 		}
 	}
-	freezero(p1, strlen(p1));
-	return (ret);
+	freezero(p1, అక్షరశ్రేణి_పొడవు(p1));
+	తిరిగి (ret);
 }
 
-static int
-load_resident_keys(int agent_fd, const char *skprovider, int qflag, int no_pin,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints)
+స్థిర పూర్ణాంకం
+ఎక్కించు_resident_కీలకాలు(పూర్ణాంకం agent_fd, స్థిరరాశి అక్షరం *skprovider, పూర్ణాంకం qflag, పూర్ణాంకం no_pin,
+    నిర్మాణం dest_constraint **dest_constraints, కొలత_t ndest_constraints)
 {
-	struct sshsk_resident_key **srks;
-	size_t nsrks, i;
-	struct sshkey *key;
-	int r, ok = 0;
-	char *fp, *pin = NULL;
+	నిర్మాణం sshsk_resident_కీలకం **srks;
+	కొలత_t nsrks, i;
+	నిర్మాణం sshkey *కీలకం;
+	పూర్ణాంకం r, ok = 0;
+	అక్షరం *fp, *pin = ఖాళీ;
 
-	if (!no_pin) {
+	ఒకవేళ (!no_pin) {
 		pin = read_passphrase("Enter PIN for authenticator: ",
 		    RP_ALLOW_STDIN);
 	}
-	if ((r = sshsk_load_resident(skprovider, NULL, pin == NULL ? "" : pin,
+	ఒకవేళ ((r = sshsk_ఎక్కించు_resident(skprovider, ఖాళీ, pin == ఖాళీ ? "" : pin,
 	    0, &srks, &nsrks)) != 0) {
 		error_r(r, "Unable to load resident keys");
-		free(pin);
-		return r;
+		విడుదల(pin);
+		తిరిగి r;
 	}
-	free(pin);
-	for (i = 0; i < nsrks; i++) {
-		key = srks[i]->key;
-		if ((fp = sshkey_fingerprint(key,
-		    fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
+	విడుదల(pin);
+	కొరకు (i = 0; i < nsrks; i++) {
+		కీలకం = srks[i]->కీలకం;
+		ఒకవేళ ((fp = sshkey_fingerprint(కీలకం,
+		    fingerprint_hash, SSH_FP_DEFAULT)) == ఖాళీ)
 			fatal_f("sshkey_fingerprint failed");
-		if ((r = ssh_add_identity_constrained(agent_fd, key,
-		    key->sk_application, lifetime, confirm, skprovider,
+		ఒకవేళ ((r = ssh_కూడు_తటస్థం_constrained(agent_fd, కీలకం,
+		    కీలకం->sk_application, lifetime, confirm, skprovider,
 		    dest_constraints, ndest_constraints)) != 0) {
 			error("Unable to add key %s %s",
-			    sshkey_type(key), fp);
-			free(fp);
+			    sshkey_type(కీలకం), fp);
+			విడుదల(fp);
 			ok = r;
-			continue;
+			కొనసాగు;
 		}
-		if (ok == 0)
+		ఒకవేళ (ok == 0)
 			ok = 1;
-		if (!qflag) {
+		ఒకవేళ (!qflag) {
 			fprintf(stderr, "Resident identity added: %s %s\n",
-			    sshkey_type(key), fp);
-			if (lifetime != 0) {
+			    sshkey_type(కీలకం), fp);
+			ఒకవేళ (lifetime != 0) {
 				fprintf(stderr,
 				    "Lifetime set to %d seconds\n", lifetime);
 			}
-			if (confirm != 0) {
+			ఒకవేళ (confirm != 0) {
 				fprintf(stderr, "The user must confirm "
 				    "each use of the key\n");
 			}
 		}
-		free(fp);
+		విడుదల(fp);
 	}
-	sshsk_free_resident_keys(srks, nsrks);
-	if (nsrks == 0)
-		return SSH_ERR_KEY_NOT_FOUND;
-	return ok == 1 ? 0 : ok;
+	sshsk_free_resident_కీలకాలు(srks, nsrks);
+	ఒకవేళ (nsrks == 0)
+		తిరిగి SSH_ERR_కీలకం_NOT_దొరికింది;
+	తిరిగి ok == 1 ? 0 : ok;
 }
 
-static int
-do_file(int agent_fd, int deleting, int key_only, int cert_only,
-    char *file, int qflag, int Nflag, const char *skprovider,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints)
+స్థిర పూర్ణాంకం
+do_file(పూర్ణాంకం agent_fd, పూర్ణాంకం deleting, పూర్ణాంకం కీలకం_only, పూర్ణాంకం cert_only,
+    అక్షరం *file, పూర్ణాంకం qflag, పూర్ణాంకం Nflag, స్థిరరాశి అక్షరం *skprovider,
+    నిర్మాణం dest_constraint **dest_constraints, కొలత_t ndest_constraints)
 {
-	if (deleting) {
-		if (delete_file(agent_fd, file, key_only,
+	ఒకవేళ (deleting) {
+		ఒకవేళ (delete_file(agent_fd, file, కీలకం_only,
 		    cert_only, qflag) == -1)
-			return -1;
-	} else {
-		if (add_file(agent_fd, file, key_only, cert_only, qflag, Nflag,
+			తిరిగి -1;
+	} లేకపోతే {
+		ఒకవేళ (కూడు_file(agent_fd, file, కీలకం_only, cert_only, qflag, Nflag,
 		    skprovider, dest_constraints, ndest_constraints) == -1)
-			return -1;
+			తిరిగి -1;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static void
-free_dest_constraint_hop(struct dest_constraint_hop *dch)
+స్థిర శూన్య
+free_dest_constraint_hop(నిర్మాణం dest_constraint_hop *dch)
 {
 	u_int i;
 
-	if (dch == NULL)
-		return;
-	free(dch->user);
-	free(dch->hostname);
-	for (i = 0; i < dch->nkeys; i++)
-		sshkey_free(dch->keys[i]);
-	free(dch->keys);
-	free(dch->key_is_ca);
+	ఒకవేళ (dch == ఖాళీ)
+		తిరిగి;
+	విడుదల(dch->user);
+	విడుదల(dch->hostname);
+	కొరకు (i = 0; i < dch->nkeys; i++)
+		sshkey_free(dch->కీలకాలు[i]);
+	విడుదల(dch->కీలకాలు);
+	విడుదల(dch->కీలకం_is_ca);
 }
 
-static void
-free_dest_constraints(struct dest_constraint **dcs, size_t ndcs)
+స్థిర శూన్య
+free_dest_constraints(నిర్మాణం dest_constraint **dcs, కొలత_t ndcs)
 {
-	size_t i;
+	కొలత_t i;
 
-	for (i = 0; i < ndcs; i++) {
+	కొరకు (i = 0; i < ndcs; i++) {
 		free_dest_constraint_hop(&dcs[i]->from);
-		free_dest_constraint_hop(&dcs[i]->to);
-		free(dcs[i]);
+		free_dest_constraint_hop(&dcs[i]->గమ్యం);
+		విడుదల(dcs[i]);
 	}
-	free(dcs);
+	విడుదల(dcs);
 }
 
 
-static void
-parse_dest_constraint_hop(const char *s, struct dest_constraint_hop *dch,
-    char **hostkey_files)
+స్థిర శూన్య
+parse_dest_constraint_hop(స్థిరరాశి అక్షరం *s, నిర్మాణం dest_constraint_hop *dch,
+    అక్షరం **hostkey_files)
 {
-	char *user = NULL, *host, *os, *path;
-	size_t i;
-	struct hostkeys *hostkeys;
-	const struct hostkey_entry *hke;
-	int r, want_ca;
+	అక్షరం *user = ఖాళీ, *host, *os, *మార్గం;
+	కొలత_t i;
+	నిర్మాణం hostkeys *hostkeys;
+	స్థిరరాశి నిర్మాణం hostkey_నమోదు *hke;
+	పూర్ణాంకం r, want_ca;
 
-	memset(dch, '\0', sizeof(*dch));
+	memset(dch, '\0', పరిమాణం(*dch));
 	os = xstrdup(s);
-	if ((host = strrchr(os, '@')) == NULL)
+	ఒకవేళ ((host = strrchr(os, '@')) == ఖాళీ)
 		host = os;
-	else {
+	లేకపోతే {
 		*host++ = '\0';
 		user = os;
 	}
 	cleanhostname(host);
 	/* Trivial case: username@ (all hosts) */
-	if (*host == '\0') {
-		if (user == NULL) {
+	ఒకవేళ (*host == '\0') {
+		ఒకవేళ (user == ఖాళీ) {
 			fatal("Invalid key destination constraint \"%s\": "
 			    "does not specify user or host", s);
 		}
 		dch->user = xstrdup(user);
 		/* other fields left blank */
-		free(os);
-		return;
+		విడుదల(os);
+		తిరిగి;
 	}
-	if (hostkey_files == NULL)
+	ఒకవేళ (hostkey_files == ఖాళీ)
 		fatal_f("no hostkey files");
 	/* Otherwise we need to look up the keys for this hostname */
 	hostkeys = init_hostkeys();
-	for (i = 0; hostkey_files[i]; i++) {
-		path = tilde_expand_filename(hostkey_files[i], getuid());
-		debug2_f("looking up host keys for \"%s\" in %s", host, path);
-                load_hostkeys(hostkeys, host, path, 0);
-		free(path);
+	కొరకు (i = 0; hostkey_files[i]; i++) {
+		మార్గం = tilde_expand_filename(hostkey_files[i], getuid());
+		debug2_f("looking up host keys for \"%s\" in %s", host, మార్గం);
+                ఎక్కించు_hostkeys(hostkeys, host, మార్గం, 0);
+		విడుదల(మార్గం);
 	}
-	dch->user = user == NULL ? NULL : xstrdup(user);
+	dch->user = user == ఖాళీ ? ఖాళీ : xstrdup(user);
 	dch->hostname = xstrdup(host);
-	for (i = 0; i < hostkeys->num_entries; i++) {
+	కొరకు (i = 0; i < hostkeys->అంకె_entries; i++) {
 		hke = hostkeys->entries + i;
 		want_ca = hke->marker == MRK_CA;
-		if (hke->marker != MRK_NONE && !want_ca)
-			continue;
+		ఒకవేళ (hke->marker != MRK_NONE && !want_ca)
+			కొనసాగు;
 		debug3_f("%s%s%s: adding %s %skey from %s:%lu as key %u",
-		    user == NULL ? "": user, user == NULL ? "" : "@",
-		    host, sshkey_type(hke->key), want_ca ? "CA " : "",
-		    hke->file, hke->line, dch->nkeys);
-		dch->keys = xrecallocarray(dch->keys, dch->nkeys,
-		    dch->nkeys + 1, sizeof(*dch->keys));
-		dch->key_is_ca = xrecallocarray(dch->key_is_ca, dch->nkeys,
-		    dch->nkeys + 1, sizeof(*dch->key_is_ca));
-		if ((r = sshkey_from_private(hke->key,
-		    &(dch->keys[dch->nkeys]))) != 0)
+		    user == ఖాళీ ? "": user, user == ఖాళీ ? "" : "@",
+		    host, sshkey_type(hke->కీలకం), want_ca ? "CA " : "",
+		    hke->file, hke->పంక్తి, dch->nkeys);
+		dch->కీలకాలు = xrecallocarray(dch->కీలకాలు, dch->nkeys,
+		    dch->nkeys + 1, పరిమాణం(*dch->కీలకాలు));
+		dch->కీలకం_is_ca = xrecallocarray(dch->కీలకం_is_ca, dch->nkeys,
+		    dch->nkeys + 1, పరిమాణం(*dch->కీలకం_is_ca));
+		ఒకవేళ ((r = sshkey_from_వ్యక్తిగత(hke->కీలకం,
+		    &(dch->కీలకాలు[dch->nkeys]))) != 0)
 			fatal_fr(r, "sshkey_from_private");
-		dch->key_is_ca[dch->nkeys] = want_ca;
+		dch->కీలకం_is_ca[dch->nkeys] = want_ca;
 		dch->nkeys++;
 	}
-	if (dch->nkeys == 0)
+	ఒకవేళ (dch->nkeys == 0)
 		fatal("No host keys found for destination \"%s\"", host);
 	free_hostkeys(hostkeys);
-	free(os);
-	return;
+	విడుదల(os);
+	తిరిగి;
 }
 
-static void
-parse_dest_constraint(const char *s, struct dest_constraint ***dcp,
-    size_t *ndcp, char **hostkey_files)
+స్థిర శూన్య
+parse_dest_constraint(స్థిరరాశి అక్షరం *s, నిర్మాణం dest_constraint ***dcp,
+    కొలత_t *ndcp, అక్షరం **hostkey_files)
 {
-	struct dest_constraint *dc;
-	char *os, *cp;
+	నిర్మాణం dest_constraint *dc;
+	అక్షరం *os, *cp;
 
-	dc = xcalloc(1, sizeof(*dc));
+	dc = xcalloc(1, పరిమాణం(*dc));
 	os = xstrdup(s);
-	if ((cp = strchr(os, '>')) == NULL) {
+	ఒకవేళ ((cp = strchr(os, '>')) == ఖాళీ) {
 		/* initial hop; no 'from' hop specified */
-		parse_dest_constraint_hop(os, &dc->to, hostkey_files);
-	} else {
+		parse_dest_constraint_hop(os, &dc->గమ్యం, hostkey_files);
+	} లేకపోతే {
 		/* two hops specified */
 		*(cp++) = '\0';
 		parse_dest_constraint_hop(os, &dc->from, hostkey_files);
-		parse_dest_constraint_hop(cp, &dc->to, hostkey_files);
-		if (dc->from.user != NULL) {
+		parse_dest_constraint_hop(cp, &dc->గమ్యం, hostkey_files);
+		ఒకవేళ (dc->from.user != ఖాళీ) {
 			fatal("Invalid key constraint %s: cannot specify "
 			    "user on 'from' host", os);
 		}
@@ -791,16 +791,16 @@ parse_dest_constraint(const char *s, struct dest_constraint ***dcp,
 	debug2_f("constraint %zu: %s%s%s (%u keys) > %s%s%s (%u keys)", *ndcp,
 	    dc->from.user ? dc->from.user : "", dc->from.user ? "@" : "",
 	    dc->from.hostname ? dc->from.hostname : "(ORIGIN)", dc->from.nkeys,
-	    dc->to.user ? dc->to.user : "", dc->to.user ? "@" : "",
-	    dc->to.hostname ? dc->to.hostname : "(ANY)", dc->to.nkeys);
-	*dcp = xrecallocarray(*dcp, *ndcp, *ndcp + 1, sizeof(**dcp));
+	    dc->గమ్యం.user ? dc->గమ్యం.user : "", dc->గమ్యం.user ? "@" : "",
+	    dc->గమ్యం.hostname ? dc->గమ్యం.hostname : "(ANY)", dc->గమ్యం.nkeys);
+	*dcp = xrecallocarray(*dcp, *ndcp, *ndcp + 1, పరిమాణం(**dcp));
 	(*dcp)[(*ndcp)++] = dc;
-	free(os);
+	విడుదల(os);
 }
 
 
-static void
-usage(void)
+స్థిర శూన్య
+usage(శూన్య)
 {
 	fprintf(stderr,
 "usage: ssh-add [-CcDdKkLlqvXx] [-E fingerprint_hash] [-H hostkey_file]\n"
@@ -812,260 +812,260 @@ usage(void)
 	);
 }
 
-int
-main(int argc, char **argv)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	extern char *optarg;
-	extern int optind;
-	int agent_fd = -1;
-	char *pkcs11provider = NULL, *skprovider = NULL;
-	char **dest_constraint_strings = NULL, **hostkey_files = NULL;
-	int r, i, ch, deleting = 0, ret = 0, key_only = 0, cert_only = 0;
-	int do_download = 0, xflag = 0, lflag = 0, Dflag = 0;
-	int Qflag = 0, qflag = 0, Tflag = 0, Nflag = 0, no_pin = 0;
+	బాహ్య అక్షరం *optarg;
+	బాహ్య పూర్ణాంకం optind;
+	పూర్ణాంకం agent_fd = -1;
+	అక్షరం *pkcs11provider = ఖాళీ, *skprovider = ఖాళీ;
+	అక్షరం **dest_constraint_అక్షరశ్రేణులు = ఖాళీ, **hostkey_files = ఖాళీ;
+	పూర్ణాంకం r, i, ch, deleting = 0, ret = 0, కీలకం_only = 0, cert_only = 0;
+	పూర్ణాంకం do_download = 0, xflag = 0, lflag = 0, Dflag = 0;
+	పూర్ణాంకం Qflag = 0, qflag = 0, Tflag = 0, Nflag = 0, no_pin = 0;
 	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
 	LogLevel log_level = SYSLOG_LEVEL_INFO;
-	struct sshkey *k, **certs = NULL;
-	struct dest_constraint **dest_constraints = NULL;
-	size_t n, ndest_constraints = 0, ncerts = 0;
+	నిర్మాణం sshkey *k, **certs = ఖాళీ;
+	నిర్మాణం dest_constraint **dest_constraints = ఖాళీ;
+	కొలత_t n, ndest_constraints = 0, ncerts = 0;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
 
 	__progname = ssh_get_progname(argv[0]);
-	seed_rng();
+	విత్తనం_rng();
 
 	log_init(__progname, log_level, log_facility, 1);
 
-	setvbuf(stdout, NULL, _IOLBF, 0);
+	setvbuf(stdout, ఖాళీ, _IOLBF, 0);
 
 	skprovider = getenv("SSH_SK_PROVIDER");
 
-	while ((ch = getopt(argc, argv, "vkKlLNPCcdDTxXE:e:h:H:M:m:Qqs:S:t:")) != -1) {
-		switch (ch) {
-		case 'v':
-			if (log_level == SYSLOG_LEVEL_INFO)
+	అయితే ((ch = getopt(argc, argv, "vkKlLNPCcdDTxXE:e:h:H:M:m:Qqs:S:t:")) != -1) {
+		ఎంపిక (ch) {
+		స్థితి 'v':
+			ఒకవేళ (log_level == SYSLOG_LEVEL_INFO)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			లేకపోతే ఒకవేళ (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			break;
-		case 'N':
+			ఆపు;
+		స్థితి 'N':
 			Nflag = 1;
-			break;
-		case 'E':
+			ఆపు;
+		స్థితి 'E':
 			fingerprint_hash = ssh_digest_alg_by_name(optarg);
-			if (fingerprint_hash == -1)
+			ఒకవేళ (fingerprint_hash == -1)
 				fatal("Invalid hash algorithm \"%s\"", optarg);
-			break;
-		case 'H':
+			ఆపు;
+		స్థితి 'H':
 			stringlist_append(&hostkey_files, optarg);
-			break;
-		case 'h':
-			stringlist_append(&dest_constraint_strings, optarg);
-			break;
-		case 'k':
-			key_only = 1;
-			break;
-		case 'C':
+			ఆపు;
+		స్థితి 'h':
+			stringlist_append(&dest_constraint_అక్షరశ్రేణులు, optarg);
+			ఆపు;
+		స్థితి 'k':
+			కీలకం_only = 1;
+			ఆపు;
+		స్థితి 'C':
 			cert_only = 1;
-			break;
-		case 'K':
+			ఆపు;
+		స్థితి 'K':
 			do_download = 1;
-			break;
-		case 'l':
-		case 'L':
-			if (lflag != 0)
+			ఆపు;
+		స్థితి 'l':
+		స్థితి 'L':
+			ఒకవేళ (lflag != 0)
 				fatal("-%c flag already specified", lflag);
 			lflag = ch;
-			break;
-		case 'x':
-		case 'X':
-			if (xflag != 0)
+			ఆపు;
+		స్థితి 'x':
+		స్థితి 'X':
+			ఒకవేళ (xflag != 0)
 				fatal("-%c flag already specified", xflag);
 			xflag = ch;
-			break;
-		case 'c':
+			ఆపు;
+		స్థితి 'c':
 			confirm = 1;
-			break;
-		case 'm':
-		case 'M':
+			ఆపు;
+		స్థితి 'm':
+		స్థితి 'M':
 			/* deprecated */
-			break;
-		case 'd':
+			ఆపు;
+		స్థితి 'd':
 			deleting = 1;
-			break;
-		case 'P':
+			ఆపు;
+		స్థితి 'P':
 			no_pin = 1;
-			break;
-		case 'D':
+			ఆపు;
+		స్థితి 'D':
 			Dflag = 1;
-			break;
-		case 's':
+			ఆపు;
+		స్థితి 's':
 			pkcs11provider = optarg;
-			break;
-		case 'S':
+			ఆపు;
+		స్థితి 'S':
 			skprovider = optarg;
-			break;
-		case 'e':
+			ఆపు;
+		స్థితి 'e':
 			deleting = 1;
 			pkcs11provider = optarg;
-			break;
-		case 't':
-			if ((lifetime = convtime(optarg)) == -1 ||
+			ఆపు;
+		స్థితి 't':
+			ఒకవేళ ((lifetime = convtime(optarg)) == -1 ||
 			    lifetime < 0 || (u_long)lifetime > UINT32_MAX) {
 				fprintf(stderr, "Invalid lifetime\n");
 				ret = 1;
-				goto done;
+				వెళ్ళు పూర్తి;
 			}
-			break;
-		case 'q':
+			ఆపు;
+		స్థితి 'q':
 			qflag = 1;
-			break;
-		case 'Q':
+			ఆపు;
+		స్థితి 'Q':
 			Qflag = 1;
-			break;
-		case 'T':
+			ఆపు;
+		స్థితి 'T':
 			Tflag = 1;
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			usage();
 			ret = 1;
-			goto done;
+			వెళ్ళు పూర్తి;
 		}
 	}
 	log_init(__progname, log_level, log_facility, 1);
 
-	if ((xflag != 0) + (lflag != 0) + (Dflag != 0) + (Qflag != 0) > 1)
+	ఒకవేళ ((xflag != 0) + (lflag != 0) + (Dflag != 0) + (Qflag != 0) > 1)
 		fatal("Invalid combination of actions");
 
 	/* First, get a connection to the authentication agent. */
-	switch (r = ssh_get_authentication_socket(&agent_fd)) {
-	case 0:
-		break;
-	case SSH_ERR_AGENT_NOT_PRESENT:
+	ఎంపిక (r = ssh_get_authentication_socket(&agent_fd)) {
+	స్థితి 0:
+		ఆపు;
+	స్థితి SSH_ERR_AGENT_NOT_PRESENT:
 		fprintf(stderr, "Could not open a connection to your "
 		    "authentication agent.\n");
-		exit(2);
-	default:
+		నిష్క్రమించు(2);
+	అప్రమేయ:
 		fprintf(stderr, "Error connecting to agent: %s\n", ssh_err(r));
-		exit(2);
+		నిష్క్రమించు(2);
 	}
 
-	if (xflag) {
-		if (lock_agent(agent_fd, xflag == 'x' ? 1 : 0) == -1)
+	ఒకవేళ (xflag) {
+		ఒకవేళ (తాళం_agent(agent_fd, xflag == 'x' ? 1 : 0) == -1)
 			ret = 1;
-		goto done;
-	} else if (lflag) {
-		if (list_identities(agent_fd, lflag == 'l' ? 1 : 0) == -1)
+		వెళ్ళు పూర్తి;
+	} లేకపోతే ఒకవేళ (lflag) {
+		ఒకవేళ (list_identities(agent_fd, lflag == 'l' ? 1 : 0) == -1)
 			ret = 1;
-		goto done;
-	} else if (Dflag) {
-		if (delete_all(agent_fd, qflag) == -1)
+		వెళ్ళు పూర్తి;
+	} లేకపోతే ఒకవేళ (Dflag) {
+		ఒకవేళ (delete_all(agent_fd, qflag) == -1)
 			ret = 1;
-		goto done;
-	} else if (Qflag) {
-		if (query_exts(agent_fd) == -1)
+		వెళ్ళు పూర్తి;
+	} లేకపోతే ఒకవేళ (Qflag) {
+		ఒకవేళ (query_exts(agent_fd) == -1)
 			ret = 1;
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
-#ifdef ENABLE_SK_INTERNAL
-	if (skprovider == NULL)
+#నిర్వచితమైతే ENABLE_SK_అంతర్గత
+	ఒకవేళ (skprovider == ఖాళీ)
 		skprovider = "internal";
-#endif
+#అయితే_ముగింపు
 
-	if (hostkey_files == NULL) {
+	ఒకవేళ (hostkey_files == ఖాళీ) {
 		/* use defaults from readconf.c */
-		stringlist_append(&hostkey_files, _PATH_SSH_USER_HOSTFILE);
-		stringlist_append(&hostkey_files, _PATH_SSH_USER_HOSTFILE2);
-		stringlist_append(&hostkey_files, _PATH_SSH_SYSTEM_HOSTFILE);
-		stringlist_append(&hostkey_files, _PATH_SSH_SYSTEM_HOSTFILE2);
+		stringlist_append(&hostkey_files, మార్గం_SSH_USER_HOSTFILE);
+		stringlist_append(&hostkey_files, మార్గం_SSH_USER_HOSTFILE2);
+		stringlist_append(&hostkey_files, మార్గం_SSH_SYSTEM_HOSTFILE);
+		stringlist_append(&hostkey_files, మార్గం_SSH_SYSTEM_HOSTFILE2);
 	}
-	if (dest_constraint_strings != NULL) {
-		for (i = 0; dest_constraint_strings[i] != NULL; i++) {
-			parse_dest_constraint(dest_constraint_strings[i],
+	ఒకవేళ (dest_constraint_అక్షరశ్రేణులు != ఖాళీ) {
+		కొరకు (i = 0; dest_constraint_అక్షరశ్రేణులు[i] != ఖాళీ; i++) {
+			parse_dest_constraint(dest_constraint_అక్షరశ్రేణులు[i],
 			  &dest_constraints, &ndest_constraints, hostkey_files);
 		}
 	}
 
 	argc -= optind;
 	argv += optind;
-	if (Tflag) {
-		if (argc <= 0)
+	ఒకవేళ (Tflag) {
+		ఒకవేళ (argc <= 0)
 			fatal("no keys to test");
-		for (r = i = 0; i < argc; i++)
-			r |= test_key(agent_fd, argv[i]);
+		కొరకు (r = i = 0; i < argc; i++)
+			r |= test_కీలకం(agent_fd, argv[i]);
 		ret = r == 0 ? 0 : 1;
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
-	if (pkcs11provider != NULL) {
-		for (i = 0; i < argc; i++) {
-			if ((r = sshkey_load_public(argv[i], &k, NULL)) != 0)
+	ఒకవేళ (pkcs11provider != ఖాళీ) {
+		కొరకు (i = 0; i < argc; i++) {
+			ఒకవేళ ((r = sshkey_ఎక్కించు_ప్రజా(argv[i], &k, ఖాళీ)) != 0)
 				fatal_fr(r, "load certificate %s", argv[i]);
 			certs = xrecallocarray(certs, ncerts, ncerts + 1,
-			    sizeof(*certs));
+			    పరిమాణం(*certs));
 			debug2("%s: %s", argv[i], sshkey_ssh_name(k));
 			certs[ncerts++] = k;
 		}
 		debug2_f("loaded %zu certificates", ncerts);
-		if (update_card(agent_fd, !deleting, pkcs11provider,
-		    qflag, no_pin, key_only, cert_only,
+		ఒకవేళ (update_card(agent_fd, !deleting, pkcs11provider,
+		    qflag, no_pin, కీలకం_only, cert_only,
 		    dest_constraints, ndest_constraints,
 		    certs, ncerts) == -1)
 			ret = 1;
-		for (n = 0; n < ncerts; n++)
+		కొరకు (n = 0; n < ncerts; n++)
 			sshkey_free(certs[n]);
-		free(certs);
-		goto done;
+		విడుదల(certs);
+		వెళ్ళు పూర్తి;
 	}
-	if (do_download) {
-		if (skprovider == NULL)
+	ఒకవేళ (do_download) {
+		ఒకవేళ (skprovider == ఖాళీ)
 			fatal("Cannot download keys without provider");
-		if (load_resident_keys(agent_fd, skprovider, qflag, no_pin,
+		ఒకవేళ (ఎక్కించు_resident_కీలకాలు(agent_fd, skprovider, qflag, no_pin,
 		    dest_constraints, ndest_constraints) != 0)
 			ret = 1;
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
-	if (argc == 0) {
-		char buf[PATH_MAX];
-		struct passwd *pw;
-		struct stat st;
-		int count = 0;
+	ఒకవేళ (argc == 0) {
+		అక్షరం buf[PATH_MAX];
+		నిర్మాణం passwd *pw;
+		నిర్మాణం stat st;
+		పూర్ణాంకం లెక్క = 0;
 
-		if ((pw = getpwuid(getuid())) == NULL) {
+		ఒకవేళ ((pw = getpwuid(getuid())) == ఖాళీ) {
 			fprintf(stderr, "No user found with uid %u\n",
 			    (u_int)getuid());
 			ret = 1;
-			goto done;
+			వెళ్ళు పూర్తి;
 		}
 
-		for (i = 0; default_files[i]; i++) {
-			snprintf(buf, sizeof(buf), "%s/%s", pw->pw_dir,
+		కొరకు (i = 0; default_files[i]; i++) {
+			snprintf(buf, పరిమాణం(buf), "%s/%s", pw->pw_dir,
 			    default_files[i]);
-			if (stat(buf, &st) == -1)
-				continue;
-			if (do_file(agent_fd, deleting, key_only, cert_only,
+			ఒకవేళ (stat(buf, &st) == -1)
+				కొనసాగు;
+			ఒకవేళ (do_file(agent_fd, deleting, కీలకం_only, cert_only,
 			    buf, qflag, Nflag, skprovider,
 			    dest_constraints, ndest_constraints) == -1)
 				ret = 1;
-			else
-				count++;
+			లేకపోతే
+				లెక్క++;
 		}
-		if (count == 0)
+		ఒకవేళ (లెక్క == 0)
 			ret = 1;
-	} else {
-		for (i = 0; i < argc; i++) {
-			if (do_file(agent_fd, deleting, key_only, cert_only,
+	} లేకపోతే {
+		కొరకు (i = 0; i < argc; i++) {
+			ఒకవేళ (do_file(agent_fd, deleting, కీలకం_only, cert_only,
 			    argv[i], qflag, Nflag, skprovider,
 			    dest_constraints, ndest_constraints) == -1)
 				ret = 1;
 		}
 	}
-done:
+పూర్తి:
 	clear_pass();
 	stringlist_free(hostkey_files);
-	stringlist_free(dest_constraint_strings);
+	stringlist_free(dest_constraint_అక్షరశ్రేణులు);
 	free_dest_constraints(dest_constraints, ndest_constraints);
 	ssh_close_authentication_socket(agent_fd);
-	return ret;
+	తిరిగి ret;
 }

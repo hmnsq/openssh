@@ -15,143 +15,143 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
 
-#include <dirent.h>
-#include <glob.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
+#అన్తర్భావ <dirent.h>
+#అన్తర్భావ <glob.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdarg.h>
 
-#include "xmalloc.h"
-#include "sftp.h"
-#include "sftp-common.h"
-#include "sftp-client.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "sftp.h"
+#అన్తర్భావ "sftp-common.h"
+#అన్తర్భావ "sftp-client.h"
 
-int sftp_glob(struct sftp_conn *, const char *, int,
-    int (*)(const char *, int), glob_t *);
+పూర్ణాంకం sftp_glob(నిర్మాణం sftp_conn *, స్థిరరాశి అక్షరం *, పూర్ణాంకం,
+    పూర్ణాంకం (*)(స్థిరరాశి అక్షరం *, పూర్ణాంకం), glob_t *);
 
-struct SFTP_OPENDIR {
+నిర్మాణం SFTP_OPENDIR {
 	SFTP_DIRENT **dir;
-	int offset;
+	పూర్ణాంకం స్థానభ్రంశం;
 };
 
-static struct {
-	struct sftp_conn *conn;
+స్థిర నిర్మాణం {
+	నిర్మాణం sftp_conn *conn;
 } cur;
 
-static void *
-fudge_opendir(const char *path)
+స్థిర శూన్య *
+fudge_opendir(స్థిరరాశి అక్షరం *మార్గం)
 {
-	struct SFTP_OPENDIR *r;
+	నిర్మాణం SFTP_OPENDIR *r;
 
-	r = xcalloc(1, sizeof(*r));
+	r = xcalloc(1, పరిమాణం(*r));
 
-	if (sftp_readdir(cur.conn, path, &r->dir)) {
-		free(r);
-		return(NULL);
+	ఒకవేళ (sftp_readdir(cur.conn, మార్గం, &r->dir)) {
+		విడుదల(r);
+		తిరిగి(ఖాళీ);
 	}
 
-	r->offset = 0;
+	r->స్థానభ్రంశం = 0;
 
-	return((void *)r);
+	తిరిగి((శూన్య *)r);
 }
 
-static struct dirent *
-fudge_readdir(struct SFTP_OPENDIR *od)
+స్థిర నిర్మాణం dirent *
+fudge_readdir(నిర్మాణం SFTP_OPENDIR *od)
 {
 	/* Solaris needs sizeof(dirent) + path length (see below) */
-	static char buf[sizeof(struct dirent) + MAXPATHLEN];
-	struct dirent *ret = (struct dirent *)buf;
-#ifdef __GNU_LIBRARY__
-	static int inum = 1;
-#endif /* __GNU_LIBRARY__ */
+	స్థిర అక్షరం buf[పరిమాణం(నిర్మాణం dirent) + MAXPATHLEN];
+	నిర్మాణం dirent *ret = (నిర్మాణం dirent *)buf;
+#నిర్వచితమైతే __GNU_LIBRARY__
+	స్థిర పూర్ణాంకం inum = 1;
+#అయితే_ముగింపు /* __GNU_LIBRARY__ */
 
-	if (od->dir[od->offset] == NULL)
-		return(NULL);
+	ఒకవేళ (od->dir[od->స్థానభ్రంశం] == ఖాళీ)
+		తిరిగి(ఖాళీ);
 
-	memset(buf, 0, sizeof(buf));
+	memset(buf, 0, పరిమాణం(buf));
 
 	/*
 	 * Solaris defines dirent->d_name as a one byte array and expects
 	 * you to hack around it.
 	 */
-#ifdef BROKEN_ONE_BYTE_DIRENT_D_NAME
-	strlcpy(ret->d_name, od->dir[od->offset++]->filename, MAXPATHLEN);
-#else
-	strlcpy(ret->d_name, od->dir[od->offset++]->filename,
-	    sizeof(ret->d_name));
-#endif
-#ifdef __GNU_LIBRARY__
+#నిర్వచితమైతే BROKEN_ONE_BYTE_DIRENT_D_NAME
+	strlcpy(ret->d_name, od->dir[od->స్థానభ్రంశం++]->filename, MAXPATHLEN);
+#లేకపోతే
+	strlcpy(ret->d_name, od->dir[od->స్థానభ్రంశం++]->filename,
+	    పరిమాణం(ret->d_name));
+#అయితే_ముగింపు
+#నిర్వచితమైతే __GNU_LIBRARY__
 	/*
 	 * Idiot glibc uses extensions to struct dirent for readdir with
 	 * ALTDIRFUNCs. Not that this is documented anywhere but the
 	 * source... Fake an inode number to appease it.
 	 */
 	ret->d_ino = inum++;
-	if (!inum)
+	ఒకవేళ (!inum)
 		inum = 1;
-#endif /* __GNU_LIBRARY__ */
+#అయితే_ముగింపు /* __GNU_LIBRARY__ */
 
-	return(ret);
+	తిరిగి(ret);
 }
 
-static void
-fudge_closedir(struct SFTP_OPENDIR *od)
+స్థిర శూన్య
+fudge_closedir(నిర్మాణం SFTP_OPENDIR *od)
 {
 	sftp_free_dirents(od->dir);
-	free(od);
+	విడుదల(od);
 }
 
-static int
-fudge_lstat(const char *path, struct stat *st)
+స్థిర పూర్ణాంకం
+fudge_lstat(స్థిరరాశి అక్షరం *మార్గం, నిర్మాణం stat *st)
 {
 	Attrib a;
 
-	if (sftp_lstat(cur.conn, path, 1, &a) != 0)
-		return -1;
+	ఒకవేళ (sftp_lstat(cur.conn, మార్గం, 1, &a) != 0)
+		తిరిగి -1;
 
-	attrib_to_stat(&a, st);
+	attrib_గమ్యం_stat(&a, st);
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-fudge_stat(const char *path, struct stat *st)
+స్థిర పూర్ణాంకం
+fudge_stat(స్థిరరాశి అక్షరం *మార్గం, నిర్మాణం stat *st)
 {
 	Attrib a;
 
-	if (sftp_stat(cur.conn, path, 1, &a) != 0)
-		return -1;
+	ఒకవేళ (sftp_stat(cur.conn, మార్గం, 1, &a) != 0)
+		తిరిగి -1;
 
-	attrib_to_stat(&a, st);
+	attrib_గమ్యం_stat(&a, st);
 
-	return(0);
+	తిరిగి(0);
 }
 
-int
-sftp_glob(struct sftp_conn *conn, const char *pattern, int flags,
-    int (*errfunc)(const char *, int), glob_t *pglob)
+పూర్ణాంకం
+sftp_glob(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *నమూనా, పూర్ణాంకం flags,
+    పూర్ణాంకం (*errfunc)(స్థిరరాశి అక్షరం *, పూర్ణాంకం), glob_t *pglob)
 {
-	int r;
-	size_t l;
-	char *s;
-	struct stat sb;
+	పూర్ణాంకం r;
+	కొలత_t l;
+	అక్షరం *s;
+	నిర్మాణం stat sb;
 
 	pglob->gl_opendir = fudge_opendir;
-	pglob->gl_readdir = (struct dirent *(*)(void *))fudge_readdir;
-	pglob->gl_closedir = (void (*)(void *))fudge_closedir;
+	pglob->gl_readdir = (నిర్మాణం dirent *(*)(శూన్య *))fudge_readdir;
+	pglob->gl_closedir = (శూన్య (*)(శూన్య *))fudge_closedir;
 	pglob->gl_lstat = fudge_lstat;
 	pglob->gl_stat = fudge_stat;
 
-	memset(&cur, 0, sizeof(cur));
+	memset(&cur, 0, పరిమాణం(cur));
 	cur.conn = conn;
 
-	if ((r = glob(pattern, flags | GLOB_ALTDIRFUNC, errfunc, pglob)) != 0)
-		return r;
+	ఒకవేళ ((r = glob(నమూనా, flags | GLOB_ALTDIRFUNC, errfunc, pglob)) != 0)
+		తిరిగి r;
 	/*
 	 * When both GLOB_NOCHECK and GLOB_MARK are active, a single gl_pathv
 	 * entry has been returned and that entry has not already been marked,
@@ -163,17 +163,17 @@ sftp_glob(struct sftp_conn *conn, const char *pattern, int flags,
 	 *
 	 * XXX doesn't try to handle gl_offs.
 	 */
-	if ((flags & (GLOB_NOCHECK|GLOB_MARK)) == (GLOB_NOCHECK|GLOB_MARK) &&
+	ఒకవేళ ((flags & (GLOB_NOCHECK|GLOB_MARK)) == (GLOB_NOCHECK|GLOB_MARK) &&
 	    pglob->gl_matchc == 0 && pglob->gl_offs == 0 &&
-	    pglob->gl_pathc == 1 && (s = pglob->gl_pathv[0]) != NULL &&
-	    (l = strlen(s)) > 0 && s[l-1] != '/') {
-		if (fudge_stat(s, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+	    pglob->gl_pathc == 1 && (s = pglob->gl_pathv[0]) != ఖాళీ &&
+	    (l = అక్షరశ్రేణి_పొడవు(s)) > 0 && s[l-1] != '/') {
+		ఒకవేళ (fudge_stat(s, &sb) == 0 && S_ISDIR(sb.st_mode)) {
 			/* NOCHECK on a directory; annotate */
-			if ((s = realloc(s, l + 2)) != NULL) {
-				memcpy(s + l, "/", 2);
+			ఒకవేళ ((s = realloc(s, l + 2)) != ఖాళీ) {
+				జ్ఞాపకం_నకలు(s + l, "/", 2);
 				pglob->gl_pathv[0] = s;
 			}
 		}
 	}
-	return 0;
+	తిరిగి 0;
 }

@@ -28,74 +28,74 @@
  * draft-ietf-secsh-filexfer-01.txt
  */
 
-/* version */
-#define	SSH2_FILEXFER_VERSION		3
+/*సంస్కరణ*/
+#నిర్వచించు	SSH2_FILEXFER_సంస్కరణ		3
 
 /* client to server */
-#define SSH2_FXP_INIT			1
-#define SSH2_FXP_OPEN			3
-#define SSH2_FXP_CLOSE			4
-#define SSH2_FXP_READ			5
-#define SSH2_FXP_WRITE			6
-#define SSH2_FXP_LSTAT			7
-#define SSH2_FXP_STAT_VERSION_0		7
-#define SSH2_FXP_FSTAT			8
-#define SSH2_FXP_SETSTAT		9
-#define SSH2_FXP_FSETSTAT		10
-#define SSH2_FXP_OPENDIR		11
-#define SSH2_FXP_READDIR		12
-#define SSH2_FXP_REMOVE			13
-#define SSH2_FXP_MKDIR			14
-#define SSH2_FXP_RMDIR			15
-#define SSH2_FXP_REALPATH		16
-#define SSH2_FXP_STAT			17
-#define SSH2_FXP_RENAME			18
-#define SSH2_FXP_READLINK		19
-#define SSH2_FXP_SYMLINK		20
+#నిర్వచించు SSH2_FXP_INIT			1
+#నిర్వచించు SSH2_FXP_OPEN			3
+#నిర్వచించు SSH2_FXP_CLOSE			4
+#నిర్వచించు SSH2_FXP_READ			5
+#నిర్వచించు SSH2_FXP_WRITE			6
+#నిర్వచించు SSH2_FXP_LSTAT			7
+#నిర్వచించు SSH2_FXP_STAT_సంస్కరణ_0		7
+#నిర్వచించు SSH2_FXP_FSTAT			8
+#నిర్వచించు SSH2_FXP_SETSTAT		9
+#నిర్వచించు SSH2_FXP_FSETSTAT		10
+#నిర్వచించు SSH2_FXP_OPENDIR		11
+#నిర్వచించు SSH2_FXP_READDIR		12
+#నిర్వచించు SSH2_FXP_REMOVE			13
+#నిర్వచించు SSH2_FXP_MKDIR			14
+#నిర్వచించు SSH2_FXP_RMDIR			15
+#నిర్వచించు SSH2_FXP_REALPATH		16
+#నిర్వచించు SSH2_FXP_STAT			17
+#నిర్వచించు SSH2_FXP_RENAME			18
+#నిర్వచించు SSH2_FXP_READLINK		19
+#నిర్వచించు SSH2_FXP_SYMLINK		20
 
 /* server to client */
-#define SSH2_FXP_VERSION		2
-#define SSH2_FXP_STATUS			101
-#define SSH2_FXP_HANDLE			102
-#define SSH2_FXP_DATA			103
-#define SSH2_FXP_NAME			104
-#define SSH2_FXP_ATTRS			105
+#నిర్వచించు SSH2_FXP_సంస్కరణ		2
+#నిర్వచించు SSH2_FXP_స్థితి			101
+#నిర్వచించు SSH2_FXP_HANDLE			102
+#నిర్వచించు SSH2_FXP_దత్తాంశం			103
+#నిర్వచించు SSH2_FXP_NAME			104
+#నిర్వచించు SSH2_FXP_ATTRS			105
 
-#define SSH2_FXP_EXTENDED		200
-#define SSH2_FXP_EXTENDED_REPLY		201
+#నిర్వచించు SSH2_FXP_EXTENDED		200
+#నిర్వచించు SSH2_FXP_EXTENDED_జవాబు		201
 
-/* attributes */
-#define SSH2_FILEXFER_ATTR_SIZE		0x00000001
-#define SSH2_FILEXFER_ATTR_UIDGID	0x00000002
-#define SSH2_FILEXFER_ATTR_PERMISSIONS	0x00000004
-#define SSH2_FILEXFER_ATTR_ACMODTIME	0x00000008
-#define SSH2_FILEXFER_ATTR_EXTENDED	0x80000000
+/*లక్షణాలు*/
+#నిర్వచించు SSH2_FILEXFER_ATTR_కొలత		0x00000001
+#నిర్వచించు SSH2_FILEXFER_ATTR_UIDGID	0x00000002
+#నిర్వచించు SSH2_FILEXFER_ATTR_PERMISSIONS	0x00000004
+#నిర్వచించు SSH2_FILEXFER_ATTR_ACMODTIME	0x00000008
+#నిర్వచించు SSH2_FILEXFER_ATTR_EXTENDED	0x80000000
 
 /* portable open modes */
-#define SSH2_FXF_READ			0x00000001
-#define SSH2_FXF_WRITE			0x00000002
-#define SSH2_FXF_APPEND			0x00000004
-#define SSH2_FXF_CREAT			0x00000008
-#define SSH2_FXF_TRUNC			0x00000010
-#define SSH2_FXF_EXCL			0x00000020
+#నిర్వచించు SSH2_FXF_READ			0x00000001
+#నిర్వచించు SSH2_FXF_WRITE			0x00000002
+#నిర్వచించు SSH2_FXF_APPEND			0x00000004
+#నిర్వచించు SSH2_FXF_CREAT			0x00000008
+#నిర్వచించు SSH2_FXF_TRUNC			0x00000010
+#నిర్వచించు SSH2_FXF_EXCL			0x00000020
 
 /* statvfs@openssh.com f_flag flags */
-#define SSH2_FXE_STATVFS_ST_RDONLY	0x00000001
-#define SSH2_FXE_STATVFS_ST_NOSUID	0x00000002
+#నిర్వచించు SSH2_FXE_STATVFS_ST_RDONLY	0x00000001
+#నిర్వచించు SSH2_FXE_STATVFS_ST_NOSUID	0x00000002
 
 /* status messages */
-#define SSH2_FX_OK			0
-#define SSH2_FX_EOF			1
-#define SSH2_FX_NO_SUCH_FILE		2
-#define SSH2_FX_PERMISSION_DENIED	3
-#define SSH2_FX_FAILURE			4
-#define SSH2_FX_BAD_MESSAGE		5
-#define SSH2_FX_NO_CONNECTION		6
-#define SSH2_FX_CONNECTION_LOST		7
-#define SSH2_FX_OP_UNSUPPORTED		8
-#define SSH2_FX_MAX			8
+#నిర్వచించు SSH2_FX_OK			0
+#నిర్వచించు SSH2_FX_EOF			1
+#నిర్వచించు SSH2_FX_NO_SUCH_FILE		2
+#నిర్వచించు SSH2_FX_PERMISSION_DENIED	3
+#నిర్వచించు SSH2_FX_FAILURE			4
+#నిర్వచించు SSH2_FX_BAD_సందేశం		5
+#నిర్వచించు SSH2_FX_NO_CONNECTION		6
+#నిర్వచించు SSH2_FX_CONNECTION_కోల్పోయిన		7
+#నిర్వచించు SSH2_FX_OP_UNSUPPORTED		8
+#నిర్వచించు SSH2_FX_MAX			8
 
-struct passwd;
+నిర్మాణం passwd;
 
-int	sftp_server_main(int, char **, struct passwd *);
-void	sftp_server_cleanup_exit(int) __attribute__((noreturn));
+పూర్ణాంకం	sftp_server_main(పూర్ణాంకం, అక్షరం **, నిర్మాణం passwd *);
+శూన్య	sftp_server_cleanup_exit(పూర్ణాంకం) __attribute__((noreturn));

@@ -29,129 +29,129 @@ limitations under the License.
  * implementation is single-threaded.
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-extern void *__real_malloc(size_t);
-extern void *__real_calloc(size_t, size_t);
-extern void *__real_realloc(void *, size_t);
-extern void __real_free(void *);
-extern char *__real_strdup(const char *);
+బాహ్య శూన్య *__real_malloc(కొలత_t);
+బాహ్య శూన్య *__real_calloc(కొలత_t, కొలత_t);
+బాహ్య శూన్య *__real_realloc(శూన్య *, కొలత_t);
+బాహ్య శూన్య __real_free(శూన్య *);
+బాహ్య అక్షరం *__real_strdup(స్థిరరాశి అక్షరం *);
 
-struct arena_node {
-	void *ptr;
-	struct arena_node *next;
+నిర్మాణం arena_కణుపు {
+	శూన్య *ptr;
+	నిర్మాణం arena_కణుపు *తదుపరి;
 };
 
-static struct arena_node *arena_head;
-static int tracking;
+స్థిర నిర్మాణం arena_కణుపు *arena_తల;
+స్థిర పూర్ణాంకం tracking;
 
-static inline void
-arena_track(void *p)
+స్థిర అంతఃవరుస శూన్య
+arena_track(శూన్య *p)
 {
-	struct arena_node *n;
-	if (!tracking || p == NULL)
-		return;
-	n = (struct arena_node *)__real_malloc(sizeof(*n));
-	if (n == NULL)
-		return;
+	నిర్మాణం arena_కణుపు *n;
+	ఒకవేళ (!tracking || p == ఖాళీ)
+		తిరిగి;
+	n = (నిర్మాణం arena_కణుపు *)__real_malloc(పరిమాణం(*n));
+	ఒకవేళ (n == ఖాళీ)
+		తిరిగి;
 	n->ptr = p;
-	n->next = arena_head;
-	arena_head = n;
+	n->తదుపరి = arena_తల;
+	arena_తల = n;
 }
 
-static inline void
-arena_untrack(void *p)
+స్థిర అంతఃవరుస శూన్య
+arena_untrack(శూన్య *p)
 {
-	struct arena_node **pp;
-	if (p == NULL)
-		return;
-	for (pp = &arena_head; *pp != NULL; pp = &(*pp)->next) {
-		if ((*pp)->ptr == p) {
-			struct arena_node *n = *pp;
-			*pp = n->next;
+	నిర్మాణం arena_కణుపు **pp;
+	ఒకవేళ (p == ఖాళీ)
+		తిరిగి;
+	కొరకు (pp = &arena_తల; *pp != ఖాళీ; pp = &(*pp)->తదుపరి) {
+		ఒకవేళ ((*pp)->ptr == p) {
+			నిర్మాణం arena_కణుపు *n = *pp;
+			*pp = n->తదుపరి;
 			__real_free(n);
-			return;
+			తిరిగి;
 		}
 	}
 }
 
-void *
-__wrap_malloc(size_t size)
+శూన్య *
+__wrap_malloc(కొలత_t కొలత)
 {
-	void *p = __real_malloc(size);
+	శూన్య *p = __real_malloc(కొలత);
 	arena_track(p);
-	return p;
+	తిరిగి p;
 }
 
-void *
-__wrap_calloc(size_t nmemb, size_t size)
+శూన్య *
+__wrap_calloc(కొలత_t nmemb, కొలత_t కొలత)
 {
-	void *p = __real_calloc(nmemb, size);
+	శూన్య *p = __real_calloc(nmemb, కొలత);
 	arena_track(p);
-	return p;
+	తిరిగి p;
 }
 
-void *
-__wrap_realloc(void *ptr, size_t size)
+శూన్య *
+__wrap_realloc(శూన్య *ptr, కొలత_t కొలత)
 {
 	arena_untrack(ptr);
-	void *p = __real_realloc(ptr, size);
+	శూన్య *p = __real_realloc(ptr, కొలత);
 	arena_track(p);
-	return p;
+	తిరిగి p;
 }
 
-void
-__wrap_free(void *ptr)
+శూన్య
+__wrap_free(శూన్య *ptr)
 {
 	arena_untrack(ptr);
 	__real_free(ptr);
 }
 
-char *
-__wrap_strdup(const char *s)
+అక్షరం *
+__wrap_strdup(స్థిరరాశి అక్షరం *s)
 {
-	size_t len;
-	char *p;
-	if (s == NULL)
-		return NULL;
-	len = strlen(s) + 1;
-	p = (char *)__real_malloc(len);
-	if (p == NULL)
-		return NULL;
-	memcpy(p, s, len);
+	కొలత_t len;
+	అక్షరం *p;
+	ఒకవేళ (s == ఖాళీ)
+		తిరిగి ఖాళీ;
+	len = అక్షరశ్రేణి_పొడవు(s) + 1;
+	p = (అక్షరం *)__real_malloc(len);
+	ఒకవేళ (p == ఖాళీ)
+		తిరిగి ఖాళీ;
+	జ్ఞాపకం_నకలు(p, s, len);
 	arena_track(p);
-	return p;
+	తిరిగి p;
 }
 
-void
-fuzz_arena_begin(void)
+శూన్య
+fuzz_arena_begin(శూన్య)
 {
 	tracking = 1;
 }
 
-void
-fuzz_arena_release(void)
+శూన్య
+fuzz_arena_release(శూన్య)
 {
-	struct arena_node *n;
+	నిర్మాణం arena_కణుపు *n;
 	tracking = 0;
-	while (arena_head != NULL) {
-		n = arena_head;
-		arena_head = n->next;
+	అయితే (arena_తల != ఖాళీ) {
+		n = arena_తల;
+		arena_తల = n->తదుపరి;
 		__real_free(n);
 	}
 }
 
-void
-fuzz_arena_cleanup(void)
+శూన్య
+fuzz_arena_cleanup(శూన్య)
 {
-	struct arena_node *n;
+	నిర్మాణం arena_కణుపు *n;
 	tracking = 0;
-	while (arena_head != NULL) {
-		n = arena_head;
-		arena_head = n->next;
+	అయితే (arena_తల != ఖాళీ) {
+		n = arena_తల;
+		arena_తల = n->తదుపరి;
 		__real_free(n->ptr);
 		__real_free(n);
 	}

@@ -25,24 +25,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/socket.h>
 
-#include <netdb.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#అన్తర్భావ <netdb.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "dns.h"
-#include "log.h"
-#include "digest.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "dns.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "digest.h"
 
-static const char * const errset_text[] = {
+స్థిర స్థిరరాశి అక్షరం * స్థిరరాశి errset_పాఠ్యం[] = {
 	"success",		/* 0 ERRSET_SUCCESS */
 	"out of memory",	/* 1 ERRSET_NOMEMORY */
 	"general failure",	/* 2 ERRSET_FAIL */
@@ -51,24 +51,24 @@ static const char * const errset_text[] = {
 	"data does not exist",	/* 5 ERRSET_NODATA */
 };
 
-static const char *
-dns_result_totext(unsigned int res)
+స్థిర స్థిరరాశి అక్షరం *
+dns_ఫలితం_totext(గుర్తులేని పూర్ణాంకం res)
 {
-	switch (res) {
-	case ERRSET_SUCCESS:
-		return errset_text[ERRSET_SUCCESS];
-	case ERRSET_NOMEMORY:
-		return errset_text[ERRSET_NOMEMORY];
-	case ERRSET_FAIL:
-		return errset_text[ERRSET_FAIL];
-	case ERRSET_INVAL:
-		return errset_text[ERRSET_INVAL];
-	case ERRSET_NONAME:
-		return errset_text[ERRSET_NONAME];
-	case ERRSET_NODATA:
-		return errset_text[ERRSET_NODATA];
-	default:
-		return "unknown error";
+	ఎంపిక (res) {
+	స్థితి ERRSET_SUCCESS:
+		తిరిగి errset_పాఠ్యం[ERRSET_SUCCESS];
+	స్థితి ERRSET_NOMEMORY:
+		తిరిగి errset_పాఠ్యం[ERRSET_NOMEMORY];
+	స్థితి ERRSET_FAIL:
+		తిరిగి errset_పాఠ్యం[ERRSET_FAIL];
+	స్థితి ERRSET_INVAL:
+		తిరిగి errset_పాఠ్యం[ERRSET_INVAL];
+	స్థితి ERRSET_NONAME:
+		తిరిగి errset_పాఠ్యం[ERRSET_NONAME];
+	స్థితి ERRSET_NODATA:
+		తిరిగి errset_పాఠ్యం[ERRSET_NODATA];
+	అప్రమేయ:
+		తిరిగి "unknown error";
 	}
 }
 
@@ -76,262 +76,262 @@ dns_result_totext(unsigned int res)
  * Read SSHFP parameters from key buffer.
  * Caller must free digest which is allocated by sshkey_fingerprint_raw().
  */
-static int
-dns_read_key(uint8_t *algorithm, uint8_t *digest_type,
-    u_char **digest, size_t *digest_len, struct sshkey *key)
+స్థిర పూర్ణాంకం
+dns_read_కీలకం(uint8_t *algorithm, uint8_t *digest_type,
+    u_char **digest, కొలత_t *digest_len, నిర్మాణం sshkey *కీలకం)
 {
-	int r, success = 0;
-	int fp_alg = -1;
+	పూర్ణాంకం r, success = 0;
+	పూర్ణాంకం fp_alg = -1;
 
-	switch (key->type) {
-	case KEY_RSA:
-		*algorithm = SSHFP_KEY_RSA;
-		break;
-	case KEY_ECDSA:
-		*algorithm = SSHFP_KEY_ECDSA;
-		break;
-	case KEY_ED25519:
-		*algorithm = SSHFP_KEY_ED25519;
-		break;
-	default:
-		*algorithm = SSHFP_KEY_RESERVED; /* 0 */
+	ఎంపిక (కీలకం->type) {
+	స్థితి కీలకం_RSA:
+		*algorithm = SSHFP_కీలకం_RSA;
+		ఆపు;
+	స్థితి కీలకం_ECDSA:
+		*algorithm = SSHFP_కీలకం_ECDSA;
+		ఆపు;
+	స్థితి కీలకం_ED25519:
+		*algorithm = SSHFP_కీలకం_ED25519;
+		ఆపు;
+	అప్రమేయ:
+		*algorithm = SSHFP_కీలకం_RESERVED; /* 0 */
 	}
 
-	switch (*digest_type) {
-	case SSHFP_HASH_SHA1:
+	ఎంపిక (*digest_type) {
+	స్థితి SSHFP_HASH_SHA1:
 		fp_alg = SSH_DIGEST_SHA1;
-		break;
-	case SSHFP_HASH_SHA256:
+		ఆపు;
+	స్థితి SSHFP_HASH_SHA256:
 		fp_alg = SSH_DIGEST_SHA256;
-		break;
-	default:
+		ఆపు;
+	అప్రమేయ:
 		*digest_type = SSHFP_HASH_RESERVED; /* 0 */
 	}
 
-	if (*algorithm && *digest_type) {
-		if ((r = sshkey_fingerprint_raw(key, fp_alg, digest,
+	ఒకవేళ (*algorithm && *digest_type) {
+		ఒకవేళ ((r = sshkey_fingerprint_raw(కీలకం, fp_alg, digest,
 		    digest_len)) != 0)
 			fatal_fr(r, "sshkey_fingerprint_raw");
 		success = 1;
-	} else {
-		*digest = NULL;
+	} లేకపోతే {
+		*digest = ఖాళీ;
 		*digest_len = 0;
 	}
 
-	return success;
+	తిరిగి success;
 }
 
 /*
  * Read SSHFP parameters from rdata buffer.
  */
-static int
+స్థిర పూర్ణాంకం
 dns_read_rdata(uint8_t *algorithm, uint8_t *digest_type,
-    u_char **digest, size_t *digest_len, u_char *rdata, int rdata_len)
+    u_char **digest, కొలత_t *digest_len, u_char *rdata, పూర్ణాంకం rdata_len)
 {
-	int success = 0;
+	పూర్ణాంకం success = 0;
 
-	*algorithm = SSHFP_KEY_RESERVED;
+	*algorithm = SSHFP_కీలకం_RESERVED;
 	*digest_type = SSHFP_HASH_RESERVED;
 
-	if (rdata_len >= 2) {
+	ఒకవేళ (rdata_len >= 2) {
 		*algorithm = rdata[0];
 		*digest_type = rdata[1];
 		*digest_len = rdata_len - 2;
 
-		if (*digest_len > 0) {
+		ఒకవేళ (*digest_len > 0) {
 			*digest = xmalloc(*digest_len);
-			memcpy(*digest, rdata + 2, *digest_len);
-		} else {
+			జ్ఞాపకం_నకలు(*digest, rdata + 2, *digest_len);
+		} లేకపోతే {
 			*digest = (u_char *)xstrdup("");
 		}
 
 		success = 1;
 	}
 
-	return success;
+	తిరిగి success;
 }
 
 /*
  * Check if hostname is numerical.
  * Returns -1 if hostname is numeric, 0 otherwise
  */
-static int
-is_numeric_hostname(const char *hostname)
+స్థిర పూర్ణాంకం
+is_numeric_hostname(స్థిరరాశి అక్షరం *hostname)
 {
-	struct addrinfo hints, *ai;
+	నిర్మాణం addrinfo hints, *ai;
 
 	/*
 	 * We shouldn't ever get a null host but if we do then log an error
 	 * and return -1 which stops DNS key fingerprint processing.
 	 */
-	if (hostname == NULL) {
+	ఒకవేళ (hostname == ఖాళీ) {
 		error("is_numeric_hostname called with NULL hostname");
-		return -1;
+		తిరిగి -1;
 	}
 
-	memset(&hints, 0, sizeof(hints));
+	memset(&hints, 0, పరిమాణం(hints));
 	hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (getaddrinfo(hostname, NULL, &hints, &ai) == 0) {
+	ఒకవేళ (getaddrinfo(hostname, ఖాళీ, &hints, &ai) == 0) {
 		freeaddrinfo(ai);
-		return -1;
+		తిరిగి -1;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
 /*
  * Verify the given hostname, address and host key using DNS.
  * Returns 0 if lookup succeeds, -1 otherwise
  */
-int
-verify_host_key_dns(const char *hostname, struct sockaddr *address,
-    struct sshkey *hostkey, int *flags)
+పూర్ణాంకం
+verify_host_కీలకం_dns(స్థిరరాశి అక్షరం *hostname, నిర్మాణం sockaddr *చిరునామా,
+    నిర్మాణం sshkey *hostkey, పూర్ణాంకం *flags)
 {
 	u_int counter;
-	int result;
-	struct rrsetinfo *fingerprints = NULL;
+	పూర్ణాంకం ఫలితం;
+	నిర్మాణం rrsetinfo *fingerprints = ఖాళీ;
 
 	uint8_t hostkey_algorithm;
 	u_char *hostkey_digest;
-	size_t hostkey_digest_len;
+	కొలత_t hostkey_digest_len;
 
 	uint8_t dnskey_algorithm;
 	uint8_t dnskey_digest_type;
 	u_char *dnskey_digest;
-	size_t dnskey_digest_len;
+	కొలత_t dnskey_digest_len;
 
 	*flags = 0;
 
 	debug3("verify_host_key_dns");
-	if (hostkey == NULL)
+	ఒకవేళ (hostkey == ఖాళీ)
 		fatal("No key to look up!");
 
-	if (is_numeric_hostname(hostname)) {
+	ఒకవేళ (is_numeric_hostname(hostname)) {
 		debug("skipped DNS lookup for numerical hostname");
-		return -1;
+		తిరిగి -1;
 	}
 
-	result = getrrsetbyname(hostname, DNS_RDATACLASS_IN,
+	ఫలితం = getrrsetbyname(hostname, DNS_RDATACLASS_లోపల,
 	    DNS_RDATATYPE_SSHFP, 0, &fingerprints);
-	if (result) {
-		verbose("DNS lookup error: %s", dns_result_totext(result));
-		return -1;
+	ఒకవేళ (ఫలితం) {
+		verbose("DNS lookup error: %s", dns_ఫలితం_totext(ఫలితం));
+		తిరిగి -1;
 	}
 
-	if (fingerprints->rri_flags & RRSET_VALIDATED) {
+	ఒకవేళ (fingerprints->rri_flags & RRSET_VALIDATED) {
 		*flags |= DNS_VERIFY_SECURE;
 		debug("found %d secure fingerprints in DNS",
 		    fingerprints->rri_nrdatas);
-	} else {
+	} లేకపోతే {
 		debug("found %d insecure fingerprints in DNS",
 		    fingerprints->rri_nrdatas);
 	}
 
-	if (fingerprints->rri_nrdatas)
-		*flags |= DNS_VERIFY_FOUND;
+	ఒకవేళ (fingerprints->rri_nrdatas)
+		*flags |= DNS_VERIFY_దొరికింది;
 
-	for (counter = 0; counter < fingerprints->rri_nrdatas; counter++) {
+	కొరకు (counter = 0; counter < fingerprints->rri_nrdatas; counter++) {
 		/*
 		 * Extract the key from the answer. Ignore any badly
 		 * formatted fingerprints.
 		 */
-		if (!dns_read_rdata(&dnskey_algorithm, &dnskey_digest_type,
+		ఒకవేళ (!dns_read_rdata(&dnskey_algorithm, &dnskey_digest_type,
 		    &dnskey_digest, &dnskey_digest_len,
-		    fingerprints->rri_rdatas[counter].rdi_data,
-		    fingerprints->rri_rdatas[counter].rdi_length)) {
+		    fingerprints->rri_rdatas[counter].rdi_దత్తాంశం,
+		    fingerprints->rri_rdatas[counter].rdi_నిడివి)) {
 			verbose("Error parsing fingerprint from DNS.");
-			continue;
+			కొనసాగు;
 		}
 		debug3_f("checking SSHFP type %d fptype %d", dnskey_algorithm,
 		    dnskey_digest_type);
 
 		/* Calculate host key fingerprint. */
-		if (!dns_read_key(&hostkey_algorithm, &dnskey_digest_type,
+		ఒకవేళ (!dns_read_కీలకం(&hostkey_algorithm, &dnskey_digest_type,
 		    &hostkey_digest, &hostkey_digest_len, hostkey)) {
 			error("Error calculating key fingerprint.");
-			free(dnskey_digest);
+			విడుదల(dnskey_digest);
 			freerrset(fingerprints);
-			return -1;
+			తిరిగి -1;
 		}
 
 		/* Check if the current key is the same as the given key */
-		if (hostkey_algorithm == dnskey_algorithm &&
+		ఒకవేళ (hostkey_algorithm == dnskey_algorithm &&
 		    hostkey_digest_len == dnskey_digest_len) {
-			if (timingsafe_bcmp(hostkey_digest, dnskey_digest,
+			ఒకవేళ (timingsafe_bcmp(hostkey_digest, dnskey_digest,
 			    hostkey_digest_len) == 0) {
 				debug_f("matched SSHFP type %d fptype %d",
 				    dnskey_algorithm, dnskey_digest_type);
-				*flags |= DNS_VERIFY_MATCH;
-			} else {
+				*flags |= DNS_VERIFY_సరిపోలిక;
+			} లేకపోతే {
 				debug_f("failed SSHFP type %d fptype %d",
 				    dnskey_algorithm, dnskey_digest_type);
 				*flags |= DNS_VERIFY_FAILED;
 			}
 		}
-		free(dnskey_digest);
-		free(hostkey_digest); /* from sshkey_fingerprint_raw() */
+		విడుదల(dnskey_digest);
+		విడుదల(hostkey_digest); /* from sshkey_fingerprint_raw() */
 	}
 
 	freerrset(fingerprints);
 
 	/* If any fingerprint failed to validate, return failure. */
-	if (*flags & DNS_VERIFY_FAILED)
-		*flags &= ~DNS_VERIFY_MATCH;
+	ఒకవేళ (*flags & DNS_VERIFY_FAILED)
+		*flags &= ~DNS_VERIFY_సరిపోలిక;
 
-	if (*flags & DNS_VERIFY_FOUND)
-		if (*flags & DNS_VERIFY_MATCH)
+	ఒకవేళ (*flags & DNS_VERIFY_దొరికింది)
+		ఒకవేళ (*flags & DNS_VERIFY_సరిపోలిక)
 			debug("matching host key fingerprint found in DNS");
-		else
+		లేకపోతే
 			debug("mismatching host key fingerprint found in DNS");
-	else
+	లేకపోతే
 		debug("no host key fingerprint found in DNS");
 
-	return 0;
+	తిరిగి 0;
 }
 
 /*
  * Export the fingerprint of a key as a DNS resource record
  */
-int
-export_dns_rr(const char *hostname, struct sshkey *key, FILE *f, int generic,
-    int alg)
+పూర్ణాంకం
+export_dns_rr(స్థిరరాశి అక్షరం *hostname, నిర్మాణం sshkey *కీలకం, FILE *f, పూర్ణాంకం generic,
+    పూర్ణాంకం alg)
 {
 	uint8_t rdata_pubkey_algorithm = 0;
 	uint8_t rdata_digest_type = SSHFP_HASH_RESERVED;
 	uint8_t dtype;
 	u_char *rdata_digest;
-	size_t i, rdata_digest_len;
-	int success = 0;
+	కొలత_t i, rdata_digest_len;
+	పూర్ణాంకం success = 0;
 
-	for (dtype = SSHFP_HASH_SHA1; dtype < SSHFP_HASH_MAX; dtype++) {
-		if (alg != -1 && dtype != alg)
-			continue;
+	కొరకు (dtype = SSHFP_HASH_SHA1; dtype < SSHFP_HASH_MAX; dtype++) {
+		ఒకవేళ (alg != -1 && dtype != alg)
+			కొనసాగు;
 		rdata_digest_type = dtype;
-		if (dns_read_key(&rdata_pubkey_algorithm, &rdata_digest_type,
-		    &rdata_digest, &rdata_digest_len, key)) {
-			if (generic) {
+		ఒకవేళ (dns_read_కీలకం(&rdata_pubkey_algorithm, &rdata_digest_type,
+		    &rdata_digest, &rdata_digest_len, కీలకం)) {
+			ఒకవేళ (generic) {
 				fprintf(f, "%s IN TYPE%d \\# %zu %02x %02x ",
 				    hostname, DNS_RDATATYPE_SSHFP,
 				    2 + rdata_digest_len,
 				    rdata_pubkey_algorithm, rdata_digest_type);
-			} else {
+			} లేకపోతే {
 				fprintf(f, "%s IN SSHFP %d %d ", hostname,
 				    rdata_pubkey_algorithm, rdata_digest_type);
 			}
-			for (i = 0; i < rdata_digest_len; i++)
+			కొరకు (i = 0; i < rdata_digest_len; i++)
 				fprintf(f, "%02x", rdata_digest[i]);
 			fprintf(f, "\n");
-			free(rdata_digest); /* from sshkey_fingerprint_raw() */
+			విడుదల(rdata_digest); /* from sshkey_fingerprint_raw() */
 			success = 1;
 		}
 	}
 
 	/* No SSHFP record was generated at all */
-	if (success == 0) {
+	ఒకవేళ (success == 0) {
 		error_f("unsupported algorithm and/or digest_type");
 	}
 
-	return success;
+	తిరిగి success;
 }

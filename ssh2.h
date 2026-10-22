@@ -58,123 +58,123 @@
 
 /* special marker for no message */
 
-#define SSH_MSG_NONE					0
+#నిర్వచించు SSH_సందేశం_NONE					0
 
 /* ranges */
 
-#define SSH2_MSG_TRANSPORT_MIN				1
-#define SSH2_MSG_TRANSPORT_MAX				49
-#define SSH2_MSG_USERAUTH_MIN				50
-#define SSH2_MSG_USERAUTH_MAX				79
-#define SSH2_MSG_USERAUTH_PER_METHOD_MIN		60
-#define SSH2_MSG_USERAUTH_PER_METHOD_MAX		SSH2_MSG_USERAUTH_MAX
-#define SSH2_MSG_CONNECTION_MIN				80
-#define SSH2_MSG_CONNECTION_MAX				127
-#define SSH2_MSG_RESERVED_MIN				128
-#define SSH2_MSG_RESERVED_MAX				191
-#define SSH2_MSG_LOCAL_MIN				192
-#define SSH2_MSG_LOCAL_MAX				255
-#define SSH2_MSG_MIN					1
-#define SSH2_MSG_MAX					255
+#నిర్వచించు SSH2_సందేశం_TRANSPORT_MIN				1
+#నిర్వచించు SSH2_సందేశం_TRANSPORT_MAX				49
+#నిర్వచించు SSH2_సందేశం_USERAUTH_MIN				50
+#నిర్వచించు SSH2_సందేశం_USERAUTH_MAX				79
+#నిర్వచించు SSH2_సందేశం_USERAUTH_చొప్పున_పద్ధతి_MIN		60
+#నిర్వచించు SSH2_సందేశం_USERAUTH_చొప్పున_పద్ధతి_MAX		SSH2_సందేశం_USERAUTH_MAX
+#నిర్వచించు SSH2_సందేశం_CONNECTION_MIN				80
+#నిర్వచించు SSH2_సందేశం_CONNECTION_MAX				127
+#నిర్వచించు SSH2_సందేశం_RESERVED_MIN				128
+#నిర్వచించు SSH2_సందేశం_RESERVED_MAX				191
+#నిర్వచించు SSH2_సందేశం_LOCAL_MIN				192
+#నిర్వచించు SSH2_సందేశం_LOCAL_MAX				255
+#నిర్వచించు SSH2_సందేశం_MIN					1
+#నిర్వచించు SSH2_సందేశం_MAX					255
 
 /* transport layer: generic */
 
-#define SSH2_MSG_DISCONNECT				1
-#define SSH2_MSG_IGNORE					2
-#define SSH2_MSG_UNIMPLEMENTED				3
-#define SSH2_MSG_DEBUG					4
-#define SSH2_MSG_SERVICE_REQUEST			5
-#define SSH2_MSG_SERVICE_ACCEPT				6
-#define SSH2_MSG_EXT_INFO				7
-#define SSH2_MSG_NEWCOMPRESS				8
+#నిర్వచించు SSH2_సందేశం_DISCONNECT				1
+#నిర్వచించు SSH2_సందేశం_IGNORE					2
+#నిర్వచించు SSH2_సందేశం_UNIMPLEMENTED				3
+#నిర్వచించు SSH2_సందేశం_DEBUG					4
+#నిర్వచించు SSH2_సందేశం_SERVICE_REQUEST			5
+#నిర్వచించు SSH2_సందేశం_SERVICE_ACCEPT				6
+#నిర్వచించు SSH2_సందేశం_EXT_INFO				7
+#నిర్వచించు SSH2_సందేశం_NEWCOMPRESS				8
 
 /* transport layer: alg negotiation */
 
-#define SSH2_MSG_KEXINIT				20
-#define SSH2_MSG_NEWKEYS				21
+#నిర్వచించు SSH2_సందేశం_KEXINIT				20
+#నిర్వచించు SSH2_సందేశం_NEWKEYS				21
 
 /* transport layer: kex specific messages, can be reused */
 
-#define SSH2_MSG_KEXDH_INIT				30
-#define SSH2_MSG_KEXDH_REPLY				31
+#నిర్వచించు SSH2_సందేశం_KEXDH_INIT				30
+#నిర్వచించు SSH2_సందేశం_KEXDH_జవాబు				31
 
 /* dh-group-exchange */
-#define SSH2_MSG_KEX_DH_GEX_REQUEST_OLD			30
-#define SSH2_MSG_KEX_DH_GEX_GROUP			31
-#define SSH2_MSG_KEX_DH_GEX_INIT			32
-#define SSH2_MSG_KEX_DH_GEX_REPLY			33
-#define SSH2_MSG_KEX_DH_GEX_REQUEST			34
+#నిర్వచించు SSH2_సందేశం_KEX_DH_GEX_REQUEST_OLD			30
+#నిర్వచించు SSH2_సందేశం_KEX_DH_GEX_సమూహం			31
+#నిర్వచించు SSH2_సందేశం_KEX_DH_GEX_INIT			32
+#నిర్వచించు SSH2_సందేశం_KEX_DH_GEX_జవాబు			33
+#నిర్వచించు SSH2_సందేశం_KEX_DH_GEX_REQUEST			34
 
 /* ecdh */
-#define SSH2_MSG_KEX_ECDH_INIT				30
-#define SSH2_MSG_KEX_ECDH_REPLY				31
+#నిర్వచించు SSH2_సందేశం_KEX_ECDH_INIT				30
+#నిర్వచించు SSH2_సందేశం_KEX_ECDH_జవాబు				31
 
 /* transport layer: OpenSSH extensions */
-#define SSH2_MSG_PING					192
-#define SSH2_MSG_PONG					193
+#నిర్వచించు SSH2_సందేశం_PING					192
+#నిర్వచించు SSH2_సందేశం_PONG					193
 
 /* user authentication: generic */
 
-#define SSH2_MSG_USERAUTH_REQUEST			50
-#define SSH2_MSG_USERAUTH_FAILURE			51
-#define SSH2_MSG_USERAUTH_SUCCESS			52
-#define SSH2_MSG_USERAUTH_BANNER			53
+#నిర్వచించు SSH2_సందేశం_USERAUTH_REQUEST			50
+#నిర్వచించు SSH2_సందేశం_USERAUTH_FAILURE			51
+#నిర్వచించు SSH2_సందేశం_USERAUTH_SUCCESS			52
+#నిర్వచించు SSH2_సందేశం_USERAUTH_BANNER			53
 
 /* user authentication: method specific, can be reused */
 
-#define SSH2_MSG_USERAUTH_PK_OK				60
-#define SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ		60
-#define SSH2_MSG_USERAUTH_INFO_REQUEST			60
-#define SSH2_MSG_USERAUTH_INFO_RESPONSE			61
+#నిర్వచించు SSH2_సందేశం_USERAUTH_PK_OK				60
+#నిర్వచించు SSH2_సందేశం_USERAUTH_PASSWD_CHANGEREQ		60
+#నిర్వచించు SSH2_సందేశం_USERAUTH_INFO_REQUEST			60
+#నిర్వచించు SSH2_సందేశం_USERAUTH_INFO_RESPONSE			61
 
 /* connection protocol: generic */
 
-#define SSH2_MSG_GLOBAL_REQUEST				80
-#define SSH2_MSG_REQUEST_SUCCESS			81
-#define SSH2_MSG_REQUEST_FAILURE			82
+#నిర్వచించు SSH2_సందేశం_GLOBAL_REQUEST				80
+#నిర్వచించు SSH2_సందేశం_REQUEST_SUCCESS			81
+#నిర్వచించు SSH2_సందేశం_REQUEST_FAILURE			82
 
 /* channel related messages */
 
-#define SSH2_MSG_CHANNEL_OPEN				90
-#define SSH2_MSG_CHANNEL_OPEN_CONFIRMATION		91
-#define SSH2_MSG_CHANNEL_OPEN_FAILURE			92
-#define SSH2_MSG_CHANNEL_WINDOW_ADJUST			93
-#define SSH2_MSG_CHANNEL_DATA				94
-#define SSH2_MSG_CHANNEL_EXTENDED_DATA			95
-#define SSH2_MSG_CHANNEL_EOF				96
-#define SSH2_MSG_CHANNEL_CLOSE				97
-#define SSH2_MSG_CHANNEL_REQUEST			98
-#define SSH2_MSG_CHANNEL_SUCCESS			99
-#define SSH2_MSG_CHANNEL_FAILURE			100
+#నిర్వచించు SSH2_సందేశం_CHANNEL_OPEN				90
+#నిర్వచించు SSH2_సందేశం_CHANNEL_OPEN_CONFIRMATION		91
+#నిర్వచించు SSH2_సందేశం_CHANNEL_OPEN_FAILURE			92
+#నిర్వచించు SSH2_సందేశం_CHANNEL_కిటికీ_ADJUST			93
+#నిర్వచించు SSH2_సందేశం_CHANNEL_దత్తాంశం				94
+#నిర్వచించు SSH2_సందేశం_CHANNEL_EXTENDED_దత్తాంశం			95
+#నిర్వచించు SSH2_సందేశం_CHANNEL_EOF				96
+#నిర్వచించు SSH2_సందేశం_CHANNEL_CLOSE				97
+#నిర్వచించు SSH2_సందేశం_CHANNEL_REQUEST			98
+#నిర్వచించు SSH2_సందేశం_CHANNEL_SUCCESS			99
+#నిర్వచించు SSH2_సందేశం_CHANNEL_FAILURE			100
 
 /* disconnect reason code */
 
-#define SSH2_DISCONNECT_HOST_NOT_ALLOWED_TO_CONNECT	1
-#define SSH2_DISCONNECT_PROTOCOL_ERROR			2
-#define SSH2_DISCONNECT_KEY_EXCHANGE_FAILED		3
-#define SSH2_DISCONNECT_HOST_AUTHENTICATION_FAILED	4
-#define SSH2_DISCONNECT_RESERVED			4
-#define SSH2_DISCONNECT_MAC_ERROR			5
-#define SSH2_DISCONNECT_COMPRESSION_ERROR		6
-#define SSH2_DISCONNECT_SERVICE_NOT_AVAILABLE		7
-#define SSH2_DISCONNECT_PROTOCOL_VERSION_NOT_SUPPORTED	8
-#define SSH2_DISCONNECT_HOST_KEY_NOT_VERIFIABLE		9
-#define SSH2_DISCONNECT_CONNECTION_LOST			10
-#define SSH2_DISCONNECT_BY_APPLICATION			11
-#define SSH2_DISCONNECT_TOO_MANY_CONNECTIONS		12
-#define SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER		13
-#define SSH2_DISCONNECT_NO_MORE_AUTH_METHODS_AVAILABLE	14
-#define SSH2_DISCONNECT_ILLEGAL_USER_NAME		15
+#నిర్వచించు SSH2_DISCONNECT_HOST_NOT_ALLOWED_గమ్యం_CONNECT	1
+#నిర్వచించు SSH2_DISCONNECT_PROTOCOL_ERROR			2
+#నిర్వచించు SSH2_DISCONNECT_కీలకం_EXCHANGE_FAILED		3
+#నిర్వచించు SSH2_DISCONNECT_HOST_AUTHENTICATION_FAILED	4
+#నిర్వచించు SSH2_DISCONNECT_RESERVED			4
+#నిర్వచించు SSH2_DISCONNECT_MAC_ERROR			5
+#నిర్వచించు SSH2_DISCONNECT_COMPRESSION_ERROR		6
+#నిర్వచించు SSH2_DISCONNECT_SERVICE_NOT_అందుబాటు		7
+#నిర్వచించు SSH2_DISCONNECT_PROTOCOL_సంస్కరణ_NOT_SUPPORTED	8
+#నిర్వచించు SSH2_DISCONNECT_HOST_కీలకం_NOT_VERIFIABLE		9
+#నిర్వచించు SSH2_DISCONNECT_CONNECTION_కోల్పోయిన			10
+#నిర్వచించు SSH2_DISCONNECT_BY_APPLICATION			11
+#నిర్వచించు SSH2_DISCONNECT_TOO_MANY_CONNECTIONS		12
+#నిర్వచించు SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER		13
+#నిర్వచించు SSH2_DISCONNECT_NO_మరిన్ని_AUTH_METHODS_అందుబాటు	14
+#నిర్వచించు SSH2_DISCONNECT_ILLEGAL_USER_NAME		15
 
 /* misc */
 
-#define SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED		1
-#define SSH2_OPEN_CONNECT_FAILED			2
-#define SSH2_OPEN_UNKNOWN_CHANNEL_TYPE			3
-#define SSH2_OPEN_RESOURCE_SHORTAGE			4
+#నిర్వచించు SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED		1
+#నిర్వచించు SSH2_OPEN_CONNECT_FAILED			2
+#నిర్వచించు SSH2_OPEN_UNKNOWN_CHANNEL_TYPE			3
+#నిర్వచించు SSH2_OPEN_RESOURCE_SHORTAGE			4
 
-#define SSH2_EXTENDED_DATA_STDERR			1
+#నిర్వచించు SSH2_EXTENDED_దత్తాంశం_STDERR			1
 
 /* Certificate types for OpenSSH certificate keys extension */
-#define SSH2_CERT_TYPE_USER				1
-#define SSH2_CERT_TYPE_HOST				2
+#నిర్వచించు SSH2_CERT_TYPE_USER				1
+#నిర్వచించు SSH2_CERT_TYPE_HOST				2

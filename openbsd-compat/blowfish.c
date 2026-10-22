@@ -36,38 +36,38 @@
  * Bruce Schneier.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#if !defined(HAVE_BCRYPT_PBKDF) && (!defined(HAVE_BLOWFISH_INITSTATE) || \
+#ఒకవేళ !defined(HAVE_BCRYPT_PBKDF) && (!defined(HAVE_BLOWFISH_INITSTATE) || \
     !defined(HAVE_BLOWFISH_EXPAND0STATE) || !defined(HAVE_BLF_ENC))
 
-#if 0
-#include <stdio.h>		/* used for debugging */
-#include <string.h>
-#endif
+#ఒకవేళ 0
+#అన్తర్భావ <stdio.h>		/* used for debugging */
+#అన్తర్భావ <string.h>
+#అయితే_ముగింపు
 
-#include <sys/types.h>
-#ifdef HAVE_BLF_H
-#include <blf.h>
-#endif
+#అన్తర్భావ <sys/types.h>
+#నిర్వచితమైతే HAVE_BLF_H
+#అన్తర్భావ <blf.h>
+#అయితే_ముగింపు
 
-#undef inline
-#ifdef __GNUC__
-#define inline __inline
-#else				/* !__GNUC__ */
-#define inline
-#endif				/* !__GNUC__ */
+#నిర్వచనం_రద్దు అంతఃవరుస
+#నిర్వచితమైతే __GNUC__
+#నిర్వచించు అంతఃవరుస __inline
+#లేకపోతే				/* !__GNUC__ */
+#నిర్వచించు అంతఃవరుస
+#అయితే_ముగింపు				/* !__GNUC__ */
 
 /* Function for Feistel Networks */
 
-#define F(s, x) ((((s)[        (((x)>>24)&0xFF)]  \
+#నిర్వచించు F(s, x) ((((s)[        (((x)>>24)&0xFF)]  \
 		 + (s)[0x100 + (((x)>>16)&0xFF)]) \
 		 ^ (s)[0x200 + (((x)>> 8)&0xFF)]) \
 		 + (s)[0x300 + ( (x)     &0xFF)])
 
-#define BLFRND(s,p,i,j,n) (i ^= F(s,j) ^ (p)[n])
+#నిర్వచించు BLFRND(s,p,i,j,n) (i ^= F(s,j) ^ (p)[n])
 
-void
+శూన్య
 Blowfish_encipher(blf_ctx *c, u_int32_t *xl, u_int32_t *xr)
 {
 	u_int32_t Xl;
@@ -92,7 +92,7 @@ Blowfish_encipher(blf_ctx *c, u_int32_t *xl, u_int32_t *xr)
 	*xr = Xl;
 }
 
-void
+శూన్య
 Blowfish_decipher(blf_ctx *c, u_int32_t *xl, u_int32_t *xr)
 {
 	u_int32_t Xl;
@@ -117,12 +117,12 @@ Blowfish_decipher(blf_ctx *c, u_int32_t *xl, u_int32_t *xr)
 	*xr = Xl;
 }
 
-void
+శూన్య
 Blowfish_initstate(blf_ctx *c)
 {
 	/* P-box and S-box tables initialized with digits of Pi */
 
-	static const blf_ctx initstate =
+	స్థిర స్థిరరాశి blf_ctx initstate =
 	{ {
 		{
 			0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7,
@@ -397,55 +397,55 @@ Blowfish_initstate(blf_ctx *c)
 }
 
 u_int32_t
-Blowfish_stream2word(const u_int8_t *data, u_int16_t databytes,
+Blowfish_stream2word(స్థిరరాశి u_int8_t *దత్తాంశం, u_int16_t databytes,
     u_int16_t *current)
 {
 	u_int8_t i;
 	u_int16_t j;
-	u_int32_t temp;
+	u_int32_t తాత్కాలిక;
 
-	temp = 0x00000000;
+	తాత్కాలిక = 0x00000000;
 	j = *current;
 
-	for (i = 0; i < 4; i++, j++) {
-		if (j >= databytes)
+	కొరకు (i = 0; i < 4; i++, j++) {
+		ఒకవేళ (j >= databytes)
 			j = 0;
-		temp = (temp << 8) | data[j];
+		తాత్కాలిక = (తాత్కాలిక << 8) | దత్తాంశం[j];
 	}
 
 	*current = j;
-	return temp;
+	తిరిగి తాత్కాలిక;
 }
 
-void
-Blowfish_expand0state(blf_ctx *c, const u_int8_t *key, u_int16_t keybytes)
+శూన్య
+Blowfish_expand0state(blf_ctx *c, స్థిరరాశి u_int8_t *కీలకం, u_int16_t keybytes)
 {
 	u_int16_t i;
 	u_int16_t j;
 	u_int16_t k;
-	u_int32_t temp;
+	u_int32_t తాత్కాలిక;
 	u_int32_t datal;
 	u_int32_t datar;
 
 	j = 0;
-	for (i = 0; i < BLF_N + 2; i++) {
+	కొరకు (i = 0; i < BLF_N + 2; i++) {
 		/* Extract 4 int8 to 1 int32 from keystream */
-		temp = Blowfish_stream2word(key, keybytes, &j);
-		c->P[i] = c->P[i] ^ temp;
+		తాత్కాలిక = Blowfish_stream2word(కీలకం, keybytes, &j);
+		c->P[i] = c->P[i] ^ తాత్కాలిక;
 	}
 
 	j = 0;
 	datal = 0x00000000;
 	datar = 0x00000000;
-	for (i = 0; i < BLF_N + 2; i += 2) {
+	కొరకు (i = 0; i < BLF_N + 2; i += 2) {
 		Blowfish_encipher(c, &datal, &datar);
 
 		c->P[i] = datal;
 		c->P[i + 1] = datar;
 	}
 
-	for (i = 0; i < 4; i++) {
-		for (k = 0; k < 256; k += 2) {
+	కొరకు (i = 0; i < 4; i++) {
+		కొరకు (k = 0; k < 256; k += 2) {
 			Blowfish_encipher(c, &datal, &datar);
 
 			c->S[i][k] = datal;
@@ -455,40 +455,40 @@ Blowfish_expand0state(blf_ctx *c, const u_int8_t *key, u_int16_t keybytes)
 }
 
 
-void
-Blowfish_expandstate(blf_ctx *c, const u_int8_t *data, u_int16_t databytes,
-    const u_int8_t *key, u_int16_t keybytes)
+శూన్య
+Blowfish_expandstate(blf_ctx *c, స్థిరరాశి u_int8_t *దత్తాంశం, u_int16_t databytes,
+    స్థిరరాశి u_int8_t *కీలకం, u_int16_t keybytes)
 {
 	u_int16_t i;
 	u_int16_t j;
 	u_int16_t k;
-	u_int32_t temp;
+	u_int32_t తాత్కాలిక;
 	u_int32_t datal;
 	u_int32_t datar;
 
 	j = 0;
-	for (i = 0; i < BLF_N + 2; i++) {
+	కొరకు (i = 0; i < BLF_N + 2; i++) {
 		/* Extract 4 int8 to 1 int32 from keystream */
-		temp = Blowfish_stream2word(key, keybytes, &j);
-		c->P[i] = c->P[i] ^ temp;
+		తాత్కాలిక = Blowfish_stream2word(కీలకం, keybytes, &j);
+		c->P[i] = c->P[i] ^ తాత్కాలిక;
 	}
 
 	j = 0;
 	datal = 0x00000000;
 	datar = 0x00000000;
-	for (i = 0; i < BLF_N + 2; i += 2) {
-		datal ^= Blowfish_stream2word(data, databytes, &j);
-		datar ^= Blowfish_stream2word(data, databytes, &j);
+	కొరకు (i = 0; i < BLF_N + 2; i += 2) {
+		datal ^= Blowfish_stream2word(దత్తాంశం, databytes, &j);
+		datar ^= Blowfish_stream2word(దత్తాంశం, databytes, &j);
 		Blowfish_encipher(c, &datal, &datar);
 
 		c->P[i] = datal;
 		c->P[i + 1] = datar;
 	}
 
-	for (i = 0; i < 4; i++) {
-		for (k = 0; k < 256; k += 2) {
-			datal ^= Blowfish_stream2word(data, databytes, &j);
-			datar ^= Blowfish_stream2word(data, databytes, &j);
+	కొరకు (i = 0; i < 4; i++) {
+		కొరకు (k = 0; k < 256; k += 2) {
+			datal ^= Blowfish_stream2word(దత్తాంశం, databytes, &j);
+			datar ^= Blowfish_stream2word(దత్తాంశం, databytes, &j);
 			Blowfish_encipher(c, &datal, &datar);
 
 			c->S[i][k] = datal;
@@ -498,8 +498,8 @@ Blowfish_expandstate(blf_ctx *c, const u_int8_t *data, u_int16_t databytes,
 
 }
 
-void
-blf_key(blf_ctx *c, const u_int8_t *k, u_int16_t len)
+శూన్య
+blf_కీలకం(blf_ctx *c, స్థిరరాశి u_int8_t *k, u_int16_t len)
 {
 	/* Initialize S-boxes and subkeys with Pi */
 	Blowfish_initstate(c);
@@ -508,186 +508,186 @@ blf_key(blf_ctx *c, const u_int8_t *k, u_int16_t len)
 	Blowfish_expand0state(c, k, len);
 }
 
-void
-blf_enc(blf_ctx *c, u_int32_t *data, u_int16_t blocks)
+శూన్య
+blf_enc(blf_ctx *c, u_int32_t *దత్తాంశం, u_int16_t ఖండాలు)
 {
 	u_int32_t *d;
 	u_int16_t i;
 
-	d = data;
-	for (i = 0; i < blocks; i++) {
+	d = దత్తాంశం;
+	కొరకు (i = 0; i < ఖండాలు; i++) {
 		Blowfish_encipher(c, d, d + 1);
 		d += 2;
 	}
 }
 
-void
-blf_dec(blf_ctx *c, u_int32_t *data, u_int16_t blocks)
+శూన్య
+blf_dec(blf_ctx *c, u_int32_t *దత్తాంశం, u_int16_t ఖండాలు)
 {
 	u_int32_t *d;
 	u_int16_t i;
 
-	d = data;
-	for (i = 0; i < blocks; i++) {
+	d = దత్తాంశం;
+	కొరకు (i = 0; i < ఖండాలు; i++) {
 		Blowfish_decipher(c, d, d + 1);
 		d += 2;
 	}
 }
 
-void
-blf_ecb_encrypt(blf_ctx *c, u_int8_t *data, u_int32_t len)
+శూన్య
+blf_ecb_encrypt(blf_ctx *c, u_int8_t *దత్తాంశం, u_int32_t len)
 {
 	u_int32_t l, r;
 	u_int32_t i;
 
-	for (i = 0; i < len; i += 8) {
-		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
-		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
+	కొరకు (i = 0; i < len; i += 8) {
+		l = దత్తాంశం[0] << 24 | దత్తాంశం[1] << 16 | దత్తాంశం[2] << 8 | దత్తాంశం[3];
+		r = దత్తాంశం[4] << 24 | దత్తాంశం[5] << 16 | దత్తాంశం[6] << 8 | దత్తాంశం[7];
 		Blowfish_encipher(c, &l, &r);
-		data[0] = l >> 24 & 0xff;
-		data[1] = l >> 16 & 0xff;
-		data[2] = l >> 8 & 0xff;
-		data[3] = l & 0xff;
-		data[4] = r >> 24 & 0xff;
-		data[5] = r >> 16 & 0xff;
-		data[6] = r >> 8 & 0xff;
-		data[7] = r & 0xff;
-		data += 8;
+		దత్తాంశం[0] = l >> 24 & 0xff;
+		దత్తాంశం[1] = l >> 16 & 0xff;
+		దత్తాంశం[2] = l >> 8 & 0xff;
+		దత్తాంశం[3] = l & 0xff;
+		దత్తాంశం[4] = r >> 24 & 0xff;
+		దత్తాంశం[5] = r >> 16 & 0xff;
+		దత్తాంశం[6] = r >> 8 & 0xff;
+		దత్తాంశం[7] = r & 0xff;
+		దత్తాంశం += 8;
 	}
 }
 
-void
-blf_ecb_decrypt(blf_ctx *c, u_int8_t *data, u_int32_t len)
+శూన్య
+blf_ecb_decrypt(blf_ctx *c, u_int8_t *దత్తాంశం, u_int32_t len)
 {
 	u_int32_t l, r;
 	u_int32_t i;
 
-	for (i = 0; i < len; i += 8) {
-		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
-		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
+	కొరకు (i = 0; i < len; i += 8) {
+		l = దత్తాంశం[0] << 24 | దత్తాంశం[1] << 16 | దత్తాంశం[2] << 8 | దత్తాంశం[3];
+		r = దత్తాంశం[4] << 24 | దత్తాంశం[5] << 16 | దత్తాంశం[6] << 8 | దత్తాంశం[7];
 		Blowfish_decipher(c, &l, &r);
-		data[0] = l >> 24 & 0xff;
-		data[1] = l >> 16 & 0xff;
-		data[2] = l >> 8 & 0xff;
-		data[3] = l & 0xff;
-		data[4] = r >> 24 & 0xff;
-		data[5] = r >> 16 & 0xff;
-		data[6] = r >> 8 & 0xff;
-		data[7] = r & 0xff;
-		data += 8;
+		దత్తాంశం[0] = l >> 24 & 0xff;
+		దత్తాంశం[1] = l >> 16 & 0xff;
+		దత్తాంశం[2] = l >> 8 & 0xff;
+		దత్తాంశం[3] = l & 0xff;
+		దత్తాంశం[4] = r >> 24 & 0xff;
+		దత్తాంశం[5] = r >> 16 & 0xff;
+		దత్తాంశం[6] = r >> 8 & 0xff;
+		దత్తాంశం[7] = r & 0xff;
+		దత్తాంశం += 8;
 	}
 }
 
-void
-blf_cbc_encrypt(blf_ctx *c, u_int8_t *iv, u_int8_t *data, u_int32_t len)
+శూన్య
+blf_cbc_encrypt(blf_ctx *c, u_int8_t *iv, u_int8_t *దత్తాంశం, u_int32_t len)
 {
 	u_int32_t l, r;
 	u_int32_t i, j;
 
-	for (i = 0; i < len; i += 8) {
-		for (j = 0; j < 8; j++)
-			data[j] ^= iv[j];
-		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
-		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
+	కొరకు (i = 0; i < len; i += 8) {
+		కొరకు (j = 0; j < 8; j++)
+			దత్తాంశం[j] ^= iv[j];
+		l = దత్తాంశం[0] << 24 | దత్తాంశం[1] << 16 | దత్తాంశం[2] << 8 | దత్తాంశం[3];
+		r = దత్తాంశం[4] << 24 | దత్తాంశం[5] << 16 | దత్తాంశం[6] << 8 | దత్తాంశం[7];
 		Blowfish_encipher(c, &l, &r);
-		data[0] = l >> 24 & 0xff;
-		data[1] = l >> 16 & 0xff;
-		data[2] = l >> 8 & 0xff;
-		data[3] = l & 0xff;
-		data[4] = r >> 24 & 0xff;
-		data[5] = r >> 16 & 0xff;
-		data[6] = r >> 8 & 0xff;
-		data[7] = r & 0xff;
-		iv = data;
-		data += 8;
+		దత్తాంశం[0] = l >> 24 & 0xff;
+		దత్తాంశం[1] = l >> 16 & 0xff;
+		దత్తాంశం[2] = l >> 8 & 0xff;
+		దత్తాంశం[3] = l & 0xff;
+		దత్తాంశం[4] = r >> 24 & 0xff;
+		దత్తాంశం[5] = r >> 16 & 0xff;
+		దత్తాంశం[6] = r >> 8 & 0xff;
+		దత్తాంశం[7] = r & 0xff;
+		iv = దత్తాంశం;
+		దత్తాంశం += 8;
 	}
 }
 
-void
-blf_cbc_decrypt(blf_ctx *c, u_int8_t *iva, u_int8_t *data, u_int32_t len)
+శూన్య
+blf_cbc_decrypt(blf_ctx *c, u_int8_t *iva, u_int8_t *దత్తాంశం, u_int32_t len)
 {
 	u_int32_t l, r;
 	u_int8_t *iv;
 	u_int32_t i, j;
 
-	iv = data + len - 16;
-	data = data + len - 8;
-	for (i = len - 8; i >= 8; i -= 8) {
-		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
-		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
+	iv = దత్తాంశం + len - 16;
+	దత్తాంశం = దత్తాంశం + len - 8;
+	కొరకు (i = len - 8; i >= 8; i -= 8) {
+		l = దత్తాంశం[0] << 24 | దత్తాంశం[1] << 16 | దత్తాంశం[2] << 8 | దత్తాంశం[3];
+		r = దత్తాంశం[4] << 24 | దత్తాంశం[5] << 16 | దత్తాంశం[6] << 8 | దత్తాంశం[7];
 		Blowfish_decipher(c, &l, &r);
-		data[0] = l >> 24 & 0xff;
-		data[1] = l >> 16 & 0xff;
-		data[2] = l >> 8 & 0xff;
-		data[3] = l & 0xff;
-		data[4] = r >> 24 & 0xff;
-		data[5] = r >> 16 & 0xff;
-		data[6] = r >> 8 & 0xff;
-		data[7] = r & 0xff;
-		for (j = 0; j < 8; j++)
-			data[j] ^= iv[j];
+		దత్తాంశం[0] = l >> 24 & 0xff;
+		దత్తాంశం[1] = l >> 16 & 0xff;
+		దత్తాంశం[2] = l >> 8 & 0xff;
+		దత్తాంశం[3] = l & 0xff;
+		దత్తాంశం[4] = r >> 24 & 0xff;
+		దత్తాంశం[5] = r >> 16 & 0xff;
+		దత్తాంశం[6] = r >> 8 & 0xff;
+		దత్తాంశం[7] = r & 0xff;
+		కొరకు (j = 0; j < 8; j++)
+			దత్తాంశం[j] ^= iv[j];
 		iv -= 8;
-		data -= 8;
+		దత్తాంశం -= 8;
 	}
-	l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
-	r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
+	l = దత్తాంశం[0] << 24 | దత్తాంశం[1] << 16 | దత్తాంశం[2] << 8 | దత్తాంశం[3];
+	r = దత్తాంశం[4] << 24 | దత్తాంశం[5] << 16 | దత్తాంశం[6] << 8 | దత్తాంశం[7];
 	Blowfish_decipher(c, &l, &r);
-	data[0] = l >> 24 & 0xff;
-	data[1] = l >> 16 & 0xff;
-	data[2] = l >> 8 & 0xff;
-	data[3] = l & 0xff;
-	data[4] = r >> 24 & 0xff;
-	data[5] = r >> 16 & 0xff;
-	data[6] = r >> 8 & 0xff;
-	data[7] = r & 0xff;
-	for (j = 0; j < 8; j++)
-		data[j] ^= iva[j];
+	దత్తాంశం[0] = l >> 24 & 0xff;
+	దత్తాంశం[1] = l >> 16 & 0xff;
+	దత్తాంశం[2] = l >> 8 & 0xff;
+	దత్తాంశం[3] = l & 0xff;
+	దత్తాంశం[4] = r >> 24 & 0xff;
+	దత్తాంశం[5] = r >> 16 & 0xff;
+	దత్తాంశం[6] = r >> 8 & 0xff;
+	దత్తాంశం[7] = r & 0xff;
+	కొరకు (j = 0; j < 8; j++)
+		దత్తాంశం[j] ^= iva[j];
 }
 
-#if 0
-void
-report(u_int32_t data[], u_int16_t len)
+#ఒకవేళ 0
+శూన్య
+report(u_int32_t దత్తాంశం[], u_int16_t len)
 {
 	u_int16_t i;
-	for (i = 0; i < len; i += 2)
-		printf("Block %0hd: %08lx %08lx.\n",
-		    i / 2, data[i], data[i + 1]);
+	కొరకు (i = 0; i < len; i += 2)
+		రాయి("Block %0hd: %08lx %08lx.\n",
+		    i / 2, దత్తాంశం[i], దత్తాంశం[i + 1]);
 }
-void
-main(void)
+శూన్య
+ప్రధాన(శూన్య)
 {
 
 	blf_ctx c;
-	char    key[] = "AAAAA";
-	char    key2[] = "abcdefghijklmnopqrstuvwxyz";
+	అక్షరం    కీలకం[] = "AAAAA";
+	అక్షరం    key2[] = "abcdefghijklmnopqrstuvwxyz";
 
-	u_int32_t data[10];
+	u_int32_t దత్తాంశం[10];
 	u_int32_t data2[] =
 	{0x424c4f57l, 0x46495348l};
 
 	u_int16_t i;
 
 	/* First test */
-	for (i = 0; i < 10; i++)
-		data[i] = i;
+	కొరకు (i = 0; i < 10; i++)
+		దత్తాంశం[i] = i;
 
-	blf_key(&c, (u_int8_t *) key, 5);
-	blf_enc(&c, data, 5);
-	blf_dec(&c, data, 1);
-	blf_dec(&c, data + 2, 4);
-	printf("Should read as 0 - 9.\n");
-	report(data, 10);
+	blf_కీలకం(&c, (u_int8_t *) కీలకం, 5);
+	blf_enc(&c, దత్తాంశం, 5);
+	blf_dec(&c, దత్తాంశం, 1);
+	blf_dec(&c, దత్తాంశం + 2, 4);
+	రాయి("Should read as 0 - 9.\n");
+	report(దత్తాంశం, 10);
 
 	/* Second test */
-	blf_key(&c, (u_int8_t *) key2, strlen(key2));
+	blf_కీలకం(&c, (u_int8_t *) key2, అక్షరశ్రేణి_పొడవు(key2));
 	blf_enc(&c, data2, 1);
-	printf("\nShould read as: 0x324ed0fe 0xf413a203.\n");
+	రాయి("\nShould read as: 0x324ed0fe 0xf413a203.\n");
 	report(data2, 2);
 	blf_dec(&c, data2, 1);
 	report(data2, 2);
 }
-#endif
+#అయితే_ముగింపు
 
-#endif /* !defined(HAVE_BCRYPT_PBKDF) && (!defined(HAVE_BLOWFISH_INITSTATE) || \
+#అయితే_ముగింపు /* !defined(HAVE_BCRYPT_PBKDF) && (!defined(HAVE_BLOWFISH_INITSTATE) || \
     !defined(HAVE_BLOWFISH_EXPAND0STATE) || !defined(HAVE_BLF_ENC)) */
 

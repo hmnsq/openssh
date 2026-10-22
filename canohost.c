@@ -12,197 +12,197 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <sys/un.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#అన్తర్భావ <netinet/in.h>
+#అన్తర్భావ <arpa/inet.h>
 
-#include <errno.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <netdb.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <unistd.h>
 
-#include "xmalloc.h"
-#include "log.h"
-#include "canohost.h"
-#include "misc.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "canohost.h"
+#అన్తర్భావ "misc.h"
 
-void
-ipv64_normalise_mapped(struct sockaddr_storage *addr, socklen_t *len)
+శూన్య
+ipv64_normalise_mapped(నిర్మాణం sockaddr_storage *addr, socklen_t *len)
 {
-	struct sockaddr_in6 *a6 = (struct sockaddr_in6 *)addr;
-	struct sockaddr_in *a4 = (struct sockaddr_in *)addr;
-	struct in_addr inaddr;
-	uint16_t port;
+	నిర్మాణం sockaddr_in6 *a6 = (నిర్మాణం sockaddr_in6 *)addr;
+	నిర్మాణం sockaddr_in *a4 = (నిర్మాణం sockaddr_in *)addr;
+	నిర్మాణం in_addr inaddr;
+	uint16_t పోర్టు;
 
-	if (addr->ss_family != AF_INET6 ||
+	ఒకవేళ (addr->ss_family != AF_INET6 ||
 	    !IN6_IS_ADDR_V4MAPPED(&a6->sin6_addr))
-		return;
+		తిరిగి;
 
 	debug3("Normalising mapped IPv4 in IPv6 address");
 
-	memcpy(&inaddr, ((char *)&a6->sin6_addr) + 12, sizeof(inaddr));
-	port = a6->sin6_port;
+	జ్ఞాపకం_నకలు(&inaddr, ((అక్షరం *)&a6->sin6_addr) + 12, పరిమాణం(inaddr));
+	పోర్టు = a6->sin6_port;
 
-	memset(a4, 0, sizeof(*a4));
+	memset(a4, 0, పరిమాణం(*a4));
 
 	a4->sin_family = AF_INET;
-	*len = sizeof(*a4);
-	memcpy(&a4->sin_addr, &inaddr, sizeof(inaddr));
-	a4->sin_port = port;
+	*len = పరిమాణం(*a4);
+	జ్ఞాపకం_నకలు(&a4->sin_addr, &inaddr, పరిమాణం(inaddr));
+	a4->sin_port = పోర్టు;
 }
 
 /*
  * Returns the local/remote IP-address/hostname of socket as a string.
  * The returned string must be freed.
  */
-static char *
-get_socket_address(int sock, int remote, int flags)
+స్థిర అక్షరం *
+get_socket_చిరునామా(పూర్ణాంకం sock, పూర్ణాంకం remote, పూర్ణాంకం flags)
 {
-	struct sockaddr_storage addr;
+	నిర్మాణం sockaddr_storage addr;
 	socklen_t addrlen;
-	char ntop[NI_MAXHOST];
-	int r;
+	అక్షరం ntop[NI_MAXHOST];
+	పూర్ణాంకం r;
 
-	if (sock < 0)
-		return NULL;
+	ఒకవేళ (sock < 0)
+		తిరిగి ఖాళీ;
 
 	/* Get IP address of client. */
-	addrlen = sizeof(addr);
-	memset(&addr, 0, sizeof(addr));
+	addrlen = పరిమాణం(addr);
+	memset(&addr, 0, పరిమాణం(addr));
 
-	if (remote) {
-		if (getpeername(sock, (struct sockaddr *)&addr, &addrlen) != 0)
-			return NULL;
-	} else {
-		if (getsockname(sock, (struct sockaddr *)&addr, &addrlen) != 0)
-			return NULL;
+	ఒకవేళ (remote) {
+		ఒకవేళ (getpeername(sock, (నిర్మాణం sockaddr *)&addr, &addrlen) != 0)
+			తిరిగి ఖాళీ;
+	} లేకపోతే {
+		ఒకవేళ (getsockname(sock, (నిర్మాణం sockaddr *)&addr, &addrlen) != 0)
+			తిరిగి ఖాళీ;
 	}
 
 	/* Work around Linux IPv6 weirdness */
-	if (addr.ss_family == AF_INET6) {
-		addrlen = sizeof(struct sockaddr_in6);
+	ఒకవేళ (addr.ss_family == AF_INET6) {
+		addrlen = పరిమాణం(నిర్మాణం sockaddr_in6);
 		ipv64_normalise_mapped(&addr, &addrlen);
 	}
 
-	switch (addr.ss_family) {
-	case AF_INET:
-	case AF_INET6:
+	ఎంపిక (addr.ss_family) {
+	స్థితి AF_INET:
+	స్థితి AF_INET6:
 		/* Get the address in ascii. */
-		if ((r = getnameinfo((struct sockaddr *)&addr, addrlen, ntop,
-		    sizeof(ntop), NULL, 0, flags)) != 0) {
+		ఒకవేళ ((r = getnameinfo((నిర్మాణం sockaddr *)&addr, addrlen, ntop,
+		    పరిమాణం(ntop), ఖాళీ, 0, flags)) != 0) {
 			error_f("getnameinfo %d failed: %s",
 			    flags, ssh_gai_strerror(r));
-			return NULL;
+			తిరిగి ఖాళీ;
 		}
-		return xstrdup(ntop);
-	case AF_UNIX:
+		తిరిగి xstrdup(ntop);
+	స్థితి AF_UNIX:
 		/* Get the Unix domain socket path. */
-		return xstrdup(((struct sockaddr_un *)&addr)->sun_path);
-	default:
+		తిరిగి xstrdup(((నిర్మాణం sockaddr_un *)&addr)->sun_మార్గం);
+	అప్రమేయ:
 		/* We can't look up remote Unix domain sockets. */
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 }
 
-char *
-get_peer_ipaddr(int sock)
+అక్షరం *
+get_peer_ipaddr(పూర్ణాంకం sock)
 {
-	char *p;
+	అక్షరం *p;
 
-	if ((p = get_socket_address(sock, 1, NI_NUMERICHOST)) != NULL)
-		return p;
-	return xstrdup("UNKNOWN");
+	ఒకవేళ ((p = get_socket_చిరునామా(sock, 1, NI_NUMERICHOST)) != ఖాళీ)
+		తిరిగి p;
+	తిరిగి xstrdup("UNKNOWN");
 }
 
-char *
-get_local_ipaddr(int sock)
+అక్షరం *
+get_local_ipaddr(పూర్ణాంకం sock)
 {
-	char *p;
+	అక్షరం *p;
 
-	if ((p = get_socket_address(sock, 0, NI_NUMERICHOST)) != NULL)
-		return p;
-	return xstrdup("UNKNOWN");
+	ఒకవేళ ((p = get_socket_చిరునామా(sock, 0, NI_NUMERICHOST)) != ఖాళీ)
+		తిరిగి p;
+	తిరిగి xstrdup("UNKNOWN");
 }
 
-char *
-get_local_name(int fd)
+అక్షరం *
+get_local_name(పూర్ణాంకం fd)
 {
-	char *host, myname[NI_MAXHOST];
+	అక్షరం *host, myname[NI_MAXHOST];
 
 	/* Assume we were passed a socket */
-	if ((host = get_socket_address(fd, 0, NI_NAMEREQD)) != NULL)
-		return host;
+	ఒకవేళ ((host = get_socket_చిరునామా(fd, 0, NI_NAMEREQD)) != ఖాళీ)
+		తిరిగి host;
 
 	/* Handle the case where we were passed a pipe */
-	if (gethostname(myname, sizeof(myname)) == -1) {
+	ఒకవేళ (gethostname(myname, పరిమాణం(myname)) == -1) {
 		verbose_f("gethostname: %s", strerror(errno));
 		host = xstrdup("UNKNOWN");
-	} else {
+	} లేకపోతే {
 		host = xstrdup(myname);
 	}
 
-	return host;
+	తిరిగి host;
 }
 
 /* Returns the local/remote port for the socket. */
 
-static int
-get_sock_port(int sock, int local)
+స్థిర పూర్ణాంకం
+get_sock_పోర్టు(పూర్ణాంకం sock, పూర్ణాంకం local)
 {
-	struct sockaddr_storage from;
+	నిర్మాణం sockaddr_storage from;
 	socklen_t fromlen;
-	char strport[NI_MAXSERV];
-	int r;
+	అక్షరం strport[NI_MAXSERV];
+	పూర్ణాంకం r;
 
-	if (sock < 0)
-		return -1;
+	ఒకవేళ (sock < 0)
+		తిరిగి -1;
 	/* Get IP address of client. */
-	fromlen = sizeof(from);
-	memset(&from, 0, sizeof(from));
-	if (local) {
-		if (getsockname(sock, (struct sockaddr *)&from, &fromlen) == -1) {
+	fromlen = పరిమాణం(from);
+	memset(&from, 0, పరిమాణం(from));
+	ఒకవేళ (local) {
+		ఒకవేళ (getsockname(sock, (నిర్మాణం sockaddr *)&from, &fromlen) == -1) {
 			error("getsockname failed: %.100s", strerror(errno));
-			return 0;
+			తిరిగి 0;
 		}
-	} else {
-		if (getpeername(sock, (struct sockaddr *)&from, &fromlen) == -1) {
+	} లేకపోతే {
+		ఒకవేళ (getpeername(sock, (నిర్మాణం sockaddr *)&from, &fromlen) == -1) {
 			debug("getpeername failed: %.100s", strerror(errno));
-			return -1;
+			తిరిగి -1;
 		}
 	}
 
 	/* Work around Linux IPv6 weirdness */
-	if (from.ss_family == AF_INET6)
-		fromlen = sizeof(struct sockaddr_in6);
+	ఒకవేళ (from.ss_family == AF_INET6)
+		fromlen = పరిమాణం(నిర్మాణం sockaddr_in6);
 
 	/* Non-inet sockets don't have a port number. */
-	if (from.ss_family != AF_INET && from.ss_family != AF_INET6)
-		return 0;
+	ఒకవేళ (from.ss_family != AF_INET && from.ss_family != AF_INET6)
+		తిరిగి 0;
 
 	/* Return port number. */
-	if ((r = getnameinfo((struct sockaddr *)&from, fromlen, NULL, 0,
-	    strport, sizeof(strport), NI_NUMERICSERV)) != 0)
+	ఒకవేళ ((r = getnameinfo((నిర్మాణం sockaddr *)&from, fromlen, ఖాళీ, 0,
+	    strport, పరిమాణం(strport), NI_NUMERICSERV)) != 0)
 		fatal_f("getnameinfo NI_NUMERICSERV failed: %s",
 		    ssh_gai_strerror(r));
-	return atoi(strport);
+	తిరిగి atoi(strport);
 }
 
-int
-get_peer_port(int sock)
+పూర్ణాంకం
+get_peer_పోర్టు(పూర్ణాంకం sock)
 {
-	return get_sock_port(sock, 0);
+	తిరిగి get_sock_పోర్టు(sock, 0);
 }
 
-int
-get_local_port(int sock)
+పూర్ణాంకం
+get_local_పోర్టు(పూర్ణాంకం sock)
 {
-	return get_sock_port(sock, 1);
+	తిరిగి get_sock_పోర్టు(sock, 1);
 }

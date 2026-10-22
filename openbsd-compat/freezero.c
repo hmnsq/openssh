@@ -14,21 +14,21 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#ifndef HAVE_FREEZERO
+#నిర్వచితం_కాకపోతే HAVE_FREEZERO
 
-void
-freezero(void *ptr, size_t sz)
+శూన్య
+freezero(శూన్య *ptr, కొలత_t sz)
 {
-	if (ptr == NULL)
-		return;
+	ఒకవేళ (ptr == ఖాళీ)
+		తిరిగి;
 	explicit_bzero(ptr, sz);
-	free(ptr);
+	విడుదల(ptr);
 }
 
-#endif /* HAVE_FREEZERO */
+#అయితే_ముగింపు /* HAVE_FREEZERO */
 

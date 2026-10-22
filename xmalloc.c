@@ -13,104 +13,104 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include "xmalloc.h"
-#include "log.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "log.h"
 
-#if defined(__OpenBSD__)
-const char * const malloc_options = "S";
-#endif /* __OpenBSD__ */
+#ఒకవేళ defined(__OpenBSD__)
+స్థిరరాశి అక్షరం * స్థిరరాశి malloc_options = "S";
+#అయితే_ముగింపు /* __OpenBSD__ */
 
-void *
-xmalloc(size_t size)
+శూన్య *
+xmalloc(కొలత_t కొలత)
 {
-	void *ptr;
+	శూన్య *ptr;
 
-	if (size == 0)
+	ఒకవేళ (కొలత == 0)
 		fatal("xmalloc: zero size");
-	ptr = malloc(size);
-	if (ptr == NULL)
-		fatal("xmalloc: out of memory (allocating %zu bytes)", size);
-	return ptr;
+	ptr = జ్ఞాపకం_ఇవ్వు(కొలత);
+	ఒకవేళ (ptr == ఖాళీ)
+		fatal("xmalloc: out of memory (allocating %zu bytes)", కొలత);
+	తిరిగి ptr;
 }
 
-void *
-xcalloc(size_t nmemb, size_t size)
+శూన్య *
+xcalloc(కొలత_t nmemb, కొలత_t కొలత)
 {
-	void *ptr;
+	శూన్య *ptr;
 
-	if (size == 0 || nmemb == 0)
+	ఒకవేళ (కొలత == 0 || nmemb == 0)
 		fatal("xcalloc: zero size");
-	if (SIZE_MAX / nmemb < size)
+	ఒకవేళ (SIZE_MAX / nmemb < కొలత)
 		fatal("xcalloc: nmemb * size > SIZE_MAX");
-	ptr = calloc(nmemb, size);
-	if (ptr == NULL)
+	ptr = సున్నా_జ్ఞాపకం_ఇవ్వు(nmemb, కొలత);
+	ఒకవేళ (ptr == ఖాళీ)
 		fatal("xcalloc: out of memory (allocating %zu bytes)",
-		    size * nmemb);
-	return ptr;
+		    కొలత * nmemb);
+	తిరిగి ptr;
 }
 
-void *
-xreallocarray(void *ptr, size_t nmemb, size_t size)
+శూన్య *
+xreallocarray(శూన్య *ptr, కొలత_t nmemb, కొలత_t కొలత)
 {
-	void *new_ptr;
+	శూన్య *new_ptr;
 
-	new_ptr = reallocarray(ptr, nmemb, size);
-	if (new_ptr == NULL)
+	new_ptr = reallocarray(ptr, nmemb, కొలత);
+	ఒకవేళ (new_ptr == ఖాళీ)
 		fatal("xreallocarray: out of memory (%zu elements of %zu bytes)",
-		    nmemb, size);
-	return new_ptr;
+		    nmemb, కొలత);
+	తిరిగి new_ptr;
 }
 
-void *
-xrecallocarray(void *ptr, size_t onmemb, size_t nmemb, size_t size)
+శూన్య *
+xrecallocarray(శూన్య *ptr, కొలత_t onmemb, కొలత_t nmemb, కొలత_t కొలత)
 {
-	void *new_ptr;
+	శూన్య *new_ptr;
 
-	new_ptr = recallocarray(ptr, onmemb, nmemb, size);
-	if (new_ptr == NULL)
+	new_ptr = recallocarray(ptr, onmemb, nmemb, కొలత);
+	ఒకవేళ (new_ptr == ఖాళీ)
 		fatal("xrecallocarray: out of memory (%zu elements of %zu bytes)",
-		    nmemb, size);
-	return new_ptr;
+		    nmemb, కొలత);
+	తిరిగి new_ptr;
 }
 
-char *
-xstrdup(const char *str)
+అక్షరం *
+xstrdup(స్థిరరాశి అక్షరం *str)
 {
-	size_t len;
-	char *cp;
+	కొలత_t len;
+	అక్షరం *cp;
 
-	len = strlen(str) + 1;
+	len = అక్షరశ్రేణి_పొడవు(str) + 1;
 	cp = xmalloc(len);
-	return memcpy(cp, str, len);
+	తిరిగి జ్ఞాపకం_నకలు(cp, str, len);
 }
 
-int
-xvasprintf(char **ret, const char *fmt, va_list ap)
+పూర్ణాంకం
+xvasprintf(అక్షరం **ret, స్థిరరాశి అక్షరం *fmt, va_list ap)
 {
-	int i;
+	పూర్ణాంకం i;
 
 	i = vasprintf(ret, fmt, ap);
-	if (i < 0 || *ret == NULL)
+	ఒకవేళ (i < 0 || *ret == ఖాళీ)
 		fatal("xvasprintf: could not allocate memory");
-	return i;
+	తిరిగి i;
 }
 
-int
-xasprintf(char **ret, const char *fmt, ...)
+పూర్ణాంకం
+xasprintf(అక్షరం **ret, స్థిరరాశి అక్షరం *fmt, ...)
 {
 	va_list ap;
-	int i;
+	పూర్ణాంకం i;
 
 	va_start(ap, fmt);
 	i = xvasprintf(ret, fmt, ap);
 	va_end(ap);
-	return i;
+	తిరిగి i;
 }

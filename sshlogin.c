@@ -39,32 +39,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/socket.h>
 
-#include <netinet/in.h>
+#అన్తర్భావ <netinet/in.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <limits.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <limits.h>
 
-#include "sshlogin.h"
-#include "ssherr.h"
-#include "loginrec.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
+#అన్తర్భావ "sshlogin.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "loginrec.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "servconf.h"
 
-extern struct sshbuf *loginmsg;
-extern ServerOptions options;
+బాహ్య నిర్మాణం sshbuf *loginmsg;
+బాహ్య ServerOptions options;
 
 /*
  * Returns the time when the user last logged in.  Returns 0 if the
@@ -72,102 +72,102 @@ extern ServerOptions options;
  * The host the user logged in from will be returned in buf.
  */
 time_t
-get_last_login_time(uid_t uid, const char *logname,
-    char *buf, size_t bufsize)
+get_చివరి_login_సమయం(uid_t uid, స్థిరరాశి అక్షరం *logname,
+    అక్షరం *buf, కొలత_t bufsize)
 {
-	struct logininfo li;
+	నిర్మాణం logininfo li;
 
 	login_get_lastlog(&li, uid);
 	strlcpy(buf, li.hostname, bufsize);
-	return (time_t)li.tv_sec;
+	తిరిగి (time_t)li.tv_sec;
 }
 
 /*
  * Generate and store last login message.  This must be done before
  * login_login() is called and lastlog is updated.
  */
-static void
-store_lastlog_message(const char *user, uid_t uid)
+స్థిర శూన్య
+store_lastlog_సందేశం(స్థిరరాశి అక్షరం *user, uid_t uid)
 {
-#ifndef NO_SSH_LASTLOG
-# ifndef CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
-	char hostname[HOST_NAME_MAX+1] = "";
-	time_t last_login_time;
+#నిర్వచితం_కాకపోతే NO_SSH_LASTLOG
+# ifndef CUSTOM_SYS_AUTH_GET_LASTLOGIN_సందేశం
+	అక్షరం hostname[HOST_NAME_MAX+1] = "";
+	time_t చివరి_login_సమయం;
 # endif
-	char *time_string;
-	int r;
+	అక్షరం *సమయం_string;
+	పూర్ణాంకం r;
 
-	if (!options.print_lastlog)
-		return;
+	ఒకవేళ (!options.print_lastlog)
+		తిరిగి;
 
-# ifdef CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
-	time_string = sys_auth_get_lastlogin_msg(user, uid);
-	if (time_string != NULL) {
-		if ((r = sshbuf_put(loginmsg,
-		    time_string, strlen(time_string))) != 0)
+# ifdef CUSTOM_SYS_AUTH_GET_LASTLOGIN_సందేశం
+	సమయం_string = sys_auth_get_lastlogin_సందేశం(user, uid);
+	ఒకవేళ (సమయం_string != ఖాళీ) {
+		ఒకవేళ ((r = sshbuf_put(loginmsg,
+		    సమయం_string, అక్షరశ్రేణి_పొడవు(సమయం_string))) != 0)
 			fatal_fr(r, "buffer error");
-		free(time_string);
+		విడుదల(సమయం_string);
 	}
-# else
-	last_login_time = get_last_login_time(uid, user, hostname,
-	    sizeof(hostname));
+# లేకపోతే
+	చివరి_login_సమయం = get_చివరి_login_సమయం(uid, user, hostname,
+	    పరిమాణం(hostname));
 
-	if (last_login_time != 0) {
-		time_string = ctime(&last_login_time);
-		time_string[strcspn(time_string, "\n")] = '\0';
-		if (strcmp(hostname, "") == 0)
+	ఒకవేళ (చివరి_login_సమయం != 0) {
+		సమయం_string = ctime(&చివరి_login_సమయం);
+		సమయం_string[strcspn(సమయం_string, "\n")] = '\0';
+		ఒకవేళ (strcmp(hostname, "") == 0)
 			r = sshbuf_putf(loginmsg, "Last login: %s\r\n",
-			    time_string);
-		else
+			    సమయం_string);
+		లేకపోతే
 			r = sshbuf_putf(loginmsg, "Last login: %s from %s\r\n",
-			    time_string, hostname);
-		if (r != 0)
+			    సమయం_string, hostname);
+		ఒకవేళ (r != 0)
 			fatal_fr(r, "sshbuf_putf");
 	}
 # endif /* CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG */
-#endif /* NO_SSH_LASTLOG */
+#అయితే_ముగింపు /* NO_SSH_LASTLOG */
 }
 
 /*
  * Records that the user has logged in.  I wish these parts of operating
  * systems were more standardized.
  */
-void
-record_login(pid_t pid, const char *tty, const char *user, uid_t uid,
-    const char *host, struct sockaddr *addr, socklen_t addrlen)
+శూన్య
+రికార్డు_login(pid_t pid, స్థిరరాశి అక్షరం *tty, స్థిరరాశి అక్షరం *user, uid_t uid,
+    స్థిరరాశి అక్షరం *host, నిర్మాణం sockaddr *addr, socklen_t addrlen)
 {
-	struct logininfo *li;
+	నిర్మాణం logininfo *li;
 
 	/* save previous login details before writing new */
-	store_lastlog_message(user, uid);
+	store_lastlog_సందేశం(user, uid);
 
-	li = login_alloc_entry(pid, user, host, tty);
-	login_set_addr(li, addr, addrlen);
+	li = login_alloc_నమోదు(pid, user, host, tty);
+	login_సమితి_addr(li, addr, addrlen);
 	login_login(li);
-	login_free_entry(li);
+	login_free_నమోదు(li);
 }
 
-#ifdef LOGIN_NEEDS_UTMPX
-void
-record_utmp_only(pid_t pid, const char *ttyname, const char *user,
-		 const char *host, struct sockaddr *addr, socklen_t addrlen)
+#నిర్వచితమైతే LOGIN_NEEDS_UTMPX
+శూన్య
+రికార్డు_utmp_only(pid_t pid, స్థిరరాశి అక్షరం *ttyname, స్థిరరాశి అక్షరం *user,
+		 స్థిరరాశి అక్షరం *host, నిర్మాణం sockaddr *addr, socklen_t addrlen)
 {
-	struct logininfo *li;
+	నిర్మాణం logininfo *li;
 
-	li = login_alloc_entry(pid, user, host, ttyname);
-	login_set_addr(li, addr, addrlen);
+	li = login_alloc_నమోదు(pid, user, host, ttyname);
+	login_సమితి_addr(li, addr, addrlen);
 	login_utmp_only(li);
-	login_free_entry(li);
+	login_free_నమోదు(li);
 }
-#endif
+#అయితే_ముగింపు
 
 /* Records that the user has logged out. */
-void
-record_logout(pid_t pid, const char *tty, const char *user)
+శూన్య
+రికార్డు_logout(pid_t pid, స్థిరరాశి అక్షరం *tty, స్థిరరాశి అక్షరం *user)
 {
-	struct logininfo *li;
+	నిర్మాణం logininfo *li;
 
-	li = login_alloc_entry(pid, user, NULL, tty);
+	li = login_alloc_నమోదు(pid, user, ఖాళీ, tty);
 	login_logout(li);
-	login_free_entry(li);
+	login_free_నమోదు(li);
 }

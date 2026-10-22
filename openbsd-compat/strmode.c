@@ -30,119 +30,119 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strmode.c */
 
-#include "includes.h"
-#ifndef HAVE_STRMODE
+#అన్తర్భావ "includes.h"
+#నిర్వచితం_కాకపోతే HAVE_STRMODE
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <string.h>
 
 /* XXX mode should be mode_t */
 
-void
-strmode(int mode, char *p)
+శూన్య
+strmode(పూర్ణాంకం బహుళకం, అక్షరం *p)
 {
 	 /* print type */
-	switch (mode & S_IFMT) {
-	case S_IFDIR:			/* directory */
+	ఎంపిక (బహుళకం & S_IFMT) {
+	స్థితి S_IFDIR:			/* directory */
 		*p++ = 'd';
-		break;
-	case S_IFCHR:			/* character special */
+		ఆపు;
+	స్థితి S_IFCHR:			/* character special */
 		*p++ = 'c';
-		break;
-	case S_IFBLK:			/* block special */
+		ఆపు;
+	స్థితి S_IFBLK:			/* block special */
 		*p++ = 'b';
-		break;
-	case S_IFREG:			/* regular */
+		ఆపు;
+	స్థితి S_IFREG:			/* regular */
 		*p++ = '-';
-		break;
-	case S_IFLNK:			/* symbolic link */
+		ఆపు;
+	స్థితి S_IFLNK:			/* symbolic link */
 		*p++ = 'l';
-		break;
-#ifdef S_IFSOCK
-	case S_IFSOCK:			/* socket */
+		ఆపు;
+#నిర్వచితమైతే S_IFSOCK
+	స్థితి S_IFSOCK:			/* socket */
 		*p++ = 's';
-		break;
-#endif
-#ifdef S_IFIFO
-	case S_IFIFO:			/* fifo */
+		ఆపు;
+#అయితే_ముగింపు
+#నిర్వచితమైతే S_IFIFO
+	స్థితి S_IFIFO:			/* fifo */
 		*p++ = 'p';
-		break;
-#endif
-	default:			/* unknown */
+		ఆపు;
+#అయితే_ముగింపు
+	అప్రమేయ:			/* unknown */
 		*p++ = '?';
-		break;
+		ఆపు;
 	}
 	/* usr */
-	if (mode & S_IRUSR)
+	ఒకవేళ (బహుళకం & S_IRUSR)
 		*p++ = 'r';
-	else
+	లేకపోతే
 		*p++ = '-';
-	if (mode & S_IWUSR)
+	ఒకవేళ (బహుళకం & S_IWUSR)
 		*p++ = 'w';
-	else
+	లేకపోతే
 		*p++ = '-';
-	switch (mode & (S_IXUSR | S_ISUID)) {
-	case 0:
+	ఎంపిక (బహుళకం & (S_IXUSR | S_ISUID)) {
+	స్థితి 0:
 		*p++ = '-';
-		break;
-	case S_IXUSR:
+		ఆపు;
+	స్థితి S_IXUSR:
 		*p++ = 'x';
-		break;
-	case S_ISUID:
+		ఆపు;
+	స్థితి S_ISUID:
 		*p++ = 'S';
-		break;
-	case S_IXUSR | S_ISUID:
+		ఆపు;
+	స్థితి S_IXUSR | S_ISUID:
 		*p++ = 's';
-		break;
+		ఆపు;
 	}
-	/* group */
-	if (mode & S_IRGRP)
+	/*సమూహం*/
+	ఒకవేళ (బహుళకం & S_IRGRP)
 		*p++ = 'r';
-	else
+	లేకపోతే
 		*p++ = '-';
-	if (mode & S_IWGRP)
+	ఒకవేళ (బహుళకం & S_IWGRP)
 		*p++ = 'w';
-	else
+	లేకపోతే
 		*p++ = '-';
-	switch (mode & (S_IXGRP | S_ISGID)) {
-	case 0:
+	ఎంపిక (బహుళకం & (S_IXGRP | S_ISGID)) {
+	స్థితి 0:
 		*p++ = '-';
-		break;
-	case S_IXGRP:
+		ఆపు;
+	స్థితి S_IXGRP:
 		*p++ = 'x';
-		break;
-	case S_ISGID:
+		ఆపు;
+	స్థితి S_ISGID:
 		*p++ = 'S';
-		break;
-	case S_IXGRP | S_ISGID:
+		ఆపు;
+	స్థితి S_IXGRP | S_ISGID:
 		*p++ = 's';
-		break;
+		ఆపు;
 	}
 	/* other */
-	if (mode & S_IROTH)
+	ఒకవేళ (బహుళకం & S_IROTH)
 		*p++ = 'r';
-	else
+	లేకపోతే
 		*p++ = '-';
-	if (mode & S_IWOTH)
+	ఒకవేళ (బహుళకం & S_IWOTH)
 		*p++ = 'w';
-	else
+	లేకపోతే
 		*p++ = '-';
-	switch (mode & (S_IXOTH | S_ISVTX)) {
-	case 0:
+	ఎంపిక (బహుళకం & (S_IXOTH | S_ISVTX)) {
+	స్థితి 0:
 		*p++ = '-';
-		break;
-	case S_IXOTH:
+		ఆపు;
+	స్థితి S_IXOTH:
 		*p++ = 'x';
-		break;
-	case S_ISVTX:
+		ఆపు;
+	స్థితి S_ISVTX:
 		*p++ = 'T';
-		break;
-	case S_IXOTH | S_ISVTX:
+		ఆపు;
+	స్థితి S_IXOTH | S_ISVTX:
 		*p++ = 't';
-		break;
+		ఆపు;
 	}
 	*p++ = ' ';		/* will be a '+' if ACL's implemented */
 	*p = '\0';
 }
-#endif
+#అయితే_ముగింపు

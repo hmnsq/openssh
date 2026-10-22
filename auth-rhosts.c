@@ -14,36 +14,36 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <netgroup.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <unistd.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <netgroup.h>
+#అన్తర్భావ <pwd.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <unistd.h>
 
-#include "packet.h"
-#include "uidswap.h"
-#include "pathnames.h"
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "servconf.h"
-#include "canohost.h"
-#include "hostfile.h"
-#include "auth.h"
+#అన్తర్భావ "packet.h"
+#అన్తర్భావ "uidswap.h"
+#అన్తర్భావ "pathnames.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "servconf.h"
+#అన్తర్భావ "canohost.h"
+#అన్తర్భావ "hostfile.h"
+#అన్తర్భావ "auth.h"
 
 /* import */
-extern ServerOptions options;
+బాహ్య ServerOptions options;
 
 /*
  * This function processes an rhosts-style file (.rhosts, .shosts, or
@@ -51,75 +51,75 @@ extern ServerOptions options;
  * based on the file, and returns zero otherwise.
  */
 
-static int
-check_rhosts_file(const char *filename, const char *hostname,
-		  const char *ipaddr, const char *client_user,
-		  const char *server_user)
+స్థిర పూర్ణాంకం
+check_rhosts_file(స్థిరరాశి అక్షరం *filename, స్థిరరాశి అక్షరం *hostname,
+		  స్థిరరాశి అక్షరం *ipaddr, స్థిరరాశి అక్షరం *client_user,
+		  స్థిరరాశి అక్షరం *server_user)
 {
 	FILE *f;
-#define RBUFLN 1024
-	char buf[RBUFLN];/* Must not be larger than host, user, dummy below. */
-	int fd;
-	struct stat st;
+#నిర్వచించు RBUFLN 1024
+	అక్షరం buf[RBUFLN];/* Must not be larger than host, user, dummy below. */
+	పూర్ణాంకం fd;
+	నిర్మాణం stat st;
 
 	/* Open the .rhosts file, deny if unreadable */
-	if ((fd = open(filename, O_RDONLY|O_NONBLOCK)) == -1)
-		return 0;
-	if (fstat(fd, &st) == -1) {
+	ఒకవేళ ((fd = open(filename, O_RDONLY|O_NONBLOCK)) == -1)
+		తిరిగి 0;
+	ఒకవేళ (fstat(fd, &st) == -1) {
 		close(fd);
-		return 0;
+		తిరిగి 0;
 	}
-	if (!S_ISREG(st.st_mode)) {
+	ఒకవేళ (!S_ISREG(st.st_mode)) {
 		logit("User %s hosts file %s is not a regular file",
 		    server_user, filename);
 		close(fd);
-		return 0;
+		తిరిగి 0;
 	}
 	unset_nonblock(fd);
-	if ((f = fdopen(fd, "r")) == NULL) {
+	ఒకవేళ ((f = fdopen(fd, "r")) == ఖాళీ) {
 		close(fd);
-		return 0;
+		తిరిగి 0;
 	}
-	while (fgets(buf, sizeof(buf), f)) {
+	అయితే (fgets(buf, పరిమాణం(buf), f)) {
 		/* All three must have length >= buf to avoid overflows. */
-		char hostbuf[RBUFLN], userbuf[RBUFLN], dummy[RBUFLN];
-		char *host, *user, *cp;
-		int negated;
+		అక్షరం hostbuf[RBUFLN], userbuf[RBUFLN], dummy[RBUFLN];
+		అక్షరం *host, *user, *cp;
+		పూర్ణాంకం negated;
 
-		for (cp = buf; *cp == ' ' || *cp == '\t'; cp++)
+		కొరకు (cp = buf; *cp == ' ' || *cp == '\t'; cp++)
 			;
-		if (*cp == '#' || *cp == '\n' || !*cp)
-			continue;
+		ఒకవేళ (*cp == '#' || *cp == '\n' || !*cp)
+			కొనసాగు;
 
 		/*
 		 * NO_PLUS is supported at least on OSF/1.  We skip it (we
 		 * don't ever support the plus syntax).
 		 */
-		if (strncmp(cp, "NO_PLUS", 7) == 0)
-			continue;
+		ఒకవేళ (అక్షరశ్రేణి_పోలిక(cp, "NO_PLUS", 7) == 0)
+			కొనసాగు;
 
 		/*
 		 * This should be safe because each buffer is as big as the
 		 * whole string, and thus cannot be overwritten.
 		 */
-		switch (sscanf(buf, "%1023s %1023s %1023s", hostbuf, userbuf,
+		ఎంపిక (అక్షరశ్రేణి_చదువు(buf, "%1023s %1023s %1023s", hostbuf, userbuf,
 		    dummy)) {
-		case 0:
-			auth_debug_add("Found empty line in %.100s.", filename);
-			continue;
-		case 1:
+		స్థితి 0:
+			auth_debug_కూడు("Found empty line in %.100s.", filename);
+			కొనసాగు;
+		స్థితి 1:
 			/* Host name only. */
-			strlcpy(userbuf, server_user, sizeof(userbuf));
-			break;
-		case 2:
+			strlcpy(userbuf, server_user, పరిమాణం(userbuf));
+			ఆపు;
+		స్థితి 2:
 			/* Got both host and user name. */
-			break;
-		case 3:
-			auth_debug_add("Found garbage in %.100s.", filename);
-			continue;
-		default:
+			ఆపు;
+		స్థితి 3:
+			auth_debug_కూడు("Found garbage in %.100s.", filename);
+			కొనసాగు;
+		అప్రమేయ:
 			/* Weird... */
-			continue;
+			కొనసాగు;
 		}
 
 		host = hostbuf;
@@ -127,57 +127,57 @@ check_rhosts_file(const char *filename, const char *hostname,
 		negated = 0;
 
 		/* Process negated host names, or positive netgroups. */
-		if (host[0] == '-') {
+		ఒకవేళ (host[0] == '-') {
 			negated = 1;
 			host++;
-		} else if (host[0] == '+')
+		} లేకపోతే ఒకవేళ (host[0] == '+')
 			host++;
 
-		if (user[0] == '-') {
+		ఒకవేళ (user[0] == '-') {
 			negated = 1;
 			user++;
-		} else if (user[0] == '+')
+		} లేకపోతే ఒకవేళ (user[0] == '+')
 			user++;
 
 		/* Check for empty host/user names (particularly '+'). */
-		if (!host[0] || !user[0]) {
+		ఒకవేళ (!host[0] || !user[0]) {
 			/* We come here if either was '+' or '-'. */
-			auth_debug_add("Ignoring wild host/user names "
+			auth_debug_కూడు("Ignoring wild host/user names "
 			    "in %.100s.", filename);
-			continue;
+			కొనసాగు;
 		}
 		/* Verify that host name matches. */
-		if (host[0] == '@') {
-			if (!innetgr(host + 1, hostname, NULL, NULL) &&
-			    !innetgr(host + 1, ipaddr, NULL, NULL))
-				continue;
-		} else if (strcasecmp(host, hostname) &&
+		ఒకవేళ (host[0] == '@') {
+			ఒకవేళ (!innetgr(host + 1, hostname, ఖాళీ, ఖాళీ) &&
+			    !innetgr(host + 1, ipaddr, ఖాళీ, ఖాళీ))
+				కొనసాగు;
+		} లేకపోతే ఒకవేళ (strcasecmp(host, hostname) &&
 		    strcmp(host, ipaddr) != 0)
-			continue;	/* Different hostname. */
+			కొనసాగు;	/* Different hostname. */
 
 		/* Verify that user name matches. */
-		if (user[0] == '@') {
-			if (!innetgr(user + 1, NULL, client_user, NULL))
-				continue;
-		} else if (strcmp(user, client_user) != 0)
-			continue;	/* Different username. */
+		ఒకవేళ (user[0] == '@') {
+			ఒకవేళ (!innetgr(user + 1, ఖాళీ, client_user, ఖాళీ))
+				కొనసాగు;
+		} లేకపోతే ఒకవేళ (strcmp(user, client_user) != 0)
+			కొనసాగు;	/* Different username. */
 
 		/* Found the user and host. */
 		fclose(f);
 
 		/* If the entry was negated, deny access. */
-		if (negated) {
-			auth_debug_add("Matched negative entry in %.100s.",
+		ఒకవేళ (negated) {
+			auth_debug_కూడు("Matched negative entry in %.100s.",
 			    filename);
-			return 0;
+			తిరిగి 0;
 		}
 		/* Accept authentication. */
-		return 1;
+		తిరిగి 1;
 	}
 
 	/* Authentication using this file denied. */
 	fclose(f);
-	return 0;
+	తిరిగి 0;
 }
 
 /*
@@ -185,15 +185,15 @@ check_rhosts_file(const char *filename, const char *hostname,
  * true if authentication succeeds.  If ignore_rhosts is true, only
  * /etc/hosts.equiv will be considered (.rhosts and .shosts are ignored).
  */
-int
-auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
-    const char *ipaddr)
+పూర్ణాంకం
+auth_rhosts2(నిర్మాణం passwd *pw, స్థిరరాశి అక్షరం *client_user, స్థిరరాశి అక్షరం *hostname,
+    స్థిరరాశి అక్షరం *ipaddr)
 {
-	char *path = NULL;
-	struct stat st;
-	static const char * const rhosts_files[] = {".shosts", ".rhosts", NULL};
-	u_int rhosts_file_index;
-	int r;
+	అక్షరం *మార్గం = ఖాళీ;
+	నిర్మాణం stat st;
+	స్థిర స్థిరరాశి అక్షరం * స్థిరరాశి rhosts_files[] = {".shosts", ".rhosts", ఖాళీ};
+	u_int rhosts_file_సూచీ;
+	పూర్ణాంకం r;
 
 	debug2_f("clientuser %s hostname %s ipaddr %s",
 	    client_user, hostname, ipaddr);
@@ -206,15 +206,15 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 	 * failure immediately without doing costly lookups from name
 	 * servers.
 	 */
-	for (rhosts_file_index = 0; rhosts_files[rhosts_file_index];
-	    rhosts_file_index++) {
+	కొరకు (rhosts_file_సూచీ = 0; rhosts_files[rhosts_file_సూచీ];
+	    rhosts_file_సూచీ++) {
 		/* Check users .rhosts or .shosts. */
-		xasprintf(&path, "%s/%s",
-		    pw->pw_dir, rhosts_files[rhosts_file_index]);
-		r = stat(path, &st);
-		free(path);
-		if (r >= 0)
-			break;
+		xasprintf(&మార్గం, "%s/%s",
+		    pw->pw_dir, rhosts_files[rhosts_file_సూచీ]);
+		r = stat(మార్గం, &st);
+		విడుదల(మార్గం);
+		ఒకవేళ (r >= 0)
+			ఆపు;
 	}
 	/* Switch back to privileged uid. */
 	restore_uid();
@@ -223,31 +223,31 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 	 * Deny if The user has no .shosts or .rhosts file and there
 	 * are no system-wide files.
 	 */
-	if (!rhosts_files[rhosts_file_index] &&
-	    stat(_PATH_RHOSTS_EQUIV, &st) == -1 &&
-	    stat(_PATH_SSH_HOSTS_EQUIV, &st) == -1) {
+	ఒకవేళ (!rhosts_files[rhosts_file_సూచీ] &&
+	    stat(మార్గం_RHOSTS_EQUIV, &st) == -1 &&
+	    stat(మార్గం_SSH_HOSTS_EQUIV, &st) == -1) {
 		debug3_f("no hosts access files exist");
-		return 0;
+		తిరిగి 0;
 	}
 
 	/*
 	 * If not logging in as superuser, try /etc/hosts.equiv and
 	 * shosts.equiv.
 	 */
-	if (pw->pw_uid == 0)
+	ఒకవేళ (pw->pw_uid == 0)
 		debug3_f("root user, ignoring system hosts files");
-	else {
-		if (check_rhosts_file(_PATH_RHOSTS_EQUIV, hostname, ipaddr,
+	లేకపోతే {
+		ఒకవేళ (check_rhosts_file(మార్గం_RHOSTS_EQUIV, hostname, ipaddr,
 		    client_user, pw->pw_name)) {
-			auth_debug_add("Accepted for %.100s [%.100s] by "
+			auth_debug_కూడు("Accepted for %.100s [%.100s] by "
 			    "/etc/hosts.equiv.", hostname, ipaddr);
-			return 1;
+			తిరిగి 1;
 		}
-		if (check_rhosts_file(_PATH_SSH_HOSTS_EQUIV, hostname, ipaddr,
+		ఒకవేళ (check_rhosts_file(మార్గం_SSH_HOSTS_EQUIV, hostname, ipaddr,
 		    client_user, pw->pw_name)) {
-			auth_debug_add("Accepted for %.100s [%.100s] by "
-			    "%.100s.", hostname, ipaddr, _PATH_SSH_HOSTS_EQUIV);
-			return 1;
+			auth_debug_కూడు("Accepted for %.100s [%.100s] by "
+			    "%.100s.", hostname, ipaddr, మార్గం_SSH_HOSTS_EQUIV);
+			తిరిగి 1;
 		}
 	}
 
@@ -255,35 +255,35 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 	 * Check that the home directory is owned by root or the user, and is
 	 * not group or world writable.
 	 */
-	if (stat(pw->pw_dir, &st) == -1) {
+	ఒకవేళ (stat(pw->pw_dir, &st) == -1) {
 		logit("Rhosts authentication refused for %.100s: "
 		    "no home directory %.200s", pw->pw_name, pw->pw_dir);
-		auth_debug_add("Rhosts authentication refused for %.100s: "
+		auth_debug_కూడు("Rhosts authentication refused for %.100s: "
 		    "no home directory %.200s", pw->pw_name, pw->pw_dir);
-		return 0;
+		తిరిగి 0;
 	}
-	if (options.strict_modes &&
+	ఒకవేళ (options.strict_modes &&
 	    ((st.st_uid != 0 && st.st_uid != pw->pw_uid) ||
 	    (st.st_mode & 022) != 0)) {
 		logit("Rhosts authentication refused for %.100s: "
 		    "bad ownership or modes for home directory.", pw->pw_name);
-		auth_debug_add("Rhosts authentication refused for %.100s: "
+		auth_debug_కూడు("Rhosts authentication refused for %.100s: "
 		    "bad ownership or modes for home directory.", pw->pw_name);
-		return 0;
+		తిరిగి 0;
 	}
 	/* Temporarily use the user's uid. */
 	temporarily_use_uid(pw);
 
 	/* Check all .rhosts files (currently .shosts and .rhosts). */
-	for (rhosts_file_index = 0; rhosts_files[rhosts_file_index];
-	    rhosts_file_index++) {
+	కొరకు (rhosts_file_సూచీ = 0; rhosts_files[rhosts_file_సూచీ];
+	    rhosts_file_సూచీ++) {
 		/* Check users .rhosts or .shosts. */
-		xasprintf(&path, "%s/%s",
-		    pw->pw_dir, rhosts_files[rhosts_file_index]);
-		if (stat(path, &st) == -1) {
-			debug3_f("stat %s: %s", path, strerror(errno));
-			free(path);
-			continue;
+		xasprintf(&మార్గం, "%s/%s",
+		    pw->pw_dir, rhosts_files[rhosts_file_సూచీ]);
+		ఒకవేళ (stat(మార్గం, &st) == -1) {
+			debug3_f("stat %s: %s", మార్గం, strerror(errno));
+			విడుదల(మార్గం);
+			కొనసాగు;
 		}
 
 		/*
@@ -292,44 +292,44 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 		 * owner.  This is to help avoid novices accidentally
 		 * allowing access to their account by anyone.
 		 */
-		if (options.strict_modes &&
+		ఒకవేళ (options.strict_modes &&
 		    ((st.st_uid != 0 && st.st_uid != pw->pw_uid) ||
 		    (st.st_mode & 022) != 0)) {
 			logit("Rhosts authentication refused for %.100s: "
-			    "bad modes for %.200s", pw->pw_name, path);
-			auth_debug_add("Bad file modes for %.200s", path);
-			free(path);
-			continue;
+			    "bad modes for %.200s", pw->pw_name, మార్గం);
+			auth_debug_కూడు("Bad file modes for %.200s", మార్గం);
+			విడుదల(మార్గం);
+			కొనసాగు;
 		}
 		/*
 		 * Check if we have been configured to ignore .rhosts
 		 * and .shosts files.
 		 */
-		if (options.ignore_rhosts == IGNORE_RHOSTS_YES ||
+		ఒకవేళ (options.ignore_rhosts == IGNORE_RHOSTS_YES ||
 		    (options.ignore_rhosts == IGNORE_RHOSTS_SHOSTS &&
-		    strcmp(rhosts_files[rhosts_file_index], ".shosts") != 0)) {
-			auth_debug_add("Server has been configured to "
-			    "ignore %.100s.", rhosts_files[rhosts_file_index]);
-			free(path);
-			continue;
+		    strcmp(rhosts_files[rhosts_file_సూచీ], ".shosts") != 0)) {
+			auth_debug_కూడు("Server has been configured to "
+			    "ignore %.100s.", rhosts_files[rhosts_file_సూచీ]);
+			విడుదల(మార్గం);
+			కొనసాగు;
 		}
 		/* Check if authentication is permitted by the file. */
-		if (check_rhosts_file(path, hostname, ipaddr,
+		ఒకవేళ (check_rhosts_file(మార్గం, hostname, ipaddr,
 		    client_user, pw->pw_name)) {
-			auth_debug_add("Accepted by %.100s.",
-			    rhosts_files[rhosts_file_index]);
+			auth_debug_కూడు("Accepted by %.100s.",
+			    rhosts_files[rhosts_file_సూచీ]);
 			/* Restore the privileged uid. */
 			restore_uid();
-			auth_debug_add("Accepted host %s ip %s client_user "
+			auth_debug_కూడు("Accepted host %s ip %s client_user "
 			    "%s server_user %s", hostname, ipaddr,
 			    client_user, pw->pw_name);
-			free(path);
-			return 1;
+			విడుదల(మార్గం);
+			తిరిగి 1;
 		}
-		free(path);
+		విడుదల(మార్గం);
 	}
 
 	/* Restore the privileged uid. */
 	restore_uid();
-	return 0;
+	తిరిగి 0;
 }

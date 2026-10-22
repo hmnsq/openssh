@@ -44,86 +44,86 @@
   * includes a fast IA-32 assembly version.
   *
   /////////////////////////////////////////////////////////////////////// */
-#ifndef HEADER_UMAC_H
-#define HEADER_UMAC_H
+#నిర్వచితం_కాకపోతే శీర్షిక_UMAC_H
+#నిర్వచించు శీర్షిక_UMAC_H
 
 
-#ifdef __cplusplus
-    extern "C" {
-#endif
+#నిర్వచితమైతే __cplusplus
+    బాహ్య "C" {
+#అయితే_ముగింపు
 
-struct umac_ctx *umac_new(const u_char key[]);
+నిర్మాణం umac_ctx *umac_new(స్థిరరాశి u_char కీలకం[]);
 /* Dynamically allocate a umac_ctx struct, initialize variables, 
  * generate subkeys from key.
  */
 
-#if 0
-int umac_reset(struct umac_ctx *ctx);
+#ఒకవేళ 0
+పూర్ణాంకం umac_reset(నిర్మాణం umac_ctx *ctx);
 /* Reset a umac_ctx to begin authenticating a new message */
-#endif
+#అయితే_ముగింపు
 
-int umac_update(struct umac_ctx *ctx, const u_char *input, long len);
+పూర్ణాంకం umac_update(నిర్మాణం umac_ctx *ctx, స్థిరరాశి u_char *ఆదానం, దీర్ఘ len);
 /* Incorporate len bytes pointed to by input into context ctx */
 
-int umac_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8]);
+పూర్ణాంకం umac_final(నిర్మాణం umac_ctx *ctx, u_char ట్యాగ్[], స్థిరరాశి u_char nonce[8]);
 /* Incorporate any pending data and the ctr value, and return tag. 
  * This function returns error code if ctr < 0. 
  */
 
-int umac_delete(struct umac_ctx *ctx);
+పూర్ణాంకం umac_delete(నిర్మాణం umac_ctx *ctx);
 /* Deallocate the context structure */
 
-#if 0
-int umac(struct umac_ctx *ctx, u_char *input, 
-         long len, u_char tag[],
+#ఒకవేళ 0
+పూర్ణాంకం umac(నిర్మాణం umac_ctx *ctx, u_char *ఆదానం, 
+         దీర్ఘ len, u_char ట్యాగ్[],
          u_char nonce[8]);
 /* All-in-one implementation of the functions Reset, Update and Final */
-#endif
+#అయితే_ముగింపు
 
 /* uhash.h */
 
 
-#if 0
-typedef struct uhash_ctx *uhash_ctx_t;
+#ఒకవేళ 0
+రకనిర్వచనం నిర్మాణం uhash_ctx *uhash_ctx_t;
   /* The uhash_ctx structure is defined by the implementation of the    */
   /* UHASH functions.                                                   */
  
-uhash_ctx_t uhash_alloc(u_char key[16]);
+uhash_ctx_t uhash_alloc(u_char కీలకం[16]);
   /* Dynamically allocate a uhash_ctx struct and generate subkeys using */
   /* the kdf and kdf_key passed in. If kdf_key_len is 0 then RC6 is     */
   /* used to generate key with a fixed key. If kdf_key_len > 0 but kdf  */
   /* is NULL then the first 16 bytes pointed at by kdf_key is used as a */
   /* key for an RC6 based KDF.                                          */
   
-int uhash_free(uhash_ctx_t ctx);
+పూర్ణాంకం uhash_free(uhash_ctx_t ctx);
 
-int uhash_set_params(uhash_ctx_t ctx,
-                   void       *params);
+పూర్ణాంకం uhash_సమితి_params(uhash_ctx_t ctx,
+                   శూన్య       *params);
 
-int uhash_reset(uhash_ctx_t ctx);
+పూర్ణాంకం uhash_reset(uhash_ctx_t ctx);
 
-int uhash_update(uhash_ctx_t ctx,
-               u_char       *input,
-               long        len);
+పూర్ణాంకం uhash_update(uhash_ctx_t ctx,
+               u_char       *ఆదానం,
+               దీర్ఘ        len);
 
-int uhash_final(uhash_ctx_t ctx,
+పూర్ణాంకం uhash_final(uhash_ctx_t ctx,
               u_char        output[]);
 
-int uhash(uhash_ctx_t ctx,
-        u_char       *input,
-        long        len,
+పూర్ణాంకం uhash(uhash_ctx_t ctx,
+        u_char       *ఆదానం,
+        దీర్ఘ        len,
         u_char        output[]);
 
-#endif
+#అయితే_ముగింపు
 
 /* matching umac-128 API, we reuse umac_ctx, since it's opaque */
-struct umac_ctx *umac128_new(const u_char key[]);
-int umac128_update(struct umac_ctx *ctx, const u_char *input, long len);
-int umac128_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8]);
-int umac128_delete(struct umac_ctx *ctx);
+నిర్మాణం umac_ctx *umac128_new(స్థిరరాశి u_char కీలకం[]);
+పూర్ణాంకం umac128_update(నిర్మాణం umac_ctx *ctx, స్థిరరాశి u_char *ఆదానం, దీర్ఘ len);
+పూర్ణాంకం umac128_final(నిర్మాణం umac_ctx *ctx, u_char ట్యాగ్[], స్థిరరాశి u_char nonce[8]);
+పూర్ణాంకం umac128_delete(నిర్మాణం umac_ctx *ctx);
 
-#ifdef __cplusplus
+#నిర్వచితమైతే __cplusplus
     }
-#endif
+#అయితే_ముగింపు
 
-#endif /* HEADER_UMAC_H */
+#అయితే_ముగింపు /* HEADER_UMAC_H */

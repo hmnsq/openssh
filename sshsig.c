@@ -15,1150 +15,1150 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-#include "authfd.h"
-#include "authfile.h"
-#include "log.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "sshsig.h"
-#include "ssherr.h"
-#include "sshkey.h"
-#include "match.h"
-#include "digest.h"
+#అన్తర్భావ "authfd.h"
+#అన్తర్భావ "authfile.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "sshsig.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "match.h"
+#అన్తర్భావ "digest.h"
 
-#define SIG_VERSION		0x01
-#define MAGIC_PREAMBLE		"SSHSIG"
-#define MAGIC_PREAMBLE_LEN	(sizeof(MAGIC_PREAMBLE) - 1)
-#define BEGIN_SIGNATURE		"-----BEGIN SSH SIGNATURE-----"
-#define END_SIGNATURE		"-----END SSH SIGNATURE-----"
-#define RSA_SIGN_ALG		"rsa-sha2-512"
-#define RSA_SIGN_ALLOWED	"rsa-sha2-512,rsa-sha2-256"
-#define HASHALG_DEFAULT		"sha512"
-#define HASHALG_ALLOWED		"sha256,sha512"
+#నిర్వచించు SIG_సంస్కరణ		0x01
+#నిర్వచించు MAGIC_PREAMBLE		"SSHSIG"
+#నిర్వచించు MAGIC_PREAMBLE_LEN	(పరిమాణం(MAGIC_PREAMBLE) - 1)
+#నిర్వచించు BEGIN_SIGNATURE		"-----BEGIN SSH SIGNATURE-----"
+#నిర్వచించు చివర_SIGNATURE		"-----END SSH SIGNATURE-----"
+#నిర్వచించు RSA_SIGN_ALG		"rsa-sha2-512"
+#నిర్వచించు RSA_SIGN_ALLOWED	"rsa-sha2-512,rsa-sha2-256"
+#నిర్వచించు HASHALG_DEFAULT		"sha512"
+#నిర్వచించు HASHALG_ALLOWED		"sha256,sha512"
 
-int
-sshsig_armor(const struct sshbuf *blob, struct sshbuf **out)
+పూర్ణాంకం
+sshsig_armor(స్థిరరాశి నిర్మాణం sshbuf *blob, నిర్మాణం sshbuf **బహిర్గతం)
 {
-	struct sshbuf *buf = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	నిర్మాణం sshbuf *buf = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 
-	*out = NULL;
+	*బహిర్గతం = ఖాళీ;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	ఒకవేళ ((buf = sshbuf_new()) == ఖాళీ) {
 		error_f("sshbuf_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if ((r = sshbuf_putf(buf, "%s\n", BEGIN_SIGNATURE)) != 0) {
+	ఒకవేళ ((r = sshbuf_putf(buf, "%s\n", BEGIN_SIGNATURE)) != 0) {
 		error_fr(r, "sshbuf_putf");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if ((r = sshbuf_dtob64(blob, buf, 1)) != 0) {
+	ఒకవేళ ((r = sshbuf_dtob64(blob, buf, 1)) != 0) {
 		error_fr(r, "base64 encode signature");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if ((r = sshbuf_put(buf, END_SIGNATURE,
-	    sizeof(END_SIGNATURE)-1)) != 0 ||
+	ఒకవేళ ((r = sshbuf_put(buf, చివర_SIGNATURE,
+	    పరిమాణం(చివర_SIGNATURE)-1)) != 0 ||
 	    (r = sshbuf_put_u8(buf, '\n')) != 0) {
 		error_fr(r, "sshbuf_put");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
-	*out = buf;
-	buf = NULL; /* transferred */
+	*బహిర్గతం = buf;
+	buf = ఖాళీ; /* transferred */
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(buf);
-	return r;
+	తిరిగి r;
 }
 
-int
-sshsig_dearmor(struct sshbuf *sig, struct sshbuf **out)
+పూర్ణాంకం
+sshsig_dearmor(నిర్మాణం sshbuf *sig, నిర్మాణం sshbuf **బహిర్గతం)
 {
-	int r;
-	size_t eoffset = 0;
-	struct sshbuf *buf = NULL;
-	struct sshbuf *sbuf = NULL;
-	char *b64 = NULL;
+	పూర్ణాంకం r;
+	కొలత_t eoffset = 0;
+	నిర్మాణం sshbuf *buf = ఖాళీ;
+	నిర్మాణం sshbuf *sbuf = ఖాళీ;
+	అక్షరం *b64 = ఖాళీ;
 
-	if ((sbuf = sshbuf_fromb(sig)) == NULL) {
+	ఒకవేళ ((sbuf = sshbuf_fromb(sig)) == ఖాళీ) {
 		error_f("sshbuf_fromb failed");
-		return SSH_ERR_ALLOC_FAIL;
+		తిరిగి SSH_ERR_ALLOC_FAIL;
 	}
 
 	/* Expect and consume preamble + lf/crlf */
-	if ((r = sshbuf_cmp(sbuf, 0,
-	    BEGIN_SIGNATURE, sizeof(BEGIN_SIGNATURE)-1)) != 0) {
+	ఒకవేళ ((r = sshbuf_cmp(sbuf, 0,
+	    BEGIN_SIGNATURE, పరిమాణం(BEGIN_SIGNATURE)-1)) != 0) {
 		error("Couldn't parse signature: missing header");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
-	if ((r = sshbuf_consume(sbuf, sizeof(BEGIN_SIGNATURE)-1)) != 0) {
+	ఒకవేళ ((r = sshbuf_consume(sbuf, పరిమాణం(BEGIN_SIGNATURE)-1)) != 0) {
 		error_fr(r, "consume");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
-	if ((r = sshbuf_cmp(sbuf, 0, "\r\n", 2)) == 0)
+	ఒకవేళ ((r = sshbuf_cmp(sbuf, 0, "\r\n", 2)) == 0)
 		eoffset = 2;
-	else if ((r = sshbuf_cmp(sbuf, 0, "\n", 1)) == 0)
+	లేకపోతే ఒకవేళ ((r = sshbuf_cmp(sbuf, 0, "\n", 1)) == 0)
 		eoffset = 1;
-	else {
+	లేకపోతే {
 		r = SSH_ERR_INVALID_FORMAT;
 		error_f("no header eol");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
-	if ((r = sshbuf_consume(sbuf, eoffset)) != 0) {
+	ఒకవేళ ((r = sshbuf_consume(sbuf, eoffset)) != 0) {
 		error_fr(r, "consume eol");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 	/* Find and consume lf + suffix (any prior cr would be ignored) */
-	if ((r = sshbuf_find(sbuf, 0, "\n" END_SIGNATURE,
-	    sizeof(END_SIGNATURE), &eoffset)) != 0) {
+	ఒకవేళ ((r = sshbuf_కనుగొను(sbuf, 0, "\n" చివర_SIGNATURE,
+	    పరిమాణం(చివర_SIGNATURE), &eoffset)) != 0) {
 		error("Couldn't parse signature: missing footer");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
-	if ((r = sshbuf_consume_end(sbuf, sshbuf_len(sbuf)-eoffset)) != 0) {
+	ఒకవేళ ((r = sshbuf_consume_చివర(sbuf, sshbuf_len(sbuf)-eoffset)) != 0) {
 		error_fr(r, "consume");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
-	if ((b64 = sshbuf_dup_string(sbuf)) == NULL) {
+	ఒకవేళ ((b64 = sshbuf_dup_string(sbuf)) == ఖాళీ) {
 		error_f("sshbuf_dup_string failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
-	if ((buf = sshbuf_new()) == NULL) {
+	ఒకవేళ ((buf = sshbuf_new()) == ఖాళీ) {
 		error_f("sshbuf_new() failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
-	if ((r = sshbuf_b64tod(buf, b64)) != 0) {
+	ఒకవేళ ((r = sshbuf_b64tod(buf, b64)) != 0) {
 		error_fr(r, "decode base64");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
 	/* success */
-	*out = buf;
+	*బహిర్గతం = buf;
 	r = 0;
-	buf = NULL; /* transferred */
-done:
+	buf = ఖాళీ; /* transferred */
+పూర్తి:
 	sshbuf_free(buf);
 	sshbuf_free(sbuf);
-	free(b64);
-	return r;
+	విడుదల(b64);
+	తిరిగి r;
 }
 
-static int
-sshsig_wrap_sign(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin, const struct sshbuf *h_message,
-    const char *sig_namespace, struct sshbuf **out,
-    sshsig_signer *signer, void *signer_ctx)
+స్థిర పూర్ణాంకం
+sshsig_wrap_sign(నిర్మాణం sshkey *కీలకం, స్థిరరాశి అక్షరం *hashalg,
+    స్థిరరాశి అక్షరం *sk_provider, స్థిరరాశి అక్షరం *sk_pin, స్థిరరాశి నిర్మాణం sshbuf *h_సందేశం,
+    స్థిరరాశి అక్షరం *sig_namespace, నిర్మాణం sshbuf **బహిర్గతం,
+    sshsig_signer *signer, శూన్య *signer_ctx)
 {
-	int r;
-	size_t slen = 0;
-	u_char *sig = NULL;
-	struct sshbuf *blob = NULL;
-	struct sshbuf *tosign = NULL;
-	const char *sign_alg = NULL;
+	పూర్ణాంకం r;
+	కొలత_t slen = 0;
+	u_char *sig = ఖాళీ;
+	నిర్మాణం sshbuf *blob = ఖాళీ;
+	నిర్మాణం sshbuf *tosign = ఖాళీ;
+	స్థిరరాశి అక్షరం *sign_alg = ఖాళీ;
 
-	if ((tosign = sshbuf_new()) == NULL ||
-	    (blob = sshbuf_new()) == NULL) {
+	ఒకవేళ ((tosign = sshbuf_new()) == ఖాళీ ||
+	    (blob = sshbuf_new()) == ఖాళీ) {
 		error_f("sshbuf_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
-	if ((r = sshbuf_put(tosign, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
+	ఒకవేళ ((r = sshbuf_put(tosign, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
 	    (r = sshbuf_put_cstring(tosign, sig_namespace)) != 0 ||
-	    (r = sshbuf_put_string(tosign, NULL, 0)) != 0 || /* reserved */
+	    (r = sshbuf_put_string(tosign, ఖాళీ, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_cstring(tosign, hashalg)) != 0 ||
-	    (r = sshbuf_put_stringb(tosign, h_message)) != 0) {
+	    (r = sshbuf_put_stringb(tosign, h_సందేశం)) != 0) {
 		error_fr(r, "assemble message to sign");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
 	/* If using RSA keys then default to a good signature algorithm */
-	if (sshkey_type_plain(key->type) == KEY_RSA) {
+	ఒకవేళ (sshkey_type_plain(కీలకం->type) == కీలకం_RSA) {
 		sign_alg = RSA_SIGN_ALG;
-		if (strcmp(hashalg, "sha256") == 0)
+		ఒకవేళ (strcmp(hashalg, "sha256") == 0)
 			sign_alg = "rsa-sha2-256";
-		else if (strcmp(hashalg, "sha512") == 0)
+		లేకపోతే ఒకవేళ (strcmp(hashalg, "sha512") == 0)
 			sign_alg = "rsa-sha2-512";
 	}
 
-	if (signer != NULL) {
-		if ((r = signer(key, &sig, &slen,
+	ఒకవేళ (signer != ఖాళీ) {
+		ఒకవేళ ((r = signer(కీలకం, &sig, &slen,
 		    sshbuf_ptr(tosign), sshbuf_len(tosign),
 		    sign_alg, sk_provider, sk_pin, 0, signer_ctx)) != 0) {
 			error_r(r, "Couldn't sign message (signer)");
-			goto done;
+			వెళ్ళు పూర్తి;
 		}
-	} else {
-		if ((r = sshkey_sign(key, &sig, &slen,
+	} లేకపోతే {
+		ఒకవేళ ((r = sshkey_sign(కీలకం, &sig, &slen,
 		    sshbuf_ptr(tosign), sshbuf_len(tosign),
 		    sign_alg, sk_provider, sk_pin, 0)) != 0) {
 			error_r(r, "Couldn't sign message");
-			goto done;
+			వెళ్ళు పూర్తి;
 		}
 	}
 
-	if ((r = sshbuf_put(blob, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
-	    (r = sshbuf_put_u32(blob, SIG_VERSION)) != 0 ||
-	    (r = sshkey_puts(key, blob)) != 0 ||
+	ఒకవేళ ((r = sshbuf_put(blob, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
+	    (r = sshbuf_put_u32(blob, SIG_సంస్కరణ)) != 0 ||
+	    (r = sshkey_puts(కీలకం, blob)) != 0 ||
 	    (r = sshbuf_put_cstring(blob, sig_namespace)) != 0 ||
-	    (r = sshbuf_put_string(blob, NULL, 0)) != 0 || /* reserved */
+	    (r = sshbuf_put_string(blob, ఖాళీ, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_cstring(blob, hashalg)) != 0 ||
 	    (r = sshbuf_put_string(blob, sig, slen)) != 0) {
 		error_fr(r, "assemble signature object");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
-	if (out != NULL) {
-		*out = blob;
-		blob = NULL;
+	ఒకవేళ (బహిర్గతం != ఖాళీ) {
+		*బహిర్గతం = blob;
+		blob = ఖాళీ;
 	}
 	r = 0;
-done:
-	free(sig);
+పూర్తి:
+	విడుదల(sig);
 	sshbuf_free(blob);
 	sshbuf_free(tosign);
-	return r;
+	తిరిగి r;
 }
 
 /* Check preamble and version. */
-static int
-sshsig_parse_preamble(struct sshbuf *buf)
+స్థిర పూర్ణాంకం
+sshsig_parse_preamble(నిర్మాణం sshbuf *buf)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 	uint32_t sversion;
 
-	if ((r = sshbuf_cmp(buf, 0, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
-	    (r = sshbuf_consume(buf, (sizeof(MAGIC_PREAMBLE)-1))) != 0 ||
+	ఒకవేళ ((r = sshbuf_cmp(buf, 0, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
+	    (r = sshbuf_consume(buf, (పరిమాణం(MAGIC_PREAMBLE)-1))) != 0 ||
 	    (r = sshbuf_get_u32(buf, &sversion)) != 0) {
 		error("Couldn't verify signature: invalid format");
-		return r;
+		తిరిగి r;
 	}
 
-	if (sversion > SIG_VERSION) {
+	ఒకవేళ (sversion > SIG_సంస్కరణ) {
 		error("Signature version %lu is larger than supported "
-		    "version %u", (unsigned long)sversion, SIG_VERSION);
-		return SSH_ERR_INVALID_FORMAT;
+		    "version %u", (గుర్తులేని దీర్ఘ)sversion, SIG_సంస్కరణ);
+		తిరిగి SSH_ERR_INVALID_FORMAT;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-sshsig_check_hashalg(const char *hashalg)
+స్థిర పూర్ణాంకం
+sshsig_check_hashalg(స్థిరరాశి అక్షరం *hashalg)
 {
-	if (hashalg == NULL ||
-	    match_pattern_list(hashalg, HASHALG_ALLOWED, 0) == 1)
-		return 0;
+	ఒకవేళ (hashalg == ఖాళీ ||
+	    సరిపోలిక_నమూనా_list(hashalg, HASHALG_ALLOWED, 0) == 1)
+		తిరిగి 0;
 	error_f("unsupported hash algorithm \"%.100s\"", hashalg);
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	తిరిగి SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 
-static int
-sshsig_peek_hashalg(struct sshbuf *signature, char **hashalgp)
+స్థిర పూర్ణాంకం
+sshsig_peek_hashalg(నిర్మాణం sshbuf *signature, అక్షరం **hashalgp)
 {
-	struct sshbuf *buf = NULL;
-	char *hashalg = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	నిర్మాణం sshbuf *buf = ఖాళీ;
+	అక్షరం *hashalg = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 
-	if (hashalgp != NULL)
-		*hashalgp = NULL;
-	if ((buf = sshbuf_fromb(signature)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshsig_parse_preamble(buf)) != 0)
-		goto done;
-	if ((r = sshbuf_get_string_direct(buf, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(buf, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_string(buf, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(buf, &hashalg, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(buf, NULL, NULL)) != 0) {
+	ఒకవేళ (hashalgp != ఖాళీ)
+		*hashalgp = ఖాళీ;
+	ఒకవేళ ((buf = sshbuf_fromb(signature)) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshsig_parse_preamble(buf)) != 0)
+		వెళ్ళు పూర్తి;
+	ఒకవేళ ((r = sshbuf_get_string_ప్రత్యక్ష(buf, ఖాళీ, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_string_ప్రత్యక్ష(buf, ఖాళీ, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_string(buf, ఖాళీ, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_cstring(buf, &hashalg, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_string_ప్రత్యక్ష(buf, ఖాళీ, ఖాళీ)) != 0) {
 		error_fr(r, "parse signature object");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
 	/* success */
 	r = 0;
 	*hashalgp = hashalg;
-	hashalg = NULL;
- done:
-	free(hashalg);
+	hashalg = ఖాళీ;
+ పూర్తి:
+	విడుదల(hashalg);
 	sshbuf_free(buf);
-	return r;
+	తిరిగి r;
 }
 
-static int
-sshsig_wrap_verify(struct sshbuf *signature, const char *hashalg,
-    const struct sshbuf *h_message, const char *expect_namespace,
-    struct sshkey **sign_keyp, struct sshkey_sig_details **sig_details)
+స్థిర పూర్ణాంకం
+sshsig_wrap_verify(నిర్మాణం sshbuf *signature, స్థిరరాశి అక్షరం *hashalg,
+    స్థిరరాశి నిర్మాణం sshbuf *h_సందేశం, స్థిరరాశి అక్షరం *expect_namespace,
+    నిర్మాణం sshkey **sign_keyp, నిర్మాణం sshkey_sig_details **sig_details)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *buf = NULL, *toverify = NULL;
-	struct sshkey *key = NULL;
-	const u_char *sig;
-	char *got_namespace = NULL, *sigtype = NULL, *sig_hashalg = NULL;
-	size_t siglen;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
+	నిర్మాణం sshbuf *buf = ఖాళీ, *toverify = ఖాళీ;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ;
+	స్థిరరాశి u_char *sig;
+	అక్షరం *got_namespace = ఖాళీ, *sigtype = ఖాళీ, *sig_hashalg = ఖాళీ;
+	కొలత_t siglen;
 
-	debug_f("verify message length %zu", sshbuf_len(h_message));
-	if (sig_details != NULL)
-		*sig_details = NULL;
-	if (sign_keyp != NULL)
-		*sign_keyp = NULL;
+	debug_f("verify message length %zu", sshbuf_len(h_సందేశం));
+	ఒకవేళ (sig_details != ఖాళీ)
+		*sig_details = ఖాళీ;
+	ఒకవేళ (sign_keyp != ఖాళీ)
+		*sign_keyp = ఖాళీ;
 
-	if ((toverify = sshbuf_new()) == NULL) {
+	ఒకవేళ ((toverify = sshbuf_new()) == ఖాళీ) {
 		error_f("sshbuf_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
-	if ((r = sshbuf_put(toverify, MAGIC_PREAMBLE,
+	ఒకవేళ ((r = sshbuf_put(toverify, MAGIC_PREAMBLE,
 	    MAGIC_PREAMBLE_LEN)) != 0 ||
 	    (r = sshbuf_put_cstring(toverify, expect_namespace)) != 0 ||
-	    (r = sshbuf_put_string(toverify, NULL, 0)) != 0 || /* reserved */
+	    (r = sshbuf_put_string(toverify, ఖాళీ, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_cstring(toverify, hashalg)) != 0 ||
-	    (r = sshbuf_put_stringb(toverify, h_message)) != 0) {
+	    (r = sshbuf_put_stringb(toverify, h_సందేశం)) != 0) {
 		error_fr(r, "assemble message to verify");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
-	if ((r = sshsig_parse_preamble(signature)) != 0)
-		goto done;
+	ఒకవేళ ((r = sshsig_parse_preamble(signature)) != 0)
+		వెళ్ళు పూర్తి;
 
-	if ((r = sshkey_froms(signature, &key)) != 0 ||
-	    (r = sshbuf_get_cstring(signature, &got_namespace, NULL)) != 0 ||
-	    (r = sshbuf_get_string(signature, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(signature, &sig_hashalg, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(signature, &sig, &siglen)) != 0) {
+	ఒకవేళ ((r = sshkey_froms(signature, &కీలకం)) != 0 ||
+	    (r = sshbuf_get_cstring(signature, &got_namespace, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_string(signature, ఖాళీ, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_cstring(signature, &sig_hashalg, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_string_ప్రత్యక్ష(signature, &sig, &siglen)) != 0) {
 		error_fr(r, "parse signature object");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
-	if (sshbuf_len(signature) != 0) {
+	ఒకవేళ (sshbuf_len(signature) != 0) {
 		error("Signature contains trailing data");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
-	if (strcmp(expect_namespace, got_namespace) != 0) {
+	ఒకవేళ (strcmp(expect_namespace, got_namespace) != 0) {
 		error("Couldn't verify signature: namespace does not match");
 		debug_f("expected namespace \"%s\" received \"%s\"",
 		    expect_namespace, got_namespace);
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
-	if (strcmp(hashalg, sig_hashalg) != 0) {
+	ఒకవేళ (strcmp(hashalg, sig_hashalg) != 0) {
 		error("Couldn't verify signature: hash algorithm mismatch");
 		debug_f("expected algorithm \"%s\" received \"%s\"",
 		    hashalg, sig_hashalg);
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 	/* Ensure that RSA keys use an acceptable signature algorithm */
-	if (sshkey_type_plain(key->type) == KEY_RSA) {
-		if ((r = sshkey_get_sigtype(sig, siglen, &sigtype)) != 0) {
+	ఒకవేళ (sshkey_type_plain(కీలకం->type) == కీలకం_RSA) {
+		ఒకవేళ ((r = sshkey_get_sigtype(sig, siglen, &sigtype)) != 0) {
 			error_r(r, "Couldn't verify signature: unable to get "
 			    "signature type");
-			goto done;
+			వెళ్ళు పూర్తి;
 		}
-		if (match_pattern_list(sigtype, RSA_SIGN_ALLOWED, 0) != 1) {
+		ఒకవేళ (సరిపోలిక_నమూనా_list(sigtype, RSA_SIGN_ALLOWED, 0) != 1) {
 			error("Couldn't verify signature: unsupported RSA "
 			    "signature algorithm %s", sigtype);
 			r = SSH_ERR_SIGN_ALG_UNSUPPORTED;
-			goto done;
+			వెళ్ళు పూర్తి;
 		}
 	}
-	if ((r = sshkey_verify(key, sig, siglen, sshbuf_ptr(toverify),
-	    sshbuf_len(toverify), NULL, 0, sig_details)) != 0) {
+	ఒకవేళ ((r = sshkey_verify(కీలకం, sig, siglen, sshbuf_ptr(toverify),
+	    sshbuf_len(toverify), ఖాళీ, 0, sig_details)) != 0) {
 		error_r(r, "Signature verification failed");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
 	/* success */
 	r = 0;
-	if (sign_keyp != NULL) {
-		*sign_keyp = key;
-		key = NULL; /* transferred */
+	ఒకవేళ (sign_keyp != ఖాళీ) {
+		*sign_keyp = కీలకం;
+		కీలకం = ఖాళీ; /* transferred */
 	}
-done:
-	free(got_namespace);
-	free(sigtype);
-	free(sig_hashalg);
+పూర్తి:
+	విడుదల(got_namespace);
+	విడుదల(sigtype);
+	విడుదల(sig_hashalg);
 	sshbuf_free(buf);
 	sshbuf_free(toverify);
-	sshkey_free(key);
-	return r;
+	sshkey_free(కీలకం);
+	తిరిగి r;
 }
 
-static int
-hash_buffer(const struct sshbuf *m, const char *hashalg, struct sshbuf **bp)
+స్థిర పూర్ణాంకం
+hash_బఫరు(స్థిరరాశి నిర్మాణం sshbuf *m, స్థిరరాశి అక్షరం *hashalg, నిర్మాణం sshbuf **bp)
 {
-	char *hex, hash[SSH_DIGEST_MAX_LENGTH];
-	int alg, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *b = NULL;
+	అక్షరం *hex, hash[SSH_DIGEST_MAX_నిడివి];
+	పూర్ణాంకం alg, r = SSH_ERR_అంతర్గత_ERROR;
+	నిర్మాణం sshbuf *b = ఖాళీ;
 
-	*bp = NULL;
-	memset(hash, 0, sizeof(hash));
+	*bp = ఖాళీ;
+	memset(hash, 0, పరిమాణం(hash));
 
-	if ((r = sshsig_check_hashalg(hashalg)) != 0)
-		return r;
-	if ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
+	ఒకవేళ ((r = sshsig_check_hashalg(hashalg)) != 0)
+		తిరిగి r;
+	ఒకవేళ ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
 		error_f("can't look up hash algorithm %s", hashalg);
-		return SSH_ERR_INTERNAL_ERROR;
+		తిరిగి SSH_ERR_అంతర్గత_ERROR;
 	}
-	if ((r = ssh_digest_buffer(alg, m, hash, sizeof(hash))) != 0) {
+	ఒకవేళ ((r = ssh_digest_బఫరు(alg, m, hash, పరిమాణం(hash))) != 0) {
 		error_fr(r, "ssh_digest_buffer");
-		return r;
+		తిరిగి r;
 	}
-	if ((hex = tohex(hash, ssh_digest_bytes(alg))) != NULL) {
+	ఒకవేళ ((hex = tohex(hash, ssh_digest_బైట్లు(alg))) != ఖాళీ) {
 		debug3_f("final hash: %s", hex);
-		freezero(hex, strlen(hex));
+		freezero(hex, అక్షరశ్రేణి_పొడవు(hex));
 	}
-	if ((b = sshbuf_new()) == NULL) {
+	ఒకవేళ ((b = sshbuf_new()) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_put(b, hash, ssh_digest_bytes(alg))) != 0) {
+	ఒకవేళ ((r = sshbuf_put(b, hash, ssh_digest_బైట్లు(alg))) != 0) {
 		error_fr(r, "sshbuf_put");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	*bp = b;
-	b = NULL; /* transferred */
+	b = ఖాళీ; /* transferred */
 	/* success */
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
-	explicit_bzero(hash, sizeof(hash));
-	return r;
+	explicit_bzero(hash, పరిమాణం(hash));
+	తిరిగి r;
 }
 
-int
-sshsig_signb(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin,
-    const struct sshbuf *message, const char *sig_namespace,
-    struct sshbuf **out, sshsig_signer *signer, void *signer_ctx)
+పూర్ణాంకం
+sshsig_signb(నిర్మాణం sshkey *కీలకం, స్థిరరాశి అక్షరం *hashalg,
+    స్థిరరాశి అక్షరం *sk_provider, స్థిరరాశి అక్షరం *sk_pin,
+    స్థిరరాశి నిర్మాణం sshbuf *సందేశం_2, స్థిరరాశి అక్షరం *sig_namespace,
+    నిర్మాణం sshbuf **బహిర్గతం, sshsig_signer *signer, శూన్య *signer_ctx)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	నిర్మాణం sshbuf *b = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 
-	if (hashalg == NULL)
+	ఒకవేళ (hashalg == ఖాళీ)
 		hashalg = HASHALG_DEFAULT;
-	if (out != NULL)
-		*out = NULL;
-	if ((r = hash_buffer(message, hashalg, &b)) != 0) {
+	ఒకవేళ (బహిర్గతం != ఖాళీ)
+		*బహిర్గతం = ఖాళీ;
+	ఒకవేళ ((r = hash_బఫరు(సందేశం_2, hashalg, &b)) != 0) {
 		error_fr(r, "hash buffer");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshsig_wrap_sign(key, hashalg, sk_provider, sk_pin, b,
-	    sig_namespace, out, signer, signer_ctx)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshsig_wrap_sign(కీలకం, hashalg, sk_provider, sk_pin, b,
+	    sig_namespace, బహిర్గతం, signer, signer_ctx)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
-	return r;
+	తిరిగి r;
 }
 
-int
-sshsig_verifyb(struct sshbuf *signature, const struct sshbuf *message,
-    const char *expect_namespace, struct sshkey **sign_keyp,
-    struct sshkey_sig_details **sig_details)
+పూర్ణాంకం
+sshsig_verifyb(నిర్మాణం sshbuf *signature, స్థిరరాశి నిర్మాణం sshbuf *సందేశం_2,
+    స్థిరరాశి అక్షరం *expect_namespace, నిర్మాణం sshkey **sign_keyp,
+    నిర్మాణం sshkey_sig_details **sig_details)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	char *hashalg = NULL;
+	నిర్మాణం sshbuf *b = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
+	అక్షరం *hashalg = ఖాళీ;
 
-	if (sig_details != NULL)
-		*sig_details = NULL;
-	if (sign_keyp != NULL)
-		*sign_keyp = NULL;
-	if ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
-		return r;
+	ఒకవేళ (sig_details != ఖాళీ)
+		*sig_details = ఖాళీ;
+	ఒకవేళ (sign_keyp != ఖాళీ)
+		*sign_keyp = ఖాళీ;
+	ఒకవేళ ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
+		తిరిగి r;
 	debug_f("signature made with hash \"%s\"", hashalg);
-	if ((r = hash_buffer(message, hashalg, &b)) != 0) {
+	ఒకవేళ ((r = hash_బఫరు(సందేశం_2, hashalg, &b)) != 0) {
 		error_fr(r, "hash buffer");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
+	ఒకవేళ ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
 	    sign_keyp, sig_details)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
-	free(hashalg);
-	return r;
+	విడుదల(hashalg);
+	తిరిగి r;
 }
 
-static int
-hash_file(int fd, const char *hashalg, struct sshbuf **bp)
+స్థిర పూర్ణాంకం
+hash_file(పూర్ణాంకం fd, స్థిరరాశి అక్షరం *hashalg, నిర్మాణం sshbuf **bp)
 {
-	char *hex, rbuf[8192], hash[SSH_DIGEST_MAX_LENGTH];
-	ssize_t n, total = 0;
-	struct ssh_digest_ctx *ctx = NULL;
-	int alg, oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *b = NULL;
+	అక్షరం *hex, rbuf[8192], hash[SSH_DIGEST_MAX_నిడివి];
+	ssize_t n, మొత్తం = 0;
+	నిర్మాణం ssh_digest_ctx *ctx = ఖాళీ;
+	పూర్ణాంకం alg, oerrno, r = SSH_ERR_అంతర్గత_ERROR;
+	నిర్మాణం sshbuf *b = ఖాళీ;
 
-	*bp = NULL;
-	memset(hash, 0, sizeof(hash));
+	*bp = ఖాళీ;
+	memset(hash, 0, పరిమాణం(hash));
 
-	if ((r = sshsig_check_hashalg(hashalg)) != 0)
-		return r;
-	if ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
+	ఒకవేళ ((r = sshsig_check_hashalg(hashalg)) != 0)
+		తిరిగి r;
+	ఒకవేళ ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
 		error_f("can't look up hash algorithm %s", hashalg);
-		return SSH_ERR_INTERNAL_ERROR;
+		తిరిగి SSH_ERR_అంతర్గత_ERROR;
 	}
-	if ((ctx = ssh_digest_start(alg)) == NULL) {
+	ఒకవేళ ((ctx = ssh_digest_ప్రారంభం(alg)) == ఖాళీ) {
 		error_f("ssh_digest_start failed");
-		return SSH_ERR_INTERNAL_ERROR;
+		తిరిగి SSH_ERR_అంతర్గత_ERROR;
 	}
-	for (;;) {
-		if ((n = read(fd, rbuf, sizeof(rbuf))) == -1) {
-			if (errno == EINTR || errno == EAGAIN)
-				continue;
+	కొరకు (;;) {
+		ఒకవేళ ((n = పఠ(fd, rbuf, పరిమాణం(rbuf))) == -1) {
+			ఒకవేళ (errno == EINTR || errno == EAGAIN)
+				కొనసాగు;
 			oerrno = errno;
 			error_f("read: %s", strerror(errno));
 			errno = oerrno;
 			r = SSH_ERR_SYSTEM_ERROR;
-			goto out;
-		} else if (n == 0) {
-			debug2_f("hashed %zu bytes", total);
-			break; /* EOF */
+			వెళ్ళు బహిర్గతం;
+		} లేకపోతే ఒకవేళ (n == 0) {
+			debug2_f("hashed %zu bytes", మొత్తం);
+			ఆపు; /* EOF */
 		}
-		total += (size_t)n;
-		if ((r = ssh_digest_update(ctx, rbuf, (size_t)n)) != 0) {
+		మొత్తం += (కొలత_t)n;
+		ఒకవేళ ((r = ssh_digest_update(ctx, rbuf, (కొలత_t)n)) != 0) {
 			error_fr(r, "ssh_digest_update");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 	}
-	if ((r = ssh_digest_final(ctx, hash, sizeof(hash))) != 0) {
+	ఒకవేళ ((r = ssh_digest_final(ctx, hash, పరిమాణం(hash))) != 0) {
 		error_fr(r, "ssh_digest_final");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((hex = tohex(hash, ssh_digest_bytes(alg))) != NULL) {
+	ఒకవేళ ((hex = tohex(hash, ssh_digest_బైట్లు(alg))) != ఖాళీ) {
 		debug3_f("final hash: %s", hex);
-		freezero(hex, strlen(hex));
+		freezero(hex, అక్షరశ్రేణి_పొడవు(hex));
 	}
-	if ((b = sshbuf_new()) == NULL) {
+	ఒకవేళ ((b = sshbuf_new()) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_put(b, hash, ssh_digest_bytes(alg))) != 0) {
+	ఒకవేళ ((r = sshbuf_put(b, hash, ssh_digest_బైట్లు(alg))) != 0) {
 		error_fr(r, "sshbuf_put");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	*bp = b;
-	b = NULL; /* transferred */
+	b = ఖాళీ; /* transferred */
 	/* success */
 	r = 0;
- out:
+ బహిర్గతం:
 	oerrno = errno;
 	sshbuf_free(b);
 	ssh_digest_free(ctx);
-	explicit_bzero(hash, sizeof(hash));
+	explicit_bzero(hash, పరిమాణం(hash));
 	errno = oerrno;
-	return r;
+	తిరిగి r;
 }
 
-int
-sshsig_sign_fd(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin,
-    int fd, const char *sig_namespace, struct sshbuf **out,
-    sshsig_signer *signer, void *signer_ctx)
+పూర్ణాంకం
+sshsig_sign_fd(నిర్మాణం sshkey *కీలకం, స్థిరరాశి అక్షరం *hashalg,
+    స్థిరరాశి అక్షరం *sk_provider, స్థిరరాశి అక్షరం *sk_pin,
+    పూర్ణాంకం fd, స్థిరరాశి అక్షరం *sig_namespace, నిర్మాణం sshbuf **బహిర్గతం,
+    sshsig_signer *signer, శూన్య *signer_ctx)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	నిర్మాణం sshbuf *b = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 
-	if (hashalg == NULL)
+	ఒకవేళ (hashalg == ఖాళీ)
 		hashalg = HASHALG_DEFAULT;
-	if (out != NULL)
-		*out = NULL;
-	if ((r = hash_file(fd, hashalg, &b)) != 0) {
+	ఒకవేళ (బహిర్గతం != ఖాళీ)
+		*బహిర్గతం = ఖాళీ;
+	ఒకవేళ ((r = hash_file(fd, hashalg, &b)) != 0) {
 		error_fr(r, "hash_file");
-		return r;
+		తిరిగి r;
 	}
-	if ((r = sshsig_wrap_sign(key, hashalg, sk_provider, sk_pin, b,
-	    sig_namespace, out, signer, signer_ctx)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshsig_wrap_sign(కీలకం, hashalg, sk_provider, sk_pin, b,
+	    sig_namespace, బహిర్గతం, signer, signer_ctx)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
-	return r;
+	తిరిగి r;
 }
 
-int
-sshsig_verify_fd(struct sshbuf *signature, int fd,
-    const char *expect_namespace, struct sshkey **sign_keyp,
-    struct sshkey_sig_details **sig_details)
+పూర్ణాంకం
+sshsig_verify_fd(నిర్మాణం sshbuf *signature, పూర్ణాంకం fd,
+    స్థిరరాశి అక్షరం *expect_namespace, నిర్మాణం sshkey **sign_keyp,
+    నిర్మాణం sshkey_sig_details **sig_details)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	char *hashalg = NULL;
+	నిర్మాణం sshbuf *b = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
+	అక్షరం *hashalg = ఖాళీ;
 
-	if (sig_details != NULL)
-		*sig_details = NULL;
-	if (sign_keyp != NULL)
-		*sign_keyp = NULL;
-	if ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
-		return r;
+	ఒకవేళ (sig_details != ఖాళీ)
+		*sig_details = ఖాళీ;
+	ఒకవేళ (sign_keyp != ఖాళీ)
+		*sign_keyp = ఖాళీ;
+	ఒకవేళ ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
+		తిరిగి r;
 	debug_f("signature made with hash \"%s\"", hashalg);
-	if ((r = hash_file(fd, hashalg, &b)) != 0) {
+	ఒకవేళ ((r = hash_file(fd, hashalg, &b)) != 0) {
 		error_fr(r, "hash_file");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
+	ఒకవేళ ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
 	    sign_keyp, sig_details)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
-	free(hashalg);
-	return r;
+	విడుదల(hashalg);
+	తిరిగి r;
 }
 
-struct sshsigopt {
-	int ca;
-	char *namespaces;
+నిర్మాణం sshsigopt {
+	పూర్ణాంకం ca;
+	అక్షరం *namespaces;
 	uint64_t valid_after, valid_before;
 };
 
-struct sshsigopt *
-sshsigopt_parse(const char *opts, const char *path, u_long linenum,
-    const char **errstrp)
+నిర్మాణం sshsigopt *
+sshsigopt_parse(స్థిరరాశి అక్షరం *opts, స్థిరరాశి అక్షరం *మార్గం, u_long linenum,
+    స్థిరరాశి అక్షరం **errstrp)
 {
-	struct sshsigopt *ret;
-	int r;
-	char *opt;
-	const char *errstr = NULL;
+	నిర్మాణం sshsigopt *ret;
+	పూర్ణాంకం r;
+	అక్షరం *opt;
+	స్థిరరాశి అక్షరం *errstr = ఖాళీ;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
-	if (opts == NULL || *opts == '\0')
-		return ret; /* Empty options yields empty options :) */
+	ఒకవేళ ((ret = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*ret))) == ఖాళీ)
+		తిరిగి ఖాళీ;
+	ఒకవేళ (opts == ఖాళీ || *opts == '\0')
+		తిరిగి ret; /* Empty options yields empty options :) */
 
-	while (*opts && *opts != ' ' && *opts != '\t') {
+	అయితే (*opts && *opts != ' ' && *opts != '\t') {
 		/* flag options */
-		if ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
+		ఒకవేళ ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
 			ret->ca = 1;
-		} else if (opt_match(&opts, "namespaces")) {
-			if (ret->namespaces != NULL) {
+		} లేకపోతే ఒకవేళ (opt_సరిపోలిక(&opts, "namespaces")) {
+			ఒకవేళ (ret->namespaces != ఖాళీ) {
 				errstr = "multiple \"namespaces\" clauses";
-				goto fail;
+				వెళ్ళు fail;
 			}
 			ret->namespaces = opt_dequote(&opts, &errstr);
-			if (ret->namespaces == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "valid-after")) {
-			if (ret->valid_after != 0) {
+			ఒకవేళ (ret->namespaces == ఖాళీ)
+				వెళ్ళు fail;
+		} లేకపోతే ఒకవేళ (opt_సరిపోలిక(&opts, "valid-after")) {
+			ఒకవేళ (ret->valid_after != 0) {
 				errstr = "multiple \"valid-after\" clauses";
-				goto fail;
+				వెళ్ళు fail;
 			}
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			if (parse_absolute_time(opt, &ret->valid_after) != 0 ||
+			ఒకవేళ ((opt = opt_dequote(&opts, &errstr)) == ఖాళీ)
+				వెళ్ళు fail;
+			ఒకవేళ (parse_absolute_సమయం(opt, &ret->valid_after) != 0 ||
 			    ret->valid_after == 0) {
-				free(opt);
+				విడుదల(opt);
 				errstr = "invalid \"valid-after\" time";
-				goto fail;
+				వెళ్ళు fail;
 			}
-			free(opt);
-		} else if (opt_match(&opts, "valid-before")) {
-			if (ret->valid_before != 0) {
+			విడుదల(opt);
+		} లేకపోతే ఒకవేళ (opt_సరిపోలిక(&opts, "valid-before")) {
+			ఒకవేళ (ret->valid_before != 0) {
 				errstr = "multiple \"valid-before\" clauses";
-				goto fail;
+				వెళ్ళు fail;
 			}
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			if (parse_absolute_time(opt, &ret->valid_before) != 0 ||
+			ఒకవేళ ((opt = opt_dequote(&opts, &errstr)) == ఖాళీ)
+				వెళ్ళు fail;
+			ఒకవేళ (parse_absolute_సమయం(opt, &ret->valid_before) != 0 ||
 			    ret->valid_before == 0) {
-				free(opt);
+				విడుదల(opt);
 				errstr = "invalid \"valid-before\" time";
-				goto fail;
+				వెళ్ళు fail;
 			}
-			free(opt);
+			విడుదల(opt);
 		}
 		/*
 		 * Skip the comma, and move to the next option
 		 * (or break out if there are no more).
 		 */
-		if (*opts == '\0' || *opts == ' ' || *opts == '\t')
-			break;		/* End of options. */
+		ఒకవేళ (*opts == '\0' || *opts == ' ' || *opts == '\t')
+			ఆపు;		/* End of options. */
 		/* Anything other than a comma is an unknown option */
-		if (*opts != ',') {
+		ఒకవేళ (*opts != ',') {
 			errstr = "unknown key option";
-			goto fail;
+			వెళ్ళు fail;
 		}
 		opts++;
-		if (*opts == '\0') {
+		ఒకవేళ (*opts == '\0') {
 			errstr = "unexpected end-of-options";
-			goto fail;
+			వెళ్ళు fail;
 		}
 	}
 	/* final consistency check */
-	if (ret->valid_after != 0 && ret->valid_before != 0 &&
+	ఒకవేళ (ret->valid_after != 0 && ret->valid_before != 0 &&
 	    ret->valid_before <= ret->valid_after) {
 		errstr = "\"valid-before\" time is before \"valid-after\"";
-		goto fail;
+		వెళ్ళు fail;
 	}
 	/* success */
-	return ret;
+	తిరిగి ret;
  fail:
-	if (errstrp != NULL)
+	ఒకవేళ (errstrp != ఖాళీ)
 		*errstrp = errstr;
 	sshsigopt_free(ret);
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
-void
-sshsigopt_free(struct sshsigopt *opts)
+శూన్య
+sshsigopt_free(నిర్మాణం sshsigopt *opts)
 {
-	if (opts == NULL)
-		return;
-	free(opts->namespaces);
-	free(opts);
+	ఒకవేళ (opts == ఖాళీ)
+		తిరిగి;
+	విడుదల(opts->namespaces);
+	విడుదల(opts);
 }
 
-static int
-parse_principals_key_and_options(const char *path, u_long linenum, char *line,
-    const char *required_principal, char **principalsp, struct sshkey **keyp,
-    struct sshsigopt **sigoptsp)
+స్థిర పూర్ణాంకం
+parse_principals_కీలకం_and_options(స్థిరరాశి అక్షరం *మార్గం, u_long linenum, అక్షరం *పంక్తి,
+    స్థిరరాశి అక్షరం *required_principal, అక్షరం **principalsp, నిర్మాణం sshkey **keyp,
+    నిర్మాణం sshsigopt **sigoptsp)
 {
-	char *opts = NULL, *tmp, *cp, *principals = NULL;
-	const char *reason = NULL;
-	struct sshsigopt *sigopts = NULL;
-	struct sshkey *key = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	అక్షరం *opts = ఖాళీ, *tmp, *cp, *principals = ఖాళీ;
+	స్థిరరాశి అక్షరం *reason = ఖాళీ;
+	నిర్మాణం sshsigopt *sigopts = ఖాళీ;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 
-	if (principalsp != NULL)
-		*principalsp = NULL;
-	if (sigoptsp != NULL)
-		*sigoptsp = NULL;
-	if (keyp != NULL)
-		*keyp = NULL;
+	ఒకవేళ (principalsp != ఖాళీ)
+		*principalsp = ఖాళీ;
+	ఒకవేళ (sigoptsp != ఖాళీ)
+		*sigoptsp = ఖాళీ;
+	ఒకవేళ (keyp != ఖాళీ)
+		*keyp = ఖాళీ;
 
-	cp = line;
+	cp = పంక్తి;
 	cp = cp + strspn(cp, " \t\n\r"); /* skip leading whitespace */
-	if (*cp == '#' || *cp == '\0')
-		return SSH_ERR_KEY_NOT_FOUND; /* blank or all-comment line */
+	ఒకవేళ (*cp == '#' || *cp == '\0')
+		తిరిగి SSH_ERR_కీలకం_NOT_దొరికింది; /* blank or all-comment line */
 
 	/* format: identity[,identity...] [option[,option...]] key */
-	if ((tmp = strdelimw(&cp)) == NULL || cp == NULL) {
-		error("%s:%lu: invalid line", path, linenum);
+	ఒకవేళ ((tmp = strdelimw(&cp)) == ఖాళీ || cp == ఖాళీ) {
+		error("%s:%lu: invalid line", మార్గం, linenum);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((principals = strdup(tmp)) == NULL) {
+	ఒకవేళ ((principals = strdup(tmp)) == ఖాళీ) {
 		error_f("strdup failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/*
 	 * Bail out early if we're looking for a particular principal and this
 	 * line does not list it.
 	 */
-	if (required_principal != NULL) {
-		if (match_pattern_list(required_principal,
+	ఒకవేళ (required_principal != ఖాళీ) {
+		ఒకవేళ (సరిపోలిక_నమూనా_list(required_principal,
 		    principals, 0) != 1) {
 			/* principal didn't match */
-			r = SSH_ERR_KEY_NOT_FOUND;
-			goto out;
+			r = SSH_ERR_కీలకం_NOT_దొరికింది;
+			వెళ్ళు బహిర్గతం;
 		}
 		debug_f("%s:%lu: matched principal \"%s\"",
-		    path, linenum, required_principal);
+		    మార్గం, linenum, required_principal);
 	}
 
-	if ((key = sshkey_new(KEY_UNSPEC)) == NULL) {
+	ఒకవేళ ((కీలకం = sshkey_new(కీలకం_UNSPEC)) == ఖాళీ) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (sshkey_read(key, &cp) != 0) {
+	ఒకవేళ (sshkey_read(కీలకం, &cp) != 0) {
 		/* no key? Check for options */
 		opts = cp;
-		if (sshkey_advance_past_options(&cp) != 0) {
-			error("%s:%lu: invalid options", path, linenum);
+		ఒకవేళ (sshkey_advance_past_options(&cp) != 0) {
+			error("%s:%lu: invalid options", మార్గం, linenum);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (cp == NULL || *cp == '\0') {
-			error("%s:%lu: missing key", path, linenum);
+		ఒకవేళ (cp == ఖాళీ || *cp == '\0') {
+			error("%s:%lu: missing key", మార్గం, linenum);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		*cp++ = '\0';
 		skip_space(&cp);
-		if (sshkey_read(key, &cp) != 0) {
-			error("%s:%lu: invalid key", path, linenum);
+		ఒకవేళ (sshkey_read(కీలకం, &cp) != 0) {
+			error("%s:%lu: invalid key", మార్గం, linenum);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 	}
-	debug3("%s:%lu: options %s", path, linenum, opts == NULL ? "" : opts);
-	if ((sigopts = sshsigopt_parse(opts, path, linenum, &reason)) == NULL) {
-		error("%s:%lu: bad options: %s", path, linenum, reason);
+	debug3("%s:%lu: options %s", మార్గం, linenum, opts == ఖాళీ ? "" : opts);
+	ఒకవేళ ((sigopts = sshsigopt_parse(opts, మార్గం, linenum, &reason)) == ఖాళీ) {
+		error("%s:%lu: bad options: %s", మార్గం, linenum, reason);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
-	if (principalsp != NULL) {
+	ఒకవేళ (principalsp != ఖాళీ) {
 		*principalsp = principals;
-		principals = NULL; /* transferred */
+		principals = ఖాళీ; /* transferred */
 	}
-	if (sigoptsp != NULL) {
+	ఒకవేళ (sigoptsp != ఖాళీ) {
 		*sigoptsp = sigopts;
-		sigopts = NULL; /* transferred */
+		sigopts = ఖాళీ; /* transferred */
 	}
-	if (keyp != NULL) {
-		*keyp = key;
-		key = NULL; /* transferred */
+	ఒకవేళ (keyp != ఖాళీ) {
+		*keyp = కీలకం;
+		కీలకం = ఖాళీ; /* transferred */
 	}
 	r = 0;
- out:
-	free(principals);
+ బహిర్గతం:
+	విడుదల(principals);
 	sshsigopt_free(sigopts);
-	sshkey_free(key);
-	return r;
+	sshkey_free(కీలకం);
+	తిరిగి r;
 }
 
-static int
-cert_filter_principals(const char *path, u_long linenum,
-    char **principalsp, const struct sshkey *cert, uint64_t verify_time)
+స్థిర పూర్ణాంకం
+cert_filter_principals(స్థిరరాశి అక్షరం *మార్గం, u_long linenum,
+    అక్షరం **principalsp, స్థిరరాశి నిర్మాణం sshkey *cert, uint64_t verify_సమయం)
 {
-	char *cp, *oprincipals, *principals;
-	const char *reason;
-	struct sshbuf *nprincipals;
-	int r = SSH_ERR_INTERNAL_ERROR, success = 0;
+	అక్షరం *cp, *oprincipals, *principals;
+	స్థిరరాశి అక్షరం *reason;
+	నిర్మాణం sshbuf *nprincipals;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR, success = 0;
 	u_int i;
 
 	oprincipals = principals = *principalsp;
-	*principalsp = NULL;
+	*principalsp = ఖాళీ;
 
-	if ((nprincipals = sshbuf_new()) == NULL) {
+	ఒకవేళ ((nprincipals = sshbuf_new()) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	while ((cp = strsep(&principals, ",")) != NULL && *cp != '\0') {
+	అయితే ((cp = strsep(&principals, ",")) != ఖాళీ && *cp != '\0') {
 		/* Check certificate validity */
-		if ((r = sshkey_cert_check_authority(cert, 0, 0, verify_time,
-		    NULL, &reason)) != 0) {
+		ఒకవేళ ((r = sshkey_cert_check_authority(cert, 0, 0, verify_సమయం,
+		    ఖాళీ, &reason)) != 0) {
 			debug("%s:%lu: principal \"%s\" not authorized: %s",
-			    path, linenum, cp, reason);
-			continue;
+			    మార్గం, linenum, cp, reason);
+			కొనసాగు;
 		}
 		/* Return all matching principal names from the cert */
-		for (i = 0; i < cert->cert->nprincipals; i++) {
-			if (match_pattern(cert->cert->principals[i], cp)) {
-				if ((r = sshbuf_putf(nprincipals, "%s%s",
+		కొరకు (i = 0; i < cert->cert->nprincipals; i++) {
+			ఒకవేళ (సరిపోలిక_నమూనా(cert->cert->principals[i], cp)) {
+				ఒకవేళ ((r = sshbuf_putf(nprincipals, "%s%s",
 					sshbuf_len(nprincipals) != 0 ? "," : "",
 						cert->cert->principals[i])) != 0) {
 					error_f("buffer error");
-					goto out;
+					వెళ్ళు బహిర్గతం;
 				}
 			}
 		}
 	}
-	if (sshbuf_len(nprincipals) == 0) {
-		error("%s:%lu: no valid principals found", path, linenum);
-		r = SSH_ERR_KEY_CERT_INVALID;
-		goto out;
+	ఒకవేళ (sshbuf_len(nprincipals) == 0) {
+		error("%s:%lu: no valid principals found", మార్గం, linenum);
+		r = SSH_ERR_కీలకం_CERT_INVALID;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((principals = sshbuf_dup_string(nprincipals)) == NULL) {
+	ఒకవేళ ((principals = sshbuf_dup_string(nprincipals)) == ఖాళీ) {
 		error_f("buffer error");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
 	success = 1;
 	*principalsp = principals;
- out:
+ బహిర్గతం:
 	sshbuf_free(nprincipals);
-	free(oprincipals);
-	return success ? 0 : r;
+	విడుదల(oprincipals);
+	తిరిగి success ? 0 : r;
 }
 
-static int
-check_allowed_keys_line(const char *path, u_long linenum, char *line,
-    const struct sshkey *sign_key, const char *principal,
-    const char *sig_namespace, uint64_t verify_time, char **principalsp)
+స్థిర పూర్ణాంకం
+check_allowed_కీలకాలు_పంక్తి(స్థిరరాశి అక్షరం *మార్గం, u_long linenum, అక్షరం *పంక్తి,
+    స్థిరరాశి నిర్మాణం sshkey *sign_కీలకం, స్థిరరాశి అక్షరం *principal,
+    స్థిరరాశి అక్షరం *sig_namespace, uint64_t verify_సమయం, అక్షరం **principalsp)
 {
-	struct sshkey *found_key = NULL;
-	char *principals = NULL;
-	int r, success = 0;
-	const char *reason = NULL;
-	struct sshsigopt *sigopts = NULL;
-	char tvalid[64], tverify[64];
+	నిర్మాణం sshkey *దొరికింది_కీలకం = ఖాళీ;
+	అక్షరం *principals = ఖాళీ;
+	పూర్ణాంకం r, success = 0;
+	స్థిరరాశి అక్షరం *reason = ఖాళీ;
+	నిర్మాణం sshsigopt *sigopts = ఖాళీ;
+	అక్షరం tvalid[64], tverify[64];
 
-	if (principalsp != NULL)
-		*principalsp = NULL;
+	ఒకవేళ (principalsp != ఖాళీ)
+		*principalsp = ఖాళీ;
 
 	/* Parse the line */
-	if ((r = parse_principals_key_and_options(path, linenum, line,
-	    principal, &principals, &found_key, &sigopts)) != 0) {
+	ఒకవేళ ((r = parse_principals_కీలకం_and_options(మార్గం, linenum, పంక్తి,
+	    principal, &principals, &దొరికింది_కీలకం, &sigopts)) != 0) {
 		/* error already logged */
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
-	if (!sigopts->ca && sshkey_equal(found_key, sign_key)) {
+	ఒకవేళ (!sigopts->ca && sshkey_equal(దొరికింది_కీలకం, sign_కీలకం)) {
 		/* Exact match of key */
-		debug("%s:%lu: matched key", path, linenum);
-	} else if (sigopts->ca && sshkey_is_cert(sign_key) &&
-	    sshkey_equal_public(sign_key->cert->signature_key, found_key)) {
-		if (principal) {
+		debug("%s:%lu: matched key", మార్గం, linenum);
+	} లేకపోతే ఒకవేళ (sigopts->ca && sshkey_is_cert(sign_కీలకం) &&
+	    sshkey_equal_ప్రజా(sign_కీలకం->cert->signature_కీలకం, దొరికింది_కీలకం)) {
+		ఒకవేళ (principal) {
 			/* Match certificate CA key with specified principal */
-			if ((r = sshkey_cert_check_authority(sign_key, 0, 0,
-			    verify_time, principal, &reason)) != 0) {
+			ఒకవేళ ((r = sshkey_cert_check_authority(sign_కీలకం, 0, 0,
+			    verify_సమయం, principal, &reason)) != 0) {
 				error("%s:%lu: certificate not authorized: %s",
-				    path, linenum, reason);
-				goto done;
+				    మార్గం, linenum, reason);
+				వెళ్ళు పూర్తి;
 			}
 			debug("%s:%lu: matched certificate CA key",
-			    path, linenum);
-		} else {
+			    మార్గం, linenum);
+		} లేకపోతే {
 			/* No principal specified - find all matching ones */
-			if ((r = cert_filter_principals(path, linenum,
-			    &principals, sign_key, verify_time)) != 0) {
+			ఒకవేళ ((r = cert_filter_principals(మార్గం, linenum,
+			    &principals, sign_కీలకం, verify_సమయం)) != 0) {
 				/* error already displayed */
 				debug_r(r, "%s:%lu: cert_filter_principals",
-				    path, linenum);
-				goto done;
+				    మార్గం, linenum);
+				వెళ్ళు పూర్తి;
 			}
 			debug("%s:%lu: matched certificate CA key",
-			    path, linenum);
+			    మార్గం, linenum);
 		}
-	} else {
+	} లేకపోతే {
 		/* Didn't match key */
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 
 	/* Check whether options preclude the use of this key */
-	if (sigopts->namespaces != NULL && sig_namespace != NULL &&
-	    match_pattern_list(sig_namespace, sigopts->namespaces, 0) != 1) {
+	ఒకవేళ (sigopts->namespaces != ఖాళీ && sig_namespace != ఖాళీ &&
+	    సరిపోలిక_నమూనా_list(sig_namespace, sigopts->namespaces, 0) != 1) {
 		error("%s:%lu: key is not permitted for use in signature "
-		    "namespace \"%s\"", path, linenum, sig_namespace);
-		goto done;
+		    "namespace \"%s\"", మార్గం, linenum, sig_namespace);
+		వెళ్ళు పూర్తి;
 	}
 
 	/* check key time validity */
-	format_absolute_time((uint64_t)verify_time, tverify, sizeof(tverify));
-	if (sigopts->valid_after != 0 &&
-	    (uint64_t)verify_time < sigopts->valid_after) {
-		format_absolute_time(sigopts->valid_after,
-		    tvalid, sizeof(tvalid));
+	format_absolute_సమయం((uint64_t)verify_సమయం, tverify, పరిమాణం(tverify));
+	ఒకవేళ (sigopts->valid_after != 0 &&
+	    (uint64_t)verify_సమయం < sigopts->valid_after) {
+		format_absolute_సమయం(sigopts->valid_after,
+		    tvalid, పరిమాణం(tvalid));
 		error("%s:%lu: key is not yet valid: "
-		    "verify time %s < valid-after %s", path, linenum,
+		    "verify time %s < valid-after %s", మార్గం, linenum,
 		    tverify, tvalid);
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
-	if (sigopts->valid_before != 0 &&
-	    (uint64_t)verify_time > sigopts->valid_before) {
-		format_absolute_time(sigopts->valid_before,
-		    tvalid, sizeof(tvalid));
+	ఒకవేళ (sigopts->valid_before != 0 &&
+	    (uint64_t)verify_సమయం > sigopts->valid_before) {
+		format_absolute_సమయం(sigopts->valid_before,
+		    tvalid, పరిమాణం(tvalid));
 		error("%s:%lu: key has expired: "
-		    "verify time %s > valid-before %s", path, linenum,
+		    "verify time %s > valid-before %s", మార్గం, linenum,
 		    tverify, tvalid);
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 	success = 1;
 
- done:
-	if (success && principalsp != NULL) {
+ పూర్తి:
+	ఒకవేళ (success && principalsp != ఖాళీ) {
 		*principalsp = principals;
-		principals = NULL; /* transferred */
+		principals = ఖాళీ; /* transferred */
 	}
-	free(principals);
-	sshkey_free(found_key);
+	విడుదల(principals);
+	sshkey_free(దొరికింది_కీలకం);
 	sshsigopt_free(sigopts);
-	return success ? 0 : SSH_ERR_KEY_NOT_FOUND;
+	తిరిగి success ? 0 : SSH_ERR_కీలకం_NOT_దొరికింది;
 }
 
-int
-sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
-    const char *principal, const char *sig_namespace, uint64_t verify_time)
+పూర్ణాంకం
+sshsig_check_allowed_కీలకాలు(స్థిరరాశి అక్షరం *మార్గం, స్థిరరాశి నిర్మాణం sshkey *sign_కీలకం,
+    స్థిరరాశి అక్షరం *principal, స్థిరరాశి అక్షరం *sig_namespace, uint64_t verify_సమయం)
 {
-	FILE *f = NULL;
-	char *line = NULL;
-	size_t linesize = 0;
+	FILE *f = ఖాళీ;
+	అక్షరం *పంక్తి = ఖాళీ;
+	కొలత_t linesize = 0;
 	u_long linenum = 0;
-	int r = SSH_ERR_KEY_NOT_FOUND, oerrno;
+	పూర్ణాంకం r = SSH_ERR_కీలకం_NOT_దొరికింది, oerrno;
 
 	/* Check key and principal against file */
-	if ((f = fopen(path, "r")) == NULL) {
+	ఒకవేళ ((f = fopen(మార్గం, "r")) == ఖాళీ) {
 		oerrno = errno;
 		error("Unable to open allowed keys file \"%s\": %s",
-		    path, strerror(errno));
+		    మార్గం, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		తిరిగి SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	అయితే (getline(&పంక్తి, &linesize, f) != -1) {
 		linenum++;
-		r = check_allowed_keys_line(path, linenum, line, sign_key,
-		    principal, sig_namespace, verify_time, NULL);
-		free(line);
-		line = NULL;
+		r = check_allowed_కీలకాలు_పంక్తి(మార్గం, linenum, పంక్తి, sign_కీలకం,
+		    principal, sig_namespace, verify_సమయం, ఖాళీ);
+		విడుదల(పంక్తి);
+		పంక్తి = ఖాళీ;
 		linesize = 0;
-		if (r == SSH_ERR_KEY_NOT_FOUND)
-			continue;
-		else if (r == 0) {
+		ఒకవేళ (r == SSH_ERR_కీలకం_NOT_దొరికింది)
+			కొనసాగు;
+		లేకపోతే ఒకవేళ (r == 0) {
 			/* success */
 			fclose(f);
-			return 0;
-		} else
-			break;
+			తిరిగి 0;
+		} లేకపోతే
+			ఆపు;
 	}
 	/* Either we hit an error parsing or we simply didn't find the key */
 	fclose(f);
-	free(line);
-	return r;
+	విడుదల(పంక్తి);
+	తిరిగి r;
 }
 
-int
-sshsig_find_principals(const char *path, const struct sshkey *sign_key,
-    uint64_t verify_time, char **principals)
+పూర్ణాంకం
+sshsig_కనుగొను_principals(స్థిరరాశి అక్షరం *మార్గం, స్థిరరాశి నిర్మాణం sshkey *sign_కీలకం,
+    uint64_t verify_సమయం, అక్షరం **principals)
 {
-	FILE *f = NULL;
-	char *line = NULL;
-	size_t linesize = 0;
+	FILE *f = ఖాళీ;
+	అక్షరం *పంక్తి = ఖాళీ;
+	కొలత_t linesize = 0;
 	u_long linenum = 0;
-	int r = SSH_ERR_KEY_NOT_FOUND, oerrno;
+	పూర్ణాంకం r = SSH_ERR_కీలకం_NOT_దొరికింది, oerrno;
 
-	if ((f = fopen(path, "r")) == NULL) {
+	ఒకవేళ ((f = fopen(మార్గం, "r")) == ఖాళీ) {
 		oerrno = errno;
 		error("Unable to open allowed keys file \"%s\": %s",
-		    path, strerror(errno));
+		    మార్గం, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		తిరిగి SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	అయితే (getline(&పంక్తి, &linesize, f) != -1) {
 		linenum++;
-		r = check_allowed_keys_line(path, linenum, line,
-		    sign_key, NULL, NULL, verify_time, principals);
-		free(line);
-		line = NULL;
+		r = check_allowed_కీలకాలు_పంక్తి(మార్గం, linenum, పంక్తి,
+		    sign_కీలకం, ఖాళీ, ఖాళీ, verify_సమయం, principals);
+		విడుదల(పంక్తి);
+		పంక్తి = ఖాళీ;
 		linesize = 0;
-		if (r == SSH_ERR_KEY_NOT_FOUND)
-			continue;
-		else if (r == 0) {
+		ఒకవేళ (r == SSH_ERR_కీలకం_NOT_దొరికింది)
+			కొనసాగు;
+		లేకపోతే ఒకవేళ (r == 0) {
 			/* success */
 			fclose(f);
-			return 0;
-		} else
-			break;
+			తిరిగి 0;
+		} లేకపోతే
+			ఆపు;
 	}
-	free(line);
+	విడుదల(పంక్తి);
 	/* Either we hit an error parsing or we simply didn't find the key */
-	if (ferror(f) != 0) {
+	ఒకవేళ (ferror(f) != 0) {
 		oerrno = errno;
 		fclose(f);
 		error("Unable to read allowed keys file \"%s\": %s",
-		    path, strerror(errno));
+		    మార్గం, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		తిరిగి SSH_ERR_SYSTEM_ERROR;
 	}
 	fclose(f);
-	return r;
+	తిరిగి r;
 }
 
-int
-sshsig_match_principals(const char *path, const char *principal,
-    char ***principalsp, size_t *nprincipalsp)
+పూర్ణాంకం
+sshsig_సరిపోలిక_principals(స్థిరరాశి అక్షరం *మార్గం, స్థిరరాశి అక్షరం *principal,
+    అక్షరం ***principalsp, కొలత_t *nprincipalsp)
 {
-	FILE *f = NULL;
-	char *found, *line = NULL, **principals = NULL, **tmp;
-	size_t i, nprincipals = 0, linesize = 0;
+	FILE *f = ఖాళీ;
+	అక్షరం *దొరికింది, *పంక్తి = ఖాళీ, **principals = ఖాళీ, **tmp;
+	కొలత_t i, nprincipals = 0, linesize = 0;
 	u_long linenum = 0;
-	int oerrno = 0, r, ret = 0;
+	పూర్ణాంకం oerrno = 0, r, ret = 0;
 
-	if (principalsp != NULL)
-		*principalsp = NULL;
-	if (nprincipalsp != NULL)
+	ఒకవేళ (principalsp != ఖాళీ)
+		*principalsp = ఖాళీ;
+	ఒకవేళ (nprincipalsp != ఖాళీ)
 		*nprincipalsp = 0;
 
 	/* Check key and principal against file */
-	if ((f = fopen(path, "r")) == NULL) {
+	ఒకవేళ ((f = fopen(మార్గం, "r")) == ఖాళీ) {
 		oerrno = errno;
 		error("Unable to open allowed keys file \"%s\": %s",
-		    path, strerror(errno));
+		    మార్గం, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		తిరిగి SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	అయితే (getline(&పంక్తి, &linesize, f) != -1) {
 		linenum++;
 		/* Parse the line */
-		if ((r = parse_principals_key_and_options(path, linenum, line,
-		    principal, &found, NULL, NULL)) != 0) {
-			if (r == SSH_ERR_KEY_NOT_FOUND)
-				continue;
+		ఒకవేళ ((r = parse_principals_కీలకం_and_options(మార్గం, linenum, పంక్తి,
+		    principal, &దొరికింది, ఖాళీ, ఖాళీ)) != 0) {
+			ఒకవేళ (r == SSH_ERR_కీలకం_NOT_దొరికింది)
+				కొనసాగు;
 			ret = r;
 			oerrno = errno;
-			break; /* unexpected error */
+			ఆపు; /* unexpected error */
 		}
-		if ((tmp = recallocarray(principals, nprincipals,
-		    nprincipals + 1, sizeof(*principals))) == NULL) {
+		ఒకవేళ ((tmp = recallocarray(principals, nprincipals,
+		    nprincipals + 1, పరిమాణం(*principals))) == ఖాళీ) {
 			ret = SSH_ERR_ALLOC_FAIL;
-			free(found);
-			break;
+			విడుదల(దొరికింది);
+			ఆపు;
 		}
 		principals = tmp;
-		principals[nprincipals++] = found; /* transferred */
-		free(line);
-		line = NULL;
+		principals[nprincipals++] = దొరికింది; /* transferred */
+		విడుదల(పంక్తి);
+		పంక్తి = ఖాళీ;
 		linesize = 0;
 	}
 	fclose(f);
-	free(line);
+	విడుదల(పంక్తి);
 
-	if (ret == 0) {
-		if (nprincipals == 0)
-			ret = SSH_ERR_KEY_NOT_FOUND;
-		if (nprincipalsp != NULL)
+	ఒకవేళ (ret == 0) {
+		ఒకవేళ (nprincipals == 0)
+			ret = SSH_ERR_కీలకం_NOT_దొరికింది;
+		ఒకవేళ (nprincipalsp != ఖాళీ)
 			*nprincipalsp = nprincipals;
-		if (principalsp != NULL) {
+		ఒకవేళ (principalsp != ఖాళీ) {
 			*principalsp = principals;
-			principals = NULL; /* transferred */
+			principals = ఖాళీ; /* transferred */
 			nprincipals = 0;
 		}
 	}
 
-	for (i = 0; i < nprincipals; i++)
-		free(principals[i]);
-	free(principals);
+	కొరకు (i = 0; i < nprincipals; i++)
+		విడుదల(principals[i]);
+	విడుదల(principals);
 
 	errno = oerrno;
-	return ret;
+	తిరిగి ret;
 }
 
-int
-sshsig_get_pubkey(struct sshbuf *signature, struct sshkey **pubkey)
+పూర్ణాంకం
+sshsig_get_pubkey(నిర్మాణం sshbuf *signature, నిర్మాణం sshkey **pubkey)
 {
-	struct sshkey *pk = NULL;
-	int r = SSH_ERR_SIGNATURE_INVALID;
+	నిర్మాణం sshkey *pk = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_SIGNATURE_INVALID;
 
-	if (pubkey == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if ((r = sshsig_parse_preamble(signature)) != 0)
-		return r;
-	if ((r = sshkey_froms(signature, &pk)) != 0)
-		return r;
+	ఒకవేళ (pubkey == ఖాళీ)
+		తిరిగి SSH_ERR_అంతర్గత_ERROR;
+	ఒకవేళ ((r = sshsig_parse_preamble(signature)) != 0)
+		తిరిగి r;
+	ఒకవేళ ((r = sshkey_froms(signature, &pk)) != 0)
+		తిరిగి r;
 
 	*pubkey = pk;
-	pk = NULL;
-	return 0;
+	pk = ఖాళీ;
+	తిరిగి 0;
 }

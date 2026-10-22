@@ -16,91 +16,91 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef AUTH_OPTIONS_H
-#define AUTH_OPTIONS_H
+#నిర్వచితం_కాకపోతే AUTH_OPTIONS_H
+#నిర్వచించు AUTH_OPTIONS_H
 
-struct passwd;
-struct sshkey;
+నిర్మాణం passwd;
+నిర్మాణం sshkey;
 
 /* Maximum number of permitopen/permitlisten directives to accept */
-#define SSH_AUTHOPT_PERMIT_MAX	4096
+#నిర్వచించు SSH_AUTHOPT_PERMIT_MAX	4096
 
 /* Maximum number of environment directives to accept */
-#define SSH_AUTHOPT_ENV_MAX	1024
+#నిర్వచించు SSH_AUTHOPT_ENV_MAX	1024
 
 /*
  * sshauthopt represents key options parsed from authorized_keys or
  * from certificate extensions/options.
  */
-struct sshauthopt {
+నిర్మాణం sshauthopt {
 	/* Feature flags */
-	int permit_port_forwarding_flag;
-	int permit_agent_forwarding_flag;
-	int permit_x11_forwarding_flag;
-	int permit_pty_flag;
-	int permit_user_rc;
+	పూర్ణాంకం permit_పోర్టు_forwarding_flag;
+	పూర్ణాంకం permit_agent_forwarding_flag;
+	పూర్ణాంకం permit_x11_forwarding_flag;
+	పూర్ణాంకం permit_pty_flag;
+	పూర్ణాంకం permit_user_rc;
 
 	/* "restrict" keyword was invoked */
-	int restricted;
+	పూర్ణాంకం restricted;
 
 	/* key/principal expiry date */
 	uint64_t valid_before;
 
 	/* Certificate-related options */
-	int cert_authority;
-	char *cert_principals;
+	పూర్ణాంకం cert_authority;
+	అక్షరం *cert_principals;
 
-	int force_tun_device;
-	char *force_command;
+	పూర్ణాంకం force_tun_device;
+	అక్షరం *force_command;
 
 	/* Custom environment */
-	size_t nenv;
-	char **env;
+	కొలత_t nenv;
+	అక్షరం **env;
 
 	/* Permitted port forwardings */
-	size_t npermitopen;
-	char **permitopen;
+	కొలత_t npermitopen;
+	అక్షరం **permitopen;
 
 	/* Permitted listens (remote forwarding) */
-	size_t npermitlisten;
-	char **permitlisten;
+	కొలత_t npermitlisten;
+	అక్షరం **permitlisten;
 
 	/*
 	 * Permitted host/addresses (comma-separated)
 	 * Caller must check source address matches both lists (if present).
 	 */
-	char *required_from_host_cert;
-	char *required_from_host_keys;
+	అక్షరం *required_from_host_cert;
+	అక్షరం *required_from_host_కీలకాలు;
 
 	/* Key requires user presence asserted */
-	int no_require_user_presence;
+	పూర్ణాంకం no_require_user_presence;
 	/* Key requires user verification (e.g. PIN) */
-	int require_verify;
+	పూర్ణాంకం require_verify;
 };
 
-struct sshauthopt *sshauthopt_new(void);
-struct sshauthopt *sshauthopt_new_with_keys_defaults(void);
-void sshauthopt_free(struct sshauthopt *opts);
-struct sshauthopt *sshauthopt_copy(const struct sshauthopt *orig);
-int sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m, int);
-int sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **opts);
+నిర్మాణం sshauthopt *sshauthopt_new(శూన్య);
+నిర్మాణం sshauthopt *sshauthopt_new_with_కీలకాలు_defaults(శూన్య);
+శూన్య sshauthopt_free(నిర్మాణం sshauthopt *opts);
+నిర్మాణం sshauthopt *sshauthopt_copy(స్థిరరాశి నిర్మాణం sshauthopt *orig);
+పూర్ణాంకం sshauthopt_serialise(స్థిరరాశి నిర్మాణం sshauthopt *opts, నిర్మాణం sshbuf *m, పూర్ణాంకం);
+పూర్ణాంకం sshauthopt_deserialise(నిర్మాణం sshbuf *m, నిర్మాణం sshauthopt **opts);
 
 /*
  * Parse authorized_keys options. Returns an options structure on success
  * or NULL on failure. Will set errstr on failure.
  */
-struct sshauthopt *sshauthopt_parse(const char *s, const char **errstr);
+నిర్మాణం sshauthopt *sshauthopt_parse(స్థిరరాశి అక్షరం *s, స్థిరరాశి అక్షరం **errstr);
 
 /*
  * Parse certification options to a struct sshauthopt.
  * Returns options on success or NULL on failure.
  */
-struct sshauthopt *sshauthopt_from_cert(struct sshkey *k);
+నిర్మాణం sshauthopt *sshauthopt_from_cert(నిర్మాణం sshkey *k);
 
 /*
  * Merge key options.
  */
-struct sshauthopt *sshauthopt_merge(const struct sshauthopt *primary,
-    const struct sshauthopt *additional, const char **errstrp);
+నిర్మాణం sshauthopt *sshauthopt_విలీనం(స్థిరరాశి నిర్మాణం sshauthopt *primary,
+    స్థిరరాశి నిర్మాణం sshauthopt *additional, స్థిరరాశి అక్షరం **errstrp);
 
-#endif
+#అయితే_ముగింపు

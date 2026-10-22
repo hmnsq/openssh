@@ -22,12 +22,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _ENTROPY_H
-#define _ENTROPY_H
+#నిర్వచితం_కాకపోతే _ENTROPY_H
+#నిర్వచించు _ENTROPY_H
 
-struct sshbuf;
+నిర్మాణం sshbuf;
 
-void seed_rng(void);
-void reseed_prngs(void);
+శూన్య విత్తనం_rng(శూన్య);
+శూన్య reseed_prngs(శూన్య);
 
-#endif /* _ENTROPY_H */
+#అయితే_ముగింపు /* _ENTROPY_H */

@@ -22,140 +22,140 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
 /* compatibility with old or broken OpenSSL versions */
-#include "openbsd-compat/openssl-compat.h"
+#అన్తర్భావ "openbsd-compat/openssl-compat.h"
 
-#ifdef USE_BUILTIN_RIJNDAEL
-#include <sys/types.h>
+#నిర్వచితమైతే USE_BUILTIN_RIJNDAEL
+#అన్తర్భావ <sys/types.h>
 
-#include <openssl/evp.h>
+#అన్తర్భావ <openssl/evp.h>
 
-#include <stdarg.h>
-#include <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <string.h>
 
-#include "rijndael.h"
-#include "xmalloc.h"
-#include "log.h"
+#అన్తర్భావ "rijndael.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "log.h"
 
-#define RIJNDAEL_BLOCKSIZE 16
-struct ssh_rijndael_ctx
+#నిర్వచించు RIJNDAEL_BLOCKSIZE 16
+నిర్మాణం ssh_rijndael_ctx
 {
 	rijndael_ctx	r_ctx;
 	u_char		r_iv[RIJNDAEL_BLOCKSIZE];
 };
 
-static int
-ssh_rijndael_init(EVP_CIPHER_CTX *ctx, const u_char *key, const u_char *iv,
-    int enc)
+స్థిర పూర్ణాంకం
+ssh_rijndael_init(EVP_CIPHER_CTX *ctx, స్థిరరాశి u_char *కీలకం, స్థిరరాశి u_char *iv,
+    పూర్ణాంకం enc)
 {
-	struct ssh_rijndael_ctx *c;
+	నిర్మాణం ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
-		c = xmalloc(sizeof(*c));
-		EVP_CIPHER_CTX_set_app_data(ctx, c);
+	ఒకవేళ ((c = EVP_CIPHER_CTX_get_app_దత్తాంశం(ctx)) == ఖాళీ) {
+		c = xmalloc(పరిమాణం(*c));
+		EVP_CIPHER_CTX_సమితి_app_దత్తాంశం(ctx, c);
 	}
-	if (key != NULL) {
-		if (enc == -1)
+	ఒకవేళ (కీలకం != ఖాళీ) {
+		ఒకవేళ (enc == -1)
 			enc = ctx->encrypt;
-		rijndael_set_key(&c->r_ctx, (u_char *)key,
-		    8*EVP_CIPHER_CTX_key_length(ctx), enc);
+		rijndael_సమితి_కీలకం(&c->r_ctx, (u_char *)కీలకం,
+		    8*EVP_CIPHER_CTX_కీలకం_నిడివి(ctx), enc);
 	}
-	if (iv != NULL)
-		memcpy(c->r_iv, iv, RIJNDAEL_BLOCKSIZE);
-	return (1);
+	ఒకవేళ (iv != ఖాళీ)
+		జ్ఞాపకం_నకలు(c->r_iv, iv, RIJNDAEL_BLOCKSIZE);
+	తిరిగి (1);
 }
 
-static int
-ssh_rijndael_cbc(EVP_CIPHER_CTX *ctx, u_char *dest, const u_char *src,
-    size_t len)
+స్థిర పూర్ణాంకం
+ssh_rijndael_cbc(EVP_CIPHER_CTX *ctx, u_char *dest, స్థిరరాశి u_char *src,
+    కొలత_t len)
 {
-	struct ssh_rijndael_ctx *c;
+	నిర్మాణం ssh_rijndael_ctx *c;
 	u_char buf[RIJNDAEL_BLOCKSIZE];
 	u_char *cprev, *cnow, *plain, *ivp;
-	int i, j, blocks = len / RIJNDAEL_BLOCKSIZE;
+	పూర్ణాంకం i, j, ఖండాలు = len / RIJNDAEL_BLOCKSIZE;
 
-	if (len == 0)
-		return (1);
-	if (len % RIJNDAEL_BLOCKSIZE)
+	ఒకవేళ (len == 0)
+		తిరిగి (1);
+	ఒకవేళ (len % RIJNDAEL_BLOCKSIZE)
 		fatal("ssh_rijndael_cbc: bad len %d", len);
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
+	ఒకవేళ ((c = EVP_CIPHER_CTX_get_app_దత్తాంశం(ctx)) == ఖాళీ) {
 		error("ssh_rijndael_cbc: no context");
-		return (0);
+		తిరిగి (0);
 	}
-	if (ctx->encrypt) {
+	ఒకవేళ (ctx->encrypt) {
 		cnow  = dest;
 		plain = (u_char *)src;
 		cprev = c->r_iv;
-		for (i = 0; i < blocks; i++, plain+=RIJNDAEL_BLOCKSIZE,
+		కొరకు (i = 0; i < ఖండాలు; i++, plain+=RIJNDAEL_BLOCKSIZE,
 		    cnow+=RIJNDAEL_BLOCKSIZE) {
-			for (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
+			కొరకు (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
 				buf[j] = plain[j] ^ cprev[j];
 			rijndael_encrypt(&c->r_ctx, buf, cnow);
 			cprev = cnow;
 		}
-		memcpy(c->r_iv, cprev, RIJNDAEL_BLOCKSIZE);
-	} else {
+		జ్ఞాపకం_నకలు(c->r_iv, cprev, RIJNDAEL_BLOCKSIZE);
+	} లేకపోతే {
 		cnow  = (u_char *) (src+len-RIJNDAEL_BLOCKSIZE);
 		plain = dest+len-RIJNDAEL_BLOCKSIZE;
 
-		memcpy(buf, cnow, RIJNDAEL_BLOCKSIZE);
-		for (i = blocks; i > 0; i--, cnow-=RIJNDAEL_BLOCKSIZE,
+		జ్ఞాపకం_నకలు(buf, cnow, RIJNDAEL_BLOCKSIZE);
+		కొరకు (i = ఖండాలు; i > 0; i--, cnow-=RIJNDAEL_BLOCKSIZE,
 		    plain-=RIJNDAEL_BLOCKSIZE) {
 			rijndael_decrypt(&c->r_ctx, cnow, plain);
 			ivp = (i == 1) ? c->r_iv : cnow-RIJNDAEL_BLOCKSIZE;
-			for (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
+			కొరకు (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
 				plain[j] ^= ivp[j];
 		}
-		memcpy(c->r_iv, buf, RIJNDAEL_BLOCKSIZE);
+		జ్ఞాపకం_నకలు(c->r_iv, buf, RIJNDAEL_BLOCKSIZE);
 	}
-	return (1);
+	తిరిగి (1);
 }
 
-static int
+స్థిర పూర్ణాంకం
 ssh_rijndael_cleanup(EVP_CIPHER_CTX *ctx)
 {
-	struct ssh_rijndael_ctx *c;
+	నిర్మాణం ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) != NULL) {
-		memset(c, 0, sizeof(*c));
-		free(c);
-		EVP_CIPHER_CTX_set_app_data(ctx, NULL);
+	ఒకవేళ ((c = EVP_CIPHER_CTX_get_app_దత్తాంశం(ctx)) != ఖాళీ) {
+		memset(c, 0, పరిమాణం(*c));
+		విడుదల(c);
+		EVP_CIPHER_CTX_సమితి_app_దత్తాంశం(ctx, ఖాళీ);
 	}
-	return (1);
+	తిరిగి (1);
 }
 
-void
-ssh_rijndael_iv(EVP_CIPHER_CTX *evp, int doset, u_char * iv, u_int len)
+శూన్య
+ssh_rijndael_iv(EVP_CIPHER_CTX *evp, పూర్ణాంకం doset, u_char * iv, u_int len)
 {
-	struct ssh_rijndael_ctx *c;
+	నిర్మాణం ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(evp)) == NULL)
+	ఒకవేళ ((c = EVP_CIPHER_CTX_get_app_దత్తాంశం(evp)) == ఖాళీ)
 		fatal("ssh_rijndael_iv: no context");
-	if (doset)
-		memcpy(c->r_iv, iv, len);
-	else
-		memcpy(iv, c->r_iv, len);
+	ఒకవేళ (doset)
+		జ్ఞాపకం_నకలు(c->r_iv, iv, len);
+	లేకపోతే
+		జ్ఞాపకం_నకలు(iv, c->r_iv, len);
 }
 
-const EVP_CIPHER *
-evp_rijndael(void)
+స్థిరరాశి EVP_CIPHER *
+evp_rijndael(శూన్య)
 {
-	static EVP_CIPHER rijndal_cbc;
+	స్థిర EVP_CIPHER rijndal_cbc;
 
-	memset(&rijndal_cbc, 0, sizeof(EVP_CIPHER));
+	memset(&rijndal_cbc, 0, పరిమాణం(EVP_CIPHER));
 	rijndal_cbc.nid = NID_undef;
-	rijndal_cbc.block_size = RIJNDAEL_BLOCKSIZE;
+	rijndal_cbc.ఖండం_కొలత = RIJNDAEL_BLOCKSIZE;
 	rijndal_cbc.iv_len = RIJNDAEL_BLOCKSIZE;
-	rijndal_cbc.key_len = 16;
+	rijndal_cbc.కీలకం_len = 16;
 	rijndal_cbc.init = ssh_rijndael_init;
 	rijndal_cbc.cleanup = ssh_rijndael_cleanup;
 	rijndal_cbc.do_cipher = ssh_rijndael_cbc;
-#ifndef SSH_OLD_EVP
-	rijndal_cbc.flags = EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH |
+#నిర్వచితం_కాకపోతే SSH_OLD_EVP
+	rijndal_cbc.flags = EVP_CIPH_CBC_బహుళకం | EVP_CIPH_VARIABLE_నిడివి |
 	    EVP_CIPH_ALWAYS_CALL_INIT | EVP_CIPH_CUSTOM_IV;
-#endif
-	return (&rijndal_cbc);
+#అయితే_ముగింపు
+	తిరిగి (&rijndal_cbc);
 }
-#endif /* USE_BUILTIN_RIJNDAEL */
+#అయితే_ముగింపు /* USE_BUILTIN_RIJNDAEL */

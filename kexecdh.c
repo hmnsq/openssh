@@ -24,195 +24,195 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#if defined(WITH_OPENSSL)
+#ఒకవేళ defined(WITH_OPENSSL)
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <stdio.h>
-#include <signal.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <signal.h>
 
-#include <openssl/bn.h>
-#include <openssl/ecdh.h>
+#అన్తర్భావ <openssl/bn.h>
+#అన్తర్భావ <openssl/ecdh.h>
 
-#include "sshkey.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "ssherr.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "kex.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "ssherr.h"
 
-int
-kex_ecdh_keypair(struct kex *kex)
+పూర్ణాంకం
+kex_ecdh_keypair(నిర్మాణం kex *kex)
 {
-	EC_KEY *client_key = NULL;
-	const EC_GROUP *group;
-	const EC_POINT *public_key;
-	struct sshbuf *buf = NULL;
-	int r;
+	EC_కీలకం *client_కీలకం = ఖాళీ;
+	స్థిరరాశి EC_సమూహం *సమూహం;
+	స్థిరరాశి EC_బిందువు *ప్రజా_కీలకం;
+	నిర్మాణం sshbuf *buf = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if ((client_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
+	ఒకవేళ ((client_కీలకం = EC_కీలకం_new_by_వక్రం_name(kex->ec_nid)) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EC_KEY_generate_key(client_key) != 1) {
+	ఒకవేళ (EC_కీలకం_generate_కీలకం(client_కీలకం) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	group = EC_KEY_get0_group(client_key);
-	public_key = EC_KEY_get0_public_key(client_key);
+	సమూహం = EC_కీలకం_get0_సమూహం(client_కీలకం);
+	ప్రజా_కీలకం = EC_కీలకం_get0_ప్రజా_కీలకం(client_కీలకం);
 
-	if ((buf = sshbuf_new()) == NULL) {
+	ఒకవేళ ((buf = sshbuf_new()) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_put_ec(buf, public_key, group)) != 0 ||
-	    (r = sshbuf_get_u32(buf, NULL)) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
+	ఒకవేళ ((r = sshbuf_put_ec(buf, ప్రజా_కీలకం, సమూహం)) != 0 ||
+	    (r = sshbuf_get_u32(buf, ఖాళీ)) != 0)
+		వెళ్ళు బహిర్గతం;
+#నిర్వచితమైతే DEBUG_KEXECDH
 	fputs("client private key:\n", stderr);
-	sshkey_dump_ec_key(client_key);
-#endif
-	kex->ec_client_key = client_key;
-	kex->ec_group = group;
-	client_key = NULL;	/* owned by the kex */
+	sshkey_dump_ec_కీలకం(client_కీలకం);
+#అయితే_ముగింపు
+	kex->ec_client_కీలకం = client_కీలకం;
+	kex->ec_సమూహం = సమూహం;
+	client_కీలకం = ఖాళీ;	/* owned by the kex */
 	kex->client_pub = buf;
-	buf = NULL;
- out:
-	EC_KEY_free(client_key);
+	buf = ఖాళీ;
+ బహిర్గతం:
+	EC_కీలకం_free(client_కీలకం);
 	sshbuf_free(buf);
-	return r;
+	తిరిగి r;
 }
 
-int
-kex_ecdh_enc(struct kex *kex, const struct sshbuf *client_blob,
-    struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+పూర్ణాంకం
+kex_ecdh_enc(నిర్మాణం kex *kex, స్థిరరాశి నిర్మాణం sshbuf *client_blob,
+    నిర్మాణం sshbuf **server_blobp, నిర్మాణం sshbuf **shared_secretp)
 {
-	const EC_GROUP *group;
-	const EC_POINT *pub_key;
-	EC_KEY *server_key = NULL;
-	struct sshbuf *server_blob = NULL;
-	int r;
+	స్థిరరాశి EC_సమూహం *సమూహం;
+	స్థిరరాశి EC_బిందువు *pub_కీలకం;
+	EC_కీలకం *server_కీలకం = ఖాళీ;
+	నిర్మాణం sshbuf *server_blob = ఖాళీ;
+	పూర్ణాంకం r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = ఖాళీ;
+	*shared_secretp = ఖాళీ;
 
-	if ((server_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
+	ఒకవేళ ((server_కీలకం = EC_కీలకం_new_by_వక్రం_name(kex->ec_nid)) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EC_KEY_generate_key(server_key) != 1) {
+	ఒకవేళ (EC_కీలకం_generate_కీలకం(server_కీలకం) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	group = EC_KEY_get0_group(server_key);
+	సమూహం = EC_కీలకం_get0_సమూహం(server_కీలకం);
 
-#ifdef DEBUG_KEXECDH
+#నిర్వచితమైతే DEBUG_KEXECDH
 	fputs("server private key:\n", stderr);
-	sshkey_dump_ec_key(server_key);
-#endif
-	pub_key = EC_KEY_get0_public_key(server_key);
-	if ((server_blob = sshbuf_new()) == NULL) {
+	sshkey_dump_ec_కీలకం(server_కీలకం);
+#అయితే_ముగింపు
+	pub_కీలకం = EC_కీలకం_get0_ప్రజా_కీలకం(server_కీలకం);
+	ఒకవేళ ((server_blob = sshbuf_new()) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_put_ec(server_blob, pub_key, group)) != 0 ||
-	    (r = sshbuf_get_u32(server_blob, NULL)) != 0)
-		goto out;
-	if ((r = kex_ecdh_dec_key_group(kex, client_blob, server_key, group,
+	ఒకవేళ ((r = sshbuf_put_ec(server_blob, pub_కీలకం, సమూహం)) != 0 ||
+	    (r = sshbuf_get_u32(server_blob, ఖాళీ)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = kex_ecdh_dec_కీలకం_సమూహం(kex, client_blob, server_కీలకం, సమూహం,
 	    0, shared_secretp)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	*server_blobp = server_blob;
-	server_blob = NULL;
- out:
-	EC_KEY_free(server_key);
+	server_blob = ఖాళీ;
+ బహిర్గతం:
+	EC_కీలకం_free(server_కీలకం);
 	sshbuf_free(server_blob);
-	return r;
+	తిరిగి r;
 }
 
-int
-kex_ecdh_dec_key_group(struct kex *kex, const struct sshbuf *ec_blob,
-    EC_KEY *key, const EC_GROUP *group, int raw, struct sshbuf **shared_secretp)
+పూర్ణాంకం
+kex_ecdh_dec_కీలకం_సమూహం(నిర్మాణం kex *kex, స్థిరరాశి నిర్మాణం sshbuf *ec_blob,
+    EC_కీలకం *కీలకం, స్థిరరాశి EC_సమూహం *సమూహం, పూర్ణాంకం raw, నిర్మాణం sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	BIGNUM *shared_secret = NULL;
-	EC_POINT *dh_pub = NULL;
-	u_char *kbuf = NULL;
-	size_t klen = 0;
-	int r;
+	నిర్మాణం sshbuf *buf = ఖాళీ;
+	BIGNUM *shared_secret = ఖాళీ;
+	EC_బిందువు *dh_pub = ఖాళీ;
+	u_char *kbuf = ఖాళీ;
+	కొలత_t klen = 0;
+	పూర్ణాంకం r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = ఖాళీ;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	ఒకవేళ ((buf = sshbuf_new()) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_put_stringb(buf, ec_blob)) != 0)
-		goto out;
-	if ((dh_pub = EC_POINT_new(group)) == NULL) {
+	ఒకవేళ ((r = sshbuf_put_stringb(buf, ec_blob)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((dh_pub = EC_బిందువు_new(సమూహం)) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_get_ec(buf, dh_pub, group)) != 0) {
-		goto out;
+	ఒకవేళ ((r = sshbuf_get_ec(buf, dh_pub, సమూహం)) != 0) {
+		వెళ్ళు బహిర్గతం;
 	}
 	sshbuf_reset(buf);
 
-#ifdef DEBUG_KEXECDH
+#నిర్వచితమైతే DEBUG_KEXECDH
 	fputs("public key:\n", stderr);
-	sshkey_dump_ec_point(group, dh_pub);
-#endif
-	if (sshkey_ec_validate_public(group, dh_pub) != 0) {
-		r = SSH_ERR_MESSAGE_INCOMPLETE;
-		goto out;
+	sshkey_dump_ec_బిందువు(సమూహం, dh_pub);
+#అయితే_ముగింపు
+	ఒకవేళ (sshkey_ec_validate_ప్రజా(సమూహం, dh_pub) != 0) {
+		r = SSH_ERR_సందేశం_INCOMPLETE;
+		వెళ్ళు బహిర్గతం;
 	}
-	klen = (EC_GROUP_get_degree(group) + 7) / 8;
-	if ((kbuf = malloc(klen)) == NULL) {
+	klen = (EC_సమూహం_get_degree(సమూహం) + 7) / 8;
+	ఒకవేళ ((kbuf = జ్ఞాపకం_ఇవ్వు(klen)) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (ECDH_compute_key(kbuf, klen, dh_pub, key, NULL) != (int)klen) {
+	ఒకవేళ (ECDH_compute_కీలకం(kbuf, klen, dh_pub, కీలకం, ఖాళీ) != (పూర్ణాంకం)klen) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-#ifdef DEBUG_KEXECDH
+#నిర్వచితమైతే DEBUG_KEXECDH
 	dump_digest("shared secret", kbuf, klen);
-#endif
-	if (raw) {
-		if ((r = sshbuf_put(buf, kbuf, klen)) != 0)
-			goto out;
-	} else {
-		if ((shared_secret = BN_new()) == NULL) {
+#అయితే_ముగింపు
+	ఒకవేళ (raw) {
+		ఒకవేళ ((r = sshbuf_put(buf, kbuf, klen)) != 0)
+			వెళ్ళు బహిర్గతం;
+	} లేకపోతే {
+		ఒకవేళ ((shared_secret = BN_new()) == ఖాళీ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (BN_bin2bn(kbuf, klen, shared_secret) == NULL) {
+		ఒకవేళ (BN_bin2bn(kbuf, klen, shared_secret) == ఖాళీ) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if ((r = sshbuf_put_bignum2(buf, shared_secret)) != 0)
-			goto out;
+		ఒకవేళ ((r = sshbuf_put_bignum2(buf, shared_secret)) != 0)
+			వెళ్ళు బహిర్గతం;
 	}
 	*shared_secretp = buf;
-	buf = NULL;
- out:
-	EC_POINT_clear_free(dh_pub);
+	buf = ఖాళీ;
+ బహిర్గతం:
+	EC_బిందువు_clear_free(dh_pub);
 	BN_clear_free(shared_secret);
 	freezero(kbuf, klen);
 	sshbuf_free(buf);
-	return r;
+	తిరిగి r;
 }
 
-int
-kex_ecdh_dec(struct kex *kex, const struct sshbuf *server_blob,
-    struct sshbuf **shared_secretp)
+పూర్ణాంకం
+kex_ecdh_dec(నిర్మాణం kex *kex, స్థిరరాశి నిర్మాణం sshbuf *server_blob,
+    నిర్మాణం sshbuf **shared_secretp)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	r = kex_ecdh_dec_key_group(kex, server_blob, kex->ec_client_key,
-	    kex->ec_group, 0, shared_secretp);
-	EC_KEY_free(kex->ec_client_key);
-	kex->ec_client_key = NULL;
-	return r;
+	r = kex_ecdh_dec_కీలకం_సమూహం(kex, server_blob, kex->ec_client_కీలకం,
+	    kex->ec_సమూహం, 0, shared_secretp);
+	EC_కీలకం_free(kex->ec_client_కీలకం);
+	kex->ec_client_కీలకం = ఖాళీ;
+	తిరిగి r;
 }
 
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */

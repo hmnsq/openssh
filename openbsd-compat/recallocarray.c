@@ -17,72 +17,72 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/recallocarray.c */
 
-#include "includes.h"
-#ifndef HAVE_RECALLOCARRAY
+#అన్తర్భావ "includes.h"
+#నిర్వచితం_కాకపోతే HAVE_RECALLOCARRAY
 
-#include <errno.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
 /*
  * This is sqrt(SIZE_MAX+1), as s1*s2 <= SIZE_MAX
  * if both s1 < MUL_NO_OVERFLOW and s2 < MUL_NO_OVERFLOW
  */
-#define MUL_NO_OVERFLOW ((size_t)1 << (sizeof(size_t) * 4))
+#నిర్వచించు MUL_NO_అధికప్రవాహం ((కొలత_t)1 << (పరిమాణం(కొలత_t) * 4))
 
-void *
-recallocarray(void *ptr, size_t oldnmemb, size_t newnmemb, size_t size)
+శూన్య *
+recallocarray(శూన్య *ptr, కొలత_t oldnmemb, కొలత_t newnmemb, కొలత_t కొలత)
 {
-	size_t oldsize, newsize;
-	void *newptr;
+	కొలత_t oldsize, newsize;
+	శూన్య *newptr;
 
-	if (ptr == NULL)
-		return calloc(newnmemb, size);
+	ఒకవేళ (ptr == ఖాళీ)
+		తిరిగి సున్నా_జ్ఞాపకం_ఇవ్వు(newnmemb, కొలత);
 
-	if ((newnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
-	    newnmemb > 0 && SIZE_MAX / newnmemb < size) {
+	ఒకవేళ ((newnmemb >= MUL_NO_అధికప్రవాహం || కొలత >= MUL_NO_అధికప్రవాహం) &&
+	    newnmemb > 0 && SIZE_MAX / newnmemb < కొలత) {
 		errno = ENOMEM;
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	newsize = newnmemb * size;
+	newsize = newnmemb * కొలత;
 
-	if ((oldnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
-	    oldnmemb > 0 && SIZE_MAX / oldnmemb < size) {
+	ఒకవేళ ((oldnmemb >= MUL_NO_అధికప్రవాహం || కొలత >= MUL_NO_అధికప్రవాహం) &&
+	    oldnmemb > 0 && SIZE_MAX / oldnmemb < కొలత) {
 		errno = EINVAL;
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	oldsize = oldnmemb * size;
+	oldsize = oldnmemb * కొలత;
 	
 	/*
 	 * Don't bother too much if we're shrinking just a bit,
 	 * we do not shrink for series of small steps, oh well.
 	 */
-	if (newsize <= oldsize) {
-		size_t d = oldsize - newsize;
+	ఒకవేళ (newsize <= oldsize) {
+		కొలత_t d = oldsize - newsize;
 
-		if (d < oldsize / 2 && d < (size_t)getpagesize()) {
-			memset((char *)ptr + newsize, 0, d);
-			return ptr;
+		ఒకవేళ (d < oldsize / 2 && d < (కొలత_t)getpagesize()) {
+			memset((అక్షరం *)ptr + newsize, 0, d);
+			తిరిగి ptr;
 		}
 	}
 
-	newptr = malloc(newsize);
-	if (newptr == NULL)
-		return NULL;
+	newptr = జ్ఞాపకం_ఇవ్వు(newsize);
+	ఒకవేళ (newptr == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	if (newsize > oldsize) {
-		memcpy(newptr, ptr, oldsize);
-		memset((char *)newptr + oldsize, 0, newsize - oldsize);
-	} else
-		memcpy(newptr, ptr, newsize);
+	ఒకవేళ (newsize > oldsize) {
+		జ్ఞాపకం_నకలు(newptr, ptr, oldsize);
+		memset((అక్షరం *)newptr + oldsize, 0, newsize - oldsize);
+	} లేకపోతే
+		జ్ఞాపకం_నకలు(newptr, ptr, newsize);
 
 	explicit_bzero(ptr, oldsize);
-	free(ptr);
+	విడుదల(ptr);
 
-	return newptr;
+	తిరిగి newptr;
 }
 /* DEF_WEAK(recallocarray); */
 
-#endif /* HAVE_RECALLOCARRAY */
+#అయితే_ముగింపు /* HAVE_RECALLOCARRAY */

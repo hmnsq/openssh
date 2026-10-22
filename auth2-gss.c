@@ -24,151 +24,151 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifdef GSSAPI
+#నిర్వచితమైతే GSSAPI
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <stdarg.h>
+#అన్తర్భావ <stdarg.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "ssh2.h"
-#include "log.h"
-#include "dispatch.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "misc.h"
-#include "servconf.h"
-#include "packet.h"
-#include "kex.h"
-#include "ssh-gss.h"
-#include "monitor_wrap.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "hostfile.h"
+#అన్తర్భావ "auth.h"
+#అన్తర్భావ "ssh2.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "dispatch.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "servconf.h"
+#అన్తర్భావ "packet.h"
+#అన్తర్భావ "kex.h"
+#అన్తర్భావ "ssh-gss.h"
+#అన్తర్భావ "monitor_wrap.h"
 
-#define SSH_GSSAPI_MAX_MECHS	2048
+#నిర్వచించు SSH_GSSAPI_MAX_MECHS	2048
 
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_gssapi;
+బాహ్య ServerOptions options;
+బాహ్య నిర్మాణం authmethod_cfg methodcfg_gssapi;
 
-static int input_gssapi_token(int type, uint32_t plen, struct ssh *ssh);
-static int input_gssapi_mic(int type, uint32_t plen, struct ssh *ssh);
-static int input_gssapi_exchange_complete(int type, uint32_t plen, struct ssh *ssh);
-static int input_gssapi_errtok(int, uint32_t, struct ssh *);
+స్థిర పూర్ణాంకం ఆదానం_gssapi_token(పూర్ణాంకం type, uint32_t plen, నిర్మాణం ssh *ssh);
+స్థిర పూర్ణాంకం ఆదానం_gssapi_mic(పూర్ణాంకం type, uint32_t plen, నిర్మాణం ssh *ssh);
+స్థిర పూర్ణాంకం ఆదానం_gssapi_exchange_complete(పూర్ణాంకం type, uint32_t plen, నిర్మాణం ssh *ssh);
+స్థిర పూర్ణాంకం ఆదానం_gssapi_errtok(పూర్ణాంకం, uint32_t, నిర్మాణం ssh *);
 
 /*
  * We only support those mechanisms that we know about (ie ones that we know
  * how to check local user kuserok and the like)
  */
-static int
-userauth_gssapi(struct ssh *ssh, const char *method)
+స్థిర పూర్ణాంకం
+userauth_gssapi(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *పద్ధతి)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	gss_OID_desc goid = {0, NULL};
-	Gssctxt *ctxt = NULL;
-	int r, present;
+	gss_OID_desc goid = {0, ఖాళీ};
+	Gssctxt *ctxt = ఖాళీ;
+	పూర్ణాంకం r, present;
 	u_int mechs;
 	OM_uint32 ms;
-	size_t len;
-	u_char *doid = NULL;
+	కొలత_t len;
+	u_char *doid = ఖాళీ;
 
-	if ((r = sshpkt_get_u32(ssh, &mechs)) != 0)
+	ఒకవేళ ((r = sshpkt_get_u32(ssh, &mechs)) != 0)
 		fatal_fr(r, "parse packet");
 
-	if (mechs == 0) {
+	ఒకవేళ (mechs == 0) {
 		logit_f("mechanism negotiation is not supported");
-		return (0);
-	} else if (mechs > SSH_GSSAPI_MAX_MECHS) {
+		తిరిగి (0);
+	} లేకపోతే ఒకవేళ (mechs > SSH_GSSAPI_MAX_MECHS) {
 		logit_f("too many mechanisms requested %u > %u", mechs,
 		    SSH_GSSAPI_MAX_MECHS);
-		return (0);
+		తిరిగి (0);
 	}
 
-	do {
+	చేయి {
 		mechs--;
 
-		free(doid);
+		విడుదల(doid);
 
 		present = 0;
-		if ((r = sshpkt_get_string(ssh, &doid, &len)) != 0)
+		ఒకవేళ ((r = sshpkt_get_string(ssh, &doid, &len)) != 0)
 			fatal_fr(r, "parse oid");
 
-		if (len > 2 && doid[0] == SSH_GSS_OIDTYPE &&
+		ఒకవేళ (len > 2 && doid[0] == SSH_GSS_OIDTYPE &&
 		    doid[1] == len - 2) {
 			goid.elements = doid + 2;
-			goid.length   = len - 2;
+			goid.నిడివి   = len - 2;
 			ssh_gssapi_test_oid_supported(&ms, &goid, &present);
-		} else {
+		} లేకపోతే {
 			logit_f("badly formed OID received");
 		}
-	} while (mechs > 0 && !present);
+	} అయితే (mechs > 0 && !present);
 
-	if (!present) {
-		free(doid);
+	ఒకవేళ (!present) {
+		విడుదల(doid);
 		authctxt->server_caused_failure = 1;
-		return (0);
+		తిరిగి (0);
 	}
 
-	if (GSS_ERROR(mm_ssh_gssapi_server_ctx(&ctxt, &goid))) {
-		if (ctxt != NULL)
+	ఒకవేళ (GSS_ERROR(mm_ssh_gssapi_server_ctx(&ctxt, &goid))) {
+		ఒకవేళ (ctxt != ఖాళీ)
 			ssh_gssapi_delete_ctx(&ctxt);
-		free(doid);
+		విడుదల(doid);
 		authctxt->server_caused_failure = 1;
-		return (0);
+		తిరిగి (0);
 	}
 
-	authctxt->methoddata = (void *)ctxt;
+	authctxt->methoddata = (శూన్య *)ctxt;
 
 	/* Return the OID that we received */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_GSSAPI_RESPONSE)) != 0 ||
+	ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_RESPONSE)) != 0 ||
 	    (r = sshpkt_put_string(ssh, doid, len)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
-	free(doid);
+	విడుదల(doid);
 
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, &input_gssapi_token);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, &input_gssapi_errtok);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_TOKEN, &ఆదానం_gssapi_token);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_ERRTOK, &ఆదానం_gssapi_errtok);
 	authctxt->postponed = 1;
 
-	return (0);
+	తిరిగి (0);
 }
 
-static int
-input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
+స్థిర పూర్ణాంకం
+ఆదానం_gssapi_token(పూర్ణాంకం type, uint32_t plen, నిర్మాణం ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt;
-	gss_buffer_desc send_tok = GSS_C_EMPTY_BUFFER;
-	gss_buffer_desc recv_tok;
-	OM_uint32 maj_status, min_status, flags;
+	gss_బఫరు_desc send_tok = GSS_C_ఖాళీలు_బఫరు;
+	gss_బఫరు_desc recv_tok;
+	OM_uint32 maj_స్థితి, min_స్థితి, flags;
 	u_char *p;
-	size_t len;
-	int r;
+	కొలత_t len;
+	పూర్ణాంకం r;
 
-	if (authctxt == NULL)
+	ఒకవేళ (authctxt == ఖాళీ)
 		fatal("No authentication or GSSAPI context");
 
 	gssctxt = authctxt->methoddata;
-	if ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	ఒకవేళ ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
+	    (r = sshpkt_get_చివర(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
-	recv_tok.value = p;
-	recv_tok.length = len;
-	maj_status = mm_ssh_gssapi_accept_ctx(gssctxt, &recv_tok,
+	recv_tok.విలువ = p;
+	recv_tok.నిడివి = len;
+	maj_స్థితి = mm_ssh_gssapi_accept_ctx(gssctxt, &recv_tok,
 	    &send_tok, &flags);
 
-	free(p);
+	విడుదల(p);
 
-	if (GSS_ERROR(maj_status)) {
-		if (send_tok.length != 0) {
-			if ((r = sshpkt_start(ssh,
-			    SSH2_MSG_USERAUTH_GSSAPI_ERRTOK)) != 0 ||
-			    (r = sshpkt_put_string(ssh, send_tok.value,
-			    send_tok.length)) != 0 ||
+	ఒకవేళ (GSS_ERROR(maj_స్థితి)) {
+		ఒకవేళ (send_tok.నిడివి != 0) {
+			ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh,
+			    SSH2_సందేశం_USERAUTH_GSSAPI_ERRTOK)) != 0 ||
+			    (r = sshpkt_put_string(ssh, send_tok.విలువ,
+			    send_tok.నిడివి)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0)
 				fatal_fr(r, "send ERRTOK packet");
 		}
@@ -176,65 +176,65 @@ input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
 		    "from %.200s port %d ssh2",
 		    authctxt->valid ? "" : "invalid user ",
 		    authctxt->user,
-		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
+		    ssh_remote_ipaddr(ssh), ssh_remote_పోర్టు(ssh));
 		authctxt->postponed = 0;
-		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, NULL);
-		userauth_finish(ssh, 0, "gssapi-with-mic", NULL);
-	} else {
-		if (send_tok.length != 0) {
-			if ((r = sshpkt_start(ssh,
-			    SSH2_MSG_USERAUTH_GSSAPI_TOKEN)) != 0 ||
-			    (r = sshpkt_put_string(ssh, send_tok.value,
-			    send_tok.length)) != 0 ||
+		ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_TOKEN, ఖాళీ);
+		ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_ERRTOK, ఖాళీ);
+		userauth_ముగింపు(ssh, 0, "gssapi-with-mic", ఖాళీ);
+	} లేకపోతే {
+		ఒకవేళ (send_tok.నిడివి != 0) {
+			ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh,
+			    SSH2_సందేశం_USERAUTH_GSSAPI_TOKEN)) != 0 ||
+			    (r = sshpkt_put_string(ssh, send_tok.విలువ,
+			    send_tok.నిడివి)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0)
 				fatal_fr(r, "send TOKEN packet");
 		}
-		if (maj_status == GSS_S_COMPLETE) {
-			ssh_dispatch_set(ssh,
-			    SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
+		ఒకవేళ (maj_స్థితి == GSS_S_COMPLETE) {
+			ssh_dispatch_సమితి(ssh,
+			    SSH2_సందేశం_USERAUTH_GSSAPI_TOKEN, ఖాళీ);
 			/* note: keep ERRTOK handler as per RFC 4462 s3.4 */
-			if (flags & GSS_C_INTEG_FLAG) {
-				ssh_dispatch_set(ssh,
-				    SSH2_MSG_USERAUTH_GSSAPI_MIC,
-				    &input_gssapi_mic);
-			} else {
-				ssh_dispatch_set(ssh,
-				    SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE,
-				    &input_gssapi_exchange_complete);
+			ఒకవేళ (flags & GSS_C_INTEG_FLAG) {
+				ssh_dispatch_సమితి(ssh,
+				    SSH2_సందేశం_USERAUTH_GSSAPI_MIC,
+				    &ఆదానం_gssapi_mic);
+			} లేకపోతే {
+				ssh_dispatch_సమితి(ssh,
+				    SSH2_సందేశం_USERAUTH_GSSAPI_EXCHANGE_COMPLETE,
+				    &ఆదానం_gssapi_exchange_complete);
 			}
 		}
 	}
 
-	gss_release_buffer(&min_status, &send_tok);
-	return 0;
+	gss_release_బఫరు(&min_స్థితి, &send_tok);
+	తిరిగి 0;
 }
 
-static int
-input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
+స్థిర పూర్ణాంకం
+ఆదానం_gssapi_errtok(పూర్ణాంకం type, uint32_t plen, నిర్మాణం ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	int r;
+	పూర్ణాంకం r;
 
-	if (authctxt == NULL)
+	ఒకవేళ (authctxt == ఖాళీ)
 		fatal("No authentication or GSSAPI context");
 
 	/* Minimal error handling - just cancel auth and return FAILURE */
-	if ((r = sshpkt_get_string_direct(ssh, NULL, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	ఒకవేళ ((r = sshpkt_get_string_ప్రత్యక్ష(ssh, ఖాళీ, ఖాళీ)) != 0 ||
+	    (r = sshpkt_get_చివర(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	logit("Failed gssapi-with-mic for %s%.100s from %.200s port %d ssh2",
 	    authctxt->valid ? "" : "invalid user ",
 	    authctxt->user,
-	    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
+	    ssh_remote_ipaddr(ssh), ssh_remote_పోర్టు(ssh));
 	authctxt->postponed = 0;
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_MIC, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
-	userauth_finish(ssh, 0, "gssapi-with-mic", NULL);
-	return 0;
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_TOKEN, ఖాళీ);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_ERRTOK, ఖాళీ);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_MIC, ఖాళీ);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, ఖాళీ);
+	userauth_ముగింపు(ssh, 0, "gssapi-with-mic", ఖాళీ);
+	తిరిగి 0;
 }
 
 /*
@@ -243,14 +243,14 @@ input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
  * which only enables it once the GSSAPI exchange is complete.
  */
 
-static int
-input_gssapi_exchange_complete(int type, uint32_t plen, struct ssh *ssh)
+స్థిర పూర్ణాంకం
+ఆదానం_gssapi_exchange_complete(పూర్ణాంకం type, uint32_t plen, నిర్మాణం ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	int r, authenticated;
-	double tstart = monotime_double();
+	పూర్ణాంకం r, authenticated;
+	ద్విగుణ tstart = monotime_double();
 
-	if (authctxt == NULL)
+	ఒకవేళ (authctxt == ఖాళీ)
 		fatal("No authentication or GSSAPI context");
 
 	/*
@@ -258,74 +258,74 @@ input_gssapi_exchange_complete(int type, uint32_t plen, struct ssh *ssh)
 	 * the dispatcher once the exchange is complete
 	 */
 
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	ఒకవేళ ((r = sshpkt_get_చివర(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	authenticated = mm_ssh_gssapi_userok(authctxt->user);
-	if (!authenticated)
+	ఒకవేళ (!authenticated)
 		auth_failure_delay(authctxt, tstart);
 
 	authctxt->postponed = 0;
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_MIC, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
-	userauth_finish(ssh, authenticated, "gssapi-with-mic", NULL);
-	return 0;
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_TOKEN, ఖాళీ);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_ERRTOK, ఖాళీ);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_MIC, ఖాళీ);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, ఖాళీ);
+	userauth_ముగింపు(ssh, authenticated, "gssapi-with-mic", ఖాళీ);
+	తిరిగి 0;
 }
 
-static int
-input_gssapi_mic(int type, uint32_t plen, struct ssh *ssh)
+స్థిర పూర్ణాంకం
+ఆదానం_gssapi_mic(పూర్ణాంకం type, uint32_t plen, నిర్మాణం ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt;
-	int r, authenticated = 0;
-	struct sshbuf *b;
-	gss_buffer_desc mic, gssbuf;
+	పూర్ణాంకం r, authenticated = 0;
+	నిర్మాణం sshbuf *b;
+	gss_బఫరు_desc mic, gssbuf;
 	u_char *p;
-	size_t len;
-	double tstart = monotime_double();
+	కొలత_t len;
+	ద్విగుణ tstart = monotime_double();
 
-	if (authctxt == NULL)
+	ఒకవేళ (authctxt == ఖాళీ)
 		fatal("No authentication or GSSAPI context");
 
 	gssctxt = authctxt->methoddata;
 
-	if ((r = sshpkt_get_string(ssh, &p, &len)) != 0)
+	ఒకవేళ ((r = sshpkt_get_string(ssh, &p, &len)) != 0)
 		fatal_fr(r, "parse packet");
-	if ((b = sshbuf_new()) == NULL)
+	ఒకవేళ ((b = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	mic.value = p;
-	mic.length = len;
+	mic.విలువ = p;
+	mic.నిడివి = len;
 	ssh_gssapi_buildmic(b, authctxt->user, authctxt->service,
 	    "gssapi-with-mic", ssh->kex->session_id);
 
-	if ((gssbuf.value = sshbuf_mutable_ptr(b)) == NULL)
+	ఒకవేళ ((gssbuf.విలువ = sshbuf_mutable_ptr(b)) == ఖాళీ)
 		fatal_f("sshbuf_mutable_ptr failed");
-	gssbuf.length = sshbuf_len(b);
+	gssbuf.నిడివి = sshbuf_len(b);
 
-	if (!GSS_ERROR(mm_ssh_gssapi_checkmic(gssctxt, &gssbuf, &mic)))
+	ఒకవేళ (!GSS_ERROR(mm_ssh_gssapi_checkmic(gssctxt, &gssbuf, &mic)))
 		authenticated = mm_ssh_gssapi_userok(authctxt->user);
-	else
+	లేకపోతే
 		logit("GSSAPI MIC check failed");
 
 	sshbuf_free(b);
-	free(mic.value);
+	విడుదల(mic.విలువ);
 
-	if (!authenticated)
+	ఒకవేళ (!authenticated)
 		auth_failure_delay(authctxt, tstart);
 
 	authctxt->postponed = 0;
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_MIC, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
-	userauth_finish(ssh, authenticated, "gssapi-with-mic", NULL);
-	return 0;
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_TOKEN, ఖాళీ);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_ERRTOK, ఖాళీ);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_MIC, ఖాళీ);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, ఖాళీ);
+	userauth_ముగింపు(ssh, authenticated, "gssapi-with-mic", ఖాళీ);
+	తిరిగి 0;
 }
 
-Authmethod method_gssapi = {
+Authmethod పద్ధతి_gssapi = {
 	&methodcfg_gssapi,
 	userauth_gssapi,
 };
-#endif
+#అయితే_ముగింపు

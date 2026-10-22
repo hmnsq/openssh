@@ -24,12 +24,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GROUPACCESS_H
-#define GROUPACCESS_H
+#నిర్వచితం_కాకపోతే GROUPACCESS_H
+#నిర్వచించు GROUPACCESS_H
 
-int	 ga_init(const char *, gid_t);
-int	 ga_match(char * const *, int);
-int	 ga_match_pattern_list(const char *);
-void	 ga_free(void);
+పూర్ణాంకం	 ga_init(స్థిరరాశి అక్షరం *, gid_t);
+పూర్ణాంకం	 ga_సరిపోలిక(అక్షరం * స్థిరరాశి *, పూర్ణాంకం);
+పూర్ణాంకం	 ga_సరిపోలిక_నమూనా_list(స్థిరరాశి అక్షరం *);
+శూన్య	 ga_free(శూన్య);
 
-#endif
+#అయితే_ముగింపు

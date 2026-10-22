@@ -46,192 +46,192 @@
  *
  */
 
-#include <stdio.h>
-#include <err.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <err.h>
 
-#include <gio/gio.h>
+#అన్తర్భావ <gio/gio.h>
 
-#define GCR_API_SUBJECT_TO_CHANGE 1
-#include <gcr/gcr.h>
+#నిర్వచించు GCR_API_SUBJECT_గమ్యం_CHANGE 1
+#అన్తర్భావ <gcr/gcr.h>
 
-typedef enum _PromptType {
-	PROMPT_ENTRY,
+రకనిర్వచనం గణన _PromptType {
+	PROMPT_నమోదు,
 	PROMPT_CONFIRM,
 	PROMPT_NONE,
 } PromptType;
 
-typedef struct _PromptState {
+రకనిర్వచనం నిర్మాణం _PromptState {
 	GApplication *app;
-	char* message;
+	అక్షరం* సందేశం_2;
 	PromptType type;
-	int exit_status;
+	పూర్ణాంకం exit_స్థితి;
 } PromptState;
 
-static PromptState *
-prompt_state_new(GApplication *app, char* message, PromptType type)
+స్థిర PromptState *
+prompt_state_new(GApplication *app, అక్షరం* సందేశం_2, PromptType type)
 {
-	PromptState *state = g_malloc(sizeof(PromptState));
+	PromptState *state = g_malloc(పరిమాణం(PromptState));
 	state->app = g_object_ref(app);
-	state->message = g_strdup(message);
+	state->సందేశం_2 = g_strdup(సందేశం_2);
 	state->type = type;
-	state->exit_status = -1;
-	return state;
+	state->exit_స్థితి = -1;
+	తిరిగి state;
 }
 
-static void
+స్థిర శూన్య
 prompt_state_free(PromptState *state)
 {
 	g_clear_object(&state->app);
-	g_free(state->message);
+	g_free(state->సందేశం_2);
 	g_free(state);
 }
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(PromptState, prompt_state_free)
 
-static void
-prompt_password_done(GObject *source_object, GAsyncResult *res,
-    gpointer user_data)
+స్థిర శూన్య
+prompt_password_పూర్తి(GObject *ఆధారం_object, GAsync_ఫలితం *res,
+    gpointer user_దత్తాంశం)
 {
-	GcrPrompt *prompt = GCR_PROMPT(source_object);
-	PromptState *state = user_data;
-	g_autoptr(GError) error = NULL;
+	GcrPrompt *prompt = GCR_PROMPT(ఆధారం_object);
+	PromptState *state = user_దత్తాంశం;
+	g_autoptr(GError) error = ఖాళీ;
 
 	/*
 	 * “The returned password is valid until the next time a method
 	 * is called to display another prompt.”
 	 */
-	const char *pw = gcr_prompt_password_finish(prompt, res, &error);
+	స్థిరరాశి అక్షరం *pw = gcr_prompt_password_ముగింపు(prompt, res, &error);
 
-	if ((!pw && !error) || (error && error->code == G_IO_ERROR_CANCELLED)) {
+	ఒకవేళ ((!pw && !error) || (error && error->సంకేతం_2 == G_IO_ERROR_CANCELLED)) {
 		/* Operation was cancelled or timed out. */
-		state->exit_status = -1;
-	} else if (error) {
-		warnx("Failed to prompt for ssh-askpass: %s", error->message);
-		state->exit_status = 1;
-	} else {
+		state->exit_స్థితి = -1;
+	} లేకపోతే ఒకవేళ (error) {
+		warnx("Failed to prompt for ssh-askpass: %s", error->సందేశం_2);
+		state->exit_స్థితి = 1;
+	} లేకపోతే {
 		/* Report passphrase if user selected Continue. */
-		g_autofree char *local = g_locale_from_utf8(pw, strlen(pw),
-		    NULL, NULL, NULL);
+		g_autofree అక్షరం *local = g_locale_from_utf8(pw, అక్షరశ్రేణి_పొడవు(pw),
+		    ఖాళీ, ఖాళీ, ఖాళీ);
 
-		if (local != NULL) {
+		ఒకవేళ (local != ఖాళీ) {
 			puts(local);
-			memset(local, '\0', strlen(local));
-		} else {
+			memset(local, '\0', అక్షరశ్రేణి_పొడవు(local));
+		} లేకపోతే {
 			puts(pw);
 		}
-		state->exit_status = 0;
+		state->exit_స్థితి = 0;
 	}
 
 	g_application_release(state->app);
 }
 
-static void
-prompt_confirm_done(GObject *source_object, GAsyncResult *res,
-    gpointer user_data)
+స్థిర శూన్య
+prompt_confirm_పూర్తి(GObject *ఆధారం_object, GAsync_ఫలితం *res,
+    gpointer user_దత్తాంశం)
 {
-	GcrPrompt *prompt = GCR_PROMPT(source_object);
-	PromptState *state = user_data;
-	g_autoptr(GError) error = NULL;
+	GcrPrompt *prompt = GCR_PROMPT(ఆధారం_object);
+	PromptState *state = user_దత్తాంశం;
+	g_autoptr(GError) error = ఖాళీ;
 
-	GcrPromptReply reply = gcr_prompt_confirm_finish(prompt, res, &error);
-	if (error) {
-		if (error->code == G_IO_ERROR_CANCELLED) {
+	Gcr_Prompt_జవాబు జవాబు = gcr_prompt_confirm_ముగింపు(prompt, res, &error);
+	ఒకవేళ (error) {
+		ఒకవేళ (error->సంకేతం_2 == G_IO_ERROR_CANCELLED) {
 			/* Operation was cancelled or timed out. */
-			state->exit_status = -1;
-		} else {
-			state->exit_status = 1;
+			state->exit_స్థితి = -1;
+		} లేకపోతే {
+			state->exit_స్థితి = 1;
 			warnx("Failed to prompt for ssh-askpass: %s",
-			    error->message);
+			    error->సందేశం_2);
 		}
-	} else if (reply == GCR_PROMPT_REPLY_CONTINUE ||
+	} లేకపోతే ఒకవేళ (జవాబు == GCR_PROMPT_జవాబు_CONTINUE ||
 	    state->type == PROMPT_NONE) {
 		/*
 		 * Since Gcr doesn’t yet support one button message
 		 * boxes treat Cancel the same as Continue.
 		 */
-		state->exit_status = 0;
-	} else {
+		state->exit_స్థితి = 0;
+	} లేకపోతే {
 		/* GCR_PROMPT_REPLY_CANCEL */
-		state->exit_status = -1;
+		state->exit_స్థితి = -1;
 	}
 
 	g_application_release(state->app);
 }
 
-static int
-command_line(GApplication* app, G_GNUC_UNUSED GApplicationCommandLine *cmdline,
-    gpointer user_data)
+స్థిర పూర్ణాంకం
+command_పంక్తి(GApplication* app, G_GNUC_వాడని GApplication_Command_పంక్తి *cmdline,
+    gpointer user_దత్తాంశం)
 {
-	PromptState *state = user_data;
+	PromptState *state = user_దత్తాంశం;
 
 	/* Prevent app from exiting while waiting for the async callback. */
 	g_application_hold(app);
 
 	/* Wait indefinitely. */
-	int timeout_seconds = -1;
-	g_autoptr(GError) error = NULL;
-	GcrPrompt* prompt = gcr_system_prompt_open(timeout_seconds, NULL, &error);
+	పూర్ణాంకం timeout_seconds = -1;
+	g_autoptr(GError) error = ఖాళీ;
+	GcrPrompt* prompt = gcr_system_prompt_open(timeout_seconds, ఖాళీ, &error);
 
-	if (!prompt) {
-		if (error->code == GCR_SYSTEM_PROMPT_IN_PROGRESS) {
+	ఒకవేళ (!prompt) {
+		ఒకవేళ (error->సంకేతం_2 == GCR_SYSTEM_PROMPT_లోపల_పురోగతి) {
 			/*
 			 * This means the timeout elapsed, but no prompt
 			 * was ever shown.
 			 */
 			warnx("Timeout: the Gcr system prompter was "
 			    "already in use.");
-		} else {
+		} లేకపోతే {
 			warnx("Couldn’t create prompt for ssh-askpass: %s",
-			    error->message);
+			    error->సందేశం_2);
 		}
 
-		return 1;
+		తిరిగి 1;
 	}
 
-	gcr_prompt_set_message(prompt, "OpenSSH");
-	gcr_prompt_set_description(prompt, state->message);
+	gcr_prompt_సమితి_సందేశం(prompt, "OpenSSH");
+	gcr_prompt_సమితి_description(prompt, state->సందేశం_2);
 
 	/*
 	 * XXX: Remove the Cancel button for PROMPT_NONE when GCR
 	 * supports that.
 	 */
-	if (state->type == PROMPT_ENTRY) {
-		gcr_prompt_password_async(prompt, NULL, prompt_password_done, state);
-	} else {
-		gcr_prompt_confirm_async(prompt, NULL, prompt_confirm_done, state);
+	ఒకవేళ (state->type == PROMPT_నమోదు) {
+		gcr_prompt_password_async(prompt, ఖాళీ, prompt_password_పూర్తి, state);
+	} లేకపోతే {
+		gcr_prompt_confirm_async(prompt, ఖాళీ, prompt_confirm_పూర్తి, state);
 	}
 
 	/* The exit status will be changed in the async callbacks. */
-	return 1;
+	తిరిగి 1;
 }
 
-int
-main(int argc, char **argv)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
 	g_autoptr(GApplication) app = g_application_new(
 	    "com.openssh.gnome-ssh-askpass4",
-	    G_APPLICATION_HANDLES_COMMAND_LINE);
-	g_autofree char *message = NULL;
+	    G_APPLICATION_HANDLES_COMMAND_పంక్తి);
+	g_autofree అక్షరం *సందేశం_2 = ఖాళీ;
 
-	if (argc > 1) {
-		message = g_strjoinv(" ", argv + 1);
-	} else {
-		message = g_strdup("Enter your OpenSSH passphrase:");
+	ఒకవేళ (argc > 1) {
+		సందేశం_2 = g_strjoinv(" ", argv + 1);
+	} లేకపోతే {
+		సందేశం_2 = g_strdup("Enter your OpenSSH passphrase:");
 	}
 
-	const char *prompt_mode = getenv("SSH_ASKPASS_PROMPT");
-	PromptType type = PROMPT_ENTRY;
-	if (prompt_mode != NULL) {
-		if (strcasecmp(prompt_mode, "confirm") == 0) {
+	స్థిరరాశి అక్షరం *prompt_బహుళకం = getenv("SSH_ASKPASS_PROMPT");
+	PromptType type = PROMPT_నమోదు;
+	ఒకవేళ (prompt_బహుళకం != ఖాళీ) {
+		ఒకవేళ (strcasecmp(prompt_బహుళకం, "confirm") == 0) {
 			type = PROMPT_CONFIRM;
-		} else if (strcasecmp(prompt_mode, "none") == 0) {
+		} లేకపోతే ఒకవేళ (strcasecmp(prompt_బహుళకం, "none") == 0) {
 			type = PROMPT_NONE;
 		}
 	}
 
-	g_autoptr(PromptState) state = prompt_state_new(app, message, type);
+	g_autoptr(PromptState) state = prompt_state_new(app, సందేశం_2, type);
 
-	g_signal_connect(app, "command-line", G_CALLBACK(command_line), state);
+	g_signal_connect(app, "command-line", G_CALLBACK(command_పంక్తి), state);
 
 	/*
 	 * Since we are calling g_application_hold, we cannot use
@@ -243,7 +243,7 @@ main(int argc, char **argv)
 	 *   ‘successful’ in a certain sense, and the exit status is always
 	 *   zero.”
 	 */
-	(void)(g_application_run(app, argc, argv));
+	(శూన్య)(g_application_నిరంతరం(app, argc, argv));
 
-	return state->exit_status;
+	తిరిగి state->exit_స్థితి;
 }

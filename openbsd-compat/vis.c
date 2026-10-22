@@ -30,20 +30,20 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/vis.c */
 
-#include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#అన్తర్భావ "includes.h"
+#ఒకవేళ !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
-#include <sys/types.h>
-#include <errno.h>
-#include <ctype.h>
-#include <limits.h>
-#include <string.h>
-#include <stdlib.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "vis.h"
+#అన్తర్భావ "vis.h"
 
-#define	isoctal(c)	(((u_char)(c)) >= '0' && ((u_char)(c)) <= '7')
-#define	isvisible(c,flag)						\
+#నిర్వచించు	isoctal(c)	(((u_char)(c)) >= '0' && ((u_char)(c)) <= '7')
+#నిర్వచించు	isvisible(c,flag)						\
 	(((c) == '\\' || (flag & VIS_ALL) == 0) &&			\
 	(((u_int)(c) <= UCHAR_MAX && isascii((u_char)(c)) &&		\
 	(((c) != '*' && (c) != '?' && (c) != '[' && (c) != '#') ||	\
@@ -51,96 +51,96 @@
 	((flag & VIS_SP) == 0 && (c) == ' ') ||				\
 	((flag & VIS_TAB) == 0 && (c) == '\t') ||			\
 	((flag & VIS_NL) == 0 && (c) == '\n') ||			\
-	((flag & VIS_SAFE) && ((c) == '\b' ||				\
+	((flag & VIS_సురక్షిత) && ((c) == '\b' ||				\
 		(c) == '\007' || (c) == '\r' ||				\
 		isgraph((u_char)(c))))))
 
 /*
  * vis - visually encode characters
  */
-char *
-vis(char *dst, int c, int flag, int nextc)
+అక్షరం *
+vis(అక్షరం *dst, పూర్ణాంకం c, పూర్ణాంకం flag, పూర్ణాంకం nextc)
 {
-	if (isvisible(c, flag)) {
-		if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	ఒకవేళ (isvisible(c, flag)) {
+		ఒకవేళ ((c == '"' && (flag & VIS_DQ) != 0) ||
 		    (c == '\\' && (flag & VIS_NOSLASH) == 0))
 			*dst++ = '\\';
 		*dst++ = c;
 		*dst = '\0';
-		return (dst);
+		తిరిగి (dst);
 	}
 
-	if (flag & VIS_CSTYLE) {
-		switch(c) {
-		case '\n':
+	ఒకవేళ (flag & VIS_CSTYLE) {
+		ఎంపిక(c) {
+		స్థితి '\n':
 			*dst++ = '\\';
 			*dst++ = 'n';
-			goto done;
-		case '\r':
+			వెళ్ళు పూర్తి;
+		స్థితి '\r':
 			*dst++ = '\\';
 			*dst++ = 'r';
-			goto done;
-		case '\b':
+			వెళ్ళు పూర్తి;
+		స్థితి '\b':
 			*dst++ = '\\';
 			*dst++ = 'b';
-			goto done;
-		case '\a':
+			వెళ్ళు పూర్తి;
+		స్థితి '\a':
 			*dst++ = '\\';
 			*dst++ = 'a';
-			goto done;
-		case '\v':
+			వెళ్ళు పూర్తి;
+		స్థితి '\v':
 			*dst++ = '\\';
 			*dst++ = 'v';
-			goto done;
-		case '\t':
+			వెళ్ళు పూర్తి;
+		స్థితి '\t':
 			*dst++ = '\\';
 			*dst++ = 't';
-			goto done;
-		case '\f':
+			వెళ్ళు పూర్తి;
+		స్థితి '\f':
 			*dst++ = '\\';
 			*dst++ = 'f';
-			goto done;
-		case ' ':
+			వెళ్ళు పూర్తి;
+		స్థితి ' ':
 			*dst++ = '\\';
 			*dst++ = 's';
-			goto done;
-		case '\0':
+			వెళ్ళు పూర్తి;
+		స్థితి '\0':
 			*dst++ = '\\';
 			*dst++ = '0';
-			if (isoctal(nextc)) {
+			ఒకవేళ (isoctal(nextc)) {
 				*dst++ = '0';
 				*dst++ = '0';
 			}
-			goto done;
+			వెళ్ళు పూర్తి;
 		}
 	}
-	if (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
+	ఒకవేళ (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
 	    ((flag & VIS_GLOB) && (c == '*' || c == '?' || c == '[' || c == '#'))) {
 		*dst++ = '\\';
 		*dst++ = ((u_char)c >> 6 & 07) + '0';
 		*dst++ = ((u_char)c >> 3 & 07) + '0';
 		*dst++ = ((u_char)c & 07) + '0';
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
-	if ((flag & VIS_NOSLASH) == 0)
+	ఒకవేళ ((flag & VIS_NOSLASH) == 0)
 		*dst++ = '\\';
-	if (c & 0200) {
+	ఒకవేళ (c & 0200) {
 		c &= 0177;
 		*dst++ = 'M';
 	}
-	if (iscntrl((u_char)c)) {
+	ఒకవేళ (iscntrl((u_char)c)) {
 		*dst++ = '^';
-		if (c == 0177)
+		ఒకవేళ (c == 0177)
 			*dst++ = '?';
-		else
+		లేకపోతే
 			*dst++ = c + '@';
-	} else {
+	} లేకపోతే {
 		*dst++ = '-';
 		*dst++ = c;
 	}
-done:
+పూర్తి:
 	*dst = '\0';
-	return (dst);
+	తిరిగి (dst);
 }
 DEF_WEAK(vis);
 
@@ -157,97 +157,97 @@ DEF_WEAK(vis);
  *	Strvisx encodes exactly len bytes from src into dst.
  *	This is useful for encoding a block of data.
  */
-int
-strvis(char *dst, const char *src, int flag)
+పూర్ణాంకం
+strvis(అక్షరం *dst, స్థిరరాశి అక్షరం *src, పూర్ణాంకం flag)
 {
-	char c;
-	char *start;
+	అక్షరం c;
+	అక్షరం *ప్రారంభం;
 
-	for (start = dst; (c = *src);)
+	కొరకు (ప్రారంభం = dst; (c = *src);)
 		dst = vis(dst, c, flag, *++src);
 	*dst = '\0';
-	return (dst - start);
+	తిరిగి (dst - ప్రారంభం);
 }
 DEF_WEAK(strvis);
 
-int
-strnvis(char *dst, const char *src, size_t siz, int flag)
+పూర్ణాంకం
+strnvis(అక్షరం *dst, స్థిరరాశి అక్షరం *src, కొలత_t siz, పూర్ణాంకం flag)
 {
-	char *start, *end;
-	char tbuf[5];
-	int c, i;
+	అక్షరం *ప్రారంభం, *చివర;
+	అక్షరం tbuf[5];
+	పూర్ణాంకం c, i;
 
 	i = 0;
-	for (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
-		if (isvisible(c, flag)) {
-			if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	కొరకు (ప్రారంభం = dst, చివర = ప్రారంభం + siz - 1; (c = *src) && dst < చివర; ) {
+		ఒకవేళ (isvisible(c, flag)) {
+			ఒకవేళ ((c == '"' && (flag & VIS_DQ) != 0) ||
 			    (c == '\\' && (flag & VIS_NOSLASH) == 0)) {
 				/* need space for the extra '\\' */
-				if (dst + 1 >= end) {
+				ఒకవేళ (dst + 1 >= చివర) {
 					i = 2;
-					break;
+					ఆపు;
 				}
 				*dst++ = '\\';
 			}
 			i = 1;
 			*dst++ = c;
 			src++;
-		} else {
+		} లేకపోతే {
 			i = vis(tbuf, c, flag, *++src) - tbuf;
-			if (dst + i <= end) {
-				memcpy(dst, tbuf, i);
+			ఒకవేళ (dst + i <= చివర) {
+				జ్ఞాపకం_నకలు(dst, tbuf, i);
 				dst += i;
-			} else {
+			} లేకపోతే {
 				src--;
-				break;
+				ఆపు;
 			}
 		}
 	}
-	if (siz > 0)
+	ఒకవేళ (siz > 0)
 		*dst = '\0';
-	if (dst + i > end) {
+	ఒకవేళ (dst + i > చివర) {
 		/* adjust return value for truncation */
-		while ((c = *src))
+		అయితే ((c = *src))
 			dst += vis(tbuf, c, flag, *++src) - tbuf;
 	}
-	return (dst - start);
+	తిరిగి (dst - ప్రారంభం);
 }
 
-#if 0 /* unused in OpenSSH */
-int
-stravis(char **outp, const char *src, int flag)
+#ఒకవేళ 0 /* unused in OpenSSH */
+పూర్ణాంకం
+stravis(అక్షరం **outp, స్థిరరాశి అక్షరం *src, పూర్ణాంకం flag)
 {
-	char *buf;
-	int len, serrno;
+	అక్షరం *buf;
+	పూర్ణాంకం len, serrno;
 
-	buf = reallocarray(NULL, 4, strlen(src) + 1);
-	if (buf == NULL)
-		return -1;
+	buf = reallocarray(ఖాళీ, 4, అక్షరశ్రేణి_పొడవు(src) + 1);
+	ఒకవేళ (buf == ఖాళీ)
+		తిరిగి -1;
 	len = strvis(buf, src, flag);
 	serrno = errno;
 	*outp = realloc(buf, len + 1);
-	if (*outp == NULL) {
+	ఒకవేళ (*outp == ఖాళీ) {
 		*outp = buf;
 		errno = serrno;
 	}
-	return (len);
+	తిరిగి (len);
 }
 
-int
-strvisx(char *dst, const char *src, size_t len, int flag)
+పూర్ణాంకం
+strvisx(అక్షరం *dst, స్థిరరాశి అక్షరం *src, కొలత_t len, పూర్ణాంకం flag)
 {
-	char c;
-	char *start;
+	అక్షరం c;
+	అక్షరం *ప్రారంభం;
 
-	for (start = dst; len > 1; len--) {
+	కొరకు (ప్రారంభం = dst; len > 1; len--) {
 		c = *src;
 		dst = vis(dst, c, flag, *++src);
 	}
-	if (len)
+	ఒకవేళ (len)
 		dst = vis(dst, *src, flag, '\0');
 	*dst = '\0';
-	return (dst - start);
+	తిరిగి (dst - ప్రారంభం);
 }
-#endif /* unused */
+#అయితే_ముగింపు /*వాడని*/
 
-#endif
+#అయితే_ముగింపు

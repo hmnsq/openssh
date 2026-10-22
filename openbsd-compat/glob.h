@@ -37,72 +37,72 @@
 
 /* OPENBSD ORIGINAL: include/glob.h */
 
-#if !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#ఒకవేళ !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
 
-#ifndef _COMPAT_GLOB_H_
-#define	_COMPAT_GLOB_H_
+#నిర్వచితం_కాకపోతే _COMPAT_GLOB_H_
+#నిర్వచించు	_COMPAT_GLOB_H_
 
-#include <sys/stat.h>
-#include <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <sys/types.h>
 
 # define glob_t _ssh_compat_glob_t
 # define glob(a, b, c, d)  _ssh__compat_glob(a, b, c, d)
 # define globfree(a)  _ssh__compat_globfree(a)
 
-struct stat;
-typedef struct {
-	size_t gl_pathc;	/* Count of total paths so far. */
-	size_t gl_matchc;	/* Count of paths matching pattern. */
-	size_t gl_offs;		/* Reserved at beginning of gl_pathv. */
-	int gl_flags;		/* Copy of flags parameter to glob. */
-	char **gl_pathv;	/* List of paths matching pattern. */
-	struct stat **gl_statv;	/* Stat entries corresponding to gl_pathv */
+నిర్మాణం stat;
+రకనిర్వచనం నిర్మాణం {
+	కొలత_t gl_pathc;	/* Count of total paths so far. */
+	కొలత_t gl_matchc;	/* Count of paths matching pattern. */
+	కొలత_t gl_offs;		/* Reserved at beginning of gl_pathv. */
+	పూర్ణాంకం gl_flags;		/* Copy of flags parameter to glob. */
+	అక్షరం **gl_pathv;	/* List of paths matching pattern. */
+	నిర్మాణం stat **gl_statv;	/* Stat entries corresponding to gl_pathv */
 				/* Copy of errfunc parameter to glob. */
-	int (*gl_errfunc)(const char *, int);
+	పూర్ణాంకం (*gl_errfunc)(స్థిరరాశి అక్షరం *, పూర్ణాంకం);
 
 	/*
 	 * Alternate filesystem access methods for glob; replacement
 	 * versions of closedir(3), readdir(3), opendir(3), stat(2)
 	 * and lstat(2).
 	 */
-	void (*gl_closedir)(void *);
-	struct dirent *(*gl_readdir)(void *);	
-	void *(*gl_opendir)(const char *);
-	int (*gl_lstat)(const char *, struct stat *);
-	int (*gl_stat)(const char *, struct stat *);
+	శూన్య (*gl_closedir)(శూన్య *);
+	నిర్మాణం dirent *(*gl_readdir)(శూన్య *);	
+	శూన్య *(*gl_opendir)(స్థిరరాశి అక్షరం *);
+	పూర్ణాంకం (*gl_lstat)(స్థిరరాశి అక్షరం *, నిర్మాణం stat *);
+	పూర్ణాంకం (*gl_stat)(స్థిరరాశి అక్షరం *, నిర్మాణం stat *);
 } glob_t;
 
-#define	GLOB_APPEND	0x0001	/* Append to output from previous call. */
-#define	GLOB_DOOFFS	0x0002	/* Use gl_offs. */
-#define	GLOB_ERR	0x0004	/* Return on error. */
-#define	GLOB_MARK	0x0008	/* Append / to matching directories. */
-#define	GLOB_NOCHECK	0x0010	/* Return pattern itself if nothing matches. */
-#define	GLOB_NOSORT	0x0020	/* Don't sort. */
-#define	GLOB_NOESCAPE	0x1000	/* Disable backslash escaping. */
+#నిర్వచించు	GLOB_APPEND	0x0001	/* Append to output from previous call. */
+#నిర్వచించు	GLOB_DOOFFS	0x0002	/* Use gl_offs. */
+#నిర్వచించు	GLOB_ERR	0x0004	/* Return on error. */
+#నిర్వచించు	GLOB_MARK	0x0008	/* Append / to matching directories. */
+#నిర్వచించు	GLOB_NOCHECK	0x0010	/* Return pattern itself if nothing matches. */
+#నిర్వచించు	GLOB_NOSORT	0x0020	/* Don't sort. */
+#నిర్వచించు	GLOB_NOESCAPE	0x1000	/* Disable backslash escaping. */
 
-#define	GLOB_NOSPACE	(-1)	/* Malloc call failed. */
-#define	GLOB_ABORTED	(-2)	/* Unignored error. */
-#define	GLOB_NOMATCH	(-3)	/* No match and GLOB_NOCHECK not set. */
-#define	GLOB_NOSYS	(-4)	/* Function not supported. */
+#నిర్వచించు	GLOB_NOSPACE	(-1)	/* Malloc call failed. */
+#నిర్వచించు	GLOB_ABORTED	(-2)	/* Unignored error. */
+#నిర్వచించు	GLOB_NOMATCH	(-3)	/* No match and GLOB_NOCHECK not set. */
+#నిర్వచించు	GLOB_NOSYS	(-4)	/* Function not supported. */
 
-#define	GLOB_ALTDIRFUNC	0x0040	/* Use alternately specified directory funcs. */
-#define	GLOB_BRACE	0x0080	/* Expand braces ala csh. */
-#define	GLOB_MAGCHAR	0x0100	/* Pattern had globbing characters. */
-#define	GLOB_NOMAGIC	0x0200	/* GLOB_NOCHECK without magic chars (csh). */
-#define	GLOB_QUOTE	0x0400	/* Quote special chars with \. */
-#define	GLOB_TILDE	0x0800	/* Expand tilde names from the passwd file. */
-#define GLOB_LIMIT	0x2000	/* Limit pattern match output to ARG_MAX */
-#define	GLOB_KEEPSTAT	0x4000	/* Retain stat data for paths in gl_statv. */
-#define GLOB_ABEND	GLOB_ABORTED /* backward compatibility */
+#నిర్వచించు	GLOB_ALTDIRFUNC	0x0040	/* Use alternately specified directory funcs. */
+#నిర్వచించు	GLOB_BRACE	0x0080	/* Expand braces ala csh. */
+#నిర్వచించు	GLOB_MAGCHAR	0x0100	/* Pattern had globbing characters. */
+#నిర్వచించు	GLOB_NOMAGIC	0x0200	/* GLOB_NOCHECK without magic chars (csh). */
+#నిర్వచించు	GLOB_QUOTE	0x0400	/* Quote special chars with \. */
+#నిర్వచించు	GLOB_TILDE	0x0800	/* Expand tilde names from the passwd file. */
+#నిర్వచించు GLOB_హద్దు	0x2000	/* Limit pattern match output to ARG_MAX */
+#నిర్వచించు	GLOB_KEEPSTAT	0x4000	/* Retain stat data for paths in gl_statv. */
+#నిర్వచించు GLOB_ABEND	GLOB_ABORTED /* backward compatibility */
 
-int	glob(const char *, int, int (*)(const char *, int), glob_t *);
-void	globfree(glob_t *);
+పూర్ణాంకం	glob(స్థిరరాశి అక్షరం *, పూర్ణాంకం, పూర్ణాంకం (*)(స్థిరరాశి అక్షరం *, పూర్ణాంకం), glob_t *);
+శూన్య	globfree(glob_t *);
 
-#endif /* !_GLOB_H_ */
+#అయితే_ముగింపు /* !_GLOB_H_ */
 
-#endif /* !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC)  ||
+#అయితే_ముగింపు /* !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC)  ||
 	  !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOH_HAS_GL_STATV) */
 

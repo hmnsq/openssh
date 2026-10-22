@@ -14,24 +14,24 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#if !defined(HAVE_CLOSEFROM) || defined(BROKEN_CLOSEFROM)
+#ఒకవేళ !defined(HAVE_CLOSEFROM) || defined(BROKEN_CLOSEFROM)
 
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdio.h>
-#ifdef HAVE_FCNTL_H
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <stdio.h>
+#నిర్వచితమైతే HAVE_FCNTL_H
 # include <fcntl.h>
-#endif
-#include <limits.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <string.h>
-#ifdef HAVE_DIRENT_H
+#అయితే_ముగింపు
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <string.h>
+#నిర్వచితమైతే HAVE_DIRENT_H
 # include <dirent.h>
-# define NAMLEN(dirent) strlen((dirent)->d_name)
-#else
+# define NAMLEN(dirent) అక్షరశ్రేణి_పొడవు((dirent)->d_name)
+#లేకపోతే
 # define dirent direct
 # define NAMLEN(dirent) (dirent)->d_namlen
 # ifdef HAVE_SYS_NDIR_H
@@ -43,116 +43,116 @@
 # ifdef HAVE_NDIR_H
 #  include <ndir.h>
 # endif
-#endif
-#if defined(HAVE_LIBPROC_H)
+#అయితే_ముగింపు
+#ఒకవేళ defined(HAVE_LIBPROC_H)
 # include <libproc.h>
-#endif
+#అయితే_ముగింపు
 
-#ifndef OPEN_MAX
+#నిర్వచితం_కాకపోతే OPEN_MAX
 # define OPEN_MAX	256
-#endif
+#అయితే_ముగింపు
 
-#if 0
-__unused static const char rcsid[] = "$Sudo: closefrom.c,v 1.11 2006/08/17 15:26:54 millert Exp $";
-#endif /* lint */
+#ఒకవేళ 0
+__unused స్థిర స్థిరరాశి అక్షరం rcsid[] = "$Sudo: closefrom.c,v 1.11 2006/08/17 15:26:54 millert Exp $";
+#అయితే_ముగింపు /* lint */
 
-#ifndef HAVE_FCNTL_CLOSEM
+#నిర్వచితం_కాకపోతే HAVE_FCNTL_CLOSEM
 /*
  * Close all file descriptors greater than or equal to lowfd.
  */
-static void
-closefrom_fallback(int lowfd)
+స్థిర శూన్య
+closefrom_fallback(పూర్ణాంకం lowfd)
 {
-	long fd, maxfd;
+	దీర్ఘ fd, maxfd;
 
 	/*
 	 * Fall back on sysconf() or getdtablesize().  We avoid checking
 	 * resource limits since it is possible to open a file descriptor
 	 * and then drop the rlimit such that it is below the open fd.
 	 */
-#ifdef HAVE_SYSCONF
+#నిర్వచితమైతే HAVE_SYSCONF
 	maxfd = sysconf(_SC_OPEN_MAX);
-#else
+#లేకపోతే
 	maxfd = getdtablesize();
-#endif /* HAVE_SYSCONF */
-	if (maxfd < 0)
+#అయితే_ముగింపు /* HAVE_SYSCONF */
+	ఒకవేళ (maxfd < 0)
 		maxfd = OPEN_MAX;
 
-	for (fd = lowfd; fd < maxfd; fd++)
-		(void) close((int) fd);
+	కొరకు (fd = lowfd; fd < maxfd; fd++)
+		(శూన్య) close((పూర్ణాంకం) fd);
 }
-#endif /* HAVE_FCNTL_CLOSEM */
+#అయితే_ముగింపు /* HAVE_FCNTL_CLOSEM */
 
-#ifdef HAVE_FCNTL_CLOSEM
-void
-closefrom(int lowfd)
+#నిర్వచితమైతే HAVE_FCNTL_CLOSEM
+శూన్య
+closefrom(పూర్ణాంకం lowfd)
 {
-    (void) fcntl(lowfd, F_CLOSEM, 0);
+    (శూన్య) fcntl(lowfd, F_CLOSEM, 0);
 }
-#elif defined(HAVE_LIBPROC_H) && defined(HAVE_PROC_PIDINFO)
-void
-closefrom(int lowfd)
+#లేదావేళ defined(HAVE_LIBPROC_H) && defined(HAVE_PROC_PIDINFO)
+శూన్య
+closefrom(పూర్ణాంకం lowfd)
 {
-	int i, r, sz;
+	పూర్ణాంకం i, r, sz;
 	pid_t pid = getpid();
-	struct proc_fdinfo *fdinfo_buf = NULL;
+	నిర్మాణం proc_fdinfo *fdinfo_buf = ఖాళీ;
 
-	sz = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, NULL, 0);
-	if (sz == 0)
-		return; /* no fds, really? */
-	else if (sz == -1)
-		goto fallback;
-	if ((fdinfo_buf = malloc(sz)) == NULL)
-		goto fallback;
+	sz = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, ఖాళీ, 0);
+	ఒకవేళ (sz == 0)
+		తిరిగి; /* no fds, really? */
+	లేకపోతే ఒకవేళ (sz == -1)
+		వెళ్ళు fallback;
+	ఒకవేళ ((fdinfo_buf = జ్ఞాపకం_ఇవ్వు(sz)) == ఖాళీ)
+		వెళ్ళు fallback;
 	r = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, fdinfo_buf, sz);
-	if (r < 0 || r > sz)
-		goto fallback;
-	for (i = 0; i < r / (int)PROC_PIDLISTFD_SIZE; i++) {
-		if (fdinfo_buf[i].proc_fd >= lowfd)
+	ఒకవేళ (r < 0 || r > sz)
+		వెళ్ళు fallback;
+	కొరకు (i = 0; i < r / (పూర్ణాంకం)PROC_PIDLISTFD_కొలత; i++) {
+		ఒకవేళ (fdinfo_buf[i].proc_fd >= lowfd)
 			close(fdinfo_buf[i].proc_fd);
 	}
-	free(fdinfo_buf);
-	return;
+	విడుదల(fdinfo_buf);
+	తిరిగి;
  fallback:
-	free(fdinfo_buf);
+	విడుదల(fdinfo_buf);
 	closefrom_fallback(lowfd);
-	return;
+	తిరిగి;
 }
-#elif defined(HAVE_DIRFD) && defined(HAVE_PROC_PID)
-void
-closefrom(int lowfd)
+#లేదావేళ defined(HAVE_DIRFD) && defined(HAVE_PROC_PID)
+శూన్య
+closefrom(పూర్ణాంకం lowfd)
 {
-    long fd;
-    char fdpath[PATH_MAX], *endp;
-    struct dirent *dent;
+    దీర్ఘ fd;
+    అక్షరం fdpath[PATH_MAX], *endp;
+    నిర్మాణం dirent *dent;
     DIR *dirp;
-    int len;
+    పూర్ణాంకం len;
 
-#ifdef HAVE_CLOSE_RANGE
-	if (close_range(lowfd, INT_MAX, 0) == 0)
-		return;
-#endif
+#నిర్వచితమైతే HAVE_CLOSE_RANGE
+	ఒకవేళ (close_range(lowfd, గరిష్ఠ_పూర్ణాంకం, 0) == 0)
+		తిరిగి;
+#అయితే_ముగింపు
 
     /* Check for a /proc/$$/fd directory. */
-    len = snprintf(fdpath, sizeof(fdpath), "/proc/%ld/fd", (long)getpid());
-    if (len > 0 && (size_t)len < sizeof(fdpath) && (dirp = opendir(fdpath))) {
-	while ((dent = readdir(dirp)) != NULL) {
+    len = snprintf(fdpath, పరిమాణం(fdpath), "/proc/%ld/fd", (దీర్ఘ)getpid());
+    ఒకవేళ (len > 0 && (కొలత_t)len < పరిమాణం(fdpath) && (dirp = opendir(fdpath))) {
+	అయితే ((dent = readdir(dirp)) != ఖాళీ) {
 	    fd = strtol(dent->d_name, &endp, 10);
-	    if (dent->d_name != endp && *endp == '\0' &&
-		fd >= 0 && fd < INT_MAX && fd >= lowfd && fd != dirfd(dirp))
-		(void) close((int) fd);
+	    ఒకవేళ (dent->d_name != endp && *endp == '\0' &&
+		fd >= 0 && fd < గరిష్ఠ_పూర్ణాంకం && fd >= lowfd && fd != dirfd(dirp))
+		(శూన్య) close((పూర్ణాంకం) fd);
 	}
-	(void) closedir(dirp);
-	return;
+	(శూన్య) closedir(dirp);
+	తిరిగి;
     }
     /* /proc/$$/fd strategy failed, fall back to brute force closure */
     closefrom_fallback(lowfd);
 }
-#else
-void
-closefrom(int lowfd)
+#లేకపోతే
+శూన్య
+closefrom(పూర్ణాంకం lowfd)
 {
 	closefrom_fallback(lowfd);
 }
-#endif /* !HAVE_FCNTL_CLOSEM */
-#endif /* HAVE_CLOSEFROM */
+#అయితే_ముగింపు /* !HAVE_FCNTL_CLOSEM */
+#అయితే_ముగింపు /* HAVE_CLOSEFROM */

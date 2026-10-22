@@ -5,125 +5,125 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include "../test_helper/test_helper.h"
+#అన్తర్భావ "../test_helper/test_helper.h"
 
-#include "ssherr.h"
-#include "sshbuf.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "sshbuf.h"
 
-#define NUM_FUZZ_TESTS (1 << 18)
+#నిర్వచించు అంకె_FUZZ_TESTS (1 << 18)
 
-void sshbuf_fuzz_tests(void);
+శూన్య sshbuf_fuzz_tests(శూన్య);
 
-void
-sshbuf_fuzz_tests(void)
+శూన్య
+sshbuf_fuzz_tests(శూన్య)
 {
-	struct sshbuf *p1;
+	నిర్మాణం sshbuf *p1;
 	u_char *dp;
-	size_t sz, sz2, i, ntests = NUM_FUZZ_TESTS;
+	కొలత_t sz, sz2, i, ntests = అంకె_FUZZ_TESTS;
 	uint32_t r;
-	int ret;
+	పూర్ణాంకం ret;
 
-	if (test_is_fast())
+	ఒకవేళ (test_is_fast())
 		ntests >>= 2;
-	if (test_is_slow())
+	ఒకవేళ (test_is_slow())
 		ntests <<= 2;
 
 	/* NB. uses sshbuf internals */
-	TEST_START("fuzz alloc/dealloc");
+	TEST_ప్రారంభం("fuzz alloc/dealloc");
 	p1 = sshbuf_new();
-	ASSERT_INT_EQ(sshbuf_set_max_size(p1, 16 * 1024), 0);
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_PTR_NE(sshbuf_ptr(p1), NULL);
+	ASSERT_INT_EQ(sshbuf_సమితి_max_కొలత(p1, 16 * 1024), 0);
+	ASSERT_PTR_NE(p1, ఖాళీ);
+	ASSERT_PTR_NE(sshbuf_ptr(p1), ఖాళీ);
 	ASSERT_MEM_ZERO_NE(sshbuf_ptr(p1), sshbuf_len(p1));
-	for (i = 0; i < ntests; i++) {
-		r = arc4random_uniform(10);
-		if (r == 0) {
+	కొరకు (i = 0; i < ntests; i++) {
+		r = arc4random_ఏకరీతి(10);
+		ఒకవేళ (r == 0) {
 			/* 10% chance: small reserve */
-			r = arc4random_uniform(10);
+			r = arc4random_ఏకరీతి(10);
  fuzz_reserve:
 			sz = sshbuf_avail(p1);
 			sz2 = sshbuf_len(p1);
 			ret = sshbuf_reserve(p1, r, &dp);
-			if (ret < 0) {
-				ASSERT_PTR_EQ(dp, NULL);
-				ASSERT_SIZE_T_LT(sz, r);
-				ASSERT_SIZE_T_EQ(sshbuf_avail(p1), sz);
-				ASSERT_SIZE_T_EQ(sshbuf_len(p1), sz2);
-			} else {
-				ASSERT_PTR_NE(dp, NULL);
-				ASSERT_SIZE_T_GE(sz, r);
-				ASSERT_SIZE_T_EQ(sshbuf_avail(p1), sz - r);
-				ASSERT_SIZE_T_EQ(sshbuf_len(p1), sz2 + r);
-				memset(dp, arc4random_uniform(255) + 1, r);
+			ఒకవేళ (ret < 0) {
+				ASSERT_PTR_EQ(dp, ఖాళీ);
+				ASSERT_కొలత_T_LT(sz, r);
+				ASSERT_కొలత_T_EQ(sshbuf_avail(p1), sz);
+				ASSERT_కొలత_T_EQ(sshbuf_len(p1), sz2);
+			} లేకపోతే {
+				ASSERT_PTR_NE(dp, ఖాళీ);
+				ASSERT_కొలత_T_GE(sz, r);
+				ASSERT_కొలత_T_EQ(sshbuf_avail(p1), sz - r);
+				ASSERT_కొలత_T_EQ(sshbuf_len(p1), sz2 + r);
+				memset(dp, arc4random_ఏకరీతి(255) + 1, r);
 			}
-		} else if (r < 3) {
+		} లేకపోతే ఒకవేళ (r < 3) {
 			/* 20% chance: big reserve */
-			r = arc4random_uniform(8 * 1024);
-			goto fuzz_reserve;
-		} else if (r == 3) {
+			r = arc4random_ఏకరీతి(8 * 1024);
+			వెళ్ళు fuzz_reserve;
+		} లేకపోతే ఒకవేళ (r == 3) {
 			/* 10% chance: small consume */
-			r = arc4random_uniform(10);
+			r = arc4random_ఏకరీతి(10);
  fuzz_consume:
 			sz = sshbuf_avail(p1);
 			sz2 = sshbuf_len(p1);
 			/* 50% change consume from end, otherwise start */
 			ret = ((arc4random() & 1) ?
-			    sshbuf_consume : sshbuf_consume_end)(p1, r);
-			if (ret < 0) {
-				ASSERT_SIZE_T_LT(sz2, r);
-				ASSERT_SIZE_T_EQ(sshbuf_avail(p1), sz);
-				ASSERT_SIZE_T_EQ(sshbuf_len(p1), sz2);
-			} else {
-				ASSERT_SIZE_T_GE(sz2, r);
-				ASSERT_SIZE_T_EQ(sshbuf_avail(p1), sz + r);
-				ASSERT_SIZE_T_EQ(sshbuf_len(p1), sz2 - r);
+			    sshbuf_consume : sshbuf_consume_చివర)(p1, r);
+			ఒకవేళ (ret < 0) {
+				ASSERT_కొలత_T_LT(sz2, r);
+				ASSERT_కొలత_T_EQ(sshbuf_avail(p1), sz);
+				ASSERT_కొలత_T_EQ(sshbuf_len(p1), sz2);
+			} లేకపోతే {
+				ASSERT_కొలత_T_GE(sz2, r);
+				ASSERT_కొలత_T_EQ(sshbuf_avail(p1), sz + r);
+				ASSERT_కొలత_T_EQ(sshbuf_len(p1), sz2 - r);
 			}
-		} else if (r < 8) {
+		} లేకపోతే ఒకవేళ (r < 8) {
 			/* 40% chance: big consume */
-			r = arc4random_uniform(2 * 1024);
-			goto fuzz_consume;
-		} else if (r == 8) {
+			r = arc4random_ఏకరీతి(2 * 1024);
+			వెళ్ళు fuzz_consume;
+		} లేకపోతే ఒకవేళ (r == 8) {
 			/* 10% chance: reset max size */
-			r = arc4random_uniform(16 * 1024);
-			sz = sshbuf_max_size(p1);
-			if (sshbuf_set_max_size(p1, r) < 0)
-				ASSERT_SIZE_T_EQ(sshbuf_max_size(p1), sz);
-			else
-				ASSERT_SIZE_T_EQ(sshbuf_max_size(p1), r);
-		} else {
-			if (arc4random_uniform(8192) == 0) {
+			r = arc4random_ఏకరీతి(16 * 1024);
+			sz = sshbuf_max_కొలత(p1);
+			ఒకవేళ (sshbuf_సమితి_max_కొలత(p1, r) < 0)
+				ASSERT_కొలత_T_EQ(sshbuf_max_కొలత(p1), sz);
+			లేకపోతే
+				ASSERT_కొలత_T_EQ(sshbuf_max_కొలత(p1), r);
+		} లేకపోతే {
+			ఒకవేళ (arc4random_ఏకరీతి(8192) == 0) {
 				/* tiny chance: new buffer */
-				ASSERT_PTR_NE(sshbuf_ptr(p1), NULL);
+				ASSERT_PTR_NE(sshbuf_ptr(p1), ఖాళీ);
 				ASSERT_MEM_ZERO_NE(sshbuf_ptr(p1), sshbuf_len(p1));
 				sshbuf_free(p1);
 				p1 = sshbuf_new();
-				ASSERT_PTR_NE(p1, NULL);
-				ASSERT_INT_EQ(sshbuf_set_max_size(p1,
+				ASSERT_PTR_NE(p1, ఖాళీ);
+				ASSERT_INT_EQ(sshbuf_సమితి_max_కొలత(p1,
 				    16 * 1024), 0);
-			} else {
+			} లేకపోతే {
 				/* Almost 10%: giant reserve */
 				/* use arc4random_buf for r > 2^32 on 64 bit */
-				arc4random_buf(&r, sizeof(r));
-				while (r < SSHBUF_SIZE_MAX / 2) {
+				arc4random_buf(&r, పరిమాణం(r));
+				అయితే (r < SSHBUF_కొలత_MAX / 2) {
 					r <<= 1;
 					r |= arc4random() & 1;
 				}
-				goto fuzz_reserve;
+				వెళ్ళు fuzz_reserve;
 			}
 		}
-		ASSERT_PTR_NE(sshbuf_ptr(p1), NULL);
-		ASSERT_SIZE_T_LE(sshbuf_max_size(p1), 16 * 1024);
+		ASSERT_PTR_NE(sshbuf_ptr(p1), ఖాళీ);
+		ASSERT_కొలత_T_LE(sshbuf_max_కొలత(p1), 16 * 1024);
 	}
-	ASSERT_PTR_NE(sshbuf_ptr(p1), NULL);
+	ASSERT_PTR_NE(sshbuf_ptr(p1), ఖాళీ);
 	ASSERT_MEM_ZERO_NE(sshbuf_ptr(p1), sshbuf_len(p1));
 	sshbuf_free(p1);
-	TEST_DONE();
+	TEST_పూర్తి();
 }

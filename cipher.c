@@ -35,58 +35,58 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
 
-#include "cipher.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "ssherr.h"
+#అన్తర్భావ "cipher.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "ssherr.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#అన్తర్భావ "openbsd-compat/openssl-compat.h"
 
-#ifndef WITH_OPENSSL
-#define EVP_CIPHER_CTX void
-#endif
+#నిర్వచితం_కాకపోతే WITH_OPENSSL
+#నిర్వచించు EVP_CIPHER_CTX శూన్య
+#అయితే_ముగింపు
 
-struct sshcipher_ctx {
-	int	plaintext;
-	int	encrypt;
+నిర్మాణం sshcipher_ctx {
+	పూర్ణాంకం	plaintext;
+	పూర్ణాంకం	encrypt;
 	EVP_CIPHER_CTX *evp;
-	struct chachapoly_ctx *cp_ctx;
-	struct aesctr_ctx ac_ctx; /* XXX union with evp? */
-	const struct sshcipher *cipher;
+	నిర్మాణం chachapoly_ctx *cp_ctx;
+	నిర్మాణం aesctr_ctx ac_ctx; /* XXX union with evp? */
+	స్థిరరాశి నిర్మాణం sshcipher *cipher;
 };
 
-struct sshcipher {
-	char	*name;
-	u_int	block_size;
-	u_int	key_len;
+నిర్మాణం sshcipher {
+	అక్షరం	*name;
+	u_int	ఖండం_కొలత;
+	u_int	కీలకం_len;
 	u_int	iv_len;		/* defaults to block_size */
 	u_int	auth_len;
 	u_int	flags;
-#define CFLAG_CBC		(1<<0)
-#define CFLAG_CHACHAPOLY	(1<<1)
-#define CFLAG_AESCTR		(1<<2)
-#define CFLAG_NONE		(1<<3)
-#define CFLAG_INTERNAL		CFLAG_NONE /* Don't use "none" for packets */
-#ifdef WITH_OPENSSL
-	const EVP_CIPHER	*(*evptype)(void);
-#else
-	void	*ignored;
-#endif
+#నిర్వచించు CFLAG_CBC		(1<<0)
+#నిర్వచించు CFLAG_CHACHAPOLY	(1<<1)
+#నిర్వచించు CFLAG_AESCTR		(1<<2)
+#నిర్వచించు CFLAG_NONE		(1<<3)
+#నిర్వచించు CFLAG_అంతర్గత		CFLAG_NONE /* Don't use "none" for packets */
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థిరరాశి EVP_CIPHER	*(*evptype)(శూన్య);
+#లేకపోతే
+	శూన్య	*ignored;
+#అయితే_ముగింపు
 };
 
-static const struct sshcipher ciphers[] = {
-#ifdef WITH_OPENSSL
-#ifndef OPENSSL_NO_DES
+స్థిర స్థిరరాశి నిర్మాణం sshcipher ciphers[] = {
+#నిర్వచితమైతే WITH_OPENSSL
+#నిర్వచితం_కాకపోతే OPENSSL_NO_DES
 	{ "3des-cbc",		8, 24, 0, 0, CFLAG_CBC, EVP_des_ede3_cbc },
-#endif
+#అయితే_ముగింపు
 	{ "aes128-cbc",		16, 16, 0, 0, CFLAG_CBC, EVP_aes_128_cbc },
 	{ "aes192-cbc",		16, 24, 0, 0, CFLAG_CBC, EVP_aes_192_cbc },
 	{ "aes256-cbc",		16, 32, 0, 0, CFLAG_CBC, EVP_aes_256_cbc },
@@ -97,236 +97,236 @@ static const struct sshcipher ciphers[] = {
 				16, 16, 12, 16, 0, EVP_aes_128_gcm },
 	{ "aes256-gcm@openssh.com",
 				16, 32, 12, 16, 0, EVP_aes_256_gcm },
-#else
-	{ "aes128-ctr",		16, 16, 0, 0, CFLAG_AESCTR, NULL },
-	{ "aes192-ctr",		16, 24, 0, 0, CFLAG_AESCTR, NULL },
-	{ "aes256-ctr",		16, 32, 0, 0, CFLAG_AESCTR, NULL },
-#endif
+#లేకపోతే
+	{ "aes128-ctr",		16, 16, 0, 0, CFLAG_AESCTR, ఖాళీ },
+	{ "aes192-ctr",		16, 24, 0, 0, CFLAG_AESCTR, ఖాళీ },
+	{ "aes256-ctr",		16, 32, 0, 0, CFLAG_AESCTR, ఖాళీ },
+#అయితే_ముగింపు
 	{ "chacha20-poly1305@openssh.com",
-				8, 64, 0, 16, CFLAG_CHACHAPOLY, NULL },
-	{ "none",		8, 0, 0, 0, CFLAG_NONE, NULL },
+				8, 64, 0, 16, CFLAG_CHACHAPOLY, ఖాళీ },
+	{ "none",		8, 0, 0, 0, CFLAG_NONE, ఖాళీ },
 
-	{ NULL,			0, 0, 0, 0, 0, NULL }
+	{ ఖాళీ,			0, 0, 0, 0, 0, ఖాళీ }
 };
 
 /*--*/
 
 /* Returns a comma-separated list of supported ciphers. */
-char *
-cipher_alg_list(char sep, int auth_only)
+అక్షరం *
+cipher_alg_list(అక్షరం sep, పూర్ణాంకం auth_only)
 {
-	char *ret = NULL;
-	const struct sshcipher *c;
-	char sep_str[2] = {sep, '\0'};
+	అక్షరం *ret = ఖాళీ;
+	స్థిరరాశి నిర్మాణం sshcipher *c;
+	అక్షరం sep_str[2] = {sep, '\0'};
 
-	for (c = ciphers; c->name != NULL; c++) {
-		if ((c->flags & CFLAG_INTERNAL) != 0)
-			continue;
-		if (auth_only && c->auth_len == 0)
-			continue;
+	కొరకు (c = ciphers; c->name != ఖాళీ; c++) {
+		ఒకవేళ ((c->flags & CFLAG_అంతర్గత) != 0)
+			కొనసాగు;
+		ఒకవేళ (auth_only && c->auth_len == 0)
+			కొనసాగు;
 		xextendf(&ret, sep_str, "%s", c->name);
 	}
-	return ret;
+	తిరిగి ret;
 }
 
-const char *
-compression_alg_list(int compression)
+స్థిరరాశి అక్షరం *
+compression_alg_list(పూర్ణాంకం compression)
 {
-#ifdef WITH_ZLIB
-	return compression ? "zlib@openssh.com,none" :
+#నిర్వచితమైతే WITH_ZLIB
+	తిరిగి compression ? "zlib@openssh.com,none" :
 	    "none,zlib@openssh.com";
-#else
-	return "none";
-#endif
+#లేకపోతే
+	తిరిగి "none";
+#అయితే_ముగింపు
 }
 
 u_int
-cipher_blocksize(const struct sshcipher *c)
+cipher_blocksize(స్థిరరాశి నిర్మాణం sshcipher *c)
 {
-	return (c->block_size);
+	తిరిగి (c->ఖండం_కొలత);
 }
 
 u_int
-cipher_keylen(const struct sshcipher *c)
+cipher_keylen(స్థిరరాశి నిర్మాణం sshcipher *c)
 {
-	return (c->key_len);
+	తిరిగి (c->కీలకం_len);
 }
 
 u_int
-cipher_seclen(const struct sshcipher *c)
+cipher_seclen(స్థిరరాశి నిర్మాణం sshcipher *c)
 {
-	if (strcmp("3des-cbc", c->name) == 0)
-		return 14;
-	return cipher_keylen(c);
+	ఒకవేళ (strcmp("3des-cbc", c->name) == 0)
+		తిరిగి 14;
+	తిరిగి cipher_keylen(c);
 }
 
 u_int
-cipher_authlen(const struct sshcipher *c)
+cipher_authlen(స్థిరరాశి నిర్మాణం sshcipher *c)
 {
-	return (c->auth_len);
+	తిరిగి (c->auth_len);
 }
 
 u_int
-cipher_ivlen(const struct sshcipher *c)
+cipher_ivlen(స్థిరరాశి నిర్మాణం sshcipher *c)
 {
 	/*
 	 * Default is cipher block size, except for chacha20+poly1305 that
 	 * needs no IV. XXX make iv_len == -1 default?
 	 */
-	return (c->iv_len != 0 || (c->flags & CFLAG_CHACHAPOLY) != 0) ?
-	    c->iv_len : c->block_size;
+	తిరిగి (c->iv_len != 0 || (c->flags & CFLAG_CHACHAPOLY) != 0) ?
+	    c->iv_len : c->ఖండం_కొలత;
 }
 
 u_int
-cipher_is_cbc(const struct sshcipher *c)
+cipher_is_cbc(స్థిరరాశి నిర్మాణం sshcipher *c)
 {
-	return (c->flags & CFLAG_CBC) != 0;
+	తిరిగి (c->flags & CFLAG_CBC) != 0;
 }
 
 u_int
-cipher_is_internal(const struct sshcipher *c)
+cipher_is_అంతర్గత(స్థిరరాశి నిర్మాణం sshcipher *c)
 {
-	return (c->flags & CFLAG_INTERNAL) != 0;
+	తిరిగి (c->flags & CFLAG_అంతర్గత) != 0;
 }
 
 u_int
-cipher_ctx_is_plaintext(struct sshcipher_ctx *cc)
+cipher_ctx_is_plaintext(నిర్మాణం sshcipher_ctx *cc)
 {
-	return cc->plaintext;
+	తిరిగి cc->plaintext;
 }
 
-const struct sshcipher *
-cipher_by_name(const char *name)
+స్థిరరాశి నిర్మాణం sshcipher *
+cipher_by_name(స్థిరరాశి అక్షరం *name)
 {
-	const struct sshcipher *c;
-	for (c = ciphers; c->name != NULL; c++)
-		if (strcmp(c->name, name) == 0)
-			return c;
-	return NULL;
+	స్థిరరాశి నిర్మాణం sshcipher *c;
+	కొరకు (c = ciphers; c->name != ఖాళీ; c++)
+		ఒకవేళ (strcmp(c->name, name) == 0)
+			తిరిగి c;
+	తిరిగి ఖాళీ;
 }
 
-#define	CIPHER_SEP	","
-int
-ciphers_valid(const char *names)
+#నిర్వచించు	CIPHER_SEP	","
+పూర్ణాంకం
+ciphers_valid(స్థిరరాశి అక్షరం *పేర్లు)
 {
-	const struct sshcipher *c;
-	char *cipher_list, *cp;
-	char *p;
-	int found = 0;
+	స్థిరరాశి నిర్మాణం sshcipher *c;
+	అక్షరం *cipher_list, *cp;
+	అక్షరం *p;
+	పూర్ణాంకం దొరికింది = 0;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((cipher_list = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, CIPHER_SEP)); p && *p != '\0';
+	ఒకవేళ (పేర్లు == ఖాళీ || strcmp(పేర్లు, "") == 0)
+		తిరిగి 0;
+	ఒకవేళ ((cipher_list = cp = strdup(పేర్లు)) == ఖాళీ)
+		తిరిగి 0;
+	కొరకు ((p = strsep(&cp, CIPHER_SEP)); p && *p != '\0';
 	    (p = strsep(&cp, CIPHER_SEP))) {
 		c = cipher_by_name(p);
-		if (c == NULL || (c->flags & CFLAG_INTERNAL) != 0) {
-			free(cipher_list);
-			return 0;
-		} else
-			found = 1;
+		ఒకవేళ (c == ఖాళీ || (c->flags & CFLAG_అంతర్గత) != 0) {
+			విడుదల(cipher_list);
+			తిరిగి 0;
+		} లేకపోతే
+			దొరికింది = 1;
 	}
-	free(cipher_list);
-	return found;
+	విడుదల(cipher_list);
+	తిరిగి దొరికింది;
 }
 
-const char *
-cipher_warning_message(const struct sshcipher_ctx *cc)
+స్థిరరాశి అక్షరం *
+cipher_warning_సందేశం(స్థిరరాశి నిర్మాణం sshcipher_ctx *cc)
 {
-	if (cc == NULL || cc->cipher == NULL)
-		return NULL;
+	ఒకవేళ (cc == ఖాళీ || cc->cipher == ఖాళీ)
+		తిరిగి ఖాళీ;
 	/* XXX repurpose for CBC warning */
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
-int
-cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
-    const u_char *key, u_int keylen, const u_char *iv, u_int ivlen,
-    int do_encrypt)
+పూర్ణాంకం
+cipher_init(నిర్మాణం sshcipher_ctx **ccp, స్థిరరాశి నిర్మాణం sshcipher *cipher,
+    స్థిరరాశి u_char *కీలకం, u_int keylen, స్థిరరాశి u_char *iv, u_int ivlen,
+    పూర్ణాంకం do_encrypt)
 {
-	struct sshcipher_ctx *cc = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
-#ifdef WITH_OPENSSL
-	const EVP_CIPHER *type;
-	int klen;
-#endif
+	నిర్మాణం sshcipher_ctx *cc = ఖాళీ;
+	పూర్ణాంకం ret = SSH_ERR_అంతర్గత_ERROR;
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థిరరాశి EVP_CIPHER *type;
+	పూర్ణాంకం klen;
+#అయితే_ముగింపు
 
-	*ccp = NULL;
-	if ((cc = calloc(1, sizeof(*cc))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	*ccp = ఖాళీ;
+	ఒకవేళ ((cc = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*cc))) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
 
 	cc->plaintext = (cipher->flags & CFLAG_NONE) != 0;
 	cc->encrypt = do_encrypt;
 
-	if (keylen < cipher->key_len ||
-	    (iv != NULL && ivlen < cipher_ivlen(cipher))) {
-		ret = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+	ఒకవేళ (keylen < cipher->కీలకం_len ||
+	    (iv != ఖాళీ && ivlen < cipher_ivlen(cipher))) {
+		ret = SSH_ERR_INVALID_వాదం;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	cc->cipher = cipher;
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		cc->cp_ctx = chachapoly_new(key, keylen);
-		ret = cc->cp_ctx != NULL ? 0 : SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+	ఒకవేళ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		cc->cp_ctx = chachapoly_new(కీలకం, keylen);
+		ret = cc->cp_ctx != ఖాళీ ? 0 : SSH_ERR_INVALID_వాదం;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0) {
+	ఒకవేళ ((cc->cipher->flags & CFLAG_NONE) != 0) {
 		ret = 0;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-#ifndef WITH_OPENSSL
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		aesctr_keysetup(&cc->ac_ctx, key, 8 * keylen, 8 * ivlen);
+#నిర్వచితం_కాకపోతే WITH_OPENSSL
+	ఒకవేళ ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		aesctr_keysetup(&cc->ac_ctx, కీలకం, 8 * keylen, 8 * ivlen);
 		aesctr_ivsetup(&cc->ac_ctx, iv);
 		ret = 0;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	ret = SSH_ERR_INVALID_ARGUMENT;
-	goto out;
-#else /* WITH_OPENSSL */
+	ret = SSH_ERR_INVALID_వాదం;
+	వెళ్ళు బహిర్గతం;
+#లేకపోతే /* WITH_OPENSSL */
 	type = (*cipher->evptype)();
-	if ((cc->evp = EVP_CIPHER_CTX_new()) == NULL) {
+	ఒకవేళ ((cc->evp = EVP_CIPHER_CTX_new()) == ఖాళీ) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EVP_CipherInit(cc->evp, type, NULL, (u_char *)iv,
+	ఒకవేళ (EVP_CipherInit(cc->evp, type, ఖాళీ, (u_char *)iv,
 	    (do_encrypt == CIPHER_ENCRYPT)) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (cipher_authlen(cipher) &&
-	    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_SET_IV_FIXED,
+	ఒకవేళ (cipher_authlen(cipher) &&
+	    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_సమితి_IV_FIXED,
 	    -1, (u_char *)iv) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	klen = EVP_CIPHER_CTX_key_length(cc->evp);
-	if (klen > 0 && keylen != (u_int)klen) {
-		if (EVP_CIPHER_CTX_set_key_length(cc->evp, keylen) == 0) {
+	klen = EVP_CIPHER_CTX_కీలకం_నిడివి(cc->evp);
+	ఒకవేళ (klen > 0 && keylen != (u_int)klen) {
+		ఒకవేళ (EVP_CIPHER_CTX_సమితి_కీలకం_నిడివి(cc->evp, keylen) == 0) {
 			ret = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 	}
-	if (EVP_CipherInit(cc->evp, NULL, (u_char *)key, NULL, -1) == 0) {
+	ఒకవేళ (EVP_CipherInit(cc->evp, ఖాళీ, (u_char *)కీలకం, ఖాళీ, -1) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	ret = 0;
-#endif /* WITH_OPENSSL */
- out:
-	if (ret == 0) {
+#అయితే_ముగింపు /* WITH_OPENSSL */
+ బహిర్గతం:
+	ఒకవేళ (ret == 0) {
 		/* success */
 		*ccp = cc;
-	} else {
-		if (cc != NULL) {
-#ifdef WITH_OPENSSL
+	} లేకపోతే {
+		ఒకవేళ (cc != ఖాళీ) {
+#నిర్వచితమైతే WITH_OPENSSL
 			EVP_CIPHER_CTX_free(cc->evp);
-#endif /* WITH_OPENSSL */
-			freezero(cc, sizeof(*cc));
+#అయితే_ముగింపు /* WITH_OPENSSL */
+			freezero(cc, పరిమాణం(*cc));
 		}
 	}
-	return ret;
+	తిరిగి ret;
 }
 
 /*
@@ -339,135 +339,135 @@ cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
  * This tag is written on encryption and verified on decryption.
  * Both 'aadlen' and 'authlen' can be set to 0.
  */
-int
-cipher_crypt(struct sshcipher_ctx *cc, u_int seqnr, u_char *dest,
-   const u_char *src, u_int len, u_int aadlen, u_int authlen)
+పూర్ణాంకం
+cipher_crypt(నిర్మాణం sshcipher_ctx *cc, u_int seqnr, u_char *dest,
+   స్థిరరాశి u_char *src, u_int len, u_int aadlen, u_int authlen)
 {
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		return chachapoly_crypt(cc->cp_ctx, seqnr, dest, src,
+	ఒకవేళ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		తిరిగి chachapoly_crypt(cc->cp_ctx, seqnr, dest, src,
 		    len, aadlen, authlen, cc->encrypt);
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0) {
-		memcpy(dest, src, aadlen + len);
-		return 0;
+	ఒకవేళ ((cc->cipher->flags & CFLAG_NONE) != 0) {
+		జ్ఞాపకం_నకలు(dest, src, aadlen + len);
+		తిరిగి 0;
 	}
-#ifndef WITH_OPENSSL
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		if (aadlen)
-			memcpy(dest, src, aadlen);
-		aesctr_encrypt_bytes(&cc->ac_ctx, src + aadlen,
+#నిర్వచితం_కాకపోతే WITH_OPENSSL
+	ఒకవేళ ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		ఒకవేళ (aadlen)
+			జ్ఞాపకం_నకలు(dest, src, aadlen);
+		aesctr_encrypt_బైట్లు(&cc->ac_ctx, src + aadlen,
 		    dest + aadlen, len);
-		return 0;
+		తిరిగి 0;
 	}
-	return SSH_ERR_INVALID_ARGUMENT;
-#else
-	if (authlen) {
+	తిరిగి SSH_ERR_INVALID_వాదం;
+#లేకపోతే
+	ఒకవేళ (authlen) {
 		u_char lastiv[1];
 
-		if (authlen != cipher_authlen(cc->cipher))
-			return SSH_ERR_INVALID_ARGUMENT;
+		ఒకవేళ (authlen != cipher_authlen(cc->cipher))
+			తిరిగి SSH_ERR_INVALID_వాదం;
 		/* increment IV */
-		if (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN,
+		ఒకవేళ (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN,
 		    1, lastiv) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
 		/* set tag on decryption */
-		if (!cc->encrypt &&
-		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_SET_TAG,
+		ఒకవేళ (!cc->encrypt &&
+		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_సమితి_ట్యాగ్,
 		    authlen, (u_char *)src + aadlen + len) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
 	}
-	if (aadlen) {
-		if (authlen &&
-		    EVP_Cipher(cc->evp, NULL, (u_char *)src, aadlen) < 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
-		memcpy(dest, src, aadlen);
+	ఒకవేళ (aadlen) {
+		ఒకవేళ (authlen &&
+		    EVP_Cipher(cc->evp, ఖాళీ, (u_char *)src, aadlen) < 0)
+			తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
+		జ్ఞాపకం_నకలు(dest, src, aadlen);
 	}
-	if (len % cc->cipher->block_size)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_Cipher(cc->evp, dest + aadlen, (u_char *)src + aadlen,
+	ఒకవేళ (len % cc->cipher->ఖండం_కొలత)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ (EVP_Cipher(cc->evp, dest + aadlen, (u_char *)src + aadlen,
 	    len) < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (authlen) {
+		తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
+	ఒకవేళ (authlen) {
 		/* compute tag (on encrypt) or verify tag (on decrypt) */
-		if (EVP_Cipher(cc->evp, NULL, NULL, 0) < 0)
-			return cc->encrypt ?
+		ఒకవేళ (EVP_Cipher(cc->evp, ఖాళీ, ఖాళీ, 0) < 0)
+			తిరిగి cc->encrypt ?
 			    SSH_ERR_LIBCRYPTO_ERROR : SSH_ERR_MAC_INVALID;
-		if (cc->encrypt &&
-		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_GET_TAG,
+		ఒకవేళ (cc->encrypt &&
+		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_GET_ట్యాగ్,
 		    authlen, dest + aadlen + len) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
 	}
-	return 0;
-#endif
+	తిరిగి 0;
+#అయితే_ముగింపు
 }
 
 /* Extract the packet length, including any decryption necessary beforehand */
-int
-cipher_get_length(struct sshcipher_ctx *cc, u_int *plenp, u_int seqnr,
-    const u_char *cp, u_int len)
+పూర్ణాంకం
+cipher_get_నిడివి(నిర్మాణం sshcipher_ctx *cc, u_int *plenp, u_int seqnr,
+    స్థిరరాశి u_char *cp, u_int len)
 {
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0)
-		return chachapoly_get_length(cc->cp_ctx, plenp, seqnr,
+	ఒకవేళ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0)
+		తిరిగి chachapoly_get_నిడివి(cc->cp_ctx, plenp, seqnr,
 		    cp, len);
-	if (len < 4)
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+	ఒకవేళ (len < 4)
+		తిరిగి SSH_ERR_సందేశం_INCOMPLETE;
 	*plenp = PEEK_U32(cp);
-	return 0;
+	తిరిగి 0;
 }
 
-void
-cipher_free(struct sshcipher_ctx *cc)
+శూన్య
+cipher_free(నిర్మాణం sshcipher_ctx *cc)
 {
-	if (cc == NULL)
-		return;
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+	ఒకవేళ (cc == ఖాళీ)
+		తిరిగి;
+	ఒకవేళ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
 		chachapoly_free(cc->cp_ctx);
-		cc->cp_ctx = NULL;
-	} else if ((cc->cipher->flags & CFLAG_AESCTR) != 0)
-		explicit_bzero(&cc->ac_ctx, sizeof(cc->ac_ctx));
-#ifdef WITH_OPENSSL
+		cc->cp_ctx = ఖాళీ;
+	} లేకపోతే ఒకవేళ ((cc->cipher->flags & CFLAG_AESCTR) != 0)
+		explicit_bzero(&cc->ac_ctx, పరిమాణం(cc->ac_ctx));
+#నిర్వచితమైతే WITH_OPENSSL
 	EVP_CIPHER_CTX_free(cc->evp);
-	cc->evp = NULL;
-#endif
-	freezero(cc, sizeof(*cc));
+	cc->evp = ఖాళీ;
+#అయితే_ముగింపు
+	freezero(cc, పరిమాణం(*cc));
 }
 
-int
-cipher_get_keyiv(struct sshcipher_ctx *cc, u_char *iv, size_t len)
+పూర్ణాంకం
+cipher_get_keyiv(నిర్మాణం sshcipher_ctx *cc, u_char *iv, కొలత_t len)
 {
-#ifdef WITH_OPENSSL
-	const struct sshcipher *c = cc->cipher;
-	int evplen;
-#endif
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థిరరాశి నిర్మాణం sshcipher *c = cc->cipher;
+	పూర్ణాంకం evplen;
+#అయితే_ముగింపు
 
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		if (len != 0)
-			return SSH_ERR_INVALID_ARGUMENT;
-		return 0;
+	ఒకవేళ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		ఒకవేళ (len != 0)
+			తిరిగి SSH_ERR_INVALID_వాదం;
+		తిరిగి 0;
 	}
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		if (len != sizeof(cc->ac_ctx.ctr))
-			return SSH_ERR_INVALID_ARGUMENT;
-		memcpy(iv, cc->ac_ctx.ctr, len);
-		return 0;
+	ఒకవేళ ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		ఒకవేళ (len != పరిమాణం(cc->ac_ctx.ctr))
+			తిరిగి SSH_ERR_INVALID_వాదం;
+		జ్ఞాపకం_నకలు(iv, cc->ac_ctx.ctr, len);
+		తిరిగి 0;
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0)
-		return 0;
+	ఒకవేళ ((cc->cipher->flags & CFLAG_NONE) != 0)
+		తిరిగి 0;
 
-#ifdef WITH_OPENSSL
-	evplen = EVP_CIPHER_CTX_iv_length(cc->evp);
-	if (evplen == 0)
-		return 0;
-	else if (evplen < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if ((size_t)evplen != len)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (cipher_authlen(c)) {
-		if (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN, len,
+#నిర్వచితమైతే WITH_OPENSSL
+	evplen = EVP_CIPHER_CTX_iv_నిడివి(cc->evp);
+	ఒకవేళ (evplen == 0)
+		తిరిగి 0;
+	లేకపోతే ఒకవేళ (evplen < 0)
+		తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
+	ఒకవేళ ((కొలత_t)evplen != len)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ (cipher_authlen(c)) {
+		ఒకవేళ (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN, len,
 		    iv) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
-	} else if (EVP_CIPHER_CTX_get_iv(cc->evp, iv, len) <= 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-#endif
-	return 0;
+			తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
+	} లేకపోతే ఒకవేళ (EVP_CIPHER_CTX_get_iv(cc->evp, iv, len) <= 0)
+		తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
+#అయితే_ముగింపు
+	తిరిగి 0;
 }

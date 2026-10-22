@@ -17,26 +17,26 @@
 
 /* draft-miller-sshm-mldsa44-ed25519-composite-sigs-00 */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifdef USE_MLDSA
+#నిర్వచితమైతే USE_MLDSA
 
-#include <sys/types.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "crypto_api.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "digest.h"
-#define SSHKEY_INTERNAL
-#include "sshkey.h"
-#include "log.h"
+#అన్తర్భావ "crypto_api.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "digest.h"
+#నిర్వచించు SSHKEY_అంతర్గత
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "log.h"
 
-#define COMPOSITE_PREFIX "CompositeAlgorithmSignatures2025"
-#define COMPOSITE_LABEL  "COMPSIG-MLDSA44-Ed25519-SHA512"
-#define SSH_MLDSA44_ED25519_ALG_NAME   "ssh-mldsa44-ed25519"
+#నిర్వచించు సంయుక్త_ఉపసర్గ "CompositeAlgorithmSignatures2025"
+#నిర్వచించు సంయుక్త_LABEL  "COMPSIG-MLDSA44-Ed25519-SHA512"
+#నిర్వచించు SSH_MLDSA44_ED25519_ALG_NAME   "ssh-mldsa44-ed25519"
 
 /*
  * raw_* functions implement the draft-ietf-lamps-pq-composite-sigs-18
@@ -44,429 +44,429 @@
  * we can test them separately in unittests/crypto.
  */
 
-int
+పూర్ణాంకం
 crypto_sign_mldsa44_ed25519_keygen(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     uint8_t sk[MLDSA44_ED25519_SK_SZ])
 {
-	uint8_t mldsa_seed[MLDSA44_SEEDBYTES];
-	uint8_t ed25519_seed[crypto_sign_ed25519_SEEDBYTES];
-	int r;
+	uint8_t mldsa_విత్తనం[MLDSA44_SEEDBYTES];
+	uint8_t ed25519_విత్తనం[crypto_sign_ed25519_SEEDBYTES];
+	పూర్ణాంకం r;
 
-	arc4random_buf(mldsa_seed, sizeof(mldsa_seed));
-	arc4random_buf(ed25519_seed, sizeof(ed25519_seed));
+	arc4random_buf(mldsa_విత్తనం, పరిమాణం(mldsa_విత్తనం));
+	arc4random_buf(ed25519_విత్తనం, పరిమాణం(ed25519_విత్తనం));
 
-	r = crypto_sign_mldsa44_ed25519_keygen_seeded(pk, sk, mldsa_seed,
-	    ed25519_seed);
-	explicit_bzero(mldsa_seed, sizeof(mldsa_seed));
-	explicit_bzero(ed25519_seed, sizeof(ed25519_seed));
-	return r;
+	r = crypto_sign_mldsa44_ed25519_keygen_seeded(pk, sk, mldsa_విత్తనం,
+	    ed25519_విత్తనం);
+	explicit_bzero(mldsa_విత్తనం, పరిమాణం(mldsa_విత్తనం));
+	explicit_bzero(ed25519_విత్తనం, పరిమాణం(ed25519_విత్తనం));
+	తిరిగి r;
 }
 
-int
+పూర్ణాంకం
 crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     uint8_t sk[MLDSA44_ED25519_SK_SZ],
-    const uint8_t mldsa_seed[MLDSA44_SEEDBYTES],
-    const uint8_t ed25519_seed[crypto_sign_ed25519_SEEDBYTES])
+    స్థిరరాశి uint8_t mldsa_విత్తనం[MLDSA44_SEEDBYTES],
+    స్థిరరాశి uint8_t ed25519_విత్తనం[crypto_sign_ed25519_SEEDBYTES])
 {
 	uint8_t ed25519_pk[MLDSA44_SEEDBYTES];
 	uint8_t ed25519_sk[crypto_sign_ed25519_SECRETKEYBYTES];
 	uint8_t mldsa_sk[MLDSA44_SECRETKEYBYTES];
-	int ret = -1;
+	పూర్ణాంకం ret = -1;
 
-	if (crypto_sign_mldsa44_keypair_seeded(pk, mldsa_sk, mldsa_seed) != 0)
-		goto out;
-	if (crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk,
-	    ed25519_seed) != 0)
-		goto out;
+	ఒకవేళ (crypto_sign_mldsa44_keypair_seeded(pk, mldsa_sk, mldsa_విత్తనం) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (crypto_sign_ed25519_విత్తనం_keypair(ed25519_pk, ed25519_sk,
+	    ed25519_విత్తనం) != 0)
+		వెళ్ళు బహిర్గతం;
 
 	/* Serialize PK: mldsaPK || ed25519PK */
-	memcpy(pk + MLDSA44_PUBLICKEYBYTES, ed25519_pk,
+	జ్ఞాపకం_నకలు(pk + MLDSA44_PUBLICKEYBYTES, ed25519_pk,
 	    crypto_sign_ed25519_SEEDBYTES);
 
 	/* Serialize SK: mldsaSeed || ed25519Seed */
-	memcpy(sk, mldsa_seed, MLDSA44_SEEDBYTES);
-	memcpy(sk + MLDSA44_SEEDBYTES, ed25519_seed,
+	జ్ఞాపకం_నకలు(sk, mldsa_విత్తనం, MLDSA44_SEEDBYTES);
+	జ్ఞాపకం_నకలు(sk + MLDSA44_SEEDBYTES, ed25519_విత్తనం,
 	    crypto_sign_ed25519_SEEDBYTES);
 
 	/* success */
 	ret = 0;
- out:
-	explicit_bzero(mldsa_sk, sizeof(mldsa_sk));
-	explicit_bzero(ed25519_sk, sizeof(ed25519_sk));
-	return ret;
+ బహిర్గతం:
+	explicit_bzero(mldsa_sk, పరిమాణం(mldsa_sk));
+	explicit_bzero(ed25519_sk, పరిమాణం(ed25519_sk));
+	తిరిగి ret;
 }
 
-static int
-construct_m_prime(uint8_t **m_primep, size_t *m_prime_lenp,
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen)
+స్థిర పూర్ణాంకం
+construct_m_ప్రధానసంఖ్య(uint8_t **m_primep, కొలత_t *m_ప్రధానసంఖ్య_lenp,
+    స్థిరరాశి uint8_t *సందేశం, కొలత_t msglen,
+    స్థిరరాశి uint8_t *ctx, కొలత_t ctxlen)
 {
-	int r;
+	పూర్ణాంకం r;
 	uint8_t hash[64];
-	struct sshbuf *m_prime;
+	నిర్మాణం sshbuf *m_ప్రధానసంఖ్య;
 
-	*m_primep = NULL;
-	*m_prime_lenp = 0;
+	*m_primep = ఖాళీ;
+	*m_ప్రధానసంఖ్య_lenp = 0;
 
-	if (ctxlen > 255)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = ssh_digest_memory(SSH_DIGEST_SHA512, msg, msglen,
-	    hash, sizeof(hash))) != 0)
-		return r;
-	if ((m_prime = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put(m_prime, COMPOSITE_PREFIX,
-	    sizeof(COMPOSITE_PREFIX) - 1)) != 0 ||
-	    (r = sshbuf_put(m_prime, COMPOSITE_LABEL,
-	    sizeof(COMPOSITE_LABEL) - 1)) != 0 ||
-	    (r = sshbuf_put_u8(m_prime, (uint8_t)ctxlen)) != 0 ||
-	    (r = sshbuf_put(m_prime, ctx, ctxlen)) != 0 ||
-	    (r = sshbuf_put(m_prime, hash, sizeof(hash))) != 0) {
-		sshbuf_free(m_prime);
-		return r;
+	ఒకవేళ (ctxlen > 255)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ ((r = ssh_digest_జ్ఞాపకం(SSH_DIGEST_SHA512, సందేశం, msglen,
+	    hash, పరిమాణం(hash))) != 0)
+		తిరిగి r;
+	ఒకవేళ ((m_ప్రధానసంఖ్య = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshbuf_put(m_ప్రధానసంఖ్య, సంయుక్త_ఉపసర్గ,
+	    పరిమాణం(సంయుక్త_ఉపసర్గ) - 1)) != 0 ||
+	    (r = sshbuf_put(m_ప్రధానసంఖ్య, సంయుక్త_LABEL,
+	    పరిమాణం(సంయుక్త_LABEL) - 1)) != 0 ||
+	    (r = sshbuf_put_u8(m_ప్రధానసంఖ్య, (uint8_t)ctxlen)) != 0 ||
+	    (r = sshbuf_put(m_ప్రధానసంఖ్య, ctx, ctxlen)) != 0 ||
+	    (r = sshbuf_put(m_ప్రధానసంఖ్య, hash, పరిమాణం(hash))) != 0) {
+		sshbuf_free(m_ప్రధానసంఖ్య);
+		తిరిగి r;
 	}
-	if ((*m_primep = malloc(sshbuf_len(m_prime))) == NULL) {
-		sshbuf_free(m_prime);
-		return SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((*m_primep = జ్ఞాపకం_ఇవ్వు(sshbuf_len(m_ప్రధానసంఖ్య))) == ఖాళీ) {
+		sshbuf_free(m_ప్రధానసంఖ్య);
+		తిరిగి SSH_ERR_ALLOC_FAIL;
 	}
-	memcpy(*m_primep, sshbuf_ptr(m_prime), sshbuf_len(m_prime));
-	*m_prime_lenp = sshbuf_len(m_prime);
+	జ్ఞాపకం_నకలు(*m_primep, sshbuf_ptr(m_ప్రధానసంఖ్య), sshbuf_len(m_ప్రధానసంఖ్య));
+	*m_ప్రధానసంఖ్య_lenp = sshbuf_len(m_ప్రధానసంఖ్య);
 	/* success */
-	sshbuf_free(m_prime);
-	return 0;
+	sshbuf_free(m_ప్రధానసంఖ్య);
+	తిరిగి 0;
 }
 
-int
+పూర్ణాంకం
 crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA44_ED25519_SK_SZ])
+    స్థిరరాశి uint8_t *సందేశం, కొలత_t msglen,
+    స్థిరరాశి uint8_t *ctx, కొలత_t ctxlen,
+    స్థిరరాశి uint8_t sk[MLDSA44_ED25519_SK_SZ])
 {
-	uint8_t *m_prime = NULL;
-	size_t m_prime_len = 0;
+	uint8_t *m_ప్రధానసంఖ్య = ఖాళీ;
+	కొలత_t m_ప్రధానసంఖ్య_len = 0;
 	uint8_t mldsa_sk[MLDSA44_SECRETKEYBYTES];
 	uint8_t mldsa_pk_dummy[MLDSA44_PUBLICKEYBYTES];
 	uint8_t ed25519_pk[crypto_sign_ed25519_PUBLICKEYBYTES];
 	uint8_t ed25519_sk[crypto_sign_ed25519_SECRETKEYBYTES];
 	uint8_t mldsa_rnd[MLDSA44_SEEDBYTES];
-	unsigned long long smlen;
-	int r = -1;
+	గుర్తులేని దీర్ఘ దీర్ఘ smlen;
+	పూర్ణాంకం r = -1;
 
-	if (construct_m_prime(&m_prime, &m_prime_len, msg, msglen,
+	ఒకవేళ (construct_m_ప్రధానసంఖ్య(&m_ప్రధానసంఖ్య, &m_ప్రధానసంఖ్య_len, సందేశం, msglen,
 	    ctx, ctxlen) != 0)
-		return -1;
+		తిరిగి -1;
 
 	/* Expand ML-DSA key from seed */
-	if (crypto_sign_mldsa44_keypair_seeded(mldsa_pk_dummy, mldsa_sk, sk) != 0)
-		goto out;
+	ఒకవేళ (crypto_sign_mldsa44_keypair_seeded(mldsa_pk_dummy, mldsa_sk, sk) != 0)
+		వెళ్ళు బహిర్గతం;
 
 	/* Sign with ML-DSA */
-	arc4random_buf(mldsa_rnd, sizeof(mldsa_rnd));
-	if (crypto_sign_mldsa44_seeded(sig, m_prime, m_prime_len,
-	    (const uint8_t *)COMPOSITE_LABEL, sizeof(COMPOSITE_LABEL) - 1,
+	arc4random_buf(mldsa_rnd, పరిమాణం(mldsa_rnd));
+	ఒకవేళ (crypto_sign_mldsa44_seeded(sig, m_ప్రధానసంఖ్య, m_ప్రధానసంఖ్య_len,
+	    (స్థిరరాశి uint8_t *)సంయుక్త_LABEL, పరిమాణం(సంయుక్త_LABEL) - 1,
 	    mldsa_sk, mldsa_rnd) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
 	/* Expand Ed25519 key from seed */
-	if (crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk,
+	ఒకవేళ (crypto_sign_ed25519_విత్తనం_keypair(ed25519_pk, ed25519_sk,
 	    sk + MLDSA44_SEEDBYTES) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
 	/* Sign with Ed25519 */
-	if (crypto_sign_ed25519_detached(sig + MLDSA44_SIGBYTES, &smlen,
-	    m_prime, m_prime_len, ed25519_sk) != 0 ||
-	    smlen != crypto_sign_ed25519_BYTES)
-		goto out;
+	ఒకవేళ (crypto_sign_ed25519_detached(sig + MLDSA44_SIGBYTES, &smlen,
+	    m_ప్రధానసంఖ్య, m_ప్రధానసంఖ్య_len, ed25519_sk) != 0 ||
+	    smlen != crypto_sign_ed25519_బైట్లు)
+		వెళ్ళు బహిర్గతం;
 
 	r = 0;
- out:
-	free(m_prime);
-	explicit_bzero(mldsa_rnd, sizeof(mldsa_rnd));
-	explicit_bzero(mldsa_sk, sizeof(mldsa_sk));
-	explicit_bzero(ed25519_sk, sizeof(ed25519_sk));
-	return r;
+ బహిర్గతం:
+	విడుదల(m_ప్రధానసంఖ్య);
+	explicit_bzero(mldsa_rnd, పరిమాణం(mldsa_rnd));
+	explicit_bzero(mldsa_sk, పరిమాణం(mldsa_sk));
+	explicit_bzero(ed25519_sk, పరిమాణం(ed25519_sk));
+	తిరిగి r;
 }
 
-int
-crypto_sign_mldsa44_ed25519_verify(const uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA44_ED25519_PK_SZ])
+పూర్ణాంకం
+crypto_sign_mldsa44_ed25519_verify(స్థిరరాశి uint8_t sig[MLDSA44_ED25519_SIG_SZ],
+    స్థిరరాశి uint8_t *సందేశం, కొలత_t msglen,
+    స్థిరరాశి uint8_t *ctx, కొలత_t ctxlen,
+    స్థిరరాశి uint8_t pk[MLDSA44_ED25519_PK_SZ])
 {
-	uint8_t *m_prime = NULL;
-	size_t m_prime_len = 0;
-	int r = -1;
+	uint8_t *m_ప్రధానసంఖ్య = ఖాళీ;
+	కొలత_t m_ప్రధానసంఖ్య_len = 0;
+	పూర్ణాంకం r = -1;
 
-	if (construct_m_prime(&m_prime, &m_prime_len, msg, msglen,
+	ఒకవేళ (construct_m_ప్రధానసంఖ్య(&m_ప్రధానసంఖ్య, &m_ప్రధానసంఖ్య_len, సందేశం, msglen,
 	    ctx, ctxlen) != 0)
-		return -1;
+		తిరిగి -1;
 
 	/* Verify ML-DSA */
-	if (crypto_sign_mldsa44_verify(sig, m_prime, m_prime_len,
-	    (const uint8_t *)COMPOSITE_LABEL, sizeof(COMPOSITE_LABEL) - 1,
+	ఒకవేళ (crypto_sign_mldsa44_verify(sig, m_ప్రధానసంఖ్య, m_ప్రధానసంఖ్య_len,
+	    (స్థిరరాశి uint8_t *)సంయుక్త_LABEL, పరిమాణం(సంయుక్త_LABEL) - 1,
 	    pk) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
 	/* Verify Ed25519 */
-	if (crypto_sign_ed25519_verify_detached(sig + MLDSA44_SIGBYTES,
-	    m_prime, m_prime_len, pk + MLDSA44_PUBLICKEYBYTES) != 0)
-		goto out;
+	ఒకవేళ (crypto_sign_ed25519_verify_detached(sig + MLDSA44_SIGBYTES,
+	    m_ప్రధానసంఖ్య, m_ప్రధానసంఖ్య_len, pk + MLDSA44_PUBLICKEYBYTES) != 0)
+		వెళ్ళు బహిర్గతం;
 
 	r = 0;
- out:
-	free(m_prime);
-	return r;
+ బహిర్గతం:
+	విడుదల(m_ప్రధానసంఖ్య);
+	తిరిగి r;
 }
 
 /* sshkey integration */
 
-static void
-ssh_mldsa44_ed25519_cleanup(struct sshkey *k)
+స్థిర శూన్య
+ssh_mldsa44_ed25519_cleanup(నిర్మాణం sshkey *k)
 {
 	freezero(k->mldsa_ed25519_pk, MLDSA44_ED25519_PK_SZ);
 	freezero(k->mldsa_ed25519_sk, MLDSA44_ED25519_SK_SZ);
-	k->mldsa_ed25519_pk = NULL;
-	k->mldsa_ed25519_sk = NULL;
+	k->mldsa_ed25519_pk = ఖాళీ;
+	k->mldsa_ed25519_sk = ఖాళీ;
 }
 
-static int
-ssh_mldsa44_ed25519_equal(const struct sshkey *a, const struct sshkey *b)
+స్థిర పూర్ణాంకం
+ssh_mldsa44_ed25519_equal(స్థిరరాశి నిర్మాణం sshkey *a, స్థిరరాశి నిర్మాణం sshkey *b)
 {
-	if (a->mldsa_ed25519_pk == NULL || b->mldsa_ed25519_pk == NULL)
-		return 0;
-	if (memcmp(a->mldsa_ed25519_pk, b->mldsa_ed25519_pk,
+	ఒకవేళ (a->mldsa_ed25519_pk == ఖాళీ || b->mldsa_ed25519_pk == ఖాళీ)
+		తిరిగి 0;
+	ఒకవేళ (memcmp(a->mldsa_ed25519_pk, b->mldsa_ed25519_pk,
 	    MLDSA44_ED25519_PK_SZ) != 0)
-		return 0;
-	return 1;
+		తిరిగి 0;
+	తిరిగి 1;
 }
 
-static int
-ssh_mldsa44_ed25519_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+స్థిర పూర్ణాంకం
+ssh_mldsa44_ed25519_serialize_ప్రజా(స్థిరరాశి నిర్మాణం sshkey *కీలకం, నిర్మాణం sshbuf *b,
+    గణన sshkey_serialize_rep opts)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	if (key->mldsa_ed25519_pk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_string(b, key->mldsa_ed25519_pk,
+	ఒకవేళ (కీలకం->mldsa_ed25519_pk == ఖాళీ)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ ((r = sshbuf_put_string(b, కీలకం->mldsa_ed25519_pk,
 	    MLDSA44_ED25519_PK_SZ)) != 0)
-		return r;
+		తిరిగి r;
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-ssh_mldsa44_ed25519_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+స్థిర పూర్ణాంకం
+ssh_mldsa44_ed25519_serialize_వ్యక్తిగత(స్థిరరాశి నిర్మాణం sshkey *కీలకం, నిర్మాణం sshbuf *b,
+    గణన sshkey_serialize_rep opts)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	if (key->mldsa_ed25519_sk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_mldsa44_ed25519_serialize_public(key,
+	ఒకవేళ (కీలకం->mldsa_ed25519_sk == ఖాళీ)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ (!sshkey_is_cert(కీలకం)) {
+		ఒకవేళ ((r = ssh_mldsa44_ed25519_serialize_ప్రజా(కీలకం,
 		    b, opts)) != 0)
-			return r;
+			తిరిగి r;
 	}
-	if ((r = sshbuf_put_string(b, key->mldsa_ed25519_sk,
+	ఒకవేళ ((r = sshbuf_put_string(b, కీలకం->mldsa_ed25519_sk,
 	    MLDSA44_ED25519_SK_SZ)) != 0)
-		return r;
+		తిరిగి r;
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-ssh_mldsa44_ed25519_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+స్థిర పూర్ణాంకం
+ssh_mldsa44_ed25519_deserialize_ప్రజా(స్థిరరాశి అక్షరం *ktype, నిర్మాణం sshbuf *b,
+    నిర్మాణం sshkey *కీలకం)
 {
-	u_char *pk = NULL;
-	size_t len = 0;
-	int r;
+	u_char *pk = ఖాళీ;
+	కొలత_t len = 0;
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_get_string(b, &pk, &len)) != 0)
-		return r;
-	if (len != MLDSA44_ED25519_PK_SZ) {
+	ఒకవేళ ((r = sshbuf_get_string(b, &pk, &len)) != 0)
+		తిరిగి r;
+	ఒకవేళ (len != MLDSA44_ED25519_PK_SZ) {
 		freezero(pk, len);
-		return SSH_ERR_INVALID_FORMAT;
+		తిరిగి SSH_ERR_INVALID_FORMAT;
 	}
-	key->mldsa_ed25519_pk = pk;
-	return 0;
+	కీలకం->mldsa_ed25519_pk = pk;
+	తిరిగి 0;
 }
 
-static int
-ssh_mldsa44_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+స్థిర పూర్ణాంకం
+ssh_mldsa44_ed25519_deserialize_వ్యక్తిగత(స్థిరరాశి అక్షరం *ktype, నిర్మాణం sshbuf *b,
+    నిర్మాణం sshkey *కీలకం)
 {
-	int r;
-	size_t sklen = 0;
-	u_char *sk = NULL;
+	పూర్ణాంకం r;
+	కొలత_t sklen = 0;
+	u_char *sk = ఖాళీ;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_mldsa44_ed25519_deserialize_public(ktype,
-		    b, key)) != 0)
-			return r;
+	ఒకవేళ (!sshkey_is_cert(కీలకం)) {
+		ఒకవేళ ((r = ssh_mldsa44_ed25519_deserialize_ప్రజా(ktype,
+		    b, కీలకం)) != 0)
+			తిరిగి r;
 	}
-	if ((r = sshbuf_get_string(b, &sk, &sklen)) != 0)
-		goto out;
-	if (sklen != MLDSA44_ED25519_SK_SZ) {
+	ఒకవేళ ((r = sshbuf_get_string(b, &sk, &sklen)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (sklen != MLDSA44_ED25519_SK_SZ) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	key->mldsa_ed25519_sk = sk;
-	sk = NULL; /* transferred */
+	కీలకం->mldsa_ed25519_sk = sk;
+	sk = ఖాళీ; /* transferred */
 	r = 0;
- out:
+ బహిర్గతం:
 	freezero(sk, sklen);
-	return r;
+	తిరిగి r;
 }
 
-static int
-ssh_mldsa44_ed25519_generate(struct sshkey *k, int bits)
+స్థిర పూర్ణాంకం
+ssh_mldsa44_ed25519_generate(నిర్మాణం sshkey *k, పూర్ణాంకం బిట్లు)
 {
 	ssh_mldsa44_ed25519_cleanup(k);
-	if ((k->mldsa_ed25519_pk = malloc(MLDSA44_ED25519_PK_SZ)) == NULL ||
-	    (k->mldsa_ed25519_sk = malloc(MLDSA44_ED25519_SK_SZ)) == NULL) {
+	ఒకవేళ ((k->mldsa_ed25519_pk = జ్ఞాపకం_ఇవ్వు(MLDSA44_ED25519_PK_SZ)) == ఖాళీ ||
+	    (k->mldsa_ed25519_sk = జ్ఞాపకం_ఇవ్వు(MLDSA44_ED25519_SK_SZ)) == ఖాళీ) {
 		ssh_mldsa44_ed25519_cleanup(k);
-		return SSH_ERR_ALLOC_FAIL;
+		తిరిగి SSH_ERR_ALLOC_FAIL;
 	}
-	if (crypto_sign_mldsa44_ed25519_keygen(k->mldsa_ed25519_pk,
+	ఒకవేళ (crypto_sign_mldsa44_ed25519_keygen(k->mldsa_ed25519_pk,
 	    k->mldsa_ed25519_sk) != 0) {
 		ssh_mldsa44_ed25519_cleanup(k);
-		return SSH_ERR_CRYPTO_ERROR;
+		తిరిగి SSH_ERR_CRYPTO_ERROR;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-ssh_mldsa44_ed25519_copy_public(const struct sshkey *from, struct sshkey *to)
+స్థిర పూర్ణాంకం
+ssh_mldsa44_ed25519_copy_ప్రజా(స్థిరరాశి నిర్మాణం sshkey *from, నిర్మాణం sshkey *గమ్యం)
 {
-	if (from->mldsa_ed25519_pk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((to->mldsa_ed25519_pk = malloc(MLDSA44_ED25519_PK_SZ)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	memcpy(to->mldsa_ed25519_pk, from->mldsa_ed25519_pk,
+	ఒకవేళ (from->mldsa_ed25519_pk == ఖాళీ)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ ((గమ్యం->mldsa_ed25519_pk = జ్ఞాపకం_ఇవ్వు(MLDSA44_ED25519_PK_SZ)) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	జ్ఞాపకం_నకలు(గమ్యం->mldsa_ed25519_pk, from->mldsa_ed25519_pk,
 	    MLDSA44_ED25519_PK_SZ);
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-ssh_mldsa44_ed25519_sign(struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider, const char *sk_pin,
+స్థిర పూర్ణాంకం
+ssh_mldsa44_ed25519_sign(నిర్మాణం sshkey *కీలకం,
+    u_char **sigp, కొలత_t *lenp, స్థిరరాశి u_char *దత్తాంశం, కొలత_t datalen,
+    స్థిరరాశి అక్షరం *alg, స్థిరరాశి అక్షరం *sk_provider, స్థిరరాశి అక్షరం *sk_pin,
     u_int compat)
 {
 	u_char sig[MLDSA44_ED25519_SIG_SZ];
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	నిర్మాణం sshbuf *b = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 
-	if (lenp != NULL)
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	ఒకవేళ (sigp != ఖాళీ)
+		*sigp = ఖాళీ;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_MLDSA44_ED25519 ||
-	    key->mldsa_ed25519_sk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ఒకవేళ (కీలకం == ఖాళీ ||
+	    sshkey_type_plain(కీలకం->type) != కీలకం_MLDSA44_ED25519 ||
+	    కీలకం->mldsa_ed25519_sk == ఖాళీ)
+		తిరిగి SSH_ERR_INVALID_వాదం;
 
-	if (crypto_sign_mldsa44_ed25519_sign(sig, data, datalen, NULL, 0,
-	    key->mldsa_ed25519_sk) != 0) {
+	ఒకవేళ (crypto_sign_mldsa44_ed25519_sign(sig, దత్తాంశం, datalen, ఖాళీ, 0,
+	    కీలకం->mldsa_ed25519_sk) != 0) {
 		r = SSH_ERR_CRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if ((b = sshbuf_new()) == NULL) {
+	ఒకవేళ ((b = sshbuf_new()) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_put_cstring(b, SSH_MLDSA44_ED25519_ALG_NAME)) != 0 ||
-	    (r = sshbuf_put_string(b, sig, sizeof(sig))) != 0)
-		goto out;
+	ఒకవేళ ((r = sshbuf_put_cstring(b, SSH_MLDSA44_ED25519_ALG_NAME)) != 0 ||
+	    (r = sshbuf_put_string(b, sig, పరిమాణం(sig))) != 0)
+		వెళ్ళు బహిర్గతం;
 
-	if (sigp != NULL) {
-		if ((*sigp = malloc(sshbuf_len(b))) == NULL) {
+	ఒకవేళ (sigp != ఖాళీ) {
+		ఒకవేళ ((*sigp = జ్ఞాపకం_ఇవ్వు(sshbuf_len(b))) == ఖాళీ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		memcpy(*sigp, sshbuf_ptr(b), sshbuf_len(b));
+		జ్ఞాపకం_నకలు(*sigp, sshbuf_ptr(b), sshbuf_len(b));
 	}
-	if (lenp != NULL)
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = sshbuf_len(b);
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
-	explicit_bzero(sig, sizeof(sig));
-	return r;
+	explicit_bzero(sig, పరిమాణం(sig));
+	తిరిగి r;
 }
 
-static int
-ssh_mldsa44_ed25519_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen, const u_char *data, size_t dlen,
-    const char *alg, u_int compat, struct sshkey_sig_details **detailsp)
+స్థిర పూర్ణాంకం
+ssh_mldsa44_ed25519_verify(స్థిరరాశి నిర్మాణం sshkey *కీలకం,
+    స్థిరరాశి u_char *sig, కొలత_t siglen, స్థిరరాశి u_char *దత్తాంశం, కొలత_t dlen,
+    స్థిరరాశి అక్షరం *alg, u_int compat, నిర్మాణం sshkey_sig_details **detailsp)
 {
-	struct sshbuf *b = NULL;
-	char *ktype = NULL;
-	const u_char *sigblob;
-	size_t len;
-	int r;
+	నిర్మాణం sshbuf *b = ఖాళీ;
+	అక్షరం *ktype = ఖాళీ;
+	స్థిరరాశి u_char *sigblob;
+	కొలత_t len;
+	పూర్ణాంకం r;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_MLDSA44_ED25519 ||
-	    key->mldsa_ed25519_pk == NULL ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ఒకవేళ (కీలకం == ఖాళీ ||
+	    sshkey_type_plain(కీలకం->type) != కీలకం_MLDSA44_ED25519 ||
+	    కీలకం->mldsa_ed25519_pk == ఖాళీ ||
+	    sig == ఖాళీ || siglen == 0)
+		తిరిగి SSH_ERR_INVALID_వాదం;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_get_cstring(b, &ktype, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(b, &sigblob, &len)) != 0)
-		goto out;
-	if (strcmp(SSH_MLDSA44_ED25519_ALG_NAME, ktype) != 0) {
-		r = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+	ఒకవేళ ((b = sshbuf_from(sig, siglen)) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshbuf_get_cstring(b, &ktype, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_string_ప్రత్యక్ష(b, &sigblob, &len)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (strcmp(SSH_MLDSA44_ED25519_ALG_NAME, ktype) != 0) {
+		r = SSH_ERR_కీలకం_TYPE_MISMATCH;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (sshbuf_len(b) != 0) {
-		r = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+	ఒకవేళ (sshbuf_len(b) != 0) {
+		r = SSH_ERR_UNEXPECTED_TRAILING_దత్తాంశం;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (len != MLDSA44_ED25519_SIG_SZ) {
+	ఒకవేళ (len != MLDSA44_ED25519_SIG_SZ) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if (crypto_sign_mldsa44_ed25519_verify(sigblob, data, dlen, NULL, 0,
-	    key->mldsa_ed25519_pk) != 0) {
+	ఒకవేళ (crypto_sign_mldsa44_ed25519_verify(sigblob, దత్తాంశం, dlen, ఖాళీ, 0,
+	    కీలకం->mldsa_ed25519_pk) != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
-	free(ktype);
-	return r;
+	విడుదల(ktype);
+	తిరిగి r;
 }
 
-const struct sshkey_impl_funcs sshkey_mldsa44_ed25519_funcs = {
-	/* .size = */		NULL,
-	/* .alloc = */		NULL,
+స్థిరరాశి నిర్మాణం sshkey_impl_funcs sshkey_mldsa44_ed25519_funcs = {
+	/* .size = */		ఖాళీ,
+	/* .alloc = */		ఖాళీ,
 	/* .cleanup = */	ssh_mldsa44_ed25519_cleanup,
 	/* .equal = */		ssh_mldsa44_ed25519_equal,
-	/* .ssh_serialize_public = */ ssh_mldsa44_ed25519_serialize_public,
-	/* .ssh_deserialize_public = */ ssh_mldsa44_ed25519_deserialize_public,
-	/* .ssh_serialize_private = */ ssh_mldsa44_ed25519_serialize_private,
-	/* .ssh_deserialize_private = */ ssh_mldsa44_ed25519_deserialize_private,
+	/* .ssh_serialize_public = */ ssh_mldsa44_ed25519_serialize_ప్రజా,
+	/* .ssh_deserialize_public = */ ssh_mldsa44_ed25519_deserialize_ప్రజా,
+	/* .ssh_serialize_private = */ ssh_mldsa44_ed25519_serialize_వ్యక్తిగత,
+	/* .ssh_deserialize_private = */ ssh_mldsa44_ed25519_deserialize_వ్యక్తిగత,
 	/* .generate = */	ssh_mldsa44_ed25519_generate,
-	/* .copy_public = */	ssh_mldsa44_ed25519_copy_public,
+	/* .copy_public = */	ssh_mldsa44_ed25519_copy_ప్రజా,
 	/* .sign = */		ssh_mldsa44_ed25519_sign,
 	/* .verify = */		ssh_mldsa44_ed25519_verify,
 };
 
-const struct sshkey_impl sshkey_mldsa44_ed25519_impl = {
+స్థిరరాశి నిర్మాణం sshkey_impl sshkey_mldsa44_ed25519_impl = {
 	/* .name = */		"ssh-mldsa44-ed25519",
 	/* .shortname = */	"MLDSA44-ED25519",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_MLDSA44_ED25519,
+	/* .sigalg = */		ఖాళీ,
+	/* .type = */		కీలకం_MLDSA44_ED25519,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -474,15 +474,15 @@ const struct sshkey_impl sshkey_mldsa44_ed25519_impl = {
 	/* .funcs = */		&sshkey_mldsa44_ed25519_funcs,
 };
 
-const struct sshkey_impl sshkey_mldsa44_ed25519_cert_impl = {
+స్థిరరాశి నిర్మాణం sshkey_impl sshkey_mldsa44_ed25519_cert_impl = {
 	/* .name = */		"ssh-mldsa44-ed25519-cert",
 	/* .shortname = */	"MLDSA44-ED25519-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_MLDSA44_ED25519_CERT,
+	/* .sigalg = */		ఖాళీ,
+	/* .type = */		కీలకం_MLDSA44_ED25519_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
 	/* .keybits = */	512, /* size of the private key */
 	/* .funcs = */		&sshkey_mldsa44_ed25519_funcs,
 };
-#endif /* USE_MLDSA */
+#అయితే_ముగింపు /* USE_MLDSA */

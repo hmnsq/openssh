@@ -61,45 +61,45 @@
 TTYCHAR(VINTR, 1)
 TTYCHAR(VQUIT, 2)
 TTYCHAR(VERASE, 3)
-#if defined(VKILL)
+#ఒకవేళ defined(VKILL)
 TTYCHAR(VKILL, 4)
-#endif /* VKILL */
+#అయితే_ముగింపు /* VKILL */
 TTYCHAR(VEOF, 5)
-#if defined(VEOL)
+#ఒకవేళ defined(VEOL)
 TTYCHAR(VEOL, 6)
-#endif /* VEOL */
-#ifdef VEOL2
+#అయితే_ముగింపు /* VEOL */
+#నిర్వచితమైతే VEOL2
 TTYCHAR(VEOL2, 7)
-#endif /* VEOL2 */
+#అయితే_ముగింపు /* VEOL2 */
 TTYCHAR(VSTART, 8)
 TTYCHAR(VSTOP, 9)
-#if defined(VSUSP)
+#ఒకవేళ defined(VSUSP)
 TTYCHAR(VSUSP, 10)
-#endif /* VSUSP */
-#if defined(VDSUSP)
+#అయితే_ముగింపు /* VSUSP */
+#ఒకవేళ defined(VDSUSP)
 TTYCHAR(VDSUSP, 11)
-#endif /* VDSUSP */
-#if defined(VREPRINT)
+#అయితే_ముగింపు /* VDSUSP */
+#ఒకవేళ defined(VREPRINT)
 TTYCHAR(VREPRINT, 12)
-#endif /* VREPRINT */
-#if defined(VWERASE)
+#అయితే_ముగింపు /* VREPRINT */
+#ఒకవేళ defined(VWERASE)
 TTYCHAR(VWERASE, 13)
-#endif /* VWERASE */
-#if defined(VLNEXT)
+#అయితే_ముగింపు /* VWERASE */
+#ఒకవేళ defined(VLNEXT)
 TTYCHAR(VLNEXT, 14)
-#endif /* VLNEXT */
-#if defined(VFLUSH)
+#అయితే_ముగింపు /* VLNEXT */
+#ఒకవేళ defined(VFLUSH)
 TTYCHAR(VFLUSH, 15)
-#endif /* VFLUSH */
-#ifdef VSWTCH
+#అయితే_ముగింపు /* VFLUSH */
+#నిర్వచితమైతే VSWTCH
 TTYCHAR(VSWTCH, 16)
-#endif /* VSWTCH */
-#if defined(VSTATUS)
+#అయితే_ముగింపు /* VSWTCH */
+#ఒకవేళ defined(VSTATUS)
 TTYCHAR(VSTATUS, 17)
-#endif /* VSTATUS */
-#ifdef VDISCARD
+#అయితే_ముగింపు /* VSTATUS */
+#నిర్వచితమైతే VDISCARD
 TTYCHAR(VDISCARD, 18)
-#endif /* VDISCARD */
+#అయితే_ముగింపు /* VDISCARD */
 
 /* name, field, op */
 TTYMODE(IGNPAR,	c_iflag, 30)
@@ -109,59 +109,59 @@ TTYMODE(ISTRIP,	c_iflag, 33)
 TTYMODE(INLCR,	c_iflag, 34)
 TTYMODE(IGNCR,	c_iflag, 35)
 TTYMODE(ICRNL,	c_iflag, 36)
-#if defined(IUCLC)
+#ఒకవేళ defined(IUCLC)
 TTYMODE(IUCLC,	c_iflag, 37)
-#endif
+#అయితే_ముగింపు
 TTYMODE(IXON,	c_iflag, 38)
 TTYMODE(IXANY,	c_iflag, 39)
 TTYMODE(IXOFF,	c_iflag, 40)
-#ifdef IMAXBEL
+#నిర్వచితమైతే IMAXBEL
 TTYMODE(IMAXBEL,c_iflag, 41)
-#endif /* IMAXBEL */
-#ifdef IUTF8
+#అయితే_ముగింపు /* IMAXBEL */
+#నిర్వచితమైతే IUTF8
 TTYMODE(IUTF8,  c_iflag, 42)
-#endif /* IUTF8 */
+#అయితే_ముగింపు /* IUTF8 */
 
 TTYMODE(ISIG,	c_lflag, 50)
 TTYMODE(ICANON,	c_lflag, 51)
-#ifdef XCASE
+#నిర్వచితమైతే XCASE
 TTYMODE(XCASE,	c_lflag, 52)
-#endif
+#అయితే_ముగింపు
 TTYMODE(ECHO,	c_lflag, 53)
 TTYMODE(ECHOE,	c_lflag, 54)
 TTYMODE(ECHOK,	c_lflag, 55)
 TTYMODE(ECHONL,	c_lflag, 56)
 TTYMODE(NOFLSH,	c_lflag, 57)
 TTYMODE(TOSTOP,	c_lflag, 58)
-#ifdef IEXTEN
+#నిర్వచితమైతే IEXTEN
 TTYMODE(IEXTEN, c_lflag, 59)
-#endif /* IEXTEN */
-#if defined(ECHOCTL)
+#అయితే_ముగింపు /* IEXTEN */
+#ఒకవేళ defined(ECHOCTL)
 TTYMODE(ECHOCTL,c_lflag, 60)
-#endif /* ECHOCTL */
-#ifdef ECHOKE
+#అయితే_ముగింపు /* ECHOCTL */
+#నిర్వచితమైతే ECHOKE
 TTYMODE(ECHOKE,	c_lflag, 61)
-#endif /* ECHOKE */
-#if defined(PENDIN)
+#అయితే_ముగింపు /* ECHOKE */
+#ఒకవేళ defined(PENDIN)
 TTYMODE(PENDIN,	c_lflag, 62)
-#endif /* PENDIN */
+#అయితే_ముగింపు /* PENDIN */
 
 TTYMODE(OPOST,	c_oflag, 70)
-#if defined(OLCUC)
+#ఒకవేళ defined(OLCUC)
 TTYMODE(OLCUC,	c_oflag, 71)
-#endif
-#ifdef ONLCR
+#అయితే_ముగింపు
+#నిర్వచితమైతే ONLCR
 TTYMODE(ONLCR,	c_oflag, 72)
-#endif
-#ifdef OCRNL
+#అయితే_ముగింపు
+#నిర్వచితమైతే OCRNL
 TTYMODE(OCRNL,	c_oflag, 73)
-#endif
-#ifdef ONOCR
+#అయితే_ముగింపు
+#నిర్వచితమైతే ONOCR
 TTYMODE(ONOCR,	c_oflag, 74)
-#endif
-#ifdef ONLRET
+#అయితే_ముగింపు
+#నిర్వచితమైతే ONLRET
 TTYMODE(ONLRET,	c_oflag, 75)
-#endif
+#అయితే_ముగింపు
 
 TTYMODE(CS7,	c_cflag, 90)
 TTYMODE(CS8,	c_cflag, 91)

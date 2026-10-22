@@ -30,13 +30,13 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoul.c */
 
-#include "includes.h"
-#ifndef HAVE_STRTOUL
+#అన్తర్భావ "includes.h"
+#నిర్వచితం_కాకపోతే HAVE_STRTOUL
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <stdlib.h>
 
 /*
  * Convert a string to an unsigned long integer.
@@ -44,65 +44,65 @@
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-unsigned long
-strtoul(const char *nptr, char **endptr, int base)
+గుర్తులేని దీర్ఘ
+strtoul(స్థిరరాశి అక్షరం *nptr, అక్షరం **endptr, పూర్ణాంకం పునాది)
 {
-	const char *s;
-	unsigned long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	స్థిరరాశి అక్షరం *s;
+	గుర్తులేని దీర్ఘ acc, cutoff;
+	పూర్ణాంకం c;
+	పూర్ణాంకం neg, any, cutlim;
 
 	/*
 	 * See strtol for comments as to the logic used.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	చేయి {
+		c = (గుర్తులేని అక్షరం) *s++;
+	} అయితే (ఖాళీనా(c));
+	ఒకవేళ (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} లేకపోతే {
 		neg = 0;
-		if (c == '+')
+		ఒకవేళ (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	ఒకవేళ ((పునాది == 0 || పునాది == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
-		base = 16;
+		పునాది = 16;
 	}
-	if (base == 0)
-		base = c == '0' ? 8 : 10;
+	ఒకవేళ (పునాది == 0)
+		పునాది = c == '0' ? 8 : 10;
 
-	cutoff = ULONG_MAX / (unsigned long)base;
-	cutlim = ULONG_MAX % (unsigned long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	cutoff = ULONG_MAX / (గుర్తులేని దీర్ఘ)పునాది;
+	cutlim = ULONG_MAX % (గుర్తులేని దీర్ఘ)పునాది;
+	కొరకు (acc = 0, any = 0;; c = (గుర్తులేని అక్షరం) *s++) {
+		ఒకవేళ (అంకెనా(c))
 			c -= '0';
-		else if (isalpha(c))
+		లేకపోతే ఒకవేళ (అక్షరమా(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (acc > cutoff || acc == cutoff && c > cutlim) {
+		లేకపోతే
+			ఆపు;
+		ఒకవేళ (c >= పునాది)
+			ఆపు;
+		ఒకవేళ (any < 0)
+			కొనసాగు;
+		ఒకవేళ (acc > cutoff || acc == cutoff && c > cutlim) {
 			any = -1;
 			acc = ULONG_MAX;
 			errno = ERANGE;
-		} else {
+		} లేకపోతే {
 			any = 1;
-			acc *= (unsigned long)base;
+			acc *= (గుర్తులేని దీర్ఘ)పునాది;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	ఒకవేళ (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	ఒకవేళ (endptr != 0)
+		*endptr = (అక్షరం *) (any ? s - 1 : nptr);
+	తిరిగి (acc);
 }
-#endif /* !HAVE_STRTOUL */
+#అయితే_ముగింపు /* !HAVE_STRTOUL */

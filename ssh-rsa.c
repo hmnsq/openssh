@@ -15,286 +15,286 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <openssl/bn.h>
-#include <openssl/evp.h>
+#అన్తర్భావ <openssl/bn.h>
+#అన్తర్భావ <openssl/evp.h>
 
-#include <stdarg.h>
-#include <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <string.h>
 
-#include "sshbuf.h"
-#include "ssherr.h"
-#define SSHKEY_INTERNAL
-#include "sshkey.h"
-#include "digest.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "ssherr.h"
+#నిర్వచించు SSHKEY_అంతర్గత
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "digest.h"
 
-static u_int
-ssh_rsa_size(const struct sshkey *k)
+స్థిర u_int
+ssh_rsa_కొలత(స్థిరరాశి నిర్మాణం sshkey *k)
 {
-	if (k->pkey == NULL)
-		return 0;
-	return EVP_PKEY_bits(k->pkey);
+	ఒకవేళ (k->pkey == ఖాళీ)
+		తిరిగి 0;
+	తిరిగి EVP_PKEY_బిట్లు(k->pkey);
 }
 
-static int
-ssh_rsa_alloc(struct sshkey *k)
+స్థిర పూర్ణాంకం
+ssh_rsa_alloc(నిర్మాణం sshkey *k)
 {
-	if ((k->pkey = EVP_PKEY_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	return 0;
+	ఒకవేళ ((k->pkey = EVP_PKEY_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	తిరిగి 0;
 }
 
-static void
-ssh_rsa_cleanup(struct sshkey *k)
+స్థిర శూన్య
+ssh_rsa_cleanup(నిర్మాణం sshkey *k)
 {
 	EVP_PKEY_free(k->pkey);
-	k->pkey = NULL;
+	k->pkey = ఖాళీ;
 }
 
-static int
-ssh_rsa_equal(const struct sshkey *a, const struct sshkey *b)
+స్థిర పూర్ణాంకం
+ssh_rsa_equal(స్థిరరాశి నిర్మాణం sshkey *a, స్థిరరాశి నిర్మాణం sshkey *b)
 {
-	if (a->pkey == NULL || b->pkey == NULL)
-		return 0;
-	return EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
+	ఒకవేళ (a->pkey == ఖాళీ || b->pkey == ఖాళీ)
+		తిరిగి 0;
+	తిరిగి EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
 }
 
-static int
-ssh_rsa_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+స్థిర పూర్ణాంకం
+ssh_rsa_serialize_ప్రజా(స్థిరరాశి నిర్మాణం sshkey *కీలకం, నిర్మాణం sshbuf *b,
+    గణన sshkey_serialize_rep opts)
 {
-	int r;
-	const BIGNUM *rsa_n, *rsa_e;
-	const RSA *rsa;
+	పూర్ణాంకం r;
+	స్థిరరాశి BIGNUM *rsa_n, *rsa_e;
+	స్థిరరాశి RSA *rsa;
 
-	if (key->pkey == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((rsa = EVP_PKEY_get0_RSA(key->pkey)) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	ఒకవేళ (కీలకం->pkey == ఖాళీ)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ ((rsa = EVP_PKEY_get0_RSA(కీలకం->pkey)) == ఖాళీ)
+		తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
 
-	RSA_get0_key(rsa, &rsa_n, &rsa_e, NULL);
-	if ((r = sshbuf_put_bignum2(b, rsa_e)) != 0 ||
+	RSA_get0_కీలకం(rsa, &rsa_n, &rsa_e, ఖాళీ);
+	ఒకవేళ ((r = sshbuf_put_bignum2(b, rsa_e)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, rsa_n)) != 0)
-		return r;
+		తిరిగి r;
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-ssh_rsa_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+స్థిర పూర్ణాంకం
+ssh_rsa_serialize_వ్యక్తిగత(స్థిరరాశి నిర్మాణం sshkey *కీలకం, నిర్మాణం sshbuf *b,
+    గణన sshkey_serialize_rep opts)
 {
-	int r;
-	const BIGNUM *rsa_n, *rsa_e, *rsa_d, *rsa_iqmp, *rsa_p, *rsa_q;
-	const RSA *rsa;
+	పూర్ణాంకం r;
+	స్థిరరాశి BIGNUM *rsa_n, *rsa_e, *rsa_d, *rsa_iqmp, *rsa_p, *rsa_q;
+	స్థిరరాశి RSA *rsa;
 
-	if ((rsa = EVP_PKEY_get0_RSA(key->pkey)) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	RSA_get0_key(rsa, &rsa_n, &rsa_e, &rsa_d);
+	ఒకవేళ ((rsa = EVP_PKEY_get0_RSA(కీలకం->pkey)) == ఖాళీ)
+		తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
+	RSA_get0_కీలకం(rsa, &rsa_n, &rsa_e, &rsa_d);
 	RSA_get0_factors(rsa, &rsa_p, &rsa_q);
-	RSA_get0_crt_params(rsa, NULL, NULL, &rsa_iqmp);
+	RSA_get0_crt_params(rsa, ఖాళీ, ఖాళీ, &rsa_iqmp);
 
-	if (!sshkey_is_cert(key)) {
+	ఒకవేళ (!sshkey_is_cert(కీలకం)) {
 		/* Note: can't reuse ssh_rsa_serialize_public: e, n vs. n, e */
-		if ((r = sshbuf_put_bignum2(b, rsa_n)) != 0 ||
+		ఒకవేళ ((r = sshbuf_put_bignum2(b, rsa_n)) != 0 ||
 		    (r = sshbuf_put_bignum2(b, rsa_e)) != 0)
-			return r;
+			తిరిగి r;
 	}
-	if ((r = sshbuf_put_bignum2(b, rsa_d)) != 0 ||
+	ఒకవేళ ((r = sshbuf_put_bignum2(b, rsa_d)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, rsa_iqmp)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, rsa_p)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, rsa_q)) != 0)
-		return r;
+		తిరిగి r;
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-ssh_rsa_generate(struct sshkey *k, int bits)
+స్థిర పూర్ణాంకం
+ssh_rsa_generate(నిర్మాణం sshkey *k, పూర్ణాంకం బిట్లు)
 {
-	EVP_PKEY_CTX *ctx = NULL;
-	EVP_PKEY *res = NULL;
+	EVP_PKEY_CTX *ctx = ఖాళీ;
+	EVP_PKEY *res = ఖాళీ;
 
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	పూర్ణాంకం ret = SSH_ERR_అంతర్గత_ERROR;
 
-	if (bits < SSH_RSA_MINIMUM_MODULUS_SIZE ||
-	    bits > SSHBUF_MAX_BIGNUM * 8)
-		return SSH_ERR_KEY_LENGTH;
+	ఒకవేళ (బిట్లు < SSH_RSA_MINIMUM_MODULUS_కొలత ||
+	    బిట్లు > SSHBUF_MAX_BIGNUM * 8)
+		తిరిగి SSH_ERR_కీలకం_నిడివి;
 
-	if ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL)) == NULL) {
+	ఒకవేళ ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, ఖాళీ)) == ఖాళీ) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EVP_PKEY_keygen_init(ctx) <= 0) {
+	ఒకవేళ (EVP_PKEY_keygen_init(ctx) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, bits) <= 0) {
-		ret = SSH_ERR_KEY_LENGTH;
-		goto out;
+	ఒకవేళ (EVP_PKEY_CTX_సమితి_rsa_keygen_బిట్లు(ctx, బిట్లు) <= 0) {
+		ret = SSH_ERR_కీలకం_నిడివి;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EVP_PKEY_keygen(ctx, &res) <= 0 || res == NULL) {
+	ఒకవేళ (EVP_PKEY_keygen(ctx, &res) <= 0 || res == ఖాళీ) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
 	k->pkey = res;
 	ret = 0;
- out:
+ బహిర్గతం:
 	EVP_PKEY_CTX_free(ctx);
-	return ret;
+	తిరిగి ret;
 }
 
-static int
-ssh_rsa_copy_public(const struct sshkey *from, struct sshkey *to)
+స్థిర పూర్ణాంకం
+ssh_rsa_copy_ప్రజా(స్థిరరాశి నిర్మాణం sshkey *from, నిర్మాణం sshkey *గమ్యం)
 {
-	const BIGNUM *rsa_n, *rsa_e;
-	BIGNUM *rsa_n_dup = NULL, *rsa_e_dup = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	const RSA *rsa_from;
-	RSA *rsa_to = NULL;
+	స్థిరరాశి BIGNUM *rsa_n, *rsa_e;
+	BIGNUM *rsa_n_dup = ఖాళీ, *rsa_e_dup = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
+	స్థిరరాశి RSA *rsa_from;
+	RSA *rsa_గమ్యం = ఖాళీ;
 
-	if ((rsa_from = EVP_PKEY_get0_RSA(from->pkey)) == NULL ||
-	    (rsa_to = RSA_new()) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	ఒకవేళ ((rsa_from = EVP_PKEY_get0_RSA(from->pkey)) == ఖాళీ ||
+	    (rsa_గమ్యం = RSA_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
 
-	RSA_get0_key(rsa_from, &rsa_n, &rsa_e, NULL);
-	if ((rsa_n_dup = BN_dup(rsa_n)) == NULL ||
-	    (rsa_e_dup = BN_dup(rsa_e)) == NULL) {
+	RSA_get0_కీలకం(rsa_from, &rsa_n, &rsa_e, ఖాళీ);
+	ఒకవేళ ((rsa_n_dup = BN_dup(rsa_n)) == ఖాళీ ||
+	    (rsa_e_dup = BN_dup(rsa_e)) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (!RSA_set0_key(rsa_to, rsa_n_dup, rsa_e_dup, NULL)) {
+	ఒకవేళ (!RSA_set0_కీలకం(rsa_గమ్యం, rsa_n_dup, rsa_e_dup, ఖాళీ)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	rsa_n_dup = rsa_e_dup = NULL; /* transferred */
+	rsa_n_dup = rsa_e_dup = ఖాళీ; /* transferred */
 
-	if (EVP_PKEY_set1_RSA(to->pkey, rsa_to) != 1) {
+	ఒకవేళ (EVP_PKEY_set1_RSA(గమ్యం->pkey, rsa_గమ్యం) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
 	r = 0;
- out:
-	RSA_free(rsa_to);
+ బహిర్గతం:
+	RSA_free(rsa_గమ్యం);
 	BN_clear_free(rsa_n_dup);
 	BN_clear_free(rsa_e_dup);
-	return r;
+	తిరిగి r;
 }
 
-static int
-ssh_rsa_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+స్థిర పూర్ణాంకం
+ssh_rsa_deserialize_ప్రజా(స్థిరరాశి అక్షరం *ktype, నిర్మాణం sshbuf *b,
+    నిర్మాణం sshkey *కీలకం)
 {
-	int ret = SSH_ERR_INTERNAL_ERROR;
-	BIGNUM *rsa_n = NULL, *rsa_e = NULL;
-	RSA *rsa = NULL;
+	పూర్ణాంకం ret = SSH_ERR_అంతర్గత_ERROR;
+	BIGNUM *rsa_n = ఖాళీ, *rsa_e = ఖాళీ;
+	RSA *rsa = ఖాళీ;
 
-	if ((rsa = RSA_new()) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	ఒకవేళ ((rsa = RSA_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
 
-	if (sshbuf_get_bignum2(b, &rsa_e) != 0 ||
+	ఒకవేళ (sshbuf_get_bignum2(b, &rsa_e) != 0 ||
 	    sshbuf_get_bignum2(b, &rsa_n) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (!RSA_set0_key(rsa, rsa_n, rsa_e, NULL)) {
+	ఒకవేళ (!RSA_set0_కీలకం(rsa, rsa_n, rsa_e, ఖాళీ)) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	rsa_n = rsa_e = NULL; /* transferred */
-	if (EVP_PKEY_set1_RSA(key->pkey, rsa) != 1) {
+	rsa_n = rsa_e = ఖాళీ; /* transferred */
+	ఒకవేళ (EVP_PKEY_set1_RSA(కీలకం->pkey, rsa) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((ret = sshkey_check_rsa_length(key, 0)) != 0)
-		goto out;
-#ifdef DEBUG_PK
+	ఒకవేళ ((ret = sshkey_check_rsa_నిడివి(కీలకం, 0)) != 0)
+		వెళ్ళు బహిర్గతం;
+#నిర్వచితమైతే DEBUG_PK
 	RSA_print_fp(stderr, rsa, 8);
-#endif
+#అయితే_ముగింపు
 	/* success */
 	ret = 0;
- out:
+ బహిర్గతం:
 	RSA_free(rsa);
 	BN_clear_free(rsa_n);
 	BN_clear_free(rsa_e);
-	return ret;
+	తిరిగి ret;
 }
 
-static int
-ssh_rsa_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+స్థిర పూర్ణాంకం
+ssh_rsa_deserialize_వ్యక్తిగత(స్థిరరాశి అక్షరం *ktype, నిర్మాణం sshbuf *b,
+    నిర్మాణం sshkey *కీలకం)
 {
-	int r;
-	BIGNUM *rsa_n = NULL, *rsa_e = NULL, *rsa_d = NULL;
-	BIGNUM *rsa_iqmp = NULL, *rsa_p = NULL, *rsa_q = NULL;
-	BIGNUM *rsa_dmp1 = NULL, *rsa_dmq1 = NULL;
-	RSA *rsa = NULL;
+	పూర్ణాంకం r;
+	BIGNUM *rsa_n = ఖాళీ, *rsa_e = ఖాళీ, *rsa_d = ఖాళీ;
+	BIGNUM *rsa_iqmp = ఖాళీ, *rsa_p = ఖాళీ, *rsa_q = ఖాళీ;
+	BIGNUM *rsa_dmp1 = ఖాళీ, *rsa_dmq1 = ఖాళీ;
+	RSA *rsa = ఖాళీ;
 
-	if (sshkey_is_cert(key)) {
+	ఒకవేళ (sshkey_is_cert(కీలకం)) {
 		/* sshkey_private_deserialize already has pubkey from cert */
-		if ((rsa = EVP_PKEY_get1_RSA(key->pkey)) == NULL) {
+		ఒకవేళ ((rsa = EVP_PKEY_get1_RSA(కీలకం->pkey)) == ఖాళీ) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-	} else {
-		if ((rsa = RSA_new()) == NULL) {
+	} లేకపోతే {
+		ఒకవేళ ((rsa = RSA_new()) == ఖాళీ) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		/* Note: can't reuse ssh_rsa_deserialize_public: e,n vs. n,e */
-		if ((r = sshbuf_get_bignum2(b, &rsa_n)) != 0 ||
+		ఒకవేళ ((r = sshbuf_get_bignum2(b, &rsa_n)) != 0 ||
 		    (r = sshbuf_get_bignum2(b, &rsa_e)) != 0)
-			goto out;
-		if (!RSA_set0_key(rsa, rsa_n, rsa_e, NULL)) {
+			వెళ్ళు బహిర్గతం;
+		ఒకవేళ (!RSA_set0_కీలకం(rsa, rsa_n, rsa_e, ఖాళీ)) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		rsa_n = rsa_e = NULL; /* transferred */
+		rsa_n = rsa_e = ఖాళీ; /* transferred */
 	}
-	if ((r = sshbuf_get_bignum2(b, &rsa_d)) != 0 ||
+	ఒకవేళ ((r = sshbuf_get_bignum2(b, &rsa_d)) != 0 ||
 	    (r = sshbuf_get_bignum2(b, &rsa_iqmp)) != 0 ||
 	    (r = sshbuf_get_bignum2(b, &rsa_p)) != 0 ||
 	    (r = sshbuf_get_bignum2(b, &rsa_q)) != 0)
-		goto out;
-	if ((r = ssh_rsa_complete_crt_parameters(rsa_d, rsa_p, rsa_q,
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = ssh_rsa_complete_crt_parameters(rsa_d, rsa_p, rsa_q,
 	    rsa_iqmp, &rsa_dmp1, &rsa_dmq1)) != 0)
-		goto out;
-	if (!RSA_set0_key(rsa, NULL, NULL, rsa_d)) {
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (!RSA_set0_కీలకం(rsa, ఖాళీ, ఖాళీ, rsa_d)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	rsa_d = NULL; /* transferred */
-	if (!RSA_set0_factors(rsa, rsa_p, rsa_q)) {
+	rsa_d = ఖాళీ; /* transferred */
+	ఒకవేళ (!RSA_set0_factors(rsa, rsa_p, rsa_q)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	rsa_p = rsa_q = NULL; /* transferred */
-	if (!RSA_set0_crt_params(rsa, rsa_dmp1, rsa_dmq1, rsa_iqmp)) {
+	rsa_p = rsa_q = ఖాళీ; /* transferred */
+	ఒకవేళ (!RSA_set0_crt_params(rsa, rsa_dmp1, rsa_dmq1, rsa_iqmp)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	rsa_dmp1 = rsa_dmq1 = rsa_iqmp = NULL;
-	if (RSA_blinding_on(rsa, NULL) != 1) {
+	rsa_dmp1 = rsa_dmq1 = rsa_iqmp = ఖాళీ;
+	ఒకవేళ (RSA_blinding_on(rsa, ఖాళీ) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EVP_PKEY_set1_RSA(key->pkey, rsa) != 1) {
+	ఒకవేళ (EVP_PKEY_set1_RSA(కీలకం->pkey, rsa) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshkey_check_rsa_length(key, 0)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshkey_check_rsa_నిడివి(కీలకం, 0)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* success */
 	r = 0;
- out:
+ బహిర్గతం:
 	RSA_free(rsa);
 	BN_clear_free(rsa_n);
 	BN_clear_free(rsa_e);
@@ -304,37 +304,37 @@ ssh_rsa_deserialize_private(const char *ktype, struct sshbuf *b,
 	BN_clear_free(rsa_iqmp);
 	BN_clear_free(rsa_dmp1);
 	BN_clear_free(rsa_dmq1);
-	return r;
+	తిరిగి r;
 }
 
-const char *
-ssh_rsa_hash_alg_ident(int hash_alg)
+స్థిరరాశి అక్షరం *
+ssh_rsa_hash_alg_ident(పూర్ణాంకం hash_alg)
 {
-	switch (hash_alg) {
-	case SSH_DIGEST_SHA1:
-		return "ssh-rsa";
-	case SSH_DIGEST_SHA256:
-		return "rsa-sha2-256";
-	case SSH_DIGEST_SHA512:
-		return "rsa-sha2-512";
+	ఎంపిక (hash_alg) {
+	స్థితి SSH_DIGEST_SHA1:
+		తిరిగి "ssh-rsa";
+	స్థితి SSH_DIGEST_SHA256:
+		తిరిగి "rsa-sha2-256";
+	స్థితి SSH_DIGEST_SHA512:
+		తిరిగి "rsa-sha2-512";
 	}
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
 /*
  * Returns the hash algorithm ID for a given algorithm identifier as used
  * inside the signature blob,
  */
-static int
-rsa_hash_id_from_ident(const char *ident)
+స్థిర పూర్ణాంకం
+rsa_hash_id_from_ident(స్థిరరాశి అక్షరం *ident)
 {
-	if (strcmp(ident, "ssh-rsa") == 0)
-		return SSH_DIGEST_SHA1;
-	if (strcmp(ident, "rsa-sha2-256") == 0)
-		return SSH_DIGEST_SHA256;
-	if (strcmp(ident, "rsa-sha2-512") == 0)
-		return SSH_DIGEST_SHA512;
-	return -1;
+	ఒకవేళ (strcmp(ident, "ssh-rsa") == 0)
+		తిరిగి SSH_DIGEST_SHA1;
+	ఒకవేళ (strcmp(ident, "rsa-sha2-256") == 0)
+		తిరిగి SSH_DIGEST_SHA256;
+	ఒకవేళ (strcmp(ident, "rsa-sha2-512") == 0)
+		తిరిగి SSH_DIGEST_SHA512;
+	తిరిగి -1;
 }
 
 /*
@@ -342,260 +342,260 @@ rsa_hash_id_from_ident(const char *ident)
  * all the cases of rsa_hash_id_from_ident() but also the certificate key
  * types.
  */
-int
-ssh_rsa_hash_id_from_keyname(const char *alg)
+పూర్ణాంకం
+ssh_rsa_hash_id_from_keyname(స్థిరరాశి అక్షరం *alg)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	if ((r = rsa_hash_id_from_ident(alg)) != -1)
-		return r;
-	if (strcmp(alg, "ssh-rsa-cert-v01@openssh.com") == 0)
-		return SSH_DIGEST_SHA1;
-	if (strcmp(alg, "rsa-sha2-256-cert-v01@openssh.com") == 0)
-		return SSH_DIGEST_SHA256;
-	if (strcmp(alg, "rsa-sha2-512-cert-v01@openssh.com") == 0)
-		return SSH_DIGEST_SHA512;
-	return -1;
+	ఒకవేళ ((r = rsa_hash_id_from_ident(alg)) != -1)
+		తిరిగి r;
+	ఒకవేళ (strcmp(alg, "ssh-rsa-cert-v01@openssh.com") == 0)
+		తిరిగి SSH_DIGEST_SHA1;
+	ఒకవేళ (strcmp(alg, "rsa-sha2-256-cert-v01@openssh.com") == 0)
+		తిరిగి SSH_DIGEST_SHA256;
+	ఒకవేళ (strcmp(alg, "rsa-sha2-512-cert-v01@openssh.com") == 0)
+		తిరిగి SSH_DIGEST_SHA512;
+	తిరిగి -1;
 }
 
-int
-ssh_rsa_complete_crt_parameters(const BIGNUM *rsa_d, const BIGNUM *rsa_p,
-    const BIGNUM *rsa_q, const BIGNUM *rsa_iqmp, BIGNUM **rsa_dmp1,
+పూర్ణాంకం
+ssh_rsa_complete_crt_parameters(స్థిరరాశి BIGNUM *rsa_d, స్థిరరాశి BIGNUM *rsa_p,
+    స్థిరరాశి BIGNUM *rsa_q, స్థిరరాశి BIGNUM *rsa_iqmp, BIGNUM **rsa_dmp1,
     BIGNUM **rsa_dmq1)
 {
-	BIGNUM *aux = NULL, *d_consttime = NULL;
-	BN_CTX *ctx = NULL;
-	int r;
+	BIGNUM *aux = ఖాళీ, *d_consttime = ఖాళీ;
+	BN_CTX *ctx = ఖాళీ;
+	పూర్ణాంకం r;
 
-	*rsa_dmq1 = *rsa_dmp1 = NULL;
-	if ((ctx = BN_CTX_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((aux = BN_new()) == NULL ||
-	    (*rsa_dmq1 = BN_new()) == NULL ||
-	    (*rsa_dmp1 = BN_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((d_consttime = BN_dup(rsa_d)) == NULL) {
+	*rsa_dmq1 = *rsa_dmp1 = ఖాళీ;
+	ఒకవేళ ((ctx = BN_CTX_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((aux = BN_new()) == ఖాళీ ||
+	    (*rsa_dmq1 = BN_new()) == ఖాళీ ||
+	    (*rsa_dmp1 = BN_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((d_consttime = BN_dup(rsa_d)) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	BN_set_flags(aux, BN_FLG_CONSTTIME);
-	BN_set_flags(d_consttime, BN_FLG_CONSTTIME);
+	BN_సమితి_flags(aux, BN_FLG_CONSTTIME);
+	BN_సమితి_flags(d_consttime, BN_FLG_CONSTTIME);
 
-	if ((BN_sub(aux, rsa_q, BN_value_one()) == 0) ||
+	ఒకవేళ ((BN_sub(aux, rsa_q, BN_విలువ_one()) == 0) ||
 	    (BN_mod(*rsa_dmq1, d_consttime, aux, ctx) == 0) ||
-	    (BN_sub(aux, rsa_p, BN_value_one()) == 0) ||
+	    (BN_sub(aux, rsa_p, BN_విలువ_one()) == 0) ||
 	    (BN_mod(*rsa_dmp1, d_consttime, aux, ctx) == 0)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
 	r = 0;
- out:
+ బహిర్గతం:
 	BN_clear_free(aux);
 	BN_clear_free(d_consttime);
 	BN_CTX_free(ctx);
-	return r;
+	తిరిగి r;
 }
 
 /* RSASSA-PKCS1-v1_5 (PKCS #1 v2.0 signature) with SHA1 */
-static int
-ssh_rsa_sign(struct sshkey *key,
-    u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider, const char *sk_pin, u_int compat)
+స్థిర పూర్ణాంకం
+ssh_rsa_sign(నిర్మాణం sshkey *కీలకం,
+    u_char **sigp, కొలత_t *lenp,
+    స్థిరరాశి u_char *దత్తాంశం, కొలత_t datalen,
+    స్థిరరాశి అక్షరం *alg, స్థిరరాశి అక్షరం *sk_provider, స్థిరరాశి అక్షరం *sk_pin, u_int compat)
 {
-	u_char *sig = NULL;
-	size_t diff, len = 0;
-	int slen = 0;
-	int hash_alg, ret = SSH_ERR_INTERNAL_ERROR;
+	u_char *sig = ఖాళీ;
+	కొలత_t diff, len = 0;
+	పూర్ణాంకం slen = 0;
+	పూర్ణాంకం hash_alg, ret = SSH_ERR_అంతర్గత_ERROR;
 
-	if (lenp != NULL)
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	ఒకవేళ (sigp != ఖాళీ)
+		*sigp = ఖాళీ;
 
-	if (alg == NULL || strlen(alg) == 0)
+	ఒకవేళ (alg == ఖాళీ || అక్షరశ్రేణి_పొడవు(alg) == 0)
 		hash_alg = SSH_DIGEST_SHA1;
-	else
+	లేకపోతే
 		hash_alg = ssh_rsa_hash_id_from_keyname(alg);
 
-	if (key == NULL || key->pkey == NULL || hash_alg == -1 ||
-	    sshkey_type_plain(key->type) != KEY_RSA)
-		return SSH_ERR_INVALID_ARGUMENT;
-	slen = EVP_PKEY_size(key->pkey);
-	if (slen <= 0 || slen > SSHBUF_MAX_BIGNUM)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_PKEY_bits(key->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE)
-		return SSH_ERR_KEY_LENGTH;
+	ఒకవేళ (కీలకం == ఖాళీ || కీలకం->pkey == ఖాళీ || hash_alg == -1 ||
+	    sshkey_type_plain(కీలకం->type) != కీలకం_RSA)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	slen = EVP_PKEY_కొలత(కీలకం->pkey);
+	ఒకవేళ (slen <= 0 || slen > SSHBUF_MAX_BIGNUM)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ (EVP_PKEY_బిట్లు(కీలకం->pkey) < SSH_RSA_MINIMUM_MODULUS_కొలత)
+		తిరిగి SSH_ERR_కీలకం_నిడివి;
 
-	if ((ret = sshkey_pkey_digest_sign(key->pkey, hash_alg, &sig, &len,
-	    data, datalen)) < 0)
-		goto out;
-	if (len < (size_t)slen) {
+	ఒకవేళ ((ret = sshkey_pkey_digest_sign(కీలకం->pkey, hash_alg, &sig, &len,
+	    దత్తాంశం, datalen)) < 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (len < (కొలత_t)slen) {
 		diff = slen - len;
 		memmove(sig + diff, sig, len);
 		explicit_bzero(sig, diff);
-	} else if (len > (size_t)slen) {
-		ret = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+	} లేకపోతే ఒకవేళ (len > (కొలత_t)slen) {
+		ret = SSH_ERR_అంతర్గత_ERROR;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((ret = ssh_rsa_encode_store_sig(hash_alg, sig, slen,
+	ఒకవేళ ((ret = ssh_rsa_encode_store_sig(hash_alg, sig, slen,
 	    sigp, lenp)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
 	/* success */
 	ret = 0;
- out:
+ బహిర్గతం:
 	freezero(sig, slen);
-	return ret;
+	తిరిగి ret;
 }
 
-int
-ssh_rsa_encode_store_sig(int hash_alg, const u_char *sig, size_t slen,
-    u_char **sigp, size_t *lenp)
+పూర్ణాంకం
+ssh_rsa_encode_store_sig(పూర్ణాంకం hash_alg, స్థిరరాశి u_char *sig, కొలత_t slen,
+    u_char **sigp, కొలత_t *lenp)
 {
-	struct sshbuf *b = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
-	size_t len;
+	నిర్మాణం sshbuf *b = ఖాళీ;
+	పూర్ణాంకం ret = SSH_ERR_అంతర్గత_ERROR;
+	కొలత_t len;
 
-	if (lenp != NULL)
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	ఒకవేళ (sigp != ఖాళీ)
+		*sigp = ఖాళీ;
 
 	/* Encode signature */
-	if ((b = sshbuf_new()) == NULL) {
+	ఒకవేళ ((b = sshbuf_new()) == ఖాళీ) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((ret = sshbuf_put_cstring(b,
+	ఒకవేళ ((ret = sshbuf_put_cstring(b,
 	    ssh_rsa_hash_alg_ident(hash_alg))) != 0 ||
 	    (ret = sshbuf_put_string(b, sig, slen)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	len = sshbuf_len(b);
 
 	/* Store signature */
-	if (sigp != NULL) {
-		if ((*sigp = malloc(len)) == NULL) {
+	ఒకవేళ (sigp != ఖాళీ) {
+		ఒకవేళ ((*sigp = జ్ఞాపకం_ఇవ్వు(len)) == ఖాళీ) {
 			ret = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		memcpy(*sigp, sshbuf_ptr(b), len);
+		జ్ఞాపకం_నకలు(*sigp, sshbuf_ptr(b), len);
 	}
-	if (lenp != NULL)
+	ఒకవేళ (lenp != ఖాళీ)
 		*lenp = len;
 	ret = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
-	return ret;
+	తిరిగి ret;
 }
 
-static int
-ssh_rsa_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+స్థిర పూర్ణాంకం
+ssh_rsa_verify(స్థిరరాశి నిర్మాణం sshkey *కీలకం,
+    స్థిరరాశి u_char *sig, కొలత_t siglen,
+    స్థిరరాశి u_char *దత్తాంశం, కొలత_t dlen, స్థిరరాశి అక్షరం *alg, u_int compat,
+    నిర్మాణం sshkey_sig_details **detailsp)
 {
-	char *sigtype = NULL;
-	int hash_alg, want_alg, ret = SSH_ERR_INTERNAL_ERROR;
-	size_t len = 0, diff, modlen, rsasize;
-	struct sshbuf *b = NULL;
-	u_char digest[SSH_DIGEST_MAX_LENGTH], *osigblob, *sigblob = NULL;
+	అక్షరం *sigtype = ఖాళీ;
+	పూర్ణాంకం hash_alg, want_alg, ret = SSH_ERR_అంతర్గత_ERROR;
+	కొలత_t len = 0, diff, modlen, rsasize;
+	నిర్మాణం sshbuf *b = ఖాళీ;
+	u_char digest[SSH_DIGEST_MAX_నిడివి], *osigblob, *sigblob = ఖాళీ;
 
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_RSA ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_PKEY_bits(key->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE)
-		return SSH_ERR_KEY_LENGTH;
+	ఒకవేళ (కీలకం == ఖాళీ || కీలకం->pkey == ఖాళీ ||
+	    sshkey_type_plain(కీలకం->type) != కీలకం_RSA ||
+	    sig == ఖాళీ || siglen == 0)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ (EVP_PKEY_బిట్లు(కీలకం->pkey) < SSH_RSA_MINIMUM_MODULUS_కొలత)
+		తిరిగి SSH_ERR_కీలకం_నిడివి;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (sshbuf_get_cstring(b, &sigtype, NULL) != 0) {
+	ఒకవేళ ((b = sshbuf_from(sig, siglen)) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ (sshbuf_get_cstring(b, &sigtype, ఖాళీ) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((hash_alg = rsa_hash_id_from_ident(sigtype)) == -1) {
-		ret = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+	ఒకవేళ ((hash_alg = rsa_hash_id_from_ident(sigtype)) == -1) {
+		ret = SSH_ERR_కీలకం_TYPE_MISMATCH;
+		వెళ్ళు బహిర్గతం;
 	}
 	/*
 	 * Allow ssh-rsa-cert-v01 certs to generate SHA2 signatures for
 	 * legacy reasons, but otherwise the signature type should match.
 	 */
-	if (alg != NULL && strcmp(alg, "ssh-rsa-cert-v01@openssh.com") != 0) {
-		if ((want_alg = ssh_rsa_hash_id_from_keyname(alg)) == -1) {
-			ret = SSH_ERR_INVALID_ARGUMENT;
-			goto out;
+	ఒకవేళ (alg != ఖాళీ && strcmp(alg, "ssh-rsa-cert-v01@openssh.com") != 0) {
+		ఒకవేళ ((want_alg = ssh_rsa_hash_id_from_keyname(alg)) == -1) {
+			ret = SSH_ERR_INVALID_వాదం;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (hash_alg != want_alg) {
+		ఒకవేళ (hash_alg != want_alg) {
 			ret = SSH_ERR_SIGNATURE_INVALID;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 	}
-	if (sshbuf_get_string(b, &sigblob, &len) != 0) {
+	ఒకవేళ (sshbuf_get_string(b, &sigblob, &len) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (sshbuf_len(b) != 0) {
-		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+	ఒకవేళ (sshbuf_len(b) != 0) {
+		ret = SSH_ERR_UNEXPECTED_TRAILING_దత్తాంశం;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* RSA_verify expects a signature of RSA_size */
-	modlen = EVP_PKEY_size(key->pkey);
-	if (len > modlen) {
-		ret = SSH_ERR_KEY_BITS_MISMATCH;
-		goto out;
-	} else if (len < modlen) {
+	modlen = EVP_PKEY_కొలత(కీలకం->pkey);
+	ఒకవేళ (len > modlen) {
+		ret = SSH_ERR_కీలకం_బిట్లు_MISMATCH;
+		వెళ్ళు బహిర్గతం;
+	} లేకపోతే ఒకవేళ (len < modlen) {
 		diff = modlen - len;
 		osigblob = sigblob;
-		if ((sigblob = realloc(sigblob, modlen)) == NULL) {
+		ఒకవేళ ((sigblob = realloc(sigblob, modlen)) == ఖాళీ) {
 			sigblob = osigblob; /* put it back for clear/free */
 			ret = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		memmove(sigblob + diff, sigblob, len);
 		explicit_bzero(sigblob, diff);
 		len = modlen;
 	}
 
-	rsasize = EVP_PKEY_size(key->pkey);
-	if (rsasize <= 0 || rsasize > SSHBUF_MAX_BIGNUM ||
+	rsasize = EVP_PKEY_కొలత(కీలకం->pkey);
+	ఒకవేళ (rsasize <= 0 || rsasize > SSHBUF_MAX_BIGNUM ||
 	    len == 0 || len > rsasize) {
-		ret = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		ret = SSH_ERR_INVALID_వాదం;
+		వెళ్ళు బహిర్గతం;
 	}
-	ret = sshkey_pkey_digest_verify(key->pkey, hash_alg, data, dlen,
+	ret = sshkey_pkey_digest_verify(కీలకం->pkey, hash_alg, దత్తాంశం, dlen,
 	    sigblob, len);
 
- out:
+ బహిర్గతం:
 	freezero(sigblob, len);
-	free(sigtype);
+	విడుదల(sigtype);
 	sshbuf_free(b);
-	explicit_bzero(digest, sizeof(digest));
-	return ret;
+	explicit_bzero(digest, పరిమాణం(digest));
+	తిరిగి ret;
 }
 
-static const struct sshkey_impl_funcs sshkey_rsa_funcs = {
-	/* .size = */		ssh_rsa_size,
+స్థిర స్థిరరాశి నిర్మాణం sshkey_impl_funcs sshkey_rsa_funcs = {
+	/* .size = */		ssh_rsa_కొలత,
 	/* .alloc = */		ssh_rsa_alloc,
 	/* .cleanup = */	ssh_rsa_cleanup,
 	/* .equal = */		ssh_rsa_equal,
-	/* .ssh_serialize_public = */ ssh_rsa_serialize_public,
-	/* .ssh_deserialize_public = */ ssh_rsa_deserialize_public,
-	/* .ssh_serialize_private = */ ssh_rsa_serialize_private,
-	/* .ssh_deserialize_private = */ ssh_rsa_deserialize_private,
+	/* .ssh_serialize_public = */ ssh_rsa_serialize_ప్రజా,
+	/* .ssh_deserialize_public = */ ssh_rsa_deserialize_ప్రజా,
+	/* .ssh_serialize_private = */ ssh_rsa_serialize_వ్యక్తిగత,
+	/* .ssh_deserialize_private = */ ssh_rsa_deserialize_వ్యక్తిగత,
 	/* .generate = */	ssh_rsa_generate,
-	/* .copy_public = */	ssh_rsa_copy_public,
+	/* .copy_public = */	ssh_rsa_copy_ప్రజా,
 	/* .sign = */		ssh_rsa_sign,
 	/* .verify = */		ssh_rsa_verify,
 };
 
-const struct sshkey_impl sshkey_rsa_impl = {
+స్థిరరాశి నిర్మాణం sshkey_impl sshkey_rsa_impl = {
 	/* .name = */		"ssh-rsa",
 	/* .shortname = */	"RSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_RSA,
+	/* .sigalg = */		ఖాళీ,
+	/* .type = */		కీలకం_RSA,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -603,11 +603,11 @@ const struct sshkey_impl sshkey_rsa_impl = {
 	/* .funcs = */		&sshkey_rsa_funcs,
 };
 
-const struct sshkey_impl sshkey_rsa_cert_impl = {
+స్థిరరాశి నిర్మాణం sshkey_impl sshkey_rsa_cert_impl = {
 	/* .name = */		"ssh-rsa-cert-v01@openssh.com",
 	/* .shortname = */	"RSA-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_RSA_CERT,
+	/* .sigalg = */		ఖాళీ,
+	/* .type = */		కీలకం_RSA_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -617,11 +617,11 @@ const struct sshkey_impl sshkey_rsa_cert_impl = {
 
 /* SHA2 signature algorithms */
 
-const struct sshkey_impl sshkey_rsa_sha256_impl = {
+స్థిరరాశి నిర్మాణం sshkey_impl sshkey_rsa_sha256_impl = {
 	/* .name = */		"rsa-sha2-256",
 	/* .shortname = */	"RSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_RSA,
+	/* .sigalg = */		ఖాళీ,
+	/* .type = */		కీలకం_RSA,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	1,
@@ -629,11 +629,11 @@ const struct sshkey_impl sshkey_rsa_sha256_impl = {
 	/* .funcs = */		&sshkey_rsa_funcs,
 };
 
-const struct sshkey_impl sshkey_rsa_sha512_impl = {
+స్థిరరాశి నిర్మాణం sshkey_impl sshkey_rsa_sha512_impl = {
 	/* .name = */		"rsa-sha2-512",
 	/* .shortname = */	"RSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_RSA,
+	/* .sigalg = */		ఖాళీ,
+	/* .type = */		కీలకం_RSA,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	1,
@@ -641,11 +641,11 @@ const struct sshkey_impl sshkey_rsa_sha512_impl = {
 	/* .funcs = */		&sshkey_rsa_funcs,
 };
 
-const struct sshkey_impl sshkey_rsa_sha256_cert_impl = {
+స్థిరరాశి నిర్మాణం sshkey_impl sshkey_rsa_sha256_cert_impl = {
 	/* .name = */		"rsa-sha2-256-cert-v01@openssh.com",
 	/* .shortname = */	"RSA-CERT",
 	/* .sigalg = */		"rsa-sha2-256",
-	/* .type = */		KEY_RSA_CERT,
+	/* .type = */		కీలకం_RSA_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	1,
@@ -653,15 +653,15 @@ const struct sshkey_impl sshkey_rsa_sha256_cert_impl = {
 	/* .funcs = */		&sshkey_rsa_funcs,
 };
 
-const struct sshkey_impl sshkey_rsa_sha512_cert_impl = {
+స్థిరరాశి నిర్మాణం sshkey_impl sshkey_rsa_sha512_cert_impl = {
 	/* .name = */		"rsa-sha2-512-cert-v01@openssh.com",
 	/* .shortname = */	"RSA-CERT",
 	/* .sigalg = */		"rsa-sha2-512",
-	/* .type = */		KEY_RSA_CERT,
+	/* .type = */		కీలకం_RSA_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	1,
 	/* .keybits = */	0,
 	/* .funcs = */		&sshkey_rsa_funcs,
 };
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */

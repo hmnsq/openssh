@@ -20,199 +20,199 @@
  * Alternative to the internal libsodium-based implementation in ed25519.c.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifdef OPENSSL_HAS_ED25519
+#నిర్వచితమైతే OPENSSL_HAS_ED25519
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <string.h>
-#include <stdint.h>
-#include <limits.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <limits.h>
 
-#include <openssl/evp.h>
+#అన్తర్భావ <openssl/evp.h>
 
-#include "crypto_api.h"
-#include "log.h"
+#అన్తర్భావ "crypto_api.h"
+#అన్తర్భావ "log.h"
 
-#if crypto_sign_ed25519_SECRETKEYBYTES <= crypto_sign_ed25519_PUBLICKEYBYTES
-#error "crypto_sign_ed25519_SECRETKEYBYTES < crypto_sign_ed25519_PUBLICKEYBYTES"
-#endif
+#ఒకవేళ crypto_sign_ed25519_SECRETKEYBYTES <= crypto_sign_ed25519_PUBLICKEYBYTES
+#దోషం "crypto_sign_ed25519_SECRETKEYBYTES < crypto_sign_ed25519_PUBLICKEYBYTES"
+#అయితే_ముగింపు
 
-#define SSH_ED25519_RAW_SECRET_KEY_LEN \
+#నిర్వచించు SSH_ED25519_RAW_SECRET_కీలకం_LEN \
     (crypto_sign_ed25519_SECRETKEYBYTES - crypto_sign_ed25519_PUBLICKEYBYTES)
 
-int
-crypto_sign_ed25519_keypair(unsigned char *pk, unsigned char *sk)
+పూర్ణాంకం
+crypto_sign_ed25519_keypair(గుర్తులేని అక్షరం *pk, గుర్తులేని అక్షరం *sk)
 {
-	EVP_PKEY_CTX *ctx = NULL;
-	EVP_PKEY *pkey = NULL;
-	size_t pklen, sklen;
-	int ret = -1;
+	EVP_PKEY_CTX *ctx = ఖాళీ;
+	EVP_PKEY *pkey = ఖాళీ;
+	కొలత_t pklen, sklen;
+	పూర్ణాంకం ret = -1;
 
-	if ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_ED25519, NULL)) == NULL) {
+	ఒకవేళ ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_ED25519, ఖాళీ)) == ఖాళీ) {
 		debug3_f("EVP_PKEY_CTX_new_id failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EVP_PKEY_keygen_init(ctx) <= 0) {
+	ఒకవేళ (EVP_PKEY_keygen_init(ctx) <= 0) {
 		debug3_f("EVP_PKEY_keygen_init failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EVP_PKEY_keygen(ctx, &pkey) <= 0) {
+	ఒకవేళ (EVP_PKEY_keygen(ctx, &pkey) <= 0) {
 		debug3_f("EVP_PKEY_keygen failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Extract public key */
 	pklen = crypto_sign_ed25519_PUBLICKEYBYTES;
-	if (!EVP_PKEY_get_raw_public_key(pkey, pk, &pklen)) {
+	ఒకవేళ (!EVP_PKEY_get_raw_ప్రజా_కీలకం(pkey, pk, &pklen)) {
 		debug3_f("EVP_PKEY_get_raw_public_key failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (pklen != crypto_sign_ed25519_PUBLICKEYBYTES) {
+	ఒకవేళ (pklen != crypto_sign_ed25519_PUBLICKEYBYTES) {
 		debug3_f("public key length mismatch: %zu", pklen);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	sklen = SSH_ED25519_RAW_SECRET_KEY_LEN;
+	sklen = SSH_ED25519_RAW_SECRET_కీలకం_LEN;
 	/* Extract private key (32 bytes seed) */
-	if (!EVP_PKEY_get_raw_private_key(pkey, sk, &sklen)) {
+	ఒకవేళ (!EVP_PKEY_get_raw_వ్యక్తిగత_కీలకం(pkey, sk, &sklen)) {
 		debug3_f("EVP_PKEY_get_raw_private_key failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (sklen != SSH_ED25519_RAW_SECRET_KEY_LEN) {
+	ఒకవేళ (sklen != SSH_ED25519_RAW_SECRET_కీలకం_LEN) {
 		debug3_f("private key length mismatch: %zu", sklen);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Append public key to secret key (SUPERCOP format compatibility) */
-	memcpy(sk + sklen, pk, crypto_sign_ed25519_PUBLICKEYBYTES);
+	జ్ఞాపకం_నకలు(sk + sklen, pk, crypto_sign_ed25519_PUBLICKEYBYTES);
 
 	ret = 0;
-out:
+బహిర్గతం:
 	EVP_PKEY_free(pkey);
 	EVP_PKEY_CTX_free(ctx);
-	return ret;
+	తిరిగి ret;
 }
 
-int
-crypto_sign_ed25519_seed_keypair(unsigned char *pk, unsigned char *sk,
-    const unsigned char *seed)
+పూర్ణాంకం
+crypto_sign_ed25519_విత్తనం_keypair(గుర్తులేని అక్షరం *pk, గుర్తులేని అక్షరం *sk,
+    స్థిరరాశి గుర్తులేని అక్షరం *విత్తనం)
 {
-	EVP_PKEY *pkey = NULL;
-	size_t pklen;
-	int ret = -1;
+	EVP_PKEY *pkey = ఖాళీ;
+	కొలత_t pklen;
+	పూర్ణాంకం ret = -1;
 
-	if ((pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, NULL,
-	    seed, SSH_ED25519_RAW_SECRET_KEY_LEN)) == NULL) {
+	ఒకవేళ ((pkey = EVP_PKEY_new_raw_వ్యక్తిగత_కీలకం(EVP_PKEY_ED25519, ఖాళీ,
+	    విత్తనం, SSH_ED25519_RAW_SECRET_కీలకం_LEN)) == ఖాళీ) {
 		debug3_f("EVP_PKEY_new_raw_private_key failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Extract public key */
 	pklen = crypto_sign_ed25519_PUBLICKEYBYTES;
-	if (!EVP_PKEY_get_raw_public_key(pkey, pk, &pklen)) {
+	ఒకవేళ (!EVP_PKEY_get_raw_ప్రజా_కీలకం(pkey, pk, &pklen)) {
 		debug3_f("EVP_PKEY_get_raw_public_key failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Build sk = seed || pk */
-	memcpy(sk, seed, SSH_ED25519_RAW_SECRET_KEY_LEN);
-	memcpy(sk + SSH_ED25519_RAW_SECRET_KEY_LEN, pk,
+	జ్ఞాపకం_నకలు(sk, విత్తనం, SSH_ED25519_RAW_SECRET_కీలకం_LEN);
+	జ్ఞాపకం_నకలు(sk + SSH_ED25519_RAW_SECRET_కీలకం_LEN, pk,
 	    crypto_sign_ed25519_PUBLICKEYBYTES);
 
 	ret = 0;
-out:
+బహిర్గతం:
 	EVP_PKEY_free(pkey);
-	return ret;
+	తిరిగి ret;
 }
 
-int
-crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglenp,
-    const unsigned char *m, unsigned long long mlen,
-    const unsigned char *sk)
+పూర్ణాంకం
+crypto_sign_ed25519_detached(గుర్తులేని అక్షరం *sig, గుర్తులేని దీర్ఘ దీర్ఘ *siglenp,
+    స్థిరరాశి గుర్తులేని అక్షరం *m, గుర్తులేని దీర్ఘ దీర్ఘ mlen,
+    స్థిరరాశి గుర్తులేని అక్షరం *sk)
 {
-	EVP_PKEY *pkey = NULL;
-	EVP_MD_CTX *mdctx = NULL;
-	size_t siglen;
-	int ret = -1;
+	EVP_PKEY *pkey = ఖాళీ;
+	EVP_MD_CTX *mdctx = ఖాళీ;
+	కొలత_t siglen;
+	పూర్ణాంకం ret = -1;
 
 	/* Create EVP_PKEY from secret key (first 32 bytes are the seed) */
-	if ((pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, NULL,
-	    sk, SSH_ED25519_RAW_SECRET_KEY_LEN)) == NULL) {
+	ఒకవేళ ((pkey = EVP_PKEY_new_raw_వ్యక్తిగత_కీలకం(EVP_PKEY_ED25519, ఖాళీ,
+	    sk, SSH_ED25519_RAW_SECRET_కీలకం_LEN)) == ఖాళీ) {
 		debug3_f("EVP_PKEY_new_raw_private_key failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Sign the message */
-	if ((mdctx = EVP_MD_CTX_new()) == NULL) {
+	ఒకవేళ ((mdctx = EVP_MD_CTX_new()) == ఖాళీ) {
 		debug3_f("EVP_MD_CTX_new failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EVP_DigestSignInit(mdctx, NULL, NULL, NULL, pkey) != 1) {
+	ఒకవేళ (EVP_DigestSignInit(mdctx, ఖాళీ, ఖాళీ, ఖాళీ, pkey) != 1) {
 		debug3_f("EVP_DigestSignInit failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	siglen = crypto_sign_ed25519_BYTES;
-	if (EVP_DigestSign(mdctx, sig, &siglen, m, mlen) != 1) {
+	siglen = crypto_sign_ed25519_బైట్లు;
+	ఒకవేళ (EVP_DigestSign(mdctx, sig, &siglen, m, mlen) != 1) {
 		debug3_f("EVP_DigestSign failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (siglen != crypto_sign_ed25519_BYTES) {
+	ఒకవేళ (siglen != crypto_sign_ed25519_బైట్లు) {
 		debug3_f("signature length mismatch: %zu", siglen);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if (siglenp != NULL)
+	ఒకవేళ (siglenp != ఖాళీ)
 		*siglenp = siglen;
 
 	ret = 0;
-out:
+బహిర్గతం:
 	EVP_MD_CTX_free(mdctx);
 	EVP_PKEY_free(pkey);
-	return ret;
+	తిరిగి ret;
 }
 
-int
-crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-    const unsigned char *m, unsigned long long mlen,
-    const unsigned char *pk)
+పూర్ణాంకం
+crypto_sign_ed25519_verify_detached(స్థిరరాశి గుర్తులేని అక్షరం *sig,
+    స్థిరరాశి గుర్తులేని అక్షరం *m, గుర్తులేని దీర్ఘ దీర్ఘ mlen,
+    స్థిరరాశి గుర్తులేని అక్షరం *pk)
 {
-	EVP_PKEY *pkey = NULL;
-	EVP_MD_CTX *mdctx = NULL;
-	int ret = -1;
+	EVP_PKEY *pkey = ఖాళీ;
+	EVP_MD_CTX *mdctx = ఖాళీ;
+	పూర్ణాంకం ret = -1;
 
-	if (mlen > SIZE_MAX) {
+	ఒకవేళ (mlen > SIZE_MAX) {
 		debug3_f("message too long: %llu", mlen);
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* Create EVP_PKEY from public key */
-	if ((pkey = EVP_PKEY_new_raw_public_key(EVP_PKEY_ED25519, NULL,
-	    pk, crypto_sign_ed25519_PUBLICKEYBYTES)) == NULL) {
+	ఒకవేళ ((pkey = EVP_PKEY_new_raw_ప్రజా_కీలకం(EVP_PKEY_ED25519, ఖాళీ,
+	    pk, crypto_sign_ed25519_PUBLICKEYBYTES)) == ఖాళీ) {
 		debug3_f("EVP_PKEY_new_raw_public_key failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if ((mdctx = EVP_MD_CTX_new()) == NULL) {
+	ఒకవేళ ((mdctx = EVP_MD_CTX_new()) == ఖాళీ) {
 		debug3_f("EVP_MD_CTX_new failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EVP_DigestVerifyInit(mdctx, NULL, NULL, NULL, pkey) <= 0) {
+	ఒకవేళ (EVP_DigestVerifyInit(mdctx, ఖాళీ, ఖాళీ, ఖాళీ, pkey) <= 0) {
 		debug3_f("EVP_DigestVerifyInit failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (EVP_DigestVerify(mdctx, sig, crypto_sign_ed25519_BYTES,
-	    m, (size_t)mlen) != 1) {
+	ఒకవేళ (EVP_DigestVerify(mdctx, sig, crypto_sign_ed25519_బైట్లు,
+	    m, (కొలత_t)mlen) != 1) {
 		debug3_f("EVP_DigestVerify failed");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	ret = 0;
-out:
+బహిర్గతం:
 	EVP_MD_CTX_free(mdctx);
 	EVP_PKEY_free(pkey);
-	return ret;
+	తిరిగి ret;
 }
 
-#endif /* OPENSSL_HAS_ED25519 */
+#అయితే_ముగింపు /* OPENSSL_HAS_ED25519 */

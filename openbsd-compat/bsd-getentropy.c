@@ -16,72 +16,72 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifndef SSH_RANDOM_DEV
+#నిర్వచితం_కాకపోతే SSH_RANDOM_DEV
 # define SSH_RANDOM_DEV "/dev/urandom"
-#endif /* SSH_RANDOM_DEV */
+#అయితే_ముగింపు /* SSH_RANDOM_DEV */
 
-#include <sys/types.h>
-#ifdef HAVE_SYS_RANDOM_H
+#అన్తర్భావ <sys/types.h>
+#నిర్వచితమైతే HAVE_SYS_RANDOM_H
 # include <sys/random.h>
-#endif
+#అయితే_ముగింపు
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#ifdef WITH_OPENSSL
-#include <openssl/rand.h>
-#include <openssl/err.h>
-#endif
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ <openssl/rand.h>
+#అన్తర్భావ <openssl/err.h>
+#అయితే_ముగింపు
 
-#include "log.h"
+#అన్తర్భావ "log.h"
 
-int
-_ssh_compat_getentropy(void *s, size_t len)
+పూర్ణాంకం
+_ssh_compat_getentropy(శూన్య *s, కొలత_t len)
 {
-#if defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
-	if (RAND_bytes(s, len) <= 0)
+#ఒకవేళ defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
+	ఒకవేళ (RAND_బైట్లు(s, len) <= 0)
 		fatal("Couldn't obtain random bytes (error 0x%lx)",
-		    (unsigned long)ERR_get_error());
-#else
-	int fd, save_errno;
+		    (గుర్తులేని దీర్ఘ)ERR_get_error());
+#లేకపోతే
+	పూర్ణాంకం fd, save_errno;
 	ssize_t r;
-	size_t o = 0;
+	కొలత_t o = 0;
 
-#ifdef WITH_OPENSSL
-	if (RAND_bytes(s, len) == 1)
-		return 0;
-#endif
-#ifdef HAVE_GETENTROPY
-	if ((r = getentropy(s, len)) == 0)
-		return 0;
-#endif /* HAVE_GETENTROPY */
-#ifdef HAVE_GETRANDOM
-	if ((r = getrandom(s, len, 0)) > 0 && (size_t)r == len)
-		return 0;
-#endif /* HAVE_GETRANDOM */
+#నిర్వచితమైతే WITH_OPENSSL
+	ఒకవేళ (RAND_బైట్లు(s, len) == 1)
+		తిరిగి 0;
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_GETENTROPY
+	ఒకవేళ ((r = getentropy(s, len)) == 0)
+		తిరిగి 0;
+#అయితే_ముగింపు /* HAVE_GETENTROPY */
+#నిర్వచితమైతే HAVE_GETRANDOM
+	ఒకవేళ ((r = getrandom(s, len, 0)) > 0 && (కొలత_t)r == len)
+		తిరిగి 0;
+#అయితే_ముగింపు /* HAVE_GETRANDOM */
 
-	if ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
+	ఒకవేళ ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
 		save_errno = errno;
 		/* Try egd/prngd before giving up. */
-		if (seed_from_prngd(s, len) == 0)
-			return 0;
+		ఒకవేళ (విత్తనం_from_prngd(s, len) == 0)
+			తిరిగి 0;
 		fatal("Couldn't open %s: %s", SSH_RANDOM_DEV,
 		    strerror(save_errno));
 	}
-	while (o < len) {
-		r = read(fd, (u_char *)s + o, len - o);
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR ||
+	అయితే (o < len) {
+		r = పఠ(fd, (u_char *)s + o, len - o);
+		ఒకవేళ (r < 0) {
+			ఒకవేళ (errno == EAGAIN || errno == EINTR ||
 			    errno == EWOULDBLOCK)
-				continue;
+				కొనసాగు;
 			fatal("read %s: %s", SSH_RANDOM_DEV, strerror(errno));
 		}
 		o += r;
 	}
 	close(fd);
-#endif /* WITH_OPENSSL */
-	return 0;
+#అయితే_ముగింపు /* WITH_OPENSSL */
+	తిరిగి 0;
 }

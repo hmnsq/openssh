@@ -5,76 +5,76 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include "../test_helper/test_helper.h"
+#అన్తర్భావ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "xmalloc.h"
 
-void test_hpdelim(void);
+శూన్య test_hpdelim(శూన్య);
 
-void
-test_hpdelim(void)
+శూన్య
+test_hpdelim(శూన్య)
 {
-	char *orig, *str, *cp, *port;
+	అక్షరం *orig, *str, *cp, *పోర్టు;
 
-#define START_STRING(x)	orig = str = xstrdup(x)
-#define DONE_STRING()	free(orig)
+#నిర్వచించు ప్రారంభం_STRING(x)	orig = str = xstrdup(x)
+#నిర్వచించు పూర్తి_STRING()	విడుదల(orig)
 
-	TEST_START("hpdelim host only");
-	START_STRING("host");
+	TEST_ప్రారంభం("hpdelim host only");
+	ప్రారంభం_STRING("host");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "host");
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(str, ఖాళీ);
+	పూర్తి_STRING();
+	TEST_పూర్తి();
 
-	TEST_START("hpdelim :port");
-	START_STRING(":1234");
+	TEST_ప్రారంభం("hpdelim :port");
+	ప్రారంభం_STRING(":1234");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "");
-	ASSERT_PTR_NE(str, NULL);
-	port = hpdelim(&str);
-	ASSERT_STRING_EQ(port, "1234");
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_NE(str, ఖాళీ);
+	పోర్టు = hpdelim(&str);
+	ASSERT_STRING_EQ(పోర్టు, "1234");
+	ASSERT_PTR_EQ(str, ఖాళీ);
+	పూర్తి_STRING();
+	TEST_పూర్తి();
 
-	TEST_START("hpdelim host:port");
-	START_STRING("host:1234");
+	TEST_ప్రారంభం("hpdelim host:port");
+	ప్రారంభం_STRING("host:1234");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "host");
-	ASSERT_PTR_NE(str, NULL);
-	port = hpdelim(&str);
-	ASSERT_STRING_EQ(port, "1234");
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_NE(str, ఖాళీ);
+	పోర్టు = hpdelim(&str);
+	ASSERT_STRING_EQ(పోర్టు, "1234");
+	ASSERT_PTR_EQ(str, ఖాళీ);
+	పూర్తి_STRING();
+	TEST_పూర్తి();
 
-	TEST_START("hpdelim [host]:port");
-	START_STRING("[::1]:1234");
+	TEST_ప్రారంభం("hpdelim [host]:port");
+	ప్రారంభం_STRING("[::1]:1234");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "[::1]");
-	ASSERT_PTR_NE(str, NULL);
-	port = hpdelim(&str);
-	ASSERT_STRING_EQ(port, "1234");
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_NE(str, ఖాళీ);
+	పోర్టు = hpdelim(&str);
+	ASSERT_STRING_EQ(పోర్టు, "1234");
+	ASSERT_PTR_EQ(str, ఖాళీ);
+	పూర్తి_STRING();
+	TEST_పూర్తి();
 
-	TEST_START("hpdelim missing ] error");
-	START_STRING("[::1:1234");
+	TEST_ప్రారంభం("hpdelim missing ] error");
+	ప్రారంభం_STRING("[::1:1234");
 	cp = hpdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, ఖాళీ);
+	పూర్తి_STRING();
+	TEST_పూర్తి();
 
 }

@@ -5,180 +5,180 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include "../test_helper/test_helper.h"
+#అన్తర్భావ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
 
-void test_argv(void);
+శూన్య test_argv(శూన్య);
 
-void
-test_argv(void)
+శూన్య
+test_argv(శూన్య)
 {
-	char **av = NULL;
-	int ac = 0;
+	అక్షరం **av = ఖాళీ;
+	పూర్ణాంకం ac = 0;
 
-#define RESET_ARGV() \
-	do { \
+#నిర్వచించు RESET_ARGV() \
+	చేయి { \
 		argv_free(av, ac); \
-		av = NULL; \
+		av = ఖాళీ; \
 		ac = -1; \
-	} while (0)
+	} అయితే (0)
 
-	TEST_START("empty args");
-	ASSERT_INT_EQ(argv_split("", &ac, &av, 0), 0);
+	TEST_ప్రారంభం("empty args");
+	ASSERT_INT_EQ(argv_విభజించు("", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 0);
-	ASSERT_PTR_NE(av, NULL);
-	ASSERT_PTR_EQ(av[0], NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
+	ASSERT_PTR_EQ(av[0], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("    ", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_విభజించు("    ", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 0);
-	ASSERT_PTR_NE(av, NULL);
-	ASSERT_PTR_EQ(av[0], NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
+	ASSERT_PTR_EQ(av[0], ఖాళీ);
 	RESET_ARGV();
-	TEST_DONE();
+	TEST_పూర్తి();
 
-	TEST_START("trivial args");
-	ASSERT_INT_EQ(argv_split("leamas", &ac, &av, 0), 0);
+	TEST_ప్రారంభం("trivial args");
+	ASSERT_INT_EQ(argv_విభజించు("leamas", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "leamas");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("smiley leamas", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_విభజించు("smiley leamas", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 2);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "smiley");
 	ASSERT_STRING_EQ(av[1], "leamas");
-	ASSERT_PTR_EQ(av[2], NULL);
+	ASSERT_PTR_EQ(av[2], ఖాళీ);
 	RESET_ARGV();
-	TEST_DONE();
+	TEST_పూర్తి();
 
-	TEST_START("quoted");
-	ASSERT_INT_EQ(argv_split("\"smiley\"", &ac, &av, 0), 0);
+	TEST_ప్రారంభం("quoted");
+	ASSERT_INT_EQ(argv_విభజించు("\"smiley\"", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "smiley");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("leamas \" smiley \"", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_విభజించు("leamas \" smiley \"", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 2);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "leamas");
 	ASSERT_STRING_EQ(av[1], " smiley ");
-	ASSERT_PTR_EQ(av[2], NULL);
+	ASSERT_PTR_EQ(av[2], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("\"smiley leamas\"", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_విభజించు("\"smiley leamas\"", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "smiley leamas");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("smiley\" leamas\" liz", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_విభజించు("smiley\" leamas\" liz", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 2);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "smiley leamas");
 	ASSERT_STRING_EQ(av[1], "liz");
-	ASSERT_PTR_EQ(av[2], NULL);
+	ASSERT_PTR_EQ(av[2], ఖాళీ);
 	RESET_ARGV();
-	TEST_DONE();
+	TEST_పూర్తి();
 
-	TEST_START("escaped");
-	ASSERT_INT_EQ(argv_split("\\\"smiley\\'", &ac, &av, 0), 0);
+	TEST_ప్రారంభం("escaped");
+	ASSERT_INT_EQ(argv_విభజించు("\\\"smiley\\'", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "\"smiley'");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("'\\'smiley\\\"'", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_విభజించు("'\\'smiley\\\"'", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "'smiley\"");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("smiley\\'s leamas\\'", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_విభజించు("smiley\\'s leamas\\'", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 2);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "smiley's");
 	ASSERT_STRING_EQ(av[1], "leamas'");
-	ASSERT_PTR_EQ(av[2], NULL);
+	ASSERT_PTR_EQ(av[2], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("leamas\\\\smiley", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_విభజించు("leamas\\\\smiley", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "leamas\\smiley");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("leamas\\\\ \\\\smiley", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_విభజించు("leamas\\\\ \\\\smiley", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 2);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "leamas\\");
 	ASSERT_STRING_EQ(av[1], "\\smiley");
-	ASSERT_PTR_EQ(av[2], NULL);
+	ASSERT_PTR_EQ(av[2], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("smiley\\ leamas", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_విభజించు("smiley\\ leamas", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "smiley leamas");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], ఖాళీ);
 	RESET_ARGV();
-	TEST_DONE();
+	TEST_పూర్తి();
 
-	TEST_START("quoted escaped");
-	ASSERT_INT_EQ(argv_split("'smiley\\ leamas'", &ac, &av, 0), 0);
+	TEST_ప్రారంభం("quoted escaped");
+	ASSERT_INT_EQ(argv_విభజించు("'smiley\\ leamas'", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "smiley\\ leamas");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("\"smiley\\ leamas\"", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_విభజించు("\"smiley\\ leamas\"", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "smiley\\ leamas");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], ఖాళీ);
 	RESET_ARGV();
-	TEST_DONE();
+	TEST_పూర్తి();
 
-	TEST_START("comments");
-	ASSERT_INT_EQ(argv_split("# gold", &ac, &av, 0), 0);
+	TEST_ప్రారంభం("comments");
+	ASSERT_INT_EQ(argv_విభజించు("# gold", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 2);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "#");
 	ASSERT_STRING_EQ(av[1], "gold");
-	ASSERT_PTR_EQ(av[2], NULL);
+	ASSERT_PTR_EQ(av[2], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("# gold", &ac, &av, 1), 0);
+	ASSERT_INT_EQ(argv_విభజించు("# gold", &ac, &av, 1), 0);
 	ASSERT_INT_EQ(ac, 0);
-	ASSERT_PTR_NE(av, NULL);
-	ASSERT_PTR_EQ(av[0], NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
+	ASSERT_PTR_EQ(av[0], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("leamas#gold", &ac, &av, 1), 0);
+	ASSERT_INT_EQ(argv_విభజించు("leamas#gold", &ac, &av, 1), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "leamas#gold");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("\"leamas # gold\"", &ac, &av, 1), 0);
+	ASSERT_INT_EQ(argv_విభజించు("\"leamas # gold\"", &ac, &av, 1), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "leamas # gold");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], ఖాళీ);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("\"leamas\"#gold", &ac, &av, 1), 0);
+	ASSERT_INT_EQ(argv_విభజించు("\"leamas\"#gold", &ac, &av, 1), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, ఖాళీ);
 	ASSERT_STRING_EQ(av[0], "leamas#gold");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], ఖాళీ);
 	RESET_ARGV();
-	TEST_DONE();
+	TEST_పూర్తి();
 
 	/* XXX test char *argv_assemble(int argc, char **argv) */
 }

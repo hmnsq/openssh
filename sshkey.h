@@ -23,54 +23,54 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SSHKEY_H
-#define SSHKEY_H
+#నిర్వచితం_కాకపోతే SSHKEY_H
+#నిర్వచించు SSHKEY_H
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/rsa.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/evp.h>
-#define SSH_OPENSSL_VERSION OpenSSL_version(OPENSSL_VERSION)
-#else /* OPENSSL */
-#define BIGNUM		void
-#define RSA		void
-#define EC_KEY		void
-#define EC_GROUP	void
-#define EC_POINT	void
-#define EVP_PKEY	void
-#define SSH_OPENSSL_VERSION "without OpenSSL"
-#endif /* WITH_OPENSSL */
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ <openssl/rsa.h>
+#అన్తర్భావ <openssl/ec.h>
+#అన్తర్భావ <openssl/ecdsa.h>
+#అన్తర్భావ <openssl/evp.h>
+#నిర్వచించు SSH_OPENSSL_సంస్కరణ Open_SSL_సంస్కరణ(OPENSSL_సంస్కరణ)
+#లేకపోతే /* OPENSSL */
+#నిర్వచించు BIGNUM		శూన్య
+#నిర్వచించు RSA		శూన్య
+#నిర్వచించు EC_కీలకం		శూన్య
+#నిర్వచించు EC_సమూహం	శూన్య
+#నిర్వచించు EC_బిందువు	శూన్య
+#నిర్వచించు EVP_PKEY	శూన్య
+#నిర్వచించు SSH_OPENSSL_సంస్కరణ "without OpenSSL"
+#అయితే_ముగింపు /* WITH_OPENSSL */
 
-#define SSH_RSA_MINIMUM_MODULUS_SIZE	1024
-#define SSH_KEY_MAX_SIGN_DATA_SIZE	(1 << 20)
+#నిర్వచించు SSH_RSA_MINIMUM_MODULUS_కొలత	1024
+#నిర్వచించు SSH_కీలకం_MAX_SIGN_దత్తాంశం_కొలత	(1 << 20)
 
-struct sshbuf;
+నిర్మాణం sshbuf;
 
 /* Key types */
-enum sshkey_types {
-	KEY_RSA,
-	KEY_ECDSA,
-	KEY_ED25519,
-	KEY_RSA_CERT,
-	KEY_ECDSA_CERT,
-	KEY_ED25519_CERT,
-	KEY_ECDSA_SK,
-	KEY_ECDSA_SK_CERT,
-	KEY_ED25519_SK,
-	KEY_ED25519_SK_CERT,
-	KEY_MLDSA44_ED25519,
-	KEY_MLDSA44_ED25519_CERT,
-	KEY_UNSPEC
+గణన sshkey_types {
+	కీలకం_RSA,
+	కీలకం_ECDSA,
+	కీలకం_ED25519,
+	కీలకం_RSA_CERT,
+	కీలకం_ECDSA_CERT,
+	కీలకం_ED25519_CERT,
+	కీలకం_ECDSA_SK,
+	కీలకం_ECDSA_SK_CERT,
+	కీలకం_ED25519_SK,
+	కీలకం_ED25519_SK_CERT,
+	కీలకం_MLDSA44_ED25519,
+	కీలకం_MLDSA44_ED25519_CERT,
+	కీలకం_UNSPEC
 };
 
 /* Default fingerprint hash */
-#define SSH_FP_HASH_DEFAULT	SSH_DIGEST_SHA256
+#నిర్వచించు SSH_FP_HASH_DEFAULT	SSH_DIGEST_SHA256
 
 /* Fingerprint representation formats */
-enum sshkey_fp_rep {
+గణన sshkey_fp_rep {
 	SSH_FP_DEFAULT = 0,
 	SSH_FP_HEX,
 	SSH_FP_BASE64,
@@ -79,42 +79,42 @@ enum sshkey_fp_rep {
 };
 
 /* Private key serialisation formats, used on the wire */
-enum sshkey_serialize_rep {
+గణన sshkey_serialize_rep {
 	SSHKEY_SERIALIZE_DEFAULT = 0,
 };
 
 /* Private key disk formats */
-enum sshkey_private_format {
-	SSHKEY_PRIVATE_OPENSSH = 0,
-	SSHKEY_PRIVATE_PEM = 1,
-	SSHKEY_PRIVATE_PKCS8 = 2,
+గణన sshkey_వ్యక్తిగత_format {
+	SSHKEY_వ్యక్తిగత_OPENSSH = 0,
+	SSHKEY_వ్యక్తిగత_PEM = 1,
+	SSHKEY_వ్యక్తిగత_PKCS8 = 2,
 };
 
 /* key is stored in external hardware */
-#define SSHKEY_FLAG_EXT		0x0001
+#నిర్వచించు SSHKEY_FLAG_EXT		0x0001
 
-#define SSHKEY_CERT_MAX_PRINCIPALS	256
+#నిర్వచించు SSHKEY_CERT_MAX_PRINCIPALS	256
 /* XXX opacify? */
-struct sshkey_cert {
-	struct sshbuf	*certblob; /* Kept around for use on wire */
+నిర్మాణం sshkey_cert {
+	నిర్మాణం sshbuf	*certblob; /* Kept around for use on wire */
 	u_int		 type; /* SSH2_CERT_TYPE_USER or SSH2_CERT_TYPE_HOST */
 	uint64_t	 serial;
-	char		*key_id;
+	అక్షరం		*కీలకం_id;
 	u_int		 nprincipals;
-	char		**principals;
+	అక్షరం		**principals;
 	uint64_t	 valid_after, valid_before;
-	struct sshbuf	*critical;
-	struct sshbuf	*extensions;
-	struct sshkey	*signature_key;
-	char		*signature_type;
+	నిర్మాణం sshbuf	*critical;
+	నిర్మాణం sshbuf	*extensions;
+	నిర్మాణం sshkey	*signature_కీలకం;
+	అక్షరం		*signature_type;
 };
 
 /* XXX opacify? */
-struct sshkey {
-	int	 type;
-	int	 flags;
+నిర్మాణం sshkey {
+	పూర్ణాంకం	 type;
+	పూర్ణాంకం	 flags;
 	/* KEY_ECDSA and KEY_ECDSA_SK */
-	int	 ecdsa_nid;	/* NID of curve */
+	పూర్ణాంకం	 ecdsa_nid;	/* NID of curve */
 	/* libcrypto-backed keys */
 	EVP_PKEY *pkey;
 	/* KEY_ED25519 and KEY_ED25519_SK */
@@ -124,218 +124,218 @@ struct sshkey {
 	u_char	*mldsa_ed25519_sk;
 	u_char	*mldsa_ed25519_pk;
 	/* KEY_ECDSA_SK and KEY_ED25519_SK */
-	char	*sk_application;
+	అక్షరం	*sk_application;
 	uint8_t	sk_flags;
-	struct sshbuf *sk_key_handle;
-	struct sshbuf *sk_reserved;
+	నిర్మాణం sshbuf *sk_కీలకం_handle;
+	నిర్మాణం sshbuf *sk_reserved;
 	/* Certificates */
-	struct sshkey_cert *cert;
+	నిర్మాణం sshkey_cert *cert;
 	/* Private key shielding */
-	u_char	*shielded_private;
-	size_t	shielded_len;
+	u_char	*shielded_వ్యక్తిగత;
+	కొలత_t	shielded_len;
 	u_char	*shield_prekey;
-	size_t	shield_prekey_len;
+	కొలత_t	shield_prekey_len;
 };
 
-#define	ED25519_SK_SZ	crypto_sign_ed25519_SECRETKEYBYTES
-#define	ED25519_PK_SZ	crypto_sign_ed25519_PUBLICKEYBYTES
+#నిర్వచించు	ED25519_SK_SZ	crypto_sign_ed25519_SECRETKEYBYTES
+#నిర్వచించు	ED25519_PK_SZ	crypto_sign_ed25519_PUBLICKEYBYTES
 
 /* Additional fields contained in signature */
-struct sshkey_sig_details {
+నిర్మాణం sshkey_sig_details {
 	uint32_t sk_counter;	/* U2F signature counter */
 	uint8_t sk_flags;	/* U2F signature flags; see ssh-sk.h */
 };
 
-struct sshkey_impl_funcs {
-	u_int (*size)(const struct sshkey *);	/* optional */
-	int (*alloc)(struct sshkey *);		/* optional */
-	void (*cleanup)(struct sshkey *);	/* optional */
-	int (*equal)(const struct sshkey *, const struct sshkey *);
-	int (*serialize_public)(const struct sshkey *, struct sshbuf *,
-	    enum sshkey_serialize_rep);
-	int (*deserialize_public)(const char *, struct sshbuf *,
-	    struct sshkey *);
-	int (*serialize_private)(const struct sshkey *, struct sshbuf *,
-	    enum sshkey_serialize_rep);
-	int (*deserialize_private)(const char *, struct sshbuf *,
-	    struct sshkey *);
-	int (*generate)(struct sshkey *, int);	/* optional */
-	int (*copy_public)(const struct sshkey *, struct sshkey *);
-	int (*sign)(struct sshkey *, u_char **, size_t *,
-	    const u_char *, size_t, const char *,
-	    const char *, const char *, u_int); /* optional */
-	int (*verify)(const struct sshkey *, const u_char *, size_t,
-	    const u_char *, size_t, const char *, u_int,
-	    struct sshkey_sig_details **);
+నిర్మాణం sshkey_impl_funcs {
+	u_int (*కొలత)(స్థిరరాశి నిర్మాణం sshkey *);	/* optional */
+	పూర్ణాంకం (*alloc)(నిర్మాణం sshkey *);		/* optional */
+	శూన్య (*cleanup)(నిర్మాణం sshkey *);	/* optional */
+	పూర్ణాంకం (*equal)(స్థిరరాశి నిర్మాణం sshkey *, స్థిరరాశి నిర్మాణం sshkey *);
+	పూర్ణాంకం (*serialize_ప్రజా)(స్థిరరాశి నిర్మాణం sshkey *, నిర్మాణం sshbuf *,
+	    గణన sshkey_serialize_rep);
+	పూర్ణాంకం (*deserialize_ప్రజా)(స్థిరరాశి అక్షరం *, నిర్మాణం sshbuf *,
+	    నిర్మాణం sshkey *);
+	పూర్ణాంకం (*serialize_వ్యక్తిగత)(స్థిరరాశి నిర్మాణం sshkey *, నిర్మాణం sshbuf *,
+	    గణన sshkey_serialize_rep);
+	పూర్ణాంకం (*deserialize_వ్యక్తిగత)(స్థిరరాశి అక్షరం *, నిర్మాణం sshbuf *,
+	    నిర్మాణం sshkey *);
+	పూర్ణాంకం (*generate)(నిర్మాణం sshkey *, పూర్ణాంకం);	/* optional */
+	పూర్ణాంకం (*copy_ప్రజా)(స్థిరరాశి నిర్మాణం sshkey *, నిర్మాణం sshkey *);
+	పూర్ణాంకం (*sign)(నిర్మాణం sshkey *, u_char **, కొలత_t *,
+	    స్థిరరాశి u_char *, కొలత_t, స్థిరరాశి అక్షరం *,
+	    స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, u_int); /* optional */
+	పూర్ణాంకం (*verify)(స్థిరరాశి నిర్మాణం sshkey *, స్థిరరాశి u_char *, కొలత_t,
+	    స్థిరరాశి u_char *, కొలత_t, స్థిరరాశి అక్షరం *, u_int,
+	    నిర్మాణం sshkey_sig_details **);
 };
 
-struct sshkey_impl {
-	const char *name;
-	const char *shortname;
-	const char *sigalg;
-	int type;
-	int nid;
-	int cert;
-	int sigonly;
-	int keybits;
-	const struct sshkey_impl_funcs *funcs;
+నిర్మాణం sshkey_impl {
+	స్థిరరాశి అక్షరం *name;
+	స్థిరరాశి అక్షరం *shortname;
+	స్థిరరాశి అక్షరం *sigalg;
+	పూర్ణాంకం type;
+	పూర్ణాంకం nid;
+	పూర్ణాంకం cert;
+	పూర్ణాంకం sigonly;
+	పూర్ణాంకం keybits;
+	స్థిరరాశి నిర్మాణం sshkey_impl_funcs *funcs;
 };
 
-struct sshkey	*sshkey_new(int);
-void		 sshkey_free(struct sshkey *);
-int		 sshkey_equal_public(const struct sshkey *,
-    const struct sshkey *);
-int		 sshkey_equal(const struct sshkey *, const struct sshkey *);
-char		*sshkey_fingerprint(const struct sshkey *,
-    int, enum sshkey_fp_rep);
-int		 sshkey_fingerprint_raw(const struct sshkey *k,
-    int, u_char **retp, size_t *lenp);
-const char	*sshkey_type(const struct sshkey *);
-const char	*sshkey_cert_type(const struct sshkey *);
-int		 sshkey_format_text(const struct sshkey *, struct sshbuf *);
-int		 sshkey_write(const struct sshkey *, FILE *);
-int		 sshkey_read(struct sshkey *, char **);
-u_int		 sshkey_size(const struct sshkey *);
+నిర్మాణం sshkey	*sshkey_new(పూర్ణాంకం);
+శూన్య		 sshkey_free(నిర్మాణం sshkey *);
+పూర్ణాంకం		 sshkey_equal_ప్రజా(స్థిరరాశి నిర్మాణం sshkey *,
+    స్థిరరాశి నిర్మాణం sshkey *);
+పూర్ణాంకం		 sshkey_equal(స్థిరరాశి నిర్మాణం sshkey *, స్థిరరాశి నిర్మాణం sshkey *);
+అక్షరం		*sshkey_fingerprint(స్థిరరాశి నిర్మాణం sshkey *,
+    పూర్ణాంకం, గణన sshkey_fp_rep);
+పూర్ణాంకం		 sshkey_fingerprint_raw(స్థిరరాశి నిర్మాణం sshkey *k,
+    పూర్ణాంకం, u_char **retp, కొలత_t *lenp);
+స్థిరరాశి అక్షరం	*sshkey_type(స్థిరరాశి నిర్మాణం sshkey *);
+స్థిరరాశి అక్షరం	*sshkey_cert_type(స్థిరరాశి నిర్మాణం sshkey *);
+పూర్ణాంకం		 sshkey_format_పాఠ్యం(స్థిరరాశి నిర్మాణం sshkey *, నిర్మాణం sshbuf *);
+పూర్ణాంకం		 sshkey_write(స్థిరరాశి నిర్మాణం sshkey *, FILE *);
+పూర్ణాంకం		 sshkey_read(నిర్మాణం sshkey *, అక్షరం **);
+u_int		 sshkey_కొలత(స్థిరరాశి నిర్మాణం sshkey *);
 
-int		 sshkey_generate(int type, u_int bits, struct sshkey **keyp);
-int		 sshkey_from_private(const struct sshkey *, struct sshkey **);
+పూర్ణాంకం		 sshkey_generate(పూర్ణాంకం type, u_int బిట్లు, నిర్మాణం sshkey **keyp);
+పూర్ణాంకం		 sshkey_from_వ్యక్తిగత(స్థిరరాశి నిర్మాణం sshkey *, నిర్మాణం sshkey **);
 
-int		 sshkey_is_shielded(struct sshkey *);
-int		 sshkey_shield_private(struct sshkey *);
-int		 sshkey_unshield_private(struct sshkey *);
+పూర్ణాంకం		 sshkey_is_shielded(నిర్మాణం sshkey *);
+పూర్ణాంకం		 sshkey_shield_వ్యక్తిగత(నిర్మాణం sshkey *);
+పూర్ణాంకం		 sshkey_unshield_వ్యక్తిగత(నిర్మాణం sshkey *);
 
-int	 sshkey_type_from_name(const char *);
-int	 sshkey_type_from_shortname(const char *);
-int	 sshkey_is_cert(const struct sshkey *);
-int	 sshkey_is_sk(const struct sshkey *);
-int	 sshkey_type_is_cert(int);
-int	 sshkey_type_plain(int);
+పూర్ణాంకం	 sshkey_type_from_name(స్థిరరాశి అక్షరం *);
+పూర్ణాంకం	 sshkey_type_from_shortname(స్థిరరాశి అక్షరం *);
+పూర్ణాంకం	 sshkey_is_cert(స్థిరరాశి నిర్మాణం sshkey *);
+పూర్ణాంకం	 sshkey_is_sk(స్థిరరాశి నిర్మాణం sshkey *);
+పూర్ణాంకం	 sshkey_type_is_cert(పూర్ణాంకం);
+పూర్ణాంకం	 sshkey_type_plain(పూర్ణాంకం);
 
 /* Returns non-zero if key name match sigalgs pattern list. (handles RSA) */
-int	 sshkey_match_keyname_to_sigalgs(const char *, const char *);
+పూర్ణాంకం	 sshkey_సరిపోలిక_keyname_గమ్యం_sigalgs(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
 
-int	 sshkey_to_certified(struct sshkey *);
-int	 sshkey_drop_cert(struct sshkey *);
-int	 sshkey_cert_copy(const struct sshkey *, struct sshkey *);
-int	 sshkey_cert_check_authority(const struct sshkey *, int, int,
-    uint64_t, const char *, const char **);
-int	 sshkey_cert_check_authority_now(const struct sshkey *, int, int,
-    const char *, const char **);
-int	 sshkey_cert_check_host(const struct sshkey *, const char *,
-    const char *, const char **);
-size_t	 sshkey_format_cert_validity(const struct sshkey_cert *,
-    char *, size_t) __attribute__((__bounded__(__string__, 2, 3)));
-int	 sshkey_check_cert_sigtype(const struct sshkey *, const char *);
+పూర్ణాంకం	 sshkey_గమ్యం_certified(నిర్మాణం sshkey *);
+పూర్ణాంకం	 sshkey_drop_cert(నిర్మాణం sshkey *);
+పూర్ణాంకం	 sshkey_cert_copy(స్థిరరాశి నిర్మాణం sshkey *, నిర్మాణం sshkey *);
+పూర్ణాంకం	 sshkey_cert_check_authority(స్థిరరాశి నిర్మాణం sshkey *, పూర్ణాంకం, పూర్ణాంకం,
+    uint64_t, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం **);
+పూర్ణాంకం	 sshkey_cert_check_authority_now(స్థిరరాశి నిర్మాణం sshkey *, పూర్ణాంకం, పూర్ణాంకం,
+    స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం **);
+పూర్ణాంకం	 sshkey_cert_check_host(స్థిరరాశి నిర్మాణం sshkey *, స్థిరరాశి అక్షరం *,
+    స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం **);
+కొలత_t	 sshkey_format_cert_validity(స్థిరరాశి నిర్మాణం sshkey_cert *,
+    అక్షరం *, కొలత_t) __attribute__((__bounded__(__string__, 2, 3)));
+పూర్ణాంకం	 sshkey_check_cert_sigtype(స్థిరరాశి నిర్మాణం sshkey *, స్థిరరాశి అక్షరం *);
 
-int	 sshkey_certify(struct sshkey *, struct sshkey *,
-    const char *, const char *, const char *);
+పూర్ణాంకం	 sshkey_certify(నిర్మాణం sshkey *, నిర్మాణం sshkey *,
+    స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
 /* Variant allowing use of a custom signature function (e.g. for ssh-agent) */
-typedef int sshkey_certify_signer(struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *, const char *,
-    u_int, void *);
-int	 sshkey_certify_custom(struct sshkey *, struct sshkey *, const char *,
-    const char *, const char *, sshkey_certify_signer *, void *);
+రకనిర్వచనం పూర్ణాంకం sshkey_certify_signer(నిర్మాణం sshkey *, u_char **, కొలత_t *,
+    స్థిరరాశి u_char *, కొలత_t, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *,
+    u_int, శూన్య *);
+పూర్ణాంకం	 sshkey_certify_custom(నిర్మాణం sshkey *, నిర్మాణం sshkey *, స్థిరరాశి అక్షరం *,
+    స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, sshkey_certify_signer *, శూన్య *);
 
-int		 sshkey_ecdsa_nid_from_name(const char *);
-int		 sshkey_curve_name_to_nid(const char *);
-const char *	 sshkey_curve_nid_to_name(int);
-u_int		 sshkey_curve_nid_to_bits(int);
-int		 sshkey_ecdsa_bits_to_nid(int);
-int		 sshkey_ecdsa_key_to_nid(const EC_KEY *);
-int		 sshkey_ecdsa_pkey_to_nid(EVP_PKEY *);
-int		 sshkey_ec_nid_to_hash_alg(int nid);
-int		 sshkey_ec_validate_public(const EC_GROUP *, const EC_POINT *);
-int		 sshkey_ec_validate_private(const EC_KEY *);
-const char	*sshkey_ssh_name(const struct sshkey *);
-const char	*sshkey_ssh_name_plain(const struct sshkey *);
-int		 sshkey_names_valid2(const char *, int, int);
-char		*sshkey_alg_list(int, int, int, char);
+పూర్ణాంకం		 sshkey_ecdsa_nid_from_name(స్థిరరాశి అక్షరం *);
+పూర్ణాంకం		 sshkey_వక్రం_name_గమ్యం_nid(స్థిరరాశి అక్షరం *);
+స్థిరరాశి అక్షరం *	 sshkey_వక్రం_nid_గమ్యం_name(పూర్ణాంకం);
+u_int		 sshkey_వక్రం_nid_గమ్యం_బిట్లు(పూర్ణాంకం);
+పూర్ణాంకం		 sshkey_ecdsa_బిట్లు_గమ్యం_nid(పూర్ణాంకం);
+పూర్ణాంకం		 sshkey_ecdsa_కీలకం_గమ్యం_nid(స్థిరరాశి EC_కీలకం *);
+పూర్ణాంకం		 sshkey_ecdsa_pkey_గమ్యం_nid(EVP_PKEY *);
+పూర్ణాంకం		 sshkey_ec_nid_గమ్యం_hash_alg(పూర్ణాంకం nid);
+పూర్ణాంకం		 sshkey_ec_validate_ప్రజా(స్థిరరాశి EC_సమూహం *, స్థిరరాశి EC_బిందువు *);
+పూర్ణాంకం		 sshkey_ec_validate_వ్యక్తిగత(స్థిరరాశి EC_కీలకం *);
+స్థిరరాశి అక్షరం	*sshkey_ssh_name(స్థిరరాశి నిర్మాణం sshkey *);
+స్థిరరాశి అక్షరం	*sshkey_ssh_name_plain(స్థిరరాశి నిర్మాణం sshkey *);
+పూర్ణాంకం		 sshkey_పేర్లు_valid2(స్థిరరాశి అక్షరం *, పూర్ణాంకం, పూర్ణాంకం);
+అక్షరం		*sshkey_alg_list(పూర్ణాంకం, పూర్ణాంకం, పూర్ణాంకం, అక్షరం);
 
-int	 sshkey_from_blob(const u_char *, size_t, struct sshkey **);
-int	 sshkey_fromb(struct sshbuf *, struct sshkey **);
-int	 sshkey_fromb_allowlist(struct sshbuf *, struct sshkey **,
-    const char *, const char *);
-int	 sshkey_froms(struct sshbuf *, struct sshkey **);
-int	 sshkey_to_blob(const struct sshkey *, u_char **, size_t *);
-int	 sshkey_to_base64(const struct sshkey *, char **);
-int	 sshkey_putb(const struct sshkey *, struct sshbuf *);
-int	 sshkey_puts(const struct sshkey *, struct sshbuf *);
-int	 sshkey_plain_to_blob(const struct sshkey *, u_char **, size_t *);
-int	 sshkey_putb_plain(const struct sshkey *, struct sshbuf *);
-int	 sshkey_puts_plain(const struct sshkey *, struct sshbuf *);
+పూర్ణాంకం	 sshkey_from_blob(స్థిరరాశి u_char *, కొలత_t, నిర్మాణం sshkey **);
+పూర్ణాంకం	 sshkey_fromb(నిర్మాణం sshbuf *, నిర్మాణం sshkey **);
+పూర్ణాంకం	 sshkey_fromb_allowlist(నిర్మాణం sshbuf *, నిర్మాణం sshkey **,
+    స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
+పూర్ణాంకం	 sshkey_froms(నిర్మాణం sshbuf *, నిర్మాణం sshkey **);
+పూర్ణాంకం	 sshkey_గమ్యం_blob(స్థిరరాశి నిర్మాణం sshkey *, u_char **, కొలత_t *);
+పూర్ణాంకం	 sshkey_గమ్యం_base64(స్థిరరాశి నిర్మాణం sshkey *, అక్షరం **);
+పూర్ణాంకం	 sshkey_putb(స్థిరరాశి నిర్మాణం sshkey *, నిర్మాణం sshbuf *);
+పూర్ణాంకం	 sshkey_puts(స్థిరరాశి నిర్మాణం sshkey *, నిర్మాణం sshbuf *);
+పూర్ణాంకం	 sshkey_plain_గమ్యం_blob(స్థిరరాశి నిర్మాణం sshkey *, u_char **, కొలత_t *);
+పూర్ణాంకం	 sshkey_putb_plain(స్థిరరాశి నిర్మాణం sshkey *, నిర్మాణం sshbuf *);
+పూర్ణాంకం	 sshkey_puts_plain(స్థిరరాశి నిర్మాణం sshkey *, నిర్మాణం sshbuf *);
 
-int	 sshkey_sign(struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *, const char *, u_int);
-int	 sshkey_verify(const struct sshkey *, const u_char *, size_t,
-    const u_char *, size_t, const char *, u_int, struct sshkey_sig_details **);
-int	 sshkey_check_sigtype(const u_char *, size_t, const char *);
-const char *sshkey_sigalg_by_name(const char *);
-int	 sshkey_get_sigtype(const u_char *, size_t, char **);
+పూర్ణాంకం	 sshkey_sign(నిర్మాణం sshkey *, u_char **, కొలత_t *,
+    స్థిరరాశి u_char *, కొలత_t, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, u_int);
+పూర్ణాంకం	 sshkey_verify(స్థిరరాశి నిర్మాణం sshkey *, స్థిరరాశి u_char *, కొలత_t,
+    స్థిరరాశి u_char *, కొలత_t, స్థిరరాశి అక్షరం *, u_int, నిర్మాణం sshkey_sig_details **);
+పూర్ణాంకం	 sshkey_check_sigtype(స్థిరరాశి u_char *, కొలత_t, స్థిరరాశి అక్షరం *);
+స్థిరరాశి అక్షరం *sshkey_sigalg_by_name(స్థిరరాశి అక్షరం *);
+పూర్ణాంకం	 sshkey_get_sigtype(స్థిరరాశి u_char *, కొలత_t, అక్షరం **);
 
 /* Signing and verification backend for libcrypto-backed keys */
-int	sshkey_pkey_digest_sign(EVP_PKEY*, int, u_char **,
-    size_t *, const u_char *, size_t);
-int	sshkey_pkey_digest_verify(EVP_PKEY *, int, const u_char *,
-    size_t, u_char *, size_t);
+పూర్ణాంకం	sshkey_pkey_digest_sign(EVP_PKEY*, పూర్ణాంకం, u_char **,
+    కొలత_t *, స్థిరరాశి u_char *, కొలత_t);
+పూర్ణాంకం	sshkey_pkey_digest_verify(EVP_PKEY *, పూర్ణాంకం, స్థిరరాశి u_char *,
+    కొలత_t, u_char *, కొలత_t);
 
 /* for debug */
-void	sshkey_dump_ec_point(const EC_GROUP *, const EC_POINT *);
-void	sshkey_dump_ec_key(const EC_KEY *);
+శూన్య	sshkey_dump_ec_బిందువు(స్థిరరాశి EC_సమూహం *, స్థిరరాశి EC_బిందువు *);
+శూన్య	sshkey_dump_ec_కీలకం(స్థిరరాశి EC_కీలకం *);
 
 /* private key parsing and serialisation */
-int	sshkey_private_serialize(struct sshkey *key, struct sshbuf *buf);
-int	sshkey_private_deserialize(struct sshbuf *buf,  struct sshkey **keyp);
+పూర్ణాంకం	sshkey_వ్యక్తిగత_serialize(నిర్మాణం sshkey *కీలకం, నిర్మాణం sshbuf *buf);
+పూర్ణాంకం	sshkey_వ్యక్తిగత_deserialize(నిర్మాణం sshbuf *buf,  నిర్మాణం sshkey **keyp);
 
 /* private key file format parsing and serialisation */
-int	sshkey_private_to_fileblob(struct sshkey *key, struct sshbuf *blob,
-    const char *passphrase, const char *comment,
-    int format, const char *openssh_format_cipher, int openssh_format_rounds);
-int	sshkey_parse_private_fileblob(struct sshbuf *buffer,
-    const char *passphrase, struct sshkey **keyp, char **commentp);
-int	sshkey_parse_private_fileblob_type(struct sshbuf *blob, int type,
-    const char *passphrase, struct sshkey **keyp, char **commentp);
-int	sshkey_parse_pubkey_from_private_fileblob_type(struct sshbuf *blob,
-    int type, struct sshkey **pubkeyp);
+పూర్ణాంకం	sshkey_వ్యక్తిగత_గమ్యం_fileblob(నిర్మాణం sshkey *కీలకం, నిర్మాణం sshbuf *blob,
+    స్థిరరాశి అక్షరం *passphrase, స్థిరరాశి అక్షరం *comment,
+    పూర్ణాంకం format, స్థిరరాశి అక్షరం *openssh_format_cipher, పూర్ణాంకం openssh_format_విడతలు);
+పూర్ణాంకం	sshkey_parse_వ్యక్తిగత_fileblob(నిర్మాణం sshbuf *బఫరు,
+    స్థిరరాశి అక్షరం *passphrase, నిర్మాణం sshkey **keyp, అక్షరం **commentp);
+పూర్ణాంకం	sshkey_parse_వ్యక్తిగత_fileblob_type(నిర్మాణం sshbuf *blob, పూర్ణాంకం type,
+    స్థిరరాశి అక్షరం *passphrase, నిర్మాణం sshkey **keyp, అక్షరం **commentp);
+పూర్ణాంకం	sshkey_parse_pubkey_from_వ్యక్తిగత_fileblob_type(నిర్మాణం sshbuf *blob,
+    పూర్ణాంకం type, నిర్మాణం sshkey **pubkeyp);
 
-int sshkey_check_rsa_length(const struct sshkey *, int);
-int	ssh_rsa_hash_id_from_keyname(const char *);
-const char *ssh_rsa_hash_alg_ident(int);
-int	ssh_rsa_encode_store_sig(int, const u_char *, size_t,
-	    u_char **, size_t *);
-int	ssh_ecdsa_encode_store_sig(const struct sshkey *,
-	    const BIGNUM *, const BIGNUM *, u_char **, size_t *);
-int	ssh_ed25519_encode_store_sig(const u_char *, size_t,
-	    u_char **, size_t *);
+పూర్ణాంకం sshkey_check_rsa_నిడివి(స్థిరరాశి నిర్మాణం sshkey *, పూర్ణాంకం);
+పూర్ణాంకం	ssh_rsa_hash_id_from_keyname(స్థిరరాశి అక్షరం *);
+స్థిరరాశి అక్షరం *ssh_rsa_hash_alg_ident(పూర్ణాంకం);
+పూర్ణాంకం	ssh_rsa_encode_store_sig(పూర్ణాంకం, స్థిరరాశి u_char *, కొలత_t,
+	    u_char **, కొలత_t *);
+పూర్ణాంకం	ssh_ecdsa_encode_store_sig(స్థిరరాశి నిర్మాణం sshkey *,
+	    స్థిరరాశి BIGNUM *, స్థిరరాశి BIGNUM *, u_char **, కొలత_t *);
+పూర్ణాంకం	ssh_ed25519_encode_store_sig(స్థిరరాశి u_char *, కొలత_t,
+	    u_char **, కొలత_t *);
 /* XXX should be internal, but used by ssh-keygen */
-int ssh_rsa_complete_crt_parameters(const BIGNUM *, const BIGNUM *,
-    const BIGNUM *, const BIGNUM *, BIGNUM **, BIGNUM **);
+పూర్ణాంకం ssh_rsa_complete_crt_parameters(స్థిరరాశి BIGNUM *, స్థిరరాశి BIGNUM *,
+    స్థిరరాశి BIGNUM *, స్థిరరాశి BIGNUM *, BIGNUM **, BIGNUM **);
 
-void	 sshkey_sig_details_free(struct sshkey_sig_details *);
+శూన్య	 sshkey_sig_details_free(నిర్మాణం sshkey_sig_details *);
 
-#ifdef WITH_OPENSSL
-int	sshkey_ecdsa_fixup_group(EVP_PKEY *k); /* ssh-ecdsa.c */
-#endif
+#నిర్వచితమైతే WITH_OPENSSL
+పూర్ణాంకం	sshkey_ecdsa_fixup_సమూహం(EVP_PKEY *k); /* ssh-ecdsa.c */
+#అయితే_ముగింపు
 
-#ifdef SSHKEY_INTERNAL
-int	sshkey_sk_fields_equal(const struct sshkey *a, const struct sshkey *b);
-void	sshkey_sk_cleanup(struct sshkey *k);
-int	sshkey_serialize_sk(const struct sshkey *key, struct sshbuf *b);
-int	sshkey_copy_public_sk(const struct sshkey *from, struct sshkey *to);
-int	sshkey_deserialize_sk(struct sshbuf *b, struct sshkey *key);
-int	sshkey_serialize_private_sk(const struct sshkey *key,
-    struct sshbuf *buf);
-int	sshkey_private_deserialize_sk(struct sshbuf *buf, struct sshkey *k);
-#ifdef WITH_OPENSSL
-int	check_rsa_length(const RSA *rsa); /* XXX remove */
-#endif
-#endif
+#నిర్వచితమైతే SSHKEY_అంతర్గత
+పూర్ణాంకం	sshkey_sk_fields_equal(స్థిరరాశి నిర్మాణం sshkey *a, స్థిరరాశి నిర్మాణం sshkey *b);
+శూన్య	sshkey_sk_cleanup(నిర్మాణం sshkey *k);
+పూర్ణాంకం	sshkey_serialize_sk(స్థిరరాశి నిర్మాణం sshkey *కీలకం, నిర్మాణం sshbuf *b);
+పూర్ణాంకం	sshkey_copy_ప్రజా_sk(స్థిరరాశి నిర్మాణం sshkey *from, నిర్మాణం sshkey *గమ్యం);
+పూర్ణాంకం	sshkey_deserialize_sk(నిర్మాణం sshbuf *b, నిర్మాణం sshkey *కీలకం);
+పూర్ణాంకం	sshkey_serialize_వ్యక్తిగత_sk(స్థిరరాశి నిర్మాణం sshkey *కీలకం,
+    నిర్మాణం sshbuf *buf);
+పూర్ణాంకం	sshkey_వ్యక్తిగత_deserialize_sk(నిర్మాణం sshbuf *buf, నిర్మాణం sshkey *k);
+#నిర్వచితమైతే WITH_OPENSSL
+పూర్ణాంకం	check_rsa_నిడివి(స్థిరరాశి RSA *rsa); /* XXX remove */
+#అయితే_ముగింపు
+#అయితే_ముగింపు
 
-#ifndef WITH_OPENSSL
-#undef RSA
-#undef EC_KEY
-#undef EC_GROUP
-#undef EC_POINT
-#undef EVP_PKEY
-#endif /* WITH_OPENSSL */
+#నిర్వచితం_కాకపోతే WITH_OPENSSL
+#నిర్వచనం_రద్దు RSA
+#నిర్వచనం_రద్దు EC_కీలకం
+#నిర్వచనం_రద్దు EC_సమూహం
+#నిర్వచనం_రద్దు EC_బిందువు
+#నిర్వచనం_రద్దు EVP_PKEY
+#అయితే_ముగింపు /* WITH_OPENSSL */
 
-#endif /* SSHKEY_H */
+#అయితే_ముగింపు /* SSHKEY_H */

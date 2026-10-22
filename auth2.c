@@ -23,310 +23,310 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/uio.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <sys/uio.h>
 
-#include <fcntl.h>
-#include <limits.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
-#include <time.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <pwd.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <time.h>
 
-#include "stdlib.h"
-#include "atomicio.h"
-#include "xmalloc.h"
-#include "ssh2.h"
-#include "packet.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "dispatch.h"
-#include "pathnames.h"
-#include "ssherr.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "digest.h"
-#include "kex.h"
+#అన్తర్భావ "stdlib.h"
+#అన్తర్భావ "atomicio.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "ssh2.h"
+#అన్తర్భావ "packet.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "servconf.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "hostfile.h"
+#అన్తర్భావ "auth.h"
+#అన్తర్భావ "dispatch.h"
+#అన్తర్భావ "pathnames.h"
+#అన్తర్భావ "ssherr.h"
+#నిర్వచితమైతే GSSAPI
+#అన్తర్భావ "ssh-gss.h"
+#అయితే_ముగింపు
+#అన్తర్భావ "monitor_wrap.h"
+#అన్తర్భావ "digest.h"
+#అన్తర్భావ "kex.h"
 
 /* import */
-extern ServerOptions options;
-extern struct sshbuf *loginmsg;
+బాహ్య ServerOptions options;
+బాహ్య నిర్మాణం sshbuf *loginmsg;
 
 /* methods */
 
-extern Authmethod method_none;
-extern Authmethod method_pubkey;
-extern Authmethod method_passwd;
-extern Authmethod method_kbdint;
-extern Authmethod method_hostbased;
-#ifdef GSSAPI
-extern Authmethod method_gssapi;
-#endif
+బాహ్య Authmethod పద్ధతి_none;
+బాహ్య Authmethod పద్ధతి_pubkey;
+బాహ్య Authmethod పద్ధతి_passwd;
+బాహ్య Authmethod పద్ధతి_kbdint;
+బాహ్య Authmethod పద్ధతి_hostbased;
+#నిర్వచితమైతే GSSAPI
+బాహ్య Authmethod పద్ధతి_gssapi;
+#అయితే_ముగింపు
 
 Authmethod *authmethods[] = {
-	&method_none,
-	&method_pubkey,
-#ifdef GSSAPI
-	&method_gssapi,
-#endif
-	&method_passwd,
-	&method_kbdint,
-	&method_hostbased,
-	NULL
+	&పద్ధతి_none,
+	&పద్ధతి_pubkey,
+#నిర్వచితమైతే GSSAPI
+	&పద్ధతి_gssapi,
+#అయితే_ముగింపు
+	&పద్ధతి_passwd,
+	&పద్ధతి_kbdint,
+	&పద్ధతి_hostbased,
+	ఖాళీ
 };
 
 /* protocol */
 
-static int input_service_request(int, uint32_t, struct ssh *);
-static int input_userauth_request(int, uint32_t, struct ssh *);
+స్థిర పూర్ణాంకం ఆదానం_service_request(పూర్ణాంకం, uint32_t, నిర్మాణం ssh *);
+స్థిర పూర్ణాంకం ఆదానం_userauth_request(పూర్ణాంకం, uint32_t, నిర్మాణం ssh *);
 
 /* helper */
-static Authmethod *authmethod_byname(const char *);
-static Authmethod *authmethod_lookup(Authctxt *, const char *);
-static char *authmethods_get(Authctxt *authctxt);
+స్థిర Authmethod *authmethod_byname(స్థిరరాశి అక్షరం *);
+స్థిర Authmethod *authmethod_lookup(Authctxt *, స్థిరరాశి అక్షరం *);
+స్థిర అక్షరం *authmethods_get(Authctxt *authctxt);
 
-#define MATCH_NONE	0	/* method or submethod mismatch */
-#define MATCH_METHOD	1	/* method matches (no submethod specified) */
-#define MATCH_BOTH	2	/* method and submethod match */
-#define MATCH_PARTIAL	3	/* method matches, submethod can't be checked */
-static int list_starts_with(const char *, const char *, const char *);
+#నిర్వచించు సరిపోలిక_NONE	0	/* method or submethod mismatch */
+#నిర్వచించు సరిపోలిక_పద్ధతి	1	/* method matches (no submethod specified) */
+#నిర్వచించు సరిపోలిక_BOTH	2	/* method and submethod match */
+#నిర్వచించు సరిపోలిక_PARTIAL	3	/* method matches, submethod can't be checked */
+స్థిర పూర్ణాంకం list_starts_with(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
 
-char *
-auth2_read_banner(void)
+అక్షరం *
+auth2_read_banner(శూన్య)
 {
-	struct stat st;
-	char *banner = NULL;
-	size_t len, n;
-	int fd;
+	నిర్మాణం stat st;
+	అక్షరం *banner = ఖాళీ;
+	కొలత_t len, n;
+	పూర్ణాంకం fd;
 
-	if ((fd = open(options.banner, O_RDONLY)) == -1)
-		return (NULL);
-	if (fstat(fd, &st) == -1) {
+	ఒకవేళ ((fd = open(options.banner, O_RDONLY)) == -1)
+		తిరిగి (ఖాళీ);
+	ఒకవేళ (fstat(fd, &st) == -1) {
 		close(fd);
-		return (NULL);
+		తిరిగి (ఖాళీ);
 	}
-	if (st.st_size <= 0 || st.st_size > 1*1024*1024) {
+	ఒకవేళ (st.st_size <= 0 || st.st_size > 1*1024*1024) {
 		close(fd);
-		return (NULL);
+		తిరిగి (ఖాళీ);
 	}
 
-	len = (size_t)st.st_size;		/* truncate */
+	len = (కొలత_t)st.st_size;		/* truncate */
 	banner = xmalloc(len + 1);
-	n = atomicio(read, fd, banner, len);
+	n = atomicio(పఠ, fd, banner, len);
 	close(fd);
 
-	if (n != len) {
-		free(banner);
-		return (NULL);
+	ఒకవేళ (n != len) {
+		విడుదల(banner);
+		తిరిగి (ఖాళీ);
 	}
 	banner[n] = '\0';
 
-	return (banner);
+	తిరిగి (banner);
 }
 
-static void
-userauth_send_banner(struct ssh *ssh, const char *msg)
+స్థిర శూన్య
+userauth_send_banner(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *సందేశం)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_BANNER)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, msg)) != 0 ||
+	ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_USERAUTH_BANNER)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, సందేశం)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||	/* language, unused */
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 	debug_f("sent");
 }
 
-static void
-userauth_banner(struct ssh *ssh)
+స్థిర శూన్య
+userauth_banner(నిర్మాణం ssh *ssh)
 {
-	char *banner = NULL;
+	అక్షరం *banner = ఖాళీ;
 
-	if (options.banner == NULL)
-		return;
+	ఒకవేళ (options.banner == ఖాళీ)
+		తిరిగి;
 
-	if ((banner = mm_auth2_read_banner()) == NULL)
-		goto done;
+	ఒకవేళ ((banner = mm_auth2_read_banner()) == ఖాళీ)
+		వెళ్ళు పూర్తి;
 	userauth_send_banner(ssh, banner);
 
-done:
-	free(banner);
+పూర్తి:
+	విడుదల(banner);
 }
 
 /*
  * loop until authctxt->success == TRUE
  */
-void
-do_authentication2(struct ssh *ssh)
+శూన్య
+do_authentication2(నిర్మాణం ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 
 	ssh_dispatch_init(ssh, &dispatch_protocol_error);
-	if (ssh->kex->ext_info_c)
-		ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_SERVICE_REQUEST, &input_service_request);
-	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &authctxt->success);
-	ssh->authctxt = NULL;
+	ఒకవేళ (ssh->kex->ext_info_c)
+		ssh_dispatch_సమితి(ssh, SSH2_సందేశం_EXT_INFO, &kex_ఆదానం_ext_info);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_SERVICE_REQUEST, &ఆదానం_service_request);
+	ssh_dispatch_నిరంతరం_fatal(ssh, DISPATCH_ఖండం, &authctxt->success);
+	ssh->authctxt = ఖాళీ;
 }
 
-static int
-input_service_request(int type, uint32_t seq, struct ssh *ssh)
+స్థిర పూర్ణాంకం
+ఆదానం_service_request(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	char *service = NULL;
-	int r, acceptit = 0;
+	అక్షరం *service = ఖాళీ;
+	పూర్ణాంకం r, acceptit = 0;
 
-	if ((r = sshpkt_get_cstring(ssh, &service, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshpkt_get_cstring(ssh, &service, ఖాళీ)) != 0 ||
+	    (r = sshpkt_get_చివర(ssh)) != 0)
+		వెళ్ళు బహిర్గతం;
 
-	if (authctxt == NULL)
+	ఒకవేళ (authctxt == ఖాళీ)
 		fatal("input_service_request: no authctxt");
 
-	if (strcmp(service, "ssh-userauth") == 0) {
-		if (!authctxt->success) {
+	ఒకవేళ (strcmp(service, "ssh-userauth") == 0) {
+		ఒకవేళ (!authctxt->success) {
 			acceptit = 1;
 			/* now we can handle user-auth requests */
-			ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_REQUEST,
-			    &input_userauth_request);
+			ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_REQUEST,
+			    &ఆదానం_userauth_request);
 		}
 	}
 	/* XXX all other service requests are denied */
 
-	if (acceptit) {
-		if ((r = sshpkt_start(ssh, SSH2_MSG_SERVICE_ACCEPT)) != 0 ||
+	ఒకవేళ (acceptit) {
+		ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_SERVICE_ACCEPT)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, service)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
-			goto out;
-	} else {
+			వెళ్ళు బహిర్గతం;
+	} లేకపోతే {
 		debug("bad service request %s", service);
 		ssh_packet_disconnect(ssh, "bad service request %s", service);
 	}
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &dispatch_protocol_error);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_EXT_INFO, &dispatch_protocol_error);
 	r = 0;
- out:
-	free(service);
-	return r;
+ బహిర్గతం:
+	విడుదల(service);
+	తిరిగి r;
 }
 
-#define MIN_FAIL_DELAY_SECONDS 0.005
-#define MAX_FAIL_DELAY_SECONDS 5.0
-static double
-user_specific_delay(const char *user)
+#నిర్వచించు MIN_FAIL_DELAY_SECONDS 0.005
+#నిర్వచించు MAX_FAIL_DELAY_SECONDS 5.0
+స్థిర ద్విగుణ
+user_specific_delay(స్థిరరాశి అక్షరం *user)
 {
-	char b[512];
-	size_t len = ssh_digest_bytes(SSH_DIGEST_SHA512);
+	అక్షరం b[512];
+	కొలత_t len = ssh_digest_బైట్లు(SSH_DIGEST_SHA512);
 	u_char *hash = xmalloc(len);
-	double delay;
+	ద్విగుణ delay;
 
-	(void)snprintf(b, sizeof b, "%llu%s",
-	    (unsigned long long)options.timing_secret, user);
-	if (ssh_digest_memory(SSH_DIGEST_SHA512, b, strlen(b), hash, len) != 0)
+	(శూన్య)snprintf(b, పరిమాణం b, "%llu%s",
+	    (గుర్తులేని దీర్ఘ దీర్ఘ)options.timing_secret, user);
+	ఒకవేళ (ssh_digest_జ్ఞాపకం(SSH_DIGEST_SHA512, b, అక్షరశ్రేణి_పొడవు(b), hash, len) != 0)
 		fatal_f("ssh_digest_memory");
 	/* 0-4.2 ms of delay */
-	delay = (double)PEEK_U32(hash) / 1000 / 1000 / 1000 / 1000;
+	delay = (ద్విగుణ)PEEK_U32(hash) / 1000 / 1000 / 1000 / 1000;
 	freezero(hash, len);
 	debug3_f("user specific delay %0.3lfms", delay*1000);
-	return MIN_FAIL_DELAY_SECONDS + delay;
+	తిరిగి MIN_FAIL_DELAY_SECONDS + delay;
 }
 
-static void
-ensure_minimum_time_since(double start, double seconds)
+స్థిర శూన్య
+ensure_minimum_సమయం_since(ద్విగుణ ప్రారంభం, ద్విగుణ seconds)
 {
-	struct timespec ts;
-	double elapsed = monotime_double() - start, req = seconds, remain;
+	నిర్మాణం timespec ts;
+	ద్విగుణ elapsed = monotime_double() - ప్రారంభం, req = seconds, remain;
 
-	if (elapsed > MAX_FAIL_DELAY_SECONDS) {
+	ఒకవేళ (elapsed > MAX_FAIL_DELAY_SECONDS) {
 		debug3_f("elapsed %0.3lfms exceeded the max delay "
 		    "requested %0.3lfms)", elapsed*1000, req*1000);
-		return;
+		తిరిగి;
 	}
 
 	/* if we've already passed the requested time, scale up */
-	while ((remain = seconds - elapsed) < 0.0)
+	అయితే ((remain = seconds - elapsed) < 0.0)
 		seconds *= 2;
 
 	ts.tv_sec = remain;
 	ts.tv_nsec = (remain - ts.tv_sec) * 1000000000;
 	debug3_f("elapsed %0.3lfms, delaying %0.3lfms (requested %0.3lfms)",
 	    elapsed*1000, remain*1000, req*1000);
-	nanosleep(&ts, NULL);
+	nanosleep(&ts, ఖాళీ);
 }
 
-void
-auth_failure_delay(Authctxt *authctxt, double tstart)
+శూన్య
+auth_failure_delay(Authctxt *authctxt, ద్విగుణ tstart)
 {
-	ensure_minimum_time_since(tstart, user_specific_delay(authctxt->user));
+	ensure_minimum_సమయం_since(tstart, user_specific_delay(authctxt->user));
 }
 
-static int
-input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
+స్థిర పూర్ణాంకం
+ఆదానం_userauth_request(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	Authmethod *m = NULL;
-	char *user = NULL, *service = NULL, *method = NULL, *style = NULL;
-	int r, authenticated = 0;
-	double tstart = monotime_double();
+	Authmethod *m = ఖాళీ;
+	అక్షరం *user = ఖాళీ, *service = ఖాళీ, *పద్ధతి = ఖాళీ, *style = ఖాళీ;
+	పూర్ణాంకం r, authenticated = 0;
+	ద్విగుణ tstart = monotime_double();
 
-	if (authctxt == NULL)
+	ఒకవేళ (authctxt == ఖాళీ)
 		fatal("input_userauth_request: no authctxt");
 
-	if ((r = sshpkt_get_cstring(ssh, &user, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &service, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &method, NULL)) != 0)
-		goto out;
-	debug("userauth-request for user %s service %s method %s", user, service, method);
+	ఒకవేళ ((r = sshpkt_get_cstring(ssh, &user, ఖాళీ)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &service, ఖాళీ)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &పద్ధతి, ఖాళీ)) != 0)
+		వెళ్ళు బహిర్గతం;
+	debug("userauth-request for user %s service %s method %s", user, service, పద్ధతి);
 	debug("attempt %d failures %d", authctxt->attempt, authctxt->failures);
 
-	if ((style = strchr(user, ':')) != NULL)
+	ఒకవేళ ((style = strchr(user, ':')) != ఖాళీ)
 		*style++ = 0;
 
-	if (authctxt->attempt >= 1024)
+	ఒకవేళ (authctxt->attempt >= 1024)
 		auth_maxtries_exceeded(ssh);
-	if (authctxt->attempt++ == 0) {
+	ఒకవేళ (authctxt->attempt++ == 0) {
 		/* setup auth context */
 		authctxt->pw = mm_getpwnamallow(ssh, user);
 		authctxt->user = xstrdup(user);
 		authctxt->service = xstrdup(service);
-		authctxt->style = style ? xstrdup(style) : NULL;
-		if (authctxt->pw && strcmp(service, "ssh-connection")==0) {
+		authctxt->style = style ? xstrdup(style) : ఖాళీ;
+		ఒకవేళ (authctxt->pw && strcmp(service, "ssh-connection")==0) {
 			authctxt->valid = 1;
 			debug2_f("setting up authctxt for %s", user);
-		} else {
+		} లేకపోతే {
 			authctxt->valid = 0;
 			/* Invalid user, fake password information */
 			authctxt->pw = fakepw();
-#ifdef SSH_AUDIT_EVENTS
+#నిర్వచితమైతే SSH_AUDIT_EVENTS
 			mm_audit_event(ssh, SSH_INVALID_USER);
-#endif
+#అయితే_ముగింపు
 		}
-#ifdef USE_PAM
-		if (options.use_pam)
-			mm_start_pam(ssh);
-#endif
-		ssh_packet_set_log_preamble(ssh, "%suser %s",
+#నిర్వచితమైతే USE_PAM
+		ఒకవేళ (options.use_pam)
+			mm_ప్రారంభం_pam(ssh);
+#అయితే_ముగింపు
+		ssh_packet_సమితి_log_preamble(ssh, "%suser %s",
 		    authctxt->valid ? "authenticating " : "invalid ", user);
 		setproctitle("%s [net]", authctxt->valid ? user : "unknown");
 		mm_inform_authserv(service, style);
 		userauth_banner(ssh);
-		if ((r = kex_server_update_ext_info(ssh)) != 0)
+		ఒకవేళ ((r = kex_server_update_ext_info(ssh)) != 0)
 			fatal_fr(r, "kex_server_update_ext_info failed");
-		if (auth2_setup_methods_lists(authctxt) != 0)
+		ఒకవేళ (auth2_అమరిక_methods_lists(authctxt) != 0)
 			ssh_packet_disconnect(ssh,
 			    "no authentication methods enabled");
-	} else if (strcmp(user, authctxt->user) != 0 ||
+	} లేకపోతే ఒకవేళ (strcmp(user, authctxt->user) != 0 ||
 	    strcmp(service, authctxt->service) != 0) {
 		ssh_packet_disconnect(ssh, "Change of username or service "
 		    "not allowed: (%s,%s) -> (%s,%s)",
@@ -335,12 +335,12 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
 	/* reset state */
 	auth2_challenge_stop(ssh);
 
-#ifdef GSSAPI
+#నిర్వచితమైతే GSSAPI
 	ssh_gssapi_cleanup_global_client();
 	/* XXX move to auth2_gssapi_stop() */
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
-#endif
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_TOKEN, ఖాళీ);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, ఖాళీ);
+#అయితే_ముగింపు
 
 	auth2_authctxt_reset_info(authctxt);
 	authctxt->postponed = 0;
@@ -348,127 +348,127 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
 	authctxt->auth_failure_already_counted = 0;
 
 	/* try to authenticate user */
-	m = authmethod_lookup(authctxt, method);
-	if (m != NULL && authctxt->failures < options.max_authtries) {
-		debug2("input_userauth_request: try method %s", method);
-		authenticated =	m->userauth(ssh, method);
+	m = authmethod_lookup(authctxt, పద్ధతి);
+	ఒకవేళ (m != ఖాళీ && authctxt->failures < options.max_authtries) {
+		debug2("input_userauth_request: try method %s", పద్ధతి);
+		authenticated =	m->userauth(ssh, పద్ధతి);
 	}
-	if (!authctxt->authenticated && strcmp(method, "none") != 0)
+	ఒకవేళ (!authctxt->authenticated && strcmp(పద్ధతి, "none") != 0)
 		auth_failure_delay(authctxt, tstart);
 
-	userauth_finish(ssh, authenticated, method, NULL);
+	userauth_ముగింపు(ssh, authenticated, పద్ధతి, ఖాళీ);
 	r = 0;
- out:
-	free(service);
-	free(user);
-	free(method);
-	return r;
+ బహిర్గతం:
+	విడుదల(service);
+	విడుదల(user);
+	విడుదల(పద్ధతి);
+	తిరిగి r;
 }
 
-void
-userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
-    const char *submethod)
+శూన్య
+userauth_ముగింపు(నిర్మాణం ssh *ssh, పూర్ణాంకం authenticated, స్థిరరాశి అక్షరం *packet_పద్ధతి,
+    స్థిరరాశి అక్షరం *submethod)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	Authmethod *m = NULL;
-	const char *method = packet_method;
-	char *methods;
-	int r, partial = 0;
+	Authmethod *m = ఖాళీ;
+	స్థిరరాశి అక్షరం *పద్ధతి = packet_పద్ధతి;
+	అక్షరం *methods;
+	పూర్ణాంకం r, partial = 0;
 
-	if (authenticated) {
-		if (!authctxt->valid) {
+	ఒకవేళ (authenticated) {
+		ఒకవేళ (!authctxt->valid) {
 			fatal("INTERNAL ERROR: authenticated invalid user %s",
 			    authctxt->user);
 		}
-		if (authctxt->postponed)
+		ఒకవేళ (authctxt->postponed)
 			fatal("INTERNAL ERROR: authenticated and postponed");
 		/* prefer primary authmethod name to possible synonym */
-		if ((m = authmethod_byname(method)) == NULL)
-			fatal("INTERNAL ERROR: bad method %s", method);
-		method = m->cfg->name;
+		ఒకవేళ ((m = authmethod_byname(పద్ధతి)) == ఖాళీ)
+			fatal("INTERNAL ERROR: bad method %s", పద్ధతి);
+		పద్ధతి = m->cfg->name;
 	}
 
 	/* Special handling for root */
-	if (authenticated && authctxt->pw->pw_uid == 0 &&
-	    !auth_root_allowed(ssh, method)) {
+	ఒకవేళ (authenticated && authctxt->pw->pw_uid == 0 &&
+	    !auth_మూలం_allowed(ssh, పద్ధతి)) {
 		authenticated = 0;
-#ifdef SSH_AUDIT_EVENTS
-		mm_audit_event(ssh, SSH_LOGIN_ROOT_DENIED);
-#endif
+#నిర్వచితమైతే SSH_AUDIT_EVENTS
+		mm_audit_event(ssh, SSH_LOGIN_మూలం_DENIED);
+#అయితే_ముగింపు
 	}
 
-	if (authenticated && options.num_auth_methods != 0) {
-		if (!auth2_update_methods_lists(authctxt, method, submethod)) {
+	ఒకవేళ (authenticated && options.అంకె_auth_methods != 0) {
+		ఒకవేళ (!auth2_update_methods_lists(authctxt, పద్ధతి, submethod)) {
 			authenticated = 0;
 			partial = 1;
 		}
 	}
 
 	/* Log before sending the reply */
-	auth_log(ssh, authenticated, partial, method, submethod);
+	auth_log(ssh, authenticated, partial, పద్ధతి, submethod);
 
 	/* Update information exposed to session */
-	if (authenticated || partial)
-		auth2_update_session_info(authctxt, method, submethod);
+	ఒకవేళ (authenticated || partial)
+		auth2_update_session_info(authctxt, పద్ధతి, submethod);
 
-	if (authctxt->postponed)
-		return;
+	ఒకవేళ (authctxt->postponed)
+		తిరిగి;
 
-#ifdef USE_PAM
-	if (options.use_pam && authenticated) {
-		int r, success = mm_do_pam_account();
+#నిర్వచితమైతే USE_PAM
+	ఒకవేళ (options.use_pam && authenticated) {
+		పూర్ణాంకం r, success = mm_do_pam_account();
 
 		/* If PAM returned a message, send it to the user. */
-		if (sshbuf_len(loginmsg) > 0) {
-			if ((r = sshbuf_put(loginmsg, "\0", 1)) != 0)
+		ఒకవేళ (sshbuf_len(loginmsg) > 0) {
+			ఒకవేళ ((r = sshbuf_put(loginmsg, "\0", 1)) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
 			userauth_send_banner(ssh, sshbuf_ptr(loginmsg));
-			if ((r = ssh_packet_write_wait(ssh)) != 0) {
+			ఒకవేళ ((r = ssh_packet_write_wait(ssh)) != 0) {
 				sshpkt_fatal(ssh, r,
 				    "%s: send PAM banner", __func__);
 			}
 		}
-		if (!success) {
+		ఒకవేళ (!success) {
 			fatal("Access denied for user %s by PAM account "
 			    "configuration", authctxt->user);
 		}
 	}
-#endif
+#అయితే_ముగింపు
 
-	if (authenticated == 1) {
+	ఒకవేళ (authenticated == 1) {
 		/* turn off userauth */
-		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_REQUEST,
+		ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_REQUEST,
 		    &dispatch_protocol_ignore);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_SUCCESS)) != 0 ||
+		ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_USERAUTH_SUCCESS)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
 			fatal_fr(r, "send success packet");
 		/* now we can break out */
 		authctxt->success = 1;
-		ssh_packet_set_log_preamble(ssh, "user %s", authctxt->user);
-	} else {
+		ssh_packet_సమితి_log_preamble(ssh, "user %s", authctxt->user);
+	} లేకపోతే {
 		/* Allow initial try of "none" auth without failure penalty */
-		if (!partial && !authctxt->server_caused_failure &&
+		ఒకవేళ (!partial && !authctxt->server_caused_failure &&
 		    !authctxt->auth_failure_already_counted &&
-		    (authctxt->attempt > 1 || strcmp(method, "none") != 0))
+		    (authctxt->attempt > 1 || strcmp(పద్ధతి, "none") != 0))
 			authctxt->failures++;
-		if (authctxt->failures >= options.max_authtries) {
-#ifdef SSH_AUDIT_EVENTS
+		ఒకవేళ (authctxt->failures >= options.max_authtries) {
+#నిర్వచితమైతే SSH_AUDIT_EVENTS
 			mm_audit_event(ssh, SSH_LOGIN_EXCEED_MAXTRIES);
-#endif
+#అయితే_ముగింపు
 			auth_maxtries_exceeded(ssh);
 		}
 		methods = authmethods_get(authctxt);
 		debug3_f("failure partial=%d next methods=\"%s\"",
 		    partial, methods);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_FAILURE)) != 0 ||
+		ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_USERAUTH_FAILURE)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, methods)) != 0 ||
 		    (r = sshpkt_put_u8(ssh, partial)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
 			fatal_fr(r, "send failure packet");
-		free(methods);
+		విడుదల(methods);
 	}
 }
 
@@ -477,9 +477,9 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
  * methods list. Returns 1 if allowed, or no methods lists configured.
  * 0 otherwise.
  */
-int
-auth2_method_allowed(Authctxt *authctxt, const char *method,
-    const char *submethod)
+పూర్ణాంకం
+auth2_పద్ధతి_allowed(Authctxt *authctxt, స్థిరరాశి అక్షరం *పద్ధతి,
+    స్థిరరాశి అక్షరం *submethod)
 {
 	u_int i;
 
@@ -487,79 +487,79 @@ auth2_method_allowed(Authctxt *authctxt, const char *method,
 	 * NB. authctxt->num_auth_methods might be zero as a result of
 	 * auth2_setup_methods_lists(), so check the configuration.
 	 */
-	if (options.num_auth_methods == 0)
-		return 1;
-	for (i = 0; i < authctxt->num_auth_methods; i++) {
-		if (list_starts_with(authctxt->auth_methods[i], method,
-		    submethod) != MATCH_NONE)
-			return 1;
+	ఒకవేళ (options.అంకె_auth_methods == 0)
+		తిరిగి 1;
+	కొరకు (i = 0; i < authctxt->అంకె_auth_methods; i++) {
+		ఒకవేళ (list_starts_with(authctxt->auth_methods[i], పద్ధతి,
+		    submethod) != సరిపోలిక_NONE)
+			తిరిగి 1;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static char *
+స్థిర అక్షరం *
 authmethods_get(Authctxt *authctxt)
 {
-	struct sshbuf *b;
-	char *list;
-	int i, r;
+	నిర్మాణం sshbuf *b;
+	అక్షరం *list;
+	పూర్ణాంకం i, r;
 
-	if ((b = sshbuf_new()) == NULL)
+	ఒకవేళ ((b = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	for (i = 0; authmethods[i] != NULL; i++) {
-		if (strcmp(authmethods[i]->cfg->name, "none") == 0)
-			continue;
-		if (authmethods[i]->cfg->enabled == NULL ||
+	కొరకు (i = 0; authmethods[i] != ఖాళీ; i++) {
+		ఒకవేళ (strcmp(authmethods[i]->cfg->name, "none") == 0)
+			కొనసాగు;
+		ఒకవేళ (authmethods[i]->cfg->enabled == ఖాళీ ||
 		    *(authmethods[i]->cfg->enabled) == 0)
-			continue;
-		if (!auth2_method_allowed(authctxt, authmethods[i]->cfg->name,
-		    NULL))
-			continue;
-		if ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) ? "," : "",
+			కొనసాగు;
+		ఒకవేళ (!auth2_పద్ధతి_allowed(authctxt, authmethods[i]->cfg->name,
+		    ఖాళీ))
+			కొనసాగు;
+		ఒకవేళ ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) ? "," : "",
 		    authmethods[i]->cfg->name)) != 0)
 			fatal_fr(r, "buffer error");
 	}
-	if ((list = sshbuf_dup_string(b)) == NULL)
+	ఒకవేళ ((list = sshbuf_dup_string(b)) == ఖాళీ)
 		fatal_f("sshbuf_dup_string failed");
 	sshbuf_free(b);
-	return list;
+	తిరిగి list;
 }
 
-static Authmethod *
-authmethod_byname(const char *name)
+స్థిర Authmethod *
+authmethod_byname(స్థిరరాశి అక్షరం *name)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	if (name == NULL)
+	ఒకవేళ (name == ఖాళీ)
 		fatal_f("NULL authentication method name");
-	for (i = 0; authmethods[i] != NULL; i++) {
-		if (strcmp(name, authmethods[i]->cfg->name) == 0 ||
-		    (authmethods[i]->cfg->synonym != NULL &&
+	కొరకు (i = 0; authmethods[i] != ఖాళీ; i++) {
+		ఒకవేళ (strcmp(name, authmethods[i]->cfg->name) == 0 ||
+		    (authmethods[i]->cfg->synonym != ఖాళీ &&
 		    strcmp(name, authmethods[i]->cfg->synonym) == 0))
-			return authmethods[i];
+			తిరిగి authmethods[i];
 	}
 	debug_f("unrecognized authentication method name: %s", name);
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
-static Authmethod *
-authmethod_lookup(Authctxt *authctxt, const char *name)
+స్థిర Authmethod *
+authmethod_lookup(Authctxt *authctxt, స్థిరరాశి అక్షరం *name)
 {
-	Authmethod *method;
+	Authmethod *పద్ధతి;
 
-	if ((method = authmethod_byname(name)) == NULL)
-		return NULL;
+	ఒకవేళ ((పద్ధతి = authmethod_byname(name)) == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	if (method->cfg->enabled == NULL || *(method->cfg->enabled) == 0) {
+	ఒకవేళ (పద్ధతి->cfg->enabled == ఖాళీ || *(పద్ధతి->cfg->enabled) == 0) {
 		debug3_f("method %s not enabled", name);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	if (!auth2_method_allowed(authctxt, method->cfg->name, NULL)) {
+	ఒకవేళ (!auth2_పద్ధతి_allowed(authctxt, పద్ధతి->cfg->name, ఖాళీ)) {
 		debug3_f("method %s not allowed "
 		    "by AuthenticationMethods", name);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	return method;
+	తిరిగి పద్ధతి;
 }
 
 /*
@@ -569,70 +569,70 @@ authmethod_lookup(Authctxt *authctxt, const char *name)
  * has been requested. For this reason, all tests for whether multiple is
  * enabled should consult options.num_auth_methods directly.
  */
-int
-auth2_setup_methods_lists(Authctxt *authctxt)
+పూర్ణాంకం
+auth2_అమరిక_methods_lists(Authctxt *authctxt)
 {
 	u_int i;
 
 	/* First, normalise away the "any" pseudo-method */
-	if (options.num_auth_methods == 1 &&
+	ఒకవేళ (options.అంకె_auth_methods == 1 &&
 	    strcmp(options.auth_methods[0], "any") == 0) {
-		free(options.auth_methods[0]);
-		options.auth_methods[0] = NULL;
-		options.num_auth_methods = 0;
+		విడుదల(options.auth_methods[0]);
+		options.auth_methods[0] = ఖాళీ;
+		options.అంకె_auth_methods = 0;
 	}
 
-	if (options.num_auth_methods == 0)
-		return 0;
+	ఒకవేళ (options.అంకె_auth_methods == 0)
+		తిరిగి 0;
 	debug3_f("checking methods");
-	authctxt->auth_methods = xcalloc(options.num_auth_methods,
-	    sizeof(*authctxt->auth_methods));
-	authctxt->num_auth_methods = 0;
-	for (i = 0; i < options.num_auth_methods; i++) {
-		if (auth2_methods_valid(options.auth_methods[i], 1) != 0) {
+	authctxt->auth_methods = xcalloc(options.అంకె_auth_methods,
+	    పరిమాణం(*authctxt->auth_methods));
+	authctxt->అంకె_auth_methods = 0;
+	కొరకు (i = 0; i < options.అంకె_auth_methods; i++) {
+		ఒకవేళ (auth2_methods_valid(options.auth_methods[i], 1) != 0) {
 			logit("Authentication methods list \"%s\" contains "
 			    "disabled method, skipping",
 			    options.auth_methods[i]);
-			continue;
+			కొనసాగు;
 		}
 		debug("authentication methods list %d: %s",
-		    authctxt->num_auth_methods, options.auth_methods[i]);
-		authctxt->auth_methods[authctxt->num_auth_methods++] =
+		    authctxt->అంకె_auth_methods, options.auth_methods[i]);
+		authctxt->auth_methods[authctxt->అంకె_auth_methods++] =
 		    xstrdup(options.auth_methods[i]);
 	}
-	if (authctxt->num_auth_methods == 0) {
+	ఒకవేళ (authctxt->అంకె_auth_methods == 0) {
 		error("No AuthenticationMethods left after eliminating "
 		    "disabled methods");
-		return -1;
+		తిరిగి -1;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-list_starts_with(const char *methods, const char *method,
-    const char *submethod)
+స్థిర పూర్ణాంకం
+list_starts_with(స్థిరరాశి అక్షరం *methods, స్థిరరాశి అక్షరం *పద్ధతి,
+    స్థిరరాశి అక్షరం *submethod)
 {
-	size_t l = strlen(method);
-	int match;
-	const char *p;
+	కొలత_t l = అక్షరశ్రేణి_పొడవు(పద్ధతి);
+	పూర్ణాంకం సరిపోలిక;
+	స్థిరరాశి అక్షరం *p;
 
-	if (strncmp(methods, method, l) != 0)
-		return MATCH_NONE;
+	ఒకవేళ (అక్షరశ్రేణి_పోలిక(methods, పద్ధతి, l) != 0)
+		తిరిగి సరిపోలిక_NONE;
 	p = methods + l;
-	match = MATCH_METHOD;
-	if (*p == ':') {
-		if (!submethod)
-			return MATCH_PARTIAL;
-		l = strlen(submethod);
+	సరిపోలిక = సరిపోలిక_పద్ధతి;
+	ఒకవేళ (*p == ':') {
+		ఒకవేళ (!submethod)
+			తిరిగి సరిపోలిక_PARTIAL;
+		l = అక్షరశ్రేణి_పొడవు(submethod);
 		p += 1;
-		if (strncmp(submethod, p, l))
-			return MATCH_NONE;
+		ఒకవేళ (అక్షరశ్రేణి_పోలిక(submethod, p, l))
+			తిరిగి సరిపోలిక_NONE;
 		p += l;
-		match = MATCH_BOTH;
+		సరిపోలిక = సరిపోలిక_BOTH;
 	}
-	if (*p != ',' && *p != '\0')
-		return MATCH_NONE;
-	return match;
+	ఒకవేళ (*p != ',' && *p != '\0')
+		తిరిగి సరిపోలిక_NONE;
+	తిరిగి సరిపోలిక;
 }
 
 /*
@@ -640,24 +640,24 @@ list_starts_with(const char *methods, const char *method,
  * Returns 0 if the list of methods did not start with that method or 1
  * if it did.
  */
-static int
-remove_method(char **methods, const char *method, const char *submethod)
+స్థిర పూర్ణాంకం
+remove_పద్ధతి(అక్షరం **methods, స్థిరరాశి అక్షరం *పద్ధతి, స్థిరరాశి అక్షరం *submethod)
 {
-	char *omethods = *methods, *p;
-	size_t l = strlen(method);
-	int match;
+	అక్షరం *omethods = *methods, *p;
+	కొలత_t l = అక్షరశ్రేణి_పొడవు(పద్ధతి);
+	పూర్ణాంకం సరిపోలిక;
 
-	match = list_starts_with(omethods, method, submethod);
-	if (match != MATCH_METHOD && match != MATCH_BOTH)
-		return 0;
+	సరిపోలిక = list_starts_with(omethods, పద్ధతి, submethod);
+	ఒకవేళ (సరిపోలిక != సరిపోలిక_పద్ధతి && సరిపోలిక != సరిపోలిక_BOTH)
+		తిరిగి 0;
 	p = omethods + l;
-	if (submethod && match == MATCH_BOTH)
-		p += 1 + strlen(submethod); /* include colon */
-	if (*p == ',')
+	ఒకవేళ (submethod && సరిపోలిక == సరిపోలిక_BOTH)
+		p += 1 + అక్షరశ్రేణి_పొడవు(submethod); /* include colon */
+	ఒకవేళ (*p == ',')
 		p++;
 	*methods = xstrdup(p);
-	free(omethods);
-	return 1;
+	విడుదల(omethods);
+	తిరిగి 1;
 }
 
 /*
@@ -666,55 +666,55 @@ remove_method(char **methods, const char *method, const char *submethod)
  * in any list, then authentication is deemed successful.
  * Returns 1 if the method completed any authentication list or 0 otherwise.
  */
-int
-auth2_update_methods_lists(Authctxt *authctxt, const char *method,
-    const char *submethod)
+పూర్ణాంకం
+auth2_update_methods_lists(Authctxt *authctxt, స్థిరరాశి అక్షరం *పద్ధతి,
+    స్థిరరాశి అక్షరం *submethod)
 {
-	u_int i, found = 0;
+	u_int i, దొరికింది = 0;
 
-	debug3_f("updating methods list after \"%s\"", method);
-	for (i = 0; i < authctxt->num_auth_methods; i++) {
-		if (!remove_method(&(authctxt->auth_methods[i]), method,
+	debug3_f("updating methods list after \"%s\"", పద్ధతి);
+	కొరకు (i = 0; i < authctxt->అంకె_auth_methods; i++) {
+		ఒకవేళ (!remove_పద్ధతి(&(authctxt->auth_methods[i]), పద్ధతి,
 		    submethod))
-			continue;
-		found = 1;
-		if (*authctxt->auth_methods[i] == '\0') {
+			కొనసాగు;
+		దొరికింది = 1;
+		ఒకవేళ (*authctxt->auth_methods[i] == '\0') {
 			debug2("authentication methods list %d complete", i);
-			return 1;
+			తిరిగి 1;
 		}
 		debug3("authentication methods list %d remaining: \"%s\"",
 		    i, authctxt->auth_methods[i]);
 	}
 	/* This should not happen, but would be bad if it did */
-	if (!found)
+	ఒకవేళ (!దొరికింది)
 		fatal_f("method not in AuthenticationMethods");
-	return 0;
+	తిరిగి 0;
 }
 
 /* Reset method-specific information */
-void auth2_authctxt_reset_info(Authctxt *authctxt)
+శూన్య auth2_authctxt_reset_info(Authctxt *authctxt)
 {
-	sshkey_free(authctxt->auth_method_key);
-	free(authctxt->auth_method_info);
-	authctxt->auth_method_key = NULL;
-	authctxt->auth_method_info = NULL;
+	sshkey_free(authctxt->auth_పద్ధతి_కీలకం);
+	విడుదల(authctxt->auth_పద్ధతి_info);
+	authctxt->auth_పద్ధతి_కీలకం = ఖాళీ;
+	authctxt->auth_పద్ధతి_info = ఖాళీ;
 }
 
 /* Record auth method-specific information for logs */
-void
-auth2_record_info(Authctxt *authctxt, const char *fmt, ...)
+శూన్య
+auth2_రికార్డు_info(Authctxt *authctxt, స్థిరరాశి అక్షరం *fmt, ...)
 {
 	va_list ap;
-	int i;
+	పూర్ణాంకం i;
 
-	free(authctxt->auth_method_info);
-	authctxt->auth_method_info = NULL;
+	విడుదల(authctxt->auth_పద్ధతి_info);
+	authctxt->auth_పద్ధతి_info = ఖాళీ;
 
 	va_start(ap, fmt);
-	i = vasprintf(&authctxt->auth_method_info, fmt, ap);
+	i = vasprintf(&authctxt->auth_పద్ధతి_info, fmt, ap);
 	va_end(ap);
 
-	if (i == -1)
+	ఒకవేళ (i == -1)
 		fatal_f("vasprintf failed");
 }
 
@@ -723,95 +723,95 @@ auth2_record_info(Authctxt *authctxt, const char *fmt, ...)
  * and to ensure that the same key is not subsequently accepted again for
  * multiple authentication.
  */
-void
-auth2_record_key(Authctxt *authctxt, int authenticated,
-    const struct sshkey *key)
+శూన్య
+auth2_రికార్డు_కీలకం(Authctxt *authctxt, పూర్ణాంకం authenticated,
+    స్థిరరాశి నిర్మాణం sshkey *కీలకం)
 {
-	struct sshkey **tmp, *dup;
-	int r;
+	నిర్మాణం sshkey **tmp, *dup;
+	పూర్ణాంకం r;
 
-	if ((r = sshkey_from_private(key, &dup)) != 0)
+	ఒకవేళ ((r = sshkey_from_వ్యక్తిగత(కీలకం, &dup)) != 0)
 		fatal_fr(r, "copy key");
-	sshkey_free(authctxt->auth_method_key);
-	authctxt->auth_method_key = dup;
+	sshkey_free(authctxt->auth_పద్ధతి_కీలకం);
+	authctxt->auth_పద్ధతి_కీలకం = dup;
 
-	if (!authenticated)
-		return;
+	ఒకవేళ (!authenticated)
+		తిరిగి;
 
 	/* If authenticated, make sure we don't accept this key again */
-	if ((r = sshkey_from_private(key, &dup)) != 0)
+	ఒకవేళ ((r = sshkey_from_వ్యక్తిగత(కీలకం, &dup)) != 0)
 		fatal_fr(r, "copy key");
-	if (authctxt->nprev_keys >= INT_MAX ||
-	    (tmp = recallocarray(authctxt->prev_keys, authctxt->nprev_keys,
-	    authctxt->nprev_keys + 1, sizeof(*authctxt->prev_keys))) == NULL)
+	ఒకవేళ (authctxt->nprev_కీలకాలు >= గరిష్ఠ_పూర్ణాంకం ||
+	    (tmp = recallocarray(authctxt->prev_కీలకాలు, authctxt->nprev_కీలకాలు,
+	    authctxt->nprev_కీలకాలు + 1, పరిమాణం(*authctxt->prev_కీలకాలు))) == ఖాళీ)
 		fatal_f("reallocarray failed");
-	authctxt->prev_keys = tmp;
-	authctxt->prev_keys[authctxt->nprev_keys] = dup;
-	authctxt->nprev_keys++;
+	authctxt->prev_కీలకాలు = tmp;
+	authctxt->prev_కీలకాలు[authctxt->nprev_కీలకాలు] = dup;
+	authctxt->nprev_కీలకాలు++;
 
 }
 
 /* Checks whether a key has already been previously used for authentication */
-int
-auth2_key_already_used(Authctxt *authctxt, const struct sshkey *key)
+పూర్ణాంకం
+auth2_కీలకం_already_వాడిన(Authctxt *authctxt, స్థిరరాశి నిర్మాణం sshkey *కీలకం)
 {
 	u_int i;
-	char *fp;
+	అక్షరం *fp;
 
-	for (i = 0; i < authctxt->nprev_keys; i++) {
-		if (sshkey_equal_public(key, authctxt->prev_keys[i])) {
-			fp = sshkey_fingerprint(authctxt->prev_keys[i],
+	కొరకు (i = 0; i < authctxt->nprev_కీలకాలు; i++) {
+		ఒకవేళ (sshkey_equal_ప్రజా(కీలకం, authctxt->prev_కీలకాలు[i])) {
+			fp = sshkey_fingerprint(authctxt->prev_కీలకాలు[i],
 			    options.fingerprint_hash, SSH_FP_DEFAULT);
 			debug3_f("key already used: %s %s",
-			    sshkey_type(authctxt->prev_keys[i]),
-			    fp == NULL ? "UNKNOWN" : fp);
-			free(fp);
-			return 1;
+			    sshkey_type(authctxt->prev_కీలకాలు[i]),
+			    fp == ఖాళీ ? "UNKNOWN" : fp);
+			విడుదల(fp);
+			తిరిగి 1;
 		}
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 /*
  * Updates authctxt->session_info with details of authentication. Should be
  * whenever an authentication method succeeds.
  */
-void
-auth2_update_session_info(Authctxt *authctxt, const char *method,
-    const char *submethod)
+శూన్య
+auth2_update_session_info(Authctxt *authctxt, స్థిరరాశి అక్షరం *పద్ధతి,
+    స్థిరరాశి అక్షరం *submethod)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	if (authctxt->session_info == NULL) {
-		if ((authctxt->session_info = sshbuf_new()) == NULL)
+	ఒకవేళ (authctxt->session_info == ఖాళీ) {
+		ఒకవేళ ((authctxt->session_info = sshbuf_new()) == ఖాళీ)
 			fatal_f("sshbuf_new");
 	}
 
 	/* Append method[/submethod] */
-	if ((r = sshbuf_putf(authctxt->session_info, "%s%s%s",
-	    method, submethod == NULL ? "" : "/",
-	    submethod == NULL ? "" : submethod)) != 0)
+	ఒకవేళ ((r = sshbuf_putf(authctxt->session_info, "%s%s%s",
+	    పద్ధతి, submethod == ఖాళీ ? "" : "/",
+	    submethod == ఖాళీ ? "" : submethod)) != 0)
 		fatal_fr(r, "append method");
 
 	/* Append key if present */
-	if (authctxt->auth_method_key != NULL) {
-		if ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
-		    (r = sshkey_format_text(authctxt->auth_method_key,
+	ఒకవేళ (authctxt->auth_పద్ధతి_కీలకం != ఖాళీ) {
+		ఒకవేళ ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
+		    (r = sshkey_format_పాఠ్యం(authctxt->auth_పద్ధతి_కీలకం,
 		    authctxt->session_info)) != 0)
 			fatal_fr(r, "append key");
 	}
 
-	if (authctxt->auth_method_info != NULL) {
+	ఒకవేళ (authctxt->auth_పద్ధతి_info != ఖాళీ) {
 		/* Ensure no ambiguity here */
-		if (strchr(authctxt->auth_method_info, '\n') != NULL)
+		ఒకవేళ (strchr(authctxt->auth_పద్ధతి_info, '\n') != ఖాళీ)
 			fatal_f("auth_method_info contains \\n");
-		if ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
+		ఒకవేళ ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
 		    (r = sshbuf_putf(authctxt->session_info, "%s",
-		    authctxt->auth_method_info)) != 0) {
+		    authctxt->auth_పద్ధతి_info)) != 0) {
 			fatal_fr(r, "append method info");
 		}
 	}
-	if ((r = sshbuf_put_u8(authctxt->session_info, '\n')) != 0)
+	ఒకవేళ ((r = sshbuf_put_u8(authctxt->session_info, '\n')) != 0)
 		fatal_fr(r, "append");
 }
 

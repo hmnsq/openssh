@@ -24,26 +24,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DISPATCH_H
-#define DISPATCH_H
+#నిర్వచితం_కాకపోతే DISPATCH_H
+#నిర్వచించు DISPATCH_H
 
-#define DISPATCH_MAX	255
+#నిర్వచించు DISPATCH_MAX	255
 
-enum {
-	DISPATCH_BLOCK,
+గణన {
+	DISPATCH_ఖండం,
 	DISPATCH_NONBLOCK
 };
 
-struct ssh;
+నిర్మాణం ssh;
 
-typedef int dispatch_fn(int, uint32_t, struct ssh *);
+రకనిర్వచనం పూర్ణాంకం dispatch_fn(పూర్ణాంకం, uint32_t, నిర్మాణం ssh *);
 
-int	dispatch_protocol_error(int, uint32_t, struct ssh *);
-int	dispatch_protocol_ignore(int, uint32_t, struct ssh *);
-void	ssh_dispatch_init(struct ssh *, dispatch_fn *);
-void	ssh_dispatch_set(struct ssh *, int, dispatch_fn *);
-void	ssh_dispatch_range(struct ssh *, u_int, u_int, dispatch_fn *);
-int	ssh_dispatch_run(struct ssh *, int, volatile sig_atomic_t *);
-void	ssh_dispatch_run_fatal(struct ssh *, int, volatile sig_atomic_t *);
+పూర్ణాంకం	dispatch_protocol_error(పూర్ణాంకం, uint32_t, నిర్మాణం ssh *);
+పూర్ణాంకం	dispatch_protocol_ignore(పూర్ణాంకం, uint32_t, నిర్మాణం ssh *);
+శూన్య	ssh_dispatch_init(నిర్మాణం ssh *, dispatch_fn *);
+శూన్య	ssh_dispatch_సమితి(నిర్మాణం ssh *, పూర్ణాంకం, dispatch_fn *);
+శూన్య	ssh_dispatch_range(నిర్మాణం ssh *, u_int, u_int, dispatch_fn *);
+పూర్ణాంకం	ssh_dispatch_నిరంతరం(నిర్మాణం ssh *, పూర్ణాంకం, అస్థిర sig_atomic_t *);
+శూన్య	ssh_dispatch_నిరంతరం_fatal(నిర్మాణం ssh *, పూర్ణాంకం, అస్థిర sig_atomic_t *);
 
-#endif
+#అయితే_ముగింపు

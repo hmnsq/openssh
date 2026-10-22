@@ -16,38 +16,38 @@
 
 /* Address handling routines */
 
-#ifndef _ADDR_H
-#define _ADDR_H
+#నిర్వచితం_కాకపోతే _ADDR_H
+#నిర్వచించు _ADDR_H
 
-#include <sys/socket.h>
-#include <netinet/in.h>
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <netinet/in.h>
 
-struct xaddr {
+నిర్మాణం xaddr {
 	sa_family_t	af;
-	union {
-		struct in_addr		v4;
-		struct in6_addr		v6;
+	సంఘం {
+		నిర్మాణం in_addr		v4;
+		నిర్మాణం in6_addr		v6;
 		uint8_t			addr8[16];
 		uint16_t		addr16[8];
 		uint32_t		addr32[4];
 	} xa;		    /* 128-bit address */
 	uint32_t	scope_id;	/* iface scope id for v6 */
-#define v4	xa.v4
-#define v6	xa.v6
-#define addr8	xa.addr8
-#define addr16	xa.addr16
-#define addr32	xa.addr32
+#నిర్వచించు v4	xa.v4
+#నిర్వచించు v6	xa.v6
+#నిర్వచించు addr8	xa.addr8
+#నిర్వచించు addr16	xa.addr16
+#నిర్వచించు addr32	xa.addr32
 };
 
-int addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa);
-int addr_netmask(int af, u_int l, struct xaddr *n);
-int addr_pton(const char *p, struct xaddr *n);
-int addr_pton_cidr(const char *p, struct xaddr *n, u_int *l);
-int addr_ntop(const struct xaddr *n, char *p, size_t len);
-int addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b);
-int addr_cmp(const struct xaddr *a, const struct xaddr *b);
-int addr_host_to_all1s(struct xaddr *a, u_int masklen);
-int addr_netmatch(const struct xaddr *host, const struct xaddr *net,
+పూర్ణాంకం addr_sa_గమ్యం_xaddr(నిర్మాణం sockaddr *sa, socklen_t slen, నిర్మాణం xaddr *xa);
+పూర్ణాంకం addr_netmask(పూర్ణాంకం af, u_int l, నిర్మాణం xaddr *n);
+పూర్ణాంకం addr_pton(స్థిరరాశి అక్షరం *p, నిర్మాణం xaddr *n);
+పూర్ణాంకం addr_pton_cidr(స్థిరరాశి అక్షరం *p, నిర్మాణం xaddr *n, u_int *l);
+పూర్ణాంకం addr_ntop(స్థిరరాశి నిర్మాణం xaddr *n, అక్షరం *p, కొలత_t len);
+పూర్ణాంకం addr_and(నిర్మాణం xaddr *dst, స్థిరరాశి నిర్మాణం xaddr *a, స్థిరరాశి నిర్మాణం xaddr *b);
+పూర్ణాంకం addr_cmp(స్థిరరాశి నిర్మాణం xaddr *a, స్థిరరాశి నిర్మాణం xaddr *b);
+పూర్ణాంకం addr_host_గమ్యం_all1s(నిర్మాణం xaddr *a, u_int masklen);
+పూర్ణాంకం addr_netmatch(స్థిరరాశి నిర్మాణం xaddr *host, స్థిరరాశి నిర్మాణం xaddr *net,
     u_int masklen);
-void addr_increment(struct xaddr *a);
-#endif /* _ADDR_H */
+శూన్య addr_increment(నిర్మాణం xaddr *a);
+#అయితే_ముగింపు /* _ADDR_H */

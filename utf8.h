@@ -15,14 +15,14 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-int	 vasnmprintf(char **, size_t, int *, const char *, va_list);
-int	 mprintf(const char *, ...)
-	    __attribute__((format(printf, 1, 2)));
-int	 fmprintf(FILE *, const char *, ...)
-	    __attribute__((format(printf, 2, 3)));
-int	 vfmprintf(FILE *, const char *, va_list);
-int	 snmprintf(char *, size_t, int *, const char *, ...)
-	    __attribute__((format(printf, 4, 5)));
-int	 asmprintf(char **, size_t, int *, const char *, ...)
-	    __attribute__((format(printf, 4, 5)));
-void	 msetlocale(void);
+పూర్ణాంకం	 vasnmprintf(అక్షరం **, కొలత_t, పూర్ణాంకం *, స్థిరరాశి అక్షరం *, va_list);
+పూర్ణాంకం	 mprintf(స్థిరరాశి అక్షరం *, ...)
+	    __attribute__((format(రాయి, 1, 2)));
+పూర్ణాంకం	 fmprintf(FILE *, స్థిరరాశి అక్షరం *, ...)
+	    __attribute__((format(రాయి, 2, 3)));
+పూర్ణాంకం	 vfmprintf(FILE *, స్థిరరాశి అక్షరం *, va_list);
+పూర్ణాంకం	 snmprintf(అక్షరం *, కొలత_t, పూర్ణాంకం *, స్థిరరాశి అక్షరం *, ...)
+	    __attribute__((format(రాయి, 4, 5)));
+పూర్ణాంకం	 asmprintf(అక్షరం **, కొలత_t, పూర్ణాంకం *, స్థిరరాశి అక్షరం *, ...)
+	    __attribute__((format(రాయి, 4, 5)));
+శూన్య	 msetlocale(శూన్య);

@@ -1,29 +1,29 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdlib.h>
 
-extern "C" {
+బాహ్య "C" {
 
-#include "sshsig.h"
+#అన్తర్భావ "sshsig.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+పూర్ణాంకం LLVMFuzzer_Test_One_ఆదానం(స్థిరరాశి uint8_t* దత్తాంశం, కొలత_t కొలత)
 {
-	char *cp = (char *)malloc(size + 1);
-	struct sshsigopt *opts = NULL;
+	అక్షరం *cp = (అక్షరం *)జ్ఞాపకం_ఇవ్వు(కొలత + 1);
+	నిర్మాణం sshsigopt *opts = ఖాళీ;
 
-	if (cp == NULL)
-		goto out;
-	memcpy(cp, data, size);
-	cp[size] = '\0';
-	if ((opts = sshsigopt_parse(cp, "libfuzzer", 0, NULL)) == NULL)
-		goto out;
+	ఒకవేళ (cp == ఖాళీ)
+		వెళ్ళు బహిర్గతం;
+	జ్ఞాపకం_నకలు(cp, దత్తాంశం, కొలత);
+	cp[కొలత] = '\0';
+	ఒకవేళ ((opts = sshsigopt_parse(cp, "libfuzzer", 0, ఖాళీ)) == ఖాళీ)
+		వెళ్ళు బహిర్గతం;
 
- out:
-	free(cp);
+ బహిర్గతం:
+	విడుదల(cp);
 	sshsigopt_free(opts);
-	return 0;
+	తిరిగి 0;
 }
 
 } // extern "C"

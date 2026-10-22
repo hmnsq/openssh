@@ -15,288 +15,288 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/time.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/time.h>
 
-#include <stdlib.h>
-#include <errno.h>
-#include <poll.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <poll.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-#include "xmalloc.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "misc.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "ssh-pkcs11.h"
-#include "ssherr.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "authfd.h"
+#అన్తర్భావ "ssh-pkcs11.h"
+#అన్తర్భావ "ssherr.h"
 
-#ifdef ENABLE_PKCS11
+#నిర్వచితమైతే ENABLE_PKCS11
 
 /* borrows code from sftp-server and ssh-agent */
 
-static char *providername; /* Provider for this helper */
+స్థిర అక్షరం *providername; /* Provider for this helper */
 
-#define MAX_MSG_LENGTH		10240 /*XXX*/
+#నిర్వచించు MAX_సందేశం_నిడివి		10240 /*XXX*/
 
 /* input and output queue */
-struct sshbuf *iqueue;
-struct sshbuf *oqueue;
+నిర్మాణం sshbuf *iqueue;
+నిర్మాణం sshbuf *oqueue;
 
-static void
-send_msg(struct sshbuf *m)
+స్థిర శూన్య
+send_సందేశం(నిర్మాణం sshbuf *m)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_put_stringb(oqueue, m)) != 0)
+	ఒకవేళ ((r = sshbuf_put_stringb(oqueue, m)) != 0)
 		fatal_fr(r, "enqueue");
 }
 
-static void
-process_add(void)
+స్థిర శూన్య
+process_కూడు(శూన్య)
 {
-	char *pin;
-	struct sshkey **keys = NULL;
-	int r, i, nkeys;
-	struct sshbuf *msg;
-	char **labels = NULL;
+	అక్షరం *pin;
+	నిర్మాణం sshkey **కీలకాలు = ఖాళీ;
+	పూర్ణాంకం r, i, nkeys;
+	నిర్మాణం sshbuf *సందేశం;
+	అక్షరం **labels = ఖాళీ;
 
-	if (providername != NULL)
+	ఒకవేళ (providername != ఖాళీ)
 		fatal_f("provider already set");
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_get_cstring(iqueue, &providername, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(iqueue, &pin, NULL)) != 0)
+	ఒకవేళ ((r = sshbuf_get_cstring(iqueue, &providername, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_cstring(iqueue, &pin, ఖాళీ)) != 0)
 		fatal_fr(r, "parse");
 	debug3_f("add %s", providername);
-	if ((nkeys = pkcs11_add_provider(providername, pin,
-	    &keys, &labels)) > 0) {
-		if ((r = sshbuf_put_u8(msg,
+	ఒకవేళ ((nkeys = pkcs11_కూడు_provider(providername, pin,
+	    &కీలకాలు, &labels)) > 0) {
+		ఒకవేళ ((r = sshbuf_put_u8(సందేశం,
 		    SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
-		    (r = sshbuf_put_u32(msg, nkeys)) != 0)
+		    (r = sshbuf_put_u32(సందేశం, nkeys)) != 0)
 			fatal_fr(r, "compose");
-		for (i = 0; i < nkeys; i++) {
-			if ((r = sshkey_puts(keys[i], msg)) != 0 ||
-			    (r = sshbuf_put_cstring(msg, labels[i])) != 0)
+		కొరకు (i = 0; i < nkeys; i++) {
+			ఒకవేళ ((r = sshkey_puts(కీలకాలు[i], సందేశం)) != 0 ||
+			    (r = sshbuf_put_cstring(సందేశం, labels[i])) != 0)
 				fatal_fr(r, "compose key");
 			debug3_f("%s: %s \"%s\"", providername,
-			    sshkey_type(keys[i]), labels[i]);
-			free(labels[i]);
+			    sshkey_type(కీలకాలు[i]), labels[i]);
+			విడుదల(labels[i]);
 		}
-	} else if ((r = sshbuf_put_u8(msg, SSH_AGENT_FAILURE)) != 0 ||
-	    (r = sshbuf_put_u32(msg, -nkeys)) != 0)
+	} లేకపోతే ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH_AGENT_FAILURE)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, -nkeys)) != 0)
 		fatal_fr(r, "compose");
-	free(labels);
-	free(keys); /* keys themselves are transferred to pkcs11_keylist */
-	free(pin);
-	send_msg(msg);
-	sshbuf_free(msg);
+	విడుదల(labels);
+	విడుదల(కీలకాలు); /* keys themselves are transferred to pkcs11_keylist */
+	విడుదల(pin);
+	send_సందేశం(సందేశం);
+	sshbuf_free(సందేశం);
 }
 
-static void
-process_sign(void)
+స్థిర శూన్య
+process_sign(శూన్య)
 {
-	const u_char *data;
-	u_char *signature = NULL;
-	size_t dlen, slen = 0;
+	స్థిరరాశి u_char *దత్తాంశం;
+	u_char *signature = ఖాళీ;
+	కొలత_t dlen, slen = 0;
 	u_int compat;
-	int r, ok = -1;
-	struct sshkey *key = NULL;
-	struct sshbuf *msg;
-	char *alg = NULL;
+	పూర్ణాంకం r, ok = -1;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ;
+	నిర్మాణం sshbuf *సందేశం;
+	అక్షరం *alg = ఖాళీ;
 
-	if ((r = sshkey_froms(iqueue, &key)) != 0 ||
-	    (r = sshbuf_get_string_direct(iqueue, &data, &dlen)) != 0 ||
-	    (r = sshbuf_get_cstring(iqueue, &alg, NULL)) != 0 ||
+	ఒకవేళ ((r = sshkey_froms(iqueue, &కీలకం)) != 0 ||
+	    (r = sshbuf_get_string_ప్రత్యక్ష(iqueue, &దత్తాంశం, &dlen)) != 0 ||
+	    (r = sshbuf_get_cstring(iqueue, &alg, ఖాళీ)) != 0 ||
 	    (r = sshbuf_get_u32(iqueue, &compat)) != 0)
 		fatal_fr(r, "parse");
 
-	if (*alg == '\0') {
-		free(alg);
-		alg = NULL;
+	ఒకవేళ (*alg == '\0') {
+		విడుదల(alg);
+		alg = ఖాళీ;
 	}
 
-	if ((r = pkcs11_sign(key, &signature, &slen, data, dlen,
-	    alg, NULL, NULL, compat)) != 0) {
-		error_fr(r, "sign %s", sshkey_type(key));
-		goto reply;
+	ఒకవేళ ((r = pkcs11_sign(కీలకం, &signature, &slen, దత్తాంశం, dlen,
+	    alg, ఖాళీ, ఖాళీ, compat)) != 0) {
+		error_fr(r, "sign %s", sshkey_type(కీలకం));
+		వెళ్ళు జవాబు;
 	}
 
 	/* success */
 	ok = 0;
- reply:
-	if ((msg = sshbuf_new()) == NULL)
+ జవాబు:
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if (ok == 0) {
-		if ((r = sshbuf_put_u8(msg, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
-		    (r = sshbuf_put_string(msg, signature, slen)) != 0)
+	ఒకవేళ (ok == 0) {
+		ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
+		    (r = sshbuf_put_string(సందేశం, signature, slen)) != 0)
 			fatal_fr(r, "compose response");
-	} else {
-		if ((r = sshbuf_put_u8(msg, SSH2_AGENT_FAILURE)) != 0)
+	} లేకపోతే {
+		ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_AGENT_FAILURE)) != 0)
 			fatal_fr(r, "compose failure response");
 	}
-	sshkey_free(key);
-	free(alg);
-	free(signature);
-	send_msg(msg);
-	sshbuf_free(msg);
+	sshkey_free(కీలకం);
+	విడుదల(alg);
+	విడుదల(signature);
+	send_సందేశం(సందేశం);
+	sshbuf_free(సందేశం);
 }
 
-static void
-process(void)
+స్థిర శూన్య
+process(శూన్య)
 {
-	u_int msg_len;
+	u_int సందేశం_len;
 	u_int buf_len;
 	u_int consumed;
 	u_char type;
-	const u_char *cp;
-	int r;
+	స్థిరరాశి u_char *cp;
+	పూర్ణాంకం r;
 
 	buf_len = sshbuf_len(iqueue);
-	if (buf_len < 5)
-		return;		/* Incomplete message. */
+	ఒకవేళ (buf_len < 5)
+		తిరిగి;		/* Incomplete message. */
 	cp = sshbuf_ptr(iqueue);
-	msg_len = get_u32(cp);
-	if (msg_len > MAX_MSG_LENGTH) {
-		error("bad message len %d", msg_len);
+	సందేశం_len = get_u32(cp);
+	ఒకవేళ (సందేశం_len > MAX_సందేశం_నిడివి) {
+		error("bad message len %d", సందేశం_len);
 		cleanup_exit(11);
 	}
-	if (buf_len < msg_len + 4)
-		return;
-	if ((r = sshbuf_consume(iqueue, 4)) != 0 ||
+	ఒకవేళ (buf_len < సందేశం_len + 4)
+		తిరిగి;
+	ఒకవేళ ((r = sshbuf_consume(iqueue, 4)) != 0 ||
 	    (r = sshbuf_get_u8(iqueue, &type)) != 0)
 		fatal_fr(r, "parse type/len");
 	buf_len -= 4;
-	switch (type) {
-	case SSH_AGENTC_ADD_SMARTCARD_KEY:
+	ఎంపిక (type) {
+	స్థితి SSH_AGENTC_కూడు_SMARTCARD_కీలకం:
 		debug("process_add");
-		process_add();
-		break;
-	case SSH2_AGENTC_SIGN_REQUEST:
+		process_కూడు();
+		ఆపు;
+	స్థితి SSH2_AGENTC_SIGN_REQUEST:
 		debug("process_sign");
 		process_sign();
-		break;
-	default:
+		ఆపు;
+	అప్రమేయ:
 		error("Unknown message %d", type);
-		break;
+		ఆపు;
 	}
 	/* discard the remaining bytes from the current packet */
-	if (buf_len < sshbuf_len(iqueue)) {
+	ఒకవేళ (buf_len < sshbuf_len(iqueue)) {
 		error("iqueue grew unexpectedly");
 		cleanup_exit(255);
 	}
 	consumed = buf_len - sshbuf_len(iqueue);
-	if (msg_len < consumed) {
-		error("msg_len %d < consumed %d", msg_len, consumed);
+	ఒకవేళ (సందేశం_len < consumed) {
+		error("msg_len %d < consumed %d", సందేశం_len, consumed);
 		cleanup_exit(255);
 	}
-	if (msg_len > consumed) {
-		if ((r = sshbuf_consume(iqueue, msg_len - consumed)) != 0)
+	ఒకవేళ (సందేశం_len > consumed) {
+		ఒకవేళ ((r = sshbuf_consume(iqueue, సందేశం_len - consumed)) != 0)
 			fatal_fr(r, "consume");
 	}
 }
 
-void
-cleanup_exit(int i)
+శూన్య
+cleanup_exit(పూర్ణాంకం i)
 {
 	/* XXX */
 	_exit(i);
 }
 
-int
-main(int argc, char **argv)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	int r, ch, in, out, log_stderr = 0;
+	పూర్ణాంకం r, ch, లోపల, బహిర్గతం, log_stderr = 0;
 	ssize_t len;
 	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
 	LogLevel log_level = SYSLOG_LEVEL_ERROR;
-	char buf[4*4096];
-	extern char *__progname;
-	struct pollfd pfd[2];
+	అక్షరం buf[4*4096];
+	బాహ్య అక్షరం *__progname;
+	నిర్మాణం pollfd pfd[2];
 
 	__progname = ssh_get_progname(argv[0]);
-	seed_rng();
+	విత్తనం_rng();
 
 	sanitise_stdfd();
 	closefrom(STDERR_FILENO + 1);
 	log_init(__progname, log_level, log_facility, log_stderr);
 
-	while ((ch = getopt(argc, argv, "v")) != -1) {
-		switch (ch) {
-		case 'v':
+	అయితే ((ch = getopt(argc, argv, "v")) != -1) {
+		ఎంపిక (ch) {
+		స్థితి 'v':
 			log_stderr = 1;
-			if (log_level == SYSLOG_LEVEL_ERROR)
+			ఒకవేళ (log_level == SYSLOG_LEVEL_ERROR)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			లేకపోతే ఒకవేళ (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			fprintf(stderr, "usage: %s [-v]\n", __progname);
-			exit(1);
+			నిష్క్రమించు(1);
 		}
 	}
 
 	log_init(__progname, log_level, log_facility, log_stderr);
 
 	pkcs11_init(0);
-	in = STDIN_FILENO;
-	out = STDOUT_FILENO;
+	లోపల = STDIN_FILENO;
+	బహిర్గతం = STDOUT_FILENO;
 
-	if ((iqueue = sshbuf_new()) == NULL)
+	ఒకవేళ ((iqueue = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((oqueue = sshbuf_new()) == NULL)
+	ఒకవేళ ((oqueue = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 
-	while (1) {
-		memset(pfd, 0, sizeof(pfd));
-		pfd[0].fd = in;
-		pfd[1].fd = out;
+	అయితే (1) {
+		memset(pfd, 0, పరిమాణం(pfd));
+		pfd[0].fd = లోపల;
+		pfd[1].fd = బహిర్గతం;
 
 		/*
 		 * Ensure that we can read a full buffer and handle
 		 * the worst-case length packet it can generate,
 		 * otherwise apply backpressure by stopping reads.
 		 */
-		if ((r = sshbuf_check_reserve(iqueue, sizeof(buf))) == 0 &&
-		    (r = sshbuf_check_reserve(oqueue, MAX_MSG_LENGTH)) == 0)
+		ఒకవేళ ((r = sshbuf_check_reserve(iqueue, పరిమాణం(buf))) == 0 &&
+		    (r = sshbuf_check_reserve(oqueue, MAX_సందేశం_నిడివి)) == 0)
 			pfd[0].events = POLLIN;
-		else if (r != SSH_ERR_NO_BUFFER_SPACE)
+		లేకపోతే ఒకవేళ (r != SSH_ERR_NO_బఫరు_SPACE)
 			fatal_fr(r, "reserve");
 
-		if (sshbuf_len(oqueue) > 0)
+		ఒకవేళ (sshbuf_len(oqueue) > 0)
 			pfd[1].events = POLLOUT;
 
-		if ((r = poll(pfd, 2, -1 /* INFTIM */)) <= 0) {
-			if (r == 0 || errno == EINTR)
-				continue;
+		ఒకవేళ ((r = poll(pfd, 2, -1 /* INFTIM */)) <= 0) {
+			ఒకవేళ (r == 0 || errno == EINTR)
+				కొనసాగు;
 			fatal("poll: %s", strerror(errno));
 		}
 
 		/* copy stdin to iqueue */
-		if ((pfd[0].revents & (POLLIN|POLLHUP|POLLERR)) != 0) {
-			len = read(in, buf, sizeof buf);
-			if (len == 0) {
+		ఒకవేళ ((pfd[0].revents & (POLLIN|POLLHUP|POLLERR)) != 0) {
+			len = పఠ(లోపల, buf, పరిమాణం buf);
+			ఒకవేళ (len == 0) {
 				debug("read eof");
 				cleanup_exit(0);
-			} else if (len < 0) {
+			} లేకపోతే ఒకవేళ (len < 0) {
 				error("read: %s", strerror(errno));
 				cleanup_exit(1);
-			} else if ((r = sshbuf_put(iqueue, buf, len)) != 0)
+			} లేకపోతే ఒకవేళ ((r = sshbuf_put(iqueue, buf, len)) != 0)
 				fatal_fr(r, "sshbuf_put");
 		}
 		/* send oqueue to stdout */
-		if ((pfd[1].revents & (POLLOUT|POLLHUP)) != 0) {
-			len = write(out, sshbuf_ptr(oqueue),
+		ఒకవేళ ((pfd[1].revents & (POLLOUT|POLLHUP)) != 0) {
+			len = లిఖ(బహిర్గతం, sshbuf_ptr(oqueue),
 			    sshbuf_len(oqueue));
-			if (len < 0) {
+			ఒకవేళ (len < 0) {
 				error("write: %s", strerror(errno));
 				cleanup_exit(1);
-			} else if ((r = sshbuf_consume(oqueue, len)) != 0)
+			} లేకపోతే ఒకవేళ ((r = sshbuf_consume(oqueue, len)) != 0)
 				fatal_fr(r, "consume");
 		}
 
@@ -305,20 +305,20 @@ main(int argc, char **argv)
 		 * into the output buffer, otherwise stop processing input
 		 * and let the output queue drain.
 		 */
-		if ((r = sshbuf_check_reserve(oqueue, MAX_MSG_LENGTH)) == 0)
+		ఒకవేళ ((r = sshbuf_check_reserve(oqueue, MAX_సందేశం_నిడివి)) == 0)
 			process();
-		else if (r != SSH_ERR_NO_BUFFER_SPACE)
+		లేకపోతే ఒకవేళ (r != SSH_ERR_NO_బఫరు_SPACE)
 			fatal_fr(r, "reserve");
 	}
 }
-#else /* ENABLE_PKCS11 */
-int
-main(int argc, char **argv)
+#లేకపోతే /* ENABLE_PKCS11 */
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	extern char *__progname;
+	బాహ్య అక్షరం *__progname;
 
 	__progname = ssh_get_progname(argv[0]);
 	log_init(__progname, SYSLOG_LEVEL_ERROR, SYSLOG_FACILITY_AUTH, 0);
 	fatal("PKCS#11 support disabled at compile time");
 }
-#endif /* ENABLE_PKCS11 */
+#అయితే_ముగింపు /* ENABLE_PKCS11 */

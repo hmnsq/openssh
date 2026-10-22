@@ -31,263 +31,263 @@
  * *Hobbit* <hobbit@avian.org>.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/uio.h>
-#include <sys/un.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <sys/time.h>
+#అన్తర్భావ <sys/uio.h>
+#అన్తర్భావ <sys/un.h>
 
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <netinet/ip.h>
+#అన్తర్భావ <netinet/in.h>
+#అన్తర్భావ <netinet/tcp.h>
+#అన్తర్భావ <netinet/ip.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <netdb.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include "atomicio.h"
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <netdb.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ "atomicio.h"
 
-#include <poll.h>
-#ifdef HAVE_ERR_H
+#అన్తర్భావ <poll.h>
+#నిర్వచితమైతే HAVE_ERR_H
 # include <err.h>
-#endif
-#ifdef HAVE_SYS_BYTEORDER_H
+#అయితే_ముగింపు
+#నిర్వచితమైతే HAVE_SYS_BYTEORDER_H
 # include <sys/byteorder.h>
-#endif
+#అయితే_ముగింపు
 
 /* rename to avoid collision in libssh */
-#define timeout_connect netcat_timeout_connect
+#నిర్వచించు timeout_connect netcat_timeout_connect
 
 /* Telnet options from arpa/telnet.h */
-#define IAC	255
-#define DONT	254
-#define DO	253
-#define WONT	252
-#define WILL	251
+#నిర్వచించు IAC	255
+#నిర్వచించు DONT	254
+#నిర్వచించు DO	253
+#నిర్వచించు WONT	252
+#నిర్వచించు WILL	251
 
-#ifndef SUN_LEN
-#define SUN_LEN(su) \
-	(sizeof(*(su)) - sizeof((su)->sun_path) + strlen((su)->sun_path))
-#endif
+#నిర్వచితం_కాకపోతే SUN_LEN
+#నిర్వచించు SUN_LEN(su) \
+	(పరిమాణం(*(su)) - పరిమాణం((su)->sun_మార్గం) + అక్షరశ్రేణి_పొడవు((su)->sun_మార్గం))
+#అయితే_ముగింపు
 
-#define PORT_MAX	65535
-#define PORT_MAX_LEN	6
-#define UNIX_DG_TMP_SOCKET_SIZE	19
+#నిర్వచించు పోర్టు_MAX	65535
+#నిర్వచించు పోర్టు_MAX_LEN	6
+#నిర్వచించు UNIX_DG_TMP_SOCKET_కొలత	19
 
-#define POLL_STDIN 0
-#define POLL_NETOUT 1
-#define POLL_NETIN 2
-#define POLL_STDOUT 3
-#define BUFSIZE 16384
+#నిర్వచించు POLL_STDIN 0
+#నిర్వచించు POLL_NETOUT 1
+#నిర్వచించు POLL_NETIN 2
+#నిర్వచించు POLL_STDOUT 3
+#నిర్వచించు BUFSIZE 16384
 
 /* Command Line Options */
-int	dflag;					/* detached, no stdin */
-int	Fflag;					/* fdpass sock to stdout */
-unsigned int iflag;				/* Interval Flag */
-int	kflag;					/* More than one connect */
-int	lflag;					/* Bind to local port */
-int	Nflag;					/* shutdown() network socket */
-int	nflag;					/* Don't do name look up */
-char   *Pflag;					/* Proxy username */
-char   *pflag;					/* Localport flag */
-int	rflag;					/* Random ports flag */
-char   *sflag;					/* Source Address */
-int	tflag;					/* Telnet Emulation */
-int	uflag;					/* UDP - Default to TCP */
-int	vflag;					/* Verbosity */
-int	xflag;					/* Socks proxy */
-int	zflag;					/* Port Scan Flag */
-int	Dflag;					/* sodebug */
-int	Iflag;					/* TCP receive buffer size */
-int	Oflag;					/* TCP send buffer size */
-int	Sflag;					/* TCP MD5 signature option */
-int	Tflag = -1;				/* IP Type of Service */
-int	rtableid = -1;
+పూర్ణాంకం	dflag;					/* detached, no stdin */
+పూర్ణాంకం	Fflag;					/* fdpass sock to stdout */
+గుర్తులేని పూర్ణాంకం iflag;				/* Interval Flag */
+పూర్ణాంకం	kflag;					/* More than one connect */
+పూర్ణాంకం	lflag;					/* Bind to local port */
+పూర్ణాంకం	Nflag;					/* shutdown() network socket */
+పూర్ణాంకం	nflag;					/* Don't do name look up */
+అక్షరం   *Pflag;					/* Proxy username */
+అక్షరం   *pflag;					/* Localport flag */
+పూర్ణాంకం	rflag;					/* Random ports flag */
+అక్షరం   *sflag;					/* Source Address */
+పూర్ణాంకం	tflag;					/* Telnet Emulation */
+పూర్ణాంకం	uflag;					/* UDP - Default to TCP */
+పూర్ణాంకం	vflag;					/* Verbosity */
+పూర్ణాంకం	xflag;					/* Socks proxy */
+పూర్ణాంకం	zflag;					/* Port Scan Flag */
+పూర్ణాంకం	Dflag;					/* sodebug */
+పూర్ణాంకం	Iflag;					/* TCP receive buffer size */
+పూర్ణాంకం	Oflag;					/* TCP send buffer size */
+పూర్ణాంకం	Sflag;					/* TCP MD5 signature option */
+పూర్ణాంకం	Tflag = -1;				/* IP Type of Service */
+పూర్ణాంకం	rtableid = -1;
 
-int timeout = -1;
-int family = AF_UNSPEC;
-char *portlist[PORT_MAX+1];
-char *unix_dg_tmp_socket;
+పూర్ణాంకం timeout = -1;
+పూర్ణాంకం family = AF_UNSPEC;
+అక్షరం *portlist[పోర్టు_MAX+1];
+అక్షరం *unix_dg_tmp_socket;
 
-void	atelnet(int, unsigned char *, unsigned int);
-void	build_ports(char *);
-void	help(void);
-int	local_listen(char *, char *, struct addrinfo);
-void	readwrite(int);
-void	fdpass(int nfd) __attribute__((noreturn));
-int	remote_connect(const char *, const char *, struct addrinfo);
-int	timeout_connect(int, const struct sockaddr *, socklen_t);
-int	socks_connect(const char *, const char *, struct addrinfo,
-	    const char *, const char *, struct addrinfo, int, const char *);
-int	udptest(int);
-int	unix_bind(char *);
-int	unix_connect(char *);
-int	unix_listen(char *);
-void	set_common_sockopts(int, int);
-int	map_tos(char *, int *);
-void	report_connect(const struct sockaddr *, socklen_t);
-void	usage(int);
-ssize_t drainbuf(int, unsigned char *, size_t *);
-ssize_t fillbuf(int, unsigned char *, size_t *);
+శూన్య	atelnet(పూర్ణాంకం, గుర్తులేని అక్షరం *, గుర్తులేని పూర్ణాంకం);
+శూన్య	build_ports(అక్షరం *);
+శూన్య	help(శూన్య);
+పూర్ణాంకం	local_listen(అక్షరం *, అక్షరం *, నిర్మాణం addrinfo);
+శూన్య	readwrite(పూర్ణాంకం);
+శూన్య	fdpass(పూర్ణాంకం nfd) __attribute__((noreturn));
+పూర్ణాంకం	remote_connect(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, నిర్మాణం addrinfo);
+పూర్ణాంకం	timeout_connect(పూర్ణాంకం, స్థిరరాశి నిర్మాణం sockaddr *, socklen_t);
+పూర్ణాంకం	socks_connect(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, నిర్మాణం addrinfo,
+	    స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, నిర్మాణం addrinfo, పూర్ణాంకం, స్థిరరాశి అక్షరం *);
+పూర్ణాంకం	udptest(పూర్ణాంకం);
+పూర్ణాంకం	unix_bind(అక్షరం *);
+పూర్ణాంకం	unix_connect(అక్షరం *);
+పూర్ణాంకం	unix_listen(అక్షరం *);
+శూన్య	సమితి_common_sockopts(పూర్ణాంకం, పూర్ణాంకం);
+పూర్ణాంకం	map_tos(అక్షరం *, పూర్ణాంకం *);
+శూన్య	report_connect(స్థిరరాశి నిర్మాణం sockaddr *, socklen_t);
+శూన్య	usage(పూర్ణాంకం);
+ssize_t drainbuf(పూర్ణాంకం, గుర్తులేని అక్షరం *, కొలత_t *);
+ssize_t fillbuf(పూర్ణాంకం, గుర్తులేని అక్షరం *, కొలత_t *);
 
 
-int
-main(int argc, char *argv[])
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం *argv[])
 {
-	int ch, s, ret, socksv;
-	char *host, *uport;
-	struct addrinfo hints;
-	struct servent *sv;
+	పూర్ణాంకం ch, s, ret, socksv;
+	అక్షరం *host, *uport;
+	నిర్మాణం addrinfo hints;
+	నిర్మాణం servent *sv;
 	socklen_t len;
-	struct sockaddr_storage cliaddr;
-	char *proxy = NULL;
-	const char *errstr, *proxyhost = "", *proxyport = NULL;
-	struct addrinfo proxyhints;
-	char unix_dg_tmp_socket_buf[UNIX_DG_TMP_SOCKET_SIZE];
+	నిర్మాణం sockaddr_storage cliaddr;
+	అక్షరం *proxy = ఖాళీ;
+	స్థిరరాశి అక్షరం *errstr, *proxyhost = "", *proxyport = ఖాళీ;
+	నిర్మాణం addrinfo proxyhints;
+	అక్షరం unix_dg_tmp_socket_buf[UNIX_DG_TMP_SOCKET_కొలత];
 
 	ret = 1;
 	s = 0;
 	socksv = 5;
-	host = NULL;
-	uport = NULL;
-	sv = NULL;
+	host = ఖాళీ;
+	uport = ఖాళీ;
+	sv = ఖాళీ;
 
-	signal(SIGPIPE, SIG_IGN);
+	సంకేతం(SIGPIPE, SIG_IGN);
 
-	while ((ch = getopt(argc, argv,
+	అయితే ((ch = getopt(argc, argv,
 	    "46DdFhI:i:klNnO:P:p:rSs:tT:UuV:vw:X:x:z")) != -1) {
-		switch (ch) {
-		case '4':
+		ఎంపిక (ch) {
+		స్థితి '4':
 			family = AF_INET;
-			break;
-		case '6':
+			ఆపు;
+		స్థితి '6':
 			family = AF_INET6;
-			break;
-		case 'U':
+			ఆపు;
+		స్థితి 'U':
 			family = AF_UNIX;
-			break;
-		case 'X':
-			if (strcasecmp(optarg, "connect") == 0)
+			ఆపు;
+		స్థితి 'X':
+			ఒకవేళ (strcasecmp(optarg, "connect") == 0)
 				socksv = -1; /* HTTP proxy CONNECT */
-			else if (strcmp(optarg, "4") == 0)
+			లేకపోతే ఒకవేళ (strcmp(optarg, "4") == 0)
 				socksv = 4; /* SOCKS v.4 */
-			else if (strcasecmp(optarg, "4A") == 0)
+			లేకపోతే ఒకవేళ (strcasecmp(optarg, "4A") == 0)
 				socksv = 44; /* SOCKS v.4A */
-			else if (strcmp(optarg, "5") == 0)
+			లేకపోతే ఒకవేళ (strcmp(optarg, "5") == 0)
 				socksv = 5; /* SOCKS v.5 */
-			else
+			లేకపోతే
 				errx(1, "unsupported proxy protocol");
-			break;
-		case 'd':
+			ఆపు;
+		స్థితి 'd':
 			dflag = 1;
-			break;
-		case 'F':
+			ఆపు;
+		స్థితి 'F':
 			Fflag = 1;
-			break;
-		case 'h':
+			ఆపు;
+		స్థితి 'h':
 			help();
-			break;
-		case 'i':
+			ఆపు;
+		స్థితి 'i':
 			iflag = strtonum(optarg, 0, UINT_MAX, &errstr);
-			if (errstr)
+			ఒకవేళ (errstr)
 				errx(1, "interval %s: %s", errstr, optarg);
-			break;
-		case 'k':
+			ఆపు;
+		స్థితి 'k':
 			kflag = 1;
-			break;
-		case 'l':
+			ఆపు;
+		స్థితి 'l':
 			lflag = 1;
-			break;
-		case 'N':
+			ఆపు;
+		స్థితి 'N':
 			Nflag = 1;
-			break;
-		case 'n':
+			ఆపు;
+		స్థితి 'n':
 			nflag = 1;
-			break;
-		case 'P':
+			ఆపు;
+		స్థితి 'P':
 			Pflag = optarg;
-			break;
-		case 'p':
+			ఆపు;
+		స్థితి 'p':
 			pflag = optarg;
-			break;
-		case 'r':
+			ఆపు;
+		స్థితి 'r':
 			rflag = 1;
-			break;
-		case 's':
+			ఆపు;
+		స్థితి 's':
 			sflag = optarg;
-			break;
-		case 't':
+			ఆపు;
+		స్థితి 't':
 			tflag = 1;
-			break;
-		case 'u':
+			ఆపు;
+		స్థితి 'u':
 			uflag = 1;
-			break;
-#ifdef SO_RTABLE
-		case 'V':
-			rtableid = (int)strtonum(optarg, 0,
+			ఆపు;
+#నిర్వచితమైతే SO_RTABLE
+		స్థితి 'V':
+			rtableid = (పూర్ణాంకం)strtonum(optarg, 0,
 			    RT_TABLEID_MAX, &errstr);
-			if (errstr)
+			ఒకవేళ (errstr)
 				errx(1, "rtable %s: %s", errstr, optarg);
-			break;
-#endif
-		case 'v':
+			ఆపు;
+#అయితే_ముగింపు
+		స్థితి 'v':
 			vflag = 1;
-			break;
-		case 'w':
-			timeout = strtonum(optarg, 0, INT_MAX / 1000, &errstr);
-			if (errstr)
+			ఆపు;
+		స్థితి 'w':
+			timeout = strtonum(optarg, 0, గరిష్ఠ_పూర్ణాంకం / 1000, &errstr);
+			ఒకవేళ (errstr)
 				errx(1, "timeout %s: %s", errstr, optarg);
 			timeout *= 1000;
-			break;
-		case 'x':
+			ఆపు;
+		స్థితి 'x':
 			xflag = 1;
-			if ((proxy = strdup(optarg)) == NULL)
+			ఒకవేళ ((proxy = strdup(optarg)) == ఖాళీ)
 				errx(1, "strdup");
-			break;
-		case 'z':
+			ఆపు;
+		స్థితి 'z':
 			zflag = 1;
-			break;
-		case 'D':
+			ఆపు;
+		స్థితి 'D':
 			Dflag = 1;
-			break;
-		case 'I':
+			ఆపు;
+		స్థితి 'I':
 			Iflag = strtonum(optarg, 1, 65536 << 14, &errstr);
-			if (errstr != NULL)
+			ఒకవేళ (errstr != ఖాళీ)
 				errx(1, "TCP receive window %s: %s",
 				    errstr, optarg);
-			break;
-		case 'O':
+			ఆపు;
+		స్థితి 'O':
 			Oflag = strtonum(optarg, 1, 65536 << 14, &errstr);
-			if (errstr != NULL)
+			ఒకవేళ (errstr != ఖాళీ)
 				errx(1, "TCP send window %s: %s",
 				    errstr, optarg);
-			break;
-		case 'S':
+			ఆపు;
+		స్థితి 'S':
 			Sflag = 1;
-			break;
-		case 'T':
-			errstr = NULL;
+			ఆపు;
+		స్థితి 'T':
+			errstr = ఖాళీ;
 			errno = 0;
-			if (map_tos(optarg, &Tflag))
-				break;
-			if (strlen(optarg) > 1 && optarg[0] == '0' &&
+			ఒకవేళ (map_tos(optarg, &Tflag))
+				ఆపు;
+			ఒకవేళ (అక్షరశ్రేణి_పొడవు(optarg) > 1 && optarg[0] == '0' &&
 			    optarg[1] == 'x')
-				Tflag = (int)strtol(optarg, NULL, 16);
-			else
-				Tflag = (int)strtonum(optarg, 0, 255,
+				Tflag = (పూర్ణాంకం)strtol(optarg, ఖాళీ, 16);
+			లేకపోతే
+				Tflag = (పూర్ణాంకం)strtonum(optarg, 0, 255,
 				    &errstr);
-			if (Tflag < 0 || Tflag > 255 || errstr || errno)
+			ఒకవేళ (Tflag < 0 || Tflag > 255 || errstr || errno)
 				errx(1, "illegal tos value %s", optarg);
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			usage(1);
 		}
 	}
@@ -295,201 +295,201 @@ main(int argc, char *argv[])
 	argv += optind;
 
 	/* Cruft to make sure options are clean, and used properly. */
-	if (argv[0] && !argv[1] && family == AF_UNIX) {
+	ఒకవేళ (argv[0] && !argv[1] && family == AF_UNIX) {
 		host = argv[0];
-		uport = NULL;
-	} else if (argv[0] && !argv[1]) {
-		if  (!lflag)
+		uport = ఖాళీ;
+	} లేకపోతే ఒకవేళ (argv[0] && !argv[1]) {
+		ఒకవేళ  (!lflag)
 			usage(1);
 		uport = argv[0];
-		host = NULL;
-	} else if (argv[0] && argv[1]) {
+		host = ఖాళీ;
+	} లేకపోతే ఒకవేళ (argv[0] && argv[1]) {
 		host = argv[0];
 		uport = argv[1];
-	} else
+	} లేకపోతే
 		usage(1);
 
-	if (lflag && sflag)
+	ఒకవేళ (lflag && sflag)
 		errx(1, "cannot use -s and -l");
-	if (lflag && pflag)
+	ఒకవేళ (lflag && pflag)
 		errx(1, "cannot use -p and -l");
-	if (lflag && zflag)
+	ఒకవేళ (lflag && zflag)
 		errx(1, "cannot use -z and -l");
-	if (!lflag && kflag)
+	ఒకవేళ (!lflag && kflag)
 		errx(1, "must use -l with -k");
 
 	/* Get name of temporary socket for unix datagram client */
-	if ((family == AF_UNIX) && uflag && !lflag) {
-		if (sflag) {
+	ఒకవేళ ((family == AF_UNIX) && uflag && !lflag) {
+		ఒకవేళ (sflag) {
 			unix_dg_tmp_socket = sflag;
-		} else {
+		} లేకపోతే {
 			strlcpy(unix_dg_tmp_socket_buf, "/tmp/nc.XXXXXXXXXX",
-				UNIX_DG_TMP_SOCKET_SIZE);
-			if (mktemp(unix_dg_tmp_socket_buf) == NULL)
+				UNIX_DG_TMP_SOCKET_కొలత);
+			ఒకవేళ (mktemp(unix_dg_tmp_socket_buf) == ఖాళీ)
 				err(1, "mktemp");
 			unix_dg_tmp_socket = unix_dg_tmp_socket_buf;
 		}
 	}
 
 	/* Initialize addrinfo structure. */
-	if (family != AF_UNIX) {
-		memset(&hints, 0, sizeof(struct addrinfo));
+	ఒకవేళ (family != AF_UNIX) {
+		memset(&hints, 0, పరిమాణం(నిర్మాణం addrinfo));
 		hints.ai_family = family;
 		hints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 		hints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
-		if (nflag)
+		ఒకవేళ (nflag)
 			hints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	if (xflag) {
-		if (uflag)
+	ఒకవేళ (xflag) {
+		ఒకవేళ (uflag)
 			errx(1, "no proxy support for UDP mode");
 
-		if (lflag)
+		ఒకవేళ (lflag)
 			errx(1, "no proxy support for listen");
 
-		if (family == AF_UNIX)
+		ఒకవేళ (family == AF_UNIX)
 			errx(1, "no proxy support for unix sockets");
 
 		/* XXX IPv6 transport to proxy would probably work */
-		if (family == AF_INET6)
+		ఒకవేళ (family == AF_INET6)
 			errx(1, "no proxy support for IPv6");
 
-		if (sflag)
+		ఒకవేళ (sflag)
 			errx(1, "no proxy support for local source address");
 
 		proxyhost = strsep(&proxy, ":");
 		proxyport = proxy;
 
-		memset(&proxyhints, 0, sizeof(struct addrinfo));
+		memset(&proxyhints, 0, పరిమాణం(నిర్మాణం addrinfo));
 		proxyhints.ai_family = family;
 		proxyhints.ai_socktype = SOCK_STREAM;
 		proxyhints.ai_protocol = IPPROTO_TCP;
-		if (nflag)
+		ఒకవేళ (nflag)
 			proxyhints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	if (lflag) {
-		int connfd;
+	ఒకవేళ (lflag) {
+		పూర్ణాంకం connfd;
 		ret = 0;
 
-		if (family == AF_UNIX) {
-			if (uflag)
+		ఒకవేళ (family == AF_UNIX) {
+			ఒకవేళ (uflag)
 				s = unix_bind(host);
-			else
+			లేకపోతే
 				s = unix_listen(host);
 		}
 
 		/* Allow only one connection at a time, but stay alive. */
-		for (;;) {
-			if (family != AF_UNIX)
+		కొరకు (;;) {
+			ఒకవేళ (family != AF_UNIX)
 				s = local_listen(host, uport, hints);
-			if (s < 0)
+			ఒకవేళ (s < 0)
 				err(1, "local_listen");
 			/*
 			 * For UDP and -k, don't connect the socket, let it
 			 * receive datagrams from multiple socket pairs.
 			 */
-			if (uflag && kflag)
+			ఒకవేళ (uflag && kflag)
 				readwrite(s);
 			/*
 			 * For UDP and not -k, we will use recvfrom() initially
 			 * to wait for a caller, then use the regular functions
 			 * to talk to the caller.
 			 */
-			else if (uflag && !kflag) {
-				int rv, plen;
-				char buf[16384];
-				struct sockaddr_storage z;
+			లేకపోతే ఒకవేళ (uflag && !kflag) {
+				పూర్ణాంకం rv, plen;
+				అక్షరం buf[16384];
+				నిర్మాణం sockaddr_storage z;
 
-				len = sizeof(z);
+				len = పరిమాణం(z);
 				plen = 2048;
 				rv = recvfrom(s, buf, plen, MSG_PEEK,
-				    (struct sockaddr *)&z, &len);
-				if (rv < 0)
+				    (నిర్మాణం sockaddr *)&z, &len);
+				ఒకవేళ (rv < 0)
 					err(1, "recvfrom");
 
-				rv = connect(s, (struct sockaddr *)&z, len);
-				if (rv < 0)
+				rv = connect(s, (నిర్మాణం sockaddr *)&z, len);
+				ఒకవేళ (rv < 0)
 					err(1, "connect");
 
-				if (vflag)
-					report_connect((struct sockaddr *)&z, len);
+				ఒకవేళ (vflag)
+					report_connect((నిర్మాణం sockaddr *)&z, len);
 
 				readwrite(s);
-			} else {
-				len = sizeof(cliaddr);
-				connfd = accept(s, (struct sockaddr *)&cliaddr,
+			} లేకపోతే {
+				len = పరిమాణం(cliaddr);
+				connfd = accept(s, (నిర్మాణం sockaddr *)&cliaddr,
 				    &len);
-				if (connfd == -1) {
+				ఒకవేళ (connfd == -1) {
 					/* For now, all errnos are fatal */
 					err(1, "accept");
 				}
-				if (vflag)
-					report_connect((struct sockaddr *)&cliaddr, len);
+				ఒకవేళ (vflag)
+					report_connect((నిర్మాణం sockaddr *)&cliaddr, len);
 
 				readwrite(connfd);
 				close(connfd);
 			}
 
-			if (family != AF_UNIX)
+			ఒకవేళ (family != AF_UNIX)
 				close(s);
-			else if (uflag) {
-				if (connect(s, NULL, 0) < 0)
+			లేకపోతే ఒకవేళ (uflag) {
+				ఒకవేళ (connect(s, ఖాళీ, 0) < 0)
 					err(1, "connect");
 			}
 
-			if (!kflag)
-				break;
+			ఒకవేళ (!kflag)
+				ఆపు;
 		}
-	} else if (family == AF_UNIX) {
+	} లేకపోతే ఒకవేళ (family == AF_UNIX) {
 		ret = 0;
 
-		if ((s = unix_connect(host)) > 0 && !zflag) {
+		ఒకవేళ ((s = unix_connect(host)) > 0 && !zflag) {
 			readwrite(s);
 			close(s);
-		} else
+		} లేకపోతే
 			ret = 1;
 
-		if (uflag)
+		ఒకవేళ (uflag)
 			unlink(unix_dg_tmp_socket);
-		exit(ret);
+		నిష్క్రమించు(ret);
 
-	} else {
-		int i = 0;
+	} లేకపోతే {
+		పూర్ణాంకం i = 0;
 
 		/* Construct the portlist[] array. */
 		build_ports(uport);
 
 		/* Cycle through portlist, connecting to each port. */
-		for (i = 0; portlist[i] != NULL; i++) {
-			if (s)
+		కొరకు (i = 0; portlist[i] != ఖాళీ; i++) {
+			ఒకవేళ (s)
 				close(s);
 
-			if (xflag)
+			ఒకవేళ (xflag)
 				s = socks_connect(host, portlist[i], hints,
 				    proxyhost, proxyport, proxyhints, socksv,
 				    Pflag);
-			else
+			లేకపోతే
 				s = remote_connect(host, portlist[i], hints);
 
-			if (s < 0)
-				continue;
+			ఒకవేళ (s < 0)
+				కొనసాగు;
 
 			ret = 0;
-			if (vflag || zflag) {
+			ఒకవేళ (vflag || zflag) {
 				/* For UDP, make sure we are connected. */
-				if (uflag) {
-					if (udptest(s) == -1) {
+				ఒకవేళ (uflag) {
+					ఒకవేళ (udptest(s) == -1) {
 						ret = 1;
-						continue;
+						కొనసాగు;
 					}
 				}
 
 				/* Don't look up port if -n. */
-				if (nflag)
-					sv = NULL;
-				else {
+				ఒకవేళ (nflag)
+					sv = ఖాళీ;
+				లేకపోతే {
 					sv = getservbyport(
 					    ntohs(atoi(portlist[i])),
 					    uflag ? "udp" : "tcp");
@@ -501,84 +501,84 @@ main(int argc, char *argv[])
 				    uflag ? "udp" : "tcp",
 				    sv ? sv->s_name : "*");
 			}
-			if (Fflag)
+			ఒకవేళ (Fflag)
 				fdpass(s);
-			else if (!zflag)
+			లేకపోతే ఒకవేళ (!zflag)
 				readwrite(s);
 		}
 	}
 
-	if (s)
+	ఒకవేళ (s)
 		close(s);
 
-	exit(ret);
+	నిష్క్రమించు(ret);
 }
 
 /*
  * unix_bind()
  * Returns a unix socket bound to the given path
  */
-int
-unix_bind(char *path)
+పూర్ణాంకం
+unix_bind(అక్షరం *మార్గం)
 {
-	struct sockaddr_un sun_sa;
-	int s;
+	నిర్మాణం sockaddr_un sun_sa;
+	పూర్ణాంకం s;
 
 	/* Create unix domain socket. */
-	if ((s = socket(AF_UNIX, uflag ? SOCK_DGRAM : SOCK_STREAM,
+	ఒకవేళ ((s = socket(AF_UNIX, uflag ? SOCK_DGRAM : SOCK_STREAM,
 	     0)) < 0)
-		return (-1);
+		తిరిగి (-1);
 
-	memset(&sun_sa, 0, sizeof(struct sockaddr_un));
+	memset(&sun_sa, 0, పరిమాణం(నిర్మాణం sockaddr_un));
 	sun_sa.sun_family = AF_UNIX;
 
-	if (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
-	    sizeof(sun_sa.sun_path)) {
+	ఒకవేళ (strlcpy(sun_sa.sun_మార్గం, మార్గం, పరిమాణం(sun_sa.sun_మార్గం)) >=
+	    పరిమాణం(sun_sa.sun_మార్గం)) {
 		close(s);
 		errno = ENAMETOOLONG;
-		return (-1);
+		తిరిగి (-1);
 	}
 
-	if (bind(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
+	ఒకవేళ (bind(s, (నిర్మాణం sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
 		close(s);
-		return (-1);
+		తిరిగి (-1);
 	}
-	return (s);
+	తిరిగి (s);
 }
 
 /*
  * unix_connect()
  * Returns a socket connected to a local unix socket. Returns -1 on failure.
  */
-int
-unix_connect(char *path)
+పూర్ణాంకం
+unix_connect(అక్షరం *మార్గం)
 {
-	struct sockaddr_un sun_sa;
-	int s;
+	నిర్మాణం sockaddr_un sun_sa;
+	పూర్ణాంకం s;
 
-	if (uflag) {
-		if ((s = unix_bind(unix_dg_tmp_socket)) < 0)
-			return (-1);
-	} else {
-		if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-			return (-1);
+	ఒకవేళ (uflag) {
+		ఒకవేళ ((s = unix_bind(unix_dg_tmp_socket)) < 0)
+			తిరిగి (-1);
+	} లేకపోతే {
+		ఒకవేళ ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+			తిరిగి (-1);
 	}
-	(void)fcntl(s, F_SETFD, FD_CLOEXEC);
+	(శూన్య)fcntl(s, F_SETFD, FD_CLOEXEC);
 
-	memset(&sun_sa, 0, sizeof(struct sockaddr_un));
+	memset(&sun_sa, 0, పరిమాణం(నిర్మాణం sockaddr_un));
 	sun_sa.sun_family = AF_UNIX;
 
-	if (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
-	    sizeof(sun_sa.sun_path)) {
+	ఒకవేళ (strlcpy(sun_sa.sun_మార్గం, మార్గం, పరిమాణం(sun_sa.sun_మార్గం)) >=
+	    పరిమాణం(sun_sa.sun_మార్గం)) {
 		close(s);
 		errno = ENAMETOOLONG;
-		return (-1);
+		తిరిగి (-1);
 	}
-	if (connect(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
+	ఒకవేళ (connect(s, (నిర్మాణం sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
 		close(s);
-		return (-1);
+		తిరిగి (-1);
 	}
-	return (s);
+	తిరిగి (s);
 
 }
 
@@ -586,18 +586,18 @@ unix_connect(char *path)
  * unix_listen()
  * Create a unix domain socket, and listen on it.
  */
-int
-unix_listen(char *path)
+పూర్ణాంకం
+unix_listen(అక్షరం *మార్గం)
 {
-	int s;
-	if ((s = unix_bind(path)) < 0)
-		return (-1);
+	పూర్ణాంకం s;
+	ఒకవేళ ((s = unix_bind(మార్గం)) < 0)
+		తిరిగి (-1);
 
-	if (listen(s, 5) < 0) {
+	ఒకవేళ (listen(s, 5) < 0) {
 		close(s);
-		return (-1);
+		తిరిగి (-1);
 	}
-	return (s);
+	తిరిగి (s);
 }
 
 /*
@@ -605,103 +605,103 @@ unix_listen(char *path)
  * Returns a socket connected to a remote host. Properly binds to a local
  * port or source address if needed. Returns -1 on failure.
  */
-int
-remote_connect(const char *host, const char *port, struct addrinfo hints)
+పూర్ణాంకం
+remote_connect(స్థిరరాశి అక్షరం *host, స్థిరరాశి అక్షరం *పోర్టు, నిర్మాణం addrinfo hints)
 {
-	struct addrinfo *res, *res0;
-	int s, error;
-#if defined(SO_RTABLE) || defined(SO_BINDANY)
-	int on = 1;
-#endif
+	నిర్మాణం addrinfo *res, *res0;
+	పూర్ణాంకం s, error;
+#ఒకవేళ defined(SO_RTABLE) || defined(SO_BINDANY)
+	పూర్ణాంకం on = 1;
+#అయితే_ముగింపు
 
-	if ((error = getaddrinfo(host, port, &hints, &res)))
+	ఒకవేళ ((error = getaddrinfo(host, పోర్టు, &hints, &res)))
 		errx(1, "getaddrinfo: %s", gai_strerror(error));
 
 	res0 = res;
-	do {
-		if ((s = socket(res0->ai_family, res0->ai_socktype,
+	చేయి {
+		ఒకవేళ ((s = socket(res0->ai_family, res0->ai_socktype,
 		    res0->ai_protocol)) < 0)
-			continue;
+			కొనసాగు;
 
-#ifdef SO_RTABLE
-		if (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
-		    &rtableid, sizeof(rtableid)) == -1))
+#నిర్వచితమైతే SO_RTABLE
+		ఒకవేళ (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
+		    &rtableid, పరిమాణం(rtableid)) == -1))
 			err(1, "setsockopt SO_RTABLE");
-#endif
+#అయితే_ముగింపు
 		/* Bind to a local port or source address if specified. */
-		if (sflag || pflag) {
-			struct addrinfo ahints, *ares;
+		ఒకవేళ (sflag || pflag) {
+			నిర్మాణం addrinfo ahints, *ares;
 
-#ifdef SO_BINDANY
+#నిర్వచితమైతే SO_BINDANY
 			/* try SO_BINDANY, but don't insist */
-			setsockopt(s, SOL_SOCKET, SO_BINDANY, &on, sizeof(on));
-#endif
-			memset(&ahints, 0, sizeof(struct addrinfo));
+			setsockopt(s, SOL_SOCKET, SO_BINDANY, &on, పరిమాణం(on));
+#అయితే_ముగింపు
+			memset(&ahints, 0, పరిమాణం(నిర్మాణం addrinfo));
 			ahints.ai_family = res0->ai_family;
 			ahints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 			ahints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
 			ahints.ai_flags = AI_PASSIVE;
-			if ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
+			ఒకవేళ ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
 				errx(1, "getaddrinfo: %s", gai_strerror(error));
 
-			if (bind(s, (struct sockaddr *)ares->ai_addr,
+			ఒకవేళ (bind(s, (నిర్మాణం sockaddr *)ares->ai_addr,
 			    ares->ai_addrlen) < 0)
 				err(1, "bind failed");
 			freeaddrinfo(ares);
 		}
 
-		set_common_sockopts(s, res0->ai_family);
+		సమితి_common_sockopts(s, res0->ai_family);
 
-		if (timeout_connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
-			break;
-		else if (vflag)
-			warn("connect to %s port %s (%s) failed", host, port,
+		ఒకవేళ (timeout_connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
+			ఆపు;
+		లేకపోతే ఒకవేళ (vflag)
+			warn("connect to %s port %s (%s) failed", host, పోర్టు,
 			    uflag ? "udp" : "tcp");
 
 		close(s);
 		s = -1;
-	} while ((res0 = res0->ai_next) != NULL);
+	} అయితే ((res0 = res0->ai_next) != ఖాళీ);
 
 	freeaddrinfo(res);
 
-	return (s);
+	తిరిగి (s);
 }
 
-int
-timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
+పూర్ణాంకం
+timeout_connect(పూర్ణాంకం s, స్థిరరాశి నిర్మాణం sockaddr *name, socklen_t namelen)
 {
-	struct pollfd pfd;
+	నిర్మాణం pollfd pfd;
 	socklen_t optlen;
-	int flags = 0, optval;
-	int ret;
+	పూర్ణాంకం flags = 0, optval;
+	పూర్ణాంకం ret;
 
-	if (timeout != -1) {
+	ఒకవేళ (timeout != -1) {
 		flags = fcntl(s, F_GETFL, 0);
-		if (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1)
+		ఒకవేళ (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1)
 			err(1, "set non-blocking mode");
 	}
 
-	if ((ret = connect(s, name, namelen)) != 0 && errno == EINPROGRESS) {
+	ఒకవేళ ((ret = connect(s, name, namelen)) != 0 && errno == EINPROGRESS) {
 		pfd.fd = s;
 		pfd.events = POLLOUT;
-		if ((ret = poll(&pfd, 1, timeout)) == 1) {
-			optlen = sizeof(optval);
-			if ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
+		ఒకవేళ ((ret = poll(&pfd, 1, timeout)) == 1) {
+			optlen = పరిమాణం(optval);
+			ఒకవేళ ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
 			    &optval, &optlen)) == 0) {
 				errno = optval;
 				ret = optval == 0 ? 0 : -1;
 			}
-		} else if (ret == 0) {
+		} లేకపోతే ఒకవేళ (ret == 0) {
 			errno = ETIMEDOUT;
 			ret = -1;
-		} else
+		} లేకపోతే
 			err(1, "poll failed");
 	}
 
-	if (timeout != -1 && fcntl(s, F_SETFL, flags) == -1)
+	ఒకవేళ (timeout != -1 && fcntl(s, F_SETFL, flags) == -1)
 		err(1, "restoring flags");
 
-	return (ret);
+	తిరిగి (ret);
 }
 
 /*
@@ -709,12 +709,12 @@ timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
  * Returns a socket listening on a local port, binds to specified source
  * address. Returns -1 on failure.
  */
-int
-local_listen(char *host, char *port, struct addrinfo hints)
+పూర్ణాంకం
+local_listen(అక్షరం *host, అక్షరం *పోర్టు, నిర్మాణం addrinfo hints)
 {
-	struct addrinfo *res, *res0;
-	int s, ret, x = 1;
-	int error;
+	నిర్మాణం addrinfo *res, *res0;
+	పూర్ణాంకం s, ret, x = 1;
+	పూర్ణాంకం error;
 
 	/* Allow nodename to be null. */
 	hints.ai_flags |= AI_PASSIVE;
@@ -723,72 +723,72 @@ local_listen(char *host, char *port, struct addrinfo hints)
 	 * In the case of binding to a wildcard address
 	 * default to binding to an ipv4 address.
 	 */
-	if (host == NULL && hints.ai_family == AF_UNSPEC)
+	ఒకవేళ (host == ఖాళీ && hints.ai_family == AF_UNSPEC)
 		hints.ai_family = AF_INET;
 
-	if ((error = getaddrinfo(host, port, &hints, &res)))
+	ఒకవేళ ((error = getaddrinfo(host, పోర్టు, &hints, &res)))
 		errx(1, "getaddrinfo: %s", gai_strerror(error));
 
 	res0 = res;
-	do {
-		if ((s = socket(res0->ai_family, res0->ai_socktype,
+	చేయి {
+		ఒకవేళ ((s = socket(res0->ai_family, res0->ai_socktype,
 		    res0->ai_protocol)) < 0)
-			continue;
+			కొనసాగు;
 
-#ifdef SO_RTABLE
-		if (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
-		    &rtableid, sizeof(rtableid)) == -1))
+#నిర్వచితమైతే SO_RTABLE
+		ఒకవేళ (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
+		    &rtableid, పరిమాణం(rtableid)) == -1))
 			err(1, "setsockopt SO_RTABLE");
-#endif
-#ifdef SO_REUSEPORT
-		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, sizeof(x));
-		if (ret == -1)
+#అయితే_ముగింపు
+#నిర్వచితమైతే SO_REUSEPORT
+		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, పరిమాణం(x));
+		ఒకవేళ (ret == -1)
 			err(1, "setsockopt SO_REUSEPORT");
-#endif
-#ifdef SO_REUSEADDR
-		ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &x, sizeof(x));
-		if (ret == -1)
+#అయితే_ముగింపు
+#నిర్వచితమైతే SO_REUSEADDR
+		ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &x, పరిమాణం(x));
+		ఒకవేళ (ret == -1)
 			err(1, "setsockopt SO_REUSEADDR");
-#endif
-		set_common_sockopts(s, res0->ai_family);
+#అయితే_ముగింపు
+		సమితి_common_sockopts(s, res0->ai_family);
 
-		if (bind(s, (struct sockaddr *)res0->ai_addr,
+		ఒకవేళ (bind(s, (నిర్మాణం sockaddr *)res0->ai_addr,
 		    res0->ai_addrlen) == 0)
-			break;
+			ఆపు;
 
 		close(s);
 		s = -1;
-	} while ((res0 = res0->ai_next) != NULL);
+	} అయితే ((res0 = res0->ai_next) != ఖాళీ);
 
-	if (!uflag && s != -1) {
-		if (listen(s, 1) < 0)
+	ఒకవేళ (!uflag && s != -1) {
+		ఒకవేళ (listen(s, 1) < 0)
 			err(1, "listen");
 	}
 
 	freeaddrinfo(res);
 
-	return (s);
+	తిరిగి (s);
 }
 
 /*
  * readwrite()
  * Loop that polls on the network file descriptor and stdin.
  */
-void
-readwrite(int net_fd)
+శూన్య
+readwrite(పూర్ణాంకం net_fd)
 {
-	struct pollfd pfd[4];
-	int stdin_fd = STDIN_FILENO;
-	int stdout_fd = STDOUT_FILENO;
-	unsigned char netinbuf[BUFSIZE];
-	size_t netinbufpos = 0;
-	unsigned char stdinbuf[BUFSIZE];
-	size_t stdinbufpos = 0;
-	int n, num_fds;
+	నిర్మాణం pollfd pfd[4];
+	పూర్ణాంకం stdin_fd = STDIN_FILENO;
+	పూర్ణాంకం stdout_fd = STDOUT_FILENO;
+	గుర్తులేని అక్షరం netinbuf[BUFSIZE];
+	కొలత_t netinbufpos = 0;
+	గుర్తులేని అక్షరం stdinbuf[BUFSIZE];
+	కొలత_t stdinbufpos = 0;
+	పూర్ణాంకం n, అంకె_fds;
 	ssize_t ret;
 
 	/* don't read from stdin if requested */
-	if (dflag)
+	ఒకవేళ (dflag)
 		stdin_fd = -1;
 
 	/* stdin */
@@ -807,283 +807,283 @@ readwrite(int net_fd)
 	pfd[POLL_STDOUT].fd = stdout_fd;
 	pfd[POLL_STDOUT].events = 0;
 
-	while (1) {
+	అయితే (1) {
 		/* both inputs are gone, buffers are empty, we are done */
-		if (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1
+		ఒకవేళ (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1
 		    && stdinbufpos == 0 && netinbufpos == 0) {
 			close(net_fd);
-			return;
+			తిరిగి;
 		}
 		/* both outputs are gone, we can't continue */
-		if (pfd[POLL_NETOUT].fd == -1 && pfd[POLL_STDOUT].fd == -1) {
+		ఒకవేళ (pfd[POLL_NETOUT].fd == -1 && pfd[POLL_STDOUT].fd == -1) {
 			close(net_fd);
-			return;
+			తిరిగి;
 		}
 		/* listen and net in gone, queues empty, done */
-		if (lflag && pfd[POLL_NETIN].fd == -1
+		ఒకవేళ (lflag && pfd[POLL_NETIN].fd == -1
 		    && stdinbufpos == 0 && netinbufpos == 0) {
 			close(net_fd);
-			return;
+			తిరిగి;
 		}
 
 		/* help says -i is for "wait between lines sent". We read and
 		 * write arbitrary amounts of data, and we don't want to start
 		 * scanning for newlines, so this is as good as it gets */
-		if (iflag)
+		ఒకవేళ (iflag)
 			sleep(iflag);
 
 		/* poll */
-		num_fds = poll(pfd, 4, timeout);
+		అంకె_fds = poll(pfd, 4, timeout);
 
 		/* treat poll errors */
-		if (num_fds == -1) {
+		ఒకవేళ (అంకె_fds == -1) {
 			close(net_fd);
 			err(1, "polling error");
 		}
 
 		/* timeout happened */
-		if (num_fds == 0)
-			return;
+		ఒకవేళ (అంకె_fds == 0)
+			తిరిగి;
 
 		/* treat socket error conditions */
-		for (n = 0; n < 4; n++) {
-			if (pfd[n].revents & (POLLERR|POLLNVAL)) {
+		కొరకు (n = 0; n < 4; n++) {
+			ఒకవేళ (pfd[n].revents & (POLLERR|POLLNVAL)) {
 				pfd[n].fd = -1;
 			}
 		}
 		/* reading is possible after HUP */
-		if (pfd[POLL_STDIN].events & POLLIN &&
+		ఒకవేళ (pfd[POLL_STDIN].events & POLLIN &&
 		    pfd[POLL_STDIN].revents & POLLHUP &&
 		    ! (pfd[POLL_STDIN].revents & POLLIN))
 				pfd[POLL_STDIN].fd = -1;
 
-		if (pfd[POLL_NETIN].events & POLLIN &&
+		ఒకవేళ (pfd[POLL_NETIN].events & POLLIN &&
 		    pfd[POLL_NETIN].revents & POLLHUP &&
 		    ! (pfd[POLL_NETIN].revents & POLLIN))
 				pfd[POLL_NETIN].fd = -1;
 
-		if (pfd[POLL_NETOUT].revents & POLLHUP) {
-			if (Nflag)
+		ఒకవేళ (pfd[POLL_NETOUT].revents & POLLHUP) {
+			ఒకవేళ (Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
 		/* if HUP, stop watching stdout */
-		if (pfd[POLL_STDOUT].revents & POLLHUP)
+		ఒకవేళ (pfd[POLL_STDOUT].revents & POLLHUP)
 			pfd[POLL_STDOUT].fd = -1;
 		/* if no net out, stop watching stdin */
-		if (pfd[POLL_NETOUT].fd == -1)
+		ఒకవేళ (pfd[POLL_NETOUT].fd == -1)
 			pfd[POLL_STDIN].fd = -1;
 		/* if no stdout, stop watching net in */
-		if (pfd[POLL_STDOUT].fd == -1) {
-			if (pfd[POLL_NETIN].fd != -1)
+		ఒకవేళ (pfd[POLL_STDOUT].fd == -1) {
+			ఒకవేళ (pfd[POLL_NETIN].fd != -1)
 				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
 			pfd[POLL_NETIN].fd = -1;
 		}
 
 		/* try to read from stdin */
-		if (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
+		ఒకవేళ (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
 			ret = fillbuf(pfd[POLL_STDIN].fd, stdinbuf,
 			    &stdinbufpos);
 			/* error or eof on stdin - remove from pfd */
-			if (ret == 0 || ret == -1)
+			ఒకవేళ (ret == 0 || ret == -1)
 				pfd[POLL_STDIN].fd = -1;
 			/* read something - poll net out */
-			if (stdinbufpos > 0)
+			ఒకవేళ (stdinbufpos > 0)
 				pfd[POLL_NETOUT].events = POLLOUT;
 			/* filled buffer - remove self from polling */
-			if (stdinbufpos == BUFSIZE)
+			ఒకవేళ (stdinbufpos == BUFSIZE)
 				pfd[POLL_STDIN].events = 0;
 		}
 		/* try to write to network */
-		if (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
+		ఒకవేళ (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
 			ret = drainbuf(pfd[POLL_NETOUT].fd, stdinbuf,
 			    &stdinbufpos);
-			if (ret == -1)
+			ఒకవేళ (ret == -1)
 				pfd[POLL_NETOUT].fd = -1;
 			/* buffer empty - remove self from polling */
-			if (stdinbufpos == 0)
+			ఒకవేళ (stdinbufpos == 0)
 				pfd[POLL_NETOUT].events = 0;
 			/* buffer no longer full - poll stdin again */
-			if (stdinbufpos < BUFSIZE)
+			ఒకవేళ (stdinbufpos < BUFSIZE)
 				pfd[POLL_STDIN].events = POLLIN;
 		}
 		/* try to read from network */
-		if (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
+		ఒకవేళ (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
 			ret = fillbuf(pfd[POLL_NETIN].fd, netinbuf,
 			    &netinbufpos);
-			if (ret == -1)
+			ఒకవేళ (ret == -1)
 				pfd[POLL_NETIN].fd = -1;
 			/* eof on net in - remove from pfd */
-			if (ret == 0) {
+			ఒకవేళ (ret == 0) {
 				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
 				pfd[POLL_NETIN].fd = -1;
 			}
 			/* read something - poll stdout */
-			if (netinbufpos > 0)
+			ఒకవేళ (netinbufpos > 0)
 				pfd[POLL_STDOUT].events = POLLOUT;
 			/* filled buffer - remove self from polling */
-			if (netinbufpos == BUFSIZE)
+			ఒకవేళ (netinbufpos == BUFSIZE)
 				pfd[POLL_NETIN].events = 0;
 			/* handle telnet */
-			if (tflag)
+			ఒకవేళ (tflag)
 				atelnet(pfd[POLL_NETIN].fd, netinbuf,
 				    netinbufpos);
 		}
 		/* try to write to stdout */
-		if (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
+		ఒకవేళ (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
 			ret = drainbuf(pfd[POLL_STDOUT].fd, netinbuf,
 			    &netinbufpos);
-			if (ret == -1)
+			ఒకవేళ (ret == -1)
 				pfd[POLL_STDOUT].fd = -1;
 			/* buffer empty - remove self from polling */
-			if (netinbufpos == 0)
+			ఒకవేళ (netinbufpos == 0)
 				pfd[POLL_STDOUT].events = 0;
 			/* buffer no longer full - poll net in again */
-			if (netinbufpos < BUFSIZE)
+			ఒకవేళ (netinbufpos < BUFSIZE)
 				pfd[POLL_NETIN].events = POLLIN;
 		}
 
 		/* stdin gone and queue empty? */
-		if (pfd[POLL_STDIN].fd == -1 && stdinbufpos == 0) {
-			if (pfd[POLL_NETOUT].fd != -1 && Nflag)
+		ఒకవేళ (pfd[POLL_STDIN].fd == -1 && stdinbufpos == 0) {
+			ఒకవేళ (pfd[POLL_NETOUT].fd != -1 && Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
 		/* net in gone and queue empty? */
-		if (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
+		ఒకవేళ (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
 			pfd[POLL_STDOUT].fd = -1;
 		}
 	}
 }
 
 ssize_t
-drainbuf(int fd, unsigned char *buf, size_t *bufpos)
+drainbuf(పూర్ణాంకం fd, గుర్తులేని అక్షరం *buf, కొలత_t *bufpos)
 {
 	ssize_t n;
 	ssize_t adjust;
 
-	n = write(fd, buf, *bufpos);
+	n = లిఖ(fd, buf, *bufpos);
 	/* don't treat EAGAIN, EINTR as error */
-	if (n == -1 && (errno == EAGAIN || errno == EINTR))
+	ఒకవేళ (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
-	if (n <= 0)
-		return n;
+	ఒకవేళ (n <= 0)
+		తిరిగి n;
 	/* adjust buffer */
 	adjust = *bufpos - n;
-	if (adjust > 0)
+	ఒకవేళ (adjust > 0)
 		memmove(buf, buf + n, adjust);
 	*bufpos -= n;
-	return n;
+	తిరిగి n;
 }
 
 
 ssize_t
-fillbuf(int fd, unsigned char *buf, size_t *bufpos)
+fillbuf(పూర్ణాంకం fd, గుర్తులేని అక్షరం *buf, కొలత_t *bufpos)
 {
-	size_t num = BUFSIZE - *bufpos;
+	కొలత_t అంకె = BUFSIZE - *bufpos;
 	ssize_t n;
 
-	n = read(fd, buf + *bufpos, num);
+	n = పఠ(fd, buf + *bufpos, అంకె);
 	/* don't treat EAGAIN, EINTR as error */
-	if (n == -1 && (errno == EAGAIN || errno == EINTR))
+	ఒకవేళ (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
-	if (n <= 0)
-		return n;
+	ఒకవేళ (n <= 0)
+		తిరిగి n;
 	*bufpos += n;
-	return n;
+	తిరిగి n;
 }
 
 /*
  * fdpass()
  * Pass the connected file descriptor to stdout and exit.
  */
-void
-fdpass(int nfd)
+శూన్య
+fdpass(పూర్ణాంకం nfd)
 {
-#if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
-#ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+#ఒకవేళ defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_లోపల_MSGHDR) || defined(HAVE_CONTROL_లోపల_MSGHDR))
+	నిర్మాణం msghdr సందేశం;
+#నిర్వచితం_కాకపోతే HAVE_ACCRIGHTS_లోపల_MSGHDR
+	సంఘం {
+		నిర్మాణం cmsghdr hdr;
+		అక్షరం buf[CMSG_SPACE(పరిమాణం(పూర్ణాంకం))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
-#endif
-	struct iovec vec;
-	char ch = '\0';
-	struct pollfd pfd;
+	నిర్మాణం cmsghdr *cmsg;
+#అయితే_ముగింపు
+	నిర్మాణం iovec vec;
+	అక్షరం ch = '\0';
+	నిర్మాణం pollfd pfd;
 	ssize_t r;
 
-	memset(&msg, 0, sizeof(msg));
-#ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	msg.msg_accrights = (caddr_t)&nfd;
-	msg.msg_accrightslen = sizeof(nfd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
-	msg.msg_control = (caddr_t)&cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
-	cmsg = CMSG_FIRSTHDR(&msg);
-	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+	memset(&సందేశం, 0, పరిమాణం(సందేశం));
+#నిర్వచితమైతే HAVE_ACCRIGHTS_లోపల_MSGHDR
+	సందేశం.సందేశం_accrights = (caddr_t)&nfd;
+	సందేశం.సందేశం_accrightslen = పరిమాణం(nfd);
+#లేకపోతే
+	memset(&cmsgbuf, 0, పరిమాణం(cmsgbuf));
+	సందేశం.msg_control = (caddr_t)&cmsgbuf.buf;
+	సందేశం.msg_controllen = పరిమాణం(cmsgbuf.buf);
+	cmsg = CMSG_FIRSTHDR(&సందేశం);
+	cmsg->cmsg_len = CMSG_LEN(పరిమాణం(పూర్ణాంకం));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
-	*(int *)CMSG_DATA(cmsg) = nfd;
-#endif
+	*(పూర్ణాంకం *)CMSG_DATA(cmsg) = nfd;
+#అయితే_ముగింపు
 
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
-	msg.msg_iov = &vec;
-	msg.msg_iovlen = 1;
+	సందేశం.msg_iov = &vec;
+	సందేశం.msg_iovlen = 1;
 
-	bzero(&pfd, sizeof(pfd));
+	bzero(&pfd, పరిమాణం(pfd));
 	pfd.fd = STDOUT_FILENO;
 	pfd.events = POLLOUT;
-	for (;;) {
-		r = sendmsg(STDOUT_FILENO, &msg, 0);
-		if (r == -1) {
-			if (errno == EAGAIN || errno == EINTR) {
-				if (poll(&pfd, 1, -1) == -1)
+	కొరకు (;;) {
+		r = sendmsg(STDOUT_FILENO, &సందేశం, 0);
+		ఒకవేళ (r == -1) {
+			ఒకవేళ (errno == EAGAIN || errno == EINTR) {
+				ఒకవేళ (poll(&pfd, 1, -1) == -1)
 					err(1, "poll");
-				continue;
+				కొనసాగు;
 			}
 			err(1, "sendmsg");
-		} else if (r != 1)
+		} లేకపోతే ఒకవేళ (r != 1)
 			errx(1, "sendmsg: unexpected return value %zd", r);
-		else
-			break;
+		లేకపోతే
+			ఆపు;
 	}
-	exit(0);
-#else
+	నిష్క్రమించు(0);
+#లేకపోతే
 	errx(1, "%s: file descriptor passing not supported", __func__);
-#endif
+#అయితే_ముగింపు
 }
 
 /* Deal with RFC 854 WILL/WONT DO/DONT negotiation. */
-void
-atelnet(int nfd, unsigned char *buf, unsigned int size)
+శూన్య
+atelnet(పూర్ణాంకం nfd, గుర్తులేని అక్షరం *buf, గుర్తులేని పూర్ణాంకం కొలత)
 {
-	unsigned char *p, *end;
-	unsigned char obuf[4];
+	గుర్తులేని అక్షరం *p, *చివర;
+	గుర్తులేని అక్షరం obuf[4];
 
-	if (size < 3)
-		return;
-	end = buf + size - 2;
+	ఒకవేళ (కొలత < 3)
+		తిరిగి;
+	చివర = buf + కొలత - 2;
 
-	for (p = buf; p < end; p++) {
-		if (*p != IAC)
-			continue;
+	కొరకు (p = buf; p < చివర; p++) {
+		ఒకవేళ (*p != IAC)
+			కొనసాగు;
 
 		obuf[0] = IAC;
 		p++;
-		if ((*p == WILL) || (*p == WONT))
+		ఒకవేళ ((*p == WILL) || (*p == WONT))
 			obuf[1] = DONT;
-		else if ((*p == DO) || (*p == DONT))
+		లేకపోతే ఒకవేళ ((*p == DO) || (*p == DONT))
 			obuf[1] = WONT;
-		else
-			continue;
+		లేకపోతే
+			కొనసాగు;
 
 		p++;
 		obuf[2] = *p;
-		if (atomicio(vwrite, nfd, obuf, 3) != 3)
+		ఒకవేళ (atomicio(vwrite, nfd, obuf, 3) != 3)
 			warn("Write Error!");
 	}
 }
@@ -1093,59 +1093,59 @@ atelnet(int nfd, unsigned char *buf, unsigned int size)
  * Build an array of ports in portlist[], listing each port
  * that we should try to connect to.
  */
-void
-build_ports(char *p)
+శూన్య
+build_ports(అక్షరం *p)
 {
-	const char *errstr;
-	char *n;
-	int hi, lo, cp;
-	int x = 0;
+	స్థిరరాశి అక్షరం *errstr;
+	అక్షరం *n;
+	పూర్ణాంకం hi, lo, cp;
+	పూర్ణాంకం x = 0;
 
-	if ((n = strchr(p, '-')) != NULL) {
+	ఒకవేళ ((n = strchr(p, '-')) != ఖాళీ) {
 		*n = '\0';
 		n++;
 
 		/* Make sure the ports are in order: lowest->highest. */
-		hi = strtonum(n, 1, PORT_MAX, &errstr);
-		if (errstr)
+		hi = strtonum(n, 1, పోర్టు_MAX, &errstr);
+		ఒకవేళ (errstr)
 			errx(1, "port number %s: %s", errstr, n);
-		lo = strtonum(p, 1, PORT_MAX, &errstr);
-		if (errstr)
+		lo = strtonum(p, 1, పోర్టు_MAX, &errstr);
+		ఒకవేళ (errstr)
 			errx(1, "port number %s: %s", errstr, p);
 
-		if (lo > hi) {
+		ఒకవేళ (lo > hi) {
 			cp = hi;
 			hi = lo;
 			lo = cp;
 		}
 
 		/* Load ports sequentially. */
-		for (cp = lo; cp <= hi; cp++) {
-			portlist[x] = calloc(1, PORT_MAX_LEN);
-			if (portlist[x] == NULL)
+		కొరకు (cp = lo; cp <= hi; cp++) {
+			portlist[x] = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పోర్టు_MAX_LEN);
+			ఒకవేళ (portlist[x] == ఖాళీ)
 				errx(1, "calloc");
-			snprintf(portlist[x], PORT_MAX_LEN, "%d", cp);
+			snprintf(portlist[x], పోర్టు_MAX_LEN, "%d", cp);
 			x++;
 		}
 
 		/* Randomly swap ports. */
-		if (rflag) {
-			int y;
-			char *c;
+		ఒకవేళ (rflag) {
+			పూర్ణాంకం y;
+			అక్షరం *c;
 
-			for (x = 0; x <= (hi - lo); x++) {
-				y = arc4random_uniform(hi - lo);
+			కొరకు (x = 0; x <= (hi - lo); x++) {
+				y = arc4random_ఏకరీతి(hi - lo);
 				c = portlist[x];
 				portlist[x] = portlist[y];
 				portlist[y] = c;
 			}
 		}
-	} else {
-		hi = strtonum(p, 1, PORT_MAX, &errstr);
-		if (errstr)
+	} లేకపోతే {
+		hi = strtonum(p, 1, పోర్టు_MAX, &errstr);
+		ఒకవేళ (errstr)
 			errx(1, "port number %s: %s", errstr, p);
 		portlist[0] = strdup(p);
-		if (portlist[0] == NULL)
+		ఒకవేళ (portlist[0] == ఖాళీ)
 			errx(1, "strdup");
 	}
 }
@@ -1155,73 +1155,73 @@ build_ports(char *p)
  * Do a few writes to see if the UDP port is there.
  * Fails once PF state table is full.
  */
-int
-udptest(int s)
+పూర్ణాంకం
+udptest(పూర్ణాంకం s)
 {
-	int i, ret;
+	పూర్ణాంకం i, ret;
 
-	for (i = 0; i <= 3; i++) {
-		if (write(s, "X", 1) == 1)
+	కొరకు (i = 0; i <= 3; i++) {
+		ఒకవేళ (లిఖ(s, "X", 1) == 1)
 			ret = 1;
-		else
+		లేకపోతే
 			ret = -1;
 	}
-	return (ret);
+	తిరిగి (ret);
 }
 
-void
-set_common_sockopts(int s, int af)
+శూన్య
+సమితి_common_sockopts(పూర్ణాంకం s, పూర్ణాంకం af)
 {
-	int x = 1;
+	పూర్ణాంకం x = 1;
 
-#ifdef TCP_MD5SIG
-	if (Sflag) {
-		if (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
-			&x, sizeof(x)) == -1)
+#నిర్వచితమైతే TCP_MD5SIG
+	ఒకవేళ (Sflag) {
+		ఒకవేళ (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
+			&x, పరిమాణం(x)) == -1)
 			err(1, "setsockopt");
 	}
-#endif
-	if (Dflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_DEBUG,
-			&x, sizeof(x)) == -1)
+#అయితే_ముగింపు
+	ఒకవేళ (Dflag) {
+		ఒకవేళ (setsockopt(s, SOL_SOCKET, SO_DEBUG,
+			&x, పరిమాణం(x)) == -1)
 			err(1, "setsockopt");
 	}
-#if defined(IP_TOS) && defined(IPV6_TCLASS)
-	if (Tflag != -1) {
-		int proto, option;
+#ఒకవేళ defined(IP_TOS) && defined(IPV6_TCLASS)
+	ఒకవేళ (Tflag != -1) {
+		పూర్ణాంకం proto, option;
 
-		if (af == AF_INET6) {
+		ఒకవేళ (af == AF_INET6) {
 			proto = IPPROTO_IPV6;
 			option = IPV6_TCLASS;
-		} else {
+		} లేకపోతే {
 			proto = IPPROTO_IP;
 			option = IP_TOS;
 		}
 
-		if (setsockopt(s, proto, option, &Tflag, sizeof(Tflag)) == -1)
+		ఒకవేళ (setsockopt(s, proto, option, &Tflag, పరిమాణం(Tflag)) == -1)
 			err(1, "set IP ToS");
 	}
-#endif
-	if (Iflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
-		    &Iflag, sizeof(Iflag)) == -1)
+#అయితే_ముగింపు
+	ఒకవేళ (Iflag) {
+		ఒకవేళ (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
+		    &Iflag, పరిమాణం(Iflag)) == -1)
 			err(1, "set TCP receive buffer size");
 	}
-	if (Oflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_SNDBUF,
-		    &Oflag, sizeof(Oflag)) == -1)
+	ఒకవేళ (Oflag) {
+		ఒకవేళ (setsockopt(s, SOL_SOCKET, SO_SNDBUF,
+		    &Oflag, పరిమాణం(Oflag)) == -1)
 			err(1, "set TCP send buffer size");
 	}
 }
 
-int
-map_tos(char *s, int *val)
+పూర్ణాంకం
+map_tos(అక్షరం *s, పూర్ణాంకం *val)
 {
-#ifdef IP_TOS
+#నిర్వచితమైతే IP_TOS
 	/* DiffServ Codepoints and other TOS mappings */
-	const struct toskeywords {
-		const char	*keyword;
-		int		 val;
+	స్థిరరాశి నిర్మాణం toskeywords {
+		స్థిరరాశి అక్షరం	*keyword;
+		పూర్ణాంకం		 val;
 	} *t, toskeywords[] = {
 		{ "af11",		IPTOS_DSCP_AF11 },
 		{ "af12",		IPTOS_DSCP_AF12 },
@@ -1250,48 +1250,48 @@ map_tos(char *s, int *val)
 		{ "netcontrol",		IPTOS_PREC_NETCONTROL },
 		{ "reliability",	IPTOS_RELIABILITY },
 		{ "throughput",		IPTOS_THROUGHPUT },
-		{ NULL, 		-1 },
+		{ ఖాళీ, 		-1 },
 	};
 
-	for (t = toskeywords; t->keyword != NULL; t++) {
-		if (strcmp(s, t->keyword) == 0) {
+	కొరకు (t = toskeywords; t->keyword != ఖాళీ; t++) {
+		ఒకవేళ (strcmp(s, t->keyword) == 0) {
 			*val = t->val;
-			return (1);
+			తిరిగి (1);
 		}
 	}
-#endif
+#అయితే_ముగింపు
 
-	return (0);
+	తిరిగి (0);
 }
 
-void
-report_connect(const struct sockaddr *sa, socklen_t salen)
+శూన్య
+report_connect(స్థిరరాశి నిర్మాణం sockaddr *sa, socklen_t salen)
 {
-	char remote_host[NI_MAXHOST];
-	char remote_port[NI_MAXSERV];
-	int herr;
-	int flags = NI_NUMERICSERV;
+	అక్షరం remote_host[NI_MAXHOST];
+	అక్షరం remote_పోర్టు[NI_MAXSERV];
+	పూర్ణాంకం herr;
+	పూర్ణాంకం flags = NI_NUMERICSERV;
 	
-	if (nflag)
+	ఒకవేళ (nflag)
 		flags |= NI_NUMERICHOST;
 	
-	if ((herr = getnameinfo(sa, salen,
-	    remote_host, sizeof(remote_host),
-	    remote_port, sizeof(remote_port),
+	ఒకవేళ ((herr = getnameinfo(sa, salen,
+	    remote_host, పరిమాణం(remote_host),
+	    remote_పోర్టు, పరిమాణం(remote_పోర్టు),
 	    flags)) != 0) {
-		if (herr == EAI_SYSTEM)
+		ఒకవేళ (herr == EAI_SYSTEM)
 			err(1, "getnameinfo");
-		else
+		లేకపోతే
 			errx(1, "getnameinfo: %s", gai_strerror(herr));
 	}
 	
 	fprintf(stderr,
 	    "Connection from %s %s "
-	    "received!\n", remote_host, remote_port);
+	    "received!\n", remote_host, remote_పోర్టు);
 }
 
-void
-help(void)
+శూన్య
+help(శూన్య)
 {
 	usage(0);
 	fprintf(stderr, "\tCommand Summary:\n\
@@ -1300,43 +1300,43 @@ help(void)
 	\t-D		Enable the debug socket option\n\
 	\t-d		Detach from stdin\n\
 	\t-F		Pass socket fd\n\
-	\t-h		This help text\n\
-	\t-I length	TCP receive buffer length\n\
-	\t-i secs\t	Delay interval for lines sent, ports scanned\n\
-	\t-k		Keep inbound sockets open for multiple connects\n\
-	\t-l		Listen mode, for inbound connects\n\
-	\t-N		Shutdown the network socket after EOF on stdin\n\
-	\t-n		Suppress name/port resolutions\n\
-	\t-O length	TCP send buffer length\n\
-	\t-P proxyuser\tUsername for proxy authentication\n\
-	\t-p port\t	Specify local port for remote connects\n\
+	\t-h		This help పాఠ్యం\n\
+	\t-I నిడివి	TCP receive బఫరు నిడివి\n\
+	\t-i secs\t	Delay interval కొరకు పంక్తులు పంపిన, ports scanned\n\
+	\t-k		Keep inbound sockets open కొరకు గుణిజం connects\n\
+	\t-l		Listen బహుళకం, కొరకు inbound connects\n\
+	\t-N		Shutdown the జాలం socket after EOF on stdin\n\
+	\t-n		Suppress name/పోర్టు resolutions\n\
+	\t-O నిడివి	TCP send బఫరు నిడివి\n\
+	\t-P proxyuser\tUsername కొరకు proxy authentication\n\
+	\t-p పోర్టు\t	Specify local పోర్టు కొరకు remote connects\n\
 	\t-r		Randomize remote ports\n\
 	\t-S		Enable the TCP MD5 signature option\n\
-	\t-s addr\t	Local source address\n\
-	\t-T toskeyword\tSet IP Type of Service\n\
+	\t-s addr\t	Local ఆధారం చిరునామా\n\
+	\t-T toskeyword\t_సమితి IP Type యొక్క Service\n\
 	\t-t		Answer TELNET negotiation\n\
 	\t-U		Use UNIX domain socket\n\
-	\t-u		UDP mode\n\
-	\t-V rtable	Specify alternate routing table\n\
+	\t-u		UDP బహుళకం\n\
+	\t-V rtable	Specify alternate routing పట్టిక\n\
 	\t-v		Verbose\n\
-	\t-w secs\t	Timeout for connects and final net reads\n\
+	\t-w secs\t	Timeout కొరకు connects and final net reads\n\
 	\t-X proto	Proxy protocol: \"4\", \"5\" (SOCKS) or \"connect\"\n\
-	\t-x addr[:port]\tSpecify proxy address and port\n\
-	\t-z		Zero-I/O mode [used for scanning]\n\
-	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
-	exit(1);
+	\t-x addr[:పోర్టు]\tSpecify proxy చిరునామా and పోర్టు\n\
+	\t-z		Zero-I/O బహుళకం [వాడిన కొరకు scanning]\n\
+	పోర్టు_2 numbers can be individual or ranges: lo-hi [inclusive]\n");
+	నిష్క్రమించు(1);
 }
 
-void
-usage(int ret)
+శూన్య
+usage(పూర్ణాంకం ret)
 {
 	fprintf(stderr,
 	    "usage: nc [-46DdFhklNnrStUuvz] [-I length] [-i interval] [-O length]\n"
 	    "\t  [-P proxy_username] [-p source_port] [-s source] [-T toskeyword]\n"
 	    "\t  [-V rtable] [-w timeout] [-X proxy_protocol]\n"
 	    "\t  [-x proxy_address[:port]] [destination] [port]\n");
-	if (ret)
-		exit(1);
+	ఒకవేళ (ret)
+		నిష్క్రమించు(1);
 }
 
 /* *** src/usr.bin/nc/socks.c *** */
@@ -1369,137 +1369,137 @@ usage(int ret)
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <netinet/in.h>
+#అన్తర్భావ <arpa/inet.h>
 
-#include <errno.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <resolv.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <netdb.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <resolv.h>
 
-#define SOCKS_PORT	"1080"
-#define HTTP_PROXY_PORT	"3128"
-#define HTTP_MAXHDRS	64
-#define SOCKS_V5	5
-#define SOCKS_V4	4
-#define SOCKS_NOAUTH	0
-#define SOCKS_NOMETHOD	0xff
-#define SOCKS_CONNECT	1
-#define SOCKS_IPV4	1
-#define SOCKS_DOMAIN	3
-#define SOCKS_IPV6	4
+#నిర్వచించు SOCKS_పోర్టు	"1080"
+#నిర్వచించు HTTP_PROXY_పోర్టు	"3128"
+#నిర్వచించు HTTP_MAXHDRS	64
+#నిర్వచించు SOCKS_V5	5
+#నిర్వచించు SOCKS_V4	4
+#నిర్వచించు SOCKS_NOAUTH	0
+#నిర్వచించు SOCKS_NOMETHOD	0xff
+#నిర్వచించు SOCKS_CONNECT	1
+#నిర్వచించు SOCKS_IPV4	1
+#నిర్వచించు SOCKS_DOMAIN	3
+#నిర్వచించు SOCKS_IPV6	4
 
-int	remote_connect(const char *, const char *, struct addrinfo);
-int	socks_connect(const char *, const char *, struct addrinfo,
-	    const char *, const char *, struct addrinfo, int,
-	    const char *);
+పూర్ణాంకం	remote_connect(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, నిర్మాణం addrinfo);
+పూర్ణాంకం	socks_connect(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, నిర్మాణం addrinfo,
+	    స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, నిర్మాణం addrinfo, పూర్ణాంకం,
+	    స్థిరరాశి అక్షరం *);
 
-static int
-decode_addrport(const char *h, const char *p, struct sockaddr *addr,
-    socklen_t addrlen, int v4only, int numeric)
+స్థిర పూర్ణాంకం
+decode_addrport(స్థిరరాశి అక్షరం *h, స్థిరరాశి అక్షరం *p, నిర్మాణం sockaddr *addr,
+    socklen_t addrlen, పూర్ణాంకం v4only, పూర్ణాంకం numeric)
 {
-	int r;
-	struct addrinfo hints, *res;
+	పూర్ణాంకం r;
+	నిర్మాణం addrinfo hints, *res;
 
-	bzero(&hints, sizeof(hints));
+	bzero(&hints, పరిమాణం(hints));
 	hints.ai_family = v4only ? PF_INET : PF_UNSPEC;
 	hints.ai_flags = numeric ? AI_NUMERICHOST : 0;
 	hints.ai_socktype = SOCK_STREAM;
 	r = getaddrinfo(h, p, &hints, &res);
 	/* Don't fatal when attempting to convert a numeric address */
-	if (r != 0) {
-		if (!numeric) {
+	ఒకవేళ (r != 0) {
+		ఒకవేళ (!numeric) {
 			errx(1, "getaddrinfo(\"%.64s\", \"%.64s\"): %s", h, p,
 			    gai_strerror(r));
 		}
-		return (-1);
+		తిరిగి (-1);
 	}
-	if (addrlen < res->ai_addrlen) {
+	ఒకవేళ (addrlen < res->ai_addrlen) {
 		freeaddrinfo(res);
 		errx(1, "internal error: addrlen < res->ai_addrlen");
 	}
-	memcpy(addr, res->ai_addr, res->ai_addrlen);
+	జ్ఞాపకం_నకలు(addr, res->ai_addr, res->ai_addrlen);
 	freeaddrinfo(res);
-	return (0);
+	తిరిగి (0);
 }
 
-static int
-proxy_read_line(int fd, char *buf, size_t bufsz)
+స్థిర పూర్ణాంకం
+proxy_read_పంక్తి(పూర్ణాంకం fd, అక్షరం *buf, కొలత_t bufsz)
 {
-	size_t off;
+	కొలత_t off;
 
-	for(off = 0;;) {
-		if (off >= bufsz)
+	కొరకు(off = 0;;) {
+		ఒకవేళ (off >= bufsz)
 			errx(1, "proxy read too long");
-		if (atomicio(read, fd, buf + off, 1) != 1)
+		ఒకవేళ (atomicio(పఠ, fd, buf + off, 1) != 1)
 			err(1, "proxy read");
 		/* Skip CR */
-		if (buf[off] == '\r')
-			continue;
-		if (buf[off] == '\n') {
+		ఒకవేళ (buf[off] == '\r')
+			కొనసాగు;
+		ఒకవేళ (buf[off] == '\n') {
 			buf[off] = '\0';
-			break;
+			ఆపు;
 		}
 		off++;
 	}
-	return (off);
+	తిరిగి (off);
 }
 
-static const char *
-getproxypass(const char *proxyuser, const char *proxyhost)
+స్థిర స్థిరరాశి అక్షరం *
+getproxypass(స్థిరరాశి అక్షరం *proxyuser, స్థిరరాశి అక్షరం *proxyhost)
 {
-	char prompt[512];
-	static char pw[256];
+	అక్షరం prompt[512];
+	స్థిర అక్షరం pw[256];
 
-	snprintf(prompt, sizeof(prompt), "Proxy password for %s@%s: ",
+	snprintf(prompt, పరిమాణం(prompt), "Proxy password for %s@%s: ",
 	   proxyuser, proxyhost);
-	if (readpassphrase(prompt, pw, sizeof(pw), RPP_REQUIRE_TTY) == NULL)
+	ఒకవేళ (readpassphrase(prompt, pw, పరిమాణం(pw), RPP_REQUIRE_TTY) == ఖాళీ)
 		errx(1, "Unable to read proxy passphrase");
-	return (pw);
+	తిరిగి (pw);
 }
 
-int
-socks_connect(const char *host, const char *port,
-    struct addrinfo hints __attribute__ ((__unused__)),
-    const char *proxyhost, const char *proxyport, struct addrinfo proxyhints,
-    int socksv, const char *proxyuser)
+పూర్ణాంకం
+socks_connect(స్థిరరాశి అక్షరం *host, స్థిరరాశి అక్షరం *పోర్టు,
+    నిర్మాణం addrinfo hints __attribute__ ((__unused__)),
+    స్థిరరాశి అక్షరం *proxyhost, స్థిరరాశి అక్షరం *proxyport, నిర్మాణం addrinfo proxyhints,
+    పూర్ణాంకం socksv, స్థిరరాశి అక్షరం *proxyuser)
 {
-	int proxyfd, r, authretry = 0;
-	size_t hlen, wlen = 0;
-	unsigned char buf[1024];
-	size_t cnt;
-	struct sockaddr_storage addr;
-	struct sockaddr_in *in4 = (struct sockaddr_in *)&addr;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)&addr;
+	పూర్ణాంకం proxyfd, r, authretry = 0;
+	కొలత_t hlen, wlen = 0;
+	గుర్తులేని అక్షరం buf[1024];
+	కొలత_t cnt;
+	నిర్మాణం sockaddr_storage addr;
+	నిర్మాణం sockaddr_in *in4 = (నిర్మాణం sockaddr_in *)&addr;
+	నిర్మాణం sockaddr_in6 *in6 = (నిర్మాణం sockaddr_in6 *)&addr;
 	in_port_t serverport;
-	const char *proxypass = NULL;
+	స్థిరరాశి అక్షరం *proxypass = ఖాళీ;
 
-	if (proxyport == NULL)
-		proxyport = (socksv == -1) ? HTTP_PROXY_PORT : SOCKS_PORT;
+	ఒకవేళ (proxyport == ఖాళీ)
+		proxyport = (socksv == -1) ? HTTP_PROXY_పోర్టు : SOCKS_పోర్టు;
 
 	/* Abuse API to lookup port */
-	if (decode_addrport("0.0.0.0", port, (struct sockaddr *)&addr,
-	    sizeof(addr), 1, 1) == -1)
-		errx(1, "unknown port \"%.64s\"", port);
+	ఒకవేళ (decode_addrport("0.0.0.0", పోర్టు, (నిర్మాణం sockaddr *)&addr,
+	    పరిమాణం(addr), 1, 1) == -1)
+		errx(1, "unknown port \"%.64s\"", పోర్టు);
 	serverport = in4->sin_port;
 
  again:
-	if (authretry++ > 3)
+	ఒకవేళ (authretry++ > 3)
 		errx(1, "Too many authentication failures");
 
 	proxyfd = remote_connect(proxyhost, proxyport, proxyhints);
 
-	if (proxyfd < 0)
-		return (-1);
+	ఒకవేళ (proxyfd < 0)
+		తిరిగి (-1);
 
-	if (socksv == 5) {
-		if (decode_addrport(host, port, (struct sockaddr *)&addr,
-		    sizeof(addr), 0, 1) == -1)
+	ఒకవేళ (socksv == 5) {
+		ఒకవేళ (decode_addrport(host, పోర్టు, (నిర్మాణం sockaddr *)&addr,
+		    పరిమాణం(addr), 0, 1) == -1)
 			addr.ss_family = 0; /* used in switch below */
 
 		/* Version 5, one method: no authentication */
@@ -1507,190 +1507,190 @@ socks_connect(const char *host, const char *port,
 		buf[1] = 1;
 		buf[2] = SOCKS_NOAUTH;
 		cnt = atomicio(vwrite, proxyfd, buf, 3);
-		if (cnt != 3)
+		ఒకవేళ (cnt != 3)
 			err(1, "write failed (%zu/3)", cnt);
 
-		cnt = atomicio(read, proxyfd, buf, 2);
-		if (cnt != 2)
+		cnt = atomicio(పఠ, proxyfd, buf, 2);
+		ఒకవేళ (cnt != 2)
 			err(1, "read failed (%zu/3)", cnt);
 
-		if (buf[1] == SOCKS_NOMETHOD)
+		ఒకవేళ (buf[1] == SOCKS_NOMETHOD)
 			errx(1, "authentication method negotiation failed");
 
-		switch (addr.ss_family) {
-		case 0:
+		ఎంపిక (addr.ss_family) {
+		స్థితి 0:
 			/* Version 5, connect: domain name */
 
 			/* Max domain name length is 255 bytes */
-			hlen = strlen(host);
-			if (hlen > 255)
+			hlen = అక్షరశ్రేణి_పొడవు(host);
+			ఒకవేళ (hlen > 255)
 				errx(1, "host name too long for SOCKS5");
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
 			buf[2] = 0;
 			buf[3] = SOCKS_DOMAIN;
 			buf[4] = hlen;
-			memcpy(buf + 5, host, hlen);			
-			memcpy(buf + 5 + hlen, &serverport, sizeof serverport);
+			జ్ఞాపకం_నకలు(buf + 5, host, hlen);			
+			జ్ఞాపకం_నకలు(buf + 5 + hlen, &serverport, పరిమాణం serverport);
 			wlen = 7 + hlen;
-			break;
-		case AF_INET:
+			ఆపు;
+		స్థితి AF_INET:
 			/* Version 5, connect: IPv4 address */
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
 			buf[2] = 0;
 			buf[3] = SOCKS_IPV4;
-			memcpy(buf + 4, &in4->sin_addr, sizeof in4->sin_addr);
-			memcpy(buf + 8, &in4->sin_port, sizeof in4->sin_port);
+			జ్ఞాపకం_నకలు(buf + 4, &in4->sin_addr, పరిమాణం in4->sin_addr);
+			జ్ఞాపకం_నకలు(buf + 8, &in4->sin_port, పరిమాణం in4->sin_port);
 			wlen = 10;
-			break;
-		case AF_INET6:
+			ఆపు;
+		స్థితి AF_INET6:
 			/* Version 5, connect: IPv6 address */
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
 			buf[2] = 0;
 			buf[3] = SOCKS_IPV6;
-			memcpy(buf + 4, &in6->sin6_addr, sizeof in6->sin6_addr);
-			memcpy(buf + 20, &in6->sin6_port,
-			    sizeof in6->sin6_port);
+			జ్ఞాపకం_నకలు(buf + 4, &in6->sin6_addr, పరిమాణం in6->sin6_addr);
+			జ్ఞాపకం_నకలు(buf + 20, &in6->sin6_port,
+			    పరిమాణం in6->sin6_port);
 			wlen = 22;
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			errx(1, "internal error: silly AF");
 		}
 
 		cnt = atomicio(vwrite, proxyfd, buf, wlen);
-		if (cnt != wlen)
+		ఒకవేళ (cnt != wlen)
 			err(1, "write failed (%zu/%zu)", cnt, wlen);
 
-		cnt = atomicio(read, proxyfd, buf, 4);
-		if (cnt != 4)
+		cnt = atomicio(పఠ, proxyfd, buf, 4);
+		ఒకవేళ (cnt != 4)
 			err(1, "read failed (%zu/4)", cnt);
-		if (buf[1] != 0)
+		ఒకవేళ (buf[1] != 0)
 			errx(1, "connection failed, SOCKS error %d", buf[1]);
-		switch (buf[3]) {
-		case SOCKS_IPV4:
-			cnt = atomicio(read, proxyfd, buf + 4, 6);
-			if (cnt != 6)
+		ఎంపిక (buf[3]) {
+		స్థితి SOCKS_IPV4:
+			cnt = atomicio(పఠ, proxyfd, buf + 4, 6);
+			ఒకవేళ (cnt != 6)
 				err(1, "read failed (%zu/6)", cnt);
-			break;
-		case SOCKS_IPV6:
-			cnt = atomicio(read, proxyfd, buf + 4, 18);
-			if (cnt != 18)
+			ఆపు;
+		స్థితి SOCKS_IPV6:
+			cnt = atomicio(పఠ, proxyfd, buf + 4, 18);
+			ఒకవేళ (cnt != 18)
 				err(1, "read failed (%zu/18)", cnt);
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			errx(1, "connection failed, unsupported address type");
 		}
-	} else if (socksv == 4 || socksv == 44) {
-		if (socksv == 4) {
+	} లేకపోతే ఒకవేళ (socksv == 4 || socksv == 44) {
+		ఒకవేళ (socksv == 4) {
 			/* This will exit on lookup failure */
-			decode_addrport(host, port, (struct sockaddr *)&addr,
-			    sizeof(addr), 1, 0);
+			decode_addrport(host, పోర్టు, (నిర్మాణం sockaddr *)&addr,
+			    పరిమాణం(addr), 1, 0);
 		}
 
 		/* Version 4 */
 		buf[0] = SOCKS_V4;
 		buf[1] = SOCKS_CONNECT;	/* connect */
-		memcpy(buf + 2, &in4->sin_port, sizeof in4->sin_port);
-		if (socksv == 4) {
-			memcpy(buf + 4, &in4->sin_addr, sizeof in4->sin_addr);
-		} else {
+		జ్ఞాపకం_నకలు(buf + 2, &in4->sin_port, పరిమాణం in4->sin_port);
+		ఒకవేళ (socksv == 4) {
+			జ్ఞాపకం_నకలు(buf + 4, &in4->sin_addr, పరిమాణం in4->sin_addr);
+		} లేకపోతే {
 			/* SOCKS4A uses addr of 0.0.0.x, and hostname later */
 			buf[4] = buf[5] = buf[6] = 0;
 			buf[7] = 1;
 		}
 		buf[8] = 0;	/* empty username */
 		wlen = 9;
-		if (socksv == 44) {
+		ఒకవేళ (socksv == 44) {
 			/* SOCKS4A has nul-terminated hostname after user */
-			if (strlcpy(buf + 9, host,
-			    sizeof(buf) - 9) >= sizeof(buf) - 9)
+			ఒకవేళ (strlcpy(buf + 9, host,
+			    పరిమాణం(buf) - 9) >= పరిమాణం(buf) - 9)
 				errx(1, "hostname too big");
-			wlen = 9 + strlen(host) + 1;
+			wlen = 9 + అక్షరశ్రేణి_పొడవు(host) + 1;
 		}
 		cnt = atomicio(vwrite, proxyfd, buf, wlen);
-		if (cnt != wlen)
+		ఒకవేళ (cnt != wlen)
 			err(1, "write failed (%zu/%zu)", cnt, wlen);
 
-		cnt = atomicio(read, proxyfd, buf, 8);
-		if (cnt != 8)
+		cnt = atomicio(పఠ, proxyfd, buf, 8);
+		ఒకవేళ (cnt != 8)
 			err(1, "read failed (%zu/8)", cnt);
-		if (buf[1] != 90)
+		ఒకవేళ (buf[1] != 90)
 			errx(1, "connection failed, SOCKS error %d", buf[1]);
-	} else if (socksv == -1) {
+	} లేకపోతే ఒకవేళ (socksv == -1) {
 		/* HTTP proxy CONNECT */
 
 		/* Disallow bad chars in hostname */
-		if (strcspn(host, "\r\n\t []:") != strlen(host))
+		ఒకవేళ (strcspn(host, "\r\n\t []:") != అక్షరశ్రేణి_పొడవు(host))
 			errx(1, "Invalid hostname");
 
 		/* Try to be sane about numeric IPv6 addresses */
-		if (strchr(host, ':') != NULL) {
-			r = snprintf(buf, sizeof(buf),
+		ఒకవేళ (strchr(host, ':') != ఖాళీ) {
+			r = snprintf(buf, పరిమాణం(buf),
 			    "CONNECT [%s]:%d HTTP/1.0\r\n",
 			    host, ntohs(serverport));
-		} else {
-			r = snprintf(buf, sizeof(buf),
+		} లేకపోతే {
+			r = snprintf(buf, పరిమాణం(buf),
 			    "CONNECT %s:%d HTTP/1.0\r\n",
 			    host, ntohs(serverport));
 		}
-		if (r == -1 || (size_t)r >= sizeof(buf))
+		ఒకవేళ (r == -1 || (కొలత_t)r >= పరిమాణం(buf))
 			errx(1, "hostname too long");
-		r = strlen(buf);
+		r = అక్షరశ్రేణి_పొడవు(buf);
 
 		cnt = atomicio(vwrite, proxyfd, buf, r);
-		if (cnt != (size_t)r)
+		ఒకవేళ (cnt != (కొలత_t)r)
 			err(1, "write failed (%zu/%d)", cnt, r);
 
-		if (authretry > 1) {
-			char resp[1024];
+		ఒకవేళ (authretry > 1) {
+			అక్షరం resp[1024];
 
 			proxypass = getproxypass(proxyuser, proxyhost);
-			r = snprintf(buf, sizeof(buf), "%s:%s",
+			r = snprintf(buf, పరిమాణం(buf), "%s:%s",
 			    proxyuser, proxypass);
-			if (r == -1 || (size_t)r >= sizeof(buf) ||
-			    b64_ntop(buf, strlen(buf), resp,
-			    sizeof(resp)) == -1)
+			ఒకవేళ (r == -1 || (కొలత_t)r >= పరిమాణం(buf) ||
+			    b64_ntop(buf, అక్షరశ్రేణి_పొడవు(buf), resp,
+			    పరిమాణం(resp)) == -1)
 				errx(1, "Proxy username/password too long");
-			r = snprintf(buf, sizeof(buf), "Proxy-Authorization: "
+			r = snprintf(buf, పరిమాణం(buf), "Proxy-Authorization: "
 			    "Basic %s\r\n", resp);
-			if (r == -1 || (size_t)r >= sizeof(buf))
+			ఒకవేళ (r == -1 || (కొలత_t)r >= పరిమాణం(buf))
 				errx(1, "Proxy auth response too long");
-			r = strlen(buf);
-			if ((cnt = atomicio(vwrite, proxyfd, buf, r)) != (size_t)r)
+			r = అక్షరశ్రేణి_పొడవు(buf);
+			ఒకవేళ ((cnt = atomicio(vwrite, proxyfd, buf, r)) != (కొలత_t)r)
 				err(1, "write failed (%zu/%d)", cnt, r);
 		}
 
 		/* Terminate headers */
-		if ((r = atomicio(vwrite, proxyfd, "\r\n", 2)) != 2)
+		ఒకవేళ ((r = atomicio(vwrite, proxyfd, "\r\n", 2)) != 2)
 			err(1, "write failed (2/%d)", r);
 
 		/* Read status reply */
-		proxy_read_line(proxyfd, buf, sizeof(buf));
-		if (proxyuser != NULL &&
-		    strncmp(buf, "HTTP/1.0 407 ", 12) == 0) {
-			if (authretry > 1) {
+		proxy_read_పంక్తి(proxyfd, buf, పరిమాణం(buf));
+		ఒకవేళ (proxyuser != ఖాళీ &&
+		    అక్షరశ్రేణి_పోలిక(buf, "HTTP/1.0 407 ", 12) == 0) {
+			ఒకవేళ (authretry > 1) {
 				fprintf(stderr, "Proxy authentication "
 				    "failed\n");
 			}
 			close(proxyfd);
-			goto again;
-		} else if (strncmp(buf, "HTTP/1.0 200 ", 12) != 0 &&
-		    strncmp(buf, "HTTP/1.1 200 ", 12) != 0)
+			వెళ్ళు again;
+		} లేకపోతే ఒకవేళ (అక్షరశ్రేణి_పోలిక(buf, "HTTP/1.0 200 ", 12) != 0 &&
+		    అక్షరశ్రేణి_పోలిక(buf, "HTTP/1.1 200 ", 12) != 0)
 			errx(1, "Proxy error: \"%s\"", buf);
 
 		/* Headers continue until we hit an empty line */
-		for (r = 0; r < HTTP_MAXHDRS; r++) {
-			proxy_read_line(proxyfd, buf, sizeof(buf));
-			if (*buf == '\0')
-				break;
+		కొరకు (r = 0; r < HTTP_MAXHDRS; r++) {
+			proxy_read_పంక్తి(proxyfd, buf, పరిమాణం(buf));
+			ఒకవేళ (*buf == '\0')
+				ఆపు;
 		}
-		if (*buf != '\0')
+		ఒకవేళ (*buf != '\0')
 			errx(1, "Too many proxy headers received");
-	} else
+	} లేకపోతే
 		errx(1, "Unknown proxy protocol %d", socksv);
 
-	return (proxyfd);
+	తిరిగి (proxyfd);
 }
 

@@ -15,26 +15,26 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _SSH_SK_H
-#define _SSH_SK_H 1
+#నిర్వచితం_కాకపోతే _SSH_SK_H
+#నిర్వచించు _SSH_SK_H 1
 
-struct sshbuf;
-struct sshkey;
-struct sk_option;
+నిర్మాణం sshbuf;
+నిర్మాణం sshkey;
+నిర్మాణం sk_option;
 
 /* Version of protocol expected from ssh-sk-helper */
-#define SSH_SK_HELPER_VERSION		5
+#నిర్వచించు SSH_SK_HELPER_సంస్కరణ		5
 
 /* ssh-sk-helper messages */
-#define SSH_SK_HELPER_ERROR		0	/* Only valid H->C */
-#define SSH_SK_HELPER_SIGN		1
-#define SSH_SK_HELPER_ENROLL		2
-#define SSH_SK_HELPER_LOAD_RESIDENT	3
+#నిర్వచించు SSH_SK_HELPER_ERROR		0	/* Only valid H->C */
+#నిర్వచించు SSH_SK_HELPER_SIGN		1
+#నిర్వచించు SSH_SK_HELPER_ENROLL		2
+#నిర్వచించు SSH_SK_HELPER_ఎక్కించు_RESIDENT	3
 
-struct sshsk_resident_key {
-	struct sshkey *key;
+నిర్మాణం sshsk_resident_కీలకం {
+	నిర్మాణం sshkey *కీలకం;
 	uint8_t *user_id;
-	size_t user_id_len;
+	కొలత_t user_id_len;
 };
 
 /*
@@ -47,10 +47,10 @@ struct sshsk_resident_key {
  * If successful and the attest_data buffer is not NULL then attestation
  * information is placed there.
  */
-int sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest);
+పూర్ణాంకం sshsk_enroll(పూర్ణాంకం type, స్థిరరాశి అక్షరం *provider_మార్గం, స్థిరరాశి అక్షరం *device,
+    స్థిరరాశి అక్షరం *application, స్థిరరాశి అక్షరం *userid, uint8_t flags,
+    స్థిరరాశి అక్షరం *pin, నిర్మాణం sshbuf *challenge_buf,
+    నిర్మాణం sshkey **keyp, నిర్మాణం sshbuf *attest);
 
 /*
  * Calculate an ECDSA_SK or ED25519_SK signature using the specified key
@@ -58,9 +58,9 @@ int sshsk_enroll(int type, const char *provider_path, const char *device,
  *
  * Returns 0 on success or a ssherr.h error code on failure.
  */
-int sshsk_sign(const char *provider_path, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin);
+పూర్ణాంకం sshsk_sign(స్థిరరాశి అక్షరం *provider_మార్గం, నిర్మాణం sshkey *కీలకం,
+    u_char **sigp, కొలత_t *lenp, స్థిరరాశి u_char *దత్తాంశం, కొలత_t datalen,
+    u_int compat, స్థిరరాశి అక్షరం *pin);
 
 /*
  * Enumerates and loads all SSH-compatible resident keys from a security
@@ -68,12 +68,12 @@ int sshsk_sign(const char *provider_path, struct sshkey *key,
  *
  * Returns 0 on success or a ssherr.h error code on failure.
  */
-int sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
-    size_t *nsrksp);
+పూర్ణాంకం sshsk_ఎక్కించు_resident(స్థిరరాశి అక్షరం *provider_మార్గం, స్థిరరాశి అక్షరం *device,
+    స్థిరరాశి అక్షరం *pin, u_int flags, నిర్మాణం sshsk_resident_కీలకం ***srksp,
+    కొలత_t *nsrksp);
 
 /* Free an array of sshsk_resident_key (as returned from sshsk_load_resident) */
-void sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks);
+శూన్య sshsk_free_resident_కీలకాలు(నిర్మాణం sshsk_resident_కీలకం **srks, కొలత_t nsrks);
 
-#endif /* _SSH_SK_H */
+#అయితే_ముగింపు /* _SSH_SK_H */
 

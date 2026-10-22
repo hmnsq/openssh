@@ -6,62 +6,62 @@
  * and placed in the public domain.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <locale.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
+#అన్తర్భావ <locale.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#అన్తర్భావ "../test_helper/test_helper.h"
 
-#include "utf8.h"
+#అన్తర్భావ "utf8.h"
 
-static void
-badarg(void)
+స్థిర శూన్య
+badarg(శూన్య)
 {
-	char	 buf[16];
-	int	 len, width;
+	అక్షరం	 buf[16];
+	పూర్ణాంకం	 len, వెడల్పు;
 
-	width = 1;
-	TEST_START("utf8_badarg");
-	len = snmprintf(buf, sizeof(buf), &width, "\377");
+	వెడల్పు = 1;
+	TEST_ప్రారంభం("utf8_badarg");
+	len = snmprintf(buf, పరిమాణం(buf), &వెడల్పు, "\377");
 	ASSERT_INT_EQ(len, -1);
 	ASSERT_STRING_EQ(buf, "");
-	ASSERT_INT_EQ(width, 0);
-	TEST_DONE();
+	ASSERT_INT_EQ(వెడల్పు, 0);
+	TEST_పూర్తి();
 }
 
-static void
-one(int utf8, const char *name, const char *mbs, int width,
-    int wantwidth, int wantlen, const char *wants)
+స్థిర శూన్య
+one(పూర్ణాంకం utf8, స్థిరరాశి అక్షరం *name, స్థిరరాశి అక్షరం *mbs, పూర్ణాంకం వెడల్పు,
+    పూర్ణాంకం wantwidth, పూర్ణాంకం wantlen, స్థిరరాశి అక్షరం *కోరుతుంది)
 {
-	char	 buf[16];
-	int	*wp;
-	int	 len;
+	అక్షరం	 buf[16];
+	పూర్ణాంకం	*wp;
+	పూర్ణాంకం	 len;
 
-	if (wantlen == -2)
-		wantlen = strlen(wants);
-	(void)strlcpy(buf, utf8 ? "utf8_" : "c_", sizeof(buf));
-	(void)strlcat(buf, name, sizeof(buf));
-	TEST_START(buf);
-	wp = wantwidth == -2 ? NULL : &width;
-	len = snmprintf(buf, sizeof(buf), wp, "%s", mbs);
+	ఒకవేళ (wantlen == -2)
+		wantlen = అక్షరశ్రేణి_పొడవు(కోరుతుంది);
+	(శూన్య)strlcpy(buf, utf8 ? "utf8_" : "c_", పరిమాణం(buf));
+	(శూన్య)strlcat(buf, name, పరిమాణం(buf));
+	TEST_ప్రారంభం(buf);
+	wp = wantwidth == -2 ? ఖాళీ : &వెడల్పు;
+	len = snmprintf(buf, పరిమాణం(buf), wp, "%s", mbs);
 	ASSERT_INT_EQ(len, wantlen);
-	ASSERT_STRING_EQ(buf, wants);
-	ASSERT_INT_EQ(width, wantwidth);
-	TEST_DONE();
+	ASSERT_STRING_EQ(buf, కోరుతుంది);
+	ASSERT_INT_EQ(వెడల్పు, wantwidth);
+	TEST_పూర్తి();
 }
 
-void
-tests(void)
+శూన్య
+tests(శూన్య)
 {
-	char	*loc;
+	అక్షరం	*loc;
 
-	TEST_START("utf8_setlocale");
+	TEST_ప్రారంభం("utf8_setlocale");
 	loc = setlocale(LC_CTYPE, "en_US.UTF-8");
-	ASSERT_PTR_NE(loc, NULL);
-	TEST_DONE();
+	ASSERT_PTR_NE(loc, ఖాళీ);
+	TEST_పూర్తి();
 
 	badarg();
 	one(1, "empty", "", 2, 0, 0, "");
@@ -80,10 +80,10 @@ tests(void)
 	one(1, "double_fit", "a\343\201\201", 3, 3, 4, "a\343\201\201");
 	one(1, "double_spc", "a\343\201\201", 4, 3, 4, "a\343\201\201");
 
-	TEST_START("C_setlocale");
+	TEST_ప్రారంభం("C_setlocale");
 	loc = setlocale(LC_CTYPE, "C");
-	ASSERT_PTR_NE(loc, NULL);
-	TEST_DONE();
+	ASSERT_PTR_NE(loc, ఖాళీ);
+	TEST_పూర్తి();
 
 	badarg();
 	one(0, "empty", "", 2, 0, 0, "");
@@ -103,8 +103,8 @@ tests(void)
 	one(0, "double_spc", "a\343\201\201", 13, 13, 13, "a\\343\\201\\201");
 }
 
-void
-benchmarks(void)
+శూన్య
+benchmarks(శూన్య)
 {
-	printf("no benchmarks\n");
+	రాయి("no benchmarks\n");
 }

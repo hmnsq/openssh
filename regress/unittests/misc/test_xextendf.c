@@ -5,85 +5,85 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include "../test_helper/test_helper.h"
+#అన్తర్భావ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "xmalloc.h"
 
-void test_xextendf(void);
+శూన్య test_xextendf(శూన్య);
 
-void
-test_xextendf(void)
+శూన్య
+test_xextendf(శూన్య)
 {
-	char *s = NULL;
+	అక్షరం *s = ఖాళీ;
 
-	TEST_START("xextendf NULL string");
+	TEST_ప్రారంభం("xextendf NULL string");
 	xextendf(&s, ",", "hello");
 	ASSERT_STRING_EQ(s, "hello");
-	free(s);
-	s = NULL;
-	TEST_DONE();
+	విడుదల(s);
+	s = ఖాళీ;
+	TEST_పూర్తి();
 
-	TEST_START("xextendf empty string");
+	TEST_ప్రారంభం("xextendf empty string");
 	s = xstrdup("");
 	xextendf(&s, ",", "world");
 	ASSERT_STRING_EQ(s, "world");
-	free(s);
-	s = NULL;
-	TEST_DONE();
+	విడుదల(s);
+	s = ఖాళీ;
+	TEST_పూర్తి();
 
-	TEST_START("xextendf append to string");
+	TEST_ప్రారంభం("xextendf append to string");
 	s = xstrdup("foo");
 	xextendf(&s, ",", "bar");
 	ASSERT_STRING_EQ(s, "foo,bar");
-	free(s);
-	s = NULL;
-	TEST_DONE();
+	విడుదల(s);
+	s = ఖాళీ;
+	TEST_పూర్తి();
 
-	TEST_START("xextendf append with NULL separator");
+	TEST_ప్రారంభం("xextendf append with NULL separator");
 	s = xstrdup("foo");
-	xextendf(&s, NULL, "bar");
+	xextendf(&s, ఖాళీ, "bar");
 	ASSERT_STRING_EQ(s, "foobar");
-	free(s);
-	s = NULL;
-	TEST_DONE();
+	విడుదల(s);
+	s = ఖాళీ;
+	TEST_పూర్తి();
 
-	TEST_START("xextendf append with empty separator");
+	TEST_ప్రారంభం("xextendf append with empty separator");
 	s = xstrdup("foo");
 	xextendf(&s, "", "bar");
 	ASSERT_STRING_EQ(s, "foobar");
-	free(s);
-	s = NULL;
-	TEST_DONE();
+	విడుదల(s);
+	s = ఖాళీ;
+	TEST_పూర్తి();
 
-	TEST_START("xextendf with format string");
+	TEST_ప్రారంభం("xextendf with format string");
 	s = xstrdup("start");
 	xextendf(&s, ":", "s=%s,d=%d", "string", 123);
 	ASSERT_STRING_EQ(s, "start:s=string,d=123");
-	free(s);
-	s = NULL;
-	TEST_DONE();
+	విడుదల(s);
+	s = ఖాళీ;
+	TEST_పూర్తి();
 
-	TEST_START("xextendf multiple appends");
-	s = NULL;
+	TEST_ప్రారంభం("xextendf multiple appends");
+	s = ఖాళీ;
 	xextendf(&s, ",", "one");
 	ASSERT_STRING_EQ(s, "one");
 	xextendf(&s, ",", "two");
 	ASSERT_STRING_EQ(s, "one,two");
 	xextendf(&s, ":", "three=%d", 3);
 	ASSERT_STRING_EQ(s, "one,two:three=3");
-	xextendf(&s, NULL, "four");
+	xextendf(&s, ఖాళీ, "four");
 	ASSERT_STRING_EQ(s, "one,two:three=3four");
-	free(s);
-	s = NULL;
-	TEST_DONE();
+	విడుదల(s);
+	s = ఖాళీ;
+	TEST_పూర్తి();
 }

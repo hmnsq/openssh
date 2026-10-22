@@ -18,11 +18,11 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strlcat.c */
 
-#include "includes.h"
-#ifndef HAVE_STRLCAT
+#అన్తర్భావ "includes.h"
+#నిర్వచితం_కాకపోతే HAVE_STRLCAT
 
-#include <sys/types.h>
-#include <string.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <string.h>
 
 /*
  * Appends src to string dst of size siz (unlike strncat, siz is the
@@ -31,24 +31,24 @@
  * Returns strlen(src) + MIN(siz, strlen(initial dst)).
  * If retval >= siz, truncation occurred.
  */
-size_t
-strlcat(char *dst, const char *src, size_t siz)
+కొలత_t
+strlcat(అక్షరం *dst, స్థిరరాశి అక్షరం *src, కొలత_t siz)
 {
-	char *d = dst;
-	const char *s = src;
-	size_t n = siz;
-	size_t dlen;
+	అక్షరం *d = dst;
+	స్థిరరాశి అక్షరం *s = src;
+	కొలత_t n = siz;
+	కొలత_t dlen;
 
 	/* Find the end of dst and adjust bytes left but don't go past end */
-	while (n-- != 0 && *d != '\0')
+	అయితే (n-- != 0 && *d != '\0')
 		d++;
 	dlen = d - dst;
 	n = siz - dlen;
 
-	if (n == 0)
-		return(dlen + strlen(s));
-	while (*s != '\0') {
-		if (n != 1) {
+	ఒకవేళ (n == 0)
+		తిరిగి(dlen + అక్షరశ్రేణి_పొడవు(s));
+	అయితే (*s != '\0') {
+		ఒకవేళ (n != 1) {
 			*d++ = *s;
 			n--;
 		}
@@ -56,7 +56,7 @@ strlcat(char *dst, const char *src, size_t siz)
 	}
 	*d = '\0';
 
-	return(dlen + (s - src));	/* count does not include NUL */
+	తిరిగి(dlen + (s - src));	/* count does not include NUL */
 }
 
-#endif /* !HAVE_STRLCAT */
+#అయితే_ముగింపు /* !HAVE_STRLCAT */

@@ -30,15 +30,15 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoll.c */
 
-#include "includes.h"
-#ifndef HAVE_STRTOLL
+#అన్తర్భావ "includes.h"
+#నిర్వచితం_కాకపోతే HAVE_STRTOLL
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <stdlib.h>
 
 /*
  * Convert a string to a long long.
@@ -46,13 +46,13 @@
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-long long
-strtoll(const char *nptr, char **endptr, int base)
+దీర్ఘ దీర్ఘ
+strtoll(స్థిరరాశి అక్షరం *nptr, అక్షరం **endptr, పూర్ణాంకం పునాది)
 {
-	const char *s;
-	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	స్థిరరాశి అక్షరం *s;
+	దీర్ఘ దీర్ఘ acc, cutoff;
+	పూర్ణాంకం c;
+	పూర్ణాంకం neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -60,25 +60,25 @@ strtoll(const char *nptr, char **endptr, int base)
 	 * assume decimal; if base is already 16, allow 0x.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	చేయి {
+		c = (గుర్తులేని అక్షరం) *s++;
+	} అయితే (ఖాళీనా(c));
+	ఒకవేళ (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} లేకపోతే {
 		neg = 0;
-		if (c == '+')
+		ఒకవేళ (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	ఒకవేళ ((పునాది == 0 || పునాది == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
-		base = 16;
+		పునాది = 16;
 	}
-	if (base == 0)
-		base = c == '0' ? 8 : 10;
+	ఒకవేళ (పునాది == 0)
+		పునాది = c == '0' ? 8 : 10;
 
 	/*
 	 * Compute the cutoff value between legal numbers and illegal
@@ -99,50 +99,50 @@ strtoll(const char *nptr, char **endptr, int base)
 	 * overflow.
 	 */
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
-	cutlim = cutoff % base;
-	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
-			cutlim -= base;
+	cutlim = cutoff % పునాది;
+	cutoff /= పునాది;
+	ఒకవేళ (neg) {
+		ఒకవేళ (cutlim > 0) {
+			cutlim -= పునాది;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	కొరకు (acc = 0, any = 0;; c = (గుర్తులేని అక్షరం) *s++) {
+		ఒకవేళ (అంకెనా(c))
 			c -= '0';
-		else if (isalpha(c))
+		లేకపోతే ఒకవేళ (అక్షరమా(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		లేకపోతే
+			ఆపు;
+		ఒకవేళ (c >= పునాది)
+			ఆపు;
+		ఒకవేళ (any < 0)
+			కొనసాగు;
+		ఒకవేళ (neg) {
+			ఒకవేళ (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} లేకపోతే {
 				any = 1;
-				acc *= base;
+				acc *= పునాది;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} లేకపోతే {
+			ఒకవేళ (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} లేకపోతే {
 				any = 1;
-				acc *= base;
+				acc *= పునాది;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	ఒకవేళ (endptr != 0)
+		*endptr = (అక్షరం *) (any ? s - 1 : nptr);
+	తిరిగి (acc);
 }
-#endif /* HAVE_STRTOLL */
+#అయితే_ముగింపు /* HAVE_STRTOLL */

@@ -15,16 +15,16 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <stdarg.h>
-#include <unistd.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <unistd.h>
 
-#include "platform.h"
+#అన్తర్భావ "platform.h"
 
-#include "openbsd-compat/openbsd-compat.h"
+#అన్తర్భావ "openbsd-compat/openbsd-compat.h"
 
 /*
  * Drop any fine-grained privileges that are not needed for post-startup
@@ -32,28 +32,28 @@
  *
  * Should be as close as possible to pledge("stdio cpath unix id proc exec", ...)
  */
-void
-platform_pledge_agent(void)
+శూన్య
+platform_pledge_agent(శూన్య)
 {
-#ifdef USE_SOLARIS_PRIVS
+#నిర్వచితమైతే USE_SOLARIS_PRIVS
 	/*
 	 * Note: Solaris priv dropping is closer to tame() than pledge(), but
 	 * we will use what we have.
 	 */
-	solaris_drop_privs_root_pinfo_net();
-#endif
+	solaris_drop_privs_మూలం_pinfo_net();
+#అయితే_ముగింపు
 }
 
 /*
  * Drop any fine-grained privileges that are not needed for post-startup
  * operation of sftp-server
  */
-void
-platform_pledge_sftp_server(void)
+శూన్య
+platform_pledge_sftp_server(శూన్య)
 {
-#ifdef USE_SOLARIS_PRIVS
+#నిర్వచితమైతే USE_SOLARIS_PRIVS
 	solaris_drop_privs_pinfo_net_fork_exec();
-#endif
+#అయితే_ముగింపు
 }
 
 /*
@@ -62,10 +62,10 @@ platform_pledge_sftp_server(void)
  *
  * Should be as close as possible to pledge("stdio proc tty", ...)
  */
-void
-platform_pledge_mux(void)
+శూన్య
+platform_pledge_mux(శూన్య)
 {
-#ifdef USE_SOLARIS_PRIVS
-	solaris_drop_privs_root_pinfo_net_exec();
-#endif
+#నిర్వచితమైతే USE_SOLARIS_PRIVS
+	solaris_drop_privs_మూలం_pinfo_net_exec();
+#అయితే_ముగింపు
 }

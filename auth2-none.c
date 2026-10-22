@@ -23,47 +23,47 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "packet.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "ssh2.h"
-#include "ssherr.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "hostfile.h"
+#అన్తర్భావ "auth.h"
+#అన్తర్భావ "packet.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "servconf.h"
+#అన్తర్భావ "ssh2.h"
+#అన్తర్భావ "ssherr.h"
+#నిర్వచితమైతే GSSAPI
+#అన్తర్భావ "ssh-gss.h"
+#అయితే_ముగింపు
+#అన్తర్భావ "monitor_wrap.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_none;
+బాహ్య ServerOptions options;
+బాహ్య నిర్మాణం authmethod_cfg methodcfg_none;
 
-extern int none_enabled;
+బాహ్య పూర్ణాంకం none_enabled;
 
-static int
-userauth_none(struct ssh *ssh, const char *method)
+స్థిర పూర్ణాంకం
+userauth_none(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *పద్ధతి)
 {
-	int r;
+	పూర్ణాంకం r;
 
 	none_enabled = 0;
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	ఒకవేళ ((r = sshpkt_get_చివర(ssh)) != 0)
 		fatal_fr(r, "parse packet");
-	if (options.permit_empty_passwd && options.password_authentication)
-		return mm_auth_password(ssh, "");
-	return (0);
+	ఒకవేళ (options.permit_ఖాళీలు_passwd && options.password_authentication)
+		తిరిగి mm_auth_password(ssh, "");
+	తిరిగి (0);
 }
 
-Authmethod method_none = {
+Authmethod పద్ధతి_none = {
 	&methodcfg_none,
 	userauth_none,
 };

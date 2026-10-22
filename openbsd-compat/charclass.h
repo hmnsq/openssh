@@ -9,23 +9,23 @@
 /*
  * POSIX character class support for fnmatch() and glob().
  */
-static struct cclass {
-	const char *name;
-	int (*isctype)(int);
+స్థిర నిర్మాణం cclass {
+	స్థిరరాశి అక్షరం *name;
+	పూర్ణాంకం (*isctype)(పూర్ణాంకం);
 } cclasses[] = {
-	{ "alnum",	isalnum },
-	{ "alpha",	isalpha },
+	{ "alnum",	అక్షరమా_అంకెనా },
+	{ "alpha",	అక్షరమా },
 	{ "blank",	isblank },
 	{ "cntrl",	iscntrl },
-	{ "digit",	isdigit },
+	{ "digit",	అంకెనా },
 	{ "graph",	isgraph },
 	{ "lower",	islower },
 	{ "print",	isprint },
 	{ "punct",	ispunct },
-	{ "space",	isspace },
+	{ "space",	ఖాళీనా },
 	{ "upper",	isupper },
 	{ "xdigit",	isxdigit },
-	{ NULL,		NULL }
+	{ ఖాళీ,		ఖాళీ }
 };
 
-#define NCCLASSES	(sizeof(cclasses) / sizeof(cclasses[0]) - 1)
+#నిర్వచించు NCCLASSES	(పరిమాణం(cclasses) / పరిమాణం(cclasses[0]) - 1)

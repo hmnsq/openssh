@@ -25,79 +25,79 @@
 
 /* OPENBSD ORIGINAL: lib/libc/crypt/arc4random.c */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <fcntl.h>
-#include <limits.h>
-#include <signal.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/time.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/time.h>
 
-#ifndef HAVE_ARC4RANDOM
+#నిర్వచితం_కాకపోతే HAVE_ARC4RANDOM
 
 /*
  * Always use the getentropy implementation from bsd-getentropy.c, which
  * will call a native getentropy if available then fall back as required.
  * We use a different name so that OpenSSL cannot call the wrong getentropy.
  */
-int _ssh_compat_getentropy(void *, size_t);
-#ifdef getentropy
+పూర్ణాంకం _ssh_compat_getentropy(శూన్య *, కొలత_t);
+#నిర్వచితమైతే getentropy
 # undef getentropy
-#endif
-#define getentropy(x, y) (_ssh_compat_getentropy((x), (y)))
+#అయితే_ముగింపు
+#నిర్వచించు getentropy(x, y) (_ssh_compat_getentropy((x), (y)))
 
-#include "log.h"
+#అన్తర్భావ "log.h"
 
-#define KEYSTREAM_ONLY
-#include "chacha_private.h"
+#నిర్వచించు KEYSTREAM_ONLY
+#అన్తర్భావ "chacha_private.h"
 
-#define minimum(a, b) ((a) < (b) ? (a) : (b))
+#నిర్వచించు minimum(a, b) ((a) < (b) ? (a) : (b))
 
-#if defined(__GNUC__) || defined(_MSC_VER)
-#define inline __inline
-#else				/* __GNUC__ || _MSC_VER */
-#define inline
-#endif				/* !__GNUC__ && !_MSC_VER */
+#ఒకవేళ defined(__GNUC__) || defined(_MSC_VER)
+#నిర్వచించు అంతఃవరుస __inline
+#లేకపోతే				/* __GNUC__ || _MSC_VER */
+#నిర్వచించు అంతఃవరుస
+#అయితే_ముగింపు				/* !__GNUC__ && !_MSC_VER */
 
-#define KEYSZ	32
-#define IVSZ	8
-#define BLOCKSZ	64
-#define RSBUFSZ	(16*BLOCKSZ)
+#నిర్వచించు KEYSZ	32
+#నిర్వచించు IVSZ	8
+#నిర్వచించు BLOCKSZ	64
+#నిర్వచించు RSBUFSZ	(16*BLOCKSZ)
 
-#define REKEY_BASE	(1024*1024) /* NB. should be a power of 2 */
+#నిర్వచించు REKEY_పునాది	(1024*1024) /* NB. should be a power of 2 */
 
 /* Marked MAP_INHERIT_ZERO, so zero'd out in fork children. */
-static struct _rs {
-	size_t		rs_have;	/* valid bytes at end of rs_buf */
-	size_t		rs_count;	/* bytes till reseed */
+స్థిర నిర్మాణం _rs {
+	కొలత_t		rs_have;	/* valid bytes at end of rs_buf */
+	కొలత_t		rs_లెక్క;	/* bytes till reseed */
 } *rs;
 
 /* Maybe be preserved in fork children, if _rs_allocate() decides. */
-static struct _rsx {
+స్థిర నిర్మాణం _rsx {
 	chacha_ctx	rs_chacha;	/* chacha context for random keystream */
 	u_char		rs_buf[RSBUFSZ];	/* keystream blocks */
 } *rsx;
 
-static inline int _rs_allocate(struct _rs **, struct _rsx **);
-static inline void _rs_forkdetect(void);
-#include "arc4random.h"
+స్థిర అంతఃవరుస పూర్ణాంకం _rs_allocate(నిర్మాణం _rs **, నిర్మాణం _rsx **);
+స్థిర అంతఃవరుస శూన్య _rs_forkdetect(శూన్య);
+#అన్తర్భావ "arc4random.h"
 
-static inline void _rs_rekey(u_char *dat, size_t datlen);
+స్థిర అంతఃవరుస శూన్య _rs_rekey(u_char *dat, కొలత_t datlen);
 
-static inline void
-_rs_init(u_char *buf, size_t n)
+స్థిర అంతఃవరుస శూన్య
+_rs_init(u_char *buf, కొలత_t n)
 {
-	if (n < KEYSZ + IVSZ)
-		return;
+	ఒకవేళ (n < KEYSZ + IVSZ)
+		తిరిగి;
 
-	if (rs == NULL) {
-		if (_rs_allocate(&rs, &rsx) == -1)
+	ఒకవేళ (rs == ఖాళీ) {
+		ఒకవేళ (_rs_allocate(&rs, &rsx) == -1)
 			_exit(1);
 	}
 
@@ -105,113 +105,113 @@ _rs_init(u_char *buf, size_t n)
 	chacha_ivsetup(&rsx->rs_chacha, buf + KEYSZ);
 }
 
-static void
-_rs_stir(void)
+స్థిర శూన్య
+_rs_stir(శూన్య)
 {
 	u_char rnd[KEYSZ + IVSZ];
 	uint32_t rekey_fuzz = 0;
 
-	if (getentropy(rnd, sizeof rnd) == -1)
+	ఒకవేళ (getentropy(rnd, పరిమాణం rnd) == -1)
 		_getentropy_fail();
 
-	if (!rs)
-		_rs_init(rnd, sizeof(rnd));
-	else
-		_rs_rekey(rnd, sizeof(rnd));
-	explicit_bzero(rnd, sizeof(rnd));	/* discard source seed */
+	ఒకవేళ (!rs)
+		_rs_init(rnd, పరిమాణం(rnd));
+	లేకపోతే
+		_rs_rekey(rnd, పరిమాణం(rnd));
+	explicit_bzero(rnd, పరిమాణం(rnd));	/* discard source seed */
 
 	/* invalidate rs_buf */
 	rs->rs_have = 0;
-	memset(rsx->rs_buf, 0, sizeof(rsx->rs_buf));
+	memset(rsx->rs_buf, 0, పరిమాణం(rsx->rs_buf));
 
 	/* rekey interval should not be predictable */
-	chacha_encrypt_bytes(&rsx->rs_chacha, (uint8_t *)&rekey_fuzz,
-	    (uint8_t *)&rekey_fuzz, sizeof(rekey_fuzz));
-	rs->rs_count = REKEY_BASE + (rekey_fuzz % REKEY_BASE);
+	chacha_encrypt_బైట్లు(&rsx->rs_chacha, (uint8_t *)&rekey_fuzz,
+	    (uint8_t *)&rekey_fuzz, పరిమాణం(rekey_fuzz));
+	rs->rs_లెక్క = REKEY_పునాది + (rekey_fuzz % REKEY_పునాది);
 }
 
-static inline void
-_rs_stir_if_needed(size_t len)
+స్థిర అంతఃవరుస శూన్య
+_rs_stir_if_needed(కొలత_t len)
 {
 	_rs_forkdetect();
-	if (!rs || rs->rs_count <= len)
+	ఒకవేళ (!rs || rs->rs_లెక్క <= len)
 		_rs_stir();
-	if (rs->rs_count <= len)
-		rs->rs_count = 0;
-	else
-		rs->rs_count -= len;
+	ఒకవేళ (rs->rs_లెక్క <= len)
+		rs->rs_లెక్క = 0;
+	లేకపోతే
+		rs->rs_లెక్క -= len;
 }
 
-static inline void
-_rs_rekey(u_char *dat, size_t datlen)
+స్థిర అంతఃవరుస శూన్య
+_rs_rekey(u_char *dat, కొలత_t datlen)
 {
-#ifndef KEYSTREAM_ONLY
-	memset(rsx->rs_buf, 0, sizeof(rsx->rs_buf));
-#endif
+#నిర్వచితం_కాకపోతే KEYSTREAM_ONLY
+	memset(rsx->rs_buf, 0, పరిమాణం(rsx->rs_buf));
+#అయితే_ముగింపు
 	/* fill rs_buf with the keystream */
-	chacha_encrypt_bytes(&rsx->rs_chacha, rsx->rs_buf,
-	    rsx->rs_buf, sizeof(rsx->rs_buf));
+	chacha_encrypt_బైట్లు(&rsx->rs_chacha, rsx->rs_buf,
+	    rsx->rs_buf, పరిమాణం(rsx->rs_buf));
 	/* mix in optional user provided data */
-	if (dat) {
-		size_t i, m;
+	ఒకవేళ (dat) {
+		కొలత_t i, m;
 
 		m = minimum(datlen, KEYSZ + IVSZ);
-		for (i = 0; i < m; i++)
+		కొరకు (i = 0; i < m; i++)
 			rsx->rs_buf[i] ^= dat[i];
 	}
 	/* immediately reinit for backtracking resistance */
 	_rs_init(rsx->rs_buf, KEYSZ + IVSZ);
 	memset(rsx->rs_buf, 0, KEYSZ + IVSZ);
-	rs->rs_have = sizeof(rsx->rs_buf) - KEYSZ - IVSZ;
+	rs->rs_have = పరిమాణం(rsx->rs_buf) - KEYSZ - IVSZ;
 }
 
-static inline void
-_rs_random_buf(void *_buf, size_t n)
+స్థిర అంతఃవరుస శూన్య
+_rs_random_buf(శూన్య *_buf, కొలత_t n)
 {
 	u_char *buf = (u_char *)_buf;
 	u_char *keystream;
-	size_t m;
+	కొలత_t m;
 
 	_rs_stir_if_needed(n);
-	while (n > 0) {
-		if (rs->rs_have > 0) {
+	అయితే (n > 0) {
+		ఒకవేళ (rs->rs_have > 0) {
 			m = minimum(n, rs->rs_have);
-			keystream = rsx->rs_buf + sizeof(rsx->rs_buf)
+			keystream = rsx->rs_buf + పరిమాణం(rsx->rs_buf)
 			    - rs->rs_have;
-			memcpy(buf, keystream, m);
+			జ్ఞాపకం_నకలు(buf, keystream, m);
 			memset(keystream, 0, m);
 			buf += m;
 			n -= m;
 			rs->rs_have -= m;
 		}
-		if (rs->rs_have == 0)
-			_rs_rekey(NULL, 0);
+		ఒకవేళ (rs->rs_have == 0)
+			_rs_rekey(ఖాళీ, 0);
 	}
 }
 
-static inline void
+స్థిర అంతఃవరుస శూన్య
 _rs_random_u32(uint32_t *val)
 {
 	u_char *keystream;
 
-	_rs_stir_if_needed(sizeof(*val));
-	if (rs->rs_have < sizeof(*val))
-		_rs_rekey(NULL, 0);
-	keystream = rsx->rs_buf + sizeof(rsx->rs_buf) - rs->rs_have;
-	memcpy(val, keystream, sizeof(*val));
-	memset(keystream, 0, sizeof(*val));
-	rs->rs_have -= sizeof(*val);
+	_rs_stir_if_needed(పరిమాణం(*val));
+	ఒకవేళ (rs->rs_have < పరిమాణం(*val))
+		_rs_rekey(ఖాళీ, 0);
+	keystream = rsx->rs_buf + పరిమాణం(rsx->rs_buf) - rs->rs_have;
+	జ్ఞాపకం_నకలు(val, keystream, పరిమాణం(*val));
+	memset(keystream, 0, పరిమాణం(*val));
+	rs->rs_have -= పరిమాణం(*val);
 }
 
 uint32_t
-arc4random(void)
+arc4random(శూన్య)
 {
 	uint32_t val;
 
-	_ARC4_LOCK();
+	ARC4_తాళం();
 	_rs_random_u32(&val);
 	_ARC4_UNLOCK();
-	return val;
+	తిరిగి val;
 }
 DEF_WEAK(arc4random);
 
@@ -220,33 +220,33 @@ DEF_WEAK(arc4random);
  * arc4random_buf().
  */
 # ifndef HAVE_ARC4RANDOM_BUF
-void
-arc4random_buf(void *buf, size_t n)
+శూన్య
+arc4random_buf(శూన్య *buf, కొలత_t n)
 {
-	_ARC4_LOCK();
+	ARC4_తాళం();
 	_rs_random_buf(buf, n);
 	_ARC4_UNLOCK();
 }
 DEF_WEAK(arc4random_buf);
 # endif /* !HAVE_ARC4RANDOM_BUF */
-#endif /* !HAVE_ARC4RANDOM */
+#అయితే_ముగింపు /* !HAVE_ARC4RANDOM */
 
 /* arc4random_buf() that uses platform arc4random() */
-#if !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM)
-void
-arc4random_buf(void *_buf, size_t n)
+#ఒకవేళ !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM)
+శూన్య
+arc4random_buf(శూన్య *_buf, కొలత_t n)
 {
-	size_t i;
+	కొలత_t i;
 	u_int32_t r = 0;
-	char *buf = (char *)_buf;
+	అక్షరం *buf = (అక్షరం *)_buf;
 
-	for (i = 0; i < n; i++) {
-		if (i % 4 == 0)
+	కొరకు (i = 0; i < n; i++) {
+		ఒకవేళ (i % 4 == 0)
 			r = arc4random();
 		buf[i] = r & 0xff;
 		r >>= 8;
 	}
-	explicit_bzero(&r, sizeof(r));
+	explicit_bzero(&r, పరిమాణం(r));
 }
-#endif /* !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM) */
+#అయితే_ముగింపు /* !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM) */
 

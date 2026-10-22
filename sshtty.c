@@ -35,62 +35,62 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <termios.h>
-#include <pwd.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <termios.h>
+#అన్తర్భావ <pwd.h>
 
-#include "sshpty.h"
+#అన్తర్భావ "sshpty.h"
 
-static struct termios _saved_tio;
-static int _in_raw_mode = 0;
+స్థిర నిర్మాణం termios _saved_tio;
+స్థిర పూర్ణాంకం లోపల_raw_బహుళకం = 0;
 
-struct termios *
-get_saved_tio(void)
+నిర్మాణం termios *
+get_saved_tio(శూన్య)
 {
-	return _in_raw_mode ? &_saved_tio : NULL;
+	తిరిగి లోపల_raw_బహుళకం ? &_saved_tio : ఖాళీ;
 }
 
-void
-leave_raw_mode(int quiet)
+శూన్య
+leave_raw_బహుళకం(పూర్ణాంకం quiet)
 {
-	if (!_in_raw_mode)
-		return;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
-		if (!quiet)
+	ఒకవేళ (!లోపల_raw_బహుళకం)
+		తిరిగి;
+	ఒకవేళ (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
+		ఒకవేళ (!quiet)
 			perror("tcsetattr");
-	} else
-		_in_raw_mode = 0;
+	} లేకపోతే
+		లోపల_raw_బహుళకం = 0;
 }
 
-void
-enter_raw_mode(int quiet)
+శూన్య
+enter_raw_బహుళకం(పూర్ణాంకం quiet)
 {
-	struct termios tio;
+	నిర్మాణం termios tio;
 
-	if (tcgetattr(fileno(stdin), &tio) == -1) {
-		if (!quiet)
+	ఒకవేళ (tcgetattr(fileno(stdin), &tio) == -1) {
+		ఒకవేళ (!quiet)
 			perror("tcgetattr");
-		return;
+		తిరిగి;
 	}
 	_saved_tio = tio;
 	tio.c_iflag |= IGNPAR;
 	tio.c_iflag &= ~(ISTRIP | INLCR | IGNCR | ICRNL | IXON | IXANY | IXOFF);
-#ifdef IUCLC
+#నిర్వచితమైతే IUCLC
 	tio.c_iflag &= ~IUCLC;
-#endif
+#అయితే_ముగింపు
 	tio.c_lflag &= ~(ISIG | ICANON | ECHO | ECHOE | ECHOK | ECHONL);
-#ifdef IEXTEN
+#నిర్వచితమైతే IEXTEN
 	tio.c_lflag &= ~IEXTEN;
-#endif
+#అయితే_ముగింపు
 	tio.c_oflag &= ~OPOST;
 	tio.c_cc[VMIN] = 1;
 	tio.c_cc[VTIME] = 0;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
-		if (!quiet)
+	ఒకవేళ (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
+		ఒకవేళ (!quiet)
 			perror("tcsetattr");
-	} else
-		_in_raw_mode = 1;
+	} లేకపోతే
+		లోపల_raw_బహుళకం = 1;
 }

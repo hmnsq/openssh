@@ -15,17 +15,17 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef SSHSIG_H
-#define SSHSIG_H
+#నిర్వచితం_కాకపోతే SSHSIG_H
+#నిర్వచించు SSHSIG_H
 
-struct sshbuf;
-struct sshkey;
-struct sshsigopt;
-struct sshkey_sig_details;
+నిర్మాణం sshbuf;
+నిర్మాణం sshkey;
+నిర్మాణం sshsigopt;
+నిర్మాణం sshkey_sig_details;
 
-typedef int sshsig_signer(struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *, const char *,
-    u_int, void *);
+రకనిర్వచనం పూర్ణాంకం sshsig_signer(నిర్మాణం sshkey *, u_char **, కొలత_t *,
+    స్థిరరాశి u_char *, కొలత_t, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *,
+    u_int, శూన్య *);
 
 /* Buffer-oriented API */
 
@@ -34,19 +34,19 @@ typedef int sshsig_signer(struct sshkey *, u_char **, size_t *,
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  * out is populated with the detached signature, or NULL on failure.
  */
-int sshsig_signb(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin, const struct sshbuf *message,
-    const char *sig_namespace, struct sshbuf **out,
-    sshsig_signer *signer, void *signer_ctx);
+పూర్ణాంకం sshsig_signb(నిర్మాణం sshkey *కీలకం, స్థిరరాశి అక్షరం *hashalg,
+    స్థిరరాశి అక్షరం *sk_provider, స్థిరరాశి అక్షరం *sk_pin, స్థిరరాశి నిర్మాణం sshbuf *సందేశం_2,
+    స్థిరరాశి అక్షరం *sig_namespace, నిర్మాణం sshbuf **బహిర్గతం,
+    sshsig_signer *signer, శూన్య *signer_ctx);
 
 /*
  * Verifies that a detached signature is valid and optionally returns key
  * used to sign via argument.
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  */
-int sshsig_verifyb(struct sshbuf *signature,
-    const struct sshbuf *message, const char *sig_namespace,
-    struct sshkey **sign_keyp, struct sshkey_sig_details **sig_details);
+పూర్ణాంకం sshsig_verifyb(నిర్మాణం sshbuf *signature,
+    స్థిరరాశి నిర్మాణం sshbuf *సందేశం_2, స్థిరరాశి అక్షరం *sig_namespace,
+    నిర్మాణం sshkey **sign_keyp, నిర్మాణం sshkey_sig_details **sig_details);
 
 /* File/FD-oriented API */
 
@@ -55,57 +55,57 @@ int sshsig_verifyb(struct sshbuf *signature,
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  * out is populated with the detached signature, or NULL on failure.
  */
-int sshsig_sign_fd(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin,
-    int fd, const char *sig_namespace,
-    struct sshbuf **out, sshsig_signer *signer, void *signer_ctx);
+పూర్ణాంకం sshsig_sign_fd(నిర్మాణం sshkey *కీలకం, స్థిరరాశి అక్షరం *hashalg,
+    స్థిరరాశి అక్షరం *sk_provider, స్థిరరాశి అక్షరం *sk_pin,
+    పూర్ణాంకం fd, స్థిరరాశి అక్షరం *sig_namespace,
+    నిర్మాణం sshbuf **బహిర్గతం, sshsig_signer *signer, శూన్య *signer_ctx);
 
 /*
  * Verifies that a detached signature over a file is valid and optionally
  * returns key used to sign via argument.
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  */
-int sshsig_verify_fd(struct sshbuf *signature, int fd,
-    const char *sig_namespace, struct sshkey **sign_keyp,
-    struct sshkey_sig_details **sig_details);
+పూర్ణాంకం sshsig_verify_fd(నిర్మాణం sshbuf *signature, పూర్ణాంకం fd,
+    స్థిరరాశి అక్షరం *sig_namespace, నిర్మాణం sshkey **sign_keyp,
+    నిర్మాణం sshkey_sig_details **sig_details);
 
 /* Utility functions */
 
 /*
  * Return a base64 encoded "ASCII armoured" version of a raw signature.
  */
-int sshsig_armor(const struct sshbuf *blob, struct sshbuf **out);
+పూర్ణాంకం sshsig_armor(స్థిరరాశి నిర్మాణం sshbuf *blob, నిర్మాణం sshbuf **బహిర్గతం);
 
 /*
  * Decode a base64 encoded armoured signature to a raw signature.
  */
-int sshsig_dearmor(struct sshbuf *sig, struct sshbuf **out);
+పూర్ణాంకం sshsig_dearmor(నిర్మాణం sshbuf *sig, నిర్మాణం sshbuf **బహిర్గతం);
 
 /*
  * Checks whether a particular key/principal/namespace is permitted by
  * an allowed_keys file. Returns 0 on success.
  */
-int sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
-    const char *principal, const char *ns, uint64_t verify_time);
+పూర్ణాంకం sshsig_check_allowed_కీలకాలు(స్థిరరాశి అక్షరం *మార్గం, స్థిరరాశి నిర్మాణం sshkey *sign_కీలకం,
+    స్థిరరాశి అక్షరం *principal, స్థిరరాశి అక్షరం *ns, uint64_t verify_సమయం);
 
 /* Parse zero or more allowed_keys signature options */
-struct sshsigopt *sshsigopt_parse(const char *opts,
-    const char *path, u_long linenum, const char **errstrp);
+నిర్మాణం sshsigopt *sshsigopt_parse(స్థిరరాశి అక్షరం *opts,
+    స్థిరరాశి అక్షరం *మార్గం, u_long linenum, స్థిరరాశి అక్షరం **errstrp);
 
 /* Free signature options */
-void sshsigopt_free(struct sshsigopt *opts);
+శూన్య sshsigopt_free(నిర్మాణం sshsigopt *opts);
 
 /* Get public key from signature */
-int sshsig_get_pubkey(struct sshbuf *signature, struct sshkey **pubkey);
+పూర్ణాంకం sshsig_get_pubkey(నిర్మాణం sshbuf *signature, నిర్మాణం sshkey **pubkey);
 
 /* Find principal in allowed_keys file, given a sshkey. Returns
  * 0 on success.
  */
-int sshsig_find_principals(const char *path, const struct sshkey *sign_key,
-    uint64_t verify_time, char **principal);
+పూర్ణాంకం sshsig_కనుగొను_principals(స్థిరరాశి అక్షరం *మార్గం, స్థిరరాశి నిర్మాణం sshkey *sign_కీలకం,
+    uint64_t verify_సమయం, అక్షరం **principal);
 
 /* Find all principals in allowed_keys file matching *principal */
-int sshsig_match_principals(const char *path,
-	const char *principal, char ***principalsp, size_t *nprincipalsp);
+పూర్ణాంకం sshsig_సరిపోలిక_principals(స్థిరరాశి అక్షరం *మార్గం,
+	స్థిరరాశి అక్షరం *principal, అక్షరం ***principalsp, కొలత_t *nprincipalsp);
 
-#endif /* SSHSIG_H */
+#అయితే_ముగింపు /* SSHSIG_H */

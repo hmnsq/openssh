@@ -32,123 +32,123 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
-#if !defined(HAVE_OPENPTY)
+#అన్తర్భావ "includes.h"
+#ఒకవేళ !defined(HAVE_OPENPTY)
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <stdlib.h>
-#include <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
 
-#include <sys/stat.h>
-#ifdef HAVE_SYS_IOCTL_H
+#అన్తర్భావ <sys/stat.h>
+#నిర్వచితమైతే HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
-#endif
+#అయితే_ముగింపు
 
-#ifdef HAVE_FCNTL_H
+#నిర్వచితమైతే HAVE_FCNTL_H
 # include <fcntl.h>
-#endif
+#అయితే_ముగింపు
 
-#include <util.h>
+#అన్తర్భావ <util.h>
 
-#ifdef HAVE_PTY_H
+#నిర్వచితమైతే HAVE_PTY_H
 # include <pty.h>
-#endif
-#if defined(HAVE_DEV_PTMX) && defined(HAVE_SYS_STROPTS_H)
+#అయితే_ముగింపు
+#ఒకవేళ defined(HAVE_DEV_PTMX) && defined(HAVE_SYS_STROPTS_H)
 # include <sys/stropts.h>
-#endif
+#అయితే_ముగింపు
 
-#include <signal.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-#include "misc.h"
-#include "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "log.h"
 
-#ifndef O_NOCTTY
-#define O_NOCTTY 0
-#endif
+#నిర్వచితం_కాకపోతే O_NOCTTY
+#నిర్వచించు O_NOCTTY 0
+#అయితే_ముగింపు
 
-#if defined(HAVE_DEV_PTMX) && !defined(HAVE__GETPTY)
-static int
-openpty_streams(int *amaster, int *aslave)
+#ఒకవేళ defined(HAVE_DEV_PTMX) && !defined(HAVE__GETPTY)
+స్థిర పూర్ణాంకం
+openpty_streams(పూర్ణాంకం *amaster, పూర్ణాంకం *aslave)
 {
 	/*
 	 * This code is used e.g. on Solaris 2.x.  (Note that Solaris 2.3
 	 * also has bsd-style ptys, but they simply do not work.)
 	 */
-	int ptm;
-	char *pts;
+	పూర్ణాంకం ptm;
+	అక్షరం *pts;
 	sshsig_t old_signal;
 
-	if ((ptm = open("/dev/ptmx", O_RDWR | O_NOCTTY)) == -1)
-		return (-1);
+	ఒకవేళ ((ptm = open("/dev/ptmx", O_RDWR | O_NOCTTY)) == -1)
+		తిరిగి (-1);
 
 	/* XXX: need to close ptm on error? */
 	old_signal = ssh_signal(SIGCHLD, SIG_DFL);
-	if (grantpt(ptm) < 0)
-		return (-1);
+	ఒకవేళ (grantpt(ptm) < 0)
+		తిరిగి (-1);
 	ssh_signal(SIGCHLD, old_signal);
 
-	if (unlockpt(ptm) < 0)
-		return (-1);
+	ఒకవేళ (unlockpt(ptm) < 0)
+		తిరిగి (-1);
 
-	if ((pts = ptsname(ptm)) == NULL)
-		return (-1);
+	ఒకవేళ ((pts = ptsname(ptm)) == ఖాళీ)
+		తిరిగి (-1);
 	*amaster = ptm;
 
 	/* Open the slave side. */
-	if ((*aslave = open(pts, O_RDWR | O_NOCTTY)) == -1) {
+	ఒకవేళ ((*aslave = open(pts, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		తిరిగి (-1);
 	}
 
-# if defined(I_FIND) && defined(__SVR4)
+# ఒకవేళ defined(I_కనుగొను) && defined(__SVR4)
 	/*
 	 * If the streams modules have already been pushed then there
 	 * is no more work to do here.
 	 */
-	if (ioctl(*aslave, I_FIND, "ptem") != 0)
-		return 0;
+	ఒకవేళ (ioctl(*aslave, I_కనుగొను, "ptem") != 0)
+		తిరిగి 0;
 # endif
 
 	/*
 	 * Try to push the appropriate streams modules, as described
 	 * in Solaris pts(7).
 	 */
-	ioctl(*aslave, I_PUSH, "ptem");
-	ioctl(*aslave, I_PUSH, "ldterm");
+	ioctl(*aslave, I_నెట్టు, "ptem");
+	ioctl(*aslave, I_నెట్టు, "ldterm");
 # ifndef __hpux
-	ioctl(*aslave, I_PUSH, "ttcompat");
+	ioctl(*aslave, I_నెట్టు, "ttcompat");
 # endif /* __hpux */
-	return (0);
+	తిరిగి (0);
 }
-#endif
+#అయితే_ముగింపు
 
-int
-openpty(int *amaster, int *aslave, char *name, const struct termios *termp,
-   const struct winsize *winp)
+పూర్ణాంకం
+openpty(పూర్ణాంకం *amaster, పూర్ణాంకం *aslave, అక్షరం *name, స్థిరరాశి నిర్మాణం termios *termp,
+   స్థిరరాశి నిర్మాణం winsize *winp)
 {
-#if defined(HAVE__GETPTY)
+#ఒకవేళ defined(HAVE__GETPTY)
 	/*
 	 * _getpty(3) exists in SGI Irix 4.x, 5.x & 6.x -- it generates more
 	 * pty's automagically when needed
 	 */
-	char *slave;
+	అక్షరం *slave;
 
-	if ((slave = _getpty(amaster, O_RDWR, 0622, 0)) == NULL)
-		return (-1);
+	ఒకవేళ ((slave = _getpty(amaster, O_RDWR, 0622, 0)) == ఖాళీ)
+		తిరిగి (-1);
 
 	/* Open the slave side. */
-	if ((*aslave = open(slave, O_RDWR | O_NOCTTY)) == -1) {
+	ఒకవేళ ((*aslave = open(slave, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		తిరిగి (-1);
 	}
-	return (0);
+	తిరిగి (0);
 
-#elif defined(HAVE_DEV_PTMX)
+#లేదావేళ defined(HAVE_DEV_PTMX)
 
-#ifdef SSHD_ACQUIRES_CTTY
+#నిర్వచితమైతే SSHD_ACQUIRES_CTTY
 	/*
 	 * On some (most? all?) SysV based systems with STREAMS based terminals,
 	 * sshd will acquire a controlling terminal when it pushes the "ptem"
@@ -159,81 +159,81 @@ openpty(int *amaster, int *aslave, char *name, const struct termios *termp,
 	 * different session and is available to become controlling terminal
 	 * for the client's subprocess.  See bugzilla #245 for details.
 	 */
-	int r, fd;
-	static int junk_ptyfd = -1, junk_ttyfd;
-	char *junk_name;
+	పూర్ణాంకం r, fd;
+	స్థిర పూర్ణాంకం junk_ptyfd = -1, junk_ttyfd;
+	అక్షరం *junk_name;
 
 	r = openpty_streams(amaster, aslave);
-	if (junk_ptyfd == -1 && (fd = open(_PATH_TTY, O_RDWR|O_NOCTTY)) >= 0) {
+	ఒకవేళ (junk_ptyfd == -1 && (fd = open(_PATH_TTY, O_RDWR|O_NOCTTY)) >= 0) {
 		close(fd);
 		junk_ptyfd = *amaster;
 		junk_ttyfd = *aslave;
 		junk_name = ttyname(junk_ttyfd);
 		debug("STREAMS bug workaround pty %d tty %d name %s",
 		    junk_ptyfd, junk_ttyfd, junk_name ? junk_name : "<none>");
-	} else
-		return r;
-#endif
+	} లేకపోతే
+		తిరిగి r;
+#అయితే_ముగింపు
 
-	return openpty_streams(amaster, aslave);
+	తిరిగి openpty_streams(amaster, aslave);
 
-#elif defined(HAVE_DEV_PTS_AND_PTC)
+#లేదావేళ defined(HAVE_DEV_PTS_AND_PTC)
 	/* AIX-style pty code. */
-	const char *ttname;
+	స్థిరరాశి అక్షరం *ttname;
 
-	if ((*amaster = open("/dev/ptc", O_RDWR | O_NOCTTY)) == -1)
-		return (-1);
-	if ((ttname = ttyname(*amaster)) == NULL)
-		return (-1);
-	if ((*aslave = open(ttname, O_RDWR | O_NOCTTY)) == -1) {
+	ఒకవేళ ((*amaster = open("/dev/ptc", O_RDWR | O_NOCTTY)) == -1)
+		తిరిగి (-1);
+	ఒకవేళ ((ttname = ttyname(*amaster)) == ఖాళీ)
+		తిరిగి (-1);
+	ఒకవేళ ((*aslave = open(ttname, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		తిరిగి (-1);
 	}
-	return (0);
+	తిరిగి (0);
 
-#else
+#లేకపోతే
 	/* BSD-style pty code. */
-	char ptbuf[64], ttbuf[64];
-	int i;
-	const char *ptymajors = "pqrstuvwxyzabcdefghijklmno"
+	అక్షరం ptbuf[64], ttbuf[64];
+	పూర్ణాంకం i;
+	స్థిరరాశి అక్షరం *ptymajors = "pqrstuvwxyzabcdefghijklmno"
 	    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	const char *ptyminors = "0123456789abcdef";
-	int num_minors = strlen(ptyminors);
-	int num_ptys = strlen(ptymajors) * num_minors;
-	struct termios tio;
+	స్థిరరాశి అక్షరం *ptyminors = "0123456789abcdef";
+	పూర్ణాంకం అంకె_minors = అక్షరశ్రేణి_పొడవు(ptyminors);
+	పూర్ణాంకం అంకె_ptys = అక్షరశ్రేణి_పొడవు(ptymajors) * అంకె_minors;
+	నిర్మాణం termios tio;
 
-	for (i = 0; i < num_ptys; i++) {
-		snprintf(ptbuf, sizeof(ptbuf), "/dev/pty%c%c",
-		    ptymajors[i / num_minors], ptyminors[i % num_minors]);
-		snprintf(ttbuf, sizeof(ttbuf), "/dev/tty%c%c",
-		    ptymajors[i / num_minors], ptyminors[i % num_minors]);
+	కొరకు (i = 0; i < అంకె_ptys; i++) {
+		snprintf(ptbuf, పరిమాణం(ptbuf), "/dev/pty%c%c",
+		    ptymajors[i / అంకె_minors], ptyminors[i % అంకె_minors]);
+		snprintf(ttbuf, పరిమాణం(ttbuf), "/dev/tty%c%c",
+		    ptymajors[i / అంకె_minors], ptyminors[i % అంకె_minors]);
 
-		if ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1) {
+		ఒకవేళ ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1) {
 			/* Try SCO style naming */
-			snprintf(ptbuf, sizeof(ptbuf), "/dev/ptyp%d", i);
-			snprintf(ttbuf, sizeof(ttbuf), "/dev/ttyp%d", i);
-			if ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1)
-				continue;
+			snprintf(ptbuf, పరిమాణం(ptbuf), "/dev/ptyp%d", i);
+			snprintf(ttbuf, పరిమాణం(ttbuf), "/dev/ttyp%d", i);
+			ఒకవేళ ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1)
+				కొనసాగు;
 		}
 
 		/* Open the slave side. */
-		if ((*aslave = open(ttbuf, O_RDWR | O_NOCTTY)) == -1) {
+		ఒకవేళ ((*aslave = open(ttbuf, O_RDWR | O_NOCTTY)) == -1) {
 			close(*amaster);
-			return (-1);
+			తిరిగి (-1);
 		}
 		/* set tty modes to a sane state for broken clients */
-		if (tcgetattr(*amaster, &tio) != -1) {
+		ఒకవేళ (tcgetattr(*amaster, &tio) != -1) {
 			tio.c_lflag |= (ECHO | ISIG | ICANON);
 			tio.c_oflag |= (OPOST | ONLCR);
 			tio.c_iflag |= ICRNL;
 			tcsetattr(*amaster, TCSANOW, &tio);
 		}
 
-		return (0);
+		తిరిగి (0);
 	}
-	return (-1);
-#endif
+	తిరిగి (-1);
+#అయితే_ముగింపు
 }
 
-#endif /* !defined(HAVE_OPENPTY) */
+#అయితే_ముగింపు /* !defined(HAVE_OPENPTY) */
 

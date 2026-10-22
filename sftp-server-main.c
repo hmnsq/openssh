@@ -15,38 +15,38 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <unistd.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <pwd.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <unistd.h>
 
-#include "log.h"
-#include "sftp.h"
-#include "misc.h"
-#include "xmalloc.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "sftp.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "xmalloc.h"
 
-void
-cleanup_exit(int i)
+శూన్య
+cleanup_exit(పూర్ణాంకం i)
 {
 	sftp_server_cleanup_exit(i);
 }
 
-int
-main(int argc, char **argv)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	struct passwd *user_pw;
+	నిర్మాణం passwd *user_pw;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
 
-	if ((user_pw = getpwuid(getuid())) == NULL) {
+	ఒకవేళ ((user_pw = getpwuid(getuid())) == ఖాళీ) {
 		fprintf(stderr, "No user found for uid %lu\n",
 		    (u_long)getuid());
-		return 1;
+		తిరిగి 1;
 	}
 
-	return (sftp_server_main(argc, argv, user_pw));
+	తిరిగి (sftp_server_main(argc, argv, user_pw));
 }

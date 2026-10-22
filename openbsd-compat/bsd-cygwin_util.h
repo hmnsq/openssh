@@ -27,40 +27,40 @@
  * binary mode on Windows systems.
  */
 
-#ifndef _BSD_CYGWIN_UTIL_H
-#define _BSD_CYGWIN_UTIL_H
+#నిర్వచితం_కాకపోతే _BSD_CYGWIN_UTIL_H
+#నిర్వచించు _BSD_CYGWIN_UTIL_H
 
-#ifdef HAVE_CYGWIN
+#నిర్వచితమైతే HAVE_CYGWIN
 
-#undef ERROR
+#నిర్వచనం_రద్దు ERROR
 
 /* Avoid including windows headers. */
-typedef void *HANDLE;
-#define INVALID_HANDLE_VALUE ((HANDLE) -1)
-#define DNLEN 16
-#define UNLEN 256
+రకనిర్వచనం శూన్య *HANDLE;
+#నిర్వచించు INVALID_HANDLE_విలువ ((HANDLE) -1)
+#నిర్వచించు DNLEN 16
+#నిర్వచించు UNLEN 256
 
 /* Cygwin functions for which declarations are only available when including
    windows headers, so we have to define them here explicitly. */
-extern HANDLE cygwin_logon_user (const struct passwd *, const char *);
-extern void cygwin_set_impersonation_token (const HANDLE);
+బాహ్య HANDLE cygwin_logon_user (స్థిరరాశి నిర్మాణం passwd *, స్థిరరాశి అక్షరం *);
+బాహ్య శూన్య cygwin_సమితి_impersonation_token (స్థిరరాశి HANDLE);
 
-#include <sys/cygwin.h>
-#include <io.h>
+#అన్తర్భావ <sys/cygwin.h>
+#అన్తర్భావ <io.h>
 
-#define CYGWIN_SSH_PRIVSEP_USER (cygwin_ssh_privsep_user())
-const char *cygwin_ssh_privsep_user();
+#నిర్వచించు CYGWIN_SSH_PRIVSEP_USER (cygwin_ssh_privsep_user())
+స్థిరరాశి అక్షరం *cygwin_ssh_privsep_user();
 
-int binary_open(const char *, int , ...);
-int check_ntsec(const char *);
-char **fetch_windows_environment(void);
-void free_windows_environment(char **);
-int cygwin_ug_match_pattern_list(const char *, const char *);
+పూర్ణాంకం ద్విమాన_open(స్థిరరాశి అక్షరం *, పూర్ణాంకం , ...);
+పూర్ణాంకం check_ntsec(స్థిరరాశి అక్షరం *);
+అక్షరం **fetch_windows_environment(శూన్య);
+శూన్య free_windows_environment(అక్షరం **);
+పూర్ణాంకం cygwin_ug_సరిపోలిక_నమూనా_list(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
 
-#ifndef NO_BINARY_OPEN
-#define open binary_open
-#endif
+#నిర్వచితం_కాకపోతే NO_ద్విమాన_OPEN
+#నిర్వచించు open ద్విమాన_open
+#అయితే_ముగింపు
 
-#endif /* HAVE_CYGWIN */
+#అయితే_ముగింపు /* HAVE_CYGWIN */
 
-#endif /* _BSD_CYGWIN_UTIL_H */
+#అయితే_ముగింపు /* _BSD_CYGWIN_UTIL_H */

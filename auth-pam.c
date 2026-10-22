@@ -47,217 +47,217 @@
 
 /* Based on FreeBSD: src/crypto/openssh/auth2-pam-freebsd.c,v 1.11 2003/03/31 13:48:18 des */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <sys/wait.h>
 
-#include <errno.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-#ifdef USE_PAM
-#if defined(HAVE_SECURITY_PAM_APPL_H)
-#include <security/pam_appl.h>
-#elif defined (HAVE_PAM_PAM_APPL_H)
-#include <pam/pam_appl.h>
-#endif
+#నిర్వచితమైతే USE_PAM
+#ఒకవేళ defined(HAVE_SECURITY_PAM_APPL_H)
+#అన్తర్భావ <security/pam_appl.h>
+#లేదావేళ defined (HAVE_PAM_PAM_APPL_H)
+#అన్తర్భావ <pam/pam_appl.h>
+#అయితే_ముగింపు
 
 /* OpenGroup RFC86.0 and XSSO specify no "const" on arguments */
-#ifdef PAM_SUN_CODEBASE
+#నిర్వచితమైతే PAM_SUN_CODEBASE
 # define sshpam_const		/* Solaris, HP-UX, SunOS */
-#else
-# define sshpam_const	const	/* LinuxPAM, OpenPAM, AIX */
-#endif
+#లేకపోతే
+# define sshpam_const	స్థిరరాశి	/* LinuxPAM, OpenPAM, AIX */
+#అయితే_ముగింపు
 
 /* Ambiguity in spec: is it an array of pointers or a pointer to an array? */
-#ifdef PAM_SUN_CODEBASE
-# define PAM_MSG_MEMBER(msg, n, member) ((*(msg))[(n)].member)
-#else
-# define PAM_MSG_MEMBER(msg, n, member) ((msg)[(n)]->member)
-#endif
+#నిర్వచితమైతే PAM_SUN_CODEBASE
+# define PAM_సందేశం_MEMBER(సందేశం, n, member) ((*(సందేశం))[(n)].member)
+#లేకపోతే
+# define PAM_సందేశం_MEMBER(సందేశం, n, member) ((సందేశం)[(n)]->member)
+#అయితే_ముగింపు
 
-#include "xmalloc.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-pam.h"
-#include "canohost.h"
-#include "log.h"
-#include "msg.h"
-#include "packet.h"
-#include "misc.h"
-#include "servconf.h"
-#include "ssh2.h"
-#include "auth-options.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "srclimit.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "hostfile.h"
+#అన్తర్భావ "auth.h"
+#అన్తర్భావ "auth-pam.h"
+#అన్తర్భావ "canohost.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "msg.h"
+#అన్తర్భావ "packet.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "servconf.h"
+#అన్తర్భావ "ssh2.h"
+#అన్తర్భావ "auth-options.h"
+#నిర్వచితమైతే GSSAPI
+#అన్తర్భావ "ssh-gss.h"
+#అయితే_ముగింపు
+#అన్తర్భావ "monitor_wrap.h"
+#అన్తర్భావ "srclimit.h"
 
-extern ServerOptions options;
-extern struct sshbuf *loginmsg;
-extern u_int utmp_len;
+బాహ్య ServerOptions options;
+బాహ్య నిర్మాణం sshbuf *loginmsg;
+బాహ్య u_int utmp_len;
 
 /* so we don't silently change behaviour */
-#ifdef USE_POSIX_THREADS
+#నిర్వచితమైతే USE_POSIX_దారాలు
 # error "USE_POSIX_THREADS replaced by UNSUPPORTED_POSIX_THREADS_HACK"
-#endif
+#అయితే_ముగింపు
 
 /*
  * Formerly known as USE_POSIX_THREADS, using this is completely unsupported
  * and generally a bad idea.  Use at own risk and do not expect support if
  * this breaks.
  */
-#ifdef UNSUPPORTED_POSIX_THREADS_HACK
-#include <pthread.h>
+#నిర్వచితమైతే UNSUPPORTED_POSIX_దారాలు_HACK
+#అన్తర్భావ <pthread.h>
 /*
  * Avoid namespace clash when *not* using pthreads for systems *with*
  * pthreads, which unconditionally define pthread_t via sys/types.h
  * (e.g. Linux)
  */
-typedef pthread_t sp_pthread_t;
-#else
-typedef pid_t sp_pthread_t;
-#define pthread_exit	fake_pthread_exit
-#define pthread_create	fake_pthread_create
-#define pthread_cancel	fake_pthread_cancel
-#define pthread_join	fake_pthread_join
-#endif
+రకనిర్వచనం pthread_t sp_pthread_t;
+#లేకపోతే
+రకనిర్వచనం pid_t sp_pthread_t;
+#నిర్వచించు pthread_exit	fake_pthread_exit
+#నిర్వచించు pthread_create	fake_pthread_create
+#నిర్వచించు pthread_cancel	fake_pthread_cancel
+#నిర్వచించు pthread_join	fake_pthread_join
+#అయితే_ముగింపు
 
-typedef int SshPamDone;
-#define SshPamError -1
-#define SshPamNone 0
-#define SshPamAuthenticated 1
-#define SshPamAgain 2
+రకనిర్వచనం పూర్ణాంకం Ssh_Pam_పూర్తి;
+#నిర్వచించు SshPamError -1
+#నిర్వచించు SshPamNone 0
+#నిర్వచించు SshPamAuthenticated 1
+#నిర్వచించు SshPamAgain 2
 
-struct pam_ctxt {
+నిర్మాణం pam_ctxt {
 	sp_pthread_t	 pam_thread;
-	int		 pam_psock;
-	int		 pam_csock;
-	SshPamDone	 pam_done;
+	పూర్ణాంకం		 pam_psock;
+	పూర్ణాంకం		 pam_csock;
+	Ssh_Pam_పూర్తి	 pam_పూర్తి;
 };
 
-static void sshpam_free_ctx(void *);
-static struct pam_ctxt *cleanup_ctxt;
+స్థిర శూన్య sshpam_free_ctx(శూన్య *);
+స్థిర నిర్మాణం pam_ctxt *cleanup_ctxt;
 
-#ifndef UNSUPPORTED_POSIX_THREADS_HACK
+#నిర్వచితం_కాకపోతే UNSUPPORTED_POSIX_దారాలు_HACK
 /*
  * Simulate threads with processes.
  */
 
-static int sshpam_thread_status = -1;
-static sshsig_t sshpam_oldsig;
+స్థిర పూర్ణాంకం sshpam_thread_స్థితి = -1;
+స్థిర sshsig_t sshpam_oldsig;
 
-static void
-sshpam_sigchld_handler(int sig)
+స్థిర శూన్య
+sshpam_sigchld_handler(పూర్ణాంకం sig)
 {
 	ssh_signal(SIGCHLD, SIG_DFL);
-	if (cleanup_ctxt == NULL)
-		return;	/* handler called after PAM cleanup, shouldn't happen */
-	if (waitpid(cleanup_ctxt->pam_thread, &sshpam_thread_status, WNOHANG)
+	ఒకవేళ (cleanup_ctxt == ఖాళీ)
+		తిరిగి;	/* handler called after PAM cleanup, shouldn't happen */
+	ఒకవేళ (waitpid(cleanup_ctxt->pam_thread, &sshpam_thread_స్థితి, WNOHANG)
 	    <= 0) {
 		/* PAM thread has not exited, privsep slave must have */
 		kill(cleanup_ctxt->pam_thread, SIGTERM);
-		while (waitpid(cleanup_ctxt->pam_thread,
-		    &sshpam_thread_status, 0) == -1) {
-			if (errno == EINTR)
-				continue;
-			return;
+		అయితే (waitpid(cleanup_ctxt->pam_thread,
+		    &sshpam_thread_స్థితి, 0) == -1) {
+			ఒకవేళ (errno == EINTR)
+				కొనసాగు;
+			తిరిగి;
 		}
 	}
-	if (sshpam_thread_status == -1)
-		return;
-	if (WIFSIGNALED(sshpam_thread_status)) {
-		if (signal_is_crash(WTERMSIG(sshpam_thread_status)))
-			_exit(EXIT_CHILD_CRASH);
-	} else if (!WIFEXITED(sshpam_thread_status))
-		_exit(EXIT_CHILD_CRASH);
+	ఒకవేళ (sshpam_thread_స్థితి == -1)
+		తిరిగి;
+	ఒకవేళ (WIFSIGNALED(sshpam_thread_స్థితి)) {
+		ఒకవేళ (signal_is_crash(WTERMSIG(sshpam_thread_స్థితి)))
+			_exit(EXIT_బిడ్డ_CRASH);
+	} లేకపోతే ఒకవేళ (!WIFEXITED(sshpam_thread_స్థితి))
+		_exit(EXIT_బిడ్డ_CRASH);
 }
 
 /* ARGSUSED */
-static void
-pthread_exit(void *value)
+స్థిర శూన్య
+pthread_exit(శూన్య *విలువ)
 {
 	_exit(0);
 }
 
 /* ARGSUSED */
-static int
-pthread_create(sp_pthread_t *thread, const void *attr,
-    void *(*thread_start)(void *), void *arg)
+స్థిర పూర్ణాంకం
+pthread_create(sp_pthread_t *thread, స్థిరరాశి శూన్య *attr,
+    శూన్య *(*thread_ప్రారంభం)(శూన్య *), శూన్య *arg)
 {
 	pid_t pid;
-	struct pam_ctxt *ctx = arg;
+	నిర్మాణం pam_ctxt *ctx = arg;
 
-	sshpam_thread_status = -1;
-	switch ((pid = fork())) {
-	case -1:
+	sshpam_thread_స్థితి = -1;
+	ఎంపిక ((pid = fork())) {
+	స్థితి -1:
 		error("fork(): %s", strerror(errno));
-		return errno;
-	case 0:
+		తిరిగి errno;
+	స్థితి 0:
 		close(ctx->pam_psock);
 		ctx->pam_psock = -1;
-		thread_start(arg);
+		thread_ప్రారంభం(arg);
 		_exit(1);
-	default:
+	అప్రమేయ:
 		*thread = pid;
 		close(ctx->pam_csock);
 		ctx->pam_csock = -1;
 		sshpam_oldsig = ssh_signal(SIGCHLD, sshpam_sigchld_handler);
-		return (0);
+		తిరిగి (0);
 	}
 }
 
-static int
+స్థిర పూర్ణాంకం
 pthread_cancel(sp_pthread_t thread)
 {
 	ssh_signal(SIGCHLD, sshpam_oldsig);
-	return (kill(thread, SIGTERM));
+	తిరిగి (kill(thread, SIGTERM));
 }
 
 /* ARGSUSED */
-static int
-pthread_join(sp_pthread_t thread, void **value)
+స్థిర పూర్ణాంకం
+pthread_join(sp_pthread_t thread, శూన్య **విలువ)
 {
-	int status;
+	పూర్ణాంకం స్థితి_2;
 
-	if (sshpam_thread_status != -1)
-		return (sshpam_thread_status);
+	ఒకవేళ (sshpam_thread_స్థితి != -1)
+		తిరిగి (sshpam_thread_స్థితి);
 	ssh_signal(SIGCHLD, sshpam_oldsig);
-	while (waitpid(thread, &status, 0) == -1) {
-		if (errno == EINTR)
-			continue;
+	అయితే (waitpid(thread, &స్థితి_2, 0) == -1) {
+		ఒకవేళ (errno == EINTR)
+			కొనసాగు;
 		fatal_f("waitpid: %s", strerror(errno));
 	}
-	return (status);
+	తిరిగి (స్థితి_2);
 }
-#endif
+#అయితే_ముగింపు
 
 
-static pam_handle_t *sshpam_handle = NULL;
-static char *sshpam_initial_user;
-static int sshpam_err = 0;
-static int sshpam_authenticated = 0;
-static int sshpam_session_open = 0;
-static int sshpam_cred_established = 0;
-static int sshpam_account_status = -1;
-static int sshpam_maxtries_reached = 0;
-static char **sshpam_env = NULL;
-static Authctxt *sshpam_authctxt = NULL;
-static const char *sshpam_password = NULL;
-static char *sshpam_rhost = NULL;
-static char *sshpam_laddr = NULL;
+స్థిర pam_handle_t *sshpam_handle = ఖాళీ;
+స్థిర అక్షరం *sshpam_initial_user;
+స్థిర పూర్ణాంకం sshpam_err = 0;
+స్థిర పూర్ణాంకం sshpam_authenticated = 0;
+స్థిర పూర్ణాంకం sshpam_session_open = 0;
+స్థిర పూర్ణాంకం sshpam_cred_established = 0;
+స్థిర పూర్ణాంకం sshpam_account_స్థితి = -1;
+స్థిర పూర్ణాంకం sshpam_maxtries_reached = 0;
+స్థిర అక్షరం **sshpam_env = ఖాళీ;
+స్థిర Authctxt *sshpam_authctxt = ఖాళీ;
+స్థిర స్థిరరాశి అక్షరం *sshpam_password = ఖాళీ;
+స్థిర అక్షరం *sshpam_rhost = ఖాళీ;
+స్థిర అక్షరం *sshpam_laddr = ఖాళీ;
 
 /* Some PAM implementations don't implement this */
-#ifndef HAVE_PAM_GETENVLIST
-static char **
+#నిర్వచితం_కాకపోతే HAVE_PAM_GETENVLIST
+స్థిర అక్షరం **
 pam_getenvlist(pam_handle_t *pamh)
 {
 	/*
@@ -265,94 +265,94 @@ pam_getenvlist(pam_handle_t *pamh)
 	 * for platforms without pam_getenvlist by searching for known
 	 * env vars (e.g. KRB5CCNAME) from the PAM environment.
 	 */
-	 return NULL;
+	 తిరిగి ఖాళీ;
 }
-#endif
+#అయితే_ముగింపు
 
-#ifndef HAVE_PAM_PUTENV
-static int
-pam_putenv(pam_handle_t *pamh, const char *name_value)
+#నిర్వచితం_కాకపోతే HAVE_PAM_PUTENV
+స్థిర పూర్ణాంకం
+pam_putenv(pam_handle_t *pamh, స్థిరరాశి అక్షరం *name_విలువ)
 {
-	return PAM_SUCCESS;
+	తిరిగి PAM_SUCCESS;
 }
-#endif /* HAVE_PAM_PUTENV */
+#అయితే_ముగింపు /* HAVE_PAM_PUTENV */
 
-static void
-sshpam_password_change_required(int reqd)
+స్థిర శూన్య
+sshpam_password_change_required(పూర్ణాంకం reqd)
 {
-	extern struct sshauthopt *auth_opts;
-	static int saved_port, saved_agent, saved_x11;
+	బాహ్య నిర్మాణం sshauthopt *auth_opts;
+	స్థిర పూర్ణాంకం saved_పోర్టు, saved_agent, saved_x11;
 
 	debug3_f("reqd=%d", reqd);
-	if (sshpam_authctxt == NULL)
+	ఒకవేళ (sshpam_authctxt == ఖాళీ)
 		fatal_f("PAM authctxt not initialized");
 	sshpam_authctxt->force_pwchange = reqd;
-	if (reqd) {
-		saved_port = auth_opts->permit_port_forwarding_flag;
+	ఒకవేళ (reqd) {
+		saved_పోర్టు = auth_opts->permit_పోర్టు_forwarding_flag;
 		saved_agent = auth_opts->permit_agent_forwarding_flag;
 		saved_x11 = auth_opts->permit_x11_forwarding_flag;
-		auth_opts->permit_port_forwarding_flag = 0;
+		auth_opts->permit_పోర్టు_forwarding_flag = 0;
 		auth_opts->permit_agent_forwarding_flag = 0;
 		auth_opts->permit_x11_forwarding_flag = 0;
-	} else {
-		if (saved_port)
-			auth_opts->permit_port_forwarding_flag = saved_port;
-		if (saved_agent)
+	} లేకపోతే {
+		ఒకవేళ (saved_పోర్టు)
+			auth_opts->permit_పోర్టు_forwarding_flag = saved_పోర్టు;
+		ఒకవేళ (saved_agent)
 			auth_opts->permit_agent_forwarding_flag = saved_agent;
-		if (saved_x11)
+		ఒకవేళ (saved_x11)
 			auth_opts->permit_x11_forwarding_flag = saved_x11;
 	}
 }
 
 /* Import regular and PAM environment from subprocess */
-static void
-import_environments(struct sshbuf *b)
+స్థిర శూన్య
+import_environments(నిర్మాణం sshbuf *b)
 {
-	char *env;
-	u_int n, i, num_env;
-	int r;
+	అక్షరం *env;
+	u_int n, i, అంకె_env;
+	పూర్ణాంకం r;
 
 	debug3_f("entering");
 
-#ifndef UNSUPPORTED_POSIX_THREADS_HACK
+#నిర్వచితం_కాకపోతే UNSUPPORTED_POSIX_దారాలు_HACK
 	/* Import variables set by do_pam_account */
-	if ((r = sshbuf_get_u32(b, &n)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u32(b, &n)) != 0)
 		fatal_fr(r, "buffer error");
-	if (n > INT_MAX)
+	ఒకవేళ (n > గరిష్ఠ_పూర్ణాంకం)
 		fatal_f("invalid PAM account status %u", n);
-	sshpam_account_status = (int)n;
-	if ((r = sshbuf_get_u32(b, &n)) != 0)
+	sshpam_account_స్థితి = (పూర్ణాంకం)n;
+	ఒకవేళ ((r = sshbuf_get_u32(b, &n)) != 0)
 		fatal_fr(r, "buffer error");
 	sshpam_password_change_required(n != 0);
 
 	/* Import environment from subprocess */
-	if ((r = sshbuf_get_u32(b, &num_env)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u32(b, &అంకె_env)) != 0)
 		fatal_fr(r, "buffer error");
-	if (num_env > 1024) {
+	ఒకవేళ (అంకె_env > 1024) {
 		fatal_f("received %u environment variables, expected <= 1024",
-		    num_env);
+		    అంకె_env);
 	}
-	sshpam_env = xcalloc(num_env + 1, sizeof(*sshpam_env));
-	debug3("PAM: num env strings %u", num_env);
-	for(i = 0; i < num_env; i++) {
-		if ((r = sshbuf_get_cstring(b, &(sshpam_env[i]), NULL)) != 0)
+	sshpam_env = xcalloc(అంకె_env + 1, పరిమాణం(*sshpam_env));
+	debug3("PAM: num env strings %u", అంకె_env);
+	కొరకు(i = 0; i < అంకె_env; i++) {
+		ఒకవేళ ((r = sshbuf_get_cstring(b, &(sshpam_env[i]), ఖాళీ)) != 0)
 			fatal_fr(r, "buffer error");
 	}
-	sshpam_env[num_env] = NULL;
+	sshpam_env[అంకె_env] = ఖాళీ;
 
 	/* Import PAM environment from subprocess */
-	if ((r = sshbuf_get_u32(b, &num_env)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u32(b, &అంకె_env)) != 0)
 		fatal_fr(r, "buffer error");
-	if (num_env > 1024) {
+	ఒకవేళ (అంకె_env > 1024) {
 		fatal_f("received %u PAM env variables, expected <= 1024",
-		    num_env);
+		    అంకె_env);
 	}
-	debug("PAM: num PAM env strings %u", num_env);
-	for (i = 0; i < num_env; i++) {
-		if ((r = sshbuf_get_cstring(b, &env, NULL)) != 0)
+	debug("PAM: num PAM env strings %u", అంకె_env);
+	కొరకు (i = 0; i < అంకె_env; i++) {
+		ఒకవేళ ((r = sshbuf_get_cstring(b, &env, ఖాళీ)) != 0)
 			fatal_fr(r, "buffer error");
 		/* Errors are not fatal here */
-		if ((r = pam_putenv(sshpam_handle, env)) != PAM_SUCCESS) {
+		ఒకవేళ ((r = pam_putenv(sshpam_handle, env)) != PAM_SUCCESS) {
 			error("PAM: pam_putenv: %s",
 			    pam_strerror(sshpam_handle, r));
 		}
@@ -362,379 +362,379 @@ import_environments(struct sshbuf *b)
 		 * take ownership? We don't know, so it's safest just to leak.
 		 */
 	}
-#endif
+#అయితే_ముగింపు
 }
 
 /*
  * Conversation function for authentication thread.
  */
-static int
-sshpam_thread_conv(int n, sshpam_const struct pam_message **msg,
-    struct pam_response **resp, void *data)
+స్థిర పూర్ణాంకం
+sshpam_thread_conv(పూర్ణాంకం n, sshpam_const నిర్మాణం pam_సందేశం **సందేశం,
+    నిర్మాణం pam_response **resp, శూన్య *దత్తాంశం)
 {
-	struct sshbuf *buffer;
-	struct pam_ctxt *ctxt;
-	struct pam_response *reply;
-	int r, i;
-	u_char status;
+	నిర్మాణం sshbuf *బఫరు;
+	నిర్మాణం pam_ctxt *ctxt;
+	నిర్మాణం pam_response *జవాబు;
+	పూర్ణాంకం r, i;
+	u_char స్థితి_2;
 
 	debug3_f("PAM: entering, %d messages", n);
-	*resp = NULL;
+	*resp = ఖాళీ;
 
-	if (data == NULL) {
+	ఒకవేళ (దత్తాంశం == ఖాళీ) {
 		error("PAM: conversation function passed a null context");
-		return (PAM_CONV_ERR);
+		తిరిగి (PAM_CONV_ERR);
 	}
-	ctxt = data;
-	if (n <= 0 || n > PAM_MAX_NUM_MSG)
-		return (PAM_CONV_ERR);
+	ctxt = దత్తాంశం;
+	ఒకవేళ (n <= 0 || n > PAM_MAX_అంకె_సందేశం)
+		తిరిగి (PAM_CONV_ERR);
 
-	if ((reply = calloc(n, sizeof(*reply))) == NULL)
-		return PAM_CONV_ERR;
-	if ((buffer = sshbuf_new()) == NULL) {
-		free(reply);
-		return PAM_CONV_ERR;
+	ఒకవేళ ((జవాబు = సున్నా_జ్ఞాపకం_ఇవ్వు(n, పరిమాణం(*జవాబు))) == ఖాళీ)
+		తిరిగి PAM_CONV_ERR;
+	ఒకవేళ ((బఫరు = sshbuf_new()) == ఖాళీ) {
+		విడుదల(జవాబు);
+		తిరిగి PAM_CONV_ERR;
 	}
 
-	for (i = 0; i < n; ++i) {
-		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
-		case PAM_PROMPT_ECHO_OFF:
-		case PAM_PROMPT_ECHO_ON:
-			if ((r = sshbuf_put_cstring(buffer,
-			    PAM_MSG_MEMBER(msg, i, msg))) != 0)
+	కొరకు (i = 0; i < n; ++i) {
+		ఎంపిక (PAM_సందేశం_MEMBER(సందేశం, i, సందేశం_style)) {
+		స్థితి PAM_PROMPT_ECHO_OFF:
+		స్థితి PAM_PROMPT_ECHO_ON:
+			ఒకవేళ ((r = sshbuf_put_cstring(బఫరు,
+			    PAM_సందేశం_MEMBER(సందేశం, i, సందేశం))) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			if (ssh_msg_send(ctxt->pam_csock,
-			    PAM_MSG_MEMBER(msg, i, msg_style), buffer) == -1)
-				goto fail;
+			ఒకవేళ (ssh_సందేశం_send(ctxt->pam_csock,
+			    PAM_సందేశం_MEMBER(సందేశం, i, సందేశం_style), బఫరు) == -1)
+				వెళ్ళు fail;
 
-			if (ssh_msg_recv(ctxt->pam_csock, buffer) == -1)
-				goto fail;
-			if ((r = sshbuf_get_u8(buffer, &status)) != 0)
+			ఒకవేళ (ssh_సందేశం_recv(ctxt->pam_csock, బఫరు) == -1)
+				వెళ్ళు fail;
+			ఒకవేళ ((r = sshbuf_get_u8(బఫరు, &స్థితి_2)) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			if (status != PAM_AUTHTOK)
-				goto fail;
-			if ((r = sshbuf_get_cstring(buffer,
-			    &reply[i].resp, NULL)) != 0)
+			ఒకవేళ (స్థితి_2 != PAM_AUTHTOK)
+				వెళ్ళు fail;
+			ఒకవేళ ((r = sshbuf_get_cstring(బఫరు,
+			    &జవాబు[i].resp, ఖాళీ)) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			break;
-		case PAM_ERROR_MSG:
-		case PAM_TEXT_INFO:
+			ఆపు;
+		స్థితి PAM_ERROR_సందేశం:
+		స్థితి PAM_పాఠ్యం_INFO:
 			debug3("PAM: Got message of type %d: %s",
-			       PAM_MSG_MEMBER(msg, i, msg_style),
-			       PAM_MSG_MEMBER(msg, i, msg));
-			if ((r = sshbuf_put_cstring(buffer,
-			    PAM_MSG_MEMBER(msg, i, msg))) != 0)
+			       PAM_సందేశం_MEMBER(సందేశం, i, సందేశం_style),
+			       PAM_సందేశం_MEMBER(సందేశం, i, సందేశం));
+			ఒకవేళ ((r = sshbuf_put_cstring(బఫరు,
+			    PAM_సందేశం_MEMBER(సందేశం, i, సందేశం))) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			if (ssh_msg_send(ctxt->pam_csock,
-			    PAM_MSG_MEMBER(msg, i, msg_style), buffer) == -1)
-				goto fail;
-			break;
-		default:
-			goto fail;
+			ఒకవేళ (ssh_సందేశం_send(ctxt->pam_csock,
+			    PAM_సందేశం_MEMBER(సందేశం, i, సందేశం_style), బఫరు) == -1)
+				వెళ్ళు fail;
+			ఆపు;
+		అప్రమేయ:
+			వెళ్ళు fail;
 		}
-		sshbuf_reset(buffer);
+		sshbuf_reset(బఫరు);
 	}
-	sshbuf_free(buffer);
-	*resp = reply;
-	return (PAM_SUCCESS);
+	sshbuf_free(బఫరు);
+	*resp = జవాబు;
+	తిరిగి (PAM_SUCCESS);
 
  fail:
-	for(i = 0; i < n; i++) {
-		free(reply[i].resp);
+	కొరకు(i = 0; i < n; i++) {
+		విడుదల(జవాబు[i].resp);
 	}
-	free(reply);
-	sshbuf_free(buffer);
-	return (PAM_CONV_ERR);
+	విడుదల(జవాబు);
+	sshbuf_free(బఫరు);
+	తిరిగి (PAM_CONV_ERR);
 }
 
-static int
+స్థిర పూర్ణాంకం
 check_pam_user(Authctxt *authctxt)
 {
-	const char *pam_user;
+	స్థిరరాశి అక్షరం *pam_user;
 
-	if (authctxt == NULL || authctxt->pw == NULL ||
-	    authctxt->pw->pw_name == NULL)
+	ఒకవేళ (authctxt == ఖాళీ || authctxt->pw == ఖాళీ ||
+	    authctxt->pw->pw_name == ఖాళీ)
 		fatal_f("PAM authctxt user not initialized");
 
-	if ((sshpam_err = pam_get_item(sshpam_handle, PAM_USER,
-	    (sshpam_const void **) &pam_user)) != PAM_SUCCESS)
-		return sshpam_err;
+	ఒకవేళ ((sshpam_err = pam_get_అంశం(sshpam_handle, PAM_USER,
+	    (sshpam_const శూన్య **) &pam_user)) != PAM_SUCCESS)
+		తిరిగి sshpam_err;
 
-	if (pam_user == NULL) {
+	ఒకవేళ (pam_user == ఖాళీ) {
 		debug("PAM error: PAM_USER is NULL");
-		return PAM_USER_UNKNOWN;
+		తిరిగి PAM_USER_UNKNOWN;
 	}
 
-	if (sshpam_initial_user == NULL)
+	ఒకవేళ (sshpam_initial_user == ఖాళీ)
 		fatal_f("internal error: sshpam_initial_user NULL");
-	if (strcmp(sshpam_initial_user, pam_user) != 0) {
+	ఒకవేళ (strcmp(sshpam_initial_user, pam_user) != 0) {
 		error_f("PAM user \"%s\" does not match previous \"%s\"",
 		      pam_user, sshpam_initial_user);
-		return PAM_USER_UNKNOWN;
+		తిరిగి PAM_USER_UNKNOWN;
 	}
-	return PAM_SUCCESS;
+	తిరిగి PAM_SUCCESS;
 }
 
 /*
  * Authentication thread.
  */
-static void *
-sshpam_thread(void *ctxtp)
+స్థిర శూన్య *
+sshpam_thread(శూన్య *ctxtp)
 {
-	struct pam_ctxt *ctxt = ctxtp;
-	struct sshbuf *buffer = NULL;
-	struct pam_conv sshpam_conv;
-	int r, flags = (options.permit_empty_passwd == 0 ?
+	నిర్మాణం pam_ctxt *ctxt = ctxtp;
+	నిర్మాణం sshbuf *బఫరు = ఖాళీ;
+	నిర్మాణం pam_conv sshpam_conv;
+	పూర్ణాంకం r, flags = (options.permit_ఖాళీలు_passwd == 0 ?
 	    PAM_DISALLOW_NULL_AUTHTOK : 0);
-#ifndef UNSUPPORTED_POSIX_THREADS_HACK
-	extern char **environ;
-	char **env_from_pam;
+#నిర్వచితం_కాకపోతే UNSUPPORTED_POSIX_దారాలు_HACK
+	బాహ్య అక్షరం **environ;
+	అక్షరం **env_from_pam;
 	u_int i;
-	const char *pam_user;
-	const char **ptr_pam_user = &pam_user;
-	char *tz = getenv("TZ");
+	స్థిరరాశి అక్షరం *pam_user;
+	స్థిరరాశి అక్షరం **ptr_pam_user = &pam_user;
+	అక్షరం *tz = getenv("TZ");
 
-	sshpam_err = pam_get_item(sshpam_handle, PAM_USER,
-	    (sshpam_const void **)ptr_pam_user);
-	if (sshpam_err != PAM_SUCCESS)
-		goto auth_fail;
+	sshpam_err = pam_get_అంశం(sshpam_handle, PAM_USER,
+	    (sshpam_const శూన్య **)ptr_pam_user);
+	ఒకవేళ (sshpam_err != PAM_SUCCESS)
+		వెళ్ళు auth_fail;
 
-	environ[0] = NULL;
-	if (tz != NULL)
-		if (setenv("TZ", tz, 1) == -1)
+	environ[0] = ఖాళీ;
+	ఒకవేళ (tz != ఖాళీ)
+		ఒకవేళ (setenv("TZ", tz, 1) == -1)
 			error("PAM: could not set TZ environment: %s",
 			    strerror(errno));
 
-	if (sshpam_authctxt != NULL) {
+	ఒకవేళ (sshpam_authctxt != ఖాళీ) {
 		setproctitle("%s [pam]",
 		    sshpam_authctxt->valid ? pam_user : "unknown");
 	}
-#endif
+#అయితే_ముగింపు
 
 	sshpam_conv.conv = sshpam_thread_conv;
 	sshpam_conv.appdata_ptr = ctxt;
 
-	if (sshpam_authctxt == NULL)
+	ఒకవేళ (sshpam_authctxt == ఖాళీ)
 		fatal_f("PAM authctxt not initialized");
 
-	if ((buffer = sshbuf_new()) == NULL)
+	ఒకవేళ ((బఫరు = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 
-	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
-	    (const void *)&sshpam_conv);
-	if (sshpam_err != PAM_SUCCESS)
-		goto auth_fail;
+	sshpam_err = pam_సమితి_అంశం(sshpam_handle, PAM_CONV,
+	    (స్థిరరాశి శూన్య *)&sshpam_conv);
+	ఒకవేళ (sshpam_err != PAM_SUCCESS)
+		వెళ్ళు auth_fail;
 	sshpam_err = pam_authenticate(sshpam_handle, flags);
-	if (sshpam_err == PAM_MAXTRIES)
-		sshpam_set_maxtries_reached(1);
-	if (sshpam_err != PAM_SUCCESS)
-		goto auth_fail;
-	if ((sshpam_err = check_pam_user(sshpam_authctxt)) != PAM_SUCCESS)
-		goto auth_fail;
+	ఒకవేళ (sshpam_err == PAM_MAXTRIES)
+		sshpam_సమితి_maxtries_reached(1);
+	ఒకవేళ (sshpam_err != PAM_SUCCESS)
+		వెళ్ళు auth_fail;
+	ఒకవేళ ((sshpam_err = check_pam_user(sshpam_authctxt)) != PAM_SUCCESS)
+		వెళ్ళు auth_fail;
 
-	if (!do_pam_account()) {
+	ఒకవేళ (!do_pam_account()) {
 		sshpam_err = PAM_ACCT_EXPIRED;
-		goto auth_fail;
+		వెళ్ళు auth_fail;
 	}
-	if (sshpam_authctxt->force_pwchange) {
+	ఒకవేళ (sshpam_authctxt->force_pwchange) {
 		sshpam_err = pam_chauthtok(sshpam_handle,
 		    PAM_CHANGE_EXPIRED_AUTHTOK);
-		if (sshpam_err != PAM_SUCCESS)
-			goto auth_fail;
+		ఒకవేళ (sshpam_err != PAM_SUCCESS)
+			వెళ్ళు auth_fail;
 		sshpam_password_change_required(0);
 	}
 
-	if ((r = sshbuf_put_cstring(buffer, "OK")) != 0)
+	ఒకవేళ ((r = sshbuf_put_cstring(బఫరు, "OK")) != 0)
 		fatal_fr(r, "buffer error");
 
-#ifndef UNSUPPORTED_POSIX_THREADS_HACK
+#నిర్వచితం_కాకపోతే UNSUPPORTED_POSIX_దారాలు_HACK
 	/* Export variables set by do_pam_account */
-	if ((r = sshbuf_put_u32(buffer, sshpam_account_status)) != 0 ||
-	    (r = sshbuf_put_u32(buffer, sshpam_authctxt->force_pwchange)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u32(బఫరు, sshpam_account_స్థితి)) != 0 ||
+	    (r = sshbuf_put_u32(బఫరు, sshpam_authctxt->force_pwchange)) != 0)
 		fatal_fr(r, "buffer error");
 
 	/* Export any environment strings set in child */
-	for (i = 0; environ[i] != NULL; i++) {
-		/* Count */
-		if (i > INT_MAX)
+	కొరకు (i = 0; environ[i] != ఖాళీ; i++) {
+		/*లెక్క*/
+		ఒకవేళ (i > గరిష్ఠ_పూర్ణాంకం)
 			fatal_f("too many environment strings");
 	}
-	if ((r = sshbuf_put_u32(buffer, i)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u32(బఫరు, i)) != 0)
 		fatal_fr(r, "buffer error");
-	for (i = 0; environ[i] != NULL; i++) {
-		if ((r = sshbuf_put_cstring(buffer, environ[i])) != 0)
+	కొరకు (i = 0; environ[i] != ఖాళీ; i++) {
+		ఒకవేళ ((r = sshbuf_put_cstring(బఫరు, environ[i])) != 0)
 			fatal_fr(r, "buffer error");
 	}
 	/* Export any environment strings set by PAM in child */
 	env_from_pam = pam_getenvlist(sshpam_handle);
-	for (i = 0; env_from_pam != NULL && env_from_pam[i] != NULL; i++) {
-		/* Count */
-		if (i > INT_MAX)
+	కొరకు (i = 0; env_from_pam != ఖాళీ && env_from_pam[i] != ఖాళీ; i++) {
+		/*లెక్క*/
+		ఒకవేళ (i > గరిష్ఠ_పూర్ణాంకం)
 			fatal_f("too many PAM environment strings");
 	}
-	if ((r = sshbuf_put_u32(buffer, i)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u32(బఫరు, i)) != 0)
 		fatal_fr(r, "buffer error");
-	for (i = 0; env_from_pam != NULL && env_from_pam[i] != NULL; i++) {
-		if ((r = sshbuf_put_cstring(buffer, env_from_pam[i])) != 0)
+	కొరకు (i = 0; env_from_pam != ఖాళీ && env_from_pam[i] != ఖాళీ; i++) {
+		ఒకవేళ ((r = sshbuf_put_cstring(బఫరు, env_from_pam[i])) != 0)
 			fatal_fr(r, "buffer error");
 	}
-#endif /* UNSUPPORTED_POSIX_THREADS_HACK */
+#అయితే_ముగింపు /* UNSUPPORTED_POSIX_THREADS_HACK */
 
 	/* XXX - can't do much about an error here */
-	ssh_msg_send(ctxt->pam_csock, sshpam_err, buffer);
-	sshbuf_free(buffer);
-	pthread_exit(NULL);
+	ssh_సందేశం_send(ctxt->pam_csock, sshpam_err, బఫరు);
+	sshbuf_free(బఫరు);
+	pthread_exit(ఖాళీ);
 
  auth_fail:
-	if ((r = sshbuf_put_cstring(buffer,
+	ఒకవేళ ((r = sshbuf_put_cstring(బఫరు,
 	    pam_strerror(sshpam_handle, sshpam_err))) != 0)
 		fatal_fr(r, "buffer error");
 	/* XXX - can't do much about an error here */
-	if (sshpam_err == PAM_ACCT_EXPIRED)
-		ssh_msg_send(ctxt->pam_csock, PAM_ACCT_EXPIRED, buffer);
-	else if (sshpam_maxtries_reached)
-		ssh_msg_send(ctxt->pam_csock, PAM_MAXTRIES, buffer);
-	else
-		ssh_msg_send(ctxt->pam_csock, PAM_AUTH_ERR, buffer);
-	sshbuf_free(buffer);
-	pthread_exit(NULL);
+	ఒకవేళ (sshpam_err == PAM_ACCT_EXPIRED)
+		ssh_సందేశం_send(ctxt->pam_csock, PAM_ACCT_EXPIRED, బఫరు);
+	లేకపోతే ఒకవేళ (sshpam_maxtries_reached)
+		ssh_సందేశం_send(ctxt->pam_csock, PAM_MAXTRIES, బఫరు);
+	లేకపోతే
+		ssh_సందేశం_send(ctxt->pam_csock, PAM_AUTH_ERR, బఫరు);
+	sshbuf_free(బఫరు);
+	pthread_exit(ఖాళీ);
 
-	return (NULL); /* Avoid warning for non-pthread case */
+	తిరిగి (ఖాళీ); /* Avoid warning for non-pthread case */
 }
 
-void
-sshpam_thread_cleanup(void)
+శూన్య
+sshpam_thread_cleanup(శూన్య)
 {
-	struct pam_ctxt *ctxt = cleanup_ctxt;
+	నిర్మాణం pam_ctxt *ctxt = cleanup_ctxt;
 
 	debug3_f("entering");
-	if (ctxt != NULL && ctxt->pam_thread != 0) {
+	ఒకవేళ (ctxt != ఖాళీ && ctxt->pam_thread != 0) {
 		pthread_cancel(ctxt->pam_thread);
-		pthread_join(ctxt->pam_thread, NULL);
+		pthread_join(ctxt->pam_thread, ఖాళీ);
 		close(ctxt->pam_psock);
 		close(ctxt->pam_csock);
-		memset(ctxt, 0, sizeof(*ctxt));
-		cleanup_ctxt = NULL;
+		memset(ctxt, 0, పరిమాణం(*ctxt));
+		cleanup_ctxt = ఖాళీ;
 	}
 }
 
-static int
-sshpam_null_conv(int n, sshpam_const struct pam_message **msg,
-    struct pam_response **resp, void *data)
+స్థిర పూర్ణాంకం
+sshpam_null_conv(పూర్ణాంకం n, sshpam_const నిర్మాణం pam_సందేశం **సందేశం,
+    నిర్మాణం pam_response **resp, శూన్య *దత్తాంశం)
 {
 	debug3_f("PAM: entering, %d messages", n);
-	return (PAM_CONV_ERR);
+	తిరిగి (PAM_CONV_ERR);
 }
 
-static struct pam_conv null_conv = { sshpam_null_conv, NULL };
+స్థిర నిర్మాణం pam_conv null_conv = { sshpam_null_conv, ఖాళీ };
 
-static int
-sshpam_store_conv(int n, sshpam_const struct pam_message **msg,
-    struct pam_response **resp, void *data)
+స్థిర పూర్ణాంకం
+sshpam_store_conv(పూర్ణాంకం n, sshpam_const నిర్మాణం pam_సందేశం **సందేశం,
+    నిర్మాణం pam_response **resp, శూన్య *దత్తాంశం)
 {
-	struct pam_response *reply;
-	int r, i;
+	నిర్మాణం pam_response *జవాబు;
+	పూర్ణాంకం r, i;
 
 	debug3_f("PAM: called with %d messages", n);
-	*resp = NULL;
+	*resp = ఖాళీ;
 
-	if (n <= 0 || n > PAM_MAX_NUM_MSG)
-		return (PAM_CONV_ERR);
+	ఒకవేళ (n <= 0 || n > PAM_MAX_అంకె_సందేశం)
+		తిరిగి (PAM_CONV_ERR);
 
-	if ((reply = calloc(n, sizeof(*reply))) == NULL)
-		return (PAM_CONV_ERR);
+	ఒకవేళ ((జవాబు = సున్నా_జ్ఞాపకం_ఇవ్వు(n, పరిమాణం(*జవాబు))) == ఖాళీ)
+		తిరిగి (PAM_CONV_ERR);
 
-	for (i = 0; i < n; ++i) {
-		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
-		case PAM_ERROR_MSG:
-		case PAM_TEXT_INFO:
-			if ((r = sshbuf_putf(loginmsg, "%s\n",
-			    PAM_MSG_MEMBER(msg, i, msg))) != 0)
+	కొరకు (i = 0; i < n; ++i) {
+		ఎంపిక (PAM_సందేశం_MEMBER(సందేశం, i, సందేశం_style)) {
+		స్థితి PAM_ERROR_సందేశం:
+		స్థితి PAM_పాఠ్యం_INFO:
+			ఒకవేళ ((r = sshbuf_putf(loginmsg, "%s\n",
+			    PAM_సందేశం_MEMBER(సందేశం, i, సందేశం))) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			reply[i].resp_retcode = PAM_SUCCESS;
-			break;
-		default:
-			goto fail;
+			జవాబు[i].resp_retcode = PAM_SUCCESS;
+			ఆపు;
+		అప్రమేయ:
+			వెళ్ళు fail;
 		}
 	}
-	*resp = reply;
-	return (PAM_SUCCESS);
+	*resp = జవాబు;
+	తిరిగి (PAM_SUCCESS);
 
  fail:
-	for(i = 0; i < n; i++) {
-		free(reply[i].resp);
+	కొరకు(i = 0; i < n; i++) {
+		విడుదల(జవాబు[i].resp);
 	}
-	free(reply);
-	return (PAM_CONV_ERR);
+	విడుదల(జవాబు);
+	తిరిగి (PAM_CONV_ERR);
 }
 
-static struct pam_conv store_conv = { sshpam_store_conv, NULL };
+స్థిర నిర్మాణం pam_conv store_conv = { sshpam_store_conv, ఖాళీ };
 
-void
-sshpam_cleanup(void)
+శూన్య
+sshpam_cleanup(శూన్య)
 {
-	if (sshpam_handle == NULL || !mm_is_monitor())
-		return;
+	ఒకవేళ (sshpam_handle == ఖాళీ || !mm_is_monitor())
+		తిరిగి;
 	debug("PAM: cleanup");
-	pam_set_item(sshpam_handle, PAM_CONV, (const void *)&null_conv);
-	if (sshpam_session_open) {
+	pam_సమితి_అంశం(sshpam_handle, PAM_CONV, (స్థిరరాశి శూన్య *)&null_conv);
+	ఒకవేళ (sshpam_session_open) {
 		debug("PAM: closing session");
 		pam_close_session(sshpam_handle, PAM_SILENT);
 		sshpam_session_open = 0;
 	}
-	if (sshpam_cred_established) {
+	ఒకవేళ (sshpam_cred_established) {
 		debug("PAM: deleting credentials");
 		pam_setcred(sshpam_handle, PAM_DELETE_CRED);
 		sshpam_cred_established = 0;
 	}
 	sshpam_authenticated = 0;
-	pam_end(sshpam_handle, sshpam_err);
-	sshpam_handle = NULL;
-	free(sshpam_initial_user);
-	sshpam_initial_user = NULL;
+	pam_చివర(sshpam_handle, sshpam_err);
+	sshpam_handle = ఖాళీ;
+	విడుదల(sshpam_initial_user);
+	sshpam_initial_user = ఖాళీ;
 }
 
-static int
-sshpam_init(struct ssh *ssh, Authctxt *authctxt)
+స్థిర పూర్ణాంకం
+sshpam_init(నిర్మాణం ssh *ssh, Authctxt *authctxt)
 {
-	const char *user = authctxt->user;
-	int r;
+	స్థిరరాశి అక్షరం *user = authctxt->user;
+	పూర్ణాంకం r;
 
-	if (options.pam_service_name == NULL)
+	ఒకవేళ (options.pam_service_name == ఖాళీ)
 		fatal_f("internal error: NULL PAM service name");
-#if defined(PAM_SUN_CODEBASE) && defined(PAM_MAX_RESP_SIZE)
+#ఒకవేళ defined(PAM_SUN_CODEBASE) && defined(PAM_MAX_RESP_కొలత)
 	/* Protect buggy PAM implementations from excessively long usernames */
-	if (strlen(user) >= PAM_MAX_RESP_SIZE)
+	ఒకవేళ (అక్షరశ్రేణి_పొడవు(user) >= PAM_MAX_RESP_కొలత)
 		fatal("Username too long from %s port %d",
-		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
-#endif
-	if (sshpam_handle == NULL && ssh == NULL)
+		    ssh_remote_ipaddr(ssh), ssh_remote_పోర్టు(ssh));
+#అయితే_ముగింపు
+	ఒకవేళ (sshpam_handle == ఖాళీ && ssh == ఖాళీ)
 		fatal("%s: called initially with no packet context", __func__);
-	if (sshpam_handle != NULL) {
+	ఒకవేళ (sshpam_handle != ఖాళీ) {
 		/* We already have a PAM context; check if the user matches */
-		if ((sshpam_err = check_pam_user(authctxt)) != PAM_SUCCESS)
+		ఒకవేళ ((sshpam_err = check_pam_user(authctxt)) != PAM_SUCCESS)
 			fatal("PAM user mismatch");
-		return 0;
+		తిరిగి 0;
 	}
 	debug("PAM: initializing for \"%s\" with service \"%s\"", user,
 	    options.pam_service_name);
-	sshpam_err = pam_start(options.pam_service_name, user,
+	sshpam_err = pam_ప్రారంభం(options.pam_service_name, user,
 	    &store_conv, &sshpam_handle);
 	sshpam_initial_user = xstrdup(user);
 	sshpam_authctxt = authctxt;
 
-	if (sshpam_err != PAM_SUCCESS) {
-		pam_end(sshpam_handle, sshpam_err);
-		sshpam_handle = NULL;
-		return (-1);
+	ఒకవేళ (sshpam_err != PAM_SUCCESS) {
+		pam_చివర(sshpam_handle, sshpam_err);
+		sshpam_handle = ఖాళీ;
+		తిరిగి (-1);
 	}
 
-	if (ssh != NULL && sshpam_rhost == NULL) {
+	ఒకవేళ (ssh != ఖాళీ && sshpam_rhost == ఖాళీ) {
 		/*
 		 * We need to cache these as we don't have packet context
 		 * during the kbdint flow.
@@ -742,193 +742,193 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
 		sshpam_rhost = xstrdup(auth_get_canonical_hostname(ssh,
 		    options.use_dns));
 		sshpam_laddr = get_local_ipaddr(
-		    ssh_packet_get_connection_in(ssh));
+		    ssh_packet_get_connection_లోపల(ssh));
 	}
-	if (sshpam_rhost != NULL && strcmp(sshpam_rhost, "UNKNOWN") != 0) {
+	ఒకవేళ (sshpam_rhost != ఖాళీ && strcmp(sshpam_rhost, "UNKNOWN") != 0) {
 		debug("PAM: setting PAM_RHOST to \"%s\"", sshpam_rhost);
-		sshpam_err = pam_set_item(sshpam_handle, PAM_RHOST,
+		sshpam_err = pam_సమితి_అంశం(sshpam_handle, PAM_RHOST,
 		    sshpam_rhost);
-		if (sshpam_err != PAM_SUCCESS) {
-			pam_end(sshpam_handle, sshpam_err);
-			sshpam_handle = NULL;
-			return (-1);
+		ఒకవేళ (sshpam_err != PAM_SUCCESS) {
+			pam_చివర(sshpam_handle, sshpam_err);
+			sshpam_handle = ఖాళీ;
+			తిరిగి (-1);
 		}
 	}
-	if (ssh != NULL && sshpam_laddr != NULL) {
-		char *conninfo;
+	ఒకవేళ (ssh != ఖాళీ && sshpam_laddr != ఖాళీ) {
+		అక్షరం *conninfo;
 
 		/* Put SSH_CONNECTION in the PAM environment too */
 		xasprintf(&conninfo, "SSH_CONNECTION=%.50s %d %.50s %d",
-		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
-		    sshpam_laddr, ssh_local_port(ssh));
-		if ((r = pam_putenv(sshpam_handle, conninfo)) != PAM_SUCCESS)
+		    ssh_remote_ipaddr(ssh), ssh_remote_పోర్టు(ssh),
+		    sshpam_laddr, ssh_local_పోర్టు(ssh));
+		ఒకవేళ ((r = pam_putenv(sshpam_handle, conninfo)) != PAM_SUCCESS)
 			logit("pam_putenv: %s", pam_strerror(sshpam_handle, r));
-		free(conninfo);
+		విడుదల(conninfo);
 	}
 
-#ifdef PAM_TTY_KLUDGE
+#నిర్వచితమైతే PAM_TTY_KLUDGE
 	/*
 	 * Some silly PAM modules (e.g. pam_time) require a TTY to operate.
 	 * sshd doesn't set the tty until too late in the auth process and
 	 * may not even set one (for tty-less connections)
 	 */
 	debug("PAM: setting PAM_TTY to \"ssh\"");
-	sshpam_err = pam_set_item(sshpam_handle, PAM_TTY, "ssh");
-	if (sshpam_err != PAM_SUCCESS) {
-		pam_end(sshpam_handle, sshpam_err);
-		sshpam_handle = NULL;
-		return (-1);
+	sshpam_err = pam_సమితి_అంశం(sshpam_handle, PAM_TTY, "ssh");
+	ఒకవేళ (sshpam_err != PAM_SUCCESS) {
+		pam_చివర(sshpam_handle, sshpam_err);
+		sshpam_handle = ఖాళీ;
+		తిరిగి (-1);
 	}
-#endif
-	return (0);
+#అయితే_ముగింపు
+	తిరిగి (0);
 }
 
-static void
-expose_authinfo(const char *caller)
+స్థిర శూన్య
+expose_authinfo(స్థిరరాశి అక్షరం *caller)
 {
-	char *auth_info;
+	అక్షరం *auth_info;
 
 	/*
 	 * Expose authentication information to PAM.
 	 * The environment variable is versioned. Please increment the
 	 * version suffix if the format of session_info changes.
 	 */
-	if (sshpam_authctxt->session_info == NULL)
+	ఒకవేళ (sshpam_authctxt->session_info == ఖాళీ)
 		auth_info = xstrdup("");
-	else if ((auth_info = sshbuf_dup_string(
-	    sshpam_authctxt->session_info)) == NULL)
+	లేకపోతే ఒకవేళ ((auth_info = sshbuf_dup_string(
+	    sshpam_authctxt->session_info)) == ఖాళీ)
 		fatal_f("sshbuf_dup_string failed");
 
 	debug2("%s: auth information in SSH_AUTH_INFO_0", caller);
 	do_pam_putenv("SSH_AUTH_INFO_0", auth_info);
-	free(auth_info);
+	విడుదల(auth_info);
 }
 
-static void *
+స్థిర శూన్య *
 sshpam_init_ctx(Authctxt *authctxt)
 {
-	struct pam_ctxt *ctxt;
-	int result, socks[2];
+	నిర్మాణం pam_ctxt *ctxt;
+	పూర్ణాంకం ఫలితం, socks[2];
 
 	debug3_f("entering");
 	/*
 	 * Refuse to start if we don't have PAM enabled or do_pam_account
 	 * has previously failed.
 	 */
-	if (!options.use_pam || sshpam_account_status == 0)
-		return NULL;
+	ఒకవేళ (!options.use_pam || sshpam_account_స్థితి == 0)
+		తిరిగి ఖాళీ;
 
 	/* Initialize PAM */
-	if (sshpam_init(NULL, authctxt) == -1) {
+	ఒకవేళ (sshpam_init(ఖాళీ, authctxt) == -1) {
 		error("PAM: initialization failed");
-		return (NULL);
+		తిరిగి (ఖాళీ);
 	}
 
 	expose_authinfo(__func__);
-	ctxt = xcalloc(1, sizeof *ctxt);
+	ctxt = xcalloc(1, పరిమాణం *ctxt);
 
 	/* Start the authentication thread */
-	if (socketpair(AF_UNIX, SOCK_STREAM, PF_UNSPEC, socks) == -1) {
+	ఒకవేళ (socketpair(AF_UNIX, SOCK_STREAM, PF_UNSPEC, socks) == -1) {
 		error("PAM: failed create sockets: %s", strerror(errno));
-		free(ctxt);
-		return (NULL);
+		విడుదల(ctxt);
+		తిరిగి (ఖాళీ);
 	}
 	ctxt->pam_psock = socks[0];
 	ctxt->pam_csock = socks[1];
-	result = pthread_create(&ctxt->pam_thread, NULL, sshpam_thread, ctxt);
-	if (result != 0) {
+	ఫలితం = pthread_create(&ctxt->pam_thread, ఖాళీ, sshpam_thread, ctxt);
+	ఒకవేళ (ఫలితం != 0) {
 		error("PAM: failed to start authentication thread: %s",
-		    strerror(result));
+		    strerror(ఫలితం));
 		close(socks[0]);
 		close(socks[1]);
-		free(ctxt);
-		return (NULL);
+		విడుదల(ctxt);
+		తిరిగి (ఖాళీ);
 	}
 	cleanup_ctxt = ctxt;
-	return (ctxt);
+	తిరిగి (ctxt);
 }
 
-static int
-sshpam_query(void *ctx, char **name, char **info,
-    u_int *num, char ***prompts, u_int **echo_on)
+స్థిర పూర్ణాంకం
+sshpam_query(శూన్య *ctx, అక్షరం **name, అక్షరం **info,
+    u_int *అంకె, అక్షరం ***prompts, u_int **echo_on)
 {
-	struct sshbuf *buffer;
-	struct pam_ctxt *ctxt = ctx;
+	నిర్మాణం sshbuf *బఫరు;
+	నిర్మాణం pam_ctxt *ctxt = ctx;
 	u_char type;
-	char *msg;
-	size_t mlen, nmesg = 0;
-	int r;
+	అక్షరం *సందేశం;
+	కొలత_t mlen, nmesg = 0;
+	పూర్ణాంకం r;
 
 	debug3_f("entering");
-	if ((buffer = sshbuf_new()) == NULL)
+	ఒకవేళ ((బఫరు = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 	*name = xstrdup("");
 	*info = xstrdup("");
-	*prompts = NULL;
-	*num = 0;
-	ctxt->pam_done = SshPamNone;
+	*prompts = ఖాళీ;
+	*అంకె = 0;
+	ctxt->pam_పూర్తి = SshPamNone;
 
-	while (ssh_msg_recv(ctxt->pam_psock, buffer) == 0) {
-		if (++nmesg > PAM_MAX_NUM_MSG)
+	అయితే (ssh_సందేశం_recv(ctxt->pam_psock, బఫరు) == 0) {
+		ఒకవేళ (++nmesg > PAM_MAX_అంకె_సందేశం)
 			fatal_f("too many query messages");
-		if ((r = sshbuf_get_u8(buffer, &type)) != 0 ||
-		    (r = sshbuf_get_cstring(buffer, &msg, &mlen)) != 0)
+		ఒకవేళ ((r = sshbuf_get_u8(బఫరు, &type)) != 0 ||
+		    (r = sshbuf_get_cstring(బఫరు, &సందేశం, &mlen)) != 0)
 			fatal_fr(r, "buffer error");
-		switch (type) {
-		case PAM_PROMPT_ECHO_ON:
-		case PAM_PROMPT_ECHO_OFF:
-			*prompts = xcalloc(1, sizeof(char *));
-			*echo_on = xcalloc(1, sizeof(u_int));
-			(*prompts)[0] = msg;	/* transfer ownership */
+		ఎంపిక (type) {
+		స్థితి PAM_PROMPT_ECHO_ON:
+		స్థితి PAM_PROMPT_ECHO_OFF:
+			*prompts = xcalloc(1, పరిమాణం(అక్షరం *));
+			*echo_on = xcalloc(1, పరిమాణం(u_int));
+			(*prompts)[0] = సందేశం;	/* transfer ownership */
 			(*echo_on)[0] = (type == PAM_PROMPT_ECHO_ON);
-			*num = 1;
-			sshbuf_free(buffer);
-			return (0);
-		case PAM_ERROR_MSG:
-		case PAM_TEXT_INFO:
-			free(*info);
-			*info = msg; /* transfer ownership */
-			msg = NULL;
-			ctxt->pam_done = SshPamAgain;
-			sshbuf_free(buffer);
-			return (0);
-		case PAM_ACCT_EXPIRED:
-		case PAM_MAXTRIES:
-			if (type == PAM_ACCT_EXPIRED)
-				sshpam_account_status = 0;
-			if (type == PAM_MAXTRIES)
-				sshpam_set_maxtries_reached(1);
+			*అంకె = 1;
+			sshbuf_free(బఫరు);
+			తిరిగి (0);
+		స్థితి PAM_ERROR_సందేశం:
+		స్థితి PAM_పాఠ్యం_INFO:
+			విడుదల(*info);
+			*info = సందేశం; /* transfer ownership */
+			సందేశం = ఖాళీ;
+			ctxt->pam_పూర్తి = SshPamAgain;
+			sshbuf_free(బఫరు);
+			తిరిగి (0);
+		స్థితి PAM_ACCT_EXPIRED:
+		స్థితి PAM_MAXTRIES:
+			ఒకవేళ (type == PAM_ACCT_EXPIRED)
+				sshpam_account_స్థితి = 0;
+			ఒకవేళ (type == PAM_MAXTRIES)
+				sshpam_సమితి_maxtries_reached(1);
 			/* FALLTHROUGH */
-		case PAM_AUTH_ERR:
+		స్థితి PAM_AUTH_ERR:
 			debug3("PAM: %s", pam_strerror(sshpam_handle, type));
 			/* FALLTHROUGH */
-		case PAM_SUCCESS:
-			if (type == PAM_SUCCESS) {
-				if (!sshpam_authctxt->valid ||
+		స్థితి PAM_SUCCESS:
+			ఒకవేళ (type == PAM_SUCCESS) {
+				ఒకవేళ (!sshpam_authctxt->valid ||
 				    (sshpam_authctxt->pw->pw_uid == 0 &&
-				    options.permit_root_login != PERMIT_YES))
+				    options.permit_మూలం_login != PERMIT_YES))
 					fatal("Internal error: PAM auth "
 					    "succeeded when it should have "
 					    "failed");
-				import_environments(buffer);
-				ctxt->pam_done = SshPamAuthenticated;
-				free(msg);
-				sshbuf_free(buffer);
-				return (0);
+				import_environments(బఫరు);
+				ctxt->pam_పూర్తి = SshPamAuthenticated;
+				విడుదల(సందేశం);
+				sshbuf_free(బఫరు);
+				తిరిగి (0);
 			}
-			error("PAM: %s for %s%.100s from %.100s", msg,
+			error("PAM: %s for %s%.100s from %.100s", సందేశం,
 			    sshpam_authctxt->valid ? "" : "illegal user ",
 			    sshpam_authctxt->user, sshpam_rhost);
 			/* FALLTHROUGH */
-		default:
-			free(msg);
-			ctxt->pam_done = SshPamError;
-			sshbuf_free(buffer);
-			return (-1);
+		అప్రమేయ:
+			విడుదల(సందేశం);
+			ctxt->pam_పూర్తి = SshPamError;
+			sshbuf_free(బఫరు);
+			తిరిగి (-1);
 		}
 	}
-	sshbuf_free(buffer);
-	return (-1);
+	sshbuf_free(బఫరు);
+	తిరిగి (-1);
 }
 
 /*
@@ -936,78 +936,78 @@ sshpam_query(void *ctx, char **name, char **info,
  * Used to mitigate timing attacks against crypt(3)/PAM stacks that
  * vary processing time in proportion to password length.
  */
-static char *
-fake_password(const char *wire_password)
+స్థిర అక్షరం *
+fake_password(స్థిరరాశి అక్షరం *wire_password)
 {
-	const char junk[] = "\b\n\r\177INCORRECT";
-	char *ret = NULL;
-	size_t i, l = wire_password != NULL ? strlen(wire_password) : 0;
+	స్థిరరాశి అక్షరం junk[] = "\b\n\r\177INCORRECT";
+	అక్షరం *ret = ఖాళీ;
+	కొలత_t i, l = wire_password != ఖాళీ ? అక్షరశ్రేణి_పొడవు(wire_password) : 0;
 
-	if (l >= INT_MAX)
+	ఒకవేళ (l >= గరిష్ఠ_పూర్ణాంకం)
 		fatal_f("password length too long: %zu", l);
 
-	ret = malloc(l + 1);
-	if (ret == NULL)
-		return NULL;
-	for (i = 0; i < l; i++)
-		ret[i] = junk[i % (sizeof(junk) - 1)];
+	ret = జ్ఞాపకం_ఇవ్వు(l + 1);
+	ఒకవేళ (ret == ఖాళీ)
+		తిరిగి ఖాళీ;
+	కొరకు (i = 0; i < l; i++)
+		ret[i] = junk[i % (పరిమాణం(junk) - 1)];
 	ret[i] = '\0';
-	return ret;
+	తిరిగి ret;
 }
 
-static int
-sshpam_respond(void *ctx, u_int num, char **resp)
+స్థిర పూర్ణాంకం
+sshpam_respond(శూన్య *ctx, u_int అంకె, అక్షరం **resp)
 {
-	struct sshbuf *buffer;
-	struct pam_ctxt *ctxt = ctx;
-	char *fake;
-	int r;
+	నిర్మాణం sshbuf *బఫరు;
+	నిర్మాణం pam_ctxt *ctxt = ctx;
+	అక్షరం *fake;
+	పూర్ణాంకం r;
 
-	debug2_f("PAM: entering, %u responses", num);
-	switch (ctxt->pam_done) {
-	case SshPamAuthenticated:
+	debug2_f("PAM: entering, %u responses", అంకె);
+	ఎంపిక (ctxt->pam_పూర్తి) {
+	స్థితి SshPamAuthenticated:
 		sshpam_authenticated = 1;
-		return (0);
-	case SshPamNone:
-		break;
-	case SshPamAgain:
-		return 1;	/* KbdintResultAgain */
-	default:
-		return (-1);
+		తిరిగి (0);
+	స్థితి SshPamNone:
+		ఆపు;
+	స్థితి SshPamAgain:
+		తిరిగి 1;	/* KbdintResultAgain */
+	అప్రమేయ:
+		తిరిగి (-1);
 	}
-	if (num != 1) {
-		error("PAM: expected one response, got %u", num);
-		return (-1);
+	ఒకవేళ (అంకె != 1) {
+		error("PAM: expected one response, got %u", అంకె);
+		తిరిగి (-1);
 	}
-	if ((buffer = sshbuf_new()) == NULL)
+	ఒకవేళ ((బఫరు = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if (sshpam_authctxt->valid &&
+	ఒకవేళ (sshpam_authctxt->valid &&
 	    (sshpam_authctxt->pw->pw_uid != 0 ||
-	    options.permit_root_login == PERMIT_YES)) {
-		if ((r = sshbuf_put_cstring(buffer, *resp)) != 0)
+	    options.permit_మూలం_login == PERMIT_YES)) {
+		ఒకవేళ ((r = sshbuf_put_cstring(బఫరు, *resp)) != 0)
 			fatal_fr(r, "buffer error");
-	} else {
+	} లేకపోతే {
 		fake = fake_password(*resp);
-		if ((r = sshbuf_put_cstring(buffer, fake)) != 0)
+		ఒకవేళ ((r = sshbuf_put_cstring(బఫరు, fake)) != 0)
 			fatal_fr(r, "buffer error");
-		free(fake);
+		విడుదల(fake);
 	}
-	if (ssh_msg_send(ctxt->pam_psock, PAM_AUTHTOK, buffer) == -1) {
-		sshbuf_free(buffer);
-		return (-1);
+	ఒకవేళ (ssh_సందేశం_send(ctxt->pam_psock, PAM_AUTHTOK, బఫరు) == -1) {
+		sshbuf_free(బఫరు);
+		తిరిగి (-1);
 	}
-	sshbuf_free(buffer);
-	return (1);
+	sshbuf_free(బఫరు);
+	తిరిగి (1);
 }
 
-static void
-sshpam_free_ctx(void *ctxtp)
+స్థిర శూన్య
+sshpam_free_ctx(శూన్య *ctxtp)
 {
-	struct pam_ctxt *ctxt = ctxtp;
+	నిర్మాణం pam_ctxt *ctxt = ctxtp;
 
 	debug3_f("entering");
 	sshpam_thread_cleanup();
-	free(ctxt);
+	విడుదల(ctxt);
 	/*
 	 * We don't call sshpam_cleanup() here because we may need the PAM
 	 * handle at a later stage, e.g. when setting up a session.  It's
@@ -1016,12 +1016,12 @@ sshpam_free_ctx(void *ctxtp)
 	 */
 }
 
-int
-sshpam_priv_kbdint_authdone(void *ctxtp)
+పూర్ణాంకం
+sshpam_priv_kbdint_authdone(శూన్య *ctxtp)
 {
-	struct pam_ctxt *ctxt = ctxtp;
+	నిర్మాణం pam_ctxt *ctxt = ctxtp;
 
-	return ctxt->pam_done == SshPamAuthenticated;
+	తిరిగి ctxt->pam_పూర్తి == SshPamAuthenticated;
 }
 
 KbdintDevice sshpam_device = {
@@ -1043,31 +1043,31 @@ KbdintDevice mm_sshpam_device = {
 /*
  * This replaces auth-pam.c
  */
-void
-start_pam(struct ssh *ssh)
+శూన్య
+ప్రారంభం_pam(నిర్మాణం ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 
-	if (!options.use_pam)
+	ఒకవేళ (!options.use_pam)
 		fatal("PAM: initialisation requested when UsePAM=no");
 
-	if (sshpam_init(ssh, authctxt) == -1)
+	ఒకవేళ (sshpam_init(ssh, authctxt) == -1)
 		fatal("PAM: initialisation failed");
 }
 
-void
-finish_pam(void)
+శూన్య
+ముగింపు_pam(శూన్య)
 {
 	sshpam_cleanup();
 }
 
 
 u_int
-do_pam_account(void)
+do_pam_account(శూన్య)
 {
 	debug_f("called");
-	if (sshpam_account_status != -1)
-		return (sshpam_account_status);
+	ఒకవేళ (sshpam_account_స్థితి != -1)
+		తిరిగి (sshpam_account_స్థితి);
 
 	expose_authinfo(__func__);
 
@@ -1075,56 +1075,56 @@ do_pam_account(void)
 	debug3("PAM: %s pam_acct_mgmt = %d (%s)", __func__, sshpam_err,
 	    pam_strerror(sshpam_handle, sshpam_err));
 
-	if (sshpam_err != PAM_SUCCESS && sshpam_err != PAM_NEW_AUTHTOK_REQD) {
-		sshpam_account_status = 0;
-		return (sshpam_account_status);
+	ఒకవేళ (sshpam_err != PAM_SUCCESS && sshpam_err != PAM_NEW_AUTHTOK_REQD) {
+		sshpam_account_స్థితి = 0;
+		తిరిగి (sshpam_account_స్థితి);
 	}
 
-	if (sshpam_err == PAM_NEW_AUTHTOK_REQD)
+	ఒకవేళ (sshpam_err == PAM_NEW_AUTHTOK_REQD)
 		sshpam_password_change_required(1);
 
-	sshpam_account_status = 1;
-	return (sshpam_account_status);
+	sshpam_account_స్థితి = 1;
+	తిరిగి (sshpam_account_స్థితి);
 }
 
-void
-do_pam_setcred(void)
+శూన్య
+do_pam_setcred(శూన్య)
 {
-	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
-	    (const void *)&store_conv);
-	if (sshpam_err != PAM_SUCCESS)
+	sshpam_err = pam_సమితి_అంశం(sshpam_handle, PAM_CONV,
+	    (స్థిరరాశి శూన్య *)&store_conv);
+	ఒకవేళ (sshpam_err != PAM_SUCCESS)
 		fatal("PAM: failed to set PAM_CONV: %s",
 		    pam_strerror(sshpam_handle, sshpam_err));
 	debug("PAM: establishing credentials");
 	sshpam_err = pam_setcred(sshpam_handle, PAM_ESTABLISH_CRED);
-	if (sshpam_err == PAM_SUCCESS) {
+	ఒకవేళ (sshpam_err == PAM_SUCCESS) {
 		sshpam_cred_established = 1;
-		return;
+		తిరిగి;
 	}
-	if (sshpam_authenticated)
+	ఒకవేళ (sshpam_authenticated)
 		fatal("PAM: pam_setcred(): %s",
 		    pam_strerror(sshpam_handle, sshpam_err));
-	else
+	లేకపోతే
 		debug("PAM: pam_setcred(): %s",
 		    pam_strerror(sshpam_handle, sshpam_err));
 }
 
-void
-do_pam_session(struct ssh *ssh)
+శూన్య
+do_pam_session(నిర్మాణం ssh *ssh)
 {
 	debug3("PAM: opening session");
 
 	expose_authinfo(__func__);
 
-	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
-	    (const void *)&store_conv);
-	if (sshpam_err != PAM_SUCCESS)
+	sshpam_err = pam_సమితి_అంశం(sshpam_handle, PAM_CONV,
+	    (స్థిరరాశి శూన్య *)&store_conv);
+	ఒకవేళ (sshpam_err != PAM_SUCCESS)
 		fatal("PAM: failed to set PAM_CONV: %s",
 		    pam_strerror(sshpam_handle, sshpam_err));
 	sshpam_err = pam_open_session(sshpam_handle, 0);
-	if (sshpam_err == PAM_SUCCESS)
+	ఒకవేళ (sshpam_err == PAM_SUCCESS)
 		sshpam_session_open = 1;
-	else {
+	లేకపోతే {
 		sshpam_session_open = 0;
 		auth_restrict_session(ssh);
 		error("PAM: pam_open_session(): %s",
@@ -1133,10 +1133,10 @@ do_pam_session(struct ssh *ssh)
 
 }
 
-int
-is_pam_session_open(void)
+పూర్ణాంకం
+is_pam_session_open(శూన్య)
 {
-	return sshpam_session_open;
+	తిరిగి sshpam_session_open;
 }
 
 /*
@@ -1144,46 +1144,46 @@ is_pam_session_open(void)
  * modules can handle things like Kerberos/GSI credentials that appear
  * during the ssh authentication process.
  */
-int
-do_pam_putenv(char *name, char *value)
+పూర్ణాంకం
+do_pam_putenv(అక్షరం *name, అక్షరం *విలువ)
 {
-	int ret = 1;
-	char *compound;
-	size_t len;
+	పూర్ణాంకం ret = 1;
+	అక్షరం *compound;
+	కొలత_t len;
 
-	len = strlen(name) + strlen(value) + 2;
+	len = అక్షరశ్రేణి_పొడవు(name) + అక్షరశ్రేణి_పొడవు(విలువ) + 2;
 	compound = xmalloc(len);
 
-	snprintf(compound, len, "%s=%s", name, value);
+	snprintf(compound, len, "%s=%s", name, విలువ);
 	ret = pam_putenv(sshpam_handle, compound);
-	free(compound);
+	విడుదల(compound);
 
-	return (ret);
+	తిరిగి (ret);
 }
 
-char **
-fetch_pam_child_environment(void)
+అక్షరం **
+fetch_pam_బిడ్డ_environment(శూన్య)
 {
-	return sshpam_env;
+	తిరిగి sshpam_env;
 }
 
-char **
-fetch_pam_environment(void)
+అక్షరం **
+fetch_pam_environment(శూన్య)
 {
-	return (pam_getenvlist(sshpam_handle));
+	తిరిగి (pam_getenvlist(sshpam_handle));
 }
 
-void
-free_pam_environment(char **env)
+శూన్య
+free_pam_environment(అక్షరం **env)
 {
-	char **envp;
+	అక్షరం **envp;
 
-	if (env == NULL)
-		return;
+	ఒకవేళ (env == ఖాళీ)
+		తిరిగి;
 
-	for (envp = env; *envp; envp++)
-		free(*envp);
-	free(env);
+	కొరకు (envp = env; *envp; envp++)
+		విడుదల(*envp);
+	విడుదల(env);
 }
 
 /*
@@ -1191,74 +1191,74 @@ free_pam_environment(char **env)
  * echo-off prompts are for the password and stores messages for later
  * display.
  */
-static int
-sshpam_passwd_conv(int n, sshpam_const struct pam_message **msg,
-    struct pam_response **resp, void *data)
+స్థిర పూర్ణాంకం
+sshpam_passwd_conv(పూర్ణాంకం n, sshpam_const నిర్మాణం pam_సందేశం **సందేశం,
+    నిర్మాణం pam_response **resp, శూన్య *దత్తాంశం)
 {
-	struct pam_response *reply;
-	int r, i;
-	size_t len;
+	నిర్మాణం pam_response *జవాబు;
+	పూర్ణాంకం r, i;
+	కొలత_t len;
 
 	debug3_f("PAM: called with %d messages", n);
 
-	*resp = NULL;
+	*resp = ఖాళీ;
 
-	if (n <= 0 || n > PAM_MAX_NUM_MSG)
-		return (PAM_CONV_ERR);
+	ఒకవేళ (n <= 0 || n > PAM_MAX_అంకె_సందేశం)
+		తిరిగి (PAM_CONV_ERR);
 
-	if ((reply = calloc(n, sizeof(*reply))) == NULL)
-		return (PAM_CONV_ERR);
+	ఒకవేళ ((జవాబు = సున్నా_జ్ఞాపకం_ఇవ్వు(n, పరిమాణం(*జవాబు))) == ఖాళీ)
+		తిరిగి (PAM_CONV_ERR);
 
-	for (i = 0; i < n; ++i) {
-		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
-		case PAM_PROMPT_ECHO_OFF:
-			if (sshpam_password == NULL)
-				goto fail;
-			if ((reply[i].resp = strdup(sshpam_password)) == NULL)
-				goto fail;
-			reply[i].resp_retcode = PAM_SUCCESS;
-			break;
-		case PAM_ERROR_MSG:
-		case PAM_TEXT_INFO:
-			len = strlen(PAM_MSG_MEMBER(msg, i, msg));
-			if (len > 0) {
-				if ((r = sshbuf_putf(loginmsg, "%s\n",
-				    PAM_MSG_MEMBER(msg, i, msg))) != 0)
+	కొరకు (i = 0; i < n; ++i) {
+		ఎంపిక (PAM_సందేశం_MEMBER(సందేశం, i, సందేశం_style)) {
+		స్థితి PAM_PROMPT_ECHO_OFF:
+			ఒకవేళ (sshpam_password == ఖాళీ)
+				వెళ్ళు fail;
+			ఒకవేళ ((జవాబు[i].resp = strdup(sshpam_password)) == ఖాళీ)
+				వెళ్ళు fail;
+			జవాబు[i].resp_retcode = PAM_SUCCESS;
+			ఆపు;
+		స్థితి PAM_ERROR_సందేశం:
+		స్థితి PAM_పాఠ్యం_INFO:
+			len = అక్షరశ్రేణి_పొడవు(PAM_సందేశం_MEMBER(సందేశం, i, సందేశం));
+			ఒకవేళ (len > 0) {
+				ఒకవేళ ((r = sshbuf_putf(loginmsg, "%s\n",
+				    PAM_సందేశం_MEMBER(సందేశం, i, సందేశం))) != 0)
 					fatal("%s: buffer error: %s",
 					    __func__, ssh_err(r));
 			}
-			if ((reply[i].resp = strdup("")) == NULL)
-				goto fail;
-			reply[i].resp_retcode = PAM_SUCCESS;
-			break;
-		default:
-			goto fail;
+			ఒకవేళ ((జవాబు[i].resp = strdup("")) == ఖాళీ)
+				వెళ్ళు fail;
+			జవాబు[i].resp_retcode = PAM_SUCCESS;
+			ఆపు;
+		అప్రమేయ:
+			వెళ్ళు fail;
 		}
 	}
-	*resp = reply;
-	return (PAM_SUCCESS);
+	*resp = జవాబు;
+	తిరిగి (PAM_SUCCESS);
 
  fail:
-	for(i = 0; i < n; i++) {
-		free(reply[i].resp);
+	కొరకు(i = 0; i < n; i++) {
+		విడుదల(జవాబు[i].resp);
 	}
-	free(reply);
-	return (PAM_CONV_ERR);
+	విడుదల(జవాబు);
+	తిరిగి (PAM_CONV_ERR);
 }
 
-static struct pam_conv passwd_conv = { sshpam_passwd_conv, NULL };
+స్థిర నిర్మాణం pam_conv passwd_conv = { sshpam_passwd_conv, ఖాళీ };
 
 /*
  * Attempt password authentication via PAM
  */
-int
-sshpam_auth_passwd(Authctxt *authctxt, const char *password)
+పూర్ణాంకం
+sshpam_auth_passwd(Authctxt *authctxt, స్థిరరాశి అక్షరం *password)
 {
-	int flags = (options.permit_empty_passwd == 0 ?
+	పూర్ణాంకం flags = (options.permit_ఖాళీలు_passwd == 0 ?
 	    PAM_DISALLOW_NULL_AUTHTOK : 0);
-	char *fake = NULL;
+	అక్షరం *fake = ఖాళీ;
 
-	if (!options.use_pam || sshpam_handle == NULL)
+	ఒకవేళ (!options.use_pam || sshpam_handle == ఖాళీ)
 		fatal("PAM: %s called when PAM disabled or failed to "
 		    "initialise.", __func__);
 
@@ -1270,50 +1270,50 @@ sshpam_auth_passwd(Authctxt *authctxt, const char *password)
 	 * by PermitRootLogin, use an invalid password to prevent leaking
 	 * information via timing (eg if the PAM config has a delay on fail).
 	 */
-	if (!authctxt->valid || (authctxt->pw->pw_uid == 0 &&
-	    options.permit_root_login != PERMIT_YES))
+	ఒకవేళ (!authctxt->valid || (authctxt->pw->pw_uid == 0 &&
+	    options.permit_మూలం_login != PERMIT_YES))
 		sshpam_password = fake = fake_password(password);
 
-	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
-	    (const void *)&passwd_conv);
-	if (sshpam_err != PAM_SUCCESS)
+	sshpam_err = pam_సమితి_అంశం(sshpam_handle, PAM_CONV,
+	    (స్థిరరాశి శూన్య *)&passwd_conv);
+	ఒకవేళ (sshpam_err != PAM_SUCCESS)
 		fatal("PAM: %s: failed to set PAM_CONV: %s", __func__,
 		    pam_strerror(sshpam_handle, sshpam_err));
 
 	expose_authinfo(__func__);
 
 	sshpam_err = pam_authenticate(sshpam_handle, flags);
-	sshpam_password = NULL;
-	free(fake);
-	if (sshpam_err == PAM_SUCCESS)
+	sshpam_password = ఖాళీ;
+	విడుదల(fake);
+	ఒకవేళ (sshpam_err == PAM_SUCCESS)
 		sshpam_err = check_pam_user(authctxt);
-	if (sshpam_err == PAM_MAXTRIES)
-		sshpam_set_maxtries_reached(1);
-	if (sshpam_err == PAM_SUCCESS && authctxt->valid) {
+	ఒకవేళ (sshpam_err == PAM_MAXTRIES)
+		sshpam_సమితి_maxtries_reached(1);
+	ఒకవేళ (sshpam_err == PAM_SUCCESS && authctxt->valid) {
 		debug("PAM: password authentication accepted for %.100s",
 		    authctxt->user);
-		return 1;
-	} else {
+		తిరిగి 1;
+	} లేకపోతే {
 		debug("PAM: password authentication failed for %.100s: %s",
 		    authctxt->valid ? authctxt->user : "an illegal user",
 		    pam_strerror(sshpam_handle, sshpam_err));
-		return 0;
+		తిరిగి 0;
 	}
 }
 
-int
-sshpam_get_maxtries_reached(void)
+పూర్ణాంకం
+sshpam_get_maxtries_reached(శూన్య)
 {
-	return sshpam_maxtries_reached;
+	తిరిగి sshpam_maxtries_reached;
 }
 
-void
-sshpam_set_maxtries_reached(int reached)
+శూన్య
+sshpam_సమితి_maxtries_reached(పూర్ణాంకం reached)
 {
-	if (reached == 0 || sshpam_maxtries_reached)
-		return;
+	ఒకవేళ (reached == 0 || sshpam_maxtries_reached)
+		తిరిగి;
 	sshpam_maxtries_reached = 1;
 	options.password_authentication = 0;
 	options.kbd_interactive_authentication = 0;
 }
-#endif /* USE_PAM */
+#అయితే_ముగింపు /* USE_PAM */

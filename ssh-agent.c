@@ -34,392 +34,392 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/queue.h>
-#include <sys/resource.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/un.h>
-#include <sys/wait.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/time.h>
+#అన్తర్భావ <sys/queue.h>
+#అన్తర్భావ <sys/resource.h>
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <sys/un.h>
+#అన్తర్భావ <sys/wait.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#include "openbsd-compat/openssl-compat.h"
-#endif
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ <openssl/evp.h>
+#అన్తర్భావ "openbsd-compat/openssl-compat.h"
+#అయితే_ముగింపు
 
-#include <errno.h>
-#include <fcntl.h>
-#include <paths.h>
-#include <poll.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <limits.h>
-#include <time.h>
-#include <unistd.h>
-#include <util.h>
-#include <pwd.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <paths.h>
+#అన్తర్భావ <poll.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <util.h>
+#అన్తర్భావ <pwd.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "log.h"
-#include "misc.h"
-#include "digest.h"
-#include "ssherr.h"
-#include "match.h"
-#include "msg.h"
-#include "pathnames.h"
-#include "ssh-pkcs11.h"
-#include "sk-api.h"
-#include "myproposal.h"
-#include "version.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "ssh.h"
+#అన్తర్భావ "ssh2.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "authfd.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "digest.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "match.h"
+#అన్తర్భావ "msg.h"
+#అన్తర్భావ "pathnames.h"
+#అన్తర్భావ "ssh-pkcs11.h"
+#అన్తర్భావ "sk-api.h"
+#అన్తర్భావ "myproposal.h"
+#అన్తర్భావ "version.h"
 
-#ifndef DEFAULT_ALLOWED_PROVIDERS
+#నిర్వచితం_కాకపోతే DEFAULT_ALLOWED_PROVIDERS
 # define DEFAULT_ALLOWED_PROVIDERS "/usr/lib*/*,/usr/local/lib*/*"
-#endif
-#ifndef DEFAULT_WEBSAFE_ALLOWLIST
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే DEFAULT_WEBSAFE_ALLOWLIST
 # define DEFAULT_WEBSAFE_ALLOWLIST "ssh:*"
-#endif
+#అయితే_ముగింపు
 
 /* Maximum accepted message length */
-#define AGENT_MAX_LEN		(256*1024)
+#నిర్వచించు AGENT_MAX_LEN		(256*1024)
 /* Maximum bytes to read from client socket */
-#define AGENT_RBUF_LEN		(4096)
+#నిర్వచించు AGENT_RBUF_LEN		(4096)
 /* Maximum number of recorded session IDs/hostkeys per connection */
-#define AGENT_MAX_SESSION_IDS		16
+#నిర్వచించు AGENT_MAX_SESSION_IDS		16
 /* Maximum size of session ID */
-#define AGENT_MAX_SID_LEN		128
+#నిర్వచించు AGENT_MAX_SID_LEN		128
 /* Maximum number of destination constraints to accept on a key */
-#define AGENT_MAX_DEST_CONSTRAINTS	1024
+#నిర్వచించు AGENT_MAX_DEST_CONSTRAINTS	1024
 /* Maximum number of associated certificate constraints to accept on a key */
-#define AGENT_MAX_EXT_CERTS		1024
+#నిర్వచించు AGENT_MAX_EXT_CERTS		1024
 /* Max length of username constraint */
-#define AGENT_USER_CONSTRAINT_MAX_LEN	256
+#నిర్వచించు AGENT_USER_CONSTRAINT_MAX_LEN	256
 
 /* XXX store hostkey_sid in a refcounted tree */
 
-typedef enum {
-	AUTH_UNUSED = 0,
+రకనిర్వచనం గణన {
+	AUTH_వాడని = 0,
 	AUTH_SOCKET = 1,
 	AUTH_CONNECTION = 2,
 } sock_type;
 
-struct hostkey_sid {
-	struct sshkey *key;
-	struct sshbuf *sid;
-	int forwarded;
+నిర్మాణం hostkey_sid {
+	నిర్మాణం sshkey *కీలకం;
+	నిర్మాణం sshbuf *sid;
+	పూర్ణాంకం forwarded;
 };
 
-typedef struct socket_entry {
-	int fd;
+రకనిర్వచనం నిర్మాణం socket_నమోదు {
+	పూర్ణాంకం fd;
 	sock_type type;
-	struct sshbuf *input;
-	struct sshbuf *output;
-	struct sshbuf *request;
-	size_t nsession_ids;
-	struct hostkey_sid *session_ids;
-	int session_bind_attempted;
-} SocketEntry;
+	నిర్మాణం sshbuf *ఆదానం;
+	నిర్మాణం sshbuf *output;
+	నిర్మాణం sshbuf *request;
+	కొలత_t nsession_ids;
+	నిర్మాణం hostkey_sid *session_ids;
+	పూర్ణాంకం session_bind_attempted;
+} Socket_నమోదు;
 
 u_int sockets_alloc = 0;
-SocketEntry *sockets = NULL;
+Socket_నమోదు *sockets = ఖాళీ;
 
-typedef struct identity {
-	TAILQ_ENTRY(identity) next;
-	struct sshkey *key;
-	char *comment;
-	char *provider;
+రకనిర్వచనం నిర్మాణం తటస్థం_2 {
+	TAILQ_ENTRY(తటస్థం_2) తదుపరి;
+	నిర్మాణం sshkey *కీలకం;
+	అక్షరం *comment;
+	అక్షరం *provider;
 	time_t death;
 	u_int confirm;
-	char *sk_provider;
-	struct dest_constraint *dest_constraints;
-	size_t ndest_constraints;
-} Identity;
+	అక్షరం *sk_provider;
+	నిర్మాణం dest_constraint *dest_constraints;
+	కొలత_t ndest_constraints;
+} తటస్థం;
 
-struct idtable {
-	int nentries;
-	TAILQ_HEAD(idqueue, identity) idlist;
+నిర్మాణం idtable {
+	పూర్ణాంకం nentries;
+	TAILQ_HEAD(idqueue, తటస్థం_2) idlist;
 };
 
 /* private key table */
-struct idtable *idtab;
+నిర్మాణం idtable *idtab;
 
-int max_fd = 0;
+పూర్ణాంకం max_fd = 0;
 
 /* pid of shell == parent of agent */
-pid_t parent_pid = -1;
-time_t parent_alive_interval = 0;
+pid_t మాతృ_pid = -1;
+time_t మాతృ_alive_interval = 0;
 
-static sig_atomic_t signalled_exit;
-static sig_atomic_t signalled_keydrop;
+స్థిర sig_atomic_t signalled_exit;
+స్థిర sig_atomic_t signalled_keydrop;
 
 /* pid of process for which cleanup_socket is applicable */
 pid_t cleanup_pid = 0;
 
 /* pathname and directory for AUTH_SOCKET */
-static char *socket_name;
-static char *socket_dir;
-static char *socket_dirspec;
+స్థిర అక్షరం *socket_name;
+స్థిర అక్షరం *socket_dir;
+స్థిర అక్షరం *socket_dirspec;
 
 /* Pattern-list of allowed PKCS#11/Security key paths */
-static char *allowed_providers;
+స్థిర అక్షరం *allowed_providers;
 
 /*
  * Allows PKCS11 providers or SK keys that use non-internal providers to
  * be added over a remote connection (identified by session-bind@openssh.com).
  */
-static int remote_add_provider;
+స్థిర పూర్ణాంకం remote_కూడు_provider;
 
 /* locking */
-#define LOCK_SIZE	32
-#define LOCK_SALT_SIZE	16
-#define LOCK_ROUNDS	1
-int locked = 0;
-u_char lock_pwhash[LOCK_SIZE];
-u_char lock_salt[LOCK_SALT_SIZE];
+#నిర్వచించు తాళం_కొలత	32
+#నిర్వచించు తాళం_SALT_కొలత	16
+#నిర్వచించు తాళం_విడతలు	1
+పూర్ణాంకం locked = 0;
+u_char తాళం_pwhash[తాళం_కొలత];
+u_char తాళం_salt[తాళం_SALT_కొలత];
 
-extern char *__progname;
+బాహ్య అక్షరం *__progname;
 
 /* Default lifetime in seconds (0 == forever) */
-static int lifetime = 0;
+స్థిర పూర్ణాంకం lifetime = 0;
 
-static int fingerprint_hash = SSH_FP_HASH_DEFAULT;
+స్థిర పూర్ణాంకం fingerprint_hash = SSH_FP_HASH_DEFAULT;
 
 /* Refuse signing of non-SSH messages for web-origin FIDO keys */
-static int restrict_websafe = 1;
-static char *websafe_allowlist;
+స్థిర పూర్ణాంకం restrict_websafe = 1;
+స్థిర అక్షరం *websafe_allowlist;
 
-static void
-close_socket(SocketEntry *e)
+స్థిర శూన్య
+close_socket(Socket_నమోదు *e)
 {
-	size_t i;
+	కొలత_t i;
 
 	close(e->fd);
-	sshbuf_free(e->input);
+	sshbuf_free(e->ఆదానం);
 	sshbuf_free(e->output);
 	sshbuf_free(e->request);
-	for (i = 0; i < e->nsession_ids; i++) {
-		sshkey_free(e->session_ids[i].key);
+	కొరకు (i = 0; i < e->nsession_ids; i++) {
+		sshkey_free(e->session_ids[i].కీలకం);
 		sshbuf_free(e->session_ids[i].sid);
 	}
-	free(e->session_ids);
-	memset(e, '\0', sizeof(*e));
+	విడుదల(e->session_ids);
+	memset(e, '\0', పరిమాణం(*e));
 	e->fd = -1;
-	e->type = AUTH_UNUSED;
+	e->type = AUTH_వాడని;
 }
 
-static void
-idtab_init(void)
+స్థిర శూన్య
+idtab_init(శూన్య)
 {
-	idtab = xcalloc(1, sizeof(*idtab));
+	idtab = xcalloc(1, పరిమాణం(*idtab));
 	TAILQ_INIT(&idtab->idlist);
 	idtab->nentries = 0;
 }
 
-static void
-free_dest_constraint_hop(struct dest_constraint_hop *dch)
+స్థిర శూన్య
+free_dest_constraint_hop(నిర్మాణం dest_constraint_hop *dch)
 {
 	u_int i;
 
-	if (dch == NULL)
-		return;
-	free(dch->user);
-	free(dch->hostname);
-	for (i = 0; i < dch->nkeys; i++)
-		sshkey_free(dch->keys[i]);
-	free(dch->keys);
-	free(dch->key_is_ca);
+	ఒకవేళ (dch == ఖాళీ)
+		తిరిగి;
+	విడుదల(dch->user);
+	విడుదల(dch->hostname);
+	కొరకు (i = 0; i < dch->nkeys; i++)
+		sshkey_free(dch->కీలకాలు[i]);
+	విడుదల(dch->కీలకాలు);
+	విడుదల(dch->కీలకం_is_ca);
 }
 
-static void
-free_dest_constraints(struct dest_constraint *dcs, size_t ndcs)
+స్థిర శూన్య
+free_dest_constraints(నిర్మాణం dest_constraint *dcs, కొలత_t ndcs)
 {
-	size_t i;
+	కొలత_t i;
 
-	for (i = 0; i < ndcs; i++) {
+	కొరకు (i = 0; i < ndcs; i++) {
 		free_dest_constraint_hop(&dcs[i].from);
-		free_dest_constraint_hop(&dcs[i].to);
+		free_dest_constraint_hop(&dcs[i].గమ్యం);
 	}
-	free(dcs);
+	విడుదల(dcs);
 }
 
-#ifdef ENABLE_PKCS11
-static void
-dup_dest_constraint_hop(const struct dest_constraint_hop *dch,
-    struct dest_constraint_hop *out)
+#నిర్వచితమైతే ENABLE_PKCS11
+స్థిర శూన్య
+dup_dest_constraint_hop(స్థిరరాశి నిర్మాణం dest_constraint_hop *dch,
+    నిర్మాణం dest_constraint_hop *బహిర్గతం)
 {
 	u_int i;
-	int r;
+	పూర్ణాంకం r;
 
-	out->user = dch->user == NULL ? NULL : xstrdup(dch->user);
-	out->hostname = dch->hostname == NULL ? NULL : xstrdup(dch->hostname);
-	out->is_ca = dch->is_ca;
-	out->nkeys = dch->nkeys;
-	out->keys = out->nkeys == 0 ? NULL :
-	    xcalloc(out->nkeys, sizeof(*out->keys));
-	out->key_is_ca = out->nkeys == 0 ? NULL :
-	    xcalloc(out->nkeys, sizeof(*out->key_is_ca));
-	for (i = 0; i < dch->nkeys; i++) {
-		if (dch->keys[i] != NULL &&
-		    (r = sshkey_from_private(dch->keys[i],
-		    &(out->keys[i]))) != 0)
+	బహిర్గతం->user = dch->user == ఖాళీ ? ఖాళీ : xstrdup(dch->user);
+	బహిర్గతం->hostname = dch->hostname == ఖాళీ ? ఖాళీ : xstrdup(dch->hostname);
+	బహిర్గతం->is_ca = dch->is_ca;
+	బహిర్గతం->nkeys = dch->nkeys;
+	బహిర్గతం->కీలకాలు = బహిర్గతం->nkeys == 0 ? ఖాళీ :
+	    xcalloc(బహిర్గతం->nkeys, పరిమాణం(*బహిర్గతం->కీలకాలు));
+	బహిర్గతం->కీలకం_is_ca = బహిర్గతం->nkeys == 0 ? ఖాళీ :
+	    xcalloc(బహిర్గతం->nkeys, పరిమాణం(*బహిర్గతం->కీలకం_is_ca));
+	కొరకు (i = 0; i < dch->nkeys; i++) {
+		ఒకవేళ (dch->కీలకాలు[i] != ఖాళీ &&
+		    (r = sshkey_from_వ్యక్తిగత(dch->కీలకాలు[i],
+		    &(బహిర్గతం->కీలకాలు[i]))) != 0)
 			fatal_fr(r, "copy key");
-		out->key_is_ca[i] = dch->key_is_ca[i];
+		బహిర్గతం->కీలకం_is_ca[i] = dch->కీలకం_is_ca[i];
 	}
 }
 
-static struct dest_constraint *
-dup_dest_constraints(const struct dest_constraint *dcs, size_t ndcs)
+స్థిర నిర్మాణం dest_constraint *
+dup_dest_constraints(స్థిరరాశి నిర్మాణం dest_constraint *dcs, కొలత_t ndcs)
 {
-	size_t i;
-	struct dest_constraint *ret;
+	కొలత_t i;
+	నిర్మాణం dest_constraint *ret;
 
-	if (ndcs == 0)
-		return NULL;
-	ret = xcalloc(ndcs, sizeof(*ret));
-	for (i = 0; i < ndcs; i++) {
+	ఒకవేళ (ndcs == 0)
+		తిరిగి ఖాళీ;
+	ret = xcalloc(ndcs, పరిమాణం(*ret));
+	కొరకు (i = 0; i < ndcs; i++) {
 		dup_dest_constraint_hop(&dcs[i].from, &ret[i].from);
-		dup_dest_constraint_hop(&dcs[i].to, &ret[i].to);
+		dup_dest_constraint_hop(&dcs[i].గమ్యం, &ret[i].గమ్యం);
 	}
-	return ret;
+	తిరిగి ret;
 }
-#endif /* ENABLE_PKCS11 */
+#అయితే_ముగింపు /* ENABLE_PKCS11 */
 
-#ifdef DEBUG_CONSTRAINTS
-static void
-dump_dest_constraint_hop(const struct dest_constraint_hop *dch)
+#నిర్వచితమైతే DEBUG_CONSTRAINTS
+స్థిర శూన్య
+dump_dest_constraint_hop(స్థిరరాశి నిర్మాణం dest_constraint_hop *dch)
 {
 	u_int i;
-	char *fp;
+	అక్షరం *fp;
 
 	debug_f("user %s hostname %s is_ca %d nkeys %u",
-	    dch->user == NULL ? "(null)" : dch->user,
-	    dch->hostname == NULL ? "(null)" : dch->hostname,
+	    dch->user == ఖాళీ ? "(null)" : dch->user,
+	    dch->hostname == ఖాళీ ? "(null)" : dch->hostname,
 	    dch->is_ca, dch->nkeys);
-	for (i = 0; i < dch->nkeys; i++) {
-		fp = NULL;
-		if (dch->keys[i] != NULL &&
-		    (fp = sshkey_fingerprint(dch->keys[i],
-		    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == NULL)
+	కొరకు (i = 0; i < dch->nkeys; i++) {
+		fp = ఖాళీ;
+		ఒకవేళ (dch->కీలకాలు[i] != ఖాళీ &&
+		    (fp = sshkey_fingerprint(dch->కీలకాలు[i],
+		    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == ఖాళీ)
 			fatal_f("fingerprint failed");
 		debug_f("key %u/%u: %s%s%s key_is_ca %d", i, dch->nkeys,
-		    dch->keys[i] == NULL ? "" : sshkey_ssh_name(dch->keys[i]),
-		    dch->keys[i] == NULL ? "" : " ",
-		    dch->keys[i] == NULL ? "none" : fp,
-		    dch->key_is_ca[i]);
-		free(fp);
+		    dch->కీలకాలు[i] == ఖాళీ ? "" : sshkey_ssh_name(dch->కీలకాలు[i]),
+		    dch->కీలకాలు[i] == ఖాళీ ? "" : " ",
+		    dch->కీలకాలు[i] == ఖాళీ ? "none" : fp,
+		    dch->కీలకం_is_ca[i]);
+		విడుదల(fp);
 	}
 }
-#endif /* DEBUG_CONSTRAINTS */
+#అయితే_ముగింపు /* DEBUG_CONSTRAINTS */
 
-static void
-dump_dest_constraints(const char *context,
-    const struct dest_constraint *dcs, size_t ndcs)
+స్థిర శూన్య
+dump_dest_constraints(స్థిరరాశి అక్షరం *context,
+    స్థిరరాశి నిర్మాణం dest_constraint *dcs, కొలత_t ndcs)
 {
-#ifdef DEBUG_CONSTRAINTS
-	size_t i;
+#నిర్వచితమైతే DEBUG_CONSTRAINTS
+	కొలత_t i;
 
 	debug_f("%s: %zu constraints", context, ndcs);
-	for (i = 0; i < ndcs; i++) {
+	కొరకు (i = 0; i < ndcs; i++) {
 		debug_f("constraint %zu / %zu: from: ", i, ndcs);
 		dump_dest_constraint_hop(&dcs[i].from);
 		debug_f("constraint %zu / %zu: to: ", i, ndcs);
-		dump_dest_constraint_hop(&dcs[i].to);
+		dump_dest_constraint_hop(&dcs[i].గమ్యం);
 	}
 	debug_f("done for %s", context);
-#endif /* DEBUG_CONSTRAINTS */
+#అయితే_ముగింపు /* DEBUG_CONSTRAINTS */
 }
 
-static void
-free_identity(Identity *id)
+స్థిర శూన్య
+free_తటస్థం(తటస్థం *id)
 {
-	sshkey_free(id->key);
-	free(id->provider);
-	free(id->comment);
-	free(id->sk_provider);
+	sshkey_free(id->కీలకం);
+	విడుదల(id->provider);
+	విడుదల(id->comment);
+	విడుదల(id->sk_provider);
 	free_dest_constraints(id->dest_constraints, id->ndest_constraints);
-	free(id);
+	విడుదల(id);
 }
 
 /*
  * Match 'key' against the key/CA list in a destination constraint hop
  * Returns 0 on success or -1 otherwise.
  */
-static int
-match_key_hop(const char *tag, const struct sshkey *key,
-    const struct dest_constraint_hop *dch)
+స్థిర పూర్ణాంకం
+సరిపోలిక_కీలకం_hop(స్థిరరాశి అక్షరం *ట్యాగ్, స్థిరరాశి నిర్మాణం sshkey *కీలకం,
+    స్థిరరాశి నిర్మాణం dest_constraint_hop *dch)
 {
-	const char *reason = NULL;
-	const char *hostname = dch->hostname ? dch->hostname : "(ORIGIN)";
+	స్థిరరాశి అక్షరం *reason = ఖాళీ;
+	స్థిరరాశి అక్షరం *hostname = dch->hostname ? dch->hostname : "(ORIGIN)";
 	u_int i;
-	char *fp;
+	అక్షరం *fp;
 
-	if (key == NULL)
-		return -1;
+	ఒకవేళ (కీలకం == ఖాళీ)
+		తిరిగి -1;
 	/* XXX logspam */
-	if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	ఒకవేళ ((fp = sshkey_fingerprint(కీలకం, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == ఖాళీ)
 		fatal_f("fingerprint failed");
 	debug3_f("%s: entering hostname %s, requested key %s %s, %u keys avail",
-	    tag, hostname, sshkey_type(key), fp, dch->nkeys);
-	free(fp);
-	for (i = 0; i < dch->nkeys; i++) {
-		if (dch->keys[i] == NULL)
-			return -1;
+	    ట్యాగ్, hostname, sshkey_type(కీలకం), fp, dch->nkeys);
+	విడుదల(fp);
+	కొరకు (i = 0; i < dch->nkeys; i++) {
+		ఒకవేళ (dch->కీలకాలు[i] == ఖాళీ)
+			తిరిగి -1;
 		/* XXX logspam */
-		if ((fp = sshkey_fingerprint(dch->keys[i], SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+		ఒకవేళ ((fp = sshkey_fingerprint(dch->కీలకాలు[i], SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == ఖాళీ)
 			fatal_f("fingerprint failed");
-		debug3_f("%s: key %u: %s%s %s", tag, i,
-		    dch->key_is_ca[i] ? "CA " : "",
-		    sshkey_type(dch->keys[i]), fp);
-		free(fp);
-		if (!sshkey_is_cert(key)) {
+		debug3_f("%s: key %u: %s%s %s", ట్యాగ్, i,
+		    dch->కీలకం_is_ca[i] ? "CA " : "",
+		    sshkey_type(dch->కీలకాలు[i]), fp);
+		విడుదల(fp);
+		ఒకవేళ (!sshkey_is_cert(కీలకం)) {
 			/* plain key */
-			if (dch->key_is_ca[i] ||
-			    !sshkey_equal(key, dch->keys[i]))
-				continue;
-			return 0;
+			ఒకవేళ (dch->కీలకం_is_ca[i] ||
+			    !sshkey_equal(కీలకం, dch->కీలకాలు[i]))
+				కొనసాగు;
+			తిరిగి 0;
 		}
 		/* certificate */
-		if (!dch->key_is_ca[i])
-			continue;
-		if (key->cert == NULL || key->cert->signature_key == NULL)
-			return -1; /* shouldn't happen */
-		if (!sshkey_equal(key->cert->signature_key, dch->keys[i]))
-			continue;
-		if (sshkey_cert_check_host(key, hostname,
+		ఒకవేళ (!dch->కీలకం_is_ca[i])
+			కొనసాగు;
+		ఒకవేళ (కీలకం->cert == ఖాళీ || కీలకం->cert->signature_కీలకం == ఖాళీ)
+			తిరిగి -1; /* shouldn't happen */
+		ఒకవేళ (!sshkey_equal(కీలకం->cert->signature_కీలకం, dch->కీలకాలు[i]))
+			కొనసాగు;
+		ఒకవేళ (sshkey_cert_check_host(కీలకం, hostname,
 		    SSH_ALLOWED_CA_SIGALGS, &reason) != 0) {
 			debug_f("cert %s / hostname %s rejected: %s",
-			    key->cert->key_id, hostname, reason);
-			continue;
+			    కీలకం->cert->కీలకం_id, hostname, reason);
+			కొనసాగు;
 		}
-		return 0;
+		తిరిగి 0;
 	}
-	return -1;
+	తిరిగి -1;
 }
 
 /* Check destination constraints on an identity against the hostkey/user */
-static int
-permitted_by_dest_constraints(const struct sshkey *fromkey,
-    const struct sshkey *tokey, Identity *id, const char *user,
-    const char **hostnamep)
+స్థిర పూర్ణాంకం
+permitted_by_dest_constraints(స్థిరరాశి నిర్మాణం sshkey *fromkey,
+    స్థిరరాశి నిర్మాణం sshkey *tokey, తటస్థం *id, స్థిరరాశి అక్షరం *user,
+    స్థిరరాశి అక్షరం **hostnamep)
 {
-	size_t i;
-	struct dest_constraint *d;
+	కొలత_t i;
+	నిర్మాణం dest_constraint *d;
 
-	if (hostnamep != NULL)
-		*hostnamep = NULL;
-	for (i = 0; i < id->ndest_constraints; i++) {
+	ఒకవేళ (hostnamep != ఖాళీ)
+		*hostnamep = ఖాళీ;
+	కొరకు (i = 0; i < id->ndest_constraints; i++) {
 		d = id->dest_constraints + i;
 		/* XXX remove logspam */
 		debug2_f("constraint %zu %s%s%s (%u keys) > %s%s%s (%u keys)",
@@ -427,37 +427,37 @@ permitted_by_dest_constraints(const struct sshkey *fromkey,
 		    d->from.user ? "@" : "",
 		    d->from.hostname ? d->from.hostname : "(ORIGIN)",
 		    d->from.nkeys,
-		    d->to.user ? d->to.user : "", d->to.user ? "@" : "",
-		    d->to.hostname ? d->to.hostname : "(ANY)", d->to.nkeys);
+		    d->గమ్యం.user ? d->గమ్యం.user : "", d->గమ్యం.user ? "@" : "",
+		    d->గమ్యం.hostname ? d->గమ్యం.hostname : "(ANY)", d->గమ్యం.nkeys);
 
 		/* Match 'from' key */
-		if (fromkey == NULL) {
+		ఒకవేళ (fromkey == ఖాళీ) {
 			/* We are matching the first hop */
-			if (d->from.hostname != NULL || d->from.nkeys != 0)
-				continue;
-		} else if (match_key_hop("from", fromkey, &d->from) != 0)
-			continue;
+			ఒకవేళ (d->from.hostname != ఖాళీ || d->from.nkeys != 0)
+				కొనసాగు;
+		} లేకపోతే ఒకవేళ (సరిపోలిక_కీలకం_hop("from", fromkey, &d->from) != 0)
+			కొనసాగు;
 
 		/* Match 'to' key */
-		if (tokey != NULL && match_key_hop("to", tokey, &d->to) != 0)
-			continue;
+		ఒకవేళ (tokey != ఖాళీ && సరిపోలిక_కీలకం_hop("to", tokey, &d->గమ్యం) != 0)
+			కొనసాగు;
 
 		/* Match user if specified */
-		if (d->to.user != NULL && user != NULL &&
-		    !match_pattern(user, d->to.user))
-			continue;
+		ఒకవేళ (d->గమ్యం.user != ఖాళీ && user != ఖాళీ &&
+		    !సరిపోలిక_నమూనా(user, d->గమ్యం.user))
+			కొనసాగు;
 
 		/* successfully matched this constraint */
-		if (hostnamep != NULL)
-			*hostnamep = d->to.hostname;
+		ఒకవేళ (hostnamep != ఖాళీ)
+			*hostnamep = d->గమ్యం.hostname;
 		debug2_f("allowed for hostname %s",
-		    d->to.hostname == NULL ? "*" : d->to.hostname);
-		return 0;
+		    d->గమ్యం.hostname == ఖాళీ ? "*" : d->గమ్యం.hostname);
+		తిరిగి 0;
 	}
 	/* no match */
 	debug2_f("%s identity \"%s\" not permitted for this destination",
-	    sshkey_type(id->key), id->comment);
-	return -1;
+	    sshkey_type(id->కీలకం), id->comment);
+	తిరిగి -1;
 }
 
 /*
@@ -465,66 +465,66 @@ permitted_by_dest_constraints(const struct sshkey *fromkey,
  * are permitted by the destination constraints on the Identity.
  * Returns 0 on success or -1 otherwise.
  */
-static int
-identity_permitted(Identity *id, SocketEntry *e, char *user,
-    const char **forward_hostnamep, const char **last_hostnamep)
+స్థిర పూర్ణాంకం
+తటస్థం_permitted(తటస్థం *id, Socket_నమోదు *e, అక్షరం *user,
+    స్థిరరాశి అక్షరం **forward_hostnamep, స్థిరరాశి అక్షరం **చివరి_hostnamep)
 {
-	size_t i;
-	const char **hp;
-	struct hostkey_sid *hks;
-	const struct sshkey *fromkey = NULL;
-	const char *test_user;
-	char *fp1, *fp2;
+	కొలత_t i;
+	స్థిరరాశి అక్షరం **hp;
+	నిర్మాణం hostkey_sid *hks;
+	స్థిరరాశి నిర్మాణం sshkey *fromkey = ఖాళీ;
+	స్థిరరాశి అక్షరం *test_user;
+	అక్షరం *fp1, *fp2;
 
 	/* XXX remove logspam */
 	debug3_f("entering: key %s comment \"%s\", %zu socket bindings, "
-	    "%zu constraints", sshkey_type(id->key), id->comment,
+	    "%zu constraints", sshkey_type(id->కీలకం), id->comment,
 	    e->nsession_ids, id->ndest_constraints);
-	if (id->ndest_constraints == 0)
-		return 0; /* unconstrained */
-	if (e->session_bind_attempted && e->nsession_ids == 0) {
+	ఒకవేళ (id->ndest_constraints == 0)
+		తిరిగి 0; /* unconstrained */
+	ఒకవేళ (e->session_bind_attempted && e->nsession_ids == 0) {
 		error_f("previous session bind failed on socket");
-		return -1;
+		తిరిగి -1;
 	}
-	if (e->nsession_ids == 0)
-		return 0; /* local use */
+	ఒకవేళ (e->nsession_ids == 0)
+		తిరిగి 0; /* local use */
 	/*
 	 * Walk through the hops recorded by session_id and try to find a
 	 * constraint that satisfies each.
 	 */
-	for (i = 0; i < e->nsession_ids; i++) {
+	కొరకు (i = 0; i < e->nsession_ids; i++) {
 		hks = e->session_ids + i;
-		if (hks->key == NULL)
+		ఒకవేళ (hks->కీలకం == ఖాళీ)
 			fatal_f("internal error: no bound key");
 		/* XXX remove logspam */
-		fp1 = fp2 = NULL;
-		if (fromkey != NULL &&
+		fp1 = fp2 = ఖాళీ;
+		ఒకవేళ (fromkey != ఖాళీ &&
 		    (fp1 = sshkey_fingerprint(fromkey, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+		    SSH_FP_DEFAULT)) == ఖాళీ)
 			fatal_f("fingerprint failed");
-		if ((fp2 = sshkey_fingerprint(hks->key, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+		ఒకవేళ ((fp2 = sshkey_fingerprint(hks->కీలకం, SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == ఖాళీ)
 			fatal_f("fingerprint failed");
 		debug3_f("socketentry fd=%d, entry %zu %s, "
 		    "from hostkey %s %s to user %s hostkey %s %s",
 		    e->fd, i, hks->forwarded ? "FORWARD" : "AUTH",
 		    fromkey ? sshkey_type(fromkey) : "(ORIGIN)",
 		    fromkey ? fp1 : "", user ? user : "(ANY)",
-		    sshkey_type(hks->key), fp2);
-		free(fp1);
-		free(fp2);
+		    sshkey_type(hks->కీలకం), fp2);
+		విడుదల(fp1);
+		విడుదల(fp2);
 		/*
 		 * Record the hostnames for the initial forwarding and
 		 * the final destination.
 		 */
-		hp = NULL;
-		if (i == e->nsession_ids - 1)
-			hp = last_hostnamep;
-		else if (i == 0)
+		hp = ఖాళీ;
+		ఒకవేళ (i == e->nsession_ids - 1)
+			hp = చివరి_hostnamep;
+		లేకపోతే ఒకవేళ (i == 0)
 			hp = forward_hostnamep;
 		/* Special handling for final recorded binding */
-		test_user = NULL;
-		if (i == e->nsession_ids - 1) {
+		test_user = ఖాళీ;
+		ఒకవేళ (i == e->nsession_ids - 1) {
 			/* Can only check user at final hop */
 			test_user = user;
 			/*
@@ -532,18 +532,18 @@ identity_permitted(Identity *id, SocketEntry *e, char *user,
 			 * If this is the case, make sure last binding is not
 			 * for a forwarding.
 			 */
-			if (hks->forwarded && user != NULL) {
+			ఒకవేళ (hks->forwarded && user != ఖాళీ) {
 				error_f("tried to sign on forwarding hop");
-				return -1;
+				తిరిగి -1;
 			}
-		} else if (!hks->forwarded) {
+		} లేకపోతే ఒకవేళ (!hks->forwarded) {
 			error_f("tried to forward though signing bind");
-			return -1;
+			తిరిగి -1;
 		}
-		if (permitted_by_dest_constraints(fromkey, hks->key, id,
+		ఒకవేళ (permitted_by_dest_constraints(fromkey, hks->కీలకం, id,
 		    test_user, hp) != 0)
-			return -1;
-		fromkey = hks->key;
+			తిరిగి -1;
+		fromkey = hks->కీలకం;
 	}
 	/*
 	 * Another special case: if the last bound session ID was for a
@@ -554,132 +554,132 @@ identity_permitted(Identity *id, SocketEntry *e, char *user,
 	 * authenticate *to* a host but not permitted for *use* beyond it.
 	 */
 	hks = &e->session_ids[e->nsession_ids - 1];
-	if (hks->forwarded && user == NULL &&
-	    permitted_by_dest_constraints(hks->key, NULL, id,
-	    NULL, NULL) != 0) {
+	ఒకవేళ (hks->forwarded && user == ఖాళీ &&
+	    permitted_by_dest_constraints(hks->కీలకం, ఖాళీ, id,
+	    ఖాళీ, ఖాళీ) != 0) {
 		debug3_f("key permitted at host but not after");
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* success */
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-socket_is_remote(SocketEntry *e)
+స్థిర పూర్ణాంకం
+socket_is_remote(Socket_నమోదు *e)
 {
-	return e->session_bind_attempted || (e->nsession_ids != 0);
+	తిరిగి e->session_bind_attempted || (e->nsession_ids != 0);
 }
 
 /* return matching private key for given public key */
-static Identity *
-lookup_identity(struct sshkey *key)
+స్థిర తటస్థం *
+lookup_తటస్థం(నిర్మాణం sshkey *కీలకం)
 {
-	Identity *id;
+	తటస్థం *id;
 
-	TAILQ_FOREACH(id, &idtab->idlist, next) {
-		if (sshkey_equal(key, id->key))
-			return (id);
+	TAILQ_FOREACH(id, &idtab->idlist, తదుపరి) {
+		ఒకవేళ (sshkey_equal(కీలకం, id->కీలకం))
+			తిరిగి (id);
 	}
-	return (NULL);
+	తిరిగి (ఖాళీ);
 }
 
 /* Check confirmation of keysign request */
-static int
-confirm_key(Identity *id, const char *extra)
+స్థిర పూర్ణాంకం
+confirm_కీలకం(తటస్థం *id, స్థిరరాశి అక్షరం *extra)
 {
-	char *p;
-	int ret = -1;
+	అక్షరం *p;
+	పూర్ణాంకం ret = -1;
 
-	p = sshkey_fingerprint(id->key, fingerprint_hash, SSH_FP_DEFAULT);
-	if (p != NULL &&
+	p = sshkey_fingerprint(id->కీలకం, fingerprint_hash, SSH_FP_DEFAULT);
+	ఒకవేళ (p != ఖాళీ &&
 	    ask_permission("Allow use of key %s?\nKey fingerprint %s.%s%s",
 	    id->comment, p,
-	    extra == NULL ? "" : "\n", extra == NULL ? "" : extra))
+	    extra == ఖాళీ ? "" : "\n", extra == ఖాళీ ? "" : extra))
 		ret = 0;
-	free(p);
+	విడుదల(p);
 
-	return (ret);
+	తిరిగి (ret);
 }
 
-static void
-send_status_generic(SocketEntry *e, u_int code)
+స్థిర శూన్య
+send_స్థితి_generic(Socket_నమోదు *e, u_int సంకేతం_2)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_put_u32(e->output, 1)) != 0 ||
-	    (r = sshbuf_put_u8(e->output, code)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u32(e->output, 1)) != 0 ||
+	    (r = sshbuf_put_u8(e->output, సంకేతం_2)) != 0)
 		fatal_fr(r, "compose");
 }
 
-static void
-send_status(SocketEntry *e, int success)
+స్థిర శూన్య
+send_స్థితి(Socket_నమోదు *e, పూర్ణాంకం success)
 {
-	send_status_generic(e,
+	send_స్థితి_generic(e,
 	    success ? SSH_AGENT_SUCCESS : SSH_AGENT_FAILURE);
 }
 
 /* send list of supported public keys to 'client' */
-static void
-process_request_identities(SocketEntry *e)
+స్థిర శూన్య
+process_request_identities(Socket_నమోదు *e)
 {
-	Identity *id;
-	struct sshbuf *msg, *keys;
-	int r;
+	తటస్థం *id;
+	నిర్మాణం sshbuf *సందేశం, *కీలకాలు;
+	పూర్ణాంకం r;
 	u_int i = 0, nentries = 0;
-	char *fp;
+	అక్షరం *fp;
 
 	debug2_f("entering");
 
-	if ((msg = sshbuf_new()) == NULL || (keys = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ || (కీలకాలు = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	TAILQ_FOREACH(id, &idtab->idlist, next) {
-		if ((fp = sshkey_fingerprint(id->key, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+	TAILQ_FOREACH(id, &idtab->idlist, తదుపరి) {
+		ఒకవేళ ((fp = sshkey_fingerprint(id->కీలకం, SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == ఖాళీ)
 			fatal_f("fingerprint failed");
 		debug_f("key %u / %u: %s %s", i++, idtab->nentries,
-		    sshkey_ssh_name(id->key), fp);
+		    sshkey_ssh_name(id->కీలకం), fp);
 		dump_dest_constraints(__func__,
 		    id->dest_constraints, id->ndest_constraints);
-		free(fp);
+		విడుదల(fp);
 		/* identity not visible, don't include in response */
-		if (identity_permitted(id, e, NULL, NULL, NULL) != 0)
-			continue;
-		if ((r = sshkey_puts(id->key, keys)) != 0 ||
-		    (r = sshbuf_put_cstring(keys, id->comment)) != 0) {
+		ఒకవేళ (తటస్థం_permitted(id, e, ఖాళీ, ఖాళీ, ఖాళీ) != 0)
+			కొనసాగు;
+		ఒకవేళ ((r = sshkey_puts(id->కీలకం, కీలకాలు)) != 0 ||
+		    (r = sshbuf_put_cstring(కీలకాలు, id->comment)) != 0) {
 			error_fr(r, "compose key/comment");
-			continue;
+			కొనసాగు;
 		}
 		nentries++;
 	}
 	debug2_f("replying with %u allowed of %u available keys",
 	    nentries, idtab->nentries);
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
-	    (r = sshbuf_put_u32(msg, nentries)) != 0 ||
-	    (r = sshbuf_putb(msg, keys)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, nentries)) != 0 ||
+	    (r = sshbuf_putb(సందేశం, కీలకాలు)) != 0)
 		fatal_fr(r, "compose");
-	if ((r = sshbuf_put_stringb(e->output, msg)) != 0)
+	ఒకవేళ ((r = sshbuf_put_stringb(e->output, సందేశం)) != 0)
 		fatal_fr(r, "enqueue");
-	sshbuf_free(msg);
-	sshbuf_free(keys);
+	sshbuf_free(సందేశం);
+	sshbuf_free(కీలకాలు);
 }
 
 
-static char *
-agent_decode_alg(struct sshkey *key, u_int flags)
+స్థిర అక్షరం *
+agent_decode_alg(నిర్మాణం sshkey *కీలకం, u_int flags)
 {
-	if (key->type == KEY_RSA) {
-		if (flags & SSH_AGENT_RSA_SHA2_256)
-			return "rsa-sha2-256";
-		else if (flags & SSH_AGENT_RSA_SHA2_512)
-			return "rsa-sha2-512";
-	} else if (key->type == KEY_RSA_CERT) {
-		if (flags & SSH_AGENT_RSA_SHA2_256)
-			return "rsa-sha2-256-cert-v01@openssh.com";
-		else if (flags & SSH_AGENT_RSA_SHA2_512)
-			return "rsa-sha2-512-cert-v01@openssh.com";
+	ఒకవేళ (కీలకం->type == కీలకం_RSA) {
+		ఒకవేళ (flags & SSH_AGENT_RSA_SHA2_256)
+			తిరిగి "rsa-sha2-256";
+		లేకపోతే ఒకవేళ (flags & SSH_AGENT_RSA_SHA2_512)
+			తిరిగి "rsa-sha2-512";
+	} లేకపోతే ఒకవేళ (కీలకం->type == కీలకం_RSA_CERT) {
+		ఒకవేళ (flags & SSH_AGENT_RSA_SHA2_256)
+			తిరిగి "rsa-sha2-256-cert-v01@openssh.com";
+		లేకపోతే ఒకవేళ (flags & SSH_AGENT_RSA_SHA2_512)
+			తిరిగి "rsa-sha2-512-cert-v01@openssh.com";
 	}
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
 /*
@@ -689,115 +689,115 @@ agent_decode_alg(struct sshkey *key, u_int flags)
  * Note: does not modify msg buffer.
  * Optionally extract the username, session ID and/or hostkey from the request.
  */
-static int
-parse_userauth_request(struct sshbuf *msg, const struct sshkey *expected_key,
-    char **userp, struct sshbuf **sess_idp, struct sshkey **hostkeyp)
+స్థిర పూర్ణాంకం
+parse_userauth_request(నిర్మాణం sshbuf *సందేశం, స్థిరరాశి నిర్మాణం sshkey *expected_కీలకం,
+    అక్షరం **userp, నిర్మాణం sshbuf **sess_idp, నిర్మాణం sshkey **hostkeyp)
 {
-	struct sshbuf *b = NULL, *sess_id = NULL;
-	char *user = NULL, *service = NULL, *method = NULL, *pkalg = NULL;
-	int r;
+	నిర్మాణం sshbuf *b = ఖాళీ, *sess_id = ఖాళీ;
+	అక్షరం *user = ఖాళీ, *service = ఖాళీ, *పద్ధతి = ఖాళీ, *pkalg = ఖాళీ;
+	పూర్ణాంకం r;
 	u_char t, sig_follows;
-	struct sshkey *mkey = NULL, *hostkey = NULL;
+	నిర్మాణం sshkey *mkey = ఖాళీ, *hostkey = ఖాళీ;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (sess_idp != NULL)
-		*sess_idp = NULL;
-	if (hostkeyp != NULL)
-		*hostkeyp = NULL;
-	if ((b = sshbuf_fromb(msg)) == NULL)
+	ఒకవేళ (userp != ఖాళీ)
+		*userp = ఖాళీ;
+	ఒకవేళ (sess_idp != ఖాళీ)
+		*sess_idp = ఖాళీ;
+	ఒకవేళ (hostkeyp != ఖాళీ)
+		*hostkeyp = ఖాళీ;
+	ఒకవేళ ((b = sshbuf_fromb(సందేశం)) == ఖాళీ)
 		fatal_f("sshbuf_fromb");
 
 	/* SSH userauth request */
-	if ((r = sshbuf_froms(b, &sess_id)) != 0)
-		goto out;
-	if (sshbuf_len(sess_id) == 0) {
+	ఒకవేళ ((r = sshbuf_froms(b, &sess_id)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (sshbuf_len(sess_id) == 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_get_u8(b, &t)) != 0 || /* SSH2_MSG_USERAUTH_REQUEST */
-	    (r = sshbuf_get_cstring(b, &user, NULL)) != 0 || /* server user */
-	    (r = sshbuf_get_cstring(b, &service, NULL)) != 0 || /* service */
-	    (r = sshbuf_get_cstring(b, &method, NULL)) != 0 || /* method */
+	ఒకవేళ ((r = sshbuf_get_u8(b, &t)) != 0 || /* SSH2_MSG_USERAUTH_REQUEST */
+	    (r = sshbuf_get_cstring(b, &user, ఖాళీ)) != 0 || /* server user */
+	    (r = sshbuf_get_cstring(b, &service, ఖాళీ)) != 0 || /* service */
+	    (r = sshbuf_get_cstring(b, &పద్ధతి, ఖాళీ)) != 0 || /*పద్ధతి*/
 	    (r = sshbuf_get_u8(b, &sig_follows)) != 0 || /* sig-follows */
-	    (r = sshbuf_get_cstring(b, &pkalg, NULL)) != 0 || /* alg */
-	    (r = sshkey_froms(b, &mkey)) != 0) /* key */
-		goto out;
-	if (t != SSH2_MSG_USERAUTH_REQUEST ||
+	    (r = sshbuf_get_cstring(b, &pkalg, ఖాళీ)) != 0 || /* alg */
+	    (r = sshkey_froms(b, &mkey)) != 0) /*కీలకం*/
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (t != SSH2_సందేశం_USERAUTH_REQUEST ||
 	    sig_follows != 1 ||
 	    strcmp(service, "ssh-connection") != 0 ||
-	    !sshkey_equal(expected_key, mkey) ||
-	    sshkey_type_from_name(pkalg) != expected_key->type) {
+	    !sshkey_equal(expected_కీలకం, mkey) ||
+	    sshkey_type_from_name(pkalg) != expected_కీలకం->type) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (strcmp(method, "publickey-hostbound-v00@openssh.com") == 0) {
-		if ((r = sshkey_froms(b, &hostkey)) != 0)
-			goto out;
-	} else if (strcmp(method, "publickey") != 0) {
+	ఒకవేళ (strcmp(పద్ధతి, "publickey-hostbound-v00@openssh.com") == 0) {
+		ఒకవేళ ((r = sshkey_froms(b, &hostkey)) != 0)
+			వెళ్ళు బహిర్గతం;
+	} లేకపోతే ఒకవేళ (strcmp(పద్ధతి, "publickey") != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (sshbuf_len(b) != 0) {
+	ఒకవేళ (sshbuf_len(b) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
 	r = 0;
 	debug3_f("well formed userauth");
-	if (userp != NULL) {
+	ఒకవేళ (userp != ఖాళీ) {
 		*userp = user;
-		user = NULL;
+		user = ఖాళీ;
 	}
-	if (sess_idp != NULL) {
+	ఒకవేళ (sess_idp != ఖాళీ) {
 		*sess_idp = sess_id;
-		sess_id = NULL;
+		sess_id = ఖాళీ;
 	}
-	if (hostkeyp != NULL) {
+	ఒకవేళ (hostkeyp != ఖాళీ) {
 		*hostkeyp = hostkey;
-		hostkey = NULL;
+		hostkey = ఖాళీ;
 	}
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
 	sshbuf_free(sess_id);
-	free(user);
-	free(service);
-	free(method);
-	free(pkalg);
+	విడుదల(user);
+	విడుదల(service);
+	విడుదల(పద్ధతి);
+	విడుదల(pkalg);
 	sshkey_free(mkey);
 	sshkey_free(hostkey);
-	return r;
+	తిరిగి r;
 }
 
 /*
  * Attempt to parse the contents of a buffer as a SSHSIG signature request.
  * Note: does not modify buffer.
  */
-static int
-parse_sshsig_request(struct sshbuf *msg)
+స్థిర పూర్ణాంకం
+parse_sshsig_request(నిర్మాణం sshbuf *సందేశం)
 {
-	int r;
-	struct sshbuf *b;
+	పూర్ణాంకం r;
+	నిర్మాణం sshbuf *b;
 
-	if ((b = sshbuf_fromb(msg)) == NULL)
+	ఒకవేళ ((b = sshbuf_fromb(సందేశం)) == ఖాళీ)
 		fatal_f("sshbuf_fromb");
 
-	if ((r = sshbuf_cmp(b, 0, "SSHSIG", 6)) != 0 ||
+	ఒకవేళ ((r = sshbuf_cmp(b, 0, "SSHSIG", 6)) != 0 ||
 	    (r = sshbuf_consume(b, 6)) != 0 ||
-	    (r = sshbuf_get_cstring(b, NULL, NULL)) != 0 || /* namespace */
-	    (r = sshbuf_get_string_direct(b, NULL, NULL)) != 0 || /* reserved */
-	    (r = sshbuf_get_cstring(b, NULL, NULL)) != 0 || /* hashalg */
-	    (r = sshbuf_get_string_direct(b, NULL, NULL)) != 0) /* H(msg) */
-		goto out;
-	if (sshbuf_len(b) != 0) {
+	    (r = sshbuf_get_cstring(b, ఖాళీ, ఖాళీ)) != 0 || /* namespace */
+	    (r = sshbuf_get_string_ప్రత్యక్ష(b, ఖాళీ, ఖాళీ)) != 0 || /* reserved */
+	    (r = sshbuf_get_cstring(b, ఖాళీ, ఖాళీ)) != 0 || /* hashalg */
+	    (r = sshbuf_get_string_ప్రత్యక్ష(b, ఖాళీ, ఖాళీ)) != 0) /* H(msg) */
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ (sshbuf_len(b) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
-	return r;
+	తిరిగి r;
 }
 
 /*
@@ -807,162 +807,162 @@ parse_sshsig_request(struct sshbuf *msg)
  * (pubkey userauth, sshsig, CA key signing) to exclude signing challenges
  * for the web.
  */
-static int
-check_websafe_message_contents(struct sshkey *key, struct sshbuf *data)
+స్థిర పూర్ణాంకం
+check_websafe_సందేశం_contents(నిర్మాణం sshkey *కీలకం, నిర్మాణం sshbuf *దత్తాంశం)
 {
-	if (parse_userauth_request(data, key, NULL, NULL, NULL) == 0) {
+	ఒకవేళ (parse_userauth_request(దత్తాంశం, కీలకం, ఖాళీ, ఖాళీ, ఖాళీ) == 0) {
 		debug_f("signed data matches public key userauth request");
-		return 1;
+		తిరిగి 1;
 	}
-	if (parse_sshsig_request(data) == 0) {
+	ఒకవేళ (parse_sshsig_request(దత్తాంశం) == 0) {
 		debug_f("signed data matches SSHSIG signature request");
-		return 1;
+		తిరిగి 1;
 	}
 
 	/* XXX check CA signature operation */
 
 	error("web-origin key attempting to sign non-SSH message");
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-buf_equal(const struct sshbuf *a, const struct sshbuf *b)
+స్థిర పూర్ణాంకం
+buf_equal(స్థిరరాశి నిర్మాణం sshbuf *a, స్థిరరాశి నిర్మాణం sshbuf *b)
 {
-	if (sshbuf_ptr(a) == NULL || sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (sshbuf_len(a) != sshbuf_len(b))
-		return SSH_ERR_INVALID_FORMAT;
-	if (timingsafe_bcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	ఒకవేళ (sshbuf_ptr(a) == ఖాళీ || sshbuf_ptr(b) == ఖాళీ)
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ (sshbuf_len(a) != sshbuf_len(b))
+		తిరిగి SSH_ERR_INVALID_FORMAT;
+	ఒకవేళ (timingsafe_bcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
+		తిరిగి SSH_ERR_INVALID_FORMAT;
+	తిరిగి 0;
 }
 
 /* ssh2 only */
-static void
-process_sign_request2(SocketEntry *e)
+స్థిర శూన్య
+process_sign_request2(Socket_నమోదు *e)
 {
-	u_char *signature = NULL;
-	size_t slen = 0;
+	u_char *signature = ఖాళీ;
+	కొలత_t slen = 0;
 	u_int compat = 0, flags;
-	int r, ok = -1, retried = 0;
-	char *fp = NULL, *pin = NULL, *prompt = NULL;
-	char *user = NULL, *sig_dest = NULL;
-	const char *fwd_host = NULL, *dest_host = NULL;
-	struct sshbuf *msg = NULL, *data = NULL, *sid = NULL;
-	struct sshkey *key = NULL, *hostkey = NULL;
-	struct identity *id;
-	struct notifier_ctx *notifier = NULL;
+	పూర్ణాంకం r, ok = -1, retried = 0;
+	అక్షరం *fp = ఖాళీ, *pin = ఖాళీ, *prompt = ఖాళీ;
+	అక్షరం *user = ఖాళీ, *sig_dest = ఖాళీ;
+	స్థిరరాశి అక్షరం *fwd_host = ఖాళీ, *dest_host = ఖాళీ;
+	నిర్మాణం sshbuf *సందేశం = ఖాళీ, *దత్తాంశం = ఖాళీ, *sid = ఖాళీ;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ, *hostkey = ఖాళీ;
+	నిర్మాణం తటస్థం_2 *id;
+	నిర్మాణం notifier_ctx *notifier = ఖాళీ;
 
 	debug_f("entering");
 
-	if ((msg = sshbuf_new()) == NULL || (data = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ || (దత్తాంశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_froms(e->request, &key)) != 0 ||
-	    (r = sshbuf_get_stringb(e->request, data)) != 0 ||
+	ఒకవేళ ((r = sshkey_froms(e->request, &కీలకం)) != 0 ||
+	    (r = sshbuf_get_stringb(e->request, దత్తాంశం)) != 0 ||
 	    (r = sshbuf_get_u32(e->request, &flags)) != 0) {
 		error_fr(r, "parse");
-		goto send;
+		వెళ్ళు send;
 	}
 
-	if ((id = lookup_identity(key)) == NULL) {
-		verbose_f("%s key not found", sshkey_type(key));
-		goto send;
+	ఒకవేళ ((id = lookup_తటస్థం(కీలకం)) == ఖాళీ) {
+		verbose_f("%s key not found", sshkey_type(కీలకం));
+		వెళ్ళు send;
 	}
-	if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	ఒకవేళ ((fp = sshkey_fingerprint(కీలకం, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == ఖాళీ)
 		fatal_f("fingerprint failed");
 
-	if (id->ndest_constraints != 0) {
-		if (e->nsession_ids == 0) {
+	ఒకవేళ (id->ndest_constraints != 0) {
+		ఒకవేళ (e->nsession_ids == 0) {
 			logit_f("refusing use of destination-constrained key "
 			    "to sign on unbound connection");
-			goto send;
+			వెళ్ళు send;
 		}
-		if (parse_userauth_request(data, key, &user, &sid,
+		ఒకవేళ (parse_userauth_request(దత్తాంశం, కీలకం, &user, &sid,
 		    &hostkey) != 0) {
 			logit_f("refusing use of destination-constrained key "
 			   "to sign an unidentified signature");
-			goto send;
+			వెళ్ళు send;
 		}
 		/* XXX logspam */
 		debug_f("user=%s", user);
-		if (identity_permitted(id, e, user, &fwd_host, &dest_host) != 0)
-			goto send;
+		ఒకవేళ (తటస్థం_permitted(id, e, user, &fwd_host, &dest_host) != 0)
+			వెళ్ళు send;
 		/* XXX display fwd_host/dest_host in askpass UI */
 		/*
 		 * Ensure that the session ID is the most recent one
 		 * registered on the socket - it should have been bound by
 		 * ssh immediately before userauth.
 		 */
-		if (buf_equal(sid,
+		ఒకవేళ (buf_equal(sid,
 		    e->session_ids[e->nsession_ids - 1].sid) != 0) {
 			error_f("unexpected session ID (%zu listed) on "
 			    "signature request for target user %s with "
 			    "key %s %s", e->nsession_ids, user,
-			    sshkey_type(id->key), fp);
-			goto send;
+			    sshkey_type(id->కీలకం), fp);
+			వెళ్ళు send;
 		}
 		/*
 		 * Ensure that the hostkey embedded in the signature matches
 		 * the one most recently bound to the socket. An exception is
 		 * made for the initial forwarding hop.
 		 */
-		if (e->nsession_ids > 1 && hostkey == NULL) {
+		ఒకవేళ (e->nsession_ids > 1 && hostkey == ఖాళీ) {
 			error_f("refusing use of destination-constrained key: "
 			    "no hostkey recorded in signature for forwarded "
 			    "connection");
-			goto send;
+			వెళ్ళు send;
 		}
-		if (hostkey != NULL && !sshkey_equal(hostkey,
-		    e->session_ids[e->nsession_ids - 1].key)) {
+		ఒకవేళ (hostkey != ఖాళీ && !sshkey_equal(hostkey,
+		    e->session_ids[e->nsession_ids - 1].కీలకం)) {
 			error_f("refusing use of destination-constrained key: "
 			    "mismatch between hostkey in request and most "
 			    "recently bound session");
-			goto send;
+			వెళ్ళు send;
 		}
 		xasprintf(&sig_dest, "public key authentication request for "
 		    "user \"%s\" to listed host", user);
 	}
-	if (id->confirm && confirm_key(id, sig_dest) != 0) {
+	ఒకవేళ (id->confirm && confirm_కీలకం(id, sig_dest) != 0) {
 		verbose_f("user refused key");
-		goto send;
+		వెళ్ళు send;
 	}
-	if (sshkey_is_sk(id->key)) {
-		if (restrict_websafe &&
-		    match_pattern_list(id->key->sk_application,
+	ఒకవేళ (sshkey_is_sk(id->కీలకం)) {
+		ఒకవేళ (restrict_websafe &&
+		    సరిపోలిక_నమూనా_list(id->కీలకం->sk_application,
 		    websafe_allowlist, 0) != 1 &&
-		    !check_websafe_message_contents(key, data)) {
+		    !check_websafe_సందేశం_contents(కీలకం, దత్తాంశం)) {
 			/* error already logged */
-			goto send;
+			వెళ్ళు send;
 		}
-		if (id->key->sk_flags & SSH_SK_USER_PRESENCE_REQD) {
-			notifier = notify_start(0,
+		ఒకవేళ (id->కీలకం->sk_flags & SSH_SK_USER_PRESENCE_REQD) {
+			notifier = notify_ప్రారంభం(0,
 			    "Confirm user presence for key %s %s%s%s",
-			    sshkey_type(id->key), fp,
-			    sig_dest == NULL ? "" : "\n",
-			    sig_dest == NULL ? "" : sig_dest);
+			    sshkey_type(id->కీలకం), fp,
+			    sig_dest == ఖాళీ ? "" : "\n",
+			    sig_dest == ఖాళీ ? "" : sig_dest);
 		}
 	}
  retry_pin:
-	if ((r = sshkey_sign(id->key, &signature, &slen,
-	    sshbuf_ptr(data), sshbuf_len(data), agent_decode_alg(key, flags),
+	ఒకవేళ ((r = sshkey_sign(id->కీలకం, &signature, &slen,
+	    sshbuf_ptr(దత్తాంశం), sshbuf_len(దత్తాంశం), agent_decode_alg(కీలకం, flags),
 	    id->sk_provider, pin, compat)) != 0) {
 		debug_fr(r, "sshkey_sign");
-		if (pin == NULL && !retried && sshkey_is_sk(id->key) &&
-		    r == SSH_ERR_KEY_WRONG_PASSPHRASE) {
-			notify_complete(notifier, NULL);
-			notifier = NULL;
+		ఒకవేళ (pin == ఖాళీ && !retried && sshkey_is_sk(id->కీలకం) &&
+		    r == SSH_ERR_కీలకం_WRONG_PASSPHRASE) {
+			notify_complete(notifier, ఖాళీ);
+			notifier = ఖాళీ;
 			/* XXX include sig_dest */
 			xasprintf(&prompt, "Enter PIN%sfor %s key %s: ",
-			    (id->key->sk_flags & SSH_SK_USER_PRESENCE_REQD) ?
+			    (id->కీలకం->sk_flags & SSH_SK_USER_PRESENCE_REQD) ?
 			    " and confirm user presence " : " ",
-			    sshkey_type(id->key), fp);
+			    sshkey_type(id->కీలకం), fp);
 			pin = read_passphrase(prompt, RP_USE_ASKPASS);
 			retried = 1;
-			goto retry_pin;
+			వెళ్ళు retry_pin;
 		}
 		error_fr(r, "sshkey_sign");
-		goto send;
+		వెళ్ళు send;
 	}
 	/* Success */
 	ok = 0;
@@ -970,464 +970,464 @@ process_sign_request2(SocketEntry *e)
  send:
 	notify_complete(notifier, "User presence confirmed");
 
-	if (ok == 0) {
-		if ((r = sshbuf_put_u8(msg, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
-		    (r = sshbuf_put_string(msg, signature, slen)) != 0)
+	ఒకవేళ (ok == 0) {
+		ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
+		    (r = sshbuf_put_string(సందేశం, signature, slen)) != 0)
 			fatal_fr(r, "compose");
-	} else if ((r = sshbuf_put_u8(msg, SSH_AGENT_FAILURE)) != 0)
+	} లేకపోతే ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH_AGENT_FAILURE)) != 0)
 		fatal_fr(r, "compose failure");
 
-	if ((r = sshbuf_put_stringb(e->output, msg)) != 0)
+	ఒకవేళ ((r = sshbuf_put_stringb(e->output, సందేశం)) != 0)
 		fatal_fr(r, "enqueue");
 
 	sshbuf_free(sid);
-	sshbuf_free(data);
-	sshbuf_free(msg);
-	sshkey_free(key);
+	sshbuf_free(దత్తాంశం);
+	sshbuf_free(సందేశం);
+	sshkey_free(కీలకం);
 	sshkey_free(hostkey);
-	free(fp);
-	free(signature);
-	free(sig_dest);
-	free(user);
-	free(prompt);
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
+	విడుదల(fp);
+	విడుదల(signature);
+	విడుదల(sig_dest);
+	విడుదల(user);
+	విడుదల(prompt);
+	ఒకవేళ (pin != ఖాళీ)
+		freezero(pin, అక్షరశ్రేణి_పొడవు(pin));
 }
 
 /* shared */
-static void
-process_remove_identity(SocketEntry *e)
+స్థిర శూన్య
+process_remove_తటస్థం(Socket_నమోదు *e)
 {
-	int r, success = 0;
-	struct sshkey *key = NULL;
-	Identity *id;
+	పూర్ణాంకం r, success = 0;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ;
+	తటస్థం *id;
 
 	debug2_f("entering");
-	if ((r = sshkey_froms(e->request, &key)) != 0) {
+	ఒకవేళ ((r = sshkey_froms(e->request, &కీలకం)) != 0) {
 		error_fr(r, "parse key");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
-	if ((id = lookup_identity(key)) == NULL) {
+	ఒకవేళ ((id = lookup_తటస్థం(కీలకం)) == ఖాళీ) {
 		debug_f("key not found");
-		goto done;
+		వెళ్ళు పూర్తి;
 	}
 	/* identity not visible, cannot be removed */
-	if (identity_permitted(id, e, NULL, NULL, NULL) != 0)
-		goto done; /* error already logged */
+	ఒకవేళ (తటస్థం_permitted(id, e, ఖాళీ, ఖాళీ, ఖాళీ) != 0)
+		వెళ్ళు పూర్తి; /* error already logged */
 	/* We have this key, free it. */
-	if (idtab->nentries < 1)
+	ఒకవేళ (idtab->nentries < 1)
 		fatal_f("internal error: nentries %d", idtab->nentries);
-	TAILQ_REMOVE(&idtab->idlist, id, next);
-	free_identity(id);
+	TAILQ_REMOVE(&idtab->idlist, id, తదుపరి);
+	free_తటస్థం(id);
 	idtab->nentries--;
 	success = 1;
- done:
-	sshkey_free(key);
-	send_status(e, success);
+ పూర్తి:
+	sshkey_free(కీలకం);
+	send_స్థితి(e, success);
 }
 
-static void
-remove_all_identities(void)
+స్థిర శూన్య
+remove_all_identities(శూన్య)
 {
-	Identity *id;
+	తటస్థం *id;
 
 	debug2_f("entering");
 	/* Loop over all identities and clear the keys. */
-	for (id = TAILQ_FIRST(&idtab->idlist); id;
+	కొరకు (id = TAILQ_FIRST(&idtab->idlist); id;
 	    id = TAILQ_FIRST(&idtab->idlist)) {
-		TAILQ_REMOVE(&idtab->idlist, id, next);
-		free_identity(id);
+		TAILQ_REMOVE(&idtab->idlist, id, తదుపరి);
+		free_తటస్థం(id);
 	}
 
 	/* Mark that there are no identities. */
 	idtab->nentries = 0;
 }
 
-static void
-process_remove_all_identities(SocketEntry *e)
+స్థిర శూన్య
+process_remove_all_identities(Socket_నమోదు *e)
 {
 	remove_all_identities();
 
 	/* Send success. */
-	send_status(e, 1);
+	send_స్థితి(e, 1);
 }
 
 /* removes expired keys and returns number of seconds until the next expiry */
-static time_t
-reaper(void)
+స్థిర time_t
+reaper(శూన్య)
 {
 	time_t deadline = 0, now = monotime();
-	Identity *id, *nxt;
+	తటస్థం *id, *nxt;
 
-	for (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
-		nxt = TAILQ_NEXT(id, next);
-		if (id->death == 0)
-			continue;
-		if (now >= id->death) {
+	కొరకు (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
+		nxt = TAILQ_NEXT(id, తదుపరి);
+		ఒకవేళ (id->death == 0)
+			కొనసాగు;
+		ఒకవేళ (now >= id->death) {
 			debug("expiring key '%s'", id->comment);
-			TAILQ_REMOVE(&idtab->idlist, id, next);
-			free_identity(id);
+			TAILQ_REMOVE(&idtab->idlist, id, తదుపరి);
+			free_తటస్థం(id);
 			idtab->nentries--;
-		} else
+		} లేకపోతే
 			deadline = (deadline == 0) ? id->death :
 			    MINIMUM(deadline, id->death);
 	}
-	if (deadline == 0 || deadline <= now)
-		return 0;
-	else
-		return (deadline - now);
+	ఒకవేళ (deadline == 0 || deadline <= now)
+		తిరిగి 0;
+	లేకపోతే
+		తిరిగి (deadline - now);
 }
 
-static int
-parse_dest_constraint_hop(struct sshbuf *b, struct dest_constraint_hop *dch)
+స్థిర పూర్ణాంకం
+parse_dest_constraint_hop(నిర్మాణం sshbuf *b, నిర్మాణం dest_constraint_hop *dch)
 {
-	u_char key_is_ca;
-	size_t elen = 0, userlen = 0;
-	int r;
-	struct sshkey *k = NULL;
-	char *fp;
+	u_char కీలకం_is_ca;
+	కొలత_t elen = 0, userlen = 0;
+	పూర్ణాంకం r;
+	నిర్మాణం sshkey *k = ఖాళీ;
+	అక్షరం *fp;
 
-	memset(dch, '\0', sizeof(*dch));
-	if ((r = sshbuf_get_cstring(b, &dch->user, &userlen)) != 0 ||
-	    (r = sshbuf_get_cstring(b, &dch->hostname, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(b, NULL, &elen)) != 0) {
+	memset(dch, '\0', పరిమాణం(*dch));
+	ఒకవేళ ((r = sshbuf_get_cstring(b, &dch->user, &userlen)) != 0 ||
+	    (r = sshbuf_get_cstring(b, &dch->hostname, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_string_ప్రత్యక్ష(b, ఖాళీ, &elen)) != 0) {
 		error_fr(r, "parse");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (elen != 0) {
+	ఒకవేళ (elen != 0) {
 		error_f("unsupported extensions (len %zu)", elen);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (*dch->hostname == '\0') {
-		free(dch->hostname);
-		dch->hostname = NULL;
+	ఒకవేళ (*dch->hostname == '\0') {
+		విడుదల(dch->hostname);
+		dch->hostname = ఖాళీ;
 	}
-	if (*dch->user == '\0') {
-		free(dch->user);
-		dch->user = NULL;
-	} else if (userlen > AGENT_USER_CONSTRAINT_MAX_LEN) {
+	ఒకవేళ (*dch->user == '\0') {
+		విడుదల(dch->user);
+		dch->user = ఖాళీ;
+	} లేకపోతే ఒకవేళ (userlen > AGENT_USER_CONSTRAINT_MAX_LEN) {
 		error_f("user match pattern too long");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	while (sshbuf_len(b) != 0) {
-		dch->keys = xrecallocarray(dch->keys, dch->nkeys,
-		    dch->nkeys + 1, sizeof(*dch->keys));
-		dch->key_is_ca = xrecallocarray(dch->key_is_ca, dch->nkeys,
-		    dch->nkeys + 1, sizeof(*dch->key_is_ca));
-		if ((r = sshkey_froms(b, &k)) != 0 ||
-		    (r = sshbuf_get_u8(b, &key_is_ca)) != 0)
-			goto out;
-		if ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+	అయితే (sshbuf_len(b) != 0) {
+		dch->కీలకాలు = xrecallocarray(dch->కీలకాలు, dch->nkeys,
+		    dch->nkeys + 1, పరిమాణం(*dch->కీలకాలు));
+		dch->కీలకం_is_ca = xrecallocarray(dch->కీలకం_is_ca, dch->nkeys,
+		    dch->nkeys + 1, పరిమాణం(*dch->కీలకం_is_ca));
+		ఒకవేళ ((r = sshkey_froms(b, &k)) != 0 ||
+		    (r = sshbuf_get_u8(b, &కీలకం_is_ca)) != 0)
+			వెళ్ళు బహిర్గతం;
+		ఒకవేళ ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == ఖాళీ)
 			fatal_f("fingerprint failed");
 		debug3_f("%s%s%s: adding %skey %s %s",
-		    dch->user == NULL ? "" : dch->user,
-		    dch->user == NULL ? "" : "@",
-		    dch->hostname, key_is_ca ? "CA " : "", sshkey_type(k), fp);
-		free(fp);
-		dch->keys[dch->nkeys] = k;
-		dch->key_is_ca[dch->nkeys] = key_is_ca != 0;
+		    dch->user == ఖాళీ ? "" : dch->user,
+		    dch->user == ఖాళీ ? "" : "@",
+		    dch->hostname, కీలకం_is_ca ? "CA " : "", sshkey_type(k), fp);
+		విడుదల(fp);
+		dch->కీలకాలు[dch->nkeys] = k;
+		dch->కీలకం_is_ca[dch->nkeys] = కీలకం_is_ca != 0;
 		dch->nkeys++;
-		k = NULL; /* transferred */
+		k = ఖాళీ; /* transferred */
 	}
 	/* success */
 	r = 0;
- out:
+ బహిర్గతం:
 	sshkey_free(k);
-	return r;
+	తిరిగి r;
 }
 
-static int
-parse_dest_constraint(struct sshbuf *m, struct dest_constraint *dc)
+స్థిర పూర్ణాంకం
+parse_dest_constraint(నిర్మాణం sshbuf *m, నిర్మాణం dest_constraint *dc)
 {
-	struct sshbuf *b = NULL, *frombuf = NULL, *tobuf = NULL;
-	int r;
-	size_t elen = 0;
+	నిర్మాణం sshbuf *b = ఖాళీ, *frombuf = ఖాళీ, *tobuf = ఖాళీ;
+	పూర్ణాంకం r;
+	కొలత_t elen = 0;
 
 	debug3_f("entering");
 
-	memset(dc, '\0', sizeof(*dc));
-	if ((r = sshbuf_froms(m, &b)) != 0 ||
+	memset(dc, '\0', పరిమాణం(*dc));
+	ఒకవేళ ((r = sshbuf_froms(m, &b)) != 0 ||
 	    (r = sshbuf_froms(b, &frombuf)) != 0 ||
 	    (r = sshbuf_froms(b, &tobuf)) != 0 ||
-	    (r = sshbuf_get_string_direct(b, NULL, &elen)) != 0) {
+	    (r = sshbuf_get_string_ప్రత్యక్ష(b, ఖాళీ, &elen)) != 0) {
 		error_fr(r, "parse");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = parse_dest_constraint_hop(frombuf, &dc->from)) != 0 ||
-	    (r = parse_dest_constraint_hop(tobuf, &dc->to)) != 0)
-		goto out; /* already logged */
-	if (elen != 0) {
+	ఒకవేళ ((r = parse_dest_constraint_hop(frombuf, &dc->from)) != 0 ||
+	    (r = parse_dest_constraint_hop(tobuf, &dc->గమ్యం)) != 0)
+		వెళ్ళు బహిర్గతం; /* already logged */
+	ఒకవేళ (elen != 0) {
 		error_f("unsupported extensions (len %zu)", elen);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	debug2_f("parsed %s (%u keys) > %s%s%s (%u keys)",
 	    dc->from.hostname ? dc->from.hostname : "(ORIGIN)", dc->from.nkeys,
-	    dc->to.user ? dc->to.user : "", dc->to.user ? "@" : "",
-	    dc->to.hostname ? dc->to.hostname : "(ANY)", dc->to.nkeys);
+	    dc->గమ్యం.user ? dc->గమ్యం.user : "", dc->గమ్యం.user ? "@" : "",
+	    dc->గమ్యం.hostname ? dc->గమ్యం.hostname : "(ANY)", dc->గమ్యం.nkeys);
 	/* check consistency */
-	if ((dc->from.hostname == NULL) != (dc->from.nkeys == 0) ||
-	    dc->from.user != NULL) {
+	ఒకవేళ ((dc->from.hostname == ఖాళీ) != (dc->from.nkeys == 0) ||
+	    dc->from.user != ఖాళీ) {
 		error_f("inconsistent \"from\" specification");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (dc->to.hostname == NULL || dc->to.nkeys == 0) {
+	ఒకవేళ (dc->గమ్యం.hostname == ఖాళీ || dc->గమ్యం.nkeys == 0) {
 		error_f("incomplete \"to\" specification");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
 	r = 0;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
 	sshbuf_free(frombuf);
 	sshbuf_free(tobuf);
-	return r;
+	తిరిగి r;
 }
 
-static int
-parse_key_constraint_extension(struct sshbuf *m, char **sk_providerp,
-    struct dest_constraint **dcsp, size_t *ndcsp, int *cert_onlyp,
-    struct sshkey ***certs, size_t *ncerts)
+స్థిర పూర్ణాంకం
+parse_కీలకం_constraint_extension(నిర్మాణం sshbuf *m, అక్షరం **sk_providerp,
+    నిర్మాణం dest_constraint **dcsp, కొలత_t *ndcsp, పూర్ణాంకం *cert_onlyp,
+    నిర్మాణం sshkey ***certs, కొలత_t *ncerts)
 {
-	char *ext_name = NULL;
-	int r;
-	struct sshbuf *b = NULL;
+	అక్షరం *ext_name = ఖాళీ;
+	పూర్ణాంకం r;
+	నిర్మాణం sshbuf *b = ఖాళీ;
 	u_char v;
-	struct sshkey *k;
+	నిర్మాణం sshkey *k;
 
-	if ((r = sshbuf_get_cstring(m, &ext_name, NULL)) != 0) {
+	ఒకవేళ ((r = sshbuf_get_cstring(m, &ext_name, ఖాళీ)) != 0) {
 		error_fr(r, "parse constraint extension");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	debug_f("constraint ext %s", ext_name);
-	if (strcmp(ext_name, "sk-provider@openssh.com") == 0) {
-		if (sk_providerp == NULL) {
+	ఒకవేళ (strcmp(ext_name, "sk-provider@openssh.com") == 0) {
+		ఒకవేళ (sk_providerp == ఖాళీ) {
 			error_f("%s not valid here", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*sk_providerp != NULL) {
+		ఒకవేళ (*sk_providerp != ఖాళీ) {
 			error_f("%s already set", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if ((r = sshbuf_get_cstring(m, sk_providerp, NULL)) != 0) {
+		ఒకవేళ ((r = sshbuf_get_cstring(m, sk_providerp, ఖాళీ)) != 0) {
 			error_fr(r, "parse %s", ext_name);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-	} else if (strcmp(ext_name,
+	} లేకపోతే ఒకవేళ (strcmp(ext_name,
 	    "restrict-destination-v00@openssh.com") == 0) {
-		if (*dcsp != NULL) {
+		ఒకవేళ (*dcsp != ఖాళీ) {
 			error_f("%s already set", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if ((r = sshbuf_froms(m, &b)) != 0) {
+		ఒకవేళ ((r = sshbuf_froms(m, &b)) != 0) {
 			error_fr(r, "parse %s outer", ext_name);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		while (sshbuf_len(b) != 0) {
-			if (*ndcsp >= AGENT_MAX_DEST_CONSTRAINTS) {
+		అయితే (sshbuf_len(b) != 0) {
+			ఒకవేళ (*ndcsp >= AGENT_MAX_DEST_CONSTRAINTS) {
 				error_f("too many %s constraints", ext_name);
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 			*dcsp = xrecallocarray(*dcsp, *ndcsp, *ndcsp + 1,
-			    sizeof(**dcsp));
-			if ((r = parse_dest_constraint(b,
+			    పరిమాణం(**dcsp));
+			ఒకవేళ ((r = parse_dest_constraint(b,
 			    *dcsp + (*ndcsp)++)) != 0)
-				goto out; /* error already logged */
+				వెళ్ళు బహిర్గతం; /* error already logged */
 		}
-	} else if (strcmp(ext_name,
+	} లేకపోతే ఒకవేళ (strcmp(ext_name,
 	    "associated-certs-v00@openssh.com") == 0) {
-		if (certs == NULL || ncerts == NULL || cert_onlyp == NULL) {
+		ఒకవేళ (certs == ఖాళీ || ncerts == ఖాళీ || cert_onlyp == ఖాళీ) {
 			error_f("%s not valid here", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (*certs != NULL) {
+		ఒకవేళ (*certs != ఖాళీ) {
 			error_f("%s already set", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if ((r = sshbuf_get_u8(m, &v)) != 0 ||
+		ఒకవేళ ((r = sshbuf_get_u8(m, &v)) != 0 ||
 		    (r = sshbuf_froms(m, &b)) != 0) {
 			error_fr(r, "parse %s", ext_name);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		*cert_onlyp = v != 0;
-		while (sshbuf_len(b) != 0) {
-			if (*ncerts >= AGENT_MAX_EXT_CERTS) {
+		అయితే (sshbuf_len(b) != 0) {
+			ఒకవేళ (*ncerts >= AGENT_MAX_EXT_CERTS) {
 				error_f("too many %s constraints", ext_name);
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 			*certs = xrecallocarray(*certs, *ncerts, *ncerts + 1,
-			    sizeof(**certs));
-			if ((r = sshkey_froms(b, &k)) != 0) {
+			    పరిమాణం(**certs));
+			ఒకవేళ ((r = sshkey_froms(b, &k)) != 0) {
 				error_fr(r, "parse key");
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 			(*certs)[(*ncerts)++] = k;
 		}
-	} else {
+	} లేకపోతే {
 		error_f("unsupported constraint \"%s\"", ext_name);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* success */
 	r = 0;
- out:
-	free(ext_name);
+ బహిర్గతం:
+	విడుదల(ext_name);
 	sshbuf_free(b);
-	return r;
+	తిరిగి r;
 }
 
-static int
-parse_key_constraints(struct sshbuf *m, struct sshkey *k, time_t *deathp,
-    u_int *secondsp, int *confirmp, char **sk_providerp,
-    struct dest_constraint **dcsp, size_t *ndcsp,
-    int *cert_onlyp, size_t *ncerts, struct sshkey ***certs)
+స్థిర పూర్ణాంకం
+parse_కీలకం_constraints(నిర్మాణం sshbuf *m, నిర్మాణం sshkey *k, time_t *deathp,
+    u_int *secondsp, పూర్ణాంకం *confirmp, అక్షరం **sk_providerp,
+    నిర్మాణం dest_constraint **dcsp, కొలత_t *ndcsp,
+    పూర్ణాంకం *cert_onlyp, కొలత_t *ncerts, నిర్మాణం sshkey ***certs)
 {
 	u_char ctype;
-	int r;
+	పూర్ణాంకం r;
 	u_int seconds;
 
-	while (sshbuf_len(m)) {
-		if ((r = sshbuf_get_u8(m, &ctype)) != 0) {
+	అయితే (sshbuf_len(m)) {
+		ఒకవేళ ((r = sshbuf_get_u8(m, &ctype)) != 0) {
 			error_fr(r, "parse constraint type");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		switch (ctype) {
-		case SSH_AGENT_CONSTRAIN_LIFETIME:
-			if (*deathp != 0) {
+		ఎంపిక (ctype) {
+		స్థితి SSH_AGENT_CONSTRAIN_LIFETIME:
+			ఒకవేళ (*deathp != 0) {
 				error_f("lifetime already set");
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
-			if ((r = sshbuf_get_u32(m, &seconds)) != 0) {
+			ఒకవేళ ((r = sshbuf_get_u32(m, &seconds)) != 0) {
 				error_fr(r, "parse lifetime constraint");
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 			*deathp = monotime() + seconds;
 			*secondsp = seconds;
-			break;
-		case SSH_AGENT_CONSTRAIN_CONFIRM:
-			if (*confirmp != 0) {
+			ఆపు;
+		స్థితి SSH_AGENT_CONSTRAIN_CONFIRM:
+			ఒకవేళ (*confirmp != 0) {
 				error_f("confirm already set");
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 			*confirmp = 1;
-			break;
-		case SSH_AGENT_CONSTRAIN_EXTENSION:
-			if ((r = parse_key_constraint_extension(m,
+			ఆపు;
+		స్థితి SSH_AGENT_CONSTRAIN_EXTENSION:
+			ఒకవేళ ((r = parse_కీలకం_constraint_extension(m,
 			    sk_providerp, dcsp, ndcsp,
 			    cert_onlyp, certs, ncerts)) != 0)
-				goto out; /* error already logged */
-			break;
-		default:
+				వెళ్ళు బహిర్గతం; /* error already logged */
+			ఆపు;
+		అప్రమేయ:
 			error_f("Unknown constraint %d", ctype);
 			r = SSH_ERR_FEATURE_UNSUPPORTED;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 	}
 	/* success */
 	r = 0;
- out:
-	return r;
+ బహిర్గతం:
+	తిరిగి r;
 }
 
-static void
-process_add_identity(SocketEntry *e)
+స్థిర శూన్య
+process_కూడు_తటస్థం(Socket_నమోదు *e)
 {
-	Identity *id;
-	int success = 0, confirm = 0;
-	char *fp, *comment = NULL, *sk_provider = NULL;
-	char canonical_provider[PATH_MAX];
+	తటస్థం *id;
+	పూర్ణాంకం success = 0, confirm = 0;
+	అక్షరం *fp, *comment = ఖాళీ, *sk_provider = ఖాళీ;
+	అక్షరం canonical_provider[PATH_MAX];
 	time_t death = 0;
 	u_int seconds = 0;
-	struct dest_constraint *dest_constraints = NULL;
-	size_t ndest_constraints = 0;
-	struct sshkey *k = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	నిర్మాణం dest_constraint *dest_constraints = ఖాళీ;
+	కొలత_t ndest_constraints = 0;
+	నిర్మాణం sshkey *k = ఖాళీ;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
 
 	debug2_f("entering");
-	if ((r = sshkey_private_deserialize(e->request, &k)) != 0 ||
-	    k == NULL ||
-	    (r = sshbuf_get_cstring(e->request, &comment, NULL)) != 0) {
+	ఒకవేళ ((r = sshkey_వ్యక్తిగత_deserialize(e->request, &k)) != 0 ||
+	    k == ఖాళీ ||
+	    (r = sshbuf_get_cstring(e->request, &comment, ఖాళీ)) != 0) {
 		error_fr(r, "parse");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (parse_key_constraints(e->request, k, &death, &seconds, &confirm,
+	ఒకవేళ (parse_కీలకం_constraints(e->request, k, &death, &seconds, &confirm,
 	    &sk_provider, &dest_constraints, &ndest_constraints,
-	    NULL, NULL, NULL) != 0) {
+	    ఖాళీ, ఖాళీ, ఖాళీ) != 0) {
 		error_f("failed to parse constraints");
 		sshbuf_reset(e->request);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	dump_dest_constraints(__func__, dest_constraints, ndest_constraints);
 
-	if (sk_provider != NULL) {
-		if (!sshkey_is_sk(k)) {
+	ఒకవేళ (sk_provider != ఖాళీ) {
+		ఒకవేళ (!sshkey_is_sk(k)) {
 			error("Cannot add provider: %s is not an "
 			    "authenticator-hosted key", sshkey_type(k));
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (strcasecmp(sk_provider, "internal") == 0) {
+		ఒకవేళ (strcasecmp(sk_provider, "internal") == 0) {
 			debug_f("internal provider");
-		} else {
-			if (socket_is_remote(e) && !remote_add_provider) {
+		} లేకపోతే {
+			ఒకవేళ (socket_is_remote(e) && !remote_కూడు_provider) {
 				verbose("failed add of SK provider \"%.100s\": "
 				    "remote addition of providers is disabled",
 				    sk_provider);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
-			if (realpath(sk_provider, canonical_provider) == NULL) {
+			ఒకవేళ (realpath(sk_provider, canonical_provider) == ఖాళీ) {
 				verbose("failed provider \"%.100s\": "
 				    "realpath: %s", sk_provider,
 				    strerror(errno));
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
-			free(sk_provider);
+			విడుదల(sk_provider);
 			sk_provider = xstrdup(canonical_provider);
-			if (match_pattern_list(sk_provider,
+			ఒకవేళ (సరిపోలిక_నమూనా_list(sk_provider,
 			    allowed_providers, 0) != 1) {
 				error("Refusing add key: "
 				    "provider %s not allowed", sk_provider);
-				goto out;
+				వెళ్ళు బహిర్గతం;
 			}
 		}
 	}
-	if ((r = sshkey_shield_private(k)) != 0) {
+	ఒకవేళ ((r = sshkey_shield_వ్యక్తిగత(k)) != 0) {
 		error_fr(r, "shield private");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (lifetime && !death)
+	ఒకవేళ (lifetime && !death)
 		death = monotime() + lifetime;
-	if ((id = lookup_identity(k)) == NULL) {
-		id = xcalloc(1, sizeof(Identity));
-		TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
+	ఒకవేళ ((id = lookup_తటస్థం(k)) == ఖాళీ) {
+		id = xcalloc(1, పరిమాణం(తటస్థం));
+		TAILQ_INSERT_TAIL(&idtab->idlist, id, తదుపరి);
 		/* Increment the number of identities. */
 		idtab->nentries++;
-	} else {
+	} లేకపోతే {
 		/* identity not visible, do not update */
-		if (identity_permitted(id, e, NULL, NULL, NULL) != 0)
-			goto out; /* error already logged */
+		ఒకవేళ (తటస్థం_permitted(id, e, ఖాళీ, ఖాళీ, ఖాళీ) != 0)
+			వెళ్ళు బహిర్గతం; /* error already logged */
 		/* key state might have been updated */
-		sshkey_free(id->key);
-		free(id->comment);
-		free(id->sk_provider);
+		sshkey_free(id->కీలకం);
+		విడుదల(id->comment);
+		విడుదల(id->sk_provider);
 		free_dest_constraints(id->dest_constraints,
 		    id->ndest_constraints);
 	}
 	/* success */
-	id->key = k;
+	id->కీలకం = k;
 	id->comment = comment;
 	id->death = death;
 	id->confirm = confirm;
@@ -1435,38 +1435,38 @@ process_add_identity(SocketEntry *e)
 	id->dest_constraints = dest_constraints;
 	id->ndest_constraints = ndest_constraints;
 
-	if ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	ఒకవేళ ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == ఖాళీ)
 		fatal_f("sshkey_fingerprint failed");
 	debug_f("add %s %s \"%.100s\" (life: %u) (confirm: %u) "
 	    "(provider: %s) (destination constraints: %zu)",
 	    sshkey_ssh_name(k), fp, comment, seconds, confirm,
-	    sk_provider == NULL ? "none" : sk_provider, ndest_constraints);
-	free(fp);
+	    sk_provider == ఖాళీ ? "none" : sk_provider, ndest_constraints);
+	విడుదల(fp);
 	/* transferred */
-	k = NULL;
-	comment = NULL;
-	sk_provider = NULL;
-	dest_constraints = NULL;
+	k = ఖాళీ;
+	comment = ఖాళీ;
+	sk_provider = ఖాళీ;
+	dest_constraints = ఖాళీ;
 	ndest_constraints = 0;
 	success = 1;
- out:
-	free(sk_provider);
-	free(comment);
+ బహిర్గతం:
+	విడుదల(sk_provider);
+	విడుదల(comment);
 	sshkey_free(k);
 	free_dest_constraints(dest_constraints, ndest_constraints);
-	send_status(e, success);
+	send_స్థితి(e, success);
 }
 
 /* XXX todo: encrypt sensitive data with passphrase */
-static void
-process_lock_agent(SocketEntry *e, int lock)
+స్థిర శూన్య
+process_తాళం_agent(Socket_నమోదు *e, పూర్ణాంకం తాళం)
 {
-	int r, success = 0, delay;
-	char *passwd;
-	u_char passwdhash[LOCK_SIZE];
-	static u_int fail_count = 0;
-	size_t pwlen;
+	పూర్ణాంకం r, success = 0, delay;
+	అక్షరం *passwd;
+	u_char passwdhash[తాళం_కొలత];
+	స్థిర u_int fail_లెక్క = 0;
+	కొలత_t pwlen;
 
 	debug2_f("entering");
 	/*
@@ -1474,74 +1474,74 @@ process_lock_agent(SocketEntry *e, int lock)
 	 * but we can't parse their request properly. The only safe thing to
 	 * do is abort.
 	 */
-	if ((r = sshbuf_get_cstring(e->request, &passwd, &pwlen)) != 0)
+	ఒకవేళ ((r = sshbuf_get_cstring(e->request, &passwd, &pwlen)) != 0)
 		fatal_fr(r, "parse");
-	if (pwlen == 0) {
+	ఒకవేళ (pwlen == 0) {
 		debug("empty password not supported");
-	} else if (locked && !lock) {
-		if (bcrypt_pbkdf(passwd, pwlen, lock_salt, sizeof(lock_salt),
-		    passwdhash, sizeof(passwdhash), LOCK_ROUNDS) < 0)
+	} లేకపోతే ఒకవేళ (locked && !తాళం) {
+		ఒకవేళ (bcrypt_pbkdf(passwd, pwlen, తాళం_salt, పరిమాణం(తాళం_salt),
+		    passwdhash, పరిమాణం(passwdhash), తాళం_విడతలు) < 0)
 			fatal("bcrypt_pbkdf");
-		if (timingsafe_bcmp(passwdhash, lock_pwhash, LOCK_SIZE) == 0) {
+		ఒకవేళ (timingsafe_bcmp(passwdhash, తాళం_pwhash, తాళం_కొలత) == 0) {
 			debug("agent unlocked");
 			locked = 0;
-			fail_count = 0;
-			explicit_bzero(lock_pwhash, sizeof(lock_pwhash));
+			fail_లెక్క = 0;
+			explicit_bzero(తాళం_pwhash, పరిమాణం(తాళం_pwhash));
 			success = 1;
-		} else {
+		} లేకపోతే {
 			/* delay in 0.1s increments up to 10s */
-			if (fail_count < 100)
-				fail_count++;
-			delay = 100000 * fail_count;
+			ఒకవేళ (fail_లెక్క < 100)
+				fail_లెక్క++;
+			delay = 100000 * fail_లెక్క;
 			debug("unlock failed, delaying %0.1lf seconds",
-			    (double)delay/1000000);
+			    (ద్విగుణ)delay/1000000);
 			usleep(delay);
 		}
-		explicit_bzero(passwdhash, sizeof(passwdhash));
-	} else if (!locked && lock) {
+		explicit_bzero(passwdhash, పరిమాణం(passwdhash));
+	} లేకపోతే ఒకవేళ (!locked && తాళం) {
 		debug("agent locked");
 		locked = 1;
-		arc4random_buf(lock_salt, sizeof(lock_salt));
-		if (bcrypt_pbkdf(passwd, pwlen, lock_salt, sizeof(lock_salt),
-		    lock_pwhash, sizeof(lock_pwhash), LOCK_ROUNDS) < 0)
+		arc4random_buf(తాళం_salt, పరిమాణం(తాళం_salt));
+		ఒకవేళ (bcrypt_pbkdf(passwd, pwlen, తాళం_salt, పరిమాణం(తాళం_salt),
+		    తాళం_pwhash, పరిమాణం(తాళం_pwhash), తాళం_విడతలు) < 0)
 			fatal("bcrypt_pbkdf");
 		success = 1;
 	}
 	freezero(passwd, pwlen);
-	send_status(e, success);
+	send_స్థితి(e, success);
 }
 
-static void
-no_identities(SocketEntry *e)
+స్థిర శూన్య
+no_identities(Socket_నమోదు *e)
 {
-	struct sshbuf *msg;
-	int r;
+	నిర్మాణం sshbuf *సందేశం;
+	పూర్ణాంకం r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
-	    (r = sshbuf_put_u32(msg, 0)) != 0 ||
-	    (r = sshbuf_put_stringb(e->output, msg)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
+	    (r = sshbuf_put_u32(సందేశం, 0)) != 0 ||
+	    (r = sshbuf_put_stringb(e->output, సందేశం)) != 0)
 		fatal_fr(r, "compose");
-	sshbuf_free(msg);
+	sshbuf_free(సందేశం);
 }
 
-#ifdef ENABLE_PKCS11
+#నిర్వచితమైతే ENABLE_PKCS11
 /* Add an identity to idlist; takes ownership of 'key' and 'comment' */
-static void
-add_p11_identity(struct sshkey *key, char *comment, const char *provider,
-    time_t death, u_int confirm, struct dest_constraint *dest_constraints,
-    size_t ndest_constraints)
+స్థిర శూన్య
+కూడు_p11_తటస్థం(నిర్మాణం sshkey *కీలకం, అక్షరం *comment, స్థిరరాశి అక్షరం *provider,
+    time_t death, u_int confirm, నిర్మాణం dest_constraint *dest_constraints,
+    కొలత_t ndest_constraints)
 {
-	Identity *id;
+	తటస్థం *id;
 
-	if (lookup_identity(key) != NULL) {
-		sshkey_free(key);
-		free(comment);
-		return;
+	ఒకవేళ (lookup_తటస్థం(కీలకం) != ఖాళీ) {
+		sshkey_free(కీలకం);
+		విడుదల(comment);
+		తిరిగి;
 	}
-	id = xcalloc(1, sizeof(Identity));
-	id->key = key;
+	id = xcalloc(1, పరిమాణం(తటస్థం));
+	id->కీలకం = కీలకం;
 	id->comment = comment;
 	id->provider = xstrdup(provider);
 	id->death = death;
@@ -1549,193 +1549,193 @@ add_p11_identity(struct sshkey *key, char *comment, const char *provider,
 	id->dest_constraints = dup_dest_constraints(dest_constraints,
 	    ndest_constraints);
 	id->ndest_constraints = ndest_constraints;
-	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
+	TAILQ_INSERT_TAIL(&idtab->idlist, id, తదుపరి);
 	idtab->nentries++;
 }
 
-static void
-process_add_smartcard_key(SocketEntry *e)
+స్థిర శూన్య
+process_కూడు_smartcard_కీలకం(Socket_నమోదు *e)
 {
-	char *provider = NULL, *pin = NULL, canonical_provider[PATH_MAX];
-	char **comments = NULL;
-	int r, i, count = 0, success = 0, confirm = 0;
+	అక్షరం *provider = ఖాళీ, *pin = ఖాళీ, canonical_provider[PATH_MAX];
+	అక్షరం **comments = ఖాళీ;
+	పూర్ణాంకం r, i, లెక్క = 0, success = 0, confirm = 0;
 	u_int seconds = 0;
 	time_t death = 0;
-	struct sshkey **keys = NULL, *k;
-	struct dest_constraint *dest_constraints = NULL;
-	size_t j, ndest_constraints = 0, ncerts = 0;
-	struct sshkey **certs = NULL;
-	int cert_only = 0;
+	నిర్మాణం sshkey **కీలకాలు = ఖాళీ, *k;
+	నిర్మాణం dest_constraint *dest_constraints = ఖాళీ;
+	కొలత_t j, ndest_constraints = 0, ncerts = 0;
+	నిర్మాణం sshkey **certs = ఖాళీ;
+	పూర్ణాంకం cert_only = 0;
 
 	debug2_f("entering");
-	if ((r = sshbuf_get_cstring(e->request, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(e->request, &pin, NULL)) != 0) {
+	ఒకవేళ ((r = sshbuf_get_cstring(e->request, &provider, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_cstring(e->request, &pin, ఖాళీ)) != 0) {
 		error_fr(r, "parse");
-		goto send;
+		వెళ్ళు send;
 	}
-	if (parse_key_constraints(e->request, NULL, &death, &seconds, &confirm,
-	    NULL, &dest_constraints, &ndest_constraints, &cert_only,
+	ఒకవేళ (parse_కీలకం_constraints(e->request, ఖాళీ, &death, &seconds, &confirm,
+	    ఖాళీ, &dest_constraints, &ndest_constraints, &cert_only,
 	    &ncerts, &certs) != 0) {
 		error_f("failed to parse constraints");
-		goto send;
+		వెళ్ళు send;
 	}
 	dump_dest_constraints(__func__, dest_constraints, ndest_constraints);
-	if (socket_is_remote(e) && !remote_add_provider) {
+	ఒకవేళ (socket_is_remote(e) && !remote_కూడు_provider) {
 		verbose("failed PKCS#11 add of \"%.100s\": remote addition of "
 		    "providers is disabled", provider);
-		goto send;
+		వెళ్ళు send;
 	}
-	if (realpath(provider, canonical_provider) == NULL) {
+	ఒకవేళ (realpath(provider, canonical_provider) == ఖాళీ) {
 		verbose("failed PKCS#11 add of \"%.100s\": realpath: %s",
 		    provider, strerror(errno));
-		goto send;
+		వెళ్ళు send;
 	}
-	if (match_pattern_list(canonical_provider, allowed_providers, 0) != 1) {
+	ఒకవేళ (సరిపోలిక_నమూనా_list(canonical_provider, allowed_providers, 0) != 1) {
 		verbose("refusing PKCS#11 add of \"%.100s\": "
 		    "provider not allowed", canonical_provider);
-		goto send;
+		వెళ్ళు send;
 	}
 	debug_f("add %.100s", canonical_provider);
-	if (lifetime && !death)
+	ఒకవేళ (lifetime && !death)
 		death = monotime() + lifetime;
 
-	count = pkcs11_add_provider(canonical_provider, pin, &keys, &comments);
-	for (i = 0; i < count; i++) {
-		if (comments[i] == NULL || comments[i][0] == '\0') {
-			free(comments[i]);
+	లెక్క = pkcs11_కూడు_provider(canonical_provider, pin, &కీలకాలు, &comments);
+	కొరకు (i = 0; i < లెక్క; i++) {
+		ఒకవేళ (comments[i] == ఖాళీ || comments[i][0] == '\0') {
+			విడుదల(comments[i]);
 			comments[i] = xstrdup(canonical_provider);
 		}
-		for (j = 0; j < ncerts; j++) {
-			if (!sshkey_is_cert(certs[j]))
-				continue;
-			if (!sshkey_equal_public(keys[i], certs[j]))
-				continue;
-			if (pkcs11_make_cert(keys[i], certs[j], &k) != 0)
-				continue;
-			add_p11_identity(k, xstrdup(comments[i]),
+		కొరకు (j = 0; j < ncerts; j++) {
+			ఒకవేళ (!sshkey_is_cert(certs[j]))
+				కొనసాగు;
+			ఒకవేళ (!sshkey_equal_ప్రజా(కీలకాలు[i], certs[j]))
+				కొనసాగు;
+			ఒకవేళ (pkcs11_make_cert(కీలకాలు[i], certs[j], &k) != 0)
+				కొనసాగు;
+			కూడు_p11_తటస్థం(k, xstrdup(comments[i]),
 			    canonical_provider, death, confirm,
 			    dest_constraints, ndest_constraints);
 			success = 1;
 		}
-		if (!cert_only && lookup_identity(keys[i]) == NULL) {
-			add_p11_identity(keys[i], comments[i],
+		ఒకవేళ (!cert_only && lookup_తటస్థం(కీలకాలు[i]) == ఖాళీ) {
+			కూడు_p11_తటస్థం(కీలకాలు[i], comments[i],
 			    canonical_provider, death, confirm,
 			    dest_constraints, ndest_constraints);
-			keys[i] = NULL;		/* transferred */
-			comments[i] = NULL;	/* transferred */
+			కీలకాలు[i] = ఖాళీ;		/* transferred */
+			comments[i] = ఖాళీ;	/* transferred */
 			success = 1;
 		}
 		/* XXX update constraints for existing keys */
-		sshkey_free(keys[i]);
-		free(comments[i]);
+		sshkey_free(కీలకాలు[i]);
+		విడుదల(comments[i]);
 	}
 send:
-	free(pin);
-	free(provider);
-	free(keys);
-	free(comments);
+	విడుదల(pin);
+	విడుదల(provider);
+	విడుదల(కీలకాలు);
+	విడుదల(comments);
 	free_dest_constraints(dest_constraints, ndest_constraints);
-	for (j = 0; j < ncerts; j++)
+	కొరకు (j = 0; j < ncerts; j++)
 		sshkey_free(certs[j]);
-	free(certs);
-	send_status(e, success);
+	విడుదల(certs);
+	send_స్థితి(e, success);
 }
 
-static void
-process_remove_smartcard_key(SocketEntry *e)
+స్థిర శూన్య
+process_remove_smartcard_కీలకం(Socket_నమోదు *e)
 {
-	char *provider = NULL, *pin = NULL, canonical_provider[PATH_MAX];
-	int r, success = 0;
-	Identity *id, *nxt;
+	అక్షరం *provider = ఖాళీ, *pin = ఖాళీ, canonical_provider[PATH_MAX];
+	పూర్ణాంకం r, success = 0;
+	తటస్థం *id, *nxt;
 
 	debug2_f("entering");
-	if ((r = sshbuf_get_cstring(e->request, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(e->request, &pin, NULL)) != 0) {
+	ఒకవేళ ((r = sshbuf_get_cstring(e->request, &provider, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_cstring(e->request, &pin, ఖాళీ)) != 0) {
 		error_fr(r, "parse");
-		goto send;
+		వెళ్ళు send;
 	}
-	free(pin);
+	విడుదల(pin);
 
-	if (realpath(provider, canonical_provider) == NULL) {
+	ఒకవేళ (realpath(provider, canonical_provider) == ఖాళీ) {
 		verbose("failed PKCS#11 add of \"%.100s\": realpath: %s",
 		    provider, strerror(errno));
-		goto send;
+		వెళ్ళు send;
 	}
 
 	debug_f("remove %.100s", canonical_provider);
-	for (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
-		nxt = TAILQ_NEXT(id, next);
+	కొరకు (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
+		nxt = TAILQ_NEXT(id, తదుపరి);
 		/* Skip file--based keys */
-		if (id->provider == NULL)
-			continue;
-		if (!strcmp(canonical_provider, id->provider)) {
-			TAILQ_REMOVE(&idtab->idlist, id, next);
-			free_identity(id);
+		ఒకవేళ (id->provider == ఖాళీ)
+			కొనసాగు;
+		ఒకవేళ (!strcmp(canonical_provider, id->provider)) {
+			TAILQ_REMOVE(&idtab->idlist, id, తదుపరి);
+			free_తటస్థం(id);
 			idtab->nentries--;
 		}
 	}
-	if (pkcs11_del_provider(canonical_provider) == 0)
+	ఒకవేళ (pkcs11_del_provider(canonical_provider) == 0)
 		success = 1;
-	else
+	లేకపోతే
 		error_f("pkcs11_del_provider failed");
 send:
-	free(provider);
-	send_status(e, success);
+	విడుదల(provider);
+	send_స్థితి(e, success);
 }
-#endif /* ENABLE_PKCS11 */
+#అయితే_ముగింపు /* ENABLE_PKCS11 */
 
-static int
-process_ext_session_bind(SocketEntry *e)
+స్థిర పూర్ణాంకం
+process_ext_session_bind(Socket_నమోదు *e)
 {
-	int r, sid_match, key_match;
-	struct sshkey *key = NULL;
-	struct sshbuf *sid = NULL, *sig = NULL;
-	char *fp = NULL;
-	size_t i;
+	పూర్ణాంకం r, sid_సరిపోలిక, కీలకం_సరిపోలిక;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ;
+	నిర్మాణం sshbuf *sid = ఖాళీ, *sig = ఖాళీ;
+	అక్షరం *fp = ఖాళీ;
+	కొలత_t i;
 	u_char fwd = 0;
 
 	debug2_f("entering");
 	e->session_bind_attempted = 1;
-	if ((r = sshkey_froms(e->request, &key)) != 0 ||
+	ఒకవేళ ((r = sshkey_froms(e->request, &కీలకం)) != 0 ||
 	    (r = sshbuf_froms(e->request, &sid)) != 0 ||
 	    (r = sshbuf_froms(e->request, &sig)) != 0 ||
 	    (r = sshbuf_get_u8(e->request, &fwd)) != 0) {
 		error_fr(r, "parse");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (sshbuf_len(sid) > AGENT_MAX_SID_LEN) {
+	ఒకవేళ (sshbuf_len(sid) > AGENT_MAX_SID_LEN) {
 		error_f("session ID too long");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	ఒకవేళ ((fp = sshkey_fingerprint(కీలకం, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == ఖాళీ)
 		fatal_f("fingerprint failed");
 	/* check signature with hostkey on session ID */
-	if ((r = sshkey_verify(key, sshbuf_ptr(sig), sshbuf_len(sig),
-	    sshbuf_ptr(sid), sshbuf_len(sid), NULL, 0, NULL)) != 0) {
-		error_fr(r, "sshkey_verify for %s %s", sshkey_type(key), fp);
-		goto out;
+	ఒకవేళ ((r = sshkey_verify(కీలకం, sshbuf_ptr(sig), sshbuf_len(sig),
+	    sshbuf_ptr(sid), sshbuf_len(sid), ఖాళీ, 0, ఖాళీ)) != 0) {
+		error_fr(r, "sshkey_verify for %s %s", sshkey_type(కీలకం), fp);
+		వెళ్ళు బహిర్గతం;
 	}
 	/* check whether sid/key already recorded */
-	for (i = 0; i < e->nsession_ids; i++) {
-		if (!e->session_ids[i].forwarded) {
+	కొరకు (i = 0; i < e->nsession_ids; i++) {
+		ఒకవేళ (!e->session_ids[i].forwarded) {
 			error_f("attempt to bind session ID to socket "
 			    "previously bound for authentication attempt");
 			r = -1;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		sid_match = buf_equal(sid, e->session_ids[i].sid) == 0;
-		key_match = sshkey_equal(key, e->session_ids[i].key);
-		if (sid_match && key_match) {
+		sid_సరిపోలిక = buf_equal(sid, e->session_ids[i].sid) == 0;
+		కీలకం_సరిపోలిక = sshkey_equal(కీలకం, e->session_ids[i].కీలకం);
+		ఒకవేళ (sid_సరిపోలిక && కీలకం_సరిపోలిక) {
 			debug_f("session ID already recorded for %s %s",
-			    sshkey_type(key), fp);
+			    sshkey_type(కీలకం), fp);
 			r = 0;
-			goto out;
-		} else if (sid_match) {
+			వెళ్ళు బహిర్గతం;
+		} లేకపోతే ఒకవేళ (sid_సరిపోలిక) {
 			error_f("session ID recorded against different key "
-			    "for %s %s", sshkey_type(key), fp);
+			    "for %s %s", sshkey_type(కీలకం), fp);
 			r = -1;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		/*
 		 * new sid with previously-seen key can happen, e.g. multiple
@@ -1743,65 +1743,65 @@ process_ext_session_bind(SocketEntry *e)
 		 */
 	}
 	/* record new key/sid */
-	if (e->nsession_ids >= AGENT_MAX_SESSION_IDS) {
+	ఒకవేళ (e->nsession_ids >= AGENT_MAX_SESSION_IDS) {
 		error_f("too many session IDs recorded");
 		r = -1;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	e->session_ids = xrecallocarray(e->session_ids, e->nsession_ids,
-	    e->nsession_ids + 1, sizeof(*e->session_ids));
+	    e->nsession_ids + 1, పరిమాణం(*e->session_ids));
 	i = e->nsession_ids++;
-	debug_f("recorded %s %s (slot %zu of %d)", sshkey_type(key), fp, i,
+	debug_f("recorded %s %s (slot %zu of %d)", sshkey_type(కీలకం), fp, i,
 	    AGENT_MAX_SESSION_IDS);
-	e->session_ids[i].key = key;
+	e->session_ids[i].కీలకం = కీలకం;
 	e->session_ids[i].forwarded = fwd != 0;
-	key = NULL; /* transferred */
+	కీలకం = ఖాళీ; /* transferred */
 	/* can't transfer sid; it's refcounted and scoped to request's life */
-	if ((e->session_ids[i].sid = sshbuf_new()) == NULL)
+	ఒకవేళ ((e->session_ids[i].sid = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_putb(e->session_ids[i].sid, sid)) != 0)
+	ఒకవేళ ((r = sshbuf_putb(e->session_ids[i].sid, sid)) != 0)
 		fatal_fr(r, "sshbuf_putb session ID");
 	/* success */
 	r = 0;
- out:
-	free(fp);
-	sshkey_free(key);
+ బహిర్గతం:
+	విడుదల(fp);
+	sshkey_free(కీలకం);
 	sshbuf_free(sid);
 	sshbuf_free(sig);
-	return r == 0 ? 1 : 0;
+	తిరిగి r == 0 ? 1 : 0;
 }
 
-static int
-process_ext_query(SocketEntry *e)
+స్థిర పూర్ణాంకం
+process_ext_query(Socket_నమోదు *e)
 {
-	int r;
-	struct sshbuf *msg = NULL;
+	పూర్ణాంకం r;
+	నిర్మాణం sshbuf *సందేశం = ఖాళీ;
 
 	debug2_f("entering");
-	if ((msg = sshbuf_new()) == NULL)
+	ఒకవేళ ((సందేశం = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH_AGENT_EXTENSION_RESPONSE)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "query")) != 0 ||
+	ఒకవేళ ((r = sshbuf_put_u8(సందేశం, SSH_AGENT_EXTENSION_RESPONSE)) != 0 ||
+	    (r = sshbuf_put_cstring(సందేశం, "query")) != 0 ||
 	    /* string[]     supported extension types */
-	    (r = sshbuf_put_cstring(msg, "session-bind@openssh.com")) != 0)
+	    (r = sshbuf_put_cstring(సందేశం, "session-bind@openssh.com")) != 0)
 		fatal_fr(r, "compose");
-	if ((r = sshbuf_put_stringb(e->output, msg)) != 0)
+	ఒకవేళ ((r = sshbuf_put_stringb(e->output, సందేశం)) != 0)
 		fatal_fr(r, "enqueue");
-	sshbuf_free(msg);
-	return 1;
+	sshbuf_free(సందేశం);
+	తిరిగి 1;
 }
 
-static void
-process_extension(SocketEntry *e)
+స్థిర శూన్య
+process_extension(Socket_నమోదు *e)
 {
-	int r, replied = 0, success = 0;
-	char *name;
+	పూర్ణాంకం r, replied = 0, success = 0;
+	అక్షరం *name;
 
 	debug2_f("entering");
-	if ((r = sshbuf_get_cstring(e->request, &name, NULL)) != 0) {
+	ఒకవేళ ((r = sshbuf_get_cstring(e->request, &name, ఖాళీ)) != 0) {
 		error_fr(r, "parse");
-		send_status(e, 0);
-		return;
+		send_స్థితి(e, 0);
+		తిరిగి;
 	}
 
 	/*
@@ -1810,24 +1810,24 @@ process_extension(SocketEntry *e)
 	 * Other operations should be refused when locked.
 	 */
 
-	if (strcmp(name, "session-bind@openssh.com") == 0) {
+	ఒకవేళ (strcmp(name, "session-bind@openssh.com") == 0) {
 		success = process_ext_session_bind(e);
-	} else if (locked) {
+	} లేకపోతే ఒకవేళ (locked) {
 		debug_f("attempt to use extension \"%s\" while locked", name);
-		goto generic_fail;
-	} else if (strcmp(name, "query") == 0) {
+		వెళ్ళు generic_fail;
+	} లేకపోతే ఒకవేళ (strcmp(name, "query") == 0) {
 		replied = success = process_ext_query(e);
-	} else {
+	} లేకపోతే {
 		debug_f("unsupported extension \"%s\"", name);
  generic_fail:
-		free(name);
-		send_status(e, 0);
-		return;
+		విడుదల(name);
+		send_స్థితి(e, 0);
+		తిరిగి;
 	}
-	free(name);
+	విడుదల(name);
 	/* Agent failures are signalled with a different error code */
-	if (!replied) {
-		send_status_generic(e,
+	ఒకవేళ (!replied) {
+		send_స్థితి_generic(e,
 		    success ? SSH_AGENT_SUCCESS : SSH_AGENT_EXTENSION_FAILURE);
 	}
 }
@@ -1836,39 +1836,39 @@ process_extension(SocketEntry *e)
  * dispatch incoming message.
  * returns 1 on success, 0 for incomplete messages or -1 on error.
  */
-static int
-process_message(u_int socknum)
+స్థిర పూర్ణాంకం
+process_సందేశం(u_int socknum)
 {
-	u_int msg_len;
+	u_int సందేశం_len;
 	u_char type;
-	const u_char *cp;
-	int r;
-	SocketEntry *e;
+	స్థిరరాశి u_char *cp;
+	పూర్ణాంకం r;
+	Socket_నమోదు *e;
 
-	if (socknum >= sockets_alloc)
+	ఒకవేళ (socknum >= sockets_alloc)
 		fatal_f("sock %u >= allocated %u", socknum, sockets_alloc);
 	e = &sockets[socknum];
 
-	if (sshbuf_len(e->input) < 5)
-		return 0;		/* Incomplete message header. */
-	cp = sshbuf_ptr(e->input);
-	msg_len = PEEK_U32(cp);
-	if (msg_len > AGENT_MAX_LEN) {
+	ఒకవేళ (sshbuf_len(e->ఆదానం) < 5)
+		తిరిగి 0;		/* Incomplete message header. */
+	cp = sshbuf_ptr(e->ఆదానం);
+	సందేశం_len = PEEK_U32(cp);
+	ఒకవేళ (సందేశం_len > AGENT_MAX_LEN) {
 		debug_f("socket %u (fd=%d) message too long %u > %u",
-		    socknum, e->fd, msg_len, AGENT_MAX_LEN);
-		return -1;
+		    socknum, e->fd, సందేశం_len, AGENT_MAX_LEN);
+		తిరిగి -1;
 	}
-	if (sshbuf_len(e->input) < msg_len + 4)
-		return 0;		/* Incomplete message body. */
+	ఒకవేళ (sshbuf_len(e->ఆదానం) < సందేశం_len + 4)
+		తిరిగి 0;		/* Incomplete message body. */
 
 	/* move the current input to e->request */
 	sshbuf_reset(e->request);
-	if ((r = sshbuf_get_stringb(e->input, e->request)) != 0 ||
+	ఒకవేళ ((r = sshbuf_get_stringb(e->ఆదానం, e->request)) != 0 ||
 	    (r = sshbuf_get_u8(e->request, &type)) != 0) {
-		if (r == SSH_ERR_MESSAGE_INCOMPLETE ||
+		ఒకవేళ (r == SSH_ERR_సందేశం_INCOMPLETE ||
 		    r == SSH_ERR_STRING_TOO_LARGE) {
 			error_fr(r, "parse");
-			return -1;
+			తిరిగి -1;
 		}
 		fatal_fr(r, "parse");
 	}
@@ -1876,368 +1876,368 @@ process_message(u_int socknum)
 	debug_f("socket %u (fd=%d) type %d", socknum, e->fd, type);
 
 	/* check whether agent is locked */
-	if (locked && type != SSH_AGENTC_UNLOCK) {
-		switch (type) {
-		case SSH2_AGENTC_REQUEST_IDENTITIES:
+	ఒకవేళ (locked && type != SSH_AGENTC_UNLOCK) {
+		ఎంపిక (type) {
+		స్థితి SSH2_AGENTC_REQUEST_IDENTITIES:
 			/* send empty lists */
 			no_identities(e);
-			break;
-		case SSH_AGENTC_EXTENSION:
+			ఆపు;
+		స్థితి SSH_AGENTC_EXTENSION:
 			process_extension(e);
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			/* send a fail message for all other request types */
-			send_status(e, 0);
+			send_స్థితి(e, 0);
 		}
 		sshbuf_reset(e->request);
-		return 1;
+		తిరిగి 1;
 	}
 
-	switch (type) {
-	case SSH_AGENTC_LOCK:
-	case SSH_AGENTC_UNLOCK:
-		process_lock_agent(e, type == SSH_AGENTC_LOCK);
-		break;
-	case SSH_AGENTC_REMOVE_ALL_RSA_IDENTITIES:
+	ఎంపిక (type) {
+	స్థితి SSH_AGENTC_తాళం:
+	స్థితి SSH_AGENTC_UNLOCK:
+		process_తాళం_agent(e, type == SSH_AGENTC_తాళం);
+		ఆపు;
+	స్థితి SSH_AGENTC_REMOVE_ALL_RSA_IDENTITIES:
 		process_remove_all_identities(e); /* safe for !WITH_SSH1 */
-		break;
+		ఆపు;
 	/* ssh2 */
-	case SSH2_AGENTC_SIGN_REQUEST:
+	స్థితి SSH2_AGENTC_SIGN_REQUEST:
 		process_sign_request2(e);
-		break;
-	case SSH2_AGENTC_REQUEST_IDENTITIES:
+		ఆపు;
+	స్థితి SSH2_AGENTC_REQUEST_IDENTITIES:
 		process_request_identities(e);
-		break;
-	case SSH2_AGENTC_ADD_IDENTITY:
-	case SSH2_AGENTC_ADD_ID_CONSTRAINED:
-		process_add_identity(e);
-		break;
-	case SSH2_AGENTC_REMOVE_IDENTITY:
-		process_remove_identity(e);
-		break;
-	case SSH2_AGENTC_REMOVE_ALL_IDENTITIES:
+		ఆపు;
+	స్థితి SSH2_AGENTC_కూడు_తటస్థం:
+	స్థితి SSH2_AGENTC_కూడు_ID_CONSTRAINED:
+		process_కూడు_తటస్థం(e);
+		ఆపు;
+	స్థితి SSH2_AGENTC_REMOVE_తటస్థం:
+		process_remove_తటస్థం(e);
+		ఆపు;
+	స్థితి SSH2_AGENTC_REMOVE_ALL_IDENTITIES:
 		process_remove_all_identities(e);
-		break;
-#ifdef ENABLE_PKCS11
-	case SSH_AGENTC_ADD_SMARTCARD_KEY:
-	case SSH_AGENTC_ADD_SMARTCARD_KEY_CONSTRAINED:
-		process_add_smartcard_key(e);
-		break;
-	case SSH_AGENTC_REMOVE_SMARTCARD_KEY:
-		process_remove_smartcard_key(e);
-		break;
-#endif /* ENABLE_PKCS11 */
-	case SSH_AGENTC_EXTENSION:
+		ఆపు;
+#నిర్వచితమైతే ENABLE_PKCS11
+	స్థితి SSH_AGENTC_కూడు_SMARTCARD_కీలకం:
+	స్థితి SSH_AGENTC_కూడు_SMARTCARD_కీలకం_CONSTRAINED:
+		process_కూడు_smartcard_కీలకం(e);
+		ఆపు;
+	స్థితి SSH_AGENTC_REMOVE_SMARTCARD_కీలకం:
+		process_remove_smartcard_కీలకం(e);
+		ఆపు;
+#అయితే_ముగింపు /* ENABLE_PKCS11 */
+	స్థితి SSH_AGENTC_EXTENSION:
 		process_extension(e);
-		break;
-	default:
+		ఆపు;
+	అప్రమేయ:
 		/* Unknown message.  Respond with failure. */
 		error("Unknown message %d", type);
 		sshbuf_reset(e->request);
-		send_status(e, 0);
-		break;
+		send_స్థితి(e, 0);
+		ఆపు;
 	}
-	return 1;
+	తిరిగి 1;
 }
 
-static void
-new_socket(sock_type type, int fd)
+స్థిర శూన్య
+new_socket(sock_type type, పూర్ణాంకం fd)
 {
 	u_int i, old_alloc, new_alloc;
 
 	debug_f("type = %s", type == AUTH_CONNECTION ? "CONNECTION" :
 	    (type == AUTH_SOCKET ? "SOCKET" : "UNKNOWN"));
-	set_nonblock(fd);
+	సమితి_nonblock(fd);
 
-	if (fd > max_fd)
+	ఒకవేళ (fd > max_fd)
 		max_fd = fd;
 
-	for (i = 0; i < sockets_alloc; i++)
-		if (sockets[i].type == AUTH_UNUSED) {
+	కొరకు (i = 0; i < sockets_alloc; i++)
+		ఒకవేళ (sockets[i].type == AUTH_వాడని) {
 			sockets[i].fd = fd;
-			if ((sockets[i].input = sshbuf_new()) == NULL ||
-			    (sockets[i].output = sshbuf_new()) == NULL ||
-			    (sockets[i].request = sshbuf_new()) == NULL)
+			ఒకవేళ ((sockets[i].ఆదానం = sshbuf_new()) == ఖాళీ ||
+			    (sockets[i].output = sshbuf_new()) == ఖాళీ ||
+			    (sockets[i].request = sshbuf_new()) == ఖాళీ)
 				fatal_f("sshbuf_new failed");
 			sockets[i].type = type;
-			return;
+			తిరిగి;
 		}
 	old_alloc = sockets_alloc;
 	new_alloc = sockets_alloc + 10;
 	sockets = xrecallocarray(sockets, old_alloc, new_alloc,
-	    sizeof(sockets[0]));
-	for (i = old_alloc; i < new_alloc; i++)
-		sockets[i].type = AUTH_UNUSED;
+	    పరిమాణం(sockets[0]));
+	కొరకు (i = old_alloc; i < new_alloc; i++)
+		sockets[i].type = AUTH_వాడని;
 	sockets_alloc = new_alloc;
 	sockets[old_alloc].fd = fd;
-	if ((sockets[old_alloc].input = sshbuf_new()) == NULL ||
-	    (sockets[old_alloc].output = sshbuf_new()) == NULL ||
-	    (sockets[old_alloc].request = sshbuf_new()) == NULL)
+	ఒకవేళ ((sockets[old_alloc].ఆదానం = sshbuf_new()) == ఖాళీ ||
+	    (sockets[old_alloc].output = sshbuf_new()) == ఖాళీ ||
+	    (sockets[old_alloc].request = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 	sockets[old_alloc].type = type;
 }
 
-static int
+స్థిర పూర్ణాంకం
 handle_socket_read(u_int socknum)
 {
-	struct sockaddr_un sunaddr;
+	నిర్మాణం sockaddr_un sunaddr;
 	socklen_t slen;
 	uid_t euid;
 	gid_t egid;
-	int fd;
+	పూర్ణాంకం fd;
 
-	slen = sizeof(sunaddr);
-	fd = accept(sockets[socknum].fd, (struct sockaddr *)&sunaddr, &slen);
-	if (fd == -1) {
+	slen = పరిమాణం(sunaddr);
+	fd = accept(sockets[socknum].fd, (నిర్మాణం sockaddr *)&sunaddr, &slen);
+	ఒకవేళ (fd == -1) {
 		error("accept from AUTH_SOCKET: %s", strerror(errno));
-		return -1;
+		తిరిగి -1;
 	}
-	if (getpeereid(fd, &euid, &egid) == -1) {
+	ఒకవేళ (getpeereid(fd, &euid, &egid) == -1) {
 		error("getpeereid %d failed: %s", fd, strerror(errno));
 		close(fd);
-		return -1;
+		తిరిగి -1;
 	}
-	if ((euid != 0) && (getuid() != euid)) {
+	ఒకవేళ ((euid != 0) && (getuid() != euid)) {
 		error("uid mismatch: peer euid %u != uid %u",
 		    (u_int) euid, (u_int) getuid());
 		close(fd);
-		return -1;
+		తిరిగి -1;
 	}
 	new_socket(AUTH_CONNECTION, fd);
-	return 0;
+	తిరిగి 0;
 }
 
-static int
+స్థిర పూర్ణాంకం
 handle_conn_read(u_int socknum)
 {
-	char buf[AGENT_RBUF_LEN];
+	అక్షరం buf[AGENT_RBUF_LEN];
 	ssize_t len;
-	int r;
+	పూర్ణాంకం r;
 
-	if ((len = read(sockets[socknum].fd, buf, sizeof(buf))) <= 0) {
-		if (len == -1) {
-			if (errno == EAGAIN || errno == EINTR)
-				return 0;
+	ఒకవేళ ((len = పఠ(sockets[socknum].fd, buf, పరిమాణం(buf))) <= 0) {
+		ఒకవేళ (len == -1) {
+			ఒకవేళ (errno == EAGAIN || errno == EINTR)
+				తిరిగి 0;
 			error_f("read error on socket %u (fd %d): %s",
 			    socknum, sockets[socknum].fd, strerror(errno));
 		}
-		return -1;
+		తిరిగి -1;
 	}
-	if ((r = sshbuf_put(sockets[socknum].input, buf, len)) != 0)
+	ఒకవేళ ((r = sshbuf_put(sockets[socknum].ఆదానం, buf, len)) != 0)
 		fatal_fr(r, "compose");
-	explicit_bzero(buf, sizeof(buf));
-	for (;;) {
-		if ((r = process_message(socknum)) == -1)
-			return -1;
-		else if (r == 0)
-			break;
+	explicit_bzero(buf, పరిమాణం(buf));
+	కొరకు (;;) {
+		ఒకవేళ ((r = process_సందేశం(socknum)) == -1)
+			తిరిగి -1;
+		లేకపోతే ఒకవేళ (r == 0)
+			ఆపు;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static int
+స్థిర పూర్ణాంకం
 handle_conn_write(u_int socknum)
 {
 	ssize_t len;
-	int r;
+	పూర్ణాంకం r;
 
-	if (sshbuf_len(sockets[socknum].output) == 0)
-		return 0; /* shouldn't happen */
-	if ((len = write(sockets[socknum].fd,
+	ఒకవేళ (sshbuf_len(sockets[socknum].output) == 0)
+		తిరిగి 0; /* shouldn't happen */
+	ఒకవేళ ((len = లిఖ(sockets[socknum].fd,
 	    sshbuf_ptr(sockets[socknum].output),
 	    sshbuf_len(sockets[socknum].output))) <= 0) {
-		if (len == -1) {
-			if (errno == EAGAIN || errno == EINTR)
-				return 0;
+		ఒకవేళ (len == -1) {
+			ఒకవేళ (errno == EAGAIN || errno == EINTR)
+				తిరిగి 0;
 			error_f("read error on socket %u (fd %d): %s",
 			    socknum, sockets[socknum].fd, strerror(errno));
 		}
-		return -1;
+		తిరిగి -1;
 	}
-	if ((r = sshbuf_consume(sockets[socknum].output, len)) != 0)
+	ఒకవేళ ((r = sshbuf_consume(sockets[socknum].output, len)) != 0)
 		fatal_fr(r, "consume");
-	return 0;
+	తిరిగి 0;
 }
 
-static void
-after_poll(struct pollfd *pfd, size_t npfd, u_int maxfds)
+స్థిర శూన్య
+after_poll(నిర్మాణం pollfd *pfd, కొలత_t npfd, u_int maxfds)
 {
-	size_t i;
+	కొలత_t i;
 	u_int socknum, activefds = npfd;
 
-	for (i = 0; i < npfd; i++) {
-		if (pfd[i].revents == 0)
-			continue;
+	కొరకు (i = 0; i < npfd; i++) {
+		ఒకవేళ (pfd[i].revents == 0)
+			కొనసాగు;
 		/* Find sockets entry */
-		for (socknum = 0; socknum < sockets_alloc; socknum++) {
-			if (sockets[socknum].type != AUTH_SOCKET &&
+		కొరకు (socknum = 0; socknum < sockets_alloc; socknum++) {
+			ఒకవేళ (sockets[socknum].type != AUTH_SOCKET &&
 			    sockets[socknum].type != AUTH_CONNECTION)
-				continue;
-			if (pfd[i].fd == sockets[socknum].fd)
-				break;
+				కొనసాగు;
+			ఒకవేళ (pfd[i].fd == sockets[socknum].fd)
+				ఆపు;
 		}
-		if (socknum >= sockets_alloc) {
+		ఒకవేళ (socknum >= sockets_alloc) {
 			error_f("no socket for fd %d", pfd[i].fd);
-			continue;
+			కొనసాగు;
 		}
 		/* Process events */
-		switch (sockets[socknum].type) {
-		case AUTH_SOCKET:
-			if ((pfd[i].revents & (POLLIN|POLLERR)) == 0)
-				break;
-			if (npfd > maxfds) {
+		ఎంపిక (sockets[socknum].type) {
+		స్థితి AUTH_SOCKET:
+			ఒకవేళ ((pfd[i].revents & (POLLIN|POLLERR)) == 0)
+				ఆపు;
+			ఒకవేళ (npfd > maxfds) {
 				debug3("out of fds (active %u >= limit %u); "
 				    "skipping accept", activefds, maxfds);
-				break;
+				ఆపు;
 			}
-			if (handle_socket_read(socknum) == 0)
+			ఒకవేళ (handle_socket_read(socknum) == 0)
 				activefds++;
-			break;
-		case AUTH_CONNECTION:
-			if ((pfd[i].revents & (POLLIN|POLLHUP|POLLERR)) != 0 &&
+			ఆపు;
+		స్థితి AUTH_CONNECTION:
+			ఒకవేళ ((pfd[i].revents & (POLLIN|POLLHUP|POLLERR)) != 0 &&
 			    handle_conn_read(socknum) != 0)
-				goto close_sock;
-			if ((pfd[i].revents & (POLLOUT|POLLHUP)) != 0 &&
+				వెళ్ళు close_sock;
+			ఒకవేళ ((pfd[i].revents & (POLLOUT|POLLHUP)) != 0 &&
 			    handle_conn_write(socknum) != 0) {
  close_sock:
-				if (activefds == 0)
+				ఒకవేళ (activefds == 0)
 					fatal("activefds == 0 at close_sock");
 				close_socket(&sockets[socknum]);
 				activefds--;
-				break;
+				ఆపు;
 			}
-			break;
-		default:
-			break;
+			ఆపు;
+		అప్రమేయ:
+			ఆపు;
 		}
 	}
 }
 
-static int
-prepare_poll(struct pollfd **pfdp, size_t *npfdp, struct timespec *timeoutp, u_int maxfds)
+స్థిర పూర్ణాంకం
+prepare_poll(నిర్మాణం pollfd **pfdp, కొలత_t *npfdp, నిర్మాణం timespec *timeoutp, u_int maxfds)
 {
-	struct pollfd *pfd = *pfdp;
-	size_t i, j, npfd = 0;
+	నిర్మాణం pollfd *pfd = *pfdp;
+	కొలత_t i, j, npfd = 0;
 	time_t deadline;
-	int r;
+	పూర్ణాంకం r;
 
 	/* Count active sockets */
-	for (i = 0; i < sockets_alloc; i++) {
-		switch (sockets[i].type) {
-		case AUTH_SOCKET:
-		case AUTH_CONNECTION:
+	కొరకు (i = 0; i < sockets_alloc; i++) {
+		ఎంపిక (sockets[i].type) {
+		స్థితి AUTH_SOCKET:
+		స్థితి AUTH_CONNECTION:
 			npfd++;
-			break;
-		case AUTH_UNUSED:
-			break;
-		default:
+			ఆపు;
+		స్థితి AUTH_వాడని:
+			ఆపు;
+		అప్రమేయ:
 			fatal("Unknown socket type %d", sockets[i].type);
-			break;
+			ఆపు;
 		}
 	}
-	if (npfd != *npfdp &&
-	    (pfd = recallocarray(pfd, *npfdp, npfd, sizeof(*pfd))) == NULL)
+	ఒకవేళ (npfd != *npfdp &&
+	    (pfd = recallocarray(pfd, *npfdp, npfd, పరిమాణం(*pfd))) == ఖాళీ)
 		fatal_f("recallocarray failed");
 	*pfdp = pfd;
 	*npfdp = npfd;
 
-	for (i = j = 0; i < sockets_alloc; i++) {
-		switch (sockets[i].type) {
-		case AUTH_SOCKET:
-			if (npfd > maxfds) {
+	కొరకు (i = j = 0; i < sockets_alloc; i++) {
+		ఎంపిక (sockets[i].type) {
+		స్థితి AUTH_SOCKET:
+			ఒకవేళ (npfd > maxfds) {
 				debug3("out of fds (active %zu >= limit %u); "
 				    "skipping arming listener", npfd, maxfds);
-				break;
+				ఆపు;
 			}
 			pfd[j].fd = sockets[i].fd;
 			pfd[j].revents = 0;
 			pfd[j].events = POLLIN;
 			j++;
-			break;
-		case AUTH_CONNECTION:
+			ఆపు;
+		స్థితి AUTH_CONNECTION:
 			pfd[j].fd = sockets[i].fd;
 			pfd[j].revents = 0;
 			/*
 			 * Only prepare to read if we can handle a full-size
 			 * input read buffer and enqueue a max size reply..
 			 */
-			if ((r = sshbuf_check_reserve(sockets[i].input,
+			ఒకవేళ ((r = sshbuf_check_reserve(sockets[i].ఆదానం,
 			    AGENT_RBUF_LEN)) == 0 &&
 			    (r = sshbuf_check_reserve(sockets[i].output,
 			    AGENT_MAX_LEN)) == 0)
 				pfd[j].events = POLLIN;
-			else if (r != SSH_ERR_NO_BUFFER_SPACE)
+			లేకపోతే ఒకవేళ (r != SSH_ERR_NO_బఫరు_SPACE)
 				fatal_fr(r, "reserve");
-			if (sshbuf_len(sockets[i].output) > 0)
+			ఒకవేళ (sshbuf_len(sockets[i].output) > 0)
 				pfd[j].events |= POLLOUT;
 			j++;
-			break;
-		default:
-			break;
+			ఆపు;
+		అప్రమేయ:
+			ఆపు;
 		}
 	}
 	deadline = reaper();
-	if (parent_alive_interval != 0)
-		deadline = (deadline == 0) ? parent_alive_interval :
-		    MINIMUM(deadline, parent_alive_interval);
-	if (deadline != 0)
+	ఒకవేళ (మాతృ_alive_interval != 0)
+		deadline = (deadline == 0) ? మాతృ_alive_interval :
+		    MINIMUM(deadline, మాతృ_alive_interval);
+	ఒకవేళ (deadline != 0)
 		ptimeout_deadline_sec(timeoutp, deadline);
-	return (1);
+	తిరిగి (1);
 }
 
-static void
-cleanup_socket(void)
+స్థిర శూన్య
+cleanup_socket(శూన్య)
 {
-	if (cleanup_pid != 0 && getpid() != cleanup_pid)
-		return;
+	ఒకవేళ (cleanup_pid != 0 && getpid() != cleanup_pid)
+		తిరిగి;
 	debug_f("cleanup");
-	if (socket_name != NULL) {
+	ఒకవేళ (socket_name != ఖాళీ) {
 		agent_listener_cleanup(socket_dirspec, socket_name, socket_dir);
-		free(socket_name);
-		socket_name = NULL;
-		free(socket_dir);
-		socket_dir = NULL;
+		విడుదల(socket_name);
+		socket_name = ఖాళీ;
+		విడుదల(socket_dir);
+		socket_dir = ఖాళీ;
 	}
 }
 
-void
-cleanup_exit(int i)
+శూన్య
+cleanup_exit(పూర్ణాంకం i)
 {
 	cleanup_socket();
-#ifdef ENABLE_PKCS11
+#నిర్వచితమైతే ENABLE_PKCS11
 	pkcs11_terminate();
-#endif
+#అయితే_ముగింపు
 	_exit(i);
 }
 
-static void
-cleanup_handler(int sig)
+స్థిర శూన్య
+cleanup_handler(పూర్ణాంకం sig)
 {
 	signalled_exit = sig;
 }
 
-static void
-keydrop_handler(int sig)
+స్థిర శూన్య
+keydrop_handler(పూర్ణాంకం sig)
 {
 	signalled_keydrop = sig;
 }
 
-static void
-check_parent_exists(void)
+స్థిర శూన్య
+check_మాతృ_exists(శూన్య)
 {
 	/*
 	 * If our parent has exited then getppid() will return (pid_t)1,
 	 * so testing for that should be safe.
 	 */
-	if (parent_pid != -1 && getppid() != parent_pid) {
+	ఒకవేళ (మాతృ_pid != -1 && getppid() != మాతృ_pid) {
 		/* printf("Parent has died - Authentication agent exiting.\n"); */
 		cleanup_socket();
 		_exit(2);
 	}
 }
 
-static void
-usage(void)
+స్థిర శూన్య
+usage(శూన్య)
 {
 	fprintf(stderr,
 	    "usage: ssh-agent [-c | -s] [-DdU] [-T | -A directory | -a bind_address]\n"
@@ -2249,196 +2249,196 @@ usage(void)
 	    "       ssh-agent [-c | -s] -k\n"
 	    "       ssh-agent -u\n"
 	    "       ssh-agent -V\n");
-	exit(1);
+	నిష్క్రమించు(1);
 }
 
-int
-main(int ac, char **av)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం ac, అక్షరం **av)
 {
-	int c_flag = 0, d_flag = 0, D_flag = 0, k_flag = 0;
-	int s_flag = 0, T_flag = 0, u_flag = 0, U_flag = 0;
-	int sock = -1, ch, result, saved_errno;
+	పూర్ణాంకం c_flag = 0, d_flag = 0, D_flag = 0, k_flag = 0;
+	పూర్ణాంకం s_flag = 0, T_flag = 0, u_flag = 0, U_flag = 0;
+	పూర్ణాంకం sock = -1, ch, ఫలితం, saved_errno;
 	pid_t pid;
- 	char *homedir = NULL, *shell, *format, *pidstr, *agentsocket = NULL;
-	char *cp, pidstrbuf[1 + 3 * sizeof pid];
-	char *fdstr;
-	const char *errstr = NULL;
-	const char *ccp;
-#ifdef HAVE_SETRLIMIT
-	struct rlimit rlim;
-#endif
-	extern int optind;
-	extern char *optarg;
-	size_t len;
-	mode_t prev_mask;
-	struct timespec timeout;
-	struct pollfd *pfd = NULL;
-	size_t npfd = 0;
+ 	అక్షరం *homedir = ఖాళీ, *shell, *format, *pidstr, *agentsocket = ఖాళీ;
+	అక్షరం *cp, pidstrbuf[1 + 3 * పరిమాణం pid];
+	అక్షరం *fdstr;
+	స్థిరరాశి అక్షరం *errstr = ఖాళీ;
+	స్థిరరాశి అక్షరం *ccp;
+#నిర్వచితమైతే HAVE_SETRLIMIT
+	నిర్మాణం rlimit rlim;
+#అయితే_ముగింపు
+	బాహ్య పూర్ణాంకం optind;
+	బాహ్య అక్షరం *optarg;
+	కొలత_t len;
+	బహుళకం_t prev_ముసుగు;
+	నిర్మాణం timespec timeout;
+	నిర్మాణం pollfd *pfd = ఖాళీ;
+	కొలత_t npfd = 0;
 	u_int maxfds;
 	sigset_t nsigset, osigset;
-	int socket_activated = 0;
-	struct passwd *pw;
+	పూర్ణాంకం socket_activated = 0;
+	నిర్మాణం passwd *pw;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
 
 	/* drop */
-	(void)setegid(getgid());
-	(void)setgid(getgid());
+	(శూన్య)setegid(getgid());
+	(శూన్య)setgid(getgid());
 
 	platform_disable_tracing(0);	/* strict=no */
 
-	if ((pw = getpwuid(getuid())) == NULL)
+	ఒకవేళ ((pw = getpwuid(getuid())) == ఖాళీ)
 		fatal("No user exists for uid %lu", (u_long)getuid());
 	pw = pwcopy(pw);
 
-#ifdef RLIMIT_NOFILE
-	if (getrlimit(RLIMIT_NOFILE, &rlim) == -1)
+#నిర్వచితమైతే RLIMIT_NOFILE
+	ఒకవేళ (getrlimit(RLIMIT_NOFILE, &rlim) == -1)
 		fatal("%s: getrlimit: %s", __progname, strerror(errno));
-#endif
+#అయితే_ముగింపు
 
 	__progname = ssh_get_progname(av[0]);
-	seed_rng();
+	విత్తనం_rng();
 
-	while ((ch = getopt(ac, av, "cDdksTuUVA:E:a:O:P:t:")) != -1) {
-		switch (ch) {
-		case 'E':
+	అయితే ((ch = getopt(ac, av, "cDdksTuUVA:E:a:O:P:t:")) != -1) {
+		ఎంపిక (ch) {
+		స్థితి 'E':
 			fingerprint_hash = ssh_digest_alg_by_name(optarg);
-			if (fingerprint_hash == -1)
+			ఒకవేళ (fingerprint_hash == -1)
 				fatal("Invalid hash algorithm \"%s\"", optarg);
-			break;
-		case 'c':
-			if (s_flag)
+			ఆపు;
+		స్థితి 'c':
+			ఒకవేళ (s_flag)
 				usage();
 			c_flag++;
-			break;
-		case 'k':
+			ఆపు;
+		స్థితి 'k':
 			k_flag++;
-			break;
-		case 'O':
-			if (strcmp(optarg, "no-restrict-websafe") == 0)
+			ఆపు;
+		స్థితి 'O':
+			ఒకవేళ (strcmp(optarg, "no-restrict-websafe") == 0)
 				restrict_websafe = 0;
-			else if (strcmp(optarg, "allow-remote-pkcs11") == 0)
-				remote_add_provider = 1;
-			else if ((ccp = strprefix(optarg,
-			    "websafe-allow=", 0)) != NULL) {
-				if (websafe_allowlist != NULL)
+			లేకపోతే ఒకవేళ (strcmp(optarg, "allow-remote-pkcs11") == 0)
+				remote_కూడు_provider = 1;
+			లేకపోతే ఒకవేళ ((ccp = strprefix(optarg,
+			    "websafe-allow=", 0)) != ఖాళీ) {
+				ఒకవేళ (websafe_allowlist != ఖాళీ)
 					fatal("websafe-allow already set");
 				websafe_allowlist = xstrdup(ccp);
-			} else
+			} లేకపోతే
 				fatal("Unknown -O option");
-			break;
-		case 'P':
-			if (allowed_providers != NULL)
+			ఆపు;
+		స్థితి 'P':
+			ఒకవేళ (allowed_providers != ఖాళీ)
 				fatal("-P option already specified");
 			allowed_providers = xstrdup(optarg);
-			break;
-		case 's':
-			if (c_flag)
+			ఆపు;
+		స్థితి 's':
+			ఒకవేళ (c_flag)
 				usage();
 			s_flag++;
-			break;
-		case 'd':
-			if (d_flag || D_flag)
+			ఆపు;
+		స్థితి 'd':
+			ఒకవేళ (d_flag || D_flag)
 				usage();
 			d_flag++;
-			break;
-		case 'D':
-			if (d_flag || D_flag)
+			ఆపు;
+		స్థితి 'D':
+			ఒకవేళ (d_flag || D_flag)
 				usage();
 			D_flag++;
-			break;
-		case 'a':
+			ఆపు;
+		స్థితి 'a':
 			agentsocket = optarg;
-			break;
-		case 'A':
+			ఆపు;
+		స్థితి 'A':
 			socket_dirspec = xstrdup(optarg);
-			break;
-		case 't':
-			if ((lifetime = convtime(optarg)) == -1) {
+			ఆపు;
+		స్థితి 't':
+			ఒకవేళ ((lifetime = convtime(optarg)) == -1) {
 				fprintf(stderr, "Invalid lifetime\n");
 				usage();
 			}
-			break;
-		case 'T':
+			ఆపు;
+		స్థితి 'T':
 			T_flag++;
-			break;
-		case 'u':
+			ఆపు;
+		స్థితి 'u':
 			u_flag++;
-			break;
-		case 'U':
+			ఆపు;
+		స్థితి 'U':
 			U_flag++;
-			break;
-		case 'V':
+			ఆపు;
+		స్థితి 'V':
 			fprintf(stderr, "%s, %s\n",
-			    SSH_VERSION, SSH_OPENSSL_VERSION);
-			exit(0);
-		default:
+			    SSH_సంస్కరణ, SSH_OPENSSL_సంస్కరణ);
+			నిష్క్రమించు(0);
+		అప్రమేయ:
 			usage();
 		}
 	}
 	ac -= optind;
 	av += optind;
 
-	if (ac > 0 &&
+	ఒకవేళ (ac > 0 &&
 	    (c_flag || k_flag || s_flag || d_flag || D_flag || u_flag))
 		usage();
 	/* only one of -a, -A and -T allowed */
-	if (((socket_dirspec != NULL) + (agentsocket != NULL) + T_flag) > 1)
+	ఒకవేళ (((socket_dirspec != ఖాళీ) + (agentsocket != ఖాళీ) + T_flag) > 1)
 		usage();
 
 	log_init(__progname,
 	    d_flag ? SYSLOG_LEVEL_DEBUG3 : SYSLOG_LEVEL_INFO,
 	    SYSLOG_FACILITY_AUTH, 1);
 
-	if (allowed_providers == NULL)
+	ఒకవేళ (allowed_providers == ఖాళీ)
 		allowed_providers = xstrdup(DEFAULT_ALLOWED_PROVIDERS);
-	if (websafe_allowlist == NULL)
+	ఒకవేళ (websafe_allowlist == ఖాళీ)
 		websafe_allowlist = xstrdup(DEFAULT_WEBSAFE_ALLOWLIST);
 
-	if (T_flag)
-		socket_dirspec = xstrdup(_PATH_SSH_AGENT_SOCKET_TMPDIR);
-	else if (socket_dirspec == NULL && agentsocket == NULL)
-		socket_dirspec = xstrdup(_PATH_SSH_AGENT_SOCKET_DIR);
+	ఒకవేళ (T_flag)
+		socket_dirspec = xstrdup(మార్గం_SSH_AGENT_SOCKET_TMPDIR);
+	లేకపోతే ఒకవేళ (socket_dirspec == ఖాళీ && agentsocket == ఖాళీ)
+		socket_dirspec = xstrdup(మార్గం_SSH_AGENT_SOCKET_DIR);
 
-	if (ac == 0 && !c_flag && !s_flag) {
+	ఒకవేళ (ac == 0 && !c_flag && !s_flag) {
 		shell = getenv("SHELL");
-		if (shell != NULL && (len = strlen(shell)) > 2 &&
-		    strncmp(shell + len - 3, "csh", 3) == 0)
+		ఒకవేళ (shell != ఖాళీ && (len = అక్షరశ్రేణి_పొడవు(shell)) > 2 &&
+		    అక్షరశ్రేణి_పోలిక(shell + len - 3, "csh", 3) == 0)
 			c_flag = 1;
 	}
-	if (k_flag) {
+	ఒకవేళ (k_flag) {
 		pidstr = getenv(SSH_AGENTPID_ENV_NAME);
-		if (pidstr == NULL) {
+		ఒకవేళ (pidstr == ఖాళీ) {
 			fprintf(stderr, "%s not set, cannot kill agent\n",
 			    SSH_AGENTPID_ENV_NAME);
-			exit(1);
+			నిష్క్రమించు(1);
 		}
-		pid = (int)strtonum(pidstr, 2, INT_MAX, &errstr);
-		if (errstr) {
+		pid = (పూర్ణాంకం)strtonum(pidstr, 2, గరిష్ఠ_పూర్ణాంకం, &errstr);
+		ఒకవేళ (errstr) {
 			fprintf(stderr,
 			    "%s=\"%s\", which is not a good PID: %s\n",
 			    SSH_AGENTPID_ENV_NAME, pidstr, errstr);
-			exit(1);
+			నిష్క్రమించు(1);
 		}
-		if (kill(pid, SIGTERM) == -1) {
+		ఒకవేళ (kill(pid, SIGTERM) == -1) {
 			perror("kill");
-			exit(1);
+			నిష్క్రమించు(1);
 		}
 		format = c_flag ? "unsetenv %s;\n" : "unset %s;\n";
-		printf(format, SSH_AUTHSOCKET_ENV_NAME);
-		printf(format, SSH_AGENTPID_ENV_NAME);
-		printf("echo Agent pid %ld killed;\n", (long)pid);
-		exit(0);
+		రాయి(format, SSH_AUTHSOCKET_ENV_NAME);
+		రాయి(format, SSH_AGENTPID_ENV_NAME);
+		రాయి("echo Agent pid %ld killed;\n", (దీర్ఘ)pid);
+		నిష్క్రమించు(0);
 	}
-	if (u_flag) {
-		if ((homedir = get_homedir()) == NULL)
+	ఒకవేళ (u_flag) {
+		ఒకవేళ ((homedir = get_homedir()) == ఖాళీ)
 			fatal("Couldn't determine home directory");
 		agent_cleanup_stale(socket_dirspec,
 		    pw->pw_name, pw->pw_uid, homedir, u_flag > 1);
-		printf("Deleted stale agent sockets in ~/%s\n",
-		    _PATH_SSH_AGENT_SOCKET_DIR);
-		exit(0);
+		రాయి("Deleted stale agent sockets in ~/%s\n",
+		    మార్గం_SSH_AGENT_SOCKET_DIR);
+		నిష్క్రమించు(0);
 	}
 
 	/*
@@ -2446,58 +2446,58 @@ main(int ac, char **av)
 	 * stdio (3) + listener (1) + syslog (1 maybe) + connection (1) +
 	 * a few spare for libc / stack protectors / sanitisers, etc.
 	 */
-#define SSH_AGENT_MIN_FDS (3+1+1+1+4)
-	if (rlim.rlim_cur < SSH_AGENT_MIN_FDS)
+#నిర్వచించు SSH_AGENT_MIN_FDS (3+1+1+1+4)
+	ఒకవేళ (rlim.rlim_cur < SSH_AGENT_MIN_FDS)
 		fatal("%s: file descriptor rlimit %lld too low (minimum %u)",
-		    __progname, (long long)rlim.rlim_cur, SSH_AGENT_MIN_FDS);
+		    __progname, (దీర్ఘ దీర్ఘ)rlim.rlim_cur, SSH_AGENT_MIN_FDS);
 	maxfds = rlim.rlim_cur - SSH_AGENT_MIN_FDS;
 
-	parent_pid = getpid();
+	మాతృ_pid = getpid();
 
 	/* Has the socket been provided via socket activation? */
-	if (agentsocket == NULL && ac == 0 && (d_flag || D_flag) &&
-	    (pidstr = getenv("LISTEN_PID")) != NULL &&
-	    (fdstr = getenv("LISTEN_FDS")) != NULL) {
-		if (strcmp(fdstr, "1") != 0) {
+	ఒకవేళ (agentsocket == ఖాళీ && ac == 0 && (d_flag || D_flag) &&
+	    (pidstr = getenv("LISTEN_PID")) != ఖాళీ &&
+	    (fdstr = getenv("LISTEN_FDS")) != ఖాళీ) {
+		ఒకవేళ (strcmp(fdstr, "1") != 0) {
 			fatal("unexpected LISTEN_FDS contents "
 			    "(want: \"1\" got\"%s\"", fdstr);
 		}
-		if (fcntl(3, F_GETFL) == -1)
+		ఒకవేళ (fcntl(3, F_GETFL) == -1)
 			fatal("LISTEN_FDS set but fd 3 unavailable");
-		pid = (int)strtonum(pidstr, 1, INT_MAX, &errstr);
-		if (errstr != NULL)
+		pid = (పూర్ణాంకం)strtonum(pidstr, 1, గరిష్ఠ_పూర్ణాంకం, &errstr);
+		ఒకవేళ (errstr != ఖాళీ)
 			fatal("invalid LISTEN_PID: %s", errstr);
-		if (pid != getpid())
+		ఒకవేళ (pid != getpid())
 			fatal("bad LISTEN_PID: %d vs pid %d", pid, getpid());
 		debug("using socket activation on fd=3");
 		sock = 3;
 		socket_activated = 1;
 	}
 
-	if (sock == -1 && agentsocket == NULL) {
+	ఒకవేళ (sock == -1 && agentsocket == ఖాళీ) {
 		/* Listen on a socket in/under a given directory */
-		if ((homedir = get_homedir()) == NULL)
+		ఒకవేళ ((homedir = get_homedir()) == ఖాళీ)
 			fatal("Couldn't determine home directory");
-		if (!U_flag) {
+		ఒకవేళ (!U_flag) {
 			agent_cleanup_stale(socket_dirspec,
 			    pw->pw_name, pw->pw_uid, homedir, 0);
 		}
-		if (agent_listener(socket_dirspec, pw->pw_name, pw->pw_uid,
+		ఒకవేళ (agent_listener(socket_dirspec, pw->pw_name, pw->pw_uid,
 		    homedir, getpid(), "local", &sock, &socket_name,
 		    &socket_dir) != 0)
 			fatal_f("Couldn't prepare agent socket");
-		free(homedir);
-	} else if (sock == -1) {
+		విడుదల(homedir);
+	} లేకపోతే ఒకవేళ (sock == -1) {
 		/* Listen on explicit socket path */
-		prev_mask = umask(0177);
+		prev_ముసుగు = umask(0177);
 		socket_name = xstrdup(agentsocket);
-		if ((sock = unix_listener(socket_name,
+		ఒకవేళ ((sock = unix_listener(socket_name,
 		    SSH_LISTEN_BACKLOG, 0)) < 0) {
-			free(socket_name);
-			socket_name = NULL; /* Don't unlink existing file */
+			విడుదల(socket_name);
+			socket_name = ఖాళీ; /* Don't unlink existing file */
 			cleanup_exit(1);
 		}
-		umask(prev_mask);
+		umask(prev_ముసుగు);
 	}
 
 	closefrom(sock == -1 ? STDERR_FILENO + 1 : sock + 1);
@@ -2506,96 +2506,96 @@ main(int ac, char **av)
 	 * Create socket early so it will exist before command gets run from
 	 * the parent.
 	 */
-	if (sock == -1) {
-		prev_mask = umask(0177);
+	ఒకవేళ (sock == -1) {
+		prev_ముసుగు = umask(0177);
 		sock = unix_listener(socket_name, SSH_LISTEN_BACKLOG, 0);
-		if (sock < 0) {
+		ఒకవేళ (sock < 0) {
 			/* XXX - unix_listener() calls error() not perror() */
 			*socket_name = '\0'; /* Don't unlink existing file */
 			cleanup_exit(1);
 		}
-		umask(prev_mask);
+		umask(prev_ముసుగు);
 	}
 
 	/*
 	 * Fork, and have the parent execute the command, if any, or present
 	 * the socket data.  The child continues as the authentication agent.
 	 */
-	if (D_flag || d_flag) {
+	ఒకవేళ (D_flag || d_flag) {
 		log_init(__progname,
 		    d_flag ? SYSLOG_LEVEL_DEBUG3 : SYSLOG_LEVEL_INFO,
 		    SYSLOG_FACILITY_AUTH, 1);
-		if (socket_name != NULL) {
+		ఒకవేళ (socket_name != ఖాళీ) {
 			cp = argv_assemble(1, &socket_name);
 			format = c_flag ?
 			    "setenv %s %s;\n" : "%s=%s; export %s;\n";
-			printf(format, SSH_AUTHSOCKET_ENV_NAME, cp,
+			రాయి(format, SSH_AUTHSOCKET_ENV_NAME, cp,
 			    SSH_AUTHSOCKET_ENV_NAME);
-			free(cp);
-			printf("echo Agent pid %ld;\n", (long)parent_pid);
+			విడుదల(cp);
+			రాయి("echo Agent pid %ld;\n", (దీర్ఘ)మాతృ_pid);
 			fflush(stdout);
 		}
-		goto skip;
+		వెళ్ళు skip;
 	}
 	pid = fork();
-	if (pid == -1) {
+	ఒకవేళ (pid == -1) {
 		perror("fork");
 		cleanup_exit(1);
 	}
-	if (pid != 0) {		/* Parent - execute the given command. */
+	ఒకవేళ (pid != 0) {		/* Parent - execute the given command. */
 		close(sock);
-		snprintf(pidstrbuf, sizeof pidstrbuf, "%ld", (long)pid);
-		if (ac == 0) {
+		snprintf(pidstrbuf, పరిమాణం pidstrbuf, "%ld", (దీర్ఘ)pid);
+		ఒకవేళ (ac == 0) {
 			format = c_flag ? "setenv %s %s;\n" : "%s=%s; export %s;\n";
 			cp = argv_assemble(1, &socket_name);
-			printf(format, SSH_AUTHSOCKET_ENV_NAME, cp,
+			రాయి(format, SSH_AUTHSOCKET_ENV_NAME, cp,
 			    SSH_AUTHSOCKET_ENV_NAME);
-			printf(format, SSH_AGENTPID_ENV_NAME, pidstrbuf,
+			రాయి(format, SSH_AGENTPID_ENV_NAME, pidstrbuf,
 			    SSH_AGENTPID_ENV_NAME);
-			free(cp);
-			printf("echo Agent pid %ld;\n", (long)pid);
-			exit(0);
+			విడుదల(cp);
+			రాయి("echo Agent pid %ld;\n", (దీర్ఘ)pid);
+			నిష్క్రమించు(0);
 		}
-		if (setenv(SSH_AUTHSOCKET_ENV_NAME, socket_name, 1) == -1 ||
+		ఒకవేళ (setenv(SSH_AUTHSOCKET_ENV_NAME, socket_name, 1) == -1 ||
 		    setenv(SSH_AGENTPID_ENV_NAME, pidstrbuf, 1) == -1) {
 			perror("setenv");
-			exit(1);
+			నిష్క్రమించు(1);
 		}
 		execvp(av[0], av);
 		perror(av[0]);
-		exit(1);
+		నిష్క్రమించు(1);
 	}
-	/* child */
+	/*బిడ్డ*/
 	log_init(__progname, SYSLOG_LEVEL_INFO, SYSLOG_FACILITY_AUTH, 0);
 
-	if (setsid() == -1) {
+	ఒకవేళ (setsid() == -1) {
 		error("setsid: %s", strerror(errno));
 		cleanup_exit(1);
 	}
 
-	(void)chdir("/");
-	if (stdfd_devnull(1, 1, 1) == -1)
+	(శూన్య)chdir("/");
+	ఒకవేళ (stdfd_devnull(1, 1, 1) == -1)
 		error_f("stdfd_devnull failed");
 
-#ifdef HAVE_SETRLIMIT
+#నిర్వచితమైతే HAVE_SETRLIMIT
 	/* deny core dumps, since memory contains unencrypted private keys */
 	rlim.rlim_cur = rlim.rlim_max = 0;
-	if (setrlimit(RLIMIT_CORE, &rlim) == -1) {
+	ఒకవేళ (setrlimit(RLIMIT_CORE, &rlim) == -1) {
 		error("setrlimit RLIMIT_CORE: %s", strerror(errno));
 		cleanup_exit(1);
 	}
-#endif
+#అయితే_ముగింపు
 
 skip:
 
 	cleanup_pid = getpid();
 
-#ifdef ENABLE_PKCS11
+#నిర్వచితమైతే ENABLE_PKCS11
 	pkcs11_init(0);
-#endif
+#అయితే_ముగింపు
 	new_socket(AUTH_SOCKET, sock);
-	if (ac > 0)
-		parent_alive_interval = 10;
+	ఒకవేళ (ac > 0)
+		మాతృ_alive_interval = 10;
 	idtab_init();
 	ssh_signal(SIGPIPE, SIG_IGN);
 	ssh_signal(SIGINT, (d_flag | D_flag) ? cleanup_handler : SIG_IGN);
@@ -2609,60 +2609,60 @@ skip:
 	sigaddset(&nsigset, SIGTERM);
 	sigaddset(&nsigset, SIGUSR1);
 
-	if (socket_name != NULL && unveil(socket_name, "c") == -1) {
+	ఒకవేళ (socket_name != ఖాళీ && unveil(socket_name, "c") == -1) {
 		fatal("%s: unveil %s %s", __progname, socket_name,
 		    strerror(errno));
 	}
-	if (socket_dir != NULL && unveil(socket_dir, "c") == -1) {
+	ఒకవేళ (socket_dir != ఖాళీ && unveil(socket_dir, "c") == -1) {
 		fatal("%s: unveil %s %s", __progname, socket_dir,
 		    strerror(errno));
 	}
-	if (unveil("/", "r") == -1)
+	ఒకవేళ (unveil("/", "r") == -1)
 		fatal("%s: unveil /: %s", __progname, strerror(errno));
-	if ((ccp = getenv("SSH_SK_HELPER")) == NULL || *ccp == '\0')
-		ccp = _PATH_SSH_SK_HELPER;
-	if (unveil(ccp, "x") == -1)
+	ఒకవేళ ((ccp = getenv("SSH_SK_HELPER")) == ఖాళీ || *ccp == '\0')
+		ccp = మార్గం_SSH_SK_HELPER;
+	ఒకవేళ (unveil(ccp, "x") == -1)
 		fatal("%s: unveil %s: %s", __progname, ccp, strerror(errno));
-	if ((ccp = getenv("SSH_PKCS11_HELPER")) == NULL || *ccp == '\0')
-		ccp = _PATH_SSH_PKCS11_HELPER;
-	if (unveil(ccp, "x") == -1)
+	ఒకవేళ ((ccp = getenv("SSH_PKCS11_HELPER")) == ఖాళీ || *ccp == '\0')
+		ccp = మార్గం_SSH_PKCS11_HELPER;
+	ఒకవేళ (unveil(ccp, "x") == -1)
 		fatal("%s: unveil %s: %s", __progname, ccp, strerror(errno));
-	if ((ccp = getenv("SSH_ASKPASS")) == NULL || *ccp == '\0')
-		ccp = _PATH_SSH_ASKPASS_DEFAULT;
-	if (unveil(ccp, "x") == -1)
+	ఒకవేళ ((ccp = getenv("SSH_ASKPASS")) == ఖాళీ || *ccp == '\0')
+		ccp = మార్గం_SSH_ASKPASS_DEFAULT;
+	ఒకవేళ (unveil(ccp, "x") == -1)
 		fatal("%s: unveil %s: %s", __progname, ccp, strerror(errno));
-	if (unveil("/dev/null", "rw") == -1)
+	ఒకవేళ (unveil("/dev/null", "rw") == -1)
 		fatal("%s: unveil /dev/null: %s", __progname, strerror(errno));
-	if (pledge("stdio rpath cpath wpath unix id proc exec", NULL) == -1)
+	ఒకవేళ (pledge("stdio rpath cpath wpath unix id proc exec", ఖాళీ) == -1)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 	platform_pledge_agent();
 
-	while (1) {
+	అయితే (1) {
 		sigprocmask(SIG_BLOCK, &nsigset, &osigset);
-		if (signalled_exit != 0) {
-			logit("exiting on signal %d", (int)signalled_exit);
+		ఒకవేళ (signalled_exit != 0) {
+			logit("exiting on signal %d", (పూర్ణాంకం)signalled_exit);
 			cleanup_exit((signalled_exit == SIGTERM &&
 			    socket_activated) ? 0 : 2);
 		}
-		if (signalled_keydrop) {
+		ఒకవేళ (signalled_keydrop) {
 			logit("signal %d received; removing all keys",
-			    (int)signalled_keydrop);
+			    (పూర్ణాంకం)signalled_keydrop);
 			remove_all_identities();
 			signalled_keydrop = 0;
 		}
 		ptimeout_init(&timeout);
 		prepare_poll(&pfd, &npfd, &timeout, maxfds);
-		result = ppoll(pfd, npfd, ptimeout_get_tsp(&timeout), &osigset);
-		sigprocmask(SIG_SETMASK, &osigset, NULL);
+		ఫలితం = ppoll(pfd, npfd, ptimeout_get_tsp(&timeout), &osigset);
+		sigprocmask(SIG_SETMASK, &osigset, ఖాళీ);
 		saved_errno = errno;
-		if (parent_alive_interval != 0)
-			check_parent_exists();
-		(void) reaper();	/* remove expired keys */
-		if (result == -1) {
-			if (saved_errno == EINTR)
-				continue;
+		ఒకవేళ (మాతృ_alive_interval != 0)
+			check_మాతృ_exists();
+		(శూన్య) reaper();	/* remove expired keys */
+		ఒకవేళ (ఫలితం == -1) {
+			ఒకవేళ (saved_errno == EINTR)
+				కొనసాగు;
 			fatal("poll: %s", strerror(saved_errno));
-		} else if (result > 0)
+		} లేకపోతే ఒకవేళ (ఫలితం > 0)
 			after_poll(pfd, npfd, maxfds);
 	}
 	/* NOTREACHED */

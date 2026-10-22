@@ -18,20 +18,20 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strnlen.c */
 
-#include "includes.h"
-#if !defined(HAVE_STRNLEN) || defined(BROKEN_STRNLEN)
-#include <sys/types.h>
+#అన్తర్భావ "includes.h"
+#ఒకవేళ !defined(HAVE_STRNLEN) || defined(BROKEN_STRNLEN)
+#అన్తర్భావ <sys/types.h>
 
-#include <string.h>
+#అన్తర్భావ <string.h>
 
-size_t
-strnlen(const char *str, size_t maxlen)
+కొలత_t
+strnlen(స్థిరరాశి అక్షరం *str, కొలత_t maxlen)
 {
-	const char *cp;
+	స్థిరరాశి అక్షరం *cp;
 
-	for (cp = str; maxlen != 0 && *cp != '\0'; cp++, maxlen--)
+	కొరకు (cp = str; maxlen != 0 && *cp != '\0'; cp++, maxlen--)
 		;
 
-	return (size_t)(cp - str);
+	తిరిగి (కొలత_t)(cp - str);
 }
-#endif
+#అయితే_ముగింపు

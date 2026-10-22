@@ -17,348 +17,348 @@
 
 /* Utility functions/framework for regress tests */
 
-#ifndef _TEST_HELPER_H
-#define _TEST_HELPER_H
+#నిర్వచితం_కాకపోతే _TEST_HELPER_H
+#నిర్వచించు _TEST_HELPER_H
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <stdint.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdint.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/err.h>
-#endif
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ <openssl/bn.h>
+#అన్తర్భావ <openssl/err.h>
+#అయితే_ముగింపు
 
-enum test_predicate {
+గణన test_predicate {
 	TEST_EQ, TEST_NE, TEST_LT, TEST_LE, TEST_GT, TEST_GE
 };
-typedef void (test_onerror_func_t)(void *);
+రకనిర్వచనం శూన్య (test_onerror_func_t)(శూన్య *);
 
 /* Supplied by test suite */
-void tests(void);
-void benchmarks(void);
+శూన్య tests(శూన్య);
+శూన్య benchmarks(శూన్య);
 
-void hex2bin(uint8_t *, const char *, size_t);
+శూన్య hex2bin(uint8_t *, స్థిరరాశి అక్షరం *, కొలత_t);
 
-const char *test_data_file(const char *name);
-void test_start(const char *n);
-void test_info(char *s, size_t len);
-void set_onerror_func(test_onerror_func_t *f, void *ctx);
-void test_done(void);
-int test_is_verbose(void);
-int test_is_quiet(void);
-int test_is_fast(void);
-int test_is_slow(void);
-int test_is_benchmark(void);
-void test_subtest_info(const char *fmt, ...)
-    __attribute__((format(printf, 1, 2)));
-void ssl_err_check(const char *file, int line);
-#ifdef WITH_OPENSSL
-void assert_bignum(const char *file, int line,
-    const char *a1, const char *a2,
-    const BIGNUM *aa1, const BIGNUM *aa2, enum test_predicate pred);
-#endif
-void assert_string(const char *file, int line,
-    const char *a1, const char *a2,
-    const char *aa1, const char *aa2, enum test_predicate pred);
-void assert_mem(const char *file, int line,
-    const char *a1, const char *a2,
-    const void *aa1, const void *aa2, size_t l, enum test_predicate pred);
-void assert_mem_filled(const char *file, int line,
-    const char *a1,
-    const void *aa1, u_char v, size_t l, enum test_predicate pred);
-void assert_int(const char *file, int line,
-    const char *a1, const char *a2,
-    int aa1, int aa2, enum test_predicate pred);
-void assert_size_t(const char *file, int line,
-    const char *a1, const char *a2,
-    size_t aa1, size_t aa2, enum test_predicate pred);
-void assert_u_int(const char *file, int line,
-    const char *a1, const char *a2,
-    u_int aa1, u_int aa2, enum test_predicate pred);
-void assert_long(const char *file, int line,
-    const char *a1, const char *a2,
-    long aa1, long aa2, enum test_predicate pred);
-void assert_long_long(const char *file, int line,
-    const char *a1, const char *a2,
-    long long aa1, long long aa2, enum test_predicate pred);
-void assert_char(const char *file, int line,
-    const char *a1, const char *a2,
-    char aa1, char aa2, enum test_predicate pred);
-void assert_ptr(const char *file, int line,
-    const char *a1, const char *a2,
-    const void *aa1, const void *aa2, enum test_predicate pred);
-void assert_u8(const char *file, int line,
-    const char *a1, const char *a2,
-    uint8_t aa1, uint8_t aa2, enum test_predicate pred);
-void assert_u16(const char *file, int line,
-    const char *a1, const char *a2,
-    uint16_t aa1, uint16_t aa2, enum test_predicate pred);
-void assert_u32(const char *file, int line,
-    const char *a1, const char *a2,
-    uint32_t aa1, uint32_t aa2, enum test_predicate pred);
-void assert_u64(const char *file, int line,
-    const char *a1, const char *a2,
-    uint64_t aa1, uint64_t aa2, enum test_predicate pred);
-void assert_double(const char *file, int line,
-    const char *a1, const char *a2,
-    double aa1, double aa2, enum test_predicate pred);
+స్థిరరాశి అక్షరం *test_దత్తాంశం_file(స్థిరరాశి అక్షరం *name);
+శూన్య test_ప్రారంభం(స్థిరరాశి అక్షరం *n);
+శూన్య test_info(అక్షరం *s, కొలత_t len);
+శూన్య సమితి_onerror_func(test_onerror_func_t *f, శూన్య *ctx);
+శూన్య test_పూర్తి(శూన్య);
+పూర్ణాంకం test_is_verbose(శూన్య);
+పూర్ణాంకం test_is_quiet(శూన్య);
+పూర్ణాంకం test_is_fast(శూన్య);
+పూర్ణాంకం test_is_slow(శూన్య);
+పూర్ణాంకం test_is_benchmark(శూన్య);
+శూన్య test_subtest_info(స్థిరరాశి అక్షరం *fmt, ...)
+    __attribute__((format(రాయి, 1, 2)));
+శూన్య ssl_err_check(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి);
+#నిర్వచితమైతే WITH_OPENSSL
+శూన్య assert_bignum(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    స్థిరరాశి BIGNUM *aa1, స్థిరరాశి BIGNUM *aa2, గణన test_predicate pred);
+#అయితే_ముగింపు
+శూన్య assert_string(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    స్థిరరాశి అక్షరం *aa1, స్థిరరాశి అక్షరం *aa2, గణన test_predicate pred);
+శూన్య assert_mem(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    స్థిరరాశి శూన్య *aa1, స్థిరరాశి శూన్య *aa2, కొలత_t l, గణన test_predicate pred);
+శూన్య assert_mem_filled(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1,
+    స్థిరరాశి శూన్య *aa1, u_char v, కొలత_t l, గణన test_predicate pred);
+శూన్య assert_int(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    పూర్ణాంకం aa1, పూర్ణాంకం aa2, గణన test_predicate pred);
+శూన్య assert_కొలత_t(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    కొలత_t aa1, కొలత_t aa2, గణన test_predicate pred);
+శూన్య assert_u_int(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    u_int aa1, u_int aa2, గణన test_predicate pred);
+శూన్య assert_long(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    దీర్ఘ aa1, దీర్ఘ aa2, గణన test_predicate pred);
+శూన్య assert_long_long(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    దీర్ఘ దీర్ఘ aa1, దీర్ఘ దీర్ఘ aa2, గణన test_predicate pred);
+శూన్య assert_char(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    అక్షరం aa1, అక్షరం aa2, గణన test_predicate pred);
+శూన్య assert_ptr(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    స్థిరరాశి శూన్య *aa1, స్థిరరాశి శూన్య *aa2, గణన test_predicate pred);
+శూన్య assert_u8(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    uint8_t aa1, uint8_t aa2, గణన test_predicate pred);
+శూన్య assert_u16(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    uint16_t aa1, uint16_t aa2, గణన test_predicate pred);
+శూన్య assert_u32(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    uint32_t aa1, uint32_t aa2, గణన test_predicate pred);
+శూన్య assert_u64(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    uint64_t aa1, uint64_t aa2, గణన test_predicate pred);
+శూన్య assert_double(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి,
+    స్థిరరాశి అక్షరం *a1, స్థిరరాశి అక్షరం *a2,
+    ద్విగుణ aa1, ద్విగుణ aa2, గణన test_predicate pred);
 
-#define TEST_START(n)			test_start(n)
-#define TEST_DONE()			test_done()
-#define TEST_ONERROR(f, c)		set_onerror_func(f, c)
-#define SSL_ERR_CHECK() 		ssl_err_check(__FILE__, __LINE__)
+#నిర్వచించు TEST_ప్రారంభం(n)			test_ప్రారంభం(n)
+#నిర్వచించు TEST_పూర్తి()			test_పూర్తి()
+#నిర్వచించు TEST_ONERROR(f, c)		సమితి_onerror_func(f, c)
+#నిర్వచించు SSL_ERR_CHECK() 		ssl_err_check(__FILE__, __LINE__)
 
-#define ASSERT_BIGNUM_EQ(a1, a2) \
+#నిర్వచించు ASSERT_BIGNUM_EQ(a1, a2) \
 	assert_bignum(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
-#define ASSERT_STRING_EQ(a1, a2) \
+#నిర్వచించు ASSERT_STRING_EQ(a1, a2) \
 	assert_string(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
-#define ASSERT_MEM_EQ(a1, a2, l) \
+#నిర్వచించు ASSERT_MEM_EQ(a1, a2, l) \
 	assert_mem(__FILE__, __LINE__, #a1, #a2, a1, a2, l, TEST_EQ)
-#define ASSERT_MEM_FILLED_EQ(a1, c, l) \
+#నిర్వచించు ASSERT_MEM_FILLED_EQ(a1, c, l) \
 	assert_mem_filled(__FILE__, __LINE__, #a1, a1, c, l, TEST_EQ)
-#define ASSERT_MEM_ZERO_EQ(a1, l) \
+#నిర్వచించు ASSERT_MEM_ZERO_EQ(a1, l) \
 	assert_mem_filled(__FILE__, __LINE__, #a1, a1, '\0', l, TEST_EQ)
-#define ASSERT_INT_EQ(a1, a2) \
+#నిర్వచించు ASSERT_INT_EQ(a1, a2) \
 	assert_int(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
-#define ASSERT_SIZE_T_EQ(a1, a2) \
-	assert_size_t(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
-#define ASSERT_U_INT_EQ(a1, a2) \
+#నిర్వచించు ASSERT_కొలత_T_EQ(a1, a2) \
+	assert_కొలత_t(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
+#నిర్వచించు ASSERT_U_INT_EQ(a1, a2) \
 	assert_u_int(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
-#define ASSERT_LONG_EQ(a1, a2) \
+#నిర్వచించు ASSERT_LONG_EQ(a1, a2) \
 	assert_long(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
-#define ASSERT_LONG_LONG_EQ(a1, a2) \
+#నిర్వచించు ASSERT_LONG_LONG_EQ(a1, a2) \
 	assert_long_long(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
-#define ASSERT_CHAR_EQ(a1, a2) \
+#నిర్వచించు ASSERT_CHAR_EQ(a1, a2) \
 	assert_char(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
-#define ASSERT_PTR_EQ(a1, a2) \
+#నిర్వచించు ASSERT_PTR_EQ(a1, a2) \
 	assert_ptr(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
-#define ASSERT_U8_EQ(a1, a2) \
+#నిర్వచించు ASSERT_U8_EQ(a1, a2) \
 	assert_u8(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
-#define ASSERT_U16_EQ(a1, a2) \
+#నిర్వచించు ASSERT_U16_EQ(a1, a2) \
 	assert_u16(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
-#define ASSERT_U32_EQ(a1, a2) \
+#నిర్వచించు ASSERT_U32_EQ(a1, a2) \
 	assert_u32(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
-#define ASSERT_U64_EQ(a1, a2) \
+#నిర్వచించు ASSERT_U64_EQ(a1, a2) \
 	assert_u64(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
 
-#define ASSERT_BIGNUM_NE(a1, a2) \
+#నిర్వచించు ASSERT_BIGNUM_NE(a1, a2) \
 	assert_bignum(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
-#define ASSERT_STRING_NE(a1, a2) \
+#నిర్వచించు ASSERT_STRING_NE(a1, a2) \
 	assert_string(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
-#define ASSERT_MEM_NE(a1, a2, l) \
+#నిర్వచించు ASSERT_MEM_NE(a1, a2, l) \
 	assert_mem(__FILE__, __LINE__, #a1, #a2, a1, a2, l, TEST_NE)
-#define ASSERT_MEM_ZERO_NE(a1, l) \
+#నిర్వచించు ASSERT_MEM_ZERO_NE(a1, l) \
 	assert_mem_filled(__FILE__, __LINE__, #a1, a1, '\0', l, TEST_NE)
-#define ASSERT_INT_NE(a1, a2) \
+#నిర్వచించు ASSERT_INT_NE(a1, a2) \
 	assert_int(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
-#define ASSERT_SIZE_T_NE(a1, a2) \
-	assert_size_t(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
-#define ASSERT_U_INT_NE(a1, a2) \
+#నిర్వచించు ASSERT_కొలత_T_NE(a1, a2) \
+	assert_కొలత_t(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
+#నిర్వచించు ASSERT_U_INT_NE(a1, a2) \
 	assert_u_int(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
-#define ASSERT_LONG_NE(a1, a2) \
+#నిర్వచించు ASSERT_LONG_NE(a1, a2) \
 	assert_long(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
-#define ASSERT_LONG_LONG_NE(a1, a2) \
+#నిర్వచించు ASSERT_LONG_LONG_NE(a1, a2) \
 	assert_long_long(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
-#define ASSERT_CHAR_NE(a1, a2) \
+#నిర్వచించు ASSERT_CHAR_NE(a1, a2) \
 	assert_char(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
-#define ASSERT_PTR_NE(a1, a2) \
+#నిర్వచించు ASSERT_PTR_NE(a1, a2) \
 	assert_ptr(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
-#define ASSERT_U8_NE(a1, a2) \
+#నిర్వచించు ASSERT_U8_NE(a1, a2) \
 	assert_u8(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
-#define ASSERT_U16_NE(a1, a2) \
+#నిర్వచించు ASSERT_U16_NE(a1, a2) \
 	assert_u16(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
-#define ASSERT_U32_NE(a1, a2) \
+#నిర్వచించు ASSERT_U32_NE(a1, a2) \
 	assert_u32(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
-#define ASSERT_U64_NE(a1, a2) \
+#నిర్వచించు ASSERT_U64_NE(a1, a2) \
 	assert_u64(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
 
-#define ASSERT_BIGNUM_LT(a1, a2) \
+#నిర్వచించు ASSERT_BIGNUM_LT(a1, a2) \
 	assert_bignum(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
-#define ASSERT_STRING_LT(a1, a2) \
+#నిర్వచించు ASSERT_STRING_LT(a1, a2) \
 	assert_string(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
-#define ASSERT_MEM_LT(a1, a2, l) \
+#నిర్వచించు ASSERT_MEM_LT(a1, a2, l) \
 	assert_mem(__FILE__, __LINE__, #a1, #a2, a1, a2, l, TEST_LT)
-#define ASSERT_INT_LT(a1, a2) \
+#నిర్వచించు ASSERT_INT_LT(a1, a2) \
 	assert_int(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
-#define ASSERT_SIZE_T_LT(a1, a2) \
-	assert_size_t(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
-#define ASSERT_U_INT_LT(a1, a2) \
+#నిర్వచించు ASSERT_కొలత_T_LT(a1, a2) \
+	assert_కొలత_t(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
+#నిర్వచించు ASSERT_U_INT_LT(a1, a2) \
 	assert_u_int(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
-#define ASSERT_LONG_LT(a1, a2) \
+#నిర్వచించు ASSERT_LONG_LT(a1, a2) \
 	assert_long(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
-#define ASSERT_LONG_LONG_LT(a1, a2) \
+#నిర్వచించు ASSERT_LONG_LONG_LT(a1, a2) \
 	assert_long_long(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
-#define ASSERT_CHAR_LT(a1, a2) \
+#నిర్వచించు ASSERT_CHAR_LT(a1, a2) \
 	assert_char(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
-#define ASSERT_PTR_LT(a1, a2) \
+#నిర్వచించు ASSERT_PTR_LT(a1, a2) \
 	assert_ptr(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
-#define ASSERT_U8_LT(a1, a2) \
+#నిర్వచించు ASSERT_U8_LT(a1, a2) \
 	assert_u8(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
-#define ASSERT_U16_LT(a1, a2) \
+#నిర్వచించు ASSERT_U16_LT(a1, a2) \
 	assert_u16(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
-#define ASSERT_U32_LT(a1, a2) \
+#నిర్వచించు ASSERT_U32_LT(a1, a2) \
 	assert_u32(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
-#define ASSERT_U64_LT(a1, a2) \
+#నిర్వచించు ASSERT_U64_LT(a1, a2) \
 	assert_u64(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
 
-#define ASSERT_BIGNUM_LE(a1, a2) \
+#నిర్వచించు ASSERT_BIGNUM_LE(a1, a2) \
 	assert_bignum(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
-#define ASSERT_STRING_LE(a1, a2) \
+#నిర్వచించు ASSERT_STRING_LE(a1, a2) \
 	assert_string(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
-#define ASSERT_MEM_LE(a1, a2, l) \
+#నిర్వచించు ASSERT_MEM_LE(a1, a2, l) \
 	assert_mem(__FILE__, __LINE__, #a1, #a2, a1, a2, l, TEST_LE)
-#define ASSERT_INT_LE(a1, a2) \
+#నిర్వచించు ASSERT_INT_LE(a1, a2) \
 	assert_int(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
-#define ASSERT_SIZE_T_LE(a1, a2) \
-	assert_size_t(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
-#define ASSERT_U_INT_LE(a1, a2) \
+#నిర్వచించు ASSERT_కొలత_T_LE(a1, a2) \
+	assert_కొలత_t(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
+#నిర్వచించు ASSERT_U_INT_LE(a1, a2) \
 	assert_u_int(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
-#define ASSERT_LONG_LE(a1, a2) \
+#నిర్వచించు ASSERT_LONG_LE(a1, a2) \
 	assert_long(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
-#define ASSERT_LONG_LONG_LE(a1, a2) \
+#నిర్వచించు ASSERT_LONG_LONG_LE(a1, a2) \
 	assert_long_long(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
-#define ASSERT_CHAR_LE(a1, a2) \
+#నిర్వచించు ASSERT_CHAR_LE(a1, a2) \
 	assert_char(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
-#define ASSERT_PTR_LE(a1, a2) \
+#నిర్వచించు ASSERT_PTR_LE(a1, a2) \
 	assert_ptr(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
-#define ASSERT_U8_LE(a1, a2) \
+#నిర్వచించు ASSERT_U8_LE(a1, a2) \
 	assert_u8(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
-#define ASSERT_U16_LE(a1, a2) \
+#నిర్వచించు ASSERT_U16_LE(a1, a2) \
 	assert_u16(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
-#define ASSERT_U32_LE(a1, a2) \
+#నిర్వచించు ASSERT_U32_LE(a1, a2) \
 	assert_u32(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
-#define ASSERT_U64_LE(a1, a2) \
+#నిర్వచించు ASSERT_U64_LE(a1, a2) \
 	assert_u64(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
 
-#define ASSERT_BIGNUM_GT(a1, a2) \
+#నిర్వచించు ASSERT_BIGNUM_GT(a1, a2) \
 	assert_bignum(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
-#define ASSERT_STRING_GT(a1, a2) \
+#నిర్వచించు ASSERT_STRING_GT(a1, a2) \
 	assert_string(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
-#define ASSERT_MEM_GT(a1, a2, l) \
+#నిర్వచించు ASSERT_MEM_GT(a1, a2, l) \
 	assert_mem(__FILE__, __LINE__, #a1, #a2, a1, a2, l, TEST_GT)
-#define ASSERT_INT_GT(a1, a2) \
+#నిర్వచించు ASSERT_INT_GT(a1, a2) \
 	assert_int(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
-#define ASSERT_SIZE_T_GT(a1, a2) \
-	assert_size_t(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
-#define ASSERT_U_INT_GT(a1, a2) \
+#నిర్వచించు ASSERT_కొలత_T_GT(a1, a2) \
+	assert_కొలత_t(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
+#నిర్వచించు ASSERT_U_INT_GT(a1, a2) \
 	assert_u_int(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
-#define ASSERT_LONG_GT(a1, a2) \
+#నిర్వచించు ASSERT_LONG_GT(a1, a2) \
 	assert_long(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
-#define ASSERT_LONG_LONG_GT(a1, a2) \
+#నిర్వచించు ASSERT_LONG_LONG_GT(a1, a2) \
 	assert_long_long(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
-#define ASSERT_CHAR_GT(a1, a2) \
+#నిర్వచించు ASSERT_CHAR_GT(a1, a2) \
 	assert_char(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
-#define ASSERT_PTR_GT(a1, a2) \
+#నిర్వచించు ASSERT_PTR_GT(a1, a2) \
 	assert_ptr(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
-#define ASSERT_U8_GT(a1, a2) \
+#నిర్వచించు ASSERT_U8_GT(a1, a2) \
 	assert_u8(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
-#define ASSERT_U16_GT(a1, a2) \
+#నిర్వచించు ASSERT_U16_GT(a1, a2) \
 	assert_u16(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
-#define ASSERT_U32_GT(a1, a2) \
+#నిర్వచించు ASSERT_U32_GT(a1, a2) \
 	assert_u32(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
-#define ASSERT_U64_GT(a1, a2) \
+#నిర్వచించు ASSERT_U64_GT(a1, a2) \
 	assert_u64(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
 
-#define ASSERT_BIGNUM_GE(a1, a2) \
+#నిర్వచించు ASSERT_BIGNUM_GE(a1, a2) \
 	assert_bignum(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
-#define ASSERT_STRING_GE(a1, a2) \
+#నిర్వచించు ASSERT_STRING_GE(a1, a2) \
 	assert_string(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
-#define ASSERT_MEM_GE(a1, a2, l) \
+#నిర్వచించు ASSERT_MEM_GE(a1, a2, l) \
 	assert_mem(__FILE__, __LINE__, #a1, #a2, a1, a2, l, TEST_GE)
-#define ASSERT_INT_GE(a1, a2) \
+#నిర్వచించు ASSERT_INT_GE(a1, a2) \
 	assert_int(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
-#define ASSERT_SIZE_T_GE(a1, a2) \
-	assert_size_t(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
-#define ASSERT_U_INT_GE(a1, a2) \
+#నిర్వచించు ASSERT_కొలత_T_GE(a1, a2) \
+	assert_కొలత_t(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
+#నిర్వచించు ASSERT_U_INT_GE(a1, a2) \
 	assert_u_int(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
-#define ASSERT_LONG_GE(a1, a2) \
+#నిర్వచించు ASSERT_LONG_GE(a1, a2) \
 	assert_long(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
-#define ASSERT_LONG_LONG_GE(a1, a2) \
+#నిర్వచించు ASSERT_LONG_LONG_GE(a1, a2) \
 	assert_long_long(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
-#define ASSERT_CHAR_GE(a1, a2) \
+#నిర్వచించు ASSERT_CHAR_GE(a1, a2) \
 	assert_char(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
-#define ASSERT_PTR_GE(a1, a2) \
+#నిర్వచించు ASSERT_PTR_GE(a1, a2) \
 	assert_ptr(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
-#define ASSERT_U8_GE(a1, a2) \
+#నిర్వచించు ASSERT_U8_GE(a1, a2) \
 	assert_u8(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
-#define ASSERT_U16_GE(a1, a2) \
+#నిర్వచించు ASSERT_U16_GE(a1, a2) \
 	assert_u16(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
-#define ASSERT_U32_GE(a1, a2) \
+#నిర్వచించు ASSERT_U32_GE(a1, a2) \
 	assert_u32(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
-#define ASSERT_U64_GE(a1, a2) \
+#నిర్వచించు ASSERT_U64_GE(a1, a2) \
 	assert_u64(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
 
-#define ASSERT_DOUBLE_EQ(a1, a2) \
+#నిర్వచించు ASSERT_DOUBLE_EQ(a1, a2) \
 	assert_double(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_EQ)
-#define ASSERT_DOUBLE_NE(a1, a2) \
+#నిర్వచించు ASSERT_DOUBLE_NE(a1, a2) \
 	assert_double(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_NE)
-#define ASSERT_DOUBLE_LT(a1, a2) \
+#నిర్వచించు ASSERT_DOUBLE_LT(a1, a2) \
 	assert_double(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LT)
-#define ASSERT_DOUBLE_LE(a1, a2) \
+#నిర్వచించు ASSERT_DOUBLE_LE(a1, a2) \
 	assert_double(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_LE)
-#define ASSERT_DOUBLE_GT(a1, a2) \
+#నిర్వచించు ASSERT_DOUBLE_GT(a1, a2) \
 	assert_double(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GT)
-#define ASSERT_DOUBLE_GE(a1, a2) \
+#నిర్వచించు ASSERT_DOUBLE_GE(a1, a2) \
 	assert_double(__FILE__, __LINE__, #a1, #a2, a1, a2, TEST_GE)
 
 /* Benchmarking support */
-#define BENCH_START(name)	\
-	do { \
-		bench_start(__FILE__, __LINE__, name); \
-		while (!bench_done()) { \
-			bench_case_start(__FILE__, __LINE__); \
-			do {
-#define BENCH_FINISH(unit) \
-			} while (0); \
-			bench_case_finish(__FILE__, __LINE__); \
+#నిర్వచించు BENCH_ప్రారంభం(name)	\
+	చేయి { \
+		bench_ప్రారంభం(__FILE__, __LINE__, name); \
+		అయితే (!bench_పూర్తి()) { \
+			bench_case_ప్రారంభం(__FILE__, __LINE__); \
+			చేయి {
+#నిర్వచించు BENCH_ముగింపు(unit) \
+			} అయితే (0); \
+			bench_case_ముగింపు(__FILE__, __LINE__); \
 		} \
-		bench_finish(__FILE__, __LINE__, unit); \
-	} while (0)
+		bench_ముగింపు(__FILE__, __LINE__, unit); \
+	} అయితే (0)
 
-void bench_start(const char *file, int line, const char *name);
-void bench_case_start(const char *file, int line);
-void bench_case_finish(const char *file, int line);
-void bench_finish(const char *file, int line, const char *unit);
-int bench_done(void);
+శూన్య bench_ప్రారంభం(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *name);
+శూన్య bench_case_ప్రారంభం(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి);
+శూన్య bench_case_ముగింపు(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి);
+శూన్య bench_ముగింపు(స్థిరరాశి అక్షరం *file, పూర్ణాంకం పంక్తి, స్థిరరాశి అక్షరం *unit);
+పూర్ణాంకం bench_పూర్తి(శూన్య);
 
 /* Fuzzing support */
 
-struct fuzz;
-#define FUZZ_1_BIT_FLIP		0x00000001	/* Flip one bit at a time */
-#define FUZZ_2_BIT_FLIP		0x00000002	/* Flip two bits at a time */
-#define FUZZ_1_BYTE_FLIP	0x00000004	/* Flip one byte at a time */
-#define FUZZ_2_BYTE_FLIP	0x00000008	/* Flip two bytes at a time */
-#define FUZZ_TRUNCATE_START	0x00000010	/* Truncate from beginning */
-#define FUZZ_TRUNCATE_END	0x00000020	/* Truncate from end */
-#define FUZZ_BASE64		0x00000040	/* Try all base64 chars */
-#define FUZZ_MAX		FUZZ_BASE64
+నిర్మాణం fuzz;
+#నిర్వచించు FUZZ_1_బిట్టు_FLIP		0x00000001	/* Flip one bit at a time */
+#నిర్వచించు FUZZ_2_బిట్టు_FLIP		0x00000002	/* Flip two bits at a time */
+#నిర్వచించు FUZZ_1_BYTE_FLIP	0x00000004	/* Flip one byte at a time */
+#నిర్వచించు FUZZ_2_BYTE_FLIP	0x00000008	/* Flip two bytes at a time */
+#నిర్వచించు FUZZ_TRUNCATE_ప్రారంభం	0x00000010	/* Truncate from beginning */
+#నిర్వచించు FUZZ_TRUNCATE_చివర	0x00000020	/* Truncate from end */
+#నిర్వచించు FUZZ_BASE64		0x00000040	/* Try all base64 chars */
+#నిర్వచించు FUZZ_MAX		FUZZ_BASE64
 
 /* Start fuzzing a blob of data with selected strategies (bitmask) */
-struct fuzz *fuzz_begin(u_int strategies, const void *p, size_t l);
+నిర్మాణం fuzz *fuzz_begin(u_int strategies, స్థిరరాశి శూన్య *p, కొలత_t l);
 
 /* Free a fuzz context */
-void fuzz_cleanup(struct fuzz *fuzz);
+శూన్య fuzz_cleanup(నిర్మాణం fuzz *fuzz);
 
 /* Prepare the next fuzz case in the series */
-void fuzz_next(struct fuzz *fuzz);
+శూన్య fuzz_తదుపరి(నిర్మాణం fuzz *fuzz);
 
 /*
  * Check whether this fuzz case is identical to the original
  * This is slow, but useful if the caller needs to ensure that all tests
  * generated change the input (e.g. when fuzzing signatures).
  */
-int fuzz_matches_original(struct fuzz *fuzz);
+పూర్ణాంకం fuzz_matches_original(నిర్మాణం fuzz *fuzz);
 
 /* Determine whether the current fuzz sequence is exhausted (nonzero = yes) */
-int fuzz_done(struct fuzz *fuzz);
+పూర్ణాంకం fuzz_పూర్తి(నిర్మాణం fuzz *fuzz);
 
 /* Return the length and a pointer to the current fuzzed case */
-size_t fuzz_len(struct fuzz *fuzz);
-u_char *fuzz_ptr(struct fuzz *fuzz);
+కొలత_t fuzz_len(నిర్మాణం fuzz *fuzz);
+u_char *fuzz_ptr(నిర్మాణం fuzz *fuzz);
 
 /* Dump the current fuzz case to stderr */
-void fuzz_dump(struct fuzz *fuzz);
+శూన్య fuzz_dump(నిర్మాణం fuzz *fuzz);
 
-#endif /* _TEST_HELPER_H */
+#అయితే_ముగింపు /* _TEST_HELPER_H */

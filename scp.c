@@ -71,166 +71,166 @@
  *
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/wait.h>
-#include <sys/uio.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <sys/time.h>
+#అన్తర్భావ <sys/wait.h>
+#అన్తర్భావ <sys/uio.h>
 
-#include <ctype.h>
-#include <dirent.h>
-#include <errno.h>
-#include <fcntl.h>
-#ifdef HAVE_FNMATCH_H
-#include <fnmatch.h>
-#endif
-#include <glob.h>
-#include <libgen.h>
-#include <locale.h>
-#include <poll.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <limits.h>
-#include <util.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
-#include <vis.h>
-#endif
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <dirent.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <fcntl.h>
+#నిర్వచితమైతే HAVE_FNMATCH_H
+#అన్తర్భావ <fnmatch.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <glob.h>
+#అన్తర్భావ <libgen.h>
+#అన్తర్భావ <locale.h>
+#అన్తర్భావ <poll.h>
+#అన్తర్భావ <pwd.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <util.h>
+#ఒకవేళ defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#అన్తర్భావ <vis.h>
+#అయితే_ముగింపు
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "atomicio.h"
-#include "pathnames.h"
-#include "log.h"
-#include "misc.h"
-#include "progressmeter.h"
-#include "utf8.h"
-#include "sftp.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "ssh.h"
+#అన్తర్భావ "atomicio.h"
+#అన్తర్భావ "pathnames.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "progressmeter.h"
+#అన్తర్భావ "utf8.h"
+#అన్తర్భావ "sftp.h"
 
-#include "sftp-common.h"
-#include "sftp-client.h"
+#అన్తర్భావ "sftp-common.h"
+#అన్తర్భావ "sftp-client.h"
 
-extern char *__progname;
+బాహ్య అక్షరం *__progname;
 
-#define COPY_BUFLEN	16384
+#నిర్వచించు COPY_BUFLEN	16384
 
-int do_cmd(char *, char *, char *, int, int, char *, int *, int *, pid_t *);
-int do_cmd2(char *, char *, int, char *, int, int);
+పూర్ణాంకం do_cmd(అక్షరం *, అక్షరం *, అక్షరం *, పూర్ణాంకం, పూర్ణాంకం, అక్షరం *, పూర్ణాంకం *, పూర్ణాంకం *, pid_t *);
+పూర్ణాంకం do_cmd2(అక్షరం *, అక్షరం *, పూర్ణాంకం, అక్షరం *, పూర్ణాంకం, పూర్ణాంకం);
 
 /* Struct for addargs */
-arglist args;
-arglist remote_remote_args;
+arglist వాదనలు;
+arglist remote_remote_వాదనలు;
 
 /* Bandwidth limit */
-long long limit_kbps = 0;
-struct bwlimit bwlimit;
+దీర్ఘ దీర్ఘ హద్దు_kbps = 0;
+నిర్మాణం bwlimit bwlimit;
 
 /* Name of current file being transferred. */
-char *curfile;
+అక్షరం *curfile;
 
 /* This is set to non-zero to enable verbose mode. */
-int verbose_mode = 0;
+పూర్ణాంకం verbose_బహుళకం = 0;
 LogLevel log_level = SYSLOG_LEVEL_INFO;
 
 /* This is set to zero if the progressmeter is not desired. */
-int showprogress = 1;
+పూర్ణాంకం showprogress = 1;
 
 /*
  * This is set to non-zero if remote-remote copy should be piped
  * through this process.
  */
-int throughlocal = 1;
+పూర్ణాంకం throughlocal = 1;
 
 /* Non-standard port to use for the ssh connection or -1. */
-int sshport = -1;
+పూర్ణాంకం sshport = -1;
 
 /* This is the program to execute for the secure connection. ("ssh" or -S) */
-char *ssh_program = _PATH_SSH_PROGRAM;
+అక్షరం *ssh_కార్యక్రమం = మార్గం_SSH_కార్యక్రమం;
 
 /* This is used to store the pid of ssh_program */
 pid_t do_cmd_pid = -1;
 pid_t do_cmd_pid2 = -1;
 
 /* SFTP copy parameters */
-size_t sftp_copy_buflen;
-size_t sftp_nrequests;
+కొలత_t sftp_copy_buflen;
+కొలత_t sftp_nrequests;
 
 /* Needed for sftp */
-volatile sig_atomic_t interrupted = 0;
+అస్థిర sig_atomic_t interrupted = 0;
 
-int sftp_glob(struct sftp_conn *, const char *, int,
-    int (*)(const char *, int), glob_t *); /* proto for sftp-glob.c */
+పూర్ణాంకం sftp_glob(నిర్మాణం sftp_conn *, స్థిరరాశి అక్షరం *, పూర్ణాంకం,
+    పూర్ణాంకం (*)(స్థిరరాశి అక్షరం *, పూర్ణాంకం), glob_t *); /* proto for sftp-glob.c */
 
-static void
-killchild(int signo)
+స్థిర శూన్య
+killchild(పూర్ణాంకం signo)
 {
-	if (do_cmd_pid > 1) {
+	ఒకవేళ (do_cmd_pid > 1) {
 		kill(do_cmd_pid, signo ? signo : SIGTERM);
-		(void)waitpid(do_cmd_pid, NULL, 0);
+		(శూన్య)waitpid(do_cmd_pid, ఖాళీ, 0);
 	}
-	if (do_cmd_pid2 > 1) {
+	ఒకవేళ (do_cmd_pid2 > 1) {
 		kill(do_cmd_pid2, signo ? signo : SIGTERM);
-		(void)waitpid(do_cmd_pid2, NULL, 0);
+		(శూన్య)waitpid(do_cmd_pid2, ఖాళీ, 0);
 	}
 
-	if (signo)
+	ఒకవేళ (signo)
 		_exit(1);
-	exit(1);
+	నిష్క్రమించు(1);
 }
 
-static void
-suspone(int pid, int signo)
+స్థిర శూన్య
+suspone(పూర్ణాంకం pid, పూర్ణాంకం signo)
 {
-	int status;
+	పూర్ణాంకం స్థితి_2;
 
-	if (pid > 1) {
+	ఒకవేళ (pid > 1) {
 		kill(pid, signo);
-		while (waitpid(pid, &status, WUNTRACED) == -1 &&
+		అయితే (waitpid(pid, &స్థితి_2, WUNTRACED) == -1 &&
 		    errno == EINTR)
 			;
 	}
 }
 
-static void
-suspchild(int signo)
+స్థిర శూన్య
+suspchild(పూర్ణాంకం signo)
 {
-	int save_errno = errno;
+	పూర్ణాంకం save_errno = errno;
 	suspone(do_cmd_pid, signo);
 	suspone(do_cmd_pid2, signo);
 	kill(getpid(), SIGSTOP);
 	errno = save_errno;
 }
 
-static int
+స్థిర పూర్ణాంకం
 do_local_cmd(arglist *a)
 {
-	char *cp;
-	int status;
+	అక్షరం *cp;
+	పూర్ణాంకం స్థితి_2;
 	pid_t pid;
 
-	if (a->num == 0)
+	ఒకవేళ (a->అంకె == 0)
 		fatal("do_local_cmd: no arguments");
 
-	if (verbose_mode) {
-		cp = argv_assemble(a->num, a->list);
+	ఒకవేళ (verbose_బహుళకం) {
+		cp = argv_assemble(a->అంకె, a->list);
 		fmprintf(stderr, "Executing: %s\n", cp);
-		free(cp);
+		విడుదల(cp);
 	}
-	if ((pid = fork()) == -1)
+	ఒకవేళ ((pid = fork()) == -1)
 		fatal("do_local_cmd: fork: %s", strerror(errno));
 
-	if (pid == 0) {
+	ఒకవేళ (pid == 0) {
 		execvp(a->list[0], a->list);
 		perror(a->list[0]);
-		exit(1);
+		నిష్క్రమించు(1);
 	}
 
 	do_cmd_pid = pid;
@@ -238,16 +238,16 @@ do_local_cmd(arglist *a)
 	ssh_signal(SIGINT, killchild);
 	ssh_signal(SIGHUP, killchild);
 
-	while (waitpid(pid, &status, 0) == -1)
-		if (errno != EINTR)
+	అయితే (waitpid(pid, &స్థితి_2, 0) == -1)
+		ఒకవేళ (errno != EINTR)
 			fatal("do_local_cmd: waitpid: %s", strerror(errno));
 
 	do_cmd_pid = -1;
 
-	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
-		return (-1);
+	ఒకవేళ (!WIFEXITED(స్థితి_2) || WEXITSTATUS(స్థితి_2) != 0)
+		తిరిగి (-1);
 
-	return (0);
+	తిరిగి (0);
 }
 
 /*
@@ -256,33 +256,33 @@ do_local_cmd(arglist *a)
  * assigns the input and output file descriptors on success.
  */
 
-int
-do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
-    char *cmd, int *fdin, int *fdout, pid_t *pid)
+పూర్ణాంకం
+do_cmd(అక్షరం *కార్యక్రమం, అక్షరం *host, అక్షరం *remuser, పూర్ణాంకం పోర్టు, పూర్ణాంకం subsystem,
+    అక్షరం *cmd, పూర్ణాంకం *fdin, పూర్ణాంకం *fdout, pid_t *pid)
 {
-#ifdef USE_PIPES
-	int pin[2], pout[2];
-#else
-	int sv[2];
-#endif
+#నిర్వచితమైతే USE_PIPES
+	పూర్ణాంకం pin[2], pout[2];
+#లేకపోతే
+	పూర్ణాంకం sv[2];
+#అయితే_ముగింపు
 
-	if (verbose_mode)
+	ఒకవేళ (verbose_బహుళకం)
 		fmprintf(stderr,
 		    "Executing: program %s host %s, user %s, command %s\n",
-		    program, host,
+		    కార్యక్రమం, host,
 		    remuser ? remuser : "(unspecified)", cmd);
 
-	if (port == -1)
-		port = sshport;
+	ఒకవేళ (పోర్టు == -1)
+		పోర్టు = sshport;
 
-#ifdef USE_PIPES
-	if (pipe(pin) == -1 || pipe(pout) == -1)
+#నిర్వచితమైతే USE_PIPES
+	ఒకవేళ (pipe(pin) == -1 || pipe(pout) == -1)
 		fatal("pipe: %s", strerror(errno));
-#else
+#లేకపోతే
 	/* Create a socket pair for communicating with ssh. */
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) == -1)
+	ఒకవేళ (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) == -1)
 		fatal("socketpair: %s", strerror(errno));
-#endif
+#అయితే_ముగింపు
 
 	ssh_signal(SIGTSTP, suspchild);
 	ssh_signal(SIGTTIN, suspchild);
@@ -290,13 +290,13 @@ do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
 
 	/* Fork a child to execute the command on the remote host using ssh. */
 	*pid = fork();
-	switch (*pid) {
-	case -1:
+	ఎంపిక (*pid) {
+	స్థితి -1:
 		fatal("fork: %s", strerror(errno));
-	case 0:
+	స్థితి 0:
 		/* Child. */
-#ifdef USE_PIPES
-		if (dup2(pin[0], STDIN_FILENO) == -1 ||
+#నిర్వచితమైతే USE_PIPES
+		ఒకవేళ (dup2(pin[0], STDIN_FILENO) == -1 ||
 		    dup2(pout[1], STDOUT_FILENO) == -1) {
 			error("dup2: %s", strerror(errno));
 			_exit(1);
@@ -305,49 +305,49 @@ do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
 		close(pin[1]);
 		close(pout[0]);
 		close(pout[1]);
-#else
-		if (dup2(sv[0], STDIN_FILENO) == -1 ||
+#లేకపోతే
+		ఒకవేళ (dup2(sv[0], STDIN_FILENO) == -1 ||
 		    dup2(sv[0], STDOUT_FILENO) == -1) {
 			error("dup2: %s", strerror(errno));
 			_exit(1);
 		}
 		close(sv[0]);
 		close(sv[1]);
-#endif
-		replacearg(&args, 0, "%s", program);
-		if (port != -1) {
-			addargs(&args, "-p");
-			addargs(&args, "%d", port);
+#అయితే_ముగింపు
+		replacearg(&వాదనలు, 0, "%s", కార్యక్రమం);
+		ఒకవేళ (పోర్టు != -1) {
+			addargs(&వాదనలు, "-p");
+			addargs(&వాదనలు, "%d", పోర్టు);
 		}
-		if (remuser != NULL) {
-			addargs(&args, "-l");
-			addargs(&args, "%s", remuser);
+		ఒకవేళ (remuser != ఖాళీ) {
+			addargs(&వాదనలు, "-l");
+			addargs(&వాదనలు, "%s", remuser);
 		}
-		if (subsystem)
-			addargs(&args, "-s");
-		addargs(&args, "--");
-		addargs(&args, "%s", host);
-		addargs(&args, "%s", cmd);
+		ఒకవేళ (subsystem)
+			addargs(&వాదనలు, "-s");
+		addargs(&వాదనలు, "--");
+		addargs(&వాదనలు, "%s", host);
+		addargs(&వాదనలు, "%s", cmd);
 
-		execvp(program, args.list);
-		perror(program);
+		execvp(కార్యక్రమం, వాదనలు.list);
+		perror(కార్యక్రమం);
 		_exit(1);
-	default:
+	అప్రమేయ:
 		/* Parent.  Close the other side, and return the local side. */
-#ifdef USE_PIPES
+#నిర్వచితమైతే USE_PIPES
 		close(pin[0]);
 		close(pout[1]);
 		*fdout = pin[1];
 		*fdin = pout[0];
-#else
+#లేకపోతే
 		close(sv[0]);
 		*fdin = sv[1];
 		*fdout = sv[1];
-#endif
+#అయితే_ముగింపు
 		ssh_signal(SIGTERM, killchild);
 		ssh_signal(SIGINT, killchild);
 		ssh_signal(SIGHUP, killchild);
-		return 0;
+		తిరిగి 0;
 	}
 }
 
@@ -356,108 +356,108 @@ do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
  * input and output descriptors to be setup by a previous call to do_cmd().
  * This way the input and output of two commands can be connected.
  */
-int
-do_cmd2(char *host, char *remuser, int port, char *cmd,
-    int fdin, int fdout)
+పూర్ణాంకం
+do_cmd2(అక్షరం *host, అక్షరం *remuser, పూర్ణాంకం పోర్టు, అక్షరం *cmd,
+    పూర్ణాంకం fdin, పూర్ణాంకం fdout)
 {
-	int status;
+	పూర్ణాంకం స్థితి_2;
 	pid_t pid;
 
-	if (verbose_mode)
+	ఒకవేళ (verbose_బహుళకం)
 		fmprintf(stderr,
 		    "Executing: 2nd program %s host %s, user %s, command %s\n",
-		    ssh_program, host,
+		    ssh_కార్యక్రమం, host,
 		    remuser ? remuser : "(unspecified)", cmd);
 
-	if (port == -1)
-		port = sshport;
+	ఒకవేళ (పోర్టు == -1)
+		పోర్టు = sshport;
 
 	/* Fork a child to execute the command on the remote host using ssh. */
 	pid = fork();
-	if (pid == 0) {
-		if (dup2(fdin, 0) == -1)
+	ఒకవేళ (pid == 0) {
+		ఒకవేళ (dup2(fdin, 0) == -1)
 			perror("dup2");
-		if (dup2(fdout, 1) == -1)
+		ఒకవేళ (dup2(fdout, 1) == -1)
 			perror("dup2");
 
-		replacearg(&args, 0, "%s", ssh_program);
-		if (port != -1) {
-			addargs(&args, "-p");
-			addargs(&args, "%d", port);
+		replacearg(&వాదనలు, 0, "%s", ssh_కార్యక్రమం);
+		ఒకవేళ (పోర్టు != -1) {
+			addargs(&వాదనలు, "-p");
+			addargs(&వాదనలు, "%d", పోర్టు);
 		}
-		if (remuser != NULL) {
-			addargs(&args, "-l");
-			addargs(&args, "%s", remuser);
+		ఒకవేళ (remuser != ఖాళీ) {
+			addargs(&వాదనలు, "-l");
+			addargs(&వాదనలు, "%s", remuser);
 		}
-		addargs(&args, "-oBatchMode=yes");
-		addargs(&args, "--");
-		addargs(&args, "%s", host);
-		addargs(&args, "%s", cmd);
+		addargs(&వాదనలు, "-oBatchMode=yes");
+		addargs(&వాదనలు, "--");
+		addargs(&వాదనలు, "%s", host);
+		addargs(&వాదనలు, "%s", cmd);
 
-		execvp(ssh_program, args.list);
-		perror(ssh_program);
-		exit(1);
-	} else if (pid == -1) {
+		execvp(ssh_కార్యక్రమం, వాదనలు.list);
+		perror(ssh_కార్యక్రమం);
+		నిష్క్రమించు(1);
+	} లేకపోతే ఒకవేళ (pid == -1) {
 		fatal("fork: %s", strerror(errno));
 	}
-	while (waitpid(pid, &status, 0) == -1)
-		if (errno != EINTR)
+	అయితే (waitpid(pid, &స్థితి_2, 0) == -1)
+		ఒకవేళ (errno != EINTR)
 			fatal("do_cmd2: waitpid: %s", strerror(errno));
-	return 0;
+	తిరిగి 0;
 }
 
-typedef struct {
-	size_t cnt;
-	char *buf;
+రకనిర్వచనం నిర్మాణం {
+	కొలత_t cnt;
+	అక్షరం *buf;
 } BUF;
 
-BUF *allocbuf(BUF *, int, int);
-void lostconn(int);
-int okname(char *);
-void run_err(const char *,...)
-    __attribute__((__format__ (printf, 1, 2)))
+BUF *allocbuf(BUF *, పూర్ణాంకం, పూర్ణాంకం);
+శూన్య lostconn(పూర్ణాంకం);
+పూర్ణాంకం okname(అక్షరం *);
+శూన్య నిరంతరం_err(స్థిరరాశి అక్షరం *,...)
+    __attribute__((__format__ (రాయి, 1, 2)))
     __attribute__((__nonnull__ (1)));
-int note_err(const char *,...)
-    __attribute__((__format__ (printf, 1, 2)));
-void verifydir(char *);
+పూర్ణాంకం note_err(స్థిరరాశి అక్షరం *,...)
+    __attribute__((__format__ (రాయి, 1, 2)));
+శూన్య verifydir(అక్షరం *);
 
-struct passwd *pwd;
+నిర్మాణం passwd *pwd;
 uid_t userid;
-int errs, remin, remout, remin2, remout2;
-int Tflag, pflag, iamremote, iamrecursive, targetshouldbedirectory;
+పూర్ణాంకం errs, remin, remout, remin2, remout2;
+పూర్ణాంకం Tflag, pflag, iamremote, iamrecursive, targetshouldbedirectory;
 
-#define	CMDNEEDS	64
-char cmd[CMDNEEDS];		/* must hold "rcp -r -p -d\0" */
+#నిర్వచించు	CMDNEEDS	64
+అక్షరం cmd[CMDNEEDS];		/* must hold "rcp -r -p -d\0" */
 
-enum scp_mode_e {
-	MODE_SCP,
-	MODE_SFTP
+గణన scp_బహుళకం_e {
+	బహుళకం_SCP,
+	బహుళకం_SFTP
 };
 
-int response(void);
-void rsource(char *, struct stat *);
-void sink(int, char *[], const char *);
-void source(int, char *[]);
-void tolocal(int, char *[], enum scp_mode_e, char *sftp_direct);
-void toremote(int, char *[], enum scp_mode_e, char *sftp_direct);
-void usage(void);
+పూర్ణాంకం response(శూన్య);
+శూన్య rsource(అక్షరం *, నిర్మాణం stat *);
+శూన్య sink(పూర్ణాంకం, అక్షరం *[], స్థిరరాశి అక్షరం *);
+శూన్య ఆధారం(పూర్ణాంకం, అక్షరం *[]);
+శూన్య tolocal(పూర్ణాంకం, అక్షరం *[], గణన scp_బహుళకం_e, అక్షరం *sftp_ప్రత్యక్ష);
+శూన్య toremote(పూర్ణాంకం, అక్షరం *[], గణన scp_బహుళకం_e, అక్షరం *sftp_ప్రత్యక్ష);
+శూన్య usage(శూన్య);
 
-void source_sftp(int, char *, char *, struct sftp_conn *);
-void sink_sftp(int, char *, const char *, struct sftp_conn *);
-void throughlocal_sftp(struct sftp_conn *, struct sftp_conn *,
-    char *, char *);
+శూన్య ఆధారం_sftp(పూర్ణాంకం, అక్షరం *, అక్షరం *, నిర్మాణం sftp_conn *);
+శూన్య sink_sftp(పూర్ణాంకం, అక్షరం *, స్థిరరాశి అక్షరం *, నిర్మాణం sftp_conn *);
+శూన్య throughlocal_sftp(నిర్మాణం sftp_conn *, నిర్మాణం sftp_conn *,
+    అక్షరం *, అక్షరం *);
 
-int
-main(int argc, char **argv)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	int ch, fflag, tflag, status, r, n;
-	char **newargv, *argv0;
-	const char *errstr;
-	extern char *optarg;
-	extern int optind;
-	enum scp_mode_e mode = MODE_SFTP;
-	char *sftp_direct = NULL;
-	long long llv;
+	పూర్ణాంకం ch, fflag, tflag, స్థితి_2, r, n;
+	అక్షరం **newargv, *argv0;
+	స్థిరరాశి అక్షరం *errstr;
+	బాహ్య అక్షరం *optarg;
+	బాహ్య పూర్ణాంకం optind;
+	గణన scp_బహుళకం_e బహుళకం = బహుళకం_SFTP;
+	అక్షరం *sftp_ప్రత్యక్ష = ఖాళీ;
+	దీర్ఘ దీర్ఘ llv;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
@@ -466,8 +466,8 @@ main(int argc, char **argv)
 
 	/* Copy argv, because we modify it */
 	argv0 = argv[0];
-	newargv = xcalloc(MAXIMUM(argc + 1, 1), sizeof(*newargv));
-	for (n = 0; n < argc; n++)
+	newargv = xcalloc(గరిష్ఠ(argc + 1, 1), పరిమాణం(*newargv));
+	కొరకు (n = 0; n < argc; n++)
 		newargv[n] = xstrdup(argv[n]);
 	argv = newargv;
 
@@ -475,147 +475,147 @@ main(int argc, char **argv)
 
 	log_init(argv0, log_level, SYSLOG_FACILITY_USER, 2);
 
-	memset(&args, '\0', sizeof(args));
-	memset(&remote_remote_args, '\0', sizeof(remote_remote_args));
-	args.list = remote_remote_args.list = NULL;
-	addargs(&args, "%s", ssh_program);
-	addargs(&args, "-x");
-	addargs(&args, "-oPermitLocalCommand=no");
-	addargs(&args, "-oClearAllForwardings=yes");
-	addargs(&args, "-oRemoteCommand=none");
-	addargs(&args, "-oRequestTTY=no");
-	addargs(&args, "-oControlMaster=no");
+	memset(&వాదనలు, '\0', పరిమాణం(వాదనలు));
+	memset(&remote_remote_వాదనలు, '\0', పరిమాణం(remote_remote_వాదనలు));
+	వాదనలు.list = remote_remote_వాదనలు.list = ఖాళీ;
+	addargs(&వాదనలు, "%s", ssh_కార్యక్రమం);
+	addargs(&వాదనలు, "-x");
+	addargs(&వాదనలు, "-oPermitLocalCommand=no");
+	addargs(&వాదనలు, "-oClearAllForwardings=yes");
+	addargs(&వాదనలు, "-oRemoteCommand=none");
+	addargs(&వాదనలు, "-oRequestTTY=no");
+	addargs(&వాదనలు, "-oControlMaster=no");
 
 	fflag = Tflag = tflag = 0;
-	while ((ch = getopt(argc, argv,
+	అయితే ((ch = getopt(argc, argv,
 	    "12346ABCTdfOpqRrstvD:F:J:M:P:S:c:i:l:o:X:")) != -1) {
-		switch (ch) {
+		ఎంపిక (ch) {
 		/* User-visible flags. */
-		case '1':
+		స్థితి '1':
 			fatal("SSH protocol v.1 is no longer supported");
-			break;
-		case '2':
+			ఆపు;
+		స్థితి '2':
 			/* Ignored */
-			break;
-		case 'A':
-		case '4':
-		case '6':
-		case 'C':
-			addargs(&args, "-%c", ch);
-			addargs(&remote_remote_args, "-%c", ch);
-			break;
-		case 'D':
-			sftp_direct = optarg;
-			break;
-		case '3':
+			ఆపు;
+		స్థితి 'A':
+		స్థితి '4':
+		స్థితి '6':
+		స్థితి 'C':
+			addargs(&వాదనలు, "-%c", ch);
+			addargs(&remote_remote_వాదనలు, "-%c", ch);
+			ఆపు;
+		స్థితి 'D':
+			sftp_ప్రత్యక్ష = optarg;
+			ఆపు;
+		స్థితి '3':
 			throughlocal = 1;
-			break;
-		case 'R':
+			ఆపు;
+		స్థితి 'R':
 			fprintf(stderr, "warning: remote/remote -R copy mode "
 			    "is deprecated and will soon be removed\n");
 			throughlocal = 0;
-			break;
-		case 'o':
-		case 'c':
-		case 'i':
-		case 'F':
-		case 'J':
-			addargs(&remote_remote_args, "-%c", ch);
-			addargs(&remote_remote_args, "%s", optarg);
-			addargs(&args, "-%c", ch);
-			addargs(&args, "%s", optarg);
-			break;
-		case 'O':
-			mode = MODE_SCP;
-			break;
-		case 's':
+			ఆపు;
+		స్థితి 'o':
+		స్థితి 'c':
+		స్థితి 'i':
+		స్థితి 'F':
+		స్థితి 'J':
+			addargs(&remote_remote_వాదనలు, "-%c", ch);
+			addargs(&remote_remote_వాదనలు, "%s", optarg);
+			addargs(&వాదనలు, "-%c", ch);
+			addargs(&వాదనలు, "%s", optarg);
+			ఆపు;
+		స్థితి 'O':
+			బహుళకం = బహుళకం_SCP;
+			ఆపు;
+		స్థితి 's':
 			/* Ignored */
-			break;
-		case 'P':
+			ఆపు;
+		స్థితి 'P':
 			sshport = a2port(optarg);
-			if (sshport <= 0)
+			ఒకవేళ (sshport <= 0)
 				fatal("bad port \"%s\"\n", optarg);
-			break;
-		case 'B':
-			addargs(&remote_remote_args, "-oBatchmode=yes");
-			addargs(&args, "-oBatchmode=yes");
-			break;
-		case 'l':
-			limit_kbps = strtonum(optarg, 1, 100 * 1024 * 1024,
+			ఆపు;
+		స్థితి 'B':
+			addargs(&remote_remote_వాదనలు, "-oBatchmode=yes");
+			addargs(&వాదనలు, "-oBatchmode=yes");
+			ఆపు;
+		స్థితి 'l':
+			హద్దు_kbps = strtonum(optarg, 1, 100 * 1024 * 1024,
 			    &errstr);
-			if (errstr != NULL)
+			ఒకవేళ (errstr != ఖాళీ)
 				usage();
-			limit_kbps *= 1024; /* kbps */
-			bandwidth_limit_init(&bwlimit, limit_kbps, COPY_BUFLEN);
-			break;
-		case 'p':
+			హద్దు_kbps *= 1024; /* kbps */
+			bandwidth_హద్దు_init(&bwlimit, హద్దు_kbps, COPY_BUFLEN);
+			ఆపు;
+		స్థితి 'p':
 			pflag = 1;
-			break;
-		case 'r':
+			ఆపు;
+		స్థితి 'r':
 			iamrecursive = 1;
-			break;
-		case 'S':
-			ssh_program = xstrdup(optarg);
-			break;
-		case 'v':
-			addargs(&args, "-v");
-			addargs(&remote_remote_args, "-v");
-			if (verbose_mode == 0)
+			ఆపు;
+		స్థితి 'S':
+			ssh_కార్యక్రమం = xstrdup(optarg);
+			ఆపు;
+		స్థితి 'v':
+			addargs(&వాదనలు, "-v");
+			addargs(&remote_remote_వాదనలు, "-v");
+			ఒకవేళ (verbose_బహుళకం == 0)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			లేకపోతే ఒకవేళ (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			verbose_mode = 1;
-			break;
-		case 'q':
-			addargs(&args, "-q");
-			addargs(&remote_remote_args, "-q");
+			verbose_బహుళకం = 1;
+			ఆపు;
+		స్థితి 'q':
+			addargs(&వాదనలు, "-q");
+			addargs(&remote_remote_వాదనలు, "-q");
 			showprogress = 0;
-			break;
-		case 'X':
+			ఆపు;
+		స్థితి 'X':
 			/* Please keep in sync with sftp.c -X */
-			if (strncmp(optarg, "buffer=", 7) == 0) {
-				r = scan_scaled(optarg + 7, &llv);
-				if (r == 0 && (llv <= 0 || llv > 256 * 1024)) {
+			ఒకవేళ (అక్షరశ్రేణి_పోలిక(optarg, "buffer=", 7) == 0) {
+				r = పరిశీలన_scaled(optarg + 7, &llv);
+				ఒకవేళ (r == 0 && (llv <= 0 || llv > 256 * 1024)) {
 					r = -1;
 					errno = EINVAL;
 				}
-				if (r == -1) {
+				ఒకవేళ (r == -1) {
 					fatal("Invalid buffer size \"%s\": %s",
 					     optarg + 7, strerror(errno));
 				}
-				sftp_copy_buflen = (size_t)llv;
-			} else if (strncmp(optarg, "nrequests=", 10) == 0) {
+				sftp_copy_buflen = (కొలత_t)llv;
+			} లేకపోతే ఒకవేళ (అక్షరశ్రేణి_పోలిక(optarg, "nrequests=", 10) == 0) {
 				llv = strtonum(optarg + 10, 1, 256 * 1024,
 				    &errstr);
-				if (errstr != NULL) {
+				ఒకవేళ (errstr != ఖాళీ) {
 					fatal("Invalid number of requests "
 					    "\"%s\": %s", optarg + 10, errstr);
 				}
-				sftp_nrequests = (size_t)llv;
-			} else {
+				sftp_nrequests = (కొలత_t)llv;
+			} లేకపోతే {
 				fatal("Invalid -X option");
 			}
-			break;
+			ఆపు;
 
 		/* Server options. */
-		case 'd':
+		స్థితి 'd':
 			targetshouldbedirectory = 1;
-			break;
-		case 'f':	/* "from" */
+			ఆపు;
+		స్థితి 'f':	/* "from" */
 			iamremote = 1;
 			fflag = 1;
-			break;
-		case 't':	/* "to" */
+			ఆపు;
+		స్థితి 't':	/* "to" */
 			iamremote = 1;
 			tflag = 1;
-#ifdef HAVE_CYGWIN
-			setmode(0, O_BINARY);
-#endif
-			break;
-		case 'T':
+#నిర్వచితమైతే HAVE_CYGWIN
+			setmode(0, O_ద్విమాన);
+#అయితే_ముగింపు
+			ఆపు;
+		స్థితి 'T':
 			Tflag = 1;
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			usage();
 		}
 	}
@@ -625,236 +625,236 @@ main(int argc, char **argv)
 	log_init(argv0, log_level, SYSLOG_FACILITY_USER, 2);
 
 	/* Do this last because we want the user to be able to override it */
-	addargs(&args, "-oForwardAgent=no");
+	addargs(&వాదనలు, "-oForwardAgent=no");
 
-	if (iamremote)
-		mode = MODE_SCP;
+	ఒకవేళ (iamremote)
+		బహుళకం = బహుళకం_SCP;
 
-	if ((pwd = getpwuid(userid = getuid())) == NULL)
+	ఒకవేళ ((pwd = getpwuid(userid = getuid())) == ఖాళీ)
 		fatal("unknown user %u", (u_int) userid);
 
-	if (!isatty(STDOUT_FILENO))
+	ఒకవేళ (!isatty(STDOUT_FILENO))
 		showprogress = 0;
 
-	if (pflag) {
+	ఒకవేళ (pflag) {
 		/* Cannot pledge: -p allows setuid/setgid files... */
-	} else {
-		if (pledge("stdio rpath wpath cpath fattr tty proc exec",
-		    NULL) == -1) {
+	} లేకపోతే {
+		ఒకవేళ (pledge("stdio rpath wpath cpath fattr tty proc exec",
+		    ఖాళీ) == -1) {
 			perror("pledge");
-			exit(1);
+			నిష్క్రమించు(1);
 		}
 	}
 
 	remin = STDIN_FILENO;
 	remout = STDOUT_FILENO;
 
-	if (fflag) {
+	ఒకవేళ (fflag) {
 		/* Follow "protocol", send data. */
-		(void) response();
-		source(argc, argv);
-		exit(errs != 0);
+		(శూన్య) response();
+		ఆధారం(argc, argv);
+		నిష్క్రమించు(errs != 0);
 	}
-	if (tflag) {
+	ఒకవేళ (tflag) {
 		/* Receive data. */
-		sink(argc, argv, NULL);
-		exit(errs != 0);
+		sink(argc, argv, ఖాళీ);
+		నిష్క్రమించు(errs != 0);
 	}
-	if (argc < 2)
+	ఒకవేళ (argc < 2)
 		usage();
-	if (argc > 2)
+	ఒకవేళ (argc > 2)
 		targetshouldbedirectory = 1;
 
 	remin = remout = -1;
 	do_cmd_pid = -1;
 	/* Command to be executed on remote system using "ssh". */
-	(void) snprintf(cmd, sizeof cmd, "scp%s%s%s%s",
-	    verbose_mode ? " -v" : "",
+	(శూన్య) snprintf(cmd, పరిమాణం cmd, "scp%s%s%s%s",
+	    verbose_బహుళకం ? " -v" : "",
 	    iamrecursive ? " -r" : "", pflag ? " -p" : "",
 	    targetshouldbedirectory ? " -d" : "");
 
-	(void) ssh_signal(SIGPIPE, lostconn);
+	(శూన్య) ssh_signal(SIGPIPE, lostconn);
 
-	if (colon(argv[argc - 1]))	/* Dest is remote host. */
-		toremote(argc, argv, mode, sftp_direct);
-	else {
-		if (targetshouldbedirectory)
+	ఒకవేళ (colon(argv[argc - 1]))	/* Dest is remote host. */
+		toremote(argc, argv, బహుళకం, sftp_ప్రత్యక్ష);
+	లేకపోతే {
+		ఒకవేళ (targetshouldbedirectory)
 			verifydir(argv[argc - 1]);
-		tolocal(argc, argv, mode, sftp_direct);	/* Dest is local host. */
+		tolocal(argc, argv, బహుళకం, sftp_ప్రత్యక్ష);	/* Dest is local host. */
 	}
 	/*
 	 * Finally check the exit status of the ssh process, if one was forked
 	 * and no error has occurred yet
 	 */
-	if (do_cmd_pid != -1 && (mode == MODE_SFTP || errs == 0)) {
-		if (remin != -1)
-		    (void) close(remin);
-		if (remout != -1)
-		    (void) close(remout);
-		if (waitpid(do_cmd_pid, &status, 0) == -1)
+	ఒకవేళ (do_cmd_pid != -1 && (బహుళకం == బహుళకం_SFTP || errs == 0)) {
+		ఒకవేళ (remin != -1)
+		    (శూన్య) close(remin);
+		ఒకవేళ (remout != -1)
+		    (శూన్య) close(remout);
+		ఒకవేళ (waitpid(do_cmd_pid, &స్థితి_2, 0) == -1)
 			errs = 1;
-		else {
-			if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+		లేకపోతే {
+			ఒకవేళ (!WIFEXITED(స్థితి_2) || WEXITSTATUS(స్థితి_2) != 0)
 				errs = 1;
 		}
 	}
-	exit(errs != 0);
+	నిష్క్రమించు(errs != 0);
 }
 
 /* Callback from atomicio6 to update progress meter and limit bandwidth */
-static int
-scpio(void *_cnt, size_t s)
+స్థిర పూర్ణాంకం
+scpio(శూన్య *_cnt, కొలత_t s)
 {
 	off_t *cnt = (off_t *)_cnt;
 
 	*cnt += s;
-	refresh_progress_meter(0);
-	if (limit_kbps > 0)
-		bandwidth_limit(&bwlimit, s);
-	return 0;
+	refresh_పురోగతి_meter(0);
+	ఒకవేళ (హద్దు_kbps > 0)
+		bandwidth_హద్దు(&bwlimit, s);
+	తిరిగి 0;
 }
 
-static int
-do_times(int fd, int verb, const struct stat *sb)
+స్థిర పూర్ణాంకం
+do_times(పూర్ణాంకం fd, పూర్ణాంకం verb, స్థిరరాశి నిర్మాణం stat *sb)
 {
 	/* strlen(2^64) == 20; strlen(10^6) == 7 */
-	char buf[(20 + 7 + 2) * 2 + 2];
+	అక్షరం buf[(20 + 7 + 2) * 2 + 2];
 
-	(void)snprintf(buf, sizeof(buf), "T%llu 0 %llu 0\n",
-	    (unsigned long long) (sb->st_mtime < 0 ? 0 : sb->st_mtime),
-	    (unsigned long long) (sb->st_atime < 0 ? 0 : sb->st_atime));
-	if (verb) {
+	(శూన్య)snprintf(buf, పరిమాణం(buf), "T%llu 0 %llu 0\n",
+	    (గుర్తులేని దీర్ఘ దీర్ఘ) (sb->st_mtime < 0 ? 0 : sb->st_mtime),
+	    (గుర్తులేని దీర్ఘ దీర్ఘ) (sb->st_atime < 0 ? 0 : sb->st_atime));
+	ఒకవేళ (verb) {
 		fprintf(stderr, "File mtime %lld atime %lld\n",
-		    (long long)sb->st_mtime, (long long)sb->st_atime);
+		    (దీర్ఘ దీర్ఘ)sb->st_mtime, (దీర్ఘ దీర్ఘ)sb->st_atime);
 		fprintf(stderr, "Sending file timestamps: %s", buf);
 	}
-	(void) atomicio(vwrite, fd, buf, strlen(buf));
-	return (response());
+	(శూన్య) atomicio(vwrite, fd, buf, అక్షరశ్రేణి_పొడవు(buf));
+	తిరిగి (response());
 }
 
-static int
-parse_scp_uri(const char *uri, char **userp, char **hostp, int *portp,
-    char **pathp)
+స్థిర పూర్ణాంకం
+parse_scp_uri(స్థిరరాశి అక్షరం *uri, అక్షరం **userp, అక్షరం **hostp, పూర్ణాంకం *portp,
+    అక్షరం **pathp)
 {
-	int r;
+	పూర్ణాంకం r;
 
 	r = parse_uri("scp", uri, userp, hostp, portp, pathp);
-	if (r == 0 && *pathp == NULL)
+	ఒకవేళ (r == 0 && *pathp == ఖాళీ)
 		*pathp = xstrdup(".");
-	return r;
+	తిరిగి r;
 }
 
 /* Appends a string to an array; returns 0 on success, -1 on alloc failure */
-static int
-append(char *cp, char ***ap, size_t *np)
+స్థిర పూర్ణాంకం
+append(అక్షరం *cp, అక్షరం ***ap, కొలత_t *np)
 {
-	char **tmp;
+	అక్షరం **tmp;
 
-	if ((tmp = reallocarray(*ap, *np + 1, sizeof(*tmp))) == NULL)
-		return -1;
+	ఒకవేళ ((tmp = reallocarray(*ap, *np + 1, పరిమాణం(*tmp))) == ఖాళీ)
+		తిరిగి -1;
 	tmp[(*np)] = cp;
 	(*np)++;
 	*ap = tmp;
-	return 0;
+	తిరిగి 0;
 }
 
 /*
  * Finds the start and end of the first brace pair in the pattern.
  * returns 0 on success or -1 for invalid patterns.
  */
-static int
-find_brace(const char *pattern, int *startp, int *endp)
+స్థిర పూర్ణాంకం
+కనుగొను_brace(స్థిరరాశి అక్షరం *నమూనా, పూర్ణాంకం *startp, పూర్ణాంకం *endp)
 {
-	int i;
-	int in_bracket, brace_level;
+	పూర్ణాంకం i;
+	పూర్ణాంకం లోపల_bracket, brace_level;
 
 	*startp = *endp = -1;
-	in_bracket = brace_level = 0;
-	for (i = 0; i < INT_MAX && *endp < 0 && pattern[i] != '\0'; i++) {
-		switch (pattern[i]) {
-		case '\\':
+	లోపల_bracket = brace_level = 0;
+	కొరకు (i = 0; i < గరిష్ఠ_పూర్ణాంకం && *endp < 0 && నమూనా[i] != '\0'; i++) {
+		ఎంపిక (నమూనా[i]) {
+		స్థితి '\\':
 			/* skip next character */
-			if (pattern[i + 1] != '\0')
+			ఒకవేళ (నమూనా[i + 1] != '\0')
 				i++;
-			break;
-		case '[':
-			in_bracket = 1;
-			break;
-		case ']':
-			in_bracket = 0;
-			break;
-		case '{':
-			if (in_bracket)
-				break;
-			if (pattern[i + 1] == '}') {
+			ఆపు;
+		స్థితి '[':
+			లోపల_bracket = 1;
+			ఆపు;
+		స్థితి ']':
+			లోపల_bracket = 0;
+			ఆపు;
+		స్థితి '{':
+			ఒకవేళ (లోపల_bracket)
+				ఆపు;
+			ఒకవేళ (నమూనా[i + 1] == '}') {
 				/* Protect a single {}, for find(1), like csh */
 				i++; /* skip */
-				break;
+				ఆపు;
 			}
-			if (*startp == -1)
+			ఒకవేళ (*startp == -1)
 				*startp = i;
 			brace_level++;
-			break;
-		case '}':
-			if (in_bracket)
-				break;
-			if (*startp < 0) {
+			ఆపు;
+		స్థితి '}':
+			ఒకవేళ (లోపల_bracket)
+				ఆపు;
+			ఒకవేళ (*startp < 0) {
 				/* Unbalanced brace */
-				return -1;
+				తిరిగి -1;
 			}
-			if (--brace_level <= 0)
+			ఒకవేళ (--brace_level <= 0)
 				*endp = i;
-			break;
+			ఆపు;
 		}
 	}
 	/* unbalanced brackets/braces */
-	if (*endp < 0 && (*startp >= 0 || in_bracket))
-		return -1;
-	return 0;
+	ఒకవేళ (*endp < 0 && (*startp >= 0 || లోపల_bracket))
+		తిరిగి -1;
+	తిరిగి 0;
 }
 
 /*
  * Assembles and records a successfully-expanded pattern, returns -1 on
  * alloc failure.
  */
-static int
-emit_expansion(const char *pattern, int brace_start, int brace_end,
-    int sel_start, int sel_end, char ***patternsp, size_t *npatternsp)
+స్థిర పూర్ణాంకం
+emit_expansion(స్థిరరాశి అక్షరం *నమూనా, పూర్ణాంకం brace_ప్రారంభం, పూర్ణాంకం brace_చివర,
+    పూర్ణాంకం sel_ప్రారంభం, పూర్ణాంకం sel_చివర, అక్షరం ***patternsp, కొలత_t *npatternsp)
 {
-	char *cp;
-	size_t pattern_len;
-	int o = 0, tail_len;
+	అక్షరం *cp;
+	కొలత_t నమూనా_len;
+	పూర్ణాంకం o = 0, తోక_len;
 
-	if ((pattern_len = strlen(pattern)) == 0 || pattern_len >= INT_MAX)
-		return -1;
+	ఒకవేళ ((నమూనా_len = అక్షరశ్రేణి_పొడవు(నమూనా)) == 0 || నమూనా_len >= గరిష్ఠ_పూర్ణాంకం)
+		తిరిగి -1;
 
-	tail_len = strlen(pattern + brace_end + 1);
-	if ((cp = malloc(brace_start + (sel_end - sel_start) +
-	    tail_len + 1)) == NULL)
-		return -1;
+	తోక_len = అక్షరశ్రేణి_పొడవు(నమూనా + brace_చివర + 1);
+	ఒకవేళ ((cp = జ్ఞాపకం_ఇవ్వు(brace_ప్రారంభం + (sel_చివర - sel_ప్రారంభం) +
+	    తోక_len + 1)) == ఖాళీ)
+		తిరిగి -1;
 
 	/* Pattern before initial brace */
-	if (brace_start > 0) {
-		memcpy(cp, pattern, brace_start);
-		o = brace_start;
+	ఒకవేళ (brace_ప్రారంభం > 0) {
+		జ్ఞాపకం_నకలు(cp, నమూనా, brace_ప్రారంభం);
+		o = brace_ప్రారంభం;
 	}
 	/* Current braced selection */
-	if (sel_end - sel_start > 0) {
-		memcpy(cp + o, pattern + sel_start,
-		    sel_end - sel_start);
-		o += sel_end - sel_start;
+	ఒకవేళ (sel_చివర - sel_ప్రారంభం > 0) {
+		జ్ఞాపకం_నకలు(cp + o, నమూనా + sel_ప్రారంభం,
+		    sel_చివర - sel_ప్రారంభం);
+		o += sel_చివర - sel_ప్రారంభం;
 	}
 	/* Remainder of pattern after closing brace */
-	if (tail_len > 0) {
-		memcpy(cp + o, pattern + brace_end + 1, tail_len);
-		o += tail_len;
+	ఒకవేళ (తోక_len > 0) {
+		జ్ఞాపకం_నకలు(cp + o, నమూనా + brace_చివర + 1, తోక_len);
+		o += తోక_len;
 	}
 	cp[o] = '\0';
-	if (append(cp, patternsp, npatternsp) != 0) {
-		free(cp);
-		return -1;
+	ఒకవేళ (append(cp, patternsp, npatternsp) != 0) {
+		విడుదల(cp);
+		తిరిగి -1;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 /*
@@ -866,219 +866,219 @@ emit_expansion(const char *pattern, int brace_start, int brace_end,
  * Signals whether expansion was performed via *expanded and whether
  * pattern was invalid via *invalid.
  */
-static int
-brace_expand_one(const char *pattern, char ***patternsp, size_t *npatternsp,
-    int *expanded, int *invalid)
+స్థిర పూర్ణాంకం
+brace_expand_one(స్థిరరాశి అక్షరం *నమూనా, అక్షరం ***patternsp, కొలత_t *npatternsp,
+    పూర్ణాంకం *expanded, పూర్ణాంకం *invalid)
 {
-	int i;
-	int in_bracket, brace_start, brace_end, brace_level;
-	int sel_start, sel_end;
+	పూర్ణాంకం i;
+	పూర్ణాంకం లోపల_bracket, brace_ప్రారంభం, brace_చివర, brace_level;
+	పూర్ణాంకం sel_ప్రారంభం, sel_చివర;
 
 	*invalid = *expanded = 0;
 
-	if (find_brace(pattern, &brace_start, &brace_end) != 0) {
+	ఒకవేళ (కనుగొను_brace(నమూనా, &brace_ప్రారంభం, &brace_చివర) != 0) {
 		*invalid = 1;
-		return 0;
-	} else if (brace_start == -1)
-		return 0;
+		తిరిగి 0;
+	} లేకపోతే ఒకవేళ (brace_ప్రారంభం == -1)
+		తిరిగి 0;
 
-	in_bracket = brace_level = 0;
-	for (i = sel_start = brace_start + 1; i < brace_end; i++) {
-		switch (pattern[i]) {
-		case '{':
-			if (in_bracket)
-				break;
+	లోపల_bracket = brace_level = 0;
+	కొరకు (i = sel_ప్రారంభం = brace_ప్రారంభం + 1; i < brace_చివర; i++) {
+		ఎంపిక (నమూనా[i]) {
+		స్థితి '{':
+			ఒకవేళ (లోపల_bracket)
+				ఆపు;
 			brace_level++;
-			break;
-		case '}':
-			if (in_bracket)
-				break;
+			ఆపు;
+		స్థితి '}':
+			ఒకవేళ (లోపల_bracket)
+				ఆపు;
 			brace_level--;
-			break;
-		case '[':
-			in_bracket = 1;
-			break;
-		case ']':
-			in_bracket = 0;
-			break;
-		case '\\':
-			if (i < brace_end - 1)
+			ఆపు;
+		స్థితి '[':
+			లోపల_bracket = 1;
+			ఆపు;
+		స్థితి ']':
+			లోపల_bracket = 0;
+			ఆపు;
+		స్థితి '\\':
+			ఒకవేళ (i < brace_చివర - 1)
 				i++; /* skip */
-			break;
+			ఆపు;
 		}
-		if (pattern[i] == ',' || i == brace_end - 1) {
-			if (in_bracket || brace_level > 0)
-				continue;
+		ఒకవేళ (నమూనా[i] == ',' || i == brace_చివర - 1) {
+			ఒకవేళ (లోపల_bracket || brace_level > 0)
+				కొనసాగు;
 			/* End of a selection, emit an expanded pattern */
 
 			/* Adjust end index for last selection */
-			sel_end = (i == brace_end - 1) ? brace_end : i;
-			if (emit_expansion(pattern, brace_start, brace_end,
-			    sel_start, sel_end, patternsp, npatternsp) != 0)
-				return -1;
+			sel_చివర = (i == brace_చివర - 1) ? brace_చివర : i;
+			ఒకవేళ (emit_expansion(నమూనా, brace_ప్రారంభం, brace_చివర,
+			    sel_ప్రారంభం, sel_చివర, patternsp, npatternsp) != 0)
+				తిరిగి -1;
 			/* move on to the next selection */
-			sel_start = i + 1;
-			continue;
+			sel_ప్రారంభం = i + 1;
+			కొనసాగు;
 		}
 	}
-	if (in_bracket || brace_level > 0) {
+	ఒకవేళ (లోపల_bracket || brace_level > 0) {
 		*invalid = 1;
-		return 0;
+		తిరిగి 0;
 	}
 	/* success */
 	*expanded = 1;
-	return 0;
+	తిరిగి 0;
 }
 
 /* Expand braces from pattern. Returns 0 on success, -1 on failure */
-static int
-brace_expand(const char *pattern, char ***patternsp, size_t *npatternsp)
+స్థిర పూర్ణాంకం
+brace_expand(స్థిరరాశి అక్షరం *నమూనా, అక్షరం ***patternsp, కొలత_t *npatternsp)
 {
-	char *cp, *cp2, **active = NULL, **done = NULL;
-	size_t i, nactive = 0, ndone = 0;
-	int ret = -1, invalid = 0, expanded = 0;
+	అక్షరం *cp, *cp2, **చురుకైన = ఖాళీ, **పూర్తి = ఖాళీ;
+	కొలత_t i, nactive = 0, ndone = 0;
+	పూర్ణాంకం ret = -1, invalid = 0, expanded = 0;
 
-	*patternsp = NULL;
+	*patternsp = ఖాళీ;
 	*npatternsp = 0;
 
 	/* Start the worklist with the original pattern */
-	if ((cp = strdup(pattern)) == NULL)
-		return -1;
-	if (append(cp, &active, &nactive) != 0) {
-		free(cp);
-		return -1;
+	ఒకవేళ ((cp = strdup(నమూనా)) == ఖాళీ)
+		తిరిగి -1;
+	ఒకవేళ (append(cp, &చురుకైన, &nactive) != 0) {
+		విడుదల(cp);
+		తిరిగి -1;
 	}
-	while (nactive > 0) {
-		cp = active[nactive - 1];
+	అయితే (nactive > 0) {
+		cp = చురుకైన[nactive - 1];
 		nactive--;
-		if (brace_expand_one(cp, &active, &nactive,
+		ఒకవేళ (brace_expand_one(cp, &చురుకైన, &nactive,
 		    &expanded, &invalid) == -1) {
-			free(cp);
-			goto fail;
+			విడుదల(cp);
+			వెళ్ళు fail;
 		}
-		if (invalid)
+		ఒకవేళ (invalid)
 			fatal_f("invalid brace pattern \"%s\"", cp);
-		if (expanded) {
+		ఒకవేళ (expanded) {
 			/*
 			 * Current entry expanded to new entries on the
 			 * active list; discard the progenitor pattern.
 			 */
-			free(cp);
-			continue;
+			విడుదల(cp);
+			కొనసాగు;
 		}
 		/*
 		 * Pattern did not expand; append the filename component to
 		 * the completed list
 		 */
-		if ((cp2 = strrchr(cp, '/')) != NULL)
+		ఒకవేళ ((cp2 = strrchr(cp, '/')) != ఖాళీ)
 			*cp2++ = '\0';
-		else
+		లేకపోతే
 			cp2 = cp;
-		if (append(xstrdup(cp2), &done, &ndone) != 0) {
-			free(cp);
-			goto fail;
+		ఒకవేళ (append(xstrdup(cp2), &పూర్తి, &ndone) != 0) {
+			విడుదల(cp);
+			వెళ్ళు fail;
 		}
-		free(cp);
+		విడుదల(cp);
 	}
 	/* success */
-	*patternsp = done;
+	*patternsp = పూర్తి;
 	*npatternsp = ndone;
-	done = NULL;
+	పూర్తి = ఖాళీ;
 	ndone = 0;
 	ret = 0;
  fail:
-	for (i = 0; i < nactive; i++)
-		free(active[i]);
-	free(active);
-	for (i = 0; i < ndone; i++)
-		free(done[i]);
-	free(done);
-	return ret;
+	కొరకు (i = 0; i < nactive; i++)
+		విడుదల(చురుకైన[i]);
+	విడుదల(చురుకైన);
+	కొరకు (i = 0; i < ndone; i++)
+		విడుదల(పూర్తి[i]);
+	విడుదల(పూర్తి);
+	తిరిగి ret;
 }
 
-static struct sftp_conn *
-do_sftp_connect(char *host, char *user, int port, char *sftp_direct,
-   int *reminp, int *remoutp, int *pidp)
+స్థిర నిర్మాణం sftp_conn *
+do_sftp_connect(అక్షరం *host, అక్షరం *user, పూర్ణాంకం పోర్టు, అక్షరం *sftp_ప్రత్యక్ష,
+   పూర్ణాంకం *reminp, పూర్ణాంకం *remoutp, పూర్ణాంకం *pidp)
 {
-	if (sftp_direct == NULL) {
-		if (do_cmd(ssh_program, host, user, port, 1, "sftp",
+	ఒకవేళ (sftp_ప్రత్యక్ష == ఖాళీ) {
+		ఒకవేళ (do_cmd(ssh_కార్యక్రమం, host, user, పోర్టు, 1, "sftp",
 		    reminp, remoutp, pidp) < 0)
-			return NULL;
+			తిరిగి ఖాళీ;
 
-	} else {
-		freeargs(&args);
-		addargs(&args, "sftp-server");
-		if (do_cmd(sftp_direct, host, NULL, -1, 0, "sftp",
+	} లేకపోతే {
+		freeargs(&వాదనలు);
+		addargs(&వాదనలు, "sftp-server");
+		ఒకవేళ (do_cmd(sftp_ప్రత్యక్ష, host, ఖాళీ, -1, 0, "sftp",
 		    reminp, remoutp, pidp) < 0)
-			return NULL;
+			తిరిగి ఖాళీ;
 	}
-	return sftp_init(*reminp, *remoutp,
-	    sftp_copy_buflen, sftp_nrequests, limit_kbps);
+	తిరిగి sftp_init(*reminp, *remoutp,
+	    sftp_copy_buflen, sftp_nrequests, హద్దు_kbps);
 }
 
-void
-toremote(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
+శూన్య
+toremote(పూర్ణాంకం argc, అక్షరం **argv, గణన scp_బహుళకం_e బహుళకం, అక్షరం *sftp_ప్రత్యక్ష)
 {
-	char *suser = NULL, *host = NULL, *src = NULL;
-	char *bp, *tuser, *thost, *targ;
-	int sport = -1, tport = -1;
-	struct sftp_conn *conn = NULL, *conn2 = NULL;
+	అక్షరం *suser = ఖాళీ, *host = ఖాళీ, *src = ఖాళీ;
+	అక్షరం *bp, *tuser, *thost, *targ;
+	పూర్ణాంకం sport = -1, tport = -1;
+	నిర్మాణం sftp_conn *conn = ఖాళీ, *conn2 = ఖాళీ;
 	arglist alist;
-	int i, r, status;
-	struct stat sb;
+	పూర్ణాంకం i, r, స్థితి_2;
+	నిర్మాణం stat sb;
 	u_int j;
 
-	memset(&alist, '\0', sizeof(alist));
-	alist.list = NULL;
+	memset(&alist, '\0', పరిమాణం(alist));
+	alist.list = ఖాళీ;
 
 	/* Parse target */
 	r = parse_scp_uri(argv[argc - 1], &tuser, &thost, &tport, &targ);
-	if (r == -1) {
+	ఒకవేళ (r == -1) {
 		fmprintf(stderr, "%s: invalid uri\n", argv[argc - 1]);
 		++errs;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (r != 0) {
-		if (parse_user_host_path(argv[argc - 1], &tuser, &thost,
+	ఒకవేళ (r != 0) {
+		ఒకవేళ (parse_user_host_మార్గం(argv[argc - 1], &tuser, &thost,
 		    &targ) == -1) {
 			fmprintf(stderr, "%s: invalid target\n", argv[argc - 1]);
 			++errs;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 	}
 
 	/* Parse source files */
-	for (i = 0; i < argc - 1; i++) {
-		free(suser);
-		free(host);
-		free(src);
+	కొరకు (i = 0; i < argc - 1; i++) {
+		విడుదల(suser);
+		విడుదల(host);
+		విడుదల(src);
 		r = parse_scp_uri(argv[i], &suser, &host, &sport, &src);
-		if (r == -1) {
+		ఒకవేళ (r == -1) {
 			fmprintf(stderr, "%s: invalid uri\n", argv[i]);
 			++errs;
-			continue;
+			కొనసాగు;
 		}
-		if (r != 0) {
-			parse_user_host_path(argv[i], &suser, &host, &src);
+		ఒకవేళ (r != 0) {
+			parse_user_host_మార్గం(argv[i], &suser, &host, &src);
 		}
-		if (suser != NULL && !okname(suser)) {
+		ఒకవేళ (suser != ఖాళీ && !okname(suser)) {
 			++errs;
-			continue;
+			కొనసాగు;
 		}
-		if (host && throughlocal) {	/* extended remote to remote */
-			if (mode == MODE_SFTP) {
-				if (remin == -1 || conn == NULL) {
+		ఒకవేళ (host && throughlocal) {	/* extended remote to remote */
+			ఒకవేళ (బహుళకం == బహుళకం_SFTP) {
+				ఒకవేళ (remin == -1 || conn == ఖాళీ) {
 					/* Connect to dest now */
 					sftp_free(conn);
 					conn = do_sftp_connect(thost, tuser,
-					    tport, sftp_direct,
+					    tport, sftp_ప్రత్యక్ష,
 					    &remin, &remout, &do_cmd_pid);
-					if (conn == NULL) {
+					ఒకవేళ (conn == ఖాళీ) {
 						fatal("Unable to open "
 						    "destination connection");
 					}
 					debug3_f("origin in %d out %d pid %ld",
-					    remin, remout, (long)do_cmd_pid);
+					    remin, remout, (దీర్ఘ)do_cmd_pid);
 				}
 				/*
 				 * XXX remember suser/host/sport and only
@@ -1089,73 +1089,73 @@ toremote(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
 				/* Connect to origin now */
 				sftp_free(conn2);
 				conn2 = do_sftp_connect(host, suser,
-				    sport, sftp_direct,
+				    sport, sftp_ప్రత్యక్ష,
 				    &remin2, &remout2, &do_cmd_pid2);
-				if (conn2 == NULL) {
+				ఒకవేళ (conn2 == ఖాళీ) {
 					fatal("Unable to open "
 					    "source connection");
 				}
 				debug3_f("destination in %d out %d pid %ld",
-				    remin2, remout2, (long)do_cmd_pid2);
+				    remin2, remout2, (దీర్ఘ)do_cmd_pid2);
 				throughlocal_sftp(conn2, conn, src, targ);
-				(void) close(remin2);
-				(void) close(remout2);
+				(శూన్య) close(remin2);
+				(శూన్య) close(remout2);
 				remin2 = remout2 = -1;
-				if (waitpid(do_cmd_pid2, &status, 0) == -1)
+				ఒకవేళ (waitpid(do_cmd_pid2, &స్థితి_2, 0) == -1)
 					++errs;
-				else if (!WIFEXITED(status) ||
-				    WEXITSTATUS(status) != 0)
+				లేకపోతే ఒకవేళ (!WIFEXITED(స్థితి_2) ||
+				    WEXITSTATUS(స్థితి_2) != 0)
 					++errs;
 				do_cmd_pid2 = -1;
-				continue;
-			} else {
+				కొనసాగు;
+			} లేకపోతే {
 				xasprintf(&bp, "%s -f %s%s", cmd,
 				    *src == '-' ? "-- " : "", src);
-				if (do_cmd(ssh_program, host, suser, sport, 0,
+				ఒకవేళ (do_cmd(ssh_కార్యక్రమం, host, suser, sport, 0,
 				    bp, &remin, &remout, &do_cmd_pid) < 0)
-					exit(1);
-				free(bp);
+					నిష్క్రమించు(1);
+				విడుదల(bp);
 				xasprintf(&bp, "%s -t %s%s", cmd,
 				    *targ == '-' ? "-- " : "", targ);
-				if (do_cmd2(thost, tuser, tport, bp,
+				ఒకవేళ (do_cmd2(thost, tuser, tport, bp,
 				    remin, remout) < 0)
-					exit(1);
-				free(bp);
-				(void) close(remin);
-				(void) close(remout);
+					నిష్క్రమించు(1);
+				విడుదల(bp);
+				(శూన్య) close(remin);
+				(శూన్య) close(remout);
 				remin = remout = -1;
 			}
-		} else if (host) {	/* standard remote to remote */
+		} లేకపోతే ఒకవేళ (host) {	/* standard remote to remote */
 			/*
 			 * Second remote user is passed to first remote side
 			 * via scp command-line. Ensure it contains no obvious
 			 * shell characters.
 			 */
-			if (tuser != NULL && !okname(tuser)) {
+			ఒకవేళ (tuser != ఖాళీ && !okname(tuser)) {
 				++errs;
-				continue;
+				కొనసాగు;
 			}
-			if (tport != -1 && tport != SSH_DEFAULT_PORT) {
+			ఒకవేళ (tport != -1 && tport != SSH_DEFAULT_పోర్టు) {
 				/* This would require the remote support URIs */
 				fatal("target port not supported with two "
 				    "remote hosts and the -R option");
 			}
 
 			freeargs(&alist);
-			addargs(&alist, "%s", ssh_program);
+			addargs(&alist, "%s", ssh_కార్యక్రమం);
 			addargs(&alist, "-x");
 			addargs(&alist, "-oClearAllForwardings=yes");
 			addargs(&alist, "-n");
-			for (j = 0; j < remote_remote_args.num; j++) {
+			కొరకు (j = 0; j < remote_remote_వాదనలు.అంకె; j++) {
 				addargs(&alist, "%s",
-				    remote_remote_args.list[j]);
+				    remote_remote_వాదనలు.list[j]);
 			}
 
-			if (sport != -1) {
+			ఒకవేళ (sport != -1) {
 				addargs(&alist, "-p");
 				addargs(&alist, "%d", sport);
 			}
-			if (suser) {
+			ఒకవేళ (suser) {
 				addargs(&alist, "-l");
 				addargs(&alist, "%s", suser);
 			}
@@ -1166,611 +1166,611 @@ toremote(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
 			addargs(&alist, "%s%s%s:%s",
 			    tuser ? tuser : "", tuser ? "@" : "",
 			    thost, targ);
-			if (do_local_cmd(&alist) != 0)
+			ఒకవేళ (do_local_cmd(&alist) != 0)
 				errs = 1;
-		} else {	/* local to remote */
-			if (mode == MODE_SFTP) {
+		} లేకపోతే {	/* local to remote */
+			ఒకవేళ (బహుళకం == బహుళకం_SFTP) {
 				/* no need to glob: already done by shell */
-				if (stat(argv[i], &sb) != 0) {
+				ఒకవేళ (stat(argv[i], &sb) != 0) {
 					fatal("stat local \"%s\": %s", argv[i],
 					    strerror(errno));
 				}
-				if (remin == -1) {
+				ఒకవేళ (remin == -1) {
 					/* Connect to remote now */
 					sftp_free(conn);
 					conn = do_sftp_connect(thost, tuser,
-					    tport, sftp_direct,
+					    tport, sftp_ప్రత్యక్ష,
 					    &remin, &remout, &do_cmd_pid);
-					if (conn == NULL) {
+					ఒకవేళ (conn == ఖాళీ) {
 						fatal("Unable to open sftp "
 						    "connection");
 					}
 				}
 
 				/* The protocol */
-				source_sftp(1, argv[i], targ, conn);
-				continue;
+				ఆధారం_sftp(1, argv[i], targ, conn);
+				కొనసాగు;
 			}
 			/* SCP */
-			if (remin == -1) {
+			ఒకవేళ (remin == -1) {
 				xasprintf(&bp, "%s -t %s%s", cmd,
 				    *targ == '-' ? "-- " : "", targ);
-				if (do_cmd(ssh_program, thost, tuser, tport, 0,
+				ఒకవేళ (do_cmd(ssh_కార్యక్రమం, thost, tuser, tport, 0,
 				    bp, &remin, &remout, &do_cmd_pid) < 0)
-					exit(1);
-				if (response() < 0)
-					exit(1);
-				free(bp);
+					నిష్క్రమించు(1);
+				ఒకవేళ (response() < 0)
+					నిష్క్రమించు(1);
+				విడుదల(bp);
 			}
-			source(1, argv + i);
+			ఆధారం(1, argv + i);
 		}
 	}
-out:
+బహిర్గతం:
 	freeargs(&alist);
-	free(tuser);
-	free(thost);
-	free(targ);
-	free(suser);
-	free(host);
-	free(src);
+	విడుదల(tuser);
+	విడుదల(thost);
+	విడుదల(targ);
+	విడుదల(suser);
+	విడుదల(host);
+	విడుదల(src);
 	sftp_free(conn);
 	sftp_free(conn2);
 }
 
-void
-tolocal(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
+శూన్య
+tolocal(పూర్ణాంకం argc, అక్షరం **argv, గణన scp_బహుళకం_e బహుళకం, అక్షరం *sftp_ప్రత్యక్ష)
 {
-	char *bp, *host = NULL, *src = NULL, *suser = NULL;
+	అక్షరం *bp, *host = ఖాళీ, *src = ఖాళీ, *suser = ఖాళీ;
 	arglist alist;
-	struct sftp_conn *conn = NULL;
-	int i, r, sport = -1;
+	నిర్మాణం sftp_conn *conn = ఖాళీ;
+	పూర్ణాంకం i, r, sport = -1;
 
-	memset(&alist, '\0', sizeof(alist));
-	alist.list = NULL;
+	memset(&alist, '\0', పరిమాణం(alist));
+	alist.list = ఖాళీ;
 
-	for (i = 0; i < argc - 1; i++) {
-		free(suser);
-		free(host);
-		free(src);
+	కొరకు (i = 0; i < argc - 1; i++) {
+		విడుదల(suser);
+		విడుదల(host);
+		విడుదల(src);
 		r = parse_scp_uri(argv[i], &suser, &host, &sport, &src);
-		if (r == -1) {
+		ఒకవేళ (r == -1) {
 			fmprintf(stderr, "%s: invalid uri\n", argv[i]);
 			++errs;
-			continue;
+			కొనసాగు;
 		}
-		if (r != 0)
-			parse_user_host_path(argv[i], &suser, &host, &src);
-		if (suser != NULL && !okname(suser)) {
+		ఒకవేళ (r != 0)
+			parse_user_host_మార్గం(argv[i], &suser, &host, &src);
+		ఒకవేళ (suser != ఖాళీ && !okname(suser)) {
 			++errs;
-			continue;
+			కొనసాగు;
 		}
-		if (!host) {	/* Local to local. */
+		ఒకవేళ (!host) {	/* Local to local. */
 			freeargs(&alist);
-			addargs(&alist, "%s", _PATH_CP);
-			if (iamrecursive)
+			addargs(&alist, "%s", మార్గం_CP);
+			ఒకవేళ (iamrecursive)
 				addargs(&alist, "-r");
-			if (pflag)
+			ఒకవేళ (pflag)
 				addargs(&alist, "-p");
 			addargs(&alist, "--");
 			addargs(&alist, "%s", argv[i]);
 			addargs(&alist, "%s", argv[argc-1]);
-			if (do_local_cmd(&alist))
+			ఒకవేళ (do_local_cmd(&alist))
 				++errs;
-			continue;
+			కొనసాగు;
 		}
 		/* Remote to local. */
-		if (mode == MODE_SFTP) {
+		ఒకవేళ (బహుళకం == బహుళకం_SFTP) {
 			sftp_free(conn);
 			conn = do_sftp_connect(host, suser, sport,
-			    sftp_direct, &remin, &remout, &do_cmd_pid);
-			if (conn == NULL) {
+			    sftp_ప్రత్యక్ష, &remin, &remout, &do_cmd_pid);
+			ఒకవేళ (conn == ఖాళీ) {
 				error("sftp connection failed");
 				++errs;
-				continue;
+				కొనసాగు;
 			}
 
 			/* The protocol */
 			sink_sftp(1, argv[argc - 1], src, conn);
 
-			(void) close(remin);
-			(void) close(remout);
+			(శూన్య) close(remin);
+			(శూన్య) close(remout);
 			remin = remout = -1;
-			continue;
+			కొనసాగు;
 		}
 		/* SCP */
 		xasprintf(&bp, "%s -f %s%s",
 		    cmd, *src == '-' ? "-- " : "", src);
-		if (do_cmd(ssh_program, host, suser, sport, 0, bp,
+		ఒకవేళ (do_cmd(ssh_కార్యక్రమం, host, suser, sport, 0, bp,
 		    &remin, &remout, &do_cmd_pid) < 0) {
-			free(bp);
+			విడుదల(bp);
 			++errs;
-			continue;
+			కొనసాగు;
 		}
-		free(bp);
+		విడుదల(bp);
 		sink(1, argv + argc - 1, src);
-		(void) close(remin);
+		(శూన్య) close(remin);
 		remin = remout = -1;
 	}
 	freeargs(&alist);
-	free(suser);
-	free(host);
-	free(src);
+	విడుదల(suser);
+	విడుదల(host);
+	విడుదల(src);
 	sftp_free(conn);
 }
 
 /* Prepare remote path, handling ~ by assuming cwd is the homedir */
-static char *
-prepare_remote_path(struct sftp_conn *conn, const char *path)
+స్థిర అక్షరం *
+prepare_remote_మార్గం(నిర్మాణం sftp_conn *conn, స్థిరరాశి అక్షరం *మార్గం)
 {
-	size_t nslash;
+	కొలత_t nslash;
 
 	/* Handle ~ prefixed paths */
-	if (*path == '\0' || strcmp(path, "~") == 0)
-		return xstrdup(".");
-	if (*path != '~')
-		return xstrdup(path);
-	if (strncmp(path, "~/", 2) == 0) {
-		if ((nslash = strspn(path + 2, "/")) == strlen(path + 2))
-			return xstrdup(".");
-		return xstrdup(path + 2 + nslash);
+	ఒకవేళ (*మార్గం == '\0' || strcmp(మార్గం, "~") == 0)
+		తిరిగి xstrdup(".");
+	ఒకవేళ (*మార్గం != '~')
+		తిరిగి xstrdup(మార్గం);
+	ఒకవేళ (అక్షరశ్రేణి_పోలిక(మార్గం, "~/", 2) == 0) {
+		ఒకవేళ ((nslash = strspn(మార్గం + 2, "/")) == అక్షరశ్రేణి_పొడవు(మార్గం + 2))
+			తిరిగి xstrdup(".");
+		తిరిగి xstrdup(మార్గం + 2 + nslash);
 	}
-	if (sftp_can_expand_path(conn))
-		return sftp_expand_path(conn, path);
+	ఒకవేళ (sftp_can_expand_మార్గం(conn))
+		తిరిగి sftp_expand_మార్గం(conn, మార్గం);
 	/* No protocol extension */
 	error("server expand-path extension is required "
 	    "for ~user paths in SFTP mode");
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
-void
-source_sftp(int argc, char *src, char *targ, struct sftp_conn *conn)
+శూన్య
+ఆధారం_sftp(పూర్ణాంకం argc, అక్షరం *src, అక్షరం *targ, నిర్మాణం sftp_conn *conn)
 {
-	char *target = NULL, *filename = NULL, *abs_dst = NULL;
-	int src_is_dir, target_is_dir;
+	అక్షరం *లక్ష్యం = ఖాళీ, *filename = ఖాళీ, *abs_dst = ఖాళీ;
+	పూర్ణాంకం src_is_dir, లక్ష్యం_is_dir;
 	Attrib a;
-	struct stat st;
+	నిర్మాణం stat st;
 
-	memset(&a, '\0', sizeof(a));
-	if (stat(src, &st) != 0)
+	memset(&a, '\0', పరిమాణం(a));
+	ఒకవేళ (stat(src, &st) != 0)
 		fatal("stat local \"%s\": %s", src, strerror(errno));
 	src_is_dir = S_ISDIR(st.st_mode);
-	if ((filename = basename(src)) == NULL)
+	ఒకవేళ ((filename = basename(src)) == ఖాళీ)
 		fatal("basename \"%s\": %s", src, strerror(errno));
 
 	/* Special handling for source of '..' */
-	if (strcmp(filename, "..") == 0)
+	ఒకవేళ (strcmp(filename, "..") == 0)
 		filename = "."; /* Upload to dest, not dest/.. */
 
 	/*
 	 * No need to glob here - the local shell already took care of
 	 * the expansions
 	 */
-	if ((target = prepare_remote_path(conn, targ)) == NULL)
+	ఒకవేళ ((లక్ష్యం = prepare_remote_మార్గం(conn, targ)) == ఖాళీ)
 		cleanup_exit(255);
-	target_is_dir = sftp_remote_is_dir(conn, target);
-	if (targetshouldbedirectory && !target_is_dir) {
-		debug("target directory \"%s\" does not exist", target);
+	లక్ష్యం_is_dir = sftp_remote_is_dir(conn, లక్ష్యం);
+	ఒకవేళ (targetshouldbedirectory && !లక్ష్యం_is_dir) {
+		debug("target directory \"%s\" does not exist", లక్ష్యం);
 		a.flags = SSH2_FILEXFER_ATTR_PERMISSIONS;
 		a.perm = st.st_mode | 0700; /* ensure writable */
-		if (sftp_mkdir(conn, target, &a, 1) != 0)
+		ఒకవేళ (sftp_mkdir(conn, లక్ష్యం, &a, 1) != 0)
 			cleanup_exit(255); /* error already logged */
-		target_is_dir = 1;
+		లక్ష్యం_is_dir = 1;
 	}
-	if (target_is_dir)
-		abs_dst = sftp_path_append(target, filename);
-	else {
-		abs_dst = target;
-		target = NULL;
+	ఒకవేళ (లక్ష్యం_is_dir)
+		abs_dst = sftp_మార్గం_append(లక్ష్యం, filename);
+	లేకపోతే {
+		abs_dst = లక్ష్యం;
+		లక్ష్యం = ఖాళీ;
 	}
 	debug3_f("copying local %s to remote %s", src, abs_dst);
 
-	if (src_is_dir && iamrecursive) {
-		if (sftp_upload_dir(conn, src, abs_dst, pflag,
-		    SFTP_PROGRESS_ONLY, 0, 0, 1, 1) != 0) {
+	ఒకవేళ (src_is_dir && iamrecursive) {
+		ఒకవేళ (sftp_upload_dir(conn, src, abs_dst, pflag,
+		    SFTP_పురోగతి_ONLY, 0, 0, 1, 1) != 0) {
 			error("failed to upload directory %s to %s", src, targ);
 			errs = 1;
 		}
-	} else if (sftp_upload(conn, src, abs_dst, pflag, 0, 0, 1) != 0) {
+	} లేకపోతే ఒకవేళ (sftp_upload(conn, src, abs_dst, pflag, 0, 0, 1) != 0) {
 		error("failed to upload file %s to %s", src, targ);
 		errs = 1;
 	}
 
-	free(abs_dst);
-	free(target);
+	విడుదల(abs_dst);
+	విడుదల(లక్ష్యం);
 }
 
-void
-source(int argc, char **argv)
+శూన్య
+ఆధారం(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	struct stat stb;
-	static BUF buffer;
+	నిర్మాణం stat stb;
+	స్థిర BUF బఫరు;
 	BUF *bp;
 	off_t i, statbytes;
-	size_t amt, nr;
-	int fd = -1, haderr, indx;
-	char *last, *name, buf[PATH_MAX + 128], encname[PATH_MAX];
-	int len;
+	కొలత_t amt, nr;
+	పూర్ణాంకం fd = -1, haderr, indx;
+	అక్షరం *చివరి, *name, buf[PATH_MAX + 128], encname[PATH_MAX];
+	పూర్ణాంకం len;
 
-	for (indx = 0; indx < argc; ++indx) {
+	కొరకు (indx = 0; indx < argc; ++indx) {
 		name = argv[indx];
 		statbytes = 0;
-		len = strlen(name);
-		while (len > 1 && name[len-1] == '/')
+		len = అక్షరశ్రేణి_పొడవు(name);
+		అయితే (len > 1 && name[len-1] == '/')
 			name[--len] = '\0';
-		if ((fd = open(name, O_RDONLY|O_NONBLOCK)) == -1)
-			goto syserr;
-		if (strchr(name, '\n') != NULL) {
-			strnvis(encname, name, sizeof(encname), VIS_NL);
+		ఒకవేళ ((fd = open(name, O_RDONLY|O_NONBLOCK)) == -1)
+			వెళ్ళు syserr;
+		ఒకవేళ (strchr(name, '\n') != ఖాళీ) {
+			strnvis(encname, name, పరిమాణం(encname), VIS_NL);
 			name = encname;
 		}
-		if (fstat(fd, &stb) == -1) {
-syserr:			run_err("%s: %s", name, strerror(errno));
-			goto next;
+		ఒకవేళ (fstat(fd, &stb) == -1) {
+syserr:			నిరంతరం_err("%s: %s", name, strerror(errno));
+			వెళ్ళు తదుపరి;
 		}
-		if (stb.st_size < 0) {
-			run_err("%s: %s", name, "Negative file size");
-			goto next;
+		ఒకవేళ (stb.st_size < 0) {
+			నిరంతరం_err("%s: %s", name, "Negative file size");
+			వెళ్ళు తదుపరి;
 		}
 		unset_nonblock(fd);
-		switch (stb.st_mode & S_IFMT) {
-		case S_IFREG:
-			break;
-		case S_IFDIR:
-			if (iamrecursive) {
+		ఎంపిక (stb.st_mode & S_IFMT) {
+		స్థితి S_IFREG:
+			ఆపు;
+		స్థితి S_IFDIR:
+			ఒకవేళ (iamrecursive) {
 				rsource(name, &stb);
-				goto next;
+				వెళ్ళు తదుపరి;
 			}
 			/* FALLTHROUGH */
-		default:
-			run_err("%s: not a regular file", name);
-			goto next;
+		అప్రమేయ:
+			నిరంతరం_err("%s: not a regular file", name);
+			వెళ్ళు తదుపరి;
 		}
-		if ((last = strrchr(name, '/')) == NULL)
-			last = name;
-		else
-			++last;
-		curfile = last;
-		if (pflag) {
-			if (do_times(remout, verbose_mode, &stb) < 0)
-				goto next;
+		ఒకవేళ ((చివరి = strrchr(name, '/')) == ఖాళీ)
+			చివరి = name;
+		లేకపోతే
+			++చివరి;
+		curfile = చివరి;
+		ఒకవేళ (pflag) {
+			ఒకవేళ (do_times(remout, verbose_బహుళకం, &stb) < 0)
+				వెళ్ళు తదుపరి;
 		}
-#define	FILEMODEMASK	(S_ISUID|S_ISGID|S_IRWXU|S_IRWXG|S_IRWXO)
-		snprintf(buf, sizeof buf, "C%04o %lld %s\n",
+#నిర్వచించు	FILEMODEMASK	(S_ISUID|S_ISGID|S_IRWXU|S_IRWXG|S_IRWXO)
+		snprintf(buf, పరిమాణం buf, "C%04o %lld %s\n",
 		    (u_int) (stb.st_mode & FILEMODEMASK),
-		    (long long)stb.st_size, last);
-		if (verbose_mode)
+		    (దీర్ఘ దీర్ఘ)stb.st_size, చివరి);
+		ఒకవేళ (verbose_బహుళకం)
 			fmprintf(stderr, "Sending file modes: %s", buf);
-		(void) atomicio(vwrite, remout, buf, strlen(buf));
-		if (response() < 0)
-			goto next;
-		if ((bp = allocbuf(&buffer, fd, COPY_BUFLEN)) == NULL) {
-next:			if (fd != -1) {
-				(void) close(fd);
+		(శూన్య) atomicio(vwrite, remout, buf, అక్షరశ్రేణి_పొడవు(buf));
+		ఒకవేళ (response() < 0)
+			వెళ్ళు తదుపరి;
+		ఒకవేళ ((bp = allocbuf(&బఫరు, fd, COPY_BUFLEN)) == ఖాళీ) {
+తదుపరి:			ఒకవేళ (fd != -1) {
+				(శూన్య) close(fd);
 				fd = -1;
 			}
-			continue;
+			కొనసాగు;
 		}
-		if (showprogress)
-			start_progress_meter(curfile, stb.st_size, &statbytes);
-		set_nonblock(remout);
-		for (haderr = i = 0; i < stb.st_size; i += bp->cnt) {
+		ఒకవేళ (showprogress)
+			ప్రారంభం_పురోగతి_meter(curfile, stb.st_size, &statbytes);
+		సమితి_nonblock(remout);
+		కొరకు (haderr = i = 0; i < stb.st_size; i += bp->cnt) {
 			amt = bp->cnt;
-			if (i + (off_t)amt > stb.st_size)
+			ఒకవేళ (i + (off_t)amt > stb.st_size)
 				amt = stb.st_size - i;
-			if (!haderr) {
-				if ((nr = atomicio(read, fd,
+			ఒకవేళ (!haderr) {
+				ఒకవేళ ((nr = atomicio(పఠ, fd,
 				    bp->buf, amt)) != amt) {
 					haderr = errno;
 					memset(bp->buf + nr, 0, amt - nr);
 				}
 			}
 			/* Keep writing after error to retain sync */
-			if (haderr) {
-				(void)atomicio(vwrite, remout, bp->buf, amt);
+			ఒకవేళ (haderr) {
+				(శూన్య)atomicio(vwrite, remout, bp->buf, amt);
 				memset(bp->buf, 0, amt);
-				continue;
+				కొనసాగు;
 			}
-			if (atomicio6(vwrite, remout, bp->buf, amt, scpio,
+			ఒకవేళ (atomicio6(vwrite, remout, bp->buf, amt, scpio,
 			    &statbytes) != amt)
 				haderr = errno;
 		}
 		unset_nonblock(remout);
 
-		if (fd != -1) {
-			if (close(fd) == -1 && !haderr)
+		ఒకవేళ (fd != -1) {
+			ఒకవేళ (close(fd) == -1 && !haderr)
 				haderr = errno;
 			fd = -1;
 		}
-		if (!haderr)
-			(void) atomicio(vwrite, remout, "", 1);
-		else
-			run_err("%s: %s", name, strerror(haderr));
-		(void) response();
-		if (showprogress)
-			stop_progress_meter();
+		ఒకవేళ (!haderr)
+			(శూన్య) atomicio(vwrite, remout, "", 1);
+		లేకపోతే
+			నిరంతరం_err("%s: %s", name, strerror(haderr));
+		(శూన్య) response();
+		ఒకవేళ (showprogress)
+			stop_పురోగతి_meter();
 	}
 }
 
-void
-rsource(char *name, struct stat *statp)
+శూన్య
+rsource(అక్షరం *name, నిర్మాణం stat *statp)
 {
 	DIR *dirp;
-	struct dirent *dp;
-	char *last, *vect[1], path[PATH_MAX];
+	నిర్మాణం dirent *dp;
+	అక్షరం *చివరి, *vect[1], మార్గం[PATH_MAX];
 
-	if (!(dirp = opendir(name))) {
-		run_err("%s: %s", name, strerror(errno));
-		return;
+	ఒకవేళ (!(dirp = opendir(name))) {
+		నిరంతరం_err("%s: %s", name, strerror(errno));
+		తిరిగి;
 	}
-	last = strrchr(name, '/');
-	if (last == NULL)
-		last = name;
-	else
-		last++;
-	if (pflag) {
-		if (do_times(remout, verbose_mode, statp) < 0) {
+	చివరి = strrchr(name, '/');
+	ఒకవేళ (చివరి == ఖాళీ)
+		చివరి = name;
+	లేకపోతే
+		చివరి++;
+	ఒకవేళ (pflag) {
+		ఒకవేళ (do_times(remout, verbose_బహుళకం, statp) < 0) {
 			closedir(dirp);
-			return;
+			తిరిగి;
 		}
 	}
-	(void) snprintf(path, sizeof path, "D%04o %d %.1024s\n",
-	    (u_int) (statp->st_mode & FILEMODEMASK), 0, last);
-	if (verbose_mode)
-		fmprintf(stderr, "Entering directory: %s", path);
-	(void) atomicio(vwrite, remout, path, strlen(path));
-	if (response() < 0) {
+	(శూన్య) snprintf(మార్గం, పరిమాణం మార్గం, "D%04o %d %.1024s\n",
+	    (u_int) (statp->st_mode & FILEMODEMASK), 0, చివరి);
+	ఒకవేళ (verbose_బహుళకం)
+		fmprintf(stderr, "Entering directory: %s", మార్గం);
+	(శూన్య) atomicio(vwrite, remout, మార్గం, అక్షరశ్రేణి_పొడవు(మార్గం));
+	ఒకవేళ (response() < 0) {
 		closedir(dirp);
-		return;
+		తిరిగి;
 	}
-	while ((dp = readdir(dirp)) != NULL) {
-		if (dp->d_ino == 0)
-			continue;
-		if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
-			continue;
-		if (strlen(name) + 1 + strlen(dp->d_name) >= sizeof(path) - 1) {
-			run_err("%s/%s: name too long", name, dp->d_name);
-			continue;
+	అయితే ((dp = readdir(dirp)) != ఖాళీ) {
+		ఒకవేళ (dp->d_ino == 0)
+			కొనసాగు;
+		ఒకవేళ (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
+			కొనసాగు;
+		ఒకవేళ (అక్షరశ్రేణి_పొడవు(name) + 1 + అక్షరశ్రేణి_పొడవు(dp->d_name) >= పరిమాణం(మార్గం) - 1) {
+			నిరంతరం_err("%s/%s: name too long", name, dp->d_name);
+			కొనసాగు;
 		}
-		(void) snprintf(path, sizeof path, "%s/%s", name, dp->d_name);
-		vect[0] = path;
-		source(1, vect);
+		(శూన్య) snprintf(మార్గం, పరిమాణం మార్గం, "%s/%s", name, dp->d_name);
+		vect[0] = మార్గం;
+		ఆధారం(1, vect);
 	}
-	(void) closedir(dirp);
-	(void) atomicio(vwrite, remout, "E\n", 2);
-	(void) response();
+	(శూన్య) closedir(dirp);
+	(శూన్య) atomicio(vwrite, remout, "E\n", 2);
+	(శూన్య) response();
 }
 
-void
-sink_sftp(int argc, char *dst, const char *src, struct sftp_conn *conn)
+శూన్య
+sink_sftp(పూర్ణాంకం argc, అక్షరం *dst, స్థిరరాశి అక్షరం *src, నిర్మాణం sftp_conn *conn)
 {
-	char *abs_src = NULL;
-	char *abs_dst = NULL;
+	అక్షరం *abs_src = ఖాళీ;
+	అక్షరం *abs_dst = ఖాళీ;
 	glob_t g;
-	char *filename, *tmp = NULL;
-	int i, r, err = 0, dst_is_dir;
-	struct stat st;
+	అక్షరం *filename, *tmp = ఖాళీ;
+	పూర్ణాంకం i, r, err = 0, dst_is_dir;
+	నిర్మాణం stat st;
 
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, పరిమాణం(g));
 
 	/*
 	 * Here, we need remote glob as SFTP can not depend on remote shell
 	 * expansions
 	 */
-	if ((abs_src = prepare_remote_path(conn, src)) == NULL) {
+	ఒకవేళ ((abs_src = prepare_remote_మార్గం(conn, src)) == ఖాళీ) {
 		err = -1;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	debug3_f("copying remote %s to local %s", abs_src, dst);
-	if ((r = sftp_glob(conn, abs_src, GLOB_NOCHECK|GLOB_MARK,
-	    NULL, &g)) != 0) {
-		if (r == GLOB_NOSPACE)
+	ఒకవేళ ((r = sftp_glob(conn, abs_src, GLOB_NOCHECK|GLOB_MARK,
+	    ఖాళీ, &g)) != 0) {
+		ఒకవేళ (r == GLOB_NOSPACE)
 			error("%s: too many glob matches", src);
-		else
+		లేకపోతే
 			error("%s: %s", src, strerror(ENOENT));
 		err = -1;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Did we actually get any matches back from the glob? */
-	if (g.gl_matchc == 0 && g.gl_pathc == 1 && g.gl_pathv[0] != NULL) {
+	ఒకవేళ (g.gl_matchc == 0 && g.gl_pathc == 1 && g.gl_pathv[0] != ఖాళీ) {
 		/*
 		 * If nothing matched but a path returned, then it's probably
 		 * a GLOB_NOCHECK result. Check whether the unglobbed path
 		 * exists so we can give a nice error message early.
 		 */
-		if (sftp_stat(conn, g.gl_pathv[0], 1, NULL) != 0) {
+		ఒకవేళ (sftp_stat(conn, g.gl_pathv[0], 1, ఖాళీ) != 0) {
 			error("%s: %s", src, strerror(ENOENT));
 			err = -1;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 	}
 
-	if ((r = stat(dst, &st)) != 0)
+	ఒకవేళ ((r = stat(dst, &st)) != 0)
 		debug2_f("stat local \"%s\": %s", dst, strerror(errno));
 	dst_is_dir = r == 0 && S_ISDIR(st.st_mode);
 
-	if (g.gl_matchc > 1 && !dst_is_dir) {
-		if (r == 0) {
+	ఒకవేళ (g.gl_matchc > 1 && !dst_is_dir) {
+		ఒకవేళ (r == 0) {
 			error("Multiple files match pattern, but destination "
 			    "\"%s\" is not a directory", dst);
 			err = -1;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		debug2_f("creating destination \"%s\"", dst);
-		if (mkdir(dst, 0777) != 0) {
+		ఒకవేళ (mkdir(dst, 0777) != 0) {
 			error("local mkdir \"%s\": %s", dst, strerror(errno));
 			err = -1;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		dst_is_dir = 1;
 	}
 
-	for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+	కొరకు (i = 0; g.gl_pathv[i] && !interrupted; i++) {
 		tmp = xstrdup(g.gl_pathv[i]);
-		if ((filename = basename(tmp)) == NULL) {
+		ఒకవేళ ((filename = basename(tmp)) == ఖాళీ) {
 			error("basename %s: %s", tmp, strerror(errno));
 			err = -1;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 
 		/* Special handling for destination of '..' */
-		if (strcmp(filename, "..") == 0)
+		ఒకవేళ (strcmp(filename, "..") == 0)
 			filename = "."; /* Download to dest, not dest/.. */
 
-		if (dst_is_dir)
-			abs_dst = sftp_path_append(dst, filename);
-		else
+		ఒకవేళ (dst_is_dir)
+			abs_dst = sftp_మార్గం_append(dst, filename);
+		లేకపోతే
 			abs_dst = xstrdup(dst);
 
 		debug("Fetching %s to %s\n", g.gl_pathv[i], abs_dst);
-		if (sftp_globpath_is_dir(g.gl_pathv[i]) && iamrecursive) {
-			if (sftp_download_dir(conn, g.gl_pathv[i], abs_dst,
-			    NULL, pflag, SFTP_PROGRESS_ONLY, 0, 0, 1, 1) == -1)
+		ఒకవేళ (sftp_globpath_is_dir(g.gl_pathv[i]) && iamrecursive) {
+			ఒకవేళ (sftp_download_dir(conn, g.gl_pathv[i], abs_dst,
+			    ఖాళీ, pflag, SFTP_పురోగతి_ONLY, 0, 0, 1, 1) == -1)
 				err = -1;
-		} else {
-			if (sftp_download(conn, g.gl_pathv[i], abs_dst, NULL,
+		} లేకపోతే {
+			ఒకవేళ (sftp_download(conn, g.gl_pathv[i], abs_dst, ఖాళీ,
 			    pflag, 0, 0, 1) == -1)
 				err = -1;
 		}
-		free(abs_dst);
-		abs_dst = NULL;
-		free(tmp);
-		tmp = NULL;
+		విడుదల(abs_dst);
+		abs_dst = ఖాళీ;
+		విడుదల(tmp);
+		tmp = ఖాళీ;
 	}
 
-out:
-	free(abs_src);
-	free(tmp);
+బహిర్గతం:
+	విడుదల(abs_src);
+	విడుదల(tmp);
 	globfree(&g);
-	if (err == -1)
+	ఒకవేళ (err == -1)
 		errs = 1;
 }
 
 
-#define TYPE_OVERFLOW(type, val) \
-	((sizeof(type) == 4 && (val) > INT32_MAX) || \
-	 (sizeof(type) == 8 && (val) > INT64_MAX) || \
-	 (sizeof(type) != 4 && sizeof(type) != 8))
+#నిర్వచించు TYPE_అధికప్రవాహం(type, val) \
+	((పరిమాణం(type) == 4 && (val) > INT32_MAX) || \
+	 (పరిమాణం(type) == 8 && (val) > INT64_MAX) || \
+	 (పరిమాణం(type) != 4 && పరిమాణం(type) != 8))
 
-void
-sink(int argc, char **argv, const char *src)
+శూన్య
+sink(పూర్ణాంకం argc, అక్షరం **argv, స్థిరరాశి అక్షరం *src)
 {
-	static BUF buffer;
-	struct stat stb;
+	స్థిర BUF బఫరు;
+	నిర్మాణం stat stb;
 	BUF *bp;
 	off_t i;
-	size_t j, count;
-	int amt, exists, first, ofd;
-	mode_t mode, omode, mask;
-	off_t size, statbytes;
-	unsigned long long ull;
-	int setimes, targisdir, wrerr;
-	char ch, *cp, *np, *targ, *why, *vect[1], buf[2048], visbuf[2048];
-	char **patterns = NULL;
-	size_t n, npatterns = 0;
-	struct timeval tv[2];
+	కొలత_t j, లెక్క;
+	పూర్ణాంకం amt, exists, మొదటి, ofd;
+	బహుళకం_t బహుళకం, omode, ముసుగు;
+	off_t కొలత, statbytes;
+	గుర్తులేని దీర్ఘ దీర్ఘ ull;
+	పూర్ణాంకం setimes, targisdir, wrerr;
+	అక్షరం ch, *cp, *np, *targ, *why, *vect[1], buf[2048], visbuf[2048];
+	అక్షరం **patterns = ఖాళీ;
+	కొలత_t n, npatterns = 0;
+	నిర్మాణం timeval tv[2];
 
-#define	atime	tv[0]
-#define	mtime	tv[1]
-#define	SCREWUP(str)	{ why = str; goto screwup; }
+#నిర్వచించు	atime	tv[0]
+#నిర్వచించు	mtime	tv[1]
+#నిర్వచించు	SCREWUP(str)	{ why = str; వెళ్ళు screwup; }
 
-	if (TYPE_OVERFLOW(time_t, 0) || TYPE_OVERFLOW(off_t, 0))
+	ఒకవేళ (TYPE_అధికప్రవాహం(time_t, 0) || TYPE_అధికప్రవాహం(off_t, 0))
 		SCREWUP("Unexpected off_t/time_t size");
 
 	setimes = targisdir = 0;
-	mask = umask(0);
-	if (!pflag) {
-		(void) umask(mask);
-		mask |= 07000;
+	ముసుగు = umask(0);
+	ఒకవేళ (!pflag) {
+		(శూన్య) umask(ముసుగు);
+		ముసుగు |= 07000;
 	}
-	if (argc != 1) {
-		run_err("ambiguous target");
-		exit(1);
+	ఒకవేళ (argc != 1) {
+		నిరంతరం_err("ambiguous target");
+		నిష్క్రమించు(1);
 	}
 	targ = *argv;
-	if (targetshouldbedirectory)
+	ఒకవేళ (targetshouldbedirectory)
 		verifydir(targ);
 
-	(void) atomicio(vwrite, remout, "", 1);
-	if (stat(targ, &stb) == 0 && S_ISDIR(stb.st_mode))
+	(శూన్య) atomicio(vwrite, remout, "", 1);
+	ఒకవేళ (stat(targ, &stb) == 0 && S_ISDIR(stb.st_mode))
 		targisdir = 1;
-	if (src != NULL && !iamrecursive && !Tflag) {
+	ఒకవేళ (src != ఖాళీ && !iamrecursive && !Tflag) {
 		/*
 		 * Prepare to try to restrict incoming filenames to match
 		 * the requested destination file glob.
 		 */
-		if (brace_expand(src, &patterns, &npatterns) != 0)
+		ఒకవేళ (brace_expand(src, &patterns, &npatterns) != 0)
 			fatal_f("could not expand pattern");
 	}
-	for (first = 1;; first = 0) {
+	కొరకు (మొదటి = 1;; మొదటి = 0) {
 		cp = buf;
-		if (atomicio(read, remin, cp, 1) != 1)
-			goto done;
-		if (*cp++ == '\n')
+		ఒకవేళ (atomicio(పఠ, remin, cp, 1) != 1)
+			వెళ్ళు పూర్తి;
+		ఒకవేళ (*cp++ == '\n')
 			SCREWUP("unexpected <newline>");
-		do {
-			if (atomicio(read, remin, &ch, sizeof(ch)) != sizeof(ch))
+		చేయి {
+			ఒకవేళ (atomicio(పఠ, remin, &ch, పరిమాణం(ch)) != పరిమాణం(ch))
 				SCREWUP("lost connection");
-			if (ch == '\0')
+			ఒకవేళ (ch == '\0')
 				SCREWUP("nul byte in filename");
 			*cp++ = ch;
-		} while (cp < &buf[sizeof(buf) - 1] && ch != '\n');
+		} అయితే (cp < &buf[పరిమాణం(buf) - 1] && ch != '\n');
 		*cp = 0;
-		if (verbose_mode)
+		ఒకవేళ (verbose_బహుళకం)
 			fmprintf(stderr, "Sink: %s", buf);
 
-		if (buf[0] == '\01' || buf[0] == '\02') {
-			if (iamremote == 0) {
-				(void) snmprintf(visbuf, sizeof(visbuf),
-				    NULL, "%s", buf + 1);
-				(void) atomicio(vwrite, STDERR_FILENO,
-				    visbuf, strlen(visbuf));
+		ఒకవేళ (buf[0] == '\01' || buf[0] == '\02') {
+			ఒకవేళ (iamremote == 0) {
+				(శూన్య) snmprintf(visbuf, పరిమాణం(visbuf),
+				    ఖాళీ, "%s", buf + 1);
+				(శూన్య) atomicio(vwrite, STDERR_FILENO,
+				    visbuf, అక్షరశ్రేణి_పొడవు(visbuf));
 			}
-			if (buf[0] == '\02')
-				exit(1);
+			ఒకవేళ (buf[0] == '\02')
+				నిష్క్రమించు(1);
 			++errs;
-			continue;
+			కొనసాగు;
 		}
-		if (buf[0] == 'E') {
-			(void) atomicio(vwrite, remout, "", 1);
-			goto done;
+		ఒకవేళ (buf[0] == 'E') {
+			(శూన్య) atomicio(vwrite, remout, "", 1);
+			వెళ్ళు పూర్తి;
 		}
-		if (ch == '\n')
+		ఒకవేళ (ch == '\n')
 			*--cp = 0;
 
 		cp = buf;
-		if (*cp == 'T') {
+		ఒకవేళ (*cp == 'T') {
 			setimes++;
 			cp++;
-			if (!isdigit((unsigned char)*cp))
+			ఒకవేళ (!అంకెనా((గుర్తులేని అక్షరం)*cp))
 				SCREWUP("mtime.sec not present");
 			ull = strtoull(cp, &cp, 10);
-			if (!cp || *cp++ != ' ')
+			ఒకవేళ (!cp || *cp++ != ' ')
 				SCREWUP("mtime.sec not delimited");
-			if (TYPE_OVERFLOW(time_t, ull))
+			ఒకవేళ (TYPE_అధికప్రవాహం(time_t, ull))
 				setimes = 0;	/* out of range */
 			mtime.tv_sec = ull;
 			mtime.tv_usec = strtol(cp, &cp, 10);
-			if (!cp || *cp++ != ' ' || mtime.tv_usec < 0 ||
+			ఒకవేళ (!cp || *cp++ != ' ' || mtime.tv_usec < 0 ||
 			    mtime.tv_usec > 999999)
 				SCREWUP("mtime.usec not delimited");
-			if (!isdigit((unsigned char)*cp))
+			ఒకవేళ (!అంకెనా((గుర్తులేని అక్షరం)*cp))
 				SCREWUP("atime.sec not present");
 			ull = strtoull(cp, &cp, 10);
-			if (!cp || *cp++ != ' ')
+			ఒకవేళ (!cp || *cp++ != ' ')
 				SCREWUP("atime.sec not delimited");
-			if (TYPE_OVERFLOW(time_t, ull))
+			ఒకవేళ (TYPE_అధికప్రవాహం(time_t, ull))
 				setimes = 0;	/* out of range */
 			atime.tv_sec = ull;
 			atime.tv_usec = strtol(cp, &cp, 10);
-			if (!cp || *cp++ != '\0' || atime.tv_usec < 0 ||
+			ఒకవేళ (!cp || *cp++ != '\0' || atime.tv_usec < 0 ||
 			    atime.tv_usec > 999999)
 				SCREWUP("atime.usec not delimited");
-			(void) atomicio(vwrite, remout, "", 1);
-			continue;
+			(శూన్య) atomicio(vwrite, remout, "", 1);
+			కొనసాగు;
 		}
-		if (*cp != 'C' && *cp != 'D') {
+		ఒకవేళ (*cp != 'C' && *cp != 'D') {
 			/*
 			 * Check for the case "rcp remote:foo\* local:bar".
 			 * In this case, the line "No match." can be returned
@@ -1778,110 +1778,110 @@ sink(int argc, char **argv, const char *src)
 			 * executed so the ^Aerror_message convention isn't
 			 * followed.
 			 */
-			if (first) {
-				run_err("%s", cp);
-				exit(1);
+			ఒకవేళ (మొదటి) {
+				నిరంతరం_err("%s", cp);
+				నిష్క్రమించు(1);
 			}
 			SCREWUP("expected control record");
 		}
-		mode = 0;
-		for (++cp; cp < buf + 5; cp++) {
-			if (*cp < '0' || *cp > '7')
+		బహుళకం = 0;
+		కొరకు (++cp; cp < buf + 5; cp++) {
+			ఒకవేళ (*cp < '0' || *cp > '7')
 				SCREWUP("bad mode");
-			mode = (mode << 3) | (*cp - '0');
+			బహుళకం = (బహుళకం << 3) | (*cp - '0');
 		}
-		if (!pflag)
-			mode &= ~mask;
-		if (*cp++ != ' ')
+		ఒకవేళ (!pflag)
+			బహుళకం &= ~ముసుగు;
+		ఒకవేళ (*cp++ != ' ')
 			SCREWUP("mode not delimited");
 
-		if (!isdigit((unsigned char)*cp))
+		ఒకవేళ (!అంకెనా((గుర్తులేని అక్షరం)*cp))
 			SCREWUP("size not present");
 		ull = strtoull(cp, &cp, 10);
-		if (!cp || *cp++ != ' ')
+		ఒకవేళ (!cp || *cp++ != ' ')
 			SCREWUP("size not delimited");
-		if (TYPE_OVERFLOW(off_t, ull))
+		ఒకవేళ (TYPE_అధికప్రవాహం(off_t, ull))
 			SCREWUP("size out of range");
-		size = (off_t)ull;
+		కొలత = (off_t)ull;
 
-		if (*cp == '\0' || strchr(cp, '/') != NULL ||
+		ఒకవేళ (*cp == '\0' || strchr(cp, '/') != ఖాళీ ||
 		    strcmp(cp, ".") == 0 || strcmp(cp, "..") == 0) {
-			run_err("error: unexpected filename: %s", cp);
-			exit(1);
+			నిరంతరం_err("error: unexpected filename: %s", cp);
+			నిష్క్రమించు(1);
 		}
-		if (npatterns > 0) {
-			for (n = 0; n < npatterns; n++) {
-				if (strcmp(patterns[n], cp) == 0 ||
+		ఒకవేళ (npatterns > 0) {
+			కొరకు (n = 0; n < npatterns; n++) {
+				ఒకవేళ (strcmp(patterns[n], cp) == 0 ||
 				    fnmatch(patterns[n], cp, 0) == 0)
-					break;
+					ఆపు;
 			}
-			if (n >= npatterns) {
+			ఒకవేళ (n >= npatterns) {
 				debug2_f("incoming filename \"%s\" does not "
 				    "match any of %zu expected patterns", cp,
 				    npatterns);
-				for (n = 0; n < npatterns; n++) {
+				కొరకు (n = 0; n < npatterns; n++) {
 					debug3_f("expected pattern %zu: \"%s\"",
 					    n, patterns[n]);
 				}
 				SCREWUP("filename does not match request");
 			}
 		}
-		if (targisdir) {
-			static char *namebuf;
-			static size_t cursize;
-			size_t need;
+		ఒకవేళ (targisdir) {
+			స్థిర అక్షరం *namebuf;
+			స్థిర కొలత_t cursize;
+			కొలత_t need;
 
-			need = strlen(targ) + strlen(cp) + 250;
-			if (need > cursize) {
-				free(namebuf);
+			need = అక్షరశ్రేణి_పొడవు(targ) + అక్షరశ్రేణి_పొడవు(cp) + 250;
+			ఒకవేళ (need > cursize) {
+				విడుదల(namebuf);
 				namebuf = xmalloc(need);
 				cursize = need;
 			}
-			(void) snprintf(namebuf, need, "%s%s%s", targ,
+			(శూన్య) snprintf(namebuf, need, "%s%s%s", targ,
 			    strcmp(targ, "/") ? "/" : "", cp);
 			np = namebuf;
-		} else
+		} లేకపోతే
 			np = targ;
 		curfile = cp;
 		exists = stat(np, &stb) == 0;
-		if (buf[0] == 'D') {
-			int mod_flag = pflag;
-			if (!iamrecursive)
+		ఒకవేళ (buf[0] == 'D') {
+			పూర్ణాంకం mod_flag = pflag;
+			ఒకవేళ (!iamrecursive)
 				SCREWUP("received directory without -r");
-			if (exists) {
-				if (!S_ISDIR(stb.st_mode)) {
+			ఒకవేళ (exists) {
+				ఒకవేళ (!S_ISDIR(stb.st_mode)) {
 					errno = ENOTDIR;
-					goto bad;
+					వెళ్ళు bad;
 				}
-				if (pflag)
-					(void) chmod(np, mode);
-			} else {
+				ఒకవేళ (pflag)
+					(శూన్య) chmod(np, బహుళకం);
+			} లేకపోతే {
 				/* Handle copying from a read-only directory */
 				mod_flag = 1;
-				if (mkdir(np, mode | S_IRWXU) == -1)
-					goto bad;
+				ఒకవేళ (mkdir(np, బహుళకం | S_IRWXU) == -1)
+					వెళ్ళు bad;
 			}
 			vect[0] = xstrdup(np);
 			sink(1, vect, src);
-			if (setimes) {
+			ఒకవేళ (setimes) {
 				setimes = 0;
-				(void) utimes(vect[0], tv);
+				(శూన్య) utimes(vect[0], tv);
 			}
-			if (mod_flag)
-				(void) chmod(vect[0], mode);
-			free(vect[0]);
-			continue;
+			ఒకవేళ (mod_flag)
+				(శూన్య) chmod(vect[0], బహుళకం);
+			విడుదల(vect[0]);
+			కొనసాగు;
 		}
-		omode = mode;
-		mode |= S_IWUSR;
-		if ((ofd = open(np, O_WRONLY|O_CREAT, mode)) == -1) {
-bad:			run_err("%s: %s", np, strerror(errno));
-			continue;
+		omode = బహుళకం;
+		బహుళకం |= S_IWUSR;
+		ఒకవేళ ((ofd = open(np, O_WRONLY|O_CREAT, బహుళకం)) == -1) {
+bad:			నిరంతరం_err("%s: %s", np, strerror(errno));
+			కొనసాగు;
 		}
-		(void) atomicio(vwrite, remout, "", 1);
-		if ((bp = allocbuf(&buffer, ofd, COPY_BUFLEN)) == NULL) {
-			(void) close(ofd);
-			continue;
+		(శూన్య) atomicio(vwrite, remout, "", 1);
+		ఒకవేళ ((bp = allocbuf(&బఫరు, ofd, COPY_BUFLEN)) == ఖాళీ) {
+			(శూన్య) close(ofd);
+			కొనసాగు;
 		}
 		cp = bp->buf;
 		wrerr = 0;
@@ -1892,258 +1892,258 @@ bad:			run_err("%s: %s", np, strerror(errno));
 		 * desynchronise us from the peer. Use note_err() instead.
 		 */
 		statbytes = 0;
-		if (showprogress)
-			start_progress_meter(curfile, size, &statbytes);
-		set_nonblock(remin);
-		for (count = i = 0; i < size; i += bp->cnt) {
+		ఒకవేళ (showprogress)
+			ప్రారంభం_పురోగతి_meter(curfile, కొలత, &statbytes);
+		సమితి_nonblock(remin);
+		కొరకు (లెక్క = i = 0; i < కొలత; i += bp->cnt) {
 			amt = bp->cnt;
-			if (i + amt > size)
-				amt = size - i;
-			count += amt;
-			do {
-				j = atomicio6(read, remin, cp, amt,
+			ఒకవేళ (i + amt > కొలత)
+				amt = కొలత - i;
+			లెక్క += amt;
+			చేయి {
+				j = atomicio6(పఠ, remin, cp, amt,
 				    scpio, &statbytes);
-				if (j == 0) {
-					run_err("%s", j != EPIPE ?
+				ఒకవేళ (j == 0) {
+					నిరంతరం_err("%s", j != EPIPE ?
 					    strerror(errno) :
 					    "dropped connection");
-					exit(1);
+					నిష్క్రమించు(1);
 				}
 				amt -= j;
 				cp += j;
-			} while (amt > 0);
+			} అయితే (amt > 0);
 
-			if (count == bp->cnt) {
+			ఒకవేళ (లెక్క == bp->cnt) {
 				/* Keep reading so we stay sync'd up. */
-				if (!wrerr) {
-					if (atomicio(vwrite, ofd, bp->buf,
-					    count) != count) {
+				ఒకవేళ (!wrerr) {
+					ఒకవేళ (atomicio(vwrite, ofd, bp->buf,
+					    లెక్క) != లెక్క) {
 						note_err("%s: %s", np,
 						    strerror(errno));
 						wrerr = 1;
 					}
 				}
-				count = 0;
+				లెక్క = 0;
 				cp = bp->buf;
 			}
 		}
 		unset_nonblock(remin);
-		if (count != 0 && !wrerr &&
-		    atomicio(vwrite, ofd, bp->buf, count) != count) {
+		ఒకవేళ (లెక్క != 0 && !wrerr &&
+		    atomicio(vwrite, ofd, bp->buf, లెక్క) != లెక్క) {
 			note_err("%s: %s", np, strerror(errno));
 			wrerr = 1;
 		}
-		if (!wrerr && (!exists || S_ISREG(stb.st_mode)) &&
-		    ftruncate(ofd, size) != 0)
+		ఒకవేళ (!wrerr && (!exists || S_ISREG(stb.st_mode)) &&
+		    ftruncate(ofd, కొలత) != 0)
 			note_err("%s: truncate: %s", np, strerror(errno));
-		if (pflag) {
-			if (exists || omode != mode)
-#ifdef HAVE_FCHMOD
-				if (fchmod(ofd, omode)) {
-#else /* HAVE_FCHMOD */
-				if (chmod(np, omode)) {
-#endif /* HAVE_FCHMOD */
+		ఒకవేళ (pflag) {
+			ఒకవేళ (exists || omode != బహుళకం)
+#నిర్వచితమైతే HAVE_FCHMOD
+				ఒకవేళ (fchmod(ofd, omode)) {
+#లేకపోతే /* HAVE_FCHMOD */
+				ఒకవేళ (chmod(np, omode)) {
+#అయితే_ముగింపు /* HAVE_FCHMOD */
 					note_err("%s: set mode: %s",
 					    np, strerror(errno));
 				}
-		} else {
-			if (!exists && omode != mode)
-#ifdef HAVE_FCHMOD
-				if (fchmod(ofd, omode & ~mask)) {
-#else /* HAVE_FCHMOD */
-				if (chmod(np, omode & ~mask)) {
-#endif /* HAVE_FCHMOD */
+		} లేకపోతే {
+			ఒకవేళ (!exists && omode != బహుళకం)
+#నిర్వచితమైతే HAVE_FCHMOD
+				ఒకవేళ (fchmod(ofd, omode & ~ముసుగు)) {
+#లేకపోతే /* HAVE_FCHMOD */
+				ఒకవేళ (chmod(np, omode & ~ముసుగు)) {
+#అయితే_ముగింపు /* HAVE_FCHMOD */
 					note_err("%s: set mode: %s",
 					    np, strerror(errno));
 				}
 		}
-		if (close(ofd) == -1)
+		ఒకవేళ (close(ofd) == -1)
 			note_err("%s: close: %s", np, strerror(errno));
-		(void) response();
-		if (showprogress)
-			stop_progress_meter();
-		if (setimes && !wrerr) {
+		(శూన్య) response();
+		ఒకవేళ (showprogress)
+			stop_పురోగతి_meter();
+		ఒకవేళ (setimes && !wrerr) {
 			setimes = 0;
-			if (utimes(np, tv) == -1) {
+			ఒకవేళ (utimes(np, tv) == -1) {
 				note_err("%s: set times: %s",
 				    np, strerror(errno));
 			}
 		}
 		/* If no error was noted then signal success for this file */
-		if (note_err(NULL) == 0)
-			(void) atomicio(vwrite, remout, "", 1);
+		ఒకవేళ (note_err(ఖాళీ) == 0)
+			(శూన్య) atomicio(vwrite, remout, "", 1);
 	}
-done:
-	for (n = 0; n < npatterns; n++)
-		free(patterns[n]);
-	free(patterns);
-	return;
+పూర్తి:
+	కొరకు (n = 0; n < npatterns; n++)
+		విడుదల(patterns[n]);
+	విడుదల(patterns);
+	తిరిగి;
 screwup:
-	for (n = 0; n < npatterns; n++)
-		free(patterns[n]);
-	free(patterns);
-	run_err("protocol error: %s", why);
-	exit(1);
+	కొరకు (n = 0; n < npatterns; n++)
+		విడుదల(patterns[n]);
+	విడుదల(patterns);
+	నిరంతరం_err("protocol error: %s", why);
+	నిష్క్రమించు(1);
 }
 
-void
-throughlocal_sftp(struct sftp_conn *from, struct sftp_conn *to,
-    char *src, char *targ)
+శూన్య
+throughlocal_sftp(నిర్మాణం sftp_conn *from, నిర్మాణం sftp_conn *గమ్యం,
+    అక్షరం *src, అక్షరం *targ)
 {
-	char *target = NULL, *filename = NULL, *abs_dst = NULL;
-	char *abs_src = NULL, *tmp = NULL;
+	అక్షరం *లక్ష్యం = ఖాళీ, *filename = ఖాళీ, *abs_dst = ఖాళీ;
+	అక్షరం *abs_src = ఖాళీ, *tmp = ఖాళీ;
 	glob_t g;
-	int i, r, targetisdir, err = 0;
+	పూర్ణాంకం i, r, targetisdir, err = 0;
 
-	if ((filename = basename(src)) == NULL)
+	ఒకవేళ ((filename = basename(src)) == ఖాళీ)
 		fatal("basename %s: %s", src, strerror(errno));
 
-	if ((abs_src = prepare_remote_path(from, src)) == NULL ||
-	    (target = prepare_remote_path(to, targ)) == NULL)
+	ఒకవేళ ((abs_src = prepare_remote_మార్గం(from, src)) == ఖాళీ ||
+	    (లక్ష్యం = prepare_remote_మార్గం(గమ్యం, targ)) == ఖాళీ)
 		cleanup_exit(255);
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, పరిమాణం(g));
 
-	targetisdir = sftp_remote_is_dir(to, target);
-	if (!targetisdir && targetshouldbedirectory) {
+	targetisdir = sftp_remote_is_dir(గమ్యం, లక్ష్యం);
+	ఒకవేళ (!targetisdir && targetshouldbedirectory) {
 		error("%s: destination is not a directory", targ);
 		err = -1;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	debug3_f("copying remote %s to remote %s", abs_src, target);
-	if ((r = sftp_glob(from, abs_src, GLOB_NOCHECK|GLOB_MARK,
-	    NULL, &g)) != 0) {
-		if (r == GLOB_NOSPACE)
+	debug3_f("copying remote %s to remote %s", abs_src, లక్ష్యం);
+	ఒకవేళ ((r = sftp_glob(from, abs_src, GLOB_NOCHECK|GLOB_MARK,
+	    ఖాళీ, &g)) != 0) {
+		ఒకవేళ (r == GLOB_NOSPACE)
 			error("%s: too many glob matches", src);
-		else
+		లేకపోతే
 			error("%s: %s", src, strerror(ENOENT));
 		err = -1;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Did we actually get any matches back from the glob? */
-	if (g.gl_matchc == 0 && g.gl_pathc == 1 && g.gl_pathv[0] != NULL) {
+	ఒకవేళ (g.gl_matchc == 0 && g.gl_pathc == 1 && g.gl_pathv[0] != ఖాళీ) {
 		/*
 		 * If nothing matched but a path returned, then it's probably
 		 * a GLOB_NOCHECK result. Check whether the unglobbed path
 		 * exists so we can give a nice error message early.
 		 */
-		if (sftp_stat(from, g.gl_pathv[0], 1, NULL) != 0) {
+		ఒకవేళ (sftp_stat(from, g.gl_pathv[0], 1, ఖాళీ) != 0) {
 			error("%s: %s", src, strerror(ENOENT));
 			err = -1;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 	}
 
-	for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+	కొరకు (i = 0; g.gl_pathv[i] && !interrupted; i++) {
 		tmp = xstrdup(g.gl_pathv[i]);
-		if ((filename = basename(tmp)) == NULL) {
+		ఒకవేళ ((filename = basename(tmp)) == ఖాళీ) {
 			error("basename %s: %s", tmp, strerror(errno));
 			err = -1;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 
 		/* Special handling for source of '..' */
-		if (strcmp(filename, "..") == 0)
+		ఒకవేళ (strcmp(filename, "..") == 0)
 			filename = "."; /* Download to dest, not dest/.. */
 
-		if (targetisdir)
-			abs_dst = sftp_path_append(target, filename);
-		else
-			abs_dst = xstrdup(target);
+		ఒకవేళ (targetisdir)
+			abs_dst = sftp_మార్గం_append(లక్ష్యం, filename);
+		లేకపోతే
+			abs_dst = xstrdup(లక్ష్యం);
 
 		debug("Fetching %s to %s\n", g.gl_pathv[i], abs_dst);
-		if (sftp_globpath_is_dir(g.gl_pathv[i]) && iamrecursive) {
-			if (sftp_crossload_dir(from, to, g.gl_pathv[i], abs_dst,
-			    NULL, pflag, SFTP_PROGRESS_ONLY, 1) == -1)
+		ఒకవేళ (sftp_globpath_is_dir(g.gl_pathv[i]) && iamrecursive) {
+			ఒకవేళ (sftp_crossload_dir(from, గమ్యం, g.gl_pathv[i], abs_dst,
+			    ఖాళీ, pflag, SFTP_పురోగతి_ONLY, 1) == -1)
 				err = -1;
-		} else {
-			if (sftp_crossload(from, to, g.gl_pathv[i], abs_dst,
-			    NULL, pflag) == -1)
+		} లేకపోతే {
+			ఒకవేళ (sftp_crossload(from, గమ్యం, g.gl_pathv[i], abs_dst,
+			    ఖాళీ, pflag) == -1)
 				err = -1;
 		}
-		free(abs_dst);
-		abs_dst = NULL;
-		free(tmp);
-		tmp = NULL;
+		విడుదల(abs_dst);
+		abs_dst = ఖాళీ;
+		విడుదల(tmp);
+		tmp = ఖాళీ;
 	}
 
-out:
-	free(abs_src);
-	free(abs_dst);
-	free(target);
-	free(tmp);
+బహిర్గతం:
+	విడుదల(abs_src);
+	విడుదల(abs_dst);
+	విడుదల(లక్ష్యం);
+	విడుదల(tmp);
 	globfree(&g);
-	if (err == -1)
+	ఒకవేళ (err == -1)
 		errs = 1;
 }
 
-int
-response(void)
+పూర్ణాంకం
+response(శూన్య)
 {
-	char ch, *cp, resp, rbuf[2048], visbuf[2048];
+	అక్షరం ch, *cp, resp, rbuf[2048], visbuf[2048];
 
-	if (atomicio(read, remin, &resp, sizeof(resp)) != sizeof(resp))
+	ఒకవేళ (atomicio(పఠ, remin, &resp, పరిమాణం(resp)) != పరిమాణం(resp))
 		lostconn(0);
 
 	cp = rbuf;
-	switch (resp) {
-	case 0:		/* ok */
-		return (0);
-	default:
+	ఎంపిక (resp) {
+	స్థితి 0:		/* ok */
+		తిరిగి (0);
+	అప్రమేయ:
 		*cp++ = resp;
 		/* FALLTHROUGH */
-	case 1:		/* error, followed by error msg */
-	case 2:		/* fatal error, "" */
-		do {
-			if (atomicio(read, remin, &ch, sizeof(ch)) != sizeof(ch))
+	స్థితి 1:		/* error, followed by error msg */
+	స్థితి 2:		/* fatal error, "" */
+		చేయి {
+			ఒకవేళ (atomicio(పఠ, remin, &ch, పరిమాణం(ch)) != పరిమాణం(ch))
 				lostconn(0);
 			*cp++ = ch;
-		} while (cp < &rbuf[sizeof(rbuf) - 1] && ch != '\n');
+		} అయితే (cp < &rbuf[పరిమాణం(rbuf) - 1] && ch != '\n');
 
-		if (!iamremote) {
+		ఒకవేళ (!iamremote) {
 			cp[-1] = '\0';
-			(void) snmprintf(visbuf, sizeof(visbuf),
-			    NULL, "%s\n", rbuf);
-			(void) atomicio(vwrite, STDERR_FILENO,
-			    visbuf, strlen(visbuf));
+			(శూన్య) snmprintf(visbuf, పరిమాణం(visbuf),
+			    ఖాళీ, "%s\n", rbuf);
+			(శూన్య) atomicio(vwrite, STDERR_FILENO,
+			    visbuf, అక్షరశ్రేణి_పొడవు(visbuf));
 		}
 		++errs;
-		if (resp == 1)
-			return (-1);
-		exit(1);
+		ఒకవేళ (resp == 1)
+			తిరిగి (-1);
+		నిష్క్రమించు(1);
 	}
 	/* NOTREACHED */
 }
 
-void
-usage(void)
+శూన్య
+usage(శూన్య)
 {
-	(void) fprintf(stderr,
+	(శూన్య) fprintf(stderr,
 	    "usage: scp [-346ABCOpqRrTv] [-c cipher] [-D sftp_server_path] [-F ssh_config]\n"
 	    "           [-i identity_file] [-J destination] [-l limit] [-o ssh_option]\n"
 	    "           [-P port] [-S program] [-X sftp_option] source ... target\n");
-	exit(1);
+	నిష్క్రమించు(1);
 }
 
-void
-run_err(const char *fmt,...)
+శూన్య
+నిరంతరం_err(స్థిరరాశి అక్షరం *fmt,...)
 {
-	static FILE *fp;
+	స్థిర FILE *fp;
 	va_list ap;
 
 	++errs;
-	if (fp != NULL || (remout != -1 && (fp = fdopen(remout, "w")))) {
-		(void) fprintf(fp, "%c", 0x01);
-		(void) fprintf(fp, "scp: ");
+	ఒకవేళ (fp != ఖాళీ || (remout != -1 && (fp = fdopen(remout, "w")))) {
+		(శూన్య) fprintf(fp, "%c", 0x01);
+		(శూన్య) fprintf(fp, "scp: ");
 		va_start(ap, fmt);
-		(void) vfprintf(fp, fmt, ap);
+		(శూన్య) vfprintf(fp, fmt, ap);
 		va_end(ap);
-		(void) fprintf(fp, "\n");
-		(void) fflush(fp);
+		(శూన్య) fprintf(fp, "\n");
+		(శూన్య) fflush(fp);
 	}
 
-	if (!iamremote) {
+	ఒకవేళ (!iamremote) {
 		va_start(ap, fmt);
 		vfmprintf(stderr, fmt, ap);
 		va_end(ap);
@@ -2156,126 +2156,126 @@ run_err(const char *fmt,...)
  * no error has been noted or -1 otherwise. Use note_err(NULL) to flush
  * any active error at the end of the transfer.
  */
-int
-note_err(const char *fmt, ...)
+పూర్ణాంకం
+note_err(స్థిరరాశి అక్షరం *fmt, ...)
 {
-	static char *emsg;
+	స్థిర అక్షరం *emsg;
 	va_list ap;
 
 	/* Replay any previously-noted error */
-	if (fmt == NULL) {
-		if (emsg == NULL)
-			return 0;
-		run_err("%s", emsg);
-		free(emsg);
-		emsg = NULL;
-		return -1;
+	ఒకవేళ (fmt == ఖాళీ) {
+		ఒకవేళ (emsg == ఖాళీ)
+			తిరిగి 0;
+		నిరంతరం_err("%s", emsg);
+		విడుదల(emsg);
+		emsg = ఖాళీ;
+		తిరిగి -1;
 	}
 
 	errs++;
 	/* Prefer first-noted error */
-	if (emsg != NULL)
-		return -1;
+	ఒకవేళ (emsg != ఖాళీ)
+		తిరిగి -1;
 
 	va_start(ap, fmt);
-	vasnmprintf(&emsg, INT_MAX, NULL, fmt, ap);
+	vasnmprintf(&emsg, గరిష్ఠ_పూర్ణాంకం, ఖాళీ, fmt, ap);
 	va_end(ap);
-	return -1;
+	తిరిగి -1;
 }
 
-void
-verifydir(char *cp)
+శూన్య
+verifydir(అక్షరం *cp)
 {
-	struct stat stb;
+	నిర్మాణం stat stb;
 
-	if (!stat(cp, &stb)) {
-		if (S_ISDIR(stb.st_mode))
-			return;
+	ఒకవేళ (!stat(cp, &stb)) {
+		ఒకవేళ (S_ISDIR(stb.st_mode))
+			తిరిగి;
 		errno = ENOTDIR;
 	}
-	run_err("%s: %s", cp, strerror(errno));
+	నిరంతరం_err("%s: %s", cp, strerror(errno));
 	killchild(0);
 }
 
-int
-okname(char *cp0)
+పూర్ణాంకం
+okname(అక్షరం *cp0)
 {
-	int c;
-	char *cp;
+	పూర్ణాంకం c;
+	అక్షరం *cp;
 
 	cp = cp0;
-	do {
-		c = (int)*cp;
-		if (c & 0200)
-			goto bad;
-		if (!isalpha(c) && !isdigit((unsigned char)c)) {
-			switch (c) {
-			case '\'':
-			case '"':
-			case '`':
-			case ' ':
-			case '#':
-				goto bad;
-			default:
-				break;
+	చేయి {
+		c = (పూర్ణాంకం)*cp;
+		ఒకవేళ (c & 0200)
+			వెళ్ళు bad;
+		ఒకవేళ (!అక్షరమా(c) && !అంకెనా((గుర్తులేని అక్షరం)c)) {
+			ఎంపిక (c) {
+			స్థితి '\'':
+			స్థితి '"':
+			స్థితి '`':
+			స్థితి ' ':
+			స్థితి '#':
+				వెళ్ళు bad;
+			అప్రమేయ:
+				ఆపు;
 			}
 		}
-	} while (*++cp);
-	return (1);
+	} అయితే (*++cp);
+	తిరిగి (1);
 
 bad:	fmprintf(stderr, "%s: invalid user name\n", cp0);
-	return (0);
+	తిరిగి (0);
 }
 
 BUF *
-allocbuf(BUF *bp, int fd, int blksize)
+allocbuf(BUF *bp, పూర్ణాంకం fd, పూర్ణాంకం blksize)
 {
-	size_t size;
-#ifdef HAVE_STRUCT_STAT_ST_BLKSIZE
-	struct stat stb;
+	కొలత_t కొలత;
+#నిర్వచితమైతే HAVE_STRUCT_STAT_ST_BLKSIZE
+	నిర్మాణం stat stb;
 
-	if (fstat(fd, &stb) == -1) {
-		run_err("fstat: %s", strerror(errno));
-		return (NULL);
+	ఒకవేళ (fstat(fd, &stb) == -1) {
+		నిరంతరం_err("fstat: %s", strerror(errno));
+		తిరిగి (ఖాళీ);
 	}
-	size = ROUNDUP(stb.st_blksize, blksize);
-	if (size == 0)
-		size = blksize;
-#else /* HAVE_STRUCT_STAT_ST_BLKSIZE */
-	size = blksize;
-#endif /* HAVE_STRUCT_STAT_ST_BLKSIZE */
-	if (bp->cnt >= size)
-		return (bp);
-	bp->buf = xrecallocarray(bp->buf, bp->cnt, size, 1);
-	bp->cnt = size;
-	return (bp);
+	కొలత = ROUNDUP(stb.st_blksize, blksize);
+	ఒకవేళ (కొలత == 0)
+		కొలత = blksize;
+#లేకపోతే /* HAVE_STRUCT_STAT_ST_BLKSIZE */
+	కొలత = blksize;
+#అయితే_ముగింపు /* HAVE_STRUCT_STAT_ST_BLKSIZE */
+	ఒకవేళ (bp->cnt >= కొలత)
+		తిరిగి (bp);
+	bp->buf = xrecallocarray(bp->buf, bp->cnt, కొలత, 1);
+	bp->cnt = కొలత;
+	తిరిగి (bp);
 }
 
-void
-lostconn(int signo)
+శూన్య
+lostconn(పూర్ణాంకం signo)
 {
-	if (!iamremote)
-		(void)write(STDERR_FILENO, "lost connection\n", 16);
-	if (signo)
+	ఒకవేళ (!iamremote)
+		(శూన్య)లిఖ(STDERR_FILENO, "lost connection\n", 16);
+	ఒకవేళ (signo)
 		_exit(1);
-	else
-		exit(1);
+	లేకపోతే
+		నిష్క్రమించు(1);
 }
 
-void
-cleanup_exit(int i)
+శూన్య
+cleanup_exit(పూర్ణాంకం i)
 {
-	if (remin > 0)
+	ఒకవేళ (remin > 0)
 		close(remin);
-	if (remout > 0)
+	ఒకవేళ (remout > 0)
 		close(remout);
-	if (remin2 > 0)
+	ఒకవేళ (remin2 > 0)
 		close(remin2);
-	if (remout2 > 0)
+	ఒకవేళ (remout2 > 0)
 		close(remout2);
-	if (do_cmd_pid > 0)
-		(void)waitpid(do_cmd_pid, NULL, 0);
-	if (do_cmd_pid2 > 0)
-		(void)waitpid(do_cmd_pid2, NULL, 0);
-	exit(i);
+	ఒకవేళ (do_cmd_pid > 0)
+		(శూన్య)waitpid(do_cmd_pid, ఖాళీ, 0);
+	ఒకవేళ (do_cmd_pid2 > 0)
+		(శూన్య)waitpid(do_cmd_pid2, ఖాళీ, 0);
+	నిష్క్రమించు(i);
 }

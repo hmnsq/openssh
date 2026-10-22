@@ -15,21 +15,21 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef OPENSSH_AESCTR_H
-#define OPENSSH_AESCTR_H
+#నిర్వచితం_కాకపోతే OPENSSH_AESCTR_H
+#నిర్వచించు OPENSSH_AESCTR_H
 
-#include "rijndael.h"
+#అన్తర్భావ "rijndael.h"
 
-#define AES_BLOCK_SIZE 16
+#నిర్వచించు AES_ఖండం_కొలత 16
 
-typedef struct aesctr_ctx {
-	int	rounds;				/* keylen-dependent #rounds */
+రకనిర్వచనం నిర్మాణం aesctr_ctx {
+	పూర్ణాంకం	విడతలు;				/* keylen-dependent #rounds */
 	u32	ek[4*(AES_MAXROUNDS + 1)];	/* encrypt key schedule */
-	u8	ctr[AES_BLOCK_SIZE];		/* counter */
+	u8	ctr[AES_ఖండం_కొలత];		/* counter */
 } aesctr_ctx;
 
-void aesctr_keysetup(aesctr_ctx *x,const u8 *k,u32 kbits,u32 ivbits);
-void aesctr_ivsetup(aesctr_ctx *x,const u8 *iv);
-void aesctr_encrypt_bytes(aesctr_ctx *x,const u8 *m,u8 *c,u32 bytes);
+శూన్య aesctr_keysetup(aesctr_ctx *x,స్థిరరాశి u8 *k,u32 kbits,u32 ivbits);
+శూన్య aesctr_ivsetup(aesctr_ctx *x,స్థిరరాశి u8 *iv);
+శూన్య aesctr_encrypt_బైట్లు(aesctr_ctx *x,స్థిరరాశి u8 *m,u8 *c,u32 బైట్లు);
 
-#endif
+#అయితే_ముగింపు

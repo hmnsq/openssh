@@ -19,28 +19,28 @@
 
 /* This version has been modified to use SHA512 from SUPERCOP */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifndef HAVE_BCRYPT_PBKDF
+#నిర్వచితం_కాకపోతే HAVE_BCRYPT_PBKDF
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#ifdef HAVE_STDLIB_H
+#నిర్వచితమైతే HAVE_STDLIB_H
 # include <stdlib.h>
-#endif
-#include <string.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <string.h>
 
-#ifdef HAVE_BLF_H
+#నిర్వచితమైతే HAVE_BLF_H
 # include <blf.h>
-#endif
+#అయితే_ముగింపు
 
-#include "crypto_api.h"
-#ifdef SHA512_DIGEST_LENGTH
-# undef SHA512_DIGEST_LENGTH
-#endif
-#define SHA512_DIGEST_LENGTH crypto_hash_sha512_BYTES
+#అన్తర్భావ "crypto_api.h"
+#నిర్వచితమైతే SHA512_DIGEST_నిడివి
+# undef SHA512_DIGEST_నిడివి
+#అయితే_ముగింపు
+#నిర్వచించు SHA512_DIGEST_నిడివి crypto_hash_sha512_బైట్లు
 
-#define	MINIMUM(a,b) (((a) < (b)) ? (a) : (b))
+#నిర్వచించు	MINIMUM(a,b) (((a) < (b)) ? (a) : (b))
 
 /*
  * pkcs #5 pbkdf2 implementation using the "bcrypt" hash
@@ -66,123 +66,123 @@
  * wise caller could do; we just do it for you.
  */
 
-#define BCRYPT_WORDS 8
-#define BCRYPT_HASHSIZE (BCRYPT_WORDS * 4)
+#నిర్వచించు BCRYPT_పదాలు 8
+#నిర్వచించు BCRYPT_HASHSIZE (BCRYPT_పదాలు * 4)
 
-static void
-bcrypt_hash(uint8_t *sha2pass, uint8_t *sha2salt, uint8_t *out)
+స్థిర శూన్య
+bcrypt_hash(uint8_t *sha2pass, uint8_t *sha2salt, uint8_t *బహిర్గతం)
 {
 	blf_ctx state;
 	uint8_t __attribute__ ((__nonstring__)) ciphertext[BCRYPT_HASHSIZE] =
 	    "OxychromaticBlowfishSwatDynamite";
-	uint32_t cdata[BCRYPT_WORDS];
-	int i;
+	uint32_t cdata[BCRYPT_పదాలు];
+	పూర్ణాంకం i;
 	uint16_t j;
-	size_t shalen = SHA512_DIGEST_LENGTH;
+	కొలత_t shalen = SHA512_DIGEST_నిడివి;
 
 	/* key expansion */
 	Blowfish_initstate(&state);
 	Blowfish_expandstate(&state, sha2salt, shalen, sha2pass, shalen);
-	for (i = 0; i < 64; i++) {
+	కొరకు (i = 0; i < 64; i++) {
 		Blowfish_expand0state(&state, sha2salt, shalen);
 		Blowfish_expand0state(&state, sha2pass, shalen);
 	}
 
 	/* encryption */
 	j = 0;
-	for (i = 0; i < BCRYPT_WORDS; i++)
-		cdata[i] = Blowfish_stream2word(ciphertext, sizeof(ciphertext),
+	కొరకు (i = 0; i < BCRYPT_పదాలు; i++)
+		cdata[i] = Blowfish_stream2word(ciphertext, పరిమాణం(ciphertext),
 		    &j);
-	for (i = 0; i < 64; i++)
-		blf_enc(&state, cdata, BCRYPT_WORDS / 2);
+	కొరకు (i = 0; i < 64; i++)
+		blf_enc(&state, cdata, BCRYPT_పదాలు / 2);
 
 	/* copy out */
-	for (i = 0; i < BCRYPT_WORDS; i++) {
-		out[4 * i + 3] = (cdata[i] >> 24) & 0xff;
-		out[4 * i + 2] = (cdata[i] >> 16) & 0xff;
-		out[4 * i + 1] = (cdata[i] >> 8) & 0xff;
-		out[4 * i + 0] = cdata[i] & 0xff;
+	కొరకు (i = 0; i < BCRYPT_పదాలు; i++) {
+		బహిర్గతం[4 * i + 3] = (cdata[i] >> 24) & 0xff;
+		బహిర్గతం[4 * i + 2] = (cdata[i] >> 16) & 0xff;
+		బహిర్గతం[4 * i + 1] = (cdata[i] >> 8) & 0xff;
+		బహిర్గతం[4 * i + 0] = cdata[i] & 0xff;
 	}
 
 	/* zap */
-	explicit_bzero(ciphertext, sizeof(ciphertext));
-	explicit_bzero(cdata, sizeof(cdata));
-	explicit_bzero(&state, sizeof(state));
+	explicit_bzero(ciphertext, పరిమాణం(ciphertext));
+	explicit_bzero(cdata, పరిమాణం(cdata));
+	explicit_bzero(&state, పరిమాణం(state));
 }
 
-int
-bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltlen,
-    uint8_t *key, size_t keylen, unsigned int rounds)
+పూర్ణాంకం
+bcrypt_pbkdf(స్థిరరాశి అక్షరం *pass, కొలత_t passlen, స్థిరరాశి uint8_t *salt, కొలత_t saltlen,
+    uint8_t *కీలకం, కొలత_t keylen, గుర్తులేని పూర్ణాంకం విడతలు)
 {
-	uint8_t sha2pass[SHA512_DIGEST_LENGTH];
-	uint8_t sha2salt[SHA512_DIGEST_LENGTH];
-	uint8_t out[BCRYPT_HASHSIZE];
+	uint8_t sha2pass[SHA512_DIGEST_నిడివి];
+	uint8_t sha2salt[SHA512_DIGEST_నిడివి];
+	uint8_t బహిర్గతం[BCRYPT_HASHSIZE];
 	uint8_t tmpout[BCRYPT_HASHSIZE];
 	uint8_t *countsalt;
-	size_t i, j, amt, stride;
-	uint32_t count;
-	size_t origkeylen = keylen;
+	కొలత_t i, j, amt, stride;
+	uint32_t లెక్క;
+	కొలత_t origkeylen = keylen;
 
 	/* nothing crazy */
-	if (rounds < 1)
-		goto bad;
-	if (passlen == 0 || saltlen == 0 || keylen == 0 ||
-	    keylen > sizeof(out) * sizeof(out) || saltlen > 1<<20)
-		goto bad;
-	if ((countsalt = calloc(1, saltlen + 4)) == NULL)
-		goto bad;
-	stride = (keylen + sizeof(out) - 1) / sizeof(out);
+	ఒకవేళ (విడతలు < 1)
+		వెళ్ళు bad;
+	ఒకవేళ (passlen == 0 || saltlen == 0 || keylen == 0 ||
+	    keylen > పరిమాణం(బహిర్గతం) * పరిమాణం(బహిర్గతం) || saltlen > 1<<20)
+		వెళ్ళు bad;
+	ఒకవేళ ((countsalt = సున్నా_జ్ఞాపకం_ఇవ్వు(1, saltlen + 4)) == ఖాళీ)
+		వెళ్ళు bad;
+	stride = (keylen + పరిమాణం(బహిర్గతం) - 1) / పరిమాణం(బహిర్గతం);
 	amt = (keylen + stride - 1) / stride;
 
-	memcpy(countsalt, salt, saltlen);
+	జ్ఞాపకం_నకలు(countsalt, salt, saltlen);
 
 	/* collapse password */
 	crypto_hash_sha512(sha2pass, pass, passlen);
 
 	/* generate key, sizeof(out) at a time */
-	for (count = 1; keylen > 0; count++) {
-		countsalt[saltlen + 0] = (count >> 24) & 0xff;
-		countsalt[saltlen + 1] = (count >> 16) & 0xff;
-		countsalt[saltlen + 2] = (count >> 8) & 0xff;
-		countsalt[saltlen + 3] = count & 0xff;
+	కొరకు (లెక్క = 1; keylen > 0; లెక్క++) {
+		countsalt[saltlen + 0] = (లెక్క >> 24) & 0xff;
+		countsalt[saltlen + 1] = (లెక్క >> 16) & 0xff;
+		countsalt[saltlen + 2] = (లెక్క >> 8) & 0xff;
+		countsalt[saltlen + 3] = లెక్క & 0xff;
 
 		/* first round, salt is salt */
 		crypto_hash_sha512(sha2salt, countsalt, saltlen + 4);
 
 		bcrypt_hash(sha2pass, sha2salt, tmpout);
-		memcpy(out, tmpout, sizeof(out));
+		జ్ఞాపకం_నకలు(బహిర్గతం, tmpout, పరిమాణం(బహిర్గతం));
 
-		for (i = 1; i < rounds; i++) {
+		కొరకు (i = 1; i < విడతలు; i++) {
 			/* subsequent rounds, salt is previous output */
-			crypto_hash_sha512(sha2salt, tmpout, sizeof(tmpout));
+			crypto_hash_sha512(sha2salt, tmpout, పరిమాణం(tmpout));
 			bcrypt_hash(sha2pass, sha2salt, tmpout);
-			for (j = 0; j < sizeof(out); j++)
-				out[j] ^= tmpout[j];
+			కొరకు (j = 0; j < పరిమాణం(బహిర్గతం); j++)
+				బహిర్గతం[j] ^= tmpout[j];
 		}
 
 		/*
 		 * pbkdf2 deviation: output the key material non-linearly.
 		 */
 		amt = MINIMUM(amt, keylen);
-		for (i = 0; i < amt; i++) {
-			size_t dest = i * stride + (count - 1);
-			if (dest >= origkeylen)
-				break;
-			key[dest] = out[i];
+		కొరకు (i = 0; i < amt; i++) {
+			కొలత_t dest = i * stride + (లెక్క - 1);
+			ఒకవేళ (dest >= origkeylen)
+				ఆపు;
+			కీలకం[dest] = బహిర్గతం[i];
 		}
 		keylen -= i;
 	}
 
 	/* zap */
 	freezero(countsalt, saltlen + 4);
-	explicit_bzero(out, sizeof(out));
-	explicit_bzero(tmpout, sizeof(tmpout));
+	explicit_bzero(బహిర్గతం, పరిమాణం(బహిర్గతం));
+	explicit_bzero(tmpout, పరిమాణం(tmpout));
 
-	return 0;
+	తిరిగి 0;
 
 bad:
 	/* overwrite with random in case caller doesn't check return code */
-	arc4random_buf(key, keylen);
-	return -1;
+	arc4random_buf(కీలకం, keylen);
+	తిరిగి -1;
 }
-#endif /* HAVE_BCRYPT_PBKDF */
+#అయితే_ముగింపు /* HAVE_BCRYPT_PBKDF */

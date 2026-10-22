@@ -25,293 +25,293 @@
  * protocol changes.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <limits.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <errno.h>
 
-#include "xmalloc.h"
-#include "log.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "msg.h"
-#include "uidswap.h"
-#include "ssherr.h"
-#include "ssh-sk.h"
-#include "ssh-pkcs11.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "authfd.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "msg.h"
+#అన్తర్భావ "uidswap.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "ssh-sk.h"
+#అన్తర్భావ "ssh-pkcs11.h"
 
-#ifdef ENABLE_SK
-extern char *__progname;
+#నిర్వచితమైతే ENABLE_SK
+బాహ్య అక్షరం *__progname;
 
-static struct sshbuf *reply_error(int r, char *fmt, ...)
-    __attribute__((__format__ (printf, 2, 3)));
+స్థిర నిర్మాణం sshbuf *జవాబు_error(పూర్ణాంకం r, అక్షరం *fmt, ...)
+    __attribute__((__format__ (రాయి, 2, 3)));
 
-static struct sshbuf *
-reply_error(int r, char *fmt, ...)
+స్థిర నిర్మాణం sshbuf *
+జవాబు_error(పూర్ణాంకం r, అక్షరం *fmt, ...)
 {
-	char *msg;
+	అక్షరం *సందేశం;
 	va_list ap;
-	struct sshbuf *resp;
+	నిర్మాణం sshbuf *resp;
 
 	va_start(ap, fmt);
-	xvasprintf(&msg, fmt, ap);
+	xvasprintf(&సందేశం, fmt, ap);
 	va_end(ap);
-	debug("%s: %s", __progname, msg);
-	free(msg);
+	debug("%s: %s", __progname, సందేశం);
+	విడుదల(సందేశం);
 
-	if (r >= 0)
+	ఒకవేళ (r >= 0)
 		fatal_f("invalid error code %d", r);
 
-	if ((resp = sshbuf_new()) == NULL)
+	ఒకవేళ ((resp = sshbuf_new()) == ఖాళీ)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (sshbuf_put_u32(resp, SSH_SK_HELPER_ERROR) != 0 ||
+	ఒకవేళ (sshbuf_put_u32(resp, SSH_SK_HELPER_ERROR) != 0 ||
 	    sshbuf_put_u32(resp, (u_int)-r) != 0)
 		fatal("%s: buffer error", __progname);
-	return resp;
+	తిరిగి resp;
 }
 
 /* If the specified string is zero length, then free it and replace with NULL */
-static void
-null_empty(char **s)
+స్థిర శూన్య
+null_ఖాళీలు(అక్షరం **s)
 {
-	if (s == NULL || *s == NULL || **s != '\0')
-		return;
+	ఒకవేళ (s == ఖాళీ || *s == ఖాళీ || **s != '\0')
+		తిరిగి;
 
-	free(*s);
-	*s = NULL;
+	విడుదల(*s);
+	*s = ఖాళీ;
 }
 
 /* stubs */
-int
-pkcs11_sign(struct sshkey *key,
-    u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider,
-    const char *sk_pin, u_int compat)
+పూర్ణాంకం
+pkcs11_sign(నిర్మాణం sshkey *కీలకం,
+    u_char **sigp, కొలత_t *lenp,
+    స్థిరరాశి u_char *దత్తాంశం, కొలత_t datalen,
+    స్థిరరాశి అక్షరం *alg, స్థిరరాశి అక్షరం *sk_provider,
+    స్థిరరాశి అక్షరం *sk_pin, u_int compat)
 {
-	return SSH_ERR_INTERNAL_ERROR;
+	తిరిగి SSH_ERR_అంతర్గత_ERROR;
 }
 
-void
-pkcs11_key_free(struct sshkey *key)
+శూన్య
+pkcs11_కీలకం_free(నిర్మాణం sshkey *కీలకం)
 {
 }
 
-static struct sshbuf *
-process_sign(struct sshbuf *req)
+స్థిర నిర్మాణం sshbuf *
+process_sign(నిర్మాణం sshbuf *req)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *resp, *kbuf;
-	struct sshkey *key = NULL;
+	పూర్ణాంకం r = SSH_ERR_అంతర్గత_ERROR;
+	నిర్మాణం sshbuf *resp, *kbuf;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ;
 	uint32_t compat;
-	const u_char *message;
-	u_char *sig = NULL;
-	size_t msglen, siglen = 0;
-	char *provider = NULL, *pin = NULL;
+	స్థిరరాశి u_char *సందేశం_2;
+	u_char *sig = ఖాళీ;
+	కొలత_t msglen, siglen = 0;
+	అక్షరం *provider = ఖాళీ, *pin = ఖాళీ;
 
-	if ((r = sshbuf_froms(req, &kbuf)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(req, &message, &msglen)) != 0 ||
-	    (r = sshbuf_get_cstring(req, NULL, NULL)) != 0 || /* alg */
+	ఒకవేళ ((r = sshbuf_froms(req, &kbuf)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &provider, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_string_ప్రత్యక్ష(req, &సందేశం_2, &msglen)) != 0 ||
+	    (r = sshbuf_get_cstring(req, ఖాళీ, ఖాళీ)) != 0 || /* alg */
 	    (r = sshbuf_get_u32(req, &compat)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0)
+	    (r = sshbuf_get_cstring(req, &pin, ఖాళీ)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	ఒకవేళ (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
-	if ((r = sshkey_private_deserialize(kbuf, &key)) != 0)
+	ఒకవేళ ((r = sshkey_వ్యక్తిగత_deserialize(kbuf, &కీలకం)) != 0)
 		fatal_r(r, "%s: Unable to parse private key", __progname);
-	if (!sshkey_is_sk(key)) {
+	ఒకవేళ (!sshkey_is_sk(కీలకం)) {
 		fatal("%s: Unsupported key type %s",
-		    __progname, sshkey_ssh_name(key));
+		    __progname, sshkey_ssh_name(కీలకం));
 	}
 
 	debug_f("ready to sign with key %s, provider %s: "
-	    "msg len %zu, compat 0x%lx", sshkey_type(key),
+	    "msg len %zu, compat 0x%lx", sshkey_type(కీలకం),
 	    provider, msglen, (u_long)compat);
 
-	null_empty(&pin);
+	null_ఖాళీలు(&pin);
 
-	if ((r = sshsk_sign(provider, key, &sig, &siglen,
-	    message, msglen, compat, pin)) != 0) {
-		resp = reply_error(r, "Signing failed: %s", ssh_err(r));
-		goto out;
+	ఒకవేళ ((r = sshsk_sign(provider, కీలకం, &sig, &siglen,
+	    సందేశం_2, msglen, compat, pin)) != 0) {
+		resp = జవాబు_error(r, "Signing failed: %s", ssh_err(r));
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	ఒకవేళ ((resp = sshbuf_new()) == ఖాళీ)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_SIGN)) != 0 ||
+	ఒకవేళ ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_SIGN)) != 0 ||
 	    (r = sshbuf_put_string(resp, sig, siglen)) != 0)
 		fatal_r(r, "%s: compose", __progname);
- out:
-	sshkey_free(key);
+ బహిర్గతం:
+	sshkey_free(కీలకం);
 	sshbuf_free(kbuf);
-	free(provider);
-	if (sig != NULL)
+	విడుదల(provider);
+	ఒకవేళ (sig != ఖాళీ)
 		freezero(sig, siglen);
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
-	return resp;
+	ఒకవేళ (pin != ఖాళీ)
+		freezero(pin, అక్షరశ్రేణి_పొడవు(pin));
+	తిరిగి resp;
 }
 
-static struct sshbuf *
-process_enroll(struct sshbuf *req)
+స్థిర నిర్మాణం sshbuf *
+process_enroll(నిర్మాణం sshbuf *req)
 {
-	int r;
+	పూర్ణాంకం r;
 	u_int type;
-	char *provider, *application, *pin, *device, *userid;
+	అక్షరం *provider, *application, *pin, *device, *userid;
 	uint8_t flags;
-	struct sshbuf *challenge, *attest, *kbuf, *resp;
-	struct sshkey *key;
+	నిర్మాణం sshbuf *challenge, *attest, *kbuf, *resp;
+	నిర్మాణం sshkey *కీలకం;
 
-	if ((attest = sshbuf_new()) == NULL ||
-	    (kbuf = sshbuf_new()) == NULL)
+	ఒకవేళ ((attest = sshbuf_new()) == ఖాళీ ||
+	    (kbuf = sshbuf_new()) == ఖాళీ)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_get_u32(req, &type)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &device, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &application, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &userid, NULL)) != 0 ||
+	ఒకవేళ ((r = sshbuf_get_u32(req, &type)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &provider, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &device, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &application, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &userid, ఖాళీ)) != 0 ||
 	    (r = sshbuf_get_u8(req, &flags)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &pin, ఖాళీ)) != 0 ||
 	    (r = sshbuf_froms(req, &challenge)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	ఒకవేళ (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
-	if (type > INT_MAX)
+	ఒకవేళ (type > గరిష్ఠ_పూర్ణాంకం)
 		fatal("%s: bad type %u", __progname, type);
-	if (sshbuf_len(challenge) == 0) {
+	ఒకవేళ (sshbuf_len(challenge) == 0) {
 		sshbuf_free(challenge);
-		challenge = NULL;
+		challenge = ఖాళీ;
 	}
-	null_empty(&device);
-	null_empty(&userid);
-	null_empty(&pin);
+	null_ఖాళీలు(&device);
+	null_ఖాళీలు(&userid);
+	null_ఖాళీలు(&pin);
 
-	if ((r = sshsk_enroll((int)type, provider, device, application, userid,
-	    flags, pin, challenge, &key, attest)) != 0) {
-		resp = reply_error(r, "Enrollment failed: %s", ssh_err(r));
-		goto out;
+	ఒకవేళ ((r = sshsk_enroll((పూర్ణాంకం)type, provider, device, application, userid,
+	    flags, pin, challenge, &కీలకం, attest)) != 0) {
+		resp = జవాబు_error(r, "Enrollment failed: %s", ssh_err(r));
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	ఒకవేళ ((resp = sshbuf_new()) == ఖాళీ)
 		fatal("%s: sshbuf_new failed", __progname);
-	if ((r = sshkey_private_serialize(key, kbuf)) != 0)
+	ఒకవేళ ((r = sshkey_వ్యక్తిగత_serialize(కీలకం, kbuf)) != 0)
 		fatal_r(r, "%s: encode key", __progname);
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_ENROLL)) != 0 ||
+	ఒకవేళ ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_ENROLL)) != 0 ||
 	    (r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
 	    (r = sshbuf_put_stringb(resp, attest)) != 0)
 		fatal_r(r, "%s: compose", __progname);
 
- out:
-	sshkey_free(key);
+ బహిర్గతం:
+	sshkey_free(కీలకం);
 	sshbuf_free(kbuf);
 	sshbuf_free(attest);
 	sshbuf_free(challenge);
-	free(provider);
-	free(application);
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
+	విడుదల(provider);
+	విడుదల(application);
+	ఒకవేళ (pin != ఖాళీ)
+		freezero(pin, అక్షరశ్రేణి_పొడవు(pin));
 
-	return resp;
+	తిరిగి resp;
 }
 
-static struct sshbuf *
-process_load_resident(struct sshbuf *req)
+స్థిర నిర్మాణం sshbuf *
+process_ఎక్కించు_resident(నిర్మాణం sshbuf *req)
 {
-	int r;
-	char *provider, *pin, *device;
-	struct sshbuf *kbuf, *resp;
-	struct sshsk_resident_key **srks = NULL;
-	size_t nsrks = 0, i;
+	పూర్ణాంకం r;
+	అక్షరం *provider, *pin, *device;
+	నిర్మాణం sshbuf *kbuf, *resp;
+	నిర్మాణం sshsk_resident_కీలకం **srks = ఖాళీ;
+	కొలత_t nsrks = 0, i;
 	u_int flags;
 
-	if ((kbuf = sshbuf_new()) == NULL)
+	ఒకవేళ ((kbuf = sshbuf_new()) == ఖాళీ)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &device, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0 ||
+	ఒకవేళ ((r = sshbuf_get_cstring(req, &provider, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &device, ఖాళీ)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &pin, ఖాళీ)) != 0 ||
 	    (r = sshbuf_get_u32(req, &flags)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	ఒకవేళ (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
-	null_empty(&device);
-	null_empty(&pin);
+	null_ఖాళీలు(&device);
+	null_ఖాళీలు(&pin);
 
-	if ((r = sshsk_load_resident(provider, device, pin, flags,
+	ఒకవేళ ((r = sshsk_ఎక్కించు_resident(provider, device, pin, flags,
 	    &srks, &nsrks)) != 0) {
-		resp = reply_error(r, "sshsk_load_resident failed: %s",
+		resp = జవాబు_error(r, "sshsk_load_resident failed: %s",
 		    ssh_err(r));
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	ఒకవేళ ((resp = sshbuf_new()) == ఖాళీ)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
+	ఒకవేళ ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_ఎక్కించు_RESIDENT)) != 0)
 		fatal_r(r, "%s: compose", __progname);
 
-	for (i = 0; i < nsrks; i++) {
+	కొరకు (i = 0; i < nsrks; i++) {
 		debug_f("key %zu %s %s uidlen %zu", i,
-		    sshkey_type(srks[i]->key), srks[i]->key->sk_application,
+		    sshkey_type(srks[i]->కీలకం), srks[i]->కీలకం->sk_application,
 		    srks[i]->user_id_len);
 		sshbuf_reset(kbuf);
-		if ((r = sshkey_private_serialize(srks[i]->key, kbuf)) != 0)
+		ఒకవేళ ((r = sshkey_వ్యక్తిగత_serialize(srks[i]->కీలకం, kbuf)) != 0)
 			fatal_r(r, "%s: encode key", __progname);
-		if ((r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
+		ఒకవేళ ((r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
 		    (r = sshbuf_put_cstring(resp, "")) != 0 || /* comment */
 		    (r = sshbuf_put_string(resp, srks[i]->user_id,
 		    srks[i]->user_id_len)) != 0)
 			fatal_r(r, "%s: compose key", __progname);
 	}
 
- out:
-	sshsk_free_resident_keys(srks, nsrks);
+ బహిర్గతం:
+	sshsk_free_resident_కీలకాలు(srks, nsrks);
 	sshbuf_free(kbuf);
-	free(provider);
-	free(device);
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
-	return resp;
+	విడుదల(provider);
+	విడుదల(device);
+	ఒకవేళ (pin != ఖాళీ)
+		freezero(pin, అక్షరశ్రేణి_పొడవు(pin));
+	తిరిగి resp;
 }
 
-int
-main(int argc, char **argv)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
 	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
 	LogLevel log_level = SYSLOG_LEVEL_ERROR;
-	struct sshbuf *req, *resp;
-	int in, out, ch, r, vflag = 0;
+	నిర్మాణం sshbuf *req, *resp;
+	పూర్ణాంకం లోపల, బహిర్గతం, ch, r, vflag = 0;
 	u_int rtype, ll = 0;
-	uint8_t version, log_stderr = 0;
+	uint8_t సంస్కరణ, log_stderr = 0;
 
 	sanitise_stdfd();
 	log_init(__progname, log_level, log_facility, log_stderr);
 
-	while ((ch = getopt(argc, argv, "v")) != -1) {
-		switch (ch) {
-		case 'v':
+	అయితే ((ch = getopt(argc, argv, "v")) != -1) {
+		ఎంపిక (ch) {
+		స్థితి 'v':
 			vflag = 1;
-			if (log_level == SYSLOG_LEVEL_ERROR)
+			ఒకవేళ (log_level == SYSLOG_LEVEL_ERROR)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			లేకపోతే ఒకవేళ (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			fprintf(stderr, "usage: %s [-v]\n", __progname);
-			exit(1);
+			నిష్క్రమించు(1);
 		}
 	}
 	log_init(__progname, log_level, log_facility, vflag);
@@ -321,63 +321,63 @@ main(int argc, char **argv)
 	 * providers not to fiddle with stdin/out.
 	 */
 	closefrom(STDERR_FILENO + 1);
-	if ((in = dup(STDIN_FILENO)) == -1 || (out = dup(STDOUT_FILENO)) == -1)
+	ఒకవేళ ((లోపల = dup(STDIN_FILENO)) == -1 || (బహిర్గతం = dup(STDOUT_FILENO)) == -1)
 		fatal("%s: dup: %s", __progname, strerror(errno));
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	sanitise_stdfd(); /* resets to /dev/null */
 
-	if ((req = sshbuf_new()) == NULL)
+	ఒకవేళ ((req = sshbuf_new()) == ఖాళీ)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (ssh_msg_recv(in, req) < 0)
+	ఒకవేళ (ssh_సందేశం_recv(లోపల, req) < 0)
 		fatal("ssh_msg_recv failed");
-	close(in);
+	close(లోపల);
 	debug_f("received message len %zu", sshbuf_len(req));
 
-	if ((r = sshbuf_get_u8(req, &version)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u8(req, &సంస్కరణ)) != 0)
 		fatal_r(r, "%s: parse version", __progname);
-	if (version != SSH_SK_HELPER_VERSION) {
+	ఒకవేళ (సంస్కరణ != SSH_SK_HELPER_సంస్కరణ) {
 		fatal("unsupported version: received %d, expected %d",
-		    version, SSH_SK_HELPER_VERSION);
+		    సంస్కరణ, SSH_SK_HELPER_సంస్కరణ);
 	}
 
-	if ((r = sshbuf_get_u32(req, &rtype)) != 0 ||
+	ఒకవేళ ((r = sshbuf_get_u32(req, &rtype)) != 0 ||
 	    (r = sshbuf_get_u8(req, &log_stderr)) != 0 ||
 	    (r = sshbuf_get_u32(req, &ll)) != 0)
 		fatal_r(r, "%s: parse", __progname);
 
-	if (!vflag && log_level_name((LogLevel)ll) != NULL)
+	ఒకవేళ (!vflag && log_level_name((LogLevel)ll) != ఖాళీ)
 		log_init(__progname, (LogLevel)ll, log_facility, log_stderr);
 
-	switch (rtype) {
-	case SSH_SK_HELPER_SIGN:
+	ఎంపిక (rtype) {
+	స్థితి SSH_SK_HELPER_SIGN:
 		resp = process_sign(req);
-		break;
-	case SSH_SK_HELPER_ENROLL:
+		ఆపు;
+	స్థితి SSH_SK_HELPER_ENROLL:
 		resp = process_enroll(req);
-		break;
-	case SSH_SK_HELPER_LOAD_RESIDENT:
-		resp = process_load_resident(req);
-		break;
-	default:
+		ఆపు;
+	స్థితి SSH_SK_HELPER_ఎక్కించు_RESIDENT:
+		resp = process_ఎక్కించు_resident(req);
+		ఆపు;
+	అప్రమేయ:
 		fatal("%s: unsupported request type %u", __progname, rtype);
 	}
 	sshbuf_free(req);
 	debug_f("reply len %zu", sshbuf_len(resp));
 
-	if (ssh_msg_send(out, SSH_SK_HELPER_VERSION, resp) == -1)
+	ఒకవేళ (ssh_సందేశం_send(బహిర్గతం, SSH_SK_HELPER_సంస్కరణ, resp) == -1)
 		fatal("ssh_msg_send failed");
 	sshbuf_free(resp);
-	close(out);
+	close(బహిర్గతం);
 
-	return (0);
+	తిరిగి (0);
 }
-#else /* ENABLE_SK */
+#లేకపోతే /* ENABLE_SK */
 
-int
-main(int argc, char **argv)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
 	fprintf(stderr, "ssh-sk-helper: disabled at compile time\n");
-	return -1;
+	తిరిగి -1;
 }
-#endif /* ENABLE_SK */
+#అయితే_ముగింపు /* ENABLE_SK */

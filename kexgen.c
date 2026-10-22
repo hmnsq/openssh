@@ -23,374 +23,374 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <signal.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <signal.h>
 
-#include "sshkey.h"
-#include "kex.h"
-#include "log.h"
-#include "packet.h"
-#include "ssh2.h"
-#include "sshbuf.h"
-#include "digest.h"
-#include "ssherr.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "kex.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "packet.h"
+#అన్తర్భావ "ssh2.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "digest.h"
+#అన్తర్భావ "ssherr.h"
 
-static int input_kex_gen_init(int, uint32_t, struct ssh *);
-static int input_kex_gen_reply(int type, uint32_t seq, struct ssh *ssh);
+స్థిర పూర్ణాంకం ఆదానం_kex_gen_init(పూర్ణాంకం, uint32_t, నిర్మాణం ssh *);
+స్థిర పూర్ణాంకం ఆదానం_kex_gen_జవాబు(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh);
 
-static int
+స్థిర పూర్ణాంకం
 kex_gen_hash(
-    int hash_alg,
-    const struct sshbuf *client_version,
-    const struct sshbuf *server_version,
-    const struct sshbuf *client_kexinit,
-    const struct sshbuf *server_kexinit,
-    const struct sshbuf *server_host_key_blob,
-    const struct sshbuf *client_pub,
-    const struct sshbuf *server_pub,
-    const struct sshbuf *shared_secret,
-    u_char *hash, size_t *hashlen)
+    పూర్ణాంకం hash_alg,
+    స్థిరరాశి నిర్మాణం sshbuf *client_సంస్కరణ,
+    స్థిరరాశి నిర్మాణం sshbuf *server_సంస్కరణ,
+    స్థిరరాశి నిర్మాణం sshbuf *client_kexinit,
+    స్థిరరాశి నిర్మాణం sshbuf *server_kexinit,
+    స్థిరరాశి నిర్మాణం sshbuf *server_host_కీలకం_blob,
+    స్థిరరాశి నిర్మాణం sshbuf *client_pub,
+    స్థిరరాశి నిర్మాణం sshbuf *server_pub,
+    స్థిరరాశి నిర్మాణం sshbuf *shared_secret,
+    u_char *hash, కొలత_t *hashlen)
 {
-	struct sshbuf *b;
-	int r;
+	నిర్మాణం sshbuf *b;
+	పూర్ణాంకం r;
 
-	if (*hashlen < ssh_digest_bytes(hash_alg))
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_stringb(b, client_version)) != 0 ||
-	    (r = sshbuf_put_stringb(b, server_version)) != 0 ||
+	ఒకవేళ (*hashlen < ssh_digest_బైట్లు(hash_alg))
+		తిరిగి SSH_ERR_INVALID_వాదం;
+	ఒకవేళ ((b = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshbuf_put_stringb(b, client_సంస్కరణ)) != 0 ||
+	    (r = sshbuf_put_stringb(b, server_సంస్కరణ)) != 0 ||
 	    /* kexinit messages: fake header: len+SSH2_MSG_KEXINIT */
 	    (r = sshbuf_put_u32(b, sshbuf_len(client_kexinit) + 1)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_KEXINIT)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_సందేశం_KEXINIT)) != 0 ||
 	    (r = sshbuf_putb(b, client_kexinit)) != 0 ||
 	    (r = sshbuf_put_u32(b, sshbuf_len(server_kexinit) + 1)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_KEXINIT)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_సందేశం_KEXINIT)) != 0 ||
 	    (r = sshbuf_putb(b, server_kexinit)) != 0 ||
-	    (r = sshbuf_put_stringb(b, server_host_key_blob)) != 0 ||
+	    (r = sshbuf_put_stringb(b, server_host_కీలకం_blob)) != 0 ||
 	    (r = sshbuf_put_stringb(b, client_pub)) != 0 ||
 	    (r = sshbuf_put_stringb(b, server_pub)) != 0 ||
 	    (r = sshbuf_putb(b, shared_secret)) != 0) {
 		sshbuf_free(b);
-		return r;
+		తిరిగి r;
 	}
-#ifdef DEBUG_KEX
+#నిర్వచితమైతే DEBUG_KEX
 	sshbuf_dump(b, stderr);
-#endif
-	if (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
+#అయితే_ముగింపు
+	ఒకవేళ (ssh_digest_బఫరు(hash_alg, b, hash, *hashlen) != 0) {
 		sshbuf_free(b);
-		return SSH_ERR_LIBCRYPTO_ERROR;
+		తిరిగి SSH_ERR_LIBCRYPTO_ERROR;
 	}
 	sshbuf_free(b);
-	*hashlen = ssh_digest_bytes(hash_alg);
-#ifdef DEBUG_KEX
+	*hashlen = ssh_digest_బైట్లు(hash_alg);
+#నిర్వచితమైతే DEBUG_KEX
 	dump_digest("hash", hash, *hashlen);
-#endif
-	return 0;
+#అయితే_ముగింపు
+	తిరిగి 0;
 }
 
-int
-kex_gen_client(struct ssh *ssh)
+పూర్ణాంకం
+kex_gen_client(నిర్మాణం ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r;
+	నిర్మాణం kex *kex = ssh->kex;
+	పూర్ణాంకం r;
 
-	switch (kex->kex_type) {
-#ifdef WITH_OPENSSL
-	case KEX_DH_GRP1_SHA1:
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
-	case KEX_DH_GRP16_SHA512:
-	case KEX_DH_GRP18_SHA512:
+	ఎంపిక (kex->kex_type) {
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థితి KEX_DH_GRP1_SHA1:
+	స్థితి KEX_DH_GRP14_SHA1:
+	స్థితి KEX_DH_GRP14_SHA256:
+	స్థితి KEX_DH_GRP16_SHA512:
+	స్థితి KEX_DH_GRP18_SHA512:
 		r = kex_dh_keypair(kex);
-		break;
-	case KEX_ECDH_SHA2:
+		ఆపు;
+	స్థితి KEX_ECDH_SHA2:
 		r = kex_ecdh_keypair(kex);
-		break;
-	case KEX_KEM_MLKEM768ECDH_SHA256:
+		ఆపు;
+	స్థితి KEX_KEM_MLKEM768ECDH_SHA256:
 		r = kex_kem_mlkem768ecdh_keypair(kex);
-		break;
-#endif /* WITH_OPENSSL */
-	case KEX_C25519_SHA256:
+		ఆపు;
+#అయితే_ముగింపు /* WITH_OPENSSL */
+	స్థితి KEX_C25519_SHA256:
 		r = kex_c25519_keypair(kex);
-		break;
-	case KEX_KEM_SNTRUP761X25519_SHA512:
+		ఆపు;
+	స్థితి KEX_KEM_SNTRUP761X25519_SHA512:
 		r = kex_kem_sntrup761x25519_keypair(kex);
-		break;
-	case KEX_KEM_MLKEM768X25519_SHA256:
+		ఆపు;
+	స్థితి KEX_KEM_MLKEM768X25519_SHA256:
 		r = kex_kem_mlkem768x25519_keypair(kex);
-		break;
-	default:
-		r = SSH_ERR_INVALID_ARGUMENT;
-		break;
+		ఆపు;
+	అప్రమేయ:
+		r = SSH_ERR_INVALID_వాదం;
+		ఆపు;
 	}
-	if (r != 0)
-		return r;
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_ECDH_INIT)) != 0 ||
+	ఒకవేళ (r != 0)
+		తిరిగి r;
+	ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_KEX_ECDH_INIT)) != 0 ||
 	    (r = sshpkt_put_stringb(ssh, kex->client_pub)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
+		తిరిగి r;
 	debug("expecting SSH2_MSG_KEX_ECDH_REPLY");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_REPLY, &input_kex_gen_reply);
-	return 0;
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_KEX_ECDH_జవాబు, &ఆదానం_kex_gen_జవాబు);
+	తిరిగి 0;
 }
 
-static int
-input_kex_gen_reply(int type, uint32_t seq, struct ssh *ssh)
+స్థిర పూర్ణాంకం
+ఆదానం_kex_gen_జవాబు(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	struct sshkey *server_host_key = NULL;
-	struct sshbuf *shared_secret = NULL;
-	struct sshbuf *server_blob = NULL;
-	struct sshbuf *tmp = NULL, *server_host_key_blob = NULL;
-	u_char *signature = NULL;
-	u_char hash[SSH_DIGEST_MAX_LENGTH];
-	size_t slen, hashlen;
-	int r;
+	నిర్మాణం kex *kex = ssh->kex;
+	నిర్మాణం sshkey *server_host_కీలకం = ఖాళీ;
+	నిర్మాణం sshbuf *shared_secret = ఖాళీ;
+	నిర్మాణం sshbuf *server_blob = ఖాళీ;
+	నిర్మాణం sshbuf *tmp = ఖాళీ, *server_host_కీలకం_blob = ఖాళీ;
+	u_char *signature = ఖాళీ;
+	u_char hash[SSH_DIGEST_MAX_నిడివి];
+	కొలత_t slen, hashlen;
+	పూర్ణాంకం r;
 
 	debug("SSH2_MSG_KEX_ECDH_REPLY received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_REPLY, &kex_protocol_error);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_KEX_ECDH_జవాబు, &kex_protocol_error);
 
 	/* hostkey */
-	if ((r = sshpkt_getb_froms(ssh, &server_host_key_blob)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshpkt_getb_froms(ssh, &server_host_కీలకం_blob)) != 0)
+		వెళ్ళు బహిర్గతం;
 	/* sshkey_fromb() consumes its buffer, so make a copy */
-	if ((tmp = sshbuf_fromb(server_host_key_blob)) == NULL) {
+	ఒకవేళ ((tmp = sshbuf_fromb(server_host_కీలకం_blob)) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshkey_fromb_allowlist(tmp, &server_host_key,
-	    kex->hostkey_alg, NULL)) != 0)
-		goto out;
-	if ((r = kex_verify_host_key(ssh, server_host_key)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshkey_fromb_allowlist(tmp, &server_host_కీలకం,
+	    kex->hostkey_alg, ఖాళీ)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = kex_verify_host_కీలకం(ssh, server_host_కీలకం)) != 0)
+		వెళ్ళు బహిర్గతం;
 
 	/* Q_S, server public key */
 	/* signed H */
-	if ((r = sshpkt_getb_froms(ssh, &server_blob)) != 0 ||
+	ఒకవేళ ((r = sshpkt_getb_froms(ssh, &server_blob)) != 0 ||
 	    (r = sshpkt_get_string(ssh, &signature, &slen)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+	    (r = sshpkt_get_చివర(ssh)) != 0)
+		వెళ్ళు బహిర్గతం;
 
 	/* compute shared secret */
-	switch (kex->kex_type) {
-#ifdef WITH_OPENSSL
-	case KEX_DH_GRP1_SHA1:
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
-	case KEX_DH_GRP16_SHA512:
-	case KEX_DH_GRP18_SHA512:
+	ఎంపిక (kex->kex_type) {
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థితి KEX_DH_GRP1_SHA1:
+	స్థితి KEX_DH_GRP14_SHA1:
+	స్థితి KEX_DH_GRP14_SHA256:
+	స్థితి KEX_DH_GRP16_SHA512:
+	స్థితి KEX_DH_GRP18_SHA512:
 		r = kex_dh_dec(kex, server_blob, &shared_secret);
-		break;
-	case KEX_ECDH_SHA2:
+		ఆపు;
+	స్థితి KEX_ECDH_SHA2:
 		r = kex_ecdh_dec(kex, server_blob, &shared_secret);
-		break;
-	case KEX_KEM_MLKEM768ECDH_SHA256:
+		ఆపు;
+	స్థితి KEX_KEM_MLKEM768ECDH_SHA256:
 		r = kex_kem_mlkem768ecdh_dec(kex, server_blob,
 		    &shared_secret);
-		break;
-#endif /* WITH_OPENSSL */
-	case KEX_C25519_SHA256:
+		ఆపు;
+#అయితే_ముగింపు /* WITH_OPENSSL */
+	స్థితి KEX_C25519_SHA256:
 		r = kex_c25519_dec(kex, server_blob, &shared_secret);
-		break;
-	case KEX_KEM_SNTRUP761X25519_SHA512:
+		ఆపు;
+	స్థితి KEX_KEM_SNTRUP761X25519_SHA512:
 		r = kex_kem_sntrup761x25519_dec(kex, server_blob,
 		    &shared_secret);
-		break;
-	case KEX_KEM_MLKEM768X25519_SHA256:
+		ఆపు;
+	స్థితి KEX_KEM_MLKEM768X25519_SHA256:
 		r = kex_kem_mlkem768x25519_dec(kex, server_blob,
 		    &shared_secret);
-		break;
-	default:
-		r = SSH_ERR_INVALID_ARGUMENT;
-		break;
+		ఆపు;
+	అప్రమేయ:
+		r = SSH_ERR_INVALID_వాదం;
+		ఆపు;
 	}
-	if (r !=0 )
-		goto out;
+	ఒకవేళ (r !=0 )
+		వెళ్ళు బహిర్గతం;
 
 	/* calc and verify H */
-	hashlen = sizeof(hash);
-	if ((r = kex_gen_hash(
+	hashlen = పరిమాణం(hash);
+	ఒకవేళ ((r = kex_gen_hash(
 	    kex->hash_alg,
-	    kex->client_version,
-	    kex->server_version,
+	    kex->client_సంస్కరణ,
+	    kex->server_సంస్కరణ,
 	    kex->my,
 	    kex->peer,
-	    server_host_key_blob,
+	    server_host_కీలకం_blob,
 	    kex->client_pub,
 	    server_blob,
 	    shared_secret,
 	    hash, &hashlen)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
-	if ((r = sshkey_verify(server_host_key, signature, slen, hash, hashlen,
-	    kex->hostkey_alg, ssh->compat, NULL)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshkey_verify(server_host_కీలకం, signature, slen, hash, hashlen,
+	    kex->hostkey_alg, ssh->compat, ఖాళీ)) != 0)
+		వెళ్ళు బహిర్గతం;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	ఒకవేళ ((r = kex_derive_కీలకాలు(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
 	/* save initial signature and hostkey */
-	if ((kex->flags & KEX_INITIAL) != 0) {
-		if (kex->initial_hostkey != NULL || kex->initial_sig != NULL) {
-			r = SSH_ERR_INTERNAL_ERROR;
-			goto out;
+	ఒకవేళ ((kex->flags & KEX_INITIAL) != 0) {
+		ఒకవేళ (kex->initial_hostkey != ఖాళీ || kex->initial_sig != ఖాళీ) {
+			r = SSH_ERR_అంతర్గత_ERROR;
+			వెళ్ళు బహిర్గతం;
 		}
-		if ((kex->initial_sig = sshbuf_new()) == NULL) {
+		ఒకవేళ ((kex->initial_sig = sshbuf_new()) == ఖాళీ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
-			goto out;
-		kex->initial_hostkey = server_host_key;
-		server_host_key = NULL;
+		ఒకవేళ ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
+			వెళ్ళు బహిర్గతం;
+		kex->initial_hostkey = server_host_కీలకం;
+		server_host_కీలకం = ఖాళీ;
 	}
 	/* success */
-out:
-	explicit_bzero(hash, sizeof(hash));
-	explicit_bzero(kex->c25519_client_key, sizeof(kex->c25519_client_key));
-	explicit_bzero(kex->sntrup761_client_key,
-	    sizeof(kex->sntrup761_client_key));
-	explicit_bzero(kex->mlkem768_client_key,
-	    sizeof(kex->mlkem768_client_key));
-	sshbuf_free(server_host_key_blob);
-	free(signature);
+బహిర్గతం:
+	explicit_bzero(hash, పరిమాణం(hash));
+	explicit_bzero(kex->c25519_client_కీలకం, పరిమాణం(kex->c25519_client_కీలకం));
+	explicit_bzero(kex->sntrup761_client_కీలకం,
+	    పరిమాణం(kex->sntrup761_client_కీలకం));
+	explicit_bzero(kex->mlkem768_client_కీలకం,
+	    పరిమాణం(kex->mlkem768_client_కీలకం));
+	sshbuf_free(server_host_కీలకం_blob);
+	విడుదల(signature);
 	sshbuf_free(tmp);
-	sshkey_free(server_host_key);
+	sshkey_free(server_host_కీలకం);
 	sshbuf_free(server_blob);
 	sshbuf_free(shared_secret);
 	sshbuf_free(kex->client_pub);
-	kex->client_pub = NULL;
-	return r;
+	kex->client_pub = ఖాళీ;
+	తిరిగి r;
 }
 
-int
-kex_gen_server(struct ssh *ssh)
+పూర్ణాంకం
+kex_gen_server(నిర్మాణం ssh *ssh)
 {
 	debug("expecting SSH2_MSG_KEX_ECDH_INIT");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_INIT, &input_kex_gen_init);
-	return 0;
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_KEX_ECDH_INIT, &ఆదానం_kex_gen_init);
+	తిరిగి 0;
 }
 
-static int
-input_kex_gen_init(int type, uint32_t seq, struct ssh *ssh)
+స్థిర పూర్ణాంకం
+ఆదానం_kex_gen_init(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	struct sshkey *server_host_private, *server_host_public;
-	struct sshbuf *shared_secret = NULL;
-	struct sshbuf *server_pubkey = NULL;
-	struct sshbuf *client_pubkey = NULL;
-	struct sshbuf *server_host_key_blob = NULL;
-	u_char *signature = NULL, hash[SSH_DIGEST_MAX_LENGTH];
-	size_t slen, hashlen;
-	int r;
+	నిర్మాణం kex *kex = ssh->kex;
+	నిర్మాణం sshkey *server_host_వ్యక్తిగత, *server_host_ప్రజా;
+	నిర్మాణం sshbuf *shared_secret = ఖాళీ;
+	నిర్మాణం sshbuf *server_pubkey = ఖాళీ;
+	నిర్మాణం sshbuf *client_pubkey = ఖాళీ;
+	నిర్మాణం sshbuf *server_host_కీలకం_blob = ఖాళీ;
+	u_char *signature = ఖాళీ, hash[SSH_DIGEST_MAX_నిడివి];
+	కొలత_t slen, hashlen;
+	పూర్ణాంకం r;
 
 	debug("SSH2_MSG_KEX_ECDH_INIT received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_INIT, &kex_protocol_error);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_KEX_ECDH_INIT, &kex_protocol_error);
 
-	if ((r = kex_load_hostkey(ssh, &server_host_private,
-	    &server_host_public)) != 0)
-		goto out;
+	ఒకవేళ ((r = kex_ఎక్కించు_hostkey(ssh, &server_host_వ్యక్తిగత,
+	    &server_host_ప్రజా)) != 0)
+		వెళ్ళు బహిర్గతం;
 
-	if ((r = sshpkt_getb_froms(ssh, &client_pubkey)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshpkt_getb_froms(ssh, &client_pubkey)) != 0 ||
+	    (r = sshpkt_get_చివర(ssh)) != 0)
+		వెళ్ళు బహిర్గతం;
 
 	/* compute shared secret */
-	switch (kex->kex_type) {
-#ifdef WITH_OPENSSL
-	case KEX_DH_GRP1_SHA1:
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
-	case KEX_DH_GRP16_SHA512:
-	case KEX_DH_GRP18_SHA512:
+	ఎంపిక (kex->kex_type) {
+#నిర్వచితమైతే WITH_OPENSSL
+	స్థితి KEX_DH_GRP1_SHA1:
+	స్థితి KEX_DH_GRP14_SHA1:
+	స్థితి KEX_DH_GRP14_SHA256:
+	స్థితి KEX_DH_GRP16_SHA512:
+	స్థితి KEX_DH_GRP18_SHA512:
 		r = kex_dh_enc(kex, client_pubkey, &server_pubkey,
 		    &shared_secret);
-		break;
-	case KEX_ECDH_SHA2:
+		ఆపు;
+	స్థితి KEX_ECDH_SHA2:
 		r = kex_ecdh_enc(kex, client_pubkey, &server_pubkey,
 		    &shared_secret);
-		break;
-	case KEX_KEM_MLKEM768ECDH_SHA256:
+		ఆపు;
+	స్థితి KEX_KEM_MLKEM768ECDH_SHA256:
 		r = kex_kem_mlkem768ecdh_enc(kex, client_pubkey,
 		    &server_pubkey, &shared_secret);
-		break;
-#endif /* WITH_OPENSSL */
-	case KEX_C25519_SHA256:
+		ఆపు;
+#అయితే_ముగింపు /* WITH_OPENSSL */
+	స్థితి KEX_C25519_SHA256:
 		r = kex_c25519_enc(kex, client_pubkey, &server_pubkey,
 		    &shared_secret);
-		break;
-	case KEX_KEM_SNTRUP761X25519_SHA512:
+		ఆపు;
+	స్థితి KEX_KEM_SNTRUP761X25519_SHA512:
 		r = kex_kem_sntrup761x25519_enc(kex, client_pubkey,
 		    &server_pubkey, &shared_secret);
-		break;
-	case KEX_KEM_MLKEM768X25519_SHA256:
+		ఆపు;
+	స్థితి KEX_KEM_MLKEM768X25519_SHA256:
 		r = kex_kem_mlkem768x25519_enc(kex, client_pubkey,
 		    &server_pubkey, &shared_secret);
-		break;
-	default:
-		r = SSH_ERR_INVALID_ARGUMENT;
-		break;
+		ఆపు;
+	అప్రమేయ:
+		r = SSH_ERR_INVALID_వాదం;
+		ఆపు;
 	}
-	if (r !=0 )
-		goto out;
+	ఒకవేళ (r !=0 )
+		వెళ్ళు బహిర్గతం;
 
 	/* calc H */
-	if ((server_host_key_blob = sshbuf_new()) == NULL) {
+	ఒకవేళ ((server_host_కీలకం_blob = sshbuf_new()) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshkey_putb(server_host_public, server_host_key_blob)) != 0)
-		goto out;
-	hashlen = sizeof(hash);
-	if ((r = kex_gen_hash(
+	ఒకవేళ ((r = sshkey_putb(server_host_ప్రజా, server_host_కీలకం_blob)) != 0)
+		వెళ్ళు బహిర్గతం;
+	hashlen = పరిమాణం(hash);
+	ఒకవేళ ((r = kex_gen_hash(
 	    kex->hash_alg,
-	    kex->client_version,
-	    kex->server_version,
+	    kex->client_సంస్కరణ,
+	    kex->server_సంస్కరణ,
 	    kex->peer,
 	    kex->my,
-	    server_host_key_blob,
+	    server_host_కీలకం_blob,
 	    client_pubkey,
 	    server_pubkey,
 	    shared_secret,
 	    hash, &hashlen)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
 	/* sign H */
-	if ((r = kex->sign(ssh, server_host_private, server_host_public,
+	ఒకవేళ ((r = kex->sign(ssh, server_host_వ్యక్తిగత, server_host_ప్రజా,
 	    &signature, &slen, hash, hashlen, kex->hostkey_alg)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
 	/* send server hostkey, ECDH pubkey 'Q_S' and signed H */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_ECDH_REPLY)) != 0 ||
-	    (r = sshpkt_put_stringb(ssh, server_host_key_blob)) != 0 ||
+	ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_KEX_ECDH_జవాబు)) != 0 ||
+	    (r = sshpkt_put_stringb(ssh, server_host_కీలకం_blob)) != 0 ||
 	    (r = sshpkt_put_stringb(ssh, server_pubkey)) != 0 ||
 	    (r = sshpkt_put_string(ssh, signature, slen)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	ఒకవేళ ((r = kex_derive_కీలకాలు(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	/* retain copy of hostkey used at initial KEX */
-	if (kex->initial_hostkey == NULL &&
-	    (r = sshkey_from_private(server_host_public,
+	ఒకవేళ (kex->initial_hostkey == ఖాళీ &&
+	    (r = sshkey_from_వ్యక్తిగత(server_host_ప్రజా,
 	    &kex->initial_hostkey)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	/* success */
-out:
-	explicit_bzero(hash, sizeof(hash));
-	sshbuf_free(server_host_key_blob);
-	free(signature);
+బహిర్గతం:
+	explicit_bzero(hash, పరిమాణం(hash));
+	sshbuf_free(server_host_కీలకం_blob);
+	విడుదల(signature);
 	sshbuf_free(shared_secret);
 	sshbuf_free(client_pubkey);
 	sshbuf_free(server_pubkey);
-	return r;
+	తిరిగి r;
 }

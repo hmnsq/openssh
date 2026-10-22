@@ -18,34 +18,34 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/inet_ntop.c */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifndef HAVE_INET_NTOP
+#నిర్వచితం_కాకపోతే HAVE_INET_NTOP
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <arpa/nameser.h>
-#include <string.h>
-#include <errno.h>
-#include <stdio.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <netinet/in.h>
+#అన్తర్భావ <arpa/inet.h>
+#అన్తర్భావ <arpa/nameser.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <stdio.h>
 
-#ifndef IN6ADDRSZ
-#define IN6ADDRSZ   16   /* IPv6 T_AAAA */                 
-#endif
+#నిర్వచితం_కాకపోతే IN6ADDRSZ
+#నిర్వచించు IN6ADDRSZ   16   /* IPv6 T_AAAA */                 
+#అయితే_ముగింపు
 
-#ifndef INT16SZ
-#define INT16SZ     2    /* for systems without 16-bit ints */
-#endif
+#నిర్వచితం_కాకపోతే INT16SZ
+#నిర్వచించు INT16SZ     2    /* for systems without 16-bit ints */
+#అయితే_ముగింపు
 
 /*
  * WARNING: Don't even consider trying to compile this on a system where
  * sizeof(int) < 4.  sizeof(int) > 4 is fine; all the world's not a VAX.
  */
 
-static const char *inet_ntop4(const u_char *src, char *dst, size_t size);
-static const char *inet_ntop6(const u_char *src, char *dst, size_t size);
+స్థిర స్థిరరాశి అక్షరం *inet_ntop4(స్థిరరాశి u_char *src, అక్షరం *dst, కొలత_t కొలత);
+స్థిర స్థిరరాశి అక్షరం *inet_ntop6(స్థిరరాశి u_char *src, అక్షరం *dst, కొలత_t కొలత);
 
 /* char *
  * inet_ntop(af, src, dst, size)
@@ -55,17 +55,17 @@ static const char *inet_ntop6(const u_char *src, char *dst, size_t size);
  * author:
  *	Paul Vixie, 1996.
  */
-const char *
-inet_ntop(int af, const void *src, char *dst, socklen_t size)
+స్థిరరాశి అక్షరం *
+inet_ntop(పూర్ణాంకం af, స్థిరరాశి శూన్య *src, అక్షరం *dst, socklen_t కొలత)
 {
-	switch (af) {
-	case AF_INET:
-		return (inet_ntop4(src, dst, (size_t)size));
-	case AF_INET6:
-		return (inet_ntop6(src, dst, (size_t)size));
-	default:
+	ఎంపిక (af) {
+	స్థితి AF_INET:
+		తిరిగి (inet_ntop4(src, dst, (కొలత_t)కొలత));
+	స్థితి AF_INET6:
+		తిరిగి (inet_ntop6(src, dst, (కొలత_t)కొలత));
+	అప్రమేయ:
 		errno = EAFNOSUPPORT;
-		return (NULL);
+		తిరిగి (ఖాళీ);
 	}
 	/* NOTREACHED */
 }
@@ -81,20 +81,20 @@ inet_ntop(int af, const void *src, char *dst, socklen_t size)
  * author:
  *	Paul Vixie, 1996.
  */
-static const char *
-inet_ntop4(const u_char *src, char *dst, size_t size)
+స్థిర స్థిరరాశి అక్షరం *
+inet_ntop4(స్థిరరాశి u_char *src, అక్షరం *dst, కొలత_t కొలత)
 {
-	static const char fmt[] = "%u.%u.%u.%u";
-	char tmp[sizeof "255.255.255.255"];
-	int l;
+	స్థిర స్థిరరాశి అక్షరం fmt[] = "%u.%u.%u.%u";
+	అక్షరం tmp[పరిమాణం "255.255.255.255"];
+	పూర్ణాంకం l;
 
-	l = snprintf(tmp, size, fmt, src[0], src[1], src[2], src[3]);
-	if (l <= 0 || l >= size) {
+	l = snprintf(tmp, కొలత, fmt, src[0], src[1], src[2], src[3]);
+	ఒకవేళ (l <= 0 || l >= కొలత) {
 		errno = ENOSPC;
-		return (NULL);
+		తిరిగి (ఖాళీ);
 	}
-	strlcpy(dst, tmp, size);
-	return (dst);
+	strlcpy(dst, tmp, కొలత);
+	తిరిగి (dst);
 }
 
 /* const char *
@@ -103,8 +103,8 @@ inet_ntop4(const u_char *src, char *dst, size_t size)
  * author:
  *	Paul Vixie, 1996.
  */
-static const char *
-inet_ntop6(const u_char *src, char *dst, size_t size)
+స్థిర స్థిరరాశి అక్షరం *
+inet_ntop6(స్థిరరాశి u_char *src, అక్షరం *dst, కొలత_t కొలత)
 {
 	/*
 	 * Note that int32_t and int16_t need only be "at least" large enough
@@ -113,98 +113,98 @@ inet_ntop6(const u_char *src, char *dst, size_t size)
 	 * Keep this in mind if you think this function should have been coded
 	 * to use pointer overlays.  All the world's not a VAX.
 	 */
-	char tmp[sizeof "ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255"];
-	char *tp, *ep;
-	struct { int base, len; } best, cur;
-	u_int words[IN6ADDRSZ / INT16SZ];
-	int i;
-	int advance;
+	అక్షరం tmp[పరిమాణం "ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255"];
+	అక్షరం *tp, *ep;
+	నిర్మాణం { పూర్ణాంకం పునాది, len; } ఉత్తమ, cur;
+	u_int పదాలు[IN6ADDRSZ / INT16SZ];
+	పూర్ణాంకం i;
+	పూర్ణాంకం advance;
 
 	/*
 	 * Preprocess:
 	 *	Copy the input (bytewise) array into a wordwise array.
 	 *	Find the longest run of 0x00's in src[] for :: shorthanding.
 	 */
-	memset(words, '\0', sizeof words);
-	for (i = 0; i < IN6ADDRSZ; i++)
-		words[i / 2] |= (src[i] << ((1 - (i % 2)) << 3));
-	best.base = -1;
-	cur.base = -1;
-	for (i = 0; i < (IN6ADDRSZ / INT16SZ); i++) {
-		if (words[i] == 0) {
-			if (cur.base == -1)
-				cur.base = i, cur.len = 1;
-			else
+	memset(పదాలు, '\0', పరిమాణం పదాలు);
+	కొరకు (i = 0; i < IN6ADDRSZ; i++)
+		పదాలు[i / 2] |= (src[i] << ((1 - (i % 2)) << 3));
+	ఉత్తమ.పునాది = -1;
+	cur.పునాది = -1;
+	కొరకు (i = 0; i < (IN6ADDRSZ / INT16SZ); i++) {
+		ఒకవేళ (పదాలు[i] == 0) {
+			ఒకవేళ (cur.పునాది == -1)
+				cur.పునాది = i, cur.len = 1;
+			లేకపోతే
 				cur.len++;
-		} else {
-			if (cur.base != -1) {
-				if (best.base == -1 || cur.len > best.len)
-					best = cur;
-				cur.base = -1;
+		} లేకపోతే {
+			ఒకవేళ (cur.పునాది != -1) {
+				ఒకవేళ (ఉత్తమ.పునాది == -1 || cur.len > ఉత్తమ.len)
+					ఉత్తమ = cur;
+				cur.పునాది = -1;
 			}
 		}
 	}
-	if (cur.base != -1) {
-		if (best.base == -1 || cur.len > best.len)
-			best = cur;
+	ఒకవేళ (cur.పునాది != -1) {
+		ఒకవేళ (ఉత్తమ.పునాది == -1 || cur.len > ఉత్తమ.len)
+			ఉత్తమ = cur;
 	}
-	if (best.base != -1 && best.len < 2)
-		best.base = -1;
+	ఒకవేళ (ఉత్తమ.పునాది != -1 && ఉత్తమ.len < 2)
+		ఉత్తమ.పునాది = -1;
 
 	/*
 	 * Format the result.
 	 */
 	tp = tmp;
-	ep = tmp + sizeof(tmp);
-	for (i = 0; i < (IN6ADDRSZ / INT16SZ) && tp < ep; i++) {
+	ep = tmp + పరిమాణం(tmp);
+	కొరకు (i = 0; i < (IN6ADDRSZ / INT16SZ) && tp < ep; i++) {
 		/* Are we inside the best run of 0x00's? */
-		if (best.base != -1 && i >= best.base &&
-		    i < (best.base + best.len)) {
-			if (i == best.base) {
-				if (tp + 1 >= ep)
-					return (NULL);
+		ఒకవేళ (ఉత్తమ.పునాది != -1 && i >= ఉత్తమ.పునాది &&
+		    i < (ఉత్తమ.పునాది + ఉత్తమ.len)) {
+			ఒకవేళ (i == ఉత్తమ.పునాది) {
+				ఒకవేళ (tp + 1 >= ep)
+					తిరిగి (ఖాళీ);
 				*tp++ = ':';
 			}
-			continue;
+			కొనసాగు;
 		}
 		/* Are we following an initial run of 0x00s or any real hex? */
-		if (i != 0) {
-			if (tp + 1 >= ep)
-				return (NULL);
+		ఒకవేళ (i != 0) {
+			ఒకవేళ (tp + 1 >= ep)
+				తిరిగి (ఖాళీ);
 			*tp++ = ':';
 		}
 		/* Is this address an encapsulated IPv4? */
-		if (i == 6 && best.base == 0 &&
-		    (best.len == 6 || (best.len == 5 && words[5] == 0xffff))) {
-			if (!inet_ntop4(src+12, tp, (size_t)(ep - tp)))
-				return (NULL);
-			tp += strlen(tp);
-			break;
+		ఒకవేళ (i == 6 && ఉత్తమ.పునాది == 0 &&
+		    (ఉత్తమ.len == 6 || (ఉత్తమ.len == 5 && పదాలు[5] == 0xffff))) {
+			ఒకవేళ (!inet_ntop4(src+12, tp, (కొలత_t)(ep - tp)))
+				తిరిగి (ఖాళీ);
+			tp += అక్షరశ్రేణి_పొడవు(tp);
+			ఆపు;
 		}
-		advance = snprintf(tp, ep - tp, "%x", words[i]);
-		if (advance <= 0 || advance >= ep - tp)
-			return (NULL);
+		advance = snprintf(tp, ep - tp, "%x", పదాలు[i]);
+		ఒకవేళ (advance <= 0 || advance >= ep - tp)
+			తిరిగి (ఖాళీ);
 		tp += advance;
 	}
 	/* Was it a trailing run of 0x00's? */
-	if (best.base != -1 && (best.base + best.len) == (IN6ADDRSZ / INT16SZ)) {
-		if (tp + 1 >= ep)
-			return (NULL);
+	ఒకవేళ (ఉత్తమ.పునాది != -1 && (ఉత్తమ.పునాది + ఉత్తమ.len) == (IN6ADDRSZ / INT16SZ)) {
+		ఒకవేళ (tp + 1 >= ep)
+			తిరిగి (ఖాళీ);
 		*tp++ = ':';
 	}
-	if (tp + 1 >= ep)
-		return (NULL);
+	ఒకవేళ (tp + 1 >= ep)
+		తిరిగి (ఖాళీ);
 	*tp++ = '\0';
 
 	/*
 	 * Check for overflow, copy, and we're done.
 	 */
-	if ((size_t)(tp - tmp) > size) {
+	ఒకవేళ ((కొలత_t)(tp - tmp) > కొలత) {
 		errno = ENOSPC;
-		return (NULL);
+		తిరిగి (ఖాళీ);
 	}
-	strlcpy(dst, tmp, size);
-	return (dst);
+	strlcpy(dst, tmp, కొలత);
+	తిరిగి (dst);
 }
 
-#endif /* !HAVE_INET_NTOP */
+#అయితే_ముగింపు /* !HAVE_INET_NTOP */

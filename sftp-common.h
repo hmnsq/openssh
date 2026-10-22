@@ -26,15 +26,15 @@
  */
 
 /* Maximum packet that we are willing to send/accept */
-#define SFTP_MAX_MSG_LENGTH	(256 * 1024)
+#నిర్వచించు SFTP_MAX_సందేశం_నిడివి	(256 * 1024)
 
-struct sshbuf;
-typedef struct Attrib Attrib;
+నిర్మాణం sshbuf;
+రకనిర్వచనం నిర్మాణం Attrib Attrib;
 
 /* File attributes */
-struct Attrib {
+నిర్మాణం Attrib {
 	uint32_t	flags;
-	uint64_t	size;
+	uint64_t	కొలత;
 	uint32_t	uid;
 	uint32_t	gid;
 	uint32_t	perm;
@@ -42,12 +42,12 @@ struct Attrib {
 	uint32_t	mtime;
 };
 
-void	 attrib_clear(Attrib *);
-void	 stat_to_attrib(const struct stat *, Attrib *);
-void	 attrib_to_stat(const Attrib *, struct stat *);
-int	 decode_attrib(struct sshbuf *, Attrib *);
-int	 encode_attrib(struct sshbuf *, const Attrib *);
-char	*ls_file(const char *, const struct stat *, int, int,
-    const char *, const char *);
+శూన్య	 attrib_clear(Attrib *);
+శూన్య	 stat_గమ్యం_attrib(స్థిరరాశి నిర్మాణం stat *, Attrib *);
+శూన్య	 attrib_గమ్యం_stat(స్థిరరాశి Attrib *, నిర్మాణం stat *);
+పూర్ణాంకం	 decode_attrib(నిర్మాణం sshbuf *, Attrib *);
+పూర్ణాంకం	 encode_attrib(నిర్మాణం sshbuf *, స్థిరరాశి Attrib *);
+అక్షరం	*ls_file(స్థిరరాశి అక్షరం *, స్థిరరాశి నిర్మాణం stat *, పూర్ణాంకం, పూర్ణాంకం,
+    స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
 
-const char *fx2txt(int);
+స్థిరరాశి అక్షరం *fx2txt(పూర్ణాంకం);

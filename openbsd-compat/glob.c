@@ -58,175 +58,175 @@
  *	Number of matches in the current invocation of glob.
  */
 
-#include "includes.h"
-#include "glob.h"
+#అన్తర్భావ "includes.h"
+#అన్తర్భావ "glob.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
 
-#include <dirent.h>
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <pwd.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <dirent.h>
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <pwd.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-#if !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#ఒకవేళ !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
 
-#include "charclass.h"
+#అన్తర్భావ "charclass.h"
 
-#ifdef TILDE
+#నిర్వచితమైతే TILDE
 # undef TILDE
-#endif
+#అయితే_ముగింపు
 
-#define	DOLLAR		'$'
-#define	DOT		'.'
-#define	EOS		'\0'
-#define	LBRACKET	'['
-#define	NOT		'!'
-#define	QUESTION	'?'
-#define	QUOTE		'\\'
-#define	RANGE		'-'
-#define	RBRACKET	']'
-#define	SEP		'/'
-#define	STAR		'*'
-#define	TILDE		'~'
-#define	UNDERSCORE	'_'
-#define	LBRACE		'{'
-#define	RBRACE		'}'
-#define	SLASH		'/'
-#define	COMMA		','
+#నిర్వచించు	DOLLAR		'$'
+#నిర్వచించు	DOT		'.'
+#నిర్వచించు	EOS		'\0'
+#నిర్వచించు	LBRACKET	'['
+#నిర్వచించు	NOT		'!'
+#నిర్వచించు	QUESTION	'?'
+#నిర్వచించు	QUOTE		'\\'
+#నిర్వచించు	RANGE		'-'
+#నిర్వచించు	RBRACKET	']'
+#నిర్వచించు	SEP		'/'
+#నిర్వచించు	నక్షత్రం		'*'
+#నిర్వచించు	TILDE		'~'
+#నిర్వచించు	UNDERSCORE	'_'
+#నిర్వచించు	LBRACE		'{'
+#నిర్వచించు	RBRACE		'}'
+#నిర్వచించు	SLASH		'/'
+#నిర్వచించు	COMMA		','
 
-#ifndef DEBUG
+#నిర్వచితం_కాకపోతే DEBUG
 
-#define	M_QUOTE		0x8000
-#define	M_PROTECT	0x4000
-#define	M_MASK		0xffff
-#define	M_ASCII		0x00ff
+#నిర్వచించు	M_QUOTE		0x8000
+#నిర్వచించు	M_PROTECT	0x4000
+#నిర్వచించు	M_ముసుగు		0xffff
+#నిర్వచించు	M_ASCII		0x00ff
 
-typedef u_short Char;
+రకనిర్వచనం u_short Char;
 
-#else
+#లేకపోతే
 
-#define	M_QUOTE		0x80
-#define	M_PROTECT	0x40
-#define	M_MASK		0xff
-#define	M_ASCII		0x7f
+#నిర్వచించు	M_QUOTE		0x80
+#నిర్వచించు	M_PROTECT	0x40
+#నిర్వచించు	M_ముసుగు		0xff
+#నిర్వచించు	M_ASCII		0x7f
 
-typedef char Char;
+రకనిర్వచనం అక్షరం Char;
 
-#endif
+#అయితే_ముగింపు
 
 
-#define	CHAR(c)		((Char)((c)&M_ASCII))
-#define	META(c)		((Char)((c)|M_QUOTE))
-#define	M_ALL		META('*')
-#define	M_END		META(']')
-#define	M_NOT		META('!')
-#define	M_ONE		META('?')
-#define	M_RNG		META('-')
-#define	M_SET		META('[')
-#define	M_CLASS		META(':')
-#define	ismeta(c)	(((c)&M_QUOTE) != 0)
+#నిర్వచించు	CHAR(c)		((Char)((c)&M_ASCII))
+#నిర్వచించు	META(c)		((Char)((c)|M_QUOTE))
+#నిర్వచించు	M_ALL		META('*')
+#నిర్వచించు	M_చివర		META(']')
+#నిర్వచించు	M_NOT		META('!')
+#నిర్వచించు	M_ONE		META('?')
+#నిర్వచించు	M_RNG		META('-')
+#నిర్వచించు	M_సమితి		META('[')
+#నిర్వచించు	M_CLASS		META(':')
+#నిర్వచించు	ismeta(c)	(((c)&M_QUOTE) != 0)
 
-#define	GLOB_LIMIT_MALLOC	65536
-#define	GLOB_LIMIT_STAT		2048
-#define	GLOB_LIMIT_READDIR	16384
+#నిర్వచించు	GLOB_హద్దు_MALLOC	65536
+#నిర్వచించు	GLOB_హద్దు_STAT		2048
+#నిర్వచించు	GLOB_హద్దు_READDIR	16384
 
-struct glob_lim {
-	size_t	glim_malloc;
-	size_t	glim_stat;
-	size_t	glim_readdir;
+నిర్మాణం glob_lim {
+	కొలత_t	glim_malloc;
+	కొలత_t	glim_stat;
+	కొలత_t	glim_readdir;
 };
 
-struct glob_path_stat {
-	char		*gps_path;
-	struct stat	*gps_stat;
+నిర్మాణం glob_మార్గం_stat {
+	అక్షరం		*gps_మార్గం;
+	నిర్మాణం stat	*gps_stat;
 };
 
-static int	 compare(const void *, const void *);
-static int	 compare_gps(const void *, const void *);
-static int	 g_Ctoc(const Char *, char *, size_t);
-static int	 g_lstat(Char *, struct stat *, glob_t *);
-static DIR	*g_opendir(Char *, glob_t *);
-static Char	*g_strchr(const Char *, int);
-static int	 g_strncmp(const Char *, const char *, size_t);
-static int	 g_stat(Char *, struct stat *, glob_t *);
-static int	 glob0(const Char *, glob_t *, struct glob_lim *);
-static int	 glob1(Char *, Char *, glob_t *, struct glob_lim *);
-static int	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
-		    glob_t *, struct glob_lim *);
-static int	 glob3(Char *, Char *, Char *, Char *, Char *,
-		    Char *, Char *, glob_t *, struct glob_lim *);
-static int	 globextend(const Char *, glob_t *, struct glob_lim *,
-		    struct stat *);
-static const Char *
-		 globtilde(const Char *, Char *, size_t, glob_t *);
-static int	 globexp1(const Char *, glob_t *, struct glob_lim *);
-static int	 globexp2(const Char *, const Char *, glob_t *,
-		    struct glob_lim *);
-static int	 match(Char *, Char *, Char *);
-#ifdef DEBUG
-static void	 qprintf(const char *, Char *);
-#endif
+స్థిర పూర్ణాంకం	 compare(స్థిరరాశి శూన్య *, స్థిరరాశి శూన్య *);
+స్థిర పూర్ణాంకం	 compare_gps(స్థిరరాశి శూన్య *, స్థిరరాశి శూన్య *);
+స్థిర పూర్ణాంకం	 g_Ctoc(స్థిరరాశి Char *, అక్షరం *, కొలత_t);
+స్థిర పూర్ణాంకం	 g_lstat(Char *, నిర్మాణం stat *, glob_t *);
+స్థిర DIR	*g_opendir(Char *, glob_t *);
+స్థిర Char	*g_strchr(స్థిరరాశి Char *, పూర్ణాంకం);
+స్థిర పూర్ణాంకం	 g_strncmp(స్థిరరాశి Char *, స్థిరరాశి అక్షరం *, కొలత_t);
+స్థిర పూర్ణాంకం	 g_stat(Char *, నిర్మాణం stat *, glob_t *);
+స్థిర పూర్ణాంకం	 glob0(స్థిరరాశి Char *, glob_t *, నిర్మాణం glob_lim *);
+స్థిర పూర్ణాంకం	 glob1(Char *, Char *, glob_t *, నిర్మాణం glob_lim *);
+స్థిర పూర్ణాంకం	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
+		    glob_t *, నిర్మాణం glob_lim *);
+స్థిర పూర్ణాంకం	 glob3(Char *, Char *, Char *, Char *, Char *,
+		    Char *, Char *, glob_t *, నిర్మాణం glob_lim *);
+స్థిర పూర్ణాంకం	 globextend(స్థిరరాశి Char *, glob_t *, నిర్మాణం glob_lim *,
+		    నిర్మాణం stat *);
+స్థిర స్థిరరాశి Char *
+		 globtilde(స్థిరరాశి Char *, Char *, కొలత_t, glob_t *);
+స్థిర పూర్ణాంకం	 globexp1(స్థిరరాశి Char *, glob_t *, నిర్మాణం glob_lim *);
+స్థిర పూర్ణాంకం	 globexp2(స్థిరరాశి Char *, స్థిరరాశి Char *, glob_t *,
+		    నిర్మాణం glob_lim *);
+స్థిర పూర్ణాంకం	 సరిపోలిక(Char *, Char *, Char *);
+#నిర్వచితమైతే DEBUG
+స్థిర శూన్య	 qprintf(స్థిరరాశి అక్షరం *, Char *);
+#అయితే_ముగింపు
 
-int
-glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
+పూర్ణాంకం
+glob(స్థిరరాశి అక్షరం *నమూనా, పూర్ణాంకం flags, పూర్ణాంకం (*errfunc)(స్థిరరాశి అక్షరం *, పూర్ణాంకం),
     glob_t *pglob)
 {
-	const u_char *patnext;
-	int c;
+	స్థిరరాశి u_char *patnext;
+	పూర్ణాంకం c;
 	Char *bufnext, *bufend, patbuf[PATH_MAX];
-	struct glob_lim limit = { 0, 0, 0 };
+	నిర్మాణం glob_lim హద్దు = { 0, 0, 0 };
 
-	patnext = (u_char *) pattern;
-	if (!(flags & GLOB_APPEND)) {
+	patnext = (u_char *) నమూనా;
+	ఒకవేళ (!(flags & GLOB_APPEND)) {
 		pglob->gl_pathc = 0;
-		pglob->gl_pathv = NULL;
-		pglob->gl_statv = NULL;
-		if (!(flags & GLOB_DOOFFS))
+		pglob->gl_pathv = ఖాళీ;
+		pglob->gl_statv = ఖాళీ;
+		ఒకవేళ (!(flags & GLOB_DOOFFS))
 			pglob->gl_offs = 0;
 	}
 	pglob->gl_flags = flags & ~GLOB_MAGCHAR;
 	pglob->gl_errfunc = errfunc;
 	pglob->gl_matchc = 0;
 
-	if (strnlen(pattern, PATH_MAX) == PATH_MAX)
-		return(GLOB_NOMATCH);
+	ఒకవేళ (strnlen(నమూనా, PATH_MAX) == PATH_MAX)
+		తిరిగి(GLOB_NOMATCH);
 
-	if (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
+	ఒకవేళ (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX - pglob->gl_offs - 1)
-		return GLOB_NOSPACE;
+		తిరిగి GLOB_NOSPACE;
 
 	bufnext = patbuf;
 	bufend = bufnext + PATH_MAX - 1;
-	if (flags & GLOB_NOESCAPE)
-		while (bufnext < bufend && (c = *patnext++) != EOS)
+	ఒకవేళ (flags & GLOB_NOESCAPE)
+		అయితే (bufnext < bufend && (c = *patnext++) != EOS)
 			*bufnext++ = c;
-	else {
+	లేకపోతే {
 		/* Protect the quoted characters. */
-		while (bufnext < bufend && (c = *patnext++) != EOS)
-			if (c == QUOTE) {
-				if ((c = *patnext++) == EOS) {
+		అయితే (bufnext < bufend && (c = *patnext++) != EOS)
+			ఒకవేళ (c == QUOTE) {
+				ఒకవేళ ((c = *patnext++) == EOS) {
 					c = QUOTE;
 					--patnext;
 				}
 				*bufnext++ = c | M_PROTECT;
-			} else
+			} లేకపోతే
 				*bufnext++ = c;
 	}
 	*bufnext = EOS;
 
-	if (flags & GLOB_BRACE)
-		return globexp1(patbuf, pglob, &limit);
-	else
-		return glob0(patbuf, pglob, &limit);
+	ఒకవేళ (flags & GLOB_BRACE)
+		తిరిగి globexp1(patbuf, pglob, &హద్దు);
+	లేకపోతే
+		తిరిగి glob0(patbuf, pglob, &హద్దు);
 }
 
 /*
@@ -234,19 +234,19 @@ glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
  * invoke the standard globbing routine to glob the rest of the magic
  * characters
  */
-static int
-globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
+స్థిర పూర్ణాంకం
+globexp1(స్థిరరాశి Char *నమూనా, glob_t *pglob, నిర్మాణం glob_lim *limitp)
 {
-	const Char* ptr = pattern;
+	స్థిరరాశి Char* ptr = నమూనా;
 
 	/* Protect a single {}, for find(1), like csh */
-	if (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
-		return glob0(pattern, pglob, limitp);
+	ఒకవేళ (నమూనా[0] == LBRACE && నమూనా[1] == RBRACE && నమూనా[2] == EOS)
+		తిరిగి glob0(నమూనా, pglob, limitp);
 
-	if ((ptr = (const Char *) g_strchr(ptr, LBRACE)) != NULL)
-		return globexp2(ptr, pattern, pglob, limitp);
+	ఒకవేళ ((ptr = (స్థిరరాశి Char *) g_strchr(ptr, LBRACE)) != ఖాళీ)
+		తిరిగి globexp2(ptr, నమూనా, pglob, limitp);
 
-	return glob0(pattern, pglob, limitp);
+	తిరిగి glob0(నమూనా, pglob, limitp);
 }
 
 
@@ -255,104 +255,104 @@ globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
  * If it succeeds then it invokes globexp1 with the new pattern.
  * If it fails then it tries to glob the rest of the pattern and returns.
  */
-static int
-globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
-    struct glob_lim *limitp)
+స్థిర పూర్ణాంకం
+globexp2(స్థిరరాశి Char *ptr, స్థిరరాశి Char *నమూనా, glob_t *pglob,
+    నిర్మాణం glob_lim *limitp)
 {
-	int     i, rv;
+	పూర్ణాంకం     i, rv;
 	Char   *lm, *ls;
-	const Char *pe, *pm, *pl;
+	స్థిరరాశి Char *pe, *pm, *pl;
 	Char    patbuf[PATH_MAX];
 
 	/* copy part up to the brace */
-	for (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
+	కొరకు (lm = patbuf, pm = నమూనా; pm != ptr; *lm++ = *pm++)
 		;
 	*lm = EOS;
 	ls = lm;
 
 	/* Find the balanced brace */
-	for (i = 0, pe = ++ptr; *pe; pe++)
-		if (*pe == LBRACKET) {
+	కొరకు (i = 0, pe = ++ptr; *pe; pe++)
+		ఒకవేళ (*pe == LBRACKET) {
 			/* Ignore everything between [] */
-			for (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
+			కొరకు (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
 				;
-			if (*pe == EOS) {
+			ఒకవేళ (*pe == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pe = pm;
 			}
-		} else if (*pe == LBRACE)
+		} లేకపోతే ఒకవేళ (*pe == LBRACE)
 			i++;
-		else if (*pe == RBRACE) {
-			if (i == 0)
-				break;
+		లేకపోతే ఒకవేళ (*pe == RBRACE) {
+			ఒకవేళ (i == 0)
+				ఆపు;
 			i--;
 		}
 
 	/* Non matching braces; just glob the pattern */
-	if (i != 0 || *pe == EOS)
-		return glob0(patbuf, pglob, limitp);
+	ఒకవేళ (i != 0 || *pe == EOS)
+		తిరిగి glob0(patbuf, pglob, limitp);
 
-	for (i = 0, pl = pm = ptr; pm <= pe; pm++) {
-		switch (*pm) {
-		case LBRACKET:
+	కొరకు (i = 0, pl = pm = ptr; pm <= pe; pm++) {
+		ఎంపిక (*pm) {
+		స్థితి LBRACKET:
 			/* Ignore everything between [] */
-			for (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
+			కొరకు (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
 				;
-			if (*pm == EOS) {
+			ఒకవేళ (*pm == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pm = pl;
 			}
-			break;
+			ఆపు;
 
-		case LBRACE:
+		స్థితి LBRACE:
 			i++;
-			break;
+			ఆపు;
 
-		case RBRACE:
-			if (i) {
+		స్థితి RBRACE:
+			ఒకవేళ (i) {
 				i--;
-				break;
+				ఆపు;
 			}
 			/* FALLTHROUGH */
-		case COMMA:
-			if (i && *pm == COMMA)
-				break;
-			else {
+		స్థితి COMMA:
+			ఒకవేళ (i && *pm == COMMA)
+				ఆపు;
+			లేకపోతే {
 				/* Append the current string */
-				for (lm = ls; (pl < pm); *lm++ = *pl++)
+				కొరకు (lm = ls; (pl < pm); *lm++ = *pl++)
 					;
 
 				/*
 				 * Append the rest of the pattern after the
 				 * closing brace
 				 */
-				for (pl = pe + 1; (*lm++ = *pl++) != EOS; )
+				కొరకు (pl = pe + 1; (*lm++ = *pl++) != EOS; )
 					;
 
 				/* Expand the current pattern */
-#ifdef DEBUG
+#నిర్వచితమైతే DEBUG
 				qprintf("globexp2:", patbuf);
-#endif
+#అయితే_ముగింపు
 				rv = globexp1(patbuf, pglob, limitp);
-				if (rv && rv != GLOB_NOMATCH)
-					return rv;
+				ఒకవేళ (rv && rv != GLOB_NOMATCH)
+					తిరిగి rv;
 
 				/* move after the comma, to the next string */
 				pl = pm + 1;
 			}
-			break;
+			ఆపు;
 
-		default:
-			break;
+		అప్రమేయ:
+			ఆపు;
 		}
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 
@@ -360,106 +360,106 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 /*
  * expand tilde from the passwd file.
  */
-static const Char *
-globtilde(const Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
+స్థిర స్థిరరాశి Char *
+globtilde(స్థిరరాశి Char *నమూనా, Char *patbuf, కొలత_t patbuf_len, glob_t *pglob)
 {
-	struct passwd *pwd;
-	char *h;
-	const Char *p;
+	నిర్మాణం passwd *pwd;
+	అక్షరం *h;
+	స్థిరరాశి Char *p;
 	Char *b, *eb;
 
-	if (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
-		return pattern;
+	ఒకవేళ (*నమూనా != TILDE || !(pglob->gl_flags & GLOB_TILDE))
+		తిరిగి నమూనా;
 
 	/* Copy up to the end of the string or / */
 	eb = &patbuf[patbuf_len - 1];
-	for (p = pattern + 1, h = (char *) patbuf;
-	    h < (char *)eb && *p && *p != SLASH; *h++ = *p++)
+	కొరకు (p = నమూనా + 1, h = (అక్షరం *) patbuf;
+	    h < (అక్షరం *)eb && *p && *p != SLASH; *h++ = *p++)
 		;
 
 	*h = EOS;
 
-#if 0
-	if (h == (char *)eb)
-		return what;
-#endif
+#ఒకవేళ 0
+	ఒకవేళ (h == (అక్షరం *)eb)
+		తిరిగి what;
+#అయితే_ముగింపు
 
-	if (((char *) patbuf)[0] == EOS) {
+	ఒకవేళ (((అక్షరం *) patbuf)[0] == EOS) {
 		/*
 		 * handle a plain ~ or ~/ by expanding $HOME
 		 * first and then trying the password file
 		 */
-#if 0
-		if (issetugid() != 0 || (h = getenv("HOME")) == NULL) {
-#endif
-		if ((getuid() != geteuid()) || (h = getenv("HOME")) == NULL) {
-			if ((pwd = getpwuid(getuid())) == NULL)
-				return pattern;
-			else
+#ఒకవేళ 0
+		ఒకవేళ (issetugid() != 0 || (h = getenv("HOME")) == ఖాళీ) {
+#అయితే_ముగింపు
+		ఒకవేళ ((getuid() != geteuid()) || (h = getenv("HOME")) == ఖాళీ) {
+			ఒకవేళ ((pwd = getpwuid(getuid())) == ఖాళీ)
+				తిరిగి నమూనా;
+			లేకపోతే
 				h = pwd->pw_dir;
 		}
-	} else {
+	} లేకపోతే {
 		/*
 		 * Expand a ~user
 		 */
-		if ((pwd = getpwnam((char*) patbuf)) == NULL)
-			return pattern;
-		else
+		ఒకవేళ ((pwd = getpwnam((అక్షరం*) patbuf)) == ఖాళీ)
+			తిరిగి నమూనా;
+		లేకపోతే
 			h = pwd->pw_dir;
 	}
 
 	/* Copy the home directory */
-	for (b = patbuf; b < eb && *h; *b++ = *h++)
+	కొరకు (b = patbuf; b < eb && *h; *b++ = *h++)
 		;
 
 	/* Append the rest of the pattern */
-	while (b < eb && (*b++ = *p++) != EOS)
+	అయితే (b < eb && (*b++ = *p++) != EOS)
 		;
 	*b = EOS;
 
-	return patbuf;
+	తిరిగి patbuf;
 }
 
-static int
-g_strncmp(const Char *s1, const char *s2, size_t n)
+స్థిర పూర్ణాంకం
+g_strncmp(స్థిరరాశి Char *s1, స్థిరరాశి అక్షరం *s2, కొలత_t n)
 {
-	int rv = 0;
+	పూర్ణాంకం rv = 0;
 
-	while (n--) {
-		rv = *(Char *)s1 - *(const unsigned char *)s2++;
-		if (rv)
-			break;
-		if (*s1++ == '\0')
-			break;
+	అయితే (n--) {
+		rv = *(Char *)s1 - *(స్థిరరాశి గుర్తులేని అక్షరం *)s2++;
+		ఒకవేళ (rv)
+			ఆపు;
+		ఒకవేళ (*s1++ == '\0')
+			ఆపు;
 	}
-	return rv;
+	తిరిగి rv;
 }
 
-static int
-g_charclass(const Char **patternp, Char **bufnextp)
+స్థిర పూర్ణాంకం
+g_charclass(స్థిరరాశి Char **patternp, Char **bufnextp)
 {
-	const Char *pattern = *patternp + 1;
+	స్థిరరాశి Char *నమూనా = *patternp + 1;
 	Char *bufnext = *bufnextp;
-	const Char *colon;
-	struct cclass *cc;
-	size_t len;
+	స్థిరరాశి Char *colon;
+	నిర్మాణం cclass *cc;
+	కొలత_t len;
 
-	if ((colon = g_strchr(pattern, ':')) == NULL || colon[1] != ']')
-		return 1;	/* not a character class */
+	ఒకవేళ ((colon = g_strchr(నమూనా, ':')) == ఖాళీ || colon[1] != ']')
+		తిరిగి 1;	/* not a character class */
 
-	len = (size_t)(colon - pattern);
-	for (cc = cclasses; cc->name != NULL; cc++) {
-		if (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
-			break;
+	len = (కొలత_t)(colon - నమూనా);
+	కొరకు (cc = cclasses; cc->name != ఖాళీ; cc++) {
+		ఒకవేళ (!g_strncmp(నమూనా, cc->name, len) && cc->name[len] == '\0')
+			ఆపు;
 	}
-	if (cc->name == NULL)
-		return -1;	/* invalid character class */
+	ఒకవేళ (cc->name == ఖాళీ)
+		తిరిగి -1;	/* invalid character class */
 	*bufnext++ = M_CLASS;
 	*bufnext++ = (Char)(cc - &cclasses[0]);
 	*bufnextp = bufnext;
 	*patternp += len + 3;
 
-	return 0;
+	తిరిగి 0;
 }
 
 /*
@@ -469,86 +469,86 @@ g_charclass(const Char **patternp, Char **bufnextp)
  * if things went well, nonzero if errors occurred.  It is not an error
  * to find no matches.
  */
-static int
-glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
+స్థిర పూర్ణాంకం
+glob0(స్థిరరాశి Char *నమూనా, glob_t *pglob, నిర్మాణం glob_lim *limitp)
 {
-	const Char *qpatnext;
-	int c, err;
-	size_t oldpathc;
+	స్థిరరాశి Char *qpatnext;
+	పూర్ణాంకం c, err;
+	కొలత_t oldpathc;
 	Char *bufnext, patbuf[PATH_MAX];
 
-	qpatnext = globtilde(pattern, patbuf, PATH_MAX, pglob);
+	qpatnext = globtilde(నమూనా, patbuf, PATH_MAX, pglob);
 	oldpathc = pglob->gl_pathc;
 	bufnext = patbuf;
 
 	/* We don't need to check for buffer overflow any more. */
-	while ((c = *qpatnext++) != EOS) {
-		switch (c) {
-		case LBRACKET:
+	అయితే ((c = *qpatnext++) != EOS) {
+		ఎంపిక (c) {
+		స్థితి LBRACKET:
 			c = *qpatnext;
-			if (c == NOT)
+			ఒకవేళ (c == NOT)
 				++qpatnext;
-			if (*qpatnext == EOS ||
-			    g_strchr(qpatnext+1, RBRACKET) == NULL) {
+			ఒకవేళ (*qpatnext == EOS ||
+			    g_strchr(qpatnext+1, RBRACKET) == ఖాళీ) {
 				*bufnext++ = LBRACKET;
-				if (c == NOT)
+				ఒకవేళ (c == NOT)
 					--qpatnext;
-				break;
+				ఆపు;
 			}
-			*bufnext++ = M_SET;
-			if (c == NOT)
+			*bufnext++ = M_సమితి;
+			ఒకవేళ (c == NOT)
 				*bufnext++ = M_NOT;
 			c = *qpatnext++;
-			do {
-				if (c == LBRACKET && *qpatnext == ':') {
-					do {
+			చేయి {
+				ఒకవేళ (c == LBRACKET && *qpatnext == ':') {
+					చేయి {
 						err = g_charclass(&qpatnext,
 						    &bufnext);
-						if (err)
-							break;
+						ఒకవేళ (err)
+							ఆపు;
 						c = *qpatnext++;
-					} while (c == LBRACKET && *qpatnext == ':');
-					if (err == -1 &&
+					} అయితే (c == LBRACKET && *qpatnext == ':');
+					ఒకవేళ (err == -1 &&
 					    !(pglob->gl_flags & GLOB_NOCHECK))
-						return GLOB_NOMATCH;
-					if (c == RBRACKET)
-						break;
+						తిరిగి GLOB_NOMATCH;
+					ఒకవేళ (c == RBRACKET)
+						ఆపు;
 				}
 				*bufnext++ = CHAR(c);
-				if (*qpatnext == RANGE &&
+				ఒకవేళ (*qpatnext == RANGE &&
 				    (c = qpatnext[1]) != RBRACKET) {
 					*bufnext++ = M_RNG;
 					*bufnext++ = CHAR(c);
 					qpatnext += 2;
 				}
-			} while ((c = *qpatnext++) != RBRACKET);
+			} అయితే ((c = *qpatnext++) != RBRACKET);
 			pglob->gl_flags |= GLOB_MAGCHAR;
-			*bufnext++ = M_END;
-			break;
-		case QUESTION:
+			*bufnext++ = M_చివర;
+			ఆపు;
+		స్థితి QUESTION:
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			*bufnext++ = M_ONE;
-			break;
-		case STAR:
+			ఆపు;
+		స్థితి నక్షత్రం:
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			/* collapse adjacent stars to one,
 			 * to avoid exponential behavior
 			 */
-			if (bufnext == patbuf || bufnext[-1] != M_ALL)
+			ఒకవేళ (bufnext == patbuf || bufnext[-1] != M_ALL)
 				*bufnext++ = M_ALL;
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			*bufnext++ = CHAR(c);
-			break;
+			ఆపు;
 		}
 	}
 	*bufnext = EOS;
-#ifdef DEBUG
+#నిర్వచితమైతే DEBUG
 	qprintf("glob0:", patbuf);
-#endif
+#అయితే_ముగింపు
 
-	if ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
-		return(err);
+	ఒకవేళ ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
+		తిరిగి(err);
 
 	/*
 	 * If there was no match we are going to append the pattern
@@ -556,69 +556,69 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	 * and the pattern did not contain any magic characters
 	 * GLOB_NOMAGIC is there just for compatibility with csh.
 	 */
-	if (pglob->gl_pathc == oldpathc) {
-		if ((pglob->gl_flags & GLOB_NOCHECK) ||
+	ఒకవేళ (pglob->gl_pathc == oldpathc) {
+		ఒకవేళ ((pglob->gl_flags & GLOB_NOCHECK) ||
 		    ((pglob->gl_flags & GLOB_NOMAGIC) &&
 		    !(pglob->gl_flags & GLOB_MAGCHAR)))
-			return(globextend(pattern, pglob, limitp, NULL));
-		else
-			return(GLOB_NOMATCH);
+			తిరిగి(globextend(నమూనా, pglob, limitp, ఖాళీ));
+		లేకపోతే
+			తిరిగి(GLOB_NOMATCH);
 	}
-	if (!(pglob->gl_flags & GLOB_NOSORT)) {
-		if ((pglob->gl_flags & GLOB_KEEPSTAT)) {
+	ఒకవేళ (!(pglob->gl_flags & GLOB_NOSORT)) {
+		ఒకవేళ ((pglob->gl_flags & GLOB_KEEPSTAT)) {
 			/* Keep the paths and stat info synced during sort */
-			struct glob_path_stat *path_stat;
-			size_t i;
-			size_t n = pglob->gl_pathc - oldpathc;
-			size_t o = pglob->gl_offs + oldpathc;
+			నిర్మాణం glob_మార్గం_stat *మార్గం_stat;
+			కొలత_t i;
+			కొలత_t n = pglob->gl_pathc - oldpathc;
+			కొలత_t o = pglob->gl_offs + oldpathc;
 
-			if ((path_stat = calloc(n, sizeof(*path_stat))) == NULL)
-				return GLOB_NOSPACE;
-			for (i = 0; i < n; i++) {
-				path_stat[i].gps_path = pglob->gl_pathv[o + i];
-				path_stat[i].gps_stat = pglob->gl_statv[o + i];
+			ఒకవేళ ((మార్గం_stat = సున్నా_జ్ఞాపకం_ఇవ్వు(n, పరిమాణం(*మార్గం_stat))) == ఖాళీ)
+				తిరిగి GLOB_NOSPACE;
+			కొరకు (i = 0; i < n; i++) {
+				మార్గం_stat[i].gps_మార్గం = pglob->gl_pathv[o + i];
+				మార్గం_stat[i].gps_stat = pglob->gl_statv[o + i];
 			}
-			qsort(path_stat, n, sizeof(*path_stat), compare_gps);
-			for (i = 0; i < n; i++) {
-				pglob->gl_pathv[o + i] = path_stat[i].gps_path;
-				pglob->gl_statv[o + i] = path_stat[i].gps_stat;
+			qsort(మార్గం_stat, n, పరిమాణం(*మార్గం_stat), compare_gps);
+			కొరకు (i = 0; i < n; i++) {
+				pglob->gl_pathv[o + i] = మార్గం_stat[i].gps_మార్గం;
+				pglob->gl_statv[o + i] = మార్గం_stat[i].gps_stat;
 			}
-			free(path_stat);
-		} else {
+			విడుదల(మార్గం_stat);
+		} లేకపోతే {
 			qsort(pglob->gl_pathv + pglob->gl_offs + oldpathc,
-			    pglob->gl_pathc - oldpathc, sizeof(char *),
+			    pglob->gl_pathc - oldpathc, పరిమాణం(అక్షరం *),
 			    compare);
 		}
 	}
-	return(0);
+	తిరిగి(0);
 }
 
-static int
-compare(const void *p, const void *q)
+స్థిర పూర్ణాంకం
+compare(స్థిరరాశి శూన్య *p, స్థిరరాశి శూన్య *q)
 {
-	return(strcmp(*(char **)p, *(char **)q));
+	తిరిగి(strcmp(*(అక్షరం **)p, *(అక్షరం **)q));
 }
 
-static int
-compare_gps(const void *_p, const void *_q)
+స్థిర పూర్ణాంకం
+compare_gps(స్థిరరాశి శూన్య *_p, స్థిరరాశి శూన్య *_q)
 {
-	const struct glob_path_stat *p = (const struct glob_path_stat *)_p;
-	const struct glob_path_stat *q = (const struct glob_path_stat *)_q;
+	స్థిరరాశి నిర్మాణం glob_మార్గం_stat *p = (స్థిరరాశి నిర్మాణం glob_మార్గం_stat *)_p;
+	స్థిరరాశి నిర్మాణం glob_మార్గం_stat *q = (స్థిరరాశి నిర్మాణం glob_మార్గం_stat *)_q;
 
-	return(strcmp(p->gps_path, q->gps_path));
+	తిరిగి(strcmp(p->gps_మార్గం, q->gps_మార్గం));
 }
 
-static int
-glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
+స్థిర పూర్ణాంకం
+glob1(Char *నమూనా, Char *నమూనా_చివరి, glob_t *pglob, నిర్మాణం glob_lim *limitp)
 {
 	Char pathbuf[PATH_MAX];
 
 	/* A null pathname is invalid -- POSIX 1003.1 sect. 2.4. */
-	if (*pattern == EOS)
-		return(0);
-	return(glob2(pathbuf, pathbuf+PATH_MAX-1,
+	ఒకవేళ (*నమూనా == EOS)
+		తిరిగి(0);
+	తిరిగి(glob2(pathbuf, pathbuf+PATH_MAX-1,
 	    pathbuf, pathbuf+PATH_MAX-1,
-	    pattern, pattern_last, pglob, limitp));
+	    నమూనా, నమూనా_చివరి, pglob, limitp));
 }
 
 /*
@@ -626,83 +626,83 @@ glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
  * of recursion for each segment in the pattern that contains one or more
  * meta characters.
  */
-static int
-glob2(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
-    Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
+స్థిర పూర్ణాంకం
+glob2(Char *pathbuf, Char *pathbuf_చివరి, Char *pathend, Char *pathend_చివరి,
+    Char *నమూనా, Char *నమూనా_చివరి, glob_t *pglob, నిర్మాణం glob_lim *limitp)
 {
-	struct stat sb;
+	నిర్మాణం stat sb;
 	Char *p, *q;
-	int anymeta;
+	పూర్ణాంకం anymeta;
 
 	/*
 	 * Loop over pattern segments until end of pattern or until
 	 * segment with meta character found.
 	 */
-	for (anymeta = 0;;) {
-		if (*pattern == EOS) {		/* End of pattern? */
+	కొరకు (anymeta = 0;;) {
+		ఒకవేళ (*నమూనా == EOS) {		/* End of pattern? */
 			*pathend = EOS;
 
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
-			    limitp->glim_stat++ >= GLOB_LIMIT_STAT) {
+			ఒకవేళ ((pglob->gl_flags & GLOB_హద్దు) &&
+			    limitp->glim_stat++ >= GLOB_హద్దు_STAT) {
 				errno = 0;
 				*pathend++ = SEP;
 				*pathend = EOS;
-				return(GLOB_NOSPACE);
+				తిరిగి(GLOB_NOSPACE);
 			}
-			if (g_lstat(pathbuf, &sb, pglob))
-				return(0);
+			ఒకవేళ (g_lstat(pathbuf, &sb, pglob))
+				తిరిగి(0);
 
-			if (((pglob->gl_flags & GLOB_MARK) &&
+			ఒకవేళ (((pglob->gl_flags & GLOB_MARK) &&
 			    pathend[-1] != SEP) && (S_ISDIR(sb.st_mode) ||
 			    (S_ISLNK(sb.st_mode) &&
 			    (g_stat(pathbuf, &sb, pglob) == 0) &&
 			    S_ISDIR(sb.st_mode)))) {
-				if (pathend+1 > pathend_last)
-					return (1);
+				ఒకవేళ (pathend+1 > pathend_చివరి)
+					తిరిగి (1);
 				*pathend++ = SEP;
 				*pathend = EOS;
 			}
 			++pglob->gl_matchc;
-			return(globextend(pathbuf, pglob, limitp, &sb));
+			తిరిగి(globextend(pathbuf, pglob, limitp, &sb));
 		}
 
 		/* Find end of next segment, copy tentatively to pathend. */
 		q = pathend;
-		p = pattern;
-		while (*p != EOS && *p != SEP) {
-			if (ismeta(*p))
+		p = నమూనా;
+		అయితే (*p != EOS && *p != SEP) {
+			ఒకవేళ (ismeta(*p))
 				anymeta = 1;
-			if (q+1 > pathend_last)
-				return (1);
+			ఒకవేళ (q+1 > pathend_చివరి)
+				తిరిగి (1);
 			*q++ = *p++;
 		}
 
-		if (!anymeta) {		/* No expansion, do next segment. */
+		ఒకవేళ (!anymeta) {		/* No expansion, do next segment. */
 			pathend = q;
-			pattern = p;
-			while (*pattern == SEP) {
-				if (pathend+1 > pathend_last)
-					return (1);
-				*pathend++ = *pattern++;
+			నమూనా = p;
+			అయితే (*నమూనా == SEP) {
+				ఒకవేళ (pathend+1 > pathend_చివరి)
+					తిరిగి (1);
+				*pathend++ = *నమూనా++;
 			}
-		} else
+		} లేకపోతే
 			/* Need expansion, recurse. */
-			return(glob3(pathbuf, pathbuf_last, pathend,
-			    pathend_last, pattern, p, pattern_last,
+			తిరిగి(glob3(pathbuf, pathbuf_చివరి, pathend,
+			    pathend_చివరి, నమూనా, p, నమూనా_చివరి,
 			    pglob, limitp));
 	}
 	/* NOTREACHED */
 }
 
-static int
-glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
-    Char *pattern, Char *restpattern, Char *restpattern_last, glob_t *pglob,
-    struct glob_lim *limitp)
+స్థిర పూర్ణాంకం
+glob3(Char *pathbuf, Char *pathbuf_చివరి, Char *pathend, Char *pathend_చివరి,
+    Char *నమూనా, Char *restpattern, Char *restpattern_చివరి, glob_t *pglob,
+    నిర్మాణం glob_lim *limitp)
 {
-	struct dirent *dp;
+	నిర్మాణం dirent *dp;
 	DIR *dirp;
-	int err;
-	char buf[PATH_MAX];
+	పూర్ణాంకం err;
+	అక్షరం buf[PATH_MAX];
 
 	/*
 	 * The readdirfunc declaration can't be prototyped, because it is
@@ -710,73 +710,73 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
 	 * and dirent.h as taking pointers to differently typed opaque
 	 * structures.
 	 */
-	struct dirent *(*readdirfunc)(void *);
+	నిర్మాణం dirent *(*readdirfunc)(శూన్య *);
 
-	if (pathend > pathend_last)
-		return (1);
+	ఒకవేళ (pathend > pathend_చివరి)
+		తిరిగి (1);
 	*pathend = EOS;
 	errno = 0;
 
-	if ((dirp = g_opendir(pathbuf, pglob)) == NULL) {
+	ఒకవేళ ((dirp = g_opendir(pathbuf, pglob)) == ఖాళీ) {
 		/* TODO: don't call for ENOENT or ENOTDIR? */
-		if (pglob->gl_errfunc) {
-			if (g_Ctoc(pathbuf, buf, sizeof(buf)))
-				return(GLOB_ABORTED);
-			if (pglob->gl_errfunc(buf, errno) ||
+		ఒకవేళ (pglob->gl_errfunc) {
+			ఒకవేళ (g_Ctoc(pathbuf, buf, పరిమాణం(buf)))
+				తిరిగి(GLOB_ABORTED);
+			ఒకవేళ (pglob->gl_errfunc(buf, errno) ||
 			    pglob->gl_flags & GLOB_ERR)
-				return(GLOB_ABORTED);
+				తిరిగి(GLOB_ABORTED);
 		}
-		return(0);
+		తిరిగి(0);
 	}
 
 	err = 0;
 
 	/* Search directory for matching names. */
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	ఒకవేళ (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		readdirfunc = pglob->gl_readdir;
-	else
-		readdirfunc = (struct dirent *(*)(void *))readdir;
-	while ((dp = (*readdirfunc)(dirp))) {
+	లేకపోతే
+		readdirfunc = (నిర్మాణం dirent *(*)(శూన్య *))readdir;
+	అయితే ((dp = (*readdirfunc)(dirp))) {
 		u_char *sc;
 		Char *dc;
 
-		if ((pglob->gl_flags & GLOB_LIMIT) &&
-		    limitp->glim_readdir++ >= GLOB_LIMIT_READDIR) {
+		ఒకవేళ ((pglob->gl_flags & GLOB_హద్దు) &&
+		    limitp->glim_readdir++ >= GLOB_హద్దు_READDIR) {
 			errno = 0;
 			*pathend++ = SEP;
 			*pathend = EOS;
 			err = GLOB_NOSPACE;
-			break;
+			ఆపు;
 		}
 
 		/* Initial DOT must be matched literally. */
-		if (dp->d_name[0] == DOT && *pattern != DOT)
-			continue;
+		ఒకవేళ (dp->d_name[0] == DOT && *నమూనా != DOT)
+			కొనసాగు;
 		dc = pathend;
 		sc = (u_char *) dp->d_name;
-		while (dc < pathend_last && (*dc++ = *sc++) != EOS)
+		అయితే (dc < pathend_చివరి && (*dc++ = *sc++) != EOS)
 			;
-		if (dc >= pathend_last) {
+		ఒకవేళ (dc >= pathend_చివరి) {
 			*dc = EOS;
 			err = 1;
-			break;
+			ఆపు;
 		}
 
-		if (!match(pathend, pattern, restpattern)) {
+		ఒకవేళ (!సరిపోలిక(pathend, నమూనా, restpattern)) {
 			*pathend = EOS;
-			continue;
+			కొనసాగు;
 		}
-		err = glob2(pathbuf, pathbuf_last, --dc, pathend_last,
-		    restpattern, restpattern_last, pglob, limitp);
-		if (err)
-			break;
+		err = glob2(pathbuf, pathbuf_చివరి, --dc, pathend_చివరి,
+		    restpattern, restpattern_చివరి, pglob, limitp);
+		ఒకవేళ (err)
+			ఆపు;
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	ఒకవేళ (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		(*pglob->gl_closedir)(dirp);
-	else
+	లేకపోతే
 		closedir(dirp);
-	return(err);
+	తిరిగి(err);
 }
 
 
@@ -794,98 +794,98 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
  *	Either gl_pathc is zero and gl_pathv is NULL; or gl_pathc > 0 and
  *	gl_pathv points to (gl_offs + gl_pathc + 1) items.
  */
-static int
-globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
-    struct stat *sb)
+స్థిర పూర్ణాంకం
+globextend(స్థిరరాశి Char *మార్గం, glob_t *pglob, నిర్మాణం glob_lim *limitp,
+    నిర్మాణం stat *sb)
 {
-	char **pathv;
-	size_t i, newn, len;
-	char *copy = NULL;
-	const Char *p;
-	struct stat **statv;
+	అక్షరం **pathv;
+	కొలత_t i, newn, len;
+	అక్షరం *copy = ఖాళీ;
+	స్థిరరాశి Char *p;
+	నిర్మాణం stat **statv;
 
 	newn = 2 + pglob->gl_pathc + pglob->gl_offs;
-	if (pglob->gl_offs >= SSIZE_MAX ||
+	ఒకవేళ (pglob->gl_offs >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX ||
 	    newn >= SSIZE_MAX ||
-	    SIZE_MAX / sizeof(*pathv) <= newn ||
-	    SIZE_MAX / sizeof(*statv) <= newn) {
+	    SIZE_MAX / పరిమాణం(*pathv) <= newn ||
+	    SIZE_MAX / పరిమాణం(*statv) <= newn) {
  nospace:
-		for (i = pglob->gl_offs; i < newn - 2; i++) {
-			if (pglob->gl_pathv && pglob->gl_pathv[i])
-				free(pglob->gl_pathv[i]);
-			if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
+		కొరకు (i = pglob->gl_offs; i < newn - 2; i++) {
+			ఒకవేళ (pglob->gl_pathv && pglob->gl_pathv[i])
+				విడుదల(pglob->gl_pathv[i]);
+			ఒకవేళ ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
 			    pglob->gl_pathv && pglob->gl_pathv[i])
-				free(pglob->gl_statv[i]);
+				విడుదల(pglob->gl_statv[i]);
 		}
-		free(pglob->gl_pathv);
-		pglob->gl_pathv = NULL;
-		free(pglob->gl_statv);
-		pglob->gl_statv = NULL;
-		return(GLOB_NOSPACE);
+		విడుదల(pglob->gl_pathv);
+		pglob->gl_pathv = ఖాళీ;
+		విడుదల(pglob->gl_statv);
+		pglob->gl_statv = ఖాళీ;
+		తిరిగి(GLOB_NOSPACE);
 	}
 
-	pathv = reallocarray(pglob->gl_pathv, newn, sizeof(*pathv));
-	if (pathv == NULL)
-		goto nospace;
-	if (pglob->gl_pathv == NULL && pglob->gl_offs > 0) {
+	pathv = reallocarray(pglob->gl_pathv, newn, పరిమాణం(*pathv));
+	ఒకవేళ (pathv == ఖాళీ)
+		వెళ్ళు nospace;
+	ఒకవేళ (pglob->gl_pathv == ఖాళీ && pglob->gl_offs > 0) {
 		/* first time around -- clear initial gl_offs items */
 		pathv += pglob->gl_offs;
-		for (i = pglob->gl_offs; i > 0; i--)
-			*--pathv = NULL;
+		కొరకు (i = pglob->gl_offs; i > 0; i--)
+			*--pathv = ఖాళీ;
 	}
 	pglob->gl_pathv = pathv;
 
-	if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
-		statv = reallocarray(pglob->gl_statv, newn, sizeof(*statv));
-		if (statv == NULL)
-			goto nospace;
-		if (pglob->gl_statv == NULL && pglob->gl_offs > 0) {
+	ఒకవేళ ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
+		statv = reallocarray(pglob->gl_statv, newn, పరిమాణం(*statv));
+		ఒకవేళ (statv == ఖాళీ)
+			వెళ్ళు nospace;
+		ఒకవేళ (pglob->gl_statv == ఖాళీ && pglob->gl_offs > 0) {
 			/* first time around -- clear initial gl_offs items */
 			statv += pglob->gl_offs;
-			for (i = pglob->gl_offs; i > 0; i--)
-				*--statv = NULL;
+			కొరకు (i = pglob->gl_offs; i > 0; i--)
+				*--statv = ఖాళీ;
 		}
 		pglob->gl_statv = statv;
-		if (sb == NULL)
-			statv[pglob->gl_offs + pglob->gl_pathc] = NULL;
-		else {
-			limitp->glim_malloc += sizeof(**statv);
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
-			    limitp->glim_malloc >= GLOB_LIMIT_MALLOC) {
+		ఒకవేళ (sb == ఖాళీ)
+			statv[pglob->gl_offs + pglob->gl_pathc] = ఖాళీ;
+		లేకపోతే {
+			limitp->glim_malloc += పరిమాణం(**statv);
+			ఒకవేళ ((pglob->gl_flags & GLOB_హద్దు) &&
+			    limitp->glim_malloc >= GLOB_హద్దు_MALLOC) {
 				errno = 0;
-				return(GLOB_NOSPACE);
+				తిరిగి(GLOB_NOSPACE);
 			}
-			if ((statv[pglob->gl_offs + pglob->gl_pathc] =
-			    malloc(sizeof(**statv))) == NULL)
-				goto copy_error;
-			memcpy(statv[pglob->gl_offs + pglob->gl_pathc], sb,
-			    sizeof(*sb));
+			ఒకవేళ ((statv[pglob->gl_offs + pglob->gl_pathc] =
+			    జ్ఞాపకం_ఇవ్వు(పరిమాణం(**statv))) == ఖాళీ)
+				వెళ్ళు copy_error;
+			జ్ఞాపకం_నకలు(statv[pglob->gl_offs + pglob->gl_pathc], sb,
+			    పరిమాణం(*sb));
 		}
-		statv[pglob->gl_offs + pglob->gl_pathc + 1] = NULL;
+		statv[pglob->gl_offs + pglob->gl_pathc + 1] = ఖాళీ;
 	}
 
-	for (p = path; *p++;)
+	కొరకు (p = మార్గం; *p++;)
 		;
-	len = (size_t)(p - path);
+	len = (కొలత_t)(p - మార్గం);
 	limitp->glim_malloc += len;
-	if ((copy = malloc(len)) != NULL) {
-		if (g_Ctoc(path, copy, len)) {
-			free(copy);
-			return(GLOB_NOSPACE);
+	ఒకవేళ ((copy = జ్ఞాపకం_ఇవ్వు(len)) != ఖాళీ) {
+		ఒకవేళ (g_Ctoc(మార్గం, copy, len)) {
+			విడుదల(copy);
+			తిరిగి(GLOB_NOSPACE);
 		}
 		pathv[pglob->gl_offs + pglob->gl_pathc++] = copy;
 	}
-	pathv[pglob->gl_offs + pglob->gl_pathc] = NULL;
+	pathv[pglob->gl_offs + pglob->gl_pathc] = ఖాళీ;
 
-	if ((pglob->gl_flags & GLOB_LIMIT) &&
-	    (newn * sizeof(*pathv)) + limitp->glim_malloc >
-	    GLOB_LIMIT_MALLOC) {
+	ఒకవేళ ((pglob->gl_flags & GLOB_హద్దు) &&
+	    (newn * పరిమాణం(*pathv)) + limitp->glim_malloc >
+	    GLOB_హద్దు_MALLOC) {
 		errno = 0;
-		return(GLOB_NOSPACE);
+		తిరిగి(GLOB_NOSPACE);
 	}
  copy_error:
-	return(copy == NULL ? GLOB_NOSPACE : 0);
+	తిరిగి(copy == ఖాళీ ? GLOB_NOSPACE : 0);
 }
 
 
@@ -900,178 +900,178 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
  * from Russ Cox to not go quadratic on cases like a file called
  * ("a" x 100) . "x" matched against a pattern like "a*a*a*a*a*a*a*y".
  */
-static int
-match(Char *name, Char *pat, Char *patend)
+స్థిర పూర్ణాంకం
+సరిపోలిక(Char *name, Char *pat, Char *patend)
 {
-	int ok, negate_range;
+	పూర్ణాంకం ok, negate_range;
 	Char c, k;
-	Char *nextp = NULL;
-	Char *nextn = NULL;
+	Char *nextp = ఖాళీ;
+	Char *nextn = ఖాళీ;
 
 loop:
-	while (pat < patend) {
+	అయితే (pat < patend) {
 		c = *pat++;
-		switch (c & M_MASK) {
-		case M_ALL:
-			while (pat < patend && (*pat & M_MASK) == M_ALL)
+		ఎంపిక (c & M_ముసుగు) {
+		స్థితి M_ALL:
+			అయితే (pat < patend && (*pat & M_ముసుగు) == M_ALL)
 				pat++;	/* eat consecutive '*' */
-			if (pat == patend)
-				return(1);
-			if (*name == EOS)
-				return(0);
+			ఒకవేళ (pat == patend)
+				తిరిగి(1);
+			ఒకవేళ (*name == EOS)
+				తిరిగి(0);
 			nextn = name + 1;
 			nextp = pat - 1;
-			break;
-		case M_ONE:
-			if (*name++ == EOS)
-				goto fail;
-			break;
-		case M_SET:
+			ఆపు;
+		స్థితి M_ONE:
+			ఒకవేళ (*name++ == EOS)
+				వెళ్ళు fail;
+			ఆపు;
+		స్థితి M_సమితి:
 			ok = 0;
-			if ((k = *name++) == EOS)
-				goto fail;
-			if ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
+			ఒకవేళ ((k = *name++) == EOS)
+				వెళ్ళు fail;
+			ఒకవేళ ((negate_range = ((*pat & M_ముసుగు) == M_NOT)) != EOS)
 				++pat;
-			while (((c = *pat++) & M_MASK) != M_END) {
-				if ((c & M_MASK) == M_CLASS) {
-					Char idx = *pat & M_MASK;
-					if (idx < NCCLASSES &&
+			అయితే (((c = *pat++) & M_ముసుగు) != M_చివర) {
+				ఒకవేళ ((c & M_ముసుగు) == M_CLASS) {
+					Char idx = *pat & M_ముసుగు;
+					ఒకవేళ (idx < NCCLASSES &&
 					    cclasses[idx].isctype(k))
 						ok = 1;
 					++pat;
 				}
-				if ((*pat & M_MASK) == M_RNG) {
-					if (c <= k && k <= pat[1])
+				ఒకవేళ ((*pat & M_ముసుగు) == M_RNG) {
+					ఒకవేళ (c <= k && k <= pat[1])
 						ok = 1;
 					pat += 2;
-				} else if (c == k)
+				} లేకపోతే ఒకవేళ (c == k)
 					ok = 1;
 			}
-			if (ok == negate_range)
-				goto fail;
-			break;
-		default:
-			if (*name++ != c)
-				goto fail;
-			break;
+			ఒకవేళ (ok == negate_range)
+				వెళ్ళు fail;
+			ఆపు;
+		అప్రమేయ:
+			ఒకవేళ (*name++ != c)
+				వెళ్ళు fail;
+			ఆపు;
 		}
 	}
-	if (*name == EOS)
-		return(1);
+	ఒకవేళ (*name == EOS)
+		తిరిగి(1);
 
 fail:
-	if (nextn) {
+	ఒకవేళ (nextn) {
 		pat = nextp;
 		name = nextn;
-		goto loop;
+		వెళ్ళు loop;
 	}
-	return(0);
+	తిరిగి(0);
 }
 
 /* Free allocated data belonging to a glob_t structure. */
-void
+శూన్య
 globfree(glob_t *pglob)
 {
-	size_t i;
-	char **pp;
+	కొలత_t i;
+	అక్షరం **pp;
 
-	if (pglob->gl_pathv != NULL) {
+	ఒకవేళ (pglob->gl_pathv != ఖాళీ) {
 		pp = pglob->gl_pathv + pglob->gl_offs;
-		for (i = pglob->gl_pathc; i--; ++pp)
-			free(*pp);
-		free(pglob->gl_pathv);
-		pglob->gl_pathv = NULL;
+		కొరకు (i = pglob->gl_pathc; i--; ++pp)
+			విడుదల(*pp);
+		విడుదల(pglob->gl_pathv);
+		pglob->gl_pathv = ఖాళీ;
 	}
-	if (pglob->gl_statv != NULL) {
-		for (i = 0; i < pglob->gl_pathc; i++) {
-			free(pglob->gl_statv[i]);
+	ఒకవేళ (pglob->gl_statv != ఖాళీ) {
+		కొరకు (i = 0; i < pglob->gl_pathc; i++) {
+			విడుదల(pglob->gl_statv[i]);
 		}
-		free(pglob->gl_statv);
-		pglob->gl_statv = NULL;
+		విడుదల(pglob->gl_statv);
+		pglob->gl_statv = ఖాళీ;
 	}
 }
 
-static DIR *
+స్థిర DIR *
 g_opendir(Char *str, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	అక్షరం buf[PATH_MAX];
 
-	if (!*str)
-		strlcpy(buf, ".", sizeof buf);
-	else {
-		if (g_Ctoc(str, buf, sizeof(buf)))
-			return(NULL);
+	ఒకవేళ (!*str)
+		strlcpy(buf, ".", పరిమాణం buf);
+	లేకపోతే {
+		ఒకవేళ (g_Ctoc(str, buf, పరిమాణం(buf)))
+			తిరిగి(ఖాళీ);
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_opendir)(buf));
+	ఒకవేళ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		తిరిగి((*pglob->gl_opendir)(buf));
 
-	return(opendir(buf));
+	తిరిగి(opendir(buf));
 }
 
-static int
-g_lstat(Char *fn, struct stat *sb, glob_t *pglob)
+స్థిర పూర్ణాంకం
+g_lstat(Char *fn, నిర్మాణం stat *sb, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	అక్షరం buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_lstat)(buf, sb));
-	return(lstat(buf, sb));
+	ఒకవేళ (g_Ctoc(fn, buf, పరిమాణం(buf)))
+		తిరిగి(-1);
+	ఒకవేళ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		తిరిగి((*pglob->gl_lstat)(buf, sb));
+	తిరిగి(lstat(buf, sb));
 }
 
-static int
-g_stat(Char *fn, struct stat *sb, glob_t *pglob)
+స్థిర పూర్ణాంకం
+g_stat(Char *fn, నిర్మాణం stat *sb, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	అక్షరం buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_stat)(buf, sb));
-	return(stat(buf, sb));
+	ఒకవేళ (g_Ctoc(fn, buf, పరిమాణం(buf)))
+		తిరిగి(-1);
+	ఒకవేళ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		తిరిగి((*pglob->gl_stat)(buf, sb));
+	తిరిగి(stat(buf, sb));
 }
 
-static Char *
-g_strchr(const Char *str, int ch)
+స్థిర Char *
+g_strchr(స్థిరరాశి Char *str, పూర్ణాంకం ch)
 {
-	do {
-		if (*str == ch)
-			return ((Char *)str);
-	} while (*str++);
-	return (NULL);
+	చేయి {
+		ఒకవేళ (*str == ch)
+			తిరిగి ((Char *)str);
+	} అయితే (*str++);
+	తిరిగి (ఖాళీ);
 }
 
-static int
-g_Ctoc(const Char *str, char *buf, size_t len)
+స్థిర పూర్ణాంకం
+g_Ctoc(స్థిరరాశి Char *str, అక్షరం *buf, కొలత_t len)
 {
 
-	while (len--) {
-		if ((*buf++ = *str++) == EOS)
-			return (0);
+	అయితే (len--) {
+		ఒకవేళ ((*buf++ = *str++) == EOS)
+			తిరిగి (0);
 	}
-	return (1);
+	తిరిగి (1);
 }
 
-#ifdef DEBUG
-static void
-qprintf(const char *str, Char *s)
+#నిర్వచితమైతే DEBUG
+స్థిర శూన్య
+qprintf(స్థిరరాశి అక్షరం *str, Char *s)
 {
 	Char *p;
 
-	(void)printf("%s:\n", str);
-	for (p = s; *p; p++)
-		(void)printf("%c", CHAR(*p));
-	(void)printf("\n");
-	for (p = s; *p; p++)
-		(void)printf("%c", *p & M_PROTECT ? '"' : ' ');
-	(void)printf("\n");
-	for (p = s; *p; p++)
-		(void)printf("%c", ismeta(*p) ? '_' : ' ');
-	(void)printf("\n");
+	(శూన్య)రాయి("%s:\n", str);
+	కొరకు (p = s; *p; p++)
+		(శూన్య)రాయి("%c", CHAR(*p));
+	(శూన్య)రాయి("\n");
+	కొరకు (p = s; *p; p++)
+		(శూన్య)రాయి("%c", *p & M_PROTECT ? '"' : ' ');
+	(శూన్య)రాయి("\n");
+	కొరకు (p = s; *p; p++)
+		(శూన్య)రాయి("%c", ismeta(*p) ? '_' : ' ');
+	(శూన్య)రాయి("\n");
 }
-#endif
+#అయితే_ముగింపు
 
-#endif /* !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) ||
+#అయితే_ముగింపు /* !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) ||
           !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) */

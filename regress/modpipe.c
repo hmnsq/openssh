@@ -16,135 +16,135 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <errno.h>
-#ifdef HAVE_ERR_H
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <errno.h>
+#నిర్వచితమైతే HAVE_ERR_H
 # include <err.h>
-#endif
-#include "openbsd-compat/getopt_long.c"
+#అయితే_ముగింపు
+#అన్తర్భావ "openbsd-compat/getopt_long.c"
 
-static void
-usage(void)
+స్థిర శూన్య
+usage(శూన్య)
 {
 	fprintf(stderr, "Usage: modpipe -w [-m modspec ...] < in > out\n");
 	fprintf(stderr, "modspec is one of:\n");
 	fprintf(stderr, "    xor:offset:value       - XOR \"value\" at \"offset\"\n");
 	fprintf(stderr, "    andor:offset:val1:val2 - AND \"val1\" then OR \"val2\" at \"offset\"\n");
-	exit(1);
+	నిష్క్రమించు(1);
 }
 
-#define MAX_MODIFICATIONS 256
-struct modification {
-	enum { MOD_XOR, MOD_AND_OR } what;
-	unsigned long long offset;
+#నిర్వచించు MAX_MODIFICATIONS 256
+నిర్మాణం modification {
+	గణన { MOD_XOR, MOD_AND_OR } what;
+	గుర్తులేని దీర్ఘ దీర్ఘ స్థానభ్రంశం;
 	uint8_t m1, m2;
 };
 
-static void
-parse_modification(const char *s, struct modification *m)
+స్థిర శూన్య
+parse_modification(స్థిరరాశి అక్షరం *s, నిర్మాణం modification *m)
 {
-	char what[16+1];
-	int n, m1, m2;
+	అక్షరం what[16+1];
+	పూర్ణాంకం n, m1, m2;
 
-	bzero(m, sizeof(*m));
-	if ((n = sscanf(s, "%16[^:]%*[:]%llu%*[:]%i%*[:]%i",
-	    what, &m->offset, &m1, &m2)) < 3)
+	bzero(m, పరిమాణం(*m));
+	ఒకవేళ ((n = అక్షరశ్రేణి_చదువు(s, "%16[^:]%*[:]%llu%*[:]%i%*[:]%i",
+	    what, &m->స్థానభ్రంశం, &m1, &m2)) < 3)
 		errx(1, "Invalid modification spec \"%s\"", s);
-	if (strcasecmp(what, "xor") == 0) {
-		if (n > 3)
+	ఒకవేళ (strcasecmp(what, "xor") == 0) {
+		ఒకవేళ (n > 3)
 			errx(1, "Invalid modification spec \"%s\"", s);
-		if (m1 < 0 || m1 > 0xff)
+		ఒకవేళ (m1 < 0 || m1 > 0xff)
 			errx(1, "Invalid XOR modification value");
 		m->what = MOD_XOR;
 		m->m1 = m1;
-	} else if (strcasecmp(what, "andor") == 0) {
-		if (n != 4)
+	} లేకపోతే ఒకవేళ (strcasecmp(what, "andor") == 0) {
+		ఒకవేళ (n != 4)
 			errx(1, "Invalid modification spec \"%s\"", s);
-		if (m1 < 0 || m1 > 0xff)
+		ఒకవేళ (m1 < 0 || m1 > 0xff)
 			errx(1, "Invalid AND modification value");
-		if (m2 < 0 || m2 > 0xff)
+		ఒకవేళ (m2 < 0 || m2 > 0xff)
 			errx(1, "Invalid OR modification value");
 		m->what = MOD_AND_OR;
 		m->m1 = m1;
 		m->m2 = m2;
-	} else
+	} లేకపోతే
 		errx(1, "Invalid modification type \"%s\"", what);
 }
 
-int
-main(int argc, char **argv)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	int ch;
+	పూర్ణాంకం ch;
 	u_char buf[8192];
-	size_t total;
+	కొలత_t మొత్తం;
 	ssize_t r, s, o;
-	struct modification mods[MAX_MODIFICATIONS];
-	u_int i, wflag = 0, num_mods = 0;
+	నిర్మాణం modification mods[MAX_MODIFICATIONS];
+	u_int i, wflag = 0, అంకె_mods = 0;
 
-	while ((ch = getopt(argc, argv, "wm:")) != -1) {
-		switch (ch) {
-		case 'm':
-			if (num_mods >= MAX_MODIFICATIONS)
+	అయితే ((ch = getopt(argc, argv, "wm:")) != -1) {
+		ఎంపిక (ch) {
+		స్థితి 'm':
+			ఒకవేళ (అంకె_mods >= MAX_MODIFICATIONS)
 				errx(1, "Too many modifications");
-			parse_modification(optarg, &(mods[num_mods++]));
-			break;
-		case 'w':
+			parse_modification(optarg, &(mods[అంకె_mods++]));
+			ఆపు;
+		స్థితి 'w':
 			wflag = 1;
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			usage();
 			/* NOTREACHED */
 		}
 	}
-	for (total = 0;;) {
-		r = s = read(STDIN_FILENO, buf, sizeof(buf));
-		if (r == 0)
-			break;
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR)
-				continue;
+	కొరకు (మొత్తం = 0;;) {
+		r = s = పఠ(STDIN_FILENO, buf, పరిమాణం(buf));
+		ఒకవేళ (r == 0)
+			ఆపు;
+		ఒకవేళ (r < 0) {
+			ఒకవేళ (errno == EAGAIN || errno == EINTR)
+				కొనసాగు;
 			err(1, "read");
 		}
-		for (i = 0; i < num_mods; i++) {
-			if (mods[i].offset < total ||
-			    mods[i].offset >= total + s)
-				continue;
-			switch (mods[i].what) {
-			case MOD_XOR:
-				buf[mods[i].offset - total] ^= mods[i].m1;
-				break;
-			case MOD_AND_OR:
-				buf[mods[i].offset - total] &= mods[i].m1;
-				buf[mods[i].offset - total] |= mods[i].m2;
-				break;
+		కొరకు (i = 0; i < అంకె_mods; i++) {
+			ఒకవేళ (mods[i].స్థానభ్రంశం < మొత్తం ||
+			    mods[i].స్థానభ్రంశం >= మొత్తం + s)
+				కొనసాగు;
+			ఎంపిక (mods[i].what) {
+			స్థితి MOD_XOR:
+				buf[mods[i].స్థానభ్రంశం - మొత్తం] ^= mods[i].m1;
+				ఆపు;
+			స్థితి MOD_AND_OR:
+				buf[mods[i].స్థానభ్రంశం - మొత్తం] &= mods[i].m1;
+				buf[mods[i].స్థానభ్రంశం - మొత్తం] |= mods[i].m2;
+				ఆపు;
 			}
 		}
-		for (o = 0; o < s; o += r) {
-			r = write(STDOUT_FILENO, buf + o, s - o);
-			if (r == 0)
-				break;
-			if (r < 0) {
-				if (errno == EAGAIN || errno == EINTR)
-					continue;
+		కొరకు (o = 0; o < s; o += r) {
+			r = లిఖ(STDOUT_FILENO, buf + o, s - o);
+			ఒకవేళ (r == 0)
+				ఆపు;
+			ఒకవేళ (r < 0) {
+				ఒకవేళ (errno == EAGAIN || errno == EINTR)
+					కొనసాగు;
 				err(1, "write");
 			}
 		}
-		total += s;
+		మొత్తం += s;
 	}
 	/* Warn if modifications not reached in input stream */
 	r = 0;
-	for (i = 0; wflag && i < num_mods; i++) {
-		if (mods[i].offset < total)
-			continue;
+	కొరకు (i = 0; wflag && i < అంకె_mods; i++) {
+		ఒకవేళ (mods[i].స్థానభ్రంశం < మొత్తం)
+			కొనసాగు;
 		r = 1;
 		fprintf(stderr, "modpipe: warning - mod %u not reached\n", i);
 	}
-	return r;
+	తిరిగి r;
 }

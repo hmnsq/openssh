@@ -50,98 +50,98 @@
  */
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/getopt_long.c */
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#if !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
+#ఒకవేళ !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
 
 /*
  * Some defines to make it easier to keep the code in sync with upstream.
  * getopt opterr optind optopt optreset optarg are all in defines.h which is
  * pulled in by includes.h.
  */
-#define warnx		logit
+#నిర్వచించు warnx		logit
 
-#if 0
-#include <err.h>
-#include <getopt.h>
-#endif
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
+#ఒకవేళ 0
+#అన్తర్భావ <err.h>
+#అన్తర్భావ <getopt.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdarg.h>
 
-#include "log.h"
+#అన్తర్భావ "log.h"
 
-struct option {
+నిర్మాణం option {
 	/* name of long option */
-	const char *name;
+	స్థిరరాశి అక్షరం *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	పూర్ణాంకం has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	పూర్ణాంకం *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	పూర్ణాంకం val;
 };
 
-int	opterr = 1;		/* if error message should be printed */
-int	optind = 1;		/* index into parent argv vector */
-int	optopt = '?';		/* character checked for validity */
-int	optreset;		/* reset getopt */
-char    *optarg;		/* argument associated with option */
+పూర్ణాంకం	opterr = 1;		/* if error message should be printed */
+పూర్ణాంకం	optind = 1;		/* index into parent argv vector */
+పూర్ణాంకం	optopt = '?';		/* character checked for validity */
+పూర్ణాంకం	optreset;		/* reset getopt */
+అక్షరం    *optarg;		/* argument associated with option */
 
-#define PRINT_ERROR	((opterr) && (*options != ':'))
+#నిర్వచించు PRINT_ERROR	((opterr) && (*options != ':'))
 
-#define FLAG_PERMUTE	0x01	/* permute non-options to the end of argv */
-#define FLAG_ALLARGS	0x02	/* treat non-options as args to option "-1" */
-#define FLAG_LONGONLY	0x04	/* operate as getopt_long_only */
+#నిర్వచించు FLAG_క్రమమార్పు	0x01	/* permute non-options to the end of argv */
+#నిర్వచించు FLAG_ALLARGS	0x02	/* treat non-options as args to option "-1" */
+#నిర్వచించు FLAG_LONGONLY	0x04	/* operate as getopt_long_only */
 
 /* return values */
-#define	BADCH		(int)'?'
-#define	BADARG		((*options == ':') ? (int)':' : (int)'?')
-#define	INORDER		(int)1
+#నిర్వచించు	BADCH		(పూర్ణాంకం)'?'
+#నిర్వచించు	BADARG		((*options == ':') ? (పూర్ణాంకం)':' : (పూర్ణాంకం)'?')
+#నిర్వచించు	మధ్యక్రమం		(పూర్ణాంకం)1
 
-#define	EMSG		""
+#నిర్వచించు	EMSG		""
 
-static int getopt_internal(int, char * const *, const char *,
-			   const struct option *, int *, int);
-static int parse_long_options(char * const *, const char *,
-			      const struct option *, int *, int);
-static int gcd(int, int);
-static void permute_args(int, int, int, char * const *);
+స్థిర పూర్ణాంకం getopt_అంతర్గత(పూర్ణాంకం, అక్షరం * స్థిరరాశి *, స్థిరరాశి అక్షరం *,
+			   స్థిరరాశి నిర్మాణం option *, పూర్ణాంకం *, పూర్ణాంకం);
+స్థిర పూర్ణాంకం parse_long_options(అక్షరం * స్థిరరాశి *, స్థిరరాశి అక్షరం *,
+			      స్థిరరాశి నిర్మాణం option *, పూర్ణాంకం *, పూర్ణాంకం);
+స్థిర పూర్ణాంకం గరిష్ఠ_సామాన్య_భాజకం(పూర్ణాంకం, పూర్ణాంకం);
+స్థిర శూన్య క్రమమార్పు_వాదనలు(పూర్ణాంకం, పూర్ణాంకం, పూర్ణాంకం, అక్షరం * స్థిరరాశి *);
 
-static char *place = EMSG; /* option letter processing */
+స్థిర అక్షరం *ఉంచు = EMSG; /* option letter processing */
 
 /* XXX: set optreset to 1 rather than these two */
-static int nonopt_start = -1; /* first non option argument (for permute) */
-static int nonopt_end = -1;   /* first option after non options (for permute) */
+స్థిర పూర్ణాంకం nonopt_ప్రారంభం = -1; /* first non option argument (for permute) */
+స్థిర పూర్ణాంకం nonopt_చివర = -1;   /* first option after non options (for permute) */
 
 /* Error messages */
-static const char recargchar[] = "option requires an argument -- %c";
-static const char recargstring[] = "option requires an argument -- %s";
-static const char ambig[] = "ambiguous option -- %.*s";
-static const char noarg[] = "option doesn't take an argument -- %.*s";
-static const char illoptchar[] = "unknown option -- %c";
-static const char illoptstring[] = "unknown option -- %s";
+స్థిర స్థిరరాశి అక్షరం recargchar[] = "option requires an argument -- %c";
+స్థిర స్థిరరాశి అక్షరం recargstring[] = "option requires an argument -- %s";
+స్థిర స్థిరరాశి అక్షరం ambig[] = "ambiguous option -- %.*s";
+స్థిర స్థిరరాశి అక్షరం noarg[] = "option doesn't take an argument -- %.*s";
+స్థిర స్థిరరాశి అక్షరం illoptchar[] = "unknown option -- %c";
+స్థిర స్థిరరాశి అక్షరం illoptstring[] = "unknown option -- %s";
 
 /*
  * Compute the greatest common divisor of a and b.
  */
-static int
-gcd(int a, int b)
+స్థిర పూర్ణాంకం
+గరిష్ఠ_సామాన్య_భాజకం(పూర్ణాంకం a, పూర్ణాంకం b)
 {
-	int c;
+	పూర్ణాంకం c;
 
 	c = a % b;
-	while (c != 0) {
+	అయితే (c != 0) {
 		a = b;
 		b = c;
 		c = a % b;
 	}
 
-	return (b);
+	తిరిగి (b);
 }
 
 /*
@@ -149,34 +149,34 @@ gcd(int a, int b)
  * from nonopt_end to opt_end (keeping the same order of arguments
  * in each block).
  */
-static void
-permute_args(int panonopt_start, int panonopt_end, int opt_end,
-	char * const *nargv)
+స్థిర శూన్య
+క్రమమార్పు_వాదనలు(పూర్ణాంకం panonopt_ప్రారంభం, పూర్ణాంకం panonopt_చివర, పూర్ణాంకం opt_చివర,
+	అక్షరం * స్థిరరాశి *nargv)
 {
-	int cstart, cyclelen, i, j, ncycle, nnonopts, nopts, pos;
-	char *swap;
+	పూర్ణాంకం cstart, cyclelen, i, j, ncycle, nnonopts, nopts, pos;
+	అక్షరం *మార్పిడి;
 
 	/*
 	 * compute lengths of blocks and number and size of cycles
 	 */
-	nnonopts = panonopt_end - panonopt_start;
-	nopts = opt_end - panonopt_end;
-	ncycle = gcd(nnonopts, nopts);
-	cyclelen = (opt_end - panonopt_start) / ncycle;
+	nnonopts = panonopt_చివర - panonopt_ప్రారంభం;
+	nopts = opt_చివర - panonopt_చివర;
+	ncycle = గరిష్ఠ_సామాన్య_భాజకం(nnonopts, nopts);
+	cyclelen = (opt_చివర - panonopt_ప్రారంభం) / ncycle;
 
-	for (i = 0; i < ncycle; i++) {
-		cstart = panonopt_end+i;
+	కొరకు (i = 0; i < ncycle; i++) {
+		cstart = panonopt_చివర+i;
 		pos = cstart;
-		for (j = 0; j < cyclelen; j++) {
-			if (pos >= panonopt_end)
+		కొరకు (j = 0; j < cyclelen; j++) {
+			ఒకవేళ (pos >= panonopt_చివర)
 				pos -= nnonopts;
-			else
+			లేకపోతే
 				pos += nopts;
-			swap = nargv[pos];
+			మార్పిడి = nargv[pos];
 			/* LINTED const cast */
-			((char **) nargv)[pos] = nargv[cstart];
+			((అక్షరం **) nargv)[pos] = nargv[cstart];
 			/* LINTED const cast */
-			((char **)nargv)[cstart] = swap;
+			((అక్షరం **)nargv)[cstart] = మార్పిడి;
 		}
 	}
 }
@@ -186,75 +186,75 @@ permute_args(int panonopt_start, int panonopt_end, int opt_end,
  *	Parse long options in argc/argv argument vector.
  * Returns -1 if short_too is set and the option does not match long_options.
  */
-static int
-parse_long_options(char * const *nargv, const char *options,
-	const struct option *long_options, int *idx, int short_too)
+స్థిర పూర్ణాంకం
+parse_long_options(అక్షరం * స్థిరరాశి *nargv, స్థిరరాశి అక్షరం *options,
+	స్థిరరాశి నిర్మాణం option *long_options, పూర్ణాంకం *idx, పూర్ణాంకం short_too)
 {
-	char *current_argv, *has_equal;
-	size_t current_argv_len;
-	int i, match;
+	అక్షరం *current_argv, *has_equal;
+	కొలత_t current_argv_len;
+	పూర్ణాంకం i, సరిపోలిక;
 
-	current_argv = place;
-	match = -1;
+	current_argv = ఉంచు;
+	సరిపోలిక = -1;
 
 	optind++;
 
-	if ((has_equal = strchr(current_argv, '=')) != NULL) {
+	ఒకవేళ ((has_equal = strchr(current_argv, '=')) != ఖాళీ) {
 		/* argument found (--option=arg) */
 		current_argv_len = has_equal - current_argv;
 		has_equal++;
-	} else
-		current_argv_len = strlen(current_argv);
+	} లేకపోతే
+		current_argv_len = అక్షరశ్రేణి_పొడవు(current_argv);
 
-	for (i = 0; long_options[i].name; i++) {
+	కొరకు (i = 0; long_options[i].name; i++) {
 		/* find matching long option */
-		if (strncmp(current_argv, long_options[i].name,
+		ఒకవేళ (అక్షరశ్రేణి_పోలిక(current_argv, long_options[i].name,
 		    current_argv_len))
-			continue;
+			కొనసాగు;
 
-		if (strlen(long_options[i].name) == current_argv_len) {
+		ఒకవేళ (అక్షరశ్రేణి_పొడవు(long_options[i].name) == current_argv_len) {
 			/* exact match */
-			match = i;
-			break;
+			సరిపోలిక = i;
+			ఆపు;
 		}
 		/*
 		 * If this is a known short option, don't allow
 		 * a partial match of a single character.
 		 */
-		if (short_too && current_argv_len == 1)
-			continue;
+		ఒకవేళ (short_too && current_argv_len == 1)
+			కొనసాగు;
 
-		if (match == -1)	/* partial match */
-			match = i;
-		else {
+		ఒకవేళ (సరిపోలిక == -1)	/* partial match */
+			సరిపోలిక = i;
+		లేకపోతే {
 			/* ambiguous abbreviation */
-			if (PRINT_ERROR)
-				warnx(ambig, (int)current_argv_len,
+			ఒకవేళ (PRINT_ERROR)
+				warnx(ambig, (పూర్ణాంకం)current_argv_len,
 				     current_argv);
 			optopt = 0;
-			return (BADCH);
+			తిరిగి (BADCH);
 		}
 	}
-	if (match != -1) {		/* option found */
-		if (long_options[match].has_arg == no_argument
+	ఒకవేళ (సరిపోలిక != -1) {		/* option found */
+		ఒకవేళ (long_options[సరిపోలిక].has_arg == no_argument
 		    && has_equal) {
-			if (PRINT_ERROR)
-				warnx(noarg, (int)current_argv_len,
+			ఒకవేళ (PRINT_ERROR)
+				warnx(noarg, (పూర్ణాంకం)current_argv_len,
 				     current_argv);
 			/*
 			 * XXX: GNU sets optopt to val regardless of flag
 			 */
-			if (long_options[match].flag == NULL)
-				optopt = long_options[match].val;
-			else
+			ఒకవేళ (long_options[సరిపోలిక].flag == ఖాళీ)
+				optopt = long_options[సరిపోలిక].val;
+			లేకపోతే
 				optopt = 0;
-			return (BADARG);
+			తిరిగి (BADARG);
 		}
-		if (long_options[match].has_arg == required_argument ||
-		    long_options[match].has_arg == optional_argument) {
-			if (has_equal)
+		ఒకవేళ (long_options[సరిపోలిక].has_arg == required_argument ||
+		    long_options[సరిపోలిక].has_arg == optional_argument) {
+			ఒకవేళ (has_equal)
 				optarg = has_equal;
-			else if (long_options[match].has_arg ==
+			లేకపోతే ఒకవేళ (long_options[సరిపోలిక].has_arg ==
 			    required_argument) {
 				/*
 				 * optional argument doesn't use next nargv
@@ -262,155 +262,155 @@ parse_long_options(char * const *nargv, const char *options,
 				optarg = nargv[optind++];
 			}
 		}
-		if ((long_options[match].has_arg == required_argument)
-		    && (optarg == NULL)) {
+		ఒకవేళ ((long_options[సరిపోలిక].has_arg == required_argument)
+		    && (optarg == ఖాళీ)) {
 			/*
 			 * Missing argument; leading ':' indicates no error
 			 * should be generated.
 			 */
-			if (PRINT_ERROR)
+			ఒకవేళ (PRINT_ERROR)
 				warnx(recargstring,
 				    current_argv);
 			/*
 			 * XXX: GNU sets optopt to val regardless of flag
 			 */
-			if (long_options[match].flag == NULL)
-				optopt = long_options[match].val;
-			else
+			ఒకవేళ (long_options[సరిపోలిక].flag == ఖాళీ)
+				optopt = long_options[సరిపోలిక].val;
+			లేకపోతే
 				optopt = 0;
 			--optind;
-			return (BADARG);
+			తిరిగి (BADARG);
 		}
-	} else {			/* unknown option */
-		if (short_too) {
+	} లేకపోతే {			/* unknown option */
+		ఒకవేళ (short_too) {
 			--optind;
-			return (-1);
+			తిరిగి (-1);
 		}
-		if (PRINT_ERROR)
+		ఒకవేళ (PRINT_ERROR)
 			warnx(illoptstring, current_argv);
 		optopt = 0;
-		return (BADCH);
+		తిరిగి (BADCH);
 	}
-	if (idx)
-		*idx = match;
-	if (long_options[match].flag) {
-		*long_options[match].flag = long_options[match].val;
-		return (0);
-	} else
-		return (long_options[match].val);
+	ఒకవేళ (idx)
+		*idx = సరిపోలిక;
+	ఒకవేళ (long_options[సరిపోలిక].flag) {
+		*long_options[సరిపోలిక].flag = long_options[సరిపోలిక].val;
+		తిరిగి (0);
+	} లేకపోతే
+		తిరిగి (long_options[సరిపోలిక].val);
 }
 
 /*
  * getopt_internal --
  *	Parse argc/argv argument vector.  Called by user level routines.
  */
-static int
-getopt_internal(int nargc, char * const *nargv, const char *options,
-	const struct option *long_options, int *idx, int flags)
+స్థిర పూర్ణాంకం
+getopt_అంతర్గత(పూర్ణాంకం nargc, అక్షరం * స్థిరరాశి *nargv, స్థిరరాశి అక్షరం *options,
+	స్థిరరాశి నిర్మాణం option *long_options, పూర్ణాంకం *idx, పూర్ణాంకం flags)
 {
-	char *oli;				/* option letter list index */
-	int optchar, short_too;
-	static int posixly_correct = -1;
+	అక్షరం *oli;				/* option letter list index */
+	పూర్ణాంకం optchar, short_too;
+	స్థిర పూర్ణాంకం posixly_correct = -1;
 
-	if (options == NULL)
-		return (-1);
+	ఒకవేళ (options == ఖాళీ)
+		తిరిగి (-1);
 
 	/*
 	 * XXX Some GNU programs (like cvs) set optind to 0 instead of
 	 * XXX using optreset.  Work around this braindamage.
 	 */
-	if (optind == 0)
+	ఒకవేళ (optind == 0)
 		optind = optreset = 1;
 
 	/*
 	 * Disable GNU extensions if POSIXLY_CORRECT is set or options
 	 * string begins with a '+'.
 	 */
-	if (posixly_correct == -1 || optreset)
-		posixly_correct = (getenv("POSIXLY_CORRECT") != NULL);
-	if (*options == '-')
+	ఒకవేళ (posixly_correct == -1 || optreset)
+		posixly_correct = (getenv("POSIXLY_CORRECT") != ఖాళీ);
+	ఒకవేళ (*options == '-')
 		flags |= FLAG_ALLARGS;
-	else if (posixly_correct || *options == '+')
-		flags &= ~FLAG_PERMUTE;
-	if (*options == '+' || *options == '-')
+	లేకపోతే ఒకవేళ (posixly_correct || *options == '+')
+		flags &= ~FLAG_క్రమమార్పు;
+	ఒకవేళ (*options == '+' || *options == '-')
 		options++;
 
-	optarg = NULL;
-	if (optreset)
-		nonopt_start = nonopt_end = -1;
-start:
-	if (optreset || !*place) {		/* update scanning pointer */
+	optarg = ఖాళీ;
+	ఒకవేళ (optreset)
+		nonopt_ప్రారంభం = nonopt_చివర = -1;
+ప్రారంభం:
+	ఒకవేళ (optreset || !*ఉంచు) {		/* update scanning pointer */
 		optreset = 0;
-		if (optind >= nargc) {          /* end of argument vector */
-			place = EMSG;
-			if (nonopt_end != -1) {
+		ఒకవేళ (optind >= nargc) {          /* end of argument vector */
+			ఉంచు = EMSG;
+			ఒకవేళ (nonopt_చివర != -1) {
 				/* do permutation, if we have to */
-				permute_args(nonopt_start, nonopt_end,
+				క్రమమార్పు_వాదనలు(nonopt_ప్రారంభం, nonopt_చివర,
 				    optind, nargv);
-				optind -= nonopt_end - nonopt_start;
+				optind -= nonopt_చివర - nonopt_ప్రారంభం;
 			}
-			else if (nonopt_start != -1) {
+			లేకపోతే ఒకవేళ (nonopt_ప్రారంభం != -1) {
 				/*
 				 * If we skipped non-options, set optind
 				 * to the first of them.
 				 */
-				optind = nonopt_start;
+				optind = nonopt_ప్రారంభం;
 			}
-			nonopt_start = nonopt_end = -1;
-			return (-1);
+			nonopt_ప్రారంభం = nonopt_చివర = -1;
+			తిరిగి (-1);
 		}
-		if (*(place = nargv[optind]) != '-' ||
-		    (place[1] == '\0' && strchr(options, '-') == NULL)) {
-			place = EMSG;		/* found non-option */
-			if (flags & FLAG_ALLARGS) {
+		ఒకవేళ (*(ఉంచు = nargv[optind]) != '-' ||
+		    (ఉంచు[1] == '\0' && strchr(options, '-') == ఖాళీ)) {
+			ఉంచు = EMSG;		/* found non-option */
+			ఒకవేళ (flags & FLAG_ALLARGS) {
 				/*
 				 * GNU extension:
 				 * return non-option as argument to option 1
 				 */
 				optarg = nargv[optind++];
-				return (INORDER);
+				తిరిగి (మధ్యక్రమం);
 			}
-			if (!(flags & FLAG_PERMUTE)) {
+			ఒకవేళ (!(flags & FLAG_క్రమమార్పు)) {
 				/*
 				 * If no permutation wanted, stop parsing
 				 * at first non-option.
 				 */
-				return (-1);
+				తిరిగి (-1);
 			}
 			/* do permutation */
-			if (nonopt_start == -1)
-				nonopt_start = optind;
-			else if (nonopt_end != -1) {
-				permute_args(nonopt_start, nonopt_end,
+			ఒకవేళ (nonopt_ప్రారంభం == -1)
+				nonopt_ప్రారంభం = optind;
+			లేకపోతే ఒకవేళ (nonopt_చివర != -1) {
+				క్రమమార్పు_వాదనలు(nonopt_ప్రారంభం, nonopt_చివర,
 				    optind, nargv);
-				nonopt_start = optind -
-				    (nonopt_end - nonopt_start);
-				nonopt_end = -1;
+				nonopt_ప్రారంభం = optind -
+				    (nonopt_చివర - nonopt_ప్రారంభం);
+				nonopt_చివర = -1;
 			}
 			optind++;
 			/* process next argument */
-			goto start;
+			వెళ్ళు ప్రారంభం;
 		}
-		if (nonopt_start != -1 && nonopt_end == -1)
-			nonopt_end = optind;
+		ఒకవేళ (nonopt_ప్రారంభం != -1 && nonopt_చివర == -1)
+			nonopt_చివర = optind;
 
 		/*
 		 * If we have "-" do nothing, if "--" we are done.
 		 */
-		if (place[1] != '\0' && *++place == '-' && place[1] == '\0') {
+		ఒకవేళ (ఉంచు[1] != '\0' && *++ఉంచు == '-' && ఉంచు[1] == '\0') {
 			optind++;
-			place = EMSG;
+			ఉంచు = EMSG;
 			/*
 			 * We found an option (--), so if we skipped
 			 * non-options, we have to permute.
 			 */
-			if (nonopt_end != -1) {
-				permute_args(nonopt_start, nonopt_end,
+			ఒకవేళ (nonopt_చివర != -1) {
+				క్రమమార్పు_వాదనలు(nonopt_ప్రారంభం, nonopt_చివర,
 				    optind, nargv);
-				optind -= nonopt_end - nonopt_start;
+				optind -= nonopt_చివర - nonopt_ప్రారంభం;
 			}
-			nonopt_start = nonopt_end = -1;
-			return (-1);
+			nonopt_ప్రారంభం = nonopt_చివర = -1;
+			తిరిగి (-1);
 		}
 	}
 
@@ -420,78 +420,78 @@ start:
 	 *  2) the arg is not just "-"
 	 *  3) either the arg starts with -- we are getopt_long_only()
 	 */
-	if (long_options != NULL && place != nargv[optind] &&
-	    (*place == '-' || (flags & FLAG_LONGONLY))) {
+	ఒకవేళ (long_options != ఖాళీ && ఉంచు != nargv[optind] &&
+	    (*ఉంచు == '-' || (flags & FLAG_LONGONLY))) {
 		short_too = 0;
-		if (*place == '-')
-			place++;		/* --foo long option */
-		else if (*place != ':' && strchr(options, *place) != NULL)
+		ఒకవేళ (*ఉంచు == '-')
+			ఉంచు++;		/* --foo long option */
+		లేకపోతే ఒకవేళ (*ఉంచు != ':' && strchr(options, *ఉంచు) != ఖాళీ)
 			short_too = 1;		/* could be short option too */
 
 		optchar = parse_long_options(nargv, options, long_options,
 		    idx, short_too);
-		if (optchar != -1) {
-			place = EMSG;
-			return (optchar);
+		ఒకవేళ (optchar != -1) {
+			ఉంచు = EMSG;
+			తిరిగి (optchar);
 		}
 	}
 
-	if ((optchar = (int)*place++) == (int)':' ||
-	    (optchar == (int)'-' && *place != '\0') ||
-	    (oli = strchr(options, optchar)) == NULL) {
+	ఒకవేళ ((optchar = (పూర్ణాంకం)*ఉంచు++) == (పూర్ణాంకం)':' ||
+	    (optchar == (పూర్ణాంకం)'-' && *ఉంచు != '\0') ||
+	    (oli = strchr(options, optchar)) == ఖాళీ) {
 		/*
 		 * If the user specified "-" and  '-' isn't listed in
 		 * options, return -1 (non-option) as per POSIX.
 		 * Otherwise, it is an unknown option character (or ':').
 		 */
-		if (optchar == (int)'-' && *place == '\0')
-			return (-1);
-		if (!*place)
+		ఒకవేళ (optchar == (పూర్ణాంకం)'-' && *ఉంచు == '\0')
+			తిరిగి (-1);
+		ఒకవేళ (!*ఉంచు)
 			++optind;
-		if (PRINT_ERROR)
+		ఒకవేళ (PRINT_ERROR)
 			warnx(illoptchar, optchar);
 		optopt = optchar;
-		return (BADCH);
+		తిరిగి (BADCH);
 	}
-	if (long_options != NULL && optchar == 'W' && oli[1] == ';') {
+	ఒకవేళ (long_options != ఖాళీ && optchar == 'W' && oli[1] == ';') {
 		/* -W long-option */
-		if (*place)			/* no space */
+		ఒకవేళ (*ఉంచు)			/* no space */
 			/* NOTHING */;
-		else if (++optind >= nargc) {	/* no arg */
-			place = EMSG;
-			if (PRINT_ERROR)
+		లేకపోతే ఒకవేళ (++optind >= nargc) {	/* no arg */
+			ఉంచు = EMSG;
+			ఒకవేళ (PRINT_ERROR)
 				warnx(recargchar, optchar);
 			optopt = optchar;
-			return (BADARG);
-		} else				/* white space */
-			place = nargv[optind];
+			తిరిగి (BADARG);
+		} లేకపోతే				/* white space */
+			ఉంచు = nargv[optind];
 		optchar = parse_long_options(nargv, options, long_options,
 		    idx, 0);
-		place = EMSG;
-		return (optchar);
+		ఉంచు = EMSG;
+		తిరిగి (optchar);
 	}
-	if (*++oli != ':') {			/* doesn't take argument */
-		if (!*place)
+	ఒకవేళ (*++oli != ':') {			/* doesn't take argument */
+		ఒకవేళ (!*ఉంచు)
 			++optind;
-	} else {				/* takes (optional) argument */
-		optarg = NULL;
-		if (*place)			/* no white space */
-			optarg = place;
-		else if (oli[1] != ':') {	/* arg not optional */
-			if (++optind >= nargc) {	/* no arg */
-				place = EMSG;
-				if (PRINT_ERROR)
+	} లేకపోతే {				/* takes (optional) argument */
+		optarg = ఖాళీ;
+		ఒకవేళ (*ఉంచు)			/* no white space */
+			optarg = ఉంచు;
+		లేకపోతే ఒకవేళ (oli[1] != ':') {	/* arg not optional */
+			ఒకవేళ (++optind >= nargc) {	/* no arg */
+				ఉంచు = EMSG;
+				ఒకవేళ (PRINT_ERROR)
 					warnx(recargchar, optchar);
 				optopt = optchar;
-				return (BADARG);
-			} else
+				తిరిగి (BADARG);
+			} లేకపోతే
 				optarg = nargv[optind];
 		}
-		place = EMSG;
+		ఉంచు = EMSG;
 		++optind;
 	}
 	/* dump back option letter */
-	return (optchar);
+	తిరిగి (optchar);
 }
 
 /*
@@ -500,8 +500,8 @@ start:
  *
  * [eventually this will replace the BSD getopt]
  */
-int
-getopt(int nargc, char * const *nargv, const char *options)
+పూర్ణాంకం
+getopt(పూర్ణాంకం nargc, అక్షరం * స్థిరరాశి *nargv, స్థిరరాశి అక్షరం *options)
 {
 
 	/*
@@ -512,35 +512,35 @@ getopt(int nargc, char * const *nargv, const char *options)
 	 * before dropping privileges it makes sense to keep things
 	 * as simple (and bug-free) as possible.
 	 */
-	return (getopt_internal(nargc, nargv, options, NULL, NULL, 0));
+	తిరిగి (getopt_అంతర్గత(nargc, nargv, options, ఖాళీ, ఖాళీ, 0));
 }
 
-#if 0
+#ఒకవేళ 0
 /*
  * getopt_long --
  *	Parse argc/argv argument vector.
  */
-int
-getopt_long(int nargc, char * const *nargv, const char *options,
-    const struct option *long_options, int *idx)
+పూర్ణాంకం
+getopt_long(పూర్ణాంకం nargc, అక్షరం * స్థిరరాశి *nargv, స్థిరరాశి అక్షరం *options,
+    స్థిరరాశి నిర్మాణం option *long_options, పూర్ణాంకం *idx)
 {
 
-	return (getopt_internal(nargc, nargv, options, long_options, idx,
-	    FLAG_PERMUTE));
+	తిరిగి (getopt_అంతర్గత(nargc, nargv, options, long_options, idx,
+	    FLAG_క్రమమార్పు));
 }
 
 /*
  * getopt_long_only --
  *	Parse argc/argv argument vector.
  */
-int
-getopt_long_only(int nargc, char * const *nargv, const char *options,
-    const struct option *long_options, int *idx)
+పూర్ణాంకం
+getopt_long_only(పూర్ణాంకం nargc, అక్షరం * స్థిరరాశి *nargv, స్థిరరాశి అక్షరం *options,
+    స్థిరరాశి నిర్మాణం option *long_options, పూర్ణాంకం *idx)
 {
 
-	return (getopt_internal(nargc, nargv, options, long_options, idx,
-	    FLAG_PERMUTE|FLAG_LONGONLY));
+	తిరిగి (getopt_అంతర్గత(nargc, nargv, options, long_options, idx,
+	    FLAG_క్రమమార్పు|FLAG_LONGONLY));
 }
-#endif
+#అయితే_ముగింపు
 
-#endif /* !defined(HAVE_GETOPT) || !defined(HAVE_OPTRESET) */
+#అయితే_ముగింపు /* !defined(HAVE_GETOPT) || !defined(HAVE_OPTRESET) */

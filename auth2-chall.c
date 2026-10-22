@@ -24,206 +24,206 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdarg.h>
 
-#include "xmalloc.h"
-#include "ssh2.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "dispatch.h"
-#include "ssherr.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "ssh2.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "hostfile.h"
+#అన్తర్భావ "auth.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "packet.h"
+#అన్తర్భావ "dispatch.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "servconf.h"
 
 /* import */
-extern ServerOptions options;
+బాహ్య ServerOptions options;
 
-static int auth2_challenge_start(struct ssh *);
-static int send_userauth_info_request(struct ssh *);
-static int input_userauth_info_response(int, uint32_t, struct ssh *);
+స్థిర పూర్ణాంకం auth2_challenge_ప్రారంభం(నిర్మాణం ssh *);
+స్థిర పూర్ణాంకం send_userauth_info_request(నిర్మాణం ssh *);
+స్థిర పూర్ణాంకం ఆదానం_userauth_info_response(పూర్ణాంకం, uint32_t, నిర్మాణం ssh *);
 
-#ifdef BSD_AUTH
-extern KbdintDevice mm_bsdauth_device;
-#else
-#ifdef USE_PAM
-extern KbdintDevice mm_sshpam_device;
-#endif
-#endif
+#నిర్వచితమైతే BSD_AUTH
+బాహ్య KbdintDevice mm_bsdauth_device;
+#లేకపోతే
+#నిర్వచితమైతే USE_PAM
+బాహ్య KbdintDevice mm_sshpam_device;
+#అయితే_ముగింపు
+#అయితే_ముగింపు
 
 KbdintDevice *devices[] = {
-#ifdef BSD_AUTH
+#నిర్వచితమైతే BSD_AUTH
 	&mm_bsdauth_device,
-#else
-#ifdef USE_PAM
+#లేకపోతే
+#నిర్వచితమైతే USE_PAM
 	&mm_sshpam_device,
-#endif
-#endif
-	NULL
+#అయితే_ముగింపు
+#అయితే_ముగింపు
+	ఖాళీ
 };
 
-typedef struct KbdintAuthctxt KbdintAuthctxt;
-struct KbdintAuthctxt
+రకనిర్వచనం నిర్మాణం KbdintAuthctxt KbdintAuthctxt;
+నిర్మాణం KbdintAuthctxt
 {
-	char *devices;
-	void *ctxt;
+	అక్షరం *devices;
+	శూన్య *ctxt;
 	KbdintDevice *device;
 	u_int nreq;
-	u_int devices_done;
+	u_int devices_పూర్తి;
 };
 
-#ifdef USE_PAM
-void
-remove_kbdint_device(const char *devname)
+#నిర్వచితమైతే USE_PAM
+శూన్య
+remove_kbdint_device(స్థిరరాశి అక్షరం *devname)
 {
-	int i, j;
+	పూర్ణాంకం i, j;
 
-	for (i = 0; devices[i] != NULL; i++)
-		if (strcmp(devices[i]->name, devname) == 0) {
-			for (j = i; devices[j] != NULL; j++)
+	కొరకు (i = 0; devices[i] != ఖాళీ; i++)
+		ఒకవేళ (strcmp(devices[i]->name, devname) == 0) {
+			కొరకు (j = i; devices[j] != ఖాళీ; j++)
 				devices[j] = devices[j+1];
 			i--;
 		}
 }
-#endif
+#అయితే_ముగింపు
 
-static KbdintAuthctxt *
-kbdint_alloc(const char *devs)
+స్థిర KbdintAuthctxt *
+kbdint_alloc(స్థిరరాశి అక్షరం *devs)
 {
 	KbdintAuthctxt *kbdintctxt;
-	struct sshbuf *b;
-	int i, r;
+	నిర్మాణం sshbuf *b;
+	పూర్ణాంకం i, r;
 
-#ifdef USE_PAM
-	if (!options.use_pam)
+#నిర్వచితమైతే USE_PAM
+	ఒకవేళ (!options.use_pam)
 		remove_kbdint_device("pam");
-#endif
+#అయితే_ముగింపు
 
-	kbdintctxt = xcalloc(1, sizeof(KbdintAuthctxt));
-	if (strcmp(devs, "") == 0) {
-		if ((b = sshbuf_new()) == NULL)
+	kbdintctxt = xcalloc(1, పరిమాణం(KbdintAuthctxt));
+	ఒకవేళ (strcmp(devs, "") == 0) {
+		ఒకవేళ ((b = sshbuf_new()) == ఖాళీ)
 			fatal_f("sshbuf_new failed");
-		for (i = 0; devices[i]; i++) {
-			if ((r = sshbuf_putf(b, "%s%s",
+		కొరకు (i = 0; devices[i]; i++) {
+			ఒకవేళ ((r = sshbuf_putf(b, "%s%s",
 			    sshbuf_len(b) ? "," : "", devices[i]->name)) != 0)
 				fatal_fr(r, "buffer error");
 		}
-		if ((kbdintctxt->devices = sshbuf_dup_string(b)) == NULL)
+		ఒకవేళ ((kbdintctxt->devices = sshbuf_dup_string(b)) == ఖాళీ)
 			fatal_f("sshbuf_dup_string failed");
 		sshbuf_free(b);
-	} else {
+	} లేకపోతే {
 		kbdintctxt->devices = xstrdup(devs);
 	}
 	debug("kbdint_alloc: devices '%s'", kbdintctxt->devices);
-	kbdintctxt->ctxt = NULL;
-	kbdintctxt->device = NULL;
+	kbdintctxt->ctxt = ఖాళీ;
+	kbdintctxt->device = ఖాళీ;
 	kbdintctxt->nreq = 0;
 
-	return kbdintctxt;
+	తిరిగి kbdintctxt;
 }
-static void
+స్థిర శూన్య
 kbdint_reset_device(KbdintAuthctxt *kbdintctxt)
 {
-	if (kbdintctxt->ctxt) {
+	ఒకవేళ (kbdintctxt->ctxt) {
 		kbdintctxt->device->free_ctx(kbdintctxt->ctxt);
-		kbdintctxt->ctxt = NULL;
+		kbdintctxt->ctxt = ఖాళీ;
 	}
-	kbdintctxt->device = NULL;
+	kbdintctxt->device = ఖాళీ;
 }
-static void
+స్థిర శూన్య
 kbdint_free(KbdintAuthctxt *kbdintctxt)
 {
-	if (kbdintctxt->device)
+	ఒకవేళ (kbdintctxt->device)
 		kbdint_reset_device(kbdintctxt);
-	free(kbdintctxt->devices);
-	freezero(kbdintctxt, sizeof(*kbdintctxt));
+	విడుదల(kbdintctxt->devices);
+	freezero(kbdintctxt, పరిమాణం(*kbdintctxt));
 }
 /* get next device */
-static int
-kbdint_next_device(Authctxt *authctxt, KbdintAuthctxt *kbdintctxt)
+స్థిర పూర్ణాంకం
+kbdint_తదుపరి_device(Authctxt *authctxt, KbdintAuthctxt *kbdintctxt)
 {
-	size_t len;
-	char *t;
-	size_t i;
+	కొలత_t len;
+	అక్షరం *t;
+	కొలత_t i;
 
-	if (kbdintctxt->device)
+	ఒకవేళ (kbdintctxt->device)
 		kbdint_reset_device(kbdintctxt);
-	do {
+	చేయి {
 		len = kbdintctxt->devices ?
 		    strcspn(kbdintctxt->devices, ",") : 0;
 
-		if (len == 0)
-			break;
-		for (i = 0; devices[i]; i++) {
-			if (i >= sizeof(kbdintctxt->devices_done) * 8 ||
-			    i >= sizeof(devices) / sizeof(devices[0]))
+		ఒకవేళ (len == 0)
+			ఆపు;
+		కొరకు (i = 0; devices[i]; i++) {
+			ఒకవేళ (i >= పరిమాణం(kbdintctxt->devices_పూర్తి) * 8 ||
+			    i >= పరిమాణం(devices) / పరిమాణం(devices[0]))
 				fatal_f("internal error: too many devices");
-			if ((kbdintctxt->devices_done & (1 << i)) != 0 ||
-			    !auth2_method_allowed(authctxt,
+			ఒకవేళ ((kbdintctxt->devices_పూర్తి & (1 << i)) != 0 ||
+			    !auth2_పద్ధతి_allowed(authctxt,
 			    "keyboard-interactive", devices[i]->name))
-				continue;
-			if (strlen(devices[i]->name) == len &&
+				కొనసాగు;
+			ఒకవేళ (అక్షరశ్రేణి_పొడవు(devices[i]->name) == len &&
 			    memcmp(kbdintctxt->devices, devices[i]->name,
 			    len) == 0) {
 				kbdintctxt->device = devices[i];
-				kbdintctxt->devices_done |= 1 << i;
+				kbdintctxt->devices_పూర్తి |= 1 << i;
 			}
 		}
 		t = kbdintctxt->devices;
-		kbdintctxt->devices = t[len] ? xstrdup(t+len+1) : NULL;
-		free(t);
+		kbdintctxt->devices = t[len] ? xstrdup(t+len+1) : ఖాళీ;
+		విడుదల(t);
 		debug2("kbdint_next_device: devices %s", kbdintctxt->devices ?
 		    kbdintctxt->devices : "<empty>");
-	} while (kbdintctxt->devices && !kbdintctxt->device);
+	} అయితే (kbdintctxt->devices && !kbdintctxt->device);
 
-	return kbdintctxt->device ? 1 : 0;
+	తిరిగి kbdintctxt->device ? 1 : 0;
 }
 
 /*
  * try challenge-response, set authctxt->postponed if we have to
  * wait for the response.
  */
-int
-auth2_challenge(struct ssh *ssh, char *devs)
+పూర్ణాంకం
+auth2_challenge(నిర్మాణం ssh *ssh, అక్షరం *devs)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	debug("auth2_challenge: user=%s devs=%s",
 	    authctxt->user ? authctxt->user : "<nouser>",
 	    devs ? devs : "<no devs>");
 
-	if (authctxt->user == NULL || !devs)
-		return 0;
-	if (authctxt->kbdintctxt == NULL)
+	ఒకవేళ (authctxt->user == ఖాళీ || !devs)
+		తిరిగి 0;
+	ఒకవేళ (authctxt->kbdintctxt == ఖాళీ)
 		authctxt->kbdintctxt = kbdint_alloc(devs);
-	return auth2_challenge_start(ssh);
+	తిరిగి auth2_challenge_ప్రారంభం(ssh);
 }
 
 /* unregister kbd-int callbacks and context */
-void
-auth2_challenge_stop(struct ssh *ssh)
+శూన్య
+auth2_challenge_stop(నిర్మాణం ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	/* unregister callback */
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE, NULL);
-	if (authctxt->kbdintctxt != NULL) {
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_INFO_RESPONSE, ఖాళీ);
+	ఒకవేళ (authctxt->kbdintctxt != ఖాళీ) {
 		kbdint_free(authctxt->kbdintctxt);
-		authctxt->kbdintctxt = NULL;
+		authctxt->kbdintctxt = ఖాళీ;
 	}
 }
 
 /* side effect: sets authctxt->postponed if a reply was sent*/
-static int
-auth2_challenge_start(struct ssh *ssh)
+స్థిర పూర్ణాంకం
+auth2_challenge_ప్రారంభం(నిర్మాణం ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt = authctxt->kbdintctxt;
@@ -231,138 +231,138 @@ auth2_challenge_start(struct ssh *ssh)
 	debug2("auth2_challenge_start: devices %s",
 	    kbdintctxt->devices ?  kbdintctxt->devices : "<empty>");
 
-	if (kbdint_next_device(authctxt, kbdintctxt) == 0) {
+	ఒకవేళ (kbdint_తదుపరి_device(authctxt, kbdintctxt) == 0) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		తిరిగి 0;
 	}
 	debug("auth2_challenge_start: trying authentication method '%s'",
 	    kbdintctxt->device->name);
 
-	if ((kbdintctxt->ctxt = kbdintctxt->device->init_ctx(authctxt)) == NULL) {
+	ఒకవేళ ((kbdintctxt->ctxt = kbdintctxt->device->init_ctx(authctxt)) == ఖాళీ) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		తిరిగి 0;
 	}
-	if (send_userauth_info_request(ssh) == 0) {
+	ఒకవేళ (send_userauth_info_request(ssh) == 0) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		తిరిగి 0;
 	}
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE,
-	    &input_userauth_info_response);
+	ssh_dispatch_సమితి(ssh, SSH2_సందేశం_USERAUTH_INFO_RESPONSE,
+	    &ఆదానం_userauth_info_response);
 
 	authctxt->postponed = 1;
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-send_userauth_info_request(struct ssh *ssh)
+స్థిర పూర్ణాంకం
+send_userauth_info_request(నిర్మాణం ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt;
-	char *name, *instr, **prompts;
+	అక్షరం *name, *instr, **prompts;
 	u_int r, i, *echo_on;
 
 	kbdintctxt = authctxt->kbdintctxt;
-	if (kbdintctxt->device->query(kbdintctxt->ctxt,
+	ఒకవేళ (kbdintctxt->device->query(kbdintctxt->ctxt,
 	    &name, &instr, &kbdintctxt->nreq, &prompts, &echo_on))
-		return 0;
+		తిరిగి 0;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST)) != 0 ||
+	ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_USERAUTH_INFO_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, name)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, instr)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||	/* language not used */
 	    (r = sshpkt_put_u32(ssh, kbdintctxt->nreq)) != 0)
 		fatal_fr(r, "start packet");
-	for (i = 0; i < kbdintctxt->nreq; i++) {
-		if ((r = sshpkt_put_cstring(ssh, prompts[i])) != 0 ||
+	కొరకు (i = 0; i < kbdintctxt->nreq; i++) {
+		ఒకవేళ ((r = sshpkt_put_cstring(ssh, prompts[i])) != 0 ||
 		    (r = sshpkt_put_u8(ssh, echo_on[i])) != 0)
 			fatal_fr(r, "assemble packet");
 	}
-	if ((r = sshpkt_send(ssh)) != 0 ||
+	ఒకవేళ ((r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
-	for (i = 0; i < kbdintctxt->nreq; i++)
-		free(prompts[i]);
-	free(prompts);
-	free(echo_on);
-	free(name);
-	free(instr);
-	return 1;
+	కొరకు (i = 0; i < kbdintctxt->nreq; i++)
+		విడుదల(prompts[i]);
+	విడుదల(prompts);
+	విడుదల(echo_on);
+	విడుదల(name);
+	విడుదల(instr);
+	తిరిగి 1;
 }
 
-static int
-input_userauth_info_response(int type, uint32_t seq, struct ssh *ssh)
+స్థిర పూర్ణాంకం
+ఆదానం_userauth_info_response(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt;
-	int authenticated = 0, res;
-	int r;
+	పూర్ణాంకం authenticated = 0, res;
+	పూర్ణాంకం r;
 	u_int i, nresp;
-	const char *devicename = NULL;
-	char **response = NULL;
-	double tstart = monotime_double();
+	స్థిరరాశి అక్షరం *devicename = ఖాళీ;
+	అక్షరం **response = ఖాళీ;
+	ద్విగుణ tstart = monotime_double();
 
-	if (authctxt == NULL)
+	ఒకవేళ (authctxt == ఖాళీ)
 		fatal_f("no authctxt");
 	kbdintctxt = authctxt->kbdintctxt;
-	if (kbdintctxt == NULL || kbdintctxt->ctxt == NULL)
+	ఒకవేళ (kbdintctxt == ఖాళీ || kbdintctxt->ctxt == ఖాళీ)
 		fatal_f("no kbdintctxt");
-	if (kbdintctxt->device == NULL)
+	ఒకవేళ (kbdintctxt->device == ఖాళీ)
 		fatal_f("no device");
 
 	authctxt->postponed = 0;	/* reset */
-	if ((r = sshpkt_get_u32(ssh, &nresp)) != 0)
+	ఒకవేళ ((r = sshpkt_get_u32(ssh, &nresp)) != 0)
 		fatal_fr(r, "parse packet");
-	if (nresp != kbdintctxt->nreq)
+	ఒకవేళ (nresp != kbdintctxt->nreq)
 		fatal_f("wrong number of replies");
-	if (nresp > 100)
+	ఒకవేళ (nresp > 100)
 		fatal_f("too many replies");
-	if (nresp > 0) {
-		response = xcalloc(nresp, sizeof(char *));
-		for (i = 0; i < nresp; i++) {
-			if ((r = sshpkt_get_cstring(ssh, &response[i], NULL)) != 0)
+	ఒకవేళ (nresp > 0) {
+		response = xcalloc(nresp, పరిమాణం(అక్షరం *));
+		కొరకు (i = 0; i < nresp; i++) {
+			ఒకవేళ ((r = sshpkt_get_cstring(ssh, &response[i], ఖాళీ)) != 0)
 				fatal_fr(r, "parse response");
 		}
 	}
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	ఒకవేళ ((r = sshpkt_get_చివర(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	res = kbdintctxt->device->respond(kbdintctxt->ctxt, nresp, response);
 
-	for (i = 0; i < nresp; i++) {
-		explicit_bzero(response[i], strlen(response[i]));
-		free(response[i]);
+	కొరకు (i = 0; i < nresp; i++) {
+		explicit_bzero(response[i], అక్షరశ్రేణి_పొడవు(response[i]));
+		విడుదల(response[i]);
 	}
-	free(response);
+	విడుదల(response);
 
-	switch (res) {
-	case 0:
+	ఎంపిక (res) {
+	స్థితి 0:
 		/* Success! */
 		authenticated = authctxt->valid ? 1 : 0;
-		break;
-	case 1:
+		ఆపు;
+	స్థితి 1:
 		/* Authentication needs further interaction */
-		if (send_userauth_info_request(ssh) == 1)
+		ఒకవేళ (send_userauth_info_request(ssh) == 1)
 			authctxt->postponed = 1;
-		break;
-	default:
+		ఆపు;
+	అప్రమేయ:
 		/* Failure! */
-		break;
+		ఆపు;
 	}
 	devicename = kbdintctxt->device->name;
-	if (!authctxt->postponed) {
-		if (authenticated) {
+	ఒకవేళ (!authctxt->postponed) {
+		ఒకవేళ (authenticated) {
 			auth2_challenge_stop(ssh);
-		} else {
+		} లేకపోతే {
 			/* start next device */
 			/* may set authctxt->postponed */
-			auth2_challenge_start(ssh);
+			auth2_challenge_ప్రారంభం(ssh);
 		}
 	}
 
-	if (!authenticated)
+	ఒకవేళ (!authenticated)
 		auth_failure_delay(authctxt, tstart);
-	userauth_finish(ssh, authenticated, "keyboard-interactive",
+	userauth_ముగింపు(ssh, authenticated, "keyboard-interactive",
 	    devicename);
-	return 0;
+	తిరిగి 0;
 }

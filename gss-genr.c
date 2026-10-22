@@ -24,132 +24,132 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifdef GSSAPI
+#నిర్వచితమైతే GSSAPI
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <limits.h>
-#include <stdarg.h>
-#include <string.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <unistd.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <unistd.h>
 
-#include "xmalloc.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "ssh2.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "ssh2.h"
 
-#include "ssh-gss.h"
+#అన్తర్భావ "ssh-gss.h"
 
 /* sshbuf_get for gss_buffer_desc */
-int
-ssh_gssapi_get_buffer_desc(struct sshbuf *b, gss_buffer_desc *g)
+పూర్ణాంకం
+ssh_gssapi_get_బఫరు_desc(నిర్మాణం sshbuf *b, gss_బఫరు_desc *g)
 {
-	int r;
+	పూర్ణాంకం r;
 	u_char *p;
-	size_t len;
+	కొలత_t len;
 
-	if ((r = sshbuf_get_string(b, &p, &len)) != 0)
-		return r;
-	g->value = p;
-	g->length = len;
-	return 0;
+	ఒకవేళ ((r = sshbuf_get_string(b, &p, &len)) != 0)
+		తిరిగి r;
+	g->విలువ = p;
+	g->నిడివి = len;
+	తిరిగి 0;
 }
 
 /* Check that the OID in a data stream matches that in the context */
-int
-ssh_gssapi_check_oid(Gssctxt *ctx, void *data, size_t len)
+పూర్ణాంకం
+ssh_gssapi_check_oid(Gssctxt *ctx, శూన్య *దత్తాంశం, కొలత_t len)
 {
-	return (ctx != NULL && ctx->oid != GSS_C_NO_OID &&
-	    ctx->oid->length == len &&
-	    memcmp(ctx->oid->elements, data, len) == 0);
+	తిరిగి (ctx != ఖాళీ && ctx->oid != GSS_C_NO_OID &&
+	    ctx->oid->నిడివి == len &&
+	    memcmp(ctx->oid->elements, దత్తాంశం, len) == 0);
 }
 
 /* Set the contexts OID from a data stream */
-void
-ssh_gssapi_set_oid_data(Gssctxt *ctx, void *data, size_t len)
+శూన్య
+ssh_gssapi_సమితి_oid_దత్తాంశం(Gssctxt *ctx, శూన్య *దత్తాంశం, కొలత_t len)
 {
-	if (ctx->oid != GSS_C_NO_OID) {
-		free(ctx->oid->elements);
-		free(ctx->oid);
+	ఒకవేళ (ctx->oid != GSS_C_NO_OID) {
+		విడుదల(ctx->oid->elements);
+		విడుదల(ctx->oid);
 	}
-	ctx->oid = xcalloc(1, sizeof(gss_OID_desc));
-	ctx->oid->length = len;
+	ctx->oid = xcalloc(1, పరిమాణం(gss_OID_desc));
+	ctx->oid->నిడివి = len;
 	ctx->oid->elements = xmalloc(len);
-	memcpy(ctx->oid->elements, data, len);
+	జ్ఞాపకం_నకలు(ctx->oid->elements, దత్తాంశం, len);
 }
 
 /* Set the contexts OID */
-void
-ssh_gssapi_set_oid(Gssctxt *ctx, gss_OID oid)
+శూన్య
+ssh_gssapi_సమితి_oid(Gssctxt *ctx, gss_OID oid)
 {
-	ssh_gssapi_set_oid_data(ctx, oid->elements, oid->length);
+	ssh_gssapi_సమితి_oid_దత్తాంశం(ctx, oid->elements, oid->నిడివి);
 }
 
 /* All this effort to report an error ... */
-void
+శూన్య
 ssh_gssapi_error(Gssctxt *ctxt)
 {
-	char *s;
+	అక్షరం *s;
 
-	s = ssh_gssapi_last_error(ctxt, NULL, NULL);
+	s = ssh_gssapi_చివరి_error(ctxt, ఖాళీ, ఖాళీ);
 	debug("%s", s);
-	free(s);
+	విడుదల(s);
 }
 
-char *
-ssh_gssapi_last_error(Gssctxt *ctxt, OM_uint32 *major_status,
-    OM_uint32 *minor_status)
+అక్షరం *
+ssh_gssapi_చివరి_error(Gssctxt *ctxt, OM_uint32 *major_స్థితి,
+    OM_uint32 *minor_స్థితి)
 {
 	OM_uint32 lmin;
-	gss_buffer_desc msg = GSS_C_EMPTY_BUFFER;
+	gss_బఫరు_desc సందేశం = GSS_C_ఖాళీలు_బఫరు;
 	OM_uint32 ctx;
-	struct sshbuf *b;
-	char *ret;
-	int r;
+	నిర్మాణం sshbuf *b;
+	అక్షరం *ret;
+	పూర్ణాంకం r;
 
-	if ((b = sshbuf_new()) == NULL)
+	ఒకవేళ ((b = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
 
-	if (major_status != NULL)
-		*major_status = ctxt->major;
-	if (minor_status != NULL)
-		*minor_status = ctxt->minor;
+	ఒకవేళ (major_స్థితి != ఖాళీ)
+		*major_స్థితి = ctxt->major;
+	ఒకవేళ (minor_స్థితి != ఖాళీ)
+		*minor_స్థితి = ctxt->minor;
 
 	ctx = 0;
 	/* The GSSAPI error */
-	do {
-		gss_display_status(&lmin, ctxt->major,
-		    GSS_C_GSS_CODE, ctxt->oid, &ctx, &msg);
+	చేయి {
+		gss_display_స్థితి(&lmin, ctxt->major,
+		    GSS_C_GSS_సంకేతం, ctxt->oid, &ctx, &సందేశం);
 
-		if ((r = sshbuf_put(b, msg.value, msg.length)) != 0 ||
+		ఒకవేళ ((r = sshbuf_put(b, సందేశం.విలువ, సందేశం.నిడివి)) != 0 ||
 		    (r = sshbuf_put_u8(b, '\n')) != 0)
 			fatal_fr(r, "assemble GSS_CODE");
 
-		gss_release_buffer(&lmin, &msg);
-	} while (ctx != 0);
+		gss_release_బఫరు(&lmin, &సందేశం);
+	} అయితే (ctx != 0);
 
 	/* The mechanism specific error */
-	do {
-		gss_display_status(&lmin, ctxt->minor,
-		    GSS_C_MECH_CODE, ctxt->oid, &ctx, &msg);
+	చేయి {
+		gss_display_స్థితి(&lmin, ctxt->minor,
+		    GSS_C_MECH_సంకేతం, ctxt->oid, &ctx, &సందేశం);
 
-		if ((r = sshbuf_put(b, msg.value, msg.length)) != 0 ||
+		ఒకవేళ ((r = sshbuf_put(b, సందేశం.విలువ, సందేశం.నిడివి)) != 0 ||
 		    (r = sshbuf_put_u8(b, '\n')) != 0)
 			fatal_fr(r, "assemble MECH_CODE");
 
-		gss_release_buffer(&lmin, &msg);
-	} while (ctx != 0);
+		gss_release_బఫరు(&lmin, &సందేశం);
+	} అయితే (ctx != 0);
 
-	if ((r = sshbuf_put_u8(b, '\n')) != 0)
+	ఒకవేళ ((r = sshbuf_put_u8(b, '\n')) != 0)
 		fatal_fr(r, "assemble newline");
-	ret = xstrdup((const char *)sshbuf_ptr(b));
+	ret = xstrdup((స్థిరరాశి అక్షరం *)sshbuf_ptr(b));
 	sshbuf_free(b);
-	return (ret);
+	తిరిగి (ret);
 }
 
 /*
@@ -158,10 +158,10 @@ ssh_gssapi_last_error(Gssctxt *ctxt, OM_uint32 *major_status,
  * {accept,init}_sec_context calls, so that when we do it from the userauth
  * stuff life is a little easier
  */
-void
+శూన్య
 ssh_gssapi_build_ctx(Gssctxt **ctx)
 {
-	*ctx = xcalloc(1, sizeof (Gssctxt));
+	*ctx = xcalloc(1, పరిమాణం (Gssctxt));
 	(*ctx)->context = GSS_C_NO_CONTEXT;
 	(*ctx)->name = GSS_C_NO_NAME;
 	(*ctx)->oid = GSS_C_NO_OID;
@@ -171,31 +171,31 @@ ssh_gssapi_build_ctx(Gssctxt **ctx)
 }
 
 /* Delete our context, providing it has been built correctly */
-void
+శూన్య
 ssh_gssapi_delete_ctx(Gssctxt **ctx)
 {
 	OM_uint32 ms;
 
-	if ((*ctx) == NULL)
-		return;
-	if ((*ctx)->context != GSS_C_NO_CONTEXT)
-		gss_delete_sec_context(&ms, &(*ctx)->context, GSS_C_NO_BUFFER);
-	if ((*ctx)->name != GSS_C_NO_NAME)
+	ఒకవేళ ((*ctx) == ఖాళీ)
+		తిరిగి;
+	ఒకవేళ ((*ctx)->context != GSS_C_NO_CONTEXT)
+		gss_delete_sec_context(&ms, &(*ctx)->context, GSS_C_NO_బఫరు);
+	ఒకవేళ ((*ctx)->name != GSS_C_NO_NAME)
 		gss_release_name(&ms, &(*ctx)->name);
-	if ((*ctx)->oid != GSS_C_NO_OID) {
-		free((*ctx)->oid->elements);
-		free((*ctx)->oid);
+	ఒకవేళ ((*ctx)->oid != GSS_C_NO_OID) {
+		విడుదల((*ctx)->oid->elements);
+		విడుదల((*ctx)->oid);
 		(*ctx)->oid = GSS_C_NO_OID;
 	}
-	if ((*ctx)->creds != GSS_C_NO_CREDENTIAL)
+	ఒకవేళ ((*ctx)->creds != GSS_C_NO_CREDENTIAL)
 		gss_release_cred(&ms, &(*ctx)->creds);
-	if ((*ctx)->client != GSS_C_NO_NAME)
+	ఒకవేళ ((*ctx)->client != GSS_C_NO_NAME)
 		gss_release_name(&ms, &(*ctx)->client);
-	if ((*ctx)->client_creds != GSS_C_NO_CREDENTIAL)
+	ఒకవేళ ((*ctx)->client_creds != GSS_C_NO_CREDENTIAL)
 		gss_release_cred(&ms, &(*ctx)->client_creds);
 
-	free(*ctx);
-	*ctx = NULL;
+	విడుదల(*ctx);
+	*ctx = ఖాళీ;
 }
 
 /*
@@ -205,12 +205,12 @@ ssh_gssapi_delete_ctx(Gssctxt **ctx)
  *	server name (from ssh_gssapi_import_name)
  */
 OM_uint32
-ssh_gssapi_init_ctx(Gssctxt *ctx, int deleg_creds, gss_buffer_desc *recv_tok,
-    gss_buffer_desc* send_tok, OM_uint32 *flags)
+ssh_gssapi_init_ctx(Gssctxt *ctx, పూర్ణాంకం deleg_creds, gss_బఫరు_desc *recv_tok,
+    gss_బఫరు_desc* send_tok, OM_uint32 *flags)
 {
-	int deleg_flag = 0;
+	పూర్ణాంకం deleg_flag = 0;
 
-	if (deleg_creds) {
+	ఒకవేళ (deleg_creds) {
 		deleg_flag = GSS_C_DELEG_FLAG;
 		debug("Delegating credentials");
 	}
@@ -218,86 +218,86 @@ ssh_gssapi_init_ctx(Gssctxt *ctx, int deleg_creds, gss_buffer_desc *recv_tok,
 	ctx->major = gss_init_sec_context(&ctx->minor,
 	    GSS_C_NO_CREDENTIAL, &ctx->context, ctx->name, ctx->oid,
 	    GSS_C_MUTUAL_FLAG | GSS_C_INTEG_FLAG | deleg_flag,
-	    0, NULL, recv_tok, NULL, send_tok, flags, NULL);
+	    0, ఖాళీ, recv_tok, ఖాళీ, send_tok, flags, ఖాళీ);
 
-	if (GSS_ERROR(ctx->major))
+	ఒకవేళ (GSS_ERROR(ctx->major))
 		ssh_gssapi_error(ctx);
 
-	return (ctx->major);
+	తిరిగి (ctx->major);
 }
 
 /* Create a service name for the given host */
 OM_uint32
-ssh_gssapi_import_name(Gssctxt *ctx, const char *host)
+ssh_gssapi_import_name(Gssctxt *ctx, స్థిరరాశి అక్షరం *host)
 {
-	gss_buffer_desc gssbuf;
-	char *val;
+	gss_బఫరు_desc gssbuf;
+	అక్షరం *val;
 
 	xasprintf(&val, "host@%s", host);
-	gssbuf.value = val;
-	gssbuf.length = strlen(gssbuf.value);
+	gssbuf.విలువ = val;
+	gssbuf.నిడివి = అక్షరశ్రేణి_పొడవు(gssbuf.విలువ);
 
-	if ((ctx->major = gss_import_name(&ctx->minor,
+	ఒకవేళ ((ctx->major = gss_import_name(&ctx->minor,
 	    &gssbuf, GSS_C_NT_HOSTBASED_SERVICE, &ctx->name)))
 		ssh_gssapi_error(ctx);
 
-	free(gssbuf.value);
-	return (ctx->major);
+	విడుదల(gssbuf.విలువ);
+	తిరిగి (ctx->major);
 }
 
 OM_uint32
-ssh_gssapi_sign(Gssctxt *ctx, gss_buffer_t buffer, gss_buffer_t hash)
+ssh_gssapi_sign(Gssctxt *ctx, gss_బఫరు_t బఫరు, gss_బఫరు_t hash)
 {
-	if ((ctx->major = gss_get_mic(&ctx->minor, ctx->context,
-	    GSS_C_QOP_DEFAULT, buffer, hash)))
+	ఒకవేళ ((ctx->major = gss_get_mic(&ctx->minor, ctx->context,
+	    GSS_C_QOP_DEFAULT, బఫరు, hash)))
 		ssh_gssapi_error(ctx);
 
-	return (ctx->major);
+	తిరిగి (ctx->major);
 }
 
-void
-ssh_gssapi_buildmic(struct sshbuf *b, const char *user, const char *service,
-    const char *context, const struct sshbuf *session_id)
+శూన్య
+ssh_gssapi_buildmic(నిర్మాణం sshbuf *b, స్థిరరాశి అక్షరం *user, స్థిరరాశి అక్షరం *service,
+    స్థిరరాశి అక్షరం *context, స్థిరరాశి నిర్మాణం sshbuf *session_id)
 {
-	int r;
+	పూర్ణాంకం r;
 
 	sshbuf_reset(b);
-	if ((r = sshbuf_put_stringb(b, session_id)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	ఒకవేళ ((r = sshbuf_put_stringb(b, session_id)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_సందేశం_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshbuf_put_cstring(b, user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, service)) != 0 ||
 	    (r = sshbuf_put_cstring(b, context)) != 0)
 		fatal_fr(r, "assemble buildmic");
 }
 
-int
-ssh_gssapi_check_mechanism(Gssctxt **ctx, gss_OID oid, const char *host)
+పూర్ణాంకం
+ssh_gssapi_check_mechanism(Gssctxt **ctx, gss_OID oid, స్థిరరాశి అక్షరం *host)
 {
-	gss_buffer_desc token = GSS_C_EMPTY_BUFFER;
+	gss_బఫరు_desc token = GSS_C_ఖాళీలు_బఫరు;
 	OM_uint32 major, minor;
-	gss_OID_desc spnego_oid = {6, (void *)"\x2B\x06\x01\x05\x05\x02"};
+	gss_OID_desc spnego_oid = {6, (శూన్య *)"\x2B\x06\x01\x05\x05\x02"};
 
 	/* RFC 4462 says we MUST NOT do SPNEGO */
-	if (oid->length == spnego_oid.length &&
-	    (memcmp(oid->elements, spnego_oid.elements, oid->length) == 0))
-		return 0; /* false */
+	ఒకవేళ (oid->నిడివి == spnego_oid.నిడివి &&
+	    (memcmp(oid->elements, spnego_oid.elements, oid->నిడివి) == 0))
+		తిరిగి 0; /* false */
 
 	ssh_gssapi_build_ctx(ctx);
-	ssh_gssapi_set_oid(*ctx, oid);
+	ssh_gssapi_సమితి_oid(*ctx, oid);
 	major = ssh_gssapi_import_name(*ctx, host);
-	if (!GSS_ERROR(major)) {
-		major = ssh_gssapi_init_ctx(*ctx, 0, GSS_C_NO_BUFFER, &token,
-		    NULL);
-		gss_release_buffer(&minor, &token);
-		if ((*ctx)->context != GSS_C_NO_CONTEXT)
+	ఒకవేళ (!GSS_ERROR(major)) {
+		major = ssh_gssapi_init_ctx(*ctx, 0, GSS_C_NO_బఫరు, &token,
+		    ఖాళీ);
+		gss_release_బఫరు(&minor, &token);
+		ఒకవేళ ((*ctx)->context != GSS_C_NO_CONTEXT)
 			gss_delete_sec_context(&minor, &(*ctx)->context,
-			    GSS_C_NO_BUFFER);
+			    GSS_C_NO_బఫరు);
 	}
 
-	if (GSS_ERROR(major))
+	ఒకవేళ (GSS_ERROR(major))
 		ssh_gssapi_delete_ctx(ctx);
 
-	return (!GSS_ERROR(major));
+	తిరిగి (!GSS_ERROR(major));
 }
 
-#endif /* GSSAPI */
+#అయితే_ముగింపు /* GSSAPI */

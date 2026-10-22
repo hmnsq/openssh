@@ -22,25 +22,25 @@
  * so that they'll sort into chronological order.
  */
 
-#include <sys/time.h>
+#అన్తర్భావ <sys/time.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <time.h>
 
-int
-main(void)
+పూర్ణాంకం
+ప్రధాన(శూన్య)
 {
-	struct timeval tv;
-	struct tm *tm;
-	char buf[1024];
+	నిర్మాణం timeval tv;
+	నిర్మాణం tm *tm;
+	అక్షరం buf[1024];
 
-	if (gettimeofday(&tv, NULL) != 0)
-		exit(1);
-	if ((tm = localtime(&tv.tv_sec)) == NULL)
-		exit(2);
-	if (strftime(buf, sizeof buf, "%Y%m%dT%H%M%S", tm) <= 0)
-		exit(3);
-	printf("%s.%06d\n", buf, (int)tv.tv_usec);
-	exit(0);
+	ఒకవేళ (gettimeofday(&tv, ఖాళీ) != 0)
+		నిష్క్రమించు(1);
+	ఒకవేళ ((tm = localtime(&tv.tv_sec)) == ఖాళీ)
+		నిష్క్రమించు(2);
+	ఒకవేళ (strftime(buf, పరిమాణం buf, "%Y%m%dT%H%M%S", tm) <= 0)
+		నిష్క్రమించు(3);
+	రాయి("%s.%06d\n", buf, (పూర్ణాంకం)tv.tv_usec);
+	నిష్క్రమించు(0);
 }

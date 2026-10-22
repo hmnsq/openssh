@@ -35,202 +35,202 @@
  * that ai_family is AF_INET. Don't use it for another purpose.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#అన్తర్భావ <netinet/in.h>
+#అన్తర్భావ <arpa/inet.h>
 
-#ifndef HAVE_GETNAMEINFO
-int getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
-		size_t hostlen, char *serv, size_t servlen, int flags)
+#నిర్వచితం_కాకపోతే HAVE_GETNAMEINFO
+పూర్ణాంకం getnameinfo(స్థిరరాశి నిర్మాణం sockaddr *sa, కొలత_t salen, అక్షరం *host,
+		కొలత_t hostlen, అక్షరం *serv, కొలత_t servlen, పూర్ణాంకం flags)
 {
-	struct sockaddr_in *sin = (struct sockaddr_in *)sa;
-	struct hostent *hp;
-	char tmpserv[16];
+	నిర్మాణం sockaddr_in *జ్యా = (నిర్మాణం sockaddr_in *)sa;
+	నిర్మాణం hostent *hp;
+	అక్షరం tmpserv[16];
 
-	if ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
-	    salen < sizeof(struct sockaddr_in))
-		return (EAI_FAMILY);
-	if (serv != NULL) {
-		snprintf(tmpserv, sizeof(tmpserv), "%d", ntohs(sin->sin_port));
-		if (strlcpy(serv, tmpserv, servlen) >= servlen)
-			return (EAI_MEMORY);
+	ఒకవేళ ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
+	    salen < పరిమాణం(నిర్మాణం sockaddr_in))
+		తిరిగి (EAI_FAMILY);
+	ఒకవేళ (serv != ఖాళీ) {
+		snprintf(tmpserv, పరిమాణం(tmpserv), "%d", ntohs(జ్యా->sin_port));
+		ఒకవేళ (strlcpy(serv, tmpserv, servlen) >= servlen)
+			తిరిగి (EAI_MEMORY);
 	}
 
-	if (host != NULL) {
-		if (flags & NI_NUMERICHOST) {
-			if (strlcpy(host, inet_ntoa(sin->sin_addr),
+	ఒకవేళ (host != ఖాళీ) {
+		ఒకవేళ (flags & NI_NUMERICHOST) {
+			ఒకవేళ (strlcpy(host, inet_ntoa(జ్యా->sin_addr),
 			    hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
-		} else {
-			hp = gethostbyaddr((char *)&sin->sin_addr,
-			    sizeof(struct in_addr), AF_INET);
-			if (hp == NULL)
-				return (EAI_NODATA);
+				తిరిగి (EAI_MEMORY);
+			లేకపోతే
+				తిరిగి (0);
+		} లేకపోతే {
+			hp = gethostbyaddr((అక్షరం *)&జ్యా->sin_addr,
+			    పరిమాణం(నిర్మాణం in_addr), AF_INET);
+			ఒకవేళ (hp == ఖాళీ)
+				తిరిగి (EAI_NODATA);
 
-			if (strlcpy(host, hp->h_name, hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
+			ఒకవేళ (strlcpy(host, hp->h_name, hostlen) >= hostlen)
+				తిరిగి (EAI_MEMORY);
+			లేకపోతే
+				తిరిగి (0);
 		}
 	}
-	return (0);
+	తిరిగి (0);
 }
-#endif /* !HAVE_GETNAMEINFO */
+#అయితే_ముగింపు /* !HAVE_GETNAMEINFO */
 
-#ifndef HAVE_GAI_STRERROR
-#ifdef HAVE_CONST_GAI_STRERROR_PROTO
-const char *
-#else
-char *
-#endif
-gai_strerror(int err)
+#నిర్వచితం_కాకపోతే HAVE_GAI_STRERROR
+#నిర్వచితమైతే HAVE_CONST_GAI_STRERROR_PROTO
+స్థిరరాశి అక్షరం *
+#లేకపోతే
+అక్షరం *
+#అయితే_ముగింపు
+gai_strerror(పూర్ణాంకం err)
 {
-	switch (err) {
-	case EAI_NODATA:
-		return ("no address associated with name");
-	case EAI_MEMORY:
-		return ("memory allocation failure");
-	case EAI_NONAME:
-		return ("name or service is not known");
-	case EAI_FAMILY:
-		return ("ai_family not supported");
-	default:
-		return ("unknown/invalid error");
+	ఎంపిక (err) {
+	స్థితి EAI_NODATA:
+		తిరిగి ("no address associated with name");
+	స్థితి EAI_MEMORY:
+		తిరిగి ("memory allocation failure");
+	స్థితి EAI_NONAME:
+		తిరిగి ("name or service is not known");
+	స్థితి EAI_FAMILY:
+		తిరిగి ("ai_family not supported");
+	అప్రమేయ:
+		తిరిగి ("unknown/invalid error");
 	}
 }
-#endif /* !HAVE_GAI_STRERROR */
+#అయితే_ముగింపు /* !HAVE_GAI_STRERROR */
 
-#ifndef HAVE_FREEADDRINFO
-void
-freeaddrinfo(struct addrinfo *ai)
+#నిర్వచితం_కాకపోతే HAVE_FREEADDRINFO
+శూన్య
+freeaddrinfo(నిర్మాణం addrinfo *ai)
 {
-	struct addrinfo *next;
+	నిర్మాణం addrinfo *తదుపరి;
 
-	for(; ai != NULL;) {
-		next = ai->ai_next;
-		free(ai);
-		ai = next;
+	కొరకు(; ai != ఖాళీ;) {
+		తదుపరి = ai->ai_next;
+		విడుదల(ai);
+		ai = తదుపరి;
 	}
 }
-#endif /* !HAVE_FREEADDRINFO */
+#అయితే_ముగింపు /* !HAVE_FREEADDRINFO */
 
-#ifndef HAVE_GETADDRINFO
-static struct
-addrinfo *malloc_ai(int port, u_long addr, const struct addrinfo *hints)
+#నిర్వచితం_కాకపోతే HAVE_GETADDRINFO
+స్థిర నిర్మాణం
+addrinfo *malloc_ai(పూర్ణాంకం పోర్టు, u_long addr, స్థిరరాశి నిర్మాణం addrinfo *hints)
 {
-	struct addrinfo *ai;
+	నిర్మాణం addrinfo *ai;
 
-	ai = malloc(sizeof(*ai) + sizeof(struct sockaddr_in));
-	if (ai == NULL)
-		return (NULL);
+	ai = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*ai) + పరిమాణం(నిర్మాణం sockaddr_in));
+	ఒకవేళ (ai == ఖాళీ)
+		తిరిగి (ఖాళీ);
 
-	memset(ai, '\0', sizeof(*ai) + sizeof(struct sockaddr_in));
+	memset(ai, '\0', పరిమాణం(*ai) + పరిమాణం(నిర్మాణం sockaddr_in));
 
-	ai->ai_addr = (struct sockaddr *)(ai + 1);
+	ai->ai_addr = (నిర్మాణం sockaddr *)(ai + 1);
 	/* XXX -- ssh doesn't use sa_len */
-	ai->ai_addrlen = sizeof(struct sockaddr_in);
+	ai->ai_addrlen = పరిమాణం(నిర్మాణం sockaddr_in);
 	ai->ai_addr->sa_family = ai->ai_family = AF_INET;
 
-	((struct sockaddr_in *)(ai)->ai_addr)->sin_port = port;
-	((struct sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
+	((నిర్మాణం sockaddr_in *)(ai)->ai_addr)->sin_port = పోర్టు;
+	((నిర్మాణం sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
 
 	/* XXX: the following is not generally correct, but does what we want */
-	if (hints->ai_socktype)
+	ఒకవేళ (hints->ai_socktype)
 		ai->ai_socktype = hints->ai_socktype;
-	else
+	లేకపోతే
 		ai->ai_socktype = SOCK_STREAM;
 
-	if (hints->ai_protocol)
+	ఒకవేళ (hints->ai_protocol)
 		ai->ai_protocol = hints->ai_protocol;
 
-	return (ai);
+	తిరిగి (ai);
 }
 
-int
-getaddrinfo(const char *hostname, const char *servname,
-    const struct addrinfo *hints, struct addrinfo **res)
+పూర్ణాంకం
+getaddrinfo(స్థిరరాశి అక్షరం *hostname, స్థిరరాశి అక్షరం *servname,
+    స్థిరరాశి నిర్మాణం addrinfo *hints, నిర్మాణం addrinfo **res)
 {
-	struct hostent *hp;
-	struct servent *sp;
-	struct in_addr in;
-	int i;
-	long int port;
+	నిర్మాణం hostent *hp;
+	నిర్మాణం servent *sp;
+	నిర్మాణం in_addr లోపల;
+	పూర్ణాంకం i;
+	దీర్ఘ పూర్ణాంకం పోర్టు;
 	u_long addr;
 
-	port = 0;
-	if (hints && hints->ai_family != AF_UNSPEC &&
+	పోర్టు = 0;
+	ఒకవేళ (hints && hints->ai_family != AF_UNSPEC &&
 	    hints->ai_family != AF_INET)
-		return (EAI_FAMILY);
-	if (servname != NULL) {
-		char *cp;
+		తిరిగి (EAI_FAMILY);
+	ఒకవేళ (servname != ఖాళీ) {
+		అక్షరం *cp;
 
-		port = strtol(servname, &cp, 10);
-		if (port > 0 && port <= 65535 && *cp == '\0')
-			port = htons(port);
-		else if ((sp = getservbyname(servname, NULL)) != NULL)
-			port = sp->s_port;
-		else
-			port = 0;
+		పోర్టు = strtol(servname, &cp, 10);
+		ఒకవేళ (పోర్టు > 0 && పోర్టు <= 65535 && *cp == '\0')
+			పోర్టు = htons(పోర్టు);
+		లేకపోతే ఒకవేళ ((sp = getservbyname(servname, ఖాళీ)) != ఖాళీ)
+			పోర్టు = sp->s_port;
+		లేకపోతే
+			పోర్టు = 0;
 	}
 
-	if (hints && hints->ai_flags & AI_PASSIVE) {
+	ఒకవేళ (hints && hints->ai_flags & AI_PASSIVE) {
 		addr = htonl(0x00000000);
-		if (hostname && inet_aton(hostname, &in) != 0)
-			addr = in.s_addr;
-		*res = malloc_ai(port, addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		ఒకవేళ (hostname && inet_aton(hostname, &లోపల) != 0)
+			addr = లోపల.s_addr;
+		*res = malloc_ai(పోర్టు, addr, hints);
+		ఒకవేళ (*res == ఖాళీ)
+			తిరిగి (EAI_MEMORY);
+		తిరిగి (0);
 	}
 
-	if (!hostname) {
-		*res = malloc_ai(port, htonl(0x7f000001), hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+	ఒకవేళ (!hostname) {
+		*res = malloc_ai(పోర్టు, htonl(0x7f000001), hints);
+		ఒకవేళ (*res == ఖాళీ)
+			తిరిగి (EAI_MEMORY);
+		తిరిగి (0);
 	}
 
-	if (inet_aton(hostname, &in)) {
-		*res = malloc_ai(port, in.s_addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+	ఒకవేళ (inet_aton(hostname, &లోపల)) {
+		*res = malloc_ai(పోర్టు, లోపల.s_addr, hints);
+		ఒకవేళ (*res == ఖాళీ)
+			తిరిగి (EAI_MEMORY);
+		తిరిగి (0);
 	}
 
 	/* Don't try DNS if AI_NUMERICHOST is set */
-	if (hints && hints->ai_flags & AI_NUMERICHOST)
-		return (EAI_NONAME);
+	ఒకవేళ (hints && hints->ai_flags & AI_NUMERICHOST)
+		తిరిగి (EAI_NONAME);
 
 	hp = gethostbyname(hostname);
-	if (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
-		struct addrinfo *cur, *prev;
+	ఒకవేళ (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
+		నిర్మాణం addrinfo *cur, *prev;
 
-		cur = prev = *res = NULL;
-		for (i = 0; hp->h_addr_list[i]; i++) {
-			struct in_addr *in = (struct in_addr *)hp->h_addr_list[i];
+		cur = prev = *res = ఖాళీ;
+		కొరకు (i = 0; hp->h_addr_list[i]; i++) {
+			నిర్మాణం in_addr *లోపల = (నిర్మాణం in_addr *)hp->h_addr_list[i];
 
-			cur = malloc_ai(port, in->s_addr, hints);
-			if (cur == NULL) {
-				if (*res != NULL)
+			cur = malloc_ai(పోర్టు, లోపల->s_addr, hints);
+			ఒకవేళ (cur == ఖాళీ) {
+				ఒకవేళ (*res != ఖాళీ)
 					freeaddrinfo(*res);
-				return (EAI_MEMORY);
+				తిరిగి (EAI_MEMORY);
 			}
-			if (prev)
+			ఒకవేళ (prev)
 				prev->ai_next = cur;
-			else
+			లేకపోతే
 				*res = cur;
 
 			prev = cur;
 		}
-		return (0);
+		తిరిగి (0);
 	}
 
-	return (EAI_NODATA);
+	తిరిగి (EAI_NODATA);
 }
-#endif /* !HAVE_GETADDRINFO */
+#అయితే_ముగింపు /* !HAVE_GETADDRINFO */

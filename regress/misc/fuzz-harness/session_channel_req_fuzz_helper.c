@@ -17,327 +17,327 @@ limitations under the License.
  * the threat-model writeup.
  */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <pwd.h>
-#include <sys/types.h>
+#అన్తర్భావ <setjmp.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <pwd.h>
+#అన్తర్భావ <sys/types.h>
 
-#include "log.h"
-#include "digest.h"
-#include "misc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssh_api.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
-#include "servconf.h"
-#include "channels.h"
-#include "session.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "digest.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "ssh.h"
+#అన్తర్భావ "ssh2.h"
+#అన్తర్భావ "ssh_api.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "packet.h"
+#అన్తర్భావ "myproposal.h"
+#అన్తర్భావ "kex.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "authfile.h"
+#అన్తర్భావ "hostfile.h"
+#అన్తర్భావ "auth.h"
+#అన్తర్భావ "auth-options.h"
+#అన్తర్భావ "servconf.h"
+#అన్తర్భావ "channels.h"
+#అన్తర్భావ "session.h"
 
 ServerOptions options;
-struct sshbuf *loginmsg = NULL;
-struct include_list includes;
-static struct sshauthopt g_auth_opts_storage;
-struct sshauthopt *auth_opts = &g_auth_opts_storage;
-struct passwd *privsep_pw = NULL;
+నిర్మాణం sshbuf *loginmsg = ఖాళీ;
+నిర్మాణం include_list includes;
+స్థిర నిర్మాణం sshauthopt g_auth_opts_storage;
+నిర్మాణం sshauthopt *auth_opts = &g_auth_opts_storage;
+నిర్మాణం passwd *privsep_pw = ఖాళీ;
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+స్థిర jmp_buf fuzz_env;
+స్థిర అస్థిర పూర్ణాంకం లోపల_fuzz = 0;
 
-void
-cleanup_exit(int code)
+శూన్య
+cleanup_exit(పూర్ణాంకం సంకేతం_2)
 {
-	if (in_fuzz)
-		longjmp(fuzz_env, code ? code : 1);
-	_exit(code);
+	ఒకవేళ (లోపల_fuzz)
+		longjmp(fuzz_env, సంకేతం_2 ? సంకేతం_2 : 1);
+	_exit(సంకేతం_2);
 }
 
-void
-__wrap_ssh_packet_disconnect(struct ssh *ssh, const char *fmt, ...)
+శూన్య
+__wrap_ssh_packet_disconnect(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
+	(శూన్య)ssh;
+	(శూన్య)fmt;
+	ఒకవేళ (లోపల_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(1);
 }
 
-int
-__wrap_sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+పూర్ణాంకం
+__wrap_sshpkt_fatal(నిర్మాణం ssh *ssh, పూర్ణాంకం r, స్థిరరాశి అక్షరం *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
+	(శూన్య)ssh;
+	(శూన్య)fmt;
+	ఒకవేళ (లోపల_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(r ? r : 1);
 }
 
-int
-mm_is_monitor(void)
+పూర్ణాంకం
+mm_is_monitor(శూన్య)
 {
-	return 0;
+	తిరిగి 0;
 }
 
-void
-mm_audit_run_command(const char *cmd)
+శూన్య
+mm_audit_నిరంతరం_command(స్థిరరాశి అక్షరం *cmd)
 {
-	(void)cmd;
+	(శూన్య)cmd;
 }
 
-int
-mm_pty_allocate(int *ptyfd, int *ttyfd, char *namebuf, size_t namebuflen)
+పూర్ణాంకం
+mm_pty_allocate(పూర్ణాంకం *ptyfd, పూర్ణాంకం *ttyfd, అక్షరం *namebuf, కొలత_t namebuflen)
 {
 	*ptyfd = -1;
 	*ttyfd = -1;
-	if (namebuf != NULL && namebuflen > 0)
+	ఒకవేళ (namebuf != ఖాళీ && namebuflen > 0)
 		namebuf[0] = '\0';
-	return 0;
+	తిరిగి 0;
 }
 
-void mm_session_pty_cleanup2(Session *s) { (void)s; }
-int platform_locked_account(struct passwd *pw) { (void)pw; return 0; }
-void record_failed_login(struct ssh *ssh, const char *user,
-    const char *hostname, const char *ttyname) { (void)ssh; (void)user;
-    (void)hostname; (void)ttyname; }
-int temporarily_use_uid(struct passwd *pw) { (void)pw; return 0; }
-void restore_uid(void) { }
-void platform_setusercontext(struct passwd *pw) { (void)pw; }
-void platform_setusercontext_post_groups(struct passwd *pw) { (void)pw; }
-struct connection_info *
-server_get_connection_info(struct ssh *ssh, int populate, int use_dns)
-    { (void)ssh; (void)populate; (void)use_dns; return NULL; }
-int auth2_methods_valid(const char *list, int allow_unknown)
-    { (void)list; (void)allow_unknown; return 0; }
-struct sshbuf *cfg = NULL;
-int auth_sock = -1;
-char **tun_fwd_ifnames = NULL;
+శూన్య mm_session_pty_cleanup2(Session *s) { (శూన్య)s; }
+పూర్ణాంకం platform_locked_account(నిర్మాణం passwd *pw) { (శూన్య)pw; తిరిగి 0; }
+శూన్య రికార్డు_failed_login(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *user,
+    స్థిరరాశి అక్షరం *hostname, స్థిరరాశి అక్షరం *ttyname) { (శూన్య)ssh; (శూన్య)user;
+    (శూన్య)hostname; (శూన్య)ttyname; }
+పూర్ణాంకం temporarily_use_uid(నిర్మాణం passwd *pw) { (శూన్య)pw; తిరిగి 0; }
+శూన్య restore_uid(శూన్య) { }
+శూన్య platform_setusercontext(నిర్మాణం passwd *pw) { (శూన్య)pw; }
+శూన్య platform_setusercontext_post_groups(నిర్మాణం passwd *pw) { (శూన్య)pw; }
+నిర్మాణం connection_info *
+server_get_connection_info(నిర్మాణం ssh *ssh, పూర్ణాంకం populate, పూర్ణాంకం use_dns)
+    { (శూన్య)ssh; (శూన్య)populate; (శూన్య)use_dns; తిరిగి ఖాళీ; }
+పూర్ణాంకం auth2_methods_valid(స్థిరరాశి అక్షరం *list, పూర్ణాంకం allow_unknown)
+    { (శూన్య)list; (శూన్య)allow_unknown; తిరిగి 0; }
+నిర్మాణం sshbuf *cfg = ఖాళీ;
+పూర్ణాంకం auth_sock = -1;
+అక్షరం **tun_fwd_ifnames = ఖాళీ;
 
-struct logininfo *login_get_lastlog(struct logininfo *li, const uid_t uid)
-    { (void)li; (void)uid; return NULL; }
-struct logininfo *login_alloc_entry(pid_t pid, const char *username,
-    const char *hostname, const char *line)
-    { (void)pid; (void)username; (void)hostname; (void)line; return NULL; }
-void server_process_permitopen(struct ssh *ssh) { (void)ssh; }
-void server_process_channel_timeouts(struct ssh *ssh) { (void)ssh; }
-int server_loop2(struct ssh *ssh, Authctxt *authctxt)
-    { (void)ssh; (void)authctxt; return 0; }
-int platform_privileged_uidswap(void) { return 0; }
-int sftp_server_main(int argc, char **argv, struct passwd *user_pw)
-    { (void)argc; (void)argv; (void)user_pw; return 0; }
-int debug_flag = 0;
-void permanently_set_uid(struct passwd *pw) { (void)pw; }
-int login_login(struct logininfo *li) { (void)li; return 0; }
-int login_logout(struct logininfo *li) { (void)li; return 0; }
-void login_free_entry(struct logininfo *li) { (void)li; }
-void login_set_addr(struct logininfo *li, const struct sockaddr *sa,
-    const unsigned int sa_size) { (void)li; (void)sa; (void)sa_size; }
-int openpty(int *amaster, int *aslave, char *name,
-    const struct termios *termp, const struct winsize *winp)
-    { (void)termp; (void)winp; *amaster = -1; *aslave = -1;
-    if (name) name[0] = '\0'; return -1; }
+నిర్మాణం logininfo *login_get_lastlog(నిర్మాణం logininfo *li, స్థిరరాశి uid_t uid)
+    { (శూన్య)li; (శూన్య)uid; తిరిగి ఖాళీ; }
+నిర్మాణం logininfo *login_alloc_నమోదు(pid_t pid, స్థిరరాశి అక్షరం *username,
+    స్థిరరాశి అక్షరం *hostname, స్థిరరాశి అక్షరం *పంక్తి)
+    { (శూన్య)pid; (శూన్య)username; (శూన్య)hostname; (శూన్య)పంక్తి; తిరిగి ఖాళీ; }
+శూన్య server_process_permitopen(నిర్మాణం ssh *ssh) { (శూన్య)ssh; }
+శూన్య server_process_channel_timeouts(నిర్మాణం ssh *ssh) { (శూన్య)ssh; }
+పూర్ణాంకం server_loop2(నిర్మాణం ssh *ssh, Authctxt *authctxt)
+    { (శూన్య)ssh; (శూన్య)authctxt; తిరిగి 0; }
+పూర్ణాంకం platform_privileged_uidswap(శూన్య) { తిరిగి 0; }
+పూర్ణాంకం sftp_server_main(పూర్ణాంకం argc, అక్షరం **argv, నిర్మాణం passwd *user_pw)
+    { (శూన్య)argc; (శూన్య)argv; (శూన్య)user_pw; తిరిగి 0; }
+పూర్ణాంకం debug_flag = 0;
+శూన్య permanently_సమితి_uid(నిర్మాణం passwd *pw) { (శూన్య)pw; }
+పూర్ణాంకం login_login(నిర్మాణం logininfo *li) { (శూన్య)li; తిరిగి 0; }
+పూర్ణాంకం login_logout(నిర్మాణం logininfo *li) { (శూన్య)li; తిరిగి 0; }
+శూన్య login_free_నమోదు(నిర్మాణం logininfo *li) { (శూన్య)li; }
+శూన్య login_సమితి_addr(నిర్మాణం logininfo *li, స్థిరరాశి నిర్మాణం sockaddr *sa,
+    స్థిరరాశి గుర్తులేని పూర్ణాంకం sa_కొలత) { (శూన్య)li; (శూన్య)sa; (శూన్య)sa_కొలత; }
+పూర్ణాంకం openpty(పూర్ణాంకం *amaster, పూర్ణాంకం *aslave, అక్షరం *name,
+    స్థిరరాశి నిర్మాణం termios *termp, స్థిరరాశి నిర్మాణం winsize *winp)
+    { (శూన్య)termp; (శూన్య)winp; *amaster = -1; *aslave = -1;
+    ఒకవేళ (name) name[0] = '\0'; తిరిగి -1; }
 
-extern int __real_do_exec(struct ssh *, Session *, const char *);
-extern int __real_do_exec_pty(struct ssh *, Session *, const char *);
-extern int __real_do_exec_no_pty(struct ssh *, Session *, const char *);
+బాహ్య పూర్ణాంకం __real_do_exec(నిర్మాణం ssh *, Session *, స్థిరరాశి అక్షరం *);
+బాహ్య పూర్ణాంకం __real_do_exec_pty(నిర్మాణం ssh *, Session *, స్థిరరాశి అక్షరం *);
+బాహ్య పూర్ణాంకం __real_do_exec_no_pty(నిర్మాణం ssh *, Session *, స్థిరరాశి అక్షరం *);
 
-int
-__wrap_do_exec(struct ssh *ssh, Session *s, const char *command)
+పూర్ణాంకం
+__wrap_do_exec(నిర్మాణం ssh *ssh, Session *s, స్థిరరాశి అక్షరం *command)
 {
-	(void)ssh;
-	(void)s;
-	(void)command;
-	return 0;
+	(శూన్య)ssh;
+	(శూన్య)s;
+	(శూన్య)command;
+	తిరిగి 0;
 }
 
-int
-__wrap_do_exec_pty(struct ssh *ssh, Session *s, const char *command)
+పూర్ణాంకం
+__wrap_do_exec_pty(నిర్మాణం ssh *ssh, Session *s, స్థిరరాశి అక్షరం *command)
 {
-	(void)ssh;
-	(void)s;
-	(void)command;
-	return 0;
+	(శూన్య)ssh;
+	(శూన్య)s;
+	(శూన్య)command;
+	తిరిగి 0;
 }
 
-int
-__wrap_do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
+పూర్ణాంకం
+__wrap_do_exec_no_pty(నిర్మాణం ssh *ssh, Session *s, స్థిరరాశి అక్షరం *command)
 {
-	(void)ssh;
-	(void)s;
-	(void)command;
-	return 0;
+	(శూన్య)ssh;
+	(శూన్య)s;
+	(శూన్య)command;
+	తిరిగి 0;
 }
 
-static struct sshkey *
-load_private(const char *str)
+స్థిర నిర్మాణం sshkey *
+ఎక్కించు_వ్యక్తిగత(స్థిరరాశి అక్షరం *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	నిర్మాణం sshbuf *b = sshbuf_from(str, అక్షరశ్రేణి_పొడవు(str));
+	నిర్మాణం sshkey *k = ఖాళీ;
+	ఒకవేళ (b == ఖాళీ || sshkey_parse_వ్యక్తిగత_fileblob(b, "", &k, ఖాళీ) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	తిరిగి k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+స్థిర నిర్మాణం sshkey *
+ఎక్కించు_ప్రజా(స్థిరరాశి అక్షరం *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	అక్షరం *tmp, *cp;
+	నిర్మాణం sshkey *k = sshkey_new(కీలకం_UNSPEC);
+	ఒకవేళ (k == ఖాళీ)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	ఒకవేళ (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	విడుదల(tmp);
+	తిరిగి k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+స్థిర పూర్ణాంకం
+pump(నిర్మాణం ssh *from, నిర్మాణం ssh *గమ్యం, కొలత_t *transferred)
 {
-	const u_char *buf;
-	size_t len;
+	స్థిరరాశి u_char *buf;
+	కొలత_t len;
 	u_char type;
-	int r;
+	పూర్ణాంకం r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	ఒకవేళ ((r = ssh_packet_తదుపరి(from, &type)) != 0)
+		తిరిగి r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	ఒకవేళ (len == 0)
+		తిరిగి 0;
+	ఒకవేళ ((r = ssh_ఆదానం_append(గమ్యం, buf, len)) != 0)
+		తిరిగి r;
+	ఒకవేళ ((r = ssh_output_consume(from, len)) != 0)
+		తిరిగి r;
 	*transferred = len;
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+స్థిర పూర్ణాంకం
+నిరంతరం_kex(నిర్మాణం ssh *client, నిర్మాణం ssh *server)
 {
-	int r;
-	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	పూర్ణాంకం r;
+	కొలత_t cn, sn;
+	కొరకు (పూర్ణాంకం i = 0; i < 100; i++) {
+		ఒకవేళ ((r = pump(server, client, &sn)) != 0) తిరిగి r;
+		ఒకవేళ ((r = pump(client, server, &cn)) != 0) తిరిగి r;
+		ఒకవేళ (server->kex->పూర్తి && client->kex->పూర్తి)
+			తిరిగి 0;
+		ఒకవేళ (cn == 0 && sn == 0)
+			తిరిగి SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	తిరిగి SSH_ERR_PROTOCOL_ERROR;
 }
 
-#include "fixed-keys.h"
+#అన్తర్భావ "fixed-keys.h"
 
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
-static int g_channel_id = -1;
-static Authctxt g_authctxt;
-static struct passwd g_fake_pw;
+స్థిర నిర్మాణం ssh *g_client = ఖాళీ;
+స్థిర నిర్మాణం ssh *g_server = ఖాళీ;
+స్థిర పూర్ణాంకం g_init = 0;
+స్థిర పూర్ణాంకం g_channel_id = -1;
+స్థిర Authctxt g_authctxt;
+స్థిర నిర్మాణం passwd g_fake_pw;
 
-static char *g_pending_rtype = NULL;
-static char *g_pending_exec_cmd = NULL;
-static char *g_pending_env_name = NULL;
-static char *g_pending_env_val = NULL;
+స్థిర అక్షరం *g_pending_rtype = ఖాళీ;
+స్థిర అక్షరం *g_pending_exec_cmd = ఖాళీ;
+స్థిర అక్షరం *g_pending_env_name = ఖాళీ;
+స్థిర అక్షరం *g_pending_env_val = ఖాళీ;
 
-static void
-my_session_exec_req(struct ssh *ssh)
+స్థిర శూన్య
+my_session_exec_req(నిర్మాణం ssh *ssh)
 {
-	int r;
-	if ((r = sshpkt_get_cstring(ssh, &g_pending_exec_cmd, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	పూర్ణాంకం r;
+	ఒకవేళ ((r = sshpkt_get_cstring(ssh, &g_pending_exec_cmd, ఖాళీ)) != 0 ||
+	    (r = sshpkt_get_చివర(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 }
 
-static void
-my_session_env_req(struct ssh *ssh)
+స్థిర శూన్య
+my_session_env_req(నిర్మాణం ssh *ssh)
 {
-	int r;
-	if ((r = sshpkt_get_cstring(ssh, &g_pending_env_name, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &g_pending_env_val, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	పూర్ణాంకం r;
+	ఒకవేళ ((r = sshpkt_get_cstring(ssh, &g_pending_env_name, ఖాళీ)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &g_pending_env_val, ఖాళీ)) != 0 ||
+	    (r = sshpkt_get_చివర(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 }
 
-static int
-input_channel_request(int type, uint32_t seq, struct ssh *ssh)
+స్థిర పూర్ణాంకం
+ఆదానం_channel_request(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
 	uint32_t chan_id;
-	u_char want_reply;
+	u_char want_జవాబు;
 
-	(void)type;
-	(void)seq;
-	if (sshpkt_get_u32(ssh, &chan_id) != 0 ||
-	    sshpkt_get_cstring(ssh, &g_pending_rtype, NULL) != 0 ||
-	    sshpkt_get_u8(ssh, &want_reply) != 0)
-		return 0;
-	if (g_channel_id >= 0 && g_pending_rtype != NULL) {
+	(శూన్య)type;
+	(శూన్య)seq;
+	ఒకవేళ (sshpkt_get_u32(ssh, &chan_id) != 0 ||
+	    sshpkt_get_cstring(ssh, &g_pending_rtype, ఖాళీ) != 0 ||
+	    sshpkt_get_u8(ssh, &want_జవాబు) != 0)
+		తిరిగి 0;
+	ఒకవేళ (g_channel_id >= 0 && g_pending_rtype != ఖాళీ) {
 		Channel *c = channel_lookup(ssh, g_channel_id);
-		if (c != NULL) {
-			if (strcmp(g_pending_rtype, "exec") == 0)
+		ఒకవేళ (c != ఖాళీ) {
+			ఒకవేళ (strcmp(g_pending_rtype, "exec") == 0)
 				my_session_exec_req(ssh);
-			else if (strcmp(g_pending_rtype, "env") == 0)
+			లేకపోతే ఒకవేళ (strcmp(g_pending_rtype, "env") == 0)
 				my_session_env_req(ssh);
-			else
-				(void)session_input_channel_req(ssh, c,
+			లేకపోతే
+				(శూన్య)session_ఆదానం_channel_req(ssh, c,
 				    g_pending_rtype);
 		}
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static void
-reset_channel(struct ssh *ssh)
+స్థిర శూన్య
+reset_channel(నిర్మాణం ssh *ssh)
 {
-	if (g_channel_id >= 0) {
+	ఒకవేళ (g_channel_id >= 0) {
 		Channel *c = channel_lookup(ssh, g_channel_id);
-		if (c != NULL)
+		ఒకవేళ (c != ఖాళీ)
 			channel_free(ssh, c);
 		g_channel_id = -1;
 	}
-	Channel *c = channel_new(ssh, (char *)"session", SSH_CHANNEL_LARVAL,
-	    -1, -1, -1, 32768, 32768, 0, (char *)"fuzz", 0);
-	if (c == NULL)
-		return;
+	Channel *c = channel_new(ssh, (అక్షరం *)"session", SSH_CHANNEL_LARVAL,
+	    -1, -1, -1, 32768, 32768, 0, (అక్షరం *)"fuzz", 0);
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి;
 	g_channel_id = c->self;
 	Session *s = session_new();
-	if (s != NULL) {
+	ఒకవేళ (s != ఖాళీ) {
 		s->chanid = c->self;
 		s->pw = &g_fake_pw;
 	}
 }
 
-static int
-init_once(void)
+స్థిర పూర్ణాంకం
+init_once(శూన్య)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	ఒకవేళ (g_init)
+		తిరిగి 0;
+	సంకేతం(SIGPIPE, SIG_IGN);
 	log_init("session_channel_req_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	memset(&g_fake_pw, 0, sizeof(g_fake_pw));
-	g_fake_pw.pw_name = (char *)"fuzz";
+	memset(&g_fake_pw, 0, పరిమాణం(g_fake_pw));
+	g_fake_pw.pw_name = (అక్షరం *)"fuzz";
 	g_fake_pw.pw_uid = 1000;
 	g_fake_pw.pw_gid = 1000;
-	g_fake_pw.pw_dir = (char *)"/tmp";
-	g_fake_pw.pw_shell = (char *)"/bin/sh";
+	g_fake_pw.pw_dir = (అక్షరం *)"/tmp";
+	g_fake_pw.pw_shell = (అక్షరం *)"/bin/sh";
 	privsep_pw = &g_fake_pw;
 
 	initialize_server_options(&options);
@@ -345,87 +345,87 @@ init_once(void)
 
 	loginmsg = sshbuf_new();
 
-	memset(&g_authctxt, 0, sizeof(g_authctxt));
+	memset(&g_authctxt, 0, పరిమాణం(g_authctxt));
 	g_authctxt.pw = &g_fake_pw;
 	g_authctxt.valid = 1;
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	నిర్మాణం sshkey *priv = ఎక్కించు_వ్యక్తిగత(PRIV_ED25519);
+	నిర్మాణం sshkey *pub = ఎక్కించు_ప్రజా(PUB_ED25519);
+	అక్షరం *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	స్థిరరాశి అక్షరం *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	అక్షరం *proposal[PROPOSAL_MAX] = { 0 };
+	పూర్ణాంకం i;
+	కొరకు (i = 0; i < PROPOSAL_MAX; i++) {
+		స్థిరరాశి అక్షరం *p = defaults[i];
+		ఒకవేళ (i == PROPOSAL_SERVER_HOST_కీలకం_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		లేకపోతే ఒకవేళ (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		లేకపోతే ఒకవేళ (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		లేకపోతే ఒకవేళ (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	నిర్మాణం kex_params kp;
+	జ్ఞాపకం_నకలు(kp.proposal, proposal, పరిమాణం(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	ఒకవేళ (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
-	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		తిరిగి -1;
+	ఒకవేళ (ssh_కూడు_hostkey(g_server, priv) != 0 ||
+	    ssh_కూడు_hostkey(g_client, pub) != 0)
+		తిరిగి -1;
+	ఒకవేళ (నిరంతరం_kex(g_client, g_server) != 0)
+		తిరిగి -1;
 
 	g_server->authctxt = &g_authctxt;
 
 	channel_init_channels(g_server);
 
 	ssh_dispatch_init(g_server, &dispatch_protocol_ignore);
-	ssh_dispatch_set(g_server, SSH2_MSG_CHANNEL_REQUEST,
-	    &input_channel_request);
+	ssh_dispatch_సమితి(g_server, SSH2_సందేశం_CHANNEL_REQUEST,
+	    &ఆదానం_channel_request);
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	విడుదల(keyname);
+	కొరకు (i = 0; i < PROPOSAL_MAX; i++)
+		విడుదల(proposal[i]);
 	g_init = 1;
-	return 0;
+	తిరిగి 0;
 }
 
-void
-fuzz_session_one(const uint8_t *data, size_t size)
+శూన్య
+fuzz_session_one(స్థిరరాశి uint8_t *దత్తాంశం, కొలత_t కొలత)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	ఒకవేళ (init_once() != 0)
+		తిరిగి;
+	ఒకవేళ (కొలత > 65000)
+		తిరిగి;
 
 	reset_channel(g_server);
 
-	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
-		size_t transferred;
-		if (ssh_packet_put(g_client, SSH2_MSG_CHANNEL_REQUEST,
-		    data, size) != 0)
-			goto done;
-		if (pump(g_client, g_server, &transferred) != 0)
-			goto done;
-		(void)ssh_dispatch_run(g_server, DISPATCH_NONBLOCK, NULL);
-	done:
+	లోపల_fuzz = 1;
+	ఒకవేళ (setjmp(fuzz_env) == 0) {
+		కొలత_t transferred;
+		ఒకవేళ (ssh_packet_put(g_client, SSH2_సందేశం_CHANNEL_REQUEST,
+		    దత్తాంశం, కొలత) != 0)
+			వెళ్ళు పూర్తి;
+		ఒకవేళ (pump(g_client, g_server, &transferred) != 0)
+			వెళ్ళు పూర్తి;
+		(శూన్య)ssh_dispatch_నిరంతరం(g_server, DISPATCH_NONBLOCK, ఖాళీ);
+	పూర్తి:
 		;
 	}
-	in_fuzz = 0;
-	free(g_pending_rtype);
-	g_pending_rtype = NULL;
-	free(g_pending_exec_cmd);
-	g_pending_exec_cmd = NULL;
-	free(g_pending_env_name);
-	g_pending_env_name = NULL;
-	free(g_pending_env_val);
-	g_pending_env_val = NULL;
+	లోపల_fuzz = 0;
+	విడుదల(g_pending_rtype);
+	g_pending_rtype = ఖాళీ;
+	విడుదల(g_pending_exec_cmd);
+	g_pending_exec_cmd = ఖాళీ;
+	విడుదల(g_pending_env_name);
+	g_pending_env_name = ఖాళీ;
+	విడుదల(g_pending_env_val);
+	g_pending_env_val = ఖాళీ;
 }

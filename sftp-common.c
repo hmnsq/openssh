@@ -24,36 +24,36 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
 
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
-#include <util.h>
+#అన్తర్భావ <grp.h>
+#అన్తర్భావ <pwd.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <util.h>
 
-#include "xmalloc.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "misc.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
 
-#include "sftp.h"
-#include "sftp-common.h"
+#అన్తర్భావ "sftp.h"
+#అన్తర్భావ "sftp-common.h"
 
 /* Clear contents of attributes structure */
-void
+శూన్య
 attrib_clear(Attrib *a)
 {
 	a->flags = 0;
-	a->size = 0;
+	a->కొలత = 0;
 	a->uid = 0;
 	a->gid = 0;
 	a->perm = 0;
@@ -62,13 +62,13 @@ attrib_clear(Attrib *a)
 }
 
 /* Convert from struct stat to filexfer attribs */
-void
-stat_to_attrib(const struct stat *st, Attrib *a)
+శూన్య
+stat_గమ్యం_attrib(స్థిరరాశి నిర్మాణం stat *st, Attrib *a)
 {
 	attrib_clear(a);
 	a->flags = 0;
-	a->flags |= SSH2_FILEXFER_ATTR_SIZE;
-	a->size = st->st_size;
+	a->flags |= SSH2_FILEXFER_ATTR_కొలత;
+	a->కొలత = st->st_size;
 	a->flags |= SSH2_FILEXFER_ATTR_UIDGID;
 	a->uid = st->st_uid;
 	a->gid = st->st_gid;
@@ -80,130 +80,130 @@ stat_to_attrib(const struct stat *st, Attrib *a)
 }
 
 /* Convert from filexfer attribs to struct stat */
-void
-attrib_to_stat(const Attrib *a, struct stat *st)
+శూన్య
+attrib_గమ్యం_stat(స్థిరరాశి Attrib *a, నిర్మాణం stat *st)
 {
-	memset(st, 0, sizeof(*st));
+	memset(st, 0, పరిమాణం(*st));
 
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE)
-		st->st_size = a->size;
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_కొలత)
+		st->st_size = a->కొలత;
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
 		st->st_uid = a->uid;
 		st->st_gid = a->gid;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
 		st->st_mode = a->perm;
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
 		st->st_atime = a->atime;
 		st->st_mtime = a->mtime;
 	}
 }
 
 /* Decode attributes in buffer */
-int
-decode_attrib(struct sshbuf *b, Attrib *a)
+పూర్ణాంకం
+decode_attrib(నిర్మాణం sshbuf *b, Attrib *a)
 {
-	int r;
+	పూర్ణాంకం r;
 
 	attrib_clear(a);
-	if ((r = sshbuf_get_u32(b, &a->flags)) != 0)
-		return r;
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		if ((r = sshbuf_get_u64(b, &a->size)) != 0)
-			return r;
+	ఒకవేళ ((r = sshbuf_get_u32(b, &a->flags)) != 0)
+		తిరిగి r;
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_కొలత) {
+		ఒకవేళ ((r = sshbuf_get_u64(b, &a->కొలత)) != 0)
+			తిరిగి r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		if ((r = sshbuf_get_u32(b, &a->uid)) != 0 ||
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		ఒకవేళ ((r = sshbuf_get_u32(b, &a->uid)) != 0 ||
 		    (r = sshbuf_get_u32(b, &a->gid)) != 0)
-			return r;
+			తిరిగి r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		if ((r = sshbuf_get_u32(b, &a->perm)) != 0)
-			return r;
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		ఒకవేళ ((r = sshbuf_get_u32(b, &a->perm)) != 0)
+			తిరిగి r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		if ((r = sshbuf_get_u32(b, &a->atime)) != 0 ||
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		ఒకవేళ ((r = sshbuf_get_u32(b, &a->atime)) != 0 ||
 		    (r = sshbuf_get_u32(b, &a->mtime)) != 0)
-			return r;
+			తిరిగి r;
 	}
 	/* vendor-specific extensions */
-	if (a->flags & SSH2_FILEXFER_ATTR_EXTENDED) {
-		char *type;
-		u_char *data;
-		size_t dlen;
-		u_int i, count;
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_EXTENDED) {
+		అక్షరం *type;
+		u_char *దత్తాంశం;
+		కొలత_t dlen;
+		u_int i, లెక్క;
 
-		if ((r = sshbuf_get_u32(b, &count)) != 0)
-			return r;
-		if (count > 0x100000)
-			return SSH_ERR_INVALID_FORMAT;
-		for (i = 0; i < count; i++) {
-			if ((r = sshbuf_get_cstring(b, &type, NULL)) != 0 ||
-			    (r = sshbuf_get_string(b, &data, &dlen)) != 0)
-				return r;
+		ఒకవేళ ((r = sshbuf_get_u32(b, &లెక్క)) != 0)
+			తిరిగి r;
+		ఒకవేళ (లెక్క > 0x100000)
+			తిరిగి SSH_ERR_INVALID_FORMAT;
+		కొరకు (i = 0; i < లెక్క; i++) {
+			ఒకవేళ ((r = sshbuf_get_cstring(b, &type, ఖాళీ)) != 0 ||
+			    (r = sshbuf_get_string(b, &దత్తాంశం, &dlen)) != 0)
+				తిరిగి r;
 			debug3("Got file attribute \"%.100s\" len %zu",
 			    type, dlen);
-			free(type);
-			free(data);
+			విడుదల(type);
+			విడుదల(దత్తాంశం);
 		}
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 /* Encode attributes to buffer */
-int
-encode_attrib(struct sshbuf *b, const Attrib *a)
+పూర్ణాంకం
+encode_attrib(నిర్మాణం sshbuf *b, స్థిరరాశి Attrib *a)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	if ((r = sshbuf_put_u32(b, a->flags)) != 0)
-		return r;
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		if ((r = sshbuf_put_u64(b, a->size)) != 0)
-			return r;
+	ఒకవేళ ((r = sshbuf_put_u32(b, a->flags)) != 0)
+		తిరిగి r;
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_కొలత) {
+		ఒకవేళ ((r = sshbuf_put_u64(b, a->కొలత)) != 0)
+			తిరిగి r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		if ((r = sshbuf_put_u32(b, a->uid)) != 0 ||
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		ఒకవేళ ((r = sshbuf_put_u32(b, a->uid)) != 0 ||
 		    (r = sshbuf_put_u32(b, a->gid)) != 0)
-			return r;
+			తిరిగి r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		if ((r = sshbuf_put_u32(b, a->perm)) != 0)
-			return r;
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		ఒకవేళ ((r = sshbuf_put_u32(b, a->perm)) != 0)
+			తిరిగి r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		if ((r = sshbuf_put_u32(b, a->atime)) != 0 ||
+	ఒకవేళ (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		ఒకవేళ ((r = sshbuf_put_u32(b, a->atime)) != 0 ||
 		    (r = sshbuf_put_u32(b, a->mtime)) != 0)
-			return r;
+			తిరిగి r;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 /* Convert from SSH2_FX_ status to text error message */
-const char *
-fx2txt(int status)
+స్థిరరాశి అక్షరం *
+fx2txt(పూర్ణాంకం స్థితి_2)
 {
-	switch (status) {
-	case SSH2_FX_OK:
-		return("No error");
-	case SSH2_FX_EOF:
-		return("End of file");
-	case SSH2_FX_NO_SUCH_FILE:
-		return("No such file or directory");
-	case SSH2_FX_PERMISSION_DENIED:
-		return("Permission denied");
-	case SSH2_FX_FAILURE:
-		return("Failure");
-	case SSH2_FX_BAD_MESSAGE:
-		return("Bad message");
-	case SSH2_FX_NO_CONNECTION:
-		return("No connection");
-	case SSH2_FX_CONNECTION_LOST:
-		return("Connection lost");
-	case SSH2_FX_OP_UNSUPPORTED:
-		return("Operation unsupported");
-	default:
-		return("Unknown status");
+	ఎంపిక (స్థితి_2) {
+	స్థితి SSH2_FX_OK:
+		తిరిగి("No error");
+	స్థితి SSH2_FX_EOF:
+		తిరిగి("End of file");
+	స్థితి SSH2_FX_NO_SUCH_FILE:
+		తిరిగి("No such file or directory");
+	స్థితి SSH2_FX_PERMISSION_DENIED:
+		తిరిగి("Permission denied");
+	స్థితి SSH2_FX_FAILURE:
+		తిరిగి("Failure");
+	స్థితి SSH2_FX_BAD_సందేశం:
+		తిరిగి("Bad message");
+	స్థితి SSH2_FX_NO_CONNECTION:
+		తిరిగి("No connection");
+	స్థితి SSH2_FX_CONNECTION_కోల్పోయిన:
+		తిరిగి("Connection lost");
+	స్థితి SSH2_FX_OP_UNSUPPORTED:
+		తిరిగి("Operation unsupported");
+	అప్రమేయ:
+		తిరిగి("Unknown status");
 	}
 	/* NOTREACHED */
 }
@@ -211,53 +211,53 @@ fx2txt(int status)
 /*
  * drwxr-xr-x    5 markus   markus       1024 Jan 13 18:39 .ssh
  */
-char *
-ls_file(const char *name, const struct stat *st, int remote, int si_units,
-    const char *user, const char *group)
+అక్షరం *
+ls_file(స్థిరరాశి అక్షరం *name, స్థిరరాశి నిర్మాణం stat *st, పూర్ణాంకం remote, పూర్ణాంకం si_units,
+    స్థిరరాశి అక్షరం *user, స్థిరరాశి అక్షరం *సమూహం)
 {
-	int ulen, glen, sz = 0;
-	struct tm *ltime = localtime(&st->st_mtime);
-	char buf[1024], lc[8], mode[11+1], tbuf[12+1], ubuf[11+1], gbuf[11+1];
-	char sbuf[FMT_SCALED_STRSIZE];
+	పూర్ణాంకం ulen, glen, sz = 0;
+	నిర్మాణం tm *ltime = localtime(&st->st_mtime);
+	అక్షరం buf[1024], lc[8], బహుళకం[11+1], tbuf[12+1], ubuf[11+1], gbuf[11+1];
+	అక్షరం sbuf[FMT_SCALED_STRSIZE];
 	time_t now;
 
-	strmode(st->st_mode, mode);
-	if (remote) {
-		if (user == NULL) {
-			snprintf(ubuf, sizeof ubuf, "%u", (u_int)st->st_uid);
+	strmode(st->st_mode, బహుళకం);
+	ఒకవేళ (remote) {
+		ఒకవేళ (user == ఖాళీ) {
+			snprintf(ubuf, పరిమాణం ubuf, "%u", (u_int)st->st_uid);
 			user = ubuf;
 		}
-		if (group == NULL) {
-			snprintf(gbuf, sizeof gbuf, "%u", (u_int)st->st_gid);
-			group = gbuf;
+		ఒకవేళ (సమూహం == ఖాళీ) {
+			snprintf(gbuf, పరిమాణం gbuf, "%u", (u_int)st->st_gid);
+			సమూహం = gbuf;
 		}
-		strlcpy(lc, "?", sizeof(lc));
-	} else {
+		strlcpy(lc, "?", పరిమాణం(lc));
+	} లేకపోతే {
 		user = user_from_uid(st->st_uid, 0);
-		group = group_from_gid(st->st_gid, 0);
-		snprintf(lc, sizeof(lc), "%u", (u_int)st->st_nlink);
+		సమూహం = సమూహం_from_gid(st->st_gid, 0);
+		snprintf(lc, పరిమాణం(lc), "%u", (u_int)st->st_nlink);
 	}
-	if (ltime != NULL) {
-		now = time(NULL);
-		if (now - (365*24*60*60)/2 < st->st_mtime &&
+	ఒకవేళ (ltime != ఖాళీ) {
+		now = time(ఖాళీ);
+		ఒకవేళ (now - (365*24*60*60)/2 < st->st_mtime &&
 		    now >= st->st_mtime)
-			sz = strftime(tbuf, sizeof tbuf, "%b %e %H:%M", ltime);
-		else
-			sz = strftime(tbuf, sizeof tbuf, "%b %e  %Y", ltime);
+			sz = strftime(tbuf, పరిమాణం tbuf, "%b %e %H:%M", ltime);
+		లేకపోతే
+			sz = strftime(tbuf, పరిమాణం tbuf, "%b %e  %Y", ltime);
 	}
-	if (sz == 0)
+	ఒకవేళ (sz == 0)
 		tbuf[0] = '\0';
-	ulen = MAXIMUM(strlen(user), 8);
-	glen = MAXIMUM(strlen(group), 8);
-	if (si_units) {
-		fmt_scaled((long long)st->st_size, sbuf);
-		snprintf(buf, sizeof buf, "%s %3s %-*s %-*s %8s %s %s",
-		    mode, lc, ulen, user, glen, group,
+	ulen = గరిష్ఠ(అక్షరశ్రేణి_పొడవు(user), 8);
+	glen = గరిష్ఠ(అక్షరశ్రేణి_పొడవు(సమూహం), 8);
+	ఒకవేళ (si_units) {
+		fmt_scaled((దీర్ఘ దీర్ఘ)st->st_size, sbuf);
+		snprintf(buf, పరిమాణం buf, "%s %3s %-*s %-*s %8s %s %s",
+		    బహుళకం, lc, ulen, user, glen, సమూహం,
 		    sbuf, tbuf, name);
-	} else {
-		snprintf(buf, sizeof buf, "%s %3s %-*s %-*s %8llu %s %s",
-		    mode, lc, ulen, user, glen, group,
-		    (unsigned long long)st->st_size, tbuf, name);
+	} లేకపోతే {
+		snprintf(buf, పరిమాణం buf, "%s %3s %-*s %-*s %8llu %s %s",
+		    బహుళకం, lc, ulen, user, glen, సమూహం,
+		    (గుర్తులేని దీర్ఘ దీర్ఘ)st->st_size, tbuf, name);
 	}
-	return xstrdup(buf);
+	తిరిగి xstrdup(buf);
 }

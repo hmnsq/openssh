@@ -38,120 +38,120 @@ limitations under the License.
  * reclaimed before the next call.
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <sys/types.h>
 
-extern "C" {
-#include "includes.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "authfd.h"
-#include "log.h"
+బాహ్య "C" {
+#అన్తర్భావ "includes.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "authfd.h"
+#అన్తర్భావ "log.h"
 
-void fuzz_arena_begin(void);
-void fuzz_arena_cleanup(void);
+శూన్య fuzz_arena_begin(శూన్య);
+శూన్య fuzz_arena_cleanup(శూన్య);
 }
 
-#include "fixed-keys.h"
+#అన్తర్భావ "fixed-keys.h"
 
-static struct sshkey *test_keys[3] = { NULL, NULL, NULL };
-static int initialized = 0;
+స్థిర నిర్మాణం sshkey *test_కీలకాలు[3] = { ఖాళీ, ఖాళీ, ఖాళీ };
+స్థిర పూర్ణాంకం initialized = 0;
 
-static struct sshkey *
-load_pubkey_or_die(const char *txt)
+స్థిర నిర్మాణం sshkey *
+ఎక్కించు_pubkey_or_die(స్థిరరాశి అక్షరం *txt)
 {
-	char *tmp, *cp;
-	struct sshkey *k;
+	అక్షరం *tmp, *cp;
+	నిర్మాణం sshkey *k;
 
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL)
+	ఒకవేళ ((k = sshkey_new(కీలకం_UNSPEC)) == ఖాళీ)
 		abort();
-	if ((tmp = cp = strdup(txt)) == NULL)
+	ఒకవేళ ((tmp = cp = strdup(txt)) == ఖాళీ)
 		abort();
-	if (sshkey_read(k, &cp) != 0)
+	ఒకవేళ (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	విడుదల(tmp);
+	తిరిగి k;
 }
 
-static void
-setup(void)
+స్థిర శూన్య
+అమరిక(శూన్య)
 {
-	if (initialized)
-		return;
+	ఒకవేళ (initialized)
+		తిరిగి;
 	initialized = 1;
 	log_init("authfd_reply_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
-	test_keys[0] = load_pubkey_or_die(PUB_RSA);
-	test_keys[1] = load_pubkey_or_die(PUB_ECDSA);
-	test_keys[2] = load_pubkey_or_die(PUB_ED25519);
+	test_కీలకాలు[0] = ఎక్కించు_pubkey_or_die(PUB_RSA);
+	test_కీలకాలు[1] = ఎక్కించు_pubkey_or_die(PUB_ECDSA);
+	test_కీలకాలు[2] = ఎక్కించు_pubkey_or_die(PUB_ED25519);
 }
 
-enum {
+గణన {
 	API_FETCH_IDENTITYLIST,
 	API_AGENT_SIGN,
-	API_AGENT_HAS_KEY,
+	API_AGENT_HAS_కీలకం,
 	API_QUERY_EXTENSIONS,
-	API_LOCK_AGENT,
+	API_తాళం_AGENT,
 };
 
-static void
-run_one(int api, struct sshkey *k, int lock_arg,
-    const uint8_t *body, size_t bsize)
+స్థిర శూన్య
+నిరంతరం_one(పూర్ణాంకం api, నిర్మాణం sshkey *k, పూర్ణాంకం తాళం_arg,
+    స్థిరరాశి uint8_t *body, కొలత_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	పూర్ణాంకం sv[2] = { -1, -1 };
+	ఒకవేళ (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		తిరిగి;
 
 	uint32_t blen = (uint32_t)bsize;
 	uint8_t hdr[4] = {
 	    (uint8_t)(blen >> 24), (uint8_t)(blen >> 16),
 	    (uint8_t)(blen >> 8), (uint8_t)(blen)
 	};
-	(void)write(sv[0], hdr, sizeof(hdr));
-	if (bsize > 0)
-		(void)write(sv[0], body, bsize);
+	(శూన్య)లిఖ(sv[0], hdr, పరిమాణం(hdr));
+	ఒకవేళ (bsize > 0)
+		(శూన్య)లిఖ(sv[0], body, bsize);
 
 	fuzz_arena_begin();
 
-	switch (api) {
-	case API_FETCH_IDENTITYLIST: {
-		struct ssh_identitylist *idl = NULL;
-		(void)ssh_fetch_identitylist(sv[1], &idl);
+	ఎంపిక (api) {
+	స్థితి API_FETCH_IDENTITYLIST: {
+		నిర్మాణం ssh_identitylist *idl = ఖాళీ;
+		(శూన్య)ssh_fetch_identitylist(sv[1], &idl);
 		ssh_free_identitylist(idl);
-		break;
+		ఆపు;
 	}
-	case API_AGENT_SIGN: {
-		const u_char msg[16] = { 0 };
-		u_char *sig = NULL;
-		size_t siglen = 0;
-		(void)ssh_agent_sign(sv[1], k, &sig, &siglen,
-		    msg, sizeof(msg), NULL, 0);
-		free(sig);
-		break;
+	స్థితి API_AGENT_SIGN: {
+		స్థిరరాశి u_char సందేశం[16] = { 0 };
+		u_char *sig = ఖాళీ;
+		కొలత_t siglen = 0;
+		(శూన్య)ssh_agent_sign(sv[1], k, &sig, &siglen,
+		    సందేశం, పరిమాణం(సందేశం), ఖాళీ, 0);
+		విడుదల(sig);
+		ఆపు;
 	}
-	case API_AGENT_HAS_KEY:
-		(void)ssh_agent_has_key(sv[1], k);
-		break;
-	case API_QUERY_EXTENSIONS: {
-		char **exts = NULL;
-		int n = ssh_agent_query_extensions(sv[1], &exts);
-		if (n == 0 && exts != NULL) {
-			for (int i = 0; exts[i] != NULL; i++)
-				free(exts[i]);
-			free(exts);
+	స్థితి API_AGENT_HAS_కీలకం:
+		(శూన్య)ssh_agent_has_కీలకం(sv[1], k);
+		ఆపు;
+	స్థితి API_QUERY_EXTENSIONS: {
+		అక్షరం **exts = ఖాళీ;
+		పూర్ణాంకం n = ssh_agent_query_extensions(sv[1], &exts);
+		ఒకవేళ (n == 0 && exts != ఖాళీ) {
+			కొరకు (పూర్ణాంకం i = 0; exts[i] != ఖాళీ; i++)
+				విడుదల(exts[i]);
+			విడుదల(exts);
 		}
-		break;
+		ఆపు;
 	}
-	case API_LOCK_AGENT:
-		(void)ssh_lock_agent(sv[1], lock_arg, "fuzz");
-		break;
+	స్థితి API_తాళం_AGENT:
+		(శూన్య)ssh_తాళం_agent(sv[1], తాళం_arg, "fuzz");
+		ఆపు;
 	}
 
 	fuzz_arena_cleanup();
@@ -160,21 +160,21 @@ run_one(int api, struct sshkey *k, int lock_arg,
 	close(sv[1]);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+బాహ్య "C" పూర్ణాంకం
+LLVMFuzzer_Test_One_ఆదానం(స్థిరరాశి uint8_t *దత్తాంశం, కొలత_t కొలత)
 {
-	setup();
+	అమరిక();
 
-	if (size > 65536)
-		return 0;
+	ఒకవేళ (కొలత > 65536)
+		తిరిగి 0;
 
-	run_one(API_FETCH_IDENTITYLIST, NULL,           0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[0],   0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[1],   0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[2],   0, data, size);
-	run_one(API_AGENT_HAS_KEY,      test_keys[2],   0, data, size);
-	run_one(API_QUERY_EXTENSIONS,   NULL,           0, data, size);
-	run_one(API_LOCK_AGENT,         NULL,           1, data, size);
+	నిరంతరం_one(API_FETCH_IDENTITYLIST, ఖాళీ,           0, దత్తాంశం, కొలత);
+	నిరంతరం_one(API_AGENT_SIGN,         test_కీలకాలు[0],   0, దత్తాంశం, కొలత);
+	నిరంతరం_one(API_AGENT_SIGN,         test_కీలకాలు[1],   0, దత్తాంశం, కొలత);
+	నిరంతరం_one(API_AGENT_SIGN,         test_కీలకాలు[2],   0, దత్తాంశం, కొలత);
+	నిరంతరం_one(API_AGENT_HAS_కీలకం,      test_కీలకాలు[2],   0, దత్తాంశం, కొలత);
+	నిరంతరం_one(API_QUERY_EXTENSIONS,   ఖాళీ,           0, దత్తాంశం, కొలత);
+	నిరంతరం_one(API_తాళం_AGENT,         ఖాళీ,           1, దత్తాంశం, కొలత);
 
-	return 0;
+	తిరిగి 0;
 }

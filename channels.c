@@ -39,59 +39,59 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <sys/un.h>
-#include <sys/socket.h>
-#include <sys/queue.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <sys/ioctl.h>
+#అన్తర్భావ <sys/un.h>
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <sys/queue.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#అన్తర్భావ <netinet/in.h>
+#అన్తర్భావ <arpa/inet.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <netdb.h>
-#include <poll.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <termios.h>
-#include <unistd.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <netdb.h>
+#అన్తర్భావ <poll.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <termios.h>
+#అన్తర్భావ <unistd.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "log.h"
-#include "misc.h"
-#include "channels.h"
-#include "compat.h"
-#include "canohost.h"
-#include "pathnames.h"
-#include "match.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "ssh.h"
+#అన్తర్భావ "ssh2.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "packet.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "channels.h"
+#అన్తర్భావ "compat.h"
+#అన్తర్భావ "canohost.h"
+#అన్తర్భావ "pathnames.h"
+#అన్తర్భావ "match.h"
 
 /* XXX remove once we're satisfied there's no lurking bugs */
 /* #define DEBUG_CHANNEL_POLL 1 */
 
 /* -- agent forwarding */
-#define	NUM_SOCKS	10
+#నిర్వచించు	అంకె_SOCKS	10
 
 /* -- X11 forwarding */
 /* X11 port for display :0 */
-#define X11_BASE_PORT	6000
+#నిర్వచించు X11_పునాది_పోర్టు	6000
 /* Maximum number of fake X11 displays to try. */
-#define MAX_DISPLAYS  1000
+#నిర్వచించు MAX_DISPLAYS  1000
 
 /* Per-channel callback for pre/post IO actions */
-typedef void chan_fn(struct ssh *, Channel *c);
+రకనిర్వచనం శూన్య chan_fn(నిర్మాణం ssh *, Channel *c);
 
 /*
  * Data structure for storing which hosts are permitted for forward requests.
@@ -102,56 +102,56 @@ typedef void chan_fn(struct ssh *, Channel *c);
 /* XXX: streamlocal wants a path instead of host:port */
 /*      Overload host_to_connect; we could just make this match Forward */
 /*	XXX - can we use listen_host instead of listen_path? */
-struct permission {
-	char *host_to_connect;		/* Connect to 'host'. */
-	int port_to_connect;		/* Connect to 'port'. */
-	char *listen_host;		/* Remote side should listen address. */
-	char *listen_path;		/* Remote side should listen path. */
-	int listen_port;		/* Remote side should listen port. */
+నిర్మాణం permission {
+	అక్షరం *host_గమ్యం_connect;		/* Connect to 'host'. */
+	పూర్ణాంకం పోర్టు_గమ్యం_connect;		/* Connect to 'port'. */
+	అక్షరం *listen_host;		/* Remote side should listen address. */
+	అక్షరం *listen_మార్గం;		/* Remote side should listen path. */
+	పూర్ణాంకం listen_పోర్టు;		/* Remote side should listen port. */
 	Channel *downstream;		/* Downstream mux*/
 };
 
 /* Context for non-blocking connects */
-struct channel_connect {
-	char *host;
-	int port;
-	struct addrinfo *ai, *aitop;
+నిర్మాణం channel_connect {
+	అక్షరం *host;
+	పూర్ణాంకం పోర్టు;
+	నిర్మాణం addrinfo *ai, *aitop;
 };
 
 /*
  * Stores the forwarding permission state for a single direction (local or
  * remote).
  */
-struct permission_set {
+నిర్మాణం permission_సమితి {
 	/*
 	 * List of all local permitted host/port pairs to allow for the
 	 * user.
 	 */
-	u_int num_permitted_user;
-	struct permission *permitted_user;
+	u_int అంకె_permitted_user;
+	నిర్మాణం permission *permitted_user;
 
 	/*
 	 * List of all permitted host/port pairs to allow for the admin.
 	 */
-	u_int num_permitted_admin;
-	struct permission *permitted_admin;
+	u_int అంకె_permitted_admin;
+	నిర్మాణం permission *permitted_admin;
 
 	/*
 	 * If this is true, all opens/listens are permitted.  This is the
 	 * case on the server on which we have to trust the client anyway,
 	 * and the user could do anything after logging in.
 	 */
-	int all_permitted;
+	పూర్ణాంకం all_permitted;
 };
 
 /* Used to record timeouts per channel type */
-struct ssh_channel_timeout {
-	char *type_pattern;
-	double timeout_secs;
+నిర్మాణం ssh_channel_timeout {
+	అక్షరం *type_నమూనా;
+	ద్విగుణ timeout_secs;
 };
 
 /* Master structure for channels state */
-struct ssh_channels {
+నిర్మాణం ssh_channels {
 	/*
 	 * Pointer to an array containing all allocated channels.  The array
 	 * is dynamically extended as needed.
@@ -175,73 +175,73 @@ struct ssh_channels {
 	chan_fn **channel_post;
 
 	/* -- tcp forwarding */
-	struct permission_set local_perms;
-	struct permission_set remote_perms;
+	నిర్మాణం permission_సమితి local_perms;
+	నిర్మాణం permission_సమితి remote_perms;
 
 	/* -- X11 forwarding */
 
 	/* Saved X11 local (client) display. */
-	char *x11_saved_display;
+	అక్షరం *x11_saved_display;
 
 	/* Saved X11 authentication protocol name. */
-	char *x11_saved_proto;
+	అక్షరం *x11_saved_proto;
 
 	/* Saved X11 authentication data.  This is the real data. */
-	char *x11_saved_data;
-	u_int x11_saved_data_len;
+	అక్షరం *x11_saved_దత్తాంశం;
+	u_int x11_saved_దత్తాంశం_len;
 
 	/* Deadline after which all X11 connections are refused */
-	double x11_refuse_time;
+	ద్విగుణ x11_refuse_సమయం;
 
 	/*
 	 * Fake X11 authentication data.  This is what the server will be
 	 * sending us; we should replace any occurrences of this by the
 	 * real data.
 	 */
-	u_char *x11_fake_data;
-	u_int x11_fake_data_len;
+	u_char *x11_fake_దత్తాంశం;
+	u_int x11_fake_దత్తాంశం_len;
 
 	/* AF_UNSPEC or AF_INET or AF_INET6 */
-	int IPv4or6;
+	పూర్ణాంకం IPv4or6;
 
 	/* Set SO_KEEPALIVE on TCP connections */
-	int want_tcp_keepalive;
+	పూర్ణాంకం want_tcp_keepalive;
 
 	/* Channel timeouts by type */
-	struct ssh_channel_timeout *timeouts;
-	size_t ntimeouts;
+	నిర్మాణం ssh_channel_timeout *timeouts;
+	కొలత_t ntimeouts;
 	/* Global timeout for all OPEN channels */
-	double global_deadline;
-	double lastused;
+	ద్విగుణ global_deadline;
+	ద్విగుణ lastused;
 	/* pattern-lists used to classify channels as bulk */
-	char *bulk_classifier_tty, *bulk_classifier_notty;
+	అక్షరం *bulk_classifier_tty, *bulk_classifier_notty;
 	/* Number of active bulk channels (set by channel_handler) */
 	u_int nbulk;
 };
 
 /* helper */
-static void port_open_helper(struct ssh *ssh, Channel *c, char *rtype);
-static const char *channel_rfwd_bind_host(const char *listen_host);
+స్థిర శూన్య పోర్టు_open_helper(నిర్మాణం ssh *ssh, Channel *c, అక్షరం *rtype);
+స్థిర స్థిరరాశి అక్షరం *channel_rfwd_bind_host(స్థిరరాశి అక్షరం *listen_host);
 
 /* non-blocking connect helpers */
-static int connect_next(struct ssh *, struct channel_connect *);
-static Channel *rdynamic_connect_prepare(struct ssh *, char *, char *);
-static int rdynamic_connect_finish(struct ssh *, Channel *);
+స్థిర పూర్ణాంకం connect_తదుపరి(నిర్మాణం ssh *, నిర్మాణం channel_connect *);
+స్థిర Channel *rdynamic_connect_prepare(నిర్మాణం ssh *, అక్షరం *, అక్షరం *);
+స్థిర పూర్ణాంకం rdynamic_connect_ముగింపు(నిర్మాణం ssh *, Channel *);
 
 /* Setup helper */
-static void channel_handler_init(struct ssh_channels *sc);
+స్థిర శూన్య channel_handler_init(నిర్మాణం ssh_channels *sc);
 
 /* -- channel core */
 
-void
-channel_init_channels(struct ssh *ssh)
+శూన్య
+channel_init_channels(నిర్మాణం ssh *ssh)
 {
-	struct ssh_channels *sc;
+	నిర్మాణం ssh_channels *sc;
 
-	if ((sc = calloc(1, sizeof(*sc))) == NULL)
+	ఒకవేళ ((sc = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*sc))) == ఖాళీ)
 		fatal_f("allocation failed");
 	sc->channels_alloc = 10;
-	sc->channels = xcalloc(sc->channels_alloc, sizeof(*sc->channels));
+	sc->channels = xcalloc(sc->channels_alloc, పరిమాణం(*sc->channels));
 	sc->IPv4or6 = AF_UNSPEC;
 	sc->bulk_classifier_tty = xstrdup(CHANNEL_BULK_TTY);
 	sc->bulk_classifier_notty = xstrdup(CHANNEL_BULK_NOTTY);
@@ -251,34 +251,34 @@ channel_init_channels(struct ssh *ssh)
 }
 
 Channel *
-channel_by_id(struct ssh *ssh, int id)
+channel_by_id(నిర్మాణం ssh *ssh, పూర్ణాంకం id)
 {
 	Channel *c;
 
-	if (id < 0 || (u_int)id >= ssh->chanctxt->channels_alloc) {
+	ఒకవేళ (id < 0 || (u_int)id >= ssh->chanctxt->channels_alloc) {
 		logit_f("%d: bad id", id);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 	c = ssh->chanctxt->channels[id];
-	if (c == NULL) {
+	ఒకవేళ (c == ఖాళీ) {
 		logit_f("%d: bad id: channel free", id);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	return c;
+	తిరిగి c;
 }
 
 Channel *
-channel_by_remote_id(struct ssh *ssh, u_int remote_id)
+channel_by_remote_id(నిర్మాణం ssh *ssh, u_int remote_id)
 {
 	Channel *c;
 	u_int i;
 
-	for (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
+	కొరకు (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
 		c = ssh->chanctxt->channels[i];
-		if (c != NULL && c->have_remote_id && c->remote_id == remote_id)
-			return c;
+		ఒకవేళ (c != ఖాళీ && c->have_remote_id && c->remote_id == remote_id)
+			తిరిగి c;
 	}
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
 /*
@@ -286,56 +286,56 @@ channel_by_remote_id(struct ssh *ssh, u_int remote_id)
  * Private channels, like listening sockets, may not receive messages.
  */
 Channel *
-channel_lookup(struct ssh *ssh, int id)
+channel_lookup(నిర్మాణం ssh *ssh, పూర్ణాంకం id)
 {
 	Channel *c;
 
-	if ((c = channel_by_id(ssh, id)) == NULL)
-		return NULL;
+	ఒకవేళ ((c = channel_by_id(ssh, id)) == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	switch (c->type) {
-	case SSH_CHANNEL_X11_OPEN:
-	case SSH_CHANNEL_LARVAL:
-	case SSH_CHANNEL_CONNECTING:
-	case SSH_CHANNEL_DYNAMIC:
-	case SSH_CHANNEL_RDYNAMIC_OPEN:
-	case SSH_CHANNEL_RDYNAMIC_FINISH:
-	case SSH_CHANNEL_OPENING:
-	case SSH_CHANNEL_OPEN:
-	case SSH_CHANNEL_ABANDONED:
-	case SSH_CHANNEL_MUX_PROXY:
-		return c;
+	ఎంపిక (c->type) {
+	స్థితి SSH_CHANNEL_X11_OPEN:
+	స్థితి SSH_CHANNEL_LARVAL:
+	స్థితి SSH_CHANNEL_CONNECTING:
+	స్థితి SSH_CHANNEL_DYNAMIC:
+	స్థితి SSH_CHANNEL_RDYNAMIC_OPEN:
+	స్థితి SSH_CHANNEL_RDYNAMIC_ముగింపు:
+	స్థితి SSH_CHANNEL_OPENING:
+	స్థితి SSH_CHANNEL_OPEN:
+	స్థితి SSH_CHANNEL_ABANDONED:
+	స్థితి SSH_CHANNEL_MUX_PROXY:
+		తిరిగి c;
 	}
 	logit("Non-public channel %d, type %d.", id, c->type);
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
-static void
-free_connect_ctx(struct channel_connect *cctx)
+స్థిర శూన్య
+free_connect_ctx(నిర్మాణం channel_connect *cctx)
 {
-	free(cctx->host);
-	if (cctx->aitop) {
-		if (cctx->aitop->ai_family == AF_UNIX)
-			free(cctx->aitop);
-		else
+	విడుదల(cctx->host);
+	ఒకవేళ (cctx->aitop) {
+		ఒకవేళ (cctx->aitop->ai_family == AF_UNIX)
+			విడుదల(cctx->aitop);
+		లేకపోతే
 			freeaddrinfo(cctx->aitop);
 	}
-	memset(cctx, 0, sizeof(*cctx));
+	memset(cctx, 0, పరిమాణం(*cctx));
 }
 
-static void
+స్థిర శూన్య
 channel_free_connect_ctx(Channel *c)
 {
-	if (c == NULL || c->connect_ctx == NULL)
-		return;
+	ఒకవేళ (c == ఖాళీ || c->connect_ctx == ఖాళీ)
+		తిరిగి;
 	free_connect_ctx(c->connect_ctx);
-	free(c->connect_ctx);
-	c->connect_ctx = NULL;
+	విడుదల(c->connect_ctx);
+	c->connect_ctx = ఖాళీ;
 }
 
 /* Enable/disable TCP keepalives for X11 and port-forwarding sockets */
-void
-channel_set_tcp_keepalives(struct ssh *ssh, int on)
+శూన్య
+channel_సమితి_tcp_keepalives(నిర్మాణం ssh *ssh, పూర్ణాంకం on)
 {
 	ssh->chanctxt->want_tcp_keepalive = on;
 }
@@ -344,65 +344,65 @@ channel_set_tcp_keepalives(struct ssh *ssh, int on)
  * Add a timeout for open channels whose c->ctype (or c->xctype if it is set)
  * match type_pattern.
  */
-void
-channel_add_timeout(struct ssh *ssh, const char *type_pattern,
-    double timeout_secs)
+శూన్య
+channel_కూడు_timeout(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *type_నమూనా,
+    ద్విగుణ timeout_secs)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
 
-	if (strcmp(type_pattern, "global") == 0) {
+	ఒకవేళ (strcmp(type_నమూనా, "global") == 0) {
 		debug2_f("global channel timeout %f seconds", timeout_secs);
 		sc->global_deadline = timeout_secs;
-		return;
+		తిరిగి;
 	}
 	debug2_f("channel type \"%s\" timeout %f seconds",
-	    type_pattern, timeout_secs);
+	    type_నమూనా, timeout_secs);
 	sc->timeouts = xrecallocarray(sc->timeouts, sc->ntimeouts,
-	    sc->ntimeouts + 1, sizeof(*sc->timeouts));
-	sc->timeouts[sc->ntimeouts].type_pattern = xstrdup(type_pattern);
+	    sc->ntimeouts + 1, పరిమాణం(*sc->timeouts));
+	sc->timeouts[sc->ntimeouts].type_నమూనా = xstrdup(type_నమూనా);
 	sc->timeouts[sc->ntimeouts].timeout_secs = timeout_secs;
 	sc->ntimeouts++;
 }
 
 /* Clears all previously-added channel timeouts */
-void
-channel_clear_timeouts(struct ssh *ssh)
+శూన్య
+channel_clear_timeouts(నిర్మాణం ssh *ssh)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	size_t i;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	కొలత_t i;
 
 	debug3_f("clearing");
-	for (i = 0; i < sc->ntimeouts; i++)
-		free(sc->timeouts[i].type_pattern);
-	free(sc->timeouts);
-	sc->timeouts = NULL;
+	కొరకు (i = 0; i < sc->ntimeouts; i++)
+		విడుదల(sc->timeouts[i].type_నమూనా);
+	విడుదల(sc->timeouts);
+	sc->timeouts = ఖాళీ;
 	sc->ntimeouts = 0;
 }
 
-static double
-lookup_timeout(struct ssh *ssh, const char *type)
+స్థిర ద్విగుణ
+lookup_timeout(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *type)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	size_t i;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	కొలత_t i;
 
-	for (i = 0; i < sc->ntimeouts; i++) {
-		if (match_pattern(type, sc->timeouts[i].type_pattern))
-			return sc->timeouts[i].timeout_secs;
+	కొరకు (i = 0; i < sc->ntimeouts; i++) {
+		ఒకవేళ (సరిపోలిక_నమూనా(type, sc->timeouts[i].type_నమూనా))
+			తిరిగి sc->timeouts[i].timeout_secs;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-static void
-channel_classify(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_classify(నిర్మాణం ssh *ssh, Channel *c)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	const char *type = c->xctype == NULL ? c->ctype : c->xctype;
-	const int has_tty = c->isatty || c->remote_has_tty;
-	const char *classifier = has_tty ?
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	స్థిరరాశి అక్షరం *type = c->xctype == ఖాళీ ? c->ctype : c->xctype;
+	స్థిరరాశి పూర్ణాంకం has_tty = c->isatty || c->remote_has_tty;
+	స్థిరరాశి అక్షరం *classifier = has_tty ?
 	    sc->bulk_classifier_tty : sc->bulk_classifier_notty;
 
-	c->bulk = type != NULL && match_pattern_list(type, classifier, 0) == 1;
+	c->bulk = type != ఖాళీ && సరిపోలిక_నమూనా_list(type, classifier, 0) == 1;
 	debug3("channel %d: classify type \"%s\" (%s) as %s", c->self,
 	    type ? type : "(null)", has_tty ? "with TTY" : "no TTY",
 	    c->bulk ? "bulk" : "interactive");
@@ -414,20 +414,20 @@ channel_classify(struct ssh *ssh, Channel *c)
  * be used to select timeouts and DSCP values.
  * Will reset c->inactive_deadline as a side-effect.
  */
-void
-channel_set_xtype(struct ssh *ssh, int id, const char *xctype)
+శూన్య
+channel_సమితి_xtype(నిర్మాణం ssh *ssh, పూర్ణాంకం id, స్థిరరాశి అక్షరం *xctype)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
 	Channel *c;
 
-	if ((c = channel_by_id(ssh, id)) == NULL)
+	ఒకవేళ ((c = channel_by_id(ssh, id)) == ఖాళీ)
 		fatal_f("missing channel %d", id);
-	if (c->xctype != NULL)
-		free(c->xctype);
+	ఒకవేళ (c->xctype != ఖాళీ)
+		విడుదల(c->xctype);
 	c->xctype = xstrdup(xctype);
 	/* Only override deadline if xctype has a more specific match. */
-	double xtype_deadline = lookup_timeout(ssh, c->xctype);
-	if (xtype_deadline != 0)
+	ద్విగుణ xtype_deadline = lookup_timeout(ssh, c->xctype);
+	ఒకవేళ (xtype_deadline != 0)
 		c->inactive_deadline = xtype_deadline;
 	channel_classify(ssh, c);
 	/* report effective timeout: per-channel if set, else global */
@@ -440,11 +440,11 @@ channel_set_xtype(struct ssh *ssh, int id, const char *xctype)
  * update "last used" time on a channel.
  * NB. nothing else should update lastused except to clear it.
  */
-static void
-channel_set_used_time(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_సమితి_వాడిన_సమయం(నిర్మాణం ssh *ssh, Channel *c)
 {
 	ssh->chanctxt->lastused = monotime_double();
-	if (c != NULL)
+	ఒకవేళ (c != ఖాళీ)
 		c->lastused = ssh->chanctxt->lastused;
 }
 
@@ -452,45 +452,45 @@ channel_set_used_time(struct ssh *ssh, Channel *c)
  * Get the time at which a channel is due to time out for inactivity.
  * Returns 0 if the channel is not due to time out ever.
  */
-static double
-channel_get_expiry(struct ssh *ssh, Channel *c)
+స్థిర ద్విగుణ
+channel_get_expiry(నిర్మాణం ssh *ssh, Channel *c)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	double expiry = 0, channel_expiry;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	ద్విగుణ expiry = 0, channel_expiry;
 
-	if (sc->lastused != 0 && sc->global_deadline != 0)
+	ఒకవేళ (sc->lastused != 0 && sc->global_deadline != 0)
 		expiry = sc->lastused + sc->global_deadline;
-	if (c->lastused != 0 && c->inactive_deadline != 0) {
+	ఒకవేళ (c->lastused != 0 && c->inactive_deadline != 0) {
 		channel_expiry = c->lastused + c->inactive_deadline;
-		if (expiry == 0 || channel_expiry < expiry)
+		ఒకవేళ (expiry == 0 || channel_expiry < expiry)
 			expiry = channel_expiry;
 	}
-	return expiry;
+	తిరిగి expiry;
 }
 
 /* Returns non-zero if there is an open, non-interactive channel */
-int
-channel_has_bulk(struct ssh *ssh)
+పూర్ణాంకం
+channel_has_bulk(నిర్మాణం ssh *ssh)
 {
-	return ssh->chanctxt != NULL && ssh->chanctxt->nbulk != 0;
+	తిరిగి ssh->chanctxt != ఖాళీ && ssh->chanctxt->nbulk != 0;
 }
 
 /*
  * Register filedescriptors for a channel, used when allocating a channel or
  * when the channel consumer/producer is ready, e.g. shell exec'd
  */
-static void
-channel_register_fds(struct ssh *ssh, Channel *c, int rfd, int wfd, int efd,
-    int extusage, int nonblock, int is_tty)
+స్థిర శూన్య
+channel_రిజిస్టరు_fds(నిర్మాణం ssh *ssh, Channel *c, పూర్ణాంకం rfd, పూర్ణాంకం wfd, పూర్ణాంకం efd,
+    పూర్ణాంకం extusage, పూర్ణాంకం nonblock, పూర్ణాంకం is_tty)
 {
-	int val;
+	పూర్ణాంకం val;
 
-	if (rfd != -1)
-		(void)fcntl(rfd, F_SETFD, FD_CLOEXEC);
-	if (wfd != -1 && wfd != rfd)
-		(void)fcntl(wfd, F_SETFD, FD_CLOEXEC);
-	if (efd != -1 && efd != rfd && efd != wfd)
-		(void)fcntl(efd, F_SETFD, FD_CLOEXEC);
+	ఒకవేళ (rfd != -1)
+		(శూన్య)fcntl(rfd, F_SETFD, FD_CLOEXEC);
+	ఒకవేళ (wfd != -1 && wfd != rfd)
+		(శూన్య)fcntl(wfd, F_SETFD, FD_CLOEXEC);
+	ఒకవేళ (efd != -1 && efd != rfd && efd != wfd)
+		(శూన్య)fcntl(efd, F_SETFD, FD_CLOEXEC);
 
 	c->rfd = rfd;
 	c->wfd = wfd;
@@ -498,50 +498,50 @@ channel_register_fds(struct ssh *ssh, Channel *c, int rfd, int wfd, int efd,
 	c->efd = efd;
 	c->extended_usage = extusage;
 
-	if ((c->isatty = is_tty) != 0)
+	ఒకవేళ ((c->isatty = is_tty) != 0)
 		debug2("channel %d: rfd %d isatty", c->self, c->rfd);
-#ifdef _AIX
+#నిర్వచితమైతే _AIX
 	/* XXX: Later AIX versions can't push as much data to tty */
 	c->wfd_isatty = is_tty || isatty(c->wfd);
-#endif
+#అయితే_ముగింపు
 
 	/* enable nonblocking mode */
-	c->restore_block = 0;
-	if (nonblock == CHANNEL_NONBLOCK_STDIO) {
+	c->restore_ఖండం = 0;
+	ఒకవేళ (nonblock == CHANNEL_NONBLOCK_STDIO) {
 		/*
 		 * Special handling for stdio file descriptors: do not set
 		 * non-blocking mode if they are TTYs. Otherwise prepare to
 		 * restore their blocking state on exit to avoid interfering
 		 * with other programs that follow.
 		 */
-		if (rfd != -1 && !isatty(rfd) &&
+		ఒకవేళ (rfd != -1 && !isatty(rfd) &&
 		    (val = fcntl(rfd, F_GETFL)) != -1 && !(val & O_NONBLOCK)) {
 			c->restore_flags[0] = val;
-			c->restore_block |= CHANNEL_RESTORE_RFD;
-			set_nonblock(rfd);
+			c->restore_ఖండం |= CHANNEL_RESTORE_RFD;
+			సమితి_nonblock(rfd);
 		}
-		if (wfd != -1 && !isatty(wfd) &&
+		ఒకవేళ (wfd != -1 && !isatty(wfd) &&
 		    (val = fcntl(wfd, F_GETFL)) != -1 && !(val & O_NONBLOCK)) {
 			c->restore_flags[1] = val;
-			c->restore_block |= CHANNEL_RESTORE_WFD;
-			set_nonblock(wfd);
+			c->restore_ఖండం |= CHANNEL_RESTORE_WFD;
+			సమితి_nonblock(wfd);
 		}
-		if (efd != -1 && !isatty(efd) &&
+		ఒకవేళ (efd != -1 && !isatty(efd) &&
 		    (val = fcntl(efd, F_GETFL)) != -1 && !(val & O_NONBLOCK)) {
 			c->restore_flags[2] = val;
-			c->restore_block |= CHANNEL_RESTORE_EFD;
-			set_nonblock(efd);
+			c->restore_ఖండం |= CHANNEL_RESTORE_EFD;
+			సమితి_nonblock(efd);
 		}
-	} else if (nonblock) {
-		if (rfd != -1)
-			set_nonblock(rfd);
-		if (wfd != -1)
-			set_nonblock(wfd);
-		if (efd != -1)
-			set_nonblock(efd);
+	} లేకపోతే ఒకవేళ (nonblock) {
+		ఒకవేళ (rfd != -1)
+			సమితి_nonblock(rfd);
+		ఒకవేళ (wfd != -1)
+			సమితి_nonblock(wfd);
+		ఒకవేళ (efd != -1)
+			సమితి_nonblock(efd);
 	}
 	/* channel might be entering a larval state, so reset global timeout */
-	channel_set_used_time(ssh, NULL);
+	channel_సమితి_వాడిన_సమయం(ssh, ఖాళీ);
 	channel_classify(ssh, c);
 }
 
@@ -549,111 +549,111 @@ channel_register_fds(struct ssh *ssh, Channel *c, int rfd, int wfd, int efd,
  * Allocate a new channel object and set its type and socket.
  */
 Channel *
-channel_new(struct ssh *ssh, char *ctype, int type, int rfd, int wfd, int efd,
-    u_int window, u_int maxpack, int extusage, const char *remote_name,
-    int nonblock)
+channel_new(నిర్మాణం ssh *ssh, అక్షరం *ctype, పూర్ణాంకం type, పూర్ణాంకం rfd, పూర్ణాంకం wfd, పూర్ణాంకం efd,
+    u_int కిటికీ, u_int maxpack, పూర్ణాంకం extusage, స్థిరరాశి అక్షరం *remote_name,
+    పూర్ణాంకం nonblock)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	u_int i, found = 0;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	u_int i, దొరికింది = 0;
 	Channel *c;
-	int r;
+	పూర్ణాంకం r;
 
 	/* Try to find a free slot where to put the new channel. */
-	for (i = 0; i < sc->channels_alloc; i++) {
-		if (sc->channels[i] == NULL) {
+	కొరకు (i = 0; i < sc->channels_alloc; i++) {
+		ఒకవేళ (sc->channels[i] == ఖాళీ) {
 			/* Found a free slot. */
-			found = i;
-			break;
+			దొరికింది = i;
+			ఆపు;
 		}
 	}
-	if (i >= sc->channels_alloc) {
+	ఒకవేళ (i >= sc->channels_alloc) {
 		/*
 		 * There are no free slots. Take last+1 slot and expand
 		 * the array.
 		 */
-		found = sc->channels_alloc;
-		if (sc->channels_alloc > CHANNELS_MAX_CHANNELS)
+		దొరికింది = sc->channels_alloc;
+		ఒకవేళ (sc->channels_alloc > CHANNELS_MAX_CHANNELS)
 			fatal_f("internal error: channels_alloc %d too big",
 			    sc->channels_alloc);
 		sc->channels = xrecallocarray(sc->channels, sc->channels_alloc,
-		    sc->channels_alloc + 10, sizeof(*sc->channels));
+		    sc->channels_alloc + 10, పరిమాణం(*sc->channels));
 		sc->channels_alloc += 10;
 		debug2("channel: expanding %d", sc->channels_alloc);
 	}
 	/* Initialize and return new channel. */
-	c = sc->channels[found] = xcalloc(1, sizeof(Channel));
-	if ((c->input = sshbuf_new()) == NULL ||
-	    (c->output = sshbuf_new()) == NULL ||
-	    (c->extended = sshbuf_new()) == NULL)
+	c = sc->channels[దొరికింది] = xcalloc(1, పరిమాణం(Channel));
+	ఒకవేళ ((c->ఆదానం = sshbuf_new()) == ఖాళీ ||
+	    (c->output = sshbuf_new()) == ఖాళీ ||
+	    (c->extended = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_set_max_size(c->input, CHAN_INPUT_MAX)) != 0)
+	ఒకవేళ ((r = sshbuf_సమితి_max_కొలత(c->ఆదానం, CHAN_ఆదానం_MAX)) != 0)
 		fatal_fr(r, "sshbuf_set_max_size");
 	c->ostate = CHAN_OUTPUT_OPEN;
-	c->istate = CHAN_INPUT_OPEN;
-	channel_register_fds(ssh, c, rfd, wfd, efd, extusage, nonblock, 0);
-	c->self = found;
+	c->istate = CHAN_ఆదానం_OPEN;
+	channel_రిజిస్టరు_fds(ssh, c, rfd, wfd, efd, extusage, nonblock, 0);
+	c->self = దొరికింది;
 	c->type = type;
 	c->ctype = ctype;
-	c->local_window = window;
-	c->local_window_max = window;
+	c->local_కిటికీ = కిటికీ;
+	c->local_కిటికీ_max = కిటికీ;
 	c->local_maxpacket = maxpack;
 	c->remote_name = xstrdup(remote_name);
 	c->ctl_chan = -1;
 	c->delayed = 1;		/* prevent call to channel_post handler */
 	c->inactive_deadline = lookup_timeout(ssh, c->ctype);
-	TAILQ_INIT(&c->status_confirms);
+	TAILQ_INIT(&c->స్థితి_confirms);
 	channel_classify(ssh, c);
 	debug("channel %d: new %s [%s] (inactive timeout: %f)",
-	    found, c->ctype, remote_name, c->inactive_deadline != 0.0 ?
+	    దొరికింది, c->ctype, remote_name, c->inactive_deadline != 0.0 ?
 	    c->inactive_deadline : sc->global_deadline);
-	return c;
+	తిరిగి c;
 }
 
-void
-channel_set_tty(struct ssh *ssh, Channel *c)
+శూన్య
+channel_సమితి_tty(నిర్మాణం ssh *ssh, Channel *c)
 {
 	c->remote_has_tty = 1;
 	channel_classify(ssh, c);
 }
 
-int
-channel_close_fd(struct ssh *ssh, Channel *c, int *fdp)
+పూర్ణాంకం
+channel_close_fd(నిర్మాణం ssh *ssh, Channel *c, పూర్ణాంకం *fdp)
 {
-	int ret, fd = *fdp;
+	పూర్ణాంకం ret, fd = *fdp;
 
-	if (fd == -1)
-		return 0;
+	ఒకవేళ (fd == -1)
+		తిరిగి 0;
 
 	/* restore blocking */
-	if (*fdp == c->rfd &&
-	    (c->restore_block & CHANNEL_RESTORE_RFD) != 0)
-		(void)fcntl(*fdp, F_SETFL, c->restore_flags[0]);
-	else if (*fdp == c->wfd &&
-	    (c->restore_block & CHANNEL_RESTORE_WFD) != 0)
-		(void)fcntl(*fdp, F_SETFL, c->restore_flags[1]);
-	else if (*fdp == c->efd &&
-	    (c->restore_block & CHANNEL_RESTORE_EFD) != 0)
-		(void)fcntl(*fdp, F_SETFL, c->restore_flags[2]);
+	ఒకవేళ (*fdp == c->rfd &&
+	    (c->restore_ఖండం & CHANNEL_RESTORE_RFD) != 0)
+		(శూన్య)fcntl(*fdp, F_SETFL, c->restore_flags[0]);
+	లేకపోతే ఒకవేళ (*fdp == c->wfd &&
+	    (c->restore_ఖండం & CHANNEL_RESTORE_WFD) != 0)
+		(శూన్య)fcntl(*fdp, F_SETFL, c->restore_flags[1]);
+	లేకపోతే ఒకవేళ (*fdp == c->efd &&
+	    (c->restore_ఖండం & CHANNEL_RESTORE_EFD) != 0)
+		(శూన్య)fcntl(*fdp, F_SETFL, c->restore_flags[2]);
 
-	if (*fdp == c->rfd) {
+	ఒకవేళ (*fdp == c->rfd) {
 		c->io_want &= ~SSH_CHAN_IO_RFD;
 		c->io_ready &= ~SSH_CHAN_IO_RFD;
 		c->rfd = -1;
 		c->pfds[0] = -1;
 	}
-	if (*fdp == c->wfd) {
+	ఒకవేళ (*fdp == c->wfd) {
 		c->io_want &= ~SSH_CHAN_IO_WFD;
 		c->io_ready &= ~SSH_CHAN_IO_WFD;
 		c->wfd = -1;
 		c->pfds[1] = -1;
 	}
-	if (*fdp == c->efd) {
+	ఒకవేళ (*fdp == c->efd) {
 		c->io_want &= ~SSH_CHAN_IO_EFD;
 		c->io_ready &= ~SSH_CHAN_IO_EFD;
 		c->efd = -1;
 		c->pfds[2] = -1;
 	}
-	if (*fdp == c->sock) {
+	ఒకవేళ (*fdp == c->sock) {
 		c->io_want &= ~SSH_CHAN_IO_SOCK;
 		c->io_ready &= ~SSH_CHAN_IO_SOCK;
 		c->sock = -1;
@@ -662,142 +662,142 @@ channel_close_fd(struct ssh *ssh, Channel *c, int *fdp)
 
 	ret = close(fd);
 	*fdp = -1; /* probably redundant */
-	return ret;
+	తిరిగి ret;
 }
 
 /* Close all channel fd/socket. */
-static void
-channel_close_fds(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_close_fds(నిర్మాణం ssh *ssh, Channel *c)
 {
-	int sock = c->sock, rfd = c->rfd, wfd = c->wfd, efd = c->efd;
+	పూర్ణాంకం sock = c->sock, rfd = c->rfd, wfd = c->wfd, efd = c->efd;
 
 	channel_close_fd(ssh, c, &c->sock);
-	if (rfd != sock)
+	ఒకవేళ (rfd != sock)
 		channel_close_fd(ssh, c, &c->rfd);
-	if (wfd != sock && wfd != rfd)
+	ఒకవేళ (wfd != sock && wfd != rfd)
 		channel_close_fd(ssh, c, &c->wfd);
-	if (efd != sock && efd != rfd && efd != wfd)
+	ఒకవేళ (efd != sock && efd != rfd && efd != wfd)
 		channel_close_fd(ssh, c, &c->efd);
 }
 
-static void
-fwd_perm_clear(struct permission *perm)
+స్థిర శూన్య
+fwd_perm_clear(నిర్మాణం permission *perm)
 {
-	free(perm->host_to_connect);
-	free(perm->listen_host);
-	free(perm->listen_path);
-	memset(perm, 0, sizeof(*perm));
+	విడుదల(perm->host_గమ్యం_connect);
+	విడుదల(perm->listen_host);
+	విడుదల(perm->listen_మార్గం);
+	memset(perm, 0, పరిమాణం(*perm));
 }
 
 /* Returns an printable name for the specified forwarding permission list */
-static const char *
-fwd_ident(int who, int where)
+స్థిర స్థిరరాశి అక్షరం *
+fwd_ident(పూర్ణాంకం who, పూర్ణాంకం where)
 {
-	if (who == FORWARD_ADM) {
-		if (where == FORWARD_LOCAL)
-			return "admin local";
-		else if (where == FORWARD_REMOTE)
-			return "admin remote";
-	} else if (who == FORWARD_USER) {
-		if (where == FORWARD_LOCAL)
-			return "user local";
-		else if (where == FORWARD_REMOTE)
-			return "user remote";
+	ఒకవేళ (who == FORWARD_ADM) {
+		ఒకవేళ (where == FORWARD_LOCAL)
+			తిరిగి "admin local";
+		లేకపోతే ఒకవేళ (where == FORWARD_REMOTE)
+			తిరిగి "admin remote";
+	} లేకపోతే ఒకవేళ (who == FORWARD_USER) {
+		ఒకవేళ (where == FORWARD_LOCAL)
+			తిరిగి "user local";
+		లేకపోతే ఒకవేళ (where == FORWARD_REMOTE)
+			తిరిగి "user remote";
 	}
 	fatal("Unknown forward permission list %d/%d", who, where);
 }
 
 /* Returns the forwarding permission list for the specified direction */
-static struct permission_set *
-permission_set_get(struct ssh *ssh, int where)
+స్థిర నిర్మాణం permission_సమితి *
+permission_సమితి_get(నిర్మాణం ssh *ssh, పూర్ణాంకం where)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
 
-	switch (where) {
-	case FORWARD_LOCAL:
-		return &sc->local_perms;
-		break;
-	case FORWARD_REMOTE:
-		return &sc->remote_perms;
-		break;
-	default:
+	ఎంపిక (where) {
+	స్థితి FORWARD_LOCAL:
+		తిరిగి &sc->local_perms;
+		ఆపు;
+	స్థితి FORWARD_REMOTE:
+		తిరిగి &sc->remote_perms;
+		ఆపు;
+	అప్రమేయ:
 		fatal_f("invalid forwarding direction %d", where);
 	}
 }
 
 /* Returns pointers to the specified forwarding list and its element count */
-static void
-permission_set_get_array(struct ssh *ssh, int who, int where,
-    struct permission ***permpp, u_int **npermpp)
+స్థిర శూన్య
+permission_సమితి_get_array(నిర్మాణం ssh *ssh, పూర్ణాంకం who, పూర్ణాంకం where,
+    నిర్మాణం permission ***permpp, u_int **npermpp)
 {
-	struct permission_set *pset = permission_set_get(ssh, where);
+	నిర్మాణం permission_సమితి *pset = permission_సమితి_get(ssh, where);
 
-	switch (who) {
-	case FORWARD_USER:
+	ఎంపిక (who) {
+	స్థితి FORWARD_USER:
 		*permpp = &pset->permitted_user;
-		*npermpp = &pset->num_permitted_user;
-		break;
-	case FORWARD_ADM:
+		*npermpp = &pset->అంకె_permitted_user;
+		ఆపు;
+	స్థితి FORWARD_ADM:
 		*permpp = &pset->permitted_admin;
-		*npermpp = &pset->num_permitted_admin;
-		break;
-	default:
+		*npermpp = &pset->అంకె_permitted_admin;
+		ఆపు;
+	అప్రమేయ:
 		fatal_f("invalid forwarding client %d", who);
 	}
 }
 
 /* Adds an entry to the specified forwarding list */
-static int
-permission_set_add(struct ssh *ssh, int who, int where,
-    const char *host_to_connect, int port_to_connect,
-    const char *listen_host, const char *listen_path, int listen_port,
+స్థిర పూర్ణాంకం
+permission_సమితి_కూడు(నిర్మాణం ssh *ssh, పూర్ణాంకం who, పూర్ణాంకం where,
+    స్థిరరాశి అక్షరం *host_గమ్యం_connect, పూర్ణాంకం పోర్టు_గమ్యం_connect,
+    స్థిరరాశి అక్షరం *listen_host, స్థిరరాశి అక్షరం *listen_మార్గం, పూర్ణాంకం listen_పోర్టు,
     Channel *downstream)
 {
-	struct permission **permp;
+	నిర్మాణం permission **permp;
 	u_int n, *npermp;
 
-	permission_set_get_array(ssh, who, where, &permp, &npermp);
+	permission_సమితి_get_array(ssh, who, where, &permp, &npermp);
 
-	if (*npermp >= INT_MAX)
+	ఒకవేళ (*npermp >= గరిష్ఠ_పూర్ణాంకం)
 		fatal_f("%s overflow", fwd_ident(who, where));
 
-	*permp = xrecallocarray(*permp, *npermp, *npermp + 1, sizeof(**permp));
+	*permp = xrecallocarray(*permp, *npermp, *npermp + 1, పరిమాణం(**permp));
 	n = (*npermp)++;
-#define MAYBE_DUP(s) ((s == NULL) ? NULL : xstrdup(s))
-	(*permp)[n].host_to_connect = MAYBE_DUP(host_to_connect);
-	(*permp)[n].port_to_connect = port_to_connect;
+#నిర్వచించు MAYBE_DUP(s) ((s == ఖాళీ) ? ఖాళీ : xstrdup(s))
+	(*permp)[n].host_గమ్యం_connect = MAYBE_DUP(host_గమ్యం_connect);
+	(*permp)[n].పోర్టు_గమ్యం_connect = పోర్టు_గమ్యం_connect;
 	(*permp)[n].listen_host = MAYBE_DUP(listen_host);
-	(*permp)[n].listen_path = MAYBE_DUP(listen_path);
-	(*permp)[n].listen_port = listen_port;
+	(*permp)[n].listen_మార్గం = MAYBE_DUP(listen_మార్గం);
+	(*permp)[n].listen_పోర్టు = listen_పోర్టు;
 	(*permp)[n].downstream = downstream;
-#undef MAYBE_DUP
-	return (int)n;
+#నిర్వచనం_రద్దు MAYBE_DUP
+	తిరిగి (పూర్ణాంకం)n;
 }
 
-static void
-mux_remove_remote_forwardings(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+mux_remove_remote_forwardings(నిర్మాణం ssh *ssh, Channel *c)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	struct permission_set *pset = &sc->local_perms;
-	struct permission *perm;
-	int r;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం permission_సమితి *pset = &sc->local_perms;
+	నిర్మాణం permission *perm;
+	పూర్ణాంకం r;
 	u_int i;
 
-	for (i = 0; i < pset->num_permitted_user; i++) {
+	కొరకు (i = 0; i < pset->అంకె_permitted_user; i++) {
 		perm = &pset->permitted_user[i];
-		if (perm->downstream != c)
-			continue;
+		ఒకవేళ (perm->downstream != c)
+			కొనసాగు;
 
 		/* cancel on the server, since mux client is gone */
 		debug("channel %d: cleanup remote forward for %s:%u",
-		    c->self, perm->listen_host, perm->listen_port);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_GLOBAL_REQUEST)) != 0 ||
+		    c->self, perm->listen_host, perm->listen_పోర్టు);
+		ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_GLOBAL_REQUEST)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh,
 		    "cancel-tcpip-forward")) != 0 ||
 		    (r = sshpkt_put_u8(ssh, 0)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh,
 		    channel_rfwd_bind_host(perm->listen_host))) != 0 ||
-		    (r = sshpkt_put_u32(ssh, perm->listen_port)) != 0 ||
+		    (r = sshpkt_put_u32(ssh, perm->listen_పోర్టు)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0) {
 			fatal_fr(r, "channel %i", c->self);
 		}
@@ -806,159 +806,159 @@ mux_remove_remote_forwardings(struct ssh *ssh, Channel *c)
 }
 
 /* Free the channel and close its fd/socket. */
-void
-channel_free(struct ssh *ssh, Channel *c)
+శూన్య
+channel_free(నిర్మాణం ssh *ssh, Channel *c)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	char *s;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	అక్షరం *s;
 	u_int i, n;
 	Channel *other;
-	struct channel_confirm *cc;
+	నిర్మాణం channel_confirm *cc;
 
-	for (n = 0, i = 0; i < sc->channels_alloc; i++) {
-		if ((other = sc->channels[i]) == NULL)
-			continue;
+	కొరకు (n = 0, i = 0; i < sc->channels_alloc; i++) {
+		ఒకవేళ ((other = sc->channels[i]) == ఖాళీ)
+			కొనసాగు;
 		n++;
 		/* detach from mux client and prepare for closing */
-		if (c->type == SSH_CHANNEL_MUX_CLIENT &&
+		ఒకవేళ (c->type == SSH_CHANNEL_MUX_CLIENT &&
 		    other->type == SSH_CHANNEL_MUX_PROXY &&
 		    other->mux_ctx == c) {
-			other->mux_ctx = NULL;
+			other->mux_ctx = ఖాళీ;
 			other->type = SSH_CHANNEL_OPEN;
-			other->istate = CHAN_INPUT_CLOSED;
+			other->istate = CHAN_ఆదానం_CLOSED;
 			other->ostate = CHAN_OUTPUT_CLOSED;
 		}
 	}
 	debug("channel %d: free: %s, nchannels %u", c->self,
 	    c->remote_name ? c->remote_name : "???", n);
 
-	if (c->type == SSH_CHANNEL_MUX_CLIENT) {
+	ఒకవేళ (c->type == SSH_CHANNEL_MUX_CLIENT) {
 		mux_remove_remote_forwardings(ssh, c);
-		free(c->mux_ctx);
-		c->mux_ctx = NULL;
-	} else if (c->type == SSH_CHANNEL_MUX_LISTENER) {
-		free(c->mux_ctx);
-		c->mux_ctx = NULL;
+		విడుదల(c->mux_ctx);
+		c->mux_ctx = ఖాళీ;
+	} లేకపోతే ఒకవేళ (c->type == SSH_CHANNEL_MUX_LISTENER) {
+		విడుదల(c->mux_ctx);
+		c->mux_ctx = ఖాళీ;
 	}
 
-	if (log_level_get() >= SYSLOG_LEVEL_DEBUG3) {
-		s = channel_open_message(ssh);
+	ఒకవేళ (log_level_get() >= SYSLOG_LEVEL_DEBUG3) {
+		s = channel_open_సందేశం(ssh);
 		debug3("channel %d: status: %s", c->self, s);
-		free(s);
+		విడుదల(s);
 	}
 
 	channel_close_fds(ssh, c);
-	sshbuf_free(c->input);
+	sshbuf_free(c->ఆదానం);
 	sshbuf_free(c->output);
 	sshbuf_free(c->extended);
-	c->input = c->output = c->extended = NULL;
-	free(c->remote_name);
-	c->remote_name = NULL;
-	free(c->path);
-	c->path = NULL;
-	free(c->listening_addr);
-	c->listening_addr = NULL;
-	free(c->xctype);
-	c->xctype = NULL;
+	c->ఆదానం = c->output = c->extended = ఖాళీ;
+	విడుదల(c->remote_name);
+	c->remote_name = ఖాళీ;
+	విడుదల(c->మార్గం);
+	c->మార్గం = ఖాళీ;
+	విడుదల(c->listening_addr);
+	c->listening_addr = ఖాళీ;
+	విడుదల(c->xctype);
+	c->xctype = ఖాళీ;
 	channel_free_connect_ctx(c);
-	while ((cc = TAILQ_FIRST(&c->status_confirms)) != NULL) {
-		if (cc->abandon_cb != NULL)
+	అయితే ((cc = TAILQ_FIRST(&c->స్థితి_confirms)) != ఖాళీ) {
+		ఒకవేళ (cc->abandon_cb != ఖాళీ)
 			cc->abandon_cb(ssh, c, cc->ctx);
-		TAILQ_REMOVE(&c->status_confirms, cc, entry);
-		freezero(cc, sizeof(*cc));
+		TAILQ_REMOVE(&c->స్థితి_confirms, cc, నమోదు_2);
+		freezero(cc, పరిమాణం(*cc));
 	}
-	if (c->filter_cleanup != NULL && c->filter_ctx != NULL)
+	ఒకవేళ (c->filter_cleanup != ఖాళీ && c->filter_ctx != ఖాళీ)
 		c->filter_cleanup(ssh, c->self, c->filter_ctx);
-	sc->channels[c->self] = NULL;
-	freezero(c, sizeof(*c));
+	sc->channels[c->self] = ఖాళీ;
+	freezero(c, పరిమాణం(*c));
 }
 
-void
-channel_free_all(struct ssh *ssh)
+శూన్య
+channel_free_all(నిర్మాణం ssh *ssh)
 {
 	u_int i;
-	struct ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
 
-	for (i = 0; i < sc->channels_alloc; i++)
-		if (sc->channels[i] != NULL)
+	కొరకు (i = 0; i < sc->channels_alloc; i++)
+		ఒకవేళ (sc->channels[i] != ఖాళీ)
 			channel_free(ssh, sc->channels[i]);
 
-	free(sc->channels);
-	sc->channels = NULL;
+	విడుదల(sc->channels);
+	sc->channels = ఖాళీ;
 	sc->channels_alloc = 0;
 
-	free(sc->x11_saved_display);
-	sc->x11_saved_display = NULL;
+	విడుదల(sc->x11_saved_display);
+	sc->x11_saved_display = ఖాళీ;
 
-	free(sc->x11_saved_proto);
-	sc->x11_saved_proto = NULL;
+	విడుదల(sc->x11_saved_proto);
+	sc->x11_saved_proto = ఖాళీ;
 
-	free(sc->x11_saved_data);
-	sc->x11_saved_data = NULL;
-	sc->x11_saved_data_len = 0;
+	విడుదల(sc->x11_saved_దత్తాంశం);
+	sc->x11_saved_దత్తాంశం = ఖాళీ;
+	sc->x11_saved_దత్తాంశం_len = 0;
 
-	free(sc->x11_fake_data);
-	sc->x11_fake_data = NULL;
-	sc->x11_fake_data_len = 0;
+	విడుదల(sc->x11_fake_దత్తాంశం);
+	sc->x11_fake_దత్తాంశం = ఖాళీ;
+	sc->x11_fake_దత్తాంశం_len = 0;
 }
 
-void
-channel_free_channels(struct ssh *ssh)
+శూన్య
+channel_free_channels(నిర్మాణం ssh *ssh)
 {
-	struct ssh_channels *sc;
+	నిర్మాణం ssh_channels *sc;
 
-	if (ssh == NULL || ssh->chanctxt == NULL)
-		return;
+	ఒకవేళ (ssh == ఖాళీ || ssh->chanctxt == ఖాళీ)
+		తిరిగి;
 	channel_free_all(ssh);
 	channel_clear_permission(ssh, FORWARD_USER, FORWARD_LOCAL);
 	channel_clear_permission(ssh, FORWARD_USER, FORWARD_REMOTE);
 	channel_clear_permission(ssh, FORWARD_ADM, FORWARD_LOCAL);
 	channel_clear_permission(ssh, FORWARD_ADM, FORWARD_REMOTE);
 	sc = ssh->chanctxt;
-	free(sc->bulk_classifier_tty);
-	free(sc->bulk_classifier_notty);
-	free(sc->channel_pre);
-	free(sc->channel_post);
-	freezero(sc, sizeof(*sc));
-	ssh->chanctxt = NULL;
+	విడుదల(sc->bulk_classifier_tty);
+	విడుదల(sc->bulk_classifier_notty);
+	విడుదల(sc->channel_pre);
+	విడుదల(sc->channel_post);
+	freezero(sc, పరిమాణం(*sc));
+	ssh->chanctxt = ఖాళీ;
 }
 
 /*
  * Closes the sockets/fds of all channels.  This is used to close extra file
  * descriptors after a fork.
  */
-void
-channel_close_all(struct ssh *ssh)
+శూన్య
+channel_close_all(నిర్మాణం ssh *ssh)
 {
 	u_int i;
 
-	for (i = 0; i < ssh->chanctxt->channels_alloc; i++)
-		if (ssh->chanctxt->channels[i] != NULL)
+	కొరకు (i = 0; i < ssh->chanctxt->channels_alloc; i++)
+		ఒకవేళ (ssh->chanctxt->channels[i] != ఖాళీ)
 			channel_close_fds(ssh, ssh->chanctxt->channels[i]);
 }
 
 /*
  * Stop listening to channels.
  */
-void
-channel_stop_listening(struct ssh *ssh)
+శూన్య
+channel_stop_listening(నిర్మాణం ssh *ssh)
 {
 	u_int i;
 	Channel *c;
 
-	for (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
+	కొరకు (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
 		c = ssh->chanctxt->channels[i];
-		if (c != NULL) {
-			switch (c->type) {
-			case SSH_CHANNEL_AUTH_SOCKET:
-			case SSH_CHANNEL_PORT_LISTENER:
-			case SSH_CHANNEL_RPORT_LISTENER:
-			case SSH_CHANNEL_X11_LISTENER:
-			case SSH_CHANNEL_UNIX_LISTENER:
-			case SSH_CHANNEL_RUNIX_LISTENER:
+		ఒకవేళ (c != ఖాళీ) {
+			ఎంపిక (c->type) {
+			స్థితి SSH_CHANNEL_AUTH_SOCKET:
+			స్థితి SSH_CHANNEL_పోర్టు_LISTENER:
+			స్థితి SSH_CHANNEL_RPORT_LISTENER:
+			స్థితి SSH_CHANNEL_X11_LISTENER:
+			స్థితి SSH_CHANNEL_UNIX_LISTENER:
+			స్థితి SSH_CHANNEL_RUNIX_LISTENER:
 				channel_close_fd(ssh, c, &c->sock);
 				channel_free(ssh, c);
-				break;
+				ఆపు;
 			}
 		}
 	}
@@ -968,166 +968,166 @@ channel_stop_listening(struct ssh *ssh)
  * Returns true if no channel has too much buffered data, and false if one or
  * more channel is overfull.
  */
-int
-channel_not_very_much_buffered_data(struct ssh *ssh)
+పూర్ణాంకం
+channel_not_very_much_buffered_దత్తాంశం(నిర్మాణం ssh *ssh)
 {
 	u_int i;
 	u_int maxsize = ssh_packet_get_maxsize(ssh);
 	Channel *c;
 
-	for (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
+	కొరకు (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
 		c = ssh->chanctxt->channels[i];
-		if (c == NULL || c->type != SSH_CHANNEL_OPEN)
-			continue;
-		if (sshbuf_len(c->output) > maxsize) {
+		ఒకవేళ (c == ఖాళీ || c->type != SSH_CHANNEL_OPEN)
+			కొనసాగు;
+		ఒకవేళ (sshbuf_len(c->output) > maxsize) {
 			debug2("channel %d: big output buffer %zu > %u",
 			    c->self, sshbuf_len(c->output), maxsize);
-			return 0;
+			తిరిగి 0;
 		}
 	}
-	return 1;
+	తిరిగి 1;
 }
 
 /* Returns true if any channel is still open. */
-int
-channel_still_open(struct ssh *ssh)
+పూర్ణాంకం
+channel_still_open(నిర్మాణం ssh *ssh)
 {
 	u_int i;
 	Channel *c;
 
-	for (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
+	కొరకు (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
 		c = ssh->chanctxt->channels[i];
-		if (c == NULL)
-			continue;
-		switch (c->type) {
-		case SSH_CHANNEL_X11_LISTENER:
-		case SSH_CHANNEL_PORT_LISTENER:
-		case SSH_CHANNEL_RPORT_LISTENER:
-		case SSH_CHANNEL_MUX_LISTENER:
-		case SSH_CHANNEL_CLOSED:
-		case SSH_CHANNEL_AUTH_SOCKET:
-		case SSH_CHANNEL_DYNAMIC:
-		case SSH_CHANNEL_RDYNAMIC_OPEN:
-		case SSH_CHANNEL_CONNECTING:
-		case SSH_CHANNEL_ZOMBIE:
-		case SSH_CHANNEL_ABANDONED:
-		case SSH_CHANNEL_UNIX_LISTENER:
-		case SSH_CHANNEL_RUNIX_LISTENER:
-			continue;
-		case SSH_CHANNEL_LARVAL:
-			continue;
-		case SSH_CHANNEL_OPENING:
-		case SSH_CHANNEL_OPEN:
-		case SSH_CHANNEL_RDYNAMIC_FINISH:
-		case SSH_CHANNEL_X11_OPEN:
-		case SSH_CHANNEL_MUX_CLIENT:
-		case SSH_CHANNEL_MUX_PROXY:
-			return 1;
-		default:
+		ఒకవేళ (c == ఖాళీ)
+			కొనసాగు;
+		ఎంపిక (c->type) {
+		స్థితి SSH_CHANNEL_X11_LISTENER:
+		స్థితి SSH_CHANNEL_పోర్టు_LISTENER:
+		స్థితి SSH_CHANNEL_RPORT_LISTENER:
+		స్థితి SSH_CHANNEL_MUX_LISTENER:
+		స్థితి SSH_CHANNEL_CLOSED:
+		స్థితి SSH_CHANNEL_AUTH_SOCKET:
+		స్థితి SSH_CHANNEL_DYNAMIC:
+		స్థితి SSH_CHANNEL_RDYNAMIC_OPEN:
+		స్థితి SSH_CHANNEL_CONNECTING:
+		స్థితి SSH_CHANNEL_ZOMBIE:
+		స్థితి SSH_CHANNEL_ABANDONED:
+		స్థితి SSH_CHANNEL_UNIX_LISTENER:
+		స్థితి SSH_CHANNEL_RUNIX_LISTENER:
+			కొనసాగు;
+		స్థితి SSH_CHANNEL_LARVAL:
+			కొనసాగు;
+		స్థితి SSH_CHANNEL_OPENING:
+		స్థితి SSH_CHANNEL_OPEN:
+		స్థితి SSH_CHANNEL_RDYNAMIC_ముగింపు:
+		స్థితి SSH_CHANNEL_X11_OPEN:
+		స్థితి SSH_CHANNEL_MUX_CLIENT:
+		స్థితి SSH_CHANNEL_MUX_PROXY:
+			తిరిగి 1;
+		అప్రమేయ:
 			fatal_f("bad channel type %d", c->type);
 			/* NOTREACHED */
 		}
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 /* Returns true if a channel with a TTY is open. */
-int
-channel_tty_open(struct ssh *ssh)
+పూర్ణాంకం
+channel_tty_open(నిర్మాణం ssh *ssh)
 {
 	u_int i;
 	Channel *c;
 
-	for (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
+	కొరకు (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
 		c = ssh->chanctxt->channels[i];
-		if (c == NULL || c->type != SSH_CHANNEL_OPEN)
-			continue;
-		if (c->client_tty)
-			return 1;
+		ఒకవేళ (c == ఖాళీ || c->type != SSH_CHANNEL_OPEN)
+			కొనసాగు;
+		ఒకవేళ (c->client_tty)
+			తిరిగి 1;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 /* Returns the id of an open channel suitable for keepaliving */
-int
-channel_find_open(struct ssh *ssh)
+పూర్ణాంకం
+channel_కనుగొను_open(నిర్మాణం ssh *ssh)
 {
 	u_int i;
 	Channel *c;
 
-	for (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
+	కొరకు (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
 		c = ssh->chanctxt->channels[i];
-		if (c == NULL || !c->have_remote_id)
-			continue;
-		switch (c->type) {
-		case SSH_CHANNEL_CLOSED:
-		case SSH_CHANNEL_DYNAMIC:
-		case SSH_CHANNEL_RDYNAMIC_OPEN:
-		case SSH_CHANNEL_RDYNAMIC_FINISH:
-		case SSH_CHANNEL_X11_LISTENER:
-		case SSH_CHANNEL_PORT_LISTENER:
-		case SSH_CHANNEL_RPORT_LISTENER:
-		case SSH_CHANNEL_MUX_LISTENER:
-		case SSH_CHANNEL_MUX_CLIENT:
-		case SSH_CHANNEL_MUX_PROXY:
-		case SSH_CHANNEL_OPENING:
-		case SSH_CHANNEL_CONNECTING:
-		case SSH_CHANNEL_ZOMBIE:
-		case SSH_CHANNEL_ABANDONED:
-		case SSH_CHANNEL_UNIX_LISTENER:
-		case SSH_CHANNEL_RUNIX_LISTENER:
-			continue;
-		case SSH_CHANNEL_LARVAL:
-		case SSH_CHANNEL_AUTH_SOCKET:
-		case SSH_CHANNEL_OPEN:
-		case SSH_CHANNEL_X11_OPEN:
-			return i;
-		default:
+		ఒకవేళ (c == ఖాళీ || !c->have_remote_id)
+			కొనసాగు;
+		ఎంపిక (c->type) {
+		స్థితి SSH_CHANNEL_CLOSED:
+		స్థితి SSH_CHANNEL_DYNAMIC:
+		స్థితి SSH_CHANNEL_RDYNAMIC_OPEN:
+		స్థితి SSH_CHANNEL_RDYNAMIC_ముగింపు:
+		స్థితి SSH_CHANNEL_X11_LISTENER:
+		స్థితి SSH_CHANNEL_పోర్టు_LISTENER:
+		స్థితి SSH_CHANNEL_RPORT_LISTENER:
+		స్థితి SSH_CHANNEL_MUX_LISTENER:
+		స్థితి SSH_CHANNEL_MUX_CLIENT:
+		స్థితి SSH_CHANNEL_MUX_PROXY:
+		స్థితి SSH_CHANNEL_OPENING:
+		స్థితి SSH_CHANNEL_CONNECTING:
+		స్థితి SSH_CHANNEL_ZOMBIE:
+		స్థితి SSH_CHANNEL_ABANDONED:
+		స్థితి SSH_CHANNEL_UNIX_LISTENER:
+		స్థితి SSH_CHANNEL_RUNIX_LISTENER:
+			కొనసాగు;
+		స్థితి SSH_CHANNEL_LARVAL:
+		స్థితి SSH_CHANNEL_AUTH_SOCKET:
+		స్థితి SSH_CHANNEL_OPEN:
+		స్థితి SSH_CHANNEL_X11_OPEN:
+			తిరిగి i;
+		అప్రమేయ:
 			fatal_f("bad channel type %d", c->type);
 			/* NOTREACHED */
 		}
 	}
-	return -1;
+	తిరిగి -1;
 }
 
 /* Returns the state of the channel's extended usage flag */
-const char *
-channel_format_extended_usage(const Channel *c)
+స్థిరరాశి అక్షరం *
+channel_format_extended_usage(స్థిరరాశి Channel *c)
 {
-	if (c->efd == -1)
-		return "closed";
+	ఒకవేళ (c->efd == -1)
+		తిరిగి "closed";
 
-	switch (c->extended_usage) {
-	case CHAN_EXTENDED_WRITE:
-		return "write";
-	case CHAN_EXTENDED_READ:
-		return "read";
-	case CHAN_EXTENDED_IGNORE:
-		return "ignore";
-	default:
-		return "UNKNOWN";
+	ఎంపిక (c->extended_usage) {
+	స్థితి CHAN_EXTENDED_WRITE:
+		తిరిగి "write";
+	స్థితి CHAN_EXTENDED_READ:
+		తిరిగి "read";
+	స్థితి CHAN_EXTENDED_IGNORE:
+		తిరిగి "ignore";
+	అప్రమేయ:
+		తిరిగి "UNKNOWN";
 	}
 }
 
-static char *
-channel_format_status(const Channel *c)
+స్థిర అక్షరం *
+channel_format_స్థితి(స్థిరరాశి Channel *c)
 {
-	char *ret = NULL;
+	అక్షరం *ret = ఖాళీ;
 
 	xasprintf(&ret, "t%d [%s] %s%u %s%u i%u/%zu o%u/%zu e[%s]/%zu "
 	    "fd %d/%d/%d sock %d cc %d %s%u io 0x%02x/0x%02x %s%s",
-	    c->type, c->xctype != NULL ? c->xctype : c->ctype,
+	    c->type, c->xctype != ఖాళీ ? c->xctype : c->ctype,
 	    c->have_remote_id ? "r" : "nr", c->remote_id,
-	    c->mux_ctx != NULL ? "m" : "nm", c->mux_downstream_id,
-	    c->istate, sshbuf_len(c->input),
+	    c->mux_ctx != ఖాళీ ? "m" : "nm", c->mux_downstream_id,
+	    c->istate, sshbuf_len(c->ఆదానం),
 	    c->ostate, sshbuf_len(c->output),
 	    channel_format_extended_usage(c), sshbuf_len(c->extended),
 	    c->rfd, c->wfd, c->efd, c->sock, c->ctl_chan,
-	    c->have_ctl_child_id ? "c" : "nc", c->ctl_child_id,
+	    c->have_ctl_బిడ్డ_id ? "c" : "nc", c->ctl_బిడ్డ_id,
 	    c->io_want, c->io_ready,
 	    c->isatty ? "T" : (c->remote_has_tty ? "RT" : ""),
 	    c->bulk ? "B" : "I");
-	return ret;
+	తిరిగి ret;
 }
 
 /*
@@ -1135,126 +1135,126 @@ channel_format_status(const Channel *c)
  * suitable for sending to the client.  The message contains crlf pairs for
  * newlines.
  */
-char *
-channel_open_message(struct ssh *ssh)
+అక్షరం *
+channel_open_సందేశం(నిర్మాణం ssh *ssh)
 {
-	struct sshbuf *buf;
+	నిర్మాణం sshbuf *buf;
 	Channel *c;
 	u_int i;
-	int r;
-	char *cp, *ret;
+	పూర్ణాంకం r;
+	అక్షరం *cp, *ret;
 
-	if ((buf = sshbuf_new()) == NULL)
+	ఒకవేళ ((buf = sshbuf_new()) == ఖాళీ)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_putf(buf,
+	ఒకవేళ ((r = sshbuf_putf(buf,
 	    "The following connections are open:\r\n")) != 0)
 		fatal_fr(r, "sshbuf_putf");
-	for (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
+	కొరకు (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
 		c = ssh->chanctxt->channels[i];
-		if (c == NULL)
-			continue;
-		switch (c->type) {
-		case SSH_CHANNEL_X11_LISTENER:
-		case SSH_CHANNEL_PORT_LISTENER:
-		case SSH_CHANNEL_RPORT_LISTENER:
-		case SSH_CHANNEL_CLOSED:
-		case SSH_CHANNEL_AUTH_SOCKET:
-		case SSH_CHANNEL_ZOMBIE:
-		case SSH_CHANNEL_ABANDONED:
-		case SSH_CHANNEL_MUX_LISTENER:
-		case SSH_CHANNEL_UNIX_LISTENER:
-		case SSH_CHANNEL_RUNIX_LISTENER:
-			continue;
-		case SSH_CHANNEL_LARVAL:
-		case SSH_CHANNEL_OPENING:
-		case SSH_CHANNEL_CONNECTING:
-		case SSH_CHANNEL_DYNAMIC:
-		case SSH_CHANNEL_RDYNAMIC_OPEN:
-		case SSH_CHANNEL_RDYNAMIC_FINISH:
-		case SSH_CHANNEL_OPEN:
-		case SSH_CHANNEL_X11_OPEN:
-		case SSH_CHANNEL_MUX_PROXY:
-		case SSH_CHANNEL_MUX_CLIENT:
-			cp = channel_format_status(c);
-			if ((r = sshbuf_putf(buf, "  #%d %.300s (%s)\r\n",
+		ఒకవేళ (c == ఖాళీ)
+			కొనసాగు;
+		ఎంపిక (c->type) {
+		స్థితి SSH_CHANNEL_X11_LISTENER:
+		స్థితి SSH_CHANNEL_పోర్టు_LISTENER:
+		స్థితి SSH_CHANNEL_RPORT_LISTENER:
+		స్థితి SSH_CHANNEL_CLOSED:
+		స్థితి SSH_CHANNEL_AUTH_SOCKET:
+		స్థితి SSH_CHANNEL_ZOMBIE:
+		స్థితి SSH_CHANNEL_ABANDONED:
+		స్థితి SSH_CHANNEL_MUX_LISTENER:
+		స్థితి SSH_CHANNEL_UNIX_LISTENER:
+		స్థితి SSH_CHANNEL_RUNIX_LISTENER:
+			కొనసాగు;
+		స్థితి SSH_CHANNEL_LARVAL:
+		స్థితి SSH_CHANNEL_OPENING:
+		స్థితి SSH_CHANNEL_CONNECTING:
+		స్థితి SSH_CHANNEL_DYNAMIC:
+		స్థితి SSH_CHANNEL_RDYNAMIC_OPEN:
+		స్థితి SSH_CHANNEL_RDYNAMIC_ముగింపు:
+		స్థితి SSH_CHANNEL_OPEN:
+		స్థితి SSH_CHANNEL_X11_OPEN:
+		స్థితి SSH_CHANNEL_MUX_PROXY:
+		స్థితి SSH_CHANNEL_MUX_CLIENT:
+			cp = channel_format_స్థితి(c);
+			ఒకవేళ ((r = sshbuf_putf(buf, "  #%d %.300s (%s)\r\n",
 			    c->self, c->remote_name, cp)) != 0) {
-				free(cp);
+				విడుదల(cp);
 				fatal_fr(r, "sshbuf_putf");
 			}
-			free(cp);
-			continue;
-		default:
+			విడుదల(cp);
+			కొనసాగు;
+		అప్రమేయ:
 			fatal_f("bad channel type %d", c->type);
 			/* NOTREACHED */
 		}
 	}
-	if ((ret = sshbuf_dup_string(buf)) == NULL)
+	ఒకవేళ ((ret = sshbuf_dup_string(buf)) == ఖాళీ)
 		fatal_f("sshbuf_dup_string");
 	sshbuf_free(buf);
-	return ret;
+	తిరిగి ret;
 }
 
-void
-channel_report_open(struct ssh *ssh, int level)
+శూన్య
+channel_report_open(నిర్మాణం ssh *ssh, పూర్ణాంకం level)
 {
-	char *open, *oopen, *cp, ident[256];
+	అక్షరం *open, *oopen, *cp, ident[256];
 
-	sshpkt_fmt_connection_id(ssh, ident, sizeof(ident));
-	do_log2(level, "Connection: %s (pid %ld)", ident, (long)getpid());
-	open = oopen = channel_open_message(ssh);
-	while ((cp = strsep(&open, "\r\n")) != NULL) {
-		if (*cp != '\0')
+	sshpkt_fmt_connection_id(ssh, ident, పరిమాణం(ident));
+	do_log2(level, "Connection: %s (pid %ld)", ident, (దీర్ఘ)getpid());
+	open = oopen = channel_open_సందేశం(ssh);
+	అయితే ((cp = strsep(&open, "\r\n")) != ఖాళీ) {
+		ఒకవేళ (*cp != '\0')
 			do_log2(level, "%s", cp);
 	}
-	free(oopen);
+	విడుదల(oopen);
 }
 
-static void
-open_preamble(struct ssh *ssh, const char *where, Channel *c, const char *type)
+స్థిర శూన్య
+open_preamble(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *where, Channel *c, స్థిరరాశి అక్షరం *type)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_OPEN)) != 0 ||
+	ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_CHANNEL_OPEN)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, type)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, c->self)) != 0 ||
-	    (r = sshpkt_put_u32(ssh, c->local_window)) != 0 ||
+	    (r = sshpkt_put_u32(ssh, c->local_కిటికీ)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, c->local_maxpacket)) != 0) {
 		fatal_r(r, "%s: channel %i: open", where, c->self);
 	}
 }
 
-void
-channel_send_open(struct ssh *ssh, int id)
+శూన్య
+channel_send_open(నిర్మాణం ssh *ssh, పూర్ణాంకం id)
 {
 	Channel *c = channel_lookup(ssh, id);
-	int r;
+	పూర్ణాంకం r;
 
-	if (c == NULL) {
+	ఒకవేళ (c == ఖాళీ) {
 		logit("channel_send_open: %d: bad id", id);
-		return;
+		తిరిగి;
 	}
 	debug2("channel %d: send open", id);
 	open_preamble(ssh, __func__, c, c->ctype);
-	if ((r = sshpkt_send(ssh)) != 0)
+	ఒకవేళ ((r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "channel %i", c->self);
 }
 
-void
-channel_request_start(struct ssh *ssh, int id, const char *service,
-    int wantconfirm)
+శూన్య
+channel_request_ప్రారంభం(నిర్మాణం ssh *ssh, పూర్ణాంకం id, స్థిరరాశి అక్షరం *service,
+    పూర్ణాంకం wantconfirm)
 {
 	Channel *c = channel_lookup(ssh, id);
-	int r;
+	పూర్ణాంకం r;
 
-	if (c == NULL) {
+	ఒకవేళ (c == ఖాళీ) {
 		logit_f("%d: unknown channel id", id);
-		return;
+		తిరిగి;
 	}
-	if (!c->have_remote_id)
+	ఒకవేళ (!c->have_remote_id)
 		fatal_f("channel %d: no remote id", c->self);
 
 	debug2("channel %d: request %s confirm %d", id, service, wantconfirm);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_REQUEST)) != 0 ||
+	ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_CHANNEL_REQUEST)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, service)) != 0 ||
 	    (r = sshpkt_put_u8(ssh, wantconfirm)) != 0) {
@@ -1262,149 +1262,149 @@ channel_request_start(struct ssh *ssh, int id, const char *service,
 	}
 }
 
-void
-channel_register_status_confirm(struct ssh *ssh, int id,
-    channel_confirm_cb *cb, channel_confirm_abandon_cb *abandon_cb, void *ctx)
+శూన్య
+channel_రిజిస్టరు_స్థితి_confirm(నిర్మాణం ssh *ssh, పూర్ణాంకం id,
+    channel_confirm_cb *cb, channel_confirm_abandon_cb *abandon_cb, శూన్య *ctx)
 {
-	struct channel_confirm *cc;
+	నిర్మాణం channel_confirm *cc;
 	Channel *c;
 
-	if ((c = channel_lookup(ssh, id)) == NULL)
+	ఒకవేళ ((c = channel_lookup(ssh, id)) == ఖాళీ)
 		fatal_f("%d: bad id", id);
 
-	cc = xcalloc(1, sizeof(*cc));
+	cc = xcalloc(1, పరిమాణం(*cc));
 	cc->cb = cb;
 	cc->abandon_cb = abandon_cb;
 	cc->ctx = ctx;
-	TAILQ_INSERT_TAIL(&c->status_confirms, cc, entry);
+	TAILQ_INSERT_TAIL(&c->స్థితి_confirms, cc, నమోదు_2);
 }
 
-void
-channel_register_open_confirm(struct ssh *ssh, int id,
-    channel_open_fn *fn, void *ctx)
+శూన్య
+channel_రిజిస్టరు_open_confirm(నిర్మాణం ssh *ssh, పూర్ణాంకం id,
+    channel_open_fn *fn, శూన్య *ctx)
 {
 	Channel *c = channel_lookup(ssh, id);
 
-	if (c == NULL) {
+	ఒకవేళ (c == ఖాళీ) {
 		logit_f("%d: bad id", id);
-		return;
+		తిరిగి;
 	}
 	c->open_confirm = fn;
 	c->open_confirm_ctx = ctx;
 }
 
-void
-channel_register_cleanup(struct ssh *ssh, int id,
-    channel_callback_fn *fn, int do_close)
+శూన్య
+channel_రిజిస్టరు_cleanup(నిర్మాణం ssh *ssh, పూర్ణాంకం id,
+    channel_callback_fn *fn, పూర్ణాంకం do_close)
 {
 	Channel *c = channel_by_id(ssh, id);
 
-	if (c == NULL) {
+	ఒకవేళ (c == ఖాళీ) {
 		logit_f("%d: bad id", id);
-		return;
+		తిరిగి;
 	}
 	c->detach_user = fn;
 	c->detach_close = do_close;
 }
 
-void
-channel_cancel_cleanup(struct ssh *ssh, int id)
+శూన్య
+channel_cancel_cleanup(నిర్మాణం ssh *ssh, పూర్ణాంకం id)
 {
 	Channel *c = channel_by_id(ssh, id);
 
-	if (c == NULL) {
+	ఒకవేళ (c == ఖాళీ) {
 		logit_f("%d: bad id", id);
-		return;
+		తిరిగి;
 	}
-	c->detach_user = NULL;
+	c->detach_user = ఖాళీ;
 	c->detach_close = 0;
 }
 
-void
-channel_register_filter(struct ssh *ssh, int id, channel_infilter_fn *ifn,
-    channel_outfilter_fn *ofn, channel_filter_cleanup_fn *cfn, void *ctx)
+శూన్య
+channel_రిజిస్టరు_filter(నిర్మాణం ssh *ssh, పూర్ణాంకం id, channel_infilter_fn *ifn,
+    channel_outfilter_fn *ofn, channel_filter_cleanup_fn *cfn, శూన్య *ctx)
 {
 	Channel *c = channel_lookup(ssh, id);
 
-	if (c == NULL) {
+	ఒకవేళ (c == ఖాళీ) {
 		logit_f("%d: bad id", id);
-		return;
+		తిరిగి;
 	}
-	c->input_filter = ifn;
+	c->ఆదానం_filter = ifn;
 	c->output_filter = ofn;
 	c->filter_ctx = ctx;
 	c->filter_cleanup = cfn;
 }
 
-void
-channel_set_fds(struct ssh *ssh, int id, int rfd, int wfd, int efd,
-    int extusage, int nonblock, int is_tty, u_int window_max)
+శూన్య
+channel_సమితి_fds(నిర్మాణం ssh *ssh, పూర్ణాంకం id, పూర్ణాంకం rfd, పూర్ణాంకం wfd, పూర్ణాంకం efd,
+    పూర్ణాంకం extusage, పూర్ణాంకం nonblock, పూర్ణాంకం is_tty, u_int కిటికీ_max)
 {
 	Channel *c = channel_lookup(ssh, id);
-	int r;
+	పూర్ణాంకం r;
 
-	if (c == NULL || c->type != SSH_CHANNEL_LARVAL)
+	ఒకవేళ (c == ఖాళీ || c->type != SSH_CHANNEL_LARVAL)
 		fatal("channel_activate for non-larval channel %d.", id);
-	if (!c->have_remote_id)
+	ఒకవేళ (!c->have_remote_id)
 		fatal_f("channel %d: no remote id", c->self);
 
-	channel_register_fds(ssh, c, rfd, wfd, efd, extusage, nonblock, is_tty);
+	channel_రిజిస్టరు_fds(ssh, c, rfd, wfd, efd, extusage, nonblock, is_tty);
 	c->type = SSH_CHANNEL_OPEN;
-	channel_set_used_time(ssh, c);
-	c->local_window = c->local_window_max = window_max;
+	channel_సమితి_వాడిన_సమయం(ssh, c);
+	c->local_కిటికీ = c->local_కిటికీ_max = కిటికీ_max;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_WINDOW_ADJUST)) != 0 ||
+	ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_CHANNEL_కిటికీ_ADJUST)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
-	    (r = sshpkt_put_u32(ssh, c->local_window)) != 0 ||
+	    (r = sshpkt_put_u32(ssh, c->local_కిటికీ)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "channel %i", c->self);
 }
 
-static void
-channel_pre_listener(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_pre_listener(నిర్మాణం ssh *ssh, Channel *c)
 {
 	c->io_want = SSH_CHAN_IO_SOCK_R;
 }
 
-static void
-channel_pre_connecting(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_pre_connecting(నిర్మాణం ssh *ssh, Channel *c)
 {
 	debug3("channel %d: waiting for connection", c->self);
 	c->io_want = SSH_CHAN_IO_SOCK_W;
 }
 
-static void
-channel_pre_open(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_pre_open(నిర్మాణం ssh *ssh, Channel *c)
 {
 	c->io_want = 0;
-	if (c->istate == CHAN_INPUT_OPEN &&
-	    c->remote_window > 0 &&
-	    sshbuf_len(c->input) < c->remote_window &&
-	    sshbuf_check_reserve(c->input, CHAN_RBUF) == 0)
+	ఒకవేళ (c->istate == CHAN_ఆదానం_OPEN &&
+	    c->remote_కిటికీ > 0 &&
+	    sshbuf_len(c->ఆదానం) < c->remote_కిటికీ &&
+	    sshbuf_check_reserve(c->ఆదానం, CHAN_RBUF) == 0)
 		c->io_want |= SSH_CHAN_IO_RFD;
-	if (c->ostate == CHAN_OUTPUT_OPEN ||
+	ఒకవేళ (c->ostate == CHAN_OUTPUT_OPEN ||
 	    c->ostate == CHAN_OUTPUT_WAIT_DRAIN) {
-		if (sshbuf_len(c->output) > 0) {
+		ఒకవేళ (sshbuf_len(c->output) > 0) {
 			c->io_want |= SSH_CHAN_IO_WFD;
-		} else if (c->ostate == CHAN_OUTPUT_WAIT_DRAIN) {
-			if (CHANNEL_EFD_OUTPUT_ACTIVE(c))
+		} లేకపోతే ఒకవేళ (c->ostate == CHAN_OUTPUT_WAIT_DRAIN) {
+			ఒకవేళ (CHANNEL_EFD_OUTPUT_చురుకైన(c))
 				debug2("channel %d: "
 				    "obuf_empty delayed efd %d/(%zu)", c->self,
 				    c->efd, sshbuf_len(c->extended));
-			else
-				chan_obuf_empty(ssh, c);
+			లేకపోతే
+				chan_obuf_ఖాళీలు(ssh, c);
 		}
 	}
 	/** XXX check close conditions, too */
-	if (c->efd != -1 && !(c->istate == CHAN_INPUT_CLOSED &&
+	ఒకవేళ (c->efd != -1 && !(c->istate == CHAN_ఆదానం_CLOSED &&
 	    c->ostate == CHAN_OUTPUT_CLOSED)) {
-		if (c->extended_usage == CHAN_EXTENDED_WRITE &&
+		ఒకవేళ (c->extended_usage == CHAN_EXTENDED_WRITE &&
 		    sshbuf_len(c->extended) > 0)
 			c->io_want |= SSH_CHAN_IO_EFD_W;
-		else if (c->efd != -1 && !(c->flags & CHAN_EOF_SENT) &&
+		లేకపోతే ఒకవేళ (c->efd != -1 && !(c->flags & CHAN_EOF_పంపిన) &&
 		    (c->extended_usage == CHAN_EXTENDED_READ ||
 		    c->extended_usage == CHAN_EXTENDED_IGNORE) &&
-		    sshbuf_len(c->extended) < c->remote_window)
+		    sshbuf_len(c->extended) < c->remote_కిటికీ)
 			c->io_want |= SSH_CHAN_IO_EFD_R;
 	}
 	/* XXX: What about efd? races? */
@@ -1419,116 +1419,116 @@ channel_pre_open(struct ssh *ssh, Channel *c)
  * XXX All this happens at the client side.
  * Returns: 0 = need more data, -1 = wrong cookie, 1 = ok
  */
-static int
-x11_open_helper(struct ssh *ssh, struct sshbuf *b)
+స్థిర పూర్ణాంకం
+x11_open_helper(నిర్మాణం ssh *ssh, నిర్మాణం sshbuf *b)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
 	u_char *ucp;
-	u_int proto_len, data_len;
+	u_int proto_len, దత్తాంశం_len;
 
-	if (sc->x11_saved_proto == NULL) {
+	ఒకవేళ (sc->x11_saved_proto == ఖాళీ) {
 		error("X11 forwarding opened before X11 forwarding requested");
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* Is this being called after the refusal deadline? */
-	if (sc->x11_refuse_time != 0.0 &&
-	    monotime_double() >= sc->x11_refuse_time) {
+	ఒకవేళ (sc->x11_refuse_సమయం != 0.0 &&
+	    monotime_double() >= sc->x11_refuse_సమయం) {
 		verbose("Rejected X11 connection after ForwardX11Timeout "
 		    "expired");
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* Check if the fixed size part of the packet is in buffer. */
-	if (sshbuf_len(b) < 12)
-		return 0;
+	ఒకవేళ (sshbuf_len(b) < 12)
+		తిరిగి 0;
 
 	/* Parse the lengths of variable-length fields. */
 	ucp = sshbuf_mutable_ptr(b);
-	if (ucp[0] == 0x42) {	/* Byte order MSB first. */
+	ఒకవేళ (ucp[0] == 0x42) {	/* Byte order MSB first. */
 		proto_len = 256 * ucp[6] + ucp[7];
-		data_len = 256 * ucp[8] + ucp[9];
-	} else if (ucp[0] == 0x6c) {	/* Byte order LSB first. */
+		దత్తాంశం_len = 256 * ucp[8] + ucp[9];
+	} లేకపోతే ఒకవేళ (ucp[0] == 0x6c) {	/* Byte order LSB first. */
 		proto_len = ucp[6] + 256 * ucp[7];
-		data_len = ucp[8] + 256 * ucp[9];
-	} else {
+		దత్తాంశం_len = ucp[8] + 256 * ucp[9];
+	} లేకపోతే {
 		debug2("Initial X11 packet contains bad byte order byte: 0x%x",
 		    ucp[0]);
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* Check if the whole packet is in buffer. */
-	if (sshbuf_len(b) <
-	    12 + ((proto_len + 3) & ~3) + ((data_len + 3) & ~3))
-		return 0;
+	ఒకవేళ (sshbuf_len(b) <
+	    12 + ((proto_len + 3) & ~3) + ((దత్తాంశం_len + 3) & ~3))
+		తిరిగి 0;
 
 	/* Check if authentication protocol matches. */
-	if (proto_len != strlen(sc->x11_saved_proto) ||
+	ఒకవేళ (proto_len != అక్షరశ్రేణి_పొడవు(sc->x11_saved_proto) ||
 	    memcmp(ucp + 12, sc->x11_saved_proto, proto_len) != 0) {
 		debug2("X11 connection uses different authentication protocol.");
-		return -1;
+		తిరిగి -1;
 	}
 	/* Check if authentication data matches our fake data. */
-	if (data_len != sc->x11_fake_data_len ||
+	ఒకవేళ (దత్తాంశం_len != sc->x11_fake_దత్తాంశం_len ||
 	    timingsafe_bcmp(ucp + 12 + ((proto_len + 3) & ~3),
-		sc->x11_fake_data, sc->x11_fake_data_len) != 0) {
+		sc->x11_fake_దత్తాంశం, sc->x11_fake_దత్తాంశం_len) != 0) {
 		debug2("X11 auth data does not match fake data.");
-		return -1;
+		తిరిగి -1;
 	}
 	/* Check fake data length */
-	if (sc->x11_fake_data_len != sc->x11_saved_data_len) {
+	ఒకవేళ (sc->x11_fake_దత్తాంశం_len != sc->x11_saved_దత్తాంశం_len) {
 		error("X11 fake_data_len %d != saved_data_len %d",
-		    sc->x11_fake_data_len, sc->x11_saved_data_len);
-		return -1;
+		    sc->x11_fake_దత్తాంశం_len, sc->x11_saved_దత్తాంశం_len);
+		తిరిగి -1;
 	}
 	/*
 	 * Received authentication protocol and data match
 	 * our fake data. Substitute the fake data with real
 	 * data.
 	 */
-	memcpy(ucp + 12 + ((proto_len + 3) & ~3),
-	    sc->x11_saved_data, sc->x11_saved_data_len);
-	return 1;
+	జ్ఞాపకం_నకలు(ucp + 12 + ((proto_len + 3) & ~3),
+	    sc->x11_saved_దత్తాంశం, sc->x11_saved_దత్తాంశం_len);
+	తిరిగి 1;
 }
 
-void
-channel_force_close(struct ssh *ssh, Channel *c, int abandon)
+శూన్య
+channel_force_close(నిర్మాణం ssh *ssh, Channel *c, పూర్ణాంకం abandon)
 {
 	debug3_f("channel %d: forcibly closing", c->self);
-	if (c->istate == CHAN_INPUT_OPEN)
+	ఒకవేళ (c->istate == CHAN_ఆదానం_OPEN)
 		chan_read_failed(ssh, c);
-	if (c->istate == CHAN_INPUT_WAIT_DRAIN) {
-		sshbuf_reset(c->input);
-		chan_ibuf_empty(ssh, c);
+	ఒకవేళ (c->istate == CHAN_ఆదానం_WAIT_DRAIN) {
+		sshbuf_reset(c->ఆదానం);
+		chan_ibuf_ఖాళీలు(ssh, c);
 	}
-	if (c->ostate == CHAN_OUTPUT_OPEN ||
+	ఒకవేళ (c->ostate == CHAN_OUTPUT_OPEN ||
 	    c->ostate == CHAN_OUTPUT_WAIT_DRAIN) {
 		sshbuf_reset(c->output);
 		chan_write_failed(ssh, c);
 	}
-	if (c->detach_user)
-		c->detach_user(ssh, c->self, 1, NULL);
-	if (c->efd != -1)
+	ఒకవేళ (c->detach_user)
+		c->detach_user(ssh, c->self, 1, ఖాళీ);
+	ఒకవేళ (c->efd != -1)
 		channel_close_fd(ssh, c, &c->efd);
-	if (abandon)
+	ఒకవేళ (abandon)
 		c->type = SSH_CHANNEL_ABANDONED;
 	/* exempt from inactivity timeouts */
 	c->inactive_deadline = 0;
 	c->lastused = 0;
 }
 
-static void
-channel_pre_x11_open(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_pre_x11_open(నిర్మాణం ssh *ssh, Channel *c)
 {
-	int ret = x11_open_helper(ssh, c->output);
+	పూర్ణాంకం ret = x11_open_helper(ssh, c->output);
 
 	/* c->force_drain = 1; */
 
-	if (ret == 1) {
+	ఒకవేళ (ret == 1) {
 		c->type = SSH_CHANNEL_OPEN;
-		channel_set_used_time(ssh, c);
+		channel_సమితి_వాడిన_సమయం(ssh, c);
 		channel_pre_open(ssh, c);
-	} else if (ret == -1) {
+	} లేకపోతే ఒకవేళ (ret == -1) {
 		logit("X11 connection rejected because of wrong "
 		    "authentication.");
 		debug2("X11 rejected %d i%d/o%d",
@@ -1537,104 +1537,104 @@ channel_pre_x11_open(struct ssh *ssh, Channel *c)
 	}
 }
 
-static void
-channel_pre_mux_client(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_pre_mux_client(నిర్మాణం ssh *ssh, Channel *c)
 {
 	c->io_want = 0;
-	if (c->istate == CHAN_INPUT_OPEN && !c->mux_pause &&
-	    sshbuf_check_reserve(c->input, CHAN_RBUF) == 0)
+	ఒకవేళ (c->istate == CHAN_ఆదానం_OPEN && !c->mux_pause &&
+	    sshbuf_check_reserve(c->ఆదానం, CHAN_RBUF) == 0)
 		c->io_want |= SSH_CHAN_IO_RFD;
-	if (c->istate == CHAN_INPUT_WAIT_DRAIN) {
+	ఒకవేళ (c->istate == CHAN_ఆదానం_WAIT_DRAIN) {
 		/* clear buffer immediately (discard any partial packet) */
-		sshbuf_reset(c->input);
-		chan_ibuf_empty(ssh, c);
+		sshbuf_reset(c->ఆదానం);
+		chan_ibuf_ఖాళీలు(ssh, c);
 		/* Start output drain. XXX just kill chan? */
 		chan_rcvd_oclose(ssh, c);
 	}
-	if (c->ostate == CHAN_OUTPUT_OPEN ||
+	ఒకవేళ (c->ostate == CHAN_OUTPUT_OPEN ||
 	    c->ostate == CHAN_OUTPUT_WAIT_DRAIN) {
-		if (sshbuf_len(c->output) > 0)
+		ఒకవేళ (sshbuf_len(c->output) > 0)
 			c->io_want |= SSH_CHAN_IO_WFD;
-		else if (c->ostate == CHAN_OUTPUT_WAIT_DRAIN)
-			chan_obuf_empty(ssh, c);
+		లేకపోతే ఒకవేళ (c->ostate == CHAN_OUTPUT_WAIT_DRAIN)
+			chan_obuf_ఖాళీలు(ssh, c);
 	}
 }
 
-static inline int
-socks_decode_error(Channel *c, int status, const char *func, const char *msg)
+స్థిర అంతఃవరుస పూర్ణాంకం
+socks_decode_error(Channel *c, పూర్ణాంకం స్థితి_2, స్థిరరాశి అక్షరం *func, స్థిరరాశి అక్షరం *సందేశం)
 {
-	if (status == SSH_ERR_MESSAGE_INCOMPLETE)
-		return 0;
-	else {
-		debug_r(status, "%s: channel %d: decode %s",
-		    func, c->self, msg);
-		return -1;
+	ఒకవేళ (స్థితి_2 == SSH_ERR_సందేశం_INCOMPLETE)
+		తిరిగి 0;
+	లేకపోతే {
+		debug_r(స్థితి_2, "%s: channel %d: decode %s",
+		    func, c->self, సందేశం);
+		తిరిగి -1;
 	}
 }
 
 /* try to decode a socks4 header */
-static int
-channel_decode_socks4(Channel *c, struct sshbuf *input, struct sshbuf *output)
+స్థిర పూర్ణాంకం
+channel_decode_socks4(Channel *c, నిర్మాణం sshbuf *ఆదానం, నిర్మాణం sshbuf *output)
 {
 	uint8_t socks_ver, socks_cmd, dest_addr[4];
-	uint16_t dest_port;
-	char *user = NULL, *host = NULL;
-	int success = -1, socks4a = 0, r;
-	struct sshbuf *b = NULL;
+	uint16_t dest_పోర్టు;
+	అక్షరం *user = ఖాళీ, *host = ఖాళీ;
+	పూర్ణాంకం success = -1, socks4a = 0, r;
+	నిర్మాణం sshbuf *b = ఖాళీ;
 
-	if (sshbuf_len(input) < 9)
-		return 0;
+	ఒకవేళ (sshbuf_len(ఆదానం) < 9)
+		తిరిగి 0;
 
 	/* We may not have a complete message, so work on a dup of the buffer */
-	if ((b = sshbuf_fromb(input)) == NULL)
+	ఒకవేళ ((b = sshbuf_fromb(ఆదానం)) == ఖాళీ)
 		fatal_f("sshbuf_fromb failed");
 
 	debug2("channel %d: decode socks4", c->self);
-	if ((r = sshbuf_get_u8(b, &socks_ver)) != 0 ||
+	ఒకవేళ ((r = sshbuf_get_u8(b, &socks_ver)) != 0 ||
 	    (r = sshbuf_get_u8(b, &socks_cmd)) != 0 ||
-	    (r = sshbuf_get_u16(b, &dest_port)) != 0 ||
-	    (r = sshbuf_get(b, &dest_addr, sizeof(dest_addr))) != 0 ||
-	    (r = sshbuf_get_nulterminated_string(b, 1024, &user, NULL)) != 0) {
+	    (r = sshbuf_get_u16(b, &dest_పోర్టు)) != 0 ||
+	    (r = sshbuf_get(b, &dest_addr, పరిమాణం(dest_addr))) != 0 ||
+	    (r = sshbuf_get_nulterminated_string(b, 1024, &user, ఖాళీ)) != 0) {
 		success = socks_decode_error(c, r, __func__, "header");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	/* Is this a SOCKS4A request? (indicated by an address of 0.0.0.x) */
-	if (dest_addr[0] == 0 && dest_addr[1] == 0 &&
+	ఒకవేళ (dest_addr[0] == 0 && dest_addr[1] == 0 &&
 	    dest_addr[2] == 0 && dest_addr[3] != 0) {
 		/* If so, then the hostname follows, also nul-terminated */
-		if ((r = sshbuf_get_nulterminated_string(b, 1024,
-		    &host, NULL)) != 0) {
+		ఒకవేళ ((r = sshbuf_get_nulterminated_string(b, 1024,
+		    &host, ఖాళీ)) != 0) {
 			success = socks_decode_error(c, r, __func__, "host");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		socks4a = 1;
-	} else {
+	} లేకపోతే {
 		/* Plain SOCKS4 passes an IPv4 binary address; reconstruct */
 		xasprintf(&host, "%d.%d.%d.%d",
 		    dest_addr[0], dest_addr[1], dest_addr[2], dest_addr[3]);
 	}
 
 	/* We have a complete SOCKS4 message; consume it from input */
-	if ((r = sshbuf_consume_upto_child(input, b)) != 0)
+	ఒకవేళ ((r = sshbuf_consume_upto_బిడ్డ(ఆదానం, b)) != 0)
 		fatal_fr(r, "channel %d: consume", c->self);
 
 	/* Handle the request */
 	debug2("channel %d: %s: user=\"%s\" command=%d destination=[%s]:%d",
-	    c->self, socks4a ? "SOCKS4A" : "SOCKS4", user, (int)socks_cmd,
-	    host, dest_port);
-	if (socks_cmd != 1) {
+	    c->self, socks4a ? "SOCKS4A" : "SOCKS4", user, (పూర్ణాంకం)socks_cmd,
+	    host, dest_పోర్టు);
+	ఒకవేళ (socks_cmd != 1) {
 		debug("channel %d: cannot handle %s command 0x%02x",
 		    c->self, socks4a ? "SOCKS4A" : "SOCKS4", socks_cmd);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	free(c->path);
-	c->path = host;
-	host = NULL; /* transferred */
-	c->host_port = dest_port;
+	విడుదల(c->మార్గం);
+	c->మార్గం = host;
+	host = ఖాళీ; /* transferred */
+	c->host_పోర్టు = dest_పోర్టు;
 
 	/* Reply to the SOCKS4 client */
-	if ((r = sshbuf_put_u8(output, 0)) != 0 ||	/* vn: 0 for reply */
+	ఒకవేళ ((r = sshbuf_put_u8(output, 0)) != 0 ||	/* vn: 0 for reply */
 	    (r = sshbuf_put_u8(output, 90)) != 0 ||	/* cd: req granted */
 	    (r = sshbuf_put_u16(output, 0)) != 0 ||	/* port: ignored */
 	    (r = sshbuf_put_u32(output, ntohl(INADDR_ANY))) != 0) /* ignored */
@@ -1642,586 +1642,586 @@ channel_decode_socks4(Channel *c, struct sshbuf *input, struct sshbuf *output)
 
 	/* success */
 	success = 1;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
-	free(user);
-	free(host);
-	return success;
+	విడుదల(user);
+	విడుదల(host);
+	తిరిగి success;
 }
 
 /* try to decode a socks5 header */
-#define SSH_SOCKS5_AUTHDONE	0x1000
-#define SSH_SOCKS5_NOAUTH	0x00
-#define SSH_SOCKS5_IPV4		0x01
-#define SSH_SOCKS5_DOMAIN	0x03
-#define SSH_SOCKS5_IPV6		0x04
-#define SSH_SOCKS5_CONNECT	0x01
-#define SSH_SOCKS5_SUCCESS	0x00
+#నిర్వచించు SSH_SOCKS5_AUTHDONE	0x1000
+#నిర్వచించు SSH_SOCKS5_NOAUTH	0x00
+#నిర్వచించు SSH_SOCKS5_IPV4		0x01
+#నిర్వచించు SSH_SOCKS5_DOMAIN	0x03
+#నిర్వచించు SSH_SOCKS5_IPV6		0x04
+#నిర్వచించు SSH_SOCKS5_CONNECT	0x01
+#నిర్వచించు SSH_SOCKS5_SUCCESS	0x00
 
 /*
  * Handles SOCKS5 authentication. Note 'b' must be a dup of 'input'
  * Returns 0 on insufficient queued date, 1 on authentication success or
  * -1 on error.
  */
-static int
-channel_socks5_check_auth(Channel *c, struct sshbuf *b, struct sshbuf *input,
-    struct sshbuf *output)
+స్థిర పూర్ణాంకం
+channel_socks5_check_auth(Channel *c, నిర్మాణం sshbuf *b, నిర్మాణం sshbuf *ఆదానం,
+    నిర్మాణం sshbuf *output)
 {
 	uint8_t socks_ver;
-	uint8_t nmethods, method;
-	int r;
-	u_int i, found;
+	uint8_t nmethods, పద్ధతి;
+	పూర్ణాంకం r;
+	u_int i, దొరికింది;
 
 	/* format: ver | nmethods | methods */
-	if ((r = sshbuf_get_u8(b, &socks_ver)) != 0)
-		return socks_decode_error(c, r, __func__, "version");
-	if (socks_ver != 5) /* shouldn't happen; checked by caller^2 */
+	ఒకవేళ ((r = sshbuf_get_u8(b, &socks_ver)) != 0)
+		తిరిగి socks_decode_error(c, r, __func__, "version");
+	ఒకవేళ (socks_ver != 5) /* shouldn't happen; checked by caller^2 */
 		fatal_fr(r, "channel %d: internal error: not socks5", c->self);
-	if ((r = sshbuf_get_u8(b, &nmethods)) != 0)
-		return socks_decode_error(c, r, __func__, "methods");
-	for (found = i = 0; i < nmethods; i++) {
-		if ((r = sshbuf_get_u8(b, &method)) != 0)
-			return socks_decode_error(c, r, __func__, "method");
-		if (method == SSH_SOCKS5_NOAUTH)
-			found = 1;
+	ఒకవేళ ((r = sshbuf_get_u8(b, &nmethods)) != 0)
+		తిరిగి socks_decode_error(c, r, __func__, "methods");
+	కొరకు (దొరికింది = i = 0; i < nmethods; i++) {
+		ఒకవేళ ((r = sshbuf_get_u8(b, &పద్ధతి)) != 0)
+			తిరిగి socks_decode_error(c, r, __func__, "method");
+		ఒకవేళ (పద్ధతి == SSH_SOCKS5_NOAUTH)
+			దొరికింది = 1;
 	}
-	if (!found) {
+	ఒకవేళ (!దొరికింది) {
 		debug("channel %d: didn't request SSH_SOCKS5_NOAUTH", c->self);
-		return -1;
+		తిరిగి -1;
 	}
 	/* Consume completed request */
-	if ((r = sshbuf_consume_upto_child(input, b)) != 0)
+	ఒకవేళ ((r = sshbuf_consume_upto_బిడ్డ(ఆదానం, b)) != 0)
 		fatal_fr(r, "channel %d: consume", c->self);
 
 	/* Compose reply: version, method */
-	if ((r = sshbuf_put_u8(output, 0x05)) != 0 ||
+	ఒకవేళ ((r = sshbuf_put_u8(output, 0x05)) != 0 ||
 	    (r = sshbuf_put_u8(output, SSH_SOCKS5_NOAUTH)) != 0)
 		fatal_fr(r, "channel %d: append reply", c->self);
 	/* success */
 	debug2("channel %d: socks5 auth done", c->self);
-	return 1;
+	తిరిగి 1;
 }
 
-static int
-channel_decode_socks5(Channel *c, struct sshbuf *input, struct sshbuf *output)
+స్థిర పూర్ణాంకం
+channel_decode_socks5(Channel *c, నిర్మాణం sshbuf *ఆదానం, నిర్మాణం sshbuf *output)
 {
 	uint8_t socks_ver, socks_cmd, socks_reserved, socks_atyp, addrlen;
-	uint16_t dest_port;
-	char dest_addr[255+1], ntop[INET6_ADDRSTRLEN];
+	uint16_t dest_పోర్టు;
+	అక్షరం dest_addr[255+1], ntop[INET6_ADDRSTRLEN];
 	u_int af;
-	int r, success = -1;;
-	struct sshbuf *b = NULL;
+	పూర్ణాంకం r, success = -1;;
+	నిర్మాణం sshbuf *b = ఖాళీ;
 
 	debug2("channel %d: decode socks5 %s", c->self,
 	    (c->flags & SSH_SOCKS5_AUTHDONE) ? "request" : "auth");
 
 	/* We may not have a complete message, so work on a dup of the buffer */
-	if ((b = sshbuf_fromb(input)) == NULL)
+	ఒకవేళ ((b = sshbuf_fromb(ఆదానం)) == ఖాళీ)
 		fatal_f("sshbuf_fromb failed");
 
-	if (!(c->flags & SSH_SOCKS5_AUTHDONE)) {
-		if ((r = channel_socks5_check_auth(c, b, input, output)) != 1) {
+	ఒకవేళ (!(c->flags & SSH_SOCKS5_AUTHDONE)) {
+		ఒకవేళ ((r = channel_socks5_check_auth(c, b, ఆదానం, output)) != 1) {
 			success = r;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		c->flags |= SSH_SOCKS5_AUTHDONE;
 		/* Continue to parse request in case client speculated ahead */
 	}
 
 	/* Request messages (auth or connect) always start with the version */
-	if ((r = sshbuf_get_u8(b, &socks_ver)) != 0) {
+	ఒకవేళ ((r = sshbuf_get_u8(b, &socks_ver)) != 0) {
 		success = socks_decode_error(c, r, __func__, "version");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if (socks_ver != 5) /* shouldn't happen */
+	ఒకవేళ (socks_ver != 5) /* shouldn't happen */
 		fatal_fr(r, "channel %d: internal error: not socks5", c->self);
 
 	/* Parse SOCKS5 request header */
 	debug2("channel %d: socks5 post auth", c->self);
-	if ((r = sshbuf_get_u8(b, &socks_cmd)) != 0 ||
+	ఒకవేళ ((r = sshbuf_get_u8(b, &socks_cmd)) != 0 ||
 	    (r = sshbuf_get_u8(b, &socks_reserved)) != 0 ||
 	    (r = sshbuf_get_u8(b, &socks_atyp)) != 0) {
 		success = socks_decode_error(c, r, __func__, "request header");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if (socks_ver != 0x05 ||
+	ఒకవేళ (socks_ver != 0x05 ||
 	    socks_cmd != SSH_SOCKS5_CONNECT ||
 	    socks_reserved != 0x00) {
 		debug2("channel %d: only socks5 connect supported", c->self);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	switch (socks_atyp) {
-	case SSH_SOCKS5_IPV4:
+	ఎంపిక (socks_atyp) {
+	స్థితి SSH_SOCKS5_IPV4:
 		addrlen = 4;
 		af = AF_INET;
-		break;
-	case SSH_SOCKS5_DOMAIN:
-		if ((r = sshbuf_get_u8(b, &addrlen)) != 0) {
+		ఆపు;
+	స్థితి SSH_SOCKS5_DOMAIN:
+		ఒకవేళ ((r = sshbuf_get_u8(b, &addrlen)) != 0) {
 			success = socks_decode_error(c, r, __func__, "addrlen");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		af = -1;
-		break;
-	case SSH_SOCKS5_IPV6:
+		ఆపు;
+	స్థితి SSH_SOCKS5_IPV6:
 		addrlen = 16;
 		af = AF_INET6;
-		break;
-	default:
+		ఆపు;
+	అప్రమేయ:
 		debug2("channel %d: bad socks5 atyp %d", c->self, socks_atyp);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_get(b, &dest_addr, addrlen)) != 0 ||
-	    (r = sshbuf_get_u16(b, &dest_port)) != 0) {
+	ఒకవేళ ((r = sshbuf_get(b, &dest_addr, addrlen)) != 0 ||
+	    (r = sshbuf_get_u16(b, &dest_పోర్టు)) != 0) {
 		success = socks_decode_error(c, r, __func__, "addr/port");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	dest_addr[addrlen] = '\0';
 
 	/* We have a complete SOCKS5 request; consume it from input */
-	if ((r = sshbuf_consume_upto_child(input, b)) != 0)
+	ఒకవేళ ((r = sshbuf_consume_upto_బిడ్డ(ఆదానం, b)) != 0)
 		fatal_fr(r, "channel %d: consume", c->self);
 
-	free(c->path);
-	c->path = NULL;
-	if (socks_atyp == SSH_SOCKS5_DOMAIN)
-		c->path = xstrdup(dest_addr);
-	else {
-		if (inet_ntop(af, dest_addr, ntop, sizeof(ntop)) == NULL)
-			return -1;
-		c->path = xstrdup(ntop);
+	విడుదల(c->మార్గం);
+	c->మార్గం = ఖాళీ;
+	ఒకవేళ (socks_atyp == SSH_SOCKS5_DOMAIN)
+		c->మార్గం = xstrdup(dest_addr);
+	లేకపోతే {
+		ఒకవేళ (inet_ntop(af, dest_addr, ntop, పరిమాణం(ntop)) == ఖాళీ)
+			తిరిగి -1;
+		c->మార్గం = xstrdup(ntop);
 	}
-	c->host_port = dest_port;
+	c->host_పోర్టు = dest_పోర్టు;
 
 	debug2("channel %d: dynamic request: socks5 host %s port %u command %u",
-	    c->self, c->path, c->host_port, socks_cmd);
+	    c->self, c->మార్గం, c->host_పోర్టు, socks_cmd);
 
-	/* Reply */
-	if ((r = sshbuf_put_u8(output, 0x05)) != 0 ||	/* version */
+	/*జవాబు*/
+	ఒకవేళ ((r = sshbuf_put_u8(output, 0x05)) != 0 ||	/*సంస్కరణ*/
 	    (r = sshbuf_put_u8(output, SSH_SOCKS5_SUCCESS)) != 0 || /* cmd */
 	    (r = sshbuf_put_u8(output, 0)) != 0 ||	/* reserved, ignored */
 	    (r = sshbuf_put_u8(output, SSH_SOCKS5_IPV4)) != 0 || /* addrtype */
 	    (r = sshbuf_put_u32(output, ntohl(INADDR_ANY))) != 0 || /* addr */
-	    (r = sshbuf_put_u16(output, dest_port)) != 0) /* port */
+	    (r = sshbuf_put_u16(output, dest_పోర్టు)) != 0) /*పోర్టు*/
 		fatal_fr(r, "channel %d: append reply", c->self);
 
 	/* success */
 	success = 1;
- out:
+ బహిర్గతం:
 	sshbuf_free(b);
-	return success;
+	తిరిగి success;
 }
 
 Channel *
-channel_connect_stdio_fwd(struct ssh *ssh,
-    const char *host_to_connect, int port_to_connect,
-    int in, int out, int nonblock)
+channel_connect_stdio_fwd(నిర్మాణం ssh *ssh,
+    స్థిరరాశి అక్షరం *host_గమ్యం_connect, పూర్ణాంకం పోర్టు_గమ్యం_connect,
+    పూర్ణాంకం లోపల, పూర్ణాంకం బహిర్గతం, పూర్ణాంకం nonblock)
 {
 	Channel *c;
 
-	debug_f("%s:%d", host_to_connect, port_to_connect);
+	debug_f("%s:%d", host_గమ్యం_connect, పోర్టు_గమ్యం_connect);
 
-	c = channel_new(ssh, "stdio-forward", SSH_CHANNEL_OPENING, in, out,
-	    -1, CHAN_TCP_WINDOW_DEFAULT, CHAN_TCP_PACKET_DEFAULT,
+	c = channel_new(ssh, "stdio-forward", SSH_CHANNEL_OPENING, లోపల, బహిర్గతం,
+	    -1, CHAN_TCP_కిటికీ_DEFAULT, CHAN_TCP_PACKET_DEFAULT,
 	    0, "stdio-forward", nonblock);
 
-	c->path = xstrdup(host_to_connect);
-	c->host_port = port_to_connect;
-	c->listening_port = 0;
+	c->మార్గం = xstrdup(host_గమ్యం_connect);
+	c->host_పోర్టు = పోర్టు_గమ్యం_connect;
+	c->listening_పోర్టు = 0;
 	c->force_drain = 1;
 
-	channel_register_fds(ssh, c, in, out, -1, 0, 1, 0);
-	port_open_helper(ssh, c, port_to_connect == PORT_STREAMLOCAL ?
+	channel_రిజిస్టరు_fds(ssh, c, లోపల, బహిర్గతం, -1, 0, 1, 0);
+	పోర్టు_open_helper(ssh, c, పోర్టు_గమ్యం_connect == పోర్టు_STREAMLOCAL ?
 	    "direct-streamlocal@openssh.com" : "direct-tcpip");
 
-	return c;
+	తిరిగి c;
 }
 
 /* dynamic port forwarding */
-static void
-channel_pre_dynamic(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_pre_dynamic(నిర్మాణం ssh *ssh, Channel *c)
 {
 	u_int have;
 	u_char ver;
-	int r, ret;
+	పూర్ణాంకం r, ret;
 
 	c->io_want = 0;
-	have = sshbuf_len(c->input);
+	have = sshbuf_len(c->ఆదానం);
 	debug2("channel %d: pre_dynamic: have %d", c->self, have);
 	/* sshbuf_dump(c->input, stderr); */
 	/* check if the fixed size part of the packet is in buffer. */
-	if (have < 3) {
+	ఒకవేళ (have < 3) {
 		/* need more */
 		c->io_want |= SSH_CHAN_IO_RFD;
-		return;
+		తిరిగి;
 	}
 	/* try to guess the protocol */
-	if ((r = sshbuf_peek_u8(c->input, 0, &ver)) != 0)
+	ఒకవేళ ((r = sshbuf_peek_u8(c->ఆదానం, 0, &ver)) != 0)
 		fatal_fr(r, "sshbuf_peek_u8");
-	switch (ver) {
-	case 0x04:
-		ret = channel_decode_socks4(c, c->input, c->output);
-		break;
-	case 0x05:
-		ret = channel_decode_socks5(c, c->input, c->output);
-		break;
-	default:
+	ఎంపిక (ver) {
+	స్థితి 0x04:
+		ret = channel_decode_socks4(c, c->ఆదానం, c->output);
+		ఆపు;
+	స్థితి 0x05:
+		ret = channel_decode_socks5(c, c->ఆదానం, c->output);
+		ఆపు;
+	అప్రమేయ:
 		debug2_f("channel %d: unknown SOCKS version %u", c->self, ver);
 		ret = -1;
-		break;
+		ఆపు;
 	}
-	if (ret < 0) {
+	ఒకవేళ (ret < 0) {
 		chan_mark_dead(ssh, c);
-	} else if (ret == 0) {
+	} లేకపోతే ఒకవేళ (ret == 0) {
 		debug2("channel %d: pre_dynamic: need more", c->self);
 		/* need more */
 		c->io_want |= SSH_CHAN_IO_RFD;
-		if (sshbuf_len(c->output))
+		ఒకవేళ (sshbuf_len(c->output))
 			c->io_want |= SSH_CHAN_IO_WFD;
-	} else {
+	} లేకపోతే {
 		/* switch to the next state */
 		c->type = SSH_CHANNEL_OPENING;
-		port_open_helper(ssh, c, "direct-tcpip");
+		పోర్టు_open_helper(ssh, c, "direct-tcpip");
 	}
 }
 
 /* simulate read-error */
-static void
-rdynamic_close(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+rdynamic_close(నిర్మాణం ssh *ssh, Channel *c)
 {
 	c->type = SSH_CHANNEL_OPEN;
 	channel_force_close(ssh, c, 0);
 }
 
 /* reverse dynamic port forwarding */
-static void
-channel_before_prepare_io_rdynamic(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_before_prepare_io_rdynamic(నిర్మాణం ssh *ssh, Channel *c)
 {
-	const u_char *p;
+	స్థిరరాశి u_char *p;
 	u_int have, len;
-	int r, ret;
+	పూర్ణాంకం r, ret;
 
 	have = sshbuf_len(c->output);
 	debug2("channel %d: pre_rdynamic: have %d", c->self, have);
 	/* sshbuf_dump(c->output, stderr); */
 	/* EOF received */
-	if (c->flags & CHAN_EOF_RCVD) {
-		if ((r = sshbuf_consume(c->output, have)) != 0)
+	ఒకవేళ (c->flags & CHAN_EOF_RCVD) {
+		ఒకవేళ ((r = sshbuf_consume(c->output, have)) != 0)
 			fatal_fr(r, "channel %d: consume", c->self);
 		rdynamic_close(ssh, c);
-		return;
+		తిరిగి;
 	}
 	/* check if the fixed size part of the packet is in buffer. */
-	if (have < 3)
-		return;
+	ఒకవేళ (have < 3)
+		తిరిగి;
 	/* try to guess the protocol */
 	p = sshbuf_ptr(c->output);
-	switch (p[0]) {
-	case 0x04:
+	ఎంపిక (p[0]) {
+	స్థితి 0x04:
 		/* switch input/output for reverse forwarding */
-		ret = channel_decode_socks4(c, c->output, c->input);
-		break;
-	case 0x05:
-		ret = channel_decode_socks5(c, c->output, c->input);
-		break;
-	default:
+		ret = channel_decode_socks4(c, c->output, c->ఆదానం);
+		ఆపు;
+	స్థితి 0x05:
+		ret = channel_decode_socks5(c, c->output, c->ఆదానం);
+		ఆపు;
+	అప్రమేయ:
 		ret = -1;
-		break;
+		ఆపు;
 	}
-	if (ret < 0) {
+	ఒకవేళ (ret < 0) {
 		rdynamic_close(ssh, c);
-	} else if (ret == 0) {
+	} లేకపోతే ఒకవేళ (ret == 0) {
 		debug2("channel %d: pre_rdynamic: need more", c->self);
 		/* send socks request to peer */
-		len = sshbuf_len(c->input);
-		if (len > 0 && len < c->remote_window) {
-			if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_DATA)) != 0 ||
+		len = sshbuf_len(c->ఆదానం);
+		ఒకవేళ (len > 0 && len < c->remote_కిటికీ) {
+			ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_CHANNEL_దత్తాంశం)) != 0 ||
 			    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
-			    (r = sshpkt_put_stringb(ssh, c->input)) != 0 ||
+			    (r = sshpkt_put_stringb(ssh, c->ఆదానం)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0) {
 				fatal_fr(r, "channel %i: rdynamic", c->self);
 			}
-			if ((r = sshbuf_consume(c->input, len)) != 0)
+			ఒకవేళ ((r = sshbuf_consume(c->ఆదానం, len)) != 0)
 				fatal_fr(r, "channel %d: consume", c->self);
-			c->remote_window -= len;
+			c->remote_కిటికీ -= len;
 		}
-	} else if (rdynamic_connect_finish(ssh, c) < 0) {
+	} లేకపోతే ఒకవేళ (rdynamic_connect_ముగింపు(ssh, c) < 0) {
 		/* the connect failed */
 		rdynamic_close(ssh, c);
 	}
 }
 
 /* This is our fake X11 server socket. */
-static void
-channel_post_x11_listener(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_post_x11_listener(నిర్మాణం ssh *ssh, Channel *c)
 {
 	Channel *nc;
-	struct sockaddr_storage addr;
-	int r, newsock, oerrno, remote_port;
+	నిర్మాణం sockaddr_storage addr;
+	పూర్ణాంకం r, newsock, oerrno, remote_పోర్టు;
 	socklen_t addrlen;
-	char buf[16384], *remote_ipaddr;
+	అక్షరం buf[16384], *remote_ipaddr;
 
-	if ((c->io_ready & SSH_CHAN_IO_SOCK_R) == 0)
-		return;
+	ఒకవేళ ((c->io_ready & SSH_CHAN_IO_SOCK_R) == 0)
+		తిరిగి;
 
 	debug("X11 connection requested.");
-	addrlen = sizeof(addr);
-	newsock = accept(c->sock, (struct sockaddr *)&addr, &addrlen);
-	if (c->single_connection) {
+	addrlen = పరిమాణం(addr);
+	newsock = accept(c->sock, (నిర్మాణం sockaddr *)&addr, &addrlen);
+	ఒకవేళ (c->single_connection) {
 		oerrno = errno;
 		debug2("single_connection: closing X11 listener.");
 		channel_close_fd(ssh, c, &c->sock);
 		chan_mark_dead(ssh, c);
 		errno = oerrno;
 	}
-	if (newsock == -1) {
-		if (errno != EINTR && errno != EWOULDBLOCK &&
+	ఒకవేళ (newsock == -1) {
+		ఒకవేళ (errno != EINTR && errno != EWOULDBLOCK &&
 		    errno != ECONNABORTED)
 			error("accept: %.100s", strerror(errno));
-		if (errno == EMFILE || errno == ENFILE)
+		ఒకవేళ (errno == EMFILE || errno == ENFILE)
 			c->notbefore = monotime_double() + 1.0;
-		return;
+		తిరిగి;
 	}
-	set_nodelay(newsock);
-	if (ssh->chanctxt->want_tcp_keepalive)
-		set_keepalive(newsock); /* logs errors */
+	సమితి_nodelay(newsock);
+	ఒకవేళ (ssh->chanctxt->want_tcp_keepalive)
+		సమితి_keepalive(newsock); /* logs errors */
 	remote_ipaddr = get_peer_ipaddr(newsock);
-	remote_port = get_peer_port(newsock);
-	snprintf(buf, sizeof buf, "X11 connection from %.200s port %d",
-	    remote_ipaddr, remote_port);
+	remote_పోర్టు = get_peer_పోర్టు(newsock);
+	snprintf(buf, పరిమాణం buf, "X11 connection from %.200s port %d",
+	    remote_ipaddr, remote_పోర్టు);
 
 	nc = channel_new(ssh, "x11-connection",
 	    SSH_CHANNEL_OPENING, newsock, newsock, -1,
-	    c->local_window_max, c->local_maxpacket, 0, buf, 1);
+	    c->local_కిటికీ_max, c->local_maxpacket, 0, buf, 1);
 	open_preamble(ssh, __func__, nc, "x11");
-	if ((r = sshpkt_put_cstring(ssh, remote_ipaddr)) != 0 ||
-	    (r = sshpkt_put_u32(ssh, remote_port)) != 0) {
+	ఒకవేళ ((r = sshpkt_put_cstring(ssh, remote_ipaddr)) != 0 ||
+	    (r = sshpkt_put_u32(ssh, remote_పోర్టు)) != 0) {
 		fatal_fr(r, "channel %i: reply", c->self);
 	}
-	if ((r = sshpkt_send(ssh)) != 0)
+	ఒకవేళ ((r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "channel %i: send", c->self);
-	free(remote_ipaddr);
+	విడుదల(remote_ipaddr);
 }
 
-static void
-port_open_helper(struct ssh *ssh, Channel *c, char *rtype)
+స్థిర శూన్య
+పోర్టు_open_helper(నిర్మాణం ssh *ssh, Channel *c, అక్షరం *rtype)
 {
-	char *local_ipaddr = get_local_ipaddr(c->sock);
-	int local_port = c->sock == -1 ? 65536 : get_local_port(c->sock);
-	char *remote_ipaddr = get_peer_ipaddr(c->sock);
-	int remote_port = get_peer_port(c->sock);
-	int r;
+	అక్షరం *local_ipaddr = get_local_ipaddr(c->sock);
+	పూర్ణాంకం local_పోర్టు = c->sock == -1 ? 65536 : get_local_పోర్టు(c->sock);
+	అక్షరం *remote_ipaddr = get_peer_ipaddr(c->sock);
+	పూర్ణాంకం remote_పోర్టు = get_peer_పోర్టు(c->sock);
+	పూర్ణాంకం r;
 
-	if (remote_port == -1) {
+	ఒకవేళ (remote_పోర్టు == -1) {
 		/* Fake addr/port to appease peers that validate it (Tectia) */
-		free(remote_ipaddr);
+		విడుదల(remote_ipaddr);
 		remote_ipaddr = xstrdup("127.0.0.1");
-		remote_port = 65535;
+		remote_పోర్టు = 65535;
 	}
 
-	free(c->remote_name);
+	విడుదల(c->remote_name);
 	xasprintf(&c->remote_name,
 	    "%s: listening port %d for %.100s port %d, "
 	    "connect from %.200s port %d to %.100s port %d",
-	    rtype, c->listening_port, c->path, c->host_port,
-	    remote_ipaddr, remote_port, local_ipaddr, local_port);
+	    rtype, c->listening_పోర్టు, c->మార్గం, c->host_పోర్టు,
+	    remote_ipaddr, remote_పోర్టు, local_ipaddr, local_పోర్టు);
 
 	open_preamble(ssh, __func__, c, rtype);
-	if (strcmp(rtype, "direct-tcpip") == 0) {
+	ఒకవేళ (strcmp(rtype, "direct-tcpip") == 0) {
 		/* target host, port */
-		if ((r = sshpkt_put_cstring(ssh, c->path)) != 0 ||
-		    (r = sshpkt_put_u32(ssh, c->host_port)) != 0)
+		ఒకవేళ ((r = sshpkt_put_cstring(ssh, c->మార్గం)) != 0 ||
+		    (r = sshpkt_put_u32(ssh, c->host_పోర్టు)) != 0)
 			fatal_fr(r, "channel %i: reply", c->self);
-	} else if (strcmp(rtype, "direct-streamlocal@openssh.com") == 0) {
+	} లేకపోతే ఒకవేళ (strcmp(rtype, "direct-streamlocal@openssh.com") == 0) {
 		/* target path */
-		if ((r = sshpkt_put_cstring(ssh, c->path)) != 0)
+		ఒకవేళ ((r = sshpkt_put_cstring(ssh, c->మార్గం)) != 0)
 			fatal_fr(r, "channel %i: reply", c->self);
-	} else if (strcmp(rtype, "forwarded-streamlocal@openssh.com") == 0) {
+	} లేకపోతే ఒకవేళ (strcmp(rtype, "forwarded-streamlocal@openssh.com") == 0) {
 		/* listen path */
-		if ((r = sshpkt_put_cstring(ssh, c->path)) != 0)
+		ఒకవేళ ((r = sshpkt_put_cstring(ssh, c->మార్గం)) != 0)
 			fatal_fr(r, "channel %i: reply", c->self);
-	} else {
+	} లేకపోతే {
 		/* listen address, port */
-		if ((r = sshpkt_put_cstring(ssh, c->path)) != 0 ||
-		    (r = sshpkt_put_u32(ssh, local_port)) != 0)
+		ఒకవేళ ((r = sshpkt_put_cstring(ssh, c->మార్గం)) != 0 ||
+		    (r = sshpkt_put_u32(ssh, local_పోర్టు)) != 0)
 			fatal_fr(r, "channel %i: reply", c->self);
 	}
-	if (strcmp(rtype, "forwarded-streamlocal@openssh.com") == 0) {
+	ఒకవేళ (strcmp(rtype, "forwarded-streamlocal@openssh.com") == 0) {
 		/* reserved for future owner/mode info */
-		if ((r = sshpkt_put_cstring(ssh, "")) != 0)
+		ఒకవేళ ((r = sshpkt_put_cstring(ssh, "")) != 0)
 			fatal_fr(r, "channel %i: reply", c->self);
-	} else {
+	} లేకపోతే {
 		/* originator host and port */
-		if ((r = sshpkt_put_cstring(ssh, remote_ipaddr)) != 0 ||
-		    (r = sshpkt_put_u32(ssh, (u_int)remote_port)) != 0)
+		ఒకవేళ ((r = sshpkt_put_cstring(ssh, remote_ipaddr)) != 0 ||
+		    (r = sshpkt_put_u32(ssh, (u_int)remote_పోర్టు)) != 0)
 			fatal_fr(r, "channel %i: reply", c->self);
 	}
-	if ((r = sshpkt_send(ssh)) != 0)
+	ఒకవేళ ((r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "channel %i: send", c->self);
-	free(remote_ipaddr);
-	free(local_ipaddr);
+	విడుదల(remote_ipaddr);
+	విడుదల(local_ipaddr);
 }
 
-void
-channel_set_x11_refuse_time(struct ssh *ssh, double refuse_time)
+శూన్య
+channel_సమితి_x11_refuse_సమయం(నిర్మాణం ssh *ssh, ద్విగుణ refuse_సమయం)
 {
-	ssh->chanctxt->x11_refuse_time = refuse_time;
+	ssh->chanctxt->x11_refuse_సమయం = refuse_సమయం;
 }
 
 /*
  * This socket is listening for connections to a forwarded TCP/IP port.
  */
-static void
-channel_post_port_listener(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_post_పోర్టు_listener(నిర్మాణం ssh *ssh, Channel *c)
 {
 	Channel *nc;
-	struct sockaddr_storage addr;
-	int newsock, nextstate;
+	నిర్మాణం sockaddr_storage addr;
+	పూర్ణాంకం newsock, nextstate;
 	socklen_t addrlen;
-	char *rtype;
+	అక్షరం *rtype;
 
-	if ((c->io_ready & SSH_CHAN_IO_SOCK_R) == 0)
-		return;
+	ఒకవేళ ((c->io_ready & SSH_CHAN_IO_SOCK_R) == 0)
+		తిరిగి;
 
 	debug("Connection to port %d forwarding to %.100s port %d requested.",
-	    c->listening_port, c->path, c->host_port);
+	    c->listening_పోర్టు, c->మార్గం, c->host_పోర్టు);
 
-	if (c->type == SSH_CHANNEL_RPORT_LISTENER) {
+	ఒకవేళ (c->type == SSH_CHANNEL_RPORT_LISTENER) {
 		nextstate = SSH_CHANNEL_OPENING;
 		rtype = "forwarded-tcpip";
-	} else if (c->type == SSH_CHANNEL_RUNIX_LISTENER) {
+	} లేకపోతే ఒకవేళ (c->type == SSH_CHANNEL_RUNIX_LISTENER) {
 		nextstate = SSH_CHANNEL_OPENING;
 		rtype = "forwarded-streamlocal@openssh.com";
-	} else if (c->host_port == PORT_STREAMLOCAL) {
+	} లేకపోతే ఒకవేళ (c->host_పోర్టు == పోర్టు_STREAMLOCAL) {
 		nextstate = SSH_CHANNEL_OPENING;
 		rtype = "direct-streamlocal@openssh.com";
-	} else if (c->host_port == 0) {
+	} లేకపోతే ఒకవేళ (c->host_పోర్టు == 0) {
 		nextstate = SSH_CHANNEL_DYNAMIC;
 		rtype = "dynamic-tcpip";
-	} else {
+	} లేకపోతే {
 		nextstate = SSH_CHANNEL_OPENING;
 		rtype = "direct-tcpip";
 	}
 
-	addrlen = sizeof(addr);
-	newsock = accept(c->sock, (struct sockaddr *)&addr, &addrlen);
-	if (newsock == -1) {
-		if (errno != EINTR && errno != EWOULDBLOCK &&
+	addrlen = పరిమాణం(addr);
+	newsock = accept(c->sock, (నిర్మాణం sockaddr *)&addr, &addrlen);
+	ఒకవేళ (newsock == -1) {
+		ఒకవేళ (errno != EINTR && errno != EWOULDBLOCK &&
 		    errno != ECONNABORTED)
 			error("accept: %.100s", strerror(errno));
-		if (errno == EMFILE || errno == ENFILE)
+		ఒకవేళ (errno == EMFILE || errno == ENFILE)
 			c->notbefore = monotime_double() + 1.0;
-		return;
+		తిరిగి;
 	}
-	if (addr.ss_family == AF_INET || addr.ss_family == AF_INET6) {
-		set_nodelay(newsock);
-		if (ssh->chanctxt->want_tcp_keepalive)
-			set_keepalive(newsock); /* logs errors */
+	ఒకవేళ (addr.ss_family == AF_INET || addr.ss_family == AF_INET6) {
+		సమితి_nodelay(newsock);
+		ఒకవేళ (ssh->chanctxt->want_tcp_keepalive)
+			సమితి_keepalive(newsock); /* logs errors */
 	}
 	nc = channel_new(ssh, rtype, nextstate, newsock, newsock, -1,
-	    c->local_window_max, c->local_maxpacket, 0, rtype, 1);
-	nc->listening_port = c->listening_port;
-	nc->host_port = c->host_port;
-	if (c->path != NULL)
-		nc->path = xstrdup(c->path);
+	    c->local_కిటికీ_max, c->local_maxpacket, 0, rtype, 1);
+	nc->listening_పోర్టు = c->listening_పోర్టు;
+	nc->host_పోర్టు = c->host_పోర్టు;
+	ఒకవేళ (c->మార్గం != ఖాళీ)
+		nc->మార్గం = xstrdup(c->మార్గం);
 
-	if (nextstate != SSH_CHANNEL_DYNAMIC)
-		port_open_helper(ssh, nc, rtype);
+	ఒకవేళ (nextstate != SSH_CHANNEL_DYNAMIC)
+		పోర్టు_open_helper(ssh, nc, rtype);
 }
 
 /*
  * This is the authentication agent socket listening for connections from
  * clients.
  */
-static void
-channel_post_auth_listener(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_post_auth_listener(నిర్మాణం ssh *ssh, Channel *c)
 {
 	Channel *nc;
-	int r, newsock;
-	struct sockaddr_storage addr;
+	పూర్ణాంకం r, newsock;
+	నిర్మాణం sockaddr_storage addr;
 	socklen_t addrlen;
 
-	if ((c->io_ready & SSH_CHAN_IO_SOCK_R) == 0)
-		return;
+	ఒకవేళ ((c->io_ready & SSH_CHAN_IO_SOCK_R) == 0)
+		తిరిగి;
 
-	addrlen = sizeof(addr);
-	newsock = accept(c->sock, (struct sockaddr *)&addr, &addrlen);
-	if (newsock == -1) {
+	addrlen = పరిమాణం(addr);
+	newsock = accept(c->sock, (నిర్మాణం sockaddr *)&addr, &addrlen);
+	ఒకవేళ (newsock == -1) {
 		error("accept from auth socket: %.100s", strerror(errno));
-		if (errno == EMFILE || errno == ENFILE)
+		ఒకవేళ (errno == EMFILE || errno == ENFILE)
 			c->notbefore = monotime_double() + 1.0;
-		return;
+		తిరిగి;
 	}
 	nc = channel_new(ssh, "agent-connection",
 	    SSH_CHANNEL_OPENING, newsock, newsock, -1,
-	    c->local_window_max, c->local_maxpacket,
+	    c->local_కిటికీ_max, c->local_maxpacket,
 	    0, "accepted auth socket", 1);
 	open_preamble(ssh, __func__, nc,
 	    c->agent_new ? "agent-connect" : "auth-agent@openssh.com");
-	if ((r = sshpkt_send(ssh)) != 0)
+	ఒకవేళ ((r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "channel %i", c->self);
 }
 
-static void
-channel_post_connecting(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_post_connecting(నిర్మాణం ssh *ssh, Channel *c)
 {
-	int err = 0, sock, isopen, r;
-	socklen_t sz = sizeof(err);
+	పూర్ణాంకం err = 0, sock, isopen, r;
+	socklen_t sz = పరిమాణం(err);
 
-	if ((c->io_ready & SSH_CHAN_IO_SOCK_W) == 0)
-		return;
-	if (!c->have_remote_id)
+	ఒకవేళ ((c->io_ready & SSH_CHAN_IO_SOCK_W) == 0)
+		తిరిగి;
+	ఒకవేళ (!c->have_remote_id)
 		fatal_f("channel %d: no remote id", c->self);
-	if (c->connect_ctx == NULL)
+	ఒకవేళ (c->connect_ctx == ఖాళీ)
 		fatal_f("channel %d: context missing", c->self);
 
 	/* for rdynamic the OPEN_CONFIRMATION has been sent already */
-	isopen = (c->type == SSH_CHANNEL_RDYNAMIC_FINISH);
+	isopen = (c->type == SSH_CHANNEL_RDYNAMIC_ముగింపు);
 
-	if (getsockopt(c->sock, SOL_SOCKET, SO_ERROR, &err, &sz) == -1) {
+	ఒకవేళ (getsockopt(c->sock, SOL_SOCKET, SO_ERROR, &err, &sz) == -1) {
 		err = errno;
 		error("getsockopt SO_ERROR failed");
 	}
 
-	if (err == 0) {
+	ఒకవేళ (err == 0) {
 		/* Non-blocking connection completed */
 		debug("channel %d: connected to %s port %d",
-		    c->self, c->connect_ctx->host, c->connect_ctx->port);
+		    c->self, c->connect_ctx->host, c->connect_ctx->పోర్టు);
 		channel_free_connect_ctx(c);
 		c->type = SSH_CHANNEL_OPEN;
-		channel_set_used_time(ssh, c);
-		if (isopen) {
+		channel_సమితి_వాడిన_సమయం(ssh, c);
+		ఒకవేళ (isopen) {
 			/* no message necessary */
-		} else {
-			if ((r = sshpkt_start(ssh,
-			    SSH2_MSG_CHANNEL_OPEN_CONFIRMATION)) != 0 ||
+		} లేకపోతే {
+			ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh,
+			    SSH2_సందేశం_CHANNEL_OPEN_CONFIRMATION)) != 0 ||
 			    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 			    (r = sshpkt_put_u32(ssh, c->self)) != 0 ||
-			    (r = sshpkt_put_u32(ssh, c->local_window)) != 0 ||
+			    (r = sshpkt_put_u32(ssh, c->local_కిటికీ)) != 0 ||
 			    (r = sshpkt_put_u32(ssh, c->local_maxpacket)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0)
 				fatal_fr(r, "channel %i open confirm", c->self);
 		}
-		return;
+		తిరిగి;
 	}
-	if (err == EINTR || err == EAGAIN || err == EINPROGRESS)
-		return;
+	ఒకవేళ (err == EINTR || err == EAGAIN || err == EINPROGRESS)
+		తిరిగి;
 
 	/* Non-blocking connection failed */
 	debug("channel %d: connection failed: %s", c->self, strerror(err));
 
 	/* Try next address, if any */
-	if ((sock = connect_next(ssh, c->connect_ctx)) == -1) {
+	ఒకవేళ ((sock = connect_తదుపరి(ssh, c->connect_ctx)) == -1) {
 		/* Exhausted all addresses for this destination */
 		error("connect_to %.100s port %d: failed.",
-		    c->connect_ctx->host, c->connect_ctx->port);
+		    c->connect_ctx->host, c->connect_ctx->పోర్టు);
 		channel_free_connect_ctx(c);
-		if (isopen) {
+		ఒకవేళ (isopen) {
 			rdynamic_close(ssh, c);
-		} else {
-			if ((r = sshpkt_start(ssh,
-			    SSH2_MSG_CHANNEL_OPEN_FAILURE)) != 0 ||
+		} లేకపోతే {
+			ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh,
+			    SSH2_సందేశం_CHANNEL_OPEN_FAILURE)) != 0 ||
 			    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 			    (r = sshpkt_put_u32(ssh,
 			    SSH2_OPEN_CONNECT_FAILED)) != 0 ||
@@ -2238,161 +2238,161 @@ channel_post_connecting(struct ssh *ssh, Channel *c)
 	c->sock = c->rfd = c->wfd = sock;
 }
 
-static int
-channel_handle_rfd(struct ssh *ssh, Channel *c)
+స్థిర పూర్ణాంకం
+channel_handle_rfd(నిర్మాణం ssh *ssh, Channel *c)
 {
-	char buf[CHAN_RBUF];
+	అక్షరం buf[CHAN_RBUF];
 	ssize_t len;
-	int r, force;
-	size_t nr = 0, have, avail, maxlen = CHANNEL_MAX_READ;
-	int pty_zeroread = 0;
+	పూర్ణాంకం r, force;
+	కొలత_t nr = 0, have, avail, maxlen = CHANNEL_MAX_READ;
+	పూర్ణాంకం pty_zeroread = 0;
 
-#ifdef PTY_ZEROREAD
+#నిర్వచితమైతే PTY_ZEROREAD
 	/* Bug on AIX: read(1) can return 0 for a non-closed fd */
 	pty_zeroread = c->isatty;
-#endif
+#అయితే_ముగింపు
 
-	force = c->isatty && c->detach_close && c->istate != CHAN_INPUT_CLOSED;
+	force = c->isatty && c->detach_close && c->istate != CHAN_ఆదానం_CLOSED;
 
-	if (!force && (c->io_ready & SSH_CHAN_IO_RFD) == 0)
-		return 1;
-	if ((avail = sshbuf_avail(c->input)) == 0)
-		return 1; /* Shouldn't happen */
+	ఒకవేళ (!force && (c->io_ready & SSH_CHAN_IO_RFD) == 0)
+		తిరిగి 1;
+	ఒకవేళ ((avail = sshbuf_avail(c->ఆదానం)) == 0)
+		తిరిగి 1; /* Shouldn't happen */
 
 	/*
 	 * For "simple" channels (i.e. not datagram or filtered), we can
 	 * read directly to the channel buffer.
 	 */
-	if (!pty_zeroread && c->input_filter == NULL && !c->datagram) {
+	ఒకవేళ (!pty_zeroread && c->ఆదానం_filter == ఖాళీ && !c->datagram) {
 		/* Only OPEN channels have valid rwin */
-		if (c->type == SSH_CHANNEL_OPEN) {
-			if ((have = sshbuf_len(c->input)) >= c->remote_window)
-				return 1; /* shouldn't happen */
-			if (maxlen > c->remote_window - have)
-				maxlen = c->remote_window - have;
+		ఒకవేళ (c->type == SSH_CHANNEL_OPEN) {
+			ఒకవేళ ((have = sshbuf_len(c->ఆదానం)) >= c->remote_కిటికీ)
+				తిరిగి 1; /* shouldn't happen */
+			ఒకవేళ (maxlen > c->remote_కిటికీ - have)
+				maxlen = c->remote_కిటికీ - have;
 		}
-		if (maxlen > avail)
+		ఒకవేళ (maxlen > avail)
 			maxlen = avail;
-		if ((r = sshbuf_read(c->rfd, c->input, maxlen, &nr)) != 0) {
-			if (errno == EINTR || (!force &&
+		ఒకవేళ ((r = sshbuf_read(c->rfd, c->ఆదానం, maxlen, &nr)) != 0) {
+			ఒకవేళ (errno == EINTR || (!force &&
 			    (errno == EAGAIN || errno == EWOULDBLOCK)))
-				return 1;
+				తిరిగి 1;
 			debug2("channel %d: read failed rfd %d maxlen %zu: %s",
 			    c->self, c->rfd, maxlen, ssh_err(r));
-			goto rfail;
+			వెళ్ళు rfail;
 		}
-		if (nr != 0)
-			channel_set_used_time(ssh, c);
-		return 1;
+		ఒకవేళ (nr != 0)
+			channel_సమితి_వాడిన_సమయం(ssh, c);
+		తిరిగి 1;
 	}
 
 	errno = 0;
-	len = read(c->rfd, buf, sizeof(buf));
+	len = పఠ(c->rfd, buf, పరిమాణం(buf));
 	/* fixup AIX zero-length read with errno set to look more like errors */
-	if (pty_zeroread && len == 0 && errno != 0)
+	ఒకవేళ (pty_zeroread && len == 0 && errno != 0)
 		len = -1;
-	if (len == -1 && (errno == EINTR ||
+	ఒకవేళ (len == -1 && (errno == EINTR ||
 	    ((errno == EAGAIN || errno == EWOULDBLOCK) && !force)))
-		return 1;
-	if (len < 0 || (!pty_zeroread && len == 0)) {
+		తిరిగి 1;
+	ఒకవేళ (len < 0 || (!pty_zeroread && len == 0)) {
 		debug2("channel %d: read<=0 rfd %d len %zd: %s",
 		    c->self, c->rfd, len,
 		    len == 0 ? "closed" : strerror(errno));
  rfail:
-		if (c->type != SSH_CHANNEL_OPEN) {
+		ఒకవేళ (c->type != SSH_CHANNEL_OPEN) {
 			debug2("channel %d: not open", c->self);
 			chan_mark_dead(ssh, c);
-			return -1;
-		} else {
+			తిరిగి -1;
+		} లేకపోతే {
 			chan_read_failed(ssh, c);
 		}
-		return -1;
+		తిరిగి -1;
 	}
-	channel_set_used_time(ssh, c);
-	if (c->input_filter != NULL) {
-		if (c->input_filter(ssh, c, buf, len) == -1) {
+	channel_సమితి_వాడిన_సమయం(ssh, c);
+	ఒకవేళ (c->ఆదానం_filter != ఖాళీ) {
+		ఒకవేళ (c->ఆదానం_filter(ssh, c, buf, len) == -1) {
 			debug2("channel %d: filter stops", c->self);
 			chan_read_failed(ssh, c);
 		}
-	} else if (c->datagram) {
-		if ((r = sshbuf_put_string(c->input, buf, len)) != 0)
+	} లేకపోతే ఒకవేళ (c->datagram) {
+		ఒకవేళ ((r = sshbuf_put_string(c->ఆదానం, buf, len)) != 0)
 			fatal_fr(r, "channel %i: put datagram", c->self);
-	} else if ((r = sshbuf_put(c->input, buf, len)) != 0)
+	} లేకపోతే ఒకవేళ ((r = sshbuf_put(c->ఆదానం, buf, len)) != 0)
 		fatal_fr(r, "channel %i: put data", c->self);
 
-	return 1;
+	తిరిగి 1;
 }
 
-static int
-channel_handle_wfd(struct ssh *ssh, Channel *c)
+స్థిర పూర్ణాంకం
+channel_handle_wfd(నిర్మాణం ssh *ssh, Channel *c)
 {
-	struct termios tio;
-	u_char *data = NULL, *buf; /* XXX const; need filter API change */
-	size_t dlen, olen = 0;
-	int r, len;
+	నిర్మాణం termios tio;
+	u_char *దత్తాంశం = ఖాళీ, *buf; /* XXX const; need filter API change */
+	కొలత_t dlen, olen = 0;
+	పూర్ణాంకం r, len;
 
-	if ((c->io_ready & SSH_CHAN_IO_WFD) == 0)
-		return 1;
-	if (sshbuf_len(c->output) == 0)
-		return 1;
+	ఒకవేళ ((c->io_ready & SSH_CHAN_IO_WFD) == 0)
+		తిరిగి 1;
+	ఒకవేళ (sshbuf_len(c->output) == 0)
+		తిరిగి 1;
 
 	/* Send buffered output data to the socket. */
 	olen = sshbuf_len(c->output);
-	if (c->output_filter != NULL) {
-		if ((buf = c->output_filter(ssh, c, &data, &dlen)) == NULL) {
+	ఒకవేళ (c->output_filter != ఖాళీ) {
+		ఒకవేళ ((buf = c->output_filter(ssh, c, &దత్తాంశం, &dlen)) == ఖాళీ) {
 			debug2("channel %d: filter stops", c->self);
-			if (c->type != SSH_CHANNEL_OPEN)
+			ఒకవేళ (c->type != SSH_CHANNEL_OPEN)
 				chan_mark_dead(ssh, c);
-			else
+			లేకపోతే
 				chan_write_failed(ssh, c);
-			return -1;
+			తిరిగి -1;
 		}
-	} else if (c->datagram) {
-		if ((r = sshbuf_get_string(c->output, &data, &dlen)) != 0)
+	} లేకపోతే ఒకవేళ (c->datagram) {
+		ఒకవేళ ((r = sshbuf_get_string(c->output, &దత్తాంశం, &dlen)) != 0)
 			fatal_fr(r, "channel %i: get datagram", c->self);
-		buf = data;
-	} else {
-		buf = data = sshbuf_mutable_ptr(c->output);
+		buf = దత్తాంశం;
+	} లేకపోతే {
+		buf = దత్తాంశం = sshbuf_mutable_ptr(c->output);
 		dlen = sshbuf_len(c->output);
 	}
 
-	if (c->datagram) {
+	ఒకవేళ (c->datagram) {
 		/* ignore truncated writes, datagrams might get lost */
-		len = write(c->wfd, buf, dlen);
-		free(data);
-		if (len == -1 && (errno == EINTR || errno == EAGAIN ||
+		len = లిఖ(c->wfd, buf, dlen);
+		విడుదల(దత్తాంశం);
+		ఒకవేళ (len == -1 && (errno == EINTR || errno == EAGAIN ||
 		    errno == EWOULDBLOCK))
-			return 1;
-		if (len <= 0)
-			goto write_fail;
-		goto out;
+			తిరిగి 1;
+		ఒకవేళ (len <= 0)
+			వెళ్ళు write_fail;
+		వెళ్ళు బహిర్గతం;
 	}
 
-#ifdef _AIX
+#నిర్వచితమైతే _AIX
 	/* XXX: Later AIX versions can't push as much data to tty */
-	if (c->wfd_isatty)
+	ఒకవేళ (c->wfd_isatty)
 		dlen = MINIMUM(dlen, 8*1024);
-#endif
+#అయితే_ముగింపు
 
-	len = write(c->wfd, buf, dlen);
-	if (len == -1 &&
+	len = లిఖ(c->wfd, buf, dlen);
+	ఒకవేళ (len == -1 &&
 	    (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK))
-		return 1;
-	if (len <= 0) {
+		తిరిగి 1;
+	ఒకవేళ (len <= 0) {
  write_fail:
-		if (c->type != SSH_CHANNEL_OPEN) {
+		ఒకవేళ (c->type != SSH_CHANNEL_OPEN) {
 			debug2("channel %d: not open", c->self);
 			chan_mark_dead(ssh, c);
-			return -1;
-		} else {
+			తిరిగి -1;
+		} లేకపోతే {
 			chan_write_failed(ssh, c);
 		}
-		return -1;
+		తిరిగి -1;
 	}
-	channel_set_used_time(ssh, c);
-#ifndef BROKEN_TCGETATTR_ICANON
-	if (c->isatty && dlen >= 1 && buf[0] != '\r') {
-		if (tcgetattr(c->wfd, &tio) == 0 &&
+	channel_సమితి_వాడిన_సమయం(ssh, c);
+#నిర్వచితం_కాకపోతే BROKEN_TCGETATTR_ICANON
+	ఒకవేళ (c->isatty && dlen >= 1 && buf[0] != '\r') {
+		ఒకవేళ (tcgetattr(c->wfd, &tio) == 0 &&
 		    !(tio.c_lflag & ECHO) && (tio.c_lflag & ICANON)) {
 			/*
 			 * Simulate echo to reduce the impact of
@@ -2400,263 +2400,263 @@ channel_handle_wfd(struct ssh *ssh, Channel *c)
 			 * size of a SSH2_MSG_CHANNEL_DATA message
 			 * (4 byte channel id + buf)
 			 */
-			if ((r = sshpkt_msg_ignore(ssh, 4+len)) != 0 ||
+			ఒకవేళ ((r = sshpkt_సందేశం_ignore(ssh, 4+len)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0)
 				fatal_fr(r, "channel %i: ignore", c->self);
 		}
 	}
-#endif /* BROKEN_TCGETATTR_ICANON */
-	if ((r = sshbuf_consume(c->output, len)) != 0)
+#అయితే_ముగింపు /* BROKEN_TCGETATTR_ICANON */
+	ఒకవేళ ((r = sshbuf_consume(c->output, len)) != 0)
 		fatal_fr(r, "channel %i: consume", c->self);
- out:
+ బహిర్గతం:
 	c->local_consumed += olen - sshbuf_len(c->output);
 
-	return 1;
+	తిరిగి 1;
 }
 
-static int
-channel_handle_efd_write(struct ssh *ssh, Channel *c)
+స్థిర పూర్ణాంకం
+channel_handle_efd_write(నిర్మాణం ssh *ssh, Channel *c)
 {
-	int r;
+	పూర్ణాంకం r;
 	ssize_t len;
 
-	if ((c->io_ready & SSH_CHAN_IO_EFD_W) == 0)
-		return 1;
-	if (sshbuf_len(c->extended) == 0)
-		return 1;
+	ఒకవేళ ((c->io_ready & SSH_CHAN_IO_EFD_W) == 0)
+		తిరిగి 1;
+	ఒకవేళ (sshbuf_len(c->extended) == 0)
+		తిరిగి 1;
 
-	len = write(c->efd, sshbuf_ptr(c->extended),
+	len = లిఖ(c->efd, sshbuf_ptr(c->extended),
 	    sshbuf_len(c->extended));
 	debug2("channel %d: written %zd to efd %d", c->self, len, c->efd);
-	if (len == -1 && (errno == EINTR || errno == EAGAIN ||
+	ఒకవేళ (len == -1 && (errno == EINTR || errno == EAGAIN ||
 	    errno == EWOULDBLOCK))
-		return 1;
-	if (len <= 0) {
+		తిరిగి 1;
+	ఒకవేళ (len <= 0) {
 		debug2("channel %d: closing write-efd %d", c->self, c->efd);
 		channel_close_fd(ssh, c, &c->efd);
-	} else {
-		if ((r = sshbuf_consume(c->extended, len)) != 0)
+	} లేకపోతే {
+		ఒకవేళ ((r = sshbuf_consume(c->extended, len)) != 0)
 			fatal_fr(r, "channel %i: consume", c->self);
 		c->local_consumed += len;
-		channel_set_used_time(ssh, c);
+		channel_సమితి_వాడిన_సమయం(ssh, c);
 	}
-	return 1;
+	తిరిగి 1;
 }
 
-static int
-channel_handle_efd_read(struct ssh *ssh, Channel *c)
+స్థిర పూర్ణాంకం
+channel_handle_efd_read(నిర్మాణం ssh *ssh, Channel *c)
 {
-	char buf[CHAN_RBUF];
+	అక్షరం buf[CHAN_RBUF];
 	ssize_t len;
-	int r, force;
+	పూర్ణాంకం r, force;
 
-	force = c->isatty && c->detach_close && c->istate != CHAN_INPUT_CLOSED;
+	force = c->isatty && c->detach_close && c->istate != CHAN_ఆదానం_CLOSED;
 
-	if (!force && (c->io_ready & SSH_CHAN_IO_EFD_R) == 0)
-		return 1;
+	ఒకవేళ (!force && (c->io_ready & SSH_CHAN_IO_EFD_R) == 0)
+		తిరిగి 1;
 
-	len = read(c->efd, buf, sizeof(buf));
+	len = పఠ(c->efd, buf, పరిమాణం(buf));
 	debug2("channel %d: read %zd from efd %d", c->self, len, c->efd);
-	if (len == -1 && (errno == EINTR || ((errno == EAGAIN ||
+	ఒకవేళ (len == -1 && (errno == EINTR || ((errno == EAGAIN ||
 	    errno == EWOULDBLOCK) && !force)))
-		return 1;
-	if (len <= 0) {
+		తిరిగి 1;
+	ఒకవేళ (len <= 0) {
 		debug2("channel %d: closing read-efd %d", c->self, c->efd);
 		channel_close_fd(ssh, c, &c->efd);
-		return 1;
+		తిరిగి 1;
 	}
-	channel_set_used_time(ssh, c);
-	if (c->extended_usage == CHAN_EXTENDED_IGNORE)
+	channel_సమితి_వాడిన_సమయం(ssh, c);
+	ఒకవేళ (c->extended_usage == CHAN_EXTENDED_IGNORE)
 		debug3("channel %d: discard efd", c->self);
-	else if ((r = sshbuf_put(c->extended, buf, len)) != 0)
+	లేకపోతే ఒకవేళ ((r = sshbuf_put(c->extended, buf, len)) != 0)
 		fatal_fr(r, "channel %i: append", c->self);
-	return 1;
+	తిరిగి 1;
 }
 
-static int
-channel_handle_efd(struct ssh *ssh, Channel *c)
+స్థిర పూర్ణాంకం
+channel_handle_efd(నిర్మాణం ssh *ssh, Channel *c)
 {
-	if (c->efd == -1)
-		return 1;
+	ఒకవేళ (c->efd == -1)
+		తిరిగి 1;
 
 	/** XXX handle drain efd, too */
 
-	if (c->extended_usage == CHAN_EXTENDED_WRITE)
-		return channel_handle_efd_write(ssh, c);
-	else if (c->extended_usage == CHAN_EXTENDED_READ ||
+	ఒకవేళ (c->extended_usage == CHAN_EXTENDED_WRITE)
+		తిరిగి channel_handle_efd_write(ssh, c);
+	లేకపోతే ఒకవేళ (c->extended_usage == CHAN_EXTENDED_READ ||
 	    c->extended_usage == CHAN_EXTENDED_IGNORE)
-		return channel_handle_efd_read(ssh, c);
+		తిరిగి channel_handle_efd_read(ssh, c);
 
-	return 1;
+	తిరిగి 1;
 }
 
-static int
-channel_check_window(struct ssh *ssh, Channel *c)
+స్థిర పూర్ణాంకం
+channel_check_కిటికీ(నిర్మాణం ssh *ssh, Channel *c)
 {
-	int r;
+	పూర్ణాంకం r;
 
-	if (c->type == SSH_CHANNEL_OPEN &&
-	    !(c->flags & (CHAN_CLOSE_SENT|CHAN_CLOSE_RCVD)) &&
-	    ((c->local_window_max - c->local_window >
+	ఒకవేళ (c->type == SSH_CHANNEL_OPEN &&
+	    !(c->flags & (CHAN_CLOSE_పంపిన|CHAN_CLOSE_RCVD)) &&
+	    ((c->local_కిటికీ_max - c->local_కిటికీ >
 	    c->local_maxpacket*3) ||
-	    c->local_window < c->local_window_max/2) &&
+	    c->local_కిటికీ < c->local_కిటికీ_max/2) &&
 	    c->local_consumed > 0) {
-		if (!c->have_remote_id)
+		ఒకవేళ (!c->have_remote_id)
 			fatal_f("channel %d: no remote id", c->self);
-		if ((r = sshpkt_start(ssh,
-		    SSH2_MSG_CHANNEL_WINDOW_ADJUST)) != 0 ||
+		ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh,
+		    SSH2_సందేశం_CHANNEL_కిటికీ_ADJUST)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, c->local_consumed)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0) {
 			fatal_fr(r, "channel %i", c->self);
 		}
 		debug2("channel %d: window %d sent adjust %d", c->self,
-		    c->local_window, c->local_consumed);
-		c->local_window += c->local_consumed;
+		    c->local_కిటికీ, c->local_consumed);
+		c->local_కిటికీ += c->local_consumed;
 		c->local_consumed = 0;
 	}
-	return 1;
+	తిరిగి 1;
 }
 
-static void
-channel_post_open(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_post_open(నిర్మాణం ssh *ssh, Channel *c)
 {
 	channel_handle_rfd(ssh, c);
 	channel_handle_wfd(ssh, c);
 	channel_handle_efd(ssh, c);
-	channel_check_window(ssh, c);
+	channel_check_కిటికీ(ssh, c);
 }
 
-static u_int
-read_mux(struct ssh *ssh, Channel *c, u_int need)
+స్థిర u_int
+read_mux(నిర్మాణం ssh *ssh, Channel *c, u_int need)
 {
-	char buf[CHAN_RBUF];
+	అక్షరం buf[CHAN_RBUF];
 	ssize_t len;
 	u_int rlen;
-	int r;
+	పూర్ణాంకం r;
 
-	if (sshbuf_len(c->input) < need) {
-		rlen = need - sshbuf_len(c->input);
-		len = read(c->rfd, buf, MINIMUM(rlen, CHAN_RBUF));
-		if (len == -1 && (errno == EINTR || errno == EAGAIN))
-			return sshbuf_len(c->input);
-		if (len <= 0) {
+	ఒకవేళ (sshbuf_len(c->ఆదానం) < need) {
+		rlen = need - sshbuf_len(c->ఆదానం);
+		len = పఠ(c->rfd, buf, MINIMUM(rlen, CHAN_RBUF));
+		ఒకవేళ (len == -1 && (errno == EINTR || errno == EAGAIN))
+			తిరిగి sshbuf_len(c->ఆదానం);
+		ఒకవేళ (len <= 0) {
 			debug2("channel %d: ctl read<=0 rfd %d len %zd",
 			    c->self, c->rfd, len);
 			chan_read_failed(ssh, c);
-			return 0;
-		} else if ((r = sshbuf_put(c->input, buf, len)) != 0)
+			తిరిగి 0;
+		} లేకపోతే ఒకవేళ ((r = sshbuf_put(c->ఆదానం, buf, len)) != 0)
 			fatal_fr(r, "channel %i: append", c->self);
 	}
-	return sshbuf_len(c->input);
+	తిరిగి sshbuf_len(c->ఆదానం);
 }
 
-static void
-channel_post_mux_client_read(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_post_mux_client_read(నిర్మాణం ssh *ssh, Channel *c)
 {
 	u_int need;
 
-	if ((c->io_ready & SSH_CHAN_IO_RFD) == 0)
-		return;
-	if (c->istate != CHAN_INPUT_OPEN && c->istate != CHAN_INPUT_WAIT_DRAIN)
-		return;
-	if (c->mux_pause)
-		return;
+	ఒకవేళ ((c->io_ready & SSH_CHAN_IO_RFD) == 0)
+		తిరిగి;
+	ఒకవేళ (c->istate != CHAN_ఆదానం_OPEN && c->istate != CHAN_ఆదానం_WAIT_DRAIN)
+		తిరిగి;
+	ఒకవేళ (c->mux_pause)
+		తిరిగి;
 
 	/*
 	 * Don't not read past the precise end of packets to
 	 * avoid disrupting fd passing.
 	 */
-	if (read_mux(ssh, c, 4) < 4) /* read header */
-		return;
+	ఒకవేళ (read_mux(ssh, c, 4) < 4) /* read header */
+		తిరిగి;
 	/* XXX sshbuf_peek_u32 */
-	need = PEEK_U32(sshbuf_ptr(c->input));
-#define CHANNEL_MUX_MAX_PACKET	(256 * 1024)
-	if (need > CHANNEL_MUX_MAX_PACKET) {
+	need = PEEK_U32(sshbuf_ptr(c->ఆదానం));
+#నిర్వచించు CHANNEL_MUX_MAX_PACKET	(256 * 1024)
+	ఒకవేళ (need > CHANNEL_MUX_MAX_PACKET) {
 		debug2("channel %d: packet too big %u > %u",
 		    c->self, CHANNEL_MUX_MAX_PACKET, need);
 		chan_rcvd_oclose(ssh, c);
-		return;
+		తిరిగి;
 	}
-	if (read_mux(ssh, c, need + 4) < need + 4) /* read body */
-		return;
-	if (c->mux_rcb(ssh, c) != 0) {
+	ఒకవేళ (read_mux(ssh, c, need + 4) < need + 4) /* read body */
+		తిరిగి;
+	ఒకవేళ (c->mux_rcb(ssh, c) != 0) {
 		debug("channel %d: mux_rcb failed", c->self);
 		chan_mark_dead(ssh, c);
-		return;
+		తిరిగి;
 	}
 }
 
-static void
-channel_post_mux_client_write(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_post_mux_client_write(నిర్మాణం ssh *ssh, Channel *c)
 {
 	ssize_t len;
-	int r;
+	పూర్ణాంకం r;
 
-	if ((c->io_ready & SSH_CHAN_IO_WFD) == 0)
-		return;
-	if (sshbuf_len(c->output) == 0)
-		return;
+	ఒకవేళ ((c->io_ready & SSH_CHAN_IO_WFD) == 0)
+		తిరిగి;
+	ఒకవేళ (sshbuf_len(c->output) == 0)
+		తిరిగి;
 
-	len = write(c->wfd, sshbuf_ptr(c->output), sshbuf_len(c->output));
-	if (len == -1 && (errno == EINTR || errno == EAGAIN))
-		return;
-	if (len <= 0) {
+	len = లిఖ(c->wfd, sshbuf_ptr(c->output), sshbuf_len(c->output));
+	ఒకవేళ (len == -1 && (errno == EINTR || errno == EAGAIN))
+		తిరిగి;
+	ఒకవేళ (len <= 0) {
 		chan_mark_dead(ssh, c);
-		return;
+		తిరిగి;
 	}
-	if ((r = sshbuf_consume(c->output, len)) != 0)
+	ఒకవేళ ((r = sshbuf_consume(c->output, len)) != 0)
 		fatal_fr(r, "channel %i: consume", c->self);
 }
 
-static void
-channel_post_mux_client(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_post_mux_client(నిర్మాణం ssh *ssh, Channel *c)
 {
 	channel_post_mux_client_read(ssh, c);
 	channel_post_mux_client_write(ssh, c);
 }
 
-static void
-channel_post_mux_listener(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_post_mux_listener(నిర్మాణం ssh *ssh, Channel *c)
 {
 	Channel *nc;
-	struct sockaddr_storage addr;
+	నిర్మాణం sockaddr_storage addr;
 	socklen_t addrlen;
-	int newsock;
+	పూర్ణాంకం newsock;
 	uid_t euid;
 	gid_t egid;
 
-	if ((c->io_ready & SSH_CHAN_IO_SOCK_R) == 0)
-		return;
+	ఒకవేళ ((c->io_ready & SSH_CHAN_IO_SOCK_R) == 0)
+		తిరిగి;
 
 	debug("multiplexing control connection");
 
 	/*
 	 * Accept connection on control socket
 	 */
-	memset(&addr, 0, sizeof(addr));
-	addrlen = sizeof(addr);
-	if ((newsock = accept(c->sock, (struct sockaddr*)&addr,
+	memset(&addr, 0, పరిమాణం(addr));
+	addrlen = పరిమాణం(addr);
+	ఒకవేళ ((newsock = accept(c->sock, (నిర్మాణం sockaddr*)&addr,
 	    &addrlen)) == -1) {
 		error_f("accept: %s", strerror(errno));
-		if (errno == EMFILE || errno == ENFILE)
+		ఒకవేళ (errno == EMFILE || errno == ENFILE)
 			c->notbefore = monotime_double() + 1.0;
-		return;
+		తిరిగి;
 	}
 
-	if (getpeereid(newsock, &euid, &egid) == -1) {
+	ఒకవేళ (getpeereid(newsock, &euid, &egid) == -1) {
 		error_f("getpeereid failed: %s", strerror(errno));
 		close(newsock);
-		return;
+		తిరిగి;
 	}
-	if ((euid != 0) && (getuid() != euid)) {
+	ఒకవేళ ((euid != 0) && (getuid() != euid)) {
 		error("multiplex uid mismatch: peer euid %u != uid %u",
 		    (u_int)euid, (u_int)getuid());
 		close(newsock);
-		return;
+		తిరిగి;
 	}
 	nc = channel_new(ssh, "mux-control", SSH_CHANNEL_MUX_CLIENT,
-	    newsock, newsock, -1, c->local_window_max,
+	    newsock, newsock, -1, c->local_కిటికీ_max,
 	    c->local_maxpacket, 0, "mux-control", 1);
 	nc->mux_rcb = c->mux_rcb;
 	debug3_f("new mux channel %d fd %d", nc->self, nc->sock);
@@ -2666,18 +2666,18 @@ channel_post_mux_listener(struct ssh *ssh, Channel *c)
 	nc->flags |= CHAN_LOCAL;
 }
 
-static void
-channel_handler_init(struct ssh_channels *sc)
+స్థిర శూన్య
+channel_handler_init(నిర్మాణం ssh_channels *sc)
 {
 	chan_fn **pre, **post;
 
-	if ((pre = calloc(SSH_CHANNEL_MAX_TYPE, sizeof(*pre))) == NULL ||
-	    (post = calloc(SSH_CHANNEL_MAX_TYPE, sizeof(*post))) == NULL)
+	ఒకవేళ ((pre = సున్నా_జ్ఞాపకం_ఇవ్వు(SSH_CHANNEL_MAX_TYPE, పరిమాణం(*pre))) == ఖాళీ ||
+	    (post = సున్నా_జ్ఞాపకం_ఇవ్వు(SSH_CHANNEL_MAX_TYPE, పరిమాణం(*post))) == ఖాళీ)
 		fatal_f("allocation failed");
 
 	pre[SSH_CHANNEL_OPEN] =			&channel_pre_open;
 	pre[SSH_CHANNEL_X11_OPEN] =		&channel_pre_x11_open;
-	pre[SSH_CHANNEL_PORT_LISTENER] =	&channel_pre_listener;
+	pre[SSH_CHANNEL_పోర్టు_LISTENER] =	&channel_pre_listener;
 	pre[SSH_CHANNEL_RPORT_LISTENER] =	&channel_pre_listener;
 	pre[SSH_CHANNEL_UNIX_LISTENER] =	&channel_pre_listener;
 	pre[SSH_CHANNEL_RUNIX_LISTENER] =	&channel_pre_listener;
@@ -2685,20 +2685,20 @@ channel_handler_init(struct ssh_channels *sc)
 	pre[SSH_CHANNEL_AUTH_SOCKET] =		&channel_pre_listener;
 	pre[SSH_CHANNEL_CONNECTING] =		&channel_pre_connecting;
 	pre[SSH_CHANNEL_DYNAMIC] =		&channel_pre_dynamic;
-	pre[SSH_CHANNEL_RDYNAMIC_FINISH] =	&channel_pre_connecting;
+	pre[SSH_CHANNEL_RDYNAMIC_ముగింపు] =	&channel_pre_connecting;
 	pre[SSH_CHANNEL_MUX_LISTENER] =		&channel_pre_listener;
 	pre[SSH_CHANNEL_MUX_CLIENT] =		&channel_pre_mux_client;
 
 	post[SSH_CHANNEL_OPEN] =		&channel_post_open;
-	post[SSH_CHANNEL_PORT_LISTENER] =	&channel_post_port_listener;
-	post[SSH_CHANNEL_RPORT_LISTENER] =	&channel_post_port_listener;
-	post[SSH_CHANNEL_UNIX_LISTENER] =	&channel_post_port_listener;
-	post[SSH_CHANNEL_RUNIX_LISTENER] =	&channel_post_port_listener;
+	post[SSH_CHANNEL_పోర్టు_LISTENER] =	&channel_post_పోర్టు_listener;
+	post[SSH_CHANNEL_RPORT_LISTENER] =	&channel_post_పోర్టు_listener;
+	post[SSH_CHANNEL_UNIX_LISTENER] =	&channel_post_పోర్టు_listener;
+	post[SSH_CHANNEL_RUNIX_LISTENER] =	&channel_post_పోర్టు_listener;
 	post[SSH_CHANNEL_X11_LISTENER] =	&channel_post_x11_listener;
 	post[SSH_CHANNEL_AUTH_SOCKET] =		&channel_post_auth_listener;
 	post[SSH_CHANNEL_CONNECTING] =		&channel_post_connecting;
 	post[SSH_CHANNEL_DYNAMIC] =		&channel_post_open;
-	post[SSH_CHANNEL_RDYNAMIC_FINISH] =	&channel_post_connecting;
+	post[SSH_CHANNEL_RDYNAMIC_ముగింపు] =	&channel_post_connecting;
 	post[SSH_CHANNEL_MUX_LISTENER] =	&channel_post_mux_listener;
 	post[SSH_CHANNEL_MUX_CLIENT] =		&channel_post_mux_client;
 
@@ -2707,77 +2707,77 @@ channel_handler_init(struct ssh_channels *sc)
 }
 
 /* gc dead channels */
-static void
-channel_garbage_collect(struct ssh *ssh, Channel *c)
+స్థిర శూన్య
+channel_garbage_collect(నిర్మాణం ssh *ssh, Channel *c)
 {
-	if (c == NULL)
-		return;
-	if (c->detach_user != NULL) {
-		if (!chan_is_dead(ssh, c, c->detach_close))
-			return;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి;
+	ఒకవేళ (c->detach_user != ఖాళీ) {
+		ఒకవేళ (!chan_is_dead(ssh, c, c->detach_close))
+			తిరిగి;
 
 		debug2("channel %d: gc: notify user", c->self);
-		c->detach_user(ssh, c->self, 0, NULL);
+		c->detach_user(ssh, c->self, 0, ఖాళీ);
 		/* if we still have a callback */
-		if (c->detach_user != NULL)
-			return;
+		ఒకవేళ (c->detach_user != ఖాళీ)
+			తిరిగి;
 		debug2("channel %d: gc: user detached", c->self);
 	}
-	if (!chan_is_dead(ssh, c, 1))
-		return;
+	ఒకవేళ (!chan_is_dead(ssh, c, 1))
+		తిరిగి;
 	debug2("channel %d: garbage collecting", c->self);
 	channel_free(ssh, c);
 }
 
-enum channel_table { CHAN_PRE, CHAN_POST };
+గణన channel_పట్టిక { CHAN_PRE, CHAN_POST };
 
-static void
-channel_handler(struct ssh *ssh, int table, struct timespec *timeout)
+స్థిర శూన్య
+channel_handler(నిర్మాణం ssh *ssh, పూర్ణాంకం పట్టిక, నిర్మాణం timespec *timeout)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	chan_fn **ftab = table == CHAN_PRE ? sc->channel_pre : sc->channel_post;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	chan_fn **ftab = పట్టిక == CHAN_PRE ? sc->channel_pre : sc->channel_post;
 	u_int i, oalloc;
 	Channel *c;
-	double now;
+	ద్విగుణ now;
 
 	now = monotime_double();
-	for (sc->nbulk = i = 0, oalloc = sc->channels_alloc; i < oalloc; i++) {
+	కొరకు (sc->nbulk = i = 0, oalloc = sc->channels_alloc; i < oalloc; i++) {
 		c = sc->channels[i];
-		if (c == NULL)
-			continue;
+		ఒకవేళ (c == ఖాళీ)
+			కొనసాగు;
 		/* Count open channels in bulk state */
-		if (c->type == SSH_CHANNEL_OPEN && c->bulk)
+		ఒకవేళ (c->type == SSH_CHANNEL_OPEN && c->bulk)
 			sc->nbulk++;
 		/* Try to keep IO going while rekeying */
-		if (ssh_packet_is_rekeying(ssh) && c->type != SSH_CHANNEL_OPEN)
-			continue;
-		if (c->delayed) {
-			if (table == CHAN_PRE)
+		ఒకవేళ (ssh_packet_is_rekeying(ssh) && c->type != SSH_CHANNEL_OPEN)
+			కొనసాగు;
+		ఒకవేళ (c->delayed) {
+			ఒకవేళ (పట్టిక == CHAN_PRE)
 				c->delayed = 0;
-			else
-				continue;
+			లేకపోతే
+				కొనసాగు;
 		}
-		if (ftab[c->type] != NULL) {
-			if (table == CHAN_PRE && c->type == SSH_CHANNEL_OPEN &&
+		ఒకవేళ (ftab[c->type] != ఖాళీ) {
+			ఒకవేళ (పట్టిక == CHAN_PRE && c->type == SSH_CHANNEL_OPEN &&
 			    channel_get_expiry(ssh, c) != 0 &&
 			    now >= channel_get_expiry(ssh, c)) {
 				/* channel closed for inactivity */
-				double deadline = c->inactive_deadline != 0.0 ?
+				ద్విగుణ deadline = c->inactive_deadline != 0.0 ?
 				    c->inactive_deadline : sc->global_deadline;
 				verbose("channel %d: closing after %f seconds "
 				    "of inactivity", c->self, deadline);
 				channel_force_close(ssh, c, 1);
-			} else if (c->notbefore <= now) {
+			} లేకపోతే ఒకవేళ (c->notbefore <= now) {
 				/* Run handlers that are not paused. */
 				(*ftab[c->type])(ssh, c);
 				/* inactivity timeouts must interrupt poll() */
-				if (timeout != NULL &&
+				ఒకవేళ (timeout != ఖాళీ &&
 				    c->type == SSH_CHANNEL_OPEN &&
 				    channel_get_expiry(ssh, c) != 0) {
 					ptimeout_deadline_monotime_double(timeout,
 					    channel_get_expiry(ssh, c));
 				}
-			} else if (timeout != NULL) {
+			} లేకపోతే ఒకవేళ (timeout != ఖాళీ) {
 				/*
 				 * Arrange for poll() wakeup when channel pause
 				 * timer expires.
@@ -2796,47 +2796,47 @@ channel_handler(struct ssh *ssh, int table, struct timespec *timeout)
  * the network-input but need to be completed before IO event setup, e.g.
  * because they may create new channels.
  */
-static void
-channel_before_prepare_io(struct ssh *ssh)
+స్థిర శూన్య
+channel_before_prepare_io(నిర్మాణం ssh *ssh)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
 	Channel *c;
 	u_int i, oalloc;
 
-	for (i = 0, oalloc = sc->channels_alloc; i < oalloc; i++) {
+	కొరకు (i = 0, oalloc = sc->channels_alloc; i < oalloc; i++) {
 		c = sc->channels[i];
-		if (c == NULL)
-			continue;
-		if (c->type == SSH_CHANNEL_RDYNAMIC_OPEN)
+		ఒకవేళ (c == ఖాళీ)
+			కొనసాగు;
+		ఒకవేళ (c->type == SSH_CHANNEL_RDYNAMIC_OPEN)
 			channel_before_prepare_io_rdynamic(ssh, c);
 	}
 }
 
-static void
-dump_channel_poll(const char *func, const char *what, Channel *c,
-    u_int pollfd_offset, struct pollfd *pfd)
+స్థిర శూన్య
+dump_channel_poll(స్థిరరాశి అక్షరం *func, స్థిరరాశి అక్షరం *what, Channel *c,
+    u_int pollfd_స్థానభ్రంశం, నిర్మాణం pollfd *pfd)
 {
-#ifdef DEBUG_CHANNEL_POLL
+#నిర్వచితమైతే DEBUG_CHANNEL_POLL
 	debug3("%s: channel %d: %s r%d w%d e%d s%d c->pfds [ %d %d %d %d ] "
 	    "io_want 0x%02x io_ready 0x%02x pfd[%u].fd=%d "
 	    "pfd.ev 0x%02x pfd.rev 0x%02x", func, c->self, what,
 	    c->rfd, c->wfd, c->efd, c->sock,
 	    c->pfds[0], c->pfds[1], c->pfds[2], c->pfds[3],
 	    c->io_want, c->io_ready,
-	    pollfd_offset, pfd->fd, pfd->events, pfd->revents);
-#endif
+	    pollfd_స్థానభ్రంశం, pfd->fd, pfd->events, pfd->revents);
+#అయితే_ముగింపు
 }
 
 /* Prepare pollfd entries for a single channel */
-static void
-channel_prepare_pollfd(Channel *c, u_int *next_pollfd,
-    struct pollfd *pfd, u_int npfd)
+స్థిర శూన్య
+channel_prepare_pollfd(Channel *c, u_int *తదుపరి_pollfd,
+    నిర్మాణం pollfd *pfd, u_int npfd)
 {
-	u_int ev, p = *next_pollfd;
+	u_int ev, p = *తదుపరి_pollfd;
 
-	if (c == NULL)
-		return;
-	if (p + 4 > npfd) {
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి;
+	ఒకవేళ (p + 4 > npfd) {
 		/* Shouldn't happen */
 		fatal_f("channel %d: bad pfd offset %u (max %u)",
 		    c->self, p, npfd);
@@ -2849,31 +2849,31 @@ channel_prepare_pollfd(Channel *c, u_int *next_pollfd,
 	 * c->wfd, c->efd and/or c->sock. Handle those here if they want
 	 * IO too.
 	 */
-	if (c->rfd != -1) {
+	ఒకవేళ (c->rfd != -1) {
 		ev = 0;
-		if ((c->io_want & SSH_CHAN_IO_RFD) != 0)
+		ఒకవేళ ((c->io_want & SSH_CHAN_IO_RFD) != 0)
 			ev |= POLLIN;
 		/* rfd == wfd */
-		if (c->wfd == c->rfd) {
-			if ((c->io_want & SSH_CHAN_IO_WFD) != 0)
+		ఒకవేళ (c->wfd == c->rfd) {
+			ఒకవేళ ((c->io_want & SSH_CHAN_IO_WFD) != 0)
 				ev |= POLLOUT;
 		}
 		/* rfd == efd */
-		if (c->efd == c->rfd) {
-			if ((c->io_want & SSH_CHAN_IO_EFD_R) != 0)
+		ఒకవేళ (c->efd == c->rfd) {
+			ఒకవేళ ((c->io_want & SSH_CHAN_IO_EFD_R) != 0)
 				ev |= POLLIN;
-			if ((c->io_want & SSH_CHAN_IO_EFD_W) != 0)
+			ఒకవేళ ((c->io_want & SSH_CHAN_IO_EFD_W) != 0)
 				ev |= POLLOUT;
 		}
 		/* rfd == sock */
-		if (c->sock == c->rfd) {
-			if ((c->io_want & SSH_CHAN_IO_SOCK_R) != 0)
+		ఒకవేళ (c->sock == c->rfd) {
+			ఒకవేళ ((c->io_want & SSH_CHAN_IO_SOCK_R) != 0)
 				ev |= POLLIN;
-			if ((c->io_want & SSH_CHAN_IO_SOCK_W) != 0)
+			ఒకవేళ ((c->io_want & SSH_CHAN_IO_SOCK_W) != 0)
 				ev |= POLLOUT;
 		}
 		/* Pack a pfd entry if any event armed for this fd */
-		if (ev != 0) {
+		ఒకవేళ (ev != 0) {
 			c->pfds[0] = p;
 			pfd[p].fd = c->rfd;
 			pfd[p].events = ev;
@@ -2882,12 +2882,12 @@ channel_prepare_pollfd(Channel *c, u_int *next_pollfd,
 		}
 	}
 	/* prepare c->wfd if wanting IO and not already handled above */
-	if (c->wfd != -1 && c->rfd != c->wfd) {
+	ఒకవేళ (c->wfd != -1 && c->rfd != c->wfd) {
 		ev = 0;
-		if ((c->io_want & SSH_CHAN_IO_WFD))
+		ఒకవేళ ((c->io_want & SSH_CHAN_IO_WFD))
 			ev |= POLLOUT;
 		/* Pack a pfd entry if any event armed for this fd */
-		if (ev != 0) {
+		ఒకవేళ (ev != 0) {
 			c->pfds[1] = p;
 			pfd[p].fd = c->wfd;
 			pfd[p].events = ev;
@@ -2896,14 +2896,14 @@ channel_prepare_pollfd(Channel *c, u_int *next_pollfd,
 		}
 	}
 	/* prepare c->efd if wanting IO and not already handled above */
-	if (c->efd != -1 && c->rfd != c->efd) {
+	ఒకవేళ (c->efd != -1 && c->rfd != c->efd) {
 		ev = 0;
-		if ((c->io_want & SSH_CHAN_IO_EFD_R) != 0)
+		ఒకవేళ ((c->io_want & SSH_CHAN_IO_EFD_R) != 0)
 			ev |= POLLIN;
-		if ((c->io_want & SSH_CHAN_IO_EFD_W) != 0)
+		ఒకవేళ ((c->io_want & SSH_CHAN_IO_EFD_W) != 0)
 			ev |= POLLOUT;
 		/* Pack a pfd entry if any event armed for this fd */
-		if (ev != 0) {
+		ఒకవేళ (ev != 0) {
 			c->pfds[2] = p;
 			pfd[p].fd = c->efd;
 			pfd[p].events = ev;
@@ -2912,14 +2912,14 @@ channel_prepare_pollfd(Channel *c, u_int *next_pollfd,
 		}
 	}
 	/* prepare c->sock if wanting IO and not already handled above */
-	if (c->sock != -1 && c->rfd != c->sock) {
+	ఒకవేళ (c->sock != -1 && c->rfd != c->sock) {
 		ev = 0;
-		if ((c->io_want & SSH_CHAN_IO_SOCK_R) != 0)
+		ఒకవేళ ((c->io_want & SSH_CHAN_IO_SOCK_R) != 0)
 			ev |= POLLIN;
-		if ((c->io_want & SSH_CHAN_IO_SOCK_W) != 0)
+		ఒకవేళ ((c->io_want & SSH_CHAN_IO_SOCK_W) != 0)
 			ev |= POLLOUT;
 		/* Pack a pfd entry if any event armed for this fd */
-		if (ev != 0) {
+		ఒకవేళ (ev != 0) {
 			c->pfds[3] = p;
 			pfd[p].fd = c->sock;
 			pfd[p].events = ev;
@@ -2927,31 +2927,31 @@ channel_prepare_pollfd(Channel *c, u_int *next_pollfd,
 			p++;
 		}
 	}
-	*next_pollfd = p;
+	*తదుపరి_pollfd = p;
 }
 
 /* * Allocate/prepare poll structure */
-void
-channel_prepare_poll(struct ssh *ssh, struct pollfd **pfdp, u_int *npfd_allocp,
-    u_int *npfd_activep, u_int npfd_reserved, struct timespec *timeout)
+శూన్య
+channel_prepare_poll(నిర్మాణం ssh *ssh, నిర్మాణం pollfd **pfdp, u_int *npfd_allocp,
+    u_int *npfd_activep, u_int npfd_reserved, నిర్మాణం timespec *timeout)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
 	u_int i, oalloc, p, npfd = npfd_reserved;
 
 	channel_before_prepare_io(ssh); /* might create a new channel */
 	/* clear out I/O flags from last poll */
-	for (i = 0; i < sc->channels_alloc; i++) {
-		if (sc->channels[i] == NULL)
-			continue;
+	కొరకు (i = 0; i < sc->channels_alloc; i++) {
+		ఒకవేళ (sc->channels[i] == ఖాళీ)
+			కొనసాగు;
 		sc->channels[i]->io_want = sc->channels[i]->io_ready = 0;
 	}
 	/* Allocate 4x pollfd for each channel (rfd, wfd, efd, sock) */
-	if (sc->channels_alloc >= (INT_MAX / 4) - npfd_reserved)
+	ఒకవేళ (sc->channels_alloc >= (గరిష్ఠ_పూర్ణాంకం / 4) - npfd_reserved)
 		fatal_f("too many channels"); /* shouldn't happen */
 	npfd += sc->channels_alloc * 4;
-	if (npfd > *npfd_allocp) {
+	ఒకవేళ (npfd > *npfd_allocp) {
 		*pfdp = xrecallocarray(*pfdp, *npfd_allocp,
-		    npfd, sizeof(**pfdp));
+		    npfd, పరిమాణం(**pfdp));
 		*npfd_allocp = npfd;
 	}
 	*npfd_activep = npfd_reserved;
@@ -2959,7 +2959,7 @@ channel_prepare_poll(struct ssh *ssh, struct pollfd **pfdp, u_int *npfd_allocp,
 
 	channel_handler(ssh, CHAN_PRE, timeout);
 
-	if (oalloc != sc->channels_alloc) {
+	ఒకవేళ (oalloc != sc->channels_alloc) {
 		/* shouldn't happen */
 		fatal_f("channels_alloc changed during CHAN_PRE "
 		    "(was %u, now %u)", oalloc, sc->channels_alloc);
@@ -2967,32 +2967,32 @@ channel_prepare_poll(struct ssh *ssh, struct pollfd **pfdp, u_int *npfd_allocp,
 
 	/* Prepare pollfd */
 	p = npfd_reserved;
-	for (i = 0; i < sc->channels_alloc; i++)
+	కొరకు (i = 0; i < sc->channels_alloc; i++)
 		channel_prepare_pollfd(sc->channels[i], &p, *pfdp, npfd);
 	*npfd_activep = p;
 }
 
-static void
-fd_ready(Channel *c, int p, struct pollfd *pfds, u_int npfd, int fd,
-    const char *what, u_int revents_mask, u_int ready)
+స్థిర శూన్య
+fd_ready(Channel *c, పూర్ణాంకం p, నిర్మాణం pollfd *pfds, u_int npfd, పూర్ణాంకం fd,
+    స్థిరరాశి అక్షరం *what, u_int revents_ముసుగు, u_int ready)
 {
-	struct pollfd *pfd = &pfds[p];
+	నిర్మాణం pollfd *pfd = &pfds[p];
 
-	if (fd == -1)
-		return;
-	if (p == -1 || (u_int)p >= npfd)
+	ఒకవేళ (fd == -1)
+		తిరిగి;
+	ఒకవేళ (p == -1 || (u_int)p >= npfd)
 		fatal_f("channel %d: bad pfd %d (max %u)", c->self, p, npfd);
 	dump_channel_poll(__func__, what, c, p, pfd);
-	if (pfd->fd != fd) {
+	ఒకవేళ (pfd->fd != fd) {
 		fatal("channel %d: inconsistent %s fd=%d pollfd[%u].fd %d "
 		    "r%d w%d e%d s%d", c->self, what, fd, p, pfd->fd,
 		    c->rfd, c->wfd, c->efd, c->sock);
 	}
-	if ((pfd->revents & POLLNVAL) != 0) {
+	ఒకవేళ ((pfd->revents & POLLNVAL) != 0) {
 		fatal("channel %d: invalid %s pollfd[%u].fd %d r%d w%d e%d s%d",
 		    c->self, what, p, pfd->fd, c->rfd, c->wfd, c->efd, c->sock);
 	}
-	if ((pfd->revents & (revents_mask|POLLHUP|POLLERR)) != 0)
+	ఒకవేళ ((pfd->revents & (revents_ముసుగు|POLLHUP|POLLERR)) != 0)
 		c->io_ready |= ready & c->io_want;
 }
 
@@ -3000,30 +3000,30 @@ fd_ready(Channel *c, int p, struct pollfd *pfds, u_int npfd, int fd,
  * After poll, perform any appropriate operations for channels which have
  * events pending.
  */
-void
-channel_after_poll(struct ssh *ssh, struct pollfd *pfd, u_int npfd)
+శూన్య
+channel_after_poll(నిర్మాణం ssh *ssh, నిర్మాణం pollfd *pfd, u_int npfd)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
 	u_int i;
-	int p;
+	పూర్ణాంకం p;
 	Channel *c;
 
-#ifdef DEBUG_CHANNEL_POLL
-	for (p = 0; p < (int)npfd; p++) {
-		if (pfd[p].revents == 0)
-			continue;
+#నిర్వచితమైతే DEBUG_CHANNEL_POLL
+	కొరకు (p = 0; p < (పూర్ణాంకం)npfd; p++) {
+		ఒకవేళ (pfd[p].revents == 0)
+			కొనసాగు;
 		debug_f("pfd[%u].fd %d rev 0x%04x",
 		    p, pfd[p].fd, pfd[p].revents);
 	}
-#endif
+#అయితే_ముగింపు
 
 	/* Convert pollfd into c->io_ready */
-	for (i = 0; i < sc->channels_alloc; i++) {
+	కొరకు (i = 0; i < sc->channels_alloc; i++) {
 		c = sc->channels[i];
-		if (c == NULL)
-			continue;
+		ఒకవేళ (c == ఖాళీ)
+			కొనసాగు;
 		/* if rfd is shared with efd/sock then wfd should be too */
-		if (c->rfd != -1 && c->wfd != -1 && c->rfd != c->wfd &&
+		ఒకవేళ (c->rfd != -1 && c->wfd != -1 && c->rfd != c->wfd &&
 		    (c->rfd == c->efd || c->rfd == c->sock)) {
 			/* Shouldn't happen */
 			fatal_f("channel %d: unexpected fds r%d w%d e%d s%d",
@@ -3031,20 +3031,20 @@ channel_after_poll(struct ssh *ssh, struct pollfd *pfd, u_int npfd)
 		}
 		c->io_ready = 0;
 		/* rfd, potentially shared with wfd, efd and sock */
-		if (c->rfd != -1 && (p = c->pfds[0]) != -1) {
+		ఒకవేళ (c->rfd != -1 && (p = c->pfds[0]) != -1) {
 			fd_ready(c, p, pfd, npfd, c->rfd,
 			    "rfd", POLLIN, SSH_CHAN_IO_RFD);
-			if (c->rfd == c->wfd) {
+			ఒకవేళ (c->rfd == c->wfd) {
 				fd_ready(c, p, pfd, npfd, c->wfd,
 				    "wfd/r", POLLOUT, SSH_CHAN_IO_WFD);
 			}
-			if (c->rfd == c->efd) {
+			ఒకవేళ (c->rfd == c->efd) {
 				fd_ready(c, p, pfd, npfd, c->efd,
 				    "efdr/r", POLLIN, SSH_CHAN_IO_EFD_R);
 				fd_ready(c, p, pfd, npfd, c->efd,
 				    "efdw/r", POLLOUT, SSH_CHAN_IO_EFD_W);
 			}
-			if (c->rfd == c->sock) {
+			ఒకవేళ (c->rfd == c->sock) {
 				fd_ready(c, p, pfd, npfd, c->sock,
 				    "sockr/r", POLLIN, SSH_CHAN_IO_SOCK_R);
 				fd_ready(c, p, pfd, npfd, c->sock,
@@ -3053,14 +3053,14 @@ channel_after_poll(struct ssh *ssh, struct pollfd *pfd, u_int npfd)
 			dump_channel_poll(__func__, "rfd", c, p, pfd);
 		}
 		/* wfd */
-		if (c->wfd != -1 && c->wfd != c->rfd &&
+		ఒకవేళ (c->wfd != -1 && c->wfd != c->rfd &&
 		    (p = c->pfds[1]) != -1) {
 			fd_ready(c, p, pfd, npfd, c->wfd,
 			    "wfd", POLLOUT, SSH_CHAN_IO_WFD);
 			dump_channel_poll(__func__, "wfd", c, p, pfd);
 		}
 		/* efd */
-		if (c->efd != -1 && c->efd != c->rfd &&
+		ఒకవేళ (c->efd != -1 && c->efd != c->rfd &&
 		    (p = c->pfds[2]) != -1) {
 			fd_ready(c, p, pfd, npfd, c->efd,
 			    "efdr", POLLIN, SSH_CHAN_IO_EFD_R);
@@ -3069,7 +3069,7 @@ channel_after_poll(struct ssh *ssh, struct pollfd *pfd, u_int npfd)
 			dump_channel_poll(__func__, "efd", c, p, pfd);
 		}
 		/* sock */
-		if (c->sock != -1 && c->sock != c->rfd &&
+		ఒకవేళ (c->sock != -1 && c->sock != c->rfd &&
 		    (p = c->pfds[3]) != -1) {
 			fd_ready(c, p, pfd, npfd, c->sock,
 			    "sockr", POLLIN, SSH_CHAN_IO_SOCK_R);
@@ -3078,22 +3078,22 @@ channel_after_poll(struct ssh *ssh, struct pollfd *pfd, u_int npfd)
 			dump_channel_poll(__func__, "sock", c, p, pfd);
 		}
 	}
-	channel_handler(ssh, CHAN_POST, NULL);
+	channel_handler(ssh, CHAN_POST, ఖాళీ);
 }
 
 /*
  * Enqueue data for channels with open or draining c->input.
  * Returns non-zero if a packet was enqueued.
  */
-static int
-channel_output_poll_input_open(struct ssh *ssh, Channel *c)
+స్థిర పూర్ణాంకం
+channel_output_poll_ఆదానం_open(నిర్మాణం ssh *ssh, Channel *c)
 {
-	size_t len, plen;
-	const u_char *pkt;
-	int r;
+	కొలత_t len, plen;
+	స్థిరరాశి u_char *pkt;
+	పూర్ణాంకం r;
 
-	if ((len = sshbuf_len(c->input)) == 0) {
-		if (c->istate == CHAN_INPUT_WAIT_DRAIN) {
+	ఒకవేళ ((len = sshbuf_len(c->ఆదానం)) == 0) {
+		ఒకవేళ (c->istate == CHAN_ఆదానం_WAIT_DRAIN) {
 			/*
 			 * input-buffer is empty and read-socket shutdown:
 			 * tell peer, that we will not send more data:
@@ -3101,136 +3101,136 @@ channel_output_poll_input_open(struct ssh *ssh, Channel *c)
 			 * hack for extended data: delay EOF if EFD still
 			 * in use.
 			 */
-			if (CHANNEL_EFD_INPUT_ACTIVE(c))
+			ఒకవేళ (CHANNEL_EFD_ఆదానం_చురుకైన(c))
 				debug2("channel %d: "
 				    "ibuf_empty delayed efd %d/(%zu)",
 				    c->self, c->efd, sshbuf_len(c->extended));
-			else
-				chan_ibuf_empty(ssh, c);
+			లేకపోతే
+				chan_ibuf_ఖాళీలు(ssh, c);
 		}
-		return 0;
+		తిరిగి 0;
 	}
 
-	if (!c->have_remote_id)
+	ఒకవేళ (!c->have_remote_id)
 		fatal_f("channel %d: no remote id", c->self);
 
-	if (c->datagram) {
+	ఒకవేళ (c->datagram) {
 		/* Check datagram will fit; drop if not */
-		if ((r = sshbuf_get_string_direct(c->input, &pkt, &plen)) != 0)
+		ఒకవేళ ((r = sshbuf_get_string_ప్రత్యక్ష(c->ఆదానం, &pkt, &plen)) != 0)
 			fatal_fr(r, "channel %i: get datagram", c->self);
 		/*
 		 * XXX this does tail-drop on the datagram queue which is
 		 * usually suboptimal compared to head-drop. Better to have
 		 * backpressure at read time? (i.e. read + discard)
 		 */
-		if (plen > c->remote_window || plen > c->remote_maxpacket) {
+		ఒకవేళ (plen > c->remote_కిటికీ || plen > c->remote_maxpacket) {
 			debug("channel %d: datagram too big", c->self);
-			return 0;
+			తిరిగి 0;
 		}
 		/* Enqueue it */
-		if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_DATA)) != 0 ||
+		ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_CHANNEL_దత్తాంశం)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 		    (r = sshpkt_put_string(ssh, pkt, plen)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
 			fatal_fr(r, "channel %i: send datagram", c->self);
-		c->remote_window -= plen;
-		return 1;
+		c->remote_కిటికీ -= plen;
+		తిరిగి 1;
 	}
 
 	/* Enqueue packet for buffered data. */
-	if (len > c->remote_window)
-		len = c->remote_window;
-	if (len > c->remote_maxpacket)
+	ఒకవేళ (len > c->remote_కిటికీ)
+		len = c->remote_కిటికీ;
+	ఒకవేళ (len > c->remote_maxpacket)
 		len = c->remote_maxpacket;
-	if (len == 0)
-		return 0;
-	if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_DATA)) != 0 ||
+	ఒకవేళ (len == 0)
+		తిరిగి 0;
+	ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_CHANNEL_దత్తాంశం)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
-	    (r = sshpkt_put_string(ssh, sshbuf_ptr(c->input), len)) != 0 ||
+	    (r = sshpkt_put_string(ssh, sshbuf_ptr(c->ఆదానం), len)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "channel %i: send data", c->self);
-	if ((r = sshbuf_consume(c->input, len)) != 0)
+	ఒకవేళ ((r = sshbuf_consume(c->ఆదానం, len)) != 0)
 		fatal_fr(r, "channel %i: consume", c->self);
-	c->remote_window -= len;
-	return 1;
+	c->remote_కిటికీ -= len;
+	తిరిగి 1;
 }
 
 /*
  * Enqueue data for channels with open c->extended in read mode.
  * Returns non-zero if a packet was enqueued.
  */
-static int
-channel_output_poll_extended_read(struct ssh *ssh, Channel *c)
+స్థిర పూర్ణాంకం
+channel_output_poll_extended_read(నిర్మాణం ssh *ssh, Channel *c)
 {
-	size_t len;
-	int r;
+	కొలత_t len;
+	పూర్ణాంకం r;
 
-	if ((len = sshbuf_len(c->extended)) == 0)
-		return 0;
+	ఒకవేళ ((len = sshbuf_len(c->extended)) == 0)
+		తిరిగి 0;
 
 	debug2("channel %d: rwin %u elen %zu euse %d", c->self,
-	    c->remote_window, sshbuf_len(c->extended), c->extended_usage);
-	if (len > c->remote_window)
-		len = c->remote_window;
-	if (len > c->remote_maxpacket)
+	    c->remote_కిటికీ, sshbuf_len(c->extended), c->extended_usage);
+	ఒకవేళ (len > c->remote_కిటికీ)
+		len = c->remote_కిటికీ;
+	ఒకవేళ (len > c->remote_maxpacket)
 		len = c->remote_maxpacket;
-	if (len == 0)
-		return 0;
-	if (!c->have_remote_id)
+	ఒకవేళ (len == 0)
+		తిరిగి 0;
+	ఒకవేళ (!c->have_remote_id)
 		fatal_f("channel %d: no remote id", c->self);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_EXTENDED_DATA)) != 0 ||
+	ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_CHANNEL_EXTENDED_దత్తాంశం)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
-	    (r = sshpkt_put_u32(ssh, SSH2_EXTENDED_DATA_STDERR)) != 0 ||
+	    (r = sshpkt_put_u32(ssh, SSH2_EXTENDED_దత్తాంశం_STDERR)) != 0 ||
 	    (r = sshpkt_put_string(ssh, sshbuf_ptr(c->extended), len)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "channel %i: data", c->self);
-	if ((r = sshbuf_consume(c->extended, len)) != 0)
+	ఒకవేళ ((r = sshbuf_consume(c->extended, len)) != 0)
 		fatal_fr(r, "channel %i: consume", c->self);
-	c->remote_window -= len;
+	c->remote_కిటికీ -= len;
 	debug2("channel %d: sent ext data %zu", c->self, len);
-	return 1;
+	తిరిగి 1;
 }
 
 /*
  * If there is data to send to the connection, enqueue some of it now.
  * Returns non-zero if data was enqueued.
  */
-int
-channel_output_poll(struct ssh *ssh)
+పూర్ణాంకం
+channel_output_poll(నిర్మాణం ssh *ssh)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
 	Channel *c;
 	u_int i;
-	int ret = 0;
+	పూర్ణాంకం ret = 0;
 
-	for (i = 0; i < sc->channels_alloc; i++) {
+	కొరకు (i = 0; i < sc->channels_alloc; i++) {
 		c = sc->channels[i];
-		if (c == NULL)
-			continue;
+		ఒకవేళ (c == ఖాళీ)
+			కొనసాగు;
 
 		/*
 		 * We are only interested in channels that can have buffered
 		 * incoming data.
 		 */
-		if (c->type != SSH_CHANNEL_OPEN)
-			continue;
-		if ((c->flags & (CHAN_CLOSE_SENT|CHAN_CLOSE_RCVD))) {
+		ఒకవేళ (c->type != SSH_CHANNEL_OPEN)
+			కొనసాగు;
+		ఒకవేళ ((c->flags & (CHAN_CLOSE_పంపిన|CHAN_CLOSE_RCVD))) {
 			/* XXX is this true? */
 			debug3("channel %d: will not send data after close",
 			    c->self);
-			continue;
+			కొనసాగు;
 		}
 
 		/* Get the amount of buffered data for this channel. */
-		if (c->istate == CHAN_INPUT_OPEN ||
-		    c->istate == CHAN_INPUT_WAIT_DRAIN)
-			ret |= channel_output_poll_input_open(ssh, c);
+		ఒకవేళ (c->istate == CHAN_ఆదానం_OPEN ||
+		    c->istate == CHAN_ఆదానం_WAIT_DRAIN)
+			ret |= channel_output_poll_ఆదానం_open(ssh, c);
 		/* Send extended data, i.e. stderr */
-		if (!(c->flags & CHAN_EOF_SENT) &&
+		ఒకవేళ (!(c->flags & CHAN_EOF_పంపిన) &&
 		    c->extended_usage == CHAN_EXTENDED_READ)
 			ret |= channel_output_poll_extended_read(ssh, c);
 	}
-	return ret;
+	తిరిగి ret;
 }
 
 /* -- mux proxy support  */
@@ -3273,74 +3273,74 @@ channel_output_poll(struct ssh *ssh)
  * SSH_CHANNEL_MUX_PROXY channels and translates channel IDs
  * on channel creation.
  */
-int
-channel_proxy_downstream(struct ssh *ssh, Channel *downstream)
+పూర్ణాంకం
+channel_proxy_downstream(నిర్మాణం ssh *ssh, Channel *downstream)
 {
-	Channel *c = NULL;
-	struct sshbuf *original = NULL, *modified = NULL;
-	const u_char *cp;
-	char *ctype = NULL, *listen_host = NULL;
+	Channel *c = ఖాళీ;
+	నిర్మాణం sshbuf *original = ఖాళీ, *modified = ఖాళీ;
+	స్థిరరాశి u_char *cp;
+	అక్షరం *ctype = ఖాళీ, *listen_host = ఖాళీ;
 	u_char type;
-	size_t have;
-	int ret = -1, r;
-	u_int id, remote_id, listen_port;
+	కొలత_t have;
+	పూర్ణాంకం ret = -1, r;
+	u_int id, remote_id, listen_పోర్టు;
 
 	/* sshbuf_dump(downstream->input, stderr); */
-	if ((r = sshbuf_get_string_direct(downstream->input, &cp, &have))
+	ఒకవేళ ((r = sshbuf_get_string_ప్రత్యక్ష(downstream->ఆదానం, &cp, &have))
 	    != 0) {
 		error_fr(r, "parse");
-		return -1;
+		తిరిగి -1;
 	}
-	if (have < 2) {
+	ఒకవేళ (have < 2) {
 		error_f("short message");
-		return -1;
+		తిరిగి -1;
 	}
 	type = cp[1];
 	/* skip padlen + type */
 	cp += 2;
 	have -= 2;
-	if (ssh_packet_log_type(type))
+	ఒకవేళ (ssh_packet_log_type(type))
 		debug3_f("channel %u: down->up: type %u",
 		    downstream->self, type);
 
-	switch (type) {
-	case SSH2_MSG_CHANNEL_OPEN:
-		if ((original = sshbuf_from(cp, have)) == NULL ||
-		    (modified = sshbuf_new()) == NULL) {
+	ఎంపిక (type) {
+	స్థితి SSH2_సందేశం_CHANNEL_OPEN:
+		ఒకవేళ ((original = sshbuf_from(cp, have)) == ఖాళీ ||
+		    (modified = sshbuf_new()) == ఖాళీ) {
 			error_f("alloc");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if ((r = sshbuf_get_cstring(original, &ctype, NULL)) != 0 ||
+		ఒకవేళ ((r = sshbuf_get_cstring(original, &ctype, ఖాళీ)) != 0 ||
 		    (r = sshbuf_get_u32(original, &id)) != 0) {
 			error_fr(r, "parse");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		c = channel_new(ssh, "mux-proxy", SSH_CHANNEL_MUX_PROXY,
 		    -1, -1, -1, 0, 0, 0, ctype, 1);
 		c->mux_ctx = downstream;	/* point to mux client */
 		c->mux_downstream_id = id;	/* original downstream id */
-		if ((r = sshbuf_put_cstring(modified, ctype)) != 0 ||
+		ఒకవేళ ((r = sshbuf_put_cstring(modified, ctype)) != 0 ||
 		    (r = sshbuf_put_u32(modified, c->self)) != 0 ||
 		    (r = sshbuf_putb(modified, original)) != 0) {
 			error_fr(r, "compose");
 			channel_free(ssh, c);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		break;
-	case SSH2_MSG_CHANNEL_OPEN_CONFIRMATION:
+		ఆపు;
+	స్థితి SSH2_సందేశం_CHANNEL_OPEN_CONFIRMATION:
 		/*
 		 * Almost the same as SSH2_MSG_CHANNEL_OPEN, except then we
 		 * need to parse 'remote_id' instead of 'ctype'.
 		 */
-		if ((original = sshbuf_from(cp, have)) == NULL ||
-		    (modified = sshbuf_new()) == NULL) {
+		ఒకవేళ ((original = sshbuf_from(cp, have)) == ఖాళీ ||
+		    (modified = sshbuf_new()) == ఖాళీ) {
 			error_f("alloc");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if ((r = sshbuf_get_u32(original, &remote_id)) != 0 ||
+		ఒకవేళ ((r = sshbuf_get_u32(original, &remote_id)) != 0 ||
 		    (r = sshbuf_get_u32(original, &id)) != 0) {
 			error_fr(r, "parse");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		c = channel_new(ssh, "mux-proxy", SSH_CHANNEL_MUX_PROXY,
 		    -1, -1, -1, 0, 0, 0, "mux-down-connect", 1);
@@ -3348,76 +3348,76 @@ channel_proxy_downstream(struct ssh *ssh, Channel *downstream)
 		c->mux_downstream_id = id;
 		c->remote_id = remote_id;
 		c->have_remote_id = 1;
-		if ((r = sshbuf_put_u32(modified, remote_id)) != 0 ||
+		ఒకవేళ ((r = sshbuf_put_u32(modified, remote_id)) != 0 ||
 		    (r = sshbuf_put_u32(modified, c->self)) != 0 ||
 		    (r = sshbuf_putb(modified, original)) != 0) {
 			error_fr(r, "compose");
 			channel_free(ssh, c);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		break;
-	case SSH2_MSG_GLOBAL_REQUEST:
-		if ((original = sshbuf_from(cp, have)) == NULL) {
+		ఆపు;
+	స్థితి SSH2_సందేశం_GLOBAL_REQUEST:
+		ఒకవేళ ((original = sshbuf_from(cp, have)) == ఖాళీ) {
 			error_f("alloc");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if ((r = sshbuf_get_cstring(original, &ctype, NULL)) != 0) {
+		ఒకవేళ ((r = sshbuf_get_cstring(original, &ctype, ఖాళీ)) != 0) {
 			error_fr(r, "parse");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (strcmp(ctype, "tcpip-forward") != 0) {
+		ఒకవేళ (strcmp(ctype, "tcpip-forward") != 0) {
 			error_f("unsupported request %s", ctype);
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if ((r = sshbuf_get_u8(original, NULL)) != 0 ||
-		    (r = sshbuf_get_cstring(original, &listen_host, NULL)) != 0 ||
-		    (r = sshbuf_get_u32(original, &listen_port)) != 0) {
+		ఒకవేళ ((r = sshbuf_get_u8(original, ఖాళీ)) != 0 ||
+		    (r = sshbuf_get_cstring(original, &listen_host, ఖాళీ)) != 0 ||
+		    (r = sshbuf_get_u32(original, &listen_పోర్టు)) != 0) {
 			error_fr(r, "parse");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		if (listen_port > 65535) {
+		ఒకవేళ (listen_పోర్టు > 65535) {
 			error_f("tcpip-forward for %s: bad port %u",
-			    listen_host, listen_port);
-			goto out;
+			    listen_host, listen_పోర్టు);
+			వెళ్ళు బహిర్గతం;
 		}
 		/* Record that connection to this host/port is permitted. */
-		permission_set_add(ssh, FORWARD_USER, FORWARD_LOCAL, "<mux>",
-		    -1, listen_host, NULL, (int)listen_port, downstream);
-		break;
-	case SSH2_MSG_CHANNEL_CLOSE:
-		if (have < 4)
-			break;
+		permission_సమితి_కూడు(ssh, FORWARD_USER, FORWARD_LOCAL, "<mux>",
+		    -1, listen_host, ఖాళీ, (పూర్ణాంకం)listen_పోర్టు, downstream);
+		ఆపు;
+	స్థితి SSH2_సందేశం_CHANNEL_CLOSE:
+		ఒకవేళ (have < 4)
+			ఆపు;
 		remote_id = PEEK_U32(cp);
-		if ((c = channel_by_remote_id(ssh, remote_id)) != NULL) {
-			if (c->flags & CHAN_CLOSE_RCVD)
+		ఒకవేళ ((c = channel_by_remote_id(ssh, remote_id)) != ఖాళీ) {
+			ఒకవేళ (c->flags & CHAN_CLOSE_RCVD)
 				channel_free(ssh, c);
-			else
-				c->flags |= CHAN_CLOSE_SENT;
+			లేకపోతే
+				c->flags |= CHAN_CLOSE_పంపిన;
 		}
-		break;
+		ఆపు;
 	}
-	if (modified) {
-		if ((r = sshpkt_start(ssh, type)) != 0 ||
+	ఒకవేళ (modified) {
+		ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, type)) != 0 ||
 		    (r = sshpkt_putb(ssh, modified)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0) {
 			error_fr(r, "send");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-	} else {
-		if ((r = sshpkt_start(ssh, type)) != 0 ||
+	} లేకపోతే {
+		ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, type)) != 0 ||
 		    (r = sshpkt_put(ssh, cp, have)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0) {
 			error_fr(r, "send");
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 	}
 	ret = 0;
- out:
-	free(ctype);
-	free(listen_host);
+ బహిర్గతం:
+	విడుదల(ctype);
+	విడుదల(listen_host);
 	sshbuf_free(original);
 	sshbuf_free(modified);
-	return ret;
+	తిరిగి ret;
 }
 
 /*
@@ -3426,14 +3426,14 @@ channel_proxy_downstream(struct ssh *ssh, Channel *downstream)
  * implemented as a helper for channel input handlers,
  * replaces local (proxy) channel ID with downstream channel ID.
  */
-int
-channel_proxy_upstream(Channel *c, int type, uint32_t seq, struct ssh *ssh)
+పూర్ణాంకం
+channel_proxy_upstream(Channel *c, పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
-	struct sshbuf *b = NULL;
+	నిర్మాణం sshbuf *b = ఖాళీ;
 	Channel *downstream;
-	const u_char *cp = NULL;
-	size_t len;
-	int r;
+	స్థిరరాశి u_char *cp = ఖాళీ;
+	కొలత_t len;
+	పూర్ణాంకం r;
 
 	/*
 	 * When receiving packets from the peer we need to check whether we
@@ -3441,128 +3441,128 @@ channel_proxy_upstream(Channel *c, int type, uint32_t seq, struct ssh *ssh)
 	 * restore the original channel id and keep track of CLOSE messages,
 	 * so we can cleanup the channel.
 	 */
-	if (c == NULL || c->type != SSH_CHANNEL_MUX_PROXY)
-		return 0;
-	if ((downstream = c->mux_ctx) == NULL)
-		return 0;
-	switch (type) {
-	case SSH2_MSG_CHANNEL_CLOSE:
-	case SSH2_MSG_CHANNEL_DATA:
-	case SSH2_MSG_CHANNEL_EOF:
-	case SSH2_MSG_CHANNEL_EXTENDED_DATA:
-	case SSH2_MSG_CHANNEL_OPEN_CONFIRMATION:
-	case SSH2_MSG_CHANNEL_OPEN_FAILURE:
-	case SSH2_MSG_CHANNEL_WINDOW_ADJUST:
-	case SSH2_MSG_CHANNEL_SUCCESS:
-	case SSH2_MSG_CHANNEL_FAILURE:
-	case SSH2_MSG_CHANNEL_REQUEST:
-		break;
-	default:
+	ఒకవేళ (c == ఖాళీ || c->type != SSH_CHANNEL_MUX_PROXY)
+		తిరిగి 0;
+	ఒకవేళ ((downstream = c->mux_ctx) == ఖాళీ)
+		తిరిగి 0;
+	ఎంపిక (type) {
+	స్థితి SSH2_సందేశం_CHANNEL_CLOSE:
+	స్థితి SSH2_సందేశం_CHANNEL_దత్తాంశం:
+	స్థితి SSH2_సందేశం_CHANNEL_EOF:
+	స్థితి SSH2_సందేశం_CHANNEL_EXTENDED_దత్తాంశం:
+	స్థితి SSH2_సందేశం_CHANNEL_OPEN_CONFIRMATION:
+	స్థితి SSH2_సందేశం_CHANNEL_OPEN_FAILURE:
+	స్థితి SSH2_సందేశం_CHANNEL_కిటికీ_ADJUST:
+	స్థితి SSH2_సందేశం_CHANNEL_SUCCESS:
+	స్థితి SSH2_సందేశం_CHANNEL_FAILURE:
+	స్థితి SSH2_సందేశం_CHANNEL_REQUEST:
+		ఆపు;
+	అప్రమేయ:
 		debug2_f("channel %u: unsupported type %u", c->self, type);
-		return 0;
+		తిరిగి 0;
 	}
-	if ((b = sshbuf_new()) == NULL) {
+	ఒకవేళ ((b = sshbuf_new()) == ఖాళీ) {
 		error_f("alloc reply");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* get remaining payload (after id) */
 	cp = sshpkt_ptr(ssh, &len);
-	if (cp == NULL) {
+	ఒకవేళ (cp == ఖాళీ) {
 		error_f("no packet");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* translate id and send to muxclient */
-	if ((r = sshbuf_put_u8(b, 0)) != 0 ||	/* padlen */
+	ఒకవేళ ((r = sshbuf_put_u8(b, 0)) != 0 ||	/* padlen */
 	    (r = sshbuf_put_u8(b, type)) != 0 ||
 	    (r = sshbuf_put_u32(b, c->mux_downstream_id)) != 0 ||
 	    (r = sshbuf_put(b, cp, len)) != 0 ||
 	    (r = sshbuf_put_stringb(downstream->output, b)) != 0) {
 		error_fr(r, "compose muxclient");
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	/* sshbuf_dump(b, stderr); */
-	if (ssh_packet_log_type(type))
+	ఒకవేళ (ssh_packet_log_type(type))
 		debug3_f("channel %u: up->down: type %u", c->self, type);
- out:
+ బహిర్గతం:
 	/* update state */
-	switch (type) {
-	case SSH2_MSG_CHANNEL_OPEN_CONFIRMATION:
+	ఎంపిక (type) {
+	స్థితి SSH2_సందేశం_CHANNEL_OPEN_CONFIRMATION:
 		/* record remote_id for SSH2_MSG_CHANNEL_CLOSE */
-		if (cp && len > 4) {
+		ఒకవేళ (cp && len > 4) {
 			c->remote_id = PEEK_U32(cp);
 			c->have_remote_id = 1;
 		}
-		break;
-	case SSH2_MSG_CHANNEL_CLOSE:
-		if (c->flags & CHAN_CLOSE_SENT)
+		ఆపు;
+	స్థితి SSH2_సందేశం_CHANNEL_CLOSE:
+		ఒకవేళ (c->flags & CHAN_CLOSE_పంపిన)
 			channel_free(ssh, c);
-		else
+		లేకపోతే
 			c->flags |= CHAN_CLOSE_RCVD;
-		break;
+		ఆపు;
 	}
 	sshbuf_free(b);
-	return 1;
+	తిరిగి 1;
 }
 
 /* -- protocol input */
 
 /* Parse a channel ID from the current packet */
-static int
-channel_parse_id(struct ssh *ssh, const char *where, const char *what)
+స్థిర పూర్ణాంకం
+channel_parse_id(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *where, స్థిరరాశి అక్షరం *what)
 {
 	uint32_t id;
-	int r;
+	పూర్ణాంకం r;
 
-	if ((r = sshpkt_get_u32(ssh, &id)) != 0) {
+	ఒకవేళ ((r = sshpkt_get_u32(ssh, &id)) != 0) {
 		error_r(r, "%s: parse id", where);
 		ssh_packet_disconnect(ssh, "Invalid %s message", what);
 	}
-	if (id > INT_MAX) {
+	ఒకవేళ (id > గరిష్ఠ_పూర్ణాంకం) {
 		error_r(r, "%s: bad channel id %u", where, id);
 		ssh_packet_disconnect(ssh, "Invalid %s channel id", what);
 	}
-	return (int)id;
+	తిరిగి (పూర్ణాంకం)id;
 }
 
 /* Lookup a channel from an ID in the current packet */
-static Channel *
-channel_from_packet_id(struct ssh *ssh, const char *where, const char *what)
+స్థిర Channel *
+channel_from_packet_id(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *where, స్థిరరాశి అక్షరం *what)
 {
-	int id = channel_parse_id(ssh, where, what);
+	పూర్ణాంకం id = channel_parse_id(ssh, where, what);
 	Channel *c;
 
-	if ((c = channel_lookup(ssh, id)) == NULL) {
+	ఒకవేళ ((c = channel_lookup(ssh, id)) == ఖాళీ) {
 		ssh_packet_disconnect(ssh,
 		    "%s packet referred to nonexistent channel %d", what, id);
 	}
-	return c;
+	తిరిగి c;
 }
 
-int
-channel_input_data(int type, uint32_t seq, struct ssh *ssh)
+పూర్ణాంకం
+channel_ఆదానం_దత్తాంశం(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
-	const u_char *data;
-	size_t data_len, win_len;
+	స్థిరరాశి u_char *దత్తాంశం;
+	కొలత_t దత్తాంశం_len, win_len;
 	Channel *c = channel_from_packet_id(ssh, __func__, "data");
-	int r;
+	పూర్ణాంకం r;
 
-	if (channel_proxy_upstream(c, type, seq, ssh))
-		return 0;
+	ఒకవేళ (channel_proxy_upstream(c, type, seq, ssh))
+		తిరిగి 0;
 
 	/* Ignore any data for non-open channels (might happen on close) */
-	if (c->type != SSH_CHANNEL_OPEN &&
+	ఒకవేళ (c->type != SSH_CHANNEL_OPEN &&
 	    c->type != SSH_CHANNEL_RDYNAMIC_OPEN &&
-	    c->type != SSH_CHANNEL_RDYNAMIC_FINISH &&
+	    c->type != SSH_CHANNEL_RDYNAMIC_ముగింపు &&
 	    c->type != SSH_CHANNEL_X11_OPEN)
-		return 0;
+		తిరిగి 0;
 
 	/* Get the data. */
-	if ((r = sshpkt_get_string_direct(ssh, &data, &data_len)) != 0 ||
-            (r = sshpkt_get_end(ssh)) != 0)
+	ఒకవేళ ((r = sshpkt_get_string_ప్రత్యక్ష(ssh, &దత్తాంశం, &దత్తాంశం_len)) != 0 ||
+            (r = sshpkt_get_చివర(ssh)) != 0)
 		fatal_fr(r, "channel %i: get data", c->self);
 
-	win_len = data_len;
-	if (c->datagram)
+	win_len = దత్తాంశం_len;
+	ఒకవేళ (c->datagram)
 		win_len += 4;  /* string length header */
 
 	/*
@@ -3570,298 +3570,298 @@ channel_input_data(int type, uint32_t seq, struct ssh *ssh)
 	 * must 'fake' consumption of the data in order to ensure that window
 	 * updates are sent back. Otherwise the connection might deadlock.
 	 */
-	if (c->ostate != CHAN_OUTPUT_OPEN) {
-		if (win_len > c->local_window)
-			c->local_window = 0;
-		else
-			c->local_window -= win_len;
+	ఒకవేళ (c->ostate != CHAN_OUTPUT_OPEN) {
+		ఒకవేళ (win_len > c->local_కిటికీ)
+			c->local_కిటికీ = 0;
+		లేకపోతే
+			c->local_కిటికీ -= win_len;
 		c->local_consumed += win_len;
-		return 0;
+		తిరిగి 0;
 	}
 
-	if (win_len > c->local_maxpacket) {
+	ఒకవేళ (win_len > c->local_maxpacket) {
 		logit("channel %d: rcvd big packet %zu, maxpack %u",
 		    c->self, win_len, c->local_maxpacket);
-		return 0;
+		తిరిగి 0;
 	}
-	if (win_len > c->local_window) {
-		u_int delta = win_len - c->local_window;
+	ఒకవేళ (win_len > c->local_కిటికీ) {
+		u_int delta = win_len - c->local_కిటికీ;
 
-		if (c->local_window_exceeded > UINT_MAX - delta)
-			c->local_window_exceeded = UINT_MAX;
-		else
-			c->local_window_exceeded += delta;
+		ఒకవేళ (c->local_కిటికీ_exceeded > UINT_MAX - delta)
+			c->local_కిటికీ_exceeded = UINT_MAX;
+		లేకపోతే
+			c->local_కిటికీ_exceeded += delta;
 		logit("channel %d: rcvd too much data %zu, win %u/%u "
-		    "(excess %u)", c->self, win_len, c->local_window,
-		    c->local_window_max, c->local_window_exceeded);
-		c->local_window = 0;
+		    "(excess %u)", c->self, win_len, c->local_కిటికీ,
+		    c->local_కిటికీ_max, c->local_కిటికీ_exceeded);
+		c->local_కిటికీ = 0;
 		/* Allow 10% grace before bringing the hammer down */
-		if (c->local_window_exceeded > (c->local_window_max / 10)) {
+		ఒకవేళ (c->local_కిటికీ_exceeded > (c->local_కిటికీ_max / 10)) {
 			ssh_packet_disconnect(ssh, "channel %d: peer ignored "
 			    "channel window", c->self);
 		}
-	} else {
-		c->local_window -= win_len;
-		c->local_window_exceeded = 0;
+	} లేకపోతే {
+		c->local_కిటికీ -= win_len;
+		c->local_కిటికీ_exceeded = 0;
 	}
 
-	if (c->datagram) {
-		if ((r = sshbuf_put_string(c->output, data, data_len)) != 0)
+	ఒకవేళ (c->datagram) {
+		ఒకవేళ ((r = sshbuf_put_string(c->output, దత్తాంశం, దత్తాంశం_len)) != 0)
 			fatal_fr(r, "channel %i: append datagram", c->self);
-	} else if ((r = sshbuf_put(c->output, data, data_len)) != 0)
+	} లేకపోతే ఒకవేళ ((r = sshbuf_put(c->output, దత్తాంశం, దత్తాంశం_len)) != 0)
 		fatal_fr(r, "channel %i: append data", c->self);
 
-	return 0;
+	తిరిగి 0;
 }
 
-int
-channel_input_extended_data(int type, uint32_t seq, struct ssh *ssh)
+పూర్ణాంకం
+channel_ఆదానం_extended_దత్తాంశం(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
-	const u_char *data;
-	size_t data_len;
+	స్థిరరాశి u_char *దత్తాంశం;
+	కొలత_t దత్తాంశం_len;
 	uint32_t tcode;
 	Channel *c = channel_from_packet_id(ssh, __func__, "extended data");
-	int r;
+	పూర్ణాంకం r;
 
-	if (channel_proxy_upstream(c, type, seq, ssh))
-		return 0;
-	if (c->type != SSH_CHANNEL_OPEN) {
+	ఒకవేళ (channel_proxy_upstream(c, type, seq, ssh))
+		తిరిగి 0;
+	ఒకవేళ (c->type != SSH_CHANNEL_OPEN) {
 		logit("channel %d: ext data for non open", c->self);
-		return 0;
+		తిరిగి 0;
 	}
-	if (c->flags & CHAN_EOF_RCVD) {
-		if (ssh->compat & SSH_BUG_EXTEOF)
+	ఒకవేళ (c->flags & CHAN_EOF_RCVD) {
+		ఒకవేళ (ssh->compat & SSH_BUG_EXTEOF)
 			debug("channel %d: accepting ext data after eof",
 			    c->self);
-		else
+		లేకపోతే
 			ssh_packet_disconnect(ssh, "Received extended_data "
 			    "after EOF on channel %d.", c->self);
 	}
 
-	if ((r = sshpkt_get_u32(ssh, &tcode)) != 0) {
+	ఒకవేళ ((r = sshpkt_get_u32(ssh, &tcode)) != 0) {
 		error_fr(r, "parse tcode");
 		ssh_packet_disconnect(ssh, "Invalid extended_data message");
 	}
-	if (c->efd == -1 ||
+	ఒకవేళ (c->efd == -1 ||
 	    c->extended_usage != CHAN_EXTENDED_WRITE ||
-	    tcode != SSH2_EXTENDED_DATA_STDERR) {
+	    tcode != SSH2_EXTENDED_దత్తాంశం_STDERR) {
 		logit("channel %d: bad ext data", c->self);
-		return 0;
+		తిరిగి 0;
 	}
-	if ((r = sshpkt_get_string_direct(ssh, &data, &data_len)) != 0 ||
-            (r = sshpkt_get_end(ssh)) != 0) {
+	ఒకవేళ ((r = sshpkt_get_string_ప్రత్యక్ష(ssh, &దత్తాంశం, &దత్తాంశం_len)) != 0 ||
+            (r = sshpkt_get_చివర(ssh)) != 0) {
 		error_fr(r, "parse data");
 		ssh_packet_disconnect(ssh, "Invalid extended_data message");
 	}
 
-	if (data_len > c->local_window) {
+	ఒకవేళ (దత్తాంశం_len > c->local_కిటికీ) {
 		logit("channel %d: rcvd too much extended_data %zu, win %u",
-		    c->self, data_len, c->local_window);
-		return 0;
+		    c->self, దత్తాంశం_len, c->local_కిటికీ);
+		తిరిగి 0;
 	}
-	debug2("channel %d: rcvd ext data %zu", c->self, data_len);
+	debug2("channel %d: rcvd ext data %zu", c->self, దత్తాంశం_len);
 	/* XXX sshpkt_getb? */
-	if ((r = sshbuf_put(c->extended, data, data_len)) != 0)
+	ఒకవేళ ((r = sshbuf_put(c->extended, దత్తాంశం, దత్తాంశం_len)) != 0)
 		error_fr(r, "append");
-	c->local_window -= data_len;
-	return 0;
+	c->local_కిటికీ -= దత్తాంశం_len;
+	తిరిగి 0;
 }
 
-int
-channel_input_ieof(int type, uint32_t seq, struct ssh *ssh)
+పూర్ణాంకం
+channel_ఆదానం_ieof(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
 	Channel *c = channel_from_packet_id(ssh, __func__, "ieof");
-	int r;
+	పూర్ణాంకం r;
 
-        if ((r = sshpkt_get_end(ssh)) != 0) {
+        ఒకవేళ ((r = sshpkt_get_చివర(ssh)) != 0) {
 		error_fr(r, "parse data");
 		ssh_packet_disconnect(ssh, "Invalid ieof message");
 	}
 
-	if (channel_proxy_upstream(c, type, seq, ssh))
-		return 0;
+	ఒకవేళ (channel_proxy_upstream(c, type, seq, ssh))
+		తిరిగి 0;
 	chan_rcvd_ieof(ssh, c);
 
 	/* XXX force input close */
-	if (c->force_drain && c->istate == CHAN_INPUT_OPEN) {
+	ఒకవేళ (c->force_drain && c->istate == CHAN_ఆదానం_OPEN) {
 		debug("channel %d: FORCE input drain", c->self);
-		c->istate = CHAN_INPUT_WAIT_DRAIN;
-		if (sshbuf_len(c->input) == 0)
-			chan_ibuf_empty(ssh, c);
+		c->istate = CHAN_ఆదానం_WAIT_DRAIN;
+		ఒకవేళ (sshbuf_len(c->ఆదానం) == 0)
+			chan_ibuf_ఖాళీలు(ssh, c);
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-int
-channel_input_oclose(int type, uint32_t seq, struct ssh *ssh)
+పూర్ణాంకం
+channel_ఆదానం_oclose(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
 	Channel *c = channel_from_packet_id(ssh, __func__, "oclose");
-	int r;
+	పూర్ణాంకం r;
 
-	if (channel_proxy_upstream(c, type, seq, ssh))
-		return 0;
-        if ((r = sshpkt_get_end(ssh)) != 0) {
+	ఒకవేళ (channel_proxy_upstream(c, type, seq, ssh))
+		తిరిగి 0;
+        ఒకవేళ ((r = sshpkt_get_చివర(ssh)) != 0) {
 		error_fr(r, "parse data");
 		ssh_packet_disconnect(ssh, "Invalid oclose message");
 	}
 	chan_rcvd_oclose(ssh, c);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-channel_input_open_confirmation(int type, uint32_t seq, struct ssh *ssh)
+పూర్ణాంకం
+channel_ఆదానం_open_confirmation(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
 	Channel *c = channel_from_packet_id(ssh, __func__, "open confirmation");
-	uint32_t remote_window, remote_maxpacket;
-	int r;
+	uint32_t remote_కిటికీ, remote_maxpacket;
+	పూర్ణాంకం r;
 
-	if (channel_proxy_upstream(c, type, seq, ssh))
-		return 0;
-	if (c->type != SSH_CHANNEL_OPENING)
+	ఒకవేళ (channel_proxy_upstream(c, type, seq, ssh))
+		తిరిగి 0;
+	ఒకవేళ (c->type != SSH_CHANNEL_OPENING)
 		ssh_packet_disconnect(ssh, "Received open confirmation for "
 		    "non-opening channel %d.", c->self);
 	/*
 	 * Record the remote channel number and mark that the channel
 	 * is now open.
 	 */
-	if ((r = sshpkt_get_u32(ssh, &c->remote_id)) != 0 ||
-	    (r = sshpkt_get_u32(ssh, &remote_window)) != 0 ||
+	ఒకవేళ ((r = sshpkt_get_u32(ssh, &c->remote_id)) != 0 ||
+	    (r = sshpkt_get_u32(ssh, &remote_కిటికీ)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &remote_maxpacket)) != 0 ||
-            (r = sshpkt_get_end(ssh)) != 0) {
+            (r = sshpkt_get_చివర(ssh)) != 0) {
 		error_fr(r, "window/maxpacket");
 		ssh_packet_disconnect(ssh, "Invalid open confirmation message");
 	}
 
 	c->have_remote_id = 1;
-	c->remote_window = remote_window;
+	c->remote_కిటికీ = remote_కిటికీ;
 	c->remote_maxpacket = remote_maxpacket;
 	c->type = SSH_CHANNEL_OPEN;
-	if (c->open_confirm) {
+	ఒకవేళ (c->open_confirm) {
 		debug2_f("channel %d: callback start", c->self);
 		c->open_confirm(ssh, c->self, 1, c->open_confirm_ctx);
 		debug2_f("channel %d: callback done", c->self);
 	}
-	channel_set_used_time(ssh, c);
+	channel_సమితి_వాడిన_సమయం(ssh, c);
 	debug2("channel %d: open confirm rwindow %u rmax %u", c->self,
-	    c->remote_window, c->remote_maxpacket);
-	return 0;
+	    c->remote_కిటికీ, c->remote_maxpacket);
+	తిరిగి 0;
 }
 
-static char *
-reason2txt(int reason)
+స్థిర అక్షరం *
+reason2txt(పూర్ణాంకం reason)
 {
-	switch (reason) {
-	case SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED:
-		return "administratively prohibited";
-	case SSH2_OPEN_CONNECT_FAILED:
-		return "connect failed";
-	case SSH2_OPEN_UNKNOWN_CHANNEL_TYPE:
-		return "unknown channel type";
-	case SSH2_OPEN_RESOURCE_SHORTAGE:
-		return "resource shortage";
+	ఎంపిక (reason) {
+	స్థితి SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED:
+		తిరిగి "administratively prohibited";
+	స్థితి SSH2_OPEN_CONNECT_FAILED:
+		తిరిగి "connect failed";
+	స్థితి SSH2_OPEN_UNKNOWN_CHANNEL_TYPE:
+		తిరిగి "unknown channel type";
+	స్థితి SSH2_OPEN_RESOURCE_SHORTAGE:
+		తిరిగి "resource shortage";
 	}
-	return "unknown reason";
+	తిరిగి "unknown reason";
 }
 
-int
-channel_input_open_failure(int type, uint32_t seq, struct ssh *ssh)
+పూర్ణాంకం
+channel_ఆదానం_open_failure(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
 	Channel *c = channel_from_packet_id(ssh, __func__, "open failure");
 	uint32_t reason;
-	char *msg = NULL;
-	int r;
+	అక్షరం *సందేశం = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if (channel_proxy_upstream(c, type, seq, ssh))
-		return 0;
-	if (c->type != SSH_CHANNEL_OPENING)
+	ఒకవేళ (channel_proxy_upstream(c, type, seq, ssh))
+		తిరిగి 0;
+	ఒకవేళ (c->type != SSH_CHANNEL_OPENING)
 		ssh_packet_disconnect(ssh, "Received open failure for "
 		    "non-opening channel %d.", c->self);
-	if ((r = sshpkt_get_u32(ssh, &reason)) != 0) {
+	ఒకవేళ ((r = sshpkt_get_u32(ssh, &reason)) != 0) {
 		error_fr(r, "parse reason");
 		ssh_packet_disconnect(ssh, "Invalid open failure message");
 	}
 	/* skip language */
-	if ((r = sshpkt_get_cstring(ssh, &msg, NULL)) != 0 ||
-	    (r = sshpkt_get_string_direct(ssh, NULL, NULL)) != 0 ||
-            (r = sshpkt_get_end(ssh)) != 0) {
+	ఒకవేళ ((r = sshpkt_get_cstring(ssh, &సందేశం, ఖాళీ)) != 0 ||
+	    (r = sshpkt_get_string_ప్రత్యక్ష(ssh, ఖాళీ, ఖాళీ)) != 0 ||
+            (r = sshpkt_get_చివర(ssh)) != 0) {
 		error_fr(r, "parse msg/lang");
 		ssh_packet_disconnect(ssh, "Invalid open failure message");
 	}
 	logit("channel %d: open failed: %s%s%s", c->self,
-	    reason2txt(reason), msg ? ": ": "", msg ? msg : "");
-	free(msg);
-	if (c->open_confirm) {
+	    reason2txt(reason), సందేశం ? ": ": "", సందేశం ? సందేశం : "");
+	విడుదల(సందేశం);
+	ఒకవేళ (c->open_confirm) {
 		debug2_f("channel %d: callback start", c->self);
 		c->open_confirm(ssh, c->self, 0, c->open_confirm_ctx);
 		debug2_f("channel %d: callback done", c->self);
 	}
 	/* Schedule the channel for cleanup/deletion. */
 	chan_mark_dead(ssh, c);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-channel_input_window_adjust(int type, uint32_t seq, struct ssh *ssh)
+పూర్ణాంకం
+channel_ఆదానం_కిటికీ_adjust(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
-	int id = channel_parse_id(ssh, __func__, "window adjust");
+	పూర్ణాంకం id = channel_parse_id(ssh, __func__, "window adjust");
 	Channel *c;
 	uint32_t adjust;
 	u_int new_rwin;
-	int r;
+	పూర్ణాంకం r;
 
-	if ((c = channel_lookup(ssh, id)) == NULL) {
+	ఒకవేళ ((c = channel_lookup(ssh, id)) == ఖాళీ) {
 		logit("Received window adjust for non-open channel %d.", id);
-		return 0;
+		తిరిగి 0;
 	}
 
-	if (channel_proxy_upstream(c, type, seq, ssh))
-		return 0;
-	if ((r = sshpkt_get_u32(ssh, &adjust)) != 0 ||
-            (r = sshpkt_get_end(ssh)) != 0) {
+	ఒకవేళ (channel_proxy_upstream(c, type, seq, ssh))
+		తిరిగి 0;
+	ఒకవేళ ((r = sshpkt_get_u32(ssh, &adjust)) != 0 ||
+            (r = sshpkt_get_చివర(ssh)) != 0) {
 		error_fr(r, "parse adjust");
 		ssh_packet_disconnect(ssh, "Invalid window adjust message");
 	}
 	debug2("channel %d: rcvd adjust %u", c->self, adjust);
-	if ((new_rwin = c->remote_window + adjust) < c->remote_window) {
+	ఒకవేళ ((new_rwin = c->remote_కిటికీ + adjust) < c->remote_కిటికీ) {
 		fatal("channel %d: adjust %u overflows remote window %u",
-		    c->self, adjust, c->remote_window);
+		    c->self, adjust, c->remote_కిటికీ);
 	}
-	c->remote_window = new_rwin;
-	return 0;
+	c->remote_కిటికీ = new_rwin;
+	తిరిగి 0;
 }
 
-int
-channel_input_status_confirm(int type, uint32_t seq, struct ssh *ssh)
+పూర్ణాంకం
+channel_ఆదానం_స్థితి_confirm(పూర్ణాంకం type, uint32_t seq, నిర్మాణం ssh *ssh)
 {
-	int id = channel_parse_id(ssh, __func__, "status confirm");
+	పూర్ణాంకం id = channel_parse_id(ssh, __func__, "status confirm");
 	Channel *c;
-	struct channel_confirm *cc;
+	నిర్మాణం channel_confirm *cc;
 
 	/* Reset keepalive timeout */
-	ssh_packet_set_alive_timeouts(ssh, 0);
+	ssh_packet_సమితి_alive_timeouts(ssh, 0);
 
 	debug2_f("type %d id %d", type, id);
 
-	if ((c = channel_lookup(ssh, id)) == NULL) {
+	ఒకవేళ ((c = channel_lookup(ssh, id)) == ఖాళీ) {
 		logit_f("%d: unknown", id);
-		return 0;
+		తిరిగి 0;
 	}
-	if (channel_proxy_upstream(c, type, seq, ssh))
-		return 0;
-        if (sshpkt_get_end(ssh) != 0)
+	ఒకవేళ (channel_proxy_upstream(c, type, seq, ssh))
+		తిరిగి 0;
+        ఒకవేళ (sshpkt_get_చివర(ssh) != 0)
 		ssh_packet_disconnect(ssh, "Invalid status confirm message");
-	if ((cc = TAILQ_FIRST(&c->status_confirms)) == NULL)
-		return 0;
+	ఒకవేళ ((cc = TAILQ_FIRST(&c->స్థితి_confirms)) == ఖాళీ)
+		తిరిగి 0;
 	cc->cb(ssh, type, c, cc->ctx);
-	TAILQ_REMOVE(&c->status_confirms, cc, entry);
-	freezero(cc, sizeof(*cc));
-	return 0;
+	TAILQ_REMOVE(&c->స్థితి_confirms, cc, నమోదు_2);
+	freezero(cc, పరిమాణం(*cc));
+	తిరిగి 0;
 }
 
 /* -- tcp forwarding */
 
-void
-channel_set_af(struct ssh *ssh, int af)
+శూన్య
+channel_సమితి_af(నిర్మాణం ssh *ssh, పూర్ణాంకం af)
 {
 	ssh->chanctxt->IPv4or6 = af;
 }
@@ -3882,19 +3882,19 @@ channel_set_af(struct ssh *ssh, int af)
  * "localhost"             -> loopback v4/v6
  * "127.0.0.1" / "::1"     -> accepted even if gateway_ports isn't set
  */
-static const char *
-channel_fwd_bind_addr(struct ssh *ssh, const char *listen_addr, int *wildcardp,
-    int is_client, struct ForwardOptions *fwd_opts)
+స్థిర స్థిరరాశి అక్షరం *
+channel_fwd_bind_addr(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *listen_addr, పూర్ణాంకం *wildcardp,
+    పూర్ణాంకం is_client, నిర్మాణం ForwardOptions *fwd_opts)
 {
-	const char *addr = NULL;
-	int wildcard = 0;
+	స్థిరరాశి అక్షరం *addr = ఖాళీ;
+	పూర్ణాంకం wildcard = 0;
 
-	if (listen_addr == NULL) {
+	ఒకవేళ (listen_addr == ఖాళీ) {
 		/* No address specified: default to gateway_ports setting */
-		if (fwd_opts->gateway_ports)
+		ఒకవేళ (fwd_opts->gateway_ports)
 			wildcard = 1;
-	} else if (fwd_opts->gateway_ports || is_client) {
-		if (((ssh->compat & SSH_OLD_FORWARD_ADDR) &&
+	} లేకపోతే ఒకవేళ (fwd_opts->gateway_ports || is_client) {
+		ఒకవేళ (((ssh->compat & SSH_OLD_FORWARD_ADDR) &&
 		    strcmp(listen_addr, "0.0.0.0") == 0 && is_client == 0) ||
 		    *listen_addr == '\0' || strcmp(listen_addr, "*") == 0 ||
 		    (!is_client && fwd_opts->gateway_ports == 1)) {
@@ -3903,7 +3903,7 @@ channel_fwd_bind_addr(struct ssh *ssh, const char *listen_addr, int *wildcardp,
 			 * Notify client if they requested a specific listen
 			 * address and it was overridden.
 			 */
-			if (*listen_addr != '\0' &&
+			ఒకవేళ (*listen_addr != '\0' &&
 			    strcmp(listen_addr, "0.0.0.0") != 0 &&
 			    strcmp(listen_addr, "*") != 0) {
 				ssh_packet_send_debug(ssh,
@@ -3911,7 +3911,7 @@ channel_fwd_bind_addr(struct ssh *ssh, const char *listen_addr, int *wildcardp,
 				    "\"%s\" overridden by server "
 				    "GatewayPorts", listen_addr);
 			}
-		} else if (strcmp(listen_addr, "localhost") != 0 ||
+		} లేకపోతే ఒకవేళ (strcmp(listen_addr, "localhost") != 0 ||
 		    strcmp(listen_addr, "127.0.0.1") == 0 ||
 		    strcmp(listen_addr, "::1") == 0) {
 			/*
@@ -3922,7 +3922,7 @@ channel_fwd_bind_addr(struct ssh *ssh, const char *listen_addr, int *wildcardp,
 			 */
 			addr = listen_addr;
 		}
-	} else if (strcmp(listen_addr, "127.0.0.1") == 0 ||
+	} లేకపోతే ఒకవేళ (strcmp(listen_addr, "127.0.0.1") == 0 ||
 	    strcmp(listen_addr, "::1") == 0) {
 		/*
 		 * If a specific IPv4/IPv6 localhost address has been
@@ -3931,37 +3931,37 @@ channel_fwd_bind_addr(struct ssh *ssh, const char *listen_addr, int *wildcardp,
 		 */
 		addr = listen_addr;
 	}
-	if (wildcardp != NULL)
+	ఒకవేళ (wildcardp != ఖాళీ)
 		*wildcardp = wildcard;
-	return addr;
+	తిరిగి addr;
 }
 
-static int
-channel_setup_fwd_listener_tcpip(struct ssh *ssh, int type,
-    struct Forward *fwd, int *allocated_listen_port,
-    struct ForwardOptions *fwd_opts)
+స్థిర పూర్ణాంకం
+channel_అమరిక_fwd_listener_tcpip(నిర్మాణం ssh *ssh, పూర్ణాంకం type,
+    నిర్మాణం Forward *fwd, పూర్ణాంకం *allocated_listen_పోర్టు,
+    నిర్మాణం ForwardOptions *fwd_opts)
 {
 	Channel *c;
-	int sock, r, success = 0, wildcard = 0, is_client;
-	struct addrinfo hints, *ai, *aitop;
-	const char *host, *addr;
-	char ntop[NI_MAXHOST], strport[NI_MAXSERV];
+	పూర్ణాంకం sock, r, success = 0, wildcard = 0, is_client;
+	నిర్మాణం addrinfo hints, *ai, *aitop;
+	స్థిరరాశి అక్షరం *host, *addr;
+	అక్షరం ntop[NI_MAXHOST], strport[NI_MAXSERV];
 	in_port_t *lport_p;
 
-	is_client = (type == SSH_CHANNEL_PORT_LISTENER);
+	is_client = (type == SSH_CHANNEL_పోర్టు_LISTENER);
 
-	if (is_client && fwd->connect_path != NULL) {
-		host = fwd->connect_path;
-	} else {
+	ఒకవేళ (is_client && fwd->connect_మార్గం != ఖాళీ) {
+		host = fwd->connect_మార్గం;
+	} లేకపోతే {
 		host = (type == SSH_CHANNEL_RPORT_LISTENER) ?
 		    fwd->listen_host : fwd->connect_host;
-		if (host == NULL) {
+		ఒకవేళ (host == ఖాళీ) {
 			error("No forward host name.");
-			return 0;
+			తిరిగి 0;
 		}
-		if (strlen(host) >= NI_MAXHOST) {
+		ఒకవేళ (అక్షరశ్రేణి_పొడవు(host) >= NI_MAXHOST) {
 			error("Forward host name too long.");
-			return 0;
+			తిరిగి 0;
 		}
 	}
 
@@ -3969,452 +3969,452 @@ channel_setup_fwd_listener_tcpip(struct ssh *ssh, int type,
 	addr = channel_fwd_bind_addr(ssh, fwd->listen_host, &wildcard,
 	    is_client, fwd_opts);
 	debug3_f("type %d wildcard %d addr %s", type, wildcard,
-	    (addr == NULL) ? "NULL" : addr);
+	    (addr == ఖాళీ) ? "NULL" : addr);
 
 	/*
 	 * getaddrinfo returns a loopback address if the hostname is
 	 * set to NULL and hints.ai_flags is not AI_PASSIVE
 	 */
-	memset(&hints, 0, sizeof(hints));
+	memset(&hints, 0, పరిమాణం(hints));
 	hints.ai_family = ssh->chanctxt->IPv4or6;
 	hints.ai_flags = wildcard ? AI_PASSIVE : 0;
 	hints.ai_socktype = SOCK_STREAM;
-	snprintf(strport, sizeof strport, "%d", fwd->listen_port);
-	if ((r = getaddrinfo(addr, strport, &hints, &aitop)) != 0) {
-		if (addr == NULL) {
+	snprintf(strport, పరిమాణం strport, "%d", fwd->listen_పోర్టు);
+	ఒకవేళ ((r = getaddrinfo(addr, strport, &hints, &aitop)) != 0) {
+		ఒకవేళ (addr == ఖాళీ) {
 			/* This really shouldn't happen */
 			ssh_packet_disconnect(ssh, "getaddrinfo: fatal error: %s",
 			    ssh_gai_strerror(r));
-		} else {
+		} లేకపోతే {
 			error_f("getaddrinfo(%.64s): %s", addr,
 			    ssh_gai_strerror(r));
 		}
-		return 0;
+		తిరిగి 0;
 	}
-	if (allocated_listen_port != NULL)
-		*allocated_listen_port = 0;
-	for (ai = aitop; ai; ai = ai->ai_next) {
-		switch (ai->ai_family) {
-		case AF_INET:
-			lport_p = &((struct sockaddr_in *)ai->ai_addr)->
+	ఒకవేళ (allocated_listen_పోర్టు != ఖాళీ)
+		*allocated_listen_పోర్టు = 0;
+	కొరకు (ai = aitop; ai; ai = ai->ai_next) {
+		ఎంపిక (ai->ai_family) {
+		స్థితి AF_INET:
+			lport_p = &((నిర్మాణం sockaddr_in *)ai->ai_addr)->
 			    sin_port;
-			break;
-		case AF_INET6:
-			lport_p = &((struct sockaddr_in6 *)ai->ai_addr)->
+			ఆపు;
+		స్థితి AF_INET6:
+			lport_p = &((నిర్మాణం sockaddr_in6 *)ai->ai_addr)->
 			    sin6_port;
-			break;
-		default:
-			continue;
+			ఆపు;
+		అప్రమేయ:
+			కొనసాగు;
 		}
 		/*
 		 * If allocating a port for -R forwards, then use the
 		 * same port for all address families.
 		 */
-		if (type == SSH_CHANNEL_RPORT_LISTENER &&
-		    fwd->listen_port == 0 && allocated_listen_port != NULL &&
-		    *allocated_listen_port > 0)
-			*lport_p = htons(*allocated_listen_port);
+		ఒకవేళ (type == SSH_CHANNEL_RPORT_LISTENER &&
+		    fwd->listen_పోర్టు == 0 && allocated_listen_పోర్టు != ఖాళీ &&
+		    *allocated_listen_పోర్టు > 0)
+			*lport_p = htons(*allocated_listen_పోర్టు);
 
-		if (getnameinfo(ai->ai_addr, ai->ai_addrlen, ntop, sizeof(ntop),
-		    strport, sizeof(strport),
+		ఒకవేళ (getnameinfo(ai->ai_addr, ai->ai_addrlen, ntop, పరిమాణం(ntop),
+		    strport, పరిమాణం(strport),
 		    NI_NUMERICHOST|NI_NUMERICSERV) != 0) {
 			error_f("getnameinfo failed");
-			continue;
+			కొనసాగు;
 		}
 		/* Create a port to listen for the host. */
 		sock = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-		if (sock == -1) {
+		ఒకవేళ (sock == -1) {
 			/* this is no error since kernel may not support ipv6 */
 			verbose("socket [%s]:%s: %.100s", ntop, strport,
 			    strerror(errno));
-			continue;
+			కొనసాగు;
 		}
 
-		set_reuseaddr(sock);
-		if (ai->ai_family == AF_INET6)
-			sock_set_v6only(sock);
+		సమితి_reuseaddr(sock);
+		ఒకవేళ (ai->ai_family == AF_INET6)
+			sock_సమితి_v6only(sock);
 
 		debug("Local forwarding listening on %s port %s.",
 		    ntop, strport);
 
 		/* Bind the socket to the address. */
-		if (bind(sock, ai->ai_addr, ai->ai_addrlen) == -1) {
+		ఒకవేళ (bind(sock, ai->ai_addr, ai->ai_addrlen) == -1) {
 			/*
 			 * address can be in if use ipv6 address is
 			 * already bound
 			 */
-			if (!ai->ai_next)
+			ఒకవేళ (!ai->ai_next)
 				error("bind [%s]:%s: %.100s",
 				    ntop, strport, strerror(errno));
-			else
+			లేకపోతే
 				verbose("bind [%s]:%s: %.100s",
 				    ntop, strport, strerror(errno));
 
 			close(sock);
-			continue;
+			కొనసాగు;
 		}
 		/* Start listening for connections on the socket. */
-		if (listen(sock, SSH_LISTEN_BACKLOG) == -1) {
+		ఒకవేళ (listen(sock, SSH_LISTEN_BACKLOG) == -1) {
 			error("listen [%s]:%s: %.100s", ntop, strport,
 			    strerror(errno));
 			close(sock);
-			continue;
+			కొనసాగు;
 		}
 
 		/*
 		 * fwd->listen_port == 0 requests a dynamically allocated port -
 		 * record what we got.
 		 */
-		if (type == SSH_CHANNEL_RPORT_LISTENER &&
-		    fwd->listen_port == 0 &&
-		    allocated_listen_port != NULL &&
-		    *allocated_listen_port == 0) {
-			*allocated_listen_port = get_local_port(sock);
+		ఒకవేళ (type == SSH_CHANNEL_RPORT_LISTENER &&
+		    fwd->listen_పోర్టు == 0 &&
+		    allocated_listen_పోర్టు != ఖాళీ &&
+		    *allocated_listen_పోర్టు == 0) {
+			*allocated_listen_పోర్టు = get_local_పోర్టు(sock);
 			debug("Allocated listen port %d",
-			    *allocated_listen_port);
+			    *allocated_listen_పోర్టు);
 		}
 
 		/* Allocate a channel number for the socket. */
 		c = channel_new(ssh, "port-listener", type, sock, sock, -1,
-		    CHAN_TCP_WINDOW_DEFAULT, CHAN_TCP_PACKET_DEFAULT,
+		    CHAN_TCP_కిటికీ_DEFAULT, CHAN_TCP_PACKET_DEFAULT,
 		    0, "port listener", 1);
-		c->path = xstrdup(host);
-		c->host_port = fwd->connect_port;
-		c->listening_addr = addr == NULL ? NULL : xstrdup(addr);
-		if (fwd->listen_port == 0 && allocated_listen_port != NULL &&
+		c->మార్గం = xstrdup(host);
+		c->host_పోర్టు = fwd->connect_పోర్టు;
+		c->listening_addr = addr == ఖాళీ ? ఖాళీ : xstrdup(addr);
+		ఒకవేళ (fwd->listen_పోర్టు == 0 && allocated_listen_పోర్టు != ఖాళీ &&
 		    !(ssh->compat & SSH_BUG_DYNAMIC_RPORT))
-			c->listening_port = *allocated_listen_port;
-		else
-			c->listening_port = fwd->listen_port;
+			c->listening_పోర్టు = *allocated_listen_పోర్టు;
+		లేకపోతే
+			c->listening_పోర్టు = fwd->listen_పోర్టు;
 		success = 1;
 	}
-	if (success == 0)
-		error_f("cannot listen to port: %d", fwd->listen_port);
+	ఒకవేళ (success == 0)
+		error_f("cannot listen to port: %d", fwd->listen_పోర్టు);
 	freeaddrinfo(aitop);
-	return success;
+	తిరిగి success;
 }
 
-static int
-channel_setup_fwd_listener_streamlocal(struct ssh *ssh, int type,
-    struct Forward *fwd, struct ForwardOptions *fwd_opts)
+స్థిర పూర్ణాంకం
+channel_అమరిక_fwd_listener_streamlocal(నిర్మాణం ssh *ssh, పూర్ణాంకం type,
+    నిర్మాణం Forward *fwd, నిర్మాణం ForwardOptions *fwd_opts)
 {
-	struct sockaddr_un sunaddr;
-	const char *path;
+	నిర్మాణం sockaddr_un sunaddr;
+	స్థిరరాశి అక్షరం *మార్గం;
 	Channel *c;
-	int port, sock;
-	mode_t omask;
+	పూర్ణాంకం పోర్టు, sock;
+	బహుళకం_t omask;
 
-	switch (type) {
-	case SSH_CHANNEL_UNIX_LISTENER:
-		if (fwd->connect_path != NULL) {
-			if (strlen(fwd->connect_path) > sizeof(sunaddr.sun_path)) {
+	ఎంపిక (type) {
+	స్థితి SSH_CHANNEL_UNIX_LISTENER:
+		ఒకవేళ (fwd->connect_మార్గం != ఖాళీ) {
+			ఒకవేళ (అక్షరశ్రేణి_పొడవు(fwd->connect_మార్గం) > పరిమాణం(sunaddr.sun_మార్గం)) {
 				error("Local connecting path too long: %s",
-				    fwd->connect_path);
-				return 0;
+				    fwd->connect_మార్గం);
+				తిరిగి 0;
 			}
-			path = fwd->connect_path;
-			port = PORT_STREAMLOCAL;
-		} else {
-			if (fwd->connect_host == NULL) {
+			మార్గం = fwd->connect_మార్గం;
+			పోర్టు = పోర్టు_STREAMLOCAL;
+		} లేకపోతే {
+			ఒకవేళ (fwd->connect_host == ఖాళీ) {
 				error("No forward host name.");
-				return 0;
+				తిరిగి 0;
 			}
-			if (strlen(fwd->connect_host) >= NI_MAXHOST) {
+			ఒకవేళ (అక్షరశ్రేణి_పొడవు(fwd->connect_host) >= NI_MAXHOST) {
 				error("Forward host name too long.");
-				return 0;
+				తిరిగి 0;
 			}
-			path = fwd->connect_host;
-			port = fwd->connect_port;
+			మార్గం = fwd->connect_host;
+			పోర్టు = fwd->connect_పోర్టు;
 		}
-		break;
-	case SSH_CHANNEL_RUNIX_LISTENER:
-		path = fwd->listen_path;
-		port = PORT_STREAMLOCAL;
-		break;
-	default:
+		ఆపు;
+	స్థితి SSH_CHANNEL_RUNIX_LISTENER:
+		మార్గం = fwd->listen_మార్గం;
+		పోర్టు = పోర్టు_STREAMLOCAL;
+		ఆపు;
+	అప్రమేయ:
 		error_f("unexpected channel type %d", type);
-		return 0;
+		తిరిగి 0;
 	}
 
-	if (fwd->listen_path == NULL) {
+	ఒకవేళ (fwd->listen_మార్గం == ఖాళీ) {
 		error("No forward path name.");
-		return 0;
+		తిరిగి 0;
 	}
-	if (strlen(fwd->listen_path) > sizeof(sunaddr.sun_path)) {
-		error("Local listening path too long: %s", fwd->listen_path);
-		return 0;
+	ఒకవేళ (అక్షరశ్రేణి_పొడవు(fwd->listen_మార్గం) > పరిమాణం(sunaddr.sun_మార్గం)) {
+		error("Local listening path too long: %s", fwd->listen_మార్గం);
+		తిరిగి 0;
 	}
 
-	debug3_f("type %d path %s", type, fwd->listen_path);
+	debug3_f("type %d path %s", type, fwd->listen_మార్గం);
 
 	/* Start a Unix domain listener. */
-	omask = umask(fwd_opts->streamlocal_bind_mask);
-	sock = unix_listener(fwd->listen_path, SSH_LISTEN_BACKLOG,
+	omask = umask(fwd_opts->streamlocal_bind_ముసుగు);
+	sock = unix_listener(fwd->listen_మార్గం, SSH_LISTEN_BACKLOG,
 	    fwd_opts->streamlocal_bind_unlink);
 	umask(omask);
-	if (sock < 0)
-		return 0;
+	ఒకవేళ (sock < 0)
+		తిరిగి 0;
 
-	debug("Local forwarding listening on path %s.", fwd->listen_path);
+	debug("Local forwarding listening on path %s.", fwd->listen_మార్గం);
 
 	/* Allocate a channel number for the socket. */
 	c = channel_new(ssh, "unix-listener", type, sock, sock, -1,
-	    CHAN_TCP_WINDOW_DEFAULT, CHAN_TCP_PACKET_DEFAULT,
+	    CHAN_TCP_కిటికీ_DEFAULT, CHAN_TCP_PACKET_DEFAULT,
 	    0, "unix listener", 1);
-	c->path = xstrdup(path);
-	c->host_port = port;
-	c->listening_port = PORT_STREAMLOCAL;
-	c->listening_addr = xstrdup(fwd->listen_path);
-	return 1;
+	c->మార్గం = xstrdup(మార్గం);
+	c->host_పోర్టు = పోర్టు;
+	c->listening_పోర్టు = పోర్టు_STREAMLOCAL;
+	c->listening_addr = xstrdup(fwd->listen_మార్గం);
+	తిరిగి 1;
 }
 
-static int
-channel_cancel_rport_listener_tcpip(struct ssh *ssh,
-    const char *host, u_short port)
+స్థిర పూర్ణాంకం
+channel_cancel_rport_listener_tcpip(నిర్మాణం ssh *ssh,
+    స్థిరరాశి అక్షరం *host, u_short పోర్టు)
 {
 	u_int i;
-	int found = 0;
+	పూర్ణాంకం దొరికింది = 0;
 
-	for (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
+	కొరకు (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
 		Channel *c = ssh->chanctxt->channels[i];
-		if (c == NULL || c->type != SSH_CHANNEL_RPORT_LISTENER)
-			continue;
-		if (strcmp(c->path, host) == 0 && c->listening_port == port) {
+		ఒకవేళ (c == ఖాళీ || c->type != SSH_CHANNEL_RPORT_LISTENER)
+			కొనసాగు;
+		ఒకవేళ (strcmp(c->మార్గం, host) == 0 && c->listening_పోర్టు == పోర్టు) {
 			debug2_f("close channel %d", i);
 			channel_free(ssh, c);
-			found = 1;
+			దొరికింది = 1;
 		}
 	}
 
-	return found;
+	తిరిగి దొరికింది;
 }
 
-static int
-channel_cancel_rport_listener_streamlocal(struct ssh *ssh, const char *path)
+స్థిర పూర్ణాంకం
+channel_cancel_rport_listener_streamlocal(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *మార్గం)
 {
 	u_int i;
-	int found = 0;
+	పూర్ణాంకం దొరికింది = 0;
 
-	for (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
+	కొరకు (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
 		Channel *c = ssh->chanctxt->channels[i];
-		if (c == NULL || c->type != SSH_CHANNEL_RUNIX_LISTENER)
-			continue;
-		if (c->path == NULL)
-			continue;
-		if (strcmp(c->path, path) == 0) {
+		ఒకవేళ (c == ఖాళీ || c->type != SSH_CHANNEL_RUNIX_LISTENER)
+			కొనసాగు;
+		ఒకవేళ (c->మార్గం == ఖాళీ)
+			కొనసాగు;
+		ఒకవేళ (strcmp(c->మార్గం, మార్గం) == 0) {
 			debug2_f("close channel %d", i);
 			channel_free(ssh, c);
-			found = 1;
+			దొరికింది = 1;
 		}
 	}
 
-	return found;
+	తిరిగి దొరికింది;
 }
 
-int
-channel_cancel_rport_listener(struct ssh *ssh, struct Forward *fwd)
+పూర్ణాంకం
+channel_cancel_rport_listener(నిర్మాణం ssh *ssh, నిర్మాణం Forward *fwd)
 {
-	if (fwd->listen_path != NULL) {
-		return channel_cancel_rport_listener_streamlocal(ssh,
-		    fwd->listen_path);
-	} else {
-		return channel_cancel_rport_listener_tcpip(ssh,
-		    fwd->listen_host, fwd->listen_port);
+	ఒకవేళ (fwd->listen_మార్గం != ఖాళీ) {
+		తిరిగి channel_cancel_rport_listener_streamlocal(ssh,
+		    fwd->listen_మార్గం);
+	} లేకపోతే {
+		తిరిగి channel_cancel_rport_listener_tcpip(ssh,
+		    fwd->listen_host, fwd->listen_పోర్టు);
 	}
 }
 
-static int
-channel_cancel_lport_listener_tcpip(struct ssh *ssh,
-    const char *lhost, u_short lport, int cport,
-    struct ForwardOptions *fwd_opts)
+స్థిర పూర్ణాంకం
+channel_cancel_lport_listener_tcpip(నిర్మాణం ssh *ssh,
+    స్థిరరాశి అక్షరం *lhost, u_short lport, పూర్ణాంకం cport,
+    నిర్మాణం ForwardOptions *fwd_opts)
 {
 	u_int i;
-	int found = 0;
-	const char *addr = channel_fwd_bind_addr(ssh, lhost, NULL, 1, fwd_opts);
+	పూర్ణాంకం దొరికింది = 0;
+	స్థిరరాశి అక్షరం *addr = channel_fwd_bind_addr(ssh, lhost, ఖాళీ, 1, fwd_opts);
 
-	for (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
+	కొరకు (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
 		Channel *c = ssh->chanctxt->channels[i];
-		if (c == NULL || c->type != SSH_CHANNEL_PORT_LISTENER)
-			continue;
-		if (c->listening_port != lport)
-			continue;
-		if (cport == CHANNEL_CANCEL_PORT_STATIC) {
+		ఒకవేళ (c == ఖాళీ || c->type != SSH_CHANNEL_పోర్టు_LISTENER)
+			కొనసాగు;
+		ఒకవేళ (c->listening_పోర్టు != lport)
+			కొనసాగు;
+		ఒకవేళ (cport == CHANNEL_CANCEL_పోర్టు_STATIC) {
 			/* skip dynamic forwardings */
-			if (c->host_port == 0)
-				continue;
-		} else {
-			if (c->host_port != cport)
-				continue;
+			ఒకవేళ (c->host_పోర్టు == 0)
+				కొనసాగు;
+		} లేకపోతే {
+			ఒకవేళ (c->host_పోర్టు != cport)
+				కొనసాగు;
 		}
-		if ((c->listening_addr == NULL && addr != NULL) ||
-		    (c->listening_addr != NULL && addr == NULL))
-			continue;
-		if (addr == NULL || strcmp(c->listening_addr, addr) == 0) {
+		ఒకవేళ ((c->listening_addr == ఖాళీ && addr != ఖాళీ) ||
+		    (c->listening_addr != ఖాళీ && addr == ఖాళీ))
+			కొనసాగు;
+		ఒకవేళ (addr == ఖాళీ || strcmp(c->listening_addr, addr) == 0) {
 			debug2_f("close channel %d", i);
 			channel_free(ssh, c);
-			found = 1;
+			దొరికింది = 1;
 		}
 	}
 
-	return found;
+	తిరిగి దొరికింది;
 }
 
-static int
-channel_cancel_lport_listener_streamlocal(struct ssh *ssh, const char *path)
+స్థిర పూర్ణాంకం
+channel_cancel_lport_listener_streamlocal(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *మార్గం)
 {
 	u_int i;
-	int found = 0;
+	పూర్ణాంకం దొరికింది = 0;
 
-	if (path == NULL) {
+	ఒకవేళ (మార్గం == ఖాళీ) {
 		error_f("no path specified.");
-		return 0;
+		తిరిగి 0;
 	}
 
-	for (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
+	కొరకు (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
 		Channel *c = ssh->chanctxt->channels[i];
-		if (c == NULL || c->type != SSH_CHANNEL_UNIX_LISTENER)
-			continue;
-		if (c->listening_addr == NULL)
-			continue;
-		if (strcmp(c->listening_addr, path) == 0) {
+		ఒకవేళ (c == ఖాళీ || c->type != SSH_CHANNEL_UNIX_LISTENER)
+			కొనసాగు;
+		ఒకవేళ (c->listening_addr == ఖాళీ)
+			కొనసాగు;
+		ఒకవేళ (strcmp(c->listening_addr, మార్గం) == 0) {
 			debug2_f("close channel %d", i);
 			channel_free(ssh, c);
-			found = 1;
+			దొరికింది = 1;
 		}
 	}
 
-	return found;
+	తిరిగి దొరికింది;
 }
 
-int
-channel_cancel_lport_listener(struct ssh *ssh,
-    struct Forward *fwd, int cport, struct ForwardOptions *fwd_opts)
+పూర్ణాంకం
+channel_cancel_lport_listener(నిర్మాణం ssh *ssh,
+    నిర్మాణం Forward *fwd, పూర్ణాంకం cport, నిర్మాణం ForwardOptions *fwd_opts)
 {
-	if (fwd->listen_path != NULL) {
-		return channel_cancel_lport_listener_streamlocal(ssh,
-		    fwd->listen_path);
-	} else {
-		return channel_cancel_lport_listener_tcpip(ssh,
-		    fwd->listen_host, fwd->listen_port, cport, fwd_opts);
+	ఒకవేళ (fwd->listen_మార్గం != ఖాళీ) {
+		తిరిగి channel_cancel_lport_listener_streamlocal(ssh,
+		    fwd->listen_మార్గం);
+	} లేకపోతే {
+		తిరిగి channel_cancel_lport_listener_tcpip(ssh,
+		    fwd->listen_host, fwd->listen_పోర్టు, cport, fwd_opts);
 	}
 }
 
 /* protocol local port fwd, used by ssh */
-int
-channel_setup_local_fwd_listener(struct ssh *ssh,
-    struct Forward *fwd, struct ForwardOptions *fwd_opts)
+పూర్ణాంకం
+channel_అమరిక_local_fwd_listener(నిర్మాణం ssh *ssh,
+    నిర్మాణం Forward *fwd, నిర్మాణం ForwardOptions *fwd_opts)
 {
-	if (fwd->listen_path != NULL) {
-		return channel_setup_fwd_listener_streamlocal(ssh,
+	ఒకవేళ (fwd->listen_మార్గం != ఖాళీ) {
+		తిరిగి channel_అమరిక_fwd_listener_streamlocal(ssh,
 		    SSH_CHANNEL_UNIX_LISTENER, fwd, fwd_opts);
-	} else {
-		return channel_setup_fwd_listener_tcpip(ssh,
-		    SSH_CHANNEL_PORT_LISTENER, fwd, NULL, fwd_opts);
+	} లేకపోతే {
+		తిరిగి channel_అమరిక_fwd_listener_tcpip(ssh,
+		    SSH_CHANNEL_పోర్టు_LISTENER, fwd, ఖాళీ, fwd_opts);
 	}
 }
 
 /* Matches a remote forwarding permission against a requested forwarding */
-static int
-remote_open_match(struct permission *allowed_open, struct Forward *fwd)
+స్థిర పూర్ణాంకం
+remote_open_సరిపోలిక(నిర్మాణం permission *allowed_open, నిర్మాణం Forward *fwd)
 {
-	int ret;
-	char *lhost;
+	పూర్ణాంకం ret;
+	అక్షరం *lhost;
 
 	/* XXX add ACLs for streamlocal */
-	if (fwd->listen_path != NULL)
-		return 1;
+	ఒకవేళ (fwd->listen_మార్గం != ఖాళీ)
+		తిరిగి 1;
 
-	if (fwd->listen_host == NULL || allowed_open->listen_host == NULL)
-		return 0;
+	ఒకవేళ (fwd->listen_host == ఖాళీ || allowed_open->listen_host == ఖాళీ)
+		తిరిగి 0;
 
-	if (allowed_open->listen_port != FWD_PERMIT_ANY_PORT &&
-	    allowed_open->listen_port != fwd->listen_port)
-		return 0;
+	ఒకవేళ (allowed_open->listen_పోర్టు != FWD_PERMIT_ANY_పోర్టు &&
+	    allowed_open->listen_పోర్టు != fwd->listen_పోర్టు)
+		తిరిగి 0;
 
 	/* Match hostnames case-insensitively */
 	lhost = xstrdup(fwd->listen_host);
 	lowercase(lhost);
-	ret = match_pattern(lhost, allowed_open->listen_host);
-	free(lhost);
+	ret = సరిపోలిక_నమూనా(lhost, allowed_open->listen_host);
+	విడుదల(lhost);
 
-	return ret;
+	తిరిగి ret;
 }
 
 /* Checks whether a requested remote forwarding is permitted */
-static int
-check_rfwd_permission(struct ssh *ssh, struct Forward *fwd)
+స్థిర పూర్ణాంకం
+check_rfwd_permission(నిర్మాణం ssh *ssh, నిర్మాణం Forward *fwd)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	struct permission_set *pset = &sc->remote_perms;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం permission_సమితి *pset = &sc->remote_perms;
 	u_int i, permit, permit_adm = 1;
-	struct permission *perm;
+	నిర్మాణం permission *perm;
 
-#ifdef SKIP_PRIVDROP
-	if (fwd->listen_path != NULL)
-		return 0;
-	if (fwd->listen_port != 0 && fwd->listen_port < 1024)
-		return 0;
-#endif
+#నిర్వచితమైతే SKIP_PRIVDROP
+	ఒకవేళ (fwd->listen_మార్గం != ఖాళీ)
+		తిరిగి 0;
+	ఒకవేళ (fwd->listen_పోర్టు != 0 && fwd->listen_పోర్టు < 1024)
+		తిరిగి 0;
+#అయితే_ముగింపు
 
 	/* XXX apply GatewayPorts override before checking? */
 
 	permit = pset->all_permitted;
-	if (!permit) {
-		for (i = 0; i < pset->num_permitted_user; i++) {
+	ఒకవేళ (!permit) {
+		కొరకు (i = 0; i < pset->అంకె_permitted_user; i++) {
 			perm = &pset->permitted_user[i];
-			if (remote_open_match(perm, fwd)) {
+			ఒకవేళ (remote_open_సరిపోలిక(perm, fwd)) {
 				permit = 1;
-				break;
+				ఆపు;
 			}
 		}
 	}
 
-	if (pset->num_permitted_admin > 0) {
+	ఒకవేళ (pset->అంకె_permitted_admin > 0) {
 		permit_adm = 0;
-		for (i = 0; i < pset->num_permitted_admin; i++) {
+		కొరకు (i = 0; i < pset->అంకె_permitted_admin; i++) {
 			perm = &pset->permitted_admin[i];
-			if (remote_open_match(perm, fwd)) {
+			ఒకవేళ (remote_open_సరిపోలిక(perm, fwd)) {
 				permit_adm = 1;
-				break;
+				ఆపు;
 			}
 		}
 	}
 
-	return permit && permit_adm;
+	తిరిగి permit && permit_adm;
 }
 
 /* protocol v2 remote port fwd, used by sshd */
-int
-channel_setup_remote_fwd_listener(struct ssh *ssh, struct Forward *fwd,
-    int *allocated_listen_port, struct ForwardOptions *fwd_opts)
+పూర్ణాంకం
+channel_అమరిక_remote_fwd_listener(నిర్మాణం ssh *ssh, నిర్మాణం Forward *fwd,
+    పూర్ణాంకం *allocated_listen_పోర్టు, నిర్మాణం ForwardOptions *fwd_opts)
 {
-	if (!check_rfwd_permission(ssh, fwd)) {
+	ఒకవేళ (!check_rfwd_permission(ssh, fwd)) {
 		ssh_packet_send_debug(ssh, "port forwarding refused");
-		if (fwd->listen_path != NULL)
+		ఒకవేళ (fwd->listen_మార్గం != ఖాళీ)
 			/* XXX always allowed, see remote_open_match() */
 			logit("Received request from %.100s port %d to "
 			    "remote forward to path \"%.100s\", "
 			    "but the request was denied.",
-			    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
-			    fwd->listen_path);
-		else if(fwd->listen_host != NULL)
+			    ssh_remote_ipaddr(ssh), ssh_remote_పోర్టు(ssh),
+			    fwd->listen_మార్గం);
+		లేకపోతే ఒకవేళ(fwd->listen_host != ఖాళీ)
 			logit("Received request from %.100s port %d to "
 			    "remote forward to host %.100s port %d, "
 			    "but the request was denied.",
-			    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
-			    fwd->listen_host, fwd->listen_port );
-		else
+			    ssh_remote_ipaddr(ssh), ssh_remote_పోర్టు(ssh),
+			    fwd->listen_host, fwd->listen_పోర్టు );
+		లేకపోతే
 			logit("Received request from %.100s port %d to remote "
 			    "forward, but the request was denied.",
-			    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
-		return 0;
+			    ssh_remote_ipaddr(ssh), ssh_remote_పోర్టు(ssh));
+		తిరిగి 0;
 	}
-	if (fwd->listen_path != NULL) {
-		return channel_setup_fwd_listener_streamlocal(ssh,
+	ఒకవేళ (fwd->listen_మార్గం != ఖాళీ) {
+		తిరిగి channel_అమరిక_fwd_listener_streamlocal(ssh,
 		    SSH_CHANNEL_RUNIX_LISTENER, fwd, fwd_opts);
-	} else {
-		return channel_setup_fwd_listener_tcpip(ssh,
-		    SSH_CHANNEL_RPORT_LISTENER, fwd, allocated_listen_port,
+	} లేకపోతే {
+		తిరిగి channel_అమరిక_fwd_listener_tcpip(ssh,
+		    SSH_CHANNEL_RPORT_LISTENER, fwd, allocated_listen_పోర్టు,
 		    fwd_opts);
 	}
 }
@@ -4423,15 +4423,15 @@ channel_setup_remote_fwd_listener(struct ssh *ssh, struct Forward *fwd,
  * Translate the requested rfwd listen host to something usable for
  * this server.
  */
-static const char *
-channel_rfwd_bind_host(const char *listen_host)
+స్థిర స్థిరరాశి అక్షరం *
+channel_rfwd_bind_host(స్థిరరాశి అక్షరం *listen_host)
 {
-	if (listen_host == NULL) {
-		return "localhost";
-	} else if (*listen_host == '\0' || strcmp(listen_host, "*") == 0) {
-		return "";
-	} else
-		return listen_host;
+	ఒకవేళ (listen_host == ఖాళీ) {
+		తిరిగి "localhost";
+	} లేకపోతే ఒకవేళ (*listen_host == '\0' || strcmp(listen_host, "*") == 0) {
+		తిరిగి "";
+	} లేకపోతే
+		తిరిగి listen_host;
 }
 
 /*
@@ -4440,74 +4440,74 @@ channel_rfwd_bind_host(const char *listen_host)
  * Returns handle (index) for updating the dynamic listen port with
  * channel_update_permission().
  */
-int
-channel_request_remote_forwarding(struct ssh *ssh, struct Forward *fwd)
+పూర్ణాంకం
+channel_request_remote_forwarding(నిర్మాణం ssh *ssh, నిర్మాణం Forward *fwd)
 {
-	int r, success = 0, idx = -1;
-	const char *host_to_connect, *listen_host, *listen_path;
-	int port_to_connect, listen_port;
+	పూర్ణాంకం r, success = 0, idx = -1;
+	స్థిరరాశి అక్షరం *host_గమ్యం_connect, *listen_host, *listen_మార్గం;
+	పూర్ణాంకం పోర్టు_గమ్యం_connect, listen_పోర్టు;
 
 	/* Send the forward request to the remote side. */
-	if (fwd->listen_path != NULL) {
-		if ((r = sshpkt_start(ssh, SSH2_MSG_GLOBAL_REQUEST)) != 0 ||
+	ఒకవేళ (fwd->listen_మార్గం != ఖాళీ) {
+		ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_GLOBAL_REQUEST)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh,
 		    "streamlocal-forward@openssh.com")) != 0 ||
 		    (r = sshpkt_put_u8(ssh, 1)) != 0 || /* want reply */
-		    (r = sshpkt_put_cstring(ssh, fwd->listen_path)) != 0 ||
+		    (r = sshpkt_put_cstring(ssh, fwd->listen_మార్గం)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
 			fatal_fr(r, "request streamlocal");
-	} else {
-		if ((r = sshpkt_start(ssh, SSH2_MSG_GLOBAL_REQUEST)) != 0 ||
+	} లేకపోతే {
+		ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_GLOBAL_REQUEST)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, "tcpip-forward")) != 0 ||
 		    (r = sshpkt_put_u8(ssh, 1)) != 0 || /* want reply */
 		    (r = sshpkt_put_cstring(ssh,
 		    channel_rfwd_bind_host(fwd->listen_host))) != 0 ||
-		    (r = sshpkt_put_u32(ssh, fwd->listen_port)) != 0 ||
+		    (r = sshpkt_put_u32(ssh, fwd->listen_పోర్టు)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
 			fatal_fr(r, "request tcpip-forward");
 	}
 	/* Assume that server accepts the request */
 	success = 1;
-	if (success) {
+	ఒకవేళ (success) {
 		/* Record that connection to this host/port is permitted. */
-		host_to_connect = listen_host = listen_path = NULL;
-		port_to_connect = listen_port = 0;
-		if (fwd->connect_path != NULL) {
-			host_to_connect = fwd->connect_path;
-			port_to_connect = PORT_STREAMLOCAL;
-		} else {
-			host_to_connect = fwd->connect_host;
-			port_to_connect = fwd->connect_port;
+		host_గమ్యం_connect = listen_host = listen_మార్గం = ఖాళీ;
+		పోర్టు_గమ్యం_connect = listen_పోర్టు = 0;
+		ఒకవేళ (fwd->connect_మార్గం != ఖాళీ) {
+			host_గమ్యం_connect = fwd->connect_మార్గం;
+			పోర్టు_గమ్యం_connect = పోర్టు_STREAMLOCAL;
+		} లేకపోతే {
+			host_గమ్యం_connect = fwd->connect_host;
+			పోర్టు_గమ్యం_connect = fwd->connect_పోర్టు;
 		}
-		if (fwd->listen_path != NULL) {
-			listen_path = fwd->listen_path;
-			listen_port = PORT_STREAMLOCAL;
-		} else {
+		ఒకవేళ (fwd->listen_మార్గం != ఖాళీ) {
+			listen_మార్గం = fwd->listen_మార్గం;
+			listen_పోర్టు = పోర్టు_STREAMLOCAL;
+		} లేకపోతే {
 			listen_host = fwd->listen_host;
-			listen_port = fwd->listen_port;
+			listen_పోర్టు = fwd->listen_పోర్టు;
 		}
-		idx = permission_set_add(ssh, FORWARD_USER, FORWARD_LOCAL,
-		    host_to_connect, port_to_connect,
-		    listen_host, listen_path, listen_port, NULL);
+		idx = permission_సమితి_కూడు(ssh, FORWARD_USER, FORWARD_LOCAL,
+		    host_గమ్యం_connect, పోర్టు_గమ్యం_connect,
+		    listen_host, listen_మార్గం, listen_పోర్టు, ఖాళీ);
 	}
-	return idx;
+	తిరిగి idx;
 }
 
-static int
-open_match(struct permission *allowed_open, const char *requestedhost,
-    int requestedport)
+స్థిర పూర్ణాంకం
+open_సరిపోలిక(నిర్మాణం permission *allowed_open, స్థిరరాశి అక్షరం *requestedhost,
+    పూర్ణాంకం requestedport)
 {
-	if (allowed_open->host_to_connect == NULL)
-		return 0;
-	if (allowed_open->port_to_connect != FWD_PERMIT_ANY_PORT &&
-	    allowed_open->port_to_connect != requestedport)
-		return 0;
-	if (strcmp(allowed_open->host_to_connect, FWD_PERMIT_ANY_HOST) != 0 &&
-	    strcmp(allowed_open->host_to_connect, requestedhost) != 0)
-		return 0;
-	return 1;
+	ఒకవేళ (allowed_open->host_గమ్యం_connect == ఖాళీ)
+		తిరిగి 0;
+	ఒకవేళ (allowed_open->పోర్టు_గమ్యం_connect != FWD_PERMIT_ANY_పోర్టు &&
+	    allowed_open->పోర్టు_గమ్యం_connect != requestedport)
+		తిరిగి 0;
+	ఒకవేళ (strcmp(allowed_open->host_గమ్యం_connect, FWD_PERMIT_ANY_HOST) != 0 &&
+	    strcmp(allowed_open->host_గమ్యం_connect, requestedhost) != 0)
+		తిరిగి 0;
+	తిరిగి 1;
 }
 
 /*
@@ -4516,128 +4516,128 @@ open_match(struct permission *allowed_open, const char *requestedhost,
  * need to translate between the configured-host (listen_host)
  * and what we've sent to the remote server (channel_rfwd_bind_host)
  */
-static int
-open_listen_match_tcpip(struct permission *allowed_open,
-    const char *requestedhost, u_short requestedport, int translate)
+స్థిర పూర్ణాంకం
+open_listen_సరిపోలిక_tcpip(నిర్మాణం permission *allowed_open,
+    స్థిరరాశి అక్షరం *requestedhost, u_short requestedport, పూర్ణాంకం translate)
 {
-	const char *allowed_host;
+	స్థిరరాశి అక్షరం *allowed_host;
 
-	if (allowed_open->host_to_connect == NULL)
-		return 0;
-	if (allowed_open->listen_port != requestedport)
-		return 0;
-	if (!translate && allowed_open->listen_host == NULL &&
-	    requestedhost == NULL)
-		return 1;
+	ఒకవేళ (allowed_open->host_గమ్యం_connect == ఖాళీ)
+		తిరిగి 0;
+	ఒకవేళ (allowed_open->listen_పోర్టు != requestedport)
+		తిరిగి 0;
+	ఒకవేళ (!translate && allowed_open->listen_host == ఖాళీ &&
+	    requestedhost == ఖాళీ)
+		తిరిగి 1;
 	allowed_host = translate ?
 	    channel_rfwd_bind_host(allowed_open->listen_host) :
 	    allowed_open->listen_host;
-	if (allowed_host == NULL || requestedhost == NULL ||
+	ఒకవేళ (allowed_host == ఖాళీ || requestedhost == ఖాళీ ||
 	    strcmp(allowed_host, requestedhost) != 0)
-		return 0;
-	return 1;
+		తిరిగి 0;
+	తిరిగి 1;
 }
 
-static int
-open_listen_match_streamlocal(struct permission *allowed_open,
-    const char *requestedpath)
+స్థిర పూర్ణాంకం
+open_listen_సరిపోలిక_streamlocal(నిర్మాణం permission *allowed_open,
+    స్థిరరాశి అక్షరం *requestedpath)
 {
-	if (allowed_open->host_to_connect == NULL)
-		return 0;
-	if (allowed_open->listen_port != PORT_STREAMLOCAL)
-		return 0;
-	if (allowed_open->listen_path == NULL ||
-	    strcmp(allowed_open->listen_path, requestedpath) != 0)
-		return 0;
-	return 1;
+	ఒకవేళ (allowed_open->host_గమ్యం_connect == ఖాళీ)
+		తిరిగి 0;
+	ఒకవేళ (allowed_open->listen_పోర్టు != పోర్టు_STREAMLOCAL)
+		తిరిగి 0;
+	ఒకవేళ (allowed_open->listen_మార్గం == ఖాళీ ||
+	    strcmp(allowed_open->listen_మార్గం, requestedpath) != 0)
+		తిరిగి 0;
+	తిరిగి 1;
 }
 
 /*
  * Request cancellation of remote forwarding of connection host:port from
  * local side.
  */
-static int
-channel_request_rforward_cancel_tcpip(struct ssh *ssh,
-    const char *host, u_short port)
+స్థిర పూర్ణాంకం
+channel_request_rforward_cancel_tcpip(నిర్మాణం ssh *ssh,
+    స్థిరరాశి అక్షరం *host, u_short పోర్టు)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	struct permission_set *pset = &sc->local_perms;
-	int r;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం permission_సమితి *pset = &sc->local_perms;
+	పూర్ణాంకం r;
 	u_int i;
-	struct permission *perm = NULL;
+	నిర్మాణం permission *perm = ఖాళీ;
 
-	for (i = 0; i < pset->num_permitted_user; i++) {
+	కొరకు (i = 0; i < pset->అంకె_permitted_user; i++) {
 		perm = &pset->permitted_user[i];
-		if (open_listen_match_tcpip(perm, host, port, 0))
-			break;
-		perm = NULL;
+		ఒకవేళ (open_listen_సరిపోలిక_tcpip(perm, host, పోర్టు, 0))
+			ఆపు;
+		perm = ఖాళీ;
 	}
-	if (perm == NULL) {
+	ఒకవేళ (perm == ఖాళీ) {
 		debug_f("requested forward not found");
-		return -1;
+		తిరిగి -1;
 	}
-	if ((r = sshpkt_start(ssh, SSH2_MSG_GLOBAL_REQUEST)) != 0 ||
+	ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_GLOBAL_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "cancel-tcpip-forward")) != 0 ||
 	    (r = sshpkt_put_u8(ssh, 0)) != 0 || /* want reply */
 	    (r = sshpkt_put_cstring(ssh, channel_rfwd_bind_host(host))) != 0 ||
-	    (r = sshpkt_put_u32(ssh, port)) != 0 ||
+	    (r = sshpkt_put_u32(ssh, పోర్టు)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send cancel");
 
 	fwd_perm_clear(perm); /* unregister */
 
-	return 0;
+	తిరిగి 0;
 }
 
 /*
  * Request cancellation of remote forwarding of Unix domain socket
  * path from local side.
  */
-static int
-channel_request_rforward_cancel_streamlocal(struct ssh *ssh, const char *path)
+స్థిర పూర్ణాంకం
+channel_request_rforward_cancel_streamlocal(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *మార్గం)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	struct permission_set *pset = &sc->local_perms;
-	int r;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం permission_సమితి *pset = &sc->local_perms;
+	పూర్ణాంకం r;
 	u_int i;
-	struct permission *perm = NULL;
+	నిర్మాణం permission *perm = ఖాళీ;
 
-	for (i = 0; i < pset->num_permitted_user; i++) {
+	కొరకు (i = 0; i < pset->అంకె_permitted_user; i++) {
 		perm = &pset->permitted_user[i];
-		if (open_listen_match_streamlocal(perm, path))
-			break;
-		perm = NULL;
+		ఒకవేళ (open_listen_సరిపోలిక_streamlocal(perm, మార్గం))
+			ఆపు;
+		perm = ఖాళీ;
 	}
-	if (perm == NULL) {
+	ఒకవేళ (perm == ఖాళీ) {
 		debug_f("requested forward not found");
-		return -1;
+		తిరిగి -1;
 	}
-	if ((r = sshpkt_start(ssh, SSH2_MSG_GLOBAL_REQUEST)) != 0 ||
+	ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_GLOBAL_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh,
 	    "cancel-streamlocal-forward@openssh.com")) != 0 ||
 	    (r = sshpkt_put_u8(ssh, 0)) != 0 || /* want reply */
-	    (r = sshpkt_put_cstring(ssh, path)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, మార్గం)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send cancel");
 
 	fwd_perm_clear(perm); /* unregister */
 
-	return 0;
+	తిరిగి 0;
 }
 
 /*
  * Request cancellation of remote forwarding of a connection from local side.
  */
-int
-channel_request_rforward_cancel(struct ssh *ssh, struct Forward *fwd)
+పూర్ణాంకం
+channel_request_rforward_cancel(నిర్మాణం ssh *ssh, నిర్మాణం Forward *fwd)
 {
-	if (fwd->listen_path != NULL) {
-		return channel_request_rforward_cancel_streamlocal(ssh,
-		    fwd->listen_path);
-	} else {
-		return channel_request_rforward_cancel_tcpip(ssh,
+	ఒకవేళ (fwd->listen_మార్గం != ఖాళీ) {
+		తిరిగి channel_request_rforward_cancel_streamlocal(ssh,
+		    fwd->listen_మార్గం);
+	} లేకపోతే {
+		తిరిగి channel_request_rforward_cancel_tcpip(ssh,
 		    fwd->listen_host,
-		    fwd->listen_port ? fwd->listen_port : fwd->allocated_port);
+		    fwd->listen_పోర్టు ? fwd->listen_పోర్టు : fwd->allocated_పోర్టు);
 	}
 }
 
@@ -4646,62 +4646,62 @@ channel_request_rforward_cancel(struct ssh *ssh, struct Forward *fwd)
  * usually called by the server, because the user could connect to any port
  * anyway, and the server has no way to know but to trust the client anyway.
  */
-void
-channel_permit_all(struct ssh *ssh, int where)
+శూన్య
+channel_permit_all(నిర్మాణం ssh *ssh, పూర్ణాంకం where)
 {
-	struct permission_set *pset = permission_set_get(ssh, where);
+	నిర్మాణం permission_సమితి *pset = permission_సమితి_get(ssh, where);
 
-	if (pset->num_permitted_user == 0)
+	ఒకవేళ (pset->అంకె_permitted_user == 0)
 		pset->all_permitted = 1;
 }
 
 /*
  * Permit the specified host/port for forwarding.
  */
-void
-channel_add_permission(struct ssh *ssh, int who, int where,
-    char *host, int port)
+శూన్య
+channel_కూడు_permission(నిర్మాణం ssh *ssh, పూర్ణాంకం who, పూర్ణాంకం where,
+    అక్షరం *host, పూర్ణాంకం పోర్టు)
 {
-	int local = where == FORWARD_LOCAL;
-	struct permission_set *pset = permission_set_get(ssh, where);
+	పూర్ణాంకం local = where == FORWARD_LOCAL;
+	నిర్మాణం permission_సమితి *pset = permission_సమితి_get(ssh, where);
 
 	debug("allow %s forwarding to host %s port %d",
-	    fwd_ident(who, where), host, port);
+	    fwd_ident(who, where), host, పోర్టు);
 	/*
 	 * Remote forwards set listen_host/port, local forwards set
 	 * host/port_to_connect.
 	 */
-	permission_set_add(ssh, who, where,
-	    local ? host : NULL, local ? port : 0,
-	    local ? NULL : host, NULL, local ? 0 : port, NULL);
+	permission_సమితి_కూడు(ssh, who, where,
+	    local ? host : ఖాళీ, local ? పోర్టు : 0,
+	    local ? ఖాళీ : host, ఖాళీ, local ? 0 : పోర్టు, ఖాళీ);
 	pset->all_permitted = 0;
 }
 
 /*
  * Administratively disable forwarding.
  */
-void
-channel_disable_admin(struct ssh *ssh, int where)
+శూన్య
+channel_disable_admin(నిర్మాణం ssh *ssh, పూర్ణాంకం where)
 {
 	channel_clear_permission(ssh, FORWARD_ADM, where);
-	permission_set_add(ssh, FORWARD_ADM, where,
-	    NULL, 0, NULL, NULL, 0, NULL);
+	permission_సమితి_కూడు(ssh, FORWARD_ADM, where,
+	    ఖాళీ, 0, ఖాళీ, ఖాళీ, 0, ఖాళీ);
 }
 
 /*
  * Clear a list of permitted opens.
  */
-void
-channel_clear_permission(struct ssh *ssh, int who, int where)
+శూన్య
+channel_clear_permission(నిర్మాణం ssh *ssh, పూర్ణాంకం who, పూర్ణాంకం where)
 {
-	struct permission **permp;
+	నిర్మాణం permission **permp;
 	u_int i, *npermp;
 
-	permission_set_get_array(ssh, who, where, &permp, &npermp);
-	for (i = 0; i < *npermp; i++)
+	permission_సమితి_get_array(ssh, who, where, &permp, &npermp);
+	కొరకు (i = 0; i < *npermp; i++)
 		fwd_perm_clear((*permp) + i);
-	free(*permp);
-	*permp = NULL;
+	విడుదల(*permp);
+	*permp = ఖాళీ;
 	*npermp = 0;
 }
 
@@ -4710,114 +4710,114 @@ channel_clear_permission(struct ssh *ssh, int who, int where)
  * the actual 'newport' has been allocated. If 'newport' < 0 is
  * passed then they entry will be invalidated.
  */
-void
-channel_update_permission(struct ssh *ssh, int idx, int newport)
+శూన్య
+channel_update_permission(నిర్మాణం ssh *ssh, పూర్ణాంకం idx, పూర్ణాంకం newport)
 {
-	struct permission_set *pset = &ssh->chanctxt->local_perms;
+	నిర్మాణం permission_సమితి *pset = &ssh->chanctxt->local_perms;
 
-	if (idx < 0 || (u_int)idx >= pset->num_permitted_user) {
+	ఒకవేళ (idx < 0 || (u_int)idx >= pset->అంకె_permitted_user) {
 		debug_f("index out of range: %d num_permitted_user %d",
-		    idx, pset->num_permitted_user);
-		return;
+		    idx, pset->అంకె_permitted_user);
+		తిరిగి;
 	}
 	debug("%s allowed port %d for forwarding to host %s port %d",
 	    newport > 0 ? "Updating" : "Removing",
 	    newport,
-	    pset->permitted_user[idx].host_to_connect,
-	    pset->permitted_user[idx].port_to_connect);
-	if (newport <= 0)
+	    pset->permitted_user[idx].host_గమ్యం_connect,
+	    pset->permitted_user[idx].పోర్టు_గమ్యం_connect);
+	ఒకవేళ (newport <= 0)
 		fwd_perm_clear(&pset->permitted_user[idx]);
-	else {
-		pset->permitted_user[idx].listen_port =
+	లేకపోతే {
+		pset->permitted_user[idx].listen_పోర్టు =
 		    (ssh->compat & SSH_BUG_DYNAMIC_RPORT) ? 0 : newport;
 	}
 }
 
 /* Try to start non-blocking connect to next host in cctx list */
-static int
-connect_next(struct ssh *ssh, struct channel_connect *cctx)
+స్థిర పూర్ణాంకం
+connect_తదుపరి(నిర్మాణం ssh *ssh, నిర్మాణం channel_connect *cctx)
 {
-	int sock, sock_is_network, saved_errno;
-	struct sockaddr_un *sunaddr;
-	char ntop[NI_MAXHOST];
-	char strport[MAXIMUM(NI_MAXSERV, sizeof(sunaddr->sun_path))];
+	పూర్ణాంకం sock, sock_is_జాలం, saved_errno;
+	నిర్మాణం sockaddr_un *sunaddr;
+	అక్షరం ntop[NI_MAXHOST];
+	అక్షరం strport[గరిష్ఠ(NI_MAXSERV, పరిమాణం(sunaddr->sun_మార్గం))];
 
-	for (; cctx->ai; cctx->ai = cctx->ai->ai_next) {
-		sock_is_network = 0;
-		switch (cctx->ai->ai_family) {
-		case AF_UNIX:
+	కొరకు (; cctx->ai; cctx->ai = cctx->ai->ai_next) {
+		sock_is_జాలం = 0;
+		ఎంపిక (cctx->ai->ai_family) {
+		స్థితి AF_UNIX:
 			/* unix:pathname instead of host:port */
-			sunaddr = (struct sockaddr_un *)cctx->ai->ai_addr;
-			strlcpy(ntop, "unix", sizeof(ntop));
-			strlcpy(strport, sunaddr->sun_path, sizeof(strport));
-			break;
-		case AF_INET:
-		case AF_INET6:
-			if (getnameinfo(cctx->ai->ai_addr, cctx->ai->ai_addrlen,
-			    ntop, sizeof(ntop), strport, sizeof(strport),
+			sunaddr = (నిర్మాణం sockaddr_un *)cctx->ai->ai_addr;
+			strlcpy(ntop, "unix", పరిమాణం(ntop));
+			strlcpy(strport, sunaddr->sun_మార్గం, పరిమాణం(strport));
+			ఆపు;
+		స్థితి AF_INET:
+		స్థితి AF_INET6:
+			ఒకవేళ (getnameinfo(cctx->ai->ai_addr, cctx->ai->ai_addrlen,
+			    ntop, పరిమాణం(ntop), strport, పరిమాణం(strport),
 			    NI_NUMERICHOST|NI_NUMERICSERV) != 0) {
 				error_f("getnameinfo failed");
-				continue;
+				కొనసాగు;
 			}
-			sock_is_network = 1;
-			break;
-		default:
-			continue;
+			sock_is_జాలం = 1;
+			ఆపు;
+		అప్రమేయ:
+			కొనసాగు;
 		}
 		debug_f("start for host %.100s ([%.100s]:%s)",
 		    cctx->host, ntop, strport);
-		if ((sock = socket(cctx->ai->ai_family, cctx->ai->ai_socktype,
+		ఒకవేళ ((sock = socket(cctx->ai->ai_family, cctx->ai->ai_socktype,
 		    cctx->ai->ai_protocol)) == -1) {
-			if (cctx->ai->ai_next == NULL)
+			ఒకవేళ (cctx->ai->ai_next == ఖాళీ)
 				error("socket: %.100s", strerror(errno));
-			else
+			లేకపోతే
 				verbose("socket: %.100s", strerror(errno));
-			continue;
+			కొనసాగు;
 		}
-		if (set_nonblock(sock) == -1)
+		ఒకవేళ (సమితి_nonblock(sock) == -1)
 			fatal_f("set_nonblock(%d)", sock);
-		if (sock_is_network && ssh->chanctxt->want_tcp_keepalive)
-			set_keepalive(sock); /* logs errors */
-		if (connect(sock, cctx->ai->ai_addr,
+		ఒకవేళ (sock_is_జాలం && ssh->chanctxt->want_tcp_keepalive)
+			సమితి_keepalive(sock); /* logs errors */
+		ఒకవేళ (connect(sock, cctx->ai->ai_addr,
 		    cctx->ai->ai_addrlen) == -1 && errno != EINPROGRESS) {
 			debug_f("host %.100s ([%.100s]:%s): %.100s",
 			    cctx->host, ntop, strport, strerror(errno));
 			saved_errno = errno;
 			close(sock);
 			errno = saved_errno;
-			continue;	/* fail -- try next */
+			కొనసాగు;	/* fail -- try next */
 		}
-		if (cctx->ai->ai_family != AF_UNIX)
-			set_nodelay(sock);
+		ఒకవేళ (cctx->ai->ai_family != AF_UNIX)
+			సమితి_nodelay(sock);
 		debug_f("connect host %.100s ([%.100s]:%s) in progress, fd=%d",
 		    cctx->host, ntop, strport, sock);
 		cctx->ai = cctx->ai->ai_next;
-		return sock;
+		తిరిగి sock;
 	}
-	return -1;
+	తిరిగి -1;
 }
 
 /*
  * Return connecting socket to remote host:port or local socket path,
  * passing back the failure reason if appropriate.
  */
-static int
-connect_to_helper(struct ssh *ssh, const char *name, int port, int socktype,
-    char *ctype, char *rname, struct channel_connect *cctx,
-    int *reason, const char **errmsg)
+స్థిర పూర్ణాంకం
+connect_గమ్యం_helper(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *name, పూర్ణాంకం పోర్టు, పూర్ణాంకం socktype,
+    అక్షరం *ctype, అక్షరం *rname, నిర్మాణం channel_connect *cctx,
+    పూర్ణాంకం *reason, స్థిరరాశి అక్షరం **errmsg)
 {
-	struct addrinfo hints;
-	int gaierr;
-	int sock = -1;
-	char strport[NI_MAXSERV];
+	నిర్మాణం addrinfo hints;
+	పూర్ణాంకం gaierr;
+	పూర్ణాంకం sock = -1;
+	అక్షరం strport[NI_MAXSERV];
 
-	if (port == PORT_STREAMLOCAL) {
-		struct sockaddr_un *sunaddr;
-		struct addrinfo *ai;
+	ఒకవేళ (పోర్టు == పోర్టు_STREAMLOCAL) {
+		నిర్మాణం sockaddr_un *sunaddr;
+		నిర్మాణం addrinfo *ai;
 
-		if (strlen(name) > sizeof(sunaddr->sun_path)) {
+		ఒకవేళ (అక్షరశ్రేణి_పొడవు(name) > పరిమాణం(sunaddr->sun_మార్గం)) {
 			error("%.100s: %.100s", name, strerror(ENAMETOOLONG));
-			return -1;
+			తిరిగి -1;
 		}
 
 		/*
@@ -4825,70 +4825,70 @@ connect_to_helper(struct ssh *ssh, const char *name, int port, int socktype,
 		 * free_connect_ctx() must check ai_family
 		 * and use free() not freeaddrinfo() for AF_UNIX.
 		 */
-		ai = xcalloc(1, sizeof(*ai) + sizeof(*sunaddr));
-		ai->ai_addr = (struct sockaddr *)(ai + 1);
-		ai->ai_addrlen = sizeof(*sunaddr);
+		ai = xcalloc(1, పరిమాణం(*ai) + పరిమాణం(*sunaddr));
+		ai->ai_addr = (నిర్మాణం sockaddr *)(ai + 1);
+		ai->ai_addrlen = పరిమాణం(*sunaddr);
 		ai->ai_family = AF_UNIX;
 		ai->ai_socktype = socktype;
 		ai->ai_protocol = PF_UNSPEC;
-		sunaddr = (struct sockaddr_un *)ai->ai_addr;
+		sunaddr = (నిర్మాణం sockaddr_un *)ai->ai_addr;
 		sunaddr->sun_family = AF_UNIX;
-		strlcpy(sunaddr->sun_path, name, sizeof(sunaddr->sun_path));
+		strlcpy(sunaddr->sun_మార్గం, name, పరిమాణం(sunaddr->sun_మార్గం));
 		cctx->aitop = ai;
-	} else {
-		memset(&hints, 0, sizeof(hints));
+	} లేకపోతే {
+		memset(&hints, 0, పరిమాణం(hints));
 		hints.ai_family = ssh->chanctxt->IPv4or6;
 		hints.ai_socktype = socktype;
-		snprintf(strport, sizeof strport, "%d", port);
-		if ((gaierr = getaddrinfo(name, strport, &hints, &cctx->aitop))
+		snprintf(strport, పరిమాణం strport, "%d", పోర్టు);
+		ఒకవేళ ((gaierr = getaddrinfo(name, strport, &hints, &cctx->aitop))
 		    != 0) {
-			if (errmsg != NULL)
+			ఒకవేళ (errmsg != ఖాళీ)
 				*errmsg = ssh_gai_strerror(gaierr);
-			if (reason != NULL)
+			ఒకవేళ (reason != ఖాళీ)
 				*reason = SSH2_OPEN_CONNECT_FAILED;
 			error("connect_to %.100s: unknown host (%s)", name,
 			    ssh_gai_strerror(gaierr));
-			return -1;
+			తిరిగి -1;
 		}
 	}
 
 	cctx->host = xstrdup(name);
-	cctx->port = port;
+	cctx->పోర్టు = పోర్టు;
 	cctx->ai = cctx->aitop;
 
-	if ((sock = connect_next(ssh, cctx)) == -1) {
+	ఒకవేళ ((sock = connect_తదుపరి(ssh, cctx)) == -1) {
 		error("connect to %.100s port %d failed: %s",
-		    name, port, strerror(errno));
-		return -1;
+		    name, పోర్టు, strerror(errno));
+		తిరిగి -1;
 	}
 
-	return sock;
+	తిరిగి sock;
 }
 
 /* Return CONNECTING channel to remote host:port or local socket path */
-static Channel *
-connect_to(struct ssh *ssh, const char *host, int port,
-    char *ctype, char *rname)
+స్థిర Channel *
+connect_గమ్యం(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *host, పూర్ణాంకం పోర్టు,
+    అక్షరం *ctype, అక్షరం *rname)
 {
-	struct channel_connect cctx;
+	నిర్మాణం channel_connect cctx;
 	Channel *c;
-	int sock;
+	పూర్ణాంకం sock;
 
-	memset(&cctx, 0, sizeof(cctx));
-	sock = connect_to_helper(ssh, host, port, SOCK_STREAM, ctype, rname,
-	    &cctx, NULL, NULL);
-	if (sock == -1) {
+	memset(&cctx, 0, పరిమాణం(cctx));
+	sock = connect_గమ్యం_helper(ssh, host, పోర్టు, SOCK_STREAM, ctype, rname,
+	    &cctx, ఖాళీ, ఖాళీ);
+	ఒకవేళ (sock == -1) {
 		free_connect_ctx(&cctx);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 	c = channel_new(ssh, ctype, SSH_CHANNEL_CONNECTING, sock, sock, -1,
-	    CHAN_TCP_WINDOW_DEFAULT, CHAN_TCP_PACKET_DEFAULT, 0, rname, 1);
-	c->host_port = port;
-	c->path = xstrdup(host);
-	c->connect_ctx = xmalloc(sizeof(cctx));
-	memcpy(c->connect_ctx, &cctx, sizeof(cctx));
+	    CHAN_TCP_కిటికీ_DEFAULT, CHAN_TCP_PACKET_DEFAULT, 0, rname, 1);
+	c->host_పోర్టు = పోర్టు;
+	c->మార్గం = xstrdup(host);
+	c->connect_ctx = xmalloc(పరిమాణం(cctx));
+	జ్ఞాపకం_నకలు(c->connect_ctx, &cctx, పరిమాణం(cctx));
 
-	return c;
+	తిరిగి c;
 }
 
 /*
@@ -4896,174 +4896,174 @@ connect_to(struct ssh *ssh, const char *host, int port,
  * that needs to deal with this connection.
  */
 Channel *
-channel_connect_by_listen_address(struct ssh *ssh, const char *listen_host,
-    u_short listen_port, char *ctype, char *rname)
+channel_connect_by_listen_చిరునామా(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *listen_host,
+    u_short listen_పోర్టు, అక్షరం *ctype, అక్షరం *rname)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	struct permission_set *pset = &sc->local_perms;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం permission_సమితి *pset = &sc->local_perms;
 	u_int i;
-	struct permission *perm;
+	నిర్మాణం permission *perm;
 
-	for (i = 0; i < pset->num_permitted_user; i++) {
+	కొరకు (i = 0; i < pset->అంకె_permitted_user; i++) {
 		perm = &pset->permitted_user[i];
-		if (open_listen_match_tcpip(perm,
-		    listen_host, listen_port, 1)) {
-			if (perm->downstream)
-				return perm->downstream;
-			if (perm->port_to_connect == 0)
-				return rdynamic_connect_prepare(ssh,
+		ఒకవేళ (open_listen_సరిపోలిక_tcpip(perm,
+		    listen_host, listen_పోర్టు, 1)) {
+			ఒకవేళ (perm->downstream)
+				తిరిగి perm->downstream;
+			ఒకవేళ (perm->పోర్టు_గమ్యం_connect == 0)
+				తిరిగి rdynamic_connect_prepare(ssh,
 				    ctype, rname);
-			return connect_to(ssh,
-			    perm->host_to_connect, perm->port_to_connect,
+			తిరిగి connect_గమ్యం(ssh,
+			    perm->host_గమ్యం_connect, perm->పోర్టు_గమ్యం_connect,
 			    ctype, rname);
 		}
 	}
 	error("WARNING: Server requests forwarding for unknown listen_port %d",
-	    listen_port);
-	return NULL;
+	    listen_పోర్టు);
+	తిరిగి ఖాళీ;
 }
 
 Channel *
-channel_connect_by_listen_path(struct ssh *ssh, const char *path,
-    char *ctype, char *rname)
+channel_connect_by_listen_మార్గం(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *మార్గం,
+    అక్షరం *ctype, అక్షరం *rname)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	struct permission_set *pset = &sc->local_perms;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం permission_సమితి *pset = &sc->local_perms;
 	u_int i;
-	struct permission *perm;
+	నిర్మాణం permission *perm;
 
-	for (i = 0; i < pset->num_permitted_user; i++) {
+	కొరకు (i = 0; i < pset->అంకె_permitted_user; i++) {
 		perm = &pset->permitted_user[i];
-		if (open_listen_match_streamlocal(perm, path)) {
-			return connect_to(ssh,
-			    perm->host_to_connect, perm->port_to_connect,
+		ఒకవేళ (open_listen_సరిపోలిక_streamlocal(perm, మార్గం)) {
+			తిరిగి connect_గమ్యం(ssh,
+			    perm->host_గమ్యం_connect, perm->పోర్టు_గమ్యం_connect,
 			    ctype, rname);
 		}
 	}
 	error("WARNING: Server requests forwarding for unknown path %.100s",
-	    path);
-	return NULL;
+	    మార్గం);
+	తిరిగి ఖాళీ;
 }
 
 /* Check if connecting to that port is permitted and connect. */
 Channel *
-channel_connect_to_port(struct ssh *ssh, const char *host, u_short port,
-    char *ctype, char *rname, int *reason, const char **errmsg)
+channel_connect_గమ్యం_పోర్టు(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *host, u_short పోర్టు,
+    అక్షరం *ctype, అక్షరం *rname, పూర్ణాంకం *reason, స్థిరరాశి అక్షరం **errmsg)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	struct permission_set *pset = &sc->local_perms;
-	struct channel_connect cctx;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం permission_సమితి *pset = &sc->local_perms;
+	నిర్మాణం channel_connect cctx;
 	Channel *c;
 	u_int i, permit, permit_adm = 1;
-	int sock;
-	struct permission *perm;
+	పూర్ణాంకం sock;
+	నిర్మాణం permission *perm;
 
 	permit = pset->all_permitted;
-	if (!permit) {
-		for (i = 0; i < pset->num_permitted_user; i++) {
+	ఒకవేళ (!permit) {
+		కొరకు (i = 0; i < pset->అంకె_permitted_user; i++) {
 			perm = &pset->permitted_user[i];
-			if (open_match(perm, host, port)) {
+			ఒకవేళ (open_సరిపోలిక(perm, host, పోర్టు)) {
 				permit = 1;
-				break;
+				ఆపు;
 			}
 		}
 	}
 
-	if (pset->num_permitted_admin > 0) {
+	ఒకవేళ (pset->అంకె_permitted_admin > 0) {
 		permit_adm = 0;
-		for (i = 0; i < pset->num_permitted_admin; i++) {
+		కొరకు (i = 0; i < pset->అంకె_permitted_admin; i++) {
 			perm = &pset->permitted_admin[i];
-			if (open_match(perm, host, port)) {
+			ఒకవేళ (open_సరిపోలిక(perm, host, పోర్టు)) {
 				permit_adm = 1;
-				break;
+				ఆపు;
 			}
 		}
 	}
 
-	if (!permit || !permit_adm) {
+	ఒకవేళ (!permit || !permit_adm) {
 		logit("Received request from %.100s port %d to connect to "
 		    "host %.100s port %d, but the request was denied.",
-		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh), host, port);
-		if (reason != NULL)
+		    ssh_remote_ipaddr(ssh), ssh_remote_పోర్టు(ssh), host, పోర్టు);
+		ఒకవేళ (reason != ఖాళీ)
 			*reason = SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED;
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	memset(&cctx, 0, sizeof(cctx));
-	sock = connect_to_helper(ssh, host, port, SOCK_STREAM, ctype, rname,
+	memset(&cctx, 0, పరిమాణం(cctx));
+	sock = connect_గమ్యం_helper(ssh, host, పోర్టు, SOCK_STREAM, ctype, rname,
 	    &cctx, reason, errmsg);
-	if (sock == -1) {
+	ఒకవేళ (sock == -1) {
 		free_connect_ctx(&cctx);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
 	c = channel_new(ssh, ctype, SSH_CHANNEL_CONNECTING, sock, sock, -1,
-	    CHAN_TCP_WINDOW_DEFAULT, CHAN_TCP_PACKET_DEFAULT, 0, rname, 1);
-	c->host_port = port;
-	c->path = xstrdup(host);
-	c->connect_ctx = xmalloc(sizeof(cctx));
-	memcpy(c->connect_ctx, &cctx, sizeof(cctx));
+	    CHAN_TCP_కిటికీ_DEFAULT, CHAN_TCP_PACKET_DEFAULT, 0, rname, 1);
+	c->host_పోర్టు = పోర్టు;
+	c->మార్గం = xstrdup(host);
+	c->connect_ctx = xmalloc(పరిమాణం(cctx));
+	జ్ఞాపకం_నకలు(c->connect_ctx, &cctx, పరిమాణం(cctx));
 
-	return c;
+	తిరిగి c;
 }
 
 /* Check if connecting to that path is permitted and connect. */
 Channel *
-channel_connect_to_path(struct ssh *ssh, const char *path,
-    char *ctype, char *rname)
+channel_connect_గమ్యం_మార్గం(నిర్మాణం ssh *ssh, స్థిరరాశి అక్షరం *మార్గం,
+    అక్షరం *ctype, అక్షరం *rname)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	struct permission_set *pset = &sc->local_perms;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం permission_సమితి *pset = &sc->local_perms;
 	u_int i, permit, permit_adm = 1;
-	struct permission *perm;
+	నిర్మాణం permission *perm;
 
 	permit = pset->all_permitted;
-	if (!permit) {
-		for (i = 0; i < pset->num_permitted_user; i++) {
+	ఒకవేళ (!permit) {
+		కొరకు (i = 0; i < pset->అంకె_permitted_user; i++) {
 			perm = &pset->permitted_user[i];
-			if (open_match(perm, path, PORT_STREAMLOCAL)) {
+			ఒకవేళ (open_సరిపోలిక(perm, మార్గం, పోర్టు_STREAMLOCAL)) {
 				permit = 1;
-				break;
+				ఆపు;
 			}
 		}
 	}
 
-	if (pset->num_permitted_admin > 0) {
+	ఒకవేళ (pset->అంకె_permitted_admin > 0) {
 		permit_adm = 0;
-		for (i = 0; i < pset->num_permitted_admin; i++) {
+		కొరకు (i = 0; i < pset->అంకె_permitted_admin; i++) {
 			perm = &pset->permitted_admin[i];
-			if (open_match(perm, path, PORT_STREAMLOCAL)) {
+			ఒకవేళ (open_సరిపోలిక(perm, మార్గం, పోర్టు_STREAMLOCAL)) {
 				permit_adm = 1;
-				break;
+				ఆపు;
 			}
 		}
 	}
 
-	if (!permit || !permit_adm) {
+	ఒకవేళ (!permit || !permit_adm) {
 		logit("Received request to connect to path %.100s, "
-		    "but the request was denied.", path);
-		return NULL;
+		    "but the request was denied.", మార్గం);
+		తిరిగి ఖాళీ;
 	}
-	return connect_to(ssh, path, PORT_STREAMLOCAL, ctype, rname);
+	తిరిగి connect_గమ్యం(ssh, మార్గం, పోర్టు_STREAMLOCAL, ctype, rname);
 }
 
-void
-channel_send_window_changes(struct ssh *ssh)
+శూన్య
+channel_send_కిటికీ_changes(నిర్మాణం ssh *ssh)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	struct winsize ws;
-	int r;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం winsize ws;
+	పూర్ణాంకం r;
 	u_int i;
 
-	for (i = 0; i < sc->channels_alloc; i++) {
-		if (sc->channels[i] == NULL || !sc->channels[i]->client_tty ||
+	కొరకు (i = 0; i < sc->channels_alloc; i++) {
+		ఒకవేళ (sc->channels[i] == ఖాళీ || !sc->channels[i]->client_tty ||
 		    sc->channels[i]->type != SSH_CHANNEL_OPEN)
-			continue;
-		if (ioctl(sc->channels[i]->rfd, TIOCGWINSZ, &ws) == -1)
-			continue;
-		channel_request_start(ssh, i, "window-change", 0);
-		if ((r = sshpkt_put_u32(ssh, (u_int)ws.ws_col)) != 0 ||
-		    (r = sshpkt_put_u32(ssh, (u_int)ws.ws_row)) != 0 ||
+			కొనసాగు;
+		ఒకవేళ (ioctl(sc->channels[i]->rfd, TIOCGWINSZ, &ws) == -1)
+			కొనసాగు;
+		channel_request_ప్రారంభం(ssh, i, "window-change", 0);
+		ఒకవేళ ((r = sshpkt_put_u32(ssh, (u_int)ws.ws_నిలువు)) != 0 ||
+		    (r = sshpkt_put_u32(ssh, (u_int)ws.ws_అడ్డువరుస)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, (u_int)ws.ws_xpixel)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, (u_int)ws.ws_ypixel)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
@@ -5072,69 +5072,69 @@ channel_send_window_changes(struct ssh *ssh)
 }
 
 /* Return RDYNAMIC_OPEN channel: channel allows SOCKS, but is not connected */
-static Channel *
-rdynamic_connect_prepare(struct ssh *ssh, char *ctype, char *rname)
+స్థిర Channel *
+rdynamic_connect_prepare(నిర్మాణం ssh *ssh, అక్షరం *ctype, అక్షరం *rname)
 {
 	Channel *c;
-	int r;
+	పూర్ణాంకం r;
 
 	c = channel_new(ssh, ctype, SSH_CHANNEL_RDYNAMIC_OPEN, -1, -1, -1,
-	    CHAN_TCP_WINDOW_DEFAULT, CHAN_TCP_PACKET_DEFAULT, 0, rname, 1);
-	c->host_port = 0;
-	c->path = NULL;
+	    CHAN_TCP_కిటికీ_DEFAULT, CHAN_TCP_PACKET_DEFAULT, 0, rname, 1);
+	c->host_పోర్టు = 0;
+	c->మార్గం = ఖాళీ;
 
 	/*
 	 * We need to open the channel before we have a FD,
 	 * so that we can get SOCKS header from peer.
 	 */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_OPEN_CONFIRMATION)) != 0 ||
+	ఒకవేళ ((r = sshpkt_ప్రారంభం(ssh, SSH2_సందేశం_CHANNEL_OPEN_CONFIRMATION)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, c->self)) != 0 ||
-	    (r = sshpkt_put_u32(ssh, c->local_window)) != 0 ||
+	    (r = sshpkt_put_u32(ssh, c->local_కిటికీ)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, c->local_maxpacket)) != 0)
 		fatal_fr(r, "channel %i; confirm", c->self);
-	return c;
+	తిరిగి c;
 }
 
 /* Return CONNECTING socket to remote host:port or local socket path */
-static int
-rdynamic_connect_finish(struct ssh *ssh, Channel *c)
+స్థిర పూర్ణాంకం
+rdynamic_connect_ముగింపు(నిర్మాణం ssh *ssh, Channel *c)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	struct permission_set *pset = &sc->local_perms;
-	struct permission *perm;
-	struct channel_connect cctx;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	నిర్మాణం permission_సమితి *pset = &sc->local_perms;
+	నిర్మాణం permission *perm;
+	నిర్మాణం channel_connect cctx;
 	u_int i, permit_adm = 1;
-	int sock;
+	పూర్ణాంకం sock;
 
-	if (pset->num_permitted_admin > 0) {
+	ఒకవేళ (pset->అంకె_permitted_admin > 0) {
 		permit_adm = 0;
-		for (i = 0; i < pset->num_permitted_admin; i++) {
+		కొరకు (i = 0; i < pset->అంకె_permitted_admin; i++) {
 			perm = &pset->permitted_admin[i];
-			if (open_match(perm, c->path, c->host_port)) {
+			ఒకవేళ (open_సరిపోలిక(perm, c->మార్గం, c->host_పోర్టు)) {
 				permit_adm = 1;
-				break;
+				ఆపు;
 			}
 		}
 	}
-	if (!permit_adm) {
+	ఒకవేళ (!permit_adm) {
 		debug_f("requested forward not permitted");
-		return -1;
+		తిరిగి -1;
 	}
 
-	memset(&cctx, 0, sizeof(cctx));
-	sock = connect_to_helper(ssh, c->path, c->host_port, SOCK_STREAM, NULL,
-	    NULL, &cctx, NULL, NULL);
-	if (sock == -1)
+	memset(&cctx, 0, పరిమాణం(cctx));
+	sock = connect_గమ్యం_helper(ssh, c->మార్గం, c->host_పోర్టు, SOCK_STREAM, ఖాళీ,
+	    ఖాళీ, &cctx, ఖాళీ, ఖాళీ);
+	ఒకవేళ (sock == -1)
 		free_connect_ctx(&cctx);
-	else {
+	లేకపోతే {
 		/* similar to SSH_CHANNEL_CONNECTING but we've already sent the open */
-		c->type = SSH_CHANNEL_RDYNAMIC_FINISH;
-		c->connect_ctx = xmalloc(sizeof(cctx));
-		memcpy(c->connect_ctx, &cctx, sizeof(cctx));
-		channel_register_fds(ssh, c, sock, sock, -1, 0, 1, 0);
+		c->type = SSH_CHANNEL_RDYNAMIC_ముగింపు;
+		c->connect_ctx = xmalloc(పరిమాణం(cctx));
+		జ్ఞాపకం_నకలు(c->connect_ctx, &cctx, పరిమాణం(cctx));
+		channel_రిజిస్టరు_fds(ssh, c, sock, sock, -1, 0, 1, 0);
 	}
-	return sock;
+	తిరిగి sock;
 }
 
 /* -- X11 forwarding */
@@ -5144,98 +5144,98 @@ rdynamic_connect_finish(struct ssh *ssh, Channel *c)
  * Returns 0 and a suitable display number for the DISPLAY variable
  * stored in display_numberp , or -1 if an error occurs.
  */
-int
-x11_create_display_inet(struct ssh *ssh, int x11_display_offset,
-    int x11_use_localhost, int single_connection,
-    u_int *display_numberp, int **chanids)
+పూర్ణాంకం
+x11_create_display_inet(నిర్మాణం ssh *ssh, పూర్ణాంకం x11_display_స్థానభ్రంశం,
+    పూర్ణాంకం x11_use_localhost, పూర్ణాంకం single_connection,
+    u_int *display_numberp, పూర్ణాంకం **chanids)
 {
-	Channel *nc = NULL;
-	int display_number, sock, port;
-	struct addrinfo hints, *ai, *aitop;
-	char strport[NI_MAXSERV];
-	int gaierr, n, num_socks = 0, socks[NUM_SOCKS];
+	Channel *nc = ఖాళీ;
+	పూర్ణాంకం display_సంఖ్య, sock, పోర్టు;
+	నిర్మాణం addrinfo hints, *ai, *aitop;
+	అక్షరం strport[NI_MAXSERV];
+	పూర్ణాంకం gaierr, n, అంకె_socks = 0, socks[అంకె_SOCKS];
 
-	if (chanids == NULL || x11_display_offset < 0 ||
-	    x11_display_offset > UINT16_MAX - X11_BASE_PORT - MAX_DISPLAYS)
-		return -1;
+	ఒకవేళ (chanids == ఖాళీ || x11_display_స్థానభ్రంశం < 0 ||
+	    x11_display_స్థానభ్రంశం > UINT16_MAX - X11_పునాది_పోర్టు - MAX_DISPLAYS)
+		తిరిగి -1;
 
-	for (display_number = x11_display_offset;
-	    display_number < x11_display_offset + MAX_DISPLAYS;
-	    display_number++) {
-		port = X11_BASE_PORT + display_number;
-		memset(&hints, 0, sizeof(hints));
+	కొరకు (display_సంఖ్య = x11_display_స్థానభ్రంశం;
+	    display_సంఖ్య < x11_display_స్థానభ్రంశం + MAX_DISPLAYS;
+	    display_సంఖ్య++) {
+		పోర్టు = X11_పునాది_పోర్టు + display_సంఖ్య;
+		memset(&hints, 0, పరిమాణం(hints));
 		hints.ai_family = ssh->chanctxt->IPv4or6;
 		hints.ai_flags = x11_use_localhost ? 0: AI_PASSIVE;
 		hints.ai_socktype = SOCK_STREAM;
-		snprintf(strport, sizeof strport, "%d", port);
-		if ((gaierr = getaddrinfo(NULL, strport,
+		snprintf(strport, పరిమాణం strport, "%d", పోర్టు);
+		ఒకవేళ ((gaierr = getaddrinfo(ఖాళీ, strport,
 		    &hints, &aitop)) != 0) {
 			error("getaddrinfo: %.100s", ssh_gai_strerror(gaierr));
-			return -1;
+			తిరిగి -1;
 		}
-		for (ai = aitop; ai; ai = ai->ai_next) {
-			if (ai->ai_family != AF_INET &&
+		కొరకు (ai = aitop; ai; ai = ai->ai_next) {
+			ఒకవేళ (ai->ai_family != AF_INET &&
 			    ai->ai_family != AF_INET6)
-				continue;
+				కొనసాగు;
 			sock = socket(ai->ai_family, ai->ai_socktype,
 			    ai->ai_protocol);
-			if (sock == -1) {
-				if ((errno != EINVAL) && (errno != EAFNOSUPPORT)
-#ifdef EPFNOSUPPORT
+			ఒకవేళ (sock == -1) {
+				ఒకవేళ ((errno != EINVAL) && (errno != EAFNOSUPPORT)
+#నిర్వచితమైతే EPFNOSUPPORT
 				    && (errno != EPFNOSUPPORT)
-#endif 
+#అయితే_ముగింపు 
 				    ) {
 					error("socket: %.100s", strerror(errno));
 					freeaddrinfo(aitop);
-					return -1;
-				} else {
+					తిరిగి -1;
+				} లేకపోతే {
 					debug("x11_create_display_inet: Socket family %d not supported",
 						 ai->ai_family);
-					continue;
+					కొనసాగు;
 				}
 			}
-			if (ai->ai_family == AF_INET6)
-				sock_set_v6only(sock);
-			if (x11_use_localhost)
-				set_reuseaddr(sock);
-			if (bind(sock, ai->ai_addr, ai->ai_addrlen) == -1) {
-				debug2_f("bind port %d: %.100s", port,
+			ఒకవేళ (ai->ai_family == AF_INET6)
+				sock_సమితి_v6only(sock);
+			ఒకవేళ (x11_use_localhost)
+				సమితి_reuseaddr(sock);
+			ఒకవేళ (bind(sock, ai->ai_addr, ai->ai_addrlen) == -1) {
+				debug2_f("bind port %d: %.100s", పోర్టు,
 				    strerror(errno));
 				close(sock);
-				for (n = 0; n < num_socks; n++)
+				కొరకు (n = 0; n < అంకె_socks; n++)
 					close(socks[n]);
-				num_socks = 0;
-				break;
+				అంకె_socks = 0;
+				ఆపు;
 			}
-			socks[num_socks++] = sock;
-			if (num_socks == NUM_SOCKS)
-				break;
+			socks[అంకె_socks++] = sock;
+			ఒకవేళ (అంకె_socks == అంకె_SOCKS)
+				ఆపు;
 		}
 		freeaddrinfo(aitop);
-		if (num_socks > 0)
-			break;
+		ఒకవేళ (అంకె_socks > 0)
+			ఆపు;
 	}
-	if (display_number >= x11_display_offset + MAX_DISPLAYS) {
+	ఒకవేళ (display_సంఖ్య >= x11_display_స్థానభ్రంశం + MAX_DISPLAYS) {
 		error("Failed to allocate internet-domain X11 display socket.");
-		return -1;
+		తిరిగి -1;
 	}
 	/* Start listening for connections on the socket. */
-	for (n = 0; n < num_socks; n++) {
+	కొరకు (n = 0; n < అంకె_socks; n++) {
 		sock = socks[n];
-		if (listen(sock, SSH_LISTEN_BACKLOG) == -1) {
+		ఒకవేళ (listen(sock, SSH_LISTEN_BACKLOG) == -1) {
 			error("listen: %.100s", strerror(errno));
 			close(sock);
-			return -1;
+			తిరిగి -1;
 		}
 	}
 
 	/* Allocate a channel for each socket. */
-	*chanids = xcalloc(num_socks + 1, sizeof(**chanids));
-	for (n = 0; n < num_socks; n++) {
+	*chanids = xcalloc(అంకె_socks + 1, పరిమాణం(**chanids));
+	కొరకు (n = 0; n < అంకె_socks; n++) {
 		sock = socks[n];
 		nc = channel_new(ssh, "x11-listener",
 		    SSH_CHANNEL_X11_LISTENER, sock, sock, -1,
-		    CHAN_X11_WINDOW_DEFAULT, CHAN_X11_PACKET_DEFAULT,
+		    CHAN_X11_కిటికీ_DEFAULT, CHAN_X11_PACKET_DEFAULT,
 		    0, "X11 inet listener", 1);
 		nc->single_connection = single_connection;
 		(*chanids)[n] = nc->self;
@@ -5243,183 +5243,183 @@ x11_create_display_inet(struct ssh *ssh, int x11_display_offset,
 	(*chanids)[n] = -1;
 
 	/* Return the display number for the DISPLAY environment variable. */
-	*display_numberp = display_number;
-	return 0;
+	*display_numberp = display_సంఖ్య;
+	తిరిగి 0;
 }
 
-static int
-connect_local_xsocket_path(const char *pathname)
+స్థిర పూర్ణాంకం
+connect_local_xsocket_మార్గం(స్థిరరాశి అక్షరం *pathname)
 {
-	int sock;
-	struct sockaddr_un addr;
+	పూర్ణాంకం sock;
+	నిర్మాణం sockaddr_un addr;
 
 	sock = socket(AF_UNIX, SOCK_STREAM, 0);
-	if (sock == -1) {
+	ఒకవేళ (sock == -1) {
 		error("socket: %.100s", strerror(errno));
-		return -1;
+		తిరిగి -1;
 	}
-	memset(&addr, 0, sizeof(addr));
+	memset(&addr, 0, పరిమాణం(addr));
 	addr.sun_family = AF_UNIX;
-	strlcpy(addr.sun_path, pathname, sizeof addr.sun_path);
-	if (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == 0)
-		return sock;
+	strlcpy(addr.sun_మార్గం, pathname, పరిమాణం addr.sun_మార్గం);
+	ఒకవేళ (connect(sock, (నిర్మాణం sockaddr *)&addr, పరిమాణం(addr)) == 0)
+		తిరిగి sock;
 	close(sock);
-	error("connect %.100s: %.100s", addr.sun_path, strerror(errno));
-	return -1;
+	error("connect %.100s: %.100s", addr.sun_మార్గం, strerror(errno));
+	తిరిగి -1;
 }
 
-static int
+స్థిర పూర్ణాంకం
 connect_local_xsocket(u_int dnr)
 {
-	char buf[1024];
-	snprintf(buf, sizeof buf, _PATH_UNIX_X, dnr);
-	return connect_local_xsocket_path(buf);
+	అక్షరం buf[1024];
+	snprintf(buf, పరిమాణం buf, మార్గం_UNIX_X, dnr);
+	తిరిగి connect_local_xsocket_మార్గం(buf);
 }
 
-#ifdef __APPLE__
-static int
-is_path_to_xsocket(const char *display, char *path, size_t pathlen)
+#నిర్వచితమైతే __APPLE__
+స్థిర పూర్ణాంకం
+is_మార్గం_గమ్యం_xsocket(స్థిరరాశి అక్షరం *display, అక్షరం *మార్గం, కొలత_t pathlen)
 {
-	struct stat sbuf;
+	నిర్మాణం stat sbuf;
 
-	if (strlcpy(path, display, pathlen) >= pathlen) {
+	ఒకవేళ (strlcpy(మార్గం, display, pathlen) >= pathlen) {
 		error_f("display path too long");
-		return 0;
+		తిరిగి 0;
 	}
-	if (display[0] != '/')
-		return 0;
-	if (stat(path, &sbuf) == 0) {
-		return 1;
-	} else {
-		char *dot = strrchr(path, '.');
-		if (dot != NULL) {
+	ఒకవేళ (display[0] != '/')
+		తిరిగి 0;
+	ఒకవేళ (stat(మార్గం, &sbuf) == 0) {
+		తిరిగి 1;
+	} లేకపోతే {
+		అక్షరం *dot = strrchr(మార్గం, '.');
+		ఒకవేళ (dot != ఖాళీ) {
 			*dot = '\0';
-			if (stat(path, &sbuf) == 0) {
-				return 1;
+			ఒకవేళ (stat(మార్గం, &sbuf) == 0) {
+				తిరిగి 1;
 			}
 		}
 	}
-	return 0;
+	తిరిగి 0;
 }
-#endif
+#అయితే_ముగింపు
 
-int
-x11_connect_display(struct ssh *ssh)
+పూర్ణాంకం
+x11_connect_display(నిర్మాణం ssh *ssh)
 {
-	u_int display_number;
-	const char *display;
-	char buf[1024], *cp;
-	struct addrinfo hints, *ai, *aitop;
-	char strport[NI_MAXSERV];
-	int gaierr, sock = 0;
+	u_int display_సంఖ్య;
+	స్థిరరాశి అక్షరం *display;
+	అక్షరం buf[1024], *cp;
+	నిర్మాణం addrinfo hints, *ai, *aitop;
+	అక్షరం strport[NI_MAXSERV];
+	పూర్ణాంకం gaierr, sock = 0;
 
 	/* Try to open a socket for the local X server. */
 	display = getenv("DISPLAY");
-	if (!display) {
+	ఒకవేళ (!display) {
 		error("DISPLAY not set.");
-		return -1;
+		తిరిగి -1;
 	}
 	/*
 	 * Now we decode the value of the DISPLAY variable and make a
 	 * connection to the real X server.
 	 */
 
-#ifdef __APPLE__
+#నిర్వచితమైతే __APPLE__
 	/* Check if display is a path to a socket (as set by launchd). */
 	{
-		char path[PATH_MAX];
+		అక్షరం మార్గం[PATH_MAX];
 
-		if (is_path_to_xsocket(display, path, sizeof(path))) {
+		ఒకవేళ (is_మార్గం_గమ్యం_xsocket(display, మార్గం, పరిమాణం(మార్గం))) {
 			debug("x11_connect_display: $DISPLAY is launchd");
 
 			/* Create a socket. */
-			sock = connect_local_xsocket_path(path);
-			if (sock < 0)
-				return -1;
+			sock = connect_local_xsocket_మార్గం(మార్గం);
+			ఒకవేళ (sock < 0)
+				తిరిగి -1;
 
 			/* OK, we now have a connection to the display. */
-			return sock;
+			తిరిగి sock;
 		}
 	}
-#endif
+#అయితే_ముగింపు
 	/*
 	 * Check if it is a unix domain socket.  Unix domain displays are in
 	 * one of the following formats: unix:d[.s], :d[.s], ::d[.s]
 	 */
-	if (strncmp(display, "unix:", 5) == 0 ||
+	ఒకవేళ (అక్షరశ్రేణి_పోలిక(display, "unix:", 5) == 0 ||
 	    display[0] == ':') {
 		/* Connect to the unix domain socket. */
-		if (sscanf(strrchr(display, ':') + 1, "%u",
-		    &display_number) != 1) {
+		ఒకవేళ (అక్షరశ్రేణి_చదువు(strrchr(display, ':') + 1, "%u",
+		    &display_సంఖ్య) != 1) {
 			error("Could not parse display number from DISPLAY: "
 			    "%.100s", display);
-			return -1;
+			తిరిగి -1;
 		}
 		/* Create a socket. */
-		sock = connect_local_xsocket(display_number);
-		if (sock < 0)
-			return -1;
+		sock = connect_local_xsocket(display_సంఖ్య);
+		ఒకవేళ (sock < 0)
+			తిరిగి -1;
 
 		/* OK, we now have a connection to the display. */
-		return sock;
+		తిరిగి sock;
 	}
 	/*
 	 * Connect to an inet socket.  The DISPLAY value is supposedly
 	 * hostname:d[.s], where hostname may also be numeric IP address.
 	 */
-	strlcpy(buf, display, sizeof(buf));
+	strlcpy(buf, display, పరిమాణం(buf));
 	cp = strchr(buf, ':');
-	if (!cp) {
+	ఒకవేళ (!cp) {
 		error("Could not find ':' in DISPLAY: %.100s", display);
-		return -1;
+		తిరిగి -1;
 	}
 	*cp = 0;
 	/*
 	 * buf now contains the host name.  But first we parse the
 	 * display number.
 	 */
-	if (sscanf(cp + 1, "%u", &display_number) != 1 ||
-	    display_number > UINT16_MAX - X11_BASE_PORT) {
+	ఒకవేళ (అక్షరశ్రేణి_చదువు(cp + 1, "%u", &display_సంఖ్య) != 1 ||
+	    display_సంఖ్య > UINT16_MAX - X11_పునాది_పోర్టు) {
 		error("Could not parse display number from DISPLAY: %.100s",
 		    display);
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* Look up the host address */
-	memset(&hints, 0, sizeof(hints));
+	memset(&hints, 0, పరిమాణం(hints));
 	hints.ai_family = ssh->chanctxt->IPv4or6;
 	hints.ai_socktype = SOCK_STREAM;
-	snprintf(strport, sizeof strport, "%u", X11_BASE_PORT + display_number);
-	if ((gaierr = getaddrinfo(buf, strport, &hints, &aitop)) != 0) {
+	snprintf(strport, పరిమాణం strport, "%u", X11_పునాది_పోర్టు + display_సంఖ్య);
+	ఒకవేళ ((gaierr = getaddrinfo(buf, strport, &hints, &aitop)) != 0) {
 		error("%.100s: unknown host. (%s)", buf,
 		ssh_gai_strerror(gaierr));
-		return -1;
+		తిరిగి -1;
 	}
-	for (ai = aitop; ai; ai = ai->ai_next) {
+	కొరకు (ai = aitop; ai; ai = ai->ai_next) {
 		/* Create a socket. */
 		sock = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-		if (sock == -1) {
+		ఒకవేళ (sock == -1) {
 			debug2("socket: %.100s", strerror(errno));
-			continue;
+			కొనసాగు;
 		}
 		/* Connect it to the display. */
-		if (connect(sock, ai->ai_addr, ai->ai_addrlen) == -1) {
+		ఒకవేళ (connect(sock, ai->ai_addr, ai->ai_addrlen) == -1) {
 			debug2("connect %.100s port %u: %.100s", buf,
-			    X11_BASE_PORT + display_number, strerror(errno));
+			    X11_పునాది_పోర్టు + display_సంఖ్య, strerror(errno));
 			close(sock);
-			continue;
+			కొనసాగు;
 		}
 		/* Success */
-		break;
+		ఆపు;
 	}
 	freeaddrinfo(aitop);
-	if (!ai) {
+	ఒకవేళ (!ai) {
 		error("connect %.100s port %u: %.100s", buf,
-		    X11_BASE_PORT + display_number, strerror(errno));
-		return -1;
+		    X11_పునాది_పోర్టు + display_సంఖ్య, strerror(errno));
+		తిరిగి -1;
 	}
-	set_nodelay(sock);
-	return sock;
+	సమితి_nodelay(sock);
+	తిరిగి sock;
 }
 
 /*
@@ -5427,85 +5427,85 @@ x11_connect_display(struct ssh *ssh)
  * data, and enables authentication spoofing.
  * This should be called in the client only.
  */
-void
-x11_request_forwarding_with_spoofing(struct ssh *ssh, int client_session_id,
-    const char *disp, const char *proto, const char *data, int want_reply)
+శూన్య
+x11_request_forwarding_with_spoofing(నిర్మాణం ssh *ssh, పూర్ణాంకం client_session_id,
+    స్థిరరాశి అక్షరం *disp, స్థిరరాశి అక్షరం *proto, స్థిరరాశి అక్షరం *దత్తాంశం, పూర్ణాంకం want_జవాబు)
 {
-	struct ssh_channels *sc = ssh->chanctxt;
-	u_int data_len = (u_int) strlen(data) / 2;
-	u_int i, value;
-	const char *cp;
-	char *new_data;
-	int r, screen_number;
+	నిర్మాణం ssh_channels *sc = ssh->chanctxt;
+	u_int దత్తాంశం_len = (u_int) అక్షరశ్రేణి_పొడవు(దత్తాంశం) / 2;
+	u_int i, విలువ;
+	స్థిరరాశి అక్షరం *cp;
+	అక్షరం *new_దత్తాంశం;
+	పూర్ణాంకం r, screen_సంఖ్య;
 
-	if (sc->x11_saved_display == NULL)
+	ఒకవేళ (sc->x11_saved_display == ఖాళీ)
 		sc->x11_saved_display = xstrdup(disp);
-	else if (strcmp(disp, sc->x11_saved_display) != 0) {
+	లేకపోతే ఒకవేళ (strcmp(disp, sc->x11_saved_display) != 0) {
 		error("x11_request_forwarding_with_spoofing: different "
 		    "$DISPLAY already forwarded");
-		return;
+		తిరిగి;
 	}
 
 	cp = strchr(disp, ':');
-	if (cp)
+	ఒకవేళ (cp)
 		cp = strchr(cp, '.');
-	if (cp)
-		screen_number = (u_int)strtonum(cp + 1, 0, 400, NULL);
-	else
-		screen_number = 0;
+	ఒకవేళ (cp)
+		screen_సంఖ్య = (u_int)strtonum(cp + 1, 0, 400, ఖాళీ);
+	లేకపోతే
+		screen_సంఖ్య = 0;
 
-	if (sc->x11_saved_proto == NULL) {
+	ఒకవేళ (sc->x11_saved_proto == ఖాళీ) {
 		/* Save protocol name. */
 		sc->x11_saved_proto = xstrdup(proto);
 
 		/* Extract real authentication data. */
-		sc->x11_saved_data = xmalloc(data_len);
-		for (i = 0; i < data_len; i++) {
-			if (sscanf(data + 2 * i, "%2x", &value) != 1) {
+		sc->x11_saved_దత్తాంశం = xmalloc(దత్తాంశం_len);
+		కొరకు (i = 0; i < దత్తాంశం_len; i++) {
+			ఒకవేళ (అక్షరశ్రేణి_చదువు(దత్తాంశం + 2 * i, "%2x", &విలువ) != 1) {
 				fatal("x11_request_forwarding: bad "
-				    "authentication data: %.100s", data);
+				    "authentication data: %.100s", దత్తాంశం);
 			}
-			sc->x11_saved_data[i] = value;
+			sc->x11_saved_దత్తాంశం[i] = విలువ;
 		}
-		sc->x11_saved_data_len = data_len;
+		sc->x11_saved_దత్తాంశం_len = దత్తాంశం_len;
 
 		/* Generate fake data of the same length. */
-		sc->x11_fake_data = xmalloc(data_len);
-		arc4random_buf(sc->x11_fake_data, data_len);
-		sc->x11_fake_data_len = data_len;
+		sc->x11_fake_దత్తాంశం = xmalloc(దత్తాంశం_len);
+		arc4random_buf(sc->x11_fake_దత్తాంశం, దత్తాంశం_len);
+		sc->x11_fake_దత్తాంశం_len = దత్తాంశం_len;
 	}
 
 	/* Convert the fake data into hex. */
-	new_data = tohex(sc->x11_fake_data, data_len);
+	new_దత్తాంశం = tohex(sc->x11_fake_దత్తాంశం, దత్తాంశం_len);
 
 	/* Send the request packet. */
-	channel_request_start(ssh, client_session_id, "x11-req", want_reply);
-	if ((r = sshpkt_put_u8(ssh, 0)) != 0 || /* bool: single connection */
+	channel_request_ప్రారంభం(ssh, client_session_id, "x11-req", want_జవాబు);
+	ఒకవేళ ((r = sshpkt_put_u8(ssh, 0)) != 0 || /* bool: single connection */
 	    (r = sshpkt_put_cstring(ssh, proto)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, new_data)) != 0 ||
-	    (r = sshpkt_put_u32(ssh, screen_number)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, new_దత్తాంశం)) != 0 ||
+	    (r = sshpkt_put_u32(ssh, screen_సంఖ్య)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
 		fatal_fr(r, "send x11-req");
-	free(new_data);
+	విడుదల(new_దత్తాంశం);
 }
 
 /*
  * Returns whether an x11 channel was used recently (less than a second ago)
  */
-int
-x11_channel_used_recently(struct ssh *ssh) {
+పూర్ణాంకం
+x11_channel_వాడిన_recently(నిర్మాణం ssh *ssh) {
 	u_int i;
 	Channel *c;
-	double lastused = 0;
+	ద్విగుణ lastused = 0;
 
-	for (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
+	కొరకు (i = 0; i < ssh->chanctxt->channels_alloc; i++) {
 		c = ssh->chanctxt->channels[i];
-		if (c == NULL || c->ctype == NULL || c->lastused == 0.0 ||
+		ఒకవేళ (c == ఖాళీ || c->ctype == ఖాళీ || c->lastused == 0.0 ||
 		    strcmp(c->ctype, "x11-connection") != 0)
-			continue;
-		if (c->lastused > lastused)
+			కొనసాగు;
+		ఒకవేళ (c->lastused > lastused)
 			lastused = c->lastused;
 	}
-	return lastused != 0.0 && monotime_double() <= lastused + 1.0;
+	తిరిగి lastused != 0.0 && monotime_double() <= lastused + 1.0;
 }

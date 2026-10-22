@@ -31,49 +31,49 @@
  * SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifndef HAVE_SETPROCTITLE
+#నిర్వచితం_కాకపోతే HAVE_SETPROCTITLE
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#ifdef HAVE_SYS_PSTAT_H
-#include <sys/pstat.h>
-#endif
-#include <string.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <unistd.h>
+#నిర్వచితమైతే HAVE_SYS_PSTAT_H
+#అన్తర్భావ <sys/pstat.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <string.h>
 
-#include <vis.h>
+#అన్తర్భావ <vis.h>
 
-#define SPT_NONE	0	/* don't use it at all */
-#define SPT_PSTAT	1	/* use pstat(PSTAT_SETCMD, ...) */
-#define SPT_REUSEARGV	2	/* cover argv with title information */
+#నిర్వచించు SPT_NONE	0	/* don't use it at all */
+#నిర్వచించు SPT_PSTAT	1	/* use pstat(PSTAT_SETCMD, ...) */
+#నిర్వచించు SPT_REUSEARGV	2	/* cover argv with title information */
 
-#ifndef SPT_TYPE
+#నిర్వచితం_కాకపోతే SPT_TYPE
 # define SPT_TYPE	SPT_NONE
-#endif
+#అయితే_ముగింపు
 
-#ifndef SPT_PADCHAR
+#నిర్వచితం_కాకపోతే SPT_PADCHAR
 # define SPT_PADCHAR	'\0'
-#endif
+#అయితే_ముగింపు
 
-#if SPT_TYPE == SPT_REUSEARGV
-static char *argv_start = NULL;
-static size_t argv_env_len = 0;
-#endif
+#ఒకవేళ SPT_TYPE == SPT_REUSEARGV
+స్థిర అక్షరం *argv_ప్రారంభం = ఖాళీ;
+స్థిర కొలత_t argv_env_len = 0;
+#అయితే_ముగింపు
 
-#endif /* HAVE_SETPROCTITLE */
+#అయితే_ముగింపు /* HAVE_SETPROCTITLE */
 
-void
-compat_init_setproctitle(int argc, char *argv[])
+శూన్య
+compat_init_setproctitle(పూర్ణాంకం argc, అక్షరం *argv[])
 {
-#if !defined(HAVE_SETPROCTITLE) && \
+#ఒకవేళ !defined(HAVE_SETPROCTITLE) && \
     defined(SPT_TYPE) && SPT_TYPE == SPT_REUSEARGV
-	extern char **environ;
-	char *lastargv = NULL;
-	char **envp = environ;
-	int i;
+	బాహ్య అక్షరం **environ;
+	అక్షరం *lastargv = ఖాళీ;
+	అక్షరం **envp = environ;
+	పూర్ణాంకం i;
 
 	/*
 	 * NB: This assumes that argv has already been copied out of the
@@ -81,90 +81,90 @@ compat_init_setproctitle(int argc, char *argv[])
 	 * programs. Beware.
 	 */
 
-	if (argc == 0 || argv[0] == NULL)
-		return;
+	ఒకవేళ (argc == 0 || argv[0] == ఖాళీ)
+		తిరిగి;
 
 	/* Fail if we can't allocate room for the new environment */
-	for (i = 0; envp[i] != NULL; i++)
+	కొరకు (i = 0; envp[i] != ఖాళీ; i++)
 		;
-	if ((environ = calloc(i + 1, sizeof(*environ))) == NULL) {
+	ఒకవేళ ((environ = సున్నా_జ్ఞాపకం_ఇవ్వు(i + 1, పరిమాణం(*environ))) == ఖాళీ) {
 		environ = envp;	/* put it back */
-		return;
+		తిరిగి;
 	}
 
 	/*
 	 * Find the last argv string or environment variable within
 	 * our process memory area.
 	 */
-	for (i = 0; i < argc; i++) {
-		if (lastargv == NULL || lastargv + 1 == argv[i])
-			lastargv = argv[i] + strlen(argv[i]);
+	కొరకు (i = 0; i < argc; i++) {
+		ఒకవేళ (lastargv == ఖాళీ || lastargv + 1 == argv[i])
+			lastargv = argv[i] + అక్షరశ్రేణి_పొడవు(argv[i]);
 	}
-	for (i = 0; envp[i] != NULL; i++) {
-		if (lastargv + 1 == envp[i])
-			lastargv = envp[i] + strlen(envp[i]);
+	కొరకు (i = 0; envp[i] != ఖాళీ; i++) {
+		ఒకవేళ (lastargv + 1 == envp[i])
+			lastargv = envp[i] + అక్షరశ్రేణి_పొడవు(envp[i]);
 	}
 
-	argv[1] = NULL;
-	argv_start = argv[0];
+	argv[1] = ఖాళీ;
+	argv_ప్రారంభం = argv[0];
 	argv_env_len = lastargv - argv[0] - 1;
 
 	/*
 	 * Copy environment
 	 * XXX - will truncate env on strdup fail
 	 */
-	for (i = 0; envp[i] != NULL; i++)
+	కొరకు (i = 0; envp[i] != ఖాళీ; i++)
 		environ[i] = strdup(envp[i]);
-	environ[i] = NULL;
-#endif /* SPT_REUSEARGV */
+	environ[i] = ఖాళీ;
+#అయితే_ముగింపు /* SPT_REUSEARGV */
 }
 
-#ifndef HAVE_SETPROCTITLE
-void
-setproctitle(const char *fmt, ...)
+#నిర్వచితం_కాకపోతే HAVE_SETPROCTITLE
+శూన్య
+setproctitle(స్థిరరాశి అక్షరం *fmt, ...)
 {
-#if SPT_TYPE != SPT_NONE
+#ఒకవేళ SPT_TYPE != SPT_NONE
 	va_list ap;
-	char buf[1024], ptitle[1024];
-	size_t len = 0;
-	int r;
-	extern char *__progname;
-#if SPT_TYPE == SPT_PSTAT
-	union pstun pst;
-#endif
+	అక్షరం buf[1024], ptitle[1024];
+	కొలత_t len = 0;
+	పూర్ణాంకం r;
+	బాహ్య అక్షరం *__progname;
+#ఒకవేళ SPT_TYPE == SPT_PSTAT
+	సంఘం pstun pst;
+#అయితే_ముగింపు
 
-#if SPT_TYPE == SPT_REUSEARGV
-	if (argv_env_len <= 0)
-		return;
-#endif
+#ఒకవేళ SPT_TYPE == SPT_REUSEARGV
+	ఒకవేళ (argv_env_len <= 0)
+		తిరిగి;
+#అయితే_ముగింపు
 
-	strlcpy(buf, __progname, sizeof(buf));
+	strlcpy(buf, __progname, పరిమాణం(buf));
 
 	r = -1;
 	va_start(ap, fmt);
-	if (fmt != NULL) {
-		len = strlcat(buf, ": ", sizeof(buf));
-		if (len < sizeof(buf))
-			r = vsnprintf(buf + len, sizeof(buf) - len , fmt, ap);
+	ఒకవేళ (fmt != ఖాళీ) {
+		len = strlcat(buf, ": ", పరిమాణం(buf));
+		ఒకవేళ (len < పరిమాణం(buf))
+			r = vsnprintf(buf + len, పరిమాణం(buf) - len , fmt, ap);
 	}
 	va_end(ap);
-	if (r == -1 || (size_t)r >= sizeof(buf) - len)
-		return;
-	strnvis(ptitle, buf, sizeof(ptitle),
+	ఒకవేళ (r == -1 || (కొలత_t)r >= పరిమాణం(buf) - len)
+		తిరిగి;
+	strnvis(ptitle, buf, పరిమాణం(ptitle),
 	    VIS_CSTYLE|VIS_NL|VIS_TAB|VIS_OCTAL);
 
-#if SPT_TYPE == SPT_PSTAT
+#ఒకవేళ SPT_TYPE == SPT_PSTAT
 	pst.pst_command = ptitle;
-	pstat(PSTAT_SETCMD, pst, strlen(ptitle), 0, 0);
-#elif SPT_TYPE == SPT_REUSEARGV
+	pstat(PSTAT_SETCMD, pst, అక్షరశ్రేణి_పొడవు(ptitle), 0, 0);
+#లేదావేళ SPT_TYPE == SPT_REUSEARGV
 /*	debug("setproctitle: copy \"%s\" into len %d",
 	    buf, argv_env_len); */
-	len = strlcpy(argv_start, ptitle, argv_env_len);
-	for(; len < argv_env_len; len++)
-		argv_start[len] = SPT_PADCHAR;
-#endif
+	len = strlcpy(argv_ప్రారంభం, ptitle, argv_env_len);
+	కొరకు(; len < argv_env_len; len++)
+		argv_ప్రారంభం[len] = SPT_PADCHAR;
+#అయితే_ముగింపు
 
-#endif /* SPT_NONE */
+#అయితే_ముగింపు /* SPT_NONE */
 }
 
-#endif /* HAVE_SETPROCTITLE */
+#అయితే_ముగింపు /* HAVE_SETPROCTITLE */

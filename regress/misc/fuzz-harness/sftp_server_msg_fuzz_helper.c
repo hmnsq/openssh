@@ -38,156 +38,156 @@ limitations under the License.
  * recovery so LSan sees zero per-iteration leaks.
  */
 
-#include <setjmp.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <pwd.h>
-#include <sys/types.h>
+#అన్తర్భావ <setjmp.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <pwd.h>
+#అన్తర్భావ <sys/types.h>
 
-#include "log.h"
+#అన్తర్భావ "log.h"
 
-extern void fuzz_arena_begin(void);
-extern void fuzz_arena_release(void);
-extern void fuzz_arena_cleanup(void);
+బాహ్య శూన్య fuzz_arena_begin(శూన్య);
+బాహ్య శూన్య fuzz_arena_release(శూన్య);
+బాహ్య శూన్య fuzz_arena_cleanup(శూన్య);
 
-static jmp_buf fuzz_server_env;
-static volatile int in_fuzz_server = 0;
+స్థిర jmp_buf fuzz_server_env;
+స్థిర అస్థిర పూర్ణాంకం లోపల_fuzz_server = 0;
 
-void
-cleanup_exit(int code)
+శూన్య
+cleanup_exit(పూర్ణాంకం సంకేతం_2)
 {
-	if (in_fuzz_server)
-		longjmp(fuzz_server_env, code ? code : 1);
-	_exit(code);
+	ఒకవేళ (లోపల_fuzz_server)
+		longjmp(fuzz_server_env, సంకేతం_2 ? సంకేతం_2 : 1);
+	_exit(సంకేతం_2);
 }
 
-#define sftp_server_cleanup_exit __orig_sftp_server_cleanup_exit
-#include "../../../sftp-server.c"
-#undef sftp_server_cleanup_exit
+#నిర్వచించు sftp_server_cleanup_exit __orig_sftp_server_cleanup_exit
+#అన్తర్భావ "../../../sftp-server.c"
+#నిర్వచనం_రద్దు sftp_server_cleanup_exit
 
-void
-sftp_server_cleanup_exit(int code)
+శూన్య
+sftp_server_cleanup_exit(పూర్ణాంకం సంకేతం_2)
 {
-	if (in_fuzz_server)
-		longjmp(fuzz_server_env, code ? code : 1);
-	_exit(code);
+	ఒకవేళ (లోపల_fuzz_server)
+		longjmp(fuzz_server_env, సంకేతం_2 ? సంకేతం_2 : 1);
+	_exit(సంకేతం_2);
 }
 
-static void (* const __force_use_renamed)(int) =
+స్థిర శూన్య (* స్థిరరాశి __force_use_renamed)(పూర్ణాంకం) =
     __orig_sftp_server_cleanup_exit;
 
-static struct passwd fuzz_pw;
-static int log_initialized = 0;
+స్థిర నిర్మాణం passwd fuzz_pw;
+స్థిర పూర్ణాంకం log_initialized = 0;
 
-static void
-cleanup_handles(void)
+స్థిర శూన్య
+cleanup_handles(శూన్య)
 {
 	u_int i;
-	if (handles == NULL)
-		return;
-	for (i = 0; i < num_handles; i++) {
-		if (handles[i].use == HANDLE_FILE && handles[i].fd >= 0)
+	ఒకవేళ (handles == ఖాళీ)
+		తిరిగి;
+	కొరకు (i = 0; i < అంకె_handles; i++) {
+		ఒకవేళ (handles[i].use == HANDLE_FILE && handles[i].fd >= 0)
 			close(handles[i].fd);
-		else if (handles[i].use == HANDLE_DIR && handles[i].dirp != NULL)
+		లేకపోతే ఒకవేళ (handles[i].use == HANDLE_DIR && handles[i].dirp != ఖాళీ)
 			closedir(handles[i].dirp);
-		free(handles[i].name);
+		విడుదల(handles[i].name);
 	}
-	free(handles);
-	handles = NULL;
-	num_handles = 0;
-	first_unused_handle = -1;
+	విడుదల(handles);
+	handles = ఖాళీ;
+	అంకె_handles = 0;
+	మొదటి_వాడని_handle = -1;
 }
 
-static void
-reset_module_globals(void)
+స్థిర శూన్య
+reset_module_globals(శూన్య)
 {
 	pw = &fuzz_pw;
-	client_addr = NULL;
-	version = 0;
-	init_done = 0;
+	client_addr = ఖాళీ;
+	సంస్కరణ = 0;
+	init_పూర్తి = 0;
 	readonly = 0;
-	request_allowlist = NULL;
-	request_denylist = NULL;
-	handles = NULL;
-	num_handles = 0;
-	first_unused_handle = -1;
-	iqueue = NULL;
-	oqueue = NULL;
+	request_allowlist = ఖాళీ;
+	request_denylist = ఖాళీ;
+	handles = ఖాళీ;
+	అంకె_handles = 0;
+	మొదటి_వాడని_handle = -1;
+	iqueue = ఖాళీ;
+	oqueue = ఖాళీ;
 }
 
-void
-fuzz_server_one(const uint8_t *data, size_t size)
+శూన్య
+fuzz_server_one(స్థిరరాశి uint8_t *దత్తాంశం, కొలత_t కొలత)
 {
-	if (!log_initialized) {
+	ఒకవేళ (!log_initialized) {
 		log_initialized = 1;
 		log_init("sftp_server_msg_fuzz", SYSLOG_LEVEL_ERROR,
 		    SYSLOG_FACILITY_AUTH, 0);
 
 		/* Confine filesystem syscalls (process_open/mkdir/symlink) to a fresh tmpdir. */
-		char tmpdir[] = "/tmp/sftp_fuzz_XXXXXX";
-		if (mkdtemp(tmpdir) != NULL && chdir(tmpdir) != 0)
+		అక్షరం tmpdir[] = "/tmp/sftp_fuzz_XXXXXX";
+		ఒకవేళ (mkdtemp(tmpdir) != ఖాళీ && chdir(tmpdir) != 0)
 			_exit(1);
 
-		memset(&fuzz_pw, 0, sizeof(fuzz_pw));
-		fuzz_pw.pw_name = (char *)"fuzz";
+		memset(&fuzz_pw, 0, పరిమాణం(fuzz_pw));
+		fuzz_pw.pw_name = (అక్షరం *)"fuzz";
 		fuzz_pw.pw_uid = getuid();
 		fuzz_pw.pw_gid = getgid();
-		fuzz_pw.pw_dir = (char *)"/tmp";
-		fuzz_pw.pw_shell = (char *)"/bin/sh";
+		fuzz_pw.pw_dir = (అక్షరం *)"/tmp";
+		fuzz_pw.pw_shell = (అక్షరం *)"/bin/sh";
 	}
 
-	if (size == 0 || size > 65000)
-		return;
+	ఒకవేళ (కొలత == 0 || కొలత > 65000)
+		తిరిగి;
 
 	reset_module_globals();
 
 	fuzz_arena_begin();
-	in_fuzz_server = 1;
-	if (setjmp(fuzz_server_env) == 0) {
+	లోపల_fuzz_server = 1;
+	ఒకవేళ (setjmp(fuzz_server_env) == 0) {
 		client_addr = strdup("127.0.0.1");
 		iqueue = sshbuf_new();
 		oqueue = sshbuf_new();
-		if (iqueue == NULL || oqueue == NULL)
-			goto out;
+		ఒకవేళ (iqueue == ఖాళీ || oqueue == ఖాళీ)
+			వెళ్ళు బహిర్గతం;
 
-		const uint8_t init_msg[] = {
+		స్థిరరాశి uint8_t init_సందేశం[] = {
 		    0x00, 0x00, 0x00, 0x05,
 		    SSH2_FXP_INIT,
 		    0x00, 0x00, 0x00, 0x03,
 		};
-		if (sshbuf_put(iqueue, init_msg, sizeof(init_msg)) != 0)
-			goto out;
+		ఒకవేళ (sshbuf_put(iqueue, init_సందేశం, పరిమాణం(init_సందేశం)) != 0)
+			వెళ్ళు బహిర్గతం;
 		process();
 
 		sshbuf_reset(iqueue);
 		sshbuf_reset(oqueue);
 
 		uint8_t hdr[4] = {
-		    (uint8_t)((size >> 24) & 0xff),
-		    (uint8_t)((size >> 16) & 0xff),
-		    (uint8_t)((size >> 8) & 0xff),
-		    (uint8_t)(size & 0xff),
+		    (uint8_t)((కొలత >> 24) & 0xff),
+		    (uint8_t)((కొలత >> 16) & 0xff),
+		    (uint8_t)((కొలత >> 8) & 0xff),
+		    (uint8_t)(కొలత & 0xff),
 		};
-		if (sshbuf_put(iqueue, hdr, 4) != 0 ||
-		    sshbuf_put(iqueue, data, size) != 0)
-			goto out;
+		ఒకవేళ (sshbuf_put(iqueue, hdr, 4) != 0 ||
+		    sshbuf_put(iqueue, దత్తాంశం, కొలత) != 0)
+			వెళ్ళు బహిర్గతం;
 		process();
-	out:
+	బహిర్గతం:
 		cleanup_handles();
 		sshbuf_free(iqueue);
 		sshbuf_free(oqueue);
-		free(client_addr);
-		iqueue = oqueue = NULL;
-		client_addr = NULL;
-		in_fuzz_server = 0;
+		విడుదల(client_addr);
+		iqueue = oqueue = ఖాళీ;
+		client_addr = ఖాళీ;
+		లోపల_fuzz_server = 0;
 		fuzz_arena_release();
-		return;
+		తిరిగి;
 	}
 	cleanup_handles();
-	in_fuzz_server = 0;
+	లోపల_fuzz_server = 0;
 	fuzz_arena_cleanup();
-	iqueue = oqueue = NULL;
-	client_addr = NULL;
+	iqueue = oqueue = ఖాళీ;
+	client_addr = ఖాళీ;
 }

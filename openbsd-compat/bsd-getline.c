@@ -33,54 +33,54 @@
 
 /* NETBSD ORIGINAL: external/bsd/file/dist/src/getline.c */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#if 0
-#include "file.h"
-#endif
+#ఒకవేళ 0
+#అన్తర్భావ "file.h"
+#అయితే_ముగింపు
 
-#if !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string.h>
+#ఒకవేళ !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <string.h>
 
-static ssize_t
-getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
+స్థిర ssize_t
+getdelim(అక్షరం **buf, కొలత_t *bufsiz, పూర్ణాంకం delimiter, FILE *fp)
 {
-	char *ptr, *eptr;
+	అక్షరం *ptr, *eptr;
 
 
-	if (*buf == NULL || *bufsiz == 0) {
-		if ((*buf = malloc(BUFSIZ)) == NULL)
-			return -1;
+	ఒకవేళ (*buf == ఖాళీ || *bufsiz == 0) {
+		ఒకవేళ ((*buf = జ్ఞాపకం_ఇవ్వు(BUFSIZ)) == ఖాళీ)
+			తిరిగి -1;
 		*bufsiz = BUFSIZ;
 	}
 
-	for (ptr = *buf, eptr = *buf + *bufsiz;;) {
-		int c = fgetc(fp);
-		if (c == -1) {
-			if (feof(fp)) {
+	కొరకు (ptr = *buf, eptr = *buf + *bufsiz;;) {
+		పూర్ణాంకం c = fgetc(fp);
+		ఒకవేళ (c == -1) {
+			ఒకవేళ (feof(fp)) {
 				ssize_t diff = (ssize_t)(ptr - *buf);
-				if (diff != 0) {
+				ఒకవేళ (diff != 0) {
 					*ptr = '\0';
-					return diff;
+					తిరిగి diff;
 				}
 			}
-			return -1;
+			తిరిగి -1;
 		}
 		*ptr++ = c;
-		if (c == delimiter) {
+		ఒకవేళ (c == delimiter) {
 			*ptr = '\0';
-			return ptr - *buf;
+			తిరిగి ptr - *buf;
 		}
-		if (ptr + 2 >= eptr) {
-			char *nbuf;
-			size_t nbufsiz = *bufsiz * 2;
+		ఒకవేళ (ptr + 2 >= eptr) {
+			అక్షరం *nbuf;
+			కొలత_t nbufsiz = *bufsiz * 2;
 			ssize_t d = ptr - *buf;
-			if ((nbuf = realloc(*buf, nbufsiz)) == NULL)
-				return -1;
+			ఒకవేళ ((nbuf = realloc(*buf, nbufsiz)) == ఖాళీ)
+				తిరిగి -1;
 			*buf = nbuf;
 			*bufsiz = nbufsiz;
 			eptr = nbuf + nbufsiz;
@@ -90,24 +90,24 @@ getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
 }
 
 ssize_t
-getline(char **buf, size_t *bufsiz, FILE *fp)
+getline(అక్షరం **buf, కొలత_t *bufsiz, FILE *fp)
 {
-	return getdelim(buf, bufsiz, '\n', fp);
+	తిరిగి getdelim(buf, bufsiz, '\n', fp);
 }
 
-#endif
+#అయితే_ముగింపు
 
-#ifdef TEST
-int
-main(int argc, char *argv[])
+#నిర్వచితమైతే TEST
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం *argv[])
 {
-	char *p = NULL;
+	అక్షరం *p = ఖాళీ;
 	ssize_t len;
-	size_t n = 0;
+	కొలత_t n = 0;
 
-	while ((len = getline(&p, &n, stdin)) != -1)
-		(void)printf("%" SIZE_T_FORMAT "d %s", len, p);
-	free(p);
-	return 0;
+	అయితే ((len = getline(&p, &n, stdin)) != -1)
+		(శూన్య)రాయి("%" కొలత_T_FORMAT "d %s", len, p);
+	విడుదల(p);
+	తిరిగి 0;
 }
-#endif
+#అయితే_ముగింపు

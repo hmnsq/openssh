@@ -42,49 +42,49 @@
 
 /* OPENBSD ORIGINAL: lib/libcurses/SigAction.h */
 
-#ifndef _SIGACTION_H
-#define _SIGACTION_H
+#నిర్వచితం_కాకపోతే _SIGACTION_H
+#నిర్వచించు _SIGACTION_H
 
-#if !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC)
+#ఒకవేళ !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC)
 
-#undef  SIG_BLOCK
-#define SIG_BLOCK       00
+#నిర్వచనం_రద్దు  SIG_BLOCK
+#నిర్వచించు SIG_BLOCK       00
 
-#undef  SIG_UNBLOCK
-#define SIG_UNBLOCK     01
+#నిర్వచనం_రద్దు  SIG_UNBLOCK
+#నిర్వచించు SIG_UNBLOCK     01
 
-#undef  SIG_SETMASK
-#define SIG_SETMASK     02
+#నిర్వచనం_రద్దు  SIG_SETMASK
+#నిర్వచించు SIG_SETMASK     02
 
 /*
  * <bsd/signal.h> is in the Linux 1.2.8 + gcc 2.7.0 configuration,
  * and is useful for testing this header file.
  */
-#if HAVE_BSD_SIGNAL_H
+#ఒకవేళ HAVE_BSD_SIGNAL_H
 # include <bsd/signal.h>
-#endif
+#అయితే_ముగింపు
 
-struct sigaction
+నిర్మాణం sigaction
 {
-	struct sigvec sv;
+	నిర్మాణం sigvec sv;
 };
 
-typedef unsigned long sigset_t;
+రకనిర్వచనం గుర్తులేని దీర్ఘ sigset_t;
 
-#undef  sa_mask
-#define sa_mask sv.sv_mask
-#undef  sa_handler
-#define sa_handler sv.sv_handler
-#undef  sa_flags
-#define sa_flags sv.sv_flags
+#నిర్వచనం_రద్దు  sa_mask
+#నిర్వచించు sa_mask sv.sv_ముసుగు
+#నిర్వచనం_రద్దు  sa_handler
+#నిర్వచించు sa_handler sv.sv_handler
+#నిర్వచనం_రద్దు  sa_flags
+#నిర్వచించు sa_flags sv.sv_flags
 
-int sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact);
-int sigprocmask (int how, sigset_t *mask, sigset_t *omask);
-int sigemptyset (sigset_t *mask);
-int sigsuspend (sigset_t *mask);
-int sigdelset (sigset_t *mask, int sig);
-int sigaddset (sigset_t *mask, int sig);
+పూర్ణాంకం sigaction(పూర్ణాంకం sig, నిర్మాణం sigaction *sigact, నిర్మాణం sigaction *osigact);
+పూర్ణాంకం sigprocmask (పూర్ణాంకం how, sigset_t *ముసుగు, sigset_t *omask);
+పూర్ణాంకం sigemptyset (sigset_t *ముసుగు);
+పూర్ణాంకం sigsuspend (sigset_t *ముసుగు);
+పూర్ణాంకం sigdelset (sigset_t *ముసుగు, పూర్ణాంకం sig);
+పూర్ణాంకం sigaddset (sigset_t *ముసుగు, పూర్ణాంకం sig);
 
-#endif /* !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC) */
+#అయితే_ముగింపు /* !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC) */
 
-#endif /* !defined(_SIGACTION_H) */
+#అయితే_ముగింపు /* !defined(_SIGACTION_H) */

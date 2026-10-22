@@ -43,102 +43,102 @@
  * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#if !defined (HAVE_GETRRSETBYNAME) && defined (HAVE_LDNS)
+#ఒకవేళ !defined (HAVE_GETRRSETBYNAME) && defined (HAVE_LDNS)
 
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include <ldns/ldns.h>
+#అన్తర్భావ <ldns/ldns.h>
 
-#include "getrrsetbyname.h"
-#include "log.h"
-#include "xmalloc.h"
+#అన్తర్భావ "getrrsetbyname.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "xmalloc.h"
 
-#define malloc(x)	(xmalloc(x))
-#define calloc(x, y)	(xcalloc((x),(y)))
+#నిర్వచించు జ్ఞాపకం_ఇవ్వు(x)	(xmalloc(x))
+#నిర్వచించు సున్నా_జ్ఞాపకం_ఇవ్వు(x, y)	(xcalloc((x),(y)))
 
-int
-getrrsetbyname(const char *hostname, unsigned int rdclass,
-	       unsigned int rdtype, unsigned int flags,
-	       struct rrsetinfo **res)
+పూర్ణాంకం
+getrrsetbyname(స్థిరరాశి అక్షరం *hostname, గుర్తులేని పూర్ణాంకం rdclass,
+	       గుర్తులేని పూర్ణాంకం rdtype, గుర్తులేని పూర్ణాంకం flags,
+	       నిర్మాణం rrsetinfo **res)
 {
-	int result;
-	unsigned int i, j, index_ans, index_sig;
-	struct rrsetinfo *rrset = NULL;
-	struct rdatainfo *rdata;
-	size_t len;
-	ldns_resolver *ldns_res = NULL;
-	ldns_rdf *domain = NULL;
-	ldns_pkt *pkt = NULL;
-	ldns_rr_list *rrsigs = NULL, *rrdata = NULL;
-	ldns_status err;
+	పూర్ణాంకం ఫలితం;
+	గుర్తులేని పూర్ణాంకం i, j, సూచీ_ans, సూచీ_sig;
+	నిర్మాణం rrsetinfo *rrset = ఖాళీ;
+	నిర్మాణం rdatainfo *rdata;
+	కొలత_t len;
+	ldns_resolver *ldns_res = ఖాళీ;
+	ldns_rdf *domain = ఖాళీ;
+	ldns_pkt *pkt = ఖాళీ;
+	ldns_rr_list *rrsigs = ఖాళీ, *rrdata = ఖాళీ;
+	ldns_స్థితి err;
 	ldns_rr *rr;
 
 	/* check for invalid class and type */
-	if (rdclass > 0xffff || rdtype > 0xffff) {
-		result = ERRSET_INVAL;
-		goto fail;
+	ఒకవేళ (rdclass > 0xffff || rdtype > 0xffff) {
+		ఫలితం = ERRSET_INVAL;
+		వెళ్ళు fail;
 	}
 
 	/* don't allow queries of class or type ANY */
-	if (rdclass == 0xff || rdtype == 0xff) {
-		result = ERRSET_INVAL;
-		goto fail;
+	ఒకవేళ (rdclass == 0xff || rdtype == 0xff) {
+		ఫలితం = ERRSET_INVAL;
+		వెళ్ళు fail;
 	}
 
 	/* don't allow flags yet, unimplemented */
-	if (flags) {
-		result = ERRSET_INVAL;
-		goto fail;
+	ఒకవేళ (flags) {
+		ఫలితం = ERRSET_INVAL;
+		వెళ్ళు fail;
 	}
 
 	/* Initialize resolver from resolv.conf */
 	domain = ldns_dname_new_frm_str(hostname);
-	if ((err = ldns_resolver_new_frm_file(&ldns_res, NULL)) != \
-	    LDNS_STATUS_OK) {
-		result = ERRSET_FAIL;
-		goto fail;
+	ఒకవేళ ((err = ldns_resolver_new_frm_file(&ldns_res, ఖాళీ)) != \
+	    LDNS_స్థితి_OK) {
+		ఫలితం = ERRSET_FAIL;
+		వెళ్ళు fail;
 	}
 
-#ifdef LDNS_DEBUG
-	ldns_resolver_set_debug(ldns_res, true);
-#endif /* LDNS_DEBUG */
+#నిర్వచితమైతే LDNS_DEBUG
+	ldns_resolver_సమితి_debug(ldns_res, true);
+#అయితే_ముగింపు /* LDNS_DEBUG */
 
-	ldns_resolver_set_dnssec(ldns_res, true); /* Use DNSSEC */
+	ldns_resolver_సమితి_dnssec(ldns_res, true); /* Use DNSSEC */
 
 	/* make query */
 	pkt = ldns_resolver_query(ldns_res, domain, rdtype, rdclass, LDNS_RD);
 
 	/*** TODO: finer errcodes -- see original **/
-	if (!pkt || ldns_pkt_ancount(pkt) < 1) {
-		result = ERRSET_FAIL;
-		goto fail;
+	ఒకవేళ (!pkt || ldns_pkt_ancount(pkt) < 1) {
+		ఫలితం = ERRSET_FAIL;
+		వెళ్ళు fail;
 	}
 
 	/* initialize rrset */
-	rrset = calloc(1, sizeof(struct rrsetinfo));
-	if (rrset == NULL) {
-		result = ERRSET_NOMEMORY;
-		goto fail;
+	rrset = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం rrsetinfo));
+	ఒకవేళ (rrset == ఖాళీ) {
+		ఫలితం = ERRSET_NOMEMORY;
+		వెళ్ళు fail;
 	}
 
 	rrdata = ldns_pkt_rr_list_by_type(pkt, rdtype, LDNS_SECTION_ANSWER);
-	rrset->rri_nrdatas = ldns_rr_list_rr_count(rrdata);
-	if (!rrset->rri_nrdatas) {
-		result = ERRSET_NODATA;
-		goto fail;
+	rrset->rri_nrdatas = ldns_rr_list_rr_లెక్క(rrdata);
+	ఒకవేళ (!rrset->rri_nrdatas) {
+		ఫలితం = ERRSET_NODATA;
+		వెళ్ళు fail;
 	}
 
 	/* copy name from answer section */
-	len = ldns_rdf_size(ldns_rr_owner(ldns_rr_list_rr(rrdata, 0)));
-	if ((rrset->rri_name = malloc(len)) == NULL) {
-		result = ERRSET_NOMEMORY;
-		goto fail;
+	len = ldns_rdf_కొలత(ldns_rr_owner(ldns_rr_list_rr(rrdata, 0)));
+	ఒకవేళ ((rrset->rri_name = జ్ఞాపకం_ఇవ్వు(len)) == ఖాళీ) {
+		ఫలితం = ERRSET_NOMEMORY;
+		వెళ్ళు fail;
 	}
-	memcpy(rrset->rri_name,
-	    ldns_rdf_data(ldns_rr_owner(ldns_rr_list_rr(rrdata, 0))), len);
+	జ్ఞాపకం_నకలు(rrset->rri_name,
+	    ldns_rdf_దత్తాంశం(ldns_rr_owner(ldns_rr_list_rr(rrdata, 0))), len);
 
 	rrset->rri_rdclass = ldns_rr_get_class(ldns_rr_list_rr(rrdata, 0));
 	rrset->rri_rdtype = ldns_rr_get_type(ldns_rr_list_rr(rrdata, 0));
@@ -147,96 +147,96 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	debug2("ldns: got %u answers from DNS", rrset->rri_nrdatas);
 
 	/* Check for authenticated data */
-	if (ldns_pkt_ad(pkt)) {
+	ఒకవేళ (ldns_pkt_ad(pkt)) {
 		rrset->rri_flags |= RRSET_VALIDATED;
-	} else { /* AD is not set, try autonomous validation */
-		ldns_rr_list * trusted_keys = ldns_rr_list_new();
+	} లేకపోతే { /* AD is not set, try autonomous validation */
+		ldns_rr_list * trusted_కీలకాలు = ldns_rr_list_new();
 
 		debug2("ldns: trying to validate RRset");
 		/* Get eventual sigs */
 		rrsigs = ldns_pkt_rr_list_by_type(pkt, LDNS_RR_TYPE_RRSIG,
 		    LDNS_SECTION_ANSWER);
 
-		rrset->rri_nsigs = ldns_rr_list_rr_count(rrsigs);
+		rrset->rri_nsigs = ldns_rr_list_rr_లెక్క(rrsigs);
 		debug2("ldns: got %u signature(s) (RRTYPE %u) from DNS",
 		       rrset->rri_nsigs, LDNS_RR_TYPE_RRSIG);
 
-		if ((err = ldns_verify_trusted(ldns_res, rrdata, rrsigs,
-		     trusted_keys)) == LDNS_STATUS_OK) {
+		ఒకవేళ ((err = ldns_verify_trusted(ldns_res, rrdata, rrsigs,
+		     trusted_కీలకాలు)) == LDNS_స్థితి_OK) {
 			rrset->rri_flags |= RRSET_VALIDATED;
 			debug2("ldns: RRset is signed with a valid key");
-		} else {
+		} లేకపోతే {
 			debug2("ldns: RRset validation failed: %s",
 			    ldns_get_errorstr_by_id(err));
 		}
 
-		ldns_rr_list_deep_free(trusted_keys);
+		ldns_rr_list_deep_free(trusted_కీలకాలు);
 	}
 
 	/* allocate memory for answers */
-	rrset->rri_rdatas = calloc(rrset->rri_nrdatas,
-	   sizeof(struct rdatainfo));
+	rrset->rri_rdatas = సున్నా_జ్ఞాపకం_ఇవ్వు(rrset->rri_nrdatas,
+	   పరిమాణం(నిర్మాణం rdatainfo));
 
-	if (rrset->rri_rdatas == NULL) {
-		result = ERRSET_NOMEMORY;
-		goto fail;
+	ఒకవేళ (rrset->rri_rdatas == ఖాళీ) {
+		ఫలితం = ERRSET_NOMEMORY;
+		వెళ్ళు fail;
 	}
 
 	/* allocate memory for signatures */
-	if (rrset->rri_nsigs > 0) {
-		rrset->rri_sigs = calloc(rrset->rri_nsigs,
-		    sizeof(struct rdatainfo));
+	ఒకవేళ (rrset->rri_nsigs > 0) {
+		rrset->rri_sigs = సున్నా_జ్ఞాపకం_ఇవ్వు(rrset->rri_nsigs,
+		    పరిమాణం(నిర్మాణం rdatainfo));
 
-		if (rrset->rri_sigs == NULL) {
-			result = ERRSET_NOMEMORY;
-			goto fail;
+		ఒకవేళ (rrset->rri_sigs == ఖాళీ) {
+			ఫలితం = ERRSET_NOMEMORY;
+			వెళ్ళు fail;
 		}
 	}
 
 	/* copy answers & signatures */
-	for (i=0, index_ans=0, index_sig=0; i< pkt->_header->_ancount; i++) {
-		rdata = NULL;
+	కొరకు (i=0, సూచీ_ans=0, సూచీ_sig=0; i< pkt->శీర్షిక->_ancount; i++) {
+		rdata = ఖాళీ;
 		rr = ldns_rr_list_rr(ldns_pkt_answer(pkt), i);
 
-		if (ldns_rr_get_class(rr) == rrset->rri_rdclass &&
+		ఒకవేళ (ldns_rr_get_class(rr) == rrset->rri_rdclass &&
 		    ldns_rr_get_type(rr) == rrset->rri_rdtype) {
-			rdata = &rrset->rri_rdatas[index_ans++];
+			rdata = &rrset->rri_rdatas[సూచీ_ans++];
 		}
 
-		if (rr->_rr_class == rrset->rri_rdclass &&
+		ఒకవేళ (rr->_rr_class == rrset->rri_rdclass &&
 		    rr->_rr_type == LDNS_RR_TYPE_RRSIG &&
 		    rrset->rri_sigs) {
-			rdata = &rrset->rri_sigs[index_sig++];
+			rdata = &rrset->rri_sigs[సూచీ_sig++];
 		}
 
-		if (rdata) {
-			size_t rdata_offset = 0;
+		ఒకవేళ (rdata) {
+			కొలత_t rdata_స్థానభ్రంశం = 0;
 
-			rdata->rdi_length = 0;
-			for (j=0; j< rr->_rd_count; j++) {
-				rdata->rdi_length +=
-				    ldns_rdf_size(ldns_rr_rdf(rr, j));
+			rdata->rdi_నిడివి = 0;
+			కొరకు (j=0; j< rr->rd_లెక్క; j++) {
+				rdata->rdi_నిడివి +=
+				    ldns_rdf_కొలత(ldns_rr_rdf(rr, j));
 			}
 
-			rdata->rdi_data = malloc(rdata->rdi_length);
-			if (rdata->rdi_data == NULL) {
-				result = ERRSET_NOMEMORY;
-				goto fail;
+			rdata->rdi_దత్తాంశం = జ్ఞాపకం_ఇవ్వు(rdata->rdi_నిడివి);
+			ఒకవేళ (rdata->rdi_దత్తాంశం == ఖాళీ) {
+				ఫలితం = ERRSET_NOMEMORY;
+				వెళ్ళు fail;
 			}
 
 			/* Re-create the raw DNS RDATA */
-			for (j=0; j< rr->_rd_count; j++) {
-				len = ldns_rdf_size(ldns_rr_rdf(rr, j));
-				memcpy(rdata->rdi_data + rdata_offset,
-				       ldns_rdf_data(ldns_rr_rdf(rr, j)), len);
-				rdata_offset += len;
+			కొరకు (j=0; j< rr->rd_లెక్క; j++) {
+				len = ldns_rdf_కొలత(ldns_rr_rdf(rr, j));
+				జ్ఞాపకం_నకలు(rdata->rdi_దత్తాంశం + rdata_స్థానభ్రంశం,
+				       ldns_rdf_దత్తాంశం(ldns_rr_rdf(rr, j)), len);
+				rdata_స్థానభ్రంశం += len;
 			}
 		}
 	}
 
 	*res = rrset;
-	rrset = NULL; /* transferred */
-	result = ERRSET_SUCCESS;
+	rrset = ఖాళీ; /* transferred */
+	ఫలితం = ERRSET_SUCCESS;
 
 fail:
 	freerrset(rrset);
@@ -246,40 +246,40 @@ fail:
 	ldns_rr_list_deep_free(rrdata);
 	ldns_resolver_deep_free(ldns_res);
 
-	return result;
+	తిరిగి ఫలితం;
 }
 
 
-void
-freerrset(struct rrsetinfo *rrset)
+శూన్య
+freerrset(నిర్మాణం rrsetinfo *rrset)
 {
 	u_int16_t i;
 
-	if (rrset == NULL)
-		return;
+	ఒకవేళ (rrset == ఖాళీ)
+		తిరిగి;
 
-	if (rrset->rri_rdatas) {
-		for (i = 0; i < rrset->rri_nrdatas; i++) {
-			if (rrset->rri_rdatas[i].rdi_data == NULL)
-				break;
-			free(rrset->rri_rdatas[i].rdi_data);
+	ఒకవేళ (rrset->rri_rdatas) {
+		కొరకు (i = 0; i < rrset->rri_nrdatas; i++) {
+			ఒకవేళ (rrset->rri_rdatas[i].rdi_దత్తాంశం == ఖాళీ)
+				ఆపు;
+			విడుదల(rrset->rri_rdatas[i].rdi_దత్తాంశం);
 		}
-		free(rrset->rri_rdatas);
+		విడుదల(rrset->rri_rdatas);
 	}
 
-	if (rrset->rri_sigs) {
-		for (i = 0; i < rrset->rri_nsigs; i++) {
-			if (rrset->rri_sigs[i].rdi_data == NULL)
-				break;
-			free(rrset->rri_sigs[i].rdi_data);
+	ఒకవేళ (rrset->rri_sigs) {
+		కొరకు (i = 0; i < rrset->rri_nsigs; i++) {
+			ఒకవేళ (rrset->rri_sigs[i].rdi_దత్తాంశం == ఖాళీ)
+				ఆపు;
+			విడుదల(rrset->rri_sigs[i].rdi_దత్తాంశం);
 		}
-		free(rrset->rri_sigs);
+		విడుదల(rrset->rri_sigs);
 	}
 
-	if (rrset->rri_name)
-		free(rrset->rri_name);
-	free(rrset);
+	ఒకవేళ (rrset->rri_name)
+		విడుదల(rrset->rri_name);
+	విడుదల(rrset);
 }
 
 
-#endif /* !defined (HAVE_GETRRSETBYNAME) && defined (HAVE_LDNS) */
+#అయితే_ముగింపు /* !defined (HAVE_GETRRSETBYNAME) && defined (HAVE_LDNS) */

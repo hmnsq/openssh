@@ -34,33 +34,33 @@
 
 /* OPENBSD ORIGINAL: include/fnmatch.h */
 
-#ifndef HAVE_FNMATCH_H
+#నిర్వచితం_కాకపోతే HAVE_FNMATCH_H
 /* Ensure we define FNM_CASEFOLD */
-#define __BSD_VISIBLE 1
+#నిర్వచించు __BSD_VISIBLE 1
 
-#ifndef	_FNMATCH_H_
-#define	_FNMATCH_H_
+#నిర్వచితం_కాకపోతే	_FNMATCH_H_
+#నిర్వచించు	_FNMATCH_H_
 
-#ifdef HAVE_SYS_CDEFS_H
-#include <sys/cdefs.h>
-#endif
+#నిర్వచితమైతే HAVE_SYS_CDEFS_H
+#అన్తర్భావ <sys/cdefs.h>
+#అయితే_ముగింపు
 
-#define	FNM_NOMATCH	1	/* Match failed. */
-#define	FNM_NOSYS	2	/* Function not supported (unused). */
+#నిర్వచించు	FNM_NOMATCH	1	/* Match failed. */
+#నిర్వచించు	FNM_NOSYS	2	/* Function not supported (unused). */
 
-#define	FNM_NOESCAPE	0x01	/* Disable backslash escaping. */
-#define	FNM_PATHNAME	0x02	/* Slash must be matched by slash. */
-#define	FNM_PERIOD	0x04	/* Period must be matched by period. */
-#if __BSD_VISIBLE
-#define	FNM_LEADING_DIR	0x08	/* Ignore /<tail> after Imatch. */
-#define	FNM_CASEFOLD	0x10	/* Case insensitive search. */
-#define	FNM_IGNORECASE	FNM_CASEFOLD
-#define	FNM_FILE_NAME	FNM_PATHNAME
-#endif
+#నిర్వచించు	FNM_NOESCAPE	0x01	/* Disable backslash escaping. */
+#నిర్వచించు	FNM_PATHNAME	0x02	/* Slash must be matched by slash. */
+#నిర్వచించు	FNM_PERIOD	0x04	/* Period must be matched by period. */
+#ఒకవేళ __BSD_VISIBLE
+#నిర్వచించు	FNM_LEADING_DIR	0x08	/* Ignore /<tail> after Imatch. */
+#నిర్వచించు	FNM_CASEFOLD	0x10	/* Case insensitive search. */
+#నిర్వచించు	FNM_IGNORECASE	FNM_CASEFOLD
+#నిర్వచించు	FNM_FILE_NAME	FNM_PATHNAME
+#అయితే_ముగింపు
 
 /* __BEGIN_DECLS */
-int	 fnmatch(const char *, const char *, int);
+పూర్ణాంకం	 fnmatch(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, పూర్ణాంకం);
 /* __END_DECLS */
 
-#endif /* !_FNMATCH_H_ */
-#endif /* ! HAVE_FNMATCH_H */
+#అయితే_ముగింపు /* !_FNMATCH_H_ */
+#అయితే_ముగింపు /* ! HAVE_FNMATCH_H */

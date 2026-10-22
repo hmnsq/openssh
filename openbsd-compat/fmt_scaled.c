@@ -38,25 +38,25 @@
  * Scanning code written for OpenBSD libutil.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifndef HAVE_FMT_SCALED
+#నిర్వచితం_కాకపోతే HAVE_FMT_SCALED
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
-#include <ctype.h>
-#include <limits.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <limits.h>
 
-typedef enum {
+రకనిర్వచనం గణన {
 	NONE = 0, KILO = 1, MEGA = 2, GIGA = 3, TERA = 4, PETA = 5, EXA = 6
 } unit_type;
 
 /* These three arrays MUST be in sync!  XXX make a struct */
-static const unit_type units[] = { NONE, KILO, MEGA, GIGA, TERA, PETA, EXA };
-static const char scale_chars[] = "BKMGTPE";
-static const long long scale_factors[] = {
+స్థిర స్థిరరాశి unit_type units[] = { NONE, KILO, MEGA, GIGA, TERA, PETA, EXA };
+స్థిర స్థిరరాశి అక్షరం scale_chars[] = "BKMGTPE";
+స్థిర స్థిరరాశి దీర్ఘ దీర్ఘ scale_factors[] = {
 	1LL,
 	1024LL,
 	1024LL*1024,
@@ -65,38 +65,38 @@ static const long long scale_factors[] = {
 	1024LL*1024*1024*1024*1024,
 	1024LL*1024*1024*1024*1024*1024,
 };
-#define	SCALE_LENGTH (sizeof(units)/sizeof(units[0]))
+#నిర్వచించు	SCALE_నిడివి (పరిమాణం(units)/పరిమాణం(units[0]))
 
-#define MAX_DIGITS (SCALE_LENGTH * 3)	/* XXX strlen(sprintf("%lld", -1)? */
+#నిర్వచించు MAX_DIGITS (SCALE_నిడివి * 3)	/* XXX strlen(sprintf("%lld", -1)? */
 
 /* Convert the given input string "scaled" into numeric in "result".
  * Return 0 on success, -1 and errno set on error.
  */
-int
-scan_scaled(char *scaled, long long *result)
+పూర్ణాంకం
+పరిశీలన_scaled(అక్షరం *scaled, దీర్ఘ దీర్ఘ *ఫలితం)
 {
-	char *p = scaled;
-	int sign = 0;
-	unsigned int i, ndigits = 0, fract_digits = 0, muls = 0, divs = 0;
-	long long scale_fact = 1, whole = 0, fpart = 0;
+	అక్షరం *p = scaled;
+	పూర్ణాంకం sign = 0;
+	గుర్తులేని పూర్ణాంకం i, ndigits = 0, fract_digits = 0, muls = 0, divs = 0;
+	దీర్ఘ దీర్ఘ scale_fact = 1, సంపూర్ణ = 0, fpart = 0;
 
 	/* Skip leading whitespace */
-	while (isascii((unsigned char)*p) && isspace((unsigned char)*p))
+	అయితే (isascii((గుర్తులేని అక్షరం)*p) && ఖాళీనా((గుర్తులేని అక్షరం)*p))
 		++p;
 
 	/* Then at most one leading + or - */
-	while (*p == '-' || *p == '+') {
-		if (*p == '-') {
-			if (sign) {
+	అయితే (*p == '-' || *p == '+') {
+		ఒకవేళ (*p == '-') {
+			ఒకవేళ (sign) {
 				errno = EINVAL;
-				return -1;
+				తిరిగి -1;
 			}
 			sign = -1;
 			++p;
-		} else if (*p == '+') {
-			if (sign) {
+		} లేకపోతే ఒకవేళ (*p == '+') {
+			ఒకవేళ (sign) {
 				errno = EINVAL;
-				return -1;
+				తిరిగి -1;
 			}
 			sign = +1;
 			++p;
@@ -108,83 +108,83 @@ scan_scaled(char *scaled, long long *result)
 	 * (but note that E for Exa might look like e to some!).
 	 * Advance 'p' to end, to get scale factor.
 	 */
-	for (; isascii((unsigned char)*p) &&
-	    (isdigit((unsigned char)*p) || *p=='.'); ++p) {
-		if (*p == '.') {
-			if (fract_digits > 0) {	/* oops, more than one '.' */
+	కొరకు (; isascii((గుర్తులేని అక్షరం)*p) &&
+	    (అంకెనా((గుర్తులేని అక్షరం)*p) || *p=='.'); ++p) {
+		ఒకవేళ (*p == '.') {
+			ఒకవేళ (fract_digits > 0) {	/* oops, more than one '.' */
 				errno = EINVAL;
-				return -1;
+				తిరిగి -1;
 			}
 			fract_digits = 1;
-			continue;
+			కొనసాగు;
 		}
 
 		i = (*p) - '0';			/* whew! finally a digit we can use */
-		if (fract_digits > 0) {
-			if (fract_digits >= MAX_DIGITS-1)
+		ఒకవేళ (fract_digits > 0) {
+			ఒకవేళ (fract_digits >= MAX_DIGITS-1)
 				/* ignore extra fractional digits */
-				continue;
+				కొనసాగు;
 			fract_digits++;		/* for later scaling */
-			if (fpart > LLONG_MAX / 10) {
+			ఒకవేళ (fpart > LLONG_MAX / 10) {
 				errno = ERANGE;
-				return -1;
+				తిరిగి -1;
 			}
 			fpart *= 10;
-			if (i > LLONG_MAX - fpart) {
+			ఒకవేళ (i > LLONG_MAX - fpart) {
 				errno = ERANGE;
-				return -1;
+				తిరిగి -1;
 			}
 			fpart += i;
-		} else {				/* normal digit */
-			if (++ndigits >= MAX_DIGITS) {
+		} లేకపోతే {				/* normal digit */
+			ఒకవేళ (++ndigits >= MAX_DIGITS) {
 				errno = ERANGE;
-				return -1;
+				తిరిగి -1;
 			}
-			if (whole > LLONG_MAX / 10) {
+			ఒకవేళ (సంపూర్ణ > LLONG_MAX / 10) {
 				errno = ERANGE;
-				return -1;
+				తిరిగి -1;
 			}
-			whole *= 10;
-			if (i > LLONG_MAX - whole) {
+			సంపూర్ణ *= 10;
+			ఒకవేళ (i > LLONG_MAX - సంపూర్ణ) {
 				errno = ERANGE;
-				return -1;
+				తిరిగి -1;
 			}
-			whole += i;
+			సంపూర్ణ += i;
 		}
 	}
 
-	if (sign)
-		whole *= sign;
+	ఒకవేళ (sign)
+		సంపూర్ణ *= sign;
 
 	/* If no scale factor given, we're done. fraction is discarded. */
-	if (!*p) {
-		*result = whole;
-		return 0;
+	ఒకవేళ (!*p) {
+		*ఫలితం = సంపూర్ణ;
+		తిరిగి 0;
 	}
 
 	/* Validate scale factor, and scale whole and fraction by it. */
-	for (i = 0; i < SCALE_LENGTH; i++) {
+	కొరకు (i = 0; i < SCALE_నిడివి; i++) {
 
 		/* Are we there yet? */
-		if (*p == scale_chars[i] ||
-			*p == tolower((unsigned char)scale_chars[i])) {
+		ఒకవేళ (*p == scale_chars[i] ||
+			*p == tolower((గుర్తులేని అక్షరం)scale_chars[i])) {
 
 			/* If it ends with alphanumerics after the scale char, bad. */
-			if (isalnum((unsigned char)*(p+1))) {
+			ఒకవేళ (అక్షరమా_అంకెనా((గుర్తులేని అక్షరం)*(p+1))) {
 				errno = EINVAL;
-				return -1;
+				తిరిగి -1;
 			}
 			scale_fact = scale_factors[i];
 
 			/* check for overflow and underflow after scaling */
-			if (whole > LLONG_MAX / scale_fact ||
-			    whole < LLONG_MIN / scale_fact) {
+			ఒకవేళ (సంపూర్ణ > LLONG_MAX / scale_fact ||
+			    సంపూర్ణ < LLONG_MIN / scale_fact) {
 				errno = ERANGE;
-				return -1;
+				తిరిగి -1;
 			}
 
 			/* scale whole part */
-			whole *= scale_fact;
+			సంపూర్ణ *= scale_fact;
 
 			/*
 			 * Scale fractional part: compute
@@ -197,128 +197,128 @@ scan_scaled(char *scaled, long long *result)
 			 */
 			muls = i;
 			divs = fract_digits > 0 ?  fract_digits - 1 : 0;
-			while (muls > 0 && divs > 0) {
-				if (fpart <= LLONG_MAX / 1024) {
+			అయితే (muls > 0 && divs > 0) {
+				ఒకవేళ (fpart <= LLONG_MAX / 1024) {
 					fpart *= 1024;
 					muls--;
-				} else {
+				} లేకపోతే {
 					fpart /= 10;
 					divs--;
 				}
 			}
-			while (muls > 0) {
+			అయితే (muls > 0) {
 				fpart *= 1024;
 				muls--;
 			}
-			while (divs > 0) {
+			అయితే (divs > 0) {
 				fpart /= 10;
 				divs--;
 			}
-			if (sign == -1)
-				whole -= fpart;
-			else
-				whole += fpart;
-			*result = whole;
-			return 0;
+			ఒకవేళ (sign == -1)
+				సంపూర్ణ -= fpart;
+			లేకపోతే
+				సంపూర్ణ += fpart;
+			*ఫలితం = సంపూర్ణ;
+			తిరిగి 0;
 		}
 	}
 
 	/* Invalid unit or character */
 	errno = EINVAL;
-	return -1;
+	తిరిగి -1;
 }
 
 /* Format the given "number" into human-readable form in "result".
  * Result must point to an allocated buffer of length FMT_SCALED_STRSIZE.
  * Return 0 on success, -1 and errno set if error.
  */
-int
-fmt_scaled(long long number, char *result)
+పూర్ణాంకం
+fmt_scaled(దీర్ఘ దీర్ఘ సంఖ్య, అక్షరం *ఫలితం)
 {
-	long long abval, fract = 0;
-	unsigned int i;
+	దీర్ఘ దీర్ఘ abval, fract = 0;
+	గుర్తులేని పూర్ణాంకం i;
 	unit_type unit = NONE;
 
 	/* Not every negative long long has a positive representation. */
-	if (number == LLONG_MIN) {
+	ఒకవేళ (సంఖ్య == LLONG_MIN) {
 		errno = ERANGE;
-		return -1;
+		తిరిగి -1;
 	}
 
-	abval = llabs(number);
+	abval = llabs(సంఖ్య);
 
 	/* Also check for numbers that are just too darned big to format. */
-	if (abval / 1024 >= scale_factors[SCALE_LENGTH-1]) {
+	ఒకవేళ (abval / 1024 >= scale_factors[SCALE_నిడివి-1]) {
 		errno = ERANGE;
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* scale whole part; get unscaled fraction */
-	for (i = 0; i < SCALE_LENGTH; i++) {
-		if (abval/1024 < scale_factors[i]) {
+	కొరకు (i = 0; i < SCALE_నిడివి; i++) {
+		ఒకవేళ (abval/1024 < scale_factors[i]) {
 			unit = units[i];
 			fract = (i == 0) ? 0 : abval % scale_factors[i];
-			number /= scale_factors[i];
-			if (i > 0)
+			సంఖ్య /= scale_factors[i];
+			ఒకవేళ (i > 0)
 				fract /= scale_factors[i - 1];
-			break;
+			ఆపు;
 		}
 	}
 
 	fract = (10 * fract + 512) / 1024;
 	/* if the result would be >= 10, round main number */
-	if (fract >= 10) {
-		if (number >= 0)
-			number++;
-		else
-			number--;
+	ఒకవేళ (fract >= 10) {
+		ఒకవేళ (సంఖ్య >= 0)
+			సంఖ్య++;
+		లేకపోతే
+			సంఖ్య--;
 		fract = 0;
-	} else if (fract < 0) {
+	} లేకపోతే ఒకవేళ (fract < 0) {
 		/* shouldn't happen */
 		fract = 0;
 	}
 
-	if (number == 0)
-		strlcpy(result, "0B", FMT_SCALED_STRSIZE);
-	else if (unit == NONE || number >= 100 || number <= -100) {
-		if (fract >= 5) {
-			if (number >= 0)
-				number++;
-			else
-				number--;
+	ఒకవేళ (సంఖ్య == 0)
+		strlcpy(ఫలితం, "0B", FMT_SCALED_STRSIZE);
+	లేకపోతే ఒకవేళ (unit == NONE || సంఖ్య >= 100 || సంఖ్య <= -100) {
+		ఒకవేళ (fract >= 5) {
+			ఒకవేళ (సంఖ్య >= 0)
+				సంఖ్య++;
+			లేకపోతే
+				సంఖ్య--;
 		}
-		(void)snprintf(result, FMT_SCALED_STRSIZE, "%lld%c",
-			number, scale_chars[unit]);
-	} else
-		(void)snprintf(result, FMT_SCALED_STRSIZE, "%lld.%1lld%c",
-			number, fract, scale_chars[unit]);
+		(శూన్య)snprintf(ఫలితం, FMT_SCALED_STRSIZE, "%lld%c",
+			సంఖ్య, scale_chars[unit]);
+	} లేకపోతే
+		(శూన్య)snprintf(ఫలితం, FMT_SCALED_STRSIZE, "%lld.%1lld%c",
+			సంఖ్య, fract, scale_chars[unit]);
 
-	return 0;
+	తిరిగి 0;
 }
 
-#ifdef	MAIN
+#నిర్వచితమైతే	MAIN
 /*
  * This is the original version of the program in the man page.
  * Copy-and-paste whatever you need from it.
  */
-int
-main(int argc, char **argv)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	char *cinput = "1.5K", buf[FMT_SCALED_STRSIZE];
-	long long ninput = 10483892, result;
+	అక్షరం *cinput = "1.5K", buf[FMT_SCALED_STRSIZE];
+	దీర్ఘ దీర్ఘ ninput = 10483892, ఫలితం;
 
-	if (scan_scaled(cinput, &result) == 0)
-		printf("\"%s\" -> %lld\n", cinput, result);
-	else
+	ఒకవేళ (పరిశీలన_scaled(cinput, &ఫలితం) == 0)
+		రాయి("\"%s\" -> %lld\n", cinput, ఫలితం);
+	లేకపోతే
 		perror(cinput);
 
-	if (fmt_scaled(ninput, buf) == 0)
-		printf("%lld -> \"%s\"\n", ninput, buf);
-	else
+	ఒకవేళ (fmt_scaled(ninput, buf) == 0)
+		రాయి("%lld -> \"%s\"\n", ninput, buf);
+	లేకపోతే
 		fprintf(stderr, "%lld invalid (%s)\n", ninput, strerror(errno));
 
-	return 0;
+	తిరిగి 0;
 }
-#endif
+#అయితే_ముగింపు
 
-#endif /* HAVE_FMT_SCALED */
+#అయితే_ముగింపు /* HAVE_FMT_SCALED */

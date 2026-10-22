@@ -23,66 +23,66 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/readpassphrase.c */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifndef HAVE_READPASSPHRASE
+#నిర్వచితం_కాకపోతే HAVE_READPASSPHRASE
 
-#include <termios.h>
-#include <signal.h>
-#include <ctype.h>
-#include <fcntl.h>
-#include <readpassphrase.h>
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <termios.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <readpassphrase.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-#ifndef TCSASOFT
+#నిర్వచితం_కాకపోతే TCSASOFT
 /* If we don't have TCSASOFT define it so that ORing it it below is a no-op. */
 # define TCSASOFT 0
-#endif
+#అయితే_ముగింపు
 
 /* SunOS 4.x which lacks _POSIX_VDISABLE, but has VDISABLE */
-#if !defined(_POSIX_VDISABLE) && defined(VDISABLE)
+#ఒకవేళ !defined(_POSIX_VDISABLE) && defined(VDISABLE)
 #  define _POSIX_VDISABLE       VDISABLE
-#endif
+#అయితే_ముగింపు
 
-static volatile sig_atomic_t signo[_NSIG];
+స్థిర అస్థిర sig_atomic_t signo[_NSIG];
 
-static void handler(int);
+స్థిర శూన్య handler(పూర్ణాంకం);
 
 /* Like sigaction(2) but preserves SIG_IGN */
-static void
-sigaction_except_ign(int signum, struct sigaction *act, struct sigaction *old)
+స్థిర శూన్య
+sigaction_except_ign(పూర్ణాంకం signum, నిర్మాణం sigaction *act, నిర్మాణం sigaction *old)
 {
-	struct sigaction sabuf;
+	నిర్మాణం sigaction sabuf;
 
-	if (old == NULL)
+	ఒకవేళ (old == ఖాళీ)
 		old = &sabuf;
 
-	(void)sigaction(signum, act, old);
+	(శూన్య)sigaction(signum, act, old);
 	/* Reinstate SIG_IGN; we don't want to override this */
-	if (old->sa_handler == SIG_IGN && act->sa_handler != SIG_IGN)
-		(void)sigaction(signum, old, NULL);
+	ఒకవేళ (old->sa_handler == SIG_IGN && act->sa_handler != SIG_IGN)
+		(శూన్య)sigaction(signum, old, ఖాళీ);
 }
 
-char *
-readpassphrase(const char *prompt, char *buf, size_t bufsiz, int flags)
+అక్షరం *
+readpassphrase(స్థిరరాశి అక్షరం *prompt, అక్షరం *buf, కొలత_t bufsiz, పూర్ణాంకం flags)
 {
 	ssize_t nr;
-	int input, output, save_errno, i, need_restart;
-	char ch, *p, *end;
-	struct termios term, oterm;
-	struct sigaction sa, savealrm, saveint, savehup, savequit, saveterm;
-	struct sigaction savetstp, savettin, savettou, savepipe;
+	పూర్ణాంకం ఆదానం, output, save_errno, i, need_restart;
+	అక్షరం ch, *p, *చివర;
+	నిర్మాణం termios పదం, oterm;
+	నిర్మాణం sigaction sa, savealrm, saveint, savehup, savequit, saveterm;
+	నిర్మాణం sigaction savetstp, savettin, savettou, savepipe;
 
 	/* I suppose we could alloc on demand in this case (XXX). */
-	if (bufsiz == 0) {
+	ఒకవేళ (bufsiz == 0) {
 		errno = EINVAL;
-		return(NULL);
+		తిరిగి(ఖాళీ);
 	}
 
 restart:
-	for (i = 0; i < _NSIG; i++)
+	కొరకు (i = 0; i < _NSIG; i++)
 		signo[i] = 0;
 	nr = -1;
 	save_errno = 0;
@@ -91,16 +91,16 @@ restart:
 	 * Read and write to /dev/tty if available.  If not, read from
 	 * stdin and write to stderr unless a tty is required.
 	 */
-#ifndef O_CLOEXEC
+#నిర్వచితం_కాకపోతే O_CLOEXEC
 # define O_CLOEXEC 0
-#endif
-	if ((flags & RPP_STDIN) ||
-	    (input = output = open(_PATH_TTY, O_RDWR | O_CLOEXEC)) == -1) {
-		if (flags & RPP_REQUIRE_TTY) {
+#అయితే_ముగింపు
+	ఒకవేళ ((flags & RPP_STDIN) ||
+	    (ఆదానం = output = open(_PATH_TTY, O_RDWR | O_CLOEXEC)) == -1) {
+		ఒకవేళ (flags & RPP_REQUIRE_TTY) {
 			errno = ENOTTY;
-			return(NULL);
+			తిరిగి(ఖాళీ);
 		}
-		input = STDIN_FILENO;
+		ఆదానం = STDIN_FILENO;
 		output = STDERR_FILENO;
 	}
 
@@ -109,19 +109,19 @@ restart:
 	 * If we are using a tty but are not the foreground pgrp this will
 	 * generate SIGTTOU, so do it *before* installing the signal handlers.
 	 */
-	if (input != STDIN_FILENO && tcgetattr(input, &oterm) == 0) {
-		memcpy(&term, &oterm, sizeof(term));
-		if (!(flags & RPP_ECHO_ON))
-			term.c_lflag &= ~(ECHO | ECHONL);
-#ifdef VSTATUS
-		if (term.c_cc[VSTATUS] != _POSIX_VDISABLE)
-			term.c_cc[VSTATUS] = _POSIX_VDISABLE;
-#endif
-		(void)tcsetattr(input, TCSAFLUSH|TCSASOFT, &term);
-	} else {
-		memset(&term, 0, sizeof(term));
-		term.c_lflag |= ECHO;
-		memset(&oterm, 0, sizeof(oterm));
+	ఒకవేళ (ఆదానం != STDIN_FILENO && tcgetattr(ఆదానం, &oterm) == 0) {
+		జ్ఞాపకం_నకలు(&పదం, &oterm, పరిమాణం(పదం));
+		ఒకవేళ (!(flags & RPP_ECHO_ON))
+			పదం.c_lflag &= ~(ECHO | ECHONL);
+#నిర్వచితమైతే VSTATUS
+		ఒకవేళ (పదం.c_cc[VSTATUS] != _POSIX_VDISABLE)
+			పదం.c_cc[VSTATUS] = _POSIX_VDISABLE;
+#అయితే_ముగింపు
+		(శూన్య)tcsetattr(ఆదానం, TCSAFLUSH|TCSASOFT, &పదం);
+	} లేకపోతే {
+		memset(&పదం, 0, పరిమాణం(పదం));
+		పదం.c_lflag |= ECHO;
+		memset(&oterm, 0, పరిమాణం(oterm));
 		oterm.c_lflag |= ECHO;
 	}
 
@@ -143,87 +143,87 @@ restart:
 	sigaction_except_ign(SIGTTIN, &sa, &savettin);
 	sigaction_except_ign(SIGTTOU, &sa, &savettou);
 
-	if (!(flags & RPP_STDIN))
-		(void)write(output, prompt, strlen(prompt));
-	end = buf + bufsiz - 1;
+	ఒకవేళ (!(flags & RPP_STDIN))
+		(శూన్య)లిఖ(output, prompt, అక్షరశ్రేణి_పొడవు(prompt));
+	చివర = buf + bufsiz - 1;
 	p = buf;
-	while ((nr = read(input, &ch, 1)) == 1 && ch != '\n' && ch != '\r') {
-		if (p < end) {
-			if ((flags & RPP_SEVENBIT))
+	అయితే ((nr = పఠ(ఆదానం, &ch, 1)) == 1 && ch != '\n' && ch != '\r') {
+		ఒకవేళ (p < చివర) {
+			ఒకవేళ ((flags & RPP_SEVENBIT))
 				ch &= 0x7f;
-			if (isalpha((unsigned char)ch)) {
-				if ((flags & RPP_FORCELOWER))
-					ch = (char)tolower((unsigned char)ch);
-				if ((flags & RPP_FORCEUPPER))
-					ch = (char)toupper((unsigned char)ch);
+			ఒకవేళ (అక్షరమా((గుర్తులేని అక్షరం)ch)) {
+				ఒకవేళ ((flags & RPP_FORCELOWER))
+					ch = (అక్షరం)tolower((గుర్తులేని అక్షరం)ch);
+				ఒకవేళ ((flags & RPP_FORCEUPPER))
+					ch = (అక్షరం)పెద్ద_అక్షరం((గుర్తులేని అక్షరం)ch);
 			}
 			*p++ = ch;
 		}
 	}
 	*p = '\0';
 	save_errno = errno;
-	if (!(term.c_lflag & ECHO) && !(nr == -1 && errno == EINTR))
-		(void)write(output, "\n", 1);
+	ఒకవేళ (!(పదం.c_lflag & ECHO) && !(nr == -1 && errno == EINTR))
+		(శూన్య)లిఖ(output, "\n", 1);
 
 	/* Restore old terminal settings and signals. */
-	if (memcmp(&term, &oterm, sizeof(term)) != 0) {
-		const int sigttou = signo[SIGTTOU];
+	ఒకవేళ (memcmp(&పదం, &oterm, పరిమాణం(పదం)) != 0) {
+		స్థిరరాశి పూర్ణాంకం sigttou = signo[SIGTTOU];
 
 		/* Ignore SIGTTOU generated when we are not the fg pgrp. */
-		while (tcsetattr(input, TCSAFLUSH|TCSASOFT, &oterm) == -1 &&
+		అయితే (tcsetattr(ఆదానం, TCSAFLUSH|TCSASOFT, &oterm) == -1 &&
 		    errno == EINTR && !signo[SIGTTOU])
-			continue;
+			కొనసాగు;
 		signo[SIGTTOU] = sigttou;
 	}
-	sigaction(SIGINT, &saveint, NULL);
-	sigaction(SIGQUIT, &savequit, NULL);
-	sigaction_except_ign(SIGALRM, &savealrm, NULL);
-	sigaction_except_ign(SIGHUP, &savehup, NULL);
-	sigaction_except_ign(SIGPIPE, &savepipe, NULL);
-	sigaction_except_ign(SIGTERM, &saveterm, NULL);
-	sigaction_except_ign(SIGTSTP, &savetstp, NULL);
-	sigaction_except_ign(SIGTTIN, &savettin, NULL);
-	sigaction_except_ign(SIGTTOU, &savettou, NULL);
-	if (input != STDIN_FILENO)
-		(void)close(input);
+	sigaction(SIGINT, &saveint, ఖాళీ);
+	sigaction(SIGQUIT, &savequit, ఖాళీ);
+	sigaction_except_ign(SIGALRM, &savealrm, ఖాళీ);
+	sigaction_except_ign(SIGHUP, &savehup, ఖాళీ);
+	sigaction_except_ign(SIGPIPE, &savepipe, ఖాళీ);
+	sigaction_except_ign(SIGTERM, &saveterm, ఖాళీ);
+	sigaction_except_ign(SIGTSTP, &savetstp, ఖాళీ);
+	sigaction_except_ign(SIGTTIN, &savettin, ఖాళీ);
+	sigaction_except_ign(SIGTTOU, &savettou, ఖాళీ);
+	ఒకవేళ (ఆదానం != STDIN_FILENO)
+		(శూన్య)close(ఆదానం);
 
 	/*
 	 * If we were interrupted by a signal, resend it to ourselves
 	 * now that we have restored the signal handlers.
 	 */
-	for (i = 0; i < _NSIG; i++) {
-		if (signo[i]) {
+	కొరకు (i = 0; i < _NSIG; i++) {
+		ఒకవేళ (signo[i]) {
 			kill(getpid(), i);
-			switch (i) {
-			case SIGTSTP:
-			case SIGTTIN:
-			case SIGTTOU:
+			ఎంపిక (i) {
+			స్థితి SIGTSTP:
+			స్థితి SIGTTIN:
+			స్థితి SIGTTOU:
 				need_restart = 1;
 			}
 		}
 	}
-	if (need_restart)
-		goto restart;
+	ఒకవేళ (need_restart)
+		వెళ్ళు restart;
 
-	if (save_errno)
+	ఒకవేళ (save_errno)
 		errno = save_errno;
-	return(nr == -1 ? NULL : buf);
+	తిరిగి(nr == -1 ? ఖాళీ : buf);
 }
 DEF_WEAK(readpassphrase);
 
-#if 0
-char *
-getpass(const char *prompt)
+#ఒకవేళ 0
+అక్షరం *
+getpass(స్థిరరాశి అక్షరం *prompt)
 {
-	static char buf[_PASSWORD_LEN + 1];
+	స్థిర అక్షరం buf[_PASSWORD_LEN + 1];
 
-	return(readpassphrase(prompt, buf, sizeof(buf), RPP_ECHO_OFF));
+	తిరిగి(readpassphrase(prompt, buf, పరిమాణం(buf), RPP_ECHO_OFF));
 }
-#endif
+#అయితే_ముగింపు
 
-static void handler(int s)
+స్థిర శూన్య handler(పూర్ణాంకం s)
 {
 
 	signo[s] = 1;
 }
-#endif /* HAVE_READPASSPHRASE */
+#అయితే_ముగింపు /* HAVE_READPASSPHRASE */

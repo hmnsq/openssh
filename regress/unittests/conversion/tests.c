@@ -5,25 +5,25 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <string.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <string.h>
 
-#include "../test_helper/test_helper.h"
+#అన్తర్భావ "../test_helper/test_helper.h"
 
-#include "misc.h"
+#అన్తర్భావ "misc.h"
 
-void
-tests(void)
+శూన్య
+tests(శూన్య)
 {
-	char buf[1024];
+	అక్షరం buf[1024];
 
-	TEST_START("conversion_convtime");
+	TEST_ప్రారంభం("conversion_convtime");
 	ASSERT_INT_EQ(convtime("0"), 0);
 	ASSERT_INT_EQ(convtime("1"), 1);
 	ASSERT_INT_EQ(convtime("1S"), 1);
@@ -37,21 +37,21 @@ tests(void)
 	ASSERT_INT_EQ(convtime("-7"), -1);
 	ASSERT_INT_EQ(convtime("-9d"), -1);
 	
-	/* overflow */
-	snprintf(buf, sizeof buf, "%llu", (unsigned long long)INT_MAX);
-	ASSERT_INT_EQ(convtime(buf), INT_MAX);
-	snprintf(buf, sizeof buf, "%llu", (unsigned long long)INT_MAX + 1);
+	/*అధికప్రవాహం*/
+	snprintf(buf, పరిమాణం buf, "%llu", (గుర్తులేని దీర్ఘ దీర్ఘ)గరిష్ఠ_పూర్ణాంకం);
+	ASSERT_INT_EQ(convtime(buf), గరిష్ఠ_పూర్ణాంకం);
+	snprintf(buf, పరిమాణం buf, "%llu", (గుర్తులేని దీర్ఘ దీర్ఘ)గరిష్ఠ_పూర్ణాంకం + 1);
 	ASSERT_INT_EQ(convtime(buf), -1);
 
 	/* overflow with multiplier */
-	snprintf(buf, sizeof buf, "%lluM", (unsigned long long)INT_MAX/60 + 1);
+	snprintf(buf, పరిమాణం buf, "%lluM", (గుర్తులేని దీర్ఘ దీర్ఘ)గరిష్ఠ_పూర్ణాంకం/60 + 1);
 	ASSERT_INT_EQ(convtime(buf), -1);
 	ASSERT_INT_EQ(convtime("1000000000000000000000w"), -1);
-	TEST_DONE();
+	TEST_పూర్తి();
 }
 
-void
-benchmarks(void)
+శూన్య
+benchmarks(శూన్య)
 {
-	printf("no benchmarks\n");
+	రాయి("no benchmarks\n");
 }

@@ -15,8 +15,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-struct monitor;
-struct ssh_sandbox;
+నిర్మాణం monitor;
+నిర్మాణం ssh_sandbox;
 
-struct ssh_sandbox *ssh_sandbox_init(struct monitor *);
-void ssh_sandbox_child(struct ssh_sandbox *);
+నిర్మాణం ssh_sandbox *ssh_sandbox_init(నిర్మాణం monitor *);
+శూన్య ssh_sandbox_బిడ్డ(నిర్మాణం ssh_sandbox *);

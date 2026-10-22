@@ -23,18 +23,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SSH_GSS_H
-#define _SSH_GSS_H
+#నిర్వచితం_కాకపోతే _SSH_GSS_H
+#నిర్వచించు _SSH_GSS_H
 
-#ifdef GSSAPI
+#నిర్వచితమైతే GSSAPI
 
-#ifdef HAVE_GSSAPI_H
-#include <gssapi.h>
-#elif defined(HAVE_GSSAPI_GSSAPI_H)
-#include <gssapi/gssapi.h>
-#endif
+#నిర్వచితమైతే HAVE_GSSAPI_H
+#అన్తర్భావ <gssapi.h>
+#లేదావేళ defined(HAVE_GSSAPI_GSSAPI_H)
+#అన్తర్భావ <gssapi/gssapi.h>
+#అయితే_ముగింపు
 
-#ifdef KRB5
+#నిర్వచితమైతే KRB5
 # ifndef HEIMDAL
 #  ifdef HAVE_GSSAPI_GENERIC_H
 #   include <gssapi_generic.h>
@@ -44,50 +44,50 @@
 
 /* Old MIT Kerberos doesn't seem to define GSS_NT_HOSTBASED_SERVICE */
 
-#  if !HAVE_DECL_GSS_C_NT_HOSTBASED_SERVICE
+#  ఒకవేళ !HAVE_DECL_GSS_C_NT_HOSTBASED_SERVICE
 #   define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
 #  endif /* !HAVE_DECL_GSS_C_NT_... */
 
 # endif /* !HEIMDAL */
-#endif /* KRB5 */
+#అయితే_ముగింపు /* KRB5 */
 
 /* draft-ietf-secsh-gsskeyex-06 */
-#define SSH2_MSG_USERAUTH_GSSAPI_RESPONSE		60
-#define SSH2_MSG_USERAUTH_GSSAPI_TOKEN			61
-#define SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE	63
-#define SSH2_MSG_USERAUTH_GSSAPI_ERROR			64
-#define SSH2_MSG_USERAUTH_GSSAPI_ERRTOK			65
-#define SSH2_MSG_USERAUTH_GSSAPI_MIC			66
+#నిర్వచించు SSH2_సందేశం_USERAUTH_GSSAPI_RESPONSE		60
+#నిర్వచించు SSH2_సందేశం_USERAUTH_GSSAPI_TOKEN			61
+#నిర్వచించు SSH2_సందేశం_USERAUTH_GSSAPI_EXCHANGE_COMPLETE	63
+#నిర్వచించు SSH2_సందేశం_USERAUTH_GSSAPI_ERROR			64
+#నిర్వచించు SSH2_సందేశం_USERAUTH_GSSAPI_ERRTOK			65
+#నిర్వచించు SSH2_సందేశం_USERAUTH_GSSAPI_MIC			66
 
-#define SSH_GSS_OIDTYPE 0x06
+#నిర్వచించు SSH_GSS_OIDTYPE 0x06
 
-typedef struct {
-	char *filename;
-	char *envvar;
-	char *envval;
-	void *data;
+రకనిర్వచనం నిర్మాణం {
+	అక్షరం *filename;
+	అక్షరం *envvar;
+	అక్షరం *envval;
+	శూన్య *దత్తాంశం;
 } ssh_gssapi_ccache;
 
-typedef struct {
-	gss_buffer_desc displayname;
-	gss_buffer_desc exportedname;
+రకనిర్వచనం నిర్మాణం {
+	gss_బఫరు_desc displayname;
+	gss_బఫరు_desc exportedname;
 	gss_cred_id_t creds;
-	struct ssh_gssapi_mech_struct *mech;
+	నిర్మాణం ssh_gssapi_mech_struct *mech;
 	ssh_gssapi_ccache store;
-	int userok;
+	పూర్ణాంకం userok;
 } ssh_gssapi_client;
 
-typedef struct ssh_gssapi_mech_struct {
-	char *enc_name;
-	char *name;
+రకనిర్వచనం నిర్మాణం ssh_gssapi_mech_struct {
+	అక్షరం *enc_name;
+	అక్షరం *name;
 	gss_OID_desc oid;
-	int (*dochild) (ssh_gssapi_client *);
-	int (*userok) (ssh_gssapi_client *, char *);
-	int (*localname) (ssh_gssapi_client *, char **);
-	void (*storecreds) (ssh_gssapi_client *);
+	పూర్ణాంకం (*dochild) (ssh_gssapi_client *);
+	పూర్ణాంకం (*userok) (ssh_gssapi_client *, అక్షరం *);
+	పూర్ణాంకం (*localname) (ssh_gssapi_client *, అక్షరం **);
+	శూన్య (*storecreds) (ssh_gssapi_client *);
 } ssh_gssapi_mech;
 
-typedef struct {
+రకనిర్వచనం నిర్మాణం {
 	OM_uint32	major; /* both */
 	OM_uint32	minor; /* both */
 	gss_ctx_id_t	context; /* both */
@@ -98,43 +98,43 @@ typedef struct {
 	gss_cred_id_t	client_creds; /* server */
 } Gssctxt;
 
-extern ssh_gssapi_mech *supported_mechs[];
+బాహ్య ssh_gssapi_mech *supported_mechs[];
 
-int  ssh_gssapi_check_oid(Gssctxt *, void *, size_t);
-void ssh_gssapi_set_oid_data(Gssctxt *, void *, size_t);
-void ssh_gssapi_set_oid(Gssctxt *, gss_OID);
-void ssh_gssapi_supported_oids(gss_OID_set *);
-void ssh_gssapi_prepare_supported_oids(void);
-OM_uint32 ssh_gssapi_test_oid_supported(OM_uint32 *, gss_OID, int *);
+పూర్ణాంకం  ssh_gssapi_check_oid(Gssctxt *, శూన్య *, కొలత_t);
+శూన్య ssh_gssapi_సమితి_oid_దత్తాంశం(Gssctxt *, శూన్య *, కొలత_t);
+శూన్య ssh_gssapi_సమితి_oid(Gssctxt *, gss_OID);
+శూన్య ssh_gssapi_supported_oids(gss_OID_సమితి *);
+శూన్య ssh_gssapi_prepare_supported_oids(శూన్య);
+OM_uint32 ssh_gssapi_test_oid_supported(OM_uint32 *, gss_OID, పూర్ణాంకం *);
 
-struct sshbuf;
-int ssh_gssapi_get_buffer_desc(struct sshbuf *, gss_buffer_desc *);
+నిర్మాణం sshbuf;
+పూర్ణాంకం ssh_gssapi_get_బఫరు_desc(నిర్మాణం sshbuf *, gss_బఫరు_desc *);
 
-OM_uint32 ssh_gssapi_import_name(Gssctxt *, const char *);
-OM_uint32 ssh_gssapi_init_ctx(Gssctxt *, int,
-    gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
+OM_uint32 ssh_gssapi_import_name(Gssctxt *, స్థిరరాశి అక్షరం *);
+OM_uint32 ssh_gssapi_init_ctx(Gssctxt *, పూర్ణాంకం,
+    gss_బఫరు_desc *, gss_బఫరు_desc *, OM_uint32 *);
 OM_uint32 ssh_gssapi_accept_ctx(Gssctxt *,
-    gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
+    gss_బఫరు_desc *, gss_బఫరు_desc *, OM_uint32 *);
 OM_uint32 ssh_gssapi_getclient(Gssctxt *, ssh_gssapi_client *);
-void ssh_gssapi_error(Gssctxt *);
-char *ssh_gssapi_last_error(Gssctxt *, OM_uint32 *, OM_uint32 *);
-void ssh_gssapi_build_ctx(Gssctxt **);
-void ssh_gssapi_delete_ctx(Gssctxt **);
-OM_uint32 ssh_gssapi_sign(Gssctxt *, gss_buffer_t, gss_buffer_t);
-void ssh_gssapi_buildmic(struct sshbuf *, const char *,
-    const char *, const char *, const struct sshbuf *);
-int ssh_gssapi_check_mechanism(Gssctxt **, gss_OID, const char *);
+శూన్య ssh_gssapi_error(Gssctxt *);
+అక్షరం *ssh_gssapi_చివరి_error(Gssctxt *, OM_uint32 *, OM_uint32 *);
+శూన్య ssh_gssapi_build_ctx(Gssctxt **);
+శూన్య ssh_gssapi_delete_ctx(Gssctxt **);
+OM_uint32 ssh_gssapi_sign(Gssctxt *, gss_బఫరు_t, gss_బఫరు_t);
+శూన్య ssh_gssapi_buildmic(నిర్మాణం sshbuf *, స్థిరరాశి అక్షరం *,
+    స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, స్థిరరాశి నిర్మాణం sshbuf *);
+పూర్ణాంకం ssh_gssapi_check_mechanism(Gssctxt **, gss_OID, స్థిరరాశి అక్షరం *);
 
 /* In the server */
 OM_uint32 ssh_gssapi_server_ctx(Gssctxt **, gss_OID);
-int ssh_gssapi_userok(char *name);
-OM_uint32 ssh_gssapi_checkmic(Gssctxt *, gss_buffer_t, gss_buffer_t);
-void ssh_gssapi_do_child(char ***, u_int *);
-void ssh_gssapi_cleanup_creds(void);
-void ssh_gssapi_storecreds(void);
-const char *ssh_gssapi_displayname(void);
-void ssh_gssapi_cleanup_global_client(void);
+పూర్ణాంకం ssh_gssapi_userok(అక్షరం *name);
+OM_uint32 ssh_gssapi_checkmic(Gssctxt *, gss_బఫరు_t, gss_బఫరు_t);
+శూన్య ssh_gssapi_do_బిడ్డ(అక్షరం ***, u_int *);
+శూన్య ssh_gssapi_cleanup_creds(శూన్య);
+శూన్య ssh_gssapi_storecreds(శూన్య);
+స్థిరరాశి అక్షరం *ssh_gssapi_displayname(శూన్య);
+శూన్య ssh_gssapi_cleanup_global_client(శూన్య);
 
-#endif /* GSSAPI */
+#అయితే_ముగింపు /* GSSAPI */
 
-#endif /* _SSH_GSS_H */
+#అయితే_ముగింపు /* _SSH_GSS_H */

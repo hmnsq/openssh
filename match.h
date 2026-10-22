@@ -11,20 +11,20 @@
  * incompatible with the protocol description in the RFC file, it must be
  * called by a name other than "ssh" or "Secure Shell".
  */
-#ifndef MATCH_H
-#define MATCH_H
+#నిర్వచితం_కాకపోతే సరిపోలిక_H
+#నిర్వచించు సరిపోలిక_H
 
-int	 match_pattern(const char *, const char *);
-int	 match_pattern_list(const char *, const char *, int);
-int	 match_usergroup_pattern_list(const char *, const char *);
-int	 match_hostname(const char *, const char *);
-int	 match_host_and_ip(const char *, const char *, const char *);
-int	 match_user(const char *, const char *, const char *, const char *);
-char	*match_list(const char *, const char *, u_int *);
-char	*match_filter_denylist(const char *, const char *);
-char	*match_filter_allowlist(const char *, const char *);
+పూర్ణాంకం	 సరిపోలిక_నమూనా(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
+పూర్ణాంకం	 సరిపోలిక_నమూనా_list(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, పూర్ణాంకం);
+పూర్ణాంకం	 సరిపోలిక_usergroup_నమూనా_list(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
+పూర్ణాంకం	 సరిపోలిక_hostname(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
+పూర్ణాంకం	 సరిపోలిక_host_and_ip(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
+పూర్ణాంకం	 సరిపోలిక_user(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
+అక్షరం	*సరిపోలిక_list(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, u_int *);
+అక్షరం	*సరిపోలిక_filter_denylist(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
+అక్షరం	*సరిపోలిక_filter_allowlist(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
 
 /* addrmatch.c */
-int	 addr_match_list(const char *, const char *);
-int	 addr_match_cidr_list(const char *, const char *);
-#endif
+పూర్ణాంకం	 addr_సరిపోలిక_list(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
+పూర్ణాంకం	 addr_సరిపోలిక_cidr_list(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
+#అయితే_ముగింపు

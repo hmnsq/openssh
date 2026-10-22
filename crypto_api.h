@@ -5,206 +5,206 @@
  * Placed in the public domain.
  */
 
-#ifndef crypto_api_h
-#define crypto_api_h
+#నిర్వచితం_కాకపోతే crypto_api_h
+#నిర్వచించు crypto_api_h
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <stdint.h>
-#include <stdlib.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
 
-typedef int8_t crypto_int8;
-typedef uint8_t crypto_uint8;
-typedef int16_t crypto_int16;
-typedef uint16_t crypto_uint16;
-typedef int32_t crypto_int32;
-typedef uint32_t crypto_uint32;
-typedef int64_t crypto_int64;
-typedef uint64_t crypto_uint64;
+రకనిర్వచనం int8_t crypto_int8;
+రకనిర్వచనం uint8_t crypto_uint8;
+రకనిర్వచనం int16_t crypto_int16;
+రకనిర్వచనం uint16_t crypto_uint16;
+రకనిర్వచనం int32_t crypto_int32;
+రకనిర్వచనం uint32_t crypto_uint32;
+రకనిర్వచనం int64_t crypto_int64;
+రకనిర్వచనం uint64_t crypto_uint64;
 
-#define randombytes(buf, buf_len) arc4random_buf((buf), (buf_len))
-#define small_random32() arc4random()
+#నిర్వచించు randombytes(buf, buf_len) arc4random_buf((buf), (buf_len))
+#నిర్వచించు small_random32() arc4random()
 
-#define crypto_hash_sha512_BYTES 64U
+#నిర్వచించు crypto_hash_sha512_బైట్లు 64U
 
-#ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-static inline int
-crypto_hash_sha512(unsigned char *out, const unsigned char *in,
-    unsigned long long inlen)
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ <openssl/evp.h>
+స్థిర అంతఃవరుస పూర్ణాంకం
+crypto_hash_sha512(గుర్తులేని అక్షరం *బహిర్గతం, స్థిరరాశి గుర్తులేని అక్షరం *లోపల,
+    గుర్తులేని దీర్ఘ దీర్ఘ inlen)
 {
 
-	if (!EVP_Digest(in, inlen, out, NULL, EVP_sha512(), NULL))
-		return -1;
-	return 0;
+	ఒకవేళ (!EVP_Digest(లోపల, inlen, బహిర్గతం, ఖాళీ, EVP_sha512(), ఖాళీ))
+		తిరిగి -1;
+	తిరిగి 0;
 }
-#else /* WITH_OPENSSL */
+#లేకపోతే /* WITH_OPENSSL */
 # ifdef HAVE_SHA2_H
 #  include <sha2.h>
 # endif
-static inline int
-crypto_hash_sha512(unsigned char *out, const unsigned char *in,
-    unsigned long long inlen)
+స్థిర అంతఃవరుస పూర్ణాంకం
+crypto_hash_sha512(గుర్తులేని అక్షరం *బహిర్గతం, స్థిరరాశి గుర్తులేని అక్షరం *లోపల,
+    గుర్తులేని దీర్ఘ దీర్ఘ inlen)
 {
 
 	SHA2_CTX ctx;
 
 	SHA512Init(&ctx);
-	SHA512Update(&ctx, in, inlen);
-	SHA512Final(out, &ctx);
-	return 0;
+	SHA512Update(&ctx, లోపల, inlen);
+	SHA512Final(బహిర్గతం, &ctx);
+	తిరిగి 0;
 }
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */
 
-#define crypto_sign_ed25519_SECRETKEYBYTES 64U
-#define crypto_sign_ed25519_PUBLICKEYBYTES 32U
-#define crypto_sign_ed25519_SEEDBYTES 32U
-#define crypto_sign_ed25519_BYTES 64U
+#నిర్వచించు crypto_sign_ed25519_SECRETKEYBYTES 64U
+#నిర్వచించు crypto_sign_ed25519_PUBLICKEYBYTES 32U
+#నిర్వచించు crypto_sign_ed25519_SEEDBYTES 32U
+#నిర్వచించు crypto_sign_ed25519_బైట్లు 64U
 
-int	crypto_sign_ed25519_detached(unsigned char *, unsigned long long *,
-    const unsigned char *, unsigned long long, const unsigned char *);
-int	crypto_sign_ed25519_verify_detached(const unsigned char *,
-    const unsigned char *, unsigned long long, const unsigned char *);
-int	crypto_sign_ed25519_keypair(unsigned char *, unsigned char *);
-int	crypto_sign_ed25519_seed_keypair(unsigned char *, unsigned char *,
-    const unsigned char *);
+పూర్ణాంకం	crypto_sign_ed25519_detached(గుర్తులేని అక్షరం *, గుర్తులేని దీర్ఘ దీర్ఘ *,
+    స్థిరరాశి గుర్తులేని అక్షరం *, గుర్తులేని దీర్ఘ దీర్ఘ, స్థిరరాశి గుర్తులేని అక్షరం *);
+పూర్ణాంకం	crypto_sign_ed25519_verify_detached(స్థిరరాశి గుర్తులేని అక్షరం *,
+    స్థిరరాశి గుర్తులేని అక్షరం *, గుర్తులేని దీర్ఘ దీర్ఘ, స్థిరరాశి గుర్తులేని అక్షరం *);
+పూర్ణాంకం	crypto_sign_ed25519_keypair(గుర్తులేని అక్షరం *, గుర్తులేని అక్షరం *);
+పూర్ణాంకం	crypto_sign_ed25519_విత్తనం_keypair(గుర్తులేని అక్షరం *, గుర్తులేని అక్షరం *,
+    స్థిరరాశి గుర్తులేని అక్షరం *);
 
-#define crypto_kem_sntrup761_PUBLICKEYBYTES 1158
-#define crypto_kem_sntrup761_SECRETKEYBYTES 1763
-#define crypto_kem_sntrup761_CIPHERTEXTBYTES 1039
-#define crypto_kem_sntrup761_BYTES 32
+#నిర్వచించు crypto_kem_sntrup761_PUBLICKEYBYTES 1158
+#నిర్వచించు crypto_kem_sntrup761_SECRETKEYBYTES 1763
+#నిర్వచించు crypto_kem_sntrup761_CIPHERTEXTBYTES 1039
+#నిర్వచించు crypto_kem_sntrup761_బైట్లు 32
 
-int	crypto_kem_sntrup761_enc(unsigned char *cstr, unsigned char *k,
-    const unsigned char *pk);
-int	crypto_kem_sntrup761_dec(unsigned char *k,
-    const unsigned char *cstr, const unsigned char *sk);
-int	crypto_kem_sntrup761_keypair(unsigned char *pk, unsigned char *sk);
+పూర్ణాంకం	crypto_kem_sntrup761_enc(గుర్తులేని అక్షరం *cstr, గుర్తులేని అక్షరం *k,
+    స్థిరరాశి గుర్తులేని అక్షరం *pk);
+పూర్ణాంకం	crypto_kem_sntrup761_dec(గుర్తులేని అక్షరం *k,
+    స్థిరరాశి గుర్తులేని అక్షరం *cstr, స్థిరరాశి గుర్తులేని అక్షరం *sk);
+పూర్ణాంకం	crypto_kem_sntrup761_keypair(గుర్తులేని అక్షరం *pk, గుర్తులేని అక్షరం *sk);
 
 /* ML-KEM-768 */
-#define crypto_kem_mlkem768_PUBLICKEYBYTES 1184
-#define crypto_kem_mlkem768_SECRETKEYBYTES 2400
-#define crypto_kem_mlkem768_CIPHERTEXTBYTES 1088
-#define crypto_kem_mlkem768_BYTES 32
-#define crypto_kem_mlkem768_ENCSEEDBYTES 32
-#define crypto_kem_mlkem768_KEYPAIRSEEDBYTES 64
+#నిర్వచించు crypto_kem_mlkem768_PUBLICKEYBYTES 1184
+#నిర్వచించు crypto_kem_mlkem768_SECRETKEYBYTES 2400
+#నిర్వచించు crypto_kem_mlkem768_CIPHERTEXTBYTES 1088
+#నిర్వచించు crypto_kem_mlkem768_బైట్లు 32
+#నిర్వచించు crypto_kem_mlkem768_ENCSEEDBYTES 32
+#నిర్వచించు crypto_kem_mlkem768_KEYPAIRSEEDBYTES 64
 
 /* Aliases for MLKEM768 */
-#define MLKEM768_PUBLICKEYBYTES crypto_kem_mlkem768_PUBLICKEYBYTES
-#define MLKEM768_SECRETKEYBYTES crypto_kem_mlkem768_SECRETKEYBYTES
-#define MLKEM768_CIPHERTEXTBYTES crypto_kem_mlkem768_CIPHERTEXTBYTES
-#define MLKEM768_BYTES crypto_kem_mlkem768_BYTES
+#నిర్వచించు MLKEM768_PUBLICKEYBYTES crypto_kem_mlkem768_PUBLICKEYBYTES
+#నిర్వచించు MLKEM768_SECRETKEYBYTES crypto_kem_mlkem768_SECRETKEYBYTES
+#నిర్వచించు MLKEM768_CIPHERTEXTBYTES crypto_kem_mlkem768_CIPHERTEXTBYTES
+#నిర్వచించు MLKEM768_బైట్లు crypto_kem_mlkem768_బైట్లు
 
-int crypto_kem_mlkem768_keypair(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
+పూర్ణాంకం crypto_kem_mlkem768_keypair(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
     uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES]);
-int crypto_kem_mlkem768_enc(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
-    uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
-    const uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES]);
-int crypto_kem_mlkem768_dec(uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
-    const uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
-    const uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES]);
-int crypto_kem_mlkem768_keypair_seeded(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
-    uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES], const uint8_t seed[64]);
-int crypto_kem_mlkem768_enc_seeded(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
-    uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
-    const uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
-    const uint8_t seed[32]);
+పూర్ణాంకం crypto_kem_mlkem768_enc(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
+    uint8_t shared_secret[crypto_kem_mlkem768_బైట్లు],
+    స్థిరరాశి uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES]);
+పూర్ణాంకం crypto_kem_mlkem768_dec(uint8_t shared_secret[crypto_kem_mlkem768_బైట్లు],
+    స్థిరరాశి uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
+    స్థిరరాశి uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES]);
+పూర్ణాంకం crypto_kem_mlkem768_keypair_seeded(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
+    uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES], స్థిరరాశి uint8_t విత్తనం[64]);
+పూర్ణాంకం crypto_kem_mlkem768_enc_seeded(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
+    uint8_t shared_secret[crypto_kem_mlkem768_బైట్లు],
+    స్థిరరాశి uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
+    స్థిరరాశి uint8_t విత్తనం[32]);
 
 /* ML-DSA-44 */
-#define MLDSA44_PUBLICKEYBYTES 1312
-#define MLDSA44_SECRETKEYBYTES 2560
-#define MLDSA44_SIGBYTES 2420
-#define MLDSA44_SEEDBYTES 32
+#నిర్వచించు MLDSA44_PUBLICKEYBYTES 1312
+#నిర్వచించు MLDSA44_SECRETKEYBYTES 2560
+#నిర్వచించు MLDSA44_SIGBYTES 2420
+#నిర్వచించు MLDSA44_SEEDBYTES 32
 
-int crypto_sign_mldsa44_keypair(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
+పూర్ణాంకం crypto_sign_mldsa44_keypair(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
     uint8_t sk[MLDSA44_SECRETKEYBYTES]);
-int crypto_sign_mldsa44(uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA44_SECRETKEYBYTES]);
-int crypto_sign_mldsa44_verify(const uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA44_PUBLICKEYBYTES]);
-int crypto_sign_mldsa44_keypair_seeded(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
-    uint8_t sk[MLDSA44_SECRETKEYBYTES], const uint8_t seed[MLDSA44_SEEDBYTES]);
-int crypto_sign_mldsa44_seeded(uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA44_SECRETKEYBYTES],
-    const uint8_t seed[MLDSA44_SEEDBYTES]);
+పూర్ణాంకం crypto_sign_mldsa44(uint8_t sig[MLDSA44_SIGBYTES],
+    స్థిరరాశి uint8_t *సందేశం, కొలత_t msglen,
+    స్థిరరాశి uint8_t *ctx, కొలత_t ctxlen,
+    స్థిరరాశి uint8_t sk[MLDSA44_SECRETKEYBYTES]);
+పూర్ణాంకం crypto_sign_mldsa44_verify(స్థిరరాశి uint8_t sig[MLDSA44_SIGBYTES],
+    స్థిరరాశి uint8_t *సందేశం, కొలత_t msglen,
+    స్థిరరాశి uint8_t *ctx, కొలత_t ctxlen,
+    స్థిరరాశి uint8_t pk[MLDSA44_PUBLICKEYBYTES]);
+పూర్ణాంకం crypto_sign_mldsa44_keypair_seeded(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
+    uint8_t sk[MLDSA44_SECRETKEYBYTES], స్థిరరాశి uint8_t విత్తనం[MLDSA44_SEEDBYTES]);
+పూర్ణాంకం crypto_sign_mldsa44_seeded(uint8_t sig[MLDSA44_SIGBYTES],
+    స్థిరరాశి uint8_t *సందేశం, కొలత_t msglen,
+    స్థిరరాశి uint8_t *ctx, కొలత_t ctxlen,
+    స్థిరరాశి uint8_t sk[MLDSA44_SECRETKEYBYTES],
+    స్థిరరాశి uint8_t విత్తనం[MLDSA44_SEEDBYTES]);
 
 /* ML-DSA-65 */
-#define MLDSA65_PUBLICKEYBYTES 1952
-#define MLDSA65_SECRETKEYBYTES 4032
-#define MLDSA65_SIGBYTES 3309
-#define MLDSA65_SEEDBYTES 32
+#నిర్వచించు MLDSA65_PUBLICKEYBYTES 1952
+#నిర్వచించు MLDSA65_SECRETKEYBYTES 4032
+#నిర్వచించు MLDSA65_SIGBYTES 3309
+#నిర్వచించు MLDSA65_SEEDBYTES 32
 
-#if 0
-int crypto_sign_mldsa65_keypair(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
+#ఒకవేళ 0
+పూర్ణాంకం crypto_sign_mldsa65_keypair(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
     uint8_t sk[MLDSA65_SECRETKEYBYTES]);
-int crypto_sign_mldsa65(uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA65_SECRETKEYBYTES]);
-int crypto_sign_mldsa65_verify(const uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA65_PUBLICKEYBYTES]);
-int crypto_sign_mldsa65_keypair_seeded(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
-    uint8_t sk[MLDSA65_SECRETKEYBYTES], const uint8_t seed[MLDSA65_SEEDBYTES]);
-int crypto_sign_mldsa65_seeded(uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA65_SECRETKEYBYTES],
-    const uint8_t seed[MLDSA65_SEEDBYTES]);
-#endif
+పూర్ణాంకం crypto_sign_mldsa65(uint8_t sig[MLDSA65_SIGBYTES],
+    స్థిరరాశి uint8_t *సందేశం, కొలత_t msglen,
+    స్థిరరాశి uint8_t *ctx, కొలత_t ctxlen,
+    స్థిరరాశి uint8_t sk[MLDSA65_SECRETKEYBYTES]);
+పూర్ణాంకం crypto_sign_mldsa65_verify(స్థిరరాశి uint8_t sig[MLDSA65_SIGBYTES],
+    స్థిరరాశి uint8_t *సందేశం, కొలత_t msglen,
+    స్థిరరాశి uint8_t *ctx, కొలత_t ctxlen,
+    స్థిరరాశి uint8_t pk[MLDSA65_PUBLICKEYBYTES]);
+పూర్ణాంకం crypto_sign_mldsa65_keypair_seeded(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
+    uint8_t sk[MLDSA65_SECRETKEYBYTES], స్థిరరాశి uint8_t విత్తనం[MLDSA65_SEEDBYTES]);
+పూర్ణాంకం crypto_sign_mldsa65_seeded(uint8_t sig[MLDSA65_SIGBYTES],
+    స్థిరరాశి uint8_t *సందేశం, కొలత_t msglen,
+    స్థిరరాశి uint8_t *ctx, కొలత_t ctxlen,
+    స్థిరరాశి uint8_t sk[MLDSA65_SECRETKEYBYTES],
+    స్థిరరాశి uint8_t విత్తనం[MLDSA65_SEEDBYTES]);
+#అయితే_ముగింపు
 
 /* ML-DSA-87 */
-#define MLDSA87_PUBLICKEYBYTES 2592
-#define MLDSA87_SECRETKEYBYTES 4896
-#define MLDSA87_SIGBYTES 4627
-#define MLDSA87_SEEDBYTES 32
+#నిర్వచించు MLDSA87_PUBLICKEYBYTES 2592
+#నిర్వచించు MLDSA87_SECRETKEYBYTES 4896
+#నిర్వచించు MLDSA87_SIGBYTES 4627
+#నిర్వచించు MLDSA87_SEEDBYTES 32
 
-int crypto_sign_mldsa87_keypair(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
+పూర్ణాంకం crypto_sign_mldsa87_keypair(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
     uint8_t sk[MLDSA87_SECRETKEYBYTES]);
-int crypto_sign_mldsa87(uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA87_SECRETKEYBYTES]);
-int crypto_sign_mldsa87_verify(const uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA87_PUBLICKEYBYTES]);
-int crypto_sign_mldsa87_keypair_seeded(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
-    uint8_t sk[MLDSA87_SECRETKEYBYTES], const uint8_t seed[MLDSA87_SEEDBYTES]);
-int crypto_sign_mldsa87_seeded(uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA87_SECRETKEYBYTES],
-    const uint8_t seed[MLDSA87_SEEDBYTES]);
+పూర్ణాంకం crypto_sign_mldsa87(uint8_t sig[MLDSA87_SIGBYTES],
+    స్థిరరాశి uint8_t *సందేశం, కొలత_t msglen,
+    స్థిరరాశి uint8_t *ctx, కొలత_t ctxlen,
+    స్థిరరాశి uint8_t sk[MLDSA87_SECRETKEYBYTES]);
+పూర్ణాంకం crypto_sign_mldsa87_verify(స్థిరరాశి uint8_t sig[MLDSA87_SIGBYTES],
+    స్థిరరాశి uint8_t *సందేశం, కొలత_t msglen,
+    స్థిరరాశి uint8_t *ctx, కొలత_t ctxlen,
+    స్థిరరాశి uint8_t pk[MLDSA87_PUBLICKEYBYTES]);
+పూర్ణాంకం crypto_sign_mldsa87_keypair_seeded(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
+    uint8_t sk[MLDSA87_SECRETKEYBYTES], స్థిరరాశి uint8_t విత్తనం[MLDSA87_SEEDBYTES]);
+పూర్ణాంకం crypto_sign_mldsa87_seeded(uint8_t sig[MLDSA87_SIGBYTES],
+    స్థిరరాశి uint8_t *సందేశం, కొలత_t msglen,
+    స్థిరరాశి uint8_t *ctx, కొలత_t ctxlen,
+    స్థిరరాశి uint8_t sk[MLDSA87_SECRETKEYBYTES],
+    స్థిరరాశి uint8_t విత్తనం[MLDSA87_SEEDBYTES]);
 
 /* MLDSA44-Ed25519-SHA512 */
-#define MLDSA44_ED25519_PK_SZ (MLDSA44_PUBLICKEYBYTES + crypto_sign_ed25519_PUBLICKEYBYTES)
-#define MLDSA44_ED25519_SK_SZ (MLDSA44_SEEDBYTES + crypto_sign_ed25519_SEEDBYTES)
-#define MLDSA44_ED25519_SIG_SZ (MLDSA44_SIGBYTES + crypto_sign_ed25519_BYTES)
+#నిర్వచించు MLDSA44_ED25519_PK_SZ (MLDSA44_PUBLICKEYBYTES + crypto_sign_ed25519_PUBLICKEYBYTES)
+#నిర్వచించు MLDSA44_ED25519_SK_SZ (MLDSA44_SEEDBYTES + crypto_sign_ed25519_SEEDBYTES)
+#నిర్వచించు MLDSA44_ED25519_SIG_SZ (MLDSA44_SIGBYTES + crypto_sign_ed25519_బైట్లు)
 
-int crypto_sign_mldsa44_ed25519_keygen(uint8_t pk[MLDSA44_ED25519_PK_SZ],
+పూర్ణాంకం crypto_sign_mldsa44_ed25519_keygen(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     uint8_t sk[MLDSA44_ED25519_SK_SZ]);
-int crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
+పూర్ణాంకం crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     uint8_t sk[MLDSA44_ED25519_SK_SZ],
-    const uint8_t mldsa_seed[MLDSA44_SEEDBYTES],
-    const uint8_t ed25519_seed[crypto_sign_ed25519_SEEDBYTES]);
-int crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA44_ED25519_SK_SZ]);
-int crypto_sign_mldsa44_ed25519_verify(const uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA44_ED25519_PK_SZ]);
+    స్థిరరాశి uint8_t mldsa_విత్తనం[MLDSA44_SEEDBYTES],
+    స్థిరరాశి uint8_t ed25519_విత్తనం[crypto_sign_ed25519_SEEDBYTES]);
+పూర్ణాంకం crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
+    స్థిరరాశి uint8_t *సందేశం, కొలత_t msglen,
+    స్థిరరాశి uint8_t *ctx, కొలత_t ctxlen,
+    స్థిరరాశి uint8_t sk[MLDSA44_ED25519_SK_SZ]);
+పూర్ణాంకం crypto_sign_mldsa44_ed25519_verify(స్థిరరాశి uint8_t sig[MLDSA44_ED25519_SIG_SZ],
+    స్థిరరాశి uint8_t *సందేశం, కొలత_t msglen,
+    స్థిరరాశి uint8_t *ctx, కొలత_t ctxlen,
+    స్థిరరాశి uint8_t pk[MLDSA44_ED25519_PK_SZ]);
 
 /* Utility */
-void sha3_256(uint8_t digest[32], const uint8_t *data, size_t len);
-void sha3_512(uint8_t digest[64], const uint8_t *data, size_t len);
+శూన్య sha3_256(uint8_t digest[32], స్థిరరాశి uint8_t *దత్తాంశం, కొలత_t len);
+శూన్య sha3_512(uint8_t digest[64], స్థిరరాశి uint8_t *దత్తాంశం, కొలత_t len);
 
-#endif /* crypto_api_h */
+#అయితే_ముగింపు /* crypto_api_h */

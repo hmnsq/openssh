@@ -35,98 +35,98 @@
 
 /* OPENBSD ORIGINAL: lib/libcurses/base/sigaction.c */
 
-#include "includes.h"
-#include <errno.h>
-#include <signal.h>
-#include "sigact.h"
+#అన్తర్భావ "includes.h"
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ "sigact.h"
 
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#ఒకవేళ !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+పూర్ణాంకం
+sigaction(పూర్ణాంకం sig, నిర్మాణం sigaction *sigact, నిర్మాణం sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
-	    osigact ? &osigact->sv : NULL);
+	తిరిగి sigvec(sig, sigact ? &sigact->sv : ఖాళీ,
+	    osigact ? &osigact->sv : ఖాళీ);
 }
 
-int
-sigemptyset (sigset_t *mask)
+పూర్ణాంకం
+sigemptyset (sigset_t *ముసుగు)
 {
-	if (!mask) {
+	ఒకవేళ (!ముసుగు) {
 		errno = EINVAL;
-		return -1;
+		తిరిగి -1;
 	}
-	*mask = 0;
-	return 0;
+	*ముసుగు = 0;
+	తిరిగి 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+పూర్ణాంకం
+sigprocmask (పూర్ణాంకం బహుళకం, sigset_t *ముసుగు, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
+	ఒకవేళ (!ముసుగు) {
 		errno = EINVAL;
-		return -1;
+		తిరిగి -1;
 	}
 
-	if (omask)
+	ఒకవేళ (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
-		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
-		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
-	current = *mask;
+	ఒకవేళ (బహుళకం == SIG_BLOCK)
+		current |= *ముసుగు;
+	లేకపోతే ఒకవేళ (బహుళకం == SIG_UNBLOCK)
+		current &= ~*ముసుగు;
+	లేకపోతే ఒకవేళ (బహుళకం == SIG_SETMASK)
+	current = *ముసుగు;
 
 	sigsetmask(current);
-	return 0;
+	తిరిగి 0;
 }
 
-int
-sigsuspend (sigset_t *mask)
+పూర్ణాంకం
+sigsuspend (sigset_t *ముసుగు)
 {
-	if (!mask) {
+	ఒకవేళ (!ముసుగు) {
 		errno = EINVAL;
-		return -1;
+		తిరిగి -1;
 	}
-	return sigpause(*mask);
+	తిరిగి sigpause(*ముసుగు);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+పూర్ణాంకం
+sigdelset (sigset_t *ముసుగు, పూర్ణాంకం sig)
 {
-	if (!mask) {
+	ఒకవేళ (!ముసుగు) {
 		errno = EINVAL;
-		return -1;
+		తిరిగి -1;
 	}
-	*mask &= ~sigmask(sig);
-	return 0;
+	*ముసుగు &= ~sigmask(sig);
+	తిరిగి 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+పూర్ణాంకం
+sigaddset (sigset_t *ముసుగు, పూర్ణాంకం sig)
 {
-	if (!mask) {
+	ఒకవేళ (!ముసుగు) {
 		errno = EINVAL;
-		return -1;
+		తిరిగి -1;
 	}
-	*mask |= sigmask(sig);
-	return 0;
+	*ముసుగు |= sigmask(sig);
+	తిరిగి 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+పూర్ణాంకం
+sigismember (sigset_t *ముసుగు, పూర్ణాంకం sig)
 {
-	if (!mask) {
+	ఒకవేళ (!ముసుగు) {
 		errno = EINVAL;
-		return -1;
+		తిరిగి -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	తిరిగి (*ముసుగు & sigmask(sig)) != 0;
 }
 
-#endif
+#అయితే_ముగింపు

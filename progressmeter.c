@@ -23,190 +23,190 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/uio.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/ioctl.h>
+#అన్తర్భావ <sys/uio.h>
 
-#include <errno.h>
-#include <limits.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <signal.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <unistd.h>
 
-#include "progressmeter.h"
-#include "atomicio.h"
-#include "misc.h"
-#include "utf8.h"
+#అన్తర్భావ "progressmeter.h"
+#అన్తర్భావ "atomicio.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "utf8.h"
 
-#define DEFAULT_WINSIZE 80
-#define MAX_WINSIZE 512
-#define UPDATE_INTERVAL 1	/* update the progress meter every second */
-#define STALL_TIME 5		/* we're stalled after this many seconds */
+#నిర్వచించు DEFAULT_WINSIZE 80
+#నిర్వచించు MAX_WINSIZE 512
+#నిర్వచించు UPDATE_INTERVAL 1	/* update the progress meter every second */
+#నిర్వచించు STALL_సమయం 5		/* we're stalled after this many seconds */
 
 /* determines whether we can output to the terminal */
-static int can_output(void);
+స్థిర పూర్ణాంకం can_output(శూన్య);
 
 /* window resizing */
-static void sig_winch(int);
-static void setscreensize(void);
+స్థిర శూన్య sig_winch(పూర్ణాంకం);
+స్థిర శూన్య setscreensize(శూన్య);
 
 /* signal handler for updating the progress meter */
-static void sig_alarm(int);
+స్థిర శూన్య sig_alarm(పూర్ణాంకం);
 
-static double start;		/* start progress */
-static double last_update;	/* last progress update */
-static const char *file;	/* name of the file being transferred */
-static off_t start_pos;		/* initial position of transfer */
-static off_t end_pos;		/* ending position of transfer */
-static off_t cur_pos;		/* transfer position as of last refresh */
-static volatile off_t *counter;	/* progress counter */
-static long stalled;		/* how long we have been stalled */
-static long long bytes_per_second; /* current speed in bytes per second */
-static int win_size;		/* terminal window size */
-static volatile sig_atomic_t win_resized; /* for window resizing */
-static volatile sig_atomic_t alarm_fired;
+స్థిర ద్విగుణ ప్రారంభం;		/* start progress */
+స్థిర ద్విగుణ చివరి_update;	/* last progress update */
+స్థిర స్థిరరాశి అక్షరం *file;	/* name of the file being transferred */
+స్థిర off_t ప్రారంభం_pos;		/* initial position of transfer */
+స్థిర off_t చివర_pos;		/* ending position of transfer */
+స్థిర off_t cur_pos;		/* transfer position as of last refresh */
+స్థిర అస్థిర off_t *counter;	/* progress counter */
+స్థిర దీర్ఘ stalled;		/* how long we have been stalled */
+స్థిర దీర్ఘ దీర్ఘ బైట్లు_చొప్పున_రెండవ; /* current speed in bytes per second */
+స్థిర పూర్ణాంకం win_కొలత;		/* terminal window size */
+స్థిర అస్థిర sig_atomic_t win_resized; /* for window resizing */
+స్థిర అస్థిర sig_atomic_t alarm_fired;
 
 /* units for format_size */
-static const char unit[] = " KMGT";
+స్థిర స్థిరరాశి అక్షరం unit[] = " KMGT";
 
-static int
-can_output(void)
+స్థిర పూర్ణాంకం
+can_output(శూన్య)
 {
-	return (getpgrp() == tcgetpgrp(STDOUT_FILENO));
+	తిరిగి (getpgrp() == tcgetpgrp(STDOUT_FILENO));
 }
 
 /* size needed to format integer type v, using (nbits(v) * log2(10) / 10) */
-#define STRING_SIZE(v) (((sizeof(v) * 8 * 4) / 10) + 1)
+#నిర్వచించు STRING_కొలత(v) (((పరిమాణం(v) * 8 * 4) / 10) + 1)
 
-static const char *
-format_rate(off_t bytes)
+స్థిర స్థిరరాశి అక్షరం *
+format_రేటు(off_t బైట్లు)
 {
-	int i;
-	static char buf[STRING_SIZE(bytes) * 2 + 16];
+	పూర్ణాంకం i;
+	స్థిర అక్షరం buf[STRING_కొలత(బైట్లు) * 2 + 16];
 
-	bytes *= 100;
-	for (i = 0; bytes >= 100*1000 && unit[i] != 'T'; i++)
-		bytes = (bytes + 512) / 1024;
+	బైట్లు *= 100;
+	కొరకు (i = 0; బైట్లు >= 100*1000 && unit[i] != 'T'; i++)
+		బైట్లు = (బైట్లు + 512) / 1024;
 	/* Display at least KB, even when rate is low or zero. */
-	if (i == 0) {
+	ఒకవేళ (i == 0) {
 		i++;
-		bytes = (bytes + 512) / 1024;
+		బైట్లు = (బైట్లు + 512) / 1024;
 	}
-	snprintf(buf, sizeof(buf), "%3lld.%1lld%cB",
-	    (long long) (bytes + 5) / 100,
-	    (long long) (bytes + 5) / 10 % 10,
+	snprintf(buf, పరిమాణం(buf), "%3lld.%1lld%cB",
+	    (దీర్ఘ దీర్ఘ) (బైట్లు + 5) / 100,
+	    (దీర్ఘ దీర్ఘ) (బైట్లు + 5) / 10 % 10,
 	    unit[i]);
-	return buf;
+	తిరిగి buf;
 }
 
-static const char *
-format_size(off_t bytes)
+స్థిర స్థిరరాశి అక్షరం *
+format_కొలత(off_t బైట్లు)
 {
-	int i;
-	static char buf[STRING_SIZE(bytes) + 16];
+	పూర్ణాంకం i;
+	స్థిర అక్షరం buf[STRING_కొలత(బైట్లు) + 16];
 
-	for (i = 0; bytes >= 10000 && unit[i] != 'T'; i++)
-		bytes = (bytes + 512) / 1024;
-	snprintf(buf, sizeof(buf), "%4lld%c%s",
-	    (long long) bytes,
+	కొరకు (i = 0; బైట్లు >= 10000 && unit[i] != 'T'; i++)
+		బైట్లు = (బైట్లు + 512) / 1024;
+	snprintf(buf, పరిమాణం(buf), "%4lld%c%s",
+	    (దీర్ఘ దీర్ఘ) బైట్లు,
 	    unit[i],
 	    i ? "B" : " ");
-	return buf;
+	తిరిగి buf;
 }
 
-void
-refresh_progress_meter(int force_update)
+శూన్య
+refresh_పురోగతి_meter(పూర్ణాంకం force_update)
 {
-	char *buf = NULL, *obuf = NULL;
+	అక్షరం *buf = ఖాళీ, *obuf = ఖాళీ;
 	off_t transferred;
-	double elapsed, now;
-	int percent;
-	off_t bytes_left;
-	long long cur_speed;
-	int hours, minutes, seconds;
-	int file_len, cols;
+	ద్విగుణ elapsed, now;
+	పూర్ణాంకం percent;
+	off_t బైట్లు_ఎడమ;
+	దీర్ఘ దీర్ఘ cur_వేగం;
+	పూర్ణాంకం hours, minutes, seconds;
+	పూర్ణాంకం file_len, నిలువుల_సంఖ్య;
 
-	if (file == NULL || (!force_update && !alarm_fired && !win_resized) ||
+	ఒకవేళ (file == ఖాళీ || (!force_update && !alarm_fired && !win_resized) ||
 	    !can_output())
-		return;
+		తిరిగి;
 	alarm_fired = 0;
 
-	if (win_resized) {
+	ఒకవేళ (win_resized) {
 		setscreensize();
 		win_resized = 0;
 	}
 
-	transferred = *counter - (cur_pos ? cur_pos : start_pos);
+	transferred = *counter - (cur_pos ? cur_pos : ప్రారంభం_pos);
 	cur_pos = *counter;
 	now = monotime_double();
-	bytes_left = end_pos - cur_pos;
+	బైట్లు_ఎడమ = చివర_pos - cur_pos;
 
-	if (bytes_left > 0)
-		elapsed = now - last_update;
-	else {
-		elapsed = now - start;
+	ఒకవేళ (బైట్లు_ఎడమ > 0)
+		elapsed = now - చివరి_update;
+	లేకపోతే {
+		elapsed = now - ప్రారంభం;
 		/* Calculate true total speed when done */
-		transferred = end_pos - start_pos;
-		bytes_per_second = 0;
+		transferred = చివర_pos - ప్రారంభం_pos;
+		బైట్లు_చొప్పున_రెండవ = 0;
 	}
 
 	/* calculate speed */
-	if (elapsed != 0)
-		cur_speed = (transferred / elapsed);
-	else
-		cur_speed = transferred;
+	ఒకవేళ (elapsed != 0)
+		cur_వేగం = (transferred / elapsed);
+	లేకపోతే
+		cur_వేగం = transferred;
 
-#define AGE_FACTOR 0.9
-	if (bytes_per_second != 0) {
-		bytes_per_second = (bytes_per_second * AGE_FACTOR) +
-		    (cur_speed * (1.0 - AGE_FACTOR));
-	} else
-		bytes_per_second = cur_speed;
+#నిర్వచించు AGE_గుణకం 0.9
+	ఒకవేళ (బైట్లు_చొప్పున_రెండవ != 0) {
+		బైట్లు_చొప్పున_రెండవ = (బైట్లు_చొప్పున_రెండవ * AGE_గుణకం) +
+		    (cur_వేగం * (1.0 - AGE_గుణకం));
+	} లేకపోతే
+		బైట్లు_చొప్పున_రెండవ = cur_వేగం;
 
-	last_update = now;
+	చివరి_update = now;
 
 	/* Don't bother if we can't even display the completion percentage */
-	if (win_size < 4)
-		return;
+	ఒకవేళ (win_కొలత < 4)
+		తిరిగి;
 
 	/* filename */
-	file_len = cols = win_size - 36;
-	if (file_len > 0) {
-		asmprintf(&buf, INT_MAX, &cols, "%-*s", file_len, file);
+	file_len = నిలువుల_సంఖ్య = win_కొలత - 36;
+	ఒకవేళ (file_len > 0) {
+		asmprintf(&buf, గరిష్ఠ_పూర్ణాంకం, &నిలువుల_సంఖ్య, "%-*s", file_len, file);
 		/* If we used fewer columns than expected then pad */
-		if (cols < file_len)
-			xextendf(&buf, NULL, "%*s", file_len - cols, "");
+		ఒకవేళ (నిలువుల_సంఖ్య < file_len)
+			xextendf(&buf, ఖాళీ, "%*s", file_len - నిలువుల_సంఖ్య, "");
 	}
 	/* percent of transfer done */
-	if (end_pos == 0 || cur_pos == end_pos)
+	ఒకవేళ (చివర_pos == 0 || cur_pos == చివర_pos)
 		percent = 100;
-	else
-		percent = ((float)cur_pos / end_pos) * 100;
+	లేకపోతే
+		percent = ((దశాంశం)cur_pos / చివర_pos) * 100;
 
 	/* percent / amount transferred / bandwidth usage */
-	xextendf(&buf, NULL, " %3d%% %s %s/s ", percent, format_size(cur_pos),
-	    format_rate((off_t)bytes_per_second));
+	xextendf(&buf, ఖాళీ, " %3d%% %s %s/s ", percent, format_కొలత(cur_pos),
+	    format_రేటు((off_t)బైట్లు_చొప్పున_రెండవ));
 
 	/* ETA */
-	if (!transferred)
+	ఒకవేళ (!transferred)
 		stalled += elapsed;
-	else
+	లేకపోతే
 		stalled = 0;
 
-	if (stalled >= STALL_TIME)
-		xextendf(&buf, NULL, "- stalled -");
-	else if (bytes_per_second == 0 && bytes_left)
-		xextendf(&buf, NULL, "  --:-- ETA");
-	else {
-		if (bytes_left > 0)
-			seconds = bytes_left / bytes_per_second;
-		else
+	ఒకవేళ (stalled >= STALL_సమయం)
+		xextendf(&buf, ఖాళీ, "- stalled -");
+	లేకపోతే ఒకవేళ (బైట్లు_చొప్పున_రెండవ == 0 && బైట్లు_ఎడమ)
+		xextendf(&buf, ఖాళీ, "  --:-- ETA");
+	లేకపోతే {
+		ఒకవేళ (బైట్లు_ఎడమ > 0)
+			seconds = బైట్లు_ఎడమ / బైట్లు_చొప్పున_రెండవ;
+		లేకపోతే
 			seconds = elapsed;
 
 		hours = seconds / 3600;
@@ -214,90 +214,90 @@ refresh_progress_meter(int force_update)
 		minutes = seconds / 60;
 		seconds -= minutes * 60;
 
-		if (hours != 0) {
-			xextendf(&buf, NULL, "%d:%02d:%02d",
+		ఒకవేళ (hours != 0) {
+			xextendf(&buf, ఖాళీ, "%d:%02d:%02d",
 			    hours, minutes, seconds);
-		} else
-			xextendf(&buf, NULL, "  %02d:%02d", minutes, seconds);
+		} లేకపోతే
+			xextendf(&buf, ఖాళీ, "  %02d:%02d", minutes, seconds);
 
-		if (bytes_left > 0)
-			xextendf(&buf, NULL, " ETA");
-		else
-			xextendf(&buf, NULL, "    ");
+		ఒకవేళ (బైట్లు_ఎడమ > 0)
+			xextendf(&buf, ఖాళీ, " ETA");
+		లేకపోతే
+			xextendf(&buf, ఖాళీ, "    ");
 	}
 
 	/* Finally, truncate string at window width */
-	cols = win_size - 1;
-	asmprintf(&obuf, INT_MAX, &cols, " %s", buf);
-	if (obuf != NULL) {
+	నిలువుల_సంఖ్య = win_కొలత - 1;
+	asmprintf(&obuf, గరిష్ఠ_పూర్ణాంకం, &నిలువుల_సంఖ్య, " %s", buf);
+	ఒకవేళ (obuf != ఖాళీ) {
 		*obuf = '\r'; /* must insert as asmprintf() would escape it */
-		atomicio(vwrite, STDOUT_FILENO, obuf, strlen(obuf));
+		atomicio(vwrite, STDOUT_FILENO, obuf, అక్షరశ్రేణి_పొడవు(obuf));
 	}
-	free(buf);
-	free(obuf);
+	విడుదల(buf);
+	విడుదల(obuf);
 }
 
-static void
-sig_alarm(int ignore)
+స్థిర శూన్య
+sig_alarm(పూర్ణాంకం ignore)
 {
 	alarm_fired = 1;
 	alarm(UPDATE_INTERVAL);
 }
 
-void
-start_progress_meter(const char *f, off_t filesize, off_t *ctr)
+శూన్య
+ప్రారంభం_పురోగతి_meter(స్థిరరాశి అక్షరం *f, off_t filesize, off_t *ctr)
 {
-	start = last_update = monotime_double();
+	ప్రారంభం = చివరి_update = monotime_double();
 	file = f;
-	start_pos = *ctr;
-	end_pos = filesize;
+	ప్రారంభం_pos = *ctr;
+	చివర_pos = filesize;
 	cur_pos = 0;
 	counter = ctr;
 	stalled = 0;
-	bytes_per_second = 0;
+	బైట్లు_చొప్పున_రెండవ = 0;
 
 	setscreensize();
-	refresh_progress_meter(1);
+	refresh_పురోగతి_meter(1);
 
 	ssh_signal(SIGALRM, sig_alarm);
 	ssh_signal(SIGWINCH, sig_winch);
 	alarm(UPDATE_INTERVAL);
 }
 
-void
-stop_progress_meter(void)
+శూన్య
+stop_పురోగతి_meter(శూన్య)
 {
 	alarm(0);
 
-	if (!can_output())
-		return;
+	ఒకవేళ (!can_output())
+		తిరిగి;
 
 	/* Ensure we complete the progress */
-	if (cur_pos != end_pos)
-		refresh_progress_meter(1);
+	ఒకవేళ (cur_pos != చివర_pos)
+		refresh_పురోగతి_meter(1);
 
 	atomicio(vwrite, STDOUT_FILENO, "\n", 1);
-	file = NULL;
+	file = ఖాళీ;
 }
 
-static void
-sig_winch(int sig)
+స్థిర శూన్య
+sig_winch(పూర్ణాంకం sig)
 {
 	win_resized = 1;
 }
 
-static void
-setscreensize(void)
+స్థిర శూన్య
+setscreensize(శూన్య)
 {
-	struct winsize winsize;
+	నిర్మాణం winsize winsize;
 
-	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &winsize) != -1 &&
-	    winsize.ws_col != 0) {
-		if (winsize.ws_col > MAX_WINSIZE)
-			win_size = MAX_WINSIZE;
-		else
-			win_size = winsize.ws_col;
-	} else
-		win_size = DEFAULT_WINSIZE;
-	win_size += 1;					/* trailing \0 */
+	ఒకవేళ (ioctl(STDOUT_FILENO, TIOCGWINSZ, &winsize) != -1 &&
+	    winsize.ws_నిలువు != 0) {
+		ఒకవేళ (winsize.ws_నిలువు > MAX_WINSIZE)
+			win_కొలత = MAX_WINSIZE;
+		లేకపోతే
+			win_కొలత = winsize.ws_నిలువు;
+	} లేకపోతే
+		win_కొలత = DEFAULT_WINSIZE;
+	win_కొలత += 1;					/* trailing \0 */
 }

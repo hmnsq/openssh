@@ -23,35 +23,35 @@
  *
  */
 
-#ifndef _NEXT_POSIX_H
-#define _NEXT_POSIX_H
+#నిర్వచితం_కాకపోతే తదుపరి_POSIX_H
+#నిర్వచించు తదుపరి_POSIX_H
 
-#ifdef HAVE_NEXT
-#include <sys/dir.h>
+#నిర్వచితమైతే HAVE_తదుపరి
+#అన్తర్భావ <sys/dir.h>
 
 /* NGROUPS_MAX is behind -lposix.  Use the BSD version which is NGROUPS */
-#undef NGROUPS_MAX
-#define NGROUPS_MAX NGROUPS
+#నిర్వచనం_రద్దు NGROUPS_MAX
+#నిర్వచించు NGROUPS_MAX NGROUPS
 
 /* NeXT's readdir() is BSD (struct direct) not POSIX (struct dirent) */
-#define dirent direct
+#నిర్వచించు dirent direct
 
 /* Swap out NeXT's BSD wait() for a more POSIX compliant one */
-pid_t posix_wait(int *);
-#define wait(a) posix_wait(a)
+pid_t posix_wait(పూర్ణాంకం *);
+#నిర్వచించు wait(a) posix_wait(a)
 
 /* #ifdef wrapped functions that need defining for clean compiling */
-pid_t getppid(void);
-void vhangup(void);
-int innetgr(const char *, const char *, const char *, const char *);
+pid_t getppid(శూన్య);
+శూన్య vhangup(శూన్య);
+పూర్ణాంకం innetgr(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
 
 /* TERMCAP */
-int tcgetattr(int, struct termios *);
-int tcsetattr(int, int, const struct termios *);
-int tcsetpgrp(int, pid_t);
-speed_t cfgetospeed(const struct termios *);
-speed_t cfgetispeed(const struct termios *);
-int cfsetospeed(struct termios *, int);
-int cfsetispeed(struct termios *, int);
-#endif /* HAVE_NEXT */
-#endif /* _NEXT_POSIX_H */
+పూర్ణాంకం tcgetattr(పూర్ణాంకం, నిర్మాణం termios *);
+పూర్ణాంకం tcsetattr(పూర్ణాంకం, పూర్ణాంకం, స్థిరరాశి నిర్మాణం termios *);
+పూర్ణాంకం tcsetpgrp(పూర్ణాంకం, pid_t);
+speed_t cfgetospeed(స్థిరరాశి నిర్మాణం termios *);
+speed_t cfgetispeed(స్థిరరాశి నిర్మాణం termios *);
+పూర్ణాంకం cfsetospeed(నిర్మాణం termios *, పూర్ణాంకం);
+పూర్ణాంకం cfsetispeed(నిర్మాణం termios *, పూర్ణాంకం);
+#అయితే_ముగింపు /* HAVE_NEXT */
+#అయితే_ముగింపు /* _NEXT_POSIX_H */

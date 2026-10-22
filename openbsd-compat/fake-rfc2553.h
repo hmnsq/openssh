@@ -35,142 +35,142 @@
  * that ai_family is AF_INET. Don't use it for another purpose.
  */
 
-#ifndef _FAKE_RFC2553_H
-#define _FAKE_RFC2553_H
+#నిర్వచితం_కాకపోతే _FAKE_RFC2553_H
+#నిర్వచించు _FAKE_RFC2553_H
 
-#include "includes.h"
-#include <sys/types.h>
-#if defined(HAVE_NETDB_H)
+#అన్తర్భావ "includes.h"
+#అన్తర్భావ <sys/types.h>
+#ఒకవేళ defined(HAVE_NETDB_H)
 # include <netdb.h>
-#endif
+#అయితే_ముగింపు
 
 /*
  * First, socket and INET6 related definitions
  */
-#ifndef HAVE_STRUCT_SOCKADDR_STORAGE
+#నిర్వచితం_కాకపోతే HAVE_STRUCT_SOCKADDR_STORAGE
 # define	_SS_MAXSIZE	128	/* Implementation specific max size */
-# define       _SS_PADSIZE     (_SS_MAXSIZE - sizeof (struct sockaddr))
-struct sockaddr_storage {
-	struct sockaddr	ss_sa;
-	char		__ss_pad2[_SS_PADSIZE];
+# define       _SS_PADSIZE     (_SS_MAXSIZE - పరిమాణం (నిర్మాణం sockaddr))
+నిర్మాణం sockaddr_storage {
+	నిర్మాణం sockaddr	ss_sa;
+	అక్షరం		__ss_pad2[_SS_PADSIZE];
 };
 # define ss_family ss_sa.sa_family
-#endif /* !HAVE_STRUCT_SOCKADDR_STORAGE */
+#అయితే_ముగింపు /* !HAVE_STRUCT_SOCKADDR_STORAGE */
 
-#ifndef IN6_IS_ADDR_LOOPBACK
+#నిర్వచితం_కాకపోతే IN6_IS_ADDR_LOOPBACK
 # define IN6_IS_ADDR_LOOPBACK(a) \
 	(((u_int32_t *)(a))[0] == 0 && ((u_int32_t *)(a))[1] == 0 && \
 	 ((u_int32_t *)(a))[2] == 0 && ((u_int32_t *)(a))[3] == htonl(1))
-#endif /* !IN6_IS_ADDR_LOOPBACK */
+#అయితే_ముగింపు /* !IN6_IS_ADDR_LOOPBACK */
 
-#ifndef HAVE_STRUCT_IN6_ADDR
-struct in6_addr {
+#నిర్వచితం_కాకపోతే HAVE_STRUCT_IN6_ADDR
+నిర్మాణం in6_addr {
 	u_int8_t	s6_addr[16];
 };
-#endif /* !HAVE_STRUCT_IN6_ADDR */
+#అయితే_ముగింపు /* !HAVE_STRUCT_IN6_ADDR */
 
-#ifndef HAVE_STRUCT_SOCKADDR_IN6
-struct sockaddr_in6 {
-	unsigned short	sin6_family;
+#నిర్వచితం_కాకపోతే HAVE_STRUCT_SOCKADDR_IN6
+నిర్మాణం sockaddr_in6 {
+	గుర్తులేని పొట్టి	sin6_family;
 	u_int16_t	sin6_port;
 	u_int32_t	sin6_flowinfo;
-	struct in6_addr	sin6_addr;
+	నిర్మాణం in6_addr	sin6_addr;
 	u_int32_t	sin6_scope_id;
 };
-#endif /* !HAVE_STRUCT_SOCKADDR_IN6 */
+#అయితే_ముగింపు /* !HAVE_STRUCT_SOCKADDR_IN6 */
 
-#ifndef AF_INET6
+#నిర్వచితం_కాకపోతే AF_INET6
 /* Define it to something that should never appear */
-#define AF_INET6 AF_MAX
-#endif
+#నిర్వచించు AF_INET6 AF_MAX
+#అయితే_ముగింపు
 
 /*
  * Next, RFC2553 name / address resolution API
  */
 
-#ifndef NI_NUMERICHOST
+#నిర్వచితం_కాకపోతే NI_NUMERICHOST
 # define NI_NUMERICHOST    (1)
-#endif
-#ifndef NI_NAMEREQD
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే NI_NAMEREQD
 # define NI_NAMEREQD       (1<<1)
-#endif
-#ifndef NI_NUMERICSERV
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే NI_NUMERICSERV
 # define NI_NUMERICSERV    (1<<2)
-#endif
+#అయితే_ముగింపు
 
-#ifndef AI_PASSIVE
+#నిర్వచితం_కాకపోతే AI_PASSIVE
 # define AI_PASSIVE		(1)
-#endif
-#ifndef AI_CANONNAME
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే AI_CANONNAME
 # define AI_CANONNAME		(1<<1)
-#endif
-#ifndef AI_NUMERICHOST
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే AI_NUMERICHOST
 # define AI_NUMERICHOST		(1<<2)
-#endif
-#ifndef AI_NUMERICSERV
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే AI_NUMERICSERV
 # define AI_NUMERICSERV		(1<<3)
-#endif
+#అయితే_ముగింపు
 
-#ifndef NI_MAXSERV
+#నిర్వచితం_కాకపోతే NI_MAXSERV
 # define NI_MAXSERV 32
-#endif /* !NI_MAXSERV */
-#ifndef NI_MAXHOST
+#అయితే_ముగింపు /* !NI_MAXSERV */
+#నిర్వచితం_కాకపోతే NI_MAXHOST
 # define NI_MAXHOST 1025
-#endif /* !NI_MAXHOST */
+#అయితే_ముగింపు /* !NI_MAXHOST */
 
-#ifndef EAI_NODATA
-# define EAI_NODATA	(INT_MAX - 1)
-#endif
-#ifndef EAI_MEMORY
-# define EAI_MEMORY	(INT_MAX - 2)
-#endif
-#ifndef EAI_NONAME
-# define EAI_NONAME	(INT_MAX - 3)
-#endif
-#ifndef EAI_SYSTEM
-# define EAI_SYSTEM	(INT_MAX - 4)
-#endif
-#ifndef EAI_FAMILY
-# define EAI_FAMILY	(INT_MAX - 5)
-#endif
+#నిర్వచితం_కాకపోతే EAI_NODATA
+# define EAI_NODATA	(గరిష్ఠ_పూర్ణాంకం - 1)
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే EAI_MEMORY
+# define EAI_MEMORY	(గరిష్ఠ_పూర్ణాంకం - 2)
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే EAI_NONAME
+# define EAI_NONAME	(గరిష్ఠ_పూర్ణాంకం - 3)
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే EAI_SYSTEM
+# define EAI_SYSTEM	(గరిష్ఠ_పూర్ణాంకం - 4)
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే EAI_FAMILY
+# define EAI_FAMILY	(గరిష్ఠ_పూర్ణాంకం - 5)
+#అయితే_ముగింపు
 
-#ifndef HAVE_STRUCT_ADDRINFO
-struct addrinfo {
-	int	ai_flags;	/* AI_PASSIVE, AI_CANONNAME */
-	int	ai_family;	/* PF_xxx */
-	int	ai_socktype;	/* SOCK_xxx */
-	int	ai_protocol;	/* 0 or IPPROTO_xxx for IPv4 and IPv6 */
-	size_t	ai_addrlen;	/* length of ai_addr */
-	char	*ai_canonname;	/* canonical name for hostname */
-	struct sockaddr *ai_addr;	/* binary address */
-	struct addrinfo *ai_next;	/* next structure in linked list */
+#నిర్వచితం_కాకపోతే HAVE_STRUCT_ADDRINFO
+నిర్మాణం addrinfo {
+	పూర్ణాంకం	ai_flags;	/* AI_PASSIVE, AI_CANONNAME */
+	పూర్ణాంకం	ai_family;	/* PF_xxx */
+	పూర్ణాంకం	ai_socktype;	/* SOCK_xxx */
+	పూర్ణాంకం	ai_protocol;	/* 0 or IPPROTO_xxx for IPv4 and IPv6 */
+	కొలత_t	ai_addrlen;	/* length of ai_addr */
+	అక్షరం	*ai_canonname;	/* canonical name for hostname */
+	నిర్మాణం sockaddr *ai_addr;	/* binary address */
+	నిర్మాణం addrinfo *ai_next;	/* next structure in linked list */
 };
-#endif /* !HAVE_STRUCT_ADDRINFO */
+#అయితే_ముగింపు /* !HAVE_STRUCT_ADDRINFO */
 
-#ifndef HAVE_GETADDRINFO
-#ifdef getaddrinfo
+#నిర్వచితం_కాకపోతే HAVE_GETADDRINFO
+#నిర్వచితమైతే getaddrinfo
 # undef getaddrinfo
-#endif
-#define getaddrinfo(a,b,c,d)	(ssh_getaddrinfo(a,b,c,d))
-int getaddrinfo(const char *, const char *,
-    const struct addrinfo *, struct addrinfo **);
-#endif /* !HAVE_GETADDRINFO */
+#అయితే_ముగింపు
+#నిర్వచించు getaddrinfo(a,b,c,d)	(ssh_getaddrinfo(a,b,c,d))
+పూర్ణాంకం getaddrinfo(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *,
+    స్థిరరాశి నిర్మాణం addrinfo *, నిర్మాణం addrinfo **);
+#అయితే_ముగింపు /* !HAVE_GETADDRINFO */
 
-#if !defined(HAVE_GAI_STRERROR) && !defined(HAVE_CONST_GAI_STRERROR_PROTO)
-#define gai_strerror(a)		(_ssh_compat_gai_strerror(a))
-char *gai_strerror(int);
-#endif /* !HAVE_GAI_STRERROR */
+#ఒకవేళ !defined(HAVE_GAI_STRERROR) && !defined(HAVE_CONST_GAI_STRERROR_PROTO)
+#నిర్వచించు gai_strerror(a)		(_ssh_compat_gai_strerror(a))
+అక్షరం *gai_strerror(పూర్ణాంకం);
+#అయితే_ముగింపు /* !HAVE_GAI_STRERROR */
 
-#ifndef HAVE_FREEADDRINFO
-#define freeaddrinfo(a)		(ssh_freeaddrinfo(a))
-void freeaddrinfo(struct addrinfo *);
-#endif /* !HAVE_FREEADDRINFO */
+#నిర్వచితం_కాకపోతే HAVE_FREEADDRINFO
+#నిర్వచించు freeaddrinfo(a)		(ssh_freeaddrinfo(a))
+శూన్య freeaddrinfo(నిర్మాణం addrinfo *);
+#అయితే_ముగింపు /* !HAVE_FREEADDRINFO */
 
-#ifndef HAVE_GETNAMEINFO
-#define getnameinfo(a,b,c,d,e,f,g) (ssh_getnameinfo(a,b,c,d,e,f,g))
-int getnameinfo(const struct sockaddr *, size_t, char *, size_t,
-    char *, size_t, int);
-#endif /* !HAVE_GETNAMEINFO */
+#నిర్వచితం_కాకపోతే HAVE_GETNAMEINFO
+#నిర్వచించు getnameinfo(a,b,c,d,e,f,g) (ssh_getnameinfo(a,b,c,d,e,f,g))
+పూర్ణాంకం getnameinfo(స్థిరరాశి నిర్మాణం sockaddr *, కొలత_t, అక్షరం *, కొలత_t,
+    అక్షరం *, కొలత_t, పూర్ణాంకం);
+#అయితే_ముగింపు /* !HAVE_GETNAMEINFO */
 
-#endif /* !_FAKE_RFC2553_H */
+#అయితే_ముగింపు /* !_FAKE_RFC2553_H */
 

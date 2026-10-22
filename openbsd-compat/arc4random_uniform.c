@@ -18,12 +18,12 @@
 
 /* OPENBSD ORIGINAL: lib/libc/crypto/arc4random_uniform.c */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <stdint.h>
-#include <stdlib.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
 
-#ifndef HAVE_ARC4RANDOM_UNIFORM
+#నిర్వచితం_కాకపోతే HAVE_ARC4_RANDOM_ఏకరీతి
 /*
  * Calculate a uniformly distributed random number less than upper_bound
  * avoiding "modulo bias".
@@ -35,15 +35,15 @@
  * after reduction modulo upper_bound.
  */
 uint32_t
-arc4random_uniform(uint32_t upper_bound)
+arc4random_ఏకరీతి(uint32_t పై_bound)
 {
 	uint32_t r, min;
 
-	if (upper_bound < 2)
-		return 0;
+	ఒకవేళ (పై_bound < 2)
+		తిరిగి 0;
 
 	/* 2**32 % x == (2**32 - x) % x */
-	min = -upper_bound % upper_bound;
+	min = -పై_bound % పై_bound;
 
 	/*
 	 * This could theoretically loop forever but each retry has
@@ -51,12 +51,12 @@ arc4random_uniform(uint32_t upper_bound)
 	 * number inside the range we need, so it should rarely need
 	 * to re-roll.
 	 */
-	for (;;) {
+	కొరకు (;;) {
 		r = arc4random();
-		if (r >= min)
-			break;
+		ఒకవేళ (r >= min)
+			ఆపు;
 	}
 
-	return r % upper_bound;
+	తిరిగి r % పై_bound;
 }
-#endif /* !HAVE_ARC4RANDOM_UNIFORM */
+#అయితే_ముగింపు /* !HAVE_ARC4RANDOM_UNIFORM */

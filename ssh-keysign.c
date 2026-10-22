@@ -23,286 +23,286 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <fcntl.h>
-#include <paths.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <paths.h>
+#అన్తర్భావ <pwd.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <errno.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#include <openssl/rand.h>
-#include <openssl/rsa.h>
-#include "openbsd-compat/openssl-compat.h"
-#endif
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ <openssl/evp.h>
+#అన్తర్భావ <openssl/rand.h>
+#అన్తర్భావ <openssl/rsa.h>
+#అన్తర్భావ "openbsd-compat/openssl-compat.h"
+#అయితే_ముగింపు
 
-#include "xmalloc.h"
-#include "log.h"
-#include "sshkey.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "authfile.h"
-#include "msg.h"
-#include "canohost.h"
-#include "pathnames.h"
-#include "readconf.h"
-#include "uidswap.h"
-#include "ssherr.h"
+#అన్తర్భావ "xmalloc.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "sshkey.h"
+#అన్తర్భావ "ssh.h"
+#అన్తర్భావ "ssh2.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "authfile.h"
+#అన్తర్భావ "msg.h"
+#అన్తర్భావ "canohost.h"
+#అన్తర్భావ "pathnames.h"
+#అన్తర్భావ "readconf.h"
+#అన్తర్భావ "uidswap.h"
+#అన్తర్భావ "ssherr.h"
 
-extern char *__progname;
+బాహ్య అక్షరం *__progname;
 
-static int
-valid_request(struct passwd *pw, char *host, struct sshkey **ret, char **pkalgp,
-    u_char *data, size_t datalen)
+స్థిర పూర్ణాంకం
+valid_request(నిర్మాణం passwd *pw, అక్షరం *host, నిర్మాణం sshkey **ret, అక్షరం **pkalgp,
+    u_char *దత్తాంశం, కొలత_t datalen)
 {
-	struct sshbuf *b;
-	struct sshkey *key = NULL;
+	నిర్మాణం sshbuf *b;
+	నిర్మాణం sshkey *కీలకం = ఖాళీ;
 	u_char type, *pkblob;
-	char *p;
-	size_t blen, len;
-	char *pkalg, *luser;
-	int r, pktype, fail;
+	అక్షరం *p;
+	కొలత_t blen, len;
+	అక్షరం *pkalg, *luser;
+	పూర్ణాంకం r, pktype, fail;
 
-	if (ret != NULL)
-		*ret = NULL;
-	if (pkalgp != NULL)
-		*pkalgp = NULL;
+	ఒకవేళ (ret != ఖాళీ)
+		*ret = ఖాళీ;
+	ఒకవేళ (pkalgp != ఖాళీ)
+		*pkalgp = ఖాళీ;
 	fail = 0;
 
-	if ((b = sshbuf_from(data, datalen)) == NULL)
+	ఒకవేళ ((b = sshbuf_from(దత్తాంశం, datalen)) == ఖాళీ)
 		fatal_f("sshbuf_from failed");
 
 	/* session id */
-	if ((r = sshbuf_get_string(b, NULL, &len)) != 0)
+	ఒకవేళ ((r = sshbuf_get_string(b, ఖాళీ, &len)) != 0)
 		fatal_fr(r, "parse session ID");
-	if (len != 20 && /* SHA1 */
+	ఒకవేళ (len != 20 && /* SHA1 */
 	    len != 32 && /* SHA256 */
 	    len != 48 && /* SHA384 */
 	    len != 64)   /* SHA512 */
 		fail++;
 
-	if ((r = sshbuf_get_u8(b, &type)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_MSG_USERAUTH_REQUEST)
+	ఒకవేళ (type != SSH2_సందేశం_USERAUTH_REQUEST)
 		fail++;
 
 	/* server user */
-	if ((r = sshbuf_skip_string(b)) != 0)
+	ఒకవేళ ((r = sshbuf_skip_string(b)) != 0)
 		fatal_fr(r, "parse user");
 
 	/* service */
-	if ((r = sshbuf_get_cstring(b, &p, NULL)) != 0)
+	ఒకవేళ ((r = sshbuf_get_cstring(b, &p, ఖాళీ)) != 0)
 		fatal_fr(r, "parse service");
-	if (strcmp("ssh-connection", p) != 0)
+	ఒకవేళ (strcmp("ssh-connection", p) != 0)
 		fail++;
-	free(p);
+	విడుదల(p);
 
-	/* method */
-	if ((r = sshbuf_get_cstring(b, &p, NULL)) != 0)
+	/*పద్ధతి*/
+	ఒకవేళ ((r = sshbuf_get_cstring(b, &p, ఖాళీ)) != 0)
 		fatal_fr(r, "parse method");
-	if (strcmp("hostbased", p) != 0)
+	ఒకవేళ (strcmp("hostbased", p) != 0)
 		fail++;
-	free(p);
+	విడుదల(p);
 
 	/* pubkey */
-	if ((r = sshbuf_get_cstring(b, &pkalg, NULL)) != 0 ||
+	ఒకవేళ ((r = sshbuf_get_cstring(b, &pkalg, ఖాళీ)) != 0 ||
 	    (r = sshbuf_get_string(b, &pkblob, &blen)) != 0)
 		fatal_fr(r, "parse pk");
 
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC)
+	ఒకవేళ (pktype == కీలకం_UNSPEC)
 		fail++;
-	else if ((r = sshkey_from_blob(pkblob, blen, &key)) != 0) {
+	లేకపోతే ఒకవేళ ((r = sshkey_from_blob(pkblob, blen, &కీలకం)) != 0) {
 		error_fr(r, "decode key");
 		fail++;
-	} else if (key->type != pktype)
+	} లేకపోతే ఒకవేళ (కీలకం->type != pktype)
 		fail++;
 
 	/* client host name, handle trailing dot */
-	if ((r = sshbuf_get_cstring(b, &p, &len)) != 0)
+	ఒకవేళ ((r = sshbuf_get_cstring(b, &p, &len)) != 0)
 		fatal_fr(r, "parse hostname");
 	debug2_f("check expect chost \"%s\" got \"%s\"", host, p);
-	if (len == 0)
+	ఒకవేళ (len == 0)
 		fail++;
-	else if (strlen(host) != len - 1)
+	లేకపోతే ఒకవేళ (అక్షరశ్రేణి_పొడవు(host) != len - 1)
 		fail++;
-	else if (p[len - 1] != '.')
+	లేకపోతే ఒకవేళ (p[len - 1] != '.')
 		fail++;
-	else if (strncasecmp(host, p, len - 1) != 0)
+	లేకపోతే ఒకవేళ (strncasecmp(host, p, len - 1) != 0)
 		fail++;
-	free(p);
+	విడుదల(p);
 
 	/* local user */
-	if ((r = sshbuf_get_cstring(b, &luser, NULL)) != 0)
+	ఒకవేళ ((r = sshbuf_get_cstring(b, &luser, ఖాళీ)) != 0)
 		fatal_fr(r, "parse luser");
 
-	if (strcmp(pw->pw_name, luser) != 0)
+	ఒకవేళ (strcmp(pw->pw_name, luser) != 0)
 		fail++;
-	free(luser);
+	విడుదల(luser);
 
 	/* end of message */
-	if (sshbuf_len(b) != 0)
+	ఒకవేళ (sshbuf_len(b) != 0)
 		fail++;
 	sshbuf_free(b);
 
 	debug3_f("fail %d", fail);
 
-	if (!fail) {
-		if (ret != NULL) {
-			*ret = key;
-			key = NULL;
+	ఒకవేళ (!fail) {
+		ఒకవేళ (ret != ఖాళీ) {
+			*ret = కీలకం;
+			కీలకం = ఖాళీ;
 		}
-		if (pkalgp != NULL) {
+		ఒకవేళ (pkalgp != ఖాళీ) {
 			*pkalgp = pkalg;
-			pkalg = NULL;
+			pkalg = ఖాళీ;
 		}
 	}
-	sshkey_free(key);
-	free(pkalg);
-	free(pkblob);
+	sshkey_free(కీలకం);
+	విడుదల(pkalg);
+	విడుదల(pkblob);
 
-	return (fail ? -1 : 0);
+	తిరిగి (fail ? -1 : 0);
 }
 
-int
-main(int argc, char **argv)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	struct sshbuf *b;
+	నిర్మాణం sshbuf *b;
 	Options options;
-#define NUM_KEYTYPES 5
-	struct sshkey *keys[NUM_KEYTYPES], *key = NULL;
-	struct passwd *pw;
-	int r, key_fd[NUM_KEYTYPES], i, found, version = 2, fd;
-	u_char *signature, *data, rver;
-	char *host, *fp, *pkalg;
-	size_t slen, dlen;
+#నిర్వచించు అంకె_KEYTYPES 5
+	నిర్మాణం sshkey *కీలకాలు[అంకె_KEYTYPES], *కీలకం = ఖాళీ;
+	నిర్మాణం passwd *pw;
+	పూర్ణాంకం r, కీలకం_fd[అంకె_KEYTYPES], i, దొరికింది, సంస్కరణ = 2, fd;
+	u_char *signature, *దత్తాంశం, rver;
+	అక్షరం *host, *fp, *pkalg;
+	కొలత_t slen, dlen;
 
 	/* Ensure that stdin and stdout are connected */
-	if ((fd = open(_PATH_DEVNULL, O_RDWR)) < 2)
-		exit(1);
+	ఒకవేళ ((fd = open(_PATH_DEVNULL, O_RDWR)) < 2)
+		నిష్క్రమించు(1);
 	/* Leave /dev/null fd iff it is attached to stderr */
-	if (fd > 2)
+	ఒకవేళ (fd > 2)
 		close(fd);
 
-	if (pledge("stdio rpath getpw dns id", NULL) != 0)
+	ఒకవేళ (pledge("stdio rpath getpw dns id", ఖాళీ) != 0)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 
-	for (i = 0; i < NUM_KEYTYPES; i++)
-		key_fd[i] = -1;
+	కొరకు (i = 0; i < అంకె_KEYTYPES; i++)
+		కీలకం_fd[i] = -1;
 
 	i = 0;
 	/* XXX This really needs to read sshd_config for the paths */
-	key_fd[i++] = open(_PATH_HOST_ECDSA_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_ED25519_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_RSA_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_MLDSA44_ED25519_KEY_FILE, O_RDONLY);
+	కీలకం_fd[i++] = open(మార్గం_HOST_ECDSA_కీలకం_FILE, O_RDONLY);
+	కీలకం_fd[i++] = open(మార్గం_HOST_ED25519_కీలకం_FILE, O_RDONLY);
+	కీలకం_fd[i++] = open(మార్గం_HOST_RSA_కీలకం_FILE, O_RDONLY);
+	కీలకం_fd[i++] = open(మార్గం_HOST_MLDSA44_ED25519_కీలకం_FILE, O_RDONLY);
 
-	if ((pw = getpwuid(getuid())) == NULL)
+	ఒకవేళ ((pw = getpwuid(getuid())) == ఖాళీ)
 		fatal("getpwuid failed");
 	pw = pwcopy(pw);
 
-	permanently_set_uid(pw);
+	permanently_సమితి_uid(pw);
 
-	seed_rng();
+	విత్తనం_rng();
 
-#ifdef DEBUG_SSH_KEYSIGN
+#నిర్వచితమైతే DEBUG_SSH_KEYSIGN
 	log_init("ssh-keysign", SYSLOG_LEVEL_DEBUG3, SYSLOG_FACILITY_AUTH, 0);
-#endif
+#అయితే_ముగింపు
 
 	/* verify that ssh-keysign is enabled by the admin */
 	initialize_options(&options);
-	(void)read_config_file(_PATH_HOST_CONFIG_FILE, pw, "", "", "",
-	    &options, 0, NULL);
-	(void)fill_default_options(&options);
-	if (options.enable_ssh_keysign != 1)
+	(శూన్య)read_config_file(మార్గం_HOST_CONFIG_FILE, pw, "", "", "",
+	    &options, 0, ఖాళీ);
+	(శూన్య)fill_default_options(&options);
+	ఒకవేళ (options.enable_ssh_keysign != 1)
 		fatal("ssh-keysign not enabled in %s",
-		    _PATH_HOST_CONFIG_FILE);
+		    మార్గం_HOST_CONFIG_FILE);
 
-	if (pledge("stdio dns", NULL) != 0)
+	ఒకవేళ (pledge("stdio dns", ఖాళీ) != 0)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 
-	for (i = found = 0; i < NUM_KEYTYPES; i++) {
-		if (key_fd[i] != -1)
-			found = 1;
+	కొరకు (i = దొరికింది = 0; i < అంకె_KEYTYPES; i++) {
+		ఒకవేళ (కీలకం_fd[i] != -1)
+			దొరికింది = 1;
 	}
-	if (found == 0)
+	ఒకవేళ (దొరికింది == 0)
 		fatal("could not open any host key");
 
-	found = 0;
-	for (i = 0; i < NUM_KEYTYPES; i++) {
-		keys[i] = NULL;
-		if (key_fd[i] == -1)
-			continue;
-		r = sshkey_load_private_type_fd(key_fd[i], KEY_UNSPEC,
-		    NULL, &key, NULL);
-		close(key_fd[i]);
-		if (r != 0)
+	దొరికింది = 0;
+	కొరకు (i = 0; i < అంకె_KEYTYPES; i++) {
+		కీలకాలు[i] = ఖాళీ;
+		ఒకవేళ (కీలకం_fd[i] == -1)
+			కొనసాగు;
+		r = sshkey_ఎక్కించు_వ్యక్తిగత_type_fd(కీలకం_fd[i], కీలకం_UNSPEC,
+		    ఖాళీ, &కీలకం, ఖాళీ);
+		close(కీలకం_fd[i]);
+		ఒకవేళ (r != 0)
 			debug_r(r, "parse key %d", i);
-		else if (key != NULL) {
-			keys[i] = key;
-			found = 1;
+		లేకపోతే ఒకవేళ (కీలకం != ఖాళీ) {
+			కీలకాలు[i] = కీలకం;
+			దొరికింది = 1;
 		}
 	}
-	if (!found)
+	ఒకవేళ (!దొరికింది)
 		fatal("no hostkey found");
 
-	if ((b = sshbuf_new()) == NULL)
+	ఒకవేళ ((b = sshbuf_new()) == ఖాళీ)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (ssh_msg_recv(STDIN_FILENO, b) < 0)
+	ఒకవేళ (ssh_సందేశం_recv(STDIN_FILENO, b) < 0)
 		fatal("%s: ssh_msg_recv failed", __progname);
-	if ((r = sshbuf_get_u8(b, &rver)) != 0)
+	ఒకవేళ ((r = sshbuf_get_u8(b, &rver)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (rver != version)
+	ఒకవేళ (rver != సంస్కరణ)
 		fatal("%s: bad version: received %d, expected %d",
-		    __progname, rver, version);
-	if ((r = sshbuf_get_u32(b, (u_int *)&fd)) != 0)
+		    __progname, rver, సంస్కరణ);
+	ఒకవేళ ((r = sshbuf_get_u32(b, (u_int *)&fd)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (fd <= STDERR_FILENO)
+	ఒకవేళ (fd <= STDERR_FILENO)
 		fatal("%s: bad fd = %d", __progname, fd);
-	if ((host = get_local_name(fd)) == NULL)
+	ఒకవేళ ((host = get_local_name(fd)) == ఖాళీ)
 		fatal("%s: cannot get local name for fd", __progname);
 
-	if ((r = sshbuf_get_string(b, &data, &dlen)) != 0)
+	ఒకవేళ ((r = sshbuf_get_string(b, &దత్తాంశం, &dlen)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (valid_request(pw, host, &key, &pkalg, data, dlen) < 0)
+	ఒకవేళ (valid_request(pw, host, &కీలకం, &pkalg, దత్తాంశం, dlen) < 0)
 		fatal("%s: not a valid request", __progname);
-	free(host);
+	విడుదల(host);
 
-	found = 0;
-	for (i = 0; i < NUM_KEYTYPES; i++) {
-		if (keys[i] != NULL &&
-		    sshkey_equal_public(key, keys[i])) {
-			found = 1;
-			break;
+	దొరికింది = 0;
+	కొరకు (i = 0; i < అంకె_KEYTYPES; i++) {
+		ఒకవేళ (కీలకాలు[i] != ఖాళీ &&
+		    sshkey_equal_ప్రజా(కీలకం, కీలకాలు[i])) {
+			దొరికింది = 1;
+			ఆపు;
 		}
 	}
-	if (!found) {
-		if ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
-		    SSH_FP_DEFAULT)) == NULL)
+	ఒకవేళ (!దొరికింది) {
+		ఒకవేళ ((fp = sshkey_fingerprint(కీలకం, options.fingerprint_hash,
+		    SSH_FP_DEFAULT)) == ఖాళీ)
 			fatal("%s: sshkey_fingerprint failed", __progname);
 		fatal("%s: no matching hostkey found for key %s %s", __progname,
-		    sshkey_type(key), fp ? fp : "");
+		    sshkey_type(కీలకం), fp ? fp : "");
 	}
 
-	if ((r = sshkey_sign(keys[i], &signature, &slen, data, dlen,
-	    pkalg, NULL, NULL, 0)) != 0)
+	ఒకవేళ ((r = sshkey_sign(కీలకాలు[i], &signature, &slen, దత్తాంశం, dlen,
+	    pkalg, ఖాళీ, ఖాళీ, 0)) != 0)
 		fatal_r(r, "%s: sshkey_sign failed", __progname);
-	free(data);
+	విడుదల(దత్తాంశం);
 
 	/* send reply */
 	sshbuf_reset(b);
-	if ((r = sshbuf_put_string(b, signature, slen)) != 0)
+	ఒకవేళ ((r = sshbuf_put_string(b, signature, slen)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (ssh_msg_send(STDOUT_FILENO, version, b) == -1)
+	ఒకవేళ (ssh_సందేశం_send(STDOUT_FILENO, సంస్కరణ, b) == -1)
 		fatal("%s: ssh_msg_send failed", __progname);
 
-	return (0);
+	తిరిగి (0);
 }

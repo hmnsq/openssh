@@ -23,179 +23,179 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#నిర్వచితమైతే WITH_OPENSSL
+#అన్తర్భావ "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <stdio.h>
-#include <signal.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <signal.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#అన్తర్భావ <openssl/bn.h>
+#అన్తర్భావ <openssl/dh.h>
 
-#include "kex.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "dh.h"
-#include "log.h"
+#అన్తర్భావ "kex.h"
+#అన్తర్భావ "sshbuf.h"
+#అన్తర్భావ "ssherr.h"
+#అన్తర్భావ "dh.h"
+#అన్తర్భావ "log.h"
 
-int
-kex_dh_keygen(struct kex *kex)
+పూర్ణాంకం
+kex_dh_keygen(నిర్మాణం kex *kex)
 {
-	switch (kex->kex_type) {
-	case KEX_DH_GRP1_SHA1:
+	ఎంపిక (kex->kex_type) {
+	స్థితి KEX_DH_GRP1_SHA1:
 		kex->dh = dh_new_group1();
-		break;
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
+		ఆపు;
+	స్థితి KEX_DH_GRP14_SHA1:
+	స్థితి KEX_DH_GRP14_SHA256:
 		kex->dh = dh_new_group14();
-		break;
-	case KEX_DH_GRP16_SHA512:
+		ఆపు;
+	స్థితి KEX_DH_GRP16_SHA512:
 		kex->dh = dh_new_group16();
-		break;
-	case KEX_DH_GRP18_SHA512:
+		ఆపు;
+	స్థితి KEX_DH_GRP18_SHA512:
 		kex->dh = dh_new_group18();
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		ఆపు;
+	అప్రమేయ:
+		తిరిగి SSH_ERR_INVALID_వాదం;
 	}
-	if (kex->dh == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	return (dh_gen_key(kex->dh, kex->we_need * 8));
+	ఒకవేళ (kex->dh == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	తిరిగి (dh_gen_కీలకం(kex->dh, kex->we_need * 8));
 }
 
-int
-kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
+పూర్ణాంకం
+kex_dh_compute_కీలకం(నిర్మాణం kex *kex, BIGNUM *dh_pub, నిర్మాణం sshbuf *బహిర్గతం)
 {
-	BIGNUM *shared_secret = NULL;
-	u_char *kbuf = NULL;
-	size_t klen = 0;
-	int kout, r;
+	BIGNUM *shared_secret = ఖాళీ;
+	u_char *kbuf = ఖాళీ;
+	కొలత_t klen = 0;
+	పూర్ణాంకం kout, r;
 
-#ifdef DEBUG_KEXDH
+#నిర్వచితమైతే DEBUG_KEXDH
 	fprintf(stderr, "dh_pub= ");
 	BN_print_fp(stderr, dh_pub);
 	fprintf(stderr, "\n");
-	debug("bits %d", BN_num_bits(dh_pub));
+	debug("bits %d", BN_అంకె_బిట్లు(dh_pub));
 	DHparams_print_fp(stderr, kex->dh);
 	fprintf(stderr, "\n");
-#endif
+#అయితే_ముగింపు
 
-	if (!dh_pub_is_valid(kex->dh, dh_pub)) {
-		r = SSH_ERR_MESSAGE_INCOMPLETE;
-		goto out;
+	ఒకవేళ (!dh_pub_is_valid(kex->dh, dh_pub)) {
+		r = SSH_ERR_సందేశం_INCOMPLETE;
+		వెళ్ళు బహిర్గతం;
 	}
-	klen = DH_size(kex->dh);
-	if ((kbuf = malloc(klen)) == NULL ||
-	    (shared_secret = BN_new()) == NULL) {
+	klen = DH_కొలత(kex->dh);
+	ఒకవేళ ((kbuf = జ్ఞాపకం_ఇవ్వు(klen)) == ఖాళీ ||
+	    (shared_secret = BN_new()) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((kout = DH_compute_key(kbuf, dh_pub, kex->dh)) < 0 ||
-	    BN_bin2bn(kbuf, kout, shared_secret) == NULL) {
+	ఒకవేళ ((kout = DH_compute_కీలకం(kbuf, dh_pub, kex->dh)) < 0 ||
+	    BN_bin2bn(kbuf, kout, shared_secret) == ఖాళీ) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-#ifdef DEBUG_KEXDH
+#నిర్వచితమైతే DEBUG_KEXDH
 	dump_digest("shared secret", kbuf, kout);
-#endif
-	r = sshbuf_put_bignum2(out, shared_secret);
- out:
+#అయితే_ముగింపు
+	r = sshbuf_put_bignum2(బహిర్గతం, shared_secret);
+ బహిర్గతం:
 	freezero(kbuf, klen);
 	BN_clear_free(shared_secret);
-	return r;
+	తిరిగి r;
 }
 
-int
-kex_dh_keypair(struct kex *kex)
+పూర్ణాంకం
+kex_dh_keypair(నిర్మాణం kex *kex)
 {
-	const BIGNUM *pub_key;
-	struct sshbuf *buf = NULL;
-	int r;
+	స్థిరరాశి BIGNUM *pub_కీలకం;
+	నిర్మాణం sshbuf *buf = ఖాళీ;
+	పూర్ణాంకం r;
 
-	if ((r = kex_dh_keygen(kex)) != 0)
-		return r;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_bignum2(buf, pub_key)) != 0 ||
-	    (r = sshbuf_get_u32(buf, NULL)) != 0)
-		goto out;
-#ifdef DEBUG_KEXDH
+	ఒకవేళ ((r = kex_dh_keygen(kex)) != 0)
+		తిరిగి r;
+	DH_get0_కీలకం(kex->dh, &pub_కీలకం, ఖాళీ);
+	ఒకవేళ ((buf = sshbuf_new()) == ఖాళీ)
+		తిరిగి SSH_ERR_ALLOC_FAIL;
+	ఒకవేళ ((r = sshbuf_put_bignum2(buf, pub_కీలకం)) != 0 ||
+	    (r = sshbuf_get_u32(buf, ఖాళీ)) != 0)
+		వెళ్ళు బహిర్గతం;
+#నిర్వచితమైతే DEBUG_KEXDH
 	DHparams_print_fp(stderr, kex->dh);
 	fprintf(stderr, "pub= ");
-	BN_print_fp(stderr, pub_key);
+	BN_print_fp(stderr, pub_కీలకం);
 	fprintf(stderr, "\n");
-#endif
+#అయితే_ముగింపు
 	kex->client_pub = buf;
-	buf = NULL;
- out:
+	buf = ఖాళీ;
+ బహిర్గతం:
 	sshbuf_free(buf);
-	return r;
+	తిరిగి r;
 }
 
-int
-kex_dh_enc(struct kex *kex, const struct sshbuf *client_blob,
-    struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+పూర్ణాంకం
+kex_dh_enc(నిర్మాణం kex *kex, స్థిరరాశి నిర్మాణం sshbuf *client_blob,
+    నిర్మాణం sshbuf **server_blobp, నిర్మాణం sshbuf **shared_secretp)
 {
-	const BIGNUM *pub_key;
-	struct sshbuf *server_blob = NULL;
-	int r;
+	స్థిరరాశి BIGNUM *pub_కీలకం;
+	నిర్మాణం sshbuf *server_blob = ఖాళీ;
+	పూర్ణాంకం r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = ఖాళీ;
+	*shared_secretp = ఖాళీ;
 
-	if ((r = kex_dh_keygen(kex)) != 0)
-		goto out;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((server_blob = sshbuf_new()) == NULL) {
+	ఒకవేళ ((r = kex_dh_keygen(kex)) != 0)
+		వెళ్ళు బహిర్గతం;
+	DH_get0_కీలకం(kex->dh, &pub_కీలకం, ఖాళీ);
+	ఒకవేళ ((server_blob = sshbuf_new()) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_put_bignum2(server_blob, pub_key)) != 0 ||
-	    (r = sshbuf_get_u32(server_blob, NULL)) != 0)
-		goto out;
-	if ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
-		goto out;
+	ఒకవేళ ((r = sshbuf_put_bignum2(server_blob, pub_కీలకం)) != 0 ||
+	    (r = sshbuf_get_u32(server_blob, ఖాళీ)) != 0)
+		వెళ్ళు బహిర్గతం;
+	ఒకవేళ ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
+		వెళ్ళు బహిర్గతం;
 	*server_blobp = server_blob;
-	server_blob = NULL;
- out:
+	server_blob = ఖాళీ;
+ బహిర్గతం:
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = ఖాళీ;
 	sshbuf_free(server_blob);
-	return r;
+	తిరిగి r;
 }
 
-int
-kex_dh_dec(struct kex *kex, const struct sshbuf *dh_blob,
-    struct sshbuf **shared_secretp)
+పూర్ణాంకం
+kex_dh_dec(నిర్మాణం kex *kex, స్థిరరాశి నిర్మాణం sshbuf *dh_blob,
+    నిర్మాణం sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	BIGNUM *dh_pub = NULL;
-	int r;
+	నిర్మాణం sshbuf *buf = ఖాళీ;
+	BIGNUM *dh_pub = ఖాళీ;
+	పూర్ణాంకం r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = ఖాళీ;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	ఒకవేళ ((buf = sshbuf_new()) == ఖాళీ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
-	if ((r = sshbuf_put_stringb(buf, dh_blob)) != 0 ||
+	ఒకవేళ ((r = sshbuf_put_stringb(buf, dh_blob)) != 0 ||
 	    (r = sshbuf_get_bignum2(buf, &dh_pub)) != 0)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	sshbuf_reset(buf);
-	if ((r = kex_dh_compute_key(kex, dh_pub, buf)) != 0)
-		goto out;
+	ఒకవేళ ((r = kex_dh_compute_కీలకం(kex, dh_pub, buf)) != 0)
+		వెళ్ళు బహిర్గతం;
 	*shared_secretp = buf;
-	buf = NULL;
- out:
+	buf = ఖాళీ;
+ బహిర్గతం:
 	BN_free(dh_pub);
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = ఖాళీ;
 	sshbuf_free(buf);
-	return r;
+	తిరిగి r;
 }
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */

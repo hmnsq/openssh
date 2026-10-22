@@ -11,76 +11,76 @@
  * incompatible with the protocol description in the RFC file, it must be
  * called by a name other than "ssh" or "Secure Shell".
  */
-#ifndef HOSTFILE_H
-#define HOSTFILE_H
+#నిర్వచితం_కాకపోతే HOSTFILE_H
+#నిర్వచించు HOSTFILE_H
 
-typedef enum {
-	HOST_OK, HOST_NEW, HOST_CHANGED, HOST_REVOKED, HOST_FOUND
-}       HostStatus;
+రకనిర్వచనం గణన {
+	HOST_OK, HOST_NEW, HOST_మారింది, HOST_REVOKED, HOST_దొరికింది
+}       Host_స్థితి;
 
-typedef enum {
+రకనిర్వచనం గణన {
 	MRK_ERROR, MRK_NONE, MRK_REVOKE, MRK_CA
 }	HostkeyMarker;
 
-struct hostkey_entry {
-	char *host;
-	char *file;
-	u_long line;
-	struct sshkey *key;
+నిర్మాణం hostkey_నమోదు {
+	అక్షరం *host;
+	అక్షరం *file;
+	u_long పంక్తి;
+	నిర్మాణం sshkey *కీలకం;
 	HostkeyMarker marker;
 	u_int note; /* caller-specific note/flag */
 };
-struct hostkeys {
-	struct hostkey_entry *entries;
-	u_int num_entries;
+నిర్మాణం hostkeys {
+	నిర్మాణం hostkey_నమోదు *entries;
+	u_int అంకె_entries;
 };
 
-struct hostkeys *init_hostkeys(void);
-void	 load_hostkeys(struct hostkeys *, const char *,
-    const char *, u_int);
-void	 load_hostkeys_file(struct hostkeys *, const char *,
-    const char *, FILE *, u_int note);
-void	 free_hostkeys(struct hostkeys *);
+నిర్మాణం hostkeys *init_hostkeys(శూన్య);
+శూన్య	 ఎక్కించు_hostkeys(నిర్మాణం hostkeys *, స్థిరరాశి అక్షరం *,
+    స్థిరరాశి అక్షరం *, u_int);
+శూన్య	 ఎక్కించు_hostkeys_file(నిర్మాణం hostkeys *, స్థిరరాశి అక్షరం *,
+    స్థిరరాశి అక్షరం *, FILE *, u_int note);
+శూన్య	 free_hostkeys(నిర్మాణం hostkeys *);
 
-HostStatus check_key_in_hostkeys(struct hostkeys *, struct sshkey *,
-    const struct hostkey_entry **);
-int	 lookup_key_in_hostkeys_by_type(struct hostkeys *, int, int,
-    const struct hostkey_entry **);
-int	 lookup_marker_in_hostkeys(struct hostkeys *, int);
+Host_స్థితి check_కీలకం_లోపల_hostkeys(నిర్మాణం hostkeys *, నిర్మాణం sshkey *,
+    స్థిరరాశి నిర్మాణం hostkey_నమోదు **);
+పూర్ణాంకం	 lookup_కీలకం_లోపల_hostkeys_by_type(నిర్మాణం hostkeys *, పూర్ణాంకం, పూర్ణాంకం,
+    స్థిరరాశి నిర్మాణం hostkey_నమోదు **);
+పూర్ణాంకం	 lookup_marker_లోపల_hostkeys(నిర్మాణం hostkeys *, పూర్ణాంకం);
 
-int	 hostfile_read_key(char **, u_int *, struct sshkey *);
-int	 add_host_to_hostfile(const char *, const char *,
-    const struct sshkey *, int);
+పూర్ణాంకం	 hostfile_read_కీలకం(అక్షరం **, u_int *, నిర్మాణం sshkey *);
+పూర్ణాంకం	 కూడు_host_గమ్యం_hostfile(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *,
+    స్థిరరాశి నిర్మాణం sshkey *, పూర్ణాంకం);
 
-int	 hostfile_replace_entries(const char *filename,
-    const char *host, const char *ip, struct sshkey **keys, size_t nkeys,
-    int store_hash, int quiet, int hash_alg);
+పూర్ణాంకం	 hostfile_replace_entries(స్థిరరాశి అక్షరం *filename,
+    స్థిరరాశి అక్షరం *host, స్థిరరాశి అక్షరం *ip, నిర్మాణం sshkey **కీలకాలు, కొలత_t nkeys,
+    పూర్ణాంకం store_hash, పూర్ణాంకం quiet, పూర్ణాంకం hash_alg);
 
-#define HASH_MAGIC	"|1|"
-#define HASH_DELIM	'|'
+#నిర్వచించు HASH_MAGIC	"|1|"
+#నిర్వచించు HASH_DELIM	'|'
 
-#define CA_MARKER	"@cert-authority"
-#define REVOKE_MARKER	"@revoked"
+#నిర్వచించు CA_MARKER	"@cert-authority"
+#నిర్వచించు REVOKE_MARKER	"@revoked"
 
-char	*host_hash(const char *, const char *, u_int);
+అక్షరం	*host_hash(స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *, u_int);
 
 /*
  * Iterate through a hostkeys file, optionally parsing keys and matching
  * hostnames. Allows access to the raw keyfile lines to allow
  * streaming edits to the file to take place.
  */
-#define HKF_WANT_MATCH		(1)	/* return only matching hosts/addrs */
-#define HKF_WANT_PARSE_KEY	(1<<1)	/* need key parsed */
+#నిర్వచించు HKF_WANT_సరిపోలిక		(1)	/* return only matching hosts/addrs */
+#నిర్వచించు HKF_WANT_PARSE_కీలకం	(1<<1)	/* need key parsed */
 
-#define HKF_STATUS_OK		0	/* Line parsed, didn't match host */
-#define HKF_STATUS_INVALID	1	/* line had parse error */
-#define HKF_STATUS_COMMENT	2	/* valid line contained no key */
-#define HKF_STATUS_MATCHED	3	/* hostname or IP matched */
+#నిర్వచించు HKF_స్థితి_OK		0	/* Line parsed, didn't match host */
+#నిర్వచించు HKF_స్థితి_INVALID	1	/* line had parse error */
+#నిర్వచించు HKF_స్థితి_COMMENT	2	/* valid line contained no key */
+#నిర్వచించు HKF_స్థితి_MATCHED	3	/* hostname or IP matched */
 
-#define HKF_MATCH_HOST		(1)	/* hostname matched */
-#define HKF_MATCH_IP		(1<<1)	/* address matched */
-#define HKF_MATCH_HOST_HASHED	(1<<2)	/* hostname was hashed */
-#define HKF_MATCH_IP_HASHED	(1<<3)	/* address was hashed */
+#నిర్వచించు HKF_సరిపోలిక_HOST		(1)	/* hostname matched */
+#నిర్వచించు HKF_సరిపోలిక_IP		(1<<1)	/* address matched */
+#నిర్వచించు HKF_సరిపోలిక_HOST_HASHED	(1<<2)	/* hostname was hashed */
+#నిర్వచించు HKF_సరిపోలిక_IP_HASHED	(1<<3)	/* address was hashed */
 /* XXX HKF_MATCH_KEY_TYPE? */
 
 /*
@@ -88,18 +88,18 @@ char	*host_hash(const char *, const char *, u_int);
  * hostkey line. The callback may "steal" the 'key' field by setting it to NULL.
  * If a parse error occurred, then "hosts" and subsequent options may be NULL.
  */
-struct hostkey_foreach_line {
-	const char *path; /* Path of file */
+నిర్మాణం hostkey_foreach_పంక్తి {
+	స్థిరరాశి అక్షరం *మార్గం; /* Path of file */
 	u_long linenum;	/* Line number */
-	u_int status;	/* One of HKF_STATUS_* */
-	u_int match;	/* Zero or more of HKF_MATCH_* OR'd together */
-	char *line;	/* Entire key line; mutable by callback */
-	int marker;	/* CA/revocation markers; indicated by MRK_* value */
-	const char *hosts; /* Raw hosts text, may be hashed or list multiple */
-	const char *rawkey; /* Text of key and any comment following it */
-	int keytype;	/* Type of key; KEY_UNSPEC for invalid/comment lines */
-	struct sshkey *key; /* Key, if parsed ok and HKF_WANT_MATCH_HOST set */
-	const char *comment; /* Any comment following the key */
+	u_int స్థితి_2;	/* One of HKF_STATUS_* */
+	u_int సరిపోలిక;	/* Zero or more of HKF_MATCH_* OR'd together */
+	అక్షరం *పంక్తి;	/* Entire key line; mutable by callback */
+	పూర్ణాంకం marker;	/* CA/revocation markers; indicated by MRK_* value */
+	స్థిరరాశి అక్షరం *hosts; /* Raw hosts text, may be hashed or list multiple */
+	స్థిరరాశి అక్షరం *rawkey; /* Text of key and any comment following it */
+	పూర్ణాంకం keytype;	/* Type of key; KEY_UNSPEC for invalid/comment lines */
+	నిర్మాణం sshkey *కీలకం; /* Key, if parsed ok and HKF_WANT_MATCH_HOST set */
+	స్థిరరాశి అక్షరం *comment; /* Any comment following the key */
 	u_int note;	/* caller-specified note copied from arguments */
 };
 
@@ -108,16 +108,16 @@ struct hostkey_foreach_line {
  * is set). The foreach loop will terminate if the callback returns a non-
  * zero exit status.
  */
-typedef int hostkeys_foreach_fn(struct hostkey_foreach_line *l, void *ctx);
+రకనిర్వచనం పూర్ణాంకం hostkeys_foreach_fn(నిర్మాణం hostkey_foreach_పంక్తి *l, శూన్య *ctx);
 
 /* Iterate over a hostkeys file */
-int hostkeys_foreach(const char *path,
-    hostkeys_foreach_fn *callback, void *ctx,
-    const char *host, const char *ip, u_int options, u_int note);
-int hostkeys_foreach_file(const char *path, FILE *f,
-    hostkeys_foreach_fn *callback, void *ctx,
-    const char *host, const char *ip, u_int options, u_int note);
+పూర్ణాంకం hostkeys_foreach(స్థిరరాశి అక్షరం *మార్గం,
+    hostkeys_foreach_fn *callback, శూన్య *ctx,
+    స్థిరరాశి అక్షరం *host, స్థిరరాశి అక్షరం *ip, u_int options, u_int note);
+పూర్ణాంకం hostkeys_foreach_file(స్థిరరాశి అక్షరం *మార్గం, FILE *f,
+    hostkeys_foreach_fn *callback, శూన్య *ctx,
+    స్థిరరాశి అక్షరం *host, స్థిరరాశి అక్షరం *ip, u_int options, u_int note);
 
-void hostfile_create_user_ssh_dir(const char *, int);
+శూన్య hostfile_create_user_ssh_dir(స్థిరరాశి అక్షరం *, పూర్ణాంకం);
 
-#endif
+#అయితే_ముగింపు

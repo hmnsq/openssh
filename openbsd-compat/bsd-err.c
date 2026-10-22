@@ -25,53 +25,53 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#ifndef HAVE_ERR
-void
-err(int r, const char *fmt, ...)
+#నిర్వచితం_కాకపోతే HAVE_ERR
+శూన్య
+err(పూర్ణాంకం r, స్థిరరాశి అక్షరం *fmt, ...)
 {
-	va_list args;
+	va_list వాదనలు;
 
-	va_start(args, fmt);
+	va_start(వాదనలు, fmt);
 	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, వాదనలు);
 	fputc('\n', stderr);
-	va_end(args);
-	exit(r);
+	va_end(వాదనలు);
+	నిష్క్రమించు(r);
 }
-#endif
+#అయితే_ముగింపు
 
-#ifndef HAVE_ERRX
-void
-errx(int r, const char *fmt, ...)
+#నిర్వచితం_కాకపోతే HAVE_ERRX
+శూన్య
+errx(పూర్ణాంకం r, స్థిరరాశి అక్షరం *fmt, ...)
 {
-	va_list args;
+	va_list వాదనలు;
 
-	va_start(args, fmt);
-	vfprintf(stderr, fmt, args);
+	va_start(వాదనలు, fmt);
+	vfprintf(stderr, fmt, వాదనలు);
 	fputc('\n', stderr);
-	va_end(args);
-	exit(r);
+	va_end(వాదనలు);
+	నిష్క్రమించు(r);
 }
-#endif
+#అయితే_ముగింపు
 
-#ifndef HAVE_WARN
-void
-warn(const char *fmt, ...)
+#నిర్వచితం_కాకపోతే HAVE_WARN
+శూన్య
+warn(స్థిరరాశి అక్షరం *fmt, ...)
 {
-	va_list args;
+	va_list వాదనలు;
 
-	va_start(args, fmt);
+	va_start(వాదనలు, fmt);
 	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, వాదనలు);
 	fputc('\n', stderr);
-	va_end(args);
+	va_end(వాదనలు);
 }
-#endif
+#అయితే_ముగింపు

@@ -14,58 +14,58 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-#define TMPFILE "utimensat.tmp"
-#define TMPFILE2 "utimensat.tmp2"
+#నిర్వచించు TMPFILE "utimensat.tmp"
+#నిర్వచించు TMPFILE2 "utimensat.tmp2"
 
-#ifndef AT_SYMLINK_NOFOLLOW
+#నిర్వచితం_కాకపోతే AT_SYMLINK_NOFOLLOW
 # define AT_SYMLINK_NOFOLLOW 0x80000000
-#endif
+#అయితే_ముగింపు
 
-int utimensat(int, const char *, const struct timespec[2], int);
+పూర్ణాంకం utimensat(పూర్ణాంకం, స్థిరరాశి అక్షరం *, స్థిరరాశి నిర్మాణం timespec[2], పూర్ణాంకం);
 
-static void
-cleanup(void)
+స్థిర శూన్య
+cleanup(శూన్య)
 {
-	(void)unlink(TMPFILE);
-	(void)unlink(TMPFILE2);
+	(శూన్య)unlink(TMPFILE);
+	(శూన్య)unlink(TMPFILE2);
 }
 
-static void
-fail(char *msg, long expect, long got)
+స్థిర శూన్య
+fail(అక్షరం *సందేశం, దీర్ఘ expect, దీర్ఘ got)
 {
-	int saved_errno = errno;
+	పూర్ణాంకం saved_errno = errno;
 
-	if (expect == got && got == 0)
-		fprintf(stderr, "utimensat: %s: %s\n", msg,
+	ఒకవేళ (expect == got && got == 0)
+		fprintf(stderr, "utimensat: %s: %s\n", సందేశం,
 		     strerror(saved_errno));
-	else
+	లేకపోతే
 		fprintf(stderr, "utimensat: %s: expected %ld got %ld\n",
-		     msg, expect, got);
+		     సందేశం, expect, got);
 	cleanup();
-	exit(1);
+	నిష్క్రమించు(1);
 }
 
-int
-main(void)
+పూర్ణాంకం
+ప్రధాన(శూన్య)
 {
-	int fd;
-	struct stat sb;
-	struct timespec ts[2];
+	పూర్ణాంకం fd;
+	నిర్మాణం stat sb;
+	నిర్మాణం timespec ts[2];
 
 	cleanup();
-	if ((fd = open(TMPFILE, O_CREAT, 0600)) == -1)
+	ఒకవేళ ((fd = open(TMPFILE, O_CREAT, 0600)) == -1)
 		fail("open", 0, 0);
 	close(fd);
 
@@ -73,32 +73,32 @@ main(void)
 	ts[0].tv_nsec = 23456789;
 	ts[1].tv_sec = 34567890;
 	ts[1].tv_nsec = 45678901;
-	if (utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW) == -1)
+	ఒకవేళ (utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW) == -1)
 		fail("utimensat", 0, 0);
 
-	if (stat(TMPFILE, &sb) == -1)
+	ఒకవేళ (stat(TMPFILE, &sb) == -1)
 		fail("stat", 0, 0);
-#if 0
+#ఒకవేళ 0
 	/*
 	 * This test only works on filesystems mounted 'noatime', otherwise the
 	 * stat() above resets atime. Skip by default.
 	 */
-	if (sb.st_atime != 12345678)
+	ఒకవేళ (sb.st_atime != 12345678)
 		fail("st_atime", 0, 0);
-#endif
-	if (sb.st_mtime != 34567890)
+#అయితే_ముగింపు
+	ఒకవేళ (sb.st_mtime != 34567890)
 		fail("st_mtime", 0, 0);
-#if 0
+#ఒకవేళ 0
 	/*
 	 * Results expected to be rounded to the nearest microsecond.
 	 * Depends on timestamp precision in kernel and filesystem so
 	 * disabled by default.
 	 */
-	if (sb.st_atim.tv_nsec != 23456000)
+	ఒకవేళ (sb.st_atim.tv_nsec != 23456000)
 		fail("atim.tv_nsec", 23456000, sb.st_atim.tv_nsec);
-	if (sb.st_mtim.tv_nsec != 45678000)
+	ఒకవేళ (sb.st_mtim.tv_nsec != 45678000)
 		fail("mtim.tv_nsec", 45678000, sb.st_mtim.tv_nsec);
-#endif
+#అయితే_ముగింపు
 
 	/*
 	 * POSIX specifies that when given a symlink, AT_SYMLINK_NOFOLLOW
@@ -107,20 +107,20 @@ main(void)
 	 * with instead of following a symlink when explicitly asked not to.
 	 * Here we just test that it does not update the destination.
 	 */
-	if (rename(TMPFILE, TMPFILE2) == -1)
+	ఒకవేళ (rename(TMPFILE, TMPFILE2) == -1)
 		fail("rename", 0, 0);
-	if (symlink(TMPFILE2, TMPFILE) == -1)
+	ఒకవేళ (symlink(TMPFILE2, TMPFILE) == -1)
 		fail("symlink", 0, 0);
 	ts[0].tv_sec = 11223344;
 	ts[1].tv_sec = 55667788;
-	(void)utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW);
-	if (stat(TMPFILE2, &sb) == -1)
+	(శూన్య)utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW);
+	ఒకవేళ (stat(TMPFILE2, &sb) == -1)
 		fail("stat", 0, 0 );
-	if (sb.st_atime == 11223344)
+	ఒకవేళ (sb.st_atime == 11223344)
 		fail("utimensat symlink st_atime", 0, 0 );
-	if (sb.st_mtime == 55667788)
+	ఒకవేళ (sb.st_mtime == 55667788)
 		fail("utimensat symlink st_mtime", 0, 0 );
 
 	cleanup();
-	exit(0);
+	నిష్క్రమించు(0);
 }

@@ -15,64 +15,64 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#define BUFSZ 2048
+#నిర్వచించు BUFSZ 2048
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <string.h>
 
-static int failed = 0;
+స్థిర పూర్ణాంకం failed = 0;
 
-static void
-fail(const char *m)
+స్థిర శూన్య
+fail(స్థిరరాశి అక్షరం *m)
 {
 	fprintf(stderr, "snprintftest: %s\n", m);
 	failed = 1;
 }
 
-int x_snprintf(char *str, size_t count, const char *fmt, ...)
+పూర్ణాంకం x_snprintf(అక్షరం *str, కొలత_t లెక్క, స్థిరరాశి అక్షరం *fmt, ...)
 {
-	size_t ret;
+	కొలత_t ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
+	ret = vsnprintf(str, లెక్క, fmt, ap);
 	va_end(ap);
-	return ret;
+	తిరిగి ret;
 }
 
-int
-main(void)
+పూర్ణాంకం
+ప్రధాన(శూన్య)
 {
-	char b[5];
-	char *src = NULL;
-	int ret;
+	అక్షరం b[5];
+	అక్షరం *src = ఖాళీ;
+	పూర్ణాంకం ret;
 
-	memset(b, 'X', sizeof(b));
+	memset(b, 'X', పరిమాణం(b));
 	ret = snprintf(b, 5, "123456789");
-	if (ret != 9 || b[4] != '\0')
+	ఒకవేళ (ret != 9 || b[4] != '\0')
 		fail("snprintf does not correctly terminate long strings");
 
 	/* check for read overrun on unterminated string */
-	if ((src = malloc(BUFSZ)) == NULL) {
+	ఒకవేళ ((src = జ్ఞాపకం_ఇవ్వు(BUFSZ)) == ఖాళీ) {
 		fail("malloc failed");
-	} else {
+	} లేకపోతే {
 		memset(src, 'a', BUFSZ);
-		snprintf(b, sizeof(b), "%.*s", 1, src);
-		if (strcmp(b, "a") != 0)
+		snprintf(b, పరిమాణం(b), "%.*s", 1, src);
+		ఒకవేళ (strcmp(b, "a") != 0)
 			fail("failed with length limit '%%.s'");
 	}
 
 	/* check that snprintf and vsnprintf return sane values */
-	if (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	ఒకవేళ (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("snprintf does not return required length");
-	if (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	ఒకవేళ (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("vsnprintf does not return required length");
 
-	free(src);
-	return failed;
+	విడుదల(src);
+	తిరిగి failed;
 }

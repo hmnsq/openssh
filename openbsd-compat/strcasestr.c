@@ -35,35 +35,35 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strcasestr.c */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifndef HAVE_STRCASESTR
+#నిర్వచితం_కాకపోతే HAVE_STRCASESTR
 
-#include <ctype.h>
-#include <string.h>
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <string.h>
 
 /*
  * Find the first occurrence of find in s, ignore case.
  */
-char *
-strcasestr(const char *s, const char *find)
+అక్షరం *
+strcasestr(స్థిరరాశి అక్షరం *s, స్థిరరాశి అక్షరం *కనుగొను)
 {
-	char c, sc;
-	size_t len;
+	అక్షరం c, sc;
+	కొలత_t len;
 
-	if ((c = *find++) != 0) {
-		c = (char)tolower((unsigned char)c);
-		len = strlen(find);
-		do {
-			do {
-				if ((sc = *s++) == 0)
-					return (NULL);
-			} while ((char)tolower((unsigned char)sc) != c);
-		} while (strncasecmp(s, find, len) != 0);
+	ఒకవేళ ((c = *కనుగొను++) != 0) {
+		c = (అక్షరం)tolower((గుర్తులేని అక్షరం)c);
+		len = అక్షరశ్రేణి_పొడవు(కనుగొను);
+		చేయి {
+			చేయి {
+				ఒకవేళ ((sc = *s++) == 0)
+					తిరిగి (ఖాళీ);
+			} అయితే ((అక్షరం)tolower((గుర్తులేని అక్షరం)sc) != c);
+		} అయితే (strncasecmp(s, కనుగొను, len) != 0);
 		s--;
 	}
-	return ((char *)s);
+	తిరిగి ((అక్షరం *)s);
 }
 DEF_WEAK(strcasestr);
 
-#endif
+#అయితే_ముగింపు

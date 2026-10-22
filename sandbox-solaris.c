@@ -15,86 +15,86 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifdef SANDBOX_SOLARIS
-#ifndef USE_SOLARIS_PRIVS
+#నిర్వచితమైతే SANDBOX_SOLARIS
+#నిర్వచితం_కాకపోతే USE_SOLARIS_PRIVS
 # error "--with-solaris-privs must be used with the Solaris sandbox"
-#endif
+#అయితే_ముగింపు
 
-#include <sys/types.h>
+#అన్తర్భావ <sys/types.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#ifdef HAVE_PRIV_H
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#నిర్వచితమైతే HAVE_PRIV_H
 # include <priv.h>
-#endif
+#అయితే_ముగింపు
 
-#include "log.h"
-#include "ssh-sandbox.h"
-#include "xmalloc.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "ssh-sandbox.h"
+#అన్తర్భావ "xmalloc.h"
 
-struct ssh_sandbox {
-	priv_set_t *pset;
+నిర్మాణం ssh_sandbox {
+	priv_సమితి_t *pset;
 };
 
-struct ssh_sandbox *
-ssh_sandbox_init(struct monitor *monitor)
+నిర్మాణం ssh_sandbox *
+ssh_sandbox_init(నిర్మాణం monitor *monitor)
 {
-	struct ssh_sandbox *box = NULL;
+	నిర్మాణం ssh_sandbox *box = ఖాళీ;
 
-	box = xcalloc(1, sizeof(*box));
+	box = xcalloc(1, పరిమాణం(*box));
 
 	/* Start with "basic" and drop everything we don't need. */
 	box->pset = solaris_basic_privset();
 
-	if (box->pset == NULL) {
-		free(box);
-		return NULL;
+	ఒకవేళ (box->pset == ఖాళీ) {
+		విడుదల(box);
+		తిరిగి ఖాళీ;
 	}
 
 	/* Drop everything except the ability to use already-opened files */
-	if (priv_delset(box->pset, PRIV_FILE_LINK_ANY) != 0 ||
-#ifdef PRIV_NET_ACCESS
+	ఒకవేళ (priv_delset(box->pset, PRIV_FILE_LINK_ANY) != 0 ||
+#నిర్వచితమైతే PRIV_NET_ACCESS
 	    priv_delset(box->pset, PRIV_NET_ACCESS) != 0 ||
-#endif
-#ifdef PRIV_DAX_ACCESS
+#అయితే_ముగింపు
+#నిర్వచితమైతే PRIV_DAX_ACCESS
 	    priv_delset(box->pset, PRIV_DAX_ACCESS) != 0 ||
-#endif
-#ifdef PRIV_SYS_IB_INFO
+#అయితే_ముగింపు
+#నిర్వచితమైతే PRIV_SYS_IB_INFO
 	    priv_delset(box->pset, PRIV_SYS_IB_INFO) != 0 ||
-#endif
+#అయితే_ముగింపు
 	    priv_delset(box->pset, PRIV_PROC_EXEC) != 0 ||
 	    priv_delset(box->pset, PRIV_PROC_FORK) != 0 ||
 	    priv_delset(box->pset, PRIV_PROC_INFO) != 0 ||
 	    priv_delset(box->pset, PRIV_PROC_SESSION) != 0) {
-		free(box);
-		return NULL;
+		విడుదల(box);
+		తిరిగి ఖాళీ;
 	}
 
 	/* These may not be available on older Solaris-es */
-# if defined(PRIV_FILE_READ) && defined(PRIV_FILE_WRITE)
-	if (priv_delset(box->pset, PRIV_FILE_READ) != 0 ||
+# ఒకవేళ defined(PRIV_FILE_READ) && defined(PRIV_FILE_WRITE)
+	ఒకవేళ (priv_delset(box->pset, PRIV_FILE_READ) != 0 ||
 	    priv_delset(box->pset, PRIV_FILE_WRITE) != 0) {
-		free(box);
-		return NULL;
+		విడుదల(box);
+		తిరిగి ఖాళీ;
 	}
 # endif
 
-	return box;
+	తిరిగి box;
 }
 
-void
-ssh_sandbox_child(struct ssh_sandbox *box)
+శూన్య
+ssh_sandbox_బిడ్డ(నిర్మాణం ssh_sandbox *box)
 {
-	if (setppriv(PRIV_SET, PRIV_PERMITTED, box->pset) != 0 ||
-	    setppriv(PRIV_SET, PRIV_LIMIT, box->pset) != 0 ||
-	    setppriv(PRIV_SET, PRIV_INHERITABLE, box->pset) != 0)
+	ఒకవేళ (setppriv(PRIV_సమితి, PRIV_PERMITTED, box->pset) != 0 ||
+	    setppriv(PRIV_సమితి, PRIV_హద్దు, box->pset) != 0 ||
+	    setppriv(PRIV_సమితి, PRIV_INHERITABLE, box->pset) != 0)
 		fatal("setppriv: %s", strerror(errno));
 }
 
-#endif /* SANDBOX_SOLARIS */
+#అయితే_ముగింపు /* SANDBOX_SOLARIS */

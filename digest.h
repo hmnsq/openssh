@@ -15,56 +15,56 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _DIGEST_H
-#define _DIGEST_H
+#నిర్వచితం_కాకపోతే _DIGEST_H
+#నిర్వచించు _DIGEST_H
 
 /* Maximum digest output length */
-#define SSH_DIGEST_MAX_LENGTH	64
+#నిర్వచించు SSH_DIGEST_MAX_నిడివి	64
 
 /* Digest algorithms */
-#define SSH_DIGEST_MD5		0
-#define SSH_DIGEST_SHA1		1
-#define SSH_DIGEST_SHA256	2
-#define SSH_DIGEST_SHA384	3
-#define SSH_DIGEST_SHA512	4
-#define SSH_DIGEST_MAX		5
+#నిర్వచించు SSH_DIGEST_MD5		0
+#నిర్వచించు SSH_DIGEST_SHA1		1
+#నిర్వచించు SSH_DIGEST_SHA256	2
+#నిర్వచించు SSH_DIGEST_SHA384	3
+#నిర్వచించు SSH_DIGEST_SHA512	4
+#నిర్వచించు SSH_DIGEST_MAX		5
 
-struct sshbuf;
-struct ssh_digest_ctx;
+నిర్మాణం sshbuf;
+నిర్మాణం ssh_digest_ctx;
 
 /* Looks up a digest algorithm by name */
-int ssh_digest_alg_by_name(const char *name);
+పూర్ణాంకం ssh_digest_alg_by_name(స్థిరరాశి అక్షరం *name);
 
 /* Returns the algorithm name for a digest identifier */
-const char *ssh_digest_alg_name(int alg);
+స్థిరరాశి అక్షరం *ssh_digest_alg_name(పూర్ణాంకం alg);
 
 /* Returns the algorithm's digest length in bytes or 0 for invalid algorithm */
-size_t ssh_digest_bytes(int alg);
+కొలత_t ssh_digest_బైట్లు(పూర్ణాంకం alg);
 
 /* Returns the block size of the digest, e.g. for implementing HMAC */
-size_t ssh_digest_blocksize(struct ssh_digest_ctx *ctx);
+కొలత_t ssh_digest_blocksize(నిర్మాణం ssh_digest_ctx *ctx);
 
 /* Copies internal state of digest of 'from' to 'to' */
-int ssh_digest_copy_state(struct ssh_digest_ctx *from,
-    struct ssh_digest_ctx *to);
+పూర్ణాంకం ssh_digest_copy_state(నిర్మాణం ssh_digest_ctx *from,
+    నిర్మాణం ssh_digest_ctx *గమ్యం);
 
 /* One-shot API */
-int ssh_digest_memory(int alg, const void *m, size_t mlen,
-    u_char *d, size_t dlen)
+పూర్ణాంకం ssh_digest_జ్ఞాపకం(పూర్ణాంకం alg, స్థిరరాశి శూన్య *m, కొలత_t mlen,
+    u_char *d, కొలత_t dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)))
 	__attribute__((__bounded__(__buffer__, 4, 5)));
-int ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+పూర్ణాంకం ssh_digest_బఫరు(పూర్ణాంకం alg, స్థిరరాశి నిర్మాణం sshbuf *b, u_char *d, కొలత_t dlen)
 	__attribute__((__bounded__(__buffer__, 3, 4)));
 
 /* Update API */
-struct ssh_digest_ctx *ssh_digest_start(int alg);
-int ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
+నిర్మాణం ssh_digest_ctx *ssh_digest_ప్రారంభం(పూర్ణాంకం alg);
+పూర్ణాంకం ssh_digest_update(నిర్మాణం ssh_digest_ctx *ctx, స్థిరరాశి శూన్య *m, కొలత_t mlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_digest_update_buffer(struct ssh_digest_ctx *ctx,
-    const struct sshbuf *b);
-int ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
+పూర్ణాంకం ssh_digest_update_బఫరు(నిర్మాణం ssh_digest_ctx *ctx,
+    స్థిరరాశి నిర్మాణం sshbuf *b);
+పూర్ణాంకం ssh_digest_final(నిర్మాణం ssh_digest_ctx *ctx, u_char *d, కొలత_t dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-void ssh_digest_free(struct ssh_digest_ctx *ctx);
+శూన్య ssh_digest_free(నిర్మాణం ssh_digest_ctx *ctx);
 
-#endif /* _DIGEST_H */
+#అయితే_ముగింపు /* _DIGEST_H */
 

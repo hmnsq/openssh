@@ -1,5 +1,5 @@
-#ifndef _HAVE_LOGINREC_H_
-#define _HAVE_LOGINREC_H_
+#నిర్వచితం_కాకపోతే _HAVE_LOGINREC_H_
+#నిర్వచించు _HAVE_LOGINREC_H_
 
 /*
  * Copyright (c) 2000 Andre Lucas.  All rights reserved.
@@ -29,9 +29,9 @@
  ** loginrec.h:  platform-independent login recording and lastlog retrieval
  **/
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-struct ssh;
+నిర్మాణం ssh;
 
 /**
  ** you should use the login_* calls to work around platform dependencies
@@ -41,10 +41,10 @@ struct ssh;
  * login_netinfo structure
  */
 
-union login_netinfo {
-	struct sockaddr sa;
-	struct sockaddr_in sa_in;
-	struct sockaddr_storage sa_storage;
+సంఘం login_netinfo {
+	నిర్మాణం sockaddr sa;
+	నిర్మాణం sockaddr_in sa_లోపల;
+	నిర్మాణం sockaddr_storage sa_storage;
 };
 
 /*
@@ -52,37 +52,37 @@ union login_netinfo {
  */
 /* types - different to utmp.h 'type' macros */
 /* (though set to the same value as linux, openbsd and others...) */
-#define LTYPE_FAILED   6
-#define LTYPE_LOGIN    7
-#define LTYPE_LOGOUT   8
+#నిర్వచించు LTYPE_FAILED   6
+#నిర్వచించు LTYPE_LOGIN    7
+#నిర్వచించు LTYPE_LOGOUT   8
 
 /* string lengths - set very long */
-#define LINFO_PROGSIZE 64
-#define LINFO_LINESIZE 64
-#define LINFO_NAMESIZE 512
-#define LINFO_HOSTSIZE 256
+#నిర్వచించు LINFO_PROGSIZE 64
+#నిర్వచించు LINFO_LINESIZE 64
+#నిర్వచించు LINFO_NAMESIZE 512
+#నిర్వచించు LINFO_HOSTSIZE 256
 
-struct logininfo {
-	char       progname[LINFO_PROGSIZE];     /* name of program (for PAM) */
-	int        progname_null;
-	short int  type;                         /* type of login (LTYPE_*) */
+నిర్మాణం logininfo {
+	అక్షరం       progname[LINFO_PROGSIZE];     /* name of program (for PAM) */
+	పూర్ణాంకం        progname_null;
+	పొట్టి పూర్ణాంకం  type;                         /* type of login (LTYPE_*) */
 	pid_t      pid;                          /* PID of login process */
 	uid_t      uid;                          /* UID of this user */
-	char       line[LINFO_LINESIZE];         /* tty/pty name */
-	char       username[LINFO_NAMESIZE];     /* login username */
-	char       hostname[LINFO_HOSTSIZE];     /* remote hostname */
+	అక్షరం       పంక్తి[LINFO_LINESIZE];         /* tty/pty name */
+	అక్షరం       username[LINFO_NAMESIZE];     /* login username */
+	అక్షరం       hostname[LINFO_HOSTSIZE];     /* remote hostname */
 	/* 'exit_status' structure components */
-	int        exit;                        /* process exit status */
-	int        termination;                 /* process termination status */
+	పూర్ణాంకం        నిష్క్రమించు;                        /* process exit status */
+	పూర్ణాంకం        termination;                 /* process termination status */
 	/* struct timeval (sys/time.h) isn't always available, if it isn't we'll
 	 * use time_t's value as tv_sec and set tv_usec to 0
 	 */
-	unsigned int tv_sec;
-	unsigned int tv_usec;
-	union login_netinfo hostaddr;       /* caller's host address(es) */
-#ifdef USE_WTMPDB
+	గుర్తులేని పూర్ణాంకం tv_sec;
+	గుర్తులేని పూర్ణాంకం tv_usec;
+	సంఘం login_netinfo hostaddr;       /* caller's host address(es) */
+#నిర్వచితమైతే USE_WTMPDB
 	int64_t wtmpdb_id;                  /* ID for wtmpdb_logout */
-#endif
+#అయితే_ముగింపు
 }; /* struct logininfo */
 
 /*
@@ -92,47 +92,47 @@ struct logininfo {
 /** 'public' functions */
 
 /* construct a new login entry */
-struct logininfo *login_alloc_entry(pid_t pid, const char *username,
-				    const char *hostname, const char *line);
+నిర్మాణం logininfo *login_alloc_నమోదు(pid_t pid, స్థిరరాశి అక్షరం *username,
+				    స్థిరరాశి అక్షరం *hostname, స్థిరరాశి అక్షరం *పంక్తి);
 /* free a structure */
-void login_free_entry(struct logininfo *li);
+శూన్య login_free_నమోదు(నిర్మాణం logininfo *li);
 /* fill out a pre-allocated structure with useful information */
-int login_init_entry(struct logininfo *li, pid_t pid, const char *username,
-    const char *hostname, const char *line);
+పూర్ణాంకం login_init_నమోదు(నిర్మాణం logininfo *li, pid_t pid, స్థిరరాశి అక్షరం *username,
+    స్థిరరాశి అక్షరం *hostname, స్థిరరాశి అక్షరం *పంక్తి);
 /* place the current time in a logininfo struct */
-void login_set_current_time(struct logininfo *li);
+శూన్య login_సమితి_current_సమయం(నిర్మాణం logininfo *li);
 
 /* record the entry */
-int login_login (struct logininfo *li);
-int login_logout(struct logininfo *li);
-#ifdef LOGIN_NEEDS_UTMPX
-int login_utmp_only(struct logininfo *li);
-#endif
+పూర్ణాంకం login_login (నిర్మాణం logininfo *li);
+పూర్ణాంకం login_logout(నిర్మాణం logininfo *li);
+#నిర్వచితమైతే LOGIN_NEEDS_UTMPX
+పూర్ణాంకం login_utmp_only(నిర్మాణం logininfo *li);
+#అయితే_ముగింపు
 
 /** End of public functions */
 
 /* record the entry */
-int login_write (struct logininfo *li);
-int login_log_entry(struct logininfo *li);
+పూర్ణాంకం login_write (నిర్మాణం logininfo *li);
+పూర్ణాంకం login_log_నమోదు(నిర్మాణం logininfo *li);
 
 /* set the network address based on network address type */
-void login_set_addr(struct logininfo *li, const struct sockaddr *sa,
-		    const unsigned int sa_size);
+శూన్య login_సమితి_addr(నిర్మాణం logininfo *li, స్థిరరాశి నిర్మాణం sockaddr *sa,
+		    స్థిరరాశి గుర్తులేని పూర్ణాంకం sa_కొలత);
 
 /*
  * lastlog retrieval functions
  */
 /* lastlog *entry* functions fill out a logininfo */
-struct logininfo *login_get_lastlog(struct logininfo *li, const uid_t uid);
+నిర్మాణం logininfo *login_get_lastlog(నిర్మాణం logininfo *li, స్థిరరాశి uid_t uid);
 /* lastlog *time* functions return time_t equivalent (uint) */
-unsigned int login_get_lastlog_time(const uid_t uid);
+గుర్తులేని పూర్ణాంకం login_get_lastlog_సమయం(స్థిరరాశి uid_t uid);
 
 /* produce various forms of the line filename */
-char *line_fullname(char *dst, const char *src, u_int dstsize);
-char *line_stripname(char *dst, const char *src, int dstsize);
-char *line_abbrevname(char *dst, const char *src, int dstsize);
+అక్షరం *పంక్తి_fullname(అక్షరం *dst, స్థిరరాశి అక్షరం *src, u_int dstsize);
+అక్షరం *పంక్తి_stripname(అక్షరం *dst, స్థిరరాశి అక్షరం *src, పూర్ణాంకం dstsize);
+అక్షరం *పంక్తి_abbrevname(అక్షరం *dst, స్థిరరాశి అక్షరం *src, పూర్ణాంకం dstsize);
 
-void record_failed_login(struct ssh *, const char *, const char *,
-    const char *);
+శూన్య రికార్డు_failed_login(నిర్మాణం ssh *, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *,
+    స్థిరరాశి అక్షరం *);
 
-#endif /* _HAVE_LOGINREC_H_ */
+#అయితే_ముగింపు /* _HAVE_LOGINREC_H_ */

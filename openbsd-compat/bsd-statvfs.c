@@ -14,80 +14,80 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#if !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
+#ఒకవేళ !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
 
-#ifdef HAVE_SYS_MOUNT_H
+#నిర్వచితమైతే HAVE_SYS_MOUNT_H
 # include <sys/mount.h>
-#endif
+#అయితే_ముగింపు
 
-#include <errno.h>
+#అన్తర్భావ <errno.h>
 
-#ifndef MNAMELEN
+#నిర్వచితం_కాకపోతే MNAMELEN
 # define MNAMELEN 32
-#endif
+#అయితే_ముగింపు
 
-#ifdef HAVE_STRUCT_STATFS_F_FILES
+#నిర్వచితమైతే HAVE_STRUCT_STATFS_F_FILES
 # define HAVE_STRUCT_STATFS
-#endif
+#అయితే_ముగింపు
 
-#ifdef HAVE_STRUCT_STATFS
-static void
-copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
+#నిర్వచితమైతే HAVE_STRUCT_STATFS
+స్థిర శూన్య
+copy_statfs_గమ్యం_statvfs(నిర్మాణం statvfs *గమ్యం, నిర్మాణం statfs *from)
 {
-	to->f_bsize = from->f_bsize;
-	to->f_frsize = from->f_bsize;	/* no exact equivalent */
-	to->f_blocks = from->f_blocks;
-	to->f_bfree = from->f_bfree;
-	to->f_bavail = from->f_bavail;
-	to->f_files = from->f_files;
-	to->f_ffree = from->f_ffree;
-	to->f_favail = from->f_ffree;	/* no exact equivalent */
-	to->f_fsid = 0;			/* XXX fix me */
-#ifdef HAVE_STRUCT_STATFS_F_FLAGS
-	to->f_flag = from->f_flags;
-#else
-	to->f_flag = 0;
-#endif
-	to->f_namemax = MNAMELEN;
+	గమ్యం->f_bsize = from->f_bsize;
+	గమ్యం->f_frsize = from->f_bsize;	/* no exact equivalent */
+	గమ్యం->f_ఖండాలు = from->f_ఖండాలు;
+	గమ్యం->f_bfree = from->f_bfree;
+	గమ్యం->f_bavail = from->f_bavail;
+	గమ్యం->f_files = from->f_files;
+	గమ్యం->f_ffree = from->f_ffree;
+	గమ్యం->f_favail = from->f_ffree;	/* no exact equivalent */
+	గమ్యం->f_fsid = 0;			/* XXX fix me */
+#నిర్వచితమైతే HAVE_STRUCT_STATFS_F_FLAGS
+	గమ్యం->f_flag = from->f_flags;
+#లేకపోతే
+	గమ్యం->f_flag = 0;
+#అయితే_ముగింపు
+	గమ్యం->f_namemax = MNAMELEN;
 }
-#endif
+#అయితే_ముగింపు
 
 # ifndef HAVE_STATVFS
-int statvfs(const char *path, struct statvfs *buf)
+పూర్ణాంకం statvfs(స్థిరరాశి అక్షరం *మార్గం, నిర్మాణం statvfs *buf)
 {
-#  if defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
-	struct statfs fs;
+#  ఒకవేళ defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
+	నిర్మాణం statfs fs;
 
-	memset(&fs, 0, sizeof(fs));
-	if (statfs(path, &fs) == -1)
-		return -1;
-	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
+	memset(&fs, 0, పరిమాణం(fs));
+	ఒకవేళ (statfs(మార్గం, &fs) == -1)
+		తిరిగి -1;
+	copy_statfs_గమ్యం_statvfs(buf, &fs);
+	తిరిగి 0;
+#  లేకపోతే
 	errno = ENOSYS;
-	return -1;
+	తిరిగి -1;
 #  endif
 }
 # endif
 
 # ifndef HAVE_FSTATVFS
-int fstatvfs(int fd, struct statvfs *buf)
+పూర్ణాంకం fstatvfs(పూర్ణాంకం fd, నిర్మాణం statvfs *buf)
 {
-#  if defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
-	struct statfs fs;
+#  ఒకవేళ defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
+	నిర్మాణం statfs fs;
 
-	memset(&fs, 0, sizeof(fs));
-	if (fstatfs(fd, &fs) == -1)
-		return -1;
-	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
+	memset(&fs, 0, పరిమాణం(fs));
+	ఒకవేళ (fstatfs(fd, &fs) == -1)
+		తిరిగి -1;
+	copy_statfs_గమ్యం_statvfs(buf, &fs);
+	తిరిగి 0;
+#  లేకపోతే
 	errno = ENOSYS;
-	return -1;
+	తిరిగి -1;
 #  endif
 }
 # endif
 
-#endif
+#అయితే_ముగింపు

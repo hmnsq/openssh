@@ -16,46 +16,46 @@
 
 /* Roughly equivalent to "mktemp -d -t TEMPLATE", but portable. */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <limits.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <unistd.h>
 
-#include "log.h"
+#అన్తర్భావ "log.h"
 
-static void
-usage(void)
+స్థిర శూన్య
+usage(శూన్య)
 {
 	fprintf(stderr, "mkdtemp template\n");
-	exit(1);
+	నిష్క్రమించు(1);
 }
 
-int
-main(int argc, char **argv)
+పూర్ణాంకం
+ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	const char *base;
-	const char *tmpdir;
-	char template[PATH_MAX];
-	int r;
-	char *dir;
+	స్థిరరాశి అక్షరం *పునాది;
+	స్థిరరాశి అక్షరం *tmpdir;
+	అక్షరం మూస[PATH_MAX];
+	పూర్ణాంకం r;
+	అక్షరం *dir;
 
-	if (argc != 2)
+	ఒకవేళ (argc != 2)
 		usage();
-	base = argv[1];
+	పునాది = argv[1];
 
-	if ((tmpdir = getenv("TMPDIR")) == NULL)
+	ఒకవేళ ((tmpdir = getenv("TMPDIR")) == ఖాళీ)
 		tmpdir = "/tmp";
-	r = snprintf(template, sizeof(template), "%s/%s", tmpdir, base);
-	if (r < 0 || (size_t)r >= sizeof(template))
+	r = snprintf(మూస, పరిమాణం(మూస), "%s/%s", tmpdir, పునాది);
+	ఒకవేళ (r < 0 || (కొలత_t)r >= పరిమాణం(మూస))
 		fatal("template string too long");
-	dir = mkdtemp(template);
-	if (dir == NULL) {
+	dir = mkdtemp(మూస);
+	ఒకవేళ (dir == ఖాళీ) {
 		perror("mkdtemp");
-		exit(1);
+		నిష్క్రమించు(1);
 	}
 	puts(dir);
-	return 0;
+	తిరిగి 0;
 }

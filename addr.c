@@ -16,146 +16,146 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/socket.h>
+#అన్తర్భావ <netinet/in.h>
+#అన్తర్భావ <arpa/inet.h>
 
-#include <netdb.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <limits.h>
+#అన్తర్భావ <netdb.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <limits.h>
 
-#include "addr.h"
+#అన్తర్భావ "addr.h"
 
-#define _SA(x)	((struct sockaddr *)(x))
+#నిర్వచించు _SA(x)	((నిర్మాణం sockaddr *)(x))
 
-static int
-addr_unicast_masklen(int af)
+స్థిర పూర్ణాంకం
+addr_unicast_masklen(పూర్ణాంకం af)
 {
-	switch (af) {
-	case AF_INET:
-		return 32;
-	case AF_INET6:
-		return 128;
-	default:
-		return -1;
+	ఎంపిక (af) {
+	స్థితి AF_INET:
+		తిరిగి 32;
+	స్థితి AF_INET6:
+		తిరిగి 128;
+	అప్రమేయ:
+		తిరిగి -1;
 	}
 }
 
-static inline int
-masklen_valid(int af, u_int masklen)
+స్థిర అంతఃవరుస పూర్ణాంకం
+masklen_valid(పూర్ణాంకం af, u_int masklen)
 {
-	switch (af) {
-	case AF_INET:
-		return masklen <= 32 ? 0 : -1;
-	case AF_INET6:
-		return masklen <= 128 ? 0 : -1;
-	default:
-		return -1;
+	ఎంపిక (af) {
+	స్థితి AF_INET:
+		తిరిగి masklen <= 32 ? 0 : -1;
+	స్థితి AF_INET6:
+		తిరిగి masklen <= 128 ? 0 : -1;
+	అప్రమేయ:
+		తిరిగి -1;
 	}
 }
 
-static int
-addr_xaddr_to_sa(const struct xaddr *xa, struct sockaddr *sa, socklen_t *len,
-    uint16_t port)
+స్థిర పూర్ణాంకం
+addr_xaddr_గమ్యం_sa(స్థిరరాశి నిర్మాణం xaddr *xa, నిర్మాణం sockaddr *sa, socklen_t *len,
+    uint16_t పోర్టు)
 {
-	struct sockaddr_in *in4 = (struct sockaddr_in *)sa;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)sa;
+	నిర్మాణం sockaddr_in *in4 = (నిర్మాణం sockaddr_in *)sa;
+	నిర్మాణం sockaddr_in6 *in6 = (నిర్మాణం sockaddr_in6 *)sa;
 
-	if (xa == NULL || sa == NULL || len == NULL)
-		return -1;
+	ఒకవేళ (xa == ఖాళీ || sa == ఖాళీ || len == ఖాళీ)
+		తిరిగి -1;
 
-	switch (xa->af) {
-	case AF_INET:
-		if (*len < sizeof(*in4))
-			return -1;
-		memset(sa, '\0', sizeof(*in4));
-		*len = sizeof(*in4);
-#ifdef SOCK_HAS_LEN
-		in4->sin_len = sizeof(*in4);
-#endif
+	ఎంపిక (xa->af) {
+	స్థితి AF_INET:
+		ఒకవేళ (*len < పరిమాణం(*in4))
+			తిరిగి -1;
+		memset(sa, '\0', పరిమాణం(*in4));
+		*len = పరిమాణం(*in4);
+#నిర్వచితమైతే SOCK_HAS_LEN
+		in4->sin_len = పరిమాణం(*in4);
+#అయితే_ముగింపు
 		in4->sin_family = AF_INET;
-		in4->sin_port = htons(port);
-		memcpy(&in4->sin_addr, &xa->v4, sizeof(in4->sin_addr));
-		break;
-	case AF_INET6:
-		if (*len < sizeof(*in6))
-			return -1;
-		memset(sa, '\0', sizeof(*in6));
-		*len = sizeof(*in6);
-#ifdef SOCK_HAS_LEN
-		in6->sin6_len = sizeof(*in6);
-#endif
+		in4->sin_port = htons(పోర్టు);
+		జ్ఞాపకం_నకలు(&in4->sin_addr, &xa->v4, పరిమాణం(in4->sin_addr));
+		ఆపు;
+	స్థితి AF_INET6:
+		ఒకవేళ (*len < పరిమాణం(*in6))
+			తిరిగి -1;
+		memset(sa, '\0', పరిమాణం(*in6));
+		*len = పరిమాణం(*in6);
+#నిర్వచితమైతే SOCK_HAS_LEN
+		in6->sin6_len = పరిమాణం(*in6);
+#అయితే_ముగింపు
 		in6->sin6_family = AF_INET6;
-		in6->sin6_port = htons(port);
-		memcpy(&in6->sin6_addr, &xa->v6, sizeof(in6->sin6_addr));
-#ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
+		in6->sin6_port = htons(పోర్టు);
+		జ్ఞాపకం_నకలు(&in6->sin6_addr, &xa->v6, పరిమాణం(in6->sin6_addr));
+#నిర్వచితమైతే HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
 		in6->sin6_scope_id = xa->scope_id;
-#endif
-		break;
-	default:
-		return -1;
+#అయితే_ముగింపు
+		ఆపు;
+	అప్రమేయ:
+		తిరిగి -1;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 /*
  * Convert struct sockaddr to struct xaddr
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa)
+పూర్ణాంకం
+addr_sa_గమ్యం_xaddr(నిర్మాణం sockaddr *sa, socklen_t slen, నిర్మాణం xaddr *xa)
 {
-	struct sockaddr_in *in4 = (struct sockaddr_in *)sa;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)sa;
+	నిర్మాణం sockaddr_in *in4 = (నిర్మాణం sockaddr_in *)sa;
+	నిర్మాణం sockaddr_in6 *in6 = (నిర్మాణం sockaddr_in6 *)sa;
 
-	memset(xa, '\0', sizeof(*xa));
+	memset(xa, '\0', పరిమాణం(*xa));
 
-	switch (sa->sa_family) {
-	case AF_INET:
-		if (slen < (socklen_t)sizeof(*in4))
-			return -1;
+	ఎంపిక (sa->sa_family) {
+	స్థితి AF_INET:
+		ఒకవేళ (slen < (socklen_t)పరిమాణం(*in4))
+			తిరిగి -1;
 		xa->af = AF_INET;
-		memcpy(&xa->v4, &in4->sin_addr, sizeof(xa->v4));
-		break;
-	case AF_INET6:
-		if (slen < (socklen_t)sizeof(*in6))
-			return -1;
+		జ్ఞాపకం_నకలు(&xa->v4, &in4->sin_addr, పరిమాణం(xa->v4));
+		ఆపు;
+	స్థితి AF_INET6:
+		ఒకవేళ (slen < (socklen_t)పరిమాణం(*in6))
+			తిరిగి -1;
 		xa->af = AF_INET6;
-		memcpy(&xa->v6, &in6->sin6_addr, sizeof(xa->v6));
-#ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
+		జ్ఞాపకం_నకలు(&xa->v6, &in6->sin6_addr, పరిమాణం(xa->v6));
+#నిర్వచితమైతే HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
 		xa->scope_id = in6->sin6_scope_id;
-#endif
-		break;
-	default:
-		return -1;
+#అయితే_ముగింపు
+		ఆపు;
+	అప్రమేయ:
+		తిరిగి -1;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int
-addr_invert(struct xaddr *n)
+స్థిర పూర్ణాంకం
+addr_invert(నిర్మాణం xaddr *n)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	if (n == NULL)
-		return -1;
+	ఒకవేళ (n == ఖాళీ)
+		తిరిగి -1;
 
-	switch (n->af) {
-	case AF_INET:
+	ఎంపిక (n->af) {
+	స్థితి AF_INET:
 		n->v4.s_addr = ~n->v4.s_addr;
-		return 0;
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
+		తిరిగి 0;
+	స్థితి AF_INET6:
+		కొరకు (i = 0; i < 4; i++)
 			n->addr32[i] = ~n->addr32[i];
-		return 0;
-	default:
-		return -1;
+		తిరిగి 0;
+	అప్రమేయ:
+		తిరిగి -1;
 	}
 }
 
@@ -164,163 +164,163 @@ addr_invert(struct xaddr *n)
  * store it in 'n'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_netmask(int af, u_int l, struct xaddr *n)
+పూర్ణాంకం
+addr_netmask(పూర్ణాంకం af, u_int l, నిర్మాణం xaddr *n)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	if (masklen_valid(af, l) != 0 || n == NULL)
-		return -1;
+	ఒకవేళ (masklen_valid(af, l) != 0 || n == ఖాళీ)
+		తిరిగి -1;
 
-	memset(n, '\0', sizeof(*n));
-	switch (af) {
-	case AF_INET:
+	memset(n, '\0', పరిమాణం(*n));
+	ఎంపిక (af) {
+	స్థితి AF_INET:
 		n->af = AF_INET;
-		if (l == 0)
-			return 0;
+		ఒకవేళ (l == 0)
+			తిరిగి 0;
 		n->v4.s_addr = htonl((0xffffffff << (32 - l)) & 0xffffffff);
-		return 0;
-	case AF_INET6:
+		తిరిగి 0;
+	స్థితి AF_INET6:
 		n->af = AF_INET6;
-		for (i = 0; i < 4 && l >= 32; i++, l -= 32)
+		కొరకు (i = 0; i < 4 && l >= 32; i++, l -= 32)
 			n->addr32[i] = 0xffffffffU;
-		if (i < 4 && l != 0)
+		ఒకవేళ (i < 4 && l != 0)
 			n->addr32[i] = htonl((0xffffffff << (32 - l)) &
 			    0xffffffff);
-		return 0;
-	default:
-		return -1;
+		తిరిగి 0;
+	అప్రమేయ:
+		తిరిగి -1;
 	}
 }
 
-static int
-addr_hostmask(int af, u_int l, struct xaddr *n)
+స్థిర పూర్ణాంకం
+addr_hostmask(పూర్ణాంకం af, u_int l, నిర్మాణం xaddr *n)
 {
-	if (addr_netmask(af, l, n) == -1 || addr_invert(n) == -1)
-		return -1;
-	return 0;
+	ఒకవేళ (addr_netmask(af, l, n) == -1 || addr_invert(n) == -1)
+		తిరిగి -1;
+	తిరిగి 0;
 }
 
 /*
  * Perform logical AND of addresses 'a' and 'b', storing result in 'dst'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b)
+పూర్ణాంకం
+addr_and(నిర్మాణం xaddr *dst, స్థిరరాశి నిర్మాణం xaddr *a, స్థిరరాశి నిర్మాణం xaddr *b)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	if (dst == NULL || a == NULL || b == NULL || a->af != b->af)
-		return -1;
+	ఒకవేళ (dst == ఖాళీ || a == ఖాళీ || b == ఖాళీ || a->af != b->af)
+		తిరిగి -1;
 
-	memcpy(dst, a, sizeof(*dst));
-	switch (a->af) {
-	case AF_INET:
+	జ్ఞాపకం_నకలు(dst, a, పరిమాణం(*dst));
+	ఎంపిక (a->af) {
+	స్థితి AF_INET:
 		dst->v4.s_addr &= b->v4.s_addr;
-		return 0;
-	case AF_INET6:
+		తిరిగి 0;
+	స్థితి AF_INET6:
 		dst->scope_id = a->scope_id;
-		for (i = 0; i < 4; i++)
+		కొరకు (i = 0; i < 4; i++)
 			dst->addr32[i] &= b->addr32[i];
-		return 0;
-	default:
-		return -1;
+		తిరిగి 0;
+	అప్రమేయ:
+		తిరిగి -1;
 	}
 }
 
-static int
-addr_or(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b)
+స్థిర పూర్ణాంకం
+addr_or(నిర్మాణం xaddr *dst, స్థిరరాశి నిర్మాణం xaddr *a, స్థిరరాశి నిర్మాణం xaddr *b)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	if (dst == NULL || a == NULL || b == NULL || a->af != b->af)
-		return (-1);
+	ఒకవేళ (dst == ఖాళీ || a == ఖాళీ || b == ఖాళీ || a->af != b->af)
+		తిరిగి (-1);
 
-	memcpy(dst, a, sizeof(*dst));
-	switch (a->af) {
-	case AF_INET:
+	జ్ఞాపకం_నకలు(dst, a, పరిమాణం(*dst));
+	ఎంపిక (a->af) {
+	స్థితి AF_INET:
 		dst->v4.s_addr |= b->v4.s_addr;
-		return (0);
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
+		తిరిగి (0);
+	స్థితి AF_INET6:
+		కొరకు (i = 0; i < 4; i++)
 			dst->addr32[i] |= b->addr32[i];
-		return (0);
-	default:
-		return (-1);
+		తిరిగి (0);
+	అప్రమేయ:
+		తిరిగి (-1);
 	}
 }
 
-int
-addr_cmp(const struct xaddr *a, const struct xaddr *b)
+పూర్ణాంకం
+addr_cmp(స్థిరరాశి నిర్మాణం xaddr *a, స్థిరరాశి నిర్మాణం xaddr *b)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	if (a->af != b->af)
-		return (a->af == AF_INET6 ? 1 : -1);
+	ఒకవేళ (a->af != b->af)
+		తిరిగి (a->af == AF_INET6 ? 1 : -1);
 
-	switch (a->af) {
-	case AF_INET:
+	ఎంపిక (a->af) {
+	స్థితి AF_INET:
 		/*
 		 * Can't just subtract here as 255.255.255.255 - 0.0.0.0 is
 		 * too big to fit into a signed int
 		 */
-		if (a->v4.s_addr == b->v4.s_addr)
-			return 0;
-		return (ntohl(a->v4.s_addr) > ntohl(b->v4.s_addr) ? 1 : -1);
-	case AF_INET6:
+		ఒకవేళ (a->v4.s_addr == b->v4.s_addr)
+			తిరిగి 0;
+		తిరిగి (ntohl(a->v4.s_addr) > ntohl(b->v4.s_addr) ? 1 : -1);
+	స్థితి AF_INET6:
 		/*
 		 * Do this a byte at a time to avoid the above issue and
 		 * any endian problems
 		 */
-		for (i = 0; i < 16; i++)
-			if (a->addr8[i] - b->addr8[i] != 0)
-				return (a->addr8[i] - b->addr8[i]);
-		if (a->scope_id == b->scope_id)
-			return (0);
-		return (a->scope_id > b->scope_id ? 1 : -1);
-	default:
-		return (-1);
+		కొరకు (i = 0; i < 16; i++)
+			ఒకవేళ (a->addr8[i] - b->addr8[i] != 0)
+				తిరిగి (a->addr8[i] - b->addr8[i]);
+		ఒకవేళ (a->scope_id == b->scope_id)
+			తిరిగి (0);
+		తిరిగి (a->scope_id > b->scope_id ? 1 : -1);
+	అప్రమేయ:
+		తిరిగి (-1);
 	}
 }
 
-static int
-addr_is_all0s(const struct xaddr *a)
+స్థిర పూర్ణాంకం
+addr_is_all0s(స్థిరరాశి నిర్మాణం xaddr *a)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	switch (a->af) {
-	case AF_INET:
-		return (a->v4.s_addr == 0 ? 0 : -1);
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
-			if (a->addr32[i] != 0)
-				return -1;
-		return 0;
-	default:
-		return -1;
+	ఎంపిక (a->af) {
+	స్థితి AF_INET:
+		తిరిగి (a->v4.s_addr == 0 ? 0 : -1);
+	స్థితి AF_INET6:
+		కొరకు (i = 0; i < 4; i++)
+			ఒకవేళ (a->addr32[i] != 0)
+				తిరిగి -1;
+		తిరిగి 0;
+	అప్రమేయ:
+		తిరిగి -1;
 	}
 }
 
 /* Increment the specified address. Note, does not do overflow checking */
-void
-addr_increment(struct xaddr *a)
+శూన్య
+addr_increment(నిర్మాణం xaddr *a)
 {
-	int i;
+	పూర్ణాంకం i;
 	uint32_t n;
 
-	switch (a->af) {
-	case AF_INET:
+	ఎంపిక (a->af) {
+	స్థితి AF_INET:
 		a->v4.s_addr = htonl(ntohl(a->v4.s_addr) + 1);
-		break;
-	case AF_INET6:
-		for (i = 0; i < 4; i++) {
+		ఆపు;
+	స్థితి AF_INET6:
+		కొరకు (i = 0; i < 4; i++) {
 			/* Increment with carry */
 			n = ntohl(a->addr32[3 - i]) + 1;
 			a->addr32[3 - i] = htonl(n);
-			if (n != 0)
-				break;
+			ఒకవేళ (n != 0)
+				ఆపు;
 		}
-		break;
+		ఆపు;
 	}
 }
 
@@ -330,181 +330,181 @@ addr_increment(struct xaddr *a)
  * Returns 0 if host portion of address is all-zeros,
  * -1 if not all zeros or on failure.
  */
-static int
-addr_host_is_all0s(const struct xaddr *a, u_int masklen)
+స్థిర పూర్ణాంకం
+addr_host_is_all0s(స్థిరరాశి నిర్మాణం xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_addr, tmp_mask, tmp_result;
+	నిర్మాణం xaddr tmp_addr, tmp_ముసుగు, tmp_ఫలితం;
 
-	memcpy(&tmp_addr, a, sizeof(tmp_addr));
-	if (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
-		return -1;
-	if (addr_and(&tmp_result, &tmp_addr, &tmp_mask) == -1)
-		return -1;
-	return addr_is_all0s(&tmp_result);
+	జ్ఞాపకం_నకలు(&tmp_addr, a, పరిమాణం(tmp_addr));
+	ఒకవేళ (addr_hostmask(a->af, masklen, &tmp_ముసుగు) == -1)
+		తిరిగి -1;
+	ఒకవేళ (addr_and(&tmp_ఫలితం, &tmp_addr, &tmp_ముసుగు) == -1)
+		తిరిగి -1;
+	తిరిగి addr_is_all0s(&tmp_ఫలితం);
 }
 
-#if 0
-static int
-addr_host_to_all0s(struct xaddr *a, u_int masklen)
+#ఒకవేళ 0
+స్థిర పూర్ణాంకం
+addr_host_గమ్యం_all0s(నిర్మాణం xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_mask;
+	నిర్మాణం xaddr tmp_ముసుగు;
 
-	if (addr_netmask(a->af, masklen, &tmp_mask) == -1)
-		return (-1);
-	if (addr_and(a, a, &tmp_mask) == -1)
-		return (-1);
-	return (0);
+	ఒకవేళ (addr_netmask(a->af, masklen, &tmp_ముసుగు) == -1)
+		తిరిగి (-1);
+	ఒకవేళ (addr_and(a, a, &tmp_ముసుగు) == -1)
+		తిరిగి (-1);
+	తిరిగి (0);
 }
-#endif
+#అయితే_ముగింపు
 
-int
-addr_host_to_all1s(struct xaddr *a, u_int masklen)
+పూర్ణాంకం
+addr_host_గమ్యం_all1s(నిర్మాణం xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_mask;
+	నిర్మాణం xaddr tmp_ముసుగు;
 
-	if (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
-		return (-1);
-	if (addr_or(a, a, &tmp_mask) == -1)
-		return (-1);
-	return (0);
+	ఒకవేళ (addr_hostmask(a->af, masklen, &tmp_ముసుగు) == -1)
+		తిరిగి (-1);
+	ఒకవేళ (addr_or(a, a, &tmp_ముసుగు) == -1)
+		తిరిగి (-1);
+	తిరిగి (0);
 }
 
 /*
  * Parse string address 'p' into 'n'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_pton(const char *p, struct xaddr *n)
+పూర్ణాంకం
+addr_pton(స్థిరరాశి అక్షరం *p, నిర్మాణం xaddr *n)
 {
-	struct addrinfo hints, *ai;
+	నిర్మాణం addrinfo hints, *ai;
 
-	memset(&hints, '\0', sizeof(hints));
+	memset(&hints, '\0', పరిమాణం(hints));
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (p == NULL || getaddrinfo(p, NULL, &hints, &ai) != 0)
-		return -1;
+	ఒకవేళ (p == ఖాళీ || getaddrinfo(p, ఖాళీ, &hints, &ai) != 0)
+		తిరిగి -1;
 
-	if (ai == NULL)
-		return -1;
+	ఒకవేళ (ai == ఖాళీ)
+		తిరిగి -1;
 
-	if (ai->ai_addr == NULL) {
+	ఒకవేళ (ai->ai_addr == ఖాళీ) {
 		freeaddrinfo(ai);
-		return -1;
+		తిరిగి -1;
 	}
 
-	if (n != NULL && addr_sa_to_xaddr(ai->ai_addr, ai->ai_addrlen,
+	ఒకవేళ (n != ఖాళీ && addr_sa_గమ్యం_xaddr(ai->ai_addr, ai->ai_addrlen,
 	    n) == -1) {
 		freeaddrinfo(ai);
-		return -1;
+		తిరిగి -1;
 	}
 
 	freeaddrinfo(ai);
-	return 0;
+	తిరిగి 0;
 }
 
-#if 0
-static int
-addr_sa_pton(const char *h, const char *s, struct sockaddr *sa, socklen_t slen)
+#ఒకవేళ 0
+స్థిర పూర్ణాంకం
+addr_sa_pton(స్థిరరాశి అక్షరం *h, స్థిరరాశి అక్షరం *s, నిర్మాణం sockaddr *sa, socklen_t slen)
 {
-	struct addrinfo hints, *ai;
+	నిర్మాణం addrinfo hints, *ai;
 
-	memset(&hints, '\0', sizeof(hints));
+	memset(&hints, '\0', పరిమాణం(hints));
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (h == NULL || getaddrinfo(h, s, &hints, &ai) != 0)
-		return -1;
+	ఒకవేళ (h == ఖాళీ || getaddrinfo(h, s, &hints, &ai) != 0)
+		తిరిగి -1;
 
-	if (ai == NULL)
-		return -1;
+	ఒకవేళ (ai == ఖాళీ)
+		తిరిగి -1;
 
-	if (ai->ai_addr == NULL) {
+	ఒకవేళ (ai->ai_addr == ఖాళీ) {
 		freeaddrinfo(ai);
-		return -1;
+		తిరిగి -1;
 	}
 
-	if (sa != NULL) {
-		if (slen < ai->ai_addrlen) {
+	ఒకవేళ (sa != ఖాళీ) {
+		ఒకవేళ (slen < ai->ai_addrlen) {
 			freeaddrinfo(ai);
-			return -1;
+			తిరిగి -1;
 		}
-		memcpy(sa, &ai->ai_addr, ai->ai_addrlen);
+		జ్ఞాపకం_నకలు(sa, &ai->ai_addr, ai->ai_addrlen);
 	}
 
 	freeaddrinfo(ai);
-	return 0;
+	తిరిగి 0;
 }
-#endif
+#అయితే_ముగింపు
 
-int
-addr_ntop(const struct xaddr *n, char *p, size_t len)
+పూర్ణాంకం
+addr_ntop(స్థిరరాశి నిర్మాణం xaddr *n, అక్షరం *p, కొలత_t len)
 {
-	struct sockaddr_storage ss;
-	socklen_t slen = sizeof(ss);
+	నిర్మాణం sockaddr_storage ss;
+	socklen_t slen = పరిమాణం(ss);
 
-	if (addr_xaddr_to_sa(n, _SA(&ss), &slen, 0) == -1)
-		return -1;
-	if (p == NULL || len == 0)
-		return -1;
-	if (getnameinfo(_SA(&ss), slen, p, len, NULL, 0,
+	ఒకవేళ (addr_xaddr_గమ్యం_sa(n, _SA(&ss), &slen, 0) == -1)
+		తిరిగి -1;
+	ఒకవేళ (p == ఖాళీ || len == 0)
+		తిరిగి -1;
+	ఒకవేళ (getnameinfo(_SA(&ss), slen, p, len, ఖాళీ, 0,
 	    NI_NUMERICHOST) != 0)
-		return -1;
+		తిరిగి -1;
 
-	return 0;
+	తిరిగి 0;
 }
 
 /*
  * Parse a CIDR address (x.x.x.x/y or xxxx:yyyy::/z).
  * Return -1 on parse error, -2 on inconsistency or 0 on success.
  */
-int
-addr_pton_cidr(const char *p, struct xaddr *n, u_int *l)
+పూర్ణాంకం
+addr_pton_cidr(స్థిరరాశి అక్షరం *p, నిర్మాణం xaddr *n, u_int *l)
 {
-	struct xaddr tmp;
+	నిర్మాణం xaddr tmp;
 	u_int masklen = 999;
-	char addrbuf[64], *mp;
-	const char *errstr;
+	అక్షరం addrbuf[64], *mp;
+	స్థిరరాశి అక్షరం *errstr;
 
 	/* Don't modify argument */
-	if (p == NULL || strlcpy(addrbuf, p, sizeof(addrbuf)) >= sizeof(addrbuf))
-		return -1;
+	ఒకవేళ (p == ఖాళీ || strlcpy(addrbuf, p, పరిమాణం(addrbuf)) >= పరిమాణం(addrbuf))
+		తిరిగి -1;
 
-	if ((mp = strchr(addrbuf, '/')) != NULL) {
+	ఒకవేళ ((mp = strchr(addrbuf, '/')) != ఖాళీ) {
 		*mp = '\0';
 		mp++;
-		masklen = (u_int)strtonum(mp, 0, INT_MAX, &errstr);
-		if (errstr)
-			return -1;
+		masklen = (u_int)strtonum(mp, 0, గరిష్ఠ_పూర్ణాంకం, &errstr);
+		ఒకవేళ (errstr)
+			తిరిగి -1;
 	}
 
-	if (addr_pton(addrbuf, &tmp) == -1)
-		return -1;
+	ఒకవేళ (addr_pton(addrbuf, &tmp) == -1)
+		తిరిగి -1;
 
-	if (mp == NULL)
+	ఒకవేళ (mp == ఖాళీ)
 		masklen = addr_unicast_masklen(tmp.af);
-	if (masklen_valid(tmp.af, masklen) == -1)
-		return -2;
-	if (addr_host_is_all0s(&tmp, masklen) != 0)
-		return -2;
+	ఒకవేళ (masklen_valid(tmp.af, masklen) == -1)
+		తిరిగి -2;
+	ఒకవేళ (addr_host_is_all0s(&tmp, masklen) != 0)
+		తిరిగి -2;
 
-	if (n != NULL)
-		memcpy(n, &tmp, sizeof(*n));
-	if (l != NULL)
+	ఒకవేళ (n != ఖాళీ)
+		జ్ఞాపకం_నకలు(n, &tmp, పరిమాణం(*n));
+	ఒకవేళ (l != ఖాళీ)
 		*l = masklen;
 
-	return 0;
+	తిరిగి 0;
 }
 
-int
-addr_netmatch(const struct xaddr *host, const struct xaddr *net, u_int masklen)
+పూర్ణాంకం
+addr_netmatch(స్థిరరాశి నిర్మాణం xaddr *host, స్థిరరాశి నిర్మాణం xaddr *net, u_int masklen)
 {
-	struct xaddr tmp_mask, tmp_result;
+	నిర్మాణం xaddr tmp_ముసుగు, tmp_ఫలితం;
 
-	if (host->af != net->af)
-		return -1;
+	ఒకవేళ (host->af != net->af)
+		తిరిగి -1;
 
-	if (addr_netmask(host->af, masklen, &tmp_mask) == -1)
-		return -1;
-	if (addr_and(&tmp_result, host, &tmp_mask) == -1)
-		return -1;
-	return addr_cmp(&tmp_result, net);
+	ఒకవేళ (addr_netmask(host->af, masklen, &tmp_ముసుగు) == -1)
+		తిరిగి -1;
+	ఒకవేళ (addr_and(&tmp_ఫలితం, host, &tmp_ముసుగు) == -1)
+		తిరిగి -1;
+	తిరిగి addr_cmp(&tmp_ఫలితం, net);
 }

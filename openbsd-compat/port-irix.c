@@ -23,70 +23,70 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#if defined(WITH_IRIX_PROJECT) || \
+#ఒకవేళ defined(WITH_IRIX_PROJECT) || \
     defined(WITH_IRIX_JOBS) || \
     defined(WITH_IRIX_ARRAY)
 
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-#ifdef WITH_IRIX_PROJECT
+#నిర్వచితమైతే WITH_IRIX_PROJECT
 # include <proj.h>
-#endif /* WITH_IRIX_PROJECT */
-#ifdef WITH_IRIX_JOBS
+#అయితే_ముగింపు /* WITH_IRIX_PROJECT */
+#నిర్వచితమైతే WITH_IRIX_JOBS
 # include <sys/resource.h>
-#endif
-#ifdef WITH_IRIX_AUDIT
+#అయితే_ముగింపు
+#నిర్వచితమైతే WITH_IRIX_AUDIT
 # include <sat.h>
-#endif /* WITH_IRIX_AUDIT */
+#అయితే_ముగింపు /* WITH_IRIX_AUDIT */
 
-#include "log.h"
+#అన్తర్భావ "log.h"
 
-void
-irix_setusercontext(struct passwd *pw)
+శూన్య
+irix_setusercontext(నిర్మాణం passwd *pw)
 {
-#ifdef WITH_IRIX_PROJECT
+#నిర్వచితమైతే WITH_IRIX_PROJECT
 	prid_t projid;
-#endif
-#ifdef WITH_IRIX_JOBS
+#అయితే_ముగింపు
+#నిర్వచితమైతే WITH_IRIX_JOBS
 	jid_t jid = 0;
-#elif defined(WITH_IRIX_ARRAY)
-	int jid = 0;
-#endif
+#లేదావేళ defined(WITH_IRIX_ARRAY)
+	పూర్ణాంకం jid = 0;
+#అయితే_ముగింపు
 
-#ifdef WITH_IRIX_JOBS
+#నిర్వచితమైతే WITH_IRIX_JOBS
 	jid = jlimit_startjob(pw->pw_name, pw->pw_uid, "interactive");
-	if (jid == -1)
+	ఒకవేళ (jid == -1)
 		fatal("Failed to create job container: %.100s",
 		    strerror(errno));
-#endif /* WITH_IRIX_JOBS */
-#ifdef WITH_IRIX_ARRAY
+#అయితే_ముగింపు /* WITH_IRIX_JOBS */
+#నిర్వచితమైతే WITH_IRIX_ARRAY
 	/* initialize array session */
-	if (jid == 0  && newarraysess() != 0)
+	ఒకవేళ (jid == 0  && newarraysess() != 0)
 		fatal("Failed to set up new array session: %.100s",
 		    strerror(errno));
-#endif /* WITH_IRIX_ARRAY */
-#ifdef WITH_IRIX_PROJECT
+#అయితే_ముగింపు /* WITH_IRIX_ARRAY */
+#నిర్వచితమైతే WITH_IRIX_PROJECT
 	/* initialize irix project info */
-	if ((projid = getdfltprojuser(pw->pw_name)) == -1) {
+	ఒకవేళ ((projid = getdfltprojuser(pw->pw_name)) == -1) {
 		debug("Failed to get project id, using projid 0");
 		projid = 0;
 	}
-	if (setprid(projid))
+	ఒకవేళ (setprid(projid))
 		fatal("Failed to initialize project %d for %s: %.100s",
-		    (int)projid, pw->pw_name, strerror(errno));
-#endif /* WITH_IRIX_PROJECT */
-#ifdef WITH_IRIX_AUDIT
-	if (sysconf(_SC_AUDIT)) {
-		debug("Setting sat id to %d", (int) pw->pw_uid);
-		if (satsetid(pw->pw_uid))
+		    (పూర్ణాంకం)projid, pw->pw_name, strerror(errno));
+#అయితే_ముగింపు /* WITH_IRIX_PROJECT */
+#నిర్వచితమైతే WITH_IRIX_AUDIT
+	ఒకవేళ (sysconf(_SC_AUDIT)) {
+		debug("Setting sat id to %d", (పూర్ణాంకం) pw->pw_uid);
+		ఒకవేళ (satsetid(pw->pw_uid))
 			debug("error setting satid: %.100s", strerror(errno));
 	}
-#endif /* WITH_IRIX_AUDIT */
+#అయితే_ముగింపు /* WITH_IRIX_AUDIT */
 }
 
 
-#endif /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */
+#అయితే_ముగింపు /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */

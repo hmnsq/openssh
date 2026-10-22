@@ -25,34 +25,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DNS_H
-#define DNS_H
+#నిర్వచితం_కాకపోతే DNS_H
+#నిర్వచించు DNS_H
 
-enum sshfp_types {
-	SSHFP_KEY_RESERVED = 0,
-	SSHFP_KEY_RSA = 1,
-	SSHFP_KEY_DSA = 2,
-	SSHFP_KEY_ECDSA = 3,
-	SSHFP_KEY_ED25519 = 4
+గణన sshfp_types {
+	SSHFP_కీలకం_RESERVED = 0,
+	SSHFP_కీలకం_RSA = 1,
+	SSHFP_కీలకం_DSA = 2,
+	SSHFP_కీలకం_ECDSA = 3,
+	SSHFP_కీలకం_ED25519 = 4
 };
 
-enum sshfp_hashes {
+గణన sshfp_hashes {
 	SSHFP_HASH_RESERVED = 0,
 	SSHFP_HASH_SHA1 = 1,
 	SSHFP_HASH_SHA256 = 2,
 	SSHFP_HASH_MAX = 3
 };
 
-#define DNS_RDATACLASS_IN	1
-#define DNS_RDATATYPE_SSHFP	44
+#నిర్వచించు DNS_RDATACLASS_లోపల	1
+#నిర్వచించు DNS_RDATATYPE_SSHFP	44
 
-#define DNS_VERIFY_FOUND	0x00000001
-#define DNS_VERIFY_MATCH	0x00000002
-#define DNS_VERIFY_SECURE	0x00000004
-#define DNS_VERIFY_FAILED	0x00000008
+#నిర్వచించు DNS_VERIFY_దొరికింది	0x00000001
+#నిర్వచించు DNS_VERIFY_సరిపోలిక	0x00000002
+#నిర్వచించు DNS_VERIFY_SECURE	0x00000004
+#నిర్వచించు DNS_VERIFY_FAILED	0x00000008
 
-int	verify_host_key_dns(const char *, struct sockaddr *,
-    struct sshkey *, int *);
-int	export_dns_rr(const char *, struct sshkey *, FILE *, int, int);
+పూర్ణాంకం	verify_host_కీలకం_dns(స్థిరరాశి అక్షరం *, నిర్మాణం sockaddr *,
+    నిర్మాణం sshkey *, పూర్ణాంకం *);
+పూర్ణాంకం	export_dns_rr(స్థిరరాశి అక్షరం *, నిర్మాణం sshkey *, FILE *, పూర్ణాంకం, పూర్ణాంకం);
 
-#endif /* DNS_H */
+#అయితే_ముగింపు /* DNS_H */

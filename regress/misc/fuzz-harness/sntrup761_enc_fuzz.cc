@@ -1,57 +1,57 @@
 // Basic fuzz test for encapsulate operation.
 
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <err.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <err.h>
 
-extern "C" {
+బాహ్య "C" {
 
-#include "crypto_api.h"
-#include "hash.c"
+#అన్తర్భావ "crypto_api.h"
+#అన్తర్భావ "hash.c"
 
-#undef randombytes
-#define USE_SNTRUP761X25519 1
-#ifdef SNTRUP761_NO_ASM
+#నిర్వచనం_రద్దు randombytes
+#నిర్వచించు USE_SNTRUP761X25519 1
+#నిర్వచితమైతే SNTRUP761_NO_ASM
 # undef __GNUC__
-#endif
-void randombytes(unsigned char *ptr, size_t l);
-volatile crypto_int16 crypto_int16_optblocker = 0;
-volatile crypto_int32 crypto_int32_optblocker = 0;
-volatile crypto_int64 crypto_int64_optblocker = 0;
-#include "sntrup761.c"
+#అయితే_ముగింపు
+శూన్య randombytes(గుర్తులేని అక్షరం *ptr, కొలత_t l);
+అస్థిర crypto_int16 crypto_int16_optblocker = 0;
+అస్థిర crypto_int32 crypto_int32_optblocker = 0;
+అస్థిర crypto_int64 crypto_int64_optblocker = 0;
+#అన్తర్భావ "sntrup761.c"
 
-static int real_random;
+స్థిర పూర్ణాంకం real_random;
 
-void
-randombytes(unsigned char *ptr, size_t l)
+శూన్య
+randombytes(గుర్తులేని అక్షరం *ptr, కొలత_t l)
 {
-	if (real_random)
+	ఒకవేళ (real_random)
 		arc4random_buf(ptr, l);
-	else
+	లేకపోతే
 		memset(ptr, 0, l);
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
+పూర్ణాంకం LLVMFuzzer_Test_One_ఆదానం(స్థిరరాశి uint8_t* ఆదానం, కొలత_t len)
 {
-	unsigned char pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
-	unsigned char ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
-	unsigned char secret[crypto_kem_sntrup761_BYTES];
+	గుర్తులేని అక్షరం pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
+	గుర్తులేని అక్షరం ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
+	గుర్తులేని అక్షరం secret[crypto_kem_sntrup761_బైట్లు];
 
-	memset(&pk, 0, sizeof(pk));
-	if (len > sizeof(pk)) {
-		len = sizeof(pk);
+	memset(&pk, 0, పరిమాణం(pk));
+	ఒకవేళ (len > పరిమాణం(pk)) {
+		len = పరిమాణం(pk);
 	}
-	memcpy(pk, input, len);
+	జ్ఞాపకం_నకలు(pk, ఆదానం, len);
 
 	real_random = 0;
-	(void)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
+	(శూన్య)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
 	real_random = 1;
-	(void)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
-	return 0;
+	(శూన్య)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
+	తిరిగి 0;
 }
 
 } // extern

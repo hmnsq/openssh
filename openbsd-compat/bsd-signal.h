@@ -14,23 +14,23 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _BSD_SIGNAL_H
-#define _BSD_SIGNAL_H
+#నిర్వచితం_కాకపోతే _BSD_SIGNAL_H
+#నిర్వచించు _BSD_SIGNAL_H
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <signal.h>
+#అన్తర్భావ <signal.h>
 
-#ifndef _NSIG
+#నిర్వచితం_కాకపోతే _NSIG
 # ifdef NSIG
 #  define _NSIG NSIG
-# else
+# లేకపోతే
 #  define _NSIG 128
 # endif
-#endif
+#అయితే_ముగింపు
 
-#if !defined(HAVE_STRSIGNAL)
-char *strsignal(int);
-#endif
+#ఒకవేళ !defined(HAVE_STRSIGNAL)
+అక్షరం *strsignal(పూర్ణాంకం);
+#అయితే_ముగింపు
 
-#endif /* _BSD_SIGNAL_H */
+#అయితే_ముగింపు /* _BSD_SIGNAL_H */

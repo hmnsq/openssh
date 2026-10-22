@@ -5,31 +5,31 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include "../test_helper/test_helper.h"
+#అన్తర్భావ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
 
-void test_parse(void);
-void test_convtime(void);
-void test_expand(void);
-void test_argv(void);
-void test_strdelim(void);
-void test_hpdelim(void);
-void test_ptimeout(void);
-void test_xextendf(void);
-void test_misc(void);
+శూన్య test_parse(శూన్య);
+శూన్య test_convtime(శూన్య);
+శూన్య test_expand(శూన్య);
+శూన్య test_argv(శూన్య);
+శూన్య test_strdelim(శూన్య);
+శూన్య test_hpdelim(శూన్య);
+శూన్య test_ptimeout(శూన్య);
+శూన్య test_xextendf(శూన్య);
+శూన్య test_misc(శూన్య);
 
-void
-tests(void)
+శూన్య
+tests(శూన్య)
 {
 	test_parse();
 	test_convtime();
@@ -42,8 +42,8 @@ tests(void)
 	test_misc();
 }
 
-void
-benchmarks(void)
+శూన్య
+benchmarks(శూన్య)
 {
-	printf("no benchmarks\n");
+	రాయి("no benchmarks\n");
 }

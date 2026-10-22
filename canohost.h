@@ -12,15 +12,15 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#ifndef _CANOHOST_H
-#define _CANOHOST_H
+#నిర్వచితం_కాకపోతే _CANOHOST_H
+#నిర్వచించు _CANOHOST_H
 
-char		*get_peer_ipaddr(int);
-int		 get_peer_port(int);
-char		*get_local_ipaddr(int);
-char		*get_local_name(int);
-int		get_local_port(int);
+అక్షరం		*get_peer_ipaddr(పూర్ణాంకం);
+పూర్ణాంకం		 get_peer_పోర్టు(పూర్ణాంకం);
+అక్షరం		*get_local_ipaddr(పూర్ణాంకం);
+అక్షరం		*get_local_name(పూర్ణాంకం);
+పూర్ణాంకం		get_local_పోర్టు(పూర్ణాంకం);
 
-#endif /* _CANOHOST_H */
+#అయితే_ముగింపు /* _CANOHOST_H */
 
-void		 ipv64_normalise_mapped(struct sockaddr_storage *, socklen_t *);
+శూన్య		 ipv64_normalise_mapped(నిర్మాణం sockaddr_storage *, socklen_t *);

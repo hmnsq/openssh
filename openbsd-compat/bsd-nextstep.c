@@ -22,82 +22,82 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#ifdef HAVE_NEXT
-#include <errno.h>
-#include <sys/wait.h>
-#include "bsd-nextstep.h"
+#నిర్వచితమైతే HAVE_తదుపరి
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <sys/wait.h>
+#అన్తర్భావ "bsd-nextstep.h"
 
 pid_t
-posix_wait(int *status)
+posix_wait(పూర్ణాంకం *స్థితి_2)
 {
-	union wait statusp;
+	సంఘం wait statusp;
 	pid_t wait_pid;
 
-	#undef wait			/* Use NeXT's wait() function */
+	#నిర్వచనం_రద్దు wait			/* Use NeXT's wait() function */
 	wait_pid = wait(&statusp);
-	if (status)
-		*status = (int) statusp.w_status;
+	ఒకవేళ (స్థితి_2)
+		*స్థితి_2 = (పూర్ణాంకం) statusp.w_స్థితి;
 
-	return (wait_pid);
+	తిరిగి (wait_pid);
 }
 
-int
-tcgetattr(int fd, struct termios *t)
+పూర్ణాంకం
+tcgetattr(పూర్ణాంకం fd, నిర్మాణం termios *t)
 {
-	return (ioctl(fd, TIOCGETA, t));
+	తిరిగి (ioctl(fd, TIOCGETA, t));
 }
 
-int
-tcsetattr(int fd, int opt, const struct termios *t)
+పూర్ణాంకం
+tcsetattr(పూర్ణాంకం fd, పూర్ణాంకం opt, స్థిరరాశి నిర్మాణం termios *t)
 {
-	struct termios localterm;
+	నిర్మాణం termios localterm;
 
-	if (opt & TCSASOFT) {
+	ఒకవేళ (opt & TCSASOFT) {
 		localterm = *t;
 		localterm.c_cflag |= CIGNORE;
 		t = &localterm;
 	}
-	switch (opt & ~TCSASOFT) {
-	case TCSANOW:
-		return (ioctl(fd, TIOCSETA, t));
-	case TCSADRAIN:
-		return (ioctl(fd, TIOCSETAW, t));
-	case TCSAFLUSH:
-		return (ioctl(fd, TIOCSETAF, t));
-	default:
+	ఎంపిక (opt & ~TCSASOFT) {
+	స్థితి TCSANOW:
+		తిరిగి (ioctl(fd, TIOCSETA, t));
+	స్థితి TCSADRAIN:
+		తిరిగి (ioctl(fd, TIOCSETAW, t));
+	స్థితి TCSAFLUSH:
+		తిరిగి (ioctl(fd, TIOCSETAF, t));
+	అప్రమేయ:
 		errno = EINVAL;
-		return (-1);
+		తిరిగి (-1);
 	}
 }
 
-int tcsetpgrp(int fd, pid_t pgrp)
+పూర్ణాంకం tcsetpgrp(పూర్ణాంకం fd, pid_t pgrp)
 {
-	return (ioctl(fd, TIOCSPGRP, &pgrp));
+	తిరిగి (ioctl(fd, TIOCSPGRP, &pgrp));
 }
 
-speed_t cfgetospeed(const struct termios *t)
+speed_t cfgetospeed(స్థిరరాశి నిర్మాణం termios *t)
 {
-	return (t->c_ospeed);
+	తిరిగి (t->c_ospeed);
 }
 
-speed_t cfgetispeed(const struct termios *t)
+speed_t cfgetispeed(స్థిరరాశి నిర్మాణం termios *t)
 {
-	return (t->c_ispeed);
+	తిరిగి (t->c_ispeed);
 }
 
-int
-cfsetospeed(struct termios *t,int speed)
+పూర్ణాంకం
+cfsetospeed(నిర్మాణం termios *t,పూర్ణాంకం వేగం)
 {
-	t->c_ospeed = speed;
-	return (0);
+	t->c_ospeed = వేగం;
+	తిరిగి (0);
 }
 
-int
-cfsetispeed(struct termios *t, int speed)
+పూర్ణాంకం
+cfsetispeed(నిర్మాణం termios *t, పూర్ణాంకం వేగం)
 {
-	t->c_ispeed = speed;
-	return (0);
+	t->c_ispeed = వేగం;
+	తిరిగి (0);
 }
-#endif /* HAVE_NEXT */
+#అయితే_ముగింపు /* HAVE_NEXT */

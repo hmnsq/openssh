@@ -14,44 +14,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "config.h"
-#undef malloc
-#undef calloc
-#undef realloc
+#అన్తర్భావ "config.h"
+#నిర్వచనం_రద్దు జ్ఞాపకం_ఇవ్వు
+#నిర్వచనం_రద్దు సున్నా_జ్ఞాపకం_ఇవ్వు
+#నిర్వచనం_రద్దు realloc
 
-#include <sys/types.h>
-#include <stdlib.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdlib.h>
 
-#if defined(HAVE_MALLOC) && HAVE_MALLOC == 0
-void *
-rpl_malloc(size_t size)
+#ఒకవేళ defined(HAVE_MALLOC) && HAVE_MALLOC == 0
+శూన్య *
+rpl_malloc(కొలత_t కొలత)
 {
-	if (size == 0)
-		size = 1;
-	return malloc(size);
+	ఒకవేళ (కొలత == 0)
+		కొలత = 1;
+	తిరిగి జ్ఞాపకం_ఇవ్వు(కొలత);
 }
-#endif
+#అయితే_ముగింపు
 
-#if defined(HAVE_CALLOC) && HAVE_CALLOC == 0
-void *
-rpl_calloc(size_t nmemb, size_t size)
+#ఒకవేళ defined(HAVE_CALLOC) && HAVE_CALLOC == 0
+శూన్య *
+rpl_calloc(కొలత_t nmemb, కొలత_t కొలత)
 {
-	if (nmemb == 0)
+	ఒకవేళ (nmemb == 0)
 		nmemb = 1;
-	if (size == 0)
-		size = 1;
-	return calloc(nmemb, size);
+	ఒకవేళ (కొలత == 0)
+		కొలత = 1;
+	తిరిగి సున్నా_జ్ఞాపకం_ఇవ్వు(nmemb, కొలత);
 }
-#endif
+#అయితే_ముగింపు
 
-#if defined (HAVE_REALLOC) && HAVE_REALLOC == 0
-void *
-rpl_realloc(void *ptr, size_t size)
+#ఒకవేళ defined (HAVE_REALLOC) && HAVE_REALLOC == 0
+శూన్య *
+rpl_realloc(శూన్య *ptr, కొలత_t కొలత)
 {
-	if (size == 0)
-		size = 1;
-	if (ptr == 0)
-		return malloc(size);
-	return realloc(ptr, size);
+	ఒకవేళ (కొలత == 0)
+		కొలత = 1;
+	ఒకవేళ (ptr == 0)
+		తిరిగి జ్ఞాపకం_ఇవ్వు(కొలత);
+	తిరిగి realloc(ptr, కొలత);
 }
-#endif
+#అయితే_ముగింపు

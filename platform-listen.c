@@ -14,88 +14,88 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#అన్తర్భావ "includes.h"
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
 
-#include "log.h"
-#include "misc.h"
-#include "platform.h"
+#అన్తర్భావ "log.h"
+#అన్తర్భావ "misc.h"
+#అన్తర్భావ "platform.h"
 
-#include "openbsd-compat/openbsd-compat.h"
+#అన్తర్భావ "openbsd-compat/openbsd-compat.h"
 
-void
-platform_pre_listen(void)
+శూన్య
+platform_pre_listen(శూన్య)
 {
-#ifdef LINUX_OOM_ADJUST
+#నిర్వచితమైతే LINUX_OOM_ADJUST
 	/* Adjust out-of-memory killer so listening process is not killed */
-	oom_adjust_setup();
-#endif
-#ifdef LINUX_MEMLOCK_ONFAULT
+	oom_adjust_అమరిక();
+#అయితే_ముగింపు
+#నిర్వచితమైతే LINUX_MEMLOCK_ONFAULT
 	/*
 	 * Protect ourselves against kcompactd so that we are able to process
 	 * new connections while it is active and migrating pages.
 	 */
-	memlock_onfault_setup();
-#endif
+	memlock_onfault_అమరిక();
+#అయితే_ముగింపు
 }
 
-void
-platform_post_listen(void)
+శూన్య
+platform_post_listen(శూన్య)
 {
-#ifdef SYSTEMD_NOTIFY
+#నిర్వచితమైతే SYSTEMD_NOTIFY
 	ssh_systemd_notify_ready();
-#endif
+#అయితే_ముగింపు
 }
 
-void
-platform_pre_fork(void)
+శూన్య
+platform_pre_fork(శూన్య)
 {
-#ifdef USE_SOLARIS_PROCESS_CONTRACTS
+#నిర్వచితమైతే USE_SOLARIS_PROCESS_CONTRACTS
 	solaris_contract_pre_fork();
-#endif
+#అయితే_ముగింపు
 }
 
-void
-platform_pre_restart(void)
+శూన్య
+platform_pre_restart(శూన్య)
 {
-#ifdef SYSTEMD_NOTIFY
+#నిర్వచితమైతే SYSTEMD_NOTIFY
 	ssh_systemd_notify_reload();
-#endif
-#ifdef LINUX_OOM_ADJUST
+#అయితే_ముగింపు
+#నిర్వచితమైతే LINUX_OOM_ADJUST
 	oom_adjust_restore();
-#endif
+#అయితే_ముగింపు
 }
 
-void
-platform_post_fork_parent(pid_t child_pid)
+శూన్య
+platform_post_fork_మాతృ(pid_t బిడ్డ_pid)
 {
-#ifdef USE_SOLARIS_PROCESS_CONTRACTS
-	solaris_contract_post_fork_parent(child_pid);
-#endif
+#నిర్వచితమైతే USE_SOLARIS_PROCESS_CONTRACTS
+	solaris_contract_post_fork_మాతృ(బిడ్డ_pid);
+#అయితే_ముగింపు
 }
 
-void
-platform_post_fork_child(void)
+శూన్య
+platform_post_fork_బిడ్డ(శూన్య)
 {
-#ifdef USE_SOLARIS_PROCESS_CONTRACTS
-	solaris_contract_post_fork_child();
-#endif
-#ifdef LINUX_OOM_ADJUST
+#నిర్వచితమైతే USE_SOLARIS_PROCESS_CONTRACTS
+	solaris_contract_post_fork_బిడ్డ();
+#అయితే_ముగింపు
+#నిర్వచితమైతే LINUX_OOM_ADJUST
 	oom_adjust_restore();
-#endif
+#అయితే_ముగింపు
 }
 
-void platform_pre_session_start(void)
+శూన్య platform_pre_session_ప్రారంభం(శూన్య)
 {
-#ifdef LINUX_MEMLOCK_ONFAULT
+#నిర్వచితమైతే LINUX_MEMLOCK_ONFAULT
 	/*
 	 * Memlock flags are dropped on fork, lock the memory again so that the
 	 * child connection is also protected against kcompactd.
 	 */
-	memlock_onfault_setup();
-#endif
+	memlock_onfault_అమరిక();
+#అయితే_ముగింపు
 }
