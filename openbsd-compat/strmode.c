@@ -30,119 +30,119 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strmode.c */
 
-#include "includes.h"
-#ifndef HAVE_STRMODE
+#समावेश "includes.h"
+#अगर_अघोषित HAVE_STRMODE
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
+#समावेश <sys/types.h>
+#समावेश <sys/stat.h>
+#समावेश <string.h>
 
 /* XXX mode should be mode_t */
 
-void
-strmode(int mode, char *p)
+व्योम
+strmode(पूर्णांक mode, अक्षर *p)
 {
 	 /* print type */
-	switch (mode & S_IFMT) {
-	case S_IFDIR:			/* directory */
+	चयन (mode & S_IFMT) {
+	हाल S_IFDIR:			/* directory */
 		*p++ = 'd';
-		break;
-	case S_IFCHR:			/* character special */
+		अवरोध;
+	हाल S_IFCHR:			/* character special */
 		*p++ = 'c';
-		break;
-	case S_IFBLK:			/* block special */
+		अवरोध;
+	हाल S_IFBLK:			/* block special */
 		*p++ = 'b';
-		break;
-	case S_IFREG:			/* regular */
+		अवरोध;
+	हाल S_IFREG:			/* regular */
 		*p++ = '-';
-		break;
-	case S_IFLNK:			/* symbolic link */
+		अवरोध;
+	हाल S_IFLNK:			/* symbolic link */
 		*p++ = 'l';
-		break;
-#ifdef S_IFSOCK
-	case S_IFSOCK:			/* socket */
+		अवरोध;
+#अगर_घोषित S_IFSOCK
+	हाल S_IFSOCK:			/* socket */
 		*p++ = 's';
-		break;
-#endif
-#ifdef S_IFIFO
-	case S_IFIFO:			/* fifo */
+		अवरोध;
+#पूर्ण_अगर
+#अगर_घोषित S_IFIFO
+	हाल S_IFIFO:			/* fifo */
 		*p++ = 'p';
-		break;
-#endif
-	default:			/* unknown */
+		अवरोध;
+#पूर्ण_अगर
+	शेष:			/* unknown */
 		*p++ = '?';
-		break;
+		अवरोध;
 	}
 	/* usr */
-	if (mode & S_IRUSR)
+	अगर (mode & S_IRUSR)
 		*p++ = 'r';
-	else
+	अन्यथा
 		*p++ = '-';
-	if (mode & S_IWUSR)
+	अगर (mode & S_IWUSR)
 		*p++ = 'w';
-	else
+	अन्यथा
 		*p++ = '-';
-	switch (mode & (S_IXUSR | S_ISUID)) {
-	case 0:
+	चयन (mode & (S_IXUSR | S_ISUID)) {
+	हाल 0:
 		*p++ = '-';
-		break;
-	case S_IXUSR:
+		अवरोध;
+	हाल S_IXUSR:
 		*p++ = 'x';
-		break;
-	case S_ISUID:
+		अवरोध;
+	हाल S_ISUID:
 		*p++ = 'S';
-		break;
-	case S_IXUSR | S_ISUID:
+		अवरोध;
+	हाल S_IXUSR | S_ISUID:
 		*p++ = 's';
-		break;
+		अवरोध;
 	}
 	/* group */
-	if (mode & S_IRGRP)
+	अगर (mode & S_IRGRP)
 		*p++ = 'r';
-	else
+	अन्यथा
 		*p++ = '-';
-	if (mode & S_IWGRP)
+	अगर (mode & S_IWGRP)
 		*p++ = 'w';
-	else
+	अन्यथा
 		*p++ = '-';
-	switch (mode & (S_IXGRP | S_ISGID)) {
-	case 0:
+	चयन (mode & (S_IXGRP | S_ISGID)) {
+	हाल 0:
 		*p++ = '-';
-		break;
-	case S_IXGRP:
+		अवरोध;
+	हाल S_IXGRP:
 		*p++ = 'x';
-		break;
-	case S_ISGID:
+		अवरोध;
+	हाल S_ISGID:
 		*p++ = 'S';
-		break;
-	case S_IXGRP | S_ISGID:
+		अवरोध;
+	हाल S_IXGRP | S_ISGID:
 		*p++ = 's';
-		break;
+		अवरोध;
 	}
 	/* other */
-	if (mode & S_IROTH)
+	अगर (mode & S_IROTH)
 		*p++ = 'r';
-	else
+	अन्यथा
 		*p++ = '-';
-	if (mode & S_IWOTH)
+	अगर (mode & S_IWOTH)
 		*p++ = 'w';
-	else
+	अन्यथा
 		*p++ = '-';
-	switch (mode & (S_IXOTH | S_ISVTX)) {
-	case 0:
+	चयन (mode & (S_IXOTH | S_ISVTX)) {
+	हाल 0:
 		*p++ = '-';
-		break;
-	case S_IXOTH:
+		अवरोध;
+	हाल S_IXOTH:
 		*p++ = 'x';
-		break;
-	case S_ISVTX:
+		अवरोध;
+	हाल S_ISVTX:
 		*p++ = 'T';
-		break;
-	case S_IXOTH | S_ISVTX:
+		अवरोध;
+	हाल S_IXOTH | S_ISVTX:
 		*p++ = 't';
-		break;
+		अवरोध;
 	}
 	*p++ = ' ';		/* will be a '+' if ACL's implemented */
 	*p = '\0';
 }
-#endif
+#पूर्ण_अगर

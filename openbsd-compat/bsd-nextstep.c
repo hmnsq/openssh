@@ -22,82 +22,82 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#ifdef HAVE_NEXT
-#include <errno.h>
-#include <sys/wait.h>
-#include "bsd-nextstep.h"
+#अगर_घोषित HAVE_अग्र
+#समावेश <errno.h>
+#समावेश <sys/wait.h>
+#समावेश "bsd-nextstep.h"
 
 pid_t
-posix_wait(int *status)
+posix_wait(पूर्णांक *status)
 {
-	union wait statusp;
+	जोड़ रुको statusp;
 	pid_t wait_pid;
 
-	#undef wait			/* Use NeXT's wait() function */
-	wait_pid = wait(&statusp);
-	if (status)
-		*status = (int) statusp.w_status;
+	#अघोषित रुको			/* Use NeXT's wait() function */
+	wait_pid = रुको(&statusp);
+	अगर (status)
+		*status = (पूर्णांक) statusp.w_status;
 
-	return (wait_pid);
+	वापस (wait_pid);
 }
 
-int
-tcgetattr(int fd, struct termios *t)
+पूर्णांक
+tcgetattr(पूर्णांक fd, काष्ठा termios *t)
 {
-	return (ioctl(fd, TIOCGETA, t));
+	वापस (ioctl(fd, TIOCGETA, t));
 }
 
-int
-tcsetattr(int fd, int opt, const struct termios *t)
+पूर्णांक
+tcsetattr(पूर्णांक fd, पूर्णांक opt, स्थिर काष्ठा termios *t)
 {
-	struct termios localterm;
+	काष्ठा termios localterm;
 
-	if (opt & TCSASOFT) {
+	अगर (opt & TCSASOFT) {
 		localterm = *t;
 		localterm.c_cflag |= CIGNORE;
 		t = &localterm;
 	}
-	switch (opt & ~TCSASOFT) {
-	case TCSANOW:
-		return (ioctl(fd, TIOCSETA, t));
-	case TCSADRAIN:
-		return (ioctl(fd, TIOCSETAW, t));
-	case TCSAFLUSH:
-		return (ioctl(fd, TIOCSETAF, t));
-	default:
-		errno = EINVAL;
-		return (-1);
+	चयन (opt & ~TCSASOFT) {
+	हाल TCSANOW:
+		वापस (ioctl(fd, TIOCSETA, t));
+	हाल TCSADRAIN:
+		वापस (ioctl(fd, TIOCSETAW, t));
+	हाल TCSAFLUSH:
+		वापस (ioctl(fd, TIOCSETAF, t));
+	शेष:
+		त्रुटि_सं = EINVAL;
+		वापस (-1);
 	}
 }
 
-int tcsetpgrp(int fd, pid_t pgrp)
+पूर्णांक tcsetpgrp(पूर्णांक fd, pid_t pgrp)
 {
-	return (ioctl(fd, TIOCSPGRP, &pgrp));
+	वापस (ioctl(fd, TIOCSPGRP, &pgrp));
 }
 
-speed_t cfgetospeed(const struct termios *t)
+speed_t cfgetospeed(स्थिर काष्ठा termios *t)
 {
-	return (t->c_ospeed);
+	वापस (t->c_ospeed);
 }
 
-speed_t cfgetispeed(const struct termios *t)
+speed_t cfgetispeed(स्थिर काष्ठा termios *t)
 {
-	return (t->c_ispeed);
+	वापस (t->c_ispeed);
 }
 
-int
-cfsetospeed(struct termios *t,int speed)
+पूर्णांक
+cfsetospeed(काष्ठा termios *t,पूर्णांक speed)
 {
 	t->c_ospeed = speed;
-	return (0);
+	वापस (0);
 }
 
-int
-cfsetispeed(struct termios *t, int speed)
+पूर्णांक
+cfsetispeed(काष्ठा termios *t, पूर्णांक speed)
 {
 	t->c_ispeed = speed;
-	return (0);
+	वापस (0);
 }
-#endif /* HAVE_NEXT */
+#पूर्ण_अगर /* HAVE_NEXT */

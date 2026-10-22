@@ -50,98 +50,98 @@
  */
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/getopt_long.c */
-#include "includes.h"
+#समावेश "includes.h"
 
-#if !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
+#अगर !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
 
 /*
  * Some defines to make it easier to keep the code in sync with upstream.
  * getopt opterr optind optopt optreset optarg are all in defines.h which is
  * pulled in by includes.h.
  */
-#define warnx		logit
+#घोषणा warnx		logit
 
-#if 0
-#include <err.h>
-#include <getopt.h>
-#endif
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
+#अगर 0
+#समावेश <err.h>
+#समावेश <getopt.h>
+#पूर्ण_अगर
+#समावेश <errno.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <stdarg.h>
 
-#include "log.h"
+#समावेश "log.h"
 
-struct option {
+काष्ठा option {
 	/* name of long option */
-	const char *name;
+	स्थिर अक्षर *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	पूर्णांक has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	पूर्णांक *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	पूर्णांक val;
 };
 
-int	opterr = 1;		/* if error message should be printed */
-int	optind = 1;		/* index into parent argv vector */
-int	optopt = '?';		/* character checked for validity */
-int	optreset;		/* reset getopt */
-char    *optarg;		/* argument associated with option */
+पूर्णांक	opterr = 1;		/* if error message should be printed */
+पूर्णांक	optind = 1;		/* index into parent argv vector */
+पूर्णांक	optopt = '?';		/* character checked for validity */
+पूर्णांक	optreset;		/* reset getopt */
+अक्षर    *optarg;		/* argument associated with option */
 
-#define PRINT_ERROR	((opterr) && (*options != ':'))
+#घोषणा PRINT_ERROR	((opterr) && (*options != ':'))
 
-#define FLAG_PERMUTE	0x01	/* permute non-options to the end of argv */
-#define FLAG_ALLARGS	0x02	/* treat non-options as args to option "-1" */
-#define FLAG_LONGONLY	0x04	/* operate as getopt_long_only */
+#घोषणा FLAG_PERMUTE	0x01	/* permute non-options to the end of argv */
+#घोषणा FLAG_ALLARGS	0x02	/* treat non-options as args to option "-1" */
+#घोषणा FLAG_LONGONLY	0x04	/* operate as getopt_long_only */
 
 /* return values */
-#define	BADCH		(int)'?'
-#define	BADARG		((*options == ':') ? (int)':' : (int)'?')
-#define	INORDER		(int)1
+#घोषणा	BADCH		(पूर्णांक)'?'
+#घोषणा	BADARG		((*options == ':') ? (पूर्णांक)':' : (पूर्णांक)'?')
+#घोषणा	मध्यक्रम		(पूर्णांक)1
 
-#define	EMSG		""
+#घोषणा	EMSG		""
 
-static int getopt_internal(int, char * const *, const char *,
-			   const struct option *, int *, int);
-static int parse_long_options(char * const *, const char *,
-			      const struct option *, int *, int);
-static int gcd(int, int);
-static void permute_args(int, int, int, char * const *);
+अटल पूर्णांक getopt_internal(पूर्णांक, अक्षर * स्थिर *, स्थिर अक्षर *,
+			   स्थिर काष्ठा option *, पूर्णांक *, पूर्णांक);
+अटल पूर्णांक parse_long_options(अक्षर * स्थिर *, स्थिर अक्षर *,
+			      स्थिर काष्ठा option *, पूर्णांक *, पूर्णांक);
+अटल पूर्णांक gcd(पूर्णांक, पूर्णांक);
+अटल व्योम permute_args(पूर्णांक, पूर्णांक, पूर्णांक, अक्षर * स्थिर *);
 
-static char *place = EMSG; /* option letter processing */
+अटल अक्षर *place = EMSG; /* option letter processing */
 
 /* XXX: set optreset to 1 rather than these two */
-static int nonopt_start = -1; /* first non option argument (for permute) */
-static int nonopt_end = -1;   /* first option after non options (for permute) */
+अटल पूर्णांक nonopt_start = -1; /* first non option argument (for permute) */
+अटल पूर्णांक nonopt_end = -1;   /* first option after non options (for permute) */
 
 /* Error messages */
-static const char recargchar[] = "option requires an argument -- %c";
-static const char recargstring[] = "option requires an argument -- %s";
-static const char ambig[] = "ambiguous option -- %.*s";
-static const char noarg[] = "option doesn't take an argument -- %.*s";
-static const char illoptchar[] = "unknown option -- %c";
-static const char illoptstring[] = "unknown option -- %s";
+अटल स्थिर अक्षर recargchar[] = "option requires an argument -- %c";
+अटल स्थिर अक्षर recargstring[] = "option requires an argument -- %s";
+अटल स्थिर अक्षर ambig[] = "ambiguous option -- %.*s";
+अटल स्थिर अक्षर noarg[] = "option doesn't take an argument -- %.*s";
+अटल स्थिर अक्षर illoptchar[] = "unknown option -- %c";
+अटल स्थिर अक्षर illoptstring[] = "unknown option -- %s";
 
 /*
  * Compute the greatest common divisor of a and b.
  */
-static int
-gcd(int a, int b)
+अटल पूर्णांक
+gcd(पूर्णांक a, पूर्णांक b)
 {
-	int c;
+	पूर्णांक c;
 
 	c = a % b;
-	while (c != 0) {
+	जबतक (c != 0) {
 		a = b;
 		b = c;
 		c = a % b;
 	}
 
-	return (b);
+	वापस (b);
 }
 
 /*
@@ -149,12 +149,12 @@ gcd(int a, int b)
  * from nonopt_end to opt_end (keeping the same order of arguments
  * in each block).
  */
-static void
-permute_args(int panonopt_start, int panonopt_end, int opt_end,
-	char * const *nargv)
+अटल व्योम
+permute_args(पूर्णांक panonopt_start, पूर्णांक panonopt_end, पूर्णांक opt_end,
+	अक्षर * स्थिर *nargv)
 {
-	int cstart, cyclelen, i, j, ncycle, nnonopts, nopts, pos;
-	char *swap;
+	पूर्णांक cstart, cyclelen, i, j, ncycle, nnonopts, nopts, pos;
+	अक्षर *swap;
 
 	/*
 	 * compute lengths of blocks and number and size of cycles
@@ -164,19 +164,19 @@ permute_args(int panonopt_start, int panonopt_end, int opt_end,
 	ncycle = gcd(nnonopts, nopts);
 	cyclelen = (opt_end - panonopt_start) / ncycle;
 
-	for (i = 0; i < ncycle; i++) {
+	क्रम (i = 0; i < ncycle; i++) {
 		cstart = panonopt_end+i;
 		pos = cstart;
-		for (j = 0; j < cyclelen; j++) {
-			if (pos >= panonopt_end)
+		क्रम (j = 0; j < cyclelen; j++) {
+			अगर (pos >= panonopt_end)
 				pos -= nnonopts;
-			else
+			अन्यथा
 				pos += nopts;
 			swap = nargv[pos];
 			/* LINTED const cast */
-			((char **) nargv)[pos] = nargv[cstart];
+			((अक्षर **) nargv)[pos] = nargv[cstart];
 			/* LINTED const cast */
-			((char **)nargv)[cstart] = swap;
+			((अक्षर **)nargv)[cstart] = swap;
 		}
 	}
 }
@@ -186,75 +186,75 @@ permute_args(int panonopt_start, int panonopt_end, int opt_end,
  *	Parse long options in argc/argv argument vector.
  * Returns -1 if short_too is set and the option does not match long_options.
  */
-static int
-parse_long_options(char * const *nargv, const char *options,
-	const struct option *long_options, int *idx, int short_too)
+अटल पूर्णांक
+parse_long_options(अक्षर * स्थिर *nargv, स्थिर अक्षर *options,
+	स्थिर काष्ठा option *long_options, पूर्णांक *idx, पूर्णांक short_too)
 {
-	char *current_argv, *has_equal;
-	size_t current_argv_len;
-	int i, match;
+	अक्षर *current_argv, *has_equal;
+	माप_प्रकार current_argv_len;
+	पूर्णांक i, match;
 
 	current_argv = place;
 	match = -1;
 
 	optind++;
 
-	if ((has_equal = strchr(current_argv, '=')) != NULL) {
+	अगर ((has_equal = म_अक्षर(current_argv, '=')) != शून्य) {
 		/* argument found (--option=arg) */
 		current_argv_len = has_equal - current_argv;
 		has_equal++;
-	} else
-		current_argv_len = strlen(current_argv);
+	} अन्यथा
+		current_argv_len = म_माप(current_argv);
 
-	for (i = 0; long_options[i].name; i++) {
+	क्रम (i = 0; long_options[i].name; i++) {
 		/* find matching long option */
-		if (strncmp(current_argv, long_options[i].name,
+		अगर (म_भेदन(current_argv, long_options[i].name,
 		    current_argv_len))
-			continue;
+			जारी;
 
-		if (strlen(long_options[i].name) == current_argv_len) {
+		अगर (म_माप(long_options[i].name) == current_argv_len) {
 			/* exact match */
 			match = i;
-			break;
+			अवरोध;
 		}
 		/*
 		 * If this is a known short option, don't allow
 		 * a partial match of a single character.
 		 */
-		if (short_too && current_argv_len == 1)
-			continue;
+		अगर (short_too && current_argv_len == 1)
+			जारी;
 
-		if (match == -1)	/* partial match */
+		अगर (match == -1)	/* partial match */
 			match = i;
-		else {
+		अन्यथा {
 			/* ambiguous abbreviation */
-			if (PRINT_ERROR)
-				warnx(ambig, (int)current_argv_len,
+			अगर (PRINT_ERROR)
+				warnx(ambig, (पूर्णांक)current_argv_len,
 				     current_argv);
 			optopt = 0;
-			return (BADCH);
+			वापस (BADCH);
 		}
 	}
-	if (match != -1) {		/* option found */
-		if (long_options[match].has_arg == no_argument
+	अगर (match != -1) {		/* option found */
+		अगर (long_options[match].has_arg == no_argument
 		    && has_equal) {
-			if (PRINT_ERROR)
-				warnx(noarg, (int)current_argv_len,
+			अगर (PRINT_ERROR)
+				warnx(noarg, (पूर्णांक)current_argv_len,
 				     current_argv);
 			/*
 			 * XXX: GNU sets optopt to val regardless of flag
 			 */
-			if (long_options[match].flag == NULL)
+			अगर (long_options[match].flag == शून्य)
 				optopt = long_options[match].val;
-			else
+			अन्यथा
 				optopt = 0;
-			return (BADARG);
+			वापस (BADARG);
 		}
-		if (long_options[match].has_arg == required_argument ||
+		अगर (long_options[match].has_arg == required_argument ||
 		    long_options[match].has_arg == optional_argument) {
-			if (has_equal)
+			अगर (has_equal)
 				optarg = has_equal;
-			else if (long_options[match].has_arg ==
+			अन्यथा अगर (long_options[match].has_arg ==
 			    required_argument) {
 				/*
 				 * optional argument doesn't use next nargv
@@ -262,94 +262,94 @@ parse_long_options(char * const *nargv, const char *options,
 				optarg = nargv[optind++];
 			}
 		}
-		if ((long_options[match].has_arg == required_argument)
-		    && (optarg == NULL)) {
+		अगर ((long_options[match].has_arg == required_argument)
+		    && (optarg == शून्य)) {
 			/*
 			 * Missing argument; leading ':' indicates no error
 			 * should be generated.
 			 */
-			if (PRINT_ERROR)
+			अगर (PRINT_ERROR)
 				warnx(recargstring,
 				    current_argv);
 			/*
 			 * XXX: GNU sets optopt to val regardless of flag
 			 */
-			if (long_options[match].flag == NULL)
+			अगर (long_options[match].flag == शून्य)
 				optopt = long_options[match].val;
-			else
+			अन्यथा
 				optopt = 0;
 			--optind;
-			return (BADARG);
+			वापस (BADARG);
 		}
-	} else {			/* unknown option */
-		if (short_too) {
+	} अन्यथा {			/* unknown option */
+		अगर (short_too) {
 			--optind;
-			return (-1);
+			वापस (-1);
 		}
-		if (PRINT_ERROR)
+		अगर (PRINT_ERROR)
 			warnx(illoptstring, current_argv);
 		optopt = 0;
-		return (BADCH);
+		वापस (BADCH);
 	}
-	if (idx)
+	अगर (idx)
 		*idx = match;
-	if (long_options[match].flag) {
+	अगर (long_options[match].flag) {
 		*long_options[match].flag = long_options[match].val;
-		return (0);
-	} else
-		return (long_options[match].val);
+		वापस (0);
+	} अन्यथा
+		वापस (long_options[match].val);
 }
 
 /*
  * getopt_internal --
  *	Parse argc/argv argument vector.  Called by user level routines.
  */
-static int
-getopt_internal(int nargc, char * const *nargv, const char *options,
-	const struct option *long_options, int *idx, int flags)
+अटल पूर्णांक
+getopt_internal(पूर्णांक nargc, अक्षर * स्थिर *nargv, स्थिर अक्षर *options,
+	स्थिर काष्ठा option *long_options, पूर्णांक *idx, पूर्णांक flags)
 {
-	char *oli;				/* option letter list index */
-	int optchar, short_too;
-	static int posixly_correct = -1;
+	अक्षर *oli;				/* option letter list index */
+	पूर्णांक optchar, short_too;
+	अटल पूर्णांक posixly_correct = -1;
 
-	if (options == NULL)
-		return (-1);
+	अगर (options == शून्य)
+		वापस (-1);
 
 	/*
 	 * XXX Some GNU programs (like cvs) set optind to 0 instead of
 	 * XXX using optreset.  Work around this braindamage.
 	 */
-	if (optind == 0)
+	अगर (optind == 0)
 		optind = optreset = 1;
 
 	/*
 	 * Disable GNU extensions if POSIXLY_CORRECT is set or options
 	 * string begins with a '+'.
 	 */
-	if (posixly_correct == -1 || optreset)
-		posixly_correct = (getenv("POSIXLY_CORRECT") != NULL);
-	if (*options == '-')
+	अगर (posixly_correct == -1 || optreset)
+		posixly_correct = (दो_पर्या("POSIXLY_CORRECT") != शून्य);
+	अगर (*options == '-')
 		flags |= FLAG_ALLARGS;
-	else if (posixly_correct || *options == '+')
+	अन्यथा अगर (posixly_correct || *options == '+')
 		flags &= ~FLAG_PERMUTE;
-	if (*options == '+' || *options == '-')
+	अगर (*options == '+' || *options == '-')
 		options++;
 
-	optarg = NULL;
-	if (optreset)
+	optarg = शून्य;
+	अगर (optreset)
 		nonopt_start = nonopt_end = -1;
 start:
-	if (optreset || !*place) {		/* update scanning pointer */
+	अगर (optreset || !*place) {		/* update scanning pointer */
 		optreset = 0;
-		if (optind >= nargc) {          /* end of argument vector */
+		अगर (optind >= nargc) {          /* end of argument vector */
 			place = EMSG;
-			if (nonopt_end != -1) {
+			अगर (nonopt_end != -1) {
 				/* do permutation, if we have to */
 				permute_args(nonopt_start, nonopt_end,
 				    optind, nargv);
 				optind -= nonopt_end - nonopt_start;
 			}
-			else if (nonopt_start != -1) {
+			अन्यथा अगर (nonopt_start != -1) {
 				/*
 				 * If we skipped non-options, set optind
 				 * to the first of them.
@@ -357,30 +357,30 @@ start:
 				optind = nonopt_start;
 			}
 			nonopt_start = nonopt_end = -1;
-			return (-1);
+			वापस (-1);
 		}
-		if (*(place = nargv[optind]) != '-' ||
-		    (place[1] == '\0' && strchr(options, '-') == NULL)) {
+		अगर (*(place = nargv[optind]) != '-' ||
+		    (place[1] == '\0' && म_अक्षर(options, '-') == शून्य)) {
 			place = EMSG;		/* found non-option */
-			if (flags & FLAG_ALLARGS) {
+			अगर (flags & FLAG_ALLARGS) {
 				/*
 				 * GNU extension:
 				 * return non-option as argument to option 1
 				 */
 				optarg = nargv[optind++];
-				return (INORDER);
+				वापस (मध्यक्रम);
 			}
-			if (!(flags & FLAG_PERMUTE)) {
+			अगर (!(flags & FLAG_PERMUTE)) {
 				/*
 				 * If no permutation wanted, stop parsing
 				 * at first non-option.
 				 */
-				return (-1);
+				वापस (-1);
 			}
 			/* do permutation */
-			if (nonopt_start == -1)
+			अगर (nonopt_start == -1)
 				nonopt_start = optind;
-			else if (nonopt_end != -1) {
+			अन्यथा अगर (nonopt_end != -1) {
 				permute_args(nonopt_start, nonopt_end,
 				    optind, nargv);
 				nonopt_start = optind -
@@ -389,28 +389,28 @@ start:
 			}
 			optind++;
 			/* process next argument */
-			goto start;
+			जाओ start;
 		}
-		if (nonopt_start != -1 && nonopt_end == -1)
+		अगर (nonopt_start != -1 && nonopt_end == -1)
 			nonopt_end = optind;
 
 		/*
 		 * If we have "-" do nothing, if "--" we are done.
 		 */
-		if (place[1] != '\0' && *++place == '-' && place[1] == '\0') {
+		अगर (place[1] != '\0' && *++place == '-' && place[1] == '\0') {
 			optind++;
 			place = EMSG;
 			/*
 			 * We found an option (--), so if we skipped
 			 * non-options, we have to permute.
 			 */
-			if (nonopt_end != -1) {
+			अगर (nonopt_end != -1) {
 				permute_args(nonopt_start, nonopt_end,
 				    optind, nargv);
 				optind -= nonopt_end - nonopt_start;
 			}
 			nonopt_start = nonopt_end = -1;
-			return (-1);
+			वापस (-1);
 		}
 	}
 
@@ -420,78 +420,78 @@ start:
 	 *  2) the arg is not just "-"
 	 *  3) either the arg starts with -- we are getopt_long_only()
 	 */
-	if (long_options != NULL && place != nargv[optind] &&
+	अगर (long_options != शून्य && place != nargv[optind] &&
 	    (*place == '-' || (flags & FLAG_LONGONLY))) {
 		short_too = 0;
-		if (*place == '-')
+		अगर (*place == '-')
 			place++;		/* --foo long option */
-		else if (*place != ':' && strchr(options, *place) != NULL)
+		अन्यथा अगर (*place != ':' && म_अक्षर(options, *place) != शून्य)
 			short_too = 1;		/* could be short option too */
 
 		optchar = parse_long_options(nargv, options, long_options,
 		    idx, short_too);
-		if (optchar != -1) {
+		अगर (optchar != -1) {
 			place = EMSG;
-			return (optchar);
+			वापस (optchar);
 		}
 	}
 
-	if ((optchar = (int)*place++) == (int)':' ||
-	    (optchar == (int)'-' && *place != '\0') ||
-	    (oli = strchr(options, optchar)) == NULL) {
+	अगर ((optchar = (पूर्णांक)*place++) == (पूर्णांक)':' ||
+	    (optchar == (पूर्णांक)'-' && *place != '\0') ||
+	    (oli = म_अक्षर(options, optchar)) == शून्य) {
 		/*
 		 * If the user specified "-" and  '-' isn't listed in
 		 * options, return -1 (non-option) as per POSIX.
 		 * Otherwise, it is an unknown option character (or ':').
 		 */
-		if (optchar == (int)'-' && *place == '\0')
-			return (-1);
-		if (!*place)
+		अगर (optchar == (पूर्णांक)'-' && *place == '\0')
+			वापस (-1);
+		अगर (!*place)
 			++optind;
-		if (PRINT_ERROR)
+		अगर (PRINT_ERROR)
 			warnx(illoptchar, optchar);
 		optopt = optchar;
-		return (BADCH);
+		वापस (BADCH);
 	}
-	if (long_options != NULL && optchar == 'W' && oli[1] == ';') {
+	अगर (long_options != शून्य && optchar == 'W' && oli[1] == ';') {
 		/* -W long-option */
-		if (*place)			/* no space */
+		अगर (*place)			/* no space */
 			/* NOTHING */;
-		else if (++optind >= nargc) {	/* no arg */
+		अन्यथा अगर (++optind >= nargc) {	/* no arg */
 			place = EMSG;
-			if (PRINT_ERROR)
+			अगर (PRINT_ERROR)
 				warnx(recargchar, optchar);
 			optopt = optchar;
-			return (BADARG);
-		} else				/* white space */
+			वापस (BADARG);
+		} अन्यथा				/* white space */
 			place = nargv[optind];
 		optchar = parse_long_options(nargv, options, long_options,
 		    idx, 0);
 		place = EMSG;
-		return (optchar);
+		वापस (optchar);
 	}
-	if (*++oli != ':') {			/* doesn't take argument */
-		if (!*place)
+	अगर (*++oli != ':') {			/* doesn't take argument */
+		अगर (!*place)
 			++optind;
-	} else {				/* takes (optional) argument */
-		optarg = NULL;
-		if (*place)			/* no white space */
+	} अन्यथा {				/* takes (optional) argument */
+		optarg = शून्य;
+		अगर (*place)			/* no white space */
 			optarg = place;
-		else if (oli[1] != ':') {	/* arg not optional */
-			if (++optind >= nargc) {	/* no arg */
+		अन्यथा अगर (oli[1] != ':') {	/* arg not optional */
+			अगर (++optind >= nargc) {	/* no arg */
 				place = EMSG;
-				if (PRINT_ERROR)
+				अगर (PRINT_ERROR)
 					warnx(recargchar, optchar);
 				optopt = optchar;
-				return (BADARG);
-			} else
+				वापस (BADARG);
+			} अन्यथा
 				optarg = nargv[optind];
 		}
 		place = EMSG;
 		++optind;
 	}
 	/* dump back option letter */
-	return (optchar);
+	वापस (optchar);
 }
 
 /*
@@ -500,8 +500,8 @@ start:
  *
  * [eventually this will replace the BSD getopt]
  */
-int
-getopt(int nargc, char * const *nargv, const char *options)
+पूर्णांक
+getopt(पूर्णांक nargc, अक्षर * स्थिर *nargv, स्थिर अक्षर *options)
 {
 
 	/*
@@ -512,20 +512,20 @@ getopt(int nargc, char * const *nargv, const char *options)
 	 * before dropping privileges it makes sense to keep things
 	 * as simple (and bug-free) as possible.
 	 */
-	return (getopt_internal(nargc, nargv, options, NULL, NULL, 0));
+	वापस (getopt_internal(nargc, nargv, options, शून्य, शून्य, 0));
 }
 
-#if 0
+#अगर 0
 /*
  * getopt_long --
  *	Parse argc/argv argument vector.
  */
-int
-getopt_long(int nargc, char * const *nargv, const char *options,
-    const struct option *long_options, int *idx)
+पूर्णांक
+getopt_long(पूर्णांक nargc, अक्षर * स्थिर *nargv, स्थिर अक्षर *options,
+    स्थिर काष्ठा option *long_options, पूर्णांक *idx)
 {
 
-	return (getopt_internal(nargc, nargv, options, long_options, idx,
+	वापस (getopt_internal(nargc, nargv, options, long_options, idx,
 	    FLAG_PERMUTE));
 }
 
@@ -533,14 +533,14 @@ getopt_long(int nargc, char * const *nargv, const char *options,
  * getopt_long_only --
  *	Parse argc/argv argument vector.
  */
-int
-getopt_long_only(int nargc, char * const *nargv, const char *options,
-    const struct option *long_options, int *idx)
+पूर्णांक
+getopt_long_only(पूर्णांक nargc, अक्षर * स्थिर *nargv, स्थिर अक्षर *options,
+    स्थिर काष्ठा option *long_options, पूर्णांक *idx)
 {
 
-	return (getopt_internal(nargc, nargv, options, long_options, idx,
+	वापस (getopt_internal(nargc, nargv, options, long_options, idx,
 	    FLAG_PERMUTE|FLAG_LONGONLY));
 }
-#endif
+#पूर्ण_अगर
 
-#endif /* !defined(HAVE_GETOPT) || !defined(HAVE_OPTRESET) */
+#पूर्ण_अगर /* !defined(HAVE_GETOPT) || !defined(HAVE_OPTRESET) */

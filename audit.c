@@ -22,73 +22,73 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
+#समावेश <stdarg.h>
+#समावेश <string.h>
+#समावेश <unistd.h>
 
-#ifdef SSH_AUDIT_EVENTS
+#अगर_घोषित SSH_AUDIT_EVENTS
 
-#include "audit.h"
-#include "log.h"
-#include "hostfile.h"
-#include "auth.h"
+#समावेश "audit.h"
+#समावेश "log.h"
+#समावेश "hostfile.h"
+#समावेश "auth.h"
 
 /*
  * Care must be taken when using this since it WILL NOT be initialized when
  * audit_connection_from() is called and MAY NOT be initialized when
  * audit_event(CONNECTION_ABANDON) is called.  Test for NULL before using.
  */
-extern Authctxt *the_authctxt;
+बाह्य Authctxt *the_authctxt;
 
 /* Maybe add the audit class to struct Authmethod? */
 ssh_audit_event_t
-audit_classify_auth(const char *method)
+audit_classify_auth(स्थिर अक्षर *method)
 {
-	if (strcmp(method, "none") == 0)
-		return SSH_AUTH_FAIL_NONE;
-	else if (strcmp(method, "password") == 0)
-		return SSH_AUTH_FAIL_PASSWD;
-	else if (strcmp(method, "publickey") == 0 ||
-	    strcmp(method, "rsa") == 0)
-		return SSH_AUTH_FAIL_PUBKEY;
-	else if (strncmp(method, "keyboard-interactive", 20) == 0 ||
-	    strcmp(method, "challenge-response") == 0)
-		return SSH_AUTH_FAIL_KBDINT;
-	else if (strcmp(method, "hostbased") == 0 ||
-	    strcmp(method, "rhosts-rsa") == 0)
-		return SSH_AUTH_FAIL_HOSTBASED;
-	else if (strcmp(method, "gssapi-with-mic") == 0)
-		return SSH_AUTH_FAIL_GSSAPI;
-	else
-		return SSH_AUDIT_UNKNOWN;
+	अगर (म_भेद(method, "none") == 0)
+		वापस SSH_AUTH_FAIL_NONE;
+	अन्यथा अगर (म_भेद(method, "password") == 0)
+		वापस SSH_AUTH_FAIL_PASSWD;
+	अन्यथा अगर (म_भेद(method, "publickey") == 0 ||
+	    म_भेद(method, "rsa") == 0)
+		वापस SSH_AUTH_FAIL_PUBKEY;
+	अन्यथा अगर (म_भेदन(method, "keyboard-interactive", 20) == 0 ||
+	    म_भेद(method, "challenge-response") == 0)
+		वापस SSH_AUTH_FAIL_KBDINT;
+	अन्यथा अगर (म_भेद(method, "hostbased") == 0 ||
+	    म_भेद(method, "rhosts-rsa") == 0)
+		वापस SSH_AUTH_FAIL_HOSTBASED;
+	अन्यथा अगर (म_भेद(method, "gssapi-with-mic") == 0)
+		वापस SSH_AUTH_FAIL_GSSAPI;
+	अन्यथा
+		वापस SSH_AUDIT_UNKNOWN;
 }
 
 /* helper to return supplied username */
-const char *
-audit_username(void)
+स्थिर अक्षर *
+audit_username(व्योम)
 {
-	static const char unknownuser[] = "(unknown user)";
-	static const char invaliduser[] = "(invalid user)";
+	अटल स्थिर अक्षर unknownuser[] = "(unknown user)";
+	अटल स्थिर अक्षर invaliduser[] = "(invalid user)";
 
-	if (the_authctxt == NULL || the_authctxt->user == NULL)
-		return (unknownuser);
-	if (!the_authctxt->valid)
-		return (invaliduser);
-	return (the_authctxt->user);
+	अगर (the_authctxt == शून्य || the_authctxt->user == शून्य)
+		वापस (unknownuser);
+	अगर (!the_authctxt->valid)
+		वापस (invaliduser);
+	वापस (the_authctxt->user);
 }
 
-const char *
+स्थिर अक्षर *
 audit_event_lookup(ssh_audit_event_t ev)
 {
-	int i;
-	static struct event_lookup_struct {
+	पूर्णांक i;
+	अटल काष्ठा event_lookup_struct {
 		ssh_audit_event_t event;
-		const char *name;
+		स्थिर अक्षर *name;
 	} event_lookup[] = {
 		{SSH_LOGIN_EXCEED_MAXTRIES,	"LOGIN_EXCEED_MAXTRIES"},
-		{SSH_LOGIN_ROOT_DENIED,		"LOGIN_ROOT_DENIED"},
+		{SSH_LOGIN_मूल_DENIED,		"LOGIN_ROOT_DENIED"},
 		{SSH_AUTH_SUCCESS,		"AUTH_SUCCESS"},
 		{SSH_AUTH_FAIL_NONE,		"AUTH_FAIL_NONE"},
 		{SSH_AUTH_FAIL_PASSWD,		"AUTH_FAIL_PASSWD"},
@@ -103,10 +103,10 @@ audit_event_lookup(ssh_audit_event_t ev)
 		{SSH_AUDIT_UNKNOWN,		"AUDIT_UNKNOWN"}
 	};
 
-	for (i = 0; event_lookup[i].event != SSH_AUDIT_UNKNOWN; i++)
-		if (event_lookup[i].event == ev)
-			break;
-	return(event_lookup[i].name);
+	क्रम (i = 0; event_lookup[i].event != SSH_AUDIT_UNKNOWN; i++)
+		अगर (event_lookup[i].event == ev)
+			अवरोध;
+	वापस(event_lookup[i].name);
 }
 
 # ifndef CUSTOM_SSH_AUDIT_EVENTS
@@ -119,19 +119,19 @@ audit_event_lookup(ssh_audit_event_t ev)
  * Called after a connection has been accepted but before any authentication
  * has been attempted.
  */
-void
-audit_connection_from(const char *host, int port)
+व्योम
+audit_connection_from(स्थिर अक्षर *host, पूर्णांक port)
 {
 	debug("audit connection from %s port %d euid %d", host, port,
-	    (int)geteuid());
+	    (पूर्णांक)geteuid());
 }
 
 /*
  * Called when various events occur (see audit.h for a list of possible
  * events and what they mean).
  */
-void
-audit_event(struct ssh *ssh, ssh_audit_event_t event)
+व्योम
+audit_event(काष्ठा ssh *ssh, ssh_audit_event_t event)
 {
 	debug("audit event euid %d user %s event %d (%s)", geteuid(),
 	    audit_username(), event, audit_event_lookup(event));
@@ -144,10 +144,10 @@ audit_event(struct ssh *ssh, ssh_audit_event_t event)
  * Note that this may be called multiple times if multiple sessions are used
  * within a single connection.
  */
-void
-audit_session_open(struct logininfo *li)
+व्योम
+audit_session_open(काष्ठा logininfo *li)
 {
-	const char *t = li->line ? li->line : "(no tty)";
+	स्थिर अक्षर *t = li->पंक्ति ? li->पंक्ति : "(no tty)";
 
 	debug("audit session open euid %d user %s tty name %s", geteuid(),
 	    audit_username(), t);
@@ -160,10 +160,10 @@ audit_session_open(struct logininfo *li)
  * Note that this may be called multiple times if multiple sessions are used
  * within a single connection.
  */
-void
-audit_session_close(struct logininfo *li)
+व्योम
+audit_session_close(काष्ठा logininfo *li)
 {
-	const char *t = li->line ? li->line : "(no tty)";
+	स्थिर अक्षर *t = li->पंक्ति ? li->पंक्ति : "(no tty)";
 
 	debug("audit session close euid %d user %s tty name %s", geteuid(),
 	    audit_username(), t);
@@ -174,11 +174,11 @@ audit_session_close(struct logininfo *li)
  * it may be called multiple times for a single connection since SSH2 allows
  * multiple sessions within a single connection.
  */
-void
-audit_run_command(const char *command)
+व्योम
+audit_run_command(स्थिर अक्षर *command)
 {
 	debug("audit run command euid %d user %s command '%.200s'", geteuid(),
 	    audit_username(), command);
 }
 # endif  /* !defined CUSTOM_SSH_AUDIT_EVENTS */
-#endif /* SSH_AUDIT_EVENTS */
+#पूर्ण_अगर /* SSH_AUDIT_EVENTS */

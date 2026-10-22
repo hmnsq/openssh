@@ -23,374 +23,374 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
+#समावेश <sys/types.h>
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <signal.h>
+#समावेश <stdarg.h>
+#समावेश <stdio.h>
+#समावेश <string.h>
+#समावेश <signal.h>
 
-#include "sshkey.h"
-#include "kex.h"
-#include "log.h"
-#include "packet.h"
-#include "ssh2.h"
-#include "sshbuf.h"
-#include "digest.h"
-#include "ssherr.h"
+#समावेश "sshkey.h"
+#समावेश "kex.h"
+#समावेश "log.h"
+#समावेश "packet.h"
+#समावेश "ssh2.h"
+#समावेश "sshbuf.h"
+#समावेश "digest.h"
+#समावेश "ssherr.h"
 
-static int input_kex_gen_init(int, uint32_t, struct ssh *);
-static int input_kex_gen_reply(int type, uint32_t seq, struct ssh *ssh);
+अटल पूर्णांक निवेश_kex_gen_init(पूर्णांक, uint32_t, काष्ठा ssh *);
+अटल पूर्णांक निवेश_kex_gen_reply(पूर्णांक type, uint32_t seq, काष्ठा ssh *ssh);
 
-static int
+अटल पूर्णांक
 kex_gen_hash(
-    int hash_alg,
-    const struct sshbuf *client_version,
-    const struct sshbuf *server_version,
-    const struct sshbuf *client_kexinit,
-    const struct sshbuf *server_kexinit,
-    const struct sshbuf *server_host_key_blob,
-    const struct sshbuf *client_pub,
-    const struct sshbuf *server_pub,
-    const struct sshbuf *shared_secret,
-    u_char *hash, size_t *hashlen)
+    पूर्णांक hash_alg,
+    स्थिर काष्ठा sshbuf *client_version,
+    स्थिर काष्ठा sshbuf *server_version,
+    स्थिर काष्ठा sshbuf *client_kexinit,
+    स्थिर काष्ठा sshbuf *server_kexinit,
+    स्थिर काष्ठा sshbuf *server_host_कुंजी_blob,
+    स्थिर काष्ठा sshbuf *client_pub,
+    स्थिर काष्ठा sshbuf *server_pub,
+    स्थिर काष्ठा sshbuf *shared_secret,
+    u_char *hash, माप_प्रकार *hashlen)
 {
-	struct sshbuf *b;
-	int r;
+	काष्ठा sshbuf *b;
+	पूर्णांक r;
 
-	if (*hashlen < ssh_digest_bytes(hash_alg))
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_stringb(b, client_version)) != 0 ||
+	अगर (*hashlen < ssh_digest_bytes(hash_alg))
+		वापस SSH_ERR_INVALID_ARGUMENT;
+	अगर ((b = sshbuf_new()) == शून्य)
+		वापस SSH_ERR_ALLOC_FAIL;
+	अगर ((r = sshbuf_put_stringb(b, client_version)) != 0 ||
 	    (r = sshbuf_put_stringb(b, server_version)) != 0 ||
 	    /* kexinit messages: fake header: len+SSH2_MSG_KEXINIT */
 	    (r = sshbuf_put_u32(b, sshbuf_len(client_kexinit) + 1)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_KEXINIT)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_संदेश_KEXINIT)) != 0 ||
 	    (r = sshbuf_putb(b, client_kexinit)) != 0 ||
 	    (r = sshbuf_put_u32(b, sshbuf_len(server_kexinit) + 1)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_KEXINIT)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_संदेश_KEXINIT)) != 0 ||
 	    (r = sshbuf_putb(b, server_kexinit)) != 0 ||
-	    (r = sshbuf_put_stringb(b, server_host_key_blob)) != 0 ||
+	    (r = sshbuf_put_stringb(b, server_host_कुंजी_blob)) != 0 ||
 	    (r = sshbuf_put_stringb(b, client_pub)) != 0 ||
 	    (r = sshbuf_put_stringb(b, server_pub)) != 0 ||
 	    (r = sshbuf_putb(b, shared_secret)) != 0) {
 		sshbuf_free(b);
-		return r;
+		वापस r;
 	}
-#ifdef DEBUG_KEX
-	sshbuf_dump(b, stderr);
-#endif
-	if (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
+#अगर_घोषित DEBUG_KEX
+	sshbuf_dump(b, मानक_त्रुटि);
+#पूर्ण_अगर
+	अगर (ssh_digest_बफर(hash_alg, b, hash, *hashlen) != 0) {
 		sshbuf_free(b);
-		return SSH_ERR_LIBCRYPTO_ERROR;
+		वापस SSH_ERR_LIBCRYPTO_ERROR;
 	}
 	sshbuf_free(b);
 	*hashlen = ssh_digest_bytes(hash_alg);
-#ifdef DEBUG_KEX
+#अगर_घोषित DEBUG_KEX
 	dump_digest("hash", hash, *hashlen);
-#endif
-	return 0;
+#पूर्ण_अगर
+	वापस 0;
 }
 
-int
-kex_gen_client(struct ssh *ssh)
+पूर्णांक
+kex_gen_client(काष्ठा ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r;
+	काष्ठा kex *kex = ssh->kex;
+	पूर्णांक r;
 
-	switch (kex->kex_type) {
-#ifdef WITH_OPENSSL
-	case KEX_DH_GRP1_SHA1:
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
-	case KEX_DH_GRP16_SHA512:
-	case KEX_DH_GRP18_SHA512:
+	चयन (kex->kex_type) {
+#अगर_घोषित WITH_OPENSSL
+	हाल KEX_DH_GRP1_SHA1:
+	हाल KEX_DH_GRP14_SHA1:
+	हाल KEX_DH_GRP14_SHA256:
+	हाल KEX_DH_GRP16_SHA512:
+	हाल KEX_DH_GRP18_SHA512:
 		r = kex_dh_keypair(kex);
-		break;
-	case KEX_ECDH_SHA2:
+		अवरोध;
+	हाल KEX_ECDH_SHA2:
 		r = kex_ecdh_keypair(kex);
-		break;
-	case KEX_KEM_MLKEM768ECDH_SHA256:
+		अवरोध;
+	हाल KEX_KEM_MLKEM768ECDH_SHA256:
 		r = kex_kem_mlkem768ecdh_keypair(kex);
-		break;
-#endif /* WITH_OPENSSL */
-	case KEX_C25519_SHA256:
+		अवरोध;
+#पूर्ण_अगर /* WITH_OPENSSL */
+	हाल KEX_C25519_SHA256:
 		r = kex_c25519_keypair(kex);
-		break;
-	case KEX_KEM_SNTRUP761X25519_SHA512:
+		अवरोध;
+	हाल KEX_KEM_SNTRUP761X25519_SHA512:
 		r = kex_kem_sntrup761x25519_keypair(kex);
-		break;
-	case KEX_KEM_MLKEM768X25519_SHA256:
+		अवरोध;
+	हाल KEX_KEM_MLKEM768X25519_SHA256:
 		r = kex_kem_mlkem768x25519_keypair(kex);
-		break;
-	default:
+		अवरोध;
+	शेष:
 		r = SSH_ERR_INVALID_ARGUMENT;
-		break;
+		अवरोध;
 	}
-	if (r != 0)
-		return r;
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_ECDH_INIT)) != 0 ||
+	अगर (r != 0)
+		वापस r;
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_KEX_ECDH_INIT)) != 0 ||
 	    (r = sshpkt_put_stringb(ssh, kex->client_pub)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
+		वापस r;
 	debug("expecting SSH2_MSG_KEX_ECDH_REPLY");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_REPLY, &input_kex_gen_reply);
-	return 0;
+	ssh_dispatch_set(ssh, SSH2_संदेश_KEX_ECDH_REPLY, &निवेश_kex_gen_reply);
+	वापस 0;
 }
 
-static int
-input_kex_gen_reply(int type, uint32_t seq, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_kex_gen_reply(पूर्णांक type, uint32_t seq, काष्ठा ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	struct sshkey *server_host_key = NULL;
-	struct sshbuf *shared_secret = NULL;
-	struct sshbuf *server_blob = NULL;
-	struct sshbuf *tmp = NULL, *server_host_key_blob = NULL;
-	u_char *signature = NULL;
-	u_char hash[SSH_DIGEST_MAX_LENGTH];
-	size_t slen, hashlen;
-	int r;
+	काष्ठा kex *kex = ssh->kex;
+	काष्ठा sshkey *server_host_कुंजी = शून्य;
+	काष्ठा sshbuf *shared_secret = शून्य;
+	काष्ठा sshbuf *server_blob = शून्य;
+	काष्ठा sshbuf *tmp = शून्य, *server_host_कुंजी_blob = शून्य;
+	u_char *signature = शून्य;
+	u_char hash[SSH_DIGEST_MAX_लंबाई];
+	माप_प्रकार slen, hashlen;
+	पूर्णांक r;
 
 	debug("SSH2_MSG_KEX_ECDH_REPLY received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_REPLY, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_संदेश_KEX_ECDH_REPLY, &kex_protocol_error);
 
 	/* hostkey */
-	if ((r = sshpkt_getb_froms(ssh, &server_host_key_blob)) != 0)
-		goto out;
+	अगर ((r = sshpkt_getb_froms(ssh, &server_host_कुंजी_blob)) != 0)
+		जाओ out;
 	/* sshkey_fromb() consumes its buffer, so make a copy */
-	if ((tmp = sshbuf_fromb(server_host_key_blob)) == NULL) {
+	अगर ((tmp = sshbuf_fromb(server_host_कुंजी_blob)) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
-	if ((r = sshkey_fromb_allowlist(tmp, &server_host_key,
-	    kex->hostkey_alg, NULL)) != 0)
-		goto out;
-	if ((r = kex_verify_host_key(ssh, server_host_key)) != 0)
-		goto out;
+	अगर ((r = sshkey_fromb_allowlist(tmp, &server_host_कुंजी,
+	    kex->hostkey_alg, शून्य)) != 0)
+		जाओ out;
+	अगर ((r = kex_verify_host_कुंजी(ssh, server_host_कुंजी)) != 0)
+		जाओ out;
 
 	/* Q_S, server public key */
 	/* signed H */
-	if ((r = sshpkt_getb_froms(ssh, &server_blob)) != 0 ||
+	अगर ((r = sshpkt_getb_froms(ssh, &server_blob)) != 0 ||
 	    (r = sshpkt_get_string(ssh, &signature, &slen)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+		जाओ out;
 
 	/* compute shared secret */
-	switch (kex->kex_type) {
-#ifdef WITH_OPENSSL
-	case KEX_DH_GRP1_SHA1:
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
-	case KEX_DH_GRP16_SHA512:
-	case KEX_DH_GRP18_SHA512:
+	चयन (kex->kex_type) {
+#अगर_घोषित WITH_OPENSSL
+	हाल KEX_DH_GRP1_SHA1:
+	हाल KEX_DH_GRP14_SHA1:
+	हाल KEX_DH_GRP14_SHA256:
+	हाल KEX_DH_GRP16_SHA512:
+	हाल KEX_DH_GRP18_SHA512:
 		r = kex_dh_dec(kex, server_blob, &shared_secret);
-		break;
-	case KEX_ECDH_SHA2:
+		अवरोध;
+	हाल KEX_ECDH_SHA2:
 		r = kex_ecdh_dec(kex, server_blob, &shared_secret);
-		break;
-	case KEX_KEM_MLKEM768ECDH_SHA256:
+		अवरोध;
+	हाल KEX_KEM_MLKEM768ECDH_SHA256:
 		r = kex_kem_mlkem768ecdh_dec(kex, server_blob,
 		    &shared_secret);
-		break;
-#endif /* WITH_OPENSSL */
-	case KEX_C25519_SHA256:
+		अवरोध;
+#पूर्ण_अगर /* WITH_OPENSSL */
+	हाल KEX_C25519_SHA256:
 		r = kex_c25519_dec(kex, server_blob, &shared_secret);
-		break;
-	case KEX_KEM_SNTRUP761X25519_SHA512:
+		अवरोध;
+	हाल KEX_KEM_SNTRUP761X25519_SHA512:
 		r = kex_kem_sntrup761x25519_dec(kex, server_blob,
 		    &shared_secret);
-		break;
-	case KEX_KEM_MLKEM768X25519_SHA256:
+		अवरोध;
+	हाल KEX_KEM_MLKEM768X25519_SHA256:
 		r = kex_kem_mlkem768x25519_dec(kex, server_blob,
 		    &shared_secret);
-		break;
-	default:
+		अवरोध;
+	शेष:
 		r = SSH_ERR_INVALID_ARGUMENT;
-		break;
+		अवरोध;
 	}
-	if (r !=0 )
-		goto out;
+	अगर (r !=0 )
+		जाओ out;
 
 	/* calc and verify H */
-	hashlen = sizeof(hash);
-	if ((r = kex_gen_hash(
+	hashlen = माप(hash);
+	अगर ((r = kex_gen_hash(
 	    kex->hash_alg,
 	    kex->client_version,
 	    kex->server_version,
 	    kex->my,
 	    kex->peer,
-	    server_host_key_blob,
+	    server_host_कुंजी_blob,
 	    kex->client_pub,
 	    server_blob,
 	    shared_secret,
 	    hash, &hashlen)) != 0)
-		goto out;
+		जाओ out;
 
-	if ((r = sshkey_verify(server_host_key, signature, slen, hash, hashlen,
-	    kex->hostkey_alg, ssh->compat, NULL)) != 0)
-		goto out;
+	अगर ((r = sshkey_verify(server_host_कुंजी, signature, slen, hash, hashlen,
+	    kex->hostkey_alg, ssh->compat, शून्य)) != 0)
+		जाओ out;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	अगर ((r = kex_derive_कुंजियाँ(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
-		goto out;
+		जाओ out;
 
 	/* save initial signature and hostkey */
-	if ((kex->flags & KEX_INITIAL) != 0) {
-		if (kex->initial_hostkey != NULL || kex->initial_sig != NULL) {
+	अगर ((kex->flags & KEX_INITIAL) != 0) {
+		अगर (kex->initial_hostkey != शून्य || kex->initial_sig != शून्य) {
 			r = SSH_ERR_INTERNAL_ERROR;
-			goto out;
+			जाओ out;
 		}
-		if ((kex->initial_sig = sshbuf_new()) == NULL) {
+		अगर ((kex->initial_sig = sshbuf_new()) == शून्य) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			जाओ out;
 		}
-		if ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
-			goto out;
-		kex->initial_hostkey = server_host_key;
-		server_host_key = NULL;
+		अगर ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
+			जाओ out;
+		kex->initial_hostkey = server_host_कुंजी;
+		server_host_कुंजी = शून्य;
 	}
 	/* success */
 out:
-	explicit_bzero(hash, sizeof(hash));
-	explicit_bzero(kex->c25519_client_key, sizeof(kex->c25519_client_key));
-	explicit_bzero(kex->sntrup761_client_key,
-	    sizeof(kex->sntrup761_client_key));
-	explicit_bzero(kex->mlkem768_client_key,
-	    sizeof(kex->mlkem768_client_key));
-	sshbuf_free(server_host_key_blob);
-	free(signature);
+	explicit_bzero(hash, माप(hash));
+	explicit_bzero(kex->c25519_client_कुंजी, माप(kex->c25519_client_कुंजी));
+	explicit_bzero(kex->sntrup761_client_कुंजी,
+	    माप(kex->sntrup761_client_कुंजी));
+	explicit_bzero(kex->mlkem768_client_कुंजी,
+	    माप(kex->mlkem768_client_कुंजी));
+	sshbuf_free(server_host_कुंजी_blob);
+	मुक्त(signature);
 	sshbuf_free(tmp);
-	sshkey_free(server_host_key);
+	sshkey_free(server_host_कुंजी);
 	sshbuf_free(server_blob);
 	sshbuf_free(shared_secret);
 	sshbuf_free(kex->client_pub);
-	kex->client_pub = NULL;
-	return r;
+	kex->client_pub = शून्य;
+	वापस r;
 }
 
-int
-kex_gen_server(struct ssh *ssh)
+पूर्णांक
+kex_gen_server(काष्ठा ssh *ssh)
 {
 	debug("expecting SSH2_MSG_KEX_ECDH_INIT");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_INIT, &input_kex_gen_init);
-	return 0;
+	ssh_dispatch_set(ssh, SSH2_संदेश_KEX_ECDH_INIT, &निवेश_kex_gen_init);
+	वापस 0;
 }
 
-static int
-input_kex_gen_init(int type, uint32_t seq, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_kex_gen_init(पूर्णांक type, uint32_t seq, काष्ठा ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	struct sshkey *server_host_private, *server_host_public;
-	struct sshbuf *shared_secret = NULL;
-	struct sshbuf *server_pubkey = NULL;
-	struct sshbuf *client_pubkey = NULL;
-	struct sshbuf *server_host_key_blob = NULL;
-	u_char *signature = NULL, hash[SSH_DIGEST_MAX_LENGTH];
-	size_t slen, hashlen;
-	int r;
+	काष्ठा kex *kex = ssh->kex;
+	काष्ठा sshkey *server_host_private, *server_host_public;
+	काष्ठा sshbuf *shared_secret = शून्य;
+	काष्ठा sshbuf *server_pubkey = शून्य;
+	काष्ठा sshbuf *client_pubkey = शून्य;
+	काष्ठा sshbuf *server_host_कुंजी_blob = शून्य;
+	u_char *signature = शून्य, hash[SSH_DIGEST_MAX_लंबाई];
+	माप_प्रकार slen, hashlen;
+	पूर्णांक r;
 
 	debug("SSH2_MSG_KEX_ECDH_INIT received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_INIT, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_संदेश_KEX_ECDH_INIT, &kex_protocol_error);
 
-	if ((r = kex_load_hostkey(ssh, &server_host_private,
+	अगर ((r = kex_load_hostkey(ssh, &server_host_private,
 	    &server_host_public)) != 0)
-		goto out;
+		जाओ out;
 
-	if ((r = sshpkt_getb_froms(ssh, &client_pubkey)) != 0 ||
+	अगर ((r = sshpkt_getb_froms(ssh, &client_pubkey)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+		जाओ out;
 
 	/* compute shared secret */
-	switch (kex->kex_type) {
-#ifdef WITH_OPENSSL
-	case KEX_DH_GRP1_SHA1:
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
-	case KEX_DH_GRP16_SHA512:
-	case KEX_DH_GRP18_SHA512:
+	चयन (kex->kex_type) {
+#अगर_घोषित WITH_OPENSSL
+	हाल KEX_DH_GRP1_SHA1:
+	हाल KEX_DH_GRP14_SHA1:
+	हाल KEX_DH_GRP14_SHA256:
+	हाल KEX_DH_GRP16_SHA512:
+	हाल KEX_DH_GRP18_SHA512:
 		r = kex_dh_enc(kex, client_pubkey, &server_pubkey,
 		    &shared_secret);
-		break;
-	case KEX_ECDH_SHA2:
+		अवरोध;
+	हाल KEX_ECDH_SHA2:
 		r = kex_ecdh_enc(kex, client_pubkey, &server_pubkey,
 		    &shared_secret);
-		break;
-	case KEX_KEM_MLKEM768ECDH_SHA256:
+		अवरोध;
+	हाल KEX_KEM_MLKEM768ECDH_SHA256:
 		r = kex_kem_mlkem768ecdh_enc(kex, client_pubkey,
 		    &server_pubkey, &shared_secret);
-		break;
-#endif /* WITH_OPENSSL */
-	case KEX_C25519_SHA256:
+		अवरोध;
+#पूर्ण_अगर /* WITH_OPENSSL */
+	हाल KEX_C25519_SHA256:
 		r = kex_c25519_enc(kex, client_pubkey, &server_pubkey,
 		    &shared_secret);
-		break;
-	case KEX_KEM_SNTRUP761X25519_SHA512:
+		अवरोध;
+	हाल KEX_KEM_SNTRUP761X25519_SHA512:
 		r = kex_kem_sntrup761x25519_enc(kex, client_pubkey,
 		    &server_pubkey, &shared_secret);
-		break;
-	case KEX_KEM_MLKEM768X25519_SHA256:
+		अवरोध;
+	हाल KEX_KEM_MLKEM768X25519_SHA256:
 		r = kex_kem_mlkem768x25519_enc(kex, client_pubkey,
 		    &server_pubkey, &shared_secret);
-		break;
-	default:
+		अवरोध;
+	शेष:
 		r = SSH_ERR_INVALID_ARGUMENT;
-		break;
+		अवरोध;
 	}
-	if (r !=0 )
-		goto out;
+	अगर (r !=0 )
+		जाओ out;
 
 	/* calc H */
-	if ((server_host_key_blob = sshbuf_new()) == NULL) {
+	अगर ((server_host_कुंजी_blob = sshbuf_new()) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
-	if ((r = sshkey_putb(server_host_public, server_host_key_blob)) != 0)
-		goto out;
-	hashlen = sizeof(hash);
-	if ((r = kex_gen_hash(
+	अगर ((r = sshkey_putb(server_host_public, server_host_कुंजी_blob)) != 0)
+		जाओ out;
+	hashlen = माप(hash);
+	अगर ((r = kex_gen_hash(
 	    kex->hash_alg,
 	    kex->client_version,
 	    kex->server_version,
 	    kex->peer,
 	    kex->my,
-	    server_host_key_blob,
+	    server_host_कुंजी_blob,
 	    client_pubkey,
 	    server_pubkey,
 	    shared_secret,
 	    hash, &hashlen)) != 0)
-		goto out;
+		जाओ out;
 
 	/* sign H */
-	if ((r = kex->sign(ssh, server_host_private, server_host_public,
+	अगर ((r = kex->sign(ssh, server_host_private, server_host_public,
 	    &signature, &slen, hash, hashlen, kex->hostkey_alg)) != 0)
-		goto out;
+		जाओ out;
 
 	/* send server hostkey, ECDH pubkey 'Q_S' and signed H */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_ECDH_REPLY)) != 0 ||
-	    (r = sshpkt_put_stringb(ssh, server_host_key_blob)) != 0 ||
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_KEX_ECDH_REPLY)) != 0 ||
+	    (r = sshpkt_put_stringb(ssh, server_host_कुंजी_blob)) != 0 ||
 	    (r = sshpkt_put_stringb(ssh, server_pubkey)) != 0 ||
 	    (r = sshpkt_put_string(ssh, signature, slen)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		goto out;
+		जाओ out;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	अगर ((r = kex_derive_कुंजियाँ(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
-		goto out;
+		जाओ out;
 	/* retain copy of hostkey used at initial KEX */
-	if (kex->initial_hostkey == NULL &&
+	अगर (kex->initial_hostkey == शून्य &&
 	    (r = sshkey_from_private(server_host_public,
 	    &kex->initial_hostkey)) != 0)
-		goto out;
+		जाओ out;
 	/* success */
 out:
-	explicit_bzero(hash, sizeof(hash));
-	sshbuf_free(server_host_key_blob);
-	free(signature);
+	explicit_bzero(hash, माप(hash));
+	sshbuf_free(server_host_कुंजी_blob);
+	मुक्त(signature);
 	sshbuf_free(shared_secret);
 	sshbuf_free(client_pubkey);
 	sshbuf_free(server_pubkey);
-	return r;
+	वापस r;
 }

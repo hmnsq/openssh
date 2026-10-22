@@ -35,48 +35,48 @@
   adapted for Samba4 by Andrew Tridgell
 */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <time.h>
+#समावेश <time.h>
 
-#ifndef HAVE_TIMEGM
+#अगर_अघोषित HAVE_TIMEGM
 
-static int is_leap(unsigned y)
+अटल पूर्णांक is_leap(अचिन्हित y)
 {
 	y += 1900;
-	return (y % 4) == 0 && ((y % 100) != 0 || (y % 400) == 0);
+	वापस (y % 4) == 0 && ((y % 100) != 0 || (y % 400) == 0);
 }
 
-time_t timegm(struct tm *tm)
+समय_प्रकार timegm(काष्ठा पंचांग *पंचांग)
 {
-	static const unsigned ndays[2][12] ={
+	अटल स्थिर अचिन्हित ndays[2][12] ={
 		{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
 		{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}};
-	time_t res = 0;
-	unsigned i;
+	समय_प्रकार res = 0;
+	अचिन्हित i;
 
-	if (tm->tm_mon > 12 ||
-	    tm->tm_mon < 0 ||
-	    tm->tm_mday > 31 ||
-	    tm->tm_min > 60 ||
-	    tm->tm_sec > 60 ||
-	    tm->tm_hour > 24) {
+	अगर (पंचांग->tm_mon > 12 ||
+	    पंचांग->tm_mon < 0 ||
+	    पंचांग->tm_mday > 31 ||
+	    पंचांग->tm_min > 60 ||
+	    पंचांग->tm_sec > 60 ||
+	    पंचांग->tm_hour > 24) {
 		/* invalid tm structure */
-		return 0;
+		वापस 0;
 	}
 
-	for (i = 70; i < tm->tm_year; ++i)
+	क्रम (i = 70; i < पंचांग->tm_year; ++i)
 		res += is_leap(i) ? 366 : 365;
 
-	for (i = 0; i < tm->tm_mon; ++i)
-		res += ndays[is_leap(tm->tm_year)][i];
-	res += tm->tm_mday - 1;
+	क्रम (i = 0; i < पंचांग->tm_mon; ++i)
+		res += ndays[is_leap(पंचांग->tm_year)][i];
+	res += पंचांग->tm_mday - 1;
 	res *= 24;
-	res += tm->tm_hour;
+	res += पंचांग->tm_hour;
 	res *= 60;
-	res += tm->tm_min;
+	res += पंचांग->tm_min;
 	res *= 60;
-	res += tm->tm_sec;
-	return res;
+	res += पंचांग->tm_sec;
+	वापस res;
 }
-#endif /* HAVE_TIMEGM */
+#पूर्ण_अगर /* HAVE_TIMEGM */

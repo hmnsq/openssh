@@ -24,36 +24,36 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#समावेश <sys/types.h>
+#समावेश <sys/stat.h>
 
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
-#include <util.h>
+#समावेश <grp.h>
+#समावेश <pwd.h>
+#समावेश <stdio.h>
+#समावेश <string.h>
+#समावेश <stdarg.h>
+#समावेश <stdlib.h>
+#समावेश <time.h>
+#समावेश <unistd.h>
+#समावेश <util.h>
 
-#include "xmalloc.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "misc.h"
+#समावेश "xmalloc.h"
+#समावेश "ssherr.h"
+#समावेश "sshbuf.h"
+#समावेश "log.h"
+#समावेश "misc.h"
 
-#include "sftp.h"
-#include "sftp-common.h"
+#समावेश "sftp.h"
+#समावेश "sftp-common.h"
 
 /* Clear contents of attributes structure */
-void
+व्योम
 attrib_clear(Attrib *a)
 {
 	a->flags = 0;
-	a->size = 0;
+	a->आकार = 0;
 	a->uid = 0;
 	a->gid = 0;
 	a->perm = 0;
@@ -62,13 +62,13 @@ attrib_clear(Attrib *a)
 }
 
 /* Convert from struct stat to filexfer attribs */
-void
-stat_to_attrib(const struct stat *st, Attrib *a)
+व्योम
+stat_to_attrib(स्थिर काष्ठा stat *st, Attrib *a)
 {
 	attrib_clear(a);
 	a->flags = 0;
-	a->flags |= SSH2_FILEXFER_ATTR_SIZE;
-	a->size = st->st_size;
+	a->flags |= SSH2_FILEXFER_ATTR_आकार;
+	a->आकार = st->st_size;
 	a->flags |= SSH2_FILEXFER_ATTR_UIDGID;
 	a->uid = st->st_uid;
 	a->gid = st->st_gid;
@@ -80,130 +80,130 @@ stat_to_attrib(const struct stat *st, Attrib *a)
 }
 
 /* Convert from filexfer attribs to struct stat */
-void
-attrib_to_stat(const Attrib *a, struct stat *st)
+व्योम
+attrib_to_stat(स्थिर Attrib *a, काष्ठा stat *st)
 {
-	memset(st, 0, sizeof(*st));
+	स_रखो(st, 0, माप(*st));
 
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE)
-		st->st_size = a->size;
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+	अगर (a->flags & SSH2_FILEXFER_ATTR_आकार)
+		st->st_size = a->आकार;
+	अगर (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
 		st->st_uid = a->uid;
 		st->st_gid = a->gid;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
+	अगर (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
 		st->st_mode = a->perm;
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+	अगर (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
 		st->st_atime = a->atime;
 		st->st_mtime = a->mtime;
 	}
 }
 
 /* Decode attributes in buffer */
-int
-decode_attrib(struct sshbuf *b, Attrib *a)
+पूर्णांक
+decode_attrib(काष्ठा sshbuf *b, Attrib *a)
 {
-	int r;
+	पूर्णांक r;
 
 	attrib_clear(a);
-	if ((r = sshbuf_get_u32(b, &a->flags)) != 0)
-		return r;
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		if ((r = sshbuf_get_u64(b, &a->size)) != 0)
-			return r;
+	अगर ((r = sshbuf_get_u32(b, &a->flags)) != 0)
+		वापस r;
+	अगर (a->flags & SSH2_FILEXFER_ATTR_आकार) {
+		अगर ((r = sshbuf_get_u64(b, &a->आकार)) != 0)
+			वापस r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		if ((r = sshbuf_get_u32(b, &a->uid)) != 0 ||
+	अगर (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		अगर ((r = sshbuf_get_u32(b, &a->uid)) != 0 ||
 		    (r = sshbuf_get_u32(b, &a->gid)) != 0)
-			return r;
+			वापस r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		if ((r = sshbuf_get_u32(b, &a->perm)) != 0)
-			return r;
+	अगर (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		अगर ((r = sshbuf_get_u32(b, &a->perm)) != 0)
+			वापस r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		if ((r = sshbuf_get_u32(b, &a->atime)) != 0 ||
+	अगर (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		अगर ((r = sshbuf_get_u32(b, &a->atime)) != 0 ||
 		    (r = sshbuf_get_u32(b, &a->mtime)) != 0)
-			return r;
+			वापस r;
 	}
 	/* vendor-specific extensions */
-	if (a->flags & SSH2_FILEXFER_ATTR_EXTENDED) {
-		char *type;
-		u_char *data;
-		size_t dlen;
-		u_int i, count;
+	अगर (a->flags & SSH2_FILEXFER_ATTR_EXTENDED) {
+		अक्षर *type;
+		u_char *तथ्य;
+		माप_प्रकार dlen;
+		u_int i, गिनती;
 
-		if ((r = sshbuf_get_u32(b, &count)) != 0)
-			return r;
-		if (count > 0x100000)
-			return SSH_ERR_INVALID_FORMAT;
-		for (i = 0; i < count; i++) {
-			if ((r = sshbuf_get_cstring(b, &type, NULL)) != 0 ||
-			    (r = sshbuf_get_string(b, &data, &dlen)) != 0)
-				return r;
+		अगर ((r = sshbuf_get_u32(b, &गिनती)) != 0)
+			वापस r;
+		अगर (गिनती > 0x100000)
+			वापस SSH_ERR_INVALID_FORMAT;
+		क्रम (i = 0; i < गिनती; i++) {
+			अगर ((r = sshbuf_get_cstring(b, &type, शून्य)) != 0 ||
+			    (r = sshbuf_get_string(b, &तथ्य, &dlen)) != 0)
+				वापस r;
 			debug3("Got file attribute \"%.100s\" len %zu",
 			    type, dlen);
-			free(type);
-			free(data);
+			मुक्त(type);
+			मुक्त(तथ्य);
 		}
 	}
-	return 0;
+	वापस 0;
 }
 
 /* Encode attributes to buffer */
-int
-encode_attrib(struct sshbuf *b, const Attrib *a)
+पूर्णांक
+encode_attrib(काष्ठा sshbuf *b, स्थिर Attrib *a)
 {
-	int r;
+	पूर्णांक r;
 
-	if ((r = sshbuf_put_u32(b, a->flags)) != 0)
-		return r;
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		if ((r = sshbuf_put_u64(b, a->size)) != 0)
-			return r;
+	अगर ((r = sshbuf_put_u32(b, a->flags)) != 0)
+		वापस r;
+	अगर (a->flags & SSH2_FILEXFER_ATTR_आकार) {
+		अगर ((r = sshbuf_put_u64(b, a->आकार)) != 0)
+			वापस r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		if ((r = sshbuf_put_u32(b, a->uid)) != 0 ||
+	अगर (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		अगर ((r = sshbuf_put_u32(b, a->uid)) != 0 ||
 		    (r = sshbuf_put_u32(b, a->gid)) != 0)
-			return r;
+			वापस r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		if ((r = sshbuf_put_u32(b, a->perm)) != 0)
-			return r;
+	अगर (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		अगर ((r = sshbuf_put_u32(b, a->perm)) != 0)
+			वापस r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		if ((r = sshbuf_put_u32(b, a->atime)) != 0 ||
+	अगर (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		अगर ((r = sshbuf_put_u32(b, a->atime)) != 0 ||
 		    (r = sshbuf_put_u32(b, a->mtime)) != 0)
-			return r;
+			वापस r;
 	}
-	return 0;
+	वापस 0;
 }
 
 /* Convert from SSH2_FX_ status to text error message */
-const char *
-fx2txt(int status)
+स्थिर अक्षर *
+fx2txt(पूर्णांक status)
 {
-	switch (status) {
-	case SSH2_FX_OK:
-		return("No error");
-	case SSH2_FX_EOF:
-		return("End of file");
-	case SSH2_FX_NO_SUCH_FILE:
-		return("No such file or directory");
-	case SSH2_FX_PERMISSION_DENIED:
-		return("Permission denied");
-	case SSH2_FX_FAILURE:
-		return("Failure");
-	case SSH2_FX_BAD_MESSAGE:
-		return("Bad message");
-	case SSH2_FX_NO_CONNECTION:
-		return("No connection");
-	case SSH2_FX_CONNECTION_LOST:
-		return("Connection lost");
-	case SSH2_FX_OP_UNSUPPORTED:
-		return("Operation unsupported");
-	default:
-		return("Unknown status");
+	चयन (status) {
+	हाल SSH2_FX_OK:
+		वापस("No error");
+	हाल SSH2_FX_EOF:
+		वापस("End of file");
+	हाल SSH2_FX_NO_SUCH_FILE:
+		वापस("No such file or directory");
+	हाल SSH2_FX_PERMISSION_DENIED:
+		वापस("Permission denied");
+	हाल SSH2_FX_FAILURE:
+		वापस("Failure");
+	हाल SSH2_FX_BAD_MESSAGE:
+		वापस("Bad message");
+	हाल SSH2_FX_NO_CONNECTION:
+		वापस("No connection");
+	हाल SSH2_FX_CONNECTION_LOST:
+		वापस("Connection lost");
+	हाल SSH2_FX_OP_UNSUPPORTED:
+		वापस("Operation unsupported");
+	शेष:
+		वापस("Unknown status");
 	}
 	/* NOTREACHED */
 }
@@ -211,53 +211,53 @@ fx2txt(int status)
 /*
  * drwxr-xr-x    5 markus   markus       1024 Jan 13 18:39 .ssh
  */
-char *
-ls_file(const char *name, const struct stat *st, int remote, int si_units,
-    const char *user, const char *group)
+अक्षर *
+ls_file(स्थिर अक्षर *name, स्थिर काष्ठा stat *st, पूर्णांक remote, पूर्णांक si_units,
+    स्थिर अक्षर *user, स्थिर अक्षर *group)
 {
-	int ulen, glen, sz = 0;
-	struct tm *ltime = localtime(&st->st_mtime);
-	char buf[1024], lc[8], mode[11+1], tbuf[12+1], ubuf[11+1], gbuf[11+1];
-	char sbuf[FMT_SCALED_STRSIZE];
-	time_t now;
+	पूर्णांक ulen, glen, sz = 0;
+	काष्ठा पंचांग *ltime = स_स्थानीय(&st->st_mtime);
+	अक्षर buf[1024], lc[8], mode[11+1], tbuf[12+1], ubuf[11+1], gbuf[11+1];
+	अक्षर sbuf[FMT_SCALED_STRSIZE];
+	समय_प्रकार now;
 
 	strmode(st->st_mode, mode);
-	if (remote) {
-		if (user == NULL) {
-			snprintf(ubuf, sizeof ubuf, "%u", (u_int)st->st_uid);
+	अगर (remote) {
+		अगर (user == शून्य) {
+			snprintf(ubuf, माप ubuf, "%u", (u_int)st->st_uid);
 			user = ubuf;
 		}
-		if (group == NULL) {
-			snprintf(gbuf, sizeof gbuf, "%u", (u_int)st->st_gid);
+		अगर (group == शून्य) {
+			snprintf(gbuf, माप gbuf, "%u", (u_int)st->st_gid);
 			group = gbuf;
 		}
-		strlcpy(lc, "?", sizeof(lc));
-	} else {
+		strlcpy(lc, "?", माप(lc));
+	} अन्यथा {
 		user = user_from_uid(st->st_uid, 0);
 		group = group_from_gid(st->st_gid, 0);
-		snprintf(lc, sizeof(lc), "%u", (u_int)st->st_nlink);
+		snprintf(lc, माप(lc), "%u", (u_int)st->st_nlink);
 	}
-	if (ltime != NULL) {
-		now = time(NULL);
-		if (now - (365*24*60*60)/2 < st->st_mtime &&
+	अगर (ltime != शून्य) {
+		now = समय(शून्य);
+		अगर (now - (365*24*60*60)/2 < st->st_mtime &&
 		    now >= st->st_mtime)
-			sz = strftime(tbuf, sizeof tbuf, "%b %e %H:%M", ltime);
-		else
-			sz = strftime(tbuf, sizeof tbuf, "%b %e  %Y", ltime);
+			sz = स_माला(tbuf, माप tbuf, "%b %e %H:%M", ltime);
+		अन्यथा
+			sz = स_माला(tbuf, माप tbuf, "%b %e  %Y", ltime);
 	}
-	if (sz == 0)
+	अगर (sz == 0)
 		tbuf[0] = '\0';
-	ulen = MAXIMUM(strlen(user), 8);
-	glen = MAXIMUM(strlen(group), 8);
-	if (si_units) {
-		fmt_scaled((long long)st->st_size, sbuf);
-		snprintf(buf, sizeof buf, "%s %3s %-*s %-*s %8s %s %s",
+	ulen = MAXIMUM(म_माप(user), 8);
+	glen = MAXIMUM(म_माप(group), 8);
+	अगर (si_units) {
+		fmt_scaled((दीर्घ दीर्घ)st->st_size, sbuf);
+		snprintf(buf, माप buf, "%s %3s %-*s %-*s %8s %s %s",
 		    mode, lc, ulen, user, glen, group,
 		    sbuf, tbuf, name);
-	} else {
-		snprintf(buf, sizeof buf, "%s %3s %-*s %-*s %8llu %s %s",
+	} अन्यथा {
+		snprintf(buf, माप buf, "%s %3s %-*s %-*s %8llu %s %s",
 		    mode, lc, ulen, user, glen, group,
-		    (unsigned long long)st->st_size, tbuf, name);
+		    (अचिन्हित दीर्घ दीर्घ)st->st_size, tbuf, name);
 	}
-	return xstrdup(buf);
+	वापस xstrdup(buf);
 }

@@ -34,48 +34,48 @@
  * Otherwise, don't do locking; just pretend success.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#ifndef HAVE_FLOCK
-#include <errno.h>
-#include <fcntl.h>
+#अगर_अघोषित HAVE_FLOCK
+#समावेश <errno.h>
+#समावेश <fcntl.h>
 
-int
-flock(int fd, int op)
+पूर्णांक
+flock(पूर्णांक fd, पूर्णांक op)
 {
-	int rc = 0;
+	पूर्णांक rc = 0;
 
-#if defined(F_SETLK) && defined(F_SETLKW)
-	struct flock fl = {0};
+#अगर defined(F_SETLK) && defined(F_SETLKW)
+	काष्ठा flock fl = {0};
 
-	switch (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
-	case LOCK_EX:
+	चयन (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
+	हाल LOCK_EX:
 		fl.l_type = F_WRLCK;
-		break;
+		अवरोध;
 
-	case LOCK_SH:
+	हाल LOCK_SH:
 		fl.l_type = F_RDLCK;
-		break;
+		अवरोध;
 
-	case LOCK_UN:
+	हाल LOCK_UN:
 		fl.l_type = F_UNLCK;
-		break;
+		अवरोध;
 
-	default:
-		errno = EINVAL;
-		return -1;
+	शेष:
+		त्रुटि_सं = EINVAL;
+		वापस -1;
 	}
 
-	fl.l_whence = SEEK_SET;
+	fl.l_whence = शुरू_से;
 	rc = fcntl(fd, op & LOCK_NB ? F_SETLK : F_SETLKW, &fl);
 
-	if (rc && (errno == EAGAIN))
-		errno = EWOULDBLOCK;
-#else
+	अगर (rc && (त्रुटि_सं == EAGAIN))
+		त्रुटि_सं = EWOULDBLOCK;
+#अन्यथा
 	rc = -1;
-	errno = ENOSYS;
-#endif
+	त्रुटि_सं = ENOSYS;
+#पूर्ण_अगर
 
-	return rc;
+	वापस rc;
 }
-#endif
+#पूर्ण_अगर

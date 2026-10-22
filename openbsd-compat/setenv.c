@@ -30,18 +30,18 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/setenv.c */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#if !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
+#अगर !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
+#समावेश <errno.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
 
-extern char **environ;
-#ifndef HAVE_SETENV
-static char **lastenv;				/* last value of environ */
-#endif
+बाह्य अक्षर **environ;
+#अगर_अघोषित HAVE_SETENV
+अटल अक्षर **lastenv;				/* last value of environ */
+#पूर्ण_अगर
 
 /* OpenSSH Portable: __findenv is from getenv.c rev 1.8, made static */
 /*
@@ -54,175 +54,175 @@ static char **lastenv;				/* last value of environ */
  *
  *	This routine *should* be a static; don't use it.
  */
-static char *
-__findenv(const char *name, int len, int *offset)
+अटल अक्षर *
+__findenv(स्थिर अक्षर *name, पूर्णांक len, पूर्णांक *offset)
 {
-	extern char **environ;
-	int i;
-	const char *np;
-	char **p, *cp;
+	बाह्य अक्षर **environ;
+	पूर्णांक i;
+	स्थिर अक्षर *np;
+	अक्षर **p, *cp;
 
-	if (name == NULL || environ == NULL)
-		return (NULL);
-	for (p = environ + *offset; (cp = *p) != NULL; ++p) {
-		for (np = name, i = len; i && *cp; i--)
-			if (*cp++ != *np++)
-				break;
-		if (i == 0 && *cp++ == '=') {
+	अगर (name == शून्य || environ == शून्य)
+		वापस (शून्य);
+	क्रम (p = environ + *offset; (cp = *p) != शून्य; ++p) {
+		क्रम (np = name, i = len; i && *cp; i--)
+			अगर (*cp++ != *np++)
+				अवरोध;
+		अगर (i == 0 && *cp++ == '=') {
 			*offset = p - environ;
-			return (cp);
+			वापस (cp);
 		}
 	}
-	return (NULL);
+	वापस (शून्य);
 }
 
-#if 0 /* nothing uses putenv */
+#अगर 0 /* nothing uses putenv */
 /*
  * putenv --
  *	Add a name=value string directly to the environmental, replacing
  *	any current value.
  */
-int
-putenv(char *str)
+पूर्णांक
+putenv(अक्षर *str)
 {
-	char **P, *cp;
-	size_t cnt;
-	int offset = 0;
+	अक्षर **P, *cp;
+	माप_प्रकार cnt;
+	पूर्णांक offset = 0;
 
-	for (cp = str; *cp && *cp != '='; ++cp)
+	क्रम (cp = str; *cp && *cp != '='; ++cp)
 		;
-	if (*cp != '=') {
-		errno = EINVAL;
-		return (-1);			/* missing `=' in string */
+	अगर (*cp != '=') {
+		त्रुटि_सं = EINVAL;
+		वापस (-1);			/* missing `=' in string */
 	}
 
-	if (__findenv(str, (int)(cp - str), &offset) != NULL) {
+	अगर (__findenv(str, (पूर्णांक)(cp - str), &offset) != शून्य) {
 		environ[offset++] = str;
 		/* could be set multiple times */
-		while (__findenv(str, (int)(cp - str), &offset)) {
-			for (P = &environ[offset];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		जबतक (__findenv(str, (पूर्णांक)(cp - str), &offset)) {
+			क्रम (P = &environ[offset];; ++P)
+				अगर (!(*P = *(P + 1)))
+					अवरोध;
 		}
-		return (0);
+		वापस (0);
 	}
 
 	/* create new slot for string */
-	for (P = environ; *P != NULL; P++)
+	क्रम (P = environ; *P != शून्य; P++)
 		;
 	cnt = P - environ;
-	P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-	if (!P)
-		return (-1);
-	if (lastenv != environ)
-		memcpy(P, environ, cnt * sizeof(char *));
+	P = (अक्षर **)पुनः_स्मृति(lastenv, माप(अक्षर *) * (cnt + 2));
+	अगर (!P)
+		वापस (-1);
+	अगर (lastenv != environ)
+		स_नकल(P, environ, cnt * माप(अक्षर *));
 	lastenv = environ = P;
 	environ[cnt] = str;
-	environ[cnt + 1] = NULL;
-	return (0);
+	environ[cnt + 1] = शून्य;
+	वापस (0);
 }
 
-#endif
+#पूर्ण_अगर
 
-#ifndef HAVE_SETENV
+#अगर_अघोषित HAVE_SETENV
 /*
  * setenv --
  *	Set the value of the environmental variable "name" to be
  *	"value".  If rewrite is set, replace any current value.
  */
-int
-setenv(const char *name, const char *value, int rewrite)
+पूर्णांक
+setenv(स्थिर अक्षर *name, स्थिर अक्षर *मूल्य, पूर्णांक rewrite)
 {
-	char *C, **P;
-	const char *np;
-	int l_value, offset = 0;
+	अक्षर *C, **P;
+	स्थिर अक्षर *np;
+	पूर्णांक l_मूल्य, offset = 0;
 
-	for (np = name; *np && *np != '='; ++np)
+	क्रम (np = name; *np && *np != '='; ++np)
 		;
-#ifdef notyet
-	if (*np) {
-		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+#अगर_घोषित notyet
+	अगर (*np) {
+		त्रुटि_सं = EINVAL;
+		वापस (-1);			/* has `=' in name */
 	}
-#endif
+#पूर्ण_अगर
 
-	l_value = strlen(value);
-	if ((C = __findenv(name, (int)(np - name), &offset)) != NULL) {
-		int tmpoff = offset + 1;
-		if (!rewrite)
-			return (0);
-#if 0 /* XXX - existing entry may not be writable */
-		if (strlen(C) >= l_value) {	/* old larger; copy over */
-			while ((*C++ = *value++))
+	l_मूल्य = म_माप(मूल्य);
+	अगर ((C = __findenv(name, (पूर्णांक)(np - name), &offset)) != शून्य) {
+		पूर्णांक tmpoff = offset + 1;
+		अगर (!rewrite)
+			वापस (0);
+#अगर 0 /* XXX - existing entry may not be writable */
+		अगर (म_माप(C) >= l_मूल्य) {	/* old larger; copy over */
+			जबतक ((*C++ = *मूल्य++))
 				;
-			return (0);
+			वापस (0);
 		}
-#endif
+#पूर्ण_अगर
 		/* could be set multiple times */
-		while (__findenv(name, (int)(np - name), &tmpoff)) {
-			for (P = &environ[tmpoff];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		जबतक (__findenv(name, (पूर्णांक)(np - name), &tmpoff)) {
+			क्रम (P = &environ[tmpoff];; ++P)
+				अगर (!(*P = *(P + 1)))
+					अवरोध;
 		}
-	} else {					/* create new slot */
-		size_t cnt;
+	} अन्यथा {					/* create new slot */
+		माप_प्रकार cnt;
 
-		for (P = environ; *P != NULL; P++)
+		क्रम (P = environ; *P != शून्य; P++)
 			;
 		cnt = P - environ;
-		P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-		if (!P)
-			return (-1);
-		if (lastenv != environ)
-			memcpy(P, environ, cnt * sizeof(char *));
+		P = (अक्षर **)पुनः_स्मृति(lastenv, माप(अक्षर *) * (cnt + 2));
+		अगर (!P)
+			वापस (-1);
+		अगर (lastenv != environ)
+			स_नकल(P, environ, cnt * माप(अक्षर *));
 		lastenv = environ = P;
 		offset = cnt;
-		environ[cnt + 1] = NULL;
+		environ[cnt + 1] = शून्य;
 	}
-	if (!(environ[offset] =			/* name + `=' + value */
-	    malloc((size_t)((int)(np - name) + l_value + 2))))
-		return (-1);
-	for (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
+	अगर (!(environ[offset] =			/* name + `=' + value */
+	    दो_स्मृति((माप_प्रकार)((पूर्णांक)(np - name) + l_मूल्य + 2))))
+		वापस (-1);
+	क्रम (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
 		;
-	for (*C++ = '='; (*C++ = *value++); )
+	क्रम (*C++ = '='; (*C++ = *मूल्य++); )
 		;
-	return (0);
+	वापस (0);
 }
 
-#endif /* HAVE_SETENV */
+#पूर्ण_अगर /* HAVE_SETENV */
 
-#ifndef HAVE_UNSETENV
+#अगर_अघोषित HAVE_UNSETENV
 /*
  * unsetenv(name) --
  *	Delete environmental variable "name".
  */
-int
-unsetenv(const char *name)
+पूर्णांक
+unsetenv(स्थिर अक्षर *name)
 {
-	char **P;
-	const char *np;
-	int offset = 0;
+	अक्षर **P;
+	स्थिर अक्षर *np;
+	पूर्णांक offset = 0;
 
-	if (!name || !*name) {
-		errno = EINVAL;
-		return (-1);
+	अगर (!name || !*name) {
+		त्रुटि_सं = EINVAL;
+		वापस (-1);
 	}
-	for (np = name; *np && *np != '='; ++np)
+	क्रम (np = name; *np && *np != '='; ++np)
 		;
-	if (*np) {
-		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+	अगर (*np) {
+		त्रुटि_सं = EINVAL;
+		वापस (-1);			/* has `=' in name */
 	}
 
 	/* could be set multiple times */
-	while (__findenv(name, (int)(np - name), &offset)) {
-		for (P = &environ[offset];; ++P)
-			if (!(*P = *(P + 1)))
-				break;
+	जबतक (__findenv(name, (पूर्णांक)(np - name), &offset)) {
+		क्रम (P = &environ[offset];; ++P)
+			अगर (!(*P = *(P + 1)))
+				अवरोध;
 	}
-	return (0);
+	वापस (0);
 }
-#endif /* HAVE_UNSETENV */
+#पूर्ण_अगर /* HAVE_UNSETENV */
 
-#endif /* !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV) */
+#पूर्ण_अगर /* !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV) */
 

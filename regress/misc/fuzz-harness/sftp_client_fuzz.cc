@@ -39,55 +39,55 @@ limitations under the License.
  * so LSan sees zero per-iteration leaks.
  */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#समावेश <setjmp.h>
+#समावेश <signal.h>
+#समावेश <stddef.h>
+#समावेश <stdint.h>
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <unistd.h>
+#समावेश <sys/socket.h>
+#समावेश <sys/types.h>
 
-extern "C" {
-#include "includes.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sftp.h"
-#include "sftp-common.h"
-#include "sftp-client.h"
+बाह्य "C" {
+#समावेश "includes.h"
+#समावेश "sshbuf.h"
+#समावेश "ssherr.h"
+#समावेश "log.h"
+#समावेश "sftp.h"
+#समावेश "sftp-common.h"
+#समावेश "sftp-client.h"
 
-void fuzz_arena_begin(void);
-void fuzz_arena_cleanup(void);
+व्योम fuzz_arena_begin(व्योम);
+व्योम fuzz_arena_cleanup(व्योम);
 }
 
-extern "C" volatile sig_atomic_t interrupted = 0;
-extern "C" int showprogress = 0;
-extern "C" void start_progress_meter(const char *file, off_t filesize,
-    off_t *ctr) { (void)file; (void)filesize; (void)ctr; }
-extern "C" void refresh_progress_meter(int force_update) { (void)force_update; }
-extern "C" void stop_progress_meter(void) { }
+बाह्य "C" अस्थिर संक_पूर्ण_प्रकार interrupted = 0;
+बाह्य "C" पूर्णांक showprogress = 0;
+बाह्य "C" व्योम start_progress_meter(स्थिर अक्षर *file, off_t filesize,
+    off_t *ctr) { (व्योम)file; (व्योम)filesize; (व्योम)ctr; }
+बाह्य "C" व्योम refresh_progress_meter(पूर्णांक force_update) { (व्योम)force_update; }
+बाह्य "C" व्योम stop_progress_meter(व्योम) { }
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+अटल लाँघ_बफ fuzz_env;
+अटल अस्थिर पूर्णांक in_fuzz = 0;
 
-extern "C" void
-cleanup_exit(int code)
+बाह्य "C" व्योम
+cleanup_exit(पूर्णांक code)
 {
-	if (in_fuzz)
-		longjmp(fuzz_env, code ? code : 1);
-	_exit(code);
+	अगर (in_fuzz)
+		दीर्घ_लाँघ(fuzz_env, code ? code : 1);
+	_निकास(code);
 }
 
-static const uint8_t k_version_reply[] = {
+अटल स्थिर uint8_t k_version_reply[] = {
     0x00, 0x00, 0x00, 0x05,
     0x02,
     0x00, 0x00, 0x00, 0x03,
 };
 
-enum {
+क्रमागत {
 	API_STAT,
 	API_LSTAT,
 	API_REALPATH,
@@ -100,84 +100,84 @@ enum {
 	API_RMDIR,
 	API_RENAME,
 	API_SYMLINK,
-	API_COUNT,
+	API_गिनती,
 };
 
-static void
-run_one(int api, const uint8_t *body, size_t bsize)
+अटल व्योम
+run_one(पूर्णांक api, स्थिर uint8_t *body, माप_प्रकार bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	पूर्णांक sv[2] = { -1, -1 };
+	अगर (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		वापस;
 
-	ssize_t w = write(sv[0], k_version_reply, sizeof(k_version_reply));
-	(void)w;
-	if (bsize > 0)
-		w = write(sv[0], body, bsize);
-	(void)w;
+	ssize_t w = ग_लिखो(sv[0], k_version_reply, माप(k_version_reply));
+	(व्योम)w;
+	अगर (bsize > 0)
+		w = ग_लिखो(sv[0], body, bsize);
+	(व्योम)w;
 	shutdown(sv[0], SHUT_WR);
 
 	fuzz_arena_begin();
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
-		struct sftp_conn *conn = sftp_init(sv[1], sv[1], 32768, 64, 0);
-		if (conn != NULL) {
+	अगर (बनाओ_लाँघ(fuzz_env) == 0) {
+		काष्ठा sftp_conn *conn = sftp_init(sv[1], sv[1], 32768, 64, 0);
+		अगर (conn != शून्य) {
 			Attrib attr;
 			attrib_clear(&attr);
 
-			switch (api) {
-			case API_STAT: {
+			चयन (api) {
+			हाल API_STAT: {
 				Attrib a;
-				(void)sftp_stat(conn, "/fuzz", 1, &a);
-				break;
+				(व्योम)sftp_stat(conn, "/fuzz", 1, &a);
+				अवरोध;
 			}
-			case API_LSTAT: {
+			हाल API_LSTAT: {
 				Attrib a;
-				(void)sftp_lstat(conn, "/fuzz", 1, &a);
-				break;
+				(व्योम)sftp_lstat(conn, "/fuzz", 1, &a);
+				अवरोध;
 			}
-			case API_REALPATH: {
-				char *p = sftp_realpath(conn, "/fuzz");
-				free(p);
-				break;
+			हाल API_REALPATH: {
+				अक्षर *p = sftp_realpath(conn, "/fuzz");
+				मुक्त(p);
+				अवरोध;
 			}
-			case API_EXPAND_PATH: {
-				char *p = sftp_expand_path(conn, "~");
-				free(p);
-				break;
+			हाल API_EXPAND_PATH: {
+				अक्षर *p = sftp_expand_path(conn, "~");
+				मुक्त(p);
+				अवरोध;
 			}
-			case API_READDIR: {
-				SFTP_DIRENT **dir = NULL;
-				(void)sftp_readdir(conn, "/fuzz", &dir);
-				if (dir != NULL)
+			हाल API_READDIR: {
+				SFTP_DIRENT **dir = शून्य;
+				(व्योम)sftp_readdir(conn, "/fuzz", &dir);
+				अगर (dir != शून्य)
 					sftp_free_dirents(dir);
-				break;
+				अवरोध;
 			}
-			case API_STATVFS: {
-				struct sftp_statvfs vfs;
-				(void)sftp_statvfs(conn, "/fuzz", &vfs, 1);
-				break;
+			हाल API_STATVFS: {
+				काष्ठा sftp_statvfs vfs;
+				(व्योम)sftp_statvfs(conn, "/fuzz", &vfs, 1);
+				अवरोध;
 			}
-			case API_GET_LIMITS: {
-				struct sftp_limits lim;
-				(void)sftp_get_limits(conn, &lim);
-				break;
+			हाल API_GET_LIMITS: {
+				काष्ठा sftp_limits lim;
+				(व्योम)sftp_get_limits(conn, &lim);
+				अवरोध;
 			}
-			case API_RM:
-				(void)sftp_rm(conn, "/fuzz");
-				break;
-			case API_MKDIR:
-				(void)sftp_mkdir(conn, "/fuzz", &attr, 0);
-				break;
-			case API_RMDIR:
-				(void)sftp_rmdir(conn, "/fuzz");
-				break;
-			case API_RENAME:
-				(void)sftp_rename(conn, "/a", "/b", 0);
-				break;
-			case API_SYMLINK:
-				(void)sftp_symlink(conn, "/a", "/b");
-				break;
+			हाल API_RM:
+				(व्योम)sftp_rm(conn, "/fuzz");
+				अवरोध;
+			हाल API_MKDIR:
+				(व्योम)sftp_mkdir(conn, "/fuzz", &attr, 0);
+				अवरोध;
+			हाल API_RMDIR:
+				(व्योम)sftp_rmdir(conn, "/fuzz");
+				अवरोध;
+			हाल API_RENAME:
+				(व्योम)sftp_rename(conn, "/a", "/b", 0);
+				अवरोध;
+			हाल API_SYMLINK:
+				(व्योम)sftp_symlink(conn, "/a", "/b");
+				अवरोध;
 			}
 
 			sftp_free(conn);
@@ -186,25 +186,25 @@ run_one(int api, const uint8_t *body, size_t bsize)
 	in_fuzz = 0;
 	fuzz_arena_cleanup();
 
-	close(sv[0]);
-	close(sv[1]);
+	बंद(sv[0]);
+	बंद(sv[1]);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+बाह्य "C" पूर्णांक
+LLVMFuzzer_Test_One_निवेश(स्थिर uint8_t *तथ्य, माप_प्रकार आकार)
 {
-	static int initialized = 0;
-	if (!initialized) {
+	अटल पूर्णांक initialized = 0;
+	अगर (!initialized) {
 		initialized = 1;
 		log_init("sftp_client_fuzz", SYSLOG_LEVEL_ERROR,
 		    SYSLOG_FACILITY_AUTH, 0);
 	}
 
-	if (size > 65536)
-		return 0;
+	अगर (आकार > 65536)
+		वापस 0;
 
-	for (int api = 0; api < API_COUNT; api++)
-		run_one(api, data, size);
+	क्रम (पूर्णांक api = 0; api < API_गिनती; api++)
+		run_one(api, तथ्य, आकार);
 
-	return 0;
+	वापस 0;
 }

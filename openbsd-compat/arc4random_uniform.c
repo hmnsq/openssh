@@ -18,12 +18,12 @@
 
 /* OPENBSD ORIGINAL: lib/libc/crypto/arc4random_uniform.c */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <stdint.h>
-#include <stdlib.h>
+#समावेश <stdint.h>
+#समावेश <stdlib.h>
 
-#ifndef HAVE_ARC4RANDOM_UNIFORM
+#अगर_अघोषित HAVE_ARC4RANDOM_UNIFORM
 /*
  * Calculate a uniformly distributed random number less than upper_bound
  * avoiding "modulo bias".
@@ -39,8 +39,8 @@ arc4random_uniform(uint32_t upper_bound)
 {
 	uint32_t r, min;
 
-	if (upper_bound < 2)
-		return 0;
+	अगर (upper_bound < 2)
+		वापस 0;
 
 	/* 2**32 % x == (2**32 - x) % x */
 	min = -upper_bound % upper_bound;
@@ -51,12 +51,12 @@ arc4random_uniform(uint32_t upper_bound)
 	 * number inside the range we need, so it should rarely need
 	 * to re-roll.
 	 */
-	for (;;) {
+	क्रम (;;) {
 		r = arc4random();
-		if (r >= min)
-			break;
+		अगर (r >= min)
+			अवरोध;
 	}
 
-	return r % upper_bound;
+	वापस r % upper_bound;
 }
-#endif /* !HAVE_ARC4RANDOM_UNIFORM */
+#पूर्ण_अगर /* !HAVE_ARC4RANDOM_UNIFORM */

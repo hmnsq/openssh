@@ -30,25 +30,25 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getgrouplist.c */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#ifndef HAVE_GETGROUPLIST
+#अगर_अघोषित HAVE_GETGROUPLIST
 
 /*
  * get credential
  */
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <grp.h>
+#समावेश <sys/types.h>
+#समावेश <string.h>
+#समावेश <unistd.h>
+#समावेश <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+पूर्णांक
+getgrouplist(स्थिर अक्षर *uname, gid_t agroup, gid_t *groups, पूर्णांक *grpcnt)
 {
-	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	काष्ठा group *grp;
+	पूर्णांक i, ngroups;
+	पूर्णांक ret, maxgroups;
+	पूर्णांक bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	अगर (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		वापस (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,29 +67,29 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
-			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+	जबतक ((grp = getgrent())) {
+		अगर (grp->gr_gid == agroup)
+			जारी;
+		क्रम (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			अगर (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
-			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		अगर (bail)
+			जारी;
+		क्रम (i = 0; grp->gr_mem[i]; i++) {
+			अगर (!म_भेद(grp->gr_mem[i], uname)) {
+				अगर (ngroups >= maxgroups) {
 					ret = -1;
-					goto out;
+					जाओ out;
 				}
 				groups[ngroups++] = grp->gr_gid;
-				break;
+				अवरोध;
 			}
 		}
 	}
 out:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	वापस (ret);
 }
 
-#endif /* HAVE_GETGROUPLIST */
+#पूर्ण_अगर /* HAVE_GETGROUPLIST */

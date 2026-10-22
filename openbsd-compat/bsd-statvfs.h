@@ -14,40 +14,40 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#if !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
+#अगर !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
 
-#include <sys/types.h>
+#समावेश <sys/types.h>
 
-#ifdef HAVE_SYS_MOUNT_H
-#include <sys/mount.h>
-#endif
-#ifdef HAVE_SYS_STATFS_H
-#include <sys/statfs.h>
-#endif
-#ifdef HAVE_SYS_VFS_H
-#include <sys/vfs.h>
-#endif
+#अगर_घोषित HAVE_SYS_MOUNT_H
+#समावेश <sys/mount.h>
+#पूर्ण_अगर
+#अगर_घोषित HAVE_SYS_STATFS_H
+#समावेश <sys/statfs.h>
+#पूर्ण_अगर
+#अगर_घोषित HAVE_SYS_VFS_H
+#समावेश <sys/vfs.h>
+#पूर्ण_अगर
 
-#ifndef HAVE_FSBLKCNT_T
-typedef unsigned long fsblkcnt_t;
-#endif
-#ifndef HAVE_FSFILCNT_T
-typedef unsigned long fsfilcnt_t;
-#endif
+#अगर_अघोषित HAVE_FSBLKCNT_T
+प्रकार अचिन्हित दीर्घ fsblkcnt_t;
+#पूर्ण_अगर
+#अगर_अघोषित HAVE_FSFILCNT_T
+प्रकार अचिन्हित दीर्घ fsfilcnt_t;
+#पूर्ण_अगर
 
-#ifndef ST_RDONLY
-#define ST_RDONLY	1
-#endif
-#ifndef ST_NOSUID
-#define ST_NOSUID	2
-#endif
+#अगर_अघोषित ST_RDONLY
+#घोषणा ST_RDONLY	1
+#पूर्ण_अगर
+#अगर_अघोषित ST_NOSUID
+#घोषणा ST_NOSUID	2
+#पूर्ण_अगर
 
 	/* as defined in IEEE Std 1003.1, 2004 Edition */
-struct statvfs {
-	unsigned long f_bsize;	/* File system block size. */
-	unsigned long f_frsize;	/* Fundamental file system block size. */
+काष्ठा statvfs {
+	अचिन्हित दीर्घ f_bsize;	/* File system block size. */
+	अचिन्हित दीर्घ f_frsize;	/* Fundamental file system block size. */
 	fsblkcnt_t f_blocks;	/* Total number of blocks on file system in */
 				/* units of f_frsize. */
 	fsblkcnt_t    f_bfree;	/* Total number of free blocks. */
@@ -57,16 +57,16 @@ struct statvfs {
 	fsfilcnt_t    f_ffree;	/* Total number of free file serial numbers. */
 	fsfilcnt_t    f_favail;	/* Number of file serial numbers available to */
 				/* non-privileged process. */
-	unsigned long f_fsid;	/* File system ID. */
-	unsigned long f_flag;	/* BBit mask of f_flag values. */
-	unsigned long f_namemax;/*  Maximum filename length. */
+	अचिन्हित दीर्घ f_fsid;	/* File system ID. */
+	अचिन्हित दीर्घ f_flag;	/* BBit mask of f_flag values. */
+	अचिन्हित दीर्घ f_namemax;/*  Maximum filename length. */
 };
-#endif
+#पूर्ण_अगर
 
-#ifndef HAVE_STATVFS
-int statvfs(const char *, struct statvfs *);
-#endif
+#अगर_अघोषित HAVE_STATVFS
+पूर्णांक statvfs(स्थिर अक्षर *, काष्ठा statvfs *);
+#पूर्ण_अगर
 
-#ifndef HAVE_FSTATVFS
-int fstatvfs(int, struct statvfs *);
-#endif
+#अगर_अघोषित HAVE_FSTATVFS
+पूर्णांक fstatvfs(पूर्णांक, काष्ठा statvfs *);
+#पूर्ण_अगर

@@ -15,26 +15,26 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef CHACHA_POLY_AEAD_H
-#define CHACHA_POLY_AEAD_H
+#अगर_अघोषित CHACHA_POLY_AEAD_H
+#घोषणा CHACHA_POLY_AEAD_H
 
-#include <sys/types.h>
-#include "chacha.h"
-#include "poly1305.h"
+#समावेश <sys/types.h>
+#समावेश "chacha.h"
+#समावेश "poly1305.h"
 
-#define CHACHA_KEYLEN	32 /* Only 256 bit keys used here */
+#घोषणा CHACHA_KEYLEN	32 /* Only 256 bit keys used here */
 
-struct chachapoly_ctx;
+काष्ठा chachapoly_ctx;
 
-struct chachapoly_ctx *chachapoly_new(const u_char *key, u_int keylen)
+काष्ठा chachapoly_ctx *chachapoly_new(स्थिर u_char *कुंजी, u_int keylen)
     __attribute__((__bounded__(__buffer__, 1, 2)));
-void chachapoly_free(struct chachapoly_ctx *cpctx);
+व्योम chachapoly_free(काष्ठा chachapoly_ctx *cpctx);
 
-int	chachapoly_crypt(struct chachapoly_ctx *cpctx, u_int seqnr,
-    u_char *dest, const u_char *src, u_int len, u_int aadlen, u_int authlen,
-    int do_encrypt);
-int	chachapoly_get_length(struct chachapoly_ctx *cpctx,
-    u_int *plenp, u_int seqnr, const u_char *cp, u_int len)
+पूर्णांक	chachapoly_crypt(काष्ठा chachapoly_ctx *cpctx, u_int seqnr,
+    u_char *dest, स्थिर u_char *src, u_int len, u_int aadlen, u_int authlen,
+    पूर्णांक do_encrypt);
+पूर्णांक	chachapoly_get_लंबाई(काष्ठा chachapoly_ctx *cpctx,
+    u_int *plenp, u_int seqnr, स्थिर u_char *cp, u_int len)
     __attribute__((__bounded__(__buffer__, 4, 5)));
 
-#endif /* CHACHA_POLY_AEAD_H */
+#पूर्ण_अगर /* CHACHA_POLY_AEAD_H */

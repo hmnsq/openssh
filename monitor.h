@@ -25,11 +25,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _MONITOR_H_
-#define _MONITOR_H_
+#अगर_अघोषित _MONITOR_H_
+#घोषणा _MONITOR_H_
 
 /* Please keep *_REQ_* values on even numbers and *_ANS_* on odd numbers */
-enum monitor_reqtype {
+क्रमागत monitor_reqtype {
 	MONITOR_REQ_MODULI = 0, MONITOR_ANS_MODULI = 1,
 	MONITOR_REQ_FREE = 2,
 	MONITOR_REQ_AUTHSERV = 4,
@@ -67,40 +67,40 @@ enum monitor_reqtype {
 
 };
 
-struct ssh;
-struct sshbuf;
+काष्ठा ssh;
+काष्ठा sshbuf;
 
-struct monitor {
-	int			 m_recvfd;
-	int			 m_sendfd;
-	int			 m_log_recvfd;
-	int			 m_log_sendfd;
-	struct kex		**m_pkex;
+काष्ठा monitor {
+	पूर्णांक			 m_recvfd;
+	पूर्णांक			 m_sendfd;
+	पूर्णांक			 m_log_recvfd;
+	पूर्णांक			 m_log_sendfd;
+	काष्ठा kex		**m_pkex;
 	pid_t			 m_pid;
 };
 
-struct monitor *monitor_init(void);
-void monitor_reinit(struct monitor *);
+काष्ठा monitor *monitor_init(व्योम);
+व्योम monitor_reinit(काष्ठा monitor *);
 
-struct Authctxt;
-void monitor_child_preauth(struct ssh *, struct monitor *);
-void monitor_child_postauth(struct ssh *, struct monitor *);
+काष्ठा Authctxt;
+व्योम monitor_child_preauth(काष्ठा ssh *, काष्ठा monitor *);
+व्योम monitor_child_postauth(काष्ठा ssh *, काष्ठा monitor *);
 
-void monitor_clear_keystate(struct ssh *, struct monitor *);
-void monitor_apply_keystate(struct ssh *, struct monitor *);
+व्योम monitor_clear_keystate(काष्ठा ssh *, काष्ठा monitor *);
+व्योम monitor_apply_keystate(काष्ठा ssh *, काष्ठा monitor *);
 
-int  monitor_auth_attempted(void);
-int  monitor_invalid_user(void);
+पूर्णांक  monitor_auth_attempted(व्योम);
+पूर्णांक  monitor_invalid_user(व्योम);
 
 /* Prototypes for request sending and receiving */
-void mm_request_send(int, enum monitor_reqtype, struct sshbuf *);
-void mm_request_receive(int, struct sshbuf *);
-void mm_request_receive_expect(int, enum monitor_reqtype, struct sshbuf *);
-void mm_get_keystate(struct ssh *, struct monitor *);
+व्योम mm_request_send(पूर्णांक, क्रमागत monitor_reqtype, काष्ठा sshbuf *);
+व्योम mm_request_receive(पूर्णांक, काष्ठा sshbuf *);
+व्योम mm_request_receive_expect(पूर्णांक, क्रमागत monitor_reqtype, काष्ठा sshbuf *);
+व्योम mm_get_keystate(काष्ठा ssh *, काष्ठा monitor *);
 
 /* XXX: should be returned via a monitor call rather than config_fd */
-void mm_encode_server_options(struct sshbuf *);
+व्योम mm_encode_server_options(काष्ठा sshbuf *);
 
-struct sshbuf *pack_hostkeys(void);
+काष्ठा sshbuf *pack_hostkeys(व्योम);
 
-#endif /* _MONITOR_H_ */
+#पूर्ण_अगर /* _MONITOR_H_ */

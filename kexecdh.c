@@ -24,195 +24,195 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#if defined(WITH_OPENSSL)
+#अगर defined(WITH_OPENSSL)
 
-#include <sys/types.h>
+#समावेश <sys/types.h>
 
-#include <stdio.h>
-#include <signal.h>
+#समावेश <stdio.h>
+#समावेश <signal.h>
 
-#include <openssl/bn.h>
-#include <openssl/ecdh.h>
+#समावेश <openssl/bn.h>
+#समावेश <openssl/ecdh.h>
 
-#include "sshkey.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "ssherr.h"
+#समावेश "sshkey.h"
+#समावेश "kex.h"
+#समावेश "sshbuf.h"
+#समावेश "ssherr.h"
 
-int
-kex_ecdh_keypair(struct kex *kex)
+पूर्णांक
+kex_ecdh_keypair(काष्ठा kex *kex)
 {
-	EC_KEY *client_key = NULL;
-	const EC_GROUP *group;
-	const EC_POINT *public_key;
-	struct sshbuf *buf = NULL;
-	int r;
+	EC_कुंजी *client_कुंजी = शून्य;
+	स्थिर EC_GROUP *group;
+	स्थिर EC_POINT *public_कुंजी;
+	काष्ठा sshbuf *buf = शून्य;
+	पूर्णांक r;
 
-	if ((client_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
+	अगर ((client_कुंजी = EC_कुंजी_new_by_curve_name(kex->ec_nid)) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
-	if (EC_KEY_generate_key(client_key) != 1) {
+	अगर (EC_कुंजी_generate_कुंजी(client_कुंजी) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जाओ out;
 	}
-	group = EC_KEY_get0_group(client_key);
-	public_key = EC_KEY_get0_public_key(client_key);
+	group = EC_कुंजी_get0_group(client_कुंजी);
+	public_कुंजी = EC_कुंजी_get0_public_कुंजी(client_कुंजी);
 
-	if ((buf = sshbuf_new()) == NULL) {
+	अगर ((buf = sshbuf_new()) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
-	if ((r = sshbuf_put_ec(buf, public_key, group)) != 0 ||
-	    (r = sshbuf_get_u32(buf, NULL)) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
-	fputs("client private key:\n", stderr);
-	sshkey_dump_ec_key(client_key);
-#endif
-	kex->ec_client_key = client_key;
+	अगर ((r = sshbuf_put_ec(buf, public_कुंजी, group)) != 0 ||
+	    (r = sshbuf_get_u32(buf, शून्य)) != 0)
+		जाओ out;
+#अगर_घोषित DEBUG_KEXECDH
+	ख_माला_दो("client private key:\n", मानक_त्रुटि);
+	sshkey_dump_ec_कुंजी(client_कुंजी);
+#पूर्ण_अगर
+	kex->ec_client_कुंजी = client_कुंजी;
 	kex->ec_group = group;
-	client_key = NULL;	/* owned by the kex */
+	client_कुंजी = शून्य;	/* owned by the kex */
 	kex->client_pub = buf;
-	buf = NULL;
+	buf = शून्य;
  out:
-	EC_KEY_free(client_key);
+	EC_कुंजी_free(client_कुंजी);
 	sshbuf_free(buf);
-	return r;
+	वापस r;
 }
 
-int
-kex_ecdh_enc(struct kex *kex, const struct sshbuf *client_blob,
-    struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+पूर्णांक
+kex_ecdh_enc(काष्ठा kex *kex, स्थिर काष्ठा sshbuf *client_blob,
+    काष्ठा sshbuf **server_blobp, काष्ठा sshbuf **shared_secretp)
 {
-	const EC_GROUP *group;
-	const EC_POINT *pub_key;
-	EC_KEY *server_key = NULL;
-	struct sshbuf *server_blob = NULL;
-	int r;
+	स्थिर EC_GROUP *group;
+	स्थिर EC_POINT *pub_कुंजी;
+	EC_कुंजी *server_कुंजी = शून्य;
+	काष्ठा sshbuf *server_blob = शून्य;
+	पूर्णांक r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = शून्य;
+	*shared_secretp = शून्य;
 
-	if ((server_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
+	अगर ((server_कुंजी = EC_कुंजी_new_by_curve_name(kex->ec_nid)) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
-	if (EC_KEY_generate_key(server_key) != 1) {
+	अगर (EC_कुंजी_generate_कुंजी(server_कुंजी) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जाओ out;
 	}
-	group = EC_KEY_get0_group(server_key);
+	group = EC_कुंजी_get0_group(server_कुंजी);
 
-#ifdef DEBUG_KEXECDH
-	fputs("server private key:\n", stderr);
-	sshkey_dump_ec_key(server_key);
-#endif
-	pub_key = EC_KEY_get0_public_key(server_key);
-	if ((server_blob = sshbuf_new()) == NULL) {
+#अगर_घोषित DEBUG_KEXECDH
+	ख_माला_दो("server private key:\n", मानक_त्रुटि);
+	sshkey_dump_ec_कुंजी(server_कुंजी);
+#पूर्ण_अगर
+	pub_कुंजी = EC_कुंजी_get0_public_कुंजी(server_कुंजी);
+	अगर ((server_blob = sshbuf_new()) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
-	if ((r = sshbuf_put_ec(server_blob, pub_key, group)) != 0 ||
-	    (r = sshbuf_get_u32(server_blob, NULL)) != 0)
-		goto out;
-	if ((r = kex_ecdh_dec_key_group(kex, client_blob, server_key, group,
+	अगर ((r = sshbuf_put_ec(server_blob, pub_कुंजी, group)) != 0 ||
+	    (r = sshbuf_get_u32(server_blob, शून्य)) != 0)
+		जाओ out;
+	अगर ((r = kex_ecdh_dec_कुंजी_group(kex, client_blob, server_कुंजी, group,
 	    0, shared_secretp)) != 0)
-		goto out;
+		जाओ out;
 	*server_blobp = server_blob;
-	server_blob = NULL;
+	server_blob = शून्य;
  out:
-	EC_KEY_free(server_key);
+	EC_कुंजी_free(server_कुंजी);
 	sshbuf_free(server_blob);
-	return r;
+	वापस r;
 }
 
-int
-kex_ecdh_dec_key_group(struct kex *kex, const struct sshbuf *ec_blob,
-    EC_KEY *key, const EC_GROUP *group, int raw, struct sshbuf **shared_secretp)
+पूर्णांक
+kex_ecdh_dec_कुंजी_group(काष्ठा kex *kex, स्थिर काष्ठा sshbuf *ec_blob,
+    EC_कुंजी *कुंजी, स्थिर EC_GROUP *group, पूर्णांक raw, काष्ठा sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	BIGNUM *shared_secret = NULL;
-	EC_POINT *dh_pub = NULL;
-	u_char *kbuf = NULL;
-	size_t klen = 0;
-	int r;
+	काष्ठा sshbuf *buf = शून्य;
+	BIGNUM *shared_secret = शून्य;
+	EC_POINT *dh_pub = शून्य;
+	u_char *kbuf = शून्य;
+	माप_प्रकार klen = 0;
+	पूर्णांक r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = शून्य;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	अगर ((buf = sshbuf_new()) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
-	if ((r = sshbuf_put_stringb(buf, ec_blob)) != 0)
-		goto out;
-	if ((dh_pub = EC_POINT_new(group)) == NULL) {
+	अगर ((r = sshbuf_put_stringb(buf, ec_blob)) != 0)
+		जाओ out;
+	अगर ((dh_pub = EC_POINT_new(group)) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
-	if ((r = sshbuf_get_ec(buf, dh_pub, group)) != 0) {
-		goto out;
+	अगर ((r = sshbuf_get_ec(buf, dh_pub, group)) != 0) {
+		जाओ out;
 	}
 	sshbuf_reset(buf);
 
-#ifdef DEBUG_KEXECDH
-	fputs("public key:\n", stderr);
+#अगर_घोषित DEBUG_KEXECDH
+	ख_माला_दो("public key:\n", मानक_त्रुटि);
 	sshkey_dump_ec_point(group, dh_pub);
-#endif
-	if (sshkey_ec_validate_public(group, dh_pub) != 0) {
+#पूर्ण_अगर
+	अगर (sshkey_ec_validate_public(group, dh_pub) != 0) {
 		r = SSH_ERR_MESSAGE_INCOMPLETE;
-		goto out;
+		जाओ out;
 	}
 	klen = (EC_GROUP_get_degree(group) + 7) / 8;
-	if ((kbuf = malloc(klen)) == NULL) {
+	अगर ((kbuf = दो_स्मृति(klen)) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
-	if (ECDH_compute_key(kbuf, klen, dh_pub, key, NULL) != (int)klen) {
+	अगर (ECDH_compute_कुंजी(kbuf, klen, dh_pub, कुंजी, शून्य) != (पूर्णांक)klen) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जाओ out;
 	}
-#ifdef DEBUG_KEXECDH
+#अगर_घोषित DEBUG_KEXECDH
 	dump_digest("shared secret", kbuf, klen);
-#endif
-	if (raw) {
-		if ((r = sshbuf_put(buf, kbuf, klen)) != 0)
-			goto out;
-	} else {
-		if ((shared_secret = BN_new()) == NULL) {
+#पूर्ण_अगर
+	अगर (raw) {
+		अगर ((r = sshbuf_put(buf, kbuf, klen)) != 0)
+			जाओ out;
+	} अन्यथा {
+		अगर ((shared_secret = BN_new()) == शून्य) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			जाओ out;
 		}
-		if (BN_bin2bn(kbuf, klen, shared_secret) == NULL) {
+		अगर (BN_bin2bn(kbuf, klen, shared_secret) == शून्य) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			जाओ out;
 		}
-		if ((r = sshbuf_put_bignum2(buf, shared_secret)) != 0)
-			goto out;
+		अगर ((r = sshbuf_put_bignum2(buf, shared_secret)) != 0)
+			जाओ out;
 	}
 	*shared_secretp = buf;
-	buf = NULL;
+	buf = शून्य;
  out:
 	EC_POINT_clear_free(dh_pub);
 	BN_clear_free(shared_secret);
 	freezero(kbuf, klen);
 	sshbuf_free(buf);
-	return r;
+	वापस r;
 }
 
-int
-kex_ecdh_dec(struct kex *kex, const struct sshbuf *server_blob,
-    struct sshbuf **shared_secretp)
+पूर्णांक
+kex_ecdh_dec(काष्ठा kex *kex, स्थिर काष्ठा sshbuf *server_blob,
+    काष्ठा sshbuf **shared_secretp)
 {
-	int r;
+	पूर्णांक r;
 
-	r = kex_ecdh_dec_key_group(kex, server_blob, kex->ec_client_key,
+	r = kex_ecdh_dec_कुंजी_group(kex, server_blob, kex->ec_client_कुंजी,
 	    kex->ec_group, 0, shared_secretp);
-	EC_KEY_free(kex->ec_client_key);
-	kex->ec_client_key = NULL;
-	return r;
+	EC_कुंजी_free(kex->ec_client_कुंजी);
+	kex->ec_client_कुंजी = शून्य;
+	वापस r;
 }
 
-#endif /* WITH_OPENSSL */
+#पूर्ण_अगर /* WITH_OPENSSL */

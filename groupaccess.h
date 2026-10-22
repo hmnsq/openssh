@@ -24,12 +24,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GROUPACCESS_H
-#define GROUPACCESS_H
+#अगर_अघोषित GROUPACCESS_H
+#घोषणा GROUPACCESS_H
 
-int	 ga_init(const char *, gid_t);
-int	 ga_match(char * const *, int);
-int	 ga_match_pattern_list(const char *);
-void	 ga_free(void);
+पूर्णांक	 ga_init(स्थिर अक्षर *, gid_t);
+पूर्णांक	 ga_match(अक्षर * स्थिर *, पूर्णांक);
+पूर्णांक	 ga_match_pattern_list(स्थिर अक्षर *);
+व्योम	 ga_free(व्योम);
 
-#endif
+#पूर्ण_अगर

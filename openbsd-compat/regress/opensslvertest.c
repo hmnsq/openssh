@@ -14,17 +14,17 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
 
-int ssh_compatible_openssl(long, long);
+पूर्णांक ssh_compatible_openssl(दीर्घ, दीर्घ);
 
-struct version_test {
-	long headerver;
-	long libver;
-	int result;
+काष्ठा version_test {
+	दीर्घ headerver;
+	दीर्घ libver;
+	पूर्णांक परिणाम;
 } version_tests[] = {
 	/* built with 1.0.1b release headers */
 	{ 0x1000101fL, 0x1000101fL, 1},/* exact match */
@@ -57,28 +57,28 @@ struct version_test {
 	{ 0x3010101fL, 0x4010101fL, 0},	/* newer library major version: NO */
 };
 
-void
-fail(long hver, long lver, int result)
+व्योम
+fail(दीर्घ hver, दीर्घ lver, पूर्णांक परिणाम)
 {
-	fprintf(stderr, "opensslver: header %lx library %lx != %d \n", hver, lver, result);
-	exit(1);
+	ख_लिखो(मानक_त्रुटि, "opensslver: header %lx library %lx != %d \n", hver, lver, परिणाम);
+	निकास(1);
 }
 
-int
-main(void)
+पूर्णांक
+मुख्य(व्योम)
 {
-#ifdef WITH_OPENSSL
-	unsigned int i;
-	int res;
-	long hver, lver;
+#अगर_घोषित WITH_OPENSSL
+	अचिन्हित पूर्णांक i;
+	पूर्णांक res;
+	दीर्घ hver, lver;
 
-	for (i = 0; i < sizeof(version_tests) / sizeof(version_tests[0]); i++) {
+	क्रम (i = 0; i < माप(version_tests) / माप(version_tests[0]); i++) {
 		hver = version_tests[i].headerver;
 		lver = version_tests[i].libver;
-		res = version_tests[i].result;
-		if (ssh_compatible_openssl(hver, lver) != res)
+		res = version_tests[i].परिणाम;
+		अगर (ssh_compatible_openssl(hver, lver) != res)
 			fail(hver, lver, res);
 	}
-#endif
-	exit(0);
+#पूर्ण_अगर
+	निकास(0);
 }

@@ -1,29 +1,29 @@
 // cc_fuzz_target test for sshsig verification.
 
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#समावेश <stddef.h>
+#समावेश <stdio.h>
+#समावेश <stdint.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
 
-extern "C" {
+बाह्य "C" {
 
-#include "includes.h"
-#include "sshkey.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshsig.h"
-#include "log.h"
+#समावेश "includes.h"
+#समावेश "sshkey.h"
+#समावेश "ssherr.h"
+#समावेश "sshbuf.h"
+#समावेश "sshsig.h"
+#समावेश "log.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
+पूर्णांक LLVMFuzzer_Test_One_निवेश(स्थिर uint8_t* sig, माप_प्रकार slen)
 {
-  static const char *data = "If everyone started announcing his nose had "
+  अटल स्थिर अक्षर *तथ्य = "If everyone started announcing his nose had "
       "run away, I don’t know how it would all end";
-  struct sshbuf *signature = sshbuf_from(sig, slen);
-  struct sshbuf *message = sshbuf_from(data, strlen(data));
-  struct sshkey *k = NULL;
-  struct sshkey_sig_details *details = NULL;
-  extern char *__progname;
+  काष्ठा sshbuf *signature = sshbuf_from(sig, slen);
+  काष्ठा sshbuf *message = sshbuf_from(तथ्य, म_माप(तथ्य));
+  काष्ठा sshkey *k = शून्य;
+  काष्ठा sshkey_sig_details *details = शून्य;
+  बाह्य अक्षर *__progname;
 
   log_init(__progname, SYSLOG_LEVEL_QUIET, SYSLOG_FACILITY_USER, 1);
   sshsig_verifyb(signature, message, "castle", &k, &details);
@@ -31,7 +31,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
   sshkey_free(k);
   sshbuf_free(signature);
   sshbuf_free(message);
-  return 0;
+  वापस 0;
 }
 
 } // extern

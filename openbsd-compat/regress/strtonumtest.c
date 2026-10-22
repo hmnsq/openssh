@@ -17,47 +17,47 @@
 
 /* OPENBSD ORIGINAL: regress/lib/libc/strtonum/strtonumtest.c */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
+#समावेश <limits.h>
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
 
 /* LLONG_MAX is known as LONGLONG_MAX on AIX */
-#if defined(LONGLONG_MAX) && !defined(LLONG_MAX)
+#अगर defined(LONGLONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONGLONG_MAX
 # define LLONG_MIN LONGLONG_MIN
-#endif
+#पूर्ण_अगर
 
 /* LLONG_MAX is known as LONG_LONG_MAX on HP-UX */
-#if defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
+#अगर defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONG_LONG_MAX
 # define LLONG_MIN LONG_LONG_MIN
-#endif
+#पूर्ण_अगर
 
-long long strtonum(const char *, long long, long long, const char **);
+दीर्घ दीर्घ strtonum(स्थिर अक्षर *, दीर्घ दीर्घ, दीर्घ दीर्घ, स्थिर अक्षर **);
 
-int fail;
+पूर्णांक fail;
 
-void
-test(const char *p, long long lb, long long ub, int ok)
+व्योम
+test(स्थिर अक्षर *p, दीर्घ दीर्घ lb, दीर्घ दीर्घ ub, पूर्णांक ok)
 {
-	long long val;
-	const char *q;
+	दीर्घ दीर्घ val;
+	स्थिर अक्षर *q;
 
 	val = strtonum(p, lb, ub, &q);
-	if (ok && q != NULL) {
-		fprintf(stderr, "%s [%lld-%lld] ", p, lb, ub);
-		fprintf(stderr, "NUMBER NOT ACCEPTED %s\n", q);
+	अगर (ok && q != शून्य) {
+		ख_लिखो(मानक_त्रुटि, "%s [%lld-%lld] ", p, lb, ub);
+		ख_लिखो(मानक_त्रुटि, "NUMBER NOT ACCEPTED %s\n", q);
 		fail = 1;
-	} else if (!ok && q == NULL) {
-		fprintf(stderr, "%s [%lld-%lld] %lld ", p, lb, ub, val);
-		fprintf(stderr, "NUMBER ACCEPTED\n");
+	} अन्यथा अगर (!ok && q == शून्य) {
+		ख_लिखो(मानक_त्रुटि, "%s [%lld-%lld] %lld ", p, lb, ub, val);
+		ख_लिखो(मानक_त्रुटि, "NUMBER ACCEPTED\n");
 		fail = 1;
 	}
 }
 
-int main(void)
+पूर्णांक मुख्य(व्योम)
 {
 	test("1", 0, 10, 1);
 	test("0", -2, 5, 1);
@@ -77,6 +77,6 @@ int main(void)
 	test("-20", -10, -1, 0);
 	test("20", -10, -1, 0);
 
-	return (fail);
+	वापस (fail);
 }
 

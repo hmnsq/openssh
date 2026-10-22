@@ -23,92 +23,92 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <sys/wait.h>
+#समावेश <sys/types.h>
+#समावेश <sys/wait.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <paths.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#समावेश <errno.h>
+#समावेश <fcntl.h>
+#समावेश <paths.h>
+#समावेश <signal.h>
+#समावेश <stdarg.h>
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <unistd.h>
 
-#include "xmalloc.h"
-#include "misc.h"
-#include "pathnames.h"
-#include "log.h"
-#include "ssh.h"
+#समावेश "xmalloc.h"
+#समावेश "misc.h"
+#समावेश "pathnames.h"
+#समावेश "log.h"
+#समावेश "ssh.h"
 
-static char *
-ssh_askpass(char *askpass, const char *msg, const char *env_hint)
+अटल अक्षर *
+ssh_askpass(अक्षर *askpass, स्थिर अक्षर *संदेश, स्थिर अक्षर *env_hint)
 {
 	pid_t pid, ret;
-	size_t len;
-	char *pass;
-	int p[2], status;
-	char buf[1024];
-	void (*osigchld)(int);
+	माप_प्रकार len;
+	अक्षर *pass;
+	पूर्णांक p[2], status;
+	अक्षर buf[1024];
+	व्योम (*osigchld)(पूर्णांक);
 
-	if (fflush(stdout) != 0)
-		error_f("fflush: %s", strerror(errno));
-	if (askpass == NULL)
+	अगर (ख_साफ(मानक_निकास) != 0)
+		error_f("fflush: %s", म_त्रुटि(त्रुटि_सं));
+	अगर (askpass == शून्य)
 		fatal("internal error: askpass undefined");
-	if (pipe(p) == -1) {
-		error_f("pipe: %s", strerror(errno));
-		return NULL;
+	अगर (pipe(p) == -1) {
+		error_f("pipe: %s", म_त्रुटि(त्रुटि_सं));
+		वापस शून्य;
 	}
-	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if ((pid = fork()) == -1) {
-		error_f("fork: %s", strerror(errno));
+	osigchld = ssh_signal(SIGCHLD, संक_पूर्व);
+	अगर ((pid = विभाजन()) == -1) {
+		error_f("fork: %s", म_त्रुटि(त्रुटि_सं));
 		ssh_signal(SIGCHLD, osigchld);
-		return NULL;
+		वापस शून्य;
 	}
-	if (pid == 0) {
-		close(p[0]);
-		if (dup2(p[1], STDOUT_FILENO) == -1)
-			fatal_f("dup2: %s", strerror(errno));
-		if (env_hint != NULL)
+	अगर (pid == 0) {
+		बंद(p[0]);
+		अगर (dup2(p[1], STDOUT_FILENO) == -1)
+			fatal_f("dup2: %s", म_त्रुटि(त्रुटि_सं));
+		अगर (env_hint != शून्य)
 			setenv("SSH_ASKPASS_PROMPT", env_hint, 1);
-		execlp(askpass, askpass, msg, (char *)NULL);
-		fatal_f("exec(%s): %s", askpass, strerror(errno));
+		execlp(askpass, askpass, संदेश, (अक्षर *)शून्य);
+		fatal_f("exec(%s): %s", askpass, म_त्रुटि(त्रुटि_सं));
 	}
-	close(p[1]);
+	बंद(p[1]);
 
 	len = 0;
-	do {
-		ssize_t r = read(p[0], buf + len, sizeof(buf) - 1 - len);
+	करो {
+		ssize_t r = पढ़ो(p[0], buf + len, माप(buf) - 1 - len);
 
-		if (r == -1 && errno == EINTR)
-			continue;
-		if (r <= 0)
-			break;
+		अगर (r == -1 && त्रुटि_सं == EINTR)
+			जारी;
+		अगर (r <= 0)
+			अवरोध;
 		len += r;
-	} while (len < sizeof(buf) - 1);
+	} जबतक (len < माप(buf) - 1);
 	buf[len] = '\0';
 
-	close(p[0]);
-	while ((ret = waitpid(pid, &status, 0)) == -1)
-		if (errno != EINTR)
-			break;
+	बंद(p[0]);
+	जबतक ((ret = waitpid(pid, &status, 0)) == -1)
+		अगर (त्रुटि_सं != EINTR)
+			अवरोध;
 	ssh_signal(SIGCHLD, osigchld);
-	if (ret == -1 || !WIFEXITED(status) || WEXITSTATUS(status) != 0) {
-		explicit_bzero(buf, sizeof(buf));
-		return NULL;
+	अगर (ret == -1 || !WIFEXITED(status) || WEXITSTATUS(status) != 0) {
+		explicit_bzero(buf, माप(buf));
+		वापस शून्य;
 	}
 
-	buf[strcspn(buf, "\r\n")] = '\0';
+	buf[म_खोज(buf, "\r\n")] = '\0';
 	pass = xstrdup(buf);
-	explicit_bzero(buf, sizeof(buf));
-	return pass;
+	explicit_bzero(buf, माप(buf));
+	वापस pass;
 }
 
 /* private/internal read_passphrase flags */
-#define RP_ASK_PERMISSION	0x8000 /* pass hint to askpass for confirm UI */
+#घोषणा RP_ASK_PERMISSION	0x8000 /* pass hint to askpass for confirm UI */
 
 /*
  * Reads a passphrase from /dev/tty with echo turned off/on.  Returns the
@@ -116,215 +116,215 @@ ssh_askpass(char *askpass, const char *msg, const char *env_hint)
  * RP_ALLOW_STDIN is set, the passphrase will be read from stdin if no
  * tty is or askpass program is available
  */
-char *
-read_passphrase(const char *prompt, int flags)
+अक्षर *
+read_passphrase(स्थिर अक्षर *prompt, पूर्णांक flags)
 {
-	char cr = '\r', *askpass = NULL, *ret, buf[1024];
-	int rppflags, ttyfd, use_askpass = 0, allow_askpass = 0;
-	const char *askpass_hint = NULL;
-	const char *s;
+	अक्षर cr = '\r', *askpass = शून्य, *ret, buf[1024];
+	पूर्णांक rppflags, ttyfd, use_askpass = 0, allow_askpass = 0;
+	स्थिर अक्षर *askpass_hint = शून्य;
+	स्थिर अक्षर *s;
 
-	if (((s = getenv("DISPLAY")) != NULL && *s != '\0') ||
-	    ((s = getenv("WAYLAND_DISPLAY")) != NULL && *s != '\0'))
+	अगर (((s = दो_पर्या("DISPLAY")) != शून्य && *s != '\0') ||
+	    ((s = दो_पर्या("WAYLAND_DISPLAY")) != शून्य && *s != '\0'))
 		allow_askpass = 1;
-	if ((s = getenv(SSH_ASKPASS_REQUIRE_ENV)) != NULL) {
-		if (strcasecmp(s, "force") == 0) {
+	अगर ((s = दो_पर्या(SSH_ASKPASS_REQUIRE_ENV)) != शून्य) {
+		अगर (strcasecmp(s, "force") == 0) {
 			use_askpass = 1;
 			allow_askpass = 1;
-		} else if (strcasecmp(s, "prefer") == 0)
+		} अन्यथा अगर (strcasecmp(s, "prefer") == 0)
 			use_askpass = allow_askpass;
-		else if (strcasecmp(s, "never") == 0)
+		अन्यथा अगर (strcasecmp(s, "never") == 0)
 			allow_askpass = 0;
 	}
 
 	rppflags = (flags & RP_ECHO) ? RPP_ECHO_ON : RPP_ECHO_OFF;
-	if (use_askpass)
+	अगर (use_askpass)
 		debug_f("requested to askpass");
-	else if (flags & RP_USE_ASKPASS)
+	अन्यथा अगर (flags & RP_USE_ASKPASS)
 		use_askpass = 1;
-	else if (flags & RP_ALLOW_STDIN) {
-		if (!isatty(STDIN_FILENO)) {
+	अन्यथा अगर (flags & RP_ALLOW_STDIN) {
+		अगर (!isatty(STDIN_FILENO)) {
 			debug_f("stdin is not a tty");
 			use_askpass = 1;
 		}
-	} else {
+	} अन्यथा {
 		rppflags |= RPP_REQUIRE_TTY;
-		ttyfd = open(_PATH_TTY, O_RDWR);
-		if (ttyfd >= 0) {
+		ttyfd = खोलो(_PATH_TTY, O_RDWR);
+		अगर (ttyfd >= 0) {
 			/*
 			 * If we're on a tty, ensure that show the prompt at
 			 * the beginning of the line. This will hopefully
 			 * clobber any password characters the user has
 			 * optimistically typed before echo is disabled.
 			 */
-			(void)write(ttyfd, &cr, 1);
-			close(ttyfd);
-		} else {
+			(व्योम)ग_लिखो(ttyfd, &cr, 1);
+			बंद(ttyfd);
+		} अन्यथा {
 			debug_f("can't open %s: %s", _PATH_TTY,
-			    strerror(errno));
+			    म_त्रुटि(त्रुटि_सं));
 			use_askpass = 1;
 		}
 	}
 
-	if ((flags & RP_USE_ASKPASS) && !allow_askpass)
-		return (flags & RP_ALLOW_EOF) ? NULL : xstrdup("");
+	अगर ((flags & RP_USE_ASKPASS) && !allow_askpass)
+		वापस (flags & RP_ALLOW_EOF) ? शून्य : xstrdup("");
 
-	if (use_askpass && allow_askpass) {
-		if (getenv(SSH_ASKPASS_ENV))
-			askpass = getenv(SSH_ASKPASS_ENV);
-		else
+	अगर (use_askpass && allow_askpass) {
+		अगर (दो_पर्या(SSH_ASKPASS_ENV))
+			askpass = दो_पर्या(SSH_ASKPASS_ENV);
+		अन्यथा
 			askpass = _PATH_SSH_ASKPASS_DEFAULT;
-		if ((flags & RP_ASK_PERMISSION) != 0)
+		अगर ((flags & RP_ASK_PERMISSION) != 0)
 			askpass_hint = "confirm";
-		if ((ret = ssh_askpass(askpass, prompt, askpass_hint)) == NULL)
-			if (!(flags & RP_ALLOW_EOF))
-				return xstrdup("");
-		return ret;
+		अगर ((ret = ssh_askpass(askpass, prompt, askpass_hint)) == शून्य)
+			अगर (!(flags & RP_ALLOW_EOF))
+				वापस xstrdup("");
+		वापस ret;
 	}
 
-	if (readpassphrase(prompt, buf, sizeof buf, rppflags) == NULL) {
-		if (flags & RP_ALLOW_EOF)
-			return NULL;
-		return xstrdup("");
+	अगर (readpassphrase(prompt, buf, माप buf, rppflags) == शून्य) {
+		अगर (flags & RP_ALLOW_EOF)
+			वापस शून्य;
+		वापस xstrdup("");
 	}
 
 	ret = xstrdup(buf);
-	explicit_bzero(buf, sizeof(buf));
-	return ret;
+	explicit_bzero(buf, माप(buf));
+	वापस ret;
 }
 
-int
-ask_permission(const char *fmt, ...)
+पूर्णांक
+ask_permission(स्थिर अक्षर *fmt, ...)
 {
-	va_list args;
-	char *p, prompt[1024];
-	int allowed = 0;
+	बहु_सूची args;
+	अक्षर *p, prompt[1024];
+	पूर्णांक allowed = 0;
 
-	va_start(args, fmt);
-	vsnprintf(prompt, sizeof(prompt), fmt, args);
-	va_end(args);
+	बहु_शुरू(args, fmt);
+	vsnprintf(prompt, माप(prompt), fmt, args);
+	बहु_पूर्ण(args);
 
 	p = read_passphrase(prompt,
 	    RP_USE_ASKPASS|RP_ALLOW_EOF|RP_ASK_PERMISSION);
-	if (p != NULL) {
+	अगर (p != शून्य) {
 		/*
 		 * Accept empty responses and responses consisting
 		 * of the word "yes" as affirmative.
 		 */
-		if (*p == '\0' || *p == '\n' ||
+		अगर (*p == '\0' || *p == '\n' ||
 		    strcasecmp(p, "yes") == 0)
 			allowed = 1;
-		free(p);
+		मुक्त(p);
 	}
 
-	return (allowed);
+	वापस (allowed);
 }
 
-static void
-writemsg(const char *msg)
+अटल व्योम
+writemsg(स्थिर अक्षर *संदेश)
 {
-	(void)write(STDERR_FILENO, "\r", 1);
-	(void)write(STDERR_FILENO, msg, strlen(msg));
-	(void)write(STDERR_FILENO, "\r\n", 2);
+	(व्योम)ग_लिखो(STDERR_FILENO, "\r", 1);
+	(व्योम)ग_लिखो(STDERR_FILENO, संदेश, म_माप(संदेश));
+	(व्योम)ग_लिखो(STDERR_FILENO, "\r\n", 2);
 }
 
-struct notifier_ctx {
+काष्ठा notifier_ctx {
 	pid_t pid;
-	void (*osigchld)(int);
+	व्योम (*osigchld)(पूर्णांक);
 };
 
-struct notifier_ctx *
-notify_start(int force_askpass, const char *fmt, ...)
+काष्ठा notifier_ctx *
+notify_start(पूर्णांक force_askpass, स्थिर अक्षर *fmt, ...)
 {
-	va_list args;
-	char *prompt = NULL;
+	बहु_सूची args;
+	अक्षर *prompt = शून्य;
 	pid_t pid = -1;
-	void (*osigchld)(int) = NULL;
-	const char *askpass, *s;
-	struct notifier_ctx *ret = NULL;
+	व्योम (*osigchld)(पूर्णांक) = शून्य;
+	स्थिर अक्षर *askpass, *s;
+	काष्ठा notifier_ctx *ret = शून्य;
 
-	va_start(args, fmt);
+	बहु_शुरू(args, fmt);
 	xvasprintf(&prompt, fmt, args);
-	va_end(args);
+	बहु_पूर्ण(args);
 
-	if (fflush(NULL) != 0)
-		error_f("fflush: %s", strerror(errno));
-	if (!force_askpass && isatty(STDERR_FILENO)) {
+	अगर (ख_साफ(शून्य) != 0)
+		error_f("fflush: %s", म_त्रुटि(त्रुटि_सं));
+	अगर (!force_askpass && isatty(STDERR_FILENO)) {
 		writemsg(prompt);
-		goto out_ctx;
+		जाओ out_ctx;
 	}
-	if ((askpass = getenv("SSH_ASKPASS")) == NULL)
+	अगर ((askpass = दो_पर्या("SSH_ASKPASS")) == शून्य)
 		askpass = _PATH_SSH_ASKPASS_DEFAULT;
-	if (*askpass == '\0') {
+	अगर (*askpass == '\0') {
 		debug3_f("cannot notify: no askpass");
-		goto out;
+		जाओ out;
 	}
-	if (getenv("DISPLAY") == NULL && getenv("WAYLAND_DISPLAY") == NULL &&
-	    ((s = getenv(SSH_ASKPASS_REQUIRE_ENV)) == NULL ||
-	    strcmp(s, "force") != 0)) {
+	अगर (दो_पर्या("DISPLAY") == शून्य && दो_पर्या("WAYLAND_DISPLAY") == शून्य &&
+	    ((s = दो_पर्या(SSH_ASKPASS_REQUIRE_ENV)) == शून्य ||
+	    म_भेद(s, "force") != 0)) {
 		debug3_f("cannot notify: no display");
-		goto out;
+		जाओ out;
 	}
-	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if ((pid = fork()) == -1) {
-		error_f("fork: %s", strerror(errno));
+	osigchld = ssh_signal(SIGCHLD, संक_पूर्व);
+	अगर ((pid = विभाजन()) == -1) {
+		error_f("fork: %s", म_त्रुटि(त्रुटि_सं));
 		ssh_signal(SIGCHLD, osigchld);
-		free(prompt);
-		return NULL;
+		मुक्त(prompt);
+		वापस शून्य;
 	}
-	if (pid == 0) {
-		if (stdfd_devnull(1, 1, 0) == -1)
+	अगर (pid == 0) {
+		अगर (stdfd_devnull(1, 1, 0) == -1)
 			fatal_f("stdfd_devnull failed");
 		closefrom(STDERR_FILENO + 1);
 		setenv("SSH_ASKPASS_PROMPT", "none", 1); /* hint to UI */
-		execlp(askpass, askpass, prompt, (char *)NULL);
-		error_f("exec(%s): %s", askpass, strerror(errno));
-		_exit(1);
+		execlp(askpass, askpass, prompt, (अक्षर *)शून्य);
+		error_f("exec(%s): %s", askpass, म_त्रुटि(त्रुटि_सं));
+		_निकास(1);
 		/* NOTREACHED */
 	}
  out_ctx:
-	if ((ret = calloc(1, sizeof(*ret))) == NULL) {
-		if (pid != -1)
-			kill(pid, SIGTERM);
+	अगर ((ret = सुस्मृति(1, माप(*ret))) == शून्य) {
+		अगर (pid != -1)
+			समाप्त(pid, संक_इति);
 		fatal_f("calloc failed");
 	}
 	ret->pid = pid;
 	ret->osigchld = osigchld;
  out:
-	free(prompt);
-	return ret;
+	मुक्त(prompt);
+	वापस ret;
 }
 
-void
-notify_complete(struct notifier_ctx *ctx, const char *fmt, ...)
+व्योम
+notify_complete(काष्ठा notifier_ctx *ctx, स्थिर अक्षर *fmt, ...)
 {
-	int ret;
-	char *msg = NULL;
-	va_list args;
+	पूर्णांक ret;
+	अक्षर *संदेश = शून्य;
+	बहु_सूची args;
 
-	if (ctx != NULL && fmt != NULL && ctx->pid == -1) {
+	अगर (ctx != शून्य && fmt != शून्य && ctx->pid == -1) {
 		/*
 		 * notify_start wrote to stderr, so send conclusion message
 		 * there too
 		*/
-		va_start(args, fmt);
-		xvasprintf(&msg, fmt, args);
-		va_end(args);
-		writemsg(msg);
-		free(msg);
+		बहु_शुरू(args, fmt);
+		xvasprintf(&संदेश, fmt, args);
+		बहु_पूर्ण(args);
+		writemsg(संदेश);
+		मुक्त(संदेश);
 	}
 
-	if (ctx == NULL || ctx->pid <= 0) {
-		free(ctx);
-		return;
+	अगर (ctx == शून्य || ctx->pid <= 0) {
+		मुक्त(ctx);
+		वापस;
 	}
-	kill(ctx->pid, SIGTERM);
-	while ((ret = waitpid(ctx->pid, NULL, 0)) == -1) {
-		if (errno != EINTR)
-			break;
+	समाप्त(ctx->pid, संक_इति);
+	जबतक ((ret = waitpid(ctx->pid, शून्य, 0)) == -1) {
+		अगर (त्रुटि_सं != EINTR)
+			अवरोध;
 	}
-	if (ret == -1)
-		fatal_f("waitpid: %s", strerror(errno));
+	अगर (ret == -1)
+		fatal_f("waitpid: %s", म_त्रुटि(त्रुटि_सं));
 	ssh_signal(SIGCHLD, ctx->osigchld);
-	free(ctx);
+	मुक्त(ctx);
 }

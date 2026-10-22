@@ -14,27 +14,27 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#if !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
+#अगर !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
 
-#ifdef HAVE_SYS_MOUNT_H
+#अगर_घोषित HAVE_SYS_MOUNT_H
 # include <sys/mount.h>
-#endif
+#पूर्ण_अगर
 
-#include <errno.h>
+#समावेश <errno.h>
 
-#ifndef MNAMELEN
+#अगर_अघोषित MNAMELEN
 # define MNAMELEN 32
-#endif
+#पूर्ण_अगर
 
-#ifdef HAVE_STRUCT_STATFS_F_FILES
+#अगर_घोषित HAVE_STRUCT_STATFS_F_FILES
 # define HAVE_STRUCT_STATFS
-#endif
+#पूर्ण_अगर
 
-#ifdef HAVE_STRUCT_STATFS
-static void
-copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
+#अगर_घोषित HAVE_STRUCT_STATFS
+अटल व्योम
+copy_statfs_to_statvfs(काष्ठा statvfs *to, काष्ठा statfs *from)
 {
 	to->f_bsize = from->f_bsize;
 	to->f_frsize = from->f_bsize;	/* no exact equivalent */
@@ -45,49 +45,49 @@ copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
 	to->f_ffree = from->f_ffree;
 	to->f_favail = from->f_ffree;	/* no exact equivalent */
 	to->f_fsid = 0;			/* XXX fix me */
-#ifdef HAVE_STRUCT_STATFS_F_FLAGS
+#अगर_घोषित HAVE_STRUCT_STATFS_F_FLAGS
 	to->f_flag = from->f_flags;
-#else
+#अन्यथा
 	to->f_flag = 0;
-#endif
+#पूर्ण_अगर
 	to->f_namemax = MNAMELEN;
 }
-#endif
+#पूर्ण_अगर
 
 # ifndef HAVE_STATVFS
-int statvfs(const char *path, struct statvfs *buf)
+पूर्णांक statvfs(स्थिर अक्षर *path, काष्ठा statvfs *buf)
 {
-#  if defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
-	struct statfs fs;
+#  अगर defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
+	काष्ठा statfs fs;
 
-	memset(&fs, 0, sizeof(fs));
-	if (statfs(path, &fs) == -1)
-		return -1;
+	स_रखो(&fs, 0, माप(fs));
+	अगर (statfs(path, &fs) == -1)
+		वापस -1;
 	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
-	errno = ENOSYS;
-	return -1;
+	वापस 0;
+#  अन्यथा
+	त्रुटि_सं = ENOSYS;
+	वापस -1;
 #  endif
 }
 # endif
 
 # ifndef HAVE_FSTATVFS
-int fstatvfs(int fd, struct statvfs *buf)
+पूर्णांक fstatvfs(पूर्णांक fd, काष्ठा statvfs *buf)
 {
-#  if defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
-	struct statfs fs;
+#  अगर defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
+	काष्ठा statfs fs;
 
-	memset(&fs, 0, sizeof(fs));
-	if (fstatfs(fd, &fs) == -1)
-		return -1;
+	स_रखो(&fs, 0, माप(fs));
+	अगर (fstatfs(fd, &fs) == -1)
+		वापस -1;
 	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
-	errno = ENOSYS;
-	return -1;
+	वापस 0;
+#  अन्यथा
+	त्रुटि_सं = ENOSYS;
+	वापस -1;
 #  endif
 }
 # endif
 
-#endif
+#पूर्ण_अगर

@@ -34,163 +34,163 @@ limitations under the License.
  * - __wrap_read_passphrase (real one reads /dev/tty)
  */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#समावेश <setjmp.h>
+#समावेश <signal.h>
+#समावेश <stddef.h>
+#समावेश <stdint.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <unistd.h>
 
-#include "log.h"
-#include "digest.h"
-#include "misc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssh_api.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "readconf.h"
+#समावेश "log.h"
+#समावेश "digest.h"
+#समावेश "misc.h"
+#समावेश "ssh.h"
+#समावेश "ssh2.h"
+#समावेश "ssh_api.h"
+#समावेश "ssherr.h"
+#समावेश "sshbuf.h"
+#समावेश "sshkey.h"
+#समावेश "packet.h"
+#समावेश "myproposal.h"
+#समावेश "kex.h"
+#समावेश "xmalloc.h"
+#समावेश "authfile.h"
+#समावेश "readconf.h"
 
 Options options;
-int debug_flag = 0;
+पूर्णांक debug_flag = 0;
 
-struct ssh;
+काष्ठा ssh;
 
-int
-__wrap_ssh_packet_write_wait(struct ssh *ssh)
+पूर्णांक
+__wrap_ssh_packet_write_wait(काष्ठा ssh *ssh)
 {
-	(void)ssh;
-	return 0;
+	(व्योम)ssh;
+	वापस 0;
 }
 
-char *
-__wrap_read_passphrase(const char *prompt, int flags)
+अक्षर *
+__wrap_read_passphrase(स्थिर अक्षर *prompt, पूर्णांक flags)
 {
-	(void)prompt;
-	(void)flags;
-	return strdup("fuzz");
+	(व्योम)prompt;
+	(व्योम)flags;
+	वापस strdup("fuzz");
 }
 
-#include "../../../sshconnect2.c"
-#include "fixed-keys.h"
+#समावेश "../../../sshconnect2.c"
+#समावेश "fixed-keys.h"
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+अटल लाँघ_बफ fuzz_env;
+अटल अस्थिर पूर्णांक in_fuzz = 0;
 
-void
-cleanup_exit(int code)
+व्योम
+cleanup_exit(पूर्णांक code)
 {
-	if (in_fuzz)
-		longjmp(fuzz_env, code ? code : 1);
-	_exit(code);
+	अगर (in_fuzz)
+		दीर्घ_लाँघ(fuzz_env, code ? code : 1);
+	_निकास(code);
 }
 
-static struct sshkey *
-load_private(const char *str)
+अटल काष्ठा sshkey *
+load_private(स्थिर अक्षर *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
-		abort();
+	काष्ठा sshbuf *b = sshbuf_from(str, म_माप(str));
+	काष्ठा sshkey *k = शून्य;
+	अगर (b == शून्य || sshkey_parse_private_fileblob(b, "", &k, शून्य) != 0)
+		पात();
 	sshbuf_free(b);
-	return k;
+	वापस k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+अटल काष्ठा sshkey *
+load_public(स्थिर अक्षर *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
-		abort();
+	अक्षर *tmp, *cp;
+	काष्ठा sshkey *k = sshkey_new(कुंजी_UNSPEC);
+	अगर (k == शून्य)
+		पात();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
-		abort();
-	free(tmp);
-	return k;
+	अगर (sshkey_read(k, &cp) != 0)
+		पात();
+	मुक्त(tmp);
+	वापस k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+अटल पूर्णांक
+pump(काष्ठा ssh *from, काष्ठा ssh *to, माप_प्रकार *transferred)
 {
-	const u_char *buf;
-	size_t len;
+	स्थिर u_char *buf;
+	माप_प्रकार len;
 	u_char type;
-	int r;
+	पूर्णांक r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	अगर ((r = ssh_packet_अग्र(from, &type)) != 0)
+		वापस r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	अगर (len == 0)
+		वापस 0;
+	अगर ((r = ssh_निवेश_append(to, buf, len)) != 0)
+		वापस r;
+	अगर ((r = ssh_output_consume(from, len)) != 0)
+		वापस r;
 	*transferred = len;
-	return 0;
+	वापस 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+अटल पूर्णांक
+run_kex(काष्ठा ssh *client, काष्ठा ssh *server)
 {
-	int r;
-	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	पूर्णांक r;
+	माप_प्रकार cn, sn;
+	क्रम (पूर्णांक i = 0; i < 100; i++) {
+		अगर ((r = pump(server, client, &sn)) != 0) वापस r;
+		अगर ((r = pump(client, server, &cn)) != 0) वापस r;
+		अगर (server->kex->done && client->kex->done)
+			वापस 0;
+		अगर (cn == 0 && sn == 0)
+			वापस SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	वापस SSH_ERR_PROTOCOL_ERROR;
 }
 
-static Sensitive g_sensitive = { NULL, 0 };
-static Authctxt g_authctxt;
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
+अटल Sensitive g_sensitive = { शून्य, 0 };
+अटल Authctxt g_authctxt;
+अटल काष्ठा ssh *g_client = शून्य;
+अटल काष्ठा ssh *g_server = शून्य;
+अटल पूर्णांक g_init = 0;
 
-static void
-fuzz_reset_authctxt(struct ssh *ssh)
+अटल व्योम
+fuzz_reset_authctxt(काष्ठा ssh *ssh)
 {
-	free(g_authctxt.authlist);
-	g_authctxt.authlist = NULL;
-	if (ssh->authctxt == &g_authctxt)
+	मुक्त(g_authctxt.authlist);
+	g_authctxt.authlist = शून्य;
+	अगर (ssh->authctxt == &g_authctxt)
 		pubkey_cleanup(ssh);
 
-	memset(&g_authctxt, 0, sizeof(g_authctxt));
-	g_authctxt.server_user = (char *)"fuzz";
-	g_authctxt.local_user = (char *)"fuzz";
-	g_authctxt.host = (char *)"127.0.0.1";
-	g_authctxt.service = (char *)"ssh-connection";
+	स_रखो(&g_authctxt, 0, माप(g_authctxt));
+	g_authctxt.server_user = (अक्षर *)"fuzz";
+	g_authctxt.local_user = (अक्षर *)"fuzz";
+	g_authctxt.host = (अक्षर *)"127.0.0.1";
+	g_authctxt.service = (अक्षर *)"ssh-connection";
 	g_authctxt.success = 0;
 	g_authctxt.method = authmethod_lookup("none");
-	g_authctxt.authlist = NULL;
-	g_authctxt.methoddata = NULL;
+	g_authctxt.authlist = शून्य;
+	g_authctxt.methoddata = शून्य;
 	g_authctxt.sensitive = &g_sensitive;
-	g_authctxt.active_ktype = NULL;
-	g_authctxt.oktypes = NULL;
-	g_authctxt.ktypes = NULL;
+	g_authctxt.active_ktype = शून्य;
+	g_authctxt.oktypes = शून्य;
+	g_authctxt.ktypes = शून्य;
 	g_authctxt.info_req_seen = 0;
 	g_authctxt.attempt_kbdint = 0;
 	g_authctxt.attempt_passwd = 0;
 	g_authctxt.agent_fd = -1;
-	TAILQ_INIT(&g_authctxt.keys);
+	TAILQ_INIT(&g_authctxt.कुंजियाँ);
 	ssh->authctxt = &g_authctxt;
 }
 
-static void
-fuzz_setup(struct ssh *ssh)
+अटल व्योम
+fuzz_setup(काष्ठा ssh *ssh)
 {
 	initialize_options(&options);
 	options.batch_mode = 1;
@@ -201,109 +201,109 @@ fuzz_setup(struct ssh *ssh)
 	options.gss_authentication = 0;
 	options.preferred_authentications = strdup("none");
 	options.user = strdup("fuzz");
-	options.number_of_password_prompts = 0;
+	options.संख्या_of_password_prompts = 0;
 	options.log_level = SYSLOG_LEVEL_ERROR;
 	options.fingerprint_hash = SSH_DIGEST_SHA256;
-	(void)fill_default_options(&options);
+	(व्योम)fill_default_options(&options);
 
 	fuzz_reset_authctxt(ssh);
 
 	ssh_dispatch_init(ssh, &dispatch_protocol_ignore);
 
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_SERVICE_ACCEPT, &input_userauth_service_accept);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_SUCCESS, &input_userauth_success);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_FAILURE, &input_userauth_failure);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_BANNER, &input_userauth_banner);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST, &input_userauth_info_req);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PK_OK, &input_userauth_pk_ok);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ, &input_userauth_passwd_changereq);
+	ssh_dispatch_set(ssh, SSH2_संदेश_EXT_INFO, kex_निवेश_ext_info);
+	ssh_dispatch_set(ssh, SSH2_संदेश_SERVICE_ACCEPT, &निवेश_userauth_service_accept);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_SUCCESS, &निवेश_userauth_success);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_FAILURE, &निवेश_userauth_failure);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_BANNER, &निवेश_userauth_banner);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_INFO_REQUEST, &निवेश_userauth_info_req);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_PK_OK, &निवेश_userauth_pk_ok);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_PASSWD_CHANGEREQ, &निवेश_userauth_passwd_changereq);
 }
 
-static int
-init_once(void)
+अटल पूर्णांक
+init_once(व्योम)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	अगर (g_init)
+		वापस 0;
+	संकेत(SIGPIPE, संक_छोड़ो);
 	log_init("ssh_client_session_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	काष्ठा sshkey *priv = load_private(PRIV_ED25519);
+	काष्ठा sshkey *pub = load_public(PUB_ED25519);
+	अक्षर *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	स्थिर अक्षर *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	अक्षर *proposal[PROPOSAL_MAX] = { 0 };
+	पूर्णांक i;
+	क्रम (i = 0; i < PROPOSAL_MAX; i++) {
+		स्थिर अक्षर *p = defaults[i];
+		अगर (i == PROPOSAL_SERVER_HOST_कुंजी_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		अन्यथा अगर (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		अन्यथा अगर (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		अन्यथा अगर (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	काष्ठा kex_params kp;
+	स_नकल(kp.proposal, proposal, माप(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	अगर (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		वापस -1;
+	अगर (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		वापस -1;
+	अगर (run_kex(g_client, g_server) != 0)
+		वापस -1;
 
 	fuzz_setup(g_client);
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	मुक्त(keyname);
+	क्रम (i = 0; i < PROPOSAL_MAX; i++)
+		मुक्त(proposal[i]);
 	g_init = 1;
-	return 0;
+	वापस 0;
 }
 
-static const uint8_t k_msg_types[] = {
-	SSH2_MSG_DISCONNECT, SSH2_MSG_IGNORE, SSH2_MSG_UNIMPLEMENTED,
-	SSH2_MSG_DEBUG, SSH2_MSG_SERVICE_ACCEPT, SSH2_MSG_EXT_INFO,
-	SSH2_MSG_USERAUTH_FAILURE, SSH2_MSG_USERAUTH_SUCCESS,
-	SSH2_MSG_USERAUTH_BANNER, SSH2_MSG_USERAUTH_INFO_REQUEST,
-	SSH2_MSG_USERAUTH_PK_OK, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ,
+अटल स्थिर uint8_t k_संदेश_types[] = {
+	SSH2_संदेश_DISCONNECT, SSH2_संदेश_IGNORE, SSH2_संदेश_UNIMPLEMENTED,
+	SSH2_संदेश_DEBUG, SSH2_संदेश_SERVICE_ACCEPT, SSH2_संदेश_EXT_INFO,
+	SSH2_संदेश_USERAUTH_FAILURE, SSH2_संदेश_USERAUTH_SUCCESS,
+	SSH2_संदेश_USERAUTH_BANNER, SSH2_संदेश_USERAUTH_INFO_REQUEST,
+	SSH2_संदेश_USERAUTH_PK_OK, SSH2_संदेश_USERAUTH_PASSWD_CHANGEREQ,
 };
 
-void
-fuzz_one_message(const uint8_t *data, size_t size)
+व्योम
+fuzz_one_message(स्थिर uint8_t *तथ्य, माप_प्रकार आकार)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	अगर (init_once() != 0)
+		वापस;
+	अगर (आकार > 65000)
+		वापस;
 
-	uint8_t selector = size > 0 ? data[0] : 0;
-	const uint8_t *payload = size > 0 ? data + 1 : NULL;
-	size_t plen = size > 0 ? size - 1 : 0;
+	uint8_t selector = आकार > 0 ? तथ्य[0] : 0;
+	स्थिर uint8_t *payload = आकार > 0 ? तथ्य + 1 : शून्य;
+	माप_प्रकार plen = आकार > 0 ? आकार - 1 : 0;
 
-	uint8_t msg_type = k_msg_types[selector %
-	    (sizeof(k_msg_types) / sizeof(k_msg_types[0]))];
+	uint8_t संदेश_type = k_संदेश_types[selector %
+	    (माप(k_संदेश_types) / माप(k_संदेश_types[0]))];
 
 	fuzz_reset_authctxt(g_client);
 
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
-		size_t transferred;
-		if (ssh_packet_put(g_server, msg_type, payload, plen) != 0)
-			goto done;
-		if (pump(g_server, g_client, &transferred) != 0)
-			goto done;
-		(void)ssh_dispatch_run(g_client, DISPATCH_NONBLOCK, NULL);
+	अगर (बनाओ_लाँघ(fuzz_env) == 0) {
+		माप_प्रकार transferred;
+		अगर (ssh_packet_put(g_server, संदेश_type, payload, plen) != 0)
+			जाओ done;
+		अगर (pump(g_server, g_client, &transferred) != 0)
+			जाओ done;
+		(व्योम)ssh_dispatch_run(g_client, DISPATCH_NONBLOCK, शून्य);
 	done:
 		;
 	}

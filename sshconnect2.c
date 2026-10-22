@@ -24,122 +24,122 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
-#include <sys/queue.h>
-#include <sys/stat.h>
+#समावेश <sys/types.h>
+#समावेश <sys/socket.h>
+#समावेश <sys/wait.h>
+#समावेश <sys/queue.h>
+#समावेश <sys/stat.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
-#include <vis.h>
-#endif
+#समावेश <errno.h>
+#समावेश <fcntl.h>
+#समावेश <limits.h>
+#समावेश <pwd.h>
+#समावेश <signal.h>
+#समावेश <stdio.h>
+#समावेश <string.h>
+#समावेश <stdarg.h>
+#समावेश <unistd.h>
+#अगर defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#समावेश <vis.h>
+#पूर्ण_अगर
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "compat.h"
-#include "cipher.h"
-#include "sshkey.h"
-#include "kex.h"
-#include "sshconnect.h"
-#include "authfile.h"
-#include "authfd.h"
-#include "log.h"
-#include "misc.h"
-#include "readconf.h"
-#include "match.h"
-#include "dispatch.h"
-#include "canohost.h"
-#include "msg.h"
-#include "pathnames.h"
-#include "hostfile.h"
-#include "ssherr.h"
-#include "utf8.h"
-#include "ssh-sk.h"
-#include "sk-api.h"
+#समावेश "xmalloc.h"
+#समावेश "ssh.h"
+#समावेश "ssh2.h"
+#समावेश "sshbuf.h"
+#समावेश "packet.h"
+#समावेश "compat.h"
+#समावेश "cipher.h"
+#समावेश "sshkey.h"
+#समावेश "kex.h"
+#समावेश "sshconnect.h"
+#समावेश "authfile.h"
+#समावेश "authfd.h"
+#समावेश "log.h"
+#समावेश "misc.h"
+#समावेश "readconf.h"
+#समावेश "match.h"
+#समावेश "dispatch.h"
+#समावेश "canohost.h"
+#समावेश "msg.h"
+#समावेश "pathnames.h"
+#समावेश "hostfile.h"
+#समावेश "ssherr.h"
+#समावेश "utf8.h"
+#समावेश "ssh-sk.h"
+#समावेश "sk-api.h"
 
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
+#अगर_घोषित GSSAPI
+#समावेश "ssh-gss.h"
+#पूर्ण_अगर
 
 /* import */
-extern Options options;
+बाह्य Options options;
 
 /*
  * SSH2 key exchange
  */
 
-static char *xxx_host;
-static struct sockaddr_storage xxx_hostaddr;
-static const struct ssh_conn_info *xxx_conn_info;
-static int key_type_allowed(struct sshkey *, const char *);
+अटल अक्षर *xxx_host;
+अटल काष्ठा sockaddr_storage xxx_hostaddr;
+अटल स्थिर काष्ठा ssh_conn_info *xxx_conn_info;
+अटल पूर्णांक कुंजी_type_allowed(काष्ठा sshkey *, स्थिर अक्षर *);
 
-static int
-verify_host_key_callback(struct sshkey *hostkey, struct ssh *ssh)
+अटल पूर्णांक
+verify_host_कुंजी_callback(काष्ठा sshkey *hostkey, काष्ठा ssh *ssh)
 {
-	int r;
+	पूर्णांक r;
 
-	if ((r = sshkey_check_rsa_length(hostkey,
-	    options.required_rsa_size)) != 0)
+	अगर ((r = sshkey_check_rsa_लंबाई(hostkey,
+	    options.required_rsa_आकार)) != 0)
 		fatal_r(r, "Bad server host key");
-	if (!key_type_allowed(hostkey, options.hostkeyalgorithms)) {
+	अगर (!कुंजी_type_allowed(hostkey, options.hostkeyalgorithms)) {
 		fatal("Server host key %s not in HostKeyAlgorithms",
 		    sshkey_ssh_name(hostkey));
 	}
-	if (verify_host_key(xxx_host, (struct sockaddr *)&xxx_hostaddr, hostkey,
+	अगर (verify_host_कुंजी(xxx_host, (काष्ठा sockaddr *)&xxx_hostaddr, hostkey,
 	    xxx_conn_info) != 0)
 		fatal("Host key verification failed.");
-	return 0;
+	वापस 0;
 }
 
 /* Returns the first item from a comma-separated algorithm list */
-static char *
-first_alg(const char *algs)
+अटल अक्षर *
+first_alg(स्थिर अक्षर *algs)
 {
-	char *ret, *cp;
+	अक्षर *ret, *cp;
 
 	ret = xstrdup(algs);
-	if ((cp = strchr(ret, ',')) != NULL)
+	अगर ((cp = म_अक्षर(ret, ',')) != शून्य)
 		*cp = '\0';
-	return ret;
+	वापस ret;
 }
 
-static char *
-order_hostkeyalgs(char *host, struct sockaddr *hostaddr, u_short port,
-    const struct ssh_conn_info *cinfo)
+अटल अक्षर *
+order_hostkeyalgs(अक्षर *host, काष्ठा sockaddr *hostaddr, u_short port,
+    स्थिर काष्ठा ssh_conn_info *cinfo)
 {
-	char *oavail = NULL, *avail = NULL, *first = NULL, *last = NULL;
-	char *alg = NULL, *hostname = NULL, *ret = NULL, *best = NULL;
-	size_t maxlen;
-	struct hostkeys *hostkeys = NULL;
-	int ktype;
+	अक्षर *oavail = शून्य, *avail = शून्य, *first = शून्य, *last = शून्य;
+	अक्षर *alg = शून्य, *hostname = शून्य, *ret = शून्य, *best = शून्य;
+	माप_प्रकार maxlen;
+	काष्ठा hostkeys *hostkeys = शून्य;
+	पूर्णांक ktype;
 	u_int i;
 
 	/* Find all hostkeys for this hostname */
-	get_hostfile_hostname_ipaddr(host, hostaddr, port, &hostname, NULL);
+	get_hostfile_hostname_ipaddr(host, hostaddr, port, &hostname, शून्य);
 	hostkeys = init_hostkeys();
-	for (i = 0; i < options.num_user_hostfiles; i++)
+	क्रम (i = 0; i < options.अंक_user_hostfiles; i++)
 		load_hostkeys(hostkeys, hostname, options.user_hostfiles[i], 0);
-	for (i = 0; i < options.num_system_hostfiles; i++) {
+	क्रम (i = 0; i < options.अंक_system_hostfiles; i++) {
 		load_hostkeys(hostkeys, hostname,
 		    options.system_hostfiles[i], 0);
 	}
-	if (options.known_hosts_command != NULL) {
+	अगर (options.known_hosts_command != शून्य) {
 		load_hostkeys_command(hostkeys, options.known_hosts_command,
-		    "ORDER", cinfo, NULL, hostname);
+		    "ORDER", cinfo, शून्य, hostname);
 	}
 	/*
 	 * If a plain public key exists that matches the type of the best
@@ -149,13 +149,13 @@ order_hostkeyalgs(char *host, struct sockaddr *hostaddr, u_short port,
 	 * plain keys if necessary.
 	 */
 	best = first_alg(options.hostkeyalgorithms);
-	if (lookup_key_in_hostkeys_by_type(hostkeys,
+	अगर (lookup_कुंजी_in_hostkeys_by_type(hostkeys,
 	    sshkey_type_plain(sshkey_type_from_name(best)),
-	    sshkey_ecdsa_nid_from_name(best), NULL)) {
+	    sshkey_ecdsa_nid_from_name(best), शून्य)) {
 		debug3_f("have matching best-preference key type %s, "
 		    "using HostkeyAlgorithms verbatim", best);
 		ret = xstrdup(options.hostkeyalgorithms);
-		goto out;
+		जाओ out;
 	}
 
 	/*
@@ -163,65 +163,65 @@ order_hostkeyalgs(char *host, struct sockaddr *hostaddr, u_short port,
 	 * while keeping the ordering of HostkeyAlgorithms as much as possible.
 	 */
 	oavail = avail = xstrdup(options.hostkeyalgorithms);
-	maxlen = strlen(avail) + 1;
+	maxlen = म_माप(avail) + 1;
 	first = xmalloc(maxlen);
 	last = xmalloc(maxlen);
 	*first = *last = '\0';
 
-#define ALG_APPEND(to, from) \
-	do { \
-		if (*to != '\0') \
+#घोषणा ALG_APPEND(to, from) \
+	करो { \
+		अगर (*to != '\0') \
 			strlcat(to, ",", maxlen); \
 		strlcat(to, from, maxlen); \
-	} while (0)
+	} जबतक (0)
 
-	while ((alg = strsep(&avail, ",")) && *alg != '\0') {
-		if ((ktype = sshkey_type_from_name(alg)) == KEY_UNSPEC)
+	जबतक ((alg = strsep(&avail, ",")) && *alg != '\0') {
+		अगर ((ktype = sshkey_type_from_name(alg)) == कुंजी_UNSPEC)
 			fatal_f("unknown alg %s", alg);
 		/*
 		 * If we have a @cert-authority marker in known_hosts then
 		 * prefer all certificate algorithms.
 		 */
-		if (sshkey_type_is_cert(ktype) &&
+		अगर (sshkey_type_is_cert(ktype) &&
 		    lookup_marker_in_hostkeys(hostkeys, MRK_CA)) {
 			ALG_APPEND(first, alg);
-			continue;
+			जारी;
 		}
 		/* If the key appears in known_hosts then prefer it */
-		if (lookup_key_in_hostkeys_by_type(hostkeys,
+		अगर (lookup_कुंजी_in_hostkeys_by_type(hostkeys,
 		    sshkey_type_plain(ktype),
-		    sshkey_ecdsa_nid_from_name(alg), NULL)) {
+		    sshkey_ecdsa_nid_from_name(alg), शून्य)) {
 			ALG_APPEND(first, alg);
-			continue;
+			जारी;
 		}
 		/* Otherwise, put it last */
 		ALG_APPEND(last, alg);
 	}
-#undef ALG_APPEND
+#अघोषित ALG_APPEND
 	xasprintf(&ret, "%s%s%s", first,
 	    (*first == '\0' || *last == '\0') ? "" : ",", last);
-	if (*first != '\0')
+	अगर (*first != '\0')
 		debug3_f("prefer hostkeyalgs: %s", first);
-	else
+	अन्यथा
 		debug3_f("no algorithms matched; accept original");
  out:
-	free(best);
-	free(first);
-	free(last);
-	free(hostname);
-	free(oavail);
+	मुक्त(best);
+	मुक्त(first);
+	मुक्त(last);
+	मुक्त(hostname);
+	मुक्त(oavail);
 	free_hostkeys(hostkeys);
 
-	return ret;
+	वापस ret;
 }
 
-void
-ssh_kex2(struct ssh *ssh, char *host, struct sockaddr_storage *hostaddr,
-    u_short port, const struct ssh_conn_info *cinfo)
+व्योम
+ssh_kex2(काष्ठा ssh *ssh, अक्षर *host, काष्ठा sockaddr_storage *hostaddr,
+    u_short port, स्थिर काष्ठा ssh_conn_info *cinfo)
 {
-	char *myproposal[PROPOSAL_MAX];
-	char *all_key, *hkalgs = NULL;
-	int r, use_known_hosts_order = 0;
+	अक्षर *myproposal[PROPOSAL_MAX];
+	अक्षर *all_कुंजी, *hkalgs = शून्य;
+	पूर्णांक r, use_known_hosts_order = 0;
 
 	xxx_host = xstrdup(host);
 	xxx_hostaddr = *hostaddr;
@@ -235,20 +235,20 @@ ssh_kex2(struct ssh *ssh, char *host, struct sockaddr_storage *hostaddr,
 	 * appended or removed algorithms from that list then prefer algorithms
 	 * that are in the list that are supported by known_hosts keys.
 	 */
-	if (options.hostkeyalgorithms == NULL ||
+	अगर (options.hostkeyalgorithms == शून्य ||
 	    options.hostkeyalgorithms[0] == '-' ||
 	    options.hostkeyalgorithms[0] == '+')
 		use_known_hosts_order = 1;
 
 	/* Expand or fill in HostkeyAlgorithms */
-	all_key = sshkey_alg_list(0, 0, 1, ',');
-	if ((r = kex_assemble_names(&options.hostkeyalgorithms,
-	    kex_default_pk_alg(), all_key)) != 0)
+	all_कुंजी = sshkey_alg_list(0, 0, 1, ',');
+	अगर ((r = kex_assemble_names(&options.hostkeyalgorithms,
+	    kex_default_pk_alg(), all_कुंजी)) != 0)
 		fatal_fr(r, "kex_assemble_namelist");
-	free(all_key);
+	मुक्त(all_कुंजी);
 
-	if (use_known_hosts_order) {
-		hkalgs = order_hostkeyalgs(host, (struct sockaddr *)hostaddr,
+	अगर (use_known_hosts_order) {
+		hkalgs = order_hostkeyalgs(host, (काष्ठा sockaddr *)hostaddr,
 		    port, cinfo);
 	}
 
@@ -257,12 +257,12 @@ ssh_kex2(struct ssh *ssh, char *host, struct sockaddr_storage *hostaddr,
 	    compression_alg_list(options.compression),
 	    hkalgs ? hkalgs : options.hostkeyalgorithms);
 
-	free(hkalgs);
+	मुक्त(hkalgs);
 
 	/* start key exchange */
-	if ((r = kex_setup(ssh, myproposal)) != 0)
+	अगर ((r = kex_setup(ssh, myproposal)) != 0)
 		fatal_r(r, "kex_setup");
-#ifdef WITH_OPENSSL
+#अगर_घोषित WITH_OPENSSL
 	ssh->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_client;
 	ssh->kex->kex[KEX_DH_GRP14_SHA1] = kex_gen_client;
 	ssh->kex->kex[KEX_DH_GRP14_SHA256] = kex_gen_client;
@@ -271,369 +271,369 @@ ssh_kex2(struct ssh *ssh, char *host, struct sockaddr_storage *hostaddr,
 	ssh->kex->kex[KEX_DH_GEX_SHA1] = kexgex_client;
 	ssh->kex->kex[KEX_DH_GEX_SHA256] = kexgex_client;
 	ssh->kex->kex[KEX_ECDH_SHA2] = kex_gen_client;
-#endif
+#पूर्ण_अगर
 	ssh->kex->kex[KEX_C25519_SHA256] = kex_gen_client;
 	ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_client;
 	ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_client;
 	ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_client;
-	ssh->kex->verify_host_key=&verify_host_key_callback;
+	ssh->kex->verify_host_कुंजी=&verify_host_कुंजी_callback;
 
 	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &ssh->kex->done);
 	kex_proposal_free_entries(myproposal);
 
-#ifdef DEBUG_KEXDH
+#अगर_घोषित DEBUG_KEXDH
 	/* send 1st encrypted/maced/compressed message */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_IGNORE)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "markus")) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
 		fatal_fr(r, "send packet");
-#endif
+#पूर्ण_अगर
 }
 
 /*
  * Authenticate user
  */
 
-typedef struct cauthctxt Authctxt;
-typedef struct cauthmethod Authmethod;
-typedef struct identity Identity;
-typedef struct idlist Idlist;
+प्रकार काष्ठा cauthctxt Authctxt;
+प्रकार काष्ठा cauthmethod Authmethod;
+प्रकार काष्ठा identity Identity;
+प्रकार काष्ठा idlist Idlist;
 
-struct identity {
-	TAILQ_ENTRY(identity) next;
-	int	agent_fd;		/* >=0 if agent supports key */
-	struct sshkey	*key;		/* public/private key */
-	char	*filename;		/* comment for agent-only keys */
-	int	tried;
-	int	isprivate;		/* key points to the private key */
-	int	userprovided;
+काष्ठा identity {
+	TAILQ_ENTRY(identity) अग्र;
+	पूर्णांक	agent_fd;		/* >=0 if agent supports key */
+	काष्ठा sshkey	*कुंजी;		/* public/private key */
+	अक्षर	*filename;		/* comment for agent-only keys */
+	पूर्णांक	tried;
+	पूर्णांक	isprivate;		/* key points to the private key */
+	पूर्णांक	userprovided;
 };
 TAILQ_HEAD(idlist, identity);
 
-struct cauthctxt {
-	const char *server_user;
-	const char *local_user;
-	const char *host;
-	const char *service;
-	struct cauthmethod *method;
-	sig_atomic_t success;
-	char *authlist;
-#ifdef GSSAPI
+काष्ठा cauthctxt {
+	स्थिर अक्षर *server_user;
+	स्थिर अक्षर *local_user;
+	स्थिर अक्षर *host;
+	स्थिर अक्षर *service;
+	काष्ठा cauthmethod *method;
+	संक_पूर्ण_प्रकार success;
+	अक्षर *authlist;
+#अगर_घोषित GSSAPI
 	/* gssapi */
 	gss_OID_set gss_supported_mechs;
 	u_int mech_tried;
-#endif
+#पूर्ण_अगर
 	/* pubkey */
-	struct idlist keys;
-	int agent_fd;
+	काष्ठा idlist कुंजियाँ;
+	पूर्णांक agent_fd;
 	/* hostbased */
 	Sensitive *sensitive;
-	char *oktypes, *ktypes;
-	const char *active_ktype;
+	अक्षर *oktypes, *ktypes;
+	स्थिर अक्षर *active_ktype;
 	/* kbd-interactive */
-	int info_req_seen;
-	int attempt_kbdint;
+	पूर्णांक info_req_seen;
+	पूर्णांक attempt_kbdint;
 	/* password */
-	int attempt_passwd;
+	पूर्णांक attempt_passwd;
 	/* generic */
-	void *methoddata;
+	व्योम *methoddata;
 };
 
-struct cauthmethod {
-	char	*name;		/* string to compare against server's list */
-	int	(*userauth)(struct ssh *ssh);
-	void	(*cleanup)(struct ssh *ssh);
-	int	*enabled;	/* flag in option struct that enables method */
-	int	*batch_flag;	/* flag in option struct that disables method */
+काष्ठा cauthmethod {
+	अक्षर	*name;		/* string to compare against server's list */
+	पूर्णांक	(*userauth)(काष्ठा ssh *ssh);
+	व्योम	(*cleanup)(काष्ठा ssh *ssh);
+	पूर्णांक	*enabled;	/* flag in option struct that enables method */
+	पूर्णांक	*batch_flag;	/* flag in option struct that disables method */
 };
 
-static int input_userauth_service_accept(int, uint32_t, struct ssh *);
-static int input_userauth_success(int, uint32_t, struct ssh *);
-static int input_userauth_failure(int, uint32_t, struct ssh *);
-static int input_userauth_banner(int, uint32_t, struct ssh *);
-static int input_userauth_error(int, uint32_t, struct ssh *);
-static int input_userauth_info_req(int, uint32_t, struct ssh *);
-static int input_userauth_pk_ok(int, uint32_t, struct ssh *);
-static int input_userauth_passwd_changereq(int, uint32_t, struct ssh *);
+अटल पूर्णांक निवेश_userauth_service_accept(पूर्णांक, uint32_t, काष्ठा ssh *);
+अटल पूर्णांक निवेश_userauth_success(पूर्णांक, uint32_t, काष्ठा ssh *);
+अटल पूर्णांक निवेश_userauth_failure(पूर्णांक, uint32_t, काष्ठा ssh *);
+अटल पूर्णांक निवेश_userauth_banner(पूर्णांक, uint32_t, काष्ठा ssh *);
+अटल पूर्णांक निवेश_userauth_error(पूर्णांक, uint32_t, काष्ठा ssh *);
+अटल पूर्णांक निवेश_userauth_info_req(पूर्णांक, uint32_t, काष्ठा ssh *);
+अटल पूर्णांक निवेश_userauth_pk_ok(पूर्णांक, uint32_t, काष्ठा ssh *);
+अटल पूर्णांक निवेश_userauth_passwd_changereq(पूर्णांक, uint32_t, काष्ठा ssh *);
 
-static int userauth_none(struct ssh *);
-static int userauth_pubkey(struct ssh *);
-static int userauth_passwd(struct ssh *);
-static int userauth_kbdint(struct ssh *);
-static int userauth_hostbased(struct ssh *);
+अटल पूर्णांक userauth_none(काष्ठा ssh *);
+अटल पूर्णांक userauth_pubkey(काष्ठा ssh *);
+अटल पूर्णांक userauth_passwd(काष्ठा ssh *);
+अटल पूर्णांक userauth_kbdint(काष्ठा ssh *);
+अटल पूर्णांक userauth_hostbased(काष्ठा ssh *);
 
-#ifdef GSSAPI
-static int userauth_gssapi(struct ssh *);
-static void userauth_gssapi_cleanup(struct ssh *);
-static int input_gssapi_response(int type, uint32_t, struct ssh *);
-static int input_gssapi_token(int type, uint32_t, struct ssh *);
-static int input_gssapi_error(int, uint32_t, struct ssh *);
-static int input_gssapi_errtok(int, uint32_t, struct ssh *);
-#endif
+#अगर_घोषित GSSAPI
+अटल पूर्णांक userauth_gssapi(काष्ठा ssh *);
+अटल व्योम userauth_gssapi_cleanup(काष्ठा ssh *);
+अटल पूर्णांक निवेश_gssapi_response(पूर्णांक type, uint32_t, काष्ठा ssh *);
+अटल पूर्णांक निवेश_gssapi_token(पूर्णांक type, uint32_t, काष्ठा ssh *);
+अटल पूर्णांक निवेश_gssapi_error(पूर्णांक, uint32_t, काष्ठा ssh *);
+अटल पूर्णांक निवेश_gssapi_errtok(पूर्णांक, uint32_t, काष्ठा ssh *);
+#पूर्ण_अगर
 
-void	userauth(struct ssh *, char *);
+व्योम	userauth(काष्ठा ssh *, अक्षर *);
 
-static void pubkey_cleanup(struct ssh *);
-static int sign_and_send_pubkey(struct ssh *ssh, Identity *);
-static void pubkey_prepare(struct ssh *, Authctxt *);
-static void pubkey_reset(Authctxt *);
-static struct sshkey *load_identity_file(Identity *);
+अटल व्योम pubkey_cleanup(काष्ठा ssh *);
+अटल पूर्णांक sign_and_send_pubkey(काष्ठा ssh *ssh, Identity *);
+अटल व्योम pubkey_prepare(काष्ठा ssh *, Authctxt *);
+अटल व्योम pubkey_reset(Authctxt *);
+अटल काष्ठा sshkey *load_identity_file(Identity *);
 
-static Authmethod *authmethod_get(char *authlist);
-static Authmethod *authmethod_lookup(const char *name);
-static char *authmethods_get(void);
+अटल Authmethod *authmethod_get(अक्षर *authlist);
+अटल Authmethod *authmethod_lookup(स्थिर अक्षर *name);
+अटल अक्षर *authmethods_get(व्योम);
 
 Authmethod authmethods[] = {
-#ifdef GSSAPI
+#अगर_घोषित GSSAPI
 	{"gssapi-with-mic",
 		userauth_gssapi,
 		userauth_gssapi_cleanup,
 		&options.gss_authentication,
-		NULL},
-#endif
+		शून्य},
+#पूर्ण_अगर
 	{"hostbased",
 		userauth_hostbased,
-		NULL,
+		शून्य,
 		&options.hostbased_authentication,
-		NULL},
+		शून्य},
 	{"publickey",
 		userauth_pubkey,
-		NULL,
+		शून्य,
 		&options.pubkey_authentication,
-		NULL},
+		शून्य},
 	{"keyboard-interactive",
 		userauth_kbdint,
-		NULL,
+		शून्य,
 		&options.kbd_interactive_authentication,
 		&options.batch_mode},
 	{"password",
 		userauth_passwd,
-		NULL,
+		शून्य,
 		&options.password_authentication,
 		&options.batch_mode},
 	{"none",
 		userauth_none,
-		NULL,
-		NULL,
-		NULL},
-	{NULL, NULL, NULL, NULL, NULL}
+		शून्य,
+		शून्य,
+		शून्य},
+	{शून्य, शून्य, शून्य, शून्य, शून्य}
 };
 
-void
-ssh_userauth2(struct ssh *ssh, const char *local_user,
-    const char *server_user, char *host, Sensitive *sensitive)
+व्योम
+ssh_userauth2(काष्ठा ssh *ssh, स्थिर अक्षर *local_user,
+    स्थिर अक्षर *server_user, अक्षर *host, Sensitive *sensitive)
 {
 	Authctxt authctxt;
-	int r;
+	पूर्णांक r;
 
-	if (options.preferred_authentications == NULL)
+	अगर (options.preferred_authentications == शून्य)
 		options.preferred_authentications = authmethods_get();
 
 	/* setup authentication context */
-	memset(&authctxt, 0, sizeof(authctxt));
+	स_रखो(&authctxt, 0, माप(authctxt));
 	authctxt.server_user = server_user;
 	authctxt.local_user = local_user;
 	authctxt.host = host;
 	authctxt.service = "ssh-connection";		/* service name */
 	authctxt.success = 0;
 	authctxt.method = authmethod_lookup("none");
-	authctxt.authlist = NULL;
-	authctxt.methoddata = NULL;
+	authctxt.authlist = शून्य;
+	authctxt.methoddata = शून्य;
 	authctxt.sensitive = sensitive;
-	authctxt.active_ktype = authctxt.oktypes = authctxt.ktypes = NULL;
+	authctxt.active_ktype = authctxt.oktypes = authctxt.ktypes = शून्य;
 	authctxt.info_req_seen = 0;
 	authctxt.attempt_kbdint = 0;
 	authctxt.attempt_passwd = 0;
-#if GSSAPI
-	authctxt.gss_supported_mechs = NULL;
+#अगर GSSAPI
+	authctxt.gss_supported_mechs = शून्य;
 	authctxt.mech_tried = 0;
-#endif
+#पूर्ण_अगर
 	authctxt.agent_fd = -1;
-	if (authctxt.method == NULL)
+	अगर (authctxt.method == शून्य)
 		fatal_f("internal error: cannot send userauth none request");
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_SERVICE_REQUEST)) != 0 ||
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_SERVICE_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "ssh-userauth")) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
 	ssh->authctxt = &authctxt;
-	ssh_dispatch_init(ssh, &input_userauth_error);
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_SERVICE_ACCEPT, &input_userauth_service_accept);
+	ssh_dispatch_init(ssh, &निवेश_userauth_error);
+	ssh_dispatch_set(ssh, SSH2_संदेश_EXT_INFO, kex_निवेश_ext_info);
+	ssh_dispatch_set(ssh, SSH2_संदेश_SERVICE_ACCEPT, &निवेश_userauth_service_accept);
 	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &authctxt.success);	/* loop until success */
 	pubkey_cleanup(ssh);
-#ifdef GSSAPI
-	if (authctxt.gss_supported_mechs != NULL) {
+#अगर_घोषित GSSAPI
+	अगर (authctxt.gss_supported_mechs != शून्य) {
 		u_int ms;
 
 		gss_release_oid_set(&ms, &authctxt.gss_supported_mechs);
-		authctxt.gss_supported_mechs = NULL;
+		authctxt.gss_supported_mechs = शून्य;
 	}
-#endif
-	ssh->authctxt = NULL;
+#पूर्ण_अगर
+	ssh->authctxt = शून्य;
 
-	ssh_dispatch_range(ssh, SSH2_MSG_USERAUTH_MIN, SSH2_MSG_USERAUTH_MAX, NULL);
+	ssh_dispatch_range(ssh, SSH2_संदेश_USERAUTH_MIN, SSH2_संदेश_USERAUTH_MAX, शून्य);
 
-	if (!authctxt.success)
+	अगर (!authctxt.success)
 		fatal("Authentication failed.");
-	if (ssh_packet_connection_is_on_socket(ssh)) {
+	अगर (ssh_packet_connection_is_on_socket(ssh)) {
 		verbose("Authenticated to %s ([%s]:%d) using \"%s\".", host,
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
 		    authctxt.method->name);
-	} else {
+	} अन्यथा {
 		verbose("Authenticated to %s (via proxy) using \"%s\".", host,
 		    authctxt.method->name);
 	}
 }
 
-static int
-input_userauth_service_accept(int type, uint32_t seq, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_userauth_service_accept(पूर्णांक type, uint32_t seq, काष्ठा ssh *ssh)
 {
-	int r;
+	पूर्णांक r;
 
-	if (ssh_packet_remaining(ssh) > 0) {
-		char *reply;
+	अगर (ssh_packet_remaining(ssh) > 0) {
+		अक्षर *reply;
 
-		if ((r = sshpkt_get_cstring(ssh, &reply, NULL)) != 0)
-			goto out;
+		अगर ((r = sshpkt_get_cstring(ssh, &reply, शून्य)) != 0)
+			जाओ out;
 		debug2("service_accept: %s", reply);
-		free(reply);
-	} else {
+		मुक्त(reply);
+	} अन्यथा {
 		debug2("buggy server: service_accept w/o service");
 	}
-	if ((r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+	अगर ((r = sshpkt_get_end(ssh)) != 0)
+		जाओ out;
 	debug("SSH2_MSG_SERVICE_ACCEPT received");
 
 	/* initial userauth request */
 	userauth_none(ssh);
 
 	/* accept EXT_INFO at any time during userauth */
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, ssh->kex->ext_info_s ?
-	    &kex_input_ext_info : &input_userauth_error);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_SUCCESS, &input_userauth_success);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_FAILURE, &input_userauth_failure);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_BANNER, &input_userauth_banner);
+	ssh_dispatch_set(ssh, SSH2_संदेश_EXT_INFO, ssh->kex->ext_info_s ?
+	    &kex_निवेश_ext_info : &निवेश_userauth_error);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_SUCCESS, &निवेश_userauth_success);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_FAILURE, &निवेश_userauth_failure);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_BANNER, &निवेश_userauth_banner);
 	r = 0;
  out:
-	return r;
+	वापस r;
 }
 
-void
-userauth(struct ssh *ssh, char *authlist)
+व्योम
+userauth(काष्ठा ssh *ssh, अक्षर *authlist)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 
-	if (authctxt->method != NULL && authctxt->method->cleanup != NULL)
+	अगर (authctxt->method != शून्य && authctxt->method->cleanup != शून्य)
 		authctxt->method->cleanup(ssh);
 
-	free(authctxt->methoddata);
-	authctxt->methoddata = NULL;
-	if (authlist == NULL) {
+	मुक्त(authctxt->methoddata);
+	authctxt->methoddata = शून्य;
+	अगर (authlist == शून्य) {
 		authlist = authctxt->authlist;
-	} else {
-		free(authctxt->authlist);
+	} अन्यथा {
+		मुक्त(authctxt->authlist);
 		authctxt->authlist = authlist;
 	}
-	for (;;) {
+	क्रम (;;) {
 		Authmethod *method = authmethod_get(authlist);
-		if (method == NULL)
+		अगर (method == शून्य)
 			fatal("%s@%s: Permission denied (%s).",
 			    authctxt->server_user, authctxt->host, authlist);
 		authctxt->method = method;
 
 		/* reset the per method handler */
-		ssh_dispatch_range(ssh, SSH2_MSG_USERAUTH_PER_METHOD_MIN,
-		    SSH2_MSG_USERAUTH_PER_METHOD_MAX, NULL);
+		ssh_dispatch_range(ssh, SSH2_संदेश_USERAUTH_PER_METHOD_MIN,
+		    SSH2_संदेश_USERAUTH_PER_METHOD_MAX, शून्य);
 
 		/* and try new method */
-		if (method->userauth(ssh) != 0) {
+		अगर (method->userauth(ssh) != 0) {
 			debug2("we sent a %s packet, wait for reply", method->name);
-			break;
-		} else {
+			अवरोध;
+		} अन्यथा {
 			debug2("we did not send a packet, disable method");
-			method->enabled = NULL;
+			method->enabled = शून्य;
 		}
 	}
 }
 
-static int
-input_userauth_error(int type, uint32_t seq, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_userauth_error(पूर्णांक type, uint32_t seq, काष्ठा ssh *ssh)
 {
 	fatal_f("bad message during authentication: type %d", type);
-	return 0;
+	वापस 0;
 }
 
-static int
-input_userauth_banner(int type, uint32_t seq, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_userauth_banner(पूर्णांक type, uint32_t seq, काष्ठा ssh *ssh)
 {
-	char *msg = NULL;
-	size_t len;
-	int r;
+	अक्षर *संदेश = शून्य;
+	माप_प्रकार len;
+	पूर्णांक r;
 
 	debug3_f("entering");
-	if ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0)
-		goto out;
-	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO)
-		fmprintf(stderr, "%s", msg);
+	अगर ((r = sshpkt_get_cstring(ssh, &संदेश, &len)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, शून्य, शून्य)) != 0)
+		जाओ out;
+	अगर (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO)
+		fmprintf(मानक_त्रुटि, "%s", संदेश);
 	r = 0;
  out:
-	free(msg);
-	return r;
+	मुक्त(संदेश);
+	वापस r;
 }
 
-static int
-input_userauth_success(int type, uint32_t seq, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_userauth_success(पूर्णांक type, uint32_t seq, काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 
-	if (authctxt == NULL)
+	अगर (authctxt == शून्य)
 		fatal_f("no authentication context");
-	free(authctxt->authlist);
-	authctxt->authlist = NULL;
-	if (authctxt->method != NULL && authctxt->method->cleanup != NULL)
+	मुक्त(authctxt->authlist);
+	authctxt->authlist = शून्य;
+	अगर (authctxt->method != शून्य && authctxt->method->cleanup != शून्य)
 		authctxt->method->cleanup(ssh);
-	free(authctxt->methoddata);
-	authctxt->methoddata = NULL;
+	मुक्त(authctxt->methoddata);
+	authctxt->methoddata = शून्य;
 	authctxt->success = 1;			/* break out */
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, dispatch_protocol_error);
-	return 0;
+	ssh_dispatch_set(ssh, SSH2_संदेश_EXT_INFO, dispatch_protocol_error);
+	वापस 0;
 }
 
-#if 0
-static int
-input_userauth_success_unexpected(int type, uint32_t seq, struct ssh *ssh)
+#अगर 0
+अटल पूर्णांक
+निवेश_userauth_success_unexpected(पूर्णांक type, uint32_t seq, काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 
-	if (authctxt == NULL)
+	अगर (authctxt == शून्य)
 		fatal_f("no authentication context");
 
 	fatal("Unexpected authentication success during %s.",
 	    authctxt->method->name);
-	return 0;
+	वापस 0;
 }
-#endif
+#पूर्ण_अगर
 
-static int
-input_userauth_failure(int type, uint32_t seq, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_userauth_failure(पूर्णांक type, uint32_t seq, काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	char *authlist = NULL;
+	अक्षर *authlist = शून्य;
 	u_char partial;
 
-	if (authctxt == NULL)
+	अगर (authctxt == शून्य)
 		fatal("input_userauth_failure: no authentication context");
 
-	if (sshpkt_get_cstring(ssh, &authlist, NULL) != 0 ||
+	अगर (sshpkt_get_cstring(ssh, &authlist, शून्य) != 0 ||
 	    sshpkt_get_u8(ssh, &partial) != 0 ||
 	    sshpkt_get_end(ssh) != 0)
-		goto out;
+		जाओ out;
 
-	if (partial != 0) {
+	अगर (partial != 0) {
 		verbose("Authenticated using \"%s\" with partial success.",
 		    authctxt->method->name);
 		/* reset state */
@@ -642,83 +642,83 @@ input_userauth_failure(int type, uint32_t seq, struct ssh *ssh)
 	debug("Authentications that can continue: %s", authlist);
 
 	userauth(ssh, authlist);
-	authlist = NULL;
+	authlist = शून्य;
  out:
-	free(authlist);
-	return 0;
+	मुक्त(authlist);
+	वापस 0;
 }
 
 /*
  * Format an identity for logging including filename, key type, fingerprint
  * and location (agent, etc.). Caller must free.
  */
-static char *
+अटल अक्षर *
 format_identity(Identity *id)
 {
-	char *fp = NULL, *ret = NULL;
-	const char *note = "";
+	अक्षर *fp = शून्य, *ret = शून्य;
+	स्थिर अक्षर *note = "";
 
-	if (id->key != NULL) {
-		fp = sshkey_fingerprint(id->key, options.fingerprint_hash,
+	अगर (id->कुंजी != शून्य) {
+		fp = sshkey_fingerprint(id->कुंजी, options.fingerprint_hash,
 		    SSH_FP_DEFAULT);
 	}
-	if (id->key) {
-		if ((id->key->flags & SSHKEY_FLAG_EXT) != 0)
+	अगर (id->कुंजी) {
+		अगर ((id->कुंजी->flags & SSHKEY_FLAG_EXT) != 0)
 			note = " token";
-		else if (sshkey_is_sk(id->key))
+		अन्यथा अगर (sshkey_is_sk(id->कुंजी))
 			note = " authenticator";
 	}
 	xasprintf(&ret, "%s %s%s%s%s%s%s",
 	    id->filename,
-	    id->key ? sshkey_type(id->key) : "", id->key ? " " : "",
+	    id->कुंजी ? sshkey_type(id->कुंजी) : "", id->कुंजी ? " " : "",
 	    fp ? fp : "",
 	    id->userprovided ? " explicit" : "", note,
 	    id->agent_fd != -1 ? " agent" : "");
-	free(fp);
-	return ret;
+	मुक्त(fp);
+	वापस ret;
 }
 
-static int
-input_userauth_pk_ok(int type, uint32_t seq, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_userauth_pk_ok(पूर्णांक type, uint32_t seq, काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct sshkey *key = NULL;
-	struct sshbuf *keyblob = NULL;
-	Identity *id = NULL;
-	int pktype, found = 0, sent = 0;
-	char *pkalg = NULL, *fp = NULL, *ident = NULL;
-	int r;
+	काष्ठा sshkey *कुंजी = शून्य;
+	काष्ठा sshbuf *keyblob = शून्य;
+	Identity *id = शून्य;
+	पूर्णांक pktype, found = 0, sent = 0;
+	अक्षर *pkalg = शून्य, *fp = शून्य, *ident = शून्य;
+	पूर्णांक r;
 
-	if (authctxt == NULL)
+	अगर (authctxt == शून्य)
 		fatal_f("no authentication context");
 
-	if ((r = sshpkt_get_cstring(ssh, &pkalg, NULL)) != 0 ||
+	अगर ((r = sshpkt_get_cstring(ssh, &pkalg, शून्य)) != 0 ||
 	    (r = sshpkt_getb_froms(ssh, &keyblob)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
-		goto done;
+		जाओ done;
 
-	if (match_pattern_list(pkalg, options.pubkey_accepted_algos, 0) != 1) {
+	अगर (match_pattern_list(pkalg, options.pubkey_accepted_algos, 0) != 1) {
 		error_f("server replied to PK_OK with signature type %s not "
 		    "in PubkeyAcceptedAlgorithms", pkalg);
 		r = SSH_ERR_SIGN_ALG_UNSUPPORTED;
-		goto done;
+		जाओ done;
 	}
-	if ((pktype = sshkey_type_from_name(pkalg)) == KEY_UNSPEC) {
+	अगर ((pktype = sshkey_type_from_name(pkalg)) == कुंजी_UNSPEC) {
 		debug_f("server sent unknown pkalg %s", pkalg);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto done;
+		जाओ done;
 	}
 	/* inner key type should match signature type */
-	if ((r = sshkey_fromb_allowlist(keyblob, &key, pkalg, NULL)) != 0) {
+	अगर ((r = sshkey_fromb_allowlist(keyblob, &कुंजी, pkalg, शून्य)) != 0) {
 		debug_r(r, "no key from blob. pkalg %s", pkalg);
-		goto done;
+		जाओ done;
 	}
-	if (key->type != pktype) {
+	अगर (कुंजी->type != pktype) {
 		error("input_userauth_pk_ok: type mismatch "
 		    "for decoded key (received %d, expected %d)",
-		    key->type, pktype);
+		    कुंजी->type, pktype);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto done;
+		जाओ done;
 	}
 
 	/*
@@ -726,336 +726,336 @@ input_userauth_pk_ok(int type, uint32_t seq, struct ssh *ssh)
 	 * moved to the end of the queue.  this also avoids confusion by
 	 * duplicate keys
 	 */
-	TAILQ_FOREACH_REVERSE(id, &authctxt->keys, idlist, next) {
-		if (sshkey_equal(key, id->key)) {
+	TAILQ_FOREACH_REVERSE(id, &authctxt->कुंजियाँ, idlist, अग्र) {
+		अगर (sshkey_equal(कुंजी, id->कुंजी)) {
 			found = 1;
-			break;
+			अवरोध;
 		}
 	}
-	if (!found || id == NULL) {
-		fp = sshkey_fingerprint(key, options.fingerprint_hash,
+	अगर (!found || id == शून्य) {
+		fp = sshkey_fingerprint(कुंजी, options.fingerprint_hash,
 		    SSH_FP_DEFAULT);
 		error_f("server replied with unknown key: %s %s",
-		    sshkey_type(key), fp == NULL ? "<ERROR>" : fp);
+		    sshkey_type(कुंजी), fp == शून्य ? "<ERROR>" : fp);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto done;
+		जाओ done;
 	}
 	ident = format_identity(id);
 	debug("Server accepts key: %s", ident);
 	sent = sign_and_send_pubkey(ssh, id);
 	r = 0;
  done:
-	sshkey_free(key);
+	sshkey_free(कुंजी);
 	sshbuf_free(keyblob);
-	free(ident);
-	free(fp);
-	free(pkalg);
+	मुक्त(ident);
+	मुक्त(fp);
+	मुक्त(pkalg);
 
 	/* try another method if we did not send a packet */
-	if (r == 0 && sent == 0)
-		userauth(ssh, NULL);
-	return r;
+	अगर (r == 0 && sent == 0)
+		userauth(ssh, शून्य);
+	वापस r;
 }
 
-#ifdef GSSAPI
-static int
-userauth_gssapi(struct ssh *ssh)
+#अगर_घोषित GSSAPI
+अटल पूर्णांक
+userauth_gssapi(काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	Gssctxt *gssctxt = NULL;
+	Gssctxt *gssctxt = शून्य;
 	OM_uint32 min;
-	int r, ok = 0;
-	gss_OID mech = NULL;
+	पूर्णांक r, ok = 0;
+	gss_OID mech = शून्य;
 
 	/* Try one GSSAPI method at a time, rather than sending them all at
 	 * once. */
 
-	if (authctxt->gss_supported_mechs == NULL)
+	अगर (authctxt->gss_supported_mechs == शून्य)
 		gss_indicate_mechs(&min, &authctxt->gss_supported_mechs);
 
 	/* Check to see whether the mechanism is usable before we offer it */
-	while (authctxt->mech_tried < authctxt->gss_supported_mechs->count &&
+	जबतक (authctxt->mech_tried < authctxt->gss_supported_mechs->गिनती &&
 	    !ok) {
 		mech = &authctxt->gss_supported_mechs->
 		    elements[authctxt->mech_tried];
 		/* My DER encoding requires length<128 */
-		if (mech->length < 128 && ssh_gssapi_check_mechanism(&gssctxt,
+		अगर (mech->लंबाई < 128 && ssh_gssapi_check_mechanism(&gssctxt,
 		    mech, authctxt->host)) {
 			ok = 1; /* Mechanism works */
-		} else {
+		} अन्यथा {
 			authctxt->mech_tried++;
 		}
 	}
 
-	if (!ok || mech == NULL)
-		return 0;
+	अगर (!ok || mech == शून्य)
+		वापस 0;
 
-	authctxt->methoddata=(void *)gssctxt;
+	authctxt->methoddata=(व्योम *)gssctxt;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, 1)) != 0 ||
-	    (r = sshpkt_put_u32(ssh, (mech->length) + 2)) != 0 ||
+	    (r = sshpkt_put_u32(ssh, (mech->लंबाई) + 2)) != 0 ||
 	    (r = sshpkt_put_u8(ssh, SSH_GSS_OIDTYPE)) != 0 ||
-	    (r = sshpkt_put_u8(ssh, mech->length)) != 0 ||
-	    (r = sshpkt_put(ssh, mech->elements, mech->length)) != 0 ||
+	    (r = sshpkt_put_u8(ssh, mech->लंबाई)) != 0 ||
+	    (r = sshpkt_put(ssh, mech->elements, mech->लंबाई)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_RESPONSE, &input_gssapi_response);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, &input_gssapi_token);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERROR, &input_gssapi_error);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, &input_gssapi_errtok);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_GSSAPI_RESPONSE, &निवेश_gssapi_response);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_GSSAPI_TOKEN, &निवेश_gssapi_token);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_GSSAPI_ERROR, &निवेश_gssapi_error);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_GSSAPI_ERRTOK, &निवेश_gssapi_errtok);
 
 	authctxt->mech_tried++; /* Move along to next candidate */
 
-	return 1;
+	वापस 1;
 }
 
-static void
-userauth_gssapi_cleanup(struct ssh *ssh)
+अटल व्योम
+userauth_gssapi_cleanup(काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 	Gssctxt *gssctxt = (Gssctxt *)authctxt->methoddata;
 
 	ssh_gssapi_delete_ctx(&gssctxt);
-	authctxt->methoddata = NULL;
+	authctxt->methoddata = शून्य;
 }
 
-static OM_uint32
-process_gssapi_token(struct ssh *ssh, gss_buffer_t recv_tok)
+अटल OM_uint32
+process_gssapi_token(काष्ठा ssh *ssh, gss_बफर_t recv_tok)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt = authctxt->methoddata;
-	gss_buffer_desc send_tok = GSS_C_EMPTY_BUFFER;
-	gss_buffer_desc mic = GSS_C_EMPTY_BUFFER;
-	gss_buffer_desc gssbuf;
+	gss_बफर_desc send_tok = GSS_C_EMPTY_बफर;
+	gss_बफर_desc mic = GSS_C_EMPTY_बफर;
+	gss_बफर_desc gssbuf;
 	OM_uint32 status, ms, flags;
-	int r;
+	पूर्णांक r;
 
 	status = ssh_gssapi_init_ctx(gssctxt, options.gss_deleg_creds,
 	    recv_tok, &send_tok, &flags);
 
-	if (send_tok.length > 0) {
+	अगर (send_tok.लंबाई > 0) {
 		u_char type = GSS_ERROR(status) ?
-		    SSH2_MSG_USERAUTH_GSSAPI_ERRTOK :
-		    SSH2_MSG_USERAUTH_GSSAPI_TOKEN;
+		    SSH2_संदेश_USERAUTH_GSSAPI_ERRTOK :
+		    SSH2_संदेश_USERAUTH_GSSAPI_TOKEN;
 
-		if ((r = sshpkt_start(ssh, type)) != 0 ||
-		    (r = sshpkt_put_string(ssh, send_tok.value,
-		    send_tok.length)) != 0 ||
+		अगर ((r = sshpkt_start(ssh, type)) != 0 ||
+		    (r = sshpkt_put_string(ssh, send_tok.मूल्य,
+		    send_tok.लंबाई)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
 			fatal_fr(r, "send %u packet", type);
 
-		gss_release_buffer(&ms, &send_tok);
+		gss_release_बफर(&ms, &send_tok);
 	}
 
-	if (status == GSS_S_COMPLETE) {
+	अगर (status == GSS_S_COMPLETE) {
 		/* send either complete or MIC, depending on mechanism */
-		if (!(flags & GSS_C_INTEG_FLAG)) {
-			if ((r = sshpkt_start(ssh,
-			    SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE)) != 0 ||
+		अगर (!(flags & GSS_C_INTEG_FLAG)) {
+			अगर ((r = sshpkt_start(ssh,
+			    SSH2_संदेश_USERAUTH_GSSAPI_EXCHANGE_COMPLETE)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0)
 				fatal_fr(r, "send completion");
-		} else {
-			struct sshbuf *b;
+		} अन्यथा {
+			काष्ठा sshbuf *b;
 
-			if ((b = sshbuf_new()) == NULL)
+			अगर ((b = sshbuf_new()) == शून्य)
 				fatal_f("sshbuf_new failed");
 			ssh_gssapi_buildmic(b, authctxt->server_user,
 			    authctxt->service, "gssapi-with-mic",
 			    ssh->kex->session_id);
 
-			if ((gssbuf.value = sshbuf_mutable_ptr(b)) == NULL)
+			अगर ((gssbuf.मूल्य = sshbuf_mutable_ptr(b)) == शून्य)
 				fatal_f("sshbuf_mutable_ptr failed");
-			gssbuf.length = sshbuf_len(b);
+			gssbuf.लंबाई = sshbuf_len(b);
 
 			status = ssh_gssapi_sign(gssctxt, &gssbuf, &mic);
 
-			if (!GSS_ERROR(status)) {
-				if ((r = sshpkt_start(ssh,
-				    SSH2_MSG_USERAUTH_GSSAPI_MIC)) != 0 ||
-				    (r = sshpkt_put_string(ssh, mic.value,
-				    mic.length)) != 0 ||
+			अगर (!GSS_ERROR(status)) {
+				अगर ((r = sshpkt_start(ssh,
+				    SSH2_संदेश_USERAUTH_GSSAPI_MIC)) != 0 ||
+				    (r = sshpkt_put_string(ssh, mic.मूल्य,
+				    mic.लंबाई)) != 0 ||
 				    (r = sshpkt_send(ssh)) != 0)
 					fatal_fr(r, "send MIC");
 			}
 
 			sshbuf_free(b);
-			gss_release_buffer(&ms, &mic);
+			gss_release_बफर(&ms, &mic);
 		}
 	}
 
-	return status;
+	वापस status;
 }
 
-static int
-input_gssapi_response(int type, uint32_t plen, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_gssapi_response(पूर्णांक type, uint32_t plen, काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt;
-	size_t oidlen;
-	u_char *oidv = NULL;
-	int r;
+	माप_प्रकार oidlen;
+	u_char *oidv = शून्य;
+	पूर्णांक r;
 
-	if (authctxt == NULL)
+	अगर (authctxt == शून्य)
 		fatal("input_gssapi_response: no authentication context");
 	gssctxt = authctxt->methoddata;
 
 	/* Setup our OID */
-	if ((r = sshpkt_get_string(ssh, &oidv, &oidlen)) != 0)
-		goto done;
+	अगर ((r = sshpkt_get_string(ssh, &oidv, &oidlen)) != 0)
+		जाओ done;
 
-	if (oidlen <= 2 ||
+	अगर (oidlen <= 2 ||
 	    oidv[0] != SSH_GSS_OIDTYPE ||
 	    oidv[1] != oidlen - 2) {
 		debug("Badly encoded mechanism OID received");
-		userauth(ssh, NULL);
-		goto ok;
+		userauth(ssh, शून्य);
+		जाओ ok;
 	}
 
-	if (!ssh_gssapi_check_oid(gssctxt, oidv + 2, oidlen - 2))
+	अगर (!ssh_gssapi_check_oid(gssctxt, oidv + 2, oidlen - 2))
 		fatal("Server returned different OID than expected");
 
-	if ((r = sshpkt_get_end(ssh)) != 0)
-		goto done;
+	अगर ((r = sshpkt_get_end(ssh)) != 0)
+		जाओ done;
 
-	if (GSS_ERROR(process_gssapi_token(ssh, GSS_C_NO_BUFFER))) {
+	अगर (GSS_ERROR(process_gssapi_token(ssh, GSS_C_NO_बफर))) {
 		/* Start again with next method on list */
 		debug("Trying to start again");
-		userauth(ssh, NULL);
-		goto ok;
+		userauth(ssh, शून्य);
+		जाओ ok;
 	}
  ok:
 	r = 0;
  done:
-	free(oidv);
-	return r;
+	मुक्त(oidv);
+	वापस r;
 }
 
-static int
-input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_gssapi_token(पूर्णांक type, uint32_t plen, काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	gss_buffer_desc recv_tok;
-	u_char *p = NULL;
-	size_t len;
+	gss_बफर_desc recv_tok;
+	u_char *p = शून्य;
+	माप_प्रकार len;
 	OM_uint32 status;
-	int r;
+	पूर्णांक r;
 
-	if (authctxt == NULL)
+	अगर (authctxt == शून्य)
 		fatal("input_gssapi_response: no authentication context");
 
-	if ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
+	अगर ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+		जाओ out;
 
-	recv_tok.value = p;
-	recv_tok.length = len;
+	recv_tok.मूल्य = p;
+	recv_tok.लंबाई = len;
 	status = process_gssapi_token(ssh, &recv_tok);
 
 	/* Start again with the next method in the list */
-	if (GSS_ERROR(status)) {
-		userauth(ssh, NULL);
+	अगर (GSS_ERROR(status)) {
+		userauth(ssh, शून्य);
 		/* ok */
 	}
 	r = 0;
  out:
-	free(p);
-	return r;
+	मुक्त(p);
+	वापस r;
 }
 
-static int
-input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_gssapi_errtok(पूर्णांक type, uint32_t plen, काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt;
-	gss_buffer_desc send_tok = GSS_C_EMPTY_BUFFER;
-	gss_buffer_desc recv_tok;
+	gss_बफर_desc send_tok = GSS_C_EMPTY_बफर;
+	gss_बफर_desc recv_tok;
 	OM_uint32 ms;
-	u_char *p = NULL;
-	size_t len;
-	int r;
+	u_char *p = शून्य;
+	माप_प्रकार len;
+	पूर्णांक r;
 
-	if (authctxt == NULL)
+	अगर (authctxt == शून्य)
 		fatal("input_gssapi_response: no authentication context");
 	gssctxt = authctxt->methoddata;
 
-	if ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
+	अगर ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0) {
-		free(p);
-		return r;
+		मुक्त(p);
+		वापस r;
 	}
 
 	/* Stick it into GSSAPI and see what it says */
-	recv_tok.value = p;
-	recv_tok.length = len;
-	(void)ssh_gssapi_init_ctx(gssctxt, options.gss_deleg_creds,
-	    &recv_tok, &send_tok, NULL);
-	free(p);
-	gss_release_buffer(&ms, &send_tok);
+	recv_tok.मूल्य = p;
+	recv_tok.लंबाई = len;
+	(व्योम)ssh_gssapi_init_ctx(gssctxt, options.gss_deleg_creds,
+	    &recv_tok, &send_tok, शून्य);
+	मुक्त(p);
+	gss_release_बफर(&ms, &send_tok);
 
 	/* Server will be returning a failed packet after this one */
-	return 0;
+	वापस 0;
 }
 
-static int
-input_gssapi_error(int type, uint32_t plen, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_gssapi_error(पूर्णांक type, uint32_t plen, काष्ठा ssh *ssh)
 {
-	char *msg = NULL;
-	char *lang = NULL;
-	int r;
+	अक्षर *संदेश = शून्य;
+	अक्षर *lang = शून्य;
+	पूर्णांक r;
 
-	if ((r = sshpkt_get_u32(ssh, NULL)) != 0 ||	/* maj */
-	    (r = sshpkt_get_u32(ssh, NULL)) != 0 ||	/* min */
-	    (r = sshpkt_get_cstring(ssh, &msg, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0)
-		goto out;
+	अगर ((r = sshpkt_get_u32(ssh, शून्य)) != 0 ||	/* maj */
+	    (r = sshpkt_get_u32(ssh, शून्य)) != 0 ||	/* min */
+	    (r = sshpkt_get_cstring(ssh, &संदेश, शून्य)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &lang, शून्य)) != 0)
+		जाओ out;
 	r = sshpkt_get_end(ssh);
-	debug("Server GSSAPI Error:\n%s", msg);
+	debug("Server GSSAPI Error:\n%s", संदेश);
  out:
-	free(msg);
-	free(lang);
-	return r;
+	मुक्त(संदेश);
+	मुक्त(lang);
+	वापस r;
 }
-#endif /* GSSAPI */
+#पूर्ण_अगर /* GSSAPI */
 
-static int
-userauth_none(struct ssh *ssh)
+अटल पूर्णांक
+userauth_none(काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	int r;
+	पूर्णांक r;
 
 	/* initial userauth request */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
-	return 1;
+	वापस 1;
 }
 
-static int
-userauth_passwd(struct ssh *ssh)
+अटल पूर्णांक
+userauth_passwd(काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	char *password, *prompt = NULL;
-	const char *host = options.host_key_alias ?  options.host_key_alias :
+	अक्षर *password, *prompt = शून्य;
+	स्थिर अक्षर *host = options.host_कुंजी_alias ?  options.host_कुंजी_alias :
 	    authctxt->host;
-	int r;
+	पूर्णांक r;
 
-	if (authctxt->attempt_passwd++ >= options.number_of_password_prompts)
-		return 0;
+	अगर (authctxt->attempt_passwd++ >= options.संख्या_of_password_prompts)
+		वापस 0;
 
-	if (authctxt->attempt_passwd != 1)
+	अगर (authctxt->attempt_passwd != 1)
 		error("Permission denied, please try again.");
 
 	xasprintf(&prompt, "%s@%s's password: ", authctxt->server_user, host);
 	password = read_passphrase(prompt, 0);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
@@ -1065,94 +1065,94 @@ userauth_passwd(struct ssh *ssh)
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
-	free(prompt);
-	if (password != NULL)
-		freezero(password, strlen(password));
+	मुक्त(prompt);
+	अगर (password != शून्य)
+		freezero(password, म_माप(password));
 
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ,
-	    &input_userauth_passwd_changereq);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_PASSWD_CHANGEREQ,
+	    &निवेश_userauth_passwd_changereq);
 
-	return 1;
+	वापस 1;
 }
 
 /*
  * parse PASSWD_CHANGEREQ, prompt user and send SSH2_MSG_USERAUTH_REQUEST
  */
-static int
-input_userauth_passwd_changereq(int type, uint32_t seqnr, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_userauth_passwd_changereq(पूर्णांक type, uint32_t seqnr, काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	char *info = NULL, *lang = NULL, *password = NULL, *retype = NULL;
-	char prompt[256];
-	const char *host;
-	int r, addnl;
-	size_t len;
+	अक्षर *info = शून्य, *lang = शून्य, *password = शून्य, *retype = शून्य;
+	अक्षर prompt[256];
+	स्थिर अक्षर *host;
+	पूर्णांक r, addnl;
+	माप_प्रकार len;
 
 	debug2("input_userauth_passwd_changereq");
 
-	if (authctxt == NULL)
+	अगर (authctxt == शून्य)
 		fatal("input_userauth_passwd_changereq: "
 		    "no authentication context");
-	host = options.host_key_alias ? options.host_key_alias : authctxt->host;
+	host = options.host_कुंजी_alias ? options.host_कुंजी_alias : authctxt->host;
 
-	if ((r = sshpkt_get_cstring(ssh, &info, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0)
-		goto out;
-	if ((len = strlen(info)) > 0) {
+	अगर ((r = sshpkt_get_cstring(ssh, &info, शून्य)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &lang, शून्य)) != 0)
+		जाओ out;
+	अगर ((len = म_माप(info)) > 0) {
 		addnl = info[len] != '\n';
-		fmprintf(stderr, "%s%s", info, addnl ? "\n" : "");
+		fmprintf(मानक_त्रुटि, "%s%s", info, addnl ? "\n" : "");
 	}
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
 	    (r = sshpkt_put_u8(ssh, 1)) != 0)	/* additional info */
-		goto out;
+		जाओ out;
 
-	snprintf(prompt, sizeof(prompt),
+	snprintf(prompt, माप(prompt),
 	    "Enter %.30s@%.128s's old password: ",
 	    authctxt->server_user, host);
 	password = read_passphrase(prompt, 0);
-	if ((r = sshpkt_put_cstring(ssh, password)) != 0)
-		goto out;
+	अगर ((r = sshpkt_put_cstring(ssh, password)) != 0)
+		जाओ out;
 
-	freezero(password, strlen(password));
-	password = NULL;
-	while (password == NULL) {
-		snprintf(prompt, sizeof(prompt),
+	freezero(password, म_माप(password));
+	password = शून्य;
+	जबतक (password == शून्य) {
+		snprintf(prompt, माप(prompt),
 		    "Enter %.30s@%.128s's new password: ",
 		    authctxt->server_user, host);
 		password = read_passphrase(prompt, RP_ALLOW_EOF);
-		if (password == NULL) {
+		अगर (password == शून्य) {
 			/* bail out */
 			r = 0;
-			goto out;
+			जाओ out;
 		}
-		snprintf(prompt, sizeof(prompt),
+		snprintf(prompt, माप(prompt),
 		    "Retype %.30s@%.128s's new password: ",
 		    authctxt->server_user, host);
 		retype = read_passphrase(prompt, 0);
-		if (strcmp(password, retype) != 0) {
-			freezero(password, strlen(password));
+		अगर (म_भेद(password, retype) != 0) {
+			freezero(password, म_माप(password));
 			logit("Mismatch; try again, EOF to quit.");
-			password = NULL;
+			password = शून्य;
 		}
-		freezero(retype, strlen(retype));
+		freezero(retype, म_माप(retype));
 	}
-	if ((r = sshpkt_put_cstring(ssh, password)) != 0 ||
+	अगर ((r = sshpkt_put_cstring(ssh, password)) != 0 ||
 	    (r = sshpkt_add_padding(ssh, 64)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		goto out;
+		जाओ out;
 
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ,
-	    &input_userauth_passwd_changereq);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_PASSWD_CHANGEREQ,
+	    &निवेश_userauth_passwd_changereq);
 	r = 0;
  out:
-	if (password)
-		freezero(password, strlen(password));
-	free(info);
-	free(lang);
-	return r;
+	अगर (password)
+		freezero(password, म_माप(password));
+	मुक्त(info);
+	मुक्त(lang);
+	वापस r;
 }
 
 /*
@@ -1162,23 +1162,23 @@ input_userauth_passwd_changereq(int type, uint32_t seqnr, struct ssh *ssh)
  * Call with ssh==NULL to ignore server-sig-algs extension list and
  * only attempt with the key's base signature type.
  */
-static char *
-key_sig_algorithm(struct ssh *ssh, const struct sshkey *key)
+अटल अक्षर *
+कुंजी_sig_algorithm(काष्ठा ssh *ssh, स्थिर काष्ठा sshkey *कुंजी)
 {
-	char *allowed, *oallowed, *cp, *tmp, *alg = NULL;
-	const char *server_sig_algs;
+	अक्षर *allowed, *oallowed, *cp, *tmp, *alg = शून्य;
+	स्थिर अक्षर *server_sig_algs;
 
 	/*
 	 * The signature algorithm will only differ from the key algorithm
 	 * for RSA keys/certs and when the server advertises support for
 	 * newer (SHA2) algorithms.
 	 */
-	if (ssh == NULL || ssh->kex->server_sig_algs == NULL ||
-	    (key->type != KEY_RSA && key->type != KEY_RSA_CERT) ||
-	    (key->type == KEY_RSA_CERT && (ssh->compat & SSH_BUG_SIGTYPE))) {
+	अगर (ssh == शून्य || ssh->kex->server_sig_algs == शून्य ||
+	    (कुंजी->type != कुंजी_RSA && कुंजी->type != कुंजी_RSA_CERT) ||
+	    (कुंजी->type == कुंजी_RSA_CERT && (ssh->compat & SSH_BUG_SIGTYPE))) {
 		/* Filter base key signature alg against our configuration */
-		return match_list(sshkey_ssh_name(key),
-		    options.pubkey_accepted_algos, NULL);
+		वापस match_list(sshkey_ssh_name(कुंजी),
+		    options.pubkey_accepted_algos, शून्य);
 	}
 
 	/*
@@ -1186,7 +1186,7 @@ key_sig_algorithm(struct ssh *ssh, const struct sshkey *key)
 	 * fails to advertise it via SSH2_MSG_EXT_INFO.
 	 */
 	server_sig_algs = ssh->kex->server_sig_algs;
-	if (key->type == KEY_RSA && (ssh->compat & SSH_BUG_SIGTYPE74))
+	अगर (कुंजी->type == कुंजी_RSA && (ssh->compat & SSH_BUG_SIGTYPE74))
 		server_sig_algs = "rsa-sha2-256,rsa-sha2-512";
 
 	/*
@@ -1196,153 +1196,153 @@ key_sig_algorithm(struct ssh *ssh, const struct sshkey *key)
 	 * the server.
 	 */
 	oallowed = allowed = xstrdup(options.pubkey_accepted_algos);
-	while ((cp = strsep(&allowed, ",")) != NULL) {
-		if (sshkey_type_from_name(cp) != key->type)
-			continue;
+	जबतक ((cp = strsep(&allowed, ",")) != शून्य) {
+		अगर (sshkey_type_from_name(cp) != कुंजी->type)
+			जारी;
 		tmp = match_list(sshkey_sigalg_by_name(cp),
-		    server_sig_algs, NULL);
-		if (tmp != NULL)
+		    server_sig_algs, शून्य);
+		अगर (tmp != शून्य)
 			alg = xstrdup(cp);
-		free(tmp);
-		if (alg != NULL)
-			break;
+		मुक्त(tmp);
+		अगर (alg != शून्य)
+			अवरोध;
 	}
-	free(oallowed);
-	return alg;
+	मुक्त(oallowed);
+	वापस alg;
 }
 
-static int
-identity_sign(struct identity *id, u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen, u_int compat, const char *alg)
+अटल पूर्णांक
+identity_sign(काष्ठा identity *id, u_char **sigp, माप_प्रकार *lenp,
+    स्थिर u_char *तथ्य, माप_प्रकार datalen, u_int compat, स्थिर अक्षर *alg)
 {
-	struct sshkey *sign_key = NULL, *prv = NULL;
-	int is_agent = 0, retried = 0, r = SSH_ERR_INTERNAL_ERROR;
-	struct notifier_ctx *notifier = NULL;
-	char *fp = NULL, *pin = NULL, *prompt = NULL;
+	काष्ठा sshkey *sign_कुंजी = शून्य, *prv = शून्य;
+	पूर्णांक is_agent = 0, retried = 0, r = SSH_ERR_INTERNAL_ERROR;
+	काष्ठा notifier_ctx *notifier = शून्य;
+	अक्षर *fp = शून्य, *pin = शून्य, *prompt = शून्य;
 
-	*sigp = NULL;
+	*sigp = शून्य;
 	*lenp = 0;
 
 	/* The agent supports this key. */
-	if (id->key != NULL && id->agent_fd != -1) {
-		return ssh_agent_sign(id->agent_fd, id->key, sigp, lenp,
-		    data, datalen, alg, compat);
+	अगर (id->कुंजी != शून्य && id->agent_fd != -1) {
+		वापस ssh_agent_sign(id->agent_fd, id->कुंजी, sigp, lenp,
+		    तथ्य, datalen, alg, compat);
 	}
 
 	/*
 	 * We have already loaded the private key or the private key is
 	 * stored in external hardware.
 	 */
-	if (id->key != NULL &&
-	    (id->isprivate || (id->key->flags & SSHKEY_FLAG_EXT))) {
-		sign_key = id->key;
+	अगर (id->कुंजी != शून्य &&
+	    (id->isprivate || (id->कुंजी->flags & SSHKEY_FLAG_EXT))) {
+		sign_कुंजी = id->कुंजी;
 		is_agent = 1;
-	} else {
+	} अन्यथा {
 		/* Load the private key from the file. */
-		if ((prv = load_identity_file(id)) == NULL)
-			return SSH_ERR_KEY_NOT_FOUND;
-		if (id->key != NULL && !sshkey_equal_public(prv, id->key)) {
+		अगर ((prv = load_identity_file(id)) == शून्य)
+			वापस SSH_ERR_कुंजी_NOT_FOUND;
+		अगर (id->कुंजी != शून्य && !sshkey_equal_public(prv, id->कुंजी)) {
 			error_f("private key %s contents do not match public",
 			    id->filename);
-			r = SSH_ERR_KEY_NOT_FOUND;
-			goto out;
+			r = SSH_ERR_कुंजी_NOT_FOUND;
+			जाओ out;
 		}
-		sign_key = prv;
+		sign_कुंजी = prv;
 	}
  retry_pin:
 	/* Prompt for touch for non-agent FIDO keys that request UP */
-	if (!is_agent && sshkey_is_sk(sign_key) &&
-	    (sign_key->sk_flags & SSH_SK_USER_PRESENCE_REQD)) {
+	अगर (!is_agent && sshkey_is_sk(sign_कुंजी) &&
+	    (sign_कुंजी->sk_flags & SSH_SK_USER_PRESENCE_REQD)) {
 		/* XXX should batch mode just skip these? */
-		if ((fp = sshkey_fingerprint(sign_key,
-		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
+		अगर ((fp = sshkey_fingerprint(sign_कुंजी,
+		    options.fingerprint_hash, SSH_FP_DEFAULT)) == शून्य)
 			fatal_f("fingerprint failed");
 		notifier = notify_start(options.batch_mode,
 		    "Confirm user presence for key %s %s",
-		    sshkey_type(sign_key), fp);
-		free(fp);
+		    sshkey_type(sign_कुंजी), fp);
+		मुक्त(fp);
 	}
-	if ((r = sshkey_sign(sign_key, sigp, lenp, data, datalen,
+	अगर ((r = sshkey_sign(sign_कुंजी, sigp, lenp, तथ्य, datalen,
 	    alg, options.sk_provider, pin, compat)) != 0) {
 		debug_fr(r, "sshkey_sign");
-		if (!retried && pin == NULL && !is_agent &&
-		    sshkey_is_sk(sign_key) &&
-		    r == SSH_ERR_KEY_WRONG_PASSPHRASE) {
-			notify_complete(notifier, NULL);
-			notifier = NULL;
+		अगर (!retried && pin == शून्य && !is_agent &&
+		    sshkey_is_sk(sign_कुंजी) &&
+		    r == SSH_ERR_कुंजी_WRONG_PASSPHRASE) {
+			notify_complete(notifier, शून्य);
+			notifier = शून्य;
 			xasprintf(&prompt, "Enter PIN for %s key %s: ",
-			    sshkey_type(sign_key), id->filename);
+			    sshkey_type(sign_कुंजी), id->filename);
 			pin = read_passphrase(prompt, 0);
 			retried = 1;
-			goto retry_pin;
+			जाओ retry_pin;
 		}
-		goto out;
+		जाओ out;
 	}
 
 	/*
 	 * PKCS#11 tokens may not support all signature algorithms,
 	 * so check what we get back.
 	 */
-	if (id->key != NULL && (id->key->flags & SSHKEY_FLAG_EXT) != 0 &&
+	अगर (id->कुंजी != शून्य && (id->कुंजी->flags & SSHKEY_FLAG_EXT) != 0 &&
 	    (r = sshkey_check_sigtype(*sigp, *lenp, alg)) != 0) {
 		debug_fr(r, "sshkey_check_sigtype");
-		goto out;
+		जाओ out;
 	}
 	/* success */
 	r = 0;
  out:
-	free(prompt);
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
-	notify_complete(notifier, r == 0 ? "User presence confirmed" : NULL);
+	मुक्त(prompt);
+	अगर (pin != शून्य)
+		freezero(pin, म_माप(pin));
+	notify_complete(notifier, r == 0 ? "User presence confirmed" : शून्य);
 	sshkey_free(prv);
-	return r;
+	वापस r;
 }
 
-static int
+अटल पूर्णांक
 id_filename_matches(Identity *id, Identity *private_id)
 {
-	static const char * const suffixes[] = { ".pub", "-cert.pub", NULL };
-	size_t len = strlen(id->filename), plen = strlen(private_id->filename);
-	size_t i, slen;
+	अटल स्थिर अक्षर * स्थिर suffixes[] = { ".pub", "-cert.pub", शून्य };
+	माप_प्रकार len = म_माप(id->filename), plen = म_माप(private_id->filename);
+	माप_प्रकार i, slen;
 
-	if (strcmp(id->filename, private_id->filename) == 0)
-		return 1;
-	for (i = 0; suffixes[i]; i++) {
-		slen = strlen(suffixes[i]);
-		if (len > slen && plen == len - slen &&
-		    strcmp(id->filename + (len - slen), suffixes[i]) == 0 &&
-		    memcmp(id->filename, private_id->filename, plen) == 0)
-			return 1;
+	अगर (म_भेद(id->filename, private_id->filename) == 0)
+		वापस 1;
+	क्रम (i = 0; suffixes[i]; i++) {
+		slen = म_माप(suffixes[i]);
+		अगर (len > slen && plen == len - slen &&
+		    म_भेद(id->filename + (len - slen), suffixes[i]) == 0 &&
+		    स_भेद(id->filename, private_id->filename, plen) == 0)
+			वापस 1;
 	}
-	return 0;
+	वापस 0;
 }
 
-static int
-sign_and_send_pubkey(struct ssh *ssh, Identity *id)
+अटल पूर्णांक
+sign_and_send_pubkey(काष्ठा ssh *ssh, Identity *id)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	struct sshbuf *b = NULL;
-	Identity *private_id, *sign_id = NULL;
-	u_char *signature = NULL;
-	size_t slen = 0, skip = 0;
-	int r, fallback_sigtype, sent = 0;
-	char *alg = NULL, *fp = NULL;
-	const char *loc = "", *method = "publickey";
-	int hostbound = 0;
+	काष्ठा sshbuf *b = शून्य;
+	Identity *private_id, *sign_id = शून्य;
+	u_char *signature = शून्य;
+	माप_प्रकार slen = 0, skip = 0;
+	पूर्णांक r, fallback_sigtype, sent = 0;
+	अक्षर *alg = शून्य, *fp = शून्य;
+	स्थिर अक्षर *loc = "", *method = "publickey";
+	पूर्णांक hostbound = 0;
 
 	/* prefer host-bound pubkey signatures if supported by server */
-	if ((ssh->kex->flags & KEX_HAS_PUBKEY_HOSTBOUND) != 0 &&
+	अगर ((ssh->kex->flags & KEX_HAS_PUBKEY_HOSTBOUND) != 0 &&
 	    (options.pubkey_authentication & SSH_PUBKEY_AUTH_HBOUND) != 0) {
 		hostbound = 1;
 		method = "publickey-hostbound-v00@openssh.com";
 	}
 
-	if ((fp = sshkey_fingerprint(id->key, options.fingerprint_hash,
-	    SSH_FP_DEFAULT)) == NULL)
-		return 0;
+	अगर ((fp = sshkey_fingerprint(id->कुंजी, options.fingerprint_hash,
+	    SSH_FP_DEFAULT)) == शून्य)
+		वापस 0;
 
-	debug3_f("using %s with %s %s", method, sshkey_type(id->key), fp);
+	debug3_f("using %s with %s %s", method, sshkey_type(id->कुंजी), fp);
 
 	/*
 	 * If the key is an certificate, try to find a matching private key
@@ -1352,12 +1352,12 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 	 * This will try to set sign_id to the private key that will perform
 	 * the signature.
 	 */
-	if (id->agent_fd == -1 && sshkey_is_cert(id->key)) {
-		TAILQ_FOREACH(private_id, &authctxt->keys, next) {
-			if (sshkey_equal_public(id->key, private_id->key) &&
-			    id->key->type != private_id->key->type) {
+	अगर (id->agent_fd == -1 && sshkey_is_cert(id->कुंजी)) {
+		TAILQ_FOREACH(private_id, &authctxt->कुंजियाँ, अग्र) {
+			अगर (sshkey_equal_public(id->कुंजी, private_id->कुंजी) &&
+			    id->कुंजी->type != private_id->कुंजी->type) {
 				sign_id = private_id;
-				break;
+				अवरोध;
 			}
 		}
 		/*
@@ -1367,22 +1367,22 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 		 * of keeping just a private key file and public
 		 * certificate on disk.
 		 */
-		if (sign_id == NULL &&
+		अगर (sign_id == शून्य &&
 		    !id->isprivate && id->agent_fd == -1 &&
-		    (id->key->flags & SSHKEY_FLAG_EXT) == 0) {
-			TAILQ_FOREACH(private_id, &authctxt->keys, next) {
-				if (private_id->key == NULL &&
+		    (id->कुंजी->flags & SSHKEY_FLAG_EXT) == 0) {
+			TAILQ_FOREACH(private_id, &authctxt->कुंजियाँ, अग्र) {
+				अगर (private_id->कुंजी == शून्य &&
 				    id_filename_matches(id, private_id)) {
 					sign_id = private_id;
-					break;
+					अवरोध;
 				}
 			}
 		}
-		if (sign_id != NULL) {
+		अगर (sign_id != शून्य) {
 			debug2_f("using private key \"%s\"%s for "
 			    "certificate", sign_id->filename,
 			    sign_id->agent_fd != -1 ? " from agent" : "");
-		} else {
+		} अन्यथा {
 			debug_f("no separate private key for certificate "
 			    "\"%s\"", id->filename);
 		}
@@ -1392,84 +1392,84 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 	 * If the above didn't select another identity to do the signing
 	 * then default to the one we started with.
 	 */
-	if (sign_id == NULL)
+	अगर (sign_id == शून्य)
 		sign_id = id;
 
 	/* assemble and sign data */
-	for (fallback_sigtype = 0; fallback_sigtype <= 1; fallback_sigtype++) {
-		free(alg);
+	क्रम (fallback_sigtype = 0; fallback_sigtype <= 1; fallback_sigtype++) {
+		मुक्त(alg);
 		slen = 0;
-		signature = NULL;
-		if ((alg = key_sig_algorithm(fallback_sigtype ? NULL : ssh,
-		    id->key)) == NULL) {
+		signature = शून्य;
+		अगर ((alg = कुंजी_sig_algorithm(fallback_sigtype ? शून्य : ssh,
+		    id->कुंजी)) == शून्य) {
 			error_f("no mutual signature supported");
-			goto out;
+			जाओ out;
 		}
 		debug3_f("signing using %s %s", alg, fp);
 
 		sshbuf_free(b);
-		if ((b = sshbuf_new()) == NULL)
+		अगर ((b = sshbuf_new()) == शून्य)
 			fatal_f("sshbuf_new failed");
-		if ((r = sshbuf_put_stringb(b,
+		अगर ((r = sshbuf_put_stringb(b,
 		    ssh->kex->session_id)) != 0)
 			fatal_fr(r, "sshbuf_put_stringb");
 		skip = sshbuf_len(b);
-		if ((r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+		अगर ((r = sshbuf_put_u8(b, SSH2_संदेश_USERAUTH_REQUEST)) != 0 ||
 		    (r = sshbuf_put_cstring(b, authctxt->server_user)) != 0 ||
 		    (r = sshbuf_put_cstring(b, authctxt->service)) != 0 ||
 		    (r = sshbuf_put_cstring(b, method)) != 0 ||
 		    (r = sshbuf_put_u8(b, 1)) != 0 ||
 		    (r = sshbuf_put_cstring(b, alg)) != 0 ||
-		    (r = sshkey_puts(id->key, b)) != 0) {
+		    (r = sshkey_puts(id->कुंजी, b)) != 0) {
 			fatal_fr(r, "assemble signed data");
 		}
-		if (hostbound) {
-			if (ssh->kex->initial_hostkey == NULL) {
+		अगर (hostbound) {
+			अगर (ssh->kex->initial_hostkey == शून्य) {
 				fatal_f("internal error: initial hostkey "
 				    "not recorded");
 			}
-			if ((r = sshkey_puts(ssh->kex->initial_hostkey, b)) != 0)
+			अगर ((r = sshkey_puts(ssh->kex->initial_hostkey, b)) != 0)
 				fatal_fr(r, "assemble %s hostkey", method);
 		}
 		/* generate signature */
 		r = identity_sign(sign_id, &signature, &slen,
 		    sshbuf_ptr(b), sshbuf_len(b), ssh->compat, alg);
-		if (r == 0)
-			break;
-		else if (r == SSH_ERR_KEY_NOT_FOUND)
-			goto out; /* soft failure */
-		else if (r == SSH_ERR_SIGN_ALG_UNSUPPORTED &&
+		अगर (r == 0)
+			अवरोध;
+		अन्यथा अगर (r == SSH_ERR_कुंजी_NOT_FOUND)
+			जाओ out; /* soft failure */
+		अन्यथा अगर (r == SSH_ERR_SIGN_ALG_UNSUPPORTED &&
 		    !fallback_sigtype) {
-			if (sign_id->agent_fd != -1)
+			अगर (sign_id->agent_fd != -1)
 				loc = "agent ";
-			else if (sign_id->key != NULL &&
-			    (sign_id->key->flags & SSHKEY_FLAG_EXT) != 0)
+			अन्यथा अगर (sign_id->कुंजी != शून्य &&
+			    (sign_id->कुंजी->flags & SSHKEY_FLAG_EXT) != 0)
 				loc = "token ";
 			logit("%skey %s %s returned incorrect signature type",
-			    loc, sshkey_type(id->key), fp);
-			continue;
+			    loc, sshkey_type(id->कुंजी), fp);
+			जारी;
 		}
 		error_fr(r, "signing failed for %s \"%s\"%s",
-		    sshkey_type(sign_id->key), sign_id->filename,
+		    sshkey_type(sign_id->कुंजी), sign_id->filename,
 		    id->agent_fd != -1 ? " from agent" : "");
-		goto out;
+		जाओ out;
 	}
-	if (slen == 0 || signature == NULL) /* shouldn't happen */
+	अगर (slen == 0 || signature == शून्य) /* shouldn't happen */
 		fatal_f("no signature");
 
 	/* append signature */
-	if ((r = sshbuf_put_string(b, signature, slen)) != 0)
+	अगर ((r = sshbuf_put_string(b, signature, slen)) != 0)
 		fatal_fr(r, "append signature");
 
-#ifdef DEBUG_PK
-	sshbuf_dump(b, stderr);
-#endif
+#अगर_घोषित DEBUG_PK
+	sshbuf_dump(b, मानक_त्रुटि);
+#पूर्ण_अगर
 	/* skip session id and packet type */
-	if ((r = sshbuf_consume(b, skip + 1)) != 0)
+	अगर ((r = sshbuf_consume(b, skip + 1)) != 0)
 		fatal_fr(r, "consume");
 
 	/* put remaining data from buffer into packet */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_putb(ssh, b)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "enqueue request");
@@ -1478,37 +1478,37 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 	sent = 1;
 
  out:
-	free(fp);
-	free(alg);
+	मुक्त(fp);
+	मुक्त(alg);
 	sshbuf_free(b);
 	freezero(signature, slen);
-	return sent;
+	वापस sent;
 }
 
-static int
-send_pubkey_test(struct ssh *ssh, Identity *id)
+अटल पूर्णांक
+send_pubkey_test(काष्ठा ssh *ssh, Identity *id)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	u_char *blob = NULL;
-	char *alg = NULL;
-	size_t bloblen;
+	u_char *blob = शून्य;
+	अक्षर *alg = शून्य;
+	माप_प्रकार bloblen;
 	u_int have_sig = 0;
-	int sent = 0, r;
+	पूर्णांक sent = 0, r;
 
-	if ((alg = key_sig_algorithm(ssh, id->key)) == NULL) {
+	अगर ((alg = कुंजी_sig_algorithm(ssh, id->कुंजी)) == शून्य) {
 		debug_f("no mutual signature algorithm");
-		goto out;
+		जाओ out;
 	}
 
-	if ((r = sshkey_to_blob(id->key, &blob, &bloblen)) != 0) {
+	अगर ((r = sshkey_to_blob(id->कुंजी, &blob, &bloblen)) != 0) {
 		/* we cannot handle this key */
 		debug3_f("cannot handle key");
-		goto out;
+		जाओ out;
 	}
 	/* register callback for USERAUTH_PK_OK message */
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PK_OK, &input_userauth_pk_ok);
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_PK_OK, &निवेश_userauth_pk_ok);
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
@@ -1520,242 +1520,242 @@ send_pubkey_test(struct ssh *ssh, Identity *id)
 	sent = 1;
 
  out:
-	free(alg);
-	free(blob);
-	return sent;
+	मुक्त(alg);
+	मुक्त(blob);
+	वापस sent;
 }
 
-static struct sshkey *
+अटल काष्ठा sshkey *
 load_identity_file(Identity *id)
 {
-	struct sshkey *private = NULL;
-	char prompt[300], *passphrase, *comment;
-	int r, quit = 0, i;
-	struct stat st;
+	काष्ठा sshkey *निजी = शून्य;
+	अक्षर prompt[300], *passphrase, *comment;
+	पूर्णांक r, quit = 0, i;
+	काष्ठा stat st;
 
-	if (stat(id->filename, &st) == -1) {
+	अगर (stat(id->filename, &st) == -1) {
 		do_log2(id->userprovided ?
 		    SYSLOG_LEVEL_INFO : SYSLOG_LEVEL_DEBUG3,
-		    "no such identity: %s: %s", id->filename, strerror(errno));
-		return NULL;
+		    "no such identity: %s: %s", id->filename, म_त्रुटि(त्रुटि_सं));
+		वापस शून्य;
 	}
-	snprintf(prompt, sizeof prompt,
+	snprintf(prompt, माप prompt,
 	    "Enter passphrase for key '%.100s': ", id->filename);
-	for (i = 0; i <= options.number_of_password_prompts; i++) {
-		if (i == 0)
+	क्रम (i = 0; i <= options.संख्या_of_password_prompts; i++) {
+		अगर (i == 0)
 			passphrase = "";
-		else {
+		अन्यथा {
 			passphrase = read_passphrase(prompt, 0);
-			if (*passphrase == '\0') {
+			अगर (*passphrase == '\0') {
 				debug2("no passphrase given, try next key");
-				free(passphrase);
-				break;
+				मुक्त(passphrase);
+				अवरोध;
 			}
 		}
-		switch ((r = sshkey_load_private_type(KEY_UNSPEC, id->filename,
-		    passphrase, &private, &comment))) {
-		case 0:
-			break;
-		case SSH_ERR_KEY_WRONG_PASSPHRASE:
-			if (options.batch_mode) {
+		चयन ((r = sshkey_load_private_type(कुंजी_UNSPEC, id->filename,
+		    passphrase, &निजी, &comment))) {
+		हाल 0:
+			अवरोध;
+		हाल SSH_ERR_कुंजी_WRONG_PASSPHRASE:
+			अगर (options.batch_mode) {
 				quit = 1;
-				break;
+				अवरोध;
 			}
-			if (i != 0)
+			अगर (i != 0)
 				debug2("bad passphrase given, try again...");
-			break;
-		case SSH_ERR_SYSTEM_ERROR:
-			if (errno == ENOENT) {
+			अवरोध;
+		हाल SSH_ERR_SYSTEM_ERROR:
+			अगर (त्रुटि_सं == ENOENT) {
 				debug2_r(r, "Load key \"%s\"", id->filename);
 				quit = 1;
-				break;
+				अवरोध;
 			}
 			/* FALLTHROUGH */
-		default:
+		शेष:
 			error_r(r, "Load key \"%s\"", id->filename);
 			quit = 1;
-			break;
+			अवरोध;
 		}
-		if (private != NULL && sshkey_is_sk(private) &&
-		    options.sk_provider == NULL) {
+		अगर (निजी != शून्य && sshkey_is_sk(निजी) &&
+		    options.sk_provider == शून्य) {
 			debug("key \"%s\" is an authenticator-hosted key, "
 			    "but no provider specified", id->filename);
-			sshkey_free(private);
-			private = NULL;
+			sshkey_free(निजी);
+			निजी = शून्य;
 			quit = 1;
 		}
-		if (!quit && (r = sshkey_check_rsa_length(private,
-		    options.required_rsa_size)) != 0) {
+		अगर (!quit && (r = sshkey_check_rsa_लंबाई(निजी,
+		    options.required_rsa_आकार)) != 0) {
 			debug_fr(r, "Skipping key %s", id->filename);
-			sshkey_free(private);
-			private = NULL;
+			sshkey_free(निजी);
+			निजी = शून्य;
 			quit = 1;
 		}
-		if (!quit && private != NULL && id->agent_fd == -1 &&
-		    !(id->key && id->isprivate))
-			maybe_add_key_to_agent(id->filename, private, comment,
+		अगर (!quit && निजी != शून्य && id->agent_fd == -1 &&
+		    !(id->कुंजी && id->isprivate))
+			maybe_add_कुंजी_to_agent(id->filename, निजी, comment,
 			    passphrase);
-		if (i > 0)
-			freezero(passphrase, strlen(passphrase));
-		free(comment);
-		if (private != NULL || quit)
-			break;
+		अगर (i > 0)
+			freezero(passphrase, म_माप(passphrase));
+		मुक्त(comment);
+		अगर (निजी != शून्य || quit)
+			अवरोध;
 	}
-	return private;
+	वापस निजी;
 }
 
-static int
-key_type_allowed(struct sshkey *key, const char *allowlist)
+अटल पूर्णांक
+कुंजी_type_allowed(काष्ठा sshkey *कुंजी, स्थिर अक्षर *allowlist)
 {
-	if (match_pattern_list(sshkey_ssh_name(key), allowlist, 0) == 1)
-		return 1;
+	अगर (match_pattern_list(sshkey_ssh_name(कुंजी), allowlist, 0) == 1)
+		वापस 1;
 
 	/* RSA keys/certs might be allowed by alternate signature types */
-	switch (key->type) {
-	case KEY_RSA:
-		if (match_pattern_list("rsa-sha2-512", allowlist, 0) == 1)
-			return 1;
-		if (match_pattern_list("rsa-sha2-256", allowlist, 0) == 1)
-			return 1;
-		break;
-	case KEY_RSA_CERT:
-		if (match_pattern_list("rsa-sha2-512-cert-v01@openssh.com",
+	चयन (कुंजी->type) {
+	हाल कुंजी_RSA:
+		अगर (match_pattern_list("rsa-sha2-512", allowlist, 0) == 1)
+			वापस 1;
+		अगर (match_pattern_list("rsa-sha2-256", allowlist, 0) == 1)
+			वापस 1;
+		अवरोध;
+	हाल कुंजी_RSA_CERT:
+		अगर (match_pattern_list("rsa-sha2-512-cert-v01@openssh.com",
 		    allowlist, 0) == 1)
-			return 1;
-		if (match_pattern_list("rsa-sha2-256-cert-v01@openssh.com",
+			वापस 1;
+		अगर (match_pattern_list("rsa-sha2-256-cert-v01@openssh.com",
 		    allowlist, 0) == 1)
-			return 1;
-		break;
+			वापस 1;
+		अवरोध;
 	}
-	return 0;
+	वापस 0;
 }
 
-static int
-key_type_allowed_by_config(struct sshkey *key)
+अटल पूर्णांक
+कुंजी_type_allowed_by_config(काष्ठा sshkey *कुंजी)
 {
-	return key_type_allowed(key, options.pubkey_accepted_algos);
+	वापस कुंजी_type_allowed(कुंजी, options.pubkey_accepted_algos);
 }
 
 /* obtain a list of keys from the agent */
-static int
-get_agent_identities(struct ssh *ssh, int *agent_fdp,
-    struct ssh_identitylist **idlistp)
+अटल पूर्णांक
+get_agent_identities(काष्ठा ssh *ssh, पूर्णांक *agent_fdp,
+    काष्ठा ssh_identitylist **idlistp)
 {
-	int r, agent_fd;
-	struct ssh_identitylist *idlist;
+	पूर्णांक r, agent_fd;
+	काष्ठा ssh_identitylist *idlist;
 
-	if ((r = ssh_get_authentication_socket(&agent_fd)) != 0) {
-		if (r != SSH_ERR_AGENT_NOT_PRESENT)
+	अगर ((r = ssh_get_authentication_socket(&agent_fd)) != 0) {
+		अगर (r != SSH_ERR_AGENT_NOT_PRESENT)
 			debug_fr(r, "ssh_get_authentication_socket");
-		return r;
+		वापस r;
 	}
-	if (ssh != NULL && ssh->kex != NULL) {
-		if ((r = ssh_agent_bind_hostkey(agent_fd, ssh->kex->initial_hostkey,
+	अगर (ssh != शून्य && ssh->kex != शून्य) {
+		अगर ((r = ssh_agent_bind_hostkey(agent_fd, ssh->kex->initial_hostkey,
 		    ssh->kex->session_id, ssh->kex->initial_sig, 0)) == 0)
 			debug_f("bound agent to hostkey");
-		else
+		अन्यथा
 			debug2_fr(r, "ssh_agent_bind_hostkey");
 	}
 
-	if ((r = ssh_fetch_identitylist(agent_fd, &idlist)) != 0) {
+	अगर ((r = ssh_fetch_identitylist(agent_fd, &idlist)) != 0) {
 		debug_fr(r, "ssh_fetch_identitylist");
-		close(agent_fd);
-		return r;
+		बंद(agent_fd);
+		वापस r;
 	}
 	/* success */
 	*agent_fdp = agent_fd;
 	*idlistp = idlist;
 	debug_f("agent returned %zu keys", idlist->nkeys);
-	return 0;
+	वापस 0;
 }
 
 /*
  * Returns nonzero if the certificate extensions/critical-options section
  * has the specified option present, zero otherwise.
  */
-static int
-cert_has_option(struct sshbuf *oblob, const char *target)
+अटल पूर्णांक
+cert_has_option(काष्ठा sshbuf *oblob, स्थिर अक्षर *target)
 {
-	struct sshbuf *c = NULL, *data = NULL;
-	char *name = NULL;
-	int r, found = 0;
+	काष्ठा sshbuf *c = शून्य, *तथ्य = शून्य;
+	अक्षर *name = शून्य;
+	पूर्णांक r, found = 0;
 
-	if (oblob == NULL || (c = sshbuf_fromb(oblob)) == NULL)
-		return 0;
-	while (sshbuf_len(c) > 0) {
-		sshbuf_free(data);
-		data = NULL;
-		free(name);
-		name = NULL;
-		if ((r = sshbuf_get_cstring(c, &name, NULL)) != 0 ||
-		    (r = sshbuf_froms(c, &data)) != 0)
-			break;
-		if (strcmp(name, target) == 0) {
+	अगर (oblob == शून्य || (c = sshbuf_fromb(oblob)) == शून्य)
+		वापस 0;
+	जबतक (sshbuf_len(c) > 0) {
+		sshbuf_free(तथ्य);
+		तथ्य = शून्य;
+		मुक्त(name);
+		name = शून्य;
+		अगर ((r = sshbuf_get_cstring(c, &name, शून्य)) != 0 ||
+		    (r = sshbuf_froms(c, &तथ्य)) != 0)
+			अवरोध;
+		अगर (म_भेद(name, target) == 0) {
 			found = 1;
-			break;
+			अवरोध;
 		}
 	}
-	sshbuf_free(data);
-	free(name);
+	sshbuf_free(तथ्य);
+	मुक्त(name);
 	sshbuf_free(c);
-	return found;
+	वापस found;
 }
 
 /*
  * Returns an integer describing the priority of the identity
  * within its group. Lower numbers are higher priority.
  */
-#define MAX_ID_PRIORITY 3
-static int
-identity_prioritise(struct identity *id)
+#घोषणा MAX_ID_PRIORITY 3
+अटल पूर्णांक
+identity_prioritise(काष्ठा identity *id)
 {
-	if (id == NULL || id->key == NULL)
-		return 3;
-	if (!sshkey_is_cert(id->key) || id->key->cert == NULL)
-		return 3;
-	if (sshkey_is_sk(id->key) &&
-	    cert_has_option(id->key->cert->critical, "verify-required"))
-		return 2;
-	if (sshkey_is_sk(id->key) &&
-	    cert_has_option(id->key->cert->extensions, "no-touch-required"))
-		return 0;
-	return 1;
+	अगर (id == शून्य || id->कुंजी == शून्य)
+		वापस 3;
+	अगर (!sshkey_is_cert(id->कुंजी) || id->कुंजी->cert == शून्य)
+		वापस 3;
+	अगर (sshkey_is_sk(id->कुंजी) &&
+	    cert_has_option(id->कुंजी->cert->critical, "verify-required"))
+		वापस 2;
+	अगर (sshkey_is_sk(id->कुंजी) &&
+	    cert_has_option(id->कुंजी->cert->extensions, "no-touch-required"))
+		वापस 0;
+	वापस 1;
 }
 
-static void
-order_identities_by_prio(struct idlist *list)
+अटल व्योम
+order_identities_by_prio(काष्ठा idlist *list)
 {
-	struct idlist prio[MAX_ID_PRIORITY + 1], sorted;
-	struct identity *id, *tmp, *dummy;
-	int p;
+	काष्ठा idlist prio[MAX_ID_PRIORITY + 1], sorted;
+	काष्ठा identity *id, *tmp, *dummy;
+	पूर्णांक p;
 
-	for (p = 0; p <= MAX_ID_PRIORITY; p++)
+	क्रम (p = 0; p <= MAX_ID_PRIORITY; p++)
 		TAILQ_INIT(&prio[p]);
 	TAILQ_INIT(&sorted);
 
-	TAILQ_FOREACH_SAFE(id, list, next, tmp) {
-		if (id->userprovided)
-			continue;
-		dummy = xcalloc(1, sizeof(*dummy));
+	TAILQ_FOREACH_SAFE(id, list, अग्र, tmp) {
+		अगर (id->userprovided)
+			जारी;
+		dummy = xcalloc(1, माप(*dummy));
 		dummy->userprovided = -1;
-		TAILQ_INSERT_BEFORE(id, dummy, next);
-		TAILQ_REMOVE(list, id, next);
+		TAILQ_INSERT_BEFORE(id, dummy, अग्र);
+		TAILQ_REMOVE(list, id, अग्र);
 		p = identity_prioritise(id);
-		if (p < 0 || p > MAX_ID_PRIORITY)
+		अगर (p < 0 || p > MAX_ID_PRIORITY)
 			fatal_f("internal error: bad priority");
-		TAILQ_INSERT_TAIL(&prio[p], id, next);
+		TAILQ_INSERT_TAIL(&prio[p], id, अग्र);
 	}
-	for (p = 0; p <= MAX_ID_PRIORITY; p++)
-		TAILQ_CONCAT(&sorted, &prio[p], next);
+	क्रम (p = 0; p <= MAX_ID_PRIORITY; p++)
+		TAILQ_CONCAT(&sorted, &prio[p], अग्र);
 
-	TAILQ_FOREACH_SAFE(id, list, next, tmp) {
-		if (id->userprovided != -1)
-			continue;
-		struct identity *s = TAILQ_FIRST(&sorted);
-		TAILQ_REMOVE(&sorted, s, next);
-		TAILQ_INSERT_BEFORE(id, s, next);
-		TAILQ_REMOVE(list, id, next);
-		free(id);
+	TAILQ_FOREACH_SAFE(id, list, अग्र, tmp) {
+		अगर (id->userprovided != -1)
+			जारी;
+		काष्ठा identity *s = TAILQ_FIRST(&sorted);
+		TAILQ_REMOVE(&sorted, s, अग्र);
+		TAILQ_INSERT_BEFORE(id, s, अग्र);
+		TAILQ_REMOVE(list, id, अग्र);
+		मुक्त(id);
 	}
 }
 
@@ -1767,293 +1767,293 @@ order_identities_by_prio(struct idlist *list)
  *	4. PKCS#11 keys that are found in the config file
  *	5. keys that are only listed in the config file
  */
-static void
-pubkey_prepare(struct ssh *ssh, Authctxt *authctxt)
+अटल व्योम
+pubkey_prepare(काष्ठा ssh *ssh, Authctxt *authctxt)
 {
-	struct identity *id, *id2, *tmp;
-	struct idlist agent, files, certs, agent_keys, *preferred;
-	struct sshkey *key;
-	int disallowed, agent_fd = -1, i, r, found;
-	size_t j;
-	struct ssh_identitylist *idlist;
-	char *cp, *ident;
+	काष्ठा identity *id, *id2, *tmp;
+	काष्ठा idlist agent, files, certs, agent_कुंजियाँ, *preferred;
+	काष्ठा sshkey *कुंजी;
+	पूर्णांक disallowed, agent_fd = -1, i, r, found;
+	माप_प्रकार j;
+	काष्ठा ssh_identitylist *idlist;
+	अक्षर *cp, *ident;
 
 	TAILQ_INIT(&agent);	/* keys from the agent */
 	TAILQ_INIT(&files);	/* keys from the config file */
 	TAILQ_INIT(&certs);	/* certificates specified by user */
-	TAILQ_INIT(&agent_keys); /* keys supported by the agent */
-	preferred = &authctxt->keys;
+	TAILQ_INIT(&agent_कुंजियाँ); /* keys supported by the agent */
+	preferred = &authctxt->कुंजियाँ;
 	TAILQ_INIT(preferred);	/* preferred order of keys */
 
 	/* list of keys stored in the filesystem and PKCS#11 */
-	for (i = 0; i < options.num_identity_files; i++) {
-		key = options.identity_keys[i];
-		if (key && key->cert &&
-		    key->cert->type != SSH2_CERT_TYPE_USER) {
+	क्रम (i = 0; i < options.अंक_identity_files; i++) {
+		कुंजी = options.identity_कुंजियाँ[i];
+		अगर (कुंजी && कुंजी->cert &&
+		    कुंजी->cert->type != SSH2_CERT_TYPE_USER) {
 			debug_f("ignoring certificate %s: not a user "
 			    "certificate", options.identity_files[i]);
-			continue;
+			जारी;
 		}
-		if (key && sshkey_is_sk(key) && options.sk_provider == NULL) {
+		अगर (कुंजी && sshkey_is_sk(कुंजी) && options.sk_provider == शून्य) {
 			debug_f("ignoring authenticator-hosted key %s as no "
 			    "SecurityKeyProvider has been specified",
 			    options.identity_files[i]);
-			continue;
+			जारी;
 		}
-		options.identity_keys[i] = NULL;
-		id = xcalloc(1, sizeof(*id));
+		options.identity_कुंजियाँ[i] = शून्य;
+		id = xcalloc(1, माप(*id));
 		id->agent_fd = -1;
-		id->key = key;
+		id->कुंजी = कुंजी;
 		id->filename = xstrdup(options.identity_files[i]);
 		id->userprovided = options.identity_file_userprovided[i];
-		TAILQ_INSERT_TAIL(&files, id, next);
+		TAILQ_INSERT_TAIL(&files, id, अग्र);
 	}
 
 	/* list of certificates specified by user */
-	for (i = 0; i < options.num_certificate_files; i++) {
-		key = options.certificates[i];
-		if (!sshkey_is_cert(key) || key->cert == NULL ||
-		    key->cert->type != SSH2_CERT_TYPE_USER) {
+	क्रम (i = 0; i < options.अंक_certificate_files; i++) {
+		कुंजी = options.certificates[i];
+		अगर (!sshkey_is_cert(कुंजी) || कुंजी->cert == शून्य ||
+		    कुंजी->cert->type != SSH2_CERT_TYPE_USER) {
 			debug_f("ignoring certificate %s: not a user "
 			    "certificate", options.identity_files[i]);
-			continue;
+			जारी;
 		}
-		if (key && sshkey_is_sk(key) && options.sk_provider == NULL) {
+		अगर (कुंजी && sshkey_is_sk(कुंजी) && options.sk_provider == शून्य) {
 			debug_f("ignoring authenticator-hosted key "
 			    "certificate %s as no "
 			    "SecurityKeyProvider has been specified",
 			    options.identity_files[i]);
-			continue;
+			जारी;
 		}
-		id = xcalloc(1, sizeof(*id));
+		id = xcalloc(1, माप(*id));
 		id->agent_fd = -1;
-		id->key = key;
+		id->कुंजी = कुंजी;
 		id->filename = xstrdup(options.certificate_files[i]);
 		id->userprovided = options.certificate_file_userprovided[i];
-		TAILQ_INSERT_TAIL(&certs, id, next);
+		TAILQ_INSERT_TAIL(&certs, id, अग्र);
 	}
 	order_identities_by_prio(&certs);
-	TAILQ_CONCAT(preferred, &certs, next);
+	TAILQ_CONCAT(preferred, &certs, अग्र);
 
 	/* list of keys supported by the agent */
-	if ((r = get_agent_identities(ssh, &agent_fd, &idlist)) == 0) {
-		for (j = 0; j < idlist->nkeys; j++) {
-			if ((r = sshkey_check_rsa_length(idlist->keys[j],
-			    options.required_rsa_size)) != 0) {
+	अगर ((r = get_agent_identities(ssh, &agent_fd, &idlist)) == 0) {
+		क्रम (j = 0; j < idlist->nkeys; j++) {
+			अगर ((r = sshkey_check_rsa_लंबाई(idlist->कुंजियाँ[j],
+			    options.required_rsa_आकार)) != 0) {
 				debug_fr(r, "ignoring %s agent key",
-				    sshkey_ssh_name(idlist->keys[j]));
-				continue;
+				    sshkey_ssh_name(idlist->कुंजियाँ[j]));
+				जारी;
 			}
 			found = 0;
-			TAILQ_FOREACH(id, &files, next) {
+			TAILQ_FOREACH(id, &files, अग्र) {
 				/*
 				 * agent keys from the config file are
 				 * preferred
 				 */
-				if (sshkey_equal(idlist->keys[j], id->key)) {
-					TAILQ_REMOVE(&files, id, next);
-					TAILQ_INSERT_TAIL(&agent_keys, id, next);
+				अगर (sshkey_equal(idlist->कुंजियाँ[j], id->कुंजी)) {
+					TAILQ_REMOVE(&files, id, अग्र);
+					TAILQ_INSERT_TAIL(&agent_कुंजियाँ, id, अग्र);
 					id->agent_fd = agent_fd;
 					found = 1;
-					break;
+					अवरोध;
 				}
 			}
-			if (!found && !options.identities_only) {
-				id = xcalloc(1, sizeof(*id));
+			अगर (!found && !options.identities_only) {
+				id = xcalloc(1, माप(*id));
 				/* XXX "steals" key/comment from idlist */
-				id->key = idlist->keys[j];
+				id->कुंजी = idlist->कुंजियाँ[j];
 				id->filename = idlist->comments[j];
-				idlist->keys[j] = NULL;
-				idlist->comments[j] = NULL;
+				idlist->कुंजियाँ[j] = शून्य;
+				idlist->comments[j] = शून्य;
 				id->agent_fd = agent_fd;
-				TAILQ_INSERT_TAIL(&agent, id, next);
+				TAILQ_INSERT_TAIL(&agent, id, अग्र);
 			}
 		}
 		ssh_free_identitylist(idlist);
 		/* append remaining agent keys */
-		TAILQ_CONCAT(&agent_keys, &agent, next);
-		order_identities_by_prio(&agent_keys);
-		TAILQ_CONCAT(preferred, &agent_keys, next);
+		TAILQ_CONCAT(&agent_कुंजियाँ, &agent, अग्र);
+		order_identities_by_prio(&agent_कुंजियाँ);
+		TAILQ_CONCAT(preferred, &agent_कुंजियाँ, अग्र);
 		authctxt->agent_fd = agent_fd;
 	}
 	/* Prefer PKCS11 keys that are explicitly listed */
-	TAILQ_FOREACH_SAFE(id, &files, next, tmp) {
-		if (id->key == NULL || (id->key->flags & SSHKEY_FLAG_EXT) == 0)
-			continue;
+	TAILQ_FOREACH_SAFE(id, &files, अग्र, tmp) {
+		अगर (id->कुंजी == शून्य || (id->कुंजी->flags & SSHKEY_FLAG_EXT) == 0)
+			जारी;
 		found = 0;
-		TAILQ_FOREACH(id2, &files, next) {
-			if (id2->key == NULL ||
-			    (id2->key->flags & SSHKEY_FLAG_EXT) != 0)
-				continue;
-			if (sshkey_equal(id->key, id2->key)) {
-				TAILQ_REMOVE(&files, id, next);
-				TAILQ_INSERT_TAIL(preferred, id, next);
+		TAILQ_FOREACH(id2, &files, अग्र) {
+			अगर (id2->कुंजी == शून्य ||
+			    (id2->कुंजी->flags & SSHKEY_FLAG_EXT) != 0)
+				जारी;
+			अगर (sshkey_equal(id->कुंजी, id2->कुंजी)) {
+				TAILQ_REMOVE(&files, id, अग्र);
+				TAILQ_INSERT_TAIL(preferred, id, अग्र);
 				found = 1;
-				break;
+				अवरोध;
 			}
 		}
 		/* If IdentitiesOnly set and key not found then don't use it */
-		if (!found && options.identities_only) {
-			TAILQ_REMOVE(&files, id, next);
-			freezero(id, sizeof(*id));
+		अगर (!found && options.identities_only) {
+			TAILQ_REMOVE(&files, id, अग्र);
+			freezero(id, माप(*id));
 		}
 	}
 	order_identities_by_prio(&files);
 	/* append remaining keys from the config file */
-	TAILQ_CONCAT(preferred, &files, next);
+	TAILQ_CONCAT(preferred, &files, अग्र);
 	/* finally, filter by PubkeyAcceptedAlgorithms */
-	TAILQ_FOREACH_SAFE(id, preferred, next, id2) {
+	TAILQ_FOREACH_SAFE(id, preferred, अग्र, id2) {
 		disallowed = 0;
-		cp = NULL;
-		if (id->key == NULL)
-			continue;
-		if (!key_type_allowed_by_config(id->key)) {
+		cp = शून्य;
+		अगर (id->कुंजी == शून्य)
+			जारी;
+		अगर (!कुंजी_type_allowed_by_config(id->कुंजी)) {
 			debug("Skipping %s key %s - corresponding algorithm "
 			    "not in PubkeyAcceptedAlgorithms",
-			    sshkey_ssh_name(id->key), id->filename);
+			    sshkey_ssh_name(id->कुंजी), id->filename);
 			disallowed = 1;
-		} else if (ssh != NULL && ssh->kex != NULL &&
-		    ssh->kex->server_sig_algs != NULL &&
-		    (cp = key_sig_algorithm(ssh, id->key)) == NULL) {
+		} अन्यथा अगर (ssh != शून्य && ssh->kex != शून्य &&
+		    ssh->kex->server_sig_algs != शून्य &&
+		    (cp = कुंजी_sig_algorithm(ssh, id->कुंजी)) == शून्य) {
 			debug("Skipping %s key %s - corresponding algorithm "
 			    "not supported by server",
-			    sshkey_ssh_name(id->key), id->filename);
+			    sshkey_ssh_name(id->कुंजी), id->filename);
 			disallowed = 1;
 		}
-		free(cp);
-		if (!disallowed)
-			continue;
+		मुक्त(cp);
+		अगर (!disallowed)
+			जारी;
 		/* remove key */
-		TAILQ_REMOVE(preferred, id, next);
-		sshkey_free(id->key);
-		free(id->filename);
-		freezero(id, sizeof(*id));
+		TAILQ_REMOVE(preferred, id, अग्र);
+		sshkey_free(id->कुंजी);
+		मुक्त(id->filename);
+		freezero(id, माप(*id));
 	}
 	/* List the keys we plan on using */
-	TAILQ_FOREACH_SAFE(id, preferred, next, id2) {
+	TAILQ_FOREACH_SAFE(id, preferred, अग्र, id2) {
 		ident = format_identity(id);
 		debug("Will attempt key: %s", ident);
-		free(ident);
+		मुक्त(ident);
 	}
 	debug2_f("done");
 }
 
-static void
-pubkey_cleanup(struct ssh *ssh)
+अटल व्योम
+pubkey_cleanup(काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 	Identity *id;
 
-	if (authctxt->agent_fd != -1) {
+	अगर (authctxt->agent_fd != -1) {
 		ssh_close_authentication_socket(authctxt->agent_fd);
 		authctxt->agent_fd = -1;
 	}
-	for (id = TAILQ_FIRST(&authctxt->keys); id;
-	    id = TAILQ_FIRST(&authctxt->keys)) {
-		TAILQ_REMOVE(&authctxt->keys, id, next);
-		sshkey_free(id->key);
-		free(id->filename);
-		free(id);
+	क्रम (id = TAILQ_FIRST(&authctxt->कुंजियाँ); id;
+	    id = TAILQ_FIRST(&authctxt->कुंजियाँ)) {
+		TAILQ_REMOVE(&authctxt->कुंजियाँ, id, अग्र);
+		sshkey_free(id->कुंजी);
+		मुक्त(id->filename);
+		मुक्त(id);
 	}
 }
 
-void
-pubkey_dump(struct ssh *ssh)
+व्योम
+pubkey_dump(काष्ठा ssh *ssh)
 {
 	Authctxt authctxt;
 	Identity *id;
-	char *ident;
+	अक्षर *ident;
 
-	memset(&authctxt, 0, sizeof(authctxt));
+	स_रखो(&authctxt, 0, माप(authctxt));
 	authctxt.agent_fd = -1;
 	ssh->authctxt = &authctxt;
 
 	pubkey_prepare(ssh, &authctxt);
-	TAILQ_FOREACH(id, &authctxt.keys, next) {
+	TAILQ_FOREACH(id, &authctxt.कुंजियाँ, अग्र) {
 		ident = format_identity(id);
-		fprintf(stdout, "%s\n", ident);
-		free(ident);
+		ख_लिखो(मानक_निकास, "%s\n", ident);
+		मुक्त(ident);
 	}
 	pubkey_cleanup(ssh);
-	ssh->authctxt = NULL;
+	ssh->authctxt = शून्य;
 }
 
-static void
+अटल व्योम
 pubkey_reset(Authctxt *authctxt)
 {
 	Identity *id;
 
-	TAILQ_FOREACH(id, &authctxt->keys, next)
+	TAILQ_FOREACH(id, &authctxt->कुंजियाँ, अग्र)
 		id->tried = 0;
 }
 
-static int
-userauth_pubkey(struct ssh *ssh)
+अटल पूर्णांक
+userauth_pubkey(काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 	Identity *id;
-	int sent = 0;
-	char *ident;
-	static int prepared;
+	पूर्णांक sent = 0;
+	अक्षर *ident;
+	अटल पूर्णांक prepared;
 
-	if (!prepared) {
+	अगर (!prepared) {
 		pubkey_prepare(ssh, authctxt);
 		prepared = 1;
 	}
 
-	while ((id = TAILQ_FIRST(&authctxt->keys))) {
-		if (id->tried++)
-			return (0);
+	जबतक ((id = TAILQ_FIRST(&authctxt->कुंजियाँ))) {
+		अगर (id->tried++)
+			वापस (0);
 		/* move key to the end of the queue */
-		TAILQ_REMOVE(&authctxt->keys, id, next);
-		TAILQ_INSERT_TAIL(&authctxt->keys, id, next);
+		TAILQ_REMOVE(&authctxt->कुंजियाँ, id, अग्र);
+		TAILQ_INSERT_TAIL(&authctxt->कुंजियाँ, id, अग्र);
 		/*
 		 * send a test message if we have the public key. for
 		 * encrypted keys we cannot do this and have to load the
 		 * private key instead
 		 */
-		if (id->key != NULL) {
+		अगर (id->कुंजी != शून्य) {
 			ident = format_identity(id);
 			debug("Offering public key: %s", ident);
-			free(ident);
+			मुक्त(ident);
 			sent = send_pubkey_test(ssh, id);
-		} else {
+		} अन्यथा {
 			debug("Trying private key: %s", id->filename);
-			id->key = load_identity_file(id);
-			if (id->key != NULL) {
+			id->कुंजी = load_identity_file(id);
+			अगर (id->कुंजी != शून्य) {
 				id->isprivate = 1;
 				sent = sign_and_send_pubkey(ssh, id);
-				sshkey_free(id->key);
-				id->key = NULL;
+				sshkey_free(id->कुंजी);
+				id->कुंजी = शून्य;
 				id->isprivate = 0;
 			}
 		}
-		if (sent)
-			return (sent);
+		अगर (sent)
+			वापस (sent);
 	}
-	return (0);
+	वापस (0);
 }
 
 /*
  * Send userauth request message specifying keyboard-interactive method.
  */
-static int
-userauth_kbdint(struct ssh *ssh)
+अटल पूर्णांक
+userauth_kbdint(काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	int r;
+	पूर्णांक r;
 
-	if (authctxt->attempt_kbdint++ >= options.number_of_password_prompts)
-		return 0;
+	अगर (authctxt->attempt_kbdint++ >= options.संख्या_of_password_prompts)
+		वापस 0;
 	/* disable if no SSH2_MSG_USERAUTH_INFO_REQUEST has been seen */
-	if (authctxt->attempt_kbdint > 1 && !authctxt->info_req_seen) {
+	अगर (authctxt->attempt_kbdint > 1 && !authctxt->info_req_seen) {
 		debug3("userauth_kbdint: disable: no info_req_seen");
-		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST, NULL);
-		return 0;
+		ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_INFO_REQUEST, शून्य);
+		वापस 0;
 	}
 
 	debug2("userauth_kbdint");
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
@@ -2063,217 +2063,217 @@ userauth_kbdint(struct ssh *ssh)
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST, &input_userauth_info_req);
-	return 1;
+	ssh_dispatch_set(ssh, SSH2_संदेश_USERAUTH_INFO_REQUEST, &निवेश_userauth_info_req);
+	वापस 1;
 }
 
 /*
  * parse INFO_REQUEST, prompt user and send INFO_RESPONSE
  */
-static int
-input_userauth_info_req(int type, uint32_t seq, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_userauth_info_req(पूर्णांक type, uint32_t seq, काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	char *name = NULL, *inst = NULL, *lang = NULL, *prompt = NULL;
-	char *display_prompt = NULL, *response = NULL;
+	अक्षर *name = शून्य, *inst = शून्य, *lang = शून्य, *prompt = शून्य;
+	अक्षर *display_prompt = शून्य, *response = शून्य;
 	u_char echo = 0;
-	u_int num_prompts, i;
-	int r, addnl;
-	size_t len;
+	u_int अंक_prompts, i;
+	पूर्णांक r, addnl;
+	माप_प्रकार len;
 
 	debug2_f("entering");
 
-	if (authctxt == NULL)
+	अगर (authctxt == शून्य)
 		fatal_f("no authentication context");
 
 	authctxt->info_req_seen = 1;
 
-	if ((r = sshpkt_get_cstring(ssh, &name, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &inst, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0)
-		goto out;
-	if ((len = strlen(name)) > 0) {
+	अगर ((r = sshpkt_get_cstring(ssh, &name, शून्य)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &inst, शून्य)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &lang, शून्य)) != 0)
+		जाओ out;
+	अगर ((len = म_माप(name)) > 0) {
 		addnl = name[len] != '\n';
-		fmprintf(stderr, "%s%s", name, addnl ? "\n" : "");
+		fmprintf(मानक_त्रुटि, "%s%s", name, addnl ? "\n" : "");
 	}
-	if ((len = strlen(inst)) > 0) {
+	अगर ((len = म_माप(inst)) > 0) {
 		addnl = inst[len] != '\n';
-		fmprintf(stderr, "%s%s", inst, addnl ? "\n" : "");
+		fmprintf(मानक_त्रुटि, "%s%s", inst, addnl ? "\n" : "");
 	}
 
-	if ((r = sshpkt_get_u32(ssh, &num_prompts)) != 0)
-		goto out;
+	अगर ((r = sshpkt_get_u32(ssh, &अंक_prompts)) != 0)
+		जाओ out;
 	/*
 	 * Begin to build info response packet based on prompts requested.
 	 * We commit to providing the correct number of responses, so if
 	 * further on we run into a problem that prevents this, we have to
 	 * be sure and clean this up and send a correct error response.
 	 */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE)) != 0 ||
-	    (r = sshpkt_put_u32(ssh, num_prompts)) != 0)
-		goto out;
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_USERAUTH_INFO_RESPONSE)) != 0 ||
+	    (r = sshpkt_put_u32(ssh, अंक_prompts)) != 0)
+		जाओ out;
 
-	debug2_f("num_prompts %d", num_prompts);
-	for (i = 0; i < num_prompts; i++) {
-		if ((r = sshpkt_get_cstring(ssh, &prompt, NULL)) != 0 ||
+	debug2_f("num_prompts %d", अंक_prompts);
+	क्रम (i = 0; i < अंक_prompts; i++) {
+		अगर ((r = sshpkt_get_cstring(ssh, &prompt, शून्य)) != 0 ||
 		    (r = sshpkt_get_u8(ssh, &echo)) != 0)
-			goto out;
-		if (asmprintf(&display_prompt, INT_MAX, NULL, "(%s@%s) %s",
-		    authctxt->server_user, options.host_key_alias ?
-		    options.host_key_alias : authctxt->host, prompt) == -1)
+			जाओ out;
+		अगर (asmprintf(&display_prompt, पूर्णांक_उच्च, शून्य, "(%s@%s) %s",
+		    authctxt->server_user, options.host_कुंजी_alias ?
+		    options.host_कुंजी_alias : authctxt->host, prompt) == -1)
 			fatal_f("asmprintf failed");
 		response = read_passphrase(display_prompt, echo ? RP_ECHO : 0);
-		if ((r = sshpkt_put_cstring(ssh, response)) != 0)
-			goto out;
-		freezero(response, strlen(response));
-		free(prompt);
-		free(display_prompt);
-		display_prompt = response = prompt = NULL;
+		अगर ((r = sshpkt_put_cstring(ssh, response)) != 0)
+			जाओ out;
+		freezero(response, म_माप(response));
+		मुक्त(prompt);
+		मुक्त(display_prompt);
+		display_prompt = response = prompt = शून्य;
 	}
 	/* done with parsing incoming message. */
-	if ((r = sshpkt_get_end(ssh)) != 0 ||
+	अगर ((r = sshpkt_get_end(ssh)) != 0 ||
 	    (r = sshpkt_add_padding(ssh, 64)) != 0)
-		goto out;
+		जाओ out;
 	r = sshpkt_send(ssh);
  out:
-	if (response)
-		freezero(response, strlen(response));
-	free(prompt);
-	free(display_prompt);
-	free(name);
-	free(inst);
-	free(lang);
-	return r;
+	अगर (response)
+		freezero(response, म_माप(response));
+	मुक्त(prompt);
+	मुक्त(display_prompt);
+	मुक्त(name);
+	मुक्त(inst);
+	मुक्त(lang);
+	वापस r;
 }
 
-static int
-ssh_keysign(struct ssh *ssh, struct sshkey *key, u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen)
+अटल पूर्णांक
+ssh_keysign(काष्ठा ssh *ssh, काष्ठा sshkey *कुंजी, u_char **sigp, माप_प्रकार *lenp,
+    स्थिर u_char *तथ्य, माप_प्रकार datalen)
 {
-	struct sshbuf *b;
-	struct stat st;
+	काष्ठा sshbuf *b;
+	काष्ठा stat st;
 	pid_t pid;
-	int r, to[2], from[2], status;
-	int sock = ssh_packet_get_connection_in(ssh);
+	पूर्णांक r, to[2], from[2], status;
+	पूर्णांक sock = ssh_packet_get_connection_in(ssh);
 	u_char rversion = 0, version = 2;
-	void (*osigchld)(int);
+	व्योम (*osigchld)(पूर्णांक);
 
-	*sigp = NULL;
+	*sigp = शून्य;
 	*lenp = 0;
 
-	if (stat(_PATH_SSH_KEY_SIGN, &st) == -1) {
-		error_f("not installed: %s", strerror(errno));
-		return -1;
+	अगर (stat(PATH_SSH_कुंजी_SIGN, &st) == -1) {
+		error_f("not installed: %s", म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
-	if (fflush(stdout) != 0) {
-		error_f("fflush: %s", strerror(errno));
-		return -1;
+	अगर (ख_साफ(मानक_निकास) != 0) {
+		error_f("fflush: %s", म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
-	if (pipe(to) == -1) {
-		error_f("pipe: %s", strerror(errno));
-		return -1;
+	अगर (pipe(to) == -1) {
+		error_f("pipe: %s", म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
-	if (pipe(from) == -1) {
-		error_f("pipe: %s", strerror(errno));
-		return -1;
+	अगर (pipe(from) == -1) {
+		error_f("pipe: %s", म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
-	if ((pid = fork()) == -1) {
-		error_f("fork: %s", strerror(errno));
-		return -1;
+	अगर ((pid = विभाजन()) == -1) {
+		error_f("fork: %s", म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
-	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if (pid == 0) {
-		close(from[0]);
-		if (dup2(from[1], STDOUT_FILENO) == -1)
-			fatal_f("dup2: %s", strerror(errno));
-		close(to[1]);
-		if (dup2(to[0], STDIN_FILENO) == -1)
-			fatal_f("dup2: %s", strerror(errno));
-		close(from[1]);
-		close(to[0]);
+	osigchld = ssh_signal(SIGCHLD, संक_पूर्व);
+	अगर (pid == 0) {
+		बंद(from[0]);
+		अगर (dup2(from[1], STDOUT_FILENO) == -1)
+			fatal_f("dup2: %s", म_त्रुटि(त्रुटि_सं));
+		बंद(to[1]);
+		अगर (dup2(to[0], STDIN_FILENO) == -1)
+			fatal_f("dup2: %s", म_त्रुटि(त्रुटि_सं));
+		बंद(from[1]);
+		बंद(to[0]);
 
-		if (dup2(sock, STDERR_FILENO + 1) == -1)
-			fatal_f("dup2: %s", strerror(errno));
+		अगर (dup2(sock, STDERR_FILENO + 1) == -1)
+			fatal_f("dup2: %s", म_त्रुटि(त्रुटि_सं));
 		sock = STDERR_FILENO + 1;
-		if (fcntl(sock, F_SETFD, 0) == -1) /* keep the socket on exec */
-			debug3_f("fcntl F_SETFD: %s", strerror(errno));
+		अगर (fcntl(sock, F_SETFD, 0) == -1) /* keep the socket on exec */
+			debug3_f("fcntl F_SETFD: %s", म_त्रुटि(त्रुटि_सं));
 		closefrom(sock + 1);
 
 		debug3_f("[child] pid=%ld, exec %s",
-		    (long)getpid(), _PATH_SSH_KEY_SIGN);
-		execl(_PATH_SSH_KEY_SIGN, _PATH_SSH_KEY_SIGN, (char *)NULL);
-		fatal_f("exec(%s): %s", _PATH_SSH_KEY_SIGN,
-		    strerror(errno));
+		    (दीर्घ)getpid(), PATH_SSH_कुंजी_SIGN);
+		execl(PATH_SSH_कुंजी_SIGN, PATH_SSH_कुंजी_SIGN, (अक्षर *)शून्य);
+		fatal_f("exec(%s): %s", PATH_SSH_कुंजी_SIGN,
+		    म_त्रुटि(त्रुटि_सं));
 	}
-	close(from[1]);
-	close(to[0]);
+	बंद(from[1]);
+	बंद(to[0]);
 	sock = STDERR_FILENO + 1;
 
-	if ((b = sshbuf_new()) == NULL)
+	अगर ((b = sshbuf_new()) == शून्य)
 		fatal_f("sshbuf_new failed");
 	/* send # of sock, data to be signed */
-	if ((r = sshbuf_put_u32(b, sock)) != 0 ||
-	    (r = sshbuf_put_string(b, data, datalen)) != 0)
+	अगर ((r = sshbuf_put_u32(b, sock)) != 0 ||
+	    (r = sshbuf_put_string(b, तथ्य, datalen)) != 0)
 		fatal_fr(r, "buffer error");
-	if (ssh_msg_send(to[1], version, b) == -1)
+	अगर (ssh_संदेश_send(to[1], version, b) == -1)
 		fatal_f("couldn't send request");
 	sshbuf_reset(b);
-	r = ssh_msg_recv(from[0], b);
-	close(from[0]);
-	close(to[1]);
-	if (r < 0) {
+	r = ssh_संदेश_recv(from[0], b);
+	बंद(from[0]);
+	बंद(to[1]);
+	अगर (r < 0) {
 		error_f("no reply");
-		goto fail;
+		जाओ fail;
 	}
 
-	errno = 0;
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno != EINTR) {
-			error_f("waitpid %ld: %s", (long)pid, strerror(errno));
-			goto fail;
+	त्रुटि_सं = 0;
+	जबतक (waitpid(pid, &status, 0) == -1) {
+		अगर (त्रुटि_सं != EINTR) {
+			error_f("waitpid %ld: %s", (दीर्घ)pid, म_त्रुटि(त्रुटि_सं));
+			जाओ fail;
 		}
 	}
-	if (!WIFEXITED(status)) {
+	अगर (!WIFEXITED(status)) {
 		error_f("exited abnormally");
-		goto fail;
+		जाओ fail;
 	}
-	if (WEXITSTATUS(status) != 0) {
+	अगर (WEXITSTATUS(status) != 0) {
 		error_f("exited with status %d", WEXITSTATUS(status));
-		goto fail;
+		जाओ fail;
 	}
-	if ((r = sshbuf_get_u8(b, &rversion)) != 0) {
+	अगर ((r = sshbuf_get_u8(b, &rversion)) != 0) {
 		error_fr(r, "buffer error");
-		goto fail;
+		जाओ fail;
 	}
-	if (rversion != version) {
+	अगर (rversion != version) {
 		error_f("bad version");
-		goto fail;
+		जाओ fail;
 	}
-	if ((r = sshbuf_get_string(b, sigp, lenp)) != 0) {
+	अगर ((r = sshbuf_get_string(b, sigp, lenp)) != 0) {
 		error_fr(r, "buffer error");
  fail:
 		ssh_signal(SIGCHLD, osigchld);
 		sshbuf_free(b);
-		return -1;
+		वापस -1;
 	}
 	ssh_signal(SIGCHLD, osigchld);
 	sshbuf_free(b);
 
-	return 0;
+	वापस 0;
 }
 
-static int
-userauth_hostbased(struct ssh *ssh)
+अटल पूर्णांक
+userauth_hostbased(काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	struct sshkey *private = NULL;
-	struct sshbuf *b = NULL;
-	u_char *sig = NULL, *keyblob = NULL;
-	char *fp = NULL, *chost = NULL, *lname = NULL;
-	size_t siglen = 0, keylen = 0;
-	int i, r, success = 0;
+	काष्ठा sshkey *निजी = शून्य;
+	काष्ठा sshbuf *b = शून्य;
+	u_char *sig = शून्य, *keyblob = शून्य;
+	अक्षर *fp = शून्य, *chost = शून्य, *lname = शून्य;
+	माप_प्रकार siglen = 0, keylen = 0;
+	पूर्णांक i, r, success = 0;
 
-	if (authctxt->ktypes == NULL) {
+	अगर (authctxt->ktypes == शून्य) {
 		authctxt->oktypes = xstrdup(options.hostbased_accepted_algos);
 		authctxt->ktypes = authctxt->oktypes;
 	}
@@ -2282,56 +2282,56 @@ userauth_hostbased(struct ssh *ssh)
 	 * Work through each listed type pattern in HostbasedAcceptedAlgorithms,
 	 * trying each hostkey that matches the type in turn.
 	 */
-	for (;;) {
-		if (authctxt->active_ktype == NULL)
+	क्रम (;;) {
+		अगर (authctxt->active_ktype == शून्य)
 			authctxt->active_ktype = strsep(&authctxt->ktypes, ",");
-		if (authctxt->active_ktype == NULL ||
+		अगर (authctxt->active_ktype == शून्य ||
 		    *authctxt->active_ktype == '\0')
-			break;
+			अवरोध;
 		debug3_f("trying key type %s", authctxt->active_ktype);
 
 		/* check for a useful key */
-		private = NULL;
-		for (i = 0; i < authctxt->sensitive->nkeys; i++) {
-			if (authctxt->sensitive->keys[i] == NULL ||
-			    authctxt->sensitive->keys[i]->type == KEY_UNSPEC)
-				continue;
-			if (!sshkey_match_keyname_to_sigalgs(
-			    sshkey_ssh_name(authctxt->sensitive->keys[i]),
+		निजी = शून्य;
+		क्रम (i = 0; i < authctxt->sensitive->nkeys; i++) {
+			अगर (authctxt->sensitive->कुंजियाँ[i] == शून्य ||
+			    authctxt->sensitive->कुंजियाँ[i]->type == कुंजी_UNSPEC)
+				जारी;
+			अगर (!sshkey_match_keyname_to_sigalgs(
+			    sshkey_ssh_name(authctxt->sensitive->कुंजियाँ[i]),
 			    authctxt->active_ktype))
-				continue;
+				जारी;
 			/* we take and free the key */
-			private = authctxt->sensitive->keys[i];
-			authctxt->sensitive->keys[i] = NULL;
-			break;
+			निजी = authctxt->sensitive->कुंजियाँ[i];
+			authctxt->sensitive->कुंजियाँ[i] = शून्य;
+			अवरोध;
 		}
 		/* Found one */
-		if (private != NULL)
-			break;
+		अगर (निजी != शून्य)
+			अवरोध;
 		/* No more keys of this type; advance */
-		authctxt->active_ktype = NULL;
+		authctxt->active_ktype = शून्य;
 	}
-	if (private == NULL) {
-		free(authctxt->oktypes);
-		authctxt->oktypes = authctxt->ktypes = NULL;
-		authctxt->active_ktype = NULL;
+	अगर (निजी == शून्य) {
+		मुक्त(authctxt->oktypes);
+		authctxt->oktypes = authctxt->ktypes = शून्य;
+		authctxt->active_ktype = शून्य;
 		debug("No more client hostkeys for hostbased authentication.");
-		goto out;
+		जाओ out;
 	}
 
-	if ((fp = sshkey_fingerprint(private, options.fingerprint_hash,
-	    SSH_FP_DEFAULT)) == NULL) {
+	अगर ((fp = sshkey_fingerprint(निजी, options.fingerprint_hash,
+	    SSH_FP_DEFAULT)) == शून्य) {
 		error_f("sshkey_fingerprint failed");
-		goto out;
+		जाओ out;
 	}
 	debug_f("trying hostkey %s %s using sigalg %s",
-	    sshkey_ssh_name(private), fp, authctxt->active_ktype);
+	    sshkey_ssh_name(निजी), fp, authctxt->active_ktype);
 
 	/* figure out a name for the client host */
 	lname = get_local_name(ssh_packet_get_connection_in(ssh));
-	if (lname == NULL) {
+	अगर (lname == शून्य) {
 		error_f("cannot get local ipaddr/name");
-		goto out;
+		जाओ out;
 	}
 
 	/* XXX sshbuf_put_stringf? */
@@ -2339,16 +2339,16 @@ userauth_hostbased(struct ssh *ssh)
 	debug2_f("chost %s", chost);
 
 	/* construct data */
-	if ((b = sshbuf_new()) == NULL) {
+	अगर ((b = sshbuf_new()) == शून्य) {
 		error_f("sshbuf_new failed");
-		goto out;
+		जाओ out;
 	}
-	if ((r = sshkey_to_blob(private, &keyblob, &keylen)) != 0) {
+	अगर ((r = sshkey_to_blob(निजी, &keyblob, &keylen)) != 0) {
 		error_fr(r, "sshkey_to_blob");
-		goto out;
+		जाओ out;
 	}
-	if ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	अगर ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_संदेश_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->server_user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->service)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->method->name)) != 0 ||
@@ -2357,19 +2357,19 @@ userauth_hostbased(struct ssh *ssh)
 	    (r = sshbuf_put_cstring(b, chost)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->local_user)) != 0) {
 		error_fr(r, "buffer error");
-		goto out;
+		जाओ out;
 	}
 
-#ifdef DEBUG_PK
-	sshbuf_dump(b, stderr);
-#endif
-	if ((r = ssh_keysign(ssh, private, &sig, &siglen,
+#अगर_घोषित DEBUG_PK
+	sshbuf_dump(b, मानक_त्रुटि);
+#पूर्ण_अगर
+	अगर ((r = ssh_keysign(ssh, निजी, &sig, &siglen,
 	    sshbuf_ptr(b), sshbuf_len(b))) != 0) {
 		error("sign using hostkey %s %s failed",
-		    sshkey_ssh_name(private), fp);
-		goto out;
+		    sshkey_ssh_name(निजी), fp);
+		जाओ out;
 	}
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
@@ -2380,21 +2380,21 @@ userauth_hostbased(struct ssh *ssh)
 	    (r = sshpkt_put_string(ssh, sig, siglen)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0) {
 		error_fr(r, "packet error");
-		goto out;
+		जाओ out;
 	}
 	success = 1;
 
  out:
-	if (sig != NULL)
+	अगर (sig != शून्य)
 		freezero(sig, siglen);
-	free(keyblob);
-	free(lname);
-	free(fp);
-	free(chost);
-	sshkey_free(private);
+	मुक्त(keyblob);
+	मुक्त(lname);
+	मुक्त(fp);
+	मुक्त(chost);
+	sshkey_free(निजी);
 	sshbuf_free(b);
 
-	return success;
+	वापस success;
 }
 
 /* find auth method */
@@ -2403,101 +2403,101 @@ userauth_hostbased(struct ssh *ssh)
  * given auth method name, if configurable options permit this method fill
  * in auth_ident field and return true, otherwise return false.
  */
-static int
+अटल पूर्णांक
 authmethod_is_enabled(Authmethod *method)
 {
-	if (method == NULL)
-		return 0;
+	अगर (method == शून्य)
+		वापस 0;
 	/* return false if options indicate this method is disabled */
-	if  (method->enabled == NULL || *method->enabled == 0)
-		return 0;
+	अगर  (method->enabled == शून्य || *method->enabled == 0)
+		वापस 0;
 	/* return false if batch mode is enabled but method needs interactive mode */
-	if  (method->batch_flag != NULL && *method->batch_flag != 0)
-		return 0;
-	return 1;
+	अगर  (method->batch_flag != शून्य && *method->batch_flag != 0)
+		वापस 0;
+	वापस 1;
 }
 
-static Authmethod *
-authmethod_lookup(const char *name)
+अटल Authmethod *
+authmethod_lookup(स्थिर अक्षर *name)
 {
-	Authmethod *method = NULL;
-	if (name != NULL)
-		for (method = authmethods; method->name != NULL; method++)
-			if (strcmp(name, method->name) == 0)
-				return method;
+	Authmethod *method = शून्य;
+	अगर (name != शून्य)
+		क्रम (method = authmethods; method->name != शून्य; method++)
+			अगर (म_भेद(name, method->name) == 0)
+				वापस method;
 	debug2("Unrecognized authentication method name: %s", name ? name : "NULL");
-	return NULL;
+	वापस शून्य;
 }
 
 /* XXX internal state */
-static Authmethod *current = NULL;
-static char *supported = NULL;
-static char *preferred = NULL;
+अटल Authmethod *current = शून्य;
+अटल अक्षर *supported = शून्य;
+अटल अक्षर *preferred = शून्य;
 
 /*
  * Given the authentication method list sent by the server, return the
  * next method we should try.  If the server initially sends a nil list,
  * use a built-in default list.
  */
-static Authmethod *
-authmethod_get(char *authlist)
+अटल Authmethod *
+authmethod_get(अक्षर *authlist)
 {
-	char *name = NULL;
-	u_int next;
+	अक्षर *name = शून्य;
+	u_int अग्र;
 
 	/* Use a suitable default if we're passed a nil list.  */
-	if (authlist == NULL || strlen(authlist) == 0)
+	अगर (authlist == शून्य || म_माप(authlist) == 0)
 		authlist = options.preferred_authentications;
 
-	if (supported == NULL || strcmp(authlist, supported) != 0) {
+	अगर (supported == शून्य || म_भेद(authlist, supported) != 0) {
 		debug3("start over, passed a different list %s", authlist);
-		free(supported);
+		मुक्त(supported);
 		supported = xstrdup(authlist);
 		preferred = options.preferred_authentications;
 		debug3("preferred %s", preferred);
-		current = NULL;
-	} else if (current != NULL && authmethod_is_enabled(current))
-		return current;
+		current = शून्य;
+	} अन्यथा अगर (current != शून्य && authmethod_is_enabled(current))
+		वापस current;
 
-	for (;;) {
-		if ((name = match_list(preferred, supported, &next)) == NULL) {
+	क्रम (;;) {
+		अगर ((name = match_list(preferred, supported, &अग्र)) == शून्य) {
 			debug("No more authentication methods to try.");
-			current = NULL;
-			return NULL;
+			current = शून्य;
+			वापस शून्य;
 		}
-		preferred += next;
+		preferred += अग्र;
 		debug3("authmethod_lookup %s", name);
 		debug3("remaining preferred: %s", preferred);
-		if ((current = authmethod_lookup(name)) != NULL &&
+		अगर ((current = authmethod_lookup(name)) != शून्य &&
 		    authmethod_is_enabled(current)) {
 			debug3("authmethod_is_enabled %s", name);
 			debug("Next authentication method: %s", name);
-			free(name);
-			return current;
+			मुक्त(name);
+			वापस current;
 		}
-		free(name);
+		मुक्त(name);
 	}
 }
 
-static char *
-authmethods_get(void)
+अटल अक्षर *
+authmethods_get(व्योम)
 {
-	Authmethod *method = NULL;
-	struct sshbuf *b;
-	char *list;
-	int r;
+	Authmethod *method = शून्य;
+	काष्ठा sshbuf *b;
+	अक्षर *list;
+	पूर्णांक r;
 
-	if ((b = sshbuf_new()) == NULL)
+	अगर ((b = sshbuf_new()) == शून्य)
 		fatal_f("sshbuf_new failed");
-	for (method = authmethods; method->name != NULL; method++) {
-		if (authmethod_is_enabled(method)) {
-			if ((r = sshbuf_putf(b, "%s%s",
+	क्रम (method = authmethods; method->name != शून्य; method++) {
+		अगर (authmethod_is_enabled(method)) {
+			अगर ((r = sshbuf_putf(b, "%s%s",
 			    sshbuf_len(b) ? "," : "", method->name)) != 0)
 				fatal_fr(r, "buffer error");
 		}
 	}
-	if ((list = sshbuf_dup_string(b)) == NULL)
+	अगर ((list = sshbuf_dup_string(b)) == शून्य)
 		fatal_f("sshbuf_dup_string failed");
 	sshbuf_free(b);
-	return list;
+	वापस list;
 }

@@ -10,382 +10,382 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
+#समावेश <setjmp.h>
+#समावेश <signal.h>
+#समावेश <stdint.h>
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <unistd.h>
+#समावेश <sys/types.h>
 
-#include "log.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssh_api.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "misc.h"
-#include "channels.h"
-#include "readconf.h"
+#समावेश "log.h"
+#समावेश "ssh.h"
+#समावेश "ssh2.h"
+#समावेश "ssh_api.h"
+#समावेश "ssherr.h"
+#समावेश "sshbuf.h"
+#समावेश "sshkey.h"
+#समावेश "packet.h"
+#समावेश "myproposal.h"
+#समावेश "kex.h"
+#समावेश "xmalloc.h"
+#समावेश "authfile.h"
+#समावेश "misc.h"
+#समावेश "channels.h"
+#समावेश "readconf.h"
 
 /* Externs that mux.c declares. */
-int tty_flag = 0;
+पूर्णांक tty_flag = 0;
 Options options;
-char *host = NULL;
-struct sshbuf *command = NULL;
-volatile sig_atomic_t quit_pending = 0;
+अक्षर *host = शून्य;
+काष्ठा sshbuf *command = शून्य;
+अस्थिर संक_पूर्ण_प्रकार quit_pending = 0;
 
 /* Temporary: LSan off while upstream mux.c parse-chain leaks remain. */
-int
-__lsan_is_turned_off(void)
+पूर्णांक
+__lsan_is_turned_off(व्योम)
 {
-	return 1;
+	वापस 1;
 }
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+अटल लाँघ_बफ fuzz_env;
+अटल अस्थिर पूर्णांक in_fuzz = 0;
 
-void
-cleanup_exit(int code)
+व्योम
+cleanup_exit(पूर्णांक code)
 {
-	if (in_fuzz)
-		longjmp(fuzz_env, code ? code : 1);
-	_exit(code);
+	अगर (in_fuzz)
+		दीर्घ_लाँघ(fuzz_env, code ? code : 1);
+	_निकास(code);
 }
 
-void
-__wrap_ssh_packet_disconnect(struct ssh *ssh, const char *fmt, ...)
+व्योम
+__wrap_ssh_packet_disconnect(काष्ठा ssh *ssh, स्थिर अक्षर *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
-		longjmp(fuzz_env, 1);
-	_exit(1);
+	(व्योम)ssh;
+	(व्योम)fmt;
+	अगर (in_fuzz)
+		दीर्घ_लाँघ(fuzz_env, 1);
+	_निकास(1);
 }
 
-int
-__wrap_sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+पूर्णांक
+__wrap_sshpkt_fatal(काष्ठा ssh *ssh, पूर्णांक r, स्थिर अक्षर *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
-		longjmp(fuzz_env, 1);
-	_exit(r ? r : 1);
+	(व्योम)ssh;
+	(व्योम)fmt;
+	अगर (in_fuzz)
+		दीर्घ_लाँघ(fuzz_env, 1);
+	_निकास(r ? r : 1);
 }
 
 /* Block the only interactive prompt by always granting permission. */
-int
-__wrap_ask_permission(const char *fmt, ...)
+पूर्णांक
+__wrap_ask_permission(स्थिर अक्षर *fmt, ...)
 {
-	(void)fmt;
-	return 1;
+	(व्योम)fmt;
+	वापस 1;
 }
 
 /* Socket-opening side effects we must neutralise. */
-int
-__wrap_channel_setup_local_fwd_listener(struct ssh *ssh,
-    struct Forward *fwd, struct ForwardOptions *fwd_opts)
+पूर्णांक
+__wrap_channel_setup_local_fwd_listener(काष्ठा ssh *ssh,
+    काष्ठा Forward *fwd, काष्ठा ForwardOptions *fwd_opts)
 {
-	(void)ssh; (void)fwd; (void)fwd_opts;
-	return 1;
+	(व्योम)ssh; (व्योम)fwd; (व्योम)fwd_opts;
+	वापस 1;
 }
 
-int
-__wrap_channel_connect_stdio_fwd(struct ssh *ssh, const char *host_arg,
-    int port, int in_fd, int out_fd, int nonblock)
+पूर्णांक
+__wrap_channel_connect_stdio_fwd(काष्ठा ssh *ssh, स्थिर अक्षर *host_arg,
+    पूर्णांक port, पूर्णांक in_fd, पूर्णांक out_fd, पूर्णांक nonblock)
 {
-	(void)ssh; (void)host_arg; (void)port;
-	(void)in_fd; (void)out_fd; (void)nonblock;
-	return -1;
+	(व्योम)ssh; (व्योम)host_arg; (व्योम)port;
+	(व्योम)in_fd; (व्योम)out_fd; (व्योम)nonblock;
+	वापस -1;
 }
 
-int
-__wrap_channel_request_remote_forwarding(struct ssh *ssh, struct Forward *fwd)
+पूर्णांक
+__wrap_channel_request_remote_forwarding(काष्ठा ssh *ssh, काष्ठा Forward *fwd)
 {
-	(void)ssh; (void)fwd;
-	return 0;
+	(व्योम)ssh; (व्योम)fwd;
+	वापस 0;
 }
 
-int
-__wrap_channel_request_rforward_cancel(struct ssh *ssh, struct Forward *fwd)
+पूर्णांक
+__wrap_channel_request_rforward_cancel(काष्ठा ssh *ssh, काष्ठा Forward *fwd)
 {
-	(void)ssh; (void)fwd;
-	return 0;
+	(व्योम)ssh; (व्योम)fwd;
+	वापस 0;
 }
 
-int
-__wrap_channel_cancel_lport_listener(struct ssh *ssh, struct Forward *fwd,
-    int cport, struct ForwardOptions *fwd_opts)
+पूर्णांक
+__wrap_channel_cancel_lport_listener(काष्ठा ssh *ssh, काष्ठा Forward *fwd,
+    पूर्णांक cport, काष्ठा ForwardOptions *fwd_opts)
 {
-	(void)ssh; (void)fwd; (void)cport; (void)fwd_opts;
-	return 0;
+	(व्योम)ssh; (व्योम)fwd; (व्योम)cport; (व्योम)fwd_opts;
+	वापस 0;
 }
 
-static struct sshkey *
-load_private(const char *str)
+अटल काष्ठा sshkey *
+load_private(स्थिर अक्षर *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
-		abort();
+	काष्ठा sshbuf *b = sshbuf_from(str, म_माप(str));
+	काष्ठा sshkey *k = शून्य;
+	अगर (b == शून्य || sshkey_parse_private_fileblob(b, "", &k, शून्य) != 0)
+		पात();
 	sshbuf_free(b);
-	return k;
+	वापस k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+अटल काष्ठा sshkey *
+load_public(स्थिर अक्षर *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
-		abort();
+	अक्षर *tmp, *cp;
+	काष्ठा sshkey *k = sshkey_new(कुंजी_UNSPEC);
+	अगर (k == शून्य)
+		पात();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
-		abort();
-	free(tmp);
-	return k;
+	अगर (sshkey_read(k, &cp) != 0)
+		पात();
+	मुक्त(tmp);
+	वापस k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+अटल पूर्णांक
+pump(काष्ठा ssh *from, काष्ठा ssh *to, माप_प्रकार *transferred)
 {
-	const u_char *buf;
-	size_t len;
+	स्थिर u_char *buf;
+	माप_प्रकार len;
 	u_char type;
-	int r;
+	पूर्णांक r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	अगर ((r = ssh_packet_अग्र(from, &type)) != 0)
+		वापस r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	अगर (len == 0)
+		वापस 0;
+	अगर ((r = ssh_निवेश_append(to, buf, len)) != 0)
+		वापस r;
+	अगर ((r = ssh_output_consume(from, len)) != 0)
+		वापस r;
 	*transferred = len;
-	return 0;
+	वापस 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+अटल पूर्णांक
+run_kex(काष्ठा ssh *client, काष्ठा ssh *server)
 {
-	int r;
-	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	पूर्णांक r;
+	माप_प्रकार cn, sn;
+	क्रम (पूर्णांक i = 0; i < 100; i++) {
+		अगर ((r = pump(server, client, &sn)) != 0) वापस r;
+		अगर ((r = pump(client, server, &cn)) != 0) वापस r;
+		अगर (server->kex->done && client->kex->done)
+			वापस 0;
+		अगर (cn == 0 && sn == 0)
+			वापस SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	वापस SSH_ERR_PROTOCOL_ERROR;
 }
 
-#include "fixed-keys.h"
+#समावेश "fixed-keys.h"
 
 /* Forward decl of the static handler we drive; defined when mux.c is included. */
-static int mux_master_read_cb(struct ssh *ssh, Channel *c);
+अटल पूर्णांक mux_master_read_cb(काष्ठा ssh *ssh, Channel *c);
 
-#include "../../../mux.c"
+#समावेश "../../../mux.c"
 
 /* Stubs for clientloop.c / channels.h symbols mux.o references but we don't link. */
-void *
-client_new_escape_filter_ctx(int escape_char)
+व्योम *
+client_new_escape_filter_ctx(पूर्णांक escape_char)
 {
-	(void)escape_char;
-	return NULL;
+	(व्योम)escape_char;
+	वापस शून्य;
 }
 
-void
-client_register_global_confirm(global_confirm_cb *cb, void *ctx)
+व्योम
+client_register_global_confirm(global_confirm_cb *cb, व्योम *ctx)
 {
-	(void)cb; (void)ctx;
+	(व्योम)cb; (व्योम)ctx;
 }
 
-void
-client_expect_confirm(struct ssh *ssh, int id, const char *reason,
-    enum confirm_action action)
+व्योम
+client_expect_confirm(काष्ठा ssh *ssh, पूर्णांक id, स्थिर अक्षर *reason,
+    क्रमागत confirm_action action)
 {
-	(void)ssh; (void)id; (void)reason; (void)action;
+	(व्योम)ssh; (व्योम)id; (व्योम)reason; (व्योम)action;
 }
 
-void
-client_channel_request_agent_forwarding(struct ssh *ssh, int chanid)
+व्योम
+client_channel_request_agent_forwarding(काष्ठा ssh *ssh, पूर्णांक chanid)
 {
-	(void)ssh; (void)chanid;
+	(व्योम)ssh; (व्योम)chanid;
 }
 
-void
-client_stop_mux(void)
+व्योम
+client_stop_mux(व्योम)
 {
 }
 
-int
-client_simple_escape_filter(struct ssh *ssh, Channel *c, char *buf, int len)
+पूर्णांक
+client_simple_escape_filter(काष्ठा ssh *ssh, Channel *c, अक्षर *buf, पूर्णांक len)
 {
-	(void)ssh; (void)c; (void)buf; (void)len;
-	return 0;
+	(व्योम)ssh; (व्योम)c; (व्योम)buf; (व्योम)len;
+	वापस 0;
 }
 
-void
-client_filter_cleanup(struct ssh *ssh, int cid, void *ctx)
+व्योम
+client_filter_cleanup(काष्ठा ssh *ssh, पूर्णांक cid, व्योम *ctx)
 {
-	(void)ssh; (void)cid; (void)ctx;
+	(व्योम)ssh; (व्योम)cid; (व्योम)ctx;
 }
 
-int
-client_x11_get_proto(struct ssh *ssh, const char *display,
-    const char *xauth_path, u_int trusted, u_int timeout,
-    char **_proto, char **_data)
+पूर्णांक
+client_x11_get_proto(काष्ठा ssh *ssh, स्थिर अक्षर *display,
+    स्थिर अक्षर *xauth_path, u_int trusted, u_int timeout,
+    अक्षर **_proto, अक्षर **तथ्य_2)
 {
-	(void)ssh; (void)display; (void)xauth_path;
-	(void)trusted; (void)timeout;
-	if (_proto != NULL)
-		*_proto = NULL;
-	if (_data != NULL)
-		*_data = NULL;
-	return 0;
+	(व्योम)ssh; (व्योम)display; (व्योम)xauth_path;
+	(व्योम)trusted; (व्योम)timeout;
+	अगर (_proto != शून्य)
+		*_proto = शून्य;
+	अगर (तथ्य_2 != शून्य)
+		*तथ्य_2 = शून्य;
+	वापस 0;
 }
 
-void
-client_session2_setup(struct ssh *ssh, int id, int want_tty, int want_subsys,
-    const char *term, struct termios *tiop, int in_fd, struct sshbuf *cmd,
-    char **env)
+व्योम
+client_session2_setup(काष्ठा ssh *ssh, पूर्णांक id, पूर्णांक want_tty, पूर्णांक want_subsys,
+    स्थिर अक्षर *term, काष्ठा termios *tiop, पूर्णांक in_fd, काष्ठा sshbuf *cmd,
+    अक्षर **env)
 {
-	(void)ssh; (void)id; (void)want_tty; (void)want_subsys;
-	(void)term; (void)tiop; (void)in_fd; (void)cmd; (void)env;
+	(व्योम)ssh; (व्योम)id; (व्योम)want_tty; (व्योम)want_subsys;
+	(व्योम)term; (व्योम)tiop; (व्योम)in_fd; (व्योम)cmd; (व्योम)env;
 }
 
-void
-enter_raw_mode(int quiet)
+व्योम
+enter_raw_mode(पूर्णांक quiet)
 {
-	(void)quiet;
+	(व्योम)quiet;
 }
 
-void
-leave_raw_mode(int quiet)
+व्योम
+leave_raw_mode(पूर्णांक quiet)
 {
-	(void)quiet;
+	(व्योम)quiet;
 }
 
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
-static int g_mux_channel_id = -1;
-static struct sshbuf *g_mux_in = NULL;
-static struct sshbuf *g_mux_out = NULL;
+अटल काष्ठा ssh *g_client = शून्य;
+अटल काष्ठा ssh *g_server = शून्य;
+अटल पूर्णांक g_init = 0;
+अटल पूर्णांक g_mux_channel_id = -1;
+अटल काष्ठा sshbuf *g_mux_in = शून्य;
+अटल काष्ठा sshbuf *g_mux_out = शून्य;
 
 /* Mirror of mux_master_read_cb's dispatch loop using file-static in/out */
-static void
-fuzz_drive_mux(struct ssh *ssh, Channel *c)
+अटल व्योम
+fuzz_drive_mux(काष्ठा ssh *ssh, Channel *c)
 {
 	u_int type, rid, i;
-	int r;
-	const u_char *body;
-	size_t blen;
-	struct mux_master_state *state;
+	पूर्णांक r;
+	स्थिर u_char *body;
+	माप_प्रकार blen;
+	काष्ठा mux_master_state *state;
 
-	state = (struct mux_master_state *)c->mux_ctx;
-	if (state == NULL)
-		return;
+	state = (काष्ठा mux_master_state *)c->mux_ctx;
+	अगर (state == शून्य)
+		वापस;
 
 	sshbuf_reset(g_mux_in);
 	sshbuf_reset(g_mux_out);
 
-	if ((r = sshbuf_get_string_direct(c->input, &body, &blen)) != 0)
-		return;
-	if (sshbuf_put(g_mux_in, body, blen) != 0)
-		return;
-	if ((r = sshbuf_get_u32(g_mux_in, &type)) != 0)
-		return;
+	अगर ((r = sshbuf_get_string_direct(c->निवेश, &body, &blen)) != 0)
+		वापस;
+	अगर (sshbuf_put(g_mux_in, body, blen) != 0)
+		वापस;
+	अगर ((r = sshbuf_get_u32(g_mux_in, &type)) != 0)
+		वापस;
 
-	if (type == MUX_MSG_HELLO) {
+	अगर (type == MUX_संदेश_HELLO) {
 		rid = 0;
-	} else {
-		if (!state->hello_rcvd)
-			return;
-		if ((r = sshbuf_get_u32(g_mux_in, &rid)) != 0)
-			return;
+	} अन्यथा {
+		अगर (!state->hello_rcvd)
+			वापस;
+		अगर ((r = sshbuf_get_u32(g_mux_in, &rid)) != 0)
+			वापस;
 	}
 
-	for (i = 0; mux_master_handlers[i].handler != NULL; i++) {
-		if (type == mux_master_handlers[i].type) {
-			(void)mux_master_handlers[i].handler(ssh, rid, c,
+	क्रम (i = 0; mux_master_handlers[i].handler != शून्य; i++) {
+		अगर (type == mux_master_handlers[i].type) {
+			(व्योम)mux_master_handlers[i].handler(ssh, rid, c,
 			    g_mux_in, g_mux_out);
-			break;
+			अवरोध;
 		}
 	}
 }
 
-static int
-init_once(void)
+अटल पूर्णांक
+init_once(व्योम)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	अगर (g_init)
+		वापस 0;
+	संकेत(SIGPIPE, संक_छोड़ो);
 	log_init("mux_fuzz", SYSLOG_LEVEL_ERROR, SYSLOG_FACILITY_AUTH, 0);
 
 	/* Minimal Options for control-master flow. SSHCTL_MASTER_AUTO avoids
 	 * the interactive ASK paths that would gate on ask_permission. */
-	memset(&options, 0, sizeof(options));
+	स_रखो(&options, 0, माप(options));
 	options.control_master = SSHCTL_MASTER_AUTO;
-	options.control_path = (char *)"/fuzz";
+	options.control_path = (अक्षर *)"/fuzz";
 	options.escape_char = 0;
 	options.log_level = SYSLOG_LEVEL_ERROR;
 	options.fwd_opts.gateway_ports = 0;
 	options.fwd_opts.streamlocal_bind_mask = 0177;
 	options.fwd_opts.streamlocal_bind_unlink = 0;
-	host = (char *)"fuzz";
+	host = (अक्षर *)"fuzz";
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	काष्ठा sshkey *priv = load_private(PRIV_ED25519);
+	काष्ठा sshkey *pub = load_public(PUB_ED25519);
+	अक्षर *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	स्थिर अक्षर *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	अक्षर *proposal[PROPOSAL_MAX] = { 0 };
+	पूर्णांक i;
+	क्रम (i = 0; i < PROPOSAL_MAX; i++) {
+		स्थिर अक्षर *p = defaults[i];
+		अगर (i == PROPOSAL_SERVER_HOST_कुंजी_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		अन्यथा अगर (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		अन्यथा अगर (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		अन्यथा अगर (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	काष्ठा kex_params kp;
+	स_नकल(kp.proposal, proposal, माप(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	अगर (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		वापस -1;
+	अगर (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		वापस -1;
+	अगर (run_kex(g_client, g_server) != 0)
+		वापस -1;
 
 	channel_init_channels(g_client);
 
 	Channel *c = channel_new(g_client, "mux-control",
 	    SSH_CHANNEL_MUX_CLIENT, -1, -1, -1, 65536, 65536, 0,
 	    "mux-control", 1);
-	if (c == NULL)
-		return -1;
+	अगर (c == शून्य)
+		वापस -1;
 	c->mux_rcb = mux_master_read_cb;
 	c->flags |= CHAN_LOCAL;
 	g_mux_channel_id = c->self;
@@ -394,52 +394,52 @@ init_once(void)
 	c->mux_rcb(g_client, c);
 
 	/* Skip the hello handshake so every iter goes straight to dispatch. */
-	struct mux_master_state *st = (struct mux_master_state *)c->mux_ctx;
-	if (st != NULL)
+	काष्ठा mux_master_state *st = (काष्ठा mux_master_state *)c->mux_ctx;
+	अगर (st != शून्य)
 		st->hello_rcvd = 1;
 
-	if ((g_mux_in = sshbuf_new()) == NULL ||
-	    (g_mux_out = sshbuf_new()) == NULL)
-		return -1;
+	अगर ((g_mux_in = sshbuf_new()) == शून्य ||
+	    (g_mux_out = sshbuf_new()) == शून्य)
+		वापस -1;
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	मुक्त(keyname);
+	क्रम (i = 0; i < PROPOSAL_MAX; i++)
+		मुक्त(proposal[i]);
 	g_init = 1;
-	return 0;
+	वापस 0;
 }
 
-void
-fuzz_mux_one(const uint8_t *data, size_t size)
+व्योम
+fuzz_mux_one(स्थिर uint8_t *तथ्य, माप_प्रकार आकार)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	अगर (init_once() != 0)
+		वापस;
+	अगर (आकार > 65000)
+		वापस;
 
 	Channel *c = channel_by_id(g_client, g_mux_channel_id);
-	if (c == NULL || c->mux_ctx == NULL || c->input == NULL)
-		return;
+	अगर (c == शून्य || c->mux_ctx == शून्य || c->निवेश == शून्य)
+		वापस;
 
 	/* mux protocol: outer length-prefixed string containing the body. */
-	sshbuf_reset(c->input);
+	sshbuf_reset(c->निवेश);
 	u_char hdr[4];
-	hdr[0] = (u_char)(size >> 24);
-	hdr[1] = (u_char)(size >> 16);
-	hdr[2] = (u_char)(size >> 8);
-	hdr[3] = (u_char)size;
-	if (sshbuf_put(c->input, hdr, 4) != 0)
-		return;
-	if (size > 0 && sshbuf_put(c->input, data, size) != 0)
-		return;
+	hdr[0] = (u_char)(आकार >> 24);
+	hdr[1] = (u_char)(आकार >> 16);
+	hdr[2] = (u_char)(आकार >> 8);
+	hdr[3] = (u_char)आकार;
+	अगर (sshbuf_put(c->निवेश, hdr, 4) != 0)
+		वापस;
+	अगर (आकार > 0 && sshbuf_put(c->निवेश, तथ्य, आकार) != 0)
+		वापस;
 
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
+	अगर (बनाओ_लाँघ(fuzz_env) == 0) {
 		fuzz_drive_mux(g_client, c);
 	}
 	in_fuzz = 0;
 
 	/* Drain anything the handler enqueued. */
-	if (c->output != NULL)
+	अगर (c->output != शून्य)
 		sshbuf_reset(c->output);
 }

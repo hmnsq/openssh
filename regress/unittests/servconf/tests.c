@@ -5,59 +5,59 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <limits.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#समावेश <sys/types.h>
+#समावेश <limits.h>
+#समावेश <stdio.h>
+#समावेश <stdint.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
 
-#include "../test_helper/test_helper.h"
+#समावेश "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "xmalloc.h"
+#समावेश "log.h"
+#समावेश "misc.h"
+#समावेश "servconf.h"
+#समावेश "sshbuf.h"
+#समावेश "ssherr.h"
+#समावेश "xmalloc.h"
 
-struct sshbuf *cfg;
+काष्ठा sshbuf *cfg;
 
 /* stub */
-int auth2_methods_valid(const char *methods, int need_enable);
-int
-auth2_methods_valid(const char *methods, int need_enable)
+पूर्णांक auth2_methods_valid(स्थिर अक्षर *methods, पूर्णांक need_enable);
+पूर्णांक
+auth2_methods_valid(स्थिर अक्षर *methods, पूर्णांक need_enable)
 {
-	return 1;
+	वापस 1;
 }
 
-static void
-onerror(void *fuzz)
+अटल व्योम
+onerror(व्योम *fuzz)
 {
-	fprintf(stderr, "Failed during fuzz:\n");
-	fuzz_dump((struct fuzz *)fuzz);
+	ख_लिखो(मानक_त्रुटि, "Failed during fuzz:\n");
+	fuzz_dump((काष्ठा fuzz *)fuzz);
 }
 
-static void
-set_string(char **dst, const char *s)
+अटल व्योम
+set_string(अक्षर **dst, स्थिर अक्षर *s)
 {
-	*dst = s == NULL ? NULL : xstrdup(s);
+	*dst = s == शून्य ? शून्य : xstrdup(s);
 }
 
-static char **
+अटल अक्षर **
 new_string_array(u_int n)
 {
-	return xcalloc(n, sizeof(char *));
+	वापस xcalloc(n, माप(अक्षर *));
 }
 
-static void
+अटल व्योम
 set_test_options(ServerOptions *o)
 {
 	initialize_server_options(o);
 
-	o->num_ports = 2;
+	o->अंक_ports = 2;
 	o->ports[0] = 22;
 	o->ports[1] = 2022;
 	o->ip_qos_interactive = 0x10;
@@ -74,51 +74,51 @@ set_test_options(ServerOptions *o)
 	o->timing_secret = 0x0102030405060708ULL;
 
 	set_string(&o->routing_domain, "");
-	set_string(&o->banner, NULL);
+	set_string(&o->banner, शून्य);
 	set_string(&o->adm_forced_command, "internal-sftp");
 	set_string(&o->chroot_directory, "");
-	set_string(&o->host_key_agent, NULL);
-	set_string(&o->authorized_keys_command, "/bin/echo");
-	set_string(&o->authorized_keys_command_user, "");
-	set_string(&o->authorized_principals_file, NULL);
+	set_string(&o->host_कुंजी_agent, शून्य);
+	set_string(&o->authorized_कुंजियाँ_command, "/bin/echo");
+	set_string(&o->authorized_कुंजियाँ_command_user, "");
+	set_string(&o->authorized_principals_file, शून्य);
 
-	o->num_authkeys_files = 3;
-	o->authorized_keys_files = new_string_array(o->num_authkeys_files);
-	set_string(&o->authorized_keys_files[0], NULL);
-	set_string(&o->authorized_keys_files[1], "");
-	set_string(&o->authorized_keys_files[2], ".ssh/authorized_keys");
+	o->अंक_authkeys_files = 3;
+	o->authorized_कुंजियाँ_files = new_string_array(o->अंक_authkeys_files);
+	set_string(&o->authorized_कुंजियाँ_files[0], शून्य);
+	set_string(&o->authorized_कुंजियाँ_files[1], "");
+	set_string(&o->authorized_कुंजियाँ_files[2], ".ssh/authorized_keys");
 
-	o->num_log_verbose = 2;
-	o->log_verbose = new_string_array(o->num_log_verbose);
-	set_string(&o->log_verbose[0], NULL);
+	o->अंक_log_verbose = 2;
+	o->log_verbose = new_string_array(o->अंक_log_verbose);
+	set_string(&o->log_verbose[0], शून्य);
 	set_string(&o->log_verbose[1], "kex.c:*");
 
-	o->num_host_key_files = 3;
-	o->host_key_file_userprovided =
-	    xcalloc(o->num_host_key_files,
-	    sizeof(*o->host_key_file_userprovided));
-	o->host_key_files = new_string_array(o->num_host_key_files);
-	o->host_key_file_userprovided[0] = 0;
-	o->host_key_file_userprovided[1] = 1;
-	o->host_key_file_userprovided[2] = -1;
-	set_string(&o->host_key_files[0], NULL);
-	set_string(&o->host_key_files[1], "");
-	set_string(&o->host_key_files[2], "/tmp/ssh_host_ed25519_key");
+	o->अंक_host_कुंजी_files = 3;
+	o->host_कुंजी_file_userprovided =
+	    xcalloc(o->अंक_host_कुंजी_files,
+	    माप(*o->host_कुंजी_file_userprovided));
+	o->host_कुंजी_files = new_string_array(o->अंक_host_कुंजी_files);
+	o->host_कुंजी_file_userprovided[0] = 0;
+	o->host_कुंजी_file_userprovided[1] = 1;
+	o->host_कुंजी_file_userprovided[2] = -1;
+	set_string(&o->host_कुंजी_files[0], शून्य);
+	set_string(&o->host_कुंजी_files[1], "");
+	set_string(&o->host_कुंजी_files[2], "/tmp/ssh_host_ed25519_key");
 
-	o->num_queued_listens = 2;
-	o->queued_listen_addrs = xcalloc(o->num_queued_listens,
-	    sizeof(*o->queued_listen_addrs));
+	o->अंक_queued_listens = 2;
+	o->queued_listen_addrs = xcalloc(o->अंक_queued_listens,
+	    माप(*o->queued_listen_addrs));
 	set_string(&o->queued_listen_addrs[0].addr, "127.0.0.1");
 	o->queued_listen_addrs[0].port = 2222;
-	set_string(&o->queued_listen_addrs[0].rdomain, NULL);
+	set_string(&o->queued_listen_addrs[0].rdomain, शून्य);
 	set_string(&o->queued_listen_addrs[1].addr, "::1");
 	o->queued_listen_addrs[1].port = -1;
 	set_string(&o->queued_listen_addrs[1].rdomain, "");
 
-	o->num_subsystems = 2;
-	o->subsystem_name = new_string_array(o->num_subsystems);
-	o->subsystem_command = new_string_array(o->num_subsystems);
-	o->subsystem_args = new_string_array(o->num_subsystems);
+	o->अंक_subsystems = 2;
+	o->subsystem_name = new_string_array(o->अंक_subsystems);
+	o->subsystem_command = new_string_array(o->अंक_subsystems);
+	o->subsystem_args = new_string_array(o->अंक_subsystems);
 	set_string(&o->subsystem_name[0], "sftp");
 	set_string(&o->subsystem_command[0], "internal-sftp");
 	set_string(&o->subsystem_args[0], "internal-sftp -f AUTH");
@@ -127,19 +127,19 @@ set_test_options(ServerOptions *o)
 	set_string(&o->subsystem_args[1], "/bin/echo hello");
 }
 
-static void
-check_roundtrip(const ServerOptions *o)
+अटल व्योम
+check_roundtrip(स्थिर ServerOptions *o)
 {
-	struct sshbuf *buf = NULL;
+	काष्ठा sshbuf *buf = शून्य;
 	ServerOptions out;
 
 	initialize_server_options(&out);
 	ASSERT_INT_EQ(serialise_server_options(o, &buf), 0);
-	ASSERT_PTR_NE(buf, NULL);
+	ASSERT_PTR_NE(buf, शून्य);
 	ASSERT_INT_EQ(deserialise_server_options(buf, &out), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(buf), 0);
+	ASSERT_आकार_T_EQ(sshbuf_len(buf), 0);
 
-	ASSERT_U_INT_EQ(out.num_ports, 2);
+	ASSERT_U_INT_EQ(out.अंक_ports, 2);
 	ASSERT_INT_EQ(out.ports[0], 22);
 	ASSERT_INT_EQ(out.ports[1], 2022);
 	ASSERT_INT_EQ(out.ip_qos_interactive, 0x10);
@@ -156,40 +156,40 @@ check_roundtrip(const ServerOptions *o)
 	ASSERT_U64_EQ(out.timing_secret, 0x0102030405060708ULL);
 
 	ASSERT_STRING_EQ(out.routing_domain, "");
-	ASSERT_PTR_EQ(out.banner, NULL);
+	ASSERT_PTR_EQ(out.banner, शून्य);
 	ASSERT_STRING_EQ(out.adm_forced_command, "internal-sftp");
 	ASSERT_STRING_EQ(out.chroot_directory, "");
-	ASSERT_PTR_EQ(out.host_key_agent, NULL);
-	ASSERT_STRING_EQ(out.authorized_keys_command, "/bin/echo");
-	ASSERT_STRING_EQ(out.authorized_keys_command_user, "");
-	ASSERT_PTR_EQ(out.authorized_principals_file, NULL);
+	ASSERT_PTR_EQ(out.host_कुंजी_agent, शून्य);
+	ASSERT_STRING_EQ(out.authorized_कुंजियाँ_command, "/bin/echo");
+	ASSERT_STRING_EQ(out.authorized_कुंजियाँ_command_user, "");
+	ASSERT_PTR_EQ(out.authorized_principals_file, शून्य);
 
-	ASSERT_U_INT_EQ(out.num_authkeys_files, 3);
-	ASSERT_PTR_EQ(out.authorized_keys_files[0], NULL);
-	ASSERT_STRING_EQ(out.authorized_keys_files[1], "");
-	ASSERT_STRING_EQ(out.authorized_keys_files[2], ".ssh/authorized_keys");
+	ASSERT_U_INT_EQ(out.अंक_authkeys_files, 3);
+	ASSERT_PTR_EQ(out.authorized_कुंजियाँ_files[0], शून्य);
+	ASSERT_STRING_EQ(out.authorized_कुंजियाँ_files[1], "");
+	ASSERT_STRING_EQ(out.authorized_कुंजियाँ_files[2], ".ssh/authorized_keys");
 
-	ASSERT_U_INT_EQ(out.num_log_verbose, 2);
-	ASSERT_PTR_EQ(out.log_verbose[0], NULL);
+	ASSERT_U_INT_EQ(out.अंक_log_verbose, 2);
+	ASSERT_PTR_EQ(out.log_verbose[0], शून्य);
 	ASSERT_STRING_EQ(out.log_verbose[1], "kex.c:*");
 
-	ASSERT_U_INT_EQ(out.num_host_key_files, 3);
-	ASSERT_INT_EQ(out.host_key_file_userprovided[0], 0);
-	ASSERT_INT_EQ(out.host_key_file_userprovided[1], 1);
-	ASSERT_INT_EQ(out.host_key_file_userprovided[2], -1);
-	ASSERT_PTR_EQ(out.host_key_files[0], NULL);
-	ASSERT_STRING_EQ(out.host_key_files[1], "");
-	ASSERT_STRING_EQ(out.host_key_files[2], "/tmp/ssh_host_ed25519_key");
+	ASSERT_U_INT_EQ(out.अंक_host_कुंजी_files, 3);
+	ASSERT_INT_EQ(out.host_कुंजी_file_userprovided[0], 0);
+	ASSERT_INT_EQ(out.host_कुंजी_file_userprovided[1], 1);
+	ASSERT_INT_EQ(out.host_कुंजी_file_userprovided[2], -1);
+	ASSERT_PTR_EQ(out.host_कुंजी_files[0], शून्य);
+	ASSERT_STRING_EQ(out.host_कुंजी_files[1], "");
+	ASSERT_STRING_EQ(out.host_कुंजी_files[2], "/tmp/ssh_host_ed25519_key");
 
-	ASSERT_U_INT_EQ(out.num_queued_listens, 2);
+	ASSERT_U_INT_EQ(out.अंक_queued_listens, 2);
 	ASSERT_STRING_EQ(out.queued_listen_addrs[0].addr, "127.0.0.1");
 	ASSERT_INT_EQ(out.queued_listen_addrs[0].port, 2222);
-	ASSERT_PTR_EQ(out.queued_listen_addrs[0].rdomain, NULL);
+	ASSERT_PTR_EQ(out.queued_listen_addrs[0].rdomain, शून्य);
 	ASSERT_STRING_EQ(out.queued_listen_addrs[1].addr, "::1");
 	ASSERT_INT_EQ(out.queued_listen_addrs[1].port, -1);
 	ASSERT_STRING_EQ(out.queued_listen_addrs[1].rdomain, "");
 
-	ASSERT_U_INT_EQ(out.num_subsystems, 2);
+	ASSERT_U_INT_EQ(out.अंक_subsystems, 2);
 	ASSERT_STRING_EQ(out.subsystem_name[0], "sftp");
 	ASSERT_STRING_EQ(out.subsystem_command[0], "internal-sftp");
 	ASSERT_STRING_EQ(out.subsystem_args[0], "internal-sftp -f AUTH");
@@ -201,16 +201,16 @@ check_roundtrip(const ServerOptions *o)
 	sshbuf_free(buf);
 }
 
-static void
-check_rejects_trailing_data(const ServerOptions *o)
+अटल व्योम
+check_rejects_trailing_तथ्य(स्थिर ServerOptions *o)
 {
-	struct sshbuf *buf = NULL;
+	काष्ठा sshbuf *buf = शून्य;
 	ServerOptions out;
-	int r;
+	पूर्णांक r;
 
 	initialize_server_options(&out);
 	ASSERT_INT_EQ(serialise_server_options(o, &buf), 0);
-	ASSERT_PTR_NE(buf, NULL);
+	ASSERT_PTR_NE(buf, शून्य);
 	ASSERT_INT_EQ(sshbuf_put_u8(buf, 0), 0);
 	r = deserialise_server_options(buf, &out);
 	ASSERT_INT_EQ(r, SSH_ERR_INVALID_FORMAT);
@@ -218,17 +218,17 @@ check_rejects_trailing_data(const ServerOptions *o)
 	sshbuf_free(buf);
 }
 
-static void
-check_rejects_bad_version(const ServerOptions *o)
+अटल व्योम
+check_rejects_bad_version(स्थिर ServerOptions *o)
 {
-	struct sshbuf *buf = NULL;
+	काष्ठा sshbuf *buf = शून्य;
 	ServerOptions out;
-	int r;
+	पूर्णांक r;
 
 	initialize_server_options(&out);
 	ASSERT_INT_EQ(serialise_server_options(o, &buf), 0);
-	ASSERT_PTR_NE(buf, NULL);
-	ASSERT_PTR_NE(sshbuf_mutable_ptr(buf), NULL);
+	ASSERT_PTR_NE(buf, शून्य);
+	ASSERT_PTR_NE(sshbuf_mutable_ptr(buf), शून्य);
 	POKE_U32(sshbuf_mutable_ptr(buf), 2);
 	r = deserialise_server_options(buf, &out);
 	ASSERT_INT_EQ(r, SSH_ERR_INVALID_FORMAT);
@@ -236,18 +236,18 @@ check_rejects_bad_version(const ServerOptions *o)
 	sshbuf_free(buf);
 }
 
-static void
-check_rejects_bad_port_count(const ServerOptions *o)
+अटल व्योम
+check_rejects_bad_port_गिनती(स्थिर ServerOptions *o)
 {
-	struct sshbuf *buf = NULL;
+	काष्ठा sshbuf *buf = शून्य;
 	ServerOptions out;
-	int r;
+	पूर्णांक r;
 
 	initialize_server_options(&out);
 	ASSERT_INT_EQ(serialise_server_options(o, &buf), 0);
-	ASSERT_PTR_NE(buf, NULL);
-	ASSERT_SIZE_T_GT(sshbuf_len(buf), 8);
-	ASSERT_PTR_NE(sshbuf_mutable_ptr(buf), NULL);
+	ASSERT_PTR_NE(buf, शून्य);
+	ASSERT_आकार_T_GT(sshbuf_len(buf), 8);
+	ASSERT_PTR_NE(sshbuf_mutable_ptr(buf), शून्य);
 	POKE_U32(sshbuf_mutable_ptr(buf) + 4, MAX_PORTS + 1);
 	r = deserialise_server_options(buf, &out);
 	ASSERT_INT_EQ(r, SSH_ERR_INVALID_FORMAT);
@@ -255,66 +255,66 @@ check_rejects_bad_port_count(const ServerOptions *o)
 	sshbuf_free(buf);
 }
 
-static void
-check_roundtrip_signed_limits(const ServerOptions *o)
+अटल व्योम
+check_roundtrip_signed_limits(स्थिर ServerOptions *o)
 {
-	struct sshbuf *buf = NULL;
+	काष्ठा sshbuf *buf = शून्य;
 	ServerOptions out, in;
 
 	initialize_server_options(&out);
 	in = *o;
 	in.fwd_opts.streamlocal_bind_mask = (mode_t)-1;
-	in.ip_qos_bulk = INT_MIN;
+	in.ip_qos_bulk = पूर्णांक_न्यून;
 	in.rekey_limit = INT64_MIN;
 	ASSERT_INT_EQ(serialise_server_options(&in, &buf), 0);
-	ASSERT_PTR_NE(buf, NULL);
+	ASSERT_PTR_NE(buf, शून्य);
 	ASSERT_INT_EQ(deserialise_server_options(buf, &out), 0);
 	ASSERT_INT_EQ(out.fwd_opts.streamlocal_bind_mask == (mode_t)-1, 1);
-	ASSERT_INT_EQ(out.ip_qos_bulk, INT_MIN);
+	ASSERT_INT_EQ(out.ip_qos_bulk, पूर्णांक_न्यून);
 	ASSERT_LONG_LONG_EQ(out.rekey_limit, INT64_MIN);
 	free_server_options(&out);
 	sshbuf_free(buf);
 }
 
-static void
-attempt_deserialise_blob(const u_char *p, size_t len)
+अटल व्योम
+attempt_deserialise_blob(स्थिर u_char *p, माप_प्रकार len)
 {
-	struct sshbuf *buf;
+	काष्ठा sshbuf *buf;
 	ServerOptions out;
 
 	initialize_server_options(&out);
-	ASSERT_PTR_NE(buf = sshbuf_from(p, len), NULL);
-	(void)deserialise_server_options(buf, &out);
+	ASSERT_PTR_NE(buf = sshbuf_from(p, len), शून्य);
+	(व्योम)deserialise_server_options(buf, &out);
 	free_server_options(&out);
 	sshbuf_free(buf);
 }
 
-static void
-check_fuzz_deserialise(const ServerOptions *o)
+अटल व्योम
+check_fuzz_deserialise(स्थिर ServerOptions *o)
 {
-	struct sshbuf *buf = NULL;
-	struct fuzz *fuzz;
+	काष्ठा sshbuf *buf = शून्य;
+	काष्ठा fuzz *fuzz;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_1_BYTE_FLIP |
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
-	if (test_is_fast())
+	अगर (test_is_fast())
 		fuzzers &= ~FUZZ_1_BIT_FLIP;
-	if (test_is_slow())
+	अगर (test_is_slow())
 		fuzzers |= FUZZ_2_BYTE_FLIP;
 
 	ASSERT_INT_EQ(serialise_server_options(o, &buf), 0);
-	ASSERT_PTR_NE(buf, NULL);
+	ASSERT_PTR_NE(buf, शून्य);
 	fuzz = fuzz_begin(fuzzers, sshbuf_ptr(buf), sshbuf_len(buf));
 	TEST_ONERROR(onerror, fuzz);
-	for (; !fuzz_done(fuzz); fuzz_next(fuzz))
+	क्रम (; !fuzz_done(fuzz); fuzz_अग्र(fuzz))
 		attempt_deserialise_blob(fuzz_ptr(fuzz), fuzz_len(fuzz));
-	TEST_ONERROR(NULL, NULL);
+	TEST_ONERROR(शून्य, शून्य);
 	fuzz_cleanup(fuzz);
 	sshbuf_free(buf);
 }
 
-void
-tests(void)
+व्योम
+tests(व्योम)
 {
 	ServerOptions o;
 
@@ -328,7 +328,7 @@ tests(void)
 
 	TEST_START("server options reject trailing data");
 	set_test_options(&o);
-	check_rejects_trailing_data(&o);
+	check_rejects_trailing_तथ्य(&o);
 	free_server_options(&o);
 	TEST_DONE();
 
@@ -340,7 +340,7 @@ tests(void)
 
 	TEST_START("server options reject bad port count");
 	set_test_options(&o);
-	check_rejects_bad_port_count(&o);
+	check_rejects_bad_port_गिनती(&o);
 	free_server_options(&o);
 	TEST_DONE();
 
@@ -357,8 +357,8 @@ tests(void)
 	TEST_DONE();
 }
 
-void
-benchmarks(void)
+व्योम
+benchmarks(व्योम)
 {
-	printf("no benchmarks\n");
+	म_लिखो("no benchmarks\n");
 }

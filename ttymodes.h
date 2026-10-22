@@ -61,45 +61,45 @@
 TTYCHAR(VINTR, 1)
 TTYCHAR(VQUIT, 2)
 TTYCHAR(VERASE, 3)
-#if defined(VKILL)
+#अगर defined(VKILL)
 TTYCHAR(VKILL, 4)
-#endif /* VKILL */
+#पूर्ण_अगर /* VKILL */
 TTYCHAR(VEOF, 5)
-#if defined(VEOL)
+#अगर defined(VEOL)
 TTYCHAR(VEOL, 6)
-#endif /* VEOL */
-#ifdef VEOL2
+#पूर्ण_अगर /* VEOL */
+#अगर_घोषित VEOL2
 TTYCHAR(VEOL2, 7)
-#endif /* VEOL2 */
+#पूर्ण_अगर /* VEOL2 */
 TTYCHAR(VSTART, 8)
 TTYCHAR(VSTOP, 9)
-#if defined(VSUSP)
+#अगर defined(VSUSP)
 TTYCHAR(VSUSP, 10)
-#endif /* VSUSP */
-#if defined(VDSUSP)
+#पूर्ण_अगर /* VSUSP */
+#अगर defined(VDSUSP)
 TTYCHAR(VDSUSP, 11)
-#endif /* VDSUSP */
-#if defined(VREPRINT)
+#पूर्ण_अगर /* VDSUSP */
+#अगर defined(VREPRINT)
 TTYCHAR(VREPRINT, 12)
-#endif /* VREPRINT */
-#if defined(VWERASE)
+#पूर्ण_अगर /* VREPRINT */
+#अगर defined(VWERASE)
 TTYCHAR(VWERASE, 13)
-#endif /* VWERASE */
-#if defined(VLNEXT)
+#पूर्ण_अगर /* VWERASE */
+#अगर defined(VLNEXT)
 TTYCHAR(VLNEXT, 14)
-#endif /* VLNEXT */
-#if defined(VFLUSH)
+#पूर्ण_अगर /* VLNEXT */
+#अगर defined(VFLUSH)
 TTYCHAR(VFLUSH, 15)
-#endif /* VFLUSH */
-#ifdef VSWTCH
+#पूर्ण_अगर /* VFLUSH */
+#अगर_घोषित VSWTCH
 TTYCHAR(VSWTCH, 16)
-#endif /* VSWTCH */
-#if defined(VSTATUS)
+#पूर्ण_अगर /* VSWTCH */
+#अगर defined(VSTATUS)
 TTYCHAR(VSTATUS, 17)
-#endif /* VSTATUS */
-#ifdef VDISCARD
+#पूर्ण_अगर /* VSTATUS */
+#अगर_घोषित VDISCARD
 TTYCHAR(VDISCARD, 18)
-#endif /* VDISCARD */
+#पूर्ण_अगर /* VDISCARD */
 
 /* name, field, op */
 TTYMODE(IGNPAR,	c_iflag, 30)
@@ -109,59 +109,59 @@ TTYMODE(ISTRIP,	c_iflag, 33)
 TTYMODE(INLCR,	c_iflag, 34)
 TTYMODE(IGNCR,	c_iflag, 35)
 TTYMODE(ICRNL,	c_iflag, 36)
-#if defined(IUCLC)
+#अगर defined(IUCLC)
 TTYMODE(IUCLC,	c_iflag, 37)
-#endif
+#पूर्ण_अगर
 TTYMODE(IXON,	c_iflag, 38)
 TTYMODE(IXANY,	c_iflag, 39)
 TTYMODE(IXOFF,	c_iflag, 40)
-#ifdef IMAXBEL
+#अगर_घोषित IMAXBEL
 TTYMODE(IMAXBEL,c_iflag, 41)
-#endif /* IMAXBEL */
-#ifdef IUTF8
+#पूर्ण_अगर /* IMAXBEL */
+#अगर_घोषित IUTF8
 TTYMODE(IUTF8,  c_iflag, 42)
-#endif /* IUTF8 */
+#पूर्ण_अगर /* IUTF8 */
 
 TTYMODE(ISIG,	c_lflag, 50)
 TTYMODE(ICANON,	c_lflag, 51)
-#ifdef XCASE
+#अगर_घोषित XCASE
 TTYMODE(XCASE,	c_lflag, 52)
-#endif
+#पूर्ण_अगर
 TTYMODE(ECHO,	c_lflag, 53)
 TTYMODE(ECHOE,	c_lflag, 54)
 TTYMODE(ECHOK,	c_lflag, 55)
 TTYMODE(ECHONL,	c_lflag, 56)
 TTYMODE(NOFLSH,	c_lflag, 57)
 TTYMODE(TOSTOP,	c_lflag, 58)
-#ifdef IEXTEN
+#अगर_घोषित IEXTEN
 TTYMODE(IEXTEN, c_lflag, 59)
-#endif /* IEXTEN */
-#if defined(ECHOCTL)
+#पूर्ण_अगर /* IEXTEN */
+#अगर defined(ECHOCTL)
 TTYMODE(ECHOCTL,c_lflag, 60)
-#endif /* ECHOCTL */
-#ifdef ECHOKE
+#पूर्ण_अगर /* ECHOCTL */
+#अगर_घोषित ECHOKE
 TTYMODE(ECHOKE,	c_lflag, 61)
-#endif /* ECHOKE */
-#if defined(PENDIN)
+#पूर्ण_अगर /* ECHOKE */
+#अगर defined(PENDIN)
 TTYMODE(PENDIN,	c_lflag, 62)
-#endif /* PENDIN */
+#पूर्ण_अगर /* PENDIN */
 
 TTYMODE(OPOST,	c_oflag, 70)
-#if defined(OLCUC)
+#अगर defined(OLCUC)
 TTYMODE(OLCUC,	c_oflag, 71)
-#endif
-#ifdef ONLCR
+#पूर्ण_अगर
+#अगर_घोषित ONLCR
 TTYMODE(ONLCR,	c_oflag, 72)
-#endif
-#ifdef OCRNL
+#पूर्ण_अगर
+#अगर_घोषित OCRNL
 TTYMODE(OCRNL,	c_oflag, 73)
-#endif
-#ifdef ONOCR
+#पूर्ण_अगर
+#अगर_घोषित ONOCR
 TTYMODE(ONOCR,	c_oflag, 74)
-#endif
-#ifdef ONLRET
+#पूर्ण_अगर
+#अगर_घोषित ONLRET
 TTYMODE(ONLRET,	c_oflag, 75)
-#endif
+#पूर्ण_अगर
 
 TTYMODE(CS7,	c_cflag, 90)
 TTYMODE(CS8,	c_cflag, 91)

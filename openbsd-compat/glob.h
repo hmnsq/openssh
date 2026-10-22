@@ -37,72 +37,72 @@
 
 /* OPENBSD ORIGINAL: include/glob.h */
 
-#if !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#अगर !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
 
-#ifndef _COMPAT_GLOB_H_
-#define	_COMPAT_GLOB_H_
+#अगर_अघोषित _COMPAT_GLOB_H_
+#घोषणा	_COMPAT_GLOB_H_
 
-#include <sys/stat.h>
-#include <sys/types.h>
+#समावेश <sys/stat.h>
+#समावेश <sys/types.h>
 
 # define glob_t _ssh_compat_glob_t
 # define glob(a, b, c, d)  _ssh__compat_glob(a, b, c, d)
 # define globfree(a)  _ssh__compat_globfree(a)
 
-struct stat;
-typedef struct {
-	size_t gl_pathc;	/* Count of total paths so far. */
-	size_t gl_matchc;	/* Count of paths matching pattern. */
-	size_t gl_offs;		/* Reserved at beginning of gl_pathv. */
-	int gl_flags;		/* Copy of flags parameter to glob. */
-	char **gl_pathv;	/* List of paths matching pattern. */
-	struct stat **gl_statv;	/* Stat entries corresponding to gl_pathv */
+काष्ठा stat;
+प्रकार काष्ठा {
+	माप_प्रकार gl_pathc;	/* Count of total paths so far. */
+	माप_प्रकार gl_matchc;	/* Count of paths matching pattern. */
+	माप_प्रकार gl_offs;		/* Reserved at beginning of gl_pathv. */
+	पूर्णांक gl_flags;		/* Copy of flags parameter to glob. */
+	अक्षर **gl_pathv;	/* List of paths matching pattern. */
+	काष्ठा stat **gl_statv;	/* Stat entries corresponding to gl_pathv */
 				/* Copy of errfunc parameter to glob. */
-	int (*gl_errfunc)(const char *, int);
+	पूर्णांक (*gl_errfunc)(स्थिर अक्षर *, पूर्णांक);
 
 	/*
 	 * Alternate filesystem access methods for glob; replacement
 	 * versions of closedir(3), readdir(3), opendir(3), stat(2)
 	 * and lstat(2).
 	 */
-	void (*gl_closedir)(void *);
-	struct dirent *(*gl_readdir)(void *);	
-	void *(*gl_opendir)(const char *);
-	int (*gl_lstat)(const char *, struct stat *);
-	int (*gl_stat)(const char *, struct stat *);
+	व्योम (*gl_closedir)(व्योम *);
+	काष्ठा dirent *(*gl_readdir)(व्योम *);	
+	व्योम *(*gl_opendir)(स्थिर अक्षर *);
+	पूर्णांक (*gl_lstat)(स्थिर अक्षर *, काष्ठा stat *);
+	पूर्णांक (*gl_stat)(स्थिर अक्षर *, काष्ठा stat *);
 } glob_t;
 
-#define	GLOB_APPEND	0x0001	/* Append to output from previous call. */
-#define	GLOB_DOOFFS	0x0002	/* Use gl_offs. */
-#define	GLOB_ERR	0x0004	/* Return on error. */
-#define	GLOB_MARK	0x0008	/* Append / to matching directories. */
-#define	GLOB_NOCHECK	0x0010	/* Return pattern itself if nothing matches. */
-#define	GLOB_NOSORT	0x0020	/* Don't sort. */
-#define	GLOB_NOESCAPE	0x1000	/* Disable backslash escaping. */
+#घोषणा	GLOB_APPEND	0x0001	/* Append to output from previous call. */
+#घोषणा	GLOB_DOOFFS	0x0002	/* Use gl_offs. */
+#घोषणा	GLOB_ERR	0x0004	/* Return on error. */
+#घोषणा	GLOB_MARK	0x0008	/* Append / to matching directories. */
+#घोषणा	GLOB_NOCHECK	0x0010	/* Return pattern itself if nothing matches. */
+#घोषणा	GLOB_NOSORT	0x0020	/* Don't sort. */
+#घोषणा	GLOB_NOESCAPE	0x1000	/* Disable backslash escaping. */
 
-#define	GLOB_NOSPACE	(-1)	/* Malloc call failed. */
-#define	GLOB_ABORTED	(-2)	/* Unignored error. */
-#define	GLOB_NOMATCH	(-3)	/* No match and GLOB_NOCHECK not set. */
-#define	GLOB_NOSYS	(-4)	/* Function not supported. */
+#घोषणा	GLOB_NOSPACE	(-1)	/* Malloc call failed. */
+#घोषणा	GLOB_ABORTED	(-2)	/* Unignored error. */
+#घोषणा	GLOB_NOMATCH	(-3)	/* No match and GLOB_NOCHECK not set. */
+#घोषणा	GLOB_NOSYS	(-4)	/* Function not supported. */
 
-#define	GLOB_ALTDIRFUNC	0x0040	/* Use alternately specified directory funcs. */
-#define	GLOB_BRACE	0x0080	/* Expand braces ala csh. */
-#define	GLOB_MAGCHAR	0x0100	/* Pattern had globbing characters. */
-#define	GLOB_NOMAGIC	0x0200	/* GLOB_NOCHECK without magic chars (csh). */
-#define	GLOB_QUOTE	0x0400	/* Quote special chars with \. */
-#define	GLOB_TILDE	0x0800	/* Expand tilde names from the passwd file. */
-#define GLOB_LIMIT	0x2000	/* Limit pattern match output to ARG_MAX */
-#define	GLOB_KEEPSTAT	0x4000	/* Retain stat data for paths in gl_statv. */
-#define GLOB_ABEND	GLOB_ABORTED /* backward compatibility */
+#घोषणा	GLOB_ALTDIRFUNC	0x0040	/* Use alternately specified directory funcs. */
+#घोषणा	GLOB_BRACE	0x0080	/* Expand braces ala csh. */
+#घोषणा	GLOB_MAGCHAR	0x0100	/* Pattern had globbing characters. */
+#घोषणा	GLOB_NOMAGIC	0x0200	/* GLOB_NOCHECK without magic chars (csh). */
+#घोषणा	GLOB_QUOTE	0x0400	/* Quote special chars with \. */
+#घोषणा	GLOB_TILDE	0x0800	/* Expand tilde names from the passwd file. */
+#घोषणा GLOB_LIMIT	0x2000	/* Limit pattern match output to ARG_MAX */
+#घोषणा	GLOB_KEEPSTAT	0x4000	/* Retain stat data for paths in gl_statv. */
+#घोषणा GLOB_ABEND	GLOB_ABORTED /* backward compatibility */
 
-int	glob(const char *, int, int (*)(const char *, int), glob_t *);
-void	globfree(glob_t *);
+पूर्णांक	glob(स्थिर अक्षर *, पूर्णांक, पूर्णांक (*)(स्थिर अक्षर *, पूर्णांक), glob_t *);
+व्योम	globfree(glob_t *);
 
-#endif /* !_GLOB_H_ */
+#पूर्ण_अगर /* !_GLOB_H_ */
 
-#endif /* !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC)  ||
+#पूर्ण_अगर /* !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC)  ||
 	  !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOH_HAS_GL_STATV) */
 

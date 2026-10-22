@@ -10,82 +10,82 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#समावेश <stdio.h>
+#समावेश <stddef.h>
+#समावेश <stdint.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
 
-extern "C" {
+बाह्य "C" {
 
-#include "hostfile.h"
-#include "sshkey.h"
-#include "log.h"
+#समावेश "hostfile.h"
+#समावेश "sshkey.h"
+#समावेश "log.h"
 
-static int log_initialized = 0;
+अटल पूर्णांक log_initialized = 0;
 
-static int
-noop_cb(struct hostkey_foreach_line *l, void *ctx)
+अटल पूर्णांक
+noop_cb(काष्ठा hostkey_foreach_पंक्ति *l, व्योम *ctx)
 {
-	(void)l; (void)ctx;
-	return 0;
+	(व्योम)l; (व्योम)ctx;
+	वापस 0;
 }
 
-int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+पूर्णांक
+LLVMFuzzer_Test_One_निवेश(स्थिर uint8_t *तथ्य, माप_प्रकार आकार)
 {
-	if (!log_initialized) {
+	अगर (!log_initialized) {
 		log_init("hostfile_fuzz", SYSLOG_LEVEL_QUIET,
 		    SYSLOG_FACILITY_AUTH, 0);
 		log_initialized = 1;
 	}
 
 	/* Drive every HKF_WANT_* combination on each input. */
-	static const u_int flag_combos[] = {
+	अटल स्थिर u_int flag_combos[] = {
 		0,
 		HKF_WANT_MATCH,
-		HKF_WANT_PARSE_KEY,
-		HKF_WANT_MATCH | HKF_WANT_PARSE_KEY,
+		HKF_WANT_PARSE_कुंजी,
+		HKF_WANT_MATCH | HKF_WANT_PARSE_कुंजी,
 	};
-	for (size_t i = 0; i < sizeof(flag_combos)/sizeof(flag_combos[0]); i++) {
-		FILE *f = fmemopen((void *)data, size, "r");
-		if (f == NULL)
-			continue;
-		const char *host = (flag_combos[i] & HKF_WANT_MATCH) ?
-		    "example.com" : NULL;
-		(void)hostkeys_foreach_file("/fuzz", f, noop_cb, NULL,
+	क्रम (माप_प्रकार i = 0; i < माप(flag_combos)/माप(flag_combos[0]); i++) {
+		खाता *f = fmemopen((व्योम *)तथ्य, आकार, "r");
+		अगर (f == शून्य)
+			जारी;
+		स्थिर अक्षर *host = (flag_combos[i] & HKF_WANT_MATCH) ?
+		    "example.com" : शून्य;
+		(व्योम)hostkeys_foreach_file("/fuzz", f, noop_cb, शून्य,
 		    host, "127.0.0.1", flag_combos[i], 0);
-		fclose(f);
+		ख_बंद(f);
 	}
 
 	/* Higher-level wrapper that adds record_hostkey on top of foreach. */
 	{
-		FILE *f = fmemopen((void *)data, size, "r");
-		if (f != NULL) {
-			struct hostkeys *hk = init_hostkeys();
-			if (hk != NULL) {
+		खाता *f = fmemopen((व्योम *)तथ्य, आकार, "r");
+		अगर (f != शून्य) {
+			काष्ठा hostkeys *hk = init_hostkeys();
+			अगर (hk != शून्य) {
 				load_hostkeys_file(hk, "example.com",
 				    "/fuzz", f, 0);
 				free_hostkeys(hk);
 			}
-			fclose(f);
+			ख_बंद(f);
 		}
 	}
 
 	/* Drive host_hash + extract_salt on a bounded hostname-shaped slice. */
-	if (size > 0) {
-		size_t n = size < 256 ? size : 256;
-		char *hb = (char *)malloc(n + 1);
-		if (hb != NULL) {
-			memcpy(hb, data, n);
+	अगर (आकार > 0) {
+		माप_प्रकार n = आकार < 256 ? आकार : 256;
+		अक्षर *hb = (अक्षर *)दो_स्मृति(n + 1);
+		अगर (hb != शून्य) {
+			स_नकल(hb, तथ्य, n);
 			hb[n] = '\0';
-			char *h = host_hash("example.com", hb, 0);
-			free(h);
-			free(hb);
+			अक्षर *h = host_hash("example.com", hb, 0);
+			मुक्त(h);
+			मुक्त(hb);
 		}
 	}
 
-	return 0;
+	वापस 0;
 }
 
 } // extern "C"

@@ -15,67 +15,67 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#ifdef SANDBOX_RLIMIT
+#अगर_घोषित SANDBOX_RLIMIT
 
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/resource.h>
+#समावेश <sys/types.h>
+#समावेश <sys/time.h>
+#समावेश <sys/resource.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#समावेश <errno.h>
+#समावेश <stdarg.h>
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <unistd.h>
 
-#include "log.h"
-#include "ssh-sandbox.h"
-#include "xmalloc.h"
+#समावेश "log.h"
+#समावेश "ssh-sandbox.h"
+#समावेश "xmalloc.h"
 
 /* Minimal sandbox that sets zero nfiles, nprocs and filesize rlimits */
 
-struct ssh_sandbox {
-	int junk;
+काष्ठा ssh_sandbox {
+	पूर्णांक junk;
 };
 
-struct ssh_sandbox *
-ssh_sandbox_init(struct monitor *monitor)
+काष्ठा ssh_sandbox *
+ssh_sandbox_init(काष्ठा monitor *monitor)
 {
-	struct ssh_sandbox *box;
+	काष्ठा ssh_sandbox *box;
 
 	/*
 	 * Strictly, we don't need to maintain any state here but we need
 	 * to return non-NULL to satisfy the API.
 	 */
 	debug3_f("preparing rlimit sandbox");
-	box = xcalloc(1, sizeof(*box));
-	return box;
+	box = xcalloc(1, माप(*box));
+	वापस box;
 }
 
-void
-ssh_sandbox_child(struct ssh_sandbox *box)
+व्योम
+ssh_sandbox_child(काष्ठा ssh_sandbox *box)
 {
-	struct rlimit rl_zero;
+	काष्ठा rlimit rl_zero;
 
 	rl_zero.rlim_cur = rl_zero.rlim_max = 0;
 
-#ifndef SANDBOX_SKIP_RLIMIT_FSIZE
-	if (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
+#अगर_अघोषित SANDBOX_SKIP_RLIMIT_FSIZE
+	अगर (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
 		fatal_f("setrlimit(RLIMIT_FSIZE, { 0, 0 }): %s",
-			strerror(errno));
-#endif
-#ifndef SANDBOX_SKIP_RLIMIT_NOFILE
-	if (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
+			म_त्रुटि(त्रुटि_सं));
+#पूर्ण_अगर
+#अगर_अघोषित SANDBOX_SKIP_RLIMIT_NOFILE
+	अगर (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
 		fatal_f("setrlimit(RLIMIT_NOFILE, { 0, 0 }): %s",
-			strerror(errno));
-#endif
-#ifdef HAVE_RLIMIT_NPROC
-	if (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
+			म_त्रुटि(त्रुटि_सं));
+#पूर्ण_अगर
+#अगर_घोषित HAVE_RLIMIT_NPROC
+	अगर (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
 		fatal_f("setrlimit(RLIMIT_NPROC, { 0, 0 }): %s",
-			strerror(errno));
-#endif
+			म_त्रुटि(त्रुटि_सं));
+#पूर्ण_अगर
 }
 
-#endif /* SANDBOX_RLIMIT */
+#पूर्ण_अगर /* SANDBOX_RLIMIT */

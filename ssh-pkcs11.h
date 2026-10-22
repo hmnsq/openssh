@@ -18,32 +18,32 @@
 /* API for ssh-pkcs11.c and ssh-pkcs11-client.c */
 
 /* Errors for pkcs11_add_provider() */
-#define	SSH_PKCS11_ERR_GENERIC			1
-#define	SSH_PKCS11_ERR_LOGIN_FAIL		2
-#define	SSH_PKCS11_ERR_NO_SLOTS			3
-#define	SSH_PKCS11_ERR_PIN_REQUIRED		4
-#define	SSH_PKCS11_ERR_PIN_LOCKED		5
+#घोषणा	SSH_PKCS11_ERR_GENERIC			1
+#घोषणा	SSH_PKCS11_ERR_LOGIN_FAIL		2
+#घोषणा	SSH_PKCS11_ERR_NO_SLOTS			3
+#घोषणा	SSH_PKCS11_ERR_PIN_REQUIRED		4
+#घोषणा	SSH_PKCS11_ERR_PIN_LOCKED		5
 
-struct sshkey;
+काष्ठा sshkey;
 
-int	pkcs11_init(int);
-void	pkcs11_terminate(void);
-int	pkcs11_add_provider(char *, char *, struct sshkey ***, char ***);
-int	pkcs11_del_provider(char *);
-int	pkcs11_sign(struct sshkey *, u_char **, size_t *,
-	    const u_char *, size_t, const char *, const char *,
-	    const char *, u_int);
-void	pkcs11_key_free(struct sshkey *);
+पूर्णांक	pkcs11_init(पूर्णांक);
+व्योम	pkcs11_terminate(व्योम);
+पूर्णांक	pkcs11_add_provider(अक्षर *, अक्षर *, काष्ठा sshkey ***, अक्षर ***);
+पूर्णांक	pkcs11_del_provider(अक्षर *);
+पूर्णांक	pkcs11_sign(काष्ठा sshkey *, u_char **, माप_प्रकार *,
+	    स्थिर u_char *, माप_प्रकार, स्थिर अक्षर *, स्थिर अक्षर *,
+	    स्थिर अक्षर *, u_int);
+व्योम	pkcs11_कुंजी_free(काष्ठा sshkey *);
 
-#ifdef WITH_PKCS11_KEYGEN
-struct sshkey *
-	pkcs11_gakp(char *, char *, unsigned int, char *, unsigned int,
-	    unsigned int, unsigned char, uint32_t *);
-struct sshkey *
-	pkcs11_destroy_keypair(char *, char *, unsigned long, unsigned char,
+#अगर_घोषित WITH_PKCS11_KEYGEN
+काष्ठा sshkey *
+	pkcs11_gakp(अक्षर *, अक्षर *, अचिन्हित पूर्णांक, अक्षर *, अचिन्हित पूर्णांक,
+	    अचिन्हित पूर्णांक, अचिन्हित अक्षर, uint32_t *);
+काष्ठा sshkey *
+	pkcs11_destroy_keypair(अक्षर *, अक्षर *, अचिन्हित दीर्घ, अचिन्हित अक्षर,
 	    uint32_t *);
-#endif
+#पूर्ण_अगर
 
 /* Only available in ssh-pkcs11-client.c */
-int pkcs11_make_cert(const struct sshkey *,
-    const struct sshkey *, struct sshkey **);
+पूर्णांक pkcs11_make_cert(स्थिर काष्ठा sshkey *,
+    स्थिर काष्ठा sshkey *, काष्ठा sshkey **);

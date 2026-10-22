@@ -5,52 +5,52 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
+#समावेश <ctype.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "sshbuf.h"
+#समावेश "../test_helper/test_helper.h"
+#समावेश "sshbuf.h"
 
-void mldsa_tests(void);
-void mlkem_tests(void);
-void ed25519_tests(void);
-void mldsa_eddsa_tests(void);
+व्योम mldsa_tests(व्योम);
+व्योम mlkem_tests(व्योम);
+व्योम ed25519_tests(व्योम);
+व्योम mldsa_eddsa_tests(व्योम);
 
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+काष्ठा sshbuf *load_text_file(स्थिर अक्षर *name);
+अक्षर *get_json_string(काष्ठा sshbuf *content, स्थिर अक्षर *कुंजी, पूर्णांक consume);
 
-static struct sshbuf *
-load_file(const char *name)
+अटल काष्ठा sshbuf *
+load_file(स्थिर अक्षर *name)
 {
-	struct sshbuf *ret = NULL;
+	काष्ठा sshbuf *ret = शून्य;
 
-	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_INT_EQ(sshbuf_load_file(test_तथ्य_file(name), &ret), 0);
+	ASSERT_PTR_NE(ret, शून्य);
+	वापस ret;
 }
 
-struct sshbuf *
-load_text_file(const char *name)
+काष्ठा sshbuf *
+load_text_file(स्थिर अक्षर *name)
 {
-	struct sshbuf *ret = load_file(name);
-	const u_char *p;
-	size_t len;
+	काष्ठा sshbuf *ret = load_file(name);
+	स्थिर u_char *p;
+	माप_प्रकार len;
 
 	/* Trim whitespace at EOL */
-	for (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
+	क्रम (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
 		len--;
-		if (p[len] == '\r' || p[len] == '\t' ||
+		अगर (p[len] == '\r' || p[len] == '\t' ||
 		    p[len] == ' ' || p[len] == '\n')
 			ASSERT_INT_EQ(sshbuf_consume_end(ret, 1), 0);
-		else
-			break;
+		अन्यथा
+			अवरोध;
 	}
 	/* \0 terminate */
 	ASSERT_INT_EQ(sshbuf_put_u8(ret, 0), 0);
-	return ret;
+	वापस ret;
 }
 
 
@@ -59,65 +59,65 @@ load_text_file(const char *name)
  * Extracts the value for a given key.
  * Errors cause ASSERT_* failures.
  */
-char *
-get_json_string(struct sshbuf *content, const char *key, int consume)
+अक्षर *
+get_json_string(काष्ठा sshbuf *content, स्थिर अक्षर *कुंजी, पूर्णांक consume)
 {
-	struct sshbuf *tmp;
-	char *k, *ret;
-	size_t off, end_off;
+	काष्ठा sshbuf *tmp;
+	अक्षर *k, *ret;
+	माप_प्रकार off, end_off;
 	u_char c;
 
 	tmp = sshbuf_fromb(content);
-	ASSERT_PTR_NE(tmp, NULL);
-	ASSERT_INT_GT(asprintf(&k, "\"%s\"", key), 0);
-	if (sshbuf_find(tmp, 0, k, strlen(k), &off) != 0) {
-		fprintf(stderr, "Key %s not found in JSON\n", k);
+	ASSERT_PTR_NE(tmp, शून्य);
+	ASSERT_INT_GT(asprintf(&k, "\"%s\"", कुंजी), 0);
+	अगर (sshbuf_find(tmp, 0, k, म_माप(k), &off) != 0) {
+		ख_लिखो(मानक_त्रुटि, "Key %s not found in JSON\n", k);
 		ASSERT_INT_EQ(1, 0);
 	}
-	ASSERT_INT_EQ(sshbuf_consume(tmp, off + strlen(k)), 0);
-	free(k);
+	ASSERT_INT_EQ(sshbuf_consume(tmp, off + म_माप(k)), 0);
+	मुक्त(k);
 
 	/* Skip colon, spaces, commas */
-	while (sshbuf_len(tmp) > 0) {
+	जबतक (sshbuf_len(tmp) > 0) {
 		c = *sshbuf_ptr(tmp);
-		if (isspace(c) || c == ':' || c == ',')
+		अगर (है_खाली(c) || c == ':' || c == ',')
 			ASSERT_INT_EQ(sshbuf_consume(tmp, 1), 0);
-		else
-			break;
+		अन्यथा
+			अवरोध;
 	}
 	/* Expect opening quote */
 	ASSERT_INT_EQ(sshbuf_get_u8(tmp, &c), 0);
 	ASSERT_CHAR_EQ(c, '"');
 	/* Find closing quote */
 	ASSERT_INT_EQ(sshbuf_find(tmp, 0, "\"", 1, &end_off), 0);
-	ASSERT_PTR_NE(ret = malloc(end_off + 1), NULL);
-	memcpy(ret, sshbuf_ptr(tmp), end_off);
+	ASSERT_PTR_NE(ret = दो_स्मृति(end_off + 1), शून्य);
+	स_नकल(ret, sshbuf_ptr(tmp), end_off);
 	ret[end_off] = '\0';
-	if (consume) {
+	अगर (consume) {
 		ASSERT_INT_EQ(sshbuf_consume(tmp, end_off), 0);
 		ASSERT_INT_EQ(sshbuf_consume_upto_child(content, tmp), 0);
 	}
 	sshbuf_free(tmp);
-	return ret;
+	वापस ret;
 }
 
-void
-tests(void)
+व्योम
+tests(व्योम)
 {
-#ifdef USE_MLDSA
+#अगर_घोषित USE_MLDSA
 	mldsa_tests();
-#endif
-#ifdef USE_MLKEM768X25519
+#पूर्ण_अगर
+#अगर_घोषित USE_MLKEM768X25519
 	mlkem_tests();
-#endif
+#पूर्ण_अगर
 	ed25519_tests();
-#ifdef USE_MLDSA
+#अगर_घोषित USE_MLDSA
 	mldsa_eddsa_tests();
-#endif
+#पूर्ण_अगर
 }
 
-void
-benchmarks(void)
+व्योम
+benchmarks(व्योम)
 {
 	/* none */
 }

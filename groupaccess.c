@@ -23,123 +23,123 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
+#समावेश <sys/types.h>
 
-#include <grp.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+#समावेश <grp.h>
+#समावेश <unistd.h>
+#समावेश <stdarg.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <limits.h>
 
-#include "xmalloc.h"
-#include "groupaccess.h"
-#include "match.h"
-#include "log.h"
+#समावेश "xmalloc.h"
+#समावेश "groupaccess.h"
+#समावेश "match.h"
+#समावेश "log.h"
 
-static int ngroups;
-static char **groups_byname;
+अटल पूर्णांक ngroups;
+अटल अक्षर **groups_byname;
 
 /*
  * Initialize group access list for user with primary (base) and
  * supplementary groups.  Return the number of groups in the list.
  */
-int
-ga_init(const char *user, gid_t base)
+पूर्णांक
+ga_init(स्थिर अक्षर *user, gid_t base)
 {
 	gid_t *groups_bygid;
-	int ongroups, i, j, retry = 0;
-	struct group *gr;
+	पूर्णांक ongroups, i, j, retry = 0;
+	काष्ठा group *gr;
 
-	if (ngroups > 0)
+	अगर (ngroups > 0)
 		ga_free();
 
 	ongroups = ngroups = NGROUPS_MAX;
-#if defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
+#अगर defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
 	ongroups = ngroups = MAX(NGROUPS_MAX, sysconf(_SC_NGROUPS_MAX));
-#endif
+#पूर्ण_अगर
 
-	groups_bygid = xcalloc(ngroups, sizeof(*groups_bygid));
-	while (getgrouplist(user, base, groups_bygid, &ngroups) == -1) {
-		if (ngroups <= ongroups) {
+	groups_bygid = xcalloc(ngroups, माप(*groups_bygid));
+	जबतक (getgrouplist(user, base, groups_bygid, &ngroups) == -1) {
+		अगर (ngroups <= ongroups) {
 			error("getgrouplist(\"%s\", %ld): failed",
-			    user, (long)base);
-			free(groups_bygid);
-			groups_bygid = NULL;
+			    user, (दीर्घ)base);
+			मुक्त(groups_bygid);
+			groups_bygid = शून्य;
 			ngroups = 0;
-			return 0;
+			वापस 0;
 		}
-		if (retry++ > 0) {
+		अगर (retry++ > 0) {
 			fatal("getgrouplist(\"%s\", %ld): groups list too big "
-			    "(have %ld, need %ld)", user, (long)base,
-			    (long)ongroups, (long)ngroups);
+			    "(have %ld, need %ld)", user, (दीर्घ)base,
+			    (दीर्घ)ongroups, (दीर्घ)ngroups);
 		}
 		groups_bygid = xreallocarray(groups_bygid, ngroups,
-		    sizeof(*groups_bygid));
+		    माप(*groups_bygid));
 	}
-	groups_byname = xcalloc(ngroups, sizeof(*groups_byname));
+	groups_byname = xcalloc(ngroups, माप(*groups_byname));
 
-	for (i = 0, j = 0; i < ngroups; i++)
-		if ((gr = getgrgid(groups_bygid[i])) != NULL)
+	क्रम (i = 0, j = 0; i < ngroups; i++)
+		अगर ((gr = getgrgid(groups_bygid[i])) != शून्य)
 			groups_byname[j++] = xstrdup(gr->gr_name);
-	free(groups_bygid);
-	return (ngroups = j);
+	मुक्त(groups_bygid);
+	वापस (ngroups = j);
 }
 
 /*
  * Return 1 if one of user's groups is contained in groups.
  * Return 0 otherwise.  Use match_pattern() for string comparison.
  */
-int
-ga_match(char * const *groups, int n)
+पूर्णांक
+ga_match(अक्षर * स्थिर *groups, पूर्णांक n)
 {
-	int i, j;
+	पूर्णांक i, j;
 
-	for (i = 0; i < ngroups; i++)
-		for (j = 0; j < n; j++)
-			if (match_pattern(groups_byname[i], groups[j]))
-				return 1;
-	return 0;
+	क्रम (i = 0; i < ngroups; i++)
+		क्रम (j = 0; j < n; j++)
+			अगर (match_pattern(groups_byname[i], groups[j]))
+				वापस 1;
+	वापस 0;
 }
 
 /*
  * Return 1 if one of user's groups matches group_pattern list.
  * Return 0 on negated or no match.
  */
-int
-ga_match_pattern_list(const char *group_pattern)
+पूर्णांक
+ga_match_pattern_list(स्थिर अक्षर *group_pattern)
 {
-	int i, found = 0;
+	पूर्णांक i, found = 0;
 
-	for (i = 0; i < ngroups; i++) {
-		switch (match_usergroup_pattern_list(groups_byname[i],
+	क्रम (i = 0; i < ngroups; i++) {
+		चयन (match_usergroup_pattern_list(groups_byname[i],
 		    group_pattern)) {
-		case -1:
-			return 0;	/* Negated match wins */
-		case 0:
-			continue;
-		case 1:
+		हाल -1:
+			वापस 0;	/* Negated match wins */
+		हाल 0:
+			जारी;
+		हाल 1:
 			found = 1;
 		}
 	}
-	return found;
+	वापस found;
 }
 
 /*
  * Free memory allocated for group access list.
  */
-void
-ga_free(void)
+व्योम
+ga_free(व्योम)
 {
-	int i;
+	पूर्णांक i;
 
-	if (ngroups > 0) {
-		for (i = 0; i < ngroups; i++)
-			free(groups_byname[i]);
+	अगर (ngroups > 0) {
+		क्रम (i = 0; i < ngroups; i++)
+			मुक्त(groups_byname[i]);
 		ngroups = 0;
-		free(groups_byname);
-		groups_byname = NULL;
+		मुक्त(groups_byname);
+		groups_byname = शून्य;
 	}
 }

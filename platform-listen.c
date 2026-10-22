@@ -14,88 +14,88 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#समावेश <stdarg.h>
+#समावेश <stdio.h>
+#समावेश <string.h>
+#समावेश <unistd.h>
 
-#include "log.h"
-#include "misc.h"
-#include "platform.h"
+#समावेश "log.h"
+#समावेश "misc.h"
+#समावेश "platform.h"
 
-#include "openbsd-compat/openbsd-compat.h"
+#समावेश "openbsd-compat/openbsd-compat.h"
 
-void
-platform_pre_listen(void)
+व्योम
+platform_pre_listen(व्योम)
 {
-#ifdef LINUX_OOM_ADJUST
+#अगर_घोषित LINUX_OOM_ADJUST
 	/* Adjust out-of-memory killer so listening process is not killed */
 	oom_adjust_setup();
-#endif
-#ifdef LINUX_MEMLOCK_ONFAULT
+#पूर्ण_अगर
+#अगर_घोषित LINUX_MEMLOCK_ONFAULT
 	/*
 	 * Protect ourselves against kcompactd so that we are able to process
 	 * new connections while it is active and migrating pages.
 	 */
 	memlock_onfault_setup();
-#endif
+#पूर्ण_अगर
 }
 
-void
-platform_post_listen(void)
+व्योम
+platform_post_listen(व्योम)
 {
-#ifdef SYSTEMD_NOTIFY
+#अगर_घोषित SYSTEMD_NOTIFY
 	ssh_systemd_notify_ready();
-#endif
+#पूर्ण_अगर
 }
 
-void
-platform_pre_fork(void)
+व्योम
+platform_pre_fork(व्योम)
 {
-#ifdef USE_SOLARIS_PROCESS_CONTRACTS
+#अगर_घोषित USE_SOLARIS_PROCESS_CONTRACTS
 	solaris_contract_pre_fork();
-#endif
+#पूर्ण_अगर
 }
 
-void
-platform_pre_restart(void)
+व्योम
+platform_pre_restart(व्योम)
 {
-#ifdef SYSTEMD_NOTIFY
+#अगर_घोषित SYSTEMD_NOTIFY
 	ssh_systemd_notify_reload();
-#endif
-#ifdef LINUX_OOM_ADJUST
+#पूर्ण_अगर
+#अगर_घोषित LINUX_OOM_ADJUST
 	oom_adjust_restore();
-#endif
+#पूर्ण_अगर
 }
 
-void
+व्योम
 platform_post_fork_parent(pid_t child_pid)
 {
-#ifdef USE_SOLARIS_PROCESS_CONTRACTS
+#अगर_घोषित USE_SOLARIS_PROCESS_CONTRACTS
 	solaris_contract_post_fork_parent(child_pid);
-#endif
+#पूर्ण_अगर
 }
 
-void
-platform_post_fork_child(void)
+व्योम
+platform_post_fork_child(व्योम)
 {
-#ifdef USE_SOLARIS_PROCESS_CONTRACTS
+#अगर_घोषित USE_SOLARIS_PROCESS_CONTRACTS
 	solaris_contract_post_fork_child();
-#endif
-#ifdef LINUX_OOM_ADJUST
+#पूर्ण_अगर
+#अगर_घोषित LINUX_OOM_ADJUST
 	oom_adjust_restore();
-#endif
+#पूर्ण_अगर
 }
 
-void platform_pre_session_start(void)
+व्योम platform_pre_session_start(व्योम)
 {
-#ifdef LINUX_MEMLOCK_ONFAULT
+#अगर_घोषित LINUX_MEMLOCK_ONFAULT
 	/*
 	 * Memlock flags are dropped on fork, lock the memory again so that the
 	 * child connection is also protected against kcompactd.
 	 */
 	memlock_onfault_setup();
-#endif
+#पूर्ण_अगर
 }

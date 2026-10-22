@@ -14,22 +14,22 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _PORT_SOLARIS_H
+#अगर_अघोषित _PORT_SOLARIS_H
 
-#include <sys/types.h>
+#समावेश <sys/types.h>
 
-#include <pwd.h>
+#समावेश <pwd.h>
 
-void solaris_contract_pre_fork(void);
-void solaris_contract_post_fork_child(void);
-void solaris_contract_post_fork_parent(pid_t pid);
-void solaris_set_default_project(struct passwd *);
+व्योम solaris_contract_pre_fork(व्योम);
+व्योम solaris_contract_post_fork_child(व्योम);
+व्योम solaris_contract_post_fork_parent(pid_t pid);
+व्योम solaris_set_default_project(काष्ठा passwd *);
 # ifdef USE_SOLARIS_PRIVS
-#include <priv.h>
-priv_set_t *solaris_basic_privset(void);
-void solaris_drop_privs_pinfo_net_fork_exec(void);
-void solaris_drop_privs_root_pinfo_net(void);
-void solaris_drop_privs_root_pinfo_net_exec(void);
+#समावेश <priv.h>
+priv_set_t *solaris_basic_privset(व्योम);
+व्योम solaris_drop_privs_pinfo_net_fork_exec(व्योम);
+व्योम solaris_drop_privs_मूल_pinfo_net(व्योम);
+व्योम solaris_drop_privs_मूल_pinfo_net_exec(व्योम);
 # endif /* USE_SOLARIS_PRIVS */
 
-#endif
+#पूर्ण_अगर

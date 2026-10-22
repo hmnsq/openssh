@@ -23,44 +23,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
+#समावेश <sys/types.h>
+#समावेश <stdarg.h>
+#समावेश <stdio.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "packet.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "ssh2.h"
-#include "ssherr.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
+#समावेश "xmalloc.h"
+#समावेश "sshkey.h"
+#समावेश "hostfile.h"
+#समावेश "auth.h"
+#समावेश "packet.h"
+#समावेश "log.h"
+#समावेश "misc.h"
+#समावेश "servconf.h"
+#समावेश "ssh2.h"
+#समावेश "ssherr.h"
+#अगर_घोषित GSSAPI
+#समावेश "ssh-gss.h"
+#पूर्ण_अगर
+#समावेश "monitor_wrap.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_none;
+बाह्य ServerOptions options;
+बाह्य काष्ठा authmethod_cfg methodcfg_none;
 
-extern int none_enabled;
+बाह्य पूर्णांक none_enabled;
 
-static int
-userauth_none(struct ssh *ssh, const char *method)
+अटल पूर्णांक
+userauth_none(काष्ठा ssh *ssh, स्थिर अक्षर *method)
 {
-	int r;
+	पूर्णांक r;
 
 	none_enabled = 0;
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	अगर ((r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
-	if (options.permit_empty_passwd && options.password_authentication)
-		return mm_auth_password(ssh, "");
-	return (0);
+	अगर (options.permit_empty_passwd && options.password_authentication)
+		वापस mm_auth_password(ssh, "");
+	वापस (0);
 }
 
 Authmethod method_none = {

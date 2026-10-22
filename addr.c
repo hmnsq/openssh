@@ -16,146 +16,146 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#समावेश <sys/types.h>
+#समावेश <sys/socket.h>
+#समावेश <netinet/in.h>
+#समावेश <arpa/inet.h>
 
-#include <netdb.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <limits.h>
+#समावेश <netdb.h>
+#समावेश <string.h>
+#समावेश <stdlib.h>
+#समावेश <stdio.h>
+#समावेश <limits.h>
 
-#include "addr.h"
+#समावेश "addr.h"
 
-#define _SA(x)	((struct sockaddr *)(x))
+#घोषणा _SA(x)	((काष्ठा sockaddr *)(x))
 
-static int
-addr_unicast_masklen(int af)
+अटल पूर्णांक
+addr_unicast_masklen(पूर्णांक af)
 {
-	switch (af) {
-	case AF_INET:
-		return 32;
-	case AF_INET6:
-		return 128;
-	default:
-		return -1;
+	चयन (af) {
+	हाल AF_INET:
+		वापस 32;
+	हाल AF_INET6:
+		वापस 128;
+	शेष:
+		वापस -1;
 	}
 }
 
-static inline int
-masklen_valid(int af, u_int masklen)
+अटल अंतरभूत पूर्णांक
+masklen_valid(पूर्णांक af, u_int masklen)
 {
-	switch (af) {
-	case AF_INET:
-		return masklen <= 32 ? 0 : -1;
-	case AF_INET6:
-		return masklen <= 128 ? 0 : -1;
-	default:
-		return -1;
+	चयन (af) {
+	हाल AF_INET:
+		वापस masklen <= 32 ? 0 : -1;
+	हाल AF_INET6:
+		वापस masklen <= 128 ? 0 : -1;
+	शेष:
+		वापस -1;
 	}
 }
 
-static int
-addr_xaddr_to_sa(const struct xaddr *xa, struct sockaddr *sa, socklen_t *len,
+अटल पूर्णांक
+addr_xaddr_to_sa(स्थिर काष्ठा xaddr *xa, काष्ठा sockaddr *sa, socklen_t *len,
     uint16_t port)
 {
-	struct sockaddr_in *in4 = (struct sockaddr_in *)sa;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)sa;
+	काष्ठा sockaddr_in *in4 = (काष्ठा sockaddr_in *)sa;
+	काष्ठा sockaddr_in6 *in6 = (काष्ठा sockaddr_in6 *)sa;
 
-	if (xa == NULL || sa == NULL || len == NULL)
-		return -1;
+	अगर (xa == शून्य || sa == शून्य || len == शून्य)
+		वापस -1;
 
-	switch (xa->af) {
-	case AF_INET:
-		if (*len < sizeof(*in4))
-			return -1;
-		memset(sa, '\0', sizeof(*in4));
-		*len = sizeof(*in4);
-#ifdef SOCK_HAS_LEN
-		in4->sin_len = sizeof(*in4);
-#endif
+	चयन (xa->af) {
+	हाल AF_INET:
+		अगर (*len < माप(*in4))
+			वापस -1;
+		स_रखो(sa, '\0', माप(*in4));
+		*len = माप(*in4);
+#अगर_घोषित SOCK_HAS_LEN
+		in4->sin_len = माप(*in4);
+#पूर्ण_अगर
 		in4->sin_family = AF_INET;
 		in4->sin_port = htons(port);
-		memcpy(&in4->sin_addr, &xa->v4, sizeof(in4->sin_addr));
-		break;
-	case AF_INET6:
-		if (*len < sizeof(*in6))
-			return -1;
-		memset(sa, '\0', sizeof(*in6));
-		*len = sizeof(*in6);
-#ifdef SOCK_HAS_LEN
-		in6->sin6_len = sizeof(*in6);
-#endif
+		स_नकल(&in4->sin_addr, &xa->v4, माप(in4->sin_addr));
+		अवरोध;
+	हाल AF_INET6:
+		अगर (*len < माप(*in6))
+			वापस -1;
+		स_रखो(sa, '\0', माप(*in6));
+		*len = माप(*in6);
+#अगर_घोषित SOCK_HAS_LEN
+		in6->sin6_len = माप(*in6);
+#पूर्ण_अगर
 		in6->sin6_family = AF_INET6;
 		in6->sin6_port = htons(port);
-		memcpy(&in6->sin6_addr, &xa->v6, sizeof(in6->sin6_addr));
-#ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
+		स_नकल(&in6->sin6_addr, &xa->v6, माप(in6->sin6_addr));
+#अगर_घोषित HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
 		in6->sin6_scope_id = xa->scope_id;
-#endif
-		break;
-	default:
-		return -1;
+#पूर्ण_अगर
+		अवरोध;
+	शेष:
+		वापस -1;
 	}
-	return 0;
+	वापस 0;
 }
 
 /*
  * Convert struct sockaddr to struct xaddr
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa)
+पूर्णांक
+addr_sa_to_xaddr(काष्ठा sockaddr *sa, socklen_t slen, काष्ठा xaddr *xa)
 {
-	struct sockaddr_in *in4 = (struct sockaddr_in *)sa;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)sa;
+	काष्ठा sockaddr_in *in4 = (काष्ठा sockaddr_in *)sa;
+	काष्ठा sockaddr_in6 *in6 = (काष्ठा sockaddr_in6 *)sa;
 
-	memset(xa, '\0', sizeof(*xa));
+	स_रखो(xa, '\0', माप(*xa));
 
-	switch (sa->sa_family) {
-	case AF_INET:
-		if (slen < (socklen_t)sizeof(*in4))
-			return -1;
+	चयन (sa->sa_family) {
+	हाल AF_INET:
+		अगर (slen < (socklen_t)माप(*in4))
+			वापस -1;
 		xa->af = AF_INET;
-		memcpy(&xa->v4, &in4->sin_addr, sizeof(xa->v4));
-		break;
-	case AF_INET6:
-		if (slen < (socklen_t)sizeof(*in6))
-			return -1;
+		स_नकल(&xa->v4, &in4->sin_addr, माप(xa->v4));
+		अवरोध;
+	हाल AF_INET6:
+		अगर (slen < (socklen_t)माप(*in6))
+			वापस -1;
 		xa->af = AF_INET6;
-		memcpy(&xa->v6, &in6->sin6_addr, sizeof(xa->v6));
-#ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
+		स_नकल(&xa->v6, &in6->sin6_addr, माप(xa->v6));
+#अगर_घोषित HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
 		xa->scope_id = in6->sin6_scope_id;
-#endif
-		break;
-	default:
-		return -1;
+#पूर्ण_अगर
+		अवरोध;
+	शेष:
+		वापस -1;
 	}
 
-	return 0;
+	वापस 0;
 }
 
-static int
-addr_invert(struct xaddr *n)
+अटल पूर्णांक
+addr_invert(काष्ठा xaddr *n)
 {
-	int i;
+	पूर्णांक i;
 
-	if (n == NULL)
-		return -1;
+	अगर (n == शून्य)
+		वापस -1;
 
-	switch (n->af) {
-	case AF_INET:
+	चयन (n->af) {
+	हाल AF_INET:
 		n->v4.s_addr = ~n->v4.s_addr;
-		return 0;
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
+		वापस 0;
+	हाल AF_INET6:
+		क्रम (i = 0; i < 4; i++)
 			n->addr32[i] = ~n->addr32[i];
-		return 0;
-	default:
-		return -1;
+		वापस 0;
+	शेष:
+		वापस -1;
 	}
 }
 
@@ -164,163 +164,163 @@ addr_invert(struct xaddr *n)
  * store it in 'n'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_netmask(int af, u_int l, struct xaddr *n)
+पूर्णांक
+addr_netmask(पूर्णांक af, u_int l, काष्ठा xaddr *n)
 {
-	int i;
+	पूर्णांक i;
 
-	if (masklen_valid(af, l) != 0 || n == NULL)
-		return -1;
+	अगर (masklen_valid(af, l) != 0 || n == शून्य)
+		वापस -1;
 
-	memset(n, '\0', sizeof(*n));
-	switch (af) {
-	case AF_INET:
+	स_रखो(n, '\0', माप(*n));
+	चयन (af) {
+	हाल AF_INET:
 		n->af = AF_INET;
-		if (l == 0)
-			return 0;
+		अगर (l == 0)
+			वापस 0;
 		n->v4.s_addr = htonl((0xffffffff << (32 - l)) & 0xffffffff);
-		return 0;
-	case AF_INET6:
+		वापस 0;
+	हाल AF_INET6:
 		n->af = AF_INET6;
-		for (i = 0; i < 4 && l >= 32; i++, l -= 32)
+		क्रम (i = 0; i < 4 && l >= 32; i++, l -= 32)
 			n->addr32[i] = 0xffffffffU;
-		if (i < 4 && l != 0)
+		अगर (i < 4 && l != 0)
 			n->addr32[i] = htonl((0xffffffff << (32 - l)) &
 			    0xffffffff);
-		return 0;
-	default:
-		return -1;
+		वापस 0;
+	शेष:
+		वापस -1;
 	}
 }
 
-static int
-addr_hostmask(int af, u_int l, struct xaddr *n)
+अटल पूर्णांक
+addr_hostmask(पूर्णांक af, u_int l, काष्ठा xaddr *n)
 {
-	if (addr_netmask(af, l, n) == -1 || addr_invert(n) == -1)
-		return -1;
-	return 0;
+	अगर (addr_netmask(af, l, n) == -1 || addr_invert(n) == -1)
+		वापस -1;
+	वापस 0;
 }
 
 /*
  * Perform logical AND of addresses 'a' and 'b', storing result in 'dst'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b)
+पूर्णांक
+addr_and(काष्ठा xaddr *dst, स्थिर काष्ठा xaddr *a, स्थिर काष्ठा xaddr *b)
 {
-	int i;
+	पूर्णांक i;
 
-	if (dst == NULL || a == NULL || b == NULL || a->af != b->af)
-		return -1;
+	अगर (dst == शून्य || a == शून्य || b == शून्य || a->af != b->af)
+		वापस -1;
 
-	memcpy(dst, a, sizeof(*dst));
-	switch (a->af) {
-	case AF_INET:
+	स_नकल(dst, a, माप(*dst));
+	चयन (a->af) {
+	हाल AF_INET:
 		dst->v4.s_addr &= b->v4.s_addr;
-		return 0;
-	case AF_INET6:
+		वापस 0;
+	हाल AF_INET6:
 		dst->scope_id = a->scope_id;
-		for (i = 0; i < 4; i++)
+		क्रम (i = 0; i < 4; i++)
 			dst->addr32[i] &= b->addr32[i];
-		return 0;
-	default:
-		return -1;
+		वापस 0;
+	शेष:
+		वापस -1;
 	}
 }
 
-static int
-addr_or(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b)
+अटल पूर्णांक
+addr_or(काष्ठा xaddr *dst, स्थिर काष्ठा xaddr *a, स्थिर काष्ठा xaddr *b)
 {
-	int i;
+	पूर्णांक i;
 
-	if (dst == NULL || a == NULL || b == NULL || a->af != b->af)
-		return (-1);
+	अगर (dst == शून्य || a == शून्य || b == शून्य || a->af != b->af)
+		वापस (-1);
 
-	memcpy(dst, a, sizeof(*dst));
-	switch (a->af) {
-	case AF_INET:
+	स_नकल(dst, a, माप(*dst));
+	चयन (a->af) {
+	हाल AF_INET:
 		dst->v4.s_addr |= b->v4.s_addr;
-		return (0);
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
+		वापस (0);
+	हाल AF_INET6:
+		क्रम (i = 0; i < 4; i++)
 			dst->addr32[i] |= b->addr32[i];
-		return (0);
-	default:
-		return (-1);
+		वापस (0);
+	शेष:
+		वापस (-1);
 	}
 }
 
-int
-addr_cmp(const struct xaddr *a, const struct xaddr *b)
+पूर्णांक
+addr_cmp(स्थिर काष्ठा xaddr *a, स्थिर काष्ठा xaddr *b)
 {
-	int i;
+	पूर्णांक i;
 
-	if (a->af != b->af)
-		return (a->af == AF_INET6 ? 1 : -1);
+	अगर (a->af != b->af)
+		वापस (a->af == AF_INET6 ? 1 : -1);
 
-	switch (a->af) {
-	case AF_INET:
+	चयन (a->af) {
+	हाल AF_INET:
 		/*
 		 * Can't just subtract here as 255.255.255.255 - 0.0.0.0 is
 		 * too big to fit into a signed int
 		 */
-		if (a->v4.s_addr == b->v4.s_addr)
-			return 0;
-		return (ntohl(a->v4.s_addr) > ntohl(b->v4.s_addr) ? 1 : -1);
-	case AF_INET6:
+		अगर (a->v4.s_addr == b->v4.s_addr)
+			वापस 0;
+		वापस (ntohl(a->v4.s_addr) > ntohl(b->v4.s_addr) ? 1 : -1);
+	हाल AF_INET6:
 		/*
 		 * Do this a byte at a time to avoid the above issue and
 		 * any endian problems
 		 */
-		for (i = 0; i < 16; i++)
-			if (a->addr8[i] - b->addr8[i] != 0)
-				return (a->addr8[i] - b->addr8[i]);
-		if (a->scope_id == b->scope_id)
-			return (0);
-		return (a->scope_id > b->scope_id ? 1 : -1);
-	default:
-		return (-1);
+		क्रम (i = 0; i < 16; i++)
+			अगर (a->addr8[i] - b->addr8[i] != 0)
+				वापस (a->addr8[i] - b->addr8[i]);
+		अगर (a->scope_id == b->scope_id)
+			वापस (0);
+		वापस (a->scope_id > b->scope_id ? 1 : -1);
+	शेष:
+		वापस (-1);
 	}
 }
 
-static int
-addr_is_all0s(const struct xaddr *a)
+अटल पूर्णांक
+addr_is_all0s(स्थिर काष्ठा xaddr *a)
 {
-	int i;
+	पूर्णांक i;
 
-	switch (a->af) {
-	case AF_INET:
-		return (a->v4.s_addr == 0 ? 0 : -1);
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
-			if (a->addr32[i] != 0)
-				return -1;
-		return 0;
-	default:
-		return -1;
+	चयन (a->af) {
+	हाल AF_INET:
+		वापस (a->v4.s_addr == 0 ? 0 : -1);
+	हाल AF_INET6:
+		क्रम (i = 0; i < 4; i++)
+			अगर (a->addr32[i] != 0)
+				वापस -1;
+		वापस 0;
+	शेष:
+		वापस -1;
 	}
 }
 
 /* Increment the specified address. Note, does not do overflow checking */
-void
-addr_increment(struct xaddr *a)
+व्योम
+addr_increment(काष्ठा xaddr *a)
 {
-	int i;
+	पूर्णांक i;
 	uint32_t n;
 
-	switch (a->af) {
-	case AF_INET:
+	चयन (a->af) {
+	हाल AF_INET:
 		a->v4.s_addr = htonl(ntohl(a->v4.s_addr) + 1);
-		break;
-	case AF_INET6:
-		for (i = 0; i < 4; i++) {
+		अवरोध;
+	हाल AF_INET6:
+		क्रम (i = 0; i < 4; i++) {
 			/* Increment with carry */
 			n = ntohl(a->addr32[3 - i]) + 1;
 			a->addr32[3 - i] = htonl(n);
-			if (n != 0)
-				break;
+			अगर (n != 0)
+				अवरोध;
 		}
-		break;
+		अवरोध;
 	}
 }
 
@@ -330,181 +330,181 @@ addr_increment(struct xaddr *a)
  * Returns 0 if host portion of address is all-zeros,
  * -1 if not all zeros or on failure.
  */
-static int
-addr_host_is_all0s(const struct xaddr *a, u_int masklen)
+अटल पूर्णांक
+addr_host_is_all0s(स्थिर काष्ठा xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_addr, tmp_mask, tmp_result;
+	काष्ठा xaddr tmp_addr, tmp_mask, tmp_परिणाम;
 
-	memcpy(&tmp_addr, a, sizeof(tmp_addr));
-	if (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
-		return -1;
-	if (addr_and(&tmp_result, &tmp_addr, &tmp_mask) == -1)
-		return -1;
-	return addr_is_all0s(&tmp_result);
+	स_नकल(&tmp_addr, a, माप(tmp_addr));
+	अगर (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
+		वापस -1;
+	अगर (addr_and(&tmp_परिणाम, &tmp_addr, &tmp_mask) == -1)
+		वापस -1;
+	वापस addr_is_all0s(&tmp_परिणाम);
 }
 
-#if 0
-static int
-addr_host_to_all0s(struct xaddr *a, u_int masklen)
+#अगर 0
+अटल पूर्णांक
+addr_host_to_all0s(काष्ठा xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_mask;
+	काष्ठा xaddr tmp_mask;
 
-	if (addr_netmask(a->af, masklen, &tmp_mask) == -1)
-		return (-1);
-	if (addr_and(a, a, &tmp_mask) == -1)
-		return (-1);
-	return (0);
+	अगर (addr_netmask(a->af, masklen, &tmp_mask) == -1)
+		वापस (-1);
+	अगर (addr_and(a, a, &tmp_mask) == -1)
+		वापस (-1);
+	वापस (0);
 }
-#endif
+#पूर्ण_अगर
 
-int
-addr_host_to_all1s(struct xaddr *a, u_int masklen)
+पूर्णांक
+addr_host_to_all1s(काष्ठा xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_mask;
+	काष्ठा xaddr tmp_mask;
 
-	if (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
-		return (-1);
-	if (addr_or(a, a, &tmp_mask) == -1)
-		return (-1);
-	return (0);
+	अगर (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
+		वापस (-1);
+	अगर (addr_or(a, a, &tmp_mask) == -1)
+		वापस (-1);
+	वापस (0);
 }
 
 /*
  * Parse string address 'p' into 'n'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_pton(const char *p, struct xaddr *n)
+पूर्णांक
+addr_pton(स्थिर अक्षर *p, काष्ठा xaddr *n)
 {
-	struct addrinfo hints, *ai;
+	काष्ठा addrinfo hints, *ai;
 
-	memset(&hints, '\0', sizeof(hints));
+	स_रखो(&hints, '\0', माप(hints));
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (p == NULL || getaddrinfo(p, NULL, &hints, &ai) != 0)
-		return -1;
+	अगर (p == शून्य || getaddrinfo(p, शून्य, &hints, &ai) != 0)
+		वापस -1;
 
-	if (ai == NULL)
-		return -1;
+	अगर (ai == शून्य)
+		वापस -1;
 
-	if (ai->ai_addr == NULL) {
+	अगर (ai->ai_addr == शून्य) {
 		freeaddrinfo(ai);
-		return -1;
+		वापस -1;
 	}
 
-	if (n != NULL && addr_sa_to_xaddr(ai->ai_addr, ai->ai_addrlen,
+	अगर (n != शून्य && addr_sa_to_xaddr(ai->ai_addr, ai->ai_addrlen,
 	    n) == -1) {
 		freeaddrinfo(ai);
-		return -1;
+		वापस -1;
 	}
 
 	freeaddrinfo(ai);
-	return 0;
+	वापस 0;
 }
 
-#if 0
-static int
-addr_sa_pton(const char *h, const char *s, struct sockaddr *sa, socklen_t slen)
+#अगर 0
+अटल पूर्णांक
+addr_sa_pton(स्थिर अक्षर *h, स्थिर अक्षर *s, काष्ठा sockaddr *sa, socklen_t slen)
 {
-	struct addrinfo hints, *ai;
+	काष्ठा addrinfo hints, *ai;
 
-	memset(&hints, '\0', sizeof(hints));
+	स_रखो(&hints, '\0', माप(hints));
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (h == NULL || getaddrinfo(h, s, &hints, &ai) != 0)
-		return -1;
+	अगर (h == शून्य || getaddrinfo(h, s, &hints, &ai) != 0)
+		वापस -1;
 
-	if (ai == NULL)
-		return -1;
+	अगर (ai == शून्य)
+		वापस -1;
 
-	if (ai->ai_addr == NULL) {
+	अगर (ai->ai_addr == शून्य) {
 		freeaddrinfo(ai);
-		return -1;
+		वापस -1;
 	}
 
-	if (sa != NULL) {
-		if (slen < ai->ai_addrlen) {
+	अगर (sa != शून्य) {
+		अगर (slen < ai->ai_addrlen) {
 			freeaddrinfo(ai);
-			return -1;
+			वापस -1;
 		}
-		memcpy(sa, &ai->ai_addr, ai->ai_addrlen);
+		स_नकल(sa, &ai->ai_addr, ai->ai_addrlen);
 	}
 
 	freeaddrinfo(ai);
-	return 0;
+	वापस 0;
 }
-#endif
+#पूर्ण_अगर
 
-int
-addr_ntop(const struct xaddr *n, char *p, size_t len)
+पूर्णांक
+addr_ntop(स्थिर काष्ठा xaddr *n, अक्षर *p, माप_प्रकार len)
 {
-	struct sockaddr_storage ss;
-	socklen_t slen = sizeof(ss);
+	काष्ठा sockaddr_storage ss;
+	socklen_t slen = माप(ss);
 
-	if (addr_xaddr_to_sa(n, _SA(&ss), &slen, 0) == -1)
-		return -1;
-	if (p == NULL || len == 0)
-		return -1;
-	if (getnameinfo(_SA(&ss), slen, p, len, NULL, 0,
+	अगर (addr_xaddr_to_sa(n, _SA(&ss), &slen, 0) == -1)
+		वापस -1;
+	अगर (p == शून्य || len == 0)
+		वापस -1;
+	अगर (getnameinfo(_SA(&ss), slen, p, len, शून्य, 0,
 	    NI_NUMERICHOST) != 0)
-		return -1;
+		वापस -1;
 
-	return 0;
+	वापस 0;
 }
 
 /*
  * Parse a CIDR address (x.x.x.x/y or xxxx:yyyy::/z).
  * Return -1 on parse error, -2 on inconsistency or 0 on success.
  */
-int
-addr_pton_cidr(const char *p, struct xaddr *n, u_int *l)
+पूर्णांक
+addr_pton_cidr(स्थिर अक्षर *p, काष्ठा xaddr *n, u_int *l)
 {
-	struct xaddr tmp;
+	काष्ठा xaddr tmp;
 	u_int masklen = 999;
-	char addrbuf[64], *mp;
-	const char *errstr;
+	अक्षर addrbuf[64], *mp;
+	स्थिर अक्षर *errstr;
 
 	/* Don't modify argument */
-	if (p == NULL || strlcpy(addrbuf, p, sizeof(addrbuf)) >= sizeof(addrbuf))
-		return -1;
+	अगर (p == शून्य || strlcpy(addrbuf, p, माप(addrbuf)) >= माप(addrbuf))
+		वापस -1;
 
-	if ((mp = strchr(addrbuf, '/')) != NULL) {
+	अगर ((mp = म_अक्षर(addrbuf, '/')) != शून्य) {
 		*mp = '\0';
 		mp++;
-		masklen = (u_int)strtonum(mp, 0, INT_MAX, &errstr);
-		if (errstr)
-			return -1;
+		masklen = (u_int)strtonum(mp, 0, पूर्णांक_उच्च, &errstr);
+		अगर (errstr)
+			वापस -1;
 	}
 
-	if (addr_pton(addrbuf, &tmp) == -1)
-		return -1;
+	अगर (addr_pton(addrbuf, &tmp) == -1)
+		वापस -1;
 
-	if (mp == NULL)
+	अगर (mp == शून्य)
 		masklen = addr_unicast_masklen(tmp.af);
-	if (masklen_valid(tmp.af, masklen) == -1)
-		return -2;
-	if (addr_host_is_all0s(&tmp, masklen) != 0)
-		return -2;
+	अगर (masklen_valid(tmp.af, masklen) == -1)
+		वापस -2;
+	अगर (addr_host_is_all0s(&tmp, masklen) != 0)
+		वापस -2;
 
-	if (n != NULL)
-		memcpy(n, &tmp, sizeof(*n));
-	if (l != NULL)
+	अगर (n != शून्य)
+		स_नकल(n, &tmp, माप(*n));
+	अगर (l != शून्य)
 		*l = masklen;
 
-	return 0;
+	वापस 0;
 }
 
-int
-addr_netmatch(const struct xaddr *host, const struct xaddr *net, u_int masklen)
+पूर्णांक
+addr_netmatch(स्थिर काष्ठा xaddr *host, स्थिर काष्ठा xaddr *net, u_int masklen)
 {
-	struct xaddr tmp_mask, tmp_result;
+	काष्ठा xaddr tmp_mask, tmp_परिणाम;
 
-	if (host->af != net->af)
-		return -1;
+	अगर (host->af != net->af)
+		वापस -1;
 
-	if (addr_netmask(host->af, masklen, &tmp_mask) == -1)
-		return -1;
-	if (addr_and(&tmp_result, host, &tmp_mask) == -1)
-		return -1;
-	return addr_cmp(&tmp_result, net);
+	अगर (addr_netmask(host->af, masklen, &tmp_mask) == -1)
+		वापस -1;
+	अगर (addr_and(&tmp_परिणाम, host, &tmp_mask) == -1)
+		वापस -1;
+	वापस addr_cmp(&tmp_परिणाम, net);
 }

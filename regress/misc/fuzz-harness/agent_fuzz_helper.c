@@ -1,159 +1,159 @@
-#include "fixed-keys.h"
-#include <assert.h>
+#समावेश "fixed-keys.h"
+#समावेश <assert.h>
 
-#define main(ac, av) xxxmain(ac, av)
-#include "../../../ssh-agent.c"
+#घोषणा मुख्य(ac, av) xxxmain(ac, av)
+#समावेश "../../../ssh-agent.c"
 
-void test_one(const uint8_t* s, size_t slen);
+व्योम test_one(स्थिर uint8_t* s, माप_प्रकार slen);
 
-static int
-devnull_or_die(void)
+अटल पूर्णांक
+devnull_or_die(व्योम)
 {
-	int fd;
+	पूर्णांक fd;
 
-	if ((fd = open("/dev/null", O_RDWR)) == -1) {
-		error_f("open /dev/null: %s", strerror(errno));
-		abort();
+	अगर ((fd = खोलो("/dev/null", O_RDWR)) == -1) {
+		error_f("open /dev/null: %s", म_त्रुटि(त्रुटि_सं));
+		पात();
 	}
-	return fd;
+	वापस fd;
 }
 
-static struct sshkey *
-pubkey_or_die(const char *s)
+अटल काष्ठा sshkey *
+pubkey_or_die(स्थिर अक्षर *s)
 {
-	char *tmp, *cp;
-	struct sshkey *pubkey;
-	int r;
+	अक्षर *tmp, *cp;
+	काष्ठा sshkey *pubkey;
+	पूर्णांक r;
 
 	tmp = cp = xstrdup(s);
-	if ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
-		abort();
-	if ((r = sshkey_read(pubkey, &cp)) != 0) {
+	अगर ((pubkey = sshkey_new(कुंजी_UNSPEC)) == शून्य)
+		पात();
+	अगर ((r = sshkey_read(pubkey, &cp)) != 0) {
 		error_fr(r, "parse");
-		abort();
+		पात();
 	}
-	free(tmp);
-	return pubkey;
+	मुक्त(tmp);
+	वापस pubkey;
 }
 
-static struct sshkey *
-privkey_or_die(const char *s)
+अटल काष्ठा sshkey *
+privkey_or_die(स्थिर अक्षर *s)
 {
-	int r;
-	struct sshbuf *b;
-	struct sshkey *privkey;
+	पूर्णांक r;
+	काष्ठा sshbuf *b;
+	काष्ठा sshkey *privkey;
 
-	if ((b = sshbuf_from(s, strlen(s))) == NULL) {
+	अगर ((b = sshbuf_from(s, म_माप(s))) == शून्य) {
 		error_f("sshbuf_from failed");
-		abort();
+		पात();
 	}
-	if ((r = sshkey_parse_private_fileblob(b, "", &privkey, NULL)) != 0) {
+	अगर ((r = sshkey_parse_private_fileblob(b, "", &privkey, शून्य)) != 0) {
 		error_fr(r, "parse");
-		abort();
+		पात();
 	}
 	sshbuf_free(b);
-	return privkey;
+	वापस privkey;
 }
 
-static void
-add_key(const char *privkey, const char *certpath)
+अटल व्योम
+add_कुंजी(स्थिर अक्षर *privkey, स्थिर अक्षर *certpath)
 {
 	Identity *id;
-	int r;
-	struct sshkey *cert;
+	पूर्णांक r;
+	काष्ठा sshkey *cert;
 
-	id = xcalloc(1, sizeof(Identity));
-	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
+	id = xcalloc(1, माप(Identity));
+	TAILQ_INSERT_TAIL(&idtab->idlist, id, अग्र);
 	idtab->nentries++;
-	id->key = privkey_or_die(privkey);
+	id->कुंजी = privkey_or_die(privkey);
 	id->comment = xstrdup("rhododaktulos Eos");
-	if (sshkey_is_sk(id->key))
+	अगर (sshkey_is_sk(id->कुंजी))
 		id->sk_provider = xstrdup("internal");
 
 	/* Now the cert too */
-	id = xcalloc(1, sizeof(Identity));
-	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
+	id = xcalloc(1, माप(Identity));
+	TAILQ_INSERT_TAIL(&idtab->idlist, id, अग्र);
 	idtab->nentries++;
-	id->key = privkey_or_die(privkey);
+	id->कुंजी = privkey_or_die(privkey);
 	cert = pubkey_or_die(certpath);
-	if ((r = sshkey_to_certified(id->key)) != 0) {
+	अगर ((r = sshkey_to_certified(id->कुंजी)) != 0) {
 		error_fr(r, "sshkey_to_certified");
-		abort();
+		पात();
 	}
-	if ((r = sshkey_cert_copy(cert, id->key)) != 0) {
+	अगर ((r = sshkey_cert_copy(cert, id->कुंजी)) != 0) {
 		error_fr(r, "sshkey_cert_copy");
-		abort();
+		पात();
 	}
 	sshkey_free(cert);
 	id->comment = xstrdup("outis");
-	if (sshkey_is_sk(id->key))
+	अगर (sshkey_is_sk(id->कुंजी))
 		id->sk_provider = xstrdup("internal");
 }
 
-static void
-cleanup_idtab(void)
+अटल व्योम
+cleanup_idtab(व्योम)
 {
 	Identity *id;
 
-	if (idtab == NULL) return;
-	for (id = TAILQ_FIRST(&idtab->idlist); id;
+	अगर (idtab == शून्य) वापस;
+	क्रम (id = TAILQ_FIRST(&idtab->idlist); id;
 	    id = TAILQ_FIRST(&idtab->idlist)) {
-		TAILQ_REMOVE(&idtab->idlist, id, next);
+		TAILQ_REMOVE(&idtab->idlist, id, अग्र);
 		free_identity(id);
 	}
-	free(idtab);
-	idtab = NULL;
+	मुक्त(idtab);
+	idtab = शून्य;
 }
 
-static void
-reset_idtab(void)
+अटल व्योम
+reset_idtab(व्योम)
 {
 	cleanup_idtab();
 	idtab_init();
 	// Load keys.
-	add_key(PRIV_RSA, CERT_RSA);
-	add_key(PRIV_ECDSA, CERT_ECDSA);
-	add_key(PRIV_ED25519, CERT_ED25519);
-	add_key(PRIV_ECDSA_SK, CERT_ECDSA_SK);
-	add_key(PRIV_ED25519_SK, CERT_ED25519_SK);
+	add_कुंजी(PRIV_RSA, CERT_RSA);
+	add_कुंजी(PRIV_ECDSA, CERT_ECDSA);
+	add_कुंजी(PRIV_ED25519, CERT_ED25519);
+	add_कुंजी(PRIV_ECDSA_SK, CERT_ECDSA_SK);
+	add_कुंजी(PRIV_ED25519_SK, CERT_ED25519_SK);
 }
 
-static void
-cleanup_sockettab(void)
+अटल व्योम
+cleanup_sockettab(व्योम)
 {
 	u_int i;
-	for (i = 0; i < sockets_alloc; i++) {
-		if (sockets[i].type != AUTH_UNUSED)
+	क्रम (i = 0; i < sockets_alloc; i++) {
+		अगर (sockets[i].type != AUTH_UNUSED)
 			close_socket(sockets + i);
 	}
-	free(sockets);
-	sockets = NULL;
+	मुक्त(sockets);
+	sockets = शून्य;
 	sockets_alloc = 0;
 }
 
-static void
-reset_sockettab(int devnull)
+अटल व्योम
+reset_sockettab(पूर्णांक devnull)
 {
-	int fd;
+	पूर्णांक fd;
 
 	cleanup_sockettab();
-	if ((fd = dup(devnull)) == -1) {
-		error_f("dup: %s", strerror(errno));
-		abort();
+	अगर ((fd = dup(devnull)) == -1) {
+		error_f("dup: %s", म_त्रुटि(त्रुटि_सं));
+		पात();
 	}
 	new_socket(AUTH_CONNECTION, fd);
-	assert(sockets[0].type == AUTH_CONNECTION);
-	assert(sockets[0].fd == fd);
+	निश्चित(sockets[0].type == AUTH_CONNECTION);
+	निश्चित(sockets[0].fd == fd);
 }
 
-#define MAX_MESSAGES 256
-void
-test_one(const uint8_t* s, size_t slen)
+#घोषणा MAX_MESSAGES 256
+व्योम
+test_one(स्थिर uint8_t* s, माप_प्रकार slen)
 {
-	static int devnull = -1;
-	size_t i, olen, nlen;
+	अटल पूर्णांक devnull = -1;
+	माप_प्रकार i, olen, nlen;
 
-	if (devnull == -1) {
+	अगर (devnull == -1) {
 		log_init(__progname, SYSLOG_LEVEL_DEBUG3,
 		    SYSLOG_FACILITY_AUTH, 1);
 		devnull = devnull_or_die();
@@ -164,13 +164,13 @@ test_one(const uint8_t* s, size_t slen)
 
 	reset_idtab();
 	reset_sockettab(devnull);
-	(void)sshbuf_put(sockets[0].input, s, slen);
-	for (i = 0; i < MAX_MESSAGES; i++) {
-		olen = sshbuf_len(sockets[0].input);
+	(व्योम)sshbuf_put(sockets[0].निवेश, s, slen);
+	क्रम (i = 0; i < MAX_MESSAGES; i++) {
+		olen = sshbuf_len(sockets[0].निवेश);
 		process_message(0);
-		nlen = sshbuf_len(sockets[0].input);
-		if (nlen == 0 || nlen == olen)
-			break;
+		nlen = sshbuf_len(sockets[0].निवेश);
+		अगर (nlen == 0 || nlen == olen)
+			अवरोध;
 	}
 	cleanup_idtab();
 	cleanup_sockettab();

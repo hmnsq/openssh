@@ -15,144 +15,144 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <errno.h>
-#include <string.h>
-#include "ssherr.h"
+#समावेश <errno.h>
+#समावेश <string.h>
+#समावेश "ssherr.h"
 
-const char *
-ssh_err(int n)
+स्थिर अक्षर *
+ssh_err(पूर्णांक n)
 {
-	const char *msg = NULL;
+	स्थिर अक्षर *संदेश = शून्य;
 
-	switch (n) {
-	case SSH_ERR_SUCCESS:
-		return "success";
-	case SSH_ERR_INTERNAL_ERROR:
-		return "unexpected internal error";
-	case SSH_ERR_ALLOC_FAIL:
-		return "memory allocation failed";
-	case SSH_ERR_MESSAGE_INCOMPLETE:
-		return "incomplete message";
-	case SSH_ERR_INVALID_FORMAT:
-		return "invalid format";
-	case SSH_ERR_BIGNUM_IS_NEGATIVE:
-		return "bignum is negative";
-	case SSH_ERR_STRING_TOO_LARGE:
-		return "string is too large";
-	case SSH_ERR_BIGNUM_TOO_LARGE:
-		return "bignum is too large";
-	case SSH_ERR_ECPOINT_TOO_LARGE:
-		return "elliptic curve point is too large";
-	case SSH_ERR_NO_BUFFER_SPACE:
-		return "insufficient buffer space";
-	case SSH_ERR_INVALID_ARGUMENT:
-		return "invalid argument";
-	case SSH_ERR_KEY_BITS_MISMATCH:
-		return "key bits do not match";
-	case SSH_ERR_EC_CURVE_INVALID:
-		return "invalid elliptic curve";
-	case SSH_ERR_KEY_TYPE_MISMATCH:
-		return "key type does not match";
-	case SSH_ERR_KEY_TYPE_UNKNOWN:
-		return "unknown or unsupported key type";
-	case SSH_ERR_EC_CURVE_MISMATCH:
-		return "elliptic curve does not match";
-	case SSH_ERR_EXPECTED_CERT:
-		return "plain key provided where certificate required";
-	case SSH_ERR_KEY_LACKS_CERTBLOB:
-		return "key lacks certificate data";
-	case SSH_ERR_KEY_CERT_UNKNOWN_TYPE:
-		return "unknown/unsupported certificate type";
-	case SSH_ERR_KEY_CERT_INVALID_SIGN_KEY:
-		return "invalid certificate signing key";
-	case SSH_ERR_KEY_INVALID_EC_VALUE:
-		return "invalid elliptic curve value";
-	case SSH_ERR_SIGNATURE_INVALID:
-		return "incorrect signature";
-	case SSH_ERR_LIBCRYPTO_ERROR:
-		msg = ssherr_libcrypto();
-		return msg != NULL ? msg : "error in libcrypto";
-	case SSH_ERR_INTERNAL_CRYPTO_ERROR:
-		return "cryptographic operation failed";
-	case SSH_ERR_UNEXPECTED_TRAILING_DATA:
-		return "unexpected bytes remain after decoding";
-	case SSH_ERR_SYSTEM_ERROR:
-		return strerror(errno);
-	case SSH_ERR_KEY_CERT_INVALID:
-		return "invalid certificate";
-	case SSH_ERR_AGENT_COMMUNICATION:
-		return "communication with agent failed";
-	case SSH_ERR_AGENT_FAILURE:
-		return "agent refused operation";
-	case SSH_ERR_DH_GEX_OUT_OF_RANGE:
-		return "DH GEX group out of range";
-	case SSH_ERR_DISCONNECTED:
-		return "disconnected";
-	case SSH_ERR_MAC_INVALID:
-		return "message authentication code incorrect";
-	case SSH_ERR_NO_CIPHER_ALG_MATCH:
-		return "no matching cipher found";
-	case SSH_ERR_NO_MAC_ALG_MATCH:
-		return "no matching MAC found";
-	case SSH_ERR_NO_COMPRESS_ALG_MATCH:
-		return "no matching compression method found";
-	case SSH_ERR_NO_KEX_ALG_MATCH:
-		return "no matching key exchange method found";
-	case SSH_ERR_NO_HOSTKEY_ALG_MATCH:
-		return "no matching host key type found";
-	case SSH_ERR_PROTOCOL_MISMATCH:
-		return "protocol version mismatch";
-	case SSH_ERR_NO_PROTOCOL_VERSION:
-		return "could not read protocol version";
-	case SSH_ERR_NO_HOSTKEY_LOADED:
-		return "could not load host key";
-	case SSH_ERR_NEED_REKEY:
-		return "rekeying not supported by peer";
-	case SSH_ERR_PASSPHRASE_TOO_SHORT:
-		return "passphrase is too short (minimum five characters)";
-	case SSH_ERR_FILE_CHANGED:
-		return "file changed while reading";
-	case SSH_ERR_KEY_UNKNOWN_CIPHER:
-		return "key encrypted using unsupported cipher";
-	case SSH_ERR_KEY_WRONG_PASSPHRASE:
-		return "incorrect passphrase supplied to decrypt private key";
-	case SSH_ERR_KEY_BAD_PERMISSIONS:
-		return "bad permissions";
-	case SSH_ERR_KEY_CERT_MISMATCH:
-		return "certificate does not match key";
-	case SSH_ERR_KEY_NOT_FOUND:
-		return "key not found";
-	case SSH_ERR_AGENT_NOT_PRESENT:
-		return "agent not present";
-	case SSH_ERR_AGENT_NO_IDENTITIES:
-		return "agent contains no identities";
-	case SSH_ERR_BUFFER_READ_ONLY:
-		return "internal error: buffer is read-only";
-	case SSH_ERR_KRL_BAD_MAGIC:
-		return "KRL file has invalid magic number";
-	case SSH_ERR_KEY_REVOKED:
-		return "Key is revoked";
-	case SSH_ERR_CONN_CLOSED:
-		return "Connection closed";
-	case SSH_ERR_CONN_TIMEOUT:
-		return "Connection timed out";
-	case SSH_ERR_CONN_CORRUPT:
-		return "Connection corrupted";
-	case SSH_ERR_PROTOCOL_ERROR:
-		return "Protocol error";
-	case SSH_ERR_KEY_LENGTH:
-		return "Invalid key length";
-	case SSH_ERR_NUMBER_TOO_LARGE:
-		return "number is too large";
-	case SSH_ERR_KEY_ALG_UNSUPPORTED:
-		return "key algorithm not supported";
-	case SSH_ERR_SIGN_ALG_UNSUPPORTED:
-		return "signature algorithm not supported";
-	case SSH_ERR_FEATURE_UNSUPPORTED:
-		return "requested feature not supported";
-	case SSH_ERR_DEVICE_NOT_FOUND:
-		return "device not found";
-	default:
-		return "unknown error";
+	चयन (n) {
+	हाल SSH_ERR_SUCCESS:
+		वापस "success";
+	हाल SSH_ERR_INTERNAL_ERROR:
+		वापस "unexpected internal error";
+	हाल SSH_ERR_ALLOC_FAIL:
+		वापस "memory allocation failed";
+	हाल SSH_ERR_MESSAGE_INCOMPLETE:
+		वापस "incomplete message";
+	हाल SSH_ERR_INVALID_FORMAT:
+		वापस "invalid format";
+	हाल SSH_ERR_BIGNUM_IS_NEGATIVE:
+		वापस "bignum is negative";
+	हाल SSH_ERR_STRING_TOO_LARGE:
+		वापस "string is too large";
+	हाल SSH_ERR_BIGNUM_TOO_LARGE:
+		वापस "bignum is too large";
+	हाल SSH_ERR_ECPOINT_TOO_LARGE:
+		वापस "elliptic curve point is too large";
+	हाल SSH_ERR_NO_बफर_SPACE:
+		वापस "insufficient buffer space";
+	हाल SSH_ERR_INVALID_ARGUMENT:
+		वापस "invalid argument";
+	हाल SSH_ERR_कुंजी_BITS_MISMATCH:
+		वापस "key bits do not match";
+	हाल SSH_ERR_EC_CURVE_INVALID:
+		वापस "invalid elliptic curve";
+	हाल SSH_ERR_कुंजी_TYPE_MISMATCH:
+		वापस "key type does not match";
+	हाल SSH_ERR_कुंजी_TYPE_UNKNOWN:
+		वापस "unknown or unsupported key type";
+	हाल SSH_ERR_EC_CURVE_MISMATCH:
+		वापस "elliptic curve does not match";
+	हाल SSH_ERR_EXPECTED_CERT:
+		वापस "plain key provided where certificate required";
+	हाल SSH_ERR_कुंजी_LACKS_CERTBLOB:
+		वापस "key lacks certificate data";
+	हाल SSH_ERR_कुंजी_CERT_UNKNOWN_TYPE:
+		वापस "unknown/unsupported certificate type";
+	हाल SSH_ERR_कुंजी_CERT_INVALID_SIGN_कुंजी:
+		वापस "invalid certificate signing key";
+	हाल SSH_ERR_कुंजी_INVALID_EC_मूल्य:
+		वापस "invalid elliptic curve value";
+	हाल SSH_ERR_SIGNATURE_INVALID:
+		वापस "incorrect signature";
+	हाल SSH_ERR_LIBCRYPTO_ERROR:
+		संदेश = ssherr_libcrypto();
+		वापस संदेश != शून्य ? संदेश : "error in libcrypto";
+	हाल SSH_ERR_INTERNAL_CRYPTO_ERROR:
+		वापस "cryptographic operation failed";
+	हाल SSH_ERR_UNEXPECTED_TRAILING_तथ्य:
+		वापस "unexpected bytes remain after decoding";
+	हाल SSH_ERR_SYSTEM_ERROR:
+		वापस म_त्रुटि(त्रुटि_सं);
+	हाल SSH_ERR_कुंजी_CERT_INVALID:
+		वापस "invalid certificate";
+	हाल SSH_ERR_AGENT_COMMUNICATION:
+		वापस "communication with agent failed";
+	हाल SSH_ERR_AGENT_FAILURE:
+		वापस "agent refused operation";
+	हाल SSH_ERR_DH_GEX_OUT_OF_RANGE:
+		वापस "DH GEX group out of range";
+	हाल SSH_ERR_DISCONNECTED:
+		वापस "disconnected";
+	हाल SSH_ERR_MAC_INVALID:
+		वापस "message authentication code incorrect";
+	हाल SSH_ERR_NO_CIPHER_ALG_MATCH:
+		वापस "no matching cipher found";
+	हाल SSH_ERR_NO_MAC_ALG_MATCH:
+		वापस "no matching MAC found";
+	हाल SSH_ERR_NO_COMPRESS_ALG_MATCH:
+		वापस "no matching compression method found";
+	हाल SSH_ERR_NO_KEX_ALG_MATCH:
+		वापस "no matching key exchange method found";
+	हाल SSH_ERR_NO_HOSTKEY_ALG_MATCH:
+		वापस "no matching host key type found";
+	हाल SSH_ERR_PROTOCOL_MISMATCH:
+		वापस "protocol version mismatch";
+	हाल SSH_ERR_NO_PROTOCOL_VERSION:
+		वापस "could not read protocol version";
+	हाल SSH_ERR_NO_HOSTKEY_LOADED:
+		वापस "could not load host key";
+	हाल SSH_ERR_NEED_REKEY:
+		वापस "rekeying not supported by peer";
+	हाल SSH_ERR_PASSPHRASE_TOO_SHORT:
+		वापस "passphrase is too short (minimum five characters)";
+	हाल SSH_ERR_FILE_CHANGED:
+		वापस "file changed while reading";
+	हाल SSH_ERR_कुंजी_UNKNOWN_CIPHER:
+		वापस "key encrypted using unsupported cipher";
+	हाल SSH_ERR_कुंजी_WRONG_PASSPHRASE:
+		वापस "incorrect passphrase supplied to decrypt private key";
+	हाल SSH_ERR_कुंजी_BAD_PERMISSIONS:
+		वापस "bad permissions";
+	हाल SSH_ERR_कुंजी_CERT_MISMATCH:
+		वापस "certificate does not match key";
+	हाल SSH_ERR_कुंजी_NOT_FOUND:
+		वापस "key not found";
+	हाल SSH_ERR_AGENT_NOT_PRESENT:
+		वापस "agent not present";
+	हाल SSH_ERR_AGENT_NO_IDENTITIES:
+		वापस "agent contains no identities";
+	हाल SSH_ERR_बफर_READ_ONLY:
+		वापस "internal error: buffer is read-only";
+	हाल SSH_ERR_KRL_BAD_MAGIC:
+		वापस "KRL file has invalid magic number";
+	हाल SSH_ERR_कुंजी_REVOKED:
+		वापस "Key is revoked";
+	हाल SSH_ERR_CONN_CLOSED:
+		वापस "Connection closed";
+	हाल SSH_ERR_CONN_TIMEOUT:
+		वापस "Connection timed out";
+	हाल SSH_ERR_CONN_CORRUPT:
+		वापस "Connection corrupted";
+	हाल SSH_ERR_PROTOCOL_ERROR:
+		वापस "Protocol error";
+	हाल SSH_ERR_कुंजी_लंबाई:
+		वापस "Invalid key length";
+	हाल SSH_ERR_संख्या_TOO_LARGE:
+		वापस "number is too large";
+	हाल SSH_ERR_कुंजी_ALG_UNSUPPORTED:
+		वापस "key algorithm not supported";
+	हाल SSH_ERR_SIGN_ALG_UNSUPPORTED:
+		वापस "signature algorithm not supported";
+	हाल SSH_ERR_FEATURE_UNSUPPORTED:
+		वापस "requested feature not supported";
+	हाल SSH_ERR_DEVICE_NOT_FOUND:
+		वापस "device not found";
+	शेष:
+		वापस "unknown error";
 	}
 }

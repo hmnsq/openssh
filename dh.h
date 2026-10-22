@@ -23,62 +23,62 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DH_H
-#define DH_H
+#अगर_अघोषित DH_H
+#घोषणा DH_H
 
-#ifdef WITH_OPENSSL
+#अगर_घोषित WITH_OPENSSL
 
-struct dhgroup {
-	int size;
+काष्ठा dhgroup {
+	पूर्णांक आकार;
 	BIGNUM *g;
 	BIGNUM *p;
 };
 
-DH	*choose_dh(int, int, int);
-DH	*dh_new_group_asc(const char *, const char *);
+DH	*choose_dh(पूर्णांक, पूर्णांक, पूर्णांक);
+DH	*dh_new_group_asc(स्थिर अक्षर *, स्थिर अक्षर *);
 DH	*dh_new_group(BIGNUM *, BIGNUM *);
-DH	*dh_new_group1(void);
-DH	*dh_new_group14(void);
-DH	*dh_new_group16(void);
-DH	*dh_new_group18(void);
-DH	*dh_new_group_fallback(int);
+DH	*dh_new_group1(व्योम);
+DH	*dh_new_group14(व्योम);
+DH	*dh_new_group16(व्योम);
+DH	*dh_new_group18(व्योम);
+DH	*dh_new_group_fallback(पूर्णांक);
 
-int	 dh_gen_key(DH *, int);
-int	 dh_pub_is_valid(const DH *, const BIGNUM *);
+पूर्णांक	 dh_gen_कुंजी(DH *, पूर्णांक);
+पूर्णांक	 dh_pub_is_valid(स्थिर DH *, स्थिर BIGNUM *);
 
-u_int	 dh_estimate(int);
-void	 dh_set_moduli_file(const char *);
+u_int	 dh_estimate(पूर्णांक);
+व्योम	 dh_set_moduli_file(स्थिर अक्षर *);
 
 /*
  * Max value from RFC4419.
  * Min value from RFC8270.
  */
-#define DH_GRP_MIN	2048
-#define DH_GRP_MAX	8192
+#घोषणा DH_GRP_MIN	2048
+#घोषणा DH_GRP_MAX	8192
 
 /*
  * Values for "type" field of moduli(5)
  * Specifies the internal structure of the prime modulus.
  */
-#define MODULI_TYPE_UNKNOWN		(0)
-#define MODULI_TYPE_UNSTRUCTURED	(1)
-#define MODULI_TYPE_SAFE		(2)
-#define MODULI_TYPE_SCHNORR		(3)
-#define MODULI_TYPE_SOPHIE_GERMAIN	(4)
-#define MODULI_TYPE_STRONG		(5)
+#घोषणा MODULI_TYPE_UNKNOWN		(0)
+#घोषणा MODULI_TYPE_UNSTRUCTURED	(1)
+#घोषणा MODULI_TYPE_SAFE		(2)
+#घोषणा MODULI_TYPE_SCHNORR		(3)
+#घोषणा MODULI_TYPE_SOPHIE_GERMAIN	(4)
+#घोषणा MODULI_TYPE_STRONG		(5)
 
 /*
  * Values for "tests" field of moduli(5)
  * Specifies the methods used in checking for primality.
  * Usually, more than one test is used.
  */
-#define MODULI_TESTS_UNTESTED		(0x00)
-#define MODULI_TESTS_COMPOSITE		(0x01)
-#define MODULI_TESTS_SIEVE		(0x02)
-#define MODULI_TESTS_MILLER_RABIN	(0x04)
-#define MODULI_TESTS_JACOBI		(0x08)
-#define MODULI_TESTS_ELLIPTIC		(0x10)
+#घोषणा MODULI_TESTS_UNTESTED		(0x00)
+#घोषणा MODULI_TESTS_COMPOSITE		(0x01)
+#घोषणा MODULI_TESTS_SIEVE		(0x02)
+#घोषणा MODULI_TESTS_MILLER_RABIN	(0x04)
+#घोषणा MODULI_TESTS_JACOBI		(0x08)
+#घोषणा MODULI_TESTS_ELLIPTIC		(0x10)
 
-#endif /* WITH_OPENSSL */
+#पूर्ण_अगर /* WITH_OPENSSL */
 
-#endif /* DH_H */
+#पूर्ण_अगर /* DH_H */

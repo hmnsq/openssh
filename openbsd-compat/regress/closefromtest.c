@@ -14,50 +14,50 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#समावेश <sys/types.h>
+#समावेश <sys/stat.h>
 
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#समावेश <fcntl.h>
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <unistd.h>
 
-#define NUM_OPENS 10
+#घोषणा अंक_OPENS 10
 
-void
-fail(char *msg)
+व्योम
+fail(अक्षर *संदेश)
 {
-	fprintf(stderr, "closefrom: %s\n", msg);
-	exit(1);
+	ख_लिखो(मानक_त्रुटि, "closefrom: %s\n", संदेश);
+	निकास(1);
 }
 
-int
-main(void)
+पूर्णांक
+मुख्य(व्योम)
 {
-	int i, max, fds[NUM_OPENS];
-	char buf[512];
+	पूर्णांक i, max, fds[अंक_OPENS];
+	अक्षर buf[512];
 
-	for (i = 0; i < NUM_OPENS; i++)
-		if ((fds[i] = open("/dev/null", O_RDONLY)) == -1)
-			exit(0);	/* can't test */
+	क्रम (i = 0; i < अंक_OPENS; i++)
+		अगर ((fds[i] = खोलो("/dev/null", O_RDONLY)) == -1)
+			निकास(0);	/* can't test */
 	max = i - 1;
 
 	/* should close last fd only */
 	closefrom(fds[max]);
-	if (close(fds[max]) != -1)
+	अगर (बंद(fds[max]) != -1)
 		fail("failed to close highest fd");
 
 	/* make sure we can still use remaining descriptors */
-	for (i = 0; i < max; i++)
-		if (read(fds[i], buf, sizeof(buf)) == -1)
+	क्रम (i = 0; i < max; i++)
+		अगर (पढ़ो(fds[i], buf, माप(buf)) == -1)
 			fail("closed descriptors it should not have");
 
 	/* should close all fds */
 	closefrom(fds[0]);
-	for (i = 0; i < NUM_OPENS; i++)
-		if (close(fds[i]) != -1)
+	क्रम (i = 0; i < अंक_OPENS; i++)
+		अगर (बंद(fds[i]) != -1)
 			fail("failed to close from lowest fd");
-	return 0;
+	वापस 0;
 }

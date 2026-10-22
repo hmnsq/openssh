@@ -5,31 +5,31 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#समावेश <sys/types.h>
+#समावेश <stdio.h>
+#समावेश <stdint.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
 
-#include "../test_helper/test_helper.h"
+#समावेश "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#समावेश "log.h"
+#समावेश "misc.h"
 
-void test_parse(void);
-void test_convtime(void);
-void test_expand(void);
-void test_argv(void);
-void test_strdelim(void);
-void test_hpdelim(void);
-void test_ptimeout(void);
-void test_xextendf(void);
-void test_misc(void);
+व्योम test_parse(व्योम);
+व्योम test_convtime(व्योम);
+व्योम test_expand(व्योम);
+व्योम test_argv(व्योम);
+व्योम test_strdelim(व्योम);
+व्योम test_hpdelim(व्योम);
+व्योम test_ptimeout(व्योम);
+व्योम test_xextendf(व्योम);
+व्योम test_misc(व्योम);
 
-void
-tests(void)
+व्योम
+tests(व्योम)
 {
 	test_parse();
 	test_convtime();
@@ -42,8 +42,8 @@ tests(void)
 	test_misc();
 }
 
-void
-benchmarks(void)
+व्योम
+benchmarks(व्योम)
 {
-	printf("no benchmarks\n");
+	म_लिखो("no benchmarks\n");
 }

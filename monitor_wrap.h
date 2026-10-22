@@ -25,90 +25,90 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _MM_WRAP_H_
-#define _MM_WRAP_H_
+#अगर_अघोषित _MM_WRAP_H_
+#घोषणा _MM_WRAP_H_
 
-#define MONITOR_MAX_MSGLEN		(4 * 1024 * 1024)
+#घोषणा MONITOR_MAX_MSGLEN		(4 * 1024 * 1024)
 /* The configuration has to fit in a monitor message along with other state */
-#define MONITOR_MAX_CFGLEN		(MONITOR_MAX_MSGLEN - (64 * 1024))
+#घोषणा MONITOR_MAX_CFGLEN		(MONITOR_MAX_MSGLEN - (64 * 1024))
 
-enum mm_keytype { MM_NOKEY, MM_HOSTKEY, MM_USERKEY };
+क्रमागत mm_keytype { MM_NOKEY, MM_HOSTKEY, MM_USERKEY };
 
-struct ssh;
-struct monitor;
-struct Authctxt;
-struct sshkey;
-struct sshauthopt;
-struct sshkey_sig_details;
+काष्ठा ssh;
+काष्ठा monitor;
+काष्ठा Authctxt;
+काष्ठा sshkey;
+काष्ठा sshauthopt;
+काष्ठा sshkey_sig_details;
 
-void mm_log_handler(LogLevel, int, const char *, void *);
-int mm_is_monitor(void);
-#ifdef WITH_OPENSSL
-DH *mm_choose_dh(int, int, int);
-#endif
-void mm_sshkey_setcompat(struct ssh *);
-int mm_sshkey_sign(struct ssh *, struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *,
-    const char *, u_int compat);
-void mm_inform_authserv(char *, char *);
-struct passwd *mm_getpwnamallow(struct ssh *, const char *);
-char *mm_auth2_read_banner(void);
-int mm_auth_password(struct ssh *, char *);
-int mm_key_allowed(enum mm_keytype, const char *, const char *, struct sshkey *,
-    int, struct sshauthopt **);
-int mm_user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *, int,
-    struct sshauthopt **);
-int mm_hostbased_key_allowed(struct ssh *, struct passwd *, const char *,
-    const char *, struct sshkey *);
-int mm_sshkey_verify(const struct sshkey *, const u_char *, size_t,
-    const u_char *, size_t, const char *, u_int, struct sshkey_sig_details **);
+व्योम mm_log_handler(LogLevel, पूर्णांक, स्थिर अक्षर *, व्योम *);
+पूर्णांक mm_is_monitor(व्योम);
+#अगर_घोषित WITH_OPENSSL
+DH *mm_choose_dh(पूर्णांक, पूर्णांक, पूर्णांक);
+#पूर्ण_अगर
+व्योम mm_sshkey_setcompat(काष्ठा ssh *);
+पूर्णांक mm_sshkey_sign(काष्ठा ssh *, काष्ठा sshkey *, u_char **, माप_प्रकार *,
+    स्थिर u_char *, माप_प्रकार, स्थिर अक्षर *, स्थिर अक्षर *,
+    स्थिर अक्षर *, u_int compat);
+व्योम mm_inform_authserv(अक्षर *, अक्षर *);
+काष्ठा passwd *mm_getpwnamallow(काष्ठा ssh *, स्थिर अक्षर *);
+अक्षर *mm_auth2_read_banner(व्योम);
+पूर्णांक mm_auth_password(काष्ठा ssh *, अक्षर *);
+पूर्णांक mm_कुंजी_allowed(क्रमागत mm_keytype, स्थिर अक्षर *, स्थिर अक्षर *, काष्ठा sshkey *,
+    पूर्णांक, काष्ठा sshauthopt **);
+पूर्णांक mm_user_कुंजी_allowed(काष्ठा ssh *ssh, काष्ठा passwd *, काष्ठा sshkey *, पूर्णांक,
+    काष्ठा sshauthopt **);
+पूर्णांक mm_hostbased_कुंजी_allowed(काष्ठा ssh *, काष्ठा passwd *, स्थिर अक्षर *,
+    स्थिर अक्षर *, काष्ठा sshkey *);
+पूर्णांक mm_sshkey_verify(स्थिर काष्ठा sshkey *, स्थिर u_char *, माप_प्रकार,
+    स्थिर u_char *, माप_प्रकार, स्थिर अक्षर *, u_int, काष्ठा sshkey_sig_details **);
 
-void mm_decode_activate_server_options(struct ssh *ssh, struct sshbuf *m);
+व्योम mm_decode_activate_server_options(काष्ठा ssh *ssh, काष्ठा sshbuf *m);
 
-#ifdef GSSAPI
+#अगर_घोषित GSSAPI
 OM_uint32 mm_ssh_gssapi_server_ctx(Gssctxt **, gss_OID);
 OM_uint32 mm_ssh_gssapi_accept_ctx(Gssctxt *,
-   gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
-int mm_ssh_gssapi_userok(char *user);
-OM_uint32 mm_ssh_gssapi_checkmic(Gssctxt *, gss_buffer_t, gss_buffer_t);
-#endif
+   gss_बफर_desc *, gss_बफर_desc *, OM_uint32 *);
+पूर्णांक mm_ssh_gssapi_userok(अक्षर *user);
+OM_uint32 mm_ssh_gssapi_checkmic(Gssctxt *, gss_बफर_t, gss_बफर_t);
+#पूर्ण_अगर
 
-#ifdef USE_PAM
-void mm_start_pam(struct ssh *ssh);
-u_int mm_do_pam_account(void);
-void *mm_sshpam_init_ctx(struct Authctxt *);
-int mm_sshpam_query(void *, char **, char **, u_int *, char ***, u_int **);
-int mm_sshpam_respond(void *, u_int, char **);
-void mm_sshpam_free_ctx(void *);
-#endif
+#अगर_घोषित USE_PAM
+व्योम mm_start_pam(काष्ठा ssh *ssh);
+u_int mm_do_pam_account(व्योम);
+व्योम *mm_sshpam_init_ctx(काष्ठा Authctxt *);
+पूर्णांक mm_sshpam_query(व्योम *, अक्षर **, अक्षर **, u_int *, अक्षर ***, u_int **);
+पूर्णांक mm_sshpam_respond(व्योम *, u_int, अक्षर **);
+व्योम mm_sshpam_free_ctx(व्योम *);
+#पूर्ण_अगर
 
-#ifdef SSH_AUDIT_EVENTS
-#include "audit.h"
-void mm_audit_event(struct ssh *, ssh_audit_event_t);
-void mm_audit_run_command(const char *);
-#endif
+#अगर_घोषित SSH_AUDIT_EVENTS
+#समावेश "audit.h"
+व्योम mm_audit_event(काष्ठा ssh *, ssh_audit_event_t);
+व्योम mm_audit_run_command(स्थिर अक्षर *);
+#पूर्ण_अगर
 
-struct Session;
-void mm_terminate(void);
-int mm_pty_allocate(int *, int *, char *, size_t);
-void mm_session_pty_cleanup2(struct Session *);
+काष्ठा Session;
+व्योम mm_terminate(व्योम);
+पूर्णांक mm_pty_allocate(पूर्णांक *, पूर्णांक *, अक्षर *, माप_प्रकार);
+व्योम mm_session_pty_cleanup2(काष्ठा Session *);
 
-void mm_send_keystate(struct ssh *, struct monitor*);
+व्योम mm_send_keystate(काष्ठा ssh *, काष्ठा monitor*);
 
 /* state */
-struct ServerOptions;
-void mm_get_state(struct ssh *, struct ServerOptions *,
-    struct sshbuf **, uint64_t *, struct sshbuf **, struct sshbuf **,
-    u_char **, struct sshbuf **, struct sshbuf **);
+काष्ठा ServerOptions;
+व्योम mm_get_state(काष्ठा ssh *, काष्ठा ServerOptions *,
+    काष्ठा sshbuf **, uint64_t *, काष्ठा sshbuf **, काष्ठा sshbuf **,
+    u_char **, काष्ठा sshbuf **, काष्ठा sshbuf **);
 
 /* bsdauth */
-int mm_bsdauth_query(void *, char **, char **, u_int *, char ***, u_int **);
-int mm_bsdauth_respond(void *, u_int, char **);
+पूर्णांक mm_bsdauth_query(व्योम *, अक्षर **, अक्षर **, u_int *, अक्षर ***, u_int **);
+पूर्णांक mm_bsdauth_respond(व्योम *, u_int, अक्षर **);
 
 /* config / channels glue */
-void	 server_process_permitopen(struct ssh *);
-void	 server_process_channel_timeouts(struct ssh *ssh);
-struct connection_info *
-	 server_get_connection_info(struct ssh *, int, int);
+व्योम	 server_process_permitopen(काष्ठा ssh *);
+व्योम	 server_process_channel_timeouts(काष्ठा ssh *ssh);
+काष्ठा connection_info *
+	 server_get_connection_info(काष्ठा ssh *, पूर्णांक, पूर्णांक);
 
-#endif /* _MM_WRAP_H_ */
+#पूर्ण_अगर /* _MM_WRAP_H_ */

@@ -24,42 +24,42 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#अगर_घोषित WITH_OPENSSL
+#समावेश "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#समावेश <sys/types.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#समावेश <openssl/bn.h>
+#समावेश <openssl/dh.h>
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <signal.h>
+#समावेश <stdarg.h>
+#समावेश <stdio.h>
+#समावेश <string.h>
+#समावेश <signal.h>
 
-#include "sshkey.h"
-#include "digest.h"
-#include "kex.h"
-#include "log.h"
-#include "packet.h"
-#include "dh.h"
-#include "ssh2.h"
-#include "compat.h"
-#include "dispatch.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "misc.h"
+#समावेश "sshkey.h"
+#समावेश "digest.h"
+#समावेश "kex.h"
+#समावेश "log.h"
+#समावेश "packet.h"
+#समावेश "dh.h"
+#समावेश "ssh2.h"
+#समावेश "compat.h"
+#समावेश "dispatch.h"
+#समावेश "ssherr.h"
+#समावेश "sshbuf.h"
+#समावेश "misc.h"
 
-static int input_kex_dh_gex_group(int, uint32_t, struct ssh *);
-static int input_kex_dh_gex_reply(int, uint32_t, struct ssh *);
+अटल पूर्णांक निवेश_kex_dh_gex_group(पूर्णांक, uint32_t, काष्ठा ssh *);
+अटल पूर्णांक निवेश_kex_dh_gex_reply(पूर्णांक, uint32_t, काष्ठा ssh *);
 
-int
-kexgex_client(struct ssh *ssh)
+पूर्णांक
+kexgex_client(काष्ठा ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r;
+	काष्ठा kex *kex = ssh->kex;
+	पूर्णांक r;
 	u_int nbits;
 
 	nbits = dh_estimate(kex->dh_need * 8);
@@ -67,175 +67,175 @@ kexgex_client(struct ssh *ssh)
 	kex->min = DH_GRP_MIN;
 	kex->max = DH_GRP_MAX;
 	kex->nbits = nbits;
-	if (ssh->compat & SSH_BUG_DHGEX_LARGE)
+	अगर (ssh->compat & SSH_BUG_DHGEX_LARGE)
 		kex->nbits = MINIMUM(kex->nbits, 4096);
 	/* New GEX request */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_REQUEST)) != 0 ||
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_KEX_DH_GEX_REQUEST)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, kex->min)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, kex->nbits)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, kex->max)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		goto out;
+		जाओ out;
 	debug("SSH2_MSG_KEX_DH_GEX_REQUEST(%u<%u<%u) sent",
 	    kex->min, kex->nbits, kex->max);
-#ifdef DEBUG_KEXDH
-	fprintf(stderr, "\nmin = %d, nbits = %d, max = %d\n",
+#अगर_घोषित DEBUG_KEXDH
+	ख_लिखो(मानक_त्रुटि, "\nmin = %d, nbits = %d, max = %d\n",
 	    kex->min, kex->nbits, kex->max);
-#endif
+#पूर्ण_अगर
 	debug("expecting SSH2_MSG_KEX_DH_GEX_GROUP");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_GROUP,
-	    &input_kex_dh_gex_group);
+	ssh_dispatch_set(ssh, SSH2_संदेश_KEX_DH_GEX_GROUP,
+	    &निवेश_kex_dh_gex_group);
 	r = 0;
  out:
-	return r;
+	वापस r;
 }
 
-static int
-input_kex_dh_gex_group(int type, uint32_t seq, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_kex_dh_gex_group(पूर्णांक type, uint32_t seq, काष्ठा ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	BIGNUM *p = NULL, *g = NULL;
-	const BIGNUM *pub_key;
-	int r, bits;
+	काष्ठा kex *kex = ssh->kex;
+	BIGNUM *p = शून्य, *g = शून्य;
+	स्थिर BIGNUM *pub_कुंजी;
+	पूर्णांक r, bits;
 
 	debug("SSH2_MSG_KEX_DH_GEX_GROUP received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_GROUP, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_संदेश_KEX_DH_GEX_GROUP, &kex_protocol_error);
 
-	if ((r = sshpkt_get_bignum2(ssh, &p)) != 0 ||
+	अगर ((r = sshpkt_get_bignum2(ssh, &p)) != 0 ||
 	    (r = sshpkt_get_bignum2(ssh, &g)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
-	if ((bits = BN_num_bits(p)) < 0 ||
+		जाओ out;
+	अगर ((bits = BN_अंक_bits(p)) < 0 ||
 	    (u_int)bits < kex->min || (u_int)bits > kex->max) {
 		r = SSH_ERR_DH_GEX_OUT_OF_RANGE;
-		goto out;
+		जाओ out;
 	}
-	if ((kex->dh = dh_new_group(g, p)) == NULL) {
+	अगर ((kex->dh = dh_new_group(g, p)) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
-	p = g = NULL; /* belong to kex->dh now */
+	p = g = शून्य; /* belong to kex->dh now */
 
 	/* generate and send 'e', client DH public key */
-	if ((r = dh_gen_key(kex->dh, kex->we_need * 8)) != 0)
-		goto out;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_INIT)) != 0 ||
-	    (r = sshpkt_put_bignum2(ssh, pub_key)) != 0 ||
+	अगर ((r = dh_gen_कुंजी(kex->dh, kex->we_need * 8)) != 0)
+		जाओ out;
+	DH_get0_कुंजी(kex->dh, &pub_कुंजी, शून्य);
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_KEX_DH_GEX_INIT)) != 0 ||
+	    (r = sshpkt_put_bignum2(ssh, pub_कुंजी)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		goto out;
+		जाओ out;
 	debug("SSH2_MSG_KEX_DH_GEX_INIT sent");
-#ifdef DEBUG_KEXDH
-	DHparams_print_fp(stderr, kex->dh);
-	fprintf(stderr, "pub= ");
-	BN_print_fp(stderr, pub_key);
-	fprintf(stderr, "\n");
-#endif
+#अगर_घोषित DEBUG_KEXDH
+	DHparams_print_fp(मानक_त्रुटि, kex->dh);
+	ख_लिखो(मानक_त्रुटि, "pub= ");
+	BN_print_fp(मानक_त्रुटि, pub_कुंजी);
+	ख_लिखो(मानक_त्रुटि, "\n");
+#पूर्ण_अगर
 	debug("expecting SSH2_MSG_KEX_DH_GEX_REPLY");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_REPLY, &input_kex_dh_gex_reply);
+	ssh_dispatch_set(ssh, SSH2_संदेश_KEX_DH_GEX_REPLY, &निवेश_kex_dh_gex_reply);
 	r = 0;
 out:
 	BN_clear_free(p);
 	BN_clear_free(g);
-	return r;
+	वापस r;
 }
 
-static int
-input_kex_dh_gex_reply(int type, uint32_t seq, struct ssh *ssh)
+अटल पूर्णांक
+निवेश_kex_dh_gex_reply(पूर्णांक type, uint32_t seq, काष्ठा ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	BIGNUM *dh_server_pub = NULL;
-	const BIGNUM *pub_key, *dh_p, *dh_g;
-	struct sshbuf *shared_secret = NULL;
-	struct sshbuf *tmp = NULL, *server_host_key_blob = NULL;
-	struct sshkey *server_host_key = NULL;
-	u_char *signature = NULL;
-	u_char hash[SSH_DIGEST_MAX_LENGTH];
-	size_t slen, hashlen;
-	int r;
+	काष्ठा kex *kex = ssh->kex;
+	BIGNUM *dh_server_pub = शून्य;
+	स्थिर BIGNUM *pub_कुंजी, *dh_p, *dh_g;
+	काष्ठा sshbuf *shared_secret = शून्य;
+	काष्ठा sshbuf *tmp = शून्य, *server_host_कुंजी_blob = शून्य;
+	काष्ठा sshkey *server_host_कुंजी = शून्य;
+	u_char *signature = शून्य;
+	u_char hash[SSH_DIGEST_MAX_लंबाई];
+	माप_प्रकार slen, hashlen;
+	पूर्णांक r;
 
 	debug("SSH2_MSG_KEX_DH_GEX_REPLY received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_REPLY, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_संदेश_KEX_DH_GEX_REPLY, &kex_protocol_error);
 
 	/* key, cert */
-	if ((r = sshpkt_getb_froms(ssh, &server_host_key_blob)) != 0)
-		goto out;
+	अगर ((r = sshpkt_getb_froms(ssh, &server_host_कुंजी_blob)) != 0)
+		जाओ out;
 	/* sshkey_fromb() consumes its buffer, so make a copy */
-	if ((tmp = sshbuf_fromb(server_host_key_blob)) == NULL) {
+	अगर ((tmp = sshbuf_fromb(server_host_कुंजी_blob)) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
-	if ((r = sshkey_fromb_allowlist(tmp, &server_host_key,
-	    kex->hostkey_alg, NULL)) != 0 ||
-	    (r = kex_verify_host_key(ssh, server_host_key)) != 0)
-		goto out;
+	अगर ((r = sshkey_fromb_allowlist(tmp, &server_host_कुंजी,
+	    kex->hostkey_alg, शून्य)) != 0 ||
+	    (r = kex_verify_host_कुंजी(ssh, server_host_कुंजी)) != 0)
+		जाओ out;
 	/* DH parameter f, server public DH key, signed H */
-	if ((r = sshpkt_get_bignum2(ssh, &dh_server_pub)) != 0 ||
+	अगर ((r = sshpkt_get_bignum2(ssh, &dh_server_pub)) != 0 ||
 	    (r = sshpkt_get_string(ssh, &signature, &slen)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
-	if ((shared_secret = sshbuf_new()) == NULL) {
+		जाओ out;
+	अगर ((shared_secret = sshbuf_new()) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
-	if ((r = kex_dh_compute_key(kex, dh_server_pub, shared_secret)) != 0)
-		goto out;
-	if (ssh->compat & SSH_OLD_DHGEX)
+	अगर ((r = kex_dh_compute_कुंजी(kex, dh_server_pub, shared_secret)) != 0)
+		जाओ out;
+	अगर (ssh->compat & SSH_OLD_DHGEX)
 		kex->min = kex->max = -1;
 
 	/* calc and verify H */
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	DH_get0_pqg(kex->dh, &dh_p, NULL, &dh_g);
-	hashlen = sizeof(hash);
-	if ((r = kexgex_hash(
+	DH_get0_कुंजी(kex->dh, &pub_कुंजी, शून्य);
+	DH_get0_pqg(kex->dh, &dh_p, शून्य, &dh_g);
+	hashlen = माप(hash);
+	अगर ((r = kexgex_hash(
 	    kex->hash_alg,
 	    kex->client_version,
 	    kex->server_version,
 	    kex->my,
 	    kex->peer,
-	    server_host_key_blob,
+	    server_host_कुंजी_blob,
 	    kex->min, kex->nbits, kex->max,
 	    dh_p, dh_g,
-	    pub_key,
+	    pub_कुंजी,
 	    dh_server_pub,
 	    sshbuf_ptr(shared_secret), sshbuf_len(shared_secret),
 	    hash, &hashlen)) != 0)
-		goto out;
+		जाओ out;
 
-	if ((r = sshkey_verify(server_host_key, signature, slen, hash,
-	    hashlen, kex->hostkey_alg, ssh->compat, NULL)) != 0)
-		goto out;
+	अगर ((r = sshkey_verify(server_host_कुंजी, signature, slen, hash,
+	    hashlen, kex->hostkey_alg, ssh->compat, शून्य)) != 0)
+		जाओ out;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	अगर ((r = kex_derive_कुंजियाँ(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
-		goto out;
+		जाओ out;
 
 	/* save initial signature and hostkey */
-	if ((kex->flags & KEX_INITIAL) != 0) {
-		if (kex->initial_hostkey != NULL || kex->initial_sig != NULL) {
+	अगर ((kex->flags & KEX_INITIAL) != 0) {
+		अगर (kex->initial_hostkey != शून्य || kex->initial_sig != शून्य) {
 			r = SSH_ERR_INTERNAL_ERROR;
-			goto out;
+			जाओ out;
 		}
-		if ((kex->initial_sig = sshbuf_new()) == NULL) {
+		अगर ((kex->initial_sig = sshbuf_new()) == शून्य) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			जाओ out;
 		}
-		if ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
-			goto out;
-		kex->initial_hostkey = server_host_key;
-		server_host_key = NULL;
+		अगर ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
+			जाओ out;
+		kex->initial_hostkey = server_host_कुंजी;
+		server_host_कुंजी = शून्य;
 	}
 	/* success */
  out:
-	explicit_bzero(hash, sizeof(hash));
+	explicit_bzero(hash, माप(hash));
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = शून्य;
 	BN_clear_free(dh_server_pub);
 	sshbuf_free(shared_secret);
-	sshkey_free(server_host_key);
+	sshkey_free(server_host_कुंजी);
 	sshbuf_free(tmp);
-	sshbuf_free(server_host_key_blob);
-	free(signature);
-	return r;
+	sshbuf_free(server_host_कुंजी_blob);
+	मुक्त(signature);
+	वापस r;
 }
-#endif /* WITH_OPENSSL */
+#पूर्ण_अगर /* WITH_OPENSSL */

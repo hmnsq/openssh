@@ -35,142 +35,142 @@
  * that ai_family is AF_INET. Don't use it for another purpose.
  */
 
-#ifndef _FAKE_RFC2553_H
-#define _FAKE_RFC2553_H
+#अगर_अघोषित _FAKE_RFC2553_H
+#घोषणा _FAKE_RFC2553_H
 
-#include "includes.h"
-#include <sys/types.h>
-#if defined(HAVE_NETDB_H)
+#समावेश "includes.h"
+#समावेश <sys/types.h>
+#अगर defined(HAVE_NETDB_H)
 # include <netdb.h>
-#endif
+#पूर्ण_अगर
 
 /*
  * First, socket and INET6 related definitions
  */
-#ifndef HAVE_STRUCT_SOCKADDR_STORAGE
+#अगर_अघोषित HAVE_STRUCT_SOCKADDR_STORAGE
 # define	_SS_MAXSIZE	128	/* Implementation specific max size */
-# define       _SS_PADSIZE     (_SS_MAXSIZE - sizeof (struct sockaddr))
-struct sockaddr_storage {
-	struct sockaddr	ss_sa;
-	char		__ss_pad2[_SS_PADSIZE];
+# define       _SS_PADSIZE     (_SS_MAXSIZE - माप (काष्ठा sockaddr))
+काष्ठा sockaddr_storage {
+	काष्ठा sockaddr	ss_sa;
+	अक्षर		__ss_pad2[_SS_PADSIZE];
 };
 # define ss_family ss_sa.sa_family
-#endif /* !HAVE_STRUCT_SOCKADDR_STORAGE */
+#पूर्ण_अगर /* !HAVE_STRUCT_SOCKADDR_STORAGE */
 
-#ifndef IN6_IS_ADDR_LOOPBACK
+#अगर_अघोषित IN6_IS_ADDR_LOOPBACK
 # define IN6_IS_ADDR_LOOPBACK(a) \
 	(((u_int32_t *)(a))[0] == 0 && ((u_int32_t *)(a))[1] == 0 && \
 	 ((u_int32_t *)(a))[2] == 0 && ((u_int32_t *)(a))[3] == htonl(1))
-#endif /* !IN6_IS_ADDR_LOOPBACK */
+#पूर्ण_अगर /* !IN6_IS_ADDR_LOOPBACK */
 
-#ifndef HAVE_STRUCT_IN6_ADDR
-struct in6_addr {
+#अगर_अघोषित HAVE_STRUCT_IN6_ADDR
+काष्ठा in6_addr {
 	u_int8_t	s6_addr[16];
 };
-#endif /* !HAVE_STRUCT_IN6_ADDR */
+#पूर्ण_अगर /* !HAVE_STRUCT_IN6_ADDR */
 
-#ifndef HAVE_STRUCT_SOCKADDR_IN6
-struct sockaddr_in6 {
-	unsigned short	sin6_family;
+#अगर_अघोषित HAVE_STRUCT_SOCKADDR_IN6
+काष्ठा sockaddr_in6 {
+	अचिन्हित लघु	sin6_family;
 	u_int16_t	sin6_port;
 	u_int32_t	sin6_flowinfo;
-	struct in6_addr	sin6_addr;
+	काष्ठा in6_addr	sin6_addr;
 	u_int32_t	sin6_scope_id;
 };
-#endif /* !HAVE_STRUCT_SOCKADDR_IN6 */
+#पूर्ण_अगर /* !HAVE_STRUCT_SOCKADDR_IN6 */
 
-#ifndef AF_INET6
+#अगर_अघोषित AF_INET6
 /* Define it to something that should never appear */
-#define AF_INET6 AF_MAX
-#endif
+#घोषणा AF_INET6 AF_MAX
+#पूर्ण_अगर
 
 /*
  * Next, RFC2553 name / address resolution API
  */
 
-#ifndef NI_NUMERICHOST
+#अगर_अघोषित NI_NUMERICHOST
 # define NI_NUMERICHOST    (1)
-#endif
-#ifndef NI_NAMEREQD
+#पूर्ण_अगर
+#अगर_अघोषित NI_NAMEREQD
 # define NI_NAMEREQD       (1<<1)
-#endif
-#ifndef NI_NUMERICSERV
+#पूर्ण_अगर
+#अगर_अघोषित NI_NUMERICSERV
 # define NI_NUMERICSERV    (1<<2)
-#endif
+#पूर्ण_अगर
 
-#ifndef AI_PASSIVE
+#अगर_अघोषित AI_PASSIVE
 # define AI_PASSIVE		(1)
-#endif
-#ifndef AI_CANONNAME
+#पूर्ण_अगर
+#अगर_अघोषित AI_CANONNAME
 # define AI_CANONNAME		(1<<1)
-#endif
-#ifndef AI_NUMERICHOST
+#पूर्ण_अगर
+#अगर_अघोषित AI_NUMERICHOST
 # define AI_NUMERICHOST		(1<<2)
-#endif
-#ifndef AI_NUMERICSERV
+#पूर्ण_अगर
+#अगर_अघोषित AI_NUMERICSERV
 # define AI_NUMERICSERV		(1<<3)
-#endif
+#पूर्ण_अगर
 
-#ifndef NI_MAXSERV
+#अगर_अघोषित NI_MAXSERV
 # define NI_MAXSERV 32
-#endif /* !NI_MAXSERV */
-#ifndef NI_MAXHOST
+#पूर्ण_अगर /* !NI_MAXSERV */
+#अगर_अघोषित NI_MAXHOST
 # define NI_MAXHOST 1025
-#endif /* !NI_MAXHOST */
+#पूर्ण_अगर /* !NI_MAXHOST */
 
-#ifndef EAI_NODATA
-# define EAI_NODATA	(INT_MAX - 1)
-#endif
-#ifndef EAI_MEMORY
-# define EAI_MEMORY	(INT_MAX - 2)
-#endif
-#ifndef EAI_NONAME
-# define EAI_NONAME	(INT_MAX - 3)
-#endif
-#ifndef EAI_SYSTEM
-# define EAI_SYSTEM	(INT_MAX - 4)
-#endif
-#ifndef EAI_FAMILY
-# define EAI_FAMILY	(INT_MAX - 5)
-#endif
+#अगर_अघोषित EAI_NODATA
+# define EAI_NODATA	(पूर्णांक_उच्च - 1)
+#पूर्ण_अगर
+#अगर_अघोषित EAI_MEMORY
+# define EAI_MEMORY	(पूर्णांक_उच्च - 2)
+#पूर्ण_अगर
+#अगर_अघोषित EAI_NONAME
+# define EAI_NONAME	(पूर्णांक_उच्च - 3)
+#पूर्ण_अगर
+#अगर_अघोषित EAI_SYSTEM
+# define EAI_SYSTEM	(पूर्णांक_उच्च - 4)
+#पूर्ण_अगर
+#अगर_अघोषित EAI_FAMILY
+# define EAI_FAMILY	(पूर्णांक_उच्च - 5)
+#पूर्ण_अगर
 
-#ifndef HAVE_STRUCT_ADDRINFO
-struct addrinfo {
-	int	ai_flags;	/* AI_PASSIVE, AI_CANONNAME */
-	int	ai_family;	/* PF_xxx */
-	int	ai_socktype;	/* SOCK_xxx */
-	int	ai_protocol;	/* 0 or IPPROTO_xxx for IPv4 and IPv6 */
-	size_t	ai_addrlen;	/* length of ai_addr */
-	char	*ai_canonname;	/* canonical name for hostname */
-	struct sockaddr *ai_addr;	/* binary address */
-	struct addrinfo *ai_next;	/* next structure in linked list */
+#अगर_अघोषित HAVE_STRUCT_ADDRINFO
+काष्ठा addrinfo {
+	पूर्णांक	ai_flags;	/* AI_PASSIVE, AI_CANONNAME */
+	पूर्णांक	ai_family;	/* PF_xxx */
+	पूर्णांक	ai_socktype;	/* SOCK_xxx */
+	पूर्णांक	ai_protocol;	/* 0 or IPPROTO_xxx for IPv4 and IPv6 */
+	माप_प्रकार	ai_addrlen;	/* length of ai_addr */
+	अक्षर	*ai_canonname;	/* canonical name for hostname */
+	काष्ठा sockaddr *ai_addr;	/* binary address */
+	काष्ठा addrinfo *ai_next;	/* next structure in linked list */
 };
-#endif /* !HAVE_STRUCT_ADDRINFO */
+#पूर्ण_अगर /* !HAVE_STRUCT_ADDRINFO */
 
-#ifndef HAVE_GETADDRINFO
-#ifdef getaddrinfo
+#अगर_अघोषित HAVE_GETADDRINFO
+#अगर_घोषित getaddrinfo
 # undef getaddrinfo
-#endif
-#define getaddrinfo(a,b,c,d)	(ssh_getaddrinfo(a,b,c,d))
-int getaddrinfo(const char *, const char *,
-    const struct addrinfo *, struct addrinfo **);
-#endif /* !HAVE_GETADDRINFO */
+#पूर्ण_अगर
+#घोषणा getaddrinfo(a,b,c,d)	(ssh_getaddrinfo(a,b,c,d))
+पूर्णांक getaddrinfo(स्थिर अक्षर *, स्थिर अक्षर *,
+    स्थिर काष्ठा addrinfo *, काष्ठा addrinfo **);
+#पूर्ण_अगर /* !HAVE_GETADDRINFO */
 
-#if !defined(HAVE_GAI_STRERROR) && !defined(HAVE_CONST_GAI_STRERROR_PROTO)
-#define gai_strerror(a)		(_ssh_compat_gai_strerror(a))
-char *gai_strerror(int);
-#endif /* !HAVE_GAI_STRERROR */
+#अगर !defined(HAVE_GAI_STRERROR) && !defined(HAVE_CONST_GAI_STRERROR_PROTO)
+#घोषणा gai_strerror(a)		(_ssh_compat_gai_strerror(a))
+अक्षर *gai_strerror(पूर्णांक);
+#पूर्ण_अगर /* !HAVE_GAI_STRERROR */
 
-#ifndef HAVE_FREEADDRINFO
-#define freeaddrinfo(a)		(ssh_freeaddrinfo(a))
-void freeaddrinfo(struct addrinfo *);
-#endif /* !HAVE_FREEADDRINFO */
+#अगर_अघोषित HAVE_FREEADDRINFO
+#घोषणा freeaddrinfo(a)		(ssh_freeaddrinfo(a))
+व्योम freeaddrinfo(काष्ठा addrinfo *);
+#पूर्ण_अगर /* !HAVE_FREEADDRINFO */
 
-#ifndef HAVE_GETNAMEINFO
-#define getnameinfo(a,b,c,d,e,f,g) (ssh_getnameinfo(a,b,c,d,e,f,g))
-int getnameinfo(const struct sockaddr *, size_t, char *, size_t,
-    char *, size_t, int);
-#endif /* !HAVE_GETNAMEINFO */
+#अगर_अघोषित HAVE_GETNAMEINFO
+#घोषणा getnameinfo(a,b,c,d,e,f,g) (ssh_getnameinfo(a,b,c,d,e,f,g))
+पूर्णांक getnameinfo(स्थिर काष्ठा sockaddr *, माप_प्रकार, अक्षर *, माप_प्रकार,
+    अक्षर *, माप_प्रकार, पूर्णांक);
+#पूर्ण_अगर /* !HAVE_GETNAMEINFO */
 
-#endif /* !_FAKE_RFC2553_H */
+#पूर्ण_अगर /* !_FAKE_RFC2553_H */
 

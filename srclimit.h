@@ -13,30 +13,30 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-struct xaddr;
+काष्ठा xaddr;
 
-struct per_source_penalty;
+काष्ठा per_source_penalty;
 
-void	srclimit_init(int, int, int, int,
-    struct per_source_penalty *, const char *);
-int	srclimit_check_allow(int, int);
-void	srclimit_done(int);
+व्योम	srclimit_init(पूर्णांक, पूर्णांक, पूर्णांक, पूर्णांक,
+    काष्ठा per_source_penalty *, स्थिर अक्षर *);
+पूर्णांक	srclimit_check_allow(पूर्णांक, पूर्णांक);
+व्योम	srclimit_done(पूर्णांक);
 
-#define SRCLIMIT_PENALTY_NONE			0
-#define SRCLIMIT_PENALTY_CRASH			1
-#define SRCLIMIT_PENALTY_AUTHFAIL		2
-#define SRCLIMIT_PENALTY_GRACE_EXCEEDED		3
-#define SRCLIMIT_PENALTY_NOAUTH			4
-#define SRCLIMIT_PENALTY_REFUSECONNECTION	5
-#define SRCLIMIT_PENALTY_INVALIDUSER		6
+#घोषणा SRCLIMIT_PENALTY_NONE			0
+#घोषणा SRCLIMIT_PENALTY_CRASH			1
+#घोषणा SRCLIMIT_PENALTY_AUTHFAIL		2
+#घोषणा SRCLIMIT_PENALTY_GRACE_EXCEEDED		3
+#घोषणा SRCLIMIT_PENALTY_NOAUTH			4
+#घोषणा SRCLIMIT_PENALTY_REFUSECONNECTION	5
+#घोषणा SRCLIMIT_PENALTY_INVALIDUSER		6
 
 /* meaningful exit values, used by sshd listener for penalties */
-#define EXIT_LOGIN_GRACE	3	/* login grace period exceeded */
-#define EXIT_CHILD_CRASH	4	/* preauth child crashed */
-#define EXIT_AUTH_ATTEMPTED	5	/* at least one auth attempt made */
-#define EXIT_CONFIG_REFUSED	6	/* sshd_config RefuseConnection */
-#define EXIT_INVALID_USER	7	/* invalid user supplied */
+#घोषणा EXIT_LOGIN_GRACE	3	/* login grace period exceeded */
+#घोषणा EXIT_CHILD_CRASH	4	/* preauth child crashed */
+#घोषणा EXIT_AUTH_ATTEMPTED	5	/* at least one auth attempt made */
+#घोषणा EXIT_CONFIG_REFUSED	6	/* sshd_config RefuseConnection */
+#घोषणा EXIT_INVALID_USER	7	/* invalid user supplied */
 
-void	srclimit_penalise(struct xaddr *, int);
-int	srclimit_penalty_check_allow(int, const char **);
-void	srclimit_penalty_info(void);
+व्योम	srclimit_penalise(काष्ठा xaddr *, पूर्णांक);
+पूर्णांक	srclimit_penalty_check_allow(पूर्णांक, स्थिर अक्षर **);
+व्योम	srclimit_penalty_info(व्योम);

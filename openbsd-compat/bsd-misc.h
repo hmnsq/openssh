@@ -14,208 +14,208 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _BSD_MISC_H
-#define _BSD_MISC_H
+#अगर_अघोषित _BSD_MISC_H
+#घोषणा _BSD_MISC_H
 
-#include "includes.h"
+#समावेश "includes.h"
 
-char *ssh_get_progname(char *);
-int seed_from_prngd(unsigned char *, size_t);
+अक्षर *ssh_get_progname(अक्षर *);
+पूर्णांक seed_from_prngd(अचिन्हित अक्षर *, माप_प्रकार);
 
-#ifndef HAVE_SETSID
-#define setsid() setpgrp(0, getpid())
-#endif /* !HAVE_SETSID */
+#अगर_अघोषित HAVE_SETSID
+#घोषणा setsid() setpgrp(0, getpid())
+#पूर्ण_अगर /* !HAVE_SETSID */
 
-#ifndef HAVE_SETENV
-int setenv(const char *, const char *, int);
-#endif /* !HAVE_SETENV */
+#अगर_अघोषित HAVE_SETENV
+पूर्णांक setenv(स्थिर अक्षर *, स्थिर अक्षर *, पूर्णांक);
+#पूर्ण_अगर /* !HAVE_SETENV */
 
-#ifndef HAVE_SETLOGIN
-int setlogin(const char *);
-#endif /* !HAVE_SETLOGIN */
+#अगर_अघोषित HAVE_SETLOGIN
+पूर्णांक setlogin(स्थिर अक्षर *);
+#पूर्ण_अगर /* !HAVE_SETLOGIN */
 
-#ifndef HAVE_INNETGR
-int innetgr(const char *, const char *, const char *, const char *);
-#endif /* HAVE_INNETGR */
+#अगर_अघोषित HAVE_INNETGR
+पूर्णांक innetgr(स्थिर अक्षर *, स्थिर अक्षर *, स्थिर अक्षर *, स्थिर अक्षर *);
+#पूर्ण_अगर /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t);
-#endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
+#अगर !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+पूर्णांक seteuid(uid_t);
+#पूर्ण_अगर /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t);
-#endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
+#अगर !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+पूर्णांक setegid(uid_t);
+#पूर्ण_अगर /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int);
-#endif
+#अगर !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+स्थिर अक्षर *म_त्रुटि(पूर्णांक);
+#पूर्ण_अगर
 
-#if !defined(HAVE_SETLINEBUF)
-#define setlinebuf(a)	(setvbuf((a), NULL, _IOLBF, 0))
-#endif
+#अगर !defined(HAVE_SETLINEBUF)
+#घोषणा setlinebuf(a)	(रखो_भबफ((a), शून्य, _IOLBF, 0))
+#पूर्ण_अगर
 
-#ifndef HAVE_UTIMES
-#ifndef HAVE_STRUCT_TIMEVAL
-struct timeval {
-	long tv_sec;
-	long tv_usec;
+#अगर_अघोषित HAVE_UTIMES
+#अगर_अघोषित HAVE_STRUCT_TIMEVAL
+काष्ठा timeval {
+	दीर्घ tv_sec;
+	दीर्घ tv_usec;
 }
-#endif /* HAVE_STRUCT_TIMEVAL */
+#पूर्ण_अगर /* HAVE_STRUCT_TIMEVAL */
 
-int utimes(const char *, struct timeval *);
-#endif /* HAVE_UTIMES */
+पूर्णांक utimes(स्थिर अक्षर *, काष्ठा timeval *);
+#पूर्ण_अगर /* HAVE_UTIMES */
 
-#ifndef HAVE_DIRFD
-int dirfd(void *);
-#endif
+#अगर_अघोषित HAVE_DIRFD
+पूर्णांक dirfd(व्योम *);
+#पूर्ण_अगर
 
-#ifndef AT_FDCWD
+#अगर_अघोषित AT_FDCWD
 # define AT_FDCWD (-2)
-#endif
+#पूर्ण_अगर
 
-#ifndef HAVE_FCHMODAT
-int fchmodat(int, const char *, mode_t, int);
-#endif
+#अगर_अघोषित HAVE_FCHMODAT
+पूर्णांक fchmodat(पूर्णांक, स्थिर अक्षर *, mode_t, पूर्णांक);
+#पूर्ण_अगर
 
-#ifndef HAVE_FCHOWNAT
-int fchownat(int, const char *, uid_t, gid_t, int);
-#endif
+#अगर_अघोषित HAVE_FCHOWNAT
+पूर्णांक fchownat(पूर्णांक, स्थिर अक्षर *, uid_t, gid_t, पूर्णांक);
+#पूर्ण_अगर
 
-#ifdef HAVE_FSTATAT
-int fstatat(int, const char *, struct stat *, int);
-#endif
+#अगर_घोषित HAVE_FSTATAT
+पूर्णांक fstatat(पूर्णांक, स्थिर अक्षर *, काष्ठा stat *, पूर्णांक);
+#पूर्ण_अगर
 
-#ifdef HAVE_UNLINKAT
-int unlinkat(int, const char *, int);
-#endif
+#अगर_घोषित HAVE_UNLINKAT
+पूर्णांक unlinkat(पूर्णांक, स्थिर अक्षर *, पूर्णांक);
+#पूर्ण_अगर
 
-#ifndef HAVE_TRUNCATE
-int truncate (const char *, off_t);
-#endif /* HAVE_TRUNCATE */
+#अगर_अघोषित HAVE_TRUNCATE
+पूर्णांक truncate (स्थिर अक्षर *, off_t);
+#पूर्ण_अगर /* HAVE_TRUNCATE */
 
-#ifndef HAVE_STRUCT_TIMESPEC
-struct timespec {
-	time_t	tv_sec;
-	long	tv_nsec;
+#अगर_अघोषित HAVE_STRUCT_TIMESPEC
+काष्ठा timespec {
+	समय_प्रकार	tv_sec;
+	दीर्घ	tv_nsec;
 };
-#endif /* !HAVE_STRUCT_TIMESPEC */
+#पूर्ण_अगर /* !HAVE_STRUCT_TIMESPEC */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+#अगर !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
 # include <time.h>
-int nanosleep(const struct timespec *, struct timespec *);
-#endif
+पूर्णांक nanosleep(स्थिर काष्ठा timespec *, काष्ठा timespec *);
+#पूर्ण_अगर
 
-#ifndef HAVE_UTIMENSAT
+#अगर_अघोषित HAVE_UTIMENSAT
 # include <time.h>
 /* start with the high bits and work down to minimise risk of overlap */
 # ifndef AT_SYMLINK_NOFOLLOW
 #  define AT_SYMLINK_NOFOLLOW 0x80000000
 # endif
-int utimensat(int, const char *, const struct timespec[2], int);
-#endif /* !HAVE_UTIMENSAT */
+पूर्णांक utimensat(पूर्णांक, स्थिर अक्षर *, स्थिर काष्ठा timespec[2], पूर्णांक);
+#पूर्ण_अगर /* !HAVE_UTIMENSAT */
 
-#ifndef HAVE_USLEEP
-int usleep(unsigned int useconds);
-#endif
+#अगर_अघोषित HAVE_USLEEP
+पूर्णांक usleep(अचिन्हित पूर्णांक useconds);
+#पूर्ण_अगर
 
-#ifndef HAVE_TCGETPGRP
-pid_t tcgetpgrp(int);
-#endif
+#अगर_अघोषित HAVE_TCGETPGRP
+pid_t tcgetpgrp(पूर्णांक);
+#पूर्ण_अगर
 
-#ifndef HAVE_TCSENDBREAK
-int tcsendbreak(int, int);
-#endif
+#अगर_अघोषित HAVE_TCSENDBREAK
+पूर्णांक tcsendbreak(पूर्णांक, पूर्णांक);
+#पूर्ण_अगर
 
-#ifndef HAVE_UNSETENV
-int unsetenv(const char *);
-#endif
+#अगर_अघोषित HAVE_UNSETENV
+पूर्णांक unsetenv(स्थिर अक्षर *);
+#पूर्ण_अगर
 
-#ifndef HAVE_ISBLANK
-int	isblank(int);
-#endif
+#अगर_अघोषित HAVE_ISBLANK
+पूर्णांक	isblank(पूर्णांक);
+#पूर्ण_अगर
 
-#ifndef HAVE_GETPGID
+#अगर_अघोषित HAVE_GETPGID
 pid_t getpgid(pid_t);
-#endif
+#पूर्ण_अगर
 
-#ifndef HAVE_PSELECT
-int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
-    const sigset_t *);
-#endif
+#अगर_अघोषित HAVE_PSELECT
+पूर्णांक pselect(पूर्णांक, fd_set *, fd_set *, fd_set *, स्थिर काष्ठा timespec *,
+    स्थिर sigset_t *);
+#पूर्ण_अगर
 
-#ifndef HAVE_ENDGRENT
-# define endgrent() do { } while(0)
-#endif
+#अगर_अघोषित HAVE_ENDGRENT
+# define endgrent() करो { } जबतक(0)
+#पूर्ण_अगर
 
-#ifndef HAVE_KRB5_GET_ERROR_MESSAGE
+#अगर_अघोषित HAVE_KRB5_GET_ERROR_MESSAGE
 # define krb5_get_error_message krb5_get_err_text
-#endif
+#पूर्ण_अगर
 
-#ifndef HAVE_KRB5_FREE_ERROR_MESSAGE
-# define krb5_free_error_message(a,b) do { } while(0)
-#endif
+#अगर_अघोषित HAVE_KRB5_FREE_ERROR_MESSAGE
+# define krb5_free_error_message(a,b) करो { } जबतक(0)
+#पूर्ण_अगर
 
-#ifndef HAVE_PLEDGE
-int pledge(const char *promises, const char *execpromises);
-#endif
+#अगर_अघोषित HAVE_PLEDGE
+पूर्णांक pledge(स्थिर अक्षर *promises, स्थिर अक्षर *execpromises);
+#पूर्ण_अगर
 
-#ifndef HAVE_UNVEIL
-int unveil(const char *, const char *);
-#endif
+#अगर_अघोषित HAVE_UNVEIL
+पूर्णांक unveil(स्थिर अक्षर *, स्थिर अक्षर *);
+#पूर्ण_अगर
 
 /* bsd-err.h */
-#ifndef HAVE_ERR
-void err(int, const char *, ...) __attribute__((format(printf, 2, 3)));
-#endif
-#ifndef HAVE_ERRX
-void errx(int, const char *, ...) __attribute__((format(printf, 2, 3)));
-#endif
-#ifndef HAVE_WARN
-void warn(const char *, ...) __attribute__((format(printf, 1, 2)));
-#endif
+#अगर_अघोषित HAVE_ERR
+व्योम err(पूर्णांक, स्थिर अक्षर *, ...) __attribute__((format(म_लिखो, 2, 3)));
+#पूर्ण_अगर
+#अगर_अघोषित HAVE_ERRX
+व्योम errx(पूर्णांक, स्थिर अक्षर *, ...) __attribute__((format(म_लिखो, 2, 3)));
+#पूर्ण_अगर
+#अगर_अघोषित HAVE_WARN
+व्योम warn(स्थिर अक्षर *, ...) __attribute__((format(म_लिखो, 1, 2)));
+#पूर्ण_अगर
 
-#ifndef HAVE_LLABS
-long long llabs(long long);
-#endif
+#अगर_अघोषित HAVE_LLABS
+दीर्घ दीर्घ llabs(दीर्घ दीर्घ);
+#पूर्ण_अगर
 
-#if defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
-void bzero(void *, size_t);
-#endif
+#अगर defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
+व्योम bzero(व्योम *, माप_प्रकार);
+#पूर्ण_अगर
 
-#ifndef HAVE_RAISE
-int raise(int);
-#endif
+#अगर_अघोषित HAVE_RAISE
+पूर्णांक उठाओ(पूर्णांक);
+#पूर्ण_अगर
 
-#ifndef HAVE_GETSID
+#अगर_अघोषित HAVE_GETSID
 pid_t getsid(pid_t);
-#endif
+#पूर्ण_अगर
 
-#ifndef HAVE_FLOCK
+#अगर_अघोषित HAVE_FLOCK
 # define LOCK_SH		0x01
 # define LOCK_EX		0x02
 # define LOCK_NB		0x04
 # define LOCK_UN		0x08
-int flock(int, int);
-#endif
+पूर्णांक flock(पूर्णांक, पूर्णांक);
+#पूर्ण_अगर
 
-#ifdef FFLUSH_NULL_BUG
-# define fflush(x)	(_ssh_compat_fflush(x))
-#endif
+#अगर_घोषित FFLUSH_NULL_BUG
+# define ख_साफ(x)	(_ssh_compat_fflush(x))
+#पूर्ण_अगर
 
-#ifndef HAVE_LOCALTIME_R
-struct tm *localtime_r(const time_t *, struct tm *);
-#endif
+#अगर_अघोषित HAVE_LOCALTIME_R
+काष्ठा पंचांग *localtime_r(स्थिर समय_प्रकार *, काष्ठा पंचांग *);
+#पूर्ण_अगर
 
-#ifndef HAVE_CLOCK_GETTIME
-typedef int clockid_t;
-#ifndef CLOCK_REALTIME
+#अगर_अघोषित HAVE_CLOCK_GETTIME
+प्रकार पूर्णांक clockid_t;
+#अगर_अघोषित CLOCK_REALTIME
 # define CLOCK_REALTIME	0
-#endif
-int clock_gettime(clockid_t, struct timespec *);
-#endif
+#पूर्ण_अगर
+पूर्णांक clock_gettime(clockid_t, काष्ठा timespec *);
+#पूर्ण_अगर
 
-#ifndef HAVE_REALPATH
-#define realpath(x, y)	(sftp_realpath((x), (y)))
-#endif
+#अगर_अघोषित HAVE_REALPATH
+#घोषणा realpath(x, y)	(sftp_realpath((x), (y)))
+#पूर्ण_अगर
 
-#endif /* _BSD_MISC_H */
+#पूर्ण_अगर /* _BSD_MISC_H */

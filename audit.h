@@ -22,16 +22,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SSH_AUDIT_H
+#अगर_अघोषित _SSH_AUDIT_H
 # define _SSH_AUDIT_H
 
-#include "loginrec.h"
+#समावेश "loginrec.h"
 
-struct ssh;
+काष्ठा ssh;
 
-enum ssh_audit_event_type {
+क्रमागत ssh_audit_event_type {
 	SSH_LOGIN_EXCEED_MAXTRIES,
-	SSH_LOGIN_ROOT_DENIED,
+	SSH_LOGIN_मूल_DENIED,
 	SSH_AUTH_SUCCESS,
 	SSH_AUTH_FAIL_NONE,
 	SSH_AUTH_FAIL_PASSWD,
@@ -45,13 +45,13 @@ enum ssh_audit_event_type {
 	SSH_CONNECTION_ABANDON,	/* closed without completing auth */
 	SSH_AUDIT_UNKNOWN
 };
-typedef enum ssh_audit_event_type ssh_audit_event_t;
+प्रकार क्रमागत ssh_audit_event_type ssh_audit_event_t;
 
-void	audit_connection_from(const char *, int);
-void	audit_event(struct ssh *, ssh_audit_event_t);
-void	audit_session_open(struct logininfo *);
-void	audit_session_close(struct logininfo *);
-void	audit_run_command(const char *);
-ssh_audit_event_t audit_classify_auth(const char *);
+व्योम	audit_connection_from(स्थिर अक्षर *, पूर्णांक);
+व्योम	audit_event(काष्ठा ssh *, ssh_audit_event_t);
+व्योम	audit_session_open(काष्ठा logininfo *);
+व्योम	audit_session_close(काष्ठा logininfo *);
+व्योम	audit_run_command(स्थिर अक्षर *);
+ssh_audit_event_t audit_classify_auth(स्थिर अक्षर *);
 
-#endif /* _SSH_AUDIT_H */
+#पूर्ण_अगर /* _SSH_AUDIT_H */

@@ -92,104 +92,104 @@
  *
  **************************************************************/
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#if defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
+#अगर defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
 # undef HAVE_SNPRINTF
 # undef HAVE_VSNPRINTF
-#endif
+#पूर्ण_अगर
 
-#if !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
+#अगर !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
 
-#include <ctype.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
-#include <errno.h>
+#समावेश <ctype.h>
+#समावेश <stdarg.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <limits.h>
+#समावेश <errno.h>
 
-#ifdef HAVE_LONG_DOUBLE
-# define LDOUBLE long double
-#else
-# define LDOUBLE double
-#endif
+#अगर_घोषित HAVE_LONG_DOUBLE
+# define LDOUBLE दीर्घ द्विगुन
+#अन्यथा
+# define LDOUBLE द्विगुन
+#पूर्ण_अगर
 
-#ifdef HAVE_LONG_LONG
-# define LLONG long long
-#else
-# define LLONG long
-#endif
+#अगर_घोषित HAVE_LONG_LONG
+# define LLONG दीर्घ दीर्घ
+#अन्यथा
+# define LLONG दीर्घ
+#पूर्ण_अगर
 
 /*
  * dopr(): poor man's version of doprintf
  */
 
 /* format read states */
-#define DP_S_DEFAULT 0
-#define DP_S_FLAGS   1
-#define DP_S_MIN     2
-#define DP_S_DOT     3
-#define DP_S_MAX     4
-#define DP_S_MOD     5
-#define DP_S_CONV    6
-#define DP_S_DONE    7
+#घोषणा DP_S_DEFAULT 0
+#घोषणा DP_S_FLAGS   1
+#घोषणा DP_S_MIN     2
+#घोषणा DP_S_DOT     3
+#घोषणा DP_S_MAX     4
+#घोषणा DP_S_MOD     5
+#घोषणा DP_S_CONV    6
+#घोषणा DP_S_DONE    7
 
 /* format flags - Bits */
-#define DP_F_MINUS	(1 << 0)
-#define DP_F_PLUS	(1 << 1)
-#define DP_F_SPACE	(1 << 2)
-#define DP_F_NUM	(1 << 3)
-#define DP_F_ZERO	(1 << 4)
-#define DP_F_UP		(1 << 5)
-#define DP_F_UNSIGNED	(1 << 6)
+#घोषणा DP_F_MINUS	(1 << 0)
+#घोषणा DP_F_PLUS	(1 << 1)
+#घोषणा DP_F_SPACE	(1 << 2)
+#घोषणा DP_F_अंक	(1 << 3)
+#घोषणा DP_F_ZERO	(1 << 4)
+#घोषणा DP_F_UP		(1 << 5)
+#घोषणा DP_F_UNSIGNED	(1 << 6)
 
 /* Conversion Flags */
-#define DP_C_SHORT   1
-#define DP_C_LONG    2
-#define DP_C_LDOUBLE 3
-#define DP_C_LLONG   4
-#define DP_C_SIZE    5
-#define DP_C_INTMAX  6
+#घोषणा DP_C_SHORT   1
+#घोषणा DP_C_LONG    2
+#घोषणा DP_C_LDOUBLE 3
+#घोषणा DP_C_LLONG   4
+#घोषणा DP_C_आकार    5
+#घोषणा DP_C_INTMAX  6
 
-#define char_to_int(p) ((p)- '0')
-#ifndef MAX
+#घोषणा char_to_int(p) ((p)- '0')
+#अगर_अघोषित MAX
 # define MAX(p,q) (((p) >= (q)) ? (p) : (q))
-#endif
+#पूर्ण_अगर
 
-#define DOPR_OUTCH(buf, pos, buflen, thechar) \
-	do { \
-		if (pos + 1 >= INT_MAX) { \
-			errno = ERANGE; \
-			return -1; \
+#घोषणा DOPR_OUTCH(buf, pos, buflen, thechar) \
+	करो { \
+		अगर (pos + 1 >= पूर्णांक_उच्च) { \
+			त्रुटि_सं = दुस्फल; \
+			वापस -1; \
 		} \
-		if (pos < buflen) \
+		अगर (pos < buflen) \
 			buf[pos] = thechar; \
 		(pos)++; \
-	} while (0)
+	} जबतक (0)
 
-static int dopr(char *buffer, size_t maxlen, const char *format,
-    va_list args_in);
-static int fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max);
-static int fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags);
-static int fmtfp(char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags);
+अटल पूर्णांक dopr(अक्षर *बफर, माप_प्रकार maxlen, स्थिर अक्षर *format,
+    बहु_सूची args_in);
+अटल पूर्णांक fmtstr(अक्षर *बफर, माप_प्रकार *currlen, माप_प्रकार maxlen,
+    अक्षर *मूल्य, पूर्णांक flags, पूर्णांक min, पूर्णांक max);
+अटल पूर्णांक fmtint(अक्षर *बफर, माप_प्रकार *currlen, माप_प्रकार maxlen,
+    intmax_t मूल्य, पूर्णांक base, पूर्णांक min, पूर्णांक max, पूर्णांक flags);
+अटल पूर्णांक fmtfp(अक्षर *बफर, माप_प्रकार *currlen, माप_प्रकार maxlen,
+    LDOUBLE fvalue, पूर्णांक min, पूर्णांक max, पूर्णांक flags);
 
-static int
-dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
+अटल पूर्णांक
+dopr(अक्षर *बफर, माप_प्रकार maxlen, स्थिर अक्षर *format, बहु_सूची args_in)
 {
-	char ch;
-	intmax_t value;
+	अक्षर ch;
+	intmax_t मूल्य;
 	LDOUBLE fvalue;
-	char *strvalue;
-	int min;
-	int max;
-	int state;
-	int flags;
-	int cflags;
-	size_t currlen;
-	va_list args;
+	अक्षर *strvalue;
+	पूर्णांक min;
+	पूर्णांक max;
+	पूर्णांक state;
+	पूर्णांक flags;
+	पूर्णांक cflags;
+	माप_प्रकार currlen;
+	बहु_सूची args;
 
 	VA_COPY(args, args_in);
 
@@ -198,682 +198,682 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 	max = -1;
 	ch = *format++;
 
-	while (state != DP_S_DONE) {
-		if (ch == '\0')
+	जबतक (state != DP_S_DONE) {
+		अगर (ch == '\0')
 			state = DP_S_DONE;
 
-		switch(state) {
-		case DP_S_DEFAULT:
-			if (ch == '%')
+		चयन(state) {
+		हाल DP_S_DEFAULT:
+			अगर (ch == '%')
 				state = DP_S_FLAGS;
-			else
-				DOPR_OUTCH(buffer, currlen, maxlen, ch);
+			अन्यथा
+				DOPR_OUTCH(बफर, currlen, maxlen, ch);
 			ch = *format++;
-			break;
-		case DP_S_FLAGS:
-			switch (ch) {
-			case '-':
+			अवरोध;
+		हाल DP_S_FLAGS:
+			चयन (ch) {
+			हाल '-':
 				flags |= DP_F_MINUS;
 				ch = *format++;
-				break;
-			case '+':
+				अवरोध;
+			हाल '+':
 				flags |= DP_F_PLUS;
 				ch = *format++;
-				break;
-			case ' ':
+				अवरोध;
+			हाल ' ':
 				flags |= DP_F_SPACE;
 				ch = *format++;
-				break;
-			case '#':
-				flags |= DP_F_NUM;
+				अवरोध;
+			हाल '#':
+				flags |= DP_F_अंक;
 				ch = *format++;
-				break;
-			case '0':
+				अवरोध;
+			हाल '0':
 				flags |= DP_F_ZERO;
 				ch = *format++;
-				break;
-			default:
+				अवरोध;
+			शेष:
 				state = DP_S_MIN;
-				break;
+				अवरोध;
 			}
-			break;
-		case DP_S_MIN:
-			if (isdigit((unsigned char)ch)) {
+			अवरोध;
+		हाल DP_S_MIN:
+			अगर (है_अंक((अचिन्हित अक्षर)ch)) {
 				min = 10*min + char_to_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				min = va_arg (args, int);
+			} अन्यथा अगर (ch == '*') {
+				min = बहु_तर्क (args, पूर्णांक);
 				ch = *format++;
 				state = DP_S_DOT;
-			} else {
+			} अन्यथा {
 				state = DP_S_DOT;
 			}
-			break;
-		case DP_S_DOT:
-			if (ch == '.') {
+			अवरोध;
+		हाल DP_S_DOT:
+			अगर (ch == '.') {
 				state = DP_S_MAX;
 				ch = *format++;
-			} else {
+			} अन्यथा {
 				state = DP_S_MOD;
 			}
-			break;
-		case DP_S_MAX:
-			if (isdigit((unsigned char)ch)) {
-				if (max < 0)
+			अवरोध;
+		हाल DP_S_MAX:
+			अगर (है_अंक((अचिन्हित अक्षर)ch)) {
+				अगर (max < 0)
 					max = 0;
 				max = 10*max + char_to_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				max = va_arg (args, int);
+			} अन्यथा अगर (ch == '*') {
+				max = बहु_तर्क (args, पूर्णांक);
 				ch = *format++;
 				state = DP_S_MOD;
-			} else {
+			} अन्यथा {
 				state = DP_S_MOD;
 			}
-			break;
-		case DP_S_MOD:
-			switch (ch) {
-			case 'h':
+			अवरोध;
+		हाल DP_S_MOD:
+			चयन (ch) {
+			हाल 'h':
 				cflags = DP_C_SHORT;
 				ch = *format++;
-				break;
-			case 'j':
+				अवरोध;
+			हाल 'j':
 				cflags = DP_C_INTMAX;
 				ch = *format++;
-				break;
-			case 'l':
+				अवरोध;
+			हाल 'l':
 				cflags = DP_C_LONG;
 				ch = *format++;
-				if (ch == 'l') {	/* It's a long long */
+				अगर (ch == 'l') {	/* It's a long long */
 					cflags = DP_C_LLONG;
 					ch = *format++;
 				}
-				break;
-			case 'L':
+				अवरोध;
+			हाल 'L':
 				cflags = DP_C_LDOUBLE;
 				ch = *format++;
-				break;
-			case 'z':
-				cflags = DP_C_SIZE;
+				अवरोध;
+			हाल 'z':
+				cflags = DP_C_आकार;
 				ch = *format++;
-				break;
-			default:
-				break;
+				अवरोध;
+			शेष:
+				अवरोध;
 			}
 			state = DP_S_CONV;
-			break;
-		case DP_S_CONV:
-			switch (ch) {
-			case 'd':
-			case 'i':
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, int);
-				else if (cflags == DP_C_LONG)
-					value = va_arg (args, long int);
-				else if (cflags == DP_C_LLONG)
-					value = va_arg (args, LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, ssize_t);
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, intmax_t);
-				else
-					value = va_arg (args, int);
-				if (fmtint(buffer, &currlen, maxlen,
-				    value, 10, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'o':
+			अवरोध;
+		हाल DP_S_CONV:
+			चयन (ch) {
+			हाल 'd':
+			हाल 'i':
+				अगर (cflags == DP_C_SHORT)
+					मूल्य = बहु_तर्क (args, पूर्णांक);
+				अन्यथा अगर (cflags == DP_C_LONG)
+					मूल्य = बहु_तर्क (args, दीर्घ पूर्णांक);
+				अन्यथा अगर (cflags == DP_C_LLONG)
+					मूल्य = बहु_तर्क (args, LLONG);
+				अन्यथा अगर (cflags == DP_C_आकार)
+					मूल्य = बहु_तर्क (args, ssize_t);
+				अन्यथा अगर (cflags == DP_C_INTMAX)
+					मूल्य = बहु_तर्क (args, intmax_t);
+				अन्यथा
+					मूल्य = बहु_तर्क (args, पूर्णांक);
+				अगर (fmtint(बफर, &currlen, maxlen,
+				    मूल्य, 10, min, max, flags) == -1)
+					जाओ fail;
+				अवरोध;
+			हाल 'o':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (long)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
-#ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
-#endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				अगर (cflags == DP_C_SHORT)
+					मूल्य = बहु_तर्क (args, अचिन्हित पूर्णांक);
+				अन्यथा अगर (cflags == DP_C_LONG)
+					मूल्य = (दीर्घ)बहु_तर्क (args, अचिन्हित दीर्घ पूर्णांक);
+				अन्यथा अगर (cflags == DP_C_LLONG)
+					मूल्य = (दीर्घ)बहु_तर्क (args, अचिन्हित LLONG);
+				अन्यथा अगर (cflags == DP_C_आकार)
+					मूल्य = बहु_तर्क (args, माप_प्रकार);
+#अगर_घोषित notyet
+				अन्यथा अगर (cflags == DP_C_INTMAX)
+					मूल्य = बहु_तर्क (args, uintmax_t);
+#पूर्ण_अगर
+				अन्यथा
+					मूल्य = (दीर्घ)बहु_तर्क (args, अचिन्हित पूर्णांक);
+				अगर (fmtint(बफर, &currlen, maxlen, मूल्य,
 				    8, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'u':
+					जाओ fail;
+				अवरोध;
+			हाल 'u':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
-#ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
-#endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				अगर (cflags == DP_C_SHORT)
+					मूल्य = बहु_तर्क (args, अचिन्हित पूर्णांक);
+				अन्यथा अगर (cflags == DP_C_LONG)
+					मूल्य = (दीर्घ)बहु_तर्क (args, अचिन्हित दीर्घ पूर्णांक);
+				अन्यथा अगर (cflags == DP_C_LLONG)
+					मूल्य = (LLONG)बहु_तर्क (args, अचिन्हित LLONG);
+				अन्यथा अगर (cflags == DP_C_आकार)
+					मूल्य = बहु_तर्क (args, माप_प्रकार);
+#अगर_घोषित notyet
+				अन्यथा अगर (cflags == DP_C_INTMAX)
+					मूल्य = बहु_तर्क (args, uintmax_t);
+#पूर्ण_अगर
+				अन्यथा
+					मूल्य = (दीर्घ)बहु_तर्क (args, अचिन्हित पूर्णांक);
+				अगर (fmtint(बफर, &currlen, maxlen, मूल्य,
 				    10, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'X':
+					जाओ fail;
+				अवरोध;
+			हाल 'X':
 				flags |= DP_F_UP;
-			case 'x':
+			हाल 'x':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
-#ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
-#endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				अगर (cflags == DP_C_SHORT)
+					मूल्य = बहु_तर्क (args, अचिन्हित पूर्णांक);
+				अन्यथा अगर (cflags == DP_C_LONG)
+					मूल्य = (दीर्घ)बहु_तर्क (args, अचिन्हित दीर्घ पूर्णांक);
+				अन्यथा अगर (cflags == DP_C_LLONG)
+					मूल्य = (LLONG)बहु_तर्क (args, अचिन्हित LLONG);
+				अन्यथा अगर (cflags == DP_C_आकार)
+					मूल्य = बहु_तर्क (args, माप_प्रकार);
+#अगर_घोषित notyet
+				अन्यथा अगर (cflags == DP_C_INTMAX)
+					मूल्य = बहु_तर्क (args, uintmax_t);
+#पूर्ण_अगर
+				अन्यथा
+					मूल्य = (दीर्घ)बहु_तर्क (args, अचिन्हित पूर्णांक);
+				अगर (fmtint(बफर, &currlen, maxlen, मूल्य,
 				    16, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'f':
-				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+					जाओ fail;
+				अवरोध;
+			हाल 'f':
+				अगर (cflags == DP_C_LDOUBLE)
+					fvalue = बहु_तर्क (args, LDOUBLE);
+				अन्यथा
+					fvalue = बहु_तर्क (args, द्विगुन);
+				अगर (fmtfp(बफर, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'E':
+					जाओ fail;
+				अवरोध;
+			हाल 'E':
 				flags |= DP_F_UP;
-			case 'e':
-				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+			हाल 'e':
+				अगर (cflags == DP_C_LDOUBLE)
+					fvalue = बहु_तर्क (args, LDOUBLE);
+				अन्यथा
+					fvalue = बहु_तर्क (args, द्विगुन);
+				अगर (fmtfp(बफर, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'G':
+					जाओ fail;
+				अवरोध;
+			हाल 'G':
 				flags |= DP_F_UP;
-			case 'g':
-				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+			हाल 'g':
+				अगर (cflags == DP_C_LDOUBLE)
+					fvalue = बहु_तर्क (args, LDOUBLE);
+				अन्यथा
+					fvalue = बहु_तर्क (args, द्विगुन);
+				अगर (fmtfp(बफर, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'c':
-				DOPR_OUTCH(buffer, currlen, maxlen,
-				    va_arg (args, int));
-				break;
-			case 's':
-				strvalue = va_arg (args, char *);
-				if (!strvalue) strvalue = "(NULL)";
-				if (max == -1) {
-					max = strlen(strvalue);
+					जाओ fail;
+				अवरोध;
+			हाल 'c':
+				DOPR_OUTCH(बफर, currlen, maxlen,
+				    बहु_तर्क (args, पूर्णांक));
+				अवरोध;
+			हाल 's':
+				strvalue = बहु_तर्क (args, अक्षर *);
+				अगर (!strvalue) strvalue = "(NULL)";
+				अगर (max == -1) {
+					max = म_माप(strvalue);
 				}
-				if (min > 0 && max >= 0 && min > max) max = min;
-				if (fmtstr(buffer, &currlen, maxlen,
+				अगर (min > 0 && max >= 0 && min > max) max = min;
+				अगर (fmtstr(बफर, &currlen, maxlen,
 				    strvalue, flags, min, max) == -1)
-					goto fail;
-				break;
-			case 'p':
-				strvalue = va_arg (args, void *);
-				if (fmtint(buffer, &currlen, maxlen,
-				    (long) strvalue, 16, min, max, flags) == -1)
-					goto fail;
-				break;
-#if we_dont_want_this_in_openssh
-			case 'n':
-				if (cflags == DP_C_SHORT) {
-					short int *num;
-					num = va_arg (args, short int *);
-					*num = currlen;
-				} else if (cflags == DP_C_LONG) {
-					long int *num;
-					num = va_arg (args, long int *);
-					*num = (long int)currlen;
-				} else if (cflags == DP_C_LLONG) {
-					LLONG *num;
-					num = va_arg (args, LLONG *);
-					*num = (LLONG)currlen;
-				} else if (cflags == DP_C_SIZE) {
-					ssize_t *num;
-					num = va_arg (args, ssize_t *);
-					*num = (ssize_t)currlen;
-				} else if (cflags == DP_C_INTMAX) {
-					intmax_t *num;
-					num = va_arg (args, intmax_t *);
-					*num = (intmax_t)currlen;
-				} else {
-					int *num;
-					num = va_arg (args, int *);
-					*num = currlen;
+					जाओ fail;
+				अवरोध;
+			हाल 'p':
+				strvalue = बहु_तर्क (args, व्योम *);
+				अगर (fmtint(बफर, &currlen, maxlen,
+				    (दीर्घ) strvalue, 16, min, max, flags) == -1)
+					जाओ fail;
+				अवरोध;
+#अगर we_dont_want_this_in_openssh
+			हाल 'n':
+				अगर (cflags == DP_C_SHORT) {
+					लघु पूर्णांक *अंक;
+					अंक = बहु_तर्क (args, लघु पूर्णांक *);
+					*अंक = currlen;
+				} अन्यथा अगर (cflags == DP_C_LONG) {
+					दीर्घ पूर्णांक *अंक;
+					अंक = बहु_तर्क (args, दीर्घ पूर्णांक *);
+					*अंक = (दीर्घ पूर्णांक)currlen;
+				} अन्यथा अगर (cflags == DP_C_LLONG) {
+					LLONG *अंक;
+					अंक = बहु_तर्क (args, LLONG *);
+					*अंक = (LLONG)currlen;
+				} अन्यथा अगर (cflags == DP_C_आकार) {
+					ssize_t *अंक;
+					अंक = बहु_तर्क (args, ssize_t *);
+					*अंक = (ssize_t)currlen;
+				} अन्यथा अगर (cflags == DP_C_INTMAX) {
+					intmax_t *अंक;
+					अंक = बहु_तर्क (args, intmax_t *);
+					*अंक = (intmax_t)currlen;
+				} अन्यथा {
+					पूर्णांक *अंक;
+					अंक = बहु_तर्क (args, पूर्णांक *);
+					*अंक = currlen;
 				}
-				break;
-#endif
-			case '%':
-				DOPR_OUTCH(buffer, currlen, maxlen, ch);
-				break;
-			default:
+				अवरोध;
+#पूर्ण_अगर
+			हाल '%':
+				DOPR_OUTCH(बफर, currlen, maxlen, ch);
+				अवरोध;
+			शेष:
 				/* Unknown, skip */
-				break;
+				अवरोध;
 			}
 			ch = *format++;
 			state = DP_S_DEFAULT;
 			flags = cflags = min = 0;
 			max = -1;
-			break;
-		case DP_S_DONE:
-			break;
-		default:
+			अवरोध;
+		हाल DP_S_DONE:
+			अवरोध;
+		शेष:
 			/* hmm? */
-			break; /* some picky compilers need this */
+			अवरोध; /* some picky compilers need this */
 		}
 	}
-	if (maxlen != 0) {
-		if (currlen < maxlen - 1)
-			buffer[currlen] = '\0';
-		else if (maxlen > 0)
-			buffer[maxlen - 1] = '\0';
+	अगर (maxlen != 0) {
+		अगर (currlen < maxlen - 1)
+			बफर[currlen] = '\0';
+		अन्यथा अगर (maxlen > 0)
+			बफर[maxlen - 1] = '\0';
 	}
-	va_end(args);
-	return currlen < INT_MAX ? (int)currlen : -1;
+	बहु_पूर्ण(args);
+	वापस currlen < पूर्णांक_उच्च ? (पूर्णांक)currlen : -1;
  fail:
-	va_end(args);
-	return -1;
+	बहु_पूर्ण(args);
+	वापस -1;
 }
 
-static int
-fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max)
+अटल पूर्णांक
+fmtstr(अक्षर *बफर, माप_प्रकार *currlen, माप_प्रकार maxlen,
+    अक्षर *मूल्य, पूर्णांक flags, पूर्णांक min, पूर्णांक max)
 {
-	int padlen, strln;     /* amount to pad */
-	int cnt = 0;
+	पूर्णांक padlen, strln;     /* amount to pad */
+	पूर्णांक cnt = 0;
 
-#ifdef DEBUG_SNPRINTF
-	printf("fmtstr min=%d max=%d s=[%s]\n", min, max, value);
-#endif
-	if (value == 0) {
-		value = "<NULL>";
+#अगर_घोषित DEBUG_SNPRINTF
+	म_लिखो("fmtstr min=%d max=%d s=[%s]\n", min, max, मूल्य);
+#पूर्ण_अगर
+	अगर (मूल्य == 0) {
+		मूल्य = "<NULL>";
 	}
 
-	for (strln = 0; strln < max && value[strln]; ++strln); /* strlen */
+	क्रम (strln = 0; strln < max && मूल्य[strln]; ++strln); /* strlen */
 	padlen = min - strln;
-	if (padlen < 0)
+	अगर (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	अगर (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justify */
 
-	while ((padlen > 0) && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	जबतक ((padlen > 0) && (cnt < max)) {
+		DOPR_OUTCH(बफर, *currlen, maxlen, ' ');
 		--padlen;
 		++cnt;
 	}
-	while (*value && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, *value);
-		value++;
+	जबतक (*मूल्य && (cnt < max)) {
+		DOPR_OUTCH(बफर, *currlen, maxlen, *मूल्य);
+		मूल्य++;
 		++cnt;
 	}
-	while ((padlen < 0) && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	जबतक ((padlen < 0) && (cnt < max)) {
+		DOPR_OUTCH(बफर, *currlen, maxlen, ' ');
 		++padlen;
 		++cnt;
 	}
-	return 0;
+	वापस 0;
 }
 
 /* Have to handle DP_F_NUM (ie 0x and 0 alternates) */
 
-static int
-fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags)
+अटल पूर्णांक
+fmtint(अक्षर *बफर, माप_प्रकार *currlen, माप_प्रकार maxlen,
+    intmax_t मूल्य, पूर्णांक base, पूर्णांक min, पूर्णांक max, पूर्णांक flags)
 {
-	int signvalue = 0;
-	unsigned LLONG uvalue;
-	char convert[20];
-	int place = 0;
-	int spadlen = 0; /* amount to space pad */
-	int zpadlen = 0; /* amount to zero pad */
-	int caps = 0;
+	पूर्णांक signvalue = 0;
+	अचिन्हित LLONG uvalue;
+	अक्षर convert[20];
+	पूर्णांक place = 0;
+	पूर्णांक spadlen = 0; /* amount to space pad */
+	पूर्णांक zpadlen = 0; /* amount to zero pad */
+	पूर्णांक caps = 0;
 
-	if (max < 0)
+	अगर (max < 0)
 		max = 0;
 
-	uvalue = value;
+	uvalue = मूल्य;
 
-	if(!(flags & DP_F_UNSIGNED)) {
-		if( value < 0 ) {
+	अगर(!(flags & DP_F_UNSIGNED)) {
+		अगर( मूल्य < 0 ) {
 			signvalue = '-';
-			uvalue = -value;
-		} else {
-			if (flags & DP_F_PLUS)  /* Do a sign (+/i) */
+			uvalue = -मूल्य;
+		} अन्यथा {
+			अगर (flags & DP_F_PLUS)  /* Do a sign (+/i) */
 				signvalue = '+';
-			else if (flags & DP_F_SPACE)
+			अन्यथा अगर (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
+	अगर (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
 
-	do {
+	करो {
 		convert[place++] =
 			(caps? "0123456789ABCDEF":"0123456789abcdef")
-			[uvalue % (unsigned)base  ];
-		uvalue = (uvalue / (unsigned)base );
-	} while(uvalue && (place < 20));
-	if (place == 20) place--;
+			[uvalue % (अचिन्हित)base  ];
+		uvalue = (uvalue / (अचिन्हित)base );
+	} जबतक(uvalue && (place < 20));
+	अगर (place == 20) place--;
 	convert[place] = 0;
 
 	zpadlen = max - place;
 	spadlen = min - MAX (max, place) - (signvalue ? 1 : 0);
-	if (zpadlen < 0) zpadlen = 0;
-	if (spadlen < 0) spadlen = 0;
-	if (flags & DP_F_ZERO) {
+	अगर (zpadlen < 0) zpadlen = 0;
+	अगर (spadlen < 0) spadlen = 0;
+	अगर (flags & DP_F_ZERO) {
 		zpadlen = MAX(zpadlen, spadlen);
 		spadlen = 0;
 	}
-	if (flags & DP_F_MINUS)
+	अगर (flags & DP_F_MINUS)
 		spadlen = -spadlen; /* Left Justifty */
 
-#ifdef DEBUG_SNPRINTF
-	printf("zpad: %d, spad: %d, min: %d, max: %d, place: %d\n",
+#अगर_घोषित DEBUG_SNPRINTF
+	म_लिखो("zpad: %d, spad: %d, min: %d, max: %d, place: %d\n",
 	    zpadlen, spadlen, min, max, place);
-#endif
+#पूर्ण_अगर
 
 	/* Spaces */
-	while (spadlen > 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	जबतक (spadlen > 0) {
+		DOPR_OUTCH(बफर, *currlen, maxlen, ' ');
 		--spadlen;
 	}
 
 	/* Sign */
-	if (signvalue)
-		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
+	अगर (signvalue)
+		DOPR_OUTCH(बफर, *currlen, maxlen, signvalue);
 
 	/* Zeros */
-	if (zpadlen > 0) {
-		while (zpadlen > 0) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
+	अगर (zpadlen > 0) {
+		जबतक (zpadlen > 0) {
+			DOPR_OUTCH(बफर, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 	}
 
 	/* Digits */
-	while (place > 0) {
+	जबतक (place > 0) {
 		--place;
-		DOPR_OUTCH(buffer, *currlen, maxlen, convert[place]);
+		DOPR_OUTCH(बफर, *currlen, maxlen, convert[place]);
 	}
 
 	/* Left Justified spaces */
-	while (spadlen < 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	जबतक (spadlen < 0) {
+		DOPR_OUTCH(बफर, *currlen, maxlen, ' ');
 		++spadlen;
 	}
-	return 0;
+	वापस 0;
 }
 
-static LDOUBLE abs_val(LDOUBLE value)
+अटल LDOUBLE abs_val(LDOUBLE मूल्य)
 {
-	LDOUBLE result = value;
+	LDOUBLE परिणाम = मूल्य;
 
-	if (value < 0)
-		result = -value;
+	अगर (मूल्य < 0)
+		परिणाम = -मूल्य;
 
-	return result;
+	वापस परिणाम;
 }
 
-static LDOUBLE POW10(int val)
+अटल LDOUBLE POW10(पूर्णांक val)
 {
-	LDOUBLE result = 1;
+	LDOUBLE परिणाम = 1;
 
-	while (val) {
-		result *= 10;
+	जबतक (val) {
+		परिणाम *= 10;
 		val--;
 	}
 
-	return result;
+	वापस परिणाम;
 }
 
-static LLONG ROUND(LDOUBLE value)
+अटल LLONG ROUND(LDOUBLE मूल्य)
 {
 	LLONG intpart;
 
-	intpart = (LLONG)value;
-	value = value - intpart;
-	if (value >= 0.5) intpart++;
+	intpart = (LLONG)मूल्य;
+	मूल्य = मूल्य - intpart;
+	अगर (मूल्य >= 0.5) intpart++;
 
-	return intpart;
+	वापस intpart;
 }
 
 /* a replacement for modf that doesn't need the math library. Should
    be portable, but slow */
-static double my_modf(double x0, double *iptr)
+अटल द्विगुन my_modf(द्विगुन x0, द्विगुन *iptr)
 {
-	int i;
-	long l;
-	double x = x0;
-	double f = 1.0;
+	पूर्णांक i;
+	दीर्घ l;
+	द्विगुन x = x0;
+	द्विगुन f = 1.0;
 
-	for (i=0;i<100;i++) {
-		l = (long)x;
-		if (l <= (x+1) && l >= (x-1)) break;
+	क्रम (i=0;i<100;i++) {
+		l = (दीर्घ)x;
+		अगर (l <= (x+1) && l >= (x-1)) अवरोध;
 		x *= 0.1;
 		f *= 10.0;
 	}
 
-	if (i == 100) {
+	अगर (i == 100) {
 		/*
 		 * yikes! the number is beyond what we can handle.
 		 * What do we do?
 		 */
 		(*iptr) = 0;
-		return 0;
+		वापस 0;
 	}
 
-	if (i != 0) {
-		double i2;
-		double ret;
+	अगर (i != 0) {
+		द्विगुन i2;
+		द्विगुन ret;
 
 		ret = my_modf(x0-l*f, &i2);
 		(*iptr) = l*f + i2;
-		return ret;
+		वापस ret;
 	}
 
 	(*iptr) = l;
-	return x - (*iptr);
+	वापस x - (*iptr);
 }
 
 
-static int
-fmtfp (char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags)
+अटल पूर्णांक
+fmtfp (अक्षर *बफर, माप_प्रकार *currlen, माप_प्रकार maxlen,
+    LDOUBLE fvalue, पूर्णांक min, पूर्णांक max, पूर्णांक flags)
 {
-	int signvalue = 0;
-	double ufvalue;
-	char iconvert[311];
-	char fconvert[311];
-	int iplace = 0;
-	int fplace = 0;
-	int padlen = 0; /* amount to pad */
-	int zpadlen = 0;
-#if 0
-	int caps = 0;
-#endif
-	int idx;
-	double intpart;
-	double fracpart;
-	double temp;
+	पूर्णांक signvalue = 0;
+	द्विगुन ufvalue;
+	अक्षर iconvert[311];
+	अक्षर fconvert[311];
+	पूर्णांक iplace = 0;
+	पूर्णांक fplace = 0;
+	पूर्णांक padlen = 0; /* amount to pad */
+	पूर्णांक zpadlen = 0;
+#अगर 0
+	पूर्णांक caps = 0;
+#पूर्ण_अगर
+	पूर्णांक idx;
+	द्विगुन intpart;
+	द्विगुन fracpart;
+	द्विगुन अस्थायी;
 
 	/*
 	 * AIX manpage says the default is 0, but Solaris says the default
 	 * is 6, and sprintf on AIX defaults to 6
 	 */
-	if (max < 0)
+	अगर (max < 0)
 		max = 6;
 
 	ufvalue = abs_val (fvalue);
 
-	if (fvalue < 0) {
+	अगर (fvalue < 0) {
 		signvalue = '-';
-	} else {
-		if (flags & DP_F_PLUS) { /* Do a sign (+/i) */
+	} अन्यथा {
+		अगर (flags & DP_F_PLUS) { /* Do a sign (+/i) */
 			signvalue = '+';
-		} else {
-			if (flags & DP_F_SPACE)
+		} अन्यथा {
+			अगर (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-#if 0
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
-#endif
+#अगर 0
+	अगर (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
+#पूर्ण_अगर
 
-#if 0
-	 if (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
-#endif
+#अगर 0
+	 अगर (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
+#पूर्ण_अगर
 
 	/*
 	 * Sorry, we only support 16 digits past the decimal because of our
 	 * conversion method
 	 */
-	if (max > 16)
+	अगर (max > 16)
 		max = 16;
 
 	/* We "cheat" by converting the fractional part to integer by
 	 * multiplying by a factor of 10
 	 */
 
-	temp = ufvalue;
-	my_modf(temp, &intpart);
+	अस्थायी = ufvalue;
+	my_modf(अस्थायी, &intpart);
 
 	fracpart = ROUND((POW10(max)) * (ufvalue - intpart));
 
-	if (fracpart >= POW10(max)) {
+	अगर (fracpart >= POW10(max)) {
 		intpart++;
 		fracpart -= POW10(max);
 	}
 
 	/* Convert integer part */
-	do {
-		temp = intpart*0.1;
-		my_modf(temp, &intpart);
-		idx = (int) ((temp -intpart +0.05)* 10.0);
+	करो {
+		अस्थायी = intpart*0.1;
+		my_modf(अस्थायी, &intpart);
+		idx = (पूर्णांक) ((अस्थायी -intpart +0.05)* 10.0);
 		/* idx = (int) (((double)(temp*0.1) -intpart +0.05) *10.0); */
 		/* printf ("%llf, %f, %x\n", temp, intpart, idx); */
 		iconvert[iplace++] = "0123456789"[idx];
-	} while (intpart && (iplace < 311));
-	if (iplace == 311) iplace--;
+	} जबतक (intpart && (iplace < 311));
+	अगर (iplace == 311) iplace--;
 	iconvert[iplace] = 0;
 
 	/* Convert fractional part */
-	if (fracpart)
+	अगर (fracpart)
 	{
-		do {
-			temp = fracpart*0.1;
-			my_modf(temp, &fracpart);
-			idx = (int) ((temp -fracpart +0.05)* 10.0);
+		करो {
+			अस्थायी = fracpart*0.1;
+			my_modf(अस्थायी, &fracpart);
+			idx = (पूर्णांक) ((अस्थायी -fracpart +0.05)* 10.0);
 			/* idx = (int) ((((temp/10) -fracpart) +0.05) *10); */
 			/* printf ("%lf, %lf, %ld\n", temp, fracpart, idx ); */
 			fconvert[fplace++] = "0123456789"[idx];
-		} while(fracpart && (fplace < 311));
-		if (fplace == 311) fplace--;
+		} जबतक(fracpart && (fplace < 311));
+		अगर (fplace == 311) fplace--;
 	}
 	fconvert[fplace] = 0;
 
 	/* -1 for decimal point, another -1 if we are printing a sign */
 	padlen = min - iplace - max - 1 - ((signvalue) ? 1 : 0);
 	zpadlen = max - fplace;
-	if (zpadlen < 0) zpadlen = 0;
-	if (padlen < 0)
+	अगर (zpadlen < 0) zpadlen = 0;
+	अगर (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	अगर (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justifty */
 
-	if ((flags & DP_F_ZERO) && (padlen > 0)) {
-		if (signvalue) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
+	अगर ((flags & DP_F_ZERO) && (padlen > 0)) {
+		अगर (signvalue) {
+			DOPR_OUTCH(बफर, *currlen, maxlen, signvalue);
 			--padlen;
 			signvalue = 0;
 		}
-		while (padlen > 0) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
+		जबतक (padlen > 0) {
+			DOPR_OUTCH(बफर, *currlen, maxlen, '0');
 			--padlen;
 		}
 	}
-	while (padlen > 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	जबतक (padlen > 0) {
+		DOPR_OUTCH(बफर, *currlen, maxlen, ' ');
 		--padlen;
 	}
-	if (signvalue)
-		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
+	अगर (signvalue)
+		DOPR_OUTCH(बफर, *currlen, maxlen, signvalue);
 
-	while (iplace > 0) {
+	जबतक (iplace > 0) {
 		--iplace;
-		DOPR_OUTCH(buffer, *currlen, maxlen, iconvert[iplace]);
+		DOPR_OUTCH(बफर, *currlen, maxlen, iconvert[iplace]);
 	}
 
-#ifdef DEBUG_SNPRINTF
-	printf("fmtfp: fplace=%d zpadlen=%d\n", fplace, zpadlen);
-#endif
+#अगर_घोषित DEBUG_SNPRINTF
+	म_लिखो("fmtfp: fplace=%d zpadlen=%d\n", fplace, zpadlen);
+#पूर्ण_अगर
 
 	/*
 	 * Decimal point.  This should probably use locale to find the correct
 	 * char to print out.
 	 */
-	if (max > 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, '.');
+	अगर (max > 0) {
+		DOPR_OUTCH(बफर, *currlen, maxlen, '.');
 
-		while (zpadlen > 0) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
+		जबतक (zpadlen > 0) {
+			DOPR_OUTCH(बफर, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 
-		while (fplace > 0) {
+		जबतक (fplace > 0) {
 			--fplace;
-			DOPR_OUTCH(buffer, *currlen, maxlen, fconvert[fplace]);
+			DOPR_OUTCH(बफर, *currlen, maxlen, fconvert[fplace]);
 		}
 	}
 
-	while (padlen < 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	जबतक (padlen < 0) {
+		DOPR_OUTCH(बफर, *currlen, maxlen, ' ');
 		++padlen;
 	}
-	return 0;
+	वापस 0;
 }
-#endif /* !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF) */
+#पूर्ण_अगर /* !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF) */
 
-#if !defined(HAVE_VSNPRINTF)
-int
-vsnprintf (char *str, size_t count, const char *fmt, va_list args)
+#अगर !defined(HAVE_VSNPRINTF)
+पूर्णांक
+vsnprintf (अक्षर *str, माप_प्रकार गिनती, स्थिर अक्षर *fmt, बहु_सूची args)
 {
-	return dopr(str, count, fmt, args);
+	वापस dopr(str, गिनती, fmt, args);
 }
-#endif
+#पूर्ण_अगर
 
-#if !defined(HAVE_SNPRINTF)
-int
-snprintf(char *str, size_t count, SNPRINTF_CONST char *fmt, ...)
+#अगर !defined(HAVE_SNPRINTF)
+पूर्णांक
+snprintf(अक्षर *str, माप_प्रकार गिनती, SNPRINTF_CONST अक्षर *fmt, ...)
 {
-	size_t ret;
-	va_list ap;
+	माप_प्रकार ret;
+	बहु_सूची ap;
 
-	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
-	va_end(ap);
-	return ret;
+	बहु_शुरू(ap, fmt);
+	ret = vsnprintf(str, गिनती, fmt, ap);
+	बहु_पूर्ण(ap);
+	वापस ret;
 }
-#endif
+#पूर्ण_अगर

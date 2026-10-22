@@ -24,153 +24,153 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/uio.h>
-#include <sys/un.h>
+#समावेश <sys/types.h>
+#समावेश <sys/socket.h>
+#समावेश <sys/uio.h>
+#समावेश <sys/un.h>
 
-#include <errno.h>
-#include <poll.h>
-#include <string.h>
-#include <stdarg.h>
+#समावेश <errno.h>
+#समावेश <poll.h>
+#समावेश <string.h>
+#समावेश <stdarg.h>
 
-#include "log.h"
-#include "monitor_fdpass.h"
+#समावेश "log.h"
+#समावेश "monitor_fdpass.h"
 
-int
-mm_send_fd(int sock, int fd)
+पूर्णांक
+mm_send_fd(पूर्णांक sock, पूर्णांक fd)
 {
-#if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
-#ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+#अगर defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+	काष्ठा msghdr संदेश;
+#अगर_अघोषित HAVE_ACCRIGHTS_IN_MSGHDR
+	जोड़ {
+		काष्ठा cmsghdr hdr;
+		अक्षर buf[CMSG_SPACE(माप(पूर्णांक))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
-#endif
-	struct iovec vec;
-	char ch = '\0';
+	काष्ठा cmsghdr *cmsg;
+#पूर्ण_अगर
+	काष्ठा iovec vec;
+	अक्षर ch = '\0';
 	ssize_t n;
-	struct pollfd pfd;
+	काष्ठा pollfd pfd;
 
-	memset(&msg, 0, sizeof(msg));
-#ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	msg.msg_accrights = (caddr_t)&fd;
-	msg.msg_accrightslen = sizeof(fd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
-	msg.msg_control = (caddr_t)&cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
-	cmsg = CMSG_FIRSTHDR(&msg);
-	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+	स_रखो(&संदेश, 0, माप(संदेश));
+#अगर_घोषित HAVE_ACCRIGHTS_IN_MSGHDR
+	संदेश.संदेश_accrights = (caddr_t)&fd;
+	संदेश.संदेश_accrightslen = माप(fd);
+#अन्यथा
+	स_रखो(&cmsgbuf, 0, माप(cmsgbuf));
+	संदेश.msg_control = (caddr_t)&cmsgbuf.buf;
+	संदेश.msg_controllen = माप(cmsgbuf.buf);
+	cmsg = CMSG_FIRSTHDR(&संदेश);
+	cmsg->cmsg_len = CMSG_LEN(माप(पूर्णांक));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
-	*(int *)CMSG_DATA(cmsg) = fd;
-#endif
+	*(पूर्णांक *)CMSG_DATA(cmsg) = fd;
+#पूर्ण_अगर
 
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
-	msg.msg_iov = &vec;
-	msg.msg_iovlen = 1;
+	संदेश.msg_iov = &vec;
+	संदेश.msg_iovlen = 1;
 
 	pfd.fd = sock;
 	pfd.events = POLLOUT;
-	while ((n = sendmsg(sock, &msg, 0)) == -1 &&
-	    (errno == EAGAIN || errno == EINTR)) {
-		debug3_f("sendmsg(%d): %s", fd, strerror(errno));
-		(void)poll(&pfd, 1, -1);
+	जबतक ((n = sendmsg(sock, &संदेश, 0)) == -1 &&
+	    (त्रुटि_सं == EAGAIN || त्रुटि_सं == EINTR)) {
+		debug3_f("sendmsg(%d): %s", fd, म_त्रुटि(त्रुटि_सं));
+		(व्योम)poll(&pfd, 1, -1);
 	}
-	if (n == -1) {
-		error_f("sendmsg(%d): %s", fd, strerror(errno));
-		return -1;
+	अगर (n == -1) {
+		error_f("sendmsg(%d): %s", fd, म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
 
-	if (n != 1) {
+	अगर (n != 1) {
 		error_f("sendmsg: expected sent 1 got %zd", n);
-		return -1;
+		वापस -1;
 	}
-	return 0;
-#else
+	वापस 0;
+#अन्यथा
 	error_f("file descriptor passing not supported");
-	return -1;
-#endif
+	वापस -1;
+#पूर्ण_अगर
 }
 
-int
-mm_receive_fd(int sock)
+पूर्णांक
+mm_receive_fd(पूर्णांक sock)
 {
-#if defined(HAVE_RECVMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
-#ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+#अगर defined(HAVE_RECVMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+	काष्ठा msghdr संदेश;
+#अगर_अघोषित HAVE_ACCRIGHTS_IN_MSGHDR
+	जोड़ {
+		काष्ठा cmsghdr hdr;
+		अक्षर buf[CMSG_SPACE(माप(पूर्णांक))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
-#endif
-	struct iovec vec;
+	काष्ठा cmsghdr *cmsg;
+#पूर्ण_अगर
+	काष्ठा iovec vec;
 	ssize_t n;
-	char ch;
-	int fd;
-	struct pollfd pfd;
+	अक्षर ch;
+	पूर्णांक fd;
+	काष्ठा pollfd pfd;
 
-	memset(&msg, 0, sizeof(msg));
+	स_रखो(&संदेश, 0, माप(संदेश));
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
-	msg.msg_iov = &vec;
-	msg.msg_iovlen = 1;
-#ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	msg.msg_accrights = (caddr_t)&fd;
-	msg.msg_accrightslen = sizeof(fd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
-	msg.msg_control = &cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
-#endif
+	संदेश.msg_iov = &vec;
+	संदेश.msg_iovlen = 1;
+#अगर_घोषित HAVE_ACCRIGHTS_IN_MSGHDR
+	संदेश.संदेश_accrights = (caddr_t)&fd;
+	संदेश.संदेश_accrightslen = माप(fd);
+#अन्यथा
+	स_रखो(&cmsgbuf, 0, माप(cmsgbuf));
+	संदेश.msg_control = &cmsgbuf.buf;
+	संदेश.msg_controllen = माप(cmsgbuf.buf);
+#पूर्ण_अगर
 
 	pfd.fd = sock;
 	pfd.events = POLLIN;
-	while ((n = recvmsg(sock, &msg, 0)) == -1 &&
-	    (errno == EAGAIN || errno == EINTR)) {
-		debug3_f("recvmsg: %s", strerror(errno));
-		(void)poll(&pfd, 1, -1);
+	जबतक ((n = recvmsg(sock, &संदेश, 0)) == -1 &&
+	    (त्रुटि_सं == EAGAIN || त्रुटि_सं == EINTR)) {
+		debug3_f("recvmsg: %s", म_त्रुटि(त्रुटि_सं));
+		(व्योम)poll(&pfd, 1, -1);
 	}
-	if (n == -1) {
-		error_f("recvmsg: %s", strerror(errno));
-		return -1;
+	अगर (n == -1) {
+		error_f("recvmsg: %s", म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
 
-	if (n != 1) {
+	अगर (n != 1) {
 		error_f("recvmsg: expected received 1 got %zd", n);
-		return -1;
+		वापस -1;
 	}
 
-#ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	if (msg.msg_accrightslen != sizeof(fd)) {
+#अगर_घोषित HAVE_ACCRIGHTS_IN_MSGHDR
+	अगर (संदेश.संदेश_accrightslen != माप(fd)) {
 		error_f("no fd");
-		return -1;
+		वापस -1;
 	}
-#else
-	cmsg = CMSG_FIRSTHDR(&msg);
-	if (cmsg == NULL) {
+#अन्यथा
+	cmsg = CMSG_FIRSTHDR(&संदेश);
+	अगर (cmsg == शून्य) {
 		error_f("no message header");
-		return -1;
+		वापस -1;
 	}
 
-#ifndef BROKEN_CMSG_TYPE
-	if (cmsg->cmsg_type != SCM_RIGHTS) {
+#अगर_अघोषित BROKEN_CMSG_TYPE
+	अगर (cmsg->cmsg_type != SCM_RIGHTS) {
 		error_f("expected %d got %d", SCM_RIGHTS, cmsg->cmsg_type);
-		return -1;
+		वापस -1;
 	}
-#endif
-	fd = (*(int *)CMSG_DATA(cmsg));
-#endif
-	return fd;
-#else
+#पूर्ण_अगर
+	fd = (*(पूर्णांक *)CMSG_DATA(cmsg));
+#पूर्ण_अगर
+	वापस fd;
+#अन्यथा
 	error_f("file descriptor passing not supported");
-	return -1;
-#endif
+	वापस -1;
+#पूर्ण_अगर
 }

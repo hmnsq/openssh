@@ -23,66 +23,66 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
+#समावेश <sys/types.h>
+#समावेश <sys/stat.h>
+#समावेश <sys/socket.h>
+#समावेश <sys/wait.h>
 
-#include <netinet/in.h>
+#समावेश <netinet/in.h>
 
-#include <stdlib.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <paths.h>
-#include <pwd.h>
-#ifdef HAVE_LOGIN_H
-#include <login.h>
-#endif
-#ifdef USE_SHADOW
-#include <shadow.h>
-#endif
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
-#include <netdb.h>
-#include <time.h>
+#समावेश <stdlib.h>
+#समावेश <errno.h>
+#समावेश <fcntl.h>
+#समावेश <paths.h>
+#समावेश <pwd.h>
+#अगर_घोषित HAVE_LOGIN_H
+#समावेश <login.h>
+#पूर्ण_अगर
+#अगर_घोषित USE_SHADOW
+#समावेश <shadow.h>
+#पूर्ण_अगर
+#समावेश <stdarg.h>
+#समावेश <stdio.h>
+#समावेश <string.h>
+#समावेश <unistd.h>
+#समावेश <limits.h>
+#समावेश <netdb.h>
+#समावेश <time.h>
 
-#include "xmalloc.h"
-#include "match.h"
-#include "groupaccess.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
-#include "canohost.h"
-#include "uidswap.h"
-#include "packet.h"
-#include "loginrec.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "authfile.h"
-#include "monitor_wrap.h"
-#include "ssherr.h"
-#include "channels.h"
+#समावेश "xmalloc.h"
+#समावेश "match.h"
+#समावेश "groupaccess.h"
+#समावेश "log.h"
+#समावेश "sshbuf.h"
+#समावेश "misc.h"
+#समावेश "servconf.h"
+#समावेश "sshkey.h"
+#समावेश "hostfile.h"
+#समावेश "auth.h"
+#समावेश "auth-options.h"
+#समावेश "canohost.h"
+#समावेश "uidswap.h"
+#समावेश "packet.h"
+#समावेश "loginrec.h"
+#अगर_घोषित GSSAPI
+#समावेश "ssh-gss.h"
+#पूर्ण_अगर
+#समावेश "authfile.h"
+#समावेश "monitor_wrap.h"
+#समावेश "ssherr.h"
+#समावेश "channels.h"
 
 /* import */
-extern ServerOptions options;
-extern struct include_list includes;
-extern struct sshbuf *loginmsg;
-extern struct passwd *privsep_pw;
-extern struct sshauthopt *auth_opts;
+बाह्य ServerOptions options;
+बाह्य काष्ठा include_list includes;
+बाह्य काष्ठा sshbuf *loginmsg;
+बाह्य काष्ठा passwd *privsep_pw;
+बाह्य काष्ठा sshauthopt *auth_opts;
 
 /* Debugging messages */
-static struct sshbuf *auth_debug;
+अटल काष्ठा sshbuf *auth_debug;
 
 /*
  * Check if the user is allowed to log in via ssh. If user is listed
@@ -93,224 +93,224 @@ static struct sshbuf *auth_debug;
  * If the user's shell is not executable, false will be returned.
  * Otherwise true is returned.
  */
-int
-allowed_user(struct ssh *ssh, struct passwd * pw)
+पूर्णांक
+allowed_user(काष्ठा ssh *ssh, काष्ठा passwd * pw)
 {
-	struct stat st;
-	const char *hostname = NULL, *ipaddr = NULL;
-	int r;
+	काष्ठा stat st;
+	स्थिर अक्षर *hostname = शून्य, *ipaddr = शून्य;
+	पूर्णांक r;
 	u_int i;
 
 	/* Shouldn't be called if pw is NULL, but better safe than sorry... */
-	if (!pw || !pw->pw_name)
-		return 0;
+	अगर (!pw || !pw->pw_name)
+		वापस 0;
 
-	if (!options.use_pam && platform_locked_account(pw)) {
+	अगर (!options.use_pam && platform_locked_account(pw)) {
 		logit("User %.100s not allowed because account is locked",
 		    pw->pw_name);
-		return 0;
+		वापस 0;
 	}
 
 	/*
 	 * Deny if shell does not exist or is not executable unless we
 	 * are chrooting.
 	 */
-	if (options.chroot_directory == NULL ||
+	अगर (options.chroot_directory == शून्य ||
 	    strcasecmp(options.chroot_directory, "none") == 0) {
-		char *shell = xstrdup((pw->pw_shell[0] == '\0') ?
+		अक्षर *shell = xstrdup((pw->pw_shell[0] == '\0') ?
 		    _PATH_BSHELL : pw->pw_shell); /* empty = /bin/sh */
 
-		if (stat(shell, &st) == -1) {
+		अगर (stat(shell, &st) == -1) {
 			logit("User %.100s not allowed because shell %.100s "
 			    "does not exist", pw->pw_name, shell);
-			free(shell);
-			return 0;
+			मुक्त(shell);
+			वापस 0;
 		}
-		if (S_ISREG(st.st_mode) == 0 ||
+		अगर (S_ISREG(st.st_mode) == 0 ||
 		    (st.st_mode & (S_IXOTH|S_IXUSR|S_IXGRP)) == 0) {
 			logit("User %.100s not allowed because shell %.100s "
 			    "is not executable", pw->pw_name, shell);
-			free(shell);
-			return 0;
+			मुक्त(shell);
+			वापस 0;
 		}
-		free(shell);
+		मुक्त(shell);
 	}
 
-	if (options.num_deny_users > 0 || options.num_allow_users > 0 ||
-	    options.num_deny_groups > 0 || options.num_allow_groups > 0) {
+	अगर (options.अंक_deny_users > 0 || options.अंक_allow_users > 0 ||
+	    options.अंक_deny_groups > 0 || options.अंक_allow_groups > 0) {
 		hostname = auth_get_canonical_hostname(ssh, options.use_dns);
 		ipaddr = ssh_remote_ipaddr(ssh);
 	}
 
 	/* Return false if user is listed in DenyUsers */
-	if (options.num_deny_users > 0) {
-		for (i = 0; i < options.num_deny_users; i++) {
+	अगर (options.अंक_deny_users > 0) {
+		क्रम (i = 0; i < options.अंक_deny_users; i++) {
 			r = match_user(pw->pw_name, hostname, ipaddr,
 			    options.deny_users[i]);
-			if (r < 0) {
+			अगर (r < 0) {
 				fatal("Invalid DenyUsers pattern \"%.100s\"",
 				    options.deny_users[i]);
-			} else if (r != 0) {
+			} अन्यथा अगर (r != 0) {
 				logit("User %.100s from %.100s not allowed "
 				    "because listed in DenyUsers",
 				    pw->pw_name, hostname);
-				return 0;
+				वापस 0;
 			}
 		}
 	}
 	/* Return false if AllowUsers isn't empty and user isn't listed there */
-	if (options.num_allow_users > 0) {
-		for (i = 0; i < options.num_allow_users; i++) {
+	अगर (options.अंक_allow_users > 0) {
+		क्रम (i = 0; i < options.अंक_allow_users; i++) {
 			r = match_user(pw->pw_name, hostname, ipaddr,
 			    options.allow_users[i]);
-			if (r < 0) {
+			अगर (r < 0) {
 				fatal("Invalid AllowUsers pattern \"%.100s\"",
 				    options.allow_users[i]);
-			} else if (r == 1)
-				break;
+			} अन्यथा अगर (r == 1)
+				अवरोध;
 		}
 		/* i < options.num_allow_users iff we break for loop */
-		if (i >= options.num_allow_users) {
+		अगर (i >= options.अंक_allow_users) {
 			logit("User %.100s from %.100s not allowed because "
 			    "not listed in AllowUsers", pw->pw_name, hostname);
-			return 0;
+			वापस 0;
 		}
 	}
-	if (options.num_deny_groups > 0 || options.num_allow_groups > 0) {
+	अगर (options.अंक_deny_groups > 0 || options.अंक_allow_groups > 0) {
 		/* Get the user's group access list (primary and supplementary) */
-		if (ga_init(pw->pw_name, pw->pw_gid) == 0) {
+		अगर (ga_init(pw->pw_name, pw->pw_gid) == 0) {
 			logit("User %.100s from %.100s not allowed because "
 			    "not in any group", pw->pw_name, hostname);
-			return 0;
+			वापस 0;
 		}
 
 		/* Return false if one of user's groups is listed in DenyGroups */
-		if (options.num_deny_groups > 0)
-			if (ga_match(options.deny_groups,
-			    options.num_deny_groups)) {
+		अगर (options.अंक_deny_groups > 0)
+			अगर (ga_match(options.deny_groups,
+			    options.अंक_deny_groups)) {
 				ga_free();
 				logit("User %.100s from %.100s not allowed "
 				    "because a group is listed in DenyGroups",
 				    pw->pw_name, hostname);
-				return 0;
+				वापस 0;
 			}
 		/*
 		 * Return false if AllowGroups isn't empty and one of user's groups
 		 * isn't listed there
 		 */
-		if (options.num_allow_groups > 0)
-			if (!ga_match(options.allow_groups,
-			    options.num_allow_groups)) {
+		अगर (options.अंक_allow_groups > 0)
+			अगर (!ga_match(options.allow_groups,
+			    options.अंक_allow_groups)) {
 				ga_free();
 				logit("User %.100s from %.100s not allowed "
 				    "because none of user's groups are listed "
 				    "in AllowGroups", pw->pw_name, hostname);
-				return 0;
+				वापस 0;
 			}
 		ga_free();
 	}
 
-#ifdef CUSTOM_SYS_AUTH_ALLOWED_USER
-	if (!sys_auth_allowed_user(pw, loginmsg))
-		return 0;
-#endif
+#अगर_घोषित CUSTOM_SYS_AUTH_ALLOWED_USER
+	अगर (!sys_auth_allowed_user(pw, loginmsg))
+		वापस 0;
+#पूर्ण_अगर
 
 	/* We found no reason not to let this user try to log on... */
-	return 1;
+	वापस 1;
 }
 
 /*
  * Formats any key left in authctxt->auth_method_key for inclusion in
  * auth_log()'s message. Also includes authxtct->auth_method_info if present.
  */
-static char *
-format_method_key(Authctxt *authctxt)
+अटल अक्षर *
+format_method_कुंजी(Authctxt *authctxt)
 {
-	const struct sshkey *key = authctxt->auth_method_key;
-	const char *methinfo = authctxt->auth_method_info;
-	char *fp, *cafp, *ret = NULL;
+	स्थिर काष्ठा sshkey *कुंजी = authctxt->auth_method_कुंजी;
+	स्थिर अक्षर *methinfo = authctxt->auth_method_info;
+	अक्षर *fp, *cafp, *ret = शून्य;
 
-	if (key == NULL)
-		return NULL;
+	अगर (कुंजी == शून्य)
+		वापस शून्य;
 
-	if (sshkey_is_cert(key)) {
-		fp = sshkey_fingerprint(key,
+	अगर (sshkey_is_cert(कुंजी)) {
+		fp = sshkey_fingerprint(कुंजी,
 		    options.fingerprint_hash, SSH_FP_DEFAULT);
-		cafp = sshkey_fingerprint(key->cert->signature_key,
+		cafp = sshkey_fingerprint(कुंजी->cert->signature_कुंजी,
 		    options.fingerprint_hash, SSH_FP_DEFAULT);
 		xasprintf(&ret, "%s %s ID %s (serial %llu) CA %s %s%s%s",
-		    sshkey_type(key), fp == NULL ? "(null)" : fp,
-		    key->cert->key_id,
-		    (unsigned long long)key->cert->serial,
-		    sshkey_type(key->cert->signature_key),
-		    cafp == NULL ? "(null)" : cafp,
-		    methinfo == NULL ? "" : ", ",
-		    methinfo == NULL ? "" : methinfo);
-		free(fp);
-		free(cafp);
-	} else {
-		fp = sshkey_fingerprint(key, options.fingerprint_hash,
+		    sshkey_type(कुंजी), fp == शून्य ? "(null)" : fp,
+		    कुंजी->cert->कुंजी_id,
+		    (अचिन्हित दीर्घ दीर्घ)कुंजी->cert->serial,
+		    sshkey_type(कुंजी->cert->signature_कुंजी),
+		    cafp == शून्य ? "(null)" : cafp,
+		    methinfo == शून्य ? "" : ", ",
+		    methinfo == शून्य ? "" : methinfo);
+		मुक्त(fp);
+		मुक्त(cafp);
+	} अन्यथा {
+		fp = sshkey_fingerprint(कुंजी, options.fingerprint_hash,
 		    SSH_FP_DEFAULT);
-		xasprintf(&ret, "%s %s%s%s", sshkey_type(key),
-		    fp == NULL ? "(null)" : fp,
-		    methinfo == NULL ? "" : ", ",
-		    methinfo == NULL ? "" : methinfo);
-		free(fp);
+		xasprintf(&ret, "%s %s%s%s", sshkey_type(कुंजी),
+		    fp == शून्य ? "(null)" : fp,
+		    methinfo == शून्य ? "" : ", ",
+		    methinfo == शून्य ? "" : methinfo);
+		मुक्त(fp);
 	}
-	return ret;
+	वापस ret;
 }
 
-void
-auth_log(struct ssh *ssh, int authenticated, int partial,
-    const char *method, const char *submethod)
+व्योम
+auth_log(काष्ठा ssh *ssh, पूर्णांक authenticated, पूर्णांक partial,
+    स्थिर अक्षर *method, स्थिर अक्षर *submethod)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	int level = SYSLOG_LEVEL_VERBOSE;
-	const char *authmsg;
-	char *extra = NULL;
+	पूर्णांक level = SYSLOG_LEVEL_VERBOSE;
+	स्थिर अक्षर *authmsg;
+	अक्षर *extra = शून्य;
 
-	if (!mm_is_monitor() && !authctxt->postponed)
-		return;
+	अगर (!mm_is_monitor() && !authctxt->postponed)
+		वापस;
 
 	/* Raise logging level */
-	if (authenticated == 1 ||
+	अगर (authenticated == 1 ||
 	    !authctxt->valid ||
 	    authctxt->failures >= options.max_authtries / 2 ||
-	    strcmp(method, "password") == 0)
+	    म_भेद(method, "password") == 0)
 		level = SYSLOG_LEVEL_INFO;
 
-	if (authctxt->postponed)
+	अगर (authctxt->postponed)
 		authmsg = "Postponed";
-	else if (partial)
+	अन्यथा अगर (partial)
 		authmsg = "Partial";
-	else
+	अन्यथा
 		authmsg = authenticated ? "Accepted" : "Failed";
 
-	if ((extra = format_method_key(authctxt)) == NULL) {
-		if (authctxt->auth_method_info != NULL)
+	अगर ((extra = format_method_कुंजी(authctxt)) == शून्य) {
+		अगर (authctxt->auth_method_info != शून्य)
 			extra = xstrdup(authctxt->auth_method_info);
 	}
 
 	do_log2(level, "%s %s%s%s for %s%.100s from %.200s port %d ssh2%s%s",
 	    authmsg,
 	    method,
-	    submethod != NULL ? "/" : "", submethod == NULL ? "" : submethod,
+	    submethod != शून्य ? "/" : "", submethod == शून्य ? "" : submethod,
 	    authctxt->valid ? "" : "invalid user ",
 	    authctxt->user,
 	    ssh_remote_ipaddr(ssh),
 	    ssh_remote_port(ssh),
-	    extra != NULL ? ": " : "",
-	    extra != NULL ? extra : "");
+	    extra != शून्य ? ": " : "",
+	    extra != शून्य ? extra : "");
 
-	free(extra);
+	मुक्त(extra);
 
-#if defined(CUSTOM_FAILED_LOGIN) || defined(SSH_AUDIT_EVENTS)
-	if (authenticated == 0 && !(authctxt->postponed || partial)) {
+#अगर defined(CUSTOM_FAILED_LOGIN) || defined(SSH_AUDIT_EVENTS)
+	अगर (authenticated == 0 && !(authctxt->postponed || partial)) {
 		/* Log failed login attempt */
 # ifdef CUSTOM_FAILED_LOGIN
-		if (strcmp(method, "password") == 0 ||
-		    strncmp(method, "keyboard-interactive", 20) == 0 ||
-		    strcmp(method, "challenge-response") == 0)
+		अगर (म_भेद(method, "password") == 0 ||
+		    म_भेदन(method, "keyboard-interactive", 20) == 0 ||
+		    म_भेद(method, "challenge-response") == 0)
 			record_failed_login(ssh, authctxt->user,
 			    auth_get_canonical_hostname(ssh, options.use_dns), "ssh");
 # endif
@@ -318,17 +318,17 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 		audit_event(ssh, audit_classify_auth(method));
 # endif
 	}
-#endif
-#if defined(CUSTOM_FAILED_LOGIN) && defined(WITH_AIXAUTHENTICATE)
-	if (authenticated)
+#पूर्ण_अगर
+#अगर defined(CUSTOM_FAILED_LOGIN) && defined(WITH_AIXAUTHENTICATE)
+	अगर (authenticated)
 		sys_auth_record_login(authctxt->user,
 		    auth_get_canonical_hostname(ssh, options.use_dns), "ssh",
 		    loginmsg);
-#endif
+#पूर्ण_अगर
 }
 
-void
-auth_maxtries_exceeded(struct ssh *ssh)
+व्योम
+auth_maxtries_exceeded(काष्ठा ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 
@@ -345,28 +345,28 @@ auth_maxtries_exceeded(struct ssh *ssh)
 /*
  * Check whether root logins are disallowed.
  */
-int
-auth_root_allowed(struct ssh *ssh, const char *method)
+पूर्णांक
+auth_मूल_allowed(काष्ठा ssh *ssh, स्थिर अक्षर *method)
 {
-	switch (options.permit_root_login) {
-	case PERMIT_YES:
-		return 1;
-	case PERMIT_NO_PASSWD:
-		if (strcmp(method, "publickey") == 0 ||
-		    strcmp(method, "hostbased") == 0 ||
-		    strcmp(method, "gssapi-with-mic") == 0)
-			return 1;
-		break;
-	case PERMIT_FORCED_ONLY:
-		if (auth_opts->force_command != NULL) {
+	चयन (options.permit_मूल_login) {
+	हाल PERMIT_YES:
+		वापस 1;
+	हाल PERMIT_NO_PASSWD:
+		अगर (म_भेद(method, "publickey") == 0 ||
+		    म_भेद(method, "hostbased") == 0 ||
+		    म_भेद(method, "gssapi-with-mic") == 0)
+			वापस 1;
+		अवरोध;
+	हाल PERMIT_FORCED_ONLY:
+		अगर (auth_opts->force_command != शून्य) {
 			logit("Root login accepted for forced command.");
-			return 1;
+			वापस 1;
 		}
-		break;
+		अवरोध;
 	}
 	logit("ROOT LOGIN REFUSED FROM %.200s port %d",
 	    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
-	return 0;
+	वापस 0;
 }
 
 
@@ -377,55 +377,55 @@ auth_root_allowed(struct ssh *ssh, const char *method)
  *
  * This returns a buffer allocated by xmalloc.
  */
-char *
-expand_authorized_keys(const char *filename, struct passwd *pw)
+अक्षर *
+expand_authorized_कुंजियाँ(स्थिर अक्षर *filename, काष्ठा passwd *pw)
 {
-	char *file, uidstr[32], ret[PATH_MAX];
-	int i;
+	अक्षर *file, uidstr[32], ret[PATH_MAX];
+	पूर्णांक i;
 
-	snprintf(uidstr, sizeof(uidstr), "%llu",
-	    (unsigned long long)pw->pw_uid);
+	snprintf(uidstr, माप(uidstr), "%llu",
+	    (अचिन्हित दीर्घ दीर्घ)pw->pw_uid);
 	file = percent_expand(filename, "h", pw->pw_dir,
-	    "u", pw->pw_name, "U", uidstr, (char *)NULL);
+	    "u", pw->pw_name, "U", uidstr, (अक्षर *)शून्य);
 
 	/*
 	 * Ensure that filename starts anchored. If not, be backward
 	 * compatible and prepend the '%h/'
 	 */
-	if (path_absolute(file))
-		return (file);
+	अगर (path_absolute(file))
+		वापस (file);
 
-	i = snprintf(ret, sizeof(ret), "%s/%s", pw->pw_dir, file);
-	if (i < 0 || (size_t)i >= sizeof(ret))
+	i = snprintf(ret, माप(ret), "%s/%s", pw->pw_dir, file);
+	अगर (i < 0 || (माप_प्रकार)i >= माप(ret))
 		fatal("expand_authorized_keys: path too long");
-	free(file);
-	return (xstrdup(ret));
+	मुक्त(file);
+	वापस (xstrdup(ret));
 }
 
-char *
-authorized_principals_file(struct passwd *pw)
+अक्षर *
+authorized_principals_file(काष्ठा passwd *pw)
 {
-	if (options.authorized_principals_file == NULL)
-		return NULL;
-	return expand_authorized_keys(options.authorized_principals_file, pw);
+	अगर (options.authorized_principals_file == शून्य)
+		वापस शून्य;
+	वापस expand_authorized_कुंजियाँ(options.authorized_principals_file, pw);
 }
 
 /* return ok if key exists in sysfile or userfile */
 HostStatus
-check_key_in_hostfiles(struct passwd *pw, struct sshkey *key, const char *host,
-    const char *sysfile, const char *userfile)
+check_कुंजी_in_hostfiles(काष्ठा passwd *pw, काष्ठा sshkey *कुंजी, स्थिर अक्षर *host,
+    स्थिर अक्षर *sysfile, स्थिर अक्षर *userfile)
 {
-	char *user_hostfile;
-	struct stat st;
+	अक्षर *user_hostfile;
+	काष्ठा stat st;
 	HostStatus host_status;
-	struct hostkeys *hostkeys;
-	const struct hostkey_entry *found;
+	काष्ठा hostkeys *hostkeys;
+	स्थिर काष्ठा hostkey_entry *found;
 
 	hostkeys = init_hostkeys();
 	load_hostkeys(hostkeys, host, sysfile, 0);
-	if (userfile != NULL) {
+	अगर (userfile != शून्य) {
 		user_hostfile = tilde_expand_filename(userfile, pw->pw_uid);
-		if (options.strict_modes &&
+		अगर (options.strict_modes &&
 		    (stat(user_hostfile, &st) == 0) &&
 		    ((st.st_uid != 0 && st.st_uid != pw->pw_uid) ||
 		    (st.st_mode & 022) != 0)) {
@@ -434,147 +434,147 @@ check_key_in_hostfiles(struct passwd *pw, struct sshkey *key, const char *host,
 			    pw->pw_name, user_hostfile);
 			auth_debug_add("Ignored %.200s: bad ownership or modes",
 			    user_hostfile);
-		} else {
+		} अन्यथा {
 			temporarily_use_uid(pw);
 			load_hostkeys(hostkeys, host, user_hostfile, 0);
 			restore_uid();
 		}
-		free(user_hostfile);
+		मुक्त(user_hostfile);
 	}
-	host_status = check_key_in_hostkeys(hostkeys, key, &found);
-	if (host_status == HOST_REVOKED)
+	host_status = check_कुंजी_in_hostkeys(hostkeys, कुंजी, &found);
+	अगर (host_status == HOST_REVOKED)
 		error("WARNING: revoked key for %s attempted authentication",
 		    host);
-	else if (host_status == HOST_OK)
+	अन्यथा अगर (host_status == HOST_OK)
 		debug_f("key for %s found at %s:%ld",
-		    found->host, found->file, found->line);
-	else
+		    found->host, found->file, found->पंक्ति);
+	अन्यथा
 		debug_f("key for host %s not found", host);
 
 	free_hostkeys(hostkeys);
 
-	return host_status;
+	वापस host_status;
 }
 
-struct passwd *
-getpwnamallow(struct ssh *ssh, const char *user)
+काष्ठा passwd *
+getpwnamallow(काष्ठा ssh *ssh, स्थिर अक्षर *user)
 {
-#ifdef HAVE_LOGIN_CAP
-	extern login_cap_t *lc;
-#ifdef HAVE_AUTH_HOSTOK
-	const char *from_host, *from_ip;
-#endif
-#ifdef BSD_AUTH
+#अगर_घोषित HAVE_LOGIN_CAP
+	बाह्य login_cap_t *lc;
+#अगर_घोषित HAVE_AUTH_HOSTOK
+	स्थिर अक्षर *from_host, *from_ip;
+#पूर्ण_अगर
+#अगर_घोषित BSD_AUTH
 	auth_session_t *as;
-#endif
-#endif
-	struct passwd *pw;
-	struct connection_info *ci;
+#पूर्ण_अगर
+#पूर्ण_अगर
+	काष्ठा passwd *pw;
+	काष्ठा connection_info *ci;
 	u_int i;
 
 	ci = server_get_connection_info(ssh, 1, options.use_dns);
 	ci->user = user;
-	ci->user_invalid = getpwnam(user) == NULL;
+	ci->user_invalid = getpwnam(user) == शून्य;
 	parse_server_match_config(&options, &includes, ci);
 	log_change_level(options.log_level);
 	log_verbose_reset();
-	for (i = 0; i < options.num_log_verbose; i++)
+	क्रम (i = 0; i < options.अंक_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 	server_process_channel_timeouts(ssh);
 	server_process_permitopen(ssh);
 	ssh_packet_set_rekey_limits(ssh, options.rekey_limit,
 	    options.rekey_interval);
 
-#if defined(_AIX) && defined(HAVE_SETAUTHDB)
+#अगर defined(_AIX) && defined(HAVE_SETAUTHDB)
 	aix_setauthdb(user);
-#endif
+#पूर्ण_अगर
 
 	pw = getpwnam(user);
 
-#if defined(_AIX) && defined(HAVE_SETAUTHDB)
+#अगर defined(_AIX) && defined(HAVE_SETAUTHDB)
 	aix_restoreauthdb();
-#endif
-	if (pw == NULL) {
+#पूर्ण_अगर
+	अगर (pw == शून्य) {
 		logit("Invalid user %.100s from %.100s port %d",
 		    user, ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
-#ifdef CUSTOM_FAILED_LOGIN
+#अगर_घोषित CUSTOM_FAILED_LOGIN
 		record_failed_login(ssh, user,
 		    auth_get_canonical_hostname(ssh, options.use_dns), "ssh");
-#endif
-#ifdef SSH_AUDIT_EVENTS
+#पूर्ण_अगर
+#अगर_घोषित SSH_AUDIT_EVENTS
 		audit_event(ssh, SSH_INVALID_USER);
-#endif /* SSH_AUDIT_EVENTS */
-		return (NULL);
+#पूर्ण_अगर /* SSH_AUDIT_EVENTS */
+		वापस (शून्य);
 	}
-	if (!allowed_user(ssh, pw))
-		return (NULL);
-#ifdef HAVE_LOGIN_CAP
-	if ((lc = login_getpwclass(pw)) == NULL) {
+	अगर (!allowed_user(ssh, pw))
+		वापस (शून्य);
+#अगर_घोषित HAVE_LOGIN_CAP
+	अगर ((lc = login_getpwclass(pw)) == शून्य) {
 		debug("unable to get login class: %s", user);
-		return (NULL);
+		वापस (शून्य);
 	}
-#ifdef HAVE_AUTH_HOSTOK
+#अगर_घोषित HAVE_AUTH_HOSTOK
 	from_host = auth_get_canonical_hostname(ssh, options.use_dns);
 	from_ip = ssh_remote_ipaddr(ssh);
-	if (!auth_hostok(lc, from_host, from_ip)) {
+	अगर (!auth_hostok(lc, from_host, from_ip)) {
 		debug("Denied connection for %.200s from %.200s [%.200s].",
 		      pw->pw_name, from_host, from_ip);
-		return (NULL);
+		वापस (शून्य);
 	}
-#endif /* HAVE_AUTH_HOSTOK */
-#ifdef HAVE_AUTH_TIMEOK
-	if (!auth_timeok(lc, time(NULL))) {
+#पूर्ण_अगर /* HAVE_AUTH_HOSTOK */
+#अगर_घोषित HAVE_AUTH_TIMEOK
+	अगर (!auth_timeok(lc, समय(शून्य))) {
 		debug("LOGIN %.200s REFUSED (TIME)", pw->pw_name);
-		return (NULL);
+		वापस (शून्य);
 	}
-#endif /* HAVE_AUTH_TIMEOK */
-#ifdef BSD_AUTH
-	if ((as = auth_open()) == NULL || auth_setpwd(as, pw) != 0 ||
+#पूर्ण_अगर /* HAVE_AUTH_TIMEOK */
+#अगर_घोषित BSD_AUTH
+	अगर ((as = auth_open()) == शून्य || auth_setpwd(as, pw) != 0 ||
 	    auth_approval(as, lc, pw->pw_name, "ssh") <= 0) {
 		debug("Approval failure for %s", user);
-		pw = NULL;
+		pw = शून्य;
 	}
-	if (as != NULL)
+	अगर (as != शून्य)
 		auth_close(as);
-#endif
-#endif
-	if (pw != NULL)
-		return (pwcopy(pw));
-	return (NULL);
+#पूर्ण_अगर
+#पूर्ण_अगर
+	अगर (pw != शून्य)
+		वापस (pwcopy(pw));
+	वापस (शून्य);
 }
 
 /* Returns 1 if key is revoked by revoked_keys_file, 0 otherwise */
-int
-auth_key_is_revoked(struct sshkey *key)
+पूर्णांक
+auth_कुंजी_is_revoked(काष्ठा sshkey *कुंजी)
 {
-	char *fp = NULL;
+	अक्षर *fp = शून्य;
 	u_int i;
-	int r;
+	पूर्णांक r;
 
-	if (options.num_revoked_keys_files == 0)
-		return 0;
-	if ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
-	    SSH_FP_DEFAULT)) == NULL) {
+	अगर (options.अंक_revoked_कुंजियाँ_files == 0)
+		वापस 0;
+	अगर ((fp = sshkey_fingerprint(कुंजी, options.fingerprint_hash,
+	    SSH_FP_DEFAULT)) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
 		error_fr(r, "fingerprint key");
-		goto out;
+		जाओ out;
 	}
 
-	for (i = 0; i < options.num_revoked_keys_files; i++) {
-		r = sshkey_check_revoked(key, options.revoked_keys_files[i]);
-		switch (r) {
-		case 0:
-			break; /* not revoked */
-		case SSH_ERR_KEY_REVOKED:
+	क्रम (i = 0; i < options.अंक_revoked_कुंजियाँ_files; i++) {
+		r = sshkey_check_revoked(कुंजी, options.revoked_कुंजियाँ_files[i]);
+		चयन (r) {
+		हाल 0:
+			अवरोध; /* not revoked */
+		हाल SSH_ERR_कुंजी_REVOKED:
 			error("Authentication key %s %s revoked by file %s",
-			    sshkey_type(key), fp,
-			    options.revoked_keys_files[i]);
-			goto out;
-		default:
+			    sshkey_type(कुंजी), fp,
+			    options.revoked_कुंजियाँ_files[i]);
+			जाओ out;
+		शेष:
 			error_r(r, "Error checking authentication key %s %s in "
-			    "revoked keys file %s", sshkey_type(key), fp,
-			    options.revoked_keys_files[i]);
-			goto out;
+			    "revoked keys file %s", sshkey_type(कुंजी), fp,
+			    options.revoked_कुंजियाँ_files[i]);
+			जाओ out;
 		}
 	}
 
@@ -582,82 +582,82 @@ auth_key_is_revoked(struct sshkey *key)
 	r = 0;
 
  out:
-	free(fp);
-	return r == 0 ? 0 : 1;
+	मुक्त(fp);
+	वापस r == 0 ? 0 : 1;
 }
 
-void
-auth_debug_add(const char *fmt,...)
+व्योम
+auth_debug_add(स्थिर अक्षर *fmt,...)
 {
-	char buf[1024];
-	va_list args;
-	int r;
+	अक्षर buf[1024];
+	बहु_सूची args;
+	पूर्णांक r;
 
-	va_start(args, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, args);
-	va_end(args);
+	बहु_शुरू(args, fmt);
+	vsnprintf(buf, माप(buf), fmt, args);
+	बहु_पूर्ण(args);
 	debug3("%s", buf);
-	if (auth_debug != NULL)
-		if ((r = sshbuf_put_cstring(auth_debug, buf)) != 0)
+	अगर (auth_debug != शून्य)
+		अगर ((r = sshbuf_put_cstring(auth_debug, buf)) != 0)
 			fatal_fr(r, "sshbuf_put_cstring");
 }
 
-void
-auth_debug_send(struct ssh *ssh)
+व्योम
+auth_debug_send(काष्ठा ssh *ssh)
 {
-	char *msg;
-	int r;
+	अक्षर *संदेश;
+	पूर्णांक r;
 
-	if (auth_debug == NULL)
-		return;
-	while (sshbuf_len(auth_debug) != 0) {
-		if ((r = sshbuf_get_cstring(auth_debug, &msg, NULL)) != 0)
+	अगर (auth_debug == शून्य)
+		वापस;
+	जबतक (sshbuf_len(auth_debug) != 0) {
+		अगर ((r = sshbuf_get_cstring(auth_debug, &संदेश, शून्य)) != 0)
 			fatal_fr(r, "sshbuf_get_cstring");
-		ssh_packet_send_debug(ssh, "%s", msg);
-		free(msg);
+		ssh_packet_send_debug(ssh, "%s", संदेश);
+		मुक्त(संदेश);
 	}
 }
 
-void
-auth_debug_reset(void)
+व्योम
+auth_debug_reset(व्योम)
 {
-	if (auth_debug != NULL)
+	अगर (auth_debug != शून्य)
 		sshbuf_reset(auth_debug);
-	else if ((auth_debug = sshbuf_new()) == NULL)
+	अन्यथा अगर ((auth_debug = sshbuf_new()) == शून्य)
 		fatal_f("sshbuf_new failed");
 }
 
-struct passwd *
-fakepw(void)
+काष्ठा passwd *
+fakepw(व्योम)
 {
-	static int done = 0;
-	static struct passwd fake;
-	const char hashchars[] = "./ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	अटल पूर्णांक done = 0;
+	अटल काष्ठा passwd fake;
+	स्थिर अक्षर hashchars[] = "./ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	    "abcdefghijklmnopqrstuvwxyz0123456789"; /* from bcrypt.c */
-	char *cp;
+	अक्षर *cp;
 
-	if (done)
-		return (&fake);
+	अगर (done)
+		वापस (&fake);
 
-	memset(&fake, 0, sizeof(fake));
+	स_रखो(&fake, 0, माप(fake));
 	fake.pw_name = "NOUSER";
 	fake.pw_passwd = xstrdup("$2a$10$"
 	    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-	for (cp = fake.pw_passwd + 7; *cp != '\0'; cp++)
-		*cp = hashchars[arc4random_uniform(sizeof(hashchars) - 1)];
-#ifdef HAVE_STRUCT_PASSWD_PW_GECOS
+	क्रम (cp = fake.pw_passwd + 7; *cp != '\0'; cp++)
+		*cp = hashchars[arc4random_uniform(माप(hashchars) - 1)];
+#अगर_घोषित HAVE_STRUCT_PASSWD_PW_GECOS
 	fake.pw_gecos = "NOUSER";
-#endif
-	fake.pw_uid = privsep_pw == NULL ? (uid_t)-1 : privsep_pw->pw_uid;
-	fake.pw_gid = privsep_pw == NULL ? (gid_t)-1 : privsep_pw->pw_gid;
-#ifdef HAVE_STRUCT_PASSWD_PW_CLASS
+#पूर्ण_अगर
+	fake.pw_uid = privsep_pw == शून्य ? (uid_t)-1 : privsep_pw->pw_uid;
+	fake.pw_gid = privsep_pw == शून्य ? (gid_t)-1 : privsep_pw->pw_gid;
+#अगर_घोषित HAVE_STRUCT_PASSWD_PW_CLASS
 	fake.pw_class = "";
-#endif
+#पूर्ण_अगर
 	fake.pw_dir = "/nonexist";
 	fake.pw_shell = "/nonexist";
 	done = 1;
 
-	return (&fake);
+	वापस (&fake);
 }
 
 /*
@@ -666,45 +666,45 @@ fakepw(void)
  * several times.
  */
 
-const char *
-auth_get_canonical_hostname(struct ssh *ssh, int use_dns)
+स्थिर अक्षर *
+auth_get_canonical_hostname(काष्ठा ssh *ssh, पूर्णांक use_dns)
 {
-	static char *dnsname;
+	अटल अक्षर *dnsname;
 
-	if (!use_dns)
-		return ssh_remote_ipaddr(ssh);
-	if (dnsname != NULL)
-		return dnsname;
+	अगर (!use_dns)
+		वापस ssh_remote_ipaddr(ssh);
+	अगर (dnsname != शून्य)
+		वापस dnsname;
 	dnsname = ssh_remote_hostname(ssh);
-	return dnsname;
+	वापस dnsname;
 }
 
 /* These functions link key/cert options to the auth framework */
 
 /* Log sshauthopt options locally and (optionally) for remote transmission */
-void
-auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
+व्योम
+auth_log_authopts(स्थिर अक्षर *loc, स्थिर काष्ठा sshauthopt *opts, पूर्णांक do_remote)
 {
-	int do_env = options.permit_user_env && opts->nenv > 0;
-	int do_permitopen = opts->npermitopen > 0 &&
+	पूर्णांक do_env = options.permit_user_env && opts->nenv > 0;
+	पूर्णांक do_permitopen = opts->npermitopen > 0 &&
 	    (options.allow_tcp_forwarding & FORWARD_LOCAL) != 0;
-	int do_permitlisten = opts->npermitlisten > 0 &&
+	पूर्णांक do_permitlisten = opts->npermitlisten > 0 &&
 	    (options.allow_tcp_forwarding & FORWARD_REMOTE) != 0;
-	size_t i;
-	char msg[1024], buf[64];
+	माप_प्रकार i;
+	अक्षर संदेश[1024], buf[64];
 
-	snprintf(buf, sizeof(buf), "%d", opts->force_tun_device);
+	snprintf(buf, माप(buf), "%d", opts->force_tun_device);
 	/* Try to keep this alphabetically sorted */
-	snprintf(msg, sizeof(msg), "key options:%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+	snprintf(संदेश, माप(संदेश), "key options:%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
 	    opts->permit_agent_forwarding_flag ? " agent-forwarding" : "",
-	    opts->force_command == NULL ? "" : " command",
+	    opts->force_command == शून्य ? "" : " command",
 	    do_env ?  " environment" : "",
 	    opts->valid_before == 0 ? "" : "expires",
 	    opts->no_require_user_presence ? " no-touch-required" : "",
 	    do_permitopen ?  " permitopen" : "",
 	    do_permitlisten ?  " permitlisten" : "",
 	    opts->permit_port_forwarding_flag ? " port-forwarding" : "",
-	    opts->cert_principals == NULL ? "" : " principals",
+	    opts->cert_principals == शून्य ? "" : " principals",
 	    opts->permit_pty_flag ? " pty" : "",
 	    opts->require_verify ? " uv" : "",
 	    opts->force_tun_device == -1 ? "" : " tun=",
@@ -712,14 +712,14 @@ auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
 	    opts->permit_user_rc ? " user-rc" : "",
 	    opts->permit_x11_forwarding_flag ? " x11-forwarding" : "");
 
-	debug("%s: %s", loc, msg);
-	if (do_remote)
-		auth_debug_add("%s: %s", loc, msg);
+	debug("%s: %s", loc, संदेश);
+	अगर (do_remote)
+		auth_debug_add("%s: %s", loc, संदेश);
 
-	if (options.permit_user_env) {
-		for (i = 0; i < opts->nenv; i++) {
+	अगर (options.permit_user_env) {
+		क्रम (i = 0; i < opts->nenv; i++) {
 			debug("%s: environment: %s", loc, opts->env[i]);
-			if (do_remote) {
+			अगर (do_remote) {
 				auth_debug_add("%s: environment: %s",
 				    loc, opts->env[i]);
 			}
@@ -727,24 +727,24 @@ auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
 	}
 
 	/* Go into a little more details for the local logs. */
-	if (opts->valid_before != 0) {
-		format_absolute_time(opts->valid_before, buf, sizeof(buf));
+	अगर (opts->valid_before != 0) {
+		format_absolute_time(opts->valid_before, buf, माप(buf));
 		debug("%s: expires at %s", loc, buf);
 	}
-	if (opts->cert_principals != NULL) {
+	अगर (opts->cert_principals != शून्य) {
 		debug("%s: authorized principals: \"%s\"",
 		    loc, opts->cert_principals);
 	}
-	if (opts->force_command != NULL)
+	अगर (opts->force_command != शून्य)
 		debug("%s: forced command: \"%s\"", loc, opts->force_command);
-	if (do_permitopen) {
-		for (i = 0; i < opts->npermitopen; i++) {
+	अगर (do_permitopen) {
+		क्रम (i = 0; i < opts->npermitopen; i++) {
 			debug("%s: permitted open: %s",
 			    loc, opts->permitopen[i]);
 		}
 	}
-	if (do_permitlisten) {
-		for (i = 0; i < opts->npermitlisten; i++) {
+	अगर (do_permitlisten) {
+		क्रम (i = 0; i < opts->npermitlisten; i++) {
 			debug("%s: permitted listen: %s",
 			    loc, opts->permitlisten[i]);
 		}
@@ -752,36 +752,36 @@ auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
 }
 
 /* Activate a new set of key/cert options; merging with what is there. */
-int
-auth_activate_options(struct ssh *ssh, struct sshauthopt *opts)
+पूर्णांक
+auth_activate_options(काष्ठा ssh *ssh, काष्ठा sshauthopt *opts)
 {
-	struct sshauthopt *old = auth_opts;
-	const char *emsg = NULL;
+	काष्ठा sshauthopt *old = auth_opts;
+	स्थिर अक्षर *emsg = शून्य;
 
 	debug_f("setting new authentication options");
-	if ((auth_opts = sshauthopt_merge(old, opts, &emsg)) == NULL) {
+	अगर ((auth_opts = sshauthopt_merge(old, opts, &emsg)) == शून्य) {
 		error("Inconsistent authentication options: %s", emsg);
-		return -1;
+		वापस -1;
 	}
 	sshauthopt_free(old);
-	return 0;
+	वापस 0;
 }
 
 /* Disable forwarding, etc for the session */
-void
-auth_restrict_session(struct ssh *ssh)
+व्योम
+auth_restrict_session(काष्ठा ssh *ssh)
 {
-	struct sshauthopt *restricted;
+	काष्ठा sshauthopt *restricted;
 
 	debug_f("restricting session");
 
 	/* A blank sshauthopt defaults to permitting nothing */
-	if ((restricted = sshauthopt_new()) == NULL)
+	अगर ((restricted = sshauthopt_new()) == शून्य)
 		fatal_f("sshauthopt_new failed");
 	restricted->permit_pty_flag = 1;
 	restricted->restricted = 1;
 
-	if (auth_activate_options(ssh, restricted) != 0)
+	अगर (auth_activate_options(ssh, restricted) != 0)
 		fatal_f("failed to restrict session");
 	sshauthopt_free(restricted);
 }

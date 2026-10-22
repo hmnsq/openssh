@@ -34,44 +34,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CIPHER_H
-#define CIPHER_H
+#अगर_अघोषित CIPHER_H
+#घोषणा CIPHER_H
 
-#include <sys/types.h>
-#ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#endif
-#include "cipher-chachapoly.h"
-#include "cipher-aesctr.h"
+#समावेश <sys/types.h>
+#अगर_घोषित WITH_OPENSSL
+#समावेश <openssl/evp.h>
+#पूर्ण_अगर
+#समावेश "cipher-chachapoly.h"
+#समावेश "cipher-aesctr.h"
 
-#define CIPHER_ENCRYPT		1
-#define CIPHER_DECRYPT		0
+#घोषणा CIPHER_ENCRYPT		1
+#घोषणा CIPHER_DECRYPT		0
 
-struct sshcipher;
-struct sshcipher_ctx;
+काष्ठा sshcipher;
+काष्ठा sshcipher_ctx;
 
-const struct sshcipher *cipher_by_name(const char *);
-const char *cipher_warning_message(const struct sshcipher_ctx *);
-int	 ciphers_valid(const char *);
-char	*cipher_alg_list(char, int);
-const char *compression_alg_list(int);
-int	 cipher_init(struct sshcipher_ctx **, const struct sshcipher *,
-    const u_char *, u_int, const u_char *, u_int, int);
-int	 cipher_crypt(struct sshcipher_ctx *, u_int, u_char *, const u_char *,
+स्थिर काष्ठा sshcipher *cipher_by_name(स्थिर अक्षर *);
+स्थिर अक्षर *cipher_warning_message(स्थिर काष्ठा sshcipher_ctx *);
+पूर्णांक	 ciphers_valid(स्थिर अक्षर *);
+अक्षर	*cipher_alg_list(अक्षर, पूर्णांक);
+स्थिर अक्षर *compression_alg_list(पूर्णांक);
+पूर्णांक	 cipher_init(काष्ठा sshcipher_ctx **, स्थिर काष्ठा sshcipher *,
+    स्थिर u_char *, u_int, स्थिर u_char *, u_int, पूर्णांक);
+पूर्णांक	 cipher_crypt(काष्ठा sshcipher_ctx *, u_int, u_char *, स्थिर u_char *,
     u_int, u_int, u_int);
-int	 cipher_get_length(struct sshcipher_ctx *, u_int *, u_int,
-    const u_char *, u_int);
-void	 cipher_free(struct sshcipher_ctx *);
-u_int	 cipher_blocksize(const struct sshcipher *);
-u_int	 cipher_keylen(const struct sshcipher *);
-u_int	 cipher_seclen(const struct sshcipher *);
-u_int	 cipher_authlen(const struct sshcipher *);
-u_int	 cipher_ivlen(const struct sshcipher *);
-u_int	 cipher_is_cbc(const struct sshcipher *);
-u_int	 cipher_is_internal(const struct sshcipher *);
+पूर्णांक	 cipher_get_लंबाई(काष्ठा sshcipher_ctx *, u_int *, u_int,
+    स्थिर u_char *, u_int);
+व्योम	 cipher_free(काष्ठा sshcipher_ctx *);
+u_int	 cipher_blocksize(स्थिर काष्ठा sshcipher *);
+u_int	 cipher_keylen(स्थिर काष्ठा sshcipher *);
+u_int	 cipher_seclen(स्थिर काष्ठा sshcipher *);
+u_int	 cipher_authlen(स्थिर काष्ठा sshcipher *);
+u_int	 cipher_ivlen(स्थिर काष्ठा sshcipher *);
+u_int	 cipher_is_cbc(स्थिर काष्ठा sshcipher *);
+u_int	 cipher_is_internal(स्थिर काष्ठा sshcipher *);
 
-u_int	 cipher_ctx_is_plaintext(struct sshcipher_ctx *);
+u_int	 cipher_ctx_is_plaintext(काष्ठा sshcipher_ctx *);
 
-int	 cipher_get_keyiv(struct sshcipher_ctx *, u_char *, size_t);
+पूर्णांक	 cipher_get_keyiv(काष्ठा sshcipher_ctx *, u_char *, माप_प्रकार);
 
-#endif				/* CIPHER_H */
+#पूर्ण_अगर				/* CIPHER_H */

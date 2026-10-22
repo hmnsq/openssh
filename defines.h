@@ -22,13 +22,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _DEFINES_H
-#define _DEFINES_H
+#अगर_अघोषित _DEFINES_H
+#घोषणा _DEFINES_H
 
 /* Constants */
 
-#if defined(HAVE_DECL_SHUT_RD) && HAVE_DECL_SHUT_RD == 0
-enum
+#अगर defined(HAVE_DECL_SHUT_RD) && HAVE_DECL_SHUT_RD == 0
+क्रमागत
 {
   SHUT_RD = 0,		/* No more receptions.  */
   SHUT_WR,			/* No more transmissions.  */
@@ -37,7 +37,7 @@ enum
 # define SHUT_RD   SHUT_RD
 # define SHUT_WR   SHUT_WR
 # define SHUT_RDWR SHUT_RDWR
-#endif
+#पूर्ण_अगर
 
 /*
  * Cygwin doesn't really have a notion of reserved ports.  It is still
@@ -48,28 +48,28 @@ enum
  * netinet/in.h.
  */
 
-#ifdef HAVE_CYGWIN
-#define IPPORT_RESERVED 0
-#endif
+#अगर_घोषित HAVE_CYGWIN
+#घोषणा IPPORT_RESERVED 0
+#पूर्ण_अगर
 
 /*
  * Definitions for IP type of service (ip_tos)
  */
-#include <netinet/ip.h>
-#ifndef IPTOS_LOWDELAY
+#समावेश <netinet/ip.h>
+#अगर_अघोषित IPTOS_LOWDELAY
 # define IPTOS_LOWDELAY          0x10
 # define IPTOS_THROUGHPUT        0x08
 # define IPTOS_RELIABILITY       0x04
 # define IPTOS_LOWCOST           0x02
 # define IPTOS_MINCOST           IPTOS_LOWCOST
-#endif /* IPTOS_LOWDELAY */
+#पूर्ण_अगर /* IPTOS_LOWDELAY */
 
 /*
  * Definitions for DiffServ Codepoints as per RFCs 2474, 3246, 4594 & 8622.
  * These are the 6 most significant bits as they appear on the wire, so the
  * two least significant bits must be zero.
  */
-#ifndef IPTOS_DSCP_AF11
+#अगर_अघोषित IPTOS_DSCP_AF11
 # define	IPTOS_DSCP_AF11		0x28
 # define	IPTOS_DSCP_AF12		0x30
 # define	IPTOS_DSCP_AF13		0x38
@@ -83,8 +83,8 @@ enum
 # define	IPTOS_DSCP_AF42		0x90
 # define	IPTOS_DSCP_AF43		0x98
 # define	IPTOS_DSCP_EF		0xb8
-#endif /* IPTOS_DSCP_AF11 */
-#ifndef IPTOS_DSCP_CS0
+#पूर्ण_अगर /* IPTOS_DSCP_AF11 */
+#अगर_अघोषित IPTOS_DSCP_CS0
 # define	IPTOS_DSCP_CS0		0x00
 # define	IPTOS_DSCP_CS1		0x20
 # define	IPTOS_DSCP_CS2		0x40
@@ -93,94 +93,94 @@ enum
 # define	IPTOS_DSCP_CS5		0xa0
 # define	IPTOS_DSCP_CS6		0xc0
 # define	IPTOS_DSCP_CS7		0xe0
-#endif /* IPTOS_DSCP_CS0 */
-#ifndef IPTOS_DSCP_VA
+#पूर्ण_अगर /* IPTOS_DSCP_CS0 */
+#अगर_अघोषित IPTOS_DSCP_VA
 # define	IPTOS_DSCP_VA		0xb0
-#endif /* IPTOS_DSCP_VA */
-#ifndef IPTOS_DSCP_EF
+#पूर्ण_अगर /* IPTOS_DSCP_VA */
+#अगर_अघोषित IPTOS_DSCP_EF
 # define	IPTOS_DSCP_EF		0xb8
-#endif /* IPTOS_DSCP_EF */
-#ifndef IPTOS_DSCP_LE
+#पूर्ण_अगर /* IPTOS_DSCP_EF */
+#अगर_अघोषित IPTOS_DSCP_LE
 # define	IPTOS_DSCP_LE		0x04
-#endif /* IPTOS_DSCP_LE */
-#ifndef IPTOS_PREC_CRITIC_ECP
+#पूर्ण_अगर /* IPTOS_DSCP_LE */
+#अगर_अघोषित IPTOS_PREC_CRITIC_ECP
 # define IPTOS_PREC_CRITIC_ECP		0xa0
-#endif
-#ifndef IPTOS_PREC_INTERNETCONTROL
+#पूर्ण_अगर
+#अगर_अघोषित IPTOS_PREC_INTERNETCONTROL
 # define IPTOS_PREC_INTERNETCONTROL	0xc0
-#endif
-#ifndef IPTOS_PREC_NETCONTROL
+#पूर्ण_अगर
+#अगर_अघोषित IPTOS_PREC_NETCONTROL
 # define IPTOS_PREC_NETCONTROL		0xe0
-#endif
+#पूर्ण_अगर
 
-#ifndef PATH_MAX
+#अगर_अघोषित PATH_MAX
 # ifdef _POSIX_PATH_MAX
 # define PATH_MAX _POSIX_PATH_MAX
 # endif
-#endif
+#पूर्ण_अगर
 
-#ifndef MAXPATHLEN
+#अगर_अघोषित MAXPATHLEN
 # ifdef PATH_MAX
 #  define MAXPATHLEN PATH_MAX
-# else /* PATH_MAX */
+# अन्यथा /* PATH_MAX */
 #  define MAXPATHLEN 64
 # endif /* PATH_MAX */
-#endif /* MAXPATHLEN */
+#पूर्ण_अगर /* MAXPATHLEN */
 
-#ifndef HOST_NAME_MAX
+#अगर_अघोषित HOST_NAME_MAX
 # include "netdb.h" /* for MAXHOSTNAMELEN */
-# if defined(_POSIX_HOST_NAME_MAX)
+# अगर defined(_POSIX_HOST_NAME_MAX)
 #  define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
 # elif defined(MAXHOSTNAMELEN)
 #  define HOST_NAME_MAX MAXHOSTNAMELEN
-# else
+# अन्यथा
 #  define HOST_NAME_MAX	255
 # endif
-#endif /* HOST_NAME_MAX */
+#पूर्ण_अगर /* HOST_NAME_MAX */
 
-#if defined(HAVE_DECL_MAXSYMLINKS) && HAVE_DECL_MAXSYMLINKS == 0
+#अगर defined(HAVE_DECL_MAXSYMLINKS) && HAVE_DECL_MAXSYMLINKS == 0
 # define MAXSYMLINKS 5
-#endif
+#पूर्ण_अगर
 
-#ifndef STDIN_FILENO
+#अगर_अघोषित STDIN_FILENO
 # define STDIN_FILENO    0
-#endif
-#ifndef STDOUT_FILENO
+#पूर्ण_अगर
+#अगर_अघोषित STDOUT_FILENO
 # define STDOUT_FILENO   1
-#endif
-#ifndef STDERR_FILENO
+#पूर्ण_अगर
+#अगर_अघोषित STDERR_FILENO
 # define STDERR_FILENO   2
-#endif
+#पूर्ण_अगर
 
-#ifndef NGROUPS_MAX	/* Disable groupaccess if NGROUP_MAX is not set */
-#ifdef NGROUPS
-#define NGROUPS_MAX NGROUPS
-#else
-#define NGROUPS_MAX 0
-#endif
-#endif
+#अगर_अघोषित NGROUPS_MAX	/* Disable groupaccess if NGROUP_MAX is not set */
+#अगर_घोषित NGROUPS
+#घोषणा NGROUPS_MAX NGROUPS
+#अन्यथा
+#घोषणा NGROUPS_MAX 0
+#पूर्ण_अगर
+#पूर्ण_अगर
 
-#if defined(HAVE_DECL_O_NONBLOCK) && HAVE_DECL_O_NONBLOCK == 0
+#अगर defined(HAVE_DECL_O_NONBLOCK) && HAVE_DECL_O_NONBLOCK == 0
 # define O_NONBLOCK      00004	/* Non Blocking Open */
-#endif
+#पूर्ण_अगर
 
-#ifndef S_IFSOCK
+#अगर_अघोषित S_IFSOCK
 # define S_IFSOCK 0
-#endif /* S_IFSOCK */
+#पूर्ण_अगर /* S_IFSOCK */
 
-#ifndef S_ISDIR
+#अगर_अघोषित S_ISDIR
 # define S_ISDIR(mode)	(((mode) & (_S_IFMT)) == (_S_IFDIR))
-#endif /* S_ISDIR */
+#पूर्ण_अगर /* S_ISDIR */
 
-#ifndef S_ISREG
+#अगर_अघोषित S_ISREG
 # define S_ISREG(mode)	(((mode) & (_S_IFMT)) == (_S_IFREG))
-#endif /* S_ISREG */
+#पूर्ण_अगर /* S_ISREG */
 
-#ifndef S_ISLNK
+#अगर_अघोषित S_ISLNK
 # define S_ISLNK(mode)	(((mode) & S_IFMT) == S_IFLNK)
-#endif /* S_ISLNK */
+#पूर्ण_अगर /* S_ISLNK */
 
-#ifndef S_IXUSR
+#अगर_अघोषित S_IXUSR
 # define S_IXUSR			0000100	/* execute/search permission, */
 # define S_IXGRP			0000010	/* execute/search permission, */
 # define S_IXOTH			0000001	/* execute/search permission, */
@@ -194,474 +194,474 @@ enum
 # define S_IRWXU			0000700	/* read, write, execute */
 # define S_IRWXG			0000070	/* read, write, execute */
 # define S_IRWXO			0000007	/* read, write, execute */
-#endif /* S_IXUSR */
+#पूर्ण_अगर /* S_IXUSR */
 
-#if !defined(MAP_ANON) && defined(MAP_ANONYMOUS)
-#define MAP_ANON MAP_ANONYMOUS
-#endif
+#अगर !defined(MAP_ANON) && defined(MAP_ANONYMOUS)
+#घोषणा MAP_ANON MAP_ANONYMOUS
+#पूर्ण_अगर
 
-#ifndef MAP_FAILED
-# define MAP_FAILED ((void *)-1)
-#endif
+#अगर_अघोषित MAP_FAILED
+# define MAP_FAILED ((व्योम *)-1)
+#पूर्ण_अगर
 
 /*
 SCO Open Server 3 has INADDR_LOOPBACK defined in rpc/rpc.h but
 including rpc/rpc.h breaks Solaris 6
 */
-#ifndef INADDR_LOOPBACK
-#define INADDR_LOOPBACK ((u_long)0x7f000001)
-#endif
+#अगर_अघोषित INADDR_LOOPBACK
+#घोषणा INADDR_LOOPBACK ((u_long)0x7f000001)
+#पूर्ण_अगर
 
 /* Types */
 
 /* If sys/types.h does not supply intXX_t, supply them ourselves */
 /* (or die trying) */
 
-#ifndef HAVE_U_INT
-typedef unsigned short u_short;
-typedef unsigned int u_int;
-typedef unsigned long u_long;
-#endif
+#अगर_अघोषित HAVE_U_INT
+प्रकार अचिन्हित लघु u_short;
+प्रकार अचिन्हित पूर्णांक u_int;
+प्रकार अचिन्हित दीर्घ u_long;
+#पूर्ण_अगर
 
-#ifndef HAVE_INTXX_T
-typedef signed char int8_t;
-# if (SIZEOF_SHORT_INT == 2)
-typedef short int int16_t;
-# else
+#अगर_अघोषित HAVE_INTXX_T
+प्रकार चिन्हित अक्षर int8_t;
+# अगर (SIZEOF_SHORT_INT == 2)
+प्रकार लघु पूर्णांक int16_t;
+# अन्यथा
 #   error "16 bit int type not found."
 # endif
-# if (SIZEOF_INT == 4)
-typedef int int32_t;
-# else
+# अगर (SIZEOF_INT == 4)
+प्रकार पूर्णांक int32_t;
+# अन्यथा
 #   error "32 bit int type not found."
 # endif
-#endif
+#पूर्ण_अगर
 
 /* If sys/types.h does not supply u_intXX_t, supply them ourselves */
-#ifndef HAVE_U_INTXX_T
+#अगर_अघोषित HAVE_U_INTXX_T
 # ifdef HAVE_UINTXX_T
-typedef uint8_t u_int8_t;
-typedef uint16_t u_int16_t;
-typedef uint32_t u_int32_t;
+प्रकार uint8_t u_int8_t;
+प्रकार uint16_t u_int16_t;
+प्रकार uint32_t u_int32_t;
 # define HAVE_U_INTXX_T 1
-# else
-typedef unsigned char u_int8_t;
-#  if (SIZEOF_SHORT_INT == 2)
-typedef unsigned short int u_int16_t;
-#  else
+# अन्यथा
+प्रकार अचिन्हित अक्षर u_int8_t;
+#  अगर (SIZEOF_SHORT_INT == 2)
+प्रकार अचिन्हित लघु पूर्णांक u_int16_t;
+#  अन्यथा
 #    error "16 bit int type not found."
 #  endif
-#  if (SIZEOF_INT == 4)
-typedef unsigned int u_int32_t;
-#  else
+#  अगर (SIZEOF_INT == 4)
+प्रकार अचिन्हित पूर्णांक u_int32_t;
+#  अन्यथा
 #    error "32 bit int type not found."
 #  endif
 # endif
-#define __BIT_TYPES_DEFINED__
-#endif
+#घोषणा __BIT_TYPES_DEFINED__
+#पूर्ण_अगर
 
-#if !defined(LLONG_MIN) && defined(LONG_LONG_MIN)
-#define LLONG_MIN LONG_LONG_MIN
-#endif
-#if !defined(LLONG_MAX) && defined(LONG_LONG_MAX)
-#define LLONG_MAX LONG_LONG_MAX
-#endif
+#अगर !defined(LLONG_MIN) && defined(LONG_LONG_MIN)
+#घोषणा LLONG_MIN LONG_LONG_MIN
+#पूर्ण_अगर
+#अगर !defined(LLONG_MAX) && defined(LONG_LONG_MAX)
+#घोषणा LLONG_MAX LONG_LONG_MAX
+#पूर्ण_अगर
 
-#ifndef UINT32_MAX
-# if defined(HAVE_DECL_UINT32_MAX) && (HAVE_DECL_UINT32_MAX == 0)
-#  if (SIZEOF_INT == 4)
-#    define UINT32_MAX	UINT_MAX
+#अगर_अघोषित UINT32_MAX
+# अगर defined(HAVE_DECL_UINT32_MAX) && (HAVE_DECL_UINT32_MAX == 0)
+#  अगर (SIZEOF_INT == 4)
+#    define UINT32_MAX	अच_पूर्णांक_उच्च
 #  endif
 # endif
-#endif
+#पूर्ण_अगर
 
 /* 64-bit types */
-#ifndef HAVE_INT64_T
-# if (SIZEOF_LONG_INT == 8)
-typedef long int int64_t;
-# else
-#  if (SIZEOF_LONG_LONG_INT == 8)
-typedef long long int int64_t;
+#अगर_अघोषित HAVE_INT64_T
+# अगर (SIZEOF_LONG_INT == 8)
+प्रकार दीर्घ पूर्णांक int64_t;
+# अन्यथा
+#  अगर (SIZEOF_LONG_LONG_INT == 8)
+प्रकार दीर्घ दीर्घ पूर्णांक int64_t;
 #  endif
 # endif
-#endif
-#ifndef HAVE_U_INT64_T
-# if (SIZEOF_LONG_INT == 8)
-typedef unsigned long int u_int64_t;
-# else
-#  if (SIZEOF_LONG_LONG_INT == 8)
-typedef unsigned long long int u_int64_t;
+#पूर्ण_अगर
+#अगर_अघोषित HAVE_U_INT64_T
+# अगर (SIZEOF_LONG_INT == 8)
+प्रकार अचिन्हित दीर्घ पूर्णांक u_int64_t;
+# अन्यथा
+#  अगर (SIZEOF_LONG_LONG_INT == 8)
+प्रकार अचिन्हित दीर्घ दीर्घ पूर्णांक u_int64_t;
 #  endif
 # endif
-#endif
+#पूर्ण_अगर
 
-#ifndef HAVE_UINTXX_T
-typedef u_int8_t uint8_t;
-typedef u_int16_t uint16_t;
-typedef u_int32_t uint32_t;
-typedef u_int64_t uint64_t;
-#endif
+#अगर_अघोषित HAVE_UINTXX_T
+प्रकार u_int8_t uint8_t;
+प्रकार u_int16_t uint16_t;
+प्रकार u_int32_t uint32_t;
+प्रकार u_int64_t uint64_t;
+#पूर्ण_अगर
 
-#ifndef HAVE_INTMAX_T
-typedef long long intmax_t;
-#endif
+#अगर_अघोषित HAVE_INTMAX_T
+प्रकार दीर्घ दीर्घ intmax_t;
+#पूर्ण_अगर
 
-#ifndef HAVE_UINTMAX_T
-typedef unsigned long long uintmax_t;
-#endif
+#अगर_अघोषित HAVE_UINTMAX_T
+प्रकार अचिन्हित दीर्घ दीर्घ uintmax_t;
+#पूर्ण_अगर
 
-#if SIZEOF_TIME_T == SIZEOF_LONG_LONG_INT
+#अगर SIZEOF_TIME_T == SIZEOF_LONG_LONG_INT
 # define SSH_TIME_T_MAX LLONG_MAX
-#else
-# define SSH_TIME_T_MAX INT_MAX
-#endif
+#अन्यथा
+# define SSH_TIME_T_MAX पूर्णांक_उच्च
+#पूर्ण_अगर
 
-#ifndef HAVE_U_CHAR
-typedef unsigned char u_char;
+#अगर_अघोषित HAVE_U_CHAR
+प्रकार अचिन्हित अक्षर u_char;
 # define HAVE_U_CHAR
-#endif /* HAVE_U_CHAR */
+#पूर्ण_अगर /* HAVE_U_CHAR */
 
-#ifndef ULLONG_MAX
-# define ULLONG_MAX ((unsigned long long)-1)
-#endif
+#अगर_अघोषित ULLONG_MAX
+# define ULLONG_MAX ((अचिन्हित दीर्घ दीर्घ)-1)
+#पूर्ण_अगर
 
-#ifndef SIZE_T_MAX
-#define SIZE_T_MAX ULONG_MAX
-#endif /* SIZE_T_MAX */
+#अगर_अघोषित आकार_T_MAX
+#घोषणा आकार_T_MAX अच_दीर्घ_उच्च
+#पूर्ण_अगर /* SIZE_T_MAX */
 
-#ifndef HAVE_SIZE_T
-typedef unsigned int size_t;
-# define HAVE_SIZE_T
-# define SIZE_T_MAX UINT_MAX
-#endif /* HAVE_SIZE_T */
+#अगर_अघोषित HAVE_आकार_T
+प्रकार अचिन्हित पूर्णांक माप_प्रकार;
+# define HAVE_आकार_T
+# define आकार_T_MAX अच_पूर्णांक_उच्च
+#पूर्ण_अगर /* HAVE_SIZE_T */
 
-#ifndef SIZE_MAX
-#define SIZE_MAX SIZE_T_MAX
-#endif
+#अगर_अघोषित SIZE_MAX
+#घोषणा SIZE_MAX आकार_T_MAX
+#पूर्ण_अगर
 
-#ifndef INT32_MAX
-# if (SIZEOF_INT == 4)
-#  define INT32_MAX INT_MAX
+#अगर_अघोषित INT32_MAX
+# अगर (SIZEOF_INT == 4)
+#  define INT32_MAX पूर्णांक_उच्च
 # elif (SIZEOF_LONG == 4)
-#  define INT32_MAX LONG_MAX
-# else
+#  define INT32_MAX दीर्घ_उच्च
+# अन्यथा
 #  error "need INT32_MAX"
 # endif
-#endif
+#पूर्ण_अगर
 
-#ifndef INT64_MAX
-# if (SIZEOF_INT == 8)
-#  define INT64_MAX INT_MAX
+#अगर_अघोषित INT64_MAX
+# अगर (SIZEOF_INT == 8)
+#  define INT64_MAX पूर्णांक_उच्च
 # elif (SIZEOF_LONG == 8)
-#  define INT64_MAX LONG_MAX
+#  define INT64_MAX दीर्घ_उच्च
 # elif (SIZEOF_LONG_LONG_INT == 8)
 #  define INT64_MAX LLONG_MAX
-# else
+# अन्यथा
 #  error "need INT64_MAX"
 # endif
-#endif
+#पूर्ण_अगर
 
-#ifndef HAVE_SSIZE_T
-typedef int ssize_t;
-#define SSIZE_MAX INT_MAX
+#अगर_अघोषित HAVE_SSIZE_T
+प्रकार पूर्णांक ssize_t;
+#घोषणा SSIZE_MAX पूर्णांक_उच्च
 # define HAVE_SSIZE_T
-#endif /* HAVE_SSIZE_T */
+#पूर्ण_अगर /* HAVE_SSIZE_T */
 
-#ifndef HAVE_CLOCK_T
-typedef long clock_t;
+#अगर_अघोषित HAVE_CLOCK_T
+प्रकार दीर्घ घड़ी_प्रकार;
 # define HAVE_CLOCK_T
-#endif /* HAVE_CLOCK_T */
+#पूर्ण_अगर /* HAVE_CLOCK_T */
 
-#ifndef HAVE_SA_FAMILY_T
-typedef int sa_family_t;
+#अगर_अघोषित HAVE_SA_FAMILY_T
+प्रकार पूर्णांक sa_family_t;
 # define HAVE_SA_FAMILY_T
-#endif /* HAVE_SA_FAMILY_T */
+#पूर्ण_अगर /* HAVE_SA_FAMILY_T */
 
-#ifndef HAVE_PID_T
-typedef int pid_t;
+#अगर_अघोषित HAVE_PID_T
+प्रकार पूर्णांक pid_t;
 # define HAVE_PID_T
-#endif /* HAVE_PID_T */
+#पूर्ण_अगर /* HAVE_PID_T */
 
-#ifndef HAVE_SIG_ATOMIC_T
-typedef int sig_atomic_t;
+#अगर_अघोषित HAVE_SIG_ATOMIC_T
+प्रकार पूर्णांक संक_पूर्ण_प्रकार;
 # define HAVE_SIG_ATOMIC_T
-#endif /* HAVE_SIG_ATOMIC_T */
+#पूर्ण_अगर /* HAVE_SIG_ATOMIC_T */
 
-#ifndef HAVE_MODE_T
-typedef int mode_t;
+#अगर_अघोषित HAVE_MODE_T
+प्रकार पूर्णांक mode_t;
 # define HAVE_MODE_T
-#endif /* HAVE_MODE_T */
+#पूर्ण_अगर /* HAVE_MODE_T */
 
-#if !defined(HAVE_SS_FAMILY_IN_SS) && defined(HAVE___SS_FAMILY_IN_SS)
+#अगर !defined(HAVE_SS_FAMILY_IN_SS) && defined(HAVE___SS_FAMILY_IN_SS)
 # define ss_family __ss_family
-#endif /* !defined(HAVE_SS_FAMILY_IN_SS) && defined(HAVE_SA_FAMILY_IN_SS) */
+#पूर्ण_अगर /* !defined(HAVE_SS_FAMILY_IN_SS) && defined(HAVE_SA_FAMILY_IN_SS) */
 
-#ifndef HAVE_SYS_UN_H
-struct	sockaddr_un {
-	short	sun_family;		/* AF_UNIX */
-	char	sun_path[108];		/* path name (gag) */
+#अगर_अघोषित HAVE_SYS_UN_H
+काष्ठा	sockaddr_un {
+	लघु	sun_family;		/* AF_UNIX */
+	अक्षर	sun_path[108];		/* path name (gag) */
 };
-#endif /* HAVE_SYS_UN_H */
+#पूर्ण_अगर /* HAVE_SYS_UN_H */
 
-#ifndef HAVE_IN_ADDR_T
-typedef u_int32_t	in_addr_t;
-#endif
-#ifndef HAVE_IN_PORT_T
-typedef u_int16_t	in_port_t;
-#endif
+#अगर_अघोषित HAVE_IN_ADDR_T
+प्रकार u_int32_t	in_addr_t;
+#पूर्ण_अगर
+#अगर_अघोषित HAVE_IN_PORT_T
+प्रकार u_int16_t	in_port_t;
+#पूर्ण_अगर
 
-#if defined(BROKEN_SYS_TERMIO_H) && !defined(_STRUCT_WINSIZE)
-#define _STRUCT_WINSIZE
-struct winsize {
-      unsigned short ws_row;          /* rows, in characters */
-      unsigned short ws_col;          /* columns, in character */
-      unsigned short ws_xpixel;       /* horizontal size, pixels */
-      unsigned short ws_ypixel;       /* vertical size, pixels */
+#अगर defined(BROKEN_SYS_TERMIO_H) && !defined(_STRUCT_WINSIZE)
+#घोषणा _STRUCT_WINSIZE
+काष्ठा winsize {
+      अचिन्हित लघु ws_row;          /* rows, in characters */
+      अचिन्हित लघु ws_col;          /* columns, in character */
+      अचिन्हित लघु ws_xpixel;       /* horizontal size, pixels */
+      अचिन्हित लघु ws_ypixel;       /* vertical size, pixels */
 };
-#endif
+#पूर्ण_अगर
 
 /* bits needed for select that may not be in the system headers */
-#ifndef HAVE_FD_MASK
- typedef unsigned long int	fd_mask;
-#endif
+#अगर_अघोषित HAVE_FD_MASK
+ प्रकार अचिन्हित दीर्घ पूर्णांक	fd_mask;
+#पूर्ण_अगर
 
-#if defined(HAVE_DECL_NFDBITS) && HAVE_DECL_NFDBITS == 0
-# define	NFDBITS (8 * sizeof(unsigned long))
-#endif
+#अगर defined(HAVE_DECL_NFDBITS) && HAVE_DECL_NFDBITS == 0
+# define	NFDBITS (8 * माप(अचिन्हित दीर्घ))
+#पूर्ण_अगर
 
-#if defined(HAVE_DECL_HOWMANY) && HAVE_DECL_HOWMANY == 0
+#अगर defined(HAVE_DECL_HOWMANY) && HAVE_DECL_HOWMANY == 0
 # define howmany(x,y)	(((x)+((y)-1))/(y))
-#endif
+#पूर्ण_अगर
 
 /* Paths */
 
-#ifndef _PATH_BSHELL
+#अगर_अघोषित _PATH_BSHELL
 # define _PATH_BSHELL "/bin/sh"
-#endif
+#पूर्ण_अगर
 
-#ifdef USER_PATH
+#अगर_घोषित USER_PATH
 # ifdef _PATH_STDPATH
 #  undef _PATH_STDPATH
 # endif
 # define _PATH_STDPATH USER_PATH
-#endif
+#पूर्ण_अगर
 
-#ifndef _PATH_STDPATH
+#अगर_अघोषित _PATH_STDPATH
 # define _PATH_STDPATH "/usr/bin:/bin:/usr/sbin:/sbin"
-#endif
+#पूर्ण_अगर
 
-#ifndef SUPERUSER_PATH
+#अगर_अघोषित SUPERUSER_PATH
 # define SUPERUSER_PATH	_PATH_STDPATH
-#endif
+#पूर्ण_अगर
 
-#ifndef _PATH_DEVNULL
+#अगर_अघोषित _PATH_DEVNULL
 # define _PATH_DEVNULL "/dev/null"
-#endif
+#पूर्ण_अगर
 
 /* user may have set a different path */
-#if defined(_PATH_MAILDIR) && defined(MAIL_DIRECTORY)
+#अगर defined(_PATH_MAILDIR) && defined(MAIL_DIRECTORY)
 # undef _PATH_MAILDIR
-#endif /* defined(_PATH_MAILDIR) && defined(MAIL_DIRECTORY) */
+#पूर्ण_अगर /* defined(_PATH_MAILDIR) && defined(MAIL_DIRECTORY) */
 
-#ifdef MAIL_DIRECTORY
+#अगर_घोषित MAIL_DIRECTORY
 # define _PATH_MAILDIR MAIL_DIRECTORY
-#endif
+#पूर्ण_अगर
 
-#ifndef _PATH_NOLOGIN
+#अगर_अघोषित _PATH_NOLOGIN
 # define _PATH_NOLOGIN "/etc/nologin"
-#endif
+#पूर्ण_अगर
 
 /* Define this to be the path of the xauth program. */
-#ifdef XAUTH_PATH
-#define _PATH_XAUTH XAUTH_PATH
-#endif /* XAUTH_PATH */
+#अगर_घोषित XAUTH_PATH
+#घोषणा _PATH_XAUTH XAUTH_PATH
+#पूर्ण_अगर /* XAUTH_PATH */
 
 /* derived from XF4/xc/lib/dps/Xlibnet.h */
-#ifndef X_UNIX_PATH
+#अगर_अघोषित X_UNIX_PATH
 #  ifdef __hpux
 #    define X_UNIX_PATH "/var/spool/sockets/X11/%u"
-#  else
+#  अन्यथा
 #    define X_UNIX_PATH "/tmp/.X11-unix/X%u"
 #  endif
-#endif /* X_UNIX_PATH */
-#define _PATH_UNIX_X X_UNIX_PATH
+#पूर्ण_अगर /* X_UNIX_PATH */
+#घोषणा _PATH_UNIX_X X_UNIX_PATH
 
-#ifndef _PATH_TTY
+#अगर_अघोषित _PATH_TTY
 # define _PATH_TTY "/dev/tty"
-#endif
+#पूर्ण_अगर
 
 /* Macros */
 
-#if defined(HAVE_LOGIN_GETCAPBOOL) && defined(HAVE_LOGIN_CAP_H)
+#अगर defined(HAVE_LOGIN_GETCAPBOOL) && defined(HAVE_LOGIN_CAP_H)
 # define HAVE_LOGIN_CAP
-#endif
+#पूर्ण_अगर
 
-#ifndef MAX
+#अगर_अघोषित MAX
 # define MAX(a,b) (((a)>(b))?(a):(b))
 # define MIN(a,b) (((a)<(b))?(a):(b))
-#endif
+#पूर्ण_अगर
 
-#ifndef roundup
+#अगर_अघोषित roundup
 # define roundup(x, y)   ((((x)+((y)-1))/(y))*(y))
-#endif
+#पूर्ण_अगर
 
-#ifndef timersub
-#define timersub(a, b, result)					\
-   do {								\
-      (result)->tv_sec = (a)->tv_sec - (b)->tv_sec;		\
-      (result)->tv_usec = (a)->tv_usec - (b)->tv_usec;		\
-      if ((result)->tv_usec < 0) {				\
-	 --(result)->tv_sec;					\
-	 (result)->tv_usec += 1000000;				\
+#अगर_अघोषित timersub
+#घोषणा timersub(a, b, परिणाम)					\
+   करो {								\
+      (परिणाम)->tv_sec = (a)->tv_sec - (b)->tv_sec;		\
+      (परिणाम)->tv_usec = (a)->tv_usec - (b)->tv_usec;		\
+      अगर ((परिणाम)->tv_usec < 0) {				\
+	 --(परिणाम)->tv_sec;					\
+	 (परिणाम)->tv_usec += 1000000;				\
       }								\
-   } while (0)
-#endif
+   } जबतक (0)
+#पूर्ण_अगर
 
-#ifndef timespeccmp
-#define	timespeccmp(tsp, usp, cmp)					\
+#अगर_अघोषित timespeccmp
+#घोषणा	timespeccmp(tsp, usp, cmp)					\
 	(((tsp)->tv_sec == (usp)->tv_sec) ?				\
 	    ((tsp)->tv_nsec cmp (usp)->tv_nsec) :			\
 	    ((tsp)->tv_sec cmp (usp)->tv_sec))
-#endif
+#पूर्ण_अगर
 
-#ifndef TIMEVAL_TO_TIMESPEC
-#define	TIMEVAL_TO_TIMESPEC(tv, ts) {					\
+#अगर_अघोषित TIMEVAL_TO_TIMESPEC
+#घोषणा	TIMEVAL_TO_TIMESPEC(tv, ts) {					\
 	(ts)->tv_sec = (tv)->tv_sec;					\
 	(ts)->tv_nsec = (tv)->tv_usec * 1000;				\
 }
-#endif
+#पूर्ण_अगर
 
-#ifndef TIMESPEC_TO_TIMEVAL
-#define	TIMESPEC_TO_TIMEVAL(tv, ts) {					\
+#अगर_अघोषित TIMESPEC_TO_TIMEVAL
+#घोषणा	TIMESPEC_TO_TIMEVAL(tv, ts) {					\
 	(tv)->tv_sec = (ts)->tv_sec;					\
 	(tv)->tv_usec = (ts)->tv_nsec / 1000;				\
 }
-#endif
+#पूर्ण_अगर
 
-#ifndef timespeccmp
-#define timespeccmp(tsp, usp, cmp)					\
+#अगर_अघोषित timespeccmp
+#घोषणा timespeccmp(tsp, usp, cmp)					\
 	(((tsp)->tv_sec == (usp)->tv_sec) ?				\
 	    ((tsp)->tv_nsec cmp (usp)->tv_nsec) :			\
 	    ((tsp)->tv_sec cmp (usp)->tv_sec))
-#endif
+#पूर्ण_अगर
 
 /* Operations on timespecs. */
-#ifndef timespecclear
-#define	timespecclear(tsp)		(tsp)->tv_sec = (tsp)->tv_nsec = 0
-#endif
-#ifndef timespeccmp
-#define	timespeccmp(tsp, usp, cmp)					\
+#अगर_अघोषित timespecclear
+#घोषणा	timespecclear(tsp)		(tsp)->tv_sec = (tsp)->tv_nsec = 0
+#पूर्ण_अगर
+#अगर_अघोषित timespeccmp
+#घोषणा	timespeccmp(tsp, usp, cmp)					\
 	(((tsp)->tv_sec == (usp)->tv_sec) ?				\
 	    ((tsp)->tv_nsec cmp (usp)->tv_nsec) :			\
 	    ((tsp)->tv_sec cmp (usp)->tv_sec))
-#endif
-#ifndef timespecadd
-#define	timespecadd(tsp, usp, vsp)					\
-	do {								\
+#पूर्ण_अगर
+#अगर_अघोषित timespecadd
+#घोषणा	timespecadd(tsp, usp, vsp)					\
+	करो {								\
 		(vsp)->tv_sec = (tsp)->tv_sec + (usp)->tv_sec;		\
 		(vsp)->tv_nsec = (tsp)->tv_nsec + (usp)->tv_nsec;	\
-		if ((vsp)->tv_nsec >= 1000000000L) {			\
+		अगर ((vsp)->tv_nsec >= 1000000000L) {			\
 			(vsp)->tv_sec++;				\
 			(vsp)->tv_nsec -= 1000000000L;			\
 		}							\
-	} while (0)
-#endif
-#ifndef timespecsub
-#define	timespecsub(tsp, usp, vsp)					\
-	do {								\
+	} जबतक (0)
+#पूर्ण_अगर
+#अगर_अघोषित timespecsub
+#घोषणा	timespecsub(tsp, usp, vsp)					\
+	करो {								\
 		(vsp)->tv_sec = (tsp)->tv_sec - (usp)->tv_sec;		\
 		(vsp)->tv_nsec = (tsp)->tv_nsec - (usp)->tv_nsec;	\
-		if ((vsp)->tv_nsec < 0) {				\
+		अगर ((vsp)->tv_nsec < 0) {				\
 			(vsp)->tv_sec--;				\
 			(vsp)->tv_nsec += 1000000000L;			\
 		}							\
-	} while (0)
-#endif
+	} जबतक (0)
+#पूर्ण_अगर
 
-#ifndef __P
+#अगर_अघोषित __P
 # define __P(x) x
-#endif
+#पूर्ण_अगर
 
-#if !defined(IN6_IS_ADDR_V4MAPPED)
+#अगर !defined(IN6_IS_ADDR_V4MAPPED)
 # define IN6_IS_ADDR_V4MAPPED(a) \
 	((((u_int32_t *) (a))[0] == 0) && (((u_int32_t *) (a))[1] == 0) && \
 	 (((u_int32_t *) (a))[2] == htonl (0xffff)))
-#endif /* !defined(IN6_IS_ADDR_V4MAPPED) */
+#पूर्ण_अगर /* !defined(IN6_IS_ADDR_V4MAPPED) */
 
-#if !defined(__GNUC__) || (__GNUC__ < 2)
+#अगर !defined(__GNUC__) || (__GNUC__ < 2)
 # define __attribute__(x)
-#endif /* !defined(__GNUC__) || (__GNUC__ < 2) */
+#पूर्ण_अगर /* !defined(__GNUC__) || (__GNUC__ < 2) */
 
-#if !defined(HAVE_ATTRIBUTE__SENTINEL__) && !defined(__sentinel__)
+#अगर !defined(HAVE_ATTRIBUTE__SENTINEL__) && !defined(__sentinel__)
 # define __sentinel__
-#endif
+#पूर्ण_अगर
 
-#if !defined(HAVE_ATTRIBUTE__BOUNDED__) && !defined(__bounded__)
+#अगर !defined(HAVE_ATTRIBUTE__BOUNDED__) && !defined(__bounded__)
 # define __bounded__(x, y, z)
-#endif
+#पूर्ण_अगर
 
-#if !defined(HAVE_ATTRIBUTE__NONNULL__) && !defined(__nonnull__)
+#अगर !defined(HAVE_ATTRIBUTE__NONNULL__) && !defined(__nonnull__)
 # define __nonnull__(x)
-#endif
+#पूर्ण_अगर
 
-#if !defined(HAVE_ATTRIBUTE__NONSTRING__) && !defined(__nonstring__)
+#अगर !defined(HAVE_ATTRIBUTE__NONSTRING__) && !defined(__nonstring__)
 # define __nonstring__
-#endif
+#पूर्ण_अगर
 
-#ifndef OSSH_ALIGNBYTES
-#define OSSH_ALIGNBYTES	(sizeof(int) - 1)
-#endif
-#ifndef __CMSG_ALIGN
-#define	__CMSG_ALIGN(p) (((u_int)(p) + OSSH_ALIGNBYTES) &~ OSSH_ALIGNBYTES)
-#endif
+#अगर_अघोषित OSSH_ALIGNBYTES
+#घोषणा OSSH_ALIGNBYTES	(माप(पूर्णांक) - 1)
+#पूर्ण_अगर
+#अगर_अघोषित __CMSG_ALIGN
+#घोषणा	__CMSG_ALIGN(p) (((u_int)(p) + OSSH_ALIGNBYTES) &~ OSSH_ALIGNBYTES)
+#पूर्ण_अगर
 
 /* Length of the contents of a control message of length len */
-#ifndef CMSG_LEN
-#define	CMSG_LEN(len)	(__CMSG_ALIGN(sizeof(struct cmsghdr)) + (len))
-#endif
+#अगर_अघोषित CMSG_LEN
+#घोषणा	CMSG_LEN(len)	(__CMSG_ALIGN(माप(काष्ठा cmsghdr)) + (len))
+#पूर्ण_अगर
 
 /* Length of the space taken up by a padded control message of length len */
-#ifndef CMSG_SPACE
-#define	CMSG_SPACE(len)	(__CMSG_ALIGN(sizeof(struct cmsghdr)) + __CMSG_ALIGN(len))
-#endif
+#अगर_अघोषित CMSG_SPACE
+#घोषणा	CMSG_SPACE(len)	(__CMSG_ALIGN(माप(काष्ठा cmsghdr)) + __CMSG_ALIGN(len))
+#पूर्ण_अगर
 
 /* given pointer to struct cmsghdr, return pointer to data */
-#ifndef CMSG_DATA
-#define CMSG_DATA(cmsg) ((u_char *)(cmsg) + __CMSG_ALIGN(sizeof(struct cmsghdr)))
-#endif /* CMSG_DATA */
+#अगर_अघोषित CMSG_DATA
+#घोषणा CMSG_DATA(cmsg) ((u_char *)(cmsg) + __CMSG_ALIGN(माप(काष्ठा cmsghdr)))
+#पूर्ण_अगर /* CMSG_DATA */
 
 /*
  * RFC 2292 requires to check msg_controllen, in case that the kernel returns
  * an empty list for some reasons.
  */
-#ifndef CMSG_FIRSTHDR
-#define CMSG_FIRSTHDR(mhdr) \
-	((mhdr)->msg_controllen >= sizeof(struct cmsghdr) ? \
-	 (struct cmsghdr *)(mhdr)->msg_control : \
-	 (struct cmsghdr *)NULL)
-#endif /* CMSG_FIRSTHDR */
+#अगर_अघोषित CMSG_FIRSTHDR
+#घोषणा CMSG_FIRSTHDR(mhdr) \
+	((mhdr)->msg_controllen >= माप(काष्ठा cmsghdr) ? \
+	 (काष्ठा cmsghdr *)(mhdr)->msg_control : \
+	 (काष्ठा cmsghdr *)शून्य)
+#पूर्ण_अगर /* CMSG_FIRSTHDR */
 
-#if defined(HAVE_DECL_OFFSETOF) && HAVE_DECL_OFFSETOF == 0
-# define offsetof(type, member) ((size_t) &((type *)0)->member)
-#endif
+#अगर defined(HAVE_DECL_OFFSETOF) && HAVE_DECL_OFFSETOF == 0
+# define दुरत्व(type, member) ((माप_प्रकार) &((type *)0)->member)
+#पूर्ण_अगर
 
 /* Set up BSD-style BYTE_ORDER definition if it isn't there already */
 /* XXX: doesn't try to cope with strange byte orders (PDP_ENDIAN) */
-#ifndef BYTE_ORDER
+#अगर_अघोषित BYTE_ORDER
 # ifndef LITTLE_ENDIAN
 #  define LITTLE_ENDIAN  1234
 # endif /* LITTLE_ENDIAN */
 # ifndef BIG_ENDIAN
 #  define BIG_ENDIAN     4321
 # endif /* BIG_ENDIAN */
-# ifdef WORDS_BIGENDIAN
+# ifdef शब्दगण_BIGENDIAN
 #  define BYTE_ORDER BIG_ENDIAN
-# else /* WORDS_BIGENDIAN */
+# अन्यथा /* WORDS_BIGENDIAN */
 #  define BYTE_ORDER LITTLE_ENDIAN
 # endif /* WORDS_BIGENDIAN */
-#endif /* BYTE_ORDER */
+#पूर्ण_अगर /* BYTE_ORDER */
 
-#if (defined(HAVE_DECL_LE32TOH) && HAVE_DECL_LE32TOH == 0) || \
+#अगर (defined(HAVE_DECL_LE32TOH) && HAVE_DECL_LE32TOH == 0) || \
     (defined(HAVE_DECL_LE64TOH) && HAVE_DECL_LE64TOH == 0) || \
     (defined(HAVE_DECL_HTOLE64) && HAVE_DECL_HTOLE64 == 0) || \
     (defined(HAVE_DECL_HTOBE32) && HAVE_DECL_HTOBE32 == 0)
@@ -679,42 +679,42 @@ struct winsize {
 	((uint64_t)(v) & 0xff0000000000ULL) >> 24 |		\
 	((uint64_t)(v) & 0xff000000000000ULL) >> 40 |		\
 	((uint64_t)(v) & 0xff00000000000000ULL) >> 56)
-# ifdef WORDS_BIGENDIAN
-#  if defined(HAVE_DECL_LE32TOH) && HAVE_DECL_LE32TOH == 0
+# ifdef शब्दगण_BIGENDIAN
+#  अगर defined(HAVE_DECL_LE32TOH) && HAVE_DECL_LE32TOH == 0
 #   define le32toh(v) (openssh_swap32(v))
 #  endif
-#  if defined(HAVE_DECL_LE64TOH) && HAVE_DECL_LE64TOH == 0
+#  अगर defined(HAVE_DECL_LE64TOH) && HAVE_DECL_LE64TOH == 0
 #   define le64toh(v) (openssh_swap64(v))
 #  endif
-#  if defined(HAVE_DECL_HTOLE64) && HAVE_DECL_HTOLE64 == 0
+#  अगर defined(HAVE_DECL_HTOLE64) && HAVE_DECL_HTOLE64 == 0
 #   define htole64(v) (openssh_swap64(v))
 #  endif
-#  if defined(HAVE_DECL_HTOBE32) && HAVE_DECL_HTOBE32 == 0
+#  अगर defined(HAVE_DECL_HTOBE32) && HAVE_DECL_HTOBE32 == 0
 #   define htobe32(v) ((uint32_t)v)
 #  endif
-# else
-#  if defined(HAVE_DECL_LE32TOH) && HAVE_DECL_LE32TOH == 0
+# अन्यथा
+#  अगर defined(HAVE_DECL_LE32TOH) && HAVE_DECL_LE32TOH == 0
 #   define le32toh(v) ((uint32_t)v)
 #  endif
-#  if defined(HAVE_DECL_LE64TOH) && HAVE_DECL_LE64TOH == 0
+#  अगर defined(HAVE_DECL_LE64TOH) && HAVE_DECL_LE64TOH == 0
 #    define le64toh(v) ((uint64_t)v)
 #  endif
-#  if defined(HAVE_DECL_HTOLE64) && HAVE_DECL_HTOLE64 == 0
+#  अगर defined(HAVE_DECL_HTOLE64) && HAVE_DECL_HTOLE64 == 0
 #   define htole64(v) ((uint64_t)v)
 #  endif
-#  if defined(HAVE_DECL_HTOBE32) && HAVE_DECL_HTOBE32 == 0
+#  अगर defined(HAVE_DECL_HTOBE32) && HAVE_DECL_HTOBE32 == 0
 #   define htobe32(v) (openssh_swap32(v))
 #  endif
 # endif
-#endif
+#पूर्ण_अगर
 
 /* Function replacement / compatibility hacks */
 
-#if !defined(HAVE_GETADDRINFO) && (defined(HAVE_OGETADDRINFO) || defined(HAVE_NGETADDRINFO))
+#अगर !defined(HAVE_GETADDRINFO) && (defined(HAVE_OGETADDRINFO) || defined(HAVE_NGETADDRINFO))
 # define HAVE_GETADDRINFO
-#endif
+#पूर्ण_अगर
 
-#ifndef HAVE_GETOPT_OPTRESET
+#अगर_अघोषित HAVE_GETOPT_OPTRESET
 # undef getopt
 # undef opterr
 # undef optind
@@ -727,103 +727,103 @@ struct winsize {
 # define optopt             BSDoptopt
 # define optreset           BSDoptreset
 # define optarg             BSDoptarg
-#endif
+#पूर्ण_अगर
 
-#if defined(BROKEN_GETADDRINFO) && defined(HAVE_GETADDRINFO)
+#अगर defined(BROKEN_GETADDRINFO) && defined(HAVE_GETADDRINFO)
 # undef HAVE_GETADDRINFO
-#endif
-#if defined(BROKEN_GETADDRINFO) && defined(HAVE_FREEADDRINFO)
+#पूर्ण_अगर
+#अगर defined(BROKEN_GETADDRINFO) && defined(HAVE_FREEADDRINFO)
 # undef HAVE_FREEADDRINFO
-#endif
-#if defined(BROKEN_GETADDRINFO) && defined(HAVE_GAI_STRERROR)
+#पूर्ण_अगर
+#अगर defined(BROKEN_GETADDRINFO) && defined(HAVE_GAI_STRERROR)
 # undef HAVE_GAI_STRERROR
-#endif
+#पूर्ण_अगर
 
-#if defined(HAVE_GETADDRINFO)
-# if defined(HAVE_DECL_AI_NUMERICSERV) && HAVE_DECL_AI_NUMERICSERV == 0
+#अगर defined(HAVE_GETADDRINFO)
+# अगर defined(HAVE_DECL_AI_NUMERICSERV) && HAVE_DECL_AI_NUMERICSERV == 0
 #   define AI_NUMERICSERV	0
 # endif
-#endif
+#पूर्ण_अगर
 
-#if defined(BROKEN_UPDWTMPX) && defined(HAVE_UPDWTMPX)
+#अगर defined(BROKEN_UPDWTMPX) && defined(HAVE_UPDWTMPX)
 # undef HAVE_UPDWTMPX
-#endif
+#पूर्ण_अगर
 
-#if defined(BROKEN_SHADOW_EXPIRE) && defined(HAS_SHADOW_EXPIRE)
+#अगर defined(BROKEN_SHADOW_EXPIRE) && defined(HAS_SHADOW_EXPIRE)
 # undef HAS_SHADOW_EXPIRE
-#endif
+#पूर्ण_अगर
 
-#if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT) && \
+#अगर defined(HAVE_OPENLOG_R) && defined(SYSLOG_तथ्य_INIT) && \
     defined(SYSLOG_R_SAFE_IN_SIGHAND)
 # define DO_LOG_SAFE_IN_SIGHAND
-#endif
+#पूर्ण_अगर
 
-#if !defined(HAVE_MEMMOVE) && defined(HAVE_BCOPY)
-# define memmove(s1, s2, n) bcopy((s2), (s1), (n))
-#endif /* !defined(HAVE_MEMMOVE) && defined(HAVE_BCOPY) */
+#अगर !defined(HAVE_MEMMOVE) && defined(HAVE_BCOPY)
+# define स_हटाओ(s1, s2, n) bcopy((s2), (s1), (n))
+#पूर्ण_अगर /* !defined(HAVE_MEMMOVE) && defined(HAVE_BCOPY) */
 
-#ifndef GETPGRP_VOID
+#अगर_अघोषित GETPGRP_VOID
 # include <unistd.h>
 # define getpgrp() getpgrp(0)
-#endif
+#पूर्ण_अगर
 
-#ifdef USE_BSM_AUDIT
+#अगर_घोषित USE_BSM_AUDIT
 # define SSH_AUDIT_EVENTS
 # define CUSTOM_SSH_AUDIT_EVENTS
-#endif
+#पूर्ण_अगर
 
-#ifdef USE_LINUX_AUDIT
+#अगर_घोषित USE_LINUX_AUDIT
 # define SSH_AUDIT_EVENTS
 # define CUSTOM_SSH_AUDIT_EVENTS
-#endif
+#पूर्ण_अगर
 
-#if !defined(HAVE___func__) && defined(HAVE___FUNCTION__)
+#अगर !defined(HAVE___func__) && defined(HAVE___FUNCTION__)
 #  define __func__ __FUNCTION__
-#elif !defined(HAVE___func__)
+#या_अगर !defined(HAVE___func__)
 #  define __func__ ""
-#endif
+#पूर्ण_अगर
 
-#if defined(KRB5) && !defined(HEIMDAL)
+#अगर defined(KRB5) && !defined(HEIMDAL)
 #  define krb5_get_err_text(context,code) error_message(code)
-#endif
+#पूर्ण_अगर
 
 /* Maximum number of file descriptors available */
-#ifdef HAVE_SYSCONF
+#अगर_घोषित HAVE_SYSCONF
 # define SSH_SYSFDMAX sysconf(_SC_OPEN_MAX)
-#else
+#अन्यथा
 # define SSH_SYSFDMAX 10000
-#endif
+#पूर्ण_अगर
 
-#ifdef FSID_HAS_VAL
+#अगर_घोषित FSID_HAS_VAL
 /* encode f_fsid into a 64 bit value  */
-#define FSID_TO_ULONG(f) \
+#घोषणा FSID_TO_ULONG(f) \
 	((((u_int64_t)(f).val[0] & 0xffffffffUL) << 32) | \
 	    ((f).val[1] & 0xffffffffUL))
-#elif defined(FSID_HAS___VAL)
-#define FSID_TO_ULONG(f) \
+#या_अगर defined(FSID_HAS___VAL)
+#घोषणा FSID_TO_ULONG(f) \
 	((((u_int64_t)(f).__val[0] & 0xffffffffUL) << 32) | \
 	    ((f).__val[1] & 0xffffffffUL))
-#else
+#अन्यथा
 # define FSID_TO_ULONG(f) ((f))
-#endif
+#पूर्ण_अगर
 
-#if defined(__Lynx__)
+#अगर defined(__Lynx__)
  /*
   * LynxOS defines these in param.h which we do not want to include since
   * it will also pull in a bunch of kernel definitions.
   */
-# define ALIGNBYTES (sizeof(int) - 1)
-# define ALIGN(p) (((unsigned)p + ALIGNBYTES) & ~ALIGNBYTES)
+# define ALIGNBYTES (माप(पूर्णांक) - 1)
+# define ALIGN(p) (((अचिन्हित)p + ALIGNBYTES) & ~ALIGNBYTES)
   /* Missing prototypes on LynxOS */
-  int snprintf (char *, size_t, const char *, ...);
-  int mkstemp (char *);
-  char *crypt (const char *, const char *);
-  int seteuid (uid_t);
-  int setegid (gid_t);
-  char *mkdtemp (char *);
-  int rresvport_af (int *, sa_family_t);
-  int innetgr (const char *, const char *, const char *, const char *);
-#endif
+  पूर्णांक snprintf (अक्षर *, माप_प्रकार, स्थिर अक्षर *, ...);
+  पूर्णांक mkstemp (अक्षर *);
+  अक्षर *crypt (स्थिर अक्षर *, स्थिर अक्षर *);
+  पूर्णांक seteuid (uid_t);
+  पूर्णांक setegid (gid_t);
+  अक्षर *mkdtemp (अक्षर *);
+  पूर्णांक rresvport_af (पूर्णांक *, sa_family_t);
+  पूर्णांक innetgr (स्थिर अक्षर *, स्थिर अक्षर *, स्थिर अक्षर *, स्थिर अक्षर *);
+#पूर्ण_अगर
 
 /*
  * Define this to use pipes instead of socketpairs for communicating with the
@@ -839,120 +839,120 @@ struct winsize {
  **/
 
 /* FIXME: put default paths back in */
-#ifndef UTMP_FILE
+#अगर_अघोषित UTMP_FILE
 #  ifdef _PATH_UTMP
 #    define UTMP_FILE _PATH_UTMP
-#  else
+#  अन्यथा
 #    ifdef CONF_UTMP_FILE
 #      define UTMP_FILE CONF_UTMP_FILE
 #    endif
 #  endif
-#endif
-#ifndef WTMP_FILE
+#पूर्ण_अगर
+#अगर_अघोषित WTMP_FILE
 #  ifdef _PATH_WTMP
 #    define WTMP_FILE _PATH_WTMP
-#  else
+#  अन्यथा
 #    ifdef CONF_WTMP_FILE
 #      define WTMP_FILE CONF_WTMP_FILE
 #    endif
 #  endif
-#endif
+#पूर्ण_अगर
 /* pick up the user's location for lastlog if given */
-#ifndef LASTLOG_FILE
+#अगर_अघोषित LASTLOG_FILE
 #  ifdef _PATH_LASTLOG
 #    define LASTLOG_FILE _PATH_LASTLOG
-#  else
+#  अन्यथा
 #    ifdef CONF_LASTLOG_FILE
 #      define LASTLOG_FILE CONF_LASTLOG_FILE
 #    endif
 #  endif
-#endif
+#पूर्ण_अगर
 
-#if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+#अगर defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
 # define USE_SHADOW
-#endif
+#पूर्ण_अगर
 
 /* The login() library function in libutil is first choice */
-#if defined(HAVE_LOGIN) && !defined(DISABLE_LOGIN)
+#अगर defined(HAVE_LOGIN) && !defined(DISABLE_LOGIN)
 #  define USE_LOGIN
 
-#else
+#अन्यथा
 /* Simply select your favourite login types. */
 /* Can't do if-else because some systems use several... <sigh> */
-#  if !defined(DISABLE_UTMPX)
+#  अगर !defined(DISABLE_UTMPX)
 #    define USE_UTMPX
 #  endif
-#  if defined(UTMP_FILE) && !defined(DISABLE_UTMP)
+#  अगर defined(UTMP_FILE) && !defined(DISABLE_UTMP)
 #    define USE_UTMP
 #  endif
-#  if defined(WTMPX_FILE) && !defined(DISABLE_WTMPX)
+#  अगर defined(WTMPX_FILE) && !defined(DISABLE_WTMPX)
 #    define USE_WTMPX
 #  endif
-#  if defined(WTMP_FILE) && !defined(DISABLE_WTMP)
+#  अगर defined(WTMP_FILE) && !defined(DISABLE_WTMP)
 #    define USE_WTMP
 #  endif
 
-#endif
+#पूर्ण_अगर
 
-#ifndef UT_LINESIZE
+#अगर_अघोषित UT_LINESIZE
 # define UT_LINESIZE 8
-#endif
+#पूर्ण_अगर
 
 /* I hope that the presence of LASTLOG_FILE is enough to detect this */
-#if defined(LASTLOG_FILE) && !defined(DISABLE_LASTLOG)
+#अगर defined(LASTLOG_FILE) && !defined(DISABLE_LASTLOG)
 #  define USE_LASTLOG
-#endif
+#पूर्ण_अगर
 
-#ifdef HAVE_OSF_SIA
+#अगर_घोषित HAVE_OSF_SIA
 # ifdef USE_SHADOW
 #  undef USE_SHADOW
 # endif
 # define CUSTOM_SYS_AUTH_PASSWD 1
-#endif
+#पूर्ण_अगर
 
-#if defined(HAVE_LIBIAF) && defined(HAVE_SET_ID) && !defined(HAVE_SECUREWARE)
+#अगर defined(HAVE_LIBIAF) && defined(HAVE_SET_ID) && !defined(HAVE_SECUREWARE)
 # define CUSTOM_SYS_AUTH_PASSWD 1
-#endif
-#if defined(HAVE_LIBIAF) && defined(HAVE_SET_ID) && !defined(BROKEN_LIBIAF)
+#पूर्ण_अगर
+#अगर defined(HAVE_LIBIAF) && defined(HAVE_SET_ID) && !defined(BROKEN_LIBIAF)
 # define USE_LIBIAF
-#endif
+#पूर्ण_अगर
 
 /* HP-UX 11.11 */
-#ifdef BTMP_FILE
+#अगर_घोषित BTMP_FILE
 # define _PATH_BTMP BTMP_FILE
-#endif
+#पूर्ण_अगर
 
-#if defined(USE_BTMP) && defined(_PATH_BTMP)
+#अगर defined(USE_BTMP) && defined(_PATH_BTMP)
 # define CUSTOM_FAILED_LOGIN
-#endif
+#पूर्ण_अगर
 
 /** end of login recorder definitions */
 
-#ifdef BROKEN_GETGROUPS
-# define getgroups(a,b) ((a)==0 && (b)==NULL ? NGROUPS_MAX : getgroups((a),(b)))
-#endif
+#अगर_घोषित BROKEN_GETGROUPS
+# define getgroups(a,b) ((a)==0 && (b)==शून्य ? NGROUPS_MAX : getgroups((a),(b)))
+#पूर्ण_अगर
 
-#ifndef IOV_MAX
-# if defined(_XOPEN_IOV_MAX)
+#अगर_अघोषित IOV_MAX
+# अगर defined(_XOPEN_IOV_MAX)
 #  define	IOV_MAX		_XOPEN_IOV_MAX
 # elif defined(DEF_IOV_MAX)
 #  define	IOV_MAX		DEF_IOV_MAX
-# else
+# अन्यथा
 #  define	IOV_MAX		16
 # endif
-#endif
+#पूर्ण_अगर
 
-#ifndef EWOULDBLOCK
+#अगर_अघोषित EWOULDBLOCK
 # define EWOULDBLOCK EAGAIN
-#endif
+#पूर्ण_अगर
 
-#ifndef INET6_ADDRSTRLEN	/* for non IPv6 machines */
-#define INET6_ADDRSTRLEN 46
-#endif
+#अगर_अघोषित INET6_ADDRSTRLEN	/* for non IPv6 machines */
+#घोषणा INET6_ADDRSTRLEN 46
+#पूर्ण_अगर
 
-#ifndef SSH_IOBUFSZ
+#अगर_अघोषित SSH_IOBUFSZ
 # define SSH_IOBUFSZ 8192
-#endif
+#पूर्ण_अगर
 
 /*
  * We want functions in openbsd-compat, if enabled, to override system ones.
@@ -960,52 +960,52 @@ struct winsize {
  * future sync problems.  Some compilers (eg Unixware) do not allow an
  * empty statement, so we use a bogus function declaration.
  */
-#define DEF_WEAK(x)	void __ssh_compat_weak_##x(void)
+#घोषणा DEF_WEAK(x)	व्योम __ssh_compat_weak_##x(व्योम)
 
 /*
  * Platforms that have arc4random_uniform() and not arc4random_stir()
  * shouldn't need the latter.
  */
-#if defined(HAVE_ARC4RANDOM) && defined(HAVE_ARC4RANDOM_UNIFORM) && \
+#अगर defined(HAVE_ARC4RANDOM) && defined(HAVE_ARC4RANDOM_UNIFORM) && \
     !defined(HAVE_ARC4RANDOM_STIR)
 # define arc4random_stir()
-#endif
+#पूर्ण_अगर
 
-#ifndef HAVE_VA_COPY
+#अगर_अघोषित HAVE_VA_COPY
 # ifdef HAVE___VA_COPY
 #  define va_copy(dest, src) __va_copy(dest, src)
-# else
+# अन्यथा
 #  define va_copy(dest, src) (dest) = (src)
 # endif
-#endif
+#पूर्ण_अगर
 
-#ifndef __predict_true
-# if defined(__GNUC__) && \
+#अगर_अघोषित __predict_true
+# अगर defined(__GNUC__) && \
      ((__GNUC__ > (2)) || (__GNUC__ == (2) && __GNUC_MINOR__ >= (96)))
 #  define __predict_true(exp)     __builtin_expect(((exp) != 0), 1)
 #  define __predict_false(exp)    __builtin_expect(((exp) != 0), 0)
-# else
+# अन्यथा
 #  define __predict_true(exp)     ((exp) != 0)
 #  define __predict_false(exp)    ((exp) != 0)
 # endif /* gcc version */
-#endif /* __predict_true */
+#पूर्ण_अगर /* __predict_true */
 
 /*
  * sntrup761 uses variable length arrays and c99-style declarations after code,
  * so only enable if the compiler supports them.
  */
-#if defined(VARIABLE_LENGTH_ARRAYS) && defined(VARIABLE_DECLARATION_AFTER_CODE)
+#अगर defined(VARIABLE_लंबाई_ARRAYS) && defined(VARIABLE_DECLARATION_AFTER_CODE)
 # define USE_SNTRUP761X25519	1
 /* The ML-KEM768 and ML-DSA implementations also uses C89 features */
 # define USE_MLKEM768X25519	1
 # define USE_MLDSA		1
-#endif
+#पूर्ण_अगर
 
-#if defined(HAVE_DECL_INFINITY) && HAVE_DECL_INFINITY == 0
-# if defined(HAVE_DECL___BUILTIN_INFF) && HAVE_DECL___BUILTIN_INFF == 1
-#  define INFINITY __builtin_inff()
+#अगर defined(HAVE_DECL_INFINITY) && HAVE_DECL_INFINITY == 0
+# अगर defined(HAVE_DECL___BUILTIN_INFF) && HAVE_DECL___BUILTIN_INFF == 1
+#  define अनन्त __builtin_inff()
 # endif
-#endif
+#पूर्ण_अगर
 
 /*
  * Hack for systems that don't support FD passing: retain privileges
@@ -1019,8 +1019,8 @@ struct winsize {
  * fd passing, as AFAIK PTY allocation on this platform doesn't require
  * special privileges to begin with.
  */
-#if defined(DISABLE_FD_PASSING) && !defined(HAVE_CYGWIN)
+#अगर defined(DISABLE_FD_PASSING) && !defined(HAVE_CYGWIN)
 # define SKIP_PRIVDROP 1
-#endif
+#पूर्ण_अगर
 
-#endif /* _DEFINES_H */
+#पूर्ण_अगर /* _DEFINES_H */

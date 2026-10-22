@@ -21,23 +21,23 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdio/mktemp.c */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <unistd.h>
+#समावेश <sys/types.h>
+#समावेश <sys/stat.h>
+#समावेश <errno.h>
+#समावेश <fcntl.h>
+#समावेश <limits.h>
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <ctype.h>
+#समावेश <unistd.h>
 
-#ifdef mkstemp
-#undef mkstemp
-#endif
-int mkstemp(char *);
+#अगर_घोषित mkstemp
+#अघोषित mkstemp
+#पूर्ण_अगर
+पूर्णांक mkstemp(अक्षर *);
 
 /*
  * From glibc man page: 'In glibc versions 2.06 and earlier, the file is
@@ -45,120 +45,120 @@ int mkstemp(char *);
  * Provide a wrapper to make sure the mask is reasonable (POSIX requires
  * mode 0600, so mask off any other bits).
  */
-int
-_ssh_mkstemp(char *template)
+पूर्णांक
+_ssh_mkstemp(अक्षर *ढाँचा)
 {
 	mode_t mask;
-	int ret;
+	पूर्णांक ret;
 
 	mask = umask(0177);
-	ret = mkstemp(template);
-	(void)umask(mask);
-	return ret;
+	ret = mkstemp(ढाँचा);
+	(व्योम)umask(mask);
+	वापस ret;
 }
 
-#if !defined(HAVE_MKDTEMP)
+#अगर !defined(HAVE_MKDTEMP)
 
-#define MKTEMP_NAME	0
-#define MKTEMP_FILE	1
-#define MKTEMP_DIR	2
+#घोषणा MKTEMP_NAME	0
+#घोषणा MKTEMP_FILE	1
+#घोषणा MKTEMP_DIR	2
 
-#define TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-#define NUM_CHARS	(sizeof(TEMPCHARS) - 1)
+#घोषणा TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+#घोषणा अंक_CHARS	(माप(TEMPCHARS) - 1)
 
-static int
-mktemp_internal(char *path, int slen, int mode)
+अटल पूर्णांक
+mktemp_internal(अक्षर *path, पूर्णांक slen, पूर्णांक mode)
 {
-	char *start, *cp, *ep;
-	const char *tempchars = TEMPCHARS;
-	unsigned int r, tries;
-	struct stat sb;
-	size_t len;
-	int fd;
+	अक्षर *start, *cp, *ep;
+	स्थिर अक्षर *tempchars = TEMPCHARS;
+	अचिन्हित पूर्णांक r, tries;
+	काष्ठा stat sb;
+	माप_प्रकार len;
+	पूर्णांक fd;
 
-	len = strlen(path);
-	if (len == 0 || slen < 0 || (size_t)slen >= len) {
-		errno = EINVAL;
-		return(-1);
+	len = म_माप(path);
+	अगर (len == 0 || slen < 0 || (माप_प्रकार)slen >= len) {
+		त्रुटि_सं = EINVAL;
+		वापस(-1);
 	}
 	ep = path + len - slen;
 
 	tries = 1;
-	for (start = ep; start > path && start[-1] == 'X'; start--) {
-		if (tries < INT_MAX / NUM_CHARS)
-			tries *= NUM_CHARS;
+	क्रम (start = ep; start > path && start[-1] == 'X'; start--) {
+		अगर (tries < पूर्णांक_उच्च / अंक_CHARS)
+			tries *= अंक_CHARS;
 	}
 	tries *= 2;
 
-	do {
-		for (cp = start; cp != ep; cp++) {
-			r = arc4random_uniform(NUM_CHARS);
+	करो {
+		क्रम (cp = start; cp != ep; cp++) {
+			r = arc4random_uniform(अंक_CHARS);
 			*cp = tempchars[r];
 		}
 
-		switch (mode) {
-		case MKTEMP_NAME:
-			if (lstat(path, &sb) != 0)
-				return(errno == ENOENT ? 0 : -1);
-			break;
-		case MKTEMP_FILE:
-			fd = open(path, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
-			if (fd != -1 || errno != EEXIST)
-				return(fd);
-			break;
-		case MKTEMP_DIR:
-			if (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
-				return(0);
-			if (errno != EEXIST)
-				return(-1);
-			break;
+		चयन (mode) {
+		हाल MKTEMP_NAME:
+			अगर (lstat(path, &sb) != 0)
+				वापस(त्रुटि_सं == ENOENT ? 0 : -1);
+			अवरोध;
+		हाल MKTEMP_FILE:
+			fd = खोलो(path, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
+			अगर (fd != -1 || त्रुटि_सं != EEXIST)
+				वापस(fd);
+			अवरोध;
+		हाल MKTEMP_DIR:
+			अगर (सूची_गढ़ो(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
+				वापस(0);
+			अगर (त्रुटि_सं != EEXIST)
+				वापस(-1);
+			अवरोध;
 		}
-	} while (--tries);
+	} जबतक (--tries);
 
-	errno = EEXIST;
-	return(-1);
+	त्रुटि_सं = EEXIST;
+	वापस(-1);
 }
 
-#if 0
-char *_mktemp(char *);
+#अगर 0
+अक्षर *_mktemp(अक्षर *);
 
-char *
-_mktemp(char *path)
+अक्षर *
+_mktemp(अक्षर *path)
 {
-	if (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
-		return(NULL);
-	return(path);
+	अगर (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
+		वापस(शून्य);
+	वापस(path);
 }
 
 __warn_references(mktemp,
     "warning: mktemp() possibly used unsafely; consider using mkstemp()");
 
-char *
-mktemp(char *path)
+अक्षर *
+mktemp(अक्षर *path)
 {
-	return(_mktemp(path));
+	वापस(_mktemp(path));
 }
-#endif
+#पूर्ण_अगर
 
-int
-mkstemp(char *path)
+पूर्णांक
+mkstemp(अक्षर *path)
 {
-	return(mktemp_internal(path, 0, MKTEMP_FILE));
-}
-
-int
-mkstemps(char *path, int slen)
-{
-	return(mktemp_internal(path, slen, MKTEMP_FILE));
+	वापस(mktemp_internal(path, 0, MKTEMP_FILE));
 }
 
-char *
-mkdtemp(char *path)
+पूर्णांक
+mkstemps(अक्षर *path, पूर्णांक slen)
 {
-	int error;
+	वापस(mktemp_internal(path, slen, MKTEMP_FILE));
+}
+
+अक्षर *
+mkdtemp(अक्षर *path)
+{
+	पूर्णांक error;
 
 	error = mktemp_internal(path, 0, MKTEMP_DIR);
-	return(error ? NULL : path);
+	वापस(error ? शून्य : path);
 }
 
-#endif /* !defined(HAVE_MKDTEMP) */
+#पूर्ण_अगर /* !defined(HAVE_MKDTEMP) */

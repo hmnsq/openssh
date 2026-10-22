@@ -5,36 +5,36 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <stdio.h>
+#समावेश <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#समावेश "../test_helper/test_helper.h"
 
-void sshbuf_tests(void);
-void sshbuf_getput_basic_tests(void);
-void sshbuf_getput_crypto_tests(void);
-void sshbuf_misc_tests(void);
-void sshbuf_fuzz_tests(void);
-void sshbuf_getput_fuzz_tests(void);
-void sshbuf_fixed(void);
+व्योम sshbuf_tests(व्योम);
+व्योम sshbuf_getput_basic_tests(व्योम);
+व्योम sshbuf_getput_crypto_tests(व्योम);
+व्योम sshbuf_misc_tests(व्योम);
+व्योम sshbuf_fuzz_tests(व्योम);
+व्योम sshbuf_getput_fuzz_tests(व्योम);
+व्योम sshbuf_fixed(व्योम);
 
-void
-tests(void)
+व्योम
+tests(व्योम)
 {
 	sshbuf_tests();
 	sshbuf_getput_basic_tests();
-#ifdef WITH_OPENSSL
+#अगर_घोषित WITH_OPENSSL
 	sshbuf_getput_crypto_tests();
-#endif
+#पूर्ण_अगर
 	sshbuf_misc_tests();
 	sshbuf_fuzz_tests();
 	sshbuf_getput_fuzz_tests();
 	sshbuf_fixed();
 }
 
-void
-benchmarks(void)
+व्योम
+benchmarks(व्योम)
 {
-	printf("no benchmarks\n");
+	म_लिखो("no benchmarks\n");
 }

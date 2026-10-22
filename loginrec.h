@@ -1,5 +1,5 @@
-#ifndef _HAVE_LOGINREC_H_
-#define _HAVE_LOGINREC_H_
+#अगर_अघोषित _HAVE_LOGINREC_H_
+#घोषणा _HAVE_LOGINREC_H_
 
 /*
  * Copyright (c) 2000 Andre Lucas.  All rights reserved.
@@ -29,9 +29,9 @@
  ** loginrec.h:  platform-independent login recording and lastlog retrieval
  **/
 
-#include "includes.h"
+#समावेश "includes.h"
 
-struct ssh;
+काष्ठा ssh;
 
 /**
  ** you should use the login_* calls to work around platform dependencies
@@ -41,10 +41,10 @@ struct ssh;
  * login_netinfo structure
  */
 
-union login_netinfo {
-	struct sockaddr sa;
-	struct sockaddr_in sa_in;
-	struct sockaddr_storage sa_storage;
+जोड़ login_netinfo {
+	काष्ठा sockaddr sa;
+	काष्ठा sockaddr_in sa_in;
+	काष्ठा sockaddr_storage sa_storage;
 };
 
 /*
@@ -52,37 +52,37 @@ union login_netinfo {
  */
 /* types - different to utmp.h 'type' macros */
 /* (though set to the same value as linux, openbsd and others...) */
-#define LTYPE_FAILED   6
-#define LTYPE_LOGIN    7
-#define LTYPE_LOGOUT   8
+#घोषणा LTYPE_FAILED   6
+#घोषणा LTYPE_LOGIN    7
+#घोषणा LTYPE_LOGOUT   8
 
 /* string lengths - set very long */
-#define LINFO_PROGSIZE 64
-#define LINFO_LINESIZE 64
-#define LINFO_NAMESIZE 512
-#define LINFO_HOSTSIZE 256
+#घोषणा LINFO_PROGSIZE 64
+#घोषणा LINFO_LINESIZE 64
+#घोषणा LINFO_NAMESIZE 512
+#घोषणा LINFO_HOSTSIZE 256
 
-struct logininfo {
-	char       progname[LINFO_PROGSIZE];     /* name of program (for PAM) */
-	int        progname_null;
-	short int  type;                         /* type of login (LTYPE_*) */
+काष्ठा logininfo {
+	अक्षर       progname[LINFO_PROGSIZE];     /* name of program (for PAM) */
+	पूर्णांक        progname_null;
+	लघु पूर्णांक  type;                         /* type of login (LTYPE_*) */
 	pid_t      pid;                          /* PID of login process */
 	uid_t      uid;                          /* UID of this user */
-	char       line[LINFO_LINESIZE];         /* tty/pty name */
-	char       username[LINFO_NAMESIZE];     /* login username */
-	char       hostname[LINFO_HOSTSIZE];     /* remote hostname */
+	अक्षर       पंक्ति[LINFO_LINESIZE];         /* tty/pty name */
+	अक्षर       username[LINFO_NAMESIZE];     /* login username */
+	अक्षर       hostname[LINFO_HOSTSIZE];     /* remote hostname */
 	/* 'exit_status' structure components */
-	int        exit;                        /* process exit status */
-	int        termination;                 /* process termination status */
+	पूर्णांक        निकास;                        /* process exit status */
+	पूर्णांक        termination;                 /* process termination status */
 	/* struct timeval (sys/time.h) isn't always available, if it isn't we'll
 	 * use time_t's value as tv_sec and set tv_usec to 0
 	 */
-	unsigned int tv_sec;
-	unsigned int tv_usec;
-	union login_netinfo hostaddr;       /* caller's host address(es) */
-#ifdef USE_WTMPDB
+	अचिन्हित पूर्णांक tv_sec;
+	अचिन्हित पूर्णांक tv_usec;
+	जोड़ login_netinfo hostaddr;       /* caller's host address(es) */
+#अगर_घोषित USE_WTMPDB
 	int64_t wtmpdb_id;                  /* ID for wtmpdb_logout */
-#endif
+#पूर्ण_अगर
 }; /* struct logininfo */
 
 /*
@@ -92,47 +92,47 @@ struct logininfo {
 /** 'public' functions */
 
 /* construct a new login entry */
-struct logininfo *login_alloc_entry(pid_t pid, const char *username,
-				    const char *hostname, const char *line);
+काष्ठा logininfo *login_alloc_entry(pid_t pid, स्थिर अक्षर *username,
+				    स्थिर अक्षर *hostname, स्थिर अक्षर *पंक्ति);
 /* free a structure */
-void login_free_entry(struct logininfo *li);
+व्योम login_free_entry(काष्ठा logininfo *li);
 /* fill out a pre-allocated structure with useful information */
-int login_init_entry(struct logininfo *li, pid_t pid, const char *username,
-    const char *hostname, const char *line);
+पूर्णांक login_init_entry(काष्ठा logininfo *li, pid_t pid, स्थिर अक्षर *username,
+    स्थिर अक्षर *hostname, स्थिर अक्षर *पंक्ति);
 /* place the current time in a logininfo struct */
-void login_set_current_time(struct logininfo *li);
+व्योम login_set_current_time(काष्ठा logininfo *li);
 
 /* record the entry */
-int login_login (struct logininfo *li);
-int login_logout(struct logininfo *li);
-#ifdef LOGIN_NEEDS_UTMPX
-int login_utmp_only(struct logininfo *li);
-#endif
+पूर्णांक login_login (काष्ठा logininfo *li);
+पूर्णांक login_logout(काष्ठा logininfo *li);
+#अगर_घोषित LOGIN_NEEDS_UTMPX
+पूर्णांक login_utmp_only(काष्ठा logininfo *li);
+#पूर्ण_अगर
 
 /** End of public functions */
 
 /* record the entry */
-int login_write (struct logininfo *li);
-int login_log_entry(struct logininfo *li);
+पूर्णांक login_write (काष्ठा logininfo *li);
+पूर्णांक login_log_entry(काष्ठा logininfo *li);
 
 /* set the network address based on network address type */
-void login_set_addr(struct logininfo *li, const struct sockaddr *sa,
-		    const unsigned int sa_size);
+व्योम login_set_addr(काष्ठा logininfo *li, स्थिर काष्ठा sockaddr *sa,
+		    स्थिर अचिन्हित पूर्णांक sa_आकार);
 
 /*
  * lastlog retrieval functions
  */
 /* lastlog *entry* functions fill out a logininfo */
-struct logininfo *login_get_lastlog(struct logininfo *li, const uid_t uid);
+काष्ठा logininfo *login_get_lastlog(काष्ठा logininfo *li, स्थिर uid_t uid);
 /* lastlog *time* functions return time_t equivalent (uint) */
-unsigned int login_get_lastlog_time(const uid_t uid);
+अचिन्हित पूर्णांक login_get_lastlog_time(स्थिर uid_t uid);
 
 /* produce various forms of the line filename */
-char *line_fullname(char *dst, const char *src, u_int dstsize);
-char *line_stripname(char *dst, const char *src, int dstsize);
-char *line_abbrevname(char *dst, const char *src, int dstsize);
+अक्षर *पंक्ति_fullname(अक्षर *dst, स्थिर अक्षर *src, u_int dstsize);
+अक्षर *पंक्ति_stripname(अक्षर *dst, स्थिर अक्षर *src, पूर्णांक dstsize);
+अक्षर *पंक्ति_abbrevname(अक्षर *dst, स्थिर अक्षर *src, पूर्णांक dstsize);
 
-void record_failed_login(struct ssh *, const char *, const char *,
-    const char *);
+व्योम record_failed_login(काष्ठा ssh *, स्थिर अक्षर *, स्थिर अक्षर *,
+    स्थिर अक्षर *);
 
-#endif /* _HAVE_LOGINREC_H_ */
+#पूर्ण_अगर /* _HAVE_LOGINREC_H_ */

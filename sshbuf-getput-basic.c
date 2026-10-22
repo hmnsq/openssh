@@ -15,655 +15,655 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
+#समावेश <sys/types.h>
 
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
+#समावेश <stdarg.h>
+#समावेश <stdlib.h>
+#समावेश <stdio.h>
+#समावेश <string.h>
+#समावेश <stdint.h>
 
-#include "ssherr.h"
-#define SSHBUF_INTERNAL
-#include "sshbuf.h"
+#समावेश "ssherr.h"
+#घोषणा SSHBUF_INTERNAL
+#समावेश "sshbuf.h"
 
-int
-sshbuf_get(struct sshbuf *buf, void *v, size_t len)
+पूर्णांक
+sshbuf_get(काष्ठा sshbuf *buf, व्योम *v, माप_प्रकार len)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	स्थिर u_char *p = sshbuf_ptr(buf);
+	पूर्णांक r;
 
-	if ((r = sshbuf_consume(buf, len)) < 0)
-		return r;
-	if (v != NULL && len != 0)
-		memcpy(v, p, len);
-	return 0;
+	अगर ((r = sshbuf_consume(buf, len)) < 0)
+		वापस r;
+	अगर (v != शून्य && len != 0)
+		स_नकल(v, p, len);
+	वापस 0;
 }
 
-int
-sshbuf_get_u64(struct sshbuf *buf, uint64_t *valp)
+पूर्णांक
+sshbuf_get_u64(काष्ठा sshbuf *buf, uint64_t *valp)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	स्थिर u_char *p = sshbuf_ptr(buf);
+	पूर्णांक r;
 
-	if ((r = sshbuf_consume(buf, 8)) < 0)
-		return r;
-	if (valp != NULL)
+	अगर ((r = sshbuf_consume(buf, 8)) < 0)
+		वापस r;
+	अगर (valp != शून्य)
 		*valp = PEEK_U64(p);
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_get_u32(struct sshbuf *buf, uint32_t *valp)
+पूर्णांक
+sshbuf_get_u32(काष्ठा sshbuf *buf, uint32_t *valp)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	स्थिर u_char *p = sshbuf_ptr(buf);
+	पूर्णांक r;
 
-	if ((r = sshbuf_consume(buf, 4)) < 0)
-		return r;
-	if (valp != NULL)
+	अगर ((r = sshbuf_consume(buf, 4)) < 0)
+		वापस r;
+	अगर (valp != शून्य)
 		*valp = PEEK_U32(p);
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_get_u16(struct sshbuf *buf, uint16_t *valp)
+पूर्णांक
+sshbuf_get_u16(काष्ठा sshbuf *buf, uint16_t *valp)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	स्थिर u_char *p = sshbuf_ptr(buf);
+	पूर्णांक r;
 
-	if ((r = sshbuf_consume(buf, 2)) < 0)
-		return r;
-	if (valp != NULL)
+	अगर ((r = sshbuf_consume(buf, 2)) < 0)
+		वापस r;
+	अगर (valp != शून्य)
 		*valp = PEEK_U16(p);
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_get_u8(struct sshbuf *buf, u_char *valp)
+पूर्णांक
+sshbuf_get_u8(काष्ठा sshbuf *buf, u_char *valp)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	स्थिर u_char *p = sshbuf_ptr(buf);
+	पूर्णांक r;
 
-	if ((r = sshbuf_consume(buf, 1)) < 0)
-		return r;
-	if (valp != NULL)
+	अगर ((r = sshbuf_consume(buf, 1)) < 0)
+		वापस r;
+	अगर (valp != शून्य)
 		*valp = (uint8_t)*p;
-	return 0;
+	वापस 0;
 }
 
-static int
-check_offset(const struct sshbuf *buf, int wr, size_t offset, size_t len)
+अटल पूर्णांक
+check_offset(स्थिर काष्ठा sshbuf *buf, पूर्णांक wr, माप_प्रकार offset, माप_प्रकार len)
 {
-	if (sshbuf_ptr(buf) == NULL) /* calls sshbuf_check_sanity() */
-		return SSH_ERR_INTERNAL_ERROR;
-	if (offset >= SIZE_MAX - len)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (offset + len > sshbuf_len(buf)) {
-		return wr ?
-		    SSH_ERR_NO_BUFFER_SPACE : SSH_ERR_MESSAGE_INCOMPLETE;
+	अगर (sshbuf_ptr(buf) == शून्य) /* calls sshbuf_check_sanity() */
+		वापस SSH_ERR_INTERNAL_ERROR;
+	अगर (offset >= SIZE_MAX - len)
+		वापस SSH_ERR_INVALID_ARGUMENT;
+	अगर (offset + len > sshbuf_len(buf)) {
+		वापस wr ?
+		    SSH_ERR_NO_बफर_SPACE : SSH_ERR_MESSAGE_INCOMPLETE;
 	}
-	return 0;
+	वापस 0;
 }
 
-static int
-check_roffset(const struct sshbuf *buf, size_t offset, size_t len,
-    const u_char **p)
+अटल पूर्णांक
+check_roffset(स्थिर काष्ठा sshbuf *buf, माप_प्रकार offset, माप_प्रकार len,
+    स्थिर u_char **p)
 {
-	int r;
+	पूर्णांक r;
 
-	*p = NULL;
-	if ((r = check_offset(buf, 0, offset, len)) != 0)
-		return r;
+	*p = शून्य;
+	अगर ((r = check_offset(buf, 0, offset, len)) != 0)
+		वापस r;
 	*p = sshbuf_ptr(buf) + offset;
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_peek_u64(const struct sshbuf *buf, size_t offset, uint64_t *valp)
+पूर्णांक
+sshbuf_peek_u64(स्थिर काष्ठा sshbuf *buf, माप_प्रकार offset, uint64_t *valp)
 {
-	const u_char *p = NULL;
-	int r;
+	स्थिर u_char *p = शून्य;
+	पूर्णांक r;
 
-	if (valp != NULL)
+	अगर (valp != शून्य)
 		*valp = 0;
-	if ((r = check_roffset(buf, offset, 8, &p)) != 0)
-		return r;
-	if (valp != NULL)
+	अगर ((r = check_roffset(buf, offset, 8, &p)) != 0)
+		वापस r;
+	अगर (valp != शून्य)
 		*valp = PEEK_U64(p);
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_peek_u32(const struct sshbuf *buf, size_t offset, uint32_t *valp)
+पूर्णांक
+sshbuf_peek_u32(स्थिर काष्ठा sshbuf *buf, माप_प्रकार offset, uint32_t *valp)
 {
-	const u_char *p = NULL;
-	int r;
+	स्थिर u_char *p = शून्य;
+	पूर्णांक r;
 
-	if (valp != NULL)
+	अगर (valp != शून्य)
 		*valp = 0;
-	if ((r = check_roffset(buf, offset, 4, &p)) != 0)
-		return r;
-	if (valp != NULL)
+	अगर ((r = check_roffset(buf, offset, 4, &p)) != 0)
+		वापस r;
+	अगर (valp != शून्य)
 		*valp = PEEK_U32(p);
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_peek_u16(const struct sshbuf *buf, size_t offset, uint16_t *valp)
+पूर्णांक
+sshbuf_peek_u16(स्थिर काष्ठा sshbuf *buf, माप_प्रकार offset, uint16_t *valp)
 {
-	const u_char *p = NULL;
-	int r;
+	स्थिर u_char *p = शून्य;
+	पूर्णांक r;
 
-	if (valp != NULL)
+	अगर (valp != शून्य)
 		*valp = 0;
-	if ((r = check_roffset(buf, offset, 2, &p)) != 0)
-		return r;
-	if (valp != NULL)
+	अगर ((r = check_roffset(buf, offset, 2, &p)) != 0)
+		वापस r;
+	अगर (valp != शून्य)
 		*valp = PEEK_U16(p);
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_peek_u8(const struct sshbuf *buf, size_t offset, u_char *valp)
+पूर्णांक
+sshbuf_peek_u8(स्थिर काष्ठा sshbuf *buf, माप_प्रकार offset, u_char *valp)
 {
-	const u_char *p = NULL;
-	int r;
+	स्थिर u_char *p = शून्य;
+	पूर्णांक r;
 
-	if (valp != NULL)
+	अगर (valp != शून्य)
 		*valp = 0;
-	if ((r = check_roffset(buf, offset, 1, &p)) != 0)
-		return r;
-	if (valp != NULL)
+	अगर ((r = check_roffset(buf, offset, 1, &p)) != 0)
+		वापस r;
+	अगर (valp != शून्य)
 		*valp = *p;
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_get_string(struct sshbuf *buf, u_char **valp, size_t *lenp)
+पूर्णांक
+sshbuf_get_string(काष्ठा sshbuf *buf, u_char **valp, माप_प्रकार *lenp)
 {
-	const u_char *val;
-	size_t len;
-	int r;
+	स्थिर u_char *val;
+	माप_प्रकार len;
+	पूर्णांक r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	अगर (valp != शून्य)
+		*valp = शून्य;
+	अगर (lenp != शून्य)
 		*lenp = 0;
-	if ((r = sshbuf_get_string_direct(buf, &val, &len)) < 0)
-		return r;
-	if (valp != NULL) {
-		if ((*valp = malloc(len + 1)) == NULL) {
+	अगर ((r = sshbuf_get_string_direct(buf, &val, &len)) < 0)
+		वापस r;
+	अगर (valp != शून्य) {
+		अगर ((*valp = दो_स्मृति(len + 1)) == शून्य) {
 			SSHBUF_DBG(("SSH_ERR_ALLOC_FAIL"));
-			return SSH_ERR_ALLOC_FAIL;
+			वापस SSH_ERR_ALLOC_FAIL;
 		}
-		if (len != 0)
-			memcpy(*valp, val, len);
+		अगर (len != 0)
+			स_नकल(*valp, val, len);
 		(*valp)[len] = '\0';
 	}
-	if (lenp != NULL)
+	अगर (lenp != शून्य)
 		*lenp = len;
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_get_string_direct(struct sshbuf *buf, const u_char **valp, size_t *lenp)
+पूर्णांक
+sshbuf_get_string_direct(काष्ठा sshbuf *buf, स्थिर u_char **valp, माप_प्रकार *lenp)
 {
-	size_t len;
-	const u_char *p;
-	int r;
+	माप_प्रकार len;
+	स्थिर u_char *p;
+	पूर्णांक r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	अगर (valp != शून्य)
+		*valp = शून्य;
+	अगर (lenp != शून्य)
 		*lenp = 0;
-	if ((r = sshbuf_peek_string_direct(buf, &p, &len)) < 0)
-		return r;
-	if (valp != NULL)
+	अगर ((r = sshbuf_peek_string_direct(buf, &p, &len)) < 0)
+		वापस r;
+	अगर (valp != शून्य)
 		*valp = p;
-	if (lenp != NULL)
+	अगर (lenp != शून्य)
 		*lenp = len;
-	if (sshbuf_consume(buf, len + 4) != 0) {
+	अगर (sshbuf_consume(buf, len + 4) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		वापस SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_peek_string_direct(const struct sshbuf *buf, const u_char **valp,
-    size_t *lenp)
+पूर्णांक
+sshbuf_peek_string_direct(स्थिर काष्ठा sshbuf *buf, स्थिर u_char **valp,
+    माप_प्रकार *lenp)
 {
 	uint32_t len;
-	const u_char *p = sshbuf_ptr(buf);
+	स्थिर u_char *p = sshbuf_ptr(buf);
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	अगर (valp != शून्य)
+		*valp = शून्य;
+	अगर (lenp != शून्य)
 		*lenp = 0;
-	if (sshbuf_len(buf) < 4) {
+	अगर (sshbuf_len(buf) < 4) {
 		SSHBUF_DBG(("SSH_ERR_MESSAGE_INCOMPLETE"));
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+		वापस SSH_ERR_MESSAGE_INCOMPLETE;
 	}
 	len = PEEK_U32(p);
-	if (len > SSHBUF_SIZE_MAX - 4) {
+	अगर (len > SSHBUF_आकार_MAX - 4) {
 		SSHBUF_DBG(("SSH_ERR_STRING_TOO_LARGE"));
-		return SSH_ERR_STRING_TOO_LARGE;
+		वापस SSH_ERR_STRING_TOO_LARGE;
 	}
-	if (sshbuf_len(buf) - 4 < len) {
+	अगर (sshbuf_len(buf) - 4 < len) {
 		SSHBUF_DBG(("SSH_ERR_MESSAGE_INCOMPLETE"));
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+		वापस SSH_ERR_MESSAGE_INCOMPLETE;
 	}
-	if (valp != NULL)
+	अगर (valp != शून्य)
 		*valp = p + 4;
-	if (lenp != NULL)
+	अगर (lenp != शून्य)
 		*lenp = len;
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_get_cstring(struct sshbuf *buf, char **valp, size_t *lenp)
+पूर्णांक
+sshbuf_get_cstring(काष्ठा sshbuf *buf, अक्षर **valp, माप_प्रकार *lenp)
 {
-	size_t len;
-	const u_char *p, *z;
-	int r;
+	माप_प्रकार len;
+	स्थिर u_char *p, *z;
+	पूर्णांक r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	अगर (valp != शून्य)
+		*valp = शून्य;
+	अगर (lenp != शून्य)
 		*lenp = 0;
-	if ((r = sshbuf_peek_string_direct(buf, &p, &len)) != 0)
-		return r;
+	अगर ((r = sshbuf_peek_string_direct(buf, &p, &len)) != 0)
+		वापस r;
 	/* Allow a \0 only at the end of the string */
-	if (len > 0 &&
-	    (z = memchr(p , '\0', len)) != NULL && z < p + len - 1) {
+	अगर (len > 0 &&
+	    (z = स_प्रथम(p , '\0', len)) != शून्य && z < p + len - 1) {
 		SSHBUF_DBG(("SSH_ERR_INVALID_FORMAT"));
-		return SSH_ERR_INVALID_FORMAT;
+		वापस SSH_ERR_INVALID_FORMAT;
 	}
-	if ((r = sshbuf_skip_string(buf)) != 0)
-		return -1;
-	if (valp != NULL) {
-		if ((*valp = malloc(len + 1)) == NULL) {
+	अगर ((r = sshbuf_skip_string(buf)) != 0)
+		वापस -1;
+	अगर (valp != शून्य) {
+		अगर ((*valp = दो_स्मृति(len + 1)) == शून्य) {
 			SSHBUF_DBG(("SSH_ERR_ALLOC_FAIL"));
-			return SSH_ERR_ALLOC_FAIL;
+			वापस SSH_ERR_ALLOC_FAIL;
 		}
-		if (len != 0)
-			memcpy(*valp, p, len);
+		अगर (len != 0)
+			स_नकल(*valp, p, len);
 		(*valp)[len] = '\0';
 	}
-	if (lenp != NULL)
-		*lenp = (size_t)len;
-	return 0;
+	अगर (lenp != शून्य)
+		*lenp = (माप_प्रकार)len;
+	वापस 0;
 }
 
-int
-sshbuf_get_stringb(struct sshbuf *buf, struct sshbuf *v)
+पूर्णांक
+sshbuf_get_stringb(काष्ठा sshbuf *buf, काष्ठा sshbuf *v)
 {
 	uint32_t len;
 	u_char *p;
-	int r;
+	पूर्णांक r;
 
 	/*
 	 * Use sshbuf_peek_string_direct() to figure out if there is
 	 * a complete string in 'buf' and copy the string directly
 	 * into 'v'.
 	 */
-	if ((r = sshbuf_peek_string_direct(buf, NULL, NULL)) != 0 ||
+	अगर ((r = sshbuf_peek_string_direct(buf, शून्य, शून्य)) != 0 ||
 	    (r = sshbuf_get_u32(buf, &len)) != 0 ||
 	    (r = sshbuf_reserve(v, len, &p)) != 0 ||
 	    (r = sshbuf_get(buf, p, len)) != 0)
-		return r;
-	return 0;
+		वापस r;
+	वापस 0;
 }
 
-int
-sshbuf_put(struct sshbuf *buf, const void *v, size_t len)
+पूर्णांक
+sshbuf_put(काष्ठा sshbuf *buf, स्थिर व्योम *v, माप_प्रकार len)
 {
 	u_char *p;
-	int r;
+	पूर्णांक r;
 
-	if ((r = sshbuf_reserve(buf, len, &p)) < 0)
-		return r;
-	if (len != 0)
-		memcpy(p, v, len);
-	return 0;
+	अगर ((r = sshbuf_reserve(buf, len, &p)) < 0)
+		वापस r;
+	अगर (len != 0)
+		स_नकल(p, v, len);
+	वापस 0;
 }
 
-int
-sshbuf_putb(struct sshbuf *buf, const struct sshbuf *v)
+पूर्णांक
+sshbuf_putb(काष्ठा sshbuf *buf, स्थिर काष्ठा sshbuf *v)
 {
-	if (v == NULL)
-		return 0;
-	return sshbuf_put(buf, sshbuf_ptr(v), sshbuf_len(v));
+	अगर (v == शून्य)
+		वापस 0;
+	वापस sshbuf_put(buf, sshbuf_ptr(v), sshbuf_len(v));
 }
 
-int
-sshbuf_putf(struct sshbuf *buf, const char *fmt, ...)
+पूर्णांक
+sshbuf_putf(काष्ठा sshbuf *buf, स्थिर अक्षर *fmt, ...)
 {
-	va_list ap;
-	int r;
+	बहु_सूची ap;
+	पूर्णांक r;
 
-	va_start(ap, fmt);
+	बहु_शुरू(ap, fmt);
 	r = sshbuf_putfv(buf, fmt, ap);
-	va_end(ap);
-	return r;
+	बहु_पूर्ण(ap);
+	वापस r;
 }
 
-int
-sshbuf_putfv(struct sshbuf *buf, const char *fmt, va_list ap)
+पूर्णांक
+sshbuf_putfv(काष्ठा sshbuf *buf, स्थिर अक्षर *fmt, बहु_सूची ap)
 {
-	va_list ap2;
-	int r, len;
+	बहु_सूची ap2;
+	पूर्णांक r, len;
 	u_char *p;
 
 	VA_COPY(ap2, ap);
-	if ((len = vsnprintf(NULL, 0, fmt, ap2)) < 0) {
+	अगर ((len = vsnprintf(शून्य, 0, fmt, ap2)) < 0) {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		जाओ out;
 	}
-	if (len == 0) {
+	अगर (len == 0) {
 		r = 0;
-		goto out; /* Nothing to do */
+		जाओ out; /* Nothing to do */
 	}
-	va_end(ap2);
+	बहु_पूर्ण(ap2);
 	VA_COPY(ap2, ap);
-	if ((r = sshbuf_reserve(buf, (size_t)len + 1, &p)) < 0)
-		goto out;
-	if ((r = vsnprintf((char *)p, len + 1, fmt, ap2)) != len) {
+	अगर ((r = sshbuf_reserve(buf, (माप_प्रकार)len + 1, &p)) < 0)
+		जाओ out;
+	अगर ((r = vsnprintf((अक्षर *)p, len + 1, fmt, ap2)) != len) {
 		r = SSH_ERR_INTERNAL_ERROR;
-		goto out; /* Shouldn't happen */
+		जाओ out; /* Shouldn't happen */
 	}
 	/* Consume terminating \0 */
-	if ((r = sshbuf_consume_end(buf, 1)) != 0)
-		goto out;
+	अगर ((r = sshbuf_consume_end(buf, 1)) != 0)
+		जाओ out;
 	r = 0;
  out:
-	va_end(ap2);
-	return r;
+	बहु_पूर्ण(ap2);
+	वापस r;
 }
 
-int
-sshbuf_put_u64(struct sshbuf *buf, uint64_t val)
+पूर्णांक
+sshbuf_put_u64(काष्ठा sshbuf *buf, uint64_t val)
 {
 	u_char *p;
-	int r;
+	पूर्णांक r;
 
-	if ((r = sshbuf_reserve(buf, 8, &p)) < 0)
-		return r;
+	अगर ((r = sshbuf_reserve(buf, 8, &p)) < 0)
+		वापस r;
 	POKE_U64(p, val);
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_put_u32(struct sshbuf *buf, uint32_t val)
+पूर्णांक
+sshbuf_put_u32(काष्ठा sshbuf *buf, uint32_t val)
 {
 	u_char *p;
-	int r;
+	पूर्णांक r;
 
-	if ((r = sshbuf_reserve(buf, 4, &p)) < 0)
-		return r;
+	अगर ((r = sshbuf_reserve(buf, 4, &p)) < 0)
+		वापस r;
 	POKE_U32(p, val);
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_put_u16(struct sshbuf *buf, uint16_t val)
+पूर्णांक
+sshbuf_put_u16(काष्ठा sshbuf *buf, uint16_t val)
 {
 	u_char *p;
-	int r;
+	पूर्णांक r;
 
-	if ((r = sshbuf_reserve(buf, 2, &p)) < 0)
-		return r;
+	अगर ((r = sshbuf_reserve(buf, 2, &p)) < 0)
+		वापस r;
 	POKE_U16(p, val);
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_put_u8(struct sshbuf *buf, u_char val)
+पूर्णांक
+sshbuf_put_u8(काष्ठा sshbuf *buf, u_char val)
 {
 	u_char *p;
-	int r;
+	पूर्णांक r;
 
-	if ((r = sshbuf_reserve(buf, 1, &p)) < 0)
-		return r;
+	अगर ((r = sshbuf_reserve(buf, 1, &p)) < 0)
+		वापस r;
 	p[0] = val;
-	return 0;
+	वापस 0;
 }
 
-static int
-check_woffset(struct sshbuf *buf, size_t offset, size_t len, u_char **p)
+अटल पूर्णांक
+check_woffset(काष्ठा sshbuf *buf, माप_प्रकार offset, माप_प्रकार len, u_char **p)
 {
-	int r;
+	पूर्णांक r;
 
-	*p = NULL;
-	if ((r = check_offset(buf, 1, offset, len)) != 0)
-		return r;
-	if (sshbuf_mutable_ptr(buf) == NULL)
-		return SSH_ERR_BUFFER_READ_ONLY;
+	*p = शून्य;
+	अगर ((r = check_offset(buf, 1, offset, len)) != 0)
+		वापस r;
+	अगर (sshbuf_mutable_ptr(buf) == शून्य)
+		वापस SSH_ERR_बफर_READ_ONLY;
 	*p = sshbuf_mutable_ptr(buf) + offset;
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_poke_u64(struct sshbuf *buf, size_t offset, uint64_t val)
+पूर्णांक
+sshbuf_poke_u64(काष्ठा sshbuf *buf, माप_प्रकार offset, uint64_t val)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = शून्य;
+	पूर्णांक r;
 
-	if ((r = check_woffset(buf, offset, 8, &p)) != 0)
-		return r;
+	अगर ((r = check_woffset(buf, offset, 8, &p)) != 0)
+		वापस r;
 	POKE_U64(p, val);
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_poke_u32(struct sshbuf *buf, size_t offset, uint32_t val)
+पूर्णांक
+sshbuf_poke_u32(काष्ठा sshbuf *buf, माप_प्रकार offset, uint32_t val)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = शून्य;
+	पूर्णांक r;
 
-	if ((r = check_woffset(buf, offset, 4, &p)) != 0)
-		return r;
+	अगर ((r = check_woffset(buf, offset, 4, &p)) != 0)
+		वापस r;
 	POKE_U32(p, val);
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_poke_u16(struct sshbuf *buf, size_t offset, uint16_t val)
+पूर्णांक
+sshbuf_poke_u16(काष्ठा sshbuf *buf, माप_प्रकार offset, uint16_t val)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = शून्य;
+	पूर्णांक r;
 
-	if ((r = check_woffset(buf, offset, 2, &p)) != 0)
-		return r;
+	अगर ((r = check_woffset(buf, offset, 2, &p)) != 0)
+		वापस r;
 	POKE_U16(p, val);
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_poke_u8(struct sshbuf *buf, size_t offset, u_char val)
+पूर्णांक
+sshbuf_poke_u8(काष्ठा sshbuf *buf, माप_प्रकार offset, u_char val)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = शून्य;
+	पूर्णांक r;
 
-	if ((r = check_woffset(buf, offset, 1, &p)) != 0)
-		return r;
+	अगर ((r = check_woffset(buf, offset, 1, &p)) != 0)
+		वापस r;
 	*p = val;
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_poke(struct sshbuf *buf, size_t offset, void *v, size_t len)
+पूर्णांक
+sshbuf_poke(काष्ठा sshbuf *buf, माप_प्रकार offset, व्योम *v, माप_प्रकार len)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = शून्य;
+	पूर्णांक r;
 
-	if ((r = check_woffset(buf, offset, len, &p)) != 0)
-		return r;
-	memcpy(p, v, len);
-	return 0;
+	अगर ((r = check_woffset(buf, offset, len, &p)) != 0)
+		वापस r;
+	स_नकल(p, v, len);
+	वापस 0;
 }
 
-int
-sshbuf_put_string(struct sshbuf *buf, const void *v, size_t len)
+पूर्णांक
+sshbuf_put_string(काष्ठा sshbuf *buf, स्थिर व्योम *v, माप_प्रकार len)
 {
 	u_char *d;
-	int r;
+	पूर्णांक r;
 
-	if (len > SSHBUF_SIZE_MAX - 4) {
+	अगर (len > SSHBUF_आकार_MAX - 4) {
 		SSHBUF_DBG(("SSH_ERR_NO_BUFFER_SPACE"));
-		return SSH_ERR_NO_BUFFER_SPACE;
+		वापस SSH_ERR_NO_बफर_SPACE;
 	}
-	if ((r = sshbuf_reserve(buf, len + 4, &d)) < 0)
-		return r;
+	अगर ((r = sshbuf_reserve(buf, len + 4, &d)) < 0)
+		वापस r;
 	POKE_U32(d, len);
-	if (len != 0)
-		memcpy(d + 4, v, len);
-	return 0;
+	अगर (len != 0)
+		स_नकल(d + 4, v, len);
+	वापस 0;
 }
 
-int
-sshbuf_put_cstring(struct sshbuf *buf, const char *v)
+पूर्णांक
+sshbuf_put_cstring(काष्ठा sshbuf *buf, स्थिर अक्षर *v)
 {
-	return sshbuf_put_string(buf, v, v == NULL ? 0 : strlen(v));
+	वापस sshbuf_put_string(buf, v, v == शून्य ? 0 : म_माप(v));
 }
 
-int
-sshbuf_put_stringb(struct sshbuf *buf, const struct sshbuf *v)
+पूर्णांक
+sshbuf_put_stringb(काष्ठा sshbuf *buf, स्थिर काष्ठा sshbuf *v)
 {
-	if (v == NULL)
-		return sshbuf_put_string(buf, NULL, 0);
+	अगर (v == शून्य)
+		वापस sshbuf_put_string(buf, शून्य, 0);
 
-	return sshbuf_put_string(buf, sshbuf_ptr(v), sshbuf_len(v));
+	वापस sshbuf_put_string(buf, sshbuf_ptr(v), sshbuf_len(v));
 }
 
-int
-sshbuf_froms(struct sshbuf *buf, struct sshbuf **bufp)
+पूर्णांक
+sshbuf_froms(काष्ठा sshbuf *buf, काष्ठा sshbuf **bufp)
 {
-	const u_char *p;
-	size_t len;
-	struct sshbuf *ret;
-	int r;
+	स्थिर u_char *p;
+	माप_प्रकार len;
+	काष्ठा sshbuf *ret;
+	पूर्णांक r;
 
-	if (buf == NULL || bufp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	*bufp = NULL;
-	if ((r = sshbuf_peek_string_direct(buf, &p, &len)) != 0)
-		return r;
-	if ((ret = sshbuf_from(p, len)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_consume(buf, len + 4)) != 0 ||  /* Shouldn't happen */
+	अगर (buf == शून्य || bufp == शून्य)
+		वापस SSH_ERR_INVALID_ARGUMENT;
+	*bufp = शून्य;
+	अगर ((r = sshbuf_peek_string_direct(buf, &p, &len)) != 0)
+		वापस r;
+	अगर ((ret = sshbuf_from(p, len)) == शून्य)
+		वापस SSH_ERR_ALLOC_FAIL;
+	अगर ((r = sshbuf_consume(buf, len + 4)) != 0 ||  /* Shouldn't happen */
 	    (r = sshbuf_set_parent(ret, buf)) != 0) {
 		sshbuf_free(ret);
-		return r;
+		वापस r;
 	}
 	*bufp = ret;
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_put_bignum2_bytes(struct sshbuf *buf, const void *v, size_t len)
+पूर्णांक
+sshbuf_put_bignum2_bytes(काष्ठा sshbuf *buf, स्थिर व्योम *v, माप_प्रकार len)
 {
 	u_char *d;
-	const u_char *s = (const u_char *)v;
-	int r, prepend;
+	स्थिर u_char *s = (स्थिर u_char *)v;
+	पूर्णांक r, prepend;
 
-	if (len > SSHBUF_SIZE_MAX - 5) {
+	अगर (len > SSHBUF_आकार_MAX - 5) {
 		SSHBUF_DBG(("SSH_ERR_NO_BUFFER_SPACE"));
-		return SSH_ERR_NO_BUFFER_SPACE;
+		वापस SSH_ERR_NO_बफर_SPACE;
 	}
 	/* Skip leading zero bytes */
-	for (; len > 0 && *s == 0; len--, s++)
+	क्रम (; len > 0 && *s == 0; len--, s++)
 		;
 	/*
 	 * If most significant bit is set then prepend a zero byte to
 	 * avoid interpretation as a negative number.
 	 */
 	prepend = len > 0 && (s[0] & 0x80) != 0;
-	if ((r = sshbuf_reserve(buf, len + 4 + prepend, &d)) < 0)
-		return r;
+	अगर ((r = sshbuf_reserve(buf, len + 4 + prepend, &d)) < 0)
+		वापस r;
 	POKE_U32(d, len + prepend);
-	if (prepend)
+	अगर (prepend)
 		d[4] = 0;
-	if (len != 0)
-		memcpy(d + 4 + prepend, s, len);
-	return 0;
+	अगर (len != 0)
+		स_नकल(d + 4 + prepend, s, len);
+	वापस 0;
 }
 
-int
-sshbuf_get_bignum2_bytes_direct(struct sshbuf *buf,
-    const u_char **valp, size_t *lenp)
+पूर्णांक
+sshbuf_get_bignum2_bytes_direct(काष्ठा sshbuf *buf,
+    स्थिर u_char **valp, माप_प्रकार *lenp)
 {
-	const u_char *d;
-	size_t len, olen;
-	int r;
+	स्थिर u_char *d;
+	माप_प्रकार len, olen;
+	पूर्णांक r;
 
-	if ((r = sshbuf_peek_string_direct(buf, &d, &olen)) < 0)
-		return r;
+	अगर ((r = sshbuf_peek_string_direct(buf, &d, &olen)) < 0)
+		वापस r;
 	len = olen;
 	/* Refuse negative (MSB set) bignums */
-	if ((len != 0 && (*d & 0x80) != 0))
-		return SSH_ERR_BIGNUM_IS_NEGATIVE;
+	अगर ((len != 0 && (*d & 0x80) != 0))
+		वापस SSH_ERR_BIGNUM_IS_NEGATIVE;
 	/* Refuse overlong bignums, allow prepended \0 to avoid MSB set */
-	if (len > SSHBUF_MAX_BIGNUM + 1 ||
+	अगर (len > SSHBUF_MAX_BIGNUM + 1 ||
 	    (len == SSHBUF_MAX_BIGNUM + 1 && *d != 0))
-		return SSH_ERR_BIGNUM_TOO_LARGE;
+		वापस SSH_ERR_BIGNUM_TOO_LARGE;
 	/* Trim leading zeros */
-	while (len > 0 && *d == 0x00) {
+	जबतक (len > 0 && *d == 0x00) {
 		d++;
 		len--;
 	}
-	if (valp != NULL)
+	अगर (valp != शून्य)
 		*valp = d;
-	if (lenp != NULL)
+	अगर (lenp != शून्य)
 		*lenp = len;
-	if (sshbuf_consume(buf, olen + 4) != 0) {
+	अगर (sshbuf_consume(buf, olen + 4) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		वापस SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	वापस 0;
 }
 
-int
-sshbuf_get_nulterminated_string(struct sshbuf *buf, size_t maxlen,
-    char **valp, size_t *lenp)
+पूर्णांक
+sshbuf_get_nulterminated_string(काष्ठा sshbuf *buf, माप_प्रकार maxlen,
+    अक्षर **valp, माप_प्रकार *lenp)
 {
-	const u_char zero = 0;
-	char *val = NULL;
-	size_t len = 0;
-	int r;
+	स्थिर u_char zero = 0;
+	अक्षर *val = शून्य;
+	माप_प्रकार len = 0;
+	पूर्णांक r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	अगर (valp != शून्य)
+		*valp = शून्य;
+	अगर (lenp != शून्य)
 		*lenp = 0;
-	if ((r = sshbuf_find(buf, 0, &zero, sizeof(zero), &len)) != 0) {
-		if (r == SSH_ERR_INVALID_FORMAT && sshbuf_len(buf) < maxlen)
-			return SSH_ERR_MESSAGE_INCOMPLETE;
-		return r;
+	अगर ((r = sshbuf_find(buf, 0, &zero, माप(zero), &len)) != 0) {
+		अगर (r == SSH_ERR_INVALID_FORMAT && sshbuf_len(buf) < maxlen)
+			वापस SSH_ERR_MESSAGE_INCOMPLETE;
+		वापस r;
 	}
-	if (len > maxlen)
-		return SSH_ERR_INVALID_FORMAT;
+	अगर (len > maxlen)
+		वापस SSH_ERR_INVALID_FORMAT;
 	/* can strdup() because it's definitely nul-terminated */
-	if ((val = strdup(sshbuf_ptr(buf))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_consume(buf, len + 1)) != 0)
-		goto out;
+	अगर ((val = strdup(sshbuf_ptr(buf))) == शून्य)
+		वापस SSH_ERR_ALLOC_FAIL;
+	अगर ((r = sshbuf_consume(buf, len + 1)) != 0)
+		जाओ out;
 	/* success */
 	r = 0;
-	if (valp != NULL) {
+	अगर (valp != शून्य) {
 		*valp = val;
-		val = NULL;
+		val = शून्य;
 	}
-	if (lenp != NULL)
+	अगर (lenp != शून्य)
 		*lenp = len;
  out:
-	free(val);
-	return r;
+	मुक्त(val);
+	वापस r;
 }

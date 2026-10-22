@@ -30,51 +30,51 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/daemon.c */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#ifndef HAVE_DAEMON
+#अगर_अघोषित HAVE_DAEMON
 
-#include <sys/types.h>
+#समावेश <sys/types.h>
 
-#include <sys/stat.h>
+#समावेश <sys/stat.h>
 
-#ifdef HAVE_FCNTL_H
+#अगर_घोषित HAVE_FCNTL_H
 # include <fcntl.h>
-#endif
+#पूर्ण_अगर
 
-#ifdef HAVE_UNISTD_H
+#अगर_घोषित HAVE_UNISTD_H
 # include <unistd.h>
-#endif
+#पूर्ण_अगर
 
-int
-daemon(int nochdir, int noclose)
+पूर्णांक
+daemon(पूर्णांक nochdir, पूर्णांक noclose)
 {
-	int fd;
+	पूर्णांक fd;
 
-	switch (fork()) {
-	case -1:
-		return (-1);
-	case 0:
-		break;
-	default:
-		_exit(0);
+	चयन (विभाजन()) {
+	हाल -1:
+		वापस (-1);
+	हाल 0:
+		अवरोध;
+	शेष:
+		_निकास(0);
 	}
 
-	if (setsid() == -1)
-		return (-1);
+	अगर (setsid() == -1)
+		वापस (-1);
 
-	if (!nochdir)
-		(void)chdir("/");
+	अगर (!nochdir)
+		(व्योम)स_बदलो("/");
 
-	if (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
-		(void)dup2(fd, STDIN_FILENO);
-		(void)dup2(fd, STDOUT_FILENO);
-		(void)dup2(fd, STDERR_FILENO);
-		if (fd > 2)
-			(void)close (fd);
+	अगर (!noclose && (fd = खोलो(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
+		(व्योम)dup2(fd, STDIN_FILENO);
+		(व्योम)dup2(fd, STDOUT_FILENO);
+		(व्योम)dup2(fd, STDERR_FILENO);
+		अगर (fd > 2)
+			(व्योम)बंद (fd);
 	}
-	return (0);
+	वापस (0);
 }
 
-#endif /* !HAVE_DAEMON */
+#पूर्ण_अगर /* !HAVE_DAEMON */
 

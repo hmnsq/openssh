@@ -42,49 +42,49 @@
 
 /* OPENBSD ORIGINAL: lib/libcurses/SigAction.h */
 
-#ifndef _SIGACTION_H
-#define _SIGACTION_H
+#अगर_अघोषित _SIGACTION_H
+#घोषणा _SIGACTION_H
 
-#if !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC)
+#अगर !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC)
 
-#undef  SIG_BLOCK
-#define SIG_BLOCK       00
+#अघोषित  SIG_BLOCK
+#घोषणा SIG_BLOCK       00
 
-#undef  SIG_UNBLOCK
-#define SIG_UNBLOCK     01
+#अघोषित  SIG_UNBLOCK
+#घोषणा SIG_UNBLOCK     01
 
-#undef  SIG_SETMASK
-#define SIG_SETMASK     02
+#अघोषित  SIG_SETMASK
+#घोषणा SIG_SETMASK     02
 
 /*
  * <bsd/signal.h> is in the Linux 1.2.8 + gcc 2.7.0 configuration,
  * and is useful for testing this header file.
  */
-#if HAVE_BSD_SIGNAL_H
+#अगर HAVE_BSD_SIGNAL_H
 # include <bsd/signal.h>
-#endif
+#पूर्ण_अगर
 
-struct sigaction
+काष्ठा sigaction
 {
-	struct sigvec sv;
+	काष्ठा sigvec sv;
 };
 
-typedef unsigned long sigset_t;
+प्रकार अचिन्हित दीर्घ sigset_t;
 
-#undef  sa_mask
-#define sa_mask sv.sv_mask
-#undef  sa_handler
-#define sa_handler sv.sv_handler
-#undef  sa_flags
-#define sa_flags sv.sv_flags
+#अघोषित  sa_mask
+#घोषणा sa_mask sv.sv_mask
+#अघोषित  sa_handler
+#घोषणा sa_handler sv.sv_handler
+#अघोषित  sa_flags
+#घोषणा sa_flags sv.sv_flags
 
-int sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact);
-int sigprocmask (int how, sigset_t *mask, sigset_t *omask);
-int sigemptyset (sigset_t *mask);
-int sigsuspend (sigset_t *mask);
-int sigdelset (sigset_t *mask, int sig);
-int sigaddset (sigset_t *mask, int sig);
+पूर्णांक sigaction(पूर्णांक sig, काष्ठा sigaction *sigact, काष्ठा sigaction *osigact);
+पूर्णांक sigprocmask (पूर्णांक how, sigset_t *mask, sigset_t *omask);
+पूर्णांक sigemptyset (sigset_t *mask);
+पूर्णांक संक_रोको (sigset_t *mask);
+पूर्णांक sigdelset (sigset_t *mask, पूर्णांक sig);
+पूर्णांक sigaddset (sigset_t *mask, पूर्णांक sig);
 
-#endif /* !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC) */
+#पूर्ण_अगर /* !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC) */
 
-#endif /* !defined(_SIGACTION_H) */
+#पूर्ण_अगर /* !defined(_SIGACTION_H) */

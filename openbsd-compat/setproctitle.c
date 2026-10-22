@@ -31,49 +31,49 @@
  * SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#ifndef HAVE_SETPROCTITLE
+#अगर_अघोषित HAVE_SETPROCTITLE
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#ifdef HAVE_SYS_PSTAT_H
-#include <sys/pstat.h>
-#endif
-#include <string.h>
+#समावेश <stdarg.h>
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <unistd.h>
+#अगर_घोषित HAVE_SYS_PSTAT_H
+#समावेश <sys/pstat.h>
+#पूर्ण_अगर
+#समावेश <string.h>
 
-#include <vis.h>
+#समावेश <vis.h>
 
-#define SPT_NONE	0	/* don't use it at all */
-#define SPT_PSTAT	1	/* use pstat(PSTAT_SETCMD, ...) */
-#define SPT_REUSEARGV	2	/* cover argv with title information */
+#घोषणा SPT_NONE	0	/* don't use it at all */
+#घोषणा SPT_PSTAT	1	/* use pstat(PSTAT_SETCMD, ...) */
+#घोषणा SPT_REUSEARGV	2	/* cover argv with title information */
 
-#ifndef SPT_TYPE
+#अगर_अघोषित SPT_TYPE
 # define SPT_TYPE	SPT_NONE
-#endif
+#पूर्ण_अगर
 
-#ifndef SPT_PADCHAR
+#अगर_अघोषित SPT_PADCHAR
 # define SPT_PADCHAR	'\0'
-#endif
+#पूर्ण_अगर
 
-#if SPT_TYPE == SPT_REUSEARGV
-static char *argv_start = NULL;
-static size_t argv_env_len = 0;
-#endif
+#अगर SPT_TYPE == SPT_REUSEARGV
+अटल अक्षर *argv_start = शून्य;
+अटल माप_प्रकार argv_env_len = 0;
+#पूर्ण_अगर
 
-#endif /* HAVE_SETPROCTITLE */
+#पूर्ण_अगर /* HAVE_SETPROCTITLE */
 
-void
-compat_init_setproctitle(int argc, char *argv[])
+व्योम
+compat_init_setproctitle(पूर्णांक argc, अक्षर *argv[])
 {
-#if !defined(HAVE_SETPROCTITLE) && \
+#अगर !defined(HAVE_SETPROCTITLE) && \
     defined(SPT_TYPE) && SPT_TYPE == SPT_REUSEARGV
-	extern char **environ;
-	char *lastargv = NULL;
-	char **envp = environ;
-	int i;
+	बाह्य अक्षर **environ;
+	अक्षर *lastargv = शून्य;
+	अक्षर **envp = environ;
+	पूर्णांक i;
 
 	/*
 	 * NB: This assumes that argv has already been copied out of the
@@ -81,31 +81,31 @@ compat_init_setproctitle(int argc, char *argv[])
 	 * programs. Beware.
 	 */
 
-	if (argc == 0 || argv[0] == NULL)
-		return;
+	अगर (argc == 0 || argv[0] == शून्य)
+		वापस;
 
 	/* Fail if we can't allocate room for the new environment */
-	for (i = 0; envp[i] != NULL; i++)
+	क्रम (i = 0; envp[i] != शून्य; i++)
 		;
-	if ((environ = calloc(i + 1, sizeof(*environ))) == NULL) {
+	अगर ((environ = सुस्मृति(i + 1, माप(*environ))) == शून्य) {
 		environ = envp;	/* put it back */
-		return;
+		वापस;
 	}
 
 	/*
 	 * Find the last argv string or environment variable within
 	 * our process memory area.
 	 */
-	for (i = 0; i < argc; i++) {
-		if (lastargv == NULL || lastargv + 1 == argv[i])
-			lastargv = argv[i] + strlen(argv[i]);
+	क्रम (i = 0; i < argc; i++) {
+		अगर (lastargv == शून्य || lastargv + 1 == argv[i])
+			lastargv = argv[i] + म_माप(argv[i]);
 	}
-	for (i = 0; envp[i] != NULL; i++) {
-		if (lastargv + 1 == envp[i])
-			lastargv = envp[i] + strlen(envp[i]);
+	क्रम (i = 0; envp[i] != शून्य; i++) {
+		अगर (lastargv + 1 == envp[i])
+			lastargv = envp[i] + म_माप(envp[i]);
 	}
 
-	argv[1] = NULL;
+	argv[1] = शून्य;
 	argv_start = argv[0];
 	argv_env_len = lastargv - argv[0] - 1;
 
@@ -113,58 +113,58 @@ compat_init_setproctitle(int argc, char *argv[])
 	 * Copy environment
 	 * XXX - will truncate env on strdup fail
 	 */
-	for (i = 0; envp[i] != NULL; i++)
+	क्रम (i = 0; envp[i] != शून्य; i++)
 		environ[i] = strdup(envp[i]);
-	environ[i] = NULL;
-#endif /* SPT_REUSEARGV */
+	environ[i] = शून्य;
+#पूर्ण_अगर /* SPT_REUSEARGV */
 }
 
-#ifndef HAVE_SETPROCTITLE
-void
-setproctitle(const char *fmt, ...)
+#अगर_अघोषित HAVE_SETPROCTITLE
+व्योम
+setproctitle(स्थिर अक्षर *fmt, ...)
 {
-#if SPT_TYPE != SPT_NONE
-	va_list ap;
-	char buf[1024], ptitle[1024];
-	size_t len = 0;
-	int r;
-	extern char *__progname;
-#if SPT_TYPE == SPT_PSTAT
-	union pstun pst;
-#endif
+#अगर SPT_TYPE != SPT_NONE
+	बहु_सूची ap;
+	अक्षर buf[1024], ptitle[1024];
+	माप_प्रकार len = 0;
+	पूर्णांक r;
+	बाह्य अक्षर *__progname;
+#अगर SPT_TYPE == SPT_PSTAT
+	जोड़ pstun pst;
+#पूर्ण_अगर
 
-#if SPT_TYPE == SPT_REUSEARGV
-	if (argv_env_len <= 0)
-		return;
-#endif
+#अगर SPT_TYPE == SPT_REUSEARGV
+	अगर (argv_env_len <= 0)
+		वापस;
+#पूर्ण_अगर
 
-	strlcpy(buf, __progname, sizeof(buf));
+	strlcpy(buf, __progname, माप(buf));
 
 	r = -1;
-	va_start(ap, fmt);
-	if (fmt != NULL) {
-		len = strlcat(buf, ": ", sizeof(buf));
-		if (len < sizeof(buf))
-			r = vsnprintf(buf + len, sizeof(buf) - len , fmt, ap);
+	बहु_शुरू(ap, fmt);
+	अगर (fmt != शून्य) {
+		len = strlcat(buf, ": ", माप(buf));
+		अगर (len < माप(buf))
+			r = vsnprintf(buf + len, माप(buf) - len , fmt, ap);
 	}
-	va_end(ap);
-	if (r == -1 || (size_t)r >= sizeof(buf) - len)
-		return;
-	strnvis(ptitle, buf, sizeof(ptitle),
+	बहु_पूर्ण(ap);
+	अगर (r == -1 || (माप_प्रकार)r >= माप(buf) - len)
+		वापस;
+	strnvis(ptitle, buf, माप(ptitle),
 	    VIS_CSTYLE|VIS_NL|VIS_TAB|VIS_OCTAL);
 
-#if SPT_TYPE == SPT_PSTAT
+#अगर SPT_TYPE == SPT_PSTAT
 	pst.pst_command = ptitle;
-	pstat(PSTAT_SETCMD, pst, strlen(ptitle), 0, 0);
-#elif SPT_TYPE == SPT_REUSEARGV
+	pstat(PSTAT_SETCMD, pst, म_माप(ptitle), 0, 0);
+#या_अगर SPT_TYPE == SPT_REUSEARGV
 /*	debug("setproctitle: copy \"%s\" into len %d",
 	    buf, argv_env_len); */
 	len = strlcpy(argv_start, ptitle, argv_env_len);
-	for(; len < argv_env_len; len++)
+	क्रम(; len < argv_env_len; len++)
 		argv_start[len] = SPT_PADCHAR;
-#endif
+#पूर्ण_अगर
 
-#endif /* SPT_NONE */
+#पूर्ण_अगर /* SPT_NONE */
 }
 
-#endif /* HAVE_SETPROCTITLE */
+#पूर्ण_अगर /* HAVE_SETPROCTITLE */

@@ -41,268 +41,268 @@ limitations under the License.
  * so per-iteration state survives.
  */
 
-#include <fcntl.h>
-#include <setjmp.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#समावेश <fcntl.h>
+#समावेश <setjmp.h>
+#समावेश <signal.h>
+#समावेश <stddef.h>
+#समावेश <stdint.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <unistd.h>
 
-extern "C" {
-#include "includes.h"
-#include "ssherr.h"
-#include "ssh_api.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "log.h"
-#include "ssh2.h"
-#include "channels.h"
+बाह्य "C" {
+#समावेश "includes.h"
+#समावेश "ssherr.h"
+#समावेश "ssh_api.h"
+#समावेश "sshbuf.h"
+#समावेश "packet.h"
+#समावेश "myproposal.h"
+#समावेश "kex.h"
+#समावेश "xmalloc.h"
+#समावेश "authfile.h"
+#समावेश "sshkey.h"
+#समावेश "log.h"
+#समावेश "ssh2.h"
+#समावेश "channels.h"
 }
 
 
-#include "fixed-keys.h"
+#समावेश "fixed-keys.h"
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+अटल लाँघ_बफ fuzz_env;
+अटल अस्थिर पूर्णांक in_fuzz = 0;
 
-static char *g_open_failure_msg = NULL;
+अटल अक्षर *g_open_failure_संदेश = शून्य;
 
-extern "C" int
-my_channel_input_open_failure(int type, uint32_t seq, struct ssh *ssh)
+बाह्य "C" पूर्णांक
+my_channel_निवेश_open_failure(पूर्णांक type, uint32_t seq, काष्ठा ssh *ssh)
 {
-	(void)type;
-	(void)seq;
+	(व्योम)type;
+	(व्योम)seq;
 	uint32_t reason;
-	int r;
-	if ((r = sshpkt_get_u32(ssh, &reason)) != 0)
+	पूर्णांक r;
+	अगर ((r = sshpkt_get_u32(ssh, &reason)) != 0)
 		ssh_packet_disconnect(ssh, "Invalid open failure message");
-	if ((r = sshpkt_get_cstring(ssh, &g_open_failure_msg, NULL)) != 0 ||
-	    (r = sshpkt_get_string_direct(ssh, NULL, NULL)) != 0 ||
+	अगर ((r = sshpkt_get_cstring(ssh, &g_open_failure_संदेश, शून्य)) != 0 ||
+	    (r = sshpkt_get_string_direct(ssh, शून्य, शून्य)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		ssh_packet_disconnect(ssh, "Invalid open failure message");
-	return 0;
+	वापस 0;
 }
 
-extern "C" void
-cleanup_exit(int code)
+बाह्य "C" व्योम
+cleanup_exit(पूर्णांक code)
 {
-	if (in_fuzz)
-		longjmp(fuzz_env, code ? code : 1);
-	_exit(code);
+	अगर (in_fuzz)
+		दीर्घ_लाँघ(fuzz_env, code ? code : 1);
+	_निकास(code);
 }
 
-extern "C" void
-__wrap_ssh_packet_disconnect(struct ssh *ssh, const char *fmt, ...)
+बाह्य "C" व्योम
+__wrap_ssh_packet_disconnect(काष्ठा ssh *ssh, स्थिर अक्षर *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
-		longjmp(fuzz_env, 1);
-	_exit(1);
+	(व्योम)ssh;
+	(व्योम)fmt;
+	अगर (in_fuzz)
+		दीर्घ_लाँघ(fuzz_env, 1);
+	_निकास(1);
 }
 
-extern "C" int
-__wrap_sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+बाह्य "C" पूर्णांक
+__wrap_sshpkt_fatal(काष्ठा ssh *ssh, पूर्णांक r, स्थिर अक्षर *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
-		longjmp(fuzz_env, 1);
-	_exit(r ? r : 1);
+	(व्योम)ssh;
+	(व्योम)fmt;
+	अगर (in_fuzz)
+		दीर्घ_लाँघ(fuzz_env, 1);
+	_निकास(r ? r : 1);
 }
 
-static struct sshkey *
-load_private(const char *str)
+अटल काष्ठा sshkey *
+load_private(स्थिर अक्षर *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
-		abort();
+	काष्ठा sshbuf *b = sshbuf_from(str, म_माप(str));
+	काष्ठा sshkey *k = शून्य;
+	अगर (b == शून्य || sshkey_parse_private_fileblob(b, "", &k, शून्य) != 0)
+		पात();
 	sshbuf_free(b);
-	return k;
+	वापस k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+अटल काष्ठा sshkey *
+load_public(स्थिर अक्षर *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
-		abort();
+	अक्षर *tmp, *cp;
+	काष्ठा sshkey *k = sshkey_new(कुंजी_UNSPEC);
+	अगर (k == शून्य)
+		पात();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
-		abort();
-	free(tmp);
-	return k;
+	अगर (sshkey_read(k, &cp) != 0)
+		पात();
+	मुक्त(tmp);
+	वापस k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+अटल पूर्णांक
+pump(काष्ठा ssh *from, काष्ठा ssh *to, माप_प्रकार *transferred)
 {
-	const u_char *buf;
-	size_t len;
+	स्थिर u_char *buf;
+	माप_प्रकार len;
 	u_char type;
-	int r;
+	पूर्णांक r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	अगर ((r = ssh_packet_अग्र(from, &type)) != 0)
+		वापस r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	अगर (len == 0)
+		वापस 0;
+	अगर ((r = ssh_निवेश_append(to, buf, len)) != 0)
+		वापस r;
+	अगर ((r = ssh_output_consume(from, len)) != 0)
+		वापस r;
 	*transferred = len;
-	return 0;
+	वापस 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+अटल पूर्णांक
+run_kex(काष्ठा ssh *client, काष्ठा ssh *server)
 {
-	int r;
-	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	पूर्णांक r;
+	माप_प्रकार cn, sn;
+	क्रम (पूर्णांक i = 0; i < 100; i++) {
+		अगर ((r = pump(server, client, &sn)) != 0) वापस r;
+		अगर ((r = pump(client, server, &cn)) != 0) वापस r;
+		अगर (server->kex->done && client->kex->done)
+			वापस 0;
+		अगर (cn == 0 && sn == 0)
+			वापस SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	वापस SSH_ERR_PROTOCOL_ERROR;
 }
 
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
-static int g_pipe[2] = { -1, -1 };
+अटल काष्ठा ssh *g_client = शून्य;
+अटल काष्ठा ssh *g_server = शून्य;
+अटल पूर्णांक g_init = 0;
+अटल पूर्णांक g_pipe[2] = { -1, -1 };
 
-static void
-dummy_open_confirm(struct ssh *ssh, int id, int success, void *ctx)
+अटल व्योम
+dummy_open_confirm(काष्ठा ssh *ssh, पूर्णांक id, पूर्णांक success, व्योम *ctx)
 {
-	(void)ssh;
-	(void)id;
-	(void)success;
-	(void)ctx;
+	(व्योम)ssh;
+	(व्योम)id;
+	(व्योम)success;
+	(व्योम)ctx;
 }
 
-static void
-dummy_status_confirm(struct ssh *ssh, int type, Channel *c, void *ctx)
+अटल व्योम
+dummy_status_confirm(काष्ठा ssh *ssh, पूर्णांक type, Channel *c, व्योम *ctx)
 {
-	(void)ssh;
-	(void)type;
-	(void)c;
-	(void)ctx;
+	(व्योम)ssh;
+	(व्योम)type;
+	(व्योम)c;
+	(व्योम)ctx;
 }
 
-static void
-dummy_status_abandon(struct ssh *ssh, Channel *c, void *ctx)
+अटल व्योम
+dummy_status_abandon(काष्ठा ssh *ssh, Channel *c, व्योम *ctx)
 {
-	(void)ssh;
-	(void)c;
-	(void)ctx;
+	(व्योम)ssh;
+	(व्योम)c;
+	(व्योम)ctx;
 }
 
-static int
-init_once(void)
+अटल पूर्णांक
+init_once(व्योम)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	अगर (g_init)
+		वापस 0;
+	संकेत(SIGPIPE, संक_छोड़ो);
 	log_init("ssh_channels_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	int pfd[2];
-	if (pipe(pfd) != 0)
-		return -1;
+	पूर्णांक pfd[2];
+	अगर (pipe(pfd) != 0)
+		वापस -1;
 	g_pipe[0] = fcntl(pfd[0], F_DUPFD_CLOEXEC, 100);
 	g_pipe[1] = fcntl(pfd[1], F_DUPFD_CLOEXEC, 100);
-	close(pfd[0]);
-	close(pfd[1]);
-	if (g_pipe[0] < 0 || g_pipe[1] < 0)
-		return -1;
-	int fl0 = fcntl(g_pipe[0], F_GETFL, 0);
-	int fl1 = fcntl(g_pipe[1], F_GETFL, 0);
-	(void)fcntl(g_pipe[0], F_SETFL, fl0 | O_NONBLOCK);
-	(void)fcntl(g_pipe[1], F_SETFL, fl1 | O_NONBLOCK);
+	बंद(pfd[0]);
+	बंद(pfd[1]);
+	अगर (g_pipe[0] < 0 || g_pipe[1] < 0)
+		वापस -1;
+	पूर्णांक fl0 = fcntl(g_pipe[0], F_GETFL, 0);
+	पूर्णांक fl1 = fcntl(g_pipe[1], F_GETFL, 0);
+	(व्योम)fcntl(g_pipe[0], F_SETFL, fl0 | O_NONBLOCK);
+	(व्योम)fcntl(g_pipe[1], F_SETFL, fl1 | O_NONBLOCK);
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	काष्ठा sshkey *priv = load_private(PRIV_ED25519);
+	काष्ठा sshkey *pub = load_public(PUB_ED25519);
+	अक्षर *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	स्थिर अक्षर *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	अक्षर *proposal[PROPOSAL_MAX] = { 0 };
+	पूर्णांक i;
+	क्रम (i = 0; i < PROPOSAL_MAX; i++) {
+		स्थिर अक्षर *p = defaults[i];
+		अगर (i == PROPOSAL_SERVER_HOST_कुंजी_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		अन्यथा अगर (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		अन्यथा अगर (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		अन्यथा अगर (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	काष्ठा kex_params kp;
+	स_नकल(kp.proposal, proposal, माप(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	अगर (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		वापस -1;
+	अगर (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		वापस -1;
+	अगर (run_kex(g_client, g_server) != 0)
+		वापस -1;
 
 	channel_init_channels(g_client);
 
 	ssh_dispatch_init(g_client, &dispatch_protocol_ignore);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_DATA,
-	    &channel_input_data);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_EXTENDED_DATA,
-	    &channel_input_extended_data);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_EOF,
-	    &channel_input_ieof);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_CLOSE,
-	    &channel_input_oclose);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_OPEN_CONFIRMATION,
-	    &channel_input_open_confirmation);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_OPEN_FAILURE,
-	    &my_channel_input_open_failure);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_WINDOW_ADJUST,
-	    &channel_input_window_adjust);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_SUCCESS,
-	    &channel_input_status_confirm);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_FAILURE,
-	    &channel_input_status_confirm);
+	ssh_dispatch_set(g_client, SSH2_संदेश_CHANNEL_तथ्य,
+	    &channel_निवेश_तथ्य);
+	ssh_dispatch_set(g_client, SSH2_संदेश_CHANNEL_EXTENDED_तथ्य,
+	    &channel_निवेश_extended_तथ्य);
+	ssh_dispatch_set(g_client, SSH2_संदेश_CHANNEL_EOF,
+	    &channel_निवेश_ieof);
+	ssh_dispatch_set(g_client, SSH2_संदेश_CHANNEL_CLOSE,
+	    &channel_निवेश_oclose);
+	ssh_dispatch_set(g_client, SSH2_संदेश_CHANNEL_OPEN_CONFIRMATION,
+	    &channel_निवेश_open_confirmation);
+	ssh_dispatch_set(g_client, SSH2_संदेश_CHANNEL_OPEN_FAILURE,
+	    &my_channel_निवेश_open_failure);
+	ssh_dispatch_set(g_client, SSH2_संदेश_CHANNEL_WINDOW_ADJUST,
+	    &channel_निवेश_window_adjust);
+	ssh_dispatch_set(g_client, SSH2_संदेश_CHANNEL_SUCCESS,
+	    &channel_निवेश_status_confirm);
+	ssh_dispatch_set(g_client, SSH2_संदेश_CHANNEL_FAILURE,
+	    &channel_निवेश_status_confirm);
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	मुक्त(keyname);
+	क्रम (i = 0; i < PROPOSAL_MAX; i++)
+		मुक्त(proposal[i]);
 	g_init = 1;
-	return 0;
+	वापस 0;
 }
 
-struct chan_scenario {
-	const char *ctype;
-	int state;
-	int use_pipe;
+काष्ठा chan_scenario {
+	स्थिर अक्षर *ctype;
+	पूर्णांक state;
+	पूर्णांक use_pipe;
 };
 
-static const struct chan_scenario k_scenarios[] = {
+अटल स्थिर काष्ठा chan_scenario k_scenarios[] = {
 	{ "session",         SSH_CHANNEL_OPEN,     0 },
 	{ "session",         SSH_CHANNEL_OPENING,  1 },
 	{ "x11",             SSH_CHANNEL_OPEN,     1 },
@@ -310,85 +310,85 @@ static const struct chan_scenario k_scenarios[] = {
 	{ "direct-tcpip",    SSH_CHANNEL_OPENING,  1 },
 };
 
-static int g_channel_id = -1;
+अटल पूर्णांक g_channel_id = -1;
 
-static void
-drain_pipe(void)
+अटल व्योम
+drain_pipe(व्योम)
 {
-	char buf[4096];
-	if (g_pipe[0] < 0)
-		return;
-	while (read(g_pipe[0], buf, sizeof(buf)) > 0) { }
+	अक्षर buf[4096];
+	अगर (g_pipe[0] < 0)
+		वापस;
+	जबतक (पढ़ो(g_pipe[0], buf, माप(buf)) > 0) { }
 }
 
-static void
-reset_channel(struct ssh *ssh, const struct chan_scenario *s)
+अटल व्योम
+reset_channel(काष्ठा ssh *ssh, स्थिर काष्ठा chan_scenario *s)
 {
-	if (g_channel_id >= 0) {
+	अगर (g_channel_id >= 0) {
 		Channel *c = channel_lookup(ssh, g_channel_id);
-		if (c != NULL)
+		अगर (c != शून्य)
 			channel_free(ssh, c);
 		g_channel_id = -1;
 	}
 	drain_pipe();
 
-	int rfd = s->use_pipe ? g_pipe[1] : -1;
-	int wfd = s->use_pipe ? g_pipe[1] : -1;
-	Channel *c = channel_new(ssh, (char *)s->ctype, s->state,
-	    rfd, wfd, -1, 32768, 32768, 0, (char *)"fuzz", 0);
-	if (c == NULL)
-		return;
+	पूर्णांक rfd = s->use_pipe ? g_pipe[1] : -1;
+	पूर्णांक wfd = s->use_pipe ? g_pipe[1] : -1;
+	Channel *c = channel_new(ssh, (अक्षर *)s->ctype, s->state,
+	    rfd, wfd, -1, 32768, 32768, 0, (अक्षर *)"fuzz", 0);
+	अगर (c == शून्य)
+		वापस;
 	g_channel_id = c->self;
 	channel_register_open_confirm(ssh, g_channel_id,
-	    &dummy_open_confirm, NULL);
+	    &dummy_open_confirm, शून्य);
 	channel_register_status_confirm(ssh, g_channel_id,
-	    &dummy_status_confirm, &dummy_status_abandon, NULL);
+	    &dummy_status_confirm, &dummy_status_abandon, शून्य);
 }
 
-static const uint8_t k_msg_types[] = {
-	SSH2_MSG_CHANNEL_OPEN_CONFIRMATION,
-	SSH2_MSG_CHANNEL_OPEN_FAILURE,
-	SSH2_MSG_CHANNEL_WINDOW_ADJUST,
-	SSH2_MSG_CHANNEL_DATA,
-	SSH2_MSG_CHANNEL_EXTENDED_DATA,
-	SSH2_MSG_CHANNEL_SUCCESS,
-	SSH2_MSG_CHANNEL_FAILURE,
-	SSH2_MSG_CHANNEL_EOF,
-	SSH2_MSG_CHANNEL_CLOSE,
+अटल स्थिर uint8_t k_संदेश_types[] = {
+	SSH2_संदेश_CHANNEL_OPEN_CONFIRMATION,
+	SSH2_संदेश_CHANNEL_OPEN_FAILURE,
+	SSH2_संदेश_CHANNEL_WINDOW_ADJUST,
+	SSH2_संदेश_CHANNEL_तथ्य,
+	SSH2_संदेश_CHANNEL_EXTENDED_तथ्य,
+	SSH2_संदेश_CHANNEL_SUCCESS,
+	SSH2_संदेश_CHANNEL_FAILURE,
+	SSH2_संदेश_CHANNEL_EOF,
+	SSH2_संदेश_CHANNEL_CLOSE,
 };
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+बाह्य "C" पूर्णांक
+LLVMFuzzer_Test_One_निवेश(स्थिर uint8_t *तथ्य, माप_प्रकार आकार)
 {
-	if (init_once() != 0)
-		return 0;
-	if (size > 65000)
-		return 0;
+	अगर (init_once() != 0)
+		वापस 0;
+	अगर (आकार > 65000)
+		वापस 0;
 
-	const size_t n_scen = sizeof(k_scenarios) / sizeof(k_scenarios[0]);
-	const size_t n_msg = sizeof(k_msg_types) / sizeof(k_msg_types[0]);
+	स्थिर माप_प्रकार n_scen = माप(k_scenarios) / माप(k_scenarios[0]);
+	स्थिर माप_प्रकार n_संदेश = माप(k_संदेश_types) / माप(k_संदेश_types[0]);
 
-	for (size_t s = 0; s < n_scen; s++) {
+	क्रम (माप_प्रकार s = 0; s < n_scen; s++) {
 		reset_channel(g_client, &k_scenarios[s]);
-		for (size_t t = 0; t < n_msg; t++) {
+		क्रम (माप_प्रकार t = 0; t < n_संदेश; t++) {
 			in_fuzz = 1;
-			if (setjmp(fuzz_env) == 0) {
-				size_t transferred;
-				if (ssh_packet_put(g_server, k_msg_types[t],
-				    data, size) != 0)
-					goto done;
-				if (pump(g_server, g_client,
+			अगर (बनाओ_लाँघ(fuzz_env) == 0) {
+				माप_प्रकार transferred;
+				अगर (ssh_packet_put(g_server, k_संदेश_types[t],
+				    तथ्य, आकार) != 0)
+					जाओ done;
+				अगर (pump(g_server, g_client,
 				    &transferred) != 0)
-					goto done;
-				(void)ssh_dispatch_run(g_client,
-				    DISPATCH_NONBLOCK, NULL);
+					जाओ done;
+				(व्योम)ssh_dispatch_run(g_client,
+				    DISPATCH_NONBLOCK, शून्य);
 			done:
 				;
 			}
 			in_fuzz = 0;
-			free(g_open_failure_msg);
-			g_open_failure_msg = NULL;
+			मुक्त(g_open_failure_संदेश);
+			g_open_failure_संदेश = शून्य;
 		}
 	}
-	return 0;
+	वापस 0;
 }

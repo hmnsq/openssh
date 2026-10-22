@@ -27,40 +27,40 @@
  * binary mode on Windows systems.
  */
 
-#ifndef _BSD_CYGWIN_UTIL_H
-#define _BSD_CYGWIN_UTIL_H
+#अगर_अघोषित _BSD_CYGWIN_UTIL_H
+#घोषणा _BSD_CYGWIN_UTIL_H
 
-#ifdef HAVE_CYGWIN
+#अगर_घोषित HAVE_CYGWIN
 
-#undef ERROR
+#अघोषित ERROR
 
 /* Avoid including windows headers. */
-typedef void *HANDLE;
-#define INVALID_HANDLE_VALUE ((HANDLE) -1)
-#define DNLEN 16
-#define UNLEN 256
+प्रकार व्योम *HANDLE;
+#घोषणा INVALID_HANDLE_मूल्य ((HANDLE) -1)
+#घोषणा DNLEN 16
+#घोषणा UNLEN 256
 
 /* Cygwin functions for which declarations are only available when including
    windows headers, so we have to define them here explicitly. */
-extern HANDLE cygwin_logon_user (const struct passwd *, const char *);
-extern void cygwin_set_impersonation_token (const HANDLE);
+बाह्य HANDLE cygwin_logon_user (स्थिर काष्ठा passwd *, स्थिर अक्षर *);
+बाह्य व्योम cygwin_set_impersonation_token (स्थिर HANDLE);
 
-#include <sys/cygwin.h>
-#include <io.h>
+#समावेश <sys/cygwin.h>
+#समावेश <io.h>
 
-#define CYGWIN_SSH_PRIVSEP_USER (cygwin_ssh_privsep_user())
-const char *cygwin_ssh_privsep_user();
+#घोषणा CYGWIN_SSH_PRIVSEP_USER (cygwin_ssh_privsep_user())
+स्थिर अक्षर *cygwin_ssh_privsep_user();
 
-int binary_open(const char *, int , ...);
-int check_ntsec(const char *);
-char **fetch_windows_environment(void);
-void free_windows_environment(char **);
-int cygwin_ug_match_pattern_list(const char *, const char *);
+पूर्णांक द्विआधारी_open(स्थिर अक्षर *, पूर्णांक , ...);
+पूर्णांक check_ntsec(स्थिर अक्षर *);
+अक्षर **fetch_windows_environment(व्योम);
+व्योम free_windows_environment(अक्षर **);
+पूर्णांक cygwin_ug_match_pattern_list(स्थिर अक्षर *, स्थिर अक्षर *);
 
-#ifndef NO_BINARY_OPEN
-#define open binary_open
-#endif
+#अगर_अघोषित NO_द्विआधारी_OPEN
+#घोषणा खोलो द्विआधारी_open
+#पूर्ण_अगर
 
-#endif /* HAVE_CYGWIN */
+#पूर्ण_अगर /* HAVE_CYGWIN */
 
-#endif /* _BSD_CYGWIN_UTIL_H */
+#पूर्ण_अगर /* _BSD_CYGWIN_UTIL_H */

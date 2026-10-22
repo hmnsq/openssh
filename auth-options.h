@@ -16,91 +16,91 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef AUTH_OPTIONS_H
-#define AUTH_OPTIONS_H
+#अगर_अघोषित AUTH_OPTIONS_H
+#घोषणा AUTH_OPTIONS_H
 
-struct passwd;
-struct sshkey;
+काष्ठा passwd;
+काष्ठा sshkey;
 
 /* Maximum number of permitopen/permitlisten directives to accept */
-#define SSH_AUTHOPT_PERMIT_MAX	4096
+#घोषणा SSH_AUTHOPT_PERMIT_MAX	4096
 
 /* Maximum number of environment directives to accept */
-#define SSH_AUTHOPT_ENV_MAX	1024
+#घोषणा SSH_AUTHOPT_ENV_MAX	1024
 
 /*
  * sshauthopt represents key options parsed from authorized_keys or
  * from certificate extensions/options.
  */
-struct sshauthopt {
+काष्ठा sshauthopt {
 	/* Feature flags */
-	int permit_port_forwarding_flag;
-	int permit_agent_forwarding_flag;
-	int permit_x11_forwarding_flag;
-	int permit_pty_flag;
-	int permit_user_rc;
+	पूर्णांक permit_port_forwarding_flag;
+	पूर्णांक permit_agent_forwarding_flag;
+	पूर्णांक permit_x11_forwarding_flag;
+	पूर्णांक permit_pty_flag;
+	पूर्णांक permit_user_rc;
 
 	/* "restrict" keyword was invoked */
-	int restricted;
+	पूर्णांक restricted;
 
 	/* key/principal expiry date */
 	uint64_t valid_before;
 
 	/* Certificate-related options */
-	int cert_authority;
-	char *cert_principals;
+	पूर्णांक cert_authority;
+	अक्षर *cert_principals;
 
-	int force_tun_device;
-	char *force_command;
+	पूर्णांक force_tun_device;
+	अक्षर *force_command;
 
 	/* Custom environment */
-	size_t nenv;
-	char **env;
+	माप_प्रकार nenv;
+	अक्षर **env;
 
 	/* Permitted port forwardings */
-	size_t npermitopen;
-	char **permitopen;
+	माप_प्रकार npermitopen;
+	अक्षर **permitopen;
 
 	/* Permitted listens (remote forwarding) */
-	size_t npermitlisten;
-	char **permitlisten;
+	माप_प्रकार npermitlisten;
+	अक्षर **permitlisten;
 
 	/*
 	 * Permitted host/addresses (comma-separated)
 	 * Caller must check source address matches both lists (if present).
 	 */
-	char *required_from_host_cert;
-	char *required_from_host_keys;
+	अक्षर *required_from_host_cert;
+	अक्षर *required_from_host_कुंजियाँ;
 
 	/* Key requires user presence asserted */
-	int no_require_user_presence;
+	पूर्णांक no_require_user_presence;
 	/* Key requires user verification (e.g. PIN) */
-	int require_verify;
+	पूर्णांक require_verify;
 };
 
-struct sshauthopt *sshauthopt_new(void);
-struct sshauthopt *sshauthopt_new_with_keys_defaults(void);
-void sshauthopt_free(struct sshauthopt *opts);
-struct sshauthopt *sshauthopt_copy(const struct sshauthopt *orig);
-int sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m, int);
-int sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **opts);
+काष्ठा sshauthopt *sshauthopt_new(व्योम);
+काष्ठा sshauthopt *sshauthopt_new_with_कुंजियाँ_defaults(व्योम);
+व्योम sshauthopt_free(काष्ठा sshauthopt *opts);
+काष्ठा sshauthopt *sshauthopt_copy(स्थिर काष्ठा sshauthopt *orig);
+पूर्णांक sshauthopt_serialise(स्थिर काष्ठा sshauthopt *opts, काष्ठा sshbuf *m, पूर्णांक);
+पूर्णांक sshauthopt_deserialise(काष्ठा sshbuf *m, काष्ठा sshauthopt **opts);
 
 /*
  * Parse authorized_keys options. Returns an options structure on success
  * or NULL on failure. Will set errstr on failure.
  */
-struct sshauthopt *sshauthopt_parse(const char *s, const char **errstr);
+काष्ठा sshauthopt *sshauthopt_parse(स्थिर अक्षर *s, स्थिर अक्षर **errstr);
 
 /*
  * Parse certification options to a struct sshauthopt.
  * Returns options on success or NULL on failure.
  */
-struct sshauthopt *sshauthopt_from_cert(struct sshkey *k);
+काष्ठा sshauthopt *sshauthopt_from_cert(काष्ठा sshkey *k);
 
 /*
  * Merge key options.
  */
-struct sshauthopt *sshauthopt_merge(const struct sshauthopt *primary,
-    const struct sshauthopt *additional, const char **errstrp);
+काष्ठा sshauthopt *sshauthopt_merge(स्थिर काष्ठा sshauthopt *primary,
+    स्थिर काष्ठा sshauthopt *additional, स्थिर अक्षर **errstrp);
 
-#endif
+#पूर्ण_अगर

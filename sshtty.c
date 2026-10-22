@@ -35,62 +35,62 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <termios.h>
-#include <pwd.h>
+#समावेश <sys/types.h>
+#समावेश <stdio.h>
+#समावेश <termios.h>
+#समावेश <pwd.h>
 
-#include "sshpty.h"
+#समावेश "sshpty.h"
 
-static struct termios _saved_tio;
-static int _in_raw_mode = 0;
+अटल काष्ठा termios _saved_tio;
+अटल पूर्णांक _in_raw_mode = 0;
 
-struct termios *
-get_saved_tio(void)
+काष्ठा termios *
+get_saved_tio(व्योम)
 {
-	return _in_raw_mode ? &_saved_tio : NULL;
+	वापस _in_raw_mode ? &_saved_tio : शून्य;
 }
 
-void
-leave_raw_mode(int quiet)
+व्योम
+leave_raw_mode(पूर्णांक quiet)
 {
-	if (!_in_raw_mode)
-		return;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
-		if (!quiet)
-			perror("tcsetattr");
-	} else
+	अगर (!_in_raw_mode)
+		वापस;
+	अगर (tcsetattr(fileno(मानक_निवेश), TCSADRAIN, &_saved_tio) == -1) {
+		अगर (!quiet)
+			लिखो_त्रुटि("tcsetattr");
+	} अन्यथा
 		_in_raw_mode = 0;
 }
 
-void
-enter_raw_mode(int quiet)
+व्योम
+enter_raw_mode(पूर्णांक quiet)
 {
-	struct termios tio;
+	काष्ठा termios tio;
 
-	if (tcgetattr(fileno(stdin), &tio) == -1) {
-		if (!quiet)
-			perror("tcgetattr");
-		return;
+	अगर (tcgetattr(fileno(मानक_निवेश), &tio) == -1) {
+		अगर (!quiet)
+			लिखो_त्रुटि("tcgetattr");
+		वापस;
 	}
 	_saved_tio = tio;
 	tio.c_iflag |= IGNPAR;
 	tio.c_iflag &= ~(ISTRIP | INLCR | IGNCR | ICRNL | IXON | IXANY | IXOFF);
-#ifdef IUCLC
+#अगर_घोषित IUCLC
 	tio.c_iflag &= ~IUCLC;
-#endif
+#पूर्ण_अगर
 	tio.c_lflag &= ~(ISIG | ICANON | ECHO | ECHOE | ECHOK | ECHONL);
-#ifdef IEXTEN
+#अगर_घोषित IEXTEN
 	tio.c_lflag &= ~IEXTEN;
-#endif
+#पूर्ण_अगर
 	tio.c_oflag &= ~OPOST;
 	tio.c_cc[VMIN] = 1;
 	tio.c_cc[VTIME] = 0;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
-		if (!quiet)
-			perror("tcsetattr");
-	} else
+	अगर (tcsetattr(fileno(मानक_निवेश), TCSADRAIN, &tio) == -1) {
+		अगर (!quiet)
+			लिखो_त्रुटि("tcsetattr");
+	} अन्यथा
 		_in_raw_mode = 1;
 }

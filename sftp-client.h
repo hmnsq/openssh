@@ -18,14 +18,14 @@
 
 /* Client side of SSH2 filexfer protocol */
 
-#ifndef _SFTP_CLIENT_H
-#define _SFTP_CLIENT_H
+#अगर_अघोषित _SFTP_CLIENT_H
+#घोषणा _SFTP_CLIENT_H
 
-typedef struct SFTP_DIRENT SFTP_DIRENT;
+प्रकार काष्ठा SFTP_DIRENT SFTP_DIRENT;
 
-struct SFTP_DIRENT {
-	char *filename;
-	char *longname;
+काष्ठा SFTP_DIRENT {
+	अक्षर *filename;
+	अक्षर *longname;
 	Attrib a;
 };
 
@@ -33,7 +33,7 @@ struct SFTP_DIRENT {
  * Used for statvfs responses on the wire from the server, because the
  * server's native format may be larger than the client's.
  */
-struct sftp_statvfs {
+काष्ठा sftp_statvfs {
 	uint64_t f_bsize;
 	uint64_t f_frsize;
 	uint64_t f_blocks;
@@ -48,158 +48,158 @@ struct sftp_statvfs {
 };
 
 /* Used for limits response on the wire from the server */
-struct sftp_limits {
-	uint64_t packet_length;
-	uint64_t read_length;
-	uint64_t write_length;
+काष्ठा sftp_limits {
+	uint64_t packet_लंबाई;
+	uint64_t read_लंबाई;
+	uint64_t write_लंबाई;
 	uint64_t open_handles;
 };
 
 /* print flag values */
-#define SFTP_QUIET		0	/* be quiet during transfers */
-#define SFTP_PRINT		1	/* list files and show progress bar */
-#define SFTP_PROGRESS_ONLY	2	/* progress bar only */
+#घोषणा SFTP_QUIET		0	/* be quiet during transfers */
+#घोषणा SFTP_PRINT		1	/* list files and show progress bar */
+#घोषणा SFTP_PROGRESS_ONLY	2	/* progress bar only */
 
 /*
  * Initialise a SSH filexfer connection. Returns NULL on error or
  * a pointer to a initialized sftp_conn struct on success.
  */
-struct sftp_conn *sftp_init(int, int, u_int, u_int, uint64_t);
-void sftp_free(struct sftp_conn *);
+काष्ठा sftp_conn *sftp_init(पूर्णांक, पूर्णांक, u_int, u_int, uint64_t);
+व्योम sftp_free(काष्ठा sftp_conn *);
 
-u_int sftp_proto_version(struct sftp_conn *);
+u_int sftp_proto_version(काष्ठा sftp_conn *);
 
 /* Query server limits */
-int sftp_get_limits(struct sftp_conn *, struct sftp_limits *);
+पूर्णांक sftp_get_limits(काष्ठा sftp_conn *, काष्ठा sftp_limits *);
 
 /* Close file referred to by 'handle' */
-int sftp_close(struct sftp_conn *, const u_char *, u_int);
+पूर्णांक sftp_close(काष्ठा sftp_conn *, स्थिर u_char *, u_int);
 
 /* Read contents of 'path' to NULL-terminated array 'dir' */
-int sftp_readdir(struct sftp_conn *, const char *, SFTP_DIRENT ***);
+पूर्णांक sftp_readdir(काष्ठा sftp_conn *, स्थिर अक्षर *, SFTP_DIRENT ***);
 
 /* Frees a NULL-terminated array of SFTP_DIRENTs (eg. from sftp_readdir) */
-void sftp_free_dirents(SFTP_DIRENT **);
+व्योम sftp_free_dirents(SFTP_DIRENT **);
 
 /* Delete file 'path' */
-int sftp_rm(struct sftp_conn *, const char *);
+पूर्णांक sftp_rm(काष्ठा sftp_conn *, स्थिर अक्षर *);
 
 /* Create directory 'path' */
-int sftp_mkdir(struct sftp_conn *, const char *, Attrib *, int);
+पूर्णांक sftp_mkdir(काष्ठा sftp_conn *, स्थिर अक्षर *, Attrib *, पूर्णांक);
 
 /* Create directory 'path' and intermediate directories as required */
-int sftp_mkpath(struct sftp_conn *, const char *, Attrib *, int);
+पूर्णांक sftp_mkpath(काष्ठा sftp_conn *, स्थिर अक्षर *, Attrib *, पूर्णांक);
 
 /* Remove directory 'path' */
-int sftp_rmdir(struct sftp_conn *, const char *);
+पूर्णांक sftp_rmdir(काष्ठा sftp_conn *, स्थिर अक्षर *);
 
 /* Get file attributes of 'path' (follows symlinks) */
-int sftp_stat(struct sftp_conn *, const char *, int, Attrib *);
+पूर्णांक sftp_stat(काष्ठा sftp_conn *, स्थिर अक्षर *, पूर्णांक, Attrib *);
 
 /* Get file attributes of 'path' (does not follow symlinks) */
-int sftp_lstat(struct sftp_conn *, const char *, int, Attrib *);
+पूर्णांक sftp_lstat(काष्ठा sftp_conn *, स्थिर अक्षर *, पूर्णांक, Attrib *);
 
 /* Set file attributes of 'path' */
-int sftp_setstat(struct sftp_conn *, const char *, Attrib *);
+पूर्णांक sftp_setstat(काष्ठा sftp_conn *, स्थिर अक्षर *, Attrib *);
 
 /* Set file attributes of open file 'handle' */
-int sftp_fsetstat(struct sftp_conn *, const u_char *, u_int, Attrib *);
+पूर्णांक sftp_fsetstat(काष्ठा sftp_conn *, स्थिर u_char *, u_int, Attrib *);
 
 /* Set file attributes of 'path', not following symlinks */
-int sftp_lsetstat(struct sftp_conn *conn, const char *path, Attrib *a);
+पूर्णांक sftp_lsetstat(काष्ठा sftp_conn *conn, स्थिर अक्षर *path, Attrib *a);
 
 /* Canonicalise 'path' - caller must free result */
-char *sftp_realpath(struct sftp_conn *, const char *);
+अक्षर *sftp_realpath(काष्ठा sftp_conn *, स्थिर अक्षर *);
 
 /* Canonicalisation with tilde expansion (requires server extension) */
-char *sftp_expand_path(struct sftp_conn *, const char *);
+अक्षर *sftp_expand_path(काष्ठा sftp_conn *, स्थिर अक्षर *);
 
 /* Returns non-zero if server can tilde-expand paths */
-int sftp_can_expand_path(struct sftp_conn *);
+पूर्णांक sftp_can_expand_path(काष्ठा sftp_conn *);
 
 /* Get statistics for filesystem hosting file at "path" */
-int sftp_statvfs(struct sftp_conn *, const char *, struct sftp_statvfs *, int);
+पूर्णांक sftp_statvfs(काष्ठा sftp_conn *, स्थिर अक्षर *, काष्ठा sftp_statvfs *, पूर्णांक);
 
 /* Rename 'oldpath' to 'newpath' */
-int sftp_rename(struct sftp_conn *, const char *, const char *, int);
+पूर्णांक sftp_rename(काष्ठा sftp_conn *, स्थिर अक्षर *, स्थिर अक्षर *, पूर्णांक);
 
 /* Copy 'oldpath' to 'newpath' */
-int sftp_copy(struct sftp_conn *, const char *, const char *);
+पूर्णांक sftp_copy(काष्ठा sftp_conn *, स्थिर अक्षर *, स्थिर अक्षर *);
 
 /* Link 'oldpath' to 'newpath' */
-int sftp_hardlink(struct sftp_conn *, const char *, const char *);
+पूर्णांक sftp_hardlink(काष्ठा sftp_conn *, स्थिर अक्षर *, स्थिर अक्षर *);
 
 /* Rename 'oldpath' to 'newpath' */
-int sftp_symlink(struct sftp_conn *, const char *, const char *);
+पूर्णांक sftp_symlink(काष्ठा sftp_conn *, स्थिर अक्षर *, स्थिर अक्षर *);
 
 /* Call fsync() on open file 'handle' */
-int sftp_fsync(struct sftp_conn *conn, u_char *, u_int);
+पूर्णांक sftp_fsync(काष्ठा sftp_conn *conn, u_char *, u_int);
 
 /*
  * Download 'remote_path' to 'local_path'. Preserve permissions and times
  * if 'pflag' is set
  */
-int sftp_download(struct sftp_conn *, const char *, const char *, Attrib *,
-    int, int, int, int);
+पूर्णांक sftp_download(काष्ठा sftp_conn *, स्थिर अक्षर *, स्थिर अक्षर *, Attrib *,
+    पूर्णांक, पूर्णांक, पूर्णांक, पूर्णांक);
 
 /*
  * Recursively download 'remote_directory' to 'local_directory'. Preserve
  * times if 'pflag' is set
  */
-int sftp_download_dir(struct sftp_conn *, const char *, const char *, Attrib *,
-    int, int, int, int, int, int);
+पूर्णांक sftp_download_dir(काष्ठा sftp_conn *, स्थिर अक्षर *, स्थिर अक्षर *, Attrib *,
+    पूर्णांक, पूर्णांक, पूर्णांक, पूर्णांक, पूर्णांक, पूर्णांक);
 
 /*
  * Upload 'local_path' to 'remote_path'. Preserve permissions and times
  * if 'pflag' is set
  */
-int sftp_upload(struct sftp_conn *, const char *, const char *,
-    int, int, int, int);
+पूर्णांक sftp_upload(काष्ठा sftp_conn *, स्थिर अक्षर *, स्थिर अक्षर *,
+    पूर्णांक, पूर्णांक, पूर्णांक, पूर्णांक);
 
 /*
  * Recursively upload 'local_directory' to 'remote_directory'. Preserve
  * times if 'pflag' is set
  */
-int sftp_upload_dir(struct sftp_conn *, const char *, const char *,
-    int, int, int, int, int, int);
+पूर्णांक sftp_upload_dir(काष्ठा sftp_conn *, स्थिर अक्षर *, स्थिर अक्षर *,
+    पूर्णांक, पूर्णांक, पूर्णांक, पूर्णांक, पूर्णांक, पूर्णांक);
 
 /*
  * Download a 'from_path' from the 'from' connection and upload it to
  * to 'to' connection at 'to_path'.
  */
-int sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
-    const char *from_path, const char *to_path,
-    Attrib *a, int preserve_flag);
+पूर्णांक sftp_crossload(काष्ठा sftp_conn *from, काष्ठा sftp_conn *to,
+    स्थिर अक्षर *from_path, स्थिर अक्षर *to_path,
+    Attrib *a, पूर्णांक preserve_flag);
 
 /*
  * Recursively download a directory from 'from_path' from the 'from'
  * connection and upload it to 'to' connection at 'to_path'.
  */
-int sftp_crossload_dir(struct sftp_conn *from, struct sftp_conn *to,
-    const char *from_path, const char *to_path,
-    Attrib *dirattrib, int preserve_flag, int print_flag,
-    int follow_link_flag);
+पूर्णांक sftp_crossload_dir(काष्ठा sftp_conn *from, काष्ठा sftp_conn *to,
+    स्थिर अक्षर *from_path, स्थिर अक्षर *to_path,
+    Attrib *dirattrib, पूर्णांक preserve_flag, पूर्णांक print_flag,
+    पूर्णांक follow_link_flag);
 
 /*
  * User/group ID to name translation.
  */
-int sftp_can_get_users_groups_by_id(struct sftp_conn *conn);
-int sftp_get_users_groups_by_id(struct sftp_conn *conn,
-    const u_int *uids, u_int nuids,
-    const u_int *gids, u_int ngids,
-    char ***usernamesp, char ***groupnamesp);
+पूर्णांक sftp_can_get_users_groups_by_id(काष्ठा sftp_conn *conn);
+पूर्णांक sftp_get_users_groups_by_id(काष्ठा sftp_conn *conn,
+    स्थिर u_int *uids, u_int nuids,
+    स्थिर u_int *gids, u_int ngids,
+    अक्षर ***usernamesp, अक्षर ***groupnamesp);
 
 /* Concatenate paths, taking care of slashes. Caller must free result. */
-char *sftp_path_append(const char *, const char *);
+अक्षर *sftp_path_append(स्थिर अक्षर *, स्थिर अक्षर *);
 
 /* Make absolute path if relative path and CWD is given. Does not modify
  * original if the path is already absolute. */
-char *sftp_make_absolute(char *, const char *);
+अक्षर *sftp_make_absolute(अक्षर *, स्थिर अक्षर *);
 
 /* Check if remote path is directory */
-int sftp_remote_is_dir(struct sftp_conn *conn, const char *path);
+पूर्णांक sftp_remote_is_dir(काष्ठा sftp_conn *conn, स्थिर अक्षर *path);
 
 /* Check whether path returned from glob(..., GLOB_MARK, ...) is a directory */
-int sftp_globpath_is_dir(const char *pathname);
+पूर्णांक sftp_globpath_is_dir(स्थिर अक्षर *pathname);
 
-#endif
+#पूर्ण_अगर

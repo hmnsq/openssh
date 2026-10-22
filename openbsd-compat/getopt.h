@@ -30,56 +30,56 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _GETOPT_H_
-#define _GETOPT_H_
+#अगर_अघोषित _GETOPT_H_
+#घोषणा _GETOPT_H_
 
-#ifndef __THROW
-# if defined __cplusplus
+#अगर_अघोषित __THROW
+# अगर defined __cplusplus
 #  define __THROW throw()
-# else
+# अन्यथा
 #  define __THROW
 # endif
-#endif
+#पूर्ण_अगर
 
 /*
  * GNU-like getopt_long() and 4.4BSD getsubopt()/optreset extensions
  */
-#define no_argument        0
-#define required_argument  1
-#define optional_argument  2
+#घोषणा no_argument        0
+#घोषणा required_argument  1
+#घोषणा optional_argument  2
 
-#if 0
-struct option {
+#अगर 0
+काष्ठा option {
 	/* name of long option */
-	const char *name;
+	स्थिर अक्षर *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	पूर्णांक has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	पूर्णांक *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	पूर्णांक val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
-#endif
+पूर्णांक	 getopt_long(पूर्णांक, अक्षर * स्थिर *, स्थिर अक्षर *,
+	    स्थिर काष्ठा option *, पूर्णांक *);
+पूर्णांक	 getopt_long_only(पूर्णांक, अक्षर * स्थिर *, स्थिर अक्षर *,
+	    स्थिर काष्ठा option *, पूर्णांक *);
+#पूर्ण_अगर
 
-#ifndef _GETOPT_DEFINED_
-#define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+#अगर_अघोषित _GETOPT_DEFINED_
+#घोषणा _GETOPT_DEFINED_
+पूर्णांक	 getopt(पूर्णांक, अक्षर * स्थिर *, स्थिर अक्षर *) __THROW;
+पूर्णांक	 getsubopt(अक्षर **, अक्षर * स्थिर *, अक्षर **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
-#endif
+बाह्य   अक्षर *optarg;                  /* getopt(3) external variables */
+बाह्य   पूर्णांक opterr;
+बाह्य   पूर्णांक optind;
+बाह्य   पूर्णांक optopt;
+बाह्य   पूर्णांक optreset;
+बाह्य   अक्षर *suboptarg;               /* getsubopt(3) external variable */
+#पूर्ण_अगर
  
-#endif /* !_GETOPT_H_ */
+#पूर्ण_अगर /* !_GETOPT_H_ */

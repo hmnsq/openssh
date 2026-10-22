@@ -1,45 +1,45 @@
 /* public domain */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <unistd.h>
+#समावेश <stdlib.h>
+#समावेश <stdio.h>
+#समावेश <stdarg.h>
+#समावेश <unistd.h>
 
-#include "log.h"
+#समावेश "log.h"
 
-void
-sshlogv(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, va_list args)
+व्योम
+sshlogv(स्थिर अक्षर *file, स्थिर अक्षर *func, पूर्णांक पंक्ति, पूर्णांक showfunc,
+    LogLevel level, स्थिर अक्षर *suffix, स्थिर अक्षर *fmt, बहु_सूची args)
 {
-	if (showfunc)
-		fprintf(stderr, "%s: ", func);
-	vfprintf(stderr, fmt, args);
-	if (suffix != NULL)
-		fprintf(stderr, ": %s", suffix);
-	fputc('\n', stderr);
+	अगर (showfunc)
+		ख_लिखो(मानक_त्रुटि, "%s: ", func);
+	भख_लिखो(मानक_त्रुटि, fmt, args);
+	अगर (suffix != शून्य)
+		ख_लिखो(मानक_त्रुटि, ": %s", suffix);
+	ख_अक्षर_दो('\n', मानक_त्रुटि);
 }
 
-void
-sshlog(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+व्योम
+sshlog(स्थिर अक्षर *file, स्थिर अक्षर *func, पूर्णांक पंक्ति, पूर्णांक showfunc,
+    LogLevel level, स्थिर अक्षर *suffix, स्थिर अक्षर *fmt, ...)
 {
-	va_list args;
+	बहु_सूची args;
 
-	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
-	va_end(args);
+	बहु_शुरू(args, fmt);
+	sshlogv(file, func, पंक्ति, showfunc, level, suffix, fmt, args);
+	बहु_पूर्ण(args);
 }
 
-void
-sshfatal(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+व्योम
+sshfatal(स्थिर अक्षर *file, स्थिर अक्षर *func, पूर्णांक पंक्ति, पूर्णांक showfunc,
+    LogLevel level, स्थिर अक्षर *suffix, स्थिर अक्षर *fmt, ...)
 {
-	va_list args;
+	बहु_सूची args;
 
-	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
-	va_end(args);
-	_exit(1);
+	बहु_शुरू(args, fmt);
+	sshlogv(file, func, पंक्ति, showfunc, level, suffix, fmt, args);
+	बहु_पूर्ण(args);
+	_निकास(1);
 }

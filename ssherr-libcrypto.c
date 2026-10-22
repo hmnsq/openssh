@@ -15,45 +15,45 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
+#समावेश <sys/types.h>
 
-#include <errno.h>
-#include <string.h>
+#समावेश <errno.h>
+#समावेश <string.h>
 
-#include "log.h"
+#समावेश "log.h"
 
-#ifdef WITH_OPENSSL
-#include <openssl/err.h>
+#अगर_घोषित WITH_OPENSSL
+#समावेश <openssl/err.h>
 
-const char *
-ssherr_libcrypto(void)
+स्थिर अक्षर *
+ssherr_libcrypto(व्योम)
 {
-	unsigned long e;
-	static char buf[512];
-	char msg[4096];
-	const char *reason = NULL, *file, *data;
-	int ln, fl;
+	अचिन्हित दीर्घ e;
+	अटल अक्षर buf[512];
+	अक्षर संदेश[4096];
+	स्थिर अक्षर *reason = शून्य, *file, *तथ्य;
+	पूर्णांक ln, fl;
 
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
-	while ((e = ERR_get_error_line_data(&file, &ln, &data, &fl)) != 0) {
-		ERR_error_string_n(e, buf, sizeof(buf));
-		snprintf(msg, sizeof(msg), "%s:%s:%d:%s", buf, file, ln,
-		    (fl & ERR_TXT_STRING) ? data : "");
-		debug("libcrypto: '%s'", msg);
-		if ((reason = ERR_reason_error_string(e)) != NULL)
-			snprintf(buf, sizeof(buf), "error in libcrypto: %s",
+	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, शून्य);
+	जबतक ((e = ERR_get_error_पंक्ति_तथ्य(&file, &ln, &तथ्य, &fl)) != 0) {
+		ERR_error_string_n(e, buf, माप(buf));
+		snprintf(संदेश, माप(संदेश), "%s:%s:%d:%s", buf, file, ln,
+		    (fl & ERR_TXT_STRING) ? तथ्य : "");
+		debug("libcrypto: '%s'", संदेश);
+		अगर ((reason = ERR_reason_error_string(e)) != शून्य)
+			snprintf(buf, माप(buf), "error in libcrypto: %s",
 			    reason);
 	}
-	if (reason == NULL)
-		return NULL;
-	return buf;
+	अगर (reason == शून्य)
+		वापस शून्य;
+	वापस buf;
 }
-#else
-const char *
-ssherr_libcrypto(void)
+#अन्यथा
+स्थिर अक्षर *
+ssherr_libcrypto(व्योम)
 {
-	return NULL;
+	वापस शून्य;
 }
-#endif
+#पूर्ण_अगर

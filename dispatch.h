@@ -24,26 +24,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DISPATCH_H
-#define DISPATCH_H
+#अगर_अघोषित DISPATCH_H
+#घोषणा DISPATCH_H
 
-#define DISPATCH_MAX	255
+#घोषणा DISPATCH_MAX	255
 
-enum {
+क्रमागत {
 	DISPATCH_BLOCK,
 	DISPATCH_NONBLOCK
 };
 
-struct ssh;
+काष्ठा ssh;
 
-typedef int dispatch_fn(int, uint32_t, struct ssh *);
+प्रकार पूर्णांक dispatch_fn(पूर्णांक, uint32_t, काष्ठा ssh *);
 
-int	dispatch_protocol_error(int, uint32_t, struct ssh *);
-int	dispatch_protocol_ignore(int, uint32_t, struct ssh *);
-void	ssh_dispatch_init(struct ssh *, dispatch_fn *);
-void	ssh_dispatch_set(struct ssh *, int, dispatch_fn *);
-void	ssh_dispatch_range(struct ssh *, u_int, u_int, dispatch_fn *);
-int	ssh_dispatch_run(struct ssh *, int, volatile sig_atomic_t *);
-void	ssh_dispatch_run_fatal(struct ssh *, int, volatile sig_atomic_t *);
+पूर्णांक	dispatch_protocol_error(पूर्णांक, uint32_t, काष्ठा ssh *);
+पूर्णांक	dispatch_protocol_ignore(पूर्णांक, uint32_t, काष्ठा ssh *);
+व्योम	ssh_dispatch_init(काष्ठा ssh *, dispatch_fn *);
+व्योम	ssh_dispatch_set(काष्ठा ssh *, पूर्णांक, dispatch_fn *);
+व्योम	ssh_dispatch_range(काष्ठा ssh *, u_int, u_int, dispatch_fn *);
+पूर्णांक	ssh_dispatch_run(काष्ठा ssh *, पूर्णांक, अस्थिर संक_पूर्ण_प्रकार *);
+व्योम	ssh_dispatch_run_fatal(काष्ठा ssh *, पूर्णांक, अस्थिर संक_पूर्ण_प्रकार *);
 
-#endif
+#पूर्ण_अगर

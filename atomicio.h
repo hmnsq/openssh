@@ -26,28 +26,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _ATOMICIO_H
-#define _ATOMICIO_H
+#अगर_अघोषित _ATOMICIO_H
+#घोषणा _ATOMICIO_H
 
-struct iovec;
+काष्ठा iovec;
 
 /*
  * Ensure all of data on socket comes through. f==read || f==vwrite
  */
-size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *);
-size_t	atomicio(ssize_t (*)(int, void *, size_t), int, void *, size_t);
+माप_प्रकार
+atomicio6(ssize_t (*f) (पूर्णांक, व्योम *, माप_प्रकार), पूर्णांक fd, व्योम *_s, माप_प्रकार n,
+    पूर्णांक (*cb)(व्योम *, माप_प्रकार), व्योम *);
+माप_प्रकार	atomicio(ssize_t (*)(पूर्णांक, व्योम *, माप_प्रकार), पूर्णांक, व्योम *, माप_प्रकार);
 
-#define vwrite (ssize_t (*)(int, void *, size_t))write
+#घोषणा vwrite (ssize_t (*)(पूर्णांक, व्योम *, माप_प्रकार))ग_लिखो
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
-size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt, int (*cb)(void *, size_t), void *);
-size_t	atomiciov(ssize_t (*)(int, const struct iovec *, int),
-    int, const struct iovec *, int);
+माप_प्रकार
+atomiciov6(ssize_t (*f) (पूर्णांक, स्थिर काष्ठा iovec *, पूर्णांक), पूर्णांक fd,
+    स्थिर काष्ठा iovec *_iov, पूर्णांक iovcnt, पूर्णांक (*cb)(व्योम *, माप_प्रकार), व्योम *);
+माप_प्रकार	atomiciov(ssize_t (*)(पूर्णांक, स्थिर काष्ठा iovec *, पूर्णांक),
+    पूर्णांक, स्थिर काष्ठा iovec *, पूर्णांक);
 
-#endif /* _ATOMICIO_H */
+#पूर्ण_अगर /* _ATOMICIO_H */

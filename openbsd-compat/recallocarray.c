@@ -17,72 +17,72 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/recallocarray.c */
 
-#include "includes.h"
-#ifndef HAVE_RECALLOCARRAY
+#समावेश "includes.h"
+#अगर_अघोषित HAVE_RECALLOCARRAY
 
-#include <errno.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <unistd.h>
+#समावेश <errno.h>
+#समावेश <stdlib.h>
+#समावेश <stdint.h>
+#समावेश <string.h>
+#समावेश <unistd.h>
 
 /*
  * This is sqrt(SIZE_MAX+1), as s1*s2 <= SIZE_MAX
  * if both s1 < MUL_NO_OVERFLOW and s2 < MUL_NO_OVERFLOW
  */
-#define MUL_NO_OVERFLOW ((size_t)1 << (sizeof(size_t) * 4))
+#घोषणा MUL_NO_OVERFLOW ((माप_प्रकार)1 << (माप(माप_प्रकार) * 4))
 
-void *
-recallocarray(void *ptr, size_t oldnmemb, size_t newnmemb, size_t size)
+व्योम *
+recallocarray(व्योम *ptr, माप_प्रकार oldnmemb, माप_प्रकार newnmemb, माप_प्रकार आकार)
 {
-	size_t oldsize, newsize;
-	void *newptr;
+	माप_प्रकार oldsize, newsize;
+	व्योम *newptr;
 
-	if (ptr == NULL)
-		return calloc(newnmemb, size);
+	अगर (ptr == शून्य)
+		वापस सुस्मृति(newnmemb, आकार);
 
-	if ((newnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
-	    newnmemb > 0 && SIZE_MAX / newnmemb < size) {
-		errno = ENOMEM;
-		return NULL;
+	अगर ((newnmemb >= MUL_NO_OVERFLOW || आकार >= MUL_NO_OVERFLOW) &&
+	    newnmemb > 0 && SIZE_MAX / newnmemb < आकार) {
+		त्रुटि_सं = ENOMEM;
+		वापस शून्य;
 	}
-	newsize = newnmemb * size;
+	newsize = newnmemb * आकार;
 
-	if ((oldnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
-	    oldnmemb > 0 && SIZE_MAX / oldnmemb < size) {
-		errno = EINVAL;
-		return NULL;
+	अगर ((oldnmemb >= MUL_NO_OVERFLOW || आकार >= MUL_NO_OVERFLOW) &&
+	    oldnmemb > 0 && SIZE_MAX / oldnmemb < आकार) {
+		त्रुटि_सं = EINVAL;
+		वापस शून्य;
 	}
-	oldsize = oldnmemb * size;
+	oldsize = oldnmemb * आकार;
 	
 	/*
 	 * Don't bother too much if we're shrinking just a bit,
 	 * we do not shrink for series of small steps, oh well.
 	 */
-	if (newsize <= oldsize) {
-		size_t d = oldsize - newsize;
+	अगर (newsize <= oldsize) {
+		माप_प्रकार d = oldsize - newsize;
 
-		if (d < oldsize / 2 && d < (size_t)getpagesize()) {
-			memset((char *)ptr + newsize, 0, d);
-			return ptr;
+		अगर (d < oldsize / 2 && d < (माप_प्रकार)getpagesize()) {
+			स_रखो((अक्षर *)ptr + newsize, 0, d);
+			वापस ptr;
 		}
 	}
 
-	newptr = malloc(newsize);
-	if (newptr == NULL)
-		return NULL;
+	newptr = दो_स्मृति(newsize);
+	अगर (newptr == शून्य)
+		वापस शून्य;
 
-	if (newsize > oldsize) {
-		memcpy(newptr, ptr, oldsize);
-		memset((char *)newptr + oldsize, 0, newsize - oldsize);
-	} else
-		memcpy(newptr, ptr, newsize);
+	अगर (newsize > oldsize) {
+		स_नकल(newptr, ptr, oldsize);
+		स_रखो((अक्षर *)newptr + oldsize, 0, newsize - oldsize);
+	} अन्यथा
+		स_नकल(newptr, ptr, newsize);
 
 	explicit_bzero(ptr, oldsize);
-	free(ptr);
+	मुक्त(ptr);
 
-	return newptr;
+	वापस newptr;
 }
 /* DEF_WEAK(recallocarray); */
 
-#endif /* HAVE_RECALLOCARRAY */
+#पूर्ण_अगर /* HAVE_RECALLOCARRAY */

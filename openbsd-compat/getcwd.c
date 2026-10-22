@@ -30,57 +30,57 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getcwd.c */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#if !defined(HAVE_GETCWD)
+#अगर !defined(HAVE_GETCWD)
 
-#include <sys/stat.h>
-#include <errno.h>
-#include <dirent.h>
-#include <sys/dir.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "includes.h"
+#समावेश <sys/stat.h>
+#समावेश <errno.h>
+#समावेश <dirent.h>
+#समावेश <sys/dir.h>
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश "includes.h"
 
-#define	ISDOT(dp) \
+#घोषणा	ISDOT(dp) \
 	(dp->d_name[0] == '.' && (dp->d_name[1] == '\0' || \
 	    (dp->d_name[1] == '.' && dp->d_name[2] == '\0')))
 
-char *
-getcwd(char *pt, size_t size)
+अक्षर *
+getcwd(अक्षर *pt, माप_प्रकार आकार)
 {
-	struct dirent *dp;
-	DIR *dir = NULL;
+	काष्ठा dirent *dp;
+	सूची *dir = शून्य;
 	dev_t dev;
 	ino_t ino;
-	int first;
-	char *bpt, *bup;
-	struct stat s;
-	dev_t root_dev;
-	ino_t root_ino;
-	size_t ptsize, upsize;
-	int save_errno;
-	char *ept, *eup, *up;
+	पूर्णांक first;
+	अक्षर *bpt, *bup;
+	काष्ठा stat s;
+	dev_t मूल_dev;
+	ino_t मूल_ino;
+	माप_प्रकार ptsize, upsize;
+	पूर्णांक save_errno;
+	अक्षर *ept, *eup, *up;
 
 	/*
 	 * If no buffer specified by the user, allocate one as necessary.
 	 * If a buffer is specified, the size has to be non-zero.  The path
 	 * is built from the end of the buffer backwards.
 	 */
-	if (pt) {
+	अगर (pt) {
 		ptsize = 0;
-		if (size == 0) {
-			errno = EINVAL;
-			return (NULL);
-		} else if (size == 1) {
-			errno = ERANGE;
-			return (NULL);
+		अगर (आकार == 0) {
+			त्रुटि_सं = EINVAL;
+			वापस (शून्य);
+		} अन्यथा अगर (आकार == 1) {
+			त्रुटि_सं = दुस्फल;
+			वापस (शून्य);
 		}
-		ept = pt + size;
-	} else {
-		if ((pt = malloc(ptsize = MAXPATHLEN)) == NULL)
-			return (NULL);
+		ept = pt + आकार;
+	} अन्यथा {
+		अगर ((pt = दो_स्मृति(ptsize = MAXPATHLEN)) == शून्य)
+			वापस (शून्य);
 		ept = pt + ptsize;
 	}
 	bpt = ept - 1;
@@ -91,41 +91,41 @@ getcwd(char *pt, size_t size)
 	 * Should always be enough (it's 340 levels).  If it's not, allocate
 	 * as necessary.  Special * case the first stat, it's ".", not "..".
 	 */
-	if ((up = malloc(upsize = MAXPATHLEN)) == NULL)
-		goto err;
+	अगर ((up = दो_स्मृति(upsize = MAXPATHLEN)) == शून्य)
+		जाओ err;
 	eup = up + upsize;
 	bup = up;
 	up[0] = '.';
 	up[1] = '\0';
 
 	/* Save root values, so know when to stop. */
-	if (stat("/", &s))
-		goto err;
-	root_dev = s.st_dev;
-	root_ino = s.st_ino;
+	अगर (stat("/", &s))
+		जाओ err;
+	मूल_dev = s.st_dev;
+	मूल_ino = s.st_ino;
 
-	errno = 0;			/* XXX readdir has no error return. */
+	त्रुटि_सं = 0;			/* XXX readdir has no error return. */
 
-	for (first = 1;; first = 0) {
+	क्रम (first = 1;; first = 0) {
 		/* Stat the current level. */
-		if (lstat(up, &s))
-			goto err;
+		अगर (lstat(up, &s))
+			जाओ err;
 
 		/* Save current node values. */
 		ino = s.st_ino;
 		dev = s.st_dev;
 
 		/* Check for reaching root. */
-		if (root_dev == dev && root_ino == ino) {
+		अगर (मूल_dev == dev && मूल_ino == ino) {
 			*--bpt = '/';
 			/*
 			 * It's unclear that it's a requirement to copy the
 			 * path to the beginning of the buffer, but it's always
 			 * been that way and stuff would probably break.
 			 */
-			memmove(pt, bpt, ept - bpt);
-			free(up);
-			return (pt);
+			स_हटाओ(pt, bpt, ept - bpt);
+			मुक्त(up);
+			वापस (pt);
 		}
 
 		/*
@@ -133,11 +133,11 @@ getcwd(char *pt, size_t size)
 		 * as necessary.  Max length is 3 for "../", the largest
 		 * possible component name, plus a trailing NUL.
 		 */
-		if (bup + 3  + MAXNAMLEN + 1 >= eup) {
-			char *nup;
+		अगर (bup + 3  + MAXNAMLEN + 1 >= eup) {
+			अक्षर *nup;
 
-			if ((nup = realloc(up, upsize *= 2)) == NULL)
-				goto err;
+			अगर ((nup = पुनः_स्मृति(up, upsize *= 2)) == शून्य)
+				जाओ err;
 			bup = nup + (bup - up);
 			up = nup;
 			eup = up + upsize;
@@ -147,8 +147,8 @@ getcwd(char *pt, size_t size)
 		*bup = '\0';
 
 		/* Open and stat parent directory. */
-		if (!(dir = opendir(up)) || fstat(dirfd(dir), &s))
-			goto err;
+		अगर (!(dir = सूची_खोलो(up)) || ख_स्थिति(dirfd(dir), &s))
+			जाओ err;
 
 		/* Add trailing slash for next directory. */
 		*bup++ = '/';
@@ -159,58 +159,58 @@ getcwd(char *pt, size_t size)
 		 * parent directory, not the inode number of the mounted file.
 		 */
 		save_errno = 0;
-		if (s.st_dev == dev) {
-			for (;;) {
-				if (!(dp = readdir(dir)))
-					goto notfound;
-				if (dp->d_fileno == ino)
-					break;
+		अगर (s.st_dev == dev) {
+			क्रम (;;) {
+				अगर (!(dp = सूची_पढ़ो(dir)))
+					जाओ notfound;
+				अगर (dp->d_fileno == ino)
+					अवरोध;
 			}
-		} else
-			for (;;) {
-				if (!(dp = readdir(dir)))
-					goto notfound;
-				if (ISDOT(dp))
-					continue;
-				memcpy(bup, dp->d_name, dp->d_namlen + 1);
+		} अन्यथा
+			क्रम (;;) {
+				अगर (!(dp = सूची_पढ़ो(dir)))
+					जाओ notfound;
+				अगर (ISDOT(dp))
+					जारी;
+				स_नकल(bup, dp->d_name, dp->d_namlen + 1);
 
 				/* Save the first error for later. */
-				if (lstat(up, &s)) {
-					if (!save_errno)
-						save_errno = errno;
-					errno = 0;
-					continue;
+				अगर (lstat(up, &s)) {
+					अगर (!save_errno)
+						save_errno = त्रुटि_सं;
+					त्रुटि_सं = 0;
+					जारी;
 				}
-				if (s.st_dev == dev && s.st_ino == ino)
-					break;
+				अगर (s.st_dev == dev && s.st_ino == ino)
+					अवरोध;
 			}
 
 		/*
 		 * Check for length of the current name, preceding slash,
 		 * leading slash.
 		 */
-		if (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
-			size_t len;
-			char *npt;
+		अगर (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
+			माप_प्रकार len;
+			अक्षर *npt;
 
-			if (!ptsize) {
-				errno = ERANGE;
-				goto err;
+			अगर (!ptsize) {
+				त्रुटि_सं = दुस्फल;
+				जाओ err;
 			}
 			len = ept - bpt;
-			if ((npt = realloc(pt, ptsize *= 2)) == NULL)
-				goto err;
+			अगर ((npt = पुनः_स्मृति(pt, ptsize *= 2)) == शून्य)
+				जाओ err;
 			bpt = npt + (bpt - pt);
 			pt = npt;
 			ept = pt + ptsize;
-			memmove(ept - len, bpt, len);
+			स_हटाओ(ept - len, bpt, len);
 			bpt = ept - len;
 		}
-		if (!first)
+		अगर (!first)
 			*--bpt = '/';
 		bpt -= dp->d_namlen;
-		memcpy(bpt, dp->d_name, dp->d_namlen);
-		(void)closedir(dir);
+		स_नकल(bpt, dp->d_name, dp->d_namlen);
+		(व्योम)बंद_सूची(dir);
 
 		/* Truncate any file name. */
 		*bup = '\0';
@@ -222,21 +222,21 @@ notfound:
 	 * didn't find the current directory in its parent directory, set
 	 * errno to ENOENT.
 	 */
-	if (!errno)
-		errno = save_errno ? save_errno : ENOENT;
+	अगर (!त्रुटि_सं)
+		त्रुटि_सं = save_errno ? save_errno : ENOENT;
 	/* FALLTHROUGH */
 err:
-	save_errno = errno;
+	save_errno = त्रुटि_सं;
 
-	if (ptsize)
-		free(pt);
-	free(up);
-	if (dir)
-		(void)closedir(dir);
+	अगर (ptsize)
+		मुक्त(pt);
+	मुक्त(up);
+	अगर (dir)
+		(व्योम)बंद_सूची(dir);
 
-	errno = save_errno;
+	त्रुटि_सं = save_errno;
 
-	return (NULL);
+	वापस (शून्य);
 }
 
-#endif /* !defined(HAVE_GETCWD) */
+#पूर्ण_अगर /* !defined(HAVE_GETCWD) */

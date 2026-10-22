@@ -24,35 +24,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-struct sshkey;
+काष्ठा sshkey;
 
-typedef struct Sensitive Sensitive;
-struct Sensitive {
-	struct sshkey	**keys;
-	int		nkeys;
+प्रकार काष्ठा Sensitive Sensitive;
+काष्ठा Sensitive {
+	काष्ठा sshkey	**कुंजियाँ;
+	पूर्णांक		nkeys;
 };
 
-struct ssh_conn_info {
-	char *conn_hash_hex;
-	char *shorthost;
-	char *uidstr;
-	char *keyalias;
-	char *thishost;
-	char *host_arg;
-	char *portstr;
-	char *remhost;
-	char *remuser;
-	char *homedir;
-	char *locuser;
-	char *jmphost;
+काष्ठा ssh_conn_info {
+	अक्षर *conn_hash_hex;
+	अक्षर *shorthost;
+	अक्षर *uidstr;
+	अक्षर *keyalias;
+	अक्षर *thishost;
+	अक्षर *host_arg;
+	अक्षर *portstr;
+	अक्षर *remhost;
+	अक्षर *remuser;
+	अक्षर *homedir;
+	अक्षर *locuser;
+	अक्षर *jmphost;
 };
 
-struct addrinfo;
-struct ssh;
-struct hostkeys;
+काष्ठा addrinfo;
+काष्ठा ssh;
+काष्ठा hostkeys;
 
 /* default argument for client percent expansions, minus remote user */
-#define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info) \
+#घोषणा DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info) \
 	"L", conn_info->shorthost, \
 	"i", conn_info->uidstr, \
 	"k", conn_info->keyalias, \
@@ -65,44 +65,44 @@ struct hostkeys;
 	"j", conn_info->jmphost
 
 /* same plus remote user and hash which has user as a component */
-#define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(conn_info) \
+#घोषणा DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(conn_info) \
 	DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info), \
 	"C", conn_info->conn_hash_hex, \
 	"r", conn_info->remuser
 
-int	 ssh_connect(struct ssh *, const char *, const char *,
-	    struct addrinfo *, struct sockaddr_storage *, u_short,
-	    int, int *, int);
-void	 ssh_kill_proxy_command(void);
+पूर्णांक	 ssh_connect(काष्ठा ssh *, स्थिर अक्षर *, स्थिर अक्षर *,
+	    काष्ठा addrinfo *, काष्ठा sockaddr_storage *, u_short,
+	    पूर्णांक, पूर्णांक *, पूर्णांक);
+व्योम	 ssh_kill_proxy_command(व्योम);
 
-void	 ssh_login(struct ssh *, Sensitive *, const char *,
-    struct sockaddr_storage *, u_short, struct passwd *, int,
-    const struct ssh_conn_info *);
+व्योम	 ssh_login(काष्ठा ssh *, Sensitive *, स्थिर अक्षर *,
+    काष्ठा sockaddr_storage *, u_short, काष्ठा passwd *, पूर्णांक,
+    स्थिर काष्ठा ssh_conn_info *);
 
-int	 verify_host_key(char *, struct sockaddr *, struct sshkey *,
-    const struct ssh_conn_info *);
+पूर्णांक	 verify_host_कुंजी(अक्षर *, काष्ठा sockaddr *, काष्ठा sshkey *,
+    स्थिर काष्ठा ssh_conn_info *);
 
-void	 get_hostfile_hostname_ipaddr(char *, struct sockaddr *, u_short,
-    char **, char **);
+व्योम	 get_hostfile_hostname_ipaddr(अक्षर *, काष्ठा sockaddr *, u_short,
+    अक्षर **, अक्षर **);
 
-void	 ssh_kex2(struct ssh *ssh, char *, struct sockaddr_storage *, u_short,
-    const struct ssh_conn_info *);
+व्योम	 ssh_kex2(काष्ठा ssh *ssh, अक्षर *, काष्ठा sockaddr_storage *, u_short,
+    स्थिर काष्ठा ssh_conn_info *);
 
-void	 ssh_userauth2(struct ssh *ssh, const char *, const char *,
-    char *, Sensitive *);
+व्योम	 ssh_userauth2(काष्ठा ssh *ssh, स्थिर अक्षर *, स्थिर अक्षर *,
+    अक्षर *, Sensitive *);
 
-void	 pubkey_dump(struct ssh *);
+व्योम	 pubkey_dump(काष्ठा ssh *);
 
-int	 ssh_local_cmd(const char *);
+पूर्णांक	 ssh_local_cmd(स्थिर अक्षर *);
 
-void	 maybe_add_key_to_agent(const char *, struct sshkey *,
-    const char *, const char *);
+व्योम	 maybe_add_कुंजी_to_agent(स्थिर अक्षर *, काष्ठा sshkey *,
+    स्थिर अक्षर *, स्थिर अक्षर *);
 
-void	 load_hostkeys_command(struct hostkeys *, const char *,
-    const char *, const struct ssh_conn_info *,
-    const struct sshkey *, const char *);
+व्योम	 load_hostkeys_command(काष्ठा hostkeys *, स्थिर अक्षर *,
+    स्थिर अक्षर *, स्थिर काष्ठा ssh_conn_info *,
+    स्थिर काष्ठा sshkey *, स्थिर अक्षर *);
 
-int hostkey_accepted_by_hostkeyalgs(const struct sshkey *);
+पूर्णांक hostkey_accepted_by_hostkeyalgs(स्थिर काष्ठा sshkey *);
 
-void ssh_conn_info_free(struct ssh_conn_info *);
-struct ssh_conn_info *ssh_conn_info_dup(const struct ssh_conn_info *);
+व्योम ssh_conn_info_free(काष्ठा ssh_conn_info *);
+काष्ठा ssh_conn_info *ssh_conn_info_dup(स्थिर काष्ठा ssh_conn_info *);

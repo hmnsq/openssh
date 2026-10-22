@@ -15,33 +15,33 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#ifndef WITH_OPENSSL
+#अगर_अघोषित WITH_OPENSSL
 
-#include <sys/types.h>
-#include <string.h>
+#समावेश <sys/types.h>
+#समावेश <string.h>
 
-#include "cipher-aesctr.h"
+#समावेश "cipher-aesctr.h"
 
 /*
  * increment counter 'ctr',
  * the counter is of size 'len' bytes and stored in network-byte-order.
  * (LSB at ctr[len-1], MSB at ctr[0])
  */
-static inline void
+अटल अंतरभूत व्योम
 aesctr_inc(u8 *ctr, u32 len)
 {
 	ssize_t i;
 
-#ifndef CONSTANT_TIME_INCREMENT
-	for (i = len - 1; i >= 0; i--)
-		if (++ctr[i])	/* continue on overflow */
-			return;
-#else
+#अगर_अघोषित CONSTANT_TIME_INCREMENT
+	क्रम (i = len - 1; i >= 0; i--)
+		अगर (++ctr[i])	/* continue on overflow */
+			वापस;
+#अन्यथा
 	u8 x, add = 1;
 
-	for (i = len - 1; i >= 0; i--) {
+	क्रम (i = len - 1; i >= 0; i--) {
 		ctr[i] += add;
 		/* constant time for: x = ctr[i] ? 1 : 0 */
 		x = ctr[i];
@@ -50,34 +50,34 @@ aesctr_inc(u8 *ctr, u32 len)
 		x = (x | (x >> 1)) & 0x1;
 		add *= (x^1);
 	}
-#endif
+#पूर्ण_अगर
 }
 
-void
-aesctr_keysetup(aesctr_ctx *x,const u8 *k,u32 kbits,u32 ivbits)
+व्योम
+aesctr_keysetup(aesctr_ctx *x,स्थिर u8 *k,u32 kbits,u32 ivbits)
 {
-	x->rounds = rijndaelKeySetupEnc(x->ek, k, kbits);
+	x->rounds = rijndael_कुंजी_Setup_Enc(x->ek, k, kbits);
 }
 
-void
-aesctr_ivsetup(aesctr_ctx *x,const u8 *iv)
+व्योम
+aesctr_ivsetup(aesctr_ctx *x,स्थिर u8 *iv)
 {
-	memcpy(x->ctr, iv, AES_BLOCK_SIZE);
+	स_नकल(x->ctr, iv, AES_BLOCK_आकार);
 }
 
-void
-aesctr_encrypt_bytes(aesctr_ctx *x,const u8 *m,u8 *c,u32 bytes)
+व्योम
+aesctr_encrypt_bytes(aesctr_ctx *x,स्थिर u8 *m,u8 *c,u32 bytes)
 {
 	u32 n = 0;
-	u8 buf[AES_BLOCK_SIZE];
+	u8 buf[AES_BLOCK_आकार];
 
-	while ((bytes--) > 0) {
-		if (n == 0) {
+	जबतक ((bytes--) > 0) {
+		अगर (n == 0) {
 			rijndaelEncrypt(x->ek, x->rounds, x->ctr, buf);
-			aesctr_inc(x->ctr, AES_BLOCK_SIZE);
+			aesctr_inc(x->ctr, AES_BLOCK_आकार);
 		}
 		*(c++) = *(m++) ^ buf[n];
-		n = (n + 1) % AES_BLOCK_SIZE;
+		n = (n + 1) % AES_BLOCK_आकार;
 	}
 }
-#endif /* !WITH_OPENSSL */
+#पूर्ण_अगर /* !WITH_OPENSSL */

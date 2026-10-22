@@ -23,189 +23,189 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <fcntl.h>
-#include <paths.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
+#समावेश <fcntl.h>
+#समावेश <paths.h>
+#समावेश <pwd.h>
+#समावेश <stdarg.h>
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <unistd.h>
+#समावेश <errno.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#include <openssl/rand.h>
-#include <openssl/rsa.h>
-#include "openbsd-compat/openssl-compat.h"
-#endif
+#अगर_घोषित WITH_OPENSSL
+#समावेश <openssl/evp.h>
+#समावेश <openssl/rand.h>
+#समावेश <openssl/rsa.h>
+#समावेश "openbsd-compat/openssl-compat.h"
+#पूर्ण_अगर
 
-#include "xmalloc.h"
-#include "log.h"
-#include "sshkey.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "authfile.h"
-#include "msg.h"
-#include "canohost.h"
-#include "pathnames.h"
-#include "readconf.h"
-#include "uidswap.h"
-#include "ssherr.h"
+#समावेश "xmalloc.h"
+#समावेश "log.h"
+#समावेश "sshkey.h"
+#समावेश "ssh.h"
+#समावेश "ssh2.h"
+#समावेश "misc.h"
+#समावेश "sshbuf.h"
+#समावेश "authfile.h"
+#समावेश "msg.h"
+#समावेश "canohost.h"
+#समावेश "pathnames.h"
+#समावेश "readconf.h"
+#समावेश "uidswap.h"
+#समावेश "ssherr.h"
 
-extern char *__progname;
+बाह्य अक्षर *__progname;
 
-static int
-valid_request(struct passwd *pw, char *host, struct sshkey **ret, char **pkalgp,
-    u_char *data, size_t datalen)
+अटल पूर्णांक
+valid_request(काष्ठा passwd *pw, अक्षर *host, काष्ठा sshkey **ret, अक्षर **pkalgp,
+    u_char *तथ्य, माप_प्रकार datalen)
 {
-	struct sshbuf *b;
-	struct sshkey *key = NULL;
+	काष्ठा sshbuf *b;
+	काष्ठा sshkey *कुंजी = शून्य;
 	u_char type, *pkblob;
-	char *p;
-	size_t blen, len;
-	char *pkalg, *luser;
-	int r, pktype, fail;
+	अक्षर *p;
+	माप_प्रकार blen, len;
+	अक्षर *pkalg, *luser;
+	पूर्णांक r, pktype, fail;
 
-	if (ret != NULL)
-		*ret = NULL;
-	if (pkalgp != NULL)
-		*pkalgp = NULL;
+	अगर (ret != शून्य)
+		*ret = शून्य;
+	अगर (pkalgp != शून्य)
+		*pkalgp = शून्य;
 	fail = 0;
 
-	if ((b = sshbuf_from(data, datalen)) == NULL)
+	अगर ((b = sshbuf_from(तथ्य, datalen)) == शून्य)
 		fatal_f("sshbuf_from failed");
 
 	/* session id */
-	if ((r = sshbuf_get_string(b, NULL, &len)) != 0)
+	अगर ((r = sshbuf_get_string(b, शून्य, &len)) != 0)
 		fatal_fr(r, "parse session ID");
-	if (len != 20 && /* SHA1 */
+	अगर (len != 20 && /* SHA1 */
 	    len != 32 && /* SHA256 */
 	    len != 48 && /* SHA384 */
 	    len != 64)   /* SHA512 */
 		fail++;
 
-	if ((r = sshbuf_get_u8(b, &type)) != 0)
+	अगर ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_MSG_USERAUTH_REQUEST)
+	अगर (type != SSH2_संदेश_USERAUTH_REQUEST)
 		fail++;
 
 	/* server user */
-	if ((r = sshbuf_skip_string(b)) != 0)
+	अगर ((r = sshbuf_skip_string(b)) != 0)
 		fatal_fr(r, "parse user");
 
 	/* service */
-	if ((r = sshbuf_get_cstring(b, &p, NULL)) != 0)
+	अगर ((r = sshbuf_get_cstring(b, &p, शून्य)) != 0)
 		fatal_fr(r, "parse service");
-	if (strcmp("ssh-connection", p) != 0)
+	अगर (म_भेद("ssh-connection", p) != 0)
 		fail++;
-	free(p);
+	मुक्त(p);
 
 	/* method */
-	if ((r = sshbuf_get_cstring(b, &p, NULL)) != 0)
+	अगर ((r = sshbuf_get_cstring(b, &p, शून्य)) != 0)
 		fatal_fr(r, "parse method");
-	if (strcmp("hostbased", p) != 0)
+	अगर (म_भेद("hostbased", p) != 0)
 		fail++;
-	free(p);
+	मुक्त(p);
 
 	/* pubkey */
-	if ((r = sshbuf_get_cstring(b, &pkalg, NULL)) != 0 ||
+	अगर ((r = sshbuf_get_cstring(b, &pkalg, शून्य)) != 0 ||
 	    (r = sshbuf_get_string(b, &pkblob, &blen)) != 0)
 		fatal_fr(r, "parse pk");
 
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC)
+	अगर (pktype == कुंजी_UNSPEC)
 		fail++;
-	else if ((r = sshkey_from_blob(pkblob, blen, &key)) != 0) {
+	अन्यथा अगर ((r = sshkey_from_blob(pkblob, blen, &कुंजी)) != 0) {
 		error_fr(r, "decode key");
 		fail++;
-	} else if (key->type != pktype)
+	} अन्यथा अगर (कुंजी->type != pktype)
 		fail++;
 
 	/* client host name, handle trailing dot */
-	if ((r = sshbuf_get_cstring(b, &p, &len)) != 0)
+	अगर ((r = sshbuf_get_cstring(b, &p, &len)) != 0)
 		fatal_fr(r, "parse hostname");
 	debug2_f("check expect chost \"%s\" got \"%s\"", host, p);
-	if (len == 0)
+	अगर (len == 0)
 		fail++;
-	else if (strlen(host) != len - 1)
+	अन्यथा अगर (म_माप(host) != len - 1)
 		fail++;
-	else if (p[len - 1] != '.')
+	अन्यथा अगर (p[len - 1] != '.')
 		fail++;
-	else if (strncasecmp(host, p, len - 1) != 0)
+	अन्यथा अगर (strncasecmp(host, p, len - 1) != 0)
 		fail++;
-	free(p);
+	मुक्त(p);
 
 	/* local user */
-	if ((r = sshbuf_get_cstring(b, &luser, NULL)) != 0)
+	अगर ((r = sshbuf_get_cstring(b, &luser, शून्य)) != 0)
 		fatal_fr(r, "parse luser");
 
-	if (strcmp(pw->pw_name, luser) != 0)
+	अगर (म_भेद(pw->pw_name, luser) != 0)
 		fail++;
-	free(luser);
+	मुक्त(luser);
 
 	/* end of message */
-	if (sshbuf_len(b) != 0)
+	अगर (sshbuf_len(b) != 0)
 		fail++;
 	sshbuf_free(b);
 
 	debug3_f("fail %d", fail);
 
-	if (!fail) {
-		if (ret != NULL) {
-			*ret = key;
-			key = NULL;
+	अगर (!fail) {
+		अगर (ret != शून्य) {
+			*ret = कुंजी;
+			कुंजी = शून्य;
 		}
-		if (pkalgp != NULL) {
+		अगर (pkalgp != शून्य) {
 			*pkalgp = pkalg;
-			pkalg = NULL;
+			pkalg = शून्य;
 		}
 	}
-	sshkey_free(key);
-	free(pkalg);
-	free(pkblob);
+	sshkey_free(कुंजी);
+	मुक्त(pkalg);
+	मुक्त(pkblob);
 
-	return (fail ? -1 : 0);
+	वापस (fail ? -1 : 0);
 }
 
-int
-main(int argc, char **argv)
+पूर्णांक
+मुख्य(पूर्णांक argc, अक्षर **argv)
 {
-	struct sshbuf *b;
+	काष्ठा sshbuf *b;
 	Options options;
-#define NUM_KEYTYPES 5
-	struct sshkey *keys[NUM_KEYTYPES], *key = NULL;
-	struct passwd *pw;
-	int r, key_fd[NUM_KEYTYPES], i, found, version = 2, fd;
-	u_char *signature, *data, rver;
-	char *host, *fp, *pkalg;
-	size_t slen, dlen;
+#घोषणा अंक_KEYTYPES 5
+	काष्ठा sshkey *कुंजियाँ[अंक_KEYTYPES], *कुंजी = शून्य;
+	काष्ठा passwd *pw;
+	पूर्णांक r, कुंजी_fd[अंक_KEYTYPES], i, found, version = 2, fd;
+	u_char *signature, *तथ्य, rver;
+	अक्षर *host, *fp, *pkalg;
+	माप_प्रकार slen, dlen;
 
 	/* Ensure that stdin and stdout are connected */
-	if ((fd = open(_PATH_DEVNULL, O_RDWR)) < 2)
-		exit(1);
+	अगर ((fd = खोलो(_PATH_DEVNULL, O_RDWR)) < 2)
+		निकास(1);
 	/* Leave /dev/null fd iff it is attached to stderr */
-	if (fd > 2)
-		close(fd);
+	अगर (fd > 2)
+		बंद(fd);
 
-	if (pledge("stdio rpath getpw dns id", NULL) != 0)
-		fatal("%s: pledge: %s", __progname, strerror(errno));
+	अगर (pledge("stdio rpath getpw dns id", शून्य) != 0)
+		fatal("%s: pledge: %s", __progname, म_त्रुटि(त्रुटि_सं));
 
-	for (i = 0; i < NUM_KEYTYPES; i++)
-		key_fd[i] = -1;
+	क्रम (i = 0; i < अंक_KEYTYPES; i++)
+		कुंजी_fd[i] = -1;
 
 	i = 0;
 	/* XXX This really needs to read sshd_config for the paths */
-	key_fd[i++] = open(_PATH_HOST_ECDSA_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_ED25519_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_RSA_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_MLDSA44_ED25519_KEY_FILE, O_RDONLY);
+	कुंजी_fd[i++] = खोलो(PATH_HOST_ECDSA_कुंजी_FILE, O_RDONLY);
+	कुंजी_fd[i++] = खोलो(PATH_HOST_ED25519_कुंजी_FILE, O_RDONLY);
+	कुंजी_fd[i++] = खोलो(PATH_HOST_RSA_कुंजी_FILE, O_RDONLY);
+	कुंजी_fd[i++] = खोलो(PATH_HOST_MLDSA44_ED25519_कुंजी_FILE, O_RDONLY);
 
-	if ((pw = getpwuid(getuid())) == NULL)
+	अगर ((pw = getpwuid(getuid())) == शून्य)
 		fatal("getpwuid failed");
 	pw = pwcopy(pw);
 
@@ -213,96 +213,96 @@ main(int argc, char **argv)
 
 	seed_rng();
 
-#ifdef DEBUG_SSH_KEYSIGN
+#अगर_घोषित DEBUG_SSH_KEYSIGN
 	log_init("ssh-keysign", SYSLOG_LEVEL_DEBUG3, SYSLOG_FACILITY_AUTH, 0);
-#endif
+#पूर्ण_अगर
 
 	/* verify that ssh-keysign is enabled by the admin */
 	initialize_options(&options);
-	(void)read_config_file(_PATH_HOST_CONFIG_FILE, pw, "", "", "",
-	    &options, 0, NULL);
-	(void)fill_default_options(&options);
-	if (options.enable_ssh_keysign != 1)
+	(व्योम)read_config_file(_PATH_HOST_CONFIG_FILE, pw, "", "", "",
+	    &options, 0, शून्य);
+	(व्योम)fill_default_options(&options);
+	अगर (options.enable_ssh_keysign != 1)
 		fatal("ssh-keysign not enabled in %s",
 		    _PATH_HOST_CONFIG_FILE);
 
-	if (pledge("stdio dns", NULL) != 0)
-		fatal("%s: pledge: %s", __progname, strerror(errno));
+	अगर (pledge("stdio dns", शून्य) != 0)
+		fatal("%s: pledge: %s", __progname, म_त्रुटि(त्रुटि_सं));
 
-	for (i = found = 0; i < NUM_KEYTYPES; i++) {
-		if (key_fd[i] != -1)
+	क्रम (i = found = 0; i < अंक_KEYTYPES; i++) {
+		अगर (कुंजी_fd[i] != -1)
 			found = 1;
 	}
-	if (found == 0)
+	अगर (found == 0)
 		fatal("could not open any host key");
 
 	found = 0;
-	for (i = 0; i < NUM_KEYTYPES; i++) {
-		keys[i] = NULL;
-		if (key_fd[i] == -1)
-			continue;
-		r = sshkey_load_private_type_fd(key_fd[i], KEY_UNSPEC,
-		    NULL, &key, NULL);
-		close(key_fd[i]);
-		if (r != 0)
+	क्रम (i = 0; i < अंक_KEYTYPES; i++) {
+		कुंजियाँ[i] = शून्य;
+		अगर (कुंजी_fd[i] == -1)
+			जारी;
+		r = sshkey_load_private_type_fd(कुंजी_fd[i], कुंजी_UNSPEC,
+		    शून्य, &कुंजी, शून्य);
+		बंद(कुंजी_fd[i]);
+		अगर (r != 0)
 			debug_r(r, "parse key %d", i);
-		else if (key != NULL) {
-			keys[i] = key;
+		अन्यथा अगर (कुंजी != शून्य) {
+			कुंजियाँ[i] = कुंजी;
 			found = 1;
 		}
 	}
-	if (!found)
+	अगर (!found)
 		fatal("no hostkey found");
 
-	if ((b = sshbuf_new()) == NULL)
+	अगर ((b = sshbuf_new()) == शून्य)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (ssh_msg_recv(STDIN_FILENO, b) < 0)
+	अगर (ssh_संदेश_recv(STDIN_FILENO, b) < 0)
 		fatal("%s: ssh_msg_recv failed", __progname);
-	if ((r = sshbuf_get_u8(b, &rver)) != 0)
+	अगर ((r = sshbuf_get_u8(b, &rver)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (rver != version)
+	अगर (rver != version)
 		fatal("%s: bad version: received %d, expected %d",
 		    __progname, rver, version);
-	if ((r = sshbuf_get_u32(b, (u_int *)&fd)) != 0)
+	अगर ((r = sshbuf_get_u32(b, (u_int *)&fd)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (fd <= STDERR_FILENO)
+	अगर (fd <= STDERR_FILENO)
 		fatal("%s: bad fd = %d", __progname, fd);
-	if ((host = get_local_name(fd)) == NULL)
+	अगर ((host = get_local_name(fd)) == शून्य)
 		fatal("%s: cannot get local name for fd", __progname);
 
-	if ((r = sshbuf_get_string(b, &data, &dlen)) != 0)
+	अगर ((r = sshbuf_get_string(b, &तथ्य, &dlen)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (valid_request(pw, host, &key, &pkalg, data, dlen) < 0)
+	अगर (valid_request(pw, host, &कुंजी, &pkalg, तथ्य, dlen) < 0)
 		fatal("%s: not a valid request", __progname);
-	free(host);
+	मुक्त(host);
 
 	found = 0;
-	for (i = 0; i < NUM_KEYTYPES; i++) {
-		if (keys[i] != NULL &&
-		    sshkey_equal_public(key, keys[i])) {
+	क्रम (i = 0; i < अंक_KEYTYPES; i++) {
+		अगर (कुंजियाँ[i] != शून्य &&
+		    sshkey_equal_public(कुंजी, कुंजियाँ[i])) {
 			found = 1;
-			break;
+			अवरोध;
 		}
 	}
-	if (!found) {
-		if ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
-		    SSH_FP_DEFAULT)) == NULL)
+	अगर (!found) {
+		अगर ((fp = sshkey_fingerprint(कुंजी, options.fingerprint_hash,
+		    SSH_FP_DEFAULT)) == शून्य)
 			fatal("%s: sshkey_fingerprint failed", __progname);
 		fatal("%s: no matching hostkey found for key %s %s", __progname,
-		    sshkey_type(key), fp ? fp : "");
+		    sshkey_type(कुंजी), fp ? fp : "");
 	}
 
-	if ((r = sshkey_sign(keys[i], &signature, &slen, data, dlen,
-	    pkalg, NULL, NULL, 0)) != 0)
+	अगर ((r = sshkey_sign(कुंजियाँ[i], &signature, &slen, तथ्य, dlen,
+	    pkalg, शून्य, शून्य, 0)) != 0)
 		fatal_r(r, "%s: sshkey_sign failed", __progname);
-	free(data);
+	मुक्त(तथ्य);
 
 	/* send reply */
 	sshbuf_reset(b);
-	if ((r = sshbuf_put_string(b, signature, slen)) != 0)
+	अगर ((r = sshbuf_put_string(b, signature, slen)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (ssh_msg_send(STDOUT_FILENO, version, b) == -1)
+	अगर (ssh_संदेश_send(STDOUT_FILENO, version, b) == -1)
 		fatal("%s: ssh_msg_send failed", __progname);
 
-	return (0);
+	वापस (0);
 }

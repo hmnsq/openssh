@@ -5,77 +5,77 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#ifdef USE_MLDSA
+#अगर_घोषित USE_MLDSA
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <fcntl.h>
-#include <unistd.h>
+#समावेश <sys/types.h>
+#समावेश <stdio.h>
+#समावेश <stdint.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <ctype.h>
+#समावेश <fcntl.h>
+#समावेश <unistd.h>
 
-#include "../test_helper/test_helper.h"
-#include "crypto_api.h"
-#include "ssherr.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "log.h"
+#समावेश "../test_helper/test_helper.h"
+#समावेश "crypto_api.h"
+#समावेश "ssherr.h"
+#समावेश "sshkey.h"
+#समावेश "sshbuf.h"
+#समावेश "log.h"
 
 /* in tests.c */
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+काष्ठा sshbuf *load_text_file(स्थिर अक्षर *name);
+अक्षर *get_json_string(काष्ठा sshbuf *content, स्थिर अक्षर *कुंजी, पूर्णांक consume);
 
-void mldsa_eddsa_tests(void);
+व्योम mldsa_eddsa_tests(व्योम);
 
 /*
  * Simple JSON-ish parser for tvec.json.
  * Extracts the base64 value for a given key and decodes it into a new sshbuf.
  * Errors cause ASSERT_* failures.
  */
-static struct sshbuf *
-get_json_b64(struct sshbuf *content, const char *key)
+अटल काष्ठा sshbuf *
+get_json_b64(काष्ठा sshbuf *content, स्थिर अक्षर *कुंजी)
 {
-	char *b64;
-	struct sshbuf *ret;
+	अक्षर *b64;
+	काष्ठा sshbuf *ret;
 
-	b64 = get_json_string(content, key, 0);
-	ASSERT_PTR_NE(ret = sshbuf_new(), NULL);
+	b64 = get_json_string(content, कुंजी, 0);
+	ASSERT_PTR_NE(ret = sshbuf_new(), शून्य);
 	ASSERT_INT_EQ(sshbuf_b64tod(ret, b64), 0);
-	free(b64);
-	return ret;
+	मुक्त(b64);
+	वापस ret;
 }
 
-static void
-onerror(void *fuzz)
+अटल व्योम
+onerror(व्योम *fuzz)
 {
-	fprintf(stderr, "Failed during fuzz:\n");
-	fuzz_dump((struct fuzz *)fuzz);
+	ख_लिखो(मानक_त्रुटि, "Failed during fuzz:\n");
+	fuzz_dump((काष्ठा fuzz *)fuzz);
 }
 
-static void
-sig_fuzz(const uint8_t *m, size_t m_len, const uint8_t *ctx, size_t ctx_len,
-    const uint8_t *pk, const uint8_t *s)
+अटल व्योम
+sig_fuzz(स्थिर uint8_t *m, माप_प्रकार m_len, स्थिर uint8_t *ctx, माप_प्रकार ctx_len,
+    स्थिर uint8_t *pk, स्थिर uint8_t *s)
 {
-	struct fuzz *fuzz;
+	काष्ठा fuzz *fuzz;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_1_BYTE_FLIP;
 
-	if (test_is_fast())
+	अगर (test_is_fast())
 		fuzzers &= ~FUZZ_1_BIT_FLIP;
-	if (test_is_slow())
+	अगर (test_is_slow())
 		fuzzers |= FUZZ_2_BYTE_FLIP; /* FUZZ_2_BIT_FLIP much too slow */
 
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(s, m, m_len,
 	    ctx, ctx_len, pk), 0);
 	fuzz = fuzz_begin(fuzzers, s, MLDSA44_ED25519_SIG_SZ);
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
+	क्रम(; !fuzz_done(fuzz); fuzz_अग्र(fuzz)) {
 		/* Ensure 1-bit difference at least */
-		if (fuzz_matches_original(fuzz))
-			continue;
+		अगर (fuzz_matches_original(fuzz))
+			जारी;
 		ASSERT_INT_NE(crypto_sign_mldsa44_ed25519_verify(fuzz_ptr(fuzz),
 		    m, m_len, ctx, ctx_len, pk), 0);
 	}
@@ -83,23 +83,23 @@ sig_fuzz(const uint8_t *m, size_t m_len, const uint8_t *ctx, size_t ctx_len,
 }
 
 
-void
-mldsa_eddsa_tests(void)
+व्योम
+mldsa_eddsa_tests(व्योम)
 {
 	uint8_t pk[MLDSA44_ED25519_PK_SZ];
 	uint8_t sk[MLDSA44_ED25519_SK_SZ];
 	uint8_t sig[MLDSA44_ED25519_SIG_SZ];
-	struct sshbuf *b_m = NULL, *b_ctx = NULL, *b_pk = NULL;
-	struct sshbuf *b_sk = NULL, *b_s = NULL, *b_sWithContext = NULL;
-	struct sshbuf *json_buf = NULL;
-	const uint8_t *tvec_m;
-	size_t tvec_m_len;
-	const uint8_t *tvec_ctx;
-	size_t tvec_ctx_len;
-	const uint8_t *tvec_pk;
-	const uint8_t *tvec_sk;
-	const uint8_t *tvec_s;
-	const uint8_t *tvec_sWithContext;
+	काष्ठा sshbuf *b_m = शून्य, *b_ctx = शून्य, *b_pk = शून्य;
+	काष्ठा sshbuf *b_sk = शून्य, *b_s = शून्य, *b_sWithContext = शून्य;
+	काष्ठा sshbuf *json_buf = शून्य;
+	स्थिर uint8_t *tvec_m;
+	माप_प्रकार tvec_m_len;
+	स्थिर uint8_t *tvec_ctx;
+	माप_प्रकार tvec_ctx_len;
+	स्थिर uint8_t *tvec_pk;
+	स्थिर uint8_t *tvec_sk;
+	स्थिर uint8_t *tvec_s;
+	स्थिर uint8_t *tvec_sWithContext;
 
 	TEST_START("MLDSA44-Ed25519-SHA512 load test vectors");
 	json_buf = load_text_file("draft-ietf-lamps-pq-composite-sigs.json");
@@ -146,7 +146,7 @@ mldsa_eddsa_tests(void)
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw KAT verify (no context)");
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(tvec_s, tvec_m,
-	    tvec_m_len, NULL, 0, tvec_pk), 0);
+	    tvec_m_len, शून्य, 0, tvec_pk), 0);
 	TEST_DONE();
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw KAT verify (with context)");
@@ -156,9 +156,9 @@ mldsa_eddsa_tests(void)
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw round-trip (no context)");
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_sign(sig, tvec_m, tvec_m_len,
-	    NULL, 0, tvec_sk), 0);
+	    शून्य, 0, tvec_sk), 0);
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(sig,
-	    tvec_m, tvec_m_len, NULL, 0, tvec_pk), 0);
+	    tvec_m, tvec_m_len, शून्य, 0, tvec_pk), 0);
 	TEST_DONE();
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw round-trip (with context)");
@@ -170,13 +170,13 @@ mldsa_eddsa_tests(void)
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw KAT verify (no context)");
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(tvec_s, tvec_m,
-	    tvec_m_len, NULL, 0, tvec_pk), 0);
+	    tvec_m_len, शून्य, 0, tvec_pk), 0);
 	TEST_DONE();
 
 	TEST_START("MLDSA44-Ed25519-SHA512 fuzz raw verify (with context)");
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(tvec_sWithContext,
 	    tvec_m, tvec_m_len, tvec_ctx, tvec_ctx_len, tvec_pk), 0);
-	sig_fuzz(tvec_m, tvec_m_len, NULL, 0, tvec_pk, tvec_s);
+	sig_fuzz(tvec_m, tvec_m_len, शून्य, 0, tvec_pk, tvec_s);
 	TEST_DONE();
 
 	TEST_START("MLDSA44-Ed25519-SHA512 fuzz raw verify (with context)");
@@ -194,4 +194,4 @@ mldsa_eddsa_tests(void)
 	sshbuf_free(b_s);
 	sshbuf_free(b_sWithContext);
 }
-#endif /* USE_MLDSA */
+#पूर्ण_अगर /* USE_MLDSA */

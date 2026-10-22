@@ -25,53 +25,53 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#समावेश <errno.h>
+#समावेश <stdarg.h>
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
 
-#ifndef HAVE_ERR
-void
-err(int r, const char *fmt, ...)
+#अगर_अघोषित HAVE_ERR
+व्योम
+err(पूर्णांक r, स्थिर अक्षर *fmt, ...)
 {
-	va_list args;
+	बहु_सूची args;
 
-	va_start(args, fmt);
-	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
-	fputc('\n', stderr);
-	va_end(args);
-	exit(r);
+	बहु_शुरू(args, fmt);
+	ख_लिखो(मानक_त्रुटि, "%s: ", म_त्रुटि(त्रुटि_सं));
+	भख_लिखो(मानक_त्रुटि, fmt, args);
+	ख_अक्षर_दो('\n', मानक_त्रुटि);
+	बहु_पूर्ण(args);
+	निकास(r);
 }
-#endif
+#पूर्ण_अगर
 
-#ifndef HAVE_ERRX
-void
-errx(int r, const char *fmt, ...)
+#अगर_अघोषित HAVE_ERRX
+व्योम
+errx(पूर्णांक r, स्थिर अक्षर *fmt, ...)
 {
-	va_list args;
+	बहु_सूची args;
 
-	va_start(args, fmt);
-	vfprintf(stderr, fmt, args);
-	fputc('\n', stderr);
-	va_end(args);
-	exit(r);
+	बहु_शुरू(args, fmt);
+	भख_लिखो(मानक_त्रुटि, fmt, args);
+	ख_अक्षर_दो('\n', मानक_त्रुटि);
+	बहु_पूर्ण(args);
+	निकास(r);
 }
-#endif
+#पूर्ण_अगर
 
-#ifndef HAVE_WARN
-void
-warn(const char *fmt, ...)
+#अगर_अघोषित HAVE_WARN
+व्योम
+warn(स्थिर अक्षर *fmt, ...)
 {
-	va_list args;
+	बहु_सूची args;
 
-	va_start(args, fmt);
-	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
-	fputc('\n', stderr);
-	va_end(args);
+	बहु_शुरू(args, fmt);
+	ख_लिखो(मानक_त्रुटि, "%s: ", म_त्रुटि(त्रुटि_सं));
+	भख_लिखो(मानक_त्रुटि, fmt, args);
+	ख_अक्षर_दो('\n', मानक_त्रुटि);
+	बहु_पूर्ण(args);
 }
-#endif
+#पूर्ण_अगर

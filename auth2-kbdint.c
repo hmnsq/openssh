@@ -23,46 +23,46 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
+#समावेश <sys/types.h>
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
+#समावेश <stdlib.h>
+#समावेश <stdio.h>
+#समावेश <stdarg.h>
 
-#include "xmalloc.h"
-#include "packet.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "ssherr.h"
+#समावेश "xmalloc.h"
+#समावेश "packet.h"
+#समावेश "hostfile.h"
+#समावेश "auth.h"
+#समावेश "log.h"
+#समावेश "misc.h"
+#समावेश "servconf.h"
+#समावेश "ssherr.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_kbdint;
+बाह्य ServerOptions options;
+बाह्य काष्ठा authmethod_cfg methodcfg_kbdint;
 
-static int
-userauth_kbdint(struct ssh *ssh, const char *method)
+अटल पूर्णांक
+userauth_kbdint(काष्ठा ssh *ssh, स्थिर अक्षर *method)
 {
-	int r, authenticated = 0;
-	char *lang, *devs;
+	पूर्णांक r, authenticated = 0;
+	अक्षर *lang, *devs;
 
-	if ((r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &devs, NULL)) != 0 ||
+	अगर ((r = sshpkt_get_cstring(ssh, &lang, शून्य)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &devs, शून्य)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	debug("keyboard-interactive devs %s", devs);
 
-	if (options.kbd_interactive_authentication)
+	अगर (options.kbd_interactive_authentication)
 		authenticated = auth2_challenge(ssh, devs);
 
-	free(devs);
-	free(lang);
-	return authenticated;
+	मुक्त(devs);
+	मुक्त(lang);
+	वापस authenticated;
 }
 
 Authmethod method_kbdint = {

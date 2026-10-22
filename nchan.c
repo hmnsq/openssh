@@ -23,21 +23,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#समावेश <sys/types.h>
+#समावेश <sys/socket.h>
 
-#include <errno.h>
-#include <string.h>
-#include <stdarg.h>
+#समावेश <errno.h>
+#समावेश <string.h>
+#समावेश <stdarg.h>
 
-#include "ssh2.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "channels.h"
-#include "compat.h"
-#include "log.h"
+#समावेश "ssh2.h"
+#समावेश "sshbuf.h"
+#समावेश "packet.h"
+#समावेश "channels.h"
+#समावेश "compat.h"
+#समावेश "log.h"
 
 /*
  * SSH Protocol 1.5 aka New Channel Protocol
@@ -72,153 +72,153 @@
 /*
  * ACTIONS: should never update the channel states
  */
-static void	chan_send_eof2(struct ssh *, Channel *);
-static void	chan_send_eow2(struct ssh *, Channel *);
+अटल व्योम	chan_send_eof2(काष्ठा ssh *, Channel *);
+अटल व्योम	chan_send_eow2(काष्ठा ssh *, Channel *);
 
 /* helper */
-static void	chan_shutdown_write(struct ssh *, Channel *);
-static void	chan_shutdown_read(struct ssh *, Channel *);
-static void	chan_shutdown_extended_read(struct ssh *, Channel *);
+अटल व्योम	chan_shutdown_write(काष्ठा ssh *, Channel *);
+अटल व्योम	chan_shutdown_read(काष्ठा ssh *, Channel *);
+अटल व्योम	chan_shutdown_extended_read(काष्ठा ssh *, Channel *);
 
-static const char * const ostates[] = {
+अटल स्थिर अक्षर * स्थिर ostates[] = {
 	"open", "drain", "wait_ieof", "closed",
 };
-static const char * const istates[] = {
+अटल स्थिर अक्षर * स्थिर istates[] = {
 	"open", "drain", "wait_oclose", "closed",
 };
 
-static void
-chan_set_istate(Channel *c, u_int next)
+अटल व्योम
+chan_set_istate(Channel *c, u_int अग्र)
 {
-	if (c->istate > CHAN_INPUT_CLOSED || next > CHAN_INPUT_CLOSED)
-		fatal("chan_set_istate: bad state %d -> %d", c->istate, next);
+	अगर (c->istate > CHAN_निवेश_CLOSED || अग्र > CHAN_निवेश_CLOSED)
+		fatal("chan_set_istate: bad state %d -> %d", c->istate, अग्र);
 	debug2("channel %d: input %s -> %s", c->self, istates[c->istate],
-	    istates[next]);
-	c->istate = next;
+	    istates[अग्र]);
+	c->istate = अग्र;
 }
 
-static void
-chan_set_ostate(Channel *c, u_int next)
+अटल व्योम
+chan_set_ostate(Channel *c, u_int अग्र)
 {
-	if (c->ostate > CHAN_OUTPUT_CLOSED || next > CHAN_OUTPUT_CLOSED)
-		fatal("chan_set_ostate: bad state %d -> %d", c->ostate, next);
+	अगर (c->ostate > CHAN_OUTPUT_CLOSED || अग्र > CHAN_OUTPUT_CLOSED)
+		fatal("chan_set_ostate: bad state %d -> %d", c->ostate, अग्र);
 	debug2("channel %d: output %s -> %s", c->self, ostates[c->ostate],
-	    ostates[next]);
-	c->ostate = next;
+	    ostates[अग्र]);
+	c->ostate = अग्र;
 }
 
-void
-chan_read_failed(struct ssh *ssh, Channel *c)
+व्योम
+chan_read_failed(काष्ठा ssh *ssh, Channel *c)
 {
 	debug2("channel %d: read failed", c->self);
-	switch (c->istate) {
-	case CHAN_INPUT_OPEN:
+	चयन (c->istate) {
+	हाल CHAN_निवेश_OPEN:
 		chan_shutdown_read(ssh, c);
-		chan_set_istate(c, CHAN_INPUT_WAIT_DRAIN);
-		break;
-	default:
+		chan_set_istate(c, CHAN_निवेश_WAIT_DRAIN);
+		अवरोध;
+	शेष:
 		error("channel %d: chan_read_failed for istate %d",
 		    c->self, c->istate);
-		break;
+		अवरोध;
 	}
 }
 
-void
-chan_ibuf_empty(struct ssh *ssh, Channel *c)
+व्योम
+chan_ibuf_empty(काष्ठा ssh *ssh, Channel *c)
 {
 	debug2("channel %d: ibuf empty", c->self);
-	if (sshbuf_len(c->input)) {
+	अगर (sshbuf_len(c->निवेश)) {
 		error("channel %d: chan_ibuf_empty for non empty buffer",
 		    c->self);
-		return;
+		वापस;
 	}
-	switch (c->istate) {
-	case CHAN_INPUT_WAIT_DRAIN:
-		if (!(c->flags & (CHAN_CLOSE_SENT|CHAN_LOCAL)))
+	चयन (c->istate) {
+	हाल CHAN_निवेश_WAIT_DRAIN:
+		अगर (!(c->flags & (CHAN_CLOSE_SENT|CHAN_LOCAL)))
 			chan_send_eof2(ssh, c);
-		chan_set_istate(c, CHAN_INPUT_CLOSED);
-		break;
-	default:
+		chan_set_istate(c, CHAN_निवेश_CLOSED);
+		अवरोध;
+	शेष:
 		error("channel %d: chan_ibuf_empty for istate %d",
 		    c->self, c->istate);
-		break;
+		अवरोध;
 	}
 }
 
-void
-chan_obuf_empty(struct ssh *ssh, Channel *c)
+व्योम
+chan_obuf_empty(काष्ठा ssh *ssh, Channel *c)
 {
 	debug2("channel %d: obuf empty", c->self);
-	if (sshbuf_len(c->output)) {
+	अगर (sshbuf_len(c->output)) {
 		error("channel %d: chan_obuf_empty for non empty buffer",
 		    c->self);
-		return;
+		वापस;
 	}
-	switch (c->ostate) {
-	case CHAN_OUTPUT_WAIT_DRAIN:
+	चयन (c->ostate) {
+	हाल CHAN_OUTPUT_WAIT_DRAIN:
 		chan_shutdown_write(ssh, c);
 		chan_set_ostate(c, CHAN_OUTPUT_CLOSED);
-		break;
-	default:
+		अवरोध;
+	शेष:
 		error("channel %d: internal error: obuf_empty for ostate %d",
 		    c->self, c->ostate);
-		break;
+		अवरोध;
 	}
 }
 
-void
-chan_rcvd_eow(struct ssh *ssh, Channel *c)
+व्योम
+chan_rcvd_eow(काष्ठा ssh *ssh, Channel *c)
 {
 	debug2("channel %d: rcvd eow", c->self);
-	switch (c->istate) {
-	case CHAN_INPUT_OPEN:
+	चयन (c->istate) {
+	हाल CHAN_निवेश_OPEN:
 		chan_shutdown_read(ssh, c);
-		chan_set_istate(c, CHAN_INPUT_CLOSED);
-		break;
+		chan_set_istate(c, CHAN_निवेश_CLOSED);
+		अवरोध;
 	}
 }
 
-static void
-chan_send_eof2(struct ssh *ssh, Channel *c)
+अटल व्योम
+chan_send_eof2(काष्ठा ssh *ssh, Channel *c)
 {
-	int r;
+	पूर्णांक r;
 
 	debug2("channel %d: send eof", c->self);
-	switch (c->istate) {
-	case CHAN_INPUT_WAIT_DRAIN:
-		if (!c->have_remote_id)
+	चयन (c->istate) {
+	हाल CHAN_निवेश_WAIT_DRAIN:
+		अगर (!c->have_remote_id)
 			fatal_f("channel %d: no remote_id", c->self);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_EOF)) != 0 ||
+		अगर ((r = sshpkt_start(ssh, SSH2_संदेश_CHANNEL_EOF)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
 			fatal_fr(r, "send CHANNEL_EOF");
 		c->flags |= CHAN_EOF_SENT;
-		break;
-	default:
+		अवरोध;
+	शेष:
 		error("channel %d: cannot send eof for istate %d",
 		    c->self, c->istate);
-		break;
+		अवरोध;
 	}
 }
 
-static void
-chan_send_close2(struct ssh *ssh, Channel *c)
+अटल व्योम
+chan_send_close2(काष्ठा ssh *ssh, Channel *c)
 {
-	int r;
+	पूर्णांक r;
 
 	debug2("channel %d: send_close2", c->self);
-	if (c->ostate != CHAN_OUTPUT_CLOSED ||
-	    c->istate != CHAN_INPUT_CLOSED) {
+	अगर (c->ostate != CHAN_OUTPUT_CLOSED ||
+	    c->istate != CHAN_निवेश_CLOSED) {
 		error("channel %d: cannot send close for istate/ostate %d/%d",
 		    c->self, c->istate, c->ostate);
-	} else if (c->flags & CHAN_CLOSE_SENT) {
+	} अन्यथा अगर (c->flags & CHAN_CLOSE_SENT) {
 		error("channel %d: already sent close", c->self);
-	} else {
-		if (!c->have_remote_id)
+	} अन्यथा {
+		अगर (!c->have_remote_id)
 			fatal_f("channel %d: no remote_id", c->self);
 		debug2("channel %d: send close for remote id %u", c->self,
 		    c->remote_id);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_CLOSE)) != 0 ||
+		अगर ((r = sshpkt_start(ssh, SSH2_संदेश_CHANNEL_CLOSE)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
 			fatal_fr(r, "send CHANNEL_EOF");
@@ -226,22 +226,22 @@ chan_send_close2(struct ssh *ssh, Channel *c)
 	}
 }
 
-static void
-chan_send_eow2(struct ssh *ssh, Channel *c)
+अटल व्योम
+chan_send_eow2(काष्ठा ssh *ssh, Channel *c)
 {
-	int r;
+	पूर्णांक r;
 
 	debug2("channel %d: send eow", c->self);
-	if (c->ostate == CHAN_OUTPUT_CLOSED) {
+	अगर (c->ostate == CHAN_OUTPUT_CLOSED) {
 		error("channel %d: must not sent eow on closed output",
 		    c->self);
-		return;
+		वापस;
 	}
-	if (!(ssh->compat & SSH_NEW_OPENSSH))
-		return;
-	if (!c->have_remote_id)
+	अगर (!(ssh->compat & SSH_NEW_OPENSSH))
+		वापस;
+	अगर (!c->have_remote_id)
 		fatal_f("channel %d: no remote_id", c->self);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_REQUEST)) != 0 ||
+	अगर ((r = sshpkt_start(ssh, SSH2_संदेश_CHANNEL_REQUEST)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "eow@openssh.com")) != 0 ||
 	    (r = sshpkt_put_u8(ssh, 0)) != 0 ||
@@ -251,193 +251,193 @@ chan_send_eow2(struct ssh *ssh, Channel *c)
 
 /* shared */
 
-void
-chan_rcvd_ieof(struct ssh *ssh, Channel *c)
+व्योम
+chan_rcvd_ieof(काष्ठा ssh *ssh, Channel *c)
 {
 	debug2("channel %d: rcvd eof", c->self);
 	c->flags |= CHAN_EOF_RCVD;
-	if (c->ostate == CHAN_OUTPUT_OPEN)
+	अगर (c->ostate == CHAN_OUTPUT_OPEN)
 		chan_set_ostate(c, CHAN_OUTPUT_WAIT_DRAIN);
-	if (c->ostate == CHAN_OUTPUT_WAIT_DRAIN &&
+	अगर (c->ostate == CHAN_OUTPUT_WAIT_DRAIN &&
 	    sshbuf_len(c->output) == 0 &&
 	    !CHANNEL_EFD_OUTPUT_ACTIVE(c))
 		chan_obuf_empty(ssh, c);
 }
 
-void
-chan_rcvd_oclose(struct ssh *ssh, Channel *c)
+व्योम
+chan_rcvd_oclose(काष्ठा ssh *ssh, Channel *c)
 {
 	debug2("channel %d: rcvd close", c->self);
-	if (!(c->flags & CHAN_LOCAL)) {
-		if (c->flags & CHAN_CLOSE_RCVD)
+	अगर (!(c->flags & CHAN_LOCAL)) {
+		अगर (c->flags & CHAN_CLOSE_RCVD)
 			error("channel %d: protocol error: close rcvd twice",
 			    c->self);
 		c->flags |= CHAN_CLOSE_RCVD;
 	}
-	if (c->type == SSH_CHANNEL_LARVAL) {
+	अगर (c->type == SSH_CHANNEL_LARVAL) {
 		/* tear down larval channels immediately */
 		chan_set_ostate(c, CHAN_OUTPUT_CLOSED);
-		chan_set_istate(c, CHAN_INPUT_CLOSED);
-		return;
+		chan_set_istate(c, CHAN_निवेश_CLOSED);
+		वापस;
 	}
-	switch (c->ostate) {
-	case CHAN_OUTPUT_OPEN:
+	चयन (c->ostate) {
+	हाल CHAN_OUTPUT_OPEN:
 		/*
 		 * wait until a data from the channel is consumed if a CLOSE
 		 * is received
 		 */
 		chan_set_ostate(c, CHAN_OUTPUT_WAIT_DRAIN);
-		break;
+		अवरोध;
 	}
-	switch (c->istate) {
-	case CHAN_INPUT_OPEN:
+	चयन (c->istate) {
+	हाल CHAN_निवेश_OPEN:
 		chan_shutdown_read(ssh, c);
 		chan_shutdown_extended_read(ssh, c);
-		chan_set_istate(c, CHAN_INPUT_CLOSED);
-		break;
-	case CHAN_INPUT_WAIT_DRAIN:
-		if (!(c->flags & CHAN_LOCAL))
+		chan_set_istate(c, CHAN_निवेश_CLOSED);
+		अवरोध;
+	हाल CHAN_निवेश_WAIT_DRAIN:
+		अगर (!(c->flags & CHAN_LOCAL))
 			chan_send_eof2(ssh, c);
 		chan_shutdown_extended_read(ssh, c);
-		chan_set_istate(c, CHAN_INPUT_CLOSED);
-		break;
+		chan_set_istate(c, CHAN_निवेश_CLOSED);
+		अवरोध;
 	}
 }
 
-void
-chan_write_failed(struct ssh *ssh, Channel *c)
+व्योम
+chan_write_failed(काष्ठा ssh *ssh, Channel *c)
 {
 	debug2("channel %d: write failed", c->self);
-	switch (c->ostate) {
-	case CHAN_OUTPUT_OPEN:
-	case CHAN_OUTPUT_WAIT_DRAIN:
+	चयन (c->ostate) {
+	हाल CHAN_OUTPUT_OPEN:
+	हाल CHAN_OUTPUT_WAIT_DRAIN:
 		chan_shutdown_write(ssh, c);
-		if (strcmp(c->ctype, "session") == 0)
+		अगर (म_भेद(c->ctype, "session") == 0)
 			chan_send_eow2(ssh, c);
 		chan_set_ostate(c, CHAN_OUTPUT_CLOSED);
-		break;
-	default:
+		अवरोध;
+	शेष:
 		error("channel %d: chan_write_failed for ostate %d",
 		    c->self, c->ostate);
-		break;
+		अवरोध;
 	}
 }
 
-void
-chan_mark_dead(struct ssh *ssh, Channel *c)
+व्योम
+chan_mark_dead(काष्ठा ssh *ssh, Channel *c)
 {
 	c->type = SSH_CHANNEL_ZOMBIE;
 }
 
-int
-chan_is_dead(struct ssh *ssh, Channel *c, int do_send)
+पूर्णांक
+chan_is_dead(काष्ठा ssh *ssh, Channel *c, पूर्णांक do_send)
 {
-	if (c->type == SSH_CHANNEL_ZOMBIE) {
+	अगर (c->type == SSH_CHANNEL_ZOMBIE) {
 		debug2("channel %d: zombie", c->self);
-		return 1;
+		वापस 1;
 	}
-	if (c->istate != CHAN_INPUT_CLOSED || c->ostate != CHAN_OUTPUT_CLOSED)
-		return 0;
-	if ((ssh->compat & SSH_BUG_EXTEOF) &&
+	अगर (c->istate != CHAN_निवेश_CLOSED || c->ostate != CHAN_OUTPUT_CLOSED)
+		वापस 0;
+	अगर ((ssh->compat & SSH_BUG_EXTEOF) &&
 	    c->extended_usage == CHAN_EXTENDED_WRITE &&
 	    c->efd != -1 &&
 	    sshbuf_len(c->extended) > 0) {
 		debug2("channel %d: active efd: %d len %zu",
 		    c->self, c->efd, sshbuf_len(c->extended));
-		return 0;
+		वापस 0;
 	}
-	if (c->flags & CHAN_LOCAL) {
+	अगर (c->flags & CHAN_LOCAL) {
 		debug2("channel %d: is dead (local)", c->self);
-		return 1;
+		वापस 1;
 	}
-	if (!(c->flags & CHAN_CLOSE_SENT)) {
-		if (do_send) {
+	अगर (!(c->flags & CHAN_CLOSE_SENT)) {
+		अगर (do_send) {
 			chan_send_close2(ssh, c);
-		} else {
+		} अन्यथा {
 			/* channel would be dead if we sent a close */
-			if (c->flags & CHAN_CLOSE_RCVD) {
+			अगर (c->flags & CHAN_CLOSE_RCVD) {
 				debug2("channel %d: almost dead",
 				    c->self);
-				return 1;
+				वापस 1;
 			}
 		}
 	}
-	if ((c->flags & CHAN_CLOSE_SENT) &&
+	अगर ((c->flags & CHAN_CLOSE_SENT) &&
 	    (c->flags & CHAN_CLOSE_RCVD)) {
 		debug2("channel %d: is dead", c->self);
-		return 1;
+		वापस 1;
 	}
-	return 0;
+	वापस 0;
 }
 
 /* helper */
-static void
-chan_shutdown_write(struct ssh *ssh, Channel *c)
+अटल व्योम
+chan_shutdown_write(काष्ठा ssh *ssh, Channel *c)
 {
 	sshbuf_reset(c->output);
-	if (c->type == SSH_CHANNEL_LARVAL)
-		return;
+	अगर (c->type == SSH_CHANNEL_LARVAL)
+		वापस;
 	/* shutdown failure is allowed if write failed already */
 	debug2_f("channel %d: (i%d o%d sock %d wfd %d efd %d [%s])",
 	    c->self, c->istate, c->ostate, c->sock, c->wfd, c->efd,
 	    channel_format_extended_usage(c));
-	if (c->sock != -1) {
-		if (shutdown(c->sock, SHUT_WR) == -1) {
+	अगर (c->sock != -1) {
+		अगर (shutdown(c->sock, SHUT_WR) == -1) {
 			debug2_f("channel %d: shutdown() failed for "
 			    "fd %d [i%d o%d]: %.100s", c->self, c->sock,
-			    c->istate, c->ostate, strerror(errno));
+			    c->istate, c->ostate, म_त्रुटि(त्रुटि_सं));
 		}
-	} else {
-		if (channel_close_fd(ssh, c, &c->wfd) < 0) {
+	} अन्यथा {
+		अगर (channel_close_fd(ssh, c, &c->wfd) < 0) {
 			logit_f("channel %d: close() failed for "
 			    "fd %d [i%d o%d]: %.100s", c->self, c->wfd,
-			    c->istate, c->ostate, strerror(errno));
+			    c->istate, c->ostate, म_त्रुटि(त्रुटि_सं));
 		}
 	}
 }
 
-static void
-chan_shutdown_read(struct ssh *ssh, Channel *c)
+अटल व्योम
+chan_shutdown_read(काष्ठा ssh *ssh, Channel *c)
 {
-	if (c->type == SSH_CHANNEL_LARVAL)
-		return;
+	अगर (c->type == SSH_CHANNEL_LARVAL)
+		वापस;
 	debug2_f("channel %d: (i%d o%d sock %d wfd %d efd %d [%s])",
 	    c->self, c->istate, c->ostate, c->sock, c->rfd, c->efd,
 	    channel_format_extended_usage(c));
-	if (c->sock != -1) {
+	अगर (c->sock != -1) {
 		/*
 		 * shutdown(sock, SHUT_READ) may return ENOTCONN if the
 		 * write side has been closed already. (bug on Linux)
 		 * HP-UX may return ENOTCONN also.
 		 */
-		if (shutdown(c->sock, SHUT_RD) == -1 && errno != ENOTCONN) {
+		अगर (shutdown(c->sock, SHUT_RD) == -1 && त्रुटि_सं != ENOTCONN) {
 			error_f("channel %d: shutdown() failed for "
 			    "fd %d [i%d o%d]: %.100s", c->self, c->sock,
-			    c->istate, c->ostate, strerror(errno));
+			    c->istate, c->ostate, म_त्रुटि(त्रुटि_सं));
 		}
-	} else {
-		if (channel_close_fd(ssh, c, &c->rfd) < 0) {
+	} अन्यथा {
+		अगर (channel_close_fd(ssh, c, &c->rfd) < 0) {
 			logit_f("channel %d: close() failed for "
 			    "fd %d [i%d o%d]: %.100s", c->self, c->rfd,
-			    c->istate, c->ostate, strerror(errno));
+			    c->istate, c->ostate, म_त्रुटि(त्रुटि_सं));
 		}
 	}
 }
 
-static void
-chan_shutdown_extended_read(struct ssh *ssh, Channel *c)
+अटल व्योम
+chan_shutdown_extended_read(काष्ठा ssh *ssh, Channel *c)
 {
-	if (c->type == SSH_CHANNEL_LARVAL || c->efd == -1)
-		return;
-	if (c->extended_usage != CHAN_EXTENDED_READ &&
+	अगर (c->type == SSH_CHANNEL_LARVAL || c->efd == -1)
+		वापस;
+	अगर (c->extended_usage != CHAN_EXTENDED_READ &&
 	    c->extended_usage != CHAN_EXTENDED_IGNORE)
-		return;
+		वापस;
 	debug_f("channel %d: (i%d o%d sock %d wfd %d efd %d [%s])",
 	    c->self, c->istate, c->ostate, c->sock, c->rfd, c->efd,
 	    channel_format_extended_usage(c));
-	if (channel_close_fd(ssh, c, &c->efd) < 0) {
+	अगर (channel_close_fd(ssh, c, &c->efd) < 0) {
 		logit_f("channel %d: close() failed for "
 		    "extended fd %d [i%d o%d]: %.100s", c->self, c->efd,
-		    c->istate, c->ostate, strerror(errno));
+		    c->istate, c->ostate, म_त्रुटि(त्रुटि_सं));
 	}
 }

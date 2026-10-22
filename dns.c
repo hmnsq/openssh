@@ -25,24 +25,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#समावेश <sys/types.h>
+#समावेश <sys/socket.h>
 
-#include <netdb.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#समावेश <netdb.h>
+#समावेश <stdarg.h>
+#समावेश <stdio.h>
+#समावेश <string.h>
+#समावेश <stdlib.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "dns.h"
-#include "log.h"
-#include "digest.h"
+#समावेश "xmalloc.h"
+#समावेश "sshkey.h"
+#समावेश "dns.h"
+#समावेश "log.h"
+#समावेश "digest.h"
 
-static const char * const errset_text[] = {
+अटल स्थिर अक्षर * स्थिर errset_text[] = {
 	"success",		/* 0 ERRSET_SUCCESS */
 	"out of memory",	/* 1 ERRSET_NOMEMORY */
 	"general failure",	/* 2 ERRSET_FAIL */
@@ -51,24 +51,24 @@ static const char * const errset_text[] = {
 	"data does not exist",	/* 5 ERRSET_NODATA */
 };
 
-static const char *
-dns_result_totext(unsigned int res)
+अटल स्थिर अक्षर *
+dns_परिणाम_totext(अचिन्हित पूर्णांक res)
 {
-	switch (res) {
-	case ERRSET_SUCCESS:
-		return errset_text[ERRSET_SUCCESS];
-	case ERRSET_NOMEMORY:
-		return errset_text[ERRSET_NOMEMORY];
-	case ERRSET_FAIL:
-		return errset_text[ERRSET_FAIL];
-	case ERRSET_INVAL:
-		return errset_text[ERRSET_INVAL];
-	case ERRSET_NONAME:
-		return errset_text[ERRSET_NONAME];
-	case ERRSET_NODATA:
-		return errset_text[ERRSET_NODATA];
-	default:
-		return "unknown error";
+	चयन (res) {
+	हाल ERRSET_SUCCESS:
+		वापस errset_text[ERRSET_SUCCESS];
+	हाल ERRSET_NOMEMORY:
+		वापस errset_text[ERRSET_NOMEMORY];
+	हाल ERRSET_FAIL:
+		वापस errset_text[ERRSET_FAIL];
+	हाल ERRSET_INVAL:
+		वापस errset_text[ERRSET_INVAL];
+	हाल ERRSET_NONAME:
+		वापस errset_text[ERRSET_NONAME];
+	हाल ERRSET_NODATA:
+		वापस errset_text[ERRSET_NODATA];
+	शेष:
+		वापस "unknown error";
 	}
 }
 
@@ -76,262 +76,262 @@ dns_result_totext(unsigned int res)
  * Read SSHFP parameters from key buffer.
  * Caller must free digest which is allocated by sshkey_fingerprint_raw().
  */
-static int
-dns_read_key(uint8_t *algorithm, uint8_t *digest_type,
-    u_char **digest, size_t *digest_len, struct sshkey *key)
+अटल पूर्णांक
+dns_read_कुंजी(uint8_t *algorithm, uint8_t *digest_type,
+    u_char **digest, माप_प्रकार *digest_len, काष्ठा sshkey *कुंजी)
 {
-	int r, success = 0;
-	int fp_alg = -1;
+	पूर्णांक r, success = 0;
+	पूर्णांक fp_alg = -1;
 
-	switch (key->type) {
-	case KEY_RSA:
-		*algorithm = SSHFP_KEY_RSA;
-		break;
-	case KEY_ECDSA:
-		*algorithm = SSHFP_KEY_ECDSA;
-		break;
-	case KEY_ED25519:
-		*algorithm = SSHFP_KEY_ED25519;
-		break;
-	default:
-		*algorithm = SSHFP_KEY_RESERVED; /* 0 */
+	चयन (कुंजी->type) {
+	हाल कुंजी_RSA:
+		*algorithm = SSHFP_कुंजी_RSA;
+		अवरोध;
+	हाल कुंजी_ECDSA:
+		*algorithm = SSHFP_कुंजी_ECDSA;
+		अवरोध;
+	हाल कुंजी_ED25519:
+		*algorithm = SSHFP_कुंजी_ED25519;
+		अवरोध;
+	शेष:
+		*algorithm = SSHFP_कुंजी_RESERVED; /* 0 */
 	}
 
-	switch (*digest_type) {
-	case SSHFP_HASH_SHA1:
+	चयन (*digest_type) {
+	हाल SSHFP_HASH_SHA1:
 		fp_alg = SSH_DIGEST_SHA1;
-		break;
-	case SSHFP_HASH_SHA256:
+		अवरोध;
+	हाल SSHFP_HASH_SHA256:
 		fp_alg = SSH_DIGEST_SHA256;
-		break;
-	default:
+		अवरोध;
+	शेष:
 		*digest_type = SSHFP_HASH_RESERVED; /* 0 */
 	}
 
-	if (*algorithm && *digest_type) {
-		if ((r = sshkey_fingerprint_raw(key, fp_alg, digest,
+	अगर (*algorithm && *digest_type) {
+		अगर ((r = sshkey_fingerprint_raw(कुंजी, fp_alg, digest,
 		    digest_len)) != 0)
 			fatal_fr(r, "sshkey_fingerprint_raw");
 		success = 1;
-	} else {
-		*digest = NULL;
+	} अन्यथा {
+		*digest = शून्य;
 		*digest_len = 0;
 	}
 
-	return success;
+	वापस success;
 }
 
 /*
  * Read SSHFP parameters from rdata buffer.
  */
-static int
+अटल पूर्णांक
 dns_read_rdata(uint8_t *algorithm, uint8_t *digest_type,
-    u_char **digest, size_t *digest_len, u_char *rdata, int rdata_len)
+    u_char **digest, माप_प्रकार *digest_len, u_char *rdata, पूर्णांक rdata_len)
 {
-	int success = 0;
+	पूर्णांक success = 0;
 
-	*algorithm = SSHFP_KEY_RESERVED;
+	*algorithm = SSHFP_कुंजी_RESERVED;
 	*digest_type = SSHFP_HASH_RESERVED;
 
-	if (rdata_len >= 2) {
+	अगर (rdata_len >= 2) {
 		*algorithm = rdata[0];
 		*digest_type = rdata[1];
 		*digest_len = rdata_len - 2;
 
-		if (*digest_len > 0) {
+		अगर (*digest_len > 0) {
 			*digest = xmalloc(*digest_len);
-			memcpy(*digest, rdata + 2, *digest_len);
-		} else {
+			स_नकल(*digest, rdata + 2, *digest_len);
+		} अन्यथा {
 			*digest = (u_char *)xstrdup("");
 		}
 
 		success = 1;
 	}
 
-	return success;
+	वापस success;
 }
 
 /*
  * Check if hostname is numerical.
  * Returns -1 if hostname is numeric, 0 otherwise
  */
-static int
-is_numeric_hostname(const char *hostname)
+अटल पूर्णांक
+is_numeric_hostname(स्थिर अक्षर *hostname)
 {
-	struct addrinfo hints, *ai;
+	काष्ठा addrinfo hints, *ai;
 
 	/*
 	 * We shouldn't ever get a null host but if we do then log an error
 	 * and return -1 which stops DNS key fingerprint processing.
 	 */
-	if (hostname == NULL) {
+	अगर (hostname == शून्य) {
 		error("is_numeric_hostname called with NULL hostname");
-		return -1;
+		वापस -1;
 	}
 
-	memset(&hints, 0, sizeof(hints));
+	स_रखो(&hints, 0, माप(hints));
 	hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (getaddrinfo(hostname, NULL, &hints, &ai) == 0) {
+	अगर (getaddrinfo(hostname, शून्य, &hints, &ai) == 0) {
 		freeaddrinfo(ai);
-		return -1;
+		वापस -1;
 	}
 
-	return 0;
+	वापस 0;
 }
 
 /*
  * Verify the given hostname, address and host key using DNS.
  * Returns 0 if lookup succeeds, -1 otherwise
  */
-int
-verify_host_key_dns(const char *hostname, struct sockaddr *address,
-    struct sshkey *hostkey, int *flags)
+पूर्णांक
+verify_host_कुंजी_dns(स्थिर अक्षर *hostname, काष्ठा sockaddr *address,
+    काष्ठा sshkey *hostkey, पूर्णांक *flags)
 {
-	u_int counter;
-	int result;
-	struct rrsetinfo *fingerprints = NULL;
+	u_int गणक;
+	पूर्णांक परिणाम;
+	काष्ठा rrsetinfo *fingerprints = शून्य;
 
 	uint8_t hostkey_algorithm;
 	u_char *hostkey_digest;
-	size_t hostkey_digest_len;
+	माप_प्रकार hostkey_digest_len;
 
 	uint8_t dnskey_algorithm;
 	uint8_t dnskey_digest_type;
 	u_char *dnskey_digest;
-	size_t dnskey_digest_len;
+	माप_प्रकार dnskey_digest_len;
 
 	*flags = 0;
 
 	debug3("verify_host_key_dns");
-	if (hostkey == NULL)
+	अगर (hostkey == शून्य)
 		fatal("No key to look up!");
 
-	if (is_numeric_hostname(hostname)) {
+	अगर (is_numeric_hostname(hostname)) {
 		debug("skipped DNS lookup for numerical hostname");
-		return -1;
+		वापस -1;
 	}
 
-	result = getrrsetbyname(hostname, DNS_RDATACLASS_IN,
+	परिणाम = getrrsetbyname(hostname, DNS_RDATACLASS_IN,
 	    DNS_RDATATYPE_SSHFP, 0, &fingerprints);
-	if (result) {
-		verbose("DNS lookup error: %s", dns_result_totext(result));
-		return -1;
+	अगर (परिणाम) {
+		verbose("DNS lookup error: %s", dns_परिणाम_totext(परिणाम));
+		वापस -1;
 	}
 
-	if (fingerprints->rri_flags & RRSET_VALIDATED) {
+	अगर (fingerprints->rri_flags & RRSET_VALIDATED) {
 		*flags |= DNS_VERIFY_SECURE;
 		debug("found %d secure fingerprints in DNS",
 		    fingerprints->rri_nrdatas);
-	} else {
+	} अन्यथा {
 		debug("found %d insecure fingerprints in DNS",
 		    fingerprints->rri_nrdatas);
 	}
 
-	if (fingerprints->rri_nrdatas)
+	अगर (fingerprints->rri_nrdatas)
 		*flags |= DNS_VERIFY_FOUND;
 
-	for (counter = 0; counter < fingerprints->rri_nrdatas; counter++) {
+	क्रम (गणक = 0; गणक < fingerprints->rri_nrdatas; गणक++) {
 		/*
 		 * Extract the key from the answer. Ignore any badly
 		 * formatted fingerprints.
 		 */
-		if (!dns_read_rdata(&dnskey_algorithm, &dnskey_digest_type,
+		अगर (!dns_read_rdata(&dnskey_algorithm, &dnskey_digest_type,
 		    &dnskey_digest, &dnskey_digest_len,
-		    fingerprints->rri_rdatas[counter].rdi_data,
-		    fingerprints->rri_rdatas[counter].rdi_length)) {
+		    fingerprints->rri_rdatas[गणक].rdi_तथ्य,
+		    fingerprints->rri_rdatas[गणक].rdi_लंबाई)) {
 			verbose("Error parsing fingerprint from DNS.");
-			continue;
+			जारी;
 		}
 		debug3_f("checking SSHFP type %d fptype %d", dnskey_algorithm,
 		    dnskey_digest_type);
 
 		/* Calculate host key fingerprint. */
-		if (!dns_read_key(&hostkey_algorithm, &dnskey_digest_type,
+		अगर (!dns_read_कुंजी(&hostkey_algorithm, &dnskey_digest_type,
 		    &hostkey_digest, &hostkey_digest_len, hostkey)) {
 			error("Error calculating key fingerprint.");
-			free(dnskey_digest);
+			मुक्त(dnskey_digest);
 			freerrset(fingerprints);
-			return -1;
+			वापस -1;
 		}
 
 		/* Check if the current key is the same as the given key */
-		if (hostkey_algorithm == dnskey_algorithm &&
+		अगर (hostkey_algorithm == dnskey_algorithm &&
 		    hostkey_digest_len == dnskey_digest_len) {
-			if (timingsafe_bcmp(hostkey_digest, dnskey_digest,
+			अगर (timingsafe_bcmp(hostkey_digest, dnskey_digest,
 			    hostkey_digest_len) == 0) {
 				debug_f("matched SSHFP type %d fptype %d",
 				    dnskey_algorithm, dnskey_digest_type);
 				*flags |= DNS_VERIFY_MATCH;
-			} else {
+			} अन्यथा {
 				debug_f("failed SSHFP type %d fptype %d",
 				    dnskey_algorithm, dnskey_digest_type);
 				*flags |= DNS_VERIFY_FAILED;
 			}
 		}
-		free(dnskey_digest);
-		free(hostkey_digest); /* from sshkey_fingerprint_raw() */
+		मुक्त(dnskey_digest);
+		मुक्त(hostkey_digest); /* from sshkey_fingerprint_raw() */
 	}
 
 	freerrset(fingerprints);
 
 	/* If any fingerprint failed to validate, return failure. */
-	if (*flags & DNS_VERIFY_FAILED)
+	अगर (*flags & DNS_VERIFY_FAILED)
 		*flags &= ~DNS_VERIFY_MATCH;
 
-	if (*flags & DNS_VERIFY_FOUND)
-		if (*flags & DNS_VERIFY_MATCH)
+	अगर (*flags & DNS_VERIFY_FOUND)
+		अगर (*flags & DNS_VERIFY_MATCH)
 			debug("matching host key fingerprint found in DNS");
-		else
+		अन्यथा
 			debug("mismatching host key fingerprint found in DNS");
-	else
+	अन्यथा
 		debug("no host key fingerprint found in DNS");
 
-	return 0;
+	वापस 0;
 }
 
 /*
  * Export the fingerprint of a key as a DNS resource record
  */
-int
-export_dns_rr(const char *hostname, struct sshkey *key, FILE *f, int generic,
-    int alg)
+पूर्णांक
+export_dns_rr(स्थिर अक्षर *hostname, काष्ठा sshkey *कुंजी, खाता *f, पूर्णांक generic,
+    पूर्णांक alg)
 {
 	uint8_t rdata_pubkey_algorithm = 0;
 	uint8_t rdata_digest_type = SSHFP_HASH_RESERVED;
 	uint8_t dtype;
 	u_char *rdata_digest;
-	size_t i, rdata_digest_len;
-	int success = 0;
+	माप_प्रकार i, rdata_digest_len;
+	पूर्णांक success = 0;
 
-	for (dtype = SSHFP_HASH_SHA1; dtype < SSHFP_HASH_MAX; dtype++) {
-		if (alg != -1 && dtype != alg)
-			continue;
+	क्रम (dtype = SSHFP_HASH_SHA1; dtype < SSHFP_HASH_MAX; dtype++) {
+		अगर (alg != -1 && dtype != alg)
+			जारी;
 		rdata_digest_type = dtype;
-		if (dns_read_key(&rdata_pubkey_algorithm, &rdata_digest_type,
-		    &rdata_digest, &rdata_digest_len, key)) {
-			if (generic) {
-				fprintf(f, "%s IN TYPE%d \\# %zu %02x %02x ",
+		अगर (dns_read_कुंजी(&rdata_pubkey_algorithm, &rdata_digest_type,
+		    &rdata_digest, &rdata_digest_len, कुंजी)) {
+			अगर (generic) {
+				ख_लिखो(f, "%s IN TYPE%d \\# %zu %02x %02x ",
 				    hostname, DNS_RDATATYPE_SSHFP,
 				    2 + rdata_digest_len,
 				    rdata_pubkey_algorithm, rdata_digest_type);
-			} else {
-				fprintf(f, "%s IN SSHFP %d %d ", hostname,
+			} अन्यथा {
+				ख_लिखो(f, "%s IN SSHFP %d %d ", hostname,
 				    rdata_pubkey_algorithm, rdata_digest_type);
 			}
-			for (i = 0; i < rdata_digest_len; i++)
-				fprintf(f, "%02x", rdata_digest[i]);
-			fprintf(f, "\n");
-			free(rdata_digest); /* from sshkey_fingerprint_raw() */
+			क्रम (i = 0; i < rdata_digest_len; i++)
+				ख_लिखो(f, "%02x", rdata_digest[i]);
+			ख_लिखो(f, "\n");
+			मुक्त(rdata_digest); /* from sshkey_fingerprint_raw() */
 			success = 1;
 		}
 	}
 
 	/* No SSHFP record was generated at all */
-	if (success == 0) {
+	अगर (success == 0) {
 		error_f("unsupported algorithm and/or digest_type");
 	}
 
-	return success;
+	वापस success;
 }

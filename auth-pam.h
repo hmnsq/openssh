@@ -22,26 +22,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
-#ifdef USE_PAM
+#समावेश "includes.h"
+#अगर_घोषित USE_PAM
 
-struct ssh;
+काष्ठा ssh;
 
-void start_pam(struct ssh *);
-void finish_pam(void);
-u_int do_pam_account(void);
-void do_pam_session(struct ssh *);
-void do_pam_setcred(void);
-int do_pam_putenv(char *, char *);
-char ** fetch_pam_environment(void);
-char ** fetch_pam_child_environment(void);
-void free_pam_environment(char **);
-void sshpam_thread_cleanup(void);
-void sshpam_cleanup(void);
-int sshpam_auth_passwd(Authctxt *, const char *);
-int sshpam_get_maxtries_reached(void);
-void sshpam_set_maxtries_reached(int);
-int is_pam_session_open(void);
-int sshpam_priv_kbdint_authdone(void *ctxtp);
+व्योम start_pam(काष्ठा ssh *);
+व्योम finish_pam(व्योम);
+u_int do_pam_account(व्योम);
+व्योम do_pam_session(काष्ठा ssh *);
+व्योम do_pam_setcred(व्योम);
+पूर्णांक do_pam_putenv(अक्षर *, अक्षर *);
+अक्षर ** fetch_pam_environment(व्योम);
+अक्षर ** fetch_pam_child_environment(व्योम);
+व्योम free_pam_environment(अक्षर **);
+व्योम sshpam_thread_cleanup(व्योम);
+व्योम sshpam_cleanup(व्योम);
+पूर्णांक sshpam_auth_passwd(Authctxt *, स्थिर अक्षर *);
+पूर्णांक sshpam_get_maxtries_reached(व्योम);
+व्योम sshpam_set_maxtries_reached(पूर्णांक);
+पूर्णांक is_pam_session_open(व्योम);
+पूर्णांक sshpam_priv_kbdint_authdone(व्योम *ctxtp);
 
-#endif /* USE_PAM */
+#पूर्ण_अगर /* USE_PAM */

@@ -6,94 +6,94 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#समावेश <sys/types.h>
+#समावेश <stdio.h>
+#समावेश <stdint.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
 
-#include "../test_helper/test_helper.h"
+#समावेश "../test_helper/test_helper.h"
 
-#include "sshkey.h"
-#include "authfile.h"
-#include "auth-options.h"
-#include "misc.h"
-#include "log.h"
+#समावेश "sshkey.h"
+#समावेश "authfile.h"
+#समावेश "auth-options.h"
+#समावेश "misc.h"
+#समावेश "log.h"
 
-static struct sshkey *
-load_key(const char *name)
+अटल काष्ठा sshkey *
+load_कुंजी(स्थिर अक्षर *name)
 {
-	struct sshkey *ret;
-	int r;
+	काष्ठा sshkey *ret;
+	पूर्णांक r;
 
-	r = sshkey_load_public(test_data_file(name), &ret, NULL);
+	r = sshkey_load_public(test_तथ्य_file(name), &ret, शून्य);
 	ASSERT_INT_EQ(r, 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_PTR_NE(ret, शून्य);
+	वापस ret;
 }
 
-static struct sshauthopt *
-default_authkey_opts(void)
+अटल काष्ठा sshauthopt *
+default_authkey_opts(व्योम)
 {
-	struct sshauthopt *ret = sshauthopt_new();
+	काष्ठा sshauthopt *ret = sshauthopt_new();
 
-	ASSERT_PTR_NE(ret, NULL);
+	ASSERT_PTR_NE(ret, शून्य);
 	ret->permit_port_forwarding_flag = 1;
 	ret->permit_agent_forwarding_flag = 1;
 	ret->permit_x11_forwarding_flag = 1;
 	ret->permit_pty_flag = 1;
 	ret->permit_user_rc = 1;
-	return ret;
+	वापस ret;
 }
 
-static struct sshauthopt *
-default_authkey_restrict_opts(void)
+अटल काष्ठा sshauthopt *
+default_authkey_restrict_opts(व्योम)
 {
-	struct sshauthopt *ret = sshauthopt_new();
+	काष्ठा sshauthopt *ret = sshauthopt_new();
 
-	ASSERT_PTR_NE(ret, NULL);
+	ASSERT_PTR_NE(ret, शून्य);
 	ret->permit_port_forwarding_flag = 0;
 	ret->permit_agent_forwarding_flag = 0;
 	ret->permit_x11_forwarding_flag = 0;
 	ret->permit_pty_flag = 0;
 	ret->permit_user_rc = 0;
 	ret->restricted = 1;
-	return ret;
+	वापस ret;
 }
 
-static char **
-commasplit(const char *s, size_t *np)
+अटल अक्षर **
+commasplit(स्थिर अक्षर *s, माप_प्रकार *np)
 {
-	char *ocp, *cp, *cp2, **ret = NULL;
-	size_t n;
+	अक्षर *ocp, *cp, *cp2, **ret = शून्य;
+	माप_प्रकार n;
 
 	ocp = cp = strdup(s);
-	ASSERT_PTR_NE(cp, NULL);
-	for (n = 0; (cp2 = strsep(&cp, ",")) != NULL;) {
-		ret = recallocarray(ret, n, n + 1, sizeof(*ret));
-		ASSERT_PTR_NE(ret, NULL);
+	ASSERT_PTR_NE(cp, शून्य);
+	क्रम (n = 0; (cp2 = strsep(&cp, ",")) != शून्य;) {
+		ret = recallocarray(ret, n, n + 1, माप(*ret));
+		ASSERT_PTR_NE(ret, शून्य);
 		cp2 = strdup(cp2);
-		ASSERT_PTR_NE(cp2, NULL);
+		ASSERT_PTR_NE(cp2, शून्य);
 		ret[n++] = cp2;
 	}
-	free(ocp);
+	मुक्त(ocp);
 	*np = n;
-	return ret;
+	वापस ret;
 }
 
-static void
-compare_opts(const struct sshauthopt *opts,
-    const struct sshauthopt *expected)
+अटल व्योम
+compare_opts(स्थिर काष्ठा sshauthopt *opts,
+    स्थिर काष्ठा sshauthopt *expected)
 {
-	size_t i;
+	माप_प्रकार i;
 
-	ASSERT_PTR_NE(opts, NULL);
-	ASSERT_PTR_NE(expected, NULL);
+	ASSERT_PTR_NE(opts, शून्य);
+	ASSERT_PTR_NE(expected, शून्य);
 	ASSERT_PTR_NE(expected, opts); /* bozo :) */
 
-#define FLAG_EQ(x) ASSERT_INT_EQ(opts->x, expected->x)
+#घोषणा FLAG_EQ(x) ASSERT_INT_EQ(opts->x, expected->x)
 	FLAG_EQ(permit_port_forwarding_flag);
 	FLAG_EQ(permit_agent_forwarding_flag);
 	FLAG_EQ(permit_x11_forwarding_flag);
@@ -101,57 +101,57 @@ compare_opts(const struct sshauthopt *opts,
 	FLAG_EQ(permit_user_rc);
 	FLAG_EQ(restricted);
 	FLAG_EQ(cert_authority);
-#undef FLAG_EQ
+#अघोषित FLAG_EQ
 
-#define STR_EQ(x) \
-	do { \
-		if (expected->x == NULL) \
+#घोषणा STR_EQ(x) \
+	करो { \
+		अगर (expected->x == शून्य) \
 			ASSERT_PTR_EQ(opts->x, expected->x); \
-		else \
+		अन्यथा \
 			ASSERT_STRING_EQ(opts->x, expected->x); \
-	} while (0)
+	} जबतक (0)
 	STR_EQ(cert_principals);
 	STR_EQ(force_command);
 	STR_EQ(required_from_host_cert);
-	STR_EQ(required_from_host_keys);
-#undef STR_EQ
+	STR_EQ(required_from_host_कुंजियाँ);
+#अघोषित STR_EQ
 
-#define ARRAY_EQ(nx, x) \
-	do { \
-		ASSERT_SIZE_T_EQ(opts->nx, expected->nx); \
-		if (expected->nx == 0) \
-			break; \
-		for (i = 0; i < expected->nx; i++) \
+#घोषणा ARRAY_EQ(nx, x) \
+	करो { \
+		ASSERT_आकार_T_EQ(opts->nx, expected->nx); \
+		अगर (expected->nx == 0) \
+			अवरोध; \
+		क्रम (i = 0; i < expected->nx; i++) \
 			ASSERT_STRING_EQ(opts->x[i], expected->x[i]); \
-	} while (0)
+	} जबतक (0)
 	ARRAY_EQ(nenv, env);
 	ARRAY_EQ(npermitopen, permitopen);
-#undef ARRAY_EQ
+#अघोषित ARRAY_EQ
 }
 
-static void
-test_authkeys_parse(void)
+अटल व्योम
+test_authkeys_parse(व्योम)
 {
-	struct sshauthopt *opts, *expected;
-	const char *errstr;
+	काष्ठा sshauthopt *opts, *expected;
+	स्थिर अक्षर *errstr;
 
-#define FAIL_TEST(label, keywords) \
-	do { \
+#घोषणा FAIL_TEST(label, keywords) \
+	करो { \
 		TEST_START("sshauthopt_parse invalid " label); \
 		opts = sshauthopt_parse(keywords, &errstr); \
-		ASSERT_PTR_EQ(opts, NULL); \
-		ASSERT_PTR_NE(errstr, NULL); \
+		ASSERT_PTR_EQ(opts, शून्य); \
+		ASSERT_PTR_NE(errstr, शून्य); \
 		sshauthopt_free(opts); \
 		TEST_DONE(); \
-	} while (0) 
-#define CHECK_SUCCESS_AND_CLEANUP() \
-	do { \
-		if (errstr != NULL) \
+	} जबतक (0) 
+#घोषणा CHECK_SUCCESS_AND_CLEANUP() \
+	करो { \
+		अगर (errstr != शून्य) \
 			ASSERT_STRING_EQ(errstr, ""); \
 		compare_opts(opts, expected); \
 		sshauthopt_free(expected); \
 		sshauthopt_free(opts); \
-	} while (0)
+	} जबतक (0)
 
 	/* Basic tests */
 	TEST_START("sshauthopt_parse empty");
@@ -197,8 +197,8 @@ test_authkeys_parse(void)
 	FAIL_TEST("tunnel", "tunnel=\"blah\"");
 
 	/* Flag options */
-#define FLAG_TEST(keyword, var, val) \
-	do { \
+#घोषणा FLAG_TEST(keyword, var, val) \
+	करो { \
 		TEST_START("sshauthopt_parse " keyword); \
 		expected = default_authkey_opts(); \
 		expected->var = val; \
@@ -209,7 +209,7 @@ test_authkeys_parse(void)
 		opts = sshauthopt_parse("restrict,"keyword, &errstr); \
 		CHECK_SUCCESS_AND_CLEANUP(); \
 		TEST_DONE(); \
-	} while (0)
+	} जबतक (0)
 	/* Positive flags */
 	FLAG_TEST("cert-authority", cert_authority, 1);
 	FLAG_TEST("port-forwarding", permit_port_forwarding_flag, 1);
@@ -223,221 +223,221 @@ test_authkeys_parse(void)
 	FLAG_TEST("no-x11-forwarding", permit_x11_forwarding_flag, 0);
 	FLAG_TEST("no-pty", permit_pty_flag, 0);
 	FLAG_TEST("no-user-rc", permit_user_rc, 0);
-#undef FLAG_TEST
+#अघोषित FLAG_TEST
 	FAIL_TEST("no-cert-authority", "no-cert-authority");
 
 	/* String options */
-#define STRING_TEST(keyword, var, val) \
-	do { \
+#घोषणा STRING_TEST(keyword, var, val) \
+	करो { \
 		TEST_START("sshauthopt_parse " keyword); \
 		expected = default_authkey_opts(); \
 		expected->var = strdup(val); \
-		ASSERT_PTR_NE(expected->var, NULL); \
+		ASSERT_PTR_NE(expected->var, शून्य); \
 		opts = sshauthopt_parse(keyword "=" #val, &errstr); \
 		CHECK_SUCCESS_AND_CLEANUP(); \
 		expected = default_authkey_restrict_opts(); \
 		expected->var = strdup(val); \
-		ASSERT_PTR_NE(expected->var, NULL); \
+		ASSERT_PTR_NE(expected->var, शून्य); \
 		opts = sshauthopt_parse( \
 		    "restrict," keyword "=" #val ",restrict", &errstr); \
 		CHECK_SUCCESS_AND_CLEANUP(); \
 		TEST_DONE(); \
-	} while (0)
+	} जबतक (0)
 	STRING_TEST("command", force_command, "/bin/true");
 	STRING_TEST("principals", cert_principals, "gregor,josef,K");
-	STRING_TEST("from", required_from_host_keys, "127.0.0.0/8");
-#undef STRING_TEST
+	STRING_TEST("from", required_from_host_कुंजियाँ, "127.0.0.0/8");
+#अघोषित STRING_TEST
 	FAIL_TEST("unquoted command", "command=oops");
 	FAIL_TEST("unquoted principals", "principals=estragon");
 	FAIL_TEST("unquoted from", "from=127.0.0.1");
 
 	/* String array option tests */
-#define ARRAY_TEST(label, keywords, var, nvar, val) \
-	do { \
+#घोषणा ARRAY_TEST(label, keywords, var, nvar, val) \
+	करो { \
 		TEST_START("sshauthopt_parse " label); \
 		expected = default_authkey_opts(); \
 		expected->var = commasplit(val, &expected->nvar); \
-		ASSERT_PTR_NE(expected->var, NULL); \
+		ASSERT_PTR_NE(expected->var, शून्य); \
 		opts = sshauthopt_parse(keywords, &errstr); \
 		CHECK_SUCCESS_AND_CLEANUP(); \
 		expected = default_authkey_restrict_opts(); \
 		expected->var = commasplit(val, &expected->nvar); \
-		ASSERT_PTR_NE(expected->var, NULL); \
+		ASSERT_PTR_NE(expected->var, शून्य); \
 		opts = sshauthopt_parse( \
 		    "restrict," keywords ",restrict", &errstr); \
 		CHECK_SUCCESS_AND_CLEANUP(); \
 		TEST_DONE(); \
-	} while (0)
+	} जबतक (0)
 	ARRAY_TEST("environment", "environment=\"foo=1\",environment=\"bar=2\"",
 	    env, nenv, "foo=1,bar=2");
 	ARRAY_TEST("environment", "environment=\"foo=1\",environment=\"foo=2\"",
 	    env, nenv, "foo=1");
 	ARRAY_TEST("permitopen", "permitopen=\"foo:123\",permitopen=\"bar:*\"",
 	    permitopen, npermitopen, "foo:123,bar:*");
-#undef ARRAY_TEST
+#अघोषित ARRAY_TEST
 	FAIL_TEST("environment", "environment=\",=bah\"");
 	FAIL_TEST("permitopen port", "foo:bar");
 	FAIL_TEST("permitopen missing port", "foo:");
 	FAIL_TEST("permitopen missing port specification", "foo");
 	FAIL_TEST("permitopen invalid host", "[:");
 
-#undef CHECK_SUCCESS_AND_CLEANUP
-#undef FAIL_TEST
+#अघोषित CHECK_SUCCESS_AND_CLEANUP
+#अघोषित FAIL_TEST
 }
 
-static void
-test_cert_parse(void)
+अटल व्योम
+test_cert_parse(व्योम)
 {
-	struct sshkey *cert;
-	struct sshauthopt *opts, *expected;
+	काष्ठा sshkey *cert;
+	काष्ठा sshauthopt *opts, *expected;
 
-#define CHECK_SUCCESS_AND_CLEANUP() \
-	do { \
+#घोषणा CHECK_SUCCESS_AND_CLEANUP() \
+	करो { \
 		compare_opts(opts, expected); \
 		sshauthopt_free(expected); \
 		sshauthopt_free(opts); \
 		sshkey_free(cert); \
-	} while (0)
-#define FLAG_TEST(keybase, var) \
-	do { \
+	} जबतक (0)
+#घोषणा FLAG_TEST(keybase, var) \
+	करो { \
 		TEST_START("sshauthopt_from_cert no_" keybase); \
-		cert = load_key("no_" keybase ".cert"); \
+		cert = load_कुंजी("no_" keybase ".cert"); \
 		expected = default_authkey_opts(); \
 		expected->var = 0; \
 		opts = sshauthopt_from_cert(cert); \
 		CHECK_SUCCESS_AND_CLEANUP(); \
 		TEST_DONE(); \
 		TEST_START("sshauthopt_from_cert only_" keybase); \
-		cert = load_key("only_" keybase ".cert"); \
+		cert = load_कुंजी("only_" keybase ".cert"); \
 		expected = sshauthopt_new(); \
-		ASSERT_PTR_NE(expected, NULL); \
+		ASSERT_PTR_NE(expected, शून्य); \
 		expected->var = 1; \
 		opts = sshauthopt_from_cert(cert); \
 		CHECK_SUCCESS_AND_CLEANUP(); \
 		TEST_DONE(); \
-	} while (0)
+	} जबतक (0)
 	FLAG_TEST("agentfwd", permit_agent_forwarding_flag);
 	FLAG_TEST("portfwd", permit_port_forwarding_flag);
 	FLAG_TEST("pty", permit_pty_flag);
 	FLAG_TEST("user_rc", permit_user_rc);
 	FLAG_TEST("x11fwd", permit_x11_forwarding_flag);
-#undef FLAG_TEST
+#अघोषित FLAG_TEST
 
 	TEST_START("sshauthopt_from_cert all permitted");
-	cert = load_key("all_permit.cert");
+	cert = load_कुंजी("all_permit.cert");
 	expected = default_authkey_opts();
 	opts = sshauthopt_from_cert(cert);
 	CHECK_SUCCESS_AND_CLEANUP();
 	TEST_DONE();
 
 	TEST_START("sshauthopt_from_cert nothing permitted");
-	cert = load_key("no_permit.cert");
+	cert = load_कुंजी("no_permit.cert");
 	expected = sshauthopt_new();
-	ASSERT_PTR_NE(expected, NULL);
+	ASSERT_PTR_NE(expected, शून्य);
 	opts = sshauthopt_from_cert(cert);
 	CHECK_SUCCESS_AND_CLEANUP();
 	TEST_DONE();
 
 	TEST_START("sshauthopt_from_cert force-command");
-	cert = load_key("force_command.cert");
+	cert = load_कुंजी("force_command.cert");
 	expected = default_authkey_opts();
 	expected->force_command = strdup("foo");
-	ASSERT_PTR_NE(expected->force_command, NULL);
+	ASSERT_PTR_NE(expected->force_command, शून्य);
 	opts = sshauthopt_from_cert(cert);
 	CHECK_SUCCESS_AND_CLEANUP();
 	TEST_DONE();
 
 	TEST_START("sshauthopt_from_cert source-address");
-	cert = load_key("sourceaddr.cert");
+	cert = load_कुंजी("sourceaddr.cert");
 	expected = default_authkey_opts();
 	expected->required_from_host_cert = strdup("127.0.0.1/32,::1/128");
-	ASSERT_PTR_NE(expected->required_from_host_cert, NULL);
+	ASSERT_PTR_NE(expected->required_from_host_cert, शून्य);
 	opts = sshauthopt_from_cert(cert);
 	CHECK_SUCCESS_AND_CLEANUP();
 	TEST_DONE();
-#undef CHECK_SUCCESS_AND_CLEANUP
+#अघोषित CHECK_SUCCESS_AND_CLEANUP
 
-#define FAIL_TEST(keybase) \
-	do { \
+#घोषणा FAIL_TEST(keybase) \
+	करो { \
 		TEST_START("sshauthopt_from_cert " keybase); \
-		cert = load_key(keybase ".cert"); \
+		cert = load_कुंजी(keybase ".cert"); \
 		opts = sshauthopt_from_cert(cert); \
-		ASSERT_PTR_EQ(opts, NULL); \
+		ASSERT_PTR_EQ(opts, शून्य); \
 		sshkey_free(cert); \
 		TEST_DONE(); \
-	} while (0)
+	} जबतक (0)
 	FAIL_TEST("host");
 	FAIL_TEST("bad_sourceaddr");
 	FAIL_TEST("unknown_critical");
-#undef FAIL_TEST
+#अघोषित FAIL_TEST
 }
 
-static void
-test_merge(void)
+अटल व्योम
+test_merge(व्योम)
 {
-	struct sshkey *cert;
-	struct sshauthopt *key_opts, *cert_opts, *merge_opts, *expected;
-	const char *errstr;
+	काष्ठा sshkey *cert;
+	काष्ठा sshauthopt *कुंजी_opts, *cert_opts, *merge_opts, *expected;
+	स्थिर अक्षर *errstr;
 
 	/*
 	 * Prepare for a test by making some key and cert options and
 	 * attempting to merge them.
 	 */
-#define PREPARE(label, keyname, keywords) \
-	do { \
-		expected = NULL; \
+#घोषणा PREPARE(label, keyname, keywords) \
+	करो { \
+		expected = शून्य; \
 		TEST_START("sshauthopt_merge " label); \
-		cert = load_key(keyname ".cert"); \
+		cert = load_कुंजी(keyname ".cert"); \
 		cert_opts = sshauthopt_from_cert(cert); \
-		ASSERT_PTR_NE(cert_opts, NULL); \
-		key_opts = sshauthopt_parse(keywords, &errstr); \
-		if (errstr != NULL) \
+		ASSERT_PTR_NE(cert_opts, शून्य); \
+		कुंजी_opts = sshauthopt_parse(keywords, &errstr); \
+		अगर (errstr != शून्य) \
 			ASSERT_STRING_EQ(errstr, ""); \
-		ASSERT_PTR_NE(key_opts, NULL); \
-		merge_opts = sshauthopt_merge(key_opts, \
+		ASSERT_PTR_NE(कुंजी_opts, शून्य); \
+		merge_opts = sshauthopt_merge(कुंजी_opts, \
 		    cert_opts, &errstr); \
-	} while (0)
+	} जबतक (0)
 
 	/* Cleanup stuff allocated by PREPARE() */
-#define CLEANUP() \
-	do { \
+#घोषणा CLEANUP() \
+	करो { \
 		sshauthopt_free(expected); \
 		sshauthopt_free(merge_opts); \
-		sshauthopt_free(key_opts); \
+		sshauthopt_free(कुंजी_opts); \
 		sshauthopt_free(cert_opts); \
 		sshkey_free(cert); \
-	} while (0)
+	} जबतक (0)
 
 	/* Check the results of PREPARE() against expectation; calls CLEANUP */
-#define CHECK_SUCCESS_AND_CLEANUP() \
-	do { \
-		if (errstr != NULL) \
+#घोषणा CHECK_SUCCESS_AND_CLEANUP() \
+	करो { \
+		अगर (errstr != शून्य) \
 			ASSERT_STRING_EQ(errstr, ""); \
 		compare_opts(merge_opts, expected); \
 		CLEANUP(); \
-	} while (0)
+	} जबतक (0)
 
 	/* Check a single case of merging of flag options */
-#define FLAG_CASE(keybase, label, keyname, keywords, mostly_off, \
+#घोषणा FLAG_CASE(keybase, label, keyname, keywords, mostly_off, \
 	    rflag, var, val) \
-	do { \
+	करो { \
 		PREPARE(keybase " " label, keyname, keywords); \
 		expected = mostly_off ? \
 		    sshauthopt_new() : default_authkey_opts(); \
-		ASSERT_PTR_NE(expected, NULL); \
+		ASSERT_PTR_NE(expected, शून्य); \
 		expected->restricted = rflag; \
 		expected->var = val; \
 		CHECK_SUCCESS_AND_CLEANUP(); \
 		TEST_DONE(); \
-	} while (0)
+	} जबतक (0)
 
 	/*
 	 * Fairly exhaustive exercise of a flag option. Tests
 	 * option both set and clear in certificate, set and clear in
 	 * authorized_keys and set and cleared via restrict keyword.
 	 */
-#define FLAG_TEST(keybase, keyword, var) \
-	do { \
+#घोषणा FLAG_TEST(keybase, keyword, var) \
+	करो { \
 		FLAG_CASE(keybase, "keys:default,yes cert:default,no", \
 		    "no_" keybase, keyword, 0, 0, var, 0); \
 		FLAG_CASE(keybase,"keys:-*,yes cert:default,no", \
@@ -474,20 +474,20 @@ test_merge(void)
 		FLAG_CASE(keybase, "keys:-*,no cert:*", \
 		    "all_permit", "restrict,no-" keyword, 1, 1, var, 0); \
 		\
-	} while (0)
+	} जबतक (0)
 	FLAG_TEST("portfwd", "port-forwarding", permit_port_forwarding_flag);
 	FLAG_TEST("agentfwd", "agent-forwarding", permit_agent_forwarding_flag);
 	FLAG_TEST("pty", "pty", permit_pty_flag);
 	FLAG_TEST("user_rc", "user-rc", permit_user_rc);
 	FLAG_TEST("x11fwd", "x11-forwarding", permit_x11_forwarding_flag);
-#undef FLAG_TEST
+#अघोषित FLAG_TEST
 
 	PREPARE("source-address both", "sourceaddr", "from=\"127.0.0.1\"");
 	expected = default_authkey_opts();
 	expected->required_from_host_cert = strdup("127.0.0.1/32,::1/128");
-	ASSERT_PTR_NE(expected->required_from_host_cert, NULL);
-	expected->required_from_host_keys = strdup("127.0.0.1");
-	ASSERT_PTR_NE(expected->required_from_host_keys, NULL);
+	ASSERT_PTR_NE(expected->required_from_host_cert, शून्य);
+	expected->required_from_host_कुंजियाँ = strdup("127.0.0.1");
+	ASSERT_PTR_NE(expected->required_from_host_कुंजियाँ, शून्य);
 	CHECK_SUCCESS_AND_CLEANUP();
 	TEST_DONE();
 
@@ -498,22 +498,22 @@ test_merge(void)
 
 	PREPARE("source-address keys", "all_permit", "from=\"127.0.0.1\"");
 	expected = default_authkey_opts();
-	expected->required_from_host_keys = strdup("127.0.0.1");
-	ASSERT_PTR_NE(expected->required_from_host_keys, NULL);
+	expected->required_from_host_कुंजियाँ = strdup("127.0.0.1");
+	ASSERT_PTR_NE(expected->required_from_host_कुंजियाँ, शून्य);
 	CHECK_SUCCESS_AND_CLEANUP();
 	TEST_DONE();
 
 	PREPARE("source-address cert", "sourceaddr", "");
 	expected = default_authkey_opts();
 	expected->required_from_host_cert = strdup("127.0.0.1/32,::1/128");
-	ASSERT_PTR_NE(expected->required_from_host_cert, NULL);
+	ASSERT_PTR_NE(expected->required_from_host_cert, शून्य);
 	CHECK_SUCCESS_AND_CLEANUP();
 	TEST_DONE();
 
 	PREPARE("force-command both", "force_command", "command=\"foo\"");
 	expected = default_authkey_opts();
 	expected->force_command = strdup("foo");
-	ASSERT_PTR_NE(expected->force_command, NULL);
+	ASSERT_PTR_NE(expected->force_command, शून्य);
 	CHECK_SUCCESS_AND_CLEANUP();
 	TEST_DONE();
 
@@ -525,19 +525,19 @@ test_merge(void)
 	PREPARE("force-command keys", "all_permit", "command=\"bar\"");
 	expected = default_authkey_opts();
 	expected->force_command = strdup("bar");
-	ASSERT_PTR_NE(expected->force_command, NULL);
+	ASSERT_PTR_NE(expected->force_command, शून्य);
 	CHECK_SUCCESS_AND_CLEANUP();
 	TEST_DONE();
 
 	PREPARE("force-command cert", "force_command", "");
 	expected = default_authkey_opts();
 	expected->force_command = strdup("foo");
-	ASSERT_PTR_NE(expected->force_command, NULL);
+	ASSERT_PTR_NE(expected->force_command, शून्य);
 	CHECK_SUCCESS_AND_CLEANUP();
 	TEST_DONE();
 
 	PREPARE("force-command mismatch", "force_command", "command=\"bar\"");
-	ASSERT_PTR_EQ(merge_opts, NULL);
+	ASSERT_PTR_EQ(merge_opts, शून्य);
 	CLEANUP();
 	TEST_DONE();
 
@@ -563,10 +563,10 @@ test_merge(void)
 	TEST_DONE();
 }
 
-void
-tests(void)
+व्योम
+tests(व्योम)
 {
-	extern char *__progname;
+	बाह्य अक्षर *__progname;
 	LogLevel ll = test_is_verbose() ?
 	    SYSLOG_LEVEL_DEBUG3 : SYSLOG_LEVEL_QUIET;
 
@@ -578,8 +578,8 @@ tests(void)
 	test_merge();
 }
 
-void
-benchmarks(void)
+व्योम
+benchmarks(व्योम)
 {
-	printf("no benchmarks\n");
+	म_लिखो("no benchmarks\n");
 }

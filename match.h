@@ -11,20 +11,20 @@
  * incompatible with the protocol description in the RFC file, it must be
  * called by a name other than "ssh" or "Secure Shell".
  */
-#ifndef MATCH_H
-#define MATCH_H
+#अगर_अघोषित MATCH_H
+#घोषणा MATCH_H
 
-int	 match_pattern(const char *, const char *);
-int	 match_pattern_list(const char *, const char *, int);
-int	 match_usergroup_pattern_list(const char *, const char *);
-int	 match_hostname(const char *, const char *);
-int	 match_host_and_ip(const char *, const char *, const char *);
-int	 match_user(const char *, const char *, const char *, const char *);
-char	*match_list(const char *, const char *, u_int *);
-char	*match_filter_denylist(const char *, const char *);
-char	*match_filter_allowlist(const char *, const char *);
+पूर्णांक	 match_pattern(स्थिर अक्षर *, स्थिर अक्षर *);
+पूर्णांक	 match_pattern_list(स्थिर अक्षर *, स्थिर अक्षर *, पूर्णांक);
+पूर्णांक	 match_usergroup_pattern_list(स्थिर अक्षर *, स्थिर अक्षर *);
+पूर्णांक	 match_hostname(स्थिर अक्षर *, स्थिर अक्षर *);
+पूर्णांक	 match_host_and_ip(स्थिर अक्षर *, स्थिर अक्षर *, स्थिर अक्षर *);
+पूर्णांक	 match_user(स्थिर अक्षर *, स्थिर अक्षर *, स्थिर अक्षर *, स्थिर अक्षर *);
+अक्षर	*match_list(स्थिर अक्षर *, स्थिर अक्षर *, u_int *);
+अक्षर	*match_filter_denylist(स्थिर अक्षर *, स्थिर अक्षर *);
+अक्षर	*match_filter_allowlist(स्थिर अक्षर *, स्थिर अक्षर *);
 
 /* addrmatch.c */
-int	 addr_match_list(const char *, const char *);
-int	 addr_match_cidr_list(const char *, const char *);
-#endif
+पूर्णांक	 addr_match_list(स्थिर अक्षर *, स्थिर अक्षर *);
+पूर्णांक	 addr_match_cidr_list(स्थिर अक्षर *, स्थिर अक्षर *);
+#पूर्ण_अगर

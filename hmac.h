@@ -15,24 +15,24 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _HMAC_H
-#define _HMAC_H
+#अगर_अघोषित _HMAC_H
+#घोषणा _HMAC_H
 
 /* Returns the algorithm's digest length in bytes or 0 for invalid algorithm */
-size_t ssh_hmac_bytes(int alg);
+माप_प्रकार ssh_hmac_bytes(पूर्णांक alg);
 
-struct sshbuf;
-struct ssh_hmac_ctx;
-struct ssh_hmac_ctx *ssh_hmac_start(int alg);
+काष्ठा sshbuf;
+काष्ठा ssh_hmac_ctx;
+काष्ठा ssh_hmac_ctx *ssh_hmac_start(पूर्णांक alg);
 
 /* Sets the state of the HMAC or resets the state if key == NULL */
-int ssh_hmac_init(struct ssh_hmac_ctx *ctx, const void *key, size_t klen)
+पूर्णांक ssh_hmac_init(काष्ठा ssh_hmac_ctx *ctx, स्थिर व्योम *कुंजी, माप_प्रकार klen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_hmac_update(struct ssh_hmac_ctx *ctx, const void *m, size_t mlen)
+पूर्णांक ssh_hmac_update(काष्ठा ssh_hmac_ctx *ctx, स्थिर व्योम *m, माप_प्रकार mlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_hmac_update_buffer(struct ssh_hmac_ctx *ctx, const struct sshbuf *b);
-int ssh_hmac_final(struct ssh_hmac_ctx *ctx, u_char *d, size_t dlen)
+पूर्णांक ssh_hmac_update_बफर(काष्ठा ssh_hmac_ctx *ctx, स्थिर काष्ठा sshbuf *b);
+पूर्णांक ssh_hmac_final(काष्ठा ssh_hmac_ctx *ctx, u_char *d, माप_प्रकार dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-void ssh_hmac_free(struct ssh_hmac_ctx *ctx);
+व्योम ssh_hmac_free(काष्ठा ssh_hmac_ctx *ctx);
 
-#endif /* _HMAC_H */
+#पूर्ण_अगर /* _HMAC_H */

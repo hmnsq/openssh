@@ -18,351 +18,351 @@
  */
 
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/wait.h>
-#include <sys/un.h>
+#समावेश <sys/types.h>
+#समावेश <sys/ioctl.h>
+#समावेश <sys/mman.h>
+#समावेश <sys/socket.h>
+#समावेश <sys/stat.h>
+#समावेश <sys/time.h>
+#समावेश <sys/wait.h>
+#समावेश <sys/un.h>
 
-#include <limits.h>
-#include <libgen.h>
-#include <poll.h>
-#include <nlist.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#समावेश <limits.h>
+#समावेश <libgen.h>
+#समावेश <poll.h>
+#समावेश <nlist.h>
+#समावेश <signal.h>
+#समावेश <stdarg.h>
+#समावेश <stdio.h>
+#समावेश <stdint.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <time.h>
+#समावेश <unistd.h>
 
-#include <netinet/in.h>
-#include <netinet/ip.h>
-#include <netinet/tcp.h>
-#include <arpa/inet.h>
+#समावेश <netinet/in.h>
+#समावेश <netinet/ip.h>
+#समावेश <netinet/tcp.h>
+#समावेश <arpa/inet.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <grp.h>
-#ifdef SSH_TUN_OPENBSD
-#include <net/if.h>
-#endif
+#समावेश <ctype.h>
+#समावेश <errno.h>
+#समावेश <fcntl.h>
+#समावेश <netdb.h>
+#समावेश <paths.h>
+#समावेश <pwd.h>
+#समावेश <grp.h>
+#अगर_घोषित SSH_TUN_OPENBSD
+#समावेश <net/if.h>
+#पूर्ण_अगर
 
-#include "xmalloc.h"
-#include "misc.h"
-#include "log.h"
-#include "ssh.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "platform.h"
+#समावेश "xmalloc.h"
+#समावेश "misc.h"
+#समावेश "log.h"
+#समावेश "ssh.h"
+#समावेश "sshbuf.h"
+#समावेश "ssherr.h"
+#समावेश "platform.h"
 
 /* remove newline at end of string */
-char *
-chop(char *s)
+अक्षर *
+chop(अक्षर *s)
 {
-	char *t = s;
-	while (*t) {
-		if (*t == '\n' || *t == '\r') {
+	अक्षर *t = s;
+	जबतक (*t) {
+		अगर (*t == '\n' || *t == '\r') {
 			*t = '\0';
-			return s;
+			वापस s;
 		}
 		t++;
 	}
-	return s;
+	वापस s;
 
 }
 
 /* remove whitespace from end of string */
-void
-rtrim(char *s)
+व्योम
+rtrim(अक्षर *s)
 {
-	size_t i;
+	माप_प्रकार i;
 
-	if ((i = strlen(s)) == 0)
-		return;
-	do {
+	अगर ((i = म_माप(s)) == 0)
+		वापस;
+	करो {
 		i--;
-		if (isspace((unsigned char)s[i]))
+		अगर (है_खाली((अचिन्हित अक्षर)s[i]))
 			s[i] = '\0';
-		else
-			break;
-	} while (i > 0);
+		अन्यथा
+			अवरोध;
+	} जबतक (i > 0);
 }
 
 /*
  * returns pointer to character after 'prefix' in 's' or otherwise NULL
  * if the prefix is not present.
  */
-const char *
-strprefix(const char *s, const char *prefix, int ignorecase)
+स्थिर अक्षर *
+strprefix(स्थिर अक्षर *s, स्थिर अक्षर *prefix, पूर्णांक ignorecase)
 {
-	size_t prefixlen;
+	माप_प्रकार prefixlen;
 
-	if ((prefixlen = strlen(prefix)) == 0)
-		return s;
-	if (ignorecase) {
-		if (strncasecmp(s, prefix, prefixlen) != 0)
-			return NULL;
-	} else {
-		if (strncmp(s, prefix, prefixlen) != 0)
-			return NULL;
+	अगर ((prefixlen = म_माप(prefix)) == 0)
+		वापस s;
+	अगर (ignorecase) {
+		अगर (strncasecmp(s, prefix, prefixlen) != 0)
+			वापस शून्य;
+	} अन्यथा {
+		अगर (म_भेदन(s, prefix, prefixlen) != 0)
+			वापस शून्य;
 	}
-	return s + prefixlen;
+	वापस s + prefixlen;
 }
 
 /* Append string 's' to a NULL-terminated array of strings */
-void
-stringlist_append(char ***listp, const char *s)
+व्योम
+stringlist_append(अक्षर ***listp, स्थिर अक्षर *s)
 {
-	size_t i = 0;
+	माप_प्रकार i = 0;
 
-	if (*listp == NULL)
-		*listp = xcalloc(2, sizeof(**listp));
-	else {
-		for (i = 0; (*listp)[i] != NULL; i++)
+	अगर (*listp == शून्य)
+		*listp = xcalloc(2, माप(**listp));
+	अन्यथा {
+		क्रम (i = 0; (*listp)[i] != शून्य; i++)
 			; /* count */
-		*listp = xrecallocarray(*listp, i + 1, i + 2, sizeof(**listp));
+		*listp = xrecallocarray(*listp, i + 1, i + 2, माप(**listp));
 	}
 	(*listp)[i] = xstrdup(s);
 }
 
-void
-stringlist_free(char **list)
+व्योम
+stringlist_free(अक्षर **list)
 {
-	size_t i = 0;
+	माप_प्रकार i = 0;
 
-	if (list == NULL)
-		return;
-	for (i = 0; list[i] != NULL; i++)
-		free(list[i]);
-	free(list);
+	अगर (list == शून्य)
+		वापस;
+	क्रम (i = 0; list[i] != शून्य; i++)
+		मुक्त(list[i]);
+	मुक्त(list);
 }
 
 /* set/unset filedescriptor to non-blocking */
-int
-set_nonblock(int fd)
+पूर्णांक
+set_nonblock(पूर्णांक fd)
 {
-	int val;
+	पूर्णांक val;
 
 	val = fcntl(fd, F_GETFL);
-	if (val == -1) {
-		error("fcntl(%d, F_GETFL): %s", fd, strerror(errno));
-		return (-1);
+	अगर (val == -1) {
+		error("fcntl(%d, F_GETFL): %s", fd, म_त्रुटि(त्रुटि_सं));
+		वापस (-1);
 	}
-	if (val & O_NONBLOCK) {
+	अगर (val & O_NONBLOCK) {
 		debug3("fd %d is O_NONBLOCK", fd);
-		return (0);
+		वापस (0);
 	}
 	debug2("fd %d setting O_NONBLOCK", fd);
 	val |= O_NONBLOCK;
-	if (fcntl(fd, F_SETFL, val) == -1) {
+	अगर (fcntl(fd, F_SETFL, val) == -1) {
 		debug("fcntl(%d, F_SETFL, O_NONBLOCK): %s", fd,
-		    strerror(errno));
-		return (-1);
+		    म_त्रुटि(त्रुटि_सं));
+		वापस (-1);
 	}
-	return (0);
+	वापस (0);
 }
 
-int
-unset_nonblock(int fd)
+पूर्णांक
+unset_nonblock(पूर्णांक fd)
 {
-	int val;
+	पूर्णांक val;
 
 	val = fcntl(fd, F_GETFL);
-	if (val == -1) {
-		error("fcntl(%d, F_GETFL): %s", fd, strerror(errno));
-		return (-1);
+	अगर (val == -1) {
+		error("fcntl(%d, F_GETFL): %s", fd, म_त्रुटि(त्रुटि_सं));
+		वापस (-1);
 	}
-	if (!(val & O_NONBLOCK)) {
+	अगर (!(val & O_NONBLOCK)) {
 		debug3("fd %d is not O_NONBLOCK", fd);
-		return (0);
+		वापस (0);
 	}
 	debug("fd %d clearing O_NONBLOCK", fd);
 	val &= ~O_NONBLOCK;
-	if (fcntl(fd, F_SETFL, val) == -1) {
+	अगर (fcntl(fd, F_SETFL, val) == -1) {
 		debug("fcntl(%d, F_SETFL, ~O_NONBLOCK): %s",
-		    fd, strerror(errno));
-		return (-1);
+		    fd, म_त्रुटि(त्रुटि_सं));
+		वापस (-1);
 	}
-	return (0);
+	वापस (0);
 }
 
-const char *
-ssh_gai_strerror(int gaierr)
+स्थिर अक्षर *
+ssh_gai_strerror(पूर्णांक gaierr)
 {
-	if (gaierr == EAI_SYSTEM && errno != 0)
-		return strerror(errno);
-	return gai_strerror(gaierr);
+	अगर (gaierr == EAI_SYSTEM && त्रुटि_सं != 0)
+		वापस म_त्रुटि(त्रुटि_सं);
+	वापस gai_strerror(gaierr);
 }
 
 /* disable nagle on socket */
-void
-set_nodelay(int fd)
+व्योम
+set_nodelay(पूर्णांक fd)
 {
-	int opt;
+	पूर्णांक opt;
 	socklen_t optlen;
 
-	optlen = sizeof opt;
-	if (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, &optlen) == -1) {
-		debug("getsockopt TCP_NODELAY: %.100s", strerror(errno));
-		return;
+	optlen = माप opt;
+	अगर (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, &optlen) == -1) {
+		debug("getsockopt TCP_NODELAY: %.100s", म_त्रुटि(त्रुटि_सं));
+		वापस;
 	}
-	if (opt == 1) {
+	अगर (opt == 1) {
 		debug2("fd %d is TCP_NODELAY", fd);
-		return;
+		वापस;
 	}
 	opt = 1;
 	debug2("fd %d setting TCP_NODELAY", fd);
-	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof opt) == -1)
-		error("setsockopt TCP_NODELAY: %.100s", strerror(errno));
+	अगर (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, माप opt) == -1)
+		error("setsockopt TCP_NODELAY: %.100s", म_त्रुटि(त्रुटि_सं));
 }
 
 /* Allow local port reuse in TIME_WAIT */
-int
-set_reuseaddr(int fd)
+पूर्णांक
+set_reuseaddr(पूर्णांक fd)
 {
-	int on = 1;
+	पूर्णांक on = 1;
 
-	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1) {
-		error("setsockopt SO_REUSEADDR fd %d: %s", fd, strerror(errno));
-		return -1;
+	अगर (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, माप(on)) == -1) {
+		error("setsockopt SO_REUSEADDR fd %d: %s", fd, म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
-	return 0;
+	वापस 0;
 }
 
 /* Set TCP keepalives */
-int
-set_keepalive(int fd)
+पूर्णांक
+set_keepalive(पूर्णांक fd)
 {
-	int on = 1;
+	पूर्णांक on = 1;
 
-	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on)) == -1) {
-		error("setsockopt SO_KEEPALIVE fd %d: %s", fd, strerror(errno));
-		return -1;
+	अगर (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &on, माप(on)) == -1) {
+		error("setsockopt SO_KEEPALIVE fd %d: %s", fd, म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
-	return 0;
+	वापस 0;
 }
 
 /* Get/set routing domain */
-char *
-get_rdomain(int fd)
+अक्षर *
+get_rdomain(पूर्णांक fd)
 {
-#if defined(HAVE_SYS_GET_RDOMAIN)
-	return sys_get_rdomain(fd);
-#elif defined(__OpenBSD__)
-	int rtable;
-	char *ret;
-	socklen_t len = sizeof(rtable);
+#अगर defined(HAVE_SYS_GET_RDOMAIN)
+	वापस sys_get_rdomain(fd);
+#या_अगर defined(__OpenBSD__)
+	पूर्णांक rtable;
+	अक्षर *ret;
+	socklen_t len = माप(rtable);
 
-	if (getsockopt(fd, SOL_SOCKET, SO_RTABLE, &rtable, &len) == -1) {
+	अगर (getsockopt(fd, SOL_SOCKET, SO_RTABLE, &rtable, &len) == -1) {
 		error("Failed to get routing domain for fd %d: %s",
-		    fd, strerror(errno));
-		return NULL;
+		    fd, म_त्रुटि(त्रुटि_सं));
+		वापस शून्य;
 	}
 	xasprintf(&ret, "%d", rtable);
-	return ret;
-#else /* defined(__OpenBSD__) */
-	return NULL;
-#endif
+	वापस ret;
+#अन्यथा /* defined(__OpenBSD__) */
+	वापस शून्य;
+#पूर्ण_अगर
 }
 
-int
-set_rdomain(int fd, const char *name)
+पूर्णांक
+set_rdomain(पूर्णांक fd, स्थिर अक्षर *name)
 {
-#if defined(HAVE_SYS_SET_RDOMAIN)
-	return sys_set_rdomain(fd, name);
-#elif defined(__OpenBSD__)
-	int rtable;
-	const char *errstr;
+#अगर defined(HAVE_SYS_SET_RDOMAIN)
+	वापस sys_set_rdomain(fd, name);
+#या_अगर defined(__OpenBSD__)
+	पूर्णांक rtable;
+	स्थिर अक्षर *errstr;
 
-	if (name == NULL)
-		return 0; /* default table */
+	अगर (name == शून्य)
+		वापस 0; /* default table */
 
-	rtable = (int)strtonum(name, 0, 255, &errstr);
-	if (errstr != NULL) {
+	rtable = (पूर्णांक)strtonum(name, 0, 255, &errstr);
+	अगर (errstr != शून्य) {
 		/* Shouldn't happen */
 		error("Invalid routing domain \"%s\": %s", name, errstr);
-		return -1;
+		वापस -1;
 	}
-	if (setsockopt(fd, SOL_SOCKET, SO_RTABLE,
-	    &rtable, sizeof(rtable)) == -1) {
+	अगर (setsockopt(fd, SOL_SOCKET, SO_RTABLE,
+	    &rtable, माप(rtable)) == -1) {
 		error("Failed to set routing domain %d on fd %d: %s",
-		    rtable, fd, strerror(errno));
-		return -1;
+		    rtable, fd, म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
-	return 0;
-#else /* defined(__OpenBSD__) */
+	वापस 0;
+#अन्यथा /* defined(__OpenBSD__) */
 	error("Setting routing domain is not supported on this platform");
-	return -1;
-#endif
+	वापस -1;
+#पूर्ण_अगर
 }
 
-int
-get_sock_af(int fd)
+पूर्णांक
+get_sock_af(पूर्णांक fd)
 {
-	struct sockaddr_storage to;
-	socklen_t tolen = sizeof(to);
+	काष्ठा sockaddr_storage to;
+	socklen_t tolen = माप(to);
 
-	memset(&to, 0, sizeof(to));
-	if (getsockname(fd, (struct sockaddr *)&to, &tolen) == -1)
-		return -1;
-#ifdef IPV4_IN_IPV6
-	if (to.ss_family == AF_INET6 &&
-	    IN6_IS_ADDR_V4MAPPED(&((struct sockaddr_in6 *)&to)->sin6_addr))
-		return AF_INET;
-#endif
-	return to.ss_family;
+	स_रखो(&to, 0, माप(to));
+	अगर (getsockname(fd, (काष्ठा sockaddr *)&to, &tolen) == -1)
+		वापस -1;
+#अगर_घोषित IPV4_IN_IPV6
+	अगर (to.ss_family == AF_INET6 &&
+	    IN6_IS_ADDR_V4MAPPED(&((काष्ठा sockaddr_in6 *)&to)->sin6_addr))
+		वापस AF_INET;
+#पूर्ण_अगर
+	वापस to.ss_family;
 }
 
-void
-set_sock_tos(int fd, int tos)
+व्योम
+set_sock_tos(पूर्णांक fd, पूर्णांक tos)
 {
-#ifndef IP_TOS_IS_BROKEN
-	int af;
+#अगर_अघोषित IP_TOS_IS_BROKEN
+	पूर्णांक af;
 
-	if (tos < 0 || tos == INT_MAX) {
+	अगर (tos < 0 || tos == पूर्णांक_उच्च) {
 		debug_f("invalid TOS %d", tos);
-		return;
+		वापस;
 	}
-	switch ((af = get_sock_af(fd))) {
-	case -1:
+	चयन ((af = get_sock_af(fd))) {
+	हाल -1:
 		/* assume not a socket */
-		break;
-	case AF_INET:
+		अवरोध;
+	हाल AF_INET:
 # ifdef IP_TOS
 		debug3_f("set socket %d IP_TOS 0x%02x", fd, tos);
-		if (setsockopt(fd, IPPROTO_IP, IP_TOS,
-		    &tos, sizeof(tos)) == -1) {
+		अगर (setsockopt(fd, IPPROTO_IP, IP_TOS,
+		    &tos, माप(tos)) == -1) {
 			error("setsockopt socket %d IP_TOS %d: %s",
-			    fd, tos, strerror(errno));
+			    fd, tos, म_त्रुटि(त्रुटि_सं));
 		}
 # endif /* IP_TOS */
-		break;
-	case AF_INET6:
+		अवरोध;
+	हाल AF_INET6:
 # ifdef IPV6_TCLASS
 		debug3_f("set socket %d IPV6_TCLASS 0x%02x", fd, tos);
-		if (setsockopt(fd, IPPROTO_IPV6, IPV6_TCLASS,
-		    &tos, sizeof(tos)) == -1) {
+		अगर (setsockopt(fd, IPPROTO_IPV6, IPV6_TCLASS,
+		    &tos, माप(tos)) == -1) {
 			error("setsockopt socket %d IPV6_TCLASS %d: %s",
-			    fd, tos, strerror(errno));
+			    fd, tos, म_त्रुटि(त्रुटि_सं));
 		}
 # endif /* IPV6_TCLASS */
-		break;
-	default:
+		अवरोध;
+	शेष:
 		debug2_f("unsupported socket family %d", af);
-		break;
+		अवरोध;
 	}
-#endif /* IP_TOS_IS_BROKEN */
+#पूर्ण_अगर /* IP_TOS_IS_BROKEN */
 }
 
 /*
@@ -370,50 +370,50 @@ set_sock_tos(int fd, int tos)
  * *timeoutp with time remaining.
  * Returns 0 if fd ready or -1 on timeout or error (see errno).
  */
-static int
-waitfd(int fd, int *timeoutp, short events, volatile sig_atomic_t *stop)
+अटल पूर्णांक
+waitfd(पूर्णांक fd, पूर्णांक *timeoutp, लघु events, अस्थिर संक_पूर्ण_प्रकार *stop)
 {
-	struct pollfd pfd;
-	struct timespec timeout;
-	int oerrno, r;
+	काष्ठा pollfd pfd;
+	काष्ठा timespec timeout;
+	पूर्णांक oerrno, r;
 	sigset_t nsigset, osigset;
 
-	if (timeoutp && *timeoutp == -1)
-		timeoutp = NULL;
+	अगर (timeoutp && *timeoutp == -1)
+		timeoutp = शून्य;
 	pfd.fd = fd;
 	pfd.events = events;
 	ptimeout_init(&timeout);
-	if (timeoutp != NULL)
+	अगर (timeoutp != शून्य)
 		ptimeout_deadline_ms(&timeout, *timeoutp);
-	if (stop != NULL)
+	अगर (stop != शून्य)
 		sigfillset(&nsigset);
-	for (; timeoutp == NULL || *timeoutp >= 0;) {
-		if (stop != NULL) {
+	क्रम (; timeoutp == शून्य || *timeoutp >= 0;) {
+		अगर (stop != शून्य) {
 			sigprocmask(SIG_BLOCK, &nsigset, &osigset);
-			if (*stop) {
-				sigprocmask(SIG_SETMASK, &osigset, NULL);
-				errno = EINTR;
-				return -1;
+			अगर (*stop) {
+				sigprocmask(SIG_SETMASK, &osigset, शून्य);
+				त्रुटि_सं = EINTR;
+				वापस -1;
 			}
 		}
 		r = ppoll(&pfd, 1, ptimeout_get_tsp(&timeout),
-		    stop != NULL ? &osigset : NULL);
-		oerrno = errno;
-		if (stop != NULL)
-			sigprocmask(SIG_SETMASK, &osigset, NULL);
-		if (timeoutp)
+		    stop != शून्य ? &osigset : शून्य);
+		oerrno = त्रुटि_सं;
+		अगर (stop != शून्य)
+			sigprocmask(SIG_SETMASK, &osigset, शून्य);
+		अगर (timeoutp)
 			*timeoutp = ptimeout_get_ms(&timeout);
-		errno = oerrno;
-		if (r > 0)
-			return 0;
-		else if (r == -1 && errno != EAGAIN && errno != EINTR)
-			return -1;
-		else if (r == 0)
-			break;
+		त्रुटि_सं = oerrno;
+		अगर (r > 0)
+			वापस 0;
+		अन्यथा अगर (r == -1 && त्रुटि_सं != EAGAIN && त्रुटि_सं != EINTR)
+			वापस -1;
+		अन्यथा अगर (r == 0)
+			अवरोध;
 	}
 	/* timeout */
-	errno = ETIMEDOUT;
-	return -1;
+	त्रुटि_सं = ETIMEDOUT;
+	वापस -1;
 }
 
 /*
@@ -421,9 +421,9 @@ waitfd(int fd, int *timeoutp, short events, volatile sig_atomic_t *stop)
  * *timeoutp with time remaining.
  * Returns 0 if fd ready or -1 on timeout or error (see errno).
  */
-int
-waitrfd(int fd, int *timeoutp, volatile sig_atomic_t *stop) {
-	return waitfd(fd, timeoutp, POLLIN, stop);
+पूर्णांक
+waitrfd(पूर्णांक fd, पूर्णांक *timeoutp, अस्थिर संक_पूर्ण_प्रकार *stop) {
+	वापस waitfd(fd, timeoutp, POLLIN, stop);
 }
 
 /*
@@ -433,154 +433,154 @@ waitrfd(int fd, int *timeoutp, volatile sig_atomic_t *stop) {
  *
  * Returns 0 on success or -1 on failure.
  */
-int
-timeout_connect(int sockfd, const struct sockaddr *serv_addr,
-    socklen_t addrlen, int *timeoutp)
+पूर्णांक
+timeout_connect(पूर्णांक sockfd, स्थिर काष्ठा sockaddr *serv_addr,
+    socklen_t addrlen, पूर्णांक *timeoutp)
 {
-	int optval = 0;
-	socklen_t optlen = sizeof(optval);
+	पूर्णांक optval = 0;
+	socklen_t optlen = माप(optval);
 
 	/* No timeout: just do a blocking connect() */
-	if (timeoutp == NULL || *timeoutp <= 0)
-		return connect(sockfd, serv_addr, addrlen);
+	अगर (timeoutp == शून्य || *timeoutp <= 0)
+		वापस connect(sockfd, serv_addr, addrlen);
 
 	set_nonblock(sockfd);
-	for (;;) {
-		if (connect(sockfd, serv_addr, addrlen) == 0) {
+	क्रम (;;) {
+		अगर (connect(sockfd, serv_addr, addrlen) == 0) {
 			/* Succeeded already? */
 			unset_nonblock(sockfd);
-			return 0;
-		} else if (errno == EINTR)
-			continue;
-		else if (errno != EINPROGRESS)
-			return -1;
-		break;
+			वापस 0;
+		} अन्यथा अगर (त्रुटि_सं == EINTR)
+			जारी;
+		अन्यथा अगर (त्रुटि_सं != EINPROGRESS)
+			वापस -1;
+		अवरोध;
 	}
 
-	if (waitfd(sockfd, timeoutp, POLLIN | POLLOUT, NULL) == -1)
-		return -1;
+	अगर (waitfd(sockfd, timeoutp, POLLIN | POLLOUT, शून्य) == -1)
+		वापस -1;
 
 	/* Completed or failed */
-	if (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) == -1) {
-		debug("getsockopt: %s", strerror(errno));
-		return -1;
+	अगर (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) == -1) {
+		debug("getsockopt: %s", म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
-	if (optval != 0) {
-		errno = optval;
-		return -1;
+	अगर (optval != 0) {
+		त्रुटि_सं = optval;
+		वापस -1;
 	}
 	unset_nonblock(sockfd);
-	return 0;
+	वापस 0;
 }
 
 /* Characters considered whitespace in strsep calls. */
-#define WHITESPACE " \t\r\n"
-#define QUOTE	"\""
+#घोषणा WHITESPACE " \t\r\n"
+#घोषणा QUOTE	"\""
 
 /* return next token in configuration line */
-static char *
-strdelim_internal(char **s, int split_equals)
+अटल अक्षर *
+strdelim_internal(अक्षर **s, पूर्णांक split_equals)
 {
-	char *old;
-	int wspace = 0;
+	अक्षर *old;
+	पूर्णांक wspace = 0;
 
-	if (*s == NULL)
-		return NULL;
+	अगर (*s == शून्य)
+		वापस शून्य;
 
 	old = *s;
 
 	*s = strpbrk(*s,
 	    split_equals ? WHITESPACE QUOTE "=" : WHITESPACE QUOTE);
-	if (*s == NULL)
-		return (old);
+	अगर (*s == शून्य)
+		वापस (old);
 
-	if (*s[0] == '\"') {
-		memmove(*s, *s + 1, strlen(*s)); /* move nul too */
+	अगर (*s[0] == '\"') {
+		स_हटाओ(*s, *s + 1, म_माप(*s)); /* move nul too */
 		/* Find matching quote */
-		if ((*s = strpbrk(*s, QUOTE)) == NULL) {
-			return (NULL);		/* no matching quote */
-		} else {
+		अगर ((*s = strpbrk(*s, QUOTE)) == शून्य) {
+			वापस (शून्य);		/* no matching quote */
+		} अन्यथा {
 			*s[0] = '\0';
-			*s += strspn(*s + 1, WHITESPACE) + 1;
-			return (old);
+			*s += म_अखोज(*s + 1, WHITESPACE) + 1;
+			वापस (old);
 		}
 	}
 
 	/* Allow only one '=' to be skipped */
-	if (split_equals && *s[0] == '=')
+	अगर (split_equals && *s[0] == '=')
 		wspace = 1;
 	*s[0] = '\0';
 
 	/* Skip any extra whitespace after first token */
-	*s += strspn(*s + 1, WHITESPACE) + 1;
-	if (split_equals && *s[0] == '=' && !wspace)
-		*s += strspn(*s + 1, WHITESPACE) + 1;
+	*s += म_अखोज(*s + 1, WHITESPACE) + 1;
+	अगर (split_equals && *s[0] == '=' && !wspace)
+		*s += म_अखोज(*s + 1, WHITESPACE) + 1;
 
-	return (old);
+	वापस (old);
 }
 
 /*
  * Return next token in configuration line; splits on whitespace or a
  * single '=' character.
  */
-char *
-strdelim(char **s)
+अक्षर *
+strdelim(अक्षर **s)
 {
-	return strdelim_internal(s, 1);
+	वापस strdelim_internal(s, 1);
 }
 
 /*
  * Return next token in configuration line; splits on whitespace only.
  */
-char *
-strdelimw(char **s)
+अक्षर *
+strdelimw(अक्षर **s)
 {
-	return strdelim_internal(s, 0);
+	वापस strdelim_internal(s, 0);
 }
 
-struct passwd *
-pwcopy(struct passwd *pw)
+काष्ठा passwd *
+pwcopy(काष्ठा passwd *pw)
 {
-	struct passwd *copy = xcalloc(1, sizeof(*copy));
+	काष्ठा passwd *copy = xcalloc(1, माप(*copy));
 
 	copy->pw_name = xstrdup(pw->pw_name);
-	copy->pw_passwd = xstrdup(pw->pw_passwd == NULL ? "*" : pw->pw_passwd);
-#ifdef HAVE_STRUCT_PASSWD_PW_GECOS
-	copy->pw_gecos = xstrdup(pw->pw_gecos == NULL ? "" : pw->pw_gecos);
-#endif
+	copy->pw_passwd = xstrdup(pw->pw_passwd == शून्य ? "*" : pw->pw_passwd);
+#अगर_घोषित HAVE_STRUCT_PASSWD_PW_GECOS
+	copy->pw_gecos = xstrdup(pw->pw_gecos == शून्य ? "" : pw->pw_gecos);
+#पूर्ण_अगर
 	copy->pw_uid = pw->pw_uid;
 	copy->pw_gid = pw->pw_gid;
-#ifdef HAVE_STRUCT_PASSWD_PW_EXPIRE
+#अगर_घोषित HAVE_STRUCT_PASSWD_PW_EXPIRE
 	copy->pw_expire = pw->pw_expire;
-#endif
-#ifdef HAVE_STRUCT_PASSWD_PW_CHANGE
+#पूर्ण_अगर
+#अगर_घोषित HAVE_STRUCT_PASSWD_PW_CHANGE
 	copy->pw_change = pw->pw_change;
-#endif
-#ifdef HAVE_STRUCT_PASSWD_PW_CLASS
-	copy->pw_class = xstrdup(pw->pw_class == NULL ? "" : pw->pw_class);
-#endif
-	copy->pw_dir = xstrdup(pw->pw_dir == NULL ? "" : pw->pw_dir);
-	copy->pw_shell = xstrdup(pw->pw_shell == NULL ? "" : pw->pw_shell);
-	return copy;
+#पूर्ण_अगर
+#अगर_घोषित HAVE_STRUCT_PASSWD_PW_CLASS
+	copy->pw_class = xstrdup(pw->pw_class == शून्य ? "" : pw->pw_class);
+#पूर्ण_अगर
+	copy->pw_dir = xstrdup(pw->pw_dir == शून्य ? "" : pw->pw_dir);
+	copy->pw_shell = xstrdup(pw->pw_shell == शून्य ? "" : pw->pw_shell);
+	वापस copy;
 }
 
-void
-pwfree(struct passwd *pw)
+व्योम
+pwfree(काष्ठा passwd *pw)
 {
-	if (pw == NULL)
-		return;
-	free(pw->pw_name);
+	अगर (pw == शून्य)
+		वापस;
+	मुक्त(pw->pw_name);
 	freezero(pw->pw_passwd,
-	    pw->pw_passwd == NULL ? 0 : strlen(pw->pw_passwd));
-#ifdef HAVE_STRUCT_PASSWD_PW_GECOS
-	free(pw->pw_gecos);
-#endif
-#ifdef HAVE_STRUCT_PASSWD_PW_CLASS
-	free(pw->pw_class);
-#endif
-	free(pw->pw_dir);
-	free(pw->pw_shell);
-	freezero(pw, sizeof(*pw));
+	    pw->pw_passwd == शून्य ? 0 : म_माप(pw->pw_passwd));
+#अगर_घोषित HAVE_STRUCT_PASSWD_PW_GECOS
+	मुक्त(pw->pw_gecos);
+#पूर्ण_अगर
+#अगर_घोषित HAVE_STRUCT_PASSWD_PW_CLASS
+	मुक्त(pw->pw_class);
+#पूर्ण_अगर
+	मुक्त(pw->pw_dir);
+	मुक्त(pw->pw_shell);
+	freezero(pw, माप(*pw));
 }
 
 /*
@@ -588,57 +588,57 @@ pwfree(struct passwd *pw)
  * Port must be >=0 and <=65535.
  * Return -1 if invalid.
  */
-int
-a2port(const char *s)
+पूर्णांक
+a2port(स्थिर अक्षर *s)
 {
-	struct servent *se;
-	long long port;
-	const char *errstr;
+	काष्ठा servent *se;
+	दीर्घ दीर्घ port;
+	स्थिर अक्षर *errstr;
 
 	port = strtonum(s, 0, 65535, &errstr);
-	if (errstr == NULL)
-		return (int)port;
-	if ((se = getservbyname(s, "tcp")) != NULL)
-		return ntohs(se->s_port);
-	return -1;
+	अगर (errstr == शून्य)
+		वापस (पूर्णांक)port;
+	अगर ((se = getservbyname(s, "tcp")) != शून्य)
+		वापस ntohs(se->s_port);
+	वापस -1;
 }
 
-int
-a2tun(const char *s, int *remote)
+पूर्णांक
+a2tun(स्थिर अक्षर *s, पूर्णांक *remote)
 {
-	const char *errstr = NULL;
-	char *sp, *ep;
-	int tun;
+	स्थिर अक्षर *errstr = शून्य;
+	अक्षर *sp, *ep;
+	पूर्णांक tun;
 
-	if (remote != NULL) {
+	अगर (remote != शून्य) {
 		*remote = SSH_TUNID_ANY;
 		sp = xstrdup(s);
-		if ((ep = strchr(sp, ':')) == NULL) {
-			free(sp);
-			return (a2tun(s, NULL));
+		अगर ((ep = म_अक्षर(sp, ':')) == शून्य) {
+			मुक्त(sp);
+			वापस (a2tun(s, शून्य));
 		}
 		ep[0] = '\0'; ep++;
-		*remote = a2tun(ep, NULL);
-		tun = a2tun(sp, NULL);
-		free(sp);
-		return (*remote == SSH_TUNID_ERR ? *remote : tun);
+		*remote = a2tun(ep, शून्य);
+		tun = a2tun(sp, शून्य);
+		मुक्त(sp);
+		वापस (*remote == SSH_TUNID_ERR ? *remote : tun);
 	}
 
-	if (strcasecmp(s, "any") == 0)
-		return (SSH_TUNID_ANY);
+	अगर (strcasecmp(s, "any") == 0)
+		वापस (SSH_TUNID_ANY);
 
 	tun = strtonum(s, 0, SSH_TUNID_MAX, &errstr);
-	if (errstr != NULL)
-		return (SSH_TUNID_ERR);
+	अगर (errstr != शून्य)
+		वापस (SSH_TUNID_ERR);
 
-	return (tun);
+	वापस (tun);
 }
 
-#define SECONDS		1.0
-#define MINUTES		(SECONDS * 60)
-#define HOURS		(MINUTES * 60)
-#define DAYS		(HOURS * 24)
-#define WEEKS		(DAYS * 7)
+#घोषणा SECONDS		1.0
+#घोषणा MINUTES		(SECONDS * 60)
+#घोषणा HOURS		(MINUTES * 60)
+#घोषणा DAYS		(HOURS * 24)
+#घोषणा WEEKS		(DAYS * 7)
 
 /*
  * Convert an interval/duration time string into seconds, which may include
@@ -667,110 +667,110 @@ a2tun(const char *s, int *remote)
  *
  * Returns <0.0 if the time string is invalid.
  */
-double
-convtime_double(const char *s)
+द्विगुन
+convtime_double(स्थिर अक्षर *s)
 {
-	double val, total_sec = 0.0, multiplier;
-	const char *p, *start_p;
-	char *endp;
-	int seen_seconds = 0;
+	द्विगुन val, योग_sec = 0.0, multiplier;
+	स्थिर अक्षर *p, *start_p;
+	अक्षर *endp;
+	पूर्णांक seen_seconds = 0;
 
-	if (s == NULL || *s == '\0')
-		return -1.0;
+	अगर (s == शून्य || *s == '\0')
+		वापस -1.0;
 
-	for (p = s; *p != '\0';) {
-		if (!isdigit((unsigned char)*p) && *p != '.')
-			return -1.0;
+	क्रम (p = s; *p != '\0';) {
+		अगर (!है_अंक((अचिन्हित अक्षर)*p) && *p != '.')
+			वापस -1.0;
 
-		errno = 0;
-		if ((val = strtod(p, &endp)) < 0 || errno != 0 || p == endp)
-			return -1.0;
+		त्रुटि_सं = 0;
+		अगर ((val = म_से_भग्न(p, &endp)) < 0 || त्रुटि_सं != 0 || p == endp)
+			वापस -1.0;
 		/* Allow only decimal forms */
-		if (p + strspn(p, "0123456789.") != endp)
-			return -1.0;
+		अगर (p + म_अखोज(p, "0123456789.") != endp)
+			वापस -1.0;
 		start_p = p;
 		p = endp;
 
-		switch (*p) {
-		case '\0':
+		चयन (*p) {
+		हाल '\0':
 			/* FALLTHROUGH */
-		case 's':
-		case 'S':
-			if (seen_seconds++)
-				return -1.0;
+		हाल 's':
+		हाल 'S':
+			अगर (seen_seconds++)
+				वापस -1.0;
 			multiplier = SECONDS;
-			break;
-		case 'm':
-		case 'M':
+			अवरोध;
+		हाल 'm':
+		हाल 'M':
 			multiplier = MINUTES;
-			break;
-		case 'h':
-		case 'H':
+			अवरोध;
+		हाल 'h':
+		हाल 'H':
 			multiplier = HOURS;
-			break;
-		case 'd':
-		case 'D':
+			अवरोध;
+		हाल 'd':
+		हाल 'D':
 			multiplier = DAYS;
-			break;
-		case 'w':
-		case 'W':
+			अवरोध;
+		हाल 'w':
+		हाल 'W':
 			multiplier = WEEKS;
-			break;
-		default:
-			return -1.0;
+			अवरोध;
+		शेष:
+			वापस -1.0;
 		}
 
 		/* Special handling if this was a decimal */
-		if (memchr(start_p, '.', endp - start_p) != NULL) {
+		अगर (स_प्रथम(start_p, '.', endp - start_p) != शून्य) {
 			/* Decimal point present */
-			if (multiplier > 1.0)
-				return -1.0; /* No fractionals for non-seconds */
+			अगर (multiplier > 1.0)
+				वापस -1.0; /* No fractionals for non-seconds */
 			/* For seconds, ensure digits follow */
-			if (!isdigit((unsigned char)*(endp - 1)))
-				return -1.0;
+			अगर (!है_अंक((अचिन्हित अक्षर)*(endp - 1)))
+				वापस -1.0;
 		}
 
-		total_sec += val * multiplier;
+		योग_sec += val * multiplier;
 
-		if (*p != '\0')
+		अगर (*p != '\0')
 			p++;
 	}
-	return total_sec;
+	वापस योग_sec;
 }
 
 /*
  * Same as convtime_double() above but fractional seconds are ignored.
  * Return -1 if time string is invalid.
  */
-int
-convtime(const char *s)
+पूर्णांक
+convtime(स्थिर अक्षर *s)
 {
-	double sec_val;
+	द्विगुन sec_val;
 
-	if ((sec_val = convtime_double(s)) < 0.0)
-		return -1;
+	अगर ((sec_val = convtime_double(s)) < 0.0)
+		वापस -1;
 
 	/* Check for overflow into int */
-	if (sec_val < 0 || sec_val > INT_MAX)
-		return -1;
+	अगर (sec_val < 0 || sec_val > पूर्णांक_उच्च)
+		वापस -1;
 
-	return (int)sec_val;
+	वापस (पूर्णांक)sec_val;
 }
 
-#define TF_BUFS	8
-#define TF_LEN	9
+#घोषणा TF_BUFS	8
+#घोषणा TF_LEN	9
 
-const char *
-fmt_timeframe(time_t t)
+स्थिर अक्षर *
+fmt_timeframe(समय_प्रकार t)
 {
-	char		*buf;
-	static char	 tfbuf[TF_BUFS][TF_LEN];	/* ring buffer */
-	static int	 idx = 0;
-	unsigned int	 sec, min, hrs, day;
-	unsigned long long	week;
+	अक्षर		*buf;
+	अटल अक्षर	 tfbuf[TF_BUFS][TF_LEN];	/* ring buffer */
+	अटल पूर्णांक	 idx = 0;
+	अचिन्हित पूर्णांक	 sec, min, hrs, day;
+	अचिन्हित दीर्घ दीर्घ	week;
 
 	buf = tfbuf[idx++];
-	if (idx == TF_BUFS)
+	अगर (idx == TF_BUFS)
 		idx = 0;
 
 	week = t;
@@ -784,31 +784,31 @@ fmt_timeframe(time_t t)
 	day = week % 7;
 	week /= 7;
 
-	if (week > 0)
+	अगर (week > 0)
 		snprintf(buf, TF_LEN, "%02lluw%01ud%02uh", week, day, hrs);
-	else if (day > 0)
+	अन्यथा अगर (day > 0)
 		snprintf(buf, TF_LEN, "%01ud%02uh%02um", day, hrs, min);
-	else
+	अन्यथा
 		snprintf(buf, TF_LEN, "%02u:%02u:%02u", hrs, min, sec);
 
-	return (buf);
+	वापस (buf);
 }
 
 /*
  * Returns a standardized host+port identifier string.
  * Caller must free returned string.
  */
-char *
-put_host_port(const char *host, u_short port)
+अक्षर *
+put_host_port(स्थिर अक्षर *host, u_short port)
 {
-	char *hoststr;
+	अक्षर *hoststr;
 
-	if (port == 0 || port == SSH_DEFAULT_PORT)
-		return(xstrdup(host));
-	if (asprintf(&hoststr, "[%s]:%d", host, (int)port) == -1)
-		fatal("put_host_port: asprintf: %s", strerror(errno));
+	अगर (port == 0 || port == SSH_DEFAULT_PORT)
+		वापस(xstrdup(host));
+	अगर (asprintf(&hoststr, "[%s]:%d", host, (पूर्णांक)port) == -1)
+		fatal("put_host_port: asprintf: %s", म_त्रुटि(त्रुटि_सं));
 	debug3("put_host_port: %s", hoststr);
-	return hoststr;
+	वापस hoststr;
 }
 
 /*
@@ -819,86 +819,86 @@ put_host_port(const char *host, u_short port)
  * The delimiter char, if present, is stored in delim.
  * If this is the last field, *cp is set to NULL.
  */
-char *
-hpdelim2(char **cp, char *delim)
+अक्षर *
+hpdelim2(अक्षर **cp, अक्षर *delim)
 {
-	char *s, *old;
+	अक्षर *s, *old;
 
-	if (cp == NULL || *cp == NULL)
-		return NULL;
+	अगर (cp == शून्य || *cp == शून्य)
+		वापस शून्य;
 
 	old = s = *cp;
-	if (*s == '[') {
-		if ((s = strchr(s, ']')) == NULL)
-			return NULL;
-		else
+	अगर (*s == '[') {
+		अगर ((s = म_अक्षर(s, ']')) == शून्य)
+			वापस शून्य;
+		अन्यथा
 			s++;
-	} else if ((s = strpbrk(s, ":/")) == NULL)
-		s = *cp + strlen(*cp); /* skip to end (see first case below) */
+	} अन्यथा अगर ((s = strpbrk(s, ":/")) == शून्य)
+		s = *cp + म_माप(*cp); /* skip to end (see first case below) */
 
-	switch (*s) {
-	case '\0':
-		*cp = NULL;	/* no more fields*/
-		break;
+	चयन (*s) {
+	हाल '\0':
+		*cp = शून्य;	/* no more fields*/
+		अवरोध;
 
-	case ':':
-	case '/':
-		if (delim != NULL)
+	हाल ':':
+	हाल '/':
+		अगर (delim != शून्य)
 			*delim = *s;
 		*s = '\0';	/* terminate */
 		*cp = s + 1;
-		break;
+		अवरोध;
 
-	default:
-		return NULL;
+	शेष:
+		वापस शून्य;
 	}
 
-	return old;
+	वापस old;
 }
 
 /* The common case: only accept colon as delimiter. */
-char *
-hpdelim(char **cp)
+अक्षर *
+hpdelim(अक्षर **cp)
 {
-	char *r, delim = '\0';
+	अक्षर *r, delim = '\0';
 
 	r =  hpdelim2(cp, &delim);
-	if (delim == '/')
-		return NULL;
-	return r;
+	अगर (delim == '/')
+		वापस शून्य;
+	वापस r;
 }
 
-char *
-cleanhostname(char *host)
+अक्षर *
+cleanhostname(अक्षर *host)
 {
-	if (*host == '[' && host[strlen(host) - 1] == ']') {
-		host[strlen(host) - 1] = '\0';
-		return (host + 1);
-	} else
-		return host;
+	अगर (*host == '[' && host[म_माप(host) - 1] == ']') {
+		host[म_माप(host) - 1] = '\0';
+		वापस (host + 1);
+	} अन्यथा
+		वापस host;
 }
 
-char *
-colon(char *cp)
+अक्षर *
+colon(अक्षर *cp)
 {
-	int flag = 0;
+	पूर्णांक flag = 0;
 
-	if (*cp == ':')		/* Leading colon is part of file name. */
-		return NULL;
-	if (*cp == '[')
+	अगर (*cp == ':')		/* Leading colon is part of file name. */
+		वापस शून्य;
+	अगर (*cp == '[')
 		flag = 1;
 
-	for (; *cp; ++cp) {
-		if (*cp == '@' && *(cp+1) == '[')
+	क्रम (; *cp; ++cp) {
+		अगर (*cp == '@' && *(cp+1) == '[')
 			flag = 1;
-		if (*cp == ']' && *(cp+1) == ':' && flag)
-			return (cp+1);
-		if (*cp == ':' && !flag)
-			return (cp);
-		if (*cp == '/')
-			return NULL;
+		अगर (*cp == ']' && *(cp+1) == ':' && flag)
+			वापस (cp+1);
+		अगर (*cp == ':' && !flag)
+			वापस (cp);
+		अगर (*cp == '/')
+			वापस शून्य;
 	}
-	return NULL;
+	वापस शून्य;
 }
 
 /*
@@ -910,64 +910,64 @@ colon(char *cp)
  * If path was not specified then *pathp will be set to ".".
  * Returns 0 on success, -1 on failure.
  */
-int
-parse_user_host_path(const char *s, char **userp, char **hostp, char **pathp)
+पूर्णांक
+parse_user_host_path(स्थिर अक्षर *s, अक्षर **userp, अक्षर **hostp, अक्षर **pathp)
 {
-	char *user = NULL, *host = NULL, *path = NULL;
-	char *sdup, *tmp;
-	int ret = -1;
+	अक्षर *user = शून्य, *host = शून्य, *path = शून्य;
+	अक्षर *sdup, *tmp;
+	पूर्णांक ret = -1;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (hostp != NULL)
-		*hostp = NULL;
-	if (pathp != NULL)
-		*pathp = NULL;
+	अगर (userp != शून्य)
+		*userp = शून्य;
+	अगर (hostp != शून्य)
+		*hostp = शून्य;
+	अगर (pathp != शून्य)
+		*pathp = शून्य;
 
 	sdup = xstrdup(s);
 
 	/* Check for remote syntax: [user@]host:[path] */
-	if ((tmp = colon(sdup)) == NULL)
-		goto out;
+	अगर ((tmp = colon(sdup)) == शून्य)
+		जाओ out;
 
 	/* Extract optional path */
 	*tmp++ = '\0';
-	if (*tmp == '\0')
+	अगर (*tmp == '\0')
 		tmp = ".";
 	path = xstrdup(tmp);
 
 	/* Extract optional user and mandatory host */
-	tmp = strrchr(sdup, '@');
-	if (tmp != NULL) {
+	tmp = म_खोजप(sdup, '@');
+	अगर (tmp != शून्य) {
 		*tmp++ = '\0';
 		host = xstrdup(cleanhostname(tmp));
-		if (*sdup != '\0')
+		अगर (*sdup != '\0')
 			user = xstrdup(sdup);
-	} else {
+	} अन्यथा {
 		host = xstrdup(cleanhostname(sdup));
-		user = NULL;
+		user = शून्य;
 	}
 
 	/* Success */
-	if (userp != NULL) {
+	अगर (userp != शून्य) {
 		*userp = user;
-		user = NULL;
+		user = शून्य;
 	}
-	if (hostp != NULL) {
+	अगर (hostp != शून्य) {
 		*hostp = host;
-		host = NULL;
+		host = शून्य;
 	}
-	if (pathp != NULL) {
+	अगर (pathp != शून्य) {
 		*pathp = path;
-		path = NULL;
+		path = शून्य;
 	}
 	ret = 0;
 out:
-	free(sdup);
-	free(user);
-	free(host);
-	free(path);
-	return ret;
+	मुक्त(sdup);
+	मुक्त(user);
+	मुक्त(host);
+	मुक्त(path);
+	वापस ret;
 }
 
 /*
@@ -978,120 +978,120 @@ out:
  * If port was not specified then *portp will be -1.
  * Returns 0 on success, -1 on failure.
  */
-int
-parse_user_host_port(const char *s, char **userp, char **hostp, int *portp)
+पूर्णांक
+parse_user_host_port(स्थिर अक्षर *s, अक्षर **userp, अक्षर **hostp, पूर्णांक *portp)
 {
-	char *sdup, *cp, *tmp;
-	char *user = NULL, *host = NULL;
-	int port = -1, ret = -1;
+	अक्षर *sdup, *cp, *tmp;
+	अक्षर *user = शून्य, *host = शून्य;
+	पूर्णांक port = -1, ret = -1;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (hostp != NULL)
-		*hostp = NULL;
-	if (portp != NULL)
+	अगर (userp != शून्य)
+		*userp = शून्य;
+	अगर (hostp != शून्य)
+		*hostp = शून्य;
+	अगर (portp != शून्य)
 		*portp = -1;
 
-	if ((sdup = tmp = strdup(s)) == NULL)
-		return -1;
+	अगर ((sdup = tmp = strdup(s)) == शून्य)
+		वापस -1;
 	/* Extract optional username */
-	if ((cp = strrchr(tmp, '@')) != NULL) {
+	अगर ((cp = म_खोजप(tmp, '@')) != शून्य) {
 		*cp = '\0';
-		if (*tmp == '\0')
-			goto out;
-		if ((user = strdup(tmp)) == NULL)
-			goto out;
+		अगर (*tmp == '\0')
+			जाओ out;
+		अगर ((user = strdup(tmp)) == शून्य)
+			जाओ out;
 		tmp = cp + 1;
 	}
 	/* Extract mandatory hostname */
-	if ((cp = hpdelim(&tmp)) == NULL || *cp == '\0')
-		goto out;
+	अगर ((cp = hpdelim(&tmp)) == शून्य || *cp == '\0')
+		जाओ out;
 	host = xstrdup(cleanhostname(cp));
 	/* Convert and verify optional port */
-	if (tmp != NULL && *tmp != '\0') {
-		if ((port = a2port(tmp)) <= 0)
-			goto out;
+	अगर (tmp != शून्य && *tmp != '\0') {
+		अगर ((port = a2port(tmp)) <= 0)
+			जाओ out;
 	}
 	/* Success */
-	if (userp != NULL) {
+	अगर (userp != शून्य) {
 		*userp = user;
-		user = NULL;
+		user = शून्य;
 	}
-	if (hostp != NULL) {
+	अगर (hostp != शून्य) {
 		*hostp = host;
-		host = NULL;
+		host = शून्य;
 	}
-	if (portp != NULL)
+	अगर (portp != शून्य)
 		*portp = port;
 	ret = 0;
  out:
-	free(sdup);
-	free(user);
-	free(host);
-	return ret;
+	मुक्त(sdup);
+	मुक्त(user);
+	मुक्त(host);
+	वापस ret;
 }
 
 /*
  * Converts a two-byte hex string to decimal.
  * Returns the decimal value or -1 for invalid input.
  */
-static int
-hexchar(const char *s)
+अटल पूर्णांक
+hexchar(स्थिर अक्षर *s)
 {
-	unsigned char result[2];
-	int i;
+	अचिन्हित अक्षर परिणाम[2];
+	पूर्णांक i;
 
-	for (i = 0; i < 2; i++) {
-		if (s[i] >= '0' && s[i] <= '9')
-			result[i] = (unsigned char)(s[i] - '0');
-		else if (s[i] >= 'a' && s[i] <= 'f')
-			result[i] = (unsigned char)(s[i] - 'a') + 10;
-		else if (s[i] >= 'A' && s[i] <= 'F')
-			result[i] = (unsigned char)(s[i] - 'A') + 10;
-		else
-			return -1;
+	क्रम (i = 0; i < 2; i++) {
+		अगर (s[i] >= '0' && s[i] <= '9')
+			परिणाम[i] = (अचिन्हित अक्षर)(s[i] - '0');
+		अन्यथा अगर (s[i] >= 'a' && s[i] <= 'f')
+			परिणाम[i] = (अचिन्हित अक्षर)(s[i] - 'a') + 10;
+		अन्यथा अगर (s[i] >= 'A' && s[i] <= 'F')
+			परिणाम[i] = (अचिन्हित अक्षर)(s[i] - 'A') + 10;
+		अन्यथा
+			वापस -1;
 	}
-	return (result[0] << 4) | result[1];
+	वापस (परिणाम[0] << 4) | परिणाम[1];
 }
 
 /*
  * Decode an url-encoded string.
  * Returns a newly allocated string on success or NULL on failure.
  */
-static char *
-urldecode(const char *src)
+अटल अक्षर *
+urldecode(स्थिर अक्षर *src)
 {
-	char *ret, *dst;
-	int ch;
-	size_t srclen;
+	अक्षर *ret, *dst;
+	पूर्णांक ch;
+	माप_प्रकार srclen;
 
-	if ((srclen = strlen(src)) >= SIZE_MAX)
-		return NULL;
+	अगर ((srclen = म_माप(src)) >= SIZE_MAX)
+		वापस शून्य;
 	ret = xmalloc(srclen + 1);
-	for (dst = ret; *src != '\0'; src++) {
-		switch (*src) {
-		case '+':
+	क्रम (dst = ret; *src != '\0'; src++) {
+		चयन (*src) {
+		हाल '+':
 			*dst++ = ' ';
-			break;
-		case '%':
+			अवरोध;
+		हाल '%':
 			/* note: don't allow \0 characters */
-			if (!isxdigit((unsigned char)src[1]) ||
-			    !isxdigit((unsigned char)src[2]) ||
+			अगर (!है_षष्ठादशक((अचिन्हित अक्षर)src[1]) ||
+			    !है_षष्ठादशक((अचिन्हित अक्षर)src[2]) ||
 			    (ch = hexchar(src + 1)) == -1 || ch == 0) {
-				free(ret);
-				return NULL;
+				मुक्त(ret);
+				वापस शून्य;
 			}
 			*dst++ = ch;
 			src += 2;
-			break;
-		default:
+			अवरोध;
+		शेष:
 			*dst++ = *src;
-			break;
+			अवरोध;
 		}
 	}
 	*dst = '\0';
 
-	return ret;
+	वापस ret;
 }
 
 /*
@@ -1106,248 +1106,248 @@ urldecode(const char *src)
  * If path was not specified then *pathp will be set to NULL.
  * Returns 0 on success, 1 if non-uri/wrong scheme, -1 on error/invalid uri.
  */
-int
-parse_uri(const char *scheme, const char *uri, char **userp, char **hostp,
-    int *portp, char **pathp)
+पूर्णांक
+parse_uri(स्थिर अक्षर *scheme, स्थिर अक्षर *uri, अक्षर **userp, अक्षर **hostp,
+    पूर्णांक *portp, अक्षर **pathp)
 {
-	char *uridup, *cp, *tmp, ch;
-	char *user = NULL, *host = NULL, *path = NULL;
-	int port = -1, ret = -1;
-	size_t len;
+	अक्षर *uridup, *cp, *tmp, ch;
+	अक्षर *user = शून्य, *host = शून्य, *path = शून्य;
+	पूर्णांक port = -1, ret = -1;
+	माप_प्रकार len;
 
-	len = strlen(scheme);
-	if (strncmp(uri, scheme, len) != 0 || strncmp(uri + len, "://", 3) != 0)
-		return 1;
+	len = म_माप(scheme);
+	अगर (म_भेदन(uri, scheme, len) != 0 || म_भेदन(uri + len, "://", 3) != 0)
+		वापस 1;
 	uri += len + 3;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (hostp != NULL)
-		*hostp = NULL;
-	if (portp != NULL)
+	अगर (userp != शून्य)
+		*userp = शून्य;
+	अगर (hostp != शून्य)
+		*hostp = शून्य;
+	अगर (portp != शून्य)
 		*portp = -1;
-	if (pathp != NULL)
-		*pathp = NULL;
+	अगर (pathp != शून्य)
+		*pathp = शून्य;
 
 	uridup = tmp = xstrdup(uri);
 
 	/* Extract optional ssh-info (username + connection params) */
-	if ((cp = strchr(tmp, '@')) != NULL) {
-		char *delim;
+	अगर ((cp = म_अक्षर(tmp, '@')) != शून्य) {
+		अक्षर *delim;
 
 		*cp = '\0';
 		/* Extract username and connection params */
-		if ((delim = strchr(tmp, ';')) != NULL) {
+		अगर ((delim = म_अक्षर(tmp, ';')) != शून्य) {
 			/* Just ignore connection params for now */
 			*delim = '\0';
 		}
-		if (*tmp == '\0') {
+		अगर (*tmp == '\0') {
 			/* Empty username */
-			goto out;
+			जाओ out;
 		}
-		if ((user = urldecode(tmp)) == NULL)
-			goto out;
+		अगर ((user = urldecode(tmp)) == शून्य)
+			जाओ out;
 		tmp = cp + 1;
 	}
 
 	/* Extract mandatory hostname */
-	if ((cp = hpdelim2(&tmp, &ch)) == NULL || *cp == '\0')
-		goto out;
+	अगर ((cp = hpdelim2(&tmp, &ch)) == शून्य || *cp == '\0')
+		जाओ out;
 	host = xstrdup(cleanhostname(cp));
-	if (!valid_domain(host, 0, NULL))
-		goto out;
+	अगर (!valid_domain(host, 0, शून्य))
+		जाओ out;
 
-	if (tmp != NULL && *tmp != '\0') {
-		if (ch == ':') {
+	अगर (tmp != शून्य && *tmp != '\0') {
+		अगर (ch == ':') {
 			/* Convert and verify port. */
-			if ((cp = strchr(tmp, '/')) != NULL)
+			अगर ((cp = म_अक्षर(tmp, '/')) != शून्य)
 				*cp = '\0';
-			if ((port = a2port(tmp)) <= 0)
-				goto out;
-			tmp = cp ? cp + 1 : NULL;
+			अगर ((port = a2port(tmp)) <= 0)
+				जाओ out;
+			tmp = cp ? cp + 1 : शून्य;
 		}
-		if (tmp != NULL && *tmp != '\0') {
+		अगर (tmp != शून्य && *tmp != '\0') {
 			/* Extract optional path */
-			if ((path = urldecode(tmp)) == NULL)
-				goto out;
+			अगर ((path = urldecode(tmp)) == शून्य)
+				जाओ out;
 		}
 	}
 
 	/* Success */
-	if (userp != NULL) {
+	अगर (userp != शून्य) {
 		*userp = user;
-		user = NULL;
+		user = शून्य;
 	}
-	if (hostp != NULL) {
+	अगर (hostp != शून्य) {
 		*hostp = host;
-		host = NULL;
+		host = शून्य;
 	}
-	if (portp != NULL)
+	अगर (portp != शून्य)
 		*portp = port;
-	if (pathp != NULL) {
+	अगर (pathp != शून्य) {
 		*pathp = path;
-		path = NULL;
+		path = शून्य;
 	}
 	ret = 0;
  out:
-	free(uridup);
-	free(user);
-	free(host);
-	free(path);
-	return ret;
+	मुक्त(uridup);
+	मुक्त(user);
+	मुक्त(host);
+	मुक्त(path);
+	वापस ret;
 }
 
 /* function to assist building execv() arguments */
-void
-addargs(arglist *args, char *fmt, ...)
+व्योम
+addargs(arglist *args, अक्षर *fmt, ...)
 {
-	va_list ap;
-	char *cp;
+	बहु_सूची ap;
+	अक्षर *cp;
 	u_int nalloc;
-	int r;
+	पूर्णांक r;
 
-	va_start(ap, fmt);
+	बहु_शुरू(ap, fmt);
 	r = vasprintf(&cp, fmt, ap);
-	va_end(ap);
-	if (r == -1)
+	बहु_पूर्ण(ap);
+	अगर (r == -1)
 		fatal_f("argument too long");
 
 	nalloc = args->nalloc;
-	if (args->list == NULL) {
+	अगर (args->list == शून्य) {
 		nalloc = 32;
-		args->num = 0;
-	} else if (args->num > (256 * 1024))
+		args->अंक = 0;
+	} अन्यथा अगर (args->अंक > (256 * 1024))
 		fatal_f("too many arguments");
-	else if (args->num >= args->nalloc)
+	अन्यथा अगर (args->अंक >= args->nalloc)
 		fatal_f("arglist corrupt");
-	else if (args->num+2 >= nalloc)
+	अन्यथा अगर (args->अंक+2 >= nalloc)
 		nalloc *= 2;
 
 	args->list = xrecallocarray(args->list, args->nalloc,
-	    nalloc, sizeof(char *));
+	    nalloc, माप(अक्षर *));
 	args->nalloc = nalloc;
-	args->list[args->num++] = cp;
-	args->list[args->num] = NULL;
+	args->list[args->अंक++] = cp;
+	args->list[args->अंक] = शून्य;
 }
 
-void
-replacearg(arglist *args, u_int which, char *fmt, ...)
+व्योम
+replacearg(arglist *args, u_int which, अक्षर *fmt, ...)
 {
-	va_list ap;
-	char *cp;
-	int r;
+	बहु_सूची ap;
+	अक्षर *cp;
+	पूर्णांक r;
 
-	va_start(ap, fmt);
+	बहु_शुरू(ap, fmt);
 	r = vasprintf(&cp, fmt, ap);
-	va_end(ap);
-	if (r == -1)
+	बहु_पूर्ण(ap);
+	अगर (r == -1)
 		fatal_f("argument too long");
-	if (args->list == NULL || args->num >= args->nalloc)
+	अगर (args->list == शून्य || args->अंक >= args->nalloc)
 		fatal_f("arglist corrupt");
 
-	if (which >= args->num)
+	अगर (which >= args->अंक)
 		fatal_f("tried to replace invalid arg %d >= %d",
-		    which, args->num);
-	free(args->list[which]);
+		    which, args->अंक);
+	मुक्त(args->list[which]);
 	args->list[which] = cp;
 }
 
-void
+व्योम
 freeargs(arglist *args)
 {
 	u_int i;
 
-	if (args == NULL)
-		return;
-	if (args->list != NULL && args->num < args->nalloc) {
-		for (i = 0; i < args->num; i++)
-			free(args->list[i]);
-		free(args->list);
+	अगर (args == शून्य)
+		वापस;
+	अगर (args->list != शून्य && args->अंक < args->nalloc) {
+		क्रम (i = 0; i < args->अंक; i++)
+			मुक्त(args->list[i]);
+		मुक्त(args->list);
 	}
-	args->nalloc = args->num = 0;
-	args->list = NULL;
+	args->nalloc = args->अंक = 0;
+	args->list = शून्य;
 }
 
 /*
  * Expands tildes in the file name.  Returns data allocated by xmalloc.
  * Warning: this calls getpw*.
  */
-int
-tilde_expand(const char *filename, uid_t uid, char **retp)
+पूर्णांक
+tilde_expand(स्थिर अक्षर *filename, uid_t uid, अक्षर **retp)
 {
-	char *ocopy = NULL, *copy, *s = NULL;
-	const char *path = NULL, *user = NULL;
-	struct passwd *pw;
-	size_t len;
-	int ret = -1, r, slash;
+	अक्षर *ocopy = शून्य, *copy, *s = शून्य;
+	स्थिर अक्षर *path = शून्य, *user = शून्य;
+	काष्ठा passwd *pw;
+	माप_प्रकार len;
+	पूर्णांक ret = -1, r, slash;
 
-	*retp = NULL;
-	if (*filename != '~') {
+	*retp = शून्य;
+	अगर (*filename != '~') {
 		*retp = xstrdup(filename);
-		return 0;
+		वापस 0;
 	}
 	ocopy = copy = xstrdup(filename + 1);
 
-	if (*copy == '\0')				/* ~ */
-		path = NULL;
-	else if (*copy == '/') {
-		copy += strspn(copy, "/");
-		if (*copy == '\0')
-			path = NULL;			/* ~/ */
-		else
+	अगर (*copy == '\0')				/* ~ */
+		path = शून्य;
+	अन्यथा अगर (*copy == '/') {
+		copy += म_अखोज(copy, "/");
+		अगर (*copy == '\0')
+			path = शून्य;			/* ~/ */
+		अन्यथा
 			path = copy;			/* ~/path */
-	} else {
+	} अन्यथा {
 		user = copy;
-		if ((path = strchr(copy, '/')) != NULL) {
+		अगर ((path = म_अक्षर(copy, '/')) != शून्य) {
 			copy[path - copy] = '\0';
 			path++;
-			path += strspn(path, "/");
-			if (*path == '\0')		/* ~user/ */
-				path = NULL;
+			path += म_अखोज(path, "/");
+			अगर (*path == '\0')		/* ~user/ */
+				path = शून्य;
 			/* else				 ~user/path */
 		}
 		/* else					~user */
 	}
-	if (user != NULL) {
-		if ((pw = getpwnam(user)) == NULL) {
+	अगर (user != शून्य) {
+		अगर ((pw = getpwnam(user)) == शून्य) {
 			error_f("No such user %s", user);
-			goto out;
+			जाओ out;
 		}
-	} else if ((pw = getpwuid(uid)) == NULL) {
-		error_f("No such uid %ld", (long)uid);
-		goto out;
+	} अन्यथा अगर ((pw = getpwuid(uid)) == शून्य) {
+		error_f("No such uid %ld", (दीर्घ)uid);
+		जाओ out;
 	}
 
 	/* Make sure directory has a trailing '/' */
-	slash = (len = strlen(pw->pw_dir)) == 0 || pw->pw_dir[len - 1] != '/';
+	slash = (len = म_माप(pw->pw_dir)) == 0 || pw->pw_dir[len - 1] != '/';
 
-	if ((r = xasprintf(&s, "%s%s%s", pw->pw_dir,
-	    slash ? "/" : "", path != NULL ? path : "")) <= 0) {
+	अगर ((r = xasprintf(&s, "%s%s%s", pw->pw_dir,
+	    slash ? "/" : "", path != शून्य ? path : "")) <= 0) {
 		error_f("xasprintf failed");
-		goto out;
+		जाओ out;
 	}
-	if (r >= PATH_MAX) {
+	अगर (r >= PATH_MAX) {
 		error_f("Path too long");
-		goto out;
+		जाओ out;
 	}
 	/* success */
 	ret = 0;
 	*retp = s;
-	s = NULL;
+	s = शून्य;
  out:
-	free(s);
-	free(ocopy);
-	return ret;
+	मुक्त(s);
+	मुक्त(ocopy);
+	वापस ret;
 }
 
-char *
-tilde_expand_filename(const char *filename, uid_t uid)
+अक्षर *
+tilde_expand_filename(स्थिर अक्षर *filename, uid_t uid)
 {
-	char *ret;
+	अक्षर *ret;
 
-	if (tilde_expand(filename, uid, &ret) != 0)
+	अगर (tilde_expand(filename, uid, &ret) != 0)
 		cleanup_exit(255);
-	return ret;
+	वापस ret;
 }
 
 /*
@@ -1357,73 +1357,73 @@ tilde_expand_filename(const char *filename, uid_t uid)
  * by a NULL escape_char. Returns replaced string in memory allocated by
  * xmalloc which the caller must free.
  */
-static char *
-vdollar_percent_expand(int *parseerror, int dollar, int percent,
-    const char *string, va_list ap)
+अटल अक्षर *
+vdollar_percent_expand(पूर्णांक *parseerror, पूर्णांक dollar, पूर्णांक percent,
+    स्थिर अक्षर *string, बहु_सूची ap)
 {
-#define EXPAND_MAX_KEYS	64
-	u_int num_keys = 0, i;
-	struct {
-		const char *key;
-		const char *repl;
-	} keys[EXPAND_MAX_KEYS];
-	struct sshbuf *buf;
-	int r, missingvar = 0;
-	char *ret = NULL, *var, *varend, *val;
-	size_t len;
+#घोषणा EXPAND_MAX_कुंजियाँ	64
+	u_int अंक_कुंजियाँ = 0, i;
+	काष्ठा {
+		स्थिर अक्षर *कुंजी;
+		स्थिर अक्षर *repl;
+	} कुंजियाँ[EXPAND_MAX_कुंजियाँ];
+	काष्ठा sshbuf *buf;
+	पूर्णांक r, missingvar = 0;
+	अक्षर *ret = शून्य, *var, *varend, *val;
+	माप_प्रकार len;
 
-	if ((buf = sshbuf_new()) == NULL)
+	अगर ((buf = sshbuf_new()) == शून्य)
 		fatal_f("sshbuf_new failed");
-	if (parseerror == NULL)
+	अगर (parseerror == शून्य)
 		fatal_f("null parseerror arg");
 	*parseerror = 1;
 
 	/* Gather keys if we're doing percent expansion. */
-	if (percent) {
-		for (num_keys = 0; num_keys < EXPAND_MAX_KEYS; num_keys++) {
-			keys[num_keys].key = va_arg(ap, char *);
-			if (keys[num_keys].key == NULL)
-				break;
-			keys[num_keys].repl = va_arg(ap, char *);
-			if (keys[num_keys].repl == NULL) {
+	अगर (percent) {
+		क्रम (अंक_कुंजियाँ = 0; अंक_कुंजियाँ < EXPAND_MAX_कुंजियाँ; अंक_कुंजियाँ++) {
+			कुंजियाँ[अंक_कुंजियाँ].कुंजी = बहु_तर्क(ap, अक्षर *);
+			अगर (कुंजियाँ[अंक_कुंजियाँ].कुंजी == शून्य)
+				अवरोध;
+			कुंजियाँ[अंक_कुंजियाँ].repl = बहु_तर्क(ap, अक्षर *);
+			अगर (कुंजियाँ[अंक_कुंजियाँ].repl == शून्य) {
 				fatal_f("NULL replacement for token %s",
-				    keys[num_keys].key);
+				    कुंजियाँ[अंक_कुंजियाँ].कुंजी);
 			}
 		}
-		if (num_keys == EXPAND_MAX_KEYS && va_arg(ap, char *) != NULL)
+		अगर (अंक_कुंजियाँ == EXPAND_MAX_कुंजियाँ && बहु_तर्क(ap, अक्षर *) != शून्य)
 			fatal_f("too many keys");
-		if (num_keys == 0)
+		अगर (अंक_कुंजियाँ == 0)
 			fatal_f("percent expansion without token list");
 	}
 
 	/* Expand string */
-	for (i = 0; *string != '\0'; string++) {
+	क्रम (i = 0; *string != '\0'; string++) {
 		/* Optionally process ${ENVIRONMENT} expansions. */
-		if (dollar && string[0] == '$' && string[1] == '{') {
+		अगर (dollar && string[0] == '$' && string[1] == '{') {
 			string += 2;  /* skip over '${' */
-			if ((varend = strchr(string, '}')) == NULL) {
+			अगर ((varend = म_अक्षर(string, '}')) == शून्य) {
 				error_f("environment variable '%s' missing "
 				    "closing '}'", string);
-				goto out;
+				जाओ out;
 			}
 			len = varend - string;
-			if (len == 0) {
+			अगर (len == 0) {
 				error_f("zero-length environment variable");
-				goto out;
+				जाओ out;
 			}
 			var = xmalloc(len + 1);
-			(void)strlcpy(var, string, len + 1);
-			if ((val = getenv(var)) == NULL) {
+			(व्योम)strlcpy(var, string, len + 1);
+			अगर ((val = दो_पर्या(var)) == शून्य) {
 				error_f("env var ${%s} has no value", var);
 				missingvar = 1;
-			} else {
+			} अन्यथा {
 				debug3_f("expand ${%s} -> '%s'", var, val);
-				if ((r = sshbuf_put(buf, val, strlen(val))) !=0)
+				अगर ((r = sshbuf_put(buf, val, म_माप(val))) !=0)
 					fatal_fr(r, "sshbuf_put ${}");
 			}
-			free(var);
+			मुक्त(var);
 			string += len;
-			continue;
+			जारी;
 		}
 
 		/*
@@ -1431,40 +1431,40 @@ vdollar_percent_expand(int *parseerror, int dollar, int percent,
 		 * If we're not doing percent expansion everything just gets
 		 * appended here.
 		 */
-		if (*string != '%' || !percent) {
+		अगर (*string != '%' || !percent) {
  append:
-			if ((r = sshbuf_put_u8(buf, *string)) != 0)
+			अगर ((r = sshbuf_put_u8(buf, *string)) != 0)
 				fatal_fr(r, "sshbuf_put_u8 %%");
-			continue;
+			जारी;
 		}
 		string++;
 		/* %% case */
-		if (*string == '%')
-			goto append;
-		if (*string == '\0') {
+		अगर (*string == '%')
+			जाओ append;
+		अगर (*string == '\0') {
 			error_f("invalid format");
-			goto out;
+			जाओ out;
 		}
-		for (i = 0; i < num_keys; i++) {
-			if (strchr(keys[i].key, *string) != NULL) {
-				if ((r = sshbuf_put(buf, keys[i].repl,
-				    strlen(keys[i].repl))) != 0)
+		क्रम (i = 0; i < अंक_कुंजियाँ; i++) {
+			अगर (म_अक्षर(कुंजियाँ[i].कुंजी, *string) != शून्य) {
+				अगर ((r = sshbuf_put(buf, कुंजियाँ[i].repl,
+				    म_माप(कुंजियाँ[i].repl))) != 0)
 					fatal_fr(r, "sshbuf_put %%-repl");
-				break;
+				अवरोध;
 			}
 		}
-		if (i >= num_keys) {
+		अगर (i >= अंक_कुंजियाँ) {
 			error_f("unknown key %%%c", *string);
-			goto out;
+			जाओ out;
 		}
 	}
-	if (!missingvar && (ret = sshbuf_dup_string(buf)) == NULL)
+	अगर (!missingvar && (ret = sshbuf_dup_string(buf)) == शून्य)
 		fatal_f("sshbuf_dup_string failed");
 	*parseerror = 0;
  out:
 	sshbuf_free(buf);
-	return *parseerror ? NULL : ret;
-#undef EXPAND_MAX_KEYS
+	वापस *parseerror ? शून्य : ret;
+#अघोषित EXPAND_MAX_कुंजियाँ
 }
 
 /*
@@ -1473,177 +1473,177 @@ vdollar_percent_expand(int *parseerror, int dollar, int percent,
  * functions, any such arguments will be unused.
  */
 
-char *
-dollar_expand(int *parseerr, const char *string, ...)
+अक्षर *
+dollar_expand(पूर्णांक *parseerr, स्थिर अक्षर *string, ...)
 {
-	char *ret;
-	int err;
-	va_list ap;
+	अक्षर *ret;
+	पूर्णांक err;
+	बहु_सूची ap;
 
-	va_start(ap, string);
+	बहु_शुरू(ap, string);
 	ret = vdollar_percent_expand(&err, 1, 0, string, ap);
-	va_end(ap);
-	if (parseerr != NULL)
+	बहु_पूर्ण(ap);
+	अगर (parseerr != शून्य)
 		*parseerr = err;
-	return ret;
+	वापस ret;
 }
 
 /*
  * Returns expanded string or NULL if a specified environment variable is
  * not defined, or calls fatal if the string is invalid.
  */
-char *
-percent_expand(const char *string, ...)
+अक्षर *
+percent_expand(स्थिर अक्षर *string, ...)
 {
-	char *ret;
-	int err;
-	va_list ap;
+	अक्षर *ret;
+	पूर्णांक err;
+	बहु_सूची ap;
 
-	va_start(ap, string);
+	बहु_शुरू(ap, string);
 	ret = vdollar_percent_expand(&err, 0, 1, string, ap);
-	va_end(ap);
-	if (err)
+	बहु_पूर्ण(ap);
+	अगर (err)
 		fatal_f("failed");
-	return ret;
+	वापस ret;
 }
 
 /*
  * Returns expanded string or NULL if a specified environment variable is
  * not defined, or calls fatal if the string is invalid.
  */
-char *
-percent_dollar_expand(const char *string, ...)
+अक्षर *
+percent_dollar_expand(स्थिर अक्षर *string, ...)
 {
-	char *ret;
-	int err;
-	va_list ap;
+	अक्षर *ret;
+	पूर्णांक err;
+	बहु_सूची ap;
 
-	va_start(ap, string);
+	बहु_शुरू(ap, string);
 	ret = vdollar_percent_expand(&err, 1, 1, string, ap);
-	va_end(ap);
-	if (err)
+	बहु_पूर्ण(ap);
+	अगर (err)
 		fatal_f("failed");
-	return ret;
+	वापस ret;
 }
 
-int
-tun_open(int tun, int mode, char **ifname)
+पूर्णांक
+tun_open(पूर्णांक tun, पूर्णांक mode, अक्षर **ifname)
 {
-#if defined(CUSTOM_SYS_TUN_OPEN)
-	return (sys_tun_open(tun, mode, ifname));
-#elif defined(SSH_TUN_OPENBSD)
-	struct ifreq ifr;
-	char name[100];
-	int fd = -1, sock;
-	const char *tunbase = "tun";
+#अगर defined(CUSTOM_SYS_TUN_OPEN)
+	वापस (sys_tun_open(tun, mode, ifname));
+#या_अगर defined(SSH_TUN_OPENBSD)
+	काष्ठा ifreq ifr;
+	अक्षर name[100];
+	पूर्णांक fd = -1, sock;
+	स्थिर अक्षर *tunbase = "tun";
 
-	if (ifname != NULL)
-		*ifname = NULL;
+	अगर (ifname != शून्य)
+		*ifname = शून्य;
 
-	if (mode == SSH_TUNMODE_ETHERNET)
+	अगर (mode == SSH_TUNMODE_ETHERNET)
 		tunbase = "tap";
 
 	/* Open the tunnel device */
-	if (tun <= SSH_TUNID_MAX) {
-		snprintf(name, sizeof(name), "/dev/%s%d", tunbase, tun);
-		fd = open(name, O_RDWR);
-	} else if (tun == SSH_TUNID_ANY) {
-		for (tun = 100; tun >= 0; tun--) {
-			snprintf(name, sizeof(name), "/dev/%s%d",
+	अगर (tun <= SSH_TUNID_MAX) {
+		snprintf(name, माप(name), "/dev/%s%d", tunbase, tun);
+		fd = खोलो(name, O_RDWR);
+	} अन्यथा अगर (tun == SSH_TUNID_ANY) {
+		क्रम (tun = 100; tun >= 0; tun--) {
+			snprintf(name, माप(name), "/dev/%s%d",
 			    tunbase, tun);
-			if ((fd = open(name, O_RDWR)) >= 0)
-				break;
+			अगर ((fd = खोलो(name, O_RDWR)) >= 0)
+				अवरोध;
 		}
-	} else {
+	} अन्यथा {
 		debug_f("invalid tunnel %u", tun);
-		return -1;
+		वापस -1;
 	}
 
-	if (fd == -1) {
-		debug_f("%s open: %s", name, strerror(errno));
-		return -1;
+	अगर (fd == -1) {
+		debug_f("%s open: %s", name, म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
 
 	debug_f("%s mode %d fd %d", name, mode, fd);
 
 	/* Bring interface up if it is not already */
-	snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "%s%d", tunbase, tun);
-	if ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
-		goto failed;
+	snprintf(ifr.ifr_name, माप(ifr.ifr_name), "%s%d", tunbase, tun);
+	अगर ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
+		जाओ failed;
 
-	if (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1) {
+	अगर (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1) {
 		debug_f("get interface %s flags: %s", ifr.ifr_name,
-		    strerror(errno));
-		goto failed;
+		    म_त्रुटि(त्रुटि_सं));
+		जाओ failed;
 	}
 
-	if (!(ifr.ifr_flags & IFF_UP)) {
+	अगर (!(ifr.ifr_flags & IFF_UP)) {
 		ifr.ifr_flags |= IFF_UP;
-		if (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1) {
+		अगर (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1) {
 			debug_f("activate interface %s: %s", ifr.ifr_name,
-			    strerror(errno));
-			goto failed;
+			    म_त्रुटि(त्रुटि_सं));
+			जाओ failed;
 		}
 	}
 
-	if (ifname != NULL)
+	अगर (ifname != शून्य)
 		*ifname = xstrdup(ifr.ifr_name);
 
-	close(sock);
-	return fd;
+	बंद(sock);
+	वापस fd;
 
  failed:
-	if (fd >= 0)
-		close(fd);
-	if (sock >= 0)
-		close(sock);
-	return -1;
-#else
+	अगर (fd >= 0)
+		बंद(fd);
+	अगर (sock >= 0)
+		बंद(sock);
+	वापस -1;
+#अन्यथा
 	error("Tunnel interfaces are not supported on this platform");
-	return (-1);
-#endif
+	वापस (-1);
+#पूर्ण_अगर
 }
 
-void
-sanitise_stdfd(void)
+व्योम
+sanitise_stdfd(व्योम)
 {
-	int nullfd, dupfd;
+	पूर्णांक nullfd, dupfd;
 
-	if ((nullfd = dupfd = open(_PATH_DEVNULL, O_RDWR)) == -1) {
-		fprintf(stderr, "Couldn't open /dev/null: %s\n",
-		    strerror(errno));
-		exit(1);
+	अगर ((nullfd = dupfd = खोलो(_PATH_DEVNULL, O_RDWR)) == -1) {
+		ख_लिखो(मानक_त्रुटि, "Couldn't open /dev/null: %s\n",
+		    म_त्रुटि(त्रुटि_सं));
+		निकास(1);
 	}
-	while (++dupfd <= STDERR_FILENO) {
+	जबतक (++dupfd <= STDERR_FILENO) {
 		/* Only populate closed fds. */
-		if (fcntl(dupfd, F_GETFL) == -1 && errno == EBADF) {
-			if (dup2(nullfd, dupfd) == -1) {
-				fprintf(stderr, "dup2: %s\n", strerror(errno));
-				exit(1);
+		अगर (fcntl(dupfd, F_GETFL) == -1 && त्रुटि_सं == EBADF) {
+			अगर (dup2(nullfd, dupfd) == -1) {
+				ख_लिखो(मानक_त्रुटि, "dup2: %s\n", म_त्रुटि(त्रुटि_सं));
+				निकास(1);
 			}
 		}
 	}
-	if (nullfd > STDERR_FILENO)
-		close(nullfd);
+	अगर (nullfd > STDERR_FILENO)
+		बंद(nullfd);
 }
 
-char *
-tohex(const void *vp, size_t l)
+अक्षर *
+tohex(स्थिर व्योम *vp, माप_प्रकार l)
 {
-	const u_char *p = (const u_char *)vp;
-	char b[3], *r;
-	size_t i, hl;
+	स्थिर u_char *p = (स्थिर u_char *)vp;
+	अक्षर b[3], *r;
+	माप_प्रकार i, hl;
 
-	if (l > 65536)
-		return xstrdup("tohex: length > 65536");
+	अगर (l > 65536)
+		वापस xstrdup("tohex: length > 65536");
 
 	hl = l * 2 + 1;
 	r = xcalloc(1, hl);
-	for (i = 0; i < l; i++) {
-		snprintf(b, sizeof(b), "%02x", p[i]);
+	क्रम (i = 0; i < l; i++) {
+		snprintf(b, माप(b), "%02x", p[i]);
 		strlcat(r, b, hl);
 	}
-	return (r);
+	वापस (r);
 }
 
 /*
@@ -1651,32 +1651,32 @@ tohex(const void *vp, size_t l)
  * then the separator 'sep' will be prepended before the formatted arguments.
  * Extended strings are heap allocated.
  */
-void
-xextendf(char **sp, const char *sep, const char *fmt, ...)
+व्योम
+xextendf(अक्षर **sp, स्थिर अक्षर *sep, स्थिर अक्षर *fmt, ...)
 {
-	va_list ap;
-	char *tmp1, *tmp2;
+	बहु_सूची ap;
+	अक्षर *tmp1, *tmp2;
 
-	va_start(ap, fmt);
+	बहु_शुरू(ap, fmt);
 	xvasprintf(&tmp1, fmt, ap);
-	va_end(ap);
+	बहु_पूर्ण(ap);
 
-	if (*sp == NULL || **sp == '\0') {
-		free(*sp);
+	अगर (*sp == शून्य || **sp == '\0') {
+		मुक्त(*sp);
 		*sp = tmp1;
-		return;
+		वापस;
 	}
-	xasprintf(&tmp2, "%s%s%s", *sp, sep == NULL ? "" : sep, tmp1);
-	free(tmp1);
-	free(*sp);
+	xasprintf(&tmp2, "%s%s%s", *sp, sep == शून्य ? "" : sep, tmp1);
+	मुक्त(tmp1);
+	मुक्त(*sp);
 	*sp = tmp2;
 }
 
 
 uint64_t
-get_u64(const void *vp)
+get_u64(स्थिर व्योम *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	स्थिर u_char *p = (स्थिर u_char *)vp;
 	uint64_t v;
 
 	v  = (uint64_t)p[0] << 56;
@@ -1688,13 +1688,13 @@ get_u64(const void *vp)
 	v |= (uint64_t)p[6] << 8;
 	v |= (uint64_t)p[7];
 
-	return (v);
+	वापस (v);
 }
 
 uint32_t
-get_u32(const void *vp)
+get_u32(स्थिर व्योम *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	स्थिर u_char *p = (स्थिर u_char *)vp;
 	uint32_t v;
 
 	v  = (uint32_t)p[0] << 24;
@@ -1702,13 +1702,13 @@ get_u32(const void *vp)
 	v |= (uint32_t)p[2] << 8;
 	v |= (uint32_t)p[3];
 
-	return (v);
+	वापस (v);
 }
 
 uint32_t
-get_u32_le(const void *vp)
+get_u32_le(स्थिर व्योम *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	स्थिर u_char *p = (स्थिर u_char *)vp;
 	uint32_t v;
 
 	v  = (uint32_t)p[0];
@@ -1716,23 +1716,23 @@ get_u32_le(const void *vp)
 	v |= (uint32_t)p[2] << 16;
 	v |= (uint32_t)p[3] << 24;
 
-	return (v);
+	वापस (v);
 }
 
 uint16_t
-get_u16(const void *vp)
+get_u16(स्थिर व्योम *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	स्थिर u_char *p = (स्थिर u_char *)vp;
 	uint16_t v;
 
 	v  = (uint16_t)p[0] << 8;
 	v |= (uint16_t)p[1];
 
-	return (v);
+	वापस (v);
 }
 
-void
-put_u64(void *vp, uint64_t v)
+व्योम
+put_u64(व्योम *vp, uint64_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1746,8 +1746,8 @@ put_u64(void *vp, uint64_t v)
 	p[7] = (u_char)v & 0xff;
 }
 
-void
-put_u32(void *vp, uint32_t v)
+व्योम
+put_u32(व्योम *vp, uint32_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1757,8 +1757,8 @@ put_u32(void *vp, uint32_t v)
 	p[3] = (u_char)v & 0xff;
 }
 
-void
-put_u32_le(void *vp, uint32_t v)
+व्योम
+put_u32_le(व्योम *vp, uint32_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1768,8 +1768,8 @@ put_u32_le(void *vp, uint32_t v)
 	p[3] = (u_char)(v >> 24) & 0xff;
 }
 
-void
-put_u16(void *vp, uint16_t v)
+व्योम
+put_u16(व्योम *vp, uint16_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1777,86 +1777,86 @@ put_u16(void *vp, uint16_t v)
 	p[1] = (u_char)v & 0xff;
 }
 
-void
-ms_subtract_diff(struct timeval *start, int *ms)
+व्योम
+ms_subtract_diff(काष्ठा timeval *start, पूर्णांक *ms)
 {
-	struct timeval diff, finish;
+	काष्ठा timeval diff, finish;
 
 	monotime_tv(&finish);
 	timersub(&finish, start, &diff);
 	*ms -= (diff.tv_sec * 1000) + (diff.tv_usec / 1000);
 }
 
-void
-ms_to_timespec(struct timespec *ts, int ms)
+व्योम
+ms_to_timespec(काष्ठा timespec *ts, पूर्णांक ms)
 {
-	if (ms < 0)
+	अगर (ms < 0)
 		ms = 0;
 	ts->tv_sec = ms / 1000;
 	ts->tv_nsec = (ms % 1000) * 1000 * 1000;
 }
 
-void
-monotime_ts(struct timespec *ts)
+व्योम
+monotime_ts(काष्ठा timespec *ts)
 {
-	struct timeval tv;
-#if defined(HAVE_CLOCK_GETTIME) && (defined(CLOCK_BOOTTIME) || \
+	काष्ठा timeval tv;
+#अगर defined(HAVE_CLOCK_GETTIME) && (defined(CLOCK_BOOTTIME) || \
     defined(CLOCK_MONOTONIC) || defined(CLOCK_REALTIME))
-	static int gettime_failed = 0;
+	अटल पूर्णांक gettime_failed = 0;
 
-	if (!gettime_failed) {
+	अगर (!gettime_failed) {
 # ifdef CLOCK_BOOTTIME
-		if (clock_gettime(CLOCK_BOOTTIME, ts) == 0)
-			return;
+		अगर (clock_gettime(CLOCK_BOOTTIME, ts) == 0)
+			वापस;
 # endif /* CLOCK_BOOTTIME */
 # ifdef CLOCK_MONOTONIC
-		if (clock_gettime(CLOCK_MONOTONIC, ts) == 0)
-			return;
+		अगर (clock_gettime(CLOCK_MONOTONIC, ts) == 0)
+			वापस;
 # endif /* CLOCK_MONOTONIC */
 # ifdef CLOCK_REALTIME
 		/* Not monotonic, but we're almost out of options here. */
-		if (clock_gettime(CLOCK_REALTIME, ts) == 0)
-			return;
+		अगर (clock_gettime(CLOCK_REALTIME, ts) == 0)
+			वापस;
 # endif /* CLOCK_REALTIME */
-		debug3("clock_gettime: %s", strerror(errno));
+		debug3("clock_gettime: %s", म_त्रुटि(त्रुटि_सं));
 		gettime_failed = 1;
 	}
-#endif /* HAVE_CLOCK_GETTIME && (BOOTTIME || MONOTONIC || REALTIME) */
-	gettimeofday(&tv, NULL);
+#पूर्ण_अगर /* HAVE_CLOCK_GETTIME && (BOOTTIME || MONOTONIC || REALTIME) */
+	gettimeofday(&tv, शून्य);
 	ts->tv_sec = tv.tv_sec;
-	ts->tv_nsec = (long)tv.tv_usec * 1000;
+	ts->tv_nsec = (दीर्घ)tv.tv_usec * 1000;
 }
 
-void
-monotime_tv(struct timeval *tv)
+व्योम
+monotime_tv(काष्ठा timeval *tv)
 {
-	struct timespec ts;
+	काष्ठा timespec ts;
 
 	monotime_ts(&ts);
 	tv->tv_sec = ts.tv_sec;
 	tv->tv_usec = ts.tv_nsec / 1000;
 }
 
-time_t
-monotime(void)
+समय_प्रकार
+monotime(व्योम)
 {
-	struct timespec ts;
+	काष्ठा timespec ts;
 
 	monotime_ts(&ts);
-	return (ts.tv_sec);
+	वापस (ts.tv_sec);
 }
 
-double
-monotime_double(void)
+द्विगुन
+monotime_double(व्योम)
 {
-	struct timespec ts;
+	काष्ठा timespec ts;
 
 	monotime_ts(&ts);
-	return (double)ts.tv_sec + (double)ts.tv_nsec / 1000000000.0;
+	वापस (द्विगुन)ts.tv_sec + (द्विगुन)ts.tv_nsec / 1000000000.0;
 }
 
-void
-bandwidth_limit_init(struct bwlimit *bw, uint64_t kbps, size_t buflen)
+व्योम
+bandwidth_limit_init(काष्ठा bwlimit *bw, uint64_t kbps, माप_प्रकार buflen)
 {
 	bw->buflen = buflen;
 	bw->rate = kbps;
@@ -1867,49 +1867,49 @@ bandwidth_limit_init(struct bwlimit *bw, uint64_t kbps, size_t buflen)
 }
 
 /* Callback from read/write loop to insert bandwidth-limiting delays */
-void
-bandwidth_limit(struct bwlimit *bw, size_t read_len)
+व्योम
+bandwidth_limit(काष्ठा bwlimit *bw, माप_प्रकार read_len)
 {
 	uint64_t waitlen;
-	struct timespec ts, rm;
+	काष्ठा timespec ts, rm;
 
 	bw->lamt += read_len;
-	if (!timerisset(&bw->bwstart)) {
+	अगर (!timerisset(&bw->bwstart)) {
 		monotime_tv(&bw->bwstart);
-		return;
+		वापस;
 	}
-	if (bw->lamt < bw->thresh)
-		return;
+	अगर (bw->lamt < bw->thresh)
+		वापस;
 
 	monotime_tv(&bw->bwend);
 	timersub(&bw->bwend, &bw->bwstart, &bw->bwend);
-	if (!timerisset(&bw->bwend))
-		return;
+	अगर (!timerisset(&bw->bwend))
+		वापस;
 
 	bw->lamt *= 8;
-	waitlen = (double)1000000L * bw->lamt / bw->rate;
+	waitlen = (द्विगुन)1000000L * bw->lamt / bw->rate;
 
 	bw->bwstart.tv_sec = waitlen / 1000000L;
 	bw->bwstart.tv_usec = waitlen % 1000000L;
 
-	if (timercmp(&bw->bwstart, &bw->bwend, >)) {
+	अगर (timercmp(&bw->bwstart, &bw->bwend, >)) {
 		timersub(&bw->bwstart, &bw->bwend, &bw->bwend);
 
 		/* Adjust the wait time */
-		if (bw->bwend.tv_sec) {
+		अगर (bw->bwend.tv_sec) {
 			bw->thresh /= 2;
-			if (bw->thresh < bw->buflen / 4)
+			अगर (bw->thresh < bw->buflen / 4)
 				bw->thresh = bw->buflen / 4;
-		} else if (bw->bwend.tv_usec < 10000) {
+		} अन्यथा अगर (bw->bwend.tv_usec < 10000) {
 			bw->thresh *= 2;
-			if (bw->thresh > bw->buflen * 8)
+			अगर (bw->thresh > bw->buflen * 8)
 				bw->thresh = bw->buflen * 8;
 		}
 
 		TIMEVAL_TO_TIMESPEC(&bw->bwend, &ts);
-		while (nanosleep(&ts, &rm) == -1) {
-			if (errno != EINTR)
-				break;
+		जबतक (nanosleep(&ts, &rm) == -1) {
+			अगर (त्रुटि_सं != EINTR)
+				अवरोध;
 			ts = rm;
 		}
 	}
@@ -1919,27 +1919,27 @@ bandwidth_limit(struct bwlimit *bw, size_t read_len)
 }
 
 /* Make a template filename for mk[sd]temp() */
-void
-mktemp_proto(char *s, size_t len)
+व्योम
+mktemp_proto(अक्षर *s, माप_प्रकार len)
 {
-	const char *tmpdir;
-	int r;
+	स्थिर अक्षर *tmpdir;
+	पूर्णांक r;
 
-	if ((tmpdir = getenv("TMPDIR")) != NULL) {
+	अगर ((tmpdir = दो_पर्या("TMPDIR")) != शून्य) {
 		r = snprintf(s, len, "%s/ssh-XXXXXXXXXXXX", tmpdir);
-		if (r > 0 && (size_t)r < len)
-			return;
+		अगर (r > 0 && (माप_प्रकार)r < len)
+			वापस;
 	}
 	r = snprintf(s, len, "/tmp/ssh-XXXXXXXXXXXX");
-	if (r < 0 || (size_t)r >= len)
+	अगर (r < 0 || (माप_प्रकार)r >= len)
 		fatal_f("template string too short");
 }
 
-static const struct {
-	const char *name;
-	int value;
+अटल स्थिर काष्ठा {
+	स्थिर अक्षर *name;
+	पूर्णांक मूल्य;
 } ipqos[] = {
-	{ "none", INT_MAX },		/* can't use 0 here; that's CS0 */
+	{ "none", पूर्णांक_उच्च },		/* can't use 0 here; that's CS0 */
 	{ "af11", IPTOS_DSCP_AF11 },
 	{ "af12", IPTOS_DSCP_AF12 },
 	{ "af13", IPTOS_DSCP_AF13 },
@@ -1963,175 +1963,175 @@ static const struct {
 	{ "ef", IPTOS_DSCP_EF },
 	{ "le", IPTOS_DSCP_LE },
 	{ "va",	IPTOS_DSCP_VA },
-	{ "lowdelay", INT_MIN },	/* deprecated */
-	{ "throughput", INT_MIN },	/* deprecated */
-	{ "reliability", INT_MIN },	/* deprecated */
-	{ NULL, -1 }
+	{ "lowdelay", पूर्णांक_न्यून },	/* deprecated */
+	{ "throughput", पूर्णांक_न्यून },	/* deprecated */
+	{ "reliability", पूर्णांक_न्यून },	/* deprecated */
+	{ शून्य, -1 }
 };
 
-int
-parse_ipqos(const char *cp)
+पूर्णांक
+parse_ipqos(स्थिर अक्षर *cp)
 {
-	const char *errstr;
+	स्थिर अक्षर *errstr;
 	u_int i;
-	int val;
+	पूर्णांक val;
 
-	if (cp == NULL)
-		return -1;
-	for (i = 0; ipqos[i].name != NULL; i++) {
-		if (strcasecmp(cp, ipqos[i].name) == 0)
-			return ipqos[i].value;
+	अगर (cp == शून्य)
+		वापस -1;
+	क्रम (i = 0; ipqos[i].name != शून्य; i++) {
+		अगर (strcasecmp(cp, ipqos[i].name) == 0)
+			वापस ipqos[i].मूल्य;
 	}
 	/* Try parsing as an integer */
-	val = (int)strtonum(cp, 0, 255, &errstr);
-	if (errstr)
-		return -1;
-	return val;
+	val = (पूर्णांक)strtonum(cp, 0, 255, &errstr);
+	अगर (errstr)
+		वापस -1;
+	वापस val;
 }
 
-const char *
-iptos2str(int iptos)
+स्थिर अक्षर *
+iptos2str(पूर्णांक iptos)
 {
-	int i;
-	static char iptos_str[sizeof "0xff"];
+	पूर्णांक i;
+	अटल अक्षर iptos_str[माप "0xff"];
 
-	for (i = 0; ipqos[i].name != NULL; i++) {
-		if (ipqos[i].value == iptos)
-			return ipqos[i].name;
+	क्रम (i = 0; ipqos[i].name != शून्य; i++) {
+		अगर (ipqos[i].मूल्य == iptos)
+			वापस ipqos[i].name;
 	}
-	snprintf(iptos_str, sizeof iptos_str, "0x%02x", iptos);
-	return iptos_str;
+	snprintf(iptos_str, माप iptos_str, "0x%02x", iptos);
+	वापस iptos_str;
 }
 
-void
-lowercase(char *s)
+व्योम
+lowercase(अक्षर *s)
 {
-	for (; *s; s++)
-		*s = tolower((u_char)*s);
+	क्रम (; *s; s++)
+		*s = छोटे((u_char)*s);
 }
 
-int
-unix_listener(const char *path, int backlog, int unlink_first)
+पूर्णांक
+unix_listener(स्थिर अक्षर *path, पूर्णांक backlog, पूर्णांक unlink_first)
 {
-	struct sockaddr_un sunaddr;
-	int saved_errno, sock;
+	काष्ठा sockaddr_un sunaddr;
+	पूर्णांक saved_errno, sock;
 
-	memset(&sunaddr, 0, sizeof(sunaddr));
+	स_रखो(&sunaddr, 0, माप(sunaddr));
 	sunaddr.sun_family = AF_UNIX;
-	if (strlcpy(sunaddr.sun_path, path,
-	    sizeof(sunaddr.sun_path)) >= sizeof(sunaddr.sun_path)) {
+	अगर (strlcpy(sunaddr.sun_path, path,
+	    माप(sunaddr.sun_path)) >= माप(sunaddr.sun_path)) {
 		error_f("path \"%s\" too long for Unix domain socket", path);
-		errno = ENAMETOOLONG;
-		return -1;
+		त्रुटि_सं = ENAMETOOLONG;
+		वापस -1;
 	}
 
 	sock = socket(PF_UNIX, SOCK_STREAM, 0);
-	if (sock == -1) {
-		saved_errno = errno;
-		error_f("socket: %.100s", strerror(errno));
-		errno = saved_errno;
-		return -1;
+	अगर (sock == -1) {
+		saved_errno = त्रुटि_सं;
+		error_f("socket: %.100s", म_त्रुटि(त्रुटि_सं));
+		त्रुटि_सं = saved_errno;
+		वापस -1;
 	}
-	if (unlink_first == 1) {
-		if (unlink(path) != 0 && errno != ENOENT)
-			error("unlink(%s): %.100s", path, strerror(errno));
+	अगर (unlink_first == 1) {
+		अगर (unlink(path) != 0 && त्रुटि_सं != ENOENT)
+			error("unlink(%s): %.100s", path, म_त्रुटि(त्रुटि_सं));
 	}
-	if (bind(sock, (struct sockaddr *)&sunaddr, sizeof(sunaddr)) == -1) {
-		saved_errno = errno;
-		error_f("cannot bind to path %s: %s", path, strerror(errno));
-		close(sock);
-		errno = saved_errno;
-		return -1;
+	अगर (bind(sock, (काष्ठा sockaddr *)&sunaddr, माप(sunaddr)) == -1) {
+		saved_errno = त्रुटि_सं;
+		error_f("cannot bind to path %s: %s", path, म_त्रुटि(त्रुटि_सं));
+		बंद(sock);
+		त्रुटि_सं = saved_errno;
+		वापस -1;
 	}
-	if (listen(sock, backlog) == -1) {
-		saved_errno = errno;
-		error_f("cannot listen on path %s: %s", path, strerror(errno));
-		close(sock);
+	अगर (listen(sock, backlog) == -1) {
+		saved_errno = त्रुटि_सं;
+		error_f("cannot listen on path %s: %s", path, म_त्रुटि(त्रुटि_सं));
+		बंद(sock);
 		unlink(path);
-		errno = saved_errno;
-		return -1;
+		त्रुटि_सं = saved_errno;
+		वापस -1;
 	}
-	return sock;
+	वापस sock;
 }
 
-void
-sock_set_v6only(int s)
+व्योम
+sock_set_v6only(पूर्णांक s)
 {
-#if defined(IPV6_V6ONLY) && !defined(__OpenBSD__)
-	int on = 1;
+#अगर defined(IPV6_V6ONLY) && !defined(__OpenBSD__)
+	पूर्णांक on = 1;
 
 	debug3_f("set socket %d IPV6_V6ONLY", s);
-	if (setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on)) == -1)
-		error("setsockopt IPV6_V6ONLY: %s", strerror(errno));
-#endif
+	अगर (setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, &on, माप(on)) == -1)
+		error("setsockopt IPV6_V6ONLY: %s", म_त्रुटि(त्रुटि_सं));
+#पूर्ण_अगर
 }
 
 /*
  * Compares two strings that maybe be NULL. Returns non-zero if strings
  * are both NULL or are identical, returns zero otherwise.
  */
-static int
-strcmp_maybe_null(const char *a, const char *b)
+अटल पूर्णांक
+strcmp_maybe_null(स्थिर अक्षर *a, स्थिर अक्षर *b)
 {
-	if ((a == NULL && b != NULL) || (a != NULL && b == NULL))
-		return 0;
-	if (a != NULL && strcmp(a, b) != 0)
-		return 0;
-	return 1;
+	अगर ((a == शून्य && b != शून्य) || (a != शून्य && b == शून्य))
+		वापस 0;
+	अगर (a != शून्य && म_भेद(a, b) != 0)
+		वापस 0;
+	वापस 1;
 }
 
 /*
  * Compare two forwards, returning non-zero if they are identical or
  * zero otherwise.
  */
-int
-forward_equals(const struct Forward *a, const struct Forward *b)
+पूर्णांक
+forward_equals(स्थिर काष्ठा Forward *a, स्थिर काष्ठा Forward *b)
 {
-	if (strcmp_maybe_null(a->listen_host, b->listen_host) == 0)
-		return 0;
-	if (a->listen_port != b->listen_port)
-		return 0;
-	if (strcmp_maybe_null(a->listen_path, b->listen_path) == 0)
-		return 0;
-	if (strcmp_maybe_null(a->connect_host, b->connect_host) == 0)
-		return 0;
-	if (a->connect_port != b->connect_port)
-		return 0;
-	if (strcmp_maybe_null(a->connect_path, b->connect_path) == 0)
-		return 0;
+	अगर (strcmp_maybe_null(a->listen_host, b->listen_host) == 0)
+		वापस 0;
+	अगर (a->listen_port != b->listen_port)
+		वापस 0;
+	अगर (strcmp_maybe_null(a->listen_path, b->listen_path) == 0)
+		वापस 0;
+	अगर (strcmp_maybe_null(a->connect_host, b->connect_host) == 0)
+		वापस 0;
+	अगर (a->connect_port != b->connect_port)
+		वापस 0;
+	अगर (strcmp_maybe_null(a->connect_path, b->connect_path) == 0)
+		वापस 0;
 	/* allocated_port and handle are not checked */
-	return 1;
+	वापस 1;
 }
 
 /* returns port number, FWD_PERMIT_ANY_PORT or -1 on error */
-int
-permitopen_port(const char *p)
+पूर्णांक
+permitopen_port(स्थिर अक्षर *p)
 {
-	int port;
+	पूर्णांक port;
 
-	if (strcmp(p, "*") == 0)
-		return FWD_PERMIT_ANY_PORT;
-	if ((port = a2port(p)) > 0)
-		return port;
-	return -1;
+	अगर (म_भेद(p, "*") == 0)
+		वापस FWD_PERMIT_ANY_PORT;
+	अगर ((port = a2port(p)) > 0)
+		वापस port;
+	वापस -1;
 }
 
 /* returns 1 if process is already daemonized, 0 otherwise */
-int
-daemonized(void)
+पूर्णांक
+daemonized(व्योम)
 {
-	int fd;
+	पूर्णांक fd;
 
-	if ((fd = open(_PATH_TTY, O_RDONLY | O_NOCTTY)) >= 0) {
-		close(fd);
-		return 0;	/* have controlling terminal */
+	अगर ((fd = खोलो(_PATH_TTY, O_RDONLY | O_NOCTTY)) >= 0) {
+		बंद(fd);
+		वापस 0;	/* have controlling terminal */
 	}
-	if (getppid() != 1)
-		return 0;	/* parent is not init */
-	if (getsid(0) != getpid())
-		return 0;	/* not session leader */
+	अगर (getppid() != 1)
+		वापस 0;	/* parent is not init */
+	अगर (getsid(0) != getpid())
+		वापस 0;	/* not session leader */
 	debug3("already daemonized");
-	return 1;
+	वापस 1;
 }
 
 /*
@@ -2139,180 +2139,180 @@ daemonized(void)
  * escape characters (\\, \", \'). Caller must free the argument vector
  * and its members.
  */
-int
-argv_split(const char *s, int *argcp, char ***argvp, int terminate_on_comment)
+पूर्णांक
+argv_split(स्थिर अक्षर *s, पूर्णांक *argcp, अक्षर ***argvp, पूर्णांक terminate_on_comment)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int argc = 0, quote, i, j;
-	char *arg, **argv = xcalloc(1, sizeof(*argv));
+	पूर्णांक r = SSH_ERR_INTERNAL_ERROR;
+	पूर्णांक argc = 0, quote, i, j;
+	अक्षर *arg, **argv = xcalloc(1, माप(*argv));
 
-	*argvp = NULL;
+	*argvp = शून्य;
 	*argcp = 0;
 
-	for (i = 0; s[i] != '\0'; i++) {
+	क्रम (i = 0; s[i] != '\0'; i++) {
 		/* Skip leading whitespace */
-		if (s[i] == ' ' || s[i] == '\t')
-			continue;
-		if (terminate_on_comment && s[i] == '#')
-			break;
+		अगर (s[i] == ' ' || s[i] == '\t')
+			जारी;
+		अगर (terminate_on_comment && s[i] == '#')
+			अवरोध;
 		/* Start of a token */
 		quote = 0;
 
-		argv = xreallocarray(argv, (argc + 2), sizeof(*argv));
-		arg = argv[argc++] = xcalloc(1, strlen(s + i) + 1);
-		argv[argc] = NULL;
+		argv = xreallocarray(argv, (argc + 2), माप(*argv));
+		arg = argv[argc++] = xcalloc(1, म_माप(s + i) + 1);
+		argv[argc] = शून्य;
 
 		/* Copy the token in, removing escapes */
-		for (j = 0; s[i] != '\0'; i++) {
-			if (s[i] == '\\') {
-				if (s[i + 1] == '\'' ||
+		क्रम (j = 0; s[i] != '\0'; i++) {
+			अगर (s[i] == '\\') {
+				अगर (s[i + 1] == '\'' ||
 				    s[i + 1] == '\"' ||
 				    s[i + 1] == '\\' ||
 				    (quote == 0 && s[i + 1] == ' ')) {
 					i++; /* Skip '\' */
 					arg[j++] = s[i];
-				} else {
+				} अन्यथा {
 					/* Unrecognised escape */
 					arg[j++] = s[i];
 				}
-			} else if (quote == 0 && (s[i] == ' ' || s[i] == '\t'))
-				break; /* done */
-			else if (quote == 0 && (s[i] == '\"' || s[i] == '\''))
+			} अन्यथा अगर (quote == 0 && (s[i] == ' ' || s[i] == '\t'))
+				अवरोध; /* done */
+			अन्यथा अगर (quote == 0 && (s[i] == '\"' || s[i] == '\''))
 				quote = s[i]; /* quote start */
-			else if (quote != 0 && s[i] == quote)
+			अन्यथा अगर (quote != 0 && s[i] == quote)
 				quote = 0; /* quote end */
-			else
+			अन्यथा
 				arg[j++] = s[i];
 		}
-		if (s[i] == '\0') {
-			if (quote != 0) {
+		अगर (s[i] == '\0') {
+			अगर (quote != 0) {
 				/* Ran out of string looking for close quote */
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				जाओ out;
 			}
-			break;
+			अवरोध;
 		}
 	}
 	/* Success */
 	*argcp = argc;
 	*argvp = argv;
 	argc = 0;
-	argv = NULL;
+	argv = शून्य;
 	r = 0;
  out:
-	if (argc != 0 && argv != NULL) {
-		for (i = 0; i < argc; i++)
-			free(argv[i]);
-		free(argv);
+	अगर (argc != 0 && argv != शून्य) {
+		क्रम (i = 0; i < argc; i++)
+			मुक्त(argv[i]);
+		मुक्त(argv);
 	}
-	return r;
+	वापस r;
 }
 
 /*
  * Reassemble an argument vector into a string, quoting and escaping as
  * necessary. Caller must free returned string.
  */
-char *
-argv_assemble(int argc, char **argv)
+अक्षर *
+argv_assemble(पूर्णांक argc, अक्षर **argv)
 {
-	int i, j, ws, r;
-	char c, *ret;
-	struct sshbuf *buf, *arg;
+	पूर्णांक i, j, ws, r;
+	अक्षर c, *ret;
+	काष्ठा sshbuf *buf, *arg;
 
-	if ((buf = sshbuf_new()) == NULL || (arg = sshbuf_new()) == NULL)
+	अगर ((buf = sshbuf_new()) == शून्य || (arg = sshbuf_new()) == शून्य)
 		fatal_f("sshbuf_new failed");
 
-	for (i = 0; i < argc; i++) {
+	क्रम (i = 0; i < argc; i++) {
 		ws = 0;
 		sshbuf_reset(arg);
-		for (j = 0; argv[i][j] != '\0'; j++) {
+		क्रम (j = 0; argv[i][j] != '\0'; j++) {
 			r = 0;
 			c = argv[i][j];
-			switch (c) {
-			case ' ':
-			case '\t':
+			चयन (c) {
+			हाल ' ':
+			हाल '\t':
 				ws = 1;
 				r = sshbuf_put_u8(arg, c);
-				break;
-			case '\\':
-			case '\'':
-			case '"':
-				if ((r = sshbuf_put_u8(arg, '\\')) != 0)
-					break;
+				अवरोध;
+			हाल '\\':
+			हाल '\'':
+			हाल '"':
+				अगर ((r = sshbuf_put_u8(arg, '\\')) != 0)
+					अवरोध;
 				/* FALLTHROUGH */
-			default:
+			शेष:
 				r = sshbuf_put_u8(arg, c);
-				break;
+				अवरोध;
 			}
-			if (r != 0)
+			अगर (r != 0)
 				fatal_fr(r, "sshbuf_put_u8");
 		}
-		if ((i != 0 && (r = sshbuf_put_u8(buf, ' ')) != 0) ||
+		अगर ((i != 0 && (r = sshbuf_put_u8(buf, ' ')) != 0) ||
 		    (ws != 0 && (r = sshbuf_put_u8(buf, '"')) != 0) ||
 		    (r = sshbuf_putb(buf, arg)) != 0 ||
 		    (ws != 0 && (r = sshbuf_put_u8(buf, '"')) != 0))
 			fatal_fr(r, "assemble");
 	}
-	if ((ret = malloc(sshbuf_len(buf) + 1)) == NULL)
+	अगर ((ret = दो_स्मृति(sshbuf_len(buf) + 1)) == शून्य)
 		fatal_f("malloc failed");
-	memcpy(ret, sshbuf_ptr(buf), sshbuf_len(buf));
+	स_नकल(ret, sshbuf_ptr(buf), sshbuf_len(buf));
 	ret[sshbuf_len(buf)] = '\0';
 	sshbuf_free(buf);
 	sshbuf_free(arg);
-	return ret;
+	वापस ret;
 }
 
-char *
-argv_next(int *argcp, char ***argvp)
+अक्षर *
+argv_अग्र(पूर्णांक *argcp, अक्षर ***argvp)
 {
-	char *ret = (*argvp)[0];
+	अक्षर *ret = (*argvp)[0];
 
-	if (*argcp > 0 && ret != NULL) {
+	अगर (*argcp > 0 && ret != शून्य) {
 		(*argcp)--;
 		(*argvp)++;
 	}
-	return ret;
+	वापस ret;
 }
 
-void
-argv_consume(int *argcp)
+व्योम
+argv_consume(पूर्णांक *argcp)
 {
 	*argcp = 0;
 }
 
-void
-argv_free(char **av, int ac)
+व्योम
+argv_free(अक्षर **av, पूर्णांक ac)
 {
-	int i;
+	पूर्णांक i;
 
-	if (av == NULL)
-		return;
-	for (i = 0; i < ac; i++)
-		free(av[i]);
-	free(av);
+	अगर (av == शून्य)
+		वापस;
+	क्रम (i = 0; i < ac; i++)
+		मुक्त(av[i]);
+	मुक्त(av);
 }
 
 /* Returns 0 if pid exited cleanly, non-zero otherwise */
-int
-exited_cleanly(pid_t pid, const char *tag, const char *cmd, int quiet)
+पूर्णांक
+exited_cleanly(pid_t pid, स्थिर अक्षर *tag, स्थिर अक्षर *cmd, पूर्णांक quiet)
 {
-	int status;
+	पूर्णांक status;
 
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno != EINTR) {
-			error("%s waitpid: %s", tag, strerror(errno));
-			return -1;
+	जबतक (waitpid(pid, &status, 0) == -1) {
+		अगर (त्रुटि_सं != EINTR) {
+			error("%s waitpid: %s", tag, म_त्रुटि(त्रुटि_सं));
+			वापस -1;
 		}
 	}
-	if (WIFSIGNALED(status)) {
+	अगर (WIFSIGNALED(status)) {
 		error("%s %s exited on signal %d", tag, cmd, WTERMSIG(status));
-		return -1;
-	} else if (WEXITSTATUS(status) != 0) {
+		वापस -1;
+	} अन्यथा अगर (WEXITSTATUS(status) != 0) {
 		do_log2(quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_INFO,
 		    "%s %s failed, status %d", tag, cmd, WEXITSTATUS(status));
-		return -1;
+		वापस -1;
 	}
-	return 0;
+	वापस 0;
 }
 
 /*
@@ -2328,67 +2328,67 @@ exited_cleanly(pid_t pid, const char *tag, const char *cmd, int quiet)
  *
  * Returns 0 on success and -1 on failure
  */
-int
-safe_path(const char *name, struct stat *stp, const char *pw_dir,
-    uid_t uid, char *err, size_t errlen)
+पूर्णांक
+safe_path(स्थिर अक्षर *name, काष्ठा stat *stp, स्थिर अक्षर *pw_dir,
+    uid_t uid, अक्षर *err, माप_प्रकार errlen)
 {
-	char buf[PATH_MAX], buf2[PATH_MAX], homedir[PATH_MAX];
-	char *cp;
-	int comparehome = 0;
-	struct stat st;
+	अक्षर buf[PATH_MAX], buf2[PATH_MAX], homedir[PATH_MAX];
+	अक्षर *cp;
+	पूर्णांक comparehome = 0;
+	काष्ठा stat st;
 
-	if (realpath(name, buf) == NULL) {
+	अगर (realpath(name, buf) == शून्य) {
 		snprintf(err, errlen, "realpath %s failed: %s", name,
-		    strerror(errno));
-		return -1;
+		    म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
-	if (pw_dir != NULL && realpath(pw_dir, homedir) != NULL)
+	अगर (pw_dir != शून्य && realpath(pw_dir, homedir) != शून्य)
 		comparehome = 1;
 
-	if (!S_ISREG(stp->st_mode)) {
+	अगर (!S_ISREG(stp->st_mode)) {
 		snprintf(err, errlen, "%s is not a regular file", buf);
-		return -1;
+		वापस -1;
 	}
-	if ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
+	अगर ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
 	    (stp->st_mode & 022) != 0) {
 		snprintf(err, errlen, "bad ownership or modes for file %s",
 		    buf);
-		return -1;
+		वापस -1;
 	}
 
 	/* for each component of the canonical path, walking upwards */
-	for (;;) {
+	क्रम (;;) {
 		/*
 		 * POSIX allows dirname to modify its argument and return a
 		 * pointer into it, so make a copy to avoid overlapping strlcpy.
 		 */
-		strlcpy(buf2, buf, sizeof(buf2));
-		if ((cp = dirname(buf2)) == NULL) {
+		strlcpy(buf2, buf, माप(buf2));
+		अगर ((cp = स_नाम(buf2)) == शून्य) {
 			snprintf(err, errlen, "dirname() failed");
-			return -1;
+			वापस -1;
 		}
-		strlcpy(buf, cp, sizeof(buf));
+		strlcpy(buf, cp, माप(buf));
 
-		if (stat(buf, &st) == -1 ||
+		अगर (stat(buf, &st) == -1 ||
 		    (!platform_sys_dir_uid(st.st_uid) && st.st_uid != uid) ||
 		    (st.st_mode & 022) != 0) {
 			snprintf(err, errlen,
 			    "bad ownership or modes for directory %s", buf);
-			return -1;
+			वापस -1;
 		}
 
 		/* If are past the homedir then we can stop */
-		if (comparehome && strcmp(homedir, buf) == 0)
-			break;
+		अगर (comparehome && म_भेद(homedir, buf) == 0)
+			अवरोध;
 
 		/*
 		 * dirname should always complete with a "/" path,
 		 * but we can be paranoid and check for "." too
 		 */
-		if ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
-			break;
+		अगर ((म_भेद("/", buf) == 0) || (म_भेद(".", buf) == 0))
+			अवरोध;
 	}
-	return 0;
+	वापस 0;
 }
 
 /*
@@ -2397,47 +2397,47 @@ safe_path(const char *name, struct stat *stp, const char *pw_dir,
  *
  * Returns 0 on success and -1 on failure
  */
-int
-safe_path_fd(int fd, const char *file, struct passwd *pw,
-    char *err, size_t errlen)
+पूर्णांक
+safe_path_fd(पूर्णांक fd, स्थिर अक्षर *file, काष्ठा passwd *pw,
+    अक्षर *err, माप_प्रकार errlen)
 {
-	struct stat st;
+	काष्ठा stat st;
 
 	/* check the open file to avoid races */
-	if (fstat(fd, &st) == -1) {
+	अगर (ख_स्थिति(fd, &st) == -1) {
 		snprintf(err, errlen, "cannot stat file %s: %s",
-		    file, strerror(errno));
-		return -1;
+		    file, म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
-	return safe_path(file, &st, pw->pw_dir, pw->pw_uid, err, errlen);
+	वापस safe_path(file, &st, pw->pw_dir, pw->pw_uid, err, errlen);
 }
 
 /*
  * Sets the value of the given variable in the environment.  If the variable
  * already exists, its value is overridden.
  */
-void
-child_set_env(char ***envp, u_int *envsizep, const char *name,
-	const char *value)
+व्योम
+child_set_env(अक्षर ***envp, u_int *envsizep, स्थिर अक्षर *name,
+	स्थिर अक्षर *मूल्य)
 {
-	char **env;
+	अक्षर **env;
 	u_int envsize;
 	u_int i, namelen;
 
-	if (strchr(name, '=') != NULL) {
+	अगर (म_अक्षर(name, '=') != शून्य) {
 		error("Invalid environment variable \"%.100s\"", name);
-		return;
+		वापस;
 	}
 
 	/*
 	 * If we're passed an uninitialized list, allocate a single null
 	 * entry before continuing.
 	 */
-	if ((*envp == NULL) != (*envsizep == 0))
+	अगर ((*envp == शून्य) != (*envsizep == 0))
 		fatal_f("environment size mismatch");
-	if (*envp == NULL && *envsizep == 0) {
-		*envp = xmalloc(sizeof(char *));
-		*envp[0] = NULL;
+	अगर (*envp == शून्य && *envsizep == 0) {
+		*envp = xmalloc(माप(अक्षर *));
+		*envp[0] = शून्य;
 		*envsizep = 1;
 	}
 
@@ -2447,80 +2447,80 @@ child_set_env(char ***envp, u_int *envsizep, const char *name,
 	 * at the end of the array, expanding if necessary.
 	 */
 	env = *envp;
-	namelen = strlen(name);
-	for (i = 0; env[i]; i++)
-		if (strncmp(env[i], name, namelen) == 0 && env[i][namelen] == '=')
-			break;
-	if (env[i]) {
+	namelen = म_माप(name);
+	क्रम (i = 0; env[i]; i++)
+		अगर (म_भेदन(env[i], name, namelen) == 0 && env[i][namelen] == '=')
+			अवरोध;
+	अगर (env[i]) {
 		/* Reuse the slot. */
-		free(env[i]);
-	} else {
+		मुक्त(env[i]);
+	} अन्यथा {
 		/* New variable.  Expand if necessary. */
 		envsize = *envsizep;
-		if (i >= envsize - 1) {
-			if (envsize >= 1000)
+		अगर (i >= envsize - 1) {
+			अगर (envsize >= 1000)
 				fatal("child_set_env: too many env vars");
 			envsize += 50;
-			env = (*envp) = xreallocarray(env, envsize, sizeof(char *));
+			env = (*envp) = xreallocarray(env, envsize, माप(अक्षर *));
 			*envsizep = envsize;
 		}
 		/* Need to set the NULL pointer at end of array beyond the new slot. */
-		env[i + 1] = NULL;
+		env[i + 1] = शून्य;
 	}
 
 	/* Allocate space and format the variable in the appropriate slot. */
 	/* XXX xasprintf */
-	env[i] = xmalloc(strlen(name) + 1 + strlen(value) + 1);
-	snprintf(env[i], strlen(name) + 1 + strlen(value) + 1, "%s=%s", name, value);
+	env[i] = xmalloc(म_माप(name) + 1 + म_माप(मूल्य) + 1);
+	snprintf(env[i], म_माप(name) + 1 + म_माप(मूल्य) + 1, "%s=%s", name, मूल्य);
 }
 
 /*
  * Check and optionally lowercase a domain name, also removes trailing '.'
  * Returns 1 on success and 0 on failure, storing an error message in errstr.
  */
-int
-valid_domain(char *name, int makelower, const char **errstr)
+पूर्णांक
+valid_domain(अक्षर *name, पूर्णांक makelower, स्थिर अक्षर **errstr)
 {
-	size_t i, l = strlen(name);
+	माप_प्रकार i, l = म_माप(name);
 	u_char c, last = '\0';
-	static char errbuf[256];
+	अटल अक्षर errbuf[256];
 
-	if (l == 0) {
-		strlcpy(errbuf, "empty domain name", sizeof(errbuf));
-		goto bad;
+	अगर (l == 0) {
+		strlcpy(errbuf, "empty domain name", माप(errbuf));
+		जाओ bad;
 	}
-	if (!isalpha((u_char)name[0]) && !isdigit((u_char)name[0]) &&
+	अगर (!है_अक्षर((u_char)name[0]) && !है_अंक((u_char)name[0]) &&
 	   name[0] != '_' /* technically invalid, but common */) {
-		snprintf(errbuf, sizeof(errbuf), "domain name \"%.100s\" "
+		snprintf(errbuf, माप(errbuf), "domain name \"%.100s\" "
 		    "starts with invalid character", name);
-		goto bad;
+		जाओ bad;
 	}
-	for (i = 0; i < l; i++) {
-		c = tolower((u_char)name[i]);
-		if (makelower)
-			name[i] = (char)c;
-		if (last == '.' && c == '.') {
-			snprintf(errbuf, sizeof(errbuf), "domain name "
+	क्रम (i = 0; i < l; i++) {
+		c = छोटे((u_char)name[i]);
+		अगर (makelower)
+			name[i] = (अक्षर)c;
+		अगर (last == '.' && c == '.') {
+			snprintf(errbuf, माप(errbuf), "domain name "
 			    "\"%.100s\" contains consecutive separators", name);
-			goto bad;
+			जाओ bad;
 		}
-		if (c != '.' && c != '-' && !isalnum(c) &&
+		अगर (c != '.' && c != '-' && !है_अक्षर_अंक(c) &&
 		    c != '_') /* technically invalid, but common */ {
-			snprintf(errbuf, sizeof(errbuf), "domain name "
+			snprintf(errbuf, माप(errbuf), "domain name "
 			    "\"%.100s\" contains invalid characters", name);
-			goto bad;
+			जाओ bad;
 		}
 		last = c;
 	}
-	if (name[l - 1] == '.')
+	अगर (name[l - 1] == '.')
 		name[l - 1] = '\0';
-	if (errstr != NULL)
-		*errstr = NULL;
-	return 1;
+	अगर (errstr != शून्य)
+		*errstr = शून्य;
+	वापस 1;
 bad:
-	if (errstr != NULL)
+	अगर (errstr != शून्य)
 		*errstr = errbuf;
-	return 0;
+	वापस 0;
 }
 
 /*
@@ -2528,48 +2528,48 @@ bad:
  * valid; consisting of one or more alphanumeric or underscore characters only.
  * Returns 1 on valid, 0 otherwise.
  */
-int
-valid_env_name(const char *name)
+पूर्णांक
+valid_env_name(स्थिर अक्षर *name)
 {
-	const char *cp;
+	स्थिर अक्षर *cp;
 
-	if (name[0] == '\0')
-		return 0;
-	for (cp = name; *cp != '\0'; cp++) {
-		if (!isalnum((u_char)*cp) && *cp != '_')
-			return 0;
+	अगर (name[0] == '\0')
+		वापस 0;
+	क्रम (cp = name; *cp != '\0'; cp++) {
+		अगर (!है_अक्षर_अंक((u_char)*cp) && *cp != '_')
+			वापस 0;
 	}
-	return 1;
+	वापस 1;
 }
 
-const char *
-atoi_err(const char *nptr, int *val)
+स्थिर अक्षर *
+atoi_err(स्थिर अक्षर *nptr, पूर्णांक *val)
 {
-	const char *errstr = NULL;
+	स्थिर अक्षर *errstr = शून्य;
 
-	if (nptr == NULL || *nptr == '\0')
-		return "missing";
-	*val = strtonum(nptr, 0, INT_MAX, &errstr);
-	return errstr;
+	अगर (nptr == शून्य || *nptr == '\0')
+		वापस "missing";
+	*val = strtonum(nptr, 0, पूर्णांक_उच्च, &errstr);
+	वापस errstr;
 }
 
-int
-parse_absolute_time(const char *s, uint64_t *tp)
+पूर्णांक
+parse_absolute_time(स्थिर अक्षर *s, uint64_t *tp)
 {
-	struct tm tm;
-	time_t tt;
-	char buf[32], *fmt;
-	const char *cp;
-	size_t l;
-	int is_utc = 0;
+	काष्ठा पंचांग पंचांग;
+	समय_प्रकार tt;
+	अक्षर buf[32], *fmt;
+	स्थिर अक्षर *cp;
+	माप_प्रकार l;
+	पूर्णांक is_utc = 0;
 
 	*tp = 0;
 
-	l = strlen(s);
-	if (l > 1 && strcasecmp(s + l - 1, "Z") == 0) {
+	l = म_माप(s);
+	अगर (l > 1 && strcasecmp(s + l - 1, "Z") == 0) {
 		is_utc = 1;
 		l--;
-	} else if (l > 3 && strcasecmp(s + l - 3, "UTC") == 0) {
+	} अन्यथा अगर (l > 3 && strcasecmp(s + l - 3, "UTC") == 0) {
 		is_utc = 1;
 		l -= 3;
 	}
@@ -2578,53 +2578,53 @@ parse_absolute_time(const char *s, uint64_t *tp)
 	 * is white-space or other non-alphanumeric characters between
 	 * any two conversion specifications" so arrange things this way.
 	 */
-	switch (l) {
-	case 8: /* YYYYMMDD */
+	चयन (l) {
+	हाल 8: /* YYYYMMDD */
 		fmt = "%Y-%m-%d";
-		snprintf(buf, sizeof(buf), "%.4s-%.2s-%.2s", s, s + 4, s + 6);
-		break;
-	case 12: /* YYYYMMDDHHMM */
+		snprintf(buf, माप(buf), "%.4s-%.2s-%.2s", s, s + 4, s + 6);
+		अवरोध;
+	हाल 12: /* YYYYMMDDHHMM */
 		fmt = "%Y-%m-%dT%H:%M";
-		snprintf(buf, sizeof(buf), "%.4s-%.2s-%.2sT%.2s:%.2s",
+		snprintf(buf, माप(buf), "%.4s-%.2s-%.2sT%.2s:%.2s",
 		    s, s + 4, s + 6, s + 8, s + 10);
-		break;
-	case 14: /* YYYYMMDDHHMMSS */
+		अवरोध;
+	हाल 14: /* YYYYMMDDHHMMSS */
 		fmt = "%Y-%m-%dT%H:%M:%S";
-		snprintf(buf, sizeof(buf), "%.4s-%.2s-%.2sT%.2s:%.2s:%.2s",
+		snprintf(buf, माप(buf), "%.4s-%.2s-%.2sT%.2s:%.2s:%.2s",
 		    s, s + 4, s + 6, s + 8, s + 10, s + 12);
-		break;
-	default:
-		return SSH_ERR_INVALID_FORMAT;
+		अवरोध;
+	शेष:
+		वापस SSH_ERR_INVALID_FORMAT;
 	}
 
-	memset(&tm, 0, sizeof(tm));
-	if ((cp = strptime(buf, fmt, &tm)) == NULL || *cp != '\0')
-		return SSH_ERR_INVALID_FORMAT;
-	if (is_utc) {
-		tm.tm_wday = -1;	/* sentinel for error */
-		if ((tt = timegm(&tm)) == -1 && tm.tm_wday == -1)
-			return SSH_ERR_INVALID_FORMAT;
-	} else {
-		tm.tm_wday = -1;	/* sentinel for error */
-		tm.tm_isdst = -1;	/* mktime decides DST */
-		if ((tt = mktime(&tm)) == -1 && tm.tm_wday == -1)
-			return SSH_ERR_INVALID_FORMAT;
+	स_रखो(&पंचांग, 0, माप(पंचांग));
+	अगर ((cp = strptime(buf, fmt, &पंचांग)) == शून्य || *cp != '\0')
+		वापस SSH_ERR_INVALID_FORMAT;
+	अगर (is_utc) {
+		पंचांग.tm_wday = -1;	/* sentinel for error */
+		अगर ((tt = timegm(&पंचांग)) == -1 && पंचांग.tm_wday == -1)
+			वापस SSH_ERR_INVALID_FORMAT;
+	} अन्यथा {
+		पंचांग.tm_wday = -1;	/* sentinel for error */
+		पंचांग.tm_isdst = -1;	/* mktime decides DST */
+		अगर ((tt = स_गढ़ो(&पंचांग)) == -1 && पंचांग.tm_wday == -1)
+			वापस SSH_ERR_INVALID_FORMAT;
 	}
 	/* success */
 	*tp = (uint64_t)tt;
-	return 0;
+	वापस 0;
 }
 
-void
-format_absolute_time(uint64_t t, char *buf, size_t len)
+व्योम
+format_absolute_time(uint64_t t, अक्षर *buf, माप_प्रकार len)
 {
-	time_t tt = t > SSH_TIME_T_MAX ? SSH_TIME_T_MAX : t;
-	struct tm tm;
+	समय_प्रकार tt = t > SSH_TIME_T_MAX ? SSH_TIME_T_MAX : t;
+	काष्ठा पंचांग पंचांग;
 
-	if (localtime_r(&tt, &tm) == NULL)
+	अगर (localtime_r(&tt, &पंचांग) == शून्य)
 		strlcpy(buf, "UNKNOWN-TIME", len);
-	else
-		strftime(buf, len, "%Y-%m-%dT%H:%M:%S", &tm);
+	अन्यथा
+		स_माला(buf, len, "%Y-%m-%dT%H:%M:%S", &पंचांग);
 }
 
 /*
@@ -2632,51 +2632,51 @@ format_absolute_time(uint64_t t, char *buf, size_t len)
  * Returns 0 on success or non-zero on failure.
  * Caller must free *typep.
  */
-int
-parse_pattern_interval(const char *s, char **typep, double *secsp)
+पूर्णांक
+parse_pattern_interval(स्थिर अक्षर *s, अक्षर **typep, द्विगुन *secsp)
 {
-	char *cp, *sdup;
-	double secs;
+	अक्षर *cp, *sdup;
+	द्विगुन secs;
 
-	if (typep != NULL)
-		*typep = NULL;
-	if (secsp != NULL)
+	अगर (typep != शून्य)
+		*typep = शून्य;
+	अगर (secsp != शून्य)
 		*secsp = 0;
-	if (s == NULL)
-		return -1;
+	अगर (s == शून्य)
+		वापस -1;
 	sdup = xstrdup(s);
 
-	if ((cp = strchr(sdup, '=')) == NULL || cp == sdup) {
-		free(sdup);
-		return -1;
+	अगर ((cp = म_अक्षर(sdup, '=')) == शून्य || cp == sdup) {
+		मुक्त(sdup);
+		वापस -1;
 	}
 	*cp++ = '\0';
-	if ((secs = convtime_double(cp)) < 0.0) {
-		free(sdup);
-		return -1;
+	अगर ((secs = convtime_double(cp)) < 0.0) {
+		मुक्त(sdup);
+		वापस -1;
 	}
 	/* success */
-	if (typep != NULL)
+	अगर (typep != शून्य)
 		*typep = xstrdup(sdup);
-	if (secsp != NULL)
+	अगर (secsp != शून्य)
 		*secsp = secs;
-	free(sdup);
-	return 0;
+	मुक्त(sdup);
+	वापस 0;
 }
 
 /* check if path is absolute */
-int
-path_absolute(const char *path)
+पूर्णांक
+path_absolute(स्थिर अक्षर *path)
 {
-	return (*path == '/') ? 1 : 0;
+	वापस (*path == '/') ? 1 : 0;
 }
 
-void
-skip_space(char **cpp)
+व्योम
+skip_space(अक्षर **cpp)
 {
-	char *cp;
+	अक्षर *cp;
 
-	for (cp = *cpp; *cp == ' ' || *cp == '\t'; cp++)
+	क्रम (cp = *cpp; *cp == ' ' || *cp == '\t'; cp++)
 		;
 	*cpp = cp;
 }
@@ -2690,146 +2690,146 @@ skip_space(char **cpp)
  * If the option or negated option matches, then *optsp is updated to
  * point to the first character after the option.
  */
-int
-opt_flag(const char *opt, int allow_negate, const char **optsp)
+पूर्णांक
+opt_flag(स्थिर अक्षर *opt, पूर्णांक allow_negate, स्थिर अक्षर **optsp)
 {
-	size_t opt_len = strlen(opt);
-	const char *opts = *optsp;
-	int negate = 0;
+	माप_प्रकार opt_len = म_माप(opt);
+	स्थिर अक्षर *opts = *optsp;
+	पूर्णांक negate = 0;
 
-	if (allow_negate && strncasecmp(opts, "no-", 3) == 0) {
+	अगर (allow_negate && strncasecmp(opts, "no-", 3) == 0) {
 		opts += 3;
 		negate = 1;
 	}
-	if (strncasecmp(opts, opt, opt_len) == 0) {
+	अगर (strncasecmp(opts, opt, opt_len) == 0) {
 		*optsp = opts + opt_len;
-		return negate ? 0 : 1;
+		वापस negate ? 0 : 1;
 	}
-	return -1;
+	वापस -1;
 }
 
-char *
-opt_dequote(const char **sp, const char **errstrp)
+अक्षर *
+opt_dequote(स्थिर अक्षर **sp, स्थिर अक्षर **errstrp)
 {
-	const char *s = *sp;
-	char *ret;
-	size_t i;
+	स्थिर अक्षर *s = *sp;
+	अक्षर *ret;
+	माप_प्रकार i;
 
-	*errstrp = NULL;
-	if (*s != '"') {
+	*errstrp = शून्य;
+	अगर (*s != '"') {
 		*errstrp = "missing start quote";
-		return NULL;
+		वापस शून्य;
 	}
 	s++;
-	if ((ret = malloc(strlen((s)) + 1)) == NULL) {
+	अगर ((ret = दो_स्मृति(म_माप((s)) + 1)) == शून्य) {
 		*errstrp = "memory allocation failed";
-		return NULL;
+		वापस शून्य;
 	}
-	for (i = 0; *s != '\0' && *s != '"';) {
-		if (s[0] == '\\' && s[1] == '"')
+	क्रम (i = 0; *s != '\0' && *s != '"';) {
+		अगर (s[0] == '\\' && s[1] == '"')
 			s++;
 		ret[i++] = *s++;
 	}
-	if (*s == '\0') {
+	अगर (*s == '\0') {
 		*errstrp = "missing end quote";
-		free(ret);
-		return NULL;
+		मुक्त(ret);
+		वापस शून्य;
 	}
 	ret[i] = '\0';
 	s++;
 	*sp = s;
-	return ret;
+	वापस ret;
 }
 
-int
-opt_match(const char **opts, const char *term)
+पूर्णांक
+opt_match(स्थिर अक्षर **opts, स्थिर अक्षर *term)
 {
-	if (strncasecmp((*opts), term, strlen(term)) == 0 &&
-	    (*opts)[strlen(term)] == '=') {
-		*opts += strlen(term) + 1;
-		return 1;
+	अगर (strncasecmp((*opts), term, म_माप(term)) == 0 &&
+	    (*opts)[म_माप(term)] == '=') {
+		*opts += म_माप(term) + 1;
+		वापस 1;
 	}
-	return 0;
+	वापस 0;
 }
 
-void
-opt_array_append2(const char *file, const int line, const char *directive,
-    char ***array, int **iarray, u_int *lp, const char *s, int i)
+व्योम
+opt_array_append2(स्थिर अक्षर *file, स्थिर पूर्णांक पंक्ति, स्थिर अक्षर *directive,
+    अक्षर ***array, पूर्णांक **iarray, u_int *lp, स्थिर अक्षर *s, पूर्णांक i)
 {
 
-	if (*lp >= INT_MAX)
-		fatal("%s line %d: Too many %s entries", file, line, directive);
+	अगर (*lp >= पूर्णांक_उच्च)
+		fatal("%s line %d: Too many %s entries", file, पंक्ति, directive);
 
-	if (iarray != NULL) {
+	अगर (iarray != शून्य) {
 		*iarray = xrecallocarray(*iarray, *lp, *lp + 1,
-		    sizeof(**iarray));
+		    माप(**iarray));
 		(*iarray)[*lp] = i;
 	}
 
-	*array = xrecallocarray(*array, *lp, *lp + 1, sizeof(**array));
+	*array = xrecallocarray(*array, *lp, *lp + 1, माप(**array));
 	(*array)[*lp] = xstrdup(s);
 	(*lp)++;
 }
 
-void
-opt_array_append(const char *file, const int line, const char *directive,
-    char ***array, u_int *lp, const char *s)
+व्योम
+opt_array_append(स्थिर अक्षर *file, स्थिर पूर्णांक पंक्ति, स्थिर अक्षर *directive,
+    अक्षर ***array, u_int *lp, स्थिर अक्षर *s)
 {
-	opt_array_append2(file, line, directive, array, NULL, lp, s, 0);
+	opt_array_append2(file, पंक्ति, directive, array, शून्य, lp, s, 0);
 }
 
-void
-opt_array_free2(char **array, int **iarray, u_int l)
+व्योम
+opt_array_free2(अक्षर **array, पूर्णांक **iarray, u_int l)
 {
 	u_int i;
 
-	if (array == NULL || l == 0)
-		return;
-	for (i = 0; i < l; i++)
-		free(array[i]);
-	free(array);
-	free(iarray);
+	अगर (array == शून्य || l == 0)
+		वापस;
+	क्रम (i = 0; i < l; i++)
+		मुक्त(array[i]);
+	मुक्त(array);
+	मुक्त(iarray);
 }
 
 sshsig_t
-ssh_signal(int signum, sshsig_t handler)
+ssh_signal(पूर्णांक signum, sshsig_t handler)
 {
-	struct sigaction sa, osa;
+	काष्ठा sigaction sa, osa;
 
 	/* mask all other signals while in handler */
-	memset(&sa, 0, sizeof(sa));
+	स_रखो(&sa, 0, माप(sa));
 	sa.sa_handler = handler;
 	sigfillset(&sa.sa_mask);
-#if defined(SA_RESTART) && !defined(NO_SA_RESTART)
-	if (signum != SIGALRM)
+#अगर defined(SA_RESTART) && !defined(NO_SA_RESTART)
+	अगर (signum != SIGALRM)
 		sa.sa_flags = SA_RESTART;
-#endif
-	if (sigaction(signum, &sa, &osa) == -1) {
-		debug3("sigaction(%s): %s", strsignal(signum), strerror(errno));
-		return SIG_ERR;
+#पूर्ण_अगर
+	अगर (sigaction(signum, &sa, &osa) == -1) {
+		debug3("sigaction(%s): %s", strsignal(signum), म_त्रुटि(त्रुटि_सं));
+		वापस संक_त्रुटि;
 	}
-	return osa.sa_handler;
+	वापस osa.sa_handler;
 }
 
-int
-stdfd_devnull(int do_stdin, int do_stdout, int do_stderr)
+पूर्णांक
+stdfd_devnull(पूर्णांक do_stdin, पूर्णांक do_stdout, पूर्णांक do_stderr)
 {
-	int devnull, ret = 0;
+	पूर्णांक devnull, ret = 0;
 
-	if ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+	अगर ((devnull = खोलो(_PATH_DEVNULL, O_RDWR)) == -1) {
 		error_f("open %s: %s", _PATH_DEVNULL,
-		    strerror(errno));
-		return -1;
+		    म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
-	if ((do_stdin && dup2(devnull, STDIN_FILENO) == -1) ||
+	अगर ((do_stdin && dup2(devnull, STDIN_FILENO) == -1) ||
 	    (do_stdout && dup2(devnull, STDOUT_FILENO) == -1) ||
 	    (do_stderr && dup2(devnull, STDERR_FILENO) == -1)) {
-		error_f("dup2: %s", strerror(errno));
+		error_f("dup2: %s", म_त्रुटि(त्रुटि_सं));
 		ret = -1;
 	}
-	if (devnull > STDERR_FILENO)
-		close(devnull);
-	return ret;
+	अगर (devnull > STDERR_FILENO)
+		बंद(devnull);
+	वापस ret;
 }
 
 /*
@@ -2842,201 +2842,201 @@ stdfd_devnull(int do_stdin, int do_stdout, int do_stderr)
  * av[0].
  */
 pid_t
-subprocess(const char *tag, const char *command,
-    int ac, char **av, FILE **child, u_int flags,
-    struct passwd *pw, privdrop_fn *drop_privs, privrestore_fn *restore_privs)
+subprocess(स्थिर अक्षर *tag, स्थिर अक्षर *command,
+    पूर्णांक ac, अक्षर **av, खाता **child, u_int flags,
+    काष्ठा passwd *pw, privdrop_fn *drop_privs, privrestore_fn *restore_privs)
 {
-	FILE *f = NULL;
-	struct stat st;
-	int fd, devnull, p[2], i;
+	खाता *f = शून्य;
+	काष्ठा stat st;
+	पूर्णांक fd, devnull, p[2], i;
 	pid_t pid;
-	char *cp, errmsg[512];
+	अक्षर *cp, errmsg[512];
 	u_int nenv = 0;
-	char **env = NULL;
+	अक्षर **env = शून्य;
 
 	/* If dropping privs, then must specify user and restore function */
-	if (drop_privs != NULL && (pw == NULL || restore_privs == NULL)) {
+	अगर (drop_privs != शून्य && (pw == शून्य || restore_privs == शून्य)) {
 		error("%s: inconsistent arguments", tag); /* XXX fatal? */
-		return 0;
+		वापस 0;
 	}
-	if (pw == NULL && (pw = getpwuid(getuid())) == NULL) {
+	अगर (pw == शून्य && (pw = getpwuid(getuid())) == शून्य) {
 		error("%s: no user for current uid", tag);
-		return 0;
+		वापस 0;
 	}
-	if (child != NULL)
-		*child = NULL;
+	अगर (child != शून्य)
+		*child = शून्य;
 
 	debug3_f("%s command \"%s\" running as %s (flags 0x%x)",
 	    tag, command, pw->pw_name, flags);
 
 	/* Check consistency */
-	if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
+	अगर ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
 	    (flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0) {
 		error_f("inconsistent flags");
-		return 0;
+		वापस 0;
 	}
-	if (((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0) != (child == NULL)) {
+	अगर (((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0) != (child == शून्य)) {
 		error_f("inconsistent flags/output");
-		return 0;
+		वापस 0;
 	}
 
 	/*
 	 * If executing an explicit binary, then verify the it exists
 	 * and appears safe-ish to execute
 	 */
-	if (!path_absolute(av[0])) {
+	अगर (!path_absolute(av[0])) {
 		error("%s path is not absolute", tag);
-		return 0;
+		वापस 0;
 	}
-	if (drop_privs != NULL)
+	अगर (drop_privs != शून्य)
 		drop_privs(pw);
-	if (stat(av[0], &st) == -1) {
+	अगर (stat(av[0], &st) == -1) {
 		error("Could not stat %s \"%s\": %s", tag,
-		    av[0], strerror(errno));
-		goto restore_return;
+		    av[0], म_त्रुटि(त्रुटि_सं));
+		जाओ restore_return;
 	}
-	if ((flags & SSH_SUBPROCESS_UNSAFE_PATH) == 0 &&
-	    safe_path(av[0], &st, NULL, 0, errmsg, sizeof(errmsg)) != 0) {
+	अगर ((flags & SSH_SUBPROCESS_UNSAFE_PATH) == 0 &&
+	    safe_path(av[0], &st, शून्य, 0, errmsg, माप(errmsg)) != 0) {
 		error("Unsafe %s \"%s\": %s", tag, av[0], errmsg);
-		goto restore_return;
+		जाओ restore_return;
 	}
 	/* Prepare to keep the child's stdout if requested */
-	if (pipe(p) == -1) {
-		error("%s: pipe: %s", tag, strerror(errno));
+	अगर (pipe(p) == -1) {
+		error("%s: pipe: %s", tag, म_त्रुटि(त्रुटि_सं));
  restore_return:
-		if (restore_privs != NULL)
+		अगर (restore_privs != शून्य)
 			restore_privs();
-		return 0;
+		वापस 0;
 	}
-	if (restore_privs != NULL)
+	अगर (restore_privs != शून्य)
 		restore_privs();
 
-	switch ((pid = fork())) {
-	case -1: /* error */
-		error("%s: fork: %s", tag, strerror(errno));
-		close(p[0]);
-		close(p[1]);
-		return 0;
-	case 0: /* child */
+	चयन ((pid = विभाजन())) {
+	हाल -1: /* error */
+		error("%s: fork: %s", tag, म_त्रुटि(त्रुटि_सं));
+		बंद(p[0]);
+		बंद(p[1]);
+		वापस 0;
+	हाल 0: /* child */
 		/* Prepare a minimal environment for the child. */
-		if ((flags & SSH_SUBPROCESS_PRESERVE_ENV) == 0) {
+		अगर ((flags & SSH_SUBPROCESS_PRESERVE_ENV) == 0) {
 			nenv = 5;
-			env = xcalloc(sizeof(*env), nenv);
+			env = xcalloc(माप(*env), nenv);
 			child_set_env(&env, &nenv, "PATH", _PATH_STDPATH);
 			child_set_env(&env, &nenv, "USER", pw->pw_name);
 			child_set_env(&env, &nenv, "LOGNAME", pw->pw_name);
 			child_set_env(&env, &nenv, "HOME", pw->pw_dir);
-			if ((cp = getenv("LANG")) != NULL)
+			अगर ((cp = दो_पर्या("LANG")) != शून्य)
 				child_set_env(&env, &nenv, "LANG", cp);
 		}
 
-		for (i = 1; i < NSIG; i++)
-			ssh_signal(i, SIG_DFL);
+		क्रम (i = 1; i < NSIG; i++)
+			ssh_signal(i, संक_पूर्व);
 
-		if ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+		अगर ((devnull = खोलो(_PATH_DEVNULL, O_RDWR)) == -1) {
 			error("%s: open %s: %s", tag, _PATH_DEVNULL,
-			    strerror(errno));
-			_exit(1);
+			    म_त्रुटि(त्रुटि_सं));
+			_निकास(1);
 		}
-		if (dup2(devnull, STDIN_FILENO) == -1) {
-			error("%s: dup2: %s", tag, strerror(errno));
-			_exit(1);
+		अगर (dup2(devnull, STDIN_FILENO) == -1) {
+			error("%s: dup2: %s", tag, म_त्रुटि(त्रुटि_सं));
+			_निकास(1);
 		}
 
 		/* Set up stdout as requested; leave stderr in place for now. */
 		fd = -1;
-		if ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0)
+		अगर ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0)
 			fd = p[1];
-		else if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0)
+		अन्यथा अगर ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0)
 			fd = devnull;
-		if (fd != -1 && dup2(fd, STDOUT_FILENO) == -1) {
-			error("%s: dup2: %s", tag, strerror(errno));
-			_exit(1);
+		अगर (fd != -1 && dup2(fd, STDOUT_FILENO) == -1) {
+			error("%s: dup2: %s", tag, म_त्रुटि(त्रुटि_सं));
+			_निकास(1);
 		}
 		closefrom(STDERR_FILENO + 1);
 
-		if (geteuid() == 0 &&
+		अगर (geteuid() == 0 &&
 		    initgroups(pw->pw_name, pw->pw_gid) == -1) {
 			error("%s: initgroups(%s, %u): %s", tag,
-			    pw->pw_name, (u_int)pw->pw_gid, strerror(errno));
-			_exit(1);
+			    pw->pw_name, (u_int)pw->pw_gid, म_त्रुटि(त्रुटि_सं));
+			_निकास(1);
 		}
-		if (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) == -1) {
+		अगर (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) == -1) {
 			error("%s: setresgid %u: %s", tag, (u_int)pw->pw_gid,
-			    strerror(errno));
-			_exit(1);
+			    म_त्रुटि(त्रुटि_सं));
+			_निकास(1);
 		}
-		if (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1) {
+		अगर (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1) {
 			error("%s: setresuid %u: %s", tag, (u_int)pw->pw_uid,
-			    strerror(errno));
-			_exit(1);
+			    म_त्रुटि(त्रुटि_सं));
+			_निकास(1);
 		}
 		/* stdin is pointed to /dev/null at this point */
-		if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
+		अगर ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
 		    dup2(STDIN_FILENO, STDERR_FILENO) == -1) {
-			error("%s: dup2: %s", tag, strerror(errno));
-			_exit(1);
+			error("%s: dup2: %s", tag, म_त्रुटि(त्रुटि_सं));
+			_निकास(1);
 		}
-		if (env != NULL)
+		अगर (env != शून्य)
 			execve(av[0], av, env);
-		else
+		अन्यथा
 			execv(av[0], av);
-		error("%s %s \"%s\": %s", tag, env == NULL ? "execv" : "execve",
-		    command, strerror(errno));
-		_exit(127);
-	default: /* parent */
-		break;
+		error("%s %s \"%s\": %s", tag, env == शून्य ? "execv" : "execve",
+		    command, म_त्रुटि(त्रुटि_सं));
+		_निकास(127);
+	शेष: /* parent */
+		अवरोध;
 	}
 
-	close(p[1]);
-	if ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0)
-		close(p[0]);
-	else if ((f = fdopen(p[0], "r")) == NULL) {
-		error("%s: fdopen: %s", tag, strerror(errno));
-		close(p[0]);
+	बंद(p[1]);
+	अगर ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0)
+		बंद(p[0]);
+	अन्यथा अगर ((f = fdopen(p[0], "r")) == शून्य) {
+		error("%s: fdopen: %s", tag, म_त्रुटि(त्रुटि_सं));
+		बंद(p[0]);
 		/* Don't leave zombie child */
-		kill(pid, SIGTERM);
-		while (waitpid(pid, NULL, 0) == -1 && errno == EINTR)
+		समाप्त(pid, संक_इति);
+		जबतक (waitpid(pid, शून्य, 0) == -1 && त्रुटि_सं == EINTR)
 			;
-		return 0;
+		वापस 0;
 	}
 	/* Success */
-	debug3_f("%s pid %ld", tag, (long)pid);
-	if (child != NULL)
+	debug3_f("%s pid %ld", tag, (दीर्घ)pid);
+	अगर (child != शून्य)
 		*child = f;
-	return pid;
+	वापस pid;
 }
 
-const char *
-lookup_env_in_list(const char *env, char * const *envs, size_t nenvs)
+स्थिर अक्षर *
+lookup_env_in_list(स्थिर अक्षर *env, अक्षर * स्थिर *envs, माप_प्रकार nenvs)
 {
-	size_t i, envlen;
+	माप_प्रकार i, envlen;
 
-	envlen = strlen(env);
-	for (i = 0; i < nenvs; i++) {
-		if (strncmp(envs[i], env, envlen) == 0 &&
+	envlen = म_माप(env);
+	क्रम (i = 0; i < nenvs; i++) {
+		अगर (म_भेदन(envs[i], env, envlen) == 0 &&
 		    envs[i][envlen] == '=') {
-			return envs[i] + envlen + 1;
+			वापस envs[i] + envlen + 1;
 		}
 	}
-	return NULL;
+	वापस शून्य;
 }
 
-const char *
-lookup_setenv_in_list(const char *env, char * const *envs, size_t nenvs)
+स्थिर अक्षर *
+lookup_setenv_in_list(स्थिर अक्षर *env, अक्षर * स्थिर *envs, माप_प्रकार nenvs)
 {
-	char *name, *cp;
-	const char *ret;
+	अक्षर *name, *cp;
+	स्थिर अक्षर *ret;
 
 	name = xstrdup(env);
-	if ((cp = strchr(name, '=')) == NULL) {
-		free(name);
-		return NULL; /* not env=val */
+	अगर ((cp = म_अक्षर(name, '=')) == शून्य) {
+		मुक्त(name);
+		वापस शून्य; /* not env=val */
 	}
 	*cp = '\0';
 	ret = lookup_env_in_list(name, envs, nenvs);
-	free(name);
-	return ret;
+	मुक्त(name);
+	वापस ret;
 }
 
 /*
@@ -3045,8 +3045,8 @@ lookup_setenv_in_list(const char *env, char * const *envs, size_t nenvs)
  */
 
 /* Initialise a poll/ppoll timeout with an indefinite deadline */
-void
-ptimeout_init(struct timespec *pt)
+व्योम
+ptimeout_init(काष्ठा timespec *pt)
 {
 	/*
 	 * Deliberately invalid for ppoll(2).
@@ -3057,28 +3057,28 @@ ptimeout_init(struct timespec *pt)
 }
 
 /* Specify a poll/ppoll deadline of at most 'sec' seconds */
-void
-ptimeout_deadline_sec(struct timespec *pt, long sec)
+व्योम
+ptimeout_deadline_sec(काष्ठा timespec *pt, दीर्घ sec)
 {
-	if (pt->tv_sec == -1 || pt->tv_sec >= sec) {
+	अगर (pt->tv_sec == -1 || pt->tv_sec >= sec) {
 		pt->tv_sec = sec;
 		pt->tv_nsec = 0;
 	}
 }
 
 /* Specify a poll/ppoll deadline of at most 'p' (timespec) */
-static void
-ptimeout_deadline_tsp(struct timespec *pt, struct timespec *p)
+अटल व्योम
+ptimeout_deadline_tsp(काष्ठा timespec *pt, काष्ठा timespec *p)
 {
-	if (pt->tv_sec == -1 || timespeccmp(pt, p, >=))
+	अगर (pt->tv_sec == -1 || timespeccmp(pt, p, >=))
 		*pt = *p;
 }
 
 /* Specify a poll/ppoll deadline of at most 'ms' milliseconds */
-void
-ptimeout_deadline_ms(struct timespec *pt, long ms)
+व्योम
+ptimeout_deadline_ms(काष्ठा timespec *pt, दीर्घ ms)
 {
-	struct timespec p;
+	काष्ठा timespec p;
 
 	p.tv_sec = ms / 1000;
 	p.tv_nsec = (ms % 1000) * 1000000;
@@ -3086,51 +3086,51 @@ ptimeout_deadline_ms(struct timespec *pt, long ms)
 }
 
 /* Specify a poll/ppoll deadline of at most 'sec' seconds (double) */
-void
-ptimeout_deadline_sec_double(struct timespec *pt, double sec)
+व्योम
+ptimeout_deadline_sec_double(काष्ठा timespec *pt, द्विगुन sec)
 {
-	struct timespec t;
+	काष्ठा timespec t;
 
-	memset(&t, 0, sizeof(t));
-	if ((int64_t)sec >= SSH_TIME_T_MAX)
+	स_रखो(&t, 0, माप(t));
+	अगर ((int64_t)sec >= SSH_TIME_T_MAX)
 		t.tv_sec = SSH_TIME_T_MAX;
-	else if (sec > 0) {
+	अन्यथा अगर (sec > 0) {
 		t.tv_sec = sec;
-		t.tv_nsec = (sec - (double)t.tv_sec) * 1000000000.0;
+		t.tv_nsec = (sec - (द्विगुन)t.tv_sec) * 1000000000.0;
 	}
 	ptimeout_deadline_tsp(pt, &t);
 }
 
 /* Specify a poll/ppoll deadline at wall clock monotime 'when' (timespec) */
-void
-ptimeout_deadline_monotime_tsp(struct timespec *pt, struct timespec *when)
+व्योम
+ptimeout_deadline_monotime_tsp(काष्ठा timespec *pt, काष्ठा timespec *when)
 {
-	struct timespec now, t;
+	काष्ठा timespec now, t;
 
 	monotime_ts(&now);
 
-	if (timespeccmp(&now, when, >=)) {
+	अगर (timespeccmp(&now, when, >=)) {
 		/* 'when' is now or in the past. Timeout ASAP */
 		pt->tv_sec = 0;
 		pt->tv_nsec = 0;
-	} else {
+	} अन्यथा {
 		timespecsub(when, &now, &t);
 		ptimeout_deadline_tsp(pt, &t);
 	}
 }
 
 /* Specify a poll/ppoll deadline at wall clock monotime 'when' (double) */
-void
-ptimeout_deadline_monotime_double(struct timespec *pt, double when)
+व्योम
+ptimeout_deadline_monotime_double(काष्ठा timespec *pt, द्विगुन when)
 {
 	ptimeout_deadline_sec_double(pt, when - monotime_double());
 }
 
 /* Specify a poll/ppoll deadline at wall clock monotime 'when' */
-void
-ptimeout_deadline_monotime(struct timespec *pt, time_t when)
+व्योम
+ptimeout_deadline_monotime(काष्ठा timespec *pt, समय_प्रकार when)
 {
-	struct timespec t;
+	काष्ठा timespec t;
 
 	t.tv_sec = when;
 	t.tv_nsec = 0;
@@ -3138,215 +3138,215 @@ ptimeout_deadline_monotime(struct timespec *pt, time_t when)
 }
 
 /* Get a poll(2) timeout value in milliseconds */
-int
-ptimeout_get_ms(struct timespec *pt)
+पूर्णांक
+ptimeout_get_ms(काष्ठा timespec *pt)
 {
-	if (pt->tv_sec == -1)
-		return -1;
-	if (pt->tv_sec >= (INT_MAX - (pt->tv_nsec / 1000000)) / 1000)
-		return INT_MAX;
-	return (pt->tv_sec * 1000) + (pt->tv_nsec / 1000000);
+	अगर (pt->tv_sec == -1)
+		वापस -1;
+	अगर (pt->tv_sec >= (पूर्णांक_उच्च - (pt->tv_nsec / 1000000)) / 1000)
+		वापस पूर्णांक_उच्च;
+	वापस (pt->tv_sec * 1000) + (pt->tv_nsec / 1000000);
 }
 
 /* Get a ppoll(2) timeout value as a timespec pointer */
-struct timespec *
-ptimeout_get_tsp(struct timespec *pt)
+काष्ठा timespec *
+ptimeout_get_tsp(काष्ठा timespec *pt)
 {
-	return pt->tv_sec == -1 ? NULL : pt;
+	वापस pt->tv_sec == -1 ? शून्य : pt;
 }
 
 /* Returns non-zero if a timeout has been set (i.e. is not indefinite) */
-int
-ptimeout_isset(struct timespec *pt)
+पूर्णांक
+ptimeout_isset(काष्ठा timespec *pt)
 {
-	return pt->tv_sec != -1;
+	वापस pt->tv_sec != -1;
 }
 
 /*
  * Returns zero if the library at 'path' contains symbol 's', nonzero
  * otherwise.
  */
-int
-lib_contains_symbol(const char *path, const char *s)
+पूर्णांक
+lib_contains_प्रतीक(स्थिर अक्षर *path, स्थिर अक्षर *s)
 {
-#ifdef HAVE_NLIST
-	struct nlist nl[2];
-	int ret = -1, r;
+#अगर_घोषित HAVE_NLIST
+	काष्ठा nlist nl[2];
+	पूर्णांक ret = -1, r;
 
-	memset(nl, 0, sizeof(nl));
+	स_रखो(nl, 0, माप(nl));
 	nl[0].n_name = xstrdup(s);
-	nl[1].n_name = NULL;
-	if ((r = nlist(path, nl)) == -1) {
+	nl[1].n_name = शून्य;
+	अगर ((r = nlist(path, nl)) == -1) {
 		error_f("nlist failed for %s", path);
-		goto out;
+		जाओ out;
 	}
-	if (r != 0 || nl[0].n_value == 0 || nl[0].n_type == 0) {
+	अगर (r != 0 || nl[0].n_मूल्य == 0 || nl[0].n_type == 0) {
 		error_f("library %s does not contain symbol %s", path, s);
-		goto out;
+		जाओ out;
 	}
 	/* success */
 	ret = 0;
  out:
-	free(nl[0].n_name);
-	return ret;
-#else /* HAVE_NLIST */
-	int fd, ret = -1;
-	struct stat st;
-	void *m = NULL;
-	size_t sz = 0;
+	मुक्त(nl[0].n_name);
+	वापस ret;
+#अन्यथा /* HAVE_NLIST */
+	पूर्णांक fd, ret = -1;
+	काष्ठा stat st;
+	व्योम *m = शून्य;
+	माप_प्रकार sz = 0;
 
-	memset(&st, 0, sizeof(st));
-	if ((fd = open(path, O_RDONLY)) < 0) {
-		error_f("open %s: %s", path, strerror(errno));
-		return -1;
+	स_रखो(&st, 0, माप(st));
+	अगर ((fd = खोलो(path, O_RDONLY)) < 0) {
+		error_f("open %s: %s", path, म_त्रुटि(त्रुटि_सं));
+		वापस -1;
 	}
-	if (fstat(fd, &st) != 0) {
-		error_f("fstat %s: %s", path, strerror(errno));
-		goto out;
+	अगर (ख_स्थिति(fd, &st) != 0) {
+		error_f("fstat %s: %s", path, म_त्रुटि(त्रुटि_सं));
+		जाओ out;
 	}
-	if (!S_ISREG(st.st_mode)) {
+	अगर (!S_ISREG(st.st_mode)) {
 		error_f("%s is not a regular file", path);
-		goto out;
+		जाओ out;
 	}
-	if (st.st_size < 0 ||
-	    (size_t)st.st_size < strlen(s) ||
-	    st.st_size >= INT_MAX/2) {
-		error_f("%s bad size %lld", path, (long long)st.st_size);
-		goto out;
+	अगर (st.st_size < 0 ||
+	    (माप_प्रकार)st.st_size < म_माप(s) ||
+	    st.st_size >= पूर्णांक_उच्च/2) {
+		error_f("%s bad size %lld", path, (दीर्घ दीर्घ)st.st_size);
+		जाओ out;
 	}
-	sz = (size_t)st.st_size;
-	if ((m = mmap(NULL, sz, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED ||
-	    m == NULL) {
-		error_f("mmap %s: %s", path, strerror(errno));
-		goto out;
+	sz = (माप_प्रकार)st.st_size;
+	अगर ((m = mmap(शून्य, sz, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED ||
+	    m == शून्य) {
+		error_f("mmap %s: %s", path, म_त्रुटि(त्रुटि_सं));
+		जाओ out;
 	}
-	if (memmem(m, sz, s, strlen(s)) == NULL) {
+	अगर (memmem(m, sz, s, म_माप(s)) == शून्य) {
 		error_f("%s does not contain expected string %s", path, s);
-		goto out;
+		जाओ out;
 	}
 	/* success */
 	ret = 0;
  out:
-	if (m != NULL && m != MAP_FAILED)
+	अगर (m != शून्य && m != MAP_FAILED)
 		munmap(m, sz);
-	close(fd);
-	return ret;
-#endif /* HAVE_NLIST */
+	बंद(fd);
+	वापस ret;
+#पूर्ण_अगर /* HAVE_NLIST */
 }
 
-int
-signal_is_crash(int sig)
+पूर्णांक
+signal_is_crash(पूर्णांक sig)
 {
-	switch (sig) {
-	case SIGSEGV:
-	case SIGBUS:
-	case SIGTRAP:
-	case SIGSYS:
-	case SIGFPE:
-	case SIGILL:
-	case SIGABRT:
-		return 1;
+	चयन (sig) {
+	हाल संक_अंश:
+	हाल SIGBUS:
+	हाल SIGTRAP:
+	हाल SIGSYS:
+	हाल संक_भ_त्रुटि:
+	हाल संक_अवैध:
+	हाल SIGABRT:
+		वापस 1;
 	}
-	return 0;
+	वापस 0;
 }
 
-char *
-get_homedir(void)
+अक्षर *
+get_homedir(व्योम)
 {
-	char *cp;
-	struct passwd *pw;
+	अक्षर *cp;
+	काष्ठा passwd *pw;
 
-	if ((cp = getenv("HOME")) != NULL && *cp != '\0')
-		return xstrdup(cp);
+	अगर ((cp = दो_पर्या("HOME")) != शून्य && *cp != '\0')
+		वापस xstrdup(cp);
 
-	if ((pw = getpwuid(getuid())) != NULL && *pw->pw_dir != '\0')
-		return xstrdup(pw->pw_dir);
+	अगर ((pw = getpwuid(getuid())) != शून्य && *pw->pw_dir != '\0')
+		वापस xstrdup(pw->pw_dir);
 
-	return NULL;
+	वापस शून्य;
 }
 
-int
-mkdir_path(const char *target, mode_t mode)
+पूर्णांक
+mkdir_path(स्थिर अक्षर *target, mode_t mode)
 {
-#if defined(HAVE_OPENAT) && defined(O_DIRECTORY)
-	char *dir, *odir = NULL, *next;
-	int fd = AT_FDCWD, fd2, subpath_len, ret = -1;
+#अगर defined(HAVE_OPENAT) && defined(O_DIRECTORY)
+	अक्षर *dir, *odir = शून्य, *अग्र;
+	पूर्णांक fd = AT_FDCWD, fd2, subpath_len, ret = -1;
 
 	dir = odir = xstrdup(target);
 
-	if (*dir == '/' &&
-	    (fd = open("/", O_RDONLY|O_DIRECTORY)) == -1) {
-		error_f("open(\"/\"): %s", strerror(errno));
-		free(odir);
-		return -1;
+	अगर (*dir == '/' &&
+	    (fd = खोलो("/", O_RDONLY|O_DIRECTORY)) == -1) {
+		error_f("open(\"/\"): %s", म_त्रुटि(त्रुटि_सं));
+		मुक्त(odir);
+		वापस -1;
 	}
 	/* Work through the path, component-wise */
-	for (; dir != NULL && *dir != '\0'; dir = next) {
-		if ((next = strchr(dir, '/')) != NULL)
-			*(next++) = '\0';
-		if (*dir == '\0')
-			continue;
-		subpath_len = (next == NULL) ? INT_MAX : next - odir - 1;
-		if (mkdirat(fd, dir, mode) == 0)
+	क्रम (; dir != शून्य && *dir != '\0'; dir = अग्र) {
+		अगर ((अग्र = म_अक्षर(dir, '/')) != शून्य)
+			*(अग्र++) = '\0';
+		अगर (*dir == '\0')
+			जारी;
+		subpath_len = (अग्र == शून्य) ? पूर्णांक_उच्च : अग्र - odir - 1;
+		अगर (mkdirat(fd, dir, mode) == 0)
 			debug_f("created directory %.*s", subpath_len, target);
-		else if (errno != EEXIST) {
+		अन्यथा अगर (त्रुटि_सं != EEXIST) {
 			error_f("mkdir(\"%.*s\"): %s",
-			    subpath_len, target, strerror(errno));
-			goto out;
+			    subpath_len, target, म_त्रुटि(त्रुटि_सं));
+			जाओ out;
 		}
 
 		/* descend */
-		if ((fd2 = openat(fd, dir, O_RDONLY|O_DIRECTORY)) == -1) {
+		अगर ((fd2 = openat(fd, dir, O_RDONLY|O_DIRECTORY)) == -1) {
 			error_f("open(\"%.*s\"): %s",
-			    subpath_len, target, strerror(errno));
-			goto out;
+			    subpath_len, target, म_त्रुटि(त्रुटि_सं));
+			जाओ out;
 		}
-		if (fd != AT_FDCWD)
-			close(fd);
+		अगर (fd != AT_FDCWD)
+			बंद(fd);
 		fd = fd2;
 	}
 	/* success */
 	ret = 0;
  out:
-	free(odir);
-	if (fd != AT_FDCWD)
-		close(fd);
-	return ret;
-#else
+	मुक्त(odir);
+	अगर (fd != AT_FDCWD)
+		बंद(fd);
+	वापस ret;
+#अन्यथा
 	/*
 	 * If we don't have openat (which was added in POSIX.1-2008), fall back
 	 * to the possibly racy way.
 	 */
-	char *dir, *odir, *p, path[PATH_MAX] = "";
-	int ret = -1;
-	size_t plen = sizeof(path);
+	अक्षर *dir, *odir, *p, path[PATH_MAX] = "";
+	पूर्णांक ret = -1;
+	माप_प्रकार plen = माप(path);
 
 	dir = odir = xstrdup(target);
 
 	/* If the dir is relative, start with cwd. */
-	if (*dir != '/' && getcwd(path, plen) == NULL) {
-		error_f("getcwd: %s", strerror(errno));
-		goto out;
+	अगर (*dir != '/' && getcwd(path, plen) == शून्य) {
+		error_f("getcwd: %s", म_त्रुटि(त्रुटि_सं));
+		जाओ out;
 	}
 
 	/* Work through the path, component-wise */
-	while ((p = strsep(&dir, "/"))) {
-		if (*p == '\0')
-			continue;
-		if (strlcat(path, "/", plen) >= plen ||
+	जबतक ((p = strsep(&dir, "/"))) {
+		अगर (*p == '\0')
+			जारी;
+		अगर (strlcat(path, "/", plen) >= plen ||
 		    strlcat(path, p, plen) >= plen)
-			goto out;
-		if (mkdir(path, mode) == 0)
+			जाओ out;
+		अगर (सूची_गढ़ो(path, mode) == 0)
 			debug_f("created directory %s", path);
-		else if (errno != EEXIST && errno != EISDIR) {
-			error_f("mkdir(\"%s\"): %s", path, strerror(errno));
-			goto out;
+		अन्यथा अगर (त्रुटि_सं != EEXIST && त्रुटि_सं != EISDIR) {
+			error_f("mkdir(\"%s\"): %s", path, म_त्रुटि(त्रुटि_सं));
+			जाओ out;
 		}
 	}
 	/* success */
 	ret = 0;
  out:
-	free(odir);
-	return ret;
-#endif
+	मुक्त(odir);
+	वापस ret;
+#पूर्ण_अगर
 }

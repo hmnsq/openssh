@@ -23,239 +23,239 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
+#समावेश <sys/types.h>
 
-#include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include <signal.h>
-#include <endian.h>
+#समावेश <stdio.h>
+#समावेश <stdint.h>
+#समावेश <stdbool.h>
+#समावेश <string.h>
+#समावेश <signal.h>
+#समावेश <endian.h>
 
-#include "sshkey.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "digest.h"
-#include "ssherr.h"
-#include "log.h"
+#समावेश "sshkey.h"
+#समावेश "kex.h"
+#समावेश "sshbuf.h"
+#समावेश "digest.h"
+#समावेश "ssherr.h"
+#समावेश "log.h"
 
-#include "crypto_api.h"
+#समावेश "crypto_api.h"
 
-#ifdef USE_MLKEM768X25519
+#अगर_घोषित USE_MLKEM768X25519
 
-int
-kex_kem_mlkem768x25519_keypair(struct kex *kex)
+पूर्णांक
+kex_kem_mlkem768x25519_keypair(काष्ठा kex *kex)
 {
-	struct sshbuf *buf = NULL;
-	u_char *cp = NULL;
-	size_t need;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	काष्ठा sshbuf *buf = शून्य;
+	u_char *cp = शून्य;
+	माप_प्रकार need;
+	पूर्णांक r = SSH_ERR_INTERNAL_ERROR;
 
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	need = MLKEM768_PUBLICKEYBYTES + CURVE25519_SIZE;
-	if ((r = sshbuf_reserve(buf, need, &cp)) != 0)
-		goto out;
-	if (crypto_kem_mlkem768_keypair(cp, kex->mlkem768_client_key) != 0) {
+	अगर ((buf = sshbuf_new()) == शून्य)
+		वापस SSH_ERR_ALLOC_FAIL;
+	need = MLKEM768_PUBLICKEYBYTES + CURVE25519_आकार;
+	अगर ((r = sshbuf_reserve(buf, need, &cp)) != 0)
+		जाओ out;
+	अगर (crypto_kem_mlkem768_keypair(cp, kex->mlkem768_client_कुंजी) != 0) {
 		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		जाओ out;
 	}
-#ifdef DEBUG_KEXECDH
+#अगर_घोषित DEBUG_KEXECDH
 	dump_digest("client public key mlkem768:", cp,
 	    MLKEM768_PUBLICKEYBYTES);
-#endif
+#पूर्ण_अगर
 	cp += MLKEM768_PUBLICKEYBYTES;
-	kexc25519_keygen(kex->c25519_client_key, cp);
-#ifdef DEBUG_KEXECDH
-	dump_digest("client public key c25519:", cp, CURVE25519_SIZE);
-#endif
+	kexc25519_keygen(kex->c25519_client_कुंजी, cp);
+#अगर_घोषित DEBUG_KEXECDH
+	dump_digest("client public key c25519:", cp, CURVE25519_आकार);
+#पूर्ण_अगर
 	/* success */
 	r = 0;
 	kex->client_pub = buf;
-	buf = NULL;
+	buf = शून्य;
  out:
 	sshbuf_free(buf);
-	return r;
+	वापस r;
 }
 
-int
-kex_kem_mlkem768x25519_enc(struct kex *kex,
-   const struct sshbuf *client_blob, struct sshbuf **server_blobp,
-   struct sshbuf **shared_secretp)
+पूर्णांक
+kex_kem_mlkem768x25519_enc(काष्ठा kex *kex,
+   स्थिर काष्ठा sshbuf *client_blob, काष्ठा sshbuf **server_blobp,
+   काष्ठा sshbuf **shared_secretp)
 {
-	struct sshbuf *server_blob = NULL;
-	struct sshbuf *buf = NULL;
-	const u_char *client_pub;
-	u_char server_pub[CURVE25519_SIZE], server_key[CURVE25519_SIZE];
-	u_char hash[SSH_DIGEST_MAX_LENGTH];
+	काष्ठा sshbuf *server_blob = शून्य;
+	काष्ठा sshbuf *buf = शून्य;
+	स्थिर u_char *client_pub;
+	u_char server_pub[CURVE25519_आकार], server_कुंजी[CURVE25519_आकार];
+	u_char hash[SSH_DIGEST_MAX_लंबाई];
 	u_char ct[MLKEM768_CIPHERTEXTBYTES];
 	u_char shared_secret[MLKEM768_BYTES];
-	size_t need;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	माप_प्रकार need;
+	पूर्णांक r = SSH_ERR_INTERNAL_ERROR;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = शून्य;
+	*shared_secretp = शून्य;
 
 	/* client_blob contains both KEM and ECDH client pubkeys */
-	need = MLKEM768_PUBLICKEYBYTES + CURVE25519_SIZE;
-	if (sshbuf_len(client_blob) != need) {
+	need = MLKEM768_PUBLICKEYBYTES + CURVE25519_आकार;
+	अगर (sshbuf_len(client_blob) != need) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		जाओ out;
 	}
 	client_pub = sshbuf_ptr(client_blob);
-#ifdef DEBUG_KEXECDH
+#अगर_घोषित DEBUG_KEXECDH
 	dump_digest("client public key mlkem768:", client_pub,
 	    MLKEM768_PUBLICKEYBYTES);
 	dump_digest("client public key 25519:",
 	    client_pub + MLKEM768_PUBLICKEYBYTES,
-	    CURVE25519_SIZE);
-#endif
+	    CURVE25519_आकार);
+#पूर्ण_अगर
 
 	/* allocate buffer for concatenation of KEM key and ECDH shared key */
 	/* the buffer will be hashed and the result is the shared secret */
-	if ((buf = sshbuf_new()) == NULL) {
+	अगर ((buf = sshbuf_new()) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
 	/* allocate space for encrypted KEM key and ECDH pub key */
-	if ((server_blob = sshbuf_new()) == NULL) {
+	अगर ((server_blob = sshbuf_new()) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
 	/* generate and encrypt KEM key with client key */
-	if (crypto_kem_mlkem768_enc(ct, shared_secret, client_pub) != 0) {
+	अगर (crypto_kem_mlkem768_enc(ct, shared_secret, client_pub) != 0) {
 		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		जाओ out;
 	}
 	/* generate ECDH key pair, store server pubkey after ciphertext */
-	kexc25519_keygen(server_key, server_pub);
-	if ((r = sshbuf_put(buf, shared_secret, sizeof(shared_secret))) != 0 ||
-	    (r = sshbuf_put(server_blob, ct, sizeof(ct))) != 0 ||
-	    (r = sshbuf_put(server_blob, server_pub, sizeof(server_pub))) != 0)
-		goto out;
+	kexc25519_keygen(server_कुंजी, server_pub);
+	अगर ((r = sshbuf_put(buf, shared_secret, माप(shared_secret))) != 0 ||
+	    (r = sshbuf_put(server_blob, ct, माप(ct))) != 0 ||
+	    (r = sshbuf_put(server_blob, server_pub, माप(server_pub))) != 0)
+		जाओ out;
 	/* append ECDH shared key */
 	client_pub += MLKEM768_PUBLICKEYBYTES;
-	if ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 1)) < 0)
-		goto out;
-	if ((r = ssh_digest_buffer(kex->hash_alg, buf,
-	    hash, sizeof(hash))) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
-	dump_digest("server public key 25519:", server_pub, CURVE25519_SIZE);
-	dump_digest("server cipher text:", ct, sizeof(ct));
-	dump_digest("server kem key:", shared_secret, sizeof(shared_secret));
+	अगर ((r = kexc25519_shared_कुंजी_ext(server_कुंजी, client_pub, buf, 1)) < 0)
+		जाओ out;
+	अगर ((r = ssh_digest_बफर(kex->hash_alg, buf,
+	    hash, माप(hash))) != 0)
+		जाओ out;
+#अगर_घोषित DEBUG_KEXECDH
+	dump_digest("server public key 25519:", server_pub, CURVE25519_आकार);
+	dump_digest("server cipher text:", ct, माप(ct));
+	dump_digest("server kem key:", shared_secret, माप(shared_secret));
 	dump_digest("concatenation of KEM key and ECDH shared key:",
 	    sshbuf_ptr(buf), sshbuf_len(buf));
-#endif
+#पूर्ण_अगर
 	/* string-encoded hash is resulting shared secret */
 	sshbuf_reset(buf);
-	if ((r = sshbuf_put_string(buf, hash,
+	अगर ((r = sshbuf_put_string(buf, hash,
 	    ssh_digest_bytes(kex->hash_alg))) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
+		जाओ out;
+#अगर_घोषित DEBUG_KEXECDH
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
-#endif
+#पूर्ण_अगर
 	/* success */
 	r = 0;
 	*server_blobp = server_blob;
 	*shared_secretp = buf;
-	server_blob = NULL;
-	buf = NULL;
+	server_blob = शून्य;
+	buf = शून्य;
  out:
-	explicit_bzero(hash, sizeof(hash));
-	explicit_bzero(server_key, sizeof(server_key));
-	explicit_bzero(shared_secret, sizeof(shared_secret));
+	explicit_bzero(hash, माप(hash));
+	explicit_bzero(server_कुंजी, माप(server_कुंजी));
+	explicit_bzero(shared_secret, माप(shared_secret));
 	sshbuf_free(server_blob);
 	sshbuf_free(buf);
-	return r;
+	वापस r;
 }
 
-int
-kex_kem_mlkem768x25519_dec(struct kex *kex,
-    const struct sshbuf *server_blob, struct sshbuf **shared_secretp)
+पूर्णांक
+kex_kem_mlkem768x25519_dec(काष्ठा kex *kex,
+    स्थिर काष्ठा sshbuf *server_blob, काष्ठा sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
+	काष्ठा sshbuf *buf = शून्य;
 	u_char shared_secret[MLKEM768_BYTES];
-	const u_char *ciphertext, *server_pub;
-	u_char hash[SSH_DIGEST_MAX_LENGTH];
-	size_t need;
-	int r;
+	स्थिर u_char *ciphertext, *server_pub;
+	u_char hash[SSH_DIGEST_MAX_लंबाई];
+	माप_प्रकार need;
+	पूर्णांक r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = शून्य;
 
-	need = MLKEM768_CIPHERTEXTBYTES + CURVE25519_SIZE;
-	if (sshbuf_len(server_blob) != need) {
+	need = MLKEM768_CIPHERTEXTBYTES + CURVE25519_आकार;
+	अगर (sshbuf_len(server_blob) != need) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		जाओ out;
 	}
 	ciphertext = sshbuf_ptr(server_blob);
 	server_pub = ciphertext + MLKEM768_CIPHERTEXTBYTES;
 	/* hash concatenation of KEM key and ECDH shared key */
-	if ((buf = sshbuf_new()) == NULL) {
+	अगर ((buf = sshbuf_new()) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
-#ifdef DEBUG_KEXECDH
+#अगर_घोषित DEBUG_KEXECDH
 	dump_digest("server cipher text:", ciphertext,
 	    MLKEM768_CIPHERTEXTBYTES);
-	dump_digest("server public key c25519:", server_pub, CURVE25519_SIZE);
-#endif
-	if (crypto_kem_mlkem768_dec(shared_secret, ciphertext,
-	    kex->mlkem768_client_key) != 0) {
+	dump_digest("server public key c25519:", server_pub, CURVE25519_आकार);
+#पूर्ण_अगर
+	अगर (crypto_kem_mlkem768_dec(shared_secret, ciphertext,
+	    kex->mlkem768_client_कुंजी) != 0) {
 		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		जाओ out;
 	}
-	if ((r = sshbuf_put(buf, shared_secret, sizeof(shared_secret))) != 0)
-		goto out;
-	if ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
+	अगर ((r = sshbuf_put(buf, shared_secret, माप(shared_secret))) != 0)
+		जाओ out;
+	अगर ((r = kexc25519_shared_कुंजी_ext(kex->c25519_client_कुंजी, server_pub,
 	    buf, 1)) < 0)
-		goto out;
-	if ((r = ssh_digest_buffer(kex->hash_alg, buf,
-	    hash, sizeof(hash))) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
-	dump_digest("client kem key:", shared_secret, sizeof(shared_secret));
+		जाओ out;
+	अगर ((r = ssh_digest_बफर(kex->hash_alg, buf,
+	    hash, माप(hash))) != 0)
+		जाओ out;
+#अगर_घोषित DEBUG_KEXECDH
+	dump_digest("client kem key:", shared_secret, माप(shared_secret));
 	dump_digest("concatenation of KEM key and ECDH shared key:",
 	    sshbuf_ptr(buf), sshbuf_len(buf));
-#endif
+#पूर्ण_अगर
 	sshbuf_reset(buf);
-	if ((r = sshbuf_put_string(buf, hash,
+	अगर ((r = sshbuf_put_string(buf, hash,
 	    ssh_digest_bytes(kex->hash_alg))) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
+		जाओ out;
+#अगर_घोषित DEBUG_KEXECDH
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
-#endif
+#पूर्ण_अगर
 	/* success */
 	r = 0;
 	*shared_secretp = buf;
-	buf = NULL;
+	buf = शून्य;
  out:
-	explicit_bzero(hash, sizeof(hash));
-	explicit_bzero(shared_secret, sizeof(shared_secret));
+	explicit_bzero(hash, माप(hash));
+	explicit_bzero(shared_secret, माप(shared_secret));
 	sshbuf_free(buf);
-	return r;
+	वापस r;
 }
-#else /* USE_MLKEM768X25519 */
-int
-kex_kem_mlkem768x25519_keypair(struct kex *kex)
+#अन्यथा /* USE_MLKEM768X25519 */
+पूर्णांक
+kex_kem_mlkem768x25519_keypair(काष्ठा kex *kex)
 {
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	वापस SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 
-int
-kex_kem_mlkem768x25519_enc(struct kex *kex,
-   const struct sshbuf *client_blob, struct sshbuf **server_blobp,
-   struct sshbuf **shared_secretp)
+पूर्णांक
+kex_kem_mlkem768x25519_enc(काष्ठा kex *kex,
+   स्थिर काष्ठा sshbuf *client_blob, काष्ठा sshbuf **server_blobp,
+   काष्ठा sshbuf **shared_secretp)
 {
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	वापस SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 
-int
-kex_kem_mlkem768x25519_dec(struct kex *kex,
-    const struct sshbuf *server_blob, struct sshbuf **shared_secretp)
+पूर्णांक
+kex_kem_mlkem768x25519_dec(काष्ठा kex *kex,
+    स्थिर काष्ठा sshbuf *server_blob, काष्ठा sshbuf **shared_secretp)
 {
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	वापस SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
-#endif /* USE_MLKEM768X25519 */
+#पूर्ण_अगर /* USE_MLKEM768X25519 */

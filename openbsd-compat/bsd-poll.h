@@ -27,64 +27,64 @@
 
 /* OPENBSD ORIGINAL: sys/sys/poll.h */
 
-#ifndef	_COMPAT_POLL_H_
-#define	_COMPAT_POLL_H_
+#अगर_अघोषित	_COMPAT_POLL_H_
+#घोषणा	_COMPAT_POLL_H_
 
-#include <sys/types.h>
-#include <poll.h>
+#समावेश <sys/types.h>
+#समावेश <poll.h>
 
-#ifndef HAVE_STRUCT_POLLFD_FD
-typedef struct pollfd {
-	int	fd;
-	short	events;
-	short	revents;
+#अगर_अघोषित HAVE_STRUCT_POLLFD_FD
+प्रकार काष्ठा pollfd {
+	पूर्णांक	fd;
+	लघु	events;
+	लघु	revents;
 } pollfd_t;
 
-#ifndef POLLIN
+#अगर_अघोषित POLLIN
 # define POLLIN		0x0001
-#endif
-#ifndef POLLPRI
+#पूर्ण_अगर
+#अगर_अघोषित POLLPRI
 # define POLLPRI	0x0002
-#endif
-#ifndef POLLOUT
+#पूर्ण_अगर
+#अगर_अघोषित POLLOUT
 # define POLLOUT	0x0004
-#endif
-#ifndef POLLERR
+#पूर्ण_अगर
+#अगर_अघोषित POLLERR
 # define POLLERR	0x0008
-#endif
-#ifndef POLLHUP
+#पूर्ण_अगर
+#अगर_अघोषित POLLHUP
 # define POLLHUP	0x0010
-#endif
-#ifndef POLLNVAL
+#पूर्ण_अगर
+#अगर_अघोषित POLLNVAL
 # define POLLNVAL	0x0020
-#endif
+#पूर्ण_अगर
 
-#if 0
+#अगर 0
 /* the following are currently not implemented */
-#define	POLLRDNORM	0x0040
-#define POLLNORM	POLLRDNORM
-#define POLLWRNORM      POLLOUT
-#define	POLLRDBAND	0x0080
-#define	POLLWRBAND	0x0100
-#endif
+#घोषणा	POLLRDNORM	0x0040
+#घोषणा POLLNORM	POLLRDNORM
+#घोषणा POLLWRNORM      POLLOUT
+#घोषणा	POLLRDBAND	0x0080
+#घोषणा	POLLWRBAND	0x0100
+#पूर्ण_अगर
 
-#define INFTIM		(-1)	/* not standard */
-#endif /* !HAVE_STRUCT_POLLFD_FD */
+#घोषणा INFTIM		(-1)	/* not standard */
+#पूर्ण_अगर /* !HAVE_STRUCT_POLLFD_FD */
 
-#ifndef HAVE_NFDS_T
+#अगर_अघोषित HAVE_NFDS_T
 # ifdef POLL_NFDS_T_ULONG
-typedef unsigned long	nfds_t;
-# else
-typedef unsigned int	nfds_t;
+प्रकार अचिन्हित दीर्घ	nfds_t;
+# अन्यथा
+प्रकार अचिन्हित पूर्णांक	nfds_t;
 # endif
-#endif
+#पूर्ण_अगर
 
-#ifndef HAVE_POLL
-int   poll(struct pollfd *, nfds_t, int);
-#endif
+#अगर_अघोषित HAVE_POLL
+पूर्णांक   poll(काष्ठा pollfd *, nfds_t, पूर्णांक);
+#पूर्ण_अगर
 
-#ifndef HAVE_PPOLL
-int   ppoll(struct pollfd *, nfds_t, const struct timespec *, const sigset_t *);
-#endif
+#अगर_अघोषित HAVE_PPOLL
+पूर्णांक   ppoll(काष्ठा pollfd *, nfds_t, स्थिर काष्ठा timespec *, स्थिर sigset_t *);
+#पूर्ण_अगर
 
-#endif /* !_COMPAT_POLL_H_ */
+#पूर्ण_अगर /* !_COMPAT_POLL_H_ */

@@ -15,56 +15,56 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _DIGEST_H
-#define _DIGEST_H
+#अगर_अघोषित _DIGEST_H
+#घोषणा _DIGEST_H
 
 /* Maximum digest output length */
-#define SSH_DIGEST_MAX_LENGTH	64
+#घोषणा SSH_DIGEST_MAX_लंबाई	64
 
 /* Digest algorithms */
-#define SSH_DIGEST_MD5		0
-#define SSH_DIGEST_SHA1		1
-#define SSH_DIGEST_SHA256	2
-#define SSH_DIGEST_SHA384	3
-#define SSH_DIGEST_SHA512	4
-#define SSH_DIGEST_MAX		5
+#घोषणा SSH_DIGEST_MD5		0
+#घोषणा SSH_DIGEST_SHA1		1
+#घोषणा SSH_DIGEST_SHA256	2
+#घोषणा SSH_DIGEST_SHA384	3
+#घोषणा SSH_DIGEST_SHA512	4
+#घोषणा SSH_DIGEST_MAX		5
 
-struct sshbuf;
-struct ssh_digest_ctx;
+काष्ठा sshbuf;
+काष्ठा ssh_digest_ctx;
 
 /* Looks up a digest algorithm by name */
-int ssh_digest_alg_by_name(const char *name);
+पूर्णांक ssh_digest_alg_by_name(स्थिर अक्षर *name);
 
 /* Returns the algorithm name for a digest identifier */
-const char *ssh_digest_alg_name(int alg);
+स्थिर अक्षर *ssh_digest_alg_name(पूर्णांक alg);
 
 /* Returns the algorithm's digest length in bytes or 0 for invalid algorithm */
-size_t ssh_digest_bytes(int alg);
+माप_प्रकार ssh_digest_bytes(पूर्णांक alg);
 
 /* Returns the block size of the digest, e.g. for implementing HMAC */
-size_t ssh_digest_blocksize(struct ssh_digest_ctx *ctx);
+माप_प्रकार ssh_digest_blocksize(काष्ठा ssh_digest_ctx *ctx);
 
 /* Copies internal state of digest of 'from' to 'to' */
-int ssh_digest_copy_state(struct ssh_digest_ctx *from,
-    struct ssh_digest_ctx *to);
+पूर्णांक ssh_digest_copy_state(काष्ठा ssh_digest_ctx *from,
+    काष्ठा ssh_digest_ctx *to);
 
 /* One-shot API */
-int ssh_digest_memory(int alg, const void *m, size_t mlen,
-    u_char *d, size_t dlen)
+पूर्णांक ssh_digest_memory(पूर्णांक alg, स्थिर व्योम *m, माप_प्रकार mlen,
+    u_char *d, माप_प्रकार dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)))
 	__attribute__((__bounded__(__buffer__, 4, 5)));
-int ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+पूर्णांक ssh_digest_बफर(पूर्णांक alg, स्थिर काष्ठा sshbuf *b, u_char *d, माप_प्रकार dlen)
 	__attribute__((__bounded__(__buffer__, 3, 4)));
 
 /* Update API */
-struct ssh_digest_ctx *ssh_digest_start(int alg);
-int ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
+काष्ठा ssh_digest_ctx *ssh_digest_start(पूर्णांक alg);
+पूर्णांक ssh_digest_update(काष्ठा ssh_digest_ctx *ctx, स्थिर व्योम *m, माप_प्रकार mlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_digest_update_buffer(struct ssh_digest_ctx *ctx,
-    const struct sshbuf *b);
-int ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
+पूर्णांक ssh_digest_update_बफर(काष्ठा ssh_digest_ctx *ctx,
+    स्थिर काष्ठा sshbuf *b);
+पूर्णांक ssh_digest_final(काष्ठा ssh_digest_ctx *ctx, u_char *d, माप_प्रकार dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-void ssh_digest_free(struct ssh_digest_ctx *ctx);
+व्योम ssh_digest_free(काष्ठा ssh_digest_ctx *ctx);
 
-#endif /* _DIGEST_H */
+#पूर्ण_अगर /* _DIGEST_H */
 

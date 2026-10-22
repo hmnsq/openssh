@@ -15,18 +15,18 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
+#समावेश <sys/types.h>
 
-#include <unistd.h>
-#include <stdarg.h>
+#समावेश <unistd.h>
+#समावेश <stdarg.h>
 
-#include "log.h"
+#समावेश "log.h"
 
 /* default implementation */
-void
-cleanup_exit(int i)
+व्योम
+cleanup_exit(पूर्णांक i)
 {
-	_exit(i);
+	_निकास(i);
 }

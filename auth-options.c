@@ -15,226 +15,226 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <sys/queue.h>
+#समावेश <sys/types.h>
+#समावेश <sys/queue.h>
 
-#include <stdlib.h>
-#include <netdb.h>
-#include <pwd.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <limits.h>
+#समावेश <stdlib.h>
+#समावेश <netdb.h>
+#समावेश <pwd.h>
+#समावेश <string.h>
+#समावेश <stdio.h>
+#समावेश <stdint.h>
+#समावेश <stdarg.h>
+#समावेश <ctype.h>
+#समावेश <limits.h>
 
-#include "xmalloc.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "sshkey.h"
-#include "match.h"
-#include "ssh2.h"
-#include "auth-options.h"
+#समावेश "xmalloc.h"
+#समावेश "ssherr.h"
+#समावेश "log.h"
+#समावेश "sshbuf.h"
+#समावेश "misc.h"
+#समावेश "sshkey.h"
+#समावेश "match.h"
+#समावेश "ssh2.h"
+#समावेश "auth-options.h"
 
-static int
-dup_strings(char ***dstp, size_t *ndstp, char **src, size_t nsrc)
+अटल पूर्णांक
+dup_strings(अक्षर ***dstp, माप_प्रकार *ndstp, अक्षर **src, माप_प्रकार nsrc)
 {
-	char **dst;
-	size_t i, j;
+	अक्षर **dst;
+	माप_प्रकार i, j;
 
-	*dstp = NULL;
+	*dstp = शून्य;
 	*ndstp = 0;
 
-	if (nsrc == 0)
-		return 0;
-	if (nsrc >= SIZE_MAX / sizeof(*src) ||
-	    (dst = calloc(nsrc, sizeof(*src))) == NULL)
-		return -1;
-	for (i = 0; i < nsrc; i++) {
-		if ((dst[i] = strdup(src[i])) == NULL) {
-			for (j = 0; j < i; j++)
-				free(dst[j]);
-			free(dst);
-			return -1;
+	अगर (nsrc == 0)
+		वापस 0;
+	अगर (nsrc >= SIZE_MAX / माप(*src) ||
+	    (dst = सुस्मृति(nsrc, माप(*src))) == शून्य)
+		वापस -1;
+	क्रम (i = 0; i < nsrc; i++) {
+		अगर ((dst[i] = strdup(src[i])) == शून्य) {
+			क्रम (j = 0; j < i; j++)
+				मुक्त(dst[j]);
+			मुक्त(dst);
+			वापस -1;
 		}
 	}
 	/* success */
 	*dstp = dst;
 	*ndstp = nsrc;
-	return 0;
+	वापस 0;
 }
 
-#define OPTIONS_CRITICAL	1
-#define OPTIONS_EXTENSIONS	2
-static int
-cert_option_list(struct sshauthopt *opts, struct sshbuf *oblob,
-    u_int which, int crit)
+#घोषणा OPTIONS_CRITICAL	1
+#घोषणा OPTIONS_EXTENSIONS	2
+अटल पूर्णांक
+cert_option_list(काष्ठा sshauthopt *opts, काष्ठा sshbuf *oblob,
+    u_int which, पूर्णांक crit)
 {
-	char *command, *allowed;
-	char *name = NULL;
-	struct sshbuf *c = NULL, *data = NULL;
-	int r, ret = -1, found;
+	अक्षर *command, *allowed;
+	अक्षर *name = शून्य;
+	काष्ठा sshbuf *c = शून्य, *तथ्य = शून्य;
+	पूर्णांक r, ret = -1, found;
 
-	if ((c = sshbuf_fromb(oblob)) == NULL) {
+	अगर ((c = sshbuf_fromb(oblob)) == शून्य) {
 		error_f("sshbuf_fromb failed");
-		goto out;
+		जाओ out;
 	}
 
-	while (sshbuf_len(c) > 0) {
-		sshbuf_free(data);
-		data = NULL;
-		if ((r = sshbuf_get_cstring(c, &name, NULL)) != 0 ||
-		    (r = sshbuf_froms(c, &data)) != 0) {
+	जबतक (sshbuf_len(c) > 0) {
+		sshbuf_free(तथ्य);
+		तथ्य = शून्य;
+		अगर ((r = sshbuf_get_cstring(c, &name, शून्य)) != 0 ||
+		    (r = sshbuf_froms(c, &तथ्य)) != 0) {
 			error_r(r, "Unable to parse certificate options");
-			goto out;
+			जाओ out;
 		}
 		debug3("found certificate option \"%.100s\" len %zu",
-		    name, sshbuf_len(data));
+		    name, sshbuf_len(तथ्य));
 		found = 0;
-		if ((which & OPTIONS_EXTENSIONS) != 0) {
-			if (strcmp(name, "no-touch-required") == 0) {
+		अगर ((which & OPTIONS_EXTENSIONS) != 0) {
+			अगर (म_भेद(name, "no-touch-required") == 0) {
 				opts->no_require_user_presence = 1;
 				found = 1;
-			} else if (strcmp(name, "permit-X11-forwarding") == 0) {
+			} अन्यथा अगर (म_भेद(name, "permit-X11-forwarding") == 0) {
 				opts->permit_x11_forwarding_flag = 1;
 				found = 1;
-			} else if (strcmp(name,
+			} अन्यथा अगर (म_भेद(name,
 			    "permit-agent-forwarding") == 0) {
 				opts->permit_agent_forwarding_flag = 1;
 				found = 1;
-			} else if (strcmp(name,
+			} अन्यथा अगर (म_भेद(name,
 			    "permit-port-forwarding") == 0) {
 				opts->permit_port_forwarding_flag = 1;
 				found = 1;
-			} else if (strcmp(name, "permit-pty") == 0) {
+			} अन्यथा अगर (म_भेद(name, "permit-pty") == 0) {
 				opts->permit_pty_flag = 1;
 				found = 1;
-			} else if (strcmp(name, "permit-user-rc") == 0) {
+			} अन्यथा अगर (म_भेद(name, "permit-user-rc") == 0) {
 				opts->permit_user_rc = 1;
 				found = 1;
 			}
 		}
-		if (!found && (which & OPTIONS_CRITICAL) != 0) {
-			if (strcmp(name, "verify-required") == 0) {
+		अगर (!found && (which & OPTIONS_CRITICAL) != 0) {
+			अगर (म_भेद(name, "verify-required") == 0) {
 				opts->require_verify = 1;
 				found = 1;
-			} else if (strcmp(name, "force-command") == 0) {
-				if ((r = sshbuf_get_cstring(data, &command,
-				    NULL)) != 0) {
+			} अन्यथा अगर (म_भेद(name, "force-command") == 0) {
+				अगर ((r = sshbuf_get_cstring(तथ्य, &command,
+				    शून्य)) != 0) {
 					error_r(r, "Unable to parse \"%s\" "
 					    "section", name);
-					goto out;
+					जाओ out;
 				}
-				if (opts->force_command != NULL) {
+				अगर (opts->force_command != शून्य) {
 					error("Certificate has multiple "
 					    "force-command options");
-					free(command);
-					goto out;
+					मुक्त(command);
+					जाओ out;
 				}
 				opts->force_command = command;
 				found = 1;
-			} else if (strcmp(name, "source-address") == 0) {
-				if ((r = sshbuf_get_cstring(data, &allowed,
-				    NULL)) != 0) {
+			} अन्यथा अगर (म_भेद(name, "source-address") == 0) {
+				अगर ((r = sshbuf_get_cstring(तथ्य, &allowed,
+				    शून्य)) != 0) {
 					error_r(r, "Unable to parse \"%s\" "
 					    "section", name);
-					goto out;
+					जाओ out;
 				}
-				if (opts->required_from_host_cert != NULL) {
+				अगर (opts->required_from_host_cert != शून्य) {
 					error("Certificate has multiple "
 					    "source-address options");
-					free(allowed);
-					goto out;
+					मुक्त(allowed);
+					जाओ out;
 				}
 				/* Check syntax */
-				if (addr_match_cidr_list(NULL, allowed) == -1) {
+				अगर (addr_match_cidr_list(शून्य, allowed) == -1) {
 					error("Certificate source-address "
 					    "contents invalid");
-					free(allowed);
-					goto out;
+					मुक्त(allowed);
+					जाओ out;
 				}
 				opts->required_from_host_cert = allowed;
 				found = 1;
 			}
 		}
 
-		if (!found) {
-			if (crit) {
+		अगर (!found) {
+			अगर (crit) {
 				error("Certificate critical option \"%s\" "
 				    "is not supported", name);
-				goto out;
-			} else {
+				जाओ out;
+			} अन्यथा {
 				logit("Certificate extension \"%s\" "
 				    "is not supported", name);
 			}
-		} else if (sshbuf_len(data) != 0) {
+		} अन्यथा अगर (sshbuf_len(तथ्य) != 0) {
 			error("Certificate option \"%s\" corrupt "
 			    "(extra data)", name);
-			goto out;
+			जाओ out;
 		}
-		free(name);
-		name = NULL;
+		मुक्त(name);
+		name = शून्य;
 	}
 	/* successfully parsed all options */
 	ret = 0;
 
  out:
-	free(name);
-	sshbuf_free(data);
+	मुक्त(name);
+	sshbuf_free(तथ्य);
 	sshbuf_free(c);
-	return ret;
+	वापस ret;
 }
 
-struct sshauthopt *
-sshauthopt_new(void)
+काष्ठा sshauthopt *
+sshauthopt_new(व्योम)
 {
-	struct sshauthopt *ret;
+	काष्ठा sshauthopt *ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
+	अगर ((ret = सुस्मृति(1, माप(*ret))) == शून्य)
+		वापस शून्य;
 	ret->force_tun_device = -1;
-	return ret;
+	वापस ret;
 }
 
-void
-sshauthopt_free(struct sshauthopt *opts)
+व्योम
+sshauthopt_free(काष्ठा sshauthopt *opts)
 {
-	size_t i;
+	माप_प्रकार i;
 
-	if (opts == NULL)
-		return;
+	अगर (opts == शून्य)
+		वापस;
 
-	free(opts->cert_principals);
-	free(opts->force_command);
-	free(opts->required_from_host_cert);
-	free(opts->required_from_host_keys);
+	मुक्त(opts->cert_principals);
+	मुक्त(opts->force_command);
+	मुक्त(opts->required_from_host_cert);
+	मुक्त(opts->required_from_host_कुंजियाँ);
 
-	for (i = 0; i < opts->nenv; i++)
-		free(opts->env[i]);
-	free(opts->env);
+	क्रम (i = 0; i < opts->nenv; i++)
+		मुक्त(opts->env[i]);
+	मुक्त(opts->env);
 
-	for (i = 0; i < opts->npermitopen; i++)
-		free(opts->permitopen[i]);
-	free(opts->permitopen);
+	क्रम (i = 0; i < opts->npermitopen; i++)
+		मुक्त(opts->permitopen[i]);
+	मुक्त(opts->permitopen);
 
-	for (i = 0; i < opts->npermitlisten; i++)
-		free(opts->permitlisten[i]);
-	free(opts->permitlisten);
+	क्रम (i = 0; i < opts->npermitlisten; i++)
+		मुक्त(opts->permitlisten[i]);
+	मुक्त(opts->permitlisten);
 
-	freezero(opts, sizeof(*opts));
+	freezero(opts, माप(*opts));
 }
 
-struct sshauthopt *
-sshauthopt_new_with_keys_defaults(void)
+काष्ठा sshauthopt *
+sshauthopt_new_with_कुंजियाँ_defaults(व्योम)
 {
-	struct sshauthopt *ret = NULL;
+	काष्ठा sshauthopt *ret = शून्य;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	अगर ((ret = sshauthopt_new()) == शून्य)
+		वापस शून्य;
 
 	/* Defaults for authorized_keys flags */
 	ret->permit_port_forwarding_flag = 1;
@@ -242,359 +242,359 @@ sshauthopt_new_with_keys_defaults(void)
 	ret->permit_x11_forwarding_flag = 1;
 	ret->permit_pty_flag = 1;
 	ret->permit_user_rc = 1;
-	return ret;
+	वापस ret;
 }
 
 /*
  * Parse and record a permitopen/permitlisten directive.
  * Return 0 on success. Return -1 on failure and sets *errstrp to error reason.
  */
-static int
-handle_permit(const char **optsp, int allow_bare_port,
-    char ***permitsp, size_t *npermitsp, const char **errstrp)
+अटल पूर्णांक
+handle_permit(स्थिर अक्षर **optsp, पूर्णांक allow_bare_port,
+    अक्षर ***permitsp, माप_प्रकार *npermitsp, स्थिर अक्षर **errstrp)
 {
-	char *opt, *tmp, *cp, *host, **permits = *permitsp;
-	size_t npermits = *npermitsp;
-	const char *errstr = "unknown error";
+	अक्षर *opt, *tmp, *cp, *host, **permits = *permitsp;
+	माप_प्रकार npermits = *npermitsp;
+	स्थिर अक्षर *errstr = "unknown error";
 
-	if (npermits > SSH_AUTHOPT_PERMIT_MAX) {
+	अगर (npermits > SSH_AUTHOPT_PERMIT_MAX) {
 		*errstrp = "too many permission directives";
-		return -1;
+		वापस -1;
 	}
-	if ((opt = opt_dequote(optsp, &errstr)) == NULL) {
-		return -1;
+	अगर ((opt = opt_dequote(optsp, &errstr)) == शून्य) {
+		वापस -1;
 	}
-	if (allow_bare_port && strchr(opt, ':') == NULL) {
+	अगर (allow_bare_port && म_अक्षर(opt, ':') == शून्य) {
 		/*
 		 * Allow a bare port number in permitlisten to indicate a
 		 * listen_host wildcard.
 		 */
-		if (asprintf(&tmp, "*:%s", opt) == -1) {
-			free(opt);
+		अगर (asprintf(&tmp, "*:%s", opt) == -1) {
+			मुक्त(opt);
 			*errstrp = "memory allocation failed";
-			return -1;
+			वापस -1;
 		}
-		free(opt);
+		मुक्त(opt);
 		opt = tmp;
 	}
-	if ((tmp = strdup(opt)) == NULL) {
-		free(opt);
+	अगर ((tmp = strdup(opt)) == शून्य) {
+		मुक्त(opt);
 		*errstrp = "memory allocation failed";
-		return -1;
+		वापस -1;
 	}
 	cp = tmp;
 	/* validate syntax before recording it. */
-	host = hpdelim2(&cp, NULL);
-	if (host == NULL || strlen(host) >= NI_MAXHOST) {
-		free(tmp);
-		free(opt);
+	host = hpdelim2(&cp, शून्य);
+	अगर (host == शून्य || म_माप(host) >= NI_MAXHOST) {
+		मुक्त(tmp);
+		मुक्त(opt);
 		*errstrp = "invalid permission hostname";
-		return -1;
+		वापस -1;
 	}
 	/*
 	 * don't want to use permitopen_port to avoid
 	 * dependency on channels.[ch] here.
 	 */
-	if (cp == NULL ||
-	    (strcmp(cp, "*") != 0 && a2port(cp) <= 0)) {
-		free(tmp);
-		free(opt);
+	अगर (cp == शून्य ||
+	    (म_भेद(cp, "*") != 0 && a2port(cp) <= 0)) {
+		मुक्त(tmp);
+		मुक्त(opt);
 		*errstrp = "invalid permission port";
-		return -1;
+		वापस -1;
 	}
 	/* XXX - add streamlocal support */
-	free(tmp);
+	मुक्त(tmp);
 	/* Record it */
-	if ((permits = recallocarray(permits, npermits, npermits + 1,
-	    sizeof(*permits))) == NULL) {
-		free(opt);
+	अगर ((permits = recallocarray(permits, npermits, npermits + 1,
+	    माप(*permits))) == शून्य) {
+		मुक्त(opt);
 		/* NB. don't update *permitsp if alloc fails */
 		*errstrp = "memory allocation failed";
-		return -1;
+		वापस -1;
 	}
 	permits[npermits++] = opt;
 	*permitsp = permits;
 	*npermitsp = npermits;
-	return 0;
+	वापस 0;
 }
 
-struct sshauthopt *
-sshauthopt_parse(const char *opts, const char **errstrp)
+काष्ठा sshauthopt *
+sshauthopt_parse(स्थिर अक्षर *opts, स्थिर अक्षर **errstrp)
 {
-	char **oarray, *opt, *cp, *tmp;
-	int r;
-	struct sshauthopt *ret = NULL;
-	const char *errstr = "unknown error";
+	अक्षर **oarray, *opt, *cp, *tmp;
+	पूर्णांक r;
+	काष्ठा sshauthopt *ret = शून्य;
+	स्थिर अक्षर *errstr = "unknown error";
 	uint64_t valid_before;
-	size_t i, l;
+	माप_प्रकार i, l;
 
-	if (errstrp != NULL)
-		*errstrp = NULL;
-	if ((ret = sshauthopt_new_with_keys_defaults()) == NULL)
-		goto alloc_fail;
+	अगर (errstrp != शून्य)
+		*errstrp = शून्य;
+	अगर ((ret = sshauthopt_new_with_कुंजियाँ_defaults()) == शून्य)
+		जाओ alloc_fail;
 
-	if (opts == NULL)
-		return ret;
+	अगर (opts == शून्य)
+		वापस ret;
 
-	while (*opts && *opts != ' ' && *opts != '\t') {
+	जबतक (*opts && *opts != ' ' && *opts != '\t') {
 		/* flag options */
-		if ((r = opt_flag("restrict", 0, &opts)) != -1) {
+		अगर ((r = opt_flag("restrict", 0, &opts)) != -1) {
 			ret->restricted = 1;
 			ret->permit_port_forwarding_flag = 0;
 			ret->permit_agent_forwarding_flag = 0;
 			ret->permit_x11_forwarding_flag = 0;
 			ret->permit_pty_flag = 0;
 			ret->permit_user_rc = 0;
-		} else if ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
+		} अन्यथा अगर ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
 			ret->cert_authority = r;
-		} else if ((r = opt_flag("port-forwarding", 1, &opts)) != -1) {
+		} अन्यथा अगर ((r = opt_flag("port-forwarding", 1, &opts)) != -1) {
 			ret->permit_port_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("agent-forwarding", 1, &opts)) != -1) {
+		} अन्यथा अगर ((r = opt_flag("agent-forwarding", 1, &opts)) != -1) {
 			ret->permit_agent_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("x11-forwarding", 1, &opts)) != -1) {
+		} अन्यथा अगर ((r = opt_flag("x11-forwarding", 1, &opts)) != -1) {
 			ret->permit_x11_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("touch-required", 1, &opts)) != -1) {
+		} अन्यथा अगर ((r = opt_flag("touch-required", 1, &opts)) != -1) {
 			ret->no_require_user_presence = r != 1; /* NB. flip */
-		} else if ((r = opt_flag("verify-required", 1, &opts)) != -1) {
+		} अन्यथा अगर ((r = opt_flag("verify-required", 1, &opts)) != -1) {
 			ret->require_verify = r == 1;
-		} else if ((r = opt_flag("pty", 1, &opts)) != -1) {
+		} अन्यथा अगर ((r = opt_flag("pty", 1, &opts)) != -1) {
 			ret->permit_pty_flag = r == 1;
-		} else if ((r = opt_flag("user-rc", 1, &opts)) != -1) {
+		} अन्यथा अगर ((r = opt_flag("user-rc", 1, &opts)) != -1) {
 			ret->permit_user_rc = r == 1;
-		} else if (opt_match(&opts, "command")) {
-			if (ret->force_command != NULL) {
+		} अन्यथा अगर (opt_match(&opts, "command")) {
+			अगर (ret->force_command != शून्य) {
 				errstr = "multiple \"command\" clauses";
-				goto fail;
+				जाओ fail;
 			}
 			ret->force_command = opt_dequote(&opts, &errstr);
-			if (ret->force_command == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "principals")) {
-			if (ret->cert_principals != NULL) {
+			अगर (ret->force_command == शून्य)
+				जाओ fail;
+		} अन्यथा अगर (opt_match(&opts, "principals")) {
+			अगर (ret->cert_principals != शून्य) {
 				errstr = "multiple \"principals\" clauses";
-				goto fail;
+				जाओ fail;
 			}
 			ret->cert_principals = opt_dequote(&opts, &errstr);
-			if (ret->cert_principals == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "from")) {
-			if (ret->required_from_host_keys != NULL) {
+			अगर (ret->cert_principals == शून्य)
+				जाओ fail;
+		} अन्यथा अगर (opt_match(&opts, "from")) {
+			अगर (ret->required_from_host_कुंजियाँ != शून्य) {
 				errstr = "multiple \"from\" clauses";
-				goto fail;
+				जाओ fail;
 			}
-			ret->required_from_host_keys = opt_dequote(&opts,
+			ret->required_from_host_कुंजियाँ = opt_dequote(&opts,
 			    &errstr);
-			if (ret->required_from_host_keys == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "expiry-time")) {
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			if (parse_absolute_time(opt, &valid_before) != 0 ||
+			अगर (ret->required_from_host_कुंजियाँ == शून्य)
+				जाओ fail;
+		} अन्यथा अगर (opt_match(&opts, "expiry-time")) {
+			अगर ((opt = opt_dequote(&opts, &errstr)) == शून्य)
+				जाओ fail;
+			अगर (parse_absolute_time(opt, &valid_before) != 0 ||
 			    valid_before == 0) {
-				free(opt);
+				मुक्त(opt);
 				errstr = "invalid expires time";
-				goto fail;
+				जाओ fail;
 			}
-			free(opt);
-			if (ret->valid_before == 0 ||
+			मुक्त(opt);
+			अगर (ret->valid_before == 0 ||
 			    valid_before < ret->valid_before)
 				ret->valid_before = valid_before;
-		} else if (opt_match(&opts, "environment")) {
-			if (ret->nenv > SSH_AUTHOPT_ENV_MAX) {
+		} अन्यथा अगर (opt_match(&opts, "environment")) {
+			अगर (ret->nenv > SSH_AUTHOPT_ENV_MAX) {
 				errstr = "too many environment strings";
-				goto fail;
+				जाओ fail;
 			}
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
+			अगर ((opt = opt_dequote(&opts, &errstr)) == शून्य)
+				जाओ fail;
 			/* env name must be alphanumeric and followed by '=' */
-			if ((tmp = strchr(opt, '=')) == NULL) {
-				free(opt);
+			अगर ((tmp = म_अक्षर(opt, '=')) == शून्य) {
+				मुक्त(opt);
 				errstr = "invalid environment string";
-				goto fail;
+				जाओ fail;
 			}
-			if ((cp = strdup(opt)) == NULL) {
-				free(opt);
-				goto alloc_fail;
+			अगर ((cp = strdup(opt)) == शून्य) {
+				मुक्त(opt);
+				जाओ alloc_fail;
 			}
-			l = (size_t)(tmp - opt);
+			l = (माप_प्रकार)(tmp - opt);
 			cp[l] = '\0'; /* truncate at '=' */
-			if (!valid_env_name(cp)) {
-				free(cp);
-				free(opt);
+			अगर (!valid_env_name(cp)) {
+				मुक्त(cp);
+				मुक्त(opt);
 				errstr = "invalid environment string";
-				goto fail;
+				जाओ fail;
 			}
 			/* Check for duplicates; XXX O(n*log(n)) */
-			for (i = 0; i < ret->nenv; i++) {
-				if (strncmp(ret->env[i], cp, l) == 0 &&
+			क्रम (i = 0; i < ret->nenv; i++) {
+				अगर (म_भेदन(ret->env[i], cp, l) == 0 &&
 				    ret->env[i][l] == '=')
-					break;
+					अवरोध;
 			}
-			free(cp);
+			मुक्त(cp);
 			/* First match wins */
-			if (i >= ret->nenv) {
+			अगर (i >= ret->nenv) {
 				/* Append it. */
 				oarray = ret->env;
-				if ((ret->env = recallocarray(ret->env,
+				अगर ((ret->env = recallocarray(ret->env,
 				    ret->nenv, ret->nenv + 1,
-				    sizeof(*ret->env))) == NULL) {
-					free(opt);
+				    माप(*ret->env))) == शून्य) {
+					मुक्त(opt);
 					/* put it back for cleanup */
 					ret->env = oarray;
-					goto alloc_fail;
+					जाओ alloc_fail;
 				}
 				ret->env[ret->nenv++] = opt;
-				opt = NULL; /* transferred */
+				opt = शून्य; /* transferred */
 			}
-			free(opt);
-		} else if (opt_match(&opts, "permitopen")) {
-			if (handle_permit(&opts, 0, &ret->permitopen,
+			मुक्त(opt);
+		} अन्यथा अगर (opt_match(&opts, "permitopen")) {
+			अगर (handle_permit(&opts, 0, &ret->permitopen,
 			    &ret->npermitopen, &errstr) != 0)
-				goto fail;
-		} else if (opt_match(&opts, "permitlisten")) {
-			if (handle_permit(&opts, 1, &ret->permitlisten,
+				जाओ fail;
+		} अन्यथा अगर (opt_match(&opts, "permitlisten")) {
+			अगर (handle_permit(&opts, 1, &ret->permitlisten,
 			    &ret->npermitlisten, &errstr) != 0)
-				goto fail;
-		} else if (opt_match(&opts, "tunnel")) {
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			ret->force_tun_device = a2tun(opt, NULL);
-			free(opt);
-			if (ret->force_tun_device == SSH_TUNID_ERR) {
+				जाओ fail;
+		} अन्यथा अगर (opt_match(&opts, "tunnel")) {
+			अगर ((opt = opt_dequote(&opts, &errstr)) == शून्य)
+				जाओ fail;
+			ret->force_tun_device = a2tun(opt, शून्य);
+			मुक्त(opt);
+			अगर (ret->force_tun_device == SSH_TUNID_ERR) {
 				errstr = "invalid tun device";
-				goto fail;
+				जाओ fail;
 			}
 		}
 		/*
 		 * Skip the comma, and move to the next option
 		 * (or break out if there are no more).
 		 */
-		if (*opts == '\0' || *opts == ' ' || *opts == '\t')
-			break;		/* End of options. */
+		अगर (*opts == '\0' || *opts == ' ' || *opts == '\t')
+			अवरोध;		/* End of options. */
 		/* Anything other than a comma is an unknown option */
-		if (*opts != ',') {
+		अगर (*opts != ',') {
 			errstr = "unknown key option";
-			goto fail;
+			जाओ fail;
 		}
 		opts++;
-		if (*opts == '\0') {
+		अगर (*opts == '\0') {
 			errstr = "unexpected end-of-options";
-			goto fail;
+			जाओ fail;
 		}
 	}
 
 	/* success */
-	if (errstrp != NULL)
-		*errstrp = NULL;
-	return ret;
+	अगर (errstrp != शून्य)
+		*errstrp = शून्य;
+	वापस ret;
 
 alloc_fail:
 	errstr = "memory allocation failed";
 fail:
 	sshauthopt_free(ret);
-	if (errstrp != NULL)
+	अगर (errstrp != शून्य)
 		*errstrp = errstr;
-	return NULL;
+	वापस शून्य;
 }
 
-struct sshauthopt *
-sshauthopt_from_cert(struct sshkey *k)
+काष्ठा sshauthopt *
+sshauthopt_from_cert(काष्ठा sshkey *k)
 {
-	struct sshauthopt *ret;
+	काष्ठा sshauthopt *ret;
 
-	if (k == NULL || !sshkey_type_is_cert(k->type) || k->cert == NULL ||
+	अगर (k == शून्य || !sshkey_type_is_cert(k->type) || k->cert == शून्य ||
 	    k->cert->type != SSH2_CERT_TYPE_USER)
-		return NULL;
+		वापस शून्य;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	अगर ((ret = sshauthopt_new()) == शून्य)
+		वापस शून्य;
 
 	/* Handle options and critical extensions separately */
-	if (cert_option_list(ret, k->cert->critical,
+	अगर (cert_option_list(ret, k->cert->critical,
 	    OPTIONS_CRITICAL, 1) == -1) {
 		sshauthopt_free(ret);
-		return NULL;
+		वापस शून्य;
 	}
-	if (cert_option_list(ret, k->cert->extensions,
+	अगर (cert_option_list(ret, k->cert->extensions,
 	    OPTIONS_EXTENSIONS, 0) == -1) {
 		sshauthopt_free(ret);
-		return NULL;
+		वापस शून्य;
 	}
 	/* success */
-	return ret;
+	वापस ret;
 }
 
 /*
  * Merges "additional" options to "primary" and returns the result.
  * NB. Some options from primary have primacy.
  */
-struct sshauthopt *
-sshauthopt_merge(const struct sshauthopt *primary,
-    const struct sshauthopt *additional, const char **errstrp)
+काष्ठा sshauthopt *
+sshauthopt_merge(स्थिर काष्ठा sshauthopt *primary,
+    स्थिर काष्ठा sshauthopt *additional, स्थिर अक्षर **errstrp)
 {
-	struct sshauthopt *ret;
-	const char *errstr = "internal error";
-	const char *tmp;
+	काष्ठा sshauthopt *ret;
+	स्थिर अक्षर *errstr = "internal error";
+	स्थिर अक्षर *tmp;
 
-	if (errstrp != NULL)
-		*errstrp = NULL;
+	अगर (errstrp != शून्य)
+		*errstrp = शून्य;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		goto alloc_fail;
+	अगर ((ret = sshauthopt_new()) == शून्य)
+		जाओ alloc_fail;
 
 	/* cert_authority and cert_principals are cleared in result */
 
 	/* Prefer access lists from primary. */
 	/* XXX err is both set and mismatch? */
 	tmp = primary->required_from_host_cert;
-	if (tmp == NULL)
+	अगर (tmp == शून्य)
 		tmp = additional->required_from_host_cert;
-	if (tmp != NULL && (ret->required_from_host_cert = strdup(tmp)) == NULL)
-		goto alloc_fail;
-	tmp = primary->required_from_host_keys;
-	if (tmp == NULL)
-		tmp = additional->required_from_host_keys;
-	if (tmp != NULL && (ret->required_from_host_keys = strdup(tmp)) == NULL)
-		goto alloc_fail;
+	अगर (tmp != शून्य && (ret->required_from_host_cert = strdup(tmp)) == शून्य)
+		जाओ alloc_fail;
+	tmp = primary->required_from_host_कुंजियाँ;
+	अगर (tmp == शून्य)
+		tmp = additional->required_from_host_कुंजियाँ;
+	अगर (tmp != शून्य && (ret->required_from_host_कुंजियाँ = strdup(tmp)) == शून्य)
+		जाओ alloc_fail;
 
 	/*
 	 * force_tun_device, permitopen/permitlisten and environment all
 	 * prefer the primary.
 	 */
 	ret->force_tun_device = primary->force_tun_device;
-	if (ret->force_tun_device == -1)
+	अगर (ret->force_tun_device == -1)
 		ret->force_tun_device = additional->force_tun_device;
-	if (primary->nenv > 0) {
-		if (dup_strings(&ret->env, &ret->nenv,
+	अगर (primary->nenv > 0) {
+		अगर (dup_strings(&ret->env, &ret->nenv,
 		    primary->env, primary->nenv) != 0)
-			goto alloc_fail;
-	} else if (additional->nenv) {
-		if (dup_strings(&ret->env, &ret->nenv,
+			जाओ alloc_fail;
+	} अन्यथा अगर (additional->nenv) {
+		अगर (dup_strings(&ret->env, &ret->nenv,
 		    additional->env, additional->nenv) != 0)
-			goto alloc_fail;
+			जाओ alloc_fail;
 	}
-	if (primary->npermitopen > 0) {
-		if (dup_strings(&ret->permitopen, &ret->npermitopen,
+	अगर (primary->npermitopen > 0) {
+		अगर (dup_strings(&ret->permitopen, &ret->npermitopen,
 		    primary->permitopen, primary->npermitopen) != 0)
-			goto alloc_fail;
-	} else if (additional->npermitopen > 0) {
-		if (dup_strings(&ret->permitopen, &ret->npermitopen,
+			जाओ alloc_fail;
+	} अन्यथा अगर (additional->npermitopen > 0) {
+		अगर (dup_strings(&ret->permitopen, &ret->npermitopen,
 		    additional->permitopen, additional->npermitopen) != 0)
-			goto alloc_fail;
+			जाओ alloc_fail;
 	}
 
-	if (primary->npermitlisten > 0) {
-		if (dup_strings(&ret->permitlisten, &ret->npermitlisten,
+	अगर (primary->npermitlisten > 0) {
+		अगर (dup_strings(&ret->permitlisten, &ret->npermitlisten,
 		    primary->permitlisten, primary->npermitlisten) != 0)
-			goto alloc_fail;
-	} else if (additional->npermitlisten > 0) {
-		if (dup_strings(&ret->permitlisten, &ret->npermitlisten,
+			जाओ alloc_fail;
+	} अन्यथा अगर (additional->npermitlisten > 0) {
+		अगर (dup_strings(&ret->permitlisten, &ret->npermitlisten,
 		    additional->permitlisten, additional->npermitlisten) != 0)
-			goto alloc_fail;
+			जाओ alloc_fail;
 	}
 
-#define OPTFLAG_AND(x) ret->x = (primary->x == 1) && (additional->x == 1)
-#define OPTFLAG_OR(x) ret->x = (primary->x == 1) || (additional->x == 1)
+#घोषणा OPTFLAG_AND(x) ret->x = (primary->x == 1) && (additional->x == 1)
+#घोषणा OPTFLAG_OR(x) ret->x = (primary->x == 1) || (additional->x == 1)
 	/* Permissive flags are logical-AND (i.e. must be set in both) */
 	OPTFLAG_AND(permit_port_forwarding_flag);
 	OPTFLAG_AND(permit_agent_forwarding_flag);
@@ -605,12 +605,12 @@ sshauthopt_merge(const struct sshauthopt *primary,
 	/* Restrictive flags are logical-OR (i.e. must be set in either) */
 	OPTFLAG_OR(require_verify);
 	OPTFLAG_OR(restricted);
-#undef OPTFLAG_AND
+#अघोषित OPTFLAG_AND
 
 	/* Earliest expiry time should win */
-	if (primary->valid_before != 0)
+	अगर (primary->valid_before != 0)
 		ret->valid_before = primary->valid_before;
-	if (additional->valid_before != 0 &&
+	अगर (additional->valid_before != 0 &&
 	    additional->valid_before < ret->valid_before)
 		ret->valid_before = additional->valid_before;
 
@@ -618,53 +618,53 @@ sshauthopt_merge(const struct sshauthopt *primary,
 	 * When both multiple forced-command are specified, only
 	 * proceed if they are identical, otherwise fail.
 	 */
-	if (primary->force_command != NULL &&
-	    additional->force_command != NULL) {
-		if (strcmp(primary->force_command,
+	अगर (primary->force_command != शून्य &&
+	    additional->force_command != शून्य) {
+		अगर (म_भेद(primary->force_command,
 		    additional->force_command) == 0) {
 			/* ok */
 			ret->force_command = strdup(primary->force_command);
-			if (ret->force_command == NULL)
-				goto alloc_fail;
-		} else {
+			अगर (ret->force_command == शून्य)
+				जाओ alloc_fail;
+		} अन्यथा {
 			errstr = "forced command options do not match";
-			goto fail;
+			जाओ fail;
 		}
-	} else if (primary->force_command != NULL) {
-		if ((ret->force_command = strdup(
-		    primary->force_command)) == NULL)
-			goto alloc_fail;
-	} else if (additional->force_command != NULL) {
-		if ((ret->force_command = strdup(
-		    additional->force_command)) == NULL)
-			goto alloc_fail;
+	} अन्यथा अगर (primary->force_command != शून्य) {
+		अगर ((ret->force_command = strdup(
+		    primary->force_command)) == शून्य)
+			जाओ alloc_fail;
+	} अन्यथा अगर (additional->force_command != शून्य) {
+		अगर ((ret->force_command = strdup(
+		    additional->force_command)) == शून्य)
+			जाओ alloc_fail;
 	}
 	/* success */
-	if (errstrp != NULL)
-		*errstrp = NULL;
-	return ret;
+	अगर (errstrp != शून्य)
+		*errstrp = शून्य;
+	वापस ret;
 
  alloc_fail:
 	errstr = "memory allocation failed";
  fail:
-	if (errstrp != NULL)
+	अगर (errstrp != शून्य)
 		*errstrp = errstr;
 	sshauthopt_free(ret);
-	return NULL;
+	वापस शून्य;
 }
 
 /*
  * Copy options
  */
-struct sshauthopt *
-sshauthopt_copy(const struct sshauthopt *orig)
+काष्ठा sshauthopt *
+sshauthopt_copy(स्थिर काष्ठा sshauthopt *orig)
 {
-	struct sshauthopt *ret;
+	काष्ठा sshauthopt *ret;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	अगर ((ret = sshauthopt_new()) == शून्य)
+		वापस शून्य;
 
-#define OPTSCALAR(x) ret->x = orig->x
+#घोषणा OPTSCALAR(x) ret->x = orig->x
 	OPTSCALAR(permit_port_forwarding_flag);
 	OPTSCALAR(permit_agent_forwarding_flag);
 	OPTSCALAR(permit_x11_forwarding_flag);
@@ -676,131 +676,131 @@ sshauthopt_copy(const struct sshauthopt *orig)
 	OPTSCALAR(valid_before);
 	OPTSCALAR(no_require_user_presence);
 	OPTSCALAR(require_verify);
-#undef OPTSCALAR
-#define OPTSTRING(x) \
-	do { \
-		if (orig->x != NULL && (ret->x = strdup(orig->x)) == NULL) { \
+#अघोषित OPTSCALAR
+#घोषणा OPTSTRING(x) \
+	करो { \
+		अगर (orig->x != शून्य && (ret->x = strdup(orig->x)) == शून्य) { \
 			sshauthopt_free(ret); \
-			return NULL; \
+			वापस शून्य; \
 		} \
-	} while (0)
+	} जबतक (0)
 	OPTSTRING(cert_principals);
 	OPTSTRING(force_command);
 	OPTSTRING(required_from_host_cert);
-	OPTSTRING(required_from_host_keys);
-#undef OPTSTRING
+	OPTSTRING(required_from_host_कुंजियाँ);
+#अघोषित OPTSTRING
 
-	if (dup_strings(&ret->env, &ret->nenv, orig->env, orig->nenv) != 0 ||
+	अगर (dup_strings(&ret->env, &ret->nenv, orig->env, orig->nenv) != 0 ||
 	    dup_strings(&ret->permitopen, &ret->npermitopen,
 	    orig->permitopen, orig->npermitopen) != 0 ||
 	    dup_strings(&ret->permitlisten, &ret->npermitlisten,
 	    orig->permitlisten, orig->npermitlisten) != 0) {
 		sshauthopt_free(ret);
-		return NULL;
+		वापस शून्य;
 	}
-	return ret;
+	वापस ret;
 }
 
-static int
-serialise_array(struct sshbuf *m, char **a, size_t n)
+अटल पूर्णांक
+serialise_array(काष्ठा sshbuf *m, अक्षर **a, माप_प्रकार n)
 {
-	struct sshbuf *b;
-	size_t i;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	काष्ठा sshbuf *b;
+	माप_प्रकार i;
+	पूर्णांक r = SSH_ERR_INTERNAL_ERROR;
 
-	if (n > INT_MAX)
-		return SSH_ERR_INTERNAL_ERROR;
+	अगर (n > पूर्णांक_उच्च)
+		वापस SSH_ERR_INTERNAL_ERROR;
 
-	if ((b = sshbuf_new()) == NULL) {
-		return SSH_ERR_ALLOC_FAIL;
+	अगर ((b = sshbuf_new()) == शून्य) {
+		वापस SSH_ERR_ALLOC_FAIL;
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_put_cstring(b, a[i])) != 0)
-			goto out;
+	क्रम (i = 0; i < n; i++) {
+		अगर ((r = sshbuf_put_cstring(b, a[i])) != 0)
+			जाओ out;
 	}
-	if ((r = sshbuf_put_u32(m, n)) != 0 ||
+	अगर ((r = sshbuf_put_u32(m, n)) != 0 ||
 	    (r = sshbuf_put_stringb(m, b)) != 0)
-		goto out;
+		जाओ out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	वापस r;
 }
 
-static int
-deserialise_array(struct sshbuf *m, char ***ap, size_t *np)
+अटल पूर्णांक
+deserialise_array(काष्ठा sshbuf *m, अक्षर ***ap, माप_प्रकार *np)
 {
-	char **a = NULL;
-	size_t i, n = 0;
-	struct sshbuf *b = NULL;
+	अक्षर **a = शून्य;
+	माप_प्रकार i, n = 0;
+	काष्ठा sshbuf *b = शून्य;
 	u_int tmp;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	पूर्णांक r = SSH_ERR_INTERNAL_ERROR;
 
-	if ((r = sshbuf_get_u32(m, &tmp)) != 0 ||
+	अगर ((r = sshbuf_get_u32(m, &tmp)) != 0 ||
 	    (r = sshbuf_froms(m, &b)) != 0)
-		goto out;
-	if (tmp > INT_MAX) {
+		जाओ out;
+	अगर (tmp > पूर्णांक_उच्च) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		जाओ out;
 	}
 	n = tmp;
-	if (n > 0 && (a = calloc(n, sizeof(*a))) == NULL) {
+	अगर (n > 0 && (a = सुस्मृति(n, माप(*a))) == शून्य) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जाओ out;
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_get_cstring(b, &a[i], NULL)) != 0)
-			goto out;
+	क्रम (i = 0; i < n; i++) {
+		अगर ((r = sshbuf_get_cstring(b, &a[i], शून्य)) != 0)
+			जाओ out;
 	}
 	/* success */
 	r = 0;
 	*ap = a;
-	a = NULL;
+	a = शून्य;
 	*np = n;
 	n = 0;
  out:
-	if (a != NULL) {
-		for (i = 0; i < n; i++)
-			free(a[i]);
-		free(a);
+	अगर (a != शून्य) {
+		क्रम (i = 0; i < n; i++)
+			मुक्त(a[i]);
+		मुक्त(a);
 	}
 	sshbuf_free(b);
-	return r;
+	वापस r;
 }
 
-static int
-serialise_nullable_string(struct sshbuf *m, const char *s)
+अटल पूर्णांक
+serialise_nullable_string(काष्ठा sshbuf *m, स्थिर अक्षर *s)
 {
-	int r;
+	पूर्णांक r;
 
-	if ((r = sshbuf_put_u8(m, s == NULL)) != 0 ||
+	अगर ((r = sshbuf_put_u8(m, s == शून्य)) != 0 ||
 	    (r = sshbuf_put_cstring(m, s)) != 0)
-		return r;
-	return 0;
+		वापस r;
+	वापस 0;
 }
 
-static int
-deserialise_nullable_string(struct sshbuf *m, char **sp)
+अटल पूर्णांक
+deserialise_nullable_string(काष्ठा sshbuf *m, अक्षर **sp)
 {
-	int r;
+	पूर्णांक r;
 	u_char flag;
 
-	*sp = NULL;
-	if ((r = sshbuf_get_u8(m, &flag)) != 0 ||
-	    (r = sshbuf_get_cstring(m, flag ? NULL : sp, NULL)) != 0)
-		return r;
-	return 0;
+	*sp = शून्य;
+	अगर ((r = sshbuf_get_u8(m, &flag)) != 0 ||
+	    (r = sshbuf_get_cstring(m, flag ? शून्य : sp, शून्य)) != 0)
+		वापस r;
+	वापस 0;
 }
 
-int
-sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m,
-    int untrusted)
+पूर्णांक
+sshauthopt_serialise(स्थिर काष्ठा sshauthopt *opts, काष्ठा sshbuf *m,
+    पूर्णांक untrusted)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	पूर्णांक r = SSH_ERR_INTERNAL_ERROR;
 
 	/* Flag options */
-	if ((r = sshbuf_put_u8(m, opts->permit_port_forwarding_flag)) != 0 ||
+	अगर ((r = sshbuf_put_u8(m, opts->permit_port_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_agent_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_x11_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_pty_flag)) != 0 ||
@@ -809,60 +809,60 @@ sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m,
 	    (r = sshbuf_put_u8(m, opts->cert_authority)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->no_require_user_presence)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->require_verify)) != 0)
-		return r;
+		वापस r;
 
 	/* Simple integer options */
-	if ((r = sshbuf_put_u64(m, opts->valid_before)) != 0)
-		return r;
+	अगर ((r = sshbuf_put_u64(m, opts->valid_before)) != 0)
+		वापस r;
 
 	/* tunnel number can be negative to indicate "unset" */
-	if ((r = sshbuf_put_u8(m, opts->force_tun_device == -1)) != 0 ||
+	अगर ((r = sshbuf_put_u8(m, opts->force_tun_device == -1)) != 0 ||
 	    (r = sshbuf_put_u32(m, (opts->force_tun_device < 0) ?
 	    0 : (u_int)opts->force_tun_device)) != 0)
-		return r;
+		वापस r;
 
 	/* String options; these may be NULL */
-	if ((r = serialise_nullable_string(m,
+	अगर ((r = serialise_nullable_string(m,
 	    untrusted ? "yes" : opts->cert_principals)) != 0 ||
 	    (r = serialise_nullable_string(m,
 	    untrusted ? "true" : opts->force_command)) != 0 ||
 	    (r = serialise_nullable_string(m,
-	    untrusted ? NULL : opts->required_from_host_cert)) != 0 ||
+	    untrusted ? शून्य : opts->required_from_host_cert)) != 0 ||
 	    (r = serialise_nullable_string(m,
-	    untrusted ? NULL : opts->required_from_host_keys)) != 0)
-		return r;
+	    untrusted ? शून्य : opts->required_from_host_कुंजियाँ)) != 0)
+		वापस r;
 
 	/* Array options */
-	if ((r = serialise_array(m, opts->env,
+	अगर ((r = serialise_array(m, opts->env,
 	    untrusted ? 0 : opts->nenv)) != 0 ||
 	    (r = serialise_array(m, opts->permitopen,
 	    untrusted ? 0 : opts->npermitopen)) != 0 ||
 	    (r = serialise_array(m, opts->permitlisten,
 	    untrusted ? 0 : opts->npermitlisten)) != 0)
-		return r;
+		वापस r;
 
 	/* success */
-	return 0;
+	वापस 0;
 }
 
-int
-sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **optsp)
+पूर्णांक
+sshauthopt_deserialise(काष्ठा sshbuf *m, काष्ठा sshauthopt **optsp)
 {
-	struct sshauthopt *opts = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	काष्ठा sshauthopt *opts = शून्य;
+	पूर्णांक r = SSH_ERR_INTERNAL_ERROR;
 	u_char f;
 	u_int tmp;
 
-	if ((opts = calloc(1, sizeof(*opts))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	अगर ((opts = सुस्मृति(1, माप(*opts))) == शून्य)
+		वापस SSH_ERR_ALLOC_FAIL;
 
 	/* Flag options */
-#define OPT_FLAG(x) \
-	do { \
-		if ((r = sshbuf_get_u8(m, &f)) != 0) \
-			goto out; \
+#घोषणा OPT_FLAG(x) \
+	करो { \
+		अगर ((r = sshbuf_get_u8(m, &f)) != 0) \
+			जाओ out; \
 		opts->x = f; \
-	} while (0)
+	} जबतक (0)
 	OPT_FLAG(permit_port_forwarding_flag);
 	OPT_FLAG(permit_agent_forwarding_flag);
 	OPT_FLAG(permit_x11_forwarding_flag);
@@ -872,40 +872,40 @@ sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **optsp)
 	OPT_FLAG(cert_authority);
 	OPT_FLAG(no_require_user_presence);
 	OPT_FLAG(require_verify);
-#undef OPT_FLAG
+#अघोषित OPT_FLAG
 
 	/* Simple integer options */
-	if ((r = sshbuf_get_u64(m, &opts->valid_before)) != 0)
-		goto out;
+	अगर ((r = sshbuf_get_u64(m, &opts->valid_before)) != 0)
+		जाओ out;
 
 	/* tunnel number can be negative to indicate "unset" */
-	if ((r = sshbuf_get_u8(m, &f)) != 0 ||
+	अगर ((r = sshbuf_get_u8(m, &f)) != 0 ||
 	    (r = sshbuf_get_u32(m, &tmp)) != 0)
-		goto out;
-	opts->force_tun_device = f ? -1 : (int)tmp;
+		जाओ out;
+	opts->force_tun_device = f ? -1 : (पूर्णांक)tmp;
 
 	/* String options may be NULL */
-	if ((r = deserialise_nullable_string(m, &opts->cert_principals)) != 0 ||
+	अगर ((r = deserialise_nullable_string(m, &opts->cert_principals)) != 0 ||
 	    (r = deserialise_nullable_string(m, &opts->force_command)) != 0 ||
 	    (r = deserialise_nullable_string(m,
 	    &opts->required_from_host_cert)) != 0 ||
 	    (r = deserialise_nullable_string(m,
-	    &opts->required_from_host_keys)) != 0)
-		goto out;
+	    &opts->required_from_host_कुंजियाँ)) != 0)
+		जाओ out;
 
 	/* Array options */
-	if ((r = deserialise_array(m, &opts->env, &opts->nenv)) != 0 ||
+	अगर ((r = deserialise_array(m, &opts->env, &opts->nenv)) != 0 ||
 	    (r = deserialise_array(m,
 	    &opts->permitopen, &opts->npermitopen)) != 0 ||
 	    (r = deserialise_array(m,
 	    &opts->permitlisten, &opts->npermitlisten)) != 0)
-		goto out;
+		जाओ out;
 
 	/* success */
 	r = 0;
 	*optsp = opts;
-	opts = NULL;
+	opts = शून्य;
  out:
 	sshauthopt_free(opts);
-	return r;
+	वापस r;
 }

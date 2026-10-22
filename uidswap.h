@@ -12,6 +12,6 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-void	 temporarily_use_uid(struct passwd *);
-void	 restore_uid(void);
-void	 permanently_set_uid(struct passwd *);
+व्योम	 temporarily_use_uid(काष्ठा passwd *);
+व्योम	 restore_uid(व्योम);
+व्योम	 permanently_set_uid(काष्ठा passwd *);

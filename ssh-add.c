@@ -35,754 +35,754 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#समावेश <sys/types.h>
+#समावेश <sys/stat.h>
 
-#ifdef WITH_OPENSSL
+#अगर_घोषित WITH_OPENSSL
 # include <openssl/evp.h>
 # include "openbsd-compat/openssl-compat.h"
-#endif
+#पूर्ण_अगर
 
-#include <errno.h>
-#include <fcntl.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
-#include <time.h>
+#समावेश <errno.h>
+#समावेश <fcntl.h>
+#समावेश <pwd.h>
+#समावेश <stdarg.h>
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <unistd.h>
+#समावेश <limits.h>
+#समावेश <time.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "log.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "authfd.h"
-#include "authfile.h"
-#include "pathnames.h"
-#include "misc.h"
-#include "ssherr.h"
-#include "digest.h"
-#include "ssh-sk.h"
-#include "sk-api.h"
-#include "hostfile.h"
+#समावेश "xmalloc.h"
+#समावेश "ssh.h"
+#समावेश "log.h"
+#समावेश "sshkey.h"
+#समावेश "sshbuf.h"
+#समावेश "authfd.h"
+#समावेश "authfile.h"
+#समावेश "pathnames.h"
+#समावेश "misc.h"
+#समावेश "ssherr.h"
+#समावेश "digest.h"
+#समावेश "ssh-sk.h"
+#समावेश "sk-api.h"
+#समावेश "hostfile.h"
 
-#define CERT_EXPIRY_GRACE	(5*60)
+#घोषणा CERT_EXPIRY_GRACE	(5*60)
 
 /* argv0 */
-extern char *__progname;
+बाह्य अक्षर *__progname;
 
 /* Default files to add */
-static char *default_files[] = {
-#ifdef WITH_OPENSSL
+अटल अक्षर *default_files[] = {
+#अगर_घोषित WITH_OPENSSL
 	_PATH_SSH_CLIENT_ID_RSA,
 	_PATH_SSH_CLIENT_ID_ECDSA,
 	_PATH_SSH_CLIENT_ID_ECDSA_SK,
-#endif /* WITH_OPENSSL */
+#पूर्ण_अगर /* WITH_OPENSSL */
 	_PATH_SSH_CLIENT_ID_ED25519,
 	_PATH_SSH_CLIENT_ID_ED25519_SK,
 	_PATH_SSH_CLIENT_ID_MLDSA44_ED25519,
-	NULL
+	शून्य
 };
 
-static int fingerprint_hash = SSH_FP_HASH_DEFAULT;
+अटल पूर्णांक fingerprint_hash = SSH_FP_HASH_DEFAULT;
 
 /* Default lifetime (0 == forever) */
-static int lifetime = 0;
+अटल पूर्णांक lifetime = 0;
 
 /* User has to confirm key use */
-static int confirm = 0;
+अटल पूर्णांक confirm = 0;
 
 /* we keep a cache of one passphrase */
-static char *pass = NULL;
-static void
-clear_pass(void)
+अटल अक्षर *pass = शून्य;
+अटल व्योम
+clear_pass(व्योम)
 {
-	if (pass) {
-		freezero(pass, strlen(pass));
-		pass = NULL;
+	अगर (pass) {
+		freezero(pass, म_माप(pass));
+		pass = शून्य;
 	}
 }
 
-static int
-delete_one(int agent_fd, const struct sshkey *key, const char *comment,
-    const char *path, int qflag)
+अटल पूर्णांक
+delete_one(पूर्णांक agent_fd, स्थिर काष्ठा sshkey *कुंजी, स्थिर अक्षर *comment,
+    स्थिर अक्षर *path, पूर्णांक qflag)
 {
-	int r;
+	पूर्णांक r;
 
-	if ((r = ssh_remove_identity(agent_fd, key)) != 0) {
-		fprintf(stderr, "Could not remove identity \"%s\": %s\n",
+	अगर ((r = ssh_remove_identity(agent_fd, कुंजी)) != 0) {
+		ख_लिखो(मानक_त्रुटि, "Could not remove identity \"%s\": %s\n",
 		    path, ssh_err(r));
-		return r;
+		वापस r;
 	}
-	if (!qflag) {
-		fprintf(stderr, "Identity removed: %s %s (%s)\n", path,
-		    sshkey_type(key), comment ? comment : "no comment");
+	अगर (!qflag) {
+		ख_लिखो(मानक_त्रुटि, "Identity removed: %s %s (%s)\n", path,
+		    sshkey_type(कुंजी), comment ? comment : "no comment");
 	}
-	return 0;
+	वापस 0;
 }
 
-static int
-delete_stdin(int agent_fd, int qflag, int key_only, int cert_only)
+अटल पूर्णांक
+delete_stdin(पूर्णांक agent_fd, पूर्णांक qflag, पूर्णांक कुंजी_only, पूर्णांक cert_only)
 {
-	char *line = NULL, *cp;
-	size_t linesize = 0;
-	struct sshkey *key = NULL;
-	int lnum = 0, r, ret = -1;
+	अक्षर *पंक्ति = शून्य, *cp;
+	माप_प्रकार linesize = 0;
+	काष्ठा sshkey *कुंजी = शून्य;
+	पूर्णांक lnum = 0, r, ret = -1;
 
-	while (getline(&line, &linesize, stdin) != -1) {
+	जबतक (getline(&पंक्ति, &linesize, मानक_निवेश) != -1) {
 		lnum++;
-		sshkey_free(key);
-		key = NULL;
-		line[strcspn(line, "\n")] = '\0';
-		cp = line + strspn(line, " \t");
-		if (*cp == '#' || *cp == '\0')
-			continue;
-		if ((key = sshkey_new(KEY_UNSPEC)) == NULL)
+		sshkey_free(कुंजी);
+		कुंजी = शून्य;
+		पंक्ति[म_खोज(पंक्ति, "\n")] = '\0';
+		cp = पंक्ति + म_अखोज(पंक्ति, " \t");
+		अगर (*cp == '#' || *cp == '\0')
+			जारी;
+		अगर ((कुंजी = sshkey_new(कुंजी_UNSPEC)) == शून्य)
 			fatal_f("sshkey_new");
-		if ((r = sshkey_read(key, &cp)) != 0) {
+		अगर ((r = sshkey_read(कुंजी, &cp)) != 0) {
 			error_r(r, "(stdin):%d: invalid key", lnum);
-			continue;
+			जारी;
 		}
-		if ((!key_only && !cert_only) ||
-		    (key_only && !sshkey_is_cert(key)) ||
-		    (cert_only && sshkey_is_cert(key))) {
-			if (delete_one(agent_fd, key, cp,
+		अगर ((!कुंजी_only && !cert_only) ||
+		    (कुंजी_only && !sshkey_is_cert(कुंजी)) ||
+		    (cert_only && sshkey_is_cert(कुंजी))) {
+			अगर (delete_one(agent_fd, कुंजी, cp,
 			    "(stdin)", qflag) == 0)
 				ret = 0;
 		}
 	}
-	sshkey_free(key);
-	free(line);
-	return ret;
+	sshkey_free(कुंजी);
+	मुक्त(पंक्ति);
+	वापस ret;
 }
 
-static int
-delete_file(int agent_fd, const char *filename, int key_only,
-    int cert_only, int qflag)
+अटल पूर्णांक
+delete_file(पूर्णांक agent_fd, स्थिर अक्षर *filename, पूर्णांक कुंजी_only,
+    पूर्णांक cert_only, पूर्णांक qflag)
 {
-	struct sshkey *public, *cert = NULL;
-	char *certpath = NULL, *comment = NULL;
-	int r, ret = -1;
+	काष्ठा sshkey *खुला, *cert = शून्य;
+	अक्षर *certpath = शून्य, *comment = शून्य;
+	पूर्णांक r, ret = -1;
 
-	if (strcmp(filename, "-") == 0)
-		return delete_stdin(agent_fd, qflag, key_only, cert_only);
+	अगर (म_भेद(filename, "-") == 0)
+		वापस delete_stdin(agent_fd, qflag, कुंजी_only, cert_only);
 
-	if ((r = sshkey_load_public(filename, &public,  &comment)) != 0) {
-		printf("Bad key file %s: %s\n", filename, ssh_err(r));
-		return -1;
+	अगर ((r = sshkey_load_public(filename, &खुला,  &comment)) != 0) {
+		म_लिखो("Bad key file %s: %s\n", filename, ssh_err(r));
+		वापस -1;
 	}
-	if ((!key_only && !cert_only) ||
-	    (key_only && !sshkey_is_cert(public)) ||
-	    (cert_only && sshkey_is_cert(public))) {
-		if (delete_one(agent_fd, public, comment, filename, qflag) == 0)
+	अगर ((!कुंजी_only && !cert_only) ||
+	    (कुंजी_only && !sshkey_is_cert(खुला)) ||
+	    (cert_only && sshkey_is_cert(खुला))) {
+		अगर (delete_one(agent_fd, खुला, comment, filename, qflag) == 0)
 			ret = 0;
 	}
 
-	if (key_only)
-		goto out;
+	अगर (कुंजी_only)
+		जाओ out;
 
 	/* Now try to delete the corresponding certificate too */
-	free(comment);
-	comment = NULL;
+	मुक्त(comment);
+	comment = शून्य;
 	xasprintf(&certpath, "%s-cert.pub", filename);
-	if ((r = sshkey_load_public(certpath, &cert, &comment)) != 0) {
-		if (r != SSH_ERR_SYSTEM_ERROR || errno != ENOENT)
+	अगर ((r = sshkey_load_public(certpath, &cert, &comment)) != 0) {
+		अगर (r != SSH_ERR_SYSTEM_ERROR || त्रुटि_सं != ENOENT)
 			error_r(r, "Failed to load certificate \"%s\"", certpath);
-		goto out;
+		जाओ out;
 	}
 
-	if (!sshkey_equal_public(cert, public))
+	अगर (!sshkey_equal_public(cert, खुला))
 		fatal("Certificate %s does not match private key %s",
 		    certpath, filename);
 
-	if (delete_one(agent_fd, cert, comment, certpath, qflag) == 0)
+	अगर (delete_one(agent_fd, cert, comment, certpath, qflag) == 0)
 		ret = 0;
 
  out:
 	sshkey_free(cert);
-	sshkey_free(public);
-	free(certpath);
-	free(comment);
+	sshkey_free(खुला);
+	मुक्त(certpath);
+	मुक्त(comment);
 
-	return ret;
+	वापस ret;
 }
 
 /* Send a request to remove all identities. */
-static int
-delete_all(int agent_fd, int qflag)
+अटल पूर्णांक
+delete_all(पूर्णांक agent_fd, पूर्णांक qflag)
 {
-	int ret = -1;
+	पूर्णांक ret = -1;
 
 	/*
 	 * Since the agent might be forwarded, old or non-OpenSSH, when asked
 	 * to remove all keys, attempt to remove both protocol v.1 and v.2
 	 * keys.
 	 */
-	if (ssh_remove_all_identities(agent_fd, 2) == 0)
+	अगर (ssh_remove_all_identities(agent_fd, 2) == 0)
 		ret = 0;
 	/* ignore error-code for ssh1 */
 	ssh_remove_all_identities(agent_fd, 1);
 
-	if (ret != 0)
-		fprintf(stderr, "Failed to remove all identities.\n");
-	else if (!qflag)
-		fprintf(stderr, "All identities removed.\n");
+	अगर (ret != 0)
+		ख_लिखो(मानक_त्रुटि, "Failed to remove all identities.\n");
+	अन्यथा अगर (!qflag)
+		ख_लिखो(मानक_त्रुटि, "All identities removed.\n");
 
-	return ret;
+	वापस ret;
 }
 
-static int
-query_exts(int agent_fd)
+अटल पूर्णांक
+query_exts(पूर्णांक agent_fd)
 {
-	int r;
-	char **exts = NULL;
-	size_t i;
+	पूर्णांक r;
+	अक्षर **exts = शून्य;
+	माप_प्रकार i;
 
-	if ((r = ssh_agent_query_extensions(agent_fd, &exts)) != 0)
+	अगर ((r = ssh_agent_query_extensions(agent_fd, &exts)) != 0)
 		fatal_r(r, "unable to query supported extensions");
-	for (i = 0; exts != NULL && exts[i] != NULL; i++)
-		puts(exts[i]);
+	क्रम (i = 0; exts != शून्य && exts[i] != शून्य; i++)
+		माला_दो(exts[i]);
 	stringlist_free(exts);
-	return 0;
+	वापस 0;
 }
 
-static int
-check_cert_lifetime(const struct sshkey *cert, int cert_lifetime)
+अटल पूर्णांक
+check_cert_lifetime(स्थिर काष्ठा sshkey *cert, पूर्णांक cert_lifetime)
 {
-	time_t now;
+	समय_प्रकार now;
 	uint64_t n;
 
-	if (cert == NULL || cert->cert == NULL || !sshkey_is_cert(cert) ||
+	अगर (cert == शून्य || cert->cert == शून्य || !sshkey_is_cert(cert) ||
 	    cert->cert->valid_before == 0xFFFFFFFFFFFFFFFFULL)
-		return cert_lifetime;
-	if ((now = time(NULL)) <= 0)
+		वापस cert_lifetime;
+	अगर ((now = समय(शून्य)) <= 0)
 		fatal_f("system time is at/before epoch");
-	if ((uint64_t)now > (cert->cert->valid_before + CERT_EXPIRY_GRACE))
-		return -1; /* certificate already expired */
+	अगर ((uint64_t)now > (cert->cert->valid_before + CERT_EXPIRY_GRACE))
+		वापस -1; /* certificate already expired */
 	n = (CERT_EXPIRY_GRACE + cert->cert->valid_before) - (uint64_t)now;
-	n = MINIMUM(n, INT_MAX);
-	if (cert_lifetime <= 0)
-		return (int)n;
-	return MINIMUM(cert_lifetime, (int)n);
+	n = MINIMUM(n, पूर्णांक_उच्च);
+	अगर (cert_lifetime <= 0)
+		वापस (पूर्णांक)n;
+	वापस MINIMUM(cert_lifetime, (पूर्णांक)n);
 }
 
-static int
-add_file(int agent_fd, const char *filename, int key_only, int cert_only,
-    int qflag, int Nflag, const char *skprovider,
-    struct dest_constraint **dest_constraints,
-    size_t ndest_constraints)
+अटल पूर्णांक
+add_file(पूर्णांक agent_fd, स्थिर अक्षर *filename, पूर्णांक कुंजी_only, पूर्णांक cert_only,
+    पूर्णांक qflag, पूर्णांक Nflag, स्थिर अक्षर *skprovider,
+    काष्ठा dest_constraint **dest_constraints,
+    माप_प्रकार ndest_constraints)
 {
-	struct sshkey *private = NULL, *cert = NULL;
-	char *comment = NULL;
-	char msg[1024], *certpath = NULL;
-	int cert_lifetime, r, fd, ret = -1;
-	struct sshbuf *keyblob;
+	काष्ठा sshkey *निजी = शून्य, *cert = शून्य;
+	अक्षर *comment = शून्य;
+	अक्षर संदेश[1024], *certpath = शून्य;
+	पूर्णांक cert_lifetime, r, fd, ret = -1;
+	काष्ठा sshbuf *keyblob;
 
-	if (strcmp(filename, "-") == 0) {
+	अगर (म_भेद(filename, "-") == 0) {
 		fd = STDIN_FILENO;
 		filename = "(stdin)";
-	} else if ((fd = open(filename, O_RDONLY)) == -1) {
-		perror(filename);
-		return -1;
+	} अन्यथा अगर ((fd = खोलो(filename, O_RDONLY)) == -1) {
+		लिखो_त्रुटि(filename);
+		वापस -1;
 	}
 
 	/*
 	 * Since we'll try to load a keyfile multiple times, permission errors
 	 * will occur multiple times, so check perms first and bail if wrong.
 	 */
-	if (fd != STDIN_FILENO) {
-		if (sshkey_perm_ok(fd, filename) != 0) {
-			close(fd);
-			return -1;
+	अगर (fd != STDIN_FILENO) {
+		अगर (sshkey_perm_ok(fd, filename) != 0) {
+			बंद(fd);
+			वापस -1;
 		}
 	}
-	if ((r = sshbuf_load_fd(fd, &keyblob)) != 0) {
-		fprintf(stderr, "Error loading key \"%s\": %s\n",
+	अगर ((r = sshbuf_load_fd(fd, &keyblob)) != 0) {
+		ख_लिखो(मानक_त्रुटि, "Error loading key \"%s\": %s\n",
 		    filename, ssh_err(r));
 		sshbuf_free(keyblob);
-		close(fd);
-		return -1;
+		बंद(fd);
+		वापस -1;
 	}
-	close(fd);
+	बंद(fd);
 
 	/* At first, try empty passphrase */
-	if ((r = sshkey_parse_private_fileblob(keyblob, "", &private,
-	    &comment)) != 0 && r != SSH_ERR_KEY_WRONG_PASSPHRASE) {
-		fprintf(stderr, "Error loading key \"%s\": %s\n",
+	अगर ((r = sshkey_parse_private_fileblob(keyblob, "", &निजी,
+	    &comment)) != 0 && r != SSH_ERR_कुंजी_WRONG_PASSPHRASE) {
+		ख_लिखो(मानक_त्रुटि, "Error loading key \"%s\": %s\n",
 		    filename, ssh_err(r));
-		goto fail_load;
+		जाओ fail_load;
 	}
 	/* try last */
-	if (private == NULL && pass != NULL) {
-		if ((r = sshkey_parse_private_fileblob(keyblob, pass, &private,
-		    &comment)) != 0 && r != SSH_ERR_KEY_WRONG_PASSPHRASE) {
-			fprintf(stderr, "Error loading key \"%s\": %s\n",
+	अगर (निजी == शून्य && pass != शून्य) {
+		अगर ((r = sshkey_parse_private_fileblob(keyblob, pass, &निजी,
+		    &comment)) != 0 && r != SSH_ERR_कुंजी_WRONG_PASSPHRASE) {
+			ख_लिखो(मानक_त्रुटि, "Error loading key \"%s\": %s\n",
 			    filename, ssh_err(r));
-			goto fail_load;
+			जाओ fail_load;
 		}
 	}
-	if (private == NULL) {
+	अगर (निजी == शून्य) {
 		/* clear passphrase since it did not work */
 		clear_pass();
-		snprintf(msg, sizeof msg, "Enter passphrase for %s%s: ",
+		snprintf(संदेश, माप संदेश, "Enter passphrase for %s%s: ",
 		    filename, confirm ? " (will confirm each use)" : "");
-		for (;;) {
-			pass = read_passphrase(msg, RP_ALLOW_STDIN);
-			if (strcmp(pass, "") == 0)
-				goto fail_load;
-			if ((r = sshkey_parse_private_fileblob(keyblob, pass,
-			    &private, &comment)) == 0)
-				break;
-			else if (r != SSH_ERR_KEY_WRONG_PASSPHRASE) {
-				fprintf(stderr,
+		क्रम (;;) {
+			pass = read_passphrase(संदेश, RP_ALLOW_STDIN);
+			अगर (म_भेद(pass, "") == 0)
+				जाओ fail_load;
+			अगर ((r = sshkey_parse_private_fileblob(keyblob, pass,
+			    &निजी, &comment)) == 0)
+				अवरोध;
+			अन्यथा अगर (r != SSH_ERR_कुंजी_WRONG_PASSPHRASE) {
+				ख_लिखो(मानक_त्रुटि,
 				    "Error loading key \"%s\": %s\n",
 				    filename, ssh_err(r));
  fail_load:
 				clear_pass();
 				sshbuf_free(keyblob);
-				return -1;
+				वापस -1;
 			}
 			clear_pass();
-			snprintf(msg, sizeof msg,
+			snprintf(संदेश, माप संदेश,
 			    "Bad passphrase, try again for %s%s: ", filename,
 			    confirm ? " (will confirm each use)" : "");
 		}
 	}
-	if (comment == NULL || *comment == '\0')
+	अगर (comment == शून्य || *comment == '\0')
 		comment = xstrdup(filename);
 	sshbuf_free(keyblob);
 
-	if (sshkey_is_sk(private)) {
-		if (skprovider == NULL) {
-			fprintf(stderr, "Cannot load FIDO key %s "
+	अगर (sshkey_is_sk(निजी)) {
+		अगर (skprovider == शून्य) {
+			ख_लिखो(मानक_त्रुटि, "Cannot load FIDO key %s "
 			    "without provider\n", filename);
-			goto out;
+			जाओ out;
 		}
-	} else {
+	} अन्यथा {
 		/* Don't send provider constraint for other keys */
-		skprovider = NULL;
+		skprovider = शून्य;
 	}
 
-	if (!cert_only) {
-		if ((r = ssh_add_identity_constrained(agent_fd, private,
+	अगर (!cert_only) {
+		अगर ((r = ssh_add_identity_constrained(agent_fd, निजी,
 		    comment, lifetime, confirm, skprovider,
 		    dest_constraints, ndest_constraints)) == 0) {
 			ret = 0;
-			if (!qflag) {
-				fprintf(stderr, "Identity added: %s (%s)\n",
+			अगर (!qflag) {
+				ख_लिखो(मानक_त्रुटि, "Identity added: %s (%s)\n",
 				    filename, comment);
-				if (lifetime != 0) {
-					fprintf(stderr, "Lifetime set to %s\n",
-					    fmt_timeframe((time_t)lifetime));
+				अगर (lifetime != 0) {
+					ख_लिखो(मानक_त्रुटि, "Lifetime set to %s\n",
+					    fmt_timeframe((समय_प्रकार)lifetime));
 				}
-				if (confirm != 0) {
-					fprintf(stderr, "The user must confirm "
+				अगर (confirm != 0) {
+					ख_लिखो(मानक_त्रुटि, "The user must confirm "
 					    "each use of the key\n");
 				}
 			}
-		} else {
-			fprintf(stderr, "Could not add identity \"%s\": %s\n",
+		} अन्यथा {
+			ख_लिखो(मानक_त्रुटि, "Could not add identity \"%s\": %s\n",
 			    filename, ssh_err(r));
 		}
 	}
 
 	/* Skip trying to load the cert if requested */
-	if (key_only)
-		goto out;
+	अगर (कुंजी_only)
+		जाओ out;
 
 	/* Now try to add the certificate flavour too */
 	xasprintf(&certpath, "%s-cert.pub", filename);
-	if ((r = sshkey_load_public(certpath, &cert, NULL)) != 0) {
-		if (r != SSH_ERR_SYSTEM_ERROR || errno != ENOENT)
+	अगर ((r = sshkey_load_public(certpath, &cert, शून्य)) != 0) {
+		अगर (r != SSH_ERR_SYSTEM_ERROR || त्रुटि_सं != ENOENT)
 			error_r(r, "Failed to load certificate \"%s\"",
 			    certpath);
-		goto out;
+		जाओ out;
 	}
 
-	if (!sshkey_equal_public(cert, private)) {
+	अगर (!sshkey_equal_public(cert, निजी)) {
 		error("Certificate %s does not match private key %s",
 		    certpath, filename);
-		goto out;
+		जाओ out;
 	}
 
 	cert_lifetime = lifetime;
-	if (!Nflag &&
+	अगर (!Nflag &&
 	    (cert_lifetime = check_cert_lifetime(cert, cert_lifetime)) == -1) {
 		logit("Certificate %s has already expired; ignored", certpath);
-		goto out;
+		जाओ out;
 	}
 
 	/* Graft with private bits */
-	if ((r = sshkey_to_certified(private)) != 0) {
+	अगर ((r = sshkey_to_certified(निजी)) != 0) {
 		error_fr(r, "sshkey_to_certified");
-		goto out;
+		जाओ out;
 	}
-	if ((r = sshkey_cert_copy(cert, private)) != 0) {
+	अगर ((r = sshkey_cert_copy(cert, निजी)) != 0) {
 		error_fr(r, "sshkey_cert_copy");
-		goto out;
+		जाओ out;
 	}
 	/* send to agent */
-	if ((r = ssh_add_identity_constrained(agent_fd, private, comment,
+	अगर ((r = ssh_add_identity_constrained(agent_fd, निजी, comment,
 	    cert_lifetime, confirm, skprovider,
 	    dest_constraints, ndest_constraints)) != 0) {
 		error_r(r, "Certificate %s (%s) add failed", certpath,
-		    private->cert->key_id);
-		goto out;
+		    निजी->cert->कुंजी_id);
+		जाओ out;
 	}
 	/* success */
-	if (!qflag) {
-		fprintf(stderr, "Certificate added: %s (%s)\n", certpath,
-		    private->cert->key_id);
-		if (cert_lifetime != 0) {
-			fprintf(stderr, "Lifetime set to %s\n",
-			    fmt_timeframe((time_t)cert_lifetime));
+	अगर (!qflag) {
+		ख_लिखो(मानक_त्रुटि, "Certificate added: %s (%s)\n", certpath,
+		    निजी->cert->कुंजी_id);
+		अगर (cert_lifetime != 0) {
+			ख_लिखो(मानक_त्रुटि, "Lifetime set to %s\n",
+			    fmt_timeframe((समय_प्रकार)cert_lifetime));
 		}
-		if (confirm != 0) {
-			fprintf(stderr, "The user must confirm each use "
+		अगर (confirm != 0) {
+			ख_लिखो(मानक_त्रुटि, "The user must confirm each use "
 			    "of the key\n");
 		}
 	}
 
  out:
-	free(certpath);
-	free(comment);
+	मुक्त(certpath);
+	मुक्त(comment);
 	sshkey_free(cert);
-	sshkey_free(private);
+	sshkey_free(निजी);
 
-	return ret;
+	वापस ret;
 }
 
-static int
-update_card(int agent_fd, int add, const char *id, int qflag, int no_pin,
-    int key_only, int cert_only,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints,
-    struct sshkey **certs, size_t ncerts)
+अटल पूर्णांक
+update_card(पूर्णांक agent_fd, पूर्णांक add, स्थिर अक्षर *id, पूर्णांक qflag, पूर्णांक no_pin,
+    पूर्णांक कुंजी_only, पूर्णांक cert_only,
+    काष्ठा dest_constraint **dest_constraints, माप_प्रकार ndest_constraints,
+    काष्ठा sshkey **certs, माप_प्रकार ncerts)
 {
-	char *pin = NULL;
-	int r, ret = -1;
+	अक्षर *pin = शून्य;
+	पूर्णांक r, ret = -1;
 
-	if (key_only)
+	अगर (कुंजी_only)
 		ncerts = 0;
 
-	if (add && !no_pin) {
-		if ((pin = read_passphrase("Enter passphrase for PKCS#11: ",
-		    RP_ALLOW_STDIN)) == NULL)
-			return -1;
+	अगर (add && !no_pin) {
+		अगर ((pin = read_passphrase("Enter passphrase for PKCS#11: ",
+		    RP_ALLOW_STDIN)) == शून्य)
+			वापस -1;
 	}
 
-	if ((r = ssh_update_card(agent_fd, add, id, pin == NULL ? "" : pin,
+	अगर ((r = ssh_update_card(agent_fd, add, id, pin == शून्य ? "" : pin,
 	    lifetime, confirm, dest_constraints, ndest_constraints,
 	    cert_only, certs, ncerts)) == 0) {
 		ret = 0;
-		if (!qflag) {
-			fprintf(stderr, "Card %s: %s\n",
+		अगर (!qflag) {
+			ख_लिखो(मानक_त्रुटि, "Card %s: %s\n",
 			    add ? "added" : "removed", id);
 		}
-	} else {
-		fprintf(stderr, "Could not %s card \"%s\": %s\n",
+	} अन्यथा {
+		ख_लिखो(मानक_त्रुटि, "Could not %s card \"%s\": %s\n",
 		    add ? "add" : "remove", id, ssh_err(r));
 		ret = -1;
 	}
-	free(pin);
-	return ret;
+	मुक्त(pin);
+	वापस ret;
 }
 
-static int
-test_key(int agent_fd, const char *filename)
+अटल पूर्णांक
+test_कुंजी(पूर्णांक agent_fd, स्थिर अक्षर *filename)
 {
-	struct sshkey *key = NULL;
-	u_char *sig = NULL;
-	const char *alg = NULL;
-	size_t slen = 0;
-	int r, ret = -1;
-	char data[1024];
+	काष्ठा sshkey *कुंजी = शून्य;
+	u_char *sig = शून्य;
+	स्थिर अक्षर *alg = शून्य;
+	माप_प्रकार slen = 0;
+	पूर्णांक r, ret = -1;
+	अक्षर तथ्य[1024];
 
-	if ((r = sshkey_load_public(filename, &key, NULL)) != 0) {
+	अगर ((r = sshkey_load_public(filename, &कुंजी, शून्य)) != 0) {
 		error_r(r, "Couldn't read public key %s", filename);
-		return -1;
+		वापस -1;
 	}
-	if (sshkey_type_plain(key->type) == KEY_RSA)
+	अगर (sshkey_type_plain(कुंजी->type) == कुंजी_RSA)
 		alg = "rsa-sha2-256";
-	arc4random_buf(data, sizeof(data));
-	if ((r = ssh_agent_sign(agent_fd, key, &sig, &slen, data, sizeof(data),
+	arc4random_buf(तथ्य, माप(तथ्य));
+	अगर ((r = ssh_agent_sign(agent_fd, कुंजी, &sig, &slen, तथ्य, माप(तथ्य),
 	    alg, 0)) != 0) {
 		error_r(r, "Agent signature failed for %s", filename);
-		goto done;
+		जाओ done;
 	}
-	if ((r = sshkey_verify(key, sig, slen, data, sizeof(data),
-	    alg, 0, NULL)) != 0) {
+	अगर ((r = sshkey_verify(कुंजी, sig, slen, तथ्य, माप(तथ्य),
+	    alg, 0, शून्य)) != 0) {
 		error_r(r, "Signature verification failed for %s", filename);
-		goto done;
+		जाओ done;
 	}
 	/* success */
 	ret = 0;
  done:
-	free(sig);
-	sshkey_free(key);
-	return ret;
+	मुक्त(sig);
+	sshkey_free(कुंजी);
+	वापस ret;
 }
 
-static int
-list_identities(int agent_fd, int do_fp)
+अटल पूर्णांक
+list_identities(पूर्णांक agent_fd, पूर्णांक do_fp)
 {
-	char *fp;
-	int r;
-	struct ssh_identitylist *idlist;
-	size_t i;
+	अक्षर *fp;
+	पूर्णांक r;
+	काष्ठा ssh_identitylist *idlist;
+	माप_प्रकार i;
 
-	if ((r = ssh_fetch_identitylist(agent_fd, &idlist)) != 0) {
-		if (r != SSH_ERR_AGENT_NO_IDENTITIES)
-			fprintf(stderr, "error fetching identities: %s\n",
+	अगर ((r = ssh_fetch_identitylist(agent_fd, &idlist)) != 0) {
+		अगर (r != SSH_ERR_AGENT_NO_IDENTITIES)
+			ख_लिखो(मानक_त्रुटि, "error fetching identities: %s\n",
 			    ssh_err(r));
-		else
-			printf("The agent has no identities.\n");
-		return -1;
+		अन्यथा
+			म_लिखो("The agent has no identities.\n");
+		वापस -1;
 	}
-	for (i = 0; i < idlist->nkeys; i++) {
-		if (do_fp) {
-			fp = sshkey_fingerprint(idlist->keys[i],
+	क्रम (i = 0; i < idlist->nkeys; i++) {
+		अगर (do_fp) {
+			fp = sshkey_fingerprint(idlist->कुंजियाँ[i],
 			    fingerprint_hash, SSH_FP_DEFAULT);
-			printf("%u %s %s (%s)\n", sshkey_size(idlist->keys[i]),
-			    fp == NULL ? "(null)" : fp, idlist->comments[i],
-			    sshkey_type(idlist->keys[i]));
-			free(fp);
-		} else {
-			if ((r = sshkey_write(idlist->keys[i], stdout)) != 0) {
-				fprintf(stderr, "sshkey_write: %s\n",
+			म_लिखो("%u %s %s (%s)\n", sshkey_आकार(idlist->कुंजियाँ[i]),
+			    fp == शून्य ? "(null)" : fp, idlist->comments[i],
+			    sshkey_type(idlist->कुंजियाँ[i]));
+			मुक्त(fp);
+		} अन्यथा {
+			अगर ((r = sshkey_write(idlist->कुंजियाँ[i], मानक_निकास)) != 0) {
+				ख_लिखो(मानक_त्रुटि, "sshkey_write: %s\n",
 				    ssh_err(r));
-				continue;
+				जारी;
 			}
-			fprintf(stdout, " %s\n", idlist->comments[i]);
+			ख_लिखो(मानक_निकास, " %s\n", idlist->comments[i]);
 		}
 	}
 	ssh_free_identitylist(idlist);
-	return 0;
+	वापस 0;
 }
 
-static int
-lock_agent(int agent_fd, int lock)
+अटल पूर्णांक
+lock_agent(पूर्णांक agent_fd, पूर्णांक lock)
 {
-	char prompt[100], *p1, *p2;
-	int r, passok = 1, ret = -1;
+	अक्षर prompt[100], *p1, *p2;
+	पूर्णांक r, passok = 1, ret = -1;
 
-	strlcpy(prompt, "Enter lock password: ", sizeof(prompt));
+	strlcpy(prompt, "Enter lock password: ", माप(prompt));
 	p1 = read_passphrase(prompt, RP_ALLOW_STDIN);
-	if (lock) {
-		strlcpy(prompt, "Again: ", sizeof prompt);
+	अगर (lock) {
+		strlcpy(prompt, "Again: ", माप prompt);
 		p2 = read_passphrase(prompt, RP_ALLOW_STDIN);
-		if (strcmp(p1, p2) != 0) {
-			fprintf(stderr, "Passwords do not match.\n");
+		अगर (म_भेद(p1, p2) != 0) {
+			ख_लिखो(मानक_त्रुटि, "Passwords do not match.\n");
 			passok = 0;
 		}
-		freezero(p2, strlen(p2));
+		freezero(p2, म_माप(p2));
 	}
-	if (passok) {
-		if ((r = ssh_lock_agent(agent_fd, lock, p1)) == 0) {
-			fprintf(stderr, "Agent %slocked.\n", lock ? "" : "un");
+	अगर (passok) {
+		अगर ((r = ssh_lock_agent(agent_fd, lock, p1)) == 0) {
+			ख_लिखो(मानक_त्रुटि, "Agent %slocked.\n", lock ? "" : "un");
 			ret = 0;
-		} else {
-			fprintf(stderr, "Failed to %slock agent: %s\n",
+		} अन्यथा {
+			ख_लिखो(मानक_त्रुटि, "Failed to %slock agent: %s\n",
 			    lock ? "" : "un", ssh_err(r));
 		}
 	}
-	freezero(p1, strlen(p1));
-	return (ret);
+	freezero(p1, म_माप(p1));
+	वापस (ret);
 }
 
-static int
-load_resident_keys(int agent_fd, const char *skprovider, int qflag, int no_pin,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints)
+अटल पूर्णांक
+load_resident_कुंजियाँ(पूर्णांक agent_fd, स्थिर अक्षर *skprovider, पूर्णांक qflag, पूर्णांक no_pin,
+    काष्ठा dest_constraint **dest_constraints, माप_प्रकार ndest_constraints)
 {
-	struct sshsk_resident_key **srks;
-	size_t nsrks, i;
-	struct sshkey *key;
-	int r, ok = 0;
-	char *fp, *pin = NULL;
+	काष्ठा sshsk_resident_कुंजी **srks;
+	माप_प्रकार nsrks, i;
+	काष्ठा sshkey *कुंजी;
+	पूर्णांक r, ok = 0;
+	अक्षर *fp, *pin = शून्य;
 
-	if (!no_pin) {
+	अगर (!no_pin) {
 		pin = read_passphrase("Enter PIN for authenticator: ",
 		    RP_ALLOW_STDIN);
 	}
-	if ((r = sshsk_load_resident(skprovider, NULL, pin == NULL ? "" : pin,
+	अगर ((r = sshsk_load_resident(skprovider, शून्य, pin == शून्य ? "" : pin,
 	    0, &srks, &nsrks)) != 0) {
 		error_r(r, "Unable to load resident keys");
-		free(pin);
-		return r;
+		मुक्त(pin);
+		वापस r;
 	}
-	free(pin);
-	for (i = 0; i < nsrks; i++) {
-		key = srks[i]->key;
-		if ((fp = sshkey_fingerprint(key,
-		    fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
+	मुक्त(pin);
+	क्रम (i = 0; i < nsrks; i++) {
+		कुंजी = srks[i]->कुंजी;
+		अगर ((fp = sshkey_fingerprint(कुंजी,
+		    fingerprint_hash, SSH_FP_DEFAULT)) == शून्य)
 			fatal_f("sshkey_fingerprint failed");
-		if ((r = ssh_add_identity_constrained(agent_fd, key,
-		    key->sk_application, lifetime, confirm, skprovider,
+		अगर ((r = ssh_add_identity_constrained(agent_fd, कुंजी,
+		    कुंजी->sk_application, lifetime, confirm, skprovider,
 		    dest_constraints, ndest_constraints)) != 0) {
 			error("Unable to add key %s %s",
-			    sshkey_type(key), fp);
-			free(fp);
+			    sshkey_type(कुंजी), fp);
+			मुक्त(fp);
 			ok = r;
-			continue;
+			जारी;
 		}
-		if (ok == 0)
+		अगर (ok == 0)
 			ok = 1;
-		if (!qflag) {
-			fprintf(stderr, "Resident identity added: %s %s\n",
-			    sshkey_type(key), fp);
-			if (lifetime != 0) {
-				fprintf(stderr,
+		अगर (!qflag) {
+			ख_लिखो(मानक_त्रुटि, "Resident identity added: %s %s\n",
+			    sshkey_type(कुंजी), fp);
+			अगर (lifetime != 0) {
+				ख_लिखो(मानक_त्रुटि,
 				    "Lifetime set to %d seconds\n", lifetime);
 			}
-			if (confirm != 0) {
-				fprintf(stderr, "The user must confirm "
+			अगर (confirm != 0) {
+				ख_लिखो(मानक_त्रुटि, "The user must confirm "
 				    "each use of the key\n");
 			}
 		}
-		free(fp);
+		मुक्त(fp);
 	}
-	sshsk_free_resident_keys(srks, nsrks);
-	if (nsrks == 0)
-		return SSH_ERR_KEY_NOT_FOUND;
-	return ok == 1 ? 0 : ok;
+	sshsk_free_resident_कुंजियाँ(srks, nsrks);
+	अगर (nsrks == 0)
+		वापस SSH_ERR_कुंजी_NOT_FOUND;
+	वापस ok == 1 ? 0 : ok;
 }
 
-static int
-do_file(int agent_fd, int deleting, int key_only, int cert_only,
-    char *file, int qflag, int Nflag, const char *skprovider,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints)
+अटल पूर्णांक
+do_file(पूर्णांक agent_fd, पूर्णांक deleting, पूर्णांक कुंजी_only, पूर्णांक cert_only,
+    अक्षर *file, पूर्णांक qflag, पूर्णांक Nflag, स्थिर अक्षर *skprovider,
+    काष्ठा dest_constraint **dest_constraints, माप_प्रकार ndest_constraints)
 {
-	if (deleting) {
-		if (delete_file(agent_fd, file, key_only,
+	अगर (deleting) {
+		अगर (delete_file(agent_fd, file, कुंजी_only,
 		    cert_only, qflag) == -1)
-			return -1;
-	} else {
-		if (add_file(agent_fd, file, key_only, cert_only, qflag, Nflag,
+			वापस -1;
+	} अन्यथा {
+		अगर (add_file(agent_fd, file, कुंजी_only, cert_only, qflag, Nflag,
 		    skprovider, dest_constraints, ndest_constraints) == -1)
-			return -1;
+			वापस -1;
 	}
-	return 0;
+	वापस 0;
 }
 
-static void
-free_dest_constraint_hop(struct dest_constraint_hop *dch)
+अटल व्योम
+free_dest_constraint_hop(काष्ठा dest_constraint_hop *dch)
 {
 	u_int i;
 
-	if (dch == NULL)
-		return;
-	free(dch->user);
-	free(dch->hostname);
-	for (i = 0; i < dch->nkeys; i++)
-		sshkey_free(dch->keys[i]);
-	free(dch->keys);
-	free(dch->key_is_ca);
+	अगर (dch == शून्य)
+		वापस;
+	मुक्त(dch->user);
+	मुक्त(dch->hostname);
+	क्रम (i = 0; i < dch->nkeys; i++)
+		sshkey_free(dch->कुंजियाँ[i]);
+	मुक्त(dch->कुंजियाँ);
+	मुक्त(dch->कुंजी_is_ca);
 }
 
-static void
-free_dest_constraints(struct dest_constraint **dcs, size_t ndcs)
+अटल व्योम
+free_dest_constraints(काष्ठा dest_constraint **dcs, माप_प्रकार ndcs)
 {
-	size_t i;
+	माप_प्रकार i;
 
-	for (i = 0; i < ndcs; i++) {
+	क्रम (i = 0; i < ndcs; i++) {
 		free_dest_constraint_hop(&dcs[i]->from);
 		free_dest_constraint_hop(&dcs[i]->to);
-		free(dcs[i]);
+		मुक्त(dcs[i]);
 	}
-	free(dcs);
+	मुक्त(dcs);
 }
 
 
-static void
-parse_dest_constraint_hop(const char *s, struct dest_constraint_hop *dch,
-    char **hostkey_files)
+अटल व्योम
+parse_dest_constraint_hop(स्थिर अक्षर *s, काष्ठा dest_constraint_hop *dch,
+    अक्षर **hostkey_files)
 {
-	char *user = NULL, *host, *os, *path;
-	size_t i;
-	struct hostkeys *hostkeys;
-	const struct hostkey_entry *hke;
-	int r, want_ca;
+	अक्षर *user = शून्य, *host, *os, *path;
+	माप_प्रकार i;
+	काष्ठा hostkeys *hostkeys;
+	स्थिर काष्ठा hostkey_entry *hke;
+	पूर्णांक r, want_ca;
 
-	memset(dch, '\0', sizeof(*dch));
+	स_रखो(dch, '\0', माप(*dch));
 	os = xstrdup(s);
-	if ((host = strrchr(os, '@')) == NULL)
+	अगर ((host = म_खोजप(os, '@')) == शून्य)
 		host = os;
-	else {
+	अन्यथा {
 		*host++ = '\0';
 		user = os;
 	}
 	cleanhostname(host);
 	/* Trivial case: username@ (all hosts) */
-	if (*host == '\0') {
-		if (user == NULL) {
+	अगर (*host == '\0') {
+		अगर (user == शून्य) {
 			fatal("Invalid key destination constraint \"%s\": "
 			    "does not specify user or host", s);
 		}
 		dch->user = xstrdup(user);
 		/* other fields left blank */
-		free(os);
-		return;
+		मुक्त(os);
+		वापस;
 	}
-	if (hostkey_files == NULL)
+	अगर (hostkey_files == शून्य)
 		fatal_f("no hostkey files");
 	/* Otherwise we need to look up the keys for this hostname */
 	hostkeys = init_hostkeys();
-	for (i = 0; hostkey_files[i]; i++) {
+	क्रम (i = 0; hostkey_files[i]; i++) {
 		path = tilde_expand_filename(hostkey_files[i], getuid());
 		debug2_f("looking up host keys for \"%s\" in %s", host, path);
                 load_hostkeys(hostkeys, host, path, 0);
-		free(path);
+		मुक्त(path);
 	}
-	dch->user = user == NULL ? NULL : xstrdup(user);
+	dch->user = user == शून्य ? शून्य : xstrdup(user);
 	dch->hostname = xstrdup(host);
-	for (i = 0; i < hostkeys->num_entries; i++) {
+	क्रम (i = 0; i < hostkeys->अंक_entries; i++) {
 		hke = hostkeys->entries + i;
 		want_ca = hke->marker == MRK_CA;
-		if (hke->marker != MRK_NONE && !want_ca)
-			continue;
+		अगर (hke->marker != MRK_NONE && !want_ca)
+			जारी;
 		debug3_f("%s%s%s: adding %s %skey from %s:%lu as key %u",
-		    user == NULL ? "": user, user == NULL ? "" : "@",
-		    host, sshkey_type(hke->key), want_ca ? "CA " : "",
-		    hke->file, hke->line, dch->nkeys);
-		dch->keys = xrecallocarray(dch->keys, dch->nkeys,
-		    dch->nkeys + 1, sizeof(*dch->keys));
-		dch->key_is_ca = xrecallocarray(dch->key_is_ca, dch->nkeys,
-		    dch->nkeys + 1, sizeof(*dch->key_is_ca));
-		if ((r = sshkey_from_private(hke->key,
-		    &(dch->keys[dch->nkeys]))) != 0)
+		    user == शून्य ? "": user, user == शून्य ? "" : "@",
+		    host, sshkey_type(hke->कुंजी), want_ca ? "CA " : "",
+		    hke->file, hke->पंक्ति, dch->nkeys);
+		dch->कुंजियाँ = xrecallocarray(dch->कुंजियाँ, dch->nkeys,
+		    dch->nkeys + 1, माप(*dch->कुंजियाँ));
+		dch->कुंजी_is_ca = xrecallocarray(dch->कुंजी_is_ca, dch->nkeys,
+		    dch->nkeys + 1, माप(*dch->कुंजी_is_ca));
+		अगर ((r = sshkey_from_private(hke->कुंजी,
+		    &(dch->कुंजियाँ[dch->nkeys]))) != 0)
 			fatal_fr(r, "sshkey_from_private");
-		dch->key_is_ca[dch->nkeys] = want_ca;
+		dch->कुंजी_is_ca[dch->nkeys] = want_ca;
 		dch->nkeys++;
 	}
-	if (dch->nkeys == 0)
+	अगर (dch->nkeys == 0)
 		fatal("No host keys found for destination \"%s\"", host);
 	free_hostkeys(hostkeys);
-	free(os);
-	return;
+	मुक्त(os);
+	वापस;
 }
 
-static void
-parse_dest_constraint(const char *s, struct dest_constraint ***dcp,
-    size_t *ndcp, char **hostkey_files)
+अटल व्योम
+parse_dest_constraint(स्थिर अक्षर *s, काष्ठा dest_constraint ***dcp,
+    माप_प्रकार *ndcp, अक्षर **hostkey_files)
 {
-	struct dest_constraint *dc;
-	char *os, *cp;
+	काष्ठा dest_constraint *dc;
+	अक्षर *os, *cp;
 
-	dc = xcalloc(1, sizeof(*dc));
+	dc = xcalloc(1, माप(*dc));
 	os = xstrdup(s);
-	if ((cp = strchr(os, '>')) == NULL) {
+	अगर ((cp = म_अक्षर(os, '>')) == शून्य) {
 		/* initial hop; no 'from' hop specified */
 		parse_dest_constraint_hop(os, &dc->to, hostkey_files);
-	} else {
+	} अन्यथा {
 		/* two hops specified */
 		*(cp++) = '\0';
 		parse_dest_constraint_hop(os, &dc->from, hostkey_files);
 		parse_dest_constraint_hop(cp, &dc->to, hostkey_files);
-		if (dc->from.user != NULL) {
+		अगर (dc->from.user != शून्य) {
 			fatal("Invalid key constraint %s: cannot specify "
 			    "user on 'from' host", os);
 		}
@@ -793,16 +793,16 @@ parse_dest_constraint(const char *s, struct dest_constraint ***dcp,
 	    dc->from.hostname ? dc->from.hostname : "(ORIGIN)", dc->from.nkeys,
 	    dc->to.user ? dc->to.user : "", dc->to.user ? "@" : "",
 	    dc->to.hostname ? dc->to.hostname : "(ANY)", dc->to.nkeys);
-	*dcp = xrecallocarray(*dcp, *ndcp, *ndcp + 1, sizeof(**dcp));
+	*dcp = xrecallocarray(*dcp, *ndcp, *ndcp + 1, माप(**dcp));
 	(*dcp)[(*ndcp)++] = dc;
-	free(os);
+	मुक्त(os);
 }
 
 
-static void
-usage(void)
+अटल व्योम
+usage(व्योम)
 {
-	fprintf(stderr,
+	ख_लिखो(मानक_त्रुटि,
 "usage: ssh-add [-CcDdKkLlqvXx] [-E fingerprint_hash] [-H hostkey_file]\n"
 "               [-h destination_constraint] [-S provider] [-t life]\n"
 "               [file ...]\n"
@@ -812,22 +812,22 @@ usage(void)
 	);
 }
 
-int
-main(int argc, char **argv)
+पूर्णांक
+मुख्य(पूर्णांक argc, अक्षर **argv)
 {
-	extern char *optarg;
-	extern int optind;
-	int agent_fd = -1;
-	char *pkcs11provider = NULL, *skprovider = NULL;
-	char **dest_constraint_strings = NULL, **hostkey_files = NULL;
-	int r, i, ch, deleting = 0, ret = 0, key_only = 0, cert_only = 0;
-	int do_download = 0, xflag = 0, lflag = 0, Dflag = 0;
-	int Qflag = 0, qflag = 0, Tflag = 0, Nflag = 0, no_pin = 0;
+	बाह्य अक्षर *optarg;
+	बाह्य पूर्णांक optind;
+	पूर्णांक agent_fd = -1;
+	अक्षर *pkcs11provider = शून्य, *skprovider = शून्य;
+	अक्षर **dest_constraint_strings = शून्य, **hostkey_files = शून्य;
+	पूर्णांक r, i, ch, deleting = 0, ret = 0, कुंजी_only = 0, cert_only = 0;
+	पूर्णांक do_download = 0, xflag = 0, lflag = 0, Dflag = 0;
+	पूर्णांक Qflag = 0, qflag = 0, Tflag = 0, Nflag = 0, no_pin = 0;
 	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
 	LogLevel log_level = SYSLOG_LEVEL_INFO;
-	struct sshkey *k, **certs = NULL;
-	struct dest_constraint **dest_constraints = NULL;
-	size_t n, ndest_constraints = 0, ncerts = 0;
+	काष्ठा sshkey *k, **certs = शून्य;
+	काष्ठा dest_constraint **dest_constraints = शून्य;
+	माप_प्रकार n, ndest_constraints = 0, ncerts = 0;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
@@ -837,152 +837,152 @@ main(int argc, char **argv)
 
 	log_init(__progname, log_level, log_facility, 1);
 
-	setvbuf(stdout, NULL, _IOLBF, 0);
+	रखो_भबफ(मानक_निकास, शून्य, _IOLBF, 0);
 
-	skprovider = getenv("SSH_SK_PROVIDER");
+	skprovider = दो_पर्या("SSH_SK_PROVIDER");
 
-	while ((ch = getopt(argc, argv, "vkKlLNPCcdDTxXE:e:h:H:M:m:Qqs:S:t:")) != -1) {
-		switch (ch) {
-		case 'v':
-			if (log_level == SYSLOG_LEVEL_INFO)
+	जबतक ((ch = getopt(argc, argv, "vkKlLNPCcdDTxXE:e:h:H:M:m:Qqs:S:t:")) != -1) {
+		चयन (ch) {
+		हाल 'v':
+			अगर (log_level == SYSLOG_LEVEL_INFO)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			अन्यथा अगर (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			break;
-		case 'N':
+			अवरोध;
+		हाल 'N':
 			Nflag = 1;
-			break;
-		case 'E':
+			अवरोध;
+		हाल 'E':
 			fingerprint_hash = ssh_digest_alg_by_name(optarg);
-			if (fingerprint_hash == -1)
+			अगर (fingerprint_hash == -1)
 				fatal("Invalid hash algorithm \"%s\"", optarg);
-			break;
-		case 'H':
+			अवरोध;
+		हाल 'H':
 			stringlist_append(&hostkey_files, optarg);
-			break;
-		case 'h':
+			अवरोध;
+		हाल 'h':
 			stringlist_append(&dest_constraint_strings, optarg);
-			break;
-		case 'k':
-			key_only = 1;
-			break;
-		case 'C':
+			अवरोध;
+		हाल 'k':
+			कुंजी_only = 1;
+			अवरोध;
+		हाल 'C':
 			cert_only = 1;
-			break;
-		case 'K':
+			अवरोध;
+		हाल 'K':
 			do_download = 1;
-			break;
-		case 'l':
-		case 'L':
-			if (lflag != 0)
+			अवरोध;
+		हाल 'l':
+		हाल 'L':
+			अगर (lflag != 0)
 				fatal("-%c flag already specified", lflag);
 			lflag = ch;
-			break;
-		case 'x':
-		case 'X':
-			if (xflag != 0)
+			अवरोध;
+		हाल 'x':
+		हाल 'X':
+			अगर (xflag != 0)
 				fatal("-%c flag already specified", xflag);
 			xflag = ch;
-			break;
-		case 'c':
+			अवरोध;
+		हाल 'c':
 			confirm = 1;
-			break;
-		case 'm':
-		case 'M':
+			अवरोध;
+		हाल 'm':
+		हाल 'M':
 			/* deprecated */
-			break;
-		case 'd':
+			अवरोध;
+		हाल 'd':
 			deleting = 1;
-			break;
-		case 'P':
+			अवरोध;
+		हाल 'P':
 			no_pin = 1;
-			break;
-		case 'D':
+			अवरोध;
+		हाल 'D':
 			Dflag = 1;
-			break;
-		case 's':
+			अवरोध;
+		हाल 's':
 			pkcs11provider = optarg;
-			break;
-		case 'S':
+			अवरोध;
+		हाल 'S':
 			skprovider = optarg;
-			break;
-		case 'e':
+			अवरोध;
+		हाल 'e':
 			deleting = 1;
 			pkcs11provider = optarg;
-			break;
-		case 't':
-			if ((lifetime = convtime(optarg)) == -1 ||
+			अवरोध;
+		हाल 't':
+			अगर ((lifetime = convtime(optarg)) == -1 ||
 			    lifetime < 0 || (u_long)lifetime > UINT32_MAX) {
-				fprintf(stderr, "Invalid lifetime\n");
+				ख_लिखो(मानक_त्रुटि, "Invalid lifetime\n");
 				ret = 1;
-				goto done;
+				जाओ done;
 			}
-			break;
-		case 'q':
+			अवरोध;
+		हाल 'q':
 			qflag = 1;
-			break;
-		case 'Q':
+			अवरोध;
+		हाल 'Q':
 			Qflag = 1;
-			break;
-		case 'T':
+			अवरोध;
+		हाल 'T':
 			Tflag = 1;
-			break;
-		default:
+			अवरोध;
+		शेष:
 			usage();
 			ret = 1;
-			goto done;
+			जाओ done;
 		}
 	}
 	log_init(__progname, log_level, log_facility, 1);
 
-	if ((xflag != 0) + (lflag != 0) + (Dflag != 0) + (Qflag != 0) > 1)
+	अगर ((xflag != 0) + (lflag != 0) + (Dflag != 0) + (Qflag != 0) > 1)
 		fatal("Invalid combination of actions");
 
 	/* First, get a connection to the authentication agent. */
-	switch (r = ssh_get_authentication_socket(&agent_fd)) {
-	case 0:
-		break;
-	case SSH_ERR_AGENT_NOT_PRESENT:
-		fprintf(stderr, "Could not open a connection to your "
+	चयन (r = ssh_get_authentication_socket(&agent_fd)) {
+	हाल 0:
+		अवरोध;
+	हाल SSH_ERR_AGENT_NOT_PRESENT:
+		ख_लिखो(मानक_त्रुटि, "Could not open a connection to your "
 		    "authentication agent.\n");
-		exit(2);
-	default:
-		fprintf(stderr, "Error connecting to agent: %s\n", ssh_err(r));
-		exit(2);
+		निकास(2);
+	शेष:
+		ख_लिखो(मानक_त्रुटि, "Error connecting to agent: %s\n", ssh_err(r));
+		निकास(2);
 	}
 
-	if (xflag) {
-		if (lock_agent(agent_fd, xflag == 'x' ? 1 : 0) == -1)
+	अगर (xflag) {
+		अगर (lock_agent(agent_fd, xflag == 'x' ? 1 : 0) == -1)
 			ret = 1;
-		goto done;
-	} else if (lflag) {
-		if (list_identities(agent_fd, lflag == 'l' ? 1 : 0) == -1)
+		जाओ done;
+	} अन्यथा अगर (lflag) {
+		अगर (list_identities(agent_fd, lflag == 'l' ? 1 : 0) == -1)
 			ret = 1;
-		goto done;
-	} else if (Dflag) {
-		if (delete_all(agent_fd, qflag) == -1)
+		जाओ done;
+	} अन्यथा अगर (Dflag) {
+		अगर (delete_all(agent_fd, qflag) == -1)
 			ret = 1;
-		goto done;
-	} else if (Qflag) {
-		if (query_exts(agent_fd) == -1)
+		जाओ done;
+	} अन्यथा अगर (Qflag) {
+		अगर (query_exts(agent_fd) == -1)
 			ret = 1;
-		goto done;
+		जाओ done;
 	}
 
-#ifdef ENABLE_SK_INTERNAL
-	if (skprovider == NULL)
+#अगर_घोषित ENABLE_SK_INTERNAL
+	अगर (skprovider == शून्य)
 		skprovider = "internal";
-#endif
+#पूर्ण_अगर
 
-	if (hostkey_files == NULL) {
+	अगर (hostkey_files == शून्य) {
 		/* use defaults from readconf.c */
 		stringlist_append(&hostkey_files, _PATH_SSH_USER_HOSTFILE);
 		stringlist_append(&hostkey_files, _PATH_SSH_USER_HOSTFILE2);
 		stringlist_append(&hostkey_files, _PATH_SSH_SYSTEM_HOSTFILE);
 		stringlist_append(&hostkey_files, _PATH_SSH_SYSTEM_HOSTFILE2);
 	}
-	if (dest_constraint_strings != NULL) {
-		for (i = 0; dest_constraint_strings[i] != NULL; i++) {
+	अगर (dest_constraint_strings != शून्य) {
+		क्रम (i = 0; dest_constraint_strings[i] != शून्य; i++) {
 			parse_dest_constraint(dest_constraint_strings[i],
 			  &dest_constraints, &ndest_constraints, hostkey_files);
 		}
@@ -990,72 +990,72 @@ main(int argc, char **argv)
 
 	argc -= optind;
 	argv += optind;
-	if (Tflag) {
-		if (argc <= 0)
+	अगर (Tflag) {
+		अगर (argc <= 0)
 			fatal("no keys to test");
-		for (r = i = 0; i < argc; i++)
-			r |= test_key(agent_fd, argv[i]);
+		क्रम (r = i = 0; i < argc; i++)
+			r |= test_कुंजी(agent_fd, argv[i]);
 		ret = r == 0 ? 0 : 1;
-		goto done;
+		जाओ done;
 	}
-	if (pkcs11provider != NULL) {
-		for (i = 0; i < argc; i++) {
-			if ((r = sshkey_load_public(argv[i], &k, NULL)) != 0)
+	अगर (pkcs11provider != शून्य) {
+		क्रम (i = 0; i < argc; i++) {
+			अगर ((r = sshkey_load_public(argv[i], &k, शून्य)) != 0)
 				fatal_fr(r, "load certificate %s", argv[i]);
 			certs = xrecallocarray(certs, ncerts, ncerts + 1,
-			    sizeof(*certs));
+			    माप(*certs));
 			debug2("%s: %s", argv[i], sshkey_ssh_name(k));
 			certs[ncerts++] = k;
 		}
 		debug2_f("loaded %zu certificates", ncerts);
-		if (update_card(agent_fd, !deleting, pkcs11provider,
-		    qflag, no_pin, key_only, cert_only,
+		अगर (update_card(agent_fd, !deleting, pkcs11provider,
+		    qflag, no_pin, कुंजी_only, cert_only,
 		    dest_constraints, ndest_constraints,
 		    certs, ncerts) == -1)
 			ret = 1;
-		for (n = 0; n < ncerts; n++)
+		क्रम (n = 0; n < ncerts; n++)
 			sshkey_free(certs[n]);
-		free(certs);
-		goto done;
+		मुक्त(certs);
+		जाओ done;
 	}
-	if (do_download) {
-		if (skprovider == NULL)
+	अगर (do_download) {
+		अगर (skprovider == शून्य)
 			fatal("Cannot download keys without provider");
-		if (load_resident_keys(agent_fd, skprovider, qflag, no_pin,
+		अगर (load_resident_कुंजियाँ(agent_fd, skprovider, qflag, no_pin,
 		    dest_constraints, ndest_constraints) != 0)
 			ret = 1;
-		goto done;
+		जाओ done;
 	}
-	if (argc == 0) {
-		char buf[PATH_MAX];
-		struct passwd *pw;
-		struct stat st;
-		int count = 0;
+	अगर (argc == 0) {
+		अक्षर buf[PATH_MAX];
+		काष्ठा passwd *pw;
+		काष्ठा stat st;
+		पूर्णांक गिनती = 0;
 
-		if ((pw = getpwuid(getuid())) == NULL) {
-			fprintf(stderr, "No user found with uid %u\n",
+		अगर ((pw = getpwuid(getuid())) == शून्य) {
+			ख_लिखो(मानक_त्रुटि, "No user found with uid %u\n",
 			    (u_int)getuid());
 			ret = 1;
-			goto done;
+			जाओ done;
 		}
 
-		for (i = 0; default_files[i]; i++) {
-			snprintf(buf, sizeof(buf), "%s/%s", pw->pw_dir,
+		क्रम (i = 0; default_files[i]; i++) {
+			snprintf(buf, माप(buf), "%s/%s", pw->pw_dir,
 			    default_files[i]);
-			if (stat(buf, &st) == -1)
-				continue;
-			if (do_file(agent_fd, deleting, key_only, cert_only,
+			अगर (stat(buf, &st) == -1)
+				जारी;
+			अगर (do_file(agent_fd, deleting, कुंजी_only, cert_only,
 			    buf, qflag, Nflag, skprovider,
 			    dest_constraints, ndest_constraints) == -1)
 				ret = 1;
-			else
-				count++;
+			अन्यथा
+				गिनती++;
 		}
-		if (count == 0)
+		अगर (गिनती == 0)
 			ret = 1;
-	} else {
-		for (i = 0; i < argc; i++) {
-			if (do_file(agent_fd, deleting, key_only, cert_only,
+	} अन्यथा {
+		क्रम (i = 0; i < argc; i++) {
+			अगर (do_file(agent_fd, deleting, कुंजी_only, cert_only,
 			    argv[i], qflag, Nflag, skprovider,
 			    dest_constraints, ndest_constraints) == -1)
 				ret = 1;
@@ -1067,5 +1067,5 @@ done:
 	stringlist_free(dest_constraint_strings);
 	free_dest_constraints(dest_constraints, ndest_constraints);
 	ssh_close_authentication_socket(agent_fd);
-	return ret;
+	वापस ret;
 }

@@ -23,35 +23,35 @@
  *
  */
 
-#ifndef _NEXT_POSIX_H
-#define _NEXT_POSIX_H
+#अगर_अघोषित अग्र_POSIX_H
+#घोषणा अग्र_POSIX_H
 
-#ifdef HAVE_NEXT
-#include <sys/dir.h>
+#अगर_घोषित HAVE_अग्र
+#समावेश <sys/dir.h>
 
 /* NGROUPS_MAX is behind -lposix.  Use the BSD version which is NGROUPS */
-#undef NGROUPS_MAX
-#define NGROUPS_MAX NGROUPS
+#अघोषित NGROUPS_MAX
+#घोषणा NGROUPS_MAX NGROUPS
 
 /* NeXT's readdir() is BSD (struct direct) not POSIX (struct dirent) */
-#define dirent direct
+#घोषणा dirent direct
 
 /* Swap out NeXT's BSD wait() for a more POSIX compliant one */
-pid_t posix_wait(int *);
-#define wait(a) posix_wait(a)
+pid_t posix_wait(पूर्णांक *);
+#घोषणा रुको(a) posix_wait(a)
 
 /* #ifdef wrapped functions that need defining for clean compiling */
-pid_t getppid(void);
-void vhangup(void);
-int innetgr(const char *, const char *, const char *, const char *);
+pid_t getppid(व्योम);
+व्योम vhangup(व्योम);
+पूर्णांक innetgr(स्थिर अक्षर *, स्थिर अक्षर *, स्थिर अक्षर *, स्थिर अक्षर *);
 
 /* TERMCAP */
-int tcgetattr(int, struct termios *);
-int tcsetattr(int, int, const struct termios *);
-int tcsetpgrp(int, pid_t);
-speed_t cfgetospeed(const struct termios *);
-speed_t cfgetispeed(const struct termios *);
-int cfsetospeed(struct termios *, int);
-int cfsetispeed(struct termios *, int);
-#endif /* HAVE_NEXT */
-#endif /* _NEXT_POSIX_H */
+पूर्णांक tcgetattr(पूर्णांक, काष्ठा termios *);
+पूर्णांक tcsetattr(पूर्णांक, पूर्णांक, स्थिर काष्ठा termios *);
+पूर्णांक tcsetpgrp(पूर्णांक, pid_t);
+speed_t cfgetospeed(स्थिर काष्ठा termios *);
+speed_t cfgetispeed(स्थिर काष्ठा termios *);
+पूर्णांक cfsetospeed(काष्ठा termios *, पूर्णांक);
+पूर्णांक cfsetispeed(काष्ठा termios *, पूर्णांक);
+#पूर्ण_अगर /* HAVE_NEXT */
+#पूर्ण_अगर /* _NEXT_POSIX_H */

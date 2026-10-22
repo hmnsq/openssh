@@ -35,202 +35,202 @@
  * that ai_family is AF_INET. Don't use it for another purpose.
  */
 
-#include "includes.h"
+#समावेश "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#समावेश <netinet/in.h>
+#समावेश <arpa/inet.h>
 
-#ifndef HAVE_GETNAMEINFO
-int getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
-		size_t hostlen, char *serv, size_t servlen, int flags)
+#अगर_अघोषित HAVE_GETNAMEINFO
+पूर्णांक getnameinfo(स्थिर काष्ठा sockaddr *sa, माप_प्रकार salen, अक्षर *host,
+		माप_प्रकार hostlen, अक्षर *serv, माप_प्रकार servlen, पूर्णांक flags)
 {
-	struct sockaddr_in *sin = (struct sockaddr_in *)sa;
-	struct hostent *hp;
-	char tmpserv[16];
+	काष्ठा sockaddr_in *sin = (काष्ठा sockaddr_in *)sa;
+	काष्ठा hostent *hp;
+	अक्षर tmpserv[16];
 
-	if ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
-	    salen < sizeof(struct sockaddr_in))
-		return (EAI_FAMILY);
-	if (serv != NULL) {
-		snprintf(tmpserv, sizeof(tmpserv), "%d", ntohs(sin->sin_port));
-		if (strlcpy(serv, tmpserv, servlen) >= servlen)
-			return (EAI_MEMORY);
+	अगर ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
+	    salen < माप(काष्ठा sockaddr_in))
+		वापस (EAI_FAMILY);
+	अगर (serv != शून्य) {
+		snprintf(tmpserv, माप(tmpserv), "%d", ntohs(sin->sin_port));
+		अगर (strlcpy(serv, tmpserv, servlen) >= servlen)
+			वापस (EAI_MEMORY);
 	}
 
-	if (host != NULL) {
-		if (flags & NI_NUMERICHOST) {
-			if (strlcpy(host, inet_ntoa(sin->sin_addr),
+	अगर (host != शून्य) {
+		अगर (flags & NI_NUMERICHOST) {
+			अगर (strlcpy(host, inet_ntoa(sin->sin_addr),
 			    hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
-		} else {
-			hp = gethostbyaddr((char *)&sin->sin_addr,
-			    sizeof(struct in_addr), AF_INET);
-			if (hp == NULL)
-				return (EAI_NODATA);
+				वापस (EAI_MEMORY);
+			अन्यथा
+				वापस (0);
+		} अन्यथा {
+			hp = gethostbyaddr((अक्षर *)&sin->sin_addr,
+			    माप(काष्ठा in_addr), AF_INET);
+			अगर (hp == शून्य)
+				वापस (EAI_NODATA);
 
-			if (strlcpy(host, hp->h_name, hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
+			अगर (strlcpy(host, hp->h_name, hostlen) >= hostlen)
+				वापस (EAI_MEMORY);
+			अन्यथा
+				वापस (0);
 		}
 	}
-	return (0);
+	वापस (0);
 }
-#endif /* !HAVE_GETNAMEINFO */
+#पूर्ण_अगर /* !HAVE_GETNAMEINFO */
 
-#ifndef HAVE_GAI_STRERROR
-#ifdef HAVE_CONST_GAI_STRERROR_PROTO
-const char *
-#else
-char *
-#endif
-gai_strerror(int err)
+#अगर_अघोषित HAVE_GAI_STRERROR
+#अगर_घोषित HAVE_CONST_GAI_STRERROR_PROTO
+स्थिर अक्षर *
+#अन्यथा
+अक्षर *
+#पूर्ण_अगर
+gai_strerror(पूर्णांक err)
 {
-	switch (err) {
-	case EAI_NODATA:
-		return ("no address associated with name");
-	case EAI_MEMORY:
-		return ("memory allocation failure");
-	case EAI_NONAME:
-		return ("name or service is not known");
-	case EAI_FAMILY:
-		return ("ai_family not supported");
-	default:
-		return ("unknown/invalid error");
+	चयन (err) {
+	हाल EAI_NODATA:
+		वापस ("no address associated with name");
+	हाल EAI_MEMORY:
+		वापस ("memory allocation failure");
+	हाल EAI_NONAME:
+		वापस ("name or service is not known");
+	हाल EAI_FAMILY:
+		वापस ("ai_family not supported");
+	शेष:
+		वापस ("unknown/invalid error");
 	}
 }
-#endif /* !HAVE_GAI_STRERROR */
+#पूर्ण_अगर /* !HAVE_GAI_STRERROR */
 
-#ifndef HAVE_FREEADDRINFO
-void
-freeaddrinfo(struct addrinfo *ai)
+#अगर_अघोषित HAVE_FREEADDRINFO
+व्योम
+freeaddrinfo(काष्ठा addrinfo *ai)
 {
-	struct addrinfo *next;
+	काष्ठा addrinfo *अग्र;
 
-	for(; ai != NULL;) {
-		next = ai->ai_next;
-		free(ai);
-		ai = next;
+	क्रम(; ai != शून्य;) {
+		अग्र = ai->ai_next;
+		मुक्त(ai);
+		ai = अग्र;
 	}
 }
-#endif /* !HAVE_FREEADDRINFO */
+#पूर्ण_अगर /* !HAVE_FREEADDRINFO */
 
-#ifndef HAVE_GETADDRINFO
-static struct
-addrinfo *malloc_ai(int port, u_long addr, const struct addrinfo *hints)
+#अगर_अघोषित HAVE_GETADDRINFO
+अटल काष्ठा
+addrinfo *malloc_ai(पूर्णांक port, u_long addr, स्थिर काष्ठा addrinfo *hints)
 {
-	struct addrinfo *ai;
+	काष्ठा addrinfo *ai;
 
-	ai = malloc(sizeof(*ai) + sizeof(struct sockaddr_in));
-	if (ai == NULL)
-		return (NULL);
+	ai = दो_स्मृति(माप(*ai) + माप(काष्ठा sockaddr_in));
+	अगर (ai == शून्य)
+		वापस (शून्य);
 
-	memset(ai, '\0', sizeof(*ai) + sizeof(struct sockaddr_in));
+	स_रखो(ai, '\0', माप(*ai) + माप(काष्ठा sockaddr_in));
 
-	ai->ai_addr = (struct sockaddr *)(ai + 1);
+	ai->ai_addr = (काष्ठा sockaddr *)(ai + 1);
 	/* XXX -- ssh doesn't use sa_len */
-	ai->ai_addrlen = sizeof(struct sockaddr_in);
+	ai->ai_addrlen = माप(काष्ठा sockaddr_in);
 	ai->ai_addr->sa_family = ai->ai_family = AF_INET;
 
-	((struct sockaddr_in *)(ai)->ai_addr)->sin_port = port;
-	((struct sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
+	((काष्ठा sockaddr_in *)(ai)->ai_addr)->sin_port = port;
+	((काष्ठा sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
 
 	/* XXX: the following is not generally correct, but does what we want */
-	if (hints->ai_socktype)
+	अगर (hints->ai_socktype)
 		ai->ai_socktype = hints->ai_socktype;
-	else
+	अन्यथा
 		ai->ai_socktype = SOCK_STREAM;
 
-	if (hints->ai_protocol)
+	अगर (hints->ai_protocol)
 		ai->ai_protocol = hints->ai_protocol;
 
-	return (ai);
+	वापस (ai);
 }
 
-int
-getaddrinfo(const char *hostname, const char *servname,
-    const struct addrinfo *hints, struct addrinfo **res)
+पूर्णांक
+getaddrinfo(स्थिर अक्षर *hostname, स्थिर अक्षर *servname,
+    स्थिर काष्ठा addrinfo *hints, काष्ठा addrinfo **res)
 {
-	struct hostent *hp;
-	struct servent *sp;
-	struct in_addr in;
-	int i;
-	long int port;
+	काष्ठा hostent *hp;
+	काष्ठा servent *sp;
+	काष्ठा in_addr in;
+	पूर्णांक i;
+	दीर्घ पूर्णांक port;
 	u_long addr;
 
 	port = 0;
-	if (hints && hints->ai_family != AF_UNSPEC &&
+	अगर (hints && hints->ai_family != AF_UNSPEC &&
 	    hints->ai_family != AF_INET)
-		return (EAI_FAMILY);
-	if (servname != NULL) {
-		char *cp;
+		वापस (EAI_FAMILY);
+	अगर (servname != शून्य) {
+		अक्षर *cp;
 
-		port = strtol(servname, &cp, 10);
-		if (port > 0 && port <= 65535 && *cp == '\0')
+		port = म_से_दीर्घ(servname, &cp, 10);
+		अगर (port > 0 && port <= 65535 && *cp == '\0')
 			port = htons(port);
-		else if ((sp = getservbyname(servname, NULL)) != NULL)
+		अन्यथा अगर ((sp = getservbyname(servname, शून्य)) != शून्य)
 			port = sp->s_port;
-		else
+		अन्यथा
 			port = 0;
 	}
 
-	if (hints && hints->ai_flags & AI_PASSIVE) {
+	अगर (hints && hints->ai_flags & AI_PASSIVE) {
 		addr = htonl(0x00000000);
-		if (hostname && inet_aton(hostname, &in) != 0)
+		अगर (hostname && inet_aton(hostname, &in) != 0)
 			addr = in.s_addr;
 		*res = malloc_ai(port, addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		अगर (*res == शून्य)
+			वापस (EAI_MEMORY);
+		वापस (0);
 	}
 
-	if (!hostname) {
+	अगर (!hostname) {
 		*res = malloc_ai(port, htonl(0x7f000001), hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		अगर (*res == शून्य)
+			वापस (EAI_MEMORY);
+		वापस (0);
 	}
 
-	if (inet_aton(hostname, &in)) {
+	अगर (inet_aton(hostname, &in)) {
 		*res = malloc_ai(port, in.s_addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		अगर (*res == शून्य)
+			वापस (EAI_MEMORY);
+		वापस (0);
 	}
 
 	/* Don't try DNS if AI_NUMERICHOST is set */
-	if (hints && hints->ai_flags & AI_NUMERICHOST)
-		return (EAI_NONAME);
+	अगर (hints && hints->ai_flags & AI_NUMERICHOST)
+		वापस (EAI_NONAME);
 
 	hp = gethostbyname(hostname);
-	if (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
-		struct addrinfo *cur, *prev;
+	अगर (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
+		काष्ठा addrinfo *cur, *पूर्व;
 
-		cur = prev = *res = NULL;
-		for (i = 0; hp->h_addr_list[i]; i++) {
-			struct in_addr *in = (struct in_addr *)hp->h_addr_list[i];
+		cur = पूर्व = *res = शून्य;
+		क्रम (i = 0; hp->h_addr_list[i]; i++) {
+			काष्ठा in_addr *in = (काष्ठा in_addr *)hp->h_addr_list[i];
 
 			cur = malloc_ai(port, in->s_addr, hints);
-			if (cur == NULL) {
-				if (*res != NULL)
+			अगर (cur == शून्य) {
+				अगर (*res != शून्य)
 					freeaddrinfo(*res);
-				return (EAI_MEMORY);
+				वापस (EAI_MEMORY);
 			}
-			if (prev)
-				prev->ai_next = cur;
-			else
+			अगर (पूर्व)
+				पूर्व->ai_next = cur;
+			अन्यथा
 				*res = cur;
 
-			prev = cur;
+			पूर्व = cur;
 		}
-		return (0);
+		वापस (0);
 	}
 
-	return (EAI_NODATA);
+	वापस (EAI_NODATA);
 }
-#endif /* !HAVE_GETADDRINFO */
+#पूर्ण_अगर /* !HAVE_GETADDRINFO */
