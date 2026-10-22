@@ -5,120 +5,120 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ضمن <sys/types.h>
+#ضمن <sys/stat.h>
+#ضمن <fcntl.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/rsa.h>
-#include <openssl/objects.h>
+#ضمن <openssl/bn.h>
+#ضمن <openssl/ec.h>
+#ضمن <openssl/rsa.h>
+#ضمن <openssl/objects.h>
 #endif /* WITH_OPENSSL */
 
-#include "openbsd-compat/openssl-compat.h"
+#ضمن "openbsd-compat/openssl-compat.h"
 
-#include "../test_helper/test_helper.h"
+#ضمن "../test_helper/test_helper.h"
 
-#include "ssherr.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "sshbuf.h"
+#ضمن "ssherr.h"
+#ضمن "authfile.h"
+#ضمن "sshkey.h"
+#ضمن "sshbuf.h"
 
-#include "common.h"
+#ضمن "common.h"
 
-struct sshbuf *
-load_file(const char *name)
+بنية sshbuf *
+load_file(ثابت حرف *name)
 {
-	struct sshbuf *ret = NULL;
+	بنية sshbuf *ret = عدم;
 
 	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_PTR_NE(ret, عدم);
+	إرجاع ret;
 }
 
-struct sshbuf *
-load_text_file(const char *name)
+بنية sshbuf *
+load_text_file(ثابت حرف *name)
 {
-	struct sshbuf *ret = load_file(name);
-	const u_char *p;
+	بنية sshbuf *ret = load_file(name);
+	ثابت u_char *p;
 	size_t len;
 
 	/* Trim whitespace at EOL */
-	for (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
+	لكل (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
 		len--;
-		if (p[len] == '\r' || p[len] == '\t' ||
+		إذا (p[len] == '\r' || p[len] == '\t' ||
 		    p[len] == ' ' || p[len] == '\n')
 			ASSERT_INT_EQ(sshbuf_consume_end(ret, 1), 0);
-		else
-			break;
+		وإلا
+			اكسر;
 	}
 	/* \0 terminate */
 	ASSERT_INT_EQ(sshbuf_put_u8(ret, 0), 0);
-	return ret;
+	إرجاع ret;
 }
 
 #ifdef WITH_OPENSSL
 BIGNUM *
-load_bignum(const char *name)
+load_bignum(ثابت حرف *name)
 {
-	BIGNUM *ret = NULL;
-	struct sshbuf *buf;
+	BIGNUM *ret = عدم;
+	بنية sshbuf *buf;
 
 	buf = load_text_file(name);
-	ASSERT_INT_NE(BN_hex2bn(&ret, (const char *)sshbuf_ptr(buf)), 0);
+	ASSERT_INT_NE(BN_hex2bn(&ret, (ثابت حرف *)sshbuf_ptr(buf)), 0);
 	sshbuf_free(buf);
-	return ret;
+	إرجاع ret;
 }
 
-const BIGNUM *
-rsa_n(struct sshkey *k)
+ثابت BIGNUM *
+rsa_n(بنية sshkey *k)
 {
-	const BIGNUM *n = NULL;
+	ثابت BIGNUM *n = عدم;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(k->pkey, NULL);
-	RSA_get0_key(EVP_PKEY_get0_RSA(k->pkey), &n, NULL, NULL);
-	return n;
+	ASSERT_PTR_NE(k, عدم);
+	ASSERT_PTR_NE(k->pkey, عدم);
+	RSA_get0_مفتاح(EVP_PKEY_get0_RSA(k->pkey), &n, عدم, عدم);
+	إرجاع n;
 }
 
-const BIGNUM *
-rsa_e(struct sshkey *k)
+ثابت BIGNUM *
+rsa_e(بنية sshkey *k)
 {
-	const BIGNUM *e = NULL;
+	ثابت BIGNUM *e = عدم;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(k->pkey, NULL);
-	RSA_get0_key(EVP_PKEY_get0_RSA(k->pkey), NULL, &e, NULL);
-	return e;
+	ASSERT_PTR_NE(k, عدم);
+	ASSERT_PTR_NE(k->pkey, عدم);
+	RSA_get0_مفتاح(EVP_PKEY_get0_RSA(k->pkey), عدم, &e, عدم);
+	إرجاع e;
 }
 
-const BIGNUM *
-rsa_p(struct sshkey *k)
+ثابت BIGNUM *
+rsa_p(بنية sshkey *k)
 {
-	const BIGNUM *p = NULL;
+	ثابت BIGNUM *p = عدم;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), NULL);
-	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), &p, NULL);
-	return p;
+	ASSERT_PTR_NE(k, عدم);
+	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), عدم);
+	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), &p, عدم);
+	إرجاع p;
 }
 
-const BIGNUM *
-rsa_q(struct sshkey *k)
+ثابت BIGNUM *
+rsa_q(بنية sshkey *k)
 {
-	const BIGNUM *q = NULL;
+	ثابت BIGNUM *q = عدم;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), NULL);
-	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), NULL, &q);
-	return q;
+	ASSERT_PTR_NE(k, عدم);
+	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), عدم);
+	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), عدم, &q);
+	إرجاع q;
 }
 #endif /* WITH_OPENSSL */

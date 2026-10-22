@@ -15,170 +15,170 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#ضمن "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <openssl/bn.h>
-#include <openssl/evp.h>
+#ضمن <openssl/bn.h>
+#ضمن <openssl/evp.h>
 
-#include <stdarg.h>
-#include <string.h>
+#ضمن <stdarg.h>
+#ضمن <string.h>
 
-#include "sshbuf.h"
-#include "ssherr.h"
+#ضمن "sshbuf.h"
+#ضمن "ssherr.h"
 #define SSHKEY_INTERNAL
-#include "sshkey.h"
-#include "digest.h"
+#ضمن "sshkey.h"
+#ضمن "digest.h"
 
-static u_int
-ssh_rsa_size(const struct sshkey *k)
+ساكن u_int
+ssh_rsa_size(ثابت بنية sshkey *k)
 {
-	if (k->pkey == NULL)
-		return 0;
-	return EVP_PKEY_bits(k->pkey);
+	إذا (k->pkey == عدم)
+		إرجاع 0;
+	إرجاع EVP_PKEY_bits(k->pkey);
 }
 
-static int
-ssh_rsa_alloc(struct sshkey *k)
+ساكن صحيح
+ssh_rsa_alloc(بنية sshkey *k)
 {
-	if ((k->pkey = EVP_PKEY_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	return 0;
+	إذا ((k->pkey = EVP_PKEY_new()) == عدم)
+		إرجاع SSH_ERR_ALLOC_FAIL;
+	إرجاع 0;
 }
 
-static void
-ssh_rsa_cleanup(struct sshkey *k)
+ساكن فراغ
+ssh_rsa_cleanup(بنية sshkey *k)
 {
 	EVP_PKEY_free(k->pkey);
-	k->pkey = NULL;
+	k->pkey = عدم;
 }
 
-static int
-ssh_rsa_equal(const struct sshkey *a, const struct sshkey *b)
+ساكن صحيح
+ssh_rsa_equal(ثابت بنية sshkey *a, ثابت بنية sshkey *b)
 {
-	if (a->pkey == NULL || b->pkey == NULL)
-		return 0;
-	return EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
+	إذا (a->pkey == عدم || b->pkey == عدم)
+		إرجاع 0;
+	إرجاع EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
 }
 
-static int
-ssh_rsa_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+ساكن صحيح
+ssh_rsa_serialize_public(ثابت بنية sshkey *مفتاح, بنية sshbuf *b,
+    تعداد sshkey_serialize_rep opts)
 {
-	int r;
-	const BIGNUM *rsa_n, *rsa_e;
-	const RSA *rsa;
+	صحيح r;
+	ثابت BIGNUM *rsa_n, *rsa_e;
+	ثابت RSA *rsa;
 
-	if (key->pkey == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((rsa = EVP_PKEY_get0_RSA(key->pkey)) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	إذا (مفتاح->pkey == عدم)
+		إرجاع SSH_ERR_INVALID_ARGUMENT;
+	إذا ((rsa = EVP_PKEY_get0_RSA(مفتاح->pkey)) == عدم)
+		إرجاع SSH_ERR_LIBCRYPTO_ERROR;
 
-	RSA_get0_key(rsa, &rsa_n, &rsa_e, NULL);
-	if ((r = sshbuf_put_bignum2(b, rsa_e)) != 0 ||
+	RSA_get0_مفتاح(rsa, &rsa_n, &rsa_e, عدم);
+	إذا ((r = sshbuf_put_bignum2(b, rsa_e)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, rsa_n)) != 0)
-		return r;
+		إرجاع r;
 
-	return 0;
+	إرجاع 0;
 }
 
-static int
-ssh_rsa_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+ساكن صحيح
+ssh_rsa_serialize_private(ثابت بنية sshkey *مفتاح, بنية sshbuf *b,
+    تعداد sshkey_serialize_rep opts)
 {
-	int r;
-	const BIGNUM *rsa_n, *rsa_e, *rsa_d, *rsa_iqmp, *rsa_p, *rsa_q;
-	const RSA *rsa;
+	صحيح r;
+	ثابت BIGNUM *rsa_n, *rsa_e, *rsa_d, *rsa_iqmp, *rsa_p, *rsa_q;
+	ثابت RSA *rsa;
 
-	if ((rsa = EVP_PKEY_get0_RSA(key->pkey)) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	RSA_get0_key(rsa, &rsa_n, &rsa_e, &rsa_d);
+	إذا ((rsa = EVP_PKEY_get0_RSA(مفتاح->pkey)) == عدم)
+		إرجاع SSH_ERR_LIBCRYPTO_ERROR;
+	RSA_get0_مفتاح(rsa, &rsa_n, &rsa_e, &rsa_d);
 	RSA_get0_factors(rsa, &rsa_p, &rsa_q);
-	RSA_get0_crt_params(rsa, NULL, NULL, &rsa_iqmp);
+	RSA_get0_crt_params(rsa, عدم, عدم, &rsa_iqmp);
 
-	if (!sshkey_is_cert(key)) {
+	إذا (!sshkey_is_cert(مفتاح)) {
 		/* Note: can't reuse ssh_rsa_serialize_public: e, n vs. n, e */
-		if ((r = sshbuf_put_bignum2(b, rsa_n)) != 0 ||
+		إذا ((r = sshbuf_put_bignum2(b, rsa_n)) != 0 ||
 		    (r = sshbuf_put_bignum2(b, rsa_e)) != 0)
-			return r;
+			إرجاع r;
 	}
-	if ((r = sshbuf_put_bignum2(b, rsa_d)) != 0 ||
+	إذا ((r = sshbuf_put_bignum2(b, rsa_d)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, rsa_iqmp)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, rsa_p)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, rsa_q)) != 0)
-		return r;
+		إرجاع r;
 
-	return 0;
+	إرجاع 0;
 }
 
-static int
-ssh_rsa_generate(struct sshkey *k, int bits)
+ساكن صحيح
+ssh_rsa_generate(بنية sshkey *k, صحيح bits)
 {
-	EVP_PKEY_CTX *ctx = NULL;
-	EVP_PKEY *res = NULL;
+	EVP_PKEY_CTX *ctx = عدم;
+	EVP_PKEY *res = عدم;
 
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	صحيح ret = SSH_ERR_INTERNAL_ERROR;
 
-	if (bits < SSH_RSA_MINIMUM_MODULUS_SIZE ||
+	إذا (bits < SSH_RSA_MINIMUM_MODULUS_SIZE ||
 	    bits > SSHBUF_MAX_BIGNUM * 8)
-		return SSH_ERR_KEY_LENGTH;
+		إرجاع SSH_ERR_مفتاح_LENGTH;
 
-	if ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL)) == NULL) {
+	إذا ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, عدم)) == عدم) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب out;
 	}
-	if (EVP_PKEY_keygen_init(ctx) <= 0) {
+	إذا (EVP_PKEY_keygen_init(ctx) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب out;
 	}
-	if (EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, bits) <= 0) {
-		ret = SSH_ERR_KEY_LENGTH;
-		goto out;
+	إذا (EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, bits) <= 0) {
+		ret = SSH_ERR_مفتاح_LENGTH;
+		اذهب out;
 	}
-	if (EVP_PKEY_keygen(ctx, &res) <= 0 || res == NULL) {
+	إذا (EVP_PKEY_keygen(ctx, &res) <= 0 || res == عدم) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب out;
 	}
 	/* success */
 	k->pkey = res;
 	ret = 0;
  out:
 	EVP_PKEY_CTX_free(ctx);
-	return ret;
+	إرجاع ret;
 }
 
-static int
-ssh_rsa_copy_public(const struct sshkey *from, struct sshkey *to)
+ساكن صحيح
+ssh_rsa_copy_public(ثابت بنية sshkey *from, بنية sshkey *to)
 {
-	const BIGNUM *rsa_n, *rsa_e;
-	BIGNUM *rsa_n_dup = NULL, *rsa_e_dup = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	const RSA *rsa_from;
-	RSA *rsa_to = NULL;
+	ثابت BIGNUM *rsa_n, *rsa_e;
+	BIGNUM *rsa_n_dup = عدم, *rsa_e_dup = عدم;
+	صحيح r = SSH_ERR_INTERNAL_ERROR;
+	ثابت RSA *rsa_from;
+	RSA *rsa_to = عدم;
 
-	if ((rsa_from = EVP_PKEY_get0_RSA(from->pkey)) == NULL ||
-	    (rsa_to = RSA_new()) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	إذا ((rsa_from = EVP_PKEY_get0_RSA(from->pkey)) == عدم ||
+	    (rsa_to = RSA_new()) == عدم)
+		إرجاع SSH_ERR_LIBCRYPTO_ERROR;
 
-	RSA_get0_key(rsa_from, &rsa_n, &rsa_e, NULL);
-	if ((rsa_n_dup = BN_dup(rsa_n)) == NULL ||
-	    (rsa_e_dup = BN_dup(rsa_e)) == NULL) {
+	RSA_get0_مفتاح(rsa_from, &rsa_n, &rsa_e, عدم);
+	إذا ((rsa_n_dup = BN_dup(rsa_n)) == عدم ||
+	    (rsa_e_dup = BN_dup(rsa_e)) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب out;
 	}
-	if (!RSA_set0_key(rsa_to, rsa_n_dup, rsa_e_dup, NULL)) {
+	إذا (!RSA_set0_مفتاح(rsa_to, rsa_n_dup, rsa_e_dup, عدم)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب out;
 	}
-	rsa_n_dup = rsa_e_dup = NULL; /* transferred */
+	rsa_n_dup = rsa_e_dup = عدم; /* transferred */
 
-	if (EVP_PKEY_set1_RSA(to->pkey, rsa_to) != 1) {
+	إذا (EVP_PKEY_set1_RSA(to->pkey, rsa_to) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب out;
 	}
 	/* success */
 	r = 0;
@@ -186,36 +186,36 @@ ssh_rsa_copy_public(const struct sshkey *from, struct sshkey *to)
 	RSA_free(rsa_to);
 	BN_clear_free(rsa_n_dup);
 	BN_clear_free(rsa_e_dup);
-	return r;
+	إرجاع r;
 }
 
-static int
-ssh_rsa_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+ساكن صحيح
+ssh_rsa_deserialize_public(ثابت حرف *ktype, بنية sshbuf *b,
+    بنية sshkey *مفتاح)
 {
-	int ret = SSH_ERR_INTERNAL_ERROR;
-	BIGNUM *rsa_n = NULL, *rsa_e = NULL;
-	RSA *rsa = NULL;
+	صحيح ret = SSH_ERR_INTERNAL_ERROR;
+	BIGNUM *rsa_n = عدم, *rsa_e = عدم;
+	RSA *rsa = عدم;
 
-	if ((rsa = RSA_new()) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	إذا ((rsa = RSA_new()) == عدم)
+		إرجاع SSH_ERR_LIBCRYPTO_ERROR;
 
-	if (sshbuf_get_bignum2(b, &rsa_e) != 0 ||
+	إذا (sshbuf_get_bignum2(b, &rsa_e) != 0 ||
 	    sshbuf_get_bignum2(b, &rsa_n) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب out;
 	}
-	if (!RSA_set0_key(rsa, rsa_n, rsa_e, NULL)) {
+	إذا (!RSA_set0_مفتاح(rsa, rsa_n, rsa_e, عدم)) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب out;
 	}
-	rsa_n = rsa_e = NULL; /* transferred */
-	if (EVP_PKEY_set1_RSA(key->pkey, rsa) != 1) {
+	rsa_n = rsa_e = عدم; /* transferred */
+	إذا (EVP_PKEY_set1_RSA(مفتاح->pkey, rsa) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب out;
 	}
-	if ((ret = sshkey_check_rsa_length(key, 0)) != 0)
-		goto out;
+	إذا ((ret = sshkey_check_rsa_length(مفتاح, 0)) != 0)
+		اذهب out;
 #ifdef DEBUG_PK
 	RSA_print_fp(stderr, rsa, 8);
 #endif
@@ -225,73 +225,73 @@ ssh_rsa_deserialize_public(const char *ktype, struct sshbuf *b,
 	RSA_free(rsa);
 	BN_clear_free(rsa_n);
 	BN_clear_free(rsa_e);
-	return ret;
+	إرجاع ret;
 }
 
-static int
-ssh_rsa_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+ساكن صحيح
+ssh_rsa_deserialize_private(ثابت حرف *ktype, بنية sshbuf *b,
+    بنية sshkey *مفتاح)
 {
-	int r;
-	BIGNUM *rsa_n = NULL, *rsa_e = NULL, *rsa_d = NULL;
-	BIGNUM *rsa_iqmp = NULL, *rsa_p = NULL, *rsa_q = NULL;
-	BIGNUM *rsa_dmp1 = NULL, *rsa_dmq1 = NULL;
-	RSA *rsa = NULL;
+	صحيح r;
+	BIGNUM *rsa_n = عدم, *rsa_e = عدم, *rsa_d = عدم;
+	BIGNUM *rsa_iqmp = عدم, *rsa_p = عدم, *rsa_q = عدم;
+	BIGNUM *rsa_dmp1 = عدم, *rsa_dmq1 = عدم;
+	RSA *rsa = عدم;
 
-	if (sshkey_is_cert(key)) {
+	إذا (sshkey_is_cert(مفتاح)) {
 		/* sshkey_private_deserialize already has pubkey from cert */
-		if ((rsa = EVP_PKEY_get1_RSA(key->pkey)) == NULL) {
+		إذا ((rsa = EVP_PKEY_get1_RSA(مفتاح->pkey)) == عدم) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			اذهب out;
 		}
-	} else {
-		if ((rsa = RSA_new()) == NULL) {
+	} وإلا {
+		إذا ((rsa = RSA_new()) == عدم) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			اذهب out;
 		}
 		/* Note: can't reuse ssh_rsa_deserialize_public: e,n vs. n,e */
-		if ((r = sshbuf_get_bignum2(b, &rsa_n)) != 0 ||
+		إذا ((r = sshbuf_get_bignum2(b, &rsa_n)) != 0 ||
 		    (r = sshbuf_get_bignum2(b, &rsa_e)) != 0)
-			goto out;
-		if (!RSA_set0_key(rsa, rsa_n, rsa_e, NULL)) {
+			اذهب out;
+		إذا (!RSA_set0_مفتاح(rsa, rsa_n, rsa_e, عدم)) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			اذهب out;
 		}
-		rsa_n = rsa_e = NULL; /* transferred */
+		rsa_n = rsa_e = عدم; /* transferred */
 	}
-	if ((r = sshbuf_get_bignum2(b, &rsa_d)) != 0 ||
+	إذا ((r = sshbuf_get_bignum2(b, &rsa_d)) != 0 ||
 	    (r = sshbuf_get_bignum2(b, &rsa_iqmp)) != 0 ||
 	    (r = sshbuf_get_bignum2(b, &rsa_p)) != 0 ||
 	    (r = sshbuf_get_bignum2(b, &rsa_q)) != 0)
-		goto out;
-	if ((r = ssh_rsa_complete_crt_parameters(rsa_d, rsa_p, rsa_q,
+		اذهب out;
+	إذا ((r = ssh_rsa_complete_crt_parameters(rsa_d, rsa_p, rsa_q,
 	    rsa_iqmp, &rsa_dmp1, &rsa_dmq1)) != 0)
-		goto out;
-	if (!RSA_set0_key(rsa, NULL, NULL, rsa_d)) {
+		اذهب out;
+	إذا (!RSA_set0_مفتاح(rsa, عدم, عدم, rsa_d)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب out;
 	}
-	rsa_d = NULL; /* transferred */
-	if (!RSA_set0_factors(rsa, rsa_p, rsa_q)) {
+	rsa_d = عدم; /* transferred */
+	إذا (!RSA_set0_factors(rsa, rsa_p, rsa_q)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب out;
 	}
-	rsa_p = rsa_q = NULL; /* transferred */
-	if (!RSA_set0_crt_params(rsa, rsa_dmp1, rsa_dmq1, rsa_iqmp)) {
+	rsa_p = rsa_q = عدم; /* transferred */
+	إذا (!RSA_set0_crt_params(rsa, rsa_dmp1, rsa_dmq1, rsa_iqmp)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب out;
 	}
-	rsa_dmp1 = rsa_dmq1 = rsa_iqmp = NULL;
-	if (RSA_blinding_on(rsa, NULL) != 1) {
+	rsa_dmp1 = rsa_dmq1 = rsa_iqmp = عدم;
+	إذا (RSA_blinding_on(rsa, عدم) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب out;
 	}
-	if (EVP_PKEY_set1_RSA(key->pkey, rsa) != 1) {
+	إذا (EVP_PKEY_set1_RSA(مفتاح->pkey, rsa) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب out;
 	}
-	if ((r = sshkey_check_rsa_length(key, 0)) != 0)
-		goto out;
+	إذا ((r = sshkey_check_rsa_length(مفتاح, 0)) != 0)
+		اذهب out;
 	/* success */
 	r = 0;
  out:
@@ -304,37 +304,37 @@ ssh_rsa_deserialize_private(const char *ktype, struct sshbuf *b,
 	BN_clear_free(rsa_iqmp);
 	BN_clear_free(rsa_dmp1);
 	BN_clear_free(rsa_dmq1);
-	return r;
+	إرجاع r;
 }
 
-const char *
-ssh_rsa_hash_alg_ident(int hash_alg)
+ثابت حرف *
+ssh_rsa_hash_alg_ident(صحيح hash_alg)
 {
-	switch (hash_alg) {
-	case SSH_DIGEST_SHA1:
-		return "ssh-rsa";
-	case SSH_DIGEST_SHA256:
-		return "rsa-sha2-256";
-	case SSH_DIGEST_SHA512:
-		return "rsa-sha2-512";
+	بدل (hash_alg) {
+	حالة SSH_DIGEST_SHA1:
+		إرجاع "ssh-rsa";
+	حالة SSH_DIGEST_SHA256:
+		إرجاع "rsa-sha2-256";
+	حالة SSH_DIGEST_SHA512:
+		إرجاع "rsa-sha2-512";
 	}
-	return NULL;
+	إرجاع عدم;
 }
 
 /*
  * Returns the hash algorithm ID for a given algorithm identifier as used
  * inside the signature blob,
  */
-static int
-rsa_hash_id_from_ident(const char *ident)
+ساكن صحيح
+rsa_hash_id_from_ident(ثابت حرف *ident)
 {
-	if (strcmp(ident, "ssh-rsa") == 0)
-		return SSH_DIGEST_SHA1;
-	if (strcmp(ident, "rsa-sha2-256") == 0)
-		return SSH_DIGEST_SHA256;
-	if (strcmp(ident, "rsa-sha2-512") == 0)
-		return SSH_DIGEST_SHA512;
-	return -1;
+	إذا (strcmp(ident, "ssh-rsa") == 0)
+		إرجاع SSH_DIGEST_SHA1;
+	إذا (strcmp(ident, "rsa-sha2-256") == 0)
+		إرجاع SSH_DIGEST_SHA256;
+	إذا (strcmp(ident, "rsa-sha2-512") == 0)
+		إرجاع SSH_DIGEST_SHA512;
+	إرجاع -1;
 }
 
 /*
@@ -342,51 +342,51 @@ rsa_hash_id_from_ident(const char *ident)
  * all the cases of rsa_hash_id_from_ident() but also the certificate key
  * types.
  */
-int
-ssh_rsa_hash_id_from_keyname(const char *alg)
+صحيح
+ssh_rsa_hash_id_from_keyname(ثابت حرف *alg)
 {
-	int r;
+	صحيح r;
 
-	if ((r = rsa_hash_id_from_ident(alg)) != -1)
-		return r;
-	if (strcmp(alg, "ssh-rsa-cert-v01@openssh.com") == 0)
-		return SSH_DIGEST_SHA1;
-	if (strcmp(alg, "rsa-sha2-256-cert-v01@openssh.com") == 0)
-		return SSH_DIGEST_SHA256;
-	if (strcmp(alg, "rsa-sha2-512-cert-v01@openssh.com") == 0)
-		return SSH_DIGEST_SHA512;
-	return -1;
+	إذا ((r = rsa_hash_id_from_ident(alg)) != -1)
+		إرجاع r;
+	إذا (strcmp(alg, "ssh-rsa-cert-v01@openssh.com") == 0)
+		إرجاع SSH_DIGEST_SHA1;
+	إذا (strcmp(alg, "rsa-sha2-256-cert-v01@openssh.com") == 0)
+		إرجاع SSH_DIGEST_SHA256;
+	إذا (strcmp(alg, "rsa-sha2-512-cert-v01@openssh.com") == 0)
+		إرجاع SSH_DIGEST_SHA512;
+	إرجاع -1;
 }
 
-int
-ssh_rsa_complete_crt_parameters(const BIGNUM *rsa_d, const BIGNUM *rsa_p,
-    const BIGNUM *rsa_q, const BIGNUM *rsa_iqmp, BIGNUM **rsa_dmp1,
+صحيح
+ssh_rsa_complete_crt_parameters(ثابت BIGNUM *rsa_d, ثابت BIGNUM *rsa_p,
+    ثابت BIGNUM *rsa_q, ثابت BIGNUM *rsa_iqmp, BIGNUM **rsa_dmp1,
     BIGNUM **rsa_dmq1)
 {
-	BIGNUM *aux = NULL, *d_consttime = NULL;
-	BN_CTX *ctx = NULL;
-	int r;
+	BIGNUM *aux = عدم, *d_consttime = عدم;
+	BN_CTX *ctx = عدم;
+	صحيح r;
 
-	*rsa_dmq1 = *rsa_dmp1 = NULL;
-	if ((ctx = BN_CTX_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((aux = BN_new()) == NULL ||
-	    (*rsa_dmq1 = BN_new()) == NULL ||
-	    (*rsa_dmp1 = BN_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((d_consttime = BN_dup(rsa_d)) == NULL) {
+	*rsa_dmq1 = *rsa_dmp1 = عدم;
+	إذا ((ctx = BN_CTX_new()) == عدم)
+		إرجاع SSH_ERR_ALLOC_FAIL;
+	إذا ((aux = BN_new()) == عدم ||
+	    (*rsa_dmq1 = BN_new()) == عدم ||
+	    (*rsa_dmp1 = BN_new()) == عدم)
+		إرجاع SSH_ERR_ALLOC_FAIL;
+	إذا ((d_consttime = BN_dup(rsa_d)) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب out;
 	}
 	BN_set_flags(aux, BN_FLG_CONSTTIME);
 	BN_set_flags(d_consttime, BN_FLG_CONSTTIME);
 
-	if ((BN_sub(aux, rsa_q, BN_value_one()) == 0) ||
+	إذا ((BN_sub(aux, rsa_q, BN_قيمة_one()) == 0) ||
 	    (BN_mod(*rsa_dmq1, d_consttime, aux, ctx) == 0) ||
-	    (BN_sub(aux, rsa_p, BN_value_one()) == 0) ||
+	    (BN_sub(aux, rsa_p, BN_قيمة_one()) == 0) ||
 	    (BN_mod(*rsa_dmp1, d_consttime, aux, ctx) == 0)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب out;
 	}
 	/* success */
 	r = 0;
@@ -394,189 +394,189 @@ ssh_rsa_complete_crt_parameters(const BIGNUM *rsa_d, const BIGNUM *rsa_p,
 	BN_clear_free(aux);
 	BN_clear_free(d_consttime);
 	BN_CTX_free(ctx);
-	return r;
+	إرجاع r;
 }
 
 /* RSASSA-PKCS1-v1_5 (PKCS #1 v2.0 signature) with SHA1 */
-static int
-ssh_rsa_sign(struct sshkey *key,
+ساكن صحيح
+ssh_rsa_sign(بنية sshkey *مفتاح,
     u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider, const char *sk_pin, u_int compat)
+    ثابت u_char *data, size_t datalen,
+    ثابت حرف *alg, ثابت حرف *sk_provider, ثابت حرف *sk_pin, u_int compat)
 {
-	u_char *sig = NULL;
+	u_char *sig = عدم;
 	size_t diff, len = 0;
-	int slen = 0;
-	int hash_alg, ret = SSH_ERR_INTERNAL_ERROR;
+	صحيح slen = 0;
+	صحيح hash_alg, ret = SSH_ERR_INTERNAL_ERROR;
 
-	if (lenp != NULL)
+	إذا (lenp != عدم)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	إذا (sigp != عدم)
+		*sigp = عدم;
 
-	if (alg == NULL || strlen(alg) == 0)
+	إذا (alg == عدم || strlen(alg) == 0)
 		hash_alg = SSH_DIGEST_SHA1;
-	else
+	وإلا
 		hash_alg = ssh_rsa_hash_id_from_keyname(alg);
 
-	if (key == NULL || key->pkey == NULL || hash_alg == -1 ||
-	    sshkey_type_plain(key->type) != KEY_RSA)
-		return SSH_ERR_INVALID_ARGUMENT;
-	slen = EVP_PKEY_size(key->pkey);
-	if (slen <= 0 || slen > SSHBUF_MAX_BIGNUM)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_PKEY_bits(key->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE)
-		return SSH_ERR_KEY_LENGTH;
+	إذا (مفتاح == عدم || مفتاح->pkey == عدم || hash_alg == -1 ||
+	    sshkey_type_plain(مفتاح->type) != مفتاح_RSA)
+		إرجاع SSH_ERR_INVALID_ARGUMENT;
+	slen = EVP_PKEY_size(مفتاح->pkey);
+	إذا (slen <= 0 || slen > SSHBUF_MAX_BIGNUM)
+		إرجاع SSH_ERR_INVALID_ARGUMENT;
+	إذا (EVP_PKEY_bits(مفتاح->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE)
+		إرجاع SSH_ERR_مفتاح_LENGTH;
 
-	if ((ret = sshkey_pkey_digest_sign(key->pkey, hash_alg, &sig, &len,
+	إذا ((ret = sshkey_pkey_digest_sign(مفتاح->pkey, hash_alg, &sig, &len,
 	    data, datalen)) < 0)
-		goto out;
-	if (len < (size_t)slen) {
+		اذهب out;
+	إذا (len < (size_t)slen) {
 		diff = slen - len;
 		memmove(sig + diff, sig, len);
 		explicit_bzero(sig, diff);
-	} else if (len > (size_t)slen) {
+	} وإلا إذا (len > (size_t)slen) {
 		ret = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		اذهب out;
 	}
-	if ((ret = ssh_rsa_encode_store_sig(hash_alg, sig, slen,
+	إذا ((ret = ssh_rsa_encode_store_sig(hash_alg, sig, slen,
 	    sigp, lenp)) != 0)
-		goto out;
+		اذهب out;
 
 	/* success */
 	ret = 0;
  out:
 	freezero(sig, slen);
-	return ret;
+	إرجاع ret;
 }
 
-int
-ssh_rsa_encode_store_sig(int hash_alg, const u_char *sig, size_t slen,
+صحيح
+ssh_rsa_encode_store_sig(صحيح hash_alg, ثابت u_char *sig, size_t slen,
     u_char **sigp, size_t *lenp)
 {
-	struct sshbuf *b = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	بنية sshbuf *b = عدم;
+	صحيح ret = SSH_ERR_INTERNAL_ERROR;
 	size_t len;
 
-	if (lenp != NULL)
+	إذا (lenp != عدم)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	إذا (sigp != عدم)
+		*sigp = عدم;
 
 	/* Encode signature */
-	if ((b = sshbuf_new()) == NULL) {
+	إذا ((b = sshbuf_new()) == عدم) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب out;
 	}
-	if ((ret = sshbuf_put_cstring(b,
+	إذا ((ret = sshbuf_put_cstring(b,
 	    ssh_rsa_hash_alg_ident(hash_alg))) != 0 ||
 	    (ret = sshbuf_put_string(b, sig, slen)) != 0)
-		goto out;
+		اذهب out;
 	len = sshbuf_len(b);
 
 	/* Store signature */
-	if (sigp != NULL) {
-		if ((*sigp = malloc(len)) == NULL) {
+	إذا (sigp != عدم) {
+		إذا ((*sigp = malloc(len)) == عدم) {
 			ret = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			اذهب out;
 		}
 		memcpy(*sigp, sshbuf_ptr(b), len);
 	}
-	if (lenp != NULL)
+	إذا (lenp != عدم)
 		*lenp = len;
 	ret = 0;
  out:
 	sshbuf_free(b);
-	return ret;
+	إرجاع ret;
 }
 
-static int
-ssh_rsa_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+ساكن صحيح
+ssh_rsa_verify(ثابت بنية sshkey *مفتاح,
+    ثابت u_char *sig, size_t siglen,
+    ثابت u_char *data, size_t dlen, ثابت حرف *alg, u_int compat,
+    بنية sshkey_sig_details **detailsp)
 {
-	char *sigtype = NULL;
-	int hash_alg, want_alg, ret = SSH_ERR_INTERNAL_ERROR;
+	حرف *sigtype = عدم;
+	صحيح hash_alg, want_alg, ret = SSH_ERR_INTERNAL_ERROR;
 	size_t len = 0, diff, modlen, rsasize;
-	struct sshbuf *b = NULL;
-	u_char digest[SSH_DIGEST_MAX_LENGTH], *osigblob, *sigblob = NULL;
+	بنية sshbuf *b = عدم;
+	u_char digest[SSH_DIGEST_MAX_LENGTH], *osigblob, *sigblob = عدم;
 
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_RSA ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_PKEY_bits(key->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE)
-		return SSH_ERR_KEY_LENGTH;
+	إذا (مفتاح == عدم || مفتاح->pkey == عدم ||
+	    sshkey_type_plain(مفتاح->type) != مفتاح_RSA ||
+	    sig == عدم || siglen == 0)
+		إرجاع SSH_ERR_INVALID_ARGUMENT;
+	إذا (EVP_PKEY_bits(مفتاح->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE)
+		إرجاع SSH_ERR_مفتاح_LENGTH;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (sshbuf_get_cstring(b, &sigtype, NULL) != 0) {
+	إذا ((b = sshbuf_from(sig, siglen)) == عدم)
+		إرجاع SSH_ERR_ALLOC_FAIL;
+	إذا (sshbuf_get_cstring(b, &sigtype, عدم) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب out;
 	}
-	if ((hash_alg = rsa_hash_id_from_ident(sigtype)) == -1) {
-		ret = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+	إذا ((hash_alg = rsa_hash_id_from_ident(sigtype)) == -1) {
+		ret = SSH_ERR_مفتاح_TYPE_MISMATCH;
+		اذهب out;
 	}
 	/*
 	 * Allow ssh-rsa-cert-v01 certs to generate SHA2 signatures for
 	 * legacy reasons, but otherwise the signature type should match.
 	 */
-	if (alg != NULL && strcmp(alg, "ssh-rsa-cert-v01@openssh.com") != 0) {
-		if ((want_alg = ssh_rsa_hash_id_from_keyname(alg)) == -1) {
+	إذا (alg != عدم && strcmp(alg, "ssh-rsa-cert-v01@openssh.com") != 0) {
+		إذا ((want_alg = ssh_rsa_hash_id_from_keyname(alg)) == -1) {
 			ret = SSH_ERR_INVALID_ARGUMENT;
-			goto out;
+			اذهب out;
 		}
-		if (hash_alg != want_alg) {
+		إذا (hash_alg != want_alg) {
 			ret = SSH_ERR_SIGNATURE_INVALID;
-			goto out;
+			اذهب out;
 		}
 	}
-	if (sshbuf_get_string(b, &sigblob, &len) != 0) {
+	إذا (sshbuf_get_string(b, &sigblob, &len) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب out;
 	}
-	if (sshbuf_len(b) != 0) {
+	إذا (sshbuf_len(b) != 0) {
 		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+		اذهب out;
 	}
 	/* RSA_verify expects a signature of RSA_size */
-	modlen = EVP_PKEY_size(key->pkey);
-	if (len > modlen) {
-		ret = SSH_ERR_KEY_BITS_MISMATCH;
-		goto out;
-	} else if (len < modlen) {
+	modlen = EVP_PKEY_size(مفتاح->pkey);
+	إذا (len > modlen) {
+		ret = SSH_ERR_مفتاح_BITS_MISMATCH;
+		اذهب out;
+	} وإلا إذا (len < modlen) {
 		diff = modlen - len;
 		osigblob = sigblob;
-		if ((sigblob = realloc(sigblob, modlen)) == NULL) {
+		إذا ((sigblob = realloc(sigblob, modlen)) == عدم) {
 			sigblob = osigblob; /* put it back for clear/free */
 			ret = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			اذهب out;
 		}
 		memmove(sigblob + diff, sigblob, len);
 		explicit_bzero(sigblob, diff);
 		len = modlen;
 	}
 
-	rsasize = EVP_PKEY_size(key->pkey);
-	if (rsasize <= 0 || rsasize > SSHBUF_MAX_BIGNUM ||
+	rsasize = EVP_PKEY_size(مفتاح->pkey);
+	إذا (rsasize <= 0 || rsasize > SSHBUF_MAX_BIGNUM ||
 	    len == 0 || len > rsasize) {
 		ret = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		اذهب out;
 	}
-	ret = sshkey_pkey_digest_verify(key->pkey, hash_alg, data, dlen,
+	ret = sshkey_pkey_digest_verify(مفتاح->pkey, hash_alg, data, dlen,
 	    sigblob, len);
 
  out:
 	freezero(sigblob, len);
-	free(sigtype);
+	حرر(sigtype);
 	sshbuf_free(b);
-	explicit_bzero(digest, sizeof(digest));
-	return ret;
+	explicit_bzero(digest, حجم(digest));
+	إرجاع ret;
 }
 
-static const struct sshkey_impl_funcs sshkey_rsa_funcs = {
+ساكن ثابت بنية sshkey_impl_funcs sshkey_rsa_funcs = {
 	/* .size = */		ssh_rsa_size,
 	/* .alloc = */		ssh_rsa_alloc,
 	/* .cleanup = */	ssh_rsa_cleanup,
@@ -591,11 +591,11 @@ static const struct sshkey_impl_funcs sshkey_rsa_funcs = {
 	/* .verify = */		ssh_rsa_verify,
 };
 
-const struct sshkey_impl sshkey_rsa_impl = {
+ثابت بنية sshkey_impl sshkey_rsa_impl = {
 	/* .name = */		"ssh-rsa",
 	/* .shortname = */	"RSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_RSA,
+	/* .sigalg = */		عدم,
+	/* .type = */		مفتاح_RSA,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -603,11 +603,11 @@ const struct sshkey_impl sshkey_rsa_impl = {
 	/* .funcs = */		&sshkey_rsa_funcs,
 };
 
-const struct sshkey_impl sshkey_rsa_cert_impl = {
+ثابت بنية sshkey_impl sshkey_rsa_cert_impl = {
 	/* .name = */		"ssh-rsa-cert-v01@openssh.com",
 	/* .shortname = */	"RSA-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_RSA_CERT,
+	/* .sigalg = */		عدم,
+	/* .type = */		مفتاح_RSA_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -617,11 +617,11 @@ const struct sshkey_impl sshkey_rsa_cert_impl = {
 
 /* SHA2 signature algorithms */
 
-const struct sshkey_impl sshkey_rsa_sha256_impl = {
+ثابت بنية sshkey_impl sshkey_rsa_sha256_impl = {
 	/* .name = */		"rsa-sha2-256",
 	/* .shortname = */	"RSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_RSA,
+	/* .sigalg = */		عدم,
+	/* .type = */		مفتاح_RSA,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	1,
@@ -629,11 +629,11 @@ const struct sshkey_impl sshkey_rsa_sha256_impl = {
 	/* .funcs = */		&sshkey_rsa_funcs,
 };
 
-const struct sshkey_impl sshkey_rsa_sha512_impl = {
+ثابت بنية sshkey_impl sshkey_rsa_sha512_impl = {
 	/* .name = */		"rsa-sha2-512",
 	/* .shortname = */	"RSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_RSA,
+	/* .sigalg = */		عدم,
+	/* .type = */		مفتاح_RSA,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	1,
@@ -641,11 +641,11 @@ const struct sshkey_impl sshkey_rsa_sha512_impl = {
 	/* .funcs = */		&sshkey_rsa_funcs,
 };
 
-const struct sshkey_impl sshkey_rsa_sha256_cert_impl = {
+ثابت بنية sshkey_impl sshkey_rsa_sha256_cert_impl = {
 	/* .name = */		"rsa-sha2-256-cert-v01@openssh.com",
 	/* .shortname = */	"RSA-CERT",
 	/* .sigalg = */		"rsa-sha2-256",
-	/* .type = */		KEY_RSA_CERT,
+	/* .type = */		مفتاح_RSA_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	1,
@@ -653,11 +653,11 @@ const struct sshkey_impl sshkey_rsa_sha256_cert_impl = {
 	/* .funcs = */		&sshkey_rsa_funcs,
 };
 
-const struct sshkey_impl sshkey_rsa_sha512_cert_impl = {
+ثابت بنية sshkey_impl sshkey_rsa_sha512_cert_impl = {
 	/* .name = */		"rsa-sha2-512-cert-v01@openssh.com",
 	/* .shortname = */	"RSA-CERT",
 	/* .sigalg = */		"rsa-sha2-512",
-	/* .type = */		KEY_RSA_CERT,
+	/* .type = */		مفتاح_RSA_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	1,

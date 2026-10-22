@@ -16,43 +16,43 @@
 
 /* $OpenBSD$ */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 #ifdef HAVE_SYS_STATVFS_H
 # include <sys/statvfs.h>
 #endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ضمن <errno.h>
 
-static void
-usage(void)
+ساكن فراغ
+usage(فراغ)
 {
 	fprintf(stderr, "check-setuid [path]\n");
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+صحيح
+الرئيسية(صحيح argc, حرف **argv)
 {
-	const char *path = ".";
-	struct statvfs sb;
+	ثابت حرف *path = ".";
+	بنية statvfs sb;
 
-	if (argc > 2)
+	إذا (argc > 2)
 		usage();
-	else if (argc == 2)
+	وإلا إذا (argc == 2)
 		path = argv[1];
 
-	if (statvfs(path, &sb) != 0) {
+	إذا (statvfs(path, &sb) != 0) {
 		/* Don't return an error if the host doesn't support statvfs */
-		if (errno == ENOSYS)
-			return 0;
+		إذا (errno == ENOSYS)
+			إرجاع 0;
 		fprintf(stderr, "statvfs for \"%s\" failed: %s\n",
 		     path, strerror(errno));
 	}
-	return (sb.f_flag & ST_NOSUID) ? 1 : 0;
+	إرجاع (sb.f_flag & ST_NOSUID) ? 1 : 0;
 }
 
 

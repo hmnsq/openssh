@@ -36,19 +36,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#ضمن <ctype.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
 
-#include "xmalloc.h"
-#include "match.h"
-#include "misc.h"
+#ضمن "xmalloc.h"
+#ضمن "match.h"
+#ضمن "misc.h"
 
 /*
  * Computes the epsilon closure of an NFA set.
@@ -57,15 +57,15 @@
  *
  * This function modifies 'states' in place.
  */
-static void
-epsilon_closure(char *states, const char *pattern, size_t M)
+ساكن فراغ
+epsilon_closure(حرف *states, ثابت حرف *pattern, size_t M)
 {
 	size_t i;
 
 	/* only need a forward pass as there are no back jumps in our grammar */
-	for (i = 0; i < M; i++) {
-		if (!states[i] || pattern[i] != '*')
-			continue;
+	لكل (i = 0; i < M; i++) {
+		إذا (!states[i] || pattern[i] != '*')
+			استمر;
 		/*
 		 * State i is active, and pattern[i] is '*', so we can
 		 * epsilon-transition to i+1.
@@ -78,41 +78,41 @@ epsilon_closure(char *states, const char *pattern, size_t M)
  * Returns true if the given string matches the pattern (which may contain ?
  * and * as wildcards), and zero if it does not match. Uses an NFA internally.
  */
-int
-match_pattern(const char *s, const char *pattern)
+صحيح
+match_pattern(ثابت حرف *s, ثابت حرف *pattern)
 {
 	size_t M;
 	size_t i;
-	char *states, *next_states, *tmp;
-	int active, matched = 0;
+	حرف *states, *next_states, *tmp;
+	صحيح active, matched = 0;
 
 	/* trivial case: empty pattern vs empty input */
-	if ((M = strlen(pattern)) == 0)
-		return *s == '\0';
+	إذا ((M = strlen(pattern)) == 0)
+		إرجاع *s == '\0';
 
 	/* A state for each pattern character, plus one final accepting state */
-	states = xcalloc(M + 1, sizeof(*states));
-	next_states = xcalloc(M + 1, sizeof(*next_states));
+	states = xcalloc(M + 1, حجم(*states));
+	next_states = xcalloc(M + 1, حجم(*next_states));
 
 	/* Initial state: state 0 is active */
 	states[0] = 1;
 	/* Other states might be reachable now if the pattern starts with '*' */
 	epsilon_closure(states, pattern, M);
 
-	for (; *s; s++) {
+	لكل (; *s; s++) {
 		memset(next_states, 0, M + 1);
 
 		/* Calculate the reachable next states given the input char */
-		for (i = 0; i < M; i++) {
-			if (!states[i])
-				continue;
-			if (pattern[i] == '*') {
+		لكل (i = 0; i < M; i++) {
+			إذا (!states[i])
+				استمر;
+			إذا (pattern[i] == '*') {
 				/*
 				 * '*' matches any character, so we can
 				 * stay in state i
 				 */
 				next_states[i] = 1;
-			} else if (pattern[i] == '?' || pattern[i] == *s) {
+			} وإلا إذا (pattern[i] == '?' || pattern[i] == *s) {
 				/*
 				 * '?' matches any character, or we have
 				 * a literal match.
@@ -131,14 +131,14 @@ match_pattern(const char *s, const char *pattern)
 
 		/* Check if we have any active pattern states left */
 		active = 0;
-		for (i = 0; i <= M; i++) {
-			if (states[i]) {
+		لكل (i = 0; i <= M; i++) {
+			إذا (states[i]) {
 				active = 1;
-				break;
+				اكسر;
 			}
 		}
-		if (!active)
-			goto out; /* No active states, fail early */
+		إذا (!active)
+			اذهب out; /* No active states, fail early */
 	}
 	/*
 	 * We matched only if we ended up in the final, accepting state
@@ -146,9 +146,9 @@ match_pattern(const char *s, const char *pattern)
 	 */
 	matched = states[M];
  out:
-	free(states);
-	free(next_states);
-	return matched;
+	حرر(states);
+	حرر(next_states);
+	إرجاع matched;
 }
 
 /*
@@ -157,48 +157,48 @@ match_pattern(const char *s, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-match_pattern_list(const char *string, const char *pattern, int dolower)
+صحيح
+match_pattern_list(ثابت حرف *string, ثابت حرف *pattern, صحيح dolower)
 {
-	char sub[1024];
-	int negated;
-	int got_positive;
+	حرف sub[1024];
+	صحيح negated;
+	صحيح got_positive;
 	u_int i, subi, len = strlen(pattern);
 
 	got_positive = 0;
-	for (i = 0; i < len;) {
+	لكل (i = 0; i < len;) {
 		/* Check if the subpattern is negated. */
-		if (pattern[i] == '!') {
+		إذا (pattern[i] == '!') {
 			negated = 1;
 			i++;
-		} else
+		} وإلا
 			negated = 0;
 
 		/*
 		 * Extract the subpattern up to a comma or end.  Convert the
 		 * subpattern to lowercase.
 		 */
-		for (subi = 0;
-		    i < len && subi < sizeof(sub) - 1 && pattern[i] != ',';
+		لكل (subi = 0;
+		    i < len && subi < حجم(sub) - 1 && pattern[i] != ',';
 		    subi++, i++)
 			sub[subi] = dolower && isupper((u_char)pattern[i]) ?
 			    tolower((u_char)pattern[i]) : pattern[i];
 		/* If subpattern too long, return failure (no match). */
-		if (subi >= sizeof(sub) - 1)
-			return 0;
+		إذا (subi >= حجم(sub) - 1)
+			إرجاع 0;
 
 		/* If the subpattern was terminated by a comma, then skip it. */
-		if (i < len && pattern[i] == ',')
+		إذا (i < len && pattern[i] == ',')
 			i++;
 
 		/* Null-terminate the subpattern. */
 		sub[subi] = '\0';
 
 		/* Try to match the subpattern against the string. */
-		if (match_pattern(string, sub)) {
-			if (negated)
-				return -1;		/* Negative */
-			else
+		إذا (match_pattern(string, sub)) {
+			إذا (negated)
+				إرجاع -1;		/* Negative */
+			وإلا
 				got_positive = 1;	/* Positive */
 		}
 	}
@@ -207,19 +207,19 @@ match_pattern_list(const char *string, const char *pattern, int dolower)
 	 * Return success if got a positive match.  If there was a negative
 	 * match, we have already returned -1 and never get here.
 	 */
-	return got_positive;
+	إرجاع got_positive;
 }
 
 /* Match a list representing users or groups. */
-int
-match_usergroup_pattern_list(const char *string, const char *pattern)
+صحيح
+match_usergroup_pattern_list(ثابت حرف *string, ثابت حرف *pattern)
 {
 #ifdef HAVE_CYGWIN
 	/* Windows usernames may be Unicode and are not case sensitive */
-	return cygwin_ug_match_pattern_list(string, pattern);
-#else
+	إرجاع cygwin_ug_match_pattern_list(string, pattern);
+#وإلا
 	/* Case sensitive match */
-	return match_pattern_list(string, pattern, 0);
+	إرجاع match_pattern_list(string, pattern, 0);
 #endif
 }
 
@@ -229,16 +229,16 @@ match_usergroup_pattern_list(const char *string, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-match_hostname(const char *host, const char *pattern)
+صحيح
+match_hostname(ثابت حرف *host, ثابت حرف *pattern)
 {
-	char *hostcopy = xstrdup(host);
-	int r;
+	حرف *hostcopy = xstrdup(host);
+	صحيح r;
 
 	lowercase(hostcopy);
 	r = match_pattern_list(hostcopy, pattern, 1);
-	free(hostcopy);
-	return r;
+	حرر(hostcopy);
+	إرجاع r;
 }
 
 /*
@@ -246,24 +246,24 @@ match_hostname(const char *host, const char *pattern)
  * or if we get no match at all.  returns -1 on error, or 1 on
  * successful match.
  */
-int
-match_host_and_ip(const char *host, const char *ipaddr,
-    const char *patterns)
+صحيح
+match_host_and_ip(ثابت حرف *host, ثابت حرف *ipaddr,
+    ثابت حرف *patterns)
 {
-	int mhost, mip;
+	صحيح mhost, mip;
 
-	if ((mip = addr_match_list(ipaddr, patterns)) == -2)
-		return -1; /* error in ipaddr match */
-	else if (host == NULL || ipaddr == NULL || mip == -1)
-		return 0; /* negative ip address match, or testing pattern */
+	إذا ((mip = addr_match_list(ipaddr, patterns)) == -2)
+		إرجاع -1; /* error in ipaddr match */
+	وإلا إذا (host == عدم || ipaddr == عدم || mip == -1)
+		إرجاع 0; /* negative ip address match, or testing pattern */
 
 	/* negative hostname match */
-	if ((mhost = match_hostname(host, patterns)) == -1)
-		return 0;
+	إذا ((mhost = match_hostname(host, patterns)) == -1)
+		إرجاع 0;
 	/* no match at all */
-	if (mhost == 0 && mip == 0)
-		return 0;
-	return 1;
+	إذا (mhost == 0 && mip == 0)
+		إرجاع 0;
+	إرجاع 1;
 }
 
 /*
@@ -271,36 +271,36 @@ match_host_and_ip(const char *host, const char *ipaddr,
  * If user, host and ipaddr are all NULL then validate pattern/
  * Returns -1 on invalid pattern, 0 on no match, 1 on match.
  */
-int
-match_user(const char *user, const char *host, const char *ipaddr,
-    const char *pattern)
+صحيح
+match_user(ثابت حرف *user, ثابت حرف *host, ثابت حرف *ipaddr,
+    ثابت حرف *pattern)
 {
-	char *p, *pat;
-	int ret;
+	حرف *p, *pat;
+	صحيح ret;
 
 	/* test mode */
-	if (user == NULL && host == NULL && ipaddr == NULL) {
-		if ((p = strrchr(pattern, '@')) != NULL &&
-		    match_host_and_ip(NULL, NULL, p + 1) < 0)
-			return -1;
-		return 0;
+	إذا (user == عدم && host == عدم && ipaddr == عدم) {
+		إذا ((p = strrchr(pattern, '@')) != عدم &&
+		    match_host_and_ip(عدم, عدم, p + 1) < 0)
+			إرجاع -1;
+		إرجاع 0;
 	}
 
-	if (user == NULL)
-		return 0; /* shouldn't happen */
+	إذا (user == عدم)
+		إرجاع 0; /* shouldn't happen */
 
-	if (strrchr(pattern, '@') == NULL)
-		return match_pattern(user, pattern);
+	إذا (strrchr(pattern, '@') == عدم)
+		إرجاع match_pattern(user, pattern);
 
 	pat = xstrdup(pattern);
 	p = strrchr(pat, '@');
 	*p++ = '\0';
 
-	if ((ret = match_pattern(user, pat)) == 1)
+	إذا ((ret = match_pattern(user, pat)) == 1)
 		ret = match_host_and_ip(host, ipaddr, p);
-	free(pat);
+	حرر(pat);
 
-	return ret;
+	إرجاع ret;
 }
 
 /*
@@ -309,44 +309,44 @@ match_user(const char *user, const char *host, const char *ipaddr,
  */
 #define	MAX_PROP	40
 #define	SEP	","
-char *
-match_list(const char *client, const char *server, u_int *next)
+حرف *
+match_list(ثابت حرف *client, ثابت حرف *server, u_int *next)
 {
-	char *sproposals[MAX_PROP];
-	char *c, *s, *p, *ret, *cp, *sp;
-	int i, j, nproposals;
+	حرف *sproposals[MAX_PROP];
+	حرف *c, *s, *p, *ret, *cp, *sp;
+	صحيح i, j, nproposals;
 
 	c = cp = xstrdup(client);
 	s = sp = xstrdup(server);
 
-	for ((p = strsep(&sp, SEP)), i=0; p && *p != '\0';
+	لكل ((p = strsep(&sp, SEP)), i=0; p && *p != '\0';
 	    (p = strsep(&sp, SEP)), i++) {
-		if (i < MAX_PROP)
+		إذا (i < MAX_PROP)
 			sproposals[i] = p;
-		else
-			break;
+		وإلا
+			اكسر;
 	}
 	nproposals = i;
 
-	for ((p = strsep(&cp, SEP)), i=0; p && *p != '\0';
+	لكل ((p = strsep(&cp, SEP)), i=0; p && *p != '\0';
 	    (p = strsep(&cp, SEP)), i++) {
-		for (j = 0; j < nproposals; j++) {
-			if (strcmp(p, sproposals[j]) == 0) {
+		لكل (j = 0; j < nproposals; j++) {
+			إذا (strcmp(p, sproposals[j]) == 0) {
 				ret = xstrdup(p);
-				if (next != NULL)
-					*next = (cp == NULL) ?
+				إذا (next != عدم)
+					*next = (cp == عدم) ?
 					    strlen(c) : (u_int)(cp - c);
-				free(c);
-				free(s);
-				return ret;
+				حرر(c);
+				حرر(s);
+				إرجاع ret;
 			}
 		}
 	}
-	if (next != NULL)
+	إذا (next != عدم)
 		*next = strlen(c);
-	free(c);
-	free(s);
-	return NULL;
+	حرر(c);
+	حرر(s);
+	إرجاع عدم;
 }
 
 /*
@@ -356,51 +356,51 @@ match_list(const char *client, const char *server, u_int *next)
  * zero indicates that only items matching filter should be included.
  * returns NULL on allocation error, otherwise caller must free result.
  */
-static char *
-filter_list(const char *proposal, const char *filter, int denylist)
+ساكن حرف *
+filter_list(ثابت حرف *proposal, ثابت حرف *filter, صحيح denylist)
 {
 	size_t len = strlen(proposal) + 1;
-	char *fix_prop = malloc(len);
-	char *orig_prop = strdup(proposal);
-	char *cp, *tmp;
-	int r;
+	حرف *fix_prop = malloc(len);
+	حرف *orig_prop = strdup(proposal);
+	حرف *cp, *tmp;
+	صحيح r;
 
-	if (fix_prop == NULL || orig_prop == NULL) {
-		free(orig_prop);
-		free(fix_prop);
-		return NULL;
+	إذا (fix_prop == عدم || orig_prop == عدم) {
+		حرر(orig_prop);
+		حرر(fix_prop);
+		إرجاع عدم;
 	}
 
 	tmp = orig_prop;
 	*fix_prop = '\0';
-	while ((cp = strsep(&tmp, ",")) != NULL) {
+	بينما ((cp = strsep(&tmp, ",")) != عدم) {
 		r = match_pattern_list(cp, filter, 0);
-		if ((denylist && r != 1) || (!denylist && r == 1)) {
-			if (*fix_prop != '\0')
+		إذا ((denylist && r != 1) || (!denylist && r == 1)) {
+			إذا (*fix_prop != '\0')
 				strlcat(fix_prop, ",", len);
 			strlcat(fix_prop, cp, len);
 		}
 	}
-	free(orig_prop);
-	return fix_prop;
+	حرر(orig_prop);
+	إرجاع fix_prop;
 }
 
 /*
  * Filters a comma-separated list of strings, excluding any entry matching
  * the 'filter' pattern list. Caller must free returned string.
  */
-char *
-match_filter_denylist(const char *proposal, const char *filter)
+حرف *
+match_filter_denylist(ثابت حرف *proposal, ثابت حرف *filter)
 {
-	return filter_list(proposal, filter, 1);
+	إرجاع filter_list(proposal, filter, 1);
 }
 
 /*
  * Filters a comma-separated list of strings, including only entries matching
  * the 'filter' pattern list. Caller must free returned string.
  */
-char *
-match_filter_allowlist(const char *proposal, const char *filter)
+حرف *
+match_filter_allowlist(ثابت حرف *proposal, ثابت حرف *filter)
 {
-	return filter_list(proposal, filter, 0);
+	إرجاع filter_list(proposal, filter, 0);
 }

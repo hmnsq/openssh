@@ -34,44 +34,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <syslog.h>
-#include <unistd.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#ضمن <errno.h>
+#ضمن <fcntl.h>
+#ضمن <limits.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <syslog.h>
+#ضمن <unistd.h>
+#إذا defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
 #endif
 
-#include "log.h"
-#include "match.h"
+#ضمن "log.h"
+#ضمن "match.h"
 
-static LogLevel log_level = SYSLOG_LEVEL_INFO;
-static int log_on_stderr = 1;
-static int log_stderr_fd = STDERR_FILENO;
-static int log_facility = LOG_AUTH;
-static const char *argv0;
-static log_handler_fn *log_handler;
-static void *log_handler_ctx;
-static char **log_verbose;
-static size_t nlog_verbose;
-extern char *__progname;
+ساكن LogLevel log_level = SYSLOG_LEVEL_INFO;
+ساكن صحيح log_on_stderr = 1;
+ساكن صحيح log_stderr_fd = STDERR_FILENO;
+ساكن صحيح log_facility = LOG_AUTH;
+ساكن ثابت حرف *argv0;
+ساكن log_handler_fn *log_handler;
+ساكن فراغ *log_handler_ctx;
+ساكن حرف **log_verbose;
+ساكن size_t nlog_verbose;
+خارجي حرف *__progname;
 
 #define LOG_SYSLOG_VIS	(VIS_CSTYLE|VIS_NL|VIS_TAB|VIS_OCTAL)
 #define LOG_STDERR_VIS	(VIS_SAFE|VIS_OCTAL)
 
 /* textual representation of log-facilities/levels */
 
-static struct {
-	const char *name;
+ساكن بنية {
+	ثابت حرف *name;
 	SyslogFacility val;
 } log_facilities[] = {
 	{ "DAEMON",	SYSLOG_FACILITY_DAEMON },
@@ -88,11 +88,11 @@ static struct {
 	{ "LOCAL5",	SYSLOG_FACILITY_LOCAL5 },
 	{ "LOCAL6",	SYSLOG_FACILITY_LOCAL6 },
 	{ "LOCAL7",	SYSLOG_FACILITY_LOCAL7 },
-	{ NULL,		SYSLOG_FACILITY_NOT_SET }
+	{ عدم,		SYSLOG_FACILITY_NOT_SET }
 };
 
-static struct {
-	const char *name;
+ساكن بنية {
+	ثابت حرف *name;
 	LogLevel val;
 } log_levels[] =
 {
@@ -105,84 +105,84 @@ static struct {
 	{ "DEBUG1",	SYSLOG_LEVEL_DEBUG1 },
 	{ "DEBUG2",	SYSLOG_LEVEL_DEBUG2 },
 	{ "DEBUG3",	SYSLOG_LEVEL_DEBUG3 },
-	{ NULL,		SYSLOG_LEVEL_NOT_SET }
+	{ عدم,		SYSLOG_LEVEL_NOT_SET }
 };
 
 LogLevel
-log_level_get(void)
+log_level_get(فراغ)
 {
-	return log_level;
+	إرجاع log_level;
 }
 
 SyslogFacility
-log_facility_number(char *name)
+log_facility_العدد(حرف *name)
 {
-	int i;
+	صحيح i;
 
-	if (name != NULL)
-		for (i = 0; log_facilities[i].name; i++)
-			if (strcasecmp(log_facilities[i].name, name) == 0)
-				return log_facilities[i].val;
-	return SYSLOG_FACILITY_NOT_SET;
+	إذا (name != عدم)
+		لكل (i = 0; log_facilities[i].name; i++)
+			إذا (strcasecmp(log_facilities[i].name, name) == 0)
+				إرجاع log_facilities[i].val;
+	إرجاع SYSLOG_FACILITY_NOT_SET;
 }
 
-const char *
+ثابت حرف *
 log_facility_name(SyslogFacility facility)
 {
 	u_int i;
 
-	for (i = 0;  log_facilities[i].name; i++)
-		if (log_facilities[i].val == facility)
-			return log_facilities[i].name;
-	return NULL;
+	لكل (i = 0;  log_facilities[i].name; i++)
+		إذا (log_facilities[i].val == facility)
+			إرجاع log_facilities[i].name;
+	إرجاع عدم;
 }
 
 LogLevel
-log_level_number(char *name)
+log_level_العدد(حرف *name)
 {
-	int i;
+	صحيح i;
 
-	if (name != NULL)
-		for (i = 0; log_levels[i].name; i++)
-			if (strcasecmp(log_levels[i].name, name) == 0)
-				return log_levels[i].val;
-	return SYSLOG_LEVEL_NOT_SET;
+	إذا (name != عدم)
+		لكل (i = 0; log_levels[i].name; i++)
+			إذا (strcasecmp(log_levels[i].name, name) == 0)
+				إرجاع log_levels[i].val;
+	إرجاع SYSLOG_LEVEL_NOT_SET;
 }
 
-const char *
+ثابت حرف *
 log_level_name(LogLevel level)
 {
 	u_int i;
 
-	for (i = 0; log_levels[i].name != NULL; i++)
-		if (log_levels[i].val == level)
-			return log_levels[i].name;
-	return NULL;
+	لكل (i = 0; log_levels[i].name != عدم; i++)
+		إذا (log_levels[i].val == level)
+			إرجاع log_levels[i].name;
+	إرجاع عدم;
 }
 
-void
-log_verbose_add(const char *s)
+فراغ
+log_verbose_add(ثابت حرف *s)
 {
-	char **tmp;
+	حرف **tmp;
 
 	/* Ignore failures here */
-	if ((tmp = recallocarray(log_verbose, nlog_verbose, nlog_verbose + 1,
-	    sizeof(*log_verbose))) != NULL) {
+	إذا ((tmp = recallocarray(log_verbose, nlog_verbose, nlog_verbose + 1,
+	    حجم(*log_verbose))) != عدم) {
 		log_verbose = tmp;
-		if ((log_verbose[nlog_verbose] = strdup(s)) != NULL)
+		إذا ((log_verbose[nlog_verbose] = strdup(s)) != عدم)
 			nlog_verbose++;
 	}
 }
 
-void
-log_verbose_reset(void)
+فراغ
+log_verbose_reset(فراغ)
 {
 	size_t i;
 
-	for (i = 0; i < nlog_verbose; i++)
-		free(log_verbose[i]);
-	free(log_verbose);
-	log_verbose = NULL;
+	لكل (i = 0; i < nlog_verbose; i++)
+		حرر(log_verbose[i]);
+	حرر(log_verbose);
+	log_verbose = عدم;
 	nlog_verbose = 0;
 }
 
@@ -190,72 +190,72 @@ log_verbose_reset(void)
  * Initialize the log.
  */
 
-void
-log_init(const char *av0, LogLevel level, SyslogFacility facility,
-    int on_stderr)
+فراغ
+log_init(ثابت حرف *av0, LogLevel level, SyslogFacility facility,
+    صحيح on_stderr)
 {
-#if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
-	struct syslog_data sdata = SYSLOG_DATA_INIT;
+#إذا defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
+	بنية syslog_data sdata = SYSLOG_DATA_INIT;
 #endif
 
 	argv0 = av0;
 
-	if (log_change_level(level) != 0) {
+	إذا (log_change_level(level) != 0) {
 		fprintf(stderr, "Unrecognized internal syslog level code %d\n",
-		    (int) level);
+		    (صحيح) level);
 		exit(1);
 	}
 
-	log_handler = NULL;
-	log_handler_ctx = NULL;
+	log_handler = عدم;
+	log_handler_ctx = عدم;
 
 	log_on_stderr = on_stderr;
-	if (on_stderr)
-		return;
+	إذا (on_stderr)
+		إرجاع;
 
-	switch (facility) {
-	case SYSLOG_FACILITY_DAEMON:
+	بدل (facility) {
+	حالة SYSLOG_FACILITY_DAEMON:
 		log_facility = LOG_DAEMON;
-		break;
-	case SYSLOG_FACILITY_USER:
+		اكسر;
+	حالة SYSLOG_FACILITY_USER:
 		log_facility = LOG_USER;
-		break;
-	case SYSLOG_FACILITY_AUTH:
+		اكسر;
+	حالة SYSLOG_FACILITY_AUTH:
 		log_facility = LOG_AUTH;
-		break;
+		اكسر;
 #ifdef LOG_AUTHPRIV
-	case SYSLOG_FACILITY_AUTHPRIV:
+	حالة SYSLOG_FACILITY_AUTHPRIV:
 		log_facility = LOG_AUTHPRIV;
-		break;
+		اكسر;
 #endif
-	case SYSLOG_FACILITY_LOCAL0:
+	حالة SYSLOG_FACILITY_LOCAL0:
 		log_facility = LOG_LOCAL0;
-		break;
-	case SYSLOG_FACILITY_LOCAL1:
+		اكسر;
+	حالة SYSLOG_FACILITY_LOCAL1:
 		log_facility = LOG_LOCAL1;
-		break;
-	case SYSLOG_FACILITY_LOCAL2:
+		اكسر;
+	حالة SYSLOG_FACILITY_LOCAL2:
 		log_facility = LOG_LOCAL2;
-		break;
-	case SYSLOG_FACILITY_LOCAL3:
+		اكسر;
+	حالة SYSLOG_FACILITY_LOCAL3:
 		log_facility = LOG_LOCAL3;
-		break;
-	case SYSLOG_FACILITY_LOCAL4:
+		اكسر;
+	حالة SYSLOG_FACILITY_LOCAL4:
 		log_facility = LOG_LOCAL4;
-		break;
-	case SYSLOG_FACILITY_LOCAL5:
+		اكسر;
+	حالة SYSLOG_FACILITY_LOCAL5:
 		log_facility = LOG_LOCAL5;
-		break;
-	case SYSLOG_FACILITY_LOCAL6:
+		اكسر;
+	حالة SYSLOG_FACILITY_LOCAL6:
 		log_facility = LOG_LOCAL6;
-		break;
-	case SYSLOG_FACILITY_LOCAL7:
+		اكسر;
+	حالة SYSLOG_FACILITY_LOCAL7:
 		log_facility = LOG_LOCAL7;
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		fprintf(stderr,
 		    "Unrecognized internal syslog facility code %d\n",
-		    (int) facility);
+		    (صحيح) facility);
 		exit(1);
 	}
 
@@ -264,59 +264,59 @@ log_init(const char *av0, LogLevel level, SyslogFacility facility,
 	 * immediately after reexec, syslog may be pointing to the wrong
 	 * facility, so we force an open/close of syslog here.
 	 */
-#if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
+#إذا defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
 	openlog_r(argv0 ? argv0 : __progname, LOG_PID, log_facility, &sdata);
 	closelog_r(&sdata);
-#else
+#وإلا
 	openlog(argv0 ? argv0 : __progname, LOG_PID, log_facility);
 	closelog();
 #endif
 }
 
-int
+صحيح
 log_change_level(LogLevel new_log_level)
 {
 	/* no-op if log_init has not been called */
-	if (argv0 == NULL)
-		return 0;
+	إذا (argv0 == عدم)
+		إرجاع 0;
 
-	switch (new_log_level) {
-	case SYSLOG_LEVEL_QUIET:
-	case SYSLOG_LEVEL_FATAL:
-	case SYSLOG_LEVEL_ERROR:
-	case SYSLOG_LEVEL_INFO:
-	case SYSLOG_LEVEL_VERBOSE:
-	case SYSLOG_LEVEL_DEBUG1:
-	case SYSLOG_LEVEL_DEBUG2:
-	case SYSLOG_LEVEL_DEBUG3:
+	بدل (new_log_level) {
+	حالة SYSLOG_LEVEL_QUIET:
+	حالة SYSLOG_LEVEL_FATAL:
+	حالة SYSLOG_LEVEL_ERROR:
+	حالة SYSLOG_LEVEL_INFO:
+	حالة SYSLOG_LEVEL_VERBOSE:
+	حالة SYSLOG_LEVEL_DEBUG1:
+	حالة SYSLOG_LEVEL_DEBUG2:
+	حالة SYSLOG_LEVEL_DEBUG3:
 		log_level = new_log_level;
-		return 0;
-	default:
-		return -1;
+		إرجاع 0;
+	افتراضي:
+		إرجاع -1;
 	}
 }
 
-int
-log_is_on_stderr(void)
+صحيح
+log_is_on_stderr(فراغ)
 {
-	return log_on_stderr && log_stderr_fd == STDERR_FILENO;
+	إرجاع log_on_stderr && log_stderr_fd == STDERR_FILENO;
 }
 
 /* redirect what would usually get written to stderr to specified file */
-void
-log_redirect_stderr_to(const char *logfile)
+فراغ
+log_redirect_stderr_to(ثابت حرف *logfile)
 {
-	int fd;
+	صحيح fd;
 
-	if (logfile == NULL) {
-		if (log_stderr_fd != STDERR_FILENO) {
+	إذا (logfile == عدم) {
+		إذا (log_stderr_fd != STDERR_FILENO) {
 			close(log_stderr_fd);
 			log_stderr_fd = STDERR_FILENO;
 		}
-		return;
+		إرجاع;
 	}
 
-	if ((fd = open(logfile, O_WRONLY|O_CREAT|O_APPEND, 0600)) == -1) {
+	إذا ((fd = open(logfile, O_WRONLY|O_CREAT|O_APPEND, 0600)) == -1) {
 		fprintf(stderr, "Couldn't open logfile %s: %s\n", logfile,
 		    strerror(errno));
 		exit(1);
@@ -326,96 +326,96 @@ log_redirect_stderr_to(const char *logfile)
 
 #define MSGBUFSIZ 1024
 
-void
-set_log_handler(log_handler_fn *handler, void *ctx)
+فراغ
+set_log_handler(log_handler_fn *handler, فراغ *ctx)
 {
 	log_handler = handler;
 	log_handler_ctx = ctx;
 }
 
-static void
-do_log(LogLevel level, int force, const char *suffix, const char *fmt,
+ساكن فراغ
+do_log(LogLevel level, صحيح force, ثابت حرف *suffix, ثابت حرف *fmt,
     va_list args)
 {
-#if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
-	struct syslog_data sdata = SYSLOG_DATA_INIT;
+#إذا defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
+	بنية syslog_data sdata = SYSLOG_DATA_INIT;
 #endif
-	char msgbuf[MSGBUFSIZ];
-	char fmtbuf[MSGBUFSIZ];
-	char *txt = NULL;
-	int pri = LOG_INFO;
-	int saved_errno = errno;
+	حرف msgbuf[MSGBUFSIZ];
+	حرف fmtbuf[MSGBUFSIZ];
+	حرف *txt = عدم;
+	صحيح pri = LOG_INFO;
+	صحيح saved_errno = errno;
 	log_handler_fn *tmp_handler;
-	const char *progname = argv0 != NULL ? argv0 : __progname;
+	ثابت حرف *progname = argv0 != عدم ? argv0 : __progname;
 
-	if (!force && level > log_level)
-		return;
+	إذا (!force && level > log_level)
+		إرجاع;
 
-	switch (level) {
-	case SYSLOG_LEVEL_FATAL:
-		if (!log_on_stderr)
+	بدل (level) {
+	حالة SYSLOG_LEVEL_FATAL:
+		إذا (!log_on_stderr)
 			txt = "fatal";
 		pri = LOG_CRIT;
-		break;
-	case SYSLOG_LEVEL_ERROR:
-		if (!log_on_stderr)
+		اكسر;
+	حالة SYSLOG_LEVEL_ERROR:
+		إذا (!log_on_stderr)
 			txt = "error";
 		pri = LOG_ERR;
-		break;
-	case SYSLOG_LEVEL_INFO:
+		اكسر;
+	حالة SYSLOG_LEVEL_INFO:
 		pri = LOG_INFO;
-		break;
-	case SYSLOG_LEVEL_VERBOSE:
+		اكسر;
+	حالة SYSLOG_LEVEL_VERBOSE:
 		pri = LOG_INFO;
-		break;
-	case SYSLOG_LEVEL_DEBUG1:
+		اكسر;
+	حالة SYSLOG_LEVEL_DEBUG1:
 		txt = "debug1";
 		pri = LOG_DEBUG;
-		break;
-	case SYSLOG_LEVEL_DEBUG2:
+		اكسر;
+	حالة SYSLOG_LEVEL_DEBUG2:
 		txt = "debug2";
 		pri = LOG_DEBUG;
-		break;
-	case SYSLOG_LEVEL_DEBUG3:
+		اكسر;
+	حالة SYSLOG_LEVEL_DEBUG3:
 		txt = "debug3";
 		pri = LOG_DEBUG;
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		txt = "internal error";
 		pri = LOG_ERR;
-		break;
+		اكسر;
 	}
-	if (txt != NULL && log_handler == NULL) {
-		snprintf(fmtbuf, sizeof(fmtbuf), "%s: %s", txt, fmt);
-		vsnprintf(msgbuf, sizeof(msgbuf), fmtbuf, args);
-	} else {
-		vsnprintf(msgbuf, sizeof(msgbuf), fmt, args);
+	إذا (txt != عدم && log_handler == عدم) {
+		snprintf(fmtbuf, حجم(fmtbuf), "%s: %s", txt, fmt);
+		vsnprintf(msgbuf, حجم(msgbuf), fmtbuf, args);
+	} وإلا {
+		vsnprintf(msgbuf, حجم(msgbuf), fmt, args);
 	}
-	if (suffix != NULL) {
-		snprintf(fmtbuf, sizeof(fmtbuf), "%s: %s", msgbuf, suffix);
-		strlcpy(msgbuf, fmtbuf, sizeof(msgbuf));
+	إذا (suffix != عدم) {
+		snprintf(fmtbuf, حجم(fmtbuf), "%s: %s", msgbuf, suffix);
+		strlcpy(msgbuf, fmtbuf, حجم(msgbuf));
 	}
-	strnvis(fmtbuf, msgbuf, sizeof(fmtbuf),
+	strnvis(fmtbuf, msgbuf, حجم(fmtbuf),
 	    log_on_stderr ? LOG_STDERR_VIS : LOG_SYSLOG_VIS);
-	if (log_handler != NULL) {
+	إذا (log_handler != عدم) {
 		/* Avoid recursion */
 		tmp_handler = log_handler;
-		log_handler = NULL;
+		log_handler = عدم;
 		/* Note: this sends the raw (i.e. no strnvis) log message */
 		tmp_handler(level, force, msgbuf, log_handler_ctx);
 		log_handler = tmp_handler;
-	} else if (log_on_stderr) {
-		snprintf(msgbuf, sizeof msgbuf, "%s%s%.*s\r\n",
+	} وإلا إذا (log_on_stderr) {
+		snprintf(msgbuf, حجم msgbuf, "%s%s%.*s\r\n",
 		    (log_on_stderr > 1) ? progname : "",
 		    (log_on_stderr > 1) ? ": " : "",
-		    (int)sizeof msgbuf - 3, fmtbuf);
-		(void)write(log_stderr_fd, msgbuf, strlen(msgbuf));
-	} else {
-#if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
+		    (صحيح)حجم msgbuf - 3, fmtbuf);
+		(فراغ)اكتب(log_stderr_fd, msgbuf, strlen(msgbuf));
+	} وإلا {
+#إذا defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
 		openlog_r(progname, LOG_PID, log_facility, &sdata);
 		syslog_r(pri, &sdata, "%.500s", fmtbuf);
 		closelog_r(&sdata);
-#else
+#وإلا
 		openlog(progname, LOG_PID, log_facility);
 		syslog(pri, "%.500s", fmtbuf);
 		closelog();
@@ -424,70 +424,70 @@ do_log(LogLevel level, int force, const char *suffix, const char *fmt,
 	errno = saved_errno;
 }
 
-void
-sshlog(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+فراغ
+sshlog(ثابت حرف *file, ثابت حرف *func, صحيح سطر, صحيح showfunc,
+    LogLevel level, ثابت حرف *suffix, ثابت حرف *fmt, ...)
 {
 	va_list args;
 
 	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
+	sshlogv(file, func, سطر, showfunc, level, suffix, fmt, args);
 	va_end(args);
 }
 
-void
-sshlogdie(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+فراغ
+sshlogdie(ثابت حرف *file, ثابت حرف *func, صحيح سطر, صحيح showfunc,
+    LogLevel level, ثابت حرف *suffix, ثابت حرف *fmt, ...)
 {
 	va_list args;
 
 	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, SYSLOG_LEVEL_INFO,
+	sshlogv(file, func, سطر, showfunc, SYSLOG_LEVEL_INFO,
 	    suffix, fmt, args);
 	va_end(args);
 	cleanup_exit(255);
 }
 
-void
-sshlogv(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, va_list args)
+فراغ
+sshlogv(ثابت حرف *file, ثابت حرف *func, صحيح سطر, صحيح showfunc,
+    LogLevel level, ثابت حرف *suffix, ثابت حرف *fmt, va_list args)
 {
-	char tag[128], fmt2[MSGBUFSIZ + 128];
-	int forced = 0;
-	const char *cp;
+	حرف tag[128], fmt2[MSGBUFSIZ + 128];
+	صحيح forced = 0;
+	ثابت حرف *cp;
 	size_t i;
 
 	/* short circuit processing early if we're not going to log anything */
-	if (nlog_verbose == 0 && level > log_level)
-		return;
+	إذا (nlog_verbose == 0 && level > log_level)
+		إرجاع;
 
-	snprintf(tag, sizeof(tag), "%.48s:%.48s():%d (bin=%s, pid=%ld)",
-	    (cp = strrchr(file, '/')) == NULL ? file : cp + 1, func, line,
-	    argv0 == NULL ? "UNKNOWN" : argv0, (long)getpid());
-	for (i = 0; i < nlog_verbose; i++) {
-		if (match_pattern_list(tag, log_verbose[i], 0) == 1) {
+	snprintf(tag, حجم(tag), "%.48s:%.48s():%d (bin=%s, pid=%ld)",
+	    (cp = strrchr(file, '/')) == عدم ? file : cp + 1, func, سطر,
+	    argv0 == عدم ? "UNKNOWN" : argv0, (long)getpid());
+	لكل (i = 0; i < nlog_verbose; i++) {
+		إذا (match_pattern_list(tag, log_verbose[i], 0) == 1) {
 			forced = 1;
-			break;
+			اكسر;
 		}
 	}
 
-	if (forced)
-		snprintf(fmt2, sizeof(fmt2), "%s: %s", tag, fmt);
-	else if (showfunc)
-		snprintf(fmt2, sizeof(fmt2), "%s: %s", func, fmt);
-	else
-		strlcpy(fmt2, fmt, sizeof(fmt2));
+	إذا (forced)
+		snprintf(fmt2, حجم(fmt2), "%s: %s", tag, fmt);
+	وإلا إذا (showfunc)
+		snprintf(fmt2, حجم(fmt2), "%s: %s", func, fmt);
+	وإلا
+		strlcpy(fmt2, fmt, حجم(fmt2));
 
 	do_log(level, forced, suffix, fmt2, args);
 }
 
-void
-sshlogdirect(LogLevel level, int forced, const char *fmt, ...)
+فراغ
+sshlogdirect(LogLevel level, صحيح forced, ثابت حرف *fmt, ...)
 {
 	va_list args;
 
 	va_start(args, fmt);
-	do_log(level, forced, NULL, fmt, args);
+	do_log(level, forced, عدم, fmt, args);
 	va_end(args);
 }
 
@@ -512,22 +512,22 @@ sshlogdirect(LogLevel level, int forced, const char *fmt, ...)
 /* #define RATELIMIT_DEBUG 1 */
 
 #ifdef RATELIMIT_DEBUG
-# define RLDBG(x) do { \
+# define RLDBG(x) افعل { \
 		printf("%s:%d %s: ", __FILE__, __LINE__, __func__); \
 		printf x; \
 		printf("\n"); \
 		fflush(stdout); \
-	} while (0)
-#else
+	} بينما (0)
+#وإلا
 # define RLDBG(x)
 #endif
 
 /* set up a ratelimit */
-void
-log_ratelimit_init(struct log_ratelimit_ctx *rl, u_int threshold,
+فراغ
+log_ratelimit_init(بنية log_ratelimit_ctx *rl, u_int threshold,
     u_int max_accum, u_int hysteresis, u_int log_every)
 {
-	memset(rl, 0, sizeof(*rl));
+	memset(rl, 0, حجم(*rl));
 	rl->threshold = threshold;
 	rl->max_accum = max_accum;
 	rl->hysteresis = hysteresis;
@@ -542,8 +542,8 @@ log_ratelimit_init(struct log_ratelimit_ctx *rl, u_int threshold,
  * is supplied then, for periodic logs, it will be set to the number of
  * dropped events since the last message.
  */
-int
-log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
+صحيح
+log_ratelimit(بنية log_ratelimit_ctx *rl, time_t now, صحيح *active,
     u_int *events_dropped)
 {
 	time_t olast_event;
@@ -555,29 +555,29 @@ log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
 	    rl->last_event == 0 ? -1 : (long)(now - rl->last_event),
 	    rl->ratelimited_events));
 
-	if (now < 0)
-		return 0;
-	if (events_dropped != NULL)
+	إذا (now < 0)
+		إرجاع 0;
+	إذا (events_dropped != عدم)
 		*events_dropped = 0;
-	if (active != NULL)
+	إذا (active != عدم)
 		*active = rl->ratelimit_active;
 
 	/* First, decay accumulated events */
-	if (rl->last_event <= 0)
+	إذا (rl->last_event <= 0)
 		rl->last_event = now;
-	if (now > rl->last_event) {
+	إذا (now > rl->last_event) {
 		uint64_t n = now - rl->last_event;
 
-		if (n > UINT_MAX)
+		إذا (n > UINT_MAX)
 			n = UINT_MAX;
-		if (rl->accumulated_events < (u_int)n)
+		إذا (rl->accumulated_events < (u_int)n)
 			rl->accumulated_events = 0;
-		else
+		وإلا
 			rl->accumulated_events -= (u_int)n;
 		RLDBG(("decay: accum=%u", rl->accumulated_events));
 	}
 	rl->accumulated_events++; /* add this event */
-	if (rl->accumulated_events > rl->max_accum)
+	إذا (rl->accumulated_events > rl->max_accum)
 		rl->accumulated_events = rl->max_accum;
 	olast_event = rl->last_event;
 	rl->last_event = now;
@@ -585,39 +585,39 @@ log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
 	    rl->accumulated_events, rl->threshold));
 
 	/* Are we under threshold? */
-	if (rl->accumulated_events < rl->threshold) {
-		if (!rl->ratelimit_active)
-			return 0;
+	إذا (rl->accumulated_events < rl->threshold) {
+		إذا (!rl->ratelimit_active)
+			إرجاع 0;
 		RLDBG(("under threshold: hys=%u since_hys=%ld since_last=%ld",
 		    rl->hysteresis, rl->hysteresis_start == 0 ? -1 :
 		    (long)(now - rl->hysteresis_start),
 		    olast_event == 0 ? -1 : (long)(now - olast_event)));
-		if (rl->hysteresis_start == 0) {
+		إذا (rl->hysteresis_start == 0) {
 			/* active, but under threshold; hysteresis */
-			if (olast_event + rl->hysteresis < now) {
+			إذا (olast_event + rl->hysteresis < now) {
 				/* hysteresis expired before this event */
 				RLDBG(("hysteresis preexpired"));
-				goto inactive;
+				اذهب inactive;
 			}
 			RLDBG(("start hysteresis"));
 			rl->hysteresis_start = now;
-		} else if (rl->hysteresis_start + rl->hysteresis < now) {
+		} وإلا إذا (rl->hysteresis_start + rl->hysteresis < now) {
 			/* Hysteresis period expired, transition to inactive */
 			RLDBG(("complete hysteresis"));
  inactive:
-			if (events_dropped != NULL)
+			إذا (events_dropped != عدم)
 				*events_dropped = rl->ratelimited_events;
-			if (active != NULL)
+			إذا (active != عدم)
 				*active = 0;
 			rl->ratelimit_active = 0;
 			rl->ratelimit_start = 0;
 			rl->last_log = 0;
 			rl->hysteresis_start = 0;
 			rl->ratelimited_events = 0;
-			return 0;
+			إرجاع 0;
 		}
 		/* ratelimiting active, but in hysteresis period */
-	} else if (!rl->ratelimit_active) {
+	} وإلا إذا (!rl->ratelimit_active) {
 		/* Transition to rate-limiting */
 		RLDBG(("start ratelimit"));
 		rl->ratelimit_active = 1;
@@ -625,32 +625,32 @@ log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
 		rl->last_log = now;
 		rl->hysteresis_start = 0;
 		rl->ratelimited_events = 1;
-		if (active != NULL)
+		إذا (active != عدم)
 			*active = 1;
-		return 1;
-	} else if (rl->hysteresis_start != 0) {
+		إرجاع 1;
+	} وإلا إذا (rl->hysteresis_start != 0) {
 		/* active and over threshold; reset hysteresis timer */
 		RLDBG(("clear hysteresis"));
 		rl->hysteresis_start = 0;
 	}
 
 	/* over threshold or in hysteresis period; log periodically */
-	if (active != NULL)
+	إذا (active != عدم)
 		*active = 1;
 	RLDBG(("log_every=%u since_log=%ld", rl->log_every,
 	    (long)(now - rl->last_log)));
-	if (rl->log_every > 0 && now >= rl->last_log + rl->log_every) {
+	إذا (rl->log_every > 0 && now >= rl->last_log + rl->log_every) {
 		RLDBG(("periodic: since_last=%u", rl->ratelimited_events));
 		rl->last_log = now;
-		if (events_dropped != NULL) {
+		إذا (events_dropped != عدم) {
 			*events_dropped = rl->ratelimited_events;
 			rl->ratelimited_events = 0;
 		}
-		return 0;
+		إرجاع 0;
 	}
 
 	/* drop event */
 	rl->ratelimited_events++;
 	RLDBG(("drop: ratelimited_events=%u", rl->ratelimited_events));
-	return 1;
+	إرجاع 1;
 }

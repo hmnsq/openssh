@@ -32,268 +32,268 @@ limitations under the License.
  * fuzzer-controlled USERAUTH_REQUEST.
  */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <pwd.h>
-#include <sys/types.h>
+#ضمن <setjmp.h>
+#ضمن <signal.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <pwd.h>
+#ضمن <sys/types.h>
 
-#include "log.h"
-#include "digest.h"
-#include "misc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssh_api.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "servconf.h"
-#include "audit.h"
+#ضمن "log.h"
+#ضمن "digest.h"
+#ضمن "misc.h"
+#ضمن "ssh.h"
+#ضمن "ssh2.h"
+#ضمن "ssh_api.h"
+#ضمن "ssherr.h"
+#ضمن "sshbuf.h"
+#ضمن "sshkey.h"
+#ضمن "packet.h"
+#ضمن "myproposal.h"
+#ضمن "kex.h"
+#ضمن "xmalloc.h"
+#ضمن "authfile.h"
+#ضمن "hostfile.h"
+#ضمن "auth.h"
+#ضمن "servconf.h"
+#ضمن "audit.h"
 
 ServerOptions options;
-struct sshbuf *loginmsg = NULL;
-struct include_list includes;
-struct sshauthopt *auth_opts = NULL;
-struct passwd *privsep_pw = NULL;
+بنية sshbuf *loginmsg = عدم;
+بنية include_list includes;
+بنية sshauthopt *auth_opts = عدم;
+بنية passwd *privsep_pw = عدم;
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+ساكن jmp_buf fuzz_env;
+ساكن متطاير صحيح in_fuzz = 0;
 
-void
-cleanup_exit(int code)
+فراغ
+cleanup_exit(صحيح code)
 {
-	if (in_fuzz)
+	إذا (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
 
-int
-__wrap_ssh_packet_write_wait(struct ssh *ssh)
+صحيح
+__wrap_ssh_packet_write_wait(بنية ssh *ssh)
 {
-	(void)ssh;
-	return 0;
+	(فراغ)ssh;
+	إرجاع 0;
 }
 
-static struct passwd g_fake_pw;
+ساكن بنية passwd g_fake_pw;
 
-int
-mm_is_monitor(void)
+صحيح
+mm_is_monitor(فراغ)
 {
-	return 0;
+	إرجاع 0;
 }
 
-struct passwd *
-mm_getpwnamallow(struct ssh *ssh, const char *user)
+بنية passwd *
+mm_getpwnamallow(بنية ssh *ssh, ثابت حرف *user)
 {
-	(void)ssh;
-	(void)user;
-	return &g_fake_pw;
+	(فراغ)ssh;
+	(فراغ)user;
+	إرجاع &g_fake_pw;
 }
 
-int
-mm_auth_password(struct ssh *ssh, char *password)
+صحيح
+mm_auth_password(بنية ssh *ssh, حرف *password)
 {
-	(void)ssh;
-	(void)password;
-	return 0;
+	(فراغ)ssh;
+	(فراغ)password;
+	إرجاع 0;
 }
 
-int
-mm_user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
-    int auth_attempt, struct sshauthopt **authoptsp)
+صحيح
+mm_user_مفتاح_allowed(بنية ssh *ssh, بنية passwd *pw, بنية sshkey *مفتاح,
+    صحيح auth_attempt, بنية sshauthopt **authoptsp)
 {
-	(void)ssh;
-	(void)pw;
-	(void)key;
-	(void)auth_attempt;
-	(void)authoptsp;
-	return 0;
+	(فراغ)ssh;
+	(فراغ)pw;
+	(فراغ)مفتاح;
+	(فراغ)auth_attempt;
+	(فراغ)authoptsp;
+	إرجاع 0;
 }
 
-int
-mm_hostbased_key_allowed(struct ssh *ssh, struct passwd *pw, const char *user,
-    const char *host, struct sshkey *key)
+صحيح
+mm_hostbased_مفتاح_allowed(بنية ssh *ssh, بنية passwd *pw, ثابت حرف *user,
+    ثابت حرف *host, بنية sshkey *مفتاح)
 {
-	(void)ssh;
-	(void)pw;
-	(void)user;
-	(void)host;
-	(void)key;
-	return 0;
+	(فراغ)ssh;
+	(فراغ)pw;
+	(فراغ)user;
+	(فراغ)host;
+	(فراغ)مفتاح;
+	إرجاع 0;
 }
 
-int
-mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
-    const u_char *data, size_t datalen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+صحيح
+mm_sshkey_verify(ثابت بنية sshkey *مفتاح, ثابت u_char *sig, size_t siglen,
+    ثابت u_char *data, size_t datalen, ثابت حرف *alg, u_int compat,
+    بنية sshkey_sig_details **detailsp)
 {
-	return sshkey_verify(key, sig, siglen, data, datalen, alg, compat,
+	إرجاع sshkey_verify(مفتاح, sig, siglen, data, datalen, alg, compat,
 	    detailsp);
 }
 
-void
-mm_inform_authserv(char *service, char *style)
+فراغ
+mm_inform_authserv(حرف *service, حرف *style)
 {
-	(void)service;
-	(void)style;
+	(فراغ)service;
+	(فراغ)style;
 }
 
-void
-mm_audit_event(struct ssh *ssh, ssh_audit_event_t event)
+فراغ
+mm_audit_event(بنية ssh *ssh, ssh_audit_event_t event)
 {
-	(void)ssh;
-	(void)event;
+	(فراغ)ssh;
+	(فراغ)event;
 }
 
-void
-mm_start_pam(struct ssh *ssh)
+فراغ
+mm_start_pam(بنية ssh *ssh)
 {
-	(void)ssh;
+	(فراغ)ssh;
 }
 
-int
-mm_do_pam_account(void)
+صحيح
+mm_do_pam_account(فراغ)
 {
-	return 0;
+	إرجاع 0;
 }
 
-static struct sshkey *
-load_private(const char *str)
+ساكن بنية sshkey *
+load_private(ثابت حرف *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	بنية sshbuf *b = sshbuf_from(str, strlen(str));
+	بنية sshkey *k = عدم;
+	إذا (b == عدم || sshkey_parse_private_fileblob(b, "", &k, عدم) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	إرجاع k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+ساكن بنية sshkey *
+load_public(ثابت حرف *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	حرف *tmp, *cp;
+	بنية sshkey *k = sshkey_new(مفتاح_UNSPEC);
+	إذا (k == عدم)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	إذا (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	حرر(tmp);
+	إرجاع k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+ساكن صحيح
+pump(بنية ssh *from, بنية ssh *to, size_t *transferred)
 {
-	const u_char *buf;
+	ثابت u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	صحيح r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	إذا ((r = ssh_packet_next(from, &type)) != 0)
+		إرجاع r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	إذا (len == 0)
+		إرجاع 0;
+	إذا ((r = ssh_إدخال_append(to, buf, len)) != 0)
+		إرجاع r;
+	إذا ((r = ssh_output_consume(from, len)) != 0)
+		إرجاع r;
 	*transferred = len;
-	return 0;
+	إرجاع 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+ساكن صحيح
+run_kex(بنية ssh *client, بنية ssh *server)
 {
-	int r;
+	صحيح r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	لكل (صحيح i = 0; i < 100; i++) {
+		إذا ((r = pump(server, client, &sn)) != 0) إرجاع r;
+		إذا ((r = pump(client, server, &cn)) != 0) إرجاع r;
+		إذا (server->kex->done && client->kex->done)
+			إرجاع 0;
+		إذا (cn == 0 && sn == 0)
+			إرجاع SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	إرجاع SSH_ERR_PROTOCOL_ERROR;
 }
 
-#include "fixed-keys.h"
+#ضمن "fixed-keys.h"
 
-struct sshbuf *cfg = NULL;
+بنية sshbuf *cfg = عدم;
 
-int auth_rhosts2(struct passwd *pw, const char *client_user,
-    const char *hostname, const char *ipaddr) { (void)pw;
-    (void)client_user; (void)hostname; (void)ipaddr; return 0; }
-int platform_locked_account(struct passwd *pw) { (void)pw; return 0; }
-void record_failed_login(struct ssh *ssh, const char *user,
-    const char *hostname, const char *ttyname) { (void)ssh; (void)user;
-    (void)hostname; (void)ttyname; }
-int temporarily_use_uid(struct passwd *pw) { (void)pw; return 0; }
-void restore_uid(void) { }
-char *mm_auth2_read_banner(void) { return NULL; }
-struct connection_info *
-server_get_connection_info(struct ssh *ssh, int populate, int use_dns)
-    { (void)ssh; (void)populate; (void)use_dns; return NULL; }
-void server_process_permitopen(struct ssh *ssh) { (void)ssh; }
-void server_process_channel_timeouts(struct ssh *ssh) { (void)ssh; }
+صحيح auth_rhosts2(بنية passwd *pw, ثابت حرف *client_user,
+    ثابت حرف *hostname, ثابت حرف *ipaddr) { (فراغ)pw;
+    (فراغ)client_user; (فراغ)hostname; (فراغ)ipaddr; إرجاع 0; }
+صحيح platform_locked_account(بنية passwd *pw) { (فراغ)pw; إرجاع 0; }
+فراغ record_failed_login(بنية ssh *ssh, ثابت حرف *user,
+    ثابت حرف *hostname, ثابت حرف *ttyname) { (فراغ)ssh; (فراغ)user;
+    (فراغ)hostname; (فراغ)ttyname; }
+صحيح temporarily_use_uid(بنية passwd *pw) { (فراغ)pw; إرجاع 0; }
+فراغ restore_uid(فراغ) { }
+حرف *mm_auth2_read_banner(فراغ) { إرجاع عدم; }
+بنية connection_info *
+server_get_connection_info(بنية ssh *ssh, صحيح populate, صحيح use_dns)
+    { (فراغ)ssh; (فراغ)populate; (فراغ)use_dns; إرجاع عدم; }
+فراغ server_process_permitopen(بنية ssh *ssh) { (فراغ)ssh; }
+فراغ server_process_channel_timeouts(بنية ssh *ssh) { (فراغ)ssh; }
 
-#include "../../../auth2.c"
+#ضمن "../../../auth2.c"
 
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
-static Authctxt g_authctxt;
+ساكن بنية ssh *g_client = عدم;
+ساكن بنية ssh *g_server = عدم;
+ساكن صحيح g_init = 0;
+ساكن Authctxt g_authctxt;
 
-static void
-fuzz_reset_authctxt(struct ssh *ssh)
+ساكن فراغ
+fuzz_reset_authctxt(بنية ssh *ssh)
 {
-	unsigned int i;
+	unsigned صحيح i;
 
-	free(g_authctxt.user);
-	free(g_authctxt.service);
-	free(g_authctxt.style);
-	free(g_authctxt.auth_method_info);
-	if (g_authctxt.auth_methods != NULL) {
-		for (i = 0; i < g_authctxt.num_auth_methods; i++)
-			free(g_authctxt.auth_methods[i]);
-		free(g_authctxt.auth_methods);
+	حرر(g_authctxt.user);
+	حرر(g_authctxt.service);
+	حرر(g_authctxt.style);
+	حرر(g_authctxt.auth_method_info);
+	إذا (g_authctxt.auth_methods != عدم) {
+		لكل (i = 0; i < g_authctxt.رقم_auth_methods; i++)
+			حرر(g_authctxt.auth_methods[i]);
+		حرر(g_authctxt.auth_methods);
 	}
-	sshkey_free(g_authctxt.auth_method_key);
-	for (i = 0; i < g_authctxt.nprev_keys; i++)
-		sshkey_free(g_authctxt.prev_keys[i]);
-	free(g_authctxt.prev_keys);
+	sshkey_free(g_authctxt.auth_method_مفتاح);
+	لكل (i = 0; i < g_authctxt.nprev_مفاتيح; i++)
+		sshkey_free(g_authctxt.prev_مفاتيح[i]);
+	حرر(g_authctxt.prev_مفاتيح);
 	sshbuf_free(g_authctxt.session_info);
-	memset(&g_authctxt, 0, sizeof(g_authctxt));
+	memset(&g_authctxt, 0, حجم(g_authctxt));
 	ssh->authctxt = &g_authctxt;
 }
 
-static int
-init_once(void)
+ساكن صحيح
+init_once(فراغ)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	إذا (g_init)
+		إرجاع 0;
+	إشارة(SIGPIPE, SIG_IGN);
 	log_init("sshd_auth_session_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	memset(&g_fake_pw, 0, sizeof(g_fake_pw));
-	g_fake_pw.pw_name = (char *)"fuzz";
+	memset(&g_fake_pw, 0, حجم(g_fake_pw));
+	g_fake_pw.pw_name = (حرف *)"fuzz";
 	g_fake_pw.pw_uid = 1000;
 	g_fake_pw.pw_gid = 1000;
-	g_fake_pw.pw_dir = (char *)"/tmp";
-	g_fake_pw.pw_shell = (char *)"/bin/sh";
+	g_fake_pw.pw_dir = (حرف *)"/tmp";
+	g_fake_pw.pw_shell = (حرف *)"/bin/sh";
 	privsep_pw = &g_fake_pw;
 
 	initialize_server_options(&options);
@@ -306,71 +306,71 @@ init_once(void)
 
 	loginmsg = sshbuf_new();
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	بنية sshkey *priv = load_private(PRIV_ED25519);
+	بنية sshkey *pub = load_public(PUB_ED25519);
+	حرف *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	ثابت حرف *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	حرف *proposal[PROPOSAL_MAX] = { 0 };
+	صحيح i;
+	لكل (i = 0; i < PROPOSAL_MAX; i++) {
+		ثابت حرف *p = defaults[i];
+		إذا (i == PROPOSAL_SERVER_HOST_مفتاح_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		وإلا إذا (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		وإلا إذا (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		وإلا إذا (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	بنية kex_params kp;
+	memcpy(kp.proposal, proposal, حجم(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	إذا (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		إرجاع -1;
+	إذا (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		إرجاع -1;
+	إذا (run_kex(g_client, g_server) != 0)
+		إرجاع -1;
 
 	fuzz_reset_authctxt(g_server);
 
 	ssh_dispatch_init(g_server, &dispatch_protocol_ignore);
-	ssh_dispatch_set(g_server, SSH2_MSG_USERAUTH_REQUEST,
-	    &input_userauth_request);
+	ssh_dispatch_set(g_server, SSH2_رسالة_USERAUTH_REQUEST,
+	    &إدخال_userauth_request);
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	حرر(keyname);
+	لكل (i = 0; i < PROPOSAL_MAX; i++)
+		حرر(proposal[i]);
 	g_init = 1;
-	return 0;
+	إرجاع 0;
 }
 
-void
-fuzz_userauth_one(const uint8_t *data, size_t size)
+فراغ
+fuzz_userauth_one(ثابت uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	إذا (init_once() != 0)
+		إرجاع;
+	إذا (size > 65000)
+		إرجاع;
 
 	fuzz_reset_authctxt(g_server);
 
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
+	إذا (setjmp(fuzz_env) == 0) {
 		size_t transferred;
-		if (ssh_packet_put(g_client, SSH2_MSG_USERAUTH_REQUEST,
+		إذا (ssh_packet_put(g_client, SSH2_رسالة_USERAUTH_REQUEST,
 		    data, size) != 0)
-			goto done;
-		if (pump(g_client, g_server, &transferred) != 0)
-			goto done;
-		(void)ssh_dispatch_run(g_server, DISPATCH_NONBLOCK, NULL);
+			اذهب done;
+		إذا (pump(g_client, g_server, &transferred) != 0)
+			اذهب done;
+		(فراغ)ssh_dispatch_run(g_server, DISPATCH_NONBLOCK, عدم);
 	done:
 		;
 	}

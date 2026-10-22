@@ -15,209 +15,209 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/time.h>
+#ضمن <sys/types.h>
+#ضمن <sys/time.h>
 
-#include <stdlib.h>
-#include <errno.h>
-#include <poll.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
+#ضمن <stdlib.h>
+#ضمن <errno.h>
+#ضمن <poll.h>
+#ضمن <stdarg.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
 
-#include "xmalloc.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "misc.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "ssh-pkcs11.h"
-#include "ssherr.h"
+#ضمن "xmalloc.h"
+#ضمن "sshbuf.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "sshkey.h"
+#ضمن "authfd.h"
+#ضمن "ssh-pkcs11.h"
+#ضمن "ssherr.h"
 
 #ifdef ENABLE_PKCS11
 
 /* borrows code from sftp-server and ssh-agent */
 
-static char *providername; /* Provider for this helper */
+ساكن حرف *providername; /* Provider for this helper */
 
-#define MAX_MSG_LENGTH		10240 /*XXX*/
+#define MAX_رسالة_LENGTH		10240 /*XXX*/
 
 /* input and output queue */
-struct sshbuf *iqueue;
-struct sshbuf *oqueue;
+بنية sshbuf *iqueue;
+بنية sshbuf *oqueue;
 
-static void
-send_msg(struct sshbuf *m)
+ساكن فراغ
+send_رسالة(بنية sshbuf *m)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshbuf_put_stringb(oqueue, m)) != 0)
+	إذا ((r = sshbuf_put_stringb(oqueue, m)) != 0)
 		fatal_fr(r, "enqueue");
 }
 
-static void
-process_add(void)
+ساكن فراغ
+process_add(فراغ)
 {
-	char *pin;
-	struct sshkey **keys = NULL;
-	int r, i, nkeys;
-	struct sshbuf *msg;
-	char **labels = NULL;
+	حرف *pin;
+	بنية sshkey **مفاتيح = عدم;
+	صحيح r, i, nkeys;
+	بنية sshbuf *رسالة;
+	حرف **labels = عدم;
 
-	if (providername != NULL)
+	إذا (providername != عدم)
 		fatal_f("provider already set");
-	if ((msg = sshbuf_new()) == NULL)
+	إذا ((رسالة = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_get_cstring(iqueue, &providername, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(iqueue, &pin, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(iqueue, &providername, عدم)) != 0 ||
+	    (r = sshbuf_get_cstring(iqueue, &pin, عدم)) != 0)
 		fatal_fr(r, "parse");
 	debug3_f("add %s", providername);
-	if ((nkeys = pkcs11_add_provider(providername, pin,
-	    &keys, &labels)) > 0) {
-		if ((r = sshbuf_put_u8(msg,
+	إذا ((nkeys = pkcs11_add_provider(providername, pin,
+	    &مفاتيح, &labels)) > 0) {
+		إذا ((r = sshbuf_put_u8(رسالة,
 		    SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
-		    (r = sshbuf_put_u32(msg, nkeys)) != 0)
+		    (r = sshbuf_put_u32(رسالة, nkeys)) != 0)
 			fatal_fr(r, "compose");
-		for (i = 0; i < nkeys; i++) {
-			if ((r = sshkey_puts(keys[i], msg)) != 0 ||
-			    (r = sshbuf_put_cstring(msg, labels[i])) != 0)
+		لكل (i = 0; i < nkeys; i++) {
+			إذا ((r = sshkey_puts(مفاتيح[i], رسالة)) != 0 ||
+			    (r = sshbuf_put_cstring(رسالة, labels[i])) != 0)
 				fatal_fr(r, "compose key");
 			debug3_f("%s: %s \"%s\"", providername,
-			    sshkey_type(keys[i]), labels[i]);
-			free(labels[i]);
+			    sshkey_type(مفاتيح[i]), labels[i]);
+			حرر(labels[i]);
 		}
-	} else if ((r = sshbuf_put_u8(msg, SSH_AGENT_FAILURE)) != 0 ||
-	    (r = sshbuf_put_u32(msg, -nkeys)) != 0)
+	} وإلا إذا ((r = sshbuf_put_u8(رسالة, SSH_AGENT_FAILURE)) != 0 ||
+	    (r = sshbuf_put_u32(رسالة, -nkeys)) != 0)
 		fatal_fr(r, "compose");
-	free(labels);
-	free(keys); /* keys themselves are transferred to pkcs11_keylist */
-	free(pin);
-	send_msg(msg);
-	sshbuf_free(msg);
+	حرر(labels);
+	حرر(مفاتيح); /* keys themselves are transferred to pkcs11_keylist */
+	حرر(pin);
+	send_رسالة(رسالة);
+	sshbuf_free(رسالة);
 }
 
-static void
-process_sign(void)
+ساكن فراغ
+process_sign(فراغ)
 {
-	const u_char *data;
-	u_char *signature = NULL;
+	ثابت u_char *data;
+	u_char *signature = عدم;
 	size_t dlen, slen = 0;
 	u_int compat;
-	int r, ok = -1;
-	struct sshkey *key = NULL;
-	struct sshbuf *msg;
-	char *alg = NULL;
+	صحيح r, ok = -1;
+	بنية sshkey *مفتاح = عدم;
+	بنية sshbuf *رسالة;
+	حرف *alg = عدم;
 
-	if ((r = sshkey_froms(iqueue, &key)) != 0 ||
+	إذا ((r = sshkey_froms(iqueue, &مفتاح)) != 0 ||
 	    (r = sshbuf_get_string_direct(iqueue, &data, &dlen)) != 0 ||
-	    (r = sshbuf_get_cstring(iqueue, &alg, NULL)) != 0 ||
+	    (r = sshbuf_get_cstring(iqueue, &alg, عدم)) != 0 ||
 	    (r = sshbuf_get_u32(iqueue, &compat)) != 0)
 		fatal_fr(r, "parse");
 
-	if (*alg == '\0') {
-		free(alg);
-		alg = NULL;
+	إذا (*alg == '\0') {
+		حرر(alg);
+		alg = عدم;
 	}
 
-	if ((r = pkcs11_sign(key, &signature, &slen, data, dlen,
-	    alg, NULL, NULL, compat)) != 0) {
-		error_fr(r, "sign %s", sshkey_type(key));
-		goto reply;
+	إذا ((r = pkcs11_sign(مفتاح, &signature, &slen, data, dlen,
+	    alg, عدم, عدم, compat)) != 0) {
+		error_fr(r, "sign %s", sshkey_type(مفتاح));
+		اذهب reply;
 	}
 
 	/* success */
 	ok = 0;
  reply:
-	if ((msg = sshbuf_new()) == NULL)
+	إذا ((رسالة = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if (ok == 0) {
-		if ((r = sshbuf_put_u8(msg, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
-		    (r = sshbuf_put_string(msg, signature, slen)) != 0)
+	إذا (ok == 0) {
+		إذا ((r = sshbuf_put_u8(رسالة, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
+		    (r = sshbuf_put_string(رسالة, signature, slen)) != 0)
 			fatal_fr(r, "compose response");
-	} else {
-		if ((r = sshbuf_put_u8(msg, SSH2_AGENT_FAILURE)) != 0)
+	} وإلا {
+		إذا ((r = sshbuf_put_u8(رسالة, SSH2_AGENT_FAILURE)) != 0)
 			fatal_fr(r, "compose failure response");
 	}
-	sshkey_free(key);
-	free(alg);
-	free(signature);
-	send_msg(msg);
-	sshbuf_free(msg);
+	sshkey_free(مفتاح);
+	حرر(alg);
+	حرر(signature);
+	send_رسالة(رسالة);
+	sshbuf_free(رسالة);
 }
 
-static void
-process(void)
+ساكن فراغ
+process(فراغ)
 {
-	u_int msg_len;
+	u_int رسالة_len;
 	u_int buf_len;
 	u_int consumed;
 	u_char type;
-	const u_char *cp;
-	int r;
+	ثابت u_char *cp;
+	صحيح r;
 
 	buf_len = sshbuf_len(iqueue);
-	if (buf_len < 5)
-		return;		/* Incomplete message. */
+	إذا (buf_len < 5)
+		إرجاع;		/* Incomplete message. */
 	cp = sshbuf_ptr(iqueue);
-	msg_len = get_u32(cp);
-	if (msg_len > MAX_MSG_LENGTH) {
-		error("bad message len %d", msg_len);
+	رسالة_len = get_u32(cp);
+	إذا (رسالة_len > MAX_رسالة_LENGTH) {
+		error("bad message len %d", رسالة_len);
 		cleanup_exit(11);
 	}
-	if (buf_len < msg_len + 4)
-		return;
-	if ((r = sshbuf_consume(iqueue, 4)) != 0 ||
+	إذا (buf_len < رسالة_len + 4)
+		إرجاع;
+	إذا ((r = sshbuf_consume(iqueue, 4)) != 0 ||
 	    (r = sshbuf_get_u8(iqueue, &type)) != 0)
 		fatal_fr(r, "parse type/len");
 	buf_len -= 4;
-	switch (type) {
-	case SSH_AGENTC_ADD_SMARTCARD_KEY:
+	بدل (type) {
+	حالة SSH_AGENTC_ADD_SMARTCARD_مفتاح:
 		debug("process_add");
 		process_add();
-		break;
-	case SSH2_AGENTC_SIGN_REQUEST:
+		اكسر;
+	حالة SSH2_AGENTC_SIGN_REQUEST:
 		debug("process_sign");
 		process_sign();
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		error("Unknown message %d", type);
-		break;
+		اكسر;
 	}
 	/* discard the remaining bytes from the current packet */
-	if (buf_len < sshbuf_len(iqueue)) {
+	إذا (buf_len < sshbuf_len(iqueue)) {
 		error("iqueue grew unexpectedly");
 		cleanup_exit(255);
 	}
 	consumed = buf_len - sshbuf_len(iqueue);
-	if (msg_len < consumed) {
-		error("msg_len %d < consumed %d", msg_len, consumed);
+	إذا (رسالة_len < consumed) {
+		error("msg_len %d < consumed %d", رسالة_len, consumed);
 		cleanup_exit(255);
 	}
-	if (msg_len > consumed) {
-		if ((r = sshbuf_consume(iqueue, msg_len - consumed)) != 0)
+	إذا (رسالة_len > consumed) {
+		إذا ((r = sshbuf_consume(iqueue, رسالة_len - consumed)) != 0)
 			fatal_fr(r, "consume");
 	}
 }
 
-void
-cleanup_exit(int i)
+فراغ
+cleanup_exit(صحيح i)
 {
 	/* XXX */
 	_exit(i);
 }
 
-int
-main(int argc, char **argv)
+صحيح
+الرئيسية(صحيح argc, حرف **argv)
 {
-	int r, ch, in, out, log_stderr = 0;
+	صحيح r, ch, in, out, log_stderr = 0;
 	ssize_t len;
 	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
 	LogLevel log_level = SYSLOG_LEVEL_ERROR;
-	char buf[4*4096];
-	extern char *__progname;
-	struct pollfd pfd[2];
+	حرف buf[4*4096];
+	خارجي حرف *__progname;
+	بنية pollfd pfd[2];
 
 	__progname = ssh_get_progname(argv[0]);
 	seed_rng();
@@ -226,16 +226,16 @@ main(int argc, char **argv)
 	closefrom(STDERR_FILENO + 1);
 	log_init(__progname, log_level, log_facility, log_stderr);
 
-	while ((ch = getopt(argc, argv, "v")) != -1) {
-		switch (ch) {
-		case 'v':
+	بينما ((ch = getopt(argc, argv, "v")) != -1) {
+		بدل (ch) {
+		حالة 'v':
 			log_stderr = 1;
-			if (log_level == SYSLOG_LEVEL_ERROR)
+			إذا (log_level == SYSLOG_LEVEL_ERROR)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			وإلا إذا (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			fprintf(stderr, "usage: %s [-v]\n", __progname);
 			exit(1);
 		}
@@ -247,13 +247,13 @@ main(int argc, char **argv)
 	in = STDIN_FILENO;
 	out = STDOUT_FILENO;
 
-	if ((iqueue = sshbuf_new()) == NULL)
+	إذا ((iqueue = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((oqueue = sshbuf_new()) == NULL)
+	إذا ((oqueue = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 
-	while (1) {
-		memset(pfd, 0, sizeof(pfd));
+	بينما (1) {
+		memset(pfd, 0, حجم(pfd));
 		pfd[0].fd = in;
 		pfd[1].fd = out;
 
@@ -262,41 +262,41 @@ main(int argc, char **argv)
 		 * the worst-case length packet it can generate,
 		 * otherwise apply backpressure by stopping reads.
 		 */
-		if ((r = sshbuf_check_reserve(iqueue, sizeof(buf))) == 0 &&
-		    (r = sshbuf_check_reserve(oqueue, MAX_MSG_LENGTH)) == 0)
+		إذا ((r = sshbuf_check_reserve(iqueue, حجم(buf))) == 0 &&
+		    (r = sshbuf_check_reserve(oqueue, MAX_رسالة_LENGTH)) == 0)
 			pfd[0].events = POLLIN;
-		else if (r != SSH_ERR_NO_BUFFER_SPACE)
+		وإلا إذا (r != SSH_ERR_NO_BUFFER_SPACE)
 			fatal_fr(r, "reserve");
 
-		if (sshbuf_len(oqueue) > 0)
+		إذا (sshbuf_len(oqueue) > 0)
 			pfd[1].events = POLLOUT;
 
-		if ((r = poll(pfd, 2, -1 /* INFTIM */)) <= 0) {
-			if (r == 0 || errno == EINTR)
-				continue;
+		إذا ((r = poll(pfd, 2, -1 /* INFTIM */)) <= 0) {
+			إذا (r == 0 || errno == EINTR)
+				استمر;
 			fatal("poll: %s", strerror(errno));
 		}
 
 		/* copy stdin to iqueue */
-		if ((pfd[0].revents & (POLLIN|POLLHUP|POLLERR)) != 0) {
-			len = read(in, buf, sizeof buf);
-			if (len == 0) {
+		إذا ((pfd[0].revents & (POLLIN|POLLHUP|POLLERR)) != 0) {
+			len = اقرأ(in, buf, حجم buf);
+			إذا (len == 0) {
 				debug("read eof");
 				cleanup_exit(0);
-			} else if (len < 0) {
+			} وإلا إذا (len < 0) {
 				error("read: %s", strerror(errno));
 				cleanup_exit(1);
-			} else if ((r = sshbuf_put(iqueue, buf, len)) != 0)
+			} وإلا إذا ((r = sshbuf_put(iqueue, buf, len)) != 0)
 				fatal_fr(r, "sshbuf_put");
 		}
 		/* send oqueue to stdout */
-		if ((pfd[1].revents & (POLLOUT|POLLHUP)) != 0) {
-			len = write(out, sshbuf_ptr(oqueue),
+		إذا ((pfd[1].revents & (POLLOUT|POLLHUP)) != 0) {
+			len = اكتب(out, sshbuf_ptr(oqueue),
 			    sshbuf_len(oqueue));
-			if (len < 0) {
+			إذا (len < 0) {
 				error("write: %s", strerror(errno));
 				cleanup_exit(1);
-			} else if ((r = sshbuf_consume(oqueue, len)) != 0)
+			} وإلا إذا ((r = sshbuf_consume(oqueue, len)) != 0)
 				fatal_fr(r, "consume");
 		}
 
@@ -305,17 +305,17 @@ main(int argc, char **argv)
 		 * into the output buffer, otherwise stop processing input
 		 * and let the output queue drain.
 		 */
-		if ((r = sshbuf_check_reserve(oqueue, MAX_MSG_LENGTH)) == 0)
+		إذا ((r = sshbuf_check_reserve(oqueue, MAX_رسالة_LENGTH)) == 0)
 			process();
-		else if (r != SSH_ERR_NO_BUFFER_SPACE)
+		وإلا إذا (r != SSH_ERR_NO_BUFFER_SPACE)
 			fatal_fr(r, "reserve");
 	}
 }
-#else /* ENABLE_PKCS11 */
-int
-main(int argc, char **argv)
+#وإلا /* ENABLE_PKCS11 */
+صحيح
+الرئيسية(صحيح argc, حرف **argv)
 {
-	extern char *__progname;
+	خارجي حرف *__progname;
 
 	__progname = ssh_get_progname(argv[0]);
 	log_init(__progname, SYSLOG_LEVEL_ERROR, SYSLOG_FACILITY_AUTH, 0);
