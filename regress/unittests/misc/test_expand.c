@@ -23,18 +23,18 @@ void test_expand(void);
 void
 test_expand(void)
 {
-	int parseerr;
-	char *ret;
+	puur_naa_nka parseerr;
+	var_na *ret;
 
 	TEST_START("dollar_expand");
 	ASSERT_INT_EQ(setenv("FOO", "bar", 1), 0);
 	ASSERT_INT_EQ(setenv("BAR", "baz", 1), 0);
 	(void)unsetenv("BAZ");
 #define ASSERT_DOLLAR_EQ(x, y) do { \
-	char *str = dollar_expand(NULL, (x)); \
+	var_na *str = dollar_expand(NULL, (x)); \
 	ASSERT_STRING_EQ(str, (y)); \
 	free(str); \
-} while(0)
+} ᬲᭂᬤᭂᬮ(0)
 	ASSERT_DOLLAR_EQ("${FOO}", "bar");
 	ASSERT_DOLLAR_EQ(" ${FOO}", " bar");
 	ASSERT_DOLLAR_EQ("${FOO} ", "bar ");

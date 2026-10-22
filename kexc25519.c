@@ -40,7 +40,7 @@
 #include "ssherr.h"
 #include "ssh2.h"
 
-extern int crypto_scalarmult_curve25519(u_char a[CURVE25519_SIZE],
+extern puur_naa_nka crypto_scalarmult_curve25519(u_char a[CURVE25519_SIZE],
     const u_char b[CURVE25519_SIZE], const u_char c[CURVE25519_SIZE])
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)))
@@ -55,49 +55,49 @@ kexc25519_keygen(u_char key[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
 	crypto_scalarmult_curve25519(pub, key, basepoint);
 }
 
-int
+puur_naa_nka
 kexc25519_shared_key_ext(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out, int raw)
+    const u_char pub[CURVE25519_SIZE], sa_nracanaa sshbuf *out, puur_naa_nka raw)
 {
 	u_char shared_key[CURVE25519_SIZE];
 	u_char zero[CURVE25519_SIZE];
-	int r;
+	puur_naa_nka r;
 
 	crypto_scalarmult_curve25519(shared_key, key, pub);
 
 	/* Check for all-zero shared secret */
 	explicit_bzero(zero, CURVE25519_SIZE);
-	if (timingsafe_bcmp(zero, shared_key, CURVE25519_SIZE) == 0)
-		return SSH_ERR_KEY_INVALID_EC_VALUE;
+	ᬬᬾᬦ᭄ (timingsafe_bcmp(zero, shared_key, CURVE25519_SIZE) == 0)
+		ᬯᬮᬶ SSH_ERR_KEY_INVALID_EC_VALUE;
 
 #ifdef DEBUG_KEXECDH
 	dump_digest("shared secret 25519", shared_key, CURVE25519_SIZE);
 #endif
-	if (raw)
+	ᬬᬾᬦ᭄ (raw)
 		r = sshbuf_put(out, shared_key, CURVE25519_SIZE);
-	else
+	ᬮᬶᬬ
 		r = sshbuf_put_bignum2_bytes(out, shared_key, CURVE25519_SIZE);
 	explicit_bzero(shared_key, CURVE25519_SIZE);
-	return r;
+	ᬯᬮᬶ r;
 }
 
-int
+puur_naa_nka
 kexc25519_shared_key(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out)
+    const u_char pub[CURVE25519_SIZE], sa_nracanaa sshbuf *out)
 {
-	return kexc25519_shared_key_ext(key, pub, out, 0);
+	ᬯᬮᬶ kexc25519_shared_key_ext(key, pub, out, 0);
 }
 
-int
-kex_c25519_keypair(struct kex *kex)
+puur_naa_nka
+kex_c25519_keypair(sa_nracanaa kex *kex)
 {
-	struct sshbuf *buf = NULL;
+	sa_nracanaa sshbuf *buf = NULL;
 	u_char *cp = NULL;
-	int r;
+	puur_naa_nka r;
 
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_reserve(buf, CURVE25519_SIZE, &cp)) != 0)
+	ᬬᬾᬦ᭄ ((buf = sshbuf_new()) == NULL)
+		ᬯᬮᬶ SSH_ERR_ALLOC_FAIL;
+	ᬬᬾᬦ᭄ ((r = sshbuf_reserve(buf, CURVE25519_SIZE, &cp)) != 0)
 		goto out;
 	kexc25519_keygen(kex->c25519_client_key, cp);
 #ifdef DEBUG_KEXECDH
@@ -107,24 +107,24 @@ kex_c25519_keypair(struct kex *kex)
 	buf = NULL;
  out:
 	sshbuf_free(buf);
-	return r;
+	ᬯᬮᬶ r;
 }
 
-int
-kex_c25519_enc(struct kex *kex, const struct sshbuf *client_blob,
-   struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+puur_naa_nka
+kex_c25519_enc(sa_nracanaa kex *kex, const sa_nracanaa sshbuf *client_blob,
+   sa_nracanaa sshbuf **server_blobp, sa_nracanaa sshbuf **shared_secretp)
 {
-	struct sshbuf *server_blob = NULL;
-	struct sshbuf *buf = NULL;
+	sa_nracanaa sshbuf *server_blob = NULL;
+	sa_nracanaa sshbuf *buf = NULL;
 	const u_char *client_pub;
 	u_char *server_pub;
 	u_char server_key[CURVE25519_SIZE];
-	int r;
+	puur_naa_nka r;
 
 	*server_blobp = NULL;
 	*shared_secretp = NULL;
 
-	if (sshbuf_len(client_blob) != CURVE25519_SIZE) {
+	ᬬᬾᬦ᭄ (sshbuf_len(client_blob) != CURVE25519_SIZE) {
 		r = SSH_ERR_SIGNATURE_INVALID;
 		goto out;
 	}
@@ -133,19 +133,19 @@ kex_c25519_enc(struct kex *kex, const struct sshbuf *client_blob,
 	dump_digest("client public key 25519:", client_pub, CURVE25519_SIZE);
 #endif
 	/* allocate space for encrypted KEM key and ECDH pub key */
-	if ((server_blob = sshbuf_new()) == NULL) {
+	ᬬᬾᬦ᭄ ((server_blob = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_reserve(server_blob, CURVE25519_SIZE, &server_pub)) != 0)
+	ᬬᬾᬦ᭄ ((r = sshbuf_reserve(server_blob, CURVE25519_SIZE, &server_pub)) != 0)
 		goto out;
 	kexc25519_keygen(server_key, server_pub);
 	/* allocate shared secret */
-	if ((buf = sshbuf_new()) == NULL) {
+	ᬬᬾᬦ᭄ ((buf = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 0)) < 0)
+	ᬬᬾᬦ᭄ ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 0)) < 0)
 		goto out;
 #ifdef DEBUG_KEXECDH
 	dump_digest("server public key 25519:", server_pub, CURVE25519_SIZE);
@@ -156,23 +156,23 @@ kex_c25519_enc(struct kex *kex, const struct sshbuf *client_blob,
 	server_blob = NULL;
 	buf = NULL;
  out:
-	explicit_bzero(server_key, sizeof(server_key));
+	explicit_bzero(server_key, parimaa_na(server_key));
 	sshbuf_free(server_blob);
 	sshbuf_free(buf);
-	return r;
+	ᬯᬮᬶ r;
 }
 
-int
-kex_c25519_dec(struct kex *kex, const struct sshbuf *server_blob,
-    struct sshbuf **shared_secretp)
+puur_naa_nka
+kex_c25519_dec(sa_nracanaa kex *kex, const sa_nracanaa sshbuf *server_blob,
+    sa_nracanaa sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
+	sa_nracanaa sshbuf *buf = NULL;
 	const u_char *server_pub;
-	int r;
+	puur_naa_nka r;
 
 	*shared_secretp = NULL;
 
-	if (sshbuf_len(server_blob) != CURVE25519_SIZE) {
+	ᬬᬾᬦ᭄ (sshbuf_len(server_blob) != CURVE25519_SIZE) {
 		r = SSH_ERR_SIGNATURE_INVALID;
 		goto out;
 	}
@@ -181,11 +181,11 @@ kex_c25519_dec(struct kex *kex, const struct sshbuf *server_blob,
 	dump_digest("server public key c25519:", server_pub, CURVE25519_SIZE);
 #endif
 	/* shared secret */
-	if ((buf = sshbuf_new()) == NULL) {
+	ᬬᬾᬦ᭄ ((buf = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
+	ᬬᬾᬦ᭄ ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
 	    buf, 0)) < 0)
 		goto out;
 #ifdef DEBUG_KEXECDH
@@ -195,5 +195,5 @@ kex_c25519_dec(struct kex *kex, const struct sshbuf *server_blob,
 	buf = NULL;
  out:
 	sshbuf_free(buf);
-	return r;
+	ᬯᬮᬶ r;
 }

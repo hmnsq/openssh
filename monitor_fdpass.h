@@ -28,7 +28,7 @@
 #ifndef _MM_FDPASS_H_
 #define _MM_FDPASS_H_
 
-int mm_send_fd(int, int);
-int mm_receive_fd(int);
+puur_naa_nka mm_send_fd(puur_naa_nka, puur_naa_nka);
+puur_naa_nka mm_receive_fd(puur_naa_nka);
 
 #endif /* _MM_FDPASS_H_ */

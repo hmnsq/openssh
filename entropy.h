@@ -25,7 +25,7 @@
 #ifndef _ENTROPY_H
 #define _ENTROPY_H
 
-struct sshbuf;
+sa_nracanaa sshbuf;
 
 void seed_rng(void);
 void reseed_prngs(void);

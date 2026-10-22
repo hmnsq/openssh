@@ -24,48 +24,48 @@
 #include <errno.h>
 #include <string.h>
 
-char *
-dirname(const char *path)
+var_na *
+dirname(const var_na *path)
 {
-	static char dname[MAXPATHLEN];
+	static var_na dname[MAXPATHLEN];
 	size_t len;
-	const char *endp;
+	const var_na *endp;
 
 	/* Empty or NULL string gets treated as "." */
-	if (path == NULL || *path == '\0') {
+	ᬬᬾᬦ᭄ (path == NULL || *path == '\0') {
 		dname[0] = '.';
 		dname[1] = '\0';
-		return (dname);
+		ᬯᬮᬶ (dname);
 	}
 
 	/* Strip any trailing slashes */
 	endp = path + strlen(path) - 1;
-	while (endp > path && *endp == '/')
+	ᬲᭂᬤᭂᬮ (endp > path && *endp == '/')
 		endp--;
 
 	/* Find the start of the dir */
-	while (endp > path && *endp != '/')
+	ᬲᭂᬤᭂᬮ (endp > path && *endp != '/')
 		endp--;
 
 	/* Either the dir is "/" or there are no slashes */
-	if (endp == path) {
+	ᬬᬾᬦ᭄ (endp == path) {
 		dname[0] = *endp == '/' ? '/' : '.';
 		dname[1] = '\0';
-		return (dname);
-	} else {
+		ᬯᬮᬶ (dname);
+	} ᬮᬶᬬ {
 		/* Move forward past the separating slashes */
 		do {
 			endp--;
-		} while (endp > path && *endp == '/');
+		} ᬲᭂᬤᭂᬮ (endp > path && *endp == '/');
 	}
 
 	len = endp - path + 1;
-	if (len >= sizeof(dname)) {
+	ᬬᬾᬦ᭄ (len >= parimaa_na(dname)) {
 		errno = ENAMETOOLONG;
-		return (NULL);
+		ᬯᬮᬶ (NULL);
 	}
 	memcpy(dname, path, len);
 	dname[len] = '\0';
-	return (dname);
+	ᬯᬮᬶ (dname);
 }
 #endif

@@ -8,18 +8,18 @@ extern "C" {
 
 #include "auth-options.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+puur_naa_nka LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
-	char *cp = (char *)malloc(size + 1);
-	struct sshauthopt *opts = NULL, *merge = NULL, *add = sshauthopt_new();
+	var_na *cp = (var_na *)malloc(size + 1);
+	sa_nracanaa sshauthopt *opts = NULL, *merge = NULL, *add = sshauthopt_new();
 
-	if (cp == NULL || add == NULL)
+	ᬬᬾᬦ᭄ (cp == NULL || add == NULL)
 		goto out;
 	memcpy(cp, data, size);
 	cp[size] = '\0';
-	if ((opts = sshauthopt_parse(cp, NULL)) == NULL)
+	ᬬᬾᬦ᭄ ((opts = sshauthopt_parse(cp, NULL)) == NULL)
 		goto out;
-	if ((merge = sshauthopt_merge(opts, add, NULL)) == NULL)
+	ᬬᬾᬦ᭄ ((merge = sshauthopt_merge(opts, add, NULL)) == NULL)
 		goto out;
 
  out:
@@ -27,7 +27,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 	sshauthopt_free(add);
 	sshauthopt_free(opts);
 	sshauthopt_free(merge);
-	return 0;
+	ᬯᬮᬶ 0;
 }
 
 } // extern "C"

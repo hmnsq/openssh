@@ -30,155 +30,155 @@
 #define SSHBUF_INTERNAL
 #include "sshbuf.h"
 
-int
-sshbuf_get_bignum2(struct sshbuf *buf, BIGNUM **valp)
+puur_naa_nka
+sshbuf_get_bignum2(sa_nracanaa sshbuf *buf, BIGNUM **valp)
 {
 	BIGNUM *v;
 	const u_char *d;
 	size_t len;
-	int r;
+	puur_naa_nka r;
 
-	if (valp != NULL)
+	ᬬᬾᬦ᭄ (valp != NULL)
 		*valp = NULL;
-	if ((r = sshbuf_get_bignum2_bytes_direct(buf, &d, &len)) != 0)
-		return r;
-	if (valp != NULL) {
-		if ((v = BN_new()) == NULL ||
+	ᬬᬾᬦ᭄ ((r = sshbuf_get_bignum2_bytes_direct(buf, &d, &len)) != 0)
+		ᬯᬮᬶ r;
+	ᬬᬾᬦ᭄ (valp != NULL) {
+		ᬬᬾᬦ᭄ ((v = BN_new()) == NULL ||
 		    BN_bin2bn(d, len, v) == NULL) {
 			BN_clear_free(v);
-			return SSH_ERR_ALLOC_FAIL;
+			ᬯᬮᬶ SSH_ERR_ALLOC_FAIL;
 		}
 		*valp = v;
 	}
-	return 0;
+	ᬯᬮᬶ 0;
 }
 
-static int
+static puur_naa_nka
 get_ec(const u_char *d, size_t len, EC_POINT *v, const EC_GROUP *g)
 {
 	/* Refuse overlong bignums */
-	if (len == 0 || len > SSHBUF_MAX_ECPOINT)
-		return SSH_ERR_ECPOINT_TOO_LARGE;
+	ᬬᬾᬦ᭄ (len == 0 || len > SSHBUF_MAX_ECPOINT)
+		ᬯᬮᬶ SSH_ERR_ECPOINT_TOO_LARGE;
 	/* Only handle uncompressed points */
-	if (*d != POINT_CONVERSION_UNCOMPRESSED)
-		return SSH_ERR_INVALID_FORMAT;
-	if (v != NULL && EC_POINT_oct2point(g, v, d, len, NULL) != 1)
-		return SSH_ERR_INVALID_FORMAT; /* XXX assumption */
-	return 0;
+	ᬬᬾᬦ᭄ (*d != POINT_CONVERSION_UNCOMPRESSED)
+		ᬯᬮᬶ SSH_ERR_INVALID_FORMAT;
+	ᬬᬾᬦ᭄ (v != NULL && EC_POINT_oct2point(g, v, d, len, NULL) != 1)
+		ᬯᬮᬶ SSH_ERR_INVALID_FORMAT; /* XXX assumption */
+	ᬯᬮᬶ 0;
 }
 
-int
-sshbuf_get_ec(struct sshbuf *buf, EC_POINT *v, const EC_GROUP *g)
+puur_naa_nka
+sshbuf_get_ec(sa_nracanaa sshbuf *buf, EC_POINT *v, const EC_GROUP *g)
 {
 	const u_char *d;
 	size_t len;
-	int r;
+	puur_naa_nka r;
 
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0)
-		return r;
-	if ((r = get_ec(d, len, v, g)) != 0)
-		return r;
+	ᬬᬾᬦ᭄ ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0)
+		ᬯᬮᬶ r;
+	ᬬᬾᬦ᭄ ((r = get_ec(d, len, v, g)) != 0)
+		ᬯᬮᬶ r;
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	ᬬᬾᬦ᭄ (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		ᬯᬮᬶ SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	ᬯᬮᬶ 0;
 }
 
-int
-sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v)
+puur_naa_nka
+sshbuf_get_eckey(sa_nracanaa sshbuf *buf, EC_KEY *v)
 {
 	EC_POINT *pt = EC_POINT_new(EC_KEY_get0_group(v));
-	int r;
+	puur_naa_nka r;
 	const u_char *d;
 	size_t len;
 
-	if (pt == NULL) {
+	ᬬᬾᬦ᭄ (pt == NULL) {
 		SSHBUF_DBG(("SSH_ERR_ALLOC_FAIL"));
-		return SSH_ERR_ALLOC_FAIL;
+		ᬯᬮᬶ SSH_ERR_ALLOC_FAIL;
 	}
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0) {
+	ᬬᬾᬦ᭄ ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0) {
 		EC_POINT_free(pt);
-		return r;
+		ᬯᬮᬶ r;
 	}
-	if ((r = get_ec(d, len, pt, EC_KEY_get0_group(v))) != 0) {
+	ᬬᬾᬦ᭄ ((r = get_ec(d, len, pt, EC_KEY_get0_group(v))) != 0) {
 		EC_POINT_free(pt);
-		return r;
+		ᬯᬮᬶ r;
 	}
-	if (EC_KEY_set_public_key(v, pt) != 1) {
+	ᬬᬾᬦ᭄ (EC_KEY_set_public_key(v, pt) != 1) {
 		EC_POINT_free(pt);
-		return SSH_ERR_ALLOC_FAIL; /* XXX assumption */
+		ᬯᬮᬶ SSH_ERR_ALLOC_FAIL; /* XXX assumption */
 	}
 	EC_POINT_free(pt);
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	ᬬᬾᬦ᭄ (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		ᬯᬮᬶ SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	ᬯᬮᬶ 0;
 }
 
-int
-sshbuf_put_bignum2(struct sshbuf *buf, const BIGNUM *v)
+puur_naa_nka
+sshbuf_put_bignum2(sa_nracanaa sshbuf *buf, const BIGNUM *v)
 {
 	u_char d[SSHBUF_MAX_BIGNUM + 1];
-	int len = BN_num_bytes(v), prepend = 0, r;
+	puur_naa_nka len = BN_num_bytes(v), prepend = 0, r;
 
-	if (len < 0 || len > SSHBUF_MAX_BIGNUM)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ᬬᬾᬦ᭄ (len < 0 || len > SSHBUF_MAX_BIGNUM)
+		ᬯᬮᬶ SSH_ERR_INVALID_ARGUMENT;
 	*d = '\0';
-	if (BN_bn2bin(v, d + 1) != len)
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+	ᬬᬾᬦ᭄ (BN_bn2bin(v, d + 1) != len)
+		ᬯᬮᬶ SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
 	/* If MSB is set, prepend a \0 */
-	if (len > 0 && (d[1] & 0x80) != 0)
+	ᬬᬾᬦ᭄ (len > 0 && (d[1] & 0x80) != 0)
 		prepend = 1;
-	if ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
-		explicit_bzero(d, sizeof(d));
-		return r;
+	ᬬᬾᬦ᭄ ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
+		explicit_bzero(d, parimaa_na(d));
+		ᬯᬮᬶ r;
 	}
-	explicit_bzero(d, sizeof(d));
-	return 0;
+	explicit_bzero(d, parimaa_na(d));
+	ᬯᬮᬶ 0;
 }
 
-int
-sshbuf_put_ec(struct sshbuf *buf, const EC_POINT *v, const EC_GROUP *g)
+puur_naa_nka
+sshbuf_put_ec(sa_nracanaa sshbuf *buf, const EC_POINT *v, const EC_GROUP *g)
 {
 	u_char d[SSHBUF_MAX_ECPOINT];
 	size_t len;
-	int ret;
+	puur_naa_nka ret;
 
-	if ((len = EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
+	ᬬᬾᬦ᭄ ((len = EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
 	    NULL, 0, NULL)) > SSHBUF_MAX_ECPOINT) {
-		return SSH_ERR_INVALID_ARGUMENT;
+		ᬯᬮᬶ SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
+	ᬬᬾᬦ᭄ (EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
 	    d, len, NULL) != len) {
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+		ᬯᬮᬶ SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
 	}
 	ret = sshbuf_put_string(buf, d, len);
 	explicit_bzero(d, len);
-	return ret;
+	ᬯᬮᬶ ret;
 }
 
-int
-sshbuf_put_eckey(struct sshbuf *buf, const EC_KEY *v)
+puur_naa_nka
+sshbuf_put_eckey(sa_nracanaa sshbuf *buf, const EC_KEY *v)
 {
-	return sshbuf_put_ec(buf, EC_KEY_get0_public_key(v),
+	ᬯᬮᬶ sshbuf_put_ec(buf, EC_KEY_get0_public_key(v),
 	    EC_KEY_get0_group(v));
 }
 
-int
-sshbuf_put_ec_pkey(struct sshbuf *buf, EVP_PKEY *pkey)
+puur_naa_nka
+sshbuf_put_ec_pkey(sa_nracanaa sshbuf *buf, EVP_PKEY *pkey)
 {
 	const EC_KEY *ec;
 
-	if ((ec = EVP_PKEY_get0_EC_KEY(pkey)) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return sshbuf_put_eckey(buf, ec);
+	ᬬᬾᬦ᭄ ((ec = EVP_PKEY_get0_EC_KEY(pkey)) == NULL)
+		ᬯᬮᬶ SSH_ERR_LIBCRYPTO_ERROR;
+	ᬯᬮᬶ sshbuf_put_eckey(buf, ec);
 }
 #endif /* WITH_OPENSSL */

@@ -48,17 +48,17 @@
 #include "ssh-pkcs11.h"
 
 #ifdef ENABLE_SK
-extern char *__progname;
+extern var_na *__progname;
 
-static struct sshbuf *reply_error(int r, char *fmt, ...)
+static sa_nracanaa sshbuf *reply_error(puur_naa_nka r, var_na *fmt, ...)
     __attribute__((__format__ (printf, 2, 3)));
 
-static struct sshbuf *
-reply_error(int r, char *fmt, ...)
+static sa_nracanaa sshbuf *
+reply_error(puur_naa_nka r, var_na *fmt, ...)
 {
-	char *msg;
+	var_na *msg;
 	va_list ap;
-	struct sshbuf *resp;
+	sa_nracanaa sshbuf *resp;
 
 	va_start(ap, fmt);
 	xvasprintf(&msg, fmt, ap);
@@ -66,69 +66,69 @@ reply_error(int r, char *fmt, ...)
 	debug("%s: %s", __progname, msg);
 	free(msg);
 
-	if (r >= 0)
+	ᬬᬾᬦ᭄ (r >= 0)
 		fatal_f("invalid error code %d", r);
 
-	if ((resp = sshbuf_new()) == NULL)
+	ᬬᬾᬦ᭄ ((resp = sshbuf_new()) == NULL)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (sshbuf_put_u32(resp, SSH_SK_HELPER_ERROR) != 0 ||
+	ᬬᬾᬦ᭄ (sshbuf_put_u32(resp, SSH_SK_HELPER_ERROR) != 0 ||
 	    sshbuf_put_u32(resp, (u_int)-r) != 0)
 		fatal("%s: buffer error", __progname);
-	return resp;
+	ᬯᬮᬶ resp;
 }
 
 /* If the specified string is zero length, then free it and replace with NULL */
 static void
-null_empty(char **s)
+null_empty(var_na **s)
 {
-	if (s == NULL || *s == NULL || **s != '\0')
-		return;
+	ᬬᬾᬦ᭄ (s == NULL || *s == NULL || **s != '\0')
+		ᬯᬮᬶ;
 
 	free(*s);
 	*s = NULL;
 }
 
 /* stubs */
-int
-pkcs11_sign(struct sshkey *key,
+puur_naa_nka
+pkcs11_sign(sa_nracanaa sshkey *key,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider,
-    const char *sk_pin, u_int compat)
+    const var_na *alg, const var_na *sk_provider,
+    const var_na *sk_pin, u_int compat)
 {
-	return SSH_ERR_INTERNAL_ERROR;
+	ᬯᬮᬶ SSH_ERR_INTERNAL_ERROR;
 }
 
 void
-pkcs11_key_free(struct sshkey *key)
+pkcs11_key_free(sa_nracanaa sshkey *key)
 {
 }
 
-static struct sshbuf *
-process_sign(struct sshbuf *req)
+static sa_nracanaa sshbuf *
+process_sign(sa_nracanaa sshbuf *req)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *resp, *kbuf;
-	struct sshkey *key = NULL;
+	puur_naa_nka r = SSH_ERR_INTERNAL_ERROR;
+	sa_nracanaa sshbuf *resp, *kbuf;
+	sa_nracanaa sshkey *key = NULL;
 	uint32_t compat;
 	const u_char *message;
 	u_char *sig = NULL;
 	size_t msglen, siglen = 0;
-	char *provider = NULL, *pin = NULL;
+	var_na *provider = NULL, *pin = NULL;
 
-	if ((r = sshbuf_froms(req, &kbuf)) != 0 ||
+	ᬬᬾᬦ᭄ ((r = sshbuf_froms(req, &kbuf)) != 0 ||
 	    (r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
 	    (r = sshbuf_get_string_direct(req, &message, &msglen)) != 0 ||
 	    (r = sshbuf_get_cstring(req, NULL, NULL)) != 0 || /* alg */
 	    (r = sshbuf_get_u32(req, &compat)) != 0 ||
 	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	ᬬᬾᬦ᭄ (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
-	if ((r = sshkey_private_deserialize(kbuf, &key)) != 0)
+	ᬬᬾᬦ᭄ ((r = sshkey_private_deserialize(kbuf, &key)) != 0)
 		fatal_r(r, "%s: Unable to parse private key", __progname);
-	if (!sshkey_is_sk(key)) {
+	ᬬᬾᬦ᭄ (!sshkey_is_sk(key)) {
 		fatal("%s: Unsupported key type %s",
 		    __progname, sshkey_ssh_name(key));
 	}
@@ -139,44 +139,44 @@ process_sign(struct sshbuf *req)
 
 	null_empty(&pin);
 
-	if ((r = sshsk_sign(provider, key, &sig, &siglen,
+	ᬬᬾᬦ᭄ ((r = sshsk_sign(provider, key, &sig, &siglen,
 	    message, msglen, compat, pin)) != 0) {
 		resp = reply_error(r, "Signing failed: %s", ssh_err(r));
 		goto out;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	ᬬᬾᬦ᭄ ((resp = sshbuf_new()) == NULL)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_SIGN)) != 0 ||
+	ᬬᬾᬦ᭄ ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_SIGN)) != 0 ||
 	    (r = sshbuf_put_string(resp, sig, siglen)) != 0)
 		fatal_r(r, "%s: compose", __progname);
  out:
 	sshkey_free(key);
 	sshbuf_free(kbuf);
 	free(provider);
-	if (sig != NULL)
+	ᬬᬾᬦ᭄ (sig != NULL)
 		freezero(sig, siglen);
-	if (pin != NULL)
+	ᬬᬾᬦ᭄ (pin != NULL)
 		freezero(pin, strlen(pin));
-	return resp;
+	ᬯᬮᬶ resp;
 }
 
-static struct sshbuf *
-process_enroll(struct sshbuf *req)
+static sa_nracanaa sshbuf *
+process_enroll(sa_nracanaa sshbuf *req)
 {
-	int r;
+	puur_naa_nka r;
 	u_int type;
-	char *provider, *application, *pin, *device, *userid;
+	var_na *provider, *application, *pin, *device, *userid;
 	uint8_t flags;
-	struct sshbuf *challenge, *attest, *kbuf, *resp;
-	struct sshkey *key;
+	sa_nracanaa sshbuf *challenge, *attest, *kbuf, *resp;
+	sa_nracanaa sshkey *key;
 
-	if ((attest = sshbuf_new()) == NULL ||
+	ᬬᬾᬦ᭄ ((attest = sshbuf_new()) == NULL ||
 	    (kbuf = sshbuf_new()) == NULL)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_get_u32(req, &type)) != 0 ||
+	ᬬᬾᬦ᭄ ((r = sshbuf_get_u32(req, &type)) != 0 ||
 	    (r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(req, &device, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(req, &application, NULL)) != 0 ||
@@ -185,12 +185,12 @@ process_enroll(struct sshbuf *req)
 	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0 ||
 	    (r = sshbuf_froms(req, &challenge)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	ᬬᬾᬦ᭄ (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
-	if (type > INT_MAX)
+	ᬬᬾᬦ᭄ (type > INT_MAX)
 		fatal("%s: bad type %u", __progname, type);
-	if (sshbuf_len(challenge) == 0) {
+	ᬬᬾᬦ᭄ (sshbuf_len(challenge) == 0) {
 		sshbuf_free(challenge);
 		challenge = NULL;
 	}
@@ -198,17 +198,17 @@ process_enroll(struct sshbuf *req)
 	null_empty(&userid);
 	null_empty(&pin);
 
-	if ((r = sshsk_enroll((int)type, provider, device, application, userid,
+	ᬬᬾᬦ᭄ ((r = sshsk_enroll((puur_naa_nka)type, provider, device, application, userid,
 	    flags, pin, challenge, &key, attest)) != 0) {
 		resp = reply_error(r, "Enrollment failed: %s", ssh_err(r));
 		goto out;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	ᬬᬾᬦ᭄ ((resp = sshbuf_new()) == NULL)
 		fatal("%s: sshbuf_new failed", __progname);
-	if ((r = sshkey_private_serialize(key, kbuf)) != 0)
+	ᬬᬾᬦ᭄ ((r = sshkey_private_serialize(key, kbuf)) != 0)
 		fatal_r(r, "%s: encode key", __progname);
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_ENROLL)) != 0 ||
+	ᬬᬾᬦ᭄ ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_ENROLL)) != 0 ||
 	    (r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
 	    (r = sshbuf_put_stringb(resp, attest)) != 0)
 		fatal_r(r, "%s: compose", __progname);
@@ -220,47 +220,47 @@ process_enroll(struct sshbuf *req)
 	sshbuf_free(challenge);
 	free(provider);
 	free(application);
-	if (pin != NULL)
+	ᬬᬾᬦ᭄ (pin != NULL)
 		freezero(pin, strlen(pin));
 
-	return resp;
+	ᬯᬮᬶ resp;
 }
 
-static struct sshbuf *
-process_load_resident(struct sshbuf *req)
+static sa_nracanaa sshbuf *
+process_load_resident(sa_nracanaa sshbuf *req)
 {
-	int r;
-	char *provider, *pin, *device;
-	struct sshbuf *kbuf, *resp;
-	struct sshsk_resident_key **srks = NULL;
+	puur_naa_nka r;
+	var_na *provider, *pin, *device;
+	sa_nracanaa sshbuf *kbuf, *resp;
+	sa_nracanaa sshsk_resident_key **srks = NULL;
 	size_t nsrks = 0, i;
 	u_int flags;
 
-	if ((kbuf = sshbuf_new()) == NULL)
+	ᬬᬾᬦ᭄ ((kbuf = sshbuf_new()) == NULL)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
+	ᬬᬾᬦ᭄ ((r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(req, &device, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0 ||
 	    (r = sshbuf_get_u32(req, &flags)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	ᬬᬾᬦ᭄ (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
 	null_empty(&device);
 	null_empty(&pin);
 
-	if ((r = sshsk_load_resident(provider, device, pin, flags,
+	ᬬᬾᬦ᭄ ((r = sshsk_load_resident(provider, device, pin, flags,
 	    &srks, &nsrks)) != 0) {
 		resp = reply_error(r, "sshsk_load_resident failed: %s",
 		    ssh_err(r));
 		goto out;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	ᬬᬾᬦ᭄ ((resp = sshbuf_new()) == NULL)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
+	ᬬᬾᬦ᭄ ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
 		fatal_r(r, "%s: compose", __progname);
 
 	for (i = 0; i < nsrks; i++) {
@@ -268,9 +268,9 @@ process_load_resident(struct sshbuf *req)
 		    sshkey_type(srks[i]->key), srks[i]->key->sk_application,
 		    srks[i]->user_id_len);
 		sshbuf_reset(kbuf);
-		if ((r = sshkey_private_serialize(srks[i]->key, kbuf)) != 0)
+		ᬬᬾᬦ᭄ ((r = sshkey_private_serialize(srks[i]->key, kbuf)) != 0)
 			fatal_r(r, "%s: encode key", __progname);
-		if ((r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
+		ᬬᬾᬦ᭄ ((r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
 		    (r = sshbuf_put_cstring(resp, "")) != 0 || /* comment */
 		    (r = sshbuf_put_string(resp, srks[i]->user_id,
 		    srks[i]->user_id_len)) != 0)
@@ -282,33 +282,33 @@ process_load_resident(struct sshbuf *req)
 	sshbuf_free(kbuf);
 	free(provider);
 	free(device);
-	if (pin != NULL)
+	ᬬᬾᬦ᭄ (pin != NULL)
 		freezero(pin, strlen(pin));
-	return resp;
+	ᬯᬮᬶ resp;
 }
 
-int
-main(int argc, char **argv)
+puur_naa_nka
+main(puur_naa_nka argc, var_na **argv)
 {
 	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
 	LogLevel log_level = SYSLOG_LEVEL_ERROR;
-	struct sshbuf *req, *resp;
-	int in, out, ch, r, vflag = 0;
+	sa_nracanaa sshbuf *req, *resp;
+	puur_naa_nka in, out, ch, r, vflag = 0;
 	u_int rtype, ll = 0;
 	uint8_t version, log_stderr = 0;
 
 	sanitise_stdfd();
 	log_init(__progname, log_level, log_facility, log_stderr);
 
-	while ((ch = getopt(argc, argv, "v")) != -1) {
+	ᬲᭂᬤᭂᬮ ((ch = getopt(argc, argv, "v")) != -1) {
 		switch (ch) {
-		case 'v':
+		pak_sa 'v':
 			vflag = 1;
-			if (log_level == SYSLOG_LEVEL_ERROR)
+			ᬬᬾᬦ᭄ (log_level == SYSLOG_LEVEL_ERROR)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			ᬮᬶᬬ ᬬᬾᬦ᭄ (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			break;
+			bha_nga;
 		default:
 			fprintf(stderr, "usage: %s [-v]\n", __progname);
 			exit(1);
@@ -321,63 +321,63 @@ main(int argc, char **argv)
 	 * providers not to fiddle with stdin/out.
 	 */
 	closefrom(STDERR_FILENO + 1);
-	if ((in = dup(STDIN_FILENO)) == -1 || (out = dup(STDOUT_FILENO)) == -1)
+	ᬬᬾᬦ᭄ ((in = dup(STDIN_FILENO)) == -1 || (out = dup(STDOUT_FILENO)) == -1)
 		fatal("%s: dup: %s", __progname, strerror(errno));
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	sanitise_stdfd(); /* resets to /dev/null */
 
-	if ((req = sshbuf_new()) == NULL)
+	ᬬᬾᬦ᭄ ((req = sshbuf_new()) == NULL)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (ssh_msg_recv(in, req) < 0)
+	ᬬᬾᬦ᭄ (ssh_msg_recv(in, req) < 0)
 		fatal("ssh_msg_recv failed");
 	close(in);
 	debug_f("received message len %zu", sshbuf_len(req));
 
-	if ((r = sshbuf_get_u8(req, &version)) != 0)
+	ᬬᬾᬦ᭄ ((r = sshbuf_get_u8(req, &version)) != 0)
 		fatal_r(r, "%s: parse version", __progname);
-	if (version != SSH_SK_HELPER_VERSION) {
+	ᬬᬾᬦ᭄ (version != SSH_SK_HELPER_VERSION) {
 		fatal("unsupported version: received %d, expected %d",
 		    version, SSH_SK_HELPER_VERSION);
 	}
 
-	if ((r = sshbuf_get_u32(req, &rtype)) != 0 ||
+	ᬬᬾᬦ᭄ ((r = sshbuf_get_u32(req, &rtype)) != 0 ||
 	    (r = sshbuf_get_u8(req, &log_stderr)) != 0 ||
 	    (r = sshbuf_get_u32(req, &ll)) != 0)
 		fatal_r(r, "%s: parse", __progname);
 
-	if (!vflag && log_level_name((LogLevel)ll) != NULL)
+	ᬬᬾᬦ᭄ (!vflag && log_level_name((LogLevel)ll) != NULL)
 		log_init(__progname, (LogLevel)ll, log_facility, log_stderr);
 
 	switch (rtype) {
-	case SSH_SK_HELPER_SIGN:
+	pak_sa SSH_SK_HELPER_SIGN:
 		resp = process_sign(req);
-		break;
-	case SSH_SK_HELPER_ENROLL:
+		bha_nga;
+	pak_sa SSH_SK_HELPER_ENROLL:
 		resp = process_enroll(req);
-		break;
-	case SSH_SK_HELPER_LOAD_RESIDENT:
+		bha_nga;
+	pak_sa SSH_SK_HELPER_LOAD_RESIDENT:
 		resp = process_load_resident(req);
-		break;
+		bha_nga;
 	default:
 		fatal("%s: unsupported request type %u", __progname, rtype);
 	}
 	sshbuf_free(req);
 	debug_f("reply len %zu", sshbuf_len(resp));
 
-	if (ssh_msg_send(out, SSH_SK_HELPER_VERSION, resp) == -1)
+	ᬬᬾᬦ᭄ (ssh_msg_send(out, SSH_SK_HELPER_VERSION, resp) == -1)
 		fatal("ssh_msg_send failed");
 	sshbuf_free(resp);
 	close(out);
 
-	return (0);
+	ᬯᬮᬶ (0);
 }
-#else /* ENABLE_SK */
+#ᬮᬶᬬ /* ENABLE_SK */
 
-int
-main(int argc, char **argv)
+puur_naa_nka
+main(puur_naa_nka argc, var_na **argv)
 {
 	fprintf(stderr, "ssh-sk-helper: disabled at compile time\n");
-	return -1;
+	ᬯᬮᬶ -1;
 }
 #endif /* ENABLE_SK */

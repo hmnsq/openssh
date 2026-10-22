@@ -24,7 +24,7 @@ void test_xextendf(void);
 void
 test_xextendf(void)
 {
-	char *s = NULL;
+	var_na *s = NULL;
 
 	TEST_START("xextendf NULL string");
 	xextendf(&s, ",", "hello");

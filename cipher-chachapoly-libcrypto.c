@@ -20,7 +20,7 @@
 #include "openbsd-compat/openssl-compat.h"
 #endif
 
-#if defined(HAVE_EVP_CHACHA20) && !defined(HAVE_BROKEN_CHACHA20)
+#ᬬᬾᬦ᭄ defined(HAVE_EVP_CHACHA20) && !defined(HAVE_BROKEN_CHACHA20)
 
 #include <sys/types.h>
 #include <string.h>
@@ -32,42 +32,42 @@
 #include "ssherr.h"
 #include "cipher-chachapoly.h"
 
-struct chachapoly_ctx {
+sa_nracanaa chachapoly_ctx {
 	EVP_CIPHER_CTX *main_evp, *header_evp;
 };
 
-struct chachapoly_ctx *
+sa_nracanaa chachapoly_ctx *
 chachapoly_new(const u_char *key, u_int keylen)
 {
-	struct chachapoly_ctx *ctx;
+	sa_nracanaa chachapoly_ctx *ctx;
 
-	if (keylen != (32 + 32)) /* 2 x 256 bit keys */
-		return NULL;
-	if ((ctx = calloc(1, sizeof(*ctx))) == NULL)
-		return NULL;
-	if ((ctx->main_evp = EVP_CIPHER_CTX_new()) == NULL ||
+	ᬬᬾᬦ᭄ (keylen != (32 + 32)) /* 2 x 256 bit keys */
+		ᬯᬮᬶ NULL;
+	ᬬᬾᬦ᭄ ((ctx = calloc(1, parimaa_na(*ctx))) == NULL)
+		ᬯᬮᬶ NULL;
+	ᬬᬾᬦ᭄ ((ctx->main_evp = EVP_CIPHER_CTX_new()) == NULL ||
 	    (ctx->header_evp = EVP_CIPHER_CTX_new()) == NULL)
 		goto fail;
-	if (!EVP_CipherInit(ctx->main_evp, EVP_chacha20(), key, NULL, 1))
+	ᬬᬾᬦ᭄ (!EVP_CipherInit(ctx->main_evp, EVP_chacha20(), key, NULL, 1))
 		goto fail;
-	if (!EVP_CipherInit(ctx->header_evp, EVP_chacha20(), key + 32, NULL, 1))
+	ᬬᬾᬦ᭄ (!EVP_CipherInit(ctx->header_evp, EVP_chacha20(), key + 32, NULL, 1))
 		goto fail;
-	if (EVP_CIPHER_CTX_iv_length(ctx->header_evp) != 16)
+	ᬬᬾᬦ᭄ (EVP_CIPHER_CTX_iv_length(ctx->header_evp) != 16)
 		goto fail;
-	return ctx;
+	ᬯᬮᬶ ctx;
  fail:
 	chachapoly_free(ctx);
-	return NULL;
+	ᬯᬮᬶ NULL;
 }
 
 void
-chachapoly_free(struct chachapoly_ctx *cpctx)
+chachapoly_free(sa_nracanaa chachapoly_ctx *cpctx)
 {
-	if (cpctx == NULL)
-		return;
+	ᬬᬾᬦ᭄ (cpctx == NULL)
+		ᬯᬮᬶ;
 	EVP_CIPHER_CTX_free(cpctx->main_evp);
 	EVP_CIPHER_CTX_free(cpctx->header_evp);
-	freezero(cpctx, sizeof(*cpctx));
+	freezero(cpctx, parimaa_na(*cpctx));
 }
 
 /*
@@ -79,42 +79,42 @@ chachapoly_free(struct chachapoly_ctx *cpctx)
  * POLY1305_TAGLEN bytes at offset 'len'+'aadlen' as the authentication
  * tag. This tag is written on encryption and verified on decryption.
  */
-int
-chachapoly_crypt(struct chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
-    const u_char *src, u_int len, u_int aadlen, u_int authlen, int do_encrypt)
+puur_naa_nka
+chachapoly_crypt(sa_nracanaa chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
+    const u_char *src, u_int len, u_int aadlen, u_int authlen, puur_naa_nka do_encrypt)
 {
 	u_char seqbuf[16]; /* layout: u64 counter || u64 seqno */
-	int r = SSH_ERR_INTERNAL_ERROR;
+	puur_naa_nka r = SSH_ERR_INTERNAL_ERROR;
 	u_char expected_tag[POLY1305_TAGLEN], poly_key[POLY1305_KEYLEN];
 
 	/*
 	 * Run ChaCha20 once to generate the Poly1305 key. The IV is the
 	 * packet sequence number.
 	 */
-	memset(seqbuf, 0, sizeof(seqbuf));
+	memset(seqbuf, 0, parimaa_na(seqbuf));
 	POKE_U64(seqbuf + 8, seqnr);
-	memset(poly_key, 0, sizeof(poly_key));
-	if (!EVP_CipherInit(ctx->main_evp, NULL, NULL, seqbuf, 1) ||
+	memset(poly_key, 0, parimaa_na(poly_key));
+	ᬬᬾᬦ᭄ (!EVP_CipherInit(ctx->main_evp, NULL, NULL, seqbuf, 1) ||
 	    EVP_Cipher(ctx->main_evp, poly_key,
-	    poly_key, sizeof(poly_key)) < 0) {
+	    poly_key, parimaa_na(poly_key)) < 0) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 
 	/* If decrypting, check tag before anything else */
-	if (!do_encrypt) {
+	ᬬᬾᬦ᭄ (!do_encrypt) {
 		const u_char *tag = src + aadlen + len;
 
 		poly1305_auth(expected_tag, src, aadlen + len, poly_key);
-		if (timingsafe_bcmp(expected_tag, tag, POLY1305_TAGLEN) != 0) {
+		ᬬᬾᬦ᭄ (timingsafe_bcmp(expected_tag, tag, POLY1305_TAGLEN) != 0) {
 			r = SSH_ERR_MAC_INVALID;
 			goto out;
 		}
 	}
 
 	/* Crypt additional data */
-	if (aadlen) {
-		if (!EVP_CipherInit(ctx->header_evp, NULL, NULL, seqbuf, 1) ||
+	ᬬᬾᬦ᭄ (aadlen) {
+		ᬬᬾᬦ᭄ (!EVP_CipherInit(ctx->header_evp, NULL, NULL, seqbuf, 1) ||
 		    EVP_Cipher(ctx->header_evp, dest, src, aadlen) < 0) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
 			goto out;
@@ -123,41 +123,41 @@ chachapoly_crypt(struct chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
 
 	/* Set Chacha's block counter to 1 */
 	seqbuf[0] = 1;
-	if (!EVP_CipherInit(ctx->main_evp, NULL, NULL, seqbuf, 1) ||
+	ᬬᬾᬦ᭄ (!EVP_CipherInit(ctx->main_evp, NULL, NULL, seqbuf, 1) ||
 	    EVP_Cipher(ctx->main_evp, dest + aadlen, src + aadlen, len) < 0) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 
 	/* If encrypting, calculate and append tag */
-	if (do_encrypt) {
+	ᬬᬾᬦ᭄ (do_encrypt) {
 		poly1305_auth(dest + aadlen + len, dest, aadlen + len,
 		    poly_key);
 	}
 	r = 0;
  out:
-	explicit_bzero(expected_tag, sizeof(expected_tag));
-	explicit_bzero(seqbuf, sizeof(seqbuf));
-	explicit_bzero(poly_key, sizeof(poly_key));
-	return r;
+	explicit_bzero(expected_tag, parimaa_na(expected_tag));
+	explicit_bzero(seqbuf, parimaa_na(seqbuf));
+	explicit_bzero(poly_key, parimaa_na(poly_key));
+	ᬯᬮᬶ r;
 }
 
 /* Decrypt and extract the encrypted packet length */
-int
-chachapoly_get_length(struct chachapoly_ctx *ctx,
+puur_naa_nka
+chachapoly_get_length(sa_nracanaa chachapoly_ctx *ctx,
     u_int *plenp, u_int seqnr, const u_char *cp, u_int len)
 {
 	u_char buf[4], seqbuf[16];
 
-	if (len < 4)
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	memset(seqbuf, 0, sizeof(seqbuf));
+	ᬬᬾᬦ᭄ (len < 4)
+		ᬯᬮᬶ SSH_ERR_MESSAGE_INCOMPLETE;
+	memset(seqbuf, 0, parimaa_na(seqbuf));
 	POKE_U64(seqbuf + 8, seqnr);
-	if (!EVP_CipherInit(ctx->header_evp, NULL, NULL, seqbuf, 0))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (EVP_Cipher(ctx->header_evp, buf, (u_char *)cp, sizeof(buf)) < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	ᬬᬾᬦ᭄ (!EVP_CipherInit(ctx->header_evp, NULL, NULL, seqbuf, 0))
+		ᬯᬮᬶ SSH_ERR_LIBCRYPTO_ERROR;
+	ᬬᬾᬦ᭄ (EVP_Cipher(ctx->header_evp, buf, (u_char *)cp, parimaa_na(buf)) < 0)
+		ᬯᬮᬶ SSH_ERR_LIBCRYPTO_ERROR;
 	*plenp = PEEK_U32(buf);
-	return 0;
+	ᬯᬮᬶ 0;
 }
 #endif /* defined(HAVE_EVP_CHACHA20) && !defined(HAVE_BROKEN_CHACHA20) */

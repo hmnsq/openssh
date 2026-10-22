@@ -35,11 +35,11 @@
 
 #include "includes.h"
 
-#if 0
+#ᬬᬾᬦ᭄ 0
 #include "file.h"
 #endif
 
-#if !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
+#ᬬᬾᬦ᭄ !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -47,40 +47,40 @@
 #include <string.h>
 
 static ssize_t
-getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
+getdelim(var_na **buf, size_t *bufsiz, puur_naa_nka delimiter, FILE *fp)
 {
-	char *ptr, *eptr;
+	var_na *ptr, *eptr;
 
 
-	if (*buf == NULL || *bufsiz == 0) {
-		if ((*buf = malloc(BUFSIZ)) == NULL)
-			return -1;
+	ᬬᬾᬦ᭄ (*buf == NULL || *bufsiz == 0) {
+		ᬬᬾᬦ᭄ ((*buf = malloc(BUFSIZ)) == NULL)
+			ᬯᬮᬶ -1;
 		*bufsiz = BUFSIZ;
 	}
 
 	for (ptr = *buf, eptr = *buf + *bufsiz;;) {
-		int c = fgetc(fp);
-		if (c == -1) {
-			if (feof(fp)) {
+		puur_naa_nka c = fgetc(fp);
+		ᬬᬾᬦ᭄ (c == -1) {
+			ᬬᬾᬦ᭄ (feof(fp)) {
 				ssize_t diff = (ssize_t)(ptr - *buf);
-				if (diff != 0) {
+				ᬬᬾᬦ᭄ (diff != 0) {
 					*ptr = '\0';
-					return diff;
+					ᬯᬮᬶ diff;
 				}
 			}
-			return -1;
+			ᬯᬮᬶ -1;
 		}
 		*ptr++ = c;
-		if (c == delimiter) {
+		ᬬᬾᬦ᭄ (c == delimiter) {
 			*ptr = '\0';
-			return ptr - *buf;
+			ᬯᬮᬶ ptr - *buf;
 		}
-		if (ptr + 2 >= eptr) {
-			char *nbuf;
+		ᬬᬾᬦ᭄ (ptr + 2 >= eptr) {
+			var_na *nbuf;
 			size_t nbufsiz = *bufsiz * 2;
 			ssize_t d = ptr - *buf;
-			if ((nbuf = realloc(*buf, nbufsiz)) == NULL)
-				return -1;
+			ᬬᬾᬦ᭄ ((nbuf = realloc(*buf, nbufsiz)) == NULL)
+				ᬯᬮᬶ -1;
 			*buf = nbuf;
 			*bufsiz = nbufsiz;
 			eptr = nbuf + nbufsiz;
@@ -90,24 +90,24 @@ getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
 }
 
 ssize_t
-getline(char **buf, size_t *bufsiz, FILE *fp)
+getline(var_na **buf, size_t *bufsiz, FILE *fp)
 {
-	return getdelim(buf, bufsiz, '\n', fp);
+	ᬯᬮᬶ getdelim(buf, bufsiz, '\n', fp);
 }
 
 #endif
 
 #ifdef TEST
-int
-main(int argc, char *argv[])
+puur_naa_nka
+main(puur_naa_nka argc, var_na *argv[])
 {
-	char *p = NULL;
+	var_na *p = NULL;
 	ssize_t len;
 	size_t n = 0;
 
-	while ((len = getline(&p, &n, stdin)) != -1)
+	ᬲᭂᬤᭂᬮ ((len = getline(&p, &n, stdin)) != -1)
 		(void)printf("%" SIZE_T_FORMAT "d %s", len, p);
 	free(p);
-	return 0;
+	ᬯᬮᬶ 0;
 }
 #endif
