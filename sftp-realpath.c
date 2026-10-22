@@ -61,44 +61,44 @@ sftp_realpath(const char *path, char *resolved)
 	char *p, *q, *s;
 	size_t left_len, resolved_len;
 	unsigned symlinks;
-	int serrno, slen, mem_allocated;
+	整数 serrno, slen, mem_allocated;
 	char left[PATH_MAX], next_token[PATH_MAX], symlink[PATH_MAX];
 
-	if (path[0] == '\0') {
+	もし (path[0] == '\0') {
 		errno = ENOENT;
-		return (NULL);
+		戻る (NULL);
 	}
 
 	serrno = errno;
 
-	if (resolved == NULL) {
+	もし (resolved == NULL) {
 		resolved = malloc(PATH_MAX);
-		if (resolved == NULL)
-			return (NULL);
+		もし (resolved == NULL)
+			戻る (NULL);
 		mem_allocated = 1;
-	} else
+	} 否则
 		mem_allocated = 0;
 
 	symlinks = 0;
-	if (path[0] == '/') {
+	もし (path[0] == '/') {
 		resolved[0] = '/';
 		resolved[1] = '\0';
-		if (path[1] == '\0')
-			return (resolved);
+		もし (path[1] == '\0')
+			戻る (resolved);
 		resolved_len = 1;
 		left_len = strlcpy(left, path + 1, sizeof(left));
-	} else {
-		if (getcwd(resolved, PATH_MAX) == NULL) {
-			if (mem_allocated)
+	} 否则 {
+		もし (getcwd(resolved, PATH_MAX) == NULL) {
+			もし (mem_allocated)
 				free(resolved);
-			else
+			否则
 				strlcpy(resolved, ".", PATH_MAX);
-			return (NULL);
+			戻る (NULL);
 		}
 		resolved_len = strlen(resolved);
 		left_len = strlcpy(left, path, sizeof(left));
 	}
-	if (left_len >= sizeof(left) || resolved_len >= PATH_MAX) {
+	もし (left_len >= sizeof(left) || resolved_len >= PATH_MAX) {
 		errno = ENAMETOOLONG;
 		goto err;
 	}
@@ -106,40 +106,40 @@ sftp_realpath(const char *path, char *resolved)
 	/*
 	 * Iterate over path components in `left'.
 	 */
-	while (left_len != 0) {
+	ながら (left_len != 0) {
 		/*
 		 * Extract the next path component and adjust `left'
 		 * and its length.
 		 */
 		p = strchr(left, '/');
 		s = p ? p : left + left_len;
-		if (s - left >= (ptrdiff_t)sizeof(next_token)) {
+		もし (s - left >= (ptrdiff_t)sizeof(next_token)) {
 			errno = ENAMETOOLONG;
 			goto err;
 		}
 		memcpy(next_token, left, s - left);
 		next_token[s - left] = '\0';
 		left_len -= s - left;
-		if (p != NULL)
+		もし (p != NULL)
 			memmove(left, s + 1, left_len + 1);
-		if (resolved[resolved_len - 1] != '/') {
-			if (resolved_len + 1 >= PATH_MAX) {
+		もし (resolved[resolved_len - 1] != '/') {
+			もし (resolved_len + 1 >= PATH_MAX) {
 				errno = ENAMETOOLONG;
 				goto err;
 			}
 			resolved[resolved_len++] = '/';
 			resolved[resolved_len] = '\0';
 		}
-		if (next_token[0] == '\0')
+		もし (next_token[0] == '\0')
 			continue;
-		else if (strcmp(next_token, ".") == 0)
+		否则 もし (strcmp(next_token, ".") == 0)
 			continue;
-		else if (strcmp(next_token, "..") == 0) {
+		否则 もし (strcmp(next_token, "..") == 0) {
 			/*
 			 * Strip the last path component except when we have
 			 * single "/"
 			 */
-			if (resolved_len > 1) {
+			もし (resolved_len > 1) {
 				resolved[resolved_len - 1] = '\0';
 				q = strrchr(resolved, '/') + 1;
 				*q = '\0';
@@ -154,30 +154,30 @@ sftp_realpath(const char *path, char *resolved)
 		 * there are no more path components left.
 		 */
 		resolved_len = strlcat(resolved, next_token, PATH_MAX);
-		if (resolved_len >= PATH_MAX) {
+		もし (resolved_len >= PATH_MAX) {
 			errno = ENAMETOOLONG;
 			goto err;
 		}
-		if (lstat(resolved, &sb) != 0) {
-			if (errno == ENOENT && p == NULL) {
+		もし (lstat(resolved, &sb) != 0) {
+			もし (errno == ENOENT && p == NULL) {
 				errno = serrno;
-				return (resolved);
+				戻る (resolved);
 			}
 			goto err;
 		}
-		if (S_ISLNK(sb.st_mode)) {
-			if (symlinks++ > SYMLOOP_MAX) {
+		もし (S_ISLNK(sb.st_mode)) {
+			もし (symlinks++ > SYMLOOP_MAX) {
 				errno = ELOOP;
 				goto err;
 			}
 			slen = readlink(resolved, symlink, sizeof(symlink) - 1);
-			if (slen < 0)
+			もし (slen < 0)
 				goto err;
 			symlink[slen] = '\0';
-			if (symlink[0] == '/') {
+			もし (symlink[0] == '/') {
 				resolved[1] = 0;
 				resolved_len = 1;
-			} else if (resolved_len > 1) {
+			} 否则 もし (resolved_len > 1) {
 				/* Strip the last path component. */
 				resolved[resolved_len - 1] = '\0';
 				q = strrchr(resolved, '/') + 1;
@@ -190,9 +190,9 @@ sftp_realpath(const char *path, char *resolved)
 			 * append them to symlink. The result is placed
 			 * in `left'.
 			 */
-			if (p != NULL) {
-				if (symlink[slen - 1] != '/') {
-					if (slen + 1 >=
+			もし (p != NULL) {
+				もし (symlink[slen - 1] != '/') {
+					もし (slen + 1 >=
 					    (ptrdiff_t)sizeof(symlink)) {
 						errno = ENAMETOOLONG;
 						goto err;
@@ -201,7 +201,7 @@ sftp_realpath(const char *path, char *resolved)
 					symlink[slen + 1] = 0;
 				}
 				left_len = strlcat(symlink, left, sizeof(symlink));
-				if (left_len >= sizeof(symlink)) {
+				もし (left_len >= sizeof(symlink)) {
 					errno = ENAMETOOLONG;
 					goto err;
 				}
@@ -214,12 +214,12 @@ sftp_realpath(const char *path, char *resolved)
 	 * Remove trailing slash except when the resolved pathname
 	 * is a single "/".
 	 */
-	if (resolved_len > 1 && resolved[resolved_len - 1] == '/')
+	もし (resolved_len > 1 && resolved[resolved_len - 1] == '/')
 		resolved[resolved_len - 1] = '\0';
-	return (resolved);
+	戻る (resolved);
 
 err:
-	if (mem_allocated)
+	もし (mem_allocated)
 		free(resolved);
-	return (NULL);
+	戻る (NULL);
 }

@@ -42,8 +42,8 @@
  * ensure all of data on socket comes through. f==read || f==vwrite
  */
 size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *cb_arg)
+atomicio6(ssize_t (*f) (整数, void *, size_t), 整数 fd, void *_s, size_t n,
+    整数 (*cb)(void *, size_t), void *cb_arg)
 {
 	char *s = _s;
 	size_t pos = 0;
@@ -52,58 +52,58 @@ atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
 
 	pfd.fd = fd;
 	pfd.events = f == read ? POLLIN : POLLOUT;
-	while (n > pos) {
+	ながら (n > pos) {
 		res = (f) (fd, s + pos, n - pos);
 		switch (res) {
 		case -1:
-			if (errno == EINTR) {
+			もし (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				もし (cb != NULL && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					戻る pos;
 				}
 				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
+			} 否则 もし (errno == EAGAIN || errno == EWOULDBLOCK) {
 				(void)poll(&pfd, 1, -1);
 				continue;
 			}
-			return 0;
+			戻る 0;
 		case 0:
 			errno = EPIPE;
-			return pos;
+			戻る pos;
 		default:
 			pos += (size_t)res;
-			if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+			もし (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
 				errno = EINTR;
-				return pos;
+				戻る pos;
 			}
 		}
 	}
-	return pos;
+	戻る pos;
 }
 
 size_t
-atomicio(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n)
+atomicio(ssize_t (*f) (整数, void *, size_t), 整数 fd, void *_s, size_t n)
 {
-	return atomicio6(f, fd, _s, n, NULL, NULL);
+	戻る atomicio6(f, fd, _s, n, NULL, NULL);
 }
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
 size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt,
-    int (*cb)(void *, size_t), void *cb_arg)
+atomiciov6(ssize_t (*f) (整数, const struct iovec *, 整数), 整数 fd,
+    const struct iovec *_iov, 整数 iovcnt,
+    整数 (*cb)(void *, size_t), void *cb_arg)
 {
 	size_t pos = 0, rem;
 	ssize_t res;
 	struct iovec iov_array[IOV_MAX], *iov = iov_array;
 	struct pollfd pfd;
 
-	if (iovcnt < 0 || iovcnt > IOV_MAX) {
+	もし (iovcnt < 0 || iovcnt > IOV_MAX) {
 		errno = EINVAL;
-		return 0;
+		戻る 0;
 	}
 	/* Make a copy of the iov array because we may modify it below */
 	memcpy(iov, _iov, (size_t)iovcnt * sizeof(*_iov));
@@ -111,59 +111,59 @@ atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
 	pfd.fd = fd;
 #ifndef BROKEN_READV_COMPARISON
 	pfd.events = f == readv ? POLLIN : POLLOUT;
-#else
+#否则
 	pfd.events = POLLIN|POLLOUT;
 #endif
-	for (; iovcnt > 0 && iov[0].iov_len > 0;) {
+	ために (; iovcnt > 0 && iov[0].iov_len > 0;) {
 		res = (f) (fd, iov, iovcnt);
 		switch (res) {
 		case -1:
-			if (errno == EINTR) {
+			もし (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				もし (cb != NULL && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					戻る pos;
 				}
 				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
+			} 否则 もし (errno == EAGAIN || errno == EWOULDBLOCK) {
 				(void)poll(&pfd, 1, -1);
 				continue;
 			}
-			return 0;
+			戻る 0;
 		case 0:
 			errno = EPIPE;
-			return pos;
+			戻る pos;
 		default:
 			rem = (size_t)res;
 			pos += rem;
 			/* skip completed iov entries */
-			while (iovcnt > 0 && rem >= iov[0].iov_len) {
+			ながら (iovcnt > 0 && rem >= iov[0].iov_len) {
 				rem -= iov[0].iov_len;
 				iov++;
 				iovcnt--;
 			}
 			/* This shouldn't happen... */
-			if (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
+			もし (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
 				errno = EFAULT;
-				return 0;
+				戻る 0;
 			}
-			if (iovcnt == 0)
+			もし (iovcnt == 0)
 				break;
 			/* update pointer in partially complete iov */
 			iov[0].iov_base = ((char *)iov[0].iov_base) + rem;
 			iov[0].iov_len -= rem;
 		}
-		if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+		もし (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
 			errno = EINTR;
-			return pos;
+			戻る pos;
 		}
 	}
-	return pos;
+	戻る pos;
 }
 
 size_t
-atomiciov(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt)
+atomiciov(ssize_t (*f) (整数, const struct iovec *, 整数), 整数 fd,
+    const struct iovec *_iov, 整数 iovcnt)
 {
-	return atomiciov6(f, fd, _iov, iovcnt, NULL, NULL);
+	戻る atomiciov6(f, fd, _iov, iovcnt, NULL, NULL);
 }

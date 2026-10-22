@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int fail = 0;
+static 整数 fail = 0;
 
 void
 test(const char *a)
@@ -27,21 +27,21 @@ test(const char *a)
 	char *b;
 
 	b = strdup(a);
-	if (b == 0) {
+	もし (b == 0) {
 		fail = 1;
-		return;
+		戻る;
 	}
-	if (strcmp(a, b) != 0)
+	もし (strcmp(a, b) != 0)
 		fail = 1;
 	free(b);
 }
 
-int
-main(void)
+整数
+メインページ(void)
 {
 	test("");
 	test("a");
 	test("\0");
 	test("abcdefghijklmnopqrstuvwxyz");
-	return fail;
+	戻る fail;
 }

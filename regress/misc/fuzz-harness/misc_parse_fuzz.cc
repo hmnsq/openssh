@@ -50,17 +50,17 @@ extern "C" {
 #include "log.h"
 }
 
-static int log_initialized = 0;
+static 整数 log_initialized = 0;
 
 static char *
 dup_n(const uint8_t *body, size_t blen)
 {
 	char *s = (char *)malloc(blen + 1);
-	if (s == NULL)
-		return NULL;
+	もし (s == NULL)
+		戻る NULL;
 	memcpy(s, body, blen);
 	s[blen] = '\0';
-	return s;
+	戻る s;
 }
 
 static void
@@ -69,49 +69,49 @@ split_two(const uint8_t *body, size_t blen, char **a, char **b)
 	const uint8_t *nul = (const uint8_t *)memchr(body, 0, blen);
 	*a = NULL;
 	*b = NULL;
-	if (nul == NULL) {
+	もし (nul == NULL) {
 		*a = dup_n(body, blen);
 		*b = strdup("");
-		return;
+		戻る;
 	}
 	size_t alen = (size_t)(nul - body);
 	*a = dup_n(body, alen);
 	*b = dup_n(nul + 1, blen - alen - 1);
 }
 
-extern "C" int
+extern "C" 整数
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
-	if (!log_initialized) {
+	もし (!log_initialized) {
 		log_init("misc_parse_fuzz", SYSLOG_LEVEL_QUIET,
 		    SYSLOG_FACILITY_AUTH, 0);
 		log_initialized = 1;
 	}
-	if (size == 0)
-		return 0;
+	もし (size == 0)
+		戻る 0;
 
 	char *s = dup_n(data, size);
 	char *a = NULL, *b = NULL;
 	split_two(data, size, &a, &b);
-	if (s == NULL || a == NULL || b == NULL) {
+	もし (s == NULL || a == NULL || b == NULL) {
 		free(s);
 		free(a);
 		free(b);
-		return 0;
+		戻る 0;
 	}
 
 	{
 		char *u = NULL, *h = NULL;
-		int port = 0;
-		if (parse_user_host_port(s, &u, &h, &port) == 0) {
+		整数 port = 0;
+		もし (parse_user_host_port(s, &u, &h, &port) == 0) {
 			free(u);
 			free(h);
 		}
 	}
 	{
 		char *u = NULL, *h = NULL, *p = NULL;
-		int port = 0;
-		if (parse_uri("ssh", s, &u, &h, &port, &p) == 0) {
+		整数 port = 0;
+		もし (parse_uri("ssh", s, &u, &h, &port, &p) == 0) {
 			free(u);
 			free(h);
 			free(p);
@@ -120,13 +120,13 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	(void)convtime(s);
 	(void)a2port(s);
 	{
-		int tun = 0;
+		整数 tun = 0;
 		(void)a2tun(s, &tun);
 	}
 	{
-		int ac = 0;
+		整数 ac = 0;
 		char **av = NULL;
-		if (argv_split(s, &ac, &av, 1) == 0) {
+		もし (argv_split(s, &ac, &av, 1) == 0) {
 			char *back = argv_assemble(ac, av);
 			free(back);
 			argv_free(av, ac);
@@ -163,5 +163,5 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	free(s);
 	free(a);
 	free(b);
-	return 0;
+	戻る 0;
 }

@@ -44,56 +44,56 @@
 #include "krl.h"
 
 /* Save a key blob to a file */
-static int
+static 整数
 sshkey_save_private_blob(struct sshbuf *keybuf, const char *filename)
 {
-	int r;
+	整数 r;
 	mode_t omask;
 
 	omask = umask(077);
 	r = sshbuf_write_file(filename, keybuf);
 	umask(omask);
-	return r;
+	戻る r;
 }
 
-int
+整数
 sshkey_save_private(struct sshkey *key, const char *filename,
     const char *passphrase, const char *comment,
-    int format, const char *openssh_format_cipher, int openssh_format_rounds)
+    整数 format, const char *openssh_format_cipher, 整数 openssh_format_rounds)
 {
 	struct sshbuf *keyblob = NULL;
-	int r;
+	整数 r;
 
-	if ((keyblob = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_private_to_fileblob(key, keyblob, passphrase, comment,
+	もし ((keyblob = sshbuf_new()) == NULL)
+		戻る SSH_ERR_ALLOC_FAIL;
+	もし ((r = sshkey_private_to_fileblob(key, keyblob, passphrase, comment,
 	    format, openssh_format_cipher, openssh_format_rounds)) != 0)
 		goto out;
-	if ((r = sshkey_save_private_blob(keyblob, filename)) != 0)
+	もし ((r = sshkey_save_private_blob(keyblob, filename)) != 0)
 		goto out;
 	r = 0;
  out:
 	sshbuf_free(keyblob);
-	return r;
+	戻る r;
 }
 
 /* XXX remove error() calls from here? */
-int
-sshkey_perm_ok(int fd, const char *filename)
+整数
+sshkey_perm_ok(整数 fd, const char *filename)
 {
 	struct stat st;
 
-	if (fstat(fd, &st) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	もし (fstat(fd, &st) == -1)
+		戻る SSH_ERR_SYSTEM_ERROR;
 	/*
 	 * if a key owned by the user is accessed, then we check the
 	 * permissions of the file. if the key owned by a different user,
 	 * then we don't care.
 	 */
 #ifdef HAVE_CYGWIN
-	if (check_ntsec(filename))
+	もし (check_ntsec(filename))
 #endif
-	if ((st.st_uid == getuid()) && (st.st_mode & 077) != 0) {
+	もし ((st.st_uid == getuid()) && (st.st_mode & 077) != 0) {
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		error("@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @");
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -101,53 +101,53 @@ sshkey_perm_ok(int fd, const char *filename)
 		    (u_int)st.st_mode & 0777, filename);
 		error("It is required that your private key files are NOT accessible by others.");
 		error("This private key will be ignored.");
-		return SSH_ERR_KEY_BAD_PERMISSIONS;
+		戻る SSH_ERR_KEY_BAD_PERMISSIONS;
 	}
-	return 0;
+	戻る 0;
 }
 
-int
-sshkey_load_private_type(int type, const char *filename, const char *passphrase,
+整数
+sshkey_load_private_type(整数 type, const char *filename, const char *passphrase,
     struct sshkey **keyp, char **commentp)
 {
-	int fd, r;
+	整数 fd, r;
 
-	if (keyp != NULL)
+	もし (keyp != NULL)
 		*keyp = NULL;
-	if (commentp != NULL)
+	もし (commentp != NULL)
 		*commentp = NULL;
 
-	if ((fd = open(filename, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	もし ((fd = open(filename, O_RDONLY)) == -1)
+		戻る SSH_ERR_SYSTEM_ERROR;
 
 	r = sshkey_perm_ok(fd, filename);
-	if (r != 0)
+	もし (r != 0)
 		goto out;
 
 	r = sshkey_load_private_type_fd(fd, type, passphrase, keyp, commentp);
  out:
 	close(fd);
-	return r;
+	戻る r;
 }
 
-int
+整数
 sshkey_load_private(const char *filename, const char *passphrase,
     struct sshkey **keyp, char **commentp)
 {
-	return sshkey_load_private_type(KEY_UNSPEC, filename, passphrase,
+	戻る sshkey_load_private_type(KEY_UNSPEC, filename, passphrase,
 	    keyp, commentp);
 }
 
-int
-sshkey_load_private_type_fd(int fd, int type, const char *passphrase,
+整数
+sshkey_load_private_type_fd(整数 fd, 整数 type, const char *passphrase,
     struct sshkey **keyp, char **commentp)
 {
 	struct sshbuf *buffer = NULL;
-	int r;
+	整数 r;
 
-	if (keyp != NULL)
+	もし (keyp != NULL)
 		*keyp = NULL;
-	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
+	もし ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
 	    (r = sshkey_parse_private_fileblob_type(buffer, type,
 	    passphrase, keyp, commentp)) != 0)
 		goto out;
@@ -156,28 +156,28 @@ sshkey_load_private_type_fd(int fd, int type, const char *passphrase,
 	r = 0;
  out:
 	sshbuf_free(buffer);
-	return r;
+	戻る r;
 }
 
 /* Load a pubkey from the unencrypted envelope of a new-format private key */
-static int
+static 整数
 sshkey_load_pubkey_from_private(const char *filename, struct sshkey **pubkeyp)
 {
 	struct sshbuf *buffer = NULL;
 	struct sshkey *pubkey = NULL;
-	int r, fd;
+	整数 r, fd;
 
-	if (pubkeyp != NULL)
+	もし (pubkeyp != NULL)
 		*pubkeyp = NULL;
 
-	if ((fd = open(filename, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
+	もし ((fd = open(filename, O_RDONLY)) == -1)
+		戻る SSH_ERR_SYSTEM_ERROR;
+	もし ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
 	    (r = sshkey_parse_pubkey_from_private_fileblob_type(buffer,
 	    KEY_UNSPEC, &pubkey)) != 0)
 		goto out;
 	/* success */
-	if (pubkeyp != NULL) {
+	もし (pubkeyp != NULL) {
 		*pubkeyp = pubkey;
 		pubkey = NULL;
 	}
@@ -186,37 +186,37 @@ sshkey_load_pubkey_from_private(const char *filename, struct sshkey **pubkeyp)
 	close(fd);
 	sshbuf_free(buffer);
 	sshkey_free(pubkey);
-	return r;
+	戻る r;
 }
 
-static int
+static 整数
 sshkey_try_load_public(struct sshkey **kp, const char *filename,
     char **commentp)
 {
 	FILE *f;
 	char *line = NULL, *cp;
 	size_t linesize = 0;
-	int r;
+	整数 r;
 	struct stat st;
 	struct sshkey *k = NULL;
 
-	if (kp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	もし (kp == NULL)
+		戻る SSH_ERR_INVALID_ARGUMENT;
 	*kp = NULL;
-	if (commentp != NULL)
+	もし (commentp != NULL)
 		*commentp = NULL;
-	if ((f = fopen(filename, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (fstat(fileno(f), &st) == 0 && S_ISREG(st.st_mode) &&
+	もし ((f = fopen(filename, "r")) == NULL)
+		戻る SSH_ERR_SYSTEM_ERROR;
+	もし (fstat(fileno(f), &st) == 0 && S_ISREG(st.st_mode) &&
 	    st.st_size > SSHBUF_SIZE_MAX) {
 		fclose(f);
-		return SSH_ERR_INVALID_FORMAT;
+		戻る SSH_ERR_INVALID_FORMAT;
 	}
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL) {
+	もし ((k = sshkey_new(KEY_UNSPEC)) == NULL) {
 		fclose(f);
-		return SSH_ERR_ALLOC_FAIL;
+		戻る SSH_ERR_ALLOC_FAIL;
 	}
-	while (getline(&line, &linesize, f) != -1) {
+	ながら (getline(&line, &linesize, f) != -1) {
 		cp = line;
 		switch (*cp) {
 		case '#':
@@ -225,58 +225,58 @@ sshkey_try_load_public(struct sshkey **kp, const char *filename,
 			continue;
 		}
 		/* Abort loading if this looks like a private key */
-		if (strncmp(cp, "-----BEGIN", 10) == 0 ||
+		もし (strncmp(cp, "-----BEGIN", 10) == 0 ||
 		    strcmp(cp, "SSH PRIVATE KEY FILE") == 0)
 			break;
 		/* Skip leading whitespace. */
-		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
+		ために (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
 			;
-		if (*cp) {
-			if ((r = sshkey_read(k, &cp)) == 0) {
+		もし (*cp) {
+			もし ((r = sshkey_read(k, &cp)) == 0) {
 				cp[strcspn(cp, "\r\n")] = '\0';
-				if (commentp) {
+				もし (commentp) {
 					*commentp = strdup(*cp ?
 					    cp : filename);
-					if (*commentp == NULL)
+					もし (*commentp == NULL)
 						r = SSH_ERR_ALLOC_FAIL;
 				}
 				/* success */
 				*kp = k;
 				free(line);
 				fclose(f);
-				return r;
+				戻る r;
 			}
 		}
 	}
 	free(k);
 	free(line);
 	fclose(f);
-	return SSH_ERR_INVALID_FORMAT;
+	戻る SSH_ERR_INVALID_FORMAT;
 }
 
 /* load public key from any pubkey file */
-int
+整数
 sshkey_load_public(const char *filename, struct sshkey **keyp, char **commentp)
 {
 	char *pubfile = NULL;
-	int r, oerrno;
+	整数 r, oerrno;
 
-	if (keyp != NULL)
+	もし (keyp != NULL)
 		*keyp = NULL;
-	if (commentp != NULL)
+	もし (commentp != NULL)
 		*commentp = NULL;
 
-	if ((r = sshkey_try_load_public(keyp, filename, commentp)) == 0)
+	もし ((r = sshkey_try_load_public(keyp, filename, commentp)) == 0)
 		goto out;
 
 	/* try .pub suffix */
-	if (asprintf(&pubfile, "%s.pub", filename) == -1)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_try_load_public(keyp, pubfile, commentp)) == 0)
+	もし (asprintf(&pubfile, "%s.pub", filename) == -1)
+		戻る SSH_ERR_ALLOC_FAIL;
+	もし ((r = sshkey_try_load_public(keyp, pubfile, commentp)) == 0)
 		goto out;
 
 	/* finally, try to extract public key from private key file */
-	if ((r = sshkey_load_pubkey_from_private(filename, keyp)) == 0)
+	もし ((r = sshkey_load_pubkey_from_private(filename, keyp)) == 0)
 		goto out;
 
 	/* Pretend we couldn't find the key */
@@ -287,38 +287,38 @@ sshkey_load_public(const char *filename, struct sshkey **keyp, char **commentp)
 	oerrno = errno;
 	free(pubfile);
 	errno = oerrno;
-	return r;
+	戻る r;
 }
 
 /* Load the certificate associated with the named private key */
-int
+整数
 sshkey_load_cert(const char *filename, struct sshkey **keyp)
 {
 	struct sshkey *pub = NULL;
 	char *file = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	整数 r = SSH_ERR_INTERNAL_ERROR;
 
-	if (keyp != NULL)
+	もし (keyp != NULL)
 		*keyp = NULL;
 
-	if (asprintf(&file, "%s-cert.pub", filename) == -1)
-		return SSH_ERR_ALLOC_FAIL;
+	もし (asprintf(&file, "%s-cert.pub", filename) == -1)
+		戻る SSH_ERR_ALLOC_FAIL;
 
 	r = sshkey_try_load_public(keyp, file, NULL);
 	free(file);
 	sshkey_free(pub);
-	return r;
+	戻る r;
 }
 
 /* Load private key and certificate */
-int
-sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
+整数
+sshkey_load_private_cert(整数 type, const char *filename, const char *passphrase,
     struct sshkey **keyp)
 {
 	struct sshkey *key = NULL, *cert = NULL;
-	int r;
+	整数 r;
 
-	if (keyp != NULL)
+	もし (keyp != NULL)
 		*keyp = NULL;
 
 	switch (type) {
@@ -331,32 +331,32 @@ sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
 	case KEY_UNSPEC:
 		break;
 	default:
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+		戻る SSH_ERR_KEY_TYPE_UNKNOWN;
 	}
 
-	if ((r = sshkey_load_private_type(type, filename,
+	もし ((r = sshkey_load_private_type(type, filename,
 	    passphrase, &key, NULL)) != 0 ||
 	    (r = sshkey_load_cert(filename, &cert)) != 0)
 		goto out;
 
 	/* Make sure the private key matches the certificate */
-	if (sshkey_equal_public(key, cert) == 0) {
+	もし (sshkey_equal_public(key, cert) == 0) {
 		r = SSH_ERR_KEY_CERT_MISMATCH;
 		goto out;
 	}
 
-	if ((r = sshkey_to_certified(key)) != 0 ||
+	もし ((r = sshkey_to_certified(key)) != 0 ||
 	    (r = sshkey_cert_copy(cert, key)) != 0)
 		goto out;
 	r = 0;
-	if (keyp != NULL) {
+	もし (keyp != NULL) {
 		*keyp = key;
 		key = NULL;
 	}
  out:
 	sshkey_free(key);
 	sshkey_free(cert);
-	return r;
+	戻る r;
 }
 
 /*
@@ -367,29 +367,29 @@ sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
  * If "check_ca" is set and "key" is a certificate, then its CA key is
  * also checked and sshkey_in_file() will return success if either is found.
  */
-int
-sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
-    int check_ca)
+整数
+sshkey_in_file(struct sshkey *key, const char *filename, 整数 strict_type,
+    整数 check_ca)
 {
 	FILE *f;
 	char *line = NULL, *cp;
 	size_t linesize = 0;
-	int r = 0;
+	整数 r = 0;
 	struct sshkey *pub = NULL;
 
-	int (*sshkey_compare)(const struct sshkey *, const struct sshkey *) =
+	整数 (*sshkey_compare)(const struct sshkey *, const struct sshkey *) =
 	    strict_type ?  sshkey_equal : sshkey_equal_public;
 
-	if ((f = fopen(filename, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
+	もし ((f = fopen(filename, "r")) == NULL)
+		戻る SSH_ERR_SYSTEM_ERROR;
 
-	while (getline(&line, &linesize, f) != -1) {
+	ながら (getline(&line, &linesize, f) != -1) {
 		sshkey_free(pub);
 		pub = NULL;
 		cp = line;
 
 		/* Skip leading whitespace. */
-		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
+		ために (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
 			;
 
 		/* Skip comments and empty lines */
@@ -400,7 +400,7 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
 			continue;
 		}
 
-		if ((pub = sshkey_new(KEY_UNSPEC)) == NULL) {
+		もし ((pub = sshkey_new(KEY_UNSPEC)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
@@ -412,7 +412,7 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
 		default:
 			goto out;
 		}
-		if (sshkey_compare(key, pub) ||
+		もし (sshkey_compare(key, pub) ||
 		    (check_ca && sshkey_is_cert(key) &&
 		    sshkey_compare(key->cert->signature_key, pub))) {
 			r = 0;
@@ -424,7 +424,7 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
 	free(line);
 	sshkey_free(pub);
 	fclose(f);
-	return r;
+	戻る r;
 }
 
 /*
@@ -434,15 +434,15 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
  * This will check both the key and, if it is a certificate, its CA key too.
  * "revoked_keys_file" may be a KRL or a one-per-line list of public keys.
  */
-int
+整数
 sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
 {
-	int r;
+	整数 r;
 
 	r = ssh_krl_file_contains_key(revoked_keys_file, key);
 	/* If this was not a KRL to begin with then continue below */
-	if (r != SSH_ERR_KRL_BAD_MAGIC)
-		return r;
+	もし (r != SSH_ERR_KRL_BAD_MAGIC)
+		戻る r;
 
 	/*
 	 * If the file is not a KRL or we can't handle KRLs then attempt to
@@ -451,13 +451,13 @@ sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
 	switch ((r = sshkey_in_file(key, revoked_keys_file, 0, 1))) {
 	case 0:
 		/* Key found => revoked */
-		return SSH_ERR_KEY_REVOKED;
+		戻る SSH_ERR_KEY_REVOKED;
 	case SSH_ERR_KEY_NOT_FOUND:
 		/* Key not found => not revoked */
-		return 0;
+		戻る 0;
 	default:
 		/* Some other error occurred */
-		return r;
+		戻る r;
 	}
 }
 
@@ -466,56 +466,56 @@ sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
  * whitespace character. Returns 0 on success or -1 on failure (e.g.
  * unterminated quotes).
  */
-int
+整数
 sshkey_advance_past_options(char **cpp)
 {
 	char *cp = *cpp;
-	int quoted = 0;
+	整数 quoted = 0;
 
-	for (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
-		if (*cp == '\\' && cp[1] == '"')
+	ために (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
+		もし (*cp == '\\' && cp[1] == '"')
 			cp++;	/* Skip both */
-		else if (*cp == '"')
+		否则 もし (*cp == '"')
 			quoted = !quoted;
 	}
 	*cpp = cp;
 	/* return failure for unterminated quotes */
-	return (*cp == '\0' && quoted) ? -1 : 0;
+	戻る (*cp == '\0' && quoted) ? -1 : 0;
 }
 
 /* Save a public key */
-int
+整数
 sshkey_save_public(const struct sshkey *key, const char *path,
     const char *comment)
 {
-	int fd, oerrno;
+	整数 fd, oerrno;
 	FILE *f = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	整数 r = SSH_ERR_INTERNAL_ERROR;
 
-	if ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((f = fdopen(fd, "w")) == NULL) {
+	もし ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1)
+		戻る SSH_ERR_SYSTEM_ERROR;
+	もし ((f = fdopen(fd, "w")) == NULL) {
 		r = SSH_ERR_SYSTEM_ERROR;
 		close(fd);
 		goto fail;
 	}
-	if ((r = sshkey_write(key, f)) != 0)
+	もし ((r = sshkey_write(key, f)) != 0)
 		goto fail;
 	fprintf(f, " %s\n", comment);
-	if (ferror(f)) {
+	もし (ferror(f)) {
 		r = SSH_ERR_SYSTEM_ERROR;
 		goto fail;
 	}
-	if (fclose(f) != 0) {
+	もし (fclose(f) != 0) {
 		r = SSH_ERR_SYSTEM_ERROR;
 		f = NULL;
  fail:
-		if (f != NULL) {
+		もし (f != NULL) {
 			oerrno = errno;
 			fclose(f);
 			errno = oerrno;
 		}
-		return r;
+		戻る r;
 	}
-	return 0;
+	戻る 0;
 }

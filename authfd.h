@@ -30,44 +30,44 @@ struct ssh_identitylist {
 struct dest_constraint_hop {
 	char *user;	/* wildcards allowed */
 	char *hostname; /* used to matching cert principals and for display */
-	int is_ca;
+	整数 is_ca;
 	u_int nkeys;	/* number of entries in *both* 'keys' and 'key_is_ca' */
 	struct sshkey **keys;
-	int *key_is_ca;
+	整数 *key_is_ca;
 };
 struct dest_constraint {
 	struct dest_constraint_hop from;
 	struct dest_constraint_hop to;
 };
 
-int	ssh_get_authentication_socket(int *fdp);
-int	ssh_get_authentication_socket_path(const char *authsocket, int *fdp);
-void	ssh_close_authentication_socket(int sock);
+整数	ssh_get_authentication_socket(整数 *fdp);
+整数	ssh_get_authentication_socket_path(const char *authsocket, 整数 *fdp);
+void	ssh_close_authentication_socket(整数 sock);
 
-int	ssh_lock_agent(int sock, int lock, const char *password);
-int	ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp);
+整数	ssh_lock_agent(整数 sock, 整数 lock, const char *password);
+整数	ssh_fetch_identitylist(整数 sock, struct ssh_identitylist **idlp);
 void	ssh_free_identitylist(struct ssh_identitylist *idl);
-int	ssh_add_identity_constrained(int sock, struct sshkey *key,
+整数	ssh_add_identity_constrained(整数 sock, struct sshkey *key,
     const char *comment, u_int life, u_int confirm, const char *provider,
     struct dest_constraint **dest_constraints, size_t ndest_constraints);
-int	ssh_agent_has_key(int sock, const struct sshkey *key);
-int	ssh_remove_identity(int sock, const struct sshkey *key);
-int	ssh_update_card(int sock, int add, const char *reader_id,
+整数	ssh_agent_has_key(整数 sock, const struct sshkey *key);
+整数	ssh_remove_identity(整数 sock, const struct sshkey *key);
+整数	ssh_update_card(整数 sock, 整数 add, const char *reader_id,
 	    const char *pin, u_int life, u_int confirm,
 	    struct dest_constraint **dest_constraints,
 	    size_t ndest_constraints,
-	    int cert_only, struct sshkey **certs, size_t ncerts);
-int	ssh_remove_all_identities(int sock, int version);
+	    整数 cert_only, struct sshkey **certs, size_t ncerts);
+整数	ssh_remove_all_identities(整数 sock, 整数 version);
 
-int	ssh_agent_sign(int sock, const struct sshkey *key,
+整数	ssh_agent_sign(整数 sock, const struct sshkey *key,
 	    u_char **sigp, size_t *lenp,
 	    const u_char *data, size_t datalen, const char *alg, u_int compat);
 
-int	ssh_agent_bind_hostkey(int sock, const struct sshkey *key,
+整数	ssh_agent_bind_hostkey(整数 sock, const struct sshkey *key,
     const struct sshbuf *session_id, const struct sshbuf *signature,
-    int forwarding);
+    整数 forwarding);
 
-int	ssh_agent_query_extensions(int sock, char ***exts);
+整数	ssh_agent_query_extensions(整数 sock, char ***exts);
 
 /* Messages for the authentication agent connection. */
 #define SSH_AGENTC_REQUEST_RSA_IDENTITIES	1

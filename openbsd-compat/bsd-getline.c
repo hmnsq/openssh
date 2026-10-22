@@ -35,11 +35,11 @@
 
 #include "includes.h"
 
-#if 0
+#もし 0
 #include "file.h"
 #endif
 
-#if !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
+#もし !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -47,40 +47,40 @@
 #include <string.h>
 
 static ssize_t
-getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
+getdelim(char **buf, size_t *bufsiz, 整数 delimiter, FILE *fp)
 {
 	char *ptr, *eptr;
 
 
-	if (*buf == NULL || *bufsiz == 0) {
-		if ((*buf = malloc(BUFSIZ)) == NULL)
-			return -1;
+	もし (*buf == NULL || *bufsiz == 0) {
+		もし ((*buf = malloc(BUFSIZ)) == NULL)
+			戻る -1;
 		*bufsiz = BUFSIZ;
 	}
 
-	for (ptr = *buf, eptr = *buf + *bufsiz;;) {
-		int c = fgetc(fp);
-		if (c == -1) {
-			if (feof(fp)) {
+	ために (ptr = *buf, eptr = *buf + *bufsiz;;) {
+		整数 c = fgetc(fp);
+		もし (c == -1) {
+			もし (feof(fp)) {
 				ssize_t diff = (ssize_t)(ptr - *buf);
-				if (diff != 0) {
+				もし (diff != 0) {
 					*ptr = '\0';
-					return diff;
+					戻る diff;
 				}
 			}
-			return -1;
+			戻る -1;
 		}
 		*ptr++ = c;
-		if (c == delimiter) {
+		もし (c == delimiter) {
 			*ptr = '\0';
-			return ptr - *buf;
+			戻る ptr - *buf;
 		}
-		if (ptr + 2 >= eptr) {
+		もし (ptr + 2 >= eptr) {
 			char *nbuf;
 			size_t nbufsiz = *bufsiz * 2;
 			ssize_t d = ptr - *buf;
-			if ((nbuf = realloc(*buf, nbufsiz)) == NULL)
-				return -1;
+			もし ((nbuf = realloc(*buf, nbufsiz)) == NULL)
+				戻る -1;
 			*buf = nbuf;
 			*bufsiz = nbufsiz;
 			eptr = nbuf + nbufsiz;
@@ -92,22 +92,22 @@ getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
 ssize_t
 getline(char **buf, size_t *bufsiz, FILE *fp)
 {
-	return getdelim(buf, bufsiz, '\n', fp);
+	戻る getdelim(buf, bufsiz, '\n', fp);
 }
 
 #endif
 
 #ifdef TEST
-int
-main(int argc, char *argv[])
+整数
+メインページ(整数 argc, char *argv[])
 {
 	char *p = NULL;
 	ssize_t len;
 	size_t n = 0;
 
-	while ((len = getline(&p, &n, stdin)) != -1)
+	ながら ((len = getline(&p, &n, stdin)) != -1)
 		(void)printf("%" SIZE_T_FORMAT "d %s", len, p);
 	free(p);
-	return 0;
+	戻る 0;
 }
 #endif

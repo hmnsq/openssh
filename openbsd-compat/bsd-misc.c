@@ -47,73 +47,73 @@ char *ssh_get_progname(char *argv0)
 	extern char *__progname;
 
 	p = __progname;
-#else
-	if (argv0 == NULL)
-		return ("unknown");	/* XXX */
+#否则
+	もし (argv0 == NULL)
+		戻る ("unknown");	/* XXX */
 	p = strrchr(argv0, '/');
-	if (p == NULL)
+	もし (p == NULL)
 		p = argv0;
-	else
+	否则
 		p++;
 #endif
-	if ((q = strdup(p)) == NULL) {
+	もし ((q = strdup(p)) == NULL) {
 		perror("strdup");
 		exit(1);
 	}
-	return q;
+	戻る q;
 }
 
 #ifndef HAVE_SETLOGIN
-int setlogin(const char *name)
+整数 setlogin(const char *name)
 {
-	return (0);
+	戻る (0);
 }
 #endif /* !HAVE_SETLOGIN */
 
 #ifndef HAVE_INNETGR
-int innetgr(const char *netgroup, const char *host,
+整数 innetgr(const char *netgroup, const char *host,
 	    const char *user, const char *domain)
 {
-	return (0);
+	戻る (0);
 }
 #endif /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t euid)
+#もし !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+整数 seteuid(uid_t euid)
 {
-	return (setreuid(-1, euid));
+	戻る (setreuid(-1, euid));
 }
 #endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t egid)
+#もし !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+整数 setegid(uid_t egid)
 {
-	return(setresgid(-1, egid, -1));
+	戻る(setresgid(-1, egid, -1));
 }
 #endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int e)
+#もし !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+const char *strerror(整数 e)
 {
-	extern int sys_nerr;
+	extern 整数 sys_nerr;
 	extern char *sys_errlist[];
 
-	if ((e >= 0) && (e < sys_nerr))
-		return (sys_errlist[e]);
+	もし ((e >= 0) && (e < sys_nerr))
+		戻る (sys_errlist[e]);
 
-	return ("unlisted error");
+	戻る ("unlisted error");
 }
 #endif
 
 #ifndef HAVE_UTIMES
-int utimes(const char *filename, struct timeval *tvp)
+整数 utimes(const char *filename, struct timeval *tvp)
 {
 	struct utimbuf ub;
 
 	ub.actime = tvp[0].tv_sec;
 	ub.modtime = tvp[1].tv_sec;
 
-	return (utime(filename, &ub));
+	戻る (utime(filename, &ub));
 }
 #endif
 
@@ -123,13 +123,13 @@ int utimes(const char *filename, struct timeval *tvp)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-utimensat(int fd, const char *path, const struct timespec times[2],
-    int flag)
+整数
+utimensat(整数 fd, const char *path, const struct timespec times[2],
+    整数 flag)
 {
 	struct timeval tv[2];
 # ifdef HAVE_FUTIMES
-	int ret, oflags = O_WRONLY;
+	整数 ret, oflags = O_WRONLY;
 # endif
 
 	tv[0].tv_sec = times[0].tv_sec;
@@ -137,32 +137,32 @@ utimensat(int fd, const char *path, const struct timespec times[2],
 	tv[1].tv_sec = times[1].tv_sec;
 	tv[1].tv_usec = times[1].tv_nsec / 1000;
 
-	if (fd != AT_FDCWD) {
+	もし (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		戻る -1;
 	}
 # ifndef HAVE_FUTIMES
-	return utimes(path, tv);
-# else
+	戻る utimes(path, tv);
+# 否则
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	もし (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	もし ((fd = open(path, oflags)) == -1)
+		戻る -1;
 	ret = futimes(fd, tv);
 	close(fd);
-	return ret;
+	戻る ret;
 # endif
 }
 #endif
 
 #ifndef HAVE_DIRFD
-int
+整数
 dirfd(void *dir)
 {
 	errno = ENOSYS;
-	return -1;
+	戻る -1;
 }
 #endif
 
@@ -172,27 +172,27 @@ dirfd(void *dir)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
+整数
+fchownat(整数 fd, const char *path, uid_t owner, gid_t group, 整数 flag)
 {
-	int ret, oflags = O_WRONLY;
+	整数 ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	もし (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		戻る -1;
 	}
 # ifndef HAVE_FCHOWN
-	return chown(path, owner, group);
-# else
+	戻る chown(path, owner, group);
+# 否则
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	もし (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	もし ((fd = open(path, oflags)) == -1)
+		戻る -1;
 	ret = fchown(fd, owner, group);
 	close(fd);
-	return ret;
+	戻る ret;
 # endif
 }
 #endif
@@ -203,27 +203,27 @@ fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchmodat(int fd, const char *path, mode_t mode, int flag)
+整数
+fchmodat(整数 fd, const char *path, mode_t mode, 整数 flag)
 {
-	int ret, oflags = O_WRONLY;
+	整数 ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	もし (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		戻る -1;
 	}
 # ifndef HAVE_FCHMOD
-	return chmod(path, mode);
-# else
+	戻る chmod(path, mode);
+# 否则
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	もし (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	もし ((fd = open(path, oflags)) == -1)
+		戻る -1;
 	ret = fchmod(fd, mode);
 	close(fd);
-	return ret;
+	戻る ret;
 # endif
 }
 #endif
@@ -233,19 +233,19 @@ fchmodat(int fd, const char *path, mode_t mode, int flag)
  * A limited implementation of fstatat that just has what OpenSSH uses:
  * cwd-relative and absolute paths, with or without following symlinks.
  */
-int
-fstatat(int dirfd, const char *path, struct stat *sb, int flag)
+整数
+fstatat(整数 dirfd, const char *path, struct stat *sb, 整数 flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	もし (dirfd != AT_FDCWD && path && path[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		戻る -1;
 	}
-	if (flag == 0)
-		return stat(path, sb);
-	else if (flag == AT_SYMLINK_NOFOLLOW)
-		return lstat(path, sb);
+	もし (flag == 0)
+		戻る stat(path, sb);
+	否则 もし (flag == AT_SYMLINK_NOFOLLOW)
+		戻る lstat(path, sb);
 	errno = ENOSYS;
-	return -1;
+	戻る -1;
 }
 #endif
 
@@ -254,50 +254,50 @@ fstatat(int dirfd, const char *path, struct stat *sb, int flag)
  * A limited implementation of unlinkat that just has what OpenSSH uses:
  * cwd-relative and absolute paths.
  */
-int
-unlinkat(int dirfd, const char *path, int flag)
+整数
+unlinkat(整数 dirfd, const char *path, 整数 flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	もし (dirfd != AT_FDCWD && path && path[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		戻る -1;
 	}
-	if (flag == 0)
-		return unlink(path);
+	もし (flag == 0)
+		戻る unlink(path);
 	errno = ENOSYS;
-	return -1;
+	戻る -1;
 }
 #endif
 
 #ifndef HAVE_TRUNCATE
-int truncate(const char *path, off_t length)
+整数 truncate(const char *path, off_t length)
 {
-	int fd, ret, saverrno;
+	整数 fd, ret, saverrno;
 
 	fd = open(path, O_WRONLY);
-	if (fd < 0)
-		return (-1);
+	もし (fd < 0)
+		戻る (-1);
 
 	ret = ftruncate(fd, length);
 	saverrno = errno;
 	close(fd);
-	if (ret == -1)
+	もし (ret == -1)
 		errno = saverrno;
 
-	return(ret);
+	戻る(ret);
 }
 #endif /* HAVE_TRUNCATE */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
-int nanosleep(const struct timespec *req, struct timespec *rem)
+#もし !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+整数 nanosleep(const struct timespec *req, struct timespec *rem)
 {
-	int rc, saverrno;
-	extern int errno;
+	整数 rc, saverrno;
+	extern 整数 errno;
 	struct timeval tstart, tstop, tremain, time2wait;
 
 	TIMESPEC_TO_TIMEVAL(&time2wait, req)
 	(void) gettimeofday(&tstart, NULL);
 	rc = select(0, NULL, NULL, NULL, &time2wait);
-	if (rc == -1) {
+	もし (rc == -1) {
 		saverrno = errno;
 		(void) gettimeofday (&tstop, NULL);
 		errno = saverrno;
@@ -307,58 +307,58 @@ int nanosleep(const struct timespec *req, struct timespec *rem)
 			(tstop.tv_usec - tstart.tv_usec);
 		tremain.tv_sec += tremain.tv_usec / 1000000L;
 		tremain.tv_usec %= 1000000L;
-	} else {
+	} 否则 {
 		tremain.tv_sec = 0;
 		tremain.tv_usec = 0;
 	}
-	if (rem != NULL)
+	もし (rem != NULL)
 		TIMEVAL_TO_TIMESPEC(&tremain, rem)
 
-	return(rc);
+	戻る(rc);
 }
 #endif
 
-#if !defined(HAVE_USLEEP)
-int usleep(unsigned int useconds)
+#もし !defined(HAVE_USLEEP)
+整数 usleep(unsigned 整数 useconds)
 {
 	struct timespec ts;
 
 	ts.tv_sec = useconds / 1000000;
 	ts.tv_nsec = (useconds % 1000000) * 1000;
-	return nanosleep(&ts, NULL);
+	戻る nanosleep(&ts, NULL);
 }
 #endif
 
 #ifndef HAVE_TCGETPGRP
 pid_t
-tcgetpgrp(int fd)
+tcgetpgrp(整数 fd)
 {
-	int ctty_pgrp;
+	整数 ctty_pgrp;
 
-	if (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
-		return(-1);
-	else
-		return(ctty_pgrp);
+	もし (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
+		戻る(-1);
+	否则
+		戻る(ctty_pgrp);
 }
 #endif /* HAVE_TCGETPGRP */
 
 #ifndef HAVE_TCSENDBREAK
-int
-tcsendbreak(int fd, int duration)
+整数
+tcsendbreak(整数 fd, 整数 duration)
 {
-# if defined(TIOCSBRK) && defined(TIOCCBRK)
+# もし defined(TIOCSBRK) && defined(TIOCCBRK)
 	struct timeval sleepytime;
 
 	sleepytime.tv_sec = 0;
 	sleepytime.tv_usec = 400000;
-	if (ioctl(fd, TIOCSBRK, 0) == -1)
-		return (-1);
+	もし (ioctl(fd, TIOCSBRK, 0) == -1)
+		戻る (-1);
 	(void)select(0, 0, 0, 0, &sleepytime);
-	if (ioctl(fd, TIOCCBRK, 0) == -1)
-		return (-1);
-	return (0);
-# else
-	return -1;
+	もし (ioctl(fd, TIOCCBRK, 0) == -1)
+		戻る (-1);
+	戻る (0);
+# 否则
+	戻る -1;
 # endif
 }
 #endif /* HAVE_TCSENDBREAK */
@@ -372,17 +372,17 @@ strdup(const char *str)
 
 	len = strlen(str) + 1;
 	cp = malloc(len);
-	if (cp != NULL)
-		return(memcpy(cp, str, len));
-	return NULL;
+	もし (cp != NULL)
+		戻る(memcpy(cp, str, len));
+	戻る NULL;
 }
 #endif
 
 #ifndef HAVE_ISBLANK
-int
-isblank(int c)
+整数
+isblank(整数 c)
 {
-	return (c == ' ' || c == '\t');
+	戻る (c == ' ' || c == '\t');
 }
 #endif
 
@@ -390,48 +390,48 @@ isblank(int c)
 pid_t
 getpgid(pid_t pid)
 {
-#if defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
-	return getpgrp(pid);
+#もし defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
+	戻る getpgrp(pid);
 #elif defined(HAVE_GETPGRP)
-	if (pid == 0)
-		return getpgrp();
+	もし (pid == 0)
+		戻る getpgrp();
 #endif
 
 	errno = ESRCH;
-	return -1;
+	戻る -1;
 }
 #endif
 
 #ifndef HAVE_PLEDGE
-int
+整数
 pledge(const char *promises, const char *execpromises)
 {
-	return 0;
+	戻る 0;
 }
 #endif
 
 #ifndef HAVE_UNVEIL
-int
+整数
 unveil(const char *path, const char *permissions)
 {
-	return 0;
+	戻る 0;
 }
 #endif
 
 #ifndef HAVE_MBTOWC
 /* a mbtowc that only supports ASCII */
-int
+整数
 mbtowc(wchar_t *pwc, const char *s, size_t n)
 {
-	if (s == NULL || *s == '\0')
-		return 0;	/* ASCII is not state-dependent */
-	if (*s < 0 || *s > 0x7f || n < 1) {
+	もし (s == NULL || *s == '\0')
+		戻る 0;	/* ASCII is not state-dependent */
+	もし (*s < 0 || *s > 0x7f || n < 1) {
 		errno = EOPNOTSUPP;
-		return -1;
+		戻る -1;
 	}
-	if (pwc != NULL)
+	もし (pwc != NULL)
 		*pwc = *s;
-	return 1;
+	戻る 1;
 }
 #endif
 
@@ -439,7 +439,7 @@ mbtowc(wchar_t *pwc, const char *s, size_t n)
 long long
 llabs(long long j)
 {
-	return (j < 0 ? -j : j);
+	戻る (j < 0 ? -j : j);
 }
 #endif
 
@@ -452,10 +452,10 @@ bzero(void *b, size_t n)
 #endif
 
 #ifndef HAVE_RAISE
-int
-raise(int sig)
+整数
+raise(整数 sig)
 {
-	return kill(getpid(), sig);
+	戻る kill(getpid(), sig);
 }
 #endif
 
@@ -464,32 +464,32 @@ pid_t
 getsid(pid_t pid)
 {
 	errno = ENOSYS;
-	return -1;
+	戻る -1;
 }
 #endif
 
 #ifndef HAVE_KILLPG
-int
-killpg(pid_t pgrp, int sig)
+整数
+killpg(pid_t pgrp, 整数 sig)
 {
-	return kill(pgrp, sig);
+	戻る kill(pgrp, sig);
 }
 #endif
 
 #ifdef FFLUSH_NULL_BUG
 #undef fflush
-int _ssh_compat_fflush(FILE *f)
+整数 _ssh_compat_fflush(FILE *f)
 {
-	int r1, r2;
+	整数 r1, r2;
 
-	if (f == NULL) {
+	もし (f == NULL) {
 		r1 = fflush(stdout);
 		r2 = fflush(stderr);
-		if (r1 == -1 || r2 == -1)
-			return -1;
-		return 0;
+		もし (r1 == -1 || r2 == -1)
+			戻る -1;
+		戻る 0;
 	}
-	return fflush(f);
+	戻る fflush(f);
 }
 #endif
 
@@ -499,42 +499,42 @@ localtime_r(const time_t *timep, struct tm *result)
 {
 	struct tm *tm = localtime(timep);
 	*result = *tm;
-	return result;
+	戻る result;
 }
 #endif
 
 #ifndef HAVE_CLOCK_GETTIME
-int
+整数
 clock_gettime(clockid_t clockid, struct timespec *ts)
 {
 	struct timeval tv;
 
-	if (clockid != CLOCK_REALTIME) {
+	もし (clockid != CLOCK_REALTIME) {
 		errno = ENOSYS;
-		return -1;
+		戻る -1;
 	}
-	if (ts == NULL) {
+	もし (ts == NULL) {
 		errno = EFAULT;
-		return -1;
+		戻る -1;
 	}
 
-	if (gettimeofday(&tv, NULL) == -1)
-		return -1;
+	もし (gettimeofday(&tv, NULL) == -1)
+		戻る -1;
 
 	ts->tv_sec = tv.tv_sec;
 	ts->tv_nsec = (long)tv.tv_usec * 1000;
-	return 0;
+	戻る 0;
 }
 #endif
 
 #ifdef ASAN_OPTIONS
 const char *__asan_default_options(void) {
-	return ASAN_OPTIONS;
+	戻る ASAN_OPTIONS;
 }
 #endif
 
 #ifdef MSAN_OPTIONS
 const char *__msan_default_options(void) {
-	return MSAN_OPTIONS;
+	戻る MSAN_OPTIONS;
 }
 #endif

@@ -27,10 +27,10 @@
  * blk0() and blk() perform the initial expand.
  * I got the idea of expanding during the round function from SSLeay
  */
-#if BYTE_ORDER == LITTLE_ENDIAN
+#もし BYTE_ORDER == LITTLE_ENDIAN
 # define blk0(i) (block->l[i] = (rol(block->l[i],24)&0xFF00FF00) \
     |(rol(block->l[i],8)&0x00FF00FF))
-#else
+#否则
 # define blk0(i) block->l[i]
 #endif
 #define blk(i) (block->l[i&15] = rol(block->l[(i+13)&15]^block->l[(i+8)&15] \
@@ -132,13 +132,13 @@ SHA1Update(SHA1_CTX *context, const u_int8_t *data, size_t len)
 
 	j = (size_t)((context->count >> 3) & 63);
 	context->count += ((u_int64_t)len << 3);
-	if ((j + len) > 63) {
+	もし ((j + len) > 63) {
 		(void)memcpy(&context->buffer[j], data, (i = 64-j));
 		SHA1Transform(context->state, context->buffer);
-		for ( ; i + 63 < len; i += 64)
+		ために ( ; i + 63 < len; i += 64)
 			SHA1Transform(context->state, (u_int8_t *)&data[i]);
 		j = 0;
-	} else {
+	} 否则 {
 		i = 0;
 	}
 	(void)memcpy(&context->buffer[j], &data[i], len - i);
@@ -155,12 +155,12 @@ SHA1Pad(SHA1_CTX *context)
 	u_int8_t finalcount[8];
 	u_int i;
 
-	for (i = 0; i < 8; i++) {
+	ために (i = 0; i < 8; i++) {
 		finalcount[i] = (u_int8_t)((context->count >>
 		    ((7 - (i & 7)) * 8)) & 255);	/* Endian independent */
 	}
 	SHA1Update(context, (u_int8_t *)"\200", 1);
-	while ((context->count & 504) != 448)
+	ながら ((context->count & 504) != 448)
 		SHA1Update(context, (u_int8_t *)"\0", 1);
 	SHA1Update(context, finalcount, 8); /* Should cause a SHA1Transform() */
 }
@@ -172,7 +172,7 @@ SHA1Final(u_int8_t digest[SHA1_DIGEST_LENGTH], SHA1_CTX *context)
 	u_int i;
 
 	SHA1Pad(context);
-	for (i = 0; i < SHA1_DIGEST_LENGTH; i++) {
+	ために (i = 0; i < SHA1_DIGEST_LENGTH; i++) {
 		digest[i] = (u_int8_t)
 		   ((context->state[i>>2] >> ((3-(i & 3)) * 8) ) & 255);
 	}

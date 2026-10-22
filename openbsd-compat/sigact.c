@@ -43,90 +43,90 @@
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#もし !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+整数
+sigaction(整数 sig, struct sigaction *sigact, struct sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
+	戻る sigvec(sig, sigact ? &sigact->sv : NULL,
 	    osigact ? &osigact->sv : NULL);
 }
 
-int
+整数
 sigemptyset (sigset_t *mask)
 {
-	if (!mask) {
+	もし (!mask) {
 		errno = EINVAL;
-		return -1;
+		戻る -1;
 	}
 	*mask = 0;
-	return 0;
+	戻る 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+整数
+sigprocmask (整数 mode, sigset_t *mask, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
+	もし (!mask) {
 		errno = EINVAL;
-		return -1;
+		戻る -1;
 	}
 
-	if (omask)
+	もし (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
+	もし (mode == SIG_BLOCK)
 		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
+	否则 もし (mode == SIG_UNBLOCK)
 		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
+	否则 もし (mode == SIG_SETMASK)
 	current = *mask;
 
 	sigsetmask(current);
-	return 0;
+	戻る 0;
 }
 
-int
+整数
 sigsuspend (sigset_t *mask)
 {
-	if (!mask) {
+	もし (!mask) {
 		errno = EINVAL;
-		return -1;
+		戻る -1;
 	}
-	return sigpause(*mask);
+	戻る sigpause(*mask);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+整数
+sigdelset (sigset_t *mask, 整数 sig)
 {
-	if (!mask) {
+	もし (!mask) {
 		errno = EINVAL;
-		return -1;
+		戻る -1;
 	}
 	*mask &= ~sigmask(sig);
-	return 0;
+	戻る 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+整数
+sigaddset (sigset_t *mask, 整数 sig)
 {
-	if (!mask) {
+	もし (!mask) {
 		errno = EINVAL;
-		return -1;
+		戻る -1;
 	}
 	*mask |= sigmask(sig);
-	return 0;
+	戻る 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+整数
+sigismember (sigset_t *mask, 整数 sig)
 {
-	if (!mask) {
+	もし (!mask) {
 		errno = EINVAL;
-		return -1;
+		戻る -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	戻る (*mask & sigmask(sig)) != 0;
 }
 
 #endif

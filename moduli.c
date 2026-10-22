@@ -135,41 +135,41 @@ static uint32_t *LargeSieve, largewords, largetries, largenumbers;
 static uint32_t largebits, largememory;	/* megabytes */
 static BIGNUM *largebase;
 
-int gen_candidates(FILE *, uint32_t, BIGNUM *);
-int prime_test(FILE *, FILE *, uint32_t, uint32_t, char *, unsigned long,
+整数 gen_candidates(FILE *, uint32_t, BIGNUM *);
+整数 prime_test(FILE *, FILE *, uint32_t, uint32_t, char *, unsigned long,
     unsigned long);
 
 /*
  * print moduli out in consistent form,
  */
-static int
+static 整数
 qfileout(FILE * ofile, uint32_t otype, uint32_t otests, uint32_t otries,
     uint32_t osize, uint32_t ogenerator, BIGNUM * omodulus)
 {
 	struct tm *gtm;
 	time_t time_now;
-	int res;
+	整数 res;
 
 	time(&time_now);
 	gtm = gmtime(&time_now);
-	if (gtm == NULL)
-		return -1;
+	もし (gtm == NULL)
+		戻る -1;
 
 	res = fprintf(ofile, "%04d%02d%02d%02d%02d%02d %u %u %u %u %x ",
 	    gtm->tm_year + 1900, gtm->tm_mon + 1, gtm->tm_mday,
 	    gtm->tm_hour, gtm->tm_min, gtm->tm_sec,
 	    otype, otests, otries, osize, ogenerator);
 
-	if (res < 0)
-		return (-1);
+	もし (res < 0)
+		戻る (-1);
 
-	if (BN_print_fp(ofile, omodulus) < 1)
-		return (-1);
+	もし (BN_print_fp(ofile, omodulus) < 1)
+		戻る (-1);
 
 	res = fprintf(ofile, "\n");
 	fflush(ofile);
 
-	return (res > 0 ? 0 : -1);
+	戻る (res > 0 ? 0 : -1);
 }
 
 
@@ -185,46 +185,46 @@ sieve_large(uint32_t s32)
 	largetries++;
 	/* r = largebase mod s */
 	r = BN_mod_word(largebase, s32);
-	if (r == 0)
+	もし (r == 0)
 		u = 0; /* s divides into largebase exactly */
-	else
+	否则
 		u = s - r; /* largebase+u is first entry divisible by s */
 
-	if (u < largebits * 2ULL) {
+	もし (u < largebits * 2ULL) {
 		/*
 		 * The sieve omits p's and q's divisible by 2, so ensure that
 		 * largebase+u is odd. Then, step through the sieve in
 		 * increments of 2*s
 		 */
-		if (u & 0x1)
+		もし (u & 0x1)
 			u += s; /* Make largebase+u odd, and u even */
 
 		/* Mark all multiples of 2*s */
-		for (u /= 2; u < largebits; u += s)
+		ために (u /= 2; u < largebits; u += s)
 			BIT_SET(LargeSieve, u);
 	}
 
 	/* r = p mod s */
 	r = (2 * r + 1) % s;
-	if (r == 0)
+	もし (r == 0)
 		u = 0; /* s divides p exactly */
-	else
+	否则
 		u = s - r; /* p+u is first entry divisible by s */
 
-	if (u < largebits * 4ULL) {
+	もし (u < largebits * 4ULL) {
 		/*
 		 * The sieve omits p's divisible by 4, so ensure that
 		 * largebase+u is not. Then, step through the sieve in
 		 * increments of 4*s
 		 */
-		while (u & 0x3) {
-			if (SMALL_MAXIMUM - u < s)
-				return;
+		ながら (u & 0x3) {
+			もし (SMALL_MAXIMUM - u < s)
+				戻る;
 			u += s;
 		}
 
 		/* Mark all multiples of 4*s */
-		for (u /= 4; u < largebits; u += s)
+		ために (u /= 4; u < largebits; u += s)
 			BIT_SET(LargeSieve, u);
 	}
 }
@@ -234,7 +234,7 @@ sieve_large(uint32_t s32)
  * to standard output.
  * The list is checked against small known primes (less than 2**30).
  */
-int
+整数
 gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 {
 	BIGNUM *q;
@@ -243,18 +243,18 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 	uint32_t tinywords = TINY_NUMBER >> 6;
 	time_t time_start, time_stop;
 	uint32_t i;
-	int ret = 0;
+	整数 ret = 0;
 
 	/*
 	 * Set power to the length in bits of the prime to be generated.
 	 * This is changed to 1 less than the desired safe prime moduli p.
 	 */
-	if (power > TEST_MAXIMUM) {
+	もし (power > TEST_MAXIMUM) {
 		error("Too many bits: %u > %lu", power, TEST_MAXIMUM);
-		return (-1);
-	} else if (power < TEST_MINIMUM) {
+		戻る (-1);
+	} 否则 もし (power < TEST_MINIMUM) {
 		error("Too few bits: %u < %u", power, TEST_MINIMUM);
-		return (-1);
+		戻る (-1);
 	}
 	power--; /* decrement before squaring */
 
@@ -274,25 +274,25 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 
 	/* validation check: count the number of primes tried */
 	largetries = 0;
-	if ((q = BN_new()) == NULL)
+	もし ((q = BN_new()) == NULL)
 		fatal("BN_new failed");
 
 	/*
 	 * Generate random starting point for subprime search, or use
 	 * specified parameter.
 	 */
-	if ((largebase = BN_new()) == NULL)
+	もし ((largebase = BN_new()) == NULL)
 		fatal("BN_new failed");
-	if (start == NULL) {
-		if (BN_rand(largebase, power, 1, 1) == 0)
+	もし (start == NULL) {
+		もし (BN_rand(largebase, power, 1, 1) == 0)
 			fatal("BN_rand failed");
-	} else {
-		if (BN_copy(largebase, start) == NULL)
+	} 否则 {
+		もし (BN_copy(largebase, start) == NULL)
 			fatal("BN_copy: failed");
 	}
 
 	/* ensure odd */
-	if (BN_set_bit(largebase, 0) == 0)
+	もし (BN_set_bit(largebase, 0) == 0)
 		fatal("BN_set_bit: failed");
 
 	time(&time_start);
@@ -304,15 +304,15 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 	/*
 	 * TinySieve
 	 */
-	for (i = 0; i < tinybits; i++) {
-		if (BIT_TEST(TinySieve, i))
+	ために (i = 0; i < tinybits; i++) {
+		もし (BIT_TEST(TinySieve, i))
 			continue; /* 2*i+3 is composite */
 
 		/* The next tiny prime */
 		t = 2 * i + 3;
 
 		/* Mark all multiples of t */
-		for (j = i + t; j < tinybits; j += t)
+		ために (j = i + t; j < tinybits; j += t)
 			BIT_SET(TinySieve, j);
 
 		sieve_large(t);
@@ -322,20 +322,20 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 	 * Start the small block search at the next possible prime. To avoid
 	 * fencepost errors, the last pass is skipped.
 	 */
-	for (smallbase = TINY_NUMBER + 3;
+	ために (smallbase = TINY_NUMBER + 3;
 	    smallbase < (SMALL_MAXIMUM - TINY_NUMBER);
 	    smallbase += TINY_NUMBER) {
-		for (i = 0; i < tinybits; i++) {
-			if (BIT_TEST(TinySieve, i))
+		ために (i = 0; i < tinybits; i++) {
+			もし (BIT_TEST(TinySieve, i))
 				continue; /* 2*i+3 is composite */
 
 			/* The next tiny prime */
 			t = 2 * i + 3;
 			r = smallbase % t;
 
-			if (r == 0) {
+			もし (r == 0) {
 				s = 0; /* t divides into smallbase exactly */
-			} else {
+			} 否则 {
 				/* smallbase+s is first entry divisible by t */
 				s = t - r;
 			}
@@ -345,19 +345,19 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 			 * smallbase+s is odd. Then, step through the sieve
 			 * in increments of 2*t
 			 */
-			if (s & 1)
+			もし (s & 1)
 				s += t; /* Make smallbase+s odd, and s even */
 
 			/* Mark all multiples of 2*t */
-			for (s /= 2; s < smallbits; s += t)
+			ために (s /= 2; s < smallbits; s += t)
 				BIT_SET(SmallSieve, s);
 		}
 
 		/*
 		 * SmallSieve
 		 */
-		for (i = 0; i < smallbits; i++) {
-			if (BIT_TEST(SmallSieve, i))
+		ために (i = 0; i < smallbits; i++) {
+			もし (BIT_TEST(SmallSieve, i))
 				continue; /* 2*i+smallbase is composite */
 
 			/* The next small prime */
@@ -372,16 +372,16 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 	logit("%.24s Sieved with %u small primes in %lld seconds",
 	    ctime(&time_stop), largetries, (long long)(time_stop - time_start));
 
-	for (j = r = 0; j < largebits; j++) {
-		if (BIT_TEST(LargeSieve, j))
+	ために (j = r = 0; j < largebits; j++) {
+		もし (BIT_TEST(LargeSieve, j))
 			continue; /* Definitely composite, skip */
 
 		debug2("test q = largebase+%u", 2 * j);
-		if (BN_set_word(q, 2 * j) == 0)
+		もし (BN_set_word(q, 2 * j) == 0)
 			fatal("BN_set_word failed");
-		if (BN_add(q, q, largebase) == 0)
+		もし (BN_add(q, q, largebase) == 0)
 			fatal("BN_add failed");
-		if (qfileout(out, MODULI_TYPE_SOPHIE_GERMAIN,
+		もし (qfileout(out, MODULI_TYPE_SOPHIE_GERMAIN,
 		    MODULI_TESTS_SIEVE, largetries,
 		    (power - 1) /* MSB */, (0), q) == -1) {
 			ret = -1;
@@ -399,7 +399,7 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 
 	logit("%.24s Found %u candidates", ctime(&time_stop), r);
 
-	return (ret);
+	戻る (ret);
 }
 
 static void
@@ -407,29 +407,29 @@ write_checkpoint(char *cpfile, uint32_t lineno)
 {
 	FILE *fp;
 	char tmp[PATH_MAX];
-	int r, writeok, closeok;
+	整数 r, writeok, closeok;
 
 	r = snprintf(tmp, sizeof(tmp), "%s.XXXXXXXXXX", cpfile);
-	if (r < 0 || r >= PATH_MAX) {
+	もし (r < 0 || r >= PATH_MAX) {
 		logit("write_checkpoint: temp pathname too long");
-		return;
+		戻る;
 	}
-	if ((r = mkstemp(tmp)) == -1) {
+	もし ((r = mkstemp(tmp)) == -1) {
 		logit("mkstemp(%s): %s", tmp, strerror(errno));
-		return;
+		戻る;
 	}
-	if ((fp = fdopen(r, "w")) == NULL) {
+	もし ((fp = fdopen(r, "w")) == NULL) {
 		logit("write_checkpoint: fdopen: %s", strerror(errno));
 		unlink(tmp);
 		close(r);
-		return;
+		戻る;
 	}
 	writeok = (fprintf(fp, "%lu\n", (unsigned long)lineno) > 0);
 	closeok = (fclose(fp) == 0);
-	if (writeok && closeok && rename(tmp, cpfile) == 0) {
+	もし (writeok && closeok && rename(tmp, cpfile) == 0) {
 		debug3("wrote checkpoint line %lu to '%s'",
 		    (unsigned long)lineno, cpfile);
-	} else {
+	} 否则 {
 		logit("failed to write to checkpoint file '%s': %s", cpfile,
 		    strerror(errno));
 		(void)unlink(tmp);
@@ -442,14 +442,14 @@ read_checkpoint(char *cpfile)
 	FILE *fp;
 	unsigned long lineno = 0;
 
-	if ((fp = fopen(cpfile, "r")) == NULL)
-		return 0;
-	if (fscanf(fp, "%lu\n", &lineno) < 1)
+	もし ((fp = fopen(cpfile, "r")) == NULL)
+		戻る 0;
+	もし (fscanf(fp, "%lu\n", &lineno) < 1)
 		logit("Failed to load checkpoint from '%s'", cpfile);
-	else
+	否则
 		logit("Loaded checkpoint from '%s' line %lu", cpfile, lineno);
 	fclose(fp);
-	return lineno;
+	戻る lineno;
 }
 
 static unsigned long
@@ -458,31 +458,31 @@ count_lines(FILE *f)
 	unsigned long count = 0;
 	char lp[QLINESIZE + 1];
 
-	if (fseek(f, 0, SEEK_SET) != 0) {
+	もし (fseek(f, 0, SEEK_SET) != 0) {
 		debug("input file is not seekable");
-		return ULONG_MAX;
+		戻る ULONG_MAX;
 	}
-	while (fgets(lp, QLINESIZE + 1, f) != NULL)
+	ながら (fgets(lp, QLINESIZE + 1, f) != NULL)
 		count++;
 	rewind(f);
 	debug("input file has %lu lines", count);
-	return count;
+	戻る count;
 }
 
 static char *
 fmt_time(time_t seconds)
 {
-	int day, hr, min;
+	整数 day, hr, min;
 	static char buf[128];
 
 	min = (seconds / 60) % 60;
 	hr = (seconds / 60 / 60) % 24;
 	day = seconds / 60 / 60 / 24;
-	if (day > 0)
+	もし (day > 0)
 		snprintf(buf, sizeof buf, "%dd %d:%02d", day, hr, min);
-	else
+	否则
 		snprintf(buf, sizeof buf, "%d:%02d", hr, min);
-	return buf;
+	戻る buf;
 }
 
 static void
@@ -496,13 +496,13 @@ print_progress(unsigned long start_lineno, unsigned long current_lineno,
 	char *eta_str;
 
 	time_now = monotime();
-	if (time_start == 0) {
+	もし (time_start == 0) {
 		time_start = time_prev = time_now;
-		return;
+		戻る;
 	}
 	/* print progress after 1m then once per 5m */
-	if (time_now - time_prev < 5 * 60)
-		return;
+	もし (time_now - time_prev < 5 * 60)
+		戻る;
 	time_prev = time_now;
 	elapsed = time_now - time_start;
 	processed = current_lineno - start_lineno;
@@ -511,10 +511,10 @@ print_progress(unsigned long start_lineno, unsigned long current_lineno,
 	time_per_line = (double)elapsed / processed;
 	/* if we don't know how many we're processing just report count+time */
 	time(&time_now);
-	if (end_lineno == ULONG_MAX) {
+	もし (end_lineno == ULONG_MAX) {
 		logit("%.24s processed %lu in %s", ctime(&time_now),
 		    processed, fmt_time(elapsed));
-		return;
+		戻る;
 	}
 	percent = 100 * processed / num_to_process;
 	eta = time_per_line * remaining;
@@ -531,7 +531,7 @@ print_progress(unsigned long start_lineno, unsigned long current_lineno,
  * (checking both q and p)
  * The result is a list of so-call "safe" primes
  */
-int
+整数
 prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
     char *checkpoint_file, unsigned long start_lineno, unsigned long num_lines)
 {
@@ -541,50 +541,50 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 	uint32_t generator_known, in_tests, in_tries, in_type, in_size;
 	unsigned long last_processed = 0, end_lineno;
 	time_t time_start, time_stop;
-	int res, is_prime;
+	整数 res, is_prime;
 
-	if (trials < TRIAL_MINIMUM) {
+	もし (trials < TRIAL_MINIMUM) {
 		error("Minimum primality trials is %d", TRIAL_MINIMUM);
-		return (-1);
+		戻る (-1);
 	}
 
-	if (num_lines == 0)
+	もし (num_lines == 0)
 		end_lineno = count_lines(in);
-	else
+	否则
 		end_lineno = start_lineno + num_lines;
 
 	time(&time_start);
 
-	if ((p = BN_new()) == NULL)
+	もし ((p = BN_new()) == NULL)
 		fatal("BN_new failed");
-	if ((q = BN_new()) == NULL)
+	もし ((q = BN_new()) == NULL)
 		fatal("BN_new failed");
 
 	debug2("%.24s Final %u Miller-Rabin trials (%x generator)",
 	    ctime(&time_start), trials, generator_wanted);
 
-	if (checkpoint_file != NULL)
+	もし (checkpoint_file != NULL)
 		last_processed = read_checkpoint(checkpoint_file);
 	last_processed = start_lineno = MAXIMUM(last_processed, start_lineno);
-	if (end_lineno == ULONG_MAX)
+	もし (end_lineno == ULONG_MAX)
 		debug("process from line %lu from pipe", last_processed);
-	else
+	否则
 		debug("process from line %lu to line %lu", last_processed,
 		    end_lineno);
 
 	res = 0;
 	lp = xmalloc(QLINESIZE + 1);
-	while (fgets(lp, QLINESIZE + 1, in) != NULL && count_in < end_lineno) {
+	ながら (fgets(lp, QLINESIZE + 1, in) != NULL && count_in < end_lineno) {
 		count_in++;
-		if (count_in <= last_processed) {
+		もし (count_in <= last_processed) {
 			debug3("skipping line %u, before checkpoint or "
 			    "specified start line", count_in);
 			continue;
 		}
-		if (checkpoint_file != NULL)
+		もし (checkpoint_file != NULL)
 			write_checkpoint(checkpoint_file, count_in);
 		print_progress(start_lineno, count_in, end_lineno);
-		if (strlen(lp) < 14 || *lp == '!' || *lp == '#') {
+		もし (strlen(lp) < 14 || *lp == '!' || *lp == '#') {
 			debug2("%10u: comment or short line", count_in);
 			continue;
 		}
@@ -599,7 +599,7 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		/* tests */
 		in_tests = strtoul(cp, &cp, 10);
 
-		if (in_tests & MODULI_TESTS_COMPOSITE) {
+		もし (in_tests & MODULI_TESTS_COMPOSITE) {
 			debug2("%10u: known composite", count_in);
 			continue;
 		}
@@ -621,12 +621,12 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		case MODULI_TYPE_SOPHIE_GERMAIN:
 			debug2("%10u: (%u) Sophie-Germain", count_in, in_type);
 			a = q;
-			if (BN_hex2bn(&a, cp) == 0)
+			もし (BN_hex2bn(&a, cp) == 0)
 				fatal("BN_hex2bn failed");
 			/* p = 2*q + 1 */
-			if (BN_lshift(p, q, 1) == 0)
+			もし (BN_lshift(p, q, 1) == 0)
 				fatal("BN_lshift failed");
-			if (BN_add_word(p, 1) == 0)
+			もし (BN_add_word(p, 1) == 0)
 				fatal("BN_add_word failed");
 			in_size += 1;
 			generator_known = 0;
@@ -638,10 +638,10 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		case MODULI_TYPE_UNKNOWN:
 			debug2("%10u: (%u)", count_in, in_type);
 			a = p;
-			if (BN_hex2bn(&a, cp) == 0)
+			もし (BN_hex2bn(&a, cp) == 0)
 				fatal("BN_hex2bn failed");
 			/* q = (p-1) / 2 */
-			if (BN_rshift(q, p, 1) == 0)
+			もし (BN_rshift(q, p, 1) == 0)
 				fatal("BN_rshift failed");
 			break;
 		default:
@@ -653,37 +653,37 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		 * due to earlier inconsistencies in interpretation, check
 		 * the proposed bit size.
 		 */
-		if ((uint32_t)BN_num_bits(p) != (in_size + 1)) {
+		もし ((uint32_t)BN_num_bits(p) != (in_size + 1)) {
 			debug2("%10u: bit size %u mismatch", count_in, in_size);
 			continue;
 		}
-		if (in_size < QSIZE_MINIMUM) {
+		もし (in_size < QSIZE_MINIMUM) {
 			debug2("%10u: bit size %u too short", count_in, in_size);
 			continue;
 		}
 
-		if (in_tests & MODULI_TESTS_MILLER_RABIN)
+		もし (in_tests & MODULI_TESTS_MILLER_RABIN)
 			in_tries += trials;
-		else
+		否则
 			in_tries = trials;
 
 		/*
 		 * guess unknown generator
 		 */
-		if (generator_known == 0) {
-			if (BN_mod_word(p, 24) == 11)
+		もし (generator_known == 0) {
+			もし (BN_mod_word(p, 24) == 11)
 				generator_known = 2;
-			else {
+			否则 {
 				uint32_t r = BN_mod_word(p, 10);
 
-				if (r == 3 || r == 7)
+				もし (r == 3 || r == 7)
 					generator_known = 5;
 			}
 		}
 		/*
 		 * skip tests when desired generator doesn't match
 		 */
-		if (generator_wanted > 0 &&
+		もし (generator_wanted > 0 &&
 		    generator_wanted != generator_known) {
 			debug2("%10u: generator %d != %d",
 			    count_in, generator_known, generator_wanted);
@@ -694,7 +694,7 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		 * Primes with no known generator are useless for DH, so
 		 * skip those.
 		 */
-		if (generator_known == 0) {
+		もし (generator_known == 0) {
 			debug2("%10u: no known generator", count_in);
 			continue;
 		}
@@ -709,9 +709,9 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		 * vast majority of composite q's.
 		 */
 		is_prime = BN_is_prime_ex(q, 1, NULL, NULL);
-		if (is_prime < 0)
+		もし (is_prime < 0)
 			fatal("BN_is_prime_ex failed");
-		if (is_prime == 0) {
+		もし (is_prime == 0) {
 			debug("%10u: q failed first possible prime test",
 			    count_in);
 			continue;
@@ -725,9 +725,9 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		 * doesn't hurt to specify a high iteration count.
 		 */
 		is_prime = BN_is_prime_ex(p, trials, NULL, NULL);
-		if (is_prime < 0)
+		もし (is_prime < 0)
 			fatal("BN_is_prime_ex failed");
-		if (is_prime == 0) {
+		もし (is_prime == 0) {
 			debug("%10u: p is not prime", count_in);
 			continue;
 		}
@@ -735,15 +735,15 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 
 		/* recheck q more rigorously */
 		is_prime = BN_is_prime_ex(q, trials - 1, NULL, NULL);
-		if (is_prime < 0)
+		もし (is_prime < 0)
 			fatal("BN_is_prime_ex failed");
-		if (is_prime == 0) {
+		もし (is_prime == 0) {
 			debug("%10u: q is not prime", count_in);
 			continue;
 		}
 		debug("%10u: q is almost certainly prime", count_in);
 
-		if (qfileout(out, MODULI_TYPE_SAFE,
+		もし (qfileout(out, MODULI_TYPE_SAFE,
 		    in_tests | MODULI_TESTS_MILLER_RABIN,
 		    in_tries, in_size, generator_known, p)) {
 			res = -1;
@@ -758,14 +758,14 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 	BN_free(p);
 	BN_free(q);
 
-	if (checkpoint_file != NULL)
+	もし (checkpoint_file != NULL)
 		unlink(checkpoint_file);
 
 	logit("%.24s Found %u safe primes of %u candidates in %ld seconds",
 	    ctime(&time_stop), count_out, count_possible,
 	    (long) (time_stop - time_start));
 
-	return (res);
+	戻る (res);
 }
 
 #endif /* WITH_OPENSSL */

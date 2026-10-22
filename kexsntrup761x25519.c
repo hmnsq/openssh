@@ -43,18 +43,18 @@ volatile crypto_int16 crypto_int16_optblocker = 0;
 volatile crypto_int32 crypto_int32_optblocker = 0;
 volatile crypto_int64 crypto_int64_optblocker = 0;
 
-int
+整数
 kex_kem_sntrup761x25519_keypair(struct kex *kex)
 {
 	struct sshbuf *buf = NULL;
 	u_char *cp = NULL;
 	size_t need;
-	int r;
+	整数 r;
 
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	もし ((buf = sshbuf_new()) == NULL)
+		戻る SSH_ERR_ALLOC_FAIL;
 	need = crypto_kem_sntrup761_PUBLICKEYBYTES + CURVE25519_SIZE;
-	if ((r = sshbuf_reserve(buf, need, &cp)) != 0)
+	もし ((r = sshbuf_reserve(buf, need, &cp)) != 0)
 		goto out;
 	crypto_kem_sntrup761_keypair(cp, kex->sntrup761_client_key);
 #ifdef DEBUG_KEXECDH
@@ -70,10 +70,10 @@ kex_kem_sntrup761x25519_keypair(struct kex *kex)
 	buf = NULL;
  out:
 	sshbuf_free(buf);
-	return r;
+	戻る r;
 }
 
-int
+整数
 kex_kem_sntrup761x25519_enc(struct kex *kex,
    const struct sshbuf *client_blob, struct sshbuf **server_blobp,
    struct sshbuf **shared_secretp)
@@ -85,14 +85,14 @@ kex_kem_sntrup761x25519_enc(struct kex *kex,
 	u_char server_key[CURVE25519_SIZE];
 	u_char hash[SSH_DIGEST_MAX_LENGTH];
 	size_t need;
-	int r;
+	整数 r;
 
 	*server_blobp = NULL;
 	*shared_secretp = NULL;
 
 	/* client_blob contains both KEM and ECDH client pubkeys */
 	need = crypto_kem_sntrup761_PUBLICKEYBYTES + CURVE25519_SIZE;
-	if (sshbuf_len(client_blob) != need) {
+	もし (sshbuf_len(client_blob) != need) {
 		r = SSH_ERR_SIGNATURE_INVALID;
 		goto out;
 	}
@@ -106,20 +106,20 @@ kex_kem_sntrup761x25519_enc(struct kex *kex,
 #endif
 	/* allocate buffer for concatenation of KEM key and ECDH shared key */
 	/* the buffer will be hashed and the result is the shared secret */
-	if ((buf = sshbuf_new()) == NULL) {
+	もし ((buf = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_reserve(buf, crypto_kem_sntrup761_BYTES,
+	もし ((r = sshbuf_reserve(buf, crypto_kem_sntrup761_BYTES,
 	    &kem_key)) != 0)
 		goto out;
 	/* allocate space for encrypted KEM key and ECDH pub key */
-	if ((server_blob = sshbuf_new()) == NULL) {
+	もし ((server_blob = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 	need = crypto_kem_sntrup761_CIPHERTEXTBYTES + CURVE25519_SIZE;
-	if ((r = sshbuf_reserve(server_blob, need, &ciphertext)) != 0)
+	もし ((r = sshbuf_reserve(server_blob, need, &ciphertext)) != 0)
 		goto out;
 	/* generate and encrypt KEM key with client key */
 	crypto_kem_sntrup761_enc(ciphertext, kem_key, client_pub);
@@ -128,9 +128,9 @@ kex_kem_sntrup761x25519_enc(struct kex *kex,
 	kexc25519_keygen(server_key, server_pub);
 	/* append ECDH shared key */
 	client_pub += crypto_kem_sntrup761_PUBLICKEYBYTES;
-	if ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 1)) < 0)
+	もし ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 1)) < 0)
 		goto out;
-	if ((r = ssh_digest_buffer(kex->hash_alg, buf, hash, sizeof(hash))) != 0)
+	もし ((r = ssh_digest_buffer(kex->hash_alg, buf, hash, sizeof(hash))) != 0)
 		goto out;
 #ifdef DEBUG_KEXECDH
 	dump_digest("server public key 25519:", server_pub, CURVE25519_SIZE);
@@ -142,7 +142,7 @@ kex_kem_sntrup761x25519_enc(struct kex *kex,
 #endif
 	/* string-encoded hash is resulting shared secret */
 	sshbuf_reset(buf);
-	if ((r = sshbuf_put_string(buf, hash,
+	もし ((r = sshbuf_put_string(buf, hash,
 	    ssh_digest_bytes(kex->hash_alg))) != 0)
 		goto out;
 #ifdef DEBUG_KEXECDH
@@ -157,10 +157,10 @@ kex_kem_sntrup761x25519_enc(struct kex *kex,
 	explicit_bzero(server_key, sizeof(server_key));
 	sshbuf_free(server_blob);
 	sshbuf_free(buf);
-	return r;
+	戻る r;
 }
 
-int
+整数
 kex_kem_sntrup761x25519_dec(struct kex *kex,
     const struct sshbuf *server_blob, struct sshbuf **shared_secretp)
 {
@@ -169,12 +169,12 @@ kex_kem_sntrup761x25519_dec(struct kex *kex,
 	const u_char *ciphertext, *server_pub;
 	u_char hash[SSH_DIGEST_MAX_LENGTH];
 	size_t need;
-	int r, decoded;
+	整数 r, decoded;
 
 	*shared_secretp = NULL;
 
 	need = crypto_kem_sntrup761_CIPHERTEXTBYTES + CURVE25519_SIZE;
-	if (sshbuf_len(server_blob) != need) {
+	もし (sshbuf_len(server_blob) != need) {
 		r = SSH_ERR_SIGNATURE_INVALID;
 		goto out;
 	}
@@ -186,19 +186,19 @@ kex_kem_sntrup761x25519_dec(struct kex *kex,
 	dump_digest("server public key c25519:", server_pub, CURVE25519_SIZE);
 #endif
 	/* hash concatenation of KEM key and ECDH shared key */
-	if ((buf = sshbuf_new()) == NULL) {
+	もし ((buf = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_reserve(buf, crypto_kem_sntrup761_BYTES,
+	もし ((r = sshbuf_reserve(buf, crypto_kem_sntrup761_BYTES,
 	    &kem_key)) != 0)
 		goto out;
 	decoded = crypto_kem_sntrup761_dec(kem_key, ciphertext,
 	    kex->sntrup761_client_key);
-	if ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
+	もし ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
 	    buf, 1)) < 0)
 		goto out;
-	if ((r = ssh_digest_buffer(kex->hash_alg, buf, hash, sizeof(hash))) != 0)
+	もし ((r = ssh_digest_buffer(kex->hash_alg, buf, hash, sizeof(hash))) != 0)
 		goto out;
 #ifdef DEBUG_KEXECDH
 	dump_digest("client kem key:", kem_key, crypto_kem_sntrup761_BYTES);
@@ -206,13 +206,13 @@ kex_kem_sntrup761x25519_dec(struct kex *kex,
 	    sshbuf_ptr(buf), sshbuf_len(buf));
 #endif
 	sshbuf_reset(buf);
-	if ((r = sshbuf_put_string(buf, hash,
+	もし ((r = sshbuf_put_string(buf, hash,
 	    ssh_digest_bytes(kex->hash_alg))) != 0)
 		goto out;
 #ifdef DEBUG_KEXECDH
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
 #endif
-	if (decoded != 0) {
+	もし (decoded != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
 		goto out;
 	}
@@ -221,10 +221,10 @@ kex_kem_sntrup761x25519_dec(struct kex *kex,
  out:
 	explicit_bzero(hash, sizeof(hash));
 	sshbuf_free(buf);
-	return r;
+	戻る r;
 }
 
-#else
+#否则
 
 #include "ssherr.h"
 
@@ -232,24 +232,24 @@ struct kex;
 struct sshbuf;
 struct sshkey;
 
-int
+整数
 kex_kem_sntrup761x25519_keypair(struct kex *kex)
 {
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	戻る SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 
-int
+整数
 kex_kem_sntrup761x25519_enc(struct kex *kex,
    const struct sshbuf *client_blob, struct sshbuf **server_blobp,
    struct sshbuf **shared_secretp)
 {
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	戻る SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 
-int
+整数
 kex_kem_sntrup761x25519_dec(struct kex *kex,
     const struct sshbuf *server_blob, struct sshbuf **shared_secretp)
 {
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	戻る SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 #endif /* USE_SNTRUP761X25519 */

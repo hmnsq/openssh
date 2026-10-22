@@ -38,7 +38,7 @@ extern ServerOptions options;
  */
 
 /* "none" is allowed only one time and it is cleared by userauth_none() later */
-int none_enabled = 1;
+整数 none_enabled = 1;
 struct authmethod_cfg methodcfg_none = {
 	"none",
 	NULL,
@@ -89,28 +89,28 @@ static struct authmethod_cfg *authmethod_cfgs[] = {
  * non-zero, then also require that the methods are enabled.
  * Returns 0 on success or -1 if the methods list is invalid.
  */
-int
-auth2_methods_valid(const char *_methods, int need_enable)
+整数
+auth2_methods_valid(const char *_methods, 整数 need_enable)
 {
 	char *methods, *omethods, *method, *p;
 	u_int i, found;
-	int ret = -1;
+	整数 ret = -1;
 	const struct authmethod_cfg *cfg;
 
-	if (*_methods == '\0') {
+	もし (*_methods == '\0') {
 		error("empty authentication method list");
-		return -1;
+		戻る -1;
 	}
 	omethods = methods = xstrdup(_methods);
-	while ((method = strsep(&methods, ",")) != NULL) {
-		for (found = i = 0; !found && authmethod_cfgs[i] != NULL; i++) {
+	ながら ((method = strsep(&methods, ",")) != NULL) {
+		ために (found = i = 0; !found && authmethod_cfgs[i] != NULL; i++) {
 			cfg = authmethod_cfgs[i];
-			if ((p = strchr(method, ':')) != NULL)
+			もし ((p = strchr(method, ':')) != NULL)
 				*p = '\0';
-			if (strcmp(method, cfg->name) != 0)
+			もし (strcmp(method, cfg->name) != 0)
 				continue;
-			if (need_enable) {
-				if (cfg->enabled == NULL ||
+			もし (need_enable) {
+				もし (cfg->enabled == NULL ||
 				    *(cfg->enabled) == 0) {
 					error("Disabled method \"%s\" in "
 					    "AuthenticationMethods list \"%s\"",
@@ -121,7 +121,7 @@ auth2_methods_valid(const char *_methods, int need_enable)
 			found = 1;
 			break;
 		}
-		if (!found) {
+		もし (!found) {
 			error("Unknown authentication method \"%s\" in list",
 			    method);
 			goto out;
@@ -130,5 +130,5 @@ auth2_methods_valid(const char *_methods, int need_enable)
 	ret = 0;
  out:
 	free(omethods);
-	return ret;
+	戻る ret;
 }

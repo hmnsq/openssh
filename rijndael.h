@@ -35,20 +35,20 @@
 
 typedef unsigned char	u8;
 typedef unsigned short	u16;
-typedef unsigned int	u32;
+typedef unsigned 整数	u32;
 
-int	rijndaelKeySetupEnc(unsigned int [], const unsigned char [], int);
-void	rijndaelEncrypt(const unsigned int [], int, const u8 [16], u8 [16]);
+整数	rijndaelKeySetupEnc(unsigned 整数 [], const unsigned char [], 整数);
+void	rijndaelEncrypt(const unsigned 整数 [], 整数, const u8 [16], u8 [16]);
 
 /*  The structure for key information */
 typedef struct {
-	int	decrypt;
-	int	Nr;		/* key-length-dependent number of rounds */
+	整数	decrypt;
+	整数	Nr;		/* key-length-dependent number of rounds */
 	u32	ek[4*(AES_MAXROUNDS + 1)];	/* encrypt key schedule */
 	u32	dk[4*(AES_MAXROUNDS + 1)];	/* decrypt key schedule */
 } rijndael_ctx;
 
-void	 rijndael_set_key(rijndael_ctx *, u_char *, int, int);
+void	 rijndael_set_key(rijndael_ctx *, u_char *, 整数, 整数);
 void	 rijndael_decrypt(rijndael_ctx *, u_char *, u_char *);
 void	 rijndael_encrypt(rijndael_ctx *, u_char *, u_char *);
 

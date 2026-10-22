@@ -41,12 +41,12 @@
 #include "digest.h"
 #include "ssherr.h"
 
-static int input_kex_gen_init(int, uint32_t, struct ssh *);
-static int input_kex_gen_reply(int type, uint32_t seq, struct ssh *ssh);
+static 整数 input_kex_gen_init(整数, uint32_t, struct ssh *);
+static 整数 input_kex_gen_reply(整数 type, uint32_t seq, struct ssh *ssh);
 
-static int
+static 整数
 kex_gen_hash(
-    int hash_alg,
+    整数 hash_alg,
     const struct sshbuf *client_version,
     const struct sshbuf *server_version,
     const struct sshbuf *client_kexinit,
@@ -58,13 +58,13 @@ kex_gen_hash(
     u_char *hash, size_t *hashlen)
 {
 	struct sshbuf *b;
-	int r;
+	整数 r;
 
-	if (*hashlen < ssh_digest_bytes(hash_alg))
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_stringb(b, client_version)) != 0 ||
+	もし (*hashlen < ssh_digest_bytes(hash_alg))
+		戻る SSH_ERR_INVALID_ARGUMENT;
+	もし ((b = sshbuf_new()) == NULL)
+		戻る SSH_ERR_ALLOC_FAIL;
+	もし ((r = sshbuf_put_stringb(b, client_version)) != 0 ||
 	    (r = sshbuf_put_stringb(b, server_version)) != 0 ||
 	    /* kexinit messages: fake header: len+SSH2_MSG_KEXINIT */
 	    (r = sshbuf_put_u32(b, sshbuf_len(client_kexinit) + 1)) != 0 ||
@@ -78,28 +78,28 @@ kex_gen_hash(
 	    (r = sshbuf_put_stringb(b, server_pub)) != 0 ||
 	    (r = sshbuf_putb(b, shared_secret)) != 0) {
 		sshbuf_free(b);
-		return r;
+		戻る r;
 	}
 #ifdef DEBUG_KEX
 	sshbuf_dump(b, stderr);
 #endif
-	if (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
+	もし (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
 		sshbuf_free(b);
-		return SSH_ERR_LIBCRYPTO_ERROR;
+		戻る SSH_ERR_LIBCRYPTO_ERROR;
 	}
 	sshbuf_free(b);
 	*hashlen = ssh_digest_bytes(hash_alg);
 #ifdef DEBUG_KEX
 	dump_digest("hash", hash, *hashlen);
 #endif
-	return 0;
+	戻る 0;
 }
 
-int
+整数
 kex_gen_client(struct ssh *ssh)
 {
 	struct kex *kex = ssh->kex;
-	int r;
+	整数 r;
 
 	switch (kex->kex_type) {
 #ifdef WITH_OPENSSL
@@ -130,19 +130,19 @@ kex_gen_client(struct ssh *ssh)
 		r = SSH_ERR_INVALID_ARGUMENT;
 		break;
 	}
-	if (r != 0)
-		return r;
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_ECDH_INIT)) != 0 ||
+	もし (r != 0)
+		戻る r;
+	もし ((r = sshpkt_start(ssh, SSH2_MSG_KEX_ECDH_INIT)) != 0 ||
 	    (r = sshpkt_put_stringb(ssh, kex->client_pub)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
+		戻る r;
 	debug("expecting SSH2_MSG_KEX_ECDH_REPLY");
 	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_REPLY, &input_kex_gen_reply);
-	return 0;
+	戻る 0;
 }
 
-static int
-input_kex_gen_reply(int type, uint32_t seq, struct ssh *ssh)
+static 整数
+input_kex_gen_reply(整数 type, uint32_t seq, struct ssh *ssh)
 {
 	struct kex *kex = ssh->kex;
 	struct sshkey *server_host_key = NULL;
@@ -152,28 +152,28 @@ input_kex_gen_reply(int type, uint32_t seq, struct ssh *ssh)
 	u_char *signature = NULL;
 	u_char hash[SSH_DIGEST_MAX_LENGTH];
 	size_t slen, hashlen;
-	int r;
+	整数 r;
 
 	debug("SSH2_MSG_KEX_ECDH_REPLY received");
 	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_REPLY, &kex_protocol_error);
 
 	/* hostkey */
-	if ((r = sshpkt_getb_froms(ssh, &server_host_key_blob)) != 0)
+	もし ((r = sshpkt_getb_froms(ssh, &server_host_key_blob)) != 0)
 		goto out;
 	/* sshkey_fromb() consumes its buffer, so make a copy */
-	if ((tmp = sshbuf_fromb(server_host_key_blob)) == NULL) {
+	もし ((tmp = sshbuf_fromb(server_host_key_blob)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshkey_fromb_allowlist(tmp, &server_host_key,
+	もし ((r = sshkey_fromb_allowlist(tmp, &server_host_key,
 	    kex->hostkey_alg, NULL)) != 0)
 		goto out;
-	if ((r = kex_verify_host_key(ssh, server_host_key)) != 0)
+	もし ((r = kex_verify_host_key(ssh, server_host_key)) != 0)
 		goto out;
 
 	/* Q_S, server public key */
 	/* signed H */
-	if ((r = sshpkt_getb_froms(ssh, &server_blob)) != 0 ||
+	もし ((r = sshpkt_getb_froms(ssh, &server_blob)) != 0 ||
 	    (r = sshpkt_get_string(ssh, &signature, &slen)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		goto out;
@@ -211,12 +211,12 @@ input_kex_gen_reply(int type, uint32_t seq, struct ssh *ssh)
 		r = SSH_ERR_INVALID_ARGUMENT;
 		break;
 	}
-	if (r !=0 )
+	もし (r !=0 )
 		goto out;
 
 	/* calc and verify H */
 	hashlen = sizeof(hash);
-	if ((r = kex_gen_hash(
+	もし ((r = kex_gen_hash(
 	    kex->hash_alg,
 	    kex->client_version,
 	    kex->server_version,
@@ -229,25 +229,25 @@ input_kex_gen_reply(int type, uint32_t seq, struct ssh *ssh)
 	    hash, &hashlen)) != 0)
 		goto out;
 
-	if ((r = sshkey_verify(server_host_key, signature, slen, hash, hashlen,
+	もし ((r = sshkey_verify(server_host_key, signature, slen, hash, hashlen,
 	    kex->hostkey_alg, ssh->compat, NULL)) != 0)
 		goto out;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	もし ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
 		goto out;
 
 	/* save initial signature and hostkey */
-	if ((kex->flags & KEX_INITIAL) != 0) {
-		if (kex->initial_hostkey != NULL || kex->initial_sig != NULL) {
+	もし ((kex->flags & KEX_INITIAL) != 0) {
+		もし (kex->initial_hostkey != NULL || kex->initial_sig != NULL) {
 			r = SSH_ERR_INTERNAL_ERROR;
 			goto out;
 		}
-		if ((kex->initial_sig = sshbuf_new()) == NULL) {
+		もし ((kex->initial_sig = sshbuf_new()) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
-		if ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
+		もし ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
 			goto out;
 		kex->initial_hostkey = server_host_key;
 		server_host_key = NULL;
@@ -268,19 +268,19 @@ out:
 	sshbuf_free(shared_secret);
 	sshbuf_free(kex->client_pub);
 	kex->client_pub = NULL;
-	return r;
+	戻る r;
 }
 
-int
+整数
 kex_gen_server(struct ssh *ssh)
 {
 	debug("expecting SSH2_MSG_KEX_ECDH_INIT");
 	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_INIT, &input_kex_gen_init);
-	return 0;
+	戻る 0;
 }
 
-static int
-input_kex_gen_init(int type, uint32_t seq, struct ssh *ssh)
+static 整数
+input_kex_gen_init(整数 type, uint32_t seq, struct ssh *ssh)
 {
 	struct kex *kex = ssh->kex;
 	struct sshkey *server_host_private, *server_host_public;
@@ -290,16 +290,16 @@ input_kex_gen_init(int type, uint32_t seq, struct ssh *ssh)
 	struct sshbuf *server_host_key_blob = NULL;
 	u_char *signature = NULL, hash[SSH_DIGEST_MAX_LENGTH];
 	size_t slen, hashlen;
-	int r;
+	整数 r;
 
 	debug("SSH2_MSG_KEX_ECDH_INIT received");
 	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_INIT, &kex_protocol_error);
 
-	if ((r = kex_load_hostkey(ssh, &server_host_private,
+	もし ((r = kex_load_hostkey(ssh, &server_host_private,
 	    &server_host_public)) != 0)
 		goto out;
 
-	if ((r = sshpkt_getb_froms(ssh, &client_pubkey)) != 0 ||
+	もし ((r = sshpkt_getb_froms(ssh, &client_pubkey)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		goto out;
 
@@ -339,18 +339,18 @@ input_kex_gen_init(int type, uint32_t seq, struct ssh *ssh)
 		r = SSH_ERR_INVALID_ARGUMENT;
 		break;
 	}
-	if (r !=0 )
+	もし (r !=0 )
 		goto out;
 
 	/* calc H */
-	if ((server_host_key_blob = sshbuf_new()) == NULL) {
+	もし ((server_host_key_blob = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshkey_putb(server_host_public, server_host_key_blob)) != 0)
+	もし ((r = sshkey_putb(server_host_public, server_host_key_blob)) != 0)
 		goto out;
 	hashlen = sizeof(hash);
-	if ((r = kex_gen_hash(
+	もし ((r = kex_gen_hash(
 	    kex->hash_alg,
 	    kex->client_version,
 	    kex->server_version,
@@ -364,23 +364,23 @@ input_kex_gen_init(int type, uint32_t seq, struct ssh *ssh)
 		goto out;
 
 	/* sign H */
-	if ((r = kex->sign(ssh, server_host_private, server_host_public,
+	もし ((r = kex->sign(ssh, server_host_private, server_host_public,
 	    &signature, &slen, hash, hashlen, kex->hostkey_alg)) != 0)
 		goto out;
 
 	/* send server hostkey, ECDH pubkey 'Q_S' and signed H */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_ECDH_REPLY)) != 0 ||
+	もし ((r = sshpkt_start(ssh, SSH2_MSG_KEX_ECDH_REPLY)) != 0 ||
 	    (r = sshpkt_put_stringb(ssh, server_host_key_blob)) != 0 ||
 	    (r = sshpkt_put_stringb(ssh, server_pubkey)) != 0 ||
 	    (r = sshpkt_put_string(ssh, signature, slen)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		goto out;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	もし ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
 		goto out;
 	/* retain copy of hostkey used at initial KEX */
-	if (kex->initial_hostkey == NULL &&
+	もし (kex->initial_hostkey == NULL &&
 	    (r = sshkey_from_private(server_host_public,
 	    &kex->initial_hostkey)) != 0)
 		goto out;
@@ -392,5 +392,5 @@ out:
 	sshbuf_free(shared_secret);
 	sshbuf_free(client_pubkey);
 	sshbuf_free(server_pubkey);
-	return r;
+	戻る r;
 }

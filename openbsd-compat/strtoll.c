@@ -47,12 +47,12 @@
  * alphabets and digits are each contiguous.
  */
 long long
-strtoll(const char *nptr, char **endptr, int base)
+strtoll(const char *nptr, char **endptr, 整数 base)
 {
 	const char *s;
 	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	整数 c;
+	整数 neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -62,22 +62,22 @@ strtoll(const char *nptr, char **endptr, int base)
 	s = nptr;
 	do {
 		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	} ながら (isspace(c));
+	もし (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} 否则 {
 		neg = 0;
-		if (c == '+')
+		もし (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	もし ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	もし (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	/*
@@ -101,48 +101,48 @@ strtoll(const char *nptr, char **endptr, int base)
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
 	cutlim = cutoff % base;
 	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
+	もし (neg) {
+		もし (cutlim > 0) {
 			cutlim -= base;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	ために (acc = 0, any = 0;; c = (unsigned char) *s++) {
+		もし (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		否则 もし (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
+		否则
 			break;
-		if (c >= base)
+		もし (c >= base)
 			break;
-		if (any < 0)
+		もし (any < 0)
 			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		もし (neg) {
+			もし (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} 否则 {
 				any = 1;
 				acc *= base;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} 否则 {
+			もし (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} 否则 {
 				any = 1;
 				acc *= base;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
+	もし (endptr != 0)
 		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	戻る (acc);
 }
 #endif /* HAVE_STRTOLL */

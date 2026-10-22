@@ -43,12 +43,12 @@
 #endif
 
 struct ssh_digest_ctx {
-	int alg;
+	整数 alg;
 	EVP_MD_CTX *mdctx;
 };
 
 struct ssh_digest {
-	int id;
+	整数 id;
 	const char *name;
 	size_t digest_len;
 	const EVP_MD *(*mdfunc)(void);
@@ -65,143 +65,143 @@ const struct ssh_digest digests[] = {
 };
 
 static const struct ssh_digest *
-ssh_digest_by_alg(int alg)
+ssh_digest_by_alg(整数 alg)
 {
-	if (alg < 0 || alg >= SSH_DIGEST_MAX)
-		return NULL;
-	if (digests[alg].id != alg) /* sanity */
-		return NULL;
-	if (digests[alg].mdfunc == NULL)
-		return NULL;
-	return &(digests[alg]);
+	もし (alg < 0 || alg >= SSH_DIGEST_MAX)
+		戻る NULL;
+	もし (digests[alg].id != alg) /* sanity */
+		戻る NULL;
+	もし (digests[alg].mdfunc == NULL)
+		戻る NULL;
+	戻る &(digests[alg]);
 }
 
-int
+整数
 ssh_digest_alg_by_name(const char *name)
 {
-	int alg;
+	整数 alg;
 
-	for (alg = 0; digests[alg].id != -1; alg++) {
-		if (strcasecmp(name, digests[alg].name) == 0)
-			return digests[alg].id;
+	ために (alg = 0; digests[alg].id != -1; alg++) {
+		もし (strcasecmp(name, digests[alg].name) == 0)
+			戻る digests[alg].id;
 	}
-	return -1;
+	戻る -1;
 }
 
 const char *
-ssh_digest_alg_name(int alg)
+ssh_digest_alg_name(整数 alg)
 {
 	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? NULL : digest->name;
+	戻る digest == NULL ? NULL : digest->name;
 }
 
 size_t
-ssh_digest_bytes(int alg)
+ssh_digest_bytes(整数 alg)
 {
 	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? 0 : digest->digest_len;
+	戻る digest == NULL ? 0 : digest->digest_len;
 }
 
 size_t
 ssh_digest_blocksize(struct ssh_digest_ctx *ctx)
 {
-	return EVP_MD_CTX_block_size(ctx->mdctx);
+	戻る EVP_MD_CTX_block_size(ctx->mdctx);
 }
 
 struct ssh_digest_ctx *
-ssh_digest_start(int alg)
+ssh_digest_start(整数 alg)
 {
 	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
 	struct ssh_digest_ctx *ret;
 
-	if (digest == NULL || ((ret = calloc(1, sizeof(*ret))) == NULL))
-		return NULL;
+	もし (digest == NULL || ((ret = calloc(1, sizeof(*ret))) == NULL))
+		戻る NULL;
 	ret->alg = alg;
-	if ((ret->mdctx = EVP_MD_CTX_new()) == NULL) {
+	もし ((ret->mdctx = EVP_MD_CTX_new()) == NULL) {
 		free(ret);
-		return NULL;
+		戻る NULL;
 	}
-	if (EVP_DigestInit_ex(ret->mdctx, digest->mdfunc(), NULL) != 1) {
+	もし (EVP_DigestInit_ex(ret->mdctx, digest->mdfunc(), NULL) != 1) {
 		ssh_digest_free(ret);
-		return NULL;
+		戻る NULL;
 	}
-	return ret;
+	戻る ret;
 }
 
-int
+整数
 ssh_digest_copy_state(struct ssh_digest_ctx *from, struct ssh_digest_ctx *to)
 {
-	if (from->alg != to->alg)
-		return SSH_ERR_INVALID_ARGUMENT;
+	もし (from->alg != to->alg)
+		戻る SSH_ERR_INVALID_ARGUMENT;
 	/* we have bcopy-style order while openssl has memcpy-style */
-	if (!EVP_MD_CTX_copy_ex(to->mdctx, from->mdctx))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	もし (!EVP_MD_CTX_copy_ex(to->mdctx, from->mdctx))
+		戻る SSH_ERR_LIBCRYPTO_ERROR;
+	戻る 0;
 }
 
-int
+整数
 ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
 {
-	if (EVP_DigestUpdate(ctx->mdctx, m, mlen) != 1)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	もし (EVP_DigestUpdate(ctx->mdctx, m, mlen) != 1)
+		戻る SSH_ERR_LIBCRYPTO_ERROR;
+	戻る 0;
 }
 
-int
+整数
 ssh_digest_update_buffer(struct ssh_digest_ctx *ctx, const struct sshbuf *b)
 {
-	return ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
+	戻る ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
 }
 
-int
+整数
 ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
 {
 	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 	u_int l = dlen;
 
-	if (digest == NULL || dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len) /* No truncation allowed */
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_DigestFinal_ex(ctx->mdctx, d, &l) != 1)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (l != digest->digest_len) /* sanity */
-		return SSH_ERR_INTERNAL_ERROR;
-	return 0;
+	もし (digest == NULL || dlen > UINT_MAX)
+		戻る SSH_ERR_INVALID_ARGUMENT;
+	もし (dlen < digest->digest_len) /* No truncation allowed */
+		戻る SSH_ERR_INVALID_ARGUMENT;
+	もし (EVP_DigestFinal_ex(ctx->mdctx, d, &l) != 1)
+		戻る SSH_ERR_LIBCRYPTO_ERROR;
+	もし (l != digest->digest_len) /* sanity */
+		戻る SSH_ERR_INTERNAL_ERROR;
+	戻る 0;
 }
 
 void
 ssh_digest_free(struct ssh_digest_ctx *ctx)
 {
-	if (ctx == NULL)
-		return;
+	もし (ctx == NULL)
+		戻る;
 	EVP_MD_CTX_free(ctx->mdctx);
 	freezero(ctx, sizeof(*ctx));
 }
 
-int
-ssh_digest_memory(int alg, const void *m, size_t mlen, u_char *d, size_t dlen)
+整数
+ssh_digest_memory(整数 alg, const void *m, size_t mlen, u_char *d, size_t dlen)
 {
 	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
 	u_int mdlen;
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len)
-		return SSH_ERR_INVALID_ARGUMENT;
+	もし (digest == NULL)
+		戻る SSH_ERR_INVALID_ARGUMENT;
+	もし (dlen > UINT_MAX)
+		戻る SSH_ERR_INVALID_ARGUMENT;
+	もし (dlen < digest->digest_len)
+		戻る SSH_ERR_INVALID_ARGUMENT;
 	mdlen = dlen;
-	if (!EVP_Digest(m, mlen, d, &mdlen, digest->mdfunc(), NULL))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	もし (!EVP_Digest(m, mlen, d, &mdlen, digest->mdfunc(), NULL))
+		戻る SSH_ERR_LIBCRYPTO_ERROR;
+	戻る 0;
 }
 
-int
-ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+整数
+ssh_digest_buffer(整数 alg, const struct sshbuf *b, u_char *d, size_t dlen)
 {
-	return ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
+	戻る ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
 }
 #endif /* WITH_OPENSSL */

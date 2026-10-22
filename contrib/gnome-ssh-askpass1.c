@@ -64,12 +64,12 @@ report_failed_grab (void)
 	gnome_dialog_run_and_close(GNOME_DIALOG(err));
 }
 
-int
+整数
 passphrase_dialog(char *message)
 {
 	char *passphrase;
 	char **messages;
-	int result, i, grab_server, grab_pointer;
+	整数 result, i, grab_server, grab_pointer;
 	GtkWidget *dialog, *entry, *label;
 
 	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != NULL);
@@ -79,8 +79,8 @@ passphrase_dialog(char *message)
 	    GNOME_STOCK_BUTTON_CANCEL, NULL);
 
 	messages = g_strsplit(message, "\\n", 0);
-	if (messages)
-		for(i = 0; messages[i]; i++) {
+	もし (messages)
+		ために(i = 0; messages[i]; i++) {
 			label = gtk_label_new(messages[i]);
 			gtk_box_pack_start(GTK_BOX(GNOME_DIALOG(dialog)->vbox),
 			    label, FALSE, FALSE, 0);
@@ -103,12 +103,12 @@ passphrase_dialog(char *message)
 	gtk_widget_show_all(dialog);
 
 	/* Grab focus */
-	if (grab_server)
+	もし (grab_server)
 		XGrabServer(GDK_DISPLAY());
-	if (grab_pointer && gdk_pointer_grab(dialog->window, TRUE, 0,
+	もし (grab_pointer && gdk_pointer_grab(dialog->window, TRUE, 0,
 	    NULL, NULL, GDK_CURRENT_TIME))
 		goto nograb;
-	if (gdk_keyboard_grab(dialog->window, FALSE, GDK_CURRENT_TIME))
+	もし (gdk_keyboard_grab(dialog->window, FALSE, GDK_CURRENT_TIME))
 		goto nograbkb;
 
 	/* Make <enter> close dialog */
@@ -118,16 +118,16 @@ passphrase_dialog(char *message)
 	result = gnome_dialog_run(GNOME_DIALOG(dialog));
 
 	/* Ungrab */
-	if (grab_server)
+	もし (grab_server)
 		XUngrabServer(GDK_DISPLAY());
-	if (grab_pointer)
+	もし (grab_pointer)
 		gdk_pointer_ungrab(GDK_CURRENT_TIME);
 	gdk_keyboard_ungrab(GDK_CURRENT_TIME);
 	gdk_flush();
 
 	/* Report passphrase if user selected OK */
 	passphrase = gtk_entry_get_text(GTK_ENTRY(entry));
-	if (result == 0)
+	もし (result == 0)
 		puts(passphrase);
 		
 	/* Zero passphrase in memory */
@@ -135,7 +135,7 @@ passphrase_dialog(char *message)
 	gtk_entry_set_text(GTK_ENTRY(entry), passphrase);
 			
 	gnome_dialog_close(GNOME_DIALOG(dialog));
-	return (result == 0 ? 0 : -1);
+	戻る (result == 0 ? 0 : -1);
 
 	/*
 	 * At least one grab failed - ungrab what we got, and report the
@@ -144,29 +144,29 @@ passphrase_dialog(char *message)
  nograbkb:
 	gdk_pointer_ungrab(GDK_CURRENT_TIME);
  nograb:
-	if (grab_server)
+	もし (grab_server)
 		XUngrabServer(GDK_DISPLAY());
 	gnome_dialog_close(GNOME_DIALOG(dialog));
 	
 	report_failed_grab();
-	return (-1);
+	戻る (-1);
 }
 
-int
-main(int argc, char **argv)
+整数
+メインページ(整数 argc, char **argv)
 {
 	char *message;
-	int result;
+	整数 result;
 
 	gnome_init("GNOME ssh-askpass", "0.1", argc, argv);
 
-	if (argc == 2)
+	もし (argc == 2)
 		message = argv[1];
-	else
+	否则
 		message = "Enter your OpenSSH passphrase:";
 
 	setvbuf(stdout, 0, _IONBF, 0);
 	result = passphrase_dialog(message);
 
-	return (result);
+	戻る (result);
 }

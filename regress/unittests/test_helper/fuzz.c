@@ -42,8 +42,8 @@
 		printf x; \
 		printf("\n"); \
 		fflush(stdout); \
-	} while (0)
-#else
+	} ながら (0)
+#否则
 # define FUZZ_DBG(x)
 #endif
 
@@ -56,10 +56,10 @@ static const char fuzz_b64chars[] =
 
 struct fuzz {
 	/* Fuzz method currently in use */
-	int strategy;
+	整数 strategy;
 
 	/* Fuzz methods remaining */
-	int strategies;
+	整数 strategies;
 
 	/* Original seed data blob */
 	void *seed;
@@ -77,67 +77,67 @@ fuzz_ntop(u_int n)
 {
 	switch (n) {
 	case 0:
-		return "NONE";
+		戻る "NONE";
 	case FUZZ_1_BIT_FLIP:
-		return "FUZZ_1_BIT_FLIP";
+		戻る "FUZZ_1_BIT_FLIP";
 	case FUZZ_2_BIT_FLIP:
-		return "FUZZ_2_BIT_FLIP";
+		戻る "FUZZ_2_BIT_FLIP";
 	case FUZZ_1_BYTE_FLIP:
-		return "FUZZ_1_BYTE_FLIP";
+		戻る "FUZZ_1_BYTE_FLIP";
 	case FUZZ_2_BYTE_FLIP:
-		return "FUZZ_2_BYTE_FLIP";
+		戻る "FUZZ_2_BYTE_FLIP";
 	case FUZZ_TRUNCATE_START:
-		return "FUZZ_TRUNCATE_START";
+		戻る "FUZZ_TRUNCATE_START";
 	case FUZZ_TRUNCATE_END:
-		return "FUZZ_TRUNCATE_END";
+		戻る "FUZZ_TRUNCATE_END";
 	case FUZZ_BASE64:
-		return "FUZZ_BASE64";
+		戻る "FUZZ_BASE64";
 	default:
 		abort();
 	}
 }
 
-static int
+static 整数
 fuzz_fmt(struct fuzz *fuzz, char *s, size_t n)
 {
-	if (fuzz == NULL)
-		return -1;
+	もし (fuzz == NULL)
+		戻る -1;
 
 	switch (fuzz->strategy) {
 	case FUZZ_1_BIT_FLIP:
 		snprintf(s, n, "%s case %zu of %zu (bit: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen * 8, fuzz->o1);
-		return 0;
+		戻る 0;
 	case FUZZ_2_BIT_FLIP:
 		snprintf(s, n, "%s case %llu of %llu (bits: %zu, %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (((fuzz_ullong)fuzz->o2) * fuzz->slen * 8) + fuzz->o1,
 		    ((fuzz_ullong)fuzz->slen * 8) * fuzz->slen * 8,
 		    fuzz->o1, fuzz->o2);
-		return 0;
+		戻る 0;
 	case FUZZ_1_BYTE_FLIP:
 		snprintf(s, n, "%s case %zu of %zu (byte: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
+		戻る 0;
 	case FUZZ_2_BYTE_FLIP:
 		snprintf(s, n, "%s case %llu of %llu (bytes: %zu, %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (((fuzz_ullong)fuzz->o2) * fuzz->slen) + fuzz->o1,
 		    ((fuzz_ullong)fuzz->slen) * fuzz->slen,
 		    fuzz->o1, fuzz->o2);
-		return 0;
+		戻る 0;
 	case FUZZ_TRUNCATE_START:
 		snprintf(s, n, "%s case %zu of %zu (offset: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
+		戻る 0;
 	case FUZZ_TRUNCATE_END:
 		snprintf(s, n, "%s case %zu of %zu (offset: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
+		戻る 0;
 	case FUZZ_BASE64:
 		assert(fuzz->o2 < sizeof(fuzz_b64chars) - 1);
 		snprintf(s, n, "%s case %llu of %llu (offset: %zu char: %c)\n",
@@ -145,9 +145,9 @@ fuzz_fmt(struct fuzz *fuzz, char *s, size_t n)
 		    (fuzz->o1 * (fuzz_ullong)64) + fuzz->o2,
 		    fuzz->slen * (fuzz_ullong)64, fuzz->o1,
 		    fuzz_b64chars[fuzz->o2]);
-		return 0;
+		戻る 0;
 	default:
-		return -1;
+		戻る -1;
 	}
 }
 
@@ -156,20 +156,20 @@ dump(u_char *p, size_t len)
 {
 	size_t i, j;
 
-	for (i = 0; i < len; i += 16) {
+	ために (i = 0; i < len; i += 16) {
 		fprintf(stderr, "%.4zd: ", i);
-		for (j = i; j < i + 16; j++) {
-			if (j < len)
+		ために (j = i; j < i + 16; j++) {
+			もし (j < len)
 				fprintf(stderr, "%02x ", p[j]);
-			else
+			否则
 				fprintf(stderr, "   ");
 		}
 		fprintf(stderr, " ");
-		for (j = i; j < i + 16; j++) {
-			if (j < len) {
-				if  (isascii(p[j]) && isprint(p[j]))
+		ために (j = i; j < i + 16; j++) {
+			もし (j < len) {
+				もし  (isascii(p[j]) && isprint(p[j]))
 					fprintf(stderr, "%c", p[j]);
-				else
+				否则
 					fprintf(stderr, ".");
 			}
 		}
@@ -182,7 +182,7 @@ fuzz_dump(struct fuzz *fuzz)
 {
 	char buf[256];
 
-	if (fuzz_fmt(fuzz, buf, sizeof(buf)) != 0) {
+	もし (fuzz_fmt(fuzz, buf, sizeof(buf)) != 0) {
 		fprintf(stderr, "%s: fuzz invalid\n", __func__);
 		abort();
 	}
@@ -196,13 +196,13 @@ fuzz_dump(struct fuzz *fuzz)
 static struct fuzz *last_fuzz;
 
 static void
-siginfo(int unused __attribute__((__unused__)))
+siginfo(整数 unused __attribute__((__unused__)))
 {
 	char buf[256];
 
 	test_info(buf, sizeof(buf));
 	atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
-	if (last_fuzz != NULL) {
+	もし (last_fuzz != NULL) {
 		fuzz_fmt(last_fuzz, buf, sizeof(buf));
 		atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
 	}
@@ -234,7 +234,7 @@ fuzz_begin(u_int strategies, const void *p, size_t l)
 #endif
 	signal(SIGUSR1, siginfo);
 
-	return ret;
+	戻る ret;
 }
 
 void
@@ -254,7 +254,7 @@ fuzz_cleanup(struct fuzz *fuzz)
 	free(fuzz);
 }
 
-static int
+static 整数
 fuzz_strategy_done(struct fuzz *fuzz)
 {
 	FUZZ_DBG(("fuzz = %p, strategy = %s, o1 = %zu, o2 = %zu, slen = %zu",
@@ -262,16 +262,16 @@ fuzz_strategy_done(struct fuzz *fuzz)
 
 	switch (fuzz->strategy) {
 	case FUZZ_1_BIT_FLIP:
-		return fuzz->o1 >= fuzz->slen * 8;
+		戻る fuzz->o1 >= fuzz->slen * 8;
 	case FUZZ_2_BIT_FLIP:
-		return fuzz->o2 >= fuzz->slen * 8;
+		戻る fuzz->o2 >= fuzz->slen * 8;
 	case FUZZ_2_BYTE_FLIP:
-		return fuzz->o2 >= fuzz->slen;
+		戻る fuzz->o2 >= fuzz->slen;
 	case FUZZ_1_BYTE_FLIP:
 	case FUZZ_TRUNCATE_START:
 	case FUZZ_TRUNCATE_END:
 	case FUZZ_BASE64:
-		return fuzz->o1 >= fuzz->slen;
+		戻る fuzz->o1 >= fuzz->slen;
 	default:
 		abort();
 	}
@@ -286,24 +286,24 @@ fuzz_next(struct fuzz *fuzz)
 	    "o1 = %zu, o2 = %zu, slen = %zu", fuzz, fuzz_ntop(fuzz->strategy),
 	    (u_long)fuzz->strategies, fuzz->o1, fuzz->o2, fuzz->slen));
 
-	if (fuzz->strategy == 0 || fuzz_strategy_done(fuzz)) {
+	もし (fuzz->strategy == 0 || fuzz_strategy_done(fuzz)) {
 		/* If we are just starting out, we need to allocate too */
-		if (fuzz->fuzzed == NULL) {
+		もし (fuzz->fuzzed == NULL) {
 			FUZZ_DBG(("alloc"));
 			fuzz->fuzzed = calloc(fuzz->slen, 1);
 		}
 		/* Pick next strategy */
 		FUZZ_DBG(("advance"));
-		for (i = 1; i <= FUZZ_MAX; i <<= 1) {
-			if ((fuzz->strategies & i) != 0) {
+		ために (i = 1; i <= FUZZ_MAX; i <<= 1) {
+			もし ((fuzz->strategies & i) != 0) {
 				fuzz->strategy = i;
 				break;
 			}
 		}
 		FUZZ_DBG(("selected = %u", fuzz->strategy));
-		if (fuzz->strategy == 0) {
+		もし (fuzz->strategy == 0) {
 			FUZZ_DBG(("done, no more strategies"));
-			return;
+			戻る;
 		}
 		fuzz->strategies &= ~(fuzz->strategy);
 		fuzz->o1 = fuzz->o2 = 0;
@@ -325,7 +325,7 @@ fuzz_next(struct fuzz *fuzz)
 		fuzz->fuzzed[fuzz->o1 / 8] ^= 1 << (fuzz->o1 % 8);
 		fuzz->fuzzed[fuzz->o2 / 8] ^= 1 << (fuzz->o2 % 8);
 		fuzz->o1++;
-		if (fuzz->o1 >= fuzz->slen * 8) {
+		もし (fuzz->o1 >= fuzz->slen * 8) {
 			fuzz->o1 = 0;
 			fuzz->o2++;
 		}
@@ -343,7 +343,7 @@ fuzz_next(struct fuzz *fuzz)
 		fuzz->fuzzed[fuzz->o1] ^= 0xff;
 		fuzz->fuzzed[fuzz->o2] ^= 0xff;
 		fuzz->o1++;
-		if (fuzz->o1 >= fuzz->slen) {
+		もし (fuzz->o1 >= fuzz->slen) {
 			fuzz->o1 = 0;
 			fuzz->o2++;
 		}
@@ -360,7 +360,7 @@ fuzz_next(struct fuzz *fuzz)
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] = fuzz_b64chars[fuzz->o2];
 		fuzz->o2++;
-		if (fuzz->o2 >= sizeof(fuzz_b64chars) - 1) {
+		もし (fuzz->o2 >= sizeof(fuzz_b64chars) - 1) {
 			fuzz->o2 = 0;
 			fuzz->o1++;
 		}
@@ -374,21 +374,21 @@ fuzz_next(struct fuzz *fuzz)
 	    (u_long)fuzz->strategies, fuzz->o1, fuzz->o2, fuzz->slen));
 }
 
-int
+整数
 fuzz_matches_original(struct fuzz *fuzz)
 {
-	if (fuzz_len(fuzz) != fuzz->slen)
-		return 0;
-	return memcmp(fuzz_ptr(fuzz), fuzz->seed, fuzz->slen) == 0;
+	もし (fuzz_len(fuzz) != fuzz->slen)
+		戻る 0;
+	戻る memcmp(fuzz_ptr(fuzz), fuzz->seed, fuzz->slen) == 0;
 }
 
-int
+整数
 fuzz_done(struct fuzz *fuzz)
 {
 	FUZZ_DBG(("fuzz = %p, strategies = 0x%lx", fuzz,
 	    (u_long)fuzz->strategies));
 
-	return fuzz_strategy_done(fuzz) && fuzz->strategies == 0;
+	戻る fuzz_strategy_done(fuzz) && fuzz->strategies == 0;
 }
 
 size_t
@@ -401,11 +401,11 @@ fuzz_len(struct fuzz *fuzz)
 	case FUZZ_1_BYTE_FLIP:
 	case FUZZ_2_BYTE_FLIP:
 	case FUZZ_BASE64:
-		return fuzz->slen;
+		戻る fuzz->slen;
 	case FUZZ_TRUNCATE_START:
 	case FUZZ_TRUNCATE_END:
 		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->slen - fuzz->o1;
+		戻る fuzz->slen - fuzz->o1;
 	default:
 		abort();
 	}
@@ -421,13 +421,13 @@ fuzz_ptr(struct fuzz *fuzz)
 	case FUZZ_1_BYTE_FLIP:
 	case FUZZ_2_BYTE_FLIP:
 	case FUZZ_BASE64:
-		return fuzz->fuzzed;
+		戻る fuzz->fuzzed;
 	case FUZZ_TRUNCATE_START:
 		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->fuzzed + fuzz->o1;
+		戻る fuzz->fuzzed + fuzz->o1;
 	case FUZZ_TRUNCATE_END:
 		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->fuzzed;
+		戻る fuzz->fuzzed;
 	default:
 		abort();
 	}

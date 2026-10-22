@@ -58,7 +58,7 @@
 # define SPT_PADCHAR	'\0'
 #endif
 
-#if SPT_TYPE == SPT_REUSEARGV
+#もし SPT_TYPE == SPT_REUSEARGV
 static char *argv_start = NULL;
 static size_t argv_env_len = 0;
 #endif
@@ -66,14 +66,14 @@ static size_t argv_env_len = 0;
 #endif /* HAVE_SETPROCTITLE */
 
 void
-compat_init_setproctitle(int argc, char *argv[])
+compat_init_setproctitle(整数 argc, char *argv[])
 {
-#if !defined(HAVE_SETPROCTITLE) && \
+#もし !defined(HAVE_SETPROCTITLE) && \
     defined(SPT_TYPE) && SPT_TYPE == SPT_REUSEARGV
 	extern char **environ;
 	char *lastargv = NULL;
 	char **envp = environ;
-	int i;
+	整数 i;
 
 	/*
 	 * NB: This assumes that argv has already been copied out of the
@@ -81,27 +81,27 @@ compat_init_setproctitle(int argc, char *argv[])
 	 * programs. Beware.
 	 */
 
-	if (argc == 0 || argv[0] == NULL)
-		return;
+	もし (argc == 0 || argv[0] == NULL)
+		戻る;
 
 	/* Fail if we can't allocate room for the new environment */
-	for (i = 0; envp[i] != NULL; i++)
+	ために (i = 0; envp[i] != NULL; i++)
 		;
-	if ((environ = calloc(i + 1, sizeof(*environ))) == NULL) {
+	もし ((environ = calloc(i + 1, sizeof(*environ))) == NULL) {
 		environ = envp;	/* put it back */
-		return;
+		戻る;
 	}
 
 	/*
 	 * Find the last argv string or environment variable within
 	 * our process memory area.
 	 */
-	for (i = 0; i < argc; i++) {
-		if (lastargv == NULL || lastargv + 1 == argv[i])
+	ために (i = 0; i < argc; i++) {
+		もし (lastargv == NULL || lastargv + 1 == argv[i])
 			lastargv = argv[i] + strlen(argv[i]);
 	}
-	for (i = 0; envp[i] != NULL; i++) {
-		if (lastargv + 1 == envp[i])
+	ために (i = 0; envp[i] != NULL; i++) {
+		もし (lastargv + 1 == envp[i])
 			lastargv = envp[i] + strlen(envp[i]);
 	}
 
@@ -113,7 +113,7 @@ compat_init_setproctitle(int argc, char *argv[])
 	 * Copy environment
 	 * XXX - will truncate env on strdup fail
 	 */
-	for (i = 0; envp[i] != NULL; i++)
+	ために (i = 0; envp[i] != NULL; i++)
 		environ[i] = strdup(envp[i]);
 	environ[i] = NULL;
 #endif /* SPT_REUSEARGV */
@@ -123,44 +123,44 @@ compat_init_setproctitle(int argc, char *argv[])
 void
 setproctitle(const char *fmt, ...)
 {
-#if SPT_TYPE != SPT_NONE
+#もし SPT_TYPE != SPT_NONE
 	va_list ap;
 	char buf[1024], ptitle[1024];
 	size_t len = 0;
-	int r;
+	整数 r;
 	extern char *__progname;
-#if SPT_TYPE == SPT_PSTAT
+#もし SPT_TYPE == SPT_PSTAT
 	union pstun pst;
 #endif
 
-#if SPT_TYPE == SPT_REUSEARGV
-	if (argv_env_len <= 0)
-		return;
+#もし SPT_TYPE == SPT_REUSEARGV
+	もし (argv_env_len <= 0)
+		戻る;
 #endif
 
 	strlcpy(buf, __progname, sizeof(buf));
 
 	r = -1;
 	va_start(ap, fmt);
-	if (fmt != NULL) {
+	もし (fmt != NULL) {
 		len = strlcat(buf, ": ", sizeof(buf));
-		if (len < sizeof(buf))
+		もし (len < sizeof(buf))
 			r = vsnprintf(buf + len, sizeof(buf) - len , fmt, ap);
 	}
 	va_end(ap);
-	if (r == -1 || (size_t)r >= sizeof(buf) - len)
-		return;
+	もし (r == -1 || (size_t)r >= sizeof(buf) - len)
+		戻る;
 	strnvis(ptitle, buf, sizeof(ptitle),
 	    VIS_CSTYLE|VIS_NL|VIS_TAB|VIS_OCTAL);
 
-#if SPT_TYPE == SPT_PSTAT
+#もし SPT_TYPE == SPT_PSTAT
 	pst.pst_command = ptitle;
 	pstat(PSTAT_SETCMD, pst, strlen(ptitle), 0, 0);
 #elif SPT_TYPE == SPT_REUSEARGV
 /*	debug("setproctitle: copy \"%s\" into len %d",
 	    buf, argv_env_len); */
 	len = strlcpy(argv_start, ptitle, argv_env_len);
-	for(; len < argv_env_len; len++)
+	ために(; len < argv_env_len; len++)
 		argv_start[len] = SPT_PADCHAR;
 #endif
 

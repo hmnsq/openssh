@@ -36,19 +36,19 @@ safely_chroot(const char *path, uid_t uid)
 	char component[PATH_MAX];
 	struct stat st;
 
-	if (*path != '/')
+	もし (*path != '/')
 		fatal("chroot path does not begin at root");
-	if (strlen(path) >= sizeof(component))
+	もし (strlen(path) >= sizeof(component))
 		fatal("chroot path too long");
 
 	/*
 	 * Descend the path, checking that each component is a
 	 * root-owned directory with strict permissions.
 	 */
-	for (cp = path; cp != NULL;) {
-		if ((cp = strchr(cp, '/')) == NULL)
+	ために (cp = path; cp != NULL;) {
+		もし ((cp = strchr(cp, '/')) == NULL)
 			strlcpy(component, path, sizeof(component));
-		else {
+		否则 {
 			cp++;
 			memcpy(component, path, cp - path);
 			component[cp - path] = '\0';
@@ -56,94 +56,94 @@ safely_chroot(const char *path, uid_t uid)
 
 		/* debug3("%s: checking '%s'", __func__, component); */
 
-		if (stat(component, &st) != 0)
+		もし (stat(component, &st) != 0)
 			fatal("%s: stat(\"%s\"): %s", __func__,
 			    component, strerror(errno));
-		if (st.st_uid != 0 || (st.st_mode & 022) != 0)
+		もし (st.st_uid != 0 || (st.st_mode & 022) != 0)
 			fatal("bad ownership or modes for chroot "
 			    "directory %s\"%s\"",
 			    cp == NULL ? "" : "component ", component);
-		if (!S_ISDIR(st.st_mode))
+		もし (!S_ISDIR(st.st_mode))
 			fatal("chroot path %s\"%s\" is not a directory",
 			    cp == NULL ? "" : "component ", component);
 
 	}
 
-	if (chdir(path) == -1)
+	もし (chdir(path) == -1)
 		fatal("Unable to chdir to chroot path \"%s\": "
 		    "%s", path, strerror(errno));
 }
 
 /* from platform.c */
-int
+整数
 platform_sys_dir_uid(uid_t uid)
 {
-	if (uid == 0)
-		return 1;
+	もし (uid == 0)
+		戻る 1;
 #ifdef PLATFORM_SYS_DIR_UID
-	if (uid == PLATFORM_SYS_DIR_UID)
-		return 1;
+	もし (uid == PLATFORM_SYS_DIR_UID)
+		戻る 1;
 #endif
-	return 0;
+	戻る 0;
 }
 
 /* from auth.c */
-int
+整数
 auth_secure_path(const char *name, struct stat *stp, const char *pw_dir,
     uid_t uid, char *err, size_t errlen)
 {
 	char buf[PATH_MAX], homedir[PATH_MAX];
 	char *cp;
-	int comparehome = 0;
+	整数 comparehome = 0;
 	struct stat st;
 
-	if (realpath(name, buf) == NULL) {
+	もし (realpath(name, buf) == NULL) {
 		snprintf(err, errlen, "realpath %s failed: %s", name,
 		    strerror(errno));
-		return -1;
+		戻る -1;
 	}
-	if (pw_dir != NULL && realpath(pw_dir, homedir) != NULL)
+	もし (pw_dir != NULL && realpath(pw_dir, homedir) != NULL)
 		comparehome = 1;
 
-	if (!S_ISREG(stp->st_mode)) {
+	もし (!S_ISREG(stp->st_mode)) {
 		snprintf(err, errlen, "%s is not a regular file", buf);
-		return -1;
+		戻る -1;
 	}
-	if ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
+	もし ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
 	    (stp->st_mode & 022) != 0) {
 		snprintf(err, errlen, "bad ownership or modes for file %s",
 		    buf);
-		return -1;
+		戻る -1;
 	}
 
 	/* for each component of the canonical path, walking upwards */
-	for (;;) {
-		if ((cp = dirname(buf)) == NULL) {
+	ために (;;) {
+		もし ((cp = dirname(buf)) == NULL) {
 			snprintf(err, errlen, "dirname() failed");
-			return -1;
+			戻る -1;
 		}
 		strlcpy(buf, cp, sizeof(buf));
 
-		if (stat(buf, &st) < 0 ||
+		もし (stat(buf, &st) < 0 ||
 		    (!platform_sys_dir_uid(st.st_uid) && st.st_uid != uid) ||
 		    (st.st_mode & 022) != 0) {
 			snprintf(err, errlen,
 			    "bad ownership or modes for directory %s", buf);
-			return -1;
+			戻る -1;
 		}
 
 		/* If are past the homedir then we can stop */
-		if (comparehome && strcmp(homedir, buf) == 0)
+		もし (comparehome && strcmp(homedir, buf) == 0)
 			break;
 
 		/*
 		 * dirname should always complete with a "/" path,
 		 * but we can be paranoid and check for "." too
 		 */
-		if ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
+		もし ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
 			break;
 	}
-	return 0;
+	戻る 0;
 }
 
 static void
@@ -153,24 +153,24 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+整数
+メインページ(整数 argc, char **argv)
 {
 	const char *path = ".";
 	char errmsg[256];
-	int ch, mode = -1;
+	整数 ch, mode = -1;
 	extern char *optarg;
-	extern int optind;
+	extern 整数 optind;
 	struct stat st;
 
-	while ((ch = getopt(argc, argv, "hm:")) != -1) {
+	ながら ((ch = getopt(argc, argv, "hm:")) != -1) {
 		switch (ch) {
 		case 'm':
-			if (strcasecmp(optarg, "chroot") == 0)
+			もし (strcasecmp(optarg, "chroot") == 0)
 				mode = 1;
-			else if (strcasecmp(optarg, "keys-command") == 0)
+			否则 もし (strcasecmp(optarg, "keys-command") == 0)
 				mode = 2;
-			else {
+			否则 {
 				fprintf(stderr, "Invalid -m option\n"),
 				usage();
 			}
@@ -182,22 +182,22 @@ main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	if (argc > 1)
+	もし (argc > 1)
 		usage();
-	else if (argc == 1)
+	否则 もし (argc == 1)
 		path = argv[0];
 
-	if (mode == 1)
+	もし (mode == 1)
 		safely_chroot(path, getuid());
-	else if (mode == 2) {
-		if (stat(path, &st) < 0)
+	否则 もし (mode == 2) {
+		もし (stat(path, &st) < 0)
 			fatal("Could not stat %s: %s", path, strerror(errno));
-		if (auth_secure_path(path, &st, NULL, 0,
+		もし (auth_secure_path(path, &st, NULL, 0,
 		    errmsg, sizeof(errmsg)) != 0)
 			fatal("Unsafe %s: %s", path, errmsg);
-	} else {
+	} 否则 {
 		fprintf(stderr, "Invalid mode\n");
 		usage();
 	}
-	return 0;
+	戻る 0;
 }

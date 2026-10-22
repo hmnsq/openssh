@@ -46,96 +46,96 @@ struct ssh_rijndael_ctx
 	u_char		r_iv[RIJNDAEL_BLOCKSIZE];
 };
 
-static int
+static 整数
 ssh_rijndael_init(EVP_CIPHER_CTX *ctx, const u_char *key, const u_char *iv,
-    int enc)
+    整数 enc)
 {
 	struct ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
+	もし ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
 		c = xmalloc(sizeof(*c));
 		EVP_CIPHER_CTX_set_app_data(ctx, c);
 	}
-	if (key != NULL) {
-		if (enc == -1)
+	もし (key != NULL) {
+		もし (enc == -1)
 			enc = ctx->encrypt;
 		rijndael_set_key(&c->r_ctx, (u_char *)key,
 		    8*EVP_CIPHER_CTX_key_length(ctx), enc);
 	}
-	if (iv != NULL)
+	もし (iv != NULL)
 		memcpy(c->r_iv, iv, RIJNDAEL_BLOCKSIZE);
-	return (1);
+	戻る (1);
 }
 
-static int
+static 整数
 ssh_rijndael_cbc(EVP_CIPHER_CTX *ctx, u_char *dest, const u_char *src,
     size_t len)
 {
 	struct ssh_rijndael_ctx *c;
 	u_char buf[RIJNDAEL_BLOCKSIZE];
 	u_char *cprev, *cnow, *plain, *ivp;
-	int i, j, blocks = len / RIJNDAEL_BLOCKSIZE;
+	整数 i, j, blocks = len / RIJNDAEL_BLOCKSIZE;
 
-	if (len == 0)
-		return (1);
-	if (len % RIJNDAEL_BLOCKSIZE)
+	もし (len == 0)
+		戻る (1);
+	もし (len % RIJNDAEL_BLOCKSIZE)
 		fatal("ssh_rijndael_cbc: bad len %d", len);
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
+	もし ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
 		error("ssh_rijndael_cbc: no context");
-		return (0);
+		戻る (0);
 	}
-	if (ctx->encrypt) {
+	もし (ctx->encrypt) {
 		cnow  = dest;
 		plain = (u_char *)src;
 		cprev = c->r_iv;
-		for (i = 0; i < blocks; i++, plain+=RIJNDAEL_BLOCKSIZE,
+		ために (i = 0; i < blocks; i++, plain+=RIJNDAEL_BLOCKSIZE,
 		    cnow+=RIJNDAEL_BLOCKSIZE) {
-			for (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
+			ために (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
 				buf[j] = plain[j] ^ cprev[j];
 			rijndael_encrypt(&c->r_ctx, buf, cnow);
 			cprev = cnow;
 		}
 		memcpy(c->r_iv, cprev, RIJNDAEL_BLOCKSIZE);
-	} else {
+	} 否则 {
 		cnow  = (u_char *) (src+len-RIJNDAEL_BLOCKSIZE);
 		plain = dest+len-RIJNDAEL_BLOCKSIZE;
 
 		memcpy(buf, cnow, RIJNDAEL_BLOCKSIZE);
-		for (i = blocks; i > 0; i--, cnow-=RIJNDAEL_BLOCKSIZE,
+		ために (i = blocks; i > 0; i--, cnow-=RIJNDAEL_BLOCKSIZE,
 		    plain-=RIJNDAEL_BLOCKSIZE) {
 			rijndael_decrypt(&c->r_ctx, cnow, plain);
 			ivp = (i == 1) ? c->r_iv : cnow-RIJNDAEL_BLOCKSIZE;
-			for (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
+			ために (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
 				plain[j] ^= ivp[j];
 		}
 		memcpy(c->r_iv, buf, RIJNDAEL_BLOCKSIZE);
 	}
-	return (1);
+	戻る (1);
 }
 
-static int
+static 整数
 ssh_rijndael_cleanup(EVP_CIPHER_CTX *ctx)
 {
 	struct ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) != NULL) {
+	もし ((c = EVP_CIPHER_CTX_get_app_data(ctx)) != NULL) {
 		memset(c, 0, sizeof(*c));
 		free(c);
 		EVP_CIPHER_CTX_set_app_data(ctx, NULL);
 	}
-	return (1);
+	戻る (1);
 }
 
 void
-ssh_rijndael_iv(EVP_CIPHER_CTX *evp, int doset, u_char * iv, u_int len)
+ssh_rijndael_iv(EVP_CIPHER_CTX *evp, 整数 doset, u_char * iv, u_int len)
 {
 	struct ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(evp)) == NULL)
+	もし ((c = EVP_CIPHER_CTX_get_app_data(evp)) == NULL)
 		fatal("ssh_rijndael_iv: no context");
-	if (doset)
+	もし (doset)
 		memcpy(c->r_iv, iv, len);
-	else
+	否则
 		memcpy(iv, c->r_iv, len);
 }
 
@@ -156,6 +156,6 @@ evp_rijndael(void)
 	rijndal_cbc.flags = EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH |
 	    EVP_CIPH_ALWAYS_CALL_INIT | EVP_CIPH_CUSTOM_IV;
 #endif
-	return (&rijndal_cbc);
+	戻る (&rijndal_cbc);
 }
 #endif /* USE_BUILTIN_RIJNDAEL */

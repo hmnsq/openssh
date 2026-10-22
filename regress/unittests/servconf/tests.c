@@ -26,11 +26,11 @@
 struct sshbuf *cfg;
 
 /* stub */
-int auth2_methods_valid(const char *methods, int need_enable);
-int
-auth2_methods_valid(const char *methods, int need_enable)
+整数 auth2_methods_valid(const char *methods, 整数 need_enable);
+整数
+auth2_methods_valid(const char *methods, 整数 need_enable)
 {
-	return 1;
+	戻る 1;
 }
 
 static void
@@ -49,7 +49,7 @@ set_string(char **dst, const char *s)
 static char **
 new_string_array(u_int n)
 {
-	return xcalloc(n, sizeof(char *));
+	戻る xcalloc(n, sizeof(char *));
 }
 
 static void
@@ -206,7 +206,7 @@ check_rejects_trailing_data(const ServerOptions *o)
 {
 	struct sshbuf *buf = NULL;
 	ServerOptions out;
-	int r;
+	整数 r;
 
 	initialize_server_options(&out);
 	ASSERT_INT_EQ(serialise_server_options(o, &buf), 0);
@@ -223,7 +223,7 @@ check_rejects_bad_version(const ServerOptions *o)
 {
 	struct sshbuf *buf = NULL;
 	ServerOptions out;
-	int r;
+	整数 r;
 
 	initialize_server_options(&out);
 	ASSERT_INT_EQ(serialise_server_options(o, &buf), 0);
@@ -241,7 +241,7 @@ check_rejects_bad_port_count(const ServerOptions *o)
 {
 	struct sshbuf *buf = NULL;
 	ServerOptions out;
-	int r;
+	整数 r;
 
 	initialize_server_options(&out);
 	ASSERT_INT_EQ(serialise_server_options(o, &buf), 0);
@@ -297,16 +297,16 @@ check_fuzz_deserialise(const ServerOptions *o)
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_1_BYTE_FLIP |
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
-	if (test_is_fast())
+	もし (test_is_fast())
 		fuzzers &= ~FUZZ_1_BIT_FLIP;
-	if (test_is_slow())
+	もし (test_is_slow())
 		fuzzers |= FUZZ_2_BYTE_FLIP;
 
 	ASSERT_INT_EQ(serialise_server_options(o, &buf), 0);
 	ASSERT_PTR_NE(buf, NULL);
 	fuzz = fuzz_begin(fuzzers, sshbuf_ptr(buf), sshbuf_len(buf));
 	TEST_ONERROR(onerror, fuzz);
-	for (; !fuzz_done(fuzz); fuzz_next(fuzz))
+	ために (; !fuzz_done(fuzz); fuzz_next(fuzz))
 		attempt_deserialise_blob(fuzz_ptr(fuzz), fuzz_len(fuzz));
 	TEST_ONERROR(NULL, NULL);
 	fuzz_cleanup(fuzz);

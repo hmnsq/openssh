@@ -31,7 +31,7 @@
 /* OPENBSD ORIGINAL: lib/libc/gen/vis.c */
 
 #include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#もし !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
 #include <sys/types.h>
 #include <errno.h>
@@ -59,18 +59,18 @@
  * vis - visually encode characters
  */
 char *
-vis(char *dst, int c, int flag, int nextc)
+vis(char *dst, 整数 c, 整数 flag, 整数 nextc)
 {
-	if (isvisible(c, flag)) {
-		if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	もし (isvisible(c, flag)) {
+		もし ((c == '"' && (flag & VIS_DQ) != 0) ||
 		    (c == '\\' && (flag & VIS_NOSLASH) == 0))
 			*dst++ = '\\';
 		*dst++ = c;
 		*dst = '\0';
-		return (dst);
+		戻る (dst);
 	}
 
-	if (flag & VIS_CSTYLE) {
+	もし (flag & VIS_CSTYLE) {
 		switch(c) {
 		case '\n':
 			*dst++ = '\\';
@@ -107,14 +107,14 @@ vis(char *dst, int c, int flag, int nextc)
 		case '\0':
 			*dst++ = '\\';
 			*dst++ = '0';
-			if (isoctal(nextc)) {
+			もし (isoctal(nextc)) {
 				*dst++ = '0';
 				*dst++ = '0';
 			}
 			goto done;
 		}
 	}
-	if (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
+	もし (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
 	    ((flag & VIS_GLOB) && (c == '*' || c == '?' || c == '[' || c == '#'))) {
 		*dst++ = '\\';
 		*dst++ = ((u_char)c >> 6 & 07) + '0';
@@ -122,25 +122,25 @@ vis(char *dst, int c, int flag, int nextc)
 		*dst++ = ((u_char)c & 07) + '0';
 		goto done;
 	}
-	if ((flag & VIS_NOSLASH) == 0)
+	もし ((flag & VIS_NOSLASH) == 0)
 		*dst++ = '\\';
-	if (c & 0200) {
+	もし (c & 0200) {
 		c &= 0177;
 		*dst++ = 'M';
 	}
-	if (iscntrl((u_char)c)) {
+	もし (iscntrl((u_char)c)) {
 		*dst++ = '^';
-		if (c == 0177)
+		もし (c == 0177)
 			*dst++ = '?';
-		else
+		否则
 			*dst++ = c + '@';
-	} else {
+	} 否则 {
 		*dst++ = '-';
 		*dst++ = c;
 	}
 done:
 	*dst = '\0';
-	return (dst);
+	戻る (dst);
 }
 DEF_WEAK(vis);
 
@@ -157,33 +157,33 @@ DEF_WEAK(vis);
  *	Strvisx encodes exactly len bytes from src into dst.
  *	This is useful for encoding a block of data.
  */
-int
-strvis(char *dst, const char *src, int flag)
+整数
+strvis(char *dst, const char *src, 整数 flag)
 {
 	char c;
 	char *start;
 
-	for (start = dst; (c = *src);)
+	ために (start = dst; (c = *src);)
 		dst = vis(dst, c, flag, *++src);
 	*dst = '\0';
-	return (dst - start);
+	戻る (dst - start);
 }
 DEF_WEAK(strvis);
 
-int
-strnvis(char *dst, const char *src, size_t siz, int flag)
+整数
+strnvis(char *dst, const char *src, size_t siz, 整数 flag)
 {
 	char *start, *end;
 	char tbuf[5];
-	int c, i;
+	整数 c, i;
 
 	i = 0;
-	for (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
-		if (isvisible(c, flag)) {
-			if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	ために (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
+		もし (isvisible(c, flag)) {
+			もし ((c == '"' && (flag & VIS_DQ) != 0) ||
 			    (c == '\\' && (flag & VIS_NOSLASH) == 0)) {
 				/* need space for the extra '\\' */
-				if (dst + 1 >= end) {
+				もし (dst + 1 >= end) {
 					i = 2;
 					break;
 				}
@@ -192,61 +192,61 @@ strnvis(char *dst, const char *src, size_t siz, int flag)
 			i = 1;
 			*dst++ = c;
 			src++;
-		} else {
+		} 否则 {
 			i = vis(tbuf, c, flag, *++src) - tbuf;
-			if (dst + i <= end) {
+			もし (dst + i <= end) {
 				memcpy(dst, tbuf, i);
 				dst += i;
-			} else {
+			} 否则 {
 				src--;
 				break;
 			}
 		}
 	}
-	if (siz > 0)
+	もし (siz > 0)
 		*dst = '\0';
-	if (dst + i > end) {
+	もし (dst + i > end) {
 		/* adjust return value for truncation */
-		while ((c = *src))
+		ながら ((c = *src))
 			dst += vis(tbuf, c, flag, *++src) - tbuf;
 	}
-	return (dst - start);
+	戻る (dst - start);
 }
 
-#if 0 /* unused in OpenSSH */
-int
-stravis(char **outp, const char *src, int flag)
+#もし 0 /* unused in OpenSSH */
+整数
+stravis(char **outp, const char *src, 整数 flag)
 {
 	char *buf;
-	int len, serrno;
+	整数 len, serrno;
 
 	buf = reallocarray(NULL, 4, strlen(src) + 1);
-	if (buf == NULL)
-		return -1;
+	もし (buf == NULL)
+		戻る -1;
 	len = strvis(buf, src, flag);
 	serrno = errno;
 	*outp = realloc(buf, len + 1);
-	if (*outp == NULL) {
+	もし (*outp == NULL) {
 		*outp = buf;
 		errno = serrno;
 	}
-	return (len);
+	戻る (len);
 }
 
-int
-strvisx(char *dst, const char *src, size_t len, int flag)
+整数
+strvisx(char *dst, const char *src, size_t len, 整数 flag)
 {
 	char c;
 	char *start;
 
-	for (start = dst; len > 1; len--) {
+	ために (start = dst; len > 1; len--) {
 		c = *src;
 		dst = vis(dst, c, flag, *++src);
 	}
-	if (len)
+	もし (len)
 		dst = vis(dst, *src, flag, '\0');
 	*dst = '\0';
-	return (dst - start);
+	戻る (dst - start);
 }
 #endif /* unused */
 

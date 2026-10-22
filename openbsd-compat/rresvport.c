@@ -46,21 +46,21 @@
 #include <string.h>
 #include <unistd.h>
 
-#if 0
-int
-rresvport(int *alport)
+#もし 0
+整数
+rresvport(整数 *alport)
 {
-	return rresvport_af(alport, AF_INET);
+	戻る rresvport_af(alport, AF_INET);
 }
 #endif
 
-int
-rresvport_af(int *alport, sa_family_t af)
+整数
+rresvport_af(整数 *alport, sa_family_t af)
 {
 	struct sockaddr_storage ss;
 	struct sockaddr *sa;
 	u_int16_t *portp;
-	int s;
+	整数 s;
 	socklen_t salen;
 
 	memset(&ss, '\0', sizeof ss);
@@ -77,32 +77,32 @@ rresvport_af(int *alport, sa_family_t af)
 		break;
 	default:
 		errno = EPFNOSUPPORT;
-		return (-1);
+		戻る (-1);
 	}
 	sa->sa_family = af;
 	
 	s = socket(af, SOCK_STREAM, 0);
-	if (s < 0)
-		return (-1);
+	もし (s < 0)
+		戻る (-1);
 
 	*portp = htons(*alport);
-	if (*alport < IPPORT_RESERVED - 1) {
-		if (bind(s, sa, salen) >= 0)
-			return (s);
-		if (errno != EADDRINUSE) {
+	もし (*alport < IPPORT_RESERVED - 1) {
+		もし (bind(s, sa, salen) >= 0)
+			戻る (s);
+		もし (errno != EADDRINUSE) {
 			(void)close(s);
-			return (-1);
+			戻る (-1);
 		}
 	}
 
 	*portp = 0;
 	sa->sa_family = af;
-	if (bindresvport_sa(s, sa) == -1) {
+	もし (bindresvport_sa(s, sa) == -1) {
 		(void)close(s);
-		return (-1);
+		戻る (-1);
 	}
 	*alport = ntohs(*portp);
-	return (s);
+	戻る (s);
 }
 
 #endif /* HAVE_RRESVPORT_AF */

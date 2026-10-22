@@ -30,155 +30,155 @@
 #define SSHBUF_INTERNAL
 #include "sshbuf.h"
 
-int
+整数
 sshbuf_get_bignum2(struct sshbuf *buf, BIGNUM **valp)
 {
 	BIGNUM *v;
 	const u_char *d;
 	size_t len;
-	int r;
+	整数 r;
 
-	if (valp != NULL)
+	もし (valp != NULL)
 		*valp = NULL;
-	if ((r = sshbuf_get_bignum2_bytes_direct(buf, &d, &len)) != 0)
-		return r;
-	if (valp != NULL) {
-		if ((v = BN_new()) == NULL ||
+	もし ((r = sshbuf_get_bignum2_bytes_direct(buf, &d, &len)) != 0)
+		戻る r;
+	もし (valp != NULL) {
+		もし ((v = BN_new()) == NULL ||
 		    BN_bin2bn(d, len, v) == NULL) {
 			BN_clear_free(v);
-			return SSH_ERR_ALLOC_FAIL;
+			戻る SSH_ERR_ALLOC_FAIL;
 		}
 		*valp = v;
 	}
-	return 0;
+	戻る 0;
 }
 
-static int
+static 整数
 get_ec(const u_char *d, size_t len, EC_POINT *v, const EC_GROUP *g)
 {
 	/* Refuse overlong bignums */
-	if (len == 0 || len > SSHBUF_MAX_ECPOINT)
-		return SSH_ERR_ECPOINT_TOO_LARGE;
+	もし (len == 0 || len > SSHBUF_MAX_ECPOINT)
+		戻る SSH_ERR_ECPOINT_TOO_LARGE;
 	/* Only handle uncompressed points */
-	if (*d != POINT_CONVERSION_UNCOMPRESSED)
-		return SSH_ERR_INVALID_FORMAT;
-	if (v != NULL && EC_POINT_oct2point(g, v, d, len, NULL) != 1)
-		return SSH_ERR_INVALID_FORMAT; /* XXX assumption */
-	return 0;
+	もし (*d != POINT_CONVERSION_UNCOMPRESSED)
+		戻る SSH_ERR_INVALID_FORMAT;
+	もし (v != NULL && EC_POINT_oct2point(g, v, d, len, NULL) != 1)
+		戻る SSH_ERR_INVALID_FORMAT; /* XXX assumption */
+	戻る 0;
 }
 
-int
+整数
 sshbuf_get_ec(struct sshbuf *buf, EC_POINT *v, const EC_GROUP *g)
 {
 	const u_char *d;
 	size_t len;
-	int r;
+	整数 r;
 
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0)
-		return r;
-	if ((r = get_ec(d, len, v, g)) != 0)
-		return r;
+	もし ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0)
+		戻る r;
+	もし ((r = get_ec(d, len, v, g)) != 0)
+		戻る r;
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	もし (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		戻る SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	戻る 0;
 }
 
-int
+整数
 sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v)
 {
 	EC_POINT *pt = EC_POINT_new(EC_KEY_get0_group(v));
-	int r;
+	整数 r;
 	const u_char *d;
 	size_t len;
 
-	if (pt == NULL) {
+	もし (pt == NULL) {
 		SSHBUF_DBG(("SSH_ERR_ALLOC_FAIL"));
-		return SSH_ERR_ALLOC_FAIL;
+		戻る SSH_ERR_ALLOC_FAIL;
 	}
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0) {
+	もし ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0) {
 		EC_POINT_free(pt);
-		return r;
+		戻る r;
 	}
-	if ((r = get_ec(d, len, pt, EC_KEY_get0_group(v))) != 0) {
+	もし ((r = get_ec(d, len, pt, EC_KEY_get0_group(v))) != 0) {
 		EC_POINT_free(pt);
-		return r;
+		戻る r;
 	}
-	if (EC_KEY_set_public_key(v, pt) != 1) {
+	もし (EC_KEY_set_public_key(v, pt) != 1) {
 		EC_POINT_free(pt);
-		return SSH_ERR_ALLOC_FAIL; /* XXX assumption */
+		戻る SSH_ERR_ALLOC_FAIL; /* XXX assumption */
 	}
 	EC_POINT_free(pt);
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	もし (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		戻る SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	戻る 0;
 }
 
-int
+整数
 sshbuf_put_bignum2(struct sshbuf *buf, const BIGNUM *v)
 {
 	u_char d[SSHBUF_MAX_BIGNUM + 1];
-	int len = BN_num_bytes(v), prepend = 0, r;
+	整数 len = BN_num_bytes(v), prepend = 0, r;
 
-	if (len < 0 || len > SSHBUF_MAX_BIGNUM)
-		return SSH_ERR_INVALID_ARGUMENT;
+	もし (len < 0 || len > SSHBUF_MAX_BIGNUM)
+		戻る SSH_ERR_INVALID_ARGUMENT;
 	*d = '\0';
-	if (BN_bn2bin(v, d + 1) != len)
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+	もし (BN_bn2bin(v, d + 1) != len)
+		戻る SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
 	/* If MSB is set, prepend a \0 */
-	if (len > 0 && (d[1] & 0x80) != 0)
+	もし (len > 0 && (d[1] & 0x80) != 0)
 		prepend = 1;
-	if ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
+	もし ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
 		explicit_bzero(d, sizeof(d));
-		return r;
+		戻る r;
 	}
 	explicit_bzero(d, sizeof(d));
-	return 0;
+	戻る 0;
 }
 
-int
+整数
 sshbuf_put_ec(struct sshbuf *buf, const EC_POINT *v, const EC_GROUP *g)
 {
 	u_char d[SSHBUF_MAX_ECPOINT];
 	size_t len;
-	int ret;
+	整数 ret;
 
-	if ((len = EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
+	もし ((len = EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
 	    NULL, 0, NULL)) > SSHBUF_MAX_ECPOINT) {
-		return SSH_ERR_INVALID_ARGUMENT;
+		戻る SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
+	もし (EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
 	    d, len, NULL) != len) {
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+		戻る SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
 	}
 	ret = sshbuf_put_string(buf, d, len);
 	explicit_bzero(d, len);
-	return ret;
+	戻る ret;
 }
 
-int
+整数
 sshbuf_put_eckey(struct sshbuf *buf, const EC_KEY *v)
 {
-	return sshbuf_put_ec(buf, EC_KEY_get0_public_key(v),
+	戻る sshbuf_put_ec(buf, EC_KEY_get0_public_key(v),
 	    EC_KEY_get0_group(v));
 }
 
-int
+整数
 sshbuf_put_ec_pkey(struct sshbuf *buf, EVP_PKEY *pkey)
 {
 	const EC_KEY *ec;
 
-	if ((ec = EVP_PKEY_get0_EC_KEY(pkey)) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return sshbuf_put_eckey(buf, ec);
+	もし ((ec = EVP_PKEY_get0_EC_KEY(pkey)) == NULL)
+		戻る SSH_ERR_LIBCRYPTO_ERROR;
+	戻る sshbuf_put_eckey(buf, ec);
 }
 #endif /* WITH_OPENSSL */

@@ -41,7 +41,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <unistd.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#もし defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 #include <vis.h>
 #endif
 
@@ -85,24 +85,24 @@ extern Options options;
 static char *xxx_host;
 static struct sockaddr_storage xxx_hostaddr;
 static const struct ssh_conn_info *xxx_conn_info;
-static int key_type_allowed(struct sshkey *, const char *);
+static 整数 key_type_allowed(struct sshkey *, const char *);
 
-static int
+static 整数
 verify_host_key_callback(struct sshkey *hostkey, struct ssh *ssh)
 {
-	int r;
+	整数 r;
 
-	if ((r = sshkey_check_rsa_length(hostkey,
+	もし ((r = sshkey_check_rsa_length(hostkey,
 	    options.required_rsa_size)) != 0)
 		fatal_r(r, "Bad server host key");
-	if (!key_type_allowed(hostkey, options.hostkeyalgorithms)) {
+	もし (!key_type_allowed(hostkey, options.hostkeyalgorithms)) {
 		fatal("Server host key %s not in HostKeyAlgorithms",
 		    sshkey_ssh_name(hostkey));
 	}
-	if (verify_host_key(xxx_host, (struct sockaddr *)&xxx_hostaddr, hostkey,
+	もし (verify_host_key(xxx_host, (struct sockaddr *)&xxx_hostaddr, hostkey,
 	    xxx_conn_info) != 0)
 		fatal("Host key verification failed.");
-	return 0;
+	戻る 0;
 }
 
 /* Returns the first item from a comma-separated algorithm list */
@@ -112,9 +112,9 @@ first_alg(const char *algs)
 	char *ret, *cp;
 
 	ret = xstrdup(algs);
-	if ((cp = strchr(ret, ',')) != NULL)
+	もし ((cp = strchr(ret, ',')) != NULL)
 		*cp = '\0';
-	return ret;
+	戻る ret;
 }
 
 static char *
@@ -125,19 +125,19 @@ order_hostkeyalgs(char *host, struct sockaddr *hostaddr, u_short port,
 	char *alg = NULL, *hostname = NULL, *ret = NULL, *best = NULL;
 	size_t maxlen;
 	struct hostkeys *hostkeys = NULL;
-	int ktype;
+	整数 ktype;
 	u_int i;
 
 	/* Find all hostkeys for this hostname */
 	get_hostfile_hostname_ipaddr(host, hostaddr, port, &hostname, NULL);
 	hostkeys = init_hostkeys();
-	for (i = 0; i < options.num_user_hostfiles; i++)
+	ために (i = 0; i < options.num_user_hostfiles; i++)
 		load_hostkeys(hostkeys, hostname, options.user_hostfiles[i], 0);
-	for (i = 0; i < options.num_system_hostfiles; i++) {
+	ために (i = 0; i < options.num_system_hostfiles; i++) {
 		load_hostkeys(hostkeys, hostname,
 		    options.system_hostfiles[i], 0);
 	}
-	if (options.known_hosts_command != NULL) {
+	もし (options.known_hosts_command != NULL) {
 		load_hostkeys_command(hostkeys, options.known_hosts_command,
 		    "ORDER", cinfo, NULL, hostname);
 	}
@@ -149,7 +149,7 @@ order_hostkeyalgs(char *host, struct sockaddr *hostaddr, u_short port,
 	 * plain keys if necessary.
 	 */
 	best = first_alg(options.hostkeyalgorithms);
-	if (lookup_key_in_hostkeys_by_type(hostkeys,
+	もし (lookup_key_in_hostkeys_by_type(hostkeys,
 	    sshkey_type_plain(sshkey_type_from_name(best)),
 	    sshkey_ecdsa_nid_from_name(best), NULL)) {
 		debug3_f("have matching best-preference key type %s, "
@@ -170,25 +170,25 @@ order_hostkeyalgs(char *host, struct sockaddr *hostaddr, u_short port,
 
 #define ALG_APPEND(to, from) \
 	do { \
-		if (*to != '\0') \
+		もし (*to != '\0') \
 			strlcat(to, ",", maxlen); \
 		strlcat(to, from, maxlen); \
-	} while (0)
+	} ながら (0)
 
-	while ((alg = strsep(&avail, ",")) && *alg != '\0') {
-		if ((ktype = sshkey_type_from_name(alg)) == KEY_UNSPEC)
+	ながら ((alg = strsep(&avail, ",")) && *alg != '\0') {
+		もし ((ktype = sshkey_type_from_name(alg)) == KEY_UNSPEC)
 			fatal_f("unknown alg %s", alg);
 		/*
 		 * If we have a @cert-authority marker in known_hosts then
 		 * prefer all certificate algorithms.
 		 */
-		if (sshkey_type_is_cert(ktype) &&
+		もし (sshkey_type_is_cert(ktype) &&
 		    lookup_marker_in_hostkeys(hostkeys, MRK_CA)) {
 			ALG_APPEND(first, alg);
 			continue;
 		}
 		/* If the key appears in known_hosts then prefer it */
-		if (lookup_key_in_hostkeys_by_type(hostkeys,
+		もし (lookup_key_in_hostkeys_by_type(hostkeys,
 		    sshkey_type_plain(ktype),
 		    sshkey_ecdsa_nid_from_name(alg), NULL)) {
 			ALG_APPEND(first, alg);
@@ -200,9 +200,9 @@ order_hostkeyalgs(char *host, struct sockaddr *hostaddr, u_short port,
 #undef ALG_APPEND
 	xasprintf(&ret, "%s%s%s", first,
 	    (*first == '\0' || *last == '\0') ? "" : ",", last);
-	if (*first != '\0')
+	もし (*first != '\0')
 		debug3_f("prefer hostkeyalgs: %s", first);
-	else
+	否则
 		debug3_f("no algorithms matched; accept original");
  out:
 	free(best);
@@ -212,7 +212,7 @@ order_hostkeyalgs(char *host, struct sockaddr *hostaddr, u_short port,
 	free(oavail);
 	free_hostkeys(hostkeys);
 
-	return ret;
+	戻る ret;
 }
 
 void
@@ -221,7 +221,7 @@ ssh_kex2(struct ssh *ssh, char *host, struct sockaddr_storage *hostaddr,
 {
 	char *myproposal[PROPOSAL_MAX];
 	char *all_key, *hkalgs = NULL;
-	int r, use_known_hosts_order = 0;
+	整数 r, use_known_hosts_order = 0;
 
 	xxx_host = xstrdup(host);
 	xxx_hostaddr = *hostaddr;
@@ -235,19 +235,19 @@ ssh_kex2(struct ssh *ssh, char *host, struct sockaddr_storage *hostaddr,
 	 * appended or removed algorithms from that list then prefer algorithms
 	 * that are in the list that are supported by known_hosts keys.
 	 */
-	if (options.hostkeyalgorithms == NULL ||
+	もし (options.hostkeyalgorithms == NULL ||
 	    options.hostkeyalgorithms[0] == '-' ||
 	    options.hostkeyalgorithms[0] == '+')
 		use_known_hosts_order = 1;
 
 	/* Expand or fill in HostkeyAlgorithms */
 	all_key = sshkey_alg_list(0, 0, 1, ',');
-	if ((r = kex_assemble_names(&options.hostkeyalgorithms,
+	もし ((r = kex_assemble_names(&options.hostkeyalgorithms,
 	    kex_default_pk_alg(), all_key)) != 0)
 		fatal_fr(r, "kex_assemble_namelist");
 	free(all_key);
 
-	if (use_known_hosts_order) {
+	もし (use_known_hosts_order) {
 		hkalgs = order_hostkeyalgs(host, (struct sockaddr *)hostaddr,
 		    port, cinfo);
 	}
@@ -260,7 +260,7 @@ ssh_kex2(struct ssh *ssh, char *host, struct sockaddr_storage *hostaddr,
 	free(hkalgs);
 
 	/* start key exchange */
-	if ((r = kex_setup(ssh, myproposal)) != 0)
+	もし ((r = kex_setup(ssh, myproposal)) != 0)
 		fatal_r(r, "kex_setup");
 #ifdef WITH_OPENSSL
 	ssh->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_client;
@@ -283,7 +283,7 @@ ssh_kex2(struct ssh *ssh, char *host, struct sockaddr_storage *hostaddr,
 
 #ifdef DEBUG_KEXDH
 	/* send 1st encrypted/maced/compressed message */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
+	もし ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "markus")) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
@@ -302,12 +302,12 @@ typedef struct idlist Idlist;
 
 struct identity {
 	TAILQ_ENTRY(identity) next;
-	int	agent_fd;		/* >=0 if agent supports key */
+	整数	agent_fd;		/* >=0 if agent supports key */
 	struct sshkey	*key;		/* public/private key */
 	char	*filename;		/* comment for agent-only keys */
-	int	tried;
-	int	isprivate;		/* key points to the private key */
-	int	userprovided;
+	整数	tried;
+	整数	isprivate;		/* key points to the private key */
+	整数	userprovided;
 };
 TAILQ_HEAD(idlist, identity);
 
@@ -326,56 +326,56 @@ struct cauthctxt {
 #endif
 	/* pubkey */
 	struct idlist keys;
-	int agent_fd;
+	整数 agent_fd;
 	/* hostbased */
 	Sensitive *sensitive;
 	char *oktypes, *ktypes;
 	const char *active_ktype;
 	/* kbd-interactive */
-	int info_req_seen;
-	int attempt_kbdint;
+	整数 info_req_seen;
+	整数 attempt_kbdint;
 	/* password */
-	int attempt_passwd;
+	整数 attempt_passwd;
 	/* generic */
 	void *methoddata;
 };
 
 struct cauthmethod {
 	char	*name;		/* string to compare against server's list */
-	int	(*userauth)(struct ssh *ssh);
+	整数	(*userauth)(struct ssh *ssh);
 	void	(*cleanup)(struct ssh *ssh);
-	int	*enabled;	/* flag in option struct that enables method */
-	int	*batch_flag;	/* flag in option struct that disables method */
+	整数	*enabled;	/* flag in option struct that enables method */
+	整数	*batch_flag;	/* flag in option struct that disables method */
 };
 
-static int input_userauth_service_accept(int, uint32_t, struct ssh *);
-static int input_userauth_success(int, uint32_t, struct ssh *);
-static int input_userauth_failure(int, uint32_t, struct ssh *);
-static int input_userauth_banner(int, uint32_t, struct ssh *);
-static int input_userauth_error(int, uint32_t, struct ssh *);
-static int input_userauth_info_req(int, uint32_t, struct ssh *);
-static int input_userauth_pk_ok(int, uint32_t, struct ssh *);
-static int input_userauth_passwd_changereq(int, uint32_t, struct ssh *);
+static 整数 input_userauth_service_accept(整数, uint32_t, struct ssh *);
+static 整数 input_userauth_success(整数, uint32_t, struct ssh *);
+static 整数 input_userauth_failure(整数, uint32_t, struct ssh *);
+static 整数 input_userauth_banner(整数, uint32_t, struct ssh *);
+static 整数 input_userauth_error(整数, uint32_t, struct ssh *);
+static 整数 input_userauth_info_req(整数, uint32_t, struct ssh *);
+static 整数 input_userauth_pk_ok(整数, uint32_t, struct ssh *);
+static 整数 input_userauth_passwd_changereq(整数, uint32_t, struct ssh *);
 
-static int userauth_none(struct ssh *);
-static int userauth_pubkey(struct ssh *);
-static int userauth_passwd(struct ssh *);
-static int userauth_kbdint(struct ssh *);
-static int userauth_hostbased(struct ssh *);
+static 整数 userauth_none(struct ssh *);
+static 整数 userauth_pubkey(struct ssh *);
+static 整数 userauth_passwd(struct ssh *);
+static 整数 userauth_kbdint(struct ssh *);
+static 整数 userauth_hostbased(struct ssh *);
 
 #ifdef GSSAPI
-static int userauth_gssapi(struct ssh *);
+static 整数 userauth_gssapi(struct ssh *);
 static void userauth_gssapi_cleanup(struct ssh *);
-static int input_gssapi_response(int type, uint32_t, struct ssh *);
-static int input_gssapi_token(int type, uint32_t, struct ssh *);
-static int input_gssapi_error(int, uint32_t, struct ssh *);
-static int input_gssapi_errtok(int, uint32_t, struct ssh *);
+static 整数 input_gssapi_response(整数 type, uint32_t, struct ssh *);
+static 整数 input_gssapi_token(整数 type, uint32_t, struct ssh *);
+static 整数 input_gssapi_error(整数, uint32_t, struct ssh *);
+static 整数 input_gssapi_errtok(整数, uint32_t, struct ssh *);
 #endif
 
 void	userauth(struct ssh *, char *);
 
 static void pubkey_cleanup(struct ssh *);
-static int sign_and_send_pubkey(struct ssh *ssh, Identity *);
+static 整数 sign_and_send_pubkey(struct ssh *ssh, Identity *);
 static void pubkey_prepare(struct ssh *, Authctxt *);
 static void pubkey_reset(Authctxt *);
 static struct sshkey *load_identity_file(Identity *);
@@ -425,9 +425,9 @@ ssh_userauth2(struct ssh *ssh, const char *local_user,
     const char *server_user, char *host, Sensitive *sensitive)
 {
 	Authctxt authctxt;
-	int r;
+	整数 r;
 
-	if (options.preferred_authentications == NULL)
+	もし (options.preferred_authentications == NULL)
 		options.preferred_authentications = authmethods_get();
 
 	/* setup authentication context */
@@ -445,15 +445,15 @@ ssh_userauth2(struct ssh *ssh, const char *local_user,
 	authctxt.info_req_seen = 0;
 	authctxt.attempt_kbdint = 0;
 	authctxt.attempt_passwd = 0;
-#if GSSAPI
+#もし GSSAPI
 	authctxt.gss_supported_mechs = NULL;
 	authctxt.mech_tried = 0;
 #endif
 	authctxt.agent_fd = -1;
-	if (authctxt.method == NULL)
+	もし (authctxt.method == NULL)
 		fatal_f("internal error: cannot send userauth none request");
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_SERVICE_REQUEST)) != 0 ||
+	もし ((r = sshpkt_start(ssh, SSH2_MSG_SERVICE_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "ssh-userauth")) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
@@ -465,7 +465,7 @@ ssh_userauth2(struct ssh *ssh, const char *local_user,
 	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &authctxt.success);	/* loop until success */
 	pubkey_cleanup(ssh);
 #ifdef GSSAPI
-	if (authctxt.gss_supported_mechs != NULL) {
+	もし (authctxt.gss_supported_mechs != NULL) {
 		u_int ms;
 
 		gss_release_oid_set(&ms, &authctxt.gss_supported_mechs);
@@ -476,34 +476,34 @@ ssh_userauth2(struct ssh *ssh, const char *local_user,
 
 	ssh_dispatch_range(ssh, SSH2_MSG_USERAUTH_MIN, SSH2_MSG_USERAUTH_MAX, NULL);
 
-	if (!authctxt.success)
+	もし (!authctxt.success)
 		fatal("Authentication failed.");
-	if (ssh_packet_connection_is_on_socket(ssh)) {
+	もし (ssh_packet_connection_is_on_socket(ssh)) {
 		verbose("Authenticated to %s ([%s]:%d) using \"%s\".", host,
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
 		    authctxt.method->name);
-	} else {
+	} 否则 {
 		verbose("Authenticated to %s (via proxy) using \"%s\".", host,
 		    authctxt.method->name);
 	}
 }
 
-static int
-input_userauth_service_accept(int type, uint32_t seq, struct ssh *ssh)
+static 整数
+input_userauth_service_accept(整数 type, uint32_t seq, struct ssh *ssh)
 {
-	int r;
+	整数 r;
 
-	if (ssh_packet_remaining(ssh) > 0) {
+	もし (ssh_packet_remaining(ssh) > 0) {
 		char *reply;
 
-		if ((r = sshpkt_get_cstring(ssh, &reply, NULL)) != 0)
+		もし ((r = sshpkt_get_cstring(ssh, &reply, NULL)) != 0)
 			goto out;
 		debug2("service_accept: %s", reply);
 		free(reply);
-	} else {
+	} 否则 {
 		debug2("buggy server: service_accept w/o service");
 	}
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	もし ((r = sshpkt_get_end(ssh)) != 0)
 		goto out;
 	debug("SSH2_MSG_SERVICE_ACCEPT received");
 
@@ -518,7 +518,7 @@ input_userauth_service_accept(int type, uint32_t seq, struct ssh *ssh)
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_BANNER, &input_userauth_banner);
 	r = 0;
  out:
-	return r;
+	戻る r;
 }
 
 void
@@ -526,20 +526,20 @@ userauth(struct ssh *ssh, char *authlist)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 
-	if (authctxt->method != NULL && authctxt->method->cleanup != NULL)
+	もし (authctxt->method != NULL && authctxt->method->cleanup != NULL)
 		authctxt->method->cleanup(ssh);
 
 	free(authctxt->methoddata);
 	authctxt->methoddata = NULL;
-	if (authlist == NULL) {
+	もし (authlist == NULL) {
 		authlist = authctxt->authlist;
-	} else {
+	} 否则 {
 		free(authctxt->authlist);
 		authctxt->authlist = authlist;
 	}
-	for (;;) {
+	ために (;;) {
 		Authmethod *method = authmethod_get(authlist);
-		if (method == NULL)
+		もし (method == NULL)
 			fatal("%s@%s: Permission denied (%s).",
 			    authctxt->server_user, authctxt->host, authlist);
 		authctxt->method = method;
@@ -549,91 +549,91 @@ userauth(struct ssh *ssh, char *authlist)
 		    SSH2_MSG_USERAUTH_PER_METHOD_MAX, NULL);
 
 		/* and try new method */
-		if (method->userauth(ssh) != 0) {
+		もし (method->userauth(ssh) != 0) {
 			debug2("we sent a %s packet, wait for reply", method->name);
 			break;
-		} else {
+		} 否则 {
 			debug2("we did not send a packet, disable method");
 			method->enabled = NULL;
 		}
 	}
 }
 
-static int
-input_userauth_error(int type, uint32_t seq, struct ssh *ssh)
+static 整数
+input_userauth_error(整数 type, uint32_t seq, struct ssh *ssh)
 {
 	fatal_f("bad message during authentication: type %d", type);
-	return 0;
+	戻る 0;
 }
 
-static int
-input_userauth_banner(int type, uint32_t seq, struct ssh *ssh)
+static 整数
+input_userauth_banner(整数 type, uint32_t seq, struct ssh *ssh)
 {
 	char *msg = NULL;
 	size_t len;
-	int r;
+	整数 r;
 
 	debug3_f("entering");
-	if ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 ||
+	もし ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0)
 		goto out;
-	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO)
+	もし (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO)
 		fmprintf(stderr, "%s", msg);
 	r = 0;
  out:
 	free(msg);
-	return r;
+	戻る r;
 }
 
-static int
-input_userauth_success(int type, uint32_t seq, struct ssh *ssh)
+static 整数
+input_userauth_success(整数 type, uint32_t seq, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 
-	if (authctxt == NULL)
+	もし (authctxt == NULL)
 		fatal_f("no authentication context");
 	free(authctxt->authlist);
 	authctxt->authlist = NULL;
-	if (authctxt->method != NULL && authctxt->method->cleanup != NULL)
+	もし (authctxt->method != NULL && authctxt->method->cleanup != NULL)
 		authctxt->method->cleanup(ssh);
 	free(authctxt->methoddata);
 	authctxt->methoddata = NULL;
 	authctxt->success = 1;			/* break out */
 	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, dispatch_protocol_error);
-	return 0;
+	戻る 0;
 }
 
-#if 0
-static int
-input_userauth_success_unexpected(int type, uint32_t seq, struct ssh *ssh)
+#もし 0
+static 整数
+input_userauth_success_unexpected(整数 type, uint32_t seq, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 
-	if (authctxt == NULL)
+	もし (authctxt == NULL)
 		fatal_f("no authentication context");
 
 	fatal("Unexpected authentication success during %s.",
 	    authctxt->method->name);
-	return 0;
+	戻る 0;
 }
 #endif
 
-static int
-input_userauth_failure(int type, uint32_t seq, struct ssh *ssh)
+static 整数
+input_userauth_failure(整数 type, uint32_t seq, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	char *authlist = NULL;
 	u_char partial;
 
-	if (authctxt == NULL)
+	もし (authctxt == NULL)
 		fatal("input_userauth_failure: no authentication context");
 
-	if (sshpkt_get_cstring(ssh, &authlist, NULL) != 0 ||
+	もし (sshpkt_get_cstring(ssh, &authlist, NULL) != 0 ||
 	    sshpkt_get_u8(ssh, &partial) != 0 ||
 	    sshpkt_get_end(ssh) != 0)
 		goto out;
 
-	if (partial != 0) {
+	もし (partial != 0) {
 		verbose("Authenticated using \"%s\" with partial success.",
 		    authctxt->method->name);
 		/* reset state */
@@ -645,7 +645,7 @@ input_userauth_failure(int type, uint32_t seq, struct ssh *ssh)
 	authlist = NULL;
  out:
 	free(authlist);
-	return 0;
+	戻る 0;
 }
 
 /*
@@ -658,14 +658,14 @@ format_identity(Identity *id)
 	char *fp = NULL, *ret = NULL;
 	const char *note = "";
 
-	if (id->key != NULL) {
+	もし (id->key != NULL) {
 		fp = sshkey_fingerprint(id->key, options.fingerprint_hash,
 		    SSH_FP_DEFAULT);
 	}
-	if (id->key) {
-		if ((id->key->flags & SSHKEY_FLAG_EXT) != 0)
+	もし (id->key) {
+		もし ((id->key->flags & SSHKEY_FLAG_EXT) != 0)
 			note = " token";
-		else if (sshkey_is_sk(id->key))
+		否则 もし (sshkey_is_sk(id->key))
 			note = " authenticator";
 	}
 	xasprintf(&ret, "%s %s%s%s%s%s%s",
@@ -675,45 +675,45 @@ format_identity(Identity *id)
 	    id->userprovided ? " explicit" : "", note,
 	    id->agent_fd != -1 ? " agent" : "");
 	free(fp);
-	return ret;
+	戻る ret;
 }
 
-static int
-input_userauth_pk_ok(int type, uint32_t seq, struct ssh *ssh)
+static 整数
+input_userauth_pk_ok(整数 type, uint32_t seq, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	struct sshkey *key = NULL;
 	struct sshbuf *keyblob = NULL;
 	Identity *id = NULL;
-	int pktype, found = 0, sent = 0;
+	整数 pktype, found = 0, sent = 0;
 	char *pkalg = NULL, *fp = NULL, *ident = NULL;
-	int r;
+	整数 r;
 
-	if (authctxt == NULL)
+	もし (authctxt == NULL)
 		fatal_f("no authentication context");
 
-	if ((r = sshpkt_get_cstring(ssh, &pkalg, NULL)) != 0 ||
+	もし ((r = sshpkt_get_cstring(ssh, &pkalg, NULL)) != 0 ||
 	    (r = sshpkt_getb_froms(ssh, &keyblob)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		goto done;
 
-	if (match_pattern_list(pkalg, options.pubkey_accepted_algos, 0) != 1) {
+	もし (match_pattern_list(pkalg, options.pubkey_accepted_algos, 0) != 1) {
 		error_f("server replied to PK_OK with signature type %s not "
 		    "in PubkeyAcceptedAlgorithms", pkalg);
 		r = SSH_ERR_SIGN_ALG_UNSUPPORTED;
 		goto done;
 	}
-	if ((pktype = sshkey_type_from_name(pkalg)) == KEY_UNSPEC) {
+	もし ((pktype = sshkey_type_from_name(pkalg)) == KEY_UNSPEC) {
 		debug_f("server sent unknown pkalg %s", pkalg);
 		r = SSH_ERR_INVALID_FORMAT;
 		goto done;
 	}
 	/* inner key type should match signature type */
-	if ((r = sshkey_fromb_allowlist(keyblob, &key, pkalg, NULL)) != 0) {
+	もし ((r = sshkey_fromb_allowlist(keyblob, &key, pkalg, NULL)) != 0) {
 		debug_r(r, "no key from blob. pkalg %s", pkalg);
 		goto done;
 	}
-	if (key->type != pktype) {
+	もし (key->type != pktype) {
 		error("input_userauth_pk_ok: type mismatch "
 		    "for decoded key (received %d, expected %d)",
 		    key->type, pktype);
@@ -727,12 +727,12 @@ input_userauth_pk_ok(int type, uint32_t seq, struct ssh *ssh)
 	 * duplicate keys
 	 */
 	TAILQ_FOREACH_REVERSE(id, &authctxt->keys, idlist, next) {
-		if (sshkey_equal(key, id->key)) {
+		もし (sshkey_equal(key, id->key)) {
 			found = 1;
 			break;
 		}
 	}
-	if (!found || id == NULL) {
+	もし (!found || id == NULL) {
 		fp = sshkey_fingerprint(key, options.fingerprint_hash,
 		    SSH_FP_DEFAULT);
 		error_f("server replied with unknown key: %s %s",
@@ -752,47 +752,47 @@ input_userauth_pk_ok(int type, uint32_t seq, struct ssh *ssh)
 	free(pkalg);
 
 	/* try another method if we did not send a packet */
-	if (r == 0 && sent == 0)
+	もし (r == 0 && sent == 0)
 		userauth(ssh, NULL);
-	return r;
+	戻る r;
 }
 
 #ifdef GSSAPI
-static int
+static 整数
 userauth_gssapi(struct ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 	Gssctxt *gssctxt = NULL;
 	OM_uint32 min;
-	int r, ok = 0;
+	整数 r, ok = 0;
 	gss_OID mech = NULL;
 
 	/* Try one GSSAPI method at a time, rather than sending them all at
 	 * once. */
 
-	if (authctxt->gss_supported_mechs == NULL)
+	もし (authctxt->gss_supported_mechs == NULL)
 		gss_indicate_mechs(&min, &authctxt->gss_supported_mechs);
 
 	/* Check to see whether the mechanism is usable before we offer it */
-	while (authctxt->mech_tried < authctxt->gss_supported_mechs->count &&
+	ながら (authctxt->mech_tried < authctxt->gss_supported_mechs->count &&
 	    !ok) {
 		mech = &authctxt->gss_supported_mechs->
 		    elements[authctxt->mech_tried];
 		/* My DER encoding requires length<128 */
-		if (mech->length < 128 && ssh_gssapi_check_mechanism(&gssctxt,
+		もし (mech->length < 128 && ssh_gssapi_check_mechanism(&gssctxt,
 		    mech, authctxt->host)) {
 			ok = 1; /* Mechanism works */
-		} else {
+		} 否则 {
 			authctxt->mech_tried++;
 		}
 	}
 
-	if (!ok || mech == NULL)
-		return 0;
+	もし (!ok || mech == NULL)
+		戻る 0;
 
 	authctxt->methoddata=(void *)gssctxt;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	もし ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
@@ -811,7 +811,7 @@ userauth_gssapi(struct ssh *ssh)
 
 	authctxt->mech_tried++; /* Move along to next candidate */
 
-	return 1;
+	戻る 1;
 }
 
 static void
@@ -833,17 +833,17 @@ process_gssapi_token(struct ssh *ssh, gss_buffer_t recv_tok)
 	gss_buffer_desc mic = GSS_C_EMPTY_BUFFER;
 	gss_buffer_desc gssbuf;
 	OM_uint32 status, ms, flags;
-	int r;
+	整数 r;
 
 	status = ssh_gssapi_init_ctx(gssctxt, options.gss_deleg_creds,
 	    recv_tok, &send_tok, &flags);
 
-	if (send_tok.length > 0) {
+	もし (send_tok.length > 0) {
 		u_char type = GSS_ERROR(status) ?
 		    SSH2_MSG_USERAUTH_GSSAPI_ERRTOK :
 		    SSH2_MSG_USERAUTH_GSSAPI_TOKEN;
 
-		if ((r = sshpkt_start(ssh, type)) != 0 ||
+		もし ((r = sshpkt_start(ssh, type)) != 0 ||
 		    (r = sshpkt_put_string(ssh, send_tok.value,
 		    send_tok.length)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
@@ -852,30 +852,30 @@ process_gssapi_token(struct ssh *ssh, gss_buffer_t recv_tok)
 		gss_release_buffer(&ms, &send_tok);
 	}
 
-	if (status == GSS_S_COMPLETE) {
+	もし (status == GSS_S_COMPLETE) {
 		/* send either complete or MIC, depending on mechanism */
-		if (!(flags & GSS_C_INTEG_FLAG)) {
-			if ((r = sshpkt_start(ssh,
+		もし (!(flags & GSS_C_INTEG_FLAG)) {
+			もし ((r = sshpkt_start(ssh,
 			    SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0)
 				fatal_fr(r, "send completion");
-		} else {
+		} 否则 {
 			struct sshbuf *b;
 
-			if ((b = sshbuf_new()) == NULL)
+			もし ((b = sshbuf_new()) == NULL)
 				fatal_f("sshbuf_new failed");
 			ssh_gssapi_buildmic(b, authctxt->server_user,
 			    authctxt->service, "gssapi-with-mic",
 			    ssh->kex->session_id);
 
-			if ((gssbuf.value = sshbuf_mutable_ptr(b)) == NULL)
+			もし ((gssbuf.value = sshbuf_mutable_ptr(b)) == NULL)
 				fatal_f("sshbuf_mutable_ptr failed");
 			gssbuf.length = sshbuf_len(b);
 
 			status = ssh_gssapi_sign(gssctxt, &gssbuf, &mic);
 
-			if (!GSS_ERROR(status)) {
-				if ((r = sshpkt_start(ssh,
+			もし (!GSS_ERROR(status)) {
+				もし ((r = sshpkt_start(ssh,
 				    SSH2_MSG_USERAUTH_GSSAPI_MIC)) != 0 ||
 				    (r = sshpkt_put_string(ssh, mic.value,
 				    mic.length)) != 0 ||
@@ -888,27 +888,27 @@ process_gssapi_token(struct ssh *ssh, gss_buffer_t recv_tok)
 		}
 	}
 
-	return status;
+	戻る status;
 }
 
-static int
-input_gssapi_response(int type, uint32_t plen, struct ssh *ssh)
+static 整数
+input_gssapi_response(整数 type, uint32_t plen, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt;
 	size_t oidlen;
 	u_char *oidv = NULL;
-	int r;
+	整数 r;
 
-	if (authctxt == NULL)
+	もし (authctxt == NULL)
 		fatal("input_gssapi_response: no authentication context");
 	gssctxt = authctxt->methoddata;
 
 	/* Setup our OID */
-	if ((r = sshpkt_get_string(ssh, &oidv, &oidlen)) != 0)
+	もし ((r = sshpkt_get_string(ssh, &oidv, &oidlen)) != 0)
 		goto done;
 
-	if (oidlen <= 2 ||
+	もし (oidlen <= 2 ||
 	    oidv[0] != SSH_GSS_OIDTYPE ||
 	    oidv[1] != oidlen - 2) {
 		debug("Badly encoded mechanism OID received");
@@ -916,13 +916,13 @@ input_gssapi_response(int type, uint32_t plen, struct ssh *ssh)
 		goto ok;
 	}
 
-	if (!ssh_gssapi_check_oid(gssctxt, oidv + 2, oidlen - 2))
+	もし (!ssh_gssapi_check_oid(gssctxt, oidv + 2, oidlen - 2))
 		fatal("Server returned different OID than expected");
 
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	もし ((r = sshpkt_get_end(ssh)) != 0)
 		goto done;
 
-	if (GSS_ERROR(process_gssapi_token(ssh, GSS_C_NO_BUFFER))) {
+	もし (GSS_ERROR(process_gssapi_token(ssh, GSS_C_NO_BUFFER))) {
 		/* Start again with next method on list */
 		debug("Trying to start again");
 		userauth(ssh, NULL);
@@ -932,23 +932,23 @@ input_gssapi_response(int type, uint32_t plen, struct ssh *ssh)
 	r = 0;
  done:
 	free(oidv);
-	return r;
+	戻る r;
 }
 
-static int
-input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
+static 整数
+input_gssapi_token(整数 type, uint32_t plen, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	gss_buffer_desc recv_tok;
 	u_char *p = NULL;
 	size_t len;
 	OM_uint32 status;
-	int r;
+	整数 r;
 
-	if (authctxt == NULL)
+	もし (authctxt == NULL)
 		fatal("input_gssapi_response: no authentication context");
 
-	if ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
+	もし ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		goto out;
 
@@ -957,18 +957,18 @@ input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
 	status = process_gssapi_token(ssh, &recv_tok);
 
 	/* Start again with the next method in the list */
-	if (GSS_ERROR(status)) {
+	もし (GSS_ERROR(status)) {
 		userauth(ssh, NULL);
 		/* ok */
 	}
 	r = 0;
  out:
 	free(p);
-	return r;
+	戻る r;
 }
 
-static int
-input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
+static 整数
+input_gssapi_errtok(整数 type, uint32_t plen, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt;
@@ -977,16 +977,16 @@ input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
 	OM_uint32 ms;
 	u_char *p = NULL;
 	size_t len;
-	int r;
+	整数 r;
 
-	if (authctxt == NULL)
+	もし (authctxt == NULL)
 		fatal("input_gssapi_response: no authentication context");
 	gssctxt = authctxt->methoddata;
 
-	if ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
+	もし ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0) {
 		free(p);
-		return r;
+		戻る r;
 	}
 
 	/* Stick it into GSSAPI and see what it says */
@@ -998,17 +998,17 @@ input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
 	gss_release_buffer(&ms, &send_tok);
 
 	/* Server will be returning a failed packet after this one */
-	return 0;
+	戻る 0;
 }
 
-static int
-input_gssapi_error(int type, uint32_t plen, struct ssh *ssh)
+static 整数
+input_gssapi_error(整数 type, uint32_t plen, struct ssh *ssh)
 {
 	char *msg = NULL;
 	char *lang = NULL;
-	int r;
+	整数 r;
 
-	if ((r = sshpkt_get_u32(ssh, NULL)) != 0 ||	/* maj */
+	もし ((r = sshpkt_get_u32(ssh, NULL)) != 0 ||	/* maj */
 	    (r = sshpkt_get_u32(ssh, NULL)) != 0 ||	/* min */
 	    (r = sshpkt_get_cstring(ssh, &msg, NULL)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0)
@@ -1018,44 +1018,44 @@ input_gssapi_error(int type, uint32_t plen, struct ssh *ssh)
  out:
 	free(msg);
 	free(lang);
-	return r;
+	戻る r;
 }
 #endif /* GSSAPI */
 
-static int
+static 整数
 userauth_none(struct ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	int r;
+	整数 r;
 
 	/* initial userauth request */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	もし ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
-	return 1;
+	戻る 1;
 }
 
-static int
+static 整数
 userauth_passwd(struct ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 	char *password, *prompt = NULL;
 	const char *host = options.host_key_alias ?  options.host_key_alias :
 	    authctxt->host;
-	int r;
+	整数 r;
 
-	if (authctxt->attempt_passwd++ >= options.number_of_password_prompts)
-		return 0;
+	もし (authctxt->attempt_passwd++ >= options.number_of_password_prompts)
+		戻る 0;
 
-	if (authctxt->attempt_passwd != 1)
+	もし (authctxt->attempt_passwd != 1)
 		error("Permission denied, please try again.");
 
 	xasprintf(&prompt, "%s@%s's password: ", authctxt->server_user, host);
 	password = read_passphrase(prompt, 0);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	もし ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
@@ -1066,43 +1066,43 @@ userauth_passwd(struct ssh *ssh)
 		fatal_fr(r, "send packet");
 
 	free(prompt);
-	if (password != NULL)
+	もし (password != NULL)
 		freezero(password, strlen(password));
 
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ,
 	    &input_userauth_passwd_changereq);
 
-	return 1;
+	戻る 1;
 }
 
 /*
  * parse PASSWD_CHANGEREQ, prompt user and send SSH2_MSG_USERAUTH_REQUEST
  */
-static int
-input_userauth_passwd_changereq(int type, uint32_t seqnr, struct ssh *ssh)
+static 整数
+input_userauth_passwd_changereq(整数 type, uint32_t seqnr, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	char *info = NULL, *lang = NULL, *password = NULL, *retype = NULL;
 	char prompt[256];
 	const char *host;
-	int r, addnl;
+	整数 r, addnl;
 	size_t len;
 
 	debug2("input_userauth_passwd_changereq");
 
-	if (authctxt == NULL)
+	もし (authctxt == NULL)
 		fatal("input_userauth_passwd_changereq: "
 		    "no authentication context");
 	host = options.host_key_alias ? options.host_key_alias : authctxt->host;
 
-	if ((r = sshpkt_get_cstring(ssh, &info, NULL)) != 0 ||
+	もし ((r = sshpkt_get_cstring(ssh, &info, NULL)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0)
 		goto out;
-	if ((len = strlen(info)) > 0) {
+	もし ((len = strlen(info)) > 0) {
 		addnl = info[len] != '\n';
 		fmprintf(stderr, "%s%s", info, addnl ? "\n" : "");
 	}
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	もし ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
@@ -1113,17 +1113,17 @@ input_userauth_passwd_changereq(int type, uint32_t seqnr, struct ssh *ssh)
 	    "Enter %.30s@%.128s's old password: ",
 	    authctxt->server_user, host);
 	password = read_passphrase(prompt, 0);
-	if ((r = sshpkt_put_cstring(ssh, password)) != 0)
+	もし ((r = sshpkt_put_cstring(ssh, password)) != 0)
 		goto out;
 
 	freezero(password, strlen(password));
 	password = NULL;
-	while (password == NULL) {
+	ながら (password == NULL) {
 		snprintf(prompt, sizeof(prompt),
 		    "Enter %.30s@%.128s's new password: ",
 		    authctxt->server_user, host);
 		password = read_passphrase(prompt, RP_ALLOW_EOF);
-		if (password == NULL) {
+		もし (password == NULL) {
 			/* bail out */
 			r = 0;
 			goto out;
@@ -1132,14 +1132,14 @@ input_userauth_passwd_changereq(int type, uint32_t seqnr, struct ssh *ssh)
 		    "Retype %.30s@%.128s's new password: ",
 		    authctxt->server_user, host);
 		retype = read_passphrase(prompt, 0);
-		if (strcmp(password, retype) != 0) {
+		もし (strcmp(password, retype) != 0) {
 			freezero(password, strlen(password));
 			logit("Mismatch; try again, EOF to quit.");
 			password = NULL;
 		}
 		freezero(retype, strlen(retype));
 	}
-	if ((r = sshpkt_put_cstring(ssh, password)) != 0 ||
+	もし ((r = sshpkt_put_cstring(ssh, password)) != 0 ||
 	    (r = sshpkt_add_padding(ssh, 64)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		goto out;
@@ -1148,11 +1148,11 @@ input_userauth_passwd_changereq(int type, uint32_t seqnr, struct ssh *ssh)
 	    &input_userauth_passwd_changereq);
 	r = 0;
  out:
-	if (password)
+	もし (password)
 		freezero(password, strlen(password));
 	free(info);
 	free(lang);
-	return r;
+	戻る r;
 }
 
 /*
@@ -1173,11 +1173,11 @@ key_sig_algorithm(struct ssh *ssh, const struct sshkey *key)
 	 * for RSA keys/certs and when the server advertises support for
 	 * newer (SHA2) algorithms.
 	 */
-	if (ssh == NULL || ssh->kex->server_sig_algs == NULL ||
+	もし (ssh == NULL || ssh->kex->server_sig_algs == NULL ||
 	    (key->type != KEY_RSA && key->type != KEY_RSA_CERT) ||
 	    (key->type == KEY_RSA_CERT && (ssh->compat & SSH_BUG_SIGTYPE))) {
 		/* Filter base key signature alg against our configuration */
-		return match_list(sshkey_ssh_name(key),
+		戻る match_list(sshkey_ssh_name(key),
 		    options.pubkey_accepted_algos, NULL);
 	}
 
@@ -1186,7 +1186,7 @@ key_sig_algorithm(struct ssh *ssh, const struct sshkey *key)
 	 * fails to advertise it via SSH2_MSG_EXT_INFO.
 	 */
 	server_sig_algs = ssh->kex->server_sig_algs;
-	if (key->type == KEY_RSA && (ssh->compat & SSH_BUG_SIGTYPE74))
+	もし (key->type == KEY_RSA && (ssh->compat & SSH_BUG_SIGTYPE74))
 		server_sig_algs = "rsa-sha2-256,rsa-sha2-512";
 
 	/*
@@ -1196,27 +1196,27 @@ key_sig_algorithm(struct ssh *ssh, const struct sshkey *key)
 	 * the server.
 	 */
 	oallowed = allowed = xstrdup(options.pubkey_accepted_algos);
-	while ((cp = strsep(&allowed, ",")) != NULL) {
-		if (sshkey_type_from_name(cp) != key->type)
+	ながら ((cp = strsep(&allowed, ",")) != NULL) {
+		もし (sshkey_type_from_name(cp) != key->type)
 			continue;
 		tmp = match_list(sshkey_sigalg_by_name(cp),
 		    server_sig_algs, NULL);
-		if (tmp != NULL)
+		もし (tmp != NULL)
 			alg = xstrdup(cp);
 		free(tmp);
-		if (alg != NULL)
+		もし (alg != NULL)
 			break;
 	}
 	free(oallowed);
-	return alg;
+	戻る alg;
 }
 
-static int
+static 整数
 identity_sign(struct identity *id, u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen, u_int compat, const char *alg)
 {
 	struct sshkey *sign_key = NULL, *prv = NULL;
-	int is_agent = 0, retried = 0, r = SSH_ERR_INTERNAL_ERROR;
+	整数 is_agent = 0, retried = 0, r = SSH_ERR_INTERNAL_ERROR;
 	struct notifier_ctx *notifier = NULL;
 	char *fp = NULL, *pin = NULL, *prompt = NULL;
 
@@ -1224,8 +1224,8 @@ identity_sign(struct identity *id, u_char **sigp, size_t *lenp,
 	*lenp = 0;
 
 	/* The agent supports this key. */
-	if (id->key != NULL && id->agent_fd != -1) {
-		return ssh_agent_sign(id->agent_fd, id->key, sigp, lenp,
+	もし (id->key != NULL && id->agent_fd != -1) {
+		戻る ssh_agent_sign(id->agent_fd, id->key, sigp, lenp,
 		    data, datalen, alg, compat);
 	}
 
@@ -1233,15 +1233,15 @@ identity_sign(struct identity *id, u_char **sigp, size_t *lenp,
 	 * We have already loaded the private key or the private key is
 	 * stored in external hardware.
 	 */
-	if (id->key != NULL &&
+	もし (id->key != NULL &&
 	    (id->isprivate || (id->key->flags & SSHKEY_FLAG_EXT))) {
 		sign_key = id->key;
 		is_agent = 1;
-	} else {
+	} 否则 {
 		/* Load the private key from the file. */
-		if ((prv = load_identity_file(id)) == NULL)
-			return SSH_ERR_KEY_NOT_FOUND;
-		if (id->key != NULL && !sshkey_equal_public(prv, id->key)) {
+		もし ((prv = load_identity_file(id)) == NULL)
+			戻る SSH_ERR_KEY_NOT_FOUND;
+		もし (id->key != NULL && !sshkey_equal_public(prv, id->key)) {
 			error_f("private key %s contents do not match public",
 			    id->filename);
 			r = SSH_ERR_KEY_NOT_FOUND;
@@ -1251,10 +1251,10 @@ identity_sign(struct identity *id, u_char **sigp, size_t *lenp,
 	}
  retry_pin:
 	/* Prompt for touch for non-agent FIDO keys that request UP */
-	if (!is_agent && sshkey_is_sk(sign_key) &&
+	もし (!is_agent && sshkey_is_sk(sign_key) &&
 	    (sign_key->sk_flags & SSH_SK_USER_PRESENCE_REQD)) {
 		/* XXX should batch mode just skip these? */
-		if ((fp = sshkey_fingerprint(sign_key,
+		もし ((fp = sshkey_fingerprint(sign_key,
 		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 			fatal_f("fingerprint failed");
 		notifier = notify_start(options.batch_mode,
@@ -1262,10 +1262,10 @@ identity_sign(struct identity *id, u_char **sigp, size_t *lenp,
 		    sshkey_type(sign_key), fp);
 		free(fp);
 	}
-	if ((r = sshkey_sign(sign_key, sigp, lenp, data, datalen,
+	もし ((r = sshkey_sign(sign_key, sigp, lenp, data, datalen,
 	    alg, options.sk_provider, pin, compat)) != 0) {
 		debug_fr(r, "sshkey_sign");
-		if (!retried && pin == NULL && !is_agent &&
+		もし (!retried && pin == NULL && !is_agent &&
 		    sshkey_is_sk(sign_key) &&
 		    r == SSH_ERR_KEY_WRONG_PASSPHRASE) {
 			notify_complete(notifier, NULL);
@@ -1283,7 +1283,7 @@ identity_sign(struct identity *id, u_char **sigp, size_t *lenp,
 	 * PKCS#11 tokens may not support all signature algorithms,
 	 * so check what we get back.
 	 */
-	if (id->key != NULL && (id->key->flags & SSHKEY_FLAG_EXT) != 0 &&
+	もし (id->key != NULL && (id->key->flags & SSHKEY_FLAG_EXT) != 0 &&
 	    (r = sshkey_check_sigtype(*sigp, *lenp, alg)) != 0) {
 		debug_fr(r, "sshkey_check_sigtype");
 		goto out;
@@ -1292,33 +1292,33 @@ identity_sign(struct identity *id, u_char **sigp, size_t *lenp,
 	r = 0;
  out:
 	free(prompt);
-	if (pin != NULL)
+	もし (pin != NULL)
 		freezero(pin, strlen(pin));
 	notify_complete(notifier, r == 0 ? "User presence confirmed" : NULL);
 	sshkey_free(prv);
-	return r;
+	戻る r;
 }
 
-static int
+static 整数
 id_filename_matches(Identity *id, Identity *private_id)
 {
 	static const char * const suffixes[] = { ".pub", "-cert.pub", NULL };
 	size_t len = strlen(id->filename), plen = strlen(private_id->filename);
 	size_t i, slen;
 
-	if (strcmp(id->filename, private_id->filename) == 0)
-		return 1;
-	for (i = 0; suffixes[i]; i++) {
+	もし (strcmp(id->filename, private_id->filename) == 0)
+		戻る 1;
+	ために (i = 0; suffixes[i]; i++) {
 		slen = strlen(suffixes[i]);
-		if (len > slen && plen == len - slen &&
+		もし (len > slen && plen == len - slen &&
 		    strcmp(id->filename + (len - slen), suffixes[i]) == 0 &&
 		    memcmp(id->filename, private_id->filename, plen) == 0)
-			return 1;
+			戻る 1;
 	}
-	return 0;
+	戻る 0;
 }
 
-static int
+static 整数
 sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
@@ -1326,21 +1326,21 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 	Identity *private_id, *sign_id = NULL;
 	u_char *signature = NULL;
 	size_t slen = 0, skip = 0;
-	int r, fallback_sigtype, sent = 0;
+	整数 r, fallback_sigtype, sent = 0;
 	char *alg = NULL, *fp = NULL;
 	const char *loc = "", *method = "publickey";
-	int hostbound = 0;
+	整数 hostbound = 0;
 
 	/* prefer host-bound pubkey signatures if supported by server */
-	if ((ssh->kex->flags & KEX_HAS_PUBKEY_HOSTBOUND) != 0 &&
+	もし ((ssh->kex->flags & KEX_HAS_PUBKEY_HOSTBOUND) != 0 &&
 	    (options.pubkey_authentication & SSH_PUBKEY_AUTH_HBOUND) != 0) {
 		hostbound = 1;
 		method = "publickey-hostbound-v00@openssh.com";
 	}
 
-	if ((fp = sshkey_fingerprint(id->key, options.fingerprint_hash,
+	もし ((fp = sshkey_fingerprint(id->key, options.fingerprint_hash,
 	    SSH_FP_DEFAULT)) == NULL)
-		return 0;
+		戻る 0;
 
 	debug3_f("using %s with %s %s", method, sshkey_type(id->key), fp);
 
@@ -1352,9 +1352,9 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 	 * This will try to set sign_id to the private key that will perform
 	 * the signature.
 	 */
-	if (id->agent_fd == -1 && sshkey_is_cert(id->key)) {
+	もし (id->agent_fd == -1 && sshkey_is_cert(id->key)) {
 		TAILQ_FOREACH(private_id, &authctxt->keys, next) {
-			if (sshkey_equal_public(id->key, private_id->key) &&
+			もし (sshkey_equal_public(id->key, private_id->key) &&
 			    id->key->type != private_id->key->type) {
 				sign_id = private_id;
 				break;
@@ -1367,22 +1367,22 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 		 * of keeping just a private key file and public
 		 * certificate on disk.
 		 */
-		if (sign_id == NULL &&
+		もし (sign_id == NULL &&
 		    !id->isprivate && id->agent_fd == -1 &&
 		    (id->key->flags & SSHKEY_FLAG_EXT) == 0) {
 			TAILQ_FOREACH(private_id, &authctxt->keys, next) {
-				if (private_id->key == NULL &&
+				もし (private_id->key == NULL &&
 				    id_filename_matches(id, private_id)) {
 					sign_id = private_id;
 					break;
 				}
 			}
 		}
-		if (sign_id != NULL) {
+		もし (sign_id != NULL) {
 			debug2_f("using private key \"%s\"%s for "
 			    "certificate", sign_id->filename,
 			    sign_id->agent_fd != -1 ? " from agent" : "");
-		} else {
+		} 否则 {
 			debug_f("no separate private key for certificate "
 			    "\"%s\"", id->filename);
 		}
@@ -1392,15 +1392,15 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 	 * If the above didn't select another identity to do the signing
 	 * then default to the one we started with.
 	 */
-	if (sign_id == NULL)
+	もし (sign_id == NULL)
 		sign_id = id;
 
 	/* assemble and sign data */
-	for (fallback_sigtype = 0; fallback_sigtype <= 1; fallback_sigtype++) {
+	ために (fallback_sigtype = 0; fallback_sigtype <= 1; fallback_sigtype++) {
 		free(alg);
 		slen = 0;
 		signature = NULL;
-		if ((alg = key_sig_algorithm(fallback_sigtype ? NULL : ssh,
+		もし ((alg = key_sig_algorithm(fallback_sigtype ? NULL : ssh,
 		    id->key)) == NULL) {
 			error_f("no mutual signature supported");
 			goto out;
@@ -1408,13 +1408,13 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 		debug3_f("signing using %s %s", alg, fp);
 
 		sshbuf_free(b);
-		if ((b = sshbuf_new()) == NULL)
+		もし ((b = sshbuf_new()) == NULL)
 			fatal_f("sshbuf_new failed");
-		if ((r = sshbuf_put_stringb(b,
+		もし ((r = sshbuf_put_stringb(b,
 		    ssh->kex->session_id)) != 0)
 			fatal_fr(r, "sshbuf_put_stringb");
 		skip = sshbuf_len(b);
-		if ((r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+		もし ((r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
 		    (r = sshbuf_put_cstring(b, authctxt->server_user)) != 0 ||
 		    (r = sshbuf_put_cstring(b, authctxt->service)) != 0 ||
 		    (r = sshbuf_put_cstring(b, method)) != 0 ||
@@ -1423,26 +1423,26 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 		    (r = sshkey_puts(id->key, b)) != 0) {
 			fatal_fr(r, "assemble signed data");
 		}
-		if (hostbound) {
-			if (ssh->kex->initial_hostkey == NULL) {
+		もし (hostbound) {
+			もし (ssh->kex->initial_hostkey == NULL) {
 				fatal_f("internal error: initial hostkey "
 				    "not recorded");
 			}
-			if ((r = sshkey_puts(ssh->kex->initial_hostkey, b)) != 0)
+			もし ((r = sshkey_puts(ssh->kex->initial_hostkey, b)) != 0)
 				fatal_fr(r, "assemble %s hostkey", method);
 		}
 		/* generate signature */
 		r = identity_sign(sign_id, &signature, &slen,
 		    sshbuf_ptr(b), sshbuf_len(b), ssh->compat, alg);
-		if (r == 0)
+		もし (r == 0)
 			break;
-		else if (r == SSH_ERR_KEY_NOT_FOUND)
+		否则 もし (r == SSH_ERR_KEY_NOT_FOUND)
 			goto out; /* soft failure */
-		else if (r == SSH_ERR_SIGN_ALG_UNSUPPORTED &&
+		否则 もし (r == SSH_ERR_SIGN_ALG_UNSUPPORTED &&
 		    !fallback_sigtype) {
-			if (sign_id->agent_fd != -1)
+			もし (sign_id->agent_fd != -1)
 				loc = "agent ";
-			else if (sign_id->key != NULL &&
+			否则 もし (sign_id->key != NULL &&
 			    (sign_id->key->flags & SSHKEY_FLAG_EXT) != 0)
 				loc = "token ";
 			logit("%skey %s %s returned incorrect signature type",
@@ -1454,22 +1454,22 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 		    id->agent_fd != -1 ? " from agent" : "");
 		goto out;
 	}
-	if (slen == 0 || signature == NULL) /* shouldn't happen */
+	もし (slen == 0 || signature == NULL) /* shouldn't happen */
 		fatal_f("no signature");
 
 	/* append signature */
-	if ((r = sshbuf_put_string(b, signature, slen)) != 0)
+	もし ((r = sshbuf_put_string(b, signature, slen)) != 0)
 		fatal_fr(r, "append signature");
 
 #ifdef DEBUG_PK
 	sshbuf_dump(b, stderr);
 #endif
 	/* skip session id and packet type */
-	if ((r = sshbuf_consume(b, skip + 1)) != 0)
+	もし ((r = sshbuf_consume(b, skip + 1)) != 0)
 		fatal_fr(r, "consume");
 
 	/* put remaining data from buffer into packet */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	もし ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_putb(ssh, b)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "enqueue request");
@@ -1482,10 +1482,10 @@ sign_and_send_pubkey(struct ssh *ssh, Identity *id)
 	free(alg);
 	sshbuf_free(b);
 	freezero(signature, slen);
-	return sent;
+	戻る sent;
 }
 
-static int
+static 整数
 send_pubkey_test(struct ssh *ssh, Identity *id)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
@@ -1493,14 +1493,14 @@ send_pubkey_test(struct ssh *ssh, Identity *id)
 	char *alg = NULL;
 	size_t bloblen;
 	u_int have_sig = 0;
-	int sent = 0, r;
+	整数 sent = 0, r;
 
-	if ((alg = key_sig_algorithm(ssh, id->key)) == NULL) {
+	もし ((alg = key_sig_algorithm(ssh, id->key)) == NULL) {
 		debug_f("no mutual signature algorithm");
 		goto out;
 	}
 
-	if ((r = sshkey_to_blob(id->key, &blob, &bloblen)) != 0) {
+	もし ((r = sshkey_to_blob(id->key, &blob, &bloblen)) != 0) {
 		/* we cannot handle this key */
 		debug3_f("cannot handle key");
 		goto out;
@@ -1508,7 +1508,7 @@ send_pubkey_test(struct ssh *ssh, Identity *id)
 	/* register callback for USERAUTH_PK_OK message */
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PK_OK, &input_userauth_pk_ok);
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	もし ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
@@ -1522,7 +1522,7 @@ send_pubkey_test(struct ssh *ssh, Identity *id)
  out:
 	free(alg);
 	free(blob);
-	return sent;
+	戻る sent;
 }
 
 static struct sshkey *
@@ -1530,23 +1530,23 @@ load_identity_file(Identity *id)
 {
 	struct sshkey *private = NULL;
 	char prompt[300], *passphrase, *comment;
-	int r, quit = 0, i;
+	整数 r, quit = 0, i;
 	struct stat st;
 
-	if (stat(id->filename, &st) == -1) {
+	もし (stat(id->filename, &st) == -1) {
 		do_log2(id->userprovided ?
 		    SYSLOG_LEVEL_INFO : SYSLOG_LEVEL_DEBUG3,
 		    "no such identity: %s: %s", id->filename, strerror(errno));
-		return NULL;
+		戻る NULL;
 	}
 	snprintf(prompt, sizeof prompt,
 	    "Enter passphrase for key '%.100s': ", id->filename);
-	for (i = 0; i <= options.number_of_password_prompts; i++) {
-		if (i == 0)
+	ために (i = 0; i <= options.number_of_password_prompts; i++) {
+		もし (i == 0)
 			passphrase = "";
-		else {
+		否则 {
 			passphrase = read_passphrase(prompt, 0);
-			if (*passphrase == '\0') {
+			もし (*passphrase == '\0') {
 				debug2("no passphrase given, try next key");
 				free(passphrase);
 				break;
@@ -1557,15 +1557,15 @@ load_identity_file(Identity *id)
 		case 0:
 			break;
 		case SSH_ERR_KEY_WRONG_PASSPHRASE:
-			if (options.batch_mode) {
+			もし (options.batch_mode) {
 				quit = 1;
 				break;
 			}
-			if (i != 0)
+			もし (i != 0)
 				debug2("bad passphrase given, try again...");
 			break;
 		case SSH_ERR_SYSTEM_ERROR:
-			if (errno == ENOENT) {
+			もし (errno == ENOENT) {
 				debug2_r(r, "Load key \"%s\"", id->filename);
 				quit = 1;
 				break;
@@ -1576,7 +1576,7 @@ load_identity_file(Identity *id)
 			quit = 1;
 			break;
 		}
-		if (private != NULL && sshkey_is_sk(private) &&
+		もし (private != NULL && sshkey_is_sk(private) &&
 		    options.sk_provider == NULL) {
 			debug("key \"%s\" is an authenticator-hosted key, "
 			    "but no provider specified", id->filename);
@@ -1584,113 +1584,113 @@ load_identity_file(Identity *id)
 			private = NULL;
 			quit = 1;
 		}
-		if (!quit && (r = sshkey_check_rsa_length(private,
+		もし (!quit && (r = sshkey_check_rsa_length(private,
 		    options.required_rsa_size)) != 0) {
 			debug_fr(r, "Skipping key %s", id->filename);
 			sshkey_free(private);
 			private = NULL;
 			quit = 1;
 		}
-		if (!quit && private != NULL && id->agent_fd == -1 &&
+		もし (!quit && private != NULL && id->agent_fd == -1 &&
 		    !(id->key && id->isprivate))
 			maybe_add_key_to_agent(id->filename, private, comment,
 			    passphrase);
-		if (i > 0)
+		もし (i > 0)
 			freezero(passphrase, strlen(passphrase));
 		free(comment);
-		if (private != NULL || quit)
+		もし (private != NULL || quit)
 			break;
 	}
-	return private;
+	戻る private;
 }
 
-static int
+static 整数
 key_type_allowed(struct sshkey *key, const char *allowlist)
 {
-	if (match_pattern_list(sshkey_ssh_name(key), allowlist, 0) == 1)
-		return 1;
+	もし (match_pattern_list(sshkey_ssh_name(key), allowlist, 0) == 1)
+		戻る 1;
 
 	/* RSA keys/certs might be allowed by alternate signature types */
 	switch (key->type) {
 	case KEY_RSA:
-		if (match_pattern_list("rsa-sha2-512", allowlist, 0) == 1)
-			return 1;
-		if (match_pattern_list("rsa-sha2-256", allowlist, 0) == 1)
-			return 1;
+		もし (match_pattern_list("rsa-sha2-512", allowlist, 0) == 1)
+			戻る 1;
+		もし (match_pattern_list("rsa-sha2-256", allowlist, 0) == 1)
+			戻る 1;
 		break;
 	case KEY_RSA_CERT:
-		if (match_pattern_list("rsa-sha2-512-cert-v01@openssh.com",
+		もし (match_pattern_list("rsa-sha2-512-cert-v01@openssh.com",
 		    allowlist, 0) == 1)
-			return 1;
-		if (match_pattern_list("rsa-sha2-256-cert-v01@openssh.com",
+			戻る 1;
+		もし (match_pattern_list("rsa-sha2-256-cert-v01@openssh.com",
 		    allowlist, 0) == 1)
-			return 1;
+			戻る 1;
 		break;
 	}
-	return 0;
+	戻る 0;
 }
 
-static int
+static 整数
 key_type_allowed_by_config(struct sshkey *key)
 {
-	return key_type_allowed(key, options.pubkey_accepted_algos);
+	戻る key_type_allowed(key, options.pubkey_accepted_algos);
 }
 
 /* obtain a list of keys from the agent */
-static int
-get_agent_identities(struct ssh *ssh, int *agent_fdp,
+static 整数
+get_agent_identities(struct ssh *ssh, 整数 *agent_fdp,
     struct ssh_identitylist **idlistp)
 {
-	int r, agent_fd;
+	整数 r, agent_fd;
 	struct ssh_identitylist *idlist;
 
-	if ((r = ssh_get_authentication_socket(&agent_fd)) != 0) {
-		if (r != SSH_ERR_AGENT_NOT_PRESENT)
+	もし ((r = ssh_get_authentication_socket(&agent_fd)) != 0) {
+		もし (r != SSH_ERR_AGENT_NOT_PRESENT)
 			debug_fr(r, "ssh_get_authentication_socket");
-		return r;
+		戻る r;
 	}
-	if (ssh != NULL && ssh->kex != NULL) {
-		if ((r = ssh_agent_bind_hostkey(agent_fd, ssh->kex->initial_hostkey,
+	もし (ssh != NULL && ssh->kex != NULL) {
+		もし ((r = ssh_agent_bind_hostkey(agent_fd, ssh->kex->initial_hostkey,
 		    ssh->kex->session_id, ssh->kex->initial_sig, 0)) == 0)
 			debug_f("bound agent to hostkey");
-		else
+		否则
 			debug2_fr(r, "ssh_agent_bind_hostkey");
 	}
 
-	if ((r = ssh_fetch_identitylist(agent_fd, &idlist)) != 0) {
+	もし ((r = ssh_fetch_identitylist(agent_fd, &idlist)) != 0) {
 		debug_fr(r, "ssh_fetch_identitylist");
 		close(agent_fd);
-		return r;
+		戻る r;
 	}
 	/* success */
 	*agent_fdp = agent_fd;
 	*idlistp = idlist;
 	debug_f("agent returned %zu keys", idlist->nkeys);
-	return 0;
+	戻る 0;
 }
 
 /*
  * Returns nonzero if the certificate extensions/critical-options section
  * has the specified option present, zero otherwise.
  */
-static int
+static 整数
 cert_has_option(struct sshbuf *oblob, const char *target)
 {
 	struct sshbuf *c = NULL, *data = NULL;
 	char *name = NULL;
-	int r, found = 0;
+	整数 r, found = 0;
 
-	if (oblob == NULL || (c = sshbuf_fromb(oblob)) == NULL)
-		return 0;
-	while (sshbuf_len(c) > 0) {
+	もし (oblob == NULL || (c = sshbuf_fromb(oblob)) == NULL)
+		戻る 0;
+	ながら (sshbuf_len(c) > 0) {
 		sshbuf_free(data);
 		data = NULL;
 		free(name);
 		name = NULL;
-		if ((r = sshbuf_get_cstring(c, &name, NULL)) != 0 ||
+		もし ((r = sshbuf_get_cstring(c, &name, NULL)) != 0 ||
 		    (r = sshbuf_froms(c, &data)) != 0)
 			break;
-		if (strcmp(name, target) == 0) {
+		もし (strcmp(name, target) == 0) {
 			found = 1;
 			break;
 		}
@@ -1698,7 +1698,7 @@ cert_has_option(struct sshbuf *oblob, const char *target)
 	sshbuf_free(data);
 	free(name);
 	sshbuf_free(c);
-	return found;
+	戻る found;
 }
 
 /*
@@ -1706,20 +1706,20 @@ cert_has_option(struct sshbuf *oblob, const char *target)
  * within its group. Lower numbers are higher priority.
  */
 #define MAX_ID_PRIORITY 3
-static int
+static 整数
 identity_prioritise(struct identity *id)
 {
-	if (id == NULL || id->key == NULL)
-		return 3;
-	if (!sshkey_is_cert(id->key) || id->key->cert == NULL)
-		return 3;
-	if (sshkey_is_sk(id->key) &&
+	もし (id == NULL || id->key == NULL)
+		戻る 3;
+	もし (!sshkey_is_cert(id->key) || id->key->cert == NULL)
+		戻る 3;
+	もし (sshkey_is_sk(id->key) &&
 	    cert_has_option(id->key->cert->critical, "verify-required"))
-		return 2;
-	if (sshkey_is_sk(id->key) &&
+		戻る 2;
+	もし (sshkey_is_sk(id->key) &&
 	    cert_has_option(id->key->cert->extensions, "no-touch-required"))
-		return 0;
-	return 1;
+		戻る 0;
+	戻る 1;
 }
 
 static void
@@ -1727,29 +1727,29 @@ order_identities_by_prio(struct idlist *list)
 {
 	struct idlist prio[MAX_ID_PRIORITY + 1], sorted;
 	struct identity *id, *tmp, *dummy;
-	int p;
+	整数 p;
 
-	for (p = 0; p <= MAX_ID_PRIORITY; p++)
+	ために (p = 0; p <= MAX_ID_PRIORITY; p++)
 		TAILQ_INIT(&prio[p]);
 	TAILQ_INIT(&sorted);
 
 	TAILQ_FOREACH_SAFE(id, list, next, tmp) {
-		if (id->userprovided)
+		もし (id->userprovided)
 			continue;
 		dummy = xcalloc(1, sizeof(*dummy));
 		dummy->userprovided = -1;
 		TAILQ_INSERT_BEFORE(id, dummy, next);
 		TAILQ_REMOVE(list, id, next);
 		p = identity_prioritise(id);
-		if (p < 0 || p > MAX_ID_PRIORITY)
+		もし (p < 0 || p > MAX_ID_PRIORITY)
 			fatal_f("internal error: bad priority");
 		TAILQ_INSERT_TAIL(&prio[p], id, next);
 	}
-	for (p = 0; p <= MAX_ID_PRIORITY; p++)
+	ために (p = 0; p <= MAX_ID_PRIORITY; p++)
 		TAILQ_CONCAT(&sorted, &prio[p], next);
 
 	TAILQ_FOREACH_SAFE(id, list, next, tmp) {
-		if (id->userprovided != -1)
+		もし (id->userprovided != -1)
 			continue;
 		struct identity *s = TAILQ_FIRST(&sorted);
 		TAILQ_REMOVE(&sorted, s, next);
@@ -1773,7 +1773,7 @@ pubkey_prepare(struct ssh *ssh, Authctxt *authctxt)
 	struct identity *id, *id2, *tmp;
 	struct idlist agent, files, certs, agent_keys, *preferred;
 	struct sshkey *key;
-	int disallowed, agent_fd = -1, i, r, found;
+	整数 disallowed, agent_fd = -1, i, r, found;
 	size_t j;
 	struct ssh_identitylist *idlist;
 	char *cp, *ident;
@@ -1786,15 +1786,15 @@ pubkey_prepare(struct ssh *ssh, Authctxt *authctxt)
 	TAILQ_INIT(preferred);	/* preferred order of keys */
 
 	/* list of keys stored in the filesystem and PKCS#11 */
-	for (i = 0; i < options.num_identity_files; i++) {
+	ために (i = 0; i < options.num_identity_files; i++) {
 		key = options.identity_keys[i];
-		if (key && key->cert &&
+		もし (key && key->cert &&
 		    key->cert->type != SSH2_CERT_TYPE_USER) {
 			debug_f("ignoring certificate %s: not a user "
 			    "certificate", options.identity_files[i]);
 			continue;
 		}
-		if (key && sshkey_is_sk(key) && options.sk_provider == NULL) {
+		もし (key && sshkey_is_sk(key) && options.sk_provider == NULL) {
 			debug_f("ignoring authenticator-hosted key %s as no "
 			    "SecurityKeyProvider has been specified",
 			    options.identity_files[i]);
@@ -1810,15 +1810,15 @@ pubkey_prepare(struct ssh *ssh, Authctxt *authctxt)
 	}
 
 	/* list of certificates specified by user */
-	for (i = 0; i < options.num_certificate_files; i++) {
+	ために (i = 0; i < options.num_certificate_files; i++) {
 		key = options.certificates[i];
-		if (!sshkey_is_cert(key) || key->cert == NULL ||
+		もし (!sshkey_is_cert(key) || key->cert == NULL ||
 		    key->cert->type != SSH2_CERT_TYPE_USER) {
 			debug_f("ignoring certificate %s: not a user "
 			    "certificate", options.identity_files[i]);
 			continue;
 		}
-		if (key && sshkey_is_sk(key) && options.sk_provider == NULL) {
+		もし (key && sshkey_is_sk(key) && options.sk_provider == NULL) {
 			debug_f("ignoring authenticator-hosted key "
 			    "certificate %s as no "
 			    "SecurityKeyProvider has been specified",
@@ -1836,9 +1836,9 @@ pubkey_prepare(struct ssh *ssh, Authctxt *authctxt)
 	TAILQ_CONCAT(preferred, &certs, next);
 
 	/* list of keys supported by the agent */
-	if ((r = get_agent_identities(ssh, &agent_fd, &idlist)) == 0) {
-		for (j = 0; j < idlist->nkeys; j++) {
-			if ((r = sshkey_check_rsa_length(idlist->keys[j],
+	もし ((r = get_agent_identities(ssh, &agent_fd, &idlist)) == 0) {
+		ために (j = 0; j < idlist->nkeys; j++) {
+			もし ((r = sshkey_check_rsa_length(idlist->keys[j],
 			    options.required_rsa_size)) != 0) {
 				debug_fr(r, "ignoring %s agent key",
 				    sshkey_ssh_name(idlist->keys[j]));
@@ -1850,7 +1850,7 @@ pubkey_prepare(struct ssh *ssh, Authctxt *authctxt)
 				 * agent keys from the config file are
 				 * preferred
 				 */
-				if (sshkey_equal(idlist->keys[j], id->key)) {
+				もし (sshkey_equal(idlist->keys[j], id->key)) {
 					TAILQ_REMOVE(&files, id, next);
 					TAILQ_INSERT_TAIL(&agent_keys, id, next);
 					id->agent_fd = agent_fd;
@@ -1858,7 +1858,7 @@ pubkey_prepare(struct ssh *ssh, Authctxt *authctxt)
 					break;
 				}
 			}
-			if (!found && !options.identities_only) {
+			もし (!found && !options.identities_only) {
 				id = xcalloc(1, sizeof(*id));
 				/* XXX "steals" key/comment from idlist */
 				id->key = idlist->keys[j];
@@ -1878,14 +1878,14 @@ pubkey_prepare(struct ssh *ssh, Authctxt *authctxt)
 	}
 	/* Prefer PKCS11 keys that are explicitly listed */
 	TAILQ_FOREACH_SAFE(id, &files, next, tmp) {
-		if (id->key == NULL || (id->key->flags & SSHKEY_FLAG_EXT) == 0)
+		もし (id->key == NULL || (id->key->flags & SSHKEY_FLAG_EXT) == 0)
 			continue;
 		found = 0;
 		TAILQ_FOREACH(id2, &files, next) {
-			if (id2->key == NULL ||
+			もし (id2->key == NULL ||
 			    (id2->key->flags & SSHKEY_FLAG_EXT) != 0)
 				continue;
-			if (sshkey_equal(id->key, id2->key)) {
+			もし (sshkey_equal(id->key, id2->key)) {
 				TAILQ_REMOVE(&files, id, next);
 				TAILQ_INSERT_TAIL(preferred, id, next);
 				found = 1;
@@ -1893,7 +1893,7 @@ pubkey_prepare(struct ssh *ssh, Authctxt *authctxt)
 			}
 		}
 		/* If IdentitiesOnly set and key not found then don't use it */
-		if (!found && options.identities_only) {
+		もし (!found && options.identities_only) {
 			TAILQ_REMOVE(&files, id, next);
 			freezero(id, sizeof(*id));
 		}
@@ -1905,14 +1905,14 @@ pubkey_prepare(struct ssh *ssh, Authctxt *authctxt)
 	TAILQ_FOREACH_SAFE(id, preferred, next, id2) {
 		disallowed = 0;
 		cp = NULL;
-		if (id->key == NULL)
+		もし (id->key == NULL)
 			continue;
-		if (!key_type_allowed_by_config(id->key)) {
+		もし (!key_type_allowed_by_config(id->key)) {
 			debug("Skipping %s key %s - corresponding algorithm "
 			    "not in PubkeyAcceptedAlgorithms",
 			    sshkey_ssh_name(id->key), id->filename);
 			disallowed = 1;
-		} else if (ssh != NULL && ssh->kex != NULL &&
+		} 否则 もし (ssh != NULL && ssh->kex != NULL &&
 		    ssh->kex->server_sig_algs != NULL &&
 		    (cp = key_sig_algorithm(ssh, id->key)) == NULL) {
 			debug("Skipping %s key %s - corresponding algorithm "
@@ -1921,7 +1921,7 @@ pubkey_prepare(struct ssh *ssh, Authctxt *authctxt)
 			disallowed = 1;
 		}
 		free(cp);
-		if (!disallowed)
+		もし (!disallowed)
 			continue;
 		/* remove key */
 		TAILQ_REMOVE(preferred, id, next);
@@ -1944,11 +1944,11 @@ pubkey_cleanup(struct ssh *ssh)
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 	Identity *id;
 
-	if (authctxt->agent_fd != -1) {
+	もし (authctxt->agent_fd != -1) {
 		ssh_close_authentication_socket(authctxt->agent_fd);
 		authctxt->agent_fd = -1;
 	}
-	for (id = TAILQ_FIRST(&authctxt->keys); id;
+	ために (id = TAILQ_FIRST(&authctxt->keys); id;
 	    id = TAILQ_FIRST(&authctxt->keys)) {
 		TAILQ_REMOVE(&authctxt->keys, id, next);
 		sshkey_free(id->key);
@@ -1987,23 +1987,23 @@ pubkey_reset(Authctxt *authctxt)
 		id->tried = 0;
 }
 
-static int
+static 整数
 userauth_pubkey(struct ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 	Identity *id;
-	int sent = 0;
+	整数 sent = 0;
 	char *ident;
-	static int prepared;
+	static 整数 prepared;
 
-	if (!prepared) {
+	もし (!prepared) {
 		pubkey_prepare(ssh, authctxt);
 		prepared = 1;
 	}
 
-	while ((id = TAILQ_FIRST(&authctxt->keys))) {
-		if (id->tried++)
-			return (0);
+	ながら ((id = TAILQ_FIRST(&authctxt->keys))) {
+		もし (id->tried++)
+			戻る (0);
 		/* move key to the end of the queue */
 		TAILQ_REMOVE(&authctxt->keys, id, next);
 		TAILQ_INSERT_TAIL(&authctxt->keys, id, next);
@@ -2012,15 +2012,15 @@ userauth_pubkey(struct ssh *ssh)
 		 * encrypted keys we cannot do this and have to load the
 		 * private key instead
 		 */
-		if (id->key != NULL) {
+		もし (id->key != NULL) {
 			ident = format_identity(id);
 			debug("Offering public key: %s", ident);
 			free(ident);
 			sent = send_pubkey_test(ssh, id);
-		} else {
+		} 否则 {
 			debug("Trying private key: %s", id->filename);
 			id->key = load_identity_file(id);
-			if (id->key != NULL) {
+			もし (id->key != NULL) {
 				id->isprivate = 1;
 				sent = sign_and_send_pubkey(ssh, id);
 				sshkey_free(id->key);
@@ -2028,32 +2028,32 @@ userauth_pubkey(struct ssh *ssh)
 				id->isprivate = 0;
 			}
 		}
-		if (sent)
-			return (sent);
+		もし (sent)
+			戻る (sent);
 	}
-	return (0);
+	戻る (0);
 }
 
 /*
  * Send userauth request message specifying keyboard-interactive method.
  */
-static int
+static 整数
 userauth_kbdint(struct ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	int r;
+	整数 r;
 
-	if (authctxt->attempt_kbdint++ >= options.number_of_password_prompts)
-		return 0;
+	もし (authctxt->attempt_kbdint++ >= options.number_of_password_prompts)
+		戻る 0;
 	/* disable if no SSH2_MSG_USERAUTH_INFO_REQUEST has been seen */
-	if (authctxt->attempt_kbdint > 1 && !authctxt->info_req_seen) {
+	もし (authctxt->attempt_kbdint > 1 && !authctxt->info_req_seen) {
 		debug3("userauth_kbdint: disable: no info_req_seen");
 		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST, NULL);
-		return 0;
+		戻る 0;
 	}
 
 	debug2("userauth_kbdint");
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	もし ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
@@ -2064,44 +2064,44 @@ userauth_kbdint(struct ssh *ssh)
 		fatal_fr(r, "send packet");
 
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST, &input_userauth_info_req);
-	return 1;
+	戻る 1;
 }
 
 /*
  * parse INFO_REQUEST, prompt user and send INFO_RESPONSE
  */
-static int
-input_userauth_info_req(int type, uint32_t seq, struct ssh *ssh)
+static 整数
+input_userauth_info_req(整数 type, uint32_t seq, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	char *name = NULL, *inst = NULL, *lang = NULL, *prompt = NULL;
 	char *display_prompt = NULL, *response = NULL;
 	u_char echo = 0;
 	u_int num_prompts, i;
-	int r, addnl;
+	整数 r, addnl;
 	size_t len;
 
 	debug2_f("entering");
 
-	if (authctxt == NULL)
+	もし (authctxt == NULL)
 		fatal_f("no authentication context");
 
 	authctxt->info_req_seen = 1;
 
-	if ((r = sshpkt_get_cstring(ssh, &name, NULL)) != 0 ||
+	もし ((r = sshpkt_get_cstring(ssh, &name, NULL)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &inst, NULL)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0)
 		goto out;
-	if ((len = strlen(name)) > 0) {
+	もし ((len = strlen(name)) > 0) {
 		addnl = name[len] != '\n';
 		fmprintf(stderr, "%s%s", name, addnl ? "\n" : "");
 	}
-	if ((len = strlen(inst)) > 0) {
+	もし ((len = strlen(inst)) > 0) {
 		addnl = inst[len] != '\n';
 		fmprintf(stderr, "%s%s", inst, addnl ? "\n" : "");
 	}
 
-	if ((r = sshpkt_get_u32(ssh, &num_prompts)) != 0)
+	もし ((r = sshpkt_get_u32(ssh, &num_prompts)) != 0)
 		goto out;
 	/*
 	 * Begin to build info response packet based on prompts requested.
@@ -2109,21 +2109,21 @@ input_userauth_info_req(int type, uint32_t seq, struct ssh *ssh)
 	 * further on we run into a problem that prevents this, we have to
 	 * be sure and clean this up and send a correct error response.
 	 */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE)) != 0 ||
+	もし ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, num_prompts)) != 0)
 		goto out;
 
 	debug2_f("num_prompts %d", num_prompts);
-	for (i = 0; i < num_prompts; i++) {
-		if ((r = sshpkt_get_cstring(ssh, &prompt, NULL)) != 0 ||
+	ために (i = 0; i < num_prompts; i++) {
+		もし ((r = sshpkt_get_cstring(ssh, &prompt, NULL)) != 0 ||
 		    (r = sshpkt_get_u8(ssh, &echo)) != 0)
 			goto out;
-		if (asmprintf(&display_prompt, INT_MAX, NULL, "(%s@%s) %s",
+		もし (asmprintf(&display_prompt, INT_MAX, NULL, "(%s@%s) %s",
 		    authctxt->server_user, options.host_key_alias ?
 		    options.host_key_alias : authctxt->host, prompt) == -1)
 			fatal_f("asmprintf failed");
 		response = read_passphrase(display_prompt, echo ? RP_ECHO : 0);
-		if ((r = sshpkt_put_cstring(ssh, response)) != 0)
+		もし ((r = sshpkt_put_cstring(ssh, response)) != 0)
 			goto out;
 		freezero(response, strlen(response));
 		free(prompt);
@@ -2131,71 +2131,71 @@ input_userauth_info_req(int type, uint32_t seq, struct ssh *ssh)
 		display_prompt = response = prompt = NULL;
 	}
 	/* done with parsing incoming message. */
-	if ((r = sshpkt_get_end(ssh)) != 0 ||
+	もし ((r = sshpkt_get_end(ssh)) != 0 ||
 	    (r = sshpkt_add_padding(ssh, 64)) != 0)
 		goto out;
 	r = sshpkt_send(ssh);
  out:
-	if (response)
+	もし (response)
 		freezero(response, strlen(response));
 	free(prompt);
 	free(display_prompt);
 	free(name);
 	free(inst);
 	free(lang);
-	return r;
+	戻る r;
 }
 
-static int
+static 整数
 ssh_keysign(struct ssh *ssh, struct sshkey *key, u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen)
 {
 	struct sshbuf *b;
 	struct stat st;
 	pid_t pid;
-	int r, to[2], from[2], status;
-	int sock = ssh_packet_get_connection_in(ssh);
+	整数 r, to[2], from[2], status;
+	整数 sock = ssh_packet_get_connection_in(ssh);
 	u_char rversion = 0, version = 2;
-	void (*osigchld)(int);
+	void (*osigchld)(整数);
 
 	*sigp = NULL;
 	*lenp = 0;
 
-	if (stat(_PATH_SSH_KEY_SIGN, &st) == -1) {
+	もし (stat(_PATH_SSH_KEY_SIGN, &st) == -1) {
 		error_f("not installed: %s", strerror(errno));
-		return -1;
+		戻る -1;
 	}
-	if (fflush(stdout) != 0) {
+	もし (fflush(stdout) != 0) {
 		error_f("fflush: %s", strerror(errno));
-		return -1;
+		戻る -1;
 	}
-	if (pipe(to) == -1) {
+	もし (pipe(to) == -1) {
 		error_f("pipe: %s", strerror(errno));
-		return -1;
+		戻る -1;
 	}
-	if (pipe(from) == -1) {
+	もし (pipe(from) == -1) {
 		error_f("pipe: %s", strerror(errno));
-		return -1;
+		戻る -1;
 	}
-	if ((pid = fork()) == -1) {
+	もし ((pid = fork()) == -1) {
 		error_f("fork: %s", strerror(errno));
-		return -1;
+		戻る -1;
 	}
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if (pid == 0) {
+	もし (pid == 0) {
 		close(from[0]);
-		if (dup2(from[1], STDOUT_FILENO) == -1)
+		もし (dup2(from[1], STDOUT_FILENO) == -1)
 			fatal_f("dup2: %s", strerror(errno));
 		close(to[1]);
-		if (dup2(to[0], STDIN_FILENO) == -1)
+		もし (dup2(to[0], STDIN_FILENO) == -1)
 			fatal_f("dup2: %s", strerror(errno));
 		close(from[1]);
 		close(to[0]);
 
-		if (dup2(sock, STDERR_FILENO + 1) == -1)
+		もし (dup2(sock, STDERR_FILENO + 1) == -1)
 			fatal_f("dup2: %s", strerror(errno));
 		sock = STDERR_FILENO + 1;
-		if (fcntl(sock, F_SETFD, 0) == -1) /* keep the socket on exec */
+		もし (fcntl(sock, F_SETFD, 0) == -1) /* keep the socket on exec */
 			debug3_f("fcntl F_SETFD: %s", strerror(errno));
 		closefrom(sock + 1);
 
@@ -2209,60 +2209,60 @@ ssh_keysign(struct ssh *ssh, struct sshkey *key, u_char **sigp, size_t *lenp,
 	close(to[0]);
 	sock = STDERR_FILENO + 1;
 
-	if ((b = sshbuf_new()) == NULL)
+	もし ((b = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	/* send # of sock, data to be signed */
-	if ((r = sshbuf_put_u32(b, sock)) != 0 ||
+	もし ((r = sshbuf_put_u32(b, sock)) != 0 ||
 	    (r = sshbuf_put_string(b, data, datalen)) != 0)
 		fatal_fr(r, "buffer error");
-	if (ssh_msg_send(to[1], version, b) == -1)
+	もし (ssh_msg_send(to[1], version, b) == -1)
 		fatal_f("couldn't send request");
 	sshbuf_reset(b);
 	r = ssh_msg_recv(from[0], b);
 	close(from[0]);
 	close(to[1]);
-	if (r < 0) {
+	もし (r < 0) {
 		error_f("no reply");
 		goto fail;
 	}
 
 	errno = 0;
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno != EINTR) {
+	ながら (waitpid(pid, &status, 0) == -1) {
+		もし (errno != EINTR) {
 			error_f("waitpid %ld: %s", (long)pid, strerror(errno));
 			goto fail;
 		}
 	}
-	if (!WIFEXITED(status)) {
+	もし (!WIFEXITED(status)) {
 		error_f("exited abnormally");
 		goto fail;
 	}
-	if (WEXITSTATUS(status) != 0) {
+	もし (WEXITSTATUS(status) != 0) {
 		error_f("exited with status %d", WEXITSTATUS(status));
 		goto fail;
 	}
-	if ((r = sshbuf_get_u8(b, &rversion)) != 0) {
+	もし ((r = sshbuf_get_u8(b, &rversion)) != 0) {
 		error_fr(r, "buffer error");
 		goto fail;
 	}
-	if (rversion != version) {
+	もし (rversion != version) {
 		error_f("bad version");
 		goto fail;
 	}
-	if ((r = sshbuf_get_string(b, sigp, lenp)) != 0) {
+	もし ((r = sshbuf_get_string(b, sigp, lenp)) != 0) {
 		error_fr(r, "buffer error");
  fail:
 		ssh_signal(SIGCHLD, osigchld);
 		sshbuf_free(b);
-		return -1;
+		戻る -1;
 	}
 	ssh_signal(SIGCHLD, osigchld);
 	sshbuf_free(b);
 
-	return 0;
+	戻る 0;
 }
 
-static int
+static 整数
 userauth_hostbased(struct ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
@@ -2271,9 +2271,9 @@ userauth_hostbased(struct ssh *ssh)
 	u_char *sig = NULL, *keyblob = NULL;
 	char *fp = NULL, *chost = NULL, *lname = NULL;
 	size_t siglen = 0, keylen = 0;
-	int i, r, success = 0;
+	整数 i, r, success = 0;
 
-	if (authctxt->ktypes == NULL) {
+	もし (authctxt->ktypes == NULL) {
 		authctxt->oktypes = xstrdup(options.hostbased_accepted_algos);
 		authctxt->ktypes = authctxt->oktypes;
 	}
@@ -2282,21 +2282,21 @@ userauth_hostbased(struct ssh *ssh)
 	 * Work through each listed type pattern in HostbasedAcceptedAlgorithms,
 	 * trying each hostkey that matches the type in turn.
 	 */
-	for (;;) {
-		if (authctxt->active_ktype == NULL)
+	ために (;;) {
+		もし (authctxt->active_ktype == NULL)
 			authctxt->active_ktype = strsep(&authctxt->ktypes, ",");
-		if (authctxt->active_ktype == NULL ||
+		もし (authctxt->active_ktype == NULL ||
 		    *authctxt->active_ktype == '\0')
 			break;
 		debug3_f("trying key type %s", authctxt->active_ktype);
 
 		/* check for a useful key */
 		private = NULL;
-		for (i = 0; i < authctxt->sensitive->nkeys; i++) {
-			if (authctxt->sensitive->keys[i] == NULL ||
+		ために (i = 0; i < authctxt->sensitive->nkeys; i++) {
+			もし (authctxt->sensitive->keys[i] == NULL ||
 			    authctxt->sensitive->keys[i]->type == KEY_UNSPEC)
 				continue;
-			if (!sshkey_match_keyname_to_sigalgs(
+			もし (!sshkey_match_keyname_to_sigalgs(
 			    sshkey_ssh_name(authctxt->sensitive->keys[i]),
 			    authctxt->active_ktype))
 				continue;
@@ -2306,12 +2306,12 @@ userauth_hostbased(struct ssh *ssh)
 			break;
 		}
 		/* Found one */
-		if (private != NULL)
+		もし (private != NULL)
 			break;
 		/* No more keys of this type; advance */
 		authctxt->active_ktype = NULL;
 	}
-	if (private == NULL) {
+	もし (private == NULL) {
 		free(authctxt->oktypes);
 		authctxt->oktypes = authctxt->ktypes = NULL;
 		authctxt->active_ktype = NULL;
@@ -2319,7 +2319,7 @@ userauth_hostbased(struct ssh *ssh)
 		goto out;
 	}
 
-	if ((fp = sshkey_fingerprint(private, options.fingerprint_hash,
+	もし ((fp = sshkey_fingerprint(private, options.fingerprint_hash,
 	    SSH_FP_DEFAULT)) == NULL) {
 		error_f("sshkey_fingerprint failed");
 		goto out;
@@ -2329,7 +2329,7 @@ userauth_hostbased(struct ssh *ssh)
 
 	/* figure out a name for the client host */
 	lname = get_local_name(ssh_packet_get_connection_in(ssh));
-	if (lname == NULL) {
+	もし (lname == NULL) {
 		error_f("cannot get local ipaddr/name");
 		goto out;
 	}
@@ -2339,15 +2339,15 @@ userauth_hostbased(struct ssh *ssh)
 	debug2_f("chost %s", chost);
 
 	/* construct data */
-	if ((b = sshbuf_new()) == NULL) {
+	もし ((b = sshbuf_new()) == NULL) {
 		error_f("sshbuf_new failed");
 		goto out;
 	}
-	if ((r = sshkey_to_blob(private, &keyblob, &keylen)) != 0) {
+	もし ((r = sshkey_to_blob(private, &keyblob, &keylen)) != 0) {
 		error_fr(r, "sshkey_to_blob");
 		goto out;
 	}
-	if ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
+	もし ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
 	    (r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->server_user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->service)) != 0 ||
@@ -2363,13 +2363,13 @@ userauth_hostbased(struct ssh *ssh)
 #ifdef DEBUG_PK
 	sshbuf_dump(b, stderr);
 #endif
-	if ((r = ssh_keysign(ssh, private, &sig, &siglen,
+	もし ((r = ssh_keysign(ssh, private, &sig, &siglen,
 	    sshbuf_ptr(b), sshbuf_len(b))) != 0) {
 		error("sign using hostkey %s %s failed",
 		    sshkey_ssh_name(private), fp);
 		goto out;
 	}
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	もし ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->server_user)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->service)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, authctxt->method->name)) != 0 ||
@@ -2385,7 +2385,7 @@ userauth_hostbased(struct ssh *ssh)
 	success = 1;
 
  out:
-	if (sig != NULL)
+	もし (sig != NULL)
 		freezero(sig, siglen);
 	free(keyblob);
 	free(lname);
@@ -2394,7 +2394,7 @@ userauth_hostbased(struct ssh *ssh)
 	sshkey_free(private);
 	sshbuf_free(b);
 
-	return success;
+	戻る success;
 }
 
 /* find auth method */
@@ -2403,30 +2403,30 @@ userauth_hostbased(struct ssh *ssh)
  * given auth method name, if configurable options permit this method fill
  * in auth_ident field and return true, otherwise return false.
  */
-static int
+static 整数
 authmethod_is_enabled(Authmethod *method)
 {
-	if (method == NULL)
-		return 0;
+	もし (method == NULL)
+		戻る 0;
 	/* return false if options indicate this method is disabled */
-	if  (method->enabled == NULL || *method->enabled == 0)
-		return 0;
+	もし  (method->enabled == NULL || *method->enabled == 0)
+		戻る 0;
 	/* return false if batch mode is enabled but method needs interactive mode */
-	if  (method->batch_flag != NULL && *method->batch_flag != 0)
-		return 0;
-	return 1;
+	もし  (method->batch_flag != NULL && *method->batch_flag != 0)
+		戻る 0;
+	戻る 1;
 }
 
 static Authmethod *
 authmethod_lookup(const char *name)
 {
 	Authmethod *method = NULL;
-	if (name != NULL)
-		for (method = authmethods; method->name != NULL; method++)
-			if (strcmp(name, method->name) == 0)
-				return method;
+	もし (name != NULL)
+		ために (method = authmethods; method->name != NULL; method++)
+			もし (strcmp(name, method->name) == 0)
+				戻る method;
 	debug2("Unrecognized authentication method name: %s", name ? name : "NULL");
-	return NULL;
+	戻る NULL;
 }
 
 /* XXX internal state */
@@ -2446,34 +2446,34 @@ authmethod_get(char *authlist)
 	u_int next;
 
 	/* Use a suitable default if we're passed a nil list.  */
-	if (authlist == NULL || strlen(authlist) == 0)
+	もし (authlist == NULL || strlen(authlist) == 0)
 		authlist = options.preferred_authentications;
 
-	if (supported == NULL || strcmp(authlist, supported) != 0) {
+	もし (supported == NULL || strcmp(authlist, supported) != 0) {
 		debug3("start over, passed a different list %s", authlist);
 		free(supported);
 		supported = xstrdup(authlist);
 		preferred = options.preferred_authentications;
 		debug3("preferred %s", preferred);
 		current = NULL;
-	} else if (current != NULL && authmethod_is_enabled(current))
-		return current;
+	} 否则 もし (current != NULL && authmethod_is_enabled(current))
+		戻る current;
 
-	for (;;) {
-		if ((name = match_list(preferred, supported, &next)) == NULL) {
+	ために (;;) {
+		もし ((name = match_list(preferred, supported, &next)) == NULL) {
 			debug("No more authentication methods to try.");
 			current = NULL;
-			return NULL;
+			戻る NULL;
 		}
 		preferred += next;
 		debug3("authmethod_lookup %s", name);
 		debug3("remaining preferred: %s", preferred);
-		if ((current = authmethod_lookup(name)) != NULL &&
+		もし ((current = authmethod_lookup(name)) != NULL &&
 		    authmethod_is_enabled(current)) {
 			debug3("authmethod_is_enabled %s", name);
 			debug("Next authentication method: %s", name);
 			free(name);
-			return current;
+			戻る current;
 		}
 		free(name);
 	}
@@ -2485,19 +2485,19 @@ authmethods_get(void)
 	Authmethod *method = NULL;
 	struct sshbuf *b;
 	char *list;
-	int r;
+	整数 r;
 
-	if ((b = sshbuf_new()) == NULL)
+	もし ((b = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	for (method = authmethods; method->name != NULL; method++) {
-		if (authmethod_is_enabled(method)) {
-			if ((r = sshbuf_putf(b, "%s%s",
+	ために (method = authmethods; method->name != NULL; method++) {
+		もし (authmethod_is_enabled(method)) {
+			もし ((r = sshbuf_putf(b, "%s%s",
 			    sshbuf_len(b) ? "," : "", method->name)) != 0)
 				fatal_fr(r, "buffer error");
 		}
 	}
-	if ((list = sshbuf_dup_string(b)) == NULL)
+	もし ((list = sshbuf_dup_string(b)) == NULL)
 		fatal_f("sshbuf_dup_string failed");
 	sshbuf_free(b);
-	return list;
+	戻る list;
 }

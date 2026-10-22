@@ -47,7 +47,7 @@
 #include <string.h>
 #include <syslog.h>
 #include <unistd.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#もし defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
 #endif
 
@@ -55,9 +55,9 @@
 #include "match.h"
 
 static LogLevel log_level = SYSLOG_LEVEL_INFO;
-static int log_on_stderr = 1;
-static int log_stderr_fd = STDERR_FILENO;
-static int log_facility = LOG_AUTH;
+static 整数 log_on_stderr = 1;
+static 整数 log_stderr_fd = STDERR_FILENO;
+static 整数 log_facility = LOG_AUTH;
 static const char *argv0;
 static log_handler_fn *log_handler;
 static void *log_handler_ctx;
@@ -111,19 +111,19 @@ static struct {
 LogLevel
 log_level_get(void)
 {
-	return log_level;
+	戻る log_level;
 }
 
 SyslogFacility
 log_facility_number(char *name)
 {
-	int i;
+	整数 i;
 
-	if (name != NULL)
-		for (i = 0; log_facilities[i].name; i++)
-			if (strcasecmp(log_facilities[i].name, name) == 0)
-				return log_facilities[i].val;
-	return SYSLOG_FACILITY_NOT_SET;
+	もし (name != NULL)
+		ために (i = 0; log_facilities[i].name; i++)
+			もし (strcasecmp(log_facilities[i].name, name) == 0)
+				戻る log_facilities[i].val;
+	戻る SYSLOG_FACILITY_NOT_SET;
 }
 
 const char *
@@ -131,22 +131,22 @@ log_facility_name(SyslogFacility facility)
 {
 	u_int i;
 
-	for (i = 0;  log_facilities[i].name; i++)
-		if (log_facilities[i].val == facility)
-			return log_facilities[i].name;
-	return NULL;
+	ために (i = 0;  log_facilities[i].name; i++)
+		もし (log_facilities[i].val == facility)
+			戻る log_facilities[i].name;
+	戻る NULL;
 }
 
 LogLevel
 log_level_number(char *name)
 {
-	int i;
+	整数 i;
 
-	if (name != NULL)
-		for (i = 0; log_levels[i].name; i++)
-			if (strcasecmp(log_levels[i].name, name) == 0)
-				return log_levels[i].val;
-	return SYSLOG_LEVEL_NOT_SET;
+	もし (name != NULL)
+		ために (i = 0; log_levels[i].name; i++)
+			もし (strcasecmp(log_levels[i].name, name) == 0)
+				戻る log_levels[i].val;
+	戻る SYSLOG_LEVEL_NOT_SET;
 }
 
 const char *
@@ -154,10 +154,10 @@ log_level_name(LogLevel level)
 {
 	u_int i;
 
-	for (i = 0; log_levels[i].name != NULL; i++)
-		if (log_levels[i].val == level)
-			return log_levels[i].name;
-	return NULL;
+	ために (i = 0; log_levels[i].name != NULL; i++)
+		もし (log_levels[i].val == level)
+			戻る log_levels[i].name;
+	戻る NULL;
 }
 
 void
@@ -166,10 +166,10 @@ log_verbose_add(const char *s)
 	char **tmp;
 
 	/* Ignore failures here */
-	if ((tmp = recallocarray(log_verbose, nlog_verbose, nlog_verbose + 1,
+	もし ((tmp = recallocarray(log_verbose, nlog_verbose, nlog_verbose + 1,
 	    sizeof(*log_verbose))) != NULL) {
 		log_verbose = tmp;
-		if ((log_verbose[nlog_verbose] = strdup(s)) != NULL)
+		もし ((log_verbose[nlog_verbose] = strdup(s)) != NULL)
 			nlog_verbose++;
 	}
 }
@@ -179,7 +179,7 @@ log_verbose_reset(void)
 {
 	size_t i;
 
-	for (i = 0; i < nlog_verbose; i++)
+	ために (i = 0; i < nlog_verbose; i++)
 		free(log_verbose[i]);
 	free(log_verbose);
 	log_verbose = NULL;
@@ -192,17 +192,17 @@ log_verbose_reset(void)
 
 void
 log_init(const char *av0, LogLevel level, SyslogFacility facility,
-    int on_stderr)
+    整数 on_stderr)
 {
-#if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
+#もし defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
 	struct syslog_data sdata = SYSLOG_DATA_INIT;
 #endif
 
 	argv0 = av0;
 
-	if (log_change_level(level) != 0) {
+	もし (log_change_level(level) != 0) {
 		fprintf(stderr, "Unrecognized internal syslog level code %d\n",
-		    (int) level);
+		    (整数) level);
 		exit(1);
 	}
 
@@ -210,8 +210,8 @@ log_init(const char *av0, LogLevel level, SyslogFacility facility,
 	log_handler_ctx = NULL;
 
 	log_on_stderr = on_stderr;
-	if (on_stderr)
-		return;
+	もし (on_stderr)
+		戻る;
 
 	switch (facility) {
 	case SYSLOG_FACILITY_DAEMON:
@@ -255,7 +255,7 @@ log_init(const char *av0, LogLevel level, SyslogFacility facility,
 	default:
 		fprintf(stderr,
 		    "Unrecognized internal syslog facility code %d\n",
-		    (int) facility);
+		    (整数) facility);
 		exit(1);
 	}
 
@@ -264,21 +264,21 @@ log_init(const char *av0, LogLevel level, SyslogFacility facility,
 	 * immediately after reexec, syslog may be pointing to the wrong
 	 * facility, so we force an open/close of syslog here.
 	 */
-#if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
+#もし defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
 	openlog_r(argv0 ? argv0 : __progname, LOG_PID, log_facility, &sdata);
 	closelog_r(&sdata);
-#else
+#否则
 	openlog(argv0 ? argv0 : __progname, LOG_PID, log_facility);
 	closelog();
 #endif
 }
 
-int
+整数
 log_change_level(LogLevel new_log_level)
 {
 	/* no-op if log_init has not been called */
-	if (argv0 == NULL)
-		return 0;
+	もし (argv0 == NULL)
+		戻る 0;
 
 	switch (new_log_level) {
 	case SYSLOG_LEVEL_QUIET:
@@ -290,33 +290,33 @@ log_change_level(LogLevel new_log_level)
 	case SYSLOG_LEVEL_DEBUG2:
 	case SYSLOG_LEVEL_DEBUG3:
 		log_level = new_log_level;
-		return 0;
+		戻る 0;
 	default:
-		return -1;
+		戻る -1;
 	}
 }
 
-int
+整数
 log_is_on_stderr(void)
 {
-	return log_on_stderr && log_stderr_fd == STDERR_FILENO;
+	戻る log_on_stderr && log_stderr_fd == STDERR_FILENO;
 }
 
 /* redirect what would usually get written to stderr to specified file */
 void
 log_redirect_stderr_to(const char *logfile)
 {
-	int fd;
+	整数 fd;
 
-	if (logfile == NULL) {
-		if (log_stderr_fd != STDERR_FILENO) {
+	もし (logfile == NULL) {
+		もし (log_stderr_fd != STDERR_FILENO) {
 			close(log_stderr_fd);
 			log_stderr_fd = STDERR_FILENO;
 		}
-		return;
+		戻る;
 	}
 
-	if ((fd = open(logfile, O_WRONLY|O_CREAT|O_APPEND, 0600)) == -1) {
+	もし ((fd = open(logfile, O_WRONLY|O_CREAT|O_APPEND, 0600)) == -1) {
 		fprintf(stderr, "Couldn't open logfile %s: %s\n", logfile,
 		    strerror(errno));
 		exit(1);
@@ -334,31 +334,31 @@ set_log_handler(log_handler_fn *handler, void *ctx)
 }
 
 static void
-do_log(LogLevel level, int force, const char *suffix, const char *fmt,
+do_log(LogLevel level, 整数 force, const char *suffix, const char *fmt,
     va_list args)
 {
-#if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
+#もし defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
 	struct syslog_data sdata = SYSLOG_DATA_INIT;
 #endif
 	char msgbuf[MSGBUFSIZ];
 	char fmtbuf[MSGBUFSIZ];
 	char *txt = NULL;
-	int pri = LOG_INFO;
-	int saved_errno = errno;
+	整数 pri = LOG_INFO;
+	整数 saved_errno = errno;
 	log_handler_fn *tmp_handler;
 	const char *progname = argv0 != NULL ? argv0 : __progname;
 
-	if (!force && level > log_level)
-		return;
+	もし (!force && level > log_level)
+		戻る;
 
 	switch (level) {
 	case SYSLOG_LEVEL_FATAL:
-		if (!log_on_stderr)
+		もし (!log_on_stderr)
 			txt = "fatal";
 		pri = LOG_CRIT;
 		break;
 	case SYSLOG_LEVEL_ERROR:
-		if (!log_on_stderr)
+		もし (!log_on_stderr)
 			txt = "error";
 		pri = LOG_ERR;
 		break;
@@ -385,37 +385,37 @@ do_log(LogLevel level, int force, const char *suffix, const char *fmt,
 		pri = LOG_ERR;
 		break;
 	}
-	if (txt != NULL && log_handler == NULL) {
+	もし (txt != NULL && log_handler == NULL) {
 		snprintf(fmtbuf, sizeof(fmtbuf), "%s: %s", txt, fmt);
 		vsnprintf(msgbuf, sizeof(msgbuf), fmtbuf, args);
-	} else {
+	} 否则 {
 		vsnprintf(msgbuf, sizeof(msgbuf), fmt, args);
 	}
-	if (suffix != NULL) {
+	もし (suffix != NULL) {
 		snprintf(fmtbuf, sizeof(fmtbuf), "%s: %s", msgbuf, suffix);
 		strlcpy(msgbuf, fmtbuf, sizeof(msgbuf));
 	}
 	strnvis(fmtbuf, msgbuf, sizeof(fmtbuf),
 	    log_on_stderr ? LOG_STDERR_VIS : LOG_SYSLOG_VIS);
-	if (log_handler != NULL) {
+	もし (log_handler != NULL) {
 		/* Avoid recursion */
 		tmp_handler = log_handler;
 		log_handler = NULL;
 		/* Note: this sends the raw (i.e. no strnvis) log message */
 		tmp_handler(level, force, msgbuf, log_handler_ctx);
 		log_handler = tmp_handler;
-	} else if (log_on_stderr) {
+	} 否则 もし (log_on_stderr) {
 		snprintf(msgbuf, sizeof msgbuf, "%s%s%.*s\r\n",
 		    (log_on_stderr > 1) ? progname : "",
 		    (log_on_stderr > 1) ? ": " : "",
-		    (int)sizeof msgbuf - 3, fmtbuf);
+		    (整数)sizeof msgbuf - 3, fmtbuf);
 		(void)write(log_stderr_fd, msgbuf, strlen(msgbuf));
-	} else {
-#if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
+	} 否则 {
+#もし defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
 		openlog_r(progname, LOG_PID, log_facility, &sdata);
 		syslog_r(pri, &sdata, "%.500s", fmtbuf);
 		closelog_r(&sdata);
-#else
+#否则
 		openlog(progname, LOG_PID, log_facility);
 		syslog(pri, "%.500s", fmtbuf);
 		closelog();
@@ -425,7 +425,7 @@ do_log(LogLevel level, int force, const char *suffix, const char *fmt,
 }
 
 void
-sshlog(const char *file, const char *func, int line, int showfunc,
+sshlog(const char *file, const char *func, 整数 line, 整数 showfunc,
     LogLevel level, const char *suffix, const char *fmt, ...)
 {
 	va_list args;
@@ -436,7 +436,7 @@ sshlog(const char *file, const char *func, int line, int showfunc,
 }
 
 void
-sshlogdie(const char *file, const char *func, int line, int showfunc,
+sshlogdie(const char *file, const char *func, 整数 line, 整数 showfunc,
     LogLevel level, const char *suffix, const char *fmt, ...)
 {
 	va_list args;
@@ -449,40 +449,40 @@ sshlogdie(const char *file, const char *func, int line, int showfunc,
 }
 
 void
-sshlogv(const char *file, const char *func, int line, int showfunc,
+sshlogv(const char *file, const char *func, 整数 line, 整数 showfunc,
     LogLevel level, const char *suffix, const char *fmt, va_list args)
 {
 	char tag[128], fmt2[MSGBUFSIZ + 128];
-	int forced = 0;
+	整数 forced = 0;
 	const char *cp;
 	size_t i;
 
 	/* short circuit processing early if we're not going to log anything */
-	if (nlog_verbose == 0 && level > log_level)
-		return;
+	もし (nlog_verbose == 0 && level > log_level)
+		戻る;
 
 	snprintf(tag, sizeof(tag), "%.48s:%.48s():%d (bin=%s, pid=%ld)",
 	    (cp = strrchr(file, '/')) == NULL ? file : cp + 1, func, line,
 	    argv0 == NULL ? "UNKNOWN" : argv0, (long)getpid());
-	for (i = 0; i < nlog_verbose; i++) {
-		if (match_pattern_list(tag, log_verbose[i], 0) == 1) {
+	ために (i = 0; i < nlog_verbose; i++) {
+		もし (match_pattern_list(tag, log_verbose[i], 0) == 1) {
 			forced = 1;
 			break;
 		}
 	}
 
-	if (forced)
+	もし (forced)
 		snprintf(fmt2, sizeof(fmt2), "%s: %s", tag, fmt);
-	else if (showfunc)
+	否则 もし (showfunc)
 		snprintf(fmt2, sizeof(fmt2), "%s: %s", func, fmt);
-	else
+	否则
 		strlcpy(fmt2, fmt, sizeof(fmt2));
 
 	do_log(level, forced, suffix, fmt2, args);
 }
 
 void
-sshlogdirect(LogLevel level, int forced, const char *fmt, ...)
+sshlogdirect(LogLevel level, 整数 forced, const char *fmt, ...)
 {
 	va_list args;
 
@@ -517,8 +517,8 @@ sshlogdirect(LogLevel level, int forced, const char *fmt, ...)
 		printf x; \
 		printf("\n"); \
 		fflush(stdout); \
-	} while (0)
-#else
+	} ながら (0)
+#否则
 # define RLDBG(x)
 #endif
 
@@ -542,8 +542,8 @@ log_ratelimit_init(struct log_ratelimit_ctx *rl, u_int threshold,
  * is supplied then, for periodic logs, it will be set to the number of
  * dropped events since the last message.
  */
-int
-log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
+整数
+log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, 整数 *active,
     u_int *events_dropped)
 {
 	time_t olast_event;
@@ -555,29 +555,29 @@ log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
 	    rl->last_event == 0 ? -1 : (long)(now - rl->last_event),
 	    rl->ratelimited_events));
 
-	if (now < 0)
-		return 0;
-	if (events_dropped != NULL)
+	もし (now < 0)
+		戻る 0;
+	もし (events_dropped != NULL)
 		*events_dropped = 0;
-	if (active != NULL)
+	もし (active != NULL)
 		*active = rl->ratelimit_active;
 
 	/* First, decay accumulated events */
-	if (rl->last_event <= 0)
+	もし (rl->last_event <= 0)
 		rl->last_event = now;
-	if (now > rl->last_event) {
+	もし (now > rl->last_event) {
 		uint64_t n = now - rl->last_event;
 
-		if (n > UINT_MAX)
+		もし (n > UINT_MAX)
 			n = UINT_MAX;
-		if (rl->accumulated_events < (u_int)n)
+		もし (rl->accumulated_events < (u_int)n)
 			rl->accumulated_events = 0;
-		else
+		否则
 			rl->accumulated_events -= (u_int)n;
 		RLDBG(("decay: accum=%u", rl->accumulated_events));
 	}
 	rl->accumulated_events++; /* add this event */
-	if (rl->accumulated_events > rl->max_accum)
+	もし (rl->accumulated_events > rl->max_accum)
 		rl->accumulated_events = rl->max_accum;
 	olast_event = rl->last_event;
 	rl->last_event = now;
@@ -585,39 +585,39 @@ log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
 	    rl->accumulated_events, rl->threshold));
 
 	/* Are we under threshold? */
-	if (rl->accumulated_events < rl->threshold) {
-		if (!rl->ratelimit_active)
-			return 0;
+	もし (rl->accumulated_events < rl->threshold) {
+		もし (!rl->ratelimit_active)
+			戻る 0;
 		RLDBG(("under threshold: hys=%u since_hys=%ld since_last=%ld",
 		    rl->hysteresis, rl->hysteresis_start == 0 ? -1 :
 		    (long)(now - rl->hysteresis_start),
 		    olast_event == 0 ? -1 : (long)(now - olast_event)));
-		if (rl->hysteresis_start == 0) {
+		もし (rl->hysteresis_start == 0) {
 			/* active, but under threshold; hysteresis */
-			if (olast_event + rl->hysteresis < now) {
+			もし (olast_event + rl->hysteresis < now) {
 				/* hysteresis expired before this event */
 				RLDBG(("hysteresis preexpired"));
 				goto inactive;
 			}
 			RLDBG(("start hysteresis"));
 			rl->hysteresis_start = now;
-		} else if (rl->hysteresis_start + rl->hysteresis < now) {
+		} 否则 もし (rl->hysteresis_start + rl->hysteresis < now) {
 			/* Hysteresis period expired, transition to inactive */
 			RLDBG(("complete hysteresis"));
  inactive:
-			if (events_dropped != NULL)
+			もし (events_dropped != NULL)
 				*events_dropped = rl->ratelimited_events;
-			if (active != NULL)
+			もし (active != NULL)
 				*active = 0;
 			rl->ratelimit_active = 0;
 			rl->ratelimit_start = 0;
 			rl->last_log = 0;
 			rl->hysteresis_start = 0;
 			rl->ratelimited_events = 0;
-			return 0;
+			戻る 0;
 		}
 		/* ratelimiting active, but in hysteresis period */
-	} else if (!rl->ratelimit_active) {
+	} 否则 もし (!rl->ratelimit_active) {
 		/* Transition to rate-limiting */
 		RLDBG(("start ratelimit"));
 		rl->ratelimit_active = 1;
@@ -625,32 +625,32 @@ log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
 		rl->last_log = now;
 		rl->hysteresis_start = 0;
 		rl->ratelimited_events = 1;
-		if (active != NULL)
+		もし (active != NULL)
 			*active = 1;
-		return 1;
-	} else if (rl->hysteresis_start != 0) {
+		戻る 1;
+	} 否则 もし (rl->hysteresis_start != 0) {
 		/* active and over threshold; reset hysteresis timer */
 		RLDBG(("clear hysteresis"));
 		rl->hysteresis_start = 0;
 	}
 
 	/* over threshold or in hysteresis period; log periodically */
-	if (active != NULL)
+	もし (active != NULL)
 		*active = 1;
 	RLDBG(("log_every=%u since_log=%ld", rl->log_every,
 	    (long)(now - rl->last_log)));
-	if (rl->log_every > 0 && now >= rl->last_log + rl->log_every) {
+	もし (rl->log_every > 0 && now >= rl->last_log + rl->log_every) {
 		RLDBG(("periodic: since_last=%u", rl->ratelimited_events));
 		rl->last_log = now;
-		if (events_dropped != NULL) {
+		もし (events_dropped != NULL) {
 			*events_dropped = rl->ratelimited_events;
 			rl->ratelimited_events = 0;
 		}
-		return 0;
+		戻る 0;
 	}
 
 	/* drop event */
 	rl->ratelimited_events++;
 	RLDBG(("drop: ratelimited_events=%u", rl->ratelimited_events));
-	return 1;
+	戻る 1;
 }

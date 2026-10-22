@@ -38,20 +38,20 @@ recallocarray(void *ptr, size_t oldnmemb, size_t newnmemb, size_t size)
 	size_t oldsize, newsize;
 	void *newptr;
 
-	if (ptr == NULL)
-		return calloc(newnmemb, size);
+	もし (ptr == NULL)
+		戻る calloc(newnmemb, size);
 
-	if ((newnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
+	もし ((newnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
 	    newnmemb > 0 && SIZE_MAX / newnmemb < size) {
 		errno = ENOMEM;
-		return NULL;
+		戻る NULL;
 	}
 	newsize = newnmemb * size;
 
-	if ((oldnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
+	もし ((oldnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
 	    oldnmemb > 0 && SIZE_MAX / oldnmemb < size) {
 		errno = EINVAL;
-		return NULL;
+		戻る NULL;
 	}
 	oldsize = oldnmemb * size;
 	
@@ -59,29 +59,29 @@ recallocarray(void *ptr, size_t oldnmemb, size_t newnmemb, size_t size)
 	 * Don't bother too much if we're shrinking just a bit,
 	 * we do not shrink for series of small steps, oh well.
 	 */
-	if (newsize <= oldsize) {
+	もし (newsize <= oldsize) {
 		size_t d = oldsize - newsize;
 
-		if (d < oldsize / 2 && d < (size_t)getpagesize()) {
+		もし (d < oldsize / 2 && d < (size_t)getpagesize()) {
 			memset((char *)ptr + newsize, 0, d);
-			return ptr;
+			戻る ptr;
 		}
 	}
 
 	newptr = malloc(newsize);
-	if (newptr == NULL)
-		return NULL;
+	もし (newptr == NULL)
+		戻る NULL;
 
-	if (newsize > oldsize) {
+	もし (newsize > oldsize) {
 		memcpy(newptr, ptr, oldsize);
 		memset((char *)newptr + oldsize, 0, newsize - oldsize);
-	} else
+	} 否则
 		memcpy(newptr, ptr, newsize);
 
 	explicit_bzero(ptr, oldsize);
 	free(ptr);
 
-	return newptr;
+	戻る newptr;
 }
 /* DEF_WEAK(recallocarray); */
 

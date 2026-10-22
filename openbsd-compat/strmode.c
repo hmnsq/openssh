@@ -40,7 +40,7 @@
 /* XXX mode should be mode_t */
 
 void
-strmode(int mode, char *p)
+strmode(整数 mode, char *p)
 {
 	 /* print type */
 	switch (mode & S_IFMT) {
@@ -74,13 +74,13 @@ strmode(int mode, char *p)
 		break;
 	}
 	/* usr */
-	if (mode & S_IRUSR)
+	もし (mode & S_IRUSR)
 		*p++ = 'r';
-	else
+	否则
 		*p++ = '-';
-	if (mode & S_IWUSR)
+	もし (mode & S_IWUSR)
 		*p++ = 'w';
-	else
+	否则
 		*p++ = '-';
 	switch (mode & (S_IXUSR | S_ISUID)) {
 	case 0:
@@ -97,13 +97,13 @@ strmode(int mode, char *p)
 		break;
 	}
 	/* group */
-	if (mode & S_IRGRP)
+	もし (mode & S_IRGRP)
 		*p++ = 'r';
-	else
+	否则
 		*p++ = '-';
-	if (mode & S_IWGRP)
+	もし (mode & S_IWGRP)
 		*p++ = 'w';
-	else
+	否则
 		*p++ = '-';
 	switch (mode & (S_IXGRP | S_ISGID)) {
 	case 0:
@@ -120,13 +120,13 @@ strmode(int mode, char *p)
 		break;
 	}
 	/* other */
-	if (mode & S_IROTH)
+	もし (mode & S_IROTH)
 		*p++ = 'r';
-	else
+	否则
 		*p++ = '-';
-	if (mode & S_IWOTH)
+	もし (mode & S_IWOTH)
 		*p++ = 'w';
-	else
+	否则
 		*p++ = '-';
 	switch (mode & (S_IXOTH | S_ISVTX)) {
 	case 0:

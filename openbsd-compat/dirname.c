@@ -32,40 +32,40 @@ dirname(const char *path)
 	const char *endp;
 
 	/* Empty or NULL string gets treated as "." */
-	if (path == NULL || *path == '\0') {
+	もし (path == NULL || *path == '\0') {
 		dname[0] = '.';
 		dname[1] = '\0';
-		return (dname);
+		戻る (dname);
 	}
 
 	/* Strip any trailing slashes */
 	endp = path + strlen(path) - 1;
-	while (endp > path && *endp == '/')
+	ながら (endp > path && *endp == '/')
 		endp--;
 
 	/* Find the start of the dir */
-	while (endp > path && *endp != '/')
+	ながら (endp > path && *endp != '/')
 		endp--;
 
 	/* Either the dir is "/" or there are no slashes */
-	if (endp == path) {
+	もし (endp == path) {
 		dname[0] = *endp == '/' ? '/' : '.';
 		dname[1] = '\0';
-		return (dname);
-	} else {
+		戻る (dname);
+	} 否则 {
 		/* Move forward past the separating slashes */
 		do {
 			endp--;
-		} while (endp > path && *endp == '/');
+		} ながら (endp > path && *endp == '/');
 	}
 
 	len = endp - path + 1;
-	if (len >= sizeof(dname)) {
+	もし (len >= sizeof(dname)) {
 		errno = ENAMETOOLONG;
-		return (NULL);
+		戻る (NULL);
 	}
 	memcpy(dname, path, len);
 	dname[len] = '\0';
-	return (dname);
+	戻る (dname);
 }
 #endif

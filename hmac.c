@@ -26,7 +26,7 @@
 #include "hmac.h"
 
 struct ssh_hmac_ctx {
-	int			 alg;
+	整数			 alg;
 	struct ssh_digest_ctx	*ictx;
 	struct ssh_digest_ctx	*octx;
 	struct ssh_digest_ctx	*digest;
@@ -35,98 +35,98 @@ struct ssh_hmac_ctx {
 };
 
 size_t
-ssh_hmac_bytes(int alg)
+ssh_hmac_bytes(整数 alg)
 {
-	return ssh_digest_bytes(alg);
+	戻る ssh_digest_bytes(alg);
 }
 
 struct ssh_hmac_ctx *
-ssh_hmac_start(int alg)
+ssh_hmac_start(整数 alg)
 {
 	struct ssh_hmac_ctx	*ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
+	もし ((ret = calloc(1, sizeof(*ret))) == NULL)
+		戻る NULL;
 	ret->alg = alg;
-	if ((ret->ictx = ssh_digest_start(alg)) == NULL ||
+	もし ((ret->ictx = ssh_digest_start(alg)) == NULL ||
 	    (ret->octx = ssh_digest_start(alg)) == NULL ||
 	    (ret->digest = ssh_digest_start(alg)) == NULL)
 		goto fail;
 	ret->buf_len = ssh_digest_blocksize(ret->ictx);
-	if ((ret->buf = calloc(1, ret->buf_len)) == NULL)
+	もし ((ret->buf = calloc(1, ret->buf_len)) == NULL)
 		goto fail;
-	return ret;
+	戻る ret;
 fail:
 	ssh_hmac_free(ret);
-	return NULL;
+	戻る NULL;
 }
 
-int
+整数
 ssh_hmac_init(struct ssh_hmac_ctx *ctx, const void *key, size_t klen)
 {
 	size_t i;
 
 	/* reset ictx and octx if no is key given */
-	if (key != NULL) {
+	もし (key != NULL) {
 		/* truncate long keys */
-		if (klen <= ctx->buf_len)
+		もし (klen <= ctx->buf_len)
 			memcpy(ctx->buf, key, klen);
-		else if (ssh_digest_memory(ctx->alg, key, klen, ctx->buf,
+		否则 もし (ssh_digest_memory(ctx->alg, key, klen, ctx->buf,
 		    ctx->buf_len) < 0)
-			return -1;
-		for (i = 0; i < ctx->buf_len; i++)
+			戻る -1;
+		ために (i = 0; i < ctx->buf_len; i++)
 			ctx->buf[i] ^= 0x36;
-		if (ssh_digest_update(ctx->ictx, ctx->buf, ctx->buf_len) < 0)
-			return -1;
-		for (i = 0; i < ctx->buf_len; i++)
+		もし (ssh_digest_update(ctx->ictx, ctx->buf, ctx->buf_len) < 0)
+			戻る -1;
+		ために (i = 0; i < ctx->buf_len; i++)
 			ctx->buf[i] ^= 0x36 ^ 0x5c;
-		if (ssh_digest_update(ctx->octx, ctx->buf, ctx->buf_len) < 0)
-			return -1;
+		もし (ssh_digest_update(ctx->octx, ctx->buf, ctx->buf_len) < 0)
+			戻る -1;
 		explicit_bzero(ctx->buf, ctx->buf_len);
 	}
 	/* start with ictx */
-	if (ssh_digest_copy_state(ctx->ictx, ctx->digest) < 0)
-		return -1;
-	return 0;
+	もし (ssh_digest_copy_state(ctx->ictx, ctx->digest) < 0)
+		戻る -1;
+	戻る 0;
 }
 
-int
+整数
 ssh_hmac_update(struct ssh_hmac_ctx *ctx, const void *m, size_t mlen)
 {
-	return ssh_digest_update(ctx->digest, m, mlen);
+	戻る ssh_digest_update(ctx->digest, m, mlen);
 }
 
-int
+整数
 ssh_hmac_update_buffer(struct ssh_hmac_ctx *ctx, const struct sshbuf *b)
 {
-	return ssh_digest_update_buffer(ctx->digest, b);
+	戻る ssh_digest_update_buffer(ctx->digest, b);
 }
 
-int
+整数
 ssh_hmac_final(struct ssh_hmac_ctx *ctx, u_char *d, size_t dlen)
 {
 	size_t len;
 
 	len = ssh_digest_bytes(ctx->alg);
-	if (dlen < len ||
+	もし (dlen < len ||
 	    ssh_digest_final(ctx->digest, ctx->buf, len))
-		return -1;
+		戻る -1;
 	/* switch to octx */
-	if (ssh_digest_copy_state(ctx->octx, ctx->digest) < 0 ||
+	もし (ssh_digest_copy_state(ctx->octx, ctx->digest) < 0 ||
 	    ssh_digest_update(ctx->digest, ctx->buf, len) < 0 ||
 	    ssh_digest_final(ctx->digest, d, dlen) < 0)
-		return -1;
-	return 0;
+		戻る -1;
+	戻る 0;
 }
 
 void
 ssh_hmac_free(struct ssh_hmac_ctx *ctx)
 {
-	if (ctx != NULL) {
+	もし (ctx != NULL) {
 		ssh_digest_free(ctx->ictx);
 		ssh_digest_free(ctx->octx);
 		ssh_digest_free(ctx->digest);
-		if (ctx->buf) {
+		もし (ctx->buf) {
 			explicit_bzero(ctx->buf, ctx->buf_len);
 			free(ctx->buf);
 		}
@@ -144,24 +144,24 @@ hmac_test(void *key, size_t klen, void *m, size_t mlen, u_char *e, size_t elen)
 	size_t			 i;
 	u_char			 digest[16];
 
-	if ((ctx = ssh_hmac_start(SSH_DIGEST_MD5)) == NULL)
+	もし ((ctx = ssh_hmac_start(SSH_DIGEST_MD5)) == NULL)
 		printf("ssh_hmac_start failed");
-	if (ssh_hmac_init(ctx, key, klen) < 0 ||
+	もし (ssh_hmac_init(ctx, key, klen) < 0 ||
 	    ssh_hmac_update(ctx, m, mlen) < 0 ||
 	    ssh_hmac_final(ctx, digest, sizeof(digest)) < 0)
 		printf("ssh_hmac_xxx failed");
 	ssh_hmac_free(ctx);
 
-	if (memcmp(e, digest, elen)) {
-		for (i = 0; i < elen; i++)
+	もし (memcmp(e, digest, elen)) {
+		ために (i = 0; i < elen; i++)
 			printf("[%zu] %2.2x %2.2x\n", i, e[i], digest[i]);
 		printf("mismatch\n");
-	} else
+	} 否则
 		printf("ok\n");
 }
 
-int
-main(int argc, char **argv)
+整数
+メインページ(整数 argc, char **argv)
 {
 	/* try test vectors from RFC 2104 */
 
@@ -191,7 +191,7 @@ main(int argc, char **argv)
 	hmac_test(key2, strlen(key2), data2, strlen(data2), dig2, sizeof(dig2));
 	hmac_test(key3, sizeof(key3), data3, sizeof(data3), dig3, sizeof(dig3));
 
-	return 0;
+	戻る 0;
 }
 
 #endif

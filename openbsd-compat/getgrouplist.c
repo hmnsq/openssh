@@ -42,13 +42,13 @@
 #include <unistd.h>
 #include <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+整数
+getgrouplist(const char *uname, gid_t agroup, gid_t *groups, 整数 *grpcnt)
 {
 	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	整数 i, ngroups;
+	整数 ret, maxgroups;
+	整数 bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	もし (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		戻る (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,17 +67,17 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
+	ながら ((grp = getgrent())) {
+		もし (grp->gr_gid == agroup)
 			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+		ために (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			もし (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
+		もし (bail)
 			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		ために (i = 0; grp->gr_mem[i]; i++) {
+			もし (!strcmp(grp->gr_mem[i], uname)) {
+				もし (ngroups >= maxgroups) {
 					ret = -1;
 					goto out;
 				}
@@ -89,7 +89,7 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 out:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	戻る (ret);
 }
 
 #endif /* HAVE_GETGROUPLIST */

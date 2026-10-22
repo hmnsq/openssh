@@ -70,30 +70,30 @@ extern "C" {
 #include "fixed-keys.h"
 
 static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+static volatile 整数 in_fuzz = 0;
 
 static char *g_open_failure_msg = NULL;
 
-extern "C" int
-my_channel_input_open_failure(int type, uint32_t seq, struct ssh *ssh)
+extern "C" 整数
+my_channel_input_open_failure(整数 type, uint32_t seq, struct ssh *ssh)
 {
 	(void)type;
 	(void)seq;
 	uint32_t reason;
-	int r;
-	if ((r = sshpkt_get_u32(ssh, &reason)) != 0)
+	整数 r;
+	もし ((r = sshpkt_get_u32(ssh, &reason)) != 0)
 		ssh_packet_disconnect(ssh, "Invalid open failure message");
-	if ((r = sshpkt_get_cstring(ssh, &g_open_failure_msg, NULL)) != 0 ||
+	もし ((r = sshpkt_get_cstring(ssh, &g_open_failure_msg, NULL)) != 0 ||
 	    (r = sshpkt_get_string_direct(ssh, NULL, NULL)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		ssh_packet_disconnect(ssh, "Invalid open failure message");
-	return 0;
+	戻る 0;
 }
 
 extern "C" void
-cleanup_exit(int code)
+cleanup_exit(整数 code)
 {
-	if (in_fuzz)
+	もし (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
@@ -103,17 +103,17 @@ __wrap_ssh_packet_disconnect(struct ssh *ssh, const char *fmt, ...)
 {
 	(void)ssh;
 	(void)fmt;
-	if (in_fuzz)
+	もし (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(1);
 }
 
-extern "C" int
-__wrap_sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+extern "C" 整数
+__wrap_sshpkt_fatal(struct ssh *ssh, 整数 r, const char *fmt, ...)
 {
 	(void)ssh;
 	(void)fmt;
-	if (in_fuzz)
+	もし (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(r ? r : 1);
 }
@@ -123,10 +123,10 @@ load_private(const char *str)
 {
 	struct sshbuf *b = sshbuf_from(str, strlen(str));
 	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	もし (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	戻る k;
 }
 
 static struct sshkey *
@@ -134,59 +134,59 @@ load_public(const char *str)
 {
 	char *tmp, *cp;
 	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	もし (k == NULL)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	もし (sshkey_read(k, &cp) != 0)
 		abort();
 	free(tmp);
-	return k;
+	戻る k;
 }
 
-static int
+static 整数
 pump(struct ssh *from, struct ssh *to, size_t *transferred)
 {
 	const u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	整数 r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	もし ((r = ssh_packet_next(from, &type)) != 0)
+		戻る r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	もし (len == 0)
+		戻る 0;
+	もし ((r = ssh_input_append(to, buf, len)) != 0)
+		戻る r;
+	もし ((r = ssh_output_consume(from, len)) != 0)
+		戻る r;
 	*transferred = len;
-	return 0;
+	戻る 0;
 }
 
-static int
+static 整数
 run_kex(struct ssh *client, struct ssh *server)
 {
-	int r;
+	整数 r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	ために (整数 i = 0; i < 100; i++) {
+		もし ((r = pump(server, client, &sn)) != 0) 戻る r;
+		もし ((r = pump(client, server, &cn)) != 0) 戻る r;
+		もし (server->kex->done && client->kex->done)
+			戻る 0;
+		もし (cn == 0 && sn == 0)
+			戻る SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	戻る SSH_ERR_PROTOCOL_ERROR;
 }
 
 static struct ssh *g_client = NULL;
 static struct ssh *g_server = NULL;
-static int g_init = 0;
-static int g_pipe[2] = { -1, -1 };
+static 整数 g_init = 0;
+static 整数 g_pipe[2] = { -1, -1 };
 
 static void
-dummy_open_confirm(struct ssh *ssh, int id, int success, void *ctx)
+dummy_open_confirm(struct ssh *ssh, 整数 id, 整数 success, void *ctx)
 {
 	(void)ssh;
 	(void)id;
@@ -195,7 +195,7 @@ dummy_open_confirm(struct ssh *ssh, int id, int success, void *ctx)
 }
 
 static void
-dummy_status_confirm(struct ssh *ssh, int type, Channel *c, void *ctx)
+dummy_status_confirm(struct ssh *ssh, 整数 type, Channel *c, void *ctx)
 {
 	(void)ssh;
 	(void)type;
@@ -211,26 +211,26 @@ dummy_status_abandon(struct ssh *ssh, Channel *c, void *ctx)
 	(void)ctx;
 }
 
-static int
+static 整数
 init_once(void)
 {
-	if (g_init)
-		return 0;
+	もし (g_init)
+		戻る 0;
 	signal(SIGPIPE, SIG_IGN);
 	log_init("ssh_channels_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	int pfd[2];
-	if (pipe(pfd) != 0)
-		return -1;
+	整数 pfd[2];
+	もし (pipe(pfd) != 0)
+		戻る -1;
 	g_pipe[0] = fcntl(pfd[0], F_DUPFD_CLOEXEC, 100);
 	g_pipe[1] = fcntl(pfd[1], F_DUPFD_CLOEXEC, 100);
 	close(pfd[0]);
 	close(pfd[1]);
-	if (g_pipe[0] < 0 || g_pipe[1] < 0)
-		return -1;
-	int fl0 = fcntl(g_pipe[0], F_GETFL, 0);
-	int fl1 = fcntl(g_pipe[1], F_GETFL, 0);
+	もし (g_pipe[0] < 0 || g_pipe[1] < 0)
+		戻る -1;
+	整数 fl0 = fcntl(g_pipe[0], F_GETFL, 0);
+	整数 fl1 = fcntl(g_pipe[1], F_GETFL, 0);
 	(void)fcntl(g_pipe[0], F_SETFL, fl0 | O_NONBLOCK);
 	(void)fcntl(g_pipe[1], F_SETFL, fl1 | O_NONBLOCK);
 
@@ -240,17 +240,17 @@ init_once(void)
 
 	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
 	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
+	整数 i;
+	ために (i = 0; i < PROPOSAL_MAX; i++) {
 		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+		もし (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		否则 もし (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		否则 もし (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		否则 もし (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
@@ -258,14 +258,14 @@ init_once(void)
 	struct kex_params kp;
 	memcpy(kp.proposal, proposal, sizeof(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	もし (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		戻る -1;
+	もし (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		戻る -1;
+	もし (run_kex(g_client, g_server) != 0)
+		戻る -1;
 
 	channel_init_channels(g_client);
 
@@ -290,16 +290,16 @@ init_once(void)
 	    &channel_input_status_confirm);
 
 	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
+	ために (i = 0; i < PROPOSAL_MAX; i++)
 		free(proposal[i]);
 	g_init = 1;
-	return 0;
+	戻る 0;
 }
 
 struct chan_scenario {
 	const char *ctype;
-	int state;
-	int use_pipe;
+	整数 state;
+	整数 use_pipe;
 };
 
 static const struct chan_scenario k_scenarios[] = {
@@ -310,34 +310,34 @@ static const struct chan_scenario k_scenarios[] = {
 	{ "direct-tcpip",    SSH_CHANNEL_OPENING,  1 },
 };
 
-static int g_channel_id = -1;
+static 整数 g_channel_id = -1;
 
 static void
 drain_pipe(void)
 {
 	char buf[4096];
-	if (g_pipe[0] < 0)
-		return;
-	while (read(g_pipe[0], buf, sizeof(buf)) > 0) { }
+	もし (g_pipe[0] < 0)
+		戻る;
+	ながら (read(g_pipe[0], buf, sizeof(buf)) > 0) { }
 }
 
 static void
 reset_channel(struct ssh *ssh, const struct chan_scenario *s)
 {
-	if (g_channel_id >= 0) {
+	もし (g_channel_id >= 0) {
 		Channel *c = channel_lookup(ssh, g_channel_id);
-		if (c != NULL)
+		もし (c != NULL)
 			channel_free(ssh, c);
 		g_channel_id = -1;
 	}
 	drain_pipe();
 
-	int rfd = s->use_pipe ? g_pipe[1] : -1;
-	int wfd = s->use_pipe ? g_pipe[1] : -1;
+	整数 rfd = s->use_pipe ? g_pipe[1] : -1;
+	整数 wfd = s->use_pipe ? g_pipe[1] : -1;
 	Channel *c = channel_new(ssh, (char *)s->ctype, s->state,
 	    rfd, wfd, -1, 32768, 32768, 0, (char *)"fuzz", 0);
-	if (c == NULL)
-		return;
+	もし (c == NULL)
+		戻る;
 	g_channel_id = c->self;
 	channel_register_open_confirm(ssh, g_channel_id,
 	    &dummy_open_confirm, NULL);
@@ -357,27 +357,27 @@ static const uint8_t k_msg_types[] = {
 	SSH2_MSG_CHANNEL_CLOSE,
 };
 
-extern "C" int
+extern "C" 整数
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return 0;
-	if (size > 65000)
-		return 0;
+	もし (init_once() != 0)
+		戻る 0;
+	もし (size > 65000)
+		戻る 0;
 
 	const size_t n_scen = sizeof(k_scenarios) / sizeof(k_scenarios[0]);
 	const size_t n_msg = sizeof(k_msg_types) / sizeof(k_msg_types[0]);
 
-	for (size_t s = 0; s < n_scen; s++) {
+	ために (size_t s = 0; s < n_scen; s++) {
 		reset_channel(g_client, &k_scenarios[s]);
-		for (size_t t = 0; t < n_msg; t++) {
+		ために (size_t t = 0; t < n_msg; t++) {
 			in_fuzz = 1;
-			if (setjmp(fuzz_env) == 0) {
+			もし (setjmp(fuzz_env) == 0) {
 				size_t transferred;
-				if (ssh_packet_put(g_server, k_msg_types[t],
+				もし (ssh_packet_put(g_server, k_msg_types[t],
 				    data, size) != 0)
 					goto done;
-				if (pump(g_server, g_client,
+				もし (pump(g_server, g_client,
 				    &transferred) != 0)
 					goto done;
 				(void)ssh_dispatch_run(g_client,
@@ -390,5 +390,5 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 			g_open_failure_msg = NULL;
 		}
 	}
-	return 0;
+	戻る 0;
 }

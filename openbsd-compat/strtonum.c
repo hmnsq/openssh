@@ -36,10 +36,10 @@ strtonum(const char *numstr, long long minval, long long maxval,
 {
 	long long ll = 0;
 	char *ep;
-	int error = 0;
+	整数 error = 0;
 	struct errval {
 		const char *errstr;
-		int err;
+		整数 err;
 	} ev[4] = {
 		{ NULL,		0 },
 		{ "invalid",	EINVAL },
@@ -49,24 +49,24 @@ strtonum(const char *numstr, long long minval, long long maxval,
 
 	ev[0].err = errno;
 	errno = 0;
-	if (minval > maxval)
+	もし (minval > maxval)
 		error = INVALID;
-	else {
+	否则 {
 		ll = strtoll(numstr, &ep, 10);
-		if (numstr == ep || *ep != '\0')
+		もし (numstr == ep || *ep != '\0')
 			error = INVALID;
-		else if ((ll == LLONG_MIN && errno == ERANGE) || ll < minval)
+		否则 もし ((ll == LLONG_MIN && errno == ERANGE) || ll < minval)
 			error = TOOSMALL;
-		else if ((ll == LLONG_MAX && errno == ERANGE) || ll > maxval)
+		否则 もし ((ll == LLONG_MAX && errno == ERANGE) || ll > maxval)
 			error = TOOLARGE;
 	}
-	if (errstrp != NULL)
+	もし (errstrp != NULL)
 		*errstrp = ev[error].errstr;
 	errno = ev[error].err;
-	if (error)
+	もし (error)
 		ll = 0;
 
-	return (ll);
+	戻る (ll);
 }
 
 #endif /* HAVE_STRTONUM */

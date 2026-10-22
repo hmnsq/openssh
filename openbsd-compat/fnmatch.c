@@ -100,43 +100,43 @@
 #define	RANGE_NOMATCH	0
 #define	RANGE_ERROR	(-1)
 
-static int
-classmatch(const char *pattern, char test, int foldcase, const char **ep)
+static 整数
+classmatch(const char *pattern, char test, 整数 foldcase, const char **ep)
 {
 	const char * const mismatch = pattern;
 	const char *colon;
 	struct cclass *cc;
-	int rval = RANGE_NOMATCH;
+	整数 rval = RANGE_NOMATCH;
 	size_t len;
 
-	if (pattern[0] != '[' || pattern[1] != ':') {
+	もし (pattern[0] != '[' || pattern[1] != ':') {
 		*ep = mismatch;
-		return RANGE_ERROR;
+		戻る RANGE_ERROR;
 	}
 	pattern += 2;
 
-	if ((colon = strchr(pattern, ':')) == NULL || colon[1] != ']') {
+	もし ((colon = strchr(pattern, ':')) == NULL || colon[1] != ']') {
 		*ep = mismatch;
-		return RANGE_ERROR;
+		戻る RANGE_ERROR;
 	}
 	*ep = colon + 2;
 	len = (size_t)(colon - pattern);
 
-	if (foldcase && strncmp(pattern, "upper:]", 7) == 0)
+	もし (foldcase && strncmp(pattern, "upper:]", 7) == 0)
 		pattern = "lower:]";
-	for (cc = cclasses; cc->name != NULL; cc++) {
-		if (!strncmp(pattern, cc->name, len) && cc->name[len] == '\0') {
-			if (cc->isctype((unsigned char)test))
+	ために (cc = cclasses; cc->name != NULL; cc++) {
+		もし (!strncmp(pattern, cc->name, len) && cc->name[len] == '\0') {
+			もし (cc->isctype((unsigned char)test))
 				rval = RANGE_MATCH;
 			break;
 		}
 	}
-	if (cc->name == NULL) {
+	もし (cc->name == NULL) {
 		/* invalid character class, treat as normal text */
 		*ep = mismatch;
 		rval = RANGE_ERROR;
 	}
-	return rval;
+	戻る rval;
 }
 
 /* Most MBCS/collation/case issues handled here.  Wildcard '*' is not handled.
@@ -146,46 +146,46 @@ classmatch(const char *pattern, char test, int foldcase, const char **ep)
  * Both pattern and string are **char to support pointer increment of arbitrary
  * multibyte characters for the given locale, in a later iteration of this code
  */
-static int fnmatch_ch(const char **pattern, const char **string, int flags)
+static 整数 fnmatch_ch(const char **pattern, const char **string, 整数 flags)
 {
 	const char * const mismatch = *pattern;
-	const int nocase = !!(flags & FNM_CASEFOLD);
-	const int escape = !(flags & FNM_NOESCAPE);
-	const int slash = !!(flags & FNM_PATHNAME);
-	int result = FNM_NOMATCH;
+	const 整数 nocase = !!(flags & FNM_CASEFOLD);
+	const 整数 escape = !(flags & FNM_NOESCAPE);
+	const 整数 slash = !!(flags & FNM_PATHNAME);
+	整数 result = FNM_NOMATCH;
 	const char *startch;
-	int negate;
+	整数 negate;
 
-	if (**pattern == '[') {
+	もし (**pattern == '[') {
 		++*pattern;
 
 		/* Handle negation, either leading ! or ^ operators */
 		negate = (**pattern == '!') || (**pattern == '^');
-		if (negate)
+		もし (negate)
 			++*pattern;
 
 		/* ']' is an ordinary char at the start of the range pattern */
-		if (**pattern == ']')
+		もし (**pattern == ']')
 			goto leadingclosebrace;
 
-		while (**pattern) {
-			if (**pattern == ']') {
+		ながら (**pattern) {
+			もし (**pattern == ']') {
 				++*pattern;
 				/* XXX: Fix for MBCS character width */
 				++*string;
-				return (result ^ negate);
+				戻る (result ^ negate);
 			}
 
-			if (escape && (**pattern == '\\')) {
+			もし (escape && (**pattern == '\\')) {
 				++*pattern;
 
 				/* Patterns must terminate with ']', not EOS */
-				if (!**pattern)
+				もし (!**pattern)
 					break;
 			}
 
 			/* Patterns must terminate with ']' not '/' */
-			if (slash && (**pattern == '/'))
+			もし (slash && (**pattern == '/'))
 				break;
 
 			/* Match character classes. */
@@ -200,7 +200,7 @@ static int fnmatch_ch(const char **pattern, const char **string, int flags)
 				/* Not a valid character class. */
 				break;
 			}
-			if (!**pattern)
+			もし (!**pattern)
 				break;
 
 leadingclosebrace:
@@ -208,7 +208,7 @@ leadingclosebrace:
 			 * "x-]" is not allowed unless escaped ("x-\]")
 			 * XXX: Fix for locale/MBCS character width
 			 */
-			if (((*pattern)[1] == '-') && ((*pattern)[2] != ']')) {
+			もし (((*pattern)[1] == '-') && ((*pattern)[2] != ']')) {
 				startch = *pattern;
 				*pattern += (escape && ((*pattern)[2] == '\\')) ? 3 : 2;
 
@@ -218,13 +218,13 @@ leadingclosebrace:
 				 * FNM_PATHNAME mode pattern fall out to to the
 				 * rewind and test '[' literal code path.
 				 */
-				if (!**pattern || (slash && (**pattern == '/')))
+				もし (!**pattern || (slash && (**pattern == '/')))
 					break;
 
 				/* XXX: handle locale/MBCS comparison, advance by MBCS char width */
-				if ((**string >= *startch) && (**string <= **pattern))
+				もし ((**string >= *startch) && (**string <= **pattern))
 					result = 0;
-				else if (nocase &&
+				否则 もし (nocase &&
 				    (isupper((unsigned char)**string) ||
 				     isupper((unsigned char)*startch) ||
 				     isupper((unsigned char)**pattern)) &&
@@ -239,9 +239,9 @@ leadingclosebrace:
 			}
 
 			/* XXX: handle locale/MBCS comparison, advance by MBCS char width */
-			if ((**string == **pattern))
+			もし ((**string == **pattern))
 				result = 0;
-			else if (nocase && (isupper((unsigned char)**string) ||
+			否则 もし (nocase && (isupper((unsigned char)**string) ||
 			    isupper((unsigned char)**pattern)) &&
 			    (tolower((unsigned char)**string) ==
 			    tolower((unsigned char)**pattern)))
@@ -255,63 +255,63 @@ leadingclosebrace:
 		 */
 		*pattern = mismatch;
 		result = FNM_NOMATCH;
-	} else if (**pattern == '?') {
+	} 否则 もし (**pattern == '?') {
 		/* Optimize '?' match before unescaping **pattern */
-		if (!**string || (slash && (**string == '/')))
-			return FNM_NOMATCH;
+		もし (!**string || (slash && (**string == '/')))
+			戻る FNM_NOMATCH;
 		result = 0;
 		goto fnmatch_ch_success;
-	} else if (escape && (**pattern == '\\') && (*pattern)[1]) {
+	} 否则 もし (escape && (**pattern == '\\') && (*pattern)[1]) {
 		++*pattern;
 	}
 
 	/* XXX: handle locale/MBCS comparison, advance by the MBCS char width */
-	if (**string == **pattern)
+	もし (**string == **pattern)
 		result = 0;
-	else if (nocase && (isupper((unsigned char)**string) ||
+	否则 もし (nocase && (isupper((unsigned char)**string) ||
 	    isupper((unsigned char)**pattern)) &&
 	    (tolower((unsigned char)**string) ==
 	    tolower((unsigned char)**pattern)))
 		result = 0;
 
 	/* Refuse to advance over trailing slash or NULs */
-	if (**string == '\0' || **pattern == '\0' ||
+	もし (**string == '\0' || **pattern == '\0' ||
 	    (slash && ((**string == '/') || (**pattern == '/'))))
-		return result;
+		戻る result;
 
 fnmatch_ch_success:
 	++*pattern;
 	++*string;
-	return result;
+	戻る result;
 }
 
 
-int fnmatch(const char *pattern, const char *string, int flags)
+整数 fnmatch(const char *pattern, const char *string, 整数 flags)
 {
 	static const char dummystring[2] = {' ', 0};
-	const int escape = !(flags & FNM_NOESCAPE);
-	const int slash = !!(flags & FNM_PATHNAME);
-	const int leading_dir = !!(flags & FNM_LEADING_DIR);
+	const 整数 escape = !(flags & FNM_NOESCAPE);
+	const 整数 slash = !!(flags & FNM_PATHNAME);
+	const 整数 leading_dir = !!(flags & FNM_LEADING_DIR);
 	const char *dummyptr, *matchptr, *strendseg;
-	int wild;
+	整数 wild;
 	/* For '*' wild processing only; suppress 'used before initialization'
 	 * warnings with dummy initialization values;
 	 */
 	const char *strstartseg = NULL;
 	const char *mismatch = NULL;
-	int matchlen = 0;
+	整数 matchlen = 0;
 
-	if (*pattern == '*')
+	もし (*pattern == '*')
 		goto firstsegment;
 
-	while (*pattern && *string) {
+	ながら (*pattern && *string) {
 		/*
 		 * Pre-decode "\/" which has no special significance, and
 		 * match balanced slashes, starting a new segment pattern.
 		 */
-		if (slash && escape && (*pattern == '\\') && (pattern[1] == '/'))
+		もし (slash && escape && (*pattern == '\\') && (pattern[1] == '/'))
 			++pattern;
-		if (slash && (*pattern == '/') && (*string == '/')) {
+		もし (slash && (*pattern == '/') && (*string == '/')) {
 			++pattern;
 			++string;
 		}
@@ -321,13 +321,13 @@ firstsegment:
 		 * At the beginning of each segment, validate leading period
 		 * behavior.
 		 */
-		if ((flags & FNM_PERIOD) && (*string == '.')) {
-		    if (*pattern == '.')
+		もし ((flags & FNM_PERIOD) && (*string == '.')) {
+		    もし (*pattern == '.')
 			    ++pattern;
-		    else if (escape && (*pattern == '\\') && (pattern[1] == '.'))
+		    否则 もし (escape && (*pattern == '\\') && (pattern[1] == '.'))
 			    pattern += 2;
-		    else
-			    return FNM_NOMATCH;
+		    否则
+			    戻る FNM_NOMATCH;
 		    ++string;
 		}
 
@@ -335,11 +335,11 @@ firstsegment:
 		 * Determine the end of string segment.  Presumes '/'
 		 * character is unique, not composite in any MBCS encoding
 		 */
-		if (slash) {
+		もし (slash) {
 			strendseg = strchr(string, '/');
-			if (!strendseg)
+			もし (!strendseg)
 				strendseg = strchr(string, '\0');
-		} else {
+		} 否则 {
 			strendseg = strchr(string, '\0');
 		}
 
@@ -347,12 +347,12 @@ firstsegment:
 		 * Allow pattern '*' to be consumed even with no remaining
 		 * string to match.
 		 */
-		while (*pattern) {
-			if ((string > strendseg) ||
+		ながら (*pattern) {
+			もし ((string > strendseg) ||
 			    ((string == strendseg) && (*pattern != '*')))
 				break;
 
-			if (slash && ((*pattern == '/') ||
+			もし (slash && ((*pattern == '/') ||
 			    (escape && (*pattern == '\\') && (pattern[1] == '/'))))
 				break;
 
@@ -360,19 +360,19 @@ firstsegment:
 			 * Reduce groups of '*' and '?' to n '?' matches
 			 * followed by one '*' test for simplicity.
 			 */
-			for (wild = 0; (*pattern == '*') || (*pattern == '?'); ++pattern) {
-				if (*pattern == '*') {
+			ために (wild = 0; (*pattern == '*') || (*pattern == '?'); ++pattern) {
+				もし (*pattern == '*') {
 					wild = 1;
-				} else if (string < strendseg) {  /* && (*pattern == '?') */
+				} 否则 もし (string < strendseg) {  /* && (*pattern == '?') */
 					/* XXX: Advance 1 char for MBCS locale */
 					++string;
 				}
-				else {  /* (string >= strendseg) && (*pattern == '?') */
-					return FNM_NOMATCH;
+				否则 {  /* (string >= strendseg) && (*pattern == '?') */
+					戻る FNM_NOMATCH;
 				}
 			}
 
-			if (wild) {
+			もし (wild) {
 				strstartseg = string;
 				mismatch = pattern;
 
@@ -380,8 +380,8 @@ firstsegment:
 				 * Count fixed (non '*') char matches remaining
 				 * in pattern * excluding '/' (or "\/") and '*'.
 				 */
-				for (matchptr = pattern, matchlen = 0; 1; ++matchlen) {
-					if ((*matchptr == '\0') ||
+				ために (matchptr = pattern, matchlen = 0; 1; ++matchlen) {
+					もし ((*matchptr == '\0') ||
 					    (slash && ((*matchptr == '/') ||
 					    (escape && (*matchptr == '\\') &&
 					    (matchptr[1] == '/'))))) {
@@ -391,23 +391,23 @@ firstsegment:
 						 * wildcard loop.
 						 */
 						/* XXX: Adjust for MBCS */
-						if (string + matchlen > strendseg)
-							return FNM_NOMATCH;
+						もし (string + matchlen > strendseg)
+							戻る FNM_NOMATCH;
 
 						string = strendseg - matchlen;
 						wild = 0;
 						break;
 					}
 
-					if (*matchptr == '*') {
+					もし (*matchptr == '*') {
 						/*
 						 * Ensure at least this many
 						 * trailing string chars remain
 						 * for the first comparison.
 						 */
 						/* XXX: Adjust for MBCS */
-						if (string + matchlen > strendseg)
-							return FNM_NOMATCH;
+						もし (string + matchlen > strendseg)
+							戻る FNM_NOMATCH;
 
 						/*
 						 * Begin first wild comparison
@@ -423,26 +423,26 @@ firstsegment:
 					 * "[range]" escape.
 					 */
 					/* XXX: Adjust for MBCS */
-					if (escape && (*matchptr == '\\') &&
+					もし (escape && (*matchptr == '\\') &&
 					    matchptr[1]) {
 						matchptr += 2;
-					} else if (*matchptr == '[') {
+					} 否则 もし (*matchptr == '[') {
 						dummyptr = dummystring;
 						fnmatch_ch(&matchptr, &dummyptr,
 						    flags);
-					} else {
+					} 否则 {
 						++matchptr;
 					}
 				}
 			}
 
 			/* Incrementally match string against the pattern. */
-			while (*pattern && (string < strendseg)) {
+			ながら (*pattern && (string < strendseg)) {
 				/* Success; begin a new wild pattern search. */
-				if (*pattern == '*')
+				もし (*pattern == '*')
 					break;
 
-				if (slash && ((*string == '/') ||
+				もし (slash && ((*string == '/') ||
 				    (*pattern == '/') || (escape &&
 				    (*pattern == '\\') && (pattern[1] == '/'))))
 					break;
@@ -452,7 +452,7 @@ firstsegment:
 				 * "\/" to the '/', but slashes will mismatch,
 				 * and are not consumed).
 				 */
-				if (!fnmatch_ch(&pattern, &string, flags))
+				もし (!fnmatch_ch(&pattern, &string, flags))
 					continue;
 
 				/*
@@ -461,35 +461,35 @@ firstsegment:
 				 * string chars remain to match the fixed
 				 * pattern.
 				 */
-				if (wild) {
+				もし (wild) {
 					/* XXX: Advance 1 char for MBCS locale */
 					string = ++strstartseg;
-					if (string + matchlen > strendseg)
-						return FNM_NOMATCH;
+					もし (string + matchlen > strendseg)
+						戻る FNM_NOMATCH;
 
 					pattern = mismatch;
 					continue;
-				} else
-					return FNM_NOMATCH;
+				} 否则
+					戻る FNM_NOMATCH;
 			}
 		}
 
-		if (*string && !((slash || leading_dir) && (*string == '/')))
-			return FNM_NOMATCH;
+		もし (*string && !((slash || leading_dir) && (*string == '/')))
+			戻る FNM_NOMATCH;
 
-		if (*pattern && !(slash && ((*pattern == '/') ||
+		もし (*pattern && !(slash && ((*pattern == '/') ||
 		    (escape && (*pattern == '\\') && (pattern[1] == '/')))))
-			return FNM_NOMATCH;
+			戻る FNM_NOMATCH;
 
-		if (leading_dir && !*pattern && *string == '/')
-			return 0;
+		もし (leading_dir && !*pattern && *string == '/')
+			戻る 0;
 	}
 
 	/* Where both pattern and string are at EOS, declare success.  */
-	if (!*string && !*pattern)
-		return 0;
+	もし (!*string && !*pattern)
+		戻る 0;
 
 	/* Pattern didn't match to the end of string. */
-	return FNM_NOMATCH;
+	戻る FNM_NOMATCH;
 }
 #endif /* HAVE_FNMATCH */

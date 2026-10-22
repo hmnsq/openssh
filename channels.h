@@ -92,15 +92,15 @@ struct Channel;
 typedef struct Channel Channel;
 struct channel_connect;
 
-typedef void channel_open_fn(struct ssh *, int, int, void *);
-typedef void channel_callback_fn(struct ssh *, int, int, void *);
-typedef int channel_infilter_fn(struct ssh *, struct Channel *, char *, int);
-typedef void channel_filter_cleanup_fn(struct ssh *, int, void *);
+typedef void channel_open_fn(struct ssh *, 整数, 整数, void *);
+typedef void channel_callback_fn(struct ssh *, 整数, 整数, void *);
+typedef 整数 channel_infilter_fn(struct ssh *, struct Channel *, char *, 整数);
+typedef void channel_filter_cleanup_fn(struct ssh *, 整数, void *);
 typedef u_char *channel_outfilter_fn(struct ssh *, struct Channel *,
     u_char **, size_t *);
 
 /* Channel success/failure callbacks */
-typedef void channel_confirm_cb(struct ssh *, int, struct Channel *, void *);
+typedef void channel_confirm_cb(struct ssh *, 整数, struct Channel *, void *);
 typedef void channel_confirm_abandon_cb(struct ssh *, struct Channel *, void *);
 struct channel_confirm {
 	TAILQ_ENTRY(channel_confirm) entry;
@@ -111,7 +111,7 @@ struct channel_confirm {
 TAILQ_HEAD(channel_confirms, channel_confirm);
 
 /* Callbacks for mux channels back into client-specific code */
-typedef int mux_callback_fn(struct ssh *, struct Channel *);
+typedef 整数 mux_callback_fn(struct ssh *, struct Channel *);
 
 /*
  * NB. channel IDs on the wire and in c->remote_id are uint32, but local
@@ -121,40 +121,40 @@ typedef int mux_callback_fn(struct ssh *, struct Channel *);
  */
 
 struct Channel {
-	int     type;		/* channel type/state */
+	整数     type;		/* channel type/state */
 
-	int     self;		/* my own channel identifier */
+	整数     self;		/* my own channel identifier */
 	uint32_t remote_id;	/* channel identifier for remote peer */
-	int	have_remote_id;	/* non-zero if remote_id is valid */
+	整数	have_remote_id;	/* non-zero if remote_id is valid */
 
 	u_int   istate;		/* input from channel (state of receive half) */
 	u_int   ostate;		/* output to channel  (state of transmit half) */
-	int     flags;		/* close sent/rcvd */
-	int     rfd;		/* read fd */
-	int     wfd;		/* write fd */
-	int     efd;		/* extended fd */
-	int     sock;		/* sock fd */
+	整数     flags;		/* close sent/rcvd */
+	整数     rfd;		/* read fd */
+	整数     wfd;		/* write fd */
+	整数     efd;		/* extended fd */
+	整数     sock;		/* sock fd */
 	u_int	io_want;	/* bitmask of SSH_CHAN_IO_* */
 	u_int	io_ready;	/* bitmask of SSH_CHAN_IO_* */
-	int	pfds[4];	/* pollfd entries for rfd/wfd/efd/sock */
-	int     ctl_chan;	/* control channel (multiplexed connections) */
+	整数	pfds[4];	/* pollfd entries for rfd/wfd/efd/sock */
+	整数     ctl_chan;	/* control channel (multiplexed connections) */
 	uint32_t ctl_child_id;	/* child session for mux controllers */
-	int	have_ctl_child_id;/* non-zero if ctl_child_id is valid */
-	int     remote_has_tty;	/* remote side has a tty */
-	int     isatty;		/* rfd is a tty */
+	整数	have_ctl_child_id;/* non-zero if ctl_child_id is valid */
+	整数     remote_has_tty;	/* remote side has a tty */
+	整数     isatty;		/* rfd is a tty */
 #ifdef _AIX
-	int     wfd_isatty;	/* wfd is a tty */
+	整数     wfd_isatty;	/* wfd is a tty */
 #endif
-	int	client_tty;	/* (client) TTY has been requested */
-	int     force_drain;	/* force close on iEOF */
+	整数	client_tty;	/* (client) TTY has been requested */
+	整数     force_drain;	/* force close on iEOF */
 	double	notbefore;	/* Pause IO until deadline (time_t) */
-	int     delayed;	/* post-IO handlers for newly created
+	整数     delayed;	/* post-IO handlers for newly created
 				 * channels are delayed until the first call
 				 * to a matching pre-IO handler.
 				 * this way post-IO handlers are not
 				 * accidentally called if a FD gets reused */
-	int	restore_block;	/* fd mask to restore blocking status */
-	int	restore_flags[3];/* flags to restore */
+	整数	restore_block;	/* fd mask to restore blocking status */
+	整数	restore_flags[3];/* flags to restore */
 	struct sshbuf *input;	/* data read from socket, to be sent over
 				 * encrypted connection */
 	struct sshbuf *output;	/* data received over encrypted connection for
@@ -163,9 +163,9 @@ struct Channel {
 
 	char    *path;
 		/* path for unix domain sockets, or host name for forwards */
-	int     listening_port;	/* port being listened for forwards */
+	整数     listening_port;	/* port being listened for forwards */
 	char   *listening_addr;	/* addr being listened for forwards */
-	int     host_port;	/* remote port to connect for forwards */
+	整数     host_port;	/* remote port to connect for forwards */
 	char   *remote_name;	/* remote hostname */
 
 	u_int	remote_window;
@@ -175,19 +175,19 @@ struct Channel {
 	u_int	local_window_max;
 	u_int	local_consumed;
 	u_int	local_maxpacket;
-	int     extended_usage;
-	int	agent_new;	/* For agent listeners, use RFC 9987 requests */
-	int	single_connection;
+	整数     extended_usage;
+	整数	agent_new;	/* For agent listeners, use RFC 9987 requests */
+	整数	single_connection;
 
 	char   *ctype;		/* const type - NB. not freed on channel_free */
 	char   *xctype;		/* extended type */
-	int	bulk;		/* channel is non-interactive */
+	整数	bulk;		/* channel is non-interactive */
 
 	/* callback */
 	channel_open_fn		*open_confirm;
 	void			*open_confirm_ctx;
 	channel_callback_fn	*detach_user;
-	int			detach_close;
+	整数			detach_close;
 	struct channel_confirms	status_confirms;
 
 	/* filter */
@@ -197,7 +197,7 @@ struct Channel {
 	channel_filter_cleanup_fn *filter_cleanup;
 
 	/* keep boundaries */
-	int			datagram;
+	整数			datagram;
 
 	/* non-blocking connect */
 	struct channel_connect	*connect_ctx;
@@ -205,8 +205,8 @@ struct Channel {
 	/* multiplexing protocol hook, called for each packet received */
 	mux_callback_fn		*mux_rcb;
 	void			*mux_ctx;
-	int			mux_pause;
-	int			mux_downstream_id;
+	整数			mux_pause;
+	整数			mux_downstream_id;
 
 	/* Inactivity timeouts */
 
@@ -284,35 +284,35 @@ void channel_free_channels(struct ssh *ssh);
 
 /* channel management */
 
-Channel	*channel_by_id(struct ssh *, int);
+Channel	*channel_by_id(struct ssh *, 整数);
 Channel	*channel_by_remote_id(struct ssh *, u_int);
-Channel	*channel_lookup(struct ssh *, int);
-Channel *channel_new(struct ssh *, char *, int, int, int, int,
-	    u_int, u_int, int, const char *, int);
-void	 channel_set_fds(struct ssh *, int, int, int, int, int,
-	    int, int, u_int);
+Channel	*channel_lookup(struct ssh *, 整数);
+Channel *channel_new(struct ssh *, char *, 整数, 整数, 整数, 整数,
+	    u_int, u_int, 整数, const char *, 整数);
+void	 channel_set_fds(struct ssh *, 整数, 整数, 整数, 整数, 整数,
+	    整数, 整数, u_int);
 void	 channel_set_tty(struct ssh *, Channel *);
 void	 channel_free(struct ssh *, Channel *);
 void	 channel_free_all(struct ssh *);
 void	 channel_stop_listening(struct ssh *);
-void	 channel_force_close(struct ssh *, Channel *, int);
-void	 channel_set_xtype(struct ssh *, int, const char *);
+void	 channel_force_close(struct ssh *, Channel *, 整数);
+void	 channel_set_xtype(struct ssh *, 整数, const char *);
 
-void	 channel_send_open(struct ssh *, int);
-void	 channel_request_start(struct ssh *, int, const char *, int);
-void	 channel_register_cleanup(struct ssh *, int,
-	    channel_callback_fn *, int);
-void	 channel_register_open_confirm(struct ssh *, int,
+void	 channel_send_open(struct ssh *, 整数);
+void	 channel_request_start(struct ssh *, 整数, const char *, 整数);
+void	 channel_register_cleanup(struct ssh *, 整数,
+	    channel_callback_fn *, 整数);
+void	 channel_register_open_confirm(struct ssh *, 整数,
 	    channel_open_fn *, void *);
-void	 channel_register_filter(struct ssh *, int, channel_infilter_fn *,
+void	 channel_register_filter(struct ssh *, 整数, channel_infilter_fn *,
 	    channel_outfilter_fn *, channel_filter_cleanup_fn *, void *);
-void	 channel_register_status_confirm(struct ssh *, int,
+void	 channel_register_status_confirm(struct ssh *, 整数,
 	    channel_confirm_cb *, channel_confirm_abandon_cb *, void *);
-void	 channel_cancel_cleanup(struct ssh *, int);
-int	 channel_close_fd(struct ssh *, Channel *, int *);
+void	 channel_cancel_cleanup(struct ssh *, 整数);
+整数	 channel_close_fd(struct ssh *, Channel *, 整数 *);
 void	 channel_send_window_changes(struct ssh *);
-int	 channel_has_bulk(struct ssh *);
-void	 channel_set_tcp_keepalives(struct ssh *, int);
+整数	 channel_has_bulk(struct ssh *);
+void	 channel_set_tcp_keepalives(struct ssh *, 整数);
 
 /* channel inactivity timeouts */
 void channel_add_timeout(struct ssh *, const char *, double);
@@ -320,19 +320,19 @@ void channel_clear_timeouts(struct ssh *);
 
 /* mux proxy support */
 
-int	 channel_proxy_downstream(struct ssh *, Channel *mc);
-int	 channel_proxy_upstream(Channel *, int, uint32_t, struct ssh *);
+整数	 channel_proxy_downstream(struct ssh *, Channel *mc);
+整数	 channel_proxy_upstream(Channel *, 整数, uint32_t, struct ssh *);
 
 /* protocol handler */
 
-int	 channel_input_data(int, uint32_t, struct ssh *);
-int	 channel_input_extended_data(int, uint32_t, struct ssh *);
-int	 channel_input_ieof(int, uint32_t, struct ssh *);
-int	 channel_input_oclose(int, uint32_t, struct ssh *);
-int	 channel_input_open_confirmation(int, uint32_t, struct ssh *);
-int	 channel_input_open_failure(int, uint32_t, struct ssh *);
-int	 channel_input_window_adjust(int, uint32_t, struct ssh *);
-int	 channel_input_status_confirm(int, uint32_t, struct ssh *);
+整数	 channel_input_data(整数, uint32_t, struct ssh *);
+整数	 channel_input_extended_data(整数, uint32_t, struct ssh *);
+整数	 channel_input_ieof(整数, uint32_t, struct ssh *);
+整数	 channel_input_oclose(整数, uint32_t, struct ssh *);
+整数	 channel_input_open_confirmation(整数, uint32_t, struct ssh *);
+整数	 channel_input_open_failure(整数, uint32_t, struct ssh *);
+整数	 channel_input_window_adjust(整数, uint32_t, struct ssh *);
+整数	 channel_input_status_confirm(整数, uint32_t, struct ssh *);
 
 /* file descriptor handling (read/write) */
 struct pollfd;
@@ -341,62 +341,62 @@ struct timespec;
 void	 channel_prepare_poll(struct ssh *, struct pollfd **,
 	    u_int *, u_int *, u_int, struct timespec *);
 void	 channel_after_poll(struct ssh *, struct pollfd *, u_int);
-int	 channel_output_poll(struct ssh *);
+整数	 channel_output_poll(struct ssh *);
 
-int      channel_not_very_much_buffered_data(struct ssh *);
+整数      channel_not_very_much_buffered_data(struct ssh *);
 void     channel_close_all(struct ssh *);
-int      channel_still_open(struct ssh *);
-int	 channel_tty_open(struct ssh *);
+整数      channel_still_open(struct ssh *);
+整数	 channel_tty_open(struct ssh *);
 const char *channel_format_extended_usage(const Channel *);
 char	*channel_open_message(struct ssh *);
-void	 channel_report_open(struct ssh *, int);
-int	 channel_find_open(struct ssh *);
+void	 channel_report_open(struct ssh *, 整数);
+整数	 channel_find_open(struct ssh *);
 
 /* tcp forwarding */
 struct Forward;
 struct ForwardOptions;
-void	 channel_set_af(struct ssh *, int af);
-void     channel_permit_all(struct ssh *, int);
-void	 channel_add_permission(struct ssh *, int, int, char *, int);
-void	 channel_clear_permission(struct ssh *, int, int);
-void	 channel_disable_admin(struct ssh *, int);
-void	 channel_update_permission(struct ssh *, int, int);
+void	 channel_set_af(struct ssh *, 整数 af);
+void     channel_permit_all(struct ssh *, 整数);
+void	 channel_add_permission(struct ssh *, 整数, 整数, char *, 整数);
+void	 channel_clear_permission(struct ssh *, 整数, 整数);
+void	 channel_disable_admin(struct ssh *, 整数);
+void	 channel_update_permission(struct ssh *, 整数, 整数);
 Channel	*channel_connect_to_port(struct ssh *, const char *, u_short,
-	    char *, char *, int *, const char **);
+	    char *, char *, 整数 *, const char **);
 Channel *channel_connect_to_path(struct ssh *, const char *, char *, char *);
 Channel	*channel_connect_stdio_fwd(struct ssh *, const char*,
-	    int, int, int, int);
+	    整数, 整数, 整数, 整数);
 Channel	*channel_connect_by_listen_address(struct ssh *, const char *,
 	    u_short, char *, char *);
 Channel	*channel_connect_by_listen_path(struct ssh *, const char *,
 	    char *, char *);
-int	 channel_request_remote_forwarding(struct ssh *, struct Forward *);
-int	 channel_setup_local_fwd_listener(struct ssh *, struct Forward *,
+整数	 channel_request_remote_forwarding(struct ssh *, struct Forward *);
+整数	 channel_setup_local_fwd_listener(struct ssh *, struct Forward *,
 	    struct ForwardOptions *);
-int	 channel_request_rforward_cancel(struct ssh *, struct Forward *);
-int	 channel_setup_remote_fwd_listener(struct ssh *, struct Forward *,
-	    int *, struct ForwardOptions *);
-int	 channel_cancel_rport_listener(struct ssh *, struct Forward *);
-int	 channel_cancel_lport_listener(struct ssh *, struct Forward *,
-	    int, struct ForwardOptions *);
-int	 permitopen_port(const char *);
+整数	 channel_request_rforward_cancel(struct ssh *, struct Forward *);
+整数	 channel_setup_remote_fwd_listener(struct ssh *, struct Forward *,
+	    整数 *, struct ForwardOptions *);
+整数	 channel_cancel_rport_listener(struct ssh *, struct Forward *);
+整数	 channel_cancel_lport_listener(struct ssh *, struct Forward *,
+	    整数, struct ForwardOptions *);
+整数	 permitopen_port(const char *);
 
 /* x11 forwarding */
 
 void	 channel_set_x11_refuse_time(struct ssh *, double);
-int	 x11_connect_display(struct ssh *);
-int	 x11_create_display_inet(struct ssh *, int, int, int, u_int *, int **);
-void	 x11_request_forwarding_with_spoofing(struct ssh *, int,
-	    const char *, const char *, const char *, int);
-int      x11_channel_used_recently(struct ssh *ssh);
+整数	 x11_connect_display(struct ssh *);
+整数	 x11_create_display_inet(struct ssh *, 整数, 整数, 整数, u_int *, 整数 **);
+void	 x11_request_forwarding_with_spoofing(struct ssh *, 整数,
+	    const char *, const char *, const char *, 整数);
+整数      x11_channel_used_recently(struct ssh *ssh);
 
 /* channel close */
 
-int	 chan_is_dead(struct ssh *, Channel *, int);
+整数	 chan_is_dead(struct ssh *, Channel *, 整数);
 void	 chan_mark_dead(struct ssh *, Channel *);
 
 /* agent forwarding */
-void	 client_channel_request_agent_forwarding(struct ssh *, int);
+void	 client_channel_request_agent_forwarding(struct ssh *, 整数);
 
 /* channel events */
 

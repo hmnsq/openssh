@@ -39,15 +39,15 @@ struct xaddr {
 #define addr32	xa.addr32
 };
 
-int addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa);
-int addr_netmask(int af, u_int l, struct xaddr *n);
-int addr_pton(const char *p, struct xaddr *n);
-int addr_pton_cidr(const char *p, struct xaddr *n, u_int *l);
-int addr_ntop(const struct xaddr *n, char *p, size_t len);
-int addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b);
-int addr_cmp(const struct xaddr *a, const struct xaddr *b);
-int addr_host_to_all1s(struct xaddr *a, u_int masklen);
-int addr_netmatch(const struct xaddr *host, const struct xaddr *net,
+整数 addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa);
+整数 addr_netmask(整数 af, u_int l, struct xaddr *n);
+整数 addr_pton(const char *p, struct xaddr *n);
+整数 addr_pton_cidr(const char *p, struct xaddr *n, u_int *l);
+整数 addr_ntop(const struct xaddr *n, char *p, size_t len);
+整数 addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b);
+整数 addr_cmp(const struct xaddr *a, const struct xaddr *b);
+整数 addr_host_to_all1s(struct xaddr *a, u_int masklen);
+整数 addr_netmatch(const struct xaddr *host, const struct xaddr *net,
     u_int masklen);
 void addr_increment(struct xaddr *a);
 #endif /* _ADDR_H */

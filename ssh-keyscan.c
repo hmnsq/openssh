@@ -55,9 +55,9 @@
 
 /* Flag indicating whether IPv4 or IPv6.  This can be set on the command line.
    Default value is AF_UNSPEC means both IPv4 and IPv6. */
-int IPv4or6 = AF_UNSPEC;
+整数 IPv4or6 = AF_UNSPEC;
 
-int ssh_port = SSH_DEFAULT_PORT;
+整数 ssh_port = SSH_DEFAULT_PORT;
 
 #define KT_RSA		(1)
 #define KT_ECDSA	(1<<1)
@@ -69,30 +69,30 @@ int ssh_port = SSH_DEFAULT_PORT;
 #define KT_MIN		KT_RSA
 #define KT_MAX		KT_MLDSA44_ED25519
 
-int get_cert = 0;
-int get_keytypes = KT_RSA|KT_ECDSA|KT_ED25519|KT_ECDSA_SK|KT_ED25519_SK|KT_MLDSA44_ED25519;
+整数 get_cert = 0;
+整数 get_keytypes = KT_RSA|KT_ECDSA|KT_ED25519|KT_ECDSA_SK|KT_ED25519_SK|KT_MLDSA44_ED25519;
 
-int hash_hosts = 0;		/* Hash hostname on output */
+整数 hash_hosts = 0;		/* Hash hostname on output */
 
-int print_sshfp = 0;		/* Print SSHFP records instead of known_hosts */
+整数 print_sshfp = 0;		/* Print SSHFP records instead of known_hosts */
 
-int found_one = 0;		/* Successfully found a key */
+整数 found_one = 0;		/* Successfully found a key */
 
-int hashalg = -1;		/* Hash for SSHFP records or -1 for all */
+整数 hashalg = -1;		/* Hash for SSHFP records or -1 for all */
 
-int quiet = 0;			/* Don't print key comment lines */
+整数 quiet = 0;			/* Don't print key comment lines */
 
 #define MAXMAXFD 256
 
 /* The number of seconds after which to give up on a TCP connection */
-int timeout = 5;
+整数 timeout = 5;
 
-int maxfd;
+整数 maxfd;
 #define MAXCON (maxfd - 10)
 
 extern char *__progname;
 struct pollfd *read_wait;
-int ncon;
+整数 ncon;
 
 /*
  * Keep a connection structure for each file descriptor.  The state
@@ -102,8 +102,8 @@ typedef struct Connection {
 	u_char c_status;	/* State of connection on this file desc. */
 #define CS_UNUSED 0		/* File descriptor unused */
 #define CS_CON 1		/* Waiting to connect/read greeting */
-	int c_fd;		/* Quick lookup: c->c_fd == c - fdcon */
-	int c_keytype;		/* Only one of KT_* */
+	整数 c_fd;		/* Quick lookup: c->c_fd == c - fdcon */
+	整数 c_keytype;		/* Only one of KT_* */
 	sig_atomic_t c_done;	/* SSH2 done */
 	char *c_namebase;	/* Address to free for c_name and c_namelist */
 	char *c_name;		/* Hostname of connection for errors */
@@ -112,7 +112,7 @@ typedef struct Connection {
 	struct ssh *c_ssh;	/* SSH-connection */
 	char c_banner[256];	/* Partial server greeting */
 	size_t c_banner_len;	/* Length of partial server greeting */
-	int c_banner_sent;	/* Client greeting has been sent */
+	整数 c_banner_sent;	/* Client greeting has been sent */
 	struct timespec c_ts;	/* Time at which connection gets aborted */
 	TAILQ_ENTRY(Connection) c_link;	/* List of connections in timeout order. */
 } con;
@@ -122,48 +122,48 @@ con *fdcon;
 
 static void keyprint(con *c, struct sshkey *key);
 
-static int
-fdlim_get(int hard)
+static 整数
+fdlim_get(整数 hard)
 {
-#if defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
+#もし defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
 	struct rlimit rlfd;
 	rlim_t lim;
 
-	if (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return -1;
+	もし (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		戻る -1;
 	lim = hard ? rlfd.rlim_max : rlfd.rlim_cur;
-	if (lim <= 0)
-		return -1;
-	if (lim == RLIM_INFINITY)
+	もし (lim <= 0)
+		戻る -1;
+	もし (lim == RLIM_INFINITY)
 		lim = SSH_SYSFDMAX;
-	if (lim >= INT_MAX)
+	もし (lim >= INT_MAX)
 		lim = INT_MAX;
-	return lim;
-#else
-	return (SSH_SYSFDMAX <= 0) ? -1 :
+	戻る lim;
+#否则
+	戻る (SSH_SYSFDMAX <= 0) ? -1 :
 	    ((SSH_SYSFDMAX >= INT_MAX) ? INT_MAX : SSH_SYSFDMAX);
 #endif
 }
 
-static int
-fdlim_set(int lim)
+static 整数
+fdlim_set(整数 lim)
 {
-#if defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
+#もし defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
 	struct rlimit rlfd;
 #endif
 
-	if (lim <= 0)
-		return (-1);
-#if defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
-	if (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return (-1);
+	もし (lim <= 0)
+		戻る (-1);
+#もし defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
+	もし (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		戻る (-1);
 	rlfd.rlim_cur = lim;
-	if (setrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return (-1);
+	もし (setrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		戻る (-1);
 #elif defined (HAVE_SETDTABLESIZE)
 	setdtablesize(lim);
 #endif
-	return (0);
+	戻る (0);
 }
 
 /*
@@ -176,17 +176,17 @@ xstrsep(char **str, const char *delim)
 {
 	char *s, *e;
 
-	if (!**str)
-		return (NULL);
+	もし (!**str)
+		戻る (NULL);
 
 	s = *str;
 	e = s + strcspn(s, delim);
 
-	if (*e != '\0')
+	もし (*e != '\0')
 		*e++ = '\0';
 	*str = e;
 
-	return (s);
+	戻る (s);
 }
 
 /*
@@ -200,43 +200,43 @@ strnnsep(char **stringp, char *delim)
 
 	do {
 		tok = xstrsep(stringp, delim);
-	} while (tok && *tok == '\0');
-	return (tok);
+	} ながら (tok && *tok == '\0');
+	戻る (tok);
 }
 
 
-static int
+static 整数
 key_print_wrapper(struct sshkey *hostkey, struct ssh *ssh)
 {
 	con *c;
 
-	if ((c = ssh_get_app_data(ssh)) != NULL)
+	もし ((c = ssh_get_app_data(ssh)) != NULL)
 		keyprint(c, hostkey);
 	/* always abort key exchange */
-	return -1;
+	戻る -1;
 }
 
-static int
-ssh2_capable(int remote_major, int remote_minor)
+static 整数
+ssh2_capable(整数 remote_major, 整数 remote_minor)
 {
 	switch (remote_major) {
 	case 1:
-		if (remote_minor == 99)
-			return 1;
+		もし (remote_minor == 99)
+			戻る 1;
 		break;
 	case 2:
-		return 1;
+		戻る 1;
 	default:
 		break;
 	}
-	return 0;
+	戻る 0;
 }
 
 static void
 keygrab_ssh2(con *c)
 {
 	char *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
-	int r;
+	整数 r;
 
 	switch (c->c_keytype) {
 	case KT_RSA:
@@ -280,7 +280,7 @@ keygrab_ssh2(con *c)
 		fatal("unknown key type %d", c->c_keytype);
 		break;
 	}
-	if ((r = kex_setup(c->c_ssh, myproposal)) != 0) {
+	もし ((r = kex_setup(c->c_ssh, myproposal)) != 0) {
 		free(c->c_ssh);
 		fprintf(stderr, "kex_setup: %s\n", ssh_err(r));
 		exit(1);
@@ -312,23 +312,23 @@ keyprint_one(const char *host, struct sshkey *key)
 {
 	char *hostport = NULL, *hashed = NULL;
 	const char *known_host;
-	int r = 0;
+	整数 r = 0;
 
 	found_one = 1;
 
-	if (print_sshfp) {
+	もし (print_sshfp) {
 		export_dns_rr(host, key, stdout, 0, hashalg);
-		return;
+		戻る;
 	}
 
 	hostport = put_host_port(host, ssh_port);
 	lowercase(hostport);
-	if (hash_hosts && (hashed = host_hash(hostport, NULL, 0)) == NULL)
+	もし (hash_hosts && (hashed = host_hash(hostport, NULL, 0)) == NULL)
 		fatal("host_hash failed");
 	known_host = hash_hosts ? hashed : hostport;
-	if (!get_cert)
+	もし (!get_cert)
 		r = fprintf(stdout, "%s ", known_host);
-	if (r >= 0 && sshkey_write(key, stdout) == 0)
+	もし (r >= 0 && sshkey_write(key, stdout) == 0)
 		(void)fputs("\n", stdout);
 	free(hashed);
 	free(hostport);
@@ -340,72 +340,72 @@ keyprint(con *c, struct sshkey *key)
 	char *hosts = c->c_output_name ? c->c_output_name : c->c_name;
 	char *host, *ohosts;
 
-	if (key == NULL)
-		return;
-	if (get_cert || (!hash_hosts && ssh_port == SSH_DEFAULT_PORT)) {
+	もし (key == NULL)
+		戻る;
+	もし (get_cert || (!hash_hosts && ssh_port == SSH_DEFAULT_PORT)) {
 		keyprint_one(hosts, key);
-		return;
+		戻る;
 	}
 	ohosts = hosts = xstrdup(hosts);
-	while ((host = strsep(&hosts, ",")) != NULL)
+	ながら ((host = strsep(&hosts, ",")) != NULL)
 		keyprint_one(host, key);
 	free(ohosts);
 }
 
-static int
+static 整数
 tcpconnect(char *host)
 {
 	struct addrinfo hints, *ai, *aitop;
 	char strport[NI_MAXSERV];
-	int gaierr, s = -1;
+	整数 gaierr, s = -1;
 
 	snprintf(strport, sizeof strport, "%d", ssh_port);
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = IPv4or6;
 	hints.ai_socktype = SOCK_STREAM;
-	if ((gaierr = getaddrinfo(host, strport, &hints, &aitop)) != 0) {
+	もし ((gaierr = getaddrinfo(host, strport, &hints, &aitop)) != 0) {
 		error("getaddrinfo %s: %s", host, ssh_gai_strerror(gaierr));
-		return -1;
+		戻る -1;
 	}
-	for (ai = aitop; ai; ai = ai->ai_next) {
+	ために (ai = aitop; ai; ai = ai->ai_next) {
 		s = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-		if (s == -1) {
+		もし (s == -1) {
 			error("socket: %s", strerror(errno));
 			continue;
 		}
-		if (set_nonblock(s) == -1)
+		もし (set_nonblock(s) == -1)
 			fatal_f("set_nonblock(%d)", s);
-		if (connect(s, ai->ai_addr, ai->ai_addrlen) == -1 &&
+		もし (connect(s, ai->ai_addr, ai->ai_addrlen) == -1 &&
 		    errno != EINPROGRESS)
 			error("connect (`%s'): %s", host, strerror(errno));
-		else
+		否则
 			break;
 		close(s);
 		s = -1;
 	}
 	freeaddrinfo(aitop);
-	return s;
+	戻る s;
 }
 
-static int
-conalloc(const char *iname, const char *oname, int keytype)
+static 整数
+conalloc(const char *iname, const char *oname, 整数 keytype)
 {
 	char *namebase, *name, *namelist;
-	int s;
+	整数 s;
 
 	namebase = namelist = xstrdup(iname);
 
 	do {
 		name = xstrsep(&namelist, ",");
-		if (!name) {
+		もし (!name) {
 			free(namebase);
-			return (-1);
+			戻る (-1);
 		}
-	} while ((s = tcpconnect(name)) < 0);
+	} ながら ((s = tcpconnect(name)) < 0);
 
-	if (s >= maxfd)
+	もし (s >= maxfd)
 		fatal("conalloc: fdno %d too high", s);
-	if (fdcon[s].c_status)
+	もし (fdcon[s].c_status)
 		fatal("conalloc: attempt to reuse fdno %d", s);
 
 	debug3_f("oname %s kt %d", oname, keytype);
@@ -424,23 +424,23 @@ conalloc(const char *iname, const char *oname, int keytype)
 	read_wait[s].fd = s;
 	read_wait[s].events = POLLIN;
 	ncon++;
-	return (s);
+	戻る (s);
 }
 
 static void
-confree(int s)
+confree(整数 s)
 {
-	if (s >= maxfd || fdcon[s].c_status == CS_UNUSED)
+	もし (s >= maxfd || fdcon[s].c_status == CS_UNUSED)
 		fatal("confree: attempt to free bad fdno %d", s);
 	free(fdcon[s].c_namebase);
 	free(fdcon[s].c_output_name);
 	fdcon[s].c_status = CS_UNUSED;
 	fdcon[s].c_keytype = 0;
-	if (fdcon[s].c_ssh) {
+	もし (fdcon[s].c_ssh) {
 		ssh_packet_close(fdcon[s].c_ssh);
 		free(fdcon[s].c_ssh);
 		fdcon[s].c_ssh = NULL;
-	} else
+	} 否则
 		close(s);
 	TAILQ_REMOVE(&tq, &fdcon[s], c_link);
 	read_wait[s].fd = -1;
@@ -448,39 +448,39 @@ confree(int s)
 	ncon--;
 }
 
-static int
-conrecycle(int s)
+static 整数
+conrecycle(整数 s)
 {
 	con *c = &fdcon[s];
-	int ret;
+	整数 ret;
 
 	ret = conalloc(c->c_namelist, c->c_output_name, c->c_keytype);
 	confree(s);
-	return (ret);
+	戻る (ret);
 }
 
 static void
-congreet(int s)
+congreet(整数 s)
 {
-	int remote_major = 0, remote_minor = 0;
+	整数 remote_major = 0, remote_minor = 0;
 	ssize_t n;
 	char buf[256], ch;
 	char remote_version[sizeof buf];
 	con *c = &fdcon[s];
 
-	if (!c->c_banner_sent) {
+	もし (!c->c_banner_sent) {
 		/* send client banner */
 		n = snprintf(buf, sizeof buf, "SSH-%d.%d-OpenSSH-keyscan\r\n",
 		    PROTOCOL_MAJOR_2, PROTOCOL_MINOR_2);
-		if (n < 0 || (size_t)n >= sizeof(buf)) {
+		もし (n < 0 || (size_t)n >= sizeof(buf)) {
 			error("snprintf: buffer too small");
 			confree(s);
-			return;
+			戻る;
 		}
-		if (atomicio(vwrite, s, buf, n) != (size_t)n) {
+		もし (atomicio(vwrite, s, buf, n) != (size_t)n) {
 			error("write (%s): %s", c->c_name, strerror(errno));
 			confree(s);
-			return;
+			戻る;
 		}
 		c->c_banner_sent = 1;
 	}
@@ -494,11 +494,11 @@ congreet(int s)
 	 * between calls.
 	 */
 	n = read(s, &ch, sizeof(ch));
-	if (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK ||
+	もし (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK ||
 	    errno == EINTR))
-		return;
-	if (n != 1) {
-		if (n == 0)
+		戻る;
+	もし (n != 1) {
+		もし (n == 0)
 			errno = EPIPE;
 		switch (errno) {
 		case EPIPE:
@@ -512,44 +512,44 @@ congreet(int s)
 			break;
 		}
 		conrecycle(s);
-		return;
+		戻る;
 	}
 	c->c_banner[c->c_banner_len++] = ch == '\r' ? '\n' : ch;
-	if (ch != '\n') {
-		if (c->c_banner_len < sizeof(c->c_banner) - 1)
-			return; /* incomplete line */
-		if (strncmp(c->c_banner, "SSH-", 4) == 0) {
+	もし (ch != '\n') {
+		もし (c->c_banner_len < sizeof(c->c_banner) - 1)
+			戻る; /* incomplete line */
+		もし (strncmp(c->c_banner, "SSH-", 4) == 0) {
 			/* banner exceeds RFC 4253 s4.2 length limit */
 			error("%s: greeting exceeds allowable length",
 			    c->c_name);
 			confree(s);
-			return;
+			戻る;
 		}
 		/* Discard an oversized pre-identification banner chunk. */
 		c->c_banner_len = 0;
-		return;
+		戻る;
 	}
-	if (strncmp(c->c_banner, "SSH-", 4) != 0) {
+	もし (strncmp(c->c_banner, "SSH-", 4) != 0) {
 		/* Ignore non-banner lines */
 		c->c_banner_len = 0;
-		return;
+		戻る;
 	}
 	c->c_banner[c->c_banner_len++] = '\0';
 	memcpy(buf, c->c_banner, c->c_banner_len);
-	if ((c->c_ssh = ssh_packet_set_connection(NULL, s, s)) == NULL)
+	もし ((c->c_ssh = ssh_packet_set_connection(NULL, s, s)) == NULL)
 		fatal("ssh_packet_set_connection failed");
 	ssh_packet_set_timeout(c->c_ssh, timeout, 1);
 	ssh_set_app_data(c->c_ssh, c);	/* back link */
 	c->c_ssh->compat = 0;
-	if (sscanf(buf, "SSH-%d.%d-%[^\n]\n",
+	もし (sscanf(buf, "SSH-%d.%d-%[^\n]\n",
 	    &remote_major, &remote_minor, remote_version) == 3)
 		compat_banner(c->c_ssh, remote_version);
-	if (!ssh2_capable(remote_major, remote_minor)) {
+	もし (!ssh2_capable(remote_major, remote_minor)) {
 		debug("%s doesn't support ssh2", c->c_name);
 		confree(s);
-		return;
+		戻る;
 	}
-	if (!quiet) {
+	もし (!quiet) {
 		fprintf(stdout, "%c %s:%d %s\n", print_sshfp ? ';' : '#',
 		    c->c_name, ssh_port, chop(buf));
 	}
@@ -558,11 +558,11 @@ congreet(int s)
 }
 
 static void
-conread(int s)
+conread(整数 s)
 {
 	con *c = &fdcon[s];
 
-	if (c->c_status != CS_CON)
+	もし (c->c_status != CS_CON)
 		fatal("conread: invalid status %d", c->c_status);
 
 	congreet(s);
@@ -573,32 +573,32 @@ conloop(void)
 {
 	struct timespec seltime, now;
 	con *c;
-	int i;
+	整数 i;
 
 	monotime_ts(&now);
 	c = TAILQ_FIRST(&tq);
 
-	if (c && timespeccmp(&c->c_ts, &now, >))
+	もし (c && timespeccmp(&c->c_ts, &now, >))
 		timespecsub(&c->c_ts, &now, &seltime);
-	else
+	否则
 		timespecclear(&seltime);
 
-	while (ppoll(read_wait, maxfd, &seltime, NULL) == -1) {
-		if (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK)
+	ながら (ppoll(read_wait, maxfd, &seltime, NULL) == -1) {
+		もし (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK)
 			continue;
 		error("poll error");
 	}
 
-	for (i = 0; i < maxfd; i++) {
-		if (read_wait[i].revents & (POLLHUP|POLLERR|POLLNVAL))
+	ために (i = 0; i < maxfd; i++) {
+		もし (read_wait[i].revents & (POLLHUP|POLLERR|POLLNVAL))
 			confree(i);
-		else if (read_wait[i].revents & (POLLIN))
+		否则 もし (read_wait[i].revents & (POLLIN))
 			conread(i);
 	}
 
 	c = TAILQ_FIRST(&tq);
-	while (c && timespeccmp(&c->c_ts, &now, <)) {
-		int s = c->c_fd;
+	ながら (c && timespeccmp(&c->c_ts, &now, <)) {
+		整数 s = c->c_fd;
 
 		c = TAILQ_NEXT(c, c_link);
 		conrecycle(s);
@@ -609,13 +609,13 @@ static void
 do_one_host(char *host)
 {
 	char *name = strnnsep(&host, " \t\n");
-	int j;
+	整数 j;
 
-	if (name == NULL)
-		return;
-	for (j = KT_MIN; j <= KT_MAX; j *= 2) {
-		if (get_keytypes & j) {
-			while (ncon >= MAXCON)
+	もし (name == NULL)
+		戻る;
+	ために (j = KT_MIN; j <= KT_MAX; j *= 2) {
+		もし (get_keytypes & j) {
+			ながら (ncon >= MAXCON)
 				conloop();
 			conalloc(name, *host ? host : name, j);
 		}
@@ -629,29 +629,29 @@ do_host(char *host)
 	struct xaddr addr, end_addr;
 	u_int masklen;
 
-	if (host == NULL)
-		return;
-	if (addr_pton_cidr(host, &addr, &masklen) != 0) {
+	もし (host == NULL)
+		戻る;
+	もし (addr_pton_cidr(host, &addr, &masklen) != 0) {
 		/* Assume argument is a hostname */
 		do_one_host(host);
-	} else {
+	} 否则 {
 		/* Argument is a CIDR range */
 		debug("CIDR range %s", host);
 		end_addr = addr;
-		if (addr_host_to_all1s(&end_addr, masklen) != 0)
+		もし (addr_host_to_all1s(&end_addr, masklen) != 0)
 			goto badaddr;
 		/*
 		 * Note: we deliberately include the all-zero/ones addresses.
 		 */
-		for (;;) {
-			if (addr_ntop(&addr, daddr, sizeof(daddr)) != 0) {
+		ために (;;) {
+			もし (addr_ntop(&addr, daddr, sizeof(daddr)) != 0) {
  badaddr:
 				error("Invalid address %s", host);
-				return;
+				戻る;
 			}
 			debug("CIDR expand: address %s", daddr);
 			do_one_host(daddr);
-			if (addr_cmp(&addr, &end_addr) == 0)
+			もし (addr_cmp(&addr, &end_addr) == 0)
 				break;
 			addr_increment(&addr);
 		}
@@ -667,16 +667,16 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+整数
+メインページ(整数 argc, char **argv)
 {
-	int debug_flag = 0, log_level = SYSLOG_LEVEL_INFO;
-	int opt, fopt_count = 0, j;
+	整数 debug_flag = 0, log_level = SYSLOG_LEVEL_INFO;
+	整数 opt, fopt_count = 0, j;
 	char *tname, *cp, *line = NULL;
 	size_t linesize = 0;
 	FILE *fp;
 
-	extern int optind;
+	extern 整数 optind;
 	extern char *optarg;
 
 	__progname = ssh_get_progname(argv[0]);
@@ -686,10 +686,10 @@ main(int argc, char **argv)
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
 
-	if (argc <= 1)
+	もし (argc <= 1)
 		usage();
 
-	while ((opt = getopt(argc, argv, "cDHqv46O:p:T:t:f:")) != -1) {
+	ながら ((opt = getopt(argc, argv, "cDHqv46O:p:T:t:f:")) != -1) {
 		switch (opt) {
 		case 'H':
 			hash_hosts = 1;
@@ -702,49 +702,49 @@ main(int argc, char **argv)
 			break;
 		case 'p':
 			ssh_port = a2port(optarg);
-			if (ssh_port <= 0) {
+			もし (ssh_port <= 0) {
 				fprintf(stderr, "Bad port '%s'\n", optarg);
 				exit(1);
 			}
 			break;
 		case 'T':
 			timeout = convtime(optarg);
-			if (timeout == -1 || timeout == 0) {
+			もし (timeout == -1 || timeout == 0) {
 				fprintf(stderr, "Bad timeout '%s'\n", optarg);
 				usage();
 			}
 			break;
 		case 'v':
-			if (!debug_flag) {
+			もし (!debug_flag) {
 				debug_flag = 1;
 				log_level = SYSLOG_LEVEL_DEBUG1;
 			}
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			否则 もし (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			else
+			否则
 				fatal("Too high debugging level.");
 			break;
 		case 'q':
 			quiet = 1;
 			break;
 		case 'f':
-			if (strcmp(optarg, "-") == 0)
+			もし (strcmp(optarg, "-") == 0)
 				optarg = NULL;
 			argv[fopt_count++] = optarg;
 			break;
 		case 'O':
 			/* Maybe other misc options in the future too */
-			if (strncmp(optarg, "hashalg=", 8) != 0)
+			もし (strncmp(optarg, "hashalg=", 8) != 0)
 				fatal("Unsupported -O option");
-			if ((hashalg = ssh_digest_alg_by_name(
+			もし ((hashalg = ssh_digest_alg_by_name(
 			    optarg + 8)) == -1)
 				fatal("Unsupported hash algorithm");
 			break;
 		case 't':
 			get_keytypes = 0;
 			tname = strtok(optarg, ",");
-			while (tname) {
-				int type = sshkey_type_from_shortname(tname);
+			ながら (tname) {
+				整数 type = sshkey_type_from_shortname(tname);
 
 				switch (type) {
 				case KEY_ECDSA:
@@ -782,66 +782,66 @@ main(int argc, char **argv)
 			usage();
 		}
 	}
-	if (optind == argc && !fopt_count)
+	もし (optind == argc && !fopt_count)
 		usage();
 
 	log_init("ssh-keyscan", log_level, SYSLOG_FACILITY_USER, 1);
 
 	maxfd = fdlim_get(1);
-	if (maxfd < 0)
+	もし (maxfd < 0)
 		fatal("%s: fdlim_get: bad value", __progname);
-	if (maxfd > MAXMAXFD)
+	もし (maxfd > MAXMAXFD)
 		maxfd = MAXMAXFD;
-	if (MAXCON <= 0)
+	もし (MAXCON <= 0)
 		fatal("%s: not enough file descriptors", __progname);
-	if (maxfd > fdlim_get(0))
+	もし (maxfd > fdlim_get(0))
 		fdlim_set(maxfd);
 	fdcon = xcalloc(maxfd, sizeof(con));
 	read_wait = xcalloc(maxfd, sizeof(struct pollfd));
-	for (j = 0; j < maxfd; j++)
+	ために (j = 0; j < maxfd; j++)
 		read_wait[j].fd = -1;
 
 	ssh_signal(SIGPIPE, SIG_IGN);
-	for (j = 0; j < fopt_count; j++) {
-		if (argv[j] == NULL)
+	ために (j = 0; j < fopt_count; j++) {
+		もし (argv[j] == NULL)
 			fp = stdin;
-		else if ((fp = fopen(argv[j], "r")) == NULL)
+		否则 もし ((fp = fopen(argv[j], "r")) == NULL)
 			fatal("%s: %s: %s", __progname,
 			    fp == stdin ? "<stdin>" : argv[j], strerror(errno));
 
-		while (getline(&line, &linesize, fp) != -1) {
+		ながら (getline(&line, &linesize, fp) != -1) {
 			/* Chomp off trailing whitespace and comments */
-			if ((cp = strchr(line, '#')) == NULL)
+			もし ((cp = strchr(line, '#')) == NULL)
 				cp = line + strlen(line) - 1;
-			while (cp >= line) {
-				if (*cp == ' ' || *cp == '\t' ||
+			ながら (cp >= line) {
+				もし (*cp == ' ' || *cp == '\t' ||
 				    *cp == '\n' || *cp == '#')
 					*cp-- = '\0';
-				else
+				否则
 					break;
 			}
 
 			/* Skip empty lines */
-			if (*line == '\0')
+			もし (*line == '\0')
 				continue;
 
 			do_host(line);
 		}
 
-		if (ferror(fp))
+		もし (ferror(fp))
 			fatal("%s: %s: %s", __progname,
 			    fp == stdin ? "<stdin>" : argv[j], strerror(errno));
 
-		if (fp != stdin)
+		もし (fp != stdin)
 			fclose(fp);
 	}
 	free(line);
 
-	while (optind < argc)
+	ながら (optind < argc)
 		do_host(argv[optind++]);
 
-	while (ncon > 0)
+	ながら (ncon > 0)
 		conloop();
 
-	return found_one ? 0 : 1;
+	戻る found_one ? 0 : 1;
 }

@@ -67,29 +67,29 @@ struct sshauthopt *auth_opts = NULL;
 struct passwd *privsep_pw = NULL;
 
 static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+static volatile 整数 in_fuzz = 0;
 
 void
-cleanup_exit(int code)
+cleanup_exit(整数 code)
 {
-	if (in_fuzz)
+	もし (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
 
-int
+整数
 __wrap_ssh_packet_write_wait(struct ssh *ssh)
 {
 	(void)ssh;
-	return 0;
+	戻る 0;
 }
 
 static struct passwd g_fake_pw;
 
-int
+整数
 mm_is_monitor(void)
 {
-	return 0;
+	戻る 0;
 }
 
 struct passwd *
@@ -97,30 +97,30 @@ mm_getpwnamallow(struct ssh *ssh, const char *user)
 {
 	(void)ssh;
 	(void)user;
-	return &g_fake_pw;
+	戻る &g_fake_pw;
 }
 
-int
+整数
 mm_auth_password(struct ssh *ssh, char *password)
 {
 	(void)ssh;
 	(void)password;
-	return 0;
+	戻る 0;
 }
 
-int
+整数
 mm_user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
-    int auth_attempt, struct sshauthopt **authoptsp)
+    整数 auth_attempt, struct sshauthopt **authoptsp)
 {
 	(void)ssh;
 	(void)pw;
 	(void)key;
 	(void)auth_attempt;
 	(void)authoptsp;
-	return 0;
+	戻る 0;
 }
 
-int
+整数
 mm_hostbased_key_allowed(struct ssh *ssh, struct passwd *pw, const char *user,
     const char *host, struct sshkey *key)
 {
@@ -129,15 +129,15 @@ mm_hostbased_key_allowed(struct ssh *ssh, struct passwd *pw, const char *user,
 	(void)user;
 	(void)host;
 	(void)key;
-	return 0;
+	戻る 0;
 }
 
-int
+整数
 mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
     const u_char *data, size_t datalen, const char *alg, u_int compat,
     struct sshkey_sig_details **detailsp)
 {
-	return sshkey_verify(key, sig, siglen, data, datalen, alg, compat,
+	戻る sshkey_verify(key, sig, siglen, data, datalen, alg, compat,
 	    detailsp);
 }
 
@@ -161,10 +161,10 @@ mm_start_pam(struct ssh *ssh)
 	(void)ssh;
 }
 
-int
+整数
 mm_do_pam_account(void)
 {
-	return 0;
+	戻る 0;
 }
 
 static struct sshkey *
@@ -172,10 +172,10 @@ load_private(const char *str)
 {
 	struct sshbuf *b = sshbuf_from(str, strlen(str));
 	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	もし (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	戻る k;
 }
 
 static struct sshkey *
@@ -183,69 +183,69 @@ load_public(const char *str)
 {
 	char *tmp, *cp;
 	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	もし (k == NULL)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	もし (sshkey_read(k, &cp) != 0)
 		abort();
 	free(tmp);
-	return k;
+	戻る k;
 }
 
-static int
+static 整数
 pump(struct ssh *from, struct ssh *to, size_t *transferred)
 {
 	const u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	整数 r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	もし ((r = ssh_packet_next(from, &type)) != 0)
+		戻る r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	もし (len == 0)
+		戻る 0;
+	もし ((r = ssh_input_append(to, buf, len)) != 0)
+		戻る r;
+	もし ((r = ssh_output_consume(from, len)) != 0)
+		戻る r;
 	*transferred = len;
-	return 0;
+	戻る 0;
 }
 
-static int
+static 整数
 run_kex(struct ssh *client, struct ssh *server)
 {
-	int r;
+	整数 r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	ために (整数 i = 0; i < 100; i++) {
+		もし ((r = pump(server, client, &sn)) != 0) 戻る r;
+		もし ((r = pump(client, server, &cn)) != 0) 戻る r;
+		もし (server->kex->done && client->kex->done)
+			戻る 0;
+		もし (cn == 0 && sn == 0)
+			戻る SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	戻る SSH_ERR_PROTOCOL_ERROR;
 }
 
 #include "fixed-keys.h"
 
 struct sshbuf *cfg = NULL;
 
-int auth_rhosts2(struct passwd *pw, const char *client_user,
+整数 auth_rhosts2(struct passwd *pw, const char *client_user,
     const char *hostname, const char *ipaddr) { (void)pw;
-    (void)client_user; (void)hostname; (void)ipaddr; return 0; }
-int platform_locked_account(struct passwd *pw) { (void)pw; return 0; }
+    (void)client_user; (void)hostname; (void)ipaddr; 戻る 0; }
+整数 platform_locked_account(struct passwd *pw) { (void)pw; 戻る 0; }
 void record_failed_login(struct ssh *ssh, const char *user,
     const char *hostname, const char *ttyname) { (void)ssh; (void)user;
     (void)hostname; (void)ttyname; }
-int temporarily_use_uid(struct passwd *pw) { (void)pw; return 0; }
+整数 temporarily_use_uid(struct passwd *pw) { (void)pw; 戻る 0; }
 void restore_uid(void) { }
-char *mm_auth2_read_banner(void) { return NULL; }
+char *mm_auth2_read_banner(void) { 戻る NULL; }
 struct connection_info *
-server_get_connection_info(struct ssh *ssh, int populate, int use_dns)
-    { (void)ssh; (void)populate; (void)use_dns; return NULL; }
+server_get_connection_info(struct ssh *ssh, 整数 populate, 整数 use_dns)
+    { (void)ssh; (void)populate; (void)use_dns; 戻る NULL; }
 void server_process_permitopen(struct ssh *ssh) { (void)ssh; }
 void server_process_channel_timeouts(struct ssh *ssh) { (void)ssh; }
 
@@ -253,25 +253,25 @@ void server_process_channel_timeouts(struct ssh *ssh) { (void)ssh; }
 
 static struct ssh *g_client = NULL;
 static struct ssh *g_server = NULL;
-static int g_init = 0;
+static 整数 g_init = 0;
 static Authctxt g_authctxt;
 
 static void
 fuzz_reset_authctxt(struct ssh *ssh)
 {
-	unsigned int i;
+	unsigned 整数 i;
 
 	free(g_authctxt.user);
 	free(g_authctxt.service);
 	free(g_authctxt.style);
 	free(g_authctxt.auth_method_info);
-	if (g_authctxt.auth_methods != NULL) {
-		for (i = 0; i < g_authctxt.num_auth_methods; i++)
+	もし (g_authctxt.auth_methods != NULL) {
+		ために (i = 0; i < g_authctxt.num_auth_methods; i++)
 			free(g_authctxt.auth_methods[i]);
 		free(g_authctxt.auth_methods);
 	}
 	sshkey_free(g_authctxt.auth_method_key);
-	for (i = 0; i < g_authctxt.nprev_keys; i++)
+	ために (i = 0; i < g_authctxt.nprev_keys; i++)
 		sshkey_free(g_authctxt.prev_keys[i]);
 	free(g_authctxt.prev_keys);
 	sshbuf_free(g_authctxt.session_info);
@@ -279,11 +279,11 @@ fuzz_reset_authctxt(struct ssh *ssh)
 	ssh->authctxt = &g_authctxt;
 }
 
-static int
+static 整数
 init_once(void)
 {
-	if (g_init)
-		return 0;
+	もし (g_init)
+		戻る 0;
 	signal(SIGPIPE, SIG_IGN);
 	log_init("sshd_auth_session_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
@@ -312,17 +312,17 @@ init_once(void)
 
 	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
 	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
+	整数 i;
+	ために (i = 0; i < PROPOSAL_MAX; i++) {
 		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+		もし (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		否则 もし (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		否则 もし (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		否则 もし (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
@@ -330,14 +330,14 @@ init_once(void)
 	struct kex_params kp;
 	memcpy(kp.proposal, proposal, sizeof(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	もし (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		戻る -1;
+	もし (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		戻る -1;
+	もし (run_kex(g_client, g_server) != 0)
+		戻る -1;
 
 	fuzz_reset_authctxt(g_server);
 
@@ -346,29 +346,29 @@ init_once(void)
 	    &input_userauth_request);
 
 	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
+	ために (i = 0; i < PROPOSAL_MAX; i++)
 		free(proposal[i]);
 	g_init = 1;
-	return 0;
+	戻る 0;
 }
 
 void
 fuzz_userauth_one(const uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	もし (init_once() != 0)
+		戻る;
+	もし (size > 65000)
+		戻る;
 
 	fuzz_reset_authctxt(g_server);
 
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
+	もし (setjmp(fuzz_env) == 0) {
 		size_t transferred;
-		if (ssh_packet_put(g_client, SSH2_MSG_USERAUTH_REQUEST,
+		もし (ssh_packet_put(g_client, SSH2_MSG_USERAUTH_REQUEST,
 		    data, size) != 0)
 			goto done;
-		if (pump(g_client, g_server, &transferred) != 0)
+		もし (pump(g_client, g_server, &transferred) != 0)
 			goto done;
 		(void)ssh_dispatch_run(g_server, DISPATCH_NONBLOCK, NULL);
 	done:

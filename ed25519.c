@@ -40,53 +40,53 @@
 #ifdef WITH_OPENSSL
 # include <openssl/sha.h>
 typedef SHA512_CTX crypto_hash_sha512_state;
-#else
+#否则
 typedef SHA2_CTX crypto_hash_sha512_state;
 #endif
 
-static int
+static 整数
 crypto_hash_sha512_init(crypto_hash_sha512_state *state)
 {
 #ifdef WITH_OPENSSL
 	SHA512_Init(state);
-#else
+#否则
 	SHA512Init(state);
 #endif
-	return 0;
+	戻る 0;
 }
 
-static int
+static 整数
 crypto_hash_sha512_update(crypto_hash_sha512_state *state,
     const unsigned char *in, unsigned long long inlen)
 {
 #ifdef WITH_OPENSSL
 	SHA512_Update(state, in, inlen);
-#else
+#否则
 	SHA512Update(state, in, inlen);
 #endif
-	return 0;
+	戻る 0;
 }
 
-static int
+static 整数
 crypto_hash_sha512_final(crypto_hash_sha512_state *state, unsigned char *out)
 {
 #ifdef WITH_OPENSSL
 	SHA512_Final(out, state);
-#else
+#否则
 	SHA512Final(out, state);
 #endif
-	return 0;
+	戻る 0;
 }
 
-static int
+static 整数
 sodium_is_zero(const unsigned char *n, size_t nlen)
 {
 	size_t i;
 	volatile unsigned char d = 0;
 
-	for (i = 0; i < nlen; i++)
+	ために (i = 0; i < nlen; i++)
 		d |= n[i];
-	return 1 & ((d - 1) >> 8);
+	戻る 1 & ((d - 1) >> 8);
 }
 
 #ifndef ed25519_ref10_H
@@ -101,7 +101,7 @@ sodium_is_zero(const unsigned char *n, size_t nlen)
 
 #ifdef HAVE_TI_MODE
 typedef uint64_t fe25519[5];
-#else
+#否则
 typedef int32_t fe25519[10];
 #endif
 
@@ -110,7 +110,7 @@ static void fe25519_frombytes(fe25519 h, const unsigned char *s);
 static void fe25519_tobytes(unsigned char *s, const fe25519 h);
 
 #ifdef HAVE_TI_MODE
-#else
+#否则
 #endif
 
 /*
@@ -163,9 +163,9 @@ typedef struct {
 
 static void ge25519_p3_tobytes(unsigned char *s, const ge25519_p3 *h);
 
-static int ge25519_frombytes(ge25519_p3 *h, const unsigned char *s);
+static 整数 ge25519_frombytes(ge25519_p3 *h, const unsigned char *s);
 
-static int ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s);
+static 整数 ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s);
 
 static void ge25519_p1p1_to_p2(ge25519_p2 *r, const ge25519_p1p1 *p);
 
@@ -185,11 +185,11 @@ static void ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char
 
 
 
-static int ge25519_is_canonical(const unsigned char *s);
+static 整数 ge25519_is_canonical(const unsigned char *s);
 
 
 
-static int ge25519_has_small_order(const ge25519_p3 *p);
+static 整数 ge25519_has_small_order(const ge25519_p3 *p);
 
 
 
@@ -212,7 +212,7 @@ static void sc25519_reduce(unsigned char s[64]);
 static void sc25519_muladd(unsigned char s[32], const unsigned char a[32],
                     const unsigned char b[32], const unsigned char c[32]);
 
-static int sc25519_is_canonical(const unsigned char s[32]);
+static 整数 sc25519_is_canonical(const unsigned char s[32]);
 
 #endif
 
@@ -359,7 +359,7 @@ fe25519_neg(fe25519 h, const fe25519 f)
  */
 
 static void
-fe25519_cmov(fe25519 f, const fe25519 g, unsigned int b)
+fe25519_cmov(fe25519 f, const fe25519 g, unsigned 整数 b)
 {
     uint32_t mask = (uint32_t) (-(int32_t) b);
     int32_t  f0, f1, f2, f3, f4, f5, f6, f7, f8, f9;
@@ -433,14 +433,14 @@ fe25519_copy(fe25519 h, const fe25519 f)
  |f| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static inline int
+static inline 整数
 fe25519_isnegative(const fe25519 f)
 {
     unsigned char s[32];
 
     fe25519_tobytes(s, f);
 
-    return s[0] & 1;
+    戻る s[0] & 1;
 }
 
 /*
@@ -451,14 +451,14 @@ fe25519_isnegative(const fe25519 f)
  |f| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static inline int
+static inline 整数
 fe25519_iszero(const fe25519 f)
 {
     unsigned char s[32];
 
     fe25519_tobytes(s, f);
 
-    return sodium_is_zero(s, 32);
+    戻る sodium_is_zero(s, 32);
 }
 
 /*
@@ -1118,7 +1118,7 @@ load_3(const unsigned char *in)
     result |= ((uint64_t) in[1]) << 8;
     result |= ((uint64_t) in[2]) << 16;
 
-    return result;
+    戻る result;
 }
 
 static inline uint64_t
@@ -1131,7 +1131,7 @@ load_4(const unsigned char *in)
     result |= ((uint64_t) in[2]) << 16;
     result |= ((uint64_t) in[3]) << 24;
 
-    return result;
+    戻る result;
 }
 
 /*
@@ -1144,7 +1144,7 @@ load_4(const unsigned char *in)
  */
 
 #ifdef HAVE_TI_MODE
-#else
+#否则
 /* sqrt(-1) */
 static const fe25519 fe25519_sqrtm1 = {
     -32595792, -7943725,  9377950,  3500415, 12389472, -272473, -25146209, -2005654, 326686, 11406482
@@ -1403,7 +1403,7 @@ void
 fe25519_invert(fe25519 out, const fe25519 z)
 {
     fe25519 t0, t1, t2, t3;
-    int     i;
+    整数     i;
 
     fe25519_sq(t0, z);
     fe25519_sq(t1, t0);
@@ -1413,39 +1413,39 @@ fe25519_invert(fe25519 out, const fe25519 z)
     fe25519_sq(t2, t0);
     fe25519_mul(t1, t1, t2);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 5; ++i) {
+    ために (i = 1; i < 5; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 10; ++i) {
+    ために (i = 1; i < 10; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t2, t2, t1);
     fe25519_sq(t3, t2);
-    for (i = 1; i < 20; ++i) {
+    ために (i = 1; i < 20; ++i) {
         fe25519_sq(t3, t3);
     }
     fe25519_mul(t2, t3, t2);
-    for (i = 1; i < 11; ++i) {
+    ために (i = 1; i < 11; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 50; ++i) {
+    ために (i = 1; i < 50; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t2, t2, t1);
     fe25519_sq(t3, t2);
-    for (i = 1; i < 100; ++i) {
+    ために (i = 1; i < 100; ++i) {
         fe25519_sq(t3, t3);
     }
     fe25519_mul(t2, t3, t2);
-    for (i = 1; i < 51; ++i) {
+    ために (i = 1; i < 51; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 6; ++i) {
+    ために (i = 1; i < 6; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(out, t1, t0);
@@ -1459,7 +1459,7 @@ static void
 fe25519_pow22523(fe25519 out, const fe25519 z)
 {
     fe25519 t0, t1, t2;
-    int     i;
+    整数     i;
 
     fe25519_sq(t0, z);
     fe25519_sq(t1, t0);
@@ -1469,35 +1469,35 @@ fe25519_pow22523(fe25519 out, const fe25519 z)
     fe25519_sq(t0, t0);
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 5; ++i) {
+    ために (i = 1; i < 5; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 10; ++i) {
+    ために (i = 1; i < 10; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t1, t1, t0);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 20; ++i) {
+    ために (i = 1; i < 20; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 11; ++i) {
+    ために (i = 1; i < 11; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 50; ++i) {
+    ために (i = 1; i < 50; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t1, t1, t0);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 100; ++i) {
+    ために (i = 1; i < 100; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 51; ++i) {
+    ために (i = 1; i < 51; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
@@ -1536,36 +1536,36 @@ ge25519_add_cached(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_cached *q
 static void
 slide_vartime(signed char *r, const unsigned char *a)
 {
-    int i;
-    int b;
-    int k;
-    int ribs;
-    int cmp;
+    整数 i;
+    整数 b;
+    整数 k;
+    整数 ribs;
+    整数 cmp;
 
-    for (i = 0; i < 256; ++i) {
+    ために (i = 0; i < 256; ++i) {
         r[i] = 1 & (a[i >> 3] >> (i & 7));
     }
-    for (i = 0; i < 256; ++i) {
-        if (! r[i]) {
+    ために (i = 0; i < 256; ++i) {
+        もし (! r[i]) {
             continue;
         }
-        for (b = 1; b <= 6 && i + b < 256; ++b) {
-            if (! r[i + b]) {
+        ために (b = 1; b <= 6 && i + b < 256; ++b) {
+            もし (! r[i + b]) {
                 continue;
             }
             ribs = r[i + b] << b;
             cmp = r[i] + ribs;
-            if (cmp <= 15) {
+            もし (cmp <= 15) {
                 r[i] = cmp;
                 r[i + b] = 0;
-            } else {
+            } 否则 {
                 cmp = r[i] - ribs;
-                if (cmp < -15) {
+                もし (cmp < -15) {
                     break;
                 }
                 r[i] = cmp;
-                for (k = i + b; k < 256; ++k) {
-                    if (! r[k]) {
+                ために (k = i + b; k < 256; ++k) {
+                    もし (! r[k]) {
                         r[k] = 1;
                         break;
                     }
@@ -1578,7 +1578,7 @@ slide_vartime(signed char *r, const unsigned char *a)
 
 static volatile unsigned char optblocker_u8;
 
-int
+整数
 ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
 {
     fe25519 u;
@@ -1587,7 +1587,7 @@ ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
     fe25519 m_root_check, p_root_check;
     fe25519 negx;
     fe25519 x_sqrtm1;
-    int     has_m_root, has_p_root;
+    整数     has_m_root, has_p_root;
 
     fe25519_frombytes(h->Y, s);
     fe25519_1(h->Z);
@@ -1613,10 +1613,10 @@ ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
     fe25519_cmov(h->X, negx, fe25519_isnegative(h->X) ^ (((s[31] >> 5) ^ optblocker_u8) >> 2));
     fe25519_mul(h->T, h->X, h->Y);
 
-    return (has_m_root | has_p_root) - 1;
+    戻る (has_m_root | has_p_root) - 1;
 }
 
-int
+整数
 ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s)
 {
     fe25519 u;
@@ -1645,20 +1645,20 @@ ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s)
     fe25519_sq(vxx, h->X);
     fe25519_mul(vxx, vxx, v);
     fe25519_sub(m_root_check, vxx, u); /* vx^2-u */
-    if (fe25519_iszero(m_root_check) == 0) {
+    もし (fe25519_iszero(m_root_check) == 0) {
         fe25519_add(p_root_check, vxx, u); /* vx^2+u */
-        if (fe25519_iszero(p_root_check) == 0) {
-            return -1;
+        もし (fe25519_iszero(p_root_check) == 0) {
+            戻る -1;
         }
         fe25519_mul(h->X, h->X, fe25519_sqrtm1);
     }
 
-    if (fe25519_isnegative(h->X) == (s[31] >> 7)) { /* vartime function - compiler optimization is fine */
+    もし (fe25519_isnegative(h->X) == (s[31] >> 7)) { /* vartime function - compiler optimization is fine */
         fe25519_neg(h->X, h->X);
     }
     fe25519_mul(h->T, h->X, h->Y);
 
-    return 0;
+    戻る 0;
 }
 
 /*
@@ -1841,38 +1841,38 @@ ge25519_precomp_0(ge25519_precomp *h)
 static unsigned char
 equal(signed char b, signed char c)
 {
-#if defined(HAVE_INLINE_ASM) && defined(__x86_64__)
+#もし defined(HAVE_INLINE_ASM) && defined(__x86_64__)
     int32_t b32 = (int32_t) b, c32 = (int32_t) c, q32, z32;
     __asm__ ("xorl %0,%0\n movl $1,%1\n cmpb %b3,%b2\n cmovel %1,%0" :
              "=&r"(z32), "=&r"(q32) : "q"(b32), "q"(c32) : "cc");
-    return (unsigned char) z32;
+    戻る (unsigned char) z32;
 #elif defined(HAVE_INLINE_ASM) && defined(__aarch64__)
     unsigned char z;
     __asm__ ("and %w0,%w1,255\n cmp %w0,%w2,uxtb\n cset %w0,eq" :
              "=&r"(z) : "r"(b), "r"(c) : "cc");
-    return z;
-#else
+    戻る z;
+#否则
     const unsigned char x  = (unsigned char) b ^ (unsigned char) c; /* 0: yes; 1..255: no */
     uint32_t            y  = (uint32_t) x; /* 0: yes; 1..255: no */
 
     y--;
-    return ((y >> 29) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
+    戻る ((y >> 29) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
 #endif
 }
 
 static unsigned char
 negative(signed char b)
 {
-#if defined(HAVE_INLINE_ASM) && defined(__x86_64__)
+#もし defined(HAVE_INLINE_ASM) && defined(__x86_64__)
     __asm__ ("shrb $7,%0" : "+r"(b) : : "cc");
-    return b;
+    戻る b;
 #elif defined(HAVE_INLINE_ASM) && defined(__aarch64__)
     uint8_t x;
     __asm__ ("ubfx %w0,%w1,7,1" : "=r"(x) : "r"(b) : );
-    return x;
-#else
+    戻る x;
+#否则
     const uint8_t x = (uint8_t) b; /* 0..127: no 128..255: yes */
-    return ((x >> 5) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
+    戻る ((x >> 5) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
 #endif
 }
 
@@ -1908,11 +1908,11 @@ ge25519_cmov8(ge25519_precomp *t, const ge25519_precomp precomp[8], const signed
 }
 
 static void
-ge25519_cmov8_base(ge25519_precomp *t, const int pos, const signed char b)
+ge25519_cmov8_base(ge25519_precomp *t, const 整数 pos, const signed char b)
 {
     static const ge25519_precomp base[32][8] = { /* base[i][j] = (j+1)*256^i*B */
 #ifdef HAVE_TI_MODE
-#else
+#否则
 { /* 0/31 */
   {
     { 25967493, -14356035, 29566456, 3660896, -12694345, 4014787, 27544626, -11754271, -6079156, 2047605 },
@@ -3303,7 +3303,7 @@ ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
 {
     static const ge25519_precomp Bi[8] = {
 #ifdef HAVE_TI_MODE
-#else
+#否则
 {
   { 25967493, -14356035, 29566456, 3660896, -12694345, 4014787, 27544626, -11754271, -6079156, 2047605 },
   { -12545711, 934262, -2722910, 3049990, -727428, 9406986, 12720692, 5043384, 19500929, -15469378 },
@@ -3352,7 +3352,7 @@ ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
     ge25519_p1p1   t;
     ge25519_p3     u;
     ge25519_p3     A2;
-    int            i;
+    整数            i;
 
     slide_vartime(aslide, a);
     slide_vartime(bslide, b);
@@ -3392,27 +3392,27 @@ ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
 
     ge25519_p2_0(r);
 
-    for (i = 255; i >= 0; --i) {
-        if (aslide[i] || bslide[i]) {
+    ために (i = 255; i >= 0; --i) {
+        もし (aslide[i] || bslide[i]) {
             break;
         }
     }
 
-    for (; i >= 0; --i) {
+    ために (; i >= 0; --i) {
         ge25519_p2_dbl(&t, r);
 
-        if (aslide[i] > 0) {
+        もし (aslide[i] > 0) {
             ge25519_p1p1_to_p3(&u, &t);
             ge25519_add_cached(&t, &u, &Ai[aslide[i] / 2]);
-        } else if (aslide[i] < 0) {
+        } 否则 もし (aslide[i] < 0) {
             ge25519_p1p1_to_p3(&u, &t);
             ge25519_sub_cached(&t, &u, &Ai[(-aslide[i]) / 2]);
         }
 
-        if (bslide[i] > 0) {
+        もし (bslide[i] > 0) {
             ge25519_p1p1_to_p3(&u, &t);
             ge25519_add_precomp(&t, &u, &Bi[bslide[i] / 2]);
-        } else if (bslide[i] < 0) {
+        } 否则 もし (bslide[i] < 0) {
             ge25519_p1p1_to_p3(&u, &t);
             ge25519_sub_precomp(&t, &u, &Bi[(-bslide[i]) / 2]);
         }
@@ -3450,9 +3450,9 @@ ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a)
     ge25519_p1p1    r;
     ge25519_p2      s;
     ge25519_precomp t;
-    int             i;
+    整数             i;
 
-    for (i = 0; i < 32; ++i) {
+    ために (i = 0; i < 32; ++i) {
         e[2 * i + 0] = (a[i] >> 0) & 15;
         e[2 * i + 1] = (a[i] >> 4) & 15;
     }
@@ -3460,7 +3460,7 @@ ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a)
     /* e[63] is between 0 and 7 */
 
     carry = 0;
-    for (i = 0; i < 63; ++i) {
+    ために (i = 0; i < 63; ++i) {
         e[i] += carry;
         carry = e[i] + 8;
         carry >>= 4;
@@ -3471,7 +3471,7 @@ ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a)
 
     ge25519_p3_0(h);
 
-    for (i = 1; i < 64; i += 2) {
+    ために (i = 1; i < 64; i += 2) {
         ge25519_cmov8_base(&t, i / 2, e[i]);
         ge25519_add_precomp(&r, h, &t);
         ge25519_p1p1_to_p3(h, &r);
@@ -3486,7 +3486,7 @@ ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a)
     ge25519_p2_dbl(&r, &s);
     ge25519_p1p1_to_p3(h, &r);
 
-    for (i = 0; i < 64; i += 2) {
+    ために (i = 0; i < 64; i += 2) {
         ge25519_cmov8_base(&t, i / 2, e[i]);
         ge25519_add_precomp(&r, h, &t);
         ge25519_p1p1_to_p3(h, &r);
@@ -3533,29 +3533,29 @@ ge25519_p3_sub(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q)
 
 
 
-int
+整数
 ge25519_is_canonical(const unsigned char *s)
 {
     unsigned char c;
     unsigned char d;
-    unsigned int  i;
+    unsigned 整数  i;
 
     c = (s[31] & 0x7f) ^ 0x7f;
-    for (i = 30; i > 0; i--) {
+    ために (i = 30; i > 0; i--) {
         c |= s[i] ^ 0xff;
     }
-    c = (((unsigned int) c) - 1U) >> 8;
-    d = (0xed - 1U - (unsigned int) s[0]) >> 8;
+    c = (((unsigned 整数) c) - 1U) >> 8;
+    d = (0xed - 1U - (unsigned 整数) s[0]) >> 8;
 
-    return 1 - (c & d & 1);
+    戻る 1 - (c & d & 1);
 }
 
-int
+整数
 ge25519_has_small_order(const ge25519_p3 *p)
 {
     fe25519 y_sqrtm1;
     fe25519 c;
-    int     ret = 0;
+    整数     ret = 0;
 
     ret |= fe25519_iszero(p->X);
     ret |= fe25519_iszero(p->Y);
@@ -3566,7 +3566,7 @@ ge25519_has_small_order(const ge25519_p3 *p)
     fe25519_add(c, y_sqrtm1, p->X);
     ret |= fe25519_iszero(c);
 
-    return ret;
+    戻る ret;
 }
 
 /*
@@ -4425,7 +4425,7 @@ sc25519_reduce(unsigned char s[64])
     s[31] = s11 >> 17;
 }
 
-int
+整数
 sc25519_is_canonical(const unsigned char s[32])
 {
     /* 2^252+27742317777372353535851937790883648493 */
@@ -4436,15 +4436,15 @@ sc25519_is_canonical(const unsigned char s[32])
     };
     unsigned char c = 0;
     unsigned char n = 1;
-    unsigned int  i = 32;
+    unsigned 整数  i = 32;
 
     do {
         i--;
         c |= ((s[i] - L[i]) >> 8) & n;
         n &= ((s[i] ^ L[i]) - 1) >> 8;
-    } while (i != 0);
+    } ながら (i != 0);
 
-    return (c != 0);
+    戻る (c != 0);
 }
 
 /* montgomery to edwards */
@@ -4466,24 +4466,24 @@ sc25519_is_canonical(const unsigned char s[32])
 
 
 static void _crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs,
-                                      int prehashed);
+                                      整数 prehashed);
 
-static int _crypto_sign_ed25519_detached(unsigned char *sig,
+static 整数 _crypto_sign_ed25519_detached(unsigned char *sig,
                                   unsigned long long *siglen_p,
                                   const unsigned char *m,
                                   unsigned long long mlen,
-                                  const unsigned char *sk, int prehashed);
+                                  const unsigned char *sk, 整数 prehashed);
 
-static int _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
+static 整数 _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
                                          const unsigned char *m,
                                          unsigned long long   mlen,
                                          const unsigned char *pk,
-                                         int prehashed);
+                                         整数 prehashed);
 #endif
 
 
 
-int
+整数
 crypto_sign_ed25519_seed_keypair(unsigned char *pk, unsigned char *sk,
                                  const unsigned char *seed)
 {
@@ -4500,27 +4500,27 @@ crypto_sign_ed25519_seed_keypair(unsigned char *pk, unsigned char *sk,
     memmove(sk, seed, 32);
     memmove(sk + 32, pk, 32);
 
-    return 0;
+    戻る 0;
 }
 
-int
+整数
 crypto_sign_ed25519_keypair(unsigned char *pk, unsigned char *sk)
 {
     unsigned char seed[32];
-    int           ret;
+    整数           ret;
 
     arc4random_buf(seed, sizeof seed);
     ret = crypto_sign_ed25519_seed_keypair(pk, sk, seed);
     explicit_bzero(seed, sizeof seed);
 
-    return ret;
+    戻る ret;
 }
 
 
 
 
 static void
-_crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, int prehashed)
+_crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, 整数 prehashed)
 {
     static const unsigned char DOM2PREFIX[32 + 2] = {
         'S', 'i', 'g', 'E', 'd', '2', '5', '5', '1', '9', ' ',
@@ -4530,7 +4530,7 @@ _crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, int prehashed)
     };
 
     crypto_hash_sha512_init(hs);
-    if (prehashed) {
+    もし (prehashed) {
         crypto_hash_sha512_update(hs, DOM2PREFIX, sizeof DOM2PREFIX);
     }
 }
@@ -4557,10 +4557,10 @@ _crypto_sign_ed25519_synthetic_r_hv(crypto_hash_sha512_state *hs,
 }
 #endif
 
-int
+整数
 _crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
                               const unsigned char *m, unsigned long long mlen,
-                              const unsigned char *sk, int prehashed)
+                              const unsigned char *sk, 整数 prehashed)
 {
     crypto_hash_sha512_state hs;
     unsigned char            az[64];
@@ -4573,7 +4573,7 @@ _crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
     crypto_hash_sha512(az, sk, 32);
 #ifdef ED25519_NONDETERMINISTIC
     _crypto_sign_ed25519_synthetic_r_hv(&hs, nonce /* tmp */, az);
-#else
+#否则
     crypto_hash_sha512_update(&hs, az + 32, 32);
 #endif
 
@@ -4598,29 +4598,29 @@ _crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
     explicit_bzero(az, sizeof az);
     explicit_bzero(nonce, sizeof nonce);
 
-    if (siglen_p != NULL) {
+    もし (siglen_p != NULL) {
         *siglen_p = 64U;
     }
-    return 0;
+    戻る 0;
 }
 
-int
+整数
 crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
                              const unsigned char *m, unsigned long long mlen,
                              const unsigned char *sk)
 {
-    return _crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, sk, 0);
+    戻る _crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, sk, 0);
 }
 
 
 
 
-int
+整数
 _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
                                      const unsigned char *m,
                                      unsigned long long   mlen,
                                      const unsigned char *pk,
-                                     int prehashed)
+                                     整数 prehashed)
 {
     crypto_hash_sha512_state hs;
     unsigned char            h[64];
@@ -4632,25 +4632,25 @@ _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
 
     ACQUIRE_FENCE;
 #ifdef ED25519_COMPAT
-    if (sig[63] & 224) {
-        return -1;
+    もし (sig[63] & 224) {
+        戻る -1;
     }
-#else
-    if ((sig[63] & 240) != 0 &&
+#否则
+    もし ((sig[63] & 240) != 0 &&
         sc25519_is_canonical(sig + 32) == 0) {
-        return -1;
+        戻る -1;
     }
-    if (ge25519_is_canonical(pk) == 0) {
-        return -1;
+    もし (ge25519_is_canonical(pk) == 0) {
+        戻る -1;
     }
 #endif
-    if (ge25519_frombytes_negate_vartime(&A, pk) != 0 ||
+    もし (ge25519_frombytes_negate_vartime(&A, pk) != 0 ||
         ge25519_has_small_order(&A) != 0) {
-        return -1;
+        戻る -1;
     }
-    if (ge25519_frombytes(&expected_r, sig) != 0 ||
+    もし (ge25519_frombytes(&expected_r, sig) != 0 ||
         ge25519_has_small_order(&expected_r) != 0) {
-        return -1;
+        戻る -1;
     }
     _crypto_sign_ed25519_ref10_hinit(&hs, prehashed);
     crypto_hash_sha512_update(&hs, sig, 32);
@@ -4663,16 +4663,16 @@ _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
     ge25519_p2_to_p3(&sb_ah, &sb_ah_p2);
     ge25519_p3_sub(&check, &expected_r, &sb_ah);
 
-    return ge25519_has_small_order(&check) - 1;
+    戻る ge25519_has_small_order(&check) - 1;
 }
 
-int
+整数
 crypto_sign_ed25519_verify_detached(const unsigned char *sig,
                                     const unsigned char *m,
                                     unsigned long long   mlen,
                                     const unsigned char *pk)
 {
-    return _crypto_sign_ed25519_verify_detached(sig, m, mlen, pk, 0);
+    戻る _crypto_sign_ed25519_verify_detached(sig, m, mlen, pk, 0);
 }
 
 

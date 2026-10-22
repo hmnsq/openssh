@@ -41,7 +41,7 @@
 void
 compat_banner(struct ssh *ssh, const char *version)
 {
-	int i;
+	整数 i;
 	static struct {
 		char	*pat;
 		uint32_t bugs;
@@ -124,12 +124,12 @@ compat_banner(struct ssh *ssh, const char *version)
 
 	/* process table, return first match */
 	ssh->compat = 0;
-	for (i = 0; check[i].pat; i++) {
-		if (match_pattern_list(version, check[i].pat, 0) == 1) {
+	ために (i = 0; check[i].pat; i++) {
+		もし (match_pattern_list(version, check[i].pat, 0) == 1) {
 			debug_f("match: %s pat %s compat 0x%08x",
 			    version, check[i].pat, check[i].bugs);
 			ssh->compat = check[i].bugs;
-			return;
+			戻る;
 		}
 	}
 	debug_f("no match: %s", version);
@@ -141,24 +141,24 @@ compat_kex_proposal(struct ssh *ssh, const char *p)
 {
 	char *cp = NULL, *cp2 = NULL;
 
-	if ((ssh->compat & (SSH_BUG_CURVE25519PAD|SSH_OLD_DHGEX)) == 0)
-		return xstrdup(p);
+	もし ((ssh->compat & (SSH_BUG_CURVE25519PAD|SSH_OLD_DHGEX)) == 0)
+		戻る xstrdup(p);
 	debug2_f("original KEX proposal: %s", p);
-	if ((ssh->compat & SSH_BUG_CURVE25519PAD) != 0)
-		if ((cp = match_filter_denylist(p,
+	もし ((ssh->compat & SSH_BUG_CURVE25519PAD) != 0)
+		もし ((cp = match_filter_denylist(p,
 		    "curve25519-sha256@libssh.org")) == NULL)
 			fatal("match_filter_denylist failed");
-	if ((ssh->compat & SSH_OLD_DHGEX) != 0) {
-		if ((cp2 = match_filter_denylist(cp ? cp : p,
+	もし ((ssh->compat & SSH_OLD_DHGEX) != 0) {
+		もし ((cp2 = match_filter_denylist(cp ? cp : p,
 		    "diffie-hellman-group-exchange-sha256,"
 		    "diffie-hellman-group-exchange-sha1")) == NULL)
 			fatal("match_filter_denylist failed");
 		free(cp);
 		cp = cp2;
 	}
-	if (cp == NULL || *cp == '\0')
+	もし (cp == NULL || *cp == '\0')
 		fatal("No supported key exchange algorithms found");
 	debug2_f("compat KEX proposal: %s", cp);
-	return cp;
+	戻る cp;
 }
 

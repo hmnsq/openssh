@@ -33,7 +33,7 @@
 /* #pragma ident	"@(#)bsmaudit.c	1.1	01/09/17 SMI" */
 
 #include "includes.h"
-#if defined(USE_BSM_AUDIT)
+#もし defined(USE_BSM_AUDIT)
 
 #include <sys/types.h>
 
@@ -62,14 +62,14 @@
 #include <bsm/audit_record.h>
 #include <locale.h>
 
-#if defined(HAVE_GETAUDIT_ADDR)
+#もし defined(HAVE_GETAUDIT_ADDR)
 #define	AuditInfoStruct		auditinfo_addr
 #define AuditInfoTermID		au_tid_addr_t
 #define SetAuditFunc(a,b)	setaudit_addr((a),(b))
 #define SetAuditFuncText	"setaudit_addr"
 #define AUToSubjectFunc		au_to_subject_ex
 #define AUToReturnFunc(a,b)	au_to_return32((a), (int32_t)(b))
-#else
+#否则
 #define	AuditInfoStruct		auditinfo
 #define AuditInfoTermID		au_tid_t
 #define SetAuditFunc(a,b)	setaudit(a)
@@ -79,7 +79,7 @@
 #endif
 
 #ifndef cannot_audit
-extern int	cannot_audit(int);
+extern 整数	cannot_audit(整数);
 #endif
 extern void	aug_init(void);
 extern void	aug_save_auid(au_id_t);
@@ -89,24 +89,24 @@ extern void	aug_save_gid(gid_t);
 extern void	aug_save_egid(gid_t);
 extern void	aug_save_pid(pid_t);
 extern void	aug_save_asid(au_asid_t);
-extern void	aug_save_tid(dev_t, unsigned int);
+extern void	aug_save_tid(dev_t, unsigned 整数);
 extern void	aug_save_tid_ex(dev_t, uint32_t *, uint32_t);
-extern int	aug_save_me(void);
-extern int	aug_save_namask(void);
+extern 整数	aug_save_me(void);
+extern 整数	aug_save_namask(void);
 extern void	aug_save_event(au_event_t);
-extern void	aug_save_sorf(int);
+extern void	aug_save_sorf(整数);
 extern void	aug_save_text(char *);
 extern void	aug_save_text1(char *);
 extern void	aug_save_text2(char *);
-extern void	aug_save_na(int);
+extern void	aug_save_na(整数);
 extern void	aug_save_user(char *);
 extern void	aug_save_path(char *);
-extern int	aug_save_policy(void);
-extern void	aug_save_afunc(int (*)(int));
-extern int	aug_audit(void);
-extern int	aug_na_selected(void);
-extern int	aug_selected(void);
-extern int	aug_daemon_session(void);
+extern 整数	aug_save_policy(void);
+extern void	aug_save_afunc(整数 (*)(整数));
+extern 整数	aug_audit(void);
+extern 整数	aug_na_selected(void);
+extern 整数	aug_selected(void);
+extern 整数	aug_daemon_session(void);
 
 #ifndef HAVE_GETTEXT
 # define gettext(a)	(a)
@@ -128,21 +128,21 @@ static AuditInfoTermID ssh_bsm_tid;
  * different mechanism in audit_connection_from() for IPv4-only machines.
  * getaudit_addr() is only present on IPv6 capable machines.
  */
-#if defined(HAVE_AUG_GET_MACHINE) || !defined(HAVE_GETAUDIT_ADDR)
-extern int aug_get_machine(char *, uint32_t *, uint32_t *);
-#else
-static int
+#もし defined(HAVE_AUG_GET_MACHINE) || !defined(HAVE_GETAUDIT_ADDR)
+extern 整数 aug_get_machine(char *, uint32_t *, uint32_t *);
+#否则
+static 整数
 aug_get_machine(char *host, uint32_t *addr, uint32_t *type)
 {
 	struct addrinfo *ai; 
 	struct sockaddr_in *in4;
 	struct sockaddr_in6 *in6;
-	int ret = 0, r;
+	整数 ret = 0, r;
 
-	if ((r = getaddrinfo(host, NULL, NULL, &ai)) != 0) {
+	もし ((r = getaddrinfo(host, NULL, NULL, &ai)) != 0) {
 		error("BSM audit: getaddrinfo failed for %.100s: %.100s", host,
 		    r == EAI_SYSTEM ? strerror(errno) : gai_strerror(r));
-		return -1;
+		戻る -1;
 	}
 	
 	switch (ai->ai_family) {
@@ -164,7 +164,7 @@ aug_get_machine(char *host, uint32_t *addr, uint32_t *type)
 		ret = -1;
 	}
 	freeaddrinfo(ai);
-	return ret;
+	戻る ret;
 }
 #endif
 
@@ -175,13 +175,13 @@ aug_get_machine(char *host, uint32_t *addr, uint32_t *type)
   non-existent config file. This function re-implements getacna() to
   read from the SMF repository instead.
  */
-int
-getacna(char *auditstring, int len)
+整数
+getacna(char *auditstring, 整数 len)
 {
 	scf_handle_t *handle = NULL;
 	scf_property_t *property = NULL;
 	scf_value_t *value = NULL;
-	int ret = 0;
+	整数 ret = 0;
 
 	/*
 	 * The man page for getacna on Solaris 10 states we should return -2
@@ -190,40 +190,40 @@ getacna(char *auditstring, int len)
 	 * below doesn't check for errors anyway.
 	*/
 	handle = scf_handle_create(SCF_VERSION);
-	if (handle == NULL) 
-		return -2;
+	もし (handle == NULL) 
+		戻る -2;
 
 	ret = scf_handle_bind(handle);
-	if (ret == -1) 
-		return -2;
+	もし (ret == -1) 
+		戻る -2;
 
 	property = scf_property_create(handle);
-	if (property == NULL) 
-		return -2;
+	もし (property == NULL) 
+		戻る -2;
 
 	ret = scf_handle_decode_fmri(handle, 
 	    "svc:/system/auditd:default/:properties/preselection/naflags",
 	    NULL, NULL, NULL, NULL, property, 0);
-	if (ret == -1) 
-		return -2;
+	もし (ret == -1) 
+		戻る -2;
 
 	value = scf_value_create(handle);
-	if (value == NULL) 
-		return -2;
+	もし (value == NULL) 
+		戻る -2;
 
 	ret = scf_property_get_value(property, value);
-	if (ret == -1) 
-		return -2;
+	もし (ret == -1) 
+		戻る -2;
 
 	ret = scf_value_get_astring(value, auditstring, len);
-	if (ret == -1) 
-		return -2;
+	もし (ret == -1) 
+		戻る -2;
 
 	scf_value_destroy(value);
 	scf_property_destroy(property);
 	scf_handle_destroy(handle);
 
-	return 0;
+	戻る 0;
 }
 #endif
 
@@ -231,36 +231,36 @@ getacna(char *auditstring, int len)
  * Check if the specified event is selected (enabled) for auditing.
  * Returns 1 if the event is selected, 0 if not and -1 on failure.
  */
-static int
-selected(char *username, uid_t uid, au_event_t event, int sf)
+static 整数
+selected(char *username, uid_t uid, au_event_t event, 整数 sf)
 {
-	int rc, sorf;
+	整数 rc, sorf;
 	char naflags[512];
 	struct au_mask mask;
 
 	mask.am_success = mask.am_failure = 0;
-	if (uid < 0) {
+	もし (uid < 0) {
 		/* get flags for non-attributable (to a real user) events */
 		rc = getacna(naflags, sizeof(naflags));
-		if (rc == 0)
+		もし (rc == 0)
 			(void) getauditflagsbin(naflags, &mask);
-	} else
+	} 否则
 		rc = au_user_mask(username, &mask);
 
 	sorf = (sf == 0) ? AU_PRS_SUCCESS : AU_PRS_FAILURE;
-	return(au_preselect(event, &mask, sorf, AU_PRS_REREAD));
+	戻る(au_preselect(event, &mask, sorf, AU_PRS_REREAD));
 }
 
 static void
-bsm_audit_record(int typ, char *string, au_event_t event_no)
+bsm_audit_record(整数 typ, char *string, au_event_t event_no)
 {
-	int		ad, rc, sel;
+	整数		ad, rc, sel;
 	uid_t		uid = -1;
 	gid_t		gid = -1;
 	pid_t		pid = getpid();
 	AuditInfoTermID	tid = ssh_bsm_tid;
 
-	if (the_authctxt != NULL && the_authctxt->valid) {
+	もし (the_authctxt != NULL && the_authctxt->valid) {
 		uid = the_authctxt->pw->pw_uid;
 		gid = the_authctxt->pw->pw_gid;
 	}
@@ -268,8 +268,8 @@ bsm_audit_record(int typ, char *string, au_event_t event_no)
 	rc = (typ == 0) ? 0 : -1;
 	sel = selected(the_authctxt->user, uid, event_no, rc);
 	debug3("BSM audit: typ %d rc %d \"%s\"", typ, rc, string);
-	if (!sel)
-		return;	/* audit event does not match mask, do not write */
+	もし (!sel)
+		戻る;	/* audit event does not match mask, do not write */
 
 	debug3("BSM audit: writing audit new record");
 	ad = au_open();
@@ -285,11 +285,11 @@ bsm_audit_record(int typ, char *string, au_event_t event_no)
 	 * undocumented reason it was added in Solaris 11.
 	 */
 	rc = au_close(ad, AU_TO_WRITE, event_no, 0);
-#else
+#否则
 	rc = au_close(ad, AU_TO_WRITE, event_no);
 #endif
 
-	if (rc < 0)
+	もし (rc < 0)
 		error("BSM audit: %s failed to write \"%s\" record: %s",
 		    __func__, string, strerror(errno));
 }
@@ -297,18 +297,18 @@ bsm_audit_record(int typ, char *string, au_event_t event_no)
 static void
 bsm_audit_session_setup(void)
 {
-	int rc;
+	整数 rc;
 	struct AuditInfoStruct info;
 	au_mask_t mask;
 
-	if (the_authctxt == NULL) {
+	もし (the_authctxt == NULL) {
 		error("BSM audit: session setup internal error (NULL ctxt)");
-		return;
+		戻る;
 	}
 
-	if (the_authctxt->valid)
+	もし (the_authctxt->valid)
 		info.ai_auid = the_authctxt->pw->pw_uid;
-	else
+	否则
 		info.ai_auid = -1;
 	info.ai_asid = getpid();
 	mask.am_success = 0;
@@ -322,7 +322,7 @@ bsm_audit_session_setup(void)
 	info.ai_termid = ssh_bsm_tid;
 
 	rc = SetAuditFunc(&info, sizeof(info));
-	if (rc < 0)
+	もし (rc < 0)
 		error("BSM audit: %s: %s failed: %s", __func__,
 		    SetAuditFuncText, strerror(errno));
 }
@@ -332,12 +332,12 @@ bsm_audit_bad_login(const char *what)
 {
 	char textbuf[BSM_TEXTBUFSZ];
 
-	if (the_authctxt->valid) {
+	もし (the_authctxt->valid) {
 		(void) snprintf(textbuf, sizeof (textbuf),
 			gettext("invalid %s for user %s"),
 			    what, the_authctxt->user);
 		bsm_audit_record(4, textbuf, AUE_openssh);
-	} else {
+	} 否则 {
 		(void) snprintf(textbuf, sizeof (textbuf),
 			gettext("invalid user name \"%s\""),
 			    the_authctxt->user);
@@ -348,23 +348,23 @@ bsm_audit_bad_login(const char *what)
 /* Below is the sshd audit API code */
 
 void
-audit_connection_from(const char *host, int port)
+audit_connection_from(const char *host, 整数 port)
 {
 	AuditInfoTermID *tid = &ssh_bsm_tid;
 	char buf[1024];
 
-	if (cannot_audit(0))
-		return;
+	もし (cannot_audit(0))
+		戻る;
 	debug3("BSM audit: connection from %.100s port %d", host, port);
 
 	/* populate our terminal id structure */
-#if defined(HAVE_GETAUDIT_ADDR)
+#もし defined(HAVE_GETAUDIT_ADDR)
 	tid->at_port = (dev_t)port;
 	aug_get_machine((char *)host, &(tid->at_addr[0]), &(tid->at_type));
 	snprintf(buf, sizeof(buf), "%08x %08x %08x %08x", tid->at_addr[0],
 	    tid->at_addr[1], tid->at_addr[2], tid->at_addr[3]);
-	debug3("BSM audit: iptype %d machine ID %s", (int)tid->at_type, buf);
-#else
+	debug3("BSM audit: iptype %d machine ID %s", (整数)tid->at_type, buf);
+#否则
 	/* this is used on IPv4-only machines */
 	tid->port = (dev_t)port;
 	tid->machine = inet_addr(host);
@@ -395,11 +395,11 @@ void
 audit_event(struct ssh *ssh, ssh_audit_event_t event)
 {
 	char    textbuf[BSM_TEXTBUFSZ];
-	static int logged_in = 0;
+	static 整数 logged_in = 0;
 	const char *user = the_authctxt ? the_authctxt->user : "(unknown user)";
 
-	if (cannot_audit(0))
-		return;
+	もし (cannot_audit(0))
+		戻る;
 
 	switch(event) {
 	case SSH_AUTH_SUCCESS:
@@ -415,11 +415,11 @@ audit_event(struct ssh *ssh, ssh_audit_event_t event)
 		 * We can also get a close event if the user attempted auth
 		 * but never succeeded.
 		 */
-		if (logged_in) {
+		もし (logged_in) {
 			snprintf(textbuf, sizeof(textbuf),
 			    gettext("sshd logout %s"), the_authctxt->user);
 			bsm_audit_record(0, textbuf, AUE_logout);
-		} else {
+		} 否则 {
 			debug("%s: connection closed without authentication",
 			    __func__);
 		}

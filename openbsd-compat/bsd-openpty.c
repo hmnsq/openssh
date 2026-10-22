@@ -33,7 +33,7 @@
  */
 
 #include "includes.h"
-#if !defined(HAVE_OPENPTY)
+#もし !defined(HAVE_OPENPTY)
 
 #include <sys/types.h>
 
@@ -54,7 +54,7 @@
 #ifdef HAVE_PTY_H
 # include <pty.h>
 #endif
-#if defined(HAVE_DEV_PTMX) && defined(HAVE_SYS_STROPTS_H)
+#もし defined(HAVE_DEV_PTMX) && defined(HAVE_SYS_STROPTS_H)
 # include <sys/stropts.h>
 #endif
 
@@ -69,47 +69,47 @@
 #define O_NOCTTY 0
 #endif
 
-#if defined(HAVE_DEV_PTMX) && !defined(HAVE__GETPTY)
-static int
-openpty_streams(int *amaster, int *aslave)
+#もし defined(HAVE_DEV_PTMX) && !defined(HAVE__GETPTY)
+static 整数
+openpty_streams(整数 *amaster, 整数 *aslave)
 {
 	/*
 	 * This code is used e.g. on Solaris 2.x.  (Note that Solaris 2.3
 	 * also has bsd-style ptys, but they simply do not work.)
 	 */
-	int ptm;
+	整数 ptm;
 	char *pts;
 	sshsig_t old_signal;
 
-	if ((ptm = open("/dev/ptmx", O_RDWR | O_NOCTTY)) == -1)
-		return (-1);
+	もし ((ptm = open("/dev/ptmx", O_RDWR | O_NOCTTY)) == -1)
+		戻る (-1);
 
 	/* XXX: need to close ptm on error? */
 	old_signal = ssh_signal(SIGCHLD, SIG_DFL);
-	if (grantpt(ptm) < 0)
-		return (-1);
+	もし (grantpt(ptm) < 0)
+		戻る (-1);
 	ssh_signal(SIGCHLD, old_signal);
 
-	if (unlockpt(ptm) < 0)
-		return (-1);
+	もし (unlockpt(ptm) < 0)
+		戻る (-1);
 
-	if ((pts = ptsname(ptm)) == NULL)
-		return (-1);
+	もし ((pts = ptsname(ptm)) == NULL)
+		戻る (-1);
 	*amaster = ptm;
 
 	/* Open the slave side. */
-	if ((*aslave = open(pts, O_RDWR | O_NOCTTY)) == -1) {
+	もし ((*aslave = open(pts, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		戻る (-1);
 	}
 
-# if defined(I_FIND) && defined(__SVR4)
+# もし defined(I_FIND) && defined(__SVR4)
 	/*
 	 * If the streams modules have already been pushed then there
 	 * is no more work to do here.
 	 */
-	if (ioctl(*aslave, I_FIND, "ptem") != 0)
-		return 0;
+	もし (ioctl(*aslave, I_FIND, "ptem") != 0)
+		戻る 0;
 # endif
 
 	/*
@@ -121,30 +121,30 @@ openpty_streams(int *amaster, int *aslave)
 # ifndef __hpux
 	ioctl(*aslave, I_PUSH, "ttcompat");
 # endif /* __hpux */
-	return (0);
+	戻る (0);
 }
 #endif
 
-int
-openpty(int *amaster, int *aslave, char *name, const struct termios *termp,
+整数
+openpty(整数 *amaster, 整数 *aslave, char *name, const struct termios *termp,
    const struct winsize *winp)
 {
-#if defined(HAVE__GETPTY)
+#もし defined(HAVE__GETPTY)
 	/*
 	 * _getpty(3) exists in SGI Irix 4.x, 5.x & 6.x -- it generates more
 	 * pty's automagically when needed
 	 */
 	char *slave;
 
-	if ((slave = _getpty(amaster, O_RDWR, 0622, 0)) == NULL)
-		return (-1);
+	もし ((slave = _getpty(amaster, O_RDWR, 0622, 0)) == NULL)
+		戻る (-1);
 
 	/* Open the slave side. */
-	if ((*aslave = open(slave, O_RDWR | O_NOCTTY)) == -1) {
+	もし ((*aslave = open(slave, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		戻る (-1);
 	}
-	return (0);
+	戻る (0);
 
 #elif defined(HAVE_DEV_PTMX)
 
@@ -159,79 +159,79 @@ openpty(int *amaster, int *aslave, char *name, const struct termios *termp,
 	 * different session and is available to become controlling terminal
 	 * for the client's subprocess.  See bugzilla #245 for details.
 	 */
-	int r, fd;
-	static int junk_ptyfd = -1, junk_ttyfd;
+	整数 r, fd;
+	static 整数 junk_ptyfd = -1, junk_ttyfd;
 	char *junk_name;
 
 	r = openpty_streams(amaster, aslave);
-	if (junk_ptyfd == -1 && (fd = open(_PATH_TTY, O_RDWR|O_NOCTTY)) >= 0) {
+	もし (junk_ptyfd == -1 && (fd = open(_PATH_TTY, O_RDWR|O_NOCTTY)) >= 0) {
 		close(fd);
 		junk_ptyfd = *amaster;
 		junk_ttyfd = *aslave;
 		junk_name = ttyname(junk_ttyfd);
 		debug("STREAMS bug workaround pty %d tty %d name %s",
 		    junk_ptyfd, junk_ttyfd, junk_name ? junk_name : "<none>");
-	} else
-		return r;
+	} 否则
+		戻る r;
 #endif
 
-	return openpty_streams(amaster, aslave);
+	戻る openpty_streams(amaster, aslave);
 
 #elif defined(HAVE_DEV_PTS_AND_PTC)
 	/* AIX-style pty code. */
 	const char *ttname;
 
-	if ((*amaster = open("/dev/ptc", O_RDWR | O_NOCTTY)) == -1)
-		return (-1);
-	if ((ttname = ttyname(*amaster)) == NULL)
-		return (-1);
-	if ((*aslave = open(ttname, O_RDWR | O_NOCTTY)) == -1) {
+	もし ((*amaster = open("/dev/ptc", O_RDWR | O_NOCTTY)) == -1)
+		戻る (-1);
+	もし ((ttname = ttyname(*amaster)) == NULL)
+		戻る (-1);
+	もし ((*aslave = open(ttname, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		戻る (-1);
 	}
-	return (0);
+	戻る (0);
 
-#else
+#否则
 	/* BSD-style pty code. */
 	char ptbuf[64], ttbuf[64];
-	int i;
+	整数 i;
 	const char *ptymajors = "pqrstuvwxyzabcdefghijklmno"
 	    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	const char *ptyminors = "0123456789abcdef";
-	int num_minors = strlen(ptyminors);
-	int num_ptys = strlen(ptymajors) * num_minors;
+	整数 num_minors = strlen(ptyminors);
+	整数 num_ptys = strlen(ptymajors) * num_minors;
 	struct termios tio;
 
-	for (i = 0; i < num_ptys; i++) {
+	ために (i = 0; i < num_ptys; i++) {
 		snprintf(ptbuf, sizeof(ptbuf), "/dev/pty%c%c",
 		    ptymajors[i / num_minors], ptyminors[i % num_minors]);
 		snprintf(ttbuf, sizeof(ttbuf), "/dev/tty%c%c",
 		    ptymajors[i / num_minors], ptyminors[i % num_minors]);
 
-		if ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1) {
+		もし ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1) {
 			/* Try SCO style naming */
 			snprintf(ptbuf, sizeof(ptbuf), "/dev/ptyp%d", i);
 			snprintf(ttbuf, sizeof(ttbuf), "/dev/ttyp%d", i);
-			if ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1)
+			もし ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1)
 				continue;
 		}
 
 		/* Open the slave side. */
-		if ((*aslave = open(ttbuf, O_RDWR | O_NOCTTY)) == -1) {
+		もし ((*aslave = open(ttbuf, O_RDWR | O_NOCTTY)) == -1) {
 			close(*amaster);
-			return (-1);
+			戻る (-1);
 		}
 		/* set tty modes to a sane state for broken clients */
-		if (tcgetattr(*amaster, &tio) != -1) {
+		もし (tcgetattr(*amaster, &tio) != -1) {
 			tio.c_lflag |= (ECHO | ISIG | ICANON);
 			tio.c_oflag |= (OPOST | ONLCR);
 			tio.c_iflag |= ICRNL;
 			tcsetattr(*amaster, TCSANOW, &tio);
 		}
 
-		return (0);
+		戻る (0);
 	}
-	return (-1);
+	戻る (-1);
 #endif
 }
 

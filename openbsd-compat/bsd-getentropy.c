@@ -38,43 +38,43 @@
 
 #include "log.h"
 
-int
+整数
 _ssh_compat_getentropy(void *s, size_t len)
 {
-#if defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
-	if (RAND_bytes(s, len) <= 0)
+#もし defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
+	もし (RAND_bytes(s, len) <= 0)
 		fatal("Couldn't obtain random bytes (error 0x%lx)",
 		    (unsigned long)ERR_get_error());
-#else
-	int fd, save_errno;
+#否则
+	整数 fd, save_errno;
 	ssize_t r;
 	size_t o = 0;
 
 #ifdef WITH_OPENSSL
-	if (RAND_bytes(s, len) == 1)
-		return 0;
+	もし (RAND_bytes(s, len) == 1)
+		戻る 0;
 #endif
 #ifdef HAVE_GETENTROPY
-	if ((r = getentropy(s, len)) == 0)
-		return 0;
+	もし ((r = getentropy(s, len)) == 0)
+		戻る 0;
 #endif /* HAVE_GETENTROPY */
 #ifdef HAVE_GETRANDOM
-	if ((r = getrandom(s, len, 0)) > 0 && (size_t)r == len)
-		return 0;
+	もし ((r = getrandom(s, len, 0)) > 0 && (size_t)r == len)
+		戻る 0;
 #endif /* HAVE_GETRANDOM */
 
-	if ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
+	もし ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
 		save_errno = errno;
 		/* Try egd/prngd before giving up. */
-		if (seed_from_prngd(s, len) == 0)
-			return 0;
+		もし (seed_from_prngd(s, len) == 0)
+			戻る 0;
 		fatal("Couldn't open %s: %s", SSH_RANDOM_DEV,
 		    strerror(save_errno));
 	}
-	while (o < len) {
+	ながら (o < len) {
 		r = read(fd, (u_char *)s + o, len - o);
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR ||
+		もし (r < 0) {
+			もし (errno == EAGAIN || errno == EINTR ||
 			    errno == EWOULDBLOCK)
 				continue;
 			fatal("read %s: %s", SSH_RANDOM_DEV, strerror(errno));
@@ -83,5 +83,5 @@ _ssh_compat_getentropy(void *s, size_t len)
 	}
 	close(fd);
 #endif /* WITH_OPENSSL */
-	return 0;
+	戻る 0;
 }

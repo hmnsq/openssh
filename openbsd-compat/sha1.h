@@ -45,14 +45,14 @@ char *SHA1Data(const u_int8_t *, size_t, char *)
         x[1] = htonl(x[1]);                                             \
         x[2] = htonl(x[2]);                                             \
         x[3] = htonl(x[3]);                                             \
-        x[4] = htonl(x[4]); } while (0)
+        x[4] = htonl(x[4]); } ながら (0)
 
 #define NTOHDIGEST(x) do {                                              \
         x[0] = ntohl(x[0]);                                             \
         x[1] = ntohl(x[1]);                                             \
         x[2] = ntohl(x[2]);                                             \
         x[3] = ntohl(x[3]);                                             \
-        x[4] = ntohl(x[4]); } while (0)
+        x[4] = ntohl(x[4]); } ながら (0)
 
 #endif /* !WITH_OPENSSL */
 #endif /* _SHA1_H */

@@ -39,7 +39,7 @@
 #include "log.h"
 
 #include <errno.h>
-#if defined(HAVE_NETDB_H)
+#もし defined(HAVE_NETDB_H)
 # include <netdb.h>
 #endif
 #include <uinfo.h>
@@ -51,7 +51,7 @@
 #ifdef WITH_AIXAUTHENTICATE
 # include <login.h>
 # include <userpw.h>
-# if defined(HAVE_SYS_AUDIT_H) && defined(AIX_LOGINFAILED_4ARG)
+# もし defined(HAVE_SYS_AUDIT_H) && defined(AIX_LOGINFAILED_4ARG)
 #  include <sys/audit.h>
 # endif
 # include <usersec.h>
@@ -84,7 +84,7 @@ aix_usrinfo(struct passwd *pw)
 
 	i = snprintf(cp, len, "LOGNAME=%s%cNAME=%s%c", pw->pw_name, '\0',
 	    pw->pw_name, '\0');
-	if (usrinfo(SETUINFO, cp, i) == -1)
+	もし (usrinfo(SETUINFO, cp, i) == -1)
 		fatal("Couldn't set usrinfo: %s", strerror(errno));
 	debug3("AIX/UsrInfo: set len %d", i);
 
@@ -100,15 +100,15 @@ aix_usrinfo(struct passwd *pw)
 void
 aix_remove_embedded_newlines(char *p)
 {
-	if (p == NULL)
-		return;
+	もし (p == NULL)
+		戻る;
 
-	for (; *p; p++) {
-		if (*p == '\n')
+	ために (; *p; p++) {
+		もし (*p == '\n')
 			*p = ' ';
 	}
 	/* Remove trailing whitespace */
-	if (*--p == ' ')
+	もし (*--p == ' ')
 		*p = '\0';
 }
 
@@ -128,33 +128,33 @@ aix_remove_embedded_newlines(char *p)
  *
  * Returns 0 if an unsupportable combination is found, 1 otherwise.
  */
-static int
+static 整数
 aix_valid_authentications(const char *user)
 {
 	char *auth1, *sys, *p;
-	int valid = 1;
+	整数 valid = 1;
 
-	if (getuserattr((char *)user, S_AUTHSYSTEM, &sys, SEC_CHAR) != 0) {
+	もし (getuserattr((char *)user, S_AUTHSYSTEM, &sys, SEC_CHAR) != 0) {
 		logit("Can't retrieve attribute SYSTEM for %s: %.100s",
 		    user, strerror(errno));
-		return 0;
+		戻る 0;
 	}
 
 	debug3("AIX SYSTEM attribute %s", sys);
-	if (strcmp(sys, "NONE") != 0)
-		return 1;	/* not "NONE", so is OK */
+	もし (strcmp(sys, "NONE") != 0)
+		戻る 1;	/* not "NONE", so is OK */
 
-	if (getuserattr((char *)user, S_AUTH1, &auth1, SEC_LIST) != 0) {
+	もし (getuserattr((char *)user, S_AUTH1, &auth1, SEC_LIST) != 0) {
 		logit("Can't retrieve attribute auth1 for %s: %.100s",
 		    user, strerror(errno));
-		return 0;
+		戻る 0;
 	}
 
 	p = auth1;
 	/* A SEC_LIST is concatenated strings, ending with two NULs. */
-	while (p[0] != '\0' && p[1] != '\0') {
+	ながら (p[0] != '\0' && p[1] != '\0') {
 		debug3("AIX auth1 attribute list member %s", p);
-		if (strcmp(p, "NONE") != 0 && strcmp(p, "SYSTEM")) {
+		もし (strcmp(p, "NONE") != 0 && strcmp(p, "SYSTEM")) {
 			logit("Account %s has unsupported auth1 value '%s'",
 			    user, p);
 			valid = 0;
@@ -162,7 +162,7 @@ aix_valid_authentications(const char *user)
 		p += strlen(p) + 1;
 	}
 
-	return (valid);
+	戻る (valid);
 }
 
 /*
@@ -172,12 +172,12 @@ aix_valid_authentications(const char *user)
  * Note: this function returns 1 on success, whereas AIX's authenticate()
  * returns 0.
  */
-int
+整数
 sys_auth_passwd(struct ssh *ssh, const char *password)
 {
 	Authctxt *ctxt = ssh->authctxt;
 	char *authmsg = NULL, *msg = NULL, *name = ctxt->pw->pw_name;
-	int r, authsuccess = 0, expired, reenter, result;
+	整数 r, authsuccess = 0, expired, reenter, result;
 
 	do {
 		result = authenticate((char *)name, (char *)password, &reenter,
@@ -185,12 +185,12 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 		aix_remove_embedded_newlines(authmsg);
 		debug3("AIX/authenticate result %d, authmsg %.100s", result,
 		    authmsg);
-	} while (reenter);
+	} ながら (reenter);
 
-	if (!aix_valid_authentications(name))
+	もし (!aix_valid_authentications(name))
 		result = -1;
 
-	if (result == 0) {
+	もし (result == 0) {
 		authsuccess = 1;
 
 		/*
@@ -203,8 +203,8 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 		 * Check if the user's password is expired.
 		 */
 		expired = passwdexpired(name, &msg);
-		if (msg && *msg) {
-			if ((r = sshbuf_put(ctxt->loginmsg,
+		もし (msg && *msg) {
+			もし ((r = sshbuf_put(ctxt->loginmsg,
 			    msg, strlen(msg))) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
@@ -230,18 +230,18 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 
 	free(authmsg);
 
-	return authsuccess;
+	戻る authsuccess;
 }
 
 /*
  * Check if specified account is permitted to log in.
  * Returns 1 if login is allowed, 0 if not allowed.
  */
-int
+整数
 sys_auth_allowed_user(struct passwd *pw, struct sshbuf *loginmsg)
 {
 	char *msg = NULL;
-	int r, result, permitted = 0;
+	整数 r, result, permitted = 0;
 	struct stat st;
 
 	/*
@@ -249,54 +249,54 @@ sys_auth_allowed_user(struct passwd *pw, struct sshbuf *loginmsg)
 	 * logins via ssh) or if running as non-root user (since
 	 * loginrestrictions will always fail due to insufficient privilege).
 	 */
-	if (pw->pw_uid == 0 || geteuid() != 0) {
+	もし (pw->pw_uid == 0 || geteuid() != 0) {
 		debug3("%s: not checking", __func__);
-		return 1;
+		戻る 1;
 	}
 
 	result = loginrestrictions(pw->pw_name, S_RLOGIN, NULL, &msg);
-	if (result == 0)
+	もし (result == 0)
 		permitted = 1;
 	/*
 	 * If restricted because /etc/nologin exists, the login will be denied
 	 * in session.c after the nologin message is sent, so allow for now
 	 * and do not append the returned message.
 	 */
-	if (result == -1 && errno == EPERM && stat(_PATH_NOLOGIN, &st) == 0)
+	もし (result == -1 && errno == EPERM && stat(_PATH_NOLOGIN, &st) == 0)
 		permitted = 1;
-	else if (msg != NULL) {
-		if ((r = sshbuf_put(loginmsg, msg, strlen(msg))) != 0)
+	否则 もし (msg != NULL) {
+		もし ((r = sshbuf_put(loginmsg, msg, strlen(msg))) != 0)
 			fatal("%s: buffer error: %s", __func__, ssh_err(r));
 	}
-	if (msg == NULL)
+	もし (msg == NULL)
 		msg = xstrdup("(none)");
 	aix_remove_embedded_newlines(msg);
 	debug3("AIX/loginrestrictions returned %d msg %.100s", result, msg);
 
-	if (!permitted)
+	もし (!permitted)
 		logit("Login restricted for %s: %.100s", pw->pw_name, msg);
 	free(msg);
-	return permitted;
+	戻る permitted;
 }
 
-int
+整数
 sys_auth_record_login(const char *user, const char *host, const char *ttynm,
     struct sshbuf *loginmsg)
 {
 	char *msg = NULL;
-	int success = 0;
+	整数 success = 0;
 
 	aix_setauthdb(user);
-	if (loginsuccess((char *)user, (char *)host, (char *)ttynm, &msg) == 0) {
+	もし (loginsuccess((char *)user, (char *)host, (char *)ttynm, &msg) == 0) {
 		success = 1;
-		if (msg != NULL) {
+		もし (msg != NULL) {
 			debug("AIX/loginsuccess: msg %s", msg);
-			if (lastlogin_msg == NULL)
+			もし (lastlogin_msg == NULL)
 				lastlogin_msg = msg;
 		}
 	}
 	aix_restoreauthdb();
-	return (success);
+	戻る (success);
 }
 
 char *
@@ -305,7 +305,7 @@ sys_auth_get_lastlogin_msg(const char *user, uid_t uid)
 	char *msg = lastlogin_msg;
 
 	lastlogin_msg = NULL;
-	return msg;
+	戻る msg;
 }
 
 #  ifdef CUSTOM_FAILED_LOGIN
@@ -316,14 +316,14 @@ void
 record_failed_login(struct ssh *ssh, const char *user, const char *hostname,
     const char *ttyname)
 {
-	if (geteuid() != 0)
-		return;
+	もし (geteuid() != 0)
+		戻る;
 
 	aix_setauthdb(user);
 #   ifdef AIX_LOGINFAILED_4ARG
 	loginfailed((char *)user, (char *)hostname, (char *)ttyname,
 	    AUDIT_FAIL_AUTH);
-#   else
+#   否则
 	loginfailed((char *)user, (char *)hostname, (char *)ttyname);
 #   endif
 	aix_restoreauthdb();
@@ -342,18 +342,18 @@ aix_setauthdb(const char *user)
 #  ifdef HAVE_SETAUTHDB
 	char *registry;
 
-	if (setuserdb(S_READ) == -1) {
+	もし (setuserdb(S_READ) == -1) {
 		debug3("%s: Could not open userdb to read", __func__);
-		return;
+		戻る;
 	}
 
-	if (getuserattr((char *)user, S_REGISTRY, &registry, SEC_CHAR) == 0) {
-		if (setauthdb(registry, old_registry) == 0)
+	もし (getuserattr((char *)user, S_REGISTRY, &registry, SEC_CHAR) == 0) {
+		もし (setauthdb(registry, old_registry) == 0)
 			debug3("AIX/setauthdb set registry '%s'", registry);
-		else
+		否则
 			debug3("AIX/setauthdb set registry '%s' failed: %s",
 			    registry, strerror(errno));
-	} else
+	} 否则
 		debug3("%s: Could not read S_REGISTRY for user: %s", __func__,
 		    strerror(errno));
 	enduserdb();
@@ -370,10 +370,10 @@ void
 aix_restoreauthdb(void)
 {
 #  ifdef HAVE_SETAUTHDB
-	if (setauthdb(old_registry, NULL) == 0)
+	もし (setauthdb(old_registry, NULL) == 0)
 		debug3("%s: restoring old registry '%s'", __func__,
 		    old_registry);
-	else
+	否则
 		debug3("%s: failed to restore old registry %s", __func__,
 		    old_registry);
 #  endif /* HAVE_SETAUTHDB */
@@ -393,90 +393,90 @@ aix_krb5_get_principal_name(const char *const_pw_name)
 	char *authname = NULL, *authdomain = NULL, *principal = NULL;
 
 	setuserdb(S_READ);
-	if (getuserattr(pw_name, S_AUTHDOMAIN, &authdomain, SEC_CHAR) != 0)
+	もし (getuserattr(pw_name, S_AUTHDOMAIN, &authdomain, SEC_CHAR) != 0)
 		debug("AIX getuserattr S_AUTHDOMAIN: %s", strerror(errno));
-	if (getuserattr(pw_name, S_AUTHNAME, &authname, SEC_CHAR) != 0)
+	もし (getuserattr(pw_name, S_AUTHNAME, &authname, SEC_CHAR) != 0)
 		debug("AIX getuserattr S_AUTHNAME: %s", strerror(errno));
 
-	if (authdomain != NULL)
+	もし (authdomain != NULL)
 		xasprintf(&principal, "%s@%s", authname ? authname : pw_name,
 		    authdomain);
-	else if (authname != NULL)
+	否则 もし (authname != NULL)
 		principal = xstrdup(authname);
 	enduserdb();
-	return principal;
+	戻る principal;
 }
 # endif /* USE_AIX_KRB_NAME */
 
-# if defined(AIX_GETNAMEINFO_HACK) && !defined(BROKEN_ADDRINFO)
+# もし defined(AIX_GETNAMEINFO_HACK) && !defined(BROKEN_ADDRINFO)
 # undef getnameinfo
 /*
  * For some reason, AIX's getnameinfo will refuse to resolve the all-zeros
  * IPv6 address into its textual representation ("::"), so we wrap it
  * with a function that will.
  */
-int
+整数
 sshaix_getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
-    size_t hostlen, char *serv, size_t servlen, int flags)
+    size_t hostlen, char *serv, size_t servlen, 整数 flags)
 {
 	struct sockaddr_in6 *sa6;
 	u_int32_t *a6;
 
-	if (flags & (NI_NUMERICHOST|NI_NUMERICSERV) &&
+	もし (flags & (NI_NUMERICHOST|NI_NUMERICSERV) &&
 	    sa->sa_family == AF_INET6) {
 		sa6 = (struct sockaddr_in6 *)sa;
 		a6 = sa6->sin6_addr.u6_addr.u6_addr32;
 
-		if (a6[0] == 0 && a6[1] == 0 && a6[2] == 0 && a6[3] == 0) {
+		もし (a6[0] == 0 && a6[1] == 0 && a6[2] == 0 && a6[3] == 0) {
 			strlcpy(host, "::", hostlen);
 			snprintf(serv, servlen, "%d", sa6->sin6_port);
-			return 0;
+			戻る 0;
 		}
 	}
-	return getnameinfo(sa, salen, host, hostlen, serv, servlen, flags);
+	戻る getnameinfo(sa, salen, host, hostlen, serv, servlen, flags);
 }
 # endif /* AIX_GETNAMEINFO_HACK */
 
-# if defined(USE_GETGRSET)
+# もし defined(USE_GETGRSET)
 #  include <stdlib.h>
-int
-getgrouplist(const char *user, gid_t pgid, gid_t *groups, int *grpcnt)
+整数
+getgrouplist(const char *user, gid_t pgid, gid_t *groups, 整数 *grpcnt)
 {
 	char *cp, *grplist, *grp;
 	gid_t gid;
-	int ret = 0, ngroups = 0, maxgroups;
+	整数 ret = 0, ngroups = 0, maxgroups;
 	long long ll;
 
 	maxgroups = *grpcnt;
 
-	if ((cp = grplist = getgrset(user)) == NULL)
-		return -1;
+	もし ((cp = grplist = getgrset(user)) == NULL)
+		戻る -1;
 
 	/* handle zero-length case */
-	if (maxgroups <= 0) {
+	もし (maxgroups <= 0) {
 		*grpcnt = 0;
-		return -1;
+		戻る -1;
 	}
 
 	/* copy primary group */
 	groups[ngroups++] = pgid;
 
 	/* copy each entry from getgrset into group list */
-	while ((grp = strsep(&grplist, ",")) != NULL) {
+	ながら ((grp = strsep(&grplist, ",")) != NULL) {
 		ll = strtoll(grp, NULL, 10);
-		if (ngroups >= maxgroups || ll < 0 || ll > UID_MAX) {
+		もし (ngroups >= maxgroups || ll < 0 || ll > UID_MAX) {
 			ret = -1;
 			goto out;
 		}
 		gid = (gid_t)ll;
-		if (gid == pgid)
+		もし (gid == pgid)
 			continue;	/* we have already added primary gid */
 		groups[ngroups++] = gid;
 	}
 out:
 	free(cp);
 	*grpcnt = ngroups;
-	return ret;
+	戻る ret;
 }
 # endif	/* USE_GETGRSET */
 

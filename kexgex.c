@@ -43,15 +43,15 @@
 #include "sshbuf.h"
 #include "digest.h"
 
-int
+整数
 kexgex_hash(
-    int hash_alg,
+    整数 hash_alg,
     const struct sshbuf *client_version,
     const struct sshbuf *server_version,
     const struct sshbuf *client_kexinit,
     const struct sshbuf *server_kexinit,
     const struct sshbuf *server_host_key_blob,
-    int min, int wantbits, int max,
+    整数 min, 整数 wantbits, 整数 max,
     const BIGNUM *prime,
     const BIGNUM *gen,
     const BIGNUM *client_dh_pub,
@@ -60,13 +60,13 @@ kexgex_hash(
     u_char *hash, size_t *hashlen)
 {
 	struct sshbuf *b;
-	int r;
+	整数 r;
 
-	if (*hashlen < ssh_digest_bytes(SSH_DIGEST_SHA1))
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_stringb(b, client_version)) < 0 ||
+	もし (*hashlen < ssh_digest_bytes(SSH_DIGEST_SHA1))
+		戻る SSH_ERR_INVALID_ARGUMENT;
+	もし ((b = sshbuf_new()) == NULL)
+		戻る SSH_ERR_ALLOC_FAIL;
+	もし ((r = sshbuf_put_stringb(b, client_version)) < 0 ||
 	    (r = sshbuf_put_stringb(b, server_version)) < 0 ||
 	    /* kexinit messages: fake header: len+SSH2_MSG_KEXINIT */
 	    (r = sshbuf_put_u32(b, sshbuf_len(client_kexinit) + 1)) != 0 ||
@@ -85,20 +85,20 @@ kexgex_hash(
 	    (r = sshbuf_put_bignum2(b, server_dh_pub)) != 0 ||
 	    (r = sshbuf_put(b, shared_secret, secretlen)) != 0) {
 		sshbuf_free(b);
-		return r;
+		戻る r;
 	}
 #ifdef DEBUG_KEXDH
 	sshbuf_dump(b, stderr);
 #endif
-	if (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
+	もし (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
 		sshbuf_free(b);
-		return SSH_ERR_LIBCRYPTO_ERROR;
+		戻る SSH_ERR_LIBCRYPTO_ERROR;
 	}
 	sshbuf_free(b);
 	*hashlen = ssh_digest_bytes(hash_alg);
 #ifdef DEBUG_KEXDH
 	dump_digest("hash", hash, *hashlen);
 #endif
-	return 0;
+	戻る 0;
 }
 #endif /* WITH_OPENSSL */

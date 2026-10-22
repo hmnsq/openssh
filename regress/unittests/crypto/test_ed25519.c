@@ -72,7 +72,7 @@ ed25519_tests(void)
 	size_t i, msglen;
 	unsigned long long smlen;
 
-	for (i = 0; i < sizeof(ed25519_kats)/sizeof(ed25519_kats[0]); i++) {
+	ために (i = 0; i < sizeof(ed25519_kats)/sizeof(ed25519_kats[0]); i++) {
 		TEST_START("Ed25519 keypair from seed");
 		hex2bin(seed, ed25519_kats[i].sk, 32);
 		hex2bin(expected_pk, ed25519_kats[i].pk, 32);

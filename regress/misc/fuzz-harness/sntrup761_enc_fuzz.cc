@@ -24,25 +24,25 @@ volatile crypto_int32 crypto_int32_optblocker = 0;
 volatile crypto_int64 crypto_int64_optblocker = 0;
 #include "sntrup761.c"
 
-static int real_random;
+static 整数 real_random;
 
 void
 randombytes(unsigned char *ptr, size_t l)
 {
-	if (real_random)
+	もし (real_random)
 		arc4random_buf(ptr, l);
-	else
+	否则
 		memset(ptr, 0, l);
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
+整数 LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
 {
 	unsigned char pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
 	unsigned char ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
 	unsigned char secret[crypto_kem_sntrup761_BYTES];
 
 	memset(&pk, 0, sizeof(pk));
-	if (len > sizeof(pk)) {
+	もし (len > sizeof(pk)) {
 		len = sizeof(pk);
 	}
 	memcpy(pk, input, len);
@@ -51,7 +51,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
 	(void)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
 	real_random = 1;
 	(void)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
-	return 0;
+	戻る 0;
 }
 
 } // extern

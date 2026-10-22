@@ -20,139 +20,139 @@
 #include "ssherr.h"
 
 const char *
-ssh_err(int n)
+ssh_err(整数 n)
 {
 	const char *msg = NULL;
 
 	switch (n) {
 	case SSH_ERR_SUCCESS:
-		return "success";
+		戻る "success";
 	case SSH_ERR_INTERNAL_ERROR:
-		return "unexpected internal error";
+		戻る "unexpected internal error";
 	case SSH_ERR_ALLOC_FAIL:
-		return "memory allocation failed";
+		戻る "memory allocation failed";
 	case SSH_ERR_MESSAGE_INCOMPLETE:
-		return "incomplete message";
+		戻る "incomplete message";
 	case SSH_ERR_INVALID_FORMAT:
-		return "invalid format";
+		戻る "invalid format";
 	case SSH_ERR_BIGNUM_IS_NEGATIVE:
-		return "bignum is negative";
+		戻る "bignum is negative";
 	case SSH_ERR_STRING_TOO_LARGE:
-		return "string is too large";
+		戻る "string is too large";
 	case SSH_ERR_BIGNUM_TOO_LARGE:
-		return "bignum is too large";
+		戻る "bignum is too large";
 	case SSH_ERR_ECPOINT_TOO_LARGE:
-		return "elliptic curve point is too large";
+		戻る "elliptic curve point is too large";
 	case SSH_ERR_NO_BUFFER_SPACE:
-		return "insufficient buffer space";
+		戻る "insufficient buffer space";
 	case SSH_ERR_INVALID_ARGUMENT:
-		return "invalid argument";
+		戻る "invalid argument";
 	case SSH_ERR_KEY_BITS_MISMATCH:
-		return "key bits do not match";
+		戻る "key bits do not match";
 	case SSH_ERR_EC_CURVE_INVALID:
-		return "invalid elliptic curve";
+		戻る "invalid elliptic curve";
 	case SSH_ERR_KEY_TYPE_MISMATCH:
-		return "key type does not match";
+		戻る "key type does not match";
 	case SSH_ERR_KEY_TYPE_UNKNOWN:
-		return "unknown or unsupported key type";
+		戻る "unknown or unsupported key type";
 	case SSH_ERR_EC_CURVE_MISMATCH:
-		return "elliptic curve does not match";
+		戻る "elliptic curve does not match";
 	case SSH_ERR_EXPECTED_CERT:
-		return "plain key provided where certificate required";
+		戻る "plain key provided where certificate required";
 	case SSH_ERR_KEY_LACKS_CERTBLOB:
-		return "key lacks certificate data";
+		戻る "key lacks certificate data";
 	case SSH_ERR_KEY_CERT_UNKNOWN_TYPE:
-		return "unknown/unsupported certificate type";
+		戻る "unknown/unsupported certificate type";
 	case SSH_ERR_KEY_CERT_INVALID_SIGN_KEY:
-		return "invalid certificate signing key";
+		戻る "invalid certificate signing key";
 	case SSH_ERR_KEY_INVALID_EC_VALUE:
-		return "invalid elliptic curve value";
+		戻る "invalid elliptic curve value";
 	case SSH_ERR_SIGNATURE_INVALID:
-		return "incorrect signature";
+		戻る "incorrect signature";
 	case SSH_ERR_LIBCRYPTO_ERROR:
 		msg = ssherr_libcrypto();
-		return msg != NULL ? msg : "error in libcrypto";
+		戻る msg != NULL ? msg : "error in libcrypto";
 	case SSH_ERR_INTERNAL_CRYPTO_ERROR:
-		return "cryptographic operation failed";
+		戻る "cryptographic operation failed";
 	case SSH_ERR_UNEXPECTED_TRAILING_DATA:
-		return "unexpected bytes remain after decoding";
+		戻る "unexpected bytes remain after decoding";
 	case SSH_ERR_SYSTEM_ERROR:
-		return strerror(errno);
+		戻る strerror(errno);
 	case SSH_ERR_KEY_CERT_INVALID:
-		return "invalid certificate";
+		戻る "invalid certificate";
 	case SSH_ERR_AGENT_COMMUNICATION:
-		return "communication with agent failed";
+		戻る "communication with agent failed";
 	case SSH_ERR_AGENT_FAILURE:
-		return "agent refused operation";
+		戻る "agent refused operation";
 	case SSH_ERR_DH_GEX_OUT_OF_RANGE:
-		return "DH GEX group out of range";
+		戻る "DH GEX group out of range";
 	case SSH_ERR_DISCONNECTED:
-		return "disconnected";
+		戻る "disconnected";
 	case SSH_ERR_MAC_INVALID:
-		return "message authentication code incorrect";
+		戻る "message authentication code incorrect";
 	case SSH_ERR_NO_CIPHER_ALG_MATCH:
-		return "no matching cipher found";
+		戻る "no matching cipher found";
 	case SSH_ERR_NO_MAC_ALG_MATCH:
-		return "no matching MAC found";
+		戻る "no matching MAC found";
 	case SSH_ERR_NO_COMPRESS_ALG_MATCH:
-		return "no matching compression method found";
+		戻る "no matching compression method found";
 	case SSH_ERR_NO_KEX_ALG_MATCH:
-		return "no matching key exchange method found";
+		戻る "no matching key exchange method found";
 	case SSH_ERR_NO_HOSTKEY_ALG_MATCH:
-		return "no matching host key type found";
+		戻る "no matching host key type found";
 	case SSH_ERR_PROTOCOL_MISMATCH:
-		return "protocol version mismatch";
+		戻る "protocol version mismatch";
 	case SSH_ERR_NO_PROTOCOL_VERSION:
-		return "could not read protocol version";
+		戻る "could not read protocol version";
 	case SSH_ERR_NO_HOSTKEY_LOADED:
-		return "could not load host key";
+		戻る "could not load host key";
 	case SSH_ERR_NEED_REKEY:
-		return "rekeying not supported by peer";
+		戻る "rekeying not supported by peer";
 	case SSH_ERR_PASSPHRASE_TOO_SHORT:
-		return "passphrase is too short (minimum five characters)";
+		戻る "passphrase is too short (minimum five characters)";
 	case SSH_ERR_FILE_CHANGED:
-		return "file changed while reading";
+		戻る "file changed while reading";
 	case SSH_ERR_KEY_UNKNOWN_CIPHER:
-		return "key encrypted using unsupported cipher";
+		戻る "key encrypted using unsupported cipher";
 	case SSH_ERR_KEY_WRONG_PASSPHRASE:
-		return "incorrect passphrase supplied to decrypt private key";
+		戻る "incorrect passphrase supplied to decrypt private key";
 	case SSH_ERR_KEY_BAD_PERMISSIONS:
-		return "bad permissions";
+		戻る "bad permissions";
 	case SSH_ERR_KEY_CERT_MISMATCH:
-		return "certificate does not match key";
+		戻る "certificate does not match key";
 	case SSH_ERR_KEY_NOT_FOUND:
-		return "key not found";
+		戻る "key not found";
 	case SSH_ERR_AGENT_NOT_PRESENT:
-		return "agent not present";
+		戻る "agent not present";
 	case SSH_ERR_AGENT_NO_IDENTITIES:
-		return "agent contains no identities";
+		戻る "agent contains no identities";
 	case SSH_ERR_BUFFER_READ_ONLY:
-		return "internal error: buffer is read-only";
+		戻る "internal error: buffer is read-only";
 	case SSH_ERR_KRL_BAD_MAGIC:
-		return "KRL file has invalid magic number";
+		戻る "KRL file has invalid magic number";
 	case SSH_ERR_KEY_REVOKED:
-		return "Key is revoked";
+		戻る "Key is revoked";
 	case SSH_ERR_CONN_CLOSED:
-		return "Connection closed";
+		戻る "Connection closed";
 	case SSH_ERR_CONN_TIMEOUT:
-		return "Connection timed out";
+		戻る "Connection timed out";
 	case SSH_ERR_CONN_CORRUPT:
-		return "Connection corrupted";
+		戻る "Connection corrupted";
 	case SSH_ERR_PROTOCOL_ERROR:
-		return "Protocol error";
+		戻る "Protocol error";
 	case SSH_ERR_KEY_LENGTH:
-		return "Invalid key length";
+		戻る "Invalid key length";
 	case SSH_ERR_NUMBER_TOO_LARGE:
-		return "number is too large";
+		戻る "number is too large";
 	case SSH_ERR_KEY_ALG_UNSUPPORTED:
-		return "key algorithm not supported";
+		戻る "key algorithm not supported";
 	case SSH_ERR_SIGN_ALG_UNSUPPORTED:
-		return "signature algorithm not supported";
+		戻る "signature algorithm not supported";
 	case SSH_ERR_FEATURE_UNSUPPORTED:
-		return "requested feature not supported";
+		戻る "requested feature not supported";
 	case SSH_ERR_DEVICE_NOT_FOUND:
-		return "device not found";
+		戻る "device not found";
 	default:
-		return "unknown error";
+		戻る "unknown error";
 	}
 }
