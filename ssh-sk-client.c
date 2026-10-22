@@ -15,67 +15,67 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/socket.h>
+#ಅನ್ತರ್ಭಾವ <sys/wait.h>
 
-#include <limits.h>
-#include <errno.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
 
-#include "log.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "msg.h"
-#include "pathnames.h"
-#include "ssh-sk.h"
-#include "misc.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "msg.h"
+#ಅನ್ತರ್ಭಾವ "pathnames.h"
+#ಅನ್ತರ್ಭಾವ "ssh-sk.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
 
 /* #define DEBUG_SK 1 */
 
-static int
-start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+start_helper(ಪೂರ್ಣಾಙ್ಕ *fdp, pid_t *pidp, ಶೂನ್ಯ (**osigchldp)(ಪೂರ್ಣಾಙ್ಕ))
 {
-	void (*osigchld)(int);
-	int oerrno, pair[2], execpipe[2];
+	ಶೂನ್ಯ (*osigchld)(ಪೂರ್ಣಾಙ್ಕ);
+	ಪೂರ್ಣಾಙ್ಕ oerrno, pair[2], execpipe[2];
 	ssize_t n;
 	pid_t pid;
-	char execbuf[100], *helper, *verbosity = NULL;
+	ವರ್ಣ execbuf[100], *helper, *verbosity = ರಿಕ್ತ;
 
 	*fdp = -1;
 	*pidp = 0;
 	*osigchldp = SIG_DFL;
 
 	helper = getenv("SSH_SK_HELPER");
-	if (helper == NULL || strlen(helper) == 0)
+	ಯದಿ (helper == ರಿಕ್ತ || strlen(helper) == 0)
 		helper = _PATH_SSH_SK_HELPER;
 #ifdef DEBUG_SK
 	verbosity = "-vvv";
 #endif
 
 	/* Create a O_CLOEXEC pipe to capture the execve() failure */
-	if (pipe(execpipe) == -1) {
+	ಯದಿ (pipe(execpipe) == -1) {
 		error("pipe:  %s", strerror(errno));
-		return SSH_ERR_SYSTEM_ERROR;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
 	}
 	/* Start helper */
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1) {
+	ಯದಿ (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1) {
 		error("socketpair: %s", strerror(errno));
 		close(execpipe[0]);
 		close(execpipe[1]);
-		return SSH_ERR_SYSTEM_ERROR;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
 	}
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if ((pid = fork()) == -1) {
+	ಯದಿ ((pid = fork()) == -1) {
 		oerrno = errno;
 		error("fork: %s", strerror(errno));
 		close(pair[0]);
@@ -84,38 +84,38 @@ start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
 		close(execpipe[1]);
 		ssh_signal(SIGCHLD, osigchld);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
 	}
-	if (pid == 0) {
+	ಯದಿ (pid == 0) {
 		close(execpipe[0]);
 		FD_CLOSEONEXEC(execpipe[1]);
-		if ((dup2(pair[1], STDIN_FILENO) == -1) ||
+		ಯದಿ ((dup2(pair[1], STDIN_FILENO) == -1) ||
 		    (dup2(pair[1], STDOUT_FILENO) == -1)) {
-			snprintf(execbuf, sizeof execbuf,
+			snprintf(execbuf, ಪರಿಮಾಣ execbuf,
 			    "dup2: %s", strerror(errno));
-			write(execpipe[1], execbuf, strlen(execbuf)+1);
+			ಲಿಖ(execpipe[1], execbuf, strlen(execbuf)+1);
 			_exit(1);
 		}
 		close(pair[0]);
 		close(pair[1]);
 		closefrom(STDERR_FILENO + 1);
 		debug_f("starting %s %s", helper,
-		    verbosity == NULL ? "" : verbosity);
-		execlp(helper, helper, verbosity, (char *)NULL);
-		snprintf(execbuf, sizeof execbuf,
+		    verbosity == ರಿಕ್ತ ? "" : verbosity);
+		execlp(helper, helper, verbosity, (ವರ್ಣ *)ರಿಕ್ತ);
+		snprintf(execbuf, ಪರಿಮಾಣ execbuf,
 		    "execlp: %s", strerror(errno));
-		write(execpipe[1], execbuf, strlen(execbuf)+1);
+		ಲಿಖ(execpipe[1], execbuf, strlen(execbuf)+1);
 		_exit(1);
 	}
 	close(pair[1]);
 
 	close(execpipe[1]);
-	n = read(execpipe[0], execbuf, sizeof execbuf);
+	n = ಪಠ(execpipe[0], execbuf, ಪರಿಮಾಣ execbuf);
 	close(execpipe[0]);
-	if (n > 0) {
+	ಯದಿ (n > 0) {
 		execbuf[n - 1] = '\0';
 		error_f("%s", execbuf);
-		return SSH_ERR_AGENT_FAILURE;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_AGENT_FAILURE;
 	}
 
 	/* success */
@@ -123,220 +123,220 @@ start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
 	*fdp = pair[0];
 	*pidp = pid;
 	*osigchldp = osigchld;
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
 reap_helper(pid_t pid)
 {
-	int status, oerrno;
+	ಪೂರ್ಣಾಙ್ಕ status, oerrno;
 
 	debug3_f("pid=%ld", (long)pid);
 
 	errno = 0;
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno == EINTR) {
+	ಯಾವತ್ (waitpid(pid, &status, 0) == -1) {
+		ಯದಿ (errno == EINTR) {
 			errno = 0;
-			continue;
+			ಅನುವರ್ತ;
 		}
 		oerrno = errno;
 		error_f("waitpid: %s", strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
 	}
-	if (!WIFEXITED(status)) {
+	ಯದಿ (!WIFEXITED(status)) {
 		error_f("helper exited abnormally");
-		return SSH_ERR_AGENT_FAILURE;
-	} else if (WEXITSTATUS(status) != 0) {
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_AGENT_FAILURE;
+	} ಅನ್ಯಥಾ ಯದಿ (WEXITSTATUS(status) != 0) {
 		error_f("helper exited with non-zero exit status");
-		return SSH_ERR_AGENT_FAILURE;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_AGENT_FAILURE;
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int
-client_converse(struct sshbuf *msg, struct sshbuf **respp, u_int type)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+client_converse(ಸಂರಚನಾ sshbuf *ಸಂದೇಶ, ಸಂರಚನಾ sshbuf **respp, u_int type)
 {
-	int oerrno, fd, r2, ll, r = SSH_ERR_INTERNAL_ERROR;
+	ಪೂರ್ಣಾಙ್ಕ oerrno, fd, r2, ll, r = SSH_ERR_INTERNAL_ERROR;
 	u_int rtype, rerr;
 	pid_t pid;
 	u_char version;
-	void (*osigchld)(int);
-	struct sshbuf *req = NULL, *resp = NULL;
-	*respp = NULL;
+	ಶೂನ್ಯ (*osigchld)(ಪೂರ್ಣಾಙ್ಕ);
+	ಸಂರಚನಾ sshbuf *req = ರಿಕ್ತ, *resp = ರಿಕ್ತ;
+	*respp = ರಿಕ್ತ;
 
-	if ((r = start_helper(&fd, &pid, &osigchld)) != 0)
-		return r;
+	ಯದಿ ((r = start_helper(&fd, &pid, &osigchld)) != 0)
+		ಪ್ರತ್ಯಾಗಮ r;
 
-	if ((req = sshbuf_new()) == NULL || (resp = sshbuf_new()) == NULL) {
+	ಯದಿ ((req = sshbuf_new()) == ರಿಕ್ತ || (resp = sshbuf_new()) == ರಿಕ್ತ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 	/* Request preamble: type, log_on_stderr, log_level */
 	ll = log_level_get();
-	if ((r = sshbuf_put_u32(req, type)) != 0 ||
+	ಯದಿ ((r = sshbuf_put_u32(req, type)) != 0 ||
 	    (r = sshbuf_put_u8(req, log_is_on_stderr() != 0)) != 0 ||
 	    (r = sshbuf_put_u32(req, ll < 0 ? 0 : ll)) != 0 ||
-	    (r = sshbuf_putb(req, msg)) != 0) {
+	    (r = sshbuf_putb(req, ಸಂದೇಶ)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = ssh_msg_send(fd, SSH_SK_HELPER_VERSION, req)) != 0) {
+	ಯದಿ ((r = ssh_ಸಂದೇಶ_send(fd, SSH_SK_HELPER_VERSION, req)) != 0) {
 		error_fr(r, "send");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = ssh_msg_recv(fd, resp)) != 0) {
+	ಯದಿ ((r = ssh_ಸಂದೇಶ_recv(fd, resp)) != 0) {
 		error_fr(r, "receive");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = sshbuf_get_u8(resp, &version)) != 0) {
+	ಯದಿ ((r = sshbuf_get_u8(resp, &version)) != 0) {
 		error_fr(r, "parse version");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (version != SSH_SK_HELPER_VERSION) {
+	ಯದಿ (version != SSH_SK_HELPER_VERSION) {
 		error_f("unsupported version: got %u, expected %u",
 		    version, SSH_SK_HELPER_VERSION);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = sshbuf_get_u32(resp, &rtype)) != 0) {
+	ಯದಿ ((r = sshbuf_get_u32(resp, &rtype)) != 0) {
 		error_fr(r, "parse message type");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (rtype == SSH_SK_HELPER_ERROR) {
-		if ((r = sshbuf_get_u32(resp, &rerr)) != 0) {
+	ಯದಿ (rtype == SSH_SK_HELPER_ERROR) {
+		ಯದಿ ((r = sshbuf_get_u32(resp, &rerr)) != 0) {
 			error_fr(r, "parse");
-			goto out;
+			ಗಚ್ಛ out;
 		}
 		debug_f("helper returned error -%u", rerr);
 		/* OpenSSH error values are negative; encoded as -err on wire */
-		if (rerr == 0 || rerr >= INT_MAX)
+		ಯದಿ (rerr == 0 || rerr >= INT_MAX)
 			r = SSH_ERR_INTERNAL_ERROR;
-		else
-			r = -(int)rerr;
-		goto out;
-	} else if (rtype != type) {
+		ಅನ್ಯಥಾ
+			r = -(ಪೂರ್ಣಾಙ್ಕ)rerr;
+		ಗಚ್ಛ out;
+	} ಅನ್ಯಥಾ ಯದಿ (rtype != type) {
 		error_f("helper returned incorrect message type %u, "
 		    "expecting %u", rtype, type);
 		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 	/* success */
 	r = 0;
  out:
 	oerrno = errno;
 	close(fd);
-	if ((r2 = reap_helper(pid)) != 0) {
-		if (r == 0) {
+	ಯದಿ ((r2 = reap_helper(pid)) != 0) {
+		ಯದಿ (r == 0) {
 			r = r2;
 			oerrno = errno;
 		}
 	}
-	if (r == 0) {
+	ಯದಿ (r == 0) {
 		*respp = resp;
-		resp = NULL;
+		resp = ರಿಕ್ತ;
 	}
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	ssh_signal(SIGCHLD, osigchld);
 	errno = oerrno;
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 
 }
 
-int
-sshsk_sign(const char *provider, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin)
+ಪೂರ್ಣಾಙ್ಕ
+sshsk_sign(ಧ್ರುವ ವರ್ಣ *provider, ಸಂರಚನಾ sshkey *ಕೀಲಿ,
+    u_char **sigp, size_t *lenp, ಧ್ರುವ u_char *data, size_t datalen,
+    u_int compat, ಧ್ರುವ ವರ್ಣ *pin)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *req = NULL, *resp = NULL;
+	ಪೂರ್ಣಾಙ್ಕ oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	ಸಂರಚನಾ sshbuf *kbuf = ರಿಕ್ತ, *req = ರಿಕ್ತ, *resp = ರಿಕ್ತ;
 
-	*sigp = NULL;
+	*sigp = ರಿಕ್ತ;
 	*lenp = 0;
 
 #ifndef ENABLE_SK
-	return SSH_ERR_KEY_TYPE_UNKNOWN;
+	ಪ್ರತ್ಯಾಗಮ SSH_ERR_ಕೀಲಿ_TYPE_UNKNOWN;
 #endif
 
-	if ((kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	ಯದಿ ((kbuf = sshbuf_new()) == ರಿಕ್ತ ||
+	    (req = sshbuf_new()) == ರಿಕ್ತ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
-	if ((r = sshkey_private_serialize(key, kbuf)) != 0) {
+	ಯದಿ ((r = sshkey_private_serialize(ಕೀಲಿ, kbuf)) != 0) {
 		error_fr(r, "encode key");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = sshbuf_put_stringb(req, kbuf)) != 0 ||
+	ಯದಿ ((r = sshbuf_put_stringb(req, kbuf)) != 0 ||
 	    (r = sshbuf_put_cstring(req, provider)) != 0 ||
 	    (r = sshbuf_put_string(req, data, datalen)) != 0 ||
-	    (r = sshbuf_put_cstring(req, NULL)) != 0 || /* alg */
+	    (r = sshbuf_put_cstring(req, ರಿಕ್ತ)) != 0 || /* alg */
 	    (r = sshbuf_put_u32(req, compat)) != 0 ||
 	    (r = sshbuf_put_cstring(req, pin)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_SIGN)) != 0)
-		goto out;
+	ಯದಿ ((r = client_converse(req, &resp, SSH_SK_HELPER_SIGN)) != 0)
+		ಗಚ್ಛ out;
 
-	if ((r = sshbuf_get_string(resp, sigp, lenp)) != 0) {
+	ಯದಿ ((r = sshbuf_get_string(resp, sigp, lenp)) != 0) {
 		error_fr(r, "parse signature");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (sshbuf_len(resp) != 0) {
+	ಯದಿ (sshbuf_len(resp) != 0) {
 		error_f("trailing data in response");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 	/* success */
 	r = 0;
  out:
 	oerrno = errno;
-	if (r != 0) {
+	ಯದಿ (r != 0) {
 		freezero(*sigp, *lenp);
-		*sigp = NULL;
+		*sigp = ರಿಕ್ತ;
 		*lenp = 0;
 	}
 	sshbuf_free(kbuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest)
+ಪೂರ್ಣಾಙ್ಕ
+sshsk_enroll(ಪೂರ್ಣಾಙ್ಕ type, ಧ್ರುವ ವರ್ಣ *provider_path, ಧ್ರುವ ವರ್ಣ *device,
+    ಧ್ರುವ ವರ್ಣ *application, ಧ್ರುವ ವರ್ಣ *userid, uint8_t flags,
+    ಧ್ರುವ ವರ್ಣ *pin, ಸಂರಚನಾ sshbuf *challenge_buf,
+    ಸಂರಚನಾ sshkey **keyp, ಸಂರಚನಾ sshbuf *attest)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *abuf = NULL, *req = NULL, *resp = NULL;
-	struct sshkey *key = NULL;
+	ಪೂರ್ಣಾಙ್ಕ oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	ಸಂರಚನಾ sshbuf *kbuf = ರಿಕ್ತ, *abuf = ರಿಕ್ತ, *req = ರಿಕ್ತ, *resp = ರಿಕ್ತ;
+	ಸಂರಚನಾ sshkey *ಕೀಲಿ = ರಿಕ್ತ;
 
-	*keyp = NULL;
-	if (attest != NULL)
+	*keyp = ರಿಕ್ತ;
+	ಯದಿ (attest != ರಿಕ್ತ)
 		sshbuf_reset(attest);
 
 #ifndef ENABLE_SK
-	return SSH_ERR_KEY_TYPE_UNKNOWN;
+	ಪ್ರತ್ಯಾಗಮ SSH_ERR_ಕೀಲಿ_TYPE_UNKNOWN;
 #endif
 
-	if (type < 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ಯದಿ (type < 0)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
 
-	if ((abuf = sshbuf_new()) == NULL ||
-	    (kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	ಯದಿ ((abuf = sshbuf_new()) == ರಿಕ್ತ ||
+	    (kbuf = sshbuf_new()) == ರಿಕ್ತ ||
+	    (req = sshbuf_new()) == ರಿಕ್ತ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
-	if ((r = sshbuf_put_u32(req, (u_int)type)) != 0 ||
+	ಯದಿ ((r = sshbuf_put_u32(req, (u_int)type)) != 0 ||
 	    (r = sshbuf_put_cstring(req, provider_path)) != 0 ||
 	    (r = sshbuf_put_cstring(req, device)) != 0 ||
 	    (r = sshbuf_put_cstring(req, application)) != 0 ||
@@ -345,156 +345,156 @@ sshsk_enroll(int type, const char *provider_path, const char *device,
 	    (r = sshbuf_put_cstring(req, pin)) != 0 ||
 	    (r = sshbuf_put_stringb(req, challenge_buf)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_ENROLL)) != 0)
-		goto out;
+	ಯದಿ ((r = client_converse(req, &resp, SSH_SK_HELPER_ENROLL)) != 0)
+		ಗಚ್ಛ out;
 
-	if ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
+	ಯದಿ ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
 	    (r = sshbuf_get_stringb(resp, abuf)) != 0) {
 		error_fr(r, "parse");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (sshbuf_len(resp) != 0) {
+	ಯದಿ (sshbuf_len(resp) != 0) {
 		error_f("trailing data in response");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
+	ಯದಿ ((r = sshkey_private_deserialize(kbuf, &ಕೀಲಿ)) != 0) {
 		error_fr(r, "encode");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (attest != NULL && (r = sshbuf_putb(attest, abuf)) != 0) {
+	ಯದಿ (attest != ರಿಕ್ತ && (r = sshbuf_putb(attest, abuf)) != 0) {
 		error_fr(r, "encode attestation information");
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
 	/* success */
 	r = 0;
-	*keyp = key;
-	key = NULL;
+	*keyp = ಕೀಲಿ;
+	ಕೀಲಿ = ರಿಕ್ತ;
  out:
 	oerrno = errno;
-	sshkey_free(key);
+	sshkey_free(ಕೀಲಿ);
 	sshbuf_free(kbuf);
 	sshbuf_free(abuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-static void
-sshsk_free_resident_key(struct sshsk_resident_key *srk)
+ಸ್ಥಿರ ಶೂನ್ಯ
+sshsk_free_resident_ಕೀಲಿ(ಸಂರಚನಾ sshsk_resident_ಕೀಲಿ *srk)
 {
-	if (srk == NULL)
-		return;
-	sshkey_free(srk->key);
+	ಯದಿ (srk == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ;
+	sshkey_free(srk->ಕೀಲಿ);
 	freezero(srk->user_id, srk->user_id_len);
-	free(srk);
+	ಮುಕ್ತ(srk);
 }
 
 
-void
-sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks)
+ಶೂನ್ಯ
+sshsk_free_resident_ಕೀಲಿಗಳು(ಸಂರಚನಾ sshsk_resident_ಕೀಲಿ **srks, size_t nsrks)
 {
 	size_t i;
 
-	if (srks == NULL || nsrks == 0)
-		return;
+	ಯದಿ (srks == ರಿಕ್ತ || nsrks == 0)
+		ಪ್ರತ್ಯಾಗಮ;
 
-	for (i = 0; i < nsrks; i++)
-		sshsk_free_resident_key(srks[i]);
-	free(srks);
+	ಪ್ರತಿ (i = 0; i < nsrks; i++)
+		sshsk_free_resident_ಕೀಲಿ(srks[i]);
+	ಮುಕ್ತ(srks);
 }
 
-int
-sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
+ಪೂರ್ಣಾಙ್ಕ
+sshsk_load_resident(ಧ್ರುವ ವರ್ಣ *provider_path, ಧ್ರುವ ವರ್ಣ *device,
+    ಧ್ರುವ ವರ್ಣ *pin, u_int flags, ಸಂರಚನಾ sshsk_resident_ಕೀಲಿ ***srksp,
     size_t *nsrksp)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *req = NULL, *resp = NULL;
-	struct sshkey *key = NULL;
-	struct sshsk_resident_key *srk = NULL, **srks = NULL, **tmp;
-	u_char *userid = NULL;
+	ಪೂರ್ಣಾಙ್ಕ oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	ಸಂರಚನಾ sshbuf *kbuf = ರಿಕ್ತ, *req = ರಿಕ್ತ, *resp = ರಿಕ್ತ;
+	ಸಂರಚನಾ sshkey *ಕೀಲಿ = ರಿಕ್ತ;
+	ಸಂರಚನಾ sshsk_resident_ಕೀಲಿ *srk = ರಿಕ್ತ, **srks = ರಿಕ್ತ, **tmp;
+	u_char *userid = ರಿಕ್ತ;
 	size_t userid_len = 0, nsrks = 0;
 
-	*srksp = NULL;
+	*srksp = ರಿಕ್ತ;
 	*nsrksp = 0;
 
-	if ((kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	ಯದಿ ((kbuf = sshbuf_new()) == ರಿಕ್ತ ||
+	    (req = sshbuf_new()) == ರಿಕ್ತ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
-	if ((r = sshbuf_put_cstring(req, provider_path)) != 0 ||
+	ಯದಿ ((r = sshbuf_put_cstring(req, provider_path)) != 0 ||
 	    (r = sshbuf_put_cstring(req, device)) != 0 ||
 	    (r = sshbuf_put_cstring(req, pin)) != 0 ||
 	    (r = sshbuf_put_u32(req, flags)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
-		goto out;
+	ಯದಿ ((r = client_converse(req, &resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
+		ಗಚ್ಛ out;
 
-	while (sshbuf_len(resp) != 0) {
+	ಯಾವತ್ (sshbuf_len(resp) != 0) {
 		/* key, comment, user_id */
-		if ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
-		    (r = sshbuf_get_cstring(resp, NULL, NULL)) != 0 ||
+		ಯದಿ ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
+		    (r = sshbuf_get_cstring(resp, ರಿಕ್ತ, ರಿಕ್ತ)) != 0 ||
 		    (r = sshbuf_get_string(resp, &userid, &userid_len)) != 0) {
 			error_fr(r, "parse");
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			ಗಚ್ಛ out;
 		}
-		if ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
+		ಯದಿ ((r = sshkey_private_deserialize(kbuf, &ಕೀಲಿ)) != 0) {
 			error_fr(r, "decode key");
-			goto out;
+			ಗಚ್ಛ out;
 		}
-		if ((srk = calloc(1, sizeof(*srk))) == NULL) {
+		ಯದಿ ((srk = calloc(1, ಪರಿಮಾಣ(*srk))) == ರಿಕ್ತ) {
 			error_f("calloc failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			ಗಚ್ಛ out;
 		}
-		srk->key = key;
-		key = NULL;
+		srk->ಕೀಲಿ = ಕೀಲಿ;
+		ಕೀಲಿ = ರಿಕ್ತ;
 		srk->user_id = userid;
 		srk->user_id_len = userid_len;
-		userid = NULL;
+		userid = ರಿಕ್ತ;
 		userid_len = 0;
-		if ((tmp = recallocarray(srks, nsrks, nsrks + 1,
-		    sizeof(*srks))) == NULL) {
+		ಯದಿ ((tmp = recallocarray(srks, nsrks, nsrks + 1,
+		    ಪರಿಮಾಣ(*srks))) == ರಿಕ್ತ) {
 			error_f("recallocarray keys failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			ಗಚ್ಛ out;
 		}
 		debug_f("srks[%zu]: %s %s uidlen %zu", nsrks,
-		    sshkey_type(srk->key), srk->key->sk_application,
+		    sshkey_type(srk->ಕೀಲಿ), srk->ಕೀಲಿ->sk_application,
 		    srk->user_id_len);
 		srks = tmp;
 		srks[nsrks++] = srk;
-		srk = NULL;
+		srk = ರಿಕ್ತ;
 	}
 
 	/* success */
 	r = 0;
 	*srksp = srks;
 	*nsrksp = nsrks;
-	srks = NULL;
+	srks = ರಿಕ್ತ;
 	nsrks = 0;
  out:
 	oerrno = errno;
-	sshsk_free_resident_key(srk);
-	sshsk_free_resident_keys(srks, nsrks);
+	sshsk_free_resident_ಕೀಲಿ(srk);
+	sshsk_free_resident_ಕೀಲಿಗಳು(srks, nsrks);
 	freezero(userid, userid_len);
-	sshkey_free(key);
+	sshkey_free(ಕೀಲಿ);
 	sshbuf_free(kbuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }

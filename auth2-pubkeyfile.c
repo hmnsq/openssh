@@ -24,113 +24,113 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
 
-#include <stdlib.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include "ssh.h"
-#include "log.h"
-#include "misc.h"
-#include "sshkey.h"
-#include "digest.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
-#include "authfile.h"
-#include "match.h"
-#include "ssherr.h"
-#include "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "ssh.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "digest.h"
+#ಅನ್ತರ್ಭಾವ "hostfile.h"
+#ಅನ್ತರ್ಭಾವ "auth.h"
+#ಅನ್ತರ್ಭಾವ "auth-options.h"
+#ಅನ್ತರ್ಭಾವ "authfile.h"
+#ಅನ್ತರ್ಭಾವ "match.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
 
-int
-auth_authorise_keyopts(struct passwd *pw, struct sshauthopt *opts,
-    int allow_cert_authority, const char *remote_ip, const char *remote_host,
-    const char *loc)
+ಪೂರ್ಣಾಙ್ಕ
+auth_authorise_keyopts(ಸಂರಚನಾ passwd *pw, ಸಂರಚನಾ sshauthopt *opts,
+    ಪೂರ್ಣಾಙ್ಕ allow_cert_authority, ಧ್ರುವ ವರ್ಣ *remote_ip, ಧ್ರುವ ವರ್ಣ *remote_host,
+    ಧ್ರುವ ವರ್ಣ *loc)
 {
-	time_t now = time(NULL);
-	char buf[64];
+	time_t now = time(ರಿಕ್ತ);
+	ವರ್ಣ buf[64];
 
 	/*
 	 * Check keys/principals file expiry time.
 	 * NB. validity interval in certificate is handled elsewhere.
 	 */
-	if (opts->valid_before && now > 0 &&
+	ಯದಿ (opts->valid_before && now > 0 &&
 	    opts->valid_before < (uint64_t)now) {
-		format_absolute_time(opts->valid_before, buf, sizeof(buf));
+		format_absolute_time(opts->valid_before, buf, ಪರಿಮಾಣ(buf));
 		debug("%s: entry expired at %s", loc, buf);
 		auth_debug_add("%s: entry expired at %s", loc, buf);
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 	/* Consistency checks */
-	if (opts->cert_principals != NULL && !opts->cert_authority) {
+	ಯದಿ (opts->cert_principals != ರಿಕ್ತ && !opts->cert_authority) {
 		debug("%s: principals on non-CA key", loc);
 		auth_debug_add("%s: principals on non-CA key", loc);
 		/* deny access */
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 	/* cert-authority flag isn't valid in authorized_principals files */
-	if (!allow_cert_authority && opts->cert_authority) {
+	ಯದಿ (!allow_cert_authority && opts->cert_authority) {
 		debug("%s: cert-authority flag invalid here", loc);
 		auth_debug_add("%s: cert-authority flag invalid here", loc);
 		/* deny access */
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 
 	/* Perform from= checks */
-	if (opts->required_from_host_keys != NULL) {
-		switch (match_host_and_ip(remote_host, remote_ip,
-		    opts->required_from_host_keys )) {
-		case 1:
+	ಯದಿ (opts->required_from_host_ಕೀಲಿಗಳು != ರಿಕ್ತ) {
+		ವಿಕಲ್ಪ (match_host_and_ip(remote_host, remote_ip,
+		    opts->required_from_host_ಕೀಲಿಗಳು )) {
+		ಪಕ್ಷ 1:
 			/* Host name matches. */
-			break;
-		case -1:
-		default:
+			ಭಙ್ಗ;
+		ಪಕ್ಷ -1:
+		ಸ್ವಭಾವ:
 			debug("%s: invalid from criteria", loc);
 			auth_debug_add("%s: invalid from criteria", loc);
 			/* FALLTHROUGH */
-		case 0:
+		ಪಕ್ಷ 0:
 			logit("%s: Authentication tried for %.100s with "
 			    "correct key but not from a permitted "
 			    "host (host=%.200s, ip=%.200s, required=%.200s).",
 			    loc, pw->pw_name, remote_host, remote_ip,
-			    opts->required_from_host_keys);
+			    opts->required_from_host_ಕೀಲಿಗಳು);
 			auth_debug_add("%s: Your host '%.200s' is not "
 			    "permitted to use this key for login.",
 			    loc, remote_host);
 			/* deny access */
-			return -1;
+			ಪ್ರತ್ಯಾಗಮ -1;
 		}
 	}
 	/* Check source-address restriction from certificate */
-	if (opts->required_from_host_cert != NULL) {
-		switch (addr_match_cidr_list(remote_ip,
+	ಯದಿ (opts->required_from_host_cert != ರಿಕ್ತ) {
+		ವಿಕಲ್ಪ (addr_match_cidr_list(remote_ip,
 		    opts->required_from_host_cert)) {
-		case 1:
+		ಪಕ್ಷ 1:
 			/* accepted */
-			break;
-		case -1:
-		default:
+			ಭಙ್ಗ;
+		ಪಕ್ಷ -1:
+		ಸ್ವಭಾವ:
 			/* invalid */
 			error("%s: Certificate source-address invalid", loc);
 			/* FALLTHROUGH */
-		case 0:
+		ಪಕ್ಷ 0:
 			logit("%s: Authentication tried for %.100s with valid "
 			    "certificate but not from a permitted source "
 			    "address (%.200s).", loc, pw->pw_name, remote_ip);
 			auth_debug_add("%s: Your address '%.200s' is not "
 			    "permitted to use this certificate for login.",
 			    loc, remote_ip);
-			return -1;
+			ಪ್ರತ್ಯಾಗಮ -1;
 		}
 	}
 	/*
@@ -141,30 +141,30 @@ auth_authorise_keyopts(struct passwd *pw, struct sshauthopt *opts,
 	 */
 	auth_log_authopts(loc, opts, 1);
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int
-match_principals_option(const char *principal_list, struct sshkey_cert *cert)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+match_principals_option(ಧ್ರುವ ವರ್ಣ *principal_list, ಸಂರಚನಾ sshkey_cert *cert)
 {
-	char *list, *olist, *entry;
+	ವರ್ಣ *list, *olist, *entry;
 	u_int i;
 
 	olist = list = xstrdup(principal_list);
-	for (;;) {
-		if ((entry = strsep(&list, ",")) == NULL || *entry == '\0')
-			break;
-		for (i = 0; i < cert->nprincipals; i++) {
-			if (strcmp(entry, cert->principals[i]) == 0) {
+	ಪ್ರತಿ (;;) {
+		ಯದಿ ((entry = strsep(&list, ",")) == ರಿಕ್ತ || *entry == '\0')
+			ಭಙ್ಗ;
+		ಪ್ರತಿ (i = 0; i < cert->nprincipals; i++) {
+			ಯದಿ (strcmp(entry, cert->principals[i]) == 0) {
 				debug3("matched principal from key i"
 				    "options \"%.100s\"", entry);
-				free(olist);
-				return 1;
+				ಮುಕ್ತ(olist);
+				ಪ್ರತ್ಯಾಗಮ 1;
 			}
 		}
 	}
-	free(olist);
-	return 0;
+	ಮುಕ್ತ(olist);
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /*
@@ -172,91 +172,91 @@ match_principals_option(const char *principal_list, struct sshkey_cert *cert)
  * authoptsp is principal is authorised, -1 otherwise. "loc" is used as a
  * log preamble for file/line information.
  */
-int
-auth_check_principals_line(char *cp, const struct sshkey_cert *cert,
-    const char *loc, struct sshauthopt **authoptsp)
+ಪೂರ್ಣಾಙ್ಕ
+auth_check_principals_ಸಾಲು(ವರ್ಣ *cp, ಧ್ರುವ ಸಂರಚನಾ sshkey_cert *cert,
+    ಧ್ರುವ ವರ್ಣ *loc, ಸಂರಚನಾ sshauthopt **authoptsp)
 {
 	u_int i, found = 0;
-	char *ep, *line_opts;
-	const char *reason = NULL;
-	struct sshauthopt *opts = NULL;
+	ವರ್ಣ *ep, *ಸಾಲು_opts;
+	ಧ್ರುವ ವರ್ಣ *reason = ರಿಕ್ತ;
+	ಸಂರಚನಾ sshauthopt *opts = ರಿಕ್ತ;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	ಯದಿ (authoptsp != ರಿಕ್ತ)
+		*authoptsp = ರಿಕ್ತ;
 
 	/* Trim trailing whitespace. */
 	ep = cp + strlen(cp) - 1;
-	while (ep > cp && (*ep == '\n' || *ep == ' ' || *ep == '\t'))
+	ಯಾವತ್ (ep > cp && (*ep == '\n' || *ep == ' ' || *ep == '\t'))
 		*ep-- = '\0';
 
 	/*
 	 * If the line has internal whitespace then assume it has
 	 * key options.
 	 */
-	line_opts = NULL;
-	if ((ep = strrchr(cp, ' ')) != NULL ||
-	    (ep = strrchr(cp, '\t')) != NULL) {
-		for (; *ep == ' ' || *ep == '\t'; ep++)
+	ಸಾಲು_opts = ರಿಕ್ತ;
+	ಯದಿ ((ep = strrchr(cp, ' ')) != ರಿಕ್ತ ||
+	    (ep = strrchr(cp, '\t')) != ರಿಕ್ತ) {
+		ಪ್ರತಿ (; *ep == ' ' || *ep == '\t'; ep++)
 			;
-		line_opts = cp;
+		ಸಾಲು_opts = cp;
 		cp = ep;
 	}
-	if ((opts = sshauthopt_parse(line_opts, &reason)) == NULL) {
+	ಯದಿ ((opts = sshauthopt_parse(ಸಾಲು_opts, &reason)) == ರಿಕ್ತ) {
 		debug("%s: bad principals options: %s", loc, reason);
 		auth_debug_add("%s: bad principals options: %s", loc, reason);
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 	/* Check principals in cert against those on line */
-	for (i = 0; i < cert->nprincipals; i++) {
-		if (strcmp(cp, cert->principals[i]) != 0)
-			continue;
+	ಪ್ರತಿ (i = 0; i < cert->nprincipals; i++) {
+		ಯದಿ (strcmp(cp, cert->principals[i]) != 0)
+			ಅನುವರ್ತ;
 		debug3("%s: matched principal \"%.100s\"",
 		    loc, cert->principals[i]);
 		found = 1;
 	}
-	if (found && authoptsp != NULL) {
+	ಯದಿ (found && authoptsp != ರಿಕ್ತ) {
 		*authoptsp = opts;
-		opts = NULL;
+		opts = ರಿಕ್ತ;
 	}
 	sshauthopt_free(opts);
-	return found ? 0 : -1;
+	ಪ್ರತ್ಯಾಗಮ found ? 0 : -1;
 }
 
-int
-auth_process_principals(FILE *f, const char *file,
-    const struct sshkey_cert *cert, struct sshauthopt **authoptsp)
+ಪೂರ್ಣಾಙ್ಕ
+auth_process_principals(FILE *f, ಧ್ರುವ ವರ್ಣ *file,
+    ಧ್ರುವ ಸಂರಚನಾ sshkey_cert *cert, ಸಂರಚನಾ sshauthopt **authoptsp)
 {
-	char loc[256], *line = NULL, *cp, *ep;
+	ವರ್ಣ loc[256], *ಸಾಲು = ರಿಕ್ತ, *cp, *ep;
 	size_t linesize = 0;
 	u_long linenum = 0, nonblank = 0;
 	u_int found_principal = 0;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	ಯದಿ (authoptsp != ರಿಕ್ತ)
+		*authoptsp = ರಿಕ್ತ;
 
-	while (getline(&line, &linesize, f) != -1) {
+	ಯಾವತ್ (getline(&ಸಾಲು, &linesize, f) != -1) {
 		linenum++;
 		/* Always consume entire input */
-		if (found_principal)
-			continue;
+		ಯದಿ (found_principal)
+			ಅನುವರ್ತ;
 
 		/* Skip leading whitespace. */
-		for (cp = line; *cp == ' ' || *cp == '\t'; cp++)
+		ಪ್ರತಿ (cp = ಸಾಲು; *cp == ' ' || *cp == '\t'; cp++)
 			;
 		/* Skip blank and comment lines. */
-		if ((ep = strchr(cp, '#')) != NULL)
+		ಯದಿ ((ep = strchr(cp, '#')) != ರಿಕ್ತ)
 			*ep = '\0';
-		if (!*cp || *cp == '\n')
-			continue;
+		ಯದಿ (!*cp || *cp == '\n')
+			ಅನುವರ್ತ;
 
 		nonblank++;
-		snprintf(loc, sizeof(loc), "%.200s:%lu", file, linenum);
-		if (auth_check_principals_line(cp, cert, loc, authoptsp) == 0)
+		snprintf(loc, ಪರಿಮಾಣ(loc), "%.200s:%lu", file, linenum);
+		ಯದಿ (auth_check_principals_ಸಾಲು(cp, cert, loc, authoptsp) == 0)
 			found_principal = 1;
 	}
 	debug2_f("%s: processed %lu/%lu lines", file, nonblank, linenum);
-	free(line);
-	return found_principal;
+	ಮುಕ್ತ(ಸಾಲು);
+	ಪ್ರತ್ಯಾಗಮ found_principal;
 }
 
 /*
@@ -264,81 +264,81 @@ auth_process_principals(FILE *f, const char *file,
  * matches, -1 otherwise. Will return key/cert options via *authoptsp
  * on success. "loc" is used as file/line location in log messages.
  */
-int
-auth_check_authkey_line(struct passwd *pw, struct sshkey *key,
-    char *cp, const char *remote_ip, const char *remote_host, const char *loc,
-    struct sshauthopt **authoptsp)
+ಪೂರ್ಣಾಙ್ಕ
+auth_check_authkey_ಸಾಲು(ಸಂರಚನಾ passwd *pw, ಸಂರಚನಾ sshkey *ಕೀಲಿ,
+    ವರ್ಣ *cp, ಧ್ರುವ ವರ್ಣ *remote_ip, ಧ್ರುವ ವರ್ಣ *remote_host, ಧ್ರುವ ವರ್ಣ *loc,
+    ಸಂರಚನಾ sshauthopt **authoptsp)
 {
-	int want_keytype = sshkey_is_cert(key) ? KEY_UNSPEC : key->type;
-	struct sshkey *found = NULL;
-	struct sshauthopt *keyopts = NULL, *certopts = NULL, *finalopts = NULL;
-	char *key_options = NULL, *fp = NULL;
-	const char *reason = NULL;
-	int ret = -1;
+	ಪೂರ್ಣಾಙ್ಕ want_keytype = sshkey_is_cert(ಕೀಲಿ) ? ಕೀಲಿ_UNSPEC : ಕೀಲಿ->type;
+	ಸಂರಚನಾ sshkey *found = ರಿಕ್ತ;
+	ಸಂರಚನಾ sshauthopt *keyopts = ರಿಕ್ತ, *certopts = ರಿಕ್ತ, *finalopts = ರಿಕ್ತ;
+	ವರ್ಣ *ಕೀಲಿ_options = ರಿಕ್ತ, *fp = ರಿಕ್ತ;
+	ಧ್ರುವ ವರ್ಣ *reason = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ ret = -1;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	ಯದಿ (authoptsp != ರಿಕ್ತ)
+		*authoptsp = ರಿಕ್ತ;
 
-	if ((found = sshkey_new(want_keytype)) == NULL) {
+	ಯದಿ ((found = sshkey_new(want_keytype)) == ರಿಕ್ತ) {
 		debug3_f("keytype %d failed", want_keytype);
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
 	/* XXX djm: peek at key type in line and skip if unwanted */
 
-	if (sshkey_read(found, &cp) != 0) {
+	ಯದಿ (sshkey_read(found, &cp) != 0) {
 		/* no key?  check for options */
 		debug2("%s: check options: '%s'", loc, cp);
-		key_options = cp;
-		if (sshkey_advance_past_options(&cp) != 0) {
+		ಕೀಲಿ_options = cp;
+		ಯದಿ (sshkey_advance_past_options(&cp) != 0) {
 			reason = "invalid key option string";
-			goto fail_reason;
+			ಗಚ್ಛ fail_reason;
 		}
 		skip_space(&cp);
-		if (sshkey_read(found, &cp) != 0) {
+		ಯದಿ (sshkey_read(found, &cp) != 0) {
 			/* still no key?  advance to next line*/
 			debug2("%s: advance: '%s'", loc, cp);
-			goto out;
+			ಗಚ್ಛ out;
 		}
 	}
 	/* Parse key options now; we need to know if this is a CA key */
-	if ((keyopts = sshauthopt_parse(key_options, &reason)) == NULL) {
+	ಯದಿ ((keyopts = sshauthopt_parse(ಕೀಲಿ_options, &reason)) == ರಿಕ್ತ) {
 		debug("%s: bad key options: %s", loc, reason);
 		auth_debug_add("%s: bad key options: %s", loc, reason);
-		goto out;
+		ಗಚ್ಛ out;
 	}
 	/* Ignore keys that don't match or incorrectly marked as CAs */
-	if (sshkey_is_cert(key)) {
+	ಯದಿ (sshkey_is_cert(ಕೀಲಿ)) {
 		/* Certificate; check signature key against CA */
-		if (!sshkey_equal(found, key->cert->signature_key) ||
+		ಯದಿ (!sshkey_equal(found, ಕೀಲಿ->cert->signature_ಕೀಲಿ) ||
 		    !keyopts->cert_authority)
-			goto out;
-	} else {
+			ಗಚ್ಛ out;
+	} ಅನ್ಯಥಾ {
 		/* Plain key: check it against key found in file */
-		if (!sshkey_equal(found, key) || keyopts->cert_authority)
-			goto out;
+		ಯದಿ (!sshkey_equal(found, ಕೀಲಿ) || keyopts->cert_authority)
+			ಗಚ್ಛ out;
 	}
 
 	/* We have a candidate key, perform authorisation checks */
-	if ((fp = sshkey_fingerprint(found,
-	    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == NULL)
+	ಯದಿ ((fp = sshkey_fingerprint(found,
+	    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == ರಿಕ್ತ)
 		fatal_f("fingerprint failed");
 
 	debug("%s: matching %s found: %s %s", loc,
-	    sshkey_is_cert(key) ? "CA" : "key", sshkey_type(found), fp);
+	    sshkey_is_cert(ಕೀಲಿ) ? "CA" : "key", sshkey_type(found), fp);
 
-	if (auth_authorise_keyopts(pw, keyopts,
-	    sshkey_is_cert(key), remote_ip, remote_host, loc) != 0) {
+	ಯದಿ (auth_authorise_keyopts(pw, keyopts,
+	    sshkey_is_cert(ಕೀಲಿ), remote_ip, remote_host, loc) != 0) {
 		reason = "Refused by key options";
-		goto fail_reason;
+		ಗಚ್ಛ fail_reason;
 	}
 	/* That's all we need for plain keys. */
-	if (!sshkey_is_cert(key)) {
+	ಯದಿ (!sshkey_is_cert(ಕೀಲಿ)) {
 		verbose("Accepted key %s %s found at %s",
 		    sshkey_type(found), fp, loc);
 		finalopts = keyopts;
-		keyopts = NULL;
-		goto success;
+		keyopts = ರಿಕ್ತ;
+		ಗಚ್ಛ success;
 	}
 
 	/*
@@ -346,168 +346,168 @@ auth_check_authkey_line(struct passwd *pw, struct sshkey *key,
 	 */
 
 	/* Parse and check options present in certificate */
-	if ((certopts = sshauthopt_from_cert(key)) == NULL) {
+	ಯದಿ ((certopts = sshauthopt_from_cert(ಕೀಲಿ)) == ರಿಕ್ತ) {
 		reason = "Invalid certificate options";
-		goto cert_fail_reason;
+		ಗಚ್ಛ cert_fail_reason;
 	}
-	if (auth_authorise_keyopts(pw, certopts, 0,
+	ಯದಿ (auth_authorise_keyopts(pw, certopts, 0,
 	    remote_ip, remote_host, loc) != 0) {
 		reason = "Refused by certificate options";
-		goto cert_fail_reason;
+		ಗಚ್ಛ cert_fail_reason;
 	}
-	if ((finalopts = sshauthopt_merge(keyopts, certopts, &reason)) == NULL)
-		goto cert_fail_reason;
+	ಯದಿ ((finalopts = sshauthopt_merge(keyopts, certopts, &reason)) == ರಿಕ್ತ)
+		ಗಚ್ಛ cert_fail_reason;
 
 	/*
 	 * If the user has specified a list of principals as
 	 * a key option, then prefer that list to matching
 	 * their username in the certificate principals list.
 	 */
-	if (keyopts->cert_principals != NULL &&
-	    !match_principals_option(keyopts->cert_principals, key->cert)) {
+	ಯದಿ (keyopts->cert_principals != ರಿಕ್ತ &&
+	    !match_principals_option(keyopts->cert_principals, ಕೀಲಿ->cert)) {
 		reason = "Certificate does not contain an authorized principal";
-		goto cert_fail_reason;
+		ಗಚ್ಛ cert_fail_reason;
 	}
-	if (sshkey_cert_check_authority_now(key, 0, 0,
-	    keyopts->cert_principals == NULL ? pw->pw_name : NULL,
+	ಯದಿ (sshkey_cert_check_authority_now(ಕೀಲಿ, 0, 0,
+	    keyopts->cert_principals == ರಿಕ್ತ ? pw->pw_name : ರಿಕ್ತ,
 	    &reason) != 0)
-		goto cert_fail_reason;
+		ಗಚ್ಛ cert_fail_reason;
 
 	verbose("Accepted certificate ID \"%s\" (serial %llu) "
 	    "signed by CA %s %s found at %s",
-	    key->cert->key_id,
-	    (unsigned long long)key->cert->serial,
+	    ಕೀಲಿ->cert->ಕೀಲಿ_id,
+	    (unsigned long long)ಕೀಲಿ->cert->serial,
 	    sshkey_type(found), fp, loc);
 
  success:
-	if (finalopts == NULL)
+	ಯದಿ (finalopts == ರಿಕ್ತ)
 		fatal_f("internal error: missing options");
-	if (authoptsp != NULL) {
+	ಯದಿ (authoptsp != ರಿಕ್ತ) {
 		*authoptsp = finalopts;
-		finalopts = NULL;
+		finalopts = ರಿಕ್ತ;
 	}
 	/* success */
 	ret = 0;
-	goto out;
+	ಗಚ್ಛ out;
 
  cert_fail_reason:
 	error("Refusing certificate ID \"%s\" serial=%llu "
-	    "signed by %s CA %s via %s: %s", key->cert->key_id,
-	    (unsigned long long)key->cert->serial,
-	    sshkey_type(key->cert->signature_key), fp, loc, reason);
+	    "signed by %s CA %s via %s: %s", ಕೀಲಿ->cert->ಕೀಲಿ_id,
+	    (unsigned long long)ಕೀಲಿ->cert->serial,
+	    sshkey_type(ಕೀಲಿ->cert->signature_ಕೀಲಿ), fp, loc, reason);
 	auth_debug_add("Refused Certificate ID \"%s\" serial=%llu: %s",
-	    key->cert->key_id, (unsigned long long)key->cert->serial, reason);
-	goto out;
+	    ಕೀಲಿ->cert->ಕೀಲಿ_id, (unsigned long long)ಕೀಲಿ->cert->serial, reason);
+	ಗಚ್ಛ out;
 
  fail_reason:
 	error("%s at %s", reason, loc);
 	auth_debug_add("%s", reason);
  out:
-	free(fp);
+	ಮುಕ್ತ(fp);
 	sshauthopt_free(keyopts);
 	sshauthopt_free(certopts);
 	sshauthopt_free(finalopts);
 	sshkey_free(found);
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
 /*
  * Checks whether key is allowed in authorized_keys-format file,
  * returns 1 if the key is allowed or 0 otherwise.
  */
-int
-auth_check_authkeys_file(struct passwd *pw, FILE *f, char *file,
-    struct sshkey *key, const char *remote_ip,
-    const char *remote_host, struct sshauthopt **authoptsp)
+ಪೂರ್ಣಾಙ್ಕ
+auth_check_authkeys_file(ಸಂರಚನಾ passwd *pw, FILE *f, ವರ್ಣ *file,
+    ಸಂರಚನಾ sshkey *ಕೀಲಿ, ಧ್ರುವ ವರ್ಣ *remote_ip,
+    ಧ್ರುವ ವರ್ಣ *remote_host, ಸಂರಚನಾ sshauthopt **authoptsp)
 {
-	char *cp, *line = NULL, loc[256];
+	ವರ್ಣ *cp, *ಸಾಲು = ರಿಕ್ತ, loc[256];
 	size_t linesize = 0;
-	int found_key = 0;
+	ಪೂರ್ಣಾಙ್ಕ found_ಕೀಲಿ = 0;
 	u_long linenum = 0, nonblank = 0;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	ಯದಿ (authoptsp != ರಿಕ್ತ)
+		*authoptsp = ರಿಕ್ತ;
 
-	while (getline(&line, &linesize, f) != -1) {
+	ಯಾವತ್ (getline(&ಸಾಲು, &linesize, f) != -1) {
 		linenum++;
 		/* Always consume entire file */
-		if (found_key)
-			continue;
+		ಯದಿ (found_ಕೀಲಿ)
+			ಅನುವರ್ತ;
 
 		/* Skip leading whitespace, empty and comment lines. */
-		cp = line;
+		cp = ಸಾಲು;
 		skip_space(&cp);
-		if (!*cp || *cp == '\n' || *cp == '#')
-			continue;
+		ಯದಿ (!*cp || *cp == '\n' || *cp == '#')
+			ಅನುವರ್ತ;
 
 		nonblank++;
-		snprintf(loc, sizeof(loc), "%.200s:%lu", file, linenum);
-		if (auth_check_authkey_line(pw, key, cp,
+		snprintf(loc, ಪರಿಮಾಣ(loc), "%.200s:%lu", file, linenum);
+		ಯದಿ (auth_check_authkey_ಸಾಲು(pw, ಕೀಲಿ, cp,
 		    remote_ip, remote_host, loc, authoptsp) == 0)
-			found_key = 1;
+			found_ಕೀಲಿ = 1;
 	}
-	free(line);
+	ಮುಕ್ತ(ಸಾಲು);
 	debug2_f("%s: processed %lu/%lu lines", file, nonblank, linenum);
-	return found_key;
+	ಪ್ರತ್ಯಾಗಮ found_ಕೀಲಿ;
 }
 
-static FILE *
-auth_openfile(const char *file, struct passwd *pw, int strict_modes,
-    int log_missing, char *file_type)
+ಸ್ಥಿರ FILE *
+auth_openfile(ಧ್ರುವ ವರ್ಣ *file, ಸಂರಚನಾ passwd *pw, ಪೂರ್ಣಾಙ್ಕ strict_modes,
+    ಪೂರ್ಣಾಙ್ಕ log_missing, ವರ್ಣ *file_type)
 {
-	char line[1024];
-	struct stat st;
-	int fd;
+	ವರ್ಣ ಸಾಲು[1024];
+	ಸಂರಚನಾ stat st;
+	ಪೂರ್ಣಾಙ್ಕ fd;
 	FILE *f;
 
-	if ((fd = open(file, O_RDONLY|O_NONBLOCK)) == -1) {
-		if (errno != ENOENT) {
+	ಯದಿ ((fd = open(file, O_RDONLY|O_NONBLOCK)) == -1) {
+		ಯದಿ (errno != ENOENT) {
 			logit("Could not open user '%s' %s '%s': %s",
 			    pw->pw_name, file_type, file, strerror(errno));
-		} else if (log_missing) {
+		} ಅನ್ಯಥಾ ಯದಿ (log_missing) {
 			debug("Could not open user '%s' %s '%s': %s",
 			    pw->pw_name, file_type, file, strerror(errno));
 		}
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 
-	if (fstat(fd, &st) == -1) {
+	ಯದಿ (fstat(fd, &st) == -1) {
 		close(fd);
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
-	if (!S_ISREG(st.st_mode)) {
+	ಯದಿ (!S_ISREG(st.st_mode)) {
 		logit("User '%s' %s '%s' is not a regular file",
 		    pw->pw_name, file_type, file);
 		close(fd);
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 	unset_nonblock(fd);
-	if ((f = fdopen(fd, "r")) == NULL) {
+	ಯದಿ ((f = fdopen(fd, "r")) == ರಿಕ್ತ) {
 		close(fd);
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
-	if (strict_modes &&
-	    safe_path_fd(fileno(f), file, pw, line, sizeof(line)) != 0) {
+	ಯದಿ (strict_modes &&
+	    safe_path_fd(fileno(f), file, pw, ಸಾಲು, ಪರಿಮಾಣ(ಸಾಲು)) != 0) {
 		fclose(f);
-		logit("Authentication refused: %s", line);
-		auth_debug_add("Ignored %s: %s", file_type, line);
-		return NULL;
+		logit("Authentication refused: %s", ಸಾಲು);
+		auth_debug_add("Ignored %s: %s", file_type, ಸಾಲು);
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 
-	return f;
+	ಪ್ರತ್ಯಾಗಮ f;
 }
 
 
 FILE *
-auth_openkeyfile(const char *file, struct passwd *pw, int strict_modes)
+auth_openkeyfile(ಧ್ರುವ ವರ್ಣ *file, ಸಂರಚನಾ passwd *pw, ಪೂರ್ಣಾಙ್ಕ strict_modes)
 {
-	return auth_openfile(file, pw, strict_modes, 1, "authorized keys");
+	ಪ್ರತ್ಯಾಗಮ auth_openfile(file, pw, strict_modes, 1, "authorized keys");
 }
 
 FILE *
-auth_openprincipals(const char *file, struct passwd *pw, int strict_modes)
+auth_openprincipals(ಧ್ರುವ ವರ್ಣ *file, ಸಂರಚನಾ passwd *pw, ಪೂರ್ಣಾಙ್ಕ strict_modes)
 {
-	return auth_openfile(file, pw, strict_modes, 0,
+	ಪ್ರತ್ಯಾಗಮ auth_openfile(file, pw, strict_modes, 0,
 	    "authorized principals");
 }
 

@@ -30,15 +30,15 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoll.c */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 #ifndef HAVE_STRTOLL
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <ctype.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
 /*
  * Convert a string to a long long.
@@ -47,12 +47,12 @@
  * alphabets and digits are each contiguous.
  */
 long long
-strtoll(const char *nptr, char **endptr, int base)
+strtoll(ಧ್ರುವ ವರ್ಣ *nptr, ವರ್ಣ **endptr, ಪೂರ್ಣಾಙ್ಕ base)
 {
-	const char *s;
+	ಧ್ರುವ ವರ್ಣ *s;
 	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	ಪೂರ್ಣಾಙ್ಕ c;
+	ಪೂರ್ಣಾಙ್ಕ neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -60,24 +60,24 @@ strtoll(const char *nptr, char **endptr, int base)
 	 * assume decimal; if base is already 16, allow 0x.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	ಕುರು {
+		c = (unsigned ವರ್ಣ) *s++;
+	} ಯಾವತ್ (isspace(c));
+	ಯದಿ (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} ಅನ್ಯಥಾ {
 		neg = 0;
-		if (c == '+')
+		ಯದಿ (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	ಯದಿ ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	ಯದಿ (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	/*
@@ -101,48 +101,48 @@ strtoll(const char *nptr, char **endptr, int base)
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
 	cutlim = cutoff % base;
 	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
+	ಯದಿ (neg) {
+		ಯದಿ (cutlim > 0) {
 			cutlim -= base;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	ಪ್ರತಿ (acc = 0, any = 0;; c = (unsigned ವರ್ಣ) *s++) {
+		ಯದಿ (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		ಅನ್ಯಥಾ ಯದಿ (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		ಅನ್ಯಥಾ
+			ಭಙ್ಗ;
+		ಯದಿ (c >= base)
+			ಭಙ್ಗ;
+		ಯದಿ (any < 0)
+			ಅನುವರ್ತ;
+		ಯದಿ (neg) {
+			ಯದಿ (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} ಅನ್ಯಥಾ {
 				any = 1;
 				acc *= base;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} ಅನ್ಯಥಾ {
+			ಯದಿ (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} ಅನ್ಯಥಾ {
 				any = 1;
 				acc *= base;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	ಯದಿ (endptr != 0)
+		*endptr = (ವರ್ಣ *) (any ? s - 1 : nptr);
+	ಪ್ರತ್ಯಾಗಮ (acc);
 }
 #endif /* HAVE_STRTOLL */

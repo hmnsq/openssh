@@ -12,50 +12,50 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/socket.h>
+#ಅನ್ತರ್ಭಾವ <sys/un.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ಅನ್ತರ್ಭಾವ <netinet/in.h>
+#ಅನ್ತರ್ಭಾವ <arpa/inet.h>
 
-#include <errno.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <netdb.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include "xmalloc.h"
-#include "log.h"
-#include "canohost.h"
-#include "misc.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "canohost.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
 
-void
-ipv64_normalise_mapped(struct sockaddr_storage *addr, socklen_t *len)
+ಶೂನ್ಯ
+ipv64_normalise_mapped(ಸಂರಚನಾ sockaddr_storage *addr, socklen_t *len)
 {
-	struct sockaddr_in6 *a6 = (struct sockaddr_in6 *)addr;
-	struct sockaddr_in *a4 = (struct sockaddr_in *)addr;
-	struct in_addr inaddr;
+	ಸಂರಚನಾ sockaddr_in6 *a6 = (ಸಂರಚನಾ sockaddr_in6 *)addr;
+	ಸಂರಚನಾ sockaddr_in *a4 = (ಸಂರಚನಾ sockaddr_in *)addr;
+	ಸಂರಚನಾ in_addr inaddr;
 	uint16_t port;
 
-	if (addr->ss_family != AF_INET6 ||
+	ಯದಿ (addr->ss_family != AF_INET6 ||
 	    !IN6_IS_ADDR_V4MAPPED(&a6->sin6_addr))
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 
 	debug3("Normalising mapped IPv4 in IPv6 address");
 
-	memcpy(&inaddr, ((char *)&a6->sin6_addr) + 12, sizeof(inaddr));
+	memcpy(&inaddr, ((ವರ್ಣ *)&a6->sin6_addr) + 12, ಪರಿಮಾಣ(inaddr));
 	port = a6->sin6_port;
 
-	memset(a4, 0, sizeof(*a4));
+	memset(a4, 0, ಪರಿಮಾಣ(*a4));
 
 	a4->sin_family = AF_INET;
-	*len = sizeof(*a4);
-	memcpy(&a4->sin_addr, &inaddr, sizeof(inaddr));
+	*len = ಪರಿಮಾಣ(*a4);
+	memcpy(&a4->sin_addr, &inaddr, ಪರಿಮಾಣ(inaddr));
 	a4->sin_port = port;
 }
 
@@ -63,146 +63,146 @@ ipv64_normalise_mapped(struct sockaddr_storage *addr, socklen_t *len)
  * Returns the local/remote IP-address/hostname of socket as a string.
  * The returned string must be freed.
  */
-static char *
-get_socket_address(int sock, int remote, int flags)
+ಸ್ಥಿರ ವರ್ಣ *
+get_socket_address(ಪೂರ್ಣಾಙ್ಕ sock, ಪೂರ್ಣಾಙ್ಕ remote, ಪೂರ್ಣಾಙ್ಕ flags)
 {
-	struct sockaddr_storage addr;
+	ಸಂರಚನಾ sockaddr_storage addr;
 	socklen_t addrlen;
-	char ntop[NI_MAXHOST];
-	int r;
+	ವರ್ಣ ntop[NI_MAXHOST];
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if (sock < 0)
-		return NULL;
+	ಯದಿ (sock < 0)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 
 	/* Get IP address of client. */
-	addrlen = sizeof(addr);
-	memset(&addr, 0, sizeof(addr));
+	addrlen = ಪರಿಮಾಣ(addr);
+	memset(&addr, 0, ಪರಿಮಾಣ(addr));
 
-	if (remote) {
-		if (getpeername(sock, (struct sockaddr *)&addr, &addrlen) != 0)
-			return NULL;
-	} else {
-		if (getsockname(sock, (struct sockaddr *)&addr, &addrlen) != 0)
-			return NULL;
+	ಯದಿ (remote) {
+		ಯದಿ (getpeername(sock, (ಸಂರಚನಾ sockaddr *)&addr, &addrlen) != 0)
+			ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
+	} ಅನ್ಯಥಾ {
+		ಯದಿ (getsockname(sock, (ಸಂರಚನಾ sockaddr *)&addr, &addrlen) != 0)
+			ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 
 	/* Work around Linux IPv6 weirdness */
-	if (addr.ss_family == AF_INET6) {
-		addrlen = sizeof(struct sockaddr_in6);
+	ಯದಿ (addr.ss_family == AF_INET6) {
+		addrlen = ಪರಿಮಾಣ(ಸಂರಚನಾ sockaddr_in6);
 		ipv64_normalise_mapped(&addr, &addrlen);
 	}
 
-	switch (addr.ss_family) {
-	case AF_INET:
-	case AF_INET6:
+	ವಿಕಲ್ಪ (addr.ss_family) {
+	ಪಕ್ಷ AF_INET:
+	ಪಕ್ಷ AF_INET6:
 		/* Get the address in ascii. */
-		if ((r = getnameinfo((struct sockaddr *)&addr, addrlen, ntop,
-		    sizeof(ntop), NULL, 0, flags)) != 0) {
+		ಯದಿ ((r = getnameinfo((ಸಂರಚನಾ sockaddr *)&addr, addrlen, ntop,
+		    ಪರಿಮಾಣ(ntop), ರಿಕ್ತ, 0, flags)) != 0) {
 			error_f("getnameinfo %d failed: %s",
 			    flags, ssh_gai_strerror(r));
-			return NULL;
+			ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 		}
-		return xstrdup(ntop);
-	case AF_UNIX:
+		ಪ್ರತ್ಯಾಗಮ xstrdup(ntop);
+	ಪಕ್ಷ AF_UNIX:
 		/* Get the Unix domain socket path. */
-		return xstrdup(((struct sockaddr_un *)&addr)->sun_path);
-	default:
+		ಪ್ರತ್ಯಾಗಮ xstrdup(((ಸಂರಚನಾ sockaddr_un *)&addr)->sun_path);
+	ಸ್ವಭಾವ:
 		/* We can't look up remote Unix domain sockets. */
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 }
 
-char *
-get_peer_ipaddr(int sock)
+ವರ್ಣ *
+get_peer_ipaddr(ಪೂರ್ಣಾಙ್ಕ sock)
 {
-	char *p;
+	ವರ್ಣ *p;
 
-	if ((p = get_socket_address(sock, 1, NI_NUMERICHOST)) != NULL)
-		return p;
-	return xstrdup("UNKNOWN");
+	ಯದಿ ((p = get_socket_address(sock, 1, NI_NUMERICHOST)) != ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ p;
+	ಪ್ರತ್ಯಾಗಮ xstrdup("UNKNOWN");
 }
 
-char *
-get_local_ipaddr(int sock)
+ವರ್ಣ *
+get_local_ipaddr(ಪೂರ್ಣಾಙ್ಕ sock)
 {
-	char *p;
+	ವರ್ಣ *p;
 
-	if ((p = get_socket_address(sock, 0, NI_NUMERICHOST)) != NULL)
-		return p;
-	return xstrdup("UNKNOWN");
+	ಯದಿ ((p = get_socket_address(sock, 0, NI_NUMERICHOST)) != ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ p;
+	ಪ್ರತ್ಯಾಗಮ xstrdup("UNKNOWN");
 }
 
-char *
-get_local_name(int fd)
+ವರ್ಣ *
+get_local_name(ಪೂರ್ಣಾಙ್ಕ fd)
 {
-	char *host, myname[NI_MAXHOST];
+	ವರ್ಣ *host, myname[NI_MAXHOST];
 
 	/* Assume we were passed a socket */
-	if ((host = get_socket_address(fd, 0, NI_NAMEREQD)) != NULL)
-		return host;
+	ಯದಿ ((host = get_socket_address(fd, 0, NI_NAMEREQD)) != ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ host;
 
 	/* Handle the case where we were passed a pipe */
-	if (gethostname(myname, sizeof(myname)) == -1) {
+	ಯದಿ (gethostname(myname, ಪರಿಮಾಣ(myname)) == -1) {
 		verbose_f("gethostname: %s", strerror(errno));
 		host = xstrdup("UNKNOWN");
-	} else {
+	} ಅನ್ಯಥಾ {
 		host = xstrdup(myname);
 	}
 
-	return host;
+	ಪ್ರತ್ಯಾಗಮ host;
 }
 
 /* Returns the local/remote port for the socket. */
 
-static int
-get_sock_port(int sock, int local)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+get_sock_port(ಪೂರ್ಣಾಙ್ಕ sock, ಪೂರ್ಣಾಙ್ಕ local)
 {
-	struct sockaddr_storage from;
+	ಸಂರಚನಾ sockaddr_storage from;
 	socklen_t fromlen;
-	char strport[NI_MAXSERV];
-	int r;
+	ವರ್ಣ strport[NI_MAXSERV];
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if (sock < 0)
-		return -1;
+	ಯದಿ (sock < 0)
+		ಪ್ರತ್ಯಾಗಮ -1;
 	/* Get IP address of client. */
-	fromlen = sizeof(from);
-	memset(&from, 0, sizeof(from));
-	if (local) {
-		if (getsockname(sock, (struct sockaddr *)&from, &fromlen) == -1) {
+	fromlen = ಪರಿಮಾಣ(from);
+	memset(&from, 0, ಪರಿಮಾಣ(from));
+	ಯದಿ (local) {
+		ಯದಿ (getsockname(sock, (ಸಂರಚನಾ sockaddr *)&from, &fromlen) == -1) {
 			error("getsockname failed: %.100s", strerror(errno));
-			return 0;
+			ಪ್ರತ್ಯಾಗಮ 0;
 		}
-	} else {
-		if (getpeername(sock, (struct sockaddr *)&from, &fromlen) == -1) {
+	} ಅನ್ಯಥಾ {
+		ಯದಿ (getpeername(sock, (ಸಂರಚನಾ sockaddr *)&from, &fromlen) == -1) {
 			debug("getpeername failed: %.100s", strerror(errno));
-			return -1;
+			ಪ್ರತ್ಯಾಗಮ -1;
 		}
 	}
 
 	/* Work around Linux IPv6 weirdness */
-	if (from.ss_family == AF_INET6)
-		fromlen = sizeof(struct sockaddr_in6);
+	ಯದಿ (from.ss_family == AF_INET6)
+		fromlen = ಪರಿಮಾಣ(ಸಂರಚನಾ sockaddr_in6);
 
 	/* Non-inet sockets don't have a port number. */
-	if (from.ss_family != AF_INET && from.ss_family != AF_INET6)
-		return 0;
+	ಯದಿ (from.ss_family != AF_INET && from.ss_family != AF_INET6)
+		ಪ್ರತ್ಯಾಗಮ 0;
 
 	/* Return port number. */
-	if ((r = getnameinfo((struct sockaddr *)&from, fromlen, NULL, 0,
-	    strport, sizeof(strport), NI_NUMERICSERV)) != 0)
+	ಯದಿ ((r = getnameinfo((ಸಂರಚನಾ sockaddr *)&from, fromlen, ರಿಕ್ತ, 0,
+	    strport, ಪರಿಮಾಣ(strport), NI_NUMERICSERV)) != 0)
 		fatal_f("getnameinfo NI_NUMERICSERV failed: %s",
 		    ssh_gai_strerror(r));
-	return atoi(strport);
+	ಪ್ರತ್ಯಾಗಮ atoi(strport);
 }
 
-int
-get_peer_port(int sock)
+ಪೂರ್ಣಾಙ್ಕ
+get_peer_port(ಪೂರ್ಣಾಙ್ಕ sock)
 {
-	return get_sock_port(sock, 0);
+	ಪ್ರತ್ಯಾಗಮ get_sock_port(sock, 0);
 }
 
-int
-get_local_port(int sock)
+ಪೂರ್ಣಾಙ್ಕ
+get_local_port(ಪೂರ್ಣಾಙ್ಕ sock)
 {
-	return get_sock_port(sock, 1);
+	ಪ್ರತ್ಯಾಗಮ get_sock_port(sock, 1);
 }

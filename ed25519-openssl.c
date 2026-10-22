@@ -20,69 +20,69 @@
  * Alternative to the internal libsodium-based implementation in ed25519.c.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
 #ifdef OPENSSL_HAS_ED25519
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <string.h>
-#include <stdint.h>
-#include <limits.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
 
-#include <openssl/evp.h>
+#ಅನ್ತರ್ಭಾವ <openssl/evp.h>
 
-#include "crypto_api.h"
-#include "log.h"
+#ಅನ್ತರ್ಭಾವ "crypto_api.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
 
-#if crypto_sign_ed25519_SECRETKEYBYTES <= crypto_sign_ed25519_PUBLICKEYBYTES
+#ಯದಿ crypto_sign_ed25519_SECRETKEYBYTES <= crypto_sign_ed25519_PUBLICKEYBYTES
 #error "crypto_sign_ed25519_SECRETKEYBYTES < crypto_sign_ed25519_PUBLICKEYBYTES"
 #endif
 
-#define SSH_ED25519_RAW_SECRET_KEY_LEN \
+#define SSH_ED25519_RAW_SECRET_ಕೀಲಿ_LEN \
     (crypto_sign_ed25519_SECRETKEYBYTES - crypto_sign_ed25519_PUBLICKEYBYTES)
 
-int
-crypto_sign_ed25519_keypair(unsigned char *pk, unsigned char *sk)
+ಪೂರ್ಣಾಙ್ಕ
+crypto_sign_ed25519_keypair(unsigned ವರ್ಣ *pk, unsigned ವರ್ಣ *sk)
 {
-	EVP_PKEY_CTX *ctx = NULL;
-	EVP_PKEY *pkey = NULL;
+	EVP_PKEY_CTX *ctx = ರಿಕ್ತ;
+	EVP_PKEY *pkey = ರಿಕ್ತ;
 	size_t pklen, sklen;
-	int ret = -1;
+	ಪೂರ್ಣಾಙ್ಕ ret = -1;
 
-	if ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_ED25519, NULL)) == NULL) {
+	ಯದಿ ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_ED25519, ರಿಕ್ತ)) == ರಿಕ್ತ) {
 		debug3_f("EVP_PKEY_CTX_new_id failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (EVP_PKEY_keygen_init(ctx) <= 0) {
+	ಯದಿ (EVP_PKEY_keygen_init(ctx) <= 0) {
 		debug3_f("EVP_PKEY_keygen_init failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (EVP_PKEY_keygen(ctx, &pkey) <= 0) {
+	ಯದಿ (EVP_PKEY_keygen(ctx, &pkey) <= 0) {
 		debug3_f("EVP_PKEY_keygen failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
 	/* Extract public key */
 	pklen = crypto_sign_ed25519_PUBLICKEYBYTES;
-	if (!EVP_PKEY_get_raw_public_key(pkey, pk, &pklen)) {
+	ಯದಿ (!EVP_PKEY_get_raw_public_ಕೀಲಿ(pkey, pk, &pklen)) {
 		debug3_f("EVP_PKEY_get_raw_public_key failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (pklen != crypto_sign_ed25519_PUBLICKEYBYTES) {
+	ಯದಿ (pklen != crypto_sign_ed25519_PUBLICKEYBYTES) {
 		debug3_f("public key length mismatch: %zu", pklen);
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
-	sklen = SSH_ED25519_RAW_SECRET_KEY_LEN;
+	sklen = SSH_ED25519_RAW_SECRET_ಕೀಲಿ_LEN;
 	/* Extract private key (32 bytes seed) */
-	if (!EVP_PKEY_get_raw_private_key(pkey, sk, &sklen)) {
+	ಯದಿ (!EVP_PKEY_get_raw_private_ಕೀಲಿ(pkey, sk, &sklen)) {
 		debug3_f("EVP_PKEY_get_raw_private_key failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (sklen != SSH_ED25519_RAW_SECRET_KEY_LEN) {
+	ಯದಿ (sklen != SSH_ED25519_RAW_SECRET_ಕೀಲಿ_LEN) {
 		debug3_f("private key length mismatch: %zu", sklen);
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
 	/* Append public key to secret key (SUPERCOP format compatibility) */
@@ -92,127 +92,127 @@ crypto_sign_ed25519_keypair(unsigned char *pk, unsigned char *sk)
 out:
 	EVP_PKEY_free(pkey);
 	EVP_PKEY_CTX_free(ctx);
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-int
-crypto_sign_ed25519_seed_keypair(unsigned char *pk, unsigned char *sk,
-    const unsigned char *seed)
+ಪೂರ್ಣಾಙ್ಕ
+crypto_sign_ed25519_seed_keypair(unsigned ವರ್ಣ *pk, unsigned ವರ್ಣ *sk,
+    ಧ್ರುವ unsigned ವರ್ಣ *seed)
 {
-	EVP_PKEY *pkey = NULL;
+	EVP_PKEY *pkey = ರಿಕ್ತ;
 	size_t pklen;
-	int ret = -1;
+	ಪೂರ್ಣಾಙ್ಕ ret = -1;
 
-	if ((pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, NULL,
-	    seed, SSH_ED25519_RAW_SECRET_KEY_LEN)) == NULL) {
+	ಯದಿ ((pkey = EVP_PKEY_new_raw_private_ಕೀಲಿ(EVP_PKEY_ED25519, ರಿಕ್ತ,
+	    seed, SSH_ED25519_RAW_SECRET_ಕೀಲಿ_LEN)) == ರಿಕ್ತ) {
 		debug3_f("EVP_PKEY_new_raw_private_key failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
 	/* Extract public key */
 	pklen = crypto_sign_ed25519_PUBLICKEYBYTES;
-	if (!EVP_PKEY_get_raw_public_key(pkey, pk, &pklen)) {
+	ಯದಿ (!EVP_PKEY_get_raw_public_ಕೀಲಿ(pkey, pk, &pklen)) {
 		debug3_f("EVP_PKEY_get_raw_public_key failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
 	/* Build sk = seed || pk */
-	memcpy(sk, seed, SSH_ED25519_RAW_SECRET_KEY_LEN);
-	memcpy(sk + SSH_ED25519_RAW_SECRET_KEY_LEN, pk,
+	memcpy(sk, seed, SSH_ED25519_RAW_SECRET_ಕೀಲಿ_LEN);
+	memcpy(sk + SSH_ED25519_RAW_SECRET_ಕೀಲಿ_LEN, pk,
 	    crypto_sign_ed25519_PUBLICKEYBYTES);
 
 	ret = 0;
 out:
 	EVP_PKEY_free(pkey);
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-int
-crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglenp,
-    const unsigned char *m, unsigned long long mlen,
-    const unsigned char *sk)
+ಪೂರ್ಣಾಙ್ಕ
+crypto_sign_ed25519_detached(unsigned ವರ್ಣ *sig, unsigned long long *siglenp,
+    ಧ್ರುವ unsigned ವರ್ಣ *m, unsigned long long mlen,
+    ಧ್ರುವ unsigned ವರ್ಣ *sk)
 {
-	EVP_PKEY *pkey = NULL;
-	EVP_MD_CTX *mdctx = NULL;
+	EVP_PKEY *pkey = ರಿಕ್ತ;
+	EVP_MD_CTX *mdctx = ರಿಕ್ತ;
 	size_t siglen;
-	int ret = -1;
+	ಪೂರ್ಣಾಙ್ಕ ret = -1;
 
 	/* Create EVP_PKEY from secret key (first 32 bytes are the seed) */
-	if ((pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, NULL,
-	    sk, SSH_ED25519_RAW_SECRET_KEY_LEN)) == NULL) {
+	ಯದಿ ((pkey = EVP_PKEY_new_raw_private_ಕೀಲಿ(EVP_PKEY_ED25519, ರಿಕ್ತ,
+	    sk, SSH_ED25519_RAW_SECRET_ಕೀಲಿ_LEN)) == ರಿಕ್ತ) {
 		debug3_f("EVP_PKEY_new_raw_private_key failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
 	/* Sign the message */
-	if ((mdctx = EVP_MD_CTX_new()) == NULL) {
+	ಯದಿ ((mdctx = EVP_MD_CTX_new()) == ರಿಕ್ತ) {
 		debug3_f("EVP_MD_CTX_new failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (EVP_DigestSignInit(mdctx, NULL, NULL, NULL, pkey) != 1) {
+	ಯದಿ (EVP_DigestSignInit(mdctx, ರಿಕ್ತ, ರಿಕ್ತ, ರಿಕ್ತ, pkey) != 1) {
 		debug3_f("EVP_DigestSignInit failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
 	siglen = crypto_sign_ed25519_BYTES;
-	if (EVP_DigestSign(mdctx, sig, &siglen, m, mlen) != 1) {
+	ಯದಿ (EVP_DigestSign(mdctx, sig, &siglen, m, mlen) != 1) {
 		debug3_f("EVP_DigestSign failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (siglen != crypto_sign_ed25519_BYTES) {
+	ಯದಿ (siglen != crypto_sign_ed25519_BYTES) {
 		debug3_f("signature length mismatch: %zu", siglen);
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
-	if (siglenp != NULL)
+	ಯದಿ (siglenp != ರಿಕ್ತ)
 		*siglenp = siglen;
 
 	ret = 0;
 out:
 	EVP_MD_CTX_free(mdctx);
 	EVP_PKEY_free(pkey);
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-int
-crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-    const unsigned char *m, unsigned long long mlen,
-    const unsigned char *pk)
+ಪೂರ್ಣಾಙ್ಕ
+crypto_sign_ed25519_verify_detached(ಧ್ರುವ unsigned ವರ್ಣ *sig,
+    ಧ್ರುವ unsigned ವರ್ಣ *m, unsigned long long mlen,
+    ಧ್ರುವ unsigned ವರ್ಣ *pk)
 {
-	EVP_PKEY *pkey = NULL;
-	EVP_MD_CTX *mdctx = NULL;
-	int ret = -1;
+	EVP_PKEY *pkey = ರಿಕ್ತ;
+	EVP_MD_CTX *mdctx = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ ret = -1;
 
-	if (mlen > SIZE_MAX) {
+	ಯದಿ (mlen > SIZE_MAX) {
 		debug3_f("message too long: %llu", mlen);
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 
 	/* Create EVP_PKEY from public key */
-	if ((pkey = EVP_PKEY_new_raw_public_key(EVP_PKEY_ED25519, NULL,
-	    pk, crypto_sign_ed25519_PUBLICKEYBYTES)) == NULL) {
+	ಯದಿ ((pkey = EVP_PKEY_new_raw_public_ಕೀಲಿ(EVP_PKEY_ED25519, ರಿಕ್ತ,
+	    pk, crypto_sign_ed25519_PUBLICKEYBYTES)) == ರಿಕ್ತ) {
 		debug3_f("EVP_PKEY_new_raw_public_key failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
-	if ((mdctx = EVP_MD_CTX_new()) == NULL) {
+	ಯದಿ ((mdctx = EVP_MD_CTX_new()) == ರಿಕ್ತ) {
 		debug3_f("EVP_MD_CTX_new failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (EVP_DigestVerifyInit(mdctx, NULL, NULL, NULL, pkey) <= 0) {
+	ಯದಿ (EVP_DigestVerifyInit(mdctx, ರಿಕ್ತ, ರಿಕ್ತ, ರಿಕ್ತ, pkey) <= 0) {
 		debug3_f("EVP_DigestVerifyInit failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (EVP_DigestVerify(mdctx, sig, crypto_sign_ed25519_BYTES,
+	ಯದಿ (EVP_DigestVerify(mdctx, sig, crypto_sign_ed25519_BYTES,
 	    m, (size_t)mlen) != 1) {
 		debug3_f("EVP_DigestVerify failed");
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
 	ret = 0;
 out:
 	EVP_MD_CTX_free(mdctx);
 	EVP_PKEY_free(pkey);
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
 #endif /* OPENSSL_HAS_ED25519 */

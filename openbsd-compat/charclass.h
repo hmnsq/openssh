@@ -9,9 +9,9 @@
 /*
  * POSIX character class support for fnmatch() and glob().
  */
-static struct cclass {
-	const char *name;
-	int (*isctype)(int);
+ಸ್ಥಿರ ಸಂರಚನಾ cclass {
+	ಧ್ರುವ ವರ್ಣ *name;
+	ಪೂರ್ಣಾಙ್ಕ (*isctype)(ಪೂರ್ಣಾಙ್ಕ);
 } cclasses[] = {
 	{ "alnum",	isalnum },
 	{ "alpha",	isalpha },
@@ -25,7 +25,7 @@ static struct cclass {
 	{ "space",	isspace },
 	{ "upper",	isupper },
 	{ "xdigit",	isxdigit },
-	{ NULL,		NULL }
+	{ ರಿಕ್ತ,		ರಿಕ್ತ }
 };
 
-#define NCCLASSES	(sizeof(cclasses) / sizeof(cclasses[0]) - 1)
+#define NCCLASSES	(ಪರಿಮಾಣ(cclasses) / ಪರಿಮಾಣ(cclasses[0]) - 1)

@@ -25,17 +25,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
 #ifndef HAVE_ERR
-void
-err(int r, const char *fmt, ...)
+ಶೂನ್ಯ
+err(ಪೂರ್ಣಾಙ್ಕ r, ಧ್ರುವ ವರ್ಣ *fmt, ...)
 {
 	va_list args;
 
@@ -49,8 +49,8 @@ err(int r, const char *fmt, ...)
 #endif
 
 #ifndef HAVE_ERRX
-void
-errx(int r, const char *fmt, ...)
+ಶೂನ್ಯ
+errx(ಪೂರ್ಣಾಙ್ಕ r, ಧ್ರುವ ವರ್ಣ *fmt, ...)
 {
 	va_list args;
 
@@ -63,8 +63,8 @@ errx(int r, const char *fmt, ...)
 #endif
 
 #ifndef HAVE_WARN
-void
-warn(const char *fmt, ...)
+ಶೂನ್ಯ
+warn(ಧ್ರುವ ವರ್ಣ *fmt, ...)
 {
 	va_list args;
 

@@ -15,11 +15,11 @@
 #ifndef SSH_LOG_H
 #define SSH_LOG_H
 
-#include <stdarg.h> /* va_list */
-#include "ssherr.h" /* ssh_err() */
+#ಅನ್ತರ್ಭಾವ <stdarg.h> /* va_list */
+#ಅನ್ತರ್ಭಾವ "ssherr.h" /* ssh_err() */
 
 /* Supported syslog facilities and levels. */
-typedef enum {
+ಪ್ರಕಾರನಿರ್ದೇಶ ಗಣನಾ {
 	SYSLOG_FACILITY_DAEMON,
 	SYSLOG_FACILITY_USER,
 	SYSLOG_FACILITY_AUTH,
@@ -37,7 +37,7 @@ typedef enum {
 	SYSLOG_FACILITY_NOT_SET = -1
 }       SyslogFacility;
 
-typedef enum {
+ಪ್ರಕಾರನಿರ್ದೇಶ ಗಣನಾ {
 	SYSLOG_LEVEL_QUIET,
 	SYSLOG_LEVEL_FATAL,
 	SYSLOG_LEVEL_ERROR,
@@ -49,39 +49,39 @@ typedef enum {
 	SYSLOG_LEVEL_NOT_SET = -1
 }       LogLevel;
 
-typedef void (log_handler_fn)(LogLevel, int, const char *, void *);
+ಪ್ರಕಾರನಿರ್ದೇಶ ಶೂನ್ಯ (log_handler_fn)(LogLevel, ಪೂರ್ಣಾಙ್ಕ, ಧ್ರುವ ವರ್ಣ *, ಶೂನ್ಯ *);
 
-void     log_init(const char *, LogLevel, SyslogFacility, int);
-LogLevel log_level_get(void);
-int      log_change_level(LogLevel);
-int      log_is_on_stderr(void);
-void     log_redirect_stderr_to(const char *);
-void	 log_verbose_add(const char *);
-void	 log_verbose_reset(void);
+ಶೂನ್ಯ     log_init(ಧ್ರುವ ವರ್ಣ *, LogLevel, SyslogFacility, ಪೂರ್ಣಾಙ್ಕ);
+LogLevel log_level_get(ಶೂನ್ಯ);
+ಪೂರ್ಣಾಙ್ಕ      log_change_level(LogLevel);
+ಪೂರ್ಣಾಙ್ಕ      log_is_on_stderr(ಶೂನ್ಯ);
+ಶೂನ್ಯ     log_redirect_stderr_to(ಧ್ರುವ ವರ್ಣ *);
+ಶೂನ್ಯ	 log_verbose_add(ಧ್ರುವ ವರ್ಣ *);
+ಶೂನ್ಯ	 log_verbose_reset(ಶೂನ್ಯ);
 
-SyslogFacility	log_facility_number(char *);
-const char *	log_facility_name(SyslogFacility);
-LogLevel	log_level_number(char *);
-const char *	log_level_name(LogLevel);
+SyslogFacility	log_facility_ಸಂಖ್ಯೆ(ವರ್ಣ *);
+ಧ್ರುವ ವರ್ಣ *	log_facility_name(SyslogFacility);
+LogLevel	log_level_ಸಂಖ್ಯೆ(ವರ್ಣ *);
+ಧ್ರುವ ವರ್ಣ *	log_level_name(LogLevel);
 
-void	 set_log_handler(log_handler_fn *, void *);
-void	 cleanup_exit(int) __attribute__((noreturn));
+ಶೂನ್ಯ	 set_log_handler(log_handler_fn *, ಶೂನ್ಯ *);
+ಶೂನ್ಯ	 cleanup_exit(ಪೂರ್ಣಾಙ್ಕ) __attribute__((noreturn));
 
-void	 sshlog(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...)
+ಶೂನ್ಯ	 sshlog(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, ಪೂರ್ಣಾಙ್ಕ, ಪೂರ್ಣಾಙ್ಕ,
+    LogLevel, ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, ...)
     __attribute__((format(printf, 7, 8)));
-void	 sshlogv(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, va_list);
-void	 sshlogdie(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...) __attribute__((noreturn))
+ಶೂನ್ಯ	 sshlogv(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, ಪೂರ್ಣಾಙ್ಕ, ಪೂರ್ಣಾಙ್ಕ,
+    LogLevel, ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, va_list);
+ಶೂನ್ಯ	 sshlogdie(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, ಪೂರ್ಣಾಙ್ಕ, ಪೂರ್ಣಾಙ್ಕ,
+    LogLevel, ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, ...) __attribute__((noreturn))
     __attribute__((format(printf, 7, 8)));
-void	 sshfatal(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...) __attribute__((noreturn))
+ಶೂನ್ಯ	 sshfatal(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, ಪೂರ್ಣಾಙ್ಕ, ಪೂರ್ಣಾಙ್ಕ,
+    LogLevel, ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, ...) __attribute__((noreturn))
     __attribute__((format(printf, 7, 8)));
-void	 sshlogdirect(LogLevel, int, const char *, ...)
+ಶೂನ್ಯ	 sshlogdirect(LogLevel, ಪೂರ್ಣಾಙ್ಕ, ಧ್ರುವ ವರ್ಣ *, ...)
     __attribute__((format(printf, 3, 4)));
 
-struct log_ratelimit_ctx {
+ಸಂರಚನಾ log_ratelimit_ctx {
 	/* configuration */
 	u_int threshold;	/* events per second */
 	u_int max_accum;	/* max events to accumulate */
@@ -93,38 +93,38 @@ struct log_ratelimit_ctx {
 	u_int accumulated_events; /* used for threshold comparisons */
 
 	/* state while actively rate-limiting */
-	int ratelimit_active;
+	ಪೂರ್ಣಾಙ್ಕ ratelimit_active;
 	time_t ratelimit_start;
 	time_t last_log;
 	time_t hysteresis_start;
 	u_int ratelimited_events;
 };
 
-void log_ratelimit_init(struct log_ratelimit_ctx *rl, u_int threshold,
+ಶೂನ್ಯ log_ratelimit_init(ಸಂರಚನಾ log_ratelimit_ctx *rl, u_int threshold,
     u_int max_accum, u_int hysteresis, u_int log_every);
-int log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
+ಪೂರ್ಣಾಙ್ಕ log_ratelimit(ಸಂರಚನಾ log_ratelimit_ctx *rl, time_t now, ಪೂರ್ಣಾಙ್ಕ *active,
     u_int *events_dropped);
 
-#define do_log2(level, ...)	sshlog(__FILE__, __func__, __LINE__, 0, level, NULL, __VA_ARGS__)
-#define debug3(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG3, NULL, __VA_ARGS__)
-#define debug2(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG2, NULL, __VA_ARGS__)
-#define debug(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG1, NULL, __VA_ARGS__)
-#define verbose(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_VERBOSE, NULL, __VA_ARGS__)
-#define logit(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_INFO, NULL, __VA_ARGS__)
-#define error(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
-#define fatal(...)		sshfatal(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_FATAL, NULL, __VA_ARGS__)
-#define logdie(...)		sshlogdie(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
+#define do_log2(level, ...)	sshlog(__FILE__, __func__, __LINE__, 0, level, ರಿಕ್ತ, __VA_ARGS__)
+#define debug3(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG3, ರಿಕ್ತ, __VA_ARGS__)
+#define debug2(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG2, ರಿಕ್ತ, __VA_ARGS__)
+#define debug(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG1, ರಿಕ್ತ, __VA_ARGS__)
+#define verbose(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_VERBOSE, ರಿಕ್ತ, __VA_ARGS__)
+#define logit(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_INFO, ರಿಕ್ತ, __VA_ARGS__)
+#define error(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, ರಿಕ್ತ, __VA_ARGS__)
+#define fatal(...)		sshfatal(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_FATAL, ರಿಕ್ತ, __VA_ARGS__)
+#define logdie(...)		sshlogdie(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, ರಿಕ್ತ, __VA_ARGS__)
 
 /* Variants that prepend the caller's function */
-#define do_log2_f(level, ...)	sshlog(__FILE__, __func__, __LINE__, 1, level, NULL, __VA_ARGS__)
-#define debug3_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG3, NULL, __VA_ARGS__)
-#define debug2_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG2, NULL, __VA_ARGS__)
-#define debug_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG1, NULL, __VA_ARGS__)
-#define verbose_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_VERBOSE, NULL, __VA_ARGS__)
-#define logit_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_INFO, NULL, __VA_ARGS__)
-#define error_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
-#define fatal_f(...)		sshfatal(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_FATAL, NULL, __VA_ARGS__)
-#define logdie_f(...)		sshlogdie(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
+#define do_log2_f(level, ...)	sshlog(__FILE__, __func__, __LINE__, 1, level, ರಿಕ್ತ, __VA_ARGS__)
+#define debug3_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG3, ರಿಕ್ತ, __VA_ARGS__)
+#define debug2_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG2, ರಿಕ್ತ, __VA_ARGS__)
+#define debug_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG1, ರಿಕ್ತ, __VA_ARGS__)
+#define verbose_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_VERBOSE, ರಿಕ್ತ, __VA_ARGS__)
+#define logit_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_INFO, ರಿಕ್ತ, __VA_ARGS__)
+#define error_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, ರಿಕ್ತ, __VA_ARGS__)
+#define fatal_f(...)		sshfatal(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_FATAL, ರಿಕ್ತ, __VA_ARGS__)
+#define logdie_f(...)		sshlogdie(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, ರಿಕ್ತ, __VA_ARGS__)
 
 /* Variants that appends a ssh_err message */
 #define do_log2_r(r, level, ...) sshlog(__FILE__, __func__, __LINE__, 0, level, ssh_err(r), __VA_ARGS__)

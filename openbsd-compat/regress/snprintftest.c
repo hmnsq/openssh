@@ -17,62 +17,62 @@
 
 #define BUFSZ 2048
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-static int failed = 0;
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ failed = 0;
 
-static void
-fail(const char *m)
+ಸ್ಥಿರ ಶೂನ್ಯ
+fail(ಧ್ರುವ ವರ್ಣ *m)
 {
 	fprintf(stderr, "snprintftest: %s\n", m);
 	failed = 1;
 }
 
-int x_snprintf(char *str, size_t count, const char *fmt, ...)
+ಪೂರ್ಣಾಙ್ಕ x_snprintf(ವರ್ಣ *str, size_t ಎಣಿಕೆ, ಧ್ರುವ ವರ್ಣ *fmt, ...)
 {
 	size_t ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
+	ret = vsnprintf(str, ಎಣಿಕೆ, fmt, ap);
 	va_end(ap);
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-int
-main(void)
+ಪೂರ್ಣಾಙ್ಕ
+main(ಶೂನ್ಯ)
 {
-	char b[5];
-	char *src = NULL;
-	int ret;
+	ವರ್ಣ b[5];
+	ವರ್ಣ *src = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ ret;
 
-	memset(b, 'X', sizeof(b));
+	memset(b, 'X', ಪರಿಮಾಣ(b));
 	ret = snprintf(b, 5, "123456789");
-	if (ret != 9 || b[4] != '\0')
+	ಯದಿ (ret != 9 || b[4] != '\0')
 		fail("snprintf does not correctly terminate long strings");
 
 	/* check for read overrun on unterminated string */
-	if ((src = malloc(BUFSZ)) == NULL) {
+	ಯದಿ ((src = malloc(BUFSZ)) == ರಿಕ್ತ) {
 		fail("malloc failed");
-	} else {
+	} ಅನ್ಯಥಾ {
 		memset(src, 'a', BUFSZ);
-		snprintf(b, sizeof(b), "%.*s", 1, src);
-		if (strcmp(b, "a") != 0)
+		snprintf(b, ಪರಿಮಾಣ(b), "%.*s", 1, src);
+		ಯದಿ (strcmp(b, "a") != 0)
 			fail("failed with length limit '%%.s'");
 	}
 
 	/* check that snprintf and vsnprintf return sane values */
-	if (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	ಯದಿ (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("snprintf does not return required length");
-	if (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	ಯದಿ (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("vsnprintf does not return required length");
 
-	free(src);
-	return failed;
+	ಮುಕ್ತ(src);
+	ಪ್ರತ್ಯಾಗಮ failed;
 }

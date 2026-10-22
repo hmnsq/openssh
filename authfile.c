@@ -23,77 +23,77 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include "log.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "krl.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "authfile.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "krl.h"
 
 /* Save a key blob to a file */
-static int
-sshkey_save_private_blob(struct sshbuf *keybuf, const char *filename)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+sshkey_save_private_blob(ಸಂರಚನಾ sshbuf *keybuf, ಧ್ರುವ ವರ್ಣ *filename)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 	mode_t omask;
 
 	omask = umask(077);
 	r = sshbuf_write_file(filename, keybuf);
 	umask(omask);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-int
-sshkey_save_private(struct sshkey *key, const char *filename,
-    const char *passphrase, const char *comment,
-    int format, const char *openssh_format_cipher, int openssh_format_rounds)
+ಪೂರ್ಣಾಙ್ಕ
+sshkey_save_private(ಸಂರಚನಾ sshkey *ಕೀಲಿ, ಧ್ರುವ ವರ್ಣ *filename,
+    ಧ್ರುವ ವರ್ಣ *passphrase, ಧ್ರುವ ವರ್ಣ *comment,
+    ಪೂರ್ಣಾಙ್ಕ format, ಧ್ರುವ ವರ್ಣ *openssh_format_cipher, ಪೂರ್ಣಾಙ್ಕ openssh_format_rounds)
 {
-	struct sshbuf *keyblob = NULL;
-	int r;
+	ಸಂರಚನಾ sshbuf *keyblob = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if ((keyblob = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_private_to_fileblob(key, keyblob, passphrase, comment,
+	ಯದಿ ((keyblob = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((r = sshkey_private_to_fileblob(ಕೀಲಿ, keyblob, passphrase, comment,
 	    format, openssh_format_cipher, openssh_format_rounds)) != 0)
-		goto out;
-	if ((r = sshkey_save_private_blob(keyblob, filename)) != 0)
-		goto out;
+		ಗಚ್ಛ out;
+	ಯದಿ ((r = sshkey_save_private_blob(keyblob, filename)) != 0)
+		ಗಚ್ಛ out;
 	r = 0;
  out:
 	sshbuf_free(keyblob);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /* XXX remove error() calls from here? */
-int
-sshkey_perm_ok(int fd, const char *filename)
+ಪೂರ್ಣಾಙ್ಕ
+sshkey_perm_ok(ಪೂರ್ಣಾಙ್ಕ fd, ಧ್ರುವ ವರ್ಣ *filename)
 {
-	struct stat st;
+	ಸಂರಚನಾ stat st;
 
-	if (fstat(fd, &st) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	ಯದಿ (fstat(fd, &st) == -1)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
 	/*
 	 * if a key owned by the user is accessed, then we check the
 	 * permissions of the file. if the key owned by a different user,
 	 * then we don't care.
 	 */
 #ifdef HAVE_CYGWIN
-	if (check_ntsec(filename))
+	ಯದಿ (check_ntsec(filename))
 #endif
-	if ((st.st_uid == getuid()) && (st.st_mode & 077) != 0) {
+	ಯದಿ ((st.st_uid == getuid()) && (st.st_mode & 077) != 0) {
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		error("@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @");
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -101,183 +101,183 @@ sshkey_perm_ok(int fd, const char *filename)
 		    (u_int)st.st_mode & 0777, filename);
 		error("It is required that your private key files are NOT accessible by others.");
 		error("This private key will be ignored.");
-		return SSH_ERR_KEY_BAD_PERMISSIONS;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ಕೀಲಿ_BAD_PERMISSIONS;
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
-sshkey_load_private_type(int type, const char *filename, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+ಪೂರ್ಣಾಙ್ಕ
+sshkey_load_private_type(ಪೂರ್ಣಾಙ್ಕ type, ಧ್ರುವ ವರ್ಣ *filename, ಧ್ರುವ ವರ್ಣ *passphrase,
+    ಸಂರಚನಾ sshkey **keyp, ವರ್ಣ **commentp)
 {
-	int fd, r;
+	ಪೂರ್ಣಾಙ್ಕ fd, r;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
+	ಯದಿ (keyp != ರಿಕ್ತ)
+		*keyp = ರಿಕ್ತ;
+	ಯದಿ (commentp != ರಿಕ್ತ)
+		*commentp = ರಿಕ್ತ;
 
-	if ((fd = open(filename, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	ಯದಿ ((fd = open(filename, O_RDONLY)) == -1)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
 
 	r = sshkey_perm_ok(fd, filename);
-	if (r != 0)
-		goto out;
+	ಯದಿ (r != 0)
+		ಗಚ್ಛ out;
 
 	r = sshkey_load_private_type_fd(fd, type, passphrase, keyp, commentp);
  out:
 	close(fd);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-int
-sshkey_load_private(const char *filename, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+ಪೂರ್ಣಾಙ್ಕ
+sshkey_load_private(ಧ್ರುವ ವರ್ಣ *filename, ಧ್ರುವ ವರ್ಣ *passphrase,
+    ಸಂರಚನಾ sshkey **keyp, ವರ್ಣ **commentp)
 {
-	return sshkey_load_private_type(KEY_UNSPEC, filename, passphrase,
+	ಪ್ರತ್ಯಾಗಮ sshkey_load_private_type(ಕೀಲಿ_UNSPEC, filename, passphrase,
 	    keyp, commentp);
 }
 
-int
-sshkey_load_private_type_fd(int fd, int type, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+ಪೂರ್ಣಾಙ್ಕ
+sshkey_load_private_type_fd(ಪೂರ್ಣಾಙ್ಕ fd, ಪೂರ್ಣಾಙ್ಕ type, ಧ್ರುವ ವರ್ಣ *passphrase,
+    ಸಂರಚನಾ sshkey **keyp, ವರ್ಣ **commentp)
 {
-	struct sshbuf *buffer = NULL;
-	int r;
+	ಸಂರಚನಾ sshbuf *buffer = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
+	ಯದಿ (keyp != ರಿಕ್ತ)
+		*keyp = ರಿಕ್ತ;
+	ಯದಿ ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
 	    (r = sshkey_parse_private_fileblob_type(buffer, type,
 	    passphrase, keyp, commentp)) != 0)
-		goto out;
+		ಗಚ್ಛ out;
 
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(buffer);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /* Load a pubkey from the unencrypted envelope of a new-format private key */
-static int
-sshkey_load_pubkey_from_private(const char *filename, struct sshkey **pubkeyp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+sshkey_load_pubkey_from_private(ಧ್ರುವ ವರ್ಣ *filename, ಸಂರಚನಾ sshkey **pubkeyp)
 {
-	struct sshbuf *buffer = NULL;
-	struct sshkey *pubkey = NULL;
-	int r, fd;
+	ಸಂರಚನಾ sshbuf *buffer = ರಿಕ್ತ;
+	ಸಂರಚನಾ sshkey *pubkey = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r, fd;
 
-	if (pubkeyp != NULL)
-		*pubkeyp = NULL;
+	ಯದಿ (pubkeyp != ರಿಕ್ತ)
+		*pubkeyp = ರಿಕ್ತ;
 
-	if ((fd = open(filename, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
+	ಯದಿ ((fd = open(filename, O_RDONLY)) == -1)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
+	ಯದಿ ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
 	    (r = sshkey_parse_pubkey_from_private_fileblob_type(buffer,
-	    KEY_UNSPEC, &pubkey)) != 0)
-		goto out;
+	    ಕೀಲಿ_UNSPEC, &pubkey)) != 0)
+		ಗಚ್ಛ out;
 	/* success */
-	if (pubkeyp != NULL) {
+	ಯದಿ (pubkeyp != ರಿಕ್ತ) {
 		*pubkeyp = pubkey;
-		pubkey = NULL;
+		pubkey = ರಿಕ್ತ;
 	}
 	r = 0;
  out:
 	close(fd);
 	sshbuf_free(buffer);
 	sshkey_free(pubkey);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-static int
-sshkey_try_load_public(struct sshkey **kp, const char *filename,
-    char **commentp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+sshkey_try_load_public(ಸಂರಚನಾ sshkey **kp, ಧ್ರುವ ವರ್ಣ *filename,
+    ವರ್ಣ **commentp)
 {
 	FILE *f;
-	char *line = NULL, *cp;
+	ವರ್ಣ *ಸಾಲು = ರಿಕ್ತ, *cp;
 	size_t linesize = 0;
-	int r;
-	struct stat st;
-	struct sshkey *k = NULL;
+	ಪೂರ್ಣಾಙ್ಕ r;
+	ಸಂರಚನಾ stat st;
+	ಸಂರಚನಾ sshkey *k = ರಿಕ್ತ;
 
-	if (kp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	*kp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
-	if ((f = fopen(filename, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (fstat(fileno(f), &st) == 0 && S_ISREG(st.st_mode) &&
+	ಯದಿ (kp == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
+	*kp = ರಿಕ್ತ;
+	ಯದಿ (commentp != ರಿಕ್ತ)
+		*commentp = ರಿಕ್ತ;
+	ಯದಿ ((f = fopen(filename, "r")) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
+	ಯದಿ (fstat(fileno(f), &st) == 0 && S_ISREG(st.st_mode) &&
 	    st.st_size > SSHBUF_SIZE_MAX) {
 		fclose(f);
-		return SSH_ERR_INVALID_FORMAT;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_FORMAT;
 	}
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL) {
+	ಯದಿ ((k = sshkey_new(ಕೀಲಿ_UNSPEC)) == ರಿಕ್ತ) {
 		fclose(f);
-		return SSH_ERR_ALLOC_FAIL;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
 	}
-	while (getline(&line, &linesize, f) != -1) {
-		cp = line;
-		switch (*cp) {
-		case '#':
-		case '\n':
-		case '\0':
-			continue;
+	ಯಾವತ್ (getline(&ಸಾಲು, &linesize, f) != -1) {
+		cp = ಸಾಲು;
+		ವಿಕಲ್ಪ (*cp) {
+		ಪಕ್ಷ '#':
+		ಪಕ್ಷ '\n':
+		ಪಕ್ಷ '\0':
+			ಅನುವರ್ತ;
 		}
 		/* Abort loading if this looks like a private key */
-		if (strncmp(cp, "-----BEGIN", 10) == 0 ||
+		ಯದಿ (strncmp(cp, "-----BEGIN", 10) == 0 ||
 		    strcmp(cp, "SSH PRIVATE KEY FILE") == 0)
-			break;
+			ಭಙ್ಗ;
 		/* Skip leading whitespace. */
-		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
+		ಪ್ರತಿ (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
 			;
-		if (*cp) {
-			if ((r = sshkey_read(k, &cp)) == 0) {
+		ಯದಿ (*cp) {
+			ಯದಿ ((r = sshkey_read(k, &cp)) == 0) {
 				cp[strcspn(cp, "\r\n")] = '\0';
-				if (commentp) {
+				ಯದಿ (commentp) {
 					*commentp = strdup(*cp ?
 					    cp : filename);
-					if (*commentp == NULL)
+					ಯದಿ (*commentp == ರಿಕ್ತ)
 						r = SSH_ERR_ALLOC_FAIL;
 				}
 				/* success */
 				*kp = k;
-				free(line);
+				ಮುಕ್ತ(ಸಾಲು);
 				fclose(f);
-				return r;
+				ಪ್ರತ್ಯಾಗಮ r;
 			}
 		}
 	}
-	free(k);
-	free(line);
+	ಮುಕ್ತ(k);
+	ಮುಕ್ತ(ಸಾಲು);
 	fclose(f);
-	return SSH_ERR_INVALID_FORMAT;
+	ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_FORMAT;
 }
 
 /* load public key from any pubkey file */
-int
-sshkey_load_public(const char *filename, struct sshkey **keyp, char **commentp)
+ಪೂರ್ಣಾಙ್ಕ
+sshkey_load_public(ಧ್ರುವ ವರ್ಣ *filename, ಸಂರಚನಾ sshkey **keyp, ವರ್ಣ **commentp)
 {
-	char *pubfile = NULL;
-	int r, oerrno;
+	ವರ್ಣ *pubfile = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r, oerrno;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
+	ಯದಿ (keyp != ರಿಕ್ತ)
+		*keyp = ರಿಕ್ತ;
+	ಯದಿ (commentp != ರಿಕ್ತ)
+		*commentp = ರಿಕ್ತ;
 
-	if ((r = sshkey_try_load_public(keyp, filename, commentp)) == 0)
-		goto out;
+	ಯದಿ ((r = sshkey_try_load_public(keyp, filename, commentp)) == 0)
+		ಗಚ್ಛ out;
 
 	/* try .pub suffix */
-	if (asprintf(&pubfile, "%s.pub", filename) == -1)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_try_load_public(keyp, pubfile, commentp)) == 0)
-		goto out;
+	ಯದಿ (asprintf(&pubfile, "%s.pub", filename) == -1)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((r = sshkey_try_load_public(keyp, pubfile, commentp)) == 0)
+		ಗಚ್ಛ out;
 
 	/* finally, try to extract public key from private key file */
-	if ((r = sshkey_load_pubkey_from_private(filename, keyp)) == 0)
-		goto out;
+	ಯದಿ ((r = sshkey_load_pubkey_from_private(filename, keyp)) == 0)
+		ಗಚ್ಛ out;
 
 	/* Pretend we couldn't find the key */
 	r = SSH_ERR_SYSTEM_ERROR;
@@ -285,78 +285,78 @@ sshkey_load_public(const char *filename, struct sshkey **keyp, char **commentp)
 
  out:
 	oerrno = errno;
-	free(pubfile);
+	ಮುಕ್ತ(pubfile);
 	errno = oerrno;
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /* Load the certificate associated with the named private key */
-int
-sshkey_load_cert(const char *filename, struct sshkey **keyp)
+ಪೂರ್ಣಾಙ್ಕ
+sshkey_load_cert(ಧ್ರುವ ವರ್ಣ *filename, ಸಂರಚನಾ sshkey **keyp)
 {
-	struct sshkey *pub = NULL;
-	char *file = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ಸಂರಚನಾ sshkey *pub = ರಿಕ್ತ;
+	ವರ್ಣ *file = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r = SSH_ERR_INTERNAL_ERROR;
 
-	if (keyp != NULL)
-		*keyp = NULL;
+	ಯದಿ (keyp != ರಿಕ್ತ)
+		*keyp = ರಿಕ್ತ;
 
-	if (asprintf(&file, "%s-cert.pub", filename) == -1)
-		return SSH_ERR_ALLOC_FAIL;
+	ಯದಿ (asprintf(&file, "%s-cert.pub", filename) == -1)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
 
-	r = sshkey_try_load_public(keyp, file, NULL);
-	free(file);
+	r = sshkey_try_load_public(keyp, file, ರಿಕ್ತ);
+	ಮುಕ್ತ(file);
 	sshkey_free(pub);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /* Load private key and certificate */
-int
-sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
-    struct sshkey **keyp)
+ಪೂರ್ಣಾಙ್ಕ
+sshkey_load_private_cert(ಪೂರ್ಣಾಙ್ಕ type, ಧ್ರುವ ವರ್ಣ *filename, ಧ್ರುವ ವರ್ಣ *passphrase,
+    ಸಂರಚನಾ sshkey **keyp)
 {
-	struct sshkey *key = NULL, *cert = NULL;
-	int r;
+	ಸಂರಚನಾ sshkey *ಕೀಲಿ = ರಿಕ್ತ, *cert = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if (keyp != NULL)
-		*keyp = NULL;
+	ಯದಿ (keyp != ರಿಕ್ತ)
+		*keyp = ರಿಕ್ತ;
 
-	switch (type) {
+	ವಿಕಲ್ಪ (type) {
 #ifdef WITH_OPENSSL
-	case KEY_RSA:
-	case KEY_ECDSA:
+	ಪಕ್ಷ ಕೀಲಿ_RSA:
+	ಪಕ್ಷ ಕೀಲಿ_ECDSA:
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519:
-	case KEY_MLDSA44_ED25519:
-	case KEY_UNSPEC:
-		break;
-	default:
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+	ಪಕ್ಷ ಕೀಲಿ_ED25519:
+	ಪಕ್ಷ ಕೀಲಿ_MLDSA44_ED25519:
+	ಪಕ್ಷ ಕೀಲಿ_UNSPEC:
+		ಭಙ್ಗ;
+	ಸ್ವಭಾವ:
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ಕೀಲಿ_TYPE_UNKNOWN;
 	}
 
-	if ((r = sshkey_load_private_type(type, filename,
-	    passphrase, &key, NULL)) != 0 ||
+	ಯದಿ ((r = sshkey_load_private_type(type, filename,
+	    passphrase, &ಕೀಲಿ, ರಿಕ್ತ)) != 0 ||
 	    (r = sshkey_load_cert(filename, &cert)) != 0)
-		goto out;
+		ಗಚ್ಛ out;
 
 	/* Make sure the private key matches the certificate */
-	if (sshkey_equal_public(key, cert) == 0) {
-		r = SSH_ERR_KEY_CERT_MISMATCH;
-		goto out;
+	ಯದಿ (sshkey_equal_public(ಕೀಲಿ, cert) == 0) {
+		r = SSH_ERR_ಕೀಲಿ_CERT_MISMATCH;
+		ಗಚ್ಛ out;
 	}
 
-	if ((r = sshkey_to_certified(key)) != 0 ||
-	    (r = sshkey_cert_copy(cert, key)) != 0)
-		goto out;
+	ಯದಿ ((r = sshkey_to_certified(ಕೀಲಿ)) != 0 ||
+	    (r = sshkey_cert_copy(cert, ಕೀಲಿ)) != 0)
+		ಗಚ್ಛ out;
 	r = 0;
-	if (keyp != NULL) {
-		*keyp = key;
-		key = NULL;
+	ಯದಿ (keyp != ರಿಕ್ತ) {
+		*keyp = ಕೀಲಿ;
+		ಕೀಲಿ = ರಿಕ್ತ;
 	}
  out:
-	sshkey_free(key);
+	sshkey_free(ಕೀಲಿ);
 	sshkey_free(cert);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /*
@@ -367,64 +367,64 @@ sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
  * If "check_ca" is set and "key" is a certificate, then its CA key is
  * also checked and sshkey_in_file() will return success if either is found.
  */
-int
-sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
-    int check_ca)
+ಪೂರ್ಣಾಙ್ಕ
+sshkey_in_file(ಸಂರಚನಾ sshkey *ಕೀಲಿ, ಧ್ರುವ ವರ್ಣ *filename, ಪೂರ್ಣಾಙ್ಕ strict_type,
+    ಪೂರ್ಣಾಙ್ಕ check_ca)
 {
 	FILE *f;
-	char *line = NULL, *cp;
+	ವರ್ಣ *ಸಾಲು = ರಿಕ್ತ, *cp;
 	size_t linesize = 0;
-	int r = 0;
-	struct sshkey *pub = NULL;
+	ಪೂರ್ಣಾಙ್ಕ r = 0;
+	ಸಂರಚನಾ sshkey *pub = ರಿಕ್ತ;
 
-	int (*sshkey_compare)(const struct sshkey *, const struct sshkey *) =
+	ಪೂರ್ಣಾಙ್ಕ (*sshkey_compare)(ಧ್ರುವ ಸಂರಚನಾ sshkey *, ಧ್ರುವ ಸಂರಚನಾ sshkey *) =
 	    strict_type ?  sshkey_equal : sshkey_equal_public;
 
-	if ((f = fopen(filename, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
+	ಯದಿ ((f = fopen(filename, "r")) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
 
-	while (getline(&line, &linesize, f) != -1) {
+	ಯಾವತ್ (getline(&ಸಾಲು, &linesize, f) != -1) {
 		sshkey_free(pub);
-		pub = NULL;
-		cp = line;
+		pub = ರಿಕ್ತ;
+		cp = ಸಾಲು;
 
 		/* Skip leading whitespace. */
-		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
+		ಪ್ರತಿ (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
 			;
 
 		/* Skip comments and empty lines */
-		switch (*cp) {
-		case '#':
-		case '\n':
-		case '\0':
-			continue;
+		ವಿಕಲ್ಪ (*cp) {
+		ಪಕ್ಷ '#':
+		ಪಕ್ಷ '\n':
+		ಪಕ್ಷ '\0':
+			ಅನುವರ್ತ;
 		}
 
-		if ((pub = sshkey_new(KEY_UNSPEC)) == NULL) {
+		ಯದಿ ((pub = sshkey_new(ಕೀಲಿ_UNSPEC)) == ರಿಕ್ತ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			ಗಚ್ಛ out;
 		}
-		switch (r = sshkey_read(pub, &cp)) {
-		case 0:
-			break;
-		case SSH_ERR_KEY_LENGTH:
-			continue;
-		default:
-			goto out;
+		ವಿಕಲ್ಪ (r = sshkey_read(pub, &cp)) {
+		ಪಕ್ಷ 0:
+			ಭಙ್ಗ;
+		ಪಕ್ಷ SSH_ERR_ಕೀಲಿ_LENGTH:
+			ಅನುವರ್ತ;
+		ಸ್ವಭಾವ:
+			ಗಚ್ಛ out;
 		}
-		if (sshkey_compare(key, pub) ||
-		    (check_ca && sshkey_is_cert(key) &&
-		    sshkey_compare(key->cert->signature_key, pub))) {
+		ಯದಿ (sshkey_compare(ಕೀಲಿ, pub) ||
+		    (check_ca && sshkey_is_cert(ಕೀಲಿ) &&
+		    sshkey_compare(ಕೀಲಿ->cert->signature_ಕೀಲಿ, pub))) {
 			r = 0;
-			goto out;
+			ಗಚ್ಛ out;
 		}
 	}
-	r = SSH_ERR_KEY_NOT_FOUND;
+	r = SSH_ERR_ಕೀಲಿ_NOT_FOUND;
  out:
-	free(line);
+	ಮುಕ್ತ(ಸಾಲು);
 	sshkey_free(pub);
 	fclose(f);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /*
@@ -434,30 +434,30 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
  * This will check both the key and, if it is a certificate, its CA key too.
  * "revoked_keys_file" may be a KRL or a one-per-line list of public keys.
  */
-int
-sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
+ಪೂರ್ಣಾಙ್ಕ
+sshkey_check_revoked(ಸಂರಚನಾ sshkey *ಕೀಲಿ, ಧ್ರುವ ವರ್ಣ *revoked_ಕೀಲಿಗಳು_file)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	r = ssh_krl_file_contains_key(revoked_keys_file, key);
+	r = ssh_krl_file_contains_ಕೀಲಿ(revoked_ಕೀಲಿಗಳು_file, ಕೀಲಿ);
 	/* If this was not a KRL to begin with then continue below */
-	if (r != SSH_ERR_KRL_BAD_MAGIC)
-		return r;
+	ಯದಿ (r != SSH_ERR_KRL_BAD_MAGIC)
+		ಪ್ರತ್ಯಾಗಮ r;
 
 	/*
 	 * If the file is not a KRL or we can't handle KRLs then attempt to
 	 * parse the file as a flat list of keys.
 	 */
-	switch ((r = sshkey_in_file(key, revoked_keys_file, 0, 1))) {
-	case 0:
+	ವಿಕಲ್ಪ ((r = sshkey_in_file(ಕೀಲಿ, revoked_ಕೀಲಿಗಳು_file, 0, 1))) {
+	ಪಕ್ಷ 0:
 		/* Key found => revoked */
-		return SSH_ERR_KEY_REVOKED;
-	case SSH_ERR_KEY_NOT_FOUND:
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ಕೀಲಿ_REVOKED;
+	ಪಕ್ಷ SSH_ERR_ಕೀಲಿ_NOT_FOUND:
 		/* Key not found => not revoked */
-		return 0;
-	default:
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಸ್ವಭಾವ:
 		/* Some other error occurred */
-		return r;
+		ಪ್ರತ್ಯಾಗಮ r;
 	}
 }
 
@@ -466,56 +466,56 @@ sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
  * whitespace character. Returns 0 on success or -1 on failure (e.g.
  * unterminated quotes).
  */
-int
-sshkey_advance_past_options(char **cpp)
+ಪೂರ್ಣಾಙ್ಕ
+sshkey_advance_past_options(ವರ್ಣ **cpp)
 {
-	char *cp = *cpp;
-	int quoted = 0;
+	ವರ್ಣ *cp = *cpp;
+	ಪೂರ್ಣಾಙ್ಕ quoted = 0;
 
-	for (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
-		if (*cp == '\\' && cp[1] == '"')
+	ಪ್ರತಿ (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
+		ಯದಿ (*cp == '\\' && cp[1] == '"')
 			cp++;	/* Skip both */
-		else if (*cp == '"')
+		ಅನ್ಯಥಾ ಯದಿ (*cp == '"')
 			quoted = !quoted;
 	}
 	*cpp = cp;
 	/* return failure for unterminated quotes */
-	return (*cp == '\0' && quoted) ? -1 : 0;
+	ಪ್ರತ್ಯಾಗಮ (*cp == '\0' && quoted) ? -1 : 0;
 }
 
 /* Save a public key */
-int
-sshkey_save_public(const struct sshkey *key, const char *path,
-    const char *comment)
+ಪೂರ್ಣಾಙ್ಕ
+sshkey_save_public(ಧ್ರುವ ಸಂರಚನಾ sshkey *ಕೀಲಿ, ಧ್ರುವ ವರ್ಣ *path,
+    ಧ್ರುವ ವರ್ಣ *comment)
 {
-	int fd, oerrno;
-	FILE *f = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ಪೂರ್ಣಾಙ್ಕ fd, oerrno;
+	FILE *f = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r = SSH_ERR_INTERNAL_ERROR;
 
-	if ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((f = fdopen(fd, "w")) == NULL) {
+	ಯದಿ ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
+	ಯದಿ ((f = fdopen(fd, "w")) == ರಿಕ್ತ) {
 		r = SSH_ERR_SYSTEM_ERROR;
 		close(fd);
-		goto fail;
+		ಗಚ್ಛ fail;
 	}
-	if ((r = sshkey_write(key, f)) != 0)
-		goto fail;
+	ಯದಿ ((r = sshkey_write(ಕೀಲಿ, f)) != 0)
+		ಗಚ್ಛ fail;
 	fprintf(f, " %s\n", comment);
-	if (ferror(f)) {
+	ಯದಿ (ferror(f)) {
 		r = SSH_ERR_SYSTEM_ERROR;
-		goto fail;
+		ಗಚ್ಛ fail;
 	}
-	if (fclose(f) != 0) {
+	ಯದಿ (fclose(f) != 0) {
 		r = SSH_ERR_SYSTEM_ERROR;
-		f = NULL;
+		f = ರಿಕ್ತ;
  fail:
-		if (f != NULL) {
+		ಯದಿ (f != ರಿಕ್ತ) {
 			oerrno = errno;
 			fclose(f);
 			errno = oerrno;
 		}
-		return r;
+		ಪ್ರತ್ಯಾಗಮ r;
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }

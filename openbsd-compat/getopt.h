@@ -34,9 +34,9 @@
 #define _GETOPT_H_
 
 #ifndef __THROW
-# if defined __cplusplus
+# ಯದಿ defined __cplusplus
 #  define __THROW throw()
-# else
+# ಅನ್ಯಥಾ
 #  define __THROW
 # endif
 #endif
@@ -48,38 +48,38 @@
 #define required_argument  1
 #define optional_argument  2
 
-#if 0
-struct option {
+#ಯದಿ 0
+ಸಂರಚನಾ option {
 	/* name of long option */
-	const char *name;
+	ಧ್ರುವ ವರ್ಣ *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	ಪೂರ್ಣಾಙ್ಕ has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	ಪೂರ್ಣಾಙ್ಕ *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	ಪೂರ್ಣಾಙ್ಕ val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
+ಪೂರ್ಣಾಙ್ಕ	 getopt_long(ಪೂರ್ಣಾಙ್ಕ, ವರ್ಣ * ಧ್ರುವ *, ಧ್ರುವ ವರ್ಣ *,
+	    ಧ್ರುವ ಸಂರಚನಾ option *, ಪೂರ್ಣಾಙ್ಕ *);
+ಪೂರ್ಣಾಙ್ಕ	 getopt_long_only(ಪೂರ್ಣಾಙ್ಕ, ವರ್ಣ * ಧ್ರುವ *, ಧ್ರುವ ವರ್ಣ *,
+	    ಧ್ರುವ ಸಂರಚನಾ option *, ಪೂರ್ಣಾಙ್ಕ *);
 #endif
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+ಪೂರ್ಣಾಙ್ಕ	 getopt(ಪೂರ್ಣಾಙ್ಕ, ವರ್ಣ * ಧ್ರುವ *, ಧ್ರುವ ವರ್ಣ *) __THROW;
+ಪೂರ್ಣಾಙ್ಕ	 getsubopt(ವರ್ಣ **, ವರ್ಣ * ಧ್ರುವ *, ವರ್ಣ **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
+ಬಾಹ್ಯ   ವರ್ಣ *optarg;                  /* getopt(3) external variables */
+ಬಾಹ್ಯ   ಪೂರ್ಣಾಙ್ಕ opterr;
+ಬಾಹ್ಯ   ಪೂರ್ಣಾಙ್ಕ optind;
+ಬಾಹ್ಯ   ಪೂರ್ಣಾಙ್ಕ optopt;
+ಬಾಹ್ಯ   ಪೂರ್ಣಾಙ್ಕ optreset;
+ಬಾಹ್ಯ   ವರ್ಣ *suboptarg;               /* getsubopt(3) external variable */
 #endif
  
 #endif /* !_GETOPT_H_ */

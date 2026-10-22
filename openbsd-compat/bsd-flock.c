@@ -34,48 +34,48 @@
  * Otherwise, don't do locking; just pretend success.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
 #ifndef HAVE_FLOCK
-#include <errno.h>
-#include <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
 
-int
-flock(int fd, int op)
+ಪೂರ್ಣಾಙ್ಕ
+flock(ಪೂರ್ಣಾಙ್ಕ fd, ಪೂರ್ಣಾಙ್ಕ op)
 {
-	int rc = 0;
+	ಪೂರ್ಣಾಙ್ಕ rc = 0;
 
-#if defined(F_SETLK) && defined(F_SETLKW)
-	struct flock fl = {0};
+#ಯದಿ defined(F_SETLK) && defined(F_SETLKW)
+	ಸಂರಚನಾ flock fl = {0};
 
-	switch (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
-	case LOCK_EX:
+	ವಿಕಲ್ಪ (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
+	ಪಕ್ಷ LOCK_EX:
 		fl.l_type = F_WRLCK;
-		break;
+		ಭಙ್ಗ;
 
-	case LOCK_SH:
+	ಪಕ್ಷ LOCK_SH:
 		fl.l_type = F_RDLCK;
-		break;
+		ಭಙ್ಗ;
 
-	case LOCK_UN:
+	ಪಕ್ಷ LOCK_UN:
 		fl.l_type = F_UNLCK;
-		break;
+		ಭಙ್ಗ;
 
-	default:
+	ಸ್ವಭಾವ:
 		errno = EINVAL;
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 
 	fl.l_whence = SEEK_SET;
 	rc = fcntl(fd, op & LOCK_NB ? F_SETLK : F_SETLKW, &fl);
 
-	if (rc && (errno == EAGAIN))
+	ಯದಿ (rc && (errno == EAGAIN))
 		errno = EWOULDBLOCK;
-#else
+#ಅನ್ಯಥಾ
 	rc = -1;
 	errno = ENOSYS;
 #endif
 
-	return rc;
+	ಪ್ರತ್ಯಾಗಮ rc;
 }
 #endif

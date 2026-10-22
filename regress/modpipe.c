@@ -16,22 +16,22 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <errno.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
 #ifdef HAVE_ERR_H
 # include <err.h>
 #endif
-#include "openbsd-compat/getopt_long.c"
+#ಅನ್ತರ್ಭಾವ "openbsd-compat/getopt_long.c"
 
-static void
-usage(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+usage(ಶೂನ್ಯ)
 {
 	fprintf(stderr, "Usage: modpipe -w [-m modspec ...] < in > out\n");
 	fprintf(stderr, "modspec is one of:\n");
@@ -41,98 +41,98 @@ usage(void)
 }
 
 #define MAX_MODIFICATIONS 256
-struct modification {
-	enum { MOD_XOR, MOD_AND_OR } what;
+ಸಂರಚನಾ modification {
+	ಗಣನಾ { MOD_XOR, MOD_AND_OR } what;
 	unsigned long long offset;
 	uint8_t m1, m2;
 };
 
-static void
-parse_modification(const char *s, struct modification *m)
+ಸ್ಥಿರ ಶೂನ್ಯ
+parse_modification(ಧ್ರುವ ವರ್ಣ *s, ಸಂರಚನಾ modification *m)
 {
-	char what[16+1];
-	int n, m1, m2;
+	ವರ್ಣ what[16+1];
+	ಪೂರ್ಣಾಙ್ಕ n, m1, m2;
 
-	bzero(m, sizeof(*m));
-	if ((n = sscanf(s, "%16[^:]%*[:]%llu%*[:]%i%*[:]%i",
+	bzero(m, ಪರಿಮಾಣ(*m));
+	ಯದಿ ((n = sscanf(s, "%16[^:]%*[:]%llu%*[:]%i%*[:]%i",
 	    what, &m->offset, &m1, &m2)) < 3)
 		errx(1, "Invalid modification spec \"%s\"", s);
-	if (strcasecmp(what, "xor") == 0) {
-		if (n > 3)
+	ಯದಿ (strcasecmp(what, "xor") == 0) {
+		ಯದಿ (n > 3)
 			errx(1, "Invalid modification spec \"%s\"", s);
-		if (m1 < 0 || m1 > 0xff)
+		ಯದಿ (m1 < 0 || m1 > 0xff)
 			errx(1, "Invalid XOR modification value");
 		m->what = MOD_XOR;
 		m->m1 = m1;
-	} else if (strcasecmp(what, "andor") == 0) {
-		if (n != 4)
+	} ಅನ್ಯಥಾ ಯದಿ (strcasecmp(what, "andor") == 0) {
+		ಯದಿ (n != 4)
 			errx(1, "Invalid modification spec \"%s\"", s);
-		if (m1 < 0 || m1 > 0xff)
+		ಯದಿ (m1 < 0 || m1 > 0xff)
 			errx(1, "Invalid AND modification value");
-		if (m2 < 0 || m2 > 0xff)
+		ಯದಿ (m2 < 0 || m2 > 0xff)
 			errx(1, "Invalid OR modification value");
 		m->what = MOD_AND_OR;
 		m->m1 = m1;
 		m->m2 = m2;
-	} else
+	} ಅನ್ಯಥಾ
 		errx(1, "Invalid modification type \"%s\"", what);
 }
 
-int
-main(int argc, char **argv)
+ಪೂರ್ಣಾಙ್ಕ
+main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv)
 {
-	int ch;
+	ಪೂರ್ಣಾಙ್ಕ ch;
 	u_char buf[8192];
 	size_t total;
 	ssize_t r, s, o;
-	struct modification mods[MAX_MODIFICATIONS];
-	u_int i, wflag = 0, num_mods = 0;
+	ಸಂರಚನಾ modification mods[MAX_MODIFICATIONS];
+	u_int i, wflag = 0, ಅಂಕೆ_mods = 0;
 
-	while ((ch = getopt(argc, argv, "wm:")) != -1) {
-		switch (ch) {
-		case 'm':
-			if (num_mods >= MAX_MODIFICATIONS)
+	ಯಾವತ್ ((ch = getopt(argc, argv, "wm:")) != -1) {
+		ವಿಕಲ್ಪ (ch) {
+		ಪಕ್ಷ 'm':
+			ಯದಿ (ಅಂಕೆ_mods >= MAX_MODIFICATIONS)
 				errx(1, "Too many modifications");
-			parse_modification(optarg, &(mods[num_mods++]));
-			break;
-		case 'w':
+			parse_modification(optarg, &(mods[ಅಂಕೆ_mods++]));
+			ಭಙ್ಗ;
+		ಪಕ್ಷ 'w':
 			wflag = 1;
-			break;
-		default:
+			ಭಙ್ಗ;
+		ಸ್ವಭಾವ:
 			usage();
 			/* NOTREACHED */
 		}
 	}
-	for (total = 0;;) {
-		r = s = read(STDIN_FILENO, buf, sizeof(buf));
-		if (r == 0)
-			break;
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR)
-				continue;
+	ಪ್ರತಿ (total = 0;;) {
+		r = s = ಪಠ(STDIN_FILENO, buf, ಪರಿಮಾಣ(buf));
+		ಯದಿ (r == 0)
+			ಭಙ್ಗ;
+		ಯದಿ (r < 0) {
+			ಯದಿ (errno == EAGAIN || errno == EINTR)
+				ಅನುವರ್ತ;
 			err(1, "read");
 		}
-		for (i = 0; i < num_mods; i++) {
-			if (mods[i].offset < total ||
+		ಪ್ರತಿ (i = 0; i < ಅಂಕೆ_mods; i++) {
+			ಯದಿ (mods[i].offset < total ||
 			    mods[i].offset >= total + s)
-				continue;
-			switch (mods[i].what) {
-			case MOD_XOR:
+				ಅನುವರ್ತ;
+			ವಿಕಲ್ಪ (mods[i].what) {
+			ಪಕ್ಷ MOD_XOR:
 				buf[mods[i].offset - total] ^= mods[i].m1;
-				break;
-			case MOD_AND_OR:
+				ಭಙ್ಗ;
+			ಪಕ್ಷ MOD_AND_OR:
 				buf[mods[i].offset - total] &= mods[i].m1;
 				buf[mods[i].offset - total] |= mods[i].m2;
-				break;
+				ಭಙ್ಗ;
 			}
 		}
-		for (o = 0; o < s; o += r) {
-			r = write(STDOUT_FILENO, buf + o, s - o);
-			if (r == 0)
-				break;
-			if (r < 0) {
-				if (errno == EAGAIN || errno == EINTR)
-					continue;
+		ಪ್ರತಿ (o = 0; o < s; o += r) {
+			r = ಲಿಖ(STDOUT_FILENO, buf + o, s - o);
+			ಯದಿ (r == 0)
+				ಭಙ್ಗ;
+			ಯದಿ (r < 0) {
+				ಯದಿ (errno == EAGAIN || errno == EINTR)
+					ಅನುವರ್ತ;
 				err(1, "write");
 			}
 		}
@@ -140,11 +140,11 @@ main(int argc, char **argv)
 	}
 	/* Warn if modifications not reached in input stream */
 	r = 0;
-	for (i = 0; wflag && i < num_mods; i++) {
-		if (mods[i].offset < total)
-			continue;
+	ಪ್ರತಿ (i = 0; wflag && i < ಅಂಕೆ_mods; i++) {
+		ಯದಿ (mods[i].offset < total)
+			ಅನುವರ್ತ;
 		r = 1;
 		fprintf(stderr, "modpipe: warning - mod %u not reached\n", i);
 	}
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }

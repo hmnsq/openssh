@@ -26,19 +26,19 @@
 #ifndef KEX_H
 #define KEX_H
 
-#include "mac.h"
-#include "crypto_api.h"
+#ಅನ್ತರ್ಭಾವ "mac.h"
+#ಅನ್ತರ್ಭಾವ "crypto_api.h"
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/dh.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#else /* OPENSSL */
-#define BIGNUM		void
-#define DH		void
-#define EC_KEY		void
-#define EC_GROUP	void
+#ಅನ್ತರ್ಭಾವ <openssl/bn.h>
+#ಅನ್ತರ್ಭಾವ <openssl/dh.h>
+#ಅನ್ತರ್ಭಾವ <openssl/ec.h>
+#ಅನ್ತರ್ಭಾವ <openssl/ecdsa.h>
+#ಅನ್ಯಥಾ /* OPENSSL */
+#define BIGNUM		ಶೂನ್ಯ
+#define DH		ಶೂನ್ಯ
+#define EC_ಕೀಲಿ		ಶೂನ್ಯ
+#define EC_GROUP	ಶೂನ್ಯ
 #endif /* WITH_OPENSSL */
 
 #define KEX_COOKIE_LEN	16
@@ -65,9 +65,9 @@
 
 #define CURVE25519_SIZE 32
 
-enum kex_init_proposals {
+ಗಣನಾ kex_init_proposals {
 	PROPOSAL_KEX_ALGS,
-	PROPOSAL_SERVER_HOST_KEY_ALGS,
+	PROPOSAL_SERVER_HOST_ಕೀಲಿ_ALGS,
 	PROPOSAL_ENC_ALGS_CTOS,
 	PROPOSAL_ENC_ALGS_STOC,
 	PROPOSAL_MAC_ALGS_CTOS,
@@ -79,13 +79,13 @@ enum kex_init_proposals {
 	PROPOSAL_MAX
 };
 
-enum kex_modes {
+ಗಣನಾ kex_modes {
 	MODE_IN,
 	MODE_OUT,
 	MODE_MAX
 };
 
-enum kex_exchange {
+ಗಣನಾ kex_exchange {
 	KEX_DH_GRP1_SHA1 = 1,
 	KEX_DH_GRP14_SHA1,
 	KEX_DH_GRP14_SHA256,
@@ -116,184 +116,184 @@ enum kex_exchange {
 #define KEX_NOT_PQ			0
 #define KEX_IS_PQ			1
 
-struct sshenc {
-	char	*name;
-	const struct sshcipher *cipher;
-	int	enabled;
-	u_int	key_len;
+ಸಂರಚನಾ sshenc {
+	ವರ್ಣ	*name;
+	ಧ್ರುವ ಸಂರಚನಾ sshcipher *cipher;
+	ಪೂರ್ಣಾಙ್ಕ	enabled;
+	u_int	ಕೀಲಿ_len;
 	u_int	iv_len;
 	u_int	block_size;
-	u_char	*key;
+	u_char	*ಕೀಲಿ;
 	u_char	*iv;
 };
-struct sshcomp {
+ಸಂರಚನಾ sshcomp {
 	u_int	type;
-	int	enabled;
-	char	*name;
+	ಪೂರ್ಣಾಙ್ಕ	enabled;
+	ವರ್ಣ	*name;
 };
-struct newkeys {
-	struct sshenc	enc;
-	struct sshmac	mac;
-	struct sshcomp  comp;
+ಸಂರಚನಾ newkeys {
+	ಸಂರಚನಾ sshenc	enc;
+	ಸಂರಚನಾ sshmac	mac;
+	ಸಂರಚನಾ sshcomp  comp;
 };
 
-struct ssh;
-struct sshbuf;
+ಸಂರಚನಾ ssh;
+ಸಂರಚನಾ sshbuf;
 
-struct kex {
-	struct newkeys	*newkeys[MODE_MAX];
+ಸಂರಚನಾ kex {
+	ಸಂರಚನಾ newkeys	*newkeys[MODE_MAX];
 	u_int	we_need;
 	u_int	dh_need;
-	int	server;
-	char	*name;
-	char	*hostkey_alg;
-	int	hostkey_type;
-	int	hostkey_nid;
+	ಪೂರ್ಣಾಙ್ಕ	server;
+	ವರ್ಣ	*name;
+	ವರ್ಣ	*hostkey_alg;
+	ಪೂರ್ಣಾಙ್ಕ	hostkey_type;
+	ಪೂರ್ಣಾಙ್ಕ	hostkey_nid;
 	u_int	kex_type;
-	char	*server_sig_algs;
-	int	ext_info_c;
-	int	ext_info_s;
-	int	kex_strict;
-	int	ext_info_received;
-	struct sshbuf *my;
-	struct sshbuf *peer;
-	struct sshbuf *client_version;
-	struct sshbuf *server_version;
-	struct sshbuf *session_id;
-	struct sshbuf *initial_sig;
-	struct sshkey *initial_hostkey;
+	ವರ್ಣ	*server_sig_algs;
+	ಪೂರ್ಣಾಙ್ಕ	ext_info_c;
+	ಪೂರ್ಣಾಙ್ಕ	ext_info_s;
+	ಪೂರ್ಣಾಙ್ಕ	kex_strict;
+	ಪೂರ್ಣಾಙ್ಕ	ext_info_received;
+	ಸಂರಚನಾ sshbuf *my;
+	ಸಂರಚನಾ sshbuf *peer;
+	ಸಂರಚನಾ sshbuf *client_version;
+	ಸಂರಚನಾ sshbuf *server_version;
+	ಸಂರಚನಾ sshbuf *session_id;
+	ಸಂರಚನಾ sshbuf *initial_sig;
+	ಸಂರಚನಾ sshkey *initial_hostkey;
 	sig_atomic_t done;
 	u_int	flags;
 	u_int	warn_weak_crypto;
 	u_int	pq_kex_negotiated;
 	u_int	non_pq_kex_warned;
-	int	hash_alg;
-	int	ec_nid;
-	char	*failed_choice;
-	int	(*verify_host_key)(struct sshkey *, struct ssh *);
-	struct sshkey *(*load_host_public_key)(int, int, struct ssh *);
-	struct sshkey *(*load_host_private_key)(int, int, struct ssh *);
-	int	(*host_key_index)(struct sshkey *, int, struct ssh *);
-	int	(*sign)(struct ssh *, struct sshkey *, struct sshkey *,
-	    u_char **, size_t *, const u_char *, size_t, const char *);
-	int	(*kex[KEX_MAX])(struct ssh *);
+	ಪೂರ್ಣಾಙ್ಕ	hash_alg;
+	ಪೂರ್ಣಾಙ್ಕ	ec_nid;
+	ವರ್ಣ	*failed_choice;
+	ಪೂರ್ಣಾಙ್ಕ	(*verify_host_ಕೀಲಿ)(ಸಂರಚನಾ sshkey *, ಸಂರಚನಾ ssh *);
+	ಸಂರಚನಾ sshkey *(*load_host_public_ಕೀಲಿ)(ಪೂರ್ಣಾಙ್ಕ, ಪೂರ್ಣಾಙ್ಕ, ಸಂರಚನಾ ssh *);
+	ಸಂರಚನಾ sshkey *(*load_host_private_ಕೀಲಿ)(ಪೂರ್ಣಾಙ್ಕ, ಪೂರ್ಣಾಙ್ಕ, ಸಂರಚನಾ ssh *);
+	ಪೂರ್ಣಾಙ್ಕ	(*host_ಕೀಲಿ_index)(ಸಂರಚನಾ sshkey *, ಪೂರ್ಣಾಙ್ಕ, ಸಂರಚನಾ ssh *);
+	ಪೂರ್ಣಾಙ್ಕ	(*sign)(ಸಂರಚನಾ ssh *, ಸಂರಚನಾ sshkey *, ಸಂರಚನಾ sshkey *,
+	    u_char **, size_t *, ಧ್ರುವ u_char *, size_t, ಧ್ರುವ ವರ್ಣ *);
+	ಪೂರ್ಣಾಙ್ಕ	(*kex[KEX_MAX])(ಸಂರಚನಾ ssh *);
 	/* kex specific state */
 	DH	*dh;			/* DH */
 	u_int	min, max, nbits;	/* GEX */
-	EC_KEY	*ec_client_key;		/* ECDH */
-	const EC_GROUP *ec_group;	/* ECDH */
-	u_char c25519_client_key[CURVE25519_SIZE]; /* 25519 + KEM */
+	EC_ಕೀಲಿ	*ec_client_ಕೀಲಿ;		/* ECDH */
+	ಧ್ರುವ EC_GROUP *ec_group;	/* ECDH */
+	u_char c25519_client_ಕೀಲಿ[CURVE25519_SIZE]; /* 25519 + KEM */
 	u_char c25519_client_pubkey[CURVE25519_SIZE]; /* 25519 */
-	u_char sntrup761_client_key[crypto_kem_sntrup761_SECRETKEYBYTES]; /* KEM */
-	u_char mlkem768_client_key[crypto_kem_mlkem768_SECRETKEYBYTES]; /* KEM */
-	struct sshbuf *client_pub;
+	u_char sntrup761_client_ಕೀಲಿ[crypto_kem_sntrup761_SECRETKEYBYTES]; /* KEM */
+	u_char mlkem768_client_ಕೀಲಿ[crypto_kem_mlkem768_SECRETKEYBYTES]; /* KEM */
+	ಸಂರಚನಾ sshbuf *client_pub;
 };
 
-int	 kex_name_valid(const char *);
-u_int	 kex_type_from_name(const char *);
-int	 kex_hash_from_name(const char *);
-int	 kex_nid_from_name(const char *);
-int	 kex_is_pq_from_name(const char *);
-int	 kex_names_valid(const char *);
-char	*kex_alg_list(char);
-char	*kex_names_cat(const char *, const char *);
-int	 kex_has_any_alg(const char *, const char *);
-int	 kex_assemble_names(char **, const char *, const char *);
-void	 kex_proposal_populate_entries(struct ssh *, char *prop[PROPOSAL_MAX],
-    const char *, const char *, const char *, const char *, const char *);
-void	 kex_proposal_free_entries(char *prop[PROPOSAL_MAX]);
+ಪೂರ್ಣಾಙ್ಕ	 kex_name_valid(ಧ್ರುವ ವರ್ಣ *);
+u_int	 kex_type_from_name(ಧ್ರುವ ವರ್ಣ *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_hash_from_name(ಧ್ರುವ ವರ್ಣ *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_nid_from_name(ಧ್ರುವ ವರ್ಣ *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_is_pq_from_name(ಧ್ರುವ ವರ್ಣ *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_names_valid(ಧ್ರುವ ವರ್ಣ *);
+ವರ್ಣ	*kex_alg_list(ವರ್ಣ);
+ವರ್ಣ	*kex_names_cat(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_has_any_alg(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_assemble_names(ವರ್ಣ **, ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
+ಶೂನ್ಯ	 kex_proposal_populate_entries(ಸಂರಚನಾ ssh *, ವರ್ಣ *prop[PROPOSAL_MAX],
+    ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
+ಶೂನ್ಯ	 kex_proposal_free_entries(ವರ್ಣ *prop[PROPOSAL_MAX]);
 
-int	 kex_exchange_identification(struct ssh *, int, const char *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_exchange_identification(ಸಂರಚನಾ ssh *, ಪೂರ್ಣಾಙ್ಕ, ಧ್ರುವ ವರ್ಣ *);
 
-struct kex *kex_new(void);
-int	 kex_ready(struct ssh *, char *[PROPOSAL_MAX]);
-int	 kex_setup(struct ssh *, char *[PROPOSAL_MAX]);
-void	 kex_free_newkeys(struct newkeys *);
-void	 kex_free(struct kex *);
+ಸಂರಚನಾ kex *kex_new(ಶೂನ್ಯ);
+ಪೂರ್ಣಾಙ್ಕ	 kex_ready(ಸಂರಚನಾ ssh *, ವರ್ಣ *[PROPOSAL_MAX]);
+ಪೂರ್ಣಾಙ್ಕ	 kex_setup(ಸಂರಚನಾ ssh *, ವರ್ಣ *[PROPOSAL_MAX]);
+ಶೂನ್ಯ	 kex_free_newkeys(ಸಂರಚನಾ newkeys *);
+ಶೂನ್ಯ	 kex_free(ಸಂರಚನಾ kex *);
 
-int	 kex_buf2prop(struct sshbuf *, int *, char ***);
-int	 kex_prop2buf(struct sshbuf *, char *proposal[PROPOSAL_MAX]);
-void	 kex_prop_free(char **);
-int	 kex_load_hostkey(struct ssh *, struct sshkey **, struct sshkey **);
-int	 kex_verify_host_key(struct ssh *, struct sshkey *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_buf2prop(ಸಂರಚನಾ sshbuf *, ಪೂರ್ಣಾಙ್ಕ *, ವರ್ಣ ***);
+ಪೂರ್ಣಾಙ್ಕ	 kex_prop2buf(ಸಂರಚನಾ sshbuf *, ವರ್ಣ *proposal[PROPOSAL_MAX]);
+ಶೂನ್ಯ	 kex_prop_free(ವರ್ಣ **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_load_hostkey(ಸಂರಚನಾ ssh *, ಸಂರಚನಾ sshkey **, ಸಂರಚನಾ sshkey **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_verify_host_ಕೀಲಿ(ಸಂರಚನಾ ssh *, ಸಂರಚನಾ sshkey *);
 
-int	 kex_send_kexinit(struct ssh *);
-int	 kex_input_kexinit(int, uint32_t, struct ssh *);
-int	 kex_input_ext_info(int, uint32_t, struct ssh *);
-int	 kex_protocol_error(int, uint32_t, struct ssh *);
-int	 kex_derive_keys(struct ssh *, u_char *, u_int, const struct sshbuf *);
-int	 kex_send_newkeys(struct ssh *);
-int	 kex_start_rekex(struct ssh *);
-int	 kex_server_update_ext_info(struct ssh *);
-void	 kex_set_server_sig_algs(struct ssh *, const char *);
-void	 kex_set_warn_weak_crypto(struct ssh *, int);
-void	 kex_check_warn_weak_crypto(struct ssh *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_send_kexinit(ಸಂರಚನಾ ssh *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_ಒಳಹರಿವು_kexinit(ಪೂರ್ಣಾಙ್ಕ, uint32_t, ಸಂರಚನಾ ssh *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_ಒಳಹರಿವು_ext_info(ಪೂರ್ಣಾಙ್ಕ, uint32_t, ಸಂರಚನಾ ssh *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_protocol_error(ಪೂರ್ಣಾಙ್ಕ, uint32_t, ಸಂರಚನಾ ssh *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_derive_ಕೀಲಿಗಳು(ಸಂರಚನಾ ssh *, u_char *, u_int, ಧ್ರುವ ಸಂರಚನಾ sshbuf *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_send_newkeys(ಸಂರಚನಾ ssh *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_start_rekex(ಸಂರಚನಾ ssh *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_server_update_ext_info(ಸಂರಚನಾ ssh *);
+ಶೂನ್ಯ	 kex_set_server_sig_algs(ಸಂರಚನಾ ssh *, ಧ್ರುವ ವರ್ಣ *);
+ಶೂನ್ಯ	 kex_set_warn_weak_crypto(ಸಂರಚನಾ ssh *, ಪೂರ್ಣಾಙ್ಕ);
+ಶೂನ್ಯ	 kex_check_warn_weak_crypto(ಸಂರಚನಾ ssh *);
 
-int	 kexgex_client(struct ssh *);
-int	 kexgex_server(struct ssh *);
-int	 kex_gen_client(struct ssh *);
-int	 kex_gen_server(struct ssh *);
+ಪೂರ್ಣಾಙ್ಕ	 kexgex_client(ಸಂರಚನಾ ssh *);
+ಪೂರ್ಣಾಙ್ಕ	 kexgex_server(ಸಂರಚನಾ ssh *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_gen_client(ಸಂರಚನಾ ssh *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_gen_server(ಸಂರಚನಾ ssh *);
 
-int	 kex_dh_keypair(struct kex *);
-int	 kex_dh_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
-    struct sshbuf **);
-int	 kex_dh_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_dh_keypair(ಸಂರಚನಾ kex *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_dh_enc(ಸಂರಚನಾ kex *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *, ಸಂರಚನಾ sshbuf **,
+    ಸಂರಚನಾ sshbuf **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_dh_dec(ಸಂರಚನಾ kex *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *, ಸಂರಚನಾ sshbuf **);
 
-int	 kex_ecdh_dec_key_group(struct kex *, const struct sshbuf *, EC_KEY *key,
-	    const EC_GROUP *, int, struct sshbuf **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_ecdh_dec_ಕೀಲಿ_group(ಸಂರಚನಾ kex *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *, EC_ಕೀಲಿ *ಕೀಲಿ,
+	    ಧ್ರುವ EC_GROUP *, ಪೂರ್ಣಾಙ್ಕ, ಸಂರಚನಾ sshbuf **);
 
-int	 kex_ecdh_keypair(struct kex *);
-int	 kex_ecdh_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
-    struct sshbuf **);
-int	 kex_ecdh_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_ecdh_keypair(ಸಂರಚನಾ kex *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_ecdh_enc(ಸಂರಚನಾ kex *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *, ಸಂರಚನಾ sshbuf **,
+    ಸಂರಚನಾ sshbuf **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_ecdh_dec(ಸಂರಚನಾ kex *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *, ಸಂರಚನಾ sshbuf **);
 
-int	 kex_c25519_keypair(struct kex *);
-int	 kex_c25519_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
-    struct sshbuf **);
-int	 kex_c25519_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_c25519_keypair(ಸಂರಚನಾ kex *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_c25519_enc(ಸಂರಚನಾ kex *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *, ಸಂರಚನಾ sshbuf **,
+    ಸಂರಚನಾ sshbuf **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_c25519_dec(ಸಂರಚನಾ kex *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *, ಸಂರಚನಾ sshbuf **);
 
-int	 kex_kem_sntrup761x25519_keypair(struct kex *);
-int	 kex_kem_sntrup761x25519_enc(struct kex *, const struct sshbuf *,
-    struct sshbuf **, struct sshbuf **);
-int	 kex_kem_sntrup761x25519_dec(struct kex *, const struct sshbuf *,
-    struct sshbuf **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_kem_sntrup761x25519_keypair(ಸಂರಚನಾ kex *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_kem_sntrup761x25519_enc(ಸಂರಚನಾ kex *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *,
+    ಸಂರಚನಾ sshbuf **, ಸಂರಚನಾ sshbuf **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_kem_sntrup761x25519_dec(ಸಂರಚನಾ kex *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *,
+    ಸಂರಚನಾ sshbuf **);
 
-int	 kex_kem_mlkem768x25519_keypair(struct kex *);
-int	 kex_kem_mlkem768x25519_enc(struct kex *, const struct sshbuf *,
-    struct sshbuf **, struct sshbuf **);
-int	 kex_kem_mlkem768x25519_dec(struct kex *, const struct sshbuf *,
-    struct sshbuf **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_kem_mlkem768x25519_keypair(ಸಂರಚನಾ kex *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_kem_mlkem768x25519_enc(ಸಂರಚನಾ kex *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *,
+    ಸಂರಚನಾ sshbuf **, ಸಂರಚನಾ sshbuf **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_kem_mlkem768x25519_dec(ಸಂರಚನಾ kex *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *,
+    ಸಂರಚನಾ sshbuf **);
 
-int	 kex_kem_mlkem768ecdh_keypair(struct kex *);
-int	 kex_kem_mlkem768ecdh_enc(struct kex *, const struct sshbuf *,
-    struct sshbuf **, struct sshbuf **);
-int	 kex_kem_mlkem768ecdh_dec(struct kex *, const struct sshbuf *,
-    struct sshbuf **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_kem_mlkem768ecdh_keypair(ಸಂರಚನಾ kex *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_kem_mlkem768ecdh_enc(ಸಂರಚನಾ kex *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *,
+    ಸಂರಚನಾ sshbuf **, ಸಂರಚನಾ sshbuf **);
+ಪೂರ್ಣಾಙ್ಕ	 kex_kem_mlkem768ecdh_dec(ಸಂರಚನಾ kex *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *,
+    ಸಂರಚನಾ sshbuf **);
 
-int	 kex_dh_keygen(struct kex *);
-int	 kex_dh_compute_key(struct kex *, BIGNUM *, struct sshbuf *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_dh_keygen(ಸಂರಚನಾ kex *);
+ಪೂರ್ಣಾಙ್ಕ	 kex_dh_compute_ಕೀಲಿ(ಸಂರಚನಾ kex *, BIGNUM *, ಸಂರಚನಾ sshbuf *);
 
-int	 kexgex_hash(int, const struct sshbuf *, const struct sshbuf *,
-    const struct sshbuf *, const struct sshbuf *, const struct sshbuf *,
-    int, int, int,
-    const BIGNUM *, const BIGNUM *, const BIGNUM *,
-    const BIGNUM *, const u_char *, size_t,
+ಪೂರ್ಣಾಙ್ಕ	 kexgex_hash(ಪೂರ್ಣಾಙ್ಕ, ಧ್ರುವ ಸಂರಚನಾ sshbuf *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *,
+    ಧ್ರುವ ಸಂರಚನಾ sshbuf *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *, ಧ್ರುವ ಸಂರಚನಾ sshbuf *,
+    ಪೂರ್ಣಾಙ್ಕ, ಪೂರ್ಣಾಙ್ಕ, ಪೂರ್ಣಾಙ್ಕ,
+    ಧ್ರುವ BIGNUM *, ಧ್ರುವ BIGNUM *, ಧ್ರುವ BIGNUM *,
+    ಧ್ರುವ BIGNUM *, ಧ್ರುವ u_char *, size_t,
     u_char *, size_t *);
 
-void	kexc25519_keygen(u_char key[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
+ಶೂನ್ಯ	kexc25519_keygen(u_char ಕೀಲಿ[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
-int	kexc25519_shared_key(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out)
+ಪೂರ್ಣಾಙ್ಕ	kexc25519_shared_ಕೀಲಿ(ಧ್ರುವ u_char ಕೀಲಿ[CURVE25519_SIZE],
+    ಧ್ರುವ u_char pub[CURVE25519_SIZE], ಸಂರಚನಾ sshbuf *out)
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
-int	kexc25519_shared_key_ext(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out, int)
+ಪೂರ್ಣಾಙ್ಕ	kexc25519_shared_ಕೀಲಿ_ext(ಧ್ರುವ u_char ಕೀಲಿ[CURVE25519_SIZE],
+    ಧ್ರುವ u_char pub[CURVE25519_SIZE], ಸಂರಚನಾ sshbuf *out, ಪೂರ್ಣಾಙ್ಕ)
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
 
-#if defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
-void	dump_digest(const char *, const u_char *, int);
+#ಯದಿ defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
+ಶೂನ್ಯ	dump_digest(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ u_char *, ಪೂರ್ಣಾಙ್ಕ);
 #endif
 
 #endif

@@ -16,43 +16,43 @@
 
 /* $OpenBSD$ */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 #ifdef HAVE_SYS_STATVFS_H
 # include <sys/statvfs.h>
 #endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
 
-static void
-usage(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+usage(ಶೂನ್ಯ)
 {
 	fprintf(stderr, "check-setuid [path]\n");
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+ಪೂರ್ಣಾಙ್ಕ
+main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv)
 {
-	const char *path = ".";
-	struct statvfs sb;
+	ಧ್ರುವ ವರ್ಣ *path = ".";
+	ಸಂರಚನಾ statvfs sb;
 
-	if (argc > 2)
+	ಯದಿ (argc > 2)
 		usage();
-	else if (argc == 2)
+	ಅನ್ಯಥಾ ಯದಿ (argc == 2)
 		path = argv[1];
 
-	if (statvfs(path, &sb) != 0) {
+	ಯದಿ (statvfs(path, &sb) != 0) {
 		/* Don't return an error if the host doesn't support statvfs */
-		if (errno == ENOSYS)
-			return 0;
+		ಯದಿ (errno == ENOSYS)
+			ಪ್ರತ್ಯಾಗಮ 0;
 		fprintf(stderr, "statvfs for \"%s\" failed: %s\n",
 		     path, strerror(errno));
 	}
-	return (sb.f_flag & ST_NOSUID) ? 1 : 0;
+	ಪ್ರತ್ಯಾಗಮ (sb.f_flag & ST_NOSUID) ? 1 : 0;
 }
 
 

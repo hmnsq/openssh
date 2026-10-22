@@ -5,142 +5,142 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/err.h>
-#include <openssl/evp.h>
-#include <openssl/crypto.h>
+#ಅನ್ತರ್ಭಾವ <openssl/err.h>
+#ಅನ್ತರ್ಭಾವ <openssl/evp.h>
+#ಅನ್ತರ್ಭಾವ <openssl/crypto.h>
 #endif
 
-#include "ssherr.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "sshsig.h"
-#include "log.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "authfile.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "sshsig.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
 
-#include "../test_helper/test_helper.h"
+#ಅನ್ತರ್ಭಾವ "../test_helper/test_helper.h"
 
-static struct sshbuf *
-load_file(const char *name)
+ಸ್ಥಿರ ಸಂರಚನಾ sshbuf *
+load_file(ಧ್ರುವ ವರ್ಣ *name)
 {
-	struct sshbuf *ret = NULL;
+	ಸಂರಚನಾ sshbuf *ret = ರಿಕ್ತ;
 
 	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_PTR_NE(ret, ರಿಕ್ತ);
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-static struct sshkey *
-load_key(const char *name)
+ಸ್ಥಿರ ಸಂರಚನಾ sshkey *
+load_ಕೀಲಿ(ಧ್ರುವ ವರ್ಣ *name)
 {
-	struct sshkey *ret = NULL;
-	ASSERT_INT_EQ(sshkey_load_public(test_data_file(name), &ret, NULL), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ಸಂರಚನಾ sshkey *ret = ರಿಕ್ತ;
+	ASSERT_INT_EQ(sshkey_load_public(test_data_file(name), &ret, ರಿಕ್ತ), 0);
+	ASSERT_PTR_NE(ret, ರಿಕ್ತ);
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-static void
-check_sig(const char *keyname, const char *signame, const struct sshbuf *msg,
-    const char *namespace)
+ಸ್ಥಿರ ಶೂನ್ಯ
+check_sig(ಧ್ರುವ ವರ್ಣ *keyname, ಧ್ರುವ ವರ್ಣ *signame, ಧ್ರುವ ಸಂರಚನಾ sshbuf *ಸಂದೇಶ,
+    ಧ್ರುವ ವರ್ಣ *namespace)
 {
-	struct sshkey *k, *sign_key;
-	struct sshbuf *sig, *rawsig;
-	struct sshkey_sig_details *sig_details;
+	ಸಂರಚನಾ sshkey *k, *sign_ಕೀಲಿ;
+	ಸಂರಚನಾ sshbuf *sig, *rawsig;
+	ಸಂರಚನಾ sshkey_sig_details *sig_details;
 
-	k = load_key(keyname);
+	k = load_ಕೀಲಿ(keyname);
 	sig = load_file(signame);
-	sign_key = NULL;
-	sig_details = NULL;
-	rawsig = NULL;
+	sign_ಕೀಲಿ = ರಿಕ್ತ;
+	sig_details = ರಿಕ್ತ;
+	rawsig = ರಿಕ್ತ;
 	ASSERT_INT_EQ(sshsig_dearmor(sig, &rawsig), 0);
-	ASSERT_INT_EQ(sshsig_verifyb(rawsig, msg, namespace,
-	    &sign_key, &sig_details), 0);
-	ASSERT_INT_EQ(sshkey_equal(k, sign_key), 1);
+	ASSERT_INT_EQ(sshsig_verifyb(rawsig, ಸಂದೇಶ, namespace,
+	    &sign_ಕೀಲಿ, &sig_details), 0);
+	ASSERT_INT_EQ(sshkey_equal(k, sign_ಕೀಲಿ), 1);
 	sshkey_free(k);
-	sshkey_free(sign_key);
+	sshkey_free(sign_ಕೀಲಿ);
 	sshkey_sig_details_free(sig_details);
 	sshbuf_free(sig);
 	sshbuf_free(rawsig);
 }
 
-void
-tests(void)
+ಶೂನ್ಯ
+tests(ಶೂನ್ಯ)
 {
-	struct sshbuf *msg;
-	char *namespace;
+	ಸಂರಚನಾ sshbuf *ಸಂದೇಶ;
+	ವರ್ಣ *namespace;
 
-#if 0
+#ಯದಿ 0
         log_init("test_sshsig", SYSLOG_LEVEL_DEBUG3, SYSLOG_FACILITY_AUTH, 1);
 #endif
 
 #ifdef WITH_OPENSSL
 	OpenSSL_add_all_algorithms();
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
+	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, ರಿಕ್ತ);
 #endif
 
 	TEST_START("load data");
-	msg = load_file("namespace");
-	namespace = sshbuf_dup_string(msg);
-	ASSERT_PTR_NE(namespace, NULL);
-	sshbuf_free(msg);
-	msg = load_file("signed-data");
+	ಸಂದೇಶ = load_file("namespace");
+	namespace = sshbuf_dup_string(ಸಂದೇಶ);
+	ASSERT_PTR_NE(namespace, ರಿಕ್ತ);
+	sshbuf_free(ಸಂದೇಶ);
+	ಸಂದೇಶ = load_file("signed-data");
 	TEST_DONE();
 
 #ifdef WITH_OPENSSL
 	TEST_START("check RSA signature");
-	check_sig("rsa.pub", "rsa.sig", msg, namespace);
+	check_sig("rsa.pub", "rsa.sig", ಸಂದೇಶ, namespace);
 	TEST_DONE();
 
 
 	TEST_START("check ECDSA signature");
-	check_sig("ecdsa.pub", "ecdsa.sig", msg, namespace);
+	check_sig("ecdsa.pub", "ecdsa.sig", ಸಂದೇಶ, namespace);
 	TEST_DONE();
 #endif
 
 	TEST_START("check ED25519 signature");
-	check_sig("ed25519.pub", "ed25519.sig", msg, namespace);
+	check_sig("ed25519.pub", "ed25519.sig", ಸಂದೇಶ, namespace);
 	TEST_DONE();
 
 	TEST_START("check MLDSA44-ED25519 signature");
-	check_sig("mldsa44-ed25519.pub", "mldsa44-ed25519.sig", msg, namespace);
+	check_sig("mldsa44-ed25519.pub", "mldsa44-ed25519.sig", ಸಂದೇಶ, namespace);
 	TEST_DONE();
 
 #ifdef ENABLE_SK
-#if defined(WITH_OPENSSL)
+#ಯದಿ defined(WITH_OPENSSL)
 	TEST_START("check ECDSA-SK signature");
-	check_sig("ecdsa_sk.pub", "ecdsa_sk.sig", msg, namespace);
+	check_sig("ecdsa_sk.pub", "ecdsa_sk.sig", ಸಂದೇಶ, namespace);
 	TEST_DONE();
 #endif
 
 	TEST_START("check ED25519-SK signature");
-	check_sig("ed25519_sk.pub", "ed25519_sk.sig", msg, namespace);
+	check_sig("ed25519_sk.pub", "ed25519_sk.sig", ಸಂದೇಶ, namespace);
 	TEST_DONE();
 
-#if defined(WITH_OPENSSL)
+#ಯದಿ defined(WITH_OPENSSL)
 	TEST_START("check ECDSA-SK webauthn signature");
 	check_sig("ecdsa_sk_webauthn.pub", "ecdsa_sk_webauthn.sig",
-	    msg, namespace);
+	    ಸಂದೇಶ, namespace);
 	TEST_DONE();
 #endif
 #endif /* ENABLE_SK */
 
-	sshbuf_free(msg);
-	free(namespace);
+	sshbuf_free(ಸಂದೇಶ);
+	ಮುಕ್ತ(namespace);
 }
 
-void
-benchmarks(void)
+ಶೂನ್ಯ
+benchmarks(ಶೂನ್ಯ)
 {
 	printf("no benchmarks\n");
 }

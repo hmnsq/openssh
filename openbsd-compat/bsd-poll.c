@@ -14,11 +14,11 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
-#if !defined(HAVE_PPOLL) || !defined(HAVE_POLL) || defined(BROKEN_POLL)
+#ಅನ್ತರ್ಭಾವ "includes.h"
+#ಯದಿ !defined(HAVE_PPOLL) || !defined(HAVE_POLL) || defined(BROKEN_POLL)
 
-#include <sys/types.h>
-#include <sys/time.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/time.h>
 #ifdef HAVE_SYS_PARAM_H
 # include <sys/param.h>
 #endif
@@ -26,13 +26,13 @@
 # include <sys/select.h>
 #endif
 
-#include <errno.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include "bsd-poll.h"
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ "bsd-poll.h"
 
-#if !defined(HAVE_PPOLL) || defined(BROKEN_POLL)
+#ಯದಿ !defined(HAVE_PPOLL) || defined(BROKEN_POLL)
 /*
  * A minimal implementation of ppoll(2), built on top of pselect(2).
  *
@@ -42,19 +42,19 @@
  * Supports pfd.fd = -1 meaning "unused" although it's not standard.
  */
 
-int
-ppoll(struct pollfd *fds, nfds_t nfds, const struct timespec *tmoutp,
-    const sigset_t *sigmask)
+ಪೂರ್ಣಾಙ್ಕ
+ppoll(ಸಂರಚನಾ pollfd *fds, nfds_t nfds, ಧ್ರುವ ಸಂರಚನಾ timespec *tmoutp,
+    ಧ್ರುವ sigset_t *sigmask)
 {
 	nfds_t i;
-	int ret, fd, maxfd = 0;
+	ಪೂರ್ಣಾಙ್ಕ ret, fd, maxfd = 0;
 	fd_set readfds, writefds, exceptfds;
 
-	for (i = 0; i < nfds; i++) {
+	ಪ್ರತಿ (i = 0; i < nfds; i++) {
 		fd = fds[i].fd;
-		if (fd != -1 && fd >= FD_SETSIZE) {
+		ಯದಿ (fd != -1 && fd >= FD_SETSIZE) {
 			errno = EINVAL;
-			return -1;
+			ಪ್ರತ್ಯಾಗಮ -1;
 		}
 		maxfd = MAX(maxfd, fd);
 	}
@@ -63,52 +63,52 @@ ppoll(struct pollfd *fds, nfds_t nfds, const struct timespec *tmoutp,
 	FD_ZERO(&readfds);
 	FD_ZERO(&writefds);
 	FD_ZERO(&exceptfds);
-	for (i = 0; i < nfds; i++) {
+	ಪ್ರತಿ (i = 0; i < nfds; i++) {
 		fd = fds[i].fd;
-		if (fd == -1)
-			continue;
-		if (fds[i].events & POLLIN)
+		ಯದಿ (fd == -1)
+			ಅನುವರ್ತ;
+		ಯದಿ (fds[i].events & POLLIN)
 			FD_SET(fd, &readfds);
-		if (fds[i].events & POLLOUT)
+		ಯದಿ (fds[i].events & POLLOUT)
 			FD_SET(fd, &writefds);
-		if (fds[i].events & POLLPRI)
+		ಯದಿ (fds[i].events & POLLPRI)
 			FD_SET(fd, &exceptfds);
 	}
 
 	ret = pselect(maxfd + 1, &readfds, &writefds, &exceptfds, tmoutp, sigmask);
 
 	/* scan through select results and set poll() flags */
-	for (i = 0; i < nfds; i++) {
+	ಪ್ರತಿ (i = 0; i < nfds; i++) {
 		fd = fds[i].fd;
 		fds[i].revents = 0;
-		if (fd == -1)
-			continue;
-		if ((fds[i].events & POLLIN) && FD_ISSET(fd, &readfds))
+		ಯದಿ (fd == -1)
+			ಅನುವರ್ತ;
+		ಯದಿ ((fds[i].events & POLLIN) && FD_ISSET(fd, &readfds))
 			fds[i].revents |= POLLIN;
-		if ((fds[i].events & POLLOUT) && FD_ISSET(fd, &writefds))
+		ಯದಿ ((fds[i].events & POLLOUT) && FD_ISSET(fd, &writefds))
 			fds[i].revents |= POLLOUT;
-		if ((fds[i].events & POLLPRI) && FD_ISSET(fd, &exceptfds))
+		ಯದಿ ((fds[i].events & POLLPRI) && FD_ISSET(fd, &exceptfds))
 			fds[i].revents |= POLLPRI;
 	}
 
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 #endif /* !HAVE_PPOLL || BROKEN_POLL */
 
-#if !defined(HAVE_POLL) || defined(BROKEN_POLL)
-int
-poll(struct pollfd *fds, nfds_t nfds, int timeout)
+#ಯದಿ !defined(HAVE_POLL) || defined(BROKEN_POLL)
+ಪೂರ್ಣಾಙ್ಕ
+poll(ಸಂರಚನಾ pollfd *fds, nfds_t nfds, ಪೂರ್ಣಾಙ್ಕ timeout)
 {
-	struct timespec ts, *tsp = NULL;
+	ಸಂರಚನಾ timespec ts, *tsp = ರಿಕ್ತ;
 
 	/* poll timeout is msec, ppoll is timespec (sec + nsec) */
-	if (timeout >= 0) {
+	ಯದಿ (timeout >= 0) {
 		ts.tv_sec = timeout / 1000;
 		ts.tv_nsec = (timeout % 1000) * 1000000;
 		tsp = &ts;
 	}
 
-	return ppoll(fds, nfds, tsp, NULL);
+	ಪ್ರತ್ಯಾಗಮ ppoll(fds, nfds, tsp, ರಿಕ್ತ);
 }
 #endif /* !HAVE_POLL || BROKEN_POLL */
 

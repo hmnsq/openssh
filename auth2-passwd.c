@@ -23,54 +23,54 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
-#include "packet.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
+#ಅನ್ತರ್ಭಾವ "packet.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "hostfile.h"
+#ಅನ್ತರ್ಭಾವ "auth.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#ಅನ್ತರ್ಭಾವ "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
-#include "misc.h"
-#include "servconf.h"
+#ಅನ್ತರ್ಭಾವ "monitor_wrap.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "servconf.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_passwd;
+ಬಾಹ್ಯ ServerOptions options;
+ಬಾಹ್ಯ ಸಂರಚನಾ authmethod_cfg methodcfg_passwd;
 
-static int
-userauth_passwd(struct ssh *ssh, const char *method)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+userauth_passwd(ಸಂರಚನಾ ssh *ssh, ಧ್ರುವ ವರ್ಣ *method)
 {
-	char *password = NULL;
-	int authenticated = 0, r;
+	ವರ್ಣ *password = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ authenticated = 0, r;
 	u_char change;
 	size_t len = 0;
 
-	if ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
+	ಯದಿ ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &password, &len)) != 0 ||
-	    (change && (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0) ||
+	    (change && (r = sshpkt_get_cstring(ssh, ರಿಕ್ತ, ರಿಕ್ತ)) != 0) ||
 	    (r = sshpkt_get_end(ssh)) != 0) {
 		freezero(password, len);
 		fatal_fr(r, "parse packet");
 	}
 
-	if (change)
+	ಯದಿ (change)
 		logit("password change not supported");
-	else if (mm_auth_password(ssh, password) == 1)
+	ಅನ್ಯಥಾ ಯದಿ (mm_auth_password(ssh, password) == 1)
 		authenticated = 1;
 	freezero(password, len);
-	return authenticated;
+	ಪ್ರತ್ಯಾಗಮ authenticated;
 }
 
 Authmethod method_passwd = {

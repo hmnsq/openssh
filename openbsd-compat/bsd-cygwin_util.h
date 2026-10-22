@@ -35,30 +35,30 @@
 #undef ERROR
 
 /* Avoid including windows headers. */
-typedef void *HANDLE;
-#define INVALID_HANDLE_VALUE ((HANDLE) -1)
+ಪ್ರಕಾರನಿರ್ದೇಶ ಶೂನ್ಯ *HANDLE;
+#define INVALID_HANDLE_ಮೌಲ್ಯ ((HANDLE) -1)
 #define DNLEN 16
 #define UNLEN 256
 
 /* Cygwin functions for which declarations are only available when including
    windows headers, so we have to define them here explicitly. */
-extern HANDLE cygwin_logon_user (const struct passwd *, const char *);
-extern void cygwin_set_impersonation_token (const HANDLE);
+ಬಾಹ್ಯ HANDLE cygwin_logon_user (ಧ್ರುವ ಸಂರಚನಾ passwd *, ಧ್ರುವ ವರ್ಣ *);
+ಬಾಹ್ಯ ಶೂನ್ಯ cygwin_set_impersonation_token (ಧ್ರುವ HANDLE);
 
-#include <sys/cygwin.h>
-#include <io.h>
+#ಅನ್ತರ್ಭಾವ <sys/cygwin.h>
+#ಅನ್ತರ್ಭಾವ <io.h>
 
 #define CYGWIN_SSH_PRIVSEP_USER (cygwin_ssh_privsep_user())
-const char *cygwin_ssh_privsep_user();
+ಧ್ರುವ ವರ್ಣ *cygwin_ssh_privsep_user();
 
-int binary_open(const char *, int , ...);
-int check_ntsec(const char *);
-char **fetch_windows_environment(void);
-void free_windows_environment(char **);
-int cygwin_ug_match_pattern_list(const char *, const char *);
+ಪೂರ್ಣಾಙ್ಕ ದ್ವಿಮಾನ_open(ಧ್ರುವ ವರ್ಣ *, ಪೂರ್ಣಾಙ್ಕ , ...);
+ಪೂರ್ಣಾಙ್ಕ check_ntsec(ಧ್ರುವ ವರ್ಣ *);
+ವರ್ಣ **fetch_windows_environment(ಶೂನ್ಯ);
+ಶೂನ್ಯ free_windows_environment(ವರ್ಣ **);
+ಪೂರ್ಣಾಙ್ಕ cygwin_ug_match_pattern_list(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
 
-#ifndef NO_BINARY_OPEN
-#define open binary_open
+#ifndef NO_ದ್ವಿಮಾನ_OPEN
+#define open ದ್ವಿಮಾನ_open
 #endif
 
 #endif /* HAVE_CYGWIN */

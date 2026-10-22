@@ -6,38 +6,38 @@
  */
 
 #define SSHBUF_INTERNAL 1  /* access internals for testing */
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "../test_helper/test_helper.h"
+#ಅನ್ತರ್ಭಾವ "../test_helper/test_helper.h"
 
-#include "sshbuf.h"
-#include "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
 
-void sshbuf_fixed(void);
+ಶೂನ್ಯ sshbuf_fixed(ಶೂನ್ಯ);
 
-const u_char test_buf[] = "\x01\x12\x34\x56\x78\x00\x00\x00\x05hello";
+ಧ್ರುವ u_char test_buf[] = "\x01\x12\x34\x56\x78\x00\x00\x00\x05hello";
 
-void
-sshbuf_fixed(void)
+ಶೂನ್ಯ
+sshbuf_fixed(ಶೂನ್ಯ)
 {
-	struct sshbuf *p1, *p2, *p3;
+	ಸಂರಚನಾ sshbuf *p1, *p2, *p3;
 	u_char c;
-	char *s;
+	ವರ್ಣ *s;
 	u_int i;
 	size_t l;
 
 	TEST_START("sshbuf_from");
-	p1 = sshbuf_from(test_buf, sizeof(test_buf));
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_PTR_EQ(sshbuf_mutable_ptr(p1), NULL);
+	p1 = sshbuf_from(test_buf, ಪರಿಮಾಣ(test_buf));
+	ASSERT_PTR_NE(p1, ರಿಕ್ತ);
+	ASSERT_PTR_EQ(sshbuf_mutable_ptr(p1), ರಿಕ್ತ);
 	ASSERT_INT_EQ(sshbuf_check_reserve(p1, 1), SSH_ERR_BUFFER_READ_ONLY);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 1, NULL), SSH_ERR_BUFFER_READ_ONLY);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 1, ರಿಕ್ತ), SSH_ERR_BUFFER_READ_ONLY);
 	ASSERT_INT_EQ(sshbuf_set_max_size(p1, 200), SSH_ERR_BUFFER_READ_ONLY);
 	ASSERT_INT_EQ(sshbuf_put_u32(p1, 0x12345678), SSH_ERR_BUFFER_READ_ONLY);
 	ASSERT_SIZE_T_EQ(sshbuf_avail(p1), 0);
@@ -46,8 +46,8 @@ sshbuf_fixed(void)
 	TEST_DONE();
 
 	TEST_START("sshbuf_from data");
-	p1 = sshbuf_from(test_buf, sizeof(test_buf) - 1);
-	ASSERT_PTR_NE(p1, NULL);
+	p1 = sshbuf_from(test_buf, ಪರಿಮಾಣ(test_buf) - 1);
+	ASSERT_PTR_NE(p1, ರಿಕ್ತ);
 	ASSERT_PTR_EQ(sshbuf_ptr(p1), test_buf);
 	ASSERT_INT_EQ(sshbuf_get_u8(p1, &c), 0);
 	ASSERT_PTR_EQ(sshbuf_ptr(p1), test_buf + 1);
@@ -60,25 +60,25 @@ sshbuf_fixed(void)
 	ASSERT_STRING_EQ(s, "hello");
 	ASSERT_SIZE_T_EQ(l, 5);
 	sshbuf_free(p1);
-	free(s);
+	ಮುಕ್ತ(s);
 	TEST_DONE();
 
 	TEST_START("sshbuf_fromb ");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, ರಿಕ್ತ);
 	ASSERT_U_INT_EQ(sshbuf_refcount(p1), 1);
-	ASSERT_PTR_EQ(sshbuf_parent(p1), NULL);
-	ASSERT_INT_EQ(sshbuf_put(p1, test_buf, sizeof(test_buf) - 1), 0);
+	ASSERT_PTR_EQ(sshbuf_parent(p1), ರಿಕ್ತ);
+	ASSERT_INT_EQ(sshbuf_put(p1, test_buf, ಪರಿಮಾಣ(test_buf) - 1), 0);
 	p2 = sshbuf_fromb(p1);
-	ASSERT_PTR_NE(p2, NULL);
+	ASSERT_PTR_NE(p2, ರಿಕ್ತ);
 	ASSERT_U_INT_EQ(sshbuf_refcount(p1), 2);
-	ASSERT_PTR_EQ(sshbuf_parent(p1), NULL);
+	ASSERT_PTR_EQ(sshbuf_parent(p1), ರಿಕ್ತ);
 	ASSERT_PTR_EQ(sshbuf_parent(p2), p1);
 	ASSERT_PTR_EQ(sshbuf_ptr(p2), sshbuf_ptr(p1));
-	ASSERT_PTR_NE(sshbuf_ptr(p1), NULL);
-	ASSERT_PTR_NE(sshbuf_ptr(p2), NULL);
-	ASSERT_PTR_EQ(sshbuf_mutable_ptr(p1), NULL);
-	ASSERT_PTR_EQ(sshbuf_mutable_ptr(p2), NULL);
+	ASSERT_PTR_NE(sshbuf_ptr(p1), ರಿಕ್ತ);
+	ASSERT_PTR_NE(sshbuf_ptr(p2), ರಿಕ್ತ);
+	ASSERT_PTR_EQ(sshbuf_mutable_ptr(p1), ರಿಕ್ತ);
+	ASSERT_PTR_EQ(sshbuf_mutable_ptr(p2), ರಿಕ್ತ);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sshbuf_len(p2));
 	ASSERT_INT_EQ(sshbuf_get_u8(p2, &c), 0);
 	ASSERT_PTR_EQ(sshbuf_ptr(p2), sshbuf_ptr(p1) + 1);
@@ -93,31 +93,31 @@ sshbuf_fixed(void)
 	sshbuf_free(p1);
 	ASSERT_U_INT_EQ(sshbuf_refcount(p1), 1);
 	sshbuf_free(p2);
-	free(s);
+	ಮುಕ್ತ(s);
 	TEST_DONE();
 
 	TEST_START("sshbuf_froms");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, ರಿಕ್ತ);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0x01), 0);
 	ASSERT_INT_EQ(sshbuf_put_u32(p1, 0x12345678), 0);
 	ASSERT_INT_EQ(sshbuf_put_cstring(p1, "hello"), 0);
 	p2 = sshbuf_new();
-	ASSERT_PTR_NE(p2, NULL);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(test_buf) - 1);
+	ASSERT_PTR_NE(p2, ರಿಕ್ತ);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), ಪರಿಮಾಣ(test_buf) - 1);
 	ASSERT_INT_EQ(sshbuf_put_stringb(p2, p1), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p2), sizeof(test_buf) + 4 - 1);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p2), ಪರಿಮಾಣ(test_buf) + 4 - 1);
 	ASSERT_INT_EQ(sshbuf_froms(p2, &p3), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p2), 0);
-	ASSERT_PTR_NE(p3, NULL);
-	ASSERT_PTR_NE(sshbuf_ptr(p3), NULL);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p3), sizeof(test_buf) - 1);
-	ASSERT_MEM_EQ(sshbuf_ptr(p3), test_buf, sizeof(test_buf) - 1);
+	ASSERT_PTR_NE(p3, ರಿಕ್ತ);
+	ASSERT_PTR_NE(sshbuf_ptr(p3), ರಿಕ್ತ);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p3), ಪರಿಮಾಣ(test_buf) - 1);
+	ASSERT_MEM_EQ(sshbuf_ptr(p3), test_buf, ಪರಿಮಾಣ(test_buf) - 1);
 	sshbuf_free(p3);
 	ASSERT_INT_EQ(sshbuf_put_stringb(p2, p1), 0);
 	ASSERT_INT_EQ(sshbuf_consume_end(p2, 1), 0);
 	ASSERT_INT_EQ(sshbuf_froms(p2, &p3), SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_PTR_EQ(p3, NULL);
+	ASSERT_PTR_EQ(p3, ರಿಕ್ತ);
 	sshbuf_free(p2);
 	sshbuf_free(p1);
 }

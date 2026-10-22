@@ -23,18 +23,18 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/readpassphrase.c */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
 #ifndef HAVE_READPASSPHRASE
 
-#include <termios.h>
-#include <signal.h>
-#include <ctype.h>
-#include <fcntl.h>
-#include <readpassphrase.h>
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <termios.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <ctype.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <readpassphrase.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
 #ifndef TCSASOFT
 /* If we don't have TCSASOFT define it so that ORing it it below is a no-op. */
@@ -42,47 +42,47 @@
 #endif
 
 /* SunOS 4.x which lacks _POSIX_VDISABLE, but has VDISABLE */
-#if !defined(_POSIX_VDISABLE) && defined(VDISABLE)
+#ಯದಿ !defined(_POSIX_VDISABLE) && defined(VDISABLE)
 #  define _POSIX_VDISABLE       VDISABLE
 #endif
 
-static volatile sig_atomic_t signo[_NSIG];
+ಸ್ಥಿರ ಚಞ್ಚಲ sig_atomic_t signo[_NSIG];
 
-static void handler(int);
+ಸ್ಥಿರ ಶೂನ್ಯ handler(ಪೂರ್ಣಾಙ್ಕ);
 
 /* Like sigaction(2) but preserves SIG_IGN */
-static void
-sigaction_except_ign(int signum, struct sigaction *act, struct sigaction *old)
+ಸ್ಥಿರ ಶೂನ್ಯ
+sigaction_except_ign(ಪೂರ್ಣಾಙ್ಕ signum, ಸಂರಚನಾ sigaction *act, ಸಂರಚನಾ sigaction *old)
 {
-	struct sigaction sabuf;
+	ಸಂರಚನಾ sigaction sabuf;
 
-	if (old == NULL)
+	ಯದಿ (old == ರಿಕ್ತ)
 		old = &sabuf;
 
-	(void)sigaction(signum, act, old);
+	(ಶೂನ್ಯ)sigaction(signum, act, old);
 	/* Reinstate SIG_IGN; we don't want to override this */
-	if (old->sa_handler == SIG_IGN && act->sa_handler != SIG_IGN)
-		(void)sigaction(signum, old, NULL);
+	ಯದಿ (old->sa_handler == SIG_IGN && act->sa_handler != SIG_IGN)
+		(ಶೂನ್ಯ)sigaction(signum, old, ರಿಕ್ತ);
 }
 
-char *
-readpassphrase(const char *prompt, char *buf, size_t bufsiz, int flags)
+ವರ್ಣ *
+readpassphrase(ಧ್ರುವ ವರ್ಣ *prompt, ವರ್ಣ *buf, size_t bufsiz, ಪೂರ್ಣಾಙ್ಕ flags)
 {
 	ssize_t nr;
-	int input, output, save_errno, i, need_restart;
-	char ch, *p, *end;
-	struct termios term, oterm;
-	struct sigaction sa, savealrm, saveint, savehup, savequit, saveterm;
-	struct sigaction savetstp, savettin, savettou, savepipe;
+	ಪೂರ್ಣಾಙ್ಕ ಒಳಹರಿವು, output, save_errno, i, need_restart;
+	ವರ್ಣ ch, *p, *end;
+	ಸಂರಚನಾ termios term, oterm;
+	ಸಂರಚನಾ sigaction sa, savealrm, saveint, savehup, savequit, saveterm;
+	ಸಂರಚನಾ sigaction savetstp, savettin, savettou, savepipe;
 
 	/* I suppose we could alloc on demand in this case (XXX). */
-	if (bufsiz == 0) {
+	ಯದಿ (bufsiz == 0) {
 		errno = EINVAL;
-		return(NULL);
+		ಪ್ರತ್ಯಾಗಮ(ರಿಕ್ತ);
 	}
 
 restart:
-	for (i = 0; i < _NSIG; i++)
+	ಪ್ರತಿ (i = 0; i < _NSIG; i++)
 		signo[i] = 0;
 	nr = -1;
 	save_errno = 0;
@@ -94,13 +94,13 @@ restart:
 #ifndef O_CLOEXEC
 # define O_CLOEXEC 0
 #endif
-	if ((flags & RPP_STDIN) ||
-	    (input = output = open(_PATH_TTY, O_RDWR | O_CLOEXEC)) == -1) {
-		if (flags & RPP_REQUIRE_TTY) {
+	ಯದಿ ((flags & RPP_STDIN) ||
+	    (ಒಳಹರಿವು = output = open(_PATH_TTY, O_RDWR | O_CLOEXEC)) == -1) {
+		ಯದಿ (flags & RPP_REQUIRE_TTY) {
 			errno = ENOTTY;
-			return(NULL);
+			ಪ್ರತ್ಯಾಗಮ(ರಿಕ್ತ);
 		}
-		input = STDIN_FILENO;
+		ಒಳಹರಿವು = STDIN_FILENO;
 		output = STDERR_FILENO;
 	}
 
@@ -109,19 +109,19 @@ restart:
 	 * If we are using a tty but are not the foreground pgrp this will
 	 * generate SIGTTOU, so do it *before* installing the signal handlers.
 	 */
-	if (input != STDIN_FILENO && tcgetattr(input, &oterm) == 0) {
-		memcpy(&term, &oterm, sizeof(term));
-		if (!(flags & RPP_ECHO_ON))
+	ಯದಿ (ಒಳಹರಿವು != STDIN_FILENO && tcgetattr(ಒಳಹರಿವು, &oterm) == 0) {
+		memcpy(&term, &oterm, ಪರಿಮಾಣ(term));
+		ಯದಿ (!(flags & RPP_ECHO_ON))
 			term.c_lflag &= ~(ECHO | ECHONL);
 #ifdef VSTATUS
-		if (term.c_cc[VSTATUS] != _POSIX_VDISABLE)
+		ಯದಿ (term.c_cc[VSTATUS] != _POSIX_VDISABLE)
 			term.c_cc[VSTATUS] = _POSIX_VDISABLE;
 #endif
-		(void)tcsetattr(input, TCSAFLUSH|TCSASOFT, &term);
-	} else {
-		memset(&term, 0, sizeof(term));
+		(ಶೂನ್ಯ)tcsetattr(ಒಳಹರಿವು, TCSAFLUSH|TCSASOFT, &term);
+	} ಅನ್ಯಥಾ {
+		memset(&term, 0, ಪರಿಮಾಣ(term));
 		term.c_lflag |= ECHO;
-		memset(&oterm, 0, sizeof(oterm));
+		memset(&oterm, 0, ಪರಿಮಾಣ(oterm));
 		oterm.c_lflag |= ECHO;
 	}
 
@@ -143,85 +143,85 @@ restart:
 	sigaction_except_ign(SIGTTIN, &sa, &savettin);
 	sigaction_except_ign(SIGTTOU, &sa, &savettou);
 
-	if (!(flags & RPP_STDIN))
-		(void)write(output, prompt, strlen(prompt));
+	ಯದಿ (!(flags & RPP_STDIN))
+		(ಶೂನ್ಯ)ಲಿಖ(output, prompt, strlen(prompt));
 	end = buf + bufsiz - 1;
 	p = buf;
-	while ((nr = read(input, &ch, 1)) == 1 && ch != '\n' && ch != '\r') {
-		if (p < end) {
-			if ((flags & RPP_SEVENBIT))
+	ಯಾವತ್ ((nr = ಪಠ(ಒಳಹರಿವು, &ch, 1)) == 1 && ch != '\n' && ch != '\r') {
+		ಯದಿ (p < end) {
+			ಯದಿ ((flags & RPP_SEVENBIT))
 				ch &= 0x7f;
-			if (isalpha((unsigned char)ch)) {
-				if ((flags & RPP_FORCELOWER))
-					ch = (char)tolower((unsigned char)ch);
-				if ((flags & RPP_FORCEUPPER))
-					ch = (char)toupper((unsigned char)ch);
+			ಯದಿ (isalpha((unsigned ವರ್ಣ)ch)) {
+				ಯದಿ ((flags & RPP_FORCELOWER))
+					ch = (ವರ್ಣ)tolower((unsigned ವರ್ಣ)ch);
+				ಯದಿ ((flags & RPP_FORCEUPPER))
+					ch = (ವರ್ಣ)toupper((unsigned ವರ್ಣ)ch);
 			}
 			*p++ = ch;
 		}
 	}
 	*p = '\0';
 	save_errno = errno;
-	if (!(term.c_lflag & ECHO) && !(nr == -1 && errno == EINTR))
-		(void)write(output, "\n", 1);
+	ಯದಿ (!(term.c_lflag & ECHO) && !(nr == -1 && errno == EINTR))
+		(ಶೂನ್ಯ)ಲಿಖ(output, "\n", 1);
 
 	/* Restore old terminal settings and signals. */
-	if (memcmp(&term, &oterm, sizeof(term)) != 0) {
-		const int sigttou = signo[SIGTTOU];
+	ಯದಿ (memcmp(&term, &oterm, ಪರಿಮಾಣ(term)) != 0) {
+		ಧ್ರುವ ಪೂರ್ಣಾಙ್ಕ sigttou = signo[SIGTTOU];
 
 		/* Ignore SIGTTOU generated when we are not the fg pgrp. */
-		while (tcsetattr(input, TCSAFLUSH|TCSASOFT, &oterm) == -1 &&
+		ಯಾವತ್ (tcsetattr(ಒಳಹರಿವು, TCSAFLUSH|TCSASOFT, &oterm) == -1 &&
 		    errno == EINTR && !signo[SIGTTOU])
-			continue;
+			ಅನುವರ್ತ;
 		signo[SIGTTOU] = sigttou;
 	}
-	sigaction(SIGINT, &saveint, NULL);
-	sigaction(SIGQUIT, &savequit, NULL);
-	sigaction_except_ign(SIGALRM, &savealrm, NULL);
-	sigaction_except_ign(SIGHUP, &savehup, NULL);
-	sigaction_except_ign(SIGPIPE, &savepipe, NULL);
-	sigaction_except_ign(SIGTERM, &saveterm, NULL);
-	sigaction_except_ign(SIGTSTP, &savetstp, NULL);
-	sigaction_except_ign(SIGTTIN, &savettin, NULL);
-	sigaction_except_ign(SIGTTOU, &savettou, NULL);
-	if (input != STDIN_FILENO)
-		(void)close(input);
+	sigaction(SIGINT, &saveint, ರಿಕ್ತ);
+	sigaction(SIGQUIT, &savequit, ರಿಕ್ತ);
+	sigaction_except_ign(SIGALRM, &savealrm, ರಿಕ್ತ);
+	sigaction_except_ign(SIGHUP, &savehup, ರಿಕ್ತ);
+	sigaction_except_ign(SIGPIPE, &savepipe, ರಿಕ್ತ);
+	sigaction_except_ign(SIGTERM, &saveterm, ರಿಕ್ತ);
+	sigaction_except_ign(SIGTSTP, &savetstp, ರಿಕ್ತ);
+	sigaction_except_ign(SIGTTIN, &savettin, ರಿಕ್ತ);
+	sigaction_except_ign(SIGTTOU, &savettou, ರಿಕ್ತ);
+	ಯದಿ (ಒಳಹರಿವು != STDIN_FILENO)
+		(ಶೂನ್ಯ)close(ಒಳಹರಿವು);
 
 	/*
 	 * If we were interrupted by a signal, resend it to ourselves
 	 * now that we have restored the signal handlers.
 	 */
-	for (i = 0; i < _NSIG; i++) {
-		if (signo[i]) {
+	ಪ್ರತಿ (i = 0; i < _NSIG; i++) {
+		ಯದಿ (signo[i]) {
 			kill(getpid(), i);
-			switch (i) {
-			case SIGTSTP:
-			case SIGTTIN:
-			case SIGTTOU:
+			ವಿಕಲ್ಪ (i) {
+			ಪಕ್ಷ SIGTSTP:
+			ಪಕ್ಷ SIGTTIN:
+			ಪಕ್ಷ SIGTTOU:
 				need_restart = 1;
 			}
 		}
 	}
-	if (need_restart)
-		goto restart;
+	ಯದಿ (need_restart)
+		ಗಚ್ಛ restart;
 
-	if (save_errno)
+	ಯದಿ (save_errno)
 		errno = save_errno;
-	return(nr == -1 ? NULL : buf);
+	ಪ್ರತ್ಯಾಗಮ(nr == -1 ? ರಿಕ್ತ : buf);
 }
 DEF_WEAK(readpassphrase);
 
-#if 0
-char *
-getpass(const char *prompt)
+#ಯದಿ 0
+ವರ್ಣ *
+getpass(ಧ್ರುವ ವರ್ಣ *prompt)
 {
-	static char buf[_PASSWORD_LEN + 1];
+	ಸ್ಥಿರ ವರ್ಣ buf[_PASSWORD_LEN + 1];
 
-	return(readpassphrase(prompt, buf, sizeof(buf), RPP_ECHO_OFF));
+	ಪ್ರತ್ಯಾಗಮ(readpassphrase(prompt, buf, ಪರಿಮಾಣ(buf), RPP_ECHO_OFF));
 }
 #endif
 
-static void handler(int s)
+ಸ್ಥಿರ ಶೂನ್ಯ handler(ಪೂರ್ಣಾಙ್ಕ s)
 {
 
 	signo[s] = 1;

@@ -14,24 +14,24 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#if !defined(HAVE_CLOSEFROM) || defined(BROKEN_CLOSEFROM)
+#ಯದಿ !defined(HAVE_CLOSEFROM) || defined(BROKEN_CLOSEFROM)
 
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
 #endif
-#include <limits.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
 # define NAMLEN(dirent) strlen((dirent)->d_name)
-#else
+#ಅನ್ಯಥಾ
 # define dirent direct
 # define NAMLEN(dirent) (dirent)->d_namlen
 # ifdef HAVE_SYS_NDIR_H
@@ -44,7 +44,7 @@
 #  include <ndir.h>
 # endif
 #endif
-#if defined(HAVE_LIBPROC_H)
+#ಯದಿ defined(HAVE_LIBPROC_H)
 # include <libproc.h>
 #endif
 
@@ -52,16 +52,16 @@
 # define OPEN_MAX	256
 #endif
 
-#if 0
-__unused static const char rcsid[] = "$Sudo: closefrom.c,v 1.11 2006/08/17 15:26:54 millert Exp $";
+#ಯದಿ 0
+__unused ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ rcsid[] = "$Sudo: closefrom.c,v 1.11 2006/08/17 15:26:54 millert Exp $";
 #endif /* lint */
 
 #ifndef HAVE_FCNTL_CLOSEM
 /*
  * Close all file descriptors greater than or equal to lowfd.
  */
-static void
-closefrom_fallback(int lowfd)
+ಸ್ಥಿರ ಶೂನ್ಯ
+closefrom_fallback(ಪೂರ್ಣಾಙ್ಕ lowfd)
 {
 	long fd, maxfd;
 
@@ -72,85 +72,85 @@ closefrom_fallback(int lowfd)
 	 */
 #ifdef HAVE_SYSCONF
 	maxfd = sysconf(_SC_OPEN_MAX);
-#else
+#ಅನ್ಯಥಾ
 	maxfd = getdtablesize();
 #endif /* HAVE_SYSCONF */
-	if (maxfd < 0)
+	ಯದಿ (maxfd < 0)
 		maxfd = OPEN_MAX;
 
-	for (fd = lowfd; fd < maxfd; fd++)
-		(void) close((int) fd);
+	ಪ್ರತಿ (fd = lowfd; fd < maxfd; fd++)
+		(ಶೂನ್ಯ) close((ಪೂರ್ಣಾಙ್ಕ) fd);
 }
 #endif /* HAVE_FCNTL_CLOSEM */
 
 #ifdef HAVE_FCNTL_CLOSEM
-void
-closefrom(int lowfd)
+ಶೂನ್ಯ
+closefrom(ಪೂರ್ಣಾಙ್ಕ lowfd)
 {
-    (void) fcntl(lowfd, F_CLOSEM, 0);
+    (ಶೂನ್ಯ) fcntl(lowfd, F_CLOSEM, 0);
 }
-#elif defined(HAVE_LIBPROC_H) && defined(HAVE_PROC_PIDINFO)
-void
-closefrom(int lowfd)
+#ನೋಚೇದ್ಯದಿ defined(HAVE_LIBPROC_H) && defined(HAVE_PROC_PIDINFO)
+ಶೂನ್ಯ
+closefrom(ಪೂರ್ಣಾಙ್ಕ lowfd)
 {
-	int i, r, sz;
+	ಪೂರ್ಣಾಙ್ಕ i, r, sz;
 	pid_t pid = getpid();
-	struct proc_fdinfo *fdinfo_buf = NULL;
+	ಸಂರಚನಾ proc_fdinfo *fdinfo_buf = ರಿಕ್ತ;
 
-	sz = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, NULL, 0);
-	if (sz == 0)
-		return; /* no fds, really? */
-	else if (sz == -1)
-		goto fallback;
-	if ((fdinfo_buf = malloc(sz)) == NULL)
-		goto fallback;
+	sz = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, ರಿಕ್ತ, 0);
+	ಯದಿ (sz == 0)
+		ಪ್ರತ್ಯಾಗಮ; /* no fds, really? */
+	ಅನ್ಯಥಾ ಯದಿ (sz == -1)
+		ಗಚ್ಛ fallback;
+	ಯದಿ ((fdinfo_buf = malloc(sz)) == ರಿಕ್ತ)
+		ಗಚ್ಛ fallback;
 	r = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, fdinfo_buf, sz);
-	if (r < 0 || r > sz)
-		goto fallback;
-	for (i = 0; i < r / (int)PROC_PIDLISTFD_SIZE; i++) {
-		if (fdinfo_buf[i].proc_fd >= lowfd)
+	ಯದಿ (r < 0 || r > sz)
+		ಗಚ್ಛ fallback;
+	ಪ್ರತಿ (i = 0; i < r / (ಪೂರ್ಣಾಙ್ಕ)PROC_PIDLISTFD_SIZE; i++) {
+		ಯದಿ (fdinfo_buf[i].proc_fd >= lowfd)
 			close(fdinfo_buf[i].proc_fd);
 	}
-	free(fdinfo_buf);
-	return;
+	ಮುಕ್ತ(fdinfo_buf);
+	ಪ್ರತ್ಯಾಗಮ;
  fallback:
-	free(fdinfo_buf);
+	ಮುಕ್ತ(fdinfo_buf);
 	closefrom_fallback(lowfd);
-	return;
+	ಪ್ರತ್ಯಾಗಮ;
 }
-#elif defined(HAVE_DIRFD) && defined(HAVE_PROC_PID)
-void
-closefrom(int lowfd)
+#ನೋಚೇದ್ಯದಿ defined(HAVE_DIRFD) && defined(HAVE_PROC_PID)
+ಶೂನ್ಯ
+closefrom(ಪೂರ್ಣಾಙ್ಕ lowfd)
 {
     long fd;
-    char fdpath[PATH_MAX], *endp;
-    struct dirent *dent;
+    ವರ್ಣ fdpath[PATH_MAX], *endp;
+    ಸಂರಚನಾ dirent *dent;
     DIR *dirp;
-    int len;
+    ಪೂರ್ಣಾಙ್ಕ len;
 
 #ifdef HAVE_CLOSE_RANGE
-	if (close_range(lowfd, INT_MAX, 0) == 0)
-		return;
+	ಯದಿ (close_range(lowfd, INT_MAX, 0) == 0)
+		ಪ್ರತ್ಯಾಗಮ;
 #endif
 
     /* Check for a /proc/$$/fd directory. */
-    len = snprintf(fdpath, sizeof(fdpath), "/proc/%ld/fd", (long)getpid());
-    if (len > 0 && (size_t)len < sizeof(fdpath) && (dirp = opendir(fdpath))) {
-	while ((dent = readdir(dirp)) != NULL) {
+    len = snprintf(fdpath, ಪರಿಮಾಣ(fdpath), "/proc/%ld/fd", (long)getpid());
+    ಯದಿ (len > 0 && (size_t)len < ಪರಿಮಾಣ(fdpath) && (dirp = opendir(fdpath))) {
+	ಯಾವತ್ ((dent = readdir(dirp)) != ರಿಕ್ತ) {
 	    fd = strtol(dent->d_name, &endp, 10);
-	    if (dent->d_name != endp && *endp == '\0' &&
+	    ಯದಿ (dent->d_name != endp && *endp == '\0' &&
 		fd >= 0 && fd < INT_MAX && fd >= lowfd && fd != dirfd(dirp))
-		(void) close((int) fd);
+		(ಶೂನ್ಯ) close((ಪೂರ್ಣಾಙ್ಕ) fd);
 	}
-	(void) closedir(dirp);
-	return;
+	(ಶೂನ್ಯ) closedir(dirp);
+	ಪ್ರತ್ಯಾಗಮ;
     }
     /* /proc/$$/fd strategy failed, fall back to brute force closure */
     closefrom_fallback(lowfd);
 }
-#else
-void
-closefrom(int lowfd)
+#ಅನ್ಯಥಾ
+ಶೂನ್ಯ
+closefrom(ಪೂರ್ಣಾಙ್ಕ lowfd)
 {
 	closefrom_fallback(lowfd);
 }

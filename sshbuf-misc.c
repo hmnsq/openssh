@@ -15,45 +15,45 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <limits.h>
-#include <string.h>
-#include <resolv.h>
-#include <ctype.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/socket.h>
+#ಅನ್ತರ್ಭಾವ <netinet/in.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <resolv.h>
+#ಅನ್ತರ್ಭಾವ <ctype.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
 #define SSHBUF_INTERNAL
-#include "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
 
-void
-sshbuf_dump_data(const void *s, size_t len, FILE *f)
+ಶೂನ್ಯ
+sshbuf_dump_data(ಧ್ರುವ ಶೂನ್ಯ *s, size_t len, FILE *f)
 {
 	size_t i, j;
-	const u_char *p = (const u_char *)s;
+	ಧ್ರುವ u_char *p = (ಧ್ರುವ u_char *)s;
 
-	for (i = 0; i < len; i += 16) {
+	ಪ್ರತಿ (i = 0; i < len; i += 16) {
 		fprintf(f, "%.4zu: ", i);
-		for (j = i; j < i + 16; j++) {
-			if (j < len)
+		ಪ್ರತಿ (j = i; j < i + 16; j++) {
+			ಯದಿ (j < len)
 				fprintf(f, "%02x ", p[j]);
-			else
+			ಅನ್ಯಥಾ
 				fprintf(f, "   ");
 		}
 		fprintf(f, " ");
-		for (j = i; j < i + 16; j++) {
-			if (j < len) {
-				if  (isascii(p[j]) && isprint(p[j]))
+		ಪ್ರತಿ (j = i; j < i + 16; j++) {
+			ಯದಿ (j < len) {
+				ಯದಿ  (isascii(p[j]) && isprint(p[j]))
 					fprintf(f, "%c", p[j]);
-				else
+				ಅನ್ಯಥಾ
 					fprintf(f, ".");
 			}
 		}
@@ -61,299 +61,299 @@ sshbuf_dump_data(const void *s, size_t len, FILE *f)
 	}
 }
 
-void
-sshbuf_dump(const struct sshbuf *buf, FILE *f)
+ಶೂನ್ಯ
+sshbuf_dump(ಧ್ರುವ ಸಂರಚನಾ sshbuf *buf, FILE *f)
 {
 	fprintf(f, "buffer len = %zu\n", sshbuf_len(buf));
 	sshbuf_dump_data(sshbuf_ptr(buf), sshbuf_len(buf), f);
 }
 
-char *
-sshbuf_dtob16(const struct sshbuf *buf)
+ವರ್ಣ *
+sshbuf_dtob16(ಧ್ರುವ ಸಂರಚನಾ sshbuf *buf)
 {
 	size_t i, j, len = sshbuf_len(buf);
-	const u_char *p = sshbuf_ptr(buf);
-	char *ret;
-	const char hex[] = "0123456789abcdef";
+	ಧ್ರುವ u_char *p = sshbuf_ptr(buf);
+	ವರ್ಣ *ret;
+	ಧ್ರುವ ವರ್ಣ hex[] = "0123456789abcdef";
 
-	if (len == 0)
-		return strdup("");
-	if (SIZE_MAX / 2 <= len || (ret = malloc(len * 2 + 1)) == NULL)
-		return NULL;
-	for (i = j = 0; i < len; i++) {
+	ಯದಿ (len == 0)
+		ಪ್ರತ್ಯಾಗಮ strdup("");
+	ಯದಿ (SIZE_MAX / 2 <= len || (ret = malloc(len * 2 + 1)) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
+	ಪ್ರತಿ (i = j = 0; i < len; i++) {
 		ret[j++] = hex[(p[i] >> 4) & 0xf];
 		ret[j++] = hex[p[i] & 0xf];
 	}
 	ret[j] = '\0';
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-static int
-b16tod(const char v)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+b16tod(ಧ್ರುವ ವರ್ಣ v)
 {
-	if (v >= '0' && v <= '9')
-		return v - '0';
-	if (v >= 'a' && v <= 'f')
-		return 10 + v - 'a';
-	if (v >= 'A' && v <= 'F')
-		return 10 + v - 'A';
-	return -1;
+	ಯದಿ (v >= '0' && v <= '9')
+		ಪ್ರತ್ಯಾಗಮ v - '0';
+	ಯದಿ (v >= 'a' && v <= 'f')
+		ಪ್ರತ್ಯಾಗಮ 10 + v - 'a';
+	ಯದಿ (v >= 'A' && v <= 'F')
+		ಪ್ರತ್ಯಾಗಮ 10 + v - 'A';
+	ಪ್ರತ್ಯಾಗಮ -1;
 }
 
-struct sshbuf *
-sshbuf_b16tod(const char *b16)
+ಸಂರಚನಾ sshbuf *
+sshbuf_b16tod(ಧ್ರುವ ವರ್ಣ *b16)
 {
-	struct sshbuf *ret;
+	ಸಂರಚನಾ sshbuf *ret;
 	size_t o;
-	int r, v1, v2;
+	ಪೂರ್ಣಾಙ್ಕ r, v1, v2;
 
-	if ((ret = sshbuf_new()) == NULL)
-		return NULL;
-	for (o = 0; b16[o] != '\0'; o += 2) {
-		if ((v1 = b16tod(b16[o])) == -1 ||
+	ಯದಿ ((ret = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
+	ಪ್ರತಿ (o = 0; b16[o] != '\0'; o += 2) {
+		ಯದಿ ((v1 = b16tod(b16[o])) == -1 ||
 		    (v2 = b16tod(b16[o + 1])) == -1) {
 			sshbuf_free(ret);
-			return NULL;
+			ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 		}
-		if ((r = sshbuf_put_u8(ret, (u_char)((v1 << 4) | v2))) != 0) {
+		ಯದಿ ((r = sshbuf_put_u8(ret, (u_char)((v1 << 4) | v2))) != 0) {
 			sshbuf_free(ret);
-			return NULL;
+			ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 		}
 	}
 	/* success */
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-int
-sshbuf_dtob64(const struct sshbuf *d, struct sshbuf *b64, int wrap)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_dtob64(ಧ್ರುವ ಸಂರಚನಾ sshbuf *d, ಸಂರಚನಾ sshbuf *b64, ಪೂರ್ಣಾಙ್ಕ wrap)
 {
 	size_t i, slen = 0;
-	char *s = NULL;
-	int r;
+	ವರ್ಣ *s = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if (d == NULL || b64 == NULL || sshbuf_len(d) >= SIZE_MAX / 2)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (sshbuf_len(d) == 0)
-		return 0;
+	ಯದಿ (d == ರಿಕ್ತ || b64 == ರಿಕ್ತ || sshbuf_len(d) >= SIZE_MAX / 2)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
+	ಯದಿ (sshbuf_len(d) == 0)
+		ಪ್ರತ್ಯಾಗಮ 0;
 	slen = ((sshbuf_len(d) + 2) / 3) * 4 + 1;
-	if ((s = malloc(slen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (b64_ntop(sshbuf_ptr(d), sshbuf_len(d), s, slen) == -1) {
+	ಯದಿ ((s = malloc(slen)) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ (b64_ntop(sshbuf_ptr(d), sshbuf_len(d), s, slen) == -1) {
 		r = SSH_ERR_INTERNAL_ERROR;
-		goto fail;
+		ಗಚ್ಛ fail;
 	}
-	if (wrap) {
-		for (i = 0; s[i] != '\0'; i++) {
-			if ((r = sshbuf_put_u8(b64, s[i])) != 0)
-				goto fail;
-			if (i % 70 == 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
-				goto fail;
+	ಯದಿ (wrap) {
+		ಪ್ರತಿ (i = 0; s[i] != '\0'; i++) {
+			ಯದಿ ((r = sshbuf_put_u8(b64, s[i])) != 0)
+				ಗಚ್ಛ fail;
+			ಯದಿ (i % 70 == 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
+				ಗಚ್ಛ fail;
 		}
-		if ((i - 1) % 70 != 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
-			goto fail;
-	} else {
-		if ((r = sshbuf_put(b64, s, strlen(s))) != 0)
-			goto fail;
+		ಯದಿ ((i - 1) % 70 != 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
+			ಗಚ್ಛ fail;
+	} ಅನ್ಯಥಾ {
+		ಯದಿ ((r = sshbuf_put(b64, s, strlen(s))) != 0)
+			ಗಚ್ಛ fail;
 	}
 	/* Success */
 	r = 0;
  fail:
 	freezero(s, slen);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-char *
-sshbuf_dtob64_string(const struct sshbuf *buf, int wrap)
+ವರ್ಣ *
+sshbuf_dtob64_string(ಧ್ರುವ ಸಂರಚನಾ sshbuf *buf, ಪೂರ್ಣಾಙ್ಕ wrap)
 {
-	struct sshbuf *tmp;
-	char *ret;
+	ಸಂರಚನಾ sshbuf *tmp;
+	ವರ್ಣ *ret;
 
-	if ((tmp = sshbuf_new()) == NULL)
-		return NULL;
-	if (sshbuf_dtob64(buf, tmp, wrap) != 0) {
+	ಯದಿ ((tmp = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
+	ಯದಿ (sshbuf_dtob64(buf, tmp, wrap) != 0) {
 		sshbuf_free(tmp);
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 	ret = sshbuf_dup_string(tmp);
 	sshbuf_free(tmp);
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-int
-sshbuf_b64tod(struct sshbuf *buf, const char *b64)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_b64tod(ಸಂರಚನಾ sshbuf *buf, ಧ್ರುವ ವರ್ಣ *b64)
 {
 	size_t plen = strlen(b64);
-	int nlen, r;
+	ಪೂರ್ಣಾಙ್ಕ nlen, r;
 	u_char *p;
 
-	if (plen == 0)
-		return 0;
-	if ((p = malloc(plen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((nlen = b64_pton(b64, p, plen)) < 0) {
+	ಯದಿ (plen == 0)
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಯದಿ ((p = malloc(plen)) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((nlen = b64_pton(b64, p, plen)) < 0) {
 		freezero(p, plen);
-		return SSH_ERR_INVALID_FORMAT;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_FORMAT;
 	}
-	if ((r = sshbuf_put(buf, p, nlen)) < 0) {
+	ಯದಿ ((r = sshbuf_put(buf, p, nlen)) < 0) {
 		freezero(p, plen);
-		return r;
+		ಪ್ರತ್ಯಾಗಮ r;
 	}
 	freezero(p, plen);
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
-sshbuf_dtourlb64(const struct sshbuf *d, struct sshbuf *b64, int wrap)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_dtourlb64(ಧ್ರುವ ಸಂರಚನಾ sshbuf *d, ಸಂರಚನಾ sshbuf *b64, ಪೂರ್ಣಾಙ್ಕ wrap)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ಪೂರ್ಣಾಙ್ಕ r = SSH_ERR_INTERNAL_ERROR;
 	u_char *p;
-	struct sshbuf *b = NULL;
+	ಸಂರಚನಾ sshbuf *b = ರಿಕ್ತ;
 	size_t i, l;
 
-	if (sshbuf_len(d) == 0)
-		return 0;
+	ಯದಿ (sshbuf_len(d) == 0)
+		ಪ್ರತ್ಯಾಗಮ 0;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((b = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
 	/* Encode using regular base64; we'll transform it once done */
-	if ((r = sshbuf_dtob64(d, b, wrap)) != 0)
-		goto out;
+	ಯದಿ ((r = sshbuf_dtob64(d, b, wrap)) != 0)
+		ಗಚ್ಛ out;
 	/* remove padding from end of encoded string*/
-	for (;;) {
+	ಪ್ರತಿ (;;) {
 		l = sshbuf_len(b);
-		if (l <= 1 || sshbuf_ptr(b) == NULL) {
+		ಯದಿ (l <= 1 || sshbuf_ptr(b) == ರಿಕ್ತ) {
 			r = SSH_ERR_INTERNAL_ERROR;
-			goto out;
+			ಗಚ್ಛ out;
 		}
-		if (sshbuf_ptr(b)[l - 1] != '=')
-			break;
-		if ((r = sshbuf_consume_end(b, 1)) != 0)
-			goto out;
+		ಯದಿ (sshbuf_ptr(b)[l - 1] != '=')
+			ಭಙ್ಗ;
+		ಯದಿ ((r = sshbuf_consume_end(b, 1)) != 0)
+			ಗಚ್ಛ out;
 	}
 	/* Replace characters with rfc4648 equivalents */
 	l = sshbuf_len(b);
-	if ((p = sshbuf_mutable_ptr(b)) == NULL) {
+	ಯದಿ ((p = sshbuf_mutable_ptr(b)) == ರಿಕ್ತ) {
 		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	for (i = 0; i < l; i++) {
-		if (p[i] == '+')
+	ಪ್ರತಿ (i = 0; i < l; i++) {
+		ಯದಿ (p[i] == '+')
 			p[i] = '-';
-		else if (p[i] == '/')
+		ಅನ್ಯಥಾ ಯದಿ (p[i] == '/')
 			p[i] = '_';
 	}
 	r = sshbuf_putb(b64, b);
  out:
 	sshbuf_free(b);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-char *
-sshbuf_dup_string(struct sshbuf *buf)
+ವರ್ಣ *
+sshbuf_dup_string(ಸಂರಚನಾ sshbuf *buf)
 {
-	const u_char *p = NULL, *s = sshbuf_ptr(buf);
+	ಧ್ರುವ u_char *p = ರಿಕ್ತ, *s = sshbuf_ptr(buf);
 	size_t l = sshbuf_len(buf);
-	char *r;
+	ವರ್ಣ *r;
 
-	if (s == NULL || l >= SIZE_MAX)
-		return NULL;
+	ಯದಿ (s == ರಿಕ್ತ || l >= SIZE_MAX)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	/* accept a nul only as the last character in the buffer */
-	if (l > 0 && (p = memchr(s, '\0', l)) != NULL) {
-		if (p != s + l - 1)
-			return NULL;
+	ಯದಿ (l > 0 && (p = memchr(s, '\0', l)) != ರಿಕ್ತ) {
+		ಯದಿ (p != s + l - 1)
+			ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 		l--; /* the nul is put back below */
 	}
-	if ((r = malloc(l + 1)) == NULL)
-		return NULL;
-	if (l > 0)
+	ಯದಿ ((r = malloc(l + 1)) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
+	ಯದಿ (l > 0)
 		memcpy(r, s, l);
 	r[l] = '\0';
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-int
-sshbuf_cmp(const struct sshbuf *b, size_t offset,
-    const void *s, size_t len)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_cmp(ಧ್ರುವ ಸಂರಚನಾ sshbuf *b, size_t offset,
+    ಧ್ರುವ ಶೂನ್ಯ *s, size_t len)
 {
-	if (sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (offset + len > sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if (timingsafe_bcmp(sshbuf_ptr(b) + offset, s, len) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	ಯದಿ (sshbuf_ptr(b) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INTERNAL_ERROR;
+	ಯದಿ (offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
+	ಯದಿ (offset + len > sshbuf_len(b))
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_MESSAGE_INCOMPLETE;
+	ಯದಿ (timingsafe_bcmp(sshbuf_ptr(b) + offset, s, len) != 0)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_FORMAT;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
-sshbuf_equals(const struct sshbuf *a, const struct sshbuf *b)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_equals(ಧ್ರುವ ಸಂರಚನಾ sshbuf *a, ಧ್ರುವ ಸಂರಚನಾ sshbuf *b)
 {
-	if (sshbuf_ptr(a) == NULL || sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (sshbuf_len(a) != sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if (sshbuf_len(a) == 0)
-		return 0;
-	if (memcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	ಯದಿ (sshbuf_ptr(a) == ರಿಕ್ತ || sshbuf_ptr(b) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INTERNAL_ERROR;
+	ಯದಿ (sshbuf_len(a) != sshbuf_len(b))
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_MESSAGE_INCOMPLETE;
+	ಯದಿ (sshbuf_len(a) == 0)
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಯದಿ (memcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_FORMAT;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
-sshbuf_find(const struct sshbuf *b, size_t start_offset,
-    const void *s, size_t len, size_t *offsetp)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_find(ಧ್ರುವ ಸಂರಚನಾ sshbuf *b, size_t start_offset,
+    ಧ್ರುವ ಶೂನ್ಯ *s, size_t len, size_t *offsetp)
 {
-	void *p;
+	ಶೂನ್ಯ *p;
 
-	if (offsetp != NULL)
+	ಯದಿ (offsetp != ರಿಕ್ತ)
 		*offsetp = 0;
-	if (sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (start_offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (start_offset > sshbuf_len(b) || start_offset + len > sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if ((p = memmem(sshbuf_ptr(b) + start_offset,
-	    sshbuf_len(b) - start_offset, s, len)) == NULL)
-		return SSH_ERR_INVALID_FORMAT;
-	if (offsetp != NULL)
-		*offsetp = (const u_char *)p - sshbuf_ptr(b);
-	return 0;
+	ಯದಿ (sshbuf_ptr(b) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INTERNAL_ERROR;
+	ಯದಿ (start_offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
+	ಯದಿ (start_offset > sshbuf_len(b) || start_offset + len > sshbuf_len(b))
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_MESSAGE_INCOMPLETE;
+	ಯದಿ ((p = memmem(sshbuf_ptr(b) + start_offset,
+	    sshbuf_len(b) - start_offset, s, len)) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_FORMAT;
+	ಯದಿ (offsetp != ರಿಕ್ತ)
+		*offsetp = (ಧ್ರುವ u_char *)p - sshbuf_ptr(b);
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
-sshbuf_read(int fd, struct sshbuf *buf, size_t maxlen, size_t *rlen)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_read(ಪೂರ್ಣಾಙ್ಕ fd, ಸಂರಚನಾ sshbuf *buf, size_t maxlen, size_t *rlen)
 {
-	int r, oerrno;
+	ಪೂರ್ಣಾಙ್ಕ r, oerrno;
 	size_t adjust;
 	ssize_t rr;
 	u_char *d;
 
-	if (rlen != NULL)
+	ಯದಿ (rlen != ರಿಕ್ತ)
 		*rlen = 0;
-	if ((r = sshbuf_reserve(buf, maxlen, &d)) != 0)
-		return r;
-	rr = read(fd, d, maxlen);
+	ಯದಿ ((r = sshbuf_reserve(buf, maxlen, &d)) != 0)
+		ಪ್ರತ್ಯಾಗಮ r;
+	rr = ಪಠ(fd, d, maxlen);
 	oerrno = errno;
 
 	/* Adjust the buffer to include only what was actually read */
-	if ((adjust = maxlen - (rr > 0 ? rr : 0)) != 0) {
-		if ((r = sshbuf_consume_end(buf, adjust)) != 0) {
+	ಯದಿ ((adjust = maxlen - (rr > 0 ? rr : 0)) != 0) {
+		ಯದಿ ((r = sshbuf_consume_end(buf, adjust)) != 0) {
 			/* avoid returning uninitialised data to caller */
 			memset(d + rr, '\0', adjust);
-			return SSH_ERR_INTERNAL_ERROR; /* shouldn't happen */
+			ಪ್ರತ್ಯಾಗಮ SSH_ERR_INTERNAL_ERROR; /* shouldn't happen */
 		}
 	}
-	if (rr < 0) {
+	ಯದಿ (rr < 0) {
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
-	} else if (rr == 0) {
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
+	} ಅನ್ಯಥಾ ಯದಿ (rr == 0) {
 		errno = EPIPE;
-		return SSH_ERR_SYSTEM_ERROR;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
 	}
 	/* success */
-	if (rlen != NULL)
+	ಯದಿ (rlen != ರಿಕ್ತ)
 		*rlen = (size_t)rr;
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }

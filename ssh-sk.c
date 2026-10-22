@@ -17,437 +17,437 @@
 
 /* #define DEBUG_SK 1 */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
 #ifdef ENABLE_SK
 
-#include <dlfcn.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ <dlfcn.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/objects.h>
-#include <openssl/ec.h>
-#include <openssl/evp.h>
+#ಅನ್ತರ್ಭಾವ <openssl/objects.h>
+#ಅನ್ತರ್ಭಾವ <openssl/ec.h>
+#ಅನ್ತರ್ಭಾವ <openssl/evp.h>
 #endif /* WITH_OPENSSL */
 
-#include "log.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "ssherr.h"
-#include "digest.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "digest.h"
 
-#include "ssh-sk.h"
-#include "sk-api.h"
-#include "crypto_api.h"
+#ಅನ್ತರ್ಭಾವ "ssh-sk.h"
+#ಅನ್ತರ್ಭಾವ "sk-api.h"
+#ಅನ್ತರ್ಭಾವ "crypto_api.h"
 
-struct sshsk_provider {
-	char *path;
-	void *dlhandle;
+ಸಂರಚನಾ sshsk_provider {
+	ವರ್ಣ *path;
+	ಶೂನ್ಯ *dlhandle;
 
 	/* Return the version of the middleware API */
-	uint32_t (*sk_api_version)(void);
+	uint32_t (*sk_api_version)(ಶೂನ್ಯ);
 
 	/* Enroll a U2F key (private key generation) */
-	int (*sk_enroll)(int alg, const uint8_t *challenge,
-	    size_t challenge_len, const char *application, uint8_t flags,
-	    const char *pin, struct sk_option **opts,
-	    struct sk_enroll_response **enroll_response);
+	ಪೂರ್ಣಾಙ್ಕ (*sk_enroll)(ಪೂರ್ಣಾಙ್ಕ alg, ಧ್ರುವ uint8_t *challenge,
+	    size_t challenge_len, ಧ್ರುವ ವರ್ಣ *application, uint8_t flags,
+	    ಧ್ರುವ ವರ್ಣ *pin, ಸಂರಚನಾ sk_option **opts,
+	    ಸಂರಚನಾ sk_enroll_response **enroll_response);
 
 	/* Sign a challenge */
-	int (*sk_sign)(int alg, const uint8_t *message, size_t message_len,
-	    const char *application,
-	    const uint8_t *key_handle, size_t key_handle_len,
-	    uint8_t flags, const char *pin, struct sk_option **opts,
-	    struct sk_sign_response **sign_response);
+	ಪೂರ್ಣಾಙ್ಕ (*sk_sign)(ಪೂರ್ಣಾಙ್ಕ alg, ಧ್ರುವ uint8_t *message, size_t message_len,
+	    ಧ್ರುವ ವರ್ಣ *application,
+	    ಧ್ರುವ uint8_t *ಕೀಲಿ_handle, size_t ಕೀಲಿ_handle_len,
+	    uint8_t flags, ಧ್ರುವ ವರ್ಣ *pin, ಸಂರಚನಾ sk_option **opts,
+	    ಸಂರಚನಾ sk_sign_response **sign_response);
 
 	/* Enumerate resident keys */
-	int (*sk_load_resident_keys)(const char *pin, struct sk_option **opts,
-	    struct sk_resident_key ***rks, size_t *nrks);
+	ಪೂರ್ಣಾಙ್ಕ (*sk_load_resident_ಕೀಲಿಗಳು)(ಧ್ರುವ ವರ್ಣ *pin, ಸಂರಚನಾ sk_option **opts,
+	    ಸಂರಚನಾ sk_resident_ಕೀಲಿ ***rks, size_t *nrks);
 };
 
 /* Built-in version */
-int ssh_sk_enroll(int alg, const uint8_t *challenge,
-    size_t challenge_len, const char *application, uint8_t flags,
-    const char *pin, struct sk_option **opts,
-    struct sk_enroll_response **enroll_response);
-int ssh_sk_sign(int alg, const uint8_t *message, size_t message_len,
-    const char *application,
-    const uint8_t *key_handle, size_t key_handle_len,
-    uint8_t flags, const char *pin, struct sk_option **opts,
-    struct sk_sign_response **sign_response);
-int ssh_sk_load_resident_keys(const char *pin, struct sk_option **opts,
-    struct sk_resident_key ***rks, size_t *nrks);
+ಪೂರ್ಣಾಙ್ಕ ssh_sk_enroll(ಪೂರ್ಣಾಙ್ಕ alg, ಧ್ರುವ uint8_t *challenge,
+    size_t challenge_len, ಧ್ರುವ ವರ್ಣ *application, uint8_t flags,
+    ಧ್ರುವ ವರ್ಣ *pin, ಸಂರಚನಾ sk_option **opts,
+    ಸಂರಚನಾ sk_enroll_response **enroll_response);
+ಪೂರ್ಣಾಙ್ಕ ssh_sk_sign(ಪೂರ್ಣಾಙ್ಕ alg, ಧ್ರುವ uint8_t *message, size_t message_len,
+    ಧ್ರುವ ವರ್ಣ *application,
+    ಧ್ರುವ uint8_t *ಕೀಲಿ_handle, size_t ಕೀಲಿ_handle_len,
+    uint8_t flags, ಧ್ರುವ ವರ್ಣ *pin, ಸಂರಚನಾ sk_option **opts,
+    ಸಂರಚನಾ sk_sign_response **sign_response);
+ಪೂರ್ಣಾಙ್ಕ ssh_sk_load_resident_ಕೀಲಿಗಳು(ಧ್ರುವ ವರ್ಣ *pin, ಸಂರಚನಾ sk_option **opts,
+    ಸಂರಚನಾ sk_resident_ಕೀಲಿ ***rks, size_t *nrks);
 
-static void
-sshsk_free(struct sshsk_provider *p)
+ಸ್ಥಿರ ಶೂನ್ಯ
+sshsk_free(ಸಂರಚನಾ sshsk_provider *p)
 {
-	if (p == NULL)
-		return;
-	free(p->path);
-	if (p->dlhandle != NULL)
+	ಯದಿ (p == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ;
+	ಮುಕ್ತ(p->path);
+	ಯದಿ (p->dlhandle != ರಿಕ್ತ)
 		dlclose(p->dlhandle);
-	free(p);
+	ಮುಕ್ತ(p);
 }
 
-static struct sshsk_provider *
-sshsk_open(const char *path)
+ಸ್ಥಿರ ಸಂರಚನಾ sshsk_provider *
+sshsk_open(ಧ್ರುವ ವರ್ಣ *path)
 {
-	struct sshsk_provider *ret = NULL;
+	ಸಂರಚನಾ sshsk_provider *ret = ರಿಕ್ತ;
 	uint32_t version;
 
-	if (path == NULL || *path == '\0') {
+	ಯದಿ (path == ರಿಕ್ತ || *path == '\0') {
 		error("No FIDO SecurityKeyProvider specified");
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
-	if ((ret = calloc(1, sizeof(*ret))) == NULL) {
+	ಯದಿ ((ret = calloc(1, ಪರಿಮಾಣ(*ret))) == ರಿಕ್ತ) {
 		error_f("calloc failed");
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
-	if ((ret->path = strdup(path)) == NULL) {
+	ಯದಿ ((ret->path = strdup(path)) == ರಿಕ್ತ) {
 		error_f("strdup failed");
-		goto fail;
+		ಗಚ್ಛ fail;
 	}
 	/* Skip the rest if we're using the linked in middleware */
-	if (strcasecmp(ret->path, "internal") == 0) {
+	ಯದಿ (strcasecmp(ret->path, "internal") == 0) {
 #ifdef ENABLE_SK_INTERNAL
 		ret->sk_enroll = ssh_sk_enroll;
 		ret->sk_sign = ssh_sk_sign;
-		ret->sk_load_resident_keys = ssh_sk_load_resident_keys;
-		return ret;
-#else
+		ret->sk_load_resident_ಕೀಲಿಗಳು = ssh_sk_load_resident_ಕೀಲಿಗಳು;
+		ಪ್ರತ್ಯಾಗಮ ret;
+#ಅನ್ಯಥಾ
 		error("internal security key support not enabled");
-		goto fail;
+		ಗಚ್ಛ fail;
 #endif
 	}
-	if (lib_contains_symbol(path, "sk_api_version") != 0) {
+	ಯದಿ (lib_contains_ಚಿಹ್ನೆ(path, "sk_api_version") != 0) {
 		error("provider %s is not an OpenSSH FIDO library", path);
-		goto fail;
+		ಗಚ್ಛ fail;
 	}
-	if ((ret->dlhandle = dlopen(path, RTLD_NOW)) == NULL)
+	ಯದಿ ((ret->dlhandle = dlopen(path, RTLD_NOW)) == ರಿಕ್ತ)
 		fatal("Provider \"%s\" dlopen failed: %s", path, dlerror());
-	if ((ret->sk_api_version = dlsym(ret->dlhandle,
-	    "sk_api_version")) == NULL) {
+	ಯದಿ ((ret->sk_api_version = dlsym(ret->dlhandle,
+	    "sk_api_version")) == ರಿಕ್ತ) {
 		error("Provider \"%s\" dlsym(sk_api_version) failed: %s",
 		    path, dlerror());
-		goto fail;
+		ಗಚ್ಛ fail;
 	}
 	version = ret->sk_api_version();
 	debug_f("provider %s implements version 0x%08lx", ret->path,
 	    (u_long)version);
-	if ((version & SSH_SK_VERSION_MAJOR_MASK) != SSH_SK_VERSION_MAJOR) {
+	ಯದಿ ((version & SSH_SK_VERSION_MAJOR_MASK) != SSH_SK_VERSION_MAJOR) {
 		error("Provider \"%s\" implements unsupported "
 		    "version 0x%08lx (supported: 0x%08lx)",
 		    path, (u_long)version, (u_long)SSH_SK_VERSION_MAJOR);
-		goto fail;
+		ಗಚ್ಛ fail;
 	}
-	if ((ret->sk_enroll = dlsym(ret->dlhandle, "sk_enroll")) == NULL) {
+	ಯದಿ ((ret->sk_enroll = dlsym(ret->dlhandle, "sk_enroll")) == ರಿಕ್ತ) {
 		error("Provider %s dlsym(sk_enroll) failed: %s",
 		    path, dlerror());
-		goto fail;
+		ಗಚ್ಛ fail;
 	}
-	if ((ret->sk_sign = dlsym(ret->dlhandle, "sk_sign")) == NULL) {
+	ಯದಿ ((ret->sk_sign = dlsym(ret->dlhandle, "sk_sign")) == ರಿಕ್ತ) {
 		error("Provider \"%s\" dlsym(sk_sign) failed: %s",
 		    path, dlerror());
-		goto fail;
+		ಗಚ್ಛ fail;
 	}
-	if ((ret->sk_load_resident_keys = dlsym(ret->dlhandle,
-	    "sk_load_resident_keys")) == NULL) {
+	ಯದಿ ((ret->sk_load_resident_ಕೀಲಿಗಳು = dlsym(ret->dlhandle,
+	    "sk_load_resident_keys")) == ರಿಕ್ತ) {
 		error("Provider \"%s\" dlsym(sk_load_resident_keys) "
 		    "failed: %s", path, dlerror());
-		goto fail;
+		ಗಚ್ಛ fail;
 	}
 	/* success */
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 fail:
 	sshsk_free(ret);
-	return NULL;
+	ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 }
 
-static void
-sshsk_free_enroll_response(struct sk_enroll_response *r)
+ಸ್ಥಿರ ಶೂನ್ಯ
+sshsk_free_enroll_response(ಸಂರಚನಾ sk_enroll_response *r)
 {
-	if (r == NULL)
-		return;
-	freezero(r->key_handle, r->key_handle_len);
-	freezero(r->public_key, r->public_key_len);
+	ಯದಿ (r == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ;
+	freezero(r->ಕೀಲಿ_handle, r->ಕೀಲಿ_handle_len);
+	freezero(r->public_ಕೀಲಿ, r->public_ಕೀಲಿ_len);
 	freezero(r->signature, r->signature_len);
 	freezero(r->attestation_cert, r->attestation_cert_len);
 	freezero(r->authdata, r->authdata_len);
-	freezero(r, sizeof(*r));
+	freezero(r, ಪರಿಮಾಣ(*r));
 }
 
-static void
-sshsk_free_sign_response(struct sk_sign_response *r)
+ಸ್ಥಿರ ಶೂನ್ಯ
+sshsk_free_sign_response(ಸಂರಚನಾ sk_sign_response *r)
 {
-	if (r == NULL)
-		return;
+	ಯದಿ (r == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ;
 	freezero(r->sig_r, r->sig_r_len);
 	freezero(r->sig_s, r->sig_s_len);
-	freezero(r, sizeof(*r));
+	freezero(r, ಪರಿಮಾಣ(*r));
 }
 
 #ifdef WITH_OPENSSL
 /* Assemble key from response */
-static int
-sshsk_ecdsa_assemble(struct sk_enroll_response *resp, struct sshkey **keyp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+sshsk_ecdsa_assemble(ಸಂರಚನಾ sk_enroll_response *resp, ಸಂರಚನಾ sshkey **keyp)
 {
-	struct sshkey *key = NULL;
-	struct sshbuf *b = NULL;
-	EC_KEY *ecdsa = NULL;
-	EC_POINT *q = NULL;
-	const EC_GROUP *g = NULL;
-	int r;
+	ಸಂರಚನಾ sshkey *ಕೀಲಿ = ರಿಕ್ತ;
+	ಸಂರಚನಾ sshbuf *b = ರಿಕ್ತ;
+	EC_ಕೀಲಿ *ecdsa = ರಿಕ್ತ;
+	EC_POINT *q = ರಿಕ್ತ;
+	ಧ್ರುವ EC_GROUP *g = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	*keyp = NULL;
-	if ((key = sshkey_new(KEY_ECDSA_SK)) == NULL) {
+	*keyp = ರಿಕ್ತ;
+	ಯದಿ ((ಕೀಲಿ = sshkey_new(ಕೀಲಿ_ECDSA_SK)) == ರಿಕ್ತ) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	key->ecdsa_nid = NID_X9_62_prime256v1;
-	if ((ecdsa = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL ||
-	    (g = EC_KEY_get0_group(ecdsa)) == NULL ||
-	    (q = EC_POINT_new(g)) == NULL ||
-	    (b = sshbuf_new()) == NULL) {
+	ಕೀಲಿ->ecdsa_nid = NID_X9_62_prime256v1;
+	ಯದಿ ((ecdsa = EC_ಕೀಲಿ_new_by_curve_name(ಕೀಲಿ->ecdsa_nid)) == ರಿಕ್ತ ||
+	    (g = EC_ಕೀಲಿ_get0_group(ecdsa)) == ರಿಕ್ತ ||
+	    (q = EC_POINT_new(g)) == ರಿಕ್ತ ||
+	    (b = sshbuf_new()) == ರಿಕ್ತ) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = sshbuf_put_string(b,
-	    resp->public_key, resp->public_key_len)) != 0) {
+	ಯದಿ ((r = sshbuf_put_string(b,
+	    resp->public_ಕೀಲಿ, resp->public_ಕೀಲಿ_len)) != 0) {
 		error_fr(r, "sshbuf_put_string");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = sshbuf_get_ec(b, q, g)) != 0) {
+	ಯದಿ ((r = sshbuf_get_ec(b, q, g)) != 0) {
 		error_fr(r, "parse");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (sshkey_ec_validate_public(g, q) != 0) {
+	ಯದಿ (sshkey_ec_validate_public(g, q) != 0) {
 		error("Authenticator returned invalid ECDSA key");
-		r = SSH_ERR_KEY_INVALID_EC_VALUE;
-		goto out;
+		r = SSH_ERR_ಕೀಲಿ_INVALID_EC_ಮೌಲ್ಯ;
+		ಗಚ್ಛ out;
 	}
-	if (EC_KEY_set_public_key(ecdsa, q) != 1) {
+	ಯದಿ (EC_ಕೀಲಿ_set_public_ಕೀಲಿ(ecdsa, q) != 1) {
 		/* XXX assume it is a allocation error */
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((key->pkey = EVP_PKEY_new()) == NULL) {
+	ಯದಿ ((ಕೀಲಿ->pkey = EVP_PKEY_new()) == ರಿಕ್ತ) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ecdsa) != 1) {
+	ಯದಿ (EVP_PKEY_set1_EC_ಕೀಲಿ(ಕೀಲಿ->pkey, ecdsa) != 1) {
 		error_f("Assigning EC_KEY failed");
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 	/* success */
-	*keyp = key;
-	key = NULL; /* transferred */
+	*keyp = ಕೀಲಿ;
+	ಕೀಲಿ = ರಿಕ್ತ; /* transferred */
 	r = 0;
  out:
-	sshkey_free(key);
+	sshkey_free(ಕೀಲಿ);
 	sshbuf_free(b);
-	EC_KEY_free(ecdsa);
+	EC_ಕೀಲಿ_free(ecdsa);
 	EC_POINT_free(q);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 #endif /* WITH_OPENSSL */
 
-static int
-sshsk_ed25519_assemble(struct sk_enroll_response *resp, struct sshkey **keyp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+sshsk_ed25519_assemble(ಸಂರಚನಾ sk_enroll_response *resp, ಸಂರಚನಾ sshkey **keyp)
 {
-	struct sshkey *key = NULL;
-	int r;
+	ಸಂರಚನಾ sshkey *ಕೀಲಿ = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	*keyp = NULL;
-	if (resp->public_key_len != ED25519_PK_SZ) {
-		error_f("invalid size: %zu", resp->public_key_len);
+	*keyp = ರಿಕ್ತ;
+	ಯದಿ (resp->public_ಕೀಲಿ_len != ED25519_PK_SZ) {
+		error_f("invalid size: %zu", resp->public_ಕೀಲಿ_len);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((key = sshkey_new(KEY_ED25519_SK)) == NULL) {
+	ಯದಿ ((ಕೀಲಿ = sshkey_new(ಕೀಲಿ_ED25519_SK)) == ರಿಕ್ತ) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((key->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL) {
+	ಯದಿ ((ಕೀಲಿ->ed25519_pk = malloc(ED25519_PK_SZ)) == ರಿಕ್ತ) {
 		error_f("malloc failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	memcpy(key->ed25519_pk, resp->public_key, ED25519_PK_SZ);
+	memcpy(ಕೀಲಿ->ed25519_pk, resp->public_ಕೀಲಿ, ED25519_PK_SZ);
 	/* success */
-	*keyp = key;
-	key = NULL; /* transferred */
+	*keyp = ಕೀಲಿ;
+	ಕೀಲಿ = ರಿಕ್ತ; /* transferred */
 	r = 0;
  out:
-	sshkey_free(key);
-	return r;
+	sshkey_free(ಕೀಲಿ);
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-static int
-sshsk_key_from_response(int alg, const char *application, uint8_t flags,
-    struct sk_enroll_response *resp, struct sshkey **keyp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+sshsk_ಕೀಲಿ_from_response(ಪೂರ್ಣಾಙ್ಕ alg, ಧ್ರುವ ವರ್ಣ *application, uint8_t flags,
+    ಸಂರಚನಾ sk_enroll_response *resp, ಸಂರಚನಾ sshkey **keyp)
 {
-	struct sshkey *key = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ಸಂರಚನಾ sshkey *ಕೀಲಿ = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r = SSH_ERR_INTERNAL_ERROR;
 
-	*keyp = NULL;
+	*keyp = ರಿಕ್ತ;
 
 	/* Check response validity */
-	if (resp->public_key == NULL || resp->key_handle == NULL) {
+	ಯದಿ (resp->public_ಕೀಲಿ == ರಿಕ್ತ || resp->ಕೀಲಿ_handle == ರಿಕ್ತ) {
 		error_f("sk_enroll response invalid");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	switch (alg) {
+	ವಿಕಲ್ಪ (alg) {
 #ifdef WITH_OPENSSL
-	case SSH_SK_ECDSA:
-		if ((r = sshsk_ecdsa_assemble(resp, &key)) != 0)
-			goto out;
-		break;
+	ಪಕ್ಷ SSH_SK_ECDSA:
+		ಯದಿ ((r = sshsk_ecdsa_assemble(resp, &ಕೀಲಿ)) != 0)
+			ಗಚ್ಛ out;
+		ಭಙ್ಗ;
 #endif /* WITH_OPENSSL */
-	case SSH_SK_ED25519:
-		if ((r = sshsk_ed25519_assemble(resp, &key)) != 0)
-			goto out;
-		break;
-	default:
+	ಪಕ್ಷ SSH_SK_ED25519:
+		ಯದಿ ((r = sshsk_ed25519_assemble(resp, &ಕೀಲಿ)) != 0)
+			ಗಚ್ಛ out;
+		ಭಙ್ಗ;
+	ಸ್ವಭಾವ:
 		error_f("unsupported algorithm %d", alg);
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	key->sk_flags = flags;
-	if ((key->sk_key_handle = sshbuf_new()) == NULL ||
-	    (key->sk_reserved = sshbuf_new()) == NULL) {
+	ಕೀಲಿ->sk_flags = flags;
+	ಯದಿ ((ಕೀಲಿ->sk_ಕೀಲಿ_handle = sshbuf_new()) == ರಿಕ್ತ ||
+	    (ಕೀಲಿ->sk_reserved = sshbuf_new()) == ರಿಕ್ತ) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((key->sk_application = strdup(application)) == NULL) {
+	ಯದಿ ((ಕೀಲಿ->sk_application = strdup(application)) == ರಿಕ್ತ) {
 		error_f("strdup application failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = sshbuf_put(key->sk_key_handle, resp->key_handle,
-	    resp->key_handle_len)) != 0) {
+	ಯದಿ ((r = sshbuf_put(ಕೀಲಿ->sk_ಕೀಲಿ_handle, resp->ಕೀಲಿ_handle,
+	    resp->ಕೀಲಿ_handle_len)) != 0) {
 		error_fr(r, "put key handle");
-		goto out;
+		ಗಚ್ಛ out;
 	}
 	/* success */
 	r = 0;
-	*keyp = key;
-	key = NULL;
+	*keyp = ಕೀಲಿ;
+	ಕೀಲಿ = ರಿಕ್ತ;
  out:
-	sshkey_free(key);
-	return r;
+	sshkey_free(ಕೀಲಿ);
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-static int
-skerr_to_ssherr(int skerr)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+skerr_to_ssherr(ಪೂರ್ಣಾಙ್ಕ skerr)
 {
-	switch (skerr) {
-	case SSH_SK_ERR_UNSUPPORTED:
-		return SSH_ERR_FEATURE_UNSUPPORTED;
-	case SSH_SK_ERR_PIN_REQUIRED:
-		return SSH_ERR_KEY_WRONG_PASSPHRASE;
-	case SSH_SK_ERR_DEVICE_NOT_FOUND:
-		return SSH_ERR_DEVICE_NOT_FOUND;
-	case SSH_SK_ERR_CREDENTIAL_EXISTS:
-		return SSH_ERR_KEY_BAD_PERMISSIONS;
-	case SSH_SK_ERR_GENERAL:
-	default:
-		return SSH_ERR_INVALID_FORMAT;
+	ವಿಕಲ್ಪ (skerr) {
+	ಪಕ್ಷ SSH_SK_ERR_UNSUPPORTED:
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_FEATURE_UNSUPPORTED;
+	ಪಕ್ಷ SSH_SK_ERR_PIN_REQUIRED:
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ಕೀಲಿ_WRONG_PASSPHRASE;
+	ಪಕ್ಷ SSH_SK_ERR_DEVICE_NOT_FOUND:
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_DEVICE_NOT_FOUND;
+	ಪಕ್ಷ SSH_SK_ERR_CREDENTIAL_EXISTS:
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ಕೀಲಿ_BAD_PERMISSIONS;
+	ಪಕ್ಷ SSH_SK_ERR_GENERAL:
+	ಸ್ವಭಾವ:
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_FORMAT;
 	}
 }
 
-static void
-sshsk_free_options(struct sk_option **opts)
+ಸ್ಥಿರ ಶೂನ್ಯ
+sshsk_free_options(ಸಂರಚನಾ sk_option **opts)
 {
 	size_t i;
 
-	if (opts == NULL)
-		return;
-	for (i = 0; opts[i] != NULL; i++) {
-		free(opts[i]->name);
-		free(opts[i]->value);
-		free(opts[i]);
+	ಯದಿ (opts == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ;
+	ಪ್ರತಿ (i = 0; opts[i] != ರಿಕ್ತ; i++) {
+		ಮುಕ್ತ(opts[i]->name);
+		ಮುಕ್ತ(opts[i]->ಮೌಲ್ಯ);
+		ಮುಕ್ತ(opts[i]);
 	}
-	free(opts);
+	ಮುಕ್ತ(opts);
 }
 
-static int
-sshsk_add_option(struct sk_option ***optsp, size_t *noptsp,
-    const char *name, const char *value, uint8_t required)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+sshsk_add_option(ಸಂರಚನಾ sk_option ***optsp, size_t *noptsp,
+    ಧ್ರುವ ವರ್ಣ *name, ಧ್ರುವ ವರ್ಣ *ಮೌಲ್ಯ, uint8_t required)
 {
-	struct sk_option **opts = *optsp;
+	ಸಂರಚನಾ sk_option **opts = *optsp;
 	size_t nopts = *noptsp;
 
-	if ((opts = recallocarray(opts, nopts, nopts + 2, /* extra for NULL */
-	    sizeof(*opts))) == NULL) {
+	ಯದಿ ((opts = recallocarray(opts, nopts, nopts + 2, /* extra for NULL */
+	    ಪರಿಮಾಣ(*opts))) == ರಿಕ್ತ) {
 		error_f("array alloc failed");
-		return SSH_ERR_ALLOC_FAIL;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
 	}
 	*optsp = opts;
 	*noptsp = nopts + 1;
-	if ((opts[nopts] = calloc(1, sizeof(**opts))) == NULL) {
+	ಯದಿ ((opts[nopts] = calloc(1, ಪರಿಮಾಣ(**opts))) == ರಿಕ್ತ) {
 		error_f("alloc failed");
-		return SSH_ERR_ALLOC_FAIL;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
 	}
-	if ((opts[nopts]->name = strdup(name)) == NULL ||
-	    (opts[nopts]->value = strdup(value)) == NULL) {
+	ಯದಿ ((opts[nopts]->name = strdup(name)) == ರಿಕ್ತ ||
+	    (opts[nopts]->ಮೌಲ್ಯ = strdup(ಮೌಲ್ಯ)) == ರಿಕ್ತ) {
 		error_f("alloc failed");
-		return SSH_ERR_ALLOC_FAIL;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
 	}
 	opts[nopts]->required = required;
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int
-make_options(const char *device, const char *user_id,
-    struct sk_option ***optsp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+make_options(ಧ್ರುವ ವರ್ಣ *device, ಧ್ರುವ ವರ್ಣ *user_id,
+    ಸಂರಚನಾ sk_option ***optsp)
 {
-	struct sk_option **opts = NULL;
+	ಸಂರಚನಾ sk_option **opts = ರಿಕ್ತ;
 	size_t nopts = 0;
-	int r, ret = SSH_ERR_INTERNAL_ERROR;
+	ಪೂರ್ಣಾಙ್ಕ r, ret = SSH_ERR_INTERNAL_ERROR;
 
-	if (device != NULL &&
+	ಯದಿ (device != ರಿಕ್ತ &&
 	    (r = sshsk_add_option(&opts, &nopts, "device", device, 0)) != 0) {
 		ret = r;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (user_id != NULL &&
+	ಯದಿ (user_id != ರಿಕ್ತ &&
 	    (r = sshsk_add_option(&opts, &nopts, "user", user_id, 0)) != 0) {
 		ret = r;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 	/* success */
 	*optsp = opts;
-	opts = NULL;
+	opts = ರಿಕ್ತ;
 	nopts = 0;
 	ret = 0;
  out:
 	sshsk_free_options(opts);
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
 
-static int
-fill_attestation_blob(const struct sk_enroll_response *resp,
-    struct sshbuf *attest)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+fill_attestation_blob(ಧ್ರುವ ಸಂರಚನಾ sk_enroll_response *resp,
+    ಸಂರಚನಾ sshbuf *attest)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if (attest == NULL)
-		return 0; /* nothing to do */
-	if ((r = sshbuf_put_cstring(attest, "ssh-sk-attest-v01")) != 0 ||
+	ಯದಿ (attest == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ 0; /* nothing to do */
+	ಯದಿ ((r = sshbuf_put_cstring(attest, "ssh-sk-attest-v01")) != 0 ||
 	    (r = sshbuf_put_string(attest,
 	    resp->attestation_cert, resp->attestation_cert_len)) != 0 ||
 	    (r = sshbuf_put_string(attest,
@@ -455,145 +455,145 @@ fill_attestation_blob(const struct sk_enroll_response *resp,
 	    (r = sshbuf_put_string(attest,
 	    resp->authdata, resp->authdata_len)) != 0 ||
 	    (r = sshbuf_put_u32(attest, 0)) != 0 || /* resvd flags */
-	    (r = sshbuf_put_string(attest, NULL, 0)) != 0 /* resvd */) {
+	    (r = sshbuf_put_string(attest, ರಿಕ್ತ, 0)) != 0 /* resvd */) {
 		error_fr(r, "compose");
-		return r;
+		ಪ್ರತ್ಯಾಗಮ r;
 	}
 	/* success */
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest)
+ಪೂರ್ಣಾಙ್ಕ
+sshsk_enroll(ಪೂರ್ಣಾಙ್ಕ type, ಧ್ರುವ ವರ್ಣ *provider_path, ಧ್ರುವ ವರ್ಣ *device,
+    ಧ್ರುವ ವರ್ಣ *application, ಧ್ರುವ ವರ್ಣ *userid, uint8_t flags,
+    ಧ್ರುವ ವರ್ಣ *pin, ಸಂರಚನಾ sshbuf *challenge_buf,
+    ಸಂರಚನಾ sshkey **keyp, ಸಂರಚನಾ sshbuf *attest)
 {
-	struct sshsk_provider *skp = NULL;
-	struct sshkey *key = NULL;
+	ಸಂರಚನಾ sshsk_provider *skp = ರಿಕ್ತ;
+	ಸಂರಚನಾ sshkey *ಕೀಲಿ = ರಿಕ್ತ;
 	u_char randchall[32];
-	const u_char *challenge;
+	ಧ್ರುವ u_char *challenge;
 	size_t challenge_len;
-	struct sk_enroll_response *resp = NULL;
-	struct sk_option **opts = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int alg;
+	ಸಂರಚನಾ sk_enroll_response *resp = ರಿಕ್ತ;
+	ಸಂರಚನಾ sk_option **opts = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r = SSH_ERR_INTERNAL_ERROR;
+	ಪೂರ್ಣಾಙ್ಕ alg;
 
 	debug_f("provider \"%s\", device \"%s\", application \"%s\", "
 	    "userid \"%s\", flags 0x%02x, challenge len %zu%s",
 	    provider_path, device, application, userid, flags,
-	    challenge_buf == NULL ? 0 : sshbuf_len(challenge_buf),
-	    (pin != NULL && *pin != '\0') ? " with-pin" : "");
+	    challenge_buf == ರಿಕ್ತ ? 0 : sshbuf_len(challenge_buf),
+	    (pin != ರಿಕ್ತ && *pin != '\0') ? " with-pin" : "");
 
-	*keyp = NULL;
-	if (attest)
+	*keyp = ರಿಕ್ತ;
+	ಯದಿ (attest)
 		sshbuf_reset(attest);
 
-	if ((r = make_options(device, userid, &opts)) != 0)
-		goto out;
+	ಯದಿ ((r = make_options(device, userid, &opts)) != 0)
+		ಗಚ್ಛ out;
 
-	switch (type) {
+	ವಿಕಲ್ಪ (type) {
 #ifdef WITH_OPENSSL
-	case KEY_ECDSA_SK:
+	ಪಕ್ಷ ಕೀಲಿ_ECDSA_SK:
 		alg = SSH_SK_ECDSA;
-		break;
+		ಭಙ್ಗ;
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519_SK:
+	ಪಕ್ಷ ಕೀಲಿ_ED25519_SK:
 		alg = SSH_SK_ED25519;
-		break;
-	default:
+		ಭಙ್ಗ;
+	ಸ್ವಭಾವ:
 		error_f("unsupported key type");
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (provider_path == NULL) {
+	ಯದಿ (provider_path == ರಿಕ್ತ) {
 		error_f("missing provider");
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (application == NULL || *application == '\0') {
+	ಯದಿ (application == ರಿಕ್ತ || *application == '\0') {
 		error_f("missing application");
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (challenge_buf == NULL) {
+	ಯದಿ (challenge_buf == ರಿಕ್ತ) {
 		debug_f("using random challenge");
-		arc4random_buf(randchall, sizeof(randchall));
+		arc4random_buf(randchall, ಪರಿಮಾಣ(randchall));
 		challenge = randchall;
-		challenge_len = sizeof(randchall);
-	} else if (sshbuf_len(challenge_buf) == 0) {
+		challenge_len = ಪರಿಮಾಣ(randchall);
+	} ಅನ್ಯಥಾ ಯದಿ (sshbuf_len(challenge_buf) == 0) {
 		error("Missing enrollment challenge");
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
-	} else {
+		ಗಚ್ಛ out;
+	} ಅನ್ಯಥಾ {
 		challenge = sshbuf_ptr(challenge_buf);
 		challenge_len = sshbuf_len(challenge_buf);
 		debug3_f("using explicit challenge len=%zd", challenge_len);
 	}
-	if ((skp = sshsk_open(provider_path)) == NULL) {
+	ಯದಿ ((skp = sshsk_open(provider_path)) == ರಿಕ್ತ) {
 		r = SSH_ERR_INVALID_FORMAT; /* XXX sshsk_open return code? */
-		goto out;
+		ಗಚ್ಛ out;
 	}
 	/* XXX validate flags? */
 	/* enroll key */
-	if ((r = skp->sk_enroll(alg, challenge, challenge_len, application,
+	ಯದಿ ((r = skp->sk_enroll(alg, challenge, challenge_len, application,
 	    flags, pin, opts, &resp)) != 0) {
 		debug_f("provider \"%s\" failure %d", provider_path, r);
 		r = skerr_to_ssherr(r);
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
-	if ((r = sshsk_key_from_response(alg, application, resp->flags,
-	    resp, &key)) != 0)
-		goto out;
+	ಯದಿ ((r = sshsk_ಕೀಲಿ_from_response(alg, application, resp->flags,
+	    resp, &ಕೀಲಿ)) != 0)
+		ಗಚ್ಛ out;
 
 	/* Optionally fill in the attestation information */
-	if ((r = fill_attestation_blob(resp, attest)) != 0)
-		goto out;
+	ಯದಿ ((r = fill_attestation_blob(resp, attest)) != 0)
+		ಗಚ್ಛ out;
 
 	/* success */
-	*keyp = key;
-	key = NULL; /* transferred */
+	*keyp = ಕೀಲಿ;
+	ಕೀಲಿ = ರಿಕ್ತ; /* transferred */
 	r = 0;
  out:
 	sshsk_free_options(opts);
 	sshsk_free(skp);
-	sshkey_free(key);
+	sshkey_free(ಕೀಲಿ);
 	sshsk_free_enroll_response(resp);
-	explicit_bzero(randchall, sizeof(randchall));
-	return r;
+	explicit_bzero(randchall, ಪರಿಮಾಣ(randchall));
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 #ifdef WITH_OPENSSL
-static int
-sshsk_ecdsa_sig(struct sk_sign_response *resp, struct sshbuf *sig)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+sshsk_ecdsa_sig(ಸಂರಚನಾ sk_sign_response *resp, ಸಂರಚನಾ sshbuf *sig)
 {
-	struct sshbuf *inner_sig = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ಸಂರಚನಾ sshbuf *inner_sig = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r = SSH_ERR_INTERNAL_ERROR;
 
 	/* Check response validity */
-	if (resp->sig_r == NULL || resp->sig_s == NULL) {
+	ಯದಿ (resp->sig_r == ರಿಕ್ತ || resp->sig_s == ರಿಕ್ತ) {
 		error_f("sk_sign response invalid");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((inner_sig = sshbuf_new()) == NULL) {
+	ಯದಿ ((inner_sig = sshbuf_new()) == ರಿಕ್ತ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 	/* Prepare and append inner signature object */
-	if ((r = sshbuf_put_bignum2_bytes(inner_sig,
+	ಯದಿ ((r = sshbuf_put_bignum2_bytes(inner_sig,
 	    resp->sig_r, resp->sig_r_len)) != 0 ||
 	    (r = sshbuf_put_bignum2_bytes(inner_sig,
 	    resp->sig_s, resp->sig_s_len)) != 0) {
 		error_fr(r, "compose inner");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = sshbuf_put_stringb(sig, inner_sig)) != 0 ||
+	ಯದಿ ((r = sshbuf_put_stringb(sig, inner_sig)) != 0 ||
 	    (r = sshbuf_put_u8(sig, resp->flags)) != 0 ||
 	    (r = sshbuf_put_u32(sig, resp->counter)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		ಗಚ್ಛ out;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: sig_r:\n", __func__);
@@ -606,27 +606,27 @@ sshsk_ecdsa_sig(struct sk_sign_response *resp, struct sshbuf *sig)
 	r = 0;
  out:
 	sshbuf_free(inner_sig);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 #endif /* WITH_OPENSSL */
 
-static int
-sshsk_ed25519_sig(struct sk_sign_response *resp, struct sshbuf *sig)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+sshsk_ed25519_sig(ಸಂರಚನಾ sk_sign_response *resp, ಸಂರಚನಾ sshbuf *sig)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ಪೂರ್ಣಾಙ್ಕ r = SSH_ERR_INTERNAL_ERROR;
 
 	/* Check response validity */
-	if (resp->sig_r == NULL) {
+	ಯದಿ (resp->sig_r == ರಿಕ್ತ) {
 		error_f("sk_sign response invalid");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = sshbuf_put_string(sig,
+	ಯದಿ ((r = sshbuf_put_string(sig,
 	    resp->sig_r, resp->sig_r_len)) != 0 ||
 	    (r = sshbuf_put_u8(sig, resp->flags)) != 0 ||
 	    (r = sshbuf_put_u32(sig, resp->counter)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		ಗಚ್ಛ out;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: sig_r:\n", __func__);
@@ -634,85 +634,85 @@ sshsk_ed25519_sig(struct sk_sign_response *resp, struct sshbuf *sig)
 #endif
 	r = 0;
  out:
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-int
-sshsk_sign(const char *provider_path, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin)
+ಪೂರ್ಣಾಙ್ಕ
+sshsk_sign(ಧ್ರುವ ವರ್ಣ *provider_path, ಸಂರಚನಾ sshkey *ಕೀಲಿ,
+    u_char **sigp, size_t *lenp, ಧ್ರುವ u_char *data, size_t datalen,
+    u_int compat, ಧ್ರುವ ವರ್ಣ *pin)
 {
-	struct sshsk_provider *skp = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int type, alg;
-	struct sk_sign_response *resp = NULL;
-	struct sshbuf *inner_sig = NULL, *sig = NULL;
-	struct sk_option **opts = NULL;
+	ಸಂರಚನಾ sshsk_provider *skp = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r = SSH_ERR_INTERNAL_ERROR;
+	ಪೂರ್ಣಾಙ್ಕ type, alg;
+	ಸಂರಚನಾ sk_sign_response *resp = ರಿಕ್ತ;
+	ಸಂರಚನಾ sshbuf *inner_sig = ರಿಕ್ತ, *sig = ರಿಕ್ತ;
+	ಸಂರಚನಾ sk_option **opts = ರಿಕ್ತ;
 
 	debug_f("provider \"%s\", key %s, flags 0x%02x%s",
-	    provider_path, sshkey_type(key), key->sk_flags,
-	    (pin != NULL && *pin != '\0') ? " with-pin" : "");
+	    provider_path, sshkey_type(ಕೀಲಿ), ಕೀಲಿ->sk_flags,
+	    (pin != ರಿಕ್ತ && *pin != '\0') ? " with-pin" : "");
 
-	if (sigp != NULL)
-		*sigp = NULL;
-	if (lenp != NULL)
+	ಯದಿ (sigp != ರಿಕ್ತ)
+		*sigp = ರಿಕ್ತ;
+	ಯದಿ (lenp != ರಿಕ್ತ)
 		*lenp = 0;
-	type = sshkey_type_plain(key->type);
-	switch (type) {
+	type = sshkey_type_plain(ಕೀಲಿ->type);
+	ವಿಕಲ್ಪ (type) {
 #ifdef WITH_OPENSSL
-	case KEY_ECDSA_SK:
+	ಪಕ್ಷ ಕೀಲಿ_ECDSA_SK:
 		alg = SSH_SK_ECDSA;
-		break;
+		ಭಙ್ಗ;
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519_SK:
+	ಪಕ್ಷ ಕೀಲಿ_ED25519_SK:
 		alg = SSH_SK_ED25519;
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		ಭಙ್ಗ;
+	ಸ್ವಭಾವ:
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (provider_path == NULL ||
-	    key->sk_key_handle == NULL ||
-	    key->sk_application == NULL || *key->sk_application == '\0') {
+	ಯದಿ (provider_path == ರಿಕ್ತ ||
+	    ಕೀಲಿ->sk_ಕೀಲಿ_handle == ರಿಕ್ತ ||
+	    ಕೀಲಿ->sk_application == ರಿಕ್ತ || *ಕೀಲಿ->sk_application == '\0') {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((skp = sshsk_open(provider_path)) == NULL) {
+	ಯದಿ ((skp = sshsk_open(provider_path)) == ರಿಕ್ತ) {
 		r = SSH_ERR_INVALID_FORMAT; /* XXX sshsk_open return code? */
-		goto out;
+		ಗಚ್ಛ out;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: sk_flags = 0x%02x, sk_application = \"%s\"\n",
-	    __func__, key->sk_flags, key->sk_application);
+	    __func__, ಕೀಲಿ->sk_flags, ಕೀಲಿ->sk_application);
 	fprintf(stderr, "%s: sk_key_handle:\n", __func__);
-	sshbuf_dump(key->sk_key_handle, stderr);
+	sshbuf_dump(ಕೀಲಿ->sk_ಕೀಲಿ_handle, stderr);
 #endif
-	if ((r = skp->sk_sign(alg, data, datalen, key->sk_application,
-	    sshbuf_ptr(key->sk_key_handle), sshbuf_len(key->sk_key_handle),
-	    key->sk_flags, pin, opts, &resp)) != 0) {
+	ಯದಿ ((r = skp->sk_sign(alg, data, datalen, ಕೀಲಿ->sk_application,
+	    sshbuf_ptr(ಕೀಲಿ->sk_ಕೀಲಿ_handle), sshbuf_len(ಕೀಲಿ->sk_ಕೀಲಿ_handle),
+	    ಕೀಲಿ->sk_flags, pin, opts, &resp)) != 0) {
 		debug_f("sk_sign failed with code %d", r);
 		r = skerr_to_ssherr(r);
-		goto out;
+		ಗಚ್ಛ out;
 	}
 	/* Assemble signature */
-	if ((sig = sshbuf_new()) == NULL) {
+	ಯದಿ ((sig = sshbuf_new()) == ರಿಕ್ತ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = sshbuf_put_cstring(sig, sshkey_ssh_name_plain(key))) != 0) {
+	ಯದಿ ((r = sshbuf_put_cstring(sig, sshkey_ssh_name_plain(ಕೀಲಿ))) != 0) {
 		error_fr(r, "compose outer");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	switch (type) {
+	ವಿಕಲ್ಪ (type) {
 #ifdef WITH_OPENSSL
-	case KEY_ECDSA_SK:
-		if ((r = sshsk_ecdsa_sig(resp, sig)) != 0)
-			goto out;
-		break;
+	ಪಕ್ಷ ಕೀಲಿ_ECDSA_SK:
+		ಯದಿ ((r = sshsk_ecdsa_sig(resp, sig)) != 0)
+			ಗಚ್ಛ out;
+		ಭಙ್ಗ;
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519_SK:
-		if ((r = sshsk_ed25519_sig(resp, sig)) != 0)
-			goto out;
-		break;
+	ಪಕ್ಷ ಕೀಲಿ_ED25519_SK:
+		ಯದಿ ((r = sshsk_ed25519_sig(resp, sig)) != 0)
+			ಗಚ್ಛ out;
+		ಭಙ್ಗ;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
@@ -722,14 +722,14 @@ sshsk_sign(const char *provider_path, struct sshkey *key,
 	fprintf(stderr, "%s: sigbuf:\n", __func__);
 	sshbuf_dump(sig, stderr);
 #endif
-	if (sigp != NULL) {
-		if ((*sigp = malloc(sshbuf_len(sig))) == NULL) {
+	ಯದಿ (sigp != ರಿಕ್ತ) {
+		ಯದಿ ((*sigp = malloc(sshbuf_len(sig))) == ರಿಕ್ತ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			ಗಚ್ಛ out;
 		}
 		memcpy(*sigp, sshbuf_ptr(sig), sshbuf_len(sig));
 	}
-	if (lenp != NULL)
+	ಯದಿ (lenp != ರಿಕ್ತ)
 		*lenp = sshbuf_len(sig);
 	/* success */
 	r = 0;
@@ -739,145 +739,145 @@ sshsk_sign(const char *provider_path, struct sshkey *key,
 	sshsk_free_sign_response(resp);
 	sshbuf_free(sig);
 	sshbuf_free(inner_sig);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-static void
-sshsk_free_sk_resident_keys(struct sk_resident_key **rks, size_t nrks)
+ಸ್ಥಿರ ಶೂನ್ಯ
+sshsk_free_sk_resident_ಕೀಲಿಗಳು(ಸಂರಚನಾ sk_resident_ಕೀಲಿ **rks, size_t nrks)
 {
 	size_t i;
 
-	if (nrks == 0 || rks == NULL)
-		return;
-	for (i = 0; i < nrks; i++) {
-		free(rks[i]->application);
+	ಯದಿ (nrks == 0 || rks == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ;
+	ಪ್ರತಿ (i = 0; i < nrks; i++) {
+		ಮುಕ್ತ(rks[i]->application);
 		freezero(rks[i]->user_id, rks[i]->user_id_len);
-		freezero(rks[i]->key.key_handle, rks[i]->key.key_handle_len);
-		freezero(rks[i]->key.public_key, rks[i]->key.public_key_len);
-		freezero(rks[i]->key.signature, rks[i]->key.signature_len);
-		freezero(rks[i]->key.attestation_cert,
-		    rks[i]->key.attestation_cert_len);
-		freezero(rks[i], sizeof(**rks));
+		freezero(rks[i]->ಕೀಲಿ.ಕೀಲಿ_handle, rks[i]->ಕೀಲಿ.ಕೀಲಿ_handle_len);
+		freezero(rks[i]->ಕೀಲಿ.public_ಕೀಲಿ, rks[i]->ಕೀಲಿ.public_ಕೀಲಿ_len);
+		freezero(rks[i]->ಕೀಲಿ.signature, rks[i]->ಕೀಲಿ.signature_len);
+		freezero(rks[i]->ಕೀಲಿ.attestation_cert,
+		    rks[i]->ಕೀಲಿ.attestation_cert_len);
+		freezero(rks[i], ಪರಿಮಾಣ(**rks));
 	}
-	free(rks);
+	ಮುಕ್ತ(rks);
 }
 
-static void
-sshsk_free_resident_key(struct sshsk_resident_key *srk)
+ಸ್ಥಿರ ಶೂನ್ಯ
+sshsk_free_resident_ಕೀಲಿ(ಸಂರಚನಾ sshsk_resident_ಕೀಲಿ *srk)
 {
-	if (srk == NULL)
-		return;
-	sshkey_free(srk->key);
+	ಯದಿ (srk == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ;
+	sshkey_free(srk->ಕೀಲಿ);
 	freezero(srk->user_id, srk->user_id_len);
-	free(srk);
+	ಮುಕ್ತ(srk);
 }
 
 
-void
-sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks)
+ಶೂನ್ಯ
+sshsk_free_resident_ಕೀಲಿಗಳು(ಸಂರಚನಾ sshsk_resident_ಕೀಲಿ **srks, size_t nsrks)
 {
 	size_t i;
 
-	if (srks == NULL || nsrks == 0)
-		return;
+	ಯದಿ (srks == ರಿಕ್ತ || nsrks == 0)
+		ಪ್ರತ್ಯಾಗಮ;
 
-	for (i = 0; i < nsrks; i++)
-		sshsk_free_resident_key(srks[i]);
-	free(srks);
+	ಪ್ರತಿ (i = 0; i < nsrks; i++)
+		sshsk_free_resident_ಕೀಲಿ(srks[i]);
+	ಮುಕ್ತ(srks);
 }
 
-int
-sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
+ಪೂರ್ಣಾಙ್ಕ
+sshsk_load_resident(ಧ್ರುವ ವರ್ಣ *provider_path, ಧ್ರುವ ವರ್ಣ *device,
+    ಧ್ರುವ ವರ್ಣ *pin, u_int flags, ಸಂರಚನಾ sshsk_resident_ಕೀಲಿ ***srksp,
     size_t *nsrksp)
 {
-	struct sshsk_provider *skp = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sk_resident_key **rks = NULL;
+	ಸಂರಚನಾ sshsk_provider *skp = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r = SSH_ERR_INTERNAL_ERROR;
+	ಸಂರಚನಾ sk_resident_ಕೀಲಿ **rks = ರಿಕ್ತ;
 	size_t i, nrks = 0, nsrks = 0;
-	struct sshkey *key = NULL;
-	struct sshsk_resident_key *srk = NULL, **srks = NULL, **tmp;
+	ಸಂರಚನಾ sshkey *ಕೀಲಿ = ರಿಕ್ತ;
+	ಸಂರಚನಾ sshsk_resident_ಕೀಲಿ *srk = ರಿಕ್ತ, **srks = ರಿಕ್ತ, **tmp;
 	uint8_t sk_flags;
-	struct sk_option **opts = NULL;
+	ಸಂರಚನಾ sk_option **opts = ರಿಕ್ತ;
 
 	debug_f("provider \"%s\"%s", provider_path,
-	    (pin != NULL && *pin != '\0') ? ", have-pin": "");
+	    (pin != ರಿಕ್ತ && *pin != '\0') ? ", have-pin": "");
 
-	if (srksp == NULL || nsrksp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	*srksp = NULL;
+	ಯದಿ (srksp == ರಿಕ್ತ || nsrksp == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
+	*srksp = ರಿಕ್ತ;
 	*nsrksp = 0;
 
-	if ((r = make_options(device, NULL, &opts)) != 0)
-		goto out;
-	if ((skp = sshsk_open(provider_path)) == NULL) {
+	ಯದಿ ((r = make_options(device, ರಿಕ್ತ, &opts)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ ((skp = sshsk_open(provider_path)) == ರಿಕ್ತ) {
 		r = SSH_ERR_INVALID_FORMAT; /* XXX sshsk_open return code? */
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = skp->sk_load_resident_keys(pin, opts, &rks, &nrks)) != 0) {
+	ಯದಿ ((r = skp->sk_load_resident_ಕೀಲಿಗಳು(pin, opts, &rks, &nrks)) != 0) {
 		error("Provider \"%s\" returned failure %d", provider_path, r);
 		r = skerr_to_ssherr(r);
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	for (i = 0; i < nrks; i++) {
+	ಪ್ರತಿ (i = 0; i < nrks; i++) {
 		debug3_f("rk %zu: slot %zu, alg %d, app \"%s\", uidlen %zu",
 		    i, rks[i]->slot, rks[i]->alg, rks[i]->application,
 		    rks[i]->user_id_len);
 		/* XXX need better filter here */
-		if (strncmp(rks[i]->application, "ssh:", 4) != 0)
-			continue;
-		switch (rks[i]->alg) {
-		case SSH_SK_ECDSA:
-		case SSH_SK_ED25519:
-			break;
-		default:
-			continue;
+		ಯದಿ (strncmp(rks[i]->application, "ssh:", 4) != 0)
+			ಅನುವರ್ತ;
+		ವಿಕಲ್ಪ (rks[i]->alg) {
+		ಪಕ್ಷ SSH_SK_ECDSA:
+		ಪಕ್ಷ SSH_SK_ED25519:
+			ಭಙ್ಗ;
+		ಸ್ವಭಾವ:
+			ಅನುವರ್ತ;
 		}
-		sk_flags = SSH_SK_USER_PRESENCE_REQD|SSH_SK_RESIDENT_KEY;
-		if ((rks[i]->flags & SSH_SK_USER_VERIFICATION_REQD))
+		sk_flags = SSH_SK_USER_PRESENCE_REQD|SSH_SK_RESIDENT_ಕೀಲಿ;
+		ಯದಿ ((rks[i]->flags & SSH_SK_USER_VERIFICATION_REQD))
 			sk_flags |= SSH_SK_USER_VERIFICATION_REQD;
-		if ((r = sshsk_key_from_response(rks[i]->alg,
-		    rks[i]->application, sk_flags, &rks[i]->key, &key)) != 0)
-			goto out;
-		if ((srk = calloc(1, sizeof(*srk))) == NULL) {
+		ಯದಿ ((r = sshsk_ಕೀಲಿ_from_response(rks[i]->alg,
+		    rks[i]->application, sk_flags, &rks[i]->ಕೀಲಿ, &ಕೀಲಿ)) != 0)
+			ಗಚ್ಛ out;
+		ಯದಿ ((srk = calloc(1, ಪರಿಮಾಣ(*srk))) == ರಿಕ್ತ) {
 			error_f("calloc failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			ಗಚ್ಛ out;
 		}
-		srk->key = key;
-		key = NULL; /* transferred */
-		if ((srk->user_id = calloc(1, rks[i]->user_id_len)) == NULL) {
+		srk->ಕೀಲಿ = ಕೀಲಿ;
+		ಕೀಲಿ = ರಿಕ್ತ; /* transferred */
+		ಯದಿ ((srk->user_id = calloc(1, rks[i]->user_id_len)) == ರಿಕ್ತ) {
 			error_f("calloc failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			ಗಚ್ಛ out;
 		}
 		memcpy(srk->user_id, rks[i]->user_id, rks[i]->user_id_len);
 		srk->user_id_len = rks[i]->user_id_len;
-		if ((tmp = recallocarray(srks, nsrks, nsrks + 1,
-		    sizeof(*tmp))) == NULL) {
+		ಯದಿ ((tmp = recallocarray(srks, nsrks, nsrks + 1,
+		    ಪರಿಮಾಣ(*tmp))) == ರಿಕ್ತ) {
 			error_f("recallocarray failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			ಗಚ್ಛ out;
 		}
 		srks = tmp;
 		srks[nsrks++] = srk;
-		srk = NULL;
+		srk = ರಿಕ್ತ;
 		/* XXX synthesise comment */
 	}
 	/* success */
 	*srksp = srks;
 	*nsrksp = nsrks;
-	srks = NULL;
+	srks = ರಿಕ್ತ;
 	nsrks = 0;
 	r = 0;
  out:
 	sshsk_free_options(opts);
 	sshsk_free(skp);
-	sshsk_free_sk_resident_keys(rks, nrks);
-	sshkey_free(key);
-	sshsk_free_resident_key(srk);
-	sshsk_free_resident_keys(srks, nsrks);
-	return r;
+	sshsk_free_sk_resident_ಕೀಲಿಗಳು(rks, nrks);
+	sshkey_free(ಕೀಲಿ);
+	sshsk_free_resident_ಕೀಲಿ(srk);
+	sshsk_free_resident_ಕೀಲಿಗಳು(srks, nsrks);
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 #endif /* ENABLE_SK */

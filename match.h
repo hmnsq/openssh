@@ -14,17 +14,17 @@
 #ifndef MATCH_H
 #define MATCH_H
 
-int	 match_pattern(const char *, const char *);
-int	 match_pattern_list(const char *, const char *, int);
-int	 match_usergroup_pattern_list(const char *, const char *);
-int	 match_hostname(const char *, const char *);
-int	 match_host_and_ip(const char *, const char *, const char *);
-int	 match_user(const char *, const char *, const char *, const char *);
-char	*match_list(const char *, const char *, u_int *);
-char	*match_filter_denylist(const char *, const char *);
-char	*match_filter_allowlist(const char *, const char *);
+ಪೂರ್ಣಾಙ್ಕ	 match_pattern(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
+ಪೂರ್ಣಾಙ್ಕ	 match_pattern_list(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, ಪೂರ್ಣಾಙ್ಕ);
+ಪೂರ್ಣಾಙ್ಕ	 match_usergroup_pattern_list(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
+ಪೂರ್ಣಾಙ್ಕ	 match_hostname(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
+ಪೂರ್ಣಾಙ್ಕ	 match_host_and_ip(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
+ಪೂರ್ಣಾಙ್ಕ	 match_user(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
+ವರ್ಣ	*match_list(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *, u_int *);
+ವರ್ಣ	*match_filter_denylist(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
+ವರ್ಣ	*match_filter_allowlist(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
 
 /* addrmatch.c */
-int	 addr_match_list(const char *, const char *);
-int	 addr_match_cidr_list(const char *, const char *);
+ಪೂರ್ಣಾಙ್ಕ	 addr_match_list(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
+ಪೂರ್ಣಾಙ್ಕ	 addr_match_cidr_list(ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
 #endif

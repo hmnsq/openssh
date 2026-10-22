@@ -24,153 +24,153 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/uio.h>
-#include <sys/un.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/socket.h>
+#ಅನ್ತರ್ಭಾವ <sys/uio.h>
+#ಅನ್ತರ್ಭಾವ <sys/un.h>
 
-#include <errno.h>
-#include <poll.h>
-#include <string.h>
-#include <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <poll.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
 
-#include "log.h"
-#include "monitor_fdpass.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "monitor_fdpass.h"
 
-int
-mm_send_fd(int sock, int fd)
+ಪೂರ್ಣಾಙ್ಕ
+mm_send_fd(ಪೂರ್ಣಾಙ್ಕ sock, ಪೂರ್ಣಾಙ್ಕ fd)
 {
-#if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
+#ಯದಿ defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+	ಸಂರಚನಾ msghdr ಸಂದೇಶ;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+	ಸಙ್ಘ {
+		ಸಂರಚನಾ cmsghdr hdr;
+		ವರ್ಣ buf[CMSG_SPACE(ಪರಿಮಾಣ(ಪೂರ್ಣಾಙ್ಕ))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
+	ಸಂರಚನಾ cmsghdr *cmsg;
 #endif
-	struct iovec vec;
-	char ch = '\0';
+	ಸಂರಚನಾ iovec vec;
+	ವರ್ಣ ch = '\0';
 	ssize_t n;
-	struct pollfd pfd;
+	ಸಂರಚನಾ pollfd pfd;
 
-	memset(&msg, 0, sizeof(msg));
+	memset(&ಸಂದೇಶ, 0, ಪರಿಮಾಣ(ಸಂದೇಶ));
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	msg.msg_accrights = (caddr_t)&fd;
-	msg.msg_accrightslen = sizeof(fd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
-	msg.msg_control = (caddr_t)&cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
-	cmsg = CMSG_FIRSTHDR(&msg);
-	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+	ಸಂದೇಶ.ಸಂದೇಶ_accrights = (caddr_t)&fd;
+	ಸಂದೇಶ.ಸಂದೇಶ_accrightslen = ಪರಿಮಾಣ(fd);
+#ಅನ್ಯಥಾ
+	memset(&cmsgbuf, 0, ಪರಿಮಾಣ(cmsgbuf));
+	ಸಂದೇಶ.msg_control = (caddr_t)&cmsgbuf.buf;
+	ಸಂದೇಶ.msg_controllen = ಪರಿಮಾಣ(cmsgbuf.buf);
+	cmsg = CMSG_FIRSTHDR(&ಸಂದೇಶ);
+	cmsg->cmsg_len = CMSG_LEN(ಪರಿಮಾಣ(ಪೂರ್ಣಾಙ್ಕ));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
-	*(int *)CMSG_DATA(cmsg) = fd;
+	*(ಪೂರ್ಣಾಙ್ಕ *)CMSG_DATA(cmsg) = fd;
 #endif
 
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
-	msg.msg_iov = &vec;
-	msg.msg_iovlen = 1;
+	ಸಂದೇಶ.msg_iov = &vec;
+	ಸಂದೇಶ.msg_iovlen = 1;
 
 	pfd.fd = sock;
 	pfd.events = POLLOUT;
-	while ((n = sendmsg(sock, &msg, 0)) == -1 &&
+	ಯಾವತ್ ((n = sendmsg(sock, &ಸಂದೇಶ, 0)) == -1 &&
 	    (errno == EAGAIN || errno == EINTR)) {
 		debug3_f("sendmsg(%d): %s", fd, strerror(errno));
-		(void)poll(&pfd, 1, -1);
+		(ಶೂನ್ಯ)poll(&pfd, 1, -1);
 	}
-	if (n == -1) {
+	ಯದಿ (n == -1) {
 		error_f("sendmsg(%d): %s", fd, strerror(errno));
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 
-	if (n != 1) {
+	ಯದಿ (n != 1) {
 		error_f("sendmsg: expected sent 1 got %zd", n);
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
-	return 0;
-#else
+	ಪ್ರತ್ಯಾಗಮ 0;
+#ಅನ್ಯಥಾ
 	error_f("file descriptor passing not supported");
-	return -1;
+	ಪ್ರತ್ಯಾಗಮ -1;
 #endif
 }
 
-int
-mm_receive_fd(int sock)
+ಪೂರ್ಣಾಙ್ಕ
+mm_receive_fd(ಪೂರ್ಣಾಙ್ಕ sock)
 {
-#if defined(HAVE_RECVMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
+#ಯದಿ defined(HAVE_RECVMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+	ಸಂರಚನಾ msghdr ಸಂದೇಶ;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+	ಸಙ್ಘ {
+		ಸಂರಚನಾ cmsghdr hdr;
+		ವರ್ಣ buf[CMSG_SPACE(ಪರಿಮಾಣ(ಪೂರ್ಣಾಙ್ಕ))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
+	ಸಂರಚನಾ cmsghdr *cmsg;
 #endif
-	struct iovec vec;
+	ಸಂರಚನಾ iovec vec;
 	ssize_t n;
-	char ch;
-	int fd;
-	struct pollfd pfd;
+	ವರ್ಣ ch;
+	ಪೂರ್ಣಾಙ್ಕ fd;
+	ಸಂರಚನಾ pollfd pfd;
 
-	memset(&msg, 0, sizeof(msg));
+	memset(&ಸಂದೇಶ, 0, ಪರಿಮಾಣ(ಸಂದೇಶ));
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
-	msg.msg_iov = &vec;
-	msg.msg_iovlen = 1;
+	ಸಂದೇಶ.msg_iov = &vec;
+	ಸಂದೇಶ.msg_iovlen = 1;
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	msg.msg_accrights = (caddr_t)&fd;
-	msg.msg_accrightslen = sizeof(fd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
-	msg.msg_control = &cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
+	ಸಂದೇಶ.ಸಂದೇಶ_accrights = (caddr_t)&fd;
+	ಸಂದೇಶ.ಸಂದೇಶ_accrightslen = ಪರಿಮಾಣ(fd);
+#ಅನ್ಯಥಾ
+	memset(&cmsgbuf, 0, ಪರಿಮಾಣ(cmsgbuf));
+	ಸಂದೇಶ.msg_control = &cmsgbuf.buf;
+	ಸಂದೇಶ.msg_controllen = ಪರಿಮಾಣ(cmsgbuf.buf);
 #endif
 
 	pfd.fd = sock;
 	pfd.events = POLLIN;
-	while ((n = recvmsg(sock, &msg, 0)) == -1 &&
+	ಯಾವತ್ ((n = recvmsg(sock, &ಸಂದೇಶ, 0)) == -1 &&
 	    (errno == EAGAIN || errno == EINTR)) {
 		debug3_f("recvmsg: %s", strerror(errno));
-		(void)poll(&pfd, 1, -1);
+		(ಶೂನ್ಯ)poll(&pfd, 1, -1);
 	}
-	if (n == -1) {
+	ಯದಿ (n == -1) {
 		error_f("recvmsg: %s", strerror(errno));
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 
-	if (n != 1) {
+	ಯದಿ (n != 1) {
 		error_f("recvmsg: expected received 1 got %zd", n);
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	if (msg.msg_accrightslen != sizeof(fd)) {
+	ಯದಿ (ಸಂದೇಶ.ಸಂದೇಶ_accrightslen != ಪರಿಮಾಣ(fd)) {
 		error_f("no fd");
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
-#else
-	cmsg = CMSG_FIRSTHDR(&msg);
-	if (cmsg == NULL) {
+#ಅನ್ಯಥಾ
+	cmsg = CMSG_FIRSTHDR(&ಸಂದೇಶ);
+	ಯದಿ (cmsg == ರಿಕ್ತ) {
 		error_f("no message header");
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 
 #ifndef BROKEN_CMSG_TYPE
-	if (cmsg->cmsg_type != SCM_RIGHTS) {
+	ಯದಿ (cmsg->cmsg_type != SCM_RIGHTS) {
 		error_f("expected %d got %d", SCM_RIGHTS, cmsg->cmsg_type);
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 #endif
-	fd = (*(int *)CMSG_DATA(cmsg));
+	fd = (*(ಪೂರ್ಣಾಙ್ಕ *)CMSG_DATA(cmsg));
 #endif
-	return fd;
-#else
+	ಪ್ರತ್ಯಾಗಮ fd;
+#ಅನ್ಯಥಾ
 	error_f("file descriptor passing not supported");
-	return -1;
+	ಪ್ರತ್ಯಾಗಮ -1;
 #endif
 }

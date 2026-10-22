@@ -35,28 +35,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/un.h>
-#include <sys/socket.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/un.h>
+#ಅನ್ತರ್ಭಾವ <sys/socket.h>
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <errno.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
 
-#include "ssh.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "log.h"
-#include "misc.h"
-#include "atomicio.h"
-#include "ssherr.h"
-#include "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "ssh.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "authfd.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "atomicio.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
 
 #define MAX_AGENT_IDENTITIES	2048		/* Max keys in agent reply */
 #define MAX_AGENT_REPLY_LEN	(256 * 1024)	/* Max bytes in agent reply */
@@ -69,132 +69,132 @@
     (x == SSH2_AGENT_FAILURE))
 
 /* Convert success/failure response from agent to a err.h status */
-static int
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
 decode_reply(u_char type)
 {
-	if (agent_failed(type))
-		return SSH_ERR_AGENT_FAILURE;
-	else if (type == SSH_AGENT_SUCCESS)
-		return 0;
-	else
-		return SSH_ERR_INVALID_FORMAT;
+	ಯದಿ (agent_failed(type))
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_AGENT_FAILURE;
+	ಅನ್ಯಥಾ ಯದಿ (type == SSH_AGENT_SUCCESS)
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಅನ್ಯಥಾ
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_FORMAT;
 }
 
 /*
  * Opens an authentication socket at the provided path and stores the file
  * descriptor in fdp. Returns 0 on success and an error on failure.
  */
-int
-ssh_get_authentication_socket_path(const char *authsocket, int *fdp)
+ಪೂರ್ಣಾಙ್ಕ
+ssh_get_authentication_socket_path(ಧ್ರುವ ವರ್ಣ *authsocket, ಪೂರ್ಣಾಙ್ಕ *fdp)
 {
-	int sock, oerrno;
-	struct sockaddr_un sunaddr;
+	ಪೂರ್ಣಾಙ್ಕ sock, oerrno;
+	ಸಂರಚನಾ sockaddr_un sunaddr;
 
 	debug3_f("path '%s'", authsocket);
-	memset(&sunaddr, 0, sizeof(sunaddr));
+	memset(&sunaddr, 0, ಪರಿಮಾಣ(sunaddr));
 	sunaddr.sun_family = AF_UNIX;
-	strlcpy(sunaddr.sun_path, authsocket, sizeof(sunaddr.sun_path));
+	strlcpy(sunaddr.sun_path, authsocket, ಪರಿಮಾಣ(sunaddr.sun_path));
 
-	if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	ಯದಿ ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
 
 	/* close on exec */
-	if (fcntl(sock, F_SETFD, FD_CLOEXEC) == -1 ||
-	    connect(sock, (struct sockaddr *)&sunaddr, sizeof(sunaddr)) == -1) {
+	ಯದಿ (fcntl(sock, F_SETFD, FD_CLOEXEC) == -1 ||
+	    connect(sock, (ಸಂರಚನಾ sockaddr *)&sunaddr, ಪರಿಮಾಣ(sunaddr)) == -1) {
 		oerrno = errno;
 		close(sock);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
 	}
-	if (fdp != NULL)
+	ಯದಿ (fdp != ರಿಕ್ತ)
 		*fdp = sock;
-	else
+	ಅನ್ಯಥಾ
 		close(sock);
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /*
  * Opens the default authentication socket and stores the file descriptor in
  * fdp. Returns 0 on success and an error on failure.
  */
-int
-ssh_get_authentication_socket(int *fdp)
+ಪೂರ್ಣಾಙ್ಕ
+ssh_get_authentication_socket(ಪೂರ್ಣಾಙ್ಕ *fdp)
 {
-	const char *authsocket;
+	ಧ್ರುವ ವರ್ಣ *authsocket;
 
-	if (fdp != NULL)
+	ಯದಿ (fdp != ರಿಕ್ತ)
 		*fdp = -1;
 
 	authsocket = getenv(SSH_AUTHSOCKET_ENV_NAME);
-	if (authsocket == NULL || *authsocket == '\0')
-		return SSH_ERR_AGENT_NOT_PRESENT;
+	ಯದಿ (authsocket == ರಿಕ್ತ || *authsocket == '\0')
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_AGENT_NOT_PRESENT;
 
-	return ssh_get_authentication_socket_path(authsocket, fdp);
+	ಪ್ರತ್ಯಾಗಮ ssh_get_authentication_socket_path(authsocket, fdp);
 }
 
 /* Communicate with agent: send request and read reply */
-static int
-ssh_request_reply(int sock, struct sshbuf *request, struct sshbuf *reply)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+ssh_request_reply(ಪೂರ್ಣಾಙ್ಕ sock, ಸಂರಚನಾ sshbuf *request, ಸಂರಚನಾ sshbuf *reply)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 	size_t l, len;
-	char buf[1024];
+	ವರ್ಣ buf[1024];
 
 	/* Get the length of the message, and format it in the buffer. */
 	len = sshbuf_len(request);
 	POKE_U32(buf, len);
 
 	/* Send the length and then the packet to the agent. */
-	if (atomicio(vwrite, sock, buf, 4) != 4 ||
+	ಯದಿ (atomicio(vwrite, sock, buf, 4) != 4 ||
 	    atomicio(vwrite, sock, sshbuf_mutable_ptr(request),
 	    sshbuf_len(request)) != sshbuf_len(request))
-		return SSH_ERR_AGENT_COMMUNICATION;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_AGENT_COMMUNICATION;
 	/*
 	 * Wait for response from the agent.  First read the length of the
 	 * response packet.
 	 */
-	if (atomicio(read, sock, buf, 4) != 4)
-	    return SSH_ERR_AGENT_COMMUNICATION;
+	ಯದಿ (atomicio(ಪಠ, sock, buf, 4) != 4)
+	    ಪ್ರತ್ಯಾಗಮ SSH_ERR_AGENT_COMMUNICATION;
 
 	/* Extract the length, and check it for sanity. */
 	len = PEEK_U32(buf);
-	if (len > MAX_AGENT_REPLY_LEN)
-		return SSH_ERR_INVALID_FORMAT;
+	ಯದಿ (len > MAX_AGENT_REPLY_LEN)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_FORMAT;
 
 	/* Read the rest of the response in to the buffer. */
 	sshbuf_reset(reply);
-	while (len > 0) {
+	ಯಾವತ್ (len > 0) {
 		l = len;
-		if (l > sizeof(buf))
-			l = sizeof(buf);
-		if (atomicio(read, sock, buf, l) != l)
-			return SSH_ERR_AGENT_COMMUNICATION;
-		if ((r = sshbuf_put(reply, buf, l)) != 0)
-			return r;
+		ಯದಿ (l > ಪರಿಮಾಣ(buf))
+			l = ಪರಿಮಾಣ(buf);
+		ಯದಿ (atomicio(ಪಠ, sock, buf, l) != l)
+			ಪ್ರತ್ಯಾಗಮ SSH_ERR_AGENT_COMMUNICATION;
+		ಯದಿ ((r = sshbuf_put(reply, buf, l)) != 0)
+			ಪ್ರತ್ಯಾಗಮ r;
 		len -= l;
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /* Communicate with agent: sent request, read and decode status reply */
-static int
-ssh_request_reply_decode(int sock, struct sshbuf *request)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+ssh_request_reply_decode(ಪೂರ್ಣಾಙ್ಕ sock, ಸಂರಚನಾ sshbuf *request)
 {
-	struct sshbuf *reply;
-	int r;
+	ಸಂರಚನಾ sshbuf *reply;
+	ಪೂರ್ಣಾಙ್ಕ r;
 	u_char type;
 
-	if ((reply = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = ssh_request_reply(sock, request, reply)) != 0 ||
+	ಯದಿ ((reply = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((r = ssh_request_reply(sock, request, reply)) != 0 ||
 	    (r = sshbuf_get_u8(reply, &type)) != 0 ||
 	    (r = decode_reply(type)) != 0)
-		goto out;
+		ಗಚ್ಛ out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(reply);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /*
@@ -202,177 +202,177 @@ ssh_request_reply_decode(int sock, struct sshbuf *request)
  * obtained).  The argument must have been returned by
  * ssh_get_authentication_socket().
  */
-void
-ssh_close_authentication_socket(int sock)
+ಶೂನ್ಯ
+ssh_close_authentication_socket(ಪೂರ್ಣಾಙ್ಕ sock)
 {
-	if (sock != -1 && getenv(SSH_AUTHSOCKET_ENV_NAME) != NULL)
+	ಯದಿ (sock != -1 && getenv(SSH_AUTHSOCKET_ENV_NAME) != ರಿಕ್ತ)
 		close(sock);
 }
 
 /* Lock/unlock agent */
-int
-ssh_lock_agent(int sock, int lock, const char *password)
+ಪೂರ್ಣಾಙ್ಕ
+ssh_lock_agent(ಪೂರ್ಣಾಙ್ಕ sock, ಪೂರ್ಣಾಙ್ಕ lock, ಧ್ರುವ ವರ್ಣ *password)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 	u_char type = lock ? SSH_AGENTC_LOCK : SSH_AGENTC_UNLOCK;
-	struct sshbuf *msg;
+	ಸಂರಚನಾ sshbuf *ಸಂದೇಶ;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, password)) != 0 ||
-	    (r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	ಯದಿ ((ಸಂದೇಶ = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((r = sshbuf_put_u8(ಸಂದೇಶ, type)) != 0 ||
+	    (r = sshbuf_put_cstring(ಸಂದೇಶ, password)) != 0 ||
+	    (r = ssh_request_reply_decode(sock, ಸಂದೇಶ)) != 0)
+		ಗಚ್ಛ out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(ಸಂದೇಶ);
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 
-static int
-deserialise_identity2(struct sshbuf *ids, struct sshkey **keyp, char **commentp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+deserialise_identity2(ಸಂರಚನಾ sshbuf *ids, ಸಂರಚನಾ sshkey **keyp, ವರ್ಣ **commentp)
 {
-	int r;
-	char *comment = NULL;
-	const u_char *blob;
+	ಪೂರ್ಣಾಙ್ಕ r;
+	ವರ್ಣ *comment = ರಿಕ್ತ;
+	ಧ್ರುವ u_char *blob;
 	size_t blen;
 
-	if ((r = sshbuf_get_string_direct(ids, &blob, &blen)) != 0 ||
-	    (r = sshbuf_get_cstring(ids, &comment, NULL)) != 0)
-		goto out;
-	if ((r = sshkey_from_blob(blob, blen, keyp)) != 0)
-		goto out;
-	if (commentp != NULL) {
+	ಯದಿ ((r = sshbuf_get_string_direct(ids, &blob, &blen)) != 0 ||
+	    (r = sshbuf_get_cstring(ids, &comment, ರಿಕ್ತ)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ ((r = sshkey_from_blob(blob, blen, keyp)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ (commentp != ರಿಕ್ತ) {
 		*commentp = comment;
-		comment = NULL;
+		comment = ರಿಕ್ತ;
 	}
 	r = 0;
  out:
-	free(comment);
-	return r;
+	ಮುಕ್ತ(comment);
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /*
  * Fetch list of identities held by the agent.
  */
-int
-ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp)
+ಪೂರ್ಣಾಙ್ಕ
+ssh_fetch_identitylist(ಪೂರ್ಣಾಙ್ಕ sock, ಸಂರಚನಾ ssh_identitylist **idlp)
 {
 	u_char type;
-	uint32_t num, i;
-	struct sshbuf *msg;
-	struct ssh_identitylist *idl = NULL;
-	int r;
+	uint32_t ಅಂಕೆ, i;
+	ಸಂರಚನಾ sshbuf *ಸಂದೇಶ;
+	ಸಂರಚನಾ ssh_identitylist *idl = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
 	/*
 	 * Send a message to the agent requesting for a list of the
 	 * identities it can represent.
 	 */
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENTC_REQUEST_IDENTITIES)) != 0)
-		goto out;
+	ಯದಿ ((ಸಂದೇಶ = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((r = sshbuf_put_u8(ಸಂದೇಶ, SSH2_AGENTC_REQUEST_IDENTITIES)) != 0)
+		ಗಚ್ಛ out;
 
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
-		goto out;
+	ಯದಿ ((r = ssh_request_reply(sock, ಸಂದೇಶ, ಸಂದೇಶ)) != 0)
+		ಗಚ್ಛ out;
 
 	/* Get message type, and verify that we got a proper answer. */
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
-		goto out;
-	if (agent_failed(type)) {
+	ಯದಿ ((r = sshbuf_get_u8(ಸಂದೇಶ, &type)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
-		goto out;
-	} else if (type != SSH2_AGENT_IDENTITIES_ANSWER) {
+		ಗಚ್ಛ out;
+	} ಅನ್ಯಥಾ ಯದಿ (type != SSH2_AGENT_IDENTITIES_ANSWER) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
 	/* Get the number of entries in the response and check it for sanity. */
-	if ((r = sshbuf_get_u32(msg, &num)) != 0)
-		goto out;
-	if (num > MAX_AGENT_IDENTITIES) {
+	ಯದಿ ((r = sshbuf_get_u32(ಸಂದೇಶ, &ಅಂಕೆ)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ (ಅಂಕೆ > MAX_AGENT_IDENTITIES) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (num == 0) {
+	ಯದಿ (ಅಂಕೆ == 0) {
 		r = SSH_ERR_AGENT_NO_IDENTITIES;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
 	/* Deserialise the response into a list of keys/comments */
-	if ((idl = calloc(1, sizeof(*idl))) == NULL ||
-	    (idl->keys = calloc(num, sizeof(*idl->keys))) == NULL ||
-	    (idl->comments = calloc(num, sizeof(*idl->comments))) == NULL) {
+	ಯದಿ ((idl = calloc(1, ಪರಿಮಾಣ(*idl))) == ರಿಕ್ತ ||
+	    (idl->ಕೀಲಿಗಳು = calloc(ಅಂಕೆ, ಪರಿಮಾಣ(*idl->ಕೀಲಿಗಳು))) == ರಿಕ್ತ ||
+	    (idl->comments = calloc(ಅಂಕೆ, ಪರಿಮಾಣ(*idl->comments))) == ರಿಕ್ತ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	for (i = 0; i < num;) {
-		if ((r = deserialise_identity2(msg, &(idl->keys[i]),
+	ಪ್ರತಿ (i = 0; i < ಅಂಕೆ;) {
+		ಯದಿ ((r = deserialise_identity2(ಸಂದೇಶ, &(idl->ಕೀಲಿಗಳು[i]),
 		    &(idl->comments[i]))) != 0) {
-			if (r == SSH_ERR_KEY_TYPE_UNKNOWN) {
+			ಯದಿ (r == SSH_ERR_ಕೀಲಿ_TYPE_UNKNOWN) {
 				/* Gracefully skip unknown key types */
-				num--;
-				continue;
-			} else
-				goto out;
+				ಅಂಕೆ--;
+				ಅನುವರ್ತ;
+			} ಅನ್ಯಥಾ
+				ಗಚ್ಛ out;
 		}
 		i++;
 	}
-	idl->nkeys = num;
+	idl->nkeys = ಅಂಕೆ;
 	*idlp = idl;
-	idl = NULL;
+	idl = ರಿಕ್ತ;
 	r = 0;
  out:
-	sshbuf_free(msg);
-	if (idl != NULL)
+	sshbuf_free(ಸಂದೇಶ);
+	ಯದಿ (idl != ರಿಕ್ತ)
 		ssh_free_identitylist(idl);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-void
-ssh_free_identitylist(struct ssh_identitylist *idl)
+ಶೂನ್ಯ
+ssh_free_identitylist(ಸಂರಚನಾ ssh_identitylist *idl)
 {
 	size_t i;
 
-	if (idl == NULL)
-		return;
-	for (i = 0; i < idl->nkeys; i++) {
-		if (idl->keys != NULL)
-			sshkey_free(idl->keys[i]);
-		if (idl->comments != NULL)
-			free(idl->comments[i]);
+	ಯದಿ (idl == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ;
+	ಪ್ರತಿ (i = 0; i < idl->nkeys; i++) {
+		ಯದಿ (idl->ಕೀಲಿಗಳು != ರಿಕ್ತ)
+			sshkey_free(idl->ಕೀಲಿಗಳು[i]);
+		ಯದಿ (idl->comments != ರಿಕ್ತ)
+			ಮುಕ್ತ(idl->comments[i]);
 	}
-	free(idl->keys);
-	free(idl->comments);
-	free(idl);
+	ಮುಕ್ತ(idl->ಕೀಲಿಗಳು);
+	ಮುಕ್ತ(idl->comments);
+	ಮುಕ್ತ(idl);
 }
 
 /*
  * Check if the ssh agent has a given key.
  * Returns 0 if found, or a negative SSH_ERR_* error code on failure.
  */
-int
-ssh_agent_has_key(int sock, const struct sshkey *key)
+ಪೂರ್ಣಾಙ್ಕ
+ssh_agent_has_ಕೀಲಿ(ಪೂರ್ಣಾಙ್ಕ sock, ಧ್ರುವ ಸಂರಚನಾ sshkey *ಕೀಲಿ)
 {
-	int r, ret = SSH_ERR_KEY_NOT_FOUND;
+	ಪೂರ್ಣಾಙ್ಕ r, ret = SSH_ERR_ಕೀಲಿ_NOT_FOUND;
 	size_t i;
-	struct ssh_identitylist *idlist = NULL;
+	ಸಂರಚನಾ ssh_identitylist *idlist = ರಿಕ್ತ;
 
-	if ((r = ssh_fetch_identitylist(sock, &idlist)) != 0) {
-		return r;
+	ಯದಿ ((r = ssh_fetch_identitylist(sock, &idlist)) != 0) {
+		ಪ್ರತ್ಯಾಗಮ r;
 	}
 
-	for (i = 0; i < idlist->nkeys; i++) {
-		if (sshkey_equal_public(idlist->keys[i], key)) {
+	ಪ್ರತಿ (i = 0; i < idlist->nkeys; i++) {
+		ಯದಿ (sshkey_equal_public(idlist->ಕೀಲಿಗಳು[i], ಕೀಲಿ)) {
 			ret = 0;
-			break;
+			ಭಙ್ಗ;
 		}
 	}
 
 	ssh_free_identitylist(idlist);
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
 /*
@@ -384,58 +384,58 @@ ssh_agent_has_key(int sock, const struct sshkey *key)
 
 
 /* encode signature algorithm in flag bits, so we can keep the msg format */
-static u_int
-agent_encode_alg(const struct sshkey *key, const char *alg)
+ಸ್ಥಿರ u_int
+agent_encode_alg(ಧ್ರುವ ಸಂರಚನಾ sshkey *ಕೀಲಿ, ಧ್ರುವ ವರ್ಣ *alg)
 {
-	if (alg != NULL && sshkey_type_plain(key->type) == KEY_RSA) {
-		if (strcmp(alg, "rsa-sha2-256") == 0 ||
+	ಯದಿ (alg != ರಿಕ್ತ && sshkey_type_plain(ಕೀಲಿ->type) == ಕೀಲಿ_RSA) {
+		ಯದಿ (strcmp(alg, "rsa-sha2-256") == 0 ||
 		    strcmp(alg, "rsa-sha2-256-cert-v01@openssh.com") == 0)
-			return SSH_AGENT_RSA_SHA2_256;
-		if (strcmp(alg, "rsa-sha2-512") == 0 ||
+			ಪ್ರತ್ಯಾಗಮ SSH_AGENT_RSA_SHA2_256;
+		ಯದಿ (strcmp(alg, "rsa-sha2-512") == 0 ||
 		    strcmp(alg, "rsa-sha2-512-cert-v01@openssh.com") == 0)
-			return SSH_AGENT_RSA_SHA2_512;
+			ಪ್ರತ್ಯಾಗಮ SSH_AGENT_RSA_SHA2_512;
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /* ask agent to sign data, returns err.h code on error, 0 on success */
-int
-ssh_agent_sign(int sock, const struct sshkey *key,
+ಪೂರ್ಣಾಙ್ಕ
+ssh_agent_sign(ಪೂರ್ಣಾಙ್ಕ sock, ಧ್ರುವ ಸಂರಚನಾ sshkey *ಕೀಲಿ,
     u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen, const char *alg, u_int compat)
+    ಧ್ರುವ u_char *data, size_t datalen, ಧ್ರುವ ವರ್ಣ *alg, u_int compat)
 {
-	struct sshbuf *msg;
-	u_char *sig = NULL, type = 0;
+	ಸಂರಚನಾ sshbuf *ಸಂದೇಶ;
+	u_char *sig = ರಿಕ್ತ, type = 0;
 	size_t len = 0;
 	u_int flags = 0;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ಪೂರ್ಣಾಙ್ಕ r = SSH_ERR_INTERNAL_ERROR;
 
-	*sigp = NULL;
+	*sigp = ರಿಕ್ತ;
 	*lenp = 0;
 
-	if (datalen > SSH_KEY_MAX_SIGN_DATA_SIZE)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	flags |= agent_encode_alg(key, alg);
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
-	    (r = sshkey_puts(key, msg)) != 0 ||
-	    (r = sshbuf_put_string(msg, data, datalen)) != 0 ||
-	    (r = sshbuf_put_u32(msg, flags)) != 0)
-		goto out;
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
-		goto out;
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
-		goto out;
-	if (agent_failed(type)) {
+	ಯದಿ (datalen > SSH_ಕೀಲಿ_MAX_SIGN_DATA_SIZE)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
+	ಯದಿ ((ಸಂದೇಶ = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	flags |= agent_encode_alg(ಕೀಲಿ, alg);
+	ಯದಿ ((r = sshbuf_put_u8(ಸಂದೇಶ, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
+	    (r = sshkey_puts(ಕೀಲಿ, ಸಂದೇಶ)) != 0 ||
+	    (r = sshbuf_put_string(ಸಂದೇಶ, data, datalen)) != 0 ||
+	    (r = sshbuf_put_u32(ಸಂದೇಶ, flags)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ ((r = ssh_request_reply(sock, ಸಂದೇಶ, ಸಂದೇಶ)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ ((r = sshbuf_get_u8(ಸಂದೇಶ, &type)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
-		goto out;
-	} else if (type != SSH2_AGENT_SIGN_RESPONSE) {
+		ಗಚ್ಛ out;
+	} ಅನ್ಯಥಾ ಯದಿ (type != SSH2_AGENT_SIGN_RESPONSE) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = sshbuf_get_string(msg, &sig, &len)) != 0)
-		goto out;
+	ಯದಿ ((r = sshbuf_get_string(ಸಂದೇಶ, &sig, &len)) != 0)
+		ಗಚ್ಛ out;
 	/*
 	 * Check what we actually got back from the agent, in case it returned
 	 * an incorrect RSA signature algorithm (e.g. "ssh-rsa" (RSA/SHA1) vs.
@@ -443,276 +443,276 @@ ssh_agent_sign(int sock, const struct sshkey *key,
 	 * We don't do this for FIDO signatures as webauthn vs plain are just
 	 * different signature formats and not entirely different algorithms.
 	 */
-	if (!sshkey_is_sk(key) &&
+	ಯದಿ (!sshkey_is_sk(ಕೀಲಿ) &&
 	    (r = sshkey_check_sigtype(sig, len, alg)) != 0)
-		goto out;
+		ಗಚ್ಛ out;
 	/* success */
 	*sigp = sig;
 	*lenp = len;
-	sig = NULL;
+	sig = ರಿಕ್ತ;
 	len = 0;
 	r = 0;
  out:
 	freezero(sig, len);
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(ಸಂದೇಶ);
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /* Encode key for a message to the agent. */
 
-static int
-encode_dest_constraint_hop(struct sshbuf *m,
-    const struct dest_constraint_hop *dch)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+encode_dest_constraint_hop(ಸಂರಚನಾ sshbuf *m,
+    ಧ್ರುವ ಸಂರಚನಾ dest_constraint_hop *dch)
 {
-	struct sshbuf *b;
+	ಸಂರಚನಾ sshbuf *b;
 	u_int i;
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_cstring(b, dch->user)) != 0 ||
+	ಯದಿ ((b = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((r = sshbuf_put_cstring(b, dch->user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, dch->hostname)) != 0 ||
-	    (r = sshbuf_put_string(b, NULL, 0)) != 0) /* reserved */
-		goto out;
-	for (i = 0; i < dch->nkeys; i++) {
-		if ((r = sshkey_puts(dch->keys[i], b)) != 0 ||
-		    (r = sshbuf_put_u8(b, dch->key_is_ca[i] != 0)) != 0)
-			goto out;
+	    (r = sshbuf_put_string(b, ರಿಕ್ತ, 0)) != 0) /* reserved */
+		ಗಚ್ಛ out;
+	ಪ್ರತಿ (i = 0; i < dch->nkeys; i++) {
+		ಯದಿ ((r = sshkey_puts(dch->ಕೀಲಿಗಳು[i], b)) != 0 ||
+		    (r = sshbuf_put_u8(b, dch->ಕೀಲಿ_is_ca[i] != 0)) != 0)
+			ಗಚ್ಛ out;
 	}
-	if ((r = sshbuf_put_stringb(m, b)) != 0)
-		goto out;
+	ಯದಿ ((r = sshbuf_put_stringb(m, b)) != 0)
+		ಗಚ್ಛ out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-static int
-encode_dest_constraint(struct sshbuf *m, const struct dest_constraint *dc)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+encode_dest_constraint(ಸಂರಚನಾ sshbuf *m, ಧ್ರುವ ಸಂರಚನಾ dest_constraint *dc)
 {
-	struct sshbuf *b;
-	int r;
+	ಸಂರಚನಾ sshbuf *b;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = encode_dest_constraint_hop(b, &dc->from)) != 0 ||
+	ಯದಿ ((b = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((r = encode_dest_constraint_hop(b, &dc->from)) != 0 ||
 	    (r = encode_dest_constraint_hop(b, &dc->to)) != 0 ||
-	    (r = sshbuf_put_string(b, NULL, 0)) != 0) /* reserved */
-		goto out;
-	if ((r = sshbuf_put_stringb(m, b)) != 0)
-		goto out;
+	    (r = sshbuf_put_string(b, ರಿಕ್ತ, 0)) != 0) /* reserved */
+		ಗಚ್ಛ out;
+	ಯದಿ ((r = sshbuf_put_stringb(m, b)) != 0)
+		ಗಚ್ಛ out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-static int
-encode_constraints(struct sshbuf *m, u_int life, u_int confirm,
-    const char *provider,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints,
-    int cert_only, struct sshkey **certs, size_t ncerts)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+encode_constraints(ಸಂರಚನಾ sshbuf *m, u_int life, u_int confirm,
+    ಧ್ರುವ ವರ್ಣ *provider,
+    ಸಂರಚನಾ dest_constraint **dest_constraints, size_t ndest_constraints,
+    ಪೂರ್ಣಾಙ್ಕ cert_only, ಸಂರಚನಾ sshkey **certs, size_t ncerts)
 {
-	int r;
-	struct sshbuf *b = NULL;
+	ಪೂರ್ಣಾಙ್ಕ r;
+	ಸಂರಚನಾ sshbuf *b = ರಿಕ್ತ;
 	size_t i;
 
-	if (life != 0) {
-		if ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_LIFETIME)) != 0 ||
+	ಯದಿ (life != 0) {
+		ಯದಿ ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_LIFETIME)) != 0 ||
 		    (r = sshbuf_put_u32(m, life)) != 0)
-			goto out;
+			ಗಚ್ಛ out;
 	}
-	if (confirm != 0) {
-		if ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_CONFIRM)) != 0)
-			goto out;
+	ಯದಿ (confirm != 0) {
+		ಯದಿ ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_CONFIRM)) != 0)
+			ಗಚ್ಛ out;
 	}
-	if (provider != NULL) {
-		if ((r = sshbuf_put_u8(m,
+	ಯದಿ (provider != ರಿಕ್ತ) {
+		ಯದಿ ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "sk-provider@openssh.com")) != 0 ||
 		    (r = sshbuf_put_cstring(m, provider)) != 0)
-			goto out;
+			ಗಚ್ಛ out;
 	}
-	if (dest_constraints != NULL && ndest_constraints > 0) {
-		if ((b = sshbuf_new()) == NULL) {
+	ಯದಿ (dest_constraints != ರಿಕ್ತ && ndest_constraints > 0) {
+		ಯದಿ ((b = sshbuf_new()) == ರಿಕ್ತ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			ಗಚ್ಛ out;
 		}
-		for (i = 0; i < ndest_constraints; i++) {
-			if ((r = encode_dest_constraint(b,
+		ಪ್ರತಿ (i = 0; i < ndest_constraints; i++) {
+			ಯದಿ ((r = encode_dest_constraint(b,
 			    dest_constraints[i])) != 0)
-				goto out;
+				ಗಚ್ಛ out;
 		}
-		if ((r = sshbuf_put_u8(m,
+		ಯದಿ ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "restrict-destination-v00@openssh.com")) != 0 ||
 		    (r = sshbuf_put_stringb(m, b)) != 0)
-			goto out;
+			ಗಚ್ಛ out;
 		sshbuf_free(b);
-		b = NULL;
+		b = ರಿಕ್ತ;
 	}
-	if (ncerts != 0) {
-		if ((b = sshbuf_new()) == NULL) {
+	ಯದಿ (ncerts != 0) {
+		ಯದಿ ((b = sshbuf_new()) == ರಿಕ್ತ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			ಗಚ್ಛ out;
 		}
-		for (i = 0; i < ncerts; i++) {
-			if ((r = sshkey_puts(certs[i], b)) != 0)
-				goto out;
+		ಪ್ರತಿ (i = 0; i < ncerts; i++) {
+			ಯದಿ ((r = sshkey_puts(certs[i], b)) != 0)
+				ಗಚ್ಛ out;
 		}
-		if ((r = sshbuf_put_u8(m,
+		ಯದಿ ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "associated-certs-v00@openssh.com")) != 0 ||
 		    (r = sshbuf_put_u8(m, cert_only != 0)) != 0 ||
 		    (r = sshbuf_put_stringb(m, b)) != 0)
-			goto out;
+			ಗಚ್ಛ out;
 		sshbuf_free(b);
-		b = NULL;
+		b = ರಿಕ್ತ;
 	}
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /*
  * Adds an identity to the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_add_identity_constrained(int sock, struct sshkey *key,
-    const char *comment, u_int life, u_int confirm,
-    const char *provider, struct dest_constraint **dest_constraints,
+ಪೂರ್ಣಾಙ್ಕ
+ssh_add_identity_constrained(ಪೂರ್ಣಾಙ್ಕ sock, ಸಂರಚನಾ sshkey *ಕೀಲಿ,
+    ಧ್ರುವ ವರ್ಣ *comment, u_int life, u_int confirm,
+    ಧ್ರುವ ವರ್ಣ *provider, ಸಂರಚನಾ dest_constraint **dest_constraints,
     size_t ndest_constraints)
 {
-	struct sshbuf *msg;
-	int r, constrained = (life || confirm || provider || dest_constraints);
+	ಸಂರಚನಾ sshbuf *ಸಂದೇಶ;
+	ಪೂರ್ಣಾಙ್ಕ r, constrained = (life || confirm || provider || dest_constraints);
 	u_char type;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((ಸಂದೇಶ = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
 
-	switch (key->type) {
+	ವಿಕಲ್ಪ (ಕೀಲಿ->type) {
 #ifdef WITH_OPENSSL
-	case KEY_RSA:
-	case KEY_RSA_CERT:
-	case KEY_ECDSA:
-	case KEY_ECDSA_CERT:
-	case KEY_ECDSA_SK:
-	case KEY_ECDSA_SK_CERT:
+	ಪಕ್ಷ ಕೀಲಿ_RSA:
+	ಪಕ್ಷ ಕೀಲಿ_RSA_CERT:
+	ಪಕ್ಷ ಕೀಲಿ_ECDSA:
+	ಪಕ್ಷ ಕೀಲಿ_ECDSA_CERT:
+	ಪಕ್ಷ ಕೀಲಿ_ECDSA_SK:
+	ಪಕ್ಷ ಕೀಲಿ_ECDSA_SK_CERT:
 #endif
-	case KEY_ED25519:
-	case KEY_ED25519_CERT:
-	case KEY_MLDSA44_ED25519:
-	case KEY_MLDSA44_ED25519_CERT:
-	case KEY_ED25519_SK:
-	case KEY_ED25519_SK_CERT:
+	ಪಕ್ಷ ಕೀಲಿ_ED25519:
+	ಪಕ್ಷ ಕೀಲಿ_ED25519_CERT:
+	ಪಕ್ಷ ಕೀಲಿ_MLDSA44_ED25519:
+	ಪಕ್ಷ ಕೀಲಿ_MLDSA44_ED25519_CERT:
+	ಪಕ್ಷ ಕೀಲಿ_ED25519_SK:
+	ಪಕ್ಷ ಕೀಲಿ_ED25519_SK_CERT:
 		type = constrained ?
 		    SSH2_AGENTC_ADD_ID_CONSTRAINED :
 		    SSH2_AGENTC_ADD_IDENTITY;
-		if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-		    (r = sshkey_private_serialize(key, msg)) != 0 ||
-		    (r = sshbuf_put_cstring(msg, comment)) != 0)
-			goto out;
-		break;
-	default:
+		ಯದಿ ((r = sshbuf_put_u8(ಸಂದೇಶ, type)) != 0 ||
+		    (r = sshkey_private_serialize(ಕೀಲಿ, ಸಂದೇಶ)) != 0 ||
+		    (r = sshbuf_put_cstring(ಸಂದೇಶ, comment)) != 0)
+			ಗಚ್ಛ out;
+		ಭಙ್ಗ;
+	ಸ್ವಭಾವ:
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (constrained &&
-	    (r = encode_constraints(msg, life, confirm, provider,
-	    dest_constraints, ndest_constraints, 0, NULL, 0)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	ಯದಿ (constrained &&
+	    (r = encode_constraints(ಸಂದೇಶ, life, confirm, provider,
+	    dest_constraints, ndest_constraints, 0, ರಿಕ್ತ, 0)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ ((r = ssh_request_reply_decode(sock, ಸಂದೇಶ)) != 0)
+		ಗಚ್ಛ out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(ಸಂದೇಶ);
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /*
  * Removes an identity from the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_remove_identity(int sock, const struct sshkey *key)
+ಪೂರ್ಣಾಙ್ಕ
+ssh_remove_identity(ಪೂರ್ಣಾಙ್ಕ sock, ಧ್ರುವ ಸಂರಚನಾ sshkey *ಕೀಲಿ)
 {
-	struct sshbuf *msg;
-	int r;
-	u_char *blob = NULL;
+	ಸಂರಚನಾ sshbuf *ಸಂದೇಶ;
+	ಪೂರ್ಣಾಙ್ಕ r;
+	u_char *blob = ರಿಕ್ತ;
 	size_t blen;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((ಸಂದೇಶ = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
 
-	if (key->type != KEY_UNSPEC) {
-		if ((r = sshkey_to_blob(key, &blob, &blen)) != 0)
-			goto out;
-		if ((r = sshbuf_put_u8(msg,
+	ಯದಿ (ಕೀಲಿ->type != ಕೀಲಿ_UNSPEC) {
+		ಯದಿ ((r = sshkey_to_blob(ಕೀಲಿ, &blob, &blen)) != 0)
+			ಗಚ್ಛ out;
+		ಯದಿ ((r = sshbuf_put_u8(ಸಂದೇಶ,
 		    SSH2_AGENTC_REMOVE_IDENTITY)) != 0 ||
-		    (r = sshbuf_put_string(msg, blob, blen)) != 0)
-			goto out;
-	} else {
+		    (r = sshbuf_put_string(ಸಂದೇಶ, blob, blen)) != 0)
+			ಗಚ್ಛ out;
+	} ಅನ್ಯಥಾ {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	ಯದಿ ((r = ssh_request_reply_decode(sock, ಸಂದೇಶ)) != 0)
+		ಗಚ್ಛ out;
 	/* success */
 	r = 0;
  out:
-	if (blob != NULL)
+	ಯದಿ (blob != ರಿಕ್ತ)
 		freezero(blob, blen);
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(ಸಂದೇಶ);
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /*
  * Add/remove an token-based identity from the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_update_card(int sock, int add, const char *reader_id, const char *pin,
+ಪೂರ್ಣಾಙ್ಕ
+ssh_update_card(ಪೂರ್ಣಾಙ್ಕ sock, ಪೂರ್ಣಾಙ್ಕ add, ಧ್ರುವ ವರ್ಣ *reader_id, ಧ್ರುವ ವರ್ಣ *pin,
     u_int life, u_int confirm,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints,
-    int cert_only, struct sshkey **certs, size_t ncerts)
+    ಸಂರಚನಾ dest_constraint **dest_constraints, size_t ndest_constraints,
+    ಪೂರ್ಣಾಙ್ಕ cert_only, ಸಂರಚನಾ sshkey **certs, size_t ncerts)
 {
-	struct sshbuf *msg;
-	int r, constrained = (life || confirm || dest_constraints || certs);
+	ಸಂರಚನಾ sshbuf *ಸಂದೇಶ;
+	ಪೂರ್ಣಾಙ್ಕ r, constrained = (life || confirm || dest_constraints || certs);
 	u_char type;
 
-	if (add) {
+	ಯದಿ (add) {
 		type = constrained ?
-		    SSH_AGENTC_ADD_SMARTCARD_KEY_CONSTRAINED :
-		    SSH_AGENTC_ADD_SMARTCARD_KEY;
-	} else
-		type = SSH_AGENTC_REMOVE_SMARTCARD_KEY;
+		    SSH_AGENTC_ADD_SMARTCARD_ಕೀಲಿ_CONSTRAINED :
+		    SSH_AGENTC_ADD_SMARTCARD_ಕೀಲಿ;
+	} ಅನ್ಯಥಾ
+		type = SSH_AGENTC_REMOVE_SMARTCARD_ಕೀಲಿ;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, reader_id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, pin)) != 0)
-		goto out;
-	if (constrained &&
-	    (r = encode_constraints(msg, life, confirm, NULL,
+	ಯದಿ ((ಸಂದೇಶ = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((r = sshbuf_put_u8(ಸಂದೇಶ, type)) != 0 ||
+	    (r = sshbuf_put_cstring(ಸಂದೇಶ, reader_id)) != 0 ||
+	    (r = sshbuf_put_cstring(ಸಂದೇಶ, pin)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ (constrained &&
+	    (r = encode_constraints(ಸಂದೇಶ, life, confirm, ರಿಕ್ತ,
 	    dest_constraints, ndest_constraints,
 	    cert_only, certs, ncerts)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+		ಗಚ್ಛ out;
+	ಯದಿ ((r = ssh_request_reply_decode(sock, ಸಂದೇಶ)) != 0)
+		ಗಚ್ಛ out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(ಸಂದೇಶ);
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /*
@@ -723,104 +723,104 @@ ssh_update_card(int sock, int add, const char *reader_id, const char *pin,
  * keys from an agent, we generally want to clear both protocol v1 and v2
  * keys.
  */
-int
-ssh_remove_all_identities(int sock, int version)
+ಪೂರ್ಣಾಙ್ಕ
+ssh_remove_all_identities(ಪೂರ್ಣಾಙ್ಕ sock, ಪೂರ್ಣಾಙ್ಕ version)
 {
-	struct sshbuf *msg;
+	ಸಂರಚನಾ sshbuf *ಸಂದೇಶ;
 	u_char type = (version == 1) ?
 	    SSH_AGENTC_REMOVE_ALL_RSA_IDENTITIES :
 	    SSH2_AGENTC_REMOVE_ALL_IDENTITIES;
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	ಯದಿ ((ಸಂದೇಶ = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((r = sshbuf_put_u8(ಸಂದೇಶ, type)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ ((r = ssh_request_reply_decode(sock, ಸಂದೇಶ)) != 0)
+		ಗಚ್ಛ out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(ಸಂದೇಶ);
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /* Binds a session ID to a hostkey via the initial KEX signature. */
-int
-ssh_agent_bind_hostkey(int sock, const struct sshkey *key,
-    const struct sshbuf *session_id, const struct sshbuf *signature,
-    int forwarding)
+ಪೂರ್ಣಾಙ್ಕ
+ssh_agent_bind_hostkey(ಪೂರ್ಣಾಙ್ಕ sock, ಧ್ರುವ ಸಂರಚನಾ sshkey *ಕೀಲಿ,
+    ಧ್ರುವ ಸಂರಚನಾ sshbuf *session_id, ಧ್ರುವ ಸಂರಚನಾ sshbuf *signature,
+    ಪೂರ್ಣಾಙ್ಕ forwarding)
 {
-	struct sshbuf *msg;
-	int r;
+	ಸಂರಚನಾ sshbuf *ಸಂದೇಶ;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if (key == NULL || session_id == NULL || signature == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH_AGENTC_EXTENSION)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "session-bind@openssh.com")) != 0 ||
-	    (r = sshkey_puts(key, msg)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, session_id)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, signature)) != 0 ||
-	    (r = sshbuf_put_u8(msg, forwarding ? 1 : 0)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	ಯದಿ (ಕೀಲಿ == ರಿಕ್ತ || session_id == ರಿಕ್ತ || signature == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
+	ಯದಿ ((ಸಂದೇಶ = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((r = sshbuf_put_u8(ಸಂದೇಶ, SSH_AGENTC_EXTENSION)) != 0 ||
+	    (r = sshbuf_put_cstring(ಸಂದೇಶ, "session-bind@openssh.com")) != 0 ||
+	    (r = sshkey_puts(ಕೀಲಿ, ಸಂದೇಶ)) != 0 ||
+	    (r = sshbuf_put_stringb(ಸಂದೇಶ, session_id)) != 0 ||
+	    (r = sshbuf_put_stringb(ಸಂದೇಶ, signature)) != 0 ||
+	    (r = sshbuf_put_u8(ಸಂದೇಶ, forwarding ? 1 : 0)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ ((r = ssh_request_reply_decode(sock, ಸಂದೇಶ)) != 0)
+		ಗಚ್ಛ out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(ಸಂದೇಶ);
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /* Queries supported extension request types */
-int
-ssh_agent_query_extensions(int sock, char ***exts)
+ಪೂರ್ಣಾಙ್ಕ
+ssh_agent_query_extensions(ಪೂರ್ಣಾಙ್ಕ sock, ವರ್ಣ ***exts)
 {
-	struct sshbuf *msg;
-	int r;
+	ಸಂರಚನಾ sshbuf *ಸಂದೇಶ;
+	ಪೂರ್ಣಾಙ್ಕ r;
 	u_char type;
-	char *cp = NULL, **ret = NULL;
+	ವರ್ಣ *cp = ರಿಕ್ತ, **ret = ರಿಕ್ತ;
 	size_t i = 0;
 
-	*exts = NULL;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH_AGENTC_EXTENSION)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "query")) != 0)
-		goto out;
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
-		goto out;
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
-		goto out;
-	if (agent_failed(type)) {
+	*exts = ರಿಕ್ತ;
+	ಯದಿ ((ಸಂದೇಶ = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((r = sshbuf_put_u8(ಸಂದೇಶ, SSH_AGENTC_EXTENSION)) != 0 ||
+	    (r = sshbuf_put_cstring(ಸಂದೇಶ, "query")) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ ((r = ssh_request_reply(sock, ಸಂದೇಶ, ಸಂದೇಶ)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ ((r = sshbuf_get_u8(ಸಂದೇಶ, &type)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 	/* Reply should start with "query" */
-	if (type != SSH_AGENT_EXTENSION_RESPONSE ||
-	   (r = sshbuf_get_cstring(msg, &cp, NULL)) != 0 ||
+	ಯದಿ (type != SSH_AGENT_EXTENSION_RESPONSE ||
+	   (r = sshbuf_get_cstring(ಸಂದೇಶ, &cp, ರಿಕ್ತ)) != 0 ||
 	   strcmp(cp, "query") != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	ret = xcalloc(1, sizeof(*ret));
-	while (sshbuf_len(msg)) {
-		ret = xrecallocarray(ret, i + 1, i + 2, sizeof(*ret));
-		if ((r = sshbuf_get_cstring(msg, ret + i, NULL)) != 0) {
+	ret = xcalloc(1, ಪರಿಮಾಣ(*ret));
+	ಯಾವತ್ (sshbuf_len(ಸಂದೇಶ)) {
+		ret = xrecallocarray(ret, i + 1, i + 2, ಪರಿಮಾಣ(*ret));
+		ಯದಿ ((r = sshbuf_get_cstring(ಸಂದೇಶ, ret + i, ರಿಕ್ತ)) != 0) {
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			ಗಚ್ಛ out;
 		}
 		i++;
 	}
 	/* success */
 	r = 0;
 	*exts = ret;
-	ret = NULL; /* transferred */
+	ret = ರಿಕ್ತ; /* transferred */
  out:
-	free(cp);
+	ಮುಕ್ತ(cp);
 	stringlist_free(ret);
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(ಸಂದೇಶ);
+	ಪ್ರತ್ಯಾಗಮ r;
 }

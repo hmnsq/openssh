@@ -1,33 +1,33 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-extern "C" {
+ಬಾಹ್ಯ "C" {
 
-#include "auth-options.h"
+#ಅನ್ತರ್ಭಾವ "auth-options.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+ಪೂರ್ಣಾಙ್ಕ LLVMFuzzer_Test_One_ಒಳಹರಿವು(ಧ್ರುವ uint8_t* data, size_t size)
 {
-	char *cp = (char *)malloc(size + 1);
-	struct sshauthopt *opts = NULL, *merge = NULL, *add = sshauthopt_new();
+	ವರ್ಣ *cp = (ವರ್ಣ *)malloc(size + 1);
+	ಸಂರಚನಾ sshauthopt *opts = ರಿಕ್ತ, *merge = ರಿಕ್ತ, *add = sshauthopt_new();
 
-	if (cp == NULL || add == NULL)
-		goto out;
+	ಯದಿ (cp == ರಿಕ್ತ || add == ರಿಕ್ತ)
+		ಗಚ್ಛ out;
 	memcpy(cp, data, size);
 	cp[size] = '\0';
-	if ((opts = sshauthopt_parse(cp, NULL)) == NULL)
-		goto out;
-	if ((merge = sshauthopt_merge(opts, add, NULL)) == NULL)
-		goto out;
+	ಯದಿ ((opts = sshauthopt_parse(cp, ರಿಕ್ತ)) == ರಿಕ್ತ)
+		ಗಚ್ಛ out;
+	ಯದಿ ((merge = sshauthopt_merge(opts, add, ರಿಕ್ತ)) == ರಿಕ್ತ)
+		ಗಚ್ಛ out;
 
  out:
-	free(cp);
+	ಮುಕ್ತ(cp);
 	sshauthopt_free(add);
 	sshauthopt_free(opts);
 	sshauthopt_free(merge);
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 } // extern "C"

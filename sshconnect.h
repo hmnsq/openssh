@@ -24,32 +24,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-struct sshkey;
+ಸಂರಚನಾ sshkey;
 
-typedef struct Sensitive Sensitive;
-struct Sensitive {
-	struct sshkey	**keys;
-	int		nkeys;
+ಪ್ರಕಾರನಿರ್ದೇಶ ಸಂರಚನಾ Sensitive Sensitive;
+ಸಂರಚನಾ Sensitive {
+	ಸಂರಚನಾ sshkey	**ಕೀಲಿಗಳು;
+	ಪೂರ್ಣಾಙ್ಕ		nkeys;
 };
 
-struct ssh_conn_info {
-	char *conn_hash_hex;
-	char *shorthost;
-	char *uidstr;
-	char *keyalias;
-	char *thishost;
-	char *host_arg;
-	char *portstr;
-	char *remhost;
-	char *remuser;
-	char *homedir;
-	char *locuser;
-	char *jmphost;
+ಸಂರಚನಾ ssh_conn_info {
+	ವರ್ಣ *conn_hash_hex;
+	ವರ್ಣ *shorthost;
+	ವರ್ಣ *uidstr;
+	ವರ್ಣ *keyalias;
+	ವರ್ಣ *thishost;
+	ವರ್ಣ *host_arg;
+	ವರ್ಣ *portstr;
+	ವರ್ಣ *remhost;
+	ವರ್ಣ *remuser;
+	ವರ್ಣ *homedir;
+	ವರ್ಣ *locuser;
+	ವರ್ಣ *jmphost;
 };
 
-struct addrinfo;
-struct ssh;
-struct hostkeys;
+ಸಂರಚನಾ addrinfo;
+ಸಂರಚನಾ ssh;
+ಸಂರಚನಾ hostkeys;
 
 /* default argument for client percent expansions, minus remote user */
 #define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info) \
@@ -70,39 +70,39 @@ struct hostkeys;
 	"C", conn_info->conn_hash_hex, \
 	"r", conn_info->remuser
 
-int	 ssh_connect(struct ssh *, const char *, const char *,
-	    struct addrinfo *, struct sockaddr_storage *, u_short,
-	    int, int *, int);
-void	 ssh_kill_proxy_command(void);
+ಪೂರ್ಣಾಙ್ಕ	 ssh_connect(ಸಂರಚನಾ ssh *, ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *,
+	    ಸಂರಚನಾ addrinfo *, ಸಂರಚನಾ sockaddr_storage *, u_short,
+	    ಪೂರ್ಣಾಙ್ಕ, ಪೂರ್ಣಾಙ್ಕ *, ಪೂರ್ಣಾಙ್ಕ);
+ಶೂನ್ಯ	 ssh_kill_proxy_command(ಶೂನ್ಯ);
 
-void	 ssh_login(struct ssh *, Sensitive *, const char *,
-    struct sockaddr_storage *, u_short, struct passwd *, int,
-    const struct ssh_conn_info *);
+ಶೂನ್ಯ	 ssh_login(ಸಂರಚನಾ ssh *, Sensitive *, ಧ್ರುವ ವರ್ಣ *,
+    ಸಂರಚನಾ sockaddr_storage *, u_short, ಸಂರಚನಾ passwd *, ಪೂರ್ಣಾಙ್ಕ,
+    ಧ್ರುವ ಸಂರಚನಾ ssh_conn_info *);
 
-int	 verify_host_key(char *, struct sockaddr *, struct sshkey *,
-    const struct ssh_conn_info *);
+ಪೂರ್ಣಾಙ್ಕ	 verify_host_ಕೀಲಿ(ವರ್ಣ *, ಸಂರಚನಾ sockaddr *, ಸಂರಚನಾ sshkey *,
+    ಧ್ರುವ ಸಂರಚನಾ ssh_conn_info *);
 
-void	 get_hostfile_hostname_ipaddr(char *, struct sockaddr *, u_short,
-    char **, char **);
+ಶೂನ್ಯ	 get_hostfile_hostname_ipaddr(ವರ್ಣ *, ಸಂರಚನಾ sockaddr *, u_short,
+    ವರ್ಣ **, ವರ್ಣ **);
 
-void	 ssh_kex2(struct ssh *ssh, char *, struct sockaddr_storage *, u_short,
-    const struct ssh_conn_info *);
+ಶೂನ್ಯ	 ssh_kex2(ಸಂರಚನಾ ssh *ssh, ವರ್ಣ *, ಸಂರಚನಾ sockaddr_storage *, u_short,
+    ಧ್ರುವ ಸಂರಚನಾ ssh_conn_info *);
 
-void	 ssh_userauth2(struct ssh *ssh, const char *, const char *,
-    char *, Sensitive *);
+ಶೂನ್ಯ	 ssh_userauth2(ಸಂರಚನಾ ssh *ssh, ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *,
+    ವರ್ಣ *, Sensitive *);
 
-void	 pubkey_dump(struct ssh *);
+ಶೂನ್ಯ	 pubkey_dump(ಸಂರಚನಾ ssh *);
 
-int	 ssh_local_cmd(const char *);
+ಪೂರ್ಣಾಙ್ಕ	 ssh_local_cmd(ಧ್ರುವ ವರ್ಣ *);
 
-void	 maybe_add_key_to_agent(const char *, struct sshkey *,
-    const char *, const char *);
+ಶೂನ್ಯ	 maybe_add_ಕೀಲಿ_to_agent(ಧ್ರುವ ವರ್ಣ *, ಸಂರಚನಾ sshkey *,
+    ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ವರ್ಣ *);
 
-void	 load_hostkeys_command(struct hostkeys *, const char *,
-    const char *, const struct ssh_conn_info *,
-    const struct sshkey *, const char *);
+ಶೂನ್ಯ	 load_hostkeys_command(ಸಂರಚನಾ hostkeys *, ಧ್ರುವ ವರ್ಣ *,
+    ಧ್ರುವ ವರ್ಣ *, ಧ್ರುವ ಸಂರಚನಾ ssh_conn_info *,
+    ಧ್ರುವ ಸಂರಚನಾ sshkey *, ಧ್ರುವ ವರ್ಣ *);
 
-int hostkey_accepted_by_hostkeyalgs(const struct sshkey *);
+ಪೂರ್ಣಾಙ್ಕ hostkey_accepted_by_hostkeyalgs(ಧ್ರುವ ಸಂರಚನಾ sshkey *);
 
-void ssh_conn_info_free(struct ssh_conn_info *);
-struct ssh_conn_info *ssh_conn_info_dup(const struct ssh_conn_info *);
+ಶೂನ್ಯ ssh_conn_info_free(ಸಂರಚನಾ ssh_conn_info *);
+ಸಂರಚನಾ ssh_conn_info *ssh_conn_info_dup(ಧ್ರುವ ಸಂರಚನಾ ssh_conn_info *);

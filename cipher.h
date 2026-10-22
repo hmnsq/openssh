@@ -37,41 +37,41 @@
 #ifndef CIPHER_H
 #define CIPHER_H
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 #ifdef WITH_OPENSSL
-#include <openssl/evp.h>
+#ಅನ್ತರ್ಭಾವ <openssl/evp.h>
 #endif
-#include "cipher-chachapoly.h"
-#include "cipher-aesctr.h"
+#ಅನ್ತರ್ಭಾವ "cipher-chachapoly.h"
+#ಅನ್ತರ್ಭಾವ "cipher-aesctr.h"
 
 #define CIPHER_ENCRYPT		1
 #define CIPHER_DECRYPT		0
 
-struct sshcipher;
-struct sshcipher_ctx;
+ಸಂರಚನಾ sshcipher;
+ಸಂರಚನಾ sshcipher_ctx;
 
-const struct sshcipher *cipher_by_name(const char *);
-const char *cipher_warning_message(const struct sshcipher_ctx *);
-int	 ciphers_valid(const char *);
-char	*cipher_alg_list(char, int);
-const char *compression_alg_list(int);
-int	 cipher_init(struct sshcipher_ctx **, const struct sshcipher *,
-    const u_char *, u_int, const u_char *, u_int, int);
-int	 cipher_crypt(struct sshcipher_ctx *, u_int, u_char *, const u_char *,
+ಧ್ರುವ ಸಂರಚನಾ sshcipher *cipher_by_name(ಧ್ರುವ ವರ್ಣ *);
+ಧ್ರುವ ವರ್ಣ *cipher_warning_message(ಧ್ರುವ ಸಂರಚನಾ sshcipher_ctx *);
+ಪೂರ್ಣಾಙ್ಕ	 ciphers_valid(ಧ್ರುವ ವರ್ಣ *);
+ವರ್ಣ	*cipher_alg_list(ವರ್ಣ, ಪೂರ್ಣಾಙ್ಕ);
+ಧ್ರುವ ವರ್ಣ *compression_alg_list(ಪೂರ್ಣಾಙ್ಕ);
+ಪೂರ್ಣಾಙ್ಕ	 cipher_init(ಸಂರಚನಾ sshcipher_ctx **, ಧ್ರುವ ಸಂರಚನಾ sshcipher *,
+    ಧ್ರುವ u_char *, u_int, ಧ್ರುವ u_char *, u_int, ಪೂರ್ಣಾಙ್ಕ);
+ಪೂರ್ಣಾಙ್ಕ	 cipher_crypt(ಸಂರಚನಾ sshcipher_ctx *, u_int, u_char *, ಧ್ರುವ u_char *,
     u_int, u_int, u_int);
-int	 cipher_get_length(struct sshcipher_ctx *, u_int *, u_int,
-    const u_char *, u_int);
-void	 cipher_free(struct sshcipher_ctx *);
-u_int	 cipher_blocksize(const struct sshcipher *);
-u_int	 cipher_keylen(const struct sshcipher *);
-u_int	 cipher_seclen(const struct sshcipher *);
-u_int	 cipher_authlen(const struct sshcipher *);
-u_int	 cipher_ivlen(const struct sshcipher *);
-u_int	 cipher_is_cbc(const struct sshcipher *);
-u_int	 cipher_is_internal(const struct sshcipher *);
+ಪೂರ್ಣಾಙ್ಕ	 cipher_get_length(ಸಂರಚನಾ sshcipher_ctx *, u_int *, u_int,
+    ಧ್ರುವ u_char *, u_int);
+ಶೂನ್ಯ	 cipher_free(ಸಂರಚನಾ sshcipher_ctx *);
+u_int	 cipher_blocksize(ಧ್ರುವ ಸಂರಚನಾ sshcipher *);
+u_int	 cipher_keylen(ಧ್ರುವ ಸಂರಚನಾ sshcipher *);
+u_int	 cipher_seclen(ಧ್ರುವ ಸಂರಚನಾ sshcipher *);
+u_int	 cipher_authlen(ಧ್ರುವ ಸಂರಚನಾ sshcipher *);
+u_int	 cipher_ivlen(ಧ್ರುವ ಸಂರಚನಾ sshcipher *);
+u_int	 cipher_is_cbc(ಧ್ರುವ ಸಂರಚನಾ sshcipher *);
+u_int	 cipher_is_internal(ಧ್ರುವ ಸಂರಚನಾ sshcipher *);
 
-u_int	 cipher_ctx_is_plaintext(struct sshcipher_ctx *);
+u_int	 cipher_ctx_is_plaintext(ಸಂರಚನಾ sshcipher_ctx *);
 
-int	 cipher_get_keyiv(struct sshcipher_ctx *, u_char *, size_t);
+ಪೂರ್ಣಾಙ್ಕ	 cipher_get_keyiv(ಸಂರಚನಾ sshcipher_ctx *, u_char *, size_t);
 
 #endif				/* CIPHER_H */

@@ -22,34 +22,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
 #define RANDOM_SEED_SIZE 48
 
 #ifdef WITH_OPENSSL
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <errno.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include <openssl/rand.h>
-#include <openssl/crypto.h>
-#include <openssl/err.h>
+#ಅನ್ತರ್ಭಾವ <openssl/rand.h>
+#ಅನ್ತರ್ಭಾವ <openssl/crypto.h>
+#ಅನ್ತರ್ಭಾವ <openssl/err.h>
 
-#include "openbsd-compat/openssl-compat.h"
+#ಅನ್ತರ್ಭಾವ "openbsd-compat/openssl-compat.h"
 
-#include "ssh.h"
-#include "misc.h"
-#include "xmalloc.h"
-#include "atomicio.h"
-#include "pathnames.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "ssh.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "atomicio.h"
+#ಅನ್ತರ್ಭಾವ "pathnames.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
 
 /*
  * Portable OpenSSH PRNG seeding:
@@ -58,59 +58,59 @@
  * PRNGd.
  */
 
-void
-seed_rng(void)
+ಶೂನ್ಯ
+seed_rng(ಶೂನ್ಯ)
 {
-	unsigned char buf[RANDOM_SEED_SIZE];
+	unsigned ವರ್ಣ buf[RANDOM_SEED_SIZE];
 
 	/* Initialise libcrypto */
-	if (ssh_libcrypto_init() != 1)
+	ಯದಿ (ssh_libcrypto_init() != 1)
 		fatal("libcrypto failed to initialize.");
 
-	if (!ssh_compatible_openssl(OPENSSL_VERSION_NUMBER,
-	    OpenSSL_version_num()))
+	ಯದಿ (!ssh_compatible_openssl(OPENSSL_VERSION_ಸಂಖ್ಯೆ,
+	    Open_SSL_version_ಅಂಕೆ()))
 		fatal("OpenSSL version mismatch. Built against %lx, you "
-		    "have %lx", (u_long)OPENSSL_VERSION_NUMBER,
-		    OpenSSL_version_num());
+		    "have %lx", (u_long)OPENSSL_VERSION_ಸಂಖ್ಯೆ,
+		    Open_SSL_version_ಅಂಕೆ());
 
 #ifndef OPENSSL_PRNG_ONLY
-	if (RAND_status() == 1)
+	ಯದಿ (RAND_status() == 1)
 		debug3("RNG is ready, skipping seeding");
-	else {
-		if (seed_from_prngd(buf, sizeof(buf)) == -1)
+	ಅನ್ಯಥಾ {
+		ಯದಿ (seed_from_prngd(buf, ಪರಿಮಾಣ(buf)) == -1)
 			fatal("Could not obtain seed from PRNGd");
-		RAND_add(buf, sizeof(buf), sizeof(buf));
+		RAND_add(buf, ಪರಿಮಾಣ(buf), ಪರಿಮಾಣ(buf));
 	}
 #endif /* OPENSSL_PRNG_ONLY */
 
-	if (RAND_status() != 1)
+	ಯದಿ (RAND_status() != 1)
 		fatal("PRNG is not seeded");
 
 	/* Ensure arc4random() is primed */
-	arc4random_buf(buf, sizeof(buf));
-	explicit_bzero(buf, sizeof(buf));
+	arc4random_buf(buf, ಪರಿಮಾಣ(buf));
+	explicit_bzero(buf, ಪರಿಮಾಣ(buf));
 }
 
-#else /* WITH_OPENSSL */
+#ಅನ್ಯಥಾ /* WITH_OPENSSL */
 
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
 /* Actual initialisation is handled in arc4random() */
-void
-seed_rng(void)
+ಶೂನ್ಯ
+seed_rng(ಶೂನ್ಯ)
 {
-	unsigned char buf[RANDOM_SEED_SIZE];
+	unsigned ವರ್ಣ buf[RANDOM_SEED_SIZE];
 
 	/* Ensure arc4random() is primed */
-	arc4random_buf(buf, sizeof(buf));
-	explicit_bzero(buf, sizeof(buf));
+	arc4random_buf(buf, ಪರಿಮಾಣ(buf));
+	explicit_bzero(buf, ಪರಿಮಾಣ(buf));
 }
 
 #endif /* WITH_OPENSSL */
 
-void
-reseed_prngs(void)
+ಶೂನ್ಯ
+reseed_prngs(ಶೂನ್ಯ)
 {
 	uint32_t rnd[256];
 
@@ -118,14 +118,14 @@ reseed_prngs(void)
 	RAND_poll();
 #endif
 	arc4random_stir(); /* noop on recent arc4random() implementations */
-	arc4random_buf(rnd, sizeof(rnd)); /* let arc4random notice PID change */
+	arc4random_buf(rnd, ಪರಿಮಾಣ(rnd)); /* let arc4random notice PID change */
 
 #ifdef WITH_OPENSSL
-	RAND_seed(rnd, sizeof(rnd));
+	RAND_seed(rnd, ಪರಿಮಾಣ(rnd));
 	/* give libcrypto a chance to notice the PID change */
-	if ((RAND_bytes((u_char *)rnd, 1)) != 1)
+	ಯದಿ ((RAND_bytes((u_char *)rnd, 1)) != 1)
 		fatal_f("RAND_bytes failed");
 #endif
 
-	explicit_bzero(rnd, sizeof(rnd));
+	explicit_bzero(rnd, ಪರಿಮಾಣ(rnd));
 }

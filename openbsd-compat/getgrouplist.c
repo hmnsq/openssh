@@ -30,25 +30,25 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getgrouplist.c */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
 #ifndef HAVE_GETGROUPLIST
 
 /*
  * get credential
  */
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <grp.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+ಪೂರ್ಣಾಙ್ಕ
+getgrouplist(ಧ್ರುವ ವರ್ಣ *uname, gid_t agroup, gid_t *groups, ಪೂರ್ಣಾಙ್ಕ *grpcnt)
 {
-	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	ಸಂರಚನಾ group *grp;
+	ಪೂರ್ಣಾಙ್ಕ i, ngroups;
+	ಪೂರ್ಣಾಙ್ಕ ret, maxgroups;
+	ಪೂರ್ಣಾಙ್ಕ bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	ಯದಿ (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		ಪ್ರತ್ಯಾಗಮ (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,29 +67,29 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
-			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+	ಯಾವತ್ ((grp = getgrent())) {
+		ಯದಿ (grp->gr_gid == agroup)
+			ಅನುವರ್ತ;
+		ಪ್ರತಿ (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			ಯದಿ (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
-			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		ಯದಿ (bail)
+			ಅನುವರ್ತ;
+		ಪ್ರತಿ (i = 0; grp->gr_mem[i]; i++) {
+			ಯದಿ (!strcmp(grp->gr_mem[i], uname)) {
+				ಯದಿ (ngroups >= maxgroups) {
 					ret = -1;
-					goto out;
+					ಗಚ್ಛ out;
 				}
 				groups[ngroups++] = grp->gr_gid;
-				break;
+				ಭಙ್ಗ;
 			}
 		}
 	}
 out:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	ಪ್ರತ್ಯಾಗಮ (ret);
 }
 
 #endif /* HAVE_GETGROUPLIST */

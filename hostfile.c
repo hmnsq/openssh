@@ -36,117 +36,117 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
 
-#include <netinet/in.h>
+#ಅನ್ತರ್ಭಾವ <netinet/in.h>
 
-#include <errno.h>
-#include <resolv.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <resolv.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include "xmalloc.h"
-#include "match.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "log.h"
-#include "misc.h"
-#include "pathnames.h"
-#include "ssherr.h"
-#include "digest.h"
-#include "hmac.h"
-#include "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "match.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "hostfile.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "pathnames.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "digest.h"
+#ಅನ್ತರ್ಭಾವ "hmac.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
 
 /* XXX hmac is too easy to dictionary attack; use bcrypt? */
 
-static int
-extract_salt(const char *s, u_int l, u_char *salt, size_t salt_len)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+extract_salt(ಧ್ರುವ ವರ್ಣ *s, u_int l, u_char *salt, size_t salt_len)
 {
-	char *p, *b64salt;
+	ವರ್ಣ *p, *b64salt;
 	u_int b64len;
-	int ret;
+	ಪೂರ್ಣಾಙ್ಕ ret;
 
-	if (l < sizeof(HASH_MAGIC) - 1) {
+	ಯದಿ (l < ಪರಿಮಾಣ(HASH_MAGIC) - 1) {
 		debug2("extract_salt: string too short");
-		return (-1);
+		ಪ್ರತ್ಯಾಗಮ (-1);
 	}
-	if (strncmp(s, HASH_MAGIC, sizeof(HASH_MAGIC) - 1) != 0) {
+	ಯದಿ (strncmp(s, HASH_MAGIC, ಪರಿಮಾಣ(HASH_MAGIC) - 1) != 0) {
 		debug2("extract_salt: invalid magic identifier");
-		return (-1);
+		ಪ್ರತ್ಯಾಗಮ (-1);
 	}
-	s += sizeof(HASH_MAGIC) - 1;
-	l -= sizeof(HASH_MAGIC) - 1;
-	if ((p = memchr(s, HASH_DELIM, l)) == NULL) {
+	s += ಪರಿಮಾಣ(HASH_MAGIC) - 1;
+	l -= ಪರಿಮಾಣ(HASH_MAGIC) - 1;
+	ಯದಿ ((p = memchr(s, HASH_DELIM, l)) == ರಿಕ್ತ) {
 		debug2("extract_salt: missing salt termination character");
-		return (-1);
+		ಪ್ರತ್ಯಾಗಮ (-1);
 	}
 
 	b64len = p - s;
 	/* Sanity check */
-	if (b64len == 0 || b64len > 1024) {
+	ಯದಿ (b64len == 0 || b64len > 1024) {
 		debug2("extract_salt: bad encoded salt length %u", b64len);
-		return (-1);
+		ಪ್ರತ್ಯಾಗಮ (-1);
 	}
 	b64salt = xmalloc(1 + b64len);
 	memcpy(b64salt, s, b64len);
 	b64salt[b64len] = '\0';
 
 	ret = __b64_pton(b64salt, salt, salt_len);
-	free(b64salt);
-	if (ret == -1) {
+	ಮುಕ್ತ(b64salt);
+	ಯದಿ (ret == -1) {
 		debug2("extract_salt: salt decode error");
-		return (-1);
+		ಪ್ರತ್ಯಾಗಮ (-1);
 	}
-	if (ret != (int)ssh_hmac_bytes(SSH_DIGEST_SHA1)) {
+	ಯದಿ (ret != (ಪೂರ್ಣಾಙ್ಕ)ssh_hmac_bytes(SSH_DIGEST_SHA1)) {
 		debug2("extract_salt: expected salt len %zd, got %d",
 		    ssh_hmac_bytes(SSH_DIGEST_SHA1), ret);
-		return (-1);
+		ಪ್ರತ್ಯಾಗಮ (-1);
 	}
 
-	return (0);
+	ಪ್ರತ್ಯಾಗಮ (0);
 }
 
-char *
-host_hash(const char *host, const char *name_from_hostfile, u_int src_len)
+ವರ್ಣ *
+host_hash(ಧ್ರುವ ವರ್ಣ *host, ಧ್ರುವ ವರ್ಣ *name_from_hostfile, u_int src_len)
 {
-	struct ssh_hmac_ctx *ctx;
+	ಸಂರಚನಾ ssh_hmac_ctx *ctx;
 	u_char salt[256], result[256];
-	char uu_salt[512], uu_result[512];
-	char *encoded = NULL;
+	ವರ್ಣ uu_salt[512], uu_result[512];
+	ವರ್ಣ *encoded = ರಿಕ್ತ;
 	u_int len;
 
 	len = ssh_digest_bytes(SSH_DIGEST_SHA1);
 
-	if (name_from_hostfile == NULL) {
+	ಯದಿ (name_from_hostfile == ರಿಕ್ತ) {
 		/* Create new salt */
 		arc4random_buf(salt, len);
-	} else {
+	} ಅನ್ಯಥಾ {
 		/* Extract salt from known host entry */
-		if (extract_salt(name_from_hostfile, src_len, salt,
-		    sizeof(salt)) == -1)
-			return (NULL);
+		ಯದಿ (extract_salt(name_from_hostfile, src_len, salt,
+		    ಪರಿಮಾಣ(salt)) == -1)
+			ಪ್ರತ್ಯಾಗಮ (ರಿಕ್ತ);
 	}
 
-	if ((ctx = ssh_hmac_start(SSH_DIGEST_SHA1)) == NULL ||
+	ಯದಿ ((ctx = ssh_hmac_start(SSH_DIGEST_SHA1)) == ರಿಕ್ತ ||
 	    ssh_hmac_init(ctx, salt, len) < 0 ||
 	    ssh_hmac_update(ctx, host, strlen(host)) < 0 ||
-	    ssh_hmac_final(ctx, result, sizeof(result)))
+	    ssh_hmac_final(ctx, result, ಪರಿಮಾಣ(result)))
 		fatal_f("ssh_hmac failed");
 	ssh_hmac_free(ctx);
 
-	if (__b64_ntop(salt, len, uu_salt, sizeof(uu_salt)) == -1 ||
-	    __b64_ntop(result, len, uu_result, sizeof(uu_result)) == -1)
+	ಯದಿ (__b64_ntop(salt, len, uu_salt, ಪರಿಮಾಣ(uu_salt)) == -1 ||
+	    __b64_ntop(result, len, uu_result, ಪರಿಮಾಣ(uu_result)) == -1)
 		fatal_f("__b64_ntop failed");
 	xasprintf(&encoded, "%s%s%c%s", HASH_MAGIC, uu_salt, HASH_DELIM,
 	    uu_result);
 
-	return (encoded);
+	ಪ್ರತ್ಯಾಗಮ (encoded);
 }
 
 /*
@@ -154,181 +154,181 @@ host_hash(const char *host, const char *name_from_hostfile, u_int src_len)
  * Skips any whitespace at the beginning and at end.
  */
 
-int
-hostfile_read_key(char **cpp, u_int *bitsp, struct sshkey *ret)
+ಪೂರ್ಣಾಙ್ಕ
+hostfile_read_ಕೀಲಿ(ವರ್ಣ **cpp, u_int *bitsp, ಸಂರಚನಾ sshkey *ret)
 {
-	char *cp;
+	ವರ್ಣ *cp;
 
 	/* Skip leading whitespace. */
-	for (cp = *cpp; *cp == ' ' || *cp == '\t'; cp++)
+	ಪ್ರತಿ (cp = *cpp; *cp == ' ' || *cp == '\t'; cp++)
 		;
 
-	if (sshkey_read(ret, &cp) != 0)
-		return 0;
+	ಯದಿ (sshkey_read(ret, &cp) != 0)
+		ಪ್ರತ್ಯಾಗಮ 0;
 
 	/* Skip trailing whitespace. */
-	for (; *cp == ' ' || *cp == '\t'; cp++)
+	ಪ್ರತಿ (; *cp == ' ' || *cp == '\t'; cp++)
 		;
 
 	/* Return results. */
 	*cpp = cp;
-	if (bitsp != NULL)
+	ಯದಿ (bitsp != ರಿಕ್ತ)
 		*bitsp = sshkey_size(ret);
-	return 1;
+	ಪ್ರತ್ಯಾಗಮ 1;
 }
 
-static HostkeyMarker
-check_markers(char **cpp)
+ಸ್ಥಿರ HostkeyMarker
+check_markers(ವರ್ಣ **cpp)
 {
-	char marker[32], *sp, *cp = *cpp;
-	int ret = MRK_NONE;
+	ವರ್ಣ marker[32], *sp, *cp = *cpp;
+	ಪೂರ್ಣಾಙ್ಕ ret = MRK_NONE;
 
-	while (*cp == '@') {
+	ಯಾವತ್ (*cp == '@') {
 		/* Only one marker is allowed */
-		if (ret != MRK_NONE)
-			return MRK_ERROR;
+		ಯದಿ (ret != MRK_NONE)
+			ಪ್ರತ್ಯಾಗಮ MRK_ERROR;
 		/* Markers are terminated by whitespace */
-		if ((sp = strchr(cp, ' ')) == NULL &&
-		    (sp = strchr(cp, '\t')) == NULL)
-			return MRK_ERROR;
+		ಯದಿ ((sp = strchr(cp, ' ')) == ರಿಕ್ತ &&
+		    (sp = strchr(cp, '\t')) == ರಿಕ್ತ)
+			ಪ್ರತ್ಯಾಗಮ MRK_ERROR;
 		/* Extract marker for comparison */
-		if (sp <= cp + 1 || sp >= cp + sizeof(marker))
-			return MRK_ERROR;
+		ಯದಿ (sp <= cp + 1 || sp >= cp + ಪರಿಮಾಣ(marker))
+			ಪ್ರತ್ಯಾಗಮ MRK_ERROR;
 		memcpy(marker, cp, sp - cp);
 		marker[sp - cp] = '\0';
-		if (strcmp(marker, CA_MARKER) == 0)
+		ಯದಿ (strcmp(marker, CA_MARKER) == 0)
 			ret = MRK_CA;
-		else if (strcmp(marker, REVOKE_MARKER) == 0)
+		ಅನ್ಯಥಾ ಯದಿ (strcmp(marker, REVOKE_MARKER) == 0)
 			ret = MRK_REVOKE;
-		else
-			return MRK_ERROR;
+		ಅನ್ಯಥಾ
+			ಪ್ರತ್ಯಾಗಮ MRK_ERROR;
 
 		/* Skip past marker and any whitespace that follows it */
 		cp = sp;
-		for (; *cp == ' ' || *cp == '\t'; cp++)
+		ಪ್ರತಿ (; *cp == ' ' || *cp == '\t'; cp++)
 			;
 	}
 	*cpp = cp;
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-struct hostkeys *
-init_hostkeys(void)
+ಸಂರಚನಾ hostkeys *
+init_hostkeys(ಶೂನ್ಯ)
 {
-	struct hostkeys *ret = xcalloc(1, sizeof(*ret));
+	ಸಂರಚನಾ hostkeys *ret = xcalloc(1, ಪರಿಮಾಣ(*ret));
 
-	ret->entries = NULL;
-	return ret;
+	ret->entries = ರಿಕ್ತ;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-struct load_callback_ctx {
-	const char *host;
-	u_long num_loaded;
-	struct hostkeys *hostkeys;
+ಸಂರಚನಾ load_callback_ctx {
+	ಧ್ರುವ ವರ್ಣ *host;
+	u_long ಅಂಕೆ_loaded;
+	ಸಂರಚನಾ hostkeys *hostkeys;
 };
 
-static int
-record_hostkey(struct hostkey_foreach_line *l, void *_ctx)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+record_hostkey(ಸಂರಚನಾ hostkey_foreach_ಸಾಲು *l, ಶೂನ್ಯ *_ctx)
 {
-	struct load_callback_ctx *ctx = (struct load_callback_ctx *)_ctx;
-	struct hostkeys *hostkeys = ctx->hostkeys;
-	struct hostkey_entry *tmp;
+	ಸಂರಚನಾ load_callback_ctx *ctx = (ಸಂರಚನಾ load_callback_ctx *)_ctx;
+	ಸಂರಚನಾ hostkeys *hostkeys = ctx->hostkeys;
+	ಸಂರಚನಾ hostkey_entry *tmp;
 
-	if (l->status == HKF_STATUS_INVALID) {
+	ಯದಿ (l->status == HKF_STATUS_INVALID) {
 		/* XXX make this verbose() in the future */
 		debug("%s:%ld: parse error in hostkeys file",
 		    l->path, l->linenum);
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
 
 	debug3_f("found %skey type %s in file %s:%lu",
 	    l->marker == MRK_NONE ? "" :
 	    (l->marker == MRK_CA ? "ca " : "revoked "),
-	    sshkey_type(l->key), l->path, l->linenum);
-	if ((tmp = recallocarray(hostkeys->entries, hostkeys->num_entries,
-	    hostkeys->num_entries + 1, sizeof(*hostkeys->entries))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	    sshkey_type(l->ಕೀಲಿ), l->path, l->linenum);
+	ಯದಿ ((tmp = recallocarray(hostkeys->entries, hostkeys->ಅಂಕೆ_entries,
+	    hostkeys->ಅಂಕೆ_entries + 1, ಪರಿಮಾಣ(*hostkeys->entries))) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
 	hostkeys->entries = tmp;
-	hostkeys->entries[hostkeys->num_entries].host = xstrdup(ctx->host);
-	hostkeys->entries[hostkeys->num_entries].file = xstrdup(l->path);
-	hostkeys->entries[hostkeys->num_entries].line = l->linenum;
-	hostkeys->entries[hostkeys->num_entries].key = l->key;
-	l->key = NULL; /* steal it */
-	hostkeys->entries[hostkeys->num_entries].marker = l->marker;
-	hostkeys->entries[hostkeys->num_entries].note = l->note;
-	hostkeys->num_entries++;
-	ctx->num_loaded++;
+	hostkeys->entries[hostkeys->ಅಂಕೆ_entries].host = xstrdup(ctx->host);
+	hostkeys->entries[hostkeys->ಅಂಕೆ_entries].file = xstrdup(l->path);
+	hostkeys->entries[hostkeys->ಅಂಕೆ_entries].ಸಾಲು = l->linenum;
+	hostkeys->entries[hostkeys->ಅಂಕೆ_entries].ಕೀಲಿ = l->ಕೀಲಿ;
+	l->ಕೀಲಿ = ರಿಕ್ತ; /* steal it */
+	hostkeys->entries[hostkeys->ಅಂಕೆ_entries].marker = l->marker;
+	hostkeys->entries[hostkeys->ಅಂಕೆ_entries].note = l->note;
+	hostkeys->ಅಂಕೆ_entries++;
+	ctx->ಅಂಕೆ_loaded++;
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-void
-load_hostkeys_file(struct hostkeys *hostkeys, const char *host,
-    const char *path, FILE *f, u_int note)
+ಶೂನ್ಯ
+load_hostkeys_file(ಸಂರಚನಾ hostkeys *hostkeys, ಧ್ರುವ ವರ್ಣ *host,
+    ಧ್ರುವ ವರ್ಣ *path, FILE *f, u_int note)
 {
-	int r;
-	struct load_callback_ctx ctx;
+	ಪೂರ್ಣಾಙ್ಕ r;
+	ಸಂರಚನಾ load_callback_ctx ctx;
 
 	ctx.host = host;
-	ctx.num_loaded = 0;
+	ctx.ಅಂಕೆ_loaded = 0;
 	ctx.hostkeys = hostkeys;
 
-	if ((r = hostkeys_foreach_file(path, f, record_hostkey, &ctx, host,
-	    NULL, HKF_WANT_MATCH|HKF_WANT_PARSE_KEY, note)) != 0) {
-		if (r != SSH_ERR_SYSTEM_ERROR && errno != ENOENT)
+	ಯದಿ ((r = hostkeys_foreach_file(path, f, record_hostkey, &ctx, host,
+	    ರಿಕ್ತ, HKF_WANT_MATCH|HKF_WANT_PARSE_ಕೀಲಿ, note)) != 0) {
+		ಯದಿ (r != SSH_ERR_SYSTEM_ERROR && errno != ENOENT)
 			debug_fr(r, "hostkeys_foreach failed for %s", path);
 	}
-	if (ctx.num_loaded != 0)
-		debug3_f("loaded %lu keys from %s", ctx.num_loaded, host);
+	ಯದಿ (ctx.ಅಂಕೆ_loaded != 0)
+		debug3_f("loaded %lu keys from %s", ctx.ಅಂಕೆ_loaded, host);
 }
 
-void
-load_hostkeys(struct hostkeys *hostkeys, const char *host, const char *path,
+ಶೂನ್ಯ
+load_hostkeys(ಸಂರಚನಾ hostkeys *hostkeys, ಧ್ರುವ ವರ್ಣ *host, ಧ್ರುವ ವರ್ಣ *path,
     u_int note)
 {
 	FILE *f;
 
-	if ((f = fopen(path, "r")) == NULL) {
+	ಯದಿ ((f = fopen(path, "r")) == ರಿಕ್ತ) {
 		debug_f("fopen %s: %s", path, strerror(errno));
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 	}
 
 	load_hostkeys_file(hostkeys, host, path, f, note);
 	fclose(f);
 }
 
-void
-free_hostkeys(struct hostkeys *hostkeys)
+ಶೂನ್ಯ
+free_hostkeys(ಸಂರಚನಾ hostkeys *hostkeys)
 {
 	u_int i;
 
-	for (i = 0; i < hostkeys->num_entries; i++) {
-		free(hostkeys->entries[i].host);
-		free(hostkeys->entries[i].file);
-		sshkey_free(hostkeys->entries[i].key);
-		explicit_bzero(hostkeys->entries + i, sizeof(*hostkeys->entries));
+	ಪ್ರತಿ (i = 0; i < hostkeys->ಅಂಕೆ_entries; i++) {
+		ಮುಕ್ತ(hostkeys->entries[i].host);
+		ಮುಕ್ತ(hostkeys->entries[i].file);
+		sshkey_free(hostkeys->entries[i].ಕೀಲಿ);
+		explicit_bzero(hostkeys->entries + i, ಪರಿಮಾಣ(*hostkeys->entries));
 	}
-	free(hostkeys->entries);
-	freezero(hostkeys, sizeof(*hostkeys));
+	ಮುಕ್ತ(hostkeys->entries);
+	freezero(hostkeys, ಪರಿಮಾಣ(*hostkeys));
 }
 
-static int
-check_key_not_revoked(struct hostkeys *hostkeys, struct sshkey *k)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+check_ಕೀಲಿ_not_revoked(ಸಂರಚನಾ hostkeys *hostkeys, ಸಂರಚನಾ sshkey *k)
 {
-	int is_cert = sshkey_is_cert(k);
+	ಪೂರ್ಣಾಙ್ಕ is_cert = sshkey_is_cert(k);
 	u_int i;
 
-	for (i = 0; i < hostkeys->num_entries; i++) {
-		if (hostkeys->entries[i].marker != MRK_REVOKE)
-			continue;
-		if (sshkey_equal_public(k, hostkeys->entries[i].key))
-			return -1;
-		if (is_cert && k != NULL &&
-		    sshkey_equal_public(k->cert->signature_key,
-		    hostkeys->entries[i].key))
-			return -1;
+	ಪ್ರತಿ (i = 0; i < hostkeys->ಅಂಕೆ_entries; i++) {
+		ಯದಿ (hostkeys->entries[i].marker != MRK_REVOKE)
+			ಅನುವರ್ತ;
+		ಯದಿ (sshkey_equal_public(k, hostkeys->entries[i].ಕೀಲಿ))
+			ಪ್ರತ್ಯಾಗಮ -1;
+		ಯದಿ (is_cert && k != ರಿಕ್ತ &&
+		    sshkey_equal_public(k->cert->signature_ಕೀಲಿ,
+		    hostkeys->entries[i].ಕೀಲಿ))
+			ಪ್ರತ್ಯಾಗಮ -1;
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /*
@@ -346,257 +346,257 @@ check_key_not_revoked(struct hostkeys *hostkeys, struct sshkey *k)
  *
  * Finally, check any found key is not revoked.
  */
-static HostStatus
-check_hostkeys_by_key_or_type(struct hostkeys *hostkeys,
-    struct sshkey *k, int keytype, int nid, const struct hostkey_entry **found)
+ಸ್ಥಿರ HostStatus
+check_hostkeys_by_ಕೀಲಿ_or_type(ಸಂರಚನಾ hostkeys *hostkeys,
+    ಸಂರಚನಾ sshkey *k, ಪೂರ್ಣಾಙ್ಕ keytype, ಪೂರ್ಣಾಙ್ಕ nid, ಧ್ರುವ ಸಂರಚನಾ hostkey_entry **found)
 {
 	u_int i;
 	HostStatus end_return = HOST_NEW;
-	int want_cert = sshkey_is_cert(k);
+	ಪೂರ್ಣಾಙ್ಕ want_cert = sshkey_is_cert(k);
 	HostkeyMarker want_marker = want_cert ? MRK_CA : MRK_NONE;
 
-	if (found != NULL)
-		*found = NULL;
+	ಯದಿ (found != ರಿಕ್ತ)
+		*found = ರಿಕ್ತ;
 
-	for (i = 0; i < hostkeys->num_entries; i++) {
-		if (hostkeys->entries[i].marker != want_marker)
-			continue;
-		if (k == NULL) {
-			if (hostkeys->entries[i].key->type != keytype)
-				continue;
-			if (nid != -1 &&
-			    sshkey_type_plain(keytype) == KEY_ECDSA &&
-			    hostkeys->entries[i].key->ecdsa_nid != nid)
-				continue;
+	ಪ್ರತಿ (i = 0; i < hostkeys->ಅಂಕೆ_entries; i++) {
+		ಯದಿ (hostkeys->entries[i].marker != want_marker)
+			ಅನುವರ್ತ;
+		ಯದಿ (k == ರಿಕ್ತ) {
+			ಯದಿ (hostkeys->entries[i].ಕೀಲಿ->type != keytype)
+				ಅನುವರ್ತ;
+			ಯದಿ (nid != -1 &&
+			    sshkey_type_plain(keytype) == ಕೀಲಿ_ECDSA &&
+			    hostkeys->entries[i].ಕೀಲಿ->ecdsa_nid != nid)
+				ಅನುವರ್ತ;
 			end_return = HOST_FOUND;
-			if (found != NULL)
+			ಯದಿ (found != ರಿಕ್ತ)
 				*found = hostkeys->entries + i;
-			k = hostkeys->entries[i].key;
-			break;
+			k = hostkeys->entries[i].ಕೀಲಿ;
+			ಭಙ್ಗ;
 		}
-		if (want_cert) {
-			if (sshkey_equal_public(k->cert->signature_key,
-			    hostkeys->entries[i].key)) {
+		ಯದಿ (want_cert) {
+			ಯದಿ (sshkey_equal_public(k->cert->signature_ಕೀಲಿ,
+			    hostkeys->entries[i].ಕೀಲಿ)) {
 				/* A matching CA exists */
 				end_return = HOST_OK;
-				if (found != NULL)
+				ಯದಿ (found != ರಿಕ್ತ)
 					*found = hostkeys->entries + i;
-				break;
+				ಭಙ್ಗ;
 			}
-		} else {
-			if (sshkey_equal(k, hostkeys->entries[i].key)) {
+		} ಅನ್ಯಥಾ {
+			ಯದಿ (sshkey_equal(k, hostkeys->entries[i].ಕೀಲಿ)) {
 				end_return = HOST_OK;
-				if (found != NULL)
+				ಯದಿ (found != ರಿಕ್ತ)
 					*found = hostkeys->entries + i;
-				break;
+				ಭಙ್ಗ;
 			}
 			/* A non-matching key exists */
 			end_return = HOST_CHANGED;
-			if (found != NULL)
+			ಯದಿ (found != ರಿಕ್ತ)
 				*found = hostkeys->entries + i;
 		}
 	}
-	if (check_key_not_revoked(hostkeys, k) != 0) {
+	ಯದಿ (check_ಕೀಲಿ_not_revoked(hostkeys, k) != 0) {
 		end_return = HOST_REVOKED;
-		if (found != NULL)
-			*found = NULL;
+		ಯದಿ (found != ರಿಕ್ತ)
+			*found = ರಿಕ್ತ;
 	}
-	return end_return;
+	ಪ್ರತ್ಯಾಗಮ end_return;
 }
 
 HostStatus
-check_key_in_hostkeys(struct hostkeys *hostkeys, struct sshkey *key,
-    const struct hostkey_entry **found)
+check_ಕೀಲಿ_in_hostkeys(ಸಂರಚನಾ hostkeys *hostkeys, ಸಂರಚನಾ sshkey *ಕೀಲಿ,
+    ಧ್ರುವ ಸಂರಚನಾ hostkey_entry **found)
 {
-	if (key == NULL)
+	ಯದಿ (ಕೀಲಿ == ರಿಕ್ತ)
 		fatal("no key to look up");
-	return check_hostkeys_by_key_or_type(hostkeys, key, 0, -1, found);
+	ಪ್ರತ್ಯಾಗಮ check_hostkeys_by_ಕೀಲಿ_or_type(hostkeys, ಕೀಲಿ, 0, -1, found);
 }
 
-int
-lookup_key_in_hostkeys_by_type(struct hostkeys *hostkeys, int keytype, int nid,
-    const struct hostkey_entry **found)
+ಪೂರ್ಣಾಙ್ಕ
+lookup_ಕೀಲಿ_in_hostkeys_by_type(ಸಂರಚನಾ hostkeys *hostkeys, ಪೂರ್ಣಾಙ್ಕ keytype, ಪೂರ್ಣಾಙ್ಕ nid,
+    ಧ್ರುವ ಸಂರಚನಾ hostkey_entry **found)
 {
-	return (check_hostkeys_by_key_or_type(hostkeys, NULL, keytype, nid,
+	ಪ್ರತ್ಯಾಗಮ (check_hostkeys_by_ಕೀಲಿ_or_type(hostkeys, ರಿಕ್ತ, keytype, nid,
 	    found) == HOST_FOUND);
 }
 
-int
-lookup_marker_in_hostkeys(struct hostkeys *hostkeys, int want_marker)
+ಪೂರ್ಣಾಙ್ಕ
+lookup_marker_in_hostkeys(ಸಂರಚನಾ hostkeys *hostkeys, ಪೂರ್ಣಾಙ್ಕ want_marker)
 {
 	u_int i;
 
-	for (i = 0; i < hostkeys->num_entries; i++) {
-		if (hostkeys->entries[i].marker == (HostkeyMarker)want_marker)
-			return 1;
+	ಪ್ರತಿ (i = 0; i < hostkeys->ಅಂಕೆ_entries; i++) {
+		ಯದಿ (hostkeys->entries[i].marker == (HostkeyMarker)want_marker)
+			ಪ್ರತ್ಯಾಗಮ 1;
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int
-format_host_entry(struct sshbuf *entry, const char *host, const char *ip,
-    const struct sshkey *key, int store_hash)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+format_host_entry(ಸಂರಚನಾ sshbuf *entry, ಧ್ರುವ ವರ್ಣ *host, ಧ್ರುವ ವರ್ಣ *ip,
+    ಧ್ರುವ ಸಂರಚನಾ sshkey *ಕೀಲಿ, ಪೂರ್ಣಾಙ್ಕ store_hash)
 {
-	int r, success = 0;
-	char *hashed_host = NULL, *lhost;
+	ಪೂರ್ಣಾಙ್ಕ r, success = 0;
+	ವರ್ಣ *hashed_host = ರಿಕ್ತ, *lhost;
 
 	lhost = xstrdup(host);
 	lowercase(lhost);
 
-	if (store_hash) {
-		if ((hashed_host = host_hash(lhost, NULL, 0)) == NULL) {
+	ಯದಿ (store_hash) {
+		ಯದಿ ((hashed_host = host_hash(lhost, ರಿಕ್ತ, 0)) == ರಿಕ್ತ) {
 			error_f("host_hash failed");
-			free(lhost);
-			return 0;
+			ಮುಕ್ತ(lhost);
+			ಪ್ರತ್ಯಾಗಮ 0;
 		}
-		if ((r = sshbuf_putf(entry, "%s ", hashed_host)) != 0)
+		ಯದಿ ((r = sshbuf_putf(entry, "%s ", hashed_host)) != 0)
 			fatal_fr(r, "sshbuf_putf");
-	} else if (ip != NULL) {
-		if ((r = sshbuf_putf(entry, "%s,%s ", lhost, ip)) != 0)
+	} ಅನ್ಯಥಾ ಯದಿ (ip != ರಿಕ್ತ) {
+		ಯದಿ ((r = sshbuf_putf(entry, "%s,%s ", lhost, ip)) != 0)
 			fatal_fr(r, "sshbuf_putf");
-	} else {
-		if ((r = sshbuf_putf(entry, "%s ", lhost)) != 0)
+	} ಅನ್ಯಥಾ {
+		ಯದಿ ((r = sshbuf_putf(entry, "%s ", lhost)) != 0)
 			fatal_fr(r, "sshbuf_putf");
 	}
-	free(hashed_host);
-	free(lhost);
-	if ((r = sshkey_format_text(key, entry)) == 0)
+	ಮುಕ್ತ(hashed_host);
+	ಮುಕ್ತ(lhost);
+	ಯದಿ ((r = sshkey_format_text(ಕೀಲಿ, entry)) == 0)
 		success = 1;
-	else
+	ಅನ್ಯಥಾ
 		error_fr(r, "sshkey_write");
-	if ((r = sshbuf_putf(entry, "\n")) != 0)
+	ಯದಿ ((r = sshbuf_putf(entry, "\n")) != 0)
 		fatal_fr(r, "sshbuf_putf");
 
 	/* If hashing is enabled, the IP address needs to go on its own line */
-	if (success && store_hash && ip != NULL)
-		success = format_host_entry(entry, ip, NULL, key, 1);
-	return success;
+	ಯದಿ (success && store_hash && ip != ರಿಕ್ತ)
+		success = format_host_entry(entry, ip, ರಿಕ್ತ, ಕೀಲಿ, 1);
+	ಪ್ರತ್ಯಾಗಮ success;
 }
 
-static int
-write_host_entry(FILE *f, const char *host, const char *ip,
-    const struct sshkey *key, int store_hash)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+write_host_entry(FILE *f, ಧ್ರುವ ವರ್ಣ *host, ಧ್ರುವ ವರ್ಣ *ip,
+    ಧ್ರುವ ಸಂರಚನಾ sshkey *ಕೀಲಿ, ಪೂರ್ಣಾಙ್ಕ store_hash)
 {
-	int r, success = 0;
-	struct sshbuf *entry = NULL;
+	ಪೂರ್ಣಾಙ್ಕ r, success = 0;
+	ಸಂರಚನಾ sshbuf *entry = ರಿಕ್ತ;
 
-	if ((entry = sshbuf_new()) == NULL)
+	ಯದಿ ((entry = sshbuf_new()) == ರಿಕ್ತ)
 		fatal_f("allocation failed");
-	if ((r = format_host_entry(entry, host, ip, key, store_hash)) != 1) {
+	ಯದಿ ((r = format_host_entry(entry, host, ip, ಕೀಲಿ, store_hash)) != 1) {
 		debug_f("failed to format host entry");
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = fwrite(sshbuf_ptr(entry), sshbuf_len(entry), 1, f)) != 1) {
+	ಯದಿ ((r = fwrite(sshbuf_ptr(entry), sshbuf_len(entry), 1, f)) != 1) {
 		error_f("fwrite: %s", strerror(errno));
-		goto out;
+		ಗಚ್ಛ out;
 	}
 	success = 1;
  out:
 	sshbuf_free(entry);
-	return success;
+	ಪ್ರತ್ಯಾಗಮ success;
 }
 
 /*
  * Create user ~/.ssh directory if it doesn't exist and we want to write to it.
  * If notify is set, a message will be emitted if the directory is created.
  */
-void
-hostfile_create_user_ssh_dir(const char *filename, int notify)
+ಶೂನ್ಯ
+hostfile_create_user_ssh_dir(ಧ್ರುವ ವರ್ಣ *filename, ಪೂರ್ಣಾಙ್ಕ notify)
 {
-	char *dotsshdir = NULL, *p;
+	ವರ್ಣ *dotsshdir = ರಿಕ್ತ, *p;
 	size_t len;
-	struct stat st;
+	ಸಂರಚನಾ stat st;
 
-	if ((p = strrchr(filename, '/')) == NULL)
-		return;
+	ಯದಿ ((p = strrchr(filename, '/')) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ;
 	len = p - filename;
 	dotsshdir = tilde_expand_filename("~/" _PATH_SSH_USER_DIR, getuid());
-	if (strlen(dotsshdir) > len || strncmp(filename, dotsshdir, len) != 0)
-		goto out; /* not ~/.ssh prefixed */
-	if (stat(dotsshdir, &st) == 0)
-		goto out; /* dir already exists */
-	else if (errno != ENOENT)
+	ಯದಿ (strlen(dotsshdir) > len || strncmp(filename, dotsshdir, len) != 0)
+		ಗಚ್ಛ out; /* not ~/.ssh prefixed */
+	ಯದಿ (stat(dotsshdir, &st) == 0)
+		ಗಚ್ಛ out; /* dir already exists */
+	ಅನ್ಯಥಾ ಯದಿ (errno != ENOENT)
 		error("Could not stat %s: %s", dotsshdir, strerror(errno));
-	else {
+	ಅನ್ಯಥಾ {
 #ifdef WITH_SELINUX
 		ssh_selinux_setfscreatecon(dotsshdir);
 #endif
-		if (mkdir(dotsshdir, 0700) == -1)
+		ಯದಿ (mkdir(dotsshdir, 0700) == -1)
 			error("Could not create directory '%.200s' (%s).",
 			    dotsshdir, strerror(errno));
-		else if (notify)
+		ಅನ್ಯಥಾ ಯದಿ (notify)
 			logit("Created directory '%s'.", dotsshdir);
 #ifdef WITH_SELINUX
-		ssh_selinux_setfscreatecon(NULL);
+		ssh_selinux_setfscreatecon(ರಿಕ್ತ);
 #endif
 	}
  out:
-	free(dotsshdir);
+	ಮುಕ್ತ(dotsshdir);
 }
 
 /*
  * Appends an entry to the host file.  Returns false if the entry could not
  * be appended.
  */
-int
-add_host_to_hostfile(const char *filename, const char *host,
-    const struct sshkey *key, int store_hash)
+ಪೂರ್ಣಾಙ್ಕ
+add_host_to_hostfile(ಧ್ರುವ ವರ್ಣ *filename, ಧ್ರುವ ವರ್ಣ *host,
+    ಧ್ರುವ ಸಂರಚನಾ sshkey *ಕೀಲಿ, ಪೂರ್ಣಾಙ್ಕ store_hash)
 {
 	FILE *f;
-	int success, addnl = 0;
+	ಪೂರ್ಣಾಙ್ಕ success, addnl = 0;
 
-	if (key == NULL)
-		return 1;	/* XXX ? */
+	ಯದಿ (ಕೀಲಿ == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ 1;	/* XXX ? */
 	hostfile_create_user_ssh_dir(filename, 0);
-	if ((f = fopen(filename, "a+")) == NULL)
-		return 0;
-	setvbuf(f, NULL, _IONBF, 0);
+	ಯದಿ ((f = fopen(filename, "a+")) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ 0;
+	setvbuf(f, ರಿಕ್ತ, _IONBF, 0);
 	/* Make sure we have a terminating newline. */
-	if (fseek(f, -1L, SEEK_END) == 0 && fgetc(f) != '\n')
+	ಯದಿ (fseek(f, -1L, SEEK_END) == 0 && fgetc(f) != '\n')
 		addnl = 1;
-	if (fseek(f, 0L, SEEK_END) != 0 || (addnl && fputc('\n', f) != '\n')) {
+	ಯದಿ (fseek(f, 0L, SEEK_END) != 0 || (addnl && fputc('\n', f) != '\n')) {
 		error("Failed to add terminating newline to %s: %s",
 		   filename, strerror(errno));
 		fclose(f);
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
-	success = write_host_entry(f, host, NULL, key, store_hash);
+	success = write_host_entry(f, host, ರಿಕ್ತ, ಕೀಲಿ, store_hash);
 	fclose(f);
-	return success;
+	ಪ್ರತ್ಯಾಗಮ success;
 }
 
-struct host_delete_ctx {
+ಸಂರಚನಾ host_delete_ctx {
 	FILE *out;
-	int quiet;
-	const char *host, *ip;
-	u_int *match_keys;	/* mask of HKF_MATCH_* for this key */
-	struct sshkey * const *keys;
+	ಪೂರ್ಣಾಙ್ಕ quiet;
+	ಧ್ರುವ ವರ್ಣ *host, *ip;
+	u_int *match_ಕೀಲಿಗಳು;	/* mask of HKF_MATCH_* for this key */
+	ಸಂರಚನಾ sshkey * ಧ್ರುವ *ಕೀಲಿಗಳು;
 	size_t nkeys;
-	int modified;
+	ಪೂರ್ಣಾಙ್ಕ modified;
 };
 
-static int
-host_delete(struct hostkey_foreach_line *l, void *_ctx)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+host_delete(ಸಂರಚನಾ hostkey_foreach_ಸಾಲು *l, ಶೂನ್ಯ *_ctx)
 {
-	struct host_delete_ctx *ctx = (struct host_delete_ctx *)_ctx;
-	int loglevel = ctx->quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_VERBOSE;
+	ಸಂರಚನಾ host_delete_ctx *ctx = (ಸಂರಚನಾ host_delete_ctx *)_ctx;
+	ಪೂರ್ಣಾಙ್ಕ loglevel = ctx->quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_VERBOSE;
 	size_t i;
 
 	/* Don't remove CA and revocation lines */
-	if (l->status == HKF_STATUS_MATCHED && l->marker == MRK_NONE) {
+	ಯದಿ (l->status == HKF_STATUS_MATCHED && l->marker == MRK_NONE) {
 		/*
 		 * If this line contains one of the keys that we will be
 		 * adding later, then don't change it and mark the key for
 		 * skipping.
 		 */
-		for (i = 0; i < ctx->nkeys; i++) {
-			if (!sshkey_equal(ctx->keys[i], l->key))
-				continue;
-			ctx->match_keys[i] |= l->match;
-			fprintf(ctx->out, "%s\n", l->line);
+		ಪ್ರತಿ (i = 0; i < ctx->nkeys; i++) {
+			ಯದಿ (!sshkey_equal(ctx->ಕೀಲಿಗಳು[i], l->ಕೀಲಿ))
+				ಅನುವರ್ತ;
+			ctx->match_ಕೀಲಿಗಳು[i] |= l->match;
+			fprintf(ctx->out, "%s\n", l->ಸಾಲು);
 			debug3_f("%s key already at %s:%ld",
-			    sshkey_type(l->key), l->path, l->linenum);
-			return 0;
+			    sshkey_type(l->ಕೀಲಿ), l->path, l->linenum);
+			ಪ್ರತ್ಯಾಗಮ 0;
 		}
 
 		/*
@@ -605,273 +605,273 @@ host_delete(struct hostkey_foreach_line *l, void *_ctx)
 		 */
 		do_log2(loglevel, "%s%s%s:%ld: Removed %s key for host %s",
 		    ctx->quiet ? __func__ : "", ctx->quiet ? ": " : "",
-		    l->path, l->linenum, sshkey_type(l->key), ctx->host);
+		    l->path, l->linenum, sshkey_type(l->ಕೀಲಿ), ctx->host);
 		ctx->modified = 1;
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
 	/* Retain non-matching hosts and invalid lines when deleting */
-	if (l->status == HKF_STATUS_INVALID) {
+	ಯದಿ (l->status == HKF_STATUS_INVALID) {
 		do_log2(loglevel, "%s%s%s:%ld: invalid known_hosts entry",
 		    ctx->quiet ? __func__ : "", ctx->quiet ? ": " : "",
 		    l->path, l->linenum);
 	}
-	fprintf(ctx->out, "%s\n", l->line);
-	return 0;
+	fprintf(ctx->out, "%s\n", l->ಸಾಲು);
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
-hostfile_replace_entries(const char *filename, const char *host, const char *ip,
-    struct sshkey **keys, size_t nkeys, int store_hash, int quiet, int hash_alg)
+ಪೂರ್ಣಾಙ್ಕ
+hostfile_replace_entries(ಧ್ರುವ ವರ್ಣ *filename, ಧ್ರುವ ವರ್ಣ *host, ಧ್ರುವ ವರ್ಣ *ip,
+    ಸಂರಚನಾ sshkey **ಕೀಲಿಗಳು, size_t nkeys, ಪೂರ್ಣಾಙ್ಕ store_hash, ಪೂರ್ಣಾಙ್ಕ quiet, ಪೂರ್ಣಾಙ್ಕ hash_alg)
 {
-	int r, fd, oerrno = 0;
-	int loglevel = quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_VERBOSE;
-	struct host_delete_ctx ctx;
-	char *fp = NULL, *temp = NULL, *back = NULL;
-	const char *what;
+	ಪೂರ್ಣಾಙ್ಕ r, fd, oerrno = 0;
+	ಪೂರ್ಣಾಙ್ಕ loglevel = quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_VERBOSE;
+	ಸಂರಚನಾ host_delete_ctx ctx;
+	ವರ್ಣ *fp = ರಿಕ್ತ, *temp = ರಿಕ್ತ, *back = ರಿಕ್ತ;
+	ಧ್ರುವ ವರ್ಣ *what;
 	mode_t omask;
 	size_t i;
 	u_int want;
 
 	omask = umask(077);
 
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, ಪರಿಮಾಣ(ctx));
 	ctx.host = host;
 	ctx.ip = ip;
 	ctx.quiet = quiet;
 
-	if ((ctx.match_keys = calloc(nkeys, sizeof(*ctx.match_keys))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	ctx.keys = keys;
+	ಯದಿ ((ctx.match_ಕೀಲಿಗಳು = calloc(nkeys, ಪರಿಮಾಣ(*ctx.match_ಕೀಲಿಗಳು))) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ctx.ಕೀಲಿಗಳು = ಕೀಲಿಗಳು;
 	ctx.nkeys = nkeys;
 	ctx.modified = 0;
 
 	/*
 	 * Prepare temporary file for in-place deletion.
 	 */
-	if ((r = asprintf(&temp, "%s.XXXXXXXXXXX", filename)) == -1 ||
+	ಯದಿ ((r = asprintf(&temp, "%s.XXXXXXXXXXX", filename)) == -1 ||
 	    (r = asprintf(&back, "%s.old", filename)) == -1) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto fail;
+		ಗಚ್ಛ fail;
 	}
 
-	if ((fd = mkstemp(temp)) == -1) {
+	ಯದಿ ((fd = mkstemp(temp)) == -1) {
 		oerrno = errno;
 		error_f("mkstemp: %s", strerror(oerrno));
 		r = SSH_ERR_SYSTEM_ERROR;
-		goto fail;
+		ಗಚ್ಛ fail;
 	}
-	if ((ctx.out = fdopen(fd, "w")) == NULL) {
+	ಯದಿ ((ctx.out = fdopen(fd, "w")) == ರಿಕ್ತ) {
 		oerrno = errno;
 		close(fd);
 		error_f("fdopen: %s", strerror(oerrno));
 		r = SSH_ERR_SYSTEM_ERROR;
-		goto fail;
+		ಗಚ್ಛ fail;
 	}
 
 	/* Remove stale/mismatching entries for the specified host */
-	if ((r = hostkeys_foreach(filename, host_delete, &ctx, host, ip,
-	    HKF_WANT_PARSE_KEY, 0)) != 0) {
+	ಯದಿ ((r = hostkeys_foreach(filename, host_delete, &ctx, host, ip,
+	    HKF_WANT_PARSE_ಕೀಲಿ, 0)) != 0) {
 		oerrno = errno;
 		error_fr(r, "hostkeys_foreach");
-		goto fail;
+		ಗಚ್ಛ fail;
 	}
 
 	/* Re-add the requested keys */
-	want = HKF_MATCH_HOST | (ip == NULL ? 0 : HKF_MATCH_IP);
-	for (i = 0; i < nkeys; i++) {
-		if (keys[i] == NULL || (want & ctx.match_keys[i]) == want)
-			continue;
-		if ((fp = sshkey_fingerprint(keys[i], hash_alg,
-		    SSH_FP_DEFAULT)) == NULL) {
+	want = HKF_MATCH_HOST | (ip == ರಿಕ್ತ ? 0 : HKF_MATCH_IP);
+	ಪ್ರತಿ (i = 0; i < nkeys; i++) {
+		ಯದಿ (ಕೀಲಿಗಳು[i] == ರಿಕ್ತ || (want & ctx.match_ಕೀಲಿಗಳು[i]) == want)
+			ಅನುವರ್ತ;
+		ಯದಿ ((fp = sshkey_fingerprint(ಕೀಲಿಗಳು[i], hash_alg,
+		    SSH_FP_DEFAULT)) == ರಿಕ್ತ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			ಗಚ್ಛ fail;
 		}
 		/* write host/ip */
 		what = "";
-		if (ctx.match_keys[i] == 0) {
+		ಯದಿ (ctx.match_ಕೀಲಿಗಳು[i] == 0) {
 			what = "Adding new key";
-			if (!write_host_entry(ctx.out, host, ip,
-			    keys[i], store_hash)) {
+			ಯದಿ (!write_host_entry(ctx.out, host, ip,
+			    ಕೀಲಿಗಳು[i], store_hash)) {
 				r = SSH_ERR_INTERNAL_ERROR;
-				goto fail;
+				ಗಚ್ಛ fail;
 			}
-		} else if ((want & ~ctx.match_keys[i]) == HKF_MATCH_HOST) {
+		} ಅನ್ಯಥಾ ಯದಿ ((want & ~ctx.match_ಕೀಲಿಗಳು[i]) == HKF_MATCH_HOST) {
 			what = "Fixing match (hostname)";
-			if (!write_host_entry(ctx.out, host, NULL,
-			    keys[i], store_hash)) {
+			ಯದಿ (!write_host_entry(ctx.out, host, ರಿಕ್ತ,
+			    ಕೀಲಿಗಳು[i], store_hash)) {
 				r = SSH_ERR_INTERNAL_ERROR;
-				goto fail;
+				ಗಚ್ಛ fail;
 			}
-		} else if ((want & ~ctx.match_keys[i]) == HKF_MATCH_IP) {
+		} ಅನ್ಯಥಾ ಯದಿ ((want & ~ctx.match_ಕೀಲಿಗಳು[i]) == HKF_MATCH_IP) {
 			what = "Fixing match (address)";
-			if (!write_host_entry(ctx.out, ip, NULL,
-			    keys[i], store_hash)) {
+			ಯದಿ (!write_host_entry(ctx.out, ip, ರಿಕ್ತ,
+			    ಕೀಲಿಗಳು[i], store_hash)) {
 				r = SSH_ERR_INTERNAL_ERROR;
-				goto fail;
+				ಗಚ್ಛ fail;
 			}
 		}
 		do_log2(loglevel, "%s%s%s for %s%s%s to %s: %s %s",
 		    quiet ? __func__ : "", quiet ? ": " : "", what,
-		    host, ip == NULL ? "" : ",", ip == NULL ? "" : ip, filename,
-		    sshkey_ssh_name(keys[i]), fp);
-		free(fp);
-		fp = NULL;
+		    host, ip == ರಿಕ್ತ ? "" : ",", ip == ರಿಕ್ತ ? "" : ip, filename,
+		    sshkey_ssh_name(ಕೀಲಿಗಳು[i]), fp);
+		ಮುಕ್ತ(fp);
+		fp = ರಿಕ್ತ;
 		ctx.modified = 1;
 	}
 	fclose(ctx.out);
-	ctx.out = NULL;
+	ctx.out = ರಿಕ್ತ;
 
-	if (ctx.modified) {
+	ಯದಿ (ctx.modified) {
 		/* Backup the original file and replace it with the temporary */
-		if (unlink(back) == -1 && errno != ENOENT) {
+		ಯದಿ (unlink(back) == -1 && errno != ENOENT) {
 			oerrno = errno;
 			error_f("unlink %.100s: %s", back, strerror(errno));
 			r = SSH_ERR_SYSTEM_ERROR;
-			goto fail;
+			ಗಚ್ಛ fail;
 		}
-		if (link(filename, back) == -1) {
+		ಯದಿ (link(filename, back) == -1) {
 			oerrno = errno;
 			error_f("link %.100s to %.100s: %s", filename,
 			    back, strerror(errno));
 			r = SSH_ERR_SYSTEM_ERROR;
-			goto fail;
+			ಗಚ್ಛ fail;
 		}
-		if (rename(temp, filename) == -1) {
+		ಯದಿ (rename(temp, filename) == -1) {
 			oerrno = errno;
 			error_f("rename \"%s\" to \"%s\": %s", temp,
 			    filename, strerror(errno));
 			r = SSH_ERR_SYSTEM_ERROR;
-			goto fail;
+			ಗಚ್ಛ fail;
 		}
-	} else {
+	} ಅನ್ಯಥಾ {
 		/* No changes made; just delete the temporary file */
-		if (unlink(temp) != 0)
+		ಯದಿ (unlink(temp) != 0)
 			error_f("unlink \"%s\": %s", temp, strerror(errno));
 	}
 
 	/* success */
 	r = 0;
  fail:
-	if (temp != NULL && r != 0)
+	ಯದಿ (temp != ರಿಕ್ತ && r != 0)
 		unlink(temp);
-	free(temp);
-	free(back);
-	free(fp);
-	if (ctx.out != NULL)
+	ಮುಕ್ತ(temp);
+	ಮುಕ್ತ(back);
+	ಮುಕ್ತ(fp);
+	ಯದಿ (ctx.out != ರಿಕ್ತ)
 		fclose(ctx.out);
-	free(ctx.match_keys);
+	ಮುಕ್ತ(ctx.match_ಕೀಲಿಗಳು);
 	umask(omask);
-	if (r == SSH_ERR_SYSTEM_ERROR)
+	ಯದಿ (r == SSH_ERR_SYSTEM_ERROR)
 		errno = oerrno;
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-static int
-match_maybe_hashed(const char *host, const char *names, int *was_hashed)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+match_maybe_hashed(ಧ್ರುವ ವರ್ಣ *host, ಧ್ರುವ ವರ್ಣ *names, ಪೂರ್ಣಾಙ್ಕ *was_hashed)
 {
-	int hashed = *names == HASH_DELIM, ret;
-	char *hashed_host = NULL;
+	ಪೂರ್ಣಾಙ್ಕ hashed = *names == HASH_DELIM, ret;
+	ವರ್ಣ *hashed_host = ರಿಕ್ತ;
 	size_t nlen = strlen(names);
 
-	if (was_hashed != NULL)
+	ಯದಿ (was_hashed != ರಿಕ್ತ)
 		*was_hashed = hashed;
-	if (hashed) {
-		if ((hashed_host = host_hash(host, names, nlen)) == NULL)
-			return -1;
+	ಯದಿ (hashed) {
+		ಯದಿ ((hashed_host = host_hash(host, names, nlen)) == ರಿಕ್ತ)
+			ಪ್ರತ್ಯಾಗಮ -1;
 		ret = (nlen == strlen(hashed_host) &&
 		    strncmp(hashed_host, names, nlen) == 0);
-		free(hashed_host);
-		return ret;
+		ಮುಕ್ತ(hashed_host);
+		ಪ್ರತ್ಯಾಗಮ ret;
 	}
-	return match_hostname(host, names) == 1;
+	ಪ್ರತ್ಯಾಗಮ match_hostname(host, names) == 1;
 }
 
-int
-hostkeys_foreach_file(const char *path, FILE *f, hostkeys_foreach_fn *callback,
-    void *ctx, const char *host, const char *ip, u_int options, u_int note)
+ಪೂರ್ಣಾಙ್ಕ
+hostkeys_foreach_file(ಧ್ರುವ ವರ್ಣ *path, FILE *f, hostkeys_foreach_fn *callback,
+    ಶೂನ್ಯ *ctx, ಧ್ರುವ ವರ್ಣ *host, ಧ್ರುವ ವರ್ಣ *ip, u_int options, u_int note)
 {
-	char *line = NULL, ktype[128];
+	ವರ್ಣ *ಸಾಲು = ರಿಕ್ತ, ktype[128];
 	u_long linenum = 0;
-	char *cp, *cp2;
+	ವರ್ಣ *cp, *cp2;
 	u_int kbits;
-	int hashed;
-	int s, r = 0;
-	struct hostkey_foreach_line lineinfo;
+	ಪೂರ್ಣಾಙ್ಕ hashed;
+	ಪೂರ್ಣಾಙ್ಕ s, r = 0;
+	ಸಂರಚನಾ hostkey_foreach_ಸಾಲು lineinfo;
 	size_t linesize = 0, l;
 
-	memset(&lineinfo, 0, sizeof(lineinfo));
-	if (host == NULL && (options & HKF_WANT_MATCH) != 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	memset(&lineinfo, 0, ಪರಿಮಾಣ(lineinfo));
+	ಯದಿ (host == ರಿಕ್ತ && (options & HKF_WANT_MATCH) != 0)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
 
-	while (getline(&line, &linesize, f) != -1) {
+	ಯಾವತ್ (getline(&ಸಾಲು, &linesize, f) != -1) {
 		linenum++;
-		line[strcspn(line, "\n")] = '\0';
+		ಸಾಲು[strcspn(ಸಾಲು, "\n")] = '\0';
 
-		free(lineinfo.line);
-		sshkey_free(lineinfo.key);
-		memset(&lineinfo, 0, sizeof(lineinfo));
+		ಮುಕ್ತ(lineinfo.ಸಾಲು);
+		sshkey_free(lineinfo.ಕೀಲಿ);
+		memset(&lineinfo, 0, ಪರಿಮಾಣ(lineinfo));
 		lineinfo.path = path;
 		lineinfo.linenum = linenum;
-		lineinfo.line = xstrdup(line);
+		lineinfo.ಸಾಲು = xstrdup(ಸಾಲು);
 		lineinfo.marker = MRK_NONE;
 		lineinfo.status = HKF_STATUS_OK;
-		lineinfo.keytype = KEY_UNSPEC;
+		lineinfo.keytype = ಕೀಲಿ_UNSPEC;
 		lineinfo.note = note;
 
 		/* Skip any leading whitespace, comments and empty lines. */
-		for (cp = line; *cp == ' ' || *cp == '\t'; cp++)
+		ಪ್ರತಿ (cp = ಸಾಲು; *cp == ' ' || *cp == '\t'; cp++)
 			;
-		if (!*cp || *cp == '#' || *cp == '\n') {
-			if ((options & HKF_WANT_MATCH) == 0) {
+		ಯದಿ (!*cp || *cp == '#' || *cp == '\n') {
+			ಯದಿ ((options & HKF_WANT_MATCH) == 0) {
 				lineinfo.status = HKF_STATUS_COMMENT;
-				if ((r = callback(&lineinfo, ctx)) != 0)
-					break;
+				ಯದಿ ((r = callback(&lineinfo, ctx)) != 0)
+					ಭಙ್ಗ;
 			}
-			continue;
+			ಅನುವರ್ತ;
 		}
 
-		if ((lineinfo.marker = check_markers(&cp)) == MRK_ERROR) {
+		ಯದಿ ((lineinfo.marker = check_markers(&cp)) == MRK_ERROR) {
 			verbose_f("invalid marker at %s:%lu", path, linenum);
-			if ((options & HKF_WANT_MATCH) == 0)
-				goto bad;
-			continue;
+			ಯದಿ ((options & HKF_WANT_MATCH) == 0)
+				ಗಚ್ಛ bad;
+			ಅನುವರ್ತ;
 		}
 
 		/* Find the end of the host name portion. */
-		for (cp2 = cp; *cp2 && *cp2 != ' ' && *cp2 != '\t'; cp2++)
+		ಪ್ರತಿ (cp2 = cp; *cp2 && *cp2 != ' ' && *cp2 != '\t'; cp2++)
 			;
-		if (*cp2 == '\0') {
+		ಯದಿ (*cp2 == '\0') {
 			verbose_f("truncated line at %s:%lu", path, linenum);
-			if ((options & HKF_WANT_MATCH) == 0)
-				goto bad;
-			continue;
+			ಯದಿ ((options & HKF_WANT_MATCH) == 0)
+				ಗಚ್ಛ bad;
+			ಅನುವರ್ತ;
 		}
 		lineinfo.hosts = cp;
 		*cp2++ = '\0';
 
 		/* Check if the host name matches. */
-		if (host != NULL) {
-			if ((s = match_maybe_hashed(host, lineinfo.hosts,
+		ಯದಿ (host != ರಿಕ್ತ) {
+			ಯದಿ ((s = match_maybe_hashed(host, lineinfo.hosts,
 			    &hashed)) == -1) {
 				debug2_f("%s:%ld: bad host hash \"%.32s\"",
 				    path, linenum, lineinfo.hosts);
-				goto bad;
+				ಗಚ್ಛ bad;
 			}
-			if (s == 1) {
+			ಯದಿ (s == 1) {
 				lineinfo.status = HKF_STATUS_MATCHED;
 				lineinfo.match |= HKF_MATCH_HOST |
 				    (hashed ? HKF_MATCH_HOST_HASHED : 0);
 			}
 			/* Try matching IP address if supplied */
-			if (ip != NULL) {
-				if ((s = match_maybe_hashed(ip, lineinfo.hosts,
+			ಯದಿ (ip != ರಿಕ್ತ) {
+				ಯದಿ ((s = match_maybe_hashed(ip, lineinfo.hosts,
 				    &hashed)) == -1) {
 					debug2_f("%s:%ld: bad ip hash "
 					    "\"%.32s\"", path, linenum,
 					    lineinfo.hosts);
-					goto bad;
+					ಗಚ್ಛ bad;
 				}
-				if (s == 1) {
+				ಯದಿ (s == 1) {
 					lineinfo.status = HKF_STATUS_MATCHED;
 					lineinfo.match |= HKF_MATCH_IP |
 					    (hashed ? HKF_MATCH_IP_HASHED : 0);
@@ -881,43 +881,43 @@ hostkeys_foreach_file(const char *path, FILE *f, hostkeys_foreach_fn *callback,
 			 * Skip this line if host matching requested and
 			 * neither host nor address matched.
 			 */
-			if ((options & HKF_WANT_MATCH) != 0 &&
+			ಯದಿ ((options & HKF_WANT_MATCH) != 0 &&
 			    lineinfo.status != HKF_STATUS_MATCHED)
-				continue;
+				ಅನುವರ್ತ;
 		}
 
 		/* Got a match.  Skip host name and any following whitespace */
-		for (; *cp2 == ' ' || *cp2 == '\t'; cp2++)
+		ಪ್ರತಿ (; *cp2 == ' ' || *cp2 == '\t'; cp2++)
 			;
-		if (*cp2 == '\0' || *cp2 == '#') {
+		ಯದಿ (*cp2 == '\0' || *cp2 == '#') {
 			debug2("%s:%ld: truncated before key type",
 			    path, linenum);
-			goto bad;
+			ಗಚ್ಛ bad;
 		}
 		lineinfo.rawkey = cp = cp2;
 
-		if ((options & HKF_WANT_PARSE_KEY) != 0) {
+		ಯದಿ ((options & HKF_WANT_PARSE_ಕೀಲಿ) != 0) {
 			/*
 			 * Extract the key from the line.  This will skip
 			 * any leading whitespace.  Ignore badly formatted
 			 * lines.
 			 */
-			if ((lineinfo.key = sshkey_new(KEY_UNSPEC)) == NULL) {
+			ಯದಿ ((lineinfo.ಕೀಲಿ = sshkey_new(ಕೀಲಿ_UNSPEC)) == ರಿಕ್ತ) {
 				error_f("sshkey_new failed");
 				r = SSH_ERR_ALLOC_FAIL;
-				break;
+				ಭಙ್ಗ;
 			}
-			if (!hostfile_read_key(&cp, &kbits, lineinfo.key)) {
-				goto bad;
+			ಯದಿ (!hostfile_read_ಕೀಲಿ(&cp, &kbits, lineinfo.ಕೀಲಿ)) {
+				ಗಚ್ಛ bad;
 			}
-			lineinfo.keytype = lineinfo.key->type;
+			lineinfo.keytype = lineinfo.ಕೀಲಿ->type;
 			lineinfo.comment = cp;
-		} else {
+		} ಅನ್ಯಥಾ {
 			/* Extract and parse key type */
 			l = strcspn(lineinfo.rawkey, " \t");
-			if (l <= 1 || l >= sizeof(ktype) ||
+			ಯದಿ (l <= 1 || l >= ಪರಿಮಾಣ(ktype) ||
 			    lineinfo.rawkey[l] == '\0')
-				goto bad;
+				ಗಚ್ಛ bad;
 			memcpy(ktype, lineinfo.rawkey, l);
 			ktype[l] = '\0';
 			lineinfo.keytype = sshkey_type_from_name(ktype);
@@ -926,9 +926,9 @@ hostkeys_foreach_file(const char *path, FILE *f, hostkeys_foreach_fn *callback,
 			 * Assume legacy RSA1 if the first component is a short
 			 * decimal number.
 			 */
-			if (lineinfo.keytype == KEY_UNSPEC && l < 8 &&
+			ಯದಿ (lineinfo.keytype == ಕೀಲಿ_UNSPEC && l < 8 &&
 			    strspn(ktype, "0123456789") == l)
-				goto bad;
+				ಗಚ್ಛ bad;
 
 			/*
 			 * Check that something other than whitespace follows
@@ -936,41 +936,41 @@ hostkeys_foreach_file(const char *path, FILE *f, hostkeys_foreach_fn *callback,
 			 * it does catch trivial truncation.
 			 */
 			cp2 += l; /* Skip past key type */
-			for (; *cp2 == ' ' || *cp2 == '\t'; cp2++)
+			ಪ್ರತಿ (; *cp2 == ' ' || *cp2 == '\t'; cp2++)
 				;
-			if (*cp2 == '\0' || *cp2 == '#') {
+			ಯದಿ (*cp2 == '\0' || *cp2 == '#') {
 				debug2("%s:%ld: truncated after key type",
 				    path, linenum);
-				lineinfo.keytype = KEY_UNSPEC;
+				lineinfo.keytype = ಕೀಲಿ_UNSPEC;
 			}
-			if (lineinfo.keytype == KEY_UNSPEC) {
+			ಯದಿ (lineinfo.keytype == ಕೀಲಿ_UNSPEC) {
  bad:
-				sshkey_free(lineinfo.key);
-				lineinfo.key = NULL;
+				sshkey_free(lineinfo.ಕೀಲಿ);
+				lineinfo.ಕೀಲಿ = ರಿಕ್ತ;
 				lineinfo.status = HKF_STATUS_INVALID;
-				if ((r = callback(&lineinfo, ctx)) != 0)
-					break;
-				continue;
+				ಯದಿ ((r = callback(&lineinfo, ctx)) != 0)
+					ಭಙ್ಗ;
+				ಅನುವರ್ತ;
 			}
 		}
-		if ((r = callback(&lineinfo, ctx)) != 0)
-			break;
+		ಯದಿ ((r = callback(&lineinfo, ctx)) != 0)
+			ಭಙ್ಗ;
 	}
-	sshkey_free(lineinfo.key);
-	free(lineinfo.line);
-	free(line);
-	return r;
+	sshkey_free(lineinfo.ಕೀಲಿ);
+	ಮುಕ್ತ(lineinfo.ಸಾಲು);
+	ಮುಕ್ತ(ಸಾಲು);
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-int
-hostkeys_foreach(const char *path, hostkeys_foreach_fn *callback, void *ctx,
-    const char *host, const char *ip, u_int options, u_int note)
+ಪೂರ್ಣಾಙ್ಕ
+hostkeys_foreach(ಧ್ರುವ ವರ್ಣ *path, hostkeys_foreach_fn *callback, ಶೂನ್ಯ *ctx,
+    ಧ್ರುವ ವರ್ಣ *host, ಧ್ರುವ ವರ್ಣ *ip, u_int options, u_int note)
 {
 	FILE *f;
-	int r, oerrno;
+	ಪೂರ್ಣಾಙ್ಕ r, oerrno;
 
-	if ((f = fopen(path, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
+	ಯದಿ ((f = fopen(path, "r")) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_SYSTEM_ERROR;
 
 	debug3_f("reading file \"%s\"", path);
 	r = hostkeys_foreach_file(path, f, callback, ctx, host, ip,
@@ -978,5 +978,5 @@ hostkeys_foreach(const char *path, hostkeys_foreach_fn *callback, void *ctx,
 	oerrno = errno;
 	fclose(f);
 	errno = oerrno;
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }

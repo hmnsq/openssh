@@ -58,28 +58,28 @@
  *	Number of matches in the current invocation of glob.
  */
 
-#include "includes.h"
-#include "glob.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
+#ಅನ್ತರ್ಭಾವ "glob.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
 
-#include <dirent.h>
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <pwd.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <dirent.h>
+#ಅನ್ತರ್ಭಾವ <ctype.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#if !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#ಯದಿ !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
 
-#include "charclass.h"
+#ಅನ್ತರ್ಭಾವ "charclass.h"
 
 #ifdef TILDE
 # undef TILDE
@@ -110,16 +110,16 @@
 #define	M_MASK		0xffff
 #define	M_ASCII		0x00ff
 
-typedef u_short Char;
+ಪ್ರಕಾರನಿರ್ದೇಶ u_short Char;
 
-#else
+#ಅನ್ಯಥಾ
 
 #define	M_QUOTE		0x80
 #define	M_PROTECT	0x40
 #define	M_MASK		0xff
 #define	M_ASCII		0x7f
 
-typedef char Char;
+ಪ್ರಕಾರನಿರ್ದೇಶ ವರ್ಣ Char;
 
 #endif
 
@@ -139,94 +139,94 @@ typedef char Char;
 #define	GLOB_LIMIT_STAT		2048
 #define	GLOB_LIMIT_READDIR	16384
 
-struct glob_lim {
+ಸಂರಚನಾ glob_lim {
 	size_t	glim_malloc;
 	size_t	glim_stat;
 	size_t	glim_readdir;
 };
 
-struct glob_path_stat {
-	char		*gps_path;
-	struct stat	*gps_stat;
+ಸಂರಚನಾ glob_path_stat {
+	ವರ್ಣ		*gps_path;
+	ಸಂರಚನಾ stat	*gps_stat;
 };
 
-static int	 compare(const void *, const void *);
-static int	 compare_gps(const void *, const void *);
-static int	 g_Ctoc(const Char *, char *, size_t);
-static int	 g_lstat(Char *, struct stat *, glob_t *);
-static DIR	*g_opendir(Char *, glob_t *);
-static Char	*g_strchr(const Char *, int);
-static int	 g_strncmp(const Char *, const char *, size_t);
-static int	 g_stat(Char *, struct stat *, glob_t *);
-static int	 glob0(const Char *, glob_t *, struct glob_lim *);
-static int	 glob1(Char *, Char *, glob_t *, struct glob_lim *);
-static int	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
-		    glob_t *, struct glob_lim *);
-static int	 glob3(Char *, Char *, Char *, Char *, Char *,
-		    Char *, Char *, glob_t *, struct glob_lim *);
-static int	 globextend(const Char *, glob_t *, struct glob_lim *,
-		    struct stat *);
-static const Char *
-		 globtilde(const Char *, Char *, size_t, glob_t *);
-static int	 globexp1(const Char *, glob_t *, struct glob_lim *);
-static int	 globexp2(const Char *, const Char *, glob_t *,
-		    struct glob_lim *);
-static int	 match(Char *, Char *, Char *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ	 compare(ಧ್ರುವ ಶೂನ್ಯ *, ಧ್ರುವ ಶೂನ್ಯ *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ	 compare_gps(ಧ್ರುವ ಶೂನ್ಯ *, ಧ್ರುವ ಶೂನ್ಯ *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ	 g_Ctoc(ಧ್ರುವ Char *, ವರ್ಣ *, size_t);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ	 g_lstat(Char *, ಸಂರಚನಾ stat *, glob_t *);
+ಸ್ಥಿರ DIR	*g_opendir(Char *, glob_t *);
+ಸ್ಥಿರ Char	*g_strchr(ಧ್ರುವ Char *, ಪೂರ್ಣಾಙ್ಕ);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ	 g_strncmp(ಧ್ರುವ Char *, ಧ್ರುವ ವರ್ಣ *, size_t);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ	 g_stat(Char *, ಸಂರಚನಾ stat *, glob_t *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ	 glob0(ಧ್ರುವ Char *, glob_t *, ಸಂರಚನಾ glob_lim *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ	 glob1(Char *, Char *, glob_t *, ಸಂರಚನಾ glob_lim *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
+		    glob_t *, ಸಂರಚನಾ glob_lim *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ	 glob3(Char *, Char *, Char *, Char *, Char *,
+		    Char *, Char *, glob_t *, ಸಂರಚನಾ glob_lim *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ	 globextend(ಧ್ರುವ Char *, glob_t *, ಸಂರಚನಾ glob_lim *,
+		    ಸಂರಚನಾ stat *);
+ಸ್ಥಿರ ಧ್ರುವ Char *
+		 globtilde(ಧ್ರುವ Char *, Char *, size_t, glob_t *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ	 globexp1(ಧ್ರುವ Char *, glob_t *, ಸಂರಚನಾ glob_lim *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ	 globexp2(ಧ್ರುವ Char *, ಧ್ರುವ Char *, glob_t *,
+		    ಸಂರಚನಾ glob_lim *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ	 match(Char *, Char *, Char *);
 #ifdef DEBUG
-static void	 qprintf(const char *, Char *);
+ಸ್ಥಿರ ಶೂನ್ಯ	 qprintf(ಧ್ರುವ ವರ್ಣ *, Char *);
 #endif
 
-int
-glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
+ಪೂರ್ಣಾಙ್ಕ
+glob(ಧ್ರುವ ವರ್ಣ *pattern, ಪೂರ್ಣಾಙ್ಕ flags, ಪೂರ್ಣಾಙ್ಕ (*errfunc)(ಧ್ರುವ ವರ್ಣ *, ಪೂರ್ಣಾಙ್ಕ),
     glob_t *pglob)
 {
-	const u_char *patnext;
-	int c;
+	ಧ್ರುವ u_char *patnext;
+	ಪೂರ್ಣಾಙ್ಕ c;
 	Char *bufnext, *bufend, patbuf[PATH_MAX];
-	struct glob_lim limit = { 0, 0, 0 };
+	ಸಂರಚನಾ glob_lim limit = { 0, 0, 0 };
 
 	patnext = (u_char *) pattern;
-	if (!(flags & GLOB_APPEND)) {
+	ಯದಿ (!(flags & GLOB_APPEND)) {
 		pglob->gl_pathc = 0;
-		pglob->gl_pathv = NULL;
-		pglob->gl_statv = NULL;
-		if (!(flags & GLOB_DOOFFS))
+		pglob->gl_pathv = ರಿಕ್ತ;
+		pglob->gl_statv = ರಿಕ್ತ;
+		ಯದಿ (!(flags & GLOB_DOOFFS))
 			pglob->gl_offs = 0;
 	}
 	pglob->gl_flags = flags & ~GLOB_MAGCHAR;
 	pglob->gl_errfunc = errfunc;
 	pglob->gl_matchc = 0;
 
-	if (strnlen(pattern, PATH_MAX) == PATH_MAX)
-		return(GLOB_NOMATCH);
+	ಯದಿ (strnlen(pattern, PATH_MAX) == PATH_MAX)
+		ಪ್ರತ್ಯಾಗಮ(GLOB_NOMATCH);
 
-	if (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
+	ಯದಿ (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX - pglob->gl_offs - 1)
-		return GLOB_NOSPACE;
+		ಪ್ರತ್ಯಾಗಮ GLOB_NOSPACE;
 
 	bufnext = patbuf;
 	bufend = bufnext + PATH_MAX - 1;
-	if (flags & GLOB_NOESCAPE)
-		while (bufnext < bufend && (c = *patnext++) != EOS)
+	ಯದಿ (flags & GLOB_NOESCAPE)
+		ಯಾವತ್ (bufnext < bufend && (c = *patnext++) != EOS)
 			*bufnext++ = c;
-	else {
+	ಅನ್ಯಥಾ {
 		/* Protect the quoted characters. */
-		while (bufnext < bufend && (c = *patnext++) != EOS)
-			if (c == QUOTE) {
-				if ((c = *patnext++) == EOS) {
+		ಯಾವತ್ (bufnext < bufend && (c = *patnext++) != EOS)
+			ಯದಿ (c == QUOTE) {
+				ಯದಿ ((c = *patnext++) == EOS) {
 					c = QUOTE;
 					--patnext;
 				}
 				*bufnext++ = c | M_PROTECT;
-			} else
+			} ಅನ್ಯಥಾ
 				*bufnext++ = c;
 	}
 	*bufnext = EOS;
 
-	if (flags & GLOB_BRACE)
-		return globexp1(patbuf, pglob, &limit);
-	else
-		return glob0(patbuf, pglob, &limit);
+	ಯದಿ (flags & GLOB_BRACE)
+		ಪ್ರತ್ಯಾಗಮ globexp1(patbuf, pglob, &limit);
+	ಅನ್ಯಥಾ
+		ಪ್ರತ್ಯಾಗಮ glob0(patbuf, pglob, &limit);
 }
 
 /*
@@ -234,19 +234,19 @@ glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
  * invoke the standard globbing routine to glob the rest of the magic
  * characters
  */
-static int
-globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+globexp1(ಧ್ರುವ Char *pattern, glob_t *pglob, ಸಂರಚನಾ glob_lim *limitp)
 {
-	const Char* ptr = pattern;
+	ಧ್ರುವ Char* ptr = pattern;
 
 	/* Protect a single {}, for find(1), like csh */
-	if (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
-		return glob0(pattern, pglob, limitp);
+	ಯದಿ (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
+		ಪ್ರತ್ಯಾಗಮ glob0(pattern, pglob, limitp);
 
-	if ((ptr = (const Char *) g_strchr(ptr, LBRACE)) != NULL)
-		return globexp2(ptr, pattern, pglob, limitp);
+	ಯದಿ ((ptr = (ಧ್ರುವ Char *) g_strchr(ptr, LBRACE)) != ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ globexp2(ptr, pattern, pglob, limitp);
 
-	return glob0(pattern, pglob, limitp);
+	ಪ್ರತ್ಯಾಗಮ glob0(pattern, pglob, limitp);
 }
 
 
@@ -255,84 +255,84 @@ globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
  * If it succeeds then it invokes globexp1 with the new pattern.
  * If it fails then it tries to glob the rest of the pattern and returns.
  */
-static int
-globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
-    struct glob_lim *limitp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+globexp2(ಧ್ರುವ Char *ptr, ಧ್ರುವ Char *pattern, glob_t *pglob,
+    ಸಂರಚನಾ glob_lim *limitp)
 {
-	int     i, rv;
+	ಪೂರ್ಣಾಙ್ಕ     i, rv;
 	Char   *lm, *ls;
-	const Char *pe, *pm, *pl;
+	ಧ್ರುವ Char *pe, *pm, *pl;
 	Char    patbuf[PATH_MAX];
 
 	/* copy part up to the brace */
-	for (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
+	ಪ್ರತಿ (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
 		;
 	*lm = EOS;
 	ls = lm;
 
 	/* Find the balanced brace */
-	for (i = 0, pe = ++ptr; *pe; pe++)
-		if (*pe == LBRACKET) {
+	ಪ್ರತಿ (i = 0, pe = ++ptr; *pe; pe++)
+		ಯದಿ (*pe == LBRACKET) {
 			/* Ignore everything between [] */
-			for (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
+			ಪ್ರತಿ (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
 				;
-			if (*pe == EOS) {
+			ಯದಿ (*pe == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pe = pm;
 			}
-		} else if (*pe == LBRACE)
+		} ಅನ್ಯಥಾ ಯದಿ (*pe == LBRACE)
 			i++;
-		else if (*pe == RBRACE) {
-			if (i == 0)
-				break;
+		ಅನ್ಯಥಾ ಯದಿ (*pe == RBRACE) {
+			ಯದಿ (i == 0)
+				ಭಙ್ಗ;
 			i--;
 		}
 
 	/* Non matching braces; just glob the pattern */
-	if (i != 0 || *pe == EOS)
-		return glob0(patbuf, pglob, limitp);
+	ಯದಿ (i != 0 || *pe == EOS)
+		ಪ್ರತ್ಯಾಗಮ glob0(patbuf, pglob, limitp);
 
-	for (i = 0, pl = pm = ptr; pm <= pe; pm++) {
-		switch (*pm) {
-		case LBRACKET:
+	ಪ್ರತಿ (i = 0, pl = pm = ptr; pm <= pe; pm++) {
+		ವಿಕಲ್ಪ (*pm) {
+		ಪಕ್ಷ LBRACKET:
 			/* Ignore everything between [] */
-			for (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
+			ಪ್ರತಿ (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
 				;
-			if (*pm == EOS) {
+			ಯದಿ (*pm == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pm = pl;
 			}
-			break;
+			ಭಙ್ಗ;
 
-		case LBRACE:
+		ಪಕ್ಷ LBRACE:
 			i++;
-			break;
+			ಭಙ್ಗ;
 
-		case RBRACE:
-			if (i) {
+		ಪಕ್ಷ RBRACE:
+			ಯದಿ (i) {
 				i--;
-				break;
+				ಭಙ್ಗ;
 			}
 			/* FALLTHROUGH */
-		case COMMA:
-			if (i && *pm == COMMA)
-				break;
-			else {
+		ಪಕ್ಷ COMMA:
+			ಯದಿ (i && *pm == COMMA)
+				ಭಙ್ಗ;
+			ಅನ್ಯಥಾ {
 				/* Append the current string */
-				for (lm = ls; (pl < pm); *lm++ = *pl++)
+				ಪ್ರತಿ (lm = ls; (pl < pm); *lm++ = *pl++)
 					;
 
 				/*
 				 * Append the rest of the pattern after the
 				 * closing brace
 				 */
-				for (pl = pe + 1; (*lm++ = *pl++) != EOS; )
+				ಪ್ರತಿ (pl = pe + 1; (*lm++ = *pl++) != EOS; )
 					;
 
 				/* Expand the current pattern */
@@ -340,19 +340,19 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 				qprintf("globexp2:", patbuf);
 #endif
 				rv = globexp1(patbuf, pglob, limitp);
-				if (rv && rv != GLOB_NOMATCH)
-					return rv;
+				ಯದಿ (rv && rv != GLOB_NOMATCH)
+					ಪ್ರತ್ಯಾಗಮ rv;
 
 				/* move after the comma, to the next string */
 				pl = pm + 1;
 			}
-			break;
+			ಭಙ್ಗ;
 
-		default:
-			break;
+		ಸ್ವಭಾವ:
+			ಭಙ್ಗ;
 		}
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 
@@ -360,106 +360,106 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 /*
  * expand tilde from the passwd file.
  */
-static const Char *
-globtilde(const Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
+ಸ್ಥಿರ ಧ್ರುವ Char *
+globtilde(ಧ್ರುವ Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
 {
-	struct passwd *pwd;
-	char *h;
-	const Char *p;
+	ಸಂರಚನಾ passwd *pwd;
+	ವರ್ಣ *h;
+	ಧ್ರುವ Char *p;
 	Char *b, *eb;
 
-	if (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
-		return pattern;
+	ಯದಿ (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
+		ಪ್ರತ್ಯಾಗಮ pattern;
 
 	/* Copy up to the end of the string or / */
 	eb = &patbuf[patbuf_len - 1];
-	for (p = pattern + 1, h = (char *) patbuf;
-	    h < (char *)eb && *p && *p != SLASH; *h++ = *p++)
+	ಪ್ರತಿ (p = pattern + 1, h = (ವರ್ಣ *) patbuf;
+	    h < (ವರ್ಣ *)eb && *p && *p != SLASH; *h++ = *p++)
 		;
 
 	*h = EOS;
 
-#if 0
-	if (h == (char *)eb)
-		return what;
+#ಯದಿ 0
+	ಯದಿ (h == (ವರ್ಣ *)eb)
+		ಪ್ರತ್ಯಾಗಮ what;
 #endif
 
-	if (((char *) patbuf)[0] == EOS) {
+	ಯದಿ (((ವರ್ಣ *) patbuf)[0] == EOS) {
 		/*
 		 * handle a plain ~ or ~/ by expanding $HOME
 		 * first and then trying the password file
 		 */
-#if 0
-		if (issetugid() != 0 || (h = getenv("HOME")) == NULL) {
+#ಯದಿ 0
+		ಯದಿ (issetugid() != 0 || (h = getenv("HOME")) == ರಿಕ್ತ) {
 #endif
-		if ((getuid() != geteuid()) || (h = getenv("HOME")) == NULL) {
-			if ((pwd = getpwuid(getuid())) == NULL)
-				return pattern;
-			else
+		ಯದಿ ((getuid() != geteuid()) || (h = getenv("HOME")) == ರಿಕ್ತ) {
+			ಯದಿ ((pwd = getpwuid(getuid())) == ರಿಕ್ತ)
+				ಪ್ರತ್ಯಾಗಮ pattern;
+			ಅನ್ಯಥಾ
 				h = pwd->pw_dir;
 		}
-	} else {
+	} ಅನ್ಯಥಾ {
 		/*
 		 * Expand a ~user
 		 */
-		if ((pwd = getpwnam((char*) patbuf)) == NULL)
-			return pattern;
-		else
+		ಯದಿ ((pwd = getpwnam((ವರ್ಣ*) patbuf)) == ರಿಕ್ತ)
+			ಪ್ರತ್ಯಾಗಮ pattern;
+		ಅನ್ಯಥಾ
 			h = pwd->pw_dir;
 	}
 
 	/* Copy the home directory */
-	for (b = patbuf; b < eb && *h; *b++ = *h++)
+	ಪ್ರತಿ (b = patbuf; b < eb && *h; *b++ = *h++)
 		;
 
 	/* Append the rest of the pattern */
-	while (b < eb && (*b++ = *p++) != EOS)
+	ಯಾವತ್ (b < eb && (*b++ = *p++) != EOS)
 		;
 	*b = EOS;
 
-	return patbuf;
+	ಪ್ರತ್ಯಾಗಮ patbuf;
 }
 
-static int
-g_strncmp(const Char *s1, const char *s2, size_t n)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+g_strncmp(ಧ್ರುವ Char *s1, ಧ್ರುವ ವರ್ಣ *s2, size_t n)
 {
-	int rv = 0;
+	ಪೂರ್ಣಾಙ್ಕ rv = 0;
 
-	while (n--) {
-		rv = *(Char *)s1 - *(const unsigned char *)s2++;
-		if (rv)
-			break;
-		if (*s1++ == '\0')
-			break;
+	ಯಾವತ್ (n--) {
+		rv = *(Char *)s1 - *(ಧ್ರುವ unsigned ವರ್ಣ *)s2++;
+		ಯದಿ (rv)
+			ಭಙ್ಗ;
+		ಯದಿ (*s1++ == '\0')
+			ಭಙ್ಗ;
 	}
-	return rv;
+	ಪ್ರತ್ಯಾಗಮ rv;
 }
 
-static int
-g_charclass(const Char **patternp, Char **bufnextp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+g_charclass(ಧ್ರುವ Char **patternp, Char **bufnextp)
 {
-	const Char *pattern = *patternp + 1;
+	ಧ್ರುವ Char *pattern = *patternp + 1;
 	Char *bufnext = *bufnextp;
-	const Char *colon;
-	struct cclass *cc;
+	ಧ್ರುವ Char *colon;
+	ಸಂರಚನಾ cclass *cc;
 	size_t len;
 
-	if ((colon = g_strchr(pattern, ':')) == NULL || colon[1] != ']')
-		return 1;	/* not a character class */
+	ಯದಿ ((colon = g_strchr(pattern, ':')) == ರಿಕ್ತ || colon[1] != ']')
+		ಪ್ರತ್ಯಾಗಮ 1;	/* not a character class */
 
 	len = (size_t)(colon - pattern);
-	for (cc = cclasses; cc->name != NULL; cc++) {
-		if (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
-			break;
+	ಪ್ರತಿ (cc = cclasses; cc->name != ರಿಕ್ತ; cc++) {
+		ಯದಿ (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
+			ಭಙ್ಗ;
 	}
-	if (cc->name == NULL)
-		return -1;	/* invalid character class */
+	ಯದಿ (cc->name == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ -1;	/* invalid character class */
 	*bufnext++ = M_CLASS;
 	*bufnext++ = (Char)(cc - &cclasses[0]);
 	*bufnextp = bufnext;
 	*patternp += len + 3;
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /*
@@ -469,11 +469,11 @@ g_charclass(const Char **patternp, Char **bufnextp)
  * if things went well, nonzero if errors occurred.  It is not an error
  * to find no matches.
  */
-static int
-glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+glob0(ಧ್ರುವ Char *pattern, glob_t *pglob, ಸಂರಚನಾ glob_lim *limitp)
 {
-	const Char *qpatnext;
-	int c, err;
+	ಧ್ರುವ Char *qpatnext;
+	ಪೂರ್ಣಾಙ್ಕ c, err;
 	size_t oldpathc;
 	Char *bufnext, patbuf[PATH_MAX];
 
@@ -482,64 +482,64 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	bufnext = patbuf;
 
 	/* We don't need to check for buffer overflow any more. */
-	while ((c = *qpatnext++) != EOS) {
-		switch (c) {
-		case LBRACKET:
+	ಯಾವತ್ ((c = *qpatnext++) != EOS) {
+		ವಿಕಲ್ಪ (c) {
+		ಪಕ್ಷ LBRACKET:
 			c = *qpatnext;
-			if (c == NOT)
+			ಯದಿ (c == NOT)
 				++qpatnext;
-			if (*qpatnext == EOS ||
-			    g_strchr(qpatnext+1, RBRACKET) == NULL) {
+			ಯದಿ (*qpatnext == EOS ||
+			    g_strchr(qpatnext+1, RBRACKET) == ರಿಕ್ತ) {
 				*bufnext++ = LBRACKET;
-				if (c == NOT)
+				ಯದಿ (c == NOT)
 					--qpatnext;
-				break;
+				ಭಙ್ಗ;
 			}
 			*bufnext++ = M_SET;
-			if (c == NOT)
+			ಯದಿ (c == NOT)
 				*bufnext++ = M_NOT;
 			c = *qpatnext++;
-			do {
-				if (c == LBRACKET && *qpatnext == ':') {
-					do {
+			ಕುರು {
+				ಯದಿ (c == LBRACKET && *qpatnext == ':') {
+					ಕುರು {
 						err = g_charclass(&qpatnext,
 						    &bufnext);
-						if (err)
-							break;
+						ಯದಿ (err)
+							ಭಙ್ಗ;
 						c = *qpatnext++;
-					} while (c == LBRACKET && *qpatnext == ':');
-					if (err == -1 &&
+					} ಯಾವತ್ (c == LBRACKET && *qpatnext == ':');
+					ಯದಿ (err == -1 &&
 					    !(pglob->gl_flags & GLOB_NOCHECK))
-						return GLOB_NOMATCH;
-					if (c == RBRACKET)
-						break;
+						ಪ್ರತ್ಯಾಗಮ GLOB_NOMATCH;
+					ಯದಿ (c == RBRACKET)
+						ಭಙ್ಗ;
 				}
 				*bufnext++ = CHAR(c);
-				if (*qpatnext == RANGE &&
+				ಯದಿ (*qpatnext == RANGE &&
 				    (c = qpatnext[1]) != RBRACKET) {
 					*bufnext++ = M_RNG;
 					*bufnext++ = CHAR(c);
 					qpatnext += 2;
 				}
-			} while ((c = *qpatnext++) != RBRACKET);
+			} ಯಾವತ್ ((c = *qpatnext++) != RBRACKET);
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			*bufnext++ = M_END;
-			break;
-		case QUESTION:
+			ಭಙ್ಗ;
+		ಪಕ್ಷ QUESTION:
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			*bufnext++ = M_ONE;
-			break;
-		case STAR:
+			ಭಙ್ಗ;
+		ಪಕ್ಷ STAR:
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			/* collapse adjacent stars to one,
 			 * to avoid exponential behavior
 			 */
-			if (bufnext == patbuf || bufnext[-1] != M_ALL)
+			ಯದಿ (bufnext == patbuf || bufnext[-1] != M_ALL)
 				*bufnext++ = M_ALL;
-			break;
-		default:
+			ಭಙ್ಗ;
+		ಸ್ವಭಾವ:
 			*bufnext++ = CHAR(c);
-			break;
+			ಭಙ್ಗ;
 		}
 	}
 	*bufnext = EOS;
@@ -547,8 +547,8 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	qprintf("glob0:", patbuf);
 #endif
 
-	if ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
-		return(err);
+	ಯದಿ ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
+		ಪ್ರತ್ಯಾಗಮ(err);
 
 	/*
 	 * If there was no match we are going to append the pattern
@@ -556,67 +556,67 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	 * and the pattern did not contain any magic characters
 	 * GLOB_NOMAGIC is there just for compatibility with csh.
 	 */
-	if (pglob->gl_pathc == oldpathc) {
-		if ((pglob->gl_flags & GLOB_NOCHECK) ||
+	ಯದಿ (pglob->gl_pathc == oldpathc) {
+		ಯದಿ ((pglob->gl_flags & GLOB_NOCHECK) ||
 		    ((pglob->gl_flags & GLOB_NOMAGIC) &&
 		    !(pglob->gl_flags & GLOB_MAGCHAR)))
-			return(globextend(pattern, pglob, limitp, NULL));
-		else
-			return(GLOB_NOMATCH);
+			ಪ್ರತ್ಯಾಗಮ(globextend(pattern, pglob, limitp, ರಿಕ್ತ));
+		ಅನ್ಯಥಾ
+			ಪ್ರತ್ಯಾಗಮ(GLOB_NOMATCH);
 	}
-	if (!(pglob->gl_flags & GLOB_NOSORT)) {
-		if ((pglob->gl_flags & GLOB_KEEPSTAT)) {
+	ಯದಿ (!(pglob->gl_flags & GLOB_NOSORT)) {
+		ಯದಿ ((pglob->gl_flags & GLOB_KEEPSTAT)) {
 			/* Keep the paths and stat info synced during sort */
-			struct glob_path_stat *path_stat;
+			ಸಂರಚನಾ glob_path_stat *path_stat;
 			size_t i;
 			size_t n = pglob->gl_pathc - oldpathc;
 			size_t o = pglob->gl_offs + oldpathc;
 
-			if ((path_stat = calloc(n, sizeof(*path_stat))) == NULL)
-				return GLOB_NOSPACE;
-			for (i = 0; i < n; i++) {
+			ಯದಿ ((path_stat = calloc(n, ಪರಿಮಾಣ(*path_stat))) == ರಿಕ್ತ)
+				ಪ್ರತ್ಯಾಗಮ GLOB_NOSPACE;
+			ಪ್ರತಿ (i = 0; i < n; i++) {
 				path_stat[i].gps_path = pglob->gl_pathv[o + i];
 				path_stat[i].gps_stat = pglob->gl_statv[o + i];
 			}
-			qsort(path_stat, n, sizeof(*path_stat), compare_gps);
-			for (i = 0; i < n; i++) {
+			qsort(path_stat, n, ಪರಿಮಾಣ(*path_stat), compare_gps);
+			ಪ್ರತಿ (i = 0; i < n; i++) {
 				pglob->gl_pathv[o + i] = path_stat[i].gps_path;
 				pglob->gl_statv[o + i] = path_stat[i].gps_stat;
 			}
-			free(path_stat);
-		} else {
+			ಮುಕ್ತ(path_stat);
+		} ಅನ್ಯಥಾ {
 			qsort(pglob->gl_pathv + pglob->gl_offs + oldpathc,
-			    pglob->gl_pathc - oldpathc, sizeof(char *),
+			    pglob->gl_pathc - oldpathc, ಪರಿಮಾಣ(ವರ್ಣ *),
 			    compare);
 		}
 	}
-	return(0);
+	ಪ್ರತ್ಯಾಗಮ(0);
 }
 
-static int
-compare(const void *p, const void *q)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+compare(ಧ್ರುವ ಶೂನ್ಯ *p, ಧ್ರುವ ಶೂನ್ಯ *q)
 {
-	return(strcmp(*(char **)p, *(char **)q));
+	ಪ್ರತ್ಯಾಗಮ(strcmp(*(ವರ್ಣ **)p, *(ವರ್ಣ **)q));
 }
 
-static int
-compare_gps(const void *_p, const void *_q)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+compare_gps(ಧ್ರುವ ಶೂನ್ಯ *_p, ಧ್ರುವ ಶೂನ್ಯ *_q)
 {
-	const struct glob_path_stat *p = (const struct glob_path_stat *)_p;
-	const struct glob_path_stat *q = (const struct glob_path_stat *)_q;
+	ಧ್ರುವ ಸಂರಚನಾ glob_path_stat *p = (ಧ್ರುವ ಸಂರಚನಾ glob_path_stat *)_p;
+	ಧ್ರುವ ಸಂರಚನಾ glob_path_stat *q = (ಧ್ರುವ ಸಂರಚನಾ glob_path_stat *)_q;
 
-	return(strcmp(p->gps_path, q->gps_path));
+	ಪ್ರತ್ಯಾಗಮ(strcmp(p->gps_path, q->gps_path));
 }
 
-static int
-glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+glob1(Char *pattern, Char *pattern_last, glob_t *pglob, ಸಂರಚನಾ glob_lim *limitp)
 {
 	Char pathbuf[PATH_MAX];
 
 	/* A null pathname is invalid -- POSIX 1003.1 sect. 2.4. */
-	if (*pattern == EOS)
-		return(0);
-	return(glob2(pathbuf, pathbuf+PATH_MAX-1,
+	ಯದಿ (*pattern == EOS)
+		ಪ್ರತ್ಯಾಗಮ(0);
+	ಪ್ರತ್ಯಾಗಮ(glob2(pathbuf, pathbuf+PATH_MAX-1,
 	    pathbuf, pathbuf+PATH_MAX-1,
 	    pattern, pattern_last, pglob, limitp));
 }
@@ -626,83 +626,83 @@ glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
  * of recursion for each segment in the pattern that contains one or more
  * meta characters.
  */
-static int
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
 glob2(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
-    Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
+    Char *pattern, Char *pattern_last, glob_t *pglob, ಸಂರಚನಾ glob_lim *limitp)
 {
-	struct stat sb;
+	ಸಂರಚನಾ stat sb;
 	Char *p, *q;
-	int anymeta;
+	ಪೂರ್ಣಾಙ್ಕ anymeta;
 
 	/*
 	 * Loop over pattern segments until end of pattern or until
 	 * segment with meta character found.
 	 */
-	for (anymeta = 0;;) {
-		if (*pattern == EOS) {		/* End of pattern? */
+	ಪ್ರತಿ (anymeta = 0;;) {
+		ಯದಿ (*pattern == EOS) {		/* End of pattern? */
 			*pathend = EOS;
 
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
+			ಯದಿ ((pglob->gl_flags & GLOB_LIMIT) &&
 			    limitp->glim_stat++ >= GLOB_LIMIT_STAT) {
 				errno = 0;
 				*pathend++ = SEP;
 				*pathend = EOS;
-				return(GLOB_NOSPACE);
+				ಪ್ರತ್ಯಾಗಮ(GLOB_NOSPACE);
 			}
-			if (g_lstat(pathbuf, &sb, pglob))
-				return(0);
+			ಯದಿ (g_lstat(pathbuf, &sb, pglob))
+				ಪ್ರತ್ಯಾಗಮ(0);
 
-			if (((pglob->gl_flags & GLOB_MARK) &&
+			ಯದಿ (((pglob->gl_flags & GLOB_MARK) &&
 			    pathend[-1] != SEP) && (S_ISDIR(sb.st_mode) ||
 			    (S_ISLNK(sb.st_mode) &&
 			    (g_stat(pathbuf, &sb, pglob) == 0) &&
 			    S_ISDIR(sb.st_mode)))) {
-				if (pathend+1 > pathend_last)
-					return (1);
+				ಯದಿ (pathend+1 > pathend_last)
+					ಪ್ರತ್ಯಾಗಮ (1);
 				*pathend++ = SEP;
 				*pathend = EOS;
 			}
 			++pglob->gl_matchc;
-			return(globextend(pathbuf, pglob, limitp, &sb));
+			ಪ್ರತ್ಯಾಗಮ(globextend(pathbuf, pglob, limitp, &sb));
 		}
 
 		/* Find end of next segment, copy tentatively to pathend. */
 		q = pathend;
 		p = pattern;
-		while (*p != EOS && *p != SEP) {
-			if (ismeta(*p))
+		ಯಾವತ್ (*p != EOS && *p != SEP) {
+			ಯದಿ (ismeta(*p))
 				anymeta = 1;
-			if (q+1 > pathend_last)
-				return (1);
+			ಯದಿ (q+1 > pathend_last)
+				ಪ್ರತ್ಯಾಗಮ (1);
 			*q++ = *p++;
 		}
 
-		if (!anymeta) {		/* No expansion, do next segment. */
+		ಯದಿ (!anymeta) {		/* No expansion, do next segment. */
 			pathend = q;
 			pattern = p;
-			while (*pattern == SEP) {
-				if (pathend+1 > pathend_last)
-					return (1);
+			ಯಾವತ್ (*pattern == SEP) {
+				ಯದಿ (pathend+1 > pathend_last)
+					ಪ್ರತ್ಯಾಗಮ (1);
 				*pathend++ = *pattern++;
 			}
-		} else
+		} ಅನ್ಯಥಾ
 			/* Need expansion, recurse. */
-			return(glob3(pathbuf, pathbuf_last, pathend,
+			ಪ್ರತ್ಯಾಗಮ(glob3(pathbuf, pathbuf_last, pathend,
 			    pathend_last, pattern, p, pattern_last,
 			    pglob, limitp));
 	}
 	/* NOTREACHED */
 }
 
-static int
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
 glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
     Char *pattern, Char *restpattern, Char *restpattern_last, glob_t *pglob,
-    struct glob_lim *limitp)
+    ಸಂರಚನಾ glob_lim *limitp)
 {
-	struct dirent *dp;
+	ಸಂರಚನಾ dirent *dp;
 	DIR *dirp;
-	int err;
-	char buf[PATH_MAX];
+	ಪೂರ್ಣಾಙ್ಕ err;
+	ವರ್ಣ buf[PATH_MAX];
 
 	/*
 	 * The readdirfunc declaration can't be prototyped, because it is
@@ -710,73 +710,73 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
 	 * and dirent.h as taking pointers to differently typed opaque
 	 * structures.
 	 */
-	struct dirent *(*readdirfunc)(void *);
+	ಸಂರಚನಾ dirent *(*readdirfunc)(ಶೂನ್ಯ *);
 
-	if (pathend > pathend_last)
-		return (1);
+	ಯದಿ (pathend > pathend_last)
+		ಪ್ರತ್ಯಾಗಮ (1);
 	*pathend = EOS;
 	errno = 0;
 
-	if ((dirp = g_opendir(pathbuf, pglob)) == NULL) {
+	ಯದಿ ((dirp = g_opendir(pathbuf, pglob)) == ರಿಕ್ತ) {
 		/* TODO: don't call for ENOENT or ENOTDIR? */
-		if (pglob->gl_errfunc) {
-			if (g_Ctoc(pathbuf, buf, sizeof(buf)))
-				return(GLOB_ABORTED);
-			if (pglob->gl_errfunc(buf, errno) ||
+		ಯದಿ (pglob->gl_errfunc) {
+			ಯದಿ (g_Ctoc(pathbuf, buf, ಪರಿಮಾಣ(buf)))
+				ಪ್ರತ್ಯಾಗಮ(GLOB_ABORTED);
+			ಯದಿ (pglob->gl_errfunc(buf, errno) ||
 			    pglob->gl_flags & GLOB_ERR)
-				return(GLOB_ABORTED);
+				ಪ್ರತ್ಯಾಗಮ(GLOB_ABORTED);
 		}
-		return(0);
+		ಪ್ರತ್ಯಾಗಮ(0);
 	}
 
 	err = 0;
 
 	/* Search directory for matching names. */
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	ಯದಿ (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		readdirfunc = pglob->gl_readdir;
-	else
-		readdirfunc = (struct dirent *(*)(void *))readdir;
-	while ((dp = (*readdirfunc)(dirp))) {
+	ಅನ್ಯಥಾ
+		readdirfunc = (ಸಂರಚನಾ dirent *(*)(ಶೂನ್ಯ *))readdir;
+	ಯಾವತ್ ((dp = (*readdirfunc)(dirp))) {
 		u_char *sc;
 		Char *dc;
 
-		if ((pglob->gl_flags & GLOB_LIMIT) &&
+		ಯದಿ ((pglob->gl_flags & GLOB_LIMIT) &&
 		    limitp->glim_readdir++ >= GLOB_LIMIT_READDIR) {
 			errno = 0;
 			*pathend++ = SEP;
 			*pathend = EOS;
 			err = GLOB_NOSPACE;
-			break;
+			ಭಙ್ಗ;
 		}
 
 		/* Initial DOT must be matched literally. */
-		if (dp->d_name[0] == DOT && *pattern != DOT)
-			continue;
+		ಯದಿ (dp->d_name[0] == DOT && *pattern != DOT)
+			ಅನುವರ್ತ;
 		dc = pathend;
 		sc = (u_char *) dp->d_name;
-		while (dc < pathend_last && (*dc++ = *sc++) != EOS)
+		ಯಾವತ್ (dc < pathend_last && (*dc++ = *sc++) != EOS)
 			;
-		if (dc >= pathend_last) {
+		ಯದಿ (dc >= pathend_last) {
 			*dc = EOS;
 			err = 1;
-			break;
+			ಭಙ್ಗ;
 		}
 
-		if (!match(pathend, pattern, restpattern)) {
+		ಯದಿ (!match(pathend, pattern, restpattern)) {
 			*pathend = EOS;
-			continue;
+			ಅನುವರ್ತ;
 		}
 		err = glob2(pathbuf, pathbuf_last, --dc, pathend_last,
 		    restpattern, restpattern_last, pglob, limitp);
-		if (err)
-			break;
+		ಯದಿ (err)
+			ಭಙ್ಗ;
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	ಯದಿ (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		(*pglob->gl_closedir)(dirp);
-	else
+	ಅನ್ಯಥಾ
 		closedir(dirp);
-	return(err);
+	ಪ್ರತ್ಯಾಗಮ(err);
 }
 
 
@@ -794,98 +794,98 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
  *	Either gl_pathc is zero and gl_pathv is NULL; or gl_pathc > 0 and
  *	gl_pathv points to (gl_offs + gl_pathc + 1) items.
  */
-static int
-globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
-    struct stat *sb)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+globextend(ಧ್ರುವ Char *path, glob_t *pglob, ಸಂರಚನಾ glob_lim *limitp,
+    ಸಂರಚನಾ stat *sb)
 {
-	char **pathv;
+	ವರ್ಣ **pathv;
 	size_t i, newn, len;
-	char *copy = NULL;
-	const Char *p;
-	struct stat **statv;
+	ವರ್ಣ *copy = ರಿಕ್ತ;
+	ಧ್ರುವ Char *p;
+	ಸಂರಚನಾ stat **statv;
 
 	newn = 2 + pglob->gl_pathc + pglob->gl_offs;
-	if (pglob->gl_offs >= SSIZE_MAX ||
+	ಯದಿ (pglob->gl_offs >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX ||
 	    newn >= SSIZE_MAX ||
-	    SIZE_MAX / sizeof(*pathv) <= newn ||
-	    SIZE_MAX / sizeof(*statv) <= newn) {
+	    SIZE_MAX / ಪರಿಮಾಣ(*pathv) <= newn ||
+	    SIZE_MAX / ಪರಿಮಾಣ(*statv) <= newn) {
  nospace:
-		for (i = pglob->gl_offs; i < newn - 2; i++) {
-			if (pglob->gl_pathv && pglob->gl_pathv[i])
-				free(pglob->gl_pathv[i]);
-			if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
+		ಪ್ರತಿ (i = pglob->gl_offs; i < newn - 2; i++) {
+			ಯದಿ (pglob->gl_pathv && pglob->gl_pathv[i])
+				ಮುಕ್ತ(pglob->gl_pathv[i]);
+			ಯದಿ ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
 			    pglob->gl_pathv && pglob->gl_pathv[i])
-				free(pglob->gl_statv[i]);
+				ಮುಕ್ತ(pglob->gl_statv[i]);
 		}
-		free(pglob->gl_pathv);
-		pglob->gl_pathv = NULL;
-		free(pglob->gl_statv);
-		pglob->gl_statv = NULL;
-		return(GLOB_NOSPACE);
+		ಮುಕ್ತ(pglob->gl_pathv);
+		pglob->gl_pathv = ರಿಕ್ತ;
+		ಮುಕ್ತ(pglob->gl_statv);
+		pglob->gl_statv = ರಿಕ್ತ;
+		ಪ್ರತ್ಯಾಗಮ(GLOB_NOSPACE);
 	}
 
-	pathv = reallocarray(pglob->gl_pathv, newn, sizeof(*pathv));
-	if (pathv == NULL)
-		goto nospace;
-	if (pglob->gl_pathv == NULL && pglob->gl_offs > 0) {
+	pathv = reallocarray(pglob->gl_pathv, newn, ಪರಿಮಾಣ(*pathv));
+	ಯದಿ (pathv == ರಿಕ್ತ)
+		ಗಚ್ಛ nospace;
+	ಯದಿ (pglob->gl_pathv == ರಿಕ್ತ && pglob->gl_offs > 0) {
 		/* first time around -- clear initial gl_offs items */
 		pathv += pglob->gl_offs;
-		for (i = pglob->gl_offs; i > 0; i--)
-			*--pathv = NULL;
+		ಪ್ರತಿ (i = pglob->gl_offs; i > 0; i--)
+			*--pathv = ರಿಕ್ತ;
 	}
 	pglob->gl_pathv = pathv;
 
-	if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
-		statv = reallocarray(pglob->gl_statv, newn, sizeof(*statv));
-		if (statv == NULL)
-			goto nospace;
-		if (pglob->gl_statv == NULL && pglob->gl_offs > 0) {
+	ಯದಿ ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
+		statv = reallocarray(pglob->gl_statv, newn, ಪರಿಮಾಣ(*statv));
+		ಯದಿ (statv == ರಿಕ್ತ)
+			ಗಚ್ಛ nospace;
+		ಯದಿ (pglob->gl_statv == ರಿಕ್ತ && pglob->gl_offs > 0) {
 			/* first time around -- clear initial gl_offs items */
 			statv += pglob->gl_offs;
-			for (i = pglob->gl_offs; i > 0; i--)
-				*--statv = NULL;
+			ಪ್ರತಿ (i = pglob->gl_offs; i > 0; i--)
+				*--statv = ರಿಕ್ತ;
 		}
 		pglob->gl_statv = statv;
-		if (sb == NULL)
-			statv[pglob->gl_offs + pglob->gl_pathc] = NULL;
-		else {
-			limitp->glim_malloc += sizeof(**statv);
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
+		ಯದಿ (sb == ರಿಕ್ತ)
+			statv[pglob->gl_offs + pglob->gl_pathc] = ರಿಕ್ತ;
+		ಅನ್ಯಥಾ {
+			limitp->glim_malloc += ಪರಿಮಾಣ(**statv);
+			ಯದಿ ((pglob->gl_flags & GLOB_LIMIT) &&
 			    limitp->glim_malloc >= GLOB_LIMIT_MALLOC) {
 				errno = 0;
-				return(GLOB_NOSPACE);
+				ಪ್ರತ್ಯಾಗಮ(GLOB_NOSPACE);
 			}
-			if ((statv[pglob->gl_offs + pglob->gl_pathc] =
-			    malloc(sizeof(**statv))) == NULL)
-				goto copy_error;
+			ಯದಿ ((statv[pglob->gl_offs + pglob->gl_pathc] =
+			    malloc(ಪರಿಮಾಣ(**statv))) == ರಿಕ್ತ)
+				ಗಚ್ಛ copy_error;
 			memcpy(statv[pglob->gl_offs + pglob->gl_pathc], sb,
-			    sizeof(*sb));
+			    ಪರಿಮಾಣ(*sb));
 		}
-		statv[pglob->gl_offs + pglob->gl_pathc + 1] = NULL;
+		statv[pglob->gl_offs + pglob->gl_pathc + 1] = ರಿಕ್ತ;
 	}
 
-	for (p = path; *p++;)
+	ಪ್ರತಿ (p = path; *p++;)
 		;
 	len = (size_t)(p - path);
 	limitp->glim_malloc += len;
-	if ((copy = malloc(len)) != NULL) {
-		if (g_Ctoc(path, copy, len)) {
-			free(copy);
-			return(GLOB_NOSPACE);
+	ಯದಿ ((copy = malloc(len)) != ರಿಕ್ತ) {
+		ಯದಿ (g_Ctoc(path, copy, len)) {
+			ಮುಕ್ತ(copy);
+			ಪ್ರತ್ಯಾಗಮ(GLOB_NOSPACE);
 		}
 		pathv[pglob->gl_offs + pglob->gl_pathc++] = copy;
 	}
-	pathv[pglob->gl_offs + pglob->gl_pathc] = NULL;
+	pathv[pglob->gl_offs + pglob->gl_pathc] = ರಿಕ್ತ;
 
-	if ((pglob->gl_flags & GLOB_LIMIT) &&
-	    (newn * sizeof(*pathv)) + limitp->glim_malloc >
+	ಯದಿ ((pglob->gl_flags & GLOB_LIMIT) &&
+	    (newn * ಪರಿಮಾಣ(*pathv)) + limitp->glim_malloc >
 	    GLOB_LIMIT_MALLOC) {
 		errno = 0;
-		return(GLOB_NOSPACE);
+		ಪ್ರತ್ಯಾಗಮ(GLOB_NOSPACE);
 	}
  copy_error:
-	return(copy == NULL ? GLOB_NOSPACE : 0);
+	ಪ್ರತ್ಯಾಗಮ(copy == ರಿಕ್ತ ? GLOB_NOSPACE : 0);
 }
 
 
@@ -900,176 +900,176 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
  * from Russ Cox to not go quadratic on cases like a file called
  * ("a" x 100) . "x" matched against a pattern like "a*a*a*a*a*a*a*y".
  */
-static int
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
 match(Char *name, Char *pat, Char *patend)
 {
-	int ok, negate_range;
+	ಪೂರ್ಣಾಙ್ಕ ok, negate_range;
 	Char c, k;
-	Char *nextp = NULL;
-	Char *nextn = NULL;
+	Char *nextp = ರಿಕ್ತ;
+	Char *nextn = ರಿಕ್ತ;
 
 loop:
-	while (pat < patend) {
+	ಯಾವತ್ (pat < patend) {
 		c = *pat++;
-		switch (c & M_MASK) {
-		case M_ALL:
-			while (pat < patend && (*pat & M_MASK) == M_ALL)
+		ವಿಕಲ್ಪ (c & M_MASK) {
+		ಪಕ್ಷ M_ALL:
+			ಯಾವತ್ (pat < patend && (*pat & M_MASK) == M_ALL)
 				pat++;	/* eat consecutive '*' */
-			if (pat == patend)
-				return(1);
-			if (*name == EOS)
-				return(0);
+			ಯದಿ (pat == patend)
+				ಪ್ರತ್ಯಾಗಮ(1);
+			ಯದಿ (*name == EOS)
+				ಪ್ರತ್ಯಾಗಮ(0);
 			nextn = name + 1;
 			nextp = pat - 1;
-			break;
-		case M_ONE:
-			if (*name++ == EOS)
-				goto fail;
-			break;
-		case M_SET:
+			ಭಙ್ಗ;
+		ಪಕ್ಷ M_ONE:
+			ಯದಿ (*name++ == EOS)
+				ಗಚ್ಛ fail;
+			ಭಙ್ಗ;
+		ಪಕ್ಷ M_SET:
 			ok = 0;
-			if ((k = *name++) == EOS)
-				goto fail;
-			if ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
+			ಯದಿ ((k = *name++) == EOS)
+				ಗಚ್ಛ fail;
+			ಯದಿ ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
 				++pat;
-			while (((c = *pat++) & M_MASK) != M_END) {
-				if ((c & M_MASK) == M_CLASS) {
+			ಯಾವತ್ (((c = *pat++) & M_MASK) != M_END) {
+				ಯದಿ ((c & M_MASK) == M_CLASS) {
 					Char idx = *pat & M_MASK;
-					if (idx < NCCLASSES &&
+					ಯದಿ (idx < NCCLASSES &&
 					    cclasses[idx].isctype(k))
 						ok = 1;
 					++pat;
 				}
-				if ((*pat & M_MASK) == M_RNG) {
-					if (c <= k && k <= pat[1])
+				ಯದಿ ((*pat & M_MASK) == M_RNG) {
+					ಯದಿ (c <= k && k <= pat[1])
 						ok = 1;
 					pat += 2;
-				} else if (c == k)
+				} ಅನ್ಯಥಾ ಯದಿ (c == k)
 					ok = 1;
 			}
-			if (ok == negate_range)
-				goto fail;
-			break;
-		default:
-			if (*name++ != c)
-				goto fail;
-			break;
+			ಯದಿ (ok == negate_range)
+				ಗಚ್ಛ fail;
+			ಭಙ್ಗ;
+		ಸ್ವಭಾವ:
+			ಯದಿ (*name++ != c)
+				ಗಚ್ಛ fail;
+			ಭಙ್ಗ;
 		}
 	}
-	if (*name == EOS)
-		return(1);
+	ಯದಿ (*name == EOS)
+		ಪ್ರತ್ಯಾಗಮ(1);
 
 fail:
-	if (nextn) {
+	ಯದಿ (nextn) {
 		pat = nextp;
 		name = nextn;
-		goto loop;
+		ಗಚ್ಛ loop;
 	}
-	return(0);
+	ಪ್ರತ್ಯಾಗಮ(0);
 }
 
 /* Free allocated data belonging to a glob_t structure. */
-void
+ಶೂನ್ಯ
 globfree(glob_t *pglob)
 {
 	size_t i;
-	char **pp;
+	ವರ್ಣ **pp;
 
-	if (pglob->gl_pathv != NULL) {
+	ಯದಿ (pglob->gl_pathv != ರಿಕ್ತ) {
 		pp = pglob->gl_pathv + pglob->gl_offs;
-		for (i = pglob->gl_pathc; i--; ++pp)
-			free(*pp);
-		free(pglob->gl_pathv);
-		pglob->gl_pathv = NULL;
+		ಪ್ರತಿ (i = pglob->gl_pathc; i--; ++pp)
+			ಮುಕ್ತ(*pp);
+		ಮುಕ್ತ(pglob->gl_pathv);
+		pglob->gl_pathv = ರಿಕ್ತ;
 	}
-	if (pglob->gl_statv != NULL) {
-		for (i = 0; i < pglob->gl_pathc; i++) {
-			free(pglob->gl_statv[i]);
+	ಯದಿ (pglob->gl_statv != ರಿಕ್ತ) {
+		ಪ್ರತಿ (i = 0; i < pglob->gl_pathc; i++) {
+			ಮುಕ್ತ(pglob->gl_statv[i]);
 		}
-		free(pglob->gl_statv);
-		pglob->gl_statv = NULL;
+		ಮುಕ್ತ(pglob->gl_statv);
+		pglob->gl_statv = ರಿಕ್ತ;
 	}
 }
 
-static DIR *
+ಸ್ಥಿರ DIR *
 g_opendir(Char *str, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	ವರ್ಣ buf[PATH_MAX];
 
-	if (!*str)
-		strlcpy(buf, ".", sizeof buf);
-	else {
-		if (g_Ctoc(str, buf, sizeof(buf)))
-			return(NULL);
+	ಯದಿ (!*str)
+		strlcpy(buf, ".", ಪರಿಮಾಣ buf);
+	ಅನ್ಯಥಾ {
+		ಯದಿ (g_Ctoc(str, buf, ಪರಿಮಾಣ(buf)))
+			ಪ್ರತ್ಯಾಗಮ(ರಿಕ್ತ);
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_opendir)(buf));
+	ಯದಿ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		ಪ್ರತ್ಯಾಗಮ((*pglob->gl_opendir)(buf));
 
-	return(opendir(buf));
+	ಪ್ರತ್ಯಾಗಮ(opendir(buf));
 }
 
-static int
-g_lstat(Char *fn, struct stat *sb, glob_t *pglob)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+g_lstat(Char *fn, ಸಂರಚನಾ stat *sb, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	ವರ್ಣ buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_lstat)(buf, sb));
-	return(lstat(buf, sb));
+	ಯದಿ (g_Ctoc(fn, buf, ಪರಿಮಾಣ(buf)))
+		ಪ್ರತ್ಯಾಗಮ(-1);
+	ಯದಿ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		ಪ್ರತ್ಯಾಗಮ((*pglob->gl_lstat)(buf, sb));
+	ಪ್ರತ್ಯಾಗಮ(lstat(buf, sb));
 }
 
-static int
-g_stat(Char *fn, struct stat *sb, glob_t *pglob)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+g_stat(Char *fn, ಸಂರಚನಾ stat *sb, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	ವರ್ಣ buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_stat)(buf, sb));
-	return(stat(buf, sb));
+	ಯದಿ (g_Ctoc(fn, buf, ಪರಿಮಾಣ(buf)))
+		ಪ್ರತ್ಯಾಗಮ(-1);
+	ಯದಿ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		ಪ್ರತ್ಯಾಗಮ((*pglob->gl_stat)(buf, sb));
+	ಪ್ರತ್ಯಾಗಮ(stat(buf, sb));
 }
 
-static Char *
-g_strchr(const Char *str, int ch)
+ಸ್ಥಿರ Char *
+g_strchr(ಧ್ರುವ Char *str, ಪೂರ್ಣಾಙ್ಕ ch)
 {
-	do {
-		if (*str == ch)
-			return ((Char *)str);
-	} while (*str++);
-	return (NULL);
+	ಕುರು {
+		ಯದಿ (*str == ch)
+			ಪ್ರತ್ಯಾಗಮ ((Char *)str);
+	} ಯಾವತ್ (*str++);
+	ಪ್ರತ್ಯಾಗಮ (ರಿಕ್ತ);
 }
 
-static int
-g_Ctoc(const Char *str, char *buf, size_t len)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+g_Ctoc(ಧ್ರುವ Char *str, ವರ್ಣ *buf, size_t len)
 {
 
-	while (len--) {
-		if ((*buf++ = *str++) == EOS)
-			return (0);
+	ಯಾವತ್ (len--) {
+		ಯದಿ ((*buf++ = *str++) == EOS)
+			ಪ್ರತ್ಯಾಗಮ (0);
 	}
-	return (1);
+	ಪ್ರತ್ಯಾಗಮ (1);
 }
 
 #ifdef DEBUG
-static void
-qprintf(const char *str, Char *s)
+ಸ್ಥಿರ ಶೂನ್ಯ
+qprintf(ಧ್ರುವ ವರ್ಣ *str, Char *s)
 {
 	Char *p;
 
-	(void)printf("%s:\n", str);
-	for (p = s; *p; p++)
-		(void)printf("%c", CHAR(*p));
-	(void)printf("\n");
-	for (p = s; *p; p++)
-		(void)printf("%c", *p & M_PROTECT ? '"' : ' ');
-	(void)printf("\n");
-	for (p = s; *p; p++)
-		(void)printf("%c", ismeta(*p) ? '_' : ' ');
-	(void)printf("\n");
+	(ಶೂನ್ಯ)printf("%s:\n", str);
+	ಪ್ರತಿ (p = s; *p; p++)
+		(ಶೂನ್ಯ)printf("%c", CHAR(*p));
+	(ಶೂನ್ಯ)printf("\n");
+	ಪ್ರತಿ (p = s; *p; p++)
+		(ಶೂನ್ಯ)printf("%c", *p & M_PROTECT ? '"' : ' ');
+	(ಶೂನ್ಯ)printf("\n");
+	ಪ್ರತಿ (p = s; *p; p++)
+		(ಶೂನ್ಯ)printf("%c", ismeta(*p) ? '_' : ' ');
+	(ಶೂನ್ಯ)printf("\n");
 }
 #endif
 

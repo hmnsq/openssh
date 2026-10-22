@@ -5,77 +5,77 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
 #ifdef USE_MLDSA
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <fcntl.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <ctype.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include "../test_helper/test_helper.h"
-#include "crypto_api.h"
-#include "ssherr.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "log.h"
+#ಅನ್ತರ್ಭಾವ "../test_helper/test_helper.h"
+#ಅನ್ತರ್ಭಾವ "crypto_api.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
 
 /* in tests.c */
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+ಸಂರಚನಾ sshbuf *load_text_file(ಧ್ರುವ ವರ್ಣ *name);
+ವರ್ಣ *get_json_string(ಸಂರಚನಾ sshbuf *content, ಧ್ರುವ ವರ್ಣ *ಕೀಲಿ, ಪೂರ್ಣಾಙ್ಕ consume);
 
-void mldsa_eddsa_tests(void);
+ಶೂನ್ಯ mldsa_eddsa_tests(ಶೂನ್ಯ);
 
 /*
  * Simple JSON-ish parser for tvec.json.
  * Extracts the base64 value for a given key and decodes it into a new sshbuf.
  * Errors cause ASSERT_* failures.
  */
-static struct sshbuf *
-get_json_b64(struct sshbuf *content, const char *key)
+ಸ್ಥಿರ ಸಂರಚನಾ sshbuf *
+get_json_b64(ಸಂರಚನಾ sshbuf *content, ಧ್ರುವ ವರ್ಣ *ಕೀಲಿ)
 {
-	char *b64;
-	struct sshbuf *ret;
+	ವರ್ಣ *b64;
+	ಸಂರಚನಾ sshbuf *ret;
 
-	b64 = get_json_string(content, key, 0);
-	ASSERT_PTR_NE(ret = sshbuf_new(), NULL);
+	b64 = get_json_string(content, ಕೀಲಿ, 0);
+	ASSERT_PTR_NE(ret = sshbuf_new(), ರಿಕ್ತ);
 	ASSERT_INT_EQ(sshbuf_b64tod(ret, b64), 0);
-	free(b64);
-	return ret;
+	ಮುಕ್ತ(b64);
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-static void
-onerror(void *fuzz)
+ಸ್ಥಿರ ಶೂನ್ಯ
+onerror(ಶೂನ್ಯ *fuzz)
 {
 	fprintf(stderr, "Failed during fuzz:\n");
-	fuzz_dump((struct fuzz *)fuzz);
+	fuzz_dump((ಸಂರಚನಾ fuzz *)fuzz);
 }
 
-static void
-sig_fuzz(const uint8_t *m, size_t m_len, const uint8_t *ctx, size_t ctx_len,
-    const uint8_t *pk, const uint8_t *s)
+ಸ್ಥಿರ ಶೂನ್ಯ
+sig_fuzz(ಧ್ರುವ uint8_t *m, size_t m_len, ಧ್ರುವ uint8_t *ctx, size_t ctx_len,
+    ಧ್ರುವ uint8_t *pk, ಧ್ರುವ uint8_t *s)
 {
-	struct fuzz *fuzz;
+	ಸಂರಚನಾ fuzz *fuzz;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_1_BYTE_FLIP;
 
-	if (test_is_fast())
+	ಯದಿ (test_is_fast())
 		fuzzers &= ~FUZZ_1_BIT_FLIP;
-	if (test_is_slow())
+	ಯದಿ (test_is_slow())
 		fuzzers |= FUZZ_2_BYTE_FLIP; /* FUZZ_2_BIT_FLIP much too slow */
 
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(s, m, m_len,
 	    ctx, ctx_len, pk), 0);
 	fuzz = fuzz_begin(fuzzers, s, MLDSA44_ED25519_SIG_SZ);
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
+	ಪ್ರತಿ(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
 		/* Ensure 1-bit difference at least */
-		if (fuzz_matches_original(fuzz))
-			continue;
+		ಯದಿ (fuzz_matches_original(fuzz))
+			ಅನುವರ್ತ;
 		ASSERT_INT_NE(crypto_sign_mldsa44_ed25519_verify(fuzz_ptr(fuzz),
 		    m, m_len, ctx, ctx_len, pk), 0);
 	}
@@ -83,23 +83,23 @@ sig_fuzz(const uint8_t *m, size_t m_len, const uint8_t *ctx, size_t ctx_len,
 }
 
 
-void
-mldsa_eddsa_tests(void)
+ಶೂನ್ಯ
+mldsa_eddsa_tests(ಶೂನ್ಯ)
 {
 	uint8_t pk[MLDSA44_ED25519_PK_SZ];
 	uint8_t sk[MLDSA44_ED25519_SK_SZ];
 	uint8_t sig[MLDSA44_ED25519_SIG_SZ];
-	struct sshbuf *b_m = NULL, *b_ctx = NULL, *b_pk = NULL;
-	struct sshbuf *b_sk = NULL, *b_s = NULL, *b_sWithContext = NULL;
-	struct sshbuf *json_buf = NULL;
-	const uint8_t *tvec_m;
+	ಸಂರಚನಾ sshbuf *b_m = ರಿಕ್ತ, *b_ctx = ರಿಕ್ತ, *b_pk = ರಿಕ್ತ;
+	ಸಂರಚನಾ sshbuf *b_sk = ರಿಕ್ತ, *b_s = ರಿಕ್ತ, *b_sWithContext = ರಿಕ್ತ;
+	ಸಂರಚನಾ sshbuf *json_buf = ರಿಕ್ತ;
+	ಧ್ರುವ uint8_t *tvec_m;
 	size_t tvec_m_len;
-	const uint8_t *tvec_ctx;
+	ಧ್ರುವ uint8_t *tvec_ctx;
 	size_t tvec_ctx_len;
-	const uint8_t *tvec_pk;
-	const uint8_t *tvec_sk;
-	const uint8_t *tvec_s;
-	const uint8_t *tvec_sWithContext;
+	ಧ್ರುವ uint8_t *tvec_pk;
+	ಧ್ರುವ uint8_t *tvec_sk;
+	ಧ್ರುವ uint8_t *tvec_s;
+	ಧ್ರುವ uint8_t *tvec_sWithContext;
 
 	TEST_START("MLDSA44-Ed25519-SHA512 load test vectors");
 	json_buf = load_text_file("draft-ietf-lamps-pq-composite-sigs.json");
@@ -146,7 +146,7 @@ mldsa_eddsa_tests(void)
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw KAT verify (no context)");
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(tvec_s, tvec_m,
-	    tvec_m_len, NULL, 0, tvec_pk), 0);
+	    tvec_m_len, ರಿಕ್ತ, 0, tvec_pk), 0);
 	TEST_DONE();
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw KAT verify (with context)");
@@ -156,9 +156,9 @@ mldsa_eddsa_tests(void)
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw round-trip (no context)");
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_sign(sig, tvec_m, tvec_m_len,
-	    NULL, 0, tvec_sk), 0);
+	    ರಿಕ್ತ, 0, tvec_sk), 0);
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(sig,
-	    tvec_m, tvec_m_len, NULL, 0, tvec_pk), 0);
+	    tvec_m, tvec_m_len, ರಿಕ್ತ, 0, tvec_pk), 0);
 	TEST_DONE();
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw round-trip (with context)");
@@ -170,13 +170,13 @@ mldsa_eddsa_tests(void)
 
 	TEST_START("MLDSA44-Ed25519-SHA512 raw KAT verify (no context)");
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(tvec_s, tvec_m,
-	    tvec_m_len, NULL, 0, tvec_pk), 0);
+	    tvec_m_len, ರಿಕ್ತ, 0, tvec_pk), 0);
 	TEST_DONE();
 
 	TEST_START("MLDSA44-Ed25519-SHA512 fuzz raw verify (with context)");
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(tvec_sWithContext,
 	    tvec_m, tvec_m_len, tvec_ctx, tvec_ctx_len, tvec_pk), 0);
-	sig_fuzz(tvec_m, tvec_m_len, NULL, 0, tvec_pk, tvec_s);
+	sig_fuzz(tvec_m, tvec_m_len, ರಿಕ್ತ, 0, tvec_pk, tvec_s);
 	TEST_DONE();
 
 	TEST_START("MLDSA44-Ed25519-SHA512 fuzz raw verify (with context)");

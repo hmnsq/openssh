@@ -18,23 +18,23 @@
 #ifndef CHACHA_POLY_AEAD_H
 #define CHACHA_POLY_AEAD_H
 
-#include <sys/types.h>
-#include "chacha.h"
-#include "poly1305.h"
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ "chacha.h"
+#ಅನ್ತರ್ಭಾವ "poly1305.h"
 
 #define CHACHA_KEYLEN	32 /* Only 256 bit keys used here */
 
-struct chachapoly_ctx;
+ಸಂರಚನಾ chachapoly_ctx;
 
-struct chachapoly_ctx *chachapoly_new(const u_char *key, u_int keylen)
+ಸಂರಚನಾ chachapoly_ctx *chachapoly_new(ಧ್ರುವ u_char *ಕೀಲಿ, u_int keylen)
     __attribute__((__bounded__(__buffer__, 1, 2)));
-void chachapoly_free(struct chachapoly_ctx *cpctx);
+ಶೂನ್ಯ chachapoly_free(ಸಂರಚನಾ chachapoly_ctx *cpctx);
 
-int	chachapoly_crypt(struct chachapoly_ctx *cpctx, u_int seqnr,
-    u_char *dest, const u_char *src, u_int len, u_int aadlen, u_int authlen,
-    int do_encrypt);
-int	chachapoly_get_length(struct chachapoly_ctx *cpctx,
-    u_int *plenp, u_int seqnr, const u_char *cp, u_int len)
+ಪೂರ್ಣಾಙ್ಕ	chachapoly_crypt(ಸಂರಚನಾ chachapoly_ctx *cpctx, u_int seqnr,
+    u_char *dest, ಧ್ರುವ u_char *src, u_int len, u_int aadlen, u_int authlen,
+    ಪೂರ್ಣಾಙ್ಕ do_encrypt);
+ಪೂರ್ಣಾಙ್ಕ	chachapoly_get_length(ಸಂರಚನಾ chachapoly_ctx *cpctx,
+    u_int *plenp, u_int seqnr, ಧ್ರುವ u_char *cp, u_int len)
     __attribute__((__bounded__(__buffer__, 4, 5)));
 
 #endif /* CHACHA_POLY_AEAD_H */

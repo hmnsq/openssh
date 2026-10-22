@@ -15,105 +15,105 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/ioctl.h>
 #ifdef HAVE_SYS_SELECT_H
 # include <sys/select.h>
 #endif
-#include <sys/time.h>
+#ಅನ್ತರ್ಭಾವ <sys/time.h>
 
-#include <fcntl.h>
-#include <string.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
 #ifndef HAVE___PROGNAME
-char *__progname;
+ವರ್ಣ *__progname;
 #endif
 
 /*
  * NB. duplicate __progname in case it is an alias for argv[0]
  * Otherwise it may get clobbered by setproctitle()
  */
-char *ssh_get_progname(char *argv0)
+ವರ್ಣ *ssh_get_progname(ವರ್ಣ *argv0)
 {
-	char *p, *q;
+	ವರ್ಣ *p, *q;
 #ifdef HAVE___PROGNAME
-	extern char *__progname;
+	ಬಾಹ್ಯ ವರ್ಣ *__progname;
 
 	p = __progname;
-#else
-	if (argv0 == NULL)
-		return ("unknown");	/* XXX */
+#ಅನ್ಯಥಾ
+	ಯದಿ (argv0 == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ ("unknown");	/* XXX */
 	p = strrchr(argv0, '/');
-	if (p == NULL)
+	ಯದಿ (p == ರಿಕ್ತ)
 		p = argv0;
-	else
+	ಅನ್ಯಥಾ
 		p++;
 #endif
-	if ((q = strdup(p)) == NULL) {
+	ಯದಿ ((q = strdup(p)) == ರಿಕ್ತ) {
 		perror("strdup");
 		exit(1);
 	}
-	return q;
+	ಪ್ರತ್ಯಾಗಮ q;
 }
 
 #ifndef HAVE_SETLOGIN
-int setlogin(const char *name)
+ಪೂರ್ಣಾಙ್ಕ setlogin(ಧ್ರುವ ವರ್ಣ *name)
 {
-	return (0);
+	ಪ್ರತ್ಯಾಗಮ (0);
 }
 #endif /* !HAVE_SETLOGIN */
 
 #ifndef HAVE_INNETGR
-int innetgr(const char *netgroup, const char *host,
-	    const char *user, const char *domain)
+ಪೂರ್ಣಾಙ್ಕ innetgr(ಧ್ರುವ ವರ್ಣ *netgroup, ಧ್ರುವ ವರ್ಣ *host,
+	    ಧ್ರುವ ವರ್ಣ *user, ಧ್ರುವ ವರ್ಣ *domain)
 {
-	return (0);
+	ಪ್ರತ್ಯಾಗಮ (0);
 }
 #endif /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t euid)
+#ಯದಿ !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+ಪೂರ್ಣಾಙ್ಕ seteuid(uid_t euid)
 {
-	return (setreuid(-1, euid));
+	ಪ್ರತ್ಯಾಗಮ (setreuid(-1, euid));
 }
 #endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t egid)
+#ಯದಿ !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+ಪೂರ್ಣಾಙ್ಕ setegid(uid_t egid)
 {
-	return(setresgid(-1, egid, -1));
+	ಪ್ರತ್ಯಾಗಮ(setresgid(-1, egid, -1));
 }
 #endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int e)
+#ಯದಿ !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+ಧ್ರುವ ವರ್ಣ *strerror(ಪೂರ್ಣಾಙ್ಕ e)
 {
-	extern int sys_nerr;
-	extern char *sys_errlist[];
+	ಬಾಹ್ಯ ಪೂರ್ಣಾಙ್ಕ sys_nerr;
+	ಬಾಹ್ಯ ವರ್ಣ *sys_errlist[];
 
-	if ((e >= 0) && (e < sys_nerr))
-		return (sys_errlist[e]);
+	ಯದಿ ((e >= 0) && (e < sys_nerr))
+		ಪ್ರತ್ಯಾಗಮ (sys_errlist[e]);
 
-	return ("unlisted error");
+	ಪ್ರತ್ಯಾಗಮ ("unlisted error");
 }
 #endif
 
 #ifndef HAVE_UTIMES
-int utimes(const char *filename, struct timeval *tvp)
+ಪೂರ್ಣಾಙ್ಕ utimes(ಧ್ರುವ ವರ್ಣ *filename, ಸಂರಚನಾ timeval *tvp)
 {
-	struct utimbuf ub;
+	ಸಂರಚನಾ utimbuf ub;
 
 	ub.actime = tvp[0].tv_sec;
 	ub.modtime = tvp[1].tv_sec;
 
-	return (utime(filename, &ub));
+	ಪ್ರತ್ಯಾಗಮ (utime(filename, &ub));
 }
 #endif
 
@@ -123,13 +123,13 @@ int utimes(const char *filename, struct timeval *tvp)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-utimensat(int fd, const char *path, const struct timespec times[2],
-    int flag)
+ಪೂರ್ಣಾಙ್ಕ
+utimensat(ಪೂರ್ಣಾಙ್ಕ fd, ಧ್ರುವ ವರ್ಣ *path, ಧ್ರುವ ಸಂರಚನಾ timespec times[2],
+    ಪೂರ್ಣಾಙ್ಕ flag)
 {
-	struct timeval tv[2];
+	ಸಂರಚನಾ timeval tv[2];
 # ifdef HAVE_FUTIMES
-	int ret, oflags = O_WRONLY;
+	ಪೂರ್ಣಾಙ್ಕ ret, oflags = O_WRONLY;
 # endif
 
 	tv[0].tv_sec = times[0].tv_sec;
@@ -137,32 +137,32 @@ utimensat(int fd, const char *path, const struct timespec times[2],
 	tv[1].tv_sec = times[1].tv_sec;
 	tv[1].tv_usec = times[1].tv_nsec / 1000;
 
-	if (fd != AT_FDCWD) {
+	ಯದಿ (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 # ifndef HAVE_FUTIMES
-	return utimes(path, tv);
-# else
+	ಪ್ರತ್ಯಾಗಮ utimes(path, tv);
+# ಅನ್ಯಥಾ
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	ಯದಿ (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	ಯದಿ ((fd = open(path, oflags)) == -1)
+		ಪ್ರತ್ಯಾಗಮ -1;
 	ret = futimes(fd, tv);
 	close(fd);
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 # endif
 }
 #endif
 
 #ifndef HAVE_DIRFD
-int
-dirfd(void *dir)
+ಪೂರ್ಣಾಙ್ಕ
+dirfd(ಶೂನ್ಯ *dir)
 {
 	errno = ENOSYS;
-	return -1;
+	ಪ್ರತ್ಯಾಗಮ -1;
 }
 #endif
 
@@ -172,27 +172,27 @@ dirfd(void *dir)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
+ಪೂರ್ಣಾಙ್ಕ
+fchownat(ಪೂರ್ಣಾಙ್ಕ fd, ಧ್ರುವ ವರ್ಣ *path, uid_t owner, gid_t group, ಪೂರ್ಣಾಙ್ಕ flag)
 {
-	int ret, oflags = O_WRONLY;
+	ಪೂರ್ಣಾಙ್ಕ ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	ಯದಿ (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 # ifndef HAVE_FCHOWN
-	return chown(path, owner, group);
-# else
+	ಪ್ರತ್ಯಾಗಮ chown(path, owner, group);
+# ಅನ್ಯಥಾ
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	ಯದಿ (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	ಯದಿ ((fd = open(path, oflags)) == -1)
+		ಪ್ರತ್ಯಾಗಮ -1;
 	ret = fchown(fd, owner, group);
 	close(fd);
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 # endif
 }
 #endif
@@ -203,27 +203,27 @@ fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchmodat(int fd, const char *path, mode_t mode, int flag)
+ಪೂರ್ಣಾಙ್ಕ
+fchmodat(ಪೂರ್ಣಾಙ್ಕ fd, ಧ್ರುವ ವರ್ಣ *path, mode_t mode, ಪೂರ್ಣಾಙ್ಕ flag)
 {
-	int ret, oflags = O_WRONLY;
+	ಪೂರ್ಣಾಙ್ಕ ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	ಯದಿ (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 # ifndef HAVE_FCHMOD
-	return chmod(path, mode);
-# else
+	ಪ್ರತ್ಯಾಗಮ chmod(path, mode);
+# ಅನ್ಯಥಾ
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	ಯದಿ (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	ಯದಿ ((fd = open(path, oflags)) == -1)
+		ಪ್ರತ್ಯಾಗಮ -1;
 	ret = fchmod(fd, mode);
 	close(fd);
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 # endif
 }
 #endif
@@ -233,19 +233,19 @@ fchmodat(int fd, const char *path, mode_t mode, int flag)
  * A limited implementation of fstatat that just has what OpenSSH uses:
  * cwd-relative and absolute paths, with or without following symlinks.
  */
-int
-fstatat(int dirfd, const char *path, struct stat *sb, int flag)
+ಪೂರ್ಣಾಙ್ಕ
+fstatat(ಪೂರ್ಣಾಙ್ಕ dirfd, ಧ್ರುವ ವರ್ಣ *path, ಸಂರಚನಾ stat *sb, ಪೂರ್ಣಾಙ್ಕ flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	ಯದಿ (dirfd != AT_FDCWD && path && path[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
-	if (flag == 0)
-		return stat(path, sb);
-	else if (flag == AT_SYMLINK_NOFOLLOW)
-		return lstat(path, sb);
+	ಯದಿ (flag == 0)
+		ಪ್ರತ್ಯಾಗಮ stat(path, sb);
+	ಅನ್ಯಥಾ ಯದಿ (flag == AT_SYMLINK_NOFOLLOW)
+		ಪ್ರತ್ಯಾಗಮ lstat(path, sb);
 	errno = ENOSYS;
-	return -1;
+	ಪ್ರತ್ಯಾಗಮ -1;
 }
 #endif
 
@@ -254,52 +254,52 @@ fstatat(int dirfd, const char *path, struct stat *sb, int flag)
  * A limited implementation of unlinkat that just has what OpenSSH uses:
  * cwd-relative and absolute paths.
  */
-int
-unlinkat(int dirfd, const char *path, int flag)
+ಪೂರ್ಣಾಙ್ಕ
+unlinkat(ಪೂರ್ಣಾಙ್ಕ dirfd, ಧ್ರುವ ವರ್ಣ *path, ಪೂರ್ಣಾಙ್ಕ flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	ಯದಿ (dirfd != AT_FDCWD && path && path[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
-	if (flag == 0)
-		return unlink(path);
+	ಯದಿ (flag == 0)
+		ಪ್ರತ್ಯಾಗಮ unlink(path);
 	errno = ENOSYS;
-	return -1;
+	ಪ್ರತ್ಯಾಗಮ -1;
 }
 #endif
 
 #ifndef HAVE_TRUNCATE
-int truncate(const char *path, off_t length)
+ಪೂರ್ಣಾಙ್ಕ truncate(ಧ್ರುವ ವರ್ಣ *path, off_t length)
 {
-	int fd, ret, saverrno;
+	ಪೂರ್ಣಾಙ್ಕ fd, ret, saverrno;
 
 	fd = open(path, O_WRONLY);
-	if (fd < 0)
-		return (-1);
+	ಯದಿ (fd < 0)
+		ಪ್ರತ್ಯಾಗಮ (-1);
 
 	ret = ftruncate(fd, length);
 	saverrno = errno;
 	close(fd);
-	if (ret == -1)
+	ಯದಿ (ret == -1)
 		errno = saverrno;
 
-	return(ret);
+	ಪ್ರತ್ಯಾಗಮ(ret);
 }
 #endif /* HAVE_TRUNCATE */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
-int nanosleep(const struct timespec *req, struct timespec *rem)
+#ಯದಿ !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+ಪೂರ್ಣಾಙ್ಕ nanosleep(ಧ್ರುವ ಸಂರಚನಾ timespec *req, ಸಂರಚನಾ timespec *rem)
 {
-	int rc, saverrno;
-	extern int errno;
-	struct timeval tstart, tstop, tremain, time2wait;
+	ಪೂರ್ಣಾಙ್ಕ rc, saverrno;
+	ಬಾಹ್ಯ ಪೂರ್ಣಾಙ್ಕ errno;
+	ಸಂರಚನಾ timeval tstart, tstop, tremain, time2wait;
 
 	TIMESPEC_TO_TIMEVAL(&time2wait, req)
-	(void) gettimeofday(&tstart, NULL);
-	rc = select(0, NULL, NULL, NULL, &time2wait);
-	if (rc == -1) {
+	(ಶೂನ್ಯ) gettimeofday(&tstart, ರಿಕ್ತ);
+	rc = select(0, ರಿಕ್ತ, ರಿಕ್ತ, ರಿಕ್ತ, &time2wait);
+	ಯದಿ (rc == -1) {
 		saverrno = errno;
-		(void) gettimeofday (&tstop, NULL);
+		(ಶೂನ್ಯ) gettimeofday (&tstop, ರಿಕ್ತ);
 		errno = saverrno;
 		tremain.tv_sec = time2wait.tv_sec -
 			(tstop.tv_sec - tstart.tv_sec);
@@ -307,82 +307,82 @@ int nanosleep(const struct timespec *req, struct timespec *rem)
 			(tstop.tv_usec - tstart.tv_usec);
 		tremain.tv_sec += tremain.tv_usec / 1000000L;
 		tremain.tv_usec %= 1000000L;
-	} else {
+	} ಅನ್ಯಥಾ {
 		tremain.tv_sec = 0;
 		tremain.tv_usec = 0;
 	}
-	if (rem != NULL)
+	ಯದಿ (rem != ರಿಕ್ತ)
 		TIMEVAL_TO_TIMESPEC(&tremain, rem)
 
-	return(rc);
+	ಪ್ರತ್ಯಾಗಮ(rc);
 }
 #endif
 
-#if !defined(HAVE_USLEEP)
-int usleep(unsigned int useconds)
+#ಯದಿ !defined(HAVE_USLEEP)
+ಪೂರ್ಣಾಙ್ಕ usleep(unsigned ಪೂರ್ಣಾಙ್ಕ useconds)
 {
-	struct timespec ts;
+	ಸಂರಚನಾ timespec ts;
 
 	ts.tv_sec = useconds / 1000000;
 	ts.tv_nsec = (useconds % 1000000) * 1000;
-	return nanosleep(&ts, NULL);
+	ಪ್ರತ್ಯಾಗಮ nanosleep(&ts, ರಿಕ್ತ);
 }
 #endif
 
 #ifndef HAVE_TCGETPGRP
 pid_t
-tcgetpgrp(int fd)
+tcgetpgrp(ಪೂರ್ಣಾಙ್ಕ fd)
 {
-	int ctty_pgrp;
+	ಪೂರ್ಣಾಙ್ಕ ctty_pgrp;
 
-	if (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
-		return(-1);
-	else
-		return(ctty_pgrp);
+	ಯದಿ (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
+		ಪ್ರತ್ಯಾಗಮ(-1);
+	ಅನ್ಯಥಾ
+		ಪ್ರತ್ಯಾಗಮ(ctty_pgrp);
 }
 #endif /* HAVE_TCGETPGRP */
 
 #ifndef HAVE_TCSENDBREAK
-int
-tcsendbreak(int fd, int duration)
+ಪೂರ್ಣಾಙ್ಕ
+tcsendbreak(ಪೂರ್ಣಾಙ್ಕ fd, ಪೂರ್ಣಾಙ್ಕ duration)
 {
-# if defined(TIOCSBRK) && defined(TIOCCBRK)
-	struct timeval sleepytime;
+# ಯದಿ defined(TIOCSBRK) && defined(TIOCCBRK)
+	ಸಂರಚನಾ timeval sleepytime;
 
 	sleepytime.tv_sec = 0;
 	sleepytime.tv_usec = 400000;
-	if (ioctl(fd, TIOCSBRK, 0) == -1)
-		return (-1);
-	(void)select(0, 0, 0, 0, &sleepytime);
-	if (ioctl(fd, TIOCCBRK, 0) == -1)
-		return (-1);
-	return (0);
-# else
-	return -1;
+	ಯದಿ (ioctl(fd, TIOCSBRK, 0) == -1)
+		ಪ್ರತ್ಯಾಗಮ (-1);
+	(ಶೂನ್ಯ)select(0, 0, 0, 0, &sleepytime);
+	ಯದಿ (ioctl(fd, TIOCCBRK, 0) == -1)
+		ಪ್ರತ್ಯಾಗಮ (-1);
+	ಪ್ರತ್ಯಾಗಮ (0);
+# ಅನ್ಯಥಾ
+	ಪ್ರತ್ಯಾಗಮ -1;
 # endif
 }
 #endif /* HAVE_TCSENDBREAK */
 
 #ifndef HAVE_STRDUP
-char *
-strdup(const char *str)
+ವರ್ಣ *
+strdup(ಧ್ರುವ ವರ್ಣ *str)
 {
 	size_t len;
-	char *cp;
+	ವರ್ಣ *cp;
 
 	len = strlen(str) + 1;
 	cp = malloc(len);
-	if (cp != NULL)
-		return(memcpy(cp, str, len));
-	return NULL;
+	ಯದಿ (cp != ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ(memcpy(cp, str, len));
+	ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 }
 #endif
 
 #ifndef HAVE_ISBLANK
-int
-isblank(int c)
+ಪೂರ್ಣಾಙ್ಕ
+isblank(ಪೂರ್ಣಾಙ್ಕ c)
 {
-	return (c == ' ' || c == '\t');
+	ಪ್ರತ್ಯಾಗಮ (c == ' ' || c == '\t');
 }
 #endif
 
@@ -390,48 +390,48 @@ isblank(int c)
 pid_t
 getpgid(pid_t pid)
 {
-#if defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
-	return getpgrp(pid);
-#elif defined(HAVE_GETPGRP)
-	if (pid == 0)
-		return getpgrp();
+#ಯದಿ defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
+	ಪ್ರತ್ಯಾಗಮ getpgrp(pid);
+#ನೋಚೇದ್ಯದಿ defined(HAVE_GETPGRP)
+	ಯದಿ (pid == 0)
+		ಪ್ರತ್ಯಾಗಮ getpgrp();
 #endif
 
 	errno = ESRCH;
-	return -1;
+	ಪ್ರತ್ಯಾಗಮ -1;
 }
 #endif
 
 #ifndef HAVE_PLEDGE
-int
-pledge(const char *promises, const char *execpromises)
+ಪೂರ್ಣಾಙ್ಕ
+pledge(ಧ್ರುವ ವರ್ಣ *promises, ಧ್ರುವ ವರ್ಣ *execpromises)
 {
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 #endif
 
 #ifndef HAVE_UNVEIL
-int
-unveil(const char *path, const char *permissions)
+ಪೂರ್ಣಾಙ್ಕ
+unveil(ಧ್ರುವ ವರ್ಣ *path, ಧ್ರುವ ವರ್ಣ *permissions)
 {
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 #endif
 
 #ifndef HAVE_MBTOWC
 /* a mbtowc that only supports ASCII */
-int
-mbtowc(wchar_t *pwc, const char *s, size_t n)
+ಪೂರ್ಣಾಙ್ಕ
+mbtowc(wchar_t *pwc, ಧ್ರುವ ವರ್ಣ *s, size_t n)
 {
-	if (s == NULL || *s == '\0')
-		return 0;	/* ASCII is not state-dependent */
-	if (*s < 0 || *s > 0x7f || n < 1) {
+	ಯದಿ (s == ರಿಕ್ತ || *s == '\0')
+		ಪ್ರತ್ಯಾಗಮ 0;	/* ASCII is not state-dependent */
+	ಯದಿ (*s < 0 || *s > 0x7f || n < 1) {
 		errno = EOPNOTSUPP;
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
-	if (pwc != NULL)
+	ಯದಿ (pwc != ರಿಕ್ತ)
 		*pwc = *s;
-	return 1;
+	ಪ್ರತ್ಯಾಗಮ 1;
 }
 #endif
 
@@ -439,23 +439,23 @@ mbtowc(wchar_t *pwc, const char *s, size_t n)
 long long
 llabs(long long j)
 {
-	return (j < 0 ? -j : j);
+	ಪ್ರತ್ಯಾಗಮ (j < 0 ? -j : j);
 }
 #endif
 
 #ifndef HAVE_BZERO
-void
-bzero(void *b, size_t n)
+ಶೂನ್ಯ
+bzero(ಶೂನ್ಯ *b, size_t n)
 {
-	(void)memset(b, 0, n);
+	(ಶೂನ್ಯ)memset(b, 0, n);
 }
 #endif
 
 #ifndef HAVE_RAISE
-int
-raise(int sig)
+ಪೂರ್ಣಾಙ್ಕ
+ಉತ್ಥಾಪಯ(ಪೂರ್ಣಾಙ್ಕ sig)
 {
-	return kill(getpid(), sig);
+	ಪ್ರತ್ಯಾಗಮ kill(getpid(), sig);
 }
 #endif
 
@@ -464,77 +464,77 @@ pid_t
 getsid(pid_t pid)
 {
 	errno = ENOSYS;
-	return -1;
+	ಪ್ರತ್ಯಾಗಮ -1;
 }
 #endif
 
 #ifndef HAVE_KILLPG
-int
-killpg(pid_t pgrp, int sig)
+ಪೂರ್ಣಾಙ್ಕ
+killpg(pid_t pgrp, ಪೂರ್ಣಾಙ್ಕ sig)
 {
-	return kill(pgrp, sig);
+	ಪ್ರತ್ಯಾಗಮ kill(pgrp, sig);
 }
 #endif
 
 #ifdef FFLUSH_NULL_BUG
 #undef fflush
-int _ssh_compat_fflush(FILE *f)
+ಪೂರ್ಣಾಙ್ಕ _ssh_compat_fflush(FILE *f)
 {
-	int r1, r2;
+	ಪೂರ್ಣಾಙ್ಕ r1, r2;
 
-	if (f == NULL) {
+	ಯದಿ (f == ರಿಕ್ತ) {
 		r1 = fflush(stdout);
 		r2 = fflush(stderr);
-		if (r1 == -1 || r2 == -1)
-			return -1;
-		return 0;
+		ಯದಿ (r1 == -1 || r2 == -1)
+			ಪ್ರತ್ಯಾಗಮ -1;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
-	return fflush(f);
+	ಪ್ರತ್ಯಾಗಮ fflush(f);
 }
 #endif
 
 #ifndef HAVE_LOCALTIME_R
-struct tm *
-localtime_r(const time_t *timep, struct tm *result)
+ಸಂರಚನಾ tm *
+localtime_r(ಧ್ರುವ time_t *timep, ಸಂರಚನಾ tm *result)
 {
-	struct tm *tm = localtime(timep);
+	ಸಂರಚನಾ tm *tm = localtime(timep);
 	*result = *tm;
-	return result;
+	ಪ್ರತ್ಯಾಗಮ result;
 }
 #endif
 
 #ifndef HAVE_CLOCK_GETTIME
-int
-clock_gettime(clockid_t clockid, struct timespec *ts)
+ಪೂರ್ಣಾಙ್ಕ
+clock_gettime(clockid_t clockid, ಸಂರಚನಾ timespec *ts)
 {
-	struct timeval tv;
+	ಸಂರಚನಾ timeval tv;
 
-	if (clockid != CLOCK_REALTIME) {
+	ಯದಿ (clockid != CLOCK_REALTIME) {
 		errno = ENOSYS;
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
-	if (ts == NULL) {
+	ಯದಿ (ts == ರಿಕ್ತ) {
 		errno = EFAULT;
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 	}
 
-	if (gettimeofday(&tv, NULL) == -1)
-		return -1;
+	ಯದಿ (gettimeofday(&tv, ರಿಕ್ತ) == -1)
+		ಪ್ರತ್ಯಾಗಮ -1;
 
 	ts->tv_sec = tv.tv_sec;
 	ts->tv_nsec = (long)tv.tv_usec * 1000;
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 #endif
 
 #ifdef ASAN_OPTIONS
-const char *__asan_default_options(void) {
-	return ASAN_OPTIONS;
+ಧ್ರುವ ವರ್ಣ *__asan_default_options(ಶೂನ್ಯ) {
+	ಪ್ರತ್ಯಾಗಮ ASAN_OPTIONS;
 }
 #endif
 
 #ifdef MSAN_OPTIONS
-const char *__msan_default_options(void) {
-	return MSAN_OPTIONS;
+ಧ್ರುವ ವರ್ಣ *__msan_default_options(ಶೂನ್ಯ) {
+	ಪ್ರತ್ಯಾಗಮ MSAN_OPTIONS;
 }
 #endif

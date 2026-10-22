@@ -24,132 +24,132 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
 #ifdef GSSAPI
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <limits.h>
-#include <stdarg.h>
-#include <string.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include "xmalloc.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "ssh2.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "ssh2.h"
 
-#include "ssh-gss.h"
+#ಅನ್ತರ್ಭಾವ "ssh-gss.h"
 
 /* sshbuf_get for gss_buffer_desc */
-int
-ssh_gssapi_get_buffer_desc(struct sshbuf *b, gss_buffer_desc *g)
+ಪೂರ್ಣಾಙ್ಕ
+ssh_gssapi_get_buffer_desc(ಸಂರಚನಾ sshbuf *b, gss_buffer_desc *g)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 	u_char *p;
 	size_t len;
 
-	if ((r = sshbuf_get_string(b, &p, &len)) != 0)
-		return r;
-	g->value = p;
+	ಯದಿ ((r = sshbuf_get_string(b, &p, &len)) != 0)
+		ಪ್ರತ್ಯಾಗಮ r;
+	g->ಮೌಲ್ಯ = p;
 	g->length = len;
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /* Check that the OID in a data stream matches that in the context */
-int
-ssh_gssapi_check_oid(Gssctxt *ctx, void *data, size_t len)
+ಪೂರ್ಣಾಙ್ಕ
+ssh_gssapi_check_oid(Gssctxt *ctx, ಶೂನ್ಯ *data, size_t len)
 {
-	return (ctx != NULL && ctx->oid != GSS_C_NO_OID &&
+	ಪ್ರತ್ಯಾಗಮ (ctx != ರಿಕ್ತ && ctx->oid != GSS_C_NO_OID &&
 	    ctx->oid->length == len &&
 	    memcmp(ctx->oid->elements, data, len) == 0);
 }
 
 /* Set the contexts OID from a data stream */
-void
-ssh_gssapi_set_oid_data(Gssctxt *ctx, void *data, size_t len)
+ಶೂನ್ಯ
+ssh_gssapi_set_oid_data(Gssctxt *ctx, ಶೂನ್ಯ *data, size_t len)
 {
-	if (ctx->oid != GSS_C_NO_OID) {
-		free(ctx->oid->elements);
-		free(ctx->oid);
+	ಯದಿ (ctx->oid != GSS_C_NO_OID) {
+		ಮುಕ್ತ(ctx->oid->elements);
+		ಮುಕ್ತ(ctx->oid);
 	}
-	ctx->oid = xcalloc(1, sizeof(gss_OID_desc));
+	ctx->oid = xcalloc(1, ಪರಿಮಾಣ(gss_OID_desc));
 	ctx->oid->length = len;
 	ctx->oid->elements = xmalloc(len);
 	memcpy(ctx->oid->elements, data, len);
 }
 
 /* Set the contexts OID */
-void
+ಶೂನ್ಯ
 ssh_gssapi_set_oid(Gssctxt *ctx, gss_OID oid)
 {
 	ssh_gssapi_set_oid_data(ctx, oid->elements, oid->length);
 }
 
 /* All this effort to report an error ... */
-void
+ಶೂನ್ಯ
 ssh_gssapi_error(Gssctxt *ctxt)
 {
-	char *s;
+	ವರ್ಣ *s;
 
-	s = ssh_gssapi_last_error(ctxt, NULL, NULL);
+	s = ssh_gssapi_last_error(ctxt, ರಿಕ್ತ, ರಿಕ್ತ);
 	debug("%s", s);
-	free(s);
+	ಮುಕ್ತ(s);
 }
 
-char *
+ವರ್ಣ *
 ssh_gssapi_last_error(Gssctxt *ctxt, OM_uint32 *major_status,
     OM_uint32 *minor_status)
 {
 	OM_uint32 lmin;
-	gss_buffer_desc msg = GSS_C_EMPTY_BUFFER;
+	gss_buffer_desc ಸಂದೇಶ = GSS_C_EMPTY_BUFFER;
 	OM_uint32 ctx;
-	struct sshbuf *b;
-	char *ret;
-	int r;
+	ಸಂರಚನಾ sshbuf *b;
+	ವರ್ಣ *ret;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if ((b = sshbuf_new()) == NULL)
+	ಯದಿ ((b = sshbuf_new()) == ರಿಕ್ತ)
 		fatal_f("sshbuf_new failed");
 
-	if (major_status != NULL)
+	ಯದಿ (major_status != ರಿಕ್ತ)
 		*major_status = ctxt->major;
-	if (minor_status != NULL)
+	ಯದಿ (minor_status != ರಿಕ್ತ)
 		*minor_status = ctxt->minor;
 
 	ctx = 0;
 	/* The GSSAPI error */
-	do {
+	ಕುರು {
 		gss_display_status(&lmin, ctxt->major,
-		    GSS_C_GSS_CODE, ctxt->oid, &ctx, &msg);
+		    GSS_C_GSS_CODE, ctxt->oid, &ctx, &ಸಂದೇಶ);
 
-		if ((r = sshbuf_put(b, msg.value, msg.length)) != 0 ||
+		ಯದಿ ((r = sshbuf_put(b, ಸಂದೇಶ.ಮೌಲ್ಯ, ಸಂದೇಶ.length)) != 0 ||
 		    (r = sshbuf_put_u8(b, '\n')) != 0)
 			fatal_fr(r, "assemble GSS_CODE");
 
-		gss_release_buffer(&lmin, &msg);
-	} while (ctx != 0);
+		gss_release_buffer(&lmin, &ಸಂದೇಶ);
+	} ಯಾವತ್ (ctx != 0);
 
 	/* The mechanism specific error */
-	do {
+	ಕುರು {
 		gss_display_status(&lmin, ctxt->minor,
-		    GSS_C_MECH_CODE, ctxt->oid, &ctx, &msg);
+		    GSS_C_MECH_CODE, ctxt->oid, &ctx, &ಸಂದೇಶ);
 
-		if ((r = sshbuf_put(b, msg.value, msg.length)) != 0 ||
+		ಯದಿ ((r = sshbuf_put(b, ಸಂದೇಶ.ಮೌಲ್ಯ, ಸಂದೇಶ.length)) != 0 ||
 		    (r = sshbuf_put_u8(b, '\n')) != 0)
 			fatal_fr(r, "assemble MECH_CODE");
 
-		gss_release_buffer(&lmin, &msg);
-	} while (ctx != 0);
+		gss_release_buffer(&lmin, &ಸಂದೇಶ);
+	} ಯಾವತ್ (ctx != 0);
 
-	if ((r = sshbuf_put_u8(b, '\n')) != 0)
+	ಯದಿ ((r = sshbuf_put_u8(b, '\n')) != 0)
 		fatal_fr(r, "assemble newline");
-	ret = xstrdup((const char *)sshbuf_ptr(b));
+	ret = xstrdup((ಧ್ರುವ ವರ್ಣ *)sshbuf_ptr(b));
 	sshbuf_free(b);
-	return (ret);
+	ಪ್ರತ್ಯಾಗಮ (ret);
 }
 
 /*
@@ -158,10 +158,10 @@ ssh_gssapi_last_error(Gssctxt *ctxt, OM_uint32 *major_status,
  * {accept,init}_sec_context calls, so that when we do it from the userauth
  * stuff life is a little easier
  */
-void
+ಶೂನ್ಯ
 ssh_gssapi_build_ctx(Gssctxt **ctx)
 {
-	*ctx = xcalloc(1, sizeof (Gssctxt));
+	*ctx = xcalloc(1, ಪರಿಮಾಣ (Gssctxt));
 	(*ctx)->context = GSS_C_NO_CONTEXT;
 	(*ctx)->name = GSS_C_NO_NAME;
 	(*ctx)->oid = GSS_C_NO_OID;
@@ -171,31 +171,31 @@ ssh_gssapi_build_ctx(Gssctxt **ctx)
 }
 
 /* Delete our context, providing it has been built correctly */
-void
+ಶೂನ್ಯ
 ssh_gssapi_delete_ctx(Gssctxt **ctx)
 {
 	OM_uint32 ms;
 
-	if ((*ctx) == NULL)
-		return;
-	if ((*ctx)->context != GSS_C_NO_CONTEXT)
+	ಯದಿ ((*ctx) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ;
+	ಯದಿ ((*ctx)->context != GSS_C_NO_CONTEXT)
 		gss_delete_sec_context(&ms, &(*ctx)->context, GSS_C_NO_BUFFER);
-	if ((*ctx)->name != GSS_C_NO_NAME)
+	ಯದಿ ((*ctx)->name != GSS_C_NO_NAME)
 		gss_release_name(&ms, &(*ctx)->name);
-	if ((*ctx)->oid != GSS_C_NO_OID) {
-		free((*ctx)->oid->elements);
-		free((*ctx)->oid);
+	ಯದಿ ((*ctx)->oid != GSS_C_NO_OID) {
+		ಮುಕ್ತ((*ctx)->oid->elements);
+		ಮುಕ್ತ((*ctx)->oid);
 		(*ctx)->oid = GSS_C_NO_OID;
 	}
-	if ((*ctx)->creds != GSS_C_NO_CREDENTIAL)
+	ಯದಿ ((*ctx)->creds != GSS_C_NO_CREDENTIAL)
 		gss_release_cred(&ms, &(*ctx)->creds);
-	if ((*ctx)->client != GSS_C_NO_NAME)
+	ಯದಿ ((*ctx)->client != GSS_C_NO_NAME)
 		gss_release_name(&ms, &(*ctx)->client);
-	if ((*ctx)->client_creds != GSS_C_NO_CREDENTIAL)
+	ಯದಿ ((*ctx)->client_creds != GSS_C_NO_CREDENTIAL)
 		gss_release_cred(&ms, &(*ctx)->client_creds);
 
-	free(*ctx);
-	*ctx = NULL;
+	ಮುಕ್ತ(*ctx);
+	*ctx = ರಿಕ್ತ;
 }
 
 /*
@@ -205,12 +205,12 @@ ssh_gssapi_delete_ctx(Gssctxt **ctx)
  *	server name (from ssh_gssapi_import_name)
  */
 OM_uint32
-ssh_gssapi_init_ctx(Gssctxt *ctx, int deleg_creds, gss_buffer_desc *recv_tok,
+ssh_gssapi_init_ctx(Gssctxt *ctx, ಪೂರ್ಣಾಙ್ಕ deleg_creds, gss_buffer_desc *recv_tok,
     gss_buffer_desc* send_tok, OM_uint32 *flags)
 {
-	int deleg_flag = 0;
+	ಪೂರ್ಣಾಙ್ಕ deleg_flag = 0;
 
-	if (deleg_creds) {
+	ಯದಿ (deleg_creds) {
 		deleg_flag = GSS_C_DELEG_FLAG;
 		debug("Delegating credentials");
 	}
@@ -218,86 +218,86 @@ ssh_gssapi_init_ctx(Gssctxt *ctx, int deleg_creds, gss_buffer_desc *recv_tok,
 	ctx->major = gss_init_sec_context(&ctx->minor,
 	    GSS_C_NO_CREDENTIAL, &ctx->context, ctx->name, ctx->oid,
 	    GSS_C_MUTUAL_FLAG | GSS_C_INTEG_FLAG | deleg_flag,
-	    0, NULL, recv_tok, NULL, send_tok, flags, NULL);
+	    0, ರಿಕ್ತ, recv_tok, ರಿಕ್ತ, send_tok, flags, ರಿಕ್ತ);
 
-	if (GSS_ERROR(ctx->major))
+	ಯದಿ (GSS_ERROR(ctx->major))
 		ssh_gssapi_error(ctx);
 
-	return (ctx->major);
+	ಪ್ರತ್ಯಾಗಮ (ctx->major);
 }
 
 /* Create a service name for the given host */
 OM_uint32
-ssh_gssapi_import_name(Gssctxt *ctx, const char *host)
+ssh_gssapi_import_name(Gssctxt *ctx, ಧ್ರುವ ವರ್ಣ *host)
 {
 	gss_buffer_desc gssbuf;
-	char *val;
+	ವರ್ಣ *val;
 
 	xasprintf(&val, "host@%s", host);
-	gssbuf.value = val;
-	gssbuf.length = strlen(gssbuf.value);
+	gssbuf.ಮೌಲ್ಯ = val;
+	gssbuf.length = strlen(gssbuf.ಮೌಲ್ಯ);
 
-	if ((ctx->major = gss_import_name(&ctx->minor,
+	ಯದಿ ((ctx->major = gss_import_name(&ctx->minor,
 	    &gssbuf, GSS_C_NT_HOSTBASED_SERVICE, &ctx->name)))
 		ssh_gssapi_error(ctx);
 
-	free(gssbuf.value);
-	return (ctx->major);
+	ಮುಕ್ತ(gssbuf.ಮೌಲ್ಯ);
+	ಪ್ರತ್ಯಾಗಮ (ctx->major);
 }
 
 OM_uint32
 ssh_gssapi_sign(Gssctxt *ctx, gss_buffer_t buffer, gss_buffer_t hash)
 {
-	if ((ctx->major = gss_get_mic(&ctx->minor, ctx->context,
+	ಯದಿ ((ctx->major = gss_get_mic(&ctx->minor, ctx->context,
 	    GSS_C_QOP_DEFAULT, buffer, hash)))
 		ssh_gssapi_error(ctx);
 
-	return (ctx->major);
+	ಪ್ರತ್ಯಾಗಮ (ctx->major);
 }
 
-void
-ssh_gssapi_buildmic(struct sshbuf *b, const char *user, const char *service,
-    const char *context, const struct sshbuf *session_id)
+ಶೂನ್ಯ
+ssh_gssapi_buildmic(ಸಂರಚನಾ sshbuf *b, ಧ್ರುವ ವರ್ಣ *user, ಧ್ರುವ ವರ್ಣ *service,
+    ಧ್ರುವ ವರ್ಣ *context, ಧ್ರುವ ಸಂರಚನಾ sshbuf *session_id)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
 	sshbuf_reset(b);
-	if ((r = sshbuf_put_stringb(b, session_id)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	ಯದಿ ((r = sshbuf_put_stringb(b, session_id)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_ಸಂದೇಶ_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshbuf_put_cstring(b, user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, service)) != 0 ||
 	    (r = sshbuf_put_cstring(b, context)) != 0)
 		fatal_fr(r, "assemble buildmic");
 }
 
-int
-ssh_gssapi_check_mechanism(Gssctxt **ctx, gss_OID oid, const char *host)
+ಪೂರ್ಣಾಙ್ಕ
+ssh_gssapi_check_mechanism(Gssctxt **ctx, gss_OID oid, ಧ್ರುವ ವರ್ಣ *host)
 {
 	gss_buffer_desc token = GSS_C_EMPTY_BUFFER;
 	OM_uint32 major, minor;
-	gss_OID_desc spnego_oid = {6, (void *)"\x2B\x06\x01\x05\x05\x02"};
+	gss_OID_desc spnego_oid = {6, (ಶೂನ್ಯ *)"\x2B\x06\x01\x05\x05\x02"};
 
 	/* RFC 4462 says we MUST NOT do SPNEGO */
-	if (oid->length == spnego_oid.length &&
+	ಯದಿ (oid->length == spnego_oid.length &&
 	    (memcmp(oid->elements, spnego_oid.elements, oid->length) == 0))
-		return 0; /* false */
+		ಪ್ರತ್ಯಾಗಮ 0; /* false */
 
 	ssh_gssapi_build_ctx(ctx);
 	ssh_gssapi_set_oid(*ctx, oid);
 	major = ssh_gssapi_import_name(*ctx, host);
-	if (!GSS_ERROR(major)) {
+	ಯದಿ (!GSS_ERROR(major)) {
 		major = ssh_gssapi_init_ctx(*ctx, 0, GSS_C_NO_BUFFER, &token,
-		    NULL);
+		    ರಿಕ್ತ);
 		gss_release_buffer(&minor, &token);
-		if ((*ctx)->context != GSS_C_NO_CONTEXT)
+		ಯದಿ ((*ctx)->context != GSS_C_NO_CONTEXT)
 			gss_delete_sec_context(&minor, &(*ctx)->context,
 			    GSS_C_NO_BUFFER);
 	}
 
-	if (GSS_ERROR(major))
+	ಯದಿ (GSS_ERROR(major))
 		ssh_gssapi_delete_ctx(ctx);
 
-	return (!GSS_ERROR(major));
+	ಪ್ರತ್ಯಾಗಮ (!GSS_ERROR(major));
 }
 
 #endif /* GSSAPI */

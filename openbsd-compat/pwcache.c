@@ -30,85 +30,85 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/pwcache.c */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <grp.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
 #define	NCACHE	64			/* power of 2 */
 #define	MASK	(NCACHE - 1)		/* bits to store with */
 
 #ifndef HAVE_USER_FROM_UID
-char *
-user_from_uid(uid_t uid, int nouser)
+ವರ್ಣ *
+user_from_uid(uid_t uid, ಪೂರ್ಣಾಙ್ಕ nouser)
 {
-	static struct ncache {
+	ಸ್ಥಿರ ಸಂರಚನಾ ncache {
 		uid_t	uid;
-		char	*name;
+		ವರ್ಣ	*name;
 	} c_uid[NCACHE];
-	static int pwopen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct passwd *pw;
-	struct ncache *cp;
+	ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ pwopen;
+	ಸ್ಥಿರ ವರ್ಣ nbuf[15];		/* 32 bits == 10 digits */
+	ಸಂರಚನಾ passwd *pw;
+	ಸಂರಚನಾ ncache *cp;
 
 	cp = c_uid + (uid & MASK);
-	if (cp->uid != uid || cp->name == NULL) {
-		if (pwopen == 0) {
+	ಯದಿ (cp->uid != uid || cp->name == ರಿಕ್ತ) {
+		ಯದಿ (pwopen == 0) {
 #ifdef HAVE_SETPASSENT
 			setpassent(1);
 #endif
 			pwopen = 1;
 		}
-		if ((pw = getpwuid(uid)) == NULL) {
-			if (nouser)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)uid);
+		ಯದಿ ((pw = getpwuid(uid)) == ರಿಕ್ತ) {
+			ಯದಿ (nouser)
+				ಪ್ರತ್ಯಾಗಮ (ರಿಕ್ತ);
+			(ಶೂನ್ಯ)snprintf(nbuf, ಪರಿಮಾಣ(nbuf), "%lu", (u_long)uid);
 		}
 		cp->uid = uid;
-		if (cp->name != NULL)
-			free(cp->name);
+		ಯದಿ (cp->name != ರಿಕ್ತ)
+			ಮುಕ್ತ(cp->name);
 		cp->name = strdup(pw ? pw->pw_name : nbuf);
 	}
-	return (cp->name);
+	ಪ್ರತ್ಯಾಗಮ (cp->name);
 }
 #endif
 
 #ifndef HAVE_GROUP_FROM_GID
-char *
-group_from_gid(gid_t gid, int nogroup)
+ವರ್ಣ *
+group_from_gid(gid_t gid, ಪೂರ್ಣಾಙ್ಕ nogroup)
 {
-	static struct ncache {
+	ಸ್ಥಿರ ಸಂರಚನಾ ncache {
 		gid_t	gid;
-		char	*name;
+		ವರ್ಣ	*name;
 	} c_gid[NCACHE];
-	static int gropen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct group *gr;
-	struct ncache *cp;
+	ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ gropen;
+	ಸ್ಥಿರ ವರ್ಣ nbuf[15];		/* 32 bits == 10 digits */
+	ಸಂರಚನಾ group *gr;
+	ಸಂರಚನಾ ncache *cp;
 
 	cp = c_gid + (gid & MASK);
-	if (cp->gid != gid || cp->name == NULL) {
-		if (gropen == 0) {
+	ಯದಿ (cp->gid != gid || cp->name == ರಿಕ್ತ) {
+		ಯದಿ (gropen == 0) {
 #ifdef HAVE_SETGROUPENT
 			setgroupent(1);
 #endif
 			gropen = 1;
 		}
-		if ((gr = getgrgid(gid)) == NULL) {
-			if (nogroup)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)gid);
+		ಯದಿ ((gr = getgrgid(gid)) == ರಿಕ್ತ) {
+			ಯದಿ (nogroup)
+				ಪ್ರತ್ಯಾಗಮ (ರಿಕ್ತ);
+			(ಶೂನ್ಯ)snprintf(nbuf, ಪರಿಮಾಣ(nbuf), "%lu", (u_long)gid);
 		}
 		cp->gid = gid;
-		if (cp->name != NULL)
-			free(cp->name);
+		ಯದಿ (cp->name != ರಿಕ್ತ)
+			ಮುಕ್ತ(cp->name);
 		cp->name = strdup(gr ? gr->gr_name : nbuf);
 	}
-	return (cp->name);
+	ಪ್ರತ್ಯಾಗಮ (cp->name);
 }
 #endif

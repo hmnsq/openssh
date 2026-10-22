@@ -45,7 +45,7 @@
 #ifndef _SIGACTION_H
 #define _SIGACTION_H
 
-#if !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC)
+#ಯದಿ !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC)
 
 #undef  SIG_BLOCK
 #define SIG_BLOCK       00
@@ -60,16 +60,16 @@
  * <bsd/signal.h> is in the Linux 1.2.8 + gcc 2.7.0 configuration,
  * and is useful for testing this header file.
  */
-#if HAVE_BSD_SIGNAL_H
+#ಯದಿ HAVE_BSD_SIGNAL_H
 # include <bsd/signal.h>
 #endif
 
-struct sigaction
+ಸಂರಚನಾ sigaction
 {
-	struct sigvec sv;
+	ಸಂರಚನಾ sigvec sv;
 };
 
-typedef unsigned long sigset_t;
+ಪ್ರಕಾರನಿರ್ದೇಶ unsigned long sigset_t;
 
 #undef  sa_mask
 #define sa_mask sv.sv_mask
@@ -78,12 +78,12 @@ typedef unsigned long sigset_t;
 #undef  sa_flags
 #define sa_flags sv.sv_flags
 
-int sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact);
-int sigprocmask (int how, sigset_t *mask, sigset_t *omask);
-int sigemptyset (sigset_t *mask);
-int sigsuspend (sigset_t *mask);
-int sigdelset (sigset_t *mask, int sig);
-int sigaddset (sigset_t *mask, int sig);
+ಪೂರ್ಣಾಙ್ಕ sigaction(ಪೂರ್ಣಾಙ್ಕ sig, ಸಂರಚನಾ sigaction *sigact, ಸಂರಚನಾ sigaction *osigact);
+ಪೂರ್ಣಾಙ್ಕ sigprocmask (ಪೂರ್ಣಾಙ್ಕ how, sigset_t *mask, sigset_t *omask);
+ಪೂರ್ಣಾಙ್ಕ sigemptyset (sigset_t *mask);
+ಪೂರ್ಣಾಙ್ಕ sigsuspend (sigset_t *mask);
+ಪೂರ್ಣಾಙ್ಕ sigdelset (sigset_t *mask, ಪೂರ್ಣಾಙ್ಕ sig);
+ಪೂರ್ಣಾಙ್ಕ sigaddset (sigset_t *mask, ಪೂರ್ಣಾಙ್ಕ sig);
 
 #endif /* !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC) */
 

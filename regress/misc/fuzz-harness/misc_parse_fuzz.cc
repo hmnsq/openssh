@@ -36,132 +36,132 @@ limitations under the License.
  *   match_host_and_ip, match_user (match.c)
  */
 
-#include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-extern "C" {
-#include "addr.h"
-#include "match.h"
-#include "misc.h"
-#include "log.h"
+ಬಾಹ್ಯ "C" {
+#ಅನ್ತರ್ಭಾವ "addr.h"
+#ಅನ್ತರ್ಭಾವ "match.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
 }
 
-static int log_initialized = 0;
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ log_initialized = 0;
 
-static char *
-dup_n(const uint8_t *body, size_t blen)
+ಸ್ಥಿರ ವರ್ಣ *
+dup_n(ಧ್ರುವ uint8_t *body, size_t blen)
 {
-	char *s = (char *)malloc(blen + 1);
-	if (s == NULL)
-		return NULL;
+	ವರ್ಣ *s = (ವರ್ಣ *)malloc(blen + 1);
+	ಯದಿ (s == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	memcpy(s, body, blen);
 	s[blen] = '\0';
-	return s;
+	ಪ್ರತ್ಯಾಗಮ s;
 }
 
-static void
-split_two(const uint8_t *body, size_t blen, char **a, char **b)
+ಸ್ಥಿರ ಶೂನ್ಯ
+split_two(ಧ್ರುವ uint8_t *body, size_t blen, ವರ್ಣ **a, ವರ್ಣ **b)
 {
-	const uint8_t *nul = (const uint8_t *)memchr(body, 0, blen);
-	*a = NULL;
-	*b = NULL;
-	if (nul == NULL) {
+	ಧ್ರುವ uint8_t *nul = (ಧ್ರುವ uint8_t *)memchr(body, 0, blen);
+	*a = ರಿಕ್ತ;
+	*b = ರಿಕ್ತ;
+	ಯದಿ (nul == ರಿಕ್ತ) {
 		*a = dup_n(body, blen);
 		*b = strdup("");
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 	}
 	size_t alen = (size_t)(nul - body);
 	*a = dup_n(body, alen);
 	*b = dup_n(nul + 1, blen - alen - 1);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+ಬಾಹ್ಯ "C" ಪೂರ್ಣಾಙ್ಕ
+LLVMFuzzer_Test_One_ಒಳಹರಿವು(ಧ್ರುವ uint8_t *data, size_t size)
 {
-	if (!log_initialized) {
+	ಯದಿ (!log_initialized) {
 		log_init("misc_parse_fuzz", SYSLOG_LEVEL_QUIET,
 		    SYSLOG_FACILITY_AUTH, 0);
 		log_initialized = 1;
 	}
-	if (size == 0)
-		return 0;
+	ಯದಿ (size == 0)
+		ಪ್ರತ್ಯಾಗಮ 0;
 
-	char *s = dup_n(data, size);
-	char *a = NULL, *b = NULL;
+	ವರ್ಣ *s = dup_n(data, size);
+	ವರ್ಣ *a = ರಿಕ್ತ, *b = ರಿಕ್ತ;
 	split_two(data, size, &a, &b);
-	if (s == NULL || a == NULL || b == NULL) {
-		free(s);
-		free(a);
-		free(b);
-		return 0;
+	ಯದಿ (s == ರಿಕ್ತ || a == ರಿಕ್ತ || b == ರಿಕ್ತ) {
+		ಮುಕ್ತ(s);
+		ಮುಕ್ತ(a);
+		ಮುಕ್ತ(b);
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
 
 	{
-		char *u = NULL, *h = NULL;
-		int port = 0;
-		if (parse_user_host_port(s, &u, &h, &port) == 0) {
-			free(u);
-			free(h);
+		ವರ್ಣ *u = ರಿಕ್ತ, *h = ರಿಕ್ತ;
+		ಪೂರ್ಣಾಙ್ಕ port = 0;
+		ಯದಿ (parse_user_host_port(s, &u, &h, &port) == 0) {
+			ಮುಕ್ತ(u);
+			ಮುಕ್ತ(h);
 		}
 	}
 	{
-		char *u = NULL, *h = NULL, *p = NULL;
-		int port = 0;
-		if (parse_uri("ssh", s, &u, &h, &port, &p) == 0) {
-			free(u);
-			free(h);
-			free(p);
+		ವರ್ಣ *u = ರಿಕ್ತ, *h = ರಿಕ್ತ, *p = ರಿಕ್ತ;
+		ಪೂರ್ಣಾಙ್ಕ port = 0;
+		ಯದಿ (parse_uri("ssh", s, &u, &h, &port, &p) == 0) {
+			ಮುಕ್ತ(u);
+			ಮುಕ್ತ(h);
+			ಮುಕ್ತ(p);
 		}
 	}
-	(void)convtime(s);
-	(void)a2port(s);
+	(ಶೂನ್ಯ)convtime(s);
+	(ಶೂನ್ಯ)a2port(s);
 	{
-		int tun = 0;
-		(void)a2tun(s, &tun);
+		ಪೂರ್ಣಾಙ್ಕ tun = 0;
+		(ಶೂನ್ಯ)a2tun(s, &tun);
 	}
 	{
-		int ac = 0;
-		char **av = NULL;
-		if (argv_split(s, &ac, &av, 1) == 0) {
-			char *back = argv_assemble(ac, av);
-			free(back);
+		ಪೂರ್ಣಾಙ್ಕ ac = 0;
+		ವರ್ಣ **av = ರಿಕ್ತ;
+		ಯದಿ (argv_split(s, &ac, &av, 1) == 0) {
+			ವರ್ಣ *back = argv_assemble(ac, av);
+			ಮುಕ್ತ(back);
 			argv_free(av, ac);
 		}
 	}
 	{
-		const char *err = NULL;
-		(void)valid_domain(s, 0, &err);
+		ಧ್ರುವ ವರ್ಣ *err = ರಿಕ್ತ;
+		(ಶೂನ್ಯ)valid_domain(s, 0, &err);
 	}
-	(void)valid_env_name(s);
+	(ಶೂನ್ಯ)valid_env_name(s);
 	{
 		uint64_t t = 0;
-		(void)parse_absolute_time(s, &t);
+		(ಶೂನ್ಯ)parse_absolute_time(s, &t);
 	}
 
 	{
-		struct xaddr n;
-		(void)addr_pton(s, &n);
+		ಸಂರಚನಾ xaddr n;
+		(ಶೂನ್ಯ)addr_pton(s, &n);
 	}
 	{
-		struct xaddr n;
+		ಸಂರಚನಾ xaddr n;
 		u_int prefix = 0;
-		(void)addr_pton_cidr(s, &n, &prefix);
+		(ಶೂನ್ಯ)addr_pton_cidr(s, &n, &prefix);
 	}
 
-	(void)addr_match_list(a, b);
-	(void)addr_match_cidr_list(a, b);
-	(void)match_pattern(a, b);
-	(void)match_pattern_list(a, b, 0);
-	(void)match_hostname(a, b);
-	(void)match_host_and_ip(a, "127.0.0.1", b);
-	(void)match_user("fuzz", a, "127.0.0.1", b);
+	(ಶೂನ್ಯ)addr_match_list(a, b);
+	(ಶೂನ್ಯ)addr_match_cidr_list(a, b);
+	(ಶೂನ್ಯ)match_pattern(a, b);
+	(ಶೂನ್ಯ)match_pattern_list(a, b, 0);
+	(ಶೂನ್ಯ)match_hostname(a, b);
+	(ಶೂನ್ಯ)match_host_and_ip(a, "127.0.0.1", b);
+	(ಶೂನ್ಯ)match_user("fuzz", a, "127.0.0.1", b);
 
-	free(s);
-	free(a);
-	free(b);
-	return 0;
+	ಮುಕ್ತ(s);
+	ಮುಕ್ತ(a);
+	ಮುಕ್ತ(b);
+	ಪ್ರತ್ಯಾಗಮ 0;
 }

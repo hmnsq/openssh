@@ -12,28 +12,28 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/ioctl.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <grp.h>
-#include <paths.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <termios.h>
-#include <unistd.h>
-#include <util.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <grp.h>
+#ಅನ್ತರ್ಭಾವ <paths.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <termios.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <util.h>
 
-#include "sshpty.h"
-#include "log.h"
-#include "misc.h"
+#ಅನ್ತರ್ಭಾವ "sshpty.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
 
 #ifdef HAVE_PTY_H
 # include <pty.h>
@@ -41,7 +41,7 @@
 
 #ifdef __APPLE__
 # include <AvailabilityMacros.h>
-# if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
+# ಯದಿ (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
 #  define __APPLE_PRIVPTY__
 # endif
 #endif
@@ -53,55 +53,55 @@
  * returned (the buffer must be able to hold at least 64 characters).
  */
 
-int
-pty_allocate(int *ptyfd, int *ttyfd, char *namebuf, size_t namebuflen)
+ಪೂರ್ಣಾಙ್ಕ
+pty_allocate(ಪೂರ್ಣಾಙ್ಕ *ptyfd, ಪೂರ್ಣಾಙ್ಕ *ttyfd, ವರ್ಣ *namebuf, size_t namebuflen)
 {
 	/* openpty(3) exists in OSF/1 and some other os'es */
-	char *name;
-	int i;
+	ವರ್ಣ *name;
+	ಪೂರ್ಣಾಙ್ಕ i;
 
-	i = openpty(ptyfd, ttyfd, NULL, NULL, NULL);
-	if (i == -1) {
+	i = openpty(ptyfd, ttyfd, ರಿಕ್ತ, ರಿಕ್ತ, ರಿಕ್ತ);
+	ಯದಿ (i == -1) {
 		error("openpty: %.100s", strerror(errno));
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
 	name = ttyname(*ttyfd);
-	if (!name)
+	ಯದಿ (!name)
 		fatal("openpty returns device for which ttyname fails.");
 
 	strlcpy(namebuf, name, namebuflen);	/* possible truncation */
-	return 1;
+	ಪ್ರತ್ಯಾಗಮ 1;
 }
 
 /* Releases the tty.  Its ownership is returned to root, and permissions to 0666. */
 
-void
-pty_release(const char *tty)
+ಶೂನ್ಯ
+pty_release(ಧ್ರುವ ವರ್ಣ *tty)
 {
-#if !defined(__APPLE_PRIVPTY__) && !defined(HAVE_OPENPTY)
-	if (chown(tty, (uid_t) 0, (gid_t) 0) == -1)
+#ಯದಿ !defined(__APPLE_PRIVPTY__) && !defined(HAVE_OPENPTY)
+	ಯದಿ (chown(tty, (uid_t) 0, (gid_t) 0) == -1)
 		error("chown %.100s 0 0 failed: %.100s", tty, strerror(errno));
-	if (chmod(tty, (mode_t) 0666) == -1)
+	ಯದಿ (chmod(tty, (mode_t) 0666) == -1)
 		error("chmod %.100s 0666 failed: %.100s", tty, strerror(errno));
 #endif /* !__APPLE_PRIVPTY__ && !HAVE_OPENPTY */
 }
 
 /* Makes the tty the process's controlling tty and sets it to sane modes. */
 
-void
-pty_make_controlling_tty(int *ttyfd, const char *tty)
+ಶೂನ್ಯ
+pty_make_controlling_tty(ಪೂರ್ಣಾಙ್ಕ *ttyfd, ಧ್ರುವ ವರ್ಣ *tty)
 {
-	int fd;
+	ಪೂರ್ಣಾಙ್ಕ fd;
 
 	/* First disconnect from the old controlling tty. */
 #ifdef TIOCNOTTY
 	fd = open(_PATH_TTY, O_RDWR | O_NOCTTY);
-	if (fd >= 0) {
-		(void) ioctl(fd, TIOCNOTTY, NULL);
+	ಯದಿ (fd >= 0) {
+		(ಶೂನ್ಯ) ioctl(fd, TIOCNOTTY, ರಿಕ್ತ);
 		close(fd);
 	}
 #endif /* TIOCNOTTY */
-	if (setsid() == -1)
+	ಯದಿ (setsid() == -1)
 		error("setsid: %.100s", strerror(errno));
 
 	/*
@@ -109,72 +109,72 @@ pty_make_controlling_tty(int *ttyfd, const char *tty)
 	 * tty.
 	 */
 	fd = open(_PATH_TTY, O_RDWR | O_NOCTTY);
-	if (fd >= 0) {
+	ಯದಿ (fd >= 0) {
 		error("Failed to disconnect from controlling tty.");
 		close(fd);
 	}
 	/* Make it our controlling tty. */
 #ifdef TIOCSCTTY
 	debug("Setting controlling tty using TIOCSCTTY.");
-	if (ioctl(*ttyfd, TIOCSCTTY, NULL) < 0)
+	ಯದಿ (ioctl(*ttyfd, TIOCSCTTY, ರಿಕ್ತ) < 0)
 		error("ioctl(TIOCSCTTY): %.100s", strerror(errno));
 #endif /* TIOCSCTTY */
 #ifdef NEED_SETPGRP
-	if (setpgrp(0,0) < 0)
+	ಯದಿ (setpgrp(0,0) < 0)
 		error("SETPGRP %s",strerror(errno));
 #endif /* NEED_SETPGRP */
 	fd = open(tty, O_RDWR);
-	if (fd == -1)
+	ಯದಿ (fd == -1)
 		error("%.100s: %.100s", tty, strerror(errno));
-	else
+	ಅನ್ಯಥಾ
 		close(fd);
 
 	/* Verify that we now have a controlling tty. */
 	fd = open(_PATH_TTY, O_WRONLY);
-	if (fd == -1)
+	ಯದಿ (fd == -1)
 		error("open /dev/tty failed - could not set controlling tty: %.100s",
 		    strerror(errno));
-	else
+	ಅನ್ಯಥಾ
 		close(fd);
 }
 
 /* Changes the window size associated with the pty. */
 
-void
-pty_change_window_size(int ptyfd, u_int row, u_int col,
+ಶೂನ್ಯ
+pty_change_window_size(ಪೂರ್ಣಾಙ್ಕ ptyfd, u_int row, u_int col,
 	u_int xpixel, u_int ypixel)
 {
-	struct winsize w;
+	ಸಂರಚನಾ winsize w;
 
 	/* may truncate u_int -> u_short */
 	w.ws_row = row;
 	w.ws_col = col;
 	w.ws_xpixel = xpixel;
 	w.ws_ypixel = ypixel;
-	(void) ioctl(ptyfd, TIOCSWINSZ, &w);
+	(ಶೂನ್ಯ) ioctl(ptyfd, TIOCSWINSZ, &w);
 }
 
-void
-pty_setowner(struct passwd *pw, const char *tty)
+ಶೂನ್ಯ
+pty_setowner(ಸಂರಚನಾ passwd *pw, ಧ್ರುವ ವರ್ಣ *tty)
 {
-	struct group *grp;
+	ಸಂರಚನಾ group *grp;
 	gid_t gid;
 	mode_t mode;
-	struct stat st;
+	ಸಂರಚನಾ stat st;
 
 	/* Determine the group to make the owner of the tty. */
 	grp = getgrnam("tty");
-	if (grp == NULL)
+	ಯದಿ (grp == ರಿಕ್ತ)
 		debug_f("no tty group");
-	gid = (grp != NULL) ? grp->gr_gid : pw->pw_gid;
-	mode = (grp != NULL) ? 0620 : 0600;
+	gid = (grp != ರಿಕ್ತ) ? grp->gr_gid : pw->pw_gid;
+	mode = (grp != ರಿಕ್ತ) ? 0620 : 0600;
 
 	/*
 	 * Change owner and mode of the tty as required.
 	 * Warn but continue if filesystem is read-only and the uids match/
 	 * tty is owned by root.
 	 */
-	if (stat(tty, &st) == -1)
+	ಯದಿ (stat(tty, &st) == -1)
 		fatal("stat(%.100s) failed: %.100s", tty,
 		    strerror(errno));
 
@@ -182,27 +182,27 @@ pty_setowner(struct passwd *pw, const char *tty)
 	ssh_selinux_setup_pty(pw->pw_name, tty);
 #endif
 
-	if (st.st_uid != pw->pw_uid || st.st_gid != gid) {
-		if (chown(tty, pw->pw_uid, gid) == -1) {
-			if (errno == EROFS &&
+	ಯದಿ (st.st_uid != pw->pw_uid || st.st_gid != gid) {
+		ಯದಿ (chown(tty, pw->pw_uid, gid) == -1) {
+			ಯದಿ (errno == EROFS &&
 			    (st.st_uid == pw->pw_uid || st.st_uid == 0))
 				debug("chown(%.100s, %u, %u) failed: %.100s",
 				    tty, (u_int)pw->pw_uid, (u_int)gid,
 				    strerror(errno));
-			else
+			ಅನ್ಯಥಾ
 				fatal("chown(%.100s, %u, %u) failed: %.100s",
 				    tty, (u_int)pw->pw_uid, (u_int)gid,
 				    strerror(errno));
 		}
 	}
 
-	if ((st.st_mode & (S_IRWXU|S_IRWXG|S_IRWXO)) != mode) {
-		if (chmod(tty, mode) == -1) {
-			if (errno == EROFS &&
+	ಯದಿ ((st.st_mode & (S_IRWXU|S_IRWXG|S_IRWXO)) != mode) {
+		ಯದಿ (chmod(tty, mode) == -1) {
+			ಯದಿ (errno == EROFS &&
 			    (st.st_mode & (S_IRGRP | S_IROTH)) == 0)
 				debug("chmod(%.100s, 0%o) failed: %.100s",
 				    tty, (u_int)mode, strerror(errno));
-			else
+			ಅನ್ಯಥಾ
 				fatal("chmod(%.100s, 0%o) failed: %.100s",
 				    tty, (u_int)mode, strerror(errno));
 		}

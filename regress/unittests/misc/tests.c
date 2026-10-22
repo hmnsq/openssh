@@ -5,31 +5,31 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "../test_helper/test_helper.h"
+#ಅನ್ತರ್ಭಾವ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
 
-void test_parse(void);
-void test_convtime(void);
-void test_expand(void);
-void test_argv(void);
-void test_strdelim(void);
-void test_hpdelim(void);
-void test_ptimeout(void);
-void test_xextendf(void);
-void test_misc(void);
+ಶೂನ್ಯ test_parse(ಶೂನ್ಯ);
+ಶೂನ್ಯ test_convtime(ಶೂನ್ಯ);
+ಶೂನ್ಯ test_expand(ಶೂನ್ಯ);
+ಶೂನ್ಯ test_argv(ಶೂನ್ಯ);
+ಶೂನ್ಯ test_strdelim(ಶೂನ್ಯ);
+ಶೂನ್ಯ test_hpdelim(ಶೂನ್ಯ);
+ಶೂನ್ಯ test_ptimeout(ಶೂನ್ಯ);
+ಶೂನ್ಯ test_xextendf(ಶೂನ್ಯ);
+ಶೂನ್ಯ test_misc(ಶೂನ್ಯ);
 
-void
-tests(void)
+ಶೂನ್ಯ
+tests(ಶೂನ್ಯ)
 {
 	test_parse();
 	test_convtime();
@@ -42,8 +42,8 @@ tests(void)
 	test_misc();
 }
 
-void
-benchmarks(void)
+ಶೂನ್ಯ
+benchmarks(ಶೂನ್ಯ)
 {
 	printf("no benchmarks\n");
 }

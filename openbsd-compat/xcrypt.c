@@ -22,14 +22,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <pwd.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
 
-# if defined(HAVE_CRYPT_H) && !defined(HAVE_SECUREWARE)
+# ಯದಿ defined(HAVE_CRYPT_H) && !defined(HAVE_SECUREWARE)
 #  include <crypt.h>
 # endif
 
@@ -44,17 +44,17 @@
 #  include <prot.h>
 # endif
 
-# if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+# ಯದಿ defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
 #  include <shadow.h>
 # endif
 
-# if defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
+# ಯದಿ defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
 #  include <sys/label.h>
 #  include <sys/audit.h>
 #  include <pwdadj.h>
 # endif
 
-# if defined(WITH_OPENSSL) && !defined(HAVE_CRYPT) && defined(HAVE_DES_CRYPT)
+# ಯದಿ defined(WITH_OPENSSL) && !defined(HAVE_CRYPT) && defined(HAVE_DES_CRYPT)
 #  include <openssl/des.h>
 #  define crypt DES_crypt
 # endif
@@ -67,57 +67,57 @@
  * salt.  Usually this will be root unless the root account is locked out.
  * If we don't find one we return a traditional DES-based salt.
  */
-static const char *
-pick_salt(void)
+ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ *
+pick_salt(ಶೂನ್ಯ)
 {
-	struct passwd *pw;
-	char *passwd, *p;
+	ಸಂರಚನಾ passwd *pw;
+	ವರ್ಣ *passwd, *p;
 	size_t typelen;
-	static char salt[32];
+	ಸ್ಥಿರ ವರ್ಣ salt[32];
 
-	if (salt[0] != '\0')
-		return salt;
-	strlcpy(salt, "xx", sizeof(salt));
+	ಯದಿ (salt[0] != '\0')
+		ಪ್ರತ್ಯಾಗಮ salt;
+	strlcpy(salt, "xx", ಪರಿಮಾಣ(salt));
 	setpwent();
-	while ((pw = getpwent()) != NULL) {
-		if ((passwd = shadow_pw(pw)) == NULL)
-			continue;
-		if (passwd[0] == '$' && (p = strrchr(passwd+1, '$')) != NULL) {
+	ಯಾವತ್ ((pw = getpwent()) != ರಿಕ್ತ) {
+		ಯದಿ ((passwd = shadow_pw(pw)) == ರಿಕ್ತ)
+			ಅನುವರ್ತ;
+		ಯದಿ (passwd[0] == '$' && (p = strrchr(passwd+1, '$')) != ರಿಕ್ತ) {
 			typelen = p - passwd + 1;
-			strlcpy(salt, passwd, MINIMUM(typelen, sizeof(salt)));
+			strlcpy(salt, passwd, MINIMUM(typelen, ಪರಿಮಾಣ(salt)));
 			explicit_bzero(passwd, strlen(passwd));
-			goto out;
+			ಗಚ್ಛ out;
 		}
 	}
  out:
 	endpwent();
-	return salt;
+	ಪ್ರತ್ಯಾಗಮ salt;
 }
 
-char *
-xcrypt(const char *password, const char *salt)
+ವರ್ಣ *
+xcrypt(ಧ್ರುವ ವರ್ಣ *password, ಧ್ರುವ ವರ್ಣ *salt)
 {
-	char *crypted;
+	ವರ್ಣ *crypted;
 
 	/*
 	 * If we don't have a salt we are encrypting a fake password for
 	 * for timing purposes.  Pick an appropriate salt.
 	 */
-	if (salt == NULL)
+	ಯದಿ (salt == ರಿಕ್ತ)
 		salt = pick_salt();
 
-#if defined(__hpux) && !defined(HAVE_SECUREWARE)
-	if (iscomsec())
+#ಯದಿ defined(__hpux) && !defined(HAVE_SECUREWARE)
+	ಯದಿ (iscomsec())
 		crypted = bigcrypt(password, salt);
-	else
+	ಅನ್ಯಥಾ
 		crypted = crypt(password, salt);
 # elif defined(HAVE_SECUREWARE)
 	crypted = bigcrypt(password, salt);
-# else
+# ಅನ್ಯಥಾ
 	crypted = crypt(password, salt);
 #endif
 
-	return crypted;
+	ಪ್ರತ್ಯಾಗಮ crypted;
 }
 
 /*
@@ -125,32 +125,32 @@ xcrypt(const char *password, const char *salt)
  * version.
  */
 
-char *
-shadow_pw(struct passwd *pw)
+ವರ್ಣ *
+shadow_pw(ಸಂರಚನಾ passwd *pw)
 {
-	char *pw_password = pw->pw_passwd;
+	ವರ್ಣ *pw_password = pw->pw_passwd;
 
-# if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
-	struct spwd *spw = getspnam(pw->pw_name);
+# ಯದಿ defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+	ಸಂರಚನಾ spwd *spw = getspnam(pw->pw_name);
 
-	if (spw != NULL)
+	ಯದಿ (spw != ರಿಕ್ತ)
 		pw_password = spw->sp_pwdp;
 # endif
 
 #ifdef USE_LIBIAF
-	return(get_iaf_password(pw));
+	ಪ್ರತ್ಯಾಗಮ(get_iaf_password(pw));
 #endif
 
-# if defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
-	struct passwd_adjunct *spw;
-	if (issecure() && (spw = getpwanam(pw->pw_name)) != NULL)
+# ಯದಿ defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
+	ಸಂರಚನಾ passwd_adjunct *spw;
+	ಯದಿ (issecure() && (spw = getpwanam(pw->pw_name)) != ರಿಕ್ತ)
 		pw_password = spw->pwa_passwd;
 # elif defined(HAVE_SECUREWARE)
-	struct pr_passwd *spw = getprpwnam(pw->pw_name);
+	ಸಂರಚನಾ pr_passwd *spw = getprpwnam(pw->pw_name);
 
-	if (spw != NULL)
+	ಯದಿ (spw != ರಿಕ್ತ)
 		pw_password = spw->ufld.fd_encrypt;
 # endif
 
-	return pw_password;
+	ಪ್ರತ್ಯಾಗಮ pw_password;
 }

@@ -15,51 +15,51 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
 #define SSHBUF_INTERNAL
-#include "sshbuf.h"
-#include "misc.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
 
 #ifdef SSHBUF_DEBUG
-# define SSHBUF_TELL(what) do { \
+# define SSHBUF_TELL(what) ಕುರು { \
 		printf("%s:%d %s: %s size %zu alloc %zu off %zu max %zu\n", \
 		    __FILE__, __LINE__, __func__, what, \
 		    buf->size, buf->alloc, buf->off, buf->max_size); \
 		fflush(stdout); \
-	} while (0)
-#else
+	} ಯಾವತ್ (0)
+#ಅನ್ಯಥಾ
 # define SSHBUF_TELL(what)
 #endif
 
-struct sshbuf {
+ಸಂರಚನಾ sshbuf {
 	u_char *d;		/* Data */
-	const u_char *cd;	/* Const data */
+	ಧ್ರುವ u_char *cd;	/* Const data */
 	size_t off;		/* First available byte is buf->d + buf->off */
 	size_t size;		/* Last byte is buf->d + buf->size - 1 */
 	size_t max_size;	/* Maximum size of buffer */
 	size_t alloc;		/* Total bytes allocated to buf->d */
-	int readonly;		/* Refers to external, const data */
+	ಪೂರ್ಣಾಙ್ಕ readonly;		/* Refers to external, const data */
 	u_int refcount;		/* Tracks self and number of child buffers */
-	struct sshbuf *parent;	/* If child, pointer to parent */
+	ಸಂರಚನಾ sshbuf *parent;	/* If child, pointer to parent */
 };
 
-static inline int
-sshbuf_check_sanity(const struct sshbuf *buf)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಪೂರ್ಣಾಙ್ಕ
+sshbuf_check_sanity(ಧ್ರುವ ಸಂರಚನಾ sshbuf *buf)
 {
 	SSHBUF_TELL("sanity");
-	if (__predict_false(buf == NULL ||
+	ಯದಿ (__predict_false(buf == ರಿಕ್ತ ||
 	    (!buf->readonly && buf->d != buf->cd) ||
 	    buf->parent == buf ||
 	    buf->refcount < 1 || buf->refcount > SSHBUF_REFS_MAX ||
-	    buf->cd == NULL ||
+	    buf->cd == ರಿಕ್ತ ||
 	    buf->max_size > SSHBUF_SIZE_MAX ||
 	    buf->alloc > buf->max_size ||
 	    buf->size > buf->alloc ||
@@ -67,20 +67,20 @@ sshbuf_check_sanity(const struct sshbuf *buf)
 		/* Do not try to recover from corrupted buffer internals */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		ssh_signal(SIGSEGV, SIG_DFL);
-		raise(SIGSEGV);
-		return SSH_ERR_INTERNAL_ERROR;
+		ಉತ್ಥಾಪಯ(SIGSEGV);
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static void
-sshbuf_maybe_pack(struct sshbuf *buf, int force)
+ಸ್ಥಿರ ಶೂನ್ಯ
+sshbuf_maybe_pack(ಸಂರಚನಾ sshbuf *buf, ಪೂರ್ಣಾಙ್ಕ force)
 {
 	SSHBUF_DBG(("force %d", force));
 	SSHBUF_TELL("pre-pack");
-	if (buf->off == 0 || buf->readonly || buf->refcount > 1)
-		return;
-	if (force ||
+	ಯದಿ (buf->off == 0 || buf->readonly || buf->refcount > 1)
+		ಪ್ರತ್ಯಾಗಮ;
+	ಯದಿ (force ||
 	    (buf->off >= SSHBUF_PACK_MIN && buf->off >= buf->size / 2)) {
 		memmove(buf->d, buf->d + buf->off, buf->size - buf->off);
 		buf->size -= buf->off;
@@ -89,87 +89,87 @@ sshbuf_maybe_pack(struct sshbuf *buf, int force)
 	}
 }
 
-struct sshbuf *
-sshbuf_new(void)
+ಸಂರಚನಾ sshbuf *
+sshbuf_new(ಶೂನ್ಯ)
 {
-	struct sshbuf *ret;
+	ಸಂರಚನಾ sshbuf *ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
+	ಯದಿ ((ret = calloc(1, ಪರಿಮಾಣ(*ret))) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	ret->alloc = SSHBUF_SIZE_INIT;
 	ret->max_size = SSHBUF_SIZE_MAX;
 	ret->readonly = 0;
 	ret->refcount = 1;
-	ret->parent = NULL;
-	if ((ret->cd = ret->d = calloc(1, ret->alloc)) == NULL) {
-		free(ret);
-		return NULL;
+	ret->parent = ರಿಕ್ತ;
+	ಯದಿ ((ret->cd = ret->d = calloc(1, ret->alloc)) == ರಿಕ್ತ) {
+		ಮುಕ್ತ(ret);
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-struct sshbuf *
-sshbuf_from(const void *blob, size_t len)
+ಸಂರಚನಾ sshbuf *
+sshbuf_from(ಧ್ರುವ ಶೂನ್ಯ *blob, size_t len)
 {
-	struct sshbuf *ret;
+	ಸಂರಚನಾ sshbuf *ret;
 
-	if (blob == NULL || len > SSHBUF_SIZE_MAX ||
-	    (ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
+	ಯದಿ (blob == ರಿಕ್ತ || len > SSHBUF_SIZE_MAX ||
+	    (ret = calloc(1, ಪರಿಮಾಣ(*ret))) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	ret->alloc = ret->size = ret->max_size = len;
 	ret->readonly = 1;
 	ret->refcount = 1;
-	ret->parent = NULL;
+	ret->parent = ರಿಕ್ತ;
 	ret->cd = blob;
-	ret->d = NULL;
-	return ret;
+	ret->d = ರಿಕ್ತ;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-int
-sshbuf_set_parent(struct sshbuf *child, struct sshbuf *parent)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_set_parent(ಸಂರಚನಾ sshbuf *child, ಸಂರಚನಾ sshbuf *parent)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if ((r = sshbuf_check_sanity(child)) != 0 ||
+	ಯದಿ ((r = sshbuf_check_sanity(child)) != 0 ||
 	    (r = sshbuf_check_sanity(parent)) != 0)
-		return r;
-	if ((child->parent != NULL && child->parent != parent) ||
+		ಪ್ರತ್ಯಾಗಮ r;
+	ಯದಿ ((child->parent != ರಿಕ್ತ && child->parent != parent) ||
 	    child == parent)
-		return SSH_ERR_INTERNAL_ERROR;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INTERNAL_ERROR;
 	child->parent = parent;
 	child->parent->refcount++;
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-struct sshbuf *
-sshbuf_fromb(struct sshbuf *buf)
+ಸಂರಚನಾ sshbuf *
+sshbuf_fromb(ಸಂರಚನಾ sshbuf *buf)
 {
-	struct sshbuf *ret;
+	ಸಂರಚನಾ sshbuf *ret;
 
-	if (sshbuf_check_sanity(buf) != 0)
-		return NULL;
-	if ((ret = sshbuf_from(sshbuf_ptr(buf), sshbuf_len(buf))) == NULL)
-		return NULL;
-	if (sshbuf_set_parent(ret, buf) != 0) {
+	ಯದಿ (sshbuf_check_sanity(buf) != 0)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
+	ಯದಿ ((ret = sshbuf_from(sshbuf_ptr(buf), sshbuf_len(buf))) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
+	ಯದಿ (sshbuf_set_parent(ret, buf) != 0) {
 		sshbuf_free(ret);
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-void
-sshbuf_free(struct sshbuf *buf)
+ಶೂನ್ಯ
+sshbuf_free(ಸಂರಚನಾ sshbuf *buf)
 {
-	if (buf == NULL)
-		return;
+	ಯದಿ (buf == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ;
 	/*
 	 * The following will leak on insane buffers, but this is the safest
 	 * course of action - an invalid pointer or already-freed pointer may
 	 * have been passed to us and continuing to scribble over memory would
 	 * be bad.
 	 */
-	if (sshbuf_check_sanity(buf) != 0)
-		return;
+	ಯದಿ (sshbuf_check_sanity(buf) != 0)
+		ಪ್ರತ್ಯಾಗಮ;
 
 	/*
 	 * If we are a parent with still-extant children, then don't free just
@@ -177,37 +177,37 @@ sshbuf_free(struct sshbuf *buf)
 	 * refcount to 0 and trigger the actual free.
 	 */
 	buf->refcount--;
-	if (buf->refcount > 0)
-		return;
+	ಯದಿ (buf->refcount > 0)
+		ಪ್ರತ್ಯಾಗಮ;
 
 	/*
 	 * If we are a child, then free our parent to decrement its reference
 	 * count and possibly free it.
 	 */
 	sshbuf_free(buf->parent);
-	buf->parent = NULL;
+	buf->parent = ರಿಕ್ತ;
 
-	if (!buf->readonly)
+	ಯದಿ (!buf->readonly)
 		freezero(buf->d, buf->alloc);
-	freezero(buf, sizeof(*buf));
+	freezero(buf, ಪರಿಮಾಣ(*buf));
 }
 
-void
-sshbuf_reset(struct sshbuf *buf)
+ಶೂನ್ಯ
+sshbuf_reset(ಸಂರಚನಾ sshbuf *buf)
 {
 	u_char *d;
 
-	if (buf->readonly || buf->refcount > 1) {
+	ಯದಿ (buf->readonly || buf->refcount > 1) {
 		/* Nonsensical. Just make buffer appear empty */
 		buf->off = buf->size;
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 	}
-	if (sshbuf_check_sanity(buf) != 0)
-		return;
+	ಯದಿ (sshbuf_check_sanity(buf) != 0)
+		ಪ್ರತ್ಯಾಗಮ;
 	buf->off = buf->size = 0;
-	if (buf->alloc != SSHBUF_SIZE_INIT) {
-		if ((d = recallocarray(buf->d, buf->alloc, SSHBUF_SIZE_INIT,
-		    1)) != NULL) {
+	ಯದಿ (buf->alloc != SSHBUF_SIZE_INIT) {
+		ಯದಿ ((d = recallocarray(buf->d, buf->alloc, SSHBUF_SIZE_INIT,
+		    1)) != ರಿಕ್ತ) {
 			buf->cd = buf->d = d;
 			buf->alloc = SSHBUF_SIZE_INIT;
 		}
@@ -216,133 +216,133 @@ sshbuf_reset(struct sshbuf *buf)
 }
 
 size_t
-sshbuf_max_size(const struct sshbuf *buf)
+sshbuf_max_size(ಧ್ರುವ ಸಂರಚನಾ sshbuf *buf)
 {
-	return buf->max_size;
+	ಪ್ರತ್ಯಾಗಮ buf->max_size;
 }
 
 size_t
-sshbuf_alloc(const struct sshbuf *buf)
+sshbuf_alloc(ಧ್ರುವ ಸಂರಚನಾ sshbuf *buf)
 {
-	return buf->alloc;
+	ಪ್ರತ್ಯಾಗಮ buf->alloc;
 }
 
-const struct sshbuf *
-sshbuf_parent(const struct sshbuf *buf)
+ಧ್ರುವ ಸಂರಚನಾ sshbuf *
+sshbuf_parent(ಧ್ರುವ ಸಂರಚನಾ sshbuf *buf)
 {
-	return buf->parent;
+	ಪ್ರತ್ಯಾಗಮ buf->parent;
 }
 
 u_int
-sshbuf_refcount(const struct sshbuf *buf)
+sshbuf_refcount(ಧ್ರುವ ಸಂರಚನಾ sshbuf *buf)
 {
-	return buf->refcount;
+	ಪ್ರತ್ಯಾಗಮ buf->refcount;
 }
 
-int
-sshbuf_set_max_size(struct sshbuf *buf, size_t max_size)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_set_max_size(ಸಂರಚನಾ sshbuf *buf, size_t max_size)
 {
 	size_t rlen;
 	u_char *dp;
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
 	SSHBUF_DBG(("set max buf = %p len = %zu", buf, max_size));
-	if ((r = sshbuf_check_sanity(buf)) != 0)
-		return r;
-	if (max_size == buf->max_size)
-		return 0;
-	if (buf->readonly || buf->refcount > 1)
-		return SSH_ERR_BUFFER_READ_ONLY;
-	if (max_size > SSHBUF_SIZE_MAX)
-		return SSH_ERR_NO_BUFFER_SPACE;
+	ಯದಿ ((r = sshbuf_check_sanity(buf)) != 0)
+		ಪ್ರತ್ಯಾಗಮ r;
+	ಯದಿ (max_size == buf->max_size)
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಯದಿ (buf->readonly || buf->refcount > 1)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_BUFFER_READ_ONLY;
+	ಯದಿ (max_size > SSHBUF_SIZE_MAX)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_NO_BUFFER_SPACE;
 	/* pack and realloc if necessary */
 	sshbuf_maybe_pack(buf, max_size < buf->size);
-	if (max_size < buf->alloc && max_size > buf->size) {
-		if (buf->size < SSHBUF_SIZE_INIT)
+	ಯದಿ (max_size < buf->alloc && max_size > buf->size) {
+		ಯದಿ (buf->size < SSHBUF_SIZE_INIT)
 			rlen = SSHBUF_SIZE_INIT;
-		else
+		ಅನ್ಯಥಾ
 			rlen = ROUNDUP(buf->size, SSHBUF_SIZE_INC);
-		if (rlen > max_size)
+		ಯದಿ (rlen > max_size)
 			rlen = max_size;
 		SSHBUF_DBG(("new alloc = %zu", rlen));
-		if ((dp = recallocarray(buf->d, buf->alloc, rlen, 1)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
+		ಯದಿ ((dp = recallocarray(buf->d, buf->alloc, rlen, 1)) == ರಿಕ್ತ)
+			ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
 		buf->cd = buf->d = dp;
 		buf->alloc = rlen;
 	}
 	SSHBUF_TELL("new-max");
-	if (max_size < buf->alloc)
-		return SSH_ERR_NO_BUFFER_SPACE;
+	ಯದಿ (max_size < buf->alloc)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_NO_BUFFER_SPACE;
 	buf->max_size = max_size;
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 size_t
-sshbuf_len(const struct sshbuf *buf)
+sshbuf_len(ಧ್ರುವ ಸಂರಚನಾ sshbuf *buf)
 {
-	if (sshbuf_check_sanity(buf) != 0)
-		return 0;
-	return buf->size - buf->off;
+	ಯದಿ (sshbuf_check_sanity(buf) != 0)
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಪ್ರತ್ಯಾಗಮ buf->size - buf->off;
 }
 
 size_t
-sshbuf_avail(const struct sshbuf *buf)
+sshbuf_avail(ಧ್ರುವ ಸಂರಚನಾ sshbuf *buf)
 {
-	if (sshbuf_check_sanity(buf) != 0 || buf->readonly || buf->refcount > 1)
-		return 0;
-	return buf->max_size - (buf->size - buf->off);
+	ಯದಿ (sshbuf_check_sanity(buf) != 0 || buf->readonly || buf->refcount > 1)
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಪ್ರತ್ಯಾಗಮ buf->max_size - (buf->size - buf->off);
 }
 
-const u_char *
-sshbuf_ptr(const struct sshbuf *buf)
+ಧ್ರುವ u_char *
+sshbuf_ptr(ಧ್ರುವ ಸಂರಚನಾ sshbuf *buf)
 {
-	if (sshbuf_check_sanity(buf) != 0)
-		return NULL;
-	return buf->cd + buf->off;
+	ಯದಿ (sshbuf_check_sanity(buf) != 0)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
+	ಪ್ರತ್ಯಾಗಮ buf->cd + buf->off;
 }
 
 u_char *
-sshbuf_mutable_ptr(const struct sshbuf *buf)
+sshbuf_mutable_ptr(ಧ್ರುವ ಸಂರಚನಾ sshbuf *buf)
 {
-	if (sshbuf_check_sanity(buf) != 0 || buf->readonly || buf->refcount > 1)
-		return NULL;
-	return buf->d + buf->off;
+	ಯದಿ (sshbuf_check_sanity(buf) != 0 || buf->readonly || buf->refcount > 1)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
+	ಪ್ರತ್ಯಾಗಮ buf->d + buf->off;
 }
 
-int
-sshbuf_check_reserve(const struct sshbuf *buf, size_t len)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_check_reserve(ಧ್ರುವ ಸಂರಚನಾ sshbuf *buf, size_t len)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if ((r = sshbuf_check_sanity(buf)) != 0)
-		return r;
-	if (buf->readonly || buf->refcount > 1)
-		return SSH_ERR_BUFFER_READ_ONLY;
+	ಯದಿ ((r = sshbuf_check_sanity(buf)) != 0)
+		ಪ್ರತ್ಯಾಗಮ r;
+	ಯದಿ (buf->readonly || buf->refcount > 1)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_BUFFER_READ_ONLY;
 	SSHBUF_TELL("check");
 	/* Check that len is reasonable and that max_size + available < len */
-	if (len > buf->max_size || buf->max_size - len < buf->size - buf->off)
-		return SSH_ERR_NO_BUFFER_SPACE;
-	return 0;
+	ಯದಿ (len > buf->max_size || buf->max_size - len < buf->size - buf->off)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_NO_BUFFER_SPACE;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
-sshbuf_allocate(struct sshbuf *buf, size_t len)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_allocate(ಸಂರಚನಾ sshbuf *buf, size_t len)
 {
 	size_t rlen, need;
 	u_char *dp;
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
 	SSHBUF_DBG(("allocate buf = %p len = %zu", buf, len));
-	if ((r = sshbuf_check_reserve(buf, len)) != 0)
-		return r;
+	ಯದಿ ((r = sshbuf_check_reserve(buf, len)) != 0)
+		ಪ್ರತ್ಯಾಗಮ r;
 	/*
 	 * If the requested allocation appended would push us past max_size
 	 * then pack the buffer, zeroing buf->off.
 	 */
 	sshbuf_maybe_pack(buf, buf->size + len > buf->max_size);
 	SSHBUF_TELL("allocate");
-	if (len + buf->size <= buf->alloc)
-		return 0; /* already have it. */
+	ಯದಿ (len + buf->size <= buf->alloc)
+		ಪ್ರತ್ಯಾಗಮ 0; /* already have it. */
 
 	/*
 	 * Prefer to alloc in SSHBUF_SIZE_INC units, but
@@ -351,97 +351,97 @@ sshbuf_allocate(struct sshbuf *buf, size_t len)
 	need = len + buf->size - buf->alloc;
 	rlen = ROUNDUP(buf->alloc + need, SSHBUF_SIZE_INC);
 	SSHBUF_DBG(("need %zu initial rlen %zu", need, rlen));
-	if (rlen > buf->max_size)
+	ಯದಿ (rlen > buf->max_size)
 		rlen = buf->alloc + need;
 	SSHBUF_DBG(("adjusted rlen %zu", rlen));
-	if ((dp = recallocarray(buf->d, buf->alloc, rlen, 1)) == NULL) {
+	ಯದಿ ((dp = recallocarray(buf->d, buf->alloc, rlen, 1)) == ರಿಕ್ತ) {
 		SSHBUF_DBG(("realloc fail"));
-		return SSH_ERR_ALLOC_FAIL;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
 	}
 	buf->alloc = rlen;
 	buf->cd = buf->d = dp;
-	if ((r = sshbuf_check_reserve(buf, len)) < 0) {
+	ಯದಿ ((r = sshbuf_check_reserve(buf, len)) < 0) {
 		/* shouldn't fail */
-		return r;
+		ಪ್ರತ್ಯಾಗಮ r;
 	}
 	SSHBUF_TELL("done");
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
-sshbuf_reserve(struct sshbuf *buf, size_t len, u_char **dpp)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_reserve(ಸಂರಚನಾ sshbuf *buf, size_t len, u_char **dpp)
 {
 	u_char *dp;
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if (dpp != NULL)
-		*dpp = NULL;
+	ಯದಿ (dpp != ರಿಕ್ತ)
+		*dpp = ರಿಕ್ತ;
 
 	SSHBUF_DBG(("reserve buf = %p len = %zu", buf, len));
-	if ((r = sshbuf_allocate(buf, len)) != 0)
-		return r;
+	ಯದಿ ((r = sshbuf_allocate(buf, len)) != 0)
+		ಪ್ರತ್ಯಾಗಮ r;
 
 	dp = buf->d + buf->size;
 	buf->size += len;
-	if (dpp != NULL)
+	ಯದಿ (dpp != ರಿಕ್ತ)
 		*dpp = dp;
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
-sshbuf_consume(struct sshbuf *buf, size_t len)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_consume(ಸಂರಚನಾ sshbuf *buf, size_t len)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
 	SSHBUF_DBG(("len = %zu", len));
-	if ((r = sshbuf_check_sanity(buf)) != 0)
-		return r;
-	if (len == 0)
-		return 0;
-	if (len > sshbuf_len(buf))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+	ಯದಿ ((r = sshbuf_check_sanity(buf)) != 0)
+		ಪ್ರತ್ಯಾಗಮ r;
+	ಯದಿ (len == 0)
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಯದಿ (len > sshbuf_len(buf))
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_MESSAGE_INCOMPLETE;
 	buf->off += len;
 	/* deal with empty buffer */
-	if (buf->off == buf->size)
+	ಯದಿ (buf->off == buf->size)
 		buf->off = buf->size = 0;
 	SSHBUF_TELL("done");
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
-sshbuf_consume_end(struct sshbuf *buf, size_t len)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_consume_end(ಸಂರಚನಾ sshbuf *buf, size_t len)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
 	SSHBUF_DBG(("len = %zu", len));
-	if ((r = sshbuf_check_sanity(buf)) != 0)
-		return r;
-	if (len == 0)
-		return 0;
-	if (len > sshbuf_len(buf))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+	ಯದಿ ((r = sshbuf_check_sanity(buf)) != 0)
+		ಪ್ರತ್ಯಾಗಮ r;
+	ಯದಿ (len == 0)
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಯದಿ (len > sshbuf_len(buf))
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_MESSAGE_INCOMPLETE;
 	buf->size -= len;
 	SSHBUF_TELL("done");
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
-sshbuf_consume_upto_child(struct sshbuf *buf, const struct sshbuf *child)
+ಪೂರ್ಣಾಙ್ಕ
+sshbuf_consume_upto_child(ಸಂರಚನಾ sshbuf *buf, ಧ್ರುವ ಸಂರಚನಾ sshbuf *child)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if ((r = sshbuf_check_sanity(buf)) != 0 ||
+	ಯದಿ ((r = sshbuf_check_sanity(buf)) != 0 ||
 	    (r = sshbuf_check_sanity(child)) != 0)
-		return r;
+		ಪ್ರತ್ಯಾಗಮ r;
 	/* This function is only used for parent/child buffers */
-	if (child->parent != buf)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ಯದಿ (child->parent != buf)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
 	/* Nonsensical if the parent has advanced past the child */
-	if (sshbuf_len(child) > sshbuf_len(buf))
-		return SSH_ERR_INVALID_ARGUMENT;
+	ಯದಿ (sshbuf_len(child) > sshbuf_len(buf))
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
 	/* More paranoia, shouldn't happen */
-	if (child->cd < buf->cd)
-		return SSH_ERR_INTERNAL_ERROR;
+	ಯದಿ (child->cd < buf->cd)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INTERNAL_ERROR;
 	/* Advance */
-	return sshbuf_consume(buf, sshbuf_len(buf) - sshbuf_len(child));
+	ಪ್ರತ್ಯಾಗಮ sshbuf_consume(buf, sshbuf_len(buf) - sshbuf_len(child));
 }

@@ -15,45 +15,45 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <errno.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "log.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
 
 #ifdef WITH_OPENSSL
-#include <openssl/err.h>
+#ಅನ್ತರ್ಭಾವ <openssl/err.h>
 
-const char *
-ssherr_libcrypto(void)
+ಧ್ರುವ ವರ್ಣ *
+ssherr_libcrypto(ಶೂನ್ಯ)
 {
 	unsigned long e;
-	static char buf[512];
-	char msg[4096];
-	const char *reason = NULL, *file, *data;
-	int ln, fl;
+	ಸ್ಥಿರ ವರ್ಣ buf[512];
+	ವರ್ಣ ಸಂದೇಶ[4096];
+	ಧ್ರುವ ವರ್ಣ *reason = ರಿಕ್ತ, *file, *data;
+	ಪೂರ್ಣಾಙ್ಕ ln, fl;
 
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
-	while ((e = ERR_get_error_line_data(&file, &ln, &data, &fl)) != 0) {
-		ERR_error_string_n(e, buf, sizeof(buf));
-		snprintf(msg, sizeof(msg), "%s:%s:%d:%s", buf, file, ln,
+	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, ರಿಕ್ತ);
+	ಯಾವತ್ ((e = ERR_get_error_ಸಾಲು_data(&file, &ln, &data, &fl)) != 0) {
+		ERR_error_string_n(e, buf, ಪರಿಮಾಣ(buf));
+		snprintf(ಸಂದೇಶ, ಪರಿಮಾಣ(ಸಂದೇಶ), "%s:%s:%d:%s", buf, file, ln,
 		    (fl & ERR_TXT_STRING) ? data : "");
-		debug("libcrypto: '%s'", msg);
-		if ((reason = ERR_reason_error_string(e)) != NULL)
-			snprintf(buf, sizeof(buf), "error in libcrypto: %s",
+		debug("libcrypto: '%s'", ಸಂದೇಶ);
+		ಯದಿ ((reason = ERR_reason_error_string(e)) != ರಿಕ್ತ)
+			snprintf(buf, ಪರಿಮಾಣ(buf), "error in libcrypto: %s",
 			    reason);
 	}
-	if (reason == NULL)
-		return NULL;
-	return buf;
+	ಯದಿ (reason == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
+	ಪ್ರತ್ಯಾಗಮ buf;
 }
-#else
-const char *
-ssherr_libcrypto(void)
+#ಅನ್ಯಥಾ
+ಧ್ರುವ ವರ್ಣ *
+ssherr_libcrypto(ಶೂನ್ಯ)
 {
-	return NULL;
+	ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 }
 #endif

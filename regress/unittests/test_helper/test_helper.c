@@ -17,40 +17,40 @@
 
 /* Utility functions/framework for regress tests */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <sys/time.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/uio.h>
+#ಅನ್ತರ್ಭಾವ <sys/time.h>
 
-#include <assert.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <math.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <math.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/err.h>
+#ಅನ್ತರ್ಭಾವ <openssl/bn.h>
+#ಅನ್ತರ್ಭಾವ <openssl/err.h>
 #endif
 
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#ಯದಿ defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
 #endif
 
-#include "entropy.h"
-#include "test_helper.h"
-#include "atomicio.h"
-#include "match.h"
-#include "misc.h"
-#include "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "entropy.h"
+#ಅನ್ತರ್ಭಾವ "test_helper.h"
+#ಅನ್ತರ್ಭಾವ "atomicio.h"
+#ಅನ್ತರ್ಭಾವ "match.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
 
 #define BENCH_FAST_DEADLINE	1
 #define BENCH_NORMAL_DEADLINE	10
@@ -60,497 +60,497 @@
 
 #define MINIMUM(a, b)    (((a) < (b)) ? (a) : (b))
 
-#define TEST_CHECK_INT(r, pred) do {		\
-		switch (pred) {			\
-		case TEST_EQ:			\
-			if (r == 0)		\
-				return;		\
-			break;			\
-		case TEST_NE:			\
-			if (r != 0)		\
-				return;		\
-			break;			\
-		case TEST_LT:			\
-			if (r < 0)		\
-				return;		\
-			break;			\
-		case TEST_LE:			\
-			if (r <= 0)		\
-				return;		\
-			break;			\
-		case TEST_GT:			\
-			if (r > 0)		\
-				return;		\
-			break;			\
-		case TEST_GE:			\
-			if (r >= 0)		\
-				return;		\
-			break;			\
-		default:			\
+#define TEST_CHECK_INT(r, pred) ಕುರು {		\
+		ವಿಕಲ್ಪ (pred) {			\
+		ಪಕ್ಷ TEST_EQ:			\
+			ಯದಿ (r == 0)		\
+				ಪ್ರತ್ಯಾಗಮ;		\
+			ಭಙ್ಗ;			\
+		ಪಕ್ಷ TEST_NE:			\
+			ಯದಿ (r != 0)		\
+				ಪ್ರತ್ಯಾಗಮ;		\
+			ಭಙ್ಗ;			\
+		ಪಕ್ಷ TEST_LT:			\
+			ಯದಿ (r < 0)		\
+				ಪ್ರತ್ಯಾಗಮ;		\
+			ಭಙ್ಗ;			\
+		ಪಕ್ಷ TEST_LE:			\
+			ಯದಿ (r <= 0)		\
+				ಪ್ರತ್ಯಾಗಮ;		\
+			ಭಙ್ಗ;			\
+		ಪಕ್ಷ TEST_GT:			\
+			ಯದಿ (r > 0)		\
+				ಪ್ರತ್ಯಾಗಮ;		\
+			ಭಙ್ಗ;			\
+		ಪಕ್ಷ TEST_GE:			\
+			ಯದಿ (r >= 0)		\
+				ಪ್ರತ್ಯಾಗಮ;		\
+			ಭಙ್ಗ;			\
+		ಸ್ವಭಾವ:			\
 			abort();		\
 		}				\
-	} while (0)
+	} ಯಾವತ್ (0)
 
-#define TEST_CHECK(x1, x2, pred) do {		\
-		switch (pred) {			\
-		case TEST_EQ:			\
-			if (x1 == x2)		\
-				return;		\
-			break;			\
-		case TEST_NE:			\
-			if (x1 != x2)		\
-				return;		\
-			break;			\
-		case TEST_LT:			\
-			if (x1 < x2)		\
-				return;		\
-			break;			\
-		case TEST_LE:			\
-			if (x1 <= x2)		\
-				return;		\
-			break;			\
-		case TEST_GT:			\
-			if (x1 > x2)		\
-				return;		\
-			break;			\
-		case TEST_GE:			\
-			if (x1 >= x2)		\
-				return;		\
-			break;			\
-		default:			\
+#define TEST_CHECK(x1, x2, pred) ಕುರು {		\
+		ವಿಕಲ್ಪ (pred) {			\
+		ಪಕ್ಷ TEST_EQ:			\
+			ಯದಿ (x1 == x2)		\
+				ಪ್ರತ್ಯಾಗಮ;		\
+			ಭಙ್ಗ;			\
+		ಪಕ್ಷ TEST_NE:			\
+			ಯದಿ (x1 != x2)		\
+				ಪ್ರತ್ಯಾಗಮ;		\
+			ಭಙ್ಗ;			\
+		ಪಕ್ಷ TEST_LT:			\
+			ಯದಿ (x1 < x2)		\
+				ಪ್ರತ್ಯಾಗಮ;		\
+			ಭಙ್ಗ;			\
+		ಪಕ್ಷ TEST_LE:			\
+			ಯದಿ (x1 <= x2)		\
+				ಪ್ರತ್ಯಾಗಮ;		\
+			ಭಙ್ಗ;			\
+		ಪಕ್ಷ TEST_GT:			\
+			ಯದಿ (x1 > x2)		\
+				ಪ್ರತ್ಯಾಗಮ;		\
+			ಭಙ್ಗ;			\
+		ಪಕ್ಷ TEST_GE:			\
+			ಯದಿ (x1 >= x2)		\
+				ಪ್ರತ್ಯಾಗಮ;		\
+			ಭಙ್ಗ;			\
+		ಸ್ವಭಾವ:			\
 			abort();		\
 		}				\
-	} while (0)
+	} ಯಾವತ್ (0)
 
-extern char *__progname;
+ಬಾಹ್ಯ ವರ್ಣ *__progname;
 
-static int verbose_mode = 0;
-static int quiet_mode = 0;
-static char *active_test_name = NULL;
-static u_int test_number = 0;
-static test_onerror_func_t *test_onerror = NULL;
-static void *onerror_ctx = NULL;
-static const char *data_dir = NULL;
-static char subtest_info[512];
-static int fast = 0;
-static int slow = 0;
-static int benchmark_detail_statistics = 0;
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ verbose_mode = 0;
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ quiet_mode = 0;
+ಸ್ಥಿರ ವರ್ಣ *active_test_name = ರಿಕ್ತ;
+ಸ್ಥಿರ u_int test_ಸಂಖ್ಯೆ = 0;
+ಸ್ಥಿರ test_onerror_func_t *test_onerror = ರಿಕ್ತ;
+ಸ್ಥಿರ ಶೂನ್ಯ *onerror_ctx = ರಿಕ್ತ;
+ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ *data_dir = ರಿಕ್ತ;
+ಸ್ಥಿರ ವರ್ಣ subtest_info[512];
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ fast = 0;
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ slow = 0;
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ benchmark_detail_statistics = 0;
 
-static int benchmark = 0;
-static const char *bench_name = NULL;
-static char *benchmark_pattern = NULL;
-static struct timespec bench_start_time, bench_finish_time;
-static struct timespec *bench_samples;
-static int bench_skip, bench_nruns, bench_nalloc;
-double bench_accum_secs;
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ benchmark = 0;
+ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ *bench_name = ರಿಕ್ತ;
+ಸ್ಥಿರ ವರ್ಣ *benchmark_pattern = ರಿಕ್ತ;
+ಸ್ಥಿರ ಸಂರಚನಾ timespec bench_start_time, bench_finish_time;
+ಸ್ಥಿರ ಸಂರಚನಾ timespec *bench_samples;
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ bench_skip, bench_nruns, bench_nalloc;
+ದ್ವಿಗುಣ bench_accum_secs;
 
-int
-main(int argc, char **argv)
+ಪೂರ್ಣಾಙ್ಕ
+main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv)
 {
-	int ch;
+	ಪೂರ್ಣಾಙ್ಕ ch;
 
 	seed_rng();
 #ifdef WITH_OPENSSL
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
+	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, ರಿಕ್ತ);
 #endif
 
 	/* Handle systems without __progname */
-	if (__progname == NULL) {
+	ಯದಿ (__progname == ರಿಕ್ತ) {
 		__progname = strrchr(argv[0], '/');
-		if (__progname == NULL || __progname[1] == '\0')
+		ಯದಿ (__progname == ರಿಕ್ತ || __progname[1] == '\0')
 			__progname = argv[0];	
-		else
+		ಅನ್ಯಥಾ
 			__progname++;
-		if ((__progname = strdup(__progname)) == NULL) {
+		ಯದಿ ((__progname = strdup(__progname)) == ರಿಕ್ತ) {
 			fprintf(stderr, "strdup failed\n");
 			exit(1);
 		}
 	}
 
-	while ((ch = getopt(argc, argv, "O:bBFfvqd:")) != -1) {
-		switch (ch) {
-		case 'b':
+	ಯಾವತ್ ((ch = getopt(argc, argv, "O:bBFfvqd:")) != -1) {
+		ವಿಕಲ್ಪ (ch) {
+		ಪಕ್ಷ 'b':
 			benchmark = 1;
-			break;
-		case 'B':
+			ಭಙ್ಗ;
+		ಪಕ್ಷ 'B':
 			benchmark = benchmark_detail_statistics = 1;
-			break;
-		case 'O':
+			ಭಙ್ಗ;
+		ಪಕ್ಷ 'O':
 			benchmark_pattern = xstrdup(optarg);
-			break;
-		case 'F':
+			ಭಙ್ಗ;
+		ಪಕ್ಷ 'F':
 			slow = 1;
-			break;
-		case 'f':
+			ಭಙ್ಗ;
+		ಪಕ್ಷ 'f':
 			fast = 1;
-			break;
-		case 'd':
+			ಭಙ್ಗ;
+		ಪಕ್ಷ 'd':
 			data_dir = optarg;
-			break;
-		case 'q':
+			ಭಙ್ಗ;
+		ಪಕ್ಷ 'q':
 			verbose_mode = 0;
 			quiet_mode = 1;
-			break;
-		case 'v':
+			ಭಙ್ಗ;
+		ಪಕ್ಷ 'v':
 			verbose_mode = 1;
 			quiet_mode = 0;
-			break;
-		default:
+			ಭಙ್ಗ;
+		ಸ್ವಭಾವ:
 			fprintf(stderr, "Unrecognised command line option\n");
 			fprintf(stderr, "Usage: %s [-vqfFbB] [-d data_dir] "
 			    "[-O pattern]\n", __progname);
 			exit(1);
 		}
 	}
-	setvbuf(stdout, NULL, _IONBF, 0);
-	if (!quiet_mode)
+	setvbuf(stdout, ರಿಕ್ತ, _IONBF, 0);
+	ಯದಿ (!quiet_mode)
 		printf("%s: ", __progname);
-	if (verbose_mode)
+	ಯದಿ (verbose_mode)
 		printf("\n");
 
-	if (benchmark)
+	ಯದಿ (benchmark)
 		benchmarks();
-	else
+	ಅನ್ಯಥಾ
 		tests();
 
-	if (!quiet_mode && !benchmark)
-		printf(" %u tests ok\n", test_number);
-	return 0;
+	ಯದಿ (!quiet_mode && !benchmark)
+		printf(" %u tests ok\n", test_ಸಂಖ್ಯೆ);
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
-test_is_verbose(void)
+ಪೂರ್ಣಾಙ್ಕ
+test_is_verbose(ಶೂನ್ಯ)
 {
-	return verbose_mode;
+	ಪ್ರತ್ಯಾಗಮ verbose_mode;
 }
 
-int
-test_is_quiet(void)
+ಪೂರ್ಣಾಙ್ಕ
+test_is_quiet(ಶೂನ್ಯ)
 {
-	return quiet_mode;
+	ಪ್ರತ್ಯಾಗಮ quiet_mode;
 }
 
-int
-test_is_fast(void)
+ಪೂರ್ಣಾಙ್ಕ
+test_is_fast(ಶೂನ್ಯ)
 {
-	return fast;
+	ಪ್ರತ್ಯಾಗಮ fast;
 }
 
-int
-test_is_slow(void)
+ಪೂರ್ಣಾಙ್ಕ
+test_is_slow(ಶೂನ್ಯ)
 {
-	return slow;
+	ಪ್ರತ್ಯಾಗಮ slow;
 }
 
-const char *
-test_data_file(const char *name)
+ಧ್ರುವ ವರ್ಣ *
+test_data_file(ಧ್ರುವ ವರ್ಣ *name)
 {
-	static char ret[PATH_MAX];
+	ಸ್ಥಿರ ವರ್ಣ ret[PATH_MAX];
 
-	if (data_dir != NULL)
-		snprintf(ret, sizeof(ret), "%s/%s", data_dir, name);
-	else
-		strlcpy(ret, name, sizeof(ret));
-	if (access(ret, F_OK) != 0) {
+	ಯದಿ (data_dir != ರಿಕ್ತ)
+		snprintf(ret, ಪರಿಮಾಣ(ret), "%s/%s", data_dir, name);
+	ಅನ್ಯಥಾ
+		strlcpy(ret, name, ಪರಿಮಾಣ(ret));
+	ಯದಿ (access(ret, F_OK) != 0) {
 		fprintf(stderr, "Cannot access data file %s: %s\n",
 		    ret, strerror(errno));
 		exit(1);
 	}
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-void
-test_info(char *s, size_t len)
+ಶೂನ್ಯ
+test_info(ವರ್ಣ *s, size_t len)
 {
-	snprintf(s, len, "In test %u: \"%s\"%s%s\n", test_number,
-	    active_test_name == NULL ? "<none>" : active_test_name,
+	snprintf(s, len, "In test %u: \"%s\"%s%s\n", test_ಸಂಖ್ಯೆ,
+	    active_test_name == ರಿಕ್ತ ? "<none>" : active_test_name,
 	    *subtest_info != '\0' ? " - " : "", subtest_info);
 }
 
-static void
-siginfo(int unused __attribute__((__unused__)))
+ಸ್ಥಿರ ಶೂನ್ಯ
+siginfo(ಪೂರ್ಣಾಙ್ಕ unused __attribute__((__unused__)))
 {
-	char buf[256];
+	ವರ್ಣ buf[256];
 
-	test_info(buf, sizeof(buf));
+	test_info(buf, ಪರಿಮಾಣ(buf));
 	atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
 }
 
-void
-test_start(const char *n)
+ಶೂನ್ಯ
+test_start(ಧ್ರುವ ವರ್ಣ *n)
 {
-	assert(active_test_name == NULL);
-	assert((active_test_name = strdup(n)) != NULL);
+	ಪ್ರತಿಜ್ಞಾ(active_test_name == ರಿಕ್ತ);
+	ಪ್ರತಿಜ್ಞಾ((active_test_name = strdup(n)) != ರಿಕ್ತ);
 	*subtest_info = '\0';
-	if (verbose_mode)
-		printf("test %u - \"%s\": ", test_number, active_test_name);
-	test_number++;
+	ಯದಿ (verbose_mode)
+		printf("test %u - \"%s\": ", test_ಸಂಖ್ಯೆ, active_test_name);
+	test_ಸಂಖ್ಯೆ++;
 #ifdef SIGINFO
-	signal(SIGINFO, siginfo);
+	ಸಙ್ಕೇತ(SIGINFO, siginfo);
 #endif
-	signal(SIGUSR1, siginfo);
+	ಸಙ್ಕೇತ(SIGUSR1, siginfo);
 }
 
-void
-set_onerror_func(test_onerror_func_t *f, void *ctx)
+ಶೂನ್ಯ
+set_onerror_func(test_onerror_func_t *f, ಶೂನ್ಯ *ctx)
 {
 	test_onerror = f;
 	onerror_ctx = ctx;
 }
 
-void
-test_done(void)
+ಶೂನ್ಯ
+test_done(ಶೂನ್ಯ)
 {
 	*subtest_info = '\0';
-	assert(active_test_name != NULL);
-	free(active_test_name);
-	active_test_name = NULL;
-	if (verbose_mode)
+	ಪ್ರತಿಜ್ಞಾ(active_test_name != ರಿಕ್ತ);
+	ಮುಕ್ತ(active_test_name);
+	active_test_name = ರಿಕ್ತ;
+	ಯದಿ (verbose_mode)
 		printf("OK\n");
-	else if (!quiet_mode && !benchmark) {
+	ಅನ್ಯಥಾ ಯದಿ (!quiet_mode && !benchmark) {
 		printf(".");
 		fflush(stdout);
 	}
 }
 
-void
-test_subtest_info(const char *fmt, ...)
+ಶೂನ್ಯ
+test_subtest_info(ಧ್ರುವ ವರ್ಣ *fmt, ...)
 {
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsnprintf(subtest_info, sizeof(subtest_info), fmt, ap);
+	vsnprintf(subtest_info, ಪರಿಮಾಣ(subtest_info), fmt, ap);
 	va_end(ap);
 }
 
-int
-test_is_benchmark(void)
+ಪೂರ್ಣಾಙ್ಕ
+test_is_benchmark(ಶೂನ್ಯ)
 {
-	return benchmark;
+	ಪ್ರತ್ಯಾಗಮ benchmark;
 }
 
-void
-ssl_err_check(const char *file, int line)
+ಶೂನ್ಯ
+ssl_err_check(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು)
 {
 #ifdef WITH_OPENSSL
 	long openssl_error = ERR_get_error();
 
-	if (openssl_error == 0)
-		return;
+	ಯದಿ (openssl_error == 0)
+		ಪ್ರತ್ಯಾಗಮ;
 
 	fprintf(stderr, "\n%s:%d: uncaught OpenSSL error: %s",
-	    file, line, ERR_error_string(openssl_error, NULL));
-#else /* WITH_OPENSSL */
+	    file, ಸಾಲು, ERR_error_string(openssl_error, ರಿಕ್ತ));
+#ಅನ್ಯಥಾ /* WITH_OPENSSL */
 	fprintf(stderr, "\n%s:%d: uncaught OpenSSL error ",
-	    file, line);
+	    file, ಸಾಲು);
 #endif /* WITH_OPENSSL */
 	abort();
 }
 
-static const char *
-pred_name(enum test_predicate p)
+ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ *
+pred_name(ಗಣನಾ test_predicate p)
 {
-	switch (p) {
-	case TEST_EQ:
-		return "EQ";
-	case TEST_NE:
-		return "NE";
-	case TEST_LT:
-		return "LT";
-	case TEST_LE:
-		return "LE";
-	case TEST_GT:
-		return "GT";
-	case TEST_GE:
-		return "GE";
-	default:
-		return "UNKNOWN";
+	ವಿಕಲ್ಪ (p) {
+	ಪಕ್ಷ TEST_EQ:
+		ಪ್ರತ್ಯಾಗಮ "EQ";
+	ಪಕ್ಷ TEST_NE:
+		ಪ್ರತ್ಯಾಗಮ "NE";
+	ಪಕ್ಷ TEST_LT:
+		ಪ್ರತ್ಯಾಗಮ "LT";
+	ಪಕ್ಷ TEST_LE:
+		ಪ್ರತ್ಯಾಗಮ "LE";
+	ಪಕ್ಷ TEST_GT:
+		ಪ್ರತ್ಯಾಗಮ "GT";
+	ಪಕ್ಷ TEST_GE:
+		ಪ್ರತ್ಯಾಗಮ "GE";
+	ಸ್ವಭಾವ:
+		ಪ್ರತ್ಯಾಗಮ "UNKNOWN";
 	}
 }
 
-static void
-test_die(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+test_die(ಶೂನ್ಯ)
 {
-	if (test_onerror != NULL)
+	ಯದಿ (test_onerror != ರಿಕ್ತ)
 		test_onerror(onerror_ctx);
 	abort();
 }
 
-static void
-test_header(const char *file, int line, const char *a1, const char *a2,
-    const char *name, enum test_predicate pred)
+ಸ್ಥಿರ ಶೂನ್ಯ
+test_header(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    ಧ್ರುವ ವರ್ಣ *name, ಗಣನಾ test_predicate pred)
 {
 	fprintf(stderr, "\n%s:%d test #%u \"%s\"%s%s\n", 
-	    file, line, test_number, active_test_name,
+	    file, ಸಾಲು, test_ಸಂಖ್ಯೆ, active_test_name,
 	    *subtest_info != '\0' ? " - " : "", subtest_info);
 	fprintf(stderr, "ASSERT_%s_%s(%s%s%s) failed:\n",
 	    name, pred_name(pred), a1,
-	    a2 != NULL ? ", " : "", a2 != NULL ? a2 : "");
+	    a2 != ರಿಕ್ತ ? ", " : "", a2 != ರಿಕ್ತ ? a2 : "");
 }
 
 #ifdef WITH_OPENSSL
-void
-assert_bignum(const char *file, int line, const char *a1, const char *a2,
-    const BIGNUM *aa1, const BIGNUM *aa2, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_bignum(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    ಧ್ರುವ BIGNUM *aa1, ಧ್ರುವ BIGNUM *aa2, ಗಣನಾ test_predicate pred)
 {
-	int r = BN_cmp(aa1, aa2);
+	ಪೂರ್ಣಾಙ್ಕ r = BN_cmp(aa1, aa2);
 
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "BIGNUM", pred);
+	test_header(file, ಸಾಲು, a1, a2, "BIGNUM", pred);
 	fprintf(stderr, "%12s = 0x%s\n", a1, BN_bn2hex(aa1));
 	fprintf(stderr, "%12s = 0x%s\n", a2, BN_bn2hex(aa2));
 	test_die();
 }
 #endif
 
-void
-assert_string(const char *file, int line, const char *a1, const char *a2,
-    const char *aa1, const char *aa2, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_string(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    ಧ್ರುವ ವರ್ಣ *aa1, ಧ್ರುವ ವರ್ಣ *aa2, ಗಣನಾ test_predicate pred)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
 	/* Verify pointers are not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
-	assert_ptr(file, line, a2, "NULL", aa2, NULL, TEST_NE);
+	assert_ptr(file, ಸಾಲು, a1, "NULL", aa1, ರಿಕ್ತ, TEST_NE);
+	assert_ptr(file, ಸಾಲು, a2, "NULL", aa2, ರಿಕ್ತ, TEST_NE);
 
 	r = strcmp(aa1, aa2);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "STRING", pred);
+	test_header(file, ಸಾಲು, a1, a2, "STRING", pred);
 	fprintf(stderr, "%12s = %s (len %zu)\n", a1, aa1, strlen(aa1));
 	fprintf(stderr, "%12s = %s (len %zu)\n", a2, aa2, strlen(aa2));
 	test_die();
 }
 
-void
-assert_mem(const char *file, int line, const char *a1, const char *a2,
-    const void *aa1, const void *aa2, size_t l, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_mem(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    ಧ್ರುವ ಶೂನ್ಯ *aa1, ಧ್ರುವ ಶೂನ್ಯ *aa2, size_t l, ಗಣನಾ test_predicate pred)
 {
-	int r;
-	char *aa1_tohex = NULL;
-	char *aa2_tohex = NULL;
+	ಪೂರ್ಣಾಙ್ಕ r;
+	ವರ್ಣ *aa1_tohex = ರಿಕ್ತ;
+	ವರ್ಣ *aa2_tohex = ರಿಕ್ತ;
 
-	if (l == 0)
-		return;
+	ಯದಿ (l == 0)
+		ಪ್ರತ್ಯಾಗಮ;
 	/* If length is >0, then verify pointers are not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
-	assert_ptr(file, line, a2, "NULL", aa2, NULL, TEST_NE);
+	assert_ptr(file, ಸಾಲು, a1, "NULL", aa1, ರಿಕ್ತ, TEST_NE);
+	assert_ptr(file, ಸಾಲು, a2, "NULL", aa2, ರಿಕ್ತ, TEST_NE);
 
 	r = memcmp(aa1, aa2, l);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "STRING", pred);
+	test_header(file, ಸಾಲು, a1, a2, "STRING", pred);
 	aa1_tohex = tohex(aa1, MINIMUM(l, 256));
 	aa2_tohex = tohex(aa2, MINIMUM(l, 256));
 	fprintf(stderr, "%12s = %s (len %zu)\n", a1, aa1_tohex, l);
 	fprintf(stderr, "%12s = %s (len %zu)\n", a2, aa2_tohex, l);
-	free(aa1_tohex);
-	free(aa2_tohex);
+	ಮುಕ್ತ(aa1_tohex);
+	ಮುಕ್ತ(aa2_tohex);
 	test_die();
 }
 
-static int
-memvalcmp(const uint8_t *s, u_char v, size_t l, size_t *where)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+memvalcmp(ಧ್ರುವ uint8_t *s, u_char v, size_t l, size_t *where)
 {
 	size_t i;
 
-	for (i = 0; i < l; i++) {
-		if (s[i] != v) {
+	ಪ್ರತಿ (i = 0; i < l; i++) {
+		ಯದಿ (s[i] != v) {
 			*where = i;
-			return 1;
+			ಪ್ರತ್ಯಾಗಮ 1;
 		}
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-void
-assert_mem_filled(const char *file, int line, const char *a1,
-    const void *aa1, u_char v, size_t l, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_mem_filled(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1,
+    ಧ್ರುವ ಶೂನ್ಯ *aa1, u_char v, size_t l, ಗಣನಾ test_predicate pred)
 {
 	size_t where = -1;
-	int r;
-	char tmp[64];
-	char *aa1_tohex = NULL;
+	ಪೂರ್ಣಾಙ್ಕ r;
+	ವರ್ಣ tmp[64];
+	ವರ್ಣ *aa1_tohex = ರಿಕ್ತ;
 
-	if (l == 0)
-		return;
+	ಯದಿ (l == 0)
+		ಪ್ರತ್ಯಾಗಮ;
 	/* If length is >0, then verify the pointer is not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
+	assert_ptr(file, ಸಾಲು, a1, "NULL", aa1, ರಿಕ್ತ, TEST_NE);
 
 	r = memvalcmp(aa1, v, l, &where);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, NULL, "MEM_ZERO", pred);
+	test_header(file, ಸಾಲು, a1, ರಿಕ್ತ, "MEM_ZERO", pred);
 	aa1_tohex = tohex(aa1, MINIMUM(l, 20));
 	fprintf(stderr, "%20s = %s%s (len %zu)\n", a1,
 	    aa1_tohex, l > 20 ? "..." : "", l);
-	free(aa1_tohex);
-	snprintf(tmp, sizeof(tmp), "(%s)[%zu]", a1, where);
+	ಮುಕ್ತ(aa1_tohex);
+	snprintf(tmp, ಪರಿಮಾಣ(tmp), "(%s)[%zu]", a1, where);
 	fprintf(stderr, "%20s = 0x%02x (expected 0x%02x)\n", tmp,
 	    ((u_char *)aa1)[where], v);
 	test_die();
 }
 
-void
-assert_int(const char *file, int line, const char *a1, const char *a2,
-    int aa1, int aa2, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_int(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    ಪೂರ್ಣಾಙ್ಕ aa1, ಪೂರ್ಣಾಙ್ಕ aa2, ಗಣನಾ test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "INT", pred);
+	test_header(file, ಸಾಲು, a1, a2, "INT", pred);
 	fprintf(stderr, "%12s = %d\n", a1, aa1);
 	fprintf(stderr, "%12s = %d\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_size_t(const char *file, int line, const char *a1, const char *a2,
-    size_t aa1, size_t aa2, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_size_t(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    size_t aa1, size_t aa2, ಗಣನಾ test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "SIZE_T", pred);
+	test_header(file, ಸಾಲು, a1, a2, "SIZE_T", pred);
 	fprintf(stderr, "%12s = %zu\n", a1, aa1);
 	fprintf(stderr, "%12s = %zu\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_u_int(const char *file, int line, const char *a1, const char *a2,
-    u_int aa1, u_int aa2, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_u_int(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    u_int aa1, u_int aa2, ಗಣನಾ test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U_INT", pred);
+	test_header(file, ಸಾಲು, a1, a2, "U_INT", pred);
 	fprintf(stderr, "%12s = %u / 0x%x\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %u / 0x%x\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_long(const char *file, int line, const char *a1, const char *a2,
-    long aa1, long aa2, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_long(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    long aa1, long aa2, ಗಣನಾ test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "LONG", pred);
+	test_header(file, ಸಾಲು, a1, a2, "LONG", pred);
 	fprintf(stderr, "%12s = %ld / 0x%lx\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %ld / 0x%lx\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_long_long(const char *file, int line, const char *a1, const char *a2,
-    long long aa1, long long aa2, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_long_long(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    long long aa1, long long aa2, ಗಣನಾ test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "LONG LONG", pred);
+	test_header(file, ಸಾಲು, a1, a2, "LONG LONG", pred);
 	fprintf(stderr, "%12s = %lld / 0x%llx\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %lld / 0x%llx\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_char(const char *file, int line, const char *a1, const char *a2,
-    char aa1, char aa2, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_char(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    ವರ್ಣ aa1, ವರ್ಣ aa2, ಗಣನಾ test_predicate pred)
 {
-	char buf[8];
+	ವರ್ಣ buf[8];
 
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "CHAR", pred);
+	test_header(file, ಸಾಲು, a1, a2, "CHAR", pred);
 	fprintf(stderr, "%12s = '%s' / 0x02%x\n", a1,
 	    vis(buf, aa1, VIS_SAFE|VIS_NL|VIS_TAB|VIS_OCTAL, 0), aa1);
 	fprintf(stderr, "%12s = '%s' / 0x02%x\n", a1,
@@ -558,45 +558,45 @@ assert_char(const char *file, int line, const char *a1, const char *a2,
 	test_die();
 }
 
-void
-assert_u8(const char *file, int line, const char *a1, const char *a2,
-    uint8_t aa1, uint8_t aa2, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_u8(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    uint8_t aa1, uint8_t aa2, ಗಣನಾ test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U8", pred);
+	test_header(file, ಸಾಲು, a1, a2, "U8", pred);
 	fprintf(stderr, "%12s = 0x%02x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%02x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u16(const char *file, int line, const char *a1, const char *a2,
-    uint16_t aa1, uint16_t aa2, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_u16(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    uint16_t aa1, uint16_t aa2, ಗಣನಾ test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U16", pred);
+	test_header(file, ಸಾಲು, a1, a2, "U16", pred);
 	fprintf(stderr, "%12s = 0x%04x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%04x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u32(const char *file, int line, const char *a1, const char *a2,
-    uint32_t aa1, uint32_t aa2, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_u32(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    uint32_t aa1, uint32_t aa2, ಗಣನಾ test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U32", pred);
+	test_header(file, ಸಾಲು, a1, a2, "U32", pred);
 	fprintf(stderr, "%12s = 0x%08x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%08x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u64(const char *file, int line, const char *a1, const char *a2,
-    uint64_t aa1, uint64_t aa2, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_u64(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    uint64_t aa1, uint64_t aa2, ಗಣನಾ test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U64", pred);
+	test_header(file, ಸಾಲು, a1, a2, "U64", pred);
 	fprintf(stderr, "%12s = 0x%016llx %llu\n", a1,
 	    (unsigned long long)aa1, (unsigned long long)aa1);
 	fprintf(stderr, "%12s = 0x%016llx %llu\n", a2,
@@ -604,197 +604,197 @@ assert_u64(const char *file, int line, const char *a1, const char *a2,
 	test_die();
 }
 
-void
-assert_double(const char *file, int line, const char *a1, const char *a2,
-    double aa1, double aa2, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_double(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    ದ್ವಿಗುಣ aa1, ದ್ವಿಗುಣ aa2, ಗಣನಾ test_predicate pred)
 {
-	const double epsilon = 0.000000001;
+	ಧ್ರುವ ದ್ವಿಗುಣ epsilon = 0.000000001;
 
-	switch (pred) {
-	case TEST_EQ:
-		if (fabs(aa1 - aa2) < epsilon)
-			return;
-		break;
-	case TEST_NE:
-		if (fabs(aa1 - aa2) >= epsilon)
-			return;
-		break;
-	case TEST_LT:
-		if (aa1 < aa2)
-			return;
-		break;
-	case TEST_LE:
-		if (aa1 <= aa2)
-			return;
-		break;
-	case TEST_GT:
-		if (aa1 > aa2)
-			return;
-		break;
-	case TEST_GE:
-		if (aa1 >= aa2)
-			return;
-		break;
-	default:
+	ವಿಕಲ್ಪ (pred) {
+	ಪಕ್ಷ TEST_EQ:
+		ಯದಿ (fabs(aa1 - aa2) < epsilon)
+			ಪ್ರತ್ಯಾಗಮ;
+		ಭಙ್ಗ;
+	ಪಕ್ಷ TEST_NE:
+		ಯದಿ (fabs(aa1 - aa2) >= epsilon)
+			ಪ್ರತ್ಯಾಗಮ;
+		ಭಙ್ಗ;
+	ಪಕ್ಷ TEST_LT:
+		ಯದಿ (aa1 < aa2)
+			ಪ್ರತ್ಯಾಗಮ;
+		ಭಙ್ಗ;
+	ಪಕ್ಷ TEST_LE:
+		ಯದಿ (aa1 <= aa2)
+			ಪ್ರತ್ಯಾಗಮ;
+		ಭಙ್ಗ;
+	ಪಕ್ಷ TEST_GT:
+		ಯದಿ (aa1 > aa2)
+			ಪ್ರತ್ಯಾಗಮ;
+		ಭಙ್ಗ;
+	ಪಕ್ಷ TEST_GE:
+		ಯದಿ (aa1 >= aa2)
+			ಪ್ರತ್ಯಾಗಮ;
+		ಭಙ್ಗ;
+	ಸ್ವಭಾವ:
 		abort();
 	}
 
-	test_header(file, line, a1, a2, "DOUBLE", pred);
+	test_header(file, ಸಾಲು, a1, a2, "DOUBLE", pred);
 	fprintf(stderr, "%12s = %f\n", a1, aa1);
 	fprintf(stderr, "%12s = %f\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_ptr(const char *file, int line, const char *a1, const char *a2,
-    const void *aa1, const void *aa2, enum test_predicate pred)
+ಶೂನ್ಯ
+assert_ptr(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *a1, ಧ್ರುವ ವರ್ಣ *a2,
+    ಧ್ರುವ ಶೂನ್ಯ *aa1, ಧ್ರುವ ಶೂನ್ಯ *aa2, ಗಣನಾ test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "PTR", pred);
+	test_header(file, ಸಾಲು, a1, a2, "PTR", pred);
 	fprintf(stderr, "%12s = %p\n", a1, aa1);
 	fprintf(stderr, "%12s = %p\n", a2, aa2);
 	test_die();
 }
 
-static double
-tstod(const struct timespec *ts)
+ಸ್ಥಿರ ದ್ವಿಗುಣ
+tstod(ಧ್ರುವ ಸಂರಚನಾ timespec *ts)
 {
-	return (double)ts->tv_sec + ((double)ts->tv_nsec / 1000000000.0);
+	ಪ್ರತ್ಯಾಗಮ (ದ್ವಿಗುಣ)ts->tv_sec + ((ದ್ವಿಗುಣ)ts->tv_nsec / 1000000000.0);
 }
 
-void
-hex2bin(uint8_t *bin, const char *hex, size_t len)
+ಶೂನ್ಯ
+hex2bin(uint8_t *bin, ಧ್ರುವ ವರ್ಣ *hex, size_t len)
 {
 	size_t i;
-	unsigned int v;
+	unsigned ಪೂರ್ಣಾಙ್ಕ v;
 
 	/* Don't use %hhx since it's C99 and older platforms don't have it. */
-	for (i = 0; i < len; i++) {
+	ಪ್ರತಿ (i = 0; i < len; i++) {
 		ASSERT_INT_EQ(sscanf(hex + i * 2, "%02x", &v), 1);
 		ASSERT_U_INT_LE(v, 256);
 		bin[i] = (uint8_t)v;
 	}
 }
 
-void
-bench_start(const char *file, int line, const char *name)
+ಶೂನ್ಯ
+bench_start(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *name)
 {
-	char *cp;
+	ವರ್ಣ *cp;
 
-	if (bench_name != NULL) {
+	ಯದಿ (bench_name != ರಿಕ್ತ) {
 		fprintf(stderr, "\n%s:%d internal error: BENCH_START() called "
 		    "while previous benchmark \"%s\" incomplete",
-		    file, line, bench_name);
+		    file, ಸಾಲು, bench_name);
 		abort();
 	}
 	cp = xstrdup(name);
 	lowercase(cp);
-	bench_skip = benchmark_pattern != NULL &&
+	bench_skip = benchmark_pattern != ರಿಕ್ತ &&
 	    match_pattern_list(cp, benchmark_pattern, 1) != 1;
-	free(cp);
+	ಮುಕ್ತ(cp);
 
 	bench_name = name;
 	bench_nruns = 0;
-	if (bench_skip)
-		return;
-	free(bench_samples);
+	ಯದಿ (bench_skip)
+		ಪ್ರತ್ಯಾಗಮ;
+	ಮುಕ್ತ(bench_samples);
 	bench_nalloc = BENCH_SAMPLES_ALLOC;
-	bench_samples = xcalloc(sizeof(*bench_samples), bench_nalloc);
+	bench_samples = xcalloc(ಪರಿಮಾಣ(*bench_samples), bench_nalloc);
 	bench_accum_secs = 0;
 }
 
-int
-bench_done(void)
+ಪೂರ್ಣಾಙ್ಕ
+bench_done(ಶೂನ್ಯ)
 {
-	return bench_skip || bench_accum_secs >= (fast ? BENCH_FAST_DEADLINE :
+	ಪ್ರತ್ಯಾಗಮ bench_skip || bench_accum_secs >= (fast ? BENCH_FAST_DEADLINE :
 	    (slow ? BENCH_SLOW_DEADLINE : BENCH_NORMAL_DEADLINE));
 }
 
-void
-bench_case_start(const char *file, int line)
+ಶೂನ್ಯ
+bench_case_start(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು)
 {
 	clock_gettime(CLOCK_REALTIME, &bench_start_time);
 }
 
-void
-bench_case_finish(const char *file, int line)
+ಶೂನ್ಯ
+bench_case_finish(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು)
 {
-	struct timespec ts;
+	ಸಂರಚನಾ timespec ts;
 
 	clock_gettime(CLOCK_REALTIME, &bench_finish_time);
 	timespecsub(&bench_finish_time, &bench_start_time, &ts);
-	if (bench_nruns >= bench_nalloc) {
-		if (bench_nalloc >= INT_MAX / 2) {
+	ಯದಿ (bench_nruns >= bench_nalloc) {
+		ಯದಿ (bench_nalloc >= INT_MAX / 2) {
 			fprintf(stderr, "\n%s:%d benchmark %s too many samples",
 			    __FILE__, __LINE__, bench_name);
 			abort();
 		}
 		bench_samples = xrecallocarray(bench_samples, bench_nalloc,
-		    bench_nalloc * 2, sizeof(*bench_samples));
+		    bench_nalloc * 2, ಪರಿಮಾಣ(*bench_samples));
 		bench_nalloc *= 2;
 	}
 	bench_samples[bench_nruns++] = ts;
 	bench_accum_secs += tstod(&ts);
 }
 
-static int
-tscmp(const void *aa, const void *bb)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+tscmp(ಧ್ರುವ ಶೂನ್ಯ *aa, ಧ್ರುವ ಶೂನ್ಯ *bb)
 {
-	const struct timespec *a = (const struct timespec *)aa;
-	const struct timespec *b = (const struct timespec *)bb;
+	ಧ್ರುವ ಸಂರಚನಾ timespec *a = (ಧ್ರುವ ಸಂರಚನಾ timespec *)aa;
+	ಧ್ರುವ ಸಂರಚನಾ timespec *b = (ಧ್ರುವ ಸಂರಚನಾ timespec *)bb;
 
-	if (timespeccmp(a, b, ==))
-		return 0;
-	return timespeccmp(a, b, <) ? -1 : 1;
+	ಯದಿ (timespeccmp(a, b, ==))
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಪ್ರತ್ಯಾಗಮ timespeccmp(a, b, <) ? -1 : 1;
 }
 
-void
-bench_finish(const char *file, int line, const char *unit)
+ಶೂನ್ಯ
+bench_finish(ಧ್ರುವ ವರ್ಣ *file, ಪೂರ್ಣಾಙ್ಕ ಸಾಲು, ಧ್ರುವ ವರ್ಣ *unit)
 {
-	double std_dev = 0, mean_spr, mean_rps, med_spr, med_rps;
-	int i;
+	ದ್ವಿಗುಣ std_dev = 0, mean_spr, mean_rps, med_spr, med_rps;
+	ಪೂರ್ಣಾಙ್ಕ i;
 
-	if (bench_skip)
-		goto done;
+	ಯದಿ (bench_skip)
+		ಗಚ್ಛ done;
 
-	if (bench_nruns < 1) {
-		fprintf(stderr, "\n%s:%d benchmark %s never ran", file, line,
+	ಯದಿ (bench_nruns < 1) {
+		fprintf(stderr, "\n%s:%d benchmark %s never ran", file, ಸಾಲು,
 		    bench_name);
 		abort();
 	}
 	/* median */
-	qsort(bench_samples, bench_nruns, sizeof(*bench_samples), tscmp);
+	qsort(bench_samples, bench_nruns, ಪರಿಮಾಣ(*bench_samples), tscmp);
 	i = bench_nruns / 2;
 	med_spr = tstod(&bench_samples[i]);
-	if (bench_nruns > 1 && bench_nruns & 1)
+	ಯದಿ (bench_nruns > 1 && bench_nruns & 1)
 		med_spr = (med_spr + tstod(&bench_samples[i - 1])) / 2.0;
 	med_rps = (med_spr == 0.0) ? INFINITY : 1.0/med_spr;
 	/* mean */
-	mean_spr = bench_accum_secs / (double)bench_nruns;
+	mean_spr = bench_accum_secs / (ದ್ವಿಗುಣ)bench_nruns;
 	mean_rps = (mean_spr == 0.0) ? INFINITY : 1.0/mean_spr;
 	/* std. dev */
 	std_dev = 0;
-	for (i = 0; i < bench_nruns; i++) {
+	ಪ್ರತಿ (i = 0; i < bench_nruns; i++) {
 		std_dev = tstod(&bench_samples[i]) - mean_spr;
 		std_dev *= std_dev;
 	}
-	std_dev /= (double)bench_nruns;
+	std_dev /= (ದ್ವಿಗುಣ)bench_nruns;
 	std_dev = sqrt(std_dev);
-	if (benchmark_detail_statistics) {
+	ಯದಿ (benchmark_detail_statistics) {
 		printf("%s: %d runs in %0.3fs, %0.03f/%0.03f ms/%s "
 		    "(mean/median), std.dev %0.03f ms, "
 		    "%0.2f/%0.2f %s/s (mean/median)\n",
 		    bench_name, bench_nruns, bench_accum_secs,
 		    mean_spr * 1000, med_spr * 1000, unit, std_dev * 1000,
 		    mean_rps, med_rps, unit);
-	} else {
+	} ಅನ್ಯಥಾ {
 		printf("%-*s %0.2f %s/s\n", BENCH_COLUMN_WIDTH,
 		    bench_name, med_rps, unit);
 	}
  done:
-	bench_name = NULL;
+	bench_name = ರಿಕ್ತ;
 	bench_nruns = 0;
-	free(bench_samples);
-	bench_samples = NULL;
+	ಮುಕ್ತ(bench_samples);
+	bench_samples = ರಿಕ್ತ;
 	bench_skip = 0;
 }

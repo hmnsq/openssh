@@ -18,19 +18,19 @@
 #ifndef API_H
 #define API_H
 
-#include <sys/queue.h>
-#include <sys/types.h>
-#include <signal.h>
+#ಅನ್ತರ್ಭಾವ <sys/queue.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
 
-#include "cipher.h"
-#include "sshkey.h"
-#include "kex.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "packet.h"
+#ಅನ್ತರ್ಭಾವ "cipher.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "kex.h"
+#ಅನ್ತರ್ಭಾವ "ssh.h"
+#ಅನ್ತರ್ಭಾವ "ssh2.h"
+#ಅನ್ತರ್ಭಾವ "packet.h"
 
-struct kex_params {
-	char *proposal[PROPOSAL_MAX];
+ಸಂರಚನಾ kex_params {
+	ವರ್ಣ *proposal[PROPOSAL_MAX];
 };
 
 /* public SSH API functions */
@@ -39,18 +39,18 @@ struct kex_params {
  * ssh_init() create a ssh connection object with given (optional)
  * key exchange parameters.
  */
-int	ssh_init(struct ssh **, int is_server, struct kex_params *kex_params);
+ಪೂರ್ಣಾಙ್ಕ	ssh_init(ಸಂರಚನಾ ssh **, ಪೂರ್ಣಾಙ್ಕ is_server, ಸಂರಚನಾ kex_params *kex_params);
 
 /*
  * release ssh connection state.
  */
-void	ssh_free(struct ssh *);
+ಶೂನ್ಯ	ssh_free(ಸಂರಚನಾ ssh *);
 
 /*
  * attach application specific data to the connection state
  */
-void	ssh_set_app_data(struct ssh *, void *);
-void	*ssh_get_app_data(struct ssh *);
+ಶೂನ್ಯ	ssh_set_app_data(ಸಂರಚನಾ ssh *, ಶೂನ್ಯ *);
+ಶೂನ್ಯ	*ssh_get_app_data(ಸಂರಚನಾ ssh *);
 
 /*
  * ssh_add_hostkey() registers a private/public hostkey for an ssh
@@ -60,7 +60,7 @@ void	*ssh_get_app_data(struct ssh *);
  * private hostkeys are required if we need to act as a server.
  * public hostkeys are used to verify the servers hostkey.
  */
-int	ssh_add_hostkey(struct ssh *ssh, struct sshkey *key);
+ಪೂರ್ಣಾಙ್ಕ	ssh_add_hostkey(ಸಂರಚನಾ ssh *ssh, ಸಂರಚನಾ sshkey *ಕೀಲಿ);
 
 /*
  * ssh_set_verify_host_key_callback() registers a callback function
@@ -68,8 +68,8 @@ int	ssh_add_hostkey(struct ssh *ssh, struct sshkey *key);
  * function given must return 0 if the hostkey is ok, -1 if the
  * verification has failed.
  */
-int	ssh_set_verify_host_key_callback(struct ssh *ssh,
-    int (*cb)(struct sshkey *, struct ssh *));
+ಪೂರ್ಣಾಙ್ಕ	ssh_set_verify_host_ಕೀಲಿ_callback(ಸಂರಚನಾ ssh *ssh,
+    ಪೂರ್ಣಾಙ್ಕ (*cb)(ಸಂರಚನಾ sshkey *, ಸಂರಚನಾ ssh *));
 
 /*
  * ssh_packet_next() advances to the next input packet and returns
@@ -85,39 +85,39 @@ int	ssh_set_verify_host_key_callback(struct ssh *ssh,
  * would not proceed. the output byte-stream is accessed through
  * ssh_output_ptr().
  */
-int	ssh_packet_next(struct ssh *ssh, u_char *typep);
+ಪೂರ್ಣಾಙ್ಕ	ssh_packet_next(ಸಂರಚನಾ ssh *ssh, u_char *typep);
 
 /*
  * ssh_packet_payload() returns a pointer to the raw payload data of
  * the current input packet and the length of this payload.
  * the payload is accessible until ssh_packet_next() is called again.
  */
-const u_char	*ssh_packet_payload(struct ssh *ssh, size_t *lenp);
+ಧ್ರುವ u_char	*ssh_packet_payload(ಸಂರಚನಾ ssh *ssh, size_t *lenp);
 
 /*
  * ssh_packet_put() creates an encrypted packet with the given type
  * and payload.
  * the encrypted packet is appended to the output byte-stream.
  */
-int	ssh_packet_put(struct ssh *ssh, int type, const u_char *data,
+ಪೂರ್ಣಾಙ್ಕ	ssh_packet_put(ಸಂರಚನಾ ssh *ssh, ಪೂರ್ಣಾಙ್ಕ type, ಧ್ರುವ u_char *data,
     size_t len);
 
 /*
  * ssh_input_space() checks if 'len' bytes can be appended to the
  * input byte-stream.
  */
-int	ssh_input_space(struct ssh *ssh, size_t len);
+ಪೂರ್ಣಾಙ್ಕ	ssh_ಒಳಹರಿವು_space(ಸಂರಚನಾ ssh *ssh, size_t len);
 
 /*
  * ssh_input_append() appends data to the input byte-stream.
  */
-int	ssh_input_append(struct ssh *ssh, const u_char *data, size_t len);
+ಪೂರ್ಣಾಙ್ಕ	ssh_ಒಳಹರಿವು_append(ಸಂರಚನಾ ssh *ssh, ಧ್ರುವ u_char *data, size_t len);
 
 /*
  * ssh_output_space() checks if 'len' bytes can be appended to the
  * output byte-stream. XXX
  */
-int	ssh_output_space(struct ssh *ssh, size_t len);
+ಪೂರ್ಣಾಙ್ಕ	ssh_output_space(ಸಂರಚನಾ ssh *ssh, size_t len);
 
 /*
  * ssh_output_ptr() retrieves both a pointer and the length of the
@@ -125,12 +125,12 @@ int	ssh_output_space(struct ssh *ssh, size_t len);
  * network. the number of bytes that have been successfully sent can
  * be removed from the output byte-stream with ssh_output_consume().
  */
-const u_char	*ssh_output_ptr(struct ssh *ssh, size_t *len);
+ಧ್ರುವ u_char	*ssh_output_ptr(ಸಂರಚನಾ ssh *ssh, size_t *len);
 
 /*
  * ssh_output_consume() removes the given number of bytes from
  * the output byte-stream.
  */
-int	ssh_output_consume(struct ssh *ssh, size_t len);
+ಪೂರ್ಣಾಙ್ಕ	ssh_output_consume(ಸಂರಚನಾ ssh *ssh, size_t len);
 
 #endif

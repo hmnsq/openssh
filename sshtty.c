@@ -35,45 +35,45 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <termios.h>
-#include <pwd.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <termios.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
 
-#include "sshpty.h"
+#ಅನ್ತರ್ಭಾವ "sshpty.h"
 
-static struct termios _saved_tio;
-static int _in_raw_mode = 0;
+ಸ್ಥಿರ ಸಂರಚನಾ termios _saved_tio;
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ _in_raw_mode = 0;
 
-struct termios *
-get_saved_tio(void)
+ಸಂರಚನಾ termios *
+get_saved_tio(ಶೂನ್ಯ)
 {
-	return _in_raw_mode ? &_saved_tio : NULL;
+	ಪ್ರತ್ಯಾಗಮ _in_raw_mode ? &_saved_tio : ರಿಕ್ತ;
 }
 
-void
-leave_raw_mode(int quiet)
+ಶೂನ್ಯ
+leave_raw_mode(ಪೂರ್ಣಾಙ್ಕ quiet)
 {
-	if (!_in_raw_mode)
-		return;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
-		if (!quiet)
+	ಯದಿ (!_in_raw_mode)
+		ಪ್ರತ್ಯಾಗಮ;
+	ಯದಿ (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
+		ಯದಿ (!quiet)
 			perror("tcsetattr");
-	} else
+	} ಅನ್ಯಥಾ
 		_in_raw_mode = 0;
 }
 
-void
-enter_raw_mode(int quiet)
+ಶೂನ್ಯ
+enter_raw_mode(ಪೂರ್ಣಾಙ್ಕ quiet)
 {
-	struct termios tio;
+	ಸಂರಚನಾ termios tio;
 
-	if (tcgetattr(fileno(stdin), &tio) == -1) {
-		if (!quiet)
+	ಯದಿ (tcgetattr(fileno(stdin), &tio) == -1) {
+		ಯದಿ (!quiet)
 			perror("tcgetattr");
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 	}
 	_saved_tio = tio;
 	tio.c_iflag |= IGNPAR;
@@ -88,9 +88,9 @@ enter_raw_mode(int quiet)
 	tio.c_oflag &= ~OPOST;
 	tio.c_cc[VMIN] = 1;
 	tio.c_cc[VTIME] = 0;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
-		if (!quiet)
+	ಯದಿ (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
+		ಯದಿ (!quiet)
 			perror("tcsetattr");
-	} else
+	} ಅನ್ಯಥಾ
 		_in_raw_mode = 1;
 }

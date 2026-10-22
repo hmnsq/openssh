@@ -17,22 +17,22 @@
 
 /* draft-miller-sshm-mldsa44-ed25519-composite-sigs-00 */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
 #ifdef USE_MLDSA
 
-#include <sys/types.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#include "crypto_api.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "digest.h"
+#ಅನ್ತರ್ಭಾವ "crypto_api.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "digest.h"
 #define SSHKEY_INTERNAL
-#include "sshkey.h"
-#include "log.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
 
 #define COMPOSITE_PREFIX "CompositeAlgorithmSignatures2025"
 #define COMPOSITE_LABEL  "COMPSIG-MLDSA44-Ed25519-SHA512"
@@ -44,40 +44,40 @@
  * we can test them separately in unittests/crypto.
  */
 
-int
+ಪೂರ್ಣಾಙ್ಕ
 crypto_sign_mldsa44_ed25519_keygen(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     uint8_t sk[MLDSA44_ED25519_SK_SZ])
 {
 	uint8_t mldsa_seed[MLDSA44_SEEDBYTES];
 	uint8_t ed25519_seed[crypto_sign_ed25519_SEEDBYTES];
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	arc4random_buf(mldsa_seed, sizeof(mldsa_seed));
-	arc4random_buf(ed25519_seed, sizeof(ed25519_seed));
+	arc4random_buf(mldsa_seed, ಪರಿಮಾಣ(mldsa_seed));
+	arc4random_buf(ed25519_seed, ಪರಿಮಾಣ(ed25519_seed));
 
 	r = crypto_sign_mldsa44_ed25519_keygen_seeded(pk, sk, mldsa_seed,
 	    ed25519_seed);
-	explicit_bzero(mldsa_seed, sizeof(mldsa_seed));
-	explicit_bzero(ed25519_seed, sizeof(ed25519_seed));
-	return r;
+	explicit_bzero(mldsa_seed, ಪರಿಮಾಣ(mldsa_seed));
+	explicit_bzero(ed25519_seed, ಪರಿಮಾಣ(ed25519_seed));
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-int
+ಪೂರ್ಣಾಙ್ಕ
 crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     uint8_t sk[MLDSA44_ED25519_SK_SZ],
-    const uint8_t mldsa_seed[MLDSA44_SEEDBYTES],
-    const uint8_t ed25519_seed[crypto_sign_ed25519_SEEDBYTES])
+    ಧ್ರುವ uint8_t mldsa_seed[MLDSA44_SEEDBYTES],
+    ಧ್ರುವ uint8_t ed25519_seed[crypto_sign_ed25519_SEEDBYTES])
 {
 	uint8_t ed25519_pk[MLDSA44_SEEDBYTES];
 	uint8_t ed25519_sk[crypto_sign_ed25519_SECRETKEYBYTES];
 	uint8_t mldsa_sk[MLDSA44_SECRETKEYBYTES];
-	int ret = -1;
+	ಪೂರ್ಣಾಙ್ಕ ret = -1;
 
-	if (crypto_sign_mldsa44_keypair_seeded(pk, mldsa_sk, mldsa_seed) != 0)
-		goto out;
-	if (crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk,
+	ಯದಿ (crypto_sign_mldsa44_keypair_seeded(pk, mldsa_sk, mldsa_seed) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ (crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk,
 	    ed25519_seed) != 0)
-		goto out;
+		ಗಚ್ಛ out;
 
 	/* Serialize PK: mldsaPK || ed25519PK */
 	memcpy(pk + MLDSA44_PUBLICKEYBYTES, ed25519_pk,
@@ -91,365 +91,365 @@ crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
 	/* success */
 	ret = 0;
  out:
-	explicit_bzero(mldsa_sk, sizeof(mldsa_sk));
-	explicit_bzero(ed25519_sk, sizeof(ed25519_sk));
-	return ret;
+	explicit_bzero(mldsa_sk, ಪರಿಮಾಣ(mldsa_sk));
+	explicit_bzero(ed25519_sk, ಪರಿಮಾಣ(ed25519_sk));
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-static int
-construct_m_prime(uint8_t **m_primep, size_t *m_prime_lenp,
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+construct_m_ಅವಿಭಾಜ್ಯ(uint8_t **m_primep, size_t *m_ಅವಿಭಾಜ್ಯ_lenp,
+    ಧ್ರುವ uint8_t *ಸಂದೇಶ, size_t msglen,
+    ಧ್ರುವ uint8_t *ctx, size_t ctxlen)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 	uint8_t hash[64];
-	struct sshbuf *m_prime;
+	ಸಂರಚನಾ sshbuf *m_ಅವಿಭಾಜ್ಯ;
 
-	*m_primep = NULL;
-	*m_prime_lenp = 0;
+	*m_primep = ರಿಕ್ತ;
+	*m_ಅವಿಭಾಜ್ಯ_lenp = 0;
 
-	if (ctxlen > 255)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = ssh_digest_memory(SSH_DIGEST_SHA512, msg, msglen,
-	    hash, sizeof(hash))) != 0)
-		return r;
-	if ((m_prime = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put(m_prime, COMPOSITE_PREFIX,
-	    sizeof(COMPOSITE_PREFIX) - 1)) != 0 ||
-	    (r = sshbuf_put(m_prime, COMPOSITE_LABEL,
-	    sizeof(COMPOSITE_LABEL) - 1)) != 0 ||
-	    (r = sshbuf_put_u8(m_prime, (uint8_t)ctxlen)) != 0 ||
-	    (r = sshbuf_put(m_prime, ctx, ctxlen)) != 0 ||
-	    (r = sshbuf_put(m_prime, hash, sizeof(hash))) != 0) {
-		sshbuf_free(m_prime);
-		return r;
+	ಯದಿ (ctxlen > 255)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
+	ಯದಿ ((r = ssh_digest_memory(SSH_DIGEST_SHA512, ಸಂದೇಶ, msglen,
+	    hash, ಪರಿಮಾಣ(hash))) != 0)
+		ಪ್ರತ್ಯಾಗಮ r;
+	ಯದಿ ((m_ಅವಿಭಾಜ್ಯ = sshbuf_new()) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((r = sshbuf_put(m_ಅವಿಭಾಜ್ಯ, COMPOSITE_PREFIX,
+	    ಪರಿಮಾಣ(COMPOSITE_PREFIX) - 1)) != 0 ||
+	    (r = sshbuf_put(m_ಅವಿಭಾಜ್ಯ, COMPOSITE_LABEL,
+	    ಪರಿಮಾಣ(COMPOSITE_LABEL) - 1)) != 0 ||
+	    (r = sshbuf_put_u8(m_ಅವಿಭಾಜ್ಯ, (uint8_t)ctxlen)) != 0 ||
+	    (r = sshbuf_put(m_ಅವಿಭಾಜ್ಯ, ctx, ctxlen)) != 0 ||
+	    (r = sshbuf_put(m_ಅವಿಭಾಜ್ಯ, hash, ಪರಿಮಾಣ(hash))) != 0) {
+		sshbuf_free(m_ಅವಿಭಾಜ್ಯ);
+		ಪ್ರತ್ಯಾಗಮ r;
 	}
-	if ((*m_primep = malloc(sshbuf_len(m_prime))) == NULL) {
-		sshbuf_free(m_prime);
-		return SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((*m_primep = malloc(sshbuf_len(m_ಅವಿಭಾಜ್ಯ))) == ರಿಕ್ತ) {
+		sshbuf_free(m_ಅವಿಭಾಜ್ಯ);
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
 	}
-	memcpy(*m_primep, sshbuf_ptr(m_prime), sshbuf_len(m_prime));
-	*m_prime_lenp = sshbuf_len(m_prime);
+	memcpy(*m_primep, sshbuf_ptr(m_ಅವಿಭಾಜ್ಯ), sshbuf_len(m_ಅವಿಭಾಜ್ಯ));
+	*m_ಅವಿಭಾಜ್ಯ_lenp = sshbuf_len(m_ಅವಿಭಾಜ್ಯ);
 	/* success */
-	sshbuf_free(m_prime);
-	return 0;
+	sshbuf_free(m_ಅವಿಭಾಜ್ಯ);
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
+ಪೂರ್ಣಾಙ್ಕ
 crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA44_ED25519_SK_SZ])
+    ಧ್ರುವ uint8_t *ಸಂದೇಶ, size_t msglen,
+    ಧ್ರುವ uint8_t *ctx, size_t ctxlen,
+    ಧ್ರುವ uint8_t sk[MLDSA44_ED25519_SK_SZ])
 {
-	uint8_t *m_prime = NULL;
-	size_t m_prime_len = 0;
+	uint8_t *m_ಅವಿಭಾಜ್ಯ = ರಿಕ್ತ;
+	size_t m_ಅವಿಭಾಜ್ಯ_len = 0;
 	uint8_t mldsa_sk[MLDSA44_SECRETKEYBYTES];
 	uint8_t mldsa_pk_dummy[MLDSA44_PUBLICKEYBYTES];
 	uint8_t ed25519_pk[crypto_sign_ed25519_PUBLICKEYBYTES];
 	uint8_t ed25519_sk[crypto_sign_ed25519_SECRETKEYBYTES];
 	uint8_t mldsa_rnd[MLDSA44_SEEDBYTES];
 	unsigned long long smlen;
-	int r = -1;
+	ಪೂರ್ಣಾಙ್ಕ r = -1;
 
-	if (construct_m_prime(&m_prime, &m_prime_len, msg, msglen,
+	ಯದಿ (construct_m_ಅವಿಭಾಜ್ಯ(&m_ಅವಿಭಾಜ್ಯ, &m_ಅವಿಭಾಜ್ಯ_len, ಸಂದೇಶ, msglen,
 	    ctx, ctxlen) != 0)
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 
 	/* Expand ML-DSA key from seed */
-	if (crypto_sign_mldsa44_keypair_seeded(mldsa_pk_dummy, mldsa_sk, sk) != 0)
-		goto out;
+	ಯದಿ (crypto_sign_mldsa44_keypair_seeded(mldsa_pk_dummy, mldsa_sk, sk) != 0)
+		ಗಚ್ಛ out;
 
 	/* Sign with ML-DSA */
-	arc4random_buf(mldsa_rnd, sizeof(mldsa_rnd));
-	if (crypto_sign_mldsa44_seeded(sig, m_prime, m_prime_len,
-	    (const uint8_t *)COMPOSITE_LABEL, sizeof(COMPOSITE_LABEL) - 1,
+	arc4random_buf(mldsa_rnd, ಪರಿಮಾಣ(mldsa_rnd));
+	ಯದಿ (crypto_sign_mldsa44_seeded(sig, m_ಅವಿಭಾಜ್ಯ, m_ಅವಿಭಾಜ್ಯ_len,
+	    (ಧ್ರುವ uint8_t *)COMPOSITE_LABEL, ಪರಿಮಾಣ(COMPOSITE_LABEL) - 1,
 	    mldsa_sk, mldsa_rnd) != 0)
-		goto out;
+		ಗಚ್ಛ out;
 
 	/* Expand Ed25519 key from seed */
-	if (crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk,
+	ಯದಿ (crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk,
 	    sk + MLDSA44_SEEDBYTES) != 0)
-		goto out;
+		ಗಚ್ಛ out;
 
 	/* Sign with Ed25519 */
-	if (crypto_sign_ed25519_detached(sig + MLDSA44_SIGBYTES, &smlen,
-	    m_prime, m_prime_len, ed25519_sk) != 0 ||
+	ಯದಿ (crypto_sign_ed25519_detached(sig + MLDSA44_SIGBYTES, &smlen,
+	    m_ಅವಿಭಾಜ್ಯ, m_ಅವಿಭಾಜ್ಯ_len, ed25519_sk) != 0 ||
 	    smlen != crypto_sign_ed25519_BYTES)
-		goto out;
+		ಗಚ್ಛ out;
 
 	r = 0;
  out:
-	free(m_prime);
-	explicit_bzero(mldsa_rnd, sizeof(mldsa_rnd));
-	explicit_bzero(mldsa_sk, sizeof(mldsa_sk));
-	explicit_bzero(ed25519_sk, sizeof(ed25519_sk));
-	return r;
+	ಮುಕ್ತ(m_ಅವಿಭಾಜ್ಯ);
+	explicit_bzero(mldsa_rnd, ಪರಿಮಾಣ(mldsa_rnd));
+	explicit_bzero(mldsa_sk, ಪರಿಮಾಣ(mldsa_sk));
+	explicit_bzero(ed25519_sk, ಪರಿಮಾಣ(ed25519_sk));
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-int
-crypto_sign_mldsa44_ed25519_verify(const uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA44_ED25519_PK_SZ])
+ಪೂರ್ಣಾಙ್ಕ
+crypto_sign_mldsa44_ed25519_verify(ಧ್ರುವ uint8_t sig[MLDSA44_ED25519_SIG_SZ],
+    ಧ್ರುವ uint8_t *ಸಂದೇಶ, size_t msglen,
+    ಧ್ರುವ uint8_t *ctx, size_t ctxlen,
+    ಧ್ರುವ uint8_t pk[MLDSA44_ED25519_PK_SZ])
 {
-	uint8_t *m_prime = NULL;
-	size_t m_prime_len = 0;
-	int r = -1;
+	uint8_t *m_ಅವಿಭಾಜ್ಯ = ರಿಕ್ತ;
+	size_t m_ಅವಿಭಾಜ್ಯ_len = 0;
+	ಪೂರ್ಣಾಙ್ಕ r = -1;
 
-	if (construct_m_prime(&m_prime, &m_prime_len, msg, msglen,
+	ಯದಿ (construct_m_ಅವಿಭಾಜ್ಯ(&m_ಅವಿಭಾಜ್ಯ, &m_ಅವಿಭಾಜ್ಯ_len, ಸಂದೇಶ, msglen,
 	    ctx, ctxlen) != 0)
-		return -1;
+		ಪ್ರತ್ಯಾಗಮ -1;
 
 	/* Verify ML-DSA */
-	if (crypto_sign_mldsa44_verify(sig, m_prime, m_prime_len,
-	    (const uint8_t *)COMPOSITE_LABEL, sizeof(COMPOSITE_LABEL) - 1,
+	ಯದಿ (crypto_sign_mldsa44_verify(sig, m_ಅವಿಭಾಜ್ಯ, m_ಅವಿಭಾಜ್ಯ_len,
+	    (ಧ್ರುವ uint8_t *)COMPOSITE_LABEL, ಪರಿಮಾಣ(COMPOSITE_LABEL) - 1,
 	    pk) != 0)
-		goto out;
+		ಗಚ್ಛ out;
 
 	/* Verify Ed25519 */
-	if (crypto_sign_ed25519_verify_detached(sig + MLDSA44_SIGBYTES,
-	    m_prime, m_prime_len, pk + MLDSA44_PUBLICKEYBYTES) != 0)
-		goto out;
+	ಯದಿ (crypto_sign_ed25519_verify_detached(sig + MLDSA44_SIGBYTES,
+	    m_ಅವಿಭಾಜ್ಯ, m_ಅವಿಭಾಜ್ಯ_len, pk + MLDSA44_PUBLICKEYBYTES) != 0)
+		ಗಚ್ಛ out;
 
 	r = 0;
  out:
-	free(m_prime);
-	return r;
+	ಮುಕ್ತ(m_ಅವಿಭಾಜ್ಯ);
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
 /* sshkey integration */
 
-static void
-ssh_mldsa44_ed25519_cleanup(struct sshkey *k)
+ಸ್ಥಿರ ಶೂನ್ಯ
+ssh_mldsa44_ed25519_cleanup(ಸಂರಚನಾ sshkey *k)
 {
 	freezero(k->mldsa_ed25519_pk, MLDSA44_ED25519_PK_SZ);
 	freezero(k->mldsa_ed25519_sk, MLDSA44_ED25519_SK_SZ);
-	k->mldsa_ed25519_pk = NULL;
-	k->mldsa_ed25519_sk = NULL;
+	k->mldsa_ed25519_pk = ರಿಕ್ತ;
+	k->mldsa_ed25519_sk = ರಿಕ್ತ;
 }
 
-static int
-ssh_mldsa44_ed25519_equal(const struct sshkey *a, const struct sshkey *b)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+ssh_mldsa44_ed25519_equal(ಧ್ರುವ ಸಂರಚನಾ sshkey *a, ಧ್ರುವ ಸಂರಚನಾ sshkey *b)
 {
-	if (a->mldsa_ed25519_pk == NULL || b->mldsa_ed25519_pk == NULL)
-		return 0;
-	if (memcmp(a->mldsa_ed25519_pk, b->mldsa_ed25519_pk,
+	ಯದಿ (a->mldsa_ed25519_pk == ರಿಕ್ತ || b->mldsa_ed25519_pk == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಯದಿ (memcmp(a->mldsa_ed25519_pk, b->mldsa_ed25519_pk,
 	    MLDSA44_ED25519_PK_SZ) != 0)
-		return 0;
-	return 1;
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಪ್ರತ್ಯಾಗಮ 1;
 }
 
-static int
-ssh_mldsa44_ed25519_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+ssh_mldsa44_ed25519_serialize_public(ಧ್ರುವ ಸಂರಚನಾ sshkey *ಕೀಲಿ, ಸಂರಚನಾ sshbuf *b,
+    ಗಣನಾ sshkey_serialize_rep opts)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if (key->mldsa_ed25519_pk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_string(b, key->mldsa_ed25519_pk,
+	ಯದಿ (ಕೀಲಿ->mldsa_ed25519_pk == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
+	ಯದಿ ((r = sshbuf_put_string(b, ಕೀಲಿ->mldsa_ed25519_pk,
 	    MLDSA44_ED25519_PK_SZ)) != 0)
-		return r;
+		ಪ್ರತ್ಯಾಗಮ r;
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int
-ssh_mldsa44_ed25519_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+ssh_mldsa44_ed25519_serialize_private(ಧ್ರುವ ಸಂರಚನಾ sshkey *ಕೀಲಿ, ಸಂರಚನಾ sshbuf *b,
+    ಗಣನಾ sshkey_serialize_rep opts)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if (key->mldsa_ed25519_sk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_mldsa44_ed25519_serialize_public(key,
+	ಯದಿ (ಕೀಲಿ->mldsa_ed25519_sk == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
+	ಯದಿ (!sshkey_is_cert(ಕೀಲಿ)) {
+		ಯದಿ ((r = ssh_mldsa44_ed25519_serialize_public(ಕೀಲಿ,
 		    b, opts)) != 0)
-			return r;
+			ಪ್ರತ್ಯಾಗಮ r;
 	}
-	if ((r = sshbuf_put_string(b, key->mldsa_ed25519_sk,
+	ಯದಿ ((r = sshbuf_put_string(b, ಕೀಲಿ->mldsa_ed25519_sk,
 	    MLDSA44_ED25519_SK_SZ)) != 0)
-		return r;
+		ಪ್ರತ್ಯಾಗಮ r;
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int
-ssh_mldsa44_ed25519_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+ssh_mldsa44_ed25519_deserialize_public(ಧ್ರುವ ವರ್ಣ *ktype, ಸಂರಚನಾ sshbuf *b,
+    ಸಂರಚನಾ sshkey *ಕೀಲಿ)
 {
-	u_char *pk = NULL;
+	u_char *pk = ರಿಕ್ತ;
 	size_t len = 0;
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if ((r = sshbuf_get_string(b, &pk, &len)) != 0)
-		return r;
-	if (len != MLDSA44_ED25519_PK_SZ) {
+	ಯದಿ ((r = sshbuf_get_string(b, &pk, &len)) != 0)
+		ಪ್ರತ್ಯಾಗಮ r;
+	ಯದಿ (len != MLDSA44_ED25519_PK_SZ) {
 		freezero(pk, len);
-		return SSH_ERR_INVALID_FORMAT;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_FORMAT;
 	}
-	key->mldsa_ed25519_pk = pk;
-	return 0;
+	ಕೀಲಿ->mldsa_ed25519_pk = pk;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int
-ssh_mldsa44_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+ssh_mldsa44_ed25519_deserialize_private(ಧ್ರುವ ವರ್ಣ *ktype, ಸಂರಚನಾ sshbuf *b,
+    ಸಂರಚನಾ sshkey *ಕೀಲಿ)
 {
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 	size_t sklen = 0;
-	u_char *sk = NULL;
+	u_char *sk = ರಿಕ್ತ;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_mldsa44_ed25519_deserialize_public(ktype,
-		    b, key)) != 0)
-			return r;
+	ಯದಿ (!sshkey_is_cert(ಕೀಲಿ)) {
+		ಯದಿ ((r = ssh_mldsa44_ed25519_deserialize_public(ktype,
+		    b, ಕೀಲಿ)) != 0)
+			ಪ್ರತ್ಯಾಗಮ r;
 	}
-	if ((r = sshbuf_get_string(b, &sk, &sklen)) != 0)
-		goto out;
-	if (sklen != MLDSA44_ED25519_SK_SZ) {
+	ಯದಿ ((r = sshbuf_get_string(b, &sk, &sklen)) != 0)
+		ಗಚ್ಛ out;
+	ಯದಿ (sklen != MLDSA44_ED25519_SK_SZ) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	key->mldsa_ed25519_sk = sk;
-	sk = NULL; /* transferred */
+	ಕೀಲಿ->mldsa_ed25519_sk = sk;
+	sk = ರಿಕ್ತ; /* transferred */
 	r = 0;
  out:
 	freezero(sk, sklen);
-	return r;
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-static int
-ssh_mldsa44_ed25519_generate(struct sshkey *k, int bits)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+ssh_mldsa44_ed25519_generate(ಸಂರಚನಾ sshkey *k, ಪೂರ್ಣಾಙ್ಕ bits)
 {
 	ssh_mldsa44_ed25519_cleanup(k);
-	if ((k->mldsa_ed25519_pk = malloc(MLDSA44_ED25519_PK_SZ)) == NULL ||
-	    (k->mldsa_ed25519_sk = malloc(MLDSA44_ED25519_SK_SZ)) == NULL) {
+	ಯದಿ ((k->mldsa_ed25519_pk = malloc(MLDSA44_ED25519_PK_SZ)) == ರಿಕ್ತ ||
+	    (k->mldsa_ed25519_sk = malloc(MLDSA44_ED25519_SK_SZ)) == ರಿಕ್ತ) {
 		ssh_mldsa44_ed25519_cleanup(k);
-		return SSH_ERR_ALLOC_FAIL;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
 	}
-	if (crypto_sign_mldsa44_ed25519_keygen(k->mldsa_ed25519_pk,
+	ಯದಿ (crypto_sign_mldsa44_ed25519_keygen(k->mldsa_ed25519_pk,
 	    k->mldsa_ed25519_sk) != 0) {
 		ssh_mldsa44_ed25519_cleanup(k);
-		return SSH_ERR_CRYPTO_ERROR;
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_CRYPTO_ERROR;
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int
-ssh_mldsa44_ed25519_copy_public(const struct sshkey *from, struct sshkey *to)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+ssh_mldsa44_ed25519_copy_public(ಧ್ರುವ ಸಂರಚನಾ sshkey *from, ಸಂರಚನಾ sshkey *to)
 {
-	if (from->mldsa_ed25519_pk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((to->mldsa_ed25519_pk = malloc(MLDSA44_ED25519_PK_SZ)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ಯದಿ (from->mldsa_ed25519_pk == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
+	ಯದಿ ((to->mldsa_ed25519_pk = malloc(MLDSA44_ED25519_PK_SZ)) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
 	memcpy(to->mldsa_ed25519_pk, from->mldsa_ed25519_pk,
 	    MLDSA44_ED25519_PK_SZ);
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int
-ssh_mldsa44_ed25519_sign(struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider, const char *sk_pin,
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+ssh_mldsa44_ed25519_sign(ಸಂರಚನಾ sshkey *ಕೀಲಿ,
+    u_char **sigp, size_t *lenp, ಧ್ರುವ u_char *data, size_t datalen,
+    ಧ್ರುವ ವರ್ಣ *alg, ಧ್ರುವ ವರ್ಣ *sk_provider, ಧ್ರುವ ವರ್ಣ *sk_pin,
     u_int compat)
 {
 	u_char sig[MLDSA44_ED25519_SIG_SZ];
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ಸಂರಚನಾ sshbuf *b = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ r = SSH_ERR_INTERNAL_ERROR;
 
-	if (lenp != NULL)
+	ಯದಿ (lenp != ರಿಕ್ತ)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	ಯದಿ (sigp != ರಿಕ್ತ)
+		*sigp = ರಿಕ್ತ;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_MLDSA44_ED25519 ||
-	    key->mldsa_ed25519_sk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ಯದಿ (ಕೀಲಿ == ರಿಕ್ತ ||
+	    sshkey_type_plain(ಕೀಲಿ->type) != ಕೀಲಿ_MLDSA44_ED25519 ||
+	    ಕೀಲಿ->mldsa_ed25519_sk == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
 
-	if (crypto_sign_mldsa44_ed25519_sign(sig, data, datalen, NULL, 0,
-	    key->mldsa_ed25519_sk) != 0) {
+	ಯದಿ (crypto_sign_mldsa44_ed25519_sign(sig, data, datalen, ರಿಕ್ತ, 0,
+	    ಕೀಲಿ->mldsa_ed25519_sk) != 0) {
 		r = SSH_ERR_CRYPTO_ERROR;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
-	if ((b = sshbuf_new()) == NULL) {
+	ಯದಿ ((b = sshbuf_new()) == ರಿಕ್ತ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if ((r = sshbuf_put_cstring(b, SSH_MLDSA44_ED25519_ALG_NAME)) != 0 ||
-	    (r = sshbuf_put_string(b, sig, sizeof(sig))) != 0)
-		goto out;
+	ಯದಿ ((r = sshbuf_put_cstring(b, SSH_MLDSA44_ED25519_ALG_NAME)) != 0 ||
+	    (r = sshbuf_put_string(b, sig, ಪರಿಮಾಣ(sig))) != 0)
+		ಗಚ್ಛ out;
 
-	if (sigp != NULL) {
-		if ((*sigp = malloc(sshbuf_len(b))) == NULL) {
+	ಯದಿ (sigp != ರಿಕ್ತ) {
+		ಯದಿ ((*sigp = malloc(sshbuf_len(b))) == ರಿಕ್ತ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			ಗಚ್ಛ out;
 		}
 		memcpy(*sigp, sshbuf_ptr(b), sshbuf_len(b));
 	}
-	if (lenp != NULL)
+	ಯದಿ (lenp != ರಿಕ್ತ)
 		*lenp = sshbuf_len(b);
 	r = 0;
  out:
 	sshbuf_free(b);
-	explicit_bzero(sig, sizeof(sig));
-	return r;
+	explicit_bzero(sig, ಪರಿಮಾಣ(sig));
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-static int
-ssh_mldsa44_ed25519_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen, const u_char *data, size_t dlen,
-    const char *alg, u_int compat, struct sshkey_sig_details **detailsp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+ssh_mldsa44_ed25519_verify(ಧ್ರುವ ಸಂರಚನಾ sshkey *ಕೀಲಿ,
+    ಧ್ರುವ u_char *sig, size_t siglen, ಧ್ರುವ u_char *data, size_t dlen,
+    ಧ್ರುವ ವರ್ಣ *alg, u_int compat, ಸಂರಚನಾ sshkey_sig_details **detailsp)
 {
-	struct sshbuf *b = NULL;
-	char *ktype = NULL;
-	const u_char *sigblob;
+	ಸಂರಚನಾ sshbuf *b = ರಿಕ್ತ;
+	ವರ್ಣ *ktype = ರಿಕ್ತ;
+	ಧ್ರುವ u_char *sigblob;
 	size_t len;
-	int r;
+	ಪೂರ್ಣಾಙ್ಕ r;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_MLDSA44_ED25519 ||
-	    key->mldsa_ed25519_pk == NULL ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ಯದಿ (ಕೀಲಿ == ರಿಕ್ತ ||
+	    sshkey_type_plain(ಕೀಲಿ->type) != ಕೀಲಿ_MLDSA44_ED25519 ||
+	    ಕೀಲಿ->mldsa_ed25519_pk == ರಿಕ್ತ ||
+	    sig == ರಿಕ್ತ || siglen == 0)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_INVALID_ARGUMENT;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_get_cstring(b, &ktype, NULL)) != 0 ||
+	ಯದಿ ((b = sshbuf_from(sig, siglen)) == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ SSH_ERR_ALLOC_FAIL;
+	ಯದಿ ((r = sshbuf_get_cstring(b, &ktype, ರಿಕ್ತ)) != 0 ||
 	    (r = sshbuf_get_string_direct(b, &sigblob, &len)) != 0)
-		goto out;
-	if (strcmp(SSH_MLDSA44_ED25519_ALG_NAME, ktype) != 0) {
-		r = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+		ಗಚ್ಛ out;
+	ಯದಿ (strcmp(SSH_MLDSA44_ED25519_ALG_NAME, ktype) != 0) {
+		r = SSH_ERR_ಕೀಲಿ_TYPE_MISMATCH;
+		ಗಚ್ಛ out;
 	}
-	if (sshbuf_len(b) != 0) {
+	ಯದಿ (sshbuf_len(b) != 0) {
 		r = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+		ಗಚ್ಛ out;
 	}
-	if (len != MLDSA44_ED25519_SIG_SZ) {
+	ಯದಿ (len != MLDSA44_ED25519_SIG_SZ) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
-	if (crypto_sign_mldsa44_ed25519_verify(sigblob, data, dlen, NULL, 0,
-	    key->mldsa_ed25519_pk) != 0) {
+	ಯದಿ (crypto_sign_mldsa44_ed25519_verify(sigblob, data, dlen, ರಿಕ್ತ, 0,
+	    ಕೀಲಿ->mldsa_ed25519_pk) != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
 	r = 0;
  out:
 	sshbuf_free(b);
-	free(ktype);
-	return r;
+	ಮುಕ್ತ(ktype);
+	ಪ್ರತ್ಯಾಗಮ r;
 }
 
-const struct sshkey_impl_funcs sshkey_mldsa44_ed25519_funcs = {
-	/* .size = */		NULL,
-	/* .alloc = */		NULL,
+ಧ್ರುವ ಸಂರಚನಾ sshkey_impl_funcs sshkey_mldsa44_ed25519_funcs = {
+	/* .size = */		ರಿಕ್ತ,
+	/* .alloc = */		ರಿಕ್ತ,
 	/* .cleanup = */	ssh_mldsa44_ed25519_cleanup,
 	/* .equal = */		ssh_mldsa44_ed25519_equal,
 	/* .ssh_serialize_public = */ ssh_mldsa44_ed25519_serialize_public,
@@ -462,11 +462,11 @@ const struct sshkey_impl_funcs sshkey_mldsa44_ed25519_funcs = {
 	/* .verify = */		ssh_mldsa44_ed25519_verify,
 };
 
-const struct sshkey_impl sshkey_mldsa44_ed25519_impl = {
+ಧ್ರುವ ಸಂರಚನಾ sshkey_impl sshkey_mldsa44_ed25519_impl = {
 	/* .name = */		"ssh-mldsa44-ed25519",
 	/* .shortname = */	"MLDSA44-ED25519",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_MLDSA44_ED25519,
+	/* .sigalg = */		ರಿಕ್ತ,
+	/* .type = */		ಕೀಲಿ_MLDSA44_ED25519,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -474,11 +474,11 @@ const struct sshkey_impl sshkey_mldsa44_ed25519_impl = {
 	/* .funcs = */		&sshkey_mldsa44_ed25519_funcs,
 };
 
-const struct sshkey_impl sshkey_mldsa44_ed25519_cert_impl = {
+ಧ್ರುವ ಸಂರಚನಾ sshkey_impl sshkey_mldsa44_ed25519_cert_impl = {
 	/* .name = */		"ssh-mldsa44-ed25519-cert",
 	/* .shortname = */	"MLDSA44-ED25519-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_MLDSA44_ED25519_CERT,
+	/* .sigalg = */		ರಿಕ್ತ,
+	/* .type = */		ಕೀಲಿ_MLDSA44_ED25519_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	0,

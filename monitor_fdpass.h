@@ -28,7 +28,7 @@
 #ifndef _MM_FDPASS_H_
 #define _MM_FDPASS_H_
 
-int mm_send_fd(int, int);
-int mm_receive_fd(int);
+ಪೂರ್ಣಾಙ್ಕ mm_send_fd(ಪೂರ್ಣಾಙ್ಕ, ಪೂರ್ಣಾಙ್ಕ);
+ಪೂರ್ಣಾಙ್ಕ mm_receive_fd(ಪೂರ್ಣಾಙ್ಕ);
 
 #endif /* _MM_FDPASS_H_ */
