@@ -5,27 +5,27 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <limits.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <limits.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
+#ضمن "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "ssherr.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "ssherr.h"
 
-void test_convtime(void);
+فراغ test_convtime(فراغ);
 
-void
-test_convtime(void)
+فراغ
+test_convtime(فراغ)
 {
-	char buf[1024];
+	حرف buf[1024];
 	uint64_t t;
 
 	TEST_START("misc_convtime");
@@ -47,12 +47,12 @@ test_convtime(void)
 	ASSERT_INT_EQ(convtime("trout"),  -1);
 	ASSERT_INT_EQ(convtime("-77"),  -1);
 	/* boundary conditions */
-	snprintf(buf, sizeof buf, "%llu", (long long unsigned)INT_MAX);
+	snprintf(buf, حجم buf, "%llu", (long long unsigned)INT_MAX);
 	ASSERT_INT_EQ(convtime(buf), INT_MAX);
-	snprintf(buf, sizeof buf, "%llu", (long long unsigned)INT_MAX + 1);
+	snprintf(buf, حجم buf, "%llu", (long long unsigned)INT_MAX + 1);
 	ASSERT_INT_EQ(convtime(buf), -1);
 	ASSERT_INT_EQ(convtime("3550w5d3h14m7s"), 2147483647);
-#if INT_MAX == 2147483647
+#𐡄𐡍 INT_MAX == 2147483647
 	ASSERT_INT_EQ(convtime("3550w5d3h14m8s"), -1);
 #endif
 	TEST_DONE();

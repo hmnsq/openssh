@@ -34,14 +34,14 @@
 
 /* OPENBSD ORIGINAL: include/vis.h */
 
-#include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#ضمن "includes.h"
+#𐡄𐡍 !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
 #ifndef _VIS_H_
 #define	_VIS_H_
 
-#include <sys/types.h>
-#include <limits.h>
+#ضمن <sys/types.h>
+#ضمن <limits.h>
 
 /*
  * to select alternate encoding format
@@ -81,16 +81,16 @@
  */
 #define	UNVIS_END	1	/* no more characters */
 
-char	*vis(char *, int, int, int);
-int	strvis(char *, const char *, int);
-int	stravis(char **, const char *, int);
-int	strnvis(char *, const char *, size_t, int)
+حرف	*vis(حرف *, صحيح, صحيح, صحيح);
+صحيح	strvis(حرف *, ثابت حرف *, صحيح);
+صحيح	stravis(حرف **, ثابت حرف *, صحيح);
+صحيح	strnvis(حرف *, ثابت حرف *, size_t, صحيح)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strvisx(char *, const char *, size_t, int)
+صحيح	strvisx(حرف *, ثابت حرف *, size_t, صحيح)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strunvis(char *, const char *);
-int	unvis(char *, char, int *, int);
-ssize_t strnunvis(char *, const char *, size_t)
+صحيح	strunvis(حرف *, ثابت حرف *);
+صحيح	unvis(حرف *, حرف, صحيح *, صحيح);
+ssize_t strnunvis(حرف *, ثابت حرف *, size_t)
 		__attribute__ ((__bounded__(__string__,1,3)));
 
 #endif /* !_VIS_H_ */

@@ -54,8 +54,8 @@
 #ifndef PKCS11_H
 #define PKCS11_H 1
 
-#if defined(__cplusplus)
-extern "C" {
+#𐡄𐡍 defined(__cplusplus)
+خارجي "C" {
 #endif
 
 
@@ -79,18 +79,18 @@ extern "C" {
 
 /* System dependencies.  */
 
-#if defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
+#𐡄𐡍 defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
 
 /* There is a matching pop below.  */
 #pragma pack(push, cryptoki, 1)
 
 #ifdef CRYPTOKI_EXPORTS
 #define CK_SPEC __declspec(dllexport)
-#else
+#وإلا
 #define CK_SPEC __declspec(dllimport)
 #endif
 
-#else
+#وإلا
 
 #define CK_SPEC
 
@@ -187,40 +187,40 @@ extern "C" {
 #endif	/* CRYPTOKI_COMPAT */
 
 
-typedef unsigned long ck_flags_t;
+تعريفنوع unsigned long ck_flags_t;
 
-struct ck_version
+بنية ck_version
 {
-  unsigned char major;
-  unsigned char minor;
+  unsigned حرف major;
+  unsigned حرف minor;
 };
 
 
-struct ck_info
+بنية ck_info
 {
-  struct ck_version cryptoki_version;
-  unsigned char manufacturer_id[32];
+  بنية ck_version cryptoki_version;
+  unsigned حرف manufacturer_id[32];
   ck_flags_t flags;
-  unsigned char library_description[32];
-  struct ck_version library_version;
+  unsigned حرف library_description[32];
+  بنية ck_version library_version;
 };
 
 
-typedef unsigned long ck_notification_t;
+تعريفنوع unsigned long ck_notification_t;
 
 #define CKN_SURRENDER	(0UL)
 
 
-typedef unsigned long ck_slot_id_t;
+تعريفنوع unsigned long ck_slot_id_t;
 
 
-struct ck_slot_info
+بنية ck_slot_info
 {
-  unsigned char slot_description[64];
-  unsigned char manufacturer_id[32];
+  unsigned حرف slot_description[64];
+  unsigned حرف manufacturer_id[32];
   ck_flags_t flags;
-  struct ck_version hardware_version;
-  struct ck_version firmware_version;
+  بنية ck_version hardware_version;
+  بنية ck_version firmware_version;
 };
 
 
@@ -230,12 +230,12 @@ struct ck_slot_info
 #define CKF_ARRAY_ATTRIBUTE	(1UL << 30)
 
 
-struct ck_token_info
+بنية ck_token_info
 {
-  unsigned char label[32];
-  unsigned char manufacturer_id[32];
-  unsigned char model[16];
-  unsigned char serial_number[16];
+  unsigned حرف label[32];
+  unsigned حرف manufacturer_id[32];
+  unsigned حرف model[16];
+  unsigned حرف serial_number[16];
   ck_flags_t flags;
   unsigned long max_session_count;
   unsigned long session_count;
@@ -247,9 +247,9 @@ struct ck_token_info
   unsigned long free_public_memory;
   unsigned long total_private_memory;
   unsigned long free_private_memory;
-  struct ck_version hardware_version;
-  struct ck_version firmware_version;
-  unsigned char utc_time[16];
+  بنية ck_version hardware_version;
+  بنية ck_version firmware_version;
+  unsigned حرف utc_time[16];
 };
 
 
@@ -276,19 +276,19 @@ struct ck_token_info
 #define CK_EFFECTIVELY_INFINITE		(0UL)
 
 
-typedef unsigned long ck_session_handle_t;
+تعريفنوع unsigned long ck_session_handle_t;
 
 #define CK_INVALID_HANDLE	(0UL)
 
 
-typedef unsigned long ck_user_type_t;
+تعريفنوع unsigned long ck_user_type_t;
 
 #define CKU_SO			(0UL)
 #define CKU_USER		(1UL)
 #define CKU_CONTEXT_SPECIFIC	(2UL)
 
 
-typedef unsigned long ck_state_t;
+تعريفنوع unsigned long ck_state_t;
 
 #define CKS_RO_PUBLIC_SESSION	(0UL)
 #define CKS_RO_USER_FUNCTIONS	(1UL)
@@ -297,7 +297,7 @@ typedef unsigned long ck_state_t;
 #define CKS_RW_SO_FUNCTIONS	(4UL)
 
 
-struct ck_session_info
+بنية ck_session_info
 {
   ck_slot_id_t slot_id;
   ck_state_t state;
@@ -309,10 +309,10 @@ struct ck_session_info
 #define CKF_SERIAL_SESSION	(1UL << 2)
 
 
-typedef unsigned long ck_object_handle_t;
+تعريفنوع unsigned long ck_object_handle_t;
 
 
-typedef unsigned long ck_object_class_t;
+تعريفنوع unsigned long ck_object_class_t;
 
 #define CKO_DATA		(0UL)
 #define CKO_CERTIFICATE		(1UL)
@@ -333,7 +333,7 @@ typedef unsigned long ck_object_class_t;
 #define CKP_PUBLIC_CERTIFICATES_TOKEN (4UL)
 #define CKP_VENDOR_DEFINED            (1UL << 31)
 
-typedef unsigned long ck_hw_feature_type_t;
+تعريفنوع unsigned long ck_hw_feature_type_t;
 
 #define CKH_MONOTONIC_COUNTER	(1UL)
 #define CKH_CLOCK		(2UL)
@@ -341,7 +341,7 @@ typedef unsigned long ck_hw_feature_type_t;
 #define CKH_VENDOR_DEFINED	(1UL << 31)
 
 
-typedef unsigned long ck_key_type_t;
+تعريفنوع unsigned long ck_key_type_t;
 
 #define CKK_RSA			(0UL)
 #define CKK_DSA			(1UL)
@@ -385,7 +385,7 @@ typedef unsigned long ck_key_type_t;
 
 #define CKK_GOSTR3410_512	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x003)
 
-typedef unsigned long ck_certificate_type_t;
+تعريفنوع unsigned long ck_certificate_type_t;
 
 #define CKC_X_509		(0UL)
 #define CKC_X_509_ATTR_CERT	(1UL)
@@ -393,7 +393,7 @@ typedef unsigned long ck_certificate_type_t;
 #define CKC_VENDOR_DEFINED	(1UL << 31)
 
 
-typedef unsigned long ck_attribute_type_t;
+تعريفنوع unsigned long ck_attribute_type_t;
 
 #define CKA_CLASS			(0UL)
 #define CKA_TOKEN			(1UL)
@@ -504,23 +504,23 @@ typedef unsigned long ck_attribute_type_t;
 #define CKA_VENDOR_DEFINED		(1UL << 31)
 
 
-struct ck_attribute
+بنية ck_attribute
 {
   ck_attribute_type_t type;
-  void *value;
+  فراغ *value;
   unsigned long value_len;
 };
 
 
-struct ck_date
+بنية ck_date
 {
-  unsigned char year[4];
-  unsigned char month[2];
-  unsigned char day[2];
+  unsigned حرف year[4];
+  unsigned حرف month[2];
+  unsigned حرف day[2];
 };
 
 
-typedef unsigned long ck_mechanism_type_t;
+تعريفنوع unsigned long ck_mechanism_type_t;
 
 #define CKM_RSA_PKCS_KEY_PAIR_GEN	(0UL)
 #define CKM_RSA_PKCS			(1UL)
@@ -821,15 +821,15 @@ typedef unsigned long ck_mechanism_type_t;
 
 #define CKM_VENDOR_DEFINED		(1UL << 31)
 
-struct ck_mechanism
+بنية ck_mechanism
 {
   ck_mechanism_type_t mechanism;
-  void *parameter;
+  فراغ *parameter;
   unsigned long parameter_len;
 };
 
 
-struct ck_mechanism_info
+بنية ck_mechanism_info
 {
   unsigned long min_key_size;
   unsigned long max_key_size;
@@ -879,39 +879,39 @@ struct ck_mechanism_info
 #define CKD_SHA384_KDF			(0x7UL)
 #define CKD_SHA512_KDF			(0x8UL)
 
-typedef struct CK_ECDH1_DERIVE_PARAMS {
+تعريفنوع بنية CK_ECDH1_DERIVE_PARAMS {
 	unsigned long  kdf;
 	unsigned long  ulSharedDataLen;
-	unsigned char *  pSharedData;
+	unsigned حرف *  pSharedData;
 	unsigned long  ulPublicDataLen;
-	unsigned char *  pPublicData;
+	unsigned حرف *  pPublicData;
 } CK_ECDH1_DERIVE_PARAMS;
 
-typedef struct CK_ECMQV_DERIVE_PARAMS {
+تعريفنوع بنية CK_ECMQV_DERIVE_PARAMS {
 	unsigned long kdf;
 	unsigned long ulSharedDataLen;
-	unsigned char * pSharedData;
+	unsigned حرف * pSharedData;
 	unsigned long ulPublicDataLen;
-	unsigned char * pPublicData;
+	unsigned حرف * pPublicData;
 	unsigned long ulPrivateDataLen;
 	CK_OBJECT_HANDLE hPrivateData;
 	unsigned long ulPublicDataLen2;
-	unsigned char * pPublicData2;
+	unsigned حرف * pPublicData2;
 	CK_OBJECT_HANDLE publicKey;
 } CK_ECMQV_DERIVE_PARAMS;
 
-typedef unsigned long ck_rsa_pkcs_mgf_type_t;
-typedef unsigned long CK_RSA_PKCS_OAEP_SOURCE_TYPE;
+تعريفنوع unsigned long ck_rsa_pkcs_mgf_type_t;
+تعريفنوع unsigned long CK_RSA_PKCS_OAEP_SOURCE_TYPE;
 
-typedef struct CK_RSA_PKCS_OAEP_PARAMS {
+تعريفنوع بنية CK_RSA_PKCS_OAEP_PARAMS {
 	CK_MECHANISM_TYPE hashAlg;
 	CK_RSA_PKCS_MGF_TYPE mgf;
 	CK_RSA_PKCS_OAEP_SOURCE_TYPE source;
-	void *pSourceData;
+	فراغ *pSourceData;
 	unsigned long ulSourceDataLen;
 } CK_RSA_PKCS_OAEP_PARAMS;
 
-typedef struct CK_RSA_PKCS_PSS_PARAMS {
+تعريفنوع بنية CK_RSA_PKCS_PSS_PARAMS {
 	ck_mechanism_type_t hashAlg;
 	CK_RSA_PKCS_MGF_TYPE mgf;
 	unsigned long sLen;
@@ -929,137 +929,137 @@ typedef struct CK_RSA_PKCS_PSS_PARAMS {
 
 #define CKZ_DATA_SPECIFIED	(0x00000001UL)
 
-typedef struct CK_GCM_PARAMS {
-	void * pIv;
+تعريفنوع بنية CK_GCM_PARAMS {
+	فراغ * pIv;
 	unsigned long ulIvLen;
 	unsigned long ulIvBits;
-	void * pAAD;
+	فراغ * pAAD;
 	unsigned long ulAADLen;
 	unsigned long ulTagBits;
 } CK_GCM_PARAMS;
 
-typedef struct CK_CCM_PARAMS {
+تعريفنوع بنية CK_CCM_PARAMS {
 	unsigned long ulDataLen;
-	unsigned char *pNonce;
+	unsigned حرف *pNonce;
 	unsigned long ulNonceLen;
-	unsigned char *pAAD;
+	unsigned حرف *pAAD;
 	unsigned long ulAADLen;
 	unsigned long ulMACLen;
 } CK_CCM_PARAMS;
 
 /* EDDSA */
-typedef struct CK_EDDSA_PARAMS {
-	unsigned char phFlag;
+تعريفنوع بنية CK_EDDSA_PARAMS {
+	unsigned حرف phFlag;
 	unsigned long ulContextDataLen;
-	unsigned char *pContextData;
+	unsigned حرف *pContextData;
 } CK_EDDSA_PARAMS;
 
-typedef CK_EDDSA_PARAMS *CK_EDDSA_PARAMS_PTR;
+تعريفنوع CK_EDDSA_PARAMS *CK_EDDSA_PARAMS_PTR;
 
 /* XEDDSA */
-typedef struct CK_XEDDSA_PARAMS {
+تعريفنوع بنية CK_XEDDSA_PARAMS {
 	unsigned long hash;
 } CK_XEDDSA_PARAMS;
 
-typedef CK_XEDDSA_PARAMS *CK_XEDDSA_PARAMS_PTR;
+تعريفنوع CK_XEDDSA_PARAMS *CK_XEDDSA_PARAMS_PTR;
 
-typedef struct CK_AES_CTR_PARAMS {
+تعريفنوع بنية CK_AES_CTR_PARAMS {
     unsigned long ulCounterBits;
-    unsigned char cb[16];
+    unsigned حرف cb[16];
 } CK_AES_CTR_PARAMS;
 
-typedef CK_AES_CTR_PARAMS *CK_AES_CTR_PARAMS_PTR;
+تعريفنوع CK_AES_CTR_PARAMS *CK_AES_CTR_PARAMS_PTR;
 
-typedef unsigned long CK_MAC_GENERAL_PARAMS;
+تعريفنوع unsigned long CK_MAC_GENERAL_PARAMS;
 
-typedef CK_MAC_GENERAL_PARAMS *CK_MAC_GENERAL_PARAMS_PTR;
+تعريفنوع CK_MAC_GENERAL_PARAMS *CK_MAC_GENERAL_PARAMS_PTR;
 
-typedef unsigned long ck_rv_t;
+تعريفنوع unsigned long ck_rv_t;
 
 
-typedef ck_rv_t (*ck_notify_t) (ck_session_handle_t session,
-				ck_notification_t event, void *application);
+تعريفنوع ck_rv_t (*ck_notify_t) (ck_session_handle_t session,
+				ck_notification_t event, فراغ *application);
 
-struct ck_interface {
-  char * pInterfaceName;
-  void * pFunctionList;
+بنية ck_interface {
+  حرف * pInterfaceName;
+  فراغ * pFunctionList;
   ck_flags_t flags;
 };
 
 #define CKF_INTERFACE_FORK_SAFE	(0x00000001UL)
 
 /* Forward reference.  */
-struct ck_function_list;
-struct ck_function_list_3_0;
+بنية ck_function_list;
+بنية ck_function_list_3_0;
 
 #define _CK_DECLARE_FUNCTION(name, args)	\
-typedef ck_rv_t (*CK_ ## name) args;		\
+تعريفنوع ck_rv_t (*CK_ ## name) args;		\
 ck_rv_t CK_SPEC name args
 
-_CK_DECLARE_FUNCTION (C_Initialize, (void *init_args));
-_CK_DECLARE_FUNCTION (C_Finalize, (void *reserved));
-_CK_DECLARE_FUNCTION (C_GetInfo, (struct ck_info *info));
+_CK_DECLARE_FUNCTION (C_Initialize, (فراغ *init_args));
+_CK_DECLARE_FUNCTION (C_Finalize, (فراغ *reserved));
+_CK_DECLARE_FUNCTION (C_GetInfo, (بنية ck_info *info));
 _CK_DECLARE_FUNCTION (C_GetFunctionList,
-		      (struct ck_function_list **function_list));
+		      (بنية ck_function_list **function_list));
 
 _CK_DECLARE_FUNCTION (C_GetSlotList,
-		      (unsigned char token_present, ck_slot_id_t *slot_list,
+		      (unsigned حرف token_present, ck_slot_id_t *slot_list,
 		       unsigned long *count));
 _CK_DECLARE_FUNCTION (C_GetSlotInfo,
-		      (ck_slot_id_t slot_id, struct ck_slot_info *info));
+		      (ck_slot_id_t slot_id, بنية ck_slot_info *info));
 _CK_DECLARE_FUNCTION (C_GetTokenInfo,
-		      (ck_slot_id_t slot_id, struct ck_token_info *info));
+		      (ck_slot_id_t slot_id, بنية ck_token_info *info));
 _CK_DECLARE_FUNCTION (C_WaitForSlotEvent,
-		      (ck_flags_t flags, ck_slot_id_t *slot, void *reserved));
+		      (ck_flags_t flags, ck_slot_id_t *slot, فراغ *reserved));
 _CK_DECLARE_FUNCTION (C_GetMechanismList,
 		      (ck_slot_id_t slot_id,
 		       ck_mechanism_type_t *mechanism_list,
 		       unsigned long *count));
 _CK_DECLARE_FUNCTION (C_GetMechanismInfo,
 		      (ck_slot_id_t slot_id, ck_mechanism_type_t type,
-		       struct ck_mechanism_info *info));
+		       بنية ck_mechanism_info *info));
 _CK_DECLARE_FUNCTION (C_InitToken,
-		      (ck_slot_id_t slot_id, unsigned char *pin,
-		       unsigned long pin_len, unsigned char *label));
+		      (ck_slot_id_t slot_id, unsigned حرف *pin,
+		       unsigned long pin_len, unsigned حرف *label));
 _CK_DECLARE_FUNCTION (C_InitPIN,
-		      (ck_session_handle_t session, unsigned char *pin,
+		      (ck_session_handle_t session, unsigned حرف *pin,
 		       unsigned long pin_len));
 _CK_DECLARE_FUNCTION (C_SetPIN,
-		      (ck_session_handle_t session, unsigned char *old_pin,
-		       unsigned long old_len, unsigned char *new_pin,
+		      (ck_session_handle_t session, unsigned حرف *old_pin,
+		       unsigned long old_len, unsigned حرف *new_pin,
 		       unsigned long new_len));
 
 _CK_DECLARE_FUNCTION (C_OpenSession,
 		      (ck_slot_id_t slot_id, ck_flags_t flags,
-		       void *application, ck_notify_t notify,
+		       فراغ *application, ck_notify_t notify,
 		       ck_session_handle_t *session));
 _CK_DECLARE_FUNCTION (C_CloseSession, (ck_session_handle_t session));
 _CK_DECLARE_FUNCTION (C_CloseAllSessions, (ck_slot_id_t slot_id));
 _CK_DECLARE_FUNCTION (C_GetSessionInfo,
 		      (ck_session_handle_t session,
-		       struct ck_session_info *info));
+		       بنية ck_session_info *info));
 _CK_DECLARE_FUNCTION (C_GetOperationState,
 		      (ck_session_handle_t session,
-		       unsigned char *operation_state,
+		       unsigned حرف *operation_state,
 		       unsigned long *operation_state_len));
 _CK_DECLARE_FUNCTION (C_SetOperationState,
 		      (ck_session_handle_t session,
-		       unsigned char *operation_state,
+		       unsigned حرف *operation_state,
 		       unsigned long operation_state_len,
 		       ck_object_handle_t encryption_key,
 		       ck_object_handle_t authentication_key));
 _CK_DECLARE_FUNCTION (C_Login,
 		      (ck_session_handle_t session, ck_user_type_t user_type,
-		       unsigned char *pin, unsigned long pin_len));
+		       unsigned حرف *pin, unsigned long pin_len));
 _CK_DECLARE_FUNCTION (C_Logout, (ck_session_handle_t session));
 
 _CK_DECLARE_FUNCTION (C_CreateObject,
 		      (ck_session_handle_t session,
-		       struct ck_attribute *templ,
+		       بنية ck_attribute *templ,
 		       unsigned long count, ck_object_handle_t *object));
 _CK_DECLARE_FUNCTION (C_CopyObject,
 		      (ck_session_handle_t session, ck_object_handle_t object,
-		       struct ck_attribute *templ, unsigned long count,
+		       بنية ck_attribute *templ, unsigned long count,
 		       ck_object_handle_t *new_object));
 _CK_DECLARE_FUNCTION (C_DestroyObject,
 		      (ck_session_handle_t session,
@@ -1071,16 +1071,16 @@ _CK_DECLARE_FUNCTION (C_GetObjectSize,
 _CK_DECLARE_FUNCTION (C_GetAttributeValue,
 		      (ck_session_handle_t session,
 		       ck_object_handle_t object,
-		       struct ck_attribute *templ,
+		       بنية ck_attribute *templ,
 		       unsigned long count));
 _CK_DECLARE_FUNCTION (C_SetAttributeValue,
 		      (ck_session_handle_t session,
 		       ck_object_handle_t object,
-		       struct ck_attribute *templ,
+		       بنية ck_attribute *templ,
 		       unsigned long count));
 _CK_DECLARE_FUNCTION (C_FindObjectsInit,
 		      (ck_session_handle_t session,
-		       struct ck_attribute *templ,
+		       بنية ck_attribute *templ,
 		       unsigned long count));
 _CK_DECLARE_FUNCTION (C_FindObjects,
 		      (ck_session_handle_t session,
@@ -1092,201 +1092,201 @@ _CK_DECLARE_FUNCTION (C_FindObjectsFinal,
 
 _CK_DECLARE_FUNCTION (C_EncryptInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       بنية ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_Encrypt,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *encrypted_data,
+		       unsigned حرف *data, unsigned long data_len,
+		       unsigned حرف *encrypted_data,
 		       unsigned long *encrypted_data_len));
 _CK_DECLARE_FUNCTION (C_EncryptUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len,
-		       unsigned char *encrypted_part,
+		       unsigned حرف *part, unsigned long part_len,
+		       unsigned حرف *encrypted_part,
 		       unsigned long *encrypted_part_len));
 _CK_DECLARE_FUNCTION (C_EncryptFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *last_encrypted_part,
+		       unsigned حرف *last_encrypted_part,
 		       unsigned long *last_encrypted_part_len));
 
 _CK_DECLARE_FUNCTION (C_DecryptInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       بنية ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_Decrypt,
 		      (ck_session_handle_t session,
-		       unsigned char *encrypted_data,
+		       unsigned حرف *encrypted_data,
 		       unsigned long encrypted_data_len,
-		       unsigned char *data, unsigned long *data_len));
+		       unsigned حرف *data, unsigned long *data_len));
 _CK_DECLARE_FUNCTION (C_DecryptUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *encrypted_part,
+		       unsigned حرف *encrypted_part,
 		       unsigned long encrypted_part_len,
-		       unsigned char *part, unsigned long *part_len));
+		       unsigned حرف *part, unsigned long *part_len));
 _CK_DECLARE_FUNCTION (C_DecryptFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *last_part,
+		       unsigned حرف *last_part,
 		       unsigned long *last_part_len));
 
 _CK_DECLARE_FUNCTION (C_DigestInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism));
+		       بنية ck_mechanism *mechanism));
 _CK_DECLARE_FUNCTION (C_Digest,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *digest,
+		       unsigned حرف *data, unsigned long data_len,
+		       unsigned حرف *digest,
 		       unsigned long *digest_len));
 _CK_DECLARE_FUNCTION (C_DigestUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len));
+		       unsigned حرف *part, unsigned long part_len));
 _CK_DECLARE_FUNCTION (C_DigestKey,
 		      (ck_session_handle_t session, ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_DigestFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *digest,
+		       unsigned حرف *digest,
 		       unsigned long *digest_len));
 
 _CK_DECLARE_FUNCTION (C_SignInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       بنية ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_Sign,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *signature,
+		       unsigned حرف *data, unsigned long data_len,
+		       unsigned حرف *signature,
 		       unsigned long *signature_len));
 _CK_DECLARE_FUNCTION (C_SignUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len));
+		       unsigned حرف *part, unsigned long part_len));
 _CK_DECLARE_FUNCTION (C_SignFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *signature,
+		       unsigned حرف *signature,
 		       unsigned long *signature_len));
 _CK_DECLARE_FUNCTION (C_SignRecoverInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       بنية ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_SignRecover,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *signature,
+		       unsigned حرف *data, unsigned long data_len,
+		       unsigned حرف *signature,
 		       unsigned long *signature_len));
 
 _CK_DECLARE_FUNCTION (C_VerifyInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       بنية ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_Verify,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *signature,
+		       unsigned حرف *data, unsigned long data_len,
+		       unsigned حرف *signature,
 		       unsigned long signature_len));
 _CK_DECLARE_FUNCTION (C_VerifyUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len));
+		       unsigned حرف *part, unsigned long part_len));
 _CK_DECLARE_FUNCTION (C_VerifyFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *signature,
+		       unsigned حرف *signature,
 		       unsigned long signature_len));
 _CK_DECLARE_FUNCTION (C_VerifyRecoverInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       بنية ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_VerifyRecover,
 		      (ck_session_handle_t session,
-		       unsigned char *signature,
+		       unsigned حرف *signature,
 		       unsigned long signature_len,
-		       unsigned char *data,
+		       unsigned حرف *data,
 		       unsigned long *data_len));
 
 _CK_DECLARE_FUNCTION (C_DigestEncryptUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len,
-		       unsigned char *encrypted_part,
+		       unsigned حرف *part, unsigned long part_len,
+		       unsigned حرف *encrypted_part,
 		       unsigned long *encrypted_part_len));
 _CK_DECLARE_FUNCTION (C_DecryptDigestUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *encrypted_part,
+		       unsigned حرف *encrypted_part,
 		       unsigned long encrypted_part_len,
-		       unsigned char *part,
+		       unsigned حرف *part,
 		       unsigned long *part_len));
 _CK_DECLARE_FUNCTION (C_SignEncryptUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len,
-		       unsigned char *encrypted_part,
+		       unsigned حرف *part, unsigned long part_len,
+		       unsigned حرف *encrypted_part,
 		       unsigned long *encrypted_part_len));
 _CK_DECLARE_FUNCTION (C_DecryptVerifyUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *encrypted_part,
+		       unsigned حرف *encrypted_part,
 		       unsigned long encrypted_part_len,
-		       unsigned char *part,
+		       unsigned حرف *part,
 		       unsigned long *part_len));
 
 _CK_DECLARE_FUNCTION (C_GenerateKey,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       struct ck_attribute *templ,
+		       بنية ck_mechanism *mechanism,
+		       بنية ck_attribute *templ,
 		       unsigned long count,
 		       ck_object_handle_t *key));
 _CK_DECLARE_FUNCTION (C_GenerateKeyPair,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       struct ck_attribute *public_key_template,
+		       بنية ck_mechanism *mechanism,
+		       بنية ck_attribute *public_key_template,
 		       unsigned long public_key_attribute_count,
-		       struct ck_attribute *private_key_template,
+		       بنية ck_attribute *private_key_template,
 		       unsigned long private_key_attribute_count,
 		       ck_object_handle_t *public_key,
 		       ck_object_handle_t *private_key));
 _CK_DECLARE_FUNCTION (C_WrapKey,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       بنية ck_mechanism *mechanism,
 		       ck_object_handle_t wrapping_key,
 		       ck_object_handle_t key,
-		       unsigned char *wrapped_key,
+		       unsigned حرف *wrapped_key,
 		       unsigned long *wrapped_key_len));
 _CK_DECLARE_FUNCTION (C_UnwrapKey,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       بنية ck_mechanism *mechanism,
 		       ck_object_handle_t unwrapping_key,
-		       unsigned char *wrapped_key,
+		       unsigned حرف *wrapped_key,
 		       unsigned long wrapped_key_len,
-		       struct ck_attribute *templ,
+		       بنية ck_attribute *templ,
 		       unsigned long attribute_count,
 		       ck_object_handle_t *key));
 _CK_DECLARE_FUNCTION (C_DeriveKey,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       بنية ck_mechanism *mechanism,
 		       ck_object_handle_t base_key,
-		       struct ck_attribute *templ,
+		       بنية ck_attribute *templ,
 		       unsigned long attribute_count,
 		       ck_object_handle_t *key));
 
 _CK_DECLARE_FUNCTION (C_SeedRandom,
-		      (ck_session_handle_t session, unsigned char *seed,
+		      (ck_session_handle_t session, unsigned حرف *seed,
 		       unsigned long seed_len));
 _CK_DECLARE_FUNCTION (C_GenerateRandom,
 		      (ck_session_handle_t session,
-		       unsigned char *random_data,
+		       unsigned حرف *random_data,
 		       unsigned long random_len));
 
 _CK_DECLARE_FUNCTION (C_GetFunctionStatus, (ck_session_handle_t session));
 _CK_DECLARE_FUNCTION (C_CancelFunction, (ck_session_handle_t session));
 
 _CK_DECLARE_FUNCTION (C_GetInterfaceList,
-		      (struct ck_interface *interfaces_list,
+		      (بنية ck_interface *interfaces_list,
 		       unsigned long *count));
 _CK_DECLARE_FUNCTION (C_GetInterface,
-		      (unsigned char *interface_name,
-		       struct ck_version *version,
-		       struct ck_interface **interface_ptr,
+		      (unsigned حرف *interface_name,
+		       بنية ck_version *version,
+		       بنية ck_interface **interface_ptr,
 		       ck_flags_t flags));
 
 _CK_DECLARE_FUNCTION (C_LoginUser,
 		      (ck_session_handle_t session,
 		       ck_user_type_t user_type,
-		       unsigned char *pin,
+		       unsigned حرف *pin,
 		       unsigned long pin_len,
-		       unsigned char *username,
+		       unsigned حرف *username,
 		       unsigned long username_len));
 
 _CK_DECLARE_FUNCTION (C_SessionCancel,
@@ -1295,31 +1295,31 @@ _CK_DECLARE_FUNCTION (C_SessionCancel,
 
 _CK_DECLARE_FUNCTION (C_MessageEncryptInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       بنية ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_EncryptMessage,
 		      (ck_session_handle_t session,
-		       void *parameter,
+		       فراغ *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *associated_data,
+		       unsigned حرف *associated_data,
 		       unsigned long associated_data_len,
-		       unsigned char *plaintext,
+		       unsigned حرف *plaintext,
 		       unsigned long plaintext_len,
-		       unsigned char *ciphertext,
+		       unsigned حرف *ciphertext,
 		       unsigned long *ciphertext_len));
 _CK_DECLARE_FUNCTION (C_EncryptMessageBegin,
 		      (ck_session_handle_t session,
-		       void *parameter,
+		       فراغ *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *associated_data,
+		       unsigned حرف *associated_data,
 		       unsigned long associated_data_len));
 _CK_DECLARE_FUNCTION (C_EncryptMessageNext,
 		      (ck_session_handle_t session,
-		       void *parameter,
+		       فراغ *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *plaintext_part,
+		       unsigned حرف *plaintext_part,
 		       unsigned long plaintext_part_len,
-		       unsigned char *ciphertext_part,
+		       unsigned حرف *ciphertext_part,
 		       unsigned long *ciphertext_part_len,
 		       ck_flags_t flags));
 _CK_DECLARE_FUNCTION (C_MessageEncryptFinal,
@@ -1327,31 +1327,31 @@ _CK_DECLARE_FUNCTION (C_MessageEncryptFinal,
 
 _CK_DECLARE_FUNCTION (C_MessageDecryptInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       بنية ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_DecryptMessage,
 		      (ck_session_handle_t session,
-		       void *parameter,
+		       فراغ *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *associated_data,
+		       unsigned حرف *associated_data,
 		       unsigned long associated_data_len,
-		       unsigned char *ciphertext,
+		       unsigned حرف *ciphertext,
 		       unsigned long ciphertext_len,
-		       unsigned char *plaintext,
+		       unsigned حرف *plaintext,
 		       unsigned long *plaintext_len));
 _CK_DECLARE_FUNCTION (C_DecryptMessageBegin,
 		      (ck_session_handle_t session,
-		       void *parameter,
+		       فراغ *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *associated_data,
+		       unsigned حرف *associated_data,
 		       unsigned long associated_data_len));
 _CK_DECLARE_FUNCTION (C_DecryptMessageNext,
 		      (ck_session_handle_t session,
-		       void *parameter,
+		       فراغ *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *ciphertext_part,
+		       unsigned حرف *ciphertext_part,
 		       unsigned long ciphertext_part_len,
-		       unsigned char *plaintext_part,
+		       unsigned حرف *plaintext_part,
 		       unsigned long *plaintext_part_len,
 		       ck_flags_t flags));
 _CK_DECLARE_FUNCTION (C_MessageDecryptFinal,
@@ -1359,54 +1359,54 @@ _CK_DECLARE_FUNCTION (C_MessageDecryptFinal,
 
 _CK_DECLARE_FUNCTION (C_MessageSignInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       بنية ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_SignMessage,
 		      (ck_session_handle_t session,
-		       void *parameter,
+		       فراغ *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *data,
+		       unsigned حرف *data,
 		       unsigned long data_len,
-		       unsigned char *signature,
+		       unsigned حرف *signature,
 		       unsigned long *signature_len));
 _CK_DECLARE_FUNCTION (C_SignMessageBegin,
 		      (ck_session_handle_t session,
-		       void *parameter,
+		       فراغ *parameter,
 		       unsigned long parameter_len));
 _CK_DECLARE_FUNCTION (C_SignMessageNext,
 		      (ck_session_handle_t session,
-		       void *parameter,
+		       فراغ *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *data,
+		       unsigned حرف *data,
 		       unsigned long data_len,
-		       unsigned char *signature,
+		       unsigned حرف *signature,
 		       unsigned long *signature_len));
 _CK_DECLARE_FUNCTION (C_MessageSignFinal,
 		      (ck_session_handle_t session));
 
 _CK_DECLARE_FUNCTION (C_MessageVerifyInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       بنية ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_VerifyMessage,
 		      (ck_session_handle_t session,
-		       void *parameter,
+		       فراغ *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *data,
+		       unsigned حرف *data,
 		       unsigned long data_len,
-		       unsigned char *signature,
+		       unsigned حرف *signature,
 		       unsigned long signature_len));
 _CK_DECLARE_FUNCTION (C_VerifyMessageBegin,
 		      (ck_session_handle_t session,
-		       void *parameter,
+		       فراغ *parameter,
 		       unsigned long parameter_len));
 _CK_DECLARE_FUNCTION (C_VerifyMessageNext,
 		      (ck_session_handle_t session,
-		       void *parameter,
+		       فراغ *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *data,
+		       unsigned حرف *data,
 		       unsigned long data_len,
-		       unsigned char *signature,
+		       unsigned حرف *signature,
 		       unsigned long signature_len));
 _CK_DECLARE_FUNCTION (C_MessageVerifyFinal,
 		      (ck_session_handle_t session));
@@ -1414,9 +1414,9 @@ _CK_DECLARE_FUNCTION (C_MessageVerifyFinal,
 /* Flags in Message-based encryption/decryption API */
 #define CKF_END_OF_MESSAGE	(0x00000001UL)
 
-struct ck_function_list
+بنية ck_function_list
 {
-  struct ck_version version;
+  بنية ck_version version;
   CK_C_Initialize C_Initialize;
   CK_C_Finalize C_Finalize;
   CK_C_GetInfo C_GetInfo;
@@ -1487,9 +1487,9 @@ struct ck_function_list
   CK_C_WaitForSlotEvent C_WaitForSlotEvent;
 };
 
-struct ck_function_list_3_0
+بنية ck_function_list_3_0
 {
-  struct ck_version version;
+  بنية ck_version version;
   CK_C_Initialize C_Initialize;
   CK_C_Finalize C_Finalize;
   CK_C_GetInfo C_GetInfo;
@@ -1587,20 +1587,20 @@ struct ck_function_list_3_0
 
 
 
-typedef ck_rv_t (*ck_createmutex_t) (void **mutex);
-typedef ck_rv_t (*ck_destroymutex_t) (void *mutex);
-typedef ck_rv_t (*ck_lockmutex_t) (void *mutex);
-typedef ck_rv_t (*ck_unlockmutex_t) (void *mutex);
+تعريفنوع ck_rv_t (*ck_createmutex_t) (فراغ **mutex);
+تعريفنوع ck_rv_t (*ck_destroymutex_t) (فراغ *mutex);
+تعريفنوع ck_rv_t (*ck_lockmutex_t) (فراغ *mutex);
+تعريفنوع ck_rv_t (*ck_unlockmutex_t) (فراغ *mutex);
 
 
-struct ck_c_initialize_args
+بنية ck_c_initialize_args
 {
   ck_createmutex_t create_mutex;
   ck_destroymutex_t destroy_mutex;
   ck_lockmutex_t lock_mutex;
   ck_unlockmutex_t unlock_mutex;
   ck_flags_t flags;
-  void *reserved;
+  فراغ *reserved;
 };
 
 
@@ -1705,20 +1705,20 @@ struct ck_c_initialize_args
 #define CK_DEFINE_FUNCTION(retval, name) retval CK_SPEC name
 
 /* For NULL.  */
-#include <stddef.h>
+#ضمن <stddef.h>
 
-typedef unsigned char CK_BYTE;
-typedef unsigned char CK_CHAR;
-typedef unsigned char CK_UTF8CHAR;
-typedef unsigned char CK_BBOOL;
-typedef unsigned long int CK_ULONG;
-typedef long int CK_LONG;
-typedef CK_BYTE *CK_BYTE_PTR;
-typedef CK_CHAR *CK_CHAR_PTR;
-typedef CK_UTF8CHAR *CK_UTF8CHAR_PTR;
-typedef CK_ULONG *CK_ULONG_PTR;
-typedef void *CK_VOID_PTR;
-typedef void **CK_VOID_PTR_PTR;
+تعريفنوع unsigned حرف CK_BYTE;
+تعريفنوع unsigned حرف CK_CHAR;
+تعريفنوع unsigned حرف CK_UTF8CHAR;
+تعريفنوع unsigned حرف CK_BBOOL;
+تعريفنوع unsigned long صحيح CK_ULONG;
+تعريفنوع long صحيح CK_LONG;
+تعريفنوع CK_BYTE *CK_BYTE_PTR;
+تعريفنوع CK_CHAR *CK_CHAR_PTR;
+تعريفنوع CK_UTF8CHAR *CK_UTF8CHAR_PTR;
+تعريفنوع CK_ULONG *CK_ULONG_PTR;
+تعريفنوع فراغ *CK_VOID_PTR;
+تعريفنوع فراغ **CK_VOID_PTR_PTR;
 #define CK_FALSE 0
 #define CK_TRUE 1
 #ifndef CK_DISABLE_TRUE_FALSE
@@ -1730,7 +1730,7 @@ typedef void **CK_VOID_PTR_PTR;
 #endif
 #endif
 
-typedef struct CK_HKDF_PARAMS {
+تعريفنوع بنية CK_HKDF_PARAMS {
 	CK_BBOOL bExtract;
 	CK_BBOOL bExpand;
 	CK_MECHANISM_TYPE prfHashMechanism;
@@ -1746,61 +1746,61 @@ typedef struct CK_HKDF_PARAMS {
 #define CKF_HKDF_SALT_DATA 0x00000002UL
 #define CKF_HKDF_SALT_KEY  0x00000004UL
 
-typedef struct ck_version CK_VERSION;
-typedef struct ck_version *CK_VERSION_PTR;
+تعريفنوع بنية ck_version CK_VERSION;
+تعريفنوع بنية ck_version *CK_VERSION_PTR;
 
-typedef struct ck_info CK_INFO;
-typedef struct ck_info *CK_INFO_PTR;
+تعريفنوع بنية ck_info CK_INFO;
+تعريفنوع بنية ck_info *CK_INFO_PTR;
 
-typedef ck_slot_id_t *CK_SLOT_ID_PTR;
+تعريفنوع ck_slot_id_t *CK_SLOT_ID_PTR;
 
-typedef struct ck_slot_info CK_SLOT_INFO;
-typedef struct ck_slot_info *CK_SLOT_INFO_PTR;
+تعريفنوع بنية ck_slot_info CK_SLOT_INFO;
+تعريفنوع بنية ck_slot_info *CK_SLOT_INFO_PTR;
 
-typedef struct ck_token_info CK_TOKEN_INFO;
-typedef struct ck_token_info *CK_TOKEN_INFO_PTR;
+تعريفنوع بنية ck_token_info CK_TOKEN_INFO;
+تعريفنوع بنية ck_token_info *CK_TOKEN_INFO_PTR;
 
-typedef ck_session_handle_t *CK_SESSION_HANDLE_PTR;
+تعريفنوع ck_session_handle_t *CK_SESSION_HANDLE_PTR;
 
-typedef struct ck_session_info CK_SESSION_INFO;
-typedef struct ck_session_info *CK_SESSION_INFO_PTR;
+تعريفنوع بنية ck_session_info CK_SESSION_INFO;
+تعريفنوع بنية ck_session_info *CK_SESSION_INFO_PTR;
 
-typedef ck_object_handle_t *CK_OBJECT_HANDLE_PTR;
+تعريفنوع ck_object_handle_t *CK_OBJECT_HANDLE_PTR;
 
-typedef ck_object_class_t *CK_OBJECT_CLASS_PTR;
+تعريفنوع ck_object_class_t *CK_OBJECT_CLASS_PTR;
 
-typedef struct ck_attribute CK_ATTRIBUTE;
-typedef struct ck_attribute *CK_ATTRIBUTE_PTR;
+تعريفنوع بنية ck_attribute CK_ATTRIBUTE;
+تعريفنوع بنية ck_attribute *CK_ATTRIBUTE_PTR;
 
-typedef struct ck_date CK_DATE;
-typedef struct ck_date *CK_DATE_PTR;
+تعريفنوع بنية ck_date CK_DATE;
+تعريفنوع بنية ck_date *CK_DATE_PTR;
 
-typedef ck_mechanism_type_t *CK_MECHANISM_TYPE_PTR;
+تعريفنوع ck_mechanism_type_t *CK_MECHANISM_TYPE_PTR;
 
-typedef ck_rsa_pkcs_mgf_type_t *CK_RSA_PKCS_MGF_TYPE_PTR;
+تعريفنوع ck_rsa_pkcs_mgf_type_t *CK_RSA_PKCS_MGF_TYPE_PTR;
 
-typedef struct ck_mechanism CK_MECHANISM;
-typedef struct ck_mechanism *CK_MECHANISM_PTR;
+تعريفنوع بنية ck_mechanism CK_MECHANISM;
+تعريفنوع بنية ck_mechanism *CK_MECHANISM_PTR;
 
-typedef struct ck_mechanism_info CK_MECHANISM_INFO;
-typedef struct ck_mechanism_info *CK_MECHANISM_INFO_PTR;
+تعريفنوع بنية ck_mechanism_info CK_MECHANISM_INFO;
+تعريفنوع بنية ck_mechanism_info *CK_MECHANISM_INFO_PTR;
 
-typedef struct ck_interface CK_INTERFACE;
-typedef struct ck_interface *CK_INTERFACE_PTR;
-typedef struct ck_interface **CK_INTERFACE_PTR_PTR;
+تعريفنوع بنية ck_interface CK_INTERFACE;
+تعريفنوع بنية ck_interface *CK_INTERFACE_PTR;
+تعريفنوع بنية ck_interface **CK_INTERFACE_PTR_PTR;
 
-typedef struct ck_function_list CK_FUNCTION_LIST;
-typedef struct ck_function_list *CK_FUNCTION_LIST_PTR;
-typedef struct ck_function_list **CK_FUNCTION_LIST_PTR_PTR;
+تعريفنوع بنية ck_function_list CK_FUNCTION_LIST;
+تعريفنوع بنية ck_function_list *CK_FUNCTION_LIST_PTR;
+تعريفنوع بنية ck_function_list **CK_FUNCTION_LIST_PTR_PTR;
 
-typedef struct ck_function_list_3_0 CK_FUNCTION_LIST_3_0;
-typedef struct ck_function_list_3_0 *CK_FUNCTION_LIST_3_0_PTR;
-typedef struct ck_function_list_3_0 **CK_FUNCTION_LIST_3_0_PTR_PTR;
+تعريفنوع بنية ck_function_list_3_0 CK_FUNCTION_LIST_3_0;
+تعريفنوع بنية ck_function_list_3_0 *CK_FUNCTION_LIST_3_0_PTR;
+تعريفنوع بنية ck_function_list_3_0 **CK_FUNCTION_LIST_3_0_PTR_PTR;
 
-typedef struct ck_c_initialize_args CK_C_INITIALIZE_ARGS;
-typedef struct ck_c_initialize_args *CK_C_INITIALIZE_ARGS_PTR;
+تعريفنوع بنية ck_c_initialize_args CK_C_INITIALIZE_ARGS;
+تعريفنوع بنية ck_c_initialize_args *CK_C_INITIALIZE_ARGS_PTR;
 
-#define NULL_PTR NULL
+#define NULL_PTR عدم
 
 /* Delete the helper macros defined at the top of the file.  */
 #undef ck_flags_t
@@ -1890,11 +1890,11 @@ typedef struct ck_c_initialize_args *CK_C_INITIALIZE_ARGS_PTR;
 #endif	/* CRYPTOKI_COMPAT */
 
 /* System dependencies.  */
-#if defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
+#𐡄𐡍 defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
 #pragma pack(pop, cryptoki)
 #endif
 
-#if defined(__cplusplus)
+#𐡄𐡍 defined(__cplusplus)
 }
 #endif
 

@@ -14,27 +14,27 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <pwd.h>
+#ضمن <pwd.h>
 
-void platform_pre_listen(void);
-void platform_pre_fork(void);
-void platform_pre_restart(void);
-void platform_post_listen(void);
-void platform_post_fork_parent(pid_t child_pid);
-void platform_post_fork_child(void);
-void platform_pre_session_start(void);
-int  platform_privileged_uidswap(void);
-void platform_setusercontext(struct passwd *);
-void platform_setusercontext_post_groups(struct passwd *);
-char *platform_get_krb5_client(const char *);
-char *platform_krb5_get_principal_name(const char *);
-int platform_locked_account(struct passwd *);
-int platform_sys_dir_uid(uid_t);
-void platform_disable_tracing(int);
+فراغ platform_pre_listen(فراغ);
+فراغ platform_pre_fork(فراغ);
+فراغ platform_pre_restart(فراغ);
+فراغ platform_post_listen(فراغ);
+فراغ platform_post_fork_parent(pid_t child_pid);
+فراغ platform_post_fork_child(فراغ);
+فراغ platform_pre_session_start(فراغ);
+صحيح  platform_privileged_uidswap(فراغ);
+فراغ platform_setusercontext(بنية passwd *);
+فراغ platform_setusercontext_post_groups(بنية passwd *);
+حرف *platform_get_krb5_client(ثابت حرف *);
+حرف *platform_krb5_get_principal_name(ثابت حرف *);
+صحيح platform_locked_account(بنية passwd *);
+صحيح platform_sys_dir_uid(uid_t);
+فراغ platform_disable_tracing(صحيح);
 
 /* in platform-pledge.c */
-void platform_pledge_agent(void);
-void platform_pledge_sftp_server(void);
-void platform_pledge_mux(void);
+فراغ platform_pledge_agent(فراغ);
+فراغ platform_pledge_sftp_server(فراغ);
+فراغ platform_pledge_mux(فراغ);

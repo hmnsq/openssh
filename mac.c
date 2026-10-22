@@ -23,39 +23,39 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "digest.h"
-#include "hmac.h"
-#include "umac.h"
-#include "mac.h"
-#include "misc.h"
-#include "ssherr.h"
-#include "sshbuf.h"
+#ضمن "digest.h"
+#ضمن "hmac.h"
+#ضمن "umac.h"
+#ضمن "mac.h"
+#ضمن "misc.h"
+#ضمن "ssherr.h"
+#ضمن "sshbuf.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#ضمن "openbsd-compat/openssl-compat.h"
 
 #define SSH_DIGEST	1	/* SSH_DIGEST_XXX */
 #define SSH_UMAC	2	/* UMAC (not integrated with OpenSSL) */
 #define SSH_UMAC128	3
 
-struct macalg {
-	char		*name;
-	int		type;
-	int		alg;
-	int		truncatebits;	/* truncate digest if != 0 */
-	int		key_len;	/* just for UMAC */
-	int		len;		/* just for UMAC */
-	int		etm;		/* Encrypt-then-MAC */
+بنية macalg {
+	حرف		*name;
+	صحيح		type;
+	صحيح		alg;
+	صحيح		truncatebits;	/* truncate digest if != 0 */
+	صحيح		key_len;	/* just for UMAC */
+	صحيح		len;		/* just for UMAC */
+	صحيح		etm;		/* Encrypt-then-MAC */
 };
 
-static const struct macalg macs[] = {
+ساكن ثابت بنية macalg macs[] = {
 	/* Encrypt-and-MAC (encrypt-and-authenticate) variants */
 	{ "hmac-sha1",				SSH_DIGEST, SSH_DIGEST_SHA1, 0, 0, 0, 0 },
 	{ "hmac-sha1-96",			SSH_DIGEST, SSH_DIGEST_SHA1, 96, 0, 0, 0 },
@@ -76,180 +76,180 @@ static const struct macalg macs[] = {
 	{ "umac-64-etm@openssh.com",		SSH_UMAC, 0, 0, 128, 64, 1 },
 	{ "umac-128-etm@openssh.com",		SSH_UMAC128, 0, 0, 128, 128, 1 },
 
-	{ NULL,					0, 0, 0, 0, 0, 0 }
+	{ عدم,					0, 0, 0, 0, 0, 0 }
 };
 
 /* Returns a list of supported MACs separated by the specified char. */
-char *
-mac_alg_list(char sep)
+حرف *
+mac_alg_list(حرف sep)
 {
-	char *ret = NULL;
-	const struct macalg *m;
-	char sep_str[2] = {sep, '\0'};
+	حرف *ret = عدم;
+	ثابت بنية macalg *m;
+	حرف sep_str[2] = {sep, '\0'};
 
-	for (m = macs; m->name != NULL; m++)
+	لكل (m = macs; m->name != عدم; m++)
 		xextendf(&ret, sep_str, "%s", m->name);
 
-	return ret;
+	أرجع ret;
 }
 
-static int
-mac_setup_by_alg(struct sshmac *mac, const struct macalg *macalg)
+ساكن صحيح
+mac_setup_by_alg(بنية sshmac *mac, ثابت بنية macalg *macalg)
 {
 	mac->type = macalg->type;
-	if (mac->type == SSH_DIGEST) {
-		if ((mac->hmac_ctx = ssh_hmac_start(macalg->alg)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
+	𐡄𐡍 (mac->type == SSH_DIGEST) {
+		𐡄𐡍 ((mac->hmac_ctx = ssh_hmac_start(macalg->alg)) == عدم)
+			أرجع SSH_ERR_ALLOC_FAIL;
 		mac->key_len = mac->mac_len = ssh_hmac_bytes(macalg->alg);
-	} else {
+	} وإلا {
 		mac->mac_len = macalg->len / 8;
 		mac->key_len = macalg->key_len / 8;
-		mac->umac_ctx = NULL;
+		mac->umac_ctx = عدم;
 	}
-	if (macalg->truncatebits != 0)
+	𐡄𐡍 (macalg->truncatebits != 0)
 		mac->mac_len = macalg->truncatebits / 8;
 	mac->etm = macalg->etm;
-	return 0;
+	أرجع 0;
 }
 
-int
-mac_setup(struct sshmac *mac, char *name)
+صحيح
+mac_setup(بنية sshmac *mac, حرف *name)
 {
-	const struct macalg *m;
+	ثابت بنية macalg *m;
 
-	for (m = macs; m->name != NULL; m++) {
-		if (strcmp(name, m->name) != 0)
-			continue;
-		if (mac != NULL)
-			return mac_setup_by_alg(mac, m);
-		return 0;
+	لكل (m = macs; m->name != عدم; m++) {
+		𐡄𐡍 (strcmp(name, m->name) != 0)
+			استمر;
+		𐡄𐡍 (mac != عدم)
+			أرجع mac_setup_by_alg(mac, m);
+		أرجع 0;
 	}
-	return SSH_ERR_INVALID_ARGUMENT;
+	أرجع SSH_ERR_INVALID_ARGUMENT;
 }
 
-int
-mac_init(struct sshmac *mac)
+صحيح
+mac_init(بنية sshmac *mac)
 {
-	if (mac->key == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	switch (mac->type) {
-	case SSH_DIGEST:
-		if (mac->hmac_ctx == NULL ||
+	𐡄𐡍 (mac->key == عدم)
+		أرجع SSH_ERR_INVALID_ARGUMENT;
+	بدل (mac->type) {
+	حالة SSH_DIGEST:
+		𐡄𐡍 (mac->hmac_ctx == عدم ||
 		    ssh_hmac_init(mac->hmac_ctx, mac->key, mac->key_len) < 0)
-			return SSH_ERR_INVALID_ARGUMENT;
-		return 0;
-	case SSH_UMAC:
-		if ((mac->umac_ctx = umac_new(mac->key)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
-	case SSH_UMAC128:
-		if ((mac->umac_ctx = umac128_new(mac->key)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+			أرجع SSH_ERR_INVALID_ARGUMENT;
+		أرجع 0;
+	حالة SSH_UMAC:
+		𐡄𐡍 ((mac->umac_ctx = umac_new(mac->key)) == عدم)
+			أرجع SSH_ERR_ALLOC_FAIL;
+		أرجع 0;
+	حالة SSH_UMAC128:
+		𐡄𐡍 ((mac->umac_ctx = umac128_new(mac->key)) == عدم)
+			أرجع SSH_ERR_ALLOC_FAIL;
+		أرجع 0;
+	افتراضي:
+		أرجع SSH_ERR_INVALID_ARGUMENT;
 	}
 }
 
-int
-mac_compute(struct sshmac *mac, uint32_t seqno,
-    const u_char *data, int datalen,
+صحيح
+mac_compute(بنية sshmac *mac, uint32_t seqno,
+    ثابت u_char *data, صحيح datalen,
     u_char *digest, size_t dlen)
 {
-	static union {
+	ساكن اتحاد {
 		u_char m[SSH_DIGEST_MAX_LENGTH];
 		uint64_t for_align;
 	} u;
 	u_char b[4];
 	u_char nonce[8];
 
-	if (mac->mac_len > sizeof(u))
-		return SSH_ERR_INTERNAL_ERROR;
+	𐡄𐡍 (mac->mac_len > حجم(u))
+		أرجع SSH_ERR_INTERNAL_ERROR;
 
-	switch (mac->type) {
-	case SSH_DIGEST:
+	بدل (mac->type) {
+	حالة SSH_DIGEST:
 		put_u32(b, seqno);
 		/* reset HMAC context */
-		if (ssh_hmac_init(mac->hmac_ctx, NULL, 0) < 0 ||
-		    ssh_hmac_update(mac->hmac_ctx, b, sizeof(b)) < 0 ||
+		𐡄𐡍 (ssh_hmac_init(mac->hmac_ctx, عدم, 0) < 0 ||
+		    ssh_hmac_update(mac->hmac_ctx, b, حجم(b)) < 0 ||
 		    ssh_hmac_update(mac->hmac_ctx, data, datalen) < 0 ||
-		    ssh_hmac_final(mac->hmac_ctx, u.m, sizeof(u.m)) < 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
-		break;
-	case SSH_UMAC:
+		    ssh_hmac_final(mac->hmac_ctx, u.m, حجم(u.m)) < 0)
+			أرجع SSH_ERR_LIBCRYPTO_ERROR;
+		اكسر;
+	حالة SSH_UMAC:
 		POKE_U64(nonce, seqno);
 		umac_update(mac->umac_ctx, data, datalen);
 		umac_final(mac->umac_ctx, u.m, nonce);
-		break;
-	case SSH_UMAC128:
+		اكسر;
+	حالة SSH_UMAC128:
 		put_u64(nonce, seqno);
 		umac128_update(mac->umac_ctx, data, datalen);
 		umac128_final(mac->umac_ctx, u.m, nonce);
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		اكسر;
+	افتراضي:
+		أرجع SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (digest != NULL) {
-		if (dlen > mac->mac_len)
+	𐡄𐡍 (digest != عدم) {
+		𐡄𐡍 (dlen > mac->mac_len)
 			dlen = mac->mac_len;
 		memcpy(digest, u.m, dlen);
 	}
-	return 0;
+	أرجع 0;
 }
 
-int
-mac_check(struct sshmac *mac, uint32_t seqno,
-    const u_char *data, size_t dlen,
-    const u_char *theirmac, size_t mlen)
+صحيح
+mac_check(بنية sshmac *mac, uint32_t seqno,
+    ثابت u_char *data, size_t dlen,
+    ثابت u_char *theirmac, size_t mlen)
 {
 	u_char ourmac[SSH_DIGEST_MAX_LENGTH];
-	int r;
+	صحيح r;
 
-	if (mac->mac_len > mlen)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = mac_compute(mac, seqno, data, dlen,
-	    ourmac, sizeof(ourmac))) != 0)
-		return r;
-	if (timingsafe_bcmp(ourmac, theirmac, mac->mac_len) != 0)
-		return SSH_ERR_MAC_INVALID;
-	return 0;
+	𐡄𐡍 (mac->mac_len > mlen)
+		أرجع SSH_ERR_INVALID_ARGUMENT;
+	𐡄𐡍 ((r = mac_compute(mac, seqno, data, dlen,
+	    ourmac, حجم(ourmac))) != 0)
+		أرجع r;
+	𐡄𐡍 (timingsafe_bcmp(ourmac, theirmac, mac->mac_len) != 0)
+		أرجع SSH_ERR_MAC_INVALID;
+	أرجع 0;
 }
 
-void
-mac_clear(struct sshmac *mac)
+فراغ
+mac_clear(بنية sshmac *mac)
 {
-	if (mac->type == SSH_UMAC) {
-		if (mac->umac_ctx != NULL)
+	𐡄𐡍 (mac->type == SSH_UMAC) {
+		𐡄𐡍 (mac->umac_ctx != عدم)
 			umac_delete(mac->umac_ctx);
-	} else if (mac->type == SSH_UMAC128) {
-		if (mac->umac_ctx != NULL)
+	} وإلا 𐡄𐡍 (mac->type == SSH_UMAC128) {
+		𐡄𐡍 (mac->umac_ctx != عدم)
 			umac128_delete(mac->umac_ctx);
-	} else if (mac->hmac_ctx != NULL)
+	} وإلا 𐡄𐡍 (mac->hmac_ctx != عدم)
 		ssh_hmac_free(mac->hmac_ctx);
-	mac->hmac_ctx = NULL;
-	mac->umac_ctx = NULL;
+	mac->hmac_ctx = عدم;
+	mac->umac_ctx = عدم;
 }
 
 /* XXX copied from ciphers_valid */
 #define	MAC_SEP	","
-int
-mac_valid(const char *names)
+صحيح
+mac_valid(ثابت حرف *names)
 {
-	char *maclist, *cp, *p;
-	int found = 0;
+	حرف *maclist, *cp, *p;
+	صحيح found = 0;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((maclist = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, MAC_SEP)); p && *p != '\0';
+	𐡄𐡍 (names == عدم || strcmp(names, "") == 0)
+		أرجع 0;
+	𐡄𐡍 ((maclist = cp = strdup(names)) == عدم)
+		أرجع 0;
+	لكل ((p = strsep(&cp, MAC_SEP)); p && *p != '\0';
 	    (p = strsep(&cp, MAC_SEP))) {
-		if (mac_setup(NULL, p) < 0) {
-			free(maclist);
-			return 0;
-		} else
+		𐡄𐡍 (mac_setup(عدم, p) < 0) {
+			حرر(maclist);
+			أرجع 0;
+		} وإلا
 			found = 1;
 	}
-	free(maclist);
-	return found;
+	حرر(maclist);
+	أرجع found;
 }

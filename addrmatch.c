@@ -16,19 +16,19 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <netinet/in.h>
+#ضمن <sys/types.h>
+#ضمن <netinet/in.h>
 
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
+#ضمن <string.h>
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
+#ضمن <stdarg.h>
 
-#include "addr.h"
-#include "match.h"
-#include "log.h"
+#ضمن "addr.h"
+#ضمن "match.h"
+#ضمن "log.h"
 
 /*
  * Match "addr" against list pattern list "_list", which may contain a
@@ -42,55 +42,55 @@
  * Returns -1 on negated match found (never returned when addr == NULL).
  * Returns -2 on invalid list entry.
  */
-int
-addr_match_list(const char *addr, const char *_list)
+صحيح
+addr_match_list(ثابت حرف *addr, ثابت حرف *_list)
 {
-	char *list, *cp, *o;
-	struct xaddr try_addr, match_addr;
+	حرف *list, *cp, *o;
+	بنية xaddr try_addr, match_addr;
 	u_int masklen, neg;
-	int ret = 0, r;
+	صحيح ret = 0, r;
 
-	if (addr != NULL && addr_pton(addr, &try_addr) != 0) {
+	𐡄𐡍 (addr != عدم && addr_pton(addr, &try_addr) != 0) {
 		debug2_f("couldn't parse address %.100s", addr);
-		return 0;
+		أرجع 0;
 	}
-	if ((o = list = strdup(_list)) == NULL)
-		return -1;
-	while ((cp = strsep(&list, ",")) != NULL) {
+	𐡄𐡍 ((o = list = strdup(_list)) == عدم)
+		أرجع -1;
+	طالما ((cp = strsep(&list, ",")) != عدم) {
 		neg = *cp == '!';
-		if (neg)
+		𐡄𐡍 (neg)
 			cp++;
-		if (*cp == '\0') {
+		𐡄𐡍 (*cp == '\0') {
 			ret = -2;
-			break;
+			اكسر;
 		}
 		/* Prefer CIDR address matching */
 		r = addr_pton_cidr(cp, &match_addr, &masklen);
-		if (r == -2) {
+		𐡄𐡍 (r == -2) {
 			debug2_f("inconsistent mask length for "
 			    "match network \"%.100s\"", cp);
 			ret = -2;
-			break;
-		} else if (r == 0) {
-			if (addr != NULL && addr_netmatch(&try_addr,
+			اكسر;
+		} وإلا 𐡄𐡍 (r == 0) {
+			𐡄𐡍 (addr != عدم && addr_netmatch(&try_addr,
 			    &match_addr, masklen) == 0) {
  foundit:
-				if (neg) {
+				𐡄𐡍 (neg) {
 					ret = -1;
-					break;
+					اكسر;
 				}
 				ret = 1;
 			}
-			continue;
-		} else {
+			استمر;
+		} وإلا {
 			/* If CIDR parse failed, try wildcard string match */
-			if (addr != NULL && match_pattern(addr, cp) == 1)
-				goto foundit;
+			𐡄𐡍 (addr != عدم && match_pattern(addr, cp) == 1)
+				اذهب foundit;
 		}
 	}
-	free(o);
+	حرر(o);
 
-	return ret;
+	أرجع ret;
 }
 
 /*
@@ -102,25 +102,25 @@ addr_match_list(const char *addr, const char *_list)
  * Returns 0 on if no match found, or no errors found when addr == NULL.
  * Returns -1 on error
  */
-int
-addr_match_cidr_list(const char *addr, const char *_list)
+صحيح
+addr_match_cidr_list(ثابت حرف *addr, ثابت حرف *_list)
 {
-	char *list, *cp, *o;
-	struct xaddr try_addr, match_addr;
+	حرف *list, *cp, *o;
+	بنية xaddr try_addr, match_addr;
 	u_int masklen;
-	int ret = 0, r;
+	صحيح ret = 0, r;
 
-	if (addr != NULL && addr_pton(addr, &try_addr) != 0) {
+	𐡄𐡍 (addr != عدم && addr_pton(addr, &try_addr) != 0) {
 		debug2_f("couldn't parse address %.100s", addr);
-		return 0;
+		أرجع 0;
 	}
-	if ((o = list = strdup(_list)) == NULL)
-		return -1;
-	while ((cp = strsep(&list, ",")) != NULL) {
-		if (*cp == '\0') {
+	𐡄𐡍 ((o = list = strdup(_list)) == عدم)
+		أرجع -1;
+	طالما ((cp = strsep(&list, ",")) != عدم) {
+		𐡄𐡍 (*cp == '\0') {
 			error_f("empty entry in list \"%.100s\"", o);
 			ret = -1;
-			break;
+			اكسر;
 		}
 
 		/*
@@ -130,13 +130,13 @@ addr_match_cidr_list(const char *addr, const char *_list)
 		 */
 
 		/* Stop junk from reaching getaddrinfo. +3 is for masklen */
-		if (strlen(cp) > INET6_ADDRSTRLEN + 3) {
+		𐡄𐡍 (strlen(cp) > INET6_ADDRSTRLEN + 3) {
 			error_f("list entry \"%.100s\" too long", cp);
 			ret = -1;
-			break;
+			اكسر;
 		}
 #define VALID_CIDR_CHARS "0123456789abcdefABCDEF.:/"
-		if (strspn(cp, VALID_CIDR_CHARS) != strlen(cp)) {
+		𐡄𐡍 (strspn(cp, VALID_CIDR_CHARS) != strlen(cp)) {
 			error_f("list entry \"%.100s\" contains invalid "
 			    "characters", cp);
 			ret = -1;
@@ -144,23 +144,23 @@ addr_match_cidr_list(const char *addr, const char *_list)
 
 		/* Prefer CIDR address matching */
 		r = addr_pton_cidr(cp, &match_addr, &masklen);
-		if (r == -1) {
+		𐡄𐡍 (r == -1) {
 			error("Invalid network entry \"%.100s\"", cp);
 			ret = -1;
-			break;
-		} else if (r == -2) {
+			اكسر;
+		} وإلا 𐡄𐡍 (r == -2) {
 			error("Inconsistent mask length for "
 			    "network \"%.100s\"", cp);
 			ret = -1;
-			break;
-		} else if (r == 0 && addr != NULL) {
-			if (addr_netmatch(&try_addr, &match_addr,
+			اكسر;
+		} وإلا 𐡄𐡍 (r == 0 && addr != عدم) {
+			𐡄𐡍 (addr_netmatch(&try_addr, &match_addr,
 			    masklen) == 0)
 				ret = 1;
-			continue;
+			استمر;
 		}
 	}
-	free(o);
+	حرر(o);
 
-	return ret;
+	أرجع ret;
 }

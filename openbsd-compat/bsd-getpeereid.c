@@ -14,59 +14,59 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if !defined(HAVE_GETPEEREID)
+#𐡄𐡍 !defined(HAVE_GETPEEREID)
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h>
 
-#include <unistd.h>
+#ضمن <unistd.h>
 
-#if defined(SO_PEERCRED)
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+#𐡄𐡍 defined(SO_PEERCRED)
+صحيح
+getpeereid(صحيح s, uid_t *euid, gid_t *gid)
 {
-	struct ucred cred;
-	socklen_t len = sizeof(cred);
+	بنية ucred cred;
+	socklen_t len = حجم(cred);
 
-	if (getsockopt(s, SOL_SOCKET, SO_PEERCRED, &cred, &len) < 0)
-		return (-1);
+	𐡄𐡍 (getsockopt(s, SOL_SOCKET, SO_PEERCRED, &cred, &len) < 0)
+		أرجع (-1);
 	*euid = cred.uid;
 	*gid = cred.gid;
 
-	return (0);
+	أرجع (0);
 }
-#elif defined(HAVE_GETPEERUCRED)
+#وإلاإذا defined(HAVE_GETPEERUCRED)
 
 #ifdef HAVE_UCRED_H
 # include <ucred.h>
 #endif
 
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+صحيح
+getpeereid(صحيح s, uid_t *euid, gid_t *gid)
 {
-	ucred_t *ucred = NULL;
+	ucred_t *ucred = عدم;
 
-	if (getpeerucred(s, &ucred) == -1)
-		return (-1);
-	if ((*euid = ucred_geteuid(ucred)) == -1)
-		return (-1);
-	if ((*gid = ucred_getrgid(ucred)) == -1)
-		return (-1);
+	𐡄𐡍 (getpeerucred(s, &ucred) == -1)
+		أرجع (-1);
+	𐡄𐡍 ((*euid = ucred_geteuid(ucred)) == -1)
+		أرجع (-1);
+	𐡄𐡍 ((*gid = ucred_getrgid(ucred)) == -1)
+		أرجع (-1);
 
 	ucred_free(ucred);
 
-	return (0);
+	أرجع (0);
 }
-#else
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+#وإلا
+صحيح
+getpeereid(صحيح s, uid_t *euid, gid_t *gid)
 {
 	*euid = geteuid();
 	*gid = getgid();
 
-	return (0);
+	أرجع (0);
 }
 #endif /* defined(SO_PEERCRED) */
 

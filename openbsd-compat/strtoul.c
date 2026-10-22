@@ -30,13 +30,13 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoul.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 #ifndef HAVE_STRTOUL
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#ضمن <ctype.h>
+#ضمن <errno.h>
+#ضمن <limits.h>
+#ضمن <stdlib.h>
 
 /*
  * Convert a string to an unsigned long integer.
@@ -45,64 +45,64 @@
  * alphabets and digits are each contiguous.
  */
 unsigned long
-strtoul(const char *nptr, char **endptr, int base)
+strtoul(ثابت حرف *nptr, حرف **endptr, صحيح base)
 {
-	const char *s;
+	ثابت حرف *s;
 	unsigned long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	صحيح c;
+	صحيح neg, any, cutlim;
 
 	/*
 	 * See strtol for comments as to the logic used.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	𐡏𐡁𐡃 {
+		c = (unsigned حرف) *s++;
+	} طالما (isspace(c));
+	𐡄𐡍 (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} وإلا {
 		neg = 0;
-		if (c == '+')
+		𐡄𐡍 (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	𐡄𐡍 ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	𐡄𐡍 (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	cutoff = ULONG_MAX / (unsigned long)base;
 	cutlim = ULONG_MAX % (unsigned long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	لكل (acc = 0, any = 0;; c = (unsigned حرف) *s++) {
+		𐡄𐡍 (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		وإلا 𐡄𐡍 (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (acc > cutoff || acc == cutoff && c > cutlim) {
+		وإلا
+			اكسر;
+		𐡄𐡍 (c >= base)
+			اكسر;
+		𐡄𐡍 (any < 0)
+			استمر;
+		𐡄𐡍 (acc > cutoff || acc == cutoff && c > cutlim) {
 			any = -1;
 			acc = ULONG_MAX;
 			errno = ERANGE;
-		} else {
+		} وإلا {
 			any = 1;
 			acc *= (unsigned long)base;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	𐡄𐡍 (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	𐡄𐡍 (endptr != 0)
+		*endptr = (حرف *) (any ? s - 1 : nptr);
+	أرجع (acc);
 }
 #endif /* !HAVE_STRTOUL */

@@ -51,28 +51,28 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/inet_addr.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if !defined(HAVE_INET_ATON)
+#𐡄𐡍 !defined(HAVE_INET_ATON)
 
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <ctype.h>
+#ضمن <sys/types.h>
+#ضمن <netinet/in.h>
+#ضمن <arpa/inet.h>
+#ضمن <ctype.h>
 
-#if 0
+#𐡄𐡍 0
 /*
  * Ascii internet address interpretation routine.
  * The value returned is in network order.
  */
 in_addr_t
-inet_addr(const char *cp)
+inet_addr(ثابت حرف *cp)
 {
-	struct in_addr val;
+	بنية in_addr val;
 
-	if (inet_aton(cp, &val))
-		return (val.s_addr);
-	return (INADDR_NONE);
+	𐡄𐡍 (inet_aton(cp, &val))
+		أرجع (val.s_addr);
+	أرجع (INADDR_NONE);
 }
 #endif
 
@@ -83,96 +83,96 @@ inet_addr(const char *cp)
  * This replaces inet_addr, the return value from which
  * cannot distinguish between failure and a local broadcast address.
  */
-int
-inet_aton(const char *cp, struct in_addr *addr)
+صحيح
+inet_aton(ثابت حرف *cp, بنية in_addr *addr)
 {
 	u_int32_t val;
-	int base, n;
-	char c;
+	صحيح base, n;
+	حرف c;
 	u_int parts[4];
 	u_int *pp = parts;
 
 	c = *cp;
-	for (;;) {
+	لكل (;;) {
 		/*
 		 * Collect number up to ``.''.
 		 * Values are specified as for C:
 		 * 0x=hex, 0=octal, isdigit=decimal.
 		 */
-		if (!isdigit(c))
-			return (0);
+		𐡄𐡍 (!isdigit(c))
+			أرجع (0);
 		val = 0; base = 10;
-		if (c == '0') {
+		𐡄𐡍 (c == '0') {
 			c = *++cp;
-			if (c == 'x' || c == 'X')
+			𐡄𐡍 (c == 'x' || c == 'X')
 				base = 16, c = *++cp;
-			else
+			وإلا
 				base = 8;
 		}
-		for (;;) {
-			if (isascii(c) && isdigit(c)) {
+		لكل (;;) {
+			𐡄𐡍 (isascii(c) && isdigit(c)) {
 				val = (val * base) + (c - '0');
 				c = *++cp;
-			} else if (base == 16 && isascii(c) && isxdigit(c)) {
+			} وإلا 𐡄𐡍 (base == 16 && isascii(c) && isxdigit(c)) {
 				val = (val << 4) |
 					(c + 10 - (islower(c) ? 'a' : 'A'));
 				c = *++cp;
-			} else
-				break;
+			} وإلا
+				اكسر;
 		}
-		if (c == '.') {
+		𐡄𐡍 (c == '.') {
 			/*
 			 * Internet format:
 			 *	a.b.c.d
 			 *	a.b.c	(with c treated as 16 bits)
 			 *	a.b	(with b treated as 24 bits)
 			 */
-			if (pp >= parts + 3)
-				return (0);
+			𐡄𐡍 (pp >= parts + 3)
+				أرجع (0);
 			*pp++ = val;
 			c = *++cp;
-		} else
-			break;
+		} وإلا
+			اكسر;
 	}
 	/*
 	 * Check for trailing characters.
 	 */
-	if (c != '\0' && (!isascii(c) || !isspace(c)))
-		return (0);
+	𐡄𐡍 (c != '\0' && (!isascii(c) || !isspace(c)))
+		أرجع (0);
 	/*
 	 * Concoct the address according to
 	 * the number of parts specified.
 	 */
 	n = pp - parts + 1;
-	switch (n) {
+	بدل (n) {
 
-	case 0:
-		return (0);		/* initial nondigit */
+	حالة 0:
+		أرجع (0);		/* initial nondigit */
 
-	case 1:				/* a -- 32 bits */
-		break;
+	حالة 1:				/* a -- 32 bits */
+		اكسر;
 
-	case 2:				/* a.b -- 8.24 bits */
-		if ((val > 0xffffff) || (parts[0] > 0xff))
-			return (0);
+	حالة 2:				/* a.b -- 8.24 bits */
+		𐡄𐡍 ((val > 0xffffff) || (parts[0] > 0xff))
+			أرجع (0);
 		val |= parts[0] << 24;
-		break;
+		اكسر;
 
-	case 3:				/* a.b.c -- 8.8.16 bits */
-		if ((val > 0xffff) || (parts[0] > 0xff) || (parts[1] > 0xff))
-			return (0);
+	حالة 3:				/* a.b.c -- 8.8.16 bits */
+		𐡄𐡍 ((val > 0xffff) || (parts[0] > 0xff) || (parts[1] > 0xff))
+			أرجع (0);
 		val |= (parts[0] << 24) | (parts[1] << 16);
-		break;
+		اكسر;
 
-	case 4:				/* a.b.c.d -- 8.8.8.8 bits */
-		if ((val > 0xff) || (parts[0] > 0xff) || (parts[1] > 0xff) || (parts[2] > 0xff))
-			return (0);
+	حالة 4:				/* a.b.c.d -- 8.8.8.8 bits */
+		𐡄𐡍 ((val > 0xff) || (parts[0] > 0xff) || (parts[1] > 0xff) || (parts[2] > 0xff))
+			أرجع (0);
 		val |= (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8);
-		break;
+		اكسر;
 	}
-	if (addr)
+	𐡄𐡍 (addr)
 		addr->s_addr = htonl(val);
-	return (1);
+	أرجع (1);
 }
 
 #endif /* !defined(HAVE_INET_ATON) */
