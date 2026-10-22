@@ -92,31 +92,31 @@
  *
  **************************************************************/
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
+#إذا defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
 # undef HAVE_SNPRINTF
 # undef HAVE_VSNPRINTF
 #endif
 
-#if !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
+#إذا !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
 
-#include <ctype.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
-#include <errno.h>
+#ضمن <ctype.h>
+#ضمن <stdarg.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <limits.h>
+#ضمن <errno.h>
 
 #ifdef HAVE_LONG_DOUBLE
-# define LDOUBLE long double
-#else
-# define LDOUBLE double
+# define LDOUBLE long مزدوج
+#وإلا
+# define LDOUBLE مزدوج
 #endif
 
 #ifdef HAVE_LONG_LONG
 # define LLONG long long
-#else
+#وإلا
 # define LLONG long
 #endif
 
@@ -138,7 +138,7 @@
 #define DP_F_MINUS	(1 << 0)
 #define DP_F_PLUS	(1 << 1)
 #define DP_F_SPACE	(1 << 2)
-#define DP_F_NUM	(1 << 3)
+#define DP_F_لمب	(1 << 3)
 #define DP_F_ZERO	(1 << 4)
 #define DP_F_UP		(1 << 5)
 #define DP_F_UNSIGNED	(1 << 6)
@@ -157,436 +157,436 @@
 #endif
 
 #define DOPR_OUTCH(buf, pos, buflen, thechar) \
-	do { \
-		if (pos + 1 >= INT_MAX) { \
+	افعل { \
+		إذا (pos + 1 >= INT_MAX) { \
 			errno = ERANGE; \
-			return -1; \
+			أرجع -1; \
 		} \
-		if (pos < buflen) \
+		إذا (pos < buflen) \
 			buf[pos] = thechar; \
 		(pos)++; \
-	} while (0)
+	} طالما (0)
 
-static int dopr(char *buffer, size_t maxlen, const char *format,
-    va_list args_in);
-static int fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max);
-static int fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags);
-static int fmtfp(char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags);
+ساكن صحيح dopr(حرف *buffer, size_t maxlen, ثابت حرف *format,
+    va_list حجوجي_in);
+ساكن صحيح fmtstr(حرف *buffer, size_t *currlen, size_t maxlen,
+    حرف *درج, صحيح flags, صحيح min, صحيح max);
+ساكن صحيح fmtint(حرف *buffer, size_t *currlen, size_t maxlen,
+    intmax_t درج, صحيح base, صحيح min, صحيح max, صحيح flags);
+ساكن صحيح fmtfp(حرف *buffer, size_t *currlen, size_t maxlen,
+    LDOUBLE fvalue, صحيح min, صحيح max, صحيح flags);
 
-static int
-dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
+ساكن صحيح
+dopr(حرف *buffer, size_t maxlen, ثابت حرف *format, va_list حجوجي_in)
 {
-	char ch;
-	intmax_t value;
+	حرف ch;
+	intmax_t درج;
 	LDOUBLE fvalue;
-	char *strvalue;
-	int min;
-	int max;
-	int state;
-	int flags;
-	int cflags;
+	حرف *strvalue;
+	صحيح min;
+	صحيح max;
+	صحيح state;
+	صحيح flags;
+	صحيح cflags;
 	size_t currlen;
-	va_list args;
+	va_list حجوجي;
 
-	VA_COPY(args, args_in);
+	VA_COPY(حجوجي, حجوجي_in);
 
 	state = DP_S_DEFAULT;
 	currlen = flags = cflags = min = 0;
 	max = -1;
 	ch = *format++;
 
-	while (state != DP_S_DONE) {
-		if (ch == '\0')
+	طالما (state != DP_S_DONE) {
+		إذا (ch == '\0')
 			state = DP_S_DONE;
 
-		switch(state) {
-		case DP_S_DEFAULT:
-			if (ch == '%')
+		بدل(state) {
+		حالة DP_S_DEFAULT:
+			إذا (ch == '%')
 				state = DP_S_FLAGS;
-			else
+			وإلا
 				DOPR_OUTCH(buffer, currlen, maxlen, ch);
 			ch = *format++;
-			break;
-		case DP_S_FLAGS:
-			switch (ch) {
-			case '-':
+			اكسر;
+		حالة DP_S_FLAGS:
+			بدل (ch) {
+			حالة '-':
 				flags |= DP_F_MINUS;
 				ch = *format++;
-				break;
-			case '+':
+				اكسر;
+			حالة '+':
 				flags |= DP_F_PLUS;
 				ch = *format++;
-				break;
-			case ' ':
+				اكسر;
+			حالة ' ':
 				flags |= DP_F_SPACE;
 				ch = *format++;
-				break;
-			case '#':
-				flags |= DP_F_NUM;
+				اكسر;
+			حالة '#':
+				flags |= DP_F_لمب;
 				ch = *format++;
-				break;
-			case '0':
+				اكسر;
+			حالة '0':
 				flags |= DP_F_ZERO;
 				ch = *format++;
-				break;
-			default:
+				اكسر;
+			افتراضي:
 				state = DP_S_MIN;
-				break;
+				اكسر;
 			}
-			break;
-		case DP_S_MIN:
-			if (isdigit((unsigned char)ch)) {
+			اكسر;
+		حالة DP_S_MIN:
+			إذا (isdigit((unsigned حرف)ch)) {
 				min = 10*min + char_to_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				min = va_arg (args, int);
+			} وإلا إذا (ch == '*') {
+				min = va_arg (حجوجي, صحيح);
 				ch = *format++;
 				state = DP_S_DOT;
-			} else {
+			} وإلا {
 				state = DP_S_DOT;
 			}
-			break;
-		case DP_S_DOT:
-			if (ch == '.') {
+			اكسر;
+		حالة DP_S_DOT:
+			إذا (ch == '.') {
 				state = DP_S_MAX;
 				ch = *format++;
-			} else {
+			} وإلا {
 				state = DP_S_MOD;
 			}
-			break;
-		case DP_S_MAX:
-			if (isdigit((unsigned char)ch)) {
-				if (max < 0)
+			اكسر;
+		حالة DP_S_MAX:
+			إذا (isdigit((unsigned حرف)ch)) {
+				إذا (max < 0)
 					max = 0;
 				max = 10*max + char_to_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				max = va_arg (args, int);
+			} وإلا إذا (ch == '*') {
+				max = va_arg (حجوجي, صحيح);
 				ch = *format++;
 				state = DP_S_MOD;
-			} else {
+			} وإلا {
 				state = DP_S_MOD;
 			}
-			break;
-		case DP_S_MOD:
-			switch (ch) {
-			case 'h':
+			اكسر;
+		حالة DP_S_MOD:
+			بدل (ch) {
+			حالة 'h':
 				cflags = DP_C_SHORT;
 				ch = *format++;
-				break;
-			case 'j':
+				اكسر;
+			حالة 'j':
 				cflags = DP_C_INTMAX;
 				ch = *format++;
-				break;
-			case 'l':
+				اكسر;
+			حالة 'l':
 				cflags = DP_C_LONG;
 				ch = *format++;
-				if (ch == 'l') {	/* It's a long long */
+				إذا (ch == 'l') {	/* It's a long long */
 					cflags = DP_C_LLONG;
 					ch = *format++;
 				}
-				break;
-			case 'L':
+				اكسر;
+			حالة 'L':
 				cflags = DP_C_LDOUBLE;
 				ch = *format++;
-				break;
-			case 'z':
+				اكسر;
+			حالة 'z':
 				cflags = DP_C_SIZE;
 				ch = *format++;
-				break;
-			default:
-				break;
+				اكسر;
+			افتراضي:
+				اكسر;
 			}
 			state = DP_S_CONV;
-			break;
-		case DP_S_CONV:
-			switch (ch) {
-			case 'd':
-			case 'i':
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, int);
-				else if (cflags == DP_C_LONG)
-					value = va_arg (args, long int);
-				else if (cflags == DP_C_LLONG)
-					value = va_arg (args, LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, ssize_t);
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, intmax_t);
-				else
-					value = va_arg (args, int);
-				if (fmtint(buffer, &currlen, maxlen,
-				    value, 10, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'o':
+			اكسر;
+		حالة DP_S_CONV:
+			بدل (ch) {
+			حالة 'd':
+			حالة 'i':
+				إذا (cflags == DP_C_SHORT)
+					درج = va_arg (حجوجي, صحيح);
+				وإلا إذا (cflags == DP_C_LONG)
+					درج = va_arg (حجوجي, long صحيح);
+				وإلا إذا (cflags == DP_C_LLONG)
+					درج = va_arg (حجوجي, LLONG);
+				وإلا إذا (cflags == DP_C_SIZE)
+					درج = va_arg (حجوجي, ssize_t);
+				وإلا إذا (cflags == DP_C_INTMAX)
+					درج = va_arg (حجوجي, intmax_t);
+				وإلا
+					درج = va_arg (حجوجي, صحيح);
+				إذا (fmtint(buffer, &currlen, maxlen,
+				    درج, 10, min, max, flags) == -1)
+					اذهب fail;
+				اكسر;
+			حالة 'o':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (long)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
+				إذا (cflags == DP_C_SHORT)
+					درج = va_arg (حجوجي, unsigned صحيح);
+				وإلا إذا (cflags == DP_C_LONG)
+					درج = (long)va_arg (حجوجي, unsigned long صحيح);
+				وإلا إذا (cflags == DP_C_LLONG)
+					درج = (long)va_arg (حجوجي, unsigned LLONG);
+				وإلا إذا (cflags == DP_C_SIZE)
+					درج = va_arg (حجوجي, size_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
+				وإلا إذا (cflags == DP_C_INTMAX)
+					درج = va_arg (حجوجي, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				وإلا
+					درج = (long)va_arg (حجوجي, unsigned صحيح);
+				إذا (fmtint(buffer, &currlen, maxlen, درج,
 				    8, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'u':
+					اذهب fail;
+				اكسر;
+			حالة 'u':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
+				إذا (cflags == DP_C_SHORT)
+					درج = va_arg (حجوجي, unsigned صحيح);
+				وإلا إذا (cflags == DP_C_LONG)
+					درج = (long)va_arg (حجوجي, unsigned long صحيح);
+				وإلا إذا (cflags == DP_C_LLONG)
+					درج = (LLONG)va_arg (حجوجي, unsigned LLONG);
+				وإلا إذا (cflags == DP_C_SIZE)
+					درج = va_arg (حجوجي, size_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
+				وإلا إذا (cflags == DP_C_INTMAX)
+					درج = va_arg (حجوجي, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				وإلا
+					درج = (long)va_arg (حجوجي, unsigned صحيح);
+				إذا (fmtint(buffer, &currlen, maxlen, درج,
 				    10, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'X':
+					اذهب fail;
+				اكسر;
+			حالة 'X':
 				flags |= DP_F_UP;
-			case 'x':
+			حالة 'x':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
+				إذا (cflags == DP_C_SHORT)
+					درج = va_arg (حجوجي, unsigned صحيح);
+				وإلا إذا (cflags == DP_C_LONG)
+					درج = (long)va_arg (حجوجي, unsigned long صحيح);
+				وإلا إذا (cflags == DP_C_LLONG)
+					درج = (LLONG)va_arg (حجوجي, unsigned LLONG);
+				وإلا إذا (cflags == DP_C_SIZE)
+					درج = va_arg (حجوجي, size_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
+				وإلا إذا (cflags == DP_C_INTMAX)
+					درج = va_arg (حجوجي, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				وإلا
+					درج = (long)va_arg (حجوجي, unsigned صحيح);
+				إذا (fmtint(buffer, &currlen, maxlen, درج,
 				    16, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'f':
-				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+					اذهب fail;
+				اكسر;
+			حالة 'f':
+				إذا (cflags == DP_C_LDOUBLE)
+					fvalue = va_arg (حجوجي, LDOUBLE);
+				وإلا
+					fvalue = va_arg (حجوجي, مزدوج);
+				إذا (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'E':
+					اذهب fail;
+				اكسر;
+			حالة 'E':
 				flags |= DP_F_UP;
-			case 'e':
-				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+			حالة 'e':
+				إذا (cflags == DP_C_LDOUBLE)
+					fvalue = va_arg (حجوجي, LDOUBLE);
+				وإلا
+					fvalue = va_arg (حجوجي, مزدوج);
+				إذا (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'G':
+					اذهب fail;
+				اكسر;
+			حالة 'G':
 				flags |= DP_F_UP;
-			case 'g':
-				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+			حالة 'g':
+				إذا (cflags == DP_C_LDOUBLE)
+					fvalue = va_arg (حجوجي, LDOUBLE);
+				وإلا
+					fvalue = va_arg (حجوجي, مزدوج);
+				إذا (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'c':
+					اذهب fail;
+				اكسر;
+			حالة 'c':
 				DOPR_OUTCH(buffer, currlen, maxlen,
-				    va_arg (args, int));
-				break;
-			case 's':
-				strvalue = va_arg (args, char *);
-				if (!strvalue) strvalue = "(NULL)";
-				if (max == -1) {
+				    va_arg (حجوجي, صحيح));
+				اكسر;
+			حالة 's':
+				strvalue = va_arg (حجوجي, حرف *);
+				إذا (!strvalue) strvalue = "(NULL)";
+				إذا (max == -1) {
 					max = strlen(strvalue);
 				}
-				if (min > 0 && max >= 0 && min > max) max = min;
-				if (fmtstr(buffer, &currlen, maxlen,
+				إذا (min > 0 && max >= 0 && min > max) max = min;
+				إذا (fmtstr(buffer, &currlen, maxlen,
 				    strvalue, flags, min, max) == -1)
-					goto fail;
-				break;
-			case 'p':
-				strvalue = va_arg (args, void *);
-				if (fmtint(buffer, &currlen, maxlen,
+					اذهب fail;
+				اكسر;
+			حالة 'p':
+				strvalue = va_arg (حجوجي, فراغ *);
+				إذا (fmtint(buffer, &currlen, maxlen,
 				    (long) strvalue, 16, min, max, flags) == -1)
-					goto fail;
-				break;
-#if we_dont_want_this_in_openssh
-			case 'n':
-				if (cflags == DP_C_SHORT) {
-					short int *num;
-					num = va_arg (args, short int *);
-					*num = currlen;
-				} else if (cflags == DP_C_LONG) {
-					long int *num;
-					num = va_arg (args, long int *);
-					*num = (long int)currlen;
-				} else if (cflags == DP_C_LLONG) {
-					LLONG *num;
-					num = va_arg (args, LLONG *);
-					*num = (LLONG)currlen;
-				} else if (cflags == DP_C_SIZE) {
-					ssize_t *num;
-					num = va_arg (args, ssize_t *);
-					*num = (ssize_t)currlen;
-				} else if (cflags == DP_C_INTMAX) {
-					intmax_t *num;
-					num = va_arg (args, intmax_t *);
-					*num = (intmax_t)currlen;
-				} else {
-					int *num;
-					num = va_arg (args, int *);
-					*num = currlen;
+					اذهب fail;
+				اكسر;
+#إذا we_dont_want_this_in_openssh
+			حالة 'n':
+				إذا (cflags == DP_C_SHORT) {
+					short صحيح *لمب;
+					لمب = va_arg (حجوجي, short صحيح *);
+					*لمب = currlen;
+				} وإلا إذا (cflags == DP_C_LONG) {
+					long صحيح *لمب;
+					لمب = va_arg (حجوجي, long صحيح *);
+					*لمب = (long صحيح)currlen;
+				} وإلا إذا (cflags == DP_C_LLONG) {
+					LLONG *لمب;
+					لمب = va_arg (حجوجي, LLONG *);
+					*لمب = (LLONG)currlen;
+				} وإلا إذا (cflags == DP_C_SIZE) {
+					ssize_t *لمب;
+					لمب = va_arg (حجوجي, ssize_t *);
+					*لمب = (ssize_t)currlen;
+				} وإلا إذا (cflags == DP_C_INTMAX) {
+					intmax_t *لمب;
+					لمب = va_arg (حجوجي, intmax_t *);
+					*لمب = (intmax_t)currlen;
+				} وإلا {
+					صحيح *لمب;
+					لمب = va_arg (حجوجي, صحيح *);
+					*لمب = currlen;
 				}
-				break;
+				اكسر;
 #endif
-			case '%':
+			حالة '%':
 				DOPR_OUTCH(buffer, currlen, maxlen, ch);
-				break;
-			default:
+				اكسر;
+			افتراضي:
 				/* Unknown, skip */
-				break;
+				اكسر;
 			}
 			ch = *format++;
 			state = DP_S_DEFAULT;
 			flags = cflags = min = 0;
 			max = -1;
-			break;
-		case DP_S_DONE:
-			break;
-		default:
+			اكسر;
+		حالة DP_S_DONE:
+			اكسر;
+		افتراضي:
 			/* hmm? */
-			break; /* some picky compilers need this */
+			اكسر; /* some picky compilers need this */
 		}
 	}
-	if (maxlen != 0) {
-		if (currlen < maxlen - 1)
+	إذا (maxlen != 0) {
+		إذا (currlen < maxlen - 1)
 			buffer[currlen] = '\0';
-		else if (maxlen > 0)
+		وإلا إذا (maxlen > 0)
 			buffer[maxlen - 1] = '\0';
 	}
-	va_end(args);
-	return currlen < INT_MAX ? (int)currlen : -1;
+	va_end(حجوجي);
+	أرجع currlen < INT_MAX ? (صحيح)currlen : -1;
  fail:
-	va_end(args);
-	return -1;
+	va_end(حجوجي);
+	أرجع -1;
 }
 
-static int
-fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max)
+ساكن صحيح
+fmtstr(حرف *buffer, size_t *currlen, size_t maxlen,
+    حرف *درج, صحيح flags, صحيح min, صحيح max)
 {
-	int padlen, strln;     /* amount to pad */
-	int cnt = 0;
+	صحيح padlen, strln;     /* amount to pad */
+	صحيح cnt = 0;
 
 #ifdef DEBUG_SNPRINTF
-	printf("fmtstr min=%d max=%d s=[%s]\n", min, max, value);
+	printf("fmtstr min=%d max=%d s=[%s]\n", min, max, درج);
 #endif
-	if (value == 0) {
-		value = "<NULL>";
+	إذا (درج == 0) {
+		درج = "<NULL>";
 	}
 
-	for (strln = 0; strln < max && value[strln]; ++strln); /* strlen */
+	لكل (strln = 0; strln < max && درج[strln]; ++strln); /* strlen */
 	padlen = min - strln;
-	if (padlen < 0)
+	إذا (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	إذا (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justify */
 
-	while ((padlen > 0) && (cnt < max)) {
+	طالما ((padlen > 0) && (cnt < max)) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		--padlen;
 		++cnt;
 	}
-	while (*value && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, *value);
-		value++;
+	طالما (*درج && (cnt < max)) {
+		DOPR_OUTCH(buffer, *currlen, maxlen, *درج);
+		درج++;
 		++cnt;
 	}
-	while ((padlen < 0) && (cnt < max)) {
+	طالما ((padlen < 0) && (cnt < max)) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		++padlen;
 		++cnt;
 	}
-	return 0;
+	أرجع 0;
 }
 
 /* Have to handle DP_F_NUM (ie 0x and 0 alternates) */
 
-static int
-fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags)
+ساكن صحيح
+fmtint(حرف *buffer, size_t *currlen, size_t maxlen,
+    intmax_t درج, صحيح base, صحيح min, صحيح max, صحيح flags)
 {
-	int signvalue = 0;
+	صحيح signvalue = 0;
 	unsigned LLONG uvalue;
-	char convert[20];
-	int place = 0;
-	int spadlen = 0; /* amount to space pad */
-	int zpadlen = 0; /* amount to zero pad */
-	int caps = 0;
+	حرف convert[20];
+	صحيح place = 0;
+	صحيح spadlen = 0; /* amount to space pad */
+	صحيح zpadlen = 0; /* amount to zero pad */
+	صحيح caps = 0;
 
-	if (max < 0)
+	إذا (max < 0)
 		max = 0;
 
-	uvalue = value;
+	uvalue = درج;
 
-	if(!(flags & DP_F_UNSIGNED)) {
-		if( value < 0 ) {
+	إذا(!(flags & DP_F_UNSIGNED)) {
+		إذا( درج < 0 ) {
 			signvalue = '-';
-			uvalue = -value;
-		} else {
-			if (flags & DP_F_PLUS)  /* Do a sign (+/i) */
+			uvalue = -درج;
+		} وإلا {
+			إذا (flags & DP_F_PLUS)  /* Do a sign (+/i) */
 				signvalue = '+';
-			else if (flags & DP_F_SPACE)
+			وإلا إذا (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
+	إذا (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
 
-	do {
+	افعل {
 		convert[place++] =
 			(caps? "0123456789ABCDEF":"0123456789abcdef")
 			[uvalue % (unsigned)base  ];
 		uvalue = (uvalue / (unsigned)base );
-	} while(uvalue && (place < 20));
-	if (place == 20) place--;
+	} طالما(uvalue && (place < 20));
+	إذا (place == 20) place--;
 	convert[place] = 0;
 
 	zpadlen = max - place;
 	spadlen = min - MAX (max, place) - (signvalue ? 1 : 0);
-	if (zpadlen < 0) zpadlen = 0;
-	if (spadlen < 0) spadlen = 0;
-	if (flags & DP_F_ZERO) {
+	إذا (zpadlen < 0) zpadlen = 0;
+	إذا (spadlen < 0) spadlen = 0;
+	إذا (flags & DP_F_ZERO) {
 		zpadlen = MAX(zpadlen, spadlen);
 		spadlen = 0;
 	}
-	if (flags & DP_F_MINUS)
+	إذا (flags & DP_F_MINUS)
 		spadlen = -spadlen; /* Left Justifty */
 
 #ifdef DEBUG_SNPRINTF
@@ -595,162 +595,162 @@ fmtint(char *buffer, size_t *currlen, size_t maxlen,
 #endif
 
 	/* Spaces */
-	while (spadlen > 0) {
+	طالما (spadlen > 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		--spadlen;
 	}
 
 	/* Sign */
-	if (signvalue)
+	إذا (signvalue)
 		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
 
 	/* Zeros */
-	if (zpadlen > 0) {
-		while (zpadlen > 0) {
+	إذا (zpadlen > 0) {
+		طالما (zpadlen > 0) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 	}
 
 	/* Digits */
-	while (place > 0) {
+	طالما (place > 0) {
 		--place;
 		DOPR_OUTCH(buffer, *currlen, maxlen, convert[place]);
 	}
 
 	/* Left Justified spaces */
-	while (spadlen < 0) {
+	طالما (spadlen < 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		++spadlen;
 	}
-	return 0;
+	أرجع 0;
 }
 
-static LDOUBLE abs_val(LDOUBLE value)
+ساكن LDOUBLE abs_val(LDOUBLE درج)
 {
-	LDOUBLE result = value;
+	LDOUBLE result = درج;
 
-	if (value < 0)
-		result = -value;
+	إذا (درج < 0)
+		result = -درج;
 
-	return result;
+	أرجع result;
 }
 
-static LDOUBLE POW10(int val)
+ساكن LDOUBLE POW10(صحيح val)
 {
 	LDOUBLE result = 1;
 
-	while (val) {
+	طالما (val) {
 		result *= 10;
 		val--;
 	}
 
-	return result;
+	أرجع result;
 }
 
-static LLONG ROUND(LDOUBLE value)
+ساكن LLONG ROUND(LDOUBLE درج)
 {
 	LLONG intpart;
 
-	intpart = (LLONG)value;
-	value = value - intpart;
-	if (value >= 0.5) intpart++;
+	intpart = (LLONG)درج;
+	درج = درج - intpart;
+	إذا (درج >= 0.5) intpart++;
 
-	return intpart;
+	أرجع intpart;
 }
 
 /* a replacement for modf that doesn't need the math library. Should
    be portable, but slow */
-static double my_modf(double x0, double *iptr)
+ساكن مزدوج my_modf(مزدوج x0, مزدوج *iptr)
 {
-	int i;
+	صحيح i;
 	long l;
-	double x = x0;
-	double f = 1.0;
+	مزدوج x = x0;
+	مزدوج f = 1.0;
 
-	for (i=0;i<100;i++) {
+	لكل (i=0;i<100;i++) {
 		l = (long)x;
-		if (l <= (x+1) && l >= (x-1)) break;
+		إذا (l <= (x+1) && l >= (x-1)) اكسر;
 		x *= 0.1;
 		f *= 10.0;
 	}
 
-	if (i == 100) {
+	إذا (i == 100) {
 		/*
 		 * yikes! the number is beyond what we can handle.
 		 * What do we do?
 		 */
 		(*iptr) = 0;
-		return 0;
+		أرجع 0;
 	}
 
-	if (i != 0) {
-		double i2;
-		double ret;
+	إذا (i != 0) {
+		مزدوج i2;
+		مزدوج ret;
 
 		ret = my_modf(x0-l*f, &i2);
 		(*iptr) = l*f + i2;
-		return ret;
+		أرجع ret;
 	}
 
 	(*iptr) = l;
-	return x - (*iptr);
+	أرجع x - (*iptr);
 }
 
 
-static int
-fmtfp (char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags)
+ساكن صحيح
+fmtfp (حرف *buffer, size_t *currlen, size_t maxlen,
+    LDOUBLE fvalue, صحيح min, صحيح max, صحيح flags)
 {
-	int signvalue = 0;
-	double ufvalue;
-	char iconvert[311];
-	char fconvert[311];
-	int iplace = 0;
-	int fplace = 0;
-	int padlen = 0; /* amount to pad */
-	int zpadlen = 0;
-#if 0
-	int caps = 0;
+	صحيح signvalue = 0;
+	مزدوج ufvalue;
+	حرف iconvert[311];
+	حرف fconvert[311];
+	صحيح iplace = 0;
+	صحيح fplace = 0;
+	صحيح padlen = 0; /* amount to pad */
+	صحيح zpadlen = 0;
+#إذا 0
+	صحيح caps = 0;
 #endif
-	int idx;
-	double intpart;
-	double fracpart;
-	double temp;
+	صحيح idx;
+	مزدوج intpart;
+	مزدوج fracpart;
+	مزدوج temp;
 
 	/*
 	 * AIX manpage says the default is 0, but Solaris says the default
 	 * is 6, and sprintf on AIX defaults to 6
 	 */
-	if (max < 0)
+	إذا (max < 0)
 		max = 6;
 
 	ufvalue = abs_val (fvalue);
 
-	if (fvalue < 0) {
+	إذا (fvalue < 0) {
 		signvalue = '-';
-	} else {
-		if (flags & DP_F_PLUS) { /* Do a sign (+/i) */
+	} وإلا {
+		إذا (flags & DP_F_PLUS) { /* Do a sign (+/i) */
 			signvalue = '+';
-		} else {
-			if (flags & DP_F_SPACE)
+		} وإلا {
+			إذا (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-#if 0
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
+#إذا 0
+	إذا (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
 #endif
 
-#if 0
-	 if (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
+#إذا 0
+	 إذا (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
 #endif
 
 	/*
 	 * Sorry, we only support 16 digits past the decimal because of our
 	 * conversion method
 	 */
-	if (max > 16)
+	إذا (max > 16)
 		max = 16;
 
 	/* We "cheat" by converting the fractional part to integer by
@@ -762,66 +762,66 @@ fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 
 	fracpart = ROUND((POW10(max)) * (ufvalue - intpart));
 
-	if (fracpart >= POW10(max)) {
+	إذا (fracpart >= POW10(max)) {
 		intpart++;
 		fracpart -= POW10(max);
 	}
 
 	/* Convert integer part */
-	do {
+	افعل {
 		temp = intpart*0.1;
 		my_modf(temp, &intpart);
-		idx = (int) ((temp -intpart +0.05)* 10.0);
+		idx = (صحيح) ((temp -intpart +0.05)* 10.0);
 		/* idx = (int) (((double)(temp*0.1) -intpart +0.05) *10.0); */
 		/* printf ("%llf, %f, %x\n", temp, intpart, idx); */
 		iconvert[iplace++] = "0123456789"[idx];
-	} while (intpart && (iplace < 311));
-	if (iplace == 311) iplace--;
+	} طالما (intpart && (iplace < 311));
+	إذا (iplace == 311) iplace--;
 	iconvert[iplace] = 0;
 
 	/* Convert fractional part */
-	if (fracpart)
+	إذا (fracpart)
 	{
-		do {
+		افعل {
 			temp = fracpart*0.1;
 			my_modf(temp, &fracpart);
-			idx = (int) ((temp -fracpart +0.05)* 10.0);
+			idx = (صحيح) ((temp -fracpart +0.05)* 10.0);
 			/* idx = (int) ((((temp/10) -fracpart) +0.05) *10); */
 			/* printf ("%lf, %lf, %ld\n", temp, fracpart, idx ); */
 			fconvert[fplace++] = "0123456789"[idx];
-		} while(fracpart && (fplace < 311));
-		if (fplace == 311) fplace--;
+		} طالما(fracpart && (fplace < 311));
+		إذا (fplace == 311) fplace--;
 	}
 	fconvert[fplace] = 0;
 
 	/* -1 for decimal point, another -1 if we are printing a sign */
 	padlen = min - iplace - max - 1 - ((signvalue) ? 1 : 0);
 	zpadlen = max - fplace;
-	if (zpadlen < 0) zpadlen = 0;
-	if (padlen < 0)
+	إذا (zpadlen < 0) zpadlen = 0;
+	إذا (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	إذا (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justifty */
 
-	if ((flags & DP_F_ZERO) && (padlen > 0)) {
-		if (signvalue) {
+	إذا ((flags & DP_F_ZERO) && (padlen > 0)) {
+		إذا (signvalue) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
 			--padlen;
 			signvalue = 0;
 		}
-		while (padlen > 0) {
+		طالما (padlen > 0) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
 			--padlen;
 		}
 	}
-	while (padlen > 0) {
+	طالما (padlen > 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		--padlen;
 	}
-	if (signvalue)
+	إذا (signvalue)
 		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
 
-	while (iplace > 0) {
+	طالما (iplace > 0) {
 		--iplace;
 		DOPR_OUTCH(buffer, *currlen, maxlen, iconvert[iplace]);
 	}
@@ -834,46 +834,46 @@ fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 	 * Decimal point.  This should probably use locale to find the correct
 	 * char to print out.
 	 */
-	if (max > 0) {
+	إذا (max > 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, '.');
 
-		while (zpadlen > 0) {
+		طالما (zpadlen > 0) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 
-		while (fplace > 0) {
+		طالما (fplace > 0) {
 			--fplace;
 			DOPR_OUTCH(buffer, *currlen, maxlen, fconvert[fplace]);
 		}
 	}
 
-	while (padlen < 0) {
+	طالما (padlen < 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		++padlen;
 	}
-	return 0;
+	أرجع 0;
 }
 #endif /* !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF) */
 
-#if !defined(HAVE_VSNPRINTF)
-int
-vsnprintf (char *str, size_t count, const char *fmt, va_list args)
+#إذا !defined(HAVE_VSNPRINTF)
+صحيح
+vsnprintf (حرف *str, size_t كدي, ثابت حرف *fmt, va_list حجوجي)
 {
-	return dopr(str, count, fmt, args);
+	أرجع dopr(str, كدي, fmt, حجوجي);
 }
 #endif
 
-#if !defined(HAVE_SNPRINTF)
-int
-snprintf(char *str, size_t count, SNPRINTF_CONST char *fmt, ...)
+#إذا !defined(HAVE_SNPRINTF)
+صحيح
+snprintf(حرف *str, size_t كدي, SNPRINTF_CONST حرف *fmt, ...)
 {
 	size_t ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
+	ret = vsnprintf(str, كدي, fmt, ap);
 	va_end(ap);
-	return ret;
+	أرجع ret;
 }
 #endif

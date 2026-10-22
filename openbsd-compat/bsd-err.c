@@ -25,53 +25,53 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <errno.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
 #ifndef HAVE_ERR
-void
-err(int r, const char *fmt, ...)
+فراغ
+err(صحيح r, ثابت حرف *fmt, ...)
 {
-	va_list args;
+	va_list حجوجي;
 
-	va_start(args, fmt);
+	va_start(حجوجي, fmt);
 	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, حجوجي);
 	fputc('\n', stderr);
-	va_end(args);
+	va_end(حجوجي);
 	exit(r);
 }
 #endif
 
 #ifndef HAVE_ERRX
-void
-errx(int r, const char *fmt, ...)
+فراغ
+errx(صحيح r, ثابت حرف *fmt, ...)
 {
-	va_list args;
+	va_list حجوجي;
 
-	va_start(args, fmt);
-	vfprintf(stderr, fmt, args);
+	va_start(حجوجي, fmt);
+	vfprintf(stderr, fmt, حجوجي);
 	fputc('\n', stderr);
-	va_end(args);
+	va_end(حجوجي);
 	exit(r);
 }
 #endif
 
 #ifndef HAVE_WARN
-void
-warn(const char *fmt, ...)
+فراغ
+warn(ثابت حرف *fmt, ...)
 {
-	va_list args;
+	va_list حجوجي;
 
-	va_start(args, fmt);
+	va_start(حجوجي, fmt);
 	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, حجوجي);
 	fputc('\n', stderr);
-	va_end(args);
+	va_end(حجوجي);
 }
 #endif

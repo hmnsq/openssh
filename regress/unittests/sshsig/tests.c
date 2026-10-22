@@ -5,142 +5,142 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ضمن <sys/types.h>
+#ضمن <sys/stat.h>
+#ضمن <fcntl.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/err.h>
-#include <openssl/evp.h>
-#include <openssl/crypto.h>
+#ضمن <openssl/err.h>
+#ضمن <openssl/evp.h>
+#ضمن <openssl/crypto.h>
 #endif
 
-#include "ssherr.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "sshsig.h"
-#include "log.h"
+#ضمن "ssherr.h"
+#ضمن "authfile.h"
+#ضمن "sshkey.h"
+#ضمن "sshbuf.h"
+#ضمن "sshsig.h"
+#ضمن "log.h"
 
-#include "../test_helper/test_helper.h"
+#ضمن "../test_helper/test_helper.h"
 
-static struct sshbuf *
-load_file(const char *name)
+ساكن بنية sshbuf *
+load_file(ثابت حرف *name)
 {
-	struct sshbuf *ret = NULL;
+	بنية sshbuf *ret = عدم;
 
 	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_PTR_NE(ret, عدم);
+	أرجع ret;
 }
 
-static struct sshkey *
-load_key(const char *name)
+ساكن بنية sshkey *
+load_مبودي(ثابت حرف *name)
 {
-	struct sshkey *ret = NULL;
-	ASSERT_INT_EQ(sshkey_load_public(test_data_file(name), &ret, NULL), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	بنية sshkey *ret = عدم;
+	ASSERT_INT_EQ(sshkey_load_public(test_data_file(name), &ret, عدم), 0);
+	ASSERT_PTR_NE(ret, عدم);
+	أرجع ret;
 }
 
-static void
-check_sig(const char *keyname, const char *signame, const struct sshbuf *msg,
-    const char *namespace)
+ساكن فراغ
+check_sig(ثابت حرف *keyname, ثابت حرف *signame, ثابت بنية sshbuf *سكو,
+    ثابت حرف *namespace)
 {
-	struct sshkey *k, *sign_key;
-	struct sshbuf *sig, *rawsig;
-	struct sshkey_sig_details *sig_details;
+	بنية sshkey *k, *sign_مبودي;
+	بنية sshbuf *sig, *rawsig;
+	بنية sshkey_sig_details *sig_details;
 
-	k = load_key(keyname);
+	k = load_مبودي(keyname);
 	sig = load_file(signame);
-	sign_key = NULL;
-	sig_details = NULL;
-	rawsig = NULL;
+	sign_مبودي = عدم;
+	sig_details = عدم;
+	rawsig = عدم;
 	ASSERT_INT_EQ(sshsig_dearmor(sig, &rawsig), 0);
-	ASSERT_INT_EQ(sshsig_verifyb(rawsig, msg, namespace,
-	    &sign_key, &sig_details), 0);
-	ASSERT_INT_EQ(sshkey_equal(k, sign_key), 1);
+	ASSERT_INT_EQ(sshsig_verifyb(rawsig, سكو, namespace,
+	    &sign_مبودي, &sig_details), 0);
+	ASSERT_INT_EQ(sshkey_equal(k, sign_مبودي), 1);
 	sshkey_free(k);
-	sshkey_free(sign_key);
+	sshkey_free(sign_مبودي);
 	sshkey_sig_details_free(sig_details);
 	sshbuf_free(sig);
 	sshbuf_free(rawsig);
 }
 
-void
-tests(void)
+فراغ
+tests(فراغ)
 {
-	struct sshbuf *msg;
-	char *namespace;
+	بنية sshbuf *سكو;
+	حرف *namespace;
 
-#if 0
+#إذا 0
         log_init("test_sshsig", SYSLOG_LEVEL_DEBUG3, SYSLOG_FACILITY_AUTH, 1);
 #endif
 
 #ifdef WITH_OPENSSL
 	OpenSSL_add_all_algorithms();
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
+	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, عدم);
 #endif
 
 	TEST_START("load data");
-	msg = load_file("namespace");
-	namespace = sshbuf_dup_string(msg);
-	ASSERT_PTR_NE(namespace, NULL);
-	sshbuf_free(msg);
-	msg = load_file("signed-data");
+	سكو = load_file("namespace");
+	namespace = sshbuf_dup_string(سكو);
+	ASSERT_PTR_NE(namespace, عدم);
+	sshbuf_free(سكو);
+	سكو = load_file("signed-data");
 	TEST_DONE();
 
 #ifdef WITH_OPENSSL
 	TEST_START("check RSA signature");
-	check_sig("rsa.pub", "rsa.sig", msg, namespace);
+	check_sig("rsa.pub", "rsa.sig", سكو, namespace);
 	TEST_DONE();
 
 
 	TEST_START("check ECDSA signature");
-	check_sig("ecdsa.pub", "ecdsa.sig", msg, namespace);
+	check_sig("ecdsa.pub", "ecdsa.sig", سكو, namespace);
 	TEST_DONE();
 #endif
 
 	TEST_START("check ED25519 signature");
-	check_sig("ed25519.pub", "ed25519.sig", msg, namespace);
+	check_sig("ed25519.pub", "ed25519.sig", سكو, namespace);
 	TEST_DONE();
 
 	TEST_START("check MLDSA44-ED25519 signature");
-	check_sig("mldsa44-ed25519.pub", "mldsa44-ed25519.sig", msg, namespace);
+	check_sig("mldsa44-ed25519.pub", "mldsa44-ed25519.sig", سكو, namespace);
 	TEST_DONE();
 
 #ifdef ENABLE_SK
-#if defined(WITH_OPENSSL)
+#إذا defined(WITH_OPENSSL)
 	TEST_START("check ECDSA-SK signature");
-	check_sig("ecdsa_sk.pub", "ecdsa_sk.sig", msg, namespace);
+	check_sig("ecdsa_sk.pub", "ecdsa_sk.sig", سكو, namespace);
 	TEST_DONE();
 #endif
 
 	TEST_START("check ED25519-SK signature");
-	check_sig("ed25519_sk.pub", "ed25519_sk.sig", msg, namespace);
+	check_sig("ed25519_sk.pub", "ed25519_sk.sig", سكو, namespace);
 	TEST_DONE();
 
-#if defined(WITH_OPENSSL)
+#إذا defined(WITH_OPENSSL)
 	TEST_START("check ECDSA-SK webauthn signature");
 	check_sig("ecdsa_sk_webauthn.pub", "ecdsa_sk_webauthn.sig",
-	    msg, namespace);
+	    سكو, namespace);
 	TEST_DONE();
 #endif
 #endif /* ENABLE_SK */
 
-	sshbuf_free(msg);
-	free(namespace);
+	sshbuf_free(سكو);
+	حرر(namespace);
 }
 
-void
-benchmarks(void)
+فراغ
+benchmarks(فراغ)
 {
 	printf("no benchmarks\n");
 }

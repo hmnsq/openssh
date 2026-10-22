@@ -28,26 +28,26 @@
 
 #ifdef WITH_OPENSSL
 
-struct dhgroup {
-	int size;
+بنية dhgroup {
+	صحيح size;
 	BIGNUM *g;
 	BIGNUM *p;
 };
 
-DH	*choose_dh(int, int, int);
-DH	*dh_new_group_asc(const char *, const char *);
+DH	*choose_dh(صحيح, صحيح, صحيح);
+DH	*dh_new_group_asc(ثابت حرف *, ثابت حرف *);
 DH	*dh_new_group(BIGNUM *, BIGNUM *);
-DH	*dh_new_group1(void);
-DH	*dh_new_group14(void);
-DH	*dh_new_group16(void);
-DH	*dh_new_group18(void);
-DH	*dh_new_group_fallback(int);
+DH	*dh_new_group1(فراغ);
+DH	*dh_new_group14(فراغ);
+DH	*dh_new_group16(فراغ);
+DH	*dh_new_group18(فراغ);
+DH	*dh_new_group_fallback(صحيح);
 
-int	 dh_gen_key(DH *, int);
-int	 dh_pub_is_valid(const DH *, const BIGNUM *);
+صحيح	 dh_gen_مبودي(DH *, صحيح);
+صحيح	 dh_pub_is_valid(ثابت DH *, ثابت BIGNUM *);
 
-u_int	 dh_estimate(int);
-void	 dh_set_moduli_file(const char *);
+u_int	 dh_estimate(صحيح);
+فراغ	 dh_set_moduli_file(ثابت حرف *);
 
 /*
  * Max value from RFC4419.
