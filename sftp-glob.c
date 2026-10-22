@@ -15,143 +15,143 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#شامل <sys/types.h>
+#شامل <sys/stat.h>
 
-#include <dirent.h>
-#include <glob.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
+#شامل <dirent.h>
+#شامل <glob.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <stdarg.h>
 
-#include "xmalloc.h"
-#include "sftp.h"
-#include "sftp-common.h"
-#include "sftp-client.h"
+#شامل "xmalloc.h"
+#شامل "sftp.h"
+#شامل "sftp-common.h"
+#شامل "sftp-client.h"
 
-int sftp_glob(struct sftp_conn *, const char *, int,
-    int (*)(const char *, int), glob_t *);
+صحیح sftp_glob(ساخت sftp_conn *, ثابت حرف *, صحیح,
+    صحیح (*)(ثابت حرف *, صحیح), glob_t *);
 
-struct SFTP_OPENDIR {
+ساخت SFTP_OPENDIR {
 	SFTP_DIRENT **dir;
-	int offset;
+	صحیح انحراف;
 };
 
-static struct {
-	struct sftp_conn *conn;
+ساکن ساخت {
+	ساخت sftp_conn *conn;
 } cur;
 
-static void *
-fudge_opendir(const char *path)
+ساکن خالی *
+fudge_opendir(ثابت حرف *راستہ)
 {
-	struct SFTP_OPENDIR *r;
+	ساخت SFTP_OPENDIR *r;
 
-	r = xcalloc(1, sizeof(*r));
+	r = xcalloc(1, حجم(*r));
 
-	if (sftp_readdir(cur.conn, path, &r->dir)) {
-		free(r);
-		return(NULL);
+	اگر (sftp_readdir(cur.conn, راستہ, &r->dir)) {
+		آزاد(r);
+		واپس(تہی);
 	}
 
-	r->offset = 0;
+	r->انحراف = 0;
 
-	return((void *)r);
+	واپس((خالی *)r);
 }
 
-static struct dirent *
-fudge_readdir(struct SFTP_OPENDIR *od)
+ساکن ساخت dirent *
+fudge_readdir(ساخت SFTP_OPENDIR *od)
 {
 	/* Solaris needs sizeof(dirent) + path length (see below) */
-	static char buf[sizeof(struct dirent) + MAXPATHLEN];
-	struct dirent *ret = (struct dirent *)buf;
-#ifdef __GNU_LIBRARY__
-	static int inum = 1;
-#endif /* __GNU_LIBRARY__ */
+	ساکن حرف buf[حجم(ساخت dirent) + MAXPATHLEN];
+	ساخت dirent *ret = (ساخت dirent *)buf;
+#اگر_تعریف_شدہ __GNU_LIBRARY__
+	ساکن صحیح inum = 1;
+#اگر_ختم /* __GNU_LIBRARY__ */
 
-	if (od->dir[od->offset] == NULL)
-		return(NULL);
+	اگر (od->dir[od->انحراف] == تہی)
+		واپس(تہی);
 
-	memset(buf, 0, sizeof(buf));
+	memset(buf, 0, حجم(buf));
 
 	/*
 	 * Solaris defines dirent->d_name as a one byte array and expects
 	 * you to hack around it.
 	 */
-#ifdef BROKEN_ONE_BYTE_DIRENT_D_NAME
-	strlcpy(ret->d_name, od->dir[od->offset++]->filename, MAXPATHLEN);
-#else
-	strlcpy(ret->d_name, od->dir[od->offset++]->filename,
-	    sizeof(ret->d_name));
-#endif
-#ifdef __GNU_LIBRARY__
+#اگر_تعریف_شدہ BROKEN_ONE_BYTE_DIRENT_D_NAME
+	strlcpy(ret->d_name, od->dir[od->انحراف++]->filename, MAXPATHLEN);
+#ورنہ
+	strlcpy(ret->d_name, od->dir[od->انحراف++]->filename,
+	    حجم(ret->d_name));
+#اگر_ختم
+#اگر_تعریف_شدہ __GNU_LIBRARY__
 	/*
 	 * Idiot glibc uses extensions to struct dirent for readdir with
 	 * ALTDIRFUNCs. Not that this is documented anywhere but the
 	 * source... Fake an inode number to appease it.
 	 */
 	ret->d_ino = inum++;
-	if (!inum)
+	اگر (!inum)
 		inum = 1;
-#endif /* __GNU_LIBRARY__ */
+#اگر_ختم /* __GNU_LIBRARY__ */
 
-	return(ret);
+	واپس(ret);
 }
 
-static void
-fudge_closedir(struct SFTP_OPENDIR *od)
+ساکن خالی
+fudge_closedir(ساخت SFTP_OPENDIR *od)
 {
 	sftp_free_dirents(od->dir);
-	free(od);
+	آزاد(od);
 }
 
-static int
-fudge_lstat(const char *path, struct stat *st)
+ساکن صحیح
+fudge_lstat(ثابت حرف *راستہ, ساخت stat *st)
 {
 	Attrib a;
 
-	if (sftp_lstat(cur.conn, path, 1, &a) != 0)
-		return -1;
+	اگر (sftp_lstat(cur.conn, راستہ, 1, &a) != 0)
+		واپس -1;
 
-	attrib_to_stat(&a, st);
+	attrib_مقصد_stat(&a, st);
 
-	return 0;
+	واپس 0;
 }
 
-static int
-fudge_stat(const char *path, struct stat *st)
+ساکن صحیح
+fudge_stat(ثابت حرف *راستہ, ساخت stat *st)
 {
 	Attrib a;
 
-	if (sftp_stat(cur.conn, path, 1, &a) != 0)
-		return -1;
+	اگر (sftp_stat(cur.conn, راستہ, 1, &a) != 0)
+		واپس -1;
 
-	attrib_to_stat(&a, st);
+	attrib_مقصد_stat(&a, st);
 
-	return(0);
+	واپس(0);
 }
 
-int
-sftp_glob(struct sftp_conn *conn, const char *pattern, int flags,
-    int (*errfunc)(const char *, int), glob_t *pglob)
+صحیح
+sftp_glob(ساخت sftp_conn *conn, ثابت حرف *نمونہ, صحیح flags,
+    صحیح (*errfunc)(ثابت حرف *, صحیح), glob_t *pglob)
 {
-	int r;
-	size_t l;
-	char *s;
-	struct stat sb;
+	صحیح r;
+	سائز_t l;
+	حرف *s;
+	ساخت stat sb;
 
 	pglob->gl_opendir = fudge_opendir;
-	pglob->gl_readdir = (struct dirent *(*)(void *))fudge_readdir;
-	pglob->gl_closedir = (void (*)(void *))fudge_closedir;
+	pglob->gl_readdir = (ساخت dirent *(*)(خالی *))fudge_readdir;
+	pglob->gl_closedir = (خالی (*)(خالی *))fudge_closedir;
 	pglob->gl_lstat = fudge_lstat;
 	pglob->gl_stat = fudge_stat;
 
-	memset(&cur, 0, sizeof(cur));
+	memset(&cur, 0, حجم(cur));
 	cur.conn = conn;
 
-	if ((r = glob(pattern, flags | GLOB_ALTDIRFUNC, errfunc, pglob)) != 0)
-		return r;
+	اگر ((r = glob(نمونہ, flags | GLOB_ALTDIRFUNC, errfunc, pglob)) != 0)
+		واپس r;
 	/*
 	 * When both GLOB_NOCHECK and GLOB_MARK are active, a single gl_pathv
 	 * entry has been returned and that entry has not already been marked,
@@ -163,17 +163,17 @@ sftp_glob(struct sftp_conn *conn, const char *pattern, int flags,
 	 *
 	 * XXX doesn't try to handle gl_offs.
 	 */
-	if ((flags & (GLOB_NOCHECK|GLOB_MARK)) == (GLOB_NOCHECK|GLOB_MARK) &&
+	اگر ((flags & (GLOB_NOCHECK|GLOB_MARK)) == (GLOB_NOCHECK|GLOB_MARK) &&
 	    pglob->gl_matchc == 0 && pglob->gl_offs == 0 &&
-	    pglob->gl_pathc == 1 && (s = pglob->gl_pathv[0]) != NULL &&
-	    (l = strlen(s)) > 0 && s[l-1] != '/') {
-		if (fudge_stat(s, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+	    pglob->gl_pathc == 1 && (s = pglob->gl_pathv[0]) != تہی &&
+	    (l = لڑی_لمبائی(s)) > 0 && s[l-1] != '/') {
+		اگر (fudge_stat(s, &sb) == 0 && S_ISDIR(sb.st_mode)) {
 			/* NOCHECK on a directory; annotate */
-			if ((s = realloc(s, l + 2)) != NULL) {
-				memcpy(s + l, "/", 2);
+			اگر ((s = realloc(s, l + 2)) != تہی) {
+				حافظہ_نقل(s + l, "/", 2);
 				pglob->gl_pathv[0] = s;
 			}
 		}
 	}
-	return 0;
+	واپس 0;
 }

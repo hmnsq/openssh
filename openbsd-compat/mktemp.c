@@ -21,23 +21,23 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdio/mktemp.c */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <unistd.h>
+#شامل <sys/types.h>
+#شامل <sys/stat.h>
+#شامل <errno.h>
+#شامل <fcntl.h>
+#شامل <limits.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <ctype.h>
+#شامل <unistd.h>
 
-#ifdef mkstemp
-#undef mkstemp
-#endif
-int mkstemp(char *);
+#اگر_تعریف_شدہ mkstemp
+#تعریف_منسوخ mkstemp
+#اگر_ختم
+صحیح mkstemp(حرف *);
 
 /*
  * From glibc man page: 'In glibc versions 2.06 and earlier, the file is
@@ -45,120 +45,120 @@ int mkstemp(char *);
  * Provide a wrapper to make sure the mask is reasonable (POSIX requires
  * mode 0600, so mask off any other bits).
  */
-int
-_ssh_mkstemp(char *template)
+صحیح
+_ssh_mkstemp(حرف *سانچہ)
 {
-	mode_t mask;
-	int ret;
+	منوال_t نقاب;
+	صحیح ret;
 
-	mask = umask(0177);
-	ret = mkstemp(template);
-	(void)umask(mask);
-	return ret;
+	نقاب = umask(0177);
+	ret = mkstemp(سانچہ);
+	(خالی)umask(نقاب);
+	واپس ret;
 }
 
-#if !defined(HAVE_MKDTEMP)
+#اگر !defined(HAVE_MKDTEMP)
 
-#define MKTEMP_NAME	0
-#define MKTEMP_FILE	1
-#define MKTEMP_DIR	2
+#تعریف_کرو MKTEMP_NAME	0
+#تعریف_کرو MKTEMP_FILE	1
+#تعریف_کرو MKTEMP_DIR	2
 
-#define TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-#define NUM_CHARS	(sizeof(TEMPCHARS) - 1)
+#تعریف_کرو TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+#تعریف_کرو عدد_CHARS	(حجم(TEMPCHARS) - 1)
 
-static int
-mktemp_internal(char *path, int slen, int mode)
+ساکن صحیح
+mktemp_اندرونی(حرف *راستہ, صحیح slen, صحیح منوال)
 {
-	char *start, *cp, *ep;
-	const char *tempchars = TEMPCHARS;
-	unsigned int r, tries;
-	struct stat sb;
-	size_t len;
-	int fd;
+	حرف *آغاز, *cp, *ep;
+	ثابت حرف *tempchars = TEMPCHARS;
+	غیرعلامتی صحیح r, tries;
+	ساخت stat sb;
+	سائز_t len;
+	صحیح fd;
 
-	len = strlen(path);
-	if (len == 0 || slen < 0 || (size_t)slen >= len) {
+	len = لڑی_لمبائی(راستہ);
+	اگر (len == 0 || slen < 0 || (سائز_t)slen >= len) {
 		errno = EINVAL;
-		return(-1);
+		واپس(-1);
 	}
-	ep = path + len - slen;
+	ep = راستہ + len - slen;
 
 	tries = 1;
-	for (start = ep; start > path && start[-1] == 'X'; start--) {
-		if (tries < INT_MAX / NUM_CHARS)
-			tries *= NUM_CHARS;
+	برائے (آغاز = ep; آغاز > راستہ && آغاز[-1] == 'X'; آغاز--) {
+		اگر (tries < زیادہ_سے_زیادہ_عدد / عدد_CHARS)
+			tries *= عدد_CHARS;
 	}
 	tries *= 2;
 
-	do {
-		for (cp = start; cp != ep; cp++) {
-			r = arc4random_uniform(NUM_CHARS);
+	کرو {
+		برائے (cp = آغاز; cp != ep; cp++) {
+			r = arc4random_یکساں(عدد_CHARS);
 			*cp = tempchars[r];
 		}
 
-		switch (mode) {
-		case MKTEMP_NAME:
-			if (lstat(path, &sb) != 0)
-				return(errno == ENOENT ? 0 : -1);
-			break;
-		case MKTEMP_FILE:
-			fd = open(path, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
-			if (fd != -1 || errno != EEXIST)
-				return(fd);
-			break;
-		case MKTEMP_DIR:
-			if (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
-				return(0);
-			if (errno != EEXIST)
-				return(-1);
-			break;
+		انتخاب (منوال) {
+		حالت MKTEMP_NAME:
+			اگر (lstat(راستہ, &sb) != 0)
+				واپس(errno == ENOENT ? 0 : -1);
+			توڑو;
+		حالت MKTEMP_FILE:
+			fd = open(راستہ, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
+			اگر (fd != -1 || errno != EEXIST)
+				واپس(fd);
+			توڑو;
+		حالت MKTEMP_DIR:
+			اگر (mkdir(راستہ, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
+				واپس(0);
+			اگر (errno != EEXIST)
+				واپس(-1);
+			توڑو;
 		}
-	} while (--tries);
+	} جب (--tries);
 
 	errno = EEXIST;
-	return(-1);
+	واپس(-1);
 }
 
-#if 0
-char *_mktemp(char *);
+#اگر 0
+حرف *_mktemp(حرف *);
 
-char *
-_mktemp(char *path)
+حرف *
+_mktemp(حرف *راستہ)
 {
-	if (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
-		return(NULL);
-	return(path);
+	اگر (mktemp_اندرونی(راستہ, 0, MKTEMP_NAME) == -1)
+		واپس(تہی);
+	واپس(راستہ);
 }
 
 __warn_references(mktemp,
     "warning: mktemp() possibly used unsafely; consider using mkstemp()");
 
-char *
-mktemp(char *path)
+حرف *
+mktemp(حرف *راستہ)
 {
-	return(_mktemp(path));
+	واپس(_mktemp(راستہ));
 }
-#endif
+#اگر_ختم
 
-int
-mkstemp(char *path)
+صحیح
+mkstemp(حرف *راستہ)
 {
-	return(mktemp_internal(path, 0, MKTEMP_FILE));
-}
-
-int
-mkstemps(char *path, int slen)
-{
-	return(mktemp_internal(path, slen, MKTEMP_FILE));
+	واپس(mktemp_اندرونی(راستہ, 0, MKTEMP_FILE));
 }
 
-char *
-mkdtemp(char *path)
+صحیح
+mkstemps(حرف *راستہ, صحیح slen)
 {
-	int error;
-
-	error = mktemp_internal(path, 0, MKTEMP_DIR);
-	return(error ? NULL : path);
+	واپس(mktemp_اندرونی(راستہ, slen, MKTEMP_FILE));
 }
 
-#endif /* !defined(HAVE_MKDTEMP) */
+حرف *
+mkdtemp(حرف *راستہ)
+{
+	صحیح error;
+
+	error = mktemp_اندرونی(راستہ, 0, MKTEMP_DIR);
+	واپس(error ? تہی : راستہ);
+}
+
+#اگر_ختم /* !defined(HAVE_MKDTEMP) */

@@ -1,159 +1,159 @@
-#include "fixed-keys.h"
-#include <assert.h>
+#شامل "fixed-keys.h"
+#شامل <assert.h>
 
-#define main(ac, av) xxxmain(ac, av)
-#include "../../../ssh-agent.c"
+#تعریف_کرو مین(ac, av) xxxmain(ac, av)
+#شامل "../../../ssh-agent.c"
 
-void test_one(const uint8_t* s, size_t slen);
+خالی test_one(ثابت uint8_t* s, سائز_t slen);
 
-static int
-devnull_or_die(void)
+ساکن صحیح
+devnull_or_die(خالی)
 {
-	int fd;
+	صحیح fd;
 
-	if ((fd = open("/dev/null", O_RDWR)) == -1) {
+	اگر ((fd = open("/dev/null", O_RDWR)) == -1) {
 		error_f("open /dev/null: %s", strerror(errno));
 		abort();
 	}
-	return fd;
+	واپس fd;
 }
 
-static struct sshkey *
-pubkey_or_die(const char *s)
+ساکن ساخت sshkey *
+pubkey_or_die(ثابت حرف *s)
 {
-	char *tmp, *cp;
-	struct sshkey *pubkey;
-	int r;
+	حرف *tmp, *cp;
+	ساخت sshkey *pubkey;
+	صحیح r;
 
 	tmp = cp = xstrdup(s);
-	if ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
+	اگر ((pubkey = sshkey_new(کلید_UNSPEC)) == تہی)
 		abort();
-	if ((r = sshkey_read(pubkey, &cp)) != 0) {
+	اگر ((r = sshkey_read(pubkey, &cp)) != 0) {
 		error_fr(r, "parse");
 		abort();
 	}
-	free(tmp);
-	return pubkey;
+	آزاد(tmp);
+	واپس pubkey;
 }
 
-static struct sshkey *
-privkey_or_die(const char *s)
+ساکن ساخت sshkey *
+privkey_or_die(ثابت حرف *s)
 {
-	int r;
-	struct sshbuf *b;
-	struct sshkey *privkey;
+	صحیح r;
+	ساخت sshbuf *b;
+	ساخت sshkey *privkey;
 
-	if ((b = sshbuf_from(s, strlen(s))) == NULL) {
+	اگر ((b = sshbuf_from(s, لڑی_لمبائی(s))) == تہی) {
 		error_f("sshbuf_from failed");
 		abort();
 	}
-	if ((r = sshkey_parse_private_fileblob(b, "", &privkey, NULL)) != 0) {
+	اگر ((r = sshkey_parse_نجی_fileblob(b, "", &privkey, تہی)) != 0) {
 		error_fr(r, "parse");
 		abort();
 	}
 	sshbuf_free(b);
-	return privkey;
+	واپس privkey;
 }
 
-static void
-add_key(const char *privkey, const char *certpath)
+ساکن خالی
+جوڑو_کلید(ثابت حرف *privkey, ثابت حرف *certpath)
 {
-	Identity *id;
-	int r;
-	struct sshkey *cert;
+	شناختی_عنصر *id;
+	صحیح r;
+	ساخت sshkey *cert;
 
-	id = xcalloc(1, sizeof(Identity));
-	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
+	id = xcalloc(1, حجم(شناختی_عنصر));
+	TAILQ_INSERT_TAIL(&idtab->idlist, id, اگلا);
 	idtab->nentries++;
-	id->key = privkey_or_die(privkey);
+	id->کلید = privkey_or_die(privkey);
 	id->comment = xstrdup("rhododaktulos Eos");
-	if (sshkey_is_sk(id->key))
+	اگر (sshkey_is_sk(id->کلید))
 		id->sk_provider = xstrdup("internal");
 
 	/* Now the cert too */
-	id = xcalloc(1, sizeof(Identity));
-	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
+	id = xcalloc(1, حجم(شناختی_عنصر));
+	TAILQ_INSERT_TAIL(&idtab->idlist, id, اگلا);
 	idtab->nentries++;
-	id->key = privkey_or_die(privkey);
+	id->کلید = privkey_or_die(privkey);
 	cert = pubkey_or_die(certpath);
-	if ((r = sshkey_to_certified(id->key)) != 0) {
+	اگر ((r = sshkey_مقصد_certified(id->کلید)) != 0) {
 		error_fr(r, "sshkey_to_certified");
 		abort();
 	}
-	if ((r = sshkey_cert_copy(cert, id->key)) != 0) {
+	اگر ((r = sshkey_cert_copy(cert, id->کلید)) != 0) {
 		error_fr(r, "sshkey_cert_copy");
 		abort();
 	}
 	sshkey_free(cert);
 	id->comment = xstrdup("outis");
-	if (sshkey_is_sk(id->key))
+	اگر (sshkey_is_sk(id->کلید))
 		id->sk_provider = xstrdup("internal");
 }
 
-static void
-cleanup_idtab(void)
+ساکن خالی
+cleanup_idtab(خالی)
 {
-	Identity *id;
+	شناختی_عنصر *id;
 
-	if (idtab == NULL) return;
-	for (id = TAILQ_FIRST(&idtab->idlist); id;
+	اگر (idtab == تہی) واپس;
+	برائے (id = TAILQ_FIRST(&idtab->idlist); id;
 	    id = TAILQ_FIRST(&idtab->idlist)) {
-		TAILQ_REMOVE(&idtab->idlist, id, next);
-		free_identity(id);
+		TAILQ_REMOVE(&idtab->idlist, id, اگلا);
+		free_شناختی_عنصر(id);
 	}
-	free(idtab);
-	idtab = NULL;
+	آزاد(idtab);
+	idtab = تہی;
 }
 
-static void
-reset_idtab(void)
+ساکن خالی
+reset_idtab(خالی)
 {
 	cleanup_idtab();
 	idtab_init();
 	// Load keys.
-	add_key(PRIV_RSA, CERT_RSA);
-	add_key(PRIV_ECDSA, CERT_ECDSA);
-	add_key(PRIV_ED25519, CERT_ED25519);
-	add_key(PRIV_ECDSA_SK, CERT_ECDSA_SK);
-	add_key(PRIV_ED25519_SK, CERT_ED25519_SK);
+	جوڑو_کلید(PRIV_RSA, CERT_RSA);
+	جوڑو_کلید(PRIV_ECDSA, CERT_ECDSA);
+	جوڑو_کلید(PRIV_ED25519, CERT_ED25519);
+	جوڑو_کلید(PRIV_ECDSA_SK, CERT_ECDSA_SK);
+	جوڑو_کلید(PRIV_ED25519_SK, CERT_ED25519_SK);
 }
 
-static void
-cleanup_sockettab(void)
+ساکن خالی
+cleanup_sockettab(خالی)
 {
 	u_int i;
-	for (i = 0; i < sockets_alloc; i++) {
-		if (sockets[i].type != AUTH_UNUSED)
+	برائے (i = 0; i < sockets_alloc; i++) {
+		اگر (sockets[i].type != AUTH_غیر_مستعمل)
 			close_socket(sockets + i);
 	}
-	free(sockets);
-	sockets = NULL;
+	آزاد(sockets);
+	sockets = تہی;
 	sockets_alloc = 0;
 }
 
-static void
-reset_sockettab(int devnull)
+ساکن خالی
+reset_sockettab(صحیح devnull)
 {
-	int fd;
+	صحیح fd;
 
 	cleanup_sockettab();
-	if ((fd = dup(devnull)) == -1) {
+	اگر ((fd = dup(devnull)) == -1) {
 		error_f("dup: %s", strerror(errno));
 		abort();
 	}
 	new_socket(AUTH_CONNECTION, fd);
-	assert(sockets[0].type == AUTH_CONNECTION);
-	assert(sockets[0].fd == fd);
+	أكد(sockets[0].type == AUTH_CONNECTION);
+	أكد(sockets[0].fd == fd);
 }
 
-#define MAX_MESSAGES 256
-void
-test_one(const uint8_t* s, size_t slen)
+#تعریف_کرو MAX_MESSAGES 256
+خالی
+test_one(ثابت uint8_t* s, سائز_t slen)
 {
-	static int devnull = -1;
-	size_t i, olen, nlen;
+	ساکن صحیح devnull = -1;
+	سائز_t i, olen, nlen;
 
-	if (devnull == -1) {
+	اگر (devnull == -1) {
 		log_init(__progname, SYSLOG_LEVEL_DEBUG3,
 		    SYSLOG_FACILITY_AUTH, 1);
 		devnull = devnull_or_die();
@@ -164,13 +164,13 @@ test_one(const uint8_t* s, size_t slen)
 
 	reset_idtab();
 	reset_sockettab(devnull);
-	(void)sshbuf_put(sockets[0].input, s, slen);
-	for (i = 0; i < MAX_MESSAGES; i++) {
-		olen = sshbuf_len(sockets[0].input);
-		process_message(0);
-		nlen = sshbuf_len(sockets[0].input);
-		if (nlen == 0 || nlen == olen)
-			break;
+	(خالی)sshbuf_put(sockets[0].داخلہ, s, slen);
+	برائے (i = 0; i < MAX_MESSAGES; i++) {
+		olen = sshbuf_len(sockets[0].داخلہ);
+		process_پیغام(0);
+		nlen = sshbuf_len(sockets[0].داخلہ);
+		اگر (nlen == 0 || nlen == olen)
+			توڑو;
 	}
 	cleanup_idtab();
 	cleanup_sockettab();

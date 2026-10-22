@@ -23,69 +23,69 @@
  * Stub functions for portability.  From LibreSSL with some adaptations.
  */
 
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
-#endif
+#اگر_تعریف_شدہ HAVE_SYS_MMAN_H
+#شامل <sys/mman.h>
+#اگر_ختم
 
-#include <signal.h>
+#شامل <signal.h>
 
 /* OpenSSH isn't multithreaded */
-#define _ARC4_LOCK()
-#define _ARC4_UNLOCK()
-#define _ARC4_ATFORK(f)
+#تعریف_کرو ARC4_تالا()
+#تعریف_کرو _ARC4_UNLOCK()
+#تعریف_کرو _ARC4_ATFORK(f)
 
-static inline void
-_getentropy_fail(void)
+ساکن اندرونی خالی
+_getentropy_fail(خالی)
 {
 	fatal("getentropy failed");
 }
 
-static volatile sig_atomic_t _rs_forked;
+ساکن متلون sig_atomic_t _rs_forked;
 
-static inline void
-_rs_forkhandler(void)
+ساکن اندرونی خالی
+_rs_forkhandler(خالی)
 {
 	_rs_forked = 1;
 }
 
-static inline void
-_rs_forkdetect(void)
+ساکن اندرونی خالی
+_rs_forkdetect(خالی)
 {
-	static pid_t _rs_pid = 0;
+	ساکن pid_t _rs_pid = 0;
 	pid_t pid = getpid();
 
-	if (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
+	اگر (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
 		_rs_pid = pid;
 		_rs_forked = 0;
-		if (rs)
-			memset(rs, 0, sizeof(*rs));
+		اگر (rs)
+			memset(rs, 0, حجم(*rs));
 	}
 }
 
-static inline int
-_rs_allocate(struct _rs **rsp, struct _rsx **rsxp)
+ساکن اندرونی صحیح
+_rs_allocate(ساخت _rs **rsp, ساخت _rsx **rsxp)
 {
-#if defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
-	if ((*rsp = mmap(NULL, sizeof(**rsp), PROT_READ|PROT_WRITE,
+#اگر defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
+	اگر ((*rsp = mmap(تہی, حجم(**rsp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED)
-		return (-1);
+		واپس (-1);
 
-	if ((*rsxp = mmap(NULL, sizeof(**rsxp), PROT_READ|PROT_WRITE,
+	اگر ((*rsxp = mmap(تہی, حجم(**rsxp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED) {
-		munmap(*rsp, sizeof(**rsp));
-		*rsp = NULL;
-		return (-1);
+		munmap(*rsp, حجم(**rsp));
+		*rsp = تہی;
+		واپس (-1);
 	}
-#else
-	if ((*rsp = calloc(1, sizeof(**rsp))) == NULL)
-		return (-1);
-	if ((*rsxp = calloc(1, sizeof(**rsxp))) == NULL) {
-		free(*rsp);
-		*rsp = NULL;
-		return (-1);
+#ورنہ
+	اگر ((*rsp = صفر_حافظہ_دو(1, حجم(**rsp))) == تہی)
+		واپس (-1);
+	اگر ((*rsxp = صفر_حافظہ_دو(1, حجم(**rsxp))) == تہی) {
+		آزاد(*rsp);
+		*rsp = تہی;
+		واپس (-1);
 	}
-#endif /* HAVE_MMAP et al */
+#اگر_ختم /* HAVE_MMAP et al */
 
 	_ARC4_ATFORK(_rs_forkhandler);
-	return (0);
+	واپس (0);
 }

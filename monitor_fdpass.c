@@ -24,153 +24,153 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/uio.h>
-#include <sys/un.h>
+#شامل <sys/types.h>
+#شامل <sys/socket.h>
+#شامل <sys/uio.h>
+#شامل <sys/un.h>
 
-#include <errno.h>
-#include <poll.h>
-#include <string.h>
-#include <stdarg.h>
+#شامل <errno.h>
+#شامل <poll.h>
+#شامل <string.h>
+#شامل <stdarg.h>
 
-#include "log.h"
-#include "monitor_fdpass.h"
+#شامل "log.h"
+#شامل "monitor_fdpass.h"
 
-int
-mm_send_fd(int sock, int fd)
+صحیح
+mm_send_fd(صحیح sock, صحیح fd)
 {
-#if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
-#ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+#اگر defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_اندر_MSGHDR) || defined(HAVE_CONTROL_اندر_MSGHDR))
+	ساخت msghdr پیغام;
+#اگر_غیر_تعریف_شدہ HAVE_ACCRIGHTS_اندر_MSGHDR
+	اتحاد {
+		ساخت cmsghdr hdr;
+		حرف buf[CMSG_SPACE(حجم(صحیح))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
-#endif
-	struct iovec vec;
-	char ch = '\0';
+	ساخت cmsghdr *cmsg;
+#اگر_ختم
+	ساخت iovec vec;
+	حرف ch = '\0';
 	ssize_t n;
-	struct pollfd pfd;
+	ساخت pollfd pfd;
 
-	memset(&msg, 0, sizeof(msg));
-#ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	msg.msg_accrights = (caddr_t)&fd;
-	msg.msg_accrightslen = sizeof(fd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
-	msg.msg_control = (caddr_t)&cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
-	cmsg = CMSG_FIRSTHDR(&msg);
-	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+	memset(&پیغام, 0, حجم(پیغام));
+#اگر_تعریف_شدہ HAVE_ACCRIGHTS_اندر_MSGHDR
+	پیغام.پیغام_accrights = (caddr_t)&fd;
+	پیغام.پیغام_accrightslen = حجم(fd);
+#ورنہ
+	memset(&cmsgbuf, 0, حجم(cmsgbuf));
+	پیغام.msg_control = (caddr_t)&cmsgbuf.buf;
+	پیغام.msg_controllen = حجم(cmsgbuf.buf);
+	cmsg = CMSG_FIRSTHDR(&پیغام);
+	cmsg->cmsg_len = CMSG_LEN(حجم(صحیح));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
-	*(int *)CMSG_DATA(cmsg) = fd;
-#endif
+	*(صحیح *)CMSG_DATA(cmsg) = fd;
+#اگر_ختم
 
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
-	msg.msg_iov = &vec;
-	msg.msg_iovlen = 1;
+	پیغام.msg_iov = &vec;
+	پیغام.msg_iovlen = 1;
 
 	pfd.fd = sock;
 	pfd.events = POLLOUT;
-	while ((n = sendmsg(sock, &msg, 0)) == -1 &&
+	جب ((n = sendmsg(sock, &پیغام, 0)) == -1 &&
 	    (errno == EAGAIN || errno == EINTR)) {
 		debug3_f("sendmsg(%d): %s", fd, strerror(errno));
-		(void)poll(&pfd, 1, -1);
+		(خالی)poll(&pfd, 1, -1);
 	}
-	if (n == -1) {
+	اگر (n == -1) {
 		error_f("sendmsg(%d): %s", fd, strerror(errno));
-		return -1;
+		واپس -1;
 	}
 
-	if (n != 1) {
+	اگر (n != 1) {
 		error_f("sendmsg: expected sent 1 got %zd", n);
-		return -1;
+		واپس -1;
 	}
-	return 0;
-#else
+	واپس 0;
+#ورنہ
 	error_f("file descriptor passing not supported");
-	return -1;
-#endif
+	واپس -1;
+#اگر_ختم
 }
 
-int
-mm_receive_fd(int sock)
+صحیح
+mm_receive_fd(صحیح sock)
 {
-#if defined(HAVE_RECVMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
-#ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+#اگر defined(HAVE_RECVMSG) && (defined(HAVE_ACCRIGHTS_اندر_MSGHDR) || defined(HAVE_CONTROL_اندر_MSGHDR))
+	ساخت msghdr پیغام;
+#اگر_غیر_تعریف_شدہ HAVE_ACCRIGHTS_اندر_MSGHDR
+	اتحاد {
+		ساخت cmsghdr hdr;
+		حرف buf[CMSG_SPACE(حجم(صحیح))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
-#endif
-	struct iovec vec;
+	ساخت cmsghdr *cmsg;
+#اگر_ختم
+	ساخت iovec vec;
 	ssize_t n;
-	char ch;
-	int fd;
-	struct pollfd pfd;
+	حرف ch;
+	صحیح fd;
+	ساخت pollfd pfd;
 
-	memset(&msg, 0, sizeof(msg));
+	memset(&پیغام, 0, حجم(پیغام));
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
-	msg.msg_iov = &vec;
-	msg.msg_iovlen = 1;
-#ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	msg.msg_accrights = (caddr_t)&fd;
-	msg.msg_accrightslen = sizeof(fd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
-	msg.msg_control = &cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
-#endif
+	پیغام.msg_iov = &vec;
+	پیغام.msg_iovlen = 1;
+#اگر_تعریف_شدہ HAVE_ACCRIGHTS_اندر_MSGHDR
+	پیغام.پیغام_accrights = (caddr_t)&fd;
+	پیغام.پیغام_accrightslen = حجم(fd);
+#ورنہ
+	memset(&cmsgbuf, 0, حجم(cmsgbuf));
+	پیغام.msg_control = &cmsgbuf.buf;
+	پیغام.msg_controllen = حجم(cmsgbuf.buf);
+#اگر_ختم
 
 	pfd.fd = sock;
 	pfd.events = POLLIN;
-	while ((n = recvmsg(sock, &msg, 0)) == -1 &&
+	جب ((n = recvmsg(sock, &پیغام, 0)) == -1 &&
 	    (errno == EAGAIN || errno == EINTR)) {
 		debug3_f("recvmsg: %s", strerror(errno));
-		(void)poll(&pfd, 1, -1);
+		(خالی)poll(&pfd, 1, -1);
 	}
-	if (n == -1) {
+	اگر (n == -1) {
 		error_f("recvmsg: %s", strerror(errno));
-		return -1;
+		واپس -1;
 	}
 
-	if (n != 1) {
+	اگر (n != 1) {
 		error_f("recvmsg: expected received 1 got %zd", n);
-		return -1;
+		واپس -1;
 	}
 
-#ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	if (msg.msg_accrightslen != sizeof(fd)) {
+#اگر_تعریف_شدہ HAVE_ACCRIGHTS_اندر_MSGHDR
+	اگر (پیغام.پیغام_accrightslen != حجم(fd)) {
 		error_f("no fd");
-		return -1;
+		واپس -1;
 	}
-#else
-	cmsg = CMSG_FIRSTHDR(&msg);
-	if (cmsg == NULL) {
+#ورنہ
+	cmsg = CMSG_FIRSTHDR(&پیغام);
+	اگر (cmsg == تہی) {
 		error_f("no message header");
-		return -1;
+		واپس -1;
 	}
 
-#ifndef BROKEN_CMSG_TYPE
-	if (cmsg->cmsg_type != SCM_RIGHTS) {
+#اگر_غیر_تعریف_شدہ BROKEN_CMSG_TYPE
+	اگر (cmsg->cmsg_type != SCM_RIGHTS) {
 		error_f("expected %d got %d", SCM_RIGHTS, cmsg->cmsg_type);
-		return -1;
+		واپس -1;
 	}
-#endif
-	fd = (*(int *)CMSG_DATA(cmsg));
-#endif
-	return fd;
-#else
+#اگر_ختم
+	fd = (*(صحیح *)CMSG_DATA(cmsg));
+#اگر_ختم
+	واپس fd;
+#ورنہ
 	error_f("file descriptor passing not supported");
-	return -1;
-#endif
+	واپس -1;
+#اگر_ختم
 }

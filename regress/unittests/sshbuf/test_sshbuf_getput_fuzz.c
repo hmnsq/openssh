@@ -5,74 +5,74 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <sys/types.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/objects.h>
-#include <openssl/ec.h>
-#endif
+#اگر_تعریف_شدہ WITH_OPENSSL
+#شامل <openssl/bn.h>
+#شامل <openssl/objects.h>
+#شامل <openssl/ec.h>
+#اگر_ختم
 
-#include "../test_helper/test_helper.h"
-#include "ssherr.h"
-#include "sshbuf.h"
+#شامل "../test_helper/test_helper.h"
+#شامل "ssherr.h"
+#شامل "sshbuf.h"
 
-void sshbuf_getput_fuzz_tests(void);
+خالی sshbuf_getput_fuzz_tests(خالی);
 
-static void
-attempt_parse_blob(u_char *blob, size_t len)
+ساکن خالی
+attempt_parse_blob(u_char *blob, سائز_t len)
 {
-	struct sshbuf *p1;
-#ifdef WITH_OPENSSL
+	ساخت sshbuf *p1;
+#اگر_تعریف_شدہ WITH_OPENSSL
 	BIGNUM *bn;
-	EC_KEY *eck;
-#endif /* WITH_OPENSSL */
+	EC_کلید *eck;
+#اگر_ختم /* WITH_OPENSSL */
 	u_char *s;
-	size_t l;
+	سائز_t l;
 	uint8_t u8;
 	uint16_t u16;
 	uint32_t u32;
 	uint64_t u64;
 
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, تہی);
 	ASSERT_INT_EQ(sshbuf_put(p1, blob, len), 0);
 	ASSERT_INT_EQ(sshbuf_get_u8(p1, &u8), 0);
 	ASSERT_INT_EQ(sshbuf_get_u16(p1, &u16), 0);
 	ASSERT_INT_EQ(sshbuf_get_u32(p1, &u32), 0);
 	ASSERT_INT_EQ(sshbuf_get_u64(p1, &u64), 0);
-	if (sshbuf_get_string(p1, &s, &l) == 0) {
+	اگر (sshbuf_get_string(p1, &s, &l) == 0) {
 		bzero(s, l);
-		free(s);
+		آزاد(s);
 	}
-#ifdef WITH_OPENSSL
-	bn = NULL;
+#اگر_تعریف_شدہ WITH_OPENSSL
+	bn = تہی;
 	ASSERT_INT_EQ(sshbuf_get_bignum2(p1, &bn), 0);
 	BN_clear_free(bn);
-	eck = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
-	ASSERT_PTR_NE(eck, NULL);
+	eck = EC_کلید_new_by_خم_name(NID_X9_62_prime256v1);
+	ASSERT_PTR_NE(eck, تہی);
 	ASSERT_INT_EQ(sshbuf_get_eckey(p1, eck), 0);
-	EC_KEY_free(eck);
-#endif /* WITH_OPENSSL */
+	EC_کلید_free(eck);
+#اگر_ختم /* WITH_OPENSSL */
 	sshbuf_free(p1);
 }
 
 
-static void
-onerror(void *fuzz)
+ساکن خالی
+onerror(خالی *fuzz)
 {
 	fprintf(stderr, "Failed during fuzz:\n");
-	fuzz_dump((struct fuzz *)fuzz);
+	fuzz_dump((ساخت fuzz *)fuzz);
 }
 
-void
-sshbuf_getput_fuzz_tests(void)
+خالی
+sshbuf_getput_fuzz_tests(خالی)
 {
 	u_char blob[] = {
 		/* u8 */
@@ -104,21 +104,21 @@ sshbuf_getput_fuzz_tests(void)
 		0xc8, 0xf9, 0xa3, 0x5e, 0x42, 0xbd, 0xd0, 0x47,
 		0x55, 0x0f, 0x69, 0xd8, 0x0e, 0xc2, 0x3c, 0xd4,
 	};
-	struct fuzz *fuzz;
-	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_2_BIT_FLIP |
+	ساخت fuzz *fuzz;
+	u_int fuzzers = FUZZ_1_ثنائی_ہندسہ_FLIP | FUZZ_2_ثنائی_ہندسہ_FLIP |
 	    FUZZ_1_BYTE_FLIP | FUZZ_2_BYTE_FLIP |
-	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
+	    FUZZ_TRUNCATE_آغاز | FUZZ_TRUNCATE_انتہا;
 
-	if (test_is_fast())
-		fuzzers &= ~(FUZZ_2_BYTE_FLIP|FUZZ_2_BIT_FLIP);
+	اگر (test_is_fast())
+		fuzzers &= ~(FUZZ_2_BYTE_FLIP|FUZZ_2_ثنائی_ہندسہ_FLIP);
 
-	TEST_START("fuzz blob parsing");
-	fuzz = fuzz_begin(fuzzers, blob, sizeof(blob));
+	TEST_آغاز("fuzz blob parsing");
+	fuzz = fuzz_begin(fuzzers, blob, حجم(blob));
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz))
-		attempt_parse_blob(blob, sizeof(blob));
+	برائے(; !fuzz_مکمل(fuzz); fuzz_اگلا(fuzz))
+		attempt_parse_blob(blob, حجم(blob));
 	fuzz_cleanup(fuzz);
-	TEST_DONE();
-	TEST_ONERROR(NULL, NULL);
+	TEST_مکمل();
+	TEST_ONERROR(تہی, تہی);
 }
 

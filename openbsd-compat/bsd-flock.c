@@ -34,48 +34,48 @@
  * Otherwise, don't do locking; just pretend success.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#ifndef HAVE_FLOCK
-#include <errno.h>
-#include <fcntl.h>
+#اگر_غیر_تعریف_شدہ HAVE_FLOCK
+#شامل <errno.h>
+#شامل <fcntl.h>
 
-int
-flock(int fd, int op)
+صحیح
+flock(صحیح fd, صحیح op)
 {
-	int rc = 0;
+	صحیح rc = 0;
 
-#if defined(F_SETLK) && defined(F_SETLKW)
-	struct flock fl = {0};
+#اگر defined(F_SETLK) && defined(F_SETLKW)
+	ساخت flock fl = {0};
 
-	switch (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
-	case LOCK_EX:
+	انتخاب (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
+	حالت LOCK_EX:
 		fl.l_type = F_WRLCK;
-		break;
+		توڑو;
 
-	case LOCK_SH:
+	حالت LOCK_SH:
 		fl.l_type = F_RDLCK;
-		break;
+		توڑو;
 
-	case LOCK_UN:
+	حالت LOCK_UN:
 		fl.l_type = F_UNLCK;
-		break;
+		توڑو;
 
-	default:
+	طےشدہ:
 		errno = EINVAL;
-		return -1;
+		واپس -1;
 	}
 
 	fl.l_whence = SEEK_SET;
 	rc = fcntl(fd, op & LOCK_NB ? F_SETLK : F_SETLKW, &fl);
 
-	if (rc && (errno == EAGAIN))
+	اگر (rc && (errno == EAGAIN))
 		errno = EWOULDBLOCK;
-#else
+#ورنہ
 	rc = -1;
 	errno = ENOSYS;
-#endif
+#اگر_ختم
 
-	return rc;
+	واپس rc;
 }
-#endif
+#اگر_ختم

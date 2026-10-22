@@ -28,12 +28,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _BLF_H_
-#define _BLF_H_
+#اگر_غیر_تعریف_شدہ _BLF_H_
+#تعریف_کرو _BLF_H_
 
-#include "includes.h"
+#شامل "includes.h"
 
-#if !defined(HAVE_BCRYPT_PBKDF) && !defined(HAVE_BLH_H)
+#اگر !defined(HAVE_BCRYPT_PBKDF) && !defined(HAVE_BLH_H)
 
 /* Schneier specifies a maximum key length of 56 bytes.
  * This ensures that every key bit affects every cipher
@@ -42,12 +42,12 @@
  * of the key affect all cipherbits.
  */
 
-#define BLF_N	16			/* Number of Subkeys */
-#define BLF_MAXKEYLEN ((BLF_N-2)*4)	/* 448 bits */
-#define BLF_MAXUTILIZED ((BLF_N+2)*4)	/* 576 bits */
+#تعریف_کرو BLF_N	16			/* Number of Subkeys */
+#تعریف_کرو BLF_MAXKEYLEN ((BLF_N-2)*4)	/* 448 bits */
+#تعریف_کرو BLF_MAXUTILIZED ((BLF_N+2)*4)	/* 576 bits */
 
 /* Blowfish context */
-typedef struct BlowfishContext {
+قسمتعریف ساخت BlowfishContext {
 	u_int32_t S[4][256];	/* S-Boxes */
 	u_int32_t P[BLF_N + 2];	/* Subkeys */
 } blf_ctx;
@@ -58,28 +58,28 @@ typedef struct BlowfishContext {
  *	Blowfish_expand0state( state, key, keylen )
  */
 
-void Blowfish_encipher(blf_ctx *, u_int32_t *, u_int32_t *);
-void Blowfish_decipher(blf_ctx *, u_int32_t *, u_int32_t *);
-void Blowfish_initstate(blf_ctx *);
-void Blowfish_expand0state(blf_ctx *, const u_int8_t *, u_int16_t);
-void Blowfish_expandstate
-(blf_ctx *, const u_int8_t *, u_int16_t, const u_int8_t *, u_int16_t);
+خالی Blowfish_encipher(blf_ctx *, u_int32_t *, u_int32_t *);
+خالی Blowfish_decipher(blf_ctx *, u_int32_t *, u_int32_t *);
+خالی Blowfish_initstate(blf_ctx *);
+خالی Blowfish_expand0state(blf_ctx *, ثابت u_int8_t *, u_int16_t);
+خالی Blowfish_expandstate
+(blf_ctx *, ثابت u_int8_t *, u_int16_t, ثابت u_int8_t *, u_int16_t);
 
 /* Standard Blowfish */
 
-void blf_key(blf_ctx *, const u_int8_t *, u_int16_t);
-void blf_enc(blf_ctx *, u_int32_t *, u_int16_t);
-void blf_dec(blf_ctx *, u_int32_t *, u_int16_t);
+خالی blf_کلید(blf_ctx *, ثابت u_int8_t *, u_int16_t);
+خالی blf_enc(blf_ctx *, u_int32_t *, u_int16_t);
+خالی blf_dec(blf_ctx *, u_int32_t *, u_int16_t);
 
-void blf_ecb_encrypt(blf_ctx *, u_int8_t *, u_int32_t);
-void blf_ecb_decrypt(blf_ctx *, u_int8_t *, u_int32_t);
+خالی blf_ecb_encrypt(blf_ctx *, u_int8_t *, u_int32_t);
+خالی blf_ecb_decrypt(blf_ctx *, u_int8_t *, u_int32_t);
 
-void blf_cbc_encrypt(blf_ctx *, u_int8_t *, u_int8_t *, u_int32_t);
-void blf_cbc_decrypt(blf_ctx *, u_int8_t *, u_int8_t *, u_int32_t);
+خالی blf_cbc_encrypt(blf_ctx *, u_int8_t *, u_int8_t *, u_int32_t);
+خالی blf_cbc_decrypt(blf_ctx *, u_int8_t *, u_int8_t *, u_int32_t);
 
 /* Converts u_int8_t to u_int32_t */
-u_int32_t Blowfish_stream2word(const u_int8_t *, u_int16_t , u_int16_t *);
+u_int32_t Blowfish_stream2word(ثابت u_int8_t *, u_int16_t , u_int16_t *);
 
-#endif /* !defined(HAVE_BCRYPT_PBKDF) && !defined(HAVE_BLH_H) */
-#endif /* _BLF_H */
+#اگر_ختم /* !defined(HAVE_BCRYPT_PBKDF) && !defined(HAVE_BLH_H) */
+#اگر_ختم /* _BLF_H */
 

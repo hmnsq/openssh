@@ -24,372 +24,372 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _OPENBSD_COMPAT_H
-#define _OPENBSD_COMPAT_H
+#اگر_غیر_تعریف_شدہ _OPENBSD_COMPAT_H
+#تعریف_کرو _OPENBSD_COMPAT_H
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <pwd.h>
+#شامل <sys/types.h>
+#شامل <pwd.h>
 
-#include <sys/socket.h>
+#شامل <sys/socket.h>
 
-#include <stddef.h>  /* for wchar_t */
+#شامل <stddef.h>  /* for wchar_t */
 
 /* OpenBSD function replacements */
-#include "base64.h"
-#include "sigact.h"
-#include "readpassphrase.h"
-#include "vis.h"
-#include "getrrsetbyname.h"
-#include "sha1.h"
-#include "bsd-sha2.h"
-#include "md5.h"
-#include "blf.h"
-#include "fnmatch.h"
+#شامل "base64.h"
+#شامل "sigact.h"
+#شامل "readpassphrase.h"
+#شامل "vis.h"
+#شامل "getrrsetbyname.h"
+#شامل "sha1.h"
+#شامل "bsd-sha2.h"
+#شامل "md5.h"
+#شامل "blf.h"
+#شامل "fnmatch.h"
 
-#ifndef __THROW
-# if defined __cplusplus
+#اگر_غیر_تعریف_شدہ __THROW
+# اگر defined __cplusplus
 #  define __THROW throw()
-# else
+# ورنہ
 #  define __THROW
 # endif
-#endif
+#اگر_ختم
 
-#if defined(HAVE_LOGIN_CAP) && !defined(HAVE_LOGIN_GETPWCLASS)
+#اگر defined(HAVE_LOGIN_CAP) && !defined(HAVE_LOGIN_GETPWCLASS)
 # include <login_cap.h>
 # define login_getpwclass(pw) login_getclass(pw->pw_class)
-#endif
+#اگر_ختم
 
-#ifndef HAVE_BASENAME
-char *basename(const char *path);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_BASENAME
+حرف *basename(ثابت حرف *راستہ);
+#اگر_ختم
 
-#ifndef HAVE_BINDRESVPORT_SA
-int bindresvport_sa(int sd, struct sockaddr *sa);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_BINDRESVPORT_SA
+صحیح bindresvport_sa(صحیح sd, ساخت sockaddr *sa);
+#اگر_ختم
 
-#ifndef HAVE_CLOSEFROM
-void closefrom(int);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_CLOSEFROM
+خالی closefrom(صحیح);
+#اگر_ختم
 
-#if defined(HAVE_DECL_FTRUNCATE) && HAVE_DECL_FTRUNCATE == 0
-int ftruncate(int filedes, off_t length);
-#endif
+#اگر defined(HAVE_DECL_FTRUNCATE) && HAVE_DECL_FTRUNCATE == 0
+صحیح ftruncate(صحیح filedes, off_t لمبائی);
+#اگر_ختم
 
-#ifndef HAVE_GETLINE
-#include <stdio.h>
-ssize_t getline(char **, size_t *, FILE *);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_GETLINE
+#شامل <stdio.h>
+ssize_t getline(حرف **, سائز_t *, FILE *);
+#اگر_ختم
 
-#ifndef HAVE_GETPAGESIZE
-int getpagesize(void);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_GETPAGESIZE
+صحیح getpagesize(خالی);
+#اگر_ختم
 
-#ifndef HAVE_GETCWD
-char *getcwd(char *pt, size_t size);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_GETCWD
+حرف *getcwd(حرف *pt, سائز_t سائز);
+#اگر_ختم
 
-#ifndef HAVE_GETEXECPATH
+#اگر_غیر_تعریف_شدہ HAVE_GETEXECPATH
 /* XXX this relies on correct fallback behaviour */
-#define getexecpath(a, b) (-1)
-#endif
+#تعریف_کرو getexecpath(a, b) (-1)
+#اگر_ختم
 
-#ifndef HAVE_KILLPG
-int killpg(pid_t, int);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_KILLPG
+صحیح killpg(pid_t, صحیح);
+#اگر_ختم
 
-#if defined(HAVE_DECL_MEMMEM) && HAVE_DECL_MEMMEM == 0
-void *memmem(const void *, size_t, const void *, size_t);
-#endif
+#اگر defined(HAVE_DECL_MEMMEM) && HAVE_DECL_MEMMEM == 0
+خالی *memmem(ثابت خالی *, سائز_t, ثابت خالی *, سائز_t);
+#اگر_ختم
 
-#ifndef HAVE_REALLOCARRAY
-void *reallocarray(void *, size_t, size_t);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_REALLOCARRAY
+خالی *reallocarray(خالی *, سائز_t, سائز_t);
+#اگر_ختم
 
-#ifndef HAVE_RECALLOCARRAY
-void *recallocarray(void *, size_t, size_t, size_t);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_RECALLOCARRAY
+خالی *recallocarray(خالی *, سائز_t, سائز_t, سائز_t);
+#اگر_ختم
 
-#ifndef HAVE_RRESVPORT_AF
-int rresvport_af(int *alport, sa_family_t af);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_RRESVPORT_AF
+صحیح rresvport_af(صحیح *alport, sa_family_t af);
+#اگر_ختم
 
-#ifndef HAVE_STRLCPY
-size_t strlcpy(char *dst, const char *src, size_t siz);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_STRLCPY
+سائز_t strlcpy(حرف *dst, ثابت حرف *src, سائز_t siz);
+#اگر_ختم
 
-#ifndef HAVE_STRLCAT
-size_t strlcat(char *dst, const char *src, size_t siz);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_STRLCAT
+سائز_t strlcat(حرف *dst, ثابت حرف *src, سائز_t siz);
+#اگر_ختم
 
-#ifndef HAVE_STRCASESTR
-char *strcasestr(const char *, const char *);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_STRCASESTR
+حرف *strcasestr(ثابت حرف *, ثابت حرف *);
+#اگر_ختم
 
-#ifndef HAVE_STRNLEN
-size_t strnlen(const char *, size_t);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_STRNLEN
+سائز_t strnlen(ثابت حرف *, سائز_t);
+#اگر_ختم
 
-#ifndef HAVE_STRNDUP
-char *strndup(const char *s, size_t n);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_STRNDUP
+حرف *strndup(ثابت حرف *s, سائز_t n);
+#اگر_ختم
 
-#ifndef HAVE_SETENV
-int setenv(register const char *name, register const char *value, int rewrite);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_SETENV
+صحیح setenv(اندراج ثابت حرف *name, اندراج ثابت حرف *قدر, صحیح rewrite);
+#اگر_ختم
 
-#ifndef HAVE_STRMODE
-void strmode(int mode, char *p);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_STRMODE
+خالی strmode(صحیح منوال, حرف *p);
+#اگر_ختم
 
-#ifndef HAVE_STRPTIME
-#include  <time.h>
-char *strptime(const char *buf, const char *fmt, struct tm *tm);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_STRPTIME
+#شامل  <time.h>
+حرف *strptime(ثابت حرف *buf, ثابت حرف *fmt, ساخت tm *tm);
+#اگر_ختم
 
-#if !defined(HAVE_MKDTEMP)
-int mkstemps(char *path, int slen);
-int mkstemp(char *path);
-char *mkdtemp(char *path);
-#endif
+#اگر !defined(HAVE_MKDTEMP)
+صحیح mkstemps(حرف *راستہ, صحیح slen);
+صحیح mkstemp(حرف *راستہ);
+حرف *mkdtemp(حرف *راستہ);
+#اگر_ختم
 
-#define mkstemp(x) _ssh_mkstemp(x)
-int _ssh_mkstemp(char *);
+#تعریف_کرو mkstemp(x) _ssh_mkstemp(x)
+صحیح _ssh_mkstemp(حرف *);
 
-#ifndef HAVE_DAEMON
-int daemon(int nochdir, int noclose);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_DAEMON
+صحیح daemon(صحیح nochdir, صحیح noclose);
+#اگر_ختم
 
-#ifndef HAVE_DIRNAME
-char *dirname(const char *path);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_DIRNAME
+حرف *dirname(ثابت حرف *راستہ);
+#اگر_ختم
 
-#ifndef HAVE_FMT_SCALED
-#define	FMT_SCALED_STRSIZE	7
-int	fmt_scaled(long long number, char *result);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_FMT_SCALED
+#تعریف_کرو	FMT_SCALED_STRSIZE	7
+صحیح	fmt_scaled(طویل طویل نمبر, حرف *نتیجہ);
+#اگر_ختم
 
-#ifndef HAVE_SCAN_SCALED
-int	scan_scaled(char *, long long *);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_جائزہ_SCALED
+صحیح	جائزہ_scaled(حرف *, طویل طویل *);
+#اگر_ختم
 
-#if defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
-char *inet_ntoa(struct in_addr in);
-#endif
+#اگر defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
+حرف *inet_ntoa(ساخت in_addr اندر);
+#اگر_ختم
 
-#ifndef HAVE_INET_NTOP
-const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_INET_NTOP
+ثابت حرف *inet_ntop(صحیح af, ثابت خالی *src, حرف *dst, socklen_t سائز);
+#اگر_ختم
 
-#ifndef HAVE_INET_ATON
-int inet_aton(const char *cp, struct in_addr *addr);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_INET_ATON
+صحیح inet_aton(ثابت حرف *cp, ساخت in_addr *addr);
+#اگر_ختم
 
-#ifndef HAVE_STRSEP
-char *strsep(char **stringp, const char *delim);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_STRSEP
+حرف *strsep(حرف **stringp, ثابت حرف *delim);
+#اگر_ختم
 
-#ifndef HAVE_SETPROCTITLE
-void setproctitle(const char *fmt, ...);
-void compat_init_setproctitle(int argc, char *argv[]);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_SETPROCTITLE
+خالی setproctitle(ثابت حرف *fmt, ...);
+خالی compat_init_setproctitle(صحیح argc, حرف *argv[]);
+#اگر_ختم
 
-#ifndef HAVE_GETGROUPLIST
-int getgrouplist(const char *, gid_t, gid_t *, int *);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_GETGROUPLIST
+صحیح getgrouplist(ثابت حرف *, gid_t, gid_t *, صحیح *);
+#اگر_ختم
 
-#if !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
-int BSDgetopt(int argc, char * const *argv, const char *opts) __THROW;
-#include "openbsd-compat/getopt.h"
-#endif
+#اگر !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
+صحیح BSDgetopt(صحیح argc, حرف * ثابت *argv, ثابت حرف *opts) __THROW;
+#شامل "openbsd-compat/getopt.h"
+#اگر_ختم
 
-#if ((defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0) || \
+#اگر ((defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0) || \
     (defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0))
 # include <sys/types.h>
 # include <sys/uio.h>
 
-# if defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0
-int readv(int, struct iovec *, int);
+# اگر defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0
+صحیح readv(صحیح, ساخت iovec *, صحیح);
 # endif
 
-# if defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0
-int writev(int, struct iovec *, int);
+# اگر defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0
+صحیح writev(صحیح, ساخت iovec *, صحیح);
 # endif
-#endif
+#اگر_ختم
 
 /* Home grown routines */
-#include "bsd-signal.h"
-#include "bsd-misc.h"
-#include "bsd-setres_id.h"
-#include "bsd-statvfs.h"
-#include "bsd-waitpid.h"
-#include "bsd-poll.h"
+#شامل "bsd-signal.h"
+#شامل "bsd-misc.h"
+#شامل "bsd-setres_id.h"
+#شامل "bsd-statvfs.h"
+#شامل "bsd-waitpid.h"
+#شامل "bsd-poll.h"
 
-#if defined(HAVE_DECL_GETPEEREID) && HAVE_DECL_GETPEEREID == 0
-int getpeereid(int , uid_t *, gid_t *);
-#endif
+#اگر defined(HAVE_DECL_GETPEEREID) && HAVE_DECL_GETPEEREID == 0
+صحیح getpeereid(صحیح , uid_t *, gid_t *);
+#اگر_ختم
 
-#ifndef HAVE_ARC4RANDOM
-uint32_t arc4random(void);
-#endif /* !HAVE_ARC4RANDOM */
+#اگر_غیر_تعریف_شدہ HAVE_ARC4RANDOM
+uint32_t arc4random(خالی);
+#اگر_ختم /* !HAVE_ARC4RANDOM */
 
-#ifndef HAVE_ARC4RANDOM_BUF
-void arc4random_buf(void *, size_t);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_ARC4RANDOM_BUF
+خالی arc4random_buf(خالی *, سائز_t);
+#اگر_ختم
 
-#ifndef HAVE_ARC4RANDOM_STIR
+#اگر_غیر_تعریف_شدہ HAVE_ARC4RANDOM_STIR
 # define arc4random_stir()
-#endif
+#اگر_ختم
 
-#ifndef HAVE_ARC4RANDOM_UNIFORM
-uint32_t arc4random_uniform(uint32_t);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_ARC4_RANDOM_یکساں
+uint32_t arc4random_یکساں(uint32_t);
+#اگر_ختم
 
-#ifndef HAVE_ASPRINTF
-int asprintf(char **, const char *, ...);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_ASPRINTF
+صحیح asprintf(حرف **, ثابت حرف *, ...);
+#اگر_ختم
 
-#ifndef HAVE_OPENPTY
+#اگر_غیر_تعریف_شدہ HAVE_OPENPTY
 # include <sys/ioctl.h>	/* for struct winsize */
-int openpty(int *, int *, char *, const struct termios *,
-    const struct winsize *);
-#endif /* HAVE_OPENPTY */
+صحیح openpty(صحیح *, صحیح *, حرف *, ثابت ساخت termios *,
+    ثابت ساخت winsize *);
+#اگر_ختم /* HAVE_OPENPTY */
 
-#ifndef HAVE_SNPRINTF
-int snprintf(char *, size_t, SNPRINTF_CONST char *, ...);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_SNPRINTF
+صحیح snprintf(حرف *, سائز_t, SNPRINTF_CONST حرف *, ...);
+#اگر_ختم
 
-#ifndef HAVE_STRTOLL
-long long strtoll(const char *, char **, int);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_STRTOLL
+طویل طویل strtoll(ثابت حرف *, حرف **, صحیح);
+#اگر_ختم
 
-#ifndef HAVE_STRTOUL
-unsigned long strtoul(const char *, char **, int);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_STRTOUL
+غیرعلامتی طویل strtoul(ثابت حرف *, حرف **, صحیح);
+#اگر_ختم
 
-#ifndef HAVE_STRTOULL
-unsigned long long strtoull(const char *, char **, int);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_STRTOULL
+غیرعلامتی طویل طویل strtoull(ثابت حرف *, حرف **, صحیح);
+#اگر_ختم
 
-#ifndef HAVE_STRTONUM
-long long strtonum(const char *, long long, long long, const char **);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_STRTONUM
+طویل طویل strtonum(ثابت حرف *, طویل طویل, طویل طویل, ثابت حرف **);
+#اگر_ختم
 
 /* multibyte character support */
-#ifndef HAVE_MBLEN
+#اگر_غیر_تعریف_شدہ HAVE_MBLEN
 # define mblen(x, y)	(1)
-#endif
+#اگر_ختم
 
-#ifndef HAVE_WCWIDTH
+#اگر_غیر_تعریف_شدہ HAVE_WCWIDTH
 # define wcwidth(x)	(((x) >= 0x20 && (x) <= 0x7e) ? 1 : -1)
 /* force our no-op nl_langinfo and mbtowc */
 # undef HAVE_NL_LANGINFO
 # undef HAVE_MBTOWC
 # undef HAVE_LANGINFO_H
-#endif
+#اگر_ختم
 
-#ifndef HAVE_NL_LANGINFO
+#اگر_غیر_تعریف_شدہ HAVE_NL_LANGINFO
 # define nl_langinfo(x)	""
-#endif
+#اگر_ختم
 
-#ifndef HAVE_MBTOWC
-int mbtowc(wchar_t *, const char*, size_t);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_MBTOWC
+صحیح mbtowc(wchar_t *, ثابت حرف*, سائز_t);
+#اگر_ختم
 
-#if !defined(HAVE_VASPRINTF) || !defined(HAVE_VSNPRINTF)
+#اگر !defined(HAVE_VASPRINTF) || !defined(HAVE_VSNPRINTF)
 # include <stdarg.h>
-#endif
+#اگر_ختم
 
 /*
  * Some platforms unconditionally undefine va_copy() so we define VA_COPY()
  * instead.  This is known to be the case on at least some configurations of
  * AIX with the xlc compiler.
  */
-#ifndef VA_COPY
+#اگر_غیر_تعریف_شدہ VA_COPY
 # ifdef HAVE_VA_COPY
 #  define VA_COPY(dest, src) va_copy(dest, src)
-# else
+# ورنہ
 #  ifdef HAVE___VA_COPY
 #   define VA_COPY(dest, src) __va_copy(dest, src)
-#  else
+#  ورنہ
 #   define VA_COPY(dest, src) (dest) = (src)
 #  endif
 # endif
-#endif
+#اگر_ختم
 
-#ifndef HAVE_VASPRINTF
-int vasprintf(char **, const char *, va_list);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_VASPRINTF
+صحیح vasprintf(حرف **, ثابت حرف *, va_list);
+#اگر_ختم
 
-#ifndef HAVE_VSNPRINTF
-int vsnprintf(char *, size_t, const char *, va_list);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_VSNPRINTF
+صحیح vsnprintf(حرف *, سائز_t, ثابت حرف *, va_list);
+#اگر_ختم
 
-#ifndef HAVE_USER_FROM_UID
-char *user_from_uid(uid_t, int);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_USER_FROM_UID
+حرف *user_from_uid(uid_t, صحیح);
+#اگر_ختم
 
-#ifndef HAVE_GROUP_FROM_GID
-char *group_from_gid(gid_t, int);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_گروہ_FROM_GID
+حرف *گروہ_from_gid(gid_t, صحیح);
+#اگر_ختم
 
-#ifndef HAVE_TIMINGSAFE_BCMP
-int timingsafe_bcmp(const void *, const void *, size_t);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_TIMINGSAFE_BCMP
+صحیح timingsafe_bcmp(ثابت خالی *, ثابت خالی *, سائز_t);
+#اگر_ختم
 
-#ifndef HAVE_BCRYPT_PBKDF
-int	bcrypt_pbkdf(const char *, size_t, const uint8_t *, size_t,
-    uint8_t *, size_t, unsigned int);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_BCRYPT_PBKDF
+صحیح	bcrypt_pbkdf(ثابت حرف *, سائز_t, ثابت uint8_t *, سائز_t,
+    uint8_t *, سائز_t, غیرعلامتی صحیح);
+#اگر_ختم
 
-#ifndef HAVE_EXPLICIT_BZERO
-void explicit_bzero(void *p, size_t n);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_EXPLICIT_BZERO
+خالی explicit_bzero(خالی *p, سائز_t n);
+#اگر_ختم
 
-#ifndef HAVE_FREEZERO
-void freezero(void *, size_t);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_FREEZERO
+خالی freezero(خالی *, سائز_t);
+#اگر_ختم
 
-#ifndef HAVE_LOCALTIME_R
-struct tm *localtime_r(const time_t *, struct tm *);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_LOCALTIME_R
+ساخت tm *localtime_r(ثابت time_t *, ساخت tm *);
+#اگر_ختم
 
-#ifndef HAVE_TIMEGM
-#include <time.h>
-time_t timegm(struct tm *);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_TIMEGM
+#شامل <time.h>
+time_t timegm(ساخت tm *);
+#اگر_ختم
 
-char *xcrypt(const char *password, const char *salt);
-char *shadow_pw(struct passwd *pw);
+حرف *xcrypt(ثابت حرف *password, ثابت حرف *salt);
+حرف *shadow_pw(ساخت passwd *pw);
 
 /* rfc2553 socket API replacements */
-#include "fake-rfc2553.h"
+#شامل "fake-rfc2553.h"
 
 /* Routines for a single OS platform */
-#include "bsd-cygwin_util.h"
+#شامل "bsd-cygwin_util.h"
 
-#include "port-aix.h"
-#include "port-irix.h"
-#include "port-linux.h"
-#include "port-solaris.h"
-#include "port-net.h"
-#include "port-uw.h"
+#شامل "port-aix.h"
+#شامل "port-irix.h"
+#شامل "port-linux.h"
+#شامل "port-solaris.h"
+#شامل "port-net.h"
+#شامل "port-uw.h"
 
 /* _FORTIFY_SOURCE breaks FD_ISSET(n)/FD_SET(n) for n > FD_SETSIZE. Avoid. */
-#if defined(HAVE_FEATURES_H) && defined(_FORTIFY_SOURCE)
+#اگر defined(HAVE_FEATURES_H) && defined(FORTIFY_ماخذ)
 # include <features.h>
-# if defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
-#  if __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0)
+# اگر defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
+#  اگر __GLIBC_PREREQ(2, 15) && (FORTIFY_ماخذ > 0)
 #   include <sys/socket.h>  /* Ensure include guard is defined */
 #   undef FD_SET
 #   undef FD_ISSET
-#   define FD_SET(n, set)	kludge_FD_SET(n, set)
-#   define FD_ISSET(n, set)	kludge_FD_ISSET(n, set)
-void kludge_FD_SET(int, fd_set *);
-int kludge_FD_ISSET(int, fd_set *);
+#   define FD_SET(n, سیٹ)	kludge_FD_سیٹ(n, سیٹ)
+#   define FD_ISSET(n, سیٹ)	kludge_FD_ISSET(n, سیٹ)
+خالی kludge_FD_سیٹ(صحیح, fd_set *);
+صحیح kludge_FD_ISSET(صحیح, fd_set *);
 #  endif /* __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0) */
 # endif /* __GNU_LIBRARY__ && __GLIBC_PREREQ */
-#endif /* HAVE_FEATURES_H && _FORTIFY_SOURCE */
+#اگر_ختم /* HAVE_FEATURES_H && _FORTIFY_SOURCE */
 
-#endif /* _OPENBSD_COMPAT_H */
+#اگر_ختم /* _OPENBSD_COMPAT_H */

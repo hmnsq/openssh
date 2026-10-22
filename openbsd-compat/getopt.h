@@ -30,56 +30,56 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _GETOPT_H_
-#define _GETOPT_H_
+#اگر_غیر_تعریف_شدہ _GETOPT_H_
+#تعریف_کرو _GETOPT_H_
 
-#ifndef __THROW
-# if defined __cplusplus
+#اگر_غیر_تعریف_شدہ __THROW
+# اگر defined __cplusplus
 #  define __THROW throw()
-# else
+# ورنہ
 #  define __THROW
 # endif
-#endif
+#اگر_ختم
 
 /*
  * GNU-like getopt_long() and 4.4BSD getsubopt()/optreset extensions
  */
-#define no_argument        0
-#define required_argument  1
-#define optional_argument  2
+#تعریف_کرو no_argument        0
+#تعریف_کرو required_argument  1
+#تعریف_کرو optional_argument  2
 
-#if 0
-struct option {
+#اگر 0
+ساخت option {
 	/* name of long option */
-	const char *name;
+	ثابت حرف *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	صحیح has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	صحیح *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	صحیح val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
-#endif
+صحیح	 getopt_long(صحیح, حرف * ثابت *, ثابت حرف *,
+	    ثابت ساخت option *, صحیح *);
+صحیح	 getopt_long_only(صحیح, حرف * ثابت *, ثابت حرف *,
+	    ثابت ساخت option *, صحیح *);
+#اگر_ختم
 
-#ifndef _GETOPT_DEFINED_
-#define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+#اگر_غیر_تعریف_شدہ _GETOPT_DEFINED_
+#تعریف_کرو _GETOPT_DEFINED_
+صحیح	 getopt(صحیح, حرف * ثابت *, ثابت حرف *) __THROW;
+صحیح	 getsubopt(حرف **, حرف * ثابت *, حرف **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
-#endif
+خارجی   حرف *optarg;                  /* getopt(3) external variables */
+خارجی   صحیح opterr;
+خارجی   صحیح optind;
+خارجی   صحیح optopt;
+خارجی   صحیح optreset;
+خارجی   حرف *suboptarg;               /* getsubopt(3) external variable */
+#اگر_ختم
  
-#endif /* !_GETOPT_H_ */
+#اگر_ختم /* !_GETOPT_H_ */

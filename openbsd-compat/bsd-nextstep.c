@@ -22,82 +22,82 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#ifdef HAVE_NEXT
-#include <errno.h>
-#include <sys/wait.h>
-#include "bsd-nextstep.h"
+#اگر_تعریف_شدہ HAVE_اگلا
+#شامل <errno.h>
+#شامل <sys/wait.h>
+#شامل "bsd-nextstep.h"
 
 pid_t
-posix_wait(int *status)
+posix_wait(صحیح *حالت_2)
 {
-	union wait statusp;
+	اتحاد wait statusp;
 	pid_t wait_pid;
 
-	#undef wait			/* Use NeXT's wait() function */
+	#تعریف_منسوخ wait			/* Use NeXT's wait() function */
 	wait_pid = wait(&statusp);
-	if (status)
-		*status = (int) statusp.w_status;
+	اگر (حالت_2)
+		*حالت_2 = (صحیح) statusp.w_حالت;
 
-	return (wait_pid);
+	واپس (wait_pid);
 }
 
-int
-tcgetattr(int fd, struct termios *t)
+صحیح
+tcgetattr(صحیح fd, ساخت termios *t)
 {
-	return (ioctl(fd, TIOCGETA, t));
+	واپس (ioctl(fd, TIOCGETA, t));
 }
 
-int
-tcsetattr(int fd, int opt, const struct termios *t)
+صحیح
+tcsetattr(صحیح fd, صحیح opt, ثابت ساخت termios *t)
 {
-	struct termios localterm;
+	ساخت termios localterm;
 
-	if (opt & TCSASOFT) {
+	اگر (opt & TCSASOFT) {
 		localterm = *t;
 		localterm.c_cflag |= CIGNORE;
 		t = &localterm;
 	}
-	switch (opt & ~TCSASOFT) {
-	case TCSANOW:
-		return (ioctl(fd, TIOCSETA, t));
-	case TCSADRAIN:
-		return (ioctl(fd, TIOCSETAW, t));
-	case TCSAFLUSH:
-		return (ioctl(fd, TIOCSETAF, t));
-	default:
+	انتخاب (opt & ~TCSASOFT) {
+	حالت TCSANOW:
+		واپس (ioctl(fd, TIOCSETA, t));
+	حالت TCSADRAIN:
+		واپس (ioctl(fd, TIOCSETAW, t));
+	حالت TCSAFLUSH:
+		واپس (ioctl(fd, TIOCSETAF, t));
+	طےشدہ:
 		errno = EINVAL;
-		return (-1);
+		واپس (-1);
 	}
 }
 
-int tcsetpgrp(int fd, pid_t pgrp)
+صحیح tcsetpgrp(صحیح fd, pid_t pgrp)
 {
-	return (ioctl(fd, TIOCSPGRP, &pgrp));
+	واپس (ioctl(fd, TIOCSPGRP, &pgrp));
 }
 
-speed_t cfgetospeed(const struct termios *t)
+speed_t cfgetospeed(ثابت ساخت termios *t)
 {
-	return (t->c_ospeed);
+	واپس (t->c_ospeed);
 }
 
-speed_t cfgetispeed(const struct termios *t)
+speed_t cfgetispeed(ثابت ساخت termios *t)
 {
-	return (t->c_ispeed);
+	واپس (t->c_ispeed);
 }
 
-int
-cfsetospeed(struct termios *t,int speed)
+صحیح
+cfsetospeed(ساخت termios *t,صحیح رفتار)
 {
-	t->c_ospeed = speed;
-	return (0);
+	t->c_ospeed = رفتار;
+	واپس (0);
 }
 
-int
-cfsetispeed(struct termios *t, int speed)
+صحیح
+cfsetispeed(ساخت termios *t, صحیح رفتار)
 {
-	t->c_ispeed = speed;
-	return (0);
+	t->c_ispeed = رفتار;
+	واپس (0);
 }
-#endif /* HAVE_NEXT */
+#اگر_ختم /* HAVE_NEXT */

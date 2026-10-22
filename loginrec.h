@@ -1,5 +1,5 @@
-#ifndef _HAVE_LOGINREC_H_
-#define _HAVE_LOGINREC_H_
+#اگر_غیر_تعریف_شدہ _HAVE_LOGINREC_H_
+#تعریف_کرو _HAVE_LOGINREC_H_
 
 /*
  * Copyright (c) 2000 Andre Lucas.  All rights reserved.
@@ -29,9 +29,9 @@
  ** loginrec.h:  platform-independent login recording and lastlog retrieval
  **/
 
-#include "includes.h"
+#شامل "includes.h"
 
-struct ssh;
+ساخت ssh;
 
 /**
  ** you should use the login_* calls to work around platform dependencies
@@ -41,10 +41,10 @@ struct ssh;
  * login_netinfo structure
  */
 
-union login_netinfo {
-	struct sockaddr sa;
-	struct sockaddr_in sa_in;
-	struct sockaddr_storage sa_storage;
+اتحاد login_netinfo {
+	ساخت sockaddr sa;
+	ساخت sockaddr_in sa_اندر;
+	ساخت sockaddr_storage sa_storage;
 };
 
 /*
@@ -52,37 +52,37 @@ union login_netinfo {
  */
 /* types - different to utmp.h 'type' macros */
 /* (though set to the same value as linux, openbsd and others...) */
-#define LTYPE_FAILED   6
-#define LTYPE_LOGIN    7
-#define LTYPE_LOGOUT   8
+#تعریف_کرو LTYPE_FAILED   6
+#تعریف_کرو LTYPE_LOGIN    7
+#تعریف_کرو LTYPE_LOGOUT   8
 
 /* string lengths - set very long */
-#define LINFO_PROGSIZE 64
-#define LINFO_LINESIZE 64
-#define LINFO_NAMESIZE 512
-#define LINFO_HOSTSIZE 256
+#تعریف_کرو LINFO_PROGSIZE 64
+#تعریف_کرو LINFO_LINESIZE 64
+#تعریف_کرو LINFO_NAMESIZE 512
+#تعریف_کرو LINFO_HOSTSIZE 256
 
-struct logininfo {
-	char       progname[LINFO_PROGSIZE];     /* name of program (for PAM) */
-	int        progname_null;
-	short int  type;                         /* type of login (LTYPE_*) */
+ساخت logininfo {
+	حرف       progname[LINFO_PROGSIZE];     /* name of program (for PAM) */
+	صحیح        progname_null;
+	مختصر صحیح  type;                         /* type of login (LTYPE_*) */
 	pid_t      pid;                          /* PID of login process */
 	uid_t      uid;                          /* UID of this user */
-	char       line[LINFO_LINESIZE];         /* tty/pty name */
-	char       username[LINFO_NAMESIZE];     /* login username */
-	char       hostname[LINFO_HOSTSIZE];     /* remote hostname */
+	حرف       سطر[LINFO_LINESIZE];         /* tty/pty name */
+	حرف       username[LINFO_NAMESIZE];     /* login username */
+	حرف       hostname[LINFO_HOSTSIZE];     /* remote hostname */
 	/* 'exit_status' structure components */
-	int        exit;                        /* process exit status */
-	int        termination;                 /* process termination status */
+	صحیح        باہر_نکلو;                        /* process exit status */
+	صحیح        termination;                 /* process termination status */
 	/* struct timeval (sys/time.h) isn't always available, if it isn't we'll
 	 * use time_t's value as tv_sec and set tv_usec to 0
 	 */
-	unsigned int tv_sec;
-	unsigned int tv_usec;
-	union login_netinfo hostaddr;       /* caller's host address(es) */
-#ifdef USE_WTMPDB
+	غیرعلامتی صحیح tv_sec;
+	غیرعلامتی صحیح tv_usec;
+	اتحاد login_netinfo hostaddr;       /* caller's host address(es) */
+#اگر_تعریف_شدہ USE_WTMPDB
 	int64_t wtmpdb_id;                  /* ID for wtmpdb_logout */
-#endif
+#اگر_ختم
 }; /* struct logininfo */
 
 /*
@@ -92,47 +92,47 @@ struct logininfo {
 /** 'public' functions */
 
 /* construct a new login entry */
-struct logininfo *login_alloc_entry(pid_t pid, const char *username,
-				    const char *hostname, const char *line);
+ساخت logininfo *login_alloc_اندراج(pid_t pid, ثابت حرف *username,
+				    ثابت حرف *hostname, ثابت حرف *سطر);
 /* free a structure */
-void login_free_entry(struct logininfo *li);
+خالی login_free_اندراج(ساخت logininfo *li);
 /* fill out a pre-allocated structure with useful information */
-int login_init_entry(struct logininfo *li, pid_t pid, const char *username,
-    const char *hostname, const char *line);
+صحیح login_init_اندراج(ساخت logininfo *li, pid_t pid, ثابت حرف *username,
+    ثابت حرف *hostname, ثابت حرف *سطر);
 /* place the current time in a logininfo struct */
-void login_set_current_time(struct logininfo *li);
+خالی login_سیٹ_current_وقت(ساخت logininfo *li);
 
 /* record the entry */
-int login_login (struct logininfo *li);
-int login_logout(struct logininfo *li);
-#ifdef LOGIN_NEEDS_UTMPX
-int login_utmp_only(struct logininfo *li);
-#endif
+صحیح login_login (ساخت logininfo *li);
+صحیح login_logout(ساخت logininfo *li);
+#اگر_تعریف_شدہ LOGIN_NEEDS_UTMPX
+صحیح login_utmp_only(ساخت logininfo *li);
+#اگر_ختم
 
 /** End of public functions */
 
 /* record the entry */
-int login_write (struct logininfo *li);
-int login_log_entry(struct logininfo *li);
+صحیح login_write (ساخت logininfo *li);
+صحیح login_log_اندراج(ساخت logininfo *li);
 
 /* set the network address based on network address type */
-void login_set_addr(struct logininfo *li, const struct sockaddr *sa,
-		    const unsigned int sa_size);
+خالی login_سیٹ_addr(ساخت logininfo *li, ثابت ساخت sockaddr *sa,
+		    ثابت غیرعلامتی صحیح sa_سائز);
 
 /*
  * lastlog retrieval functions
  */
 /* lastlog *entry* functions fill out a logininfo */
-struct logininfo *login_get_lastlog(struct logininfo *li, const uid_t uid);
+ساخت logininfo *login_get_lastlog(ساخت logininfo *li, ثابت uid_t uid);
 /* lastlog *time* functions return time_t equivalent (uint) */
-unsigned int login_get_lastlog_time(const uid_t uid);
+غیرعلامتی صحیح login_get_lastlog_وقت(ثابت uid_t uid);
 
 /* produce various forms of the line filename */
-char *line_fullname(char *dst, const char *src, u_int dstsize);
-char *line_stripname(char *dst, const char *src, int dstsize);
-char *line_abbrevname(char *dst, const char *src, int dstsize);
+حرف *سطر_fullname(حرف *dst, ثابت حرف *src, u_int dstsize);
+حرف *سطر_stripname(حرف *dst, ثابت حرف *src, صحیح dstsize);
+حرف *سطر_abbrevname(حرف *dst, ثابت حرف *src, صحیح dstsize);
 
-void record_failed_login(struct ssh *, const char *, const char *,
-    const char *);
+خالی ریکارڈ_failed_login(ساخت ssh *, ثابت حرف *, ثابت حرف *,
+    ثابت حرف *);
 
-#endif /* _HAVE_LOGINREC_H_ */
+#اگر_ختم /* _HAVE_LOGINREC_H_ */

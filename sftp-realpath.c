@@ -27,25 +27,25 @@
  * SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#شامل <sys/types.h>
+#شامل <sys/stat.h>
 
-#include <errno.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
+#شامل <errno.h>
+#شامل <stdlib.h>
+#شامل <stddef.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <limits.h>
 
-#ifndef SYMLOOP_MAX
+#اگر_غیر_تعریف_شدہ SYMLOOP_MAX
 # define SYMLOOP_MAX 32
-#endif
+#اگر_ختم
 
 /* XXX rewrite sftp-server to use POSIX realpath and remove this hack */
 
-char *sftp_realpath(const char *path, char *resolved);
+حرف *sftp_realpath(ثابت حرف *راستہ, حرف *resolved);
 
 /*
  * char *realpath(const char *path, char resolved[PATH_MAX]);
@@ -54,98 +54,98 @@ char *sftp_realpath(const char *path, char *resolved);
  * components.  Returns (resolved) on success, or (NULL) on failure,
  * in which case the path which caused trouble is left in (resolved).
  */
-char *
-sftp_realpath(const char *path, char *resolved)
+حرف *
+sftp_realpath(ثابت حرف *راستہ, حرف *resolved)
 {
-	struct stat sb;
-	char *p, *q, *s;
-	size_t left_len, resolved_len;
-	unsigned symlinks;
-	int serrno, slen, mem_allocated;
-	char left[PATH_MAX], next_token[PATH_MAX], symlink[PATH_MAX];
+	ساخت stat sb;
+	حرف *p, *q, *s;
+	سائز_t بایاں_len, resolved_len;
+	غیرعلامتی symlinks;
+	صحیح serrno, slen, mem_allocated;
+	حرف بایاں[PATH_MAX], اگلا_token[PATH_MAX], symlink[PATH_MAX];
 
-	if (path[0] == '\0') {
+	اگر (راستہ[0] == '\0') {
 		errno = ENOENT;
-		return (NULL);
+		واپس (تہی);
 	}
 
 	serrno = errno;
 
-	if (resolved == NULL) {
-		resolved = malloc(PATH_MAX);
-		if (resolved == NULL)
-			return (NULL);
+	اگر (resolved == تہی) {
+		resolved = حافظہ_دو(PATH_MAX);
+		اگر (resolved == تہی)
+			واپس (تہی);
 		mem_allocated = 1;
-	} else
+	} ورنہ
 		mem_allocated = 0;
 
 	symlinks = 0;
-	if (path[0] == '/') {
+	اگر (راستہ[0] == '/') {
 		resolved[0] = '/';
 		resolved[1] = '\0';
-		if (path[1] == '\0')
-			return (resolved);
+		اگر (راستہ[1] == '\0')
+			واپس (resolved);
 		resolved_len = 1;
-		left_len = strlcpy(left, path + 1, sizeof(left));
-	} else {
-		if (getcwd(resolved, PATH_MAX) == NULL) {
-			if (mem_allocated)
-				free(resolved);
-			else
+		بایاں_len = strlcpy(بایاں, راستہ + 1, حجم(بایاں));
+	} ورنہ {
+		اگر (getcwd(resolved, PATH_MAX) == تہی) {
+			اگر (mem_allocated)
+				آزاد(resolved);
+			ورنہ
 				strlcpy(resolved, ".", PATH_MAX);
-			return (NULL);
+			واپس (تہی);
 		}
-		resolved_len = strlen(resolved);
-		left_len = strlcpy(left, path, sizeof(left));
+		resolved_len = لڑی_لمبائی(resolved);
+		بایاں_len = strlcpy(بایاں, راستہ, حجم(بایاں));
 	}
-	if (left_len >= sizeof(left) || resolved_len >= PATH_MAX) {
+	اگر (بایاں_len >= حجم(بایاں) || resolved_len >= PATH_MAX) {
 		errno = ENAMETOOLONG;
-		goto err;
+		جاؤ err;
 	}
 
 	/*
 	 * Iterate over path components in `left'.
 	 */
-	while (left_len != 0) {
+	جب (بایاں_len != 0) {
 		/*
 		 * Extract the next path component and adjust `left'
 		 * and its length.
 		 */
-		p = strchr(left, '/');
-		s = p ? p : left + left_len;
-		if (s - left >= (ptrdiff_t)sizeof(next_token)) {
+		p = strchr(بایاں, '/');
+		s = p ? p : بایاں + بایاں_len;
+		اگر (s - بایاں >= (ptrdiff_t)حجم(اگلا_token)) {
 			errno = ENAMETOOLONG;
-			goto err;
+			جاؤ err;
 		}
-		memcpy(next_token, left, s - left);
-		next_token[s - left] = '\0';
-		left_len -= s - left;
-		if (p != NULL)
-			memmove(left, s + 1, left_len + 1);
-		if (resolved[resolved_len - 1] != '/') {
-			if (resolved_len + 1 >= PATH_MAX) {
+		حافظہ_نقل(اگلا_token, بایاں, s - بایاں);
+		اگلا_token[s - بایاں] = '\0';
+		بایاں_len -= s - بایاں;
+		اگر (p != تہی)
+			memmove(بایاں, s + 1, بایاں_len + 1);
+		اگر (resolved[resolved_len - 1] != '/') {
+			اگر (resolved_len + 1 >= PATH_MAX) {
 				errno = ENAMETOOLONG;
-				goto err;
+				جاؤ err;
 			}
 			resolved[resolved_len++] = '/';
 			resolved[resolved_len] = '\0';
 		}
-		if (next_token[0] == '\0')
-			continue;
-		else if (strcmp(next_token, ".") == 0)
-			continue;
-		else if (strcmp(next_token, "..") == 0) {
+		اگر (اگلا_token[0] == '\0')
+			جاری;
+		ورنہ اگر (strcmp(اگلا_token, ".") == 0)
+			جاری;
+		ورنہ اگر (strcmp(اگلا_token, "..") == 0) {
 			/*
 			 * Strip the last path component except when we have
 			 * single "/"
 			 */
-			if (resolved_len > 1) {
+			اگر (resolved_len > 1) {
 				resolved[resolved_len - 1] = '\0';
 				q = strrchr(resolved, '/') + 1;
 				*q = '\0';
 				resolved_len = q - resolved;
 			}
-			continue;
+			جاری;
 		}
 
 		/*
@@ -153,31 +153,31 @@ sftp_realpath(const char *path, char *resolved)
 		 * lstat() fails we still can return successfully if
 		 * there are no more path components left.
 		 */
-		resolved_len = strlcat(resolved, next_token, PATH_MAX);
-		if (resolved_len >= PATH_MAX) {
+		resolved_len = strlcat(resolved, اگلا_token, PATH_MAX);
+		اگر (resolved_len >= PATH_MAX) {
 			errno = ENAMETOOLONG;
-			goto err;
+			جاؤ err;
 		}
-		if (lstat(resolved, &sb) != 0) {
-			if (errno == ENOENT && p == NULL) {
+		اگر (lstat(resolved, &sb) != 0) {
+			اگر (errno == ENOENT && p == تہی) {
 				errno = serrno;
-				return (resolved);
+				واپس (resolved);
 			}
-			goto err;
+			جاؤ err;
 		}
-		if (S_ISLNK(sb.st_mode)) {
-			if (symlinks++ > SYMLOOP_MAX) {
+		اگر (S_ISLNK(sb.st_mode)) {
+			اگر (symlinks++ > SYMLOOP_MAX) {
 				errno = ELOOP;
-				goto err;
+				جاؤ err;
 			}
-			slen = readlink(resolved, symlink, sizeof(symlink) - 1);
-			if (slen < 0)
-				goto err;
+			slen = readlink(resolved, symlink, حجم(symlink) - 1);
+			اگر (slen < 0)
+				جاؤ err;
 			symlink[slen] = '\0';
-			if (symlink[0] == '/') {
+			اگر (symlink[0] == '/') {
 				resolved[1] = 0;
 				resolved_len = 1;
-			} else if (resolved_len > 1) {
+			} ورنہ اگر (resolved_len > 1) {
 				/* Strip the last path component. */
 				resolved[resolved_len - 1] = '\0';
 				q = strrchr(resolved, '/') + 1;
@@ -190,23 +190,23 @@ sftp_realpath(const char *path, char *resolved)
 			 * append them to symlink. The result is placed
 			 * in `left'.
 			 */
-			if (p != NULL) {
-				if (symlink[slen - 1] != '/') {
-					if (slen + 1 >=
-					    (ptrdiff_t)sizeof(symlink)) {
+			اگر (p != تہی) {
+				اگر (symlink[slen - 1] != '/') {
+					اگر (slen + 1 >=
+					    (ptrdiff_t)حجم(symlink)) {
 						errno = ENAMETOOLONG;
-						goto err;
+						جاؤ err;
 					}
 					symlink[slen] = '/';
 					symlink[slen + 1] = 0;
 				}
-				left_len = strlcat(symlink, left, sizeof(symlink));
-				if (left_len >= sizeof(symlink)) {
+				بایاں_len = strlcat(symlink, بایاں, حجم(symlink));
+				اگر (بایاں_len >= حجم(symlink)) {
 					errno = ENAMETOOLONG;
-					goto err;
+					جاؤ err;
 				}
 			}
-			left_len = strlcpy(left, symlink, sizeof(left));
+			بایاں_len = strlcpy(بایاں, symlink, حجم(بایاں));
 		}
 	}
 
@@ -214,12 +214,12 @@ sftp_realpath(const char *path, char *resolved)
 	 * Remove trailing slash except when the resolved pathname
 	 * is a single "/".
 	 */
-	if (resolved_len > 1 && resolved[resolved_len - 1] == '/')
+	اگر (resolved_len > 1 && resolved[resolved_len - 1] == '/')
 		resolved[resolved_len - 1] = '\0';
-	return (resolved);
+	واپس (resolved);
 
 err:
-	if (mem_allocated)
-		free(resolved);
-	return (NULL);
+	اگر (mem_allocated)
+		آزاد(resolved);
+	واپس (تہی);
 }

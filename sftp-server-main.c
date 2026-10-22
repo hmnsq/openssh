@@ -15,38 +15,38 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <unistd.h>
+#شامل <sys/types.h>
+#شامل <pwd.h>
+#شامل <stdarg.h>
+#شامل <stdio.h>
+#شامل <unistd.h>
 
-#include "log.h"
-#include "sftp.h"
-#include "misc.h"
-#include "xmalloc.h"
+#شامل "log.h"
+#شامل "sftp.h"
+#شامل "misc.h"
+#شامل "xmalloc.h"
 
-void
-cleanup_exit(int i)
+خالی
+cleanup_exit(صحیح i)
 {
 	sftp_server_cleanup_exit(i);
 }
 
-int
-main(int argc, char **argv)
+صحیح
+مین(صحیح argc, حرف **argv)
 {
-	struct passwd *user_pw;
+	ساخت passwd *user_pw;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
 
-	if ((user_pw = getpwuid(getuid())) == NULL) {
+	اگر ((user_pw = getpwuid(getuid())) == تہی) {
 		fprintf(stderr, "No user found for uid %lu\n",
 		    (u_long)getuid());
-		return 1;
+		واپس 1;
 	}
 
-	return (sftp_server_main(argc, argv, user_pw));
+	واپس (sftp_server_main(argc, argv, user_pw));
 }

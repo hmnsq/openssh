@@ -15,45 +15,45 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <errno.h>
-#include <string.h>
+#شامل <errno.h>
+#شامل <string.h>
 
-#include "log.h"
+#شامل "log.h"
 
-#ifdef WITH_OPENSSL
-#include <openssl/err.h>
+#اگر_تعریف_شدہ WITH_OPENSSL
+#شامل <openssl/err.h>
 
-const char *
-ssherr_libcrypto(void)
+ثابت حرف *
+ssherr_libcrypto(خالی)
 {
-	unsigned long e;
-	static char buf[512];
-	char msg[4096];
-	const char *reason = NULL, *file, *data;
-	int ln, fl;
+	غیرعلامتی طویل e;
+	ساکن حرف buf[512];
+	حرف پیغام[4096];
+	ثابت حرف *reason = تہی, *file, *ڈیٹا;
+	صحیح ln, fl;
 
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
-	while ((e = ERR_get_error_line_data(&file, &ln, &data, &fl)) != 0) {
-		ERR_error_string_n(e, buf, sizeof(buf));
-		snprintf(msg, sizeof(msg), "%s:%s:%d:%s", buf, file, ln,
-		    (fl & ERR_TXT_STRING) ? data : "");
-		debug("libcrypto: '%s'", msg);
-		if ((reason = ERR_reason_error_string(e)) != NULL)
-			snprintf(buf, sizeof(buf), "error in libcrypto: %s",
+	OPENSSL_init_crypto(OPENSSL_INIT_بھرو_CRYPTO_لڑیاں, تہی);
+	جب ((e = ERR_get_error_سطر_ڈیٹا(&file, &ln, &ڈیٹا, &fl)) != 0) {
+		ERR_error_string_n(e, buf, حجم(buf));
+		snprintf(پیغام, حجم(پیغام), "%s:%s:%d:%s", buf, file, ln,
+		    (fl & ERR_TXT_STRING) ? ڈیٹا : "");
+		debug("libcrypto: '%s'", پیغام);
+		اگر ((reason = ERR_reason_error_string(e)) != تہی)
+			snprintf(buf, حجم(buf), "error in libcrypto: %s",
 			    reason);
 	}
-	if (reason == NULL)
-		return NULL;
-	return buf;
+	اگر (reason == تہی)
+		واپس تہی;
+	واپس buf;
 }
-#else
-const char *
-ssherr_libcrypto(void)
+#ورنہ
+ثابت حرف *
+ssherr_libcrypto(خالی)
 {
-	return NULL;
+	واپس تہی;
 }
-#endif
+#اگر_ختم

@@ -17,73 +17,73 @@
 
 /* ssh session multiplexing support */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/queue.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/un.h>
+#شامل <sys/types.h>
+#شامل <sys/queue.h>
+#شامل <sys/stat.h>
+#شامل <sys/socket.h>
+#شامل <sys/un.h>
 
-#include <errno.h>
-#include <poll.h>
-#include <limits.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <errno.h>
+#شامل <poll.h>
+#شامل <limits.h>
+#شامل <signal.h>
+#شامل <stdarg.h>
+#شامل <stddef.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
-#include "xmalloc.h"
-#include "log.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "misc.h"
-#include "match.h"
-#include "sshbuf.h"
-#include "channels.h"
-#include "packet.h"
-#include "monitor_fdpass.h"
-#include "sshpty.h"
-#include "readconf.h"
-#include "clientloop.h"
+#شامل "xmalloc.h"
+#شامل "log.h"
+#شامل "ssh.h"
+#شامل "ssh2.h"
+#شامل "misc.h"
+#شامل "match.h"
+#شامل "sshbuf.h"
+#شامل "channels.h"
+#شامل "packet.h"
+#شامل "monitor_fdpass.h"
+#شامل "sshpty.h"
+#شامل "readconf.h"
+#شامل "clientloop.h"
 
 /* from ssh.c */
-extern int tty_flag;
-extern Options options;
-extern char *host;
-extern struct sshbuf *command;
-extern volatile sig_atomic_t quit_pending;
+خارجی صحیح tty_flag;
+خارجی Options options;
+خارجی حرف *host;
+خارجی ساخت sshbuf *command;
+خارجی متلون sig_atomic_t quit_pending;
 
 /* Context for session open confirmation callback */
-struct mux_session_confirm_ctx {
+ساخت mux_session_confirm_ctx {
 	u_int want_tty;
 	u_int want_subsys;
 	u_int want_x_fwd;
 	u_int want_agent_fwd;
-	struct sshbuf *cmd;
-	char *term;
-	struct termios tio;
-	char **env;
+	ساخت sshbuf *cmd;
+	حرف *رکن;
+	ساخت termios tio;
+	حرف **env;
 	u_int rid;
 };
 
 /* Context for stdio fwd open confirmation callback */
-struct mux_stdio_confirm_ctx {
+ساخت mux_stdio_confirm_ctx {
 	u_int rid;
 };
 
 /* Context for global channel callback */
-struct mux_channel_confirm_ctx {
+ساخت mux_channel_confirm_ctx {
 	u_int cid;	/* channel id */
 	u_int rid;	/* request id */
-	int fid;	/* forward id */
+	صحیح fid;	/* forward id */
 };
 
 /* fd to control socket */
-int muxserver_sock = -1;
+صحیح muxserver_sock = -1;
 
 /* client request id */
 u_int muxclient_request_id = 0;
@@ -92,79 +92,79 @@ u_int muxclient_request_id = 0;
 u_int muxclient_command = 0;
 
 /* Set when signalled. */
-static volatile sig_atomic_t muxclient_terminate = 0;
+ساکن متلون sig_atomic_t muxclient_terminate = 0;
 
 /* PID of multiplex server */
-static u_int muxserver_pid = 0;
+ساکن u_int muxserver_pid = 0;
 
-static Channel *mux_listener_channel = NULL;
+ساکن Channel *mux_listener_channel = تہی;
 
-struct mux_master_state {
-	int hello_rcvd;
+ساخت mux_master_state {
+	صحیح hello_rcvd;
 };
 
 /* mux protocol messages */
-#define MUX_MSG_HELLO		0x00000001
-#define MUX_C_NEW_SESSION	0x10000002
-#define MUX_C_ALIVE_CHECK	0x10000004
-#define MUX_C_TERMINATE		0x10000005
-#define MUX_C_OPEN_FWD		0x10000006
-#define MUX_C_CLOSE_FWD		0x10000007
-#define MUX_C_NEW_STDIO_FWD	0x10000008
-#define MUX_C_STOP_LISTENING	0x10000009
-#define MUX_C_PROXY		0x1000000f
-#define MUX_C_EXT_INFO		0x20000001
-#define MUX_S_OK		0x80000001
-#define MUX_S_PERMISSION_DENIED	0x80000002
-#define MUX_S_FAILURE		0x80000003
-#define MUX_S_EXIT_MESSAGE	0x80000004
-#define MUX_S_ALIVE		0x80000005
-#define MUX_S_SESSION_OPENED	0x80000006
-#define MUX_S_REMOTE_PORT	0x80000007
-#define MUX_S_TTY_ALLOC_FAIL	0x80000008
-#define MUX_S_PROXY		0x8000000f
-#define MUX_S_EXT_INFO		0x90000001
+#تعریف_کرو MUX_پیغام_HELLO		0x00000001
+#تعریف_کرو MUX_C_NEW_SESSION	0x10000002
+#تعریف_کرو MUX_C_ALIVE_CHECK	0x10000004
+#تعریف_کرو MUX_C_TERMINATE		0x10000005
+#تعریف_کرو MUX_C_OPEN_FWD		0x10000006
+#تعریف_کرو MUX_C_CLOSE_FWD		0x10000007
+#تعریف_کرو MUX_C_NEW_STDIO_FWD	0x10000008
+#تعریف_کرو MUX_C_STOP_LISTENING	0x10000009
+#تعریف_کرو MUX_C_PROXY		0x1000000f
+#تعریف_کرو MUX_C_EXT_INFO		0x20000001
+#تعریف_کرو MUX_S_OK		0x80000001
+#تعریف_کرو MUX_S_PERMISSION_DENIED	0x80000002
+#تعریف_کرو MUX_S_FAILURE		0x80000003
+#تعریف_کرو MUX_S_EXIT_پیغام	0x80000004
+#تعریف_کرو MUX_S_ALIVE		0x80000005
+#تعریف_کرو MUX_S_SESSION_OPENED	0x80000006
+#تعریف_کرو MUX_S_REMOTE_پورٹ	0x80000007
+#تعریف_کرو MUX_S_TTY_ALLOC_FAIL	0x80000008
+#تعریف_کرو MUX_S_PROXY		0x8000000f
+#تعریف_کرو MUX_S_EXT_INFO		0x90000001
 
 /* type codes for MUX_C_OPEN_FWD and MUX_C_CLOSE_FWD */
-#define MUX_FWD_LOCAL   1
-#define MUX_FWD_REMOTE  2
-#define MUX_FWD_DYNAMIC 3
+#تعریف_کرو MUX_FWD_LOCAL   1
+#تعریف_کرو MUX_FWD_REMOTE  2
+#تعریف_کرو MUX_FWD_DYNAMIC 3
 
-#define MUX_EXT_INFO		0x00000001
+#تعریف_کرو MUX_EXT_INFO		0x00000001
 
 /* Bitmask of supported extensions */
-static u_int extensions = 0;
+ساکن u_int extensions = 0;
 
-static void mux_session_confirm(struct ssh *, int, int, void *);
-static void mux_stdio_confirm(struct ssh *, int, int, void *);
+ساکن خالی mux_session_confirm(ساخت ssh *, صحیح, صحیح, خالی *);
+ساکن خالی mux_stdio_confirm(ساخت ssh *, صحیح, صحیح, خالی *);
 
-static int mux_master_process_hello(struct ssh *, u_int,
-	    Channel *, struct sshbuf *, struct sshbuf *);
-static int mux_master_process_new_session(struct ssh *, u_int,
-	    Channel *, struct sshbuf *, struct sshbuf *);
-static int mux_master_process_alive_check(struct ssh *, u_int,
-	    Channel *, struct sshbuf *, struct sshbuf *);
-static int mux_master_process_terminate(struct ssh *, u_int,
-	    Channel *, struct sshbuf *, struct sshbuf *);
-static int mux_master_process_open_fwd(struct ssh *, u_int,
-	    Channel *, struct sshbuf *, struct sshbuf *);
-static int mux_master_process_close_fwd(struct ssh *, u_int,
-	    Channel *, struct sshbuf *, struct sshbuf *);
-static int mux_master_process_stdio_fwd(struct ssh *, u_int,
-	    Channel *, struct sshbuf *, struct sshbuf *);
-static int mux_master_process_stop_listening(struct ssh *, u_int,
-	    Channel *, struct sshbuf *, struct sshbuf *);
-static int mux_master_process_proxy(struct ssh *, u_int,
-	    Channel *, struct sshbuf *, struct sshbuf *);
-static int mux_master_process_ext_info(struct ssh *, u_int,
-	    Channel *, struct sshbuf *, struct sshbuf *);
+ساکن صحیح mux_master_process_hello(ساخت ssh *, u_int,
+	    Channel *, ساخت sshbuf *, ساخت sshbuf *);
+ساکن صحیح mux_master_process_new_session(ساخت ssh *, u_int,
+	    Channel *, ساخت sshbuf *, ساخت sshbuf *);
+ساکن صحیح mux_master_process_alive_check(ساخت ssh *, u_int,
+	    Channel *, ساخت sshbuf *, ساخت sshbuf *);
+ساکن صحیح mux_master_process_terminate(ساخت ssh *, u_int,
+	    Channel *, ساخت sshbuf *, ساخت sshbuf *);
+ساکن صحیح mux_master_process_open_fwd(ساخت ssh *, u_int,
+	    Channel *, ساخت sshbuf *, ساخت sshbuf *);
+ساکن صحیح mux_master_process_close_fwd(ساخت ssh *, u_int,
+	    Channel *, ساخت sshbuf *, ساخت sshbuf *);
+ساکن صحیح mux_master_process_stdio_fwd(ساخت ssh *, u_int,
+	    Channel *, ساخت sshbuf *, ساخت sshbuf *);
+ساکن صحیح mux_master_process_stop_listening(ساخت ssh *, u_int,
+	    Channel *, ساخت sshbuf *, ساخت sshbuf *);
+ساکن صحیح mux_master_process_proxy(ساخت ssh *, u_int,
+	    Channel *, ساخت sshbuf *, ساخت sshbuf *);
+ساکن صحیح mux_master_process_ext_info(ساخت ssh *, u_int,
+	    Channel *, ساخت sshbuf *, ساخت sshbuf *);
 
-static const struct {
+ساکن ثابت ساخت {
 	u_int type;
-	int (*handler)(struct ssh *, u_int, Channel *,
-	    struct sshbuf *, struct sshbuf *);
+	صحیح (*handler)(ساخت ssh *, u_int, Channel *,
+	    ساخت sshbuf *, ساخت sshbuf *);
 } mux_master_handlers[] = {
-	{ MUX_MSG_HELLO, mux_master_process_hello },
+	{ MUX_پیغام_HELLO, mux_master_process_hello },
 	{ MUX_C_NEW_SESSION, mux_master_process_new_session },
 	{ MUX_C_ALIVE_CHECK, mux_master_process_alive_check },
 	{ MUX_C_TERMINATE, mux_master_process_terminate },
@@ -174,54 +174,54 @@ static const struct {
 	{ MUX_C_STOP_LISTENING, mux_master_process_stop_listening },
 	{ MUX_C_PROXY, mux_master_process_proxy },
 	{ MUX_C_EXT_INFO, mux_master_process_ext_info },
-	{ 0, NULL }
+	{ 0, تہی }
 };
 
 /* Cleanup callback fired on closure of mux client _session_ channel */
-static void
-mux_master_session_cleanup_cb(struct ssh *ssh, int cid, int force, void *unused)
+ساکن خالی
+mux_master_session_cleanup_cb(ساخت ssh *ssh, صحیح cid, صحیح force, خالی *غیر_مستعمل)
 {
 	Channel *cc, *c = channel_by_id(ssh, cid);
 
 	debug3_f("entering for channel %d", cid);
-	if (c == NULL)
+	اگر (c == تہی)
 		fatal_f("channel_by_id(%i) == NULL", cid);
-	if (c->ctl_chan != -1) {
-		if ((cc = channel_by_id(ssh, c->ctl_chan)) == NULL)
+	اگر (c->ctl_chan != -1) {
+		اگر ((cc = channel_by_id(ssh, c->ctl_chan)) == تہی)
 			fatal_f("channel %d missing control channel %d",
 			    c->self, c->ctl_chan);
 		c->ctl_chan = -1;
-		cc->ctl_child_id = 0;
-		cc->have_ctl_child_id = 0;
+		cc->ctl_بچہ_id = 0;
+		cc->have_ctl_بچہ_id = 0;
 		chan_rcvd_oclose(ssh, cc);
 	}
 	channel_cancel_cleanup(ssh, c->self);
 }
 
 /* Cleanup callback fired on closure of mux client _control_ channel */
-static void
-mux_master_control_cleanup_cb(struct ssh *ssh, int cid, int force, void *unused)
+ساکن خالی
+mux_master_control_cleanup_cb(ساخت ssh *ssh, صحیح cid, صحیح force, خالی *غیر_مستعمل)
 {
 	Channel *sc, *c = channel_by_id(ssh, cid);
 
 	debug3_f("entering for channel %d", cid);
-	if (c == NULL)
+	اگر (c == تہی)
 		fatal_f("channel_by_id(%i) == NULL", cid);
-	if (c->have_ctl_child_id) {
-		if ((sc = channel_by_id(ssh, c->ctl_child_id)) == NULL)
+	اگر (c->have_ctl_بچہ_id) {
+		اگر ((sc = channel_by_id(ssh, c->ctl_بچہ_id)) == تہی)
 			fatal_f("channel %d missing session channel %u",
-			    c->self, c->ctl_child_id);
-		c->ctl_child_id = 0;
-		c->have_ctl_child_id = 0;
+			    c->self, c->ctl_بچہ_id);
+		c->ctl_بچہ_id = 0;
+		c->have_ctl_بچہ_id = 0;
 		sc->ctl_chan = -1;
-		if (sc->type != SSH_CHANNEL_OPEN &&
+		اگر (sc->type != SSH_CHANNEL_OPEN &&
 		    sc->type != SSH_CHANNEL_OPENING) {
 			debug2_f("channel %d: not open", sc->self);
 			chan_mark_dead(ssh, sc);
-		} else {
-			if (sc->istate == CHAN_INPUT_OPEN)
+		} ورنہ {
+			اگر (sc->istate == CHAN_داخلہ_OPEN)
 				chan_read_failed(ssh, sc);
-			if (sc->ostate == CHAN_OUTPUT_OPEN)
+			اگر (sc->ostate == CHAN_OUTPUT_OPEN)
 				chan_write_failed(ssh, sc);
 		}
 	}
@@ -229,183 +229,183 @@ mux_master_control_cleanup_cb(struct ssh *ssh, int cid, int force, void *unused)
 }
 
 /* Check mux client environment variables before passing them to mux master. */
-static int
-env_permitted(const char *env)
+ساکن صحیح
+env_permitted(ثابت حرف *env)
 {
 	u_int i;
-	int ret;
-	char name[1024], *cp;
+	صحیح ret;
+	حرف name[1024], *cp;
 
-	if ((cp = strchr(env, '=')) == NULL || cp == env)
-		return 0;
-	ret = snprintf(name, sizeof(name), "%.*s", (int)(cp - env), env);
-	if (ret <= 0 || (size_t)ret >= sizeof(name)) {
+	اگر ((cp = strchr(env, '=')) == تہی || cp == env)
+		واپس 0;
+	ret = snprintf(name, حجم(name), "%.*s", (صحیح)(cp - env), env);
+	اگر (ret <= 0 || (سائز_t)ret >= حجم(name)) {
 		error_f("name '%.100s...' too long", env);
-		return 0;
+		واپس 0;
 	}
 
-	for (i = 0; i < options.num_send_env; i++)
-		if (match_pattern(name, options.send_env[i]))
-			return 1;
+	برائے (i = 0; i < options.عدد_send_env; i++)
+		اگر (مطابقت_نمونہ(name, options.send_env[i]))
+			واپس 1;
 
-	return 0;
+	واپس 0;
 }
 
 /* Mux master protocol message handlers */
 
-static int
-mux_master_process_hello(struct ssh *ssh, u_int rid,
-    Channel *c, struct sshbuf *m, struct sshbuf *reply)
+ساکن صحیح
+mux_master_process_hello(ساخت ssh *ssh, u_int rid,
+    Channel *c, ساخت sshbuf *m, ساخت sshbuf *جواب)
 {
 	u_int ver;
-	struct mux_master_state *state = (struct mux_master_state *)c->mux_ctx;
-	int r;
+	ساخت mux_master_state *state = (ساخت mux_master_state *)c->mux_ctx;
+	صحیح r;
 
-	if (state == NULL)
+	اگر (state == تہی)
 		fatal_f("channel %d: c->mux_ctx == NULL", c->self);
-	if (state->hello_rcvd) {
+	اگر (state->hello_rcvd) {
 		error_f("HELLO received twice");
-		return -1;
+		واپس -1;
 	}
-	if ((r = sshbuf_get_u32(m, &ver)) != 0) {
+	اگر ((r = sshbuf_get_u32(m, &ver)) != 0) {
 		error_fr(r, "parse");
-		return -1;
+		واپس -1;
 	}
-	if (ver != SSHMUX_VER) {
+	اگر (ver != SSHMUX_VER) {
 		error_f("unsupported multiplexing protocol version %u "
 		    "(expected %u)", ver, SSHMUX_VER);
-		return -1;
+		واپس -1;
 	}
 	debug2_f("channel %d client version %u", c->self, ver);
 
 	/* No extensions are presently defined */
-	while (sshbuf_len(m) > 0) {
-		char *name = NULL;
-		size_t value_len = 0;
+	جب (sshbuf_len(m) > 0) {
+		حرف *name = تہی;
+		سائز_t قدر_len = 0;
 
-		if ((r = sshbuf_get_cstring(m, &name, NULL)) != 0 ||
-		    (r = sshbuf_get_string_direct(m, NULL, &value_len)) != 0) {
+		اگر ((r = sshbuf_get_cstring(m, &name, تہی)) != 0 ||
+		    (r = sshbuf_get_string_براہ_راست(m, تہی, &قدر_len)) != 0) {
 			error_fr(r, "parse extension");
-			return -1;
+			واپس -1;
 		}
-		if (strcmp(name, "info") == 0) {
+		اگر (strcmp(name, "info") == 0) {
 			debug_f("Received 'info' extension");
 			extensions |= MUX_EXT_INFO;
-		} else {
+		} ورنہ {
 			debug2_f("Unrecognised extension \"%s\" length %zu",
-			    name, value_len);
+			    name, قدر_len);
 		}
-		free(name);
+		آزاد(name);
 	}
 	state->hello_rcvd = 1;
-	return 0;
+	واپس 0;
 }
 
 /* Enqueue a "ok" response to the reply buffer */
-static void
-reply_ok(struct sshbuf *reply, u_int rid)
+ساکن خالی
+جواب_ok(ساخت sshbuf *جواب, u_int rid)
 {
-	int r;
+	صحیح r;
 
-	if ((r = sshbuf_put_u32(reply, MUX_S_OK)) != 0 ||
-	    (r = sshbuf_put_u32(reply, rid)) != 0)
+	اگر ((r = sshbuf_put_u32(جواب, MUX_S_OK)) != 0 ||
+	    (r = sshbuf_put_u32(جواب, rid)) != 0)
 		fatal_fr(r, "reply");
 }
 
 /* Enqueue an error response to the reply buffer */
-static void
-reply_error(struct sshbuf *reply, u_int type, u_int rid, const char *msg)
+ساکن خالی
+جواب_error(ساخت sshbuf *جواب, u_int type, u_int rid, ثابت حرف *پیغام)
 {
-	int r;
+	صحیح r;
 
-	if ((r = sshbuf_put_u32(reply, type)) != 0 ||
-	    (r = sshbuf_put_u32(reply, rid)) != 0 ||
-	    (r = sshbuf_put_cstring(reply, msg)) != 0)
+	اگر ((r = sshbuf_put_u32(جواب, type)) != 0 ||
+	    (r = sshbuf_put_u32(جواب, rid)) != 0 ||
+	    (r = sshbuf_put_cstring(جواب, پیغام)) != 0)
 		fatal_fr(r, "reply");
 }
 
-static int
-mux_master_process_new_session(struct ssh *ssh, u_int rid,
-    Channel *c, struct sshbuf *m, struct sshbuf *reply)
+ساکن صحیح
+mux_master_process_new_session(ساخت ssh *ssh, u_int rid,
+    Channel *c, ساخت sshbuf *m, ساخت sshbuf *جواب)
 {
 	Channel *nc;
-	struct mux_session_confirm_ctx *cctx;
-	char *cmd, *cp;
-	u_int i, j, env_len, escape_char, window, packetmax;
-	int r, new_fd[3];
+	ساخت mux_session_confirm_ctx *cctx;
+	حرف *cmd, *cp;
+	u_int i, j, env_len, escape_char, کھڑکی, packetmax;
+	صحیح r, new_fd[3];
 
 	/* Reply for SSHMUX_COMMAND_OPEN */
-	cctx = xcalloc(1, sizeof(*cctx));
-	cctx->term = NULL;
+	cctx = xcalloc(1, حجم(*cctx));
+	cctx->رکن = تہی;
 	cctx->rid = rid;
-	cmd = NULL;
-	cctx->env = NULL;
+	cmd = تہی;
+	cctx->env = تہی;
 	env_len = 0;
-	if ((r = sshbuf_skip_string(m)) != 0 || /* reserved */
+	اگر ((r = sshbuf_skip_string(m)) != 0 || /* reserved */
 	    (r = sshbuf_get_u32(m, &cctx->want_tty)) != 0 ||
 	    (r = sshbuf_get_u32(m, &cctx->want_x_fwd)) != 0 ||
 	    (r = sshbuf_get_u32(m, &cctx->want_agent_fwd)) != 0 ||
 	    (r = sshbuf_get_u32(m, &cctx->want_subsys)) != 0 ||
 	    (r = sshbuf_get_u32(m, &escape_char)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &cctx->term, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &cmd, NULL)) != 0) {
+	    (r = sshbuf_get_cstring(m, &cctx->رکن, تہی)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &cmd, تہی)) != 0) {
  malf:
-		free(cmd);
-		for (j = 0; j < env_len; j++)
-			free(cctx->env[j]);
-		free(cctx->env);
-		free(cctx->term);
-		free(cctx);
+		آزاد(cmd);
+		برائے (j = 0; j < env_len; j++)
+			آزاد(cctx->env[j]);
+		آزاد(cctx->env);
+		آزاد(cctx->رکن);
+		آزاد(cctx);
 		error_f("malformed message");
-		return -1;
+		واپس -1;
 	}
 
-#define MUX_MAX_ENV_VARS	4096
-	while (sshbuf_len(m) > 0) {
-		if ((r = sshbuf_get_cstring(m, &cp, NULL)) != 0)
-			goto malf;
-		if (!env_permitted(cp)) {
-			free(cp);
-			continue;
+#تعریف_کرو MUX_MAX_ENV_VARS	4096
+	جب (sshbuf_len(m) > 0) {
+		اگر ((r = sshbuf_get_cstring(m, &cp, تہی)) != 0)
+			جاؤ malf;
+		اگر (!env_permitted(cp)) {
+			آزاد(cp);
+			جاری;
 		}
 		cctx->env = xreallocarray(cctx->env, env_len + 2,
-		    sizeof(*cctx->env));
+		    حجم(*cctx->env));
 		cctx->env[env_len++] = cp;
-		cctx->env[env_len] = NULL;
-		if (env_len > MUX_MAX_ENV_VARS) {
+		cctx->env[env_len] = تہی;
+		اگر (env_len > MUX_MAX_ENV_VARS) {
 			error_f(">%d environment variables received, "
 			    "ignoring additional", MUX_MAX_ENV_VARS);
-			break;
+			توڑو;
 		}
 	}
 
 	debug2_f("channel %d: request tty %d, X %d, agent %d, subsys %d, "
 	    "term \"%s\", cmd \"%s\", env %u", c->self,
 	    cctx->want_tty, cctx->want_x_fwd, cctx->want_agent_fwd,
-	    cctx->want_subsys, cctx->term, cmd, env_len);
+	    cctx->want_subsys, cctx->رکن, cmd, env_len);
 
-	if ((cctx->cmd = sshbuf_new()) == NULL)
+	اگر ((cctx->cmd = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_put(cctx->cmd, cmd, strlen(cmd))) != 0)
+	اگر ((r = sshbuf_put(cctx->cmd, cmd, لڑی_لمبائی(cmd))) != 0)
 		fatal_fr(r, "sshbuf_put");
-	free(cmd);
-	cmd = NULL;
+	آزاد(cmd);
+	cmd = تہی;
 
 	/* Gather fds from client */
-	for(i = 0; i < 3; i++) {
-		if ((new_fd[i] = mm_receive_fd(c->sock)) == -1) {
+	برائے(i = 0; i < 3; i++) {
+		اگر ((new_fd[i] = mm_receive_fd(c->sock)) == -1) {
 			error_f("failed to receive fd %d from client", i);
-			for (j = 0; j < i; j++)
+			برائے (j = 0; j < i; j++)
 				close(new_fd[j]);
-			for (j = 0; j < env_len; j++)
-				free(cctx->env[j]);
-			free(cctx->env);
-			free(cctx->term);
+			برائے (j = 0; j < env_len; j++)
+				آزاد(cctx->env[j]);
+			آزاد(cctx->env);
+			آزاد(cctx->رکن);
 			sshbuf_free(cctx->cmd);
-			free(cctx);
-			reply_error(reply, MUX_S_FAILURE, rid,
+			آزاد(cctx);
+			جواب_error(جواب, MUX_S_FAILURE, rid,
 			    "did not receive file descriptors");
-			return -1;
+			واپس -1;
 		}
 	}
 
@@ -413,879 +413,879 @@ mux_master_process_new_session(struct ssh *ssh, u_int rid,
 	    new_fd[0], new_fd[1], new_fd[2]);
 
 	/* XXX support multiple child sessions in future */
-	if (c->have_ctl_child_id) {
+	اگر (c->have_ctl_بچہ_id) {
 		debug2_f("session already open");
-		reply_error(reply, MUX_S_FAILURE, rid,
+		جواب_error(جواب, MUX_S_FAILURE, rid,
 		    "Multiple sessions not supported");
  cleanup:
 		close(new_fd[0]);
 		close(new_fd[1]);
 		close(new_fd[2]);
-		free(cctx->term);
-		if (env_len != 0) {
-			for (i = 0; i < env_len; i++)
-				free(cctx->env[i]);
-			free(cctx->env);
+		آزاد(cctx->رکن);
+		اگر (env_len != 0) {
+			برائے (i = 0; i < env_len; i++)
+				آزاد(cctx->env[i]);
+			آزاد(cctx->env);
 		}
 		sshbuf_free(cctx->cmd);
-		free(cctx);
-		return 0;
+		آزاد(cctx);
+		واپس 0;
 	}
 
-	if (options.control_master == SSHCTL_MASTER_ASK ||
+	اگر (options.control_master == SSHCTL_MASTER_ASK ||
 	    options.control_master == SSHCTL_MASTER_AUTO_ASK) {
-		if (!ask_permission("Allow shared connection to %s? ", host)) {
+		اگر (!ask_permission("Allow shared connection to %s? ", host)) {
 			debug2_f("session refused by user");
-			reply_error(reply, MUX_S_PERMISSION_DENIED, rid,
+			جواب_error(جواب, MUX_S_PERMISSION_DENIED, rid,
 			    "Permission denied");
-			goto cleanup;
+			جاؤ cleanup;
 		}
 	}
 
 	/* Try to pick up ttymodes from client before it goes raw */
-	if (cctx->want_tty && tcgetattr(new_fd[0], &cctx->tio) == -1)
+	اگر (cctx->want_tty && tcgetattr(new_fd[0], &cctx->tio) == -1)
 		error_f("tcgetattr: %s", strerror(errno));
 
-	window = CHAN_SES_WINDOW_DEFAULT;
+	کھڑکی = CHAN_SES_کھڑکی_DEFAULT;
 	packetmax = CHAN_SES_PACKET_DEFAULT;
-	if (cctx->want_tty) {
-		window >>= 1;
+	اگر (cctx->want_tty) {
+		کھڑکی >>= 1;
 		packetmax >>= 1;
 	}
 
 	nc = channel_new(ssh, "session", SSH_CHANNEL_OPENING,
-	    new_fd[0], new_fd[1], new_fd[2], window, packetmax,
+	    new_fd[0], new_fd[1], new_fd[2], کھڑکی, packetmax,
 	    CHAN_EXTENDED_WRITE, "client-session", CHANNEL_NONBLOCK_STDIO);
-	if (cctx->want_tty)
-		channel_set_tty(ssh, nc);
+	اگر (cctx->want_tty)
+		channel_سیٹ_tty(ssh, nc);
 
 	nc->ctl_chan = c->self;		/* link session -> control channel */
-	c->ctl_child_id = nc->self;	/* link control -> session channel */
-	c->have_ctl_child_id = 1;
+	c->ctl_بچہ_id = nc->self;	/* link control -> session channel */
+	c->have_ctl_بچہ_id = 1;
 
-	if (cctx->want_tty && escape_char != 0xffffffff) {
-		channel_register_filter(ssh, nc->self,
-		    client_simple_escape_filter, NULL,
+	اگر (cctx->want_tty && escape_char != 0xffffffff) {
+		channel_رجسٹر_filter(ssh, nc->self,
+		    client_simple_escape_filter, تہی,
 		    client_filter_cleanup,
-		    client_new_escape_filter_ctx((int)escape_char));
+		    client_new_escape_filter_ctx((صحیح)escape_char));
 	}
 
 	debug2_f("channel_new: %d linked to control channel %d",
 	    nc->self, nc->ctl_chan);
 
 	channel_send_open(ssh, nc->self);
-	channel_register_open_confirm(ssh, nc->self, mux_session_confirm, cctx);
+	channel_رجسٹر_open_confirm(ssh, nc->self, mux_session_confirm, cctx);
 	c->mux_pause = 1; /* stop handling messages until open_confirm done */
-	channel_register_cleanup(ssh, nc->self,
+	channel_رجسٹر_cleanup(ssh, nc->self,
 	    mux_master_session_cleanup_cb, 1);
 
 	/* reply is deferred, sent by mux_session_confirm */
-	return 0;
+	واپس 0;
 }
 
-static int
-mux_master_process_alive_check(struct ssh *ssh, u_int rid,
-    Channel *c, struct sshbuf *m, struct sshbuf *reply)
+ساکن صحیح
+mux_master_process_alive_check(ساخت ssh *ssh, u_int rid,
+    Channel *c, ساخت sshbuf *m, ساخت sshbuf *جواب)
 {
-	int r;
+	صحیح r;
 
 	debug2_f("channel %d: alive check", c->self);
 
 	/* prepare reply */
-	if ((r = sshbuf_put_u32(reply, MUX_S_ALIVE)) != 0 ||
-	    (r = sshbuf_put_u32(reply, rid)) != 0 ||
-	    (r = sshbuf_put_u32(reply, (u_int)getpid())) != 0)
+	اگر ((r = sshbuf_put_u32(جواب, MUX_S_ALIVE)) != 0 ||
+	    (r = sshbuf_put_u32(جواب, rid)) != 0 ||
+	    (r = sshbuf_put_u32(جواب, (u_int)getpid())) != 0)
 		fatal_fr(r, "reply");
 
-	return 0;
+	واپس 0;
 }
 
 /* The "info" extension. */
-static int
-mux_master_process_ext_info(struct ssh *ssh, u_int rid,
-    Channel *c, struct sshbuf *m, struct sshbuf *reply)
+ساکن صحیح
+mux_master_process_ext_info(ساخت ssh *ssh, u_int rid,
+    Channel *c, ساخت sshbuf *m, ساخت sshbuf *جواب)
 {
-	int r;
-	u_int status = 0;
-	char *name = NULL, *msg = NULL;
+	صحیح r;
+	u_int حالت_2 = 0;
+	حرف *name = تہی, *پیغام = تہی;
 
 	debug2_f("channel %d: info request", c->self);
 
-	if ((r = sshbuf_get_cstring(m, &name, NULL)) != 0)
+	اگر ((r = sshbuf_get_cstring(m, &name, تہی)) != 0)
 		fatal_fr(r, "parse");
 
-	if (strcmp(name, "connection") == 0) {
-		if ((msg = connection_info_message(ssh)) == NULL)
+	اگر (strcmp(name, "connection") == 0) {
+		اگر ((پیغام = connection_info_پیغام(ssh)) == تہی)
 			fatal_f("connection_info_message");
-		status = 1;
-	} else if (strcmp(name, "channels") == 0) {
-		if ((msg = channel_open_message(ssh)) == NULL)
+		حالت_2 = 1;
+	} ورنہ اگر (strcmp(name, "channels") == 0) {
+		اگر ((پیغام = channel_open_پیغام(ssh)) == تہی)
 			fatal_f("channel_open_message");
-		status = 1;
-	} else {
-		msg = xstrdup("info request type not supported");
+		حالت_2 = 1;
+	} ورنہ {
+		پیغام = xstrdup("info request type not supported");
 	}
 
 	/* prepare reply */
-	if ((r = sshbuf_put_u32(reply, MUX_S_EXT_INFO)) != 0 ||
-	    (r = sshbuf_put_u32(reply, rid)) != 0 ||
-	    (r = sshbuf_put_u32(reply, status)) != 0 ||
-	    (r = sshbuf_put_cstring(reply, msg)) != 0)
+	اگر ((r = sshbuf_put_u32(جواب, MUX_S_EXT_INFO)) != 0 ||
+	    (r = sshbuf_put_u32(جواب, rid)) != 0 ||
+	    (r = sshbuf_put_u32(جواب, حالت_2)) != 0 ||
+	    (r = sshbuf_put_cstring(جواب, پیغام)) != 0)
 		fatal_fr(r, "reply");
-	free(msg);
+	آزاد(پیغام);
 
-	return 0;
+	واپس 0;
 }
 
-static int
-mux_master_process_terminate(struct ssh *ssh, u_int rid,
-    Channel *c, struct sshbuf *m, struct sshbuf *reply)
+ساکن صحیح
+mux_master_process_terminate(ساخت ssh *ssh, u_int rid,
+    Channel *c, ساخت sshbuf *m, ساخت sshbuf *جواب)
 {
 	debug2_f("channel %d: terminate request", c->self);
 
-	if (options.control_master == SSHCTL_MASTER_ASK ||
+	اگر (options.control_master == SSHCTL_MASTER_ASK ||
 	    options.control_master == SSHCTL_MASTER_AUTO_ASK) {
-		if (!ask_permission("Terminate shared connection to %s? ",
+		اگر (!ask_permission("Terminate shared connection to %s? ",
 		    host)) {
 			debug2_f("termination refused by user");
-			reply_error(reply, MUX_S_PERMISSION_DENIED, rid,
+			جواب_error(جواب, MUX_S_PERMISSION_DENIED, rid,
 			    "Permission denied");
-			return 0;
+			واپس 0;
 		}
 	}
 
 	quit_pending = 1;
-	reply_ok(reply, rid);
+	جواب_ok(جواب, rid);
 	/* XXX exit happens too soon - message never makes it to client */
-	return 0;
+	واپس 0;
 }
 
-static char *
-format_forward(u_int ftype, struct Forward *fwd)
+ساکن حرف *
+format_forward(u_int ftype, ساخت Forward *fwd)
 {
-	char *ret;
+	حرف *ret;
 
-	switch (ftype) {
-	case MUX_FWD_LOCAL:
+	انتخاب (ftype) {
+	حالت MUX_FWD_LOCAL:
 		xasprintf(&ret, "local forward %.200s:%d -> %.200s:%d",
-		    (fwd->listen_path != NULL) ? fwd->listen_path :
-		    (fwd->listen_host == NULL) ?
+		    (fwd->listen_راستہ != تہی) ? fwd->listen_راستہ :
+		    (fwd->listen_host == تہی) ?
 		    (options.fwd_opts.gateway_ports ? "*" : "LOCALHOST") :
-		    fwd->listen_host, fwd->listen_port,
-		    (fwd->connect_path != NULL) ? fwd->connect_path :
-		    fwd->connect_host, fwd->connect_port);
-		break;
-	case MUX_FWD_DYNAMIC:
+		    fwd->listen_host, fwd->listen_پورٹ,
+		    (fwd->connect_راستہ != تہی) ? fwd->connect_راستہ :
+		    fwd->connect_host, fwd->connect_پورٹ);
+		توڑو;
+	حالت MUX_FWD_DYNAMIC:
 		xasprintf(&ret, "dynamic forward %.200s:%d -> *",
-		    (fwd->listen_host == NULL) ?
+		    (fwd->listen_host == تہی) ?
 		    (options.fwd_opts.gateway_ports ? "*" : "LOCALHOST") :
-		    fwd->listen_host, fwd->listen_port);
-		break;
-	case MUX_FWD_REMOTE:
+		    fwd->listen_host, fwd->listen_پورٹ);
+		توڑو;
+	حالت MUX_FWD_REMOTE:
 		xasprintf(&ret, "remote forward %.200s:%d -> %.200s:%d",
-		    (fwd->listen_path != NULL) ? fwd->listen_path :
-		    (fwd->listen_host == NULL) ?
+		    (fwd->listen_راستہ != تہی) ? fwd->listen_راستہ :
+		    (fwd->listen_host == تہی) ?
 		    "LOCALHOST" : fwd->listen_host,
-		    fwd->listen_port,
-		    (fwd->connect_path != NULL) ? fwd->connect_path :
-		    fwd->connect_host, fwd->connect_port);
-		break;
-	default:
+		    fwd->listen_پورٹ,
+		    (fwd->connect_راستہ != تہی) ? fwd->connect_راستہ :
+		    fwd->connect_host, fwd->connect_پورٹ);
+		توڑو;
+	طےشدہ:
 		fatal_f("unknown forward type %u", ftype);
 	}
-	return ret;
+	واپس ret;
 }
 
-static int
-compare_host(const char *a, const char *b)
+ساکن صحیح
+compare_host(ثابت حرف *a, ثابت حرف *b)
 {
-	if (a == NULL && b == NULL)
-		return 1;
-	if (a == NULL || b == NULL)
-		return 0;
-	return strcmp(a, b) == 0;
+	اگر (a == تہی && b == تہی)
+		واپس 1;
+	اگر (a == تہی || b == تہی)
+		واپس 0;
+	واپس strcmp(a, b) == 0;
 }
 
-static int
-compare_forward(struct Forward *a, struct Forward *b)
+ساکن صحیح
+compare_forward(ساخت Forward *a, ساخت Forward *b)
 {
-	if (!compare_host(a->listen_host, b->listen_host))
-		return 0;
-	if (!compare_host(a->listen_path, b->listen_path))
-		return 0;
-	if (a->listen_port != b->listen_port)
-		return 0;
-	if (!compare_host(a->connect_host, b->connect_host))
-		return 0;
-	if (!compare_host(a->connect_path, b->connect_path))
-		return 0;
-	if (a->connect_port != b->connect_port)
-		return 0;
+	اگر (!compare_host(a->listen_host, b->listen_host))
+		واپس 0;
+	اگر (!compare_host(a->listen_راستہ, b->listen_راستہ))
+		واپس 0;
+	اگر (a->listen_پورٹ != b->listen_پورٹ)
+		واپس 0;
+	اگر (!compare_host(a->connect_host, b->connect_host))
+		واپس 0;
+	اگر (!compare_host(a->connect_راستہ, b->connect_راستہ))
+		واپس 0;
+	اگر (a->connect_پورٹ != b->connect_پورٹ)
+		واپس 0;
 
-	return 1;
+	واپس 1;
 }
 
-static void
-mux_confirm_remote_forward(struct ssh *ssh, int type, uint32_t seq, void *ctxt)
+ساکن خالی
+mux_confirm_remote_forward(ساخت ssh *ssh, صحیح type, uint32_t seq, خالی *ctxt)
 {
-	struct mux_channel_confirm_ctx *fctx = ctxt;
-	char *failmsg = NULL;
-	struct Forward *rfwd;
+	ساخت mux_channel_confirm_ctx *fctx = ctxt;
+	حرف *failmsg = تہی;
+	ساخت Forward *rfwd;
 	Channel *c;
-	struct sshbuf *out;
-	u_int port;
-	int r;
+	ساخت sshbuf *برآمد;
+	u_int پورٹ;
+	صحیح r;
 
-	if ((c = channel_by_id(ssh, fctx->cid)) == NULL) {
+	اگر ((c = channel_by_id(ssh, fctx->cid)) == تہی) {
 		/* no channel for reply */
 		error_f("unknown channel");
-		return;
+		واپس;
 	}
-	if ((out = sshbuf_new()) == NULL)
+	اگر ((برآمد = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if (fctx->fid >= options.num_remote_forwards ||
-	    (options.remote_forwards[fctx->fid].connect_path == NULL &&
-	    options.remote_forwards[fctx->fid].connect_host == NULL)) {
+	اگر (fctx->fid >= options.عدد_remote_forwards ||
+	    (options.remote_forwards[fctx->fid].connect_راستہ == تہی &&
+	    options.remote_forwards[fctx->fid].connect_host == تہی)) {
 		xasprintf(&failmsg, "unknown forwarding id %d", fctx->fid);
-		goto fail;
+		جاؤ fail;
 	}
 	rfwd = &options.remote_forwards[fctx->fid];
 	debug_f("%s for: listen %d, connect %s:%d",
-	    type == SSH2_MSG_REQUEST_SUCCESS ? "success" : "failure",
-	    rfwd->listen_port, rfwd->connect_path ? rfwd->connect_path :
-	    rfwd->connect_host, rfwd->connect_port);
-	if (type == SSH2_MSG_REQUEST_SUCCESS) {
-		if (rfwd->listen_port == 0) {
-			if ((r = sshpkt_get_u32(ssh, &port)) != 0)
+	    type == SSH2_پیغام_REQUEST_SUCCESS ? "success" : "failure",
+	    rfwd->listen_پورٹ, rfwd->connect_راستہ ? rfwd->connect_راستہ :
+	    rfwd->connect_host, rfwd->connect_پورٹ);
+	اگر (type == SSH2_پیغام_REQUEST_SUCCESS) {
+		اگر (rfwd->listen_پورٹ == 0) {
+			اگر ((r = sshpkt_get_u32(ssh, &پورٹ)) != 0)
 				fatal_fr(r, "parse port");
-			if (port > 65535) {
+			اگر (پورٹ > 65535) {
 				fatal("Invalid allocated port %u for "
-				    "mux remote forward to %s:%d", port,
-				    rfwd->connect_host, rfwd->connect_port);
+				    "mux remote forward to %s:%d", پورٹ,
+				    rfwd->connect_host, rfwd->connect_پورٹ);
 			}
-			rfwd->allocated_port = (int)port;
+			rfwd->allocated_پورٹ = (صحیح)پورٹ;
 			debug("Allocated port %u for mux remote forward"
-			    " to %s:%d", rfwd->allocated_port,
-			    rfwd->connect_host, rfwd->connect_port);
-			if ((r = sshbuf_put_u32(out,
-			    MUX_S_REMOTE_PORT)) != 0 ||
-			    (r = sshbuf_put_u32(out, fctx->rid)) != 0 ||
-			    (r = sshbuf_put_u32(out,
-			    rfwd->allocated_port)) != 0)
+			    " to %s:%d", rfwd->allocated_پورٹ,
+			    rfwd->connect_host, rfwd->connect_پورٹ);
+			اگر ((r = sshbuf_put_u32(برآمد,
+			    MUX_S_REMOTE_پورٹ)) != 0 ||
+			    (r = sshbuf_put_u32(برآمد, fctx->rid)) != 0 ||
+			    (r = sshbuf_put_u32(برآمد,
+			    rfwd->allocated_پورٹ)) != 0)
 				fatal_fr(r, "reply");
 			channel_update_permission(ssh, rfwd->handle,
-			    rfwd->allocated_port);
-		} else {
-			reply_ok(out, fctx->rid);
+			    rfwd->allocated_پورٹ);
+		} ورنہ {
+			جواب_ok(برآمد, fctx->rid);
 		}
-		goto out;
-	} else {
-		if (rfwd->listen_port == 0)
+		جاؤ برآمد;
+	} ورنہ {
+		اگر (rfwd->listen_پورٹ == 0)
 			channel_update_permission(ssh, rfwd->handle, -1);
-		if (rfwd->listen_path != NULL)
+		اگر (rfwd->listen_راستہ != تہی)
 			xasprintf(&failmsg, "remote port forwarding failed for "
-			    "listen path %s", rfwd->listen_path);
-		else
+			    "listen path %s", rfwd->listen_راستہ);
+		ورنہ
 			xasprintf(&failmsg, "remote port forwarding failed for "
-			    "listen port %d", rfwd->listen_port);
+			    "listen port %d", rfwd->listen_پورٹ);
 
 		debug2_f("clearing registered forwarding for listen %d, "
-		    "connect %s:%d", rfwd->listen_port,
-		    rfwd->connect_path ? rfwd->connect_path :
-		    rfwd->connect_host, rfwd->connect_port);
+		    "connect %s:%d", rfwd->listen_پورٹ,
+		    rfwd->connect_راستہ ? rfwd->connect_راستہ :
+		    rfwd->connect_host, rfwd->connect_پورٹ);
 
-		free(rfwd->listen_host);
-		free(rfwd->listen_path);
-		free(rfwd->connect_host);
-		free(rfwd->connect_path);
-		memset(rfwd, 0, sizeof(*rfwd));
+		آزاد(rfwd->listen_host);
+		آزاد(rfwd->listen_راستہ);
+		آزاد(rfwd->connect_host);
+		آزاد(rfwd->connect_راستہ);
+		memset(rfwd, 0, حجم(*rfwd));
 	}
  fail:
 	error_f("%s", failmsg);
-	reply_error(out, MUX_S_FAILURE, fctx->rid, failmsg);
-	free(failmsg);
- out:
-	if ((r = sshbuf_put_stringb(c->output, out)) != 0)
+	جواب_error(برآمد, MUX_S_FAILURE, fctx->rid, failmsg);
+	آزاد(failmsg);
+ برآمد:
+	اگر ((r = sshbuf_put_stringb(c->output, برآمد)) != 0)
 		fatal_fr(r, "enqueue");
-	sshbuf_free(out);
-	if (c->mux_pause <= 0)
+	sshbuf_free(برآمد);
+	اگر (c->mux_pause <= 0)
 		fatal_f("mux_pause %d", c->mux_pause);
 	c->mux_pause = 0; /* start processing messages again */
-	free(fctx);
+	آزاد(fctx);
 }
 
-static int
-mux_master_process_open_fwd(struct ssh *ssh, u_int rid,
-    Channel *c, struct sshbuf *m, struct sshbuf *reply)
+ساکن صحیح
+mux_master_process_open_fwd(ساخت ssh *ssh, u_int rid,
+    Channel *c, ساخت sshbuf *m, ساخت sshbuf *جواب)
 {
-	struct Forward fwd;
-	char *fwd_desc = NULL;
-	char *listen_addr, *connect_addr;
+	ساخت Forward fwd;
+	حرف *fwd_desc = تہی;
+	حرف *listen_addr, *connect_addr;
 	u_int ftype;
 	u_int lport, cport;
-	int r, i, ret = 0, freefwd = 1;
+	صحیح r, i, ret = 0, freefwd = 1;
 
-	memset(&fwd, 0, sizeof(fwd));
+	memset(&fwd, 0, حجم(fwd));
 
 	/* XXX - lport/cport check redundant */
-	if ((r = sshbuf_get_u32(m, &ftype)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &listen_addr, NULL)) != 0 ||
+	اگر ((r = sshbuf_get_u32(m, &ftype)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &listen_addr, تہی)) != 0 ||
 	    (r = sshbuf_get_u32(m, &lport)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &connect_addr, NULL)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &connect_addr, تہی)) != 0 ||
 	    (r = sshbuf_get_u32(m, &cport)) != 0 ||
-	    (lport != (u_int)PORT_STREAMLOCAL && lport > 65535) ||
-	    (cport != (u_int)PORT_STREAMLOCAL && cport > 65535)) {
+	    (lport != (u_int)پورٹ_STREAMLOCAL && lport > 65535) ||
+	    (cport != (u_int)پورٹ_STREAMLOCAL && cport > 65535)) {
 		error_f("malformed message");
 		ret = -1;
-		goto out;
+		جاؤ برآمد;
 	}
-	if (*listen_addr == '\0') {
-		free(listen_addr);
-		listen_addr = NULL;
+	اگر (*listen_addr == '\0') {
+		آزاد(listen_addr);
+		listen_addr = تہی;
 	}
-	if (*connect_addr == '\0') {
-		free(connect_addr);
-		connect_addr = NULL;
+	اگر (*connect_addr == '\0') {
+		آزاد(connect_addr);
+		connect_addr = تہی;
 	}
 
-	memset(&fwd, 0, sizeof(fwd));
-	fwd.listen_port = lport;
-	if (fwd.listen_port == PORT_STREAMLOCAL)
-		fwd.listen_path = listen_addr;
-	else
+	memset(&fwd, 0, حجم(fwd));
+	fwd.listen_پورٹ = lport;
+	اگر (fwd.listen_پورٹ == پورٹ_STREAMLOCAL)
+		fwd.listen_راستہ = listen_addr;
+	ورنہ
 		fwd.listen_host = listen_addr;
-	fwd.connect_port = cport;
-	if (fwd.connect_port == PORT_STREAMLOCAL)
-		fwd.connect_path = connect_addr;
-	else
+	fwd.connect_پورٹ = cport;
+	اگر (fwd.connect_پورٹ == پورٹ_STREAMLOCAL)
+		fwd.connect_راستہ = connect_addr;
+	ورنہ
 		fwd.connect_host = connect_addr;
 
 	debug2_f("channel %d: request %s", c->self,
 	    (fwd_desc = format_forward(ftype, &fwd)));
 
-	if (ftype != MUX_FWD_LOCAL && ftype != MUX_FWD_REMOTE &&
+	اگر (ftype != MUX_FWD_LOCAL && ftype != MUX_FWD_REMOTE &&
 	    ftype != MUX_FWD_DYNAMIC) {
 		logit_f("invalid forwarding type %u", ftype);
  invalid:
-		free(listen_addr);
-		free(connect_addr);
-		reply_error(reply, MUX_S_FAILURE, rid,
+		آزاد(listen_addr);
+		آزاد(connect_addr);
+		جواب_error(جواب, MUX_S_FAILURE, rid,
 		    "Invalid forwarding request");
-		return 0;
+		واپس 0;
 	}
-	if (ftype == MUX_FWD_DYNAMIC && fwd.listen_path) {
+	اگر (ftype == MUX_FWD_DYNAMIC && fwd.listen_راستہ) {
 		logit_f("streamlocal and dynamic forwards "
 		    "are mutually exclusive");
-		goto invalid;
+		جاؤ invalid;
 	}
-	if (fwd.listen_port != PORT_STREAMLOCAL && fwd.listen_port >= 65536) {
-		logit_f("invalid listen port %u", fwd.listen_port);
-		goto invalid;
+	اگر (fwd.listen_پورٹ != پورٹ_STREAMLOCAL && fwd.listen_پورٹ >= 65536) {
+		logit_f("invalid listen port %u", fwd.listen_پورٹ);
+		جاؤ invalid;
 	}
-	if ((fwd.connect_port != PORT_STREAMLOCAL &&
-	    fwd.connect_port >= 65536) ||
+	اگر ((fwd.connect_پورٹ != پورٹ_STREAMLOCAL &&
+	    fwd.connect_پورٹ >= 65536) ||
 	    (ftype != MUX_FWD_DYNAMIC && ftype != MUX_FWD_REMOTE &&
-	    fwd.connect_port == 0)) {
+	    fwd.connect_پورٹ == 0)) {
 		logit_f("invalid connect port %u",
-		    fwd.connect_port);
-		goto invalid;
+		    fwd.connect_پورٹ);
+		جاؤ invalid;
 	}
-	if (ftype != MUX_FWD_DYNAMIC && fwd.connect_host == NULL &&
-	    fwd.connect_path == NULL) {
+	اگر (ftype != MUX_FWD_DYNAMIC && fwd.connect_host == تہی &&
+	    fwd.connect_راستہ == تہی) {
 		logit_f("missing connect host");
-		goto invalid;
+		جاؤ invalid;
 	}
 
 	/* Skip forwards that have already been requested */
-	switch (ftype) {
-	case MUX_FWD_LOCAL:
-	case MUX_FWD_DYNAMIC:
-		for (i = 0; i < options.num_local_forwards; i++) {
-			if (compare_forward(&fwd,
+	انتخاب (ftype) {
+	حالت MUX_FWD_LOCAL:
+	حالت MUX_FWD_DYNAMIC:
+		برائے (i = 0; i < options.عدد_local_forwards; i++) {
+			اگر (compare_forward(&fwd,
 			    options.local_forwards + i)) {
  exists:
 				debug2_f("found existing forwarding");
-				reply_ok(reply, rid);
-				goto out;
+				جواب_ok(جواب, rid);
+				جاؤ برآمد;
 			}
 		}
-		break;
-	case MUX_FWD_REMOTE:
-		for (i = 0; i < options.num_remote_forwards; i++) {
-			if (!compare_forward(&fwd, options.remote_forwards + i))
-				continue;
-			if (fwd.listen_port != 0)
-				goto exists;
+		توڑو;
+	حالت MUX_FWD_REMOTE:
+		برائے (i = 0; i < options.عدد_remote_forwards; i++) {
+			اگر (!compare_forward(&fwd, options.remote_forwards + i))
+				جاری;
+			اگر (fwd.listen_پورٹ != 0)
+				جاؤ exists;
 			debug2_f("found allocated port");
-			if ((r = sshbuf_put_u32(reply,
-			    MUX_S_REMOTE_PORT)) != 0 ||
-			    (r = sshbuf_put_u32(reply, rid)) != 0 ||
-			    (r = sshbuf_put_u32(reply,
-			    options.remote_forwards[i].allocated_port)) != 0)
+			اگر ((r = sshbuf_put_u32(جواب,
+			    MUX_S_REMOTE_پورٹ)) != 0 ||
+			    (r = sshbuf_put_u32(جواب, rid)) != 0 ||
+			    (r = sshbuf_put_u32(جواب,
+			    options.remote_forwards[i].allocated_پورٹ)) != 0)
 				fatal_fr(r, "reply FWD_REMOTE");
-			goto out;
+			جاؤ برآمد;
 		}
-		break;
+		توڑو;
 	}
 
-	if (options.control_master == SSHCTL_MASTER_ASK ||
+	اگر (options.control_master == SSHCTL_MASTER_ASK ||
 	    options.control_master == SSHCTL_MASTER_AUTO_ASK) {
-		if (!ask_permission("Open %s on %s?", fwd_desc, host)) {
+		اگر (!ask_permission("Open %s on %s?", fwd_desc, host)) {
 			debug2_f("forwarding refused by user");
-			reply_error(reply, MUX_S_PERMISSION_DENIED, rid,
+			جواب_error(جواب, MUX_S_PERMISSION_DENIED, rid,
 			    "Permission denied");
-			goto out;
+			جاؤ برآمد;
 		}
 	}
 
-	if (ftype == MUX_FWD_LOCAL || ftype == MUX_FWD_DYNAMIC) {
-		if (!channel_setup_local_fwd_listener(ssh, &fwd,
+	اگر (ftype == MUX_FWD_LOCAL || ftype == MUX_FWD_DYNAMIC) {
+		اگر (!channel_تیاری_local_fwd_listener(ssh, &fwd,
 		    &options.fwd_opts)) {
  fail:
 			logit_f("requested %s failed", fwd_desc);
-			reply_error(reply, MUX_S_FAILURE, rid,
+			جواب_error(جواب, MUX_S_FAILURE, rid,
 			    "Port forwarding failed");
-			goto out;
+			جاؤ برآمد;
 		}
-		add_local_forward(&options, &fwd);
+		جوڑو_local_forward(&options, &fwd);
 		freefwd = 0;
-	} else {
-		struct mux_channel_confirm_ctx *fctx;
+	} ورنہ {
+		ساخت mux_channel_confirm_ctx *fctx;
 
 		fwd.handle = channel_request_remote_forwarding(ssh, &fwd);
-		if (fwd.handle < 0)
-			goto fail;
-		add_remote_forward(&options, &fwd);
-		fctx = xcalloc(1, sizeof(*fctx));
+		اگر (fwd.handle < 0)
+			جاؤ fail;
+		جوڑو_remote_forward(&options, &fwd);
+		fctx = xcalloc(1, حجم(*fctx));
 		fctx->cid = c->self;
 		fctx->rid = rid;
-		fctx->fid = options.num_remote_forwards - 1;
-		client_register_global_confirm(mux_confirm_remote_forward,
+		fctx->fid = options.عدد_remote_forwards - 1;
+		client_رجسٹر_global_confirm(mux_confirm_remote_forward,
 		    fctx);
 		freefwd = 0;
 		c->mux_pause = 1; /* wait for mux_confirm_remote_forward */
 		/* delayed reply in mux_confirm_remote_forward */
-		goto out;
+		جاؤ برآمد;
 	}
-	reply_ok(reply, rid);
- out:
-	free(fwd_desc);
-	if (freefwd) {
-		free(fwd.listen_host);
-		free(fwd.listen_path);
-		free(fwd.connect_host);
-		free(fwd.connect_path);
+	جواب_ok(جواب, rid);
+ برآمد:
+	آزاد(fwd_desc);
+	اگر (freefwd) {
+		آزاد(fwd.listen_host);
+		آزاد(fwd.listen_راستہ);
+		آزاد(fwd.connect_host);
+		آزاد(fwd.connect_راستہ);
 	}
-	return ret;
+	واپس ret;
 }
 
-static int
-mux_master_process_close_fwd(struct ssh *ssh, u_int rid,
-    Channel *c, struct sshbuf *m, struct sshbuf *reply)
+ساکن صحیح
+mux_master_process_close_fwd(ساخت ssh *ssh, u_int rid,
+    Channel *c, ساخت sshbuf *m, ساخت sshbuf *جواب)
 {
-	struct Forward fwd, *found_fwd;
-	char *fwd_desc = NULL;
-	const char *error_reason = NULL;
-	char *listen_addr = NULL, *connect_addr = NULL;
+	ساخت Forward fwd, *ملا_fwd;
+	حرف *fwd_desc = تہی;
+	ثابت حرف *error_reason = تہی;
+	حرف *listen_addr = تہی, *connect_addr = تہی;
 	u_int ftype;
-	int r, i, ret = 0;
+	صحیح r, i, ret = 0;
 	u_int lport, cport;
 
-	memset(&fwd, 0, sizeof(fwd));
+	memset(&fwd, 0, حجم(fwd));
 
-	if ((r = sshbuf_get_u32(m, &ftype)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &listen_addr, NULL)) != 0 ||
+	اگر ((r = sshbuf_get_u32(m, &ftype)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &listen_addr, تہی)) != 0 ||
 	    (r = sshbuf_get_u32(m, &lport)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &connect_addr, NULL)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &connect_addr, تہی)) != 0 ||
 	    (r = sshbuf_get_u32(m, &cport)) != 0 ||
-	    (lport != (u_int)PORT_STREAMLOCAL && lport > 65535) ||
-	    (cport != (u_int)PORT_STREAMLOCAL && cport > 65535)) {
+	    (lport != (u_int)پورٹ_STREAMLOCAL && lport > 65535) ||
+	    (cport != (u_int)پورٹ_STREAMLOCAL && cport > 65535)) {
 		error_f("malformed message");
 		ret = -1;
-		goto out;
+		جاؤ برآمد;
 	}
 
-	if (*listen_addr == '\0') {
-		free(listen_addr);
-		listen_addr = NULL;
+	اگر (*listen_addr == '\0') {
+		آزاد(listen_addr);
+		listen_addr = تہی;
 	}
-	if (*connect_addr == '\0') {
-		free(connect_addr);
-		connect_addr = NULL;
+	اگر (*connect_addr == '\0') {
+		آزاد(connect_addr);
+		connect_addr = تہی;
 	}
 
-	memset(&fwd, 0, sizeof(fwd));
-	fwd.listen_port = lport;
-	if (fwd.listen_port == PORT_STREAMLOCAL)
-		fwd.listen_path = listen_addr;
-	else
+	memset(&fwd, 0, حجم(fwd));
+	fwd.listen_پورٹ = lport;
+	اگر (fwd.listen_پورٹ == پورٹ_STREAMLOCAL)
+		fwd.listen_راستہ = listen_addr;
+	ورنہ
 		fwd.listen_host = listen_addr;
-	fwd.connect_port = cport;
-	if (fwd.connect_port == PORT_STREAMLOCAL)
-		fwd.connect_path = connect_addr;
-	else
+	fwd.connect_پورٹ = cport;
+	اگر (fwd.connect_پورٹ == پورٹ_STREAMLOCAL)
+		fwd.connect_راستہ = connect_addr;
+	ورنہ
 		fwd.connect_host = connect_addr;
 
 	debug2_f("channel %d: request cancel %s", c->self,
 	    (fwd_desc = format_forward(ftype, &fwd)));
 
 	/* make sure this has been requested */
-	found_fwd = NULL;
-	switch (ftype) {
-	case MUX_FWD_LOCAL:
-	case MUX_FWD_DYNAMIC:
-		for (i = 0; i < options.num_local_forwards; i++) {
-			if (compare_forward(&fwd,
+	ملا_fwd = تہی;
+	انتخاب (ftype) {
+	حالت MUX_FWD_LOCAL:
+	حالت MUX_FWD_DYNAMIC:
+		برائے (i = 0; i < options.عدد_local_forwards; i++) {
+			اگر (compare_forward(&fwd,
 			    options.local_forwards + i)) {
-				found_fwd = options.local_forwards + i;
-				break;
+				ملا_fwd = options.local_forwards + i;
+				توڑو;
 			}
 		}
-		break;
-	case MUX_FWD_REMOTE:
-		for (i = 0; i < options.num_remote_forwards; i++) {
-			if (compare_forward(&fwd,
+		توڑو;
+	حالت MUX_FWD_REMOTE:
+		برائے (i = 0; i < options.عدد_remote_forwards; i++) {
+			اگر (compare_forward(&fwd,
 			    options.remote_forwards + i)) {
-				found_fwd = options.remote_forwards + i;
-				break;
+				ملا_fwd = options.remote_forwards + i;
+				توڑو;
 			}
 		}
-		break;
+		توڑو;
 	}
 
-	if (found_fwd == NULL)
+	اگر (ملا_fwd == تہی)
 		error_reason = "port not forwarded";
-	else if (ftype == MUX_FWD_REMOTE) {
+	ورنہ اگر (ftype == MUX_FWD_REMOTE) {
 		/*
 		 * This shouldn't fail unless we confused the host/port
 		 * between options.remote_forwards and permitted_opens.
 		 * However, for dynamic allocated listen ports we need
 		 * to use the actual listen port.
 		 */
-		if (channel_request_rforward_cancel(ssh, found_fwd) == -1)
+		اگر (channel_request_rforward_cancel(ssh, ملا_fwd) == -1)
 			error_reason = "port not in permitted opens";
-	} else {	/* local and dynamic forwards */
+	} ورنہ {	/* local and dynamic forwards */
 		/* Ditto */
-		if (channel_cancel_lport_listener(ssh, &fwd, fwd.connect_port,
+		اگر (channel_cancel_lport_listener(ssh, &fwd, fwd.connect_پورٹ,
 		    &options.fwd_opts) != 1)
 			error_reason = "port not found";
 	}
 
-	if (error_reason != NULL)
-		reply_error(reply, MUX_S_FAILURE, rid, error_reason);
-	else {
-		reply_ok(reply, rid);
-		free(found_fwd->listen_host);
-		free(found_fwd->listen_path);
-		free(found_fwd->connect_host);
-		free(found_fwd->connect_path);
-		found_fwd->listen_host = found_fwd->connect_host = NULL;
-		found_fwd->listen_path = found_fwd->connect_path = NULL;
-		found_fwd->listen_port = found_fwd->connect_port = 0;
+	اگر (error_reason != تہی)
+		جواب_error(جواب, MUX_S_FAILURE, rid, error_reason);
+	ورنہ {
+		جواب_ok(جواب, rid);
+		آزاد(ملا_fwd->listen_host);
+		آزاد(ملا_fwd->listen_راستہ);
+		آزاد(ملا_fwd->connect_host);
+		آزاد(ملا_fwd->connect_راستہ);
+		ملا_fwd->listen_host = ملا_fwd->connect_host = تہی;
+		ملا_fwd->listen_راستہ = ملا_fwd->connect_راستہ = تہی;
+		ملا_fwd->listen_پورٹ = ملا_fwd->connect_پورٹ = 0;
 	}
- out:
-	free(fwd_desc);
-	free(listen_addr);
-	free(connect_addr);
+ برآمد:
+	آزاد(fwd_desc);
+	آزاد(listen_addr);
+	آزاد(connect_addr);
 
-	return ret;
+	واپس ret;
 }
 
-static int
-mux_master_process_stdio_fwd(struct ssh *ssh, u_int rid,
-    Channel *c, struct sshbuf *m, struct sshbuf *reply)
+ساکن صحیح
+mux_master_process_stdio_fwd(ساخت ssh *ssh, u_int rid,
+    Channel *c, ساخت sshbuf *m, ساخت sshbuf *جواب)
 {
 	Channel *nc;
-	char *chost = NULL;
+	حرف *chost = تہی;
 	u_int _cport, i, j;
-	int ok = 0, cport, r, new_fd[2];
-	struct mux_stdio_confirm_ctx *cctx;
+	صحیح ok = 0, cport, r, new_fd[2];
+	ساخت mux_stdio_confirm_ctx *cctx;
 
-	if ((r = sshbuf_skip_string(m)) != 0 || /* reserved */
-	    (r = sshbuf_get_cstring(m, &chost, NULL)) != 0 ||
+	اگر ((r = sshbuf_skip_string(m)) != 0 || /* reserved */
+	    (r = sshbuf_get_cstring(m, &chost, تہی)) != 0 ||
 	    (r = sshbuf_get_u32(m, &_cport)) != 0) {
-		free(chost);
+		آزاد(chost);
 		error_f("malformed message");
-		return -1;
+		واپس -1;
 	}
-	if (_cport == (u_int)PORT_STREAMLOCAL)
-		cport = PORT_STREAMLOCAL;
-	else if (_cport <= INT_MAX)
-		cport = (int)_cport;
-	else {
-		free(chost);
+	اگر (_cport == (u_int)پورٹ_STREAMLOCAL)
+		cport = پورٹ_STREAMLOCAL;
+	ورنہ اگر (_cport <= زیادہ_سے_زیادہ_عدد)
+		cport = (صحیح)_cport;
+	ورنہ {
+		آزاد(chost);
 		error_f("invalid port 0x%x", _cport);
-		return -1;
+		واپس -1;
 	}
 
 	debug2_f("channel %d: stdio fwd to %s:%d", c->self, chost, cport);
 
 	/* Gather fds from client */
-	for(i = 0; i < 2; i++) {
-		if ((new_fd[i] = mm_receive_fd(c->sock)) == -1) {
+	برائے(i = 0; i < 2; i++) {
+		اگر ((new_fd[i] = mm_receive_fd(c->sock)) == -1) {
 			error_f("failed to receive fd %d from client", i);
-			for (j = 0; j < i; j++)
+			برائے (j = 0; j < i; j++)
 				close(new_fd[j]);
-			free(chost);
+			آزاد(chost);
 
 			/* prepare reply */
-			reply_error(reply, MUX_S_FAILURE, rid,
+			جواب_error(جواب, MUX_S_FAILURE, rid,
 			    "did not receive file descriptors");
-			return -1;
+			واپس -1;
 		}
 	}
 
 	debug3_f("got fds stdin %d, stdout %d", new_fd[0], new_fd[1]);
 
 	/* XXX support multiple child sessions in future */
-	if (c->have_ctl_child_id) {
+	اگر (c->have_ctl_بچہ_id) {
 		debug2_f("session already open");
-		reply_error(reply, MUX_S_FAILURE, rid,
+		جواب_error(جواب, MUX_S_FAILURE, rid,
 		    "Multiple sessions not supported");
  cleanup:
 		close(new_fd[0]);
 		close(new_fd[1]);
-		free(chost);
-		return 0;
+		آزاد(chost);
+		واپس 0;
 	}
 
-	if (options.control_master == SSHCTL_MASTER_ASK ||
+	اگر (options.control_master == SSHCTL_MASTER_ASK ||
 	    options.control_master == SSHCTL_MASTER_AUTO_ASK) {
-		if (cport == PORT_STREAMLOCAL) {
+		اگر (cport == پورٹ_STREAMLOCAL) {
 			ok = ask_permission("Allow forward to path %s", chost);
-		} else {
+		} ورنہ {
 			ok = ask_permission("Allow forward to [%s]:%d? ",
 			    chost, cport);
 		}
-		if (!ok) {
+		اگر (!ok) {
 			debug2_f("stdio fwd refused by user");
-			reply_error(reply, MUX_S_PERMISSION_DENIED, rid,
+			جواب_error(جواب, MUX_S_PERMISSION_DENIED, rid,
 			    "Permission denied");
-			goto cleanup;
+			جاؤ cleanup;
 		}
 	}
 
 	nc = channel_connect_stdio_fwd(ssh, chost, cport, new_fd[0], new_fd[1],
 	    CHANNEL_NONBLOCK_STDIO);
-	free(chost);
+	آزاد(chost);
 
 	nc->ctl_chan = c->self;		/* link session -> control channel */
-	c->ctl_child_id = nc->self;	/* link control -> session channel */
-	c->have_ctl_child_id = 1;
+	c->ctl_بچہ_id = nc->self;	/* link control -> session channel */
+	c->have_ctl_بچہ_id = 1;
 
 	debug2_f("channel_new: %d control %d", nc->self, nc->ctl_chan);
 
-	channel_register_cleanup(ssh, nc->self,
+	channel_رجسٹر_cleanup(ssh, nc->self,
 	    mux_master_session_cleanup_cb, 1);
 
-	cctx = xcalloc(1, sizeof(*cctx));
+	cctx = xcalloc(1, حجم(*cctx));
 	cctx->rid = rid;
-	channel_register_open_confirm(ssh, nc->self, mux_stdio_confirm, cctx);
+	channel_رجسٹر_open_confirm(ssh, nc->self, mux_stdio_confirm, cctx);
 	c->mux_pause = 1; /* stop handling messages until open_confirm done */
 
 	/* reply is deferred, sent by mux_session_confirm */
-	return 0;
+	واپس 0;
 }
 
 /* Callback on open confirmation in mux master for a mux stdio fwd session. */
-static void
-mux_stdio_confirm(struct ssh *ssh, int id, int success, void *arg)
+ساکن خالی
+mux_stdio_confirm(ساخت ssh *ssh, صحیح id, صحیح success, خالی *arg)
 {
-	struct mux_stdio_confirm_ctx *cctx = arg;
+	ساخت mux_stdio_confirm_ctx *cctx = arg;
 	Channel *c, *cc;
-	struct sshbuf *reply;
-	int r;
+	ساخت sshbuf *جواب;
+	صحیح r;
 
-	if (cctx == NULL)
+	اگر (cctx == تہی)
 		fatal_f("cctx == NULL");
-	if ((c = channel_by_id(ssh, id)) == NULL)
+	اگر ((c = channel_by_id(ssh, id)) == تہی)
 		fatal_f("no channel for id %d", id);
-	if ((cc = channel_by_id(ssh, c->ctl_chan)) == NULL)
+	اگر ((cc = channel_by_id(ssh, c->ctl_chan)) == تہی)
 		fatal_f("channel %d lacks control channel %d",
 		    id, c->ctl_chan);
-	if ((reply = sshbuf_new()) == NULL)
+	اگر ((جواب = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
 
-	if (!success) {
+	اگر (!success) {
 		debug3_f("sending failure reply");
-		reply_error(reply, MUX_S_FAILURE, cctx->rid,
+		جواب_error(جواب, MUX_S_FAILURE, cctx->rid,
 		    "Session open refused by peer");
 		/* prepare reply */
-		goto done;
+		جاؤ مکمل;
 	}
 
 	debug3_f("sending success reply");
 	/* prepare reply */
-	if ((r = sshbuf_put_u32(reply, MUX_S_SESSION_OPENED)) != 0 ||
-	    (r = sshbuf_put_u32(reply, cctx->rid)) != 0 ||
-	    (r = sshbuf_put_u32(reply, c->self)) != 0)
+	اگر ((r = sshbuf_put_u32(جواب, MUX_S_SESSION_OPENED)) != 0 ||
+	    (r = sshbuf_put_u32(جواب, cctx->rid)) != 0 ||
+	    (r = sshbuf_put_u32(جواب, c->self)) != 0)
 		fatal_fr(r, "reply");
 
- done:
+ مکمل:
 	/* Send reply */
-	if ((r = sshbuf_put_stringb(cc->output, reply)) != 0)
+	اگر ((r = sshbuf_put_stringb(cc->output, جواب)) != 0)
 		fatal_fr(r, "enqueue");
-	sshbuf_free(reply);
+	sshbuf_free(جواب);
 
-	if (cc->mux_pause <= 0)
+	اگر (cc->mux_pause <= 0)
 		fatal_f("mux_pause %d", cc->mux_pause);
 	cc->mux_pause = 0; /* start processing messages again */
-	c->open_confirm_ctx = NULL;
-	free(cctx);
+	c->open_confirm_ctx = تہی;
+	آزاد(cctx);
 }
 
-static int
-mux_master_process_stop_listening(struct ssh *ssh, u_int rid,
-    Channel *c, struct sshbuf *m, struct sshbuf *reply)
+ساکن صحیح
+mux_master_process_stop_listening(ساخت ssh *ssh, u_int rid,
+    Channel *c, ساخت sshbuf *m, ساخت sshbuf *جواب)
 {
 	debug_f("channel %d: stop listening", c->self);
 
-	if (options.control_master == SSHCTL_MASTER_ASK ||
+	اگر (options.control_master == SSHCTL_MASTER_ASK ||
 	    options.control_master == SSHCTL_MASTER_AUTO_ASK) {
-		if (!ask_permission("Disable further multiplexing on shared "
+		اگر (!ask_permission("Disable further multiplexing on shared "
 		    "connection to %s? ", host)) {
 			debug2_f("stop listen refused by user");
-			reply_error(reply, MUX_S_PERMISSION_DENIED, rid,
+			جواب_error(جواب, MUX_S_PERMISSION_DENIED, rid,
 			    "Permission denied");
-			return 0;
+			واپس 0;
 		}
 	}
 
-	if (mux_listener_channel != NULL) {
+	اگر (mux_listener_channel != تہی) {
 		channel_free(ssh, mux_listener_channel);
 		client_stop_mux();
-		free(options.control_path);
-		options.control_path = NULL;
-		mux_listener_channel = NULL;
+		آزاد(options.control_راستہ);
+		options.control_راستہ = تہی;
+		mux_listener_channel = تہی;
 		muxserver_sock = -1;
 	}
 
-	reply_ok(reply, rid);
-	return 0;
+	جواب_ok(جواب, rid);
+	واپس 0;
 }
 
-static int
-mux_master_process_proxy(struct ssh *ssh, u_int rid,
-    Channel *c, struct sshbuf *m, struct sshbuf *reply)
+ساکن صحیح
+mux_master_process_proxy(ساخت ssh *ssh, u_int rid,
+    Channel *c, ساخت sshbuf *m, ساخت sshbuf *جواب)
 {
-	int r;
+	صحیح r;
 
 	debug_f("channel %d: proxy request", c->self);
 
-	if (options.control_master == SSHCTL_MASTER_ASK ||
+	اگر (options.control_master == SSHCTL_MASTER_ASK ||
 	    options.control_master == SSHCTL_MASTER_AUTO_ASK) {
-		if (!ask_permission("Allow multiplex proxy connection?")) {
+		اگر (!ask_permission("Allow multiplex proxy connection?")) {
 			debug2_f("proxy refused by user");
-			reply_error(reply, MUX_S_PERMISSION_DENIED, rid,
+			جواب_error(جواب, MUX_S_PERMISSION_DENIED, rid,
 			    "Permission denied");
-			return 0;
+			واپس 0;
 		}
 	}
 
 	c->mux_rcb = channel_proxy_downstream;
-	if ((r = sshbuf_put_u32(reply, MUX_S_PROXY)) != 0 ||
-	    (r = sshbuf_put_u32(reply, rid)) != 0)
+	اگر ((r = sshbuf_put_u32(جواب, MUX_S_PROXY)) != 0 ||
+	    (r = sshbuf_put_u32(جواب, rid)) != 0)
 		fatal_fr(r, "reply");
 
-	return 0;
+	واپس 0;
 }
 
 /* Channel callbacks fired on read/write from mux client fd */
-static int
-mux_master_read_cb(struct ssh *ssh, Channel *c)
+ساکن صحیح
+mux_master_read_cb(ساخت ssh *ssh, Channel *c)
 {
-	struct mux_master_state *state = (struct mux_master_state *)c->mux_ctx;
-	struct sshbuf *in = NULL, *out = NULL;
+	ساخت mux_master_state *state = (ساخت mux_master_state *)c->mux_ctx;
+	ساخت sshbuf *اندر = تہی, *برآمد = تہی;
 	u_int type, rid, i;
-	int r, ret = -1;
+	صحیح r, ret = -1;
 
-	if ((out = sshbuf_new()) == NULL)
+	اگر ((برآمد = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
 
 	/* Setup ctx and  */
-	if (c->mux_ctx == NULL) {
-		state = xcalloc(1, sizeof(*state));
+	اگر (c->mux_ctx == تہی) {
+		state = xcalloc(1, حجم(*state));
 		c->mux_ctx = state;
-		channel_register_cleanup(ssh, c->self,
+		channel_رجسٹر_cleanup(ssh, c->self,
 		    mux_master_control_cleanup_cb, 0);
 
 		/* Send hello */
-		if ((r = sshbuf_put_u32(out, MUX_MSG_HELLO)) != 0 ||
-		    (r = sshbuf_put_u32(out, SSHMUX_VER)) != 0)
+		اگر ((r = sshbuf_put_u32(برآمد, MUX_پیغام_HELLO)) != 0 ||
+		    (r = sshbuf_put_u32(برآمد, SSHMUX_VER)) != 0)
 			fatal_fr(r, "reply");
 		/* "info" extension */
-		if ((r = sshbuf_put_cstring(out, "info")) != 0 ||
-		    (r = sshbuf_put_cstring(out, "0")) != 0)
+		اگر ((r = sshbuf_put_cstring(برآمد, "info")) != 0 ||
+		    (r = sshbuf_put_cstring(برآمد, "0")) != 0)
 			fatal_fr(r, "put info extension");
-		if ((r = sshbuf_put_stringb(c->output, out)) != 0)
+		اگر ((r = sshbuf_put_stringb(c->output, برآمد)) != 0)
 			fatal_fr(r, "enqueue");
 		debug3_f("channel %d: hello sent", c->self);
 		ret = 0;
-		goto out;
+		جاؤ برآمد;
 	}
 
 	/* Channel code ensures that we receive whole packets */
-	if ((r = sshbuf_froms(c->input, &in)) != 0) {
+	اگر ((r = sshbuf_froms(c->داخلہ, &اندر)) != 0) {
  malf:
 		error_f("malformed message");
-		goto out;
+		جاؤ برآمد;
 	}
 
-	if ((r = sshbuf_get_u32(in, &type)) != 0)
-		goto malf;
+	اگر ((r = sshbuf_get_u32(اندر, &type)) != 0)
+		جاؤ malf;
 	debug3_f("channel %d packet type 0x%08x len %zu", c->self,
-	    type, sshbuf_len(in));
+	    type, sshbuf_len(اندر));
 
-	if (type == MUX_MSG_HELLO)
+	اگر (type == MUX_پیغام_HELLO)
 		rid = 0;
-	else {
-		if (!state->hello_rcvd) {
+	ورنہ {
+		اگر (!state->hello_rcvd) {
 			error_f("expected MUX_MSG_HELLO(0x%08x), "
-			    "received 0x%08x", MUX_MSG_HELLO, type);
-			goto out;
+			    "received 0x%08x", MUX_پیغام_HELLO, type);
+			جاؤ برآمد;
 		}
-		if ((r = sshbuf_get_u32(in, &rid)) != 0)
-			goto malf;
+		اگر ((r = sshbuf_get_u32(اندر, &rid)) != 0)
+			جاؤ malf;
 	}
 
-	for (i = 0; mux_master_handlers[i].handler != NULL; i++) {
-		if (type == mux_master_handlers[i].type) {
+	برائے (i = 0; mux_master_handlers[i].handler != تہی; i++) {
+		اگر (type == mux_master_handlers[i].type) {
 			ret = mux_master_handlers[i].handler(ssh, rid,
-			    c, in, out);
-			break;
+			    c, اندر, برآمد);
+			توڑو;
 		}
 	}
-	if (mux_master_handlers[i].handler == NULL) {
+	اگر (mux_master_handlers[i].handler == تہی) {
 		error_f("unsupported mux message 0x%08x", type);
-		reply_error(out, MUX_S_FAILURE, rid, "unsupported request");
+		جواب_error(برآمد, MUX_S_FAILURE, rid, "unsupported request");
 		ret = 0;
 	}
 	/* Enqueue reply packet */
-	if (sshbuf_len(out) != 0 &&
-	    (r = sshbuf_put_stringb(c->output, out)) != 0)
+	اگر (sshbuf_len(برآمد) != 0 &&
+	    (r = sshbuf_put_stringb(c->output, برآمد)) != 0)
 		fatal_fr(r, "enqueue");
- out:
-	sshbuf_free(in);
-	sshbuf_free(out);
-	return ret;
+ برآمد:
+	sshbuf_free(اندر);
+	sshbuf_free(برآمد);
+	واپس ret;
 }
 
-void
-mux_exit_message(struct ssh *ssh, Channel *c, int exitval)
+خالی
+mux_exit_پیغام(ساخت ssh *ssh, Channel *c, صحیح exitval)
 {
-	struct sshbuf *m;
+	ساخت sshbuf *m;
 	Channel *mux_chan;
-	int r;
+	صحیح r;
 
 	debug3_f("channel %d: exit message, exitval %d", c->self, exitval);
 
-	if ((mux_chan = channel_by_id(ssh, c->ctl_chan)) == NULL)
+	اگر ((mux_chan = channel_by_id(ssh, c->ctl_chan)) == تہی)
 		fatal_f("channel %d missing mux %d", c->self, c->ctl_chan);
 
 	/* Append exit message packet to control socket output queue */
-	if ((m = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_put_u32(m, MUX_S_EXIT_MESSAGE)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, MUX_S_EXIT_پیغام)) != 0 ||
 	    (r = sshbuf_put_u32(m, c->self)) != 0 ||
 	    (r = sshbuf_put_u32(m, exitval)) != 0 ||
 	    (r = sshbuf_put_stringb(mux_chan->output, m)) != 0)
@@ -1293,22 +1293,22 @@ mux_exit_message(struct ssh *ssh, Channel *c, int exitval)
 	sshbuf_free(m);
 }
 
-void
-mux_tty_alloc_failed(struct ssh *ssh, Channel *c)
+خالی
+mux_tty_alloc_failed(ساخت ssh *ssh, Channel *c)
 {
-	struct sshbuf *m;
+	ساخت sshbuf *m;
 	Channel *mux_chan;
-	int r;
+	صحیح r;
 
 	debug3_f("channel %d: TTY alloc failed", c->self);
 
-	if ((mux_chan = channel_by_id(ssh, c->ctl_chan)) == NULL)
+	اگر ((mux_chan = channel_by_id(ssh, c->ctl_chan)) == تہی)
 		fatal_f("channel %d missing mux %d", c->self, c->ctl_chan);
 
 	/* Append exit message packet to control socket output queue */
-	if ((m = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_put_u32(m, MUX_S_TTY_ALLOC_FAIL)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, MUX_S_TTY_ALLOC_FAIL)) != 0 ||
 	    (r = sshbuf_put_u32(m, c->self)) != 0 ||
 	    (r = sshbuf_put_stringb(mux_chan->output, m)) != 0)
 		fatal_fr(r, "reply");
@@ -1316,18 +1316,18 @@ mux_tty_alloc_failed(struct ssh *ssh, Channel *c)
 }
 
 /* Prepare a mux master to listen on a Unix domain socket. */
-void
-muxserver_listen(struct ssh *ssh)
+خالی
+muxserver_listen(ساخت ssh *ssh)
 {
-	mode_t old_umask;
-	char *orig_control_path = options.control_path;
-	char rbuf[16+1];
+	منوال_t old_umask;
+	حرف *orig_control_راستہ = options.control_راستہ;
+	حرف rbuf[16+1];
 	u_int i, r;
-	int oerrno;
+	صحیح oerrno;
 
-	if (options.control_path == NULL ||
+	اگر (options.control_راستہ == تہی ||
 	    options.control_master == SSHCTL_MASTER_NO)
-		return;
+		واپس;
 
 	debug("setting up multiplex master socket");
 
@@ -1337,152 +1337,152 @@ muxserver_listen(struct ssh *ssh)
 	 * other processes racing in between bind() and listen() and hitting
 	 * an unready socket.
 	 */
-	for (i = 0; i < sizeof(rbuf) - 1; i++) {
-		r = arc4random_uniform(26+26+10);
+	برائے (i = 0; i < حجم(rbuf) - 1; i++) {
+		r = arc4random_یکساں(26+26+10);
 		rbuf[i] = (r < 26) ? 'a' + r :
 		    (r < 26*2) ? 'A' + r - 26 :
 		    '0' + r - 26 - 26;
 	}
-	rbuf[sizeof(rbuf) - 1] = '\0';
-	options.control_path = NULL;
-	xasprintf(&options.control_path, "%s.%s", orig_control_path, rbuf);
-	debug3_f("temporary control path %s", options.control_path);
+	rbuf[حجم(rbuf) - 1] = '\0';
+	options.control_راستہ = تہی;
+	xasprintf(&options.control_راستہ, "%s.%s", orig_control_راستہ, rbuf);
+	debug3_f("temporary control path %s", options.control_راستہ);
 
 	old_umask = umask(0177);
-	muxserver_sock = unix_listener(options.control_path, 64, 0);
+	muxserver_sock = unix_listener(options.control_راستہ, 64, 0);
 	oerrno = errno;
 	umask(old_umask);
-	if (muxserver_sock < 0) {
-		if (oerrno == EINVAL || oerrno == EADDRINUSE) {
+	اگر (muxserver_sock < 0) {
+		اگر (oerrno == EINVAL || oerrno == EADDRINUSE) {
 			error("ControlSocket %s already exists, "
-			    "disabling multiplexing", options.control_path);
+			    "disabling multiplexing", options.control_راستہ);
  disable_mux_master:
-			if (muxserver_sock != -1) {
+			اگر (muxserver_sock != -1) {
 				close(muxserver_sock);
 				muxserver_sock = -1;
 			}
-			free(orig_control_path);
-			free(options.control_path);
-			options.control_path = NULL;
+			آزاد(orig_control_راستہ);
+			آزاد(options.control_راستہ);
+			options.control_راستہ = تہی;
 			options.control_master = SSHCTL_MASTER_NO;
-			return;
-		} else {
+			واپس;
+		} ورنہ {
 			/* unix_listener() logs the error */
 			cleanup_exit(255);
 		}
 	}
 
 	/* Now atomically "move" the mux socket into position */
-	if (link(options.control_path, orig_control_path) != 0) {
-		if (errno != EEXIST) {
+	اگر (link(options.control_راستہ, orig_control_راستہ) != 0) {
+		اگر (errno != EEXIST) {
 			fatal_f("link mux listener %s => %s: %s",
-			    options.control_path, orig_control_path,
+			    options.control_راستہ, orig_control_راستہ,
 			    strerror(errno));
 		}
 		error("ControlSocket %s already exists, disabling multiplexing",
-		    orig_control_path);
-		unlink(options.control_path);
-		goto disable_mux_master;
+		    orig_control_راستہ);
+		unlink(options.control_راستہ);
+		جاؤ disable_mux_master;
 	}
-	unlink(options.control_path);
-	free(options.control_path);
-	options.control_path = orig_control_path;
+	unlink(options.control_راستہ);
+	آزاد(options.control_راستہ);
+	options.control_راستہ = orig_control_راستہ;
 
-	set_nonblock(muxserver_sock);
+	سیٹ_nonblock(muxserver_sock);
 
 	mux_listener_channel = channel_new(ssh, "mux listener",
 	    SSH_CHANNEL_MUX_LISTENER, muxserver_sock, muxserver_sock, -1,
-	    CHAN_TCP_WINDOW_DEFAULT, CHAN_TCP_PACKET_DEFAULT,
-	    0, options.control_path, 1);
+	    CHAN_TCP_کھڑکی_DEFAULT, CHAN_TCP_PACKET_DEFAULT,
+	    0, options.control_راستہ, 1);
 	mux_listener_channel->mux_rcb = mux_master_read_cb;
 	debug3_f("mux listener channel %d fd %d",
 	    mux_listener_channel->self, mux_listener_channel->sock);
 }
 
 /* Callback on open confirmation in mux master for a mux client session. */
-static void
-mux_session_confirm(struct ssh *ssh, int id, int success, void *arg)
+ساکن خالی
+mux_session_confirm(ساخت ssh *ssh, صحیح id, صحیح success, خالی *arg)
 {
-	struct mux_session_confirm_ctx *cctx = arg;
-	const char *display;
+	ساخت mux_session_confirm_ctx *cctx = arg;
+	ثابت حرف *display;
 	Channel *c, *cc;
-	int i, r;
-	struct sshbuf *reply;
+	صحیح i, r;
+	ساخت sshbuf *جواب;
 
-	if (cctx == NULL)
+	اگر (cctx == تہی)
 		fatal_f("cctx == NULL");
-	if ((c = channel_by_id(ssh, id)) == NULL)
+	اگر ((c = channel_by_id(ssh, id)) == تہی)
 		fatal_f("no channel for id %d", id);
-	if ((cc = channel_by_id(ssh, c->ctl_chan)) == NULL)
+	اگر ((cc = channel_by_id(ssh, c->ctl_chan)) == تہی)
 		fatal_f("channel %d lacks control channel %d",
 		    id, c->ctl_chan);
-	if ((reply = sshbuf_new()) == NULL)
+	اگر ((جواب = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
 
-	if (!success) {
+	اگر (!success) {
 		debug3_f("sending failure reply");
-		reply_error(reply, MUX_S_FAILURE, cctx->rid,
+		جواب_error(جواب, MUX_S_FAILURE, cctx->rid,
 		    "Session open refused by peer");
-		goto done;
+		جاؤ مکمل;
 	}
 
 	display = getenv("DISPLAY");
-	if (cctx->want_x_fwd && options.forward_x11 && display != NULL) {
-		char *proto, *data;
+	اگر (cctx->want_x_fwd && options.forward_x11 && display != تہی) {
+		حرف *proto, *ڈیٹا;
 
 		/* Get reasonable local authentication information. */
-		if (client_x11_get_proto(ssh, display, options.xauth_location,
+		اگر (client_x11_get_proto(ssh, display, options.xauth_location,
 		    options.forward_x11_trusted, options.forward_x11_timeout,
-		    &proto, &data) == 0) {
+		    &proto, &ڈیٹا) == 0) {
 			/* Request forwarding with authentication spoofing. */
 			debug("Requesting X11 forwarding with authentication "
 			    "spoofing.");
 			x11_request_forwarding_with_spoofing(ssh, id,
-			    display, proto, data, 1);
+			    display, proto, ڈیٹا, 1);
 			/* XXX exit_on_forward_failure */
 			client_expect_confirm(ssh, id, "X11 forwarding",
 			    CONFIRM_WARN);
 		}
 	}
 
-	if (cctx->want_agent_fwd && options.forward_agent)
+	اگر (cctx->want_agent_fwd && options.forward_agent)
 		client_channel_request_agent_forwarding(ssh, id);
 
-	client_session2_setup(ssh, id, cctx->want_tty, cctx->want_subsys,
-	    cctx->term, &cctx->tio, c->rfd, cctx->cmd, cctx->env);
+	client_session2_تیاری(ssh, id, cctx->want_tty, cctx->want_subsys,
+	    cctx->رکن, &cctx->tio, c->rfd, cctx->cmd, cctx->env);
 
 	debug3_f("sending success reply");
 	/* prepare reply */
-	if ((r = sshbuf_put_u32(reply, MUX_S_SESSION_OPENED)) != 0 ||
-	    (r = sshbuf_put_u32(reply, cctx->rid)) != 0 ||
-	    (r = sshbuf_put_u32(reply, c->self)) != 0)
+	اگر ((r = sshbuf_put_u32(جواب, MUX_S_SESSION_OPENED)) != 0 ||
+	    (r = sshbuf_put_u32(جواب, cctx->rid)) != 0 ||
+	    (r = sshbuf_put_u32(جواب, c->self)) != 0)
 		fatal_fr(r, "reply");
 
- done:
+ مکمل:
 	/* Send reply */
-	if ((r = sshbuf_put_stringb(cc->output, reply)) != 0)
+	اگر ((r = sshbuf_put_stringb(cc->output, جواب)) != 0)
 		fatal_fr(r, "enqueue");
-	sshbuf_free(reply);
+	sshbuf_free(جواب);
 
-	if (cc->mux_pause <= 0)
+	اگر (cc->mux_pause <= 0)
 		fatal_f("mux_pause %d", cc->mux_pause);
 	cc->mux_pause = 0; /* start processing messages again */
-	c->open_confirm_ctx = NULL;
+	c->open_confirm_ctx = تہی;
 	sshbuf_free(cctx->cmd);
-	free(cctx->term);
-	if (cctx->env != NULL) {
-		for (i = 0; cctx->env[i] != NULL; i++)
-			free(cctx->env[i]);
-		free(cctx->env);
+	آزاد(cctx->رکن);
+	اگر (cctx->env != تہی) {
+		برائے (i = 0; cctx->env[i] != تہی; i++)
+			آزاد(cctx->env[i]);
+		آزاد(cctx->env);
 	}
-	free(cctx);
+	آزاد(cctx);
 }
 
 /* ** Multiplexing client support */
 
 /* Exit signal handler */
-static void
-control_client_sighandler(int signo)
+ساکن خالی
+control_client_sighandler(صحیح signo)
 {
 	muxclient_terminate = signo;
 }
@@ -1491,259 +1491,259 @@ control_client_sighandler(int signo)
  * Relay signal handler - used to pass some signals from mux client to
  * mux master.
  */
-static void
-control_client_sigrelay(int signo)
+ساکن خالی
+control_client_sigrelay(صحیح signo)
 {
-	int save_errno = errno;
+	صحیح save_errno = errno;
 
-	if (muxserver_pid > 1)
+	اگر (muxserver_pid > 1)
 		kill(muxserver_pid, signo);
 
 	errno = save_errno;
 }
 
-static int
-mux_client_read(int fd, struct sshbuf *b, size_t need, int timeout_ms)
+ساکن صحیح
+mux_client_read(صحیح fd, ساخت sshbuf *b, سائز_t need, صحیح timeout_ms)
 {
-	size_t have;
+	سائز_t have;
 	ssize_t len;
 	u_char *p;
-	int r;
+	صحیح r;
 
-	if ((r = sshbuf_reserve(b, need, &p)) != 0)
+	اگر ((r = sshbuf_reserve(b, need, &p)) != 0)
 		fatal_fr(r, "reserve");
-	for (have = 0; have < need; ) {
-		if (muxclient_terminate) {
+	برائے (have = 0; have < need; ) {
+		اگر (muxclient_terminate) {
 			errno = EINTR;
-			return -1;
+			واپس -1;
 		}
-		len = read(fd, p + have, need - have);
-		if (len == -1) {
-			switch (errno) {
-#if defined(EWOULDBLOCK) && (EWOULDBLOCK != EAGAIN)
-			case EWOULDBLOCK:
-#endif
-			case EAGAIN:
-				if (waitrfd(fd, &timeout_ms,
+		len = اقرأ(fd, p + have, need - have);
+		اگر (len == -1) {
+			انتخاب (errno) {
+#اگر defined(EWOULDBLOCK) && (EWOULDBLOCK != EAGAIN)
+			حالت EWOULDBLOCK:
+#اگر_ختم
+			حالت EAGAIN:
+				اگر (waitrfd(fd, &timeout_ms,
 				    &muxclient_terminate) == -1 &&
 				    errno != EINTR)
-					return -1;	/* timeout */
+					واپس -1;	/* timeout */
 				/* FALLTHROUGH */
-			case EINTR:
-				continue;
-			default:
-				return -1;
+			حالت EINTR:
+				جاری;
+			طےشدہ:
+				واپس -1;
 			}
 		}
-		if (len == 0) {
+		اگر (len == 0) {
 			errno = EPIPE;
-			return -1;
+			واپس -1;
 		}
-		have += (size_t)len;
+		have += (سائز_t)len;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-mux_client_write_packet(int fd, struct sshbuf *m)
+ساکن صحیح
+mux_client_write_packet(صحیح fd, ساخت sshbuf *m)
 {
-	struct sshbuf *queue;
+	ساخت sshbuf *قطار;
 	u_int have, need;
-	int r, oerrno, len;
-	const u_char *ptr;
-	struct pollfd pfd;
+	صحیح r, oerrno, len;
+	ثابت u_char *ptr;
+	ساخت pollfd pfd;
 
 	pfd.fd = fd;
 	pfd.events = POLLOUT;
-	if ((queue = sshbuf_new()) == NULL)
+	اگر ((قطار = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_put_stringb(queue, m)) != 0)
+	اگر ((r = sshbuf_put_stringb(قطار, m)) != 0)
 		fatal_fr(r, "enqueue");
 
-	need = sshbuf_len(queue);
-	ptr = sshbuf_ptr(queue);
+	need = sshbuf_len(قطار);
+	ptr = sshbuf_ptr(قطار);
 
-	for (have = 0; have < need; ) {
-		if (muxclient_terminate) {
-			sshbuf_free(queue);
+	برائے (have = 0; have < need; ) {
+		اگر (muxclient_terminate) {
+			sshbuf_free(قطار);
 			errno = EINTR;
-			return -1;
+			واپس -1;
 		}
-		len = write(fd, ptr + have, need - have);
-		if (len == -1) {
-			switch (errno) {
-#if defined(EWOULDBLOCK) && (EWOULDBLOCK != EAGAIN)
-			case EWOULDBLOCK:
-#endif
-			case EAGAIN:
-				(void)poll(&pfd, 1, -1);
+		len = اكتب(fd, ptr + have, need - have);
+		اگر (len == -1) {
+			انتخاب (errno) {
+#اگر defined(EWOULDBLOCK) && (EWOULDBLOCK != EAGAIN)
+			حالت EWOULDBLOCK:
+#اگر_ختم
+			حالت EAGAIN:
+				(خالی)poll(&pfd, 1, -1);
 				/* FALLTHROUGH */
-			case EINTR:
-				continue;
-			default:
+			حالت EINTR:
+				جاری;
+			طےشدہ:
 				oerrno = errno;
-				sshbuf_free(queue);
+				sshbuf_free(قطار);
 				errno = oerrno;
-				return -1;
+				واپس -1;
 			}
 		}
-		if (len == 0) {
-			sshbuf_free(queue);
+		اگر (len == 0) {
+			sshbuf_free(قطار);
 			errno = EPIPE;
-			return -1;
+			واپس -1;
 		}
 		have += (u_int)len;
 	}
-	sshbuf_free(queue);
-	return 0;
+	sshbuf_free(قطار);
+	واپس 0;
 }
 
-static int
-mux_client_read_packet_timeout(int fd, struct sshbuf *m, int timeout_ms)
+ساکن صحیح
+mux_client_read_packet_timeout(صحیح fd, ساخت sshbuf *m, صحیح timeout_ms)
 {
-	struct sshbuf *queue;
-	size_t need, have;
-	const u_char *ptr;
-	int r, oerrno;
+	ساخت sshbuf *قطار;
+	سائز_t need, have;
+	ثابت u_char *ptr;
+	صحیح r, oerrno;
 
-	if ((queue = sshbuf_new()) == NULL)
+	اگر ((قطار = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if (mux_client_read(fd, queue, 4, timeout_ms) != 0) {
-		if ((oerrno = errno) == EPIPE)
+	اگر (mux_client_read(fd, قطار, 4, timeout_ms) != 0) {
+		اگر ((oerrno = errno) == EPIPE)
 			debug3_f("read header failed: %s",
 			    strerror(errno));
-		sshbuf_free(queue);
+		sshbuf_free(قطار);
 		errno = oerrno;
-		return -1;
+		واپس -1;
 	}
-	need = PEEK_U32(sshbuf_ptr(queue));
-	if (mux_client_read(fd, queue, need, timeout_ms) != 0) {
+	need = PEEK_U32(sshbuf_ptr(قطار));
+	اگر (mux_client_read(fd, قطار, need, timeout_ms) != 0) {
 		oerrno = errno;
 		debug3_f("read body failed: %s", strerror(errno));
-		sshbuf_free(queue);
+		sshbuf_free(قطار);
 		errno = oerrno;
-		return -1;
+		واپس -1;
 	}
-	if ((r = sshbuf_get_string_direct(queue, &ptr, &have)) != 0 ||
+	اگر ((r = sshbuf_get_string_براہ_راست(قطار, &ptr, &have)) != 0 ||
 	    (r = sshbuf_put(m, ptr, have)) != 0)
 		fatal_fr(r, "dequeue");
-	sshbuf_free(queue);
-	return 0;
+	sshbuf_free(قطار);
+	واپس 0;
 }
 
-static int
-mux_client_read_packet(int fd, struct sshbuf *m)
+ساکن صحیح
+mux_client_read_packet(صحیح fd, ساخت sshbuf *m)
 {
-	return mux_client_read_packet_timeout(fd, m, -1);
+	واپس mux_client_read_packet_timeout(fd, m, -1);
 }
 
-static int
-mux_client_hello_exchange(int fd, int timeout_ms)
+ساکن صحیح
+mux_client_hello_exchange(صحیح fd, صحیح timeout_ms)
 {
-	struct sshbuf *m;
+	ساخت sshbuf *m;
 	u_int type, ver;
-	int r, ret = -1;
+	صحیح r, ret = -1;
 
-	if ((m = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_put_u32(m, MUX_MSG_HELLO)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, MUX_پیغام_HELLO)) != 0 ||
 	    (r = sshbuf_put_u32(m, SSHMUX_VER)) != 0)
 		fatal_fr(r, "assemble hello");
 	/* no extensions */
 
-	if (mux_client_write_packet(fd, m) != 0) {
+	اگر (mux_client_write_packet(fd, m) != 0) {
 		debug_f("write packet: %s", strerror(errno));
-		goto out;
+		جاؤ برآمد;
 	}
 
 	sshbuf_reset(m);
 
 	/* Read their HELLO */
-	if (mux_client_read_packet_timeout(fd, m, timeout_ms) != 0) {
+	اگر (mux_client_read_packet_timeout(fd, m, timeout_ms) != 0) {
 		debug_f("read packet failed");
-		goto out;
+		جاؤ برآمد;
 	}
 
-	if ((r = sshbuf_get_u32(m, &type)) != 0)
+	اگر ((r = sshbuf_get_u32(m, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != MUX_MSG_HELLO) {
-		error_f("expected HELLO (%u) got %u", MUX_MSG_HELLO, type);
-		goto out;
+	اگر (type != MUX_پیغام_HELLO) {
+		error_f("expected HELLO (%u) got %u", MUX_پیغام_HELLO, type);
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_get_u32(m, &ver)) != 0)
+	اگر ((r = sshbuf_get_u32(m, &ver)) != 0)
 		fatal_fr(r, "parse version");
-	if (ver != SSHMUX_VER) {
+	اگر (ver != SSHMUX_VER) {
 		error("Unsupported multiplexing protocol version %d "
 		    "(expected %d)", ver, SSHMUX_VER);
-		goto out;
+		جاؤ برآمد;
 	}
 	debug2_f("master version %u", ver);
 	/* No extensions are presently defined */
-	while (sshbuf_len(m) > 0) {
-		char *name = NULL;
+	جب (sshbuf_len(m) > 0) {
+		حرف *name = تہی;
 
-		if ((r = sshbuf_get_cstring(m, &name, NULL)) != 0 ||
-		    (r = sshbuf_skip_string(m)) != 0) { /* value */
+		اگر ((r = sshbuf_get_cstring(m, &name, تہی)) != 0 ||
+		    (r = sshbuf_skip_string(m)) != 0) { /*قدر*/
 			error_fr(r, "parse extension");
-			goto out;
+			جاؤ برآمد;
 		}
 		/* Process extensions. */
-		if (strcmp(name, "info") == 0) {
+		اگر (strcmp(name, "info") == 0) {
 			debug("Received 'info' extension");
 			extensions |= MUX_EXT_INFO;
-		} else {
+		} ورنہ {
 			debug2("Unrecognised master extension \"%s\"", name);
 		}
-		free(name);
+		آزاد(name);
 	}
 	/* success */
 	ret = 0;
- out:
+ برآمد:
 	sshbuf_free(m);
-	return ret;
+	واپس ret;
 }
 
-static u_int
-mux_client_request_alive(int fd)
+ساکن u_int
+mux_client_request_alive(صحیح fd)
 {
-	struct sshbuf *m;
-	char *e;
+	ساخت sshbuf *m;
+	حرف *e;
 	u_int pid, type, rid;
-	int r;
+	صحیح r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_put_u32(m, MUX_C_ALIVE_CHECK)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, MUX_C_ALIVE_CHECK)) != 0 ||
 	    (r = sshbuf_put_u32(m, muxclient_request_id)) != 0)
 		fatal_fr(r, "assemble");
 
-	if (mux_client_write_packet(fd, m) != 0)
+	اگر (mux_client_write_packet(fd, m) != 0)
 		fatal_f("write packet: %s", strerror(errno));
 
 	sshbuf_reset(m);
 
 	/* Read their reply */
-	if (mux_client_read_packet(fd, m) != 0) {
+	اگر (mux_client_read_packet(fd, m) != 0) {
 		sshbuf_free(m);
-		return 0;
+		واپس 0;
 	}
 
-	if ((r = sshbuf_get_u32(m, &type)) != 0)
+	اگر ((r = sshbuf_get_u32(m, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != MUX_S_ALIVE) {
-		if ((r = sshbuf_get_cstring(m, &e, NULL)) != 0)
+	اگر (type != MUX_S_ALIVE) {
+		اگر ((r = sshbuf_get_cstring(m, &e, تہی)) != 0)
 			fatal_fr(r, "parse error message");
 		fatal_f("master returned error: %s", e);
 	}
 
-	if ((r = sshbuf_get_u32(m, &rid)) != 0)
+	اگر ((r = sshbuf_get_u32(m, &rid)) != 0)
 		fatal_fr(r, "parse remote ID");
-	if (rid != muxclient_request_id)
+	اگر (rid != muxclient_request_id)
 		fatal_f("out of sequence reply: my id %u theirs %u",
 		    muxclient_request_id, rid);
-	if ((r = sshbuf_get_u32(m, &pid)) != 0)
+	اگر ((r = sshbuf_get_u32(m, &pid)) != 0)
 		fatal_fr(r, "parse PID");
 	sshbuf_free(m);
 
@@ -1751,299 +1751,299 @@ mux_client_request_alive(int fd)
 
 	muxclient_request_id++;
 
-	return pid;
+	واپس pid;
 }
 
-static char *
-mux_client_request_info(int fd, const char *name)
+ساکن حرف *
+mux_client_request_info(صحیح fd, ثابت حرف *name)
 {
-	struct sshbuf *m;
-	char *e, *msg;
-	u_int type, rid, status;
-	int r;
+	ساخت sshbuf *m;
+	حرف *e, *پیغام;
+	u_int type, rid, حالت_2;
+	صحیح r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_put_u32(m, MUX_C_EXT_INFO)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, MUX_C_EXT_INFO)) != 0 ||
 	    (r = sshbuf_put_u32(m, muxclient_request_id)) != 0 ||
 	    (r = sshbuf_put_cstring(m, name)) != 0)
 		fatal_fr(r, "assemble");
 
-	if (mux_client_write_packet(fd, m) != 0)
+	اگر (mux_client_write_packet(fd, m) != 0)
 		fatal_f("write packet: %s", strerror(errno));
 
 	sshbuf_reset(m);
 
 	/* Read their reply */
-	if (mux_client_read_packet(fd, m) != 0) {
+	اگر (mux_client_read_packet(fd, m) != 0) {
 		sshbuf_free(m);
-		return 0;
+		واپس 0;
 	}
 
-	if ((r = sshbuf_get_u32(m, &type)) != 0)
+	اگر ((r = sshbuf_get_u32(m, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != MUX_S_EXT_INFO) {
-		if ((r = sshbuf_get_cstring(m, &e, NULL)) != 0)
+	اگر (type != MUX_S_EXT_INFO) {
+		اگر ((r = sshbuf_get_cstring(m, &e, تہی)) != 0)
 			fatal_fr(r, "parse error message");
 		fatal_f("master returned error: %s", e);
 	}
 
-	if ((r = sshbuf_get_u32(m, &rid)) != 0)
+	اگر ((r = sshbuf_get_u32(m, &rid)) != 0)
 		fatal_fr(r, "parse remote ID");
-	if (rid != muxclient_request_id)
+	اگر (rid != muxclient_request_id)
 		fatal_f("out of sequence reply: my id %u theirs %u",
 		    muxclient_request_id, rid);
-	if ((r = sshbuf_get_u32(m, &status)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &msg, NULL)) != 0)
+	اگر ((r = sshbuf_get_u32(m, &حالت_2)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &پیغام, تہی)) != 0)
 		fatal_fr(r, "parse connection info");
 	sshbuf_free(m);
 
 	muxclient_request_id++;
 
-	return msg;
+	واپس پیغام;
 }
 
-static void
-mux_client_request_terminate(int fd)
+ساکن خالی
+mux_client_request_terminate(صحیح fd)
 {
-	struct sshbuf *m;
-	char *e;
+	ساخت sshbuf *m;
+	حرف *e;
 	u_int type, rid;
-	int r;
+	صحیح r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_put_u32(m, MUX_C_TERMINATE)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, MUX_C_TERMINATE)) != 0 ||
 	    (r = sshbuf_put_u32(m, muxclient_request_id)) != 0)
 		fatal_fr(r, "request");
 
-	if (mux_client_write_packet(fd, m) != 0)
+	اگر (mux_client_write_packet(fd, m) != 0)
 		fatal_f("write packet: %s", strerror(errno));
 
 	sshbuf_reset(m);
 
 	/* Read their reply */
-	if (mux_client_read_packet(fd, m) != 0) {
+	اگر (mux_client_read_packet(fd, m) != 0) {
 		/* Remote end exited already */
-		if (errno == EPIPE) {
+		اگر (errno == EPIPE) {
 			sshbuf_free(m);
-			return;
+			واپس;
 		}
 		fatal_f("read from master failed: %s", strerror(errno));
 	}
 
-	if ((r = sshbuf_get_u32(m, &type)) != 0 ||
+	اگر ((r = sshbuf_get_u32(m, &type)) != 0 ||
 	    (r = sshbuf_get_u32(m, &rid)) != 0)
 		fatal_fr(r, "parse");
-	if (rid != muxclient_request_id)
+	اگر (rid != muxclient_request_id)
 		fatal_f("out of sequence reply: my id %u theirs %u",
 		    muxclient_request_id, rid);
-	switch (type) {
-	case MUX_S_OK:
-		break;
-	case MUX_S_PERMISSION_DENIED:
-		if ((r = sshbuf_get_cstring(m, &e, NULL)) != 0)
+	انتخاب (type) {
+	حالت MUX_S_OK:
+		توڑو;
+	حالت MUX_S_PERMISSION_DENIED:
+		اگر ((r = sshbuf_get_cstring(m, &e, تہی)) != 0)
 			fatal_fr(r, "parse error message");
 		fatal("Master refused termination request: %s", e);
-	case MUX_S_FAILURE:
-		if ((r = sshbuf_get_cstring(m, &e, NULL)) != 0)
+	حالت MUX_S_FAILURE:
+		اگر ((r = sshbuf_get_cstring(m, &e, تہی)) != 0)
 			fatal_fr(r, "parse error message");
 		fatal_f("termination request failed: %s", e);
-	default:
+	طےشدہ:
 		fatal_f("unexpected response from master 0x%08x", type);
 	}
 	sshbuf_free(m);
 	muxclient_request_id++;
 }
 
-static int
-mux_client_forward(int fd, int cancel_flag, u_int ftype, struct Forward *fwd)
+ساکن صحیح
+mux_client_forward(صحیح fd, صحیح cancel_flag, u_int ftype, ساخت Forward *fwd)
 {
-	struct sshbuf *m;
-	char *e, *fwd_desc;
-	const char *lhost, *chost;
+	ساخت sshbuf *m;
+	حرف *e, *fwd_desc;
+	ثابت حرف *lhost, *chost;
 	u_int type, rid;
-	int r;
+	صحیح r;
 
 	fwd_desc = format_forward(ftype, fwd);
 	debug("Requesting %s %s",
 	    cancel_flag ? "cancellation of" : "forwarding of", fwd_desc);
-	free(fwd_desc);
+	آزاد(fwd_desc);
 
 	type = cancel_flag ? MUX_C_CLOSE_FWD : MUX_C_OPEN_FWD;
-	if (fwd->listen_path != NULL)
-		lhost = fwd->listen_path;
-	else if (fwd->listen_host == NULL)
+	اگر (fwd->listen_راستہ != تہی)
+		lhost = fwd->listen_راستہ;
+	ورنہ اگر (fwd->listen_host == تہی)
 		lhost = "";
-	else if (*fwd->listen_host == '\0')
+	ورنہ اگر (*fwd->listen_host == '\0')
 		lhost = "*";
-	else
+	ورنہ
 		lhost = fwd->listen_host;
 
-	if (fwd->connect_path != NULL)
-		chost = fwd->connect_path;
-	else if (fwd->connect_host == NULL)
+	اگر (fwd->connect_راستہ != تہی)
+		chost = fwd->connect_راستہ;
+	ورنہ اگر (fwd->connect_host == تہی)
 		chost = "";
-	else
+	ورنہ
 		chost = fwd->connect_host;
 
-	if ((m = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_put_u32(m, type)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, type)) != 0 ||
 	    (r = sshbuf_put_u32(m, muxclient_request_id)) != 0 ||
 	    (r = sshbuf_put_u32(m, ftype)) != 0 ||
 	    (r = sshbuf_put_cstring(m, lhost)) != 0 ||
-	    (r = sshbuf_put_u32(m, fwd->listen_port)) != 0 ||
+	    (r = sshbuf_put_u32(m, fwd->listen_پورٹ)) != 0 ||
 	    (r = sshbuf_put_cstring(m, chost)) != 0 ||
-	    (r = sshbuf_put_u32(m, fwd->connect_port)) != 0)
+	    (r = sshbuf_put_u32(m, fwd->connect_پورٹ)) != 0)
 		fatal_fr(r, "request");
 
-	if (mux_client_write_packet(fd, m) != 0)
+	اگر (mux_client_write_packet(fd, m) != 0)
 		fatal_f("write packet: %s", strerror(errno));
 
 	sshbuf_reset(m);
 
 	/* Read their reply */
-	if (mux_client_read_packet(fd, m) != 0) {
+	اگر (mux_client_read_packet(fd, m) != 0) {
 		sshbuf_free(m);
-		return -1;
+		واپس -1;
 	}
 
-	if ((r = sshbuf_get_u32(m, &type)) != 0 ||
+	اگر ((r = sshbuf_get_u32(m, &type)) != 0 ||
 	    (r = sshbuf_get_u32(m, &rid)) != 0)
 		fatal_fr(r, "parse");
-	if (rid != muxclient_request_id)
+	اگر (rid != muxclient_request_id)
 		fatal_f("out of sequence reply: my id %u theirs %u",
 		    muxclient_request_id, rid);
 
-	switch (type) {
-	case MUX_S_OK:
-		break;
-	case MUX_S_REMOTE_PORT:
-		if (cancel_flag)
+	انتخاب (type) {
+	حالت MUX_S_OK:
+		توڑو;
+	حالت MUX_S_REMOTE_پورٹ:
+		اگر (cancel_flag)
 			fatal_f("got MUX_S_REMOTE_PORT for cancel");
-		if ((r = sshbuf_get_u32(m, &fwd->allocated_port)) != 0)
+		اگر ((r = sshbuf_get_u32(m, &fwd->allocated_پورٹ)) != 0)
 			fatal_fr(r, "parse port");
 		verbose("Allocated port %u for remote forward to %s:%d",
-		    fwd->allocated_port,
+		    fwd->allocated_پورٹ,
 		    fwd->connect_host ? fwd->connect_host : "",
-		    fwd->connect_port);
-		if (muxclient_command == SSHMUX_COMMAND_FORWARD)
-			fprintf(stdout, "%i\n", fwd->allocated_port);
-		break;
-	case MUX_S_PERMISSION_DENIED:
-		if ((r = sshbuf_get_cstring(m, &e, NULL)) != 0)
+		    fwd->connect_پورٹ);
+		اگر (muxclient_command == SSHMUX_COMMAND_FORWARD)
+			fprintf(stdout, "%i\n", fwd->allocated_پورٹ);
+		توڑو;
+	حالت MUX_S_PERMISSION_DENIED:
+		اگر ((r = sshbuf_get_cstring(m, &e, تہی)) != 0)
 			fatal_fr(r, "parse error message");
 		sshbuf_free(m);
 		error("Master refused forwarding request: %s", e);
-		return -1;
-	case MUX_S_FAILURE:
-		if ((r = sshbuf_get_cstring(m, &e, NULL)) != 0)
+		واپس -1;
+	حالت MUX_S_FAILURE:
+		اگر ((r = sshbuf_get_cstring(m, &e, تہی)) != 0)
 			fatal_fr(r, "parse error message");
 		sshbuf_free(m);
 		error_f("forwarding request failed: %s", e);
-		return -1;
-	default:
+		واپس -1;
+	طےشدہ:
 		fatal_f("unexpected response from master 0x%08x", type);
 	}
 	sshbuf_free(m);
 
 	muxclient_request_id++;
-	return 0;
+	واپس 0;
 }
 
-static int
-mux_client_forwards(int fd, int cancel_flag)
+ساکن صحیح
+mux_client_forwards(صحیح fd, صحیح cancel_flag)
 {
-	int i, ret = 0;
+	صحیح i, ret = 0;
 
 	debug3_f("%s forwardings: %d local, %d remote",
 	    cancel_flag ? "cancel" : "request",
-	    options.num_local_forwards, options.num_remote_forwards);
+	    options.عدد_local_forwards, options.عدد_remote_forwards);
 
 	/* XXX ExitOnForwardingFailure */
-	for (i = 0; i < options.num_local_forwards; i++) {
-		if (mux_client_forward(fd, cancel_flag,
-		    options.local_forwards[i].connect_port == 0 ?
+	برائے (i = 0; i < options.عدد_local_forwards; i++) {
+		اگر (mux_client_forward(fd, cancel_flag,
+		    options.local_forwards[i].connect_پورٹ == 0 ?
 		    MUX_FWD_DYNAMIC : MUX_FWD_LOCAL,
 		    options.local_forwards + i) != 0)
 			ret = -1;
 	}
-	for (i = 0; i < options.num_remote_forwards; i++) {
-		if (mux_client_forward(fd, cancel_flag, MUX_FWD_REMOTE,
+	برائے (i = 0; i < options.عدد_remote_forwards; i++) {
+		اگر (mux_client_forward(fd, cancel_flag, MUX_FWD_REMOTE,
 		    options.remote_forwards + i) != 0)
 			ret = -1;
 	}
-	return ret;
+	واپس ret;
 }
 
-static int
-mux_client_request_session(int fd)
+ساکن صحیح
+mux_client_request_session(صحیح fd)
 {
-	struct sshbuf *m;
-	char *e;
-	const char *term = NULL;
-	u_int i, echar, rid, sid, esid, exitval, type, exitval_seen;
-	extern char **environ;
-	int r, rawmode = 0;
+	ساخت sshbuf *m;
+	حرف *e;
+	ثابت حرف *رکن = تہی;
+	u_int i, echar, rid, sid, esid, exitval, type, exitval_نظر_آیا;
+	خارجی حرف **environ;
+	صحیح r, rawmode = 0;
 
 	debug3_f("entering");
 
-	if ((muxserver_pid = mux_client_request_alive(fd)) == 0) {
+	اگر ((muxserver_pid = mux_client_request_alive(fd)) == 0) {
 		error_f("master alive request failed");
-		return -1;
+		واپس -1;
 	}
 
 	ssh_signal(SIGPIPE, SIG_IGN);
 
-	if (options.stdin_null && stdfd_devnull(1, 0, 0) == -1)
+	اگر (options.stdin_null && stdfd_devnull(1, 0, 0) == -1)
 		fatal_f("stdfd_devnull failed");
 
-	if ((term = lookup_env_in_list("TERM", options.setenv,
-	    options.num_setenv)) == NULL || *term == '\0')
-		term = getenv("TERM");
+	اگر ((رکن = lookup_env_اندر_list("TERM", options.setenv,
+	    options.عدد_setenv)) == تہی || *رکن == '\0')
+		رکن = getenv("TERM");
 
 	echar = 0xffffffff;
-	if (options.escape_char != SSH_ESCAPECHAR_NONE)
+	اگر (options.escape_char != SSH_ESCAPECHAR_NONE)
 	    echar = (u_int)options.escape_char;
 
-	if ((m = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_put_u32(m, MUX_C_NEW_SESSION)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, MUX_C_NEW_SESSION)) != 0 ||
 	    (r = sshbuf_put_u32(m, muxclient_request_id)) != 0 ||
-	    (r = sshbuf_put_string(m, NULL, 0)) != 0 || /* reserved */
+	    (r = sshbuf_put_string(m, تہی, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_u32(m, tty_flag)) != 0 ||
 	    (r = sshbuf_put_u32(m, options.forward_x11)) != 0 ||
 	    (r = sshbuf_put_u32(m, options.forward_agent)) != 0 ||
 	    (r = sshbuf_put_u32(m, options.session_type == SESSION_TYPE_SUBSYSTEM)) != 0 ||
 	    (r = sshbuf_put_u32(m, echar)) != 0 ||
-	    (r = sshbuf_put_cstring(m, term == NULL ? "" : term)) != 0 ||
+	    (r = sshbuf_put_cstring(m, رکن == تہی ? "" : رکن)) != 0 ||
 	    (r = sshbuf_put_stringb(m, command)) != 0)
 		fatal_fr(r, "request");
 
 	/* Pass environment */
-	if (options.num_send_env > 0 && environ != NULL) {
-		for (i = 0; environ[i] != NULL; i++) {
-			if (!env_permitted(environ[i]))
-				continue;
-			if ((r = sshbuf_put_cstring(m, environ[i])) != 0)
+	اگر (options.عدد_send_env > 0 && environ != تہی) {
+		برائے (i = 0; environ[i] != تہی; i++) {
+			اگر (!env_permitted(environ[i]))
+				جاری;
+			اگر ((r = sshbuf_put_cstring(m, environ[i])) != 0)
 				fatal_fr(r, "request sendenv");
 		}
 	}
-	for (i = 0; i < options.num_setenv; i++) {
-		if ((r = sshbuf_put_cstring(m, options.setenv[i])) != 0)
+	برائے (i = 0; i < options.عدد_setenv; i++) {
+		اگر ((r = sshbuf_put_cstring(m, options.setenv[i])) != 0)
 			fatal_fr(r, "request setenv");
 	}
 
-	if (mux_client_write_packet(fd, m) != 0)
+	اگر (mux_client_write_packet(fd, m) != 0)
 		fatal_f("write packet: %s", strerror(errno));
 
 	/* Send the stdio file descriptors */
-	if (mm_send_fd(fd, STDIN_FILENO) == -1 ||
+	اگر (mm_send_fd(fd, STDIN_FILENO) == -1 ||
 	    mm_send_fd(fd, STDOUT_FILENO) == -1 ||
 	    mm_send_fd(fd, STDERR_FILENO) == -1)
 		fatal_f("send fds failed");
@@ -2052,45 +2052,45 @@ mux_client_request_session(int fd)
 
 	/* Read their reply */
 	sshbuf_reset(m);
-	if (mux_client_read_packet(fd, m) != 0) {
+	اگر (mux_client_read_packet(fd, m) != 0) {
 		error_f("read from master failed: %s", strerror(errno));
 		sshbuf_free(m);
-		return -1;
+		واپس -1;
 	}
 
-	if ((r = sshbuf_get_u32(m, &type)) != 0 ||
+	اگر ((r = sshbuf_get_u32(m, &type)) != 0 ||
 	    (r = sshbuf_get_u32(m, &rid)) != 0)
 		fatal_fr(r, "parse");
-	if (rid != muxclient_request_id)
+	اگر (rid != muxclient_request_id)
 		fatal_f("out of sequence reply: my id %u theirs %u",
 		    muxclient_request_id, rid);
 
-	switch (type) {
-	case MUX_S_SESSION_OPENED:
-		if ((r = sshbuf_get_u32(m, &sid)) != 0)
+	انتخاب (type) {
+	حالت MUX_S_SESSION_OPENED:
+		اگر ((r = sshbuf_get_u32(m, &sid)) != 0)
 			fatal_fr(r, "parse session ID");
 		debug_f("master session id: %u", sid);
-		break;
-	case MUX_S_PERMISSION_DENIED:
-		if ((r = sshbuf_get_cstring(m, &e, NULL)) != 0)
+		توڑو;
+	حالت MUX_S_PERMISSION_DENIED:
+		اگر ((r = sshbuf_get_cstring(m, &e, تہی)) != 0)
 			fatal_fr(r, "parse error message");
 		error("Master refused session request: %s", e);
 		sshbuf_free(m);
-		return -1;
-	case MUX_S_FAILURE:
-		if ((r = sshbuf_get_cstring(m, &e, NULL)) != 0)
+		واپس -1;
+	حالت MUX_S_FAILURE:
+		اگر ((r = sshbuf_get_cstring(m, &e, تہی)) != 0)
 			fatal_fr(r, "parse error message");
 		error_f("session request failed: %s", e);
 		sshbuf_free(m);
-		return -1;
-	default:
+		واپس -1;
+	طےشدہ:
 		sshbuf_free(m);
 		error_f("unexpected response from master 0x%08x", type);
-		return -1;
+		واپس -1;
 	}
 	muxclient_request_id++;
 
-	if (pledge("stdio proc tty", NULL) == -1)
+	اگر (pledge("stdio proc tty", تہی) == -1)
 		fatal_f("pledge(): %s", strerror(errno));
 	platform_pledge_mux();
 
@@ -2099,12 +2099,12 @@ mux_client_request_session(int fd)
 	ssh_signal(SIGTERM, control_client_sighandler);
 	ssh_signal(SIGWINCH, control_client_sigrelay);
 
-	if (options.fork_after_authentication)
+	اگر (options.fork_after_authentication)
 		daemon(1, 1);
-	else {
+	ورنہ {
 		rawmode = tty_flag;
-		if (tty_flag) {
-			enter_raw_mode(
+		اگر (tty_flag) {
+			enter_raw_منوال(
 			    options.request_tty == REQUEST_TTY_FORCE);
 		}
 	}
@@ -2116,92 +2116,92 @@ mux_client_request_session(int fd)
 	 * the client_fd; if this one closes early, the multiplex master will
 	 * terminate early too (possibly losing data).
 	 */
-	for (exitval = 255, exitval_seen = 0;;) {
+	برائے (exitval = 255, exitval_نظر_آیا = 0;;) {
 		sshbuf_reset(m);
-		if (mux_client_read_packet(fd, m) != 0)
-			break;
-		if ((r = sshbuf_get_u32(m, &type)) != 0)
+		اگر (mux_client_read_packet(fd, m) != 0)
+			توڑو;
+		اگر ((r = sshbuf_get_u32(m, &type)) != 0)
 			fatal_fr(r, "parse type");
-		switch (type) {
-		case MUX_S_TTY_ALLOC_FAIL:
-			if ((r = sshbuf_get_u32(m, &esid)) != 0)
+		انتخاب (type) {
+		حالت MUX_S_TTY_ALLOC_FAIL:
+			اگر ((r = sshbuf_get_u32(m, &esid)) != 0)
 				fatal_fr(r, "parse session ID");
-			if (esid != sid)
+			اگر (esid != sid)
 				fatal_f("tty alloc fail on unknown session: "
 				    "my id %u theirs %u", sid, esid);
-			leave_raw_mode(options.request_tty ==
+			leave_raw_منوال(options.request_tty ==
 			    REQUEST_TTY_FORCE);
 			rawmode = 0;
-			continue;
-		case MUX_S_EXIT_MESSAGE:
-			if ((r = sshbuf_get_u32(m, &esid)) != 0)
+			جاری;
+		حالت MUX_S_EXIT_پیغام:
+			اگر ((r = sshbuf_get_u32(m, &esid)) != 0)
 				fatal_fr(r, "parse session ID");
-			if (esid != sid)
+			اگر (esid != sid)
 				fatal_f("exit on unknown session: "
 				    "my id %u theirs %u", sid, esid);
-			if (exitval_seen)
+			اگر (exitval_نظر_آیا)
 				fatal_f("exitval sent twice");
-			if ((r = sshbuf_get_u32(m, &exitval)) != 0)
+			اگر ((r = sshbuf_get_u32(m, &exitval)) != 0)
 				fatal_fr(r, "parse exitval");
-			exitval_seen = 1;
-			continue;
-		default:
-			if ((r = sshbuf_get_cstring(m, &e, NULL)) != 0)
+			exitval_نظر_آیا = 1;
+			جاری;
+		طےشدہ:
+			اگر ((r = sshbuf_get_cstring(m, &e, تہی)) != 0)
 				fatal_fr(r, "parse error message");
 			fatal_f("master returned error: %s", e);
 		}
 	}
 
 	close(fd);
-	if (rawmode)
-		leave_raw_mode(options.request_tty == REQUEST_TTY_FORCE);
+	اگر (rawmode)
+		leave_raw_منوال(options.request_tty == REQUEST_TTY_FORCE);
 
-	if (muxclient_terminate) {
+	اگر (muxclient_terminate) {
 		debug2("Exiting on signal: %s", strsignal(muxclient_terminate));
 		exitval = 255;
-	} else if (!exitval_seen) {
+	} ورنہ اگر (!exitval_نظر_آیا) {
 		debug2("Control master terminated unexpectedly");
 		exitval = 255;
-	} else
+	} ورنہ
 		debug2("Received exit status from master %d", exitval);
 
-	if (tty_flag && options.log_level >= SYSLOG_LEVEL_INFO)
+	اگر (tty_flag && options.log_level >= SYSLOG_LEVEL_INFO)
 		fprintf(stderr, "Shared connection to %s closed.\r\n", host);
 
-	exit(exitval);
+	باہر_نکلو(exitval);
 }
 
-static int
-mux_client_proxy(int fd)
+ساکن صحیح
+mux_client_proxy(صحیح fd)
 {
-	struct sshbuf *m;
-	char *e;
+	ساخت sshbuf *m;
+	حرف *e;
 	u_int type, rid;
-	int r;
+	صحیح r;
 
-	if ((m = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_put_u32(m, MUX_C_PROXY)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, MUX_C_PROXY)) != 0 ||
 	    (r = sshbuf_put_u32(m, muxclient_request_id)) != 0)
 		fatal_fr(r, "request");
-	if (mux_client_write_packet(fd, m) != 0)
+	اگر (mux_client_write_packet(fd, m) != 0)
 		fatal_f("write packet: %s", strerror(errno));
 
 	sshbuf_reset(m);
 
 	/* Read their reply */
-	if (mux_client_read_packet(fd, m) != 0) {
+	اگر (mux_client_read_packet(fd, m) != 0) {
 		sshbuf_free(m);
-		return 0;
+		واپس 0;
 	}
-	if ((r = sshbuf_get_u32(m, &type)) != 0 ||
+	اگر ((r = sshbuf_get_u32(m, &type)) != 0 ||
 	    (r = sshbuf_get_u32(m, &rid)) != 0)
 		fatal_fr(r, "parse");
-	if (rid != muxclient_request_id)
+	اگر (rid != muxclient_request_id)
 		fatal_f("out of sequence reply: my id %u theirs %u",
 		    muxclient_request_id, rid);
-	if (type != MUX_S_PROXY) {
-		if ((r = sshbuf_get_cstring(m, &e, NULL)) != 0)
+	اگر (type != MUX_S_PROXY) {
+		اگر ((r = sshbuf_get_cstring(m, &e, تہی)) != 0)
 			fatal_fr(r, "parse error message");
 		fatal_f("master returned error: %s", e);
 	}
@@ -2209,47 +2209,47 @@ mux_client_proxy(int fd)
 
 	debug3_f("done");
 	muxclient_request_id++;
-	return 0;
+	واپس 0;
 }
 
-static int
-mux_client_request_stdio_fwd(int fd)
+ساکن صحیح
+mux_client_request_stdio_fwd(صحیح fd)
 {
-	struct sshbuf *m;
-	char *e;
+	ساخت sshbuf *m;
+	حرف *e;
 	u_int type, rid, sid;
-	int r;
+	صحیح r;
 
 	debug3_f("entering");
 
-	if ((muxserver_pid = mux_client_request_alive(fd)) == 0) {
+	اگر ((muxserver_pid = mux_client_request_alive(fd)) == 0) {
 		error_f("master alive request failed");
-		return -1;
+		واپس -1;
 	}
 
 	ssh_signal(SIGPIPE, SIG_IGN);
 
-	if (options.stdin_null && stdfd_devnull(1, 0, 0) == -1)
+	اگر (options.stdin_null && stdfd_devnull(1, 0, 0) == -1)
 		fatal_f("stdfd_devnull failed");
 
-	if ((m = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_put_u32(m, MUX_C_NEW_STDIO_FWD)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, MUX_C_NEW_STDIO_FWD)) != 0 ||
 	    (r = sshbuf_put_u32(m, muxclient_request_id)) != 0 ||
-	    (r = sshbuf_put_string(m, NULL, 0)) != 0 || /* reserved */
+	    (r = sshbuf_put_string(m, تہی, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_cstring(m, options.stdio_forward_host)) != 0 ||
-	    (r = sshbuf_put_u32(m, options.stdio_forward_port)) != 0)
+	    (r = sshbuf_put_u32(m, options.stdio_forward_پورٹ)) != 0)
 		fatal_fr(r, "request");
 
-	if (mux_client_write_packet(fd, m) != 0)
+	اگر (mux_client_write_packet(fd, m) != 0)
 		fatal_f("write packet: %s", strerror(errno));
 
 	/* Send the stdio file descriptors */
-	if (mm_send_fd(fd, STDIN_FILENO) == -1 ||
+	اگر (mm_send_fd(fd, STDIN_FILENO) == -1 ||
 	    mm_send_fd(fd, STDOUT_FILENO) == -1)
 		fatal_f("send fds failed");
 
-	if (pledge("stdio proc tty", NULL) == -1)
+	اگر (pledge("stdio proc tty", تہی) == -1)
 		fatal_f("pledge(): %s", strerror(errno));
 	platform_pledge_mux();
 
@@ -2258,38 +2258,38 @@ mux_client_request_stdio_fwd(int fd)
 	/* Read their reply */
 	sshbuf_reset(m);
 
-	if (mux_client_read_packet(fd, m) != 0) {
+	اگر (mux_client_read_packet(fd, m) != 0) {
 		error_f("read from master failed: %s", strerror(errno));
 		sshbuf_free(m);
-		return -1;
+		واپس -1;
 	}
 
-	if ((r = sshbuf_get_u32(m, &type)) != 0 ||
+	اگر ((r = sshbuf_get_u32(m, &type)) != 0 ||
 	    (r = sshbuf_get_u32(m, &rid)) != 0)
 		fatal_fr(r, "parse");
-	if (rid != muxclient_request_id)
+	اگر (rid != muxclient_request_id)
 		fatal_f("out of sequence reply: my id %u theirs %u",
 		    muxclient_request_id, rid);
-	switch (type) {
-	case MUX_S_SESSION_OPENED:
-		if ((r = sshbuf_get_u32(m, &sid)) != 0)
+	انتخاب (type) {
+	حالت MUX_S_SESSION_OPENED:
+		اگر ((r = sshbuf_get_u32(m, &sid)) != 0)
 			fatal_fr(r, "parse session ID");
 		debug_f("master session id: %u", sid);
-		break;
-	case MUX_S_PERMISSION_DENIED:
-		if ((r = sshbuf_get_cstring(m, &e, NULL)) != 0)
+		توڑو;
+	حالت MUX_S_PERMISSION_DENIED:
+		اگر ((r = sshbuf_get_cstring(m, &e, تہی)) != 0)
 			fatal_fr(r, "parse error message");
 		sshbuf_free(m);
 		fatal("Master refused stdio forwarding request: %s", e);
-	case MUX_S_FAILURE:
-		if ((r = sshbuf_get_cstring(m, &e, NULL)) != 0)
+	حالت MUX_S_FAILURE:
+		اگر ((r = sshbuf_get_cstring(m, &e, تہی)) != 0)
 			fatal_fr(r, "parse error message");
 		sshbuf_free(m);
 		fatal("Stdio forwarding request failed: %s", e);
-	default:
+	طےشدہ:
 		sshbuf_free(m);
 		error_f("unexpected response from master 0x%08x", type);
-		return -1;
+		واپس -1;
 	}
 	muxclient_request_id++;
 
@@ -2302,61 +2302,61 @@ mux_client_request_stdio_fwd(int fd)
 	 * Stick around until the controlee closes the client_fd.
 	 */
 	sshbuf_reset(m);
-	if (mux_client_read_packet(fd, m) != 0) {
-		if (errno == EPIPE ||
+	اگر (mux_client_read_packet(fd, m) != 0) {
+		اگر (errno == EPIPE ||
 		    (errno == EINTR && muxclient_terminate != 0)) {
 			sshbuf_free(m);
-			return 0;
+			واپس 0;
 		}
 		fatal_f("mux_client_read_packet: %s", strerror(errno));
 	}
 	fatal_f("master returned unexpected message %u", type);
 }
 
-static void
-mux_client_request_stop_listening(int fd)
+ساکن خالی
+mux_client_request_stop_listening(صحیح fd)
 {
-	struct sshbuf *m;
-	char *e;
+	ساخت sshbuf *m;
+	حرف *e;
 	u_int type, rid;
-	int r;
+	صحیح r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_put_u32(m, MUX_C_STOP_LISTENING)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, MUX_C_STOP_LISTENING)) != 0 ||
 	    (r = sshbuf_put_u32(m, muxclient_request_id)) != 0)
 		fatal_fr(r, "request");
 
-	if (mux_client_write_packet(fd, m) != 0)
+	اگر (mux_client_write_packet(fd, m) != 0)
 		fatal_f("write packet: %s", strerror(errno));
 
 	sshbuf_reset(m);
 
 	/* Read their reply */
-	if (mux_client_read_packet(fd, m) != 0)
+	اگر (mux_client_read_packet(fd, m) != 0)
 		fatal_f("read from master failed: %s", strerror(errno));
 
-	if ((r = sshbuf_get_u32(m, &type)) != 0 ||
+	اگر ((r = sshbuf_get_u32(m, &type)) != 0 ||
 	    (r = sshbuf_get_u32(m, &rid)) != 0)
 		fatal_fr(r, "parse");
-	if (rid != muxclient_request_id)
+	اگر (rid != muxclient_request_id)
 		fatal_f("out of sequence reply: my id %u theirs %u",
 		    muxclient_request_id, rid);
 
-	switch (type) {
-	case MUX_S_OK:
-		break;
-	case MUX_S_PERMISSION_DENIED:
-		if ((r = sshbuf_get_cstring(m, &e, NULL)) != 0)
+	انتخاب (type) {
+	حالت MUX_S_OK:
+		توڑو;
+	حالت MUX_S_PERMISSION_DENIED:
+		اگر ((r = sshbuf_get_cstring(m, &e, تہی)) != 0)
 			fatal_fr(r, "parse error message");
 		fatal("Master refused stop listening request: %s", e);
-	case MUX_S_FAILURE:
-		if ((r = sshbuf_get_cstring(m, &e, NULL)) != 0)
+	حالت MUX_S_FAILURE:
+		اگر ((r = sshbuf_get_cstring(m, &e, تہی)) != 0)
 			fatal_fr(r, "parse error message");
 		fatal_f("stop listening request failed: %s", e);
-	default:
+	طےشدہ:
 		fatal_f("unexpected response from master 0x%08x", type);
 	}
 	sshbuf_free(m);
@@ -2364,126 +2364,126 @@ mux_client_request_stop_listening(int fd)
 }
 
 /* Multiplex client main loop. */
-int
-muxclient(const char *path)
+صحیح
+muxclient(ثابت حرف *راستہ)
 {
-	struct sockaddr_un addr;
-	int sock, timeout = options.connection_timeout, timeout_ms = -1;
+	ساخت sockaddr_un addr;
+	صحیح sock, timeout = options.connection_timeout, timeout_ms = -1;
 	u_int pid;
-	char *info = NULL;
+	حرف *info = تہی;
 
-	if (muxclient_command == 0) {
-		if (options.stdio_forward_host != NULL)
+	اگر (muxclient_command == 0) {
+		اگر (options.stdio_forward_host != تہی)
 			muxclient_command = SSHMUX_COMMAND_STDIO_FWD;
-		else
+		ورنہ
 			muxclient_command = SSHMUX_COMMAND_OPEN;
 	}
 
-	switch (options.control_master) {
-	case SSHCTL_MASTER_AUTO:
-	case SSHCTL_MASTER_AUTO_ASK:
-		debug("auto-mux: Trying existing master at '%s'", path);
+	انتخاب (options.control_master) {
+	حالت SSHCTL_MASTER_AUTO:
+	حالت SSHCTL_MASTER_AUTO_ASK:
+		debug("auto-mux: Trying existing master at '%s'", راستہ);
 		/* FALLTHROUGH */
-	case SSHCTL_MASTER_NO:
-		break;
-	default:
-		return -1;
+	حالت SSHCTL_MASTER_NO:
+		توڑو;
+	طےشدہ:
+		واپس -1;
 	}
 
-	memset(&addr, '\0', sizeof(addr));
+	memset(&addr, '\0', حجم(addr));
 	addr.sun_family = AF_UNIX;
 
-	if (strlcpy(addr.sun_path, path,
-	    sizeof(addr.sun_path)) >= sizeof(addr.sun_path))
-		fatal("ControlPath too long ('%s' >= %u bytes)", path,
-		    (unsigned int)sizeof(addr.sun_path));
+	اگر (strlcpy(addr.sun_راستہ, راستہ,
+	    حجم(addr.sun_راستہ)) >= حجم(addr.sun_راستہ))
+		fatal("ControlPath too long ('%s' >= %u bytes)", راستہ,
+		    (غیرعلامتی صحیح)حجم(addr.sun_راستہ));
 
-	if ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
+	اگر ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
 		fatal_f("socket(): %s", strerror(errno));
 
-	if (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
-		switch (muxclient_command) {
-		case SSHMUX_COMMAND_OPEN:
-		case SSHMUX_COMMAND_STDIO_FWD:
-			break;
-		default:
-			fatal("Control socket connect(%.100s): %s", path,
+	اگر (connect(sock, (ساخت sockaddr *)&addr, حجم(addr)) == -1) {
+		انتخاب (muxclient_command) {
+		حالت SSHMUX_COMMAND_OPEN:
+		حالت SSHMUX_COMMAND_STDIO_FWD:
+			توڑو;
+		طےشدہ:
+			fatal("Control socket connect(%.100s): %s", راستہ,
 			    strerror(errno));
 		}
-		if (errno == ECONNREFUSED &&
+		اگر (errno == ECONNREFUSED &&
 		    options.control_master != SSHCTL_MASTER_NO) {
-			debug("Stale control socket %.100s, unlinking", path);
-			unlink(path);
-		} else if (errno == ENOENT) {
-			debug("Control socket \"%.100s\" does not exist", path);
-		} else {
-			error("Control socket connect(%.100s): %s", path,
+			debug("Stale control socket %.100s, unlinking", راستہ);
+			unlink(راستہ);
+		} ورنہ اگر (errno == ENOENT) {
+			debug("Control socket \"%.100s\" does not exist", راستہ);
+		} ورنہ {
+			error("Control socket connect(%.100s): %s", راستہ,
 			    strerror(errno));
 		}
 		close(sock);
-		return -1;
+		واپس -1;
 	}
-	set_nonblock(sock);
+	سیٹ_nonblock(sock);
 
 	/* Timeout on initial connection only. */
-	if (timeout > 0 && timeout < INT_MAX / 1000)
+	اگر (timeout > 0 && timeout < زیادہ_سے_زیادہ_عدد / 1000)
 		timeout_ms = timeout * 1000;
 
-	if (mux_client_hello_exchange(sock, timeout_ms) != 0) {
+	اگر (mux_client_hello_exchange(sock, timeout_ms) != 0) {
 		error_f("master hello exchange failed");
 		close(sock);
-		return -1;
+		واپس -1;
 	}
 
-	switch (muxclient_command) {
-	case SSHMUX_COMMAND_ALIVE_CHECK:
-		if ((pid = mux_client_request_alive(sock)) == 0)
+	انتخاب (muxclient_command) {
+	حالت SSHMUX_COMMAND_ALIVE_CHECK:
+		اگر ((pid = mux_client_request_alive(sock)) == 0)
 			fatal_f("master alive check failed");
 		fprintf(stderr, "Master running (pid=%u)\r\n", pid);
-		exit(0);
-	case SSHMUX_COMMAND_CONNINFO:
-	case SSHMUX_COMMAND_CHANINFO:
-		if (!(extensions & MUX_EXT_INFO))
+		باہر_نکلو(0);
+	حالت SSHMUX_COMMAND_CONNINFO:
+	حالت SSHMUX_COMMAND_CHANINFO:
+		اگر (!(extensions & MUX_EXT_INFO))
 			fatal("mux server does not support info request");
 		info = mux_client_request_info(sock,
 		    muxclient_command == SSHMUX_COMMAND_CONNINFO ?
 		    "connection" : "channels");
-		if (info == NULL)
+		اگر (info == تہی)
 			fatal_f("info request failed");
-		printf("%s", info);
-		exit(0);
-	case SSHMUX_COMMAND_TERMINATE:
+		لکھو("%s", info);
+		باہر_نکلو(0);
+	حالت SSHMUX_COMMAND_TERMINATE:
 		mux_client_request_terminate(sock);
-		if (options.log_level != SYSLOG_LEVEL_QUIET)
+		اگر (options.log_level != SYSLOG_LEVEL_QUIET)
 			fprintf(stderr, "Exit request sent.\r\n");
-		exit(0);
-	case SSHMUX_COMMAND_FORWARD:
-		if (mux_client_forwards(sock, 0) != 0)
+		باہر_نکلو(0);
+	حالت SSHMUX_COMMAND_FORWARD:
+		اگر (mux_client_forwards(sock, 0) != 0)
 			fatal_f("master forward request failed");
-		exit(0);
-	case SSHMUX_COMMAND_OPEN:
-		if (mux_client_forwards(sock, 0) != 0) {
+		باہر_نکلو(0);
+	حالت SSHMUX_COMMAND_OPEN:
+		اگر (mux_client_forwards(sock, 0) != 0) {
 			error_f("master forward request failed");
-			return -1;
+			واپس -1;
 		}
 		mux_client_request_session(sock);
-		return -1;
-	case SSHMUX_COMMAND_STDIO_FWD:
+		واپس -1;
+	حالت SSHMUX_COMMAND_STDIO_FWD:
 		mux_client_request_stdio_fwd(sock);
-		exit(0);
-	case SSHMUX_COMMAND_STOP:
+		باہر_نکلو(0);
+	حالت SSHMUX_COMMAND_STOP:
 		mux_client_request_stop_listening(sock);
-		if (options.log_level != SYSLOG_LEVEL_QUIET)
+		اگر (options.log_level != SYSLOG_LEVEL_QUIET)
 			fprintf(stderr, "Stop listening request sent.\r\n");
-		exit(0);
-	case SSHMUX_COMMAND_CANCEL_FWD:
-		if (mux_client_forwards(sock, 1) != 0)
+		باہر_نکلو(0);
+	حالت SSHMUX_COMMAND_CANCEL_FWD:
+		اگر (mux_client_forwards(sock, 1) != 0)
 			error_f("master cancel forward request failed");
-		exit(0);
-	case SSHMUX_COMMAND_PROXY:
+		باہر_نکلو(0);
+	حالت SSHMUX_COMMAND_PROXY:
 		mux_client_proxy(sock);
-		return (sock);
-	default:
+		واپس (sock);
+	طےشدہ:
 		fatal("unrecognised muxclient_command %d", muxclient_command);
 	}
 }

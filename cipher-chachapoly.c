@@ -15,45 +15,45 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
-#endif
+#شامل "includes.h"
+#اگر_تعریف_شدہ WITH_OPENSSL
+#شامل "openbsd-compat/openssl-compat.h"
+#اگر_ختم
 
-#if !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20)
+#اگر !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20)
 
-#include <sys/types.h>
-#include <stdarg.h> /* needed for log.h */
-#include <string.h>
-#include <stdio.h>  /* needed for misc.h */
+#شامل <sys/types.h>
+#شامل <stdarg.h> /* needed for log.h */
+#شامل <string.h>
+#شامل <stdio.h>  /* needed for misc.h */
 
-#include "log.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "cipher-chachapoly.h"
+#شامل "log.h"
+#شامل "sshbuf.h"
+#شامل "ssherr.h"
+#شامل "cipher-chachapoly.h"
 
-struct chachapoly_ctx {
-	struct chacha_ctx main_ctx, header_ctx;
+ساخت chachapoly_ctx {
+	ساخت chacha_ctx main_ctx, سرخی_ctx;
 };
 
-struct chachapoly_ctx *
-chachapoly_new(const u_char *key, u_int keylen)
+ساخت chachapoly_ctx *
+chachapoly_new(ثابت u_char *کلید, u_int keylen)
 {
-	struct chachapoly_ctx *ctx;
+	ساخت chachapoly_ctx *ctx;
 
-	if (keylen != (32 + 32)) /* 2 x 256 bit keys */
-		return NULL;
-	if ((ctx = calloc(1, sizeof(*ctx))) == NULL)
-		return NULL;
-	chacha_keysetup(&ctx->main_ctx, key, 256);
-	chacha_keysetup(&ctx->header_ctx, key + 32, 256);
-	return ctx;
+	اگر (keylen != (32 + 32)) /* 2 x 256 bit keys */
+		واپس تہی;
+	اگر ((ctx = صفر_حافظہ_دو(1, حجم(*ctx))) == تہی)
+		واپس تہی;
+	chacha_keysetup(&ctx->main_ctx, کلید, 256);
+	chacha_keysetup(&ctx->سرخی_ctx, کلید + 32, 256);
+	واپس ctx;
 }
 
-void
-chachapoly_free(struct chachapoly_ctx *cpctx)
+خالی
+chachapoly_free(ساخت chachapoly_ctx *cpctx)
 {
-	freezero(cpctx, sizeof(*cpctx));
+	freezero(cpctx, حجم(*cpctx));
 }
 
 /*
@@ -65,74 +65,74 @@ chachapoly_free(struct chachapoly_ctx *cpctx)
  * POLY1305_TAGLEN bytes at offset 'len'+'aadlen' as the authentication
  * tag. This tag is written on encryption and verified on decryption.
  */
-int
-chachapoly_crypt(struct chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
-    const u_char *src, u_int len, u_int aadlen, u_int authlen, int do_encrypt)
+صحیح
+chachapoly_crypt(ساخت chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
+    ثابت u_char *src, u_int len, u_int aadlen, u_int authlen, صحیح do_encrypt)
 {
 	u_char seqbuf[8];
-	const u_char one[8] = { 1, 0, 0, 0, 0, 0, 0, 0 }; /* NB little-endian */
-	u_char expected_tag[POLY1305_TAGLEN], poly_key[POLY1305_KEYLEN];
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ثابت u_char one[8] = { 1, 0, 0, 0, 0, 0, 0, 0 }; /* NB little-endian */
+	u_char expected_لیبل[POLY1305_TAGLEN], poly_کلید[POLY1305_KEYLEN];
+	صحیح r = SSH_ERR_اندرونی_ERROR;
 
 	/*
 	 * Run ChaCha20 once to generate the Poly1305 key. The IV is the
 	 * packet sequence number.
 	 */
-	memset(poly_key, 0, sizeof(poly_key));
+	memset(poly_کلید, 0, حجم(poly_کلید));
 	POKE_U64(seqbuf, seqnr);
-	chacha_ivsetup(&ctx->main_ctx, seqbuf, NULL);
-	chacha_encrypt_bytes(&ctx->main_ctx,
-	    poly_key, poly_key, sizeof(poly_key));
+	chacha_ivsetup(&ctx->main_ctx, seqbuf, تہی);
+	chacha_encrypt_بائٹیں(&ctx->main_ctx,
+	    poly_کلید, poly_کلید, حجم(poly_کلید));
 
 	/* If decrypting, check tag before anything else */
-	if (!do_encrypt) {
-		const u_char *tag = src + aadlen + len;
+	اگر (!do_encrypt) {
+		ثابت u_char *لیبل = src + aadlen + len;
 
-		poly1305_auth(expected_tag, src, aadlen + len, poly_key);
-		if (timingsafe_bcmp(expected_tag, tag, POLY1305_TAGLEN) != 0) {
+		poly1305_auth(expected_لیبل, src, aadlen + len, poly_کلید);
+		اگر (timingsafe_bcmp(expected_لیبل, لیبل, POLY1305_TAGLEN) != 0) {
 			r = SSH_ERR_MAC_INVALID;
-			goto out;
+			جاؤ برآمد;
 		}
 	}
 
 	/* Crypt additional data */
-	if (aadlen) {
-		chacha_ivsetup(&ctx->header_ctx, seqbuf, NULL);
-		chacha_encrypt_bytes(&ctx->header_ctx, src, dest, aadlen);
+	اگر (aadlen) {
+		chacha_ivsetup(&ctx->سرخی_ctx, seqbuf, تہی);
+		chacha_encrypt_بائٹیں(&ctx->سرخی_ctx, src, dest, aadlen);
 	}
 
 	/* Set Chacha's block counter to 1 */
 	chacha_ivsetup(&ctx->main_ctx, seqbuf, one);
-	chacha_encrypt_bytes(&ctx->main_ctx, src + aadlen,
+	chacha_encrypt_بائٹیں(&ctx->main_ctx, src + aadlen,
 	    dest + aadlen, len);
 
 	/* If encrypting, calculate and append tag */
-	if (do_encrypt) {
+	اگر (do_encrypt) {
 		poly1305_auth(dest + aadlen + len, dest, aadlen + len,
-		    poly_key);
+		    poly_کلید);
 	}
 	r = 0;
- out:
-	explicit_bzero(expected_tag, sizeof(expected_tag));
-	explicit_bzero(seqbuf, sizeof(seqbuf));
-	explicit_bzero(poly_key, sizeof(poly_key));
-	return r;
+ برآمد:
+	explicit_bzero(expected_لیبل, حجم(expected_لیبل));
+	explicit_bzero(seqbuf, حجم(seqbuf));
+	explicit_bzero(poly_کلید, حجم(poly_کلید));
+	واپس r;
 }
 
 /* Decrypt and extract the encrypted packet length */
-int
-chachapoly_get_length(struct chachapoly_ctx *ctx,
-    u_int *plenp, u_int seqnr, const u_char *cp, u_int len)
+صحیح
+chachapoly_get_لمبائی(ساخت chachapoly_ctx *ctx,
+    u_int *plenp, u_int seqnr, ثابت u_char *cp, u_int len)
 {
 	u_char buf[4], seqbuf[8];
 
-	if (len < 4)
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+	اگر (len < 4)
+		واپس SSH_ERR_پیغام_INCOMPLETE;
 	POKE_U64(seqbuf, seqnr);
-	chacha_ivsetup(&ctx->header_ctx, seqbuf, NULL);
-	chacha_encrypt_bytes(&ctx->header_ctx, cp, buf, 4);
+	chacha_ivsetup(&ctx->سرخی_ctx, seqbuf, تہی);
+	chacha_encrypt_بائٹیں(&ctx->سرخی_ctx, cp, buf, 4);
 	*plenp = PEEK_U32(buf);
-	return 0;
+	واپس 0;
 }
 
-#endif /* !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
+#اگر_ختم /* !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */

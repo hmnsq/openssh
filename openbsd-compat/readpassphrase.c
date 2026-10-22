@@ -23,66 +23,66 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/readpassphrase.c */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#ifndef HAVE_READPASSPHRASE
+#اگر_غیر_تعریف_شدہ HAVE_READPASSPHRASE
 
-#include <termios.h>
-#include <signal.h>
-#include <ctype.h>
-#include <fcntl.h>
-#include <readpassphrase.h>
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <termios.h>
+#شامل <signal.h>
+#شامل <ctype.h>
+#شامل <fcntl.h>
+#شامل <readpassphrase.h>
+#شامل <errno.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
-#ifndef TCSASOFT
+#اگر_غیر_تعریف_شدہ TCSASOFT
 /* If we don't have TCSASOFT define it so that ORing it it below is a no-op. */
 # define TCSASOFT 0
-#endif
+#اگر_ختم
 
 /* SunOS 4.x which lacks _POSIX_VDISABLE, but has VDISABLE */
-#if !defined(_POSIX_VDISABLE) && defined(VDISABLE)
+#اگر !defined(_POSIX_VDISABLE) && defined(VDISABLE)
 #  define _POSIX_VDISABLE       VDISABLE
-#endif
+#اگر_ختم
 
-static volatile sig_atomic_t signo[_NSIG];
+ساکن متلون sig_atomic_t signo[_NSIG];
 
-static void handler(int);
+ساکن خالی handler(صحیح);
 
 /* Like sigaction(2) but preserves SIG_IGN */
-static void
-sigaction_except_ign(int signum, struct sigaction *act, struct sigaction *old)
+ساکن خالی
+sigaction_except_ign(صحیح signum, ساخت sigaction *act, ساخت sigaction *old)
 {
-	struct sigaction sabuf;
+	ساخت sigaction sabuf;
 
-	if (old == NULL)
+	اگر (old == تہی)
 		old = &sabuf;
 
-	(void)sigaction(signum, act, old);
+	(خالی)sigaction(signum, act, old);
 	/* Reinstate SIG_IGN; we don't want to override this */
-	if (old->sa_handler == SIG_IGN && act->sa_handler != SIG_IGN)
-		(void)sigaction(signum, old, NULL);
+	اگر (old->sa_handler == SIG_IGN && act->sa_handler != SIG_IGN)
+		(خالی)sigaction(signum, old, تہی);
 }
 
-char *
-readpassphrase(const char *prompt, char *buf, size_t bufsiz, int flags)
+حرف *
+readpassphrase(ثابت حرف *prompt, حرف *buf, سائز_t bufsiz, صحیح flags)
 {
 	ssize_t nr;
-	int input, output, save_errno, i, need_restart;
-	char ch, *p, *end;
-	struct termios term, oterm;
-	struct sigaction sa, savealrm, saveint, savehup, savequit, saveterm;
-	struct sigaction savetstp, savettin, savettou, savepipe;
+	صحیح داخلہ, output, save_errno, i, need_restart;
+	حرف ch, *p, *انتہا;
+	ساخت termios رکن, oterm;
+	ساخت sigaction sa, savealrm, saveint, savehup, savequit, saveterm;
+	ساخت sigaction savetstp, savettin, savettou, savepipe;
 
 	/* I suppose we could alloc on demand in this case (XXX). */
-	if (bufsiz == 0) {
+	اگر (bufsiz == 0) {
 		errno = EINVAL;
-		return(NULL);
+		واپس(تہی);
 	}
 
 restart:
-	for (i = 0; i < _NSIG; i++)
+	برائے (i = 0; i < _NSIG; i++)
 		signo[i] = 0;
 	nr = -1;
 	save_errno = 0;
@@ -91,16 +91,16 @@ restart:
 	 * Read and write to /dev/tty if available.  If not, read from
 	 * stdin and write to stderr unless a tty is required.
 	 */
-#ifndef O_CLOEXEC
+#اگر_غیر_تعریف_شدہ O_CLOEXEC
 # define O_CLOEXEC 0
-#endif
-	if ((flags & RPP_STDIN) ||
-	    (input = output = open(_PATH_TTY, O_RDWR | O_CLOEXEC)) == -1) {
-		if (flags & RPP_REQUIRE_TTY) {
+#اگر_ختم
+	اگر ((flags & RPP_STDIN) ||
+	    (داخلہ = output = open(_PATH_TTY, O_RDWR | O_CLOEXEC)) == -1) {
+		اگر (flags & RPP_REQUIRE_TTY) {
 			errno = ENOTTY;
-			return(NULL);
+			واپس(تہی);
 		}
-		input = STDIN_FILENO;
+		داخلہ = STDIN_FILENO;
 		output = STDERR_FILENO;
 	}
 
@@ -109,19 +109,19 @@ restart:
 	 * If we are using a tty but are not the foreground pgrp this will
 	 * generate SIGTTOU, so do it *before* installing the signal handlers.
 	 */
-	if (input != STDIN_FILENO && tcgetattr(input, &oterm) == 0) {
-		memcpy(&term, &oterm, sizeof(term));
-		if (!(flags & RPP_ECHO_ON))
-			term.c_lflag &= ~(ECHO | ECHONL);
-#ifdef VSTATUS
-		if (term.c_cc[VSTATUS] != _POSIX_VDISABLE)
-			term.c_cc[VSTATUS] = _POSIX_VDISABLE;
-#endif
-		(void)tcsetattr(input, TCSAFLUSH|TCSASOFT, &term);
-	} else {
-		memset(&term, 0, sizeof(term));
-		term.c_lflag |= ECHO;
-		memset(&oterm, 0, sizeof(oterm));
+	اگر (داخلہ != STDIN_FILENO && tcgetattr(داخلہ, &oterm) == 0) {
+		حافظہ_نقل(&رکن, &oterm, حجم(رکن));
+		اگر (!(flags & RPP_ECHO_ON))
+			رکن.c_lflag &= ~(ECHO | ECHONL);
+#اگر_تعریف_شدہ VSTATUS
+		اگر (رکن.c_cc[VSTATUS] != _POSIX_VDISABLE)
+			رکن.c_cc[VSTATUS] = _POSIX_VDISABLE;
+#اگر_ختم
+		(خالی)tcsetattr(داخلہ, TCSAFLUSH|TCSASOFT, &رکن);
+	} ورنہ {
+		memset(&رکن, 0, حجم(رکن));
+		رکن.c_lflag |= ECHO;
+		memset(&oterm, 0, حجم(oterm));
 		oterm.c_lflag |= ECHO;
 	}
 
@@ -143,87 +143,87 @@ restart:
 	sigaction_except_ign(SIGTTIN, &sa, &savettin);
 	sigaction_except_ign(SIGTTOU, &sa, &savettou);
 
-	if (!(flags & RPP_STDIN))
-		(void)write(output, prompt, strlen(prompt));
-	end = buf + bufsiz - 1;
+	اگر (!(flags & RPP_STDIN))
+		(خالی)اكتب(output, prompt, لڑی_لمبائی(prompt));
+	انتہا = buf + bufsiz - 1;
 	p = buf;
-	while ((nr = read(input, &ch, 1)) == 1 && ch != '\n' && ch != '\r') {
-		if (p < end) {
-			if ((flags & RPP_SEVENBIT))
+	جب ((nr = اقرأ(داخلہ, &ch, 1)) == 1 && ch != '\n' && ch != '\r') {
+		اگر (p < انتہا) {
+			اگر ((flags & RPP_SEVENBIT))
 				ch &= 0x7f;
-			if (isalpha((unsigned char)ch)) {
-				if ((flags & RPP_FORCELOWER))
-					ch = (char)tolower((unsigned char)ch);
-				if ((flags & RPP_FORCEUPPER))
-					ch = (char)toupper((unsigned char)ch);
+			اگر (حرف_ہے((غیرعلامتی حرف)ch)) {
+				اگر ((flags & RPP_FORCELOWER))
+					ch = (حرف)tolower((غیرعلامتی حرف)ch);
+				اگر ((flags & RPP_FORCEUPPER))
+					ch = (حرف)بڑا_حرف((غیرعلامتی حرف)ch);
 			}
 			*p++ = ch;
 		}
 	}
 	*p = '\0';
 	save_errno = errno;
-	if (!(term.c_lflag & ECHO) && !(nr == -1 && errno == EINTR))
-		(void)write(output, "\n", 1);
+	اگر (!(رکن.c_lflag & ECHO) && !(nr == -1 && errno == EINTR))
+		(خالی)اكتب(output, "\n", 1);
 
 	/* Restore old terminal settings and signals. */
-	if (memcmp(&term, &oterm, sizeof(term)) != 0) {
-		const int sigttou = signo[SIGTTOU];
+	اگر (memcmp(&رکن, &oterm, حجم(رکن)) != 0) {
+		ثابت صحیح sigttou = signo[SIGTTOU];
 
 		/* Ignore SIGTTOU generated when we are not the fg pgrp. */
-		while (tcsetattr(input, TCSAFLUSH|TCSASOFT, &oterm) == -1 &&
+		جب (tcsetattr(داخلہ, TCSAFLUSH|TCSASOFT, &oterm) == -1 &&
 		    errno == EINTR && !signo[SIGTTOU])
-			continue;
+			جاری;
 		signo[SIGTTOU] = sigttou;
 	}
-	sigaction(SIGINT, &saveint, NULL);
-	sigaction(SIGQUIT, &savequit, NULL);
-	sigaction_except_ign(SIGALRM, &savealrm, NULL);
-	sigaction_except_ign(SIGHUP, &savehup, NULL);
-	sigaction_except_ign(SIGPIPE, &savepipe, NULL);
-	sigaction_except_ign(SIGTERM, &saveterm, NULL);
-	sigaction_except_ign(SIGTSTP, &savetstp, NULL);
-	sigaction_except_ign(SIGTTIN, &savettin, NULL);
-	sigaction_except_ign(SIGTTOU, &savettou, NULL);
-	if (input != STDIN_FILENO)
-		(void)close(input);
+	sigaction(SIGINT, &saveint, تہی);
+	sigaction(SIGQUIT, &savequit, تہی);
+	sigaction_except_ign(SIGALRM, &savealrm, تہی);
+	sigaction_except_ign(SIGHUP, &savehup, تہی);
+	sigaction_except_ign(SIGPIPE, &savepipe, تہی);
+	sigaction_except_ign(SIGTERM, &saveterm, تہی);
+	sigaction_except_ign(SIGTSTP, &savetstp, تہی);
+	sigaction_except_ign(SIGTTIN, &savettin, تہی);
+	sigaction_except_ign(SIGTTOU, &savettou, تہی);
+	اگر (داخلہ != STDIN_FILENO)
+		(خالی)close(داخلہ);
 
 	/*
 	 * If we were interrupted by a signal, resend it to ourselves
 	 * now that we have restored the signal handlers.
 	 */
-	for (i = 0; i < _NSIG; i++) {
-		if (signo[i]) {
+	برائے (i = 0; i < _NSIG; i++) {
+		اگر (signo[i]) {
 			kill(getpid(), i);
-			switch (i) {
-			case SIGTSTP:
-			case SIGTTIN:
-			case SIGTTOU:
+			انتخاب (i) {
+			حالت SIGTSTP:
+			حالت SIGTTIN:
+			حالت SIGTTOU:
 				need_restart = 1;
 			}
 		}
 	}
-	if (need_restart)
-		goto restart;
+	اگر (need_restart)
+		جاؤ restart;
 
-	if (save_errno)
+	اگر (save_errno)
 		errno = save_errno;
-	return(nr == -1 ? NULL : buf);
+	واپس(nr == -1 ? تہی : buf);
 }
 DEF_WEAK(readpassphrase);
 
-#if 0
-char *
-getpass(const char *prompt)
+#اگر 0
+حرف *
+getpass(ثابت حرف *prompt)
 {
-	static char buf[_PASSWORD_LEN + 1];
+	ساکن حرف buf[_PASSWORD_LEN + 1];
 
-	return(readpassphrase(prompt, buf, sizeof(buf), RPP_ECHO_OFF));
+	واپس(readpassphrase(prompt, buf, حجم(buf), RPP_ECHO_OFF));
 }
-#endif
+#اگر_ختم
 
-static void handler(int s)
+ساکن خالی handler(صحیح s)
 {
 
 	signo[s] = 1;
 }
-#endif /* HAVE_READPASSPHRASE */
+#اگر_ختم /* HAVE_READPASSPHRASE */

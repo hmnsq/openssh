@@ -22,73 +22,73 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <stdarg.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
-#ifdef SSH_AUDIT_EVENTS
+#اگر_تعریف_شدہ SSH_AUDIT_EVENTS
 
-#include "audit.h"
-#include "log.h"
-#include "hostfile.h"
-#include "auth.h"
+#شامل "audit.h"
+#شامل "log.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
 
 /*
  * Care must be taken when using this since it WILL NOT be initialized when
  * audit_connection_from() is called and MAY NOT be initialized when
  * audit_event(CONNECTION_ABANDON) is called.  Test for NULL before using.
  */
-extern Authctxt *the_authctxt;
+خارجی Authctxt *the_authctxt;
 
 /* Maybe add the audit class to struct Authmethod? */
 ssh_audit_event_t
-audit_classify_auth(const char *method)
+audit_classify_auth(ثابت حرف *طریقہ)
 {
-	if (strcmp(method, "none") == 0)
-		return SSH_AUTH_FAIL_NONE;
-	else if (strcmp(method, "password") == 0)
-		return SSH_AUTH_FAIL_PASSWD;
-	else if (strcmp(method, "publickey") == 0 ||
-	    strcmp(method, "rsa") == 0)
-		return SSH_AUTH_FAIL_PUBKEY;
-	else if (strncmp(method, "keyboard-interactive", 20) == 0 ||
-	    strcmp(method, "challenge-response") == 0)
-		return SSH_AUTH_FAIL_KBDINT;
-	else if (strcmp(method, "hostbased") == 0 ||
-	    strcmp(method, "rhosts-rsa") == 0)
-		return SSH_AUTH_FAIL_HOSTBASED;
-	else if (strcmp(method, "gssapi-with-mic") == 0)
-		return SSH_AUTH_FAIL_GSSAPI;
-	else
-		return SSH_AUDIT_UNKNOWN;
+	اگر (strcmp(طریقہ, "none") == 0)
+		واپس SSH_AUTH_FAIL_NONE;
+	ورنہ اگر (strcmp(طریقہ, "password") == 0)
+		واپس SSH_AUTH_FAIL_PASSWD;
+	ورنہ اگر (strcmp(طریقہ, "publickey") == 0 ||
+	    strcmp(طریقہ, "rsa") == 0)
+		واپس SSH_AUTH_FAIL_PUBKEY;
+	ورنہ اگر (لڑی_موازنہ(طریقہ, "keyboard-interactive", 20) == 0 ||
+	    strcmp(طریقہ, "challenge-response") == 0)
+		واپس SSH_AUTH_FAIL_KBDINT;
+	ورنہ اگر (strcmp(طریقہ, "hostbased") == 0 ||
+	    strcmp(طریقہ, "rhosts-rsa") == 0)
+		واپس SSH_AUTH_FAIL_HOSTBASED;
+	ورنہ اگر (strcmp(طریقہ, "gssapi-with-mic") == 0)
+		واپس SSH_AUTH_FAIL_GSSAPI;
+	ورنہ
+		واپس SSH_AUDIT_UNKNOWN;
 }
 
 /* helper to return supplied username */
-const char *
-audit_username(void)
+ثابت حرف *
+audit_username(خالی)
 {
-	static const char unknownuser[] = "(unknown user)";
-	static const char invaliduser[] = "(invalid user)";
+	ساکن ثابت حرف unknownuser[] = "(unknown user)";
+	ساکن ثابت حرف invaliduser[] = "(invalid user)";
 
-	if (the_authctxt == NULL || the_authctxt->user == NULL)
-		return (unknownuser);
-	if (!the_authctxt->valid)
-		return (invaliduser);
-	return (the_authctxt->user);
+	اگر (the_authctxt == تہی || the_authctxt->user == تہی)
+		واپس (unknownuser);
+	اگر (!the_authctxt->valid)
+		واپس (invaliduser);
+	واپس (the_authctxt->user);
 }
 
-const char *
+ثابت حرف *
 audit_event_lookup(ssh_audit_event_t ev)
 {
-	int i;
-	static struct event_lookup_struct {
+	صحیح i;
+	ساکن ساخت event_lookup_struct {
 		ssh_audit_event_t event;
-		const char *name;
+		ثابت حرف *name;
 	} event_lookup[] = {
 		{SSH_LOGIN_EXCEED_MAXTRIES,	"LOGIN_EXCEED_MAXTRIES"},
-		{SSH_LOGIN_ROOT_DENIED,		"LOGIN_ROOT_DENIED"},
+		{SSH_LOGIN_جڑ_DENIED,		"LOGIN_ROOT_DENIED"},
 		{SSH_AUTH_SUCCESS,		"AUTH_SUCCESS"},
 		{SSH_AUTH_FAIL_NONE,		"AUTH_FAIL_NONE"},
 		{SSH_AUTH_FAIL_PASSWD,		"AUTH_FAIL_PASSWD"},
@@ -103,10 +103,10 @@ audit_event_lookup(ssh_audit_event_t ev)
 		{SSH_AUDIT_UNKNOWN,		"AUDIT_UNKNOWN"}
 	};
 
-	for (i = 0; event_lookup[i].event != SSH_AUDIT_UNKNOWN; i++)
-		if (event_lookup[i].event == ev)
-			break;
-	return(event_lookup[i].name);
+	برائے (i = 0; event_lookup[i].event != SSH_AUDIT_UNKNOWN; i++)
+		اگر (event_lookup[i].event == ev)
+			توڑو;
+	واپس(event_lookup[i].name);
 }
 
 # ifndef CUSTOM_SSH_AUDIT_EVENTS
@@ -119,19 +119,19 @@ audit_event_lookup(ssh_audit_event_t ev)
  * Called after a connection has been accepted but before any authentication
  * has been attempted.
  */
-void
-audit_connection_from(const char *host, int port)
+خالی
+audit_connection_from(ثابت حرف *host, صحیح پورٹ)
 {
-	debug("audit connection from %s port %d euid %d", host, port,
-	    (int)geteuid());
+	debug("audit connection from %s port %d euid %d", host, پورٹ,
+	    (صحیح)geteuid());
 }
 
 /*
  * Called when various events occur (see audit.h for a list of possible
  * events and what they mean).
  */
-void
-audit_event(struct ssh *ssh, ssh_audit_event_t event)
+خالی
+audit_event(ساخت ssh *ssh, ssh_audit_event_t event)
 {
 	debug("audit event euid %d user %s event %d (%s)", geteuid(),
 	    audit_username(), event, audit_event_lookup(event));
@@ -144,10 +144,10 @@ audit_event(struct ssh *ssh, ssh_audit_event_t event)
  * Note that this may be called multiple times if multiple sessions are used
  * within a single connection.
  */
-void
-audit_session_open(struct logininfo *li)
+خالی
+audit_session_open(ساخت logininfo *li)
 {
-	const char *t = li->line ? li->line : "(no tty)";
+	ثابت حرف *t = li->سطر ? li->سطر : "(no tty)";
 
 	debug("audit session open euid %d user %s tty name %s", geteuid(),
 	    audit_username(), t);
@@ -160,10 +160,10 @@ audit_session_open(struct logininfo *li)
  * Note that this may be called multiple times if multiple sessions are used
  * within a single connection.
  */
-void
-audit_session_close(struct logininfo *li)
+خالی
+audit_session_close(ساخت logininfo *li)
 {
-	const char *t = li->line ? li->line : "(no tty)";
+	ثابت حرف *t = li->سطر ? li->سطر : "(no tty)";
 
 	debug("audit session close euid %d user %s tty name %s", geteuid(),
 	    audit_username(), t);
@@ -174,11 +174,11 @@ audit_session_close(struct logininfo *li)
  * it may be called multiple times for a single connection since SSH2 allows
  * multiple sessions within a single connection.
  */
-void
-audit_run_command(const char *command)
+خالی
+audit_تسلسل_command(ثابت حرف *command)
 {
 	debug("audit run command euid %d user %s command '%.200s'", geteuid(),
 	    audit_username(), command);
 }
 # endif  /* !defined CUSTOM_SSH_AUDIT_EVENTS */
-#endif /* SSH_AUDIT_EVENTS */
+#اگر_ختم /* SSH_AUDIT_EVENTS */

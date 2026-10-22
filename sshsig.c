@@ -15,1150 +15,1150 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <stdarg.h>
+#شامل <errno.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
-#include "authfd.h"
-#include "authfile.h"
-#include "log.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "sshsig.h"
-#include "ssherr.h"
-#include "sshkey.h"
-#include "match.h"
-#include "digest.h"
+#شامل "authfd.h"
+#شامل "authfile.h"
+#شامل "log.h"
+#شامل "misc.h"
+#شامل "sshbuf.h"
+#شامل "sshsig.h"
+#شامل "ssherr.h"
+#شامل "sshkey.h"
+#شامل "match.h"
+#شامل "digest.h"
 
-#define SIG_VERSION		0x01
-#define MAGIC_PREAMBLE		"SSHSIG"
-#define MAGIC_PREAMBLE_LEN	(sizeof(MAGIC_PREAMBLE) - 1)
-#define BEGIN_SIGNATURE		"-----BEGIN SSH SIGNATURE-----"
-#define END_SIGNATURE		"-----END SSH SIGNATURE-----"
-#define RSA_SIGN_ALG		"rsa-sha2-512"
-#define RSA_SIGN_ALLOWED	"rsa-sha2-512,rsa-sha2-256"
-#define HASHALG_DEFAULT		"sha512"
-#define HASHALG_ALLOWED		"sha256,sha512"
+#تعریف_کرو SIG_نسخہ		0x01
+#تعریف_کرو MAGIC_PREAMBLE		"SSHSIG"
+#تعریف_کرو MAGIC_PREAMBLE_LEN	(حجم(MAGIC_PREAMBLE) - 1)
+#تعریف_کرو BEGIN_SIGNATURE		"-----BEGIN SSH SIGNATURE-----"
+#تعریف_کرو انتہا_SIGNATURE		"-----END SSH SIGNATURE-----"
+#تعریف_کرو RSA_SIGN_ALG		"rsa-sha2-512"
+#تعریف_کرو RSA_SIGN_ALLOWED	"rsa-sha2-512,rsa-sha2-256"
+#تعریف_کرو HASHALG_DEFAULT		"sha512"
+#تعریف_کرو HASHALG_ALLOWED		"sha256,sha512"
 
-int
-sshsig_armor(const struct sshbuf *blob, struct sshbuf **out)
+صحیح
+sshsig_armor(ثابت ساخت sshbuf *blob, ساخت sshbuf **برآمد)
 {
-	struct sshbuf *buf = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ساخت sshbuf *buf = تہی;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
 
-	*out = NULL;
+	*برآمد = تہی;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	اگر ((buf = sshbuf_new()) == تہی) {
 		error_f("sshbuf_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
 
-	if ((r = sshbuf_putf(buf, "%s\n", BEGIN_SIGNATURE)) != 0) {
+	اگر ((r = sshbuf_putf(buf, "%s\n", BEGIN_SIGNATURE)) != 0) {
 		error_fr(r, "sshbuf_putf");
-		goto out;
+		جاؤ برآمد;
 	}
 
-	if ((r = sshbuf_dtob64(blob, buf, 1)) != 0) {
+	اگر ((r = sshbuf_dtob64(blob, buf, 1)) != 0) {
 		error_fr(r, "base64 encode signature");
-		goto out;
+		جاؤ برآمد;
 	}
 
-	if ((r = sshbuf_put(buf, END_SIGNATURE,
-	    sizeof(END_SIGNATURE)-1)) != 0 ||
+	اگر ((r = sshbuf_put(buf, انتہا_SIGNATURE,
+	    حجم(انتہا_SIGNATURE)-1)) != 0 ||
 	    (r = sshbuf_put_u8(buf, '\n')) != 0) {
 		error_fr(r, "sshbuf_put");
-		goto out;
+		جاؤ برآمد;
 	}
 	/* success */
-	*out = buf;
-	buf = NULL; /* transferred */
+	*برآمد = buf;
+	buf = تہی; /* transferred */
 	r = 0;
- out:
+ برآمد:
 	sshbuf_free(buf);
-	return r;
+	واپس r;
 }
 
-int
-sshsig_dearmor(struct sshbuf *sig, struct sshbuf **out)
+صحیح
+sshsig_dearmor(ساخت sshbuf *sig, ساخت sshbuf **برآمد)
 {
-	int r;
-	size_t eoffset = 0;
-	struct sshbuf *buf = NULL;
-	struct sshbuf *sbuf = NULL;
-	char *b64 = NULL;
+	صحیح r;
+	سائز_t eoffset = 0;
+	ساخت sshbuf *buf = تہی;
+	ساخت sshbuf *sbuf = تہی;
+	حرف *b64 = تہی;
 
-	if ((sbuf = sshbuf_fromb(sig)) == NULL) {
+	اگر ((sbuf = sshbuf_fromb(sig)) == تہی) {
 		error_f("sshbuf_fromb failed");
-		return SSH_ERR_ALLOC_FAIL;
+		واپس SSH_ERR_ALLOC_FAIL;
 	}
 
 	/* Expect and consume preamble + lf/crlf */
-	if ((r = sshbuf_cmp(sbuf, 0,
-	    BEGIN_SIGNATURE, sizeof(BEGIN_SIGNATURE)-1)) != 0) {
+	اگر ((r = sshbuf_cmp(sbuf, 0,
+	    BEGIN_SIGNATURE, حجم(BEGIN_SIGNATURE)-1)) != 0) {
 		error("Couldn't parse signature: missing header");
-		goto done;
+		جاؤ مکمل;
 	}
-	if ((r = sshbuf_consume(sbuf, sizeof(BEGIN_SIGNATURE)-1)) != 0) {
+	اگر ((r = sshbuf_consume(sbuf, حجم(BEGIN_SIGNATURE)-1)) != 0) {
 		error_fr(r, "consume");
-		goto done;
+		جاؤ مکمل;
 	}
-	if ((r = sshbuf_cmp(sbuf, 0, "\r\n", 2)) == 0)
+	اگر ((r = sshbuf_cmp(sbuf, 0, "\r\n", 2)) == 0)
 		eoffset = 2;
-	else if ((r = sshbuf_cmp(sbuf, 0, "\n", 1)) == 0)
+	ورنہ اگر ((r = sshbuf_cmp(sbuf, 0, "\n", 1)) == 0)
 		eoffset = 1;
-	else {
+	ورنہ {
 		r = SSH_ERR_INVALID_FORMAT;
 		error_f("no header eol");
-		goto done;
+		جاؤ مکمل;
 	}
-	if ((r = sshbuf_consume(sbuf, eoffset)) != 0) {
+	اگر ((r = sshbuf_consume(sbuf, eoffset)) != 0) {
 		error_fr(r, "consume eol");
-		goto done;
+		جاؤ مکمل;
 	}
 	/* Find and consume lf + suffix (any prior cr would be ignored) */
-	if ((r = sshbuf_find(sbuf, 0, "\n" END_SIGNATURE,
-	    sizeof(END_SIGNATURE), &eoffset)) != 0) {
+	اگر ((r = sshbuf_ڈھونڈو(sbuf, 0, "\n" انتہا_SIGNATURE,
+	    حجم(انتہا_SIGNATURE), &eoffset)) != 0) {
 		error("Couldn't parse signature: missing footer");
-		goto done;
+		جاؤ مکمل;
 	}
-	if ((r = sshbuf_consume_end(sbuf, sshbuf_len(sbuf)-eoffset)) != 0) {
+	اگر ((r = sshbuf_consume_انتہا(sbuf, sshbuf_len(sbuf)-eoffset)) != 0) {
 		error_fr(r, "consume");
-		goto done;
+		جاؤ مکمل;
 	}
 
-	if ((b64 = sshbuf_dup_string(sbuf)) == NULL) {
+	اگر ((b64 = sshbuf_dup_string(sbuf)) == تہی) {
 		error_f("sshbuf_dup_string failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		جاؤ مکمل;
 	}
 
-	if ((buf = sshbuf_new()) == NULL) {
+	اگر ((buf = sshbuf_new()) == تہی) {
 		error_f("sshbuf_new() failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		جاؤ مکمل;
 	}
 
-	if ((r = sshbuf_b64tod(buf, b64)) != 0) {
+	اگر ((r = sshbuf_b64tod(buf, b64)) != 0) {
 		error_fr(r, "decode base64");
-		goto done;
+		جاؤ مکمل;
 	}
 
 	/* success */
-	*out = buf;
+	*برآمد = buf;
 	r = 0;
-	buf = NULL; /* transferred */
-done:
+	buf = تہی; /* transferred */
+مکمل:
 	sshbuf_free(buf);
 	sshbuf_free(sbuf);
-	free(b64);
-	return r;
+	آزاد(b64);
+	واپس r;
 }
 
-static int
-sshsig_wrap_sign(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin, const struct sshbuf *h_message,
-    const char *sig_namespace, struct sshbuf **out,
-    sshsig_signer *signer, void *signer_ctx)
+ساکن صحیح
+sshsig_wrap_sign(ساخت sshkey *کلید, ثابت حرف *hashalg,
+    ثابت حرف *sk_provider, ثابت حرف *sk_pin, ثابت ساخت sshbuf *h_پیغام,
+    ثابت حرف *sig_namespace, ساخت sshbuf **برآمد,
+    sshsig_signer *signer, خالی *signer_ctx)
 {
-	int r;
-	size_t slen = 0;
-	u_char *sig = NULL;
-	struct sshbuf *blob = NULL;
-	struct sshbuf *tosign = NULL;
-	const char *sign_alg = NULL;
+	صحیح r;
+	سائز_t slen = 0;
+	u_char *sig = تہی;
+	ساخت sshbuf *blob = تہی;
+	ساخت sshbuf *tosign = تہی;
+	ثابت حرف *sign_alg = تہی;
 
-	if ((tosign = sshbuf_new()) == NULL ||
-	    (blob = sshbuf_new()) == NULL) {
+	اگر ((tosign = sshbuf_new()) == تہی ||
+	    (blob = sshbuf_new()) == تہی) {
 		error_f("sshbuf_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		جاؤ مکمل;
 	}
 
-	if ((r = sshbuf_put(tosign, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
+	اگر ((r = sshbuf_put(tosign, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
 	    (r = sshbuf_put_cstring(tosign, sig_namespace)) != 0 ||
-	    (r = sshbuf_put_string(tosign, NULL, 0)) != 0 || /* reserved */
+	    (r = sshbuf_put_string(tosign, تہی, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_cstring(tosign, hashalg)) != 0 ||
-	    (r = sshbuf_put_stringb(tosign, h_message)) != 0) {
+	    (r = sshbuf_put_stringb(tosign, h_پیغام)) != 0) {
 		error_fr(r, "assemble message to sign");
-		goto done;
+		جاؤ مکمل;
 	}
 
 	/* If using RSA keys then default to a good signature algorithm */
-	if (sshkey_type_plain(key->type) == KEY_RSA) {
+	اگر (sshkey_type_plain(کلید->type) == کلید_RSA) {
 		sign_alg = RSA_SIGN_ALG;
-		if (strcmp(hashalg, "sha256") == 0)
+		اگر (strcmp(hashalg, "sha256") == 0)
 			sign_alg = "rsa-sha2-256";
-		else if (strcmp(hashalg, "sha512") == 0)
+		ورنہ اگر (strcmp(hashalg, "sha512") == 0)
 			sign_alg = "rsa-sha2-512";
 	}
 
-	if (signer != NULL) {
-		if ((r = signer(key, &sig, &slen,
+	اگر (signer != تہی) {
+		اگر ((r = signer(کلید, &sig, &slen,
 		    sshbuf_ptr(tosign), sshbuf_len(tosign),
 		    sign_alg, sk_provider, sk_pin, 0, signer_ctx)) != 0) {
 			error_r(r, "Couldn't sign message (signer)");
-			goto done;
+			جاؤ مکمل;
 		}
-	} else {
-		if ((r = sshkey_sign(key, &sig, &slen,
+	} ورنہ {
+		اگر ((r = sshkey_sign(کلید, &sig, &slen,
 		    sshbuf_ptr(tosign), sshbuf_len(tosign),
 		    sign_alg, sk_provider, sk_pin, 0)) != 0) {
 			error_r(r, "Couldn't sign message");
-			goto done;
+			جاؤ مکمل;
 		}
 	}
 
-	if ((r = sshbuf_put(blob, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
-	    (r = sshbuf_put_u32(blob, SIG_VERSION)) != 0 ||
-	    (r = sshkey_puts(key, blob)) != 0 ||
+	اگر ((r = sshbuf_put(blob, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
+	    (r = sshbuf_put_u32(blob, SIG_نسخہ)) != 0 ||
+	    (r = sshkey_puts(کلید, blob)) != 0 ||
 	    (r = sshbuf_put_cstring(blob, sig_namespace)) != 0 ||
-	    (r = sshbuf_put_string(blob, NULL, 0)) != 0 || /* reserved */
+	    (r = sshbuf_put_string(blob, تہی, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_cstring(blob, hashalg)) != 0 ||
 	    (r = sshbuf_put_string(blob, sig, slen)) != 0) {
 		error_fr(r, "assemble signature object");
-		goto done;
+		جاؤ مکمل;
 	}
 
-	if (out != NULL) {
-		*out = blob;
-		blob = NULL;
+	اگر (برآمد != تہی) {
+		*برآمد = blob;
+		blob = تہی;
 	}
 	r = 0;
-done:
-	free(sig);
+مکمل:
+	آزاد(sig);
 	sshbuf_free(blob);
 	sshbuf_free(tosign);
-	return r;
+	واپس r;
 }
 
 /* Check preamble and version. */
-static int
-sshsig_parse_preamble(struct sshbuf *buf)
+ساکن صحیح
+sshsig_parse_preamble(ساخت sshbuf *buf)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
 	uint32_t sversion;
 
-	if ((r = sshbuf_cmp(buf, 0, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
-	    (r = sshbuf_consume(buf, (sizeof(MAGIC_PREAMBLE)-1))) != 0 ||
+	اگر ((r = sshbuf_cmp(buf, 0, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
+	    (r = sshbuf_consume(buf, (حجم(MAGIC_PREAMBLE)-1))) != 0 ||
 	    (r = sshbuf_get_u32(buf, &sversion)) != 0) {
 		error("Couldn't verify signature: invalid format");
-		return r;
+		واپس r;
 	}
 
-	if (sversion > SIG_VERSION) {
+	اگر (sversion > SIG_نسخہ) {
 		error("Signature version %lu is larger than supported "
-		    "version %u", (unsigned long)sversion, SIG_VERSION);
-		return SSH_ERR_INVALID_FORMAT;
+		    "version %u", (غیرعلامتی طویل)sversion, SIG_نسخہ);
+		واپس SSH_ERR_INVALID_FORMAT;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-sshsig_check_hashalg(const char *hashalg)
+ساکن صحیح
+sshsig_check_hashalg(ثابت حرف *hashalg)
 {
-	if (hashalg == NULL ||
-	    match_pattern_list(hashalg, HASHALG_ALLOWED, 0) == 1)
-		return 0;
+	اگر (hashalg == تہی ||
+	    مطابقت_نمونہ_list(hashalg, HASHALG_ALLOWED, 0) == 1)
+		واپس 0;
 	error_f("unsupported hash algorithm \"%.100s\"", hashalg);
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	واپس SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 
-static int
-sshsig_peek_hashalg(struct sshbuf *signature, char **hashalgp)
+ساکن صحیح
+sshsig_peek_hashalg(ساخت sshbuf *signature, حرف **hashalgp)
 {
-	struct sshbuf *buf = NULL;
-	char *hashalg = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ساخت sshbuf *buf = تہی;
+	حرف *hashalg = تہی;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
 
-	if (hashalgp != NULL)
-		*hashalgp = NULL;
-	if ((buf = sshbuf_fromb(signature)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshsig_parse_preamble(buf)) != 0)
-		goto done;
-	if ((r = sshbuf_get_string_direct(buf, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(buf, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_string(buf, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(buf, &hashalg, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(buf, NULL, NULL)) != 0) {
+	اگر (hashalgp != تہی)
+		*hashalgp = تہی;
+	اگر ((buf = sshbuf_fromb(signature)) == تہی)
+		واپس SSH_ERR_ALLOC_FAIL;
+	اگر ((r = sshsig_parse_preamble(buf)) != 0)
+		جاؤ مکمل;
+	اگر ((r = sshbuf_get_string_براہ_راست(buf, تہی, تہی)) != 0 ||
+	    (r = sshbuf_get_string_براہ_راست(buf, تہی, تہی)) != 0 ||
+	    (r = sshbuf_get_string(buf, تہی, تہی)) != 0 ||
+	    (r = sshbuf_get_cstring(buf, &hashalg, تہی)) != 0 ||
+	    (r = sshbuf_get_string_براہ_راست(buf, تہی, تہی)) != 0) {
 		error_fr(r, "parse signature object");
-		goto done;
+		جاؤ مکمل;
 	}
 
 	/* success */
 	r = 0;
 	*hashalgp = hashalg;
-	hashalg = NULL;
- done:
-	free(hashalg);
+	hashalg = تہی;
+ مکمل:
+	آزاد(hashalg);
 	sshbuf_free(buf);
-	return r;
+	واپس r;
 }
 
-static int
-sshsig_wrap_verify(struct sshbuf *signature, const char *hashalg,
-    const struct sshbuf *h_message, const char *expect_namespace,
-    struct sshkey **sign_keyp, struct sshkey_sig_details **sig_details)
+ساکن صحیح
+sshsig_wrap_verify(ساخت sshbuf *signature, ثابت حرف *hashalg,
+    ثابت ساخت sshbuf *h_پیغام, ثابت حرف *expect_namespace,
+    ساخت sshkey **sign_keyp, ساخت sshkey_sig_details **sig_details)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *buf = NULL, *toverify = NULL;
-	struct sshkey *key = NULL;
-	const u_char *sig;
-	char *got_namespace = NULL, *sigtype = NULL, *sig_hashalg = NULL;
-	size_t siglen;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
+	ساخت sshbuf *buf = تہی, *toverify = تہی;
+	ساخت sshkey *کلید = تہی;
+	ثابت u_char *sig;
+	حرف *got_namespace = تہی, *sigtype = تہی, *sig_hashalg = تہی;
+	سائز_t siglen;
 
-	debug_f("verify message length %zu", sshbuf_len(h_message));
-	if (sig_details != NULL)
-		*sig_details = NULL;
-	if (sign_keyp != NULL)
-		*sign_keyp = NULL;
+	debug_f("verify message length %zu", sshbuf_len(h_پیغام));
+	اگر (sig_details != تہی)
+		*sig_details = تہی;
+	اگر (sign_keyp != تہی)
+		*sign_keyp = تہی;
 
-	if ((toverify = sshbuf_new()) == NULL) {
+	اگر ((toverify = sshbuf_new()) == تہی) {
 		error_f("sshbuf_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		جاؤ مکمل;
 	}
-	if ((r = sshbuf_put(toverify, MAGIC_PREAMBLE,
+	اگر ((r = sshbuf_put(toverify, MAGIC_PREAMBLE,
 	    MAGIC_PREAMBLE_LEN)) != 0 ||
 	    (r = sshbuf_put_cstring(toverify, expect_namespace)) != 0 ||
-	    (r = sshbuf_put_string(toverify, NULL, 0)) != 0 || /* reserved */
+	    (r = sshbuf_put_string(toverify, تہی, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_cstring(toverify, hashalg)) != 0 ||
-	    (r = sshbuf_put_stringb(toverify, h_message)) != 0) {
+	    (r = sshbuf_put_stringb(toverify, h_پیغام)) != 0) {
 		error_fr(r, "assemble message to verify");
-		goto done;
+		جاؤ مکمل;
 	}
 
-	if ((r = sshsig_parse_preamble(signature)) != 0)
-		goto done;
+	اگر ((r = sshsig_parse_preamble(signature)) != 0)
+		جاؤ مکمل;
 
-	if ((r = sshkey_froms(signature, &key)) != 0 ||
-	    (r = sshbuf_get_cstring(signature, &got_namespace, NULL)) != 0 ||
-	    (r = sshbuf_get_string(signature, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(signature, &sig_hashalg, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(signature, &sig, &siglen)) != 0) {
+	اگر ((r = sshkey_froms(signature, &کلید)) != 0 ||
+	    (r = sshbuf_get_cstring(signature, &got_namespace, تہی)) != 0 ||
+	    (r = sshbuf_get_string(signature, تہی, تہی)) != 0 ||
+	    (r = sshbuf_get_cstring(signature, &sig_hashalg, تہی)) != 0 ||
+	    (r = sshbuf_get_string_براہ_راست(signature, &sig, &siglen)) != 0) {
 		error_fr(r, "parse signature object");
-		goto done;
+		جاؤ مکمل;
 	}
 
-	if (sshbuf_len(signature) != 0) {
+	اگر (sshbuf_len(signature) != 0) {
 		error("Signature contains trailing data");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto done;
+		جاؤ مکمل;
 	}
 
-	if (strcmp(expect_namespace, got_namespace) != 0) {
+	اگر (strcmp(expect_namespace, got_namespace) != 0) {
 		error("Couldn't verify signature: namespace does not match");
 		debug_f("expected namespace \"%s\" received \"%s\"",
 		    expect_namespace, got_namespace);
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto done;
+		جاؤ مکمل;
 	}
-	if (strcmp(hashalg, sig_hashalg) != 0) {
+	اگر (strcmp(hashalg, sig_hashalg) != 0) {
 		error("Couldn't verify signature: hash algorithm mismatch");
 		debug_f("expected algorithm \"%s\" received \"%s\"",
 		    hashalg, sig_hashalg);
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto done;
+		جاؤ مکمل;
 	}
 	/* Ensure that RSA keys use an acceptable signature algorithm */
-	if (sshkey_type_plain(key->type) == KEY_RSA) {
-		if ((r = sshkey_get_sigtype(sig, siglen, &sigtype)) != 0) {
+	اگر (sshkey_type_plain(کلید->type) == کلید_RSA) {
+		اگر ((r = sshkey_get_sigtype(sig, siglen, &sigtype)) != 0) {
 			error_r(r, "Couldn't verify signature: unable to get "
 			    "signature type");
-			goto done;
+			جاؤ مکمل;
 		}
-		if (match_pattern_list(sigtype, RSA_SIGN_ALLOWED, 0) != 1) {
+		اگر (مطابقت_نمونہ_list(sigtype, RSA_SIGN_ALLOWED, 0) != 1) {
 			error("Couldn't verify signature: unsupported RSA "
 			    "signature algorithm %s", sigtype);
 			r = SSH_ERR_SIGN_ALG_UNSUPPORTED;
-			goto done;
+			جاؤ مکمل;
 		}
 	}
-	if ((r = sshkey_verify(key, sig, siglen, sshbuf_ptr(toverify),
-	    sshbuf_len(toverify), NULL, 0, sig_details)) != 0) {
+	اگر ((r = sshkey_verify(کلید, sig, siglen, sshbuf_ptr(toverify),
+	    sshbuf_len(toverify), تہی, 0, sig_details)) != 0) {
 		error_r(r, "Signature verification failed");
-		goto done;
+		جاؤ مکمل;
 	}
 
 	/* success */
 	r = 0;
-	if (sign_keyp != NULL) {
-		*sign_keyp = key;
-		key = NULL; /* transferred */
+	اگر (sign_keyp != تہی) {
+		*sign_keyp = کلید;
+		کلید = تہی; /* transferred */
 	}
-done:
-	free(got_namespace);
-	free(sigtype);
-	free(sig_hashalg);
+مکمل:
+	آزاد(got_namespace);
+	آزاد(sigtype);
+	آزاد(sig_hashalg);
 	sshbuf_free(buf);
 	sshbuf_free(toverify);
-	sshkey_free(key);
-	return r;
+	sshkey_free(کلید);
+	واپس r;
 }
 
-static int
-hash_buffer(const struct sshbuf *m, const char *hashalg, struct sshbuf **bp)
+ساکن صحیح
+hash_بفر(ثابت ساخت sshbuf *m, ثابت حرف *hashalg, ساخت sshbuf **bp)
 {
-	char *hex, hash[SSH_DIGEST_MAX_LENGTH];
-	int alg, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *b = NULL;
+	حرف *hex, hash[SSH_DIGEST_MAX_لمبائی];
+	صحیح alg, r = SSH_ERR_اندرونی_ERROR;
+	ساخت sshbuf *b = تہی;
 
-	*bp = NULL;
-	memset(hash, 0, sizeof(hash));
+	*bp = تہی;
+	memset(hash, 0, حجم(hash));
 
-	if ((r = sshsig_check_hashalg(hashalg)) != 0)
-		return r;
-	if ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
+	اگر ((r = sshsig_check_hashalg(hashalg)) != 0)
+		واپس r;
+	اگر ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
 		error_f("can't look up hash algorithm %s", hashalg);
-		return SSH_ERR_INTERNAL_ERROR;
+		واپس SSH_ERR_اندرونی_ERROR;
 	}
-	if ((r = ssh_digest_buffer(alg, m, hash, sizeof(hash))) != 0) {
+	اگر ((r = ssh_digest_بفر(alg, m, hash, حجم(hash))) != 0) {
 		error_fr(r, "ssh_digest_buffer");
-		return r;
+		واپس r;
 	}
-	if ((hex = tohex(hash, ssh_digest_bytes(alg))) != NULL) {
+	اگر ((hex = tohex(hash, ssh_digest_بائٹیں(alg))) != تہی) {
 		debug3_f("final hash: %s", hex);
-		freezero(hex, strlen(hex));
+		freezero(hex, لڑی_لمبائی(hex));
 	}
-	if ((b = sshbuf_new()) == NULL) {
+	اگر ((b = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_put(b, hash, ssh_digest_bytes(alg))) != 0) {
+	اگر ((r = sshbuf_put(b, hash, ssh_digest_بائٹیں(alg))) != 0) {
 		error_fr(r, "sshbuf_put");
-		goto out;
+		جاؤ برآمد;
 	}
 	*bp = b;
-	b = NULL; /* transferred */
+	b = تہی; /* transferred */
 	/* success */
 	r = 0;
- out:
+ برآمد:
 	sshbuf_free(b);
-	explicit_bzero(hash, sizeof(hash));
-	return r;
+	explicit_bzero(hash, حجم(hash));
+	واپس r;
 }
 
-int
-sshsig_signb(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin,
-    const struct sshbuf *message, const char *sig_namespace,
-    struct sshbuf **out, sshsig_signer *signer, void *signer_ctx)
+صحیح
+sshsig_signb(ساخت sshkey *کلید, ثابت حرف *hashalg,
+    ثابت حرف *sk_provider, ثابت حرف *sk_pin,
+    ثابت ساخت sshbuf *پیغام_2, ثابت حرف *sig_namespace,
+    ساخت sshbuf **برآمد, sshsig_signer *signer, خالی *signer_ctx)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ساخت sshbuf *b = تہی;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
 
-	if (hashalg == NULL)
+	اگر (hashalg == تہی)
 		hashalg = HASHALG_DEFAULT;
-	if (out != NULL)
-		*out = NULL;
-	if ((r = hash_buffer(message, hashalg, &b)) != 0) {
+	اگر (برآمد != تہی)
+		*برآمد = تہی;
+	اگر ((r = hash_بفر(پیغام_2, hashalg, &b)) != 0) {
 		error_fr(r, "hash buffer");
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshsig_wrap_sign(key, hashalg, sk_provider, sk_pin, b,
-	    sig_namespace, out, signer, signer_ctx)) != 0)
-		goto out;
+	اگر ((r = sshsig_wrap_sign(کلید, hashalg, sk_provider, sk_pin, b,
+	    sig_namespace, برآمد, signer, signer_ctx)) != 0)
+		جاؤ برآمد;
 	/* success */
 	r = 0;
- out:
+ برآمد:
 	sshbuf_free(b);
-	return r;
+	واپس r;
 }
 
-int
-sshsig_verifyb(struct sshbuf *signature, const struct sshbuf *message,
-    const char *expect_namespace, struct sshkey **sign_keyp,
-    struct sshkey_sig_details **sig_details)
+صحیح
+sshsig_verifyb(ساخت sshbuf *signature, ثابت ساخت sshbuf *پیغام_2,
+    ثابت حرف *expect_namespace, ساخت sshkey **sign_keyp,
+    ساخت sshkey_sig_details **sig_details)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	char *hashalg = NULL;
+	ساخت sshbuf *b = تہی;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
+	حرف *hashalg = تہی;
 
-	if (sig_details != NULL)
-		*sig_details = NULL;
-	if (sign_keyp != NULL)
-		*sign_keyp = NULL;
-	if ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
-		return r;
+	اگر (sig_details != تہی)
+		*sig_details = تہی;
+	اگر (sign_keyp != تہی)
+		*sign_keyp = تہی;
+	اگر ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
+		واپس r;
 	debug_f("signature made with hash \"%s\"", hashalg);
-	if ((r = hash_buffer(message, hashalg, &b)) != 0) {
+	اگر ((r = hash_بفر(پیغام_2, hashalg, &b)) != 0) {
 		error_fr(r, "hash buffer");
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
+	اگر ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
 	    sign_keyp, sig_details)) != 0)
-		goto out;
+		جاؤ برآمد;
 	/* success */
 	r = 0;
- out:
+ برآمد:
 	sshbuf_free(b);
-	free(hashalg);
-	return r;
+	آزاد(hashalg);
+	واپس r;
 }
 
-static int
-hash_file(int fd, const char *hashalg, struct sshbuf **bp)
+ساکن صحیح
+hash_file(صحیح fd, ثابت حرف *hashalg, ساخت sshbuf **bp)
 {
-	char *hex, rbuf[8192], hash[SSH_DIGEST_MAX_LENGTH];
-	ssize_t n, total = 0;
-	struct ssh_digest_ctx *ctx = NULL;
-	int alg, oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *b = NULL;
+	حرف *hex, rbuf[8192], hash[SSH_DIGEST_MAX_لمبائی];
+	ssize_t n, کل = 0;
+	ساخت ssh_digest_ctx *ctx = تہی;
+	صحیح alg, oerrno, r = SSH_ERR_اندرونی_ERROR;
+	ساخت sshbuf *b = تہی;
 
-	*bp = NULL;
-	memset(hash, 0, sizeof(hash));
+	*bp = تہی;
+	memset(hash, 0, حجم(hash));
 
-	if ((r = sshsig_check_hashalg(hashalg)) != 0)
-		return r;
-	if ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
+	اگر ((r = sshsig_check_hashalg(hashalg)) != 0)
+		واپس r;
+	اگر ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
 		error_f("can't look up hash algorithm %s", hashalg);
-		return SSH_ERR_INTERNAL_ERROR;
+		واپس SSH_ERR_اندرونی_ERROR;
 	}
-	if ((ctx = ssh_digest_start(alg)) == NULL) {
+	اگر ((ctx = ssh_digest_آغاز(alg)) == تہی) {
 		error_f("ssh_digest_start failed");
-		return SSH_ERR_INTERNAL_ERROR;
+		واپس SSH_ERR_اندرونی_ERROR;
 	}
-	for (;;) {
-		if ((n = read(fd, rbuf, sizeof(rbuf))) == -1) {
-			if (errno == EINTR || errno == EAGAIN)
-				continue;
+	برائے (;;) {
+		اگر ((n = اقرأ(fd, rbuf, حجم(rbuf))) == -1) {
+			اگر (errno == EINTR || errno == EAGAIN)
+				جاری;
 			oerrno = errno;
 			error_f("read: %s", strerror(errno));
 			errno = oerrno;
 			r = SSH_ERR_SYSTEM_ERROR;
-			goto out;
-		} else if (n == 0) {
-			debug2_f("hashed %zu bytes", total);
-			break; /* EOF */
+			جاؤ برآمد;
+		} ورنہ اگر (n == 0) {
+			debug2_f("hashed %zu bytes", کل);
+			توڑو; /* EOF */
 		}
-		total += (size_t)n;
-		if ((r = ssh_digest_update(ctx, rbuf, (size_t)n)) != 0) {
+		کل += (سائز_t)n;
+		اگر ((r = ssh_digest_update(ctx, rbuf, (سائز_t)n)) != 0) {
 			error_fr(r, "ssh_digest_update");
-			goto out;
+			جاؤ برآمد;
 		}
 	}
-	if ((r = ssh_digest_final(ctx, hash, sizeof(hash))) != 0) {
+	اگر ((r = ssh_digest_final(ctx, hash, حجم(hash))) != 0) {
 		error_fr(r, "ssh_digest_final");
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((hex = tohex(hash, ssh_digest_bytes(alg))) != NULL) {
+	اگر ((hex = tohex(hash, ssh_digest_بائٹیں(alg))) != تہی) {
 		debug3_f("final hash: %s", hex);
-		freezero(hex, strlen(hex));
+		freezero(hex, لڑی_لمبائی(hex));
 	}
-	if ((b = sshbuf_new()) == NULL) {
+	اگر ((b = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_put(b, hash, ssh_digest_bytes(alg))) != 0) {
+	اگر ((r = sshbuf_put(b, hash, ssh_digest_بائٹیں(alg))) != 0) {
 		error_fr(r, "sshbuf_put");
-		goto out;
+		جاؤ برآمد;
 	}
 	*bp = b;
-	b = NULL; /* transferred */
+	b = تہی; /* transferred */
 	/* success */
 	r = 0;
- out:
+ برآمد:
 	oerrno = errno;
 	sshbuf_free(b);
 	ssh_digest_free(ctx);
-	explicit_bzero(hash, sizeof(hash));
+	explicit_bzero(hash, حجم(hash));
 	errno = oerrno;
-	return r;
+	واپس r;
 }
 
-int
-sshsig_sign_fd(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin,
-    int fd, const char *sig_namespace, struct sshbuf **out,
-    sshsig_signer *signer, void *signer_ctx)
+صحیح
+sshsig_sign_fd(ساخت sshkey *کلید, ثابت حرف *hashalg,
+    ثابت حرف *sk_provider, ثابت حرف *sk_pin,
+    صحیح fd, ثابت حرف *sig_namespace, ساخت sshbuf **برآمد,
+    sshsig_signer *signer, خالی *signer_ctx)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ساخت sshbuf *b = تہی;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
 
-	if (hashalg == NULL)
+	اگر (hashalg == تہی)
 		hashalg = HASHALG_DEFAULT;
-	if (out != NULL)
-		*out = NULL;
-	if ((r = hash_file(fd, hashalg, &b)) != 0) {
+	اگر (برآمد != تہی)
+		*برآمد = تہی;
+	اگر ((r = hash_file(fd, hashalg, &b)) != 0) {
 		error_fr(r, "hash_file");
-		return r;
+		واپس r;
 	}
-	if ((r = sshsig_wrap_sign(key, hashalg, sk_provider, sk_pin, b,
-	    sig_namespace, out, signer, signer_ctx)) != 0)
-		goto out;
+	اگر ((r = sshsig_wrap_sign(کلید, hashalg, sk_provider, sk_pin, b,
+	    sig_namespace, برآمد, signer, signer_ctx)) != 0)
+		جاؤ برآمد;
 	/* success */
 	r = 0;
- out:
+ برآمد:
 	sshbuf_free(b);
-	return r;
+	واپس r;
 }
 
-int
-sshsig_verify_fd(struct sshbuf *signature, int fd,
-    const char *expect_namespace, struct sshkey **sign_keyp,
-    struct sshkey_sig_details **sig_details)
+صحیح
+sshsig_verify_fd(ساخت sshbuf *signature, صحیح fd,
+    ثابت حرف *expect_namespace, ساخت sshkey **sign_keyp,
+    ساخت sshkey_sig_details **sig_details)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	char *hashalg = NULL;
+	ساخت sshbuf *b = تہی;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
+	حرف *hashalg = تہی;
 
-	if (sig_details != NULL)
-		*sig_details = NULL;
-	if (sign_keyp != NULL)
-		*sign_keyp = NULL;
-	if ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
-		return r;
+	اگر (sig_details != تہی)
+		*sig_details = تہی;
+	اگر (sign_keyp != تہی)
+		*sign_keyp = تہی;
+	اگر ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
+		واپس r;
 	debug_f("signature made with hash \"%s\"", hashalg);
-	if ((r = hash_file(fd, hashalg, &b)) != 0) {
+	اگر ((r = hash_file(fd, hashalg, &b)) != 0) {
 		error_fr(r, "hash_file");
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
+	اگر ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
 	    sign_keyp, sig_details)) != 0)
-		goto out;
+		جاؤ برآمد;
 	/* success */
 	r = 0;
- out:
+ برآمد:
 	sshbuf_free(b);
-	free(hashalg);
-	return r;
+	آزاد(hashalg);
+	واپس r;
 }
 
-struct sshsigopt {
-	int ca;
-	char *namespaces;
+ساخت sshsigopt {
+	صحیح ca;
+	حرف *namespaces;
 	uint64_t valid_after, valid_before;
 };
 
-struct sshsigopt *
-sshsigopt_parse(const char *opts, const char *path, u_long linenum,
-    const char **errstrp)
+ساخت sshsigopt *
+sshsigopt_parse(ثابت حرف *opts, ثابت حرف *راستہ, u_long linenum,
+    ثابت حرف **errstrp)
 {
-	struct sshsigopt *ret;
-	int r;
-	char *opt;
-	const char *errstr = NULL;
+	ساخت sshsigopt *ret;
+	صحیح r;
+	حرف *opt;
+	ثابت حرف *errstr = تہی;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
-	if (opts == NULL || *opts == '\0')
-		return ret; /* Empty options yields empty options :) */
+	اگر ((ret = صفر_حافظہ_دو(1, حجم(*ret))) == تہی)
+		واپس تہی;
+	اگر (opts == تہی || *opts == '\0')
+		واپس ret; /* Empty options yields empty options :) */
 
-	while (*opts && *opts != ' ' && *opts != '\t') {
+	جب (*opts && *opts != ' ' && *opts != '\t') {
 		/* flag options */
-		if ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
+		اگر ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
 			ret->ca = 1;
-		} else if (opt_match(&opts, "namespaces")) {
-			if (ret->namespaces != NULL) {
+		} ورنہ اگر (opt_مطابقت(&opts, "namespaces")) {
+			اگر (ret->namespaces != تہی) {
 				errstr = "multiple \"namespaces\" clauses";
-				goto fail;
+				جاؤ fail;
 			}
 			ret->namespaces = opt_dequote(&opts, &errstr);
-			if (ret->namespaces == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "valid-after")) {
-			if (ret->valid_after != 0) {
+			اگر (ret->namespaces == تہی)
+				جاؤ fail;
+		} ورنہ اگر (opt_مطابقت(&opts, "valid-after")) {
+			اگر (ret->valid_after != 0) {
 				errstr = "multiple \"valid-after\" clauses";
-				goto fail;
+				جاؤ fail;
 			}
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			if (parse_absolute_time(opt, &ret->valid_after) != 0 ||
+			اگر ((opt = opt_dequote(&opts, &errstr)) == تہی)
+				جاؤ fail;
+			اگر (parse_absolute_وقت(opt, &ret->valid_after) != 0 ||
 			    ret->valid_after == 0) {
-				free(opt);
+				آزاد(opt);
 				errstr = "invalid \"valid-after\" time";
-				goto fail;
+				جاؤ fail;
 			}
-			free(opt);
-		} else if (opt_match(&opts, "valid-before")) {
-			if (ret->valid_before != 0) {
+			آزاد(opt);
+		} ورنہ اگر (opt_مطابقت(&opts, "valid-before")) {
+			اگر (ret->valid_before != 0) {
 				errstr = "multiple \"valid-before\" clauses";
-				goto fail;
+				جاؤ fail;
 			}
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			if (parse_absolute_time(opt, &ret->valid_before) != 0 ||
+			اگر ((opt = opt_dequote(&opts, &errstr)) == تہی)
+				جاؤ fail;
+			اگر (parse_absolute_وقت(opt, &ret->valid_before) != 0 ||
 			    ret->valid_before == 0) {
-				free(opt);
+				آزاد(opt);
 				errstr = "invalid \"valid-before\" time";
-				goto fail;
+				جاؤ fail;
 			}
-			free(opt);
+			آزاد(opt);
 		}
 		/*
 		 * Skip the comma, and move to the next option
 		 * (or break out if there are no more).
 		 */
-		if (*opts == '\0' || *opts == ' ' || *opts == '\t')
-			break;		/* End of options. */
+		اگر (*opts == '\0' || *opts == ' ' || *opts == '\t')
+			توڑو;		/* End of options. */
 		/* Anything other than a comma is an unknown option */
-		if (*opts != ',') {
+		اگر (*opts != ',') {
 			errstr = "unknown key option";
-			goto fail;
+			جاؤ fail;
 		}
 		opts++;
-		if (*opts == '\0') {
+		اگر (*opts == '\0') {
 			errstr = "unexpected end-of-options";
-			goto fail;
+			جاؤ fail;
 		}
 	}
 	/* final consistency check */
-	if (ret->valid_after != 0 && ret->valid_before != 0 &&
+	اگر (ret->valid_after != 0 && ret->valid_before != 0 &&
 	    ret->valid_before <= ret->valid_after) {
 		errstr = "\"valid-before\" time is before \"valid-after\"";
-		goto fail;
+		جاؤ fail;
 	}
 	/* success */
-	return ret;
+	واپس ret;
  fail:
-	if (errstrp != NULL)
+	اگر (errstrp != تہی)
 		*errstrp = errstr;
 	sshsigopt_free(ret);
-	return NULL;
+	واپس تہی;
 }
 
-void
-sshsigopt_free(struct sshsigopt *opts)
+خالی
+sshsigopt_free(ساخت sshsigopt *opts)
 {
-	if (opts == NULL)
-		return;
-	free(opts->namespaces);
-	free(opts);
+	اگر (opts == تہی)
+		واپس;
+	آزاد(opts->namespaces);
+	آزاد(opts);
 }
 
-static int
-parse_principals_key_and_options(const char *path, u_long linenum, char *line,
-    const char *required_principal, char **principalsp, struct sshkey **keyp,
-    struct sshsigopt **sigoptsp)
+ساکن صحیح
+parse_principals_کلید_and_options(ثابت حرف *راستہ, u_long linenum, حرف *سطر,
+    ثابت حرف *required_principal, حرف **principalsp, ساخت sshkey **keyp,
+    ساخت sshsigopt **sigoptsp)
 {
-	char *opts = NULL, *tmp, *cp, *principals = NULL;
-	const char *reason = NULL;
-	struct sshsigopt *sigopts = NULL;
-	struct sshkey *key = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	حرف *opts = تہی, *tmp, *cp, *principals = تہی;
+	ثابت حرف *reason = تہی;
+	ساخت sshsigopt *sigopts = تہی;
+	ساخت sshkey *کلید = تہی;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
 
-	if (principalsp != NULL)
-		*principalsp = NULL;
-	if (sigoptsp != NULL)
-		*sigoptsp = NULL;
-	if (keyp != NULL)
-		*keyp = NULL;
+	اگر (principalsp != تہی)
+		*principalsp = تہی;
+	اگر (sigoptsp != تہی)
+		*sigoptsp = تہی;
+	اگر (keyp != تہی)
+		*keyp = تہی;
 
-	cp = line;
+	cp = سطر;
 	cp = cp + strspn(cp, " \t\n\r"); /* skip leading whitespace */
-	if (*cp == '#' || *cp == '\0')
-		return SSH_ERR_KEY_NOT_FOUND; /* blank or all-comment line */
+	اگر (*cp == '#' || *cp == '\0')
+		واپس SSH_ERR_کلید_NOT_ملا; /* blank or all-comment line */
 
 	/* format: identity[,identity...] [option[,option...]] key */
-	if ((tmp = strdelimw(&cp)) == NULL || cp == NULL) {
-		error("%s:%lu: invalid line", path, linenum);
+	اگر ((tmp = strdelimw(&cp)) == تہی || cp == تہی) {
+		error("%s:%lu: invalid line", راستہ, linenum);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((principals = strdup(tmp)) == NULL) {
+	اگر ((principals = strdup(tmp)) == تہی) {
 		error_f("strdup failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
 	/*
 	 * Bail out early if we're looking for a particular principal and this
 	 * line does not list it.
 	 */
-	if (required_principal != NULL) {
-		if (match_pattern_list(required_principal,
+	اگر (required_principal != تہی) {
+		اگر (مطابقت_نمونہ_list(required_principal,
 		    principals, 0) != 1) {
 			/* principal didn't match */
-			r = SSH_ERR_KEY_NOT_FOUND;
-			goto out;
+			r = SSH_ERR_کلید_NOT_ملا;
+			جاؤ برآمد;
 		}
 		debug_f("%s:%lu: matched principal \"%s\"",
-		    path, linenum, required_principal);
+		    راستہ, linenum, required_principal);
 	}
 
-	if ((key = sshkey_new(KEY_UNSPEC)) == NULL) {
+	اگر ((کلید = sshkey_new(کلید_UNSPEC)) == تہی) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if (sshkey_read(key, &cp) != 0) {
+	اگر (sshkey_read(کلید, &cp) != 0) {
 		/* no key? Check for options */
 		opts = cp;
-		if (sshkey_advance_past_options(&cp) != 0) {
-			error("%s:%lu: invalid options", path, linenum);
+		اگر (sshkey_advance_past_options(&cp) != 0) {
+			error("%s:%lu: invalid options", راستہ, linenum);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			جاؤ برآمد;
 		}
-		if (cp == NULL || *cp == '\0') {
-			error("%s:%lu: missing key", path, linenum);
+		اگر (cp == تہی || *cp == '\0') {
+			error("%s:%lu: missing key", راستہ, linenum);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			جاؤ برآمد;
 		}
 		*cp++ = '\0';
 		skip_space(&cp);
-		if (sshkey_read(key, &cp) != 0) {
-			error("%s:%lu: invalid key", path, linenum);
+		اگر (sshkey_read(کلید, &cp) != 0) {
+			error("%s:%lu: invalid key", راستہ, linenum);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			جاؤ برآمد;
 		}
 	}
-	debug3("%s:%lu: options %s", path, linenum, opts == NULL ? "" : opts);
-	if ((sigopts = sshsigopt_parse(opts, path, linenum, &reason)) == NULL) {
-		error("%s:%lu: bad options: %s", path, linenum, reason);
+	debug3("%s:%lu: options %s", راستہ, linenum, opts == تہی ? "" : opts);
+	اگر ((sigopts = sshsigopt_parse(opts, راستہ, linenum, &reason)) == تہی) {
+		error("%s:%lu: bad options: %s", راستہ, linenum, reason);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
 	/* success */
-	if (principalsp != NULL) {
+	اگر (principalsp != تہی) {
 		*principalsp = principals;
-		principals = NULL; /* transferred */
+		principals = تہی; /* transferred */
 	}
-	if (sigoptsp != NULL) {
+	اگر (sigoptsp != تہی) {
 		*sigoptsp = sigopts;
-		sigopts = NULL; /* transferred */
+		sigopts = تہی; /* transferred */
 	}
-	if (keyp != NULL) {
-		*keyp = key;
-		key = NULL; /* transferred */
+	اگر (keyp != تہی) {
+		*keyp = کلید;
+		کلید = تہی; /* transferred */
 	}
 	r = 0;
- out:
-	free(principals);
+ برآمد:
+	آزاد(principals);
 	sshsigopt_free(sigopts);
-	sshkey_free(key);
-	return r;
+	sshkey_free(کلید);
+	واپس r;
 }
 
-static int
-cert_filter_principals(const char *path, u_long linenum,
-    char **principalsp, const struct sshkey *cert, uint64_t verify_time)
+ساکن صحیح
+cert_filter_principals(ثابت حرف *راستہ, u_long linenum,
+    حرف **principalsp, ثابت ساخت sshkey *cert, uint64_t verify_وقت)
 {
-	char *cp, *oprincipals, *principals;
-	const char *reason;
-	struct sshbuf *nprincipals;
-	int r = SSH_ERR_INTERNAL_ERROR, success = 0;
+	حرف *cp, *oprincipals, *principals;
+	ثابت حرف *reason;
+	ساخت sshbuf *nprincipals;
+	صحیح r = SSH_ERR_اندرونی_ERROR, success = 0;
 	u_int i;
 
 	oprincipals = principals = *principalsp;
-	*principalsp = NULL;
+	*principalsp = تہی;
 
-	if ((nprincipals = sshbuf_new()) == NULL) {
+	اگر ((nprincipals = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
 
-	while ((cp = strsep(&principals, ",")) != NULL && *cp != '\0') {
+	جب ((cp = strsep(&principals, ",")) != تہی && *cp != '\0') {
 		/* Check certificate validity */
-		if ((r = sshkey_cert_check_authority(cert, 0, 0, verify_time,
-		    NULL, &reason)) != 0) {
+		اگر ((r = sshkey_cert_check_authority(cert, 0, 0, verify_وقت,
+		    تہی, &reason)) != 0) {
 			debug("%s:%lu: principal \"%s\" not authorized: %s",
-			    path, linenum, cp, reason);
-			continue;
+			    راستہ, linenum, cp, reason);
+			جاری;
 		}
 		/* Return all matching principal names from the cert */
-		for (i = 0; i < cert->cert->nprincipals; i++) {
-			if (match_pattern(cert->cert->principals[i], cp)) {
-				if ((r = sshbuf_putf(nprincipals, "%s%s",
+		برائے (i = 0; i < cert->cert->nprincipals; i++) {
+			اگر (مطابقت_نمونہ(cert->cert->principals[i], cp)) {
+				اگر ((r = sshbuf_putf(nprincipals, "%s%s",
 					sshbuf_len(nprincipals) != 0 ? "," : "",
 						cert->cert->principals[i])) != 0) {
 					error_f("buffer error");
-					goto out;
+					جاؤ برآمد;
 				}
 			}
 		}
 	}
-	if (sshbuf_len(nprincipals) == 0) {
-		error("%s:%lu: no valid principals found", path, linenum);
-		r = SSH_ERR_KEY_CERT_INVALID;
-		goto out;
+	اگر (sshbuf_len(nprincipals) == 0) {
+		error("%s:%lu: no valid principals found", راستہ, linenum);
+		r = SSH_ERR_کلید_CERT_INVALID;
+		جاؤ برآمد;
 	}
-	if ((principals = sshbuf_dup_string(nprincipals)) == NULL) {
+	اگر ((principals = sshbuf_dup_string(nprincipals)) == تہی) {
 		error_f("buffer error");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
 	/* success */
 	success = 1;
 	*principalsp = principals;
- out:
+ برآمد:
 	sshbuf_free(nprincipals);
-	free(oprincipals);
-	return success ? 0 : r;
+	آزاد(oprincipals);
+	واپس success ? 0 : r;
 }
 
-static int
-check_allowed_keys_line(const char *path, u_long linenum, char *line,
-    const struct sshkey *sign_key, const char *principal,
-    const char *sig_namespace, uint64_t verify_time, char **principalsp)
+ساکن صحیح
+check_allowed_کلیدیں_سطر(ثابت حرف *راستہ, u_long linenum, حرف *سطر,
+    ثابت ساخت sshkey *sign_کلید, ثابت حرف *principal,
+    ثابت حرف *sig_namespace, uint64_t verify_وقت, حرف **principalsp)
 {
-	struct sshkey *found_key = NULL;
-	char *principals = NULL;
-	int r, success = 0;
-	const char *reason = NULL;
-	struct sshsigopt *sigopts = NULL;
-	char tvalid[64], tverify[64];
+	ساخت sshkey *ملا_کلید = تہی;
+	حرف *principals = تہی;
+	صحیح r, success = 0;
+	ثابت حرف *reason = تہی;
+	ساخت sshsigopt *sigopts = تہی;
+	حرف tvalid[64], tverify[64];
 
-	if (principalsp != NULL)
-		*principalsp = NULL;
+	اگر (principalsp != تہی)
+		*principalsp = تہی;
 
 	/* Parse the line */
-	if ((r = parse_principals_key_and_options(path, linenum, line,
-	    principal, &principals, &found_key, &sigopts)) != 0) {
+	اگر ((r = parse_principals_کلید_and_options(راستہ, linenum, سطر,
+	    principal, &principals, &ملا_کلید, &sigopts)) != 0) {
 		/* error already logged */
-		goto done;
+		جاؤ مکمل;
 	}
 
-	if (!sigopts->ca && sshkey_equal(found_key, sign_key)) {
+	اگر (!sigopts->ca && sshkey_equal(ملا_کلید, sign_کلید)) {
 		/* Exact match of key */
-		debug("%s:%lu: matched key", path, linenum);
-	} else if (sigopts->ca && sshkey_is_cert(sign_key) &&
-	    sshkey_equal_public(sign_key->cert->signature_key, found_key)) {
-		if (principal) {
+		debug("%s:%lu: matched key", راستہ, linenum);
+	} ورنہ اگر (sigopts->ca && sshkey_is_cert(sign_کلید) &&
+	    sshkey_equal_عوامی(sign_کلید->cert->signature_کلید, ملا_کلید)) {
+		اگر (principal) {
 			/* Match certificate CA key with specified principal */
-			if ((r = sshkey_cert_check_authority(sign_key, 0, 0,
-			    verify_time, principal, &reason)) != 0) {
+			اگر ((r = sshkey_cert_check_authority(sign_کلید, 0, 0,
+			    verify_وقت, principal, &reason)) != 0) {
 				error("%s:%lu: certificate not authorized: %s",
-				    path, linenum, reason);
-				goto done;
+				    راستہ, linenum, reason);
+				جاؤ مکمل;
 			}
 			debug("%s:%lu: matched certificate CA key",
-			    path, linenum);
-		} else {
+			    راستہ, linenum);
+		} ورنہ {
 			/* No principal specified - find all matching ones */
-			if ((r = cert_filter_principals(path, linenum,
-			    &principals, sign_key, verify_time)) != 0) {
+			اگر ((r = cert_filter_principals(راستہ, linenum,
+			    &principals, sign_کلید, verify_وقت)) != 0) {
 				/* error already displayed */
 				debug_r(r, "%s:%lu: cert_filter_principals",
-				    path, linenum);
-				goto done;
+				    راستہ, linenum);
+				جاؤ مکمل;
 			}
 			debug("%s:%lu: matched certificate CA key",
-			    path, linenum);
+			    راستہ, linenum);
 		}
-	} else {
+	} ورنہ {
 		/* Didn't match key */
-		goto done;
+		جاؤ مکمل;
 	}
 
 	/* Check whether options preclude the use of this key */
-	if (sigopts->namespaces != NULL && sig_namespace != NULL &&
-	    match_pattern_list(sig_namespace, sigopts->namespaces, 0) != 1) {
+	اگر (sigopts->namespaces != تہی && sig_namespace != تہی &&
+	    مطابقت_نمونہ_list(sig_namespace, sigopts->namespaces, 0) != 1) {
 		error("%s:%lu: key is not permitted for use in signature "
-		    "namespace \"%s\"", path, linenum, sig_namespace);
-		goto done;
+		    "namespace \"%s\"", راستہ, linenum, sig_namespace);
+		جاؤ مکمل;
 	}
 
 	/* check key time validity */
-	format_absolute_time((uint64_t)verify_time, tverify, sizeof(tverify));
-	if (sigopts->valid_after != 0 &&
-	    (uint64_t)verify_time < sigopts->valid_after) {
-		format_absolute_time(sigopts->valid_after,
-		    tvalid, sizeof(tvalid));
+	format_absolute_وقت((uint64_t)verify_وقت, tverify, حجم(tverify));
+	اگر (sigopts->valid_after != 0 &&
+	    (uint64_t)verify_وقت < sigopts->valid_after) {
+		format_absolute_وقت(sigopts->valid_after,
+		    tvalid, حجم(tvalid));
 		error("%s:%lu: key is not yet valid: "
-		    "verify time %s < valid-after %s", path, linenum,
+		    "verify time %s < valid-after %s", راستہ, linenum,
 		    tverify, tvalid);
-		goto done;
+		جاؤ مکمل;
 	}
-	if (sigopts->valid_before != 0 &&
-	    (uint64_t)verify_time > sigopts->valid_before) {
-		format_absolute_time(sigopts->valid_before,
-		    tvalid, sizeof(tvalid));
+	اگر (sigopts->valid_before != 0 &&
+	    (uint64_t)verify_وقت > sigopts->valid_before) {
+		format_absolute_وقت(sigopts->valid_before,
+		    tvalid, حجم(tvalid));
 		error("%s:%lu: key has expired: "
-		    "verify time %s > valid-before %s", path, linenum,
+		    "verify time %s > valid-before %s", راستہ, linenum,
 		    tverify, tvalid);
-		goto done;
+		جاؤ مکمل;
 	}
 	success = 1;
 
- done:
-	if (success && principalsp != NULL) {
+ مکمل:
+	اگر (success && principalsp != تہی) {
 		*principalsp = principals;
-		principals = NULL; /* transferred */
+		principals = تہی; /* transferred */
 	}
-	free(principals);
-	sshkey_free(found_key);
+	آزاد(principals);
+	sshkey_free(ملا_کلید);
 	sshsigopt_free(sigopts);
-	return success ? 0 : SSH_ERR_KEY_NOT_FOUND;
+	واپس success ? 0 : SSH_ERR_کلید_NOT_ملا;
 }
 
-int
-sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
-    const char *principal, const char *sig_namespace, uint64_t verify_time)
+صحیح
+sshsig_check_allowed_کلیدیں(ثابت حرف *راستہ, ثابت ساخت sshkey *sign_کلید,
+    ثابت حرف *principal, ثابت حرف *sig_namespace, uint64_t verify_وقت)
 {
-	FILE *f = NULL;
-	char *line = NULL;
-	size_t linesize = 0;
+	FILE *f = تہی;
+	حرف *سطر = تہی;
+	سائز_t linesize = 0;
 	u_long linenum = 0;
-	int r = SSH_ERR_KEY_NOT_FOUND, oerrno;
+	صحیح r = SSH_ERR_کلید_NOT_ملا, oerrno;
 
 	/* Check key and principal against file */
-	if ((f = fopen(path, "r")) == NULL) {
+	اگر ((f = fopen(راستہ, "r")) == تہی) {
 		oerrno = errno;
 		error("Unable to open allowed keys file \"%s\": %s",
-		    path, strerror(errno));
+		    راستہ, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		واپس SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	جب (getline(&سطر, &linesize, f) != -1) {
 		linenum++;
-		r = check_allowed_keys_line(path, linenum, line, sign_key,
-		    principal, sig_namespace, verify_time, NULL);
-		free(line);
-		line = NULL;
+		r = check_allowed_کلیدیں_سطر(راستہ, linenum, سطر, sign_کلید,
+		    principal, sig_namespace, verify_وقت, تہی);
+		آزاد(سطر);
+		سطر = تہی;
 		linesize = 0;
-		if (r == SSH_ERR_KEY_NOT_FOUND)
-			continue;
-		else if (r == 0) {
+		اگر (r == SSH_ERR_کلید_NOT_ملا)
+			جاری;
+		ورنہ اگر (r == 0) {
 			/* success */
 			fclose(f);
-			return 0;
-		} else
-			break;
+			واپس 0;
+		} ورنہ
+			توڑو;
 	}
 	/* Either we hit an error parsing or we simply didn't find the key */
 	fclose(f);
-	free(line);
-	return r;
+	آزاد(سطر);
+	واپس r;
 }
 
-int
-sshsig_find_principals(const char *path, const struct sshkey *sign_key,
-    uint64_t verify_time, char **principals)
+صحیح
+sshsig_ڈھونڈو_principals(ثابت حرف *راستہ, ثابت ساخت sshkey *sign_کلید,
+    uint64_t verify_وقت, حرف **principals)
 {
-	FILE *f = NULL;
-	char *line = NULL;
-	size_t linesize = 0;
+	FILE *f = تہی;
+	حرف *سطر = تہی;
+	سائز_t linesize = 0;
 	u_long linenum = 0;
-	int r = SSH_ERR_KEY_NOT_FOUND, oerrno;
+	صحیح r = SSH_ERR_کلید_NOT_ملا, oerrno;
 
-	if ((f = fopen(path, "r")) == NULL) {
+	اگر ((f = fopen(راستہ, "r")) == تہی) {
 		oerrno = errno;
 		error("Unable to open allowed keys file \"%s\": %s",
-		    path, strerror(errno));
+		    راستہ, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		واپس SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	جب (getline(&سطر, &linesize, f) != -1) {
 		linenum++;
-		r = check_allowed_keys_line(path, linenum, line,
-		    sign_key, NULL, NULL, verify_time, principals);
-		free(line);
-		line = NULL;
+		r = check_allowed_کلیدیں_سطر(راستہ, linenum, سطر,
+		    sign_کلید, تہی, تہی, verify_وقت, principals);
+		آزاد(سطر);
+		سطر = تہی;
 		linesize = 0;
-		if (r == SSH_ERR_KEY_NOT_FOUND)
-			continue;
-		else if (r == 0) {
+		اگر (r == SSH_ERR_کلید_NOT_ملا)
+			جاری;
+		ورنہ اگر (r == 0) {
 			/* success */
 			fclose(f);
-			return 0;
-		} else
-			break;
+			واپس 0;
+		} ورنہ
+			توڑو;
 	}
-	free(line);
+	آزاد(سطر);
 	/* Either we hit an error parsing or we simply didn't find the key */
-	if (ferror(f) != 0) {
+	اگر (ferror(f) != 0) {
 		oerrno = errno;
 		fclose(f);
 		error("Unable to read allowed keys file \"%s\": %s",
-		    path, strerror(errno));
+		    راستہ, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		واپس SSH_ERR_SYSTEM_ERROR;
 	}
 	fclose(f);
-	return r;
+	واپس r;
 }
 
-int
-sshsig_match_principals(const char *path, const char *principal,
-    char ***principalsp, size_t *nprincipalsp)
+صحیح
+sshsig_مطابقت_principals(ثابت حرف *راستہ, ثابت حرف *principal,
+    حرف ***principalsp, سائز_t *nprincipalsp)
 {
-	FILE *f = NULL;
-	char *found, *line = NULL, **principals = NULL, **tmp;
-	size_t i, nprincipals = 0, linesize = 0;
+	FILE *f = تہی;
+	حرف *ملا, *سطر = تہی, **principals = تہی, **tmp;
+	سائز_t i, nprincipals = 0, linesize = 0;
 	u_long linenum = 0;
-	int oerrno = 0, r, ret = 0;
+	صحیح oerrno = 0, r, ret = 0;
 
-	if (principalsp != NULL)
-		*principalsp = NULL;
-	if (nprincipalsp != NULL)
+	اگر (principalsp != تہی)
+		*principalsp = تہی;
+	اگر (nprincipalsp != تہی)
 		*nprincipalsp = 0;
 
 	/* Check key and principal against file */
-	if ((f = fopen(path, "r")) == NULL) {
+	اگر ((f = fopen(راستہ, "r")) == تہی) {
 		oerrno = errno;
 		error("Unable to open allowed keys file \"%s\": %s",
-		    path, strerror(errno));
+		    راستہ, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		واپس SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	جب (getline(&سطر, &linesize, f) != -1) {
 		linenum++;
 		/* Parse the line */
-		if ((r = parse_principals_key_and_options(path, linenum, line,
-		    principal, &found, NULL, NULL)) != 0) {
-			if (r == SSH_ERR_KEY_NOT_FOUND)
-				continue;
+		اگر ((r = parse_principals_کلید_and_options(راستہ, linenum, سطر,
+		    principal, &ملا, تہی, تہی)) != 0) {
+			اگر (r == SSH_ERR_کلید_NOT_ملا)
+				جاری;
 			ret = r;
 			oerrno = errno;
-			break; /* unexpected error */
+			توڑو; /* unexpected error */
 		}
-		if ((tmp = recallocarray(principals, nprincipals,
-		    nprincipals + 1, sizeof(*principals))) == NULL) {
+		اگر ((tmp = recallocarray(principals, nprincipals,
+		    nprincipals + 1, حجم(*principals))) == تہی) {
 			ret = SSH_ERR_ALLOC_FAIL;
-			free(found);
-			break;
+			آزاد(ملا);
+			توڑو;
 		}
 		principals = tmp;
-		principals[nprincipals++] = found; /* transferred */
-		free(line);
-		line = NULL;
+		principals[nprincipals++] = ملا; /* transferred */
+		آزاد(سطر);
+		سطر = تہی;
 		linesize = 0;
 	}
 	fclose(f);
-	free(line);
+	آزاد(سطر);
 
-	if (ret == 0) {
-		if (nprincipals == 0)
-			ret = SSH_ERR_KEY_NOT_FOUND;
-		if (nprincipalsp != NULL)
+	اگر (ret == 0) {
+		اگر (nprincipals == 0)
+			ret = SSH_ERR_کلید_NOT_ملا;
+		اگر (nprincipalsp != تہی)
 			*nprincipalsp = nprincipals;
-		if (principalsp != NULL) {
+		اگر (principalsp != تہی) {
 			*principalsp = principals;
-			principals = NULL; /* transferred */
+			principals = تہی; /* transferred */
 			nprincipals = 0;
 		}
 	}
 
-	for (i = 0; i < nprincipals; i++)
-		free(principals[i]);
-	free(principals);
+	برائے (i = 0; i < nprincipals; i++)
+		آزاد(principals[i]);
+	آزاد(principals);
 
 	errno = oerrno;
-	return ret;
+	واپس ret;
 }
 
-int
-sshsig_get_pubkey(struct sshbuf *signature, struct sshkey **pubkey)
+صحیح
+sshsig_get_pubkey(ساخت sshbuf *signature, ساخت sshkey **pubkey)
 {
-	struct sshkey *pk = NULL;
-	int r = SSH_ERR_SIGNATURE_INVALID;
+	ساخت sshkey *pk = تہی;
+	صحیح r = SSH_ERR_SIGNATURE_INVALID;
 
-	if (pubkey == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if ((r = sshsig_parse_preamble(signature)) != 0)
-		return r;
-	if ((r = sshkey_froms(signature, &pk)) != 0)
-		return r;
+	اگر (pubkey == تہی)
+		واپس SSH_ERR_اندرونی_ERROR;
+	اگر ((r = sshsig_parse_preamble(signature)) != 0)
+		واپس r;
+	اگر ((r = sshkey_froms(signature, &pk)) != 0)
+		واپس r;
 
 	*pubkey = pk;
-	pk = NULL;
-	return 0;
+	pk = تہی;
+	واپس 0;
 }

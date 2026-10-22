@@ -16,19 +16,19 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <netinet/in.h>
+#شامل <sys/types.h>
+#شامل <netinet/in.h>
 
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
+#شامل <string.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
+#شامل <stdarg.h>
 
-#include "addr.h"
-#include "match.h"
-#include "log.h"
+#شامل "addr.h"
+#شامل "match.h"
+#شامل "log.h"
 
 /*
  * Match "addr" against list pattern list "_list", which may contain a
@@ -42,55 +42,55 @@
  * Returns -1 on negated match found (never returned when addr == NULL).
  * Returns -2 on invalid list entry.
  */
-int
-addr_match_list(const char *addr, const char *_list)
+صحیح
+addr_مطابقت_list(ثابت حرف *addr, ثابت حرف *_list)
 {
-	char *list, *cp, *o;
-	struct xaddr try_addr, match_addr;
+	حرف *list, *cp, *o;
+	ساخت xaddr try_addr, مطابقت_addr;
 	u_int masklen, neg;
-	int ret = 0, r;
+	صحیح ret = 0, r;
 
-	if (addr != NULL && addr_pton(addr, &try_addr) != 0) {
+	اگر (addr != تہی && addr_pton(addr, &try_addr) != 0) {
 		debug2_f("couldn't parse address %.100s", addr);
-		return 0;
+		واپس 0;
 	}
-	if ((o = list = strdup(_list)) == NULL)
-		return -1;
-	while ((cp = strsep(&list, ",")) != NULL) {
+	اگر ((o = list = strdup(_list)) == تہی)
+		واپس -1;
+	جب ((cp = strsep(&list, ",")) != تہی) {
 		neg = *cp == '!';
-		if (neg)
+		اگر (neg)
 			cp++;
-		if (*cp == '\0') {
+		اگر (*cp == '\0') {
 			ret = -2;
-			break;
+			توڑو;
 		}
 		/* Prefer CIDR address matching */
-		r = addr_pton_cidr(cp, &match_addr, &masklen);
-		if (r == -2) {
+		r = addr_pton_cidr(cp, &مطابقت_addr, &masklen);
+		اگر (r == -2) {
 			debug2_f("inconsistent mask length for "
 			    "match network \"%.100s\"", cp);
 			ret = -2;
-			break;
-		} else if (r == 0) {
-			if (addr != NULL && addr_netmatch(&try_addr,
-			    &match_addr, masklen) == 0) {
+			توڑو;
+		} ورنہ اگر (r == 0) {
+			اگر (addr != تہی && addr_netmatch(&try_addr,
+			    &مطابقت_addr, masklen) == 0) {
  foundit:
-				if (neg) {
+				اگر (neg) {
 					ret = -1;
-					break;
+					توڑو;
 				}
 				ret = 1;
 			}
-			continue;
-		} else {
+			جاری;
+		} ورنہ {
 			/* If CIDR parse failed, try wildcard string match */
-			if (addr != NULL && match_pattern(addr, cp) == 1)
-				goto foundit;
+			اگر (addr != تہی && مطابقت_نمونہ(addr, cp) == 1)
+				جاؤ foundit;
 		}
 	}
-	free(o);
+	آزاد(o);
 
-	return ret;
+	واپس ret;
 }
 
 /*
@@ -102,25 +102,25 @@ addr_match_list(const char *addr, const char *_list)
  * Returns 0 on if no match found, or no errors found when addr == NULL.
  * Returns -1 on error
  */
-int
-addr_match_cidr_list(const char *addr, const char *_list)
+صحیح
+addr_مطابقت_cidr_list(ثابت حرف *addr, ثابت حرف *_list)
 {
-	char *list, *cp, *o;
-	struct xaddr try_addr, match_addr;
+	حرف *list, *cp, *o;
+	ساخت xaddr try_addr, مطابقت_addr;
 	u_int masklen;
-	int ret = 0, r;
+	صحیح ret = 0, r;
 
-	if (addr != NULL && addr_pton(addr, &try_addr) != 0) {
+	اگر (addr != تہی && addr_pton(addr, &try_addr) != 0) {
 		debug2_f("couldn't parse address %.100s", addr);
-		return 0;
+		واپس 0;
 	}
-	if ((o = list = strdup(_list)) == NULL)
-		return -1;
-	while ((cp = strsep(&list, ",")) != NULL) {
-		if (*cp == '\0') {
+	اگر ((o = list = strdup(_list)) == تہی)
+		واپس -1;
+	جب ((cp = strsep(&list, ",")) != تہی) {
+		اگر (*cp == '\0') {
 			error_f("empty entry in list \"%.100s\"", o);
 			ret = -1;
-			break;
+			توڑو;
 		}
 
 		/*
@@ -130,37 +130,37 @@ addr_match_cidr_list(const char *addr, const char *_list)
 		 */
 
 		/* Stop junk from reaching getaddrinfo. +3 is for masklen */
-		if (strlen(cp) > INET6_ADDRSTRLEN + 3) {
+		اگر (لڑی_لمبائی(cp) > INET6_ADDRSTRLEN + 3) {
 			error_f("list entry \"%.100s\" too long", cp);
 			ret = -1;
-			break;
+			توڑو;
 		}
-#define VALID_CIDR_CHARS "0123456789abcdefABCDEF.:/"
-		if (strspn(cp, VALID_CIDR_CHARS) != strlen(cp)) {
+#تعریف_کرو VALID_CIDR_CHARS "0123456789abcdefABCDEF.:/"
+		اگر (strspn(cp, VALID_CIDR_CHARS) != لڑی_لمبائی(cp)) {
 			error_f("list entry \"%.100s\" contains invalid "
 			    "characters", cp);
 			ret = -1;
 		}
 
 		/* Prefer CIDR address matching */
-		r = addr_pton_cidr(cp, &match_addr, &masklen);
-		if (r == -1) {
+		r = addr_pton_cidr(cp, &مطابقت_addr, &masklen);
+		اگر (r == -1) {
 			error("Invalid network entry \"%.100s\"", cp);
 			ret = -1;
-			break;
-		} else if (r == -2) {
+			توڑو;
+		} ورنہ اگر (r == -2) {
 			error("Inconsistent mask length for "
 			    "network \"%.100s\"", cp);
 			ret = -1;
-			break;
-		} else if (r == 0 && addr != NULL) {
-			if (addr_netmatch(&try_addr, &match_addr,
+			توڑو;
+		} ورنہ اگر (r == 0 && addr != تہی) {
+			اگر (addr_netmatch(&try_addr, &مطابقت_addr,
 			    masklen) == 0)
 				ret = 1;
-			continue;
+			جاری;
 		}
 	}
-	free(o);
+	آزاد(o);
 
-	return ret;
+	واپس ret;
 }

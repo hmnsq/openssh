@@ -20,29 +20,29 @@
  * in particular to sanitize untrusted strings for terminal output.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#ifdef HAVE_LANGINFO_H
+#شامل <sys/types.h>
+#اگر_تعریف_شدہ HAVE_LANGINFO_H
 # include <langinfo.h>
-#endif
-#include <limits.h>
-#include <locale.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#اگر_ختم
+#شامل <limits.h>
+#شامل <locale.h>
+#شامل <stdarg.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#اگر defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
-#endif
-#ifdef HAVE_WCHAR_H
+#اگر_ختم
+#اگر_تعریف_شدہ HAVE_WCHAR_H
 # include <wchar.h>
-#endif
+#اگر_ختم
 
-#include "utf8.h"
+#شامل "utf8.h"
 
-static int	 dangerous_locale(void);
-static int	 grow_dst(char **, size_t *, size_t, char **, size_t);
+ساکن صحیح	 dangerous_locale(خالی);
+ساکن صحیح	 grow_dst(حرف **, سائز_t *, سائز_t, حرف **, سائز_t);
 
 
 /*
@@ -56,12 +56,12 @@ static int	 grow_dst(char **, size_t *, size_t, char **, size_t);
  * returns for US-ASCII on various operating systems.
  */
 
-static int
-dangerous_locale(void) {
-	char	*loc;
+ساکن صحیح
+dangerous_locale(خالی) {
+	حرف	*loc;
 
 	loc = nl_langinfo(CODESET);
-	return strcmp(loc, "UTF-8") != 0 &&
+	واپس strcmp(loc, "UTF-8") != 0 &&
 	    strcmp(loc, "US-ASCII") != 0 &&		/* OpenBSD */
 	    strcmp(loc, "ANSI_X3.4-1968") != 0 &&	/* Linux */
 	    strcmp(loc, "ISO8859-1") != 0 &&		/* AIX */
@@ -69,23 +69,23 @@ dangerous_locale(void) {
 	    strcmp(loc, "") != 0;			/* Solaris 6 */
 }
 
-static int
-grow_dst(char **dst, size_t *sz, size_t maxsz, char **dp, size_t need)
+ساکن صحیح
+grow_dst(حرف **dst, سائز_t *sz, سائز_t maxsz, حرف **dp, سائز_t need)
 {
-	char	*tp;
-	size_t	 tsz;
+	حرف	*tp;
+	سائز_t	 tsz;
 
-	if (*dp + need < *dst + *sz)
-		return 0;
+	اگر (*dp + need < *dst + *sz)
+		واپس 0;
 	tsz = *sz + 128;
-	if (tsz > maxsz)
+	اگر (tsz > maxsz)
 		tsz = maxsz;
-	if ((tp = recallocarray(*dst, *sz, tsz, 1)) == NULL)
-		return -1;
+	اگر ((tp = recallocarray(*dst, *sz, tsz, 1)) == تہی)
+		واپس -1;
 	*dp = tp + (*dp - *dst);
 	*dst = tp;
 	*sz = tsz;
-	return 0;
+	واپس 0;
 }
 
 /*
@@ -100,117 +100,117 @@ grow_dst(char **dst, size_t *sz, size_t maxsz, char **dp, size_t need)
  * written is returned in *wp.
  */
 
-int
-vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
+صحیح
+vasnmprintf(حرف **str, سائز_t maxsz, صحیح *wp, ثابت حرف *fmt, va_list ap)
 {
-	char	*src;	/* Source string returned from vasprintf. */
-	char	*sp;	/* Pointer into src. */
-	char	*dst;	/* Destination string to be returned. */
-	char	*dp;	/* Pointer into dst. */
-	char	*tp;	/* Temporary pointer for dst. */
-	size_t	 sz;	/* Number of bytes allocated for dst. */
+	حرف	*src;	/* Source string returned from vasprintf. */
+	حرف	*sp;	/* Pointer into src. */
+	حرف	*dst;	/* Destination string to be returned. */
+	حرف	*dp;	/* Pointer into dst. */
+	حرف	*tp;	/* Temporary pointer for dst. */
+	سائز_t	 sz;	/* Number of bytes allocated for dst. */
 	wchar_t	 wc;	/* Wide character at sp. */
-	int	 len;	/* Number of bytes in the character at sp. */
-	int	 ret;	/* Number of bytes needed to format src. */
-	int	 width;	/* Display width of the character wc. */
-	int	 total_width, max_width, print;
+	صحیح	 len;	/* Number of bytes in the character at sp. */
+	صحیح	 ret;	/* Number of bytes needed to format src. */
+	صحیح	 چوڑائی;	/* Display width of the character wc. */
+	صحیح	 کل_چوڑائی, max_چوڑائی, print;
 
-	src = NULL;
-	if ((ret = vasprintf(&src, fmt, ap)) <= 0)
-		goto fail;
+	src = تہی;
+	اگر ((ret = vasprintf(&src, fmt, ap)) <= 0)
+		جاؤ fail;
 
-	sz = strlen(src) + 1;
-	if ((dst = malloc(sz)) == NULL) {
-		free(src);
+	sz = لڑی_لمبائی(src) + 1;
+	اگر ((dst = حافظہ_دو(sz)) == تہی) {
+		آزاد(src);
 		ret = -1;
-		goto fail;
+		جاؤ fail;
 	}
 
-	if (maxsz > INT_MAX)
-		maxsz = INT_MAX;
+	اگر (maxsz > زیادہ_سے_زیادہ_عدد)
+		maxsz = زیادہ_سے_زیادہ_عدد;
 
 	sp = src;
 	dp = dst;
 	ret = 0;
 	print = 1;
-	total_width = 0;
-	max_width = wp == NULL ? INT_MAX : *wp;
-	while (*sp != '\0') {
-		if ((len = mbtowc(&wc, sp, MB_CUR_MAX)) == -1) {
-			(void)mbtowc(NULL, NULL, MB_CUR_MAX);
-			if (dangerous_locale()) {
+	کل_چوڑائی = 0;
+	max_چوڑائی = wp == تہی ? زیادہ_سے_زیادہ_عدد : *wp;
+	جب (*sp != '\0') {
+		اگر ((len = mbtowc(&wc, sp, MB_CUR_MAX)) == -1) {
+			(خالی)mbtowc(تہی, تہی, MB_CUR_MAX);
+			اگر (dangerous_locale()) {
 				ret = -1;
-				break;
+				توڑو;
 			}
 			len = 1;
-			width = -1;
-		} else if (wp == NULL &&
+			چوڑائی = -1;
+		} ورنہ اگر (wp == تہی &&
 		    (wc == L'\n' || wc == L'\r' || wc == L'\t')) {
 			/*
 			 * Don't use width uninitialized; the actual
 			 * value doesn't matter because total_width
 			 * is only returned for wp != NULL.
 			 */
-			width = 0;
-		} else if ((width = wcwidth(wc)) == -1 &&
+			چوڑائی = 0;
+		} ورنہ اگر ((چوڑائی = wcwidth(wc)) == -1 &&
 		    dangerous_locale()) {
 			ret = -1;
-			break;
+			توڑو;
 		}
 
 		/* Valid, printable character. */
 
-		if (width >= 0) {
-			if (print && (dp - dst >= (int)maxsz - len ||
-			    total_width > max_width - width))
+		اگر (چوڑائی >= 0) {
+			اگر (print && (dp - dst >= (صحیح)maxsz - len ||
+			    کل_چوڑائی > max_چوڑائی - چوڑائی))
 				print = 0;
-			if (print) {
-				if (grow_dst(&dst, &sz, maxsz,
+			اگر (print) {
+				اگر (grow_dst(&dst, &sz, maxsz,
 				    &dp, len) == -1) {
 					ret = -1;
-					break;
+					توڑو;
 				}
-				total_width += width;
-				memcpy(dp, sp, len);
+				کل_چوڑائی += چوڑائی;
+				حافظہ_نقل(dp, sp, len);
 				dp += len;
 			}
 			sp += len;
-			if (ret >= 0)
+			اگر (ret >= 0)
 				ret += len;
-			continue;
+			جاری;
 		}
 
 		/* Escaping required. */
 
-		while (len > 0) {
-			if (print && (dp - dst >= (int)maxsz - 4 ||
-			    total_width > max_width - 4))
+		جب (len > 0) {
+			اگر (print && (dp - dst >= (صحیح)maxsz - 4 ||
+			    کل_چوڑائی > max_چوڑائی - 4))
 				print = 0;
-			if (print) {
-				if (grow_dst(&dst, &sz, maxsz,
+			اگر (print) {
+				اگر (grow_dst(&dst, &sz, maxsz,
 				    &dp, 4) == -1) {
 					ret = -1;
-					break;
+					توڑو;
 				}
 				tp = vis(dp, *sp, VIS_OCTAL | VIS_ALL, 0);
-				width = tp - dp;
-				total_width += width;
+				چوڑائی = tp - dp;
+				کل_چوڑائی += چوڑائی;
 				dp = tp;
-			} else
-				width = 4;
+			} ورنہ
+				چوڑائی = 4;
 			len--;
 			sp++;
-			if (ret >= 0)
-				ret += width;
+			اگر (ret >= 0)
+				ret += چوڑائی;
 		}
-		if (len > 0)
-			break;
+		اگر (len > 0)
+			توڑو;
 	}
-	free(src);
+	آزاد(src);
 	*dp = '\0';
 	*str = dst;
-	if (wp != NULL)
-		*wp = total_width;
+	اگر (wp != تہی)
+		*wp = کل_چوڑائی;
 
 	/*
 	 * If the string was truncated by the width limit but
@@ -220,52 +220,52 @@ vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
 	 * works as expected.
 	 */
 
-	if (ret < (int)maxsz && !print)
+	اگر (ret < (صحیح)maxsz && !print)
 		ret = -1;
-	return ret;
+	واپس ret;
 
 fail:
-	if (wp != NULL)
+	اگر (wp != تہی)
 		*wp = 0;
-	if (ret == 0) {
+	اگر (ret == 0) {
 		*str = src;
-		return 0;
-	} else {
-		*str = NULL;
-		return -1;
+		واپس 0;
+	} ورنہ {
+		*str = تہی;
+		واپس -1;
 	}
 }
 
-int
-snmprintf(char *str, size_t sz, int *wp, const char *fmt, ...)
+صحیح
+snmprintf(حرف *str, سائز_t sz, صحیح *wp, ثابت حرف *fmt, ...)
 {
 	va_list	 ap;
-	char	*cp = NULL;
-	int	 ret;
+	حرف	*cp = تہی;
+	صحیح	 ret;
 
 	va_start(ap, fmt);
 	ret = vasnmprintf(&cp, sz, wp, fmt, ap);
 	va_end(ap);
-	if (cp != NULL) {
-		(void)strlcpy(str, cp, sz);
-		free(cp);
-	} else
+	اگر (cp != تہی) {
+		(خالی)strlcpy(str, cp, sz);
+		آزاد(cp);
+	} ورنہ
 		*str = '\0';
-	return ret;
+	واپس ret;
 }
 
-int
-asmprintf(char **outp, size_t sz, int *wp, const char *fmt, ...)
+صحیح
+asmprintf(حرف **outp, سائز_t sz, صحیح *wp, ثابت حرف *fmt, ...)
 {
 	va_list	 ap;
-	int	 ret;
+	صحیح	 ret;
 
-	*outp = NULL;
+	*outp = تہی;
 	va_start(ap, fmt);
 	ret = vasnmprintf(outp, sz, wp, fmt, ap);
 	va_end(ap);
 
-	return ret;
+	واپس ret;
 }
 
 /*
@@ -273,44 +273,44 @@ asmprintf(char **outp, size_t sz, int *wp, const char *fmt, ...)
  * return the number of non-NUL bytes written.
  */
 
-int
-vfmprintf(FILE *stream, const char *fmt, va_list ap)
+صحیح
+vfmprintf(FILE *دھارا, ثابت حرف *fmt, va_list ap)
 {
-	char	*str = NULL;
-	int	 ret;
+	حرف	*str = تہی;
+	صحیح	 ret;
 
-	if ((ret = vasnmprintf(&str, INT_MAX, NULL, fmt, ap)) < 0) {
-		free(str);
-		return -1;
+	اگر ((ret = vasnmprintf(&str, زیادہ_سے_زیادہ_عدد, تہی, fmt, ap)) < 0) {
+		آزاد(str);
+		واپس -1;
 	}
-	if (fputs(str, stream) == EOF)
+	اگر (fputs(str, دھارا) == EOF)
 		ret = -1;
-	free(str);
-	return ret;
+	آزاد(str);
+	واپس ret;
 }
 
-int
-fmprintf(FILE *stream, const char *fmt, ...)
+صحیح
+fmprintf(FILE *دھارا, ثابت حرف *fmt, ...)
 {
 	va_list	 ap;
-	int	 ret;
+	صحیح	 ret;
 
 	va_start(ap, fmt);
-	ret = vfmprintf(stream, fmt, ap);
+	ret = vfmprintf(دھارا, fmt, ap);
 	va_end(ap);
-	return ret;
+	واپس ret;
 }
 
-int
-mprintf(const char *fmt, ...)
+صحیح
+mprintf(ثابت حرف *fmt, ...)
 {
 	va_list	 ap;
-	int	 ret;
+	صحیح	 ret;
 
 	va_start(ap, fmt);
 	ret = vfmprintf(stdout, fmt, ap);
 	va_end(ap);
-	return ret;
+	واپس ret;
 }
 
 /*
@@ -323,35 +323,35 @@ mprintf(const char *fmt, ...)
  *      what's out there first.
  * XXX: alternately runtime probe that toupper('i') != 'I' and vice-versa?
  */
-void
-msetlocale(void)
+خالی
+msetlocale(خالی)
 {
-	const char *vars[] = { "LC_ALL", "LC_CTYPE", "LANG", NULL };
-	char *cp;
-	int i;
+	ثابت حرف *vars[] = { "LC_ALL", "LC_CTYPE", "LANG", تہی };
+	حرف *cp;
+	صحیح i;
 
 	/*
 	 * We can't yet cope with dotless/dotted I in Turkic locales,
 	 * so fall back to the C locale for these.
 	 */
-	for (i = 0; vars[i] != NULL; i++) {
-		if ((cp = getenv(vars[i])) == NULL)
-			continue;
-		if (strncasecmp(cp, "tr", 2) != 0 &&
+	برائے (i = 0; vars[i] != تہی; i++) {
+		اگر ((cp = getenv(vars[i])) == تہی)
+			جاری;
+		اگر (strncasecmp(cp, "tr", 2) != 0 &&
 		    strncasecmp(cp, "crh", 3) != 0 &&
 		    strncasecmp(cp, "az", 2) != 0)
-			break;
+			توڑو;
 		/*
 		 * If we're in a UTF-8 locale then prefer to use
 		 * the C.UTF-8 locale (or equivalent) if it exists.
 		 */
-		if ((strcasestr(cp, "UTF-8") != NULL ||
-		    strcasestr(cp, "UTF8") != NULL) &&
-		    (setlocale(LC_CTYPE, "C.UTF-8") != NULL ||
-		    setlocale(LC_CTYPE, "POSIX.UTF-8") != NULL))
-			return;
+		اگر ((strcasestr(cp, "UTF-8") != تہی ||
+		    strcasestr(cp, "UTF8") != تہی) &&
+		    (setlocale(LC_CTYPE, "C.UTF-8") != تہی ||
+		    setlocale(LC_CTYPE, "POSIX.UTF-8") != تہی))
+			واپس;
 		setlocale(LC_CTYPE, "C");
-		return;
+		واپس;
 	}
 	/* We can handle this locale */
 	setlocale(LC_CTYPE, "");

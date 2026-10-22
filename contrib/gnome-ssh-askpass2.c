@@ -36,12 +36,12 @@
  * you don't trust your X server. We grab the keyboard always.
  */
 
-#define GRAB_TRIES	16
-#define GRAB_WAIT	250 /* milliseconds */
+#تعریف_کرو GRAB_TRIES	16
+#تعریف_کرو GRAB_WAIT	250 /* milliseconds */
 
-#define PROMPT_ENTRY	0
-#define PROMPT_CONFIRM	1
-#define PROMPT_NONE	2
+#تعریف_کرو PROMPT_اندراج	0
+#تعریف_کرو PROMPT_CONFIRM	1
+#تعریف_کرو PROMPT_NONE	2
 
 /*
  * Compile with:
@@ -52,248 +52,248 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
-#include <X11/Xlib.h>
-#include <gtk/gtk.h>
-#include <gdk/gdkx.h>
-#include <gdk/gdkkeysyms.h>
+#شامل <X11/Xlib.h>
+#شامل <gtk/gtk.h>
+#شامل <gdk/gdkx.h>
+#شامل <gdk/gdkkeysyms.h>
 
-static void
-report_failed_grab (GtkWidget *parent_window, const char *what)
+ساکن خالی
+report_failed_grab (GtkWidget *والد_کھڑکی, ثابت حرف *what)
 {
 	GtkWidget *err;
 
-	err = gtk_message_dialog_new(GTK_WINDOW(parent_window), 0,
-	    GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
+	err = gtk_پیغام_dialog_new(GTK_کھڑکی(والد_کھڑکی), 0,
+	    GTK_پیغام_ERROR, GTK_BUTTONS_CLOSE,
 	    "Could not grab %s. A malicious client may be eavesdropping "
 	    "on your session.", what);
-	gtk_window_set_position(GTK_WINDOW(err), GTK_WIN_POS_CENTER);
+	gtk_کھڑکی_سیٹ_position(GTK_کھڑکی(err), GTK_WIN_POS_CENTER);
 
-	gtk_dialog_run(GTK_DIALOG(err));
+	gtk_dialog_تسلسل(GTK_DIALOG(err));
 
 	gtk_widget_destroy(err);
 }
 
-static void
-ok_dialog(GtkWidget *entry, gpointer dialog)
+ساکن خالی
+ok_dialog(GtkWidget *اندراج_2, gpointer dialog)
 {
 	g_return_if_fail(GTK_IS_DIALOG(dialog));
 	gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 }
 
-static gboolean
-check_none(GtkWidget *widget, GdkEventKey *event, gpointer dialog)
+ساکن gboolean
+check_none(GtkWidget *widget, Gdk_Event_کلید *event, gpointer dialog)
 {
-	switch (event->keyval) {
-	case GDK_KEY_Escape:
+	انتخاب (event->keyval) {
+	حالت GDK_کلید_Escape:
 		/* esc -> close dialog */
 		gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE);
-		return TRUE;
-	case GDK_KEY_Tab:
+		واپس TRUE;
+	حالت GDK_کلید_Tab:
 		/* tab -> focus close button */
 		gtk_widget_grab_focus(gtk_dialog_get_widget_for_response(
 		    dialog, GTK_RESPONSE_CLOSE));
-		return TRUE;
-	default:
+		واپس TRUE;
+	طےشدہ:
 		/* eat all other key events */
-		return TRUE;
+		واپس TRUE;
 	}
 }
 
-static int
-parse_env_hex_color(const char *env, GdkColor *c)
+ساکن صحیح
+parse_env_hex_color(ثابت حرف *env, GdkColor *c)
 {
-	const char *s;
-	unsigned long ul;
-	char *ep;
-	size_t n;
+	ثابت حرف *s;
+	غیرعلامتی طویل ul;
+	حرف *ep;
+	سائز_t n;
 
-	if ((s = getenv(env)) == NULL)
-		return 0;
+	اگر ((s = getenv(env)) == تہی)
+		واپس 0;
 
-	memset(c, 0, sizeof(*c));
+	memset(c, 0, حجم(*c));
 
 	/* Permit hex rgb or rrggbb optionally prefixed by '#' or '0x' */
-	if (*s == '#')
+	اگر (*s == '#')
 		s++;
-	else if (strncmp(s, "0x", 2) == 0)
+	ورنہ اگر (لڑی_موازنہ(s, "0x", 2) == 0)
 		s += 2;
-	n = strlen(s);
-	if (n != 3 && n != 6)
-		goto bad;
+	n = لڑی_لمبائی(s);
+	اگر (n != 3 && n != 6)
+		جاؤ bad;
 	ul = strtoul(s, &ep, 16);
-	if (*ep != '\0' || ul > 0xffffff) {
+	اگر (*ep != '\0' || ul > 0xffffff) {
  bad:
 		fprintf(stderr, "Invalid $%s - invalid hex color code\n", env);
-		return 0;
+		واپس 0;
 	}
 	/* Valid hex sequence; expand into a GdkColor */
-	if (n == 3) {
+	اگر (n == 3) {
 		/* 4-bit RGB */
 		c->red = ((ul >> 8) & 0xf) << 12;
 		c->green = ((ul >> 4) & 0xf) << 12;
 		c->blue = (ul & 0xf) << 12;
-	} else {
+	} ورنہ {
 		/* 8-bit RGB */
 		c->red = ((ul >> 16) & 0xff) << 8;
 		c->green = ((ul >> 8) & 0xff) << 8;
 		c->blue = (ul & 0xff) << 8;
 	}
-	return 1;
+	واپس 1;
 }
 
-static int
-passphrase_dialog(char *message, int prompt_type)
+ساکن صحیح
+passphrase_dialog(حرف *پیغام_2, صحیح prompt_type)
 {
-	const char *failed;
-	char *passphrase, *local;
-	int result, grab_tries, grab_server, grab_pointer;
-	int buttons, default_response;
-	GtkWidget *parent_window, *dialog, *entry;
-	GdkGrabStatus status;
+	ثابت حرف *failed;
+	حرف *passphrase, *local;
+	صحیح نتیجہ, grab_tries, grab_server, grab_اشارہ_گر;
+	صحیح buttons, default_response;
+	GtkWidget *والد_کھڑکی, *dialog, *اندراج_2;
+	Gdk_Grab_حالت حالت_2;
 	GdkColor fg, bg;
-	int fg_set = 0, bg_set = 0;
+	صحیح fg_سیٹ = 0, bg_سیٹ = 0;
 
-	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != NULL);
-	grab_pointer = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != NULL);
+	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != تہی);
+	grab_اشارہ_گر = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != تہی);
 	grab_tries = 0;
 
-	fg_set = parse_env_hex_color("GNOME_SSH_ASKPASS_FG_COLOR", &fg);
-	bg_set = parse_env_hex_color("GNOME_SSH_ASKPASS_BG_COLOR", &bg);
+	fg_سیٹ = parse_env_hex_color("GNOME_SSH_ASKPASS_FG_COLOR", &fg);
+	bg_سیٹ = parse_env_hex_color("GNOME_SSH_ASKPASS_BG_COLOR", &bg);
 
 	/* Create an invisible parent window so that GtkDialog doesn't
 	 * complain.  */
-	parent_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	والد_کھڑکی = gtk_کھڑکی_new(GTK_کھڑکی_TOPLEVEL);
 
-	switch (prompt_type) {
-	case PROMPT_CONFIRM:
+	انتخاب (prompt_type) {
+	حالت PROMPT_CONFIRM:
 		buttons = GTK_BUTTONS_YES_NO;
 		default_response = GTK_RESPONSE_YES;
-		break;
-	case PROMPT_NONE:
+		توڑو;
+	حالت PROMPT_NONE:
 		buttons = GTK_BUTTONS_CLOSE;
 		default_response = GTK_RESPONSE_CLOSE;
-		break;
-	default:
+		توڑو;
+	طےشدہ:
 		buttons = GTK_BUTTONS_OK_CANCEL;
 		default_response = GTK_RESPONSE_OK;
-		break;
+		توڑو;
 	}
 
-	dialog = gtk_message_dialog_new(GTK_WINDOW(parent_window), 0,
-	    GTK_MESSAGE_QUESTION, buttons, "%s", message);
+	dialog = gtk_پیغام_dialog_new(GTK_کھڑکی(والد_کھڑکی), 0,
+	    GTK_پیغام_QUESTION, buttons, "%s", پیغام_2);
 
-	gtk_window_set_title(GTK_WINDOW(dialog), "OpenSSH");
-	gtk_window_set_position (GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-	gtk_window_set_keep_above(GTK_WINDOW(dialog), TRUE);
-	gtk_dialog_set_default_response(GTK_DIALOG(dialog), default_response);
-	gtk_window_set_keep_above(GTK_WINDOW(dialog), TRUE);
+	gtk_کھڑکی_سیٹ_title(GTK_کھڑکی(dialog), "OpenSSH");
+	gtk_کھڑکی_سیٹ_position (GTK_کھڑکی(dialog), GTK_WIN_POS_CENTER);
+	gtk_کھڑکی_سیٹ_keep_above(GTK_کھڑکی(dialog), TRUE);
+	gtk_dialog_سیٹ_default_response(GTK_DIALOG(dialog), default_response);
+	gtk_کھڑکی_سیٹ_keep_above(GTK_کھڑکی(dialog), TRUE);
 
-	if (fg_set)
-		gtk_widget_modify_fg(dialog, GTK_STATE_NORMAL, &fg);
-	if (bg_set)
-		gtk_widget_modify_bg(dialog, GTK_STATE_NORMAL, &bg);
+	اگر (fg_سیٹ)
+		gtk_widget_modify_fg(dialog, GTK_STATE_معمول, &fg);
+	اگر (bg_سیٹ)
+		gtk_widget_modify_bg(dialog, GTK_STATE_معمول, &bg);
 
-	if (prompt_type == PROMPT_ENTRY || prompt_type == PROMPT_NONE) {
-		entry = gtk_entry_new();
-		if (fg_set)
-			gtk_widget_modify_fg(entry, GTK_STATE_NORMAL, &fg);
-		if (bg_set)
-			gtk_widget_modify_bg(entry, GTK_STATE_NORMAL, &bg);
-		gtk_box_pack_start(
+	اگر (prompt_type == PROMPT_اندراج || prompt_type == PROMPT_NONE) {
+		اندراج_2 = gtk_اندراج_new();
+		اگر (fg_سیٹ)
+			gtk_widget_modify_fg(اندراج_2, GTK_STATE_معمول, &fg);
+		اگر (bg_سیٹ)
+			gtk_widget_modify_bg(اندراج_2, GTK_STATE_معمول, &bg);
+		gtk_box_pack_آغاز(
 		    GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-		    entry, FALSE, FALSE, 0);
-		gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-		gtk_widget_grab_focus(entry);
-		if (prompt_type == PROMPT_ENTRY) {
-			gtk_widget_show(entry);
+		    اندراج_2, FALSE, FALSE, 0);
+		gtk_اندراج_سیٹ_visibility(GTK_اندراج(اندراج_2), FALSE);
+		gtk_widget_grab_focus(اندراج_2);
+		اگر (prompt_type == PROMPT_اندراج) {
+			gtk_widget_show(اندراج_2);
 			/* Make <enter> close dialog */
-			g_signal_connect(G_OBJECT(entry), "activate",
+			g_signal_connect(G_OBJECT(اندراج_2), "activate",
 					 G_CALLBACK(ok_dialog), dialog);
-		} else {
+		} ورنہ {
 			/*
 			 * Ensure the 'close' button is not focused by default
 			 * but is still reachable via tab. This is a bit of a
 			 * hack - it uses a hidden entry that responds to a
 			 * couple of keypress events (escape and tab only).
 			 */
-			gtk_widget_realize(entry);
-			g_signal_connect(G_OBJECT(entry), "key_press_event",
+			gtk_widget_realize(اندراج_2);
+			g_signal_connect(G_OBJECT(اندراج_2), "key_press_event",
 			    G_CALLBACK(check_none), dialog);
 		}
 	}
 
 	/* Grab focus */
 	gtk_widget_show_now(dialog);
-	if (grab_pointer) {
-		for(;;) {
-			status = gdk_pointer_grab(
-			    (gtk_widget_get_window(GTK_WIDGET(dialog))), TRUE,
-			    0, NULL, NULL, GDK_CURRENT_TIME);
-			if (status == GDK_GRAB_SUCCESS)
-				break;
+	اگر (grab_اشارہ_گر) {
+		برائے(;;) {
+			حالت_2 = gdk_اشارہ_گر_grab(
+			    (gtk_widget_get_کھڑکی(GTK_WIDGET(dialog))), TRUE,
+			    0, تہی, تہی, GDK_CURRENT_وقت);
+			اگر (حالت_2 == GDK_GRAB_SUCCESS)
+				توڑو;
 			usleep(GRAB_WAIT * 1000);
-			if (++grab_tries > GRAB_TRIES) {
+			اگر (++grab_tries > GRAB_TRIES) {
 				failed = "mouse";
-				goto nograb;
+				جاؤ nograb;
 			}
 		}
 	}
-	for(;;) {
-		status = gdk_keyboard_grab(
-		    gtk_widget_get_window(GTK_WIDGET(dialog)), FALSE,
-		    GDK_CURRENT_TIME);
-		if (status == GDK_GRAB_SUCCESS)
-			break;
+	برائے(;;) {
+		حالت_2 = gdk_keyboard_grab(
+		    gtk_widget_get_کھڑکی(GTK_WIDGET(dialog)), FALSE,
+		    GDK_CURRENT_وقت);
+		اگر (حالت_2 == GDK_GRAB_SUCCESS)
+			توڑو;
 		usleep(GRAB_WAIT * 1000);
-		if (++grab_tries > GRAB_TRIES) {
+		اگر (++grab_tries > GRAB_TRIES) {
 			failed = "keyboard";
-			goto nograbkb;
+			جاؤ nograbkb;
 		}
 	}
-	if (grab_server) {
+	اگر (grab_server) {
 		gdk_x11_grab_server();
 	}
 
-	result = gtk_dialog_run(GTK_DIALOG(dialog));
+	نتیجہ = gtk_dialog_تسلسل(GTK_DIALOG(dialog));
 
 	/* Ungrab */
-	if (grab_server)
+	اگر (grab_server)
 		XUngrabServer(gdk_x11_get_default_xdisplay());
-	if (grab_pointer)
-		gdk_pointer_ungrab(GDK_CURRENT_TIME);
-	gdk_keyboard_ungrab(GDK_CURRENT_TIME);
+	اگر (grab_اشارہ_گر)
+		gdk_اشارہ_گر_ungrab(GDK_CURRENT_وقت);
+	gdk_keyboard_ungrab(GDK_CURRENT_وقت);
 	gdk_flush();
 
 	/* Report passphrase if user selected OK */
-	if (prompt_type == PROMPT_ENTRY) {
-		passphrase = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
-		if (result == GTK_RESPONSE_OK) {
+	اگر (prompt_type == PROMPT_اندراج) {
+		passphrase = g_strdup(gtk_اندراج_get_متن(GTK_اندراج(اندراج_2)));
+		اگر (نتیجہ == GTK_RESPONSE_OK) {
 			local = g_locale_from_utf8(passphrase,
-			    strlen(passphrase), NULL, NULL, NULL);
-			if (local != NULL) {
+			    لڑی_لمبائی(passphrase), تہی, تہی, تہی);
+			اگر (local != تہی) {
 				puts(local);
-				memset(local, '\0', strlen(local));
+				memset(local, '\0', لڑی_لمبائی(local));
 				g_free(local);
-			} else {
+			} ورنہ {
 				puts(passphrase);
 			}
 		}
 		/* Zero passphrase in memory */
-		memset(passphrase, '\b', strlen(passphrase));
-		gtk_entry_set_text(GTK_ENTRY(entry), passphrase);
-		memset(passphrase, '\0', strlen(passphrase));
+		memset(passphrase, '\b', لڑی_لمبائی(passphrase));
+		gtk_اندراج_سیٹ_متن(GTK_اندراج(اندراج_2), passphrase);
+		memset(passphrase, '\0', لڑی_لمبائی(passphrase));
 		g_free(passphrase);
 	}
 
 	gtk_widget_destroy(dialog);
-	if (result != GTK_RESPONSE_OK && result != GTK_RESPONSE_YES)
-		return -1;
-	return 0;
+	اگر (نتیجہ != GTK_RESPONSE_OK && نتیجہ != GTK_RESPONSE_YES)
+		واپس -1;
+	واپس 0;
 
  nograbkb:
 	/*
@@ -301,41 +301,41 @@ passphrase_dialog(char *message, int prompt_type)
 	 * the failure to the user.  Note that XGrabServer() cannot
 	 * fail.
 	 */
-	gdk_pointer_ungrab(GDK_CURRENT_TIME);
+	gdk_اشارہ_گر_ungrab(GDK_CURRENT_وقت);
  nograb:
-	if (grab_server)
+	اگر (grab_server)
 		XUngrabServer(gdk_x11_get_default_xdisplay());
 	gtk_widget_destroy(dialog);
 	
-	report_failed_grab(parent_window, failed);
+	report_failed_grab(والد_کھڑکی, failed);
 
-	return (-1);
+	واپس (-1);
 }
 
-int
-main(int argc, char **argv)
+صحیح
+مین(صحیح argc, حرف **argv)
 {
-	char *message, *prompt_mode;
-	int result, prompt_type = PROMPT_ENTRY;
+	حرف *پیغام_2, *prompt_منوال;
+	صحیح نتیجہ, prompt_type = PROMPT_اندراج;
 
 	gtk_init(&argc, &argv);
 
-	if (argc > 1) {
-		message = g_strjoinv(" ", argv + 1);
-	} else {
-		message = g_strdup("Enter your OpenSSH passphrase:");
+	اگر (argc > 1) {
+		پیغام_2 = g_strjoinv(" ", argv + 1);
+	} ورنہ {
+		پیغام_2 = g_strdup("Enter your OpenSSH passphrase:");
 	}
 
-	if ((prompt_mode = getenv("SSH_ASKPASS_PROMPT")) != NULL) {
-		if (strcasecmp(prompt_mode, "confirm") == 0)
+	اگر ((prompt_منوال = getenv("SSH_ASKPASS_PROMPT")) != تہی) {
+		اگر (strcasecmp(prompt_منوال, "confirm") == 0)
 			prompt_type = PROMPT_CONFIRM;
-		else if (strcasecmp(prompt_mode, "none") == 0)
+		ورنہ اگر (strcasecmp(prompt_منوال, "none") == 0)
 			prompt_type = PROMPT_NONE;
 	}
 
 	setvbuf(stdout, 0, _IONBF, 0);
-	result = passphrase_dialog(message, prompt_type);
-	g_free(message);
+	نتیجہ = passphrase_dialog(پیغام_2, prompt_type);
+	g_free(پیغام_2);
 
-	return (result);
+	واپس (نتیجہ);
 }

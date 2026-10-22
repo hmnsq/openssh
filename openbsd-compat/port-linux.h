@@ -14,29 +14,29 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _PORT_LINUX_H
-#define _PORT_LINUX_H
+#اگر_غیر_تعریف_شدہ پورٹ_LINUX_H
+#تعریف_کرو پورٹ_LINUX_H
 
-#ifdef WITH_SELINUX
-int ssh_selinux_enabled(void);
-void ssh_selinux_setup_pty(char *, const char *);
-void ssh_selinux_setup_exec_context(char *);
-void ssh_selinux_change_context(const char *);
-void ssh_selinux_setfscreatecon(const char *);
-#endif
+#اگر_تعریف_شدہ WITH_SELINUX
+صحیح ssh_selinux_enabled(خالی);
+خالی ssh_selinux_تیاری_pty(حرف *, ثابت حرف *);
+خالی ssh_selinux_تیاری_exec_context(حرف *);
+خالی ssh_selinux_change_context(ثابت حرف *);
+خالی ssh_selinux_setfscreatecon(ثابت حرف *);
+#اگر_ختم
 
-#ifdef LINUX_OOM_ADJUST
-void oom_adjust_restore(void);
-void oom_adjust_setup(void);
-#endif
+#اگر_تعریف_شدہ LINUX_OOM_ADJUST
+خالی oom_adjust_restore(خالی);
+خالی oom_adjust_تیاری(خالی);
+#اگر_ختم
 
-#ifdef LINUX_MEMLOCK_ONFAULT
-void memlock_onfault_setup(void);
-#endif
+#اگر_تعریف_شدہ LINUX_MEMLOCK_ONFAULT
+خالی memlock_onfault_تیاری(خالی);
+#اگر_ختم
 
-#ifdef SYSTEMD_NOTIFY
-void ssh_systemd_notify_ready(void);
-void ssh_systemd_notify_reload(void);
-#endif
+#اگر_تعریف_شدہ SYSTEMD_NOTIFY
+خالی ssh_systemd_notify_ready(خالی);
+خالی ssh_systemd_notify_reload(خالی);
+#اگر_ختم
 
-#endif /* ! _PORT_LINUX_H */
+#اگر_ختم /* ! _PORT_LINUX_H */

@@ -23,18 +23,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SSH_GSS_H
-#define _SSH_GSS_H
+#اگر_غیر_تعریف_شدہ _SSH_GSS_H
+#تعریف_کرو _SSH_GSS_H
 
-#ifdef GSSAPI
+#اگر_تعریف_شدہ GSSAPI
 
-#ifdef HAVE_GSSAPI_H
-#include <gssapi.h>
-#elif defined(HAVE_GSSAPI_GSSAPI_H)
-#include <gssapi/gssapi.h>
-#endif
+#اگر_تعریف_شدہ HAVE_GSSAPI_H
+#شامل <gssapi.h>
+#وگرنہ_اگر defined(HAVE_GSSAPI_GSSAPI_H)
+#شامل <gssapi/gssapi.h>
+#اگر_ختم
 
-#ifdef KRB5
+#اگر_تعریف_شدہ KRB5
 # ifndef HEIMDAL
 #  ifdef HAVE_GSSAPI_GENERIC_H
 #   include <gssapi_generic.h>
@@ -44,50 +44,50 @@
 
 /* Old MIT Kerberos doesn't seem to define GSS_NT_HOSTBASED_SERVICE */
 
-#  if !HAVE_DECL_GSS_C_NT_HOSTBASED_SERVICE
+#  اگر !HAVE_DECL_GSS_C_NT_HOSTBASED_SERVICE
 #   define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
 #  endif /* !HAVE_DECL_GSS_C_NT_... */
 
 # endif /* !HEIMDAL */
-#endif /* KRB5 */
+#اگر_ختم /* KRB5 */
 
 /* draft-ietf-secsh-gsskeyex-06 */
-#define SSH2_MSG_USERAUTH_GSSAPI_RESPONSE		60
-#define SSH2_MSG_USERAUTH_GSSAPI_TOKEN			61
-#define SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE	63
-#define SSH2_MSG_USERAUTH_GSSAPI_ERROR			64
-#define SSH2_MSG_USERAUTH_GSSAPI_ERRTOK			65
-#define SSH2_MSG_USERAUTH_GSSAPI_MIC			66
+#تعریف_کرو SSH2_پیغام_USERAUTH_GSSAPI_RESPONSE		60
+#تعریف_کرو SSH2_پیغام_USERAUTH_GSSAPI_TOKEN			61
+#تعریف_کرو SSH2_پیغام_USERAUTH_GSSAPI_EXCHANGE_COMPLETE	63
+#تعریف_کرو SSH2_پیغام_USERAUTH_GSSAPI_ERROR			64
+#تعریف_کرو SSH2_پیغام_USERAUTH_GSSAPI_ERRTOK			65
+#تعریف_کرو SSH2_پیغام_USERAUTH_GSSAPI_MIC			66
 
-#define SSH_GSS_OIDTYPE 0x06
+#تعریف_کرو SSH_GSS_OIDTYPE 0x06
 
-typedef struct {
-	char *filename;
-	char *envvar;
-	char *envval;
-	void *data;
+قسمتعریف ساخت {
+	حرف *filename;
+	حرف *envvar;
+	حرف *envval;
+	خالی *ڈیٹا;
 } ssh_gssapi_ccache;
 
-typedef struct {
-	gss_buffer_desc displayname;
-	gss_buffer_desc exportedname;
+قسمتعریف ساخت {
+	gss_بفر_desc displayname;
+	gss_بفر_desc exportedname;
 	gss_cred_id_t creds;
-	struct ssh_gssapi_mech_struct *mech;
+	ساخت ssh_gssapi_mech_struct *mech;
 	ssh_gssapi_ccache store;
-	int userok;
+	صحیح userok;
 } ssh_gssapi_client;
 
-typedef struct ssh_gssapi_mech_struct {
-	char *enc_name;
-	char *name;
+قسمتعریف ساخت ssh_gssapi_mech_struct {
+	حرف *enc_name;
+	حرف *name;
 	gss_OID_desc oid;
-	int (*dochild) (ssh_gssapi_client *);
-	int (*userok) (ssh_gssapi_client *, char *);
-	int (*localname) (ssh_gssapi_client *, char **);
-	void (*storecreds) (ssh_gssapi_client *);
+	صحیح (*dochild) (ssh_gssapi_client *);
+	صحیح (*userok) (ssh_gssapi_client *, حرف *);
+	صحیح (*localname) (ssh_gssapi_client *, حرف **);
+	خالی (*storecreds) (ssh_gssapi_client *);
 } ssh_gssapi_mech;
 
-typedef struct {
+قسمتعریف ساخت {
 	OM_uint32	major; /* both */
 	OM_uint32	minor; /* both */
 	gss_ctx_id_t	context; /* both */
@@ -98,43 +98,43 @@ typedef struct {
 	gss_cred_id_t	client_creds; /* server */
 } Gssctxt;
 
-extern ssh_gssapi_mech *supported_mechs[];
+خارجی ssh_gssapi_mech *supported_mechs[];
 
-int  ssh_gssapi_check_oid(Gssctxt *, void *, size_t);
-void ssh_gssapi_set_oid_data(Gssctxt *, void *, size_t);
-void ssh_gssapi_set_oid(Gssctxt *, gss_OID);
-void ssh_gssapi_supported_oids(gss_OID_set *);
-void ssh_gssapi_prepare_supported_oids(void);
-OM_uint32 ssh_gssapi_test_oid_supported(OM_uint32 *, gss_OID, int *);
+صحیح  ssh_gssapi_check_oid(Gssctxt *, خالی *, سائز_t);
+خالی ssh_gssapi_سیٹ_oid_ڈیٹا(Gssctxt *, خالی *, سائز_t);
+خالی ssh_gssapi_سیٹ_oid(Gssctxt *, gss_OID);
+خالی ssh_gssapi_supported_oids(gss_OID_سیٹ *);
+خالی ssh_gssapi_prepare_supported_oids(خالی);
+OM_uint32 ssh_gssapi_test_oid_supported(OM_uint32 *, gss_OID, صحیح *);
 
-struct sshbuf;
-int ssh_gssapi_get_buffer_desc(struct sshbuf *, gss_buffer_desc *);
+ساخت sshbuf;
+صحیح ssh_gssapi_get_بفر_desc(ساخت sshbuf *, gss_بفر_desc *);
 
-OM_uint32 ssh_gssapi_import_name(Gssctxt *, const char *);
-OM_uint32 ssh_gssapi_init_ctx(Gssctxt *, int,
-    gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
+OM_uint32 ssh_gssapi_import_name(Gssctxt *, ثابت حرف *);
+OM_uint32 ssh_gssapi_init_ctx(Gssctxt *, صحیح,
+    gss_بفر_desc *, gss_بفر_desc *, OM_uint32 *);
 OM_uint32 ssh_gssapi_accept_ctx(Gssctxt *,
-    gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
+    gss_بفر_desc *, gss_بفر_desc *, OM_uint32 *);
 OM_uint32 ssh_gssapi_getclient(Gssctxt *, ssh_gssapi_client *);
-void ssh_gssapi_error(Gssctxt *);
-char *ssh_gssapi_last_error(Gssctxt *, OM_uint32 *, OM_uint32 *);
-void ssh_gssapi_build_ctx(Gssctxt **);
-void ssh_gssapi_delete_ctx(Gssctxt **);
-OM_uint32 ssh_gssapi_sign(Gssctxt *, gss_buffer_t, gss_buffer_t);
-void ssh_gssapi_buildmic(struct sshbuf *, const char *,
-    const char *, const char *, const struct sshbuf *);
-int ssh_gssapi_check_mechanism(Gssctxt **, gss_OID, const char *);
+خالی ssh_gssapi_error(Gssctxt *);
+حرف *ssh_gssapi_آخری_error(Gssctxt *, OM_uint32 *, OM_uint32 *);
+خالی ssh_gssapi_build_ctx(Gssctxt **);
+خالی ssh_gssapi_delete_ctx(Gssctxt **);
+OM_uint32 ssh_gssapi_sign(Gssctxt *, gss_بفر_t, gss_بفر_t);
+خالی ssh_gssapi_buildmic(ساخت sshbuf *, ثابت حرف *,
+    ثابت حرف *, ثابت حرف *, ثابت ساخت sshbuf *);
+صحیح ssh_gssapi_check_mechanism(Gssctxt **, gss_OID, ثابت حرف *);
 
 /* In the server */
 OM_uint32 ssh_gssapi_server_ctx(Gssctxt **, gss_OID);
-int ssh_gssapi_userok(char *name);
-OM_uint32 ssh_gssapi_checkmic(Gssctxt *, gss_buffer_t, gss_buffer_t);
-void ssh_gssapi_do_child(char ***, u_int *);
-void ssh_gssapi_cleanup_creds(void);
-void ssh_gssapi_storecreds(void);
-const char *ssh_gssapi_displayname(void);
-void ssh_gssapi_cleanup_global_client(void);
+صحیح ssh_gssapi_userok(حرف *name);
+OM_uint32 ssh_gssapi_checkmic(Gssctxt *, gss_بفر_t, gss_بفر_t);
+خالی ssh_gssapi_do_بچہ(حرف ***, u_int *);
+خالی ssh_gssapi_cleanup_creds(خالی);
+خالی ssh_gssapi_storecreds(خالی);
+ثابت حرف *ssh_gssapi_displayname(خالی);
+خالی ssh_gssapi_cleanup_global_client(خالی);
 
-#endif /* GSSAPI */
+#اگر_ختم /* GSSAPI */
 
-#endif /* _SSH_GSS_H */
+#اگر_ختم /* _SSH_GSS_H */

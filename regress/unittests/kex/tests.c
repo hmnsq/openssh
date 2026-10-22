@@ -3,27 +3,27 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <stdio.h>
+#شامل <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#شامل "../test_helper/test_helper.h"
 
-void kex_tests(void);
-void kex_proposal_tests(void);
-void kex_proposal_populate_tests(void);
+خالی kex_tests(خالی);
+خالی kex_proposal_tests(خالی);
+خالی kex_proposal_populate_tests(خالی);
 
-void
-tests(void)
+خالی
+tests(خالی)
 {
 	kex_tests();
 	kex_proposal_tests();
 	kex_proposal_populate_tests();
 }
 
-void
-benchmarks(void)
+خالی
+benchmarks(خالی)
 {
-	printf("\n");
+	لکھو("\n");
 	kex_tests();
 }

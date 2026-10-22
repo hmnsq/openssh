@@ -1,57 +1,57 @@
 // Basic fuzz test for encapsulate operation.
 
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <err.h>
+#شامل <stddef.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <err.h>
 
-extern "C" {
+خارجی "C" {
 
-#include "crypto_api.h"
-#include "hash.c"
+#شامل "crypto_api.h"
+#شامل "hash.c"
 
-#undef randombytes
-#define USE_SNTRUP761X25519 1
-#ifdef SNTRUP761_NO_ASM
+#تعریف_منسوخ randombytes
+#تعریف_کرو USE_SNTRUP761X25519 1
+#اگر_تعریف_شدہ SNTRUP761_NO_ASM
 # undef __GNUC__
-#endif
-void randombytes(unsigned char *ptr, size_t l);
-volatile crypto_int16 crypto_int16_optblocker = 0;
-volatile crypto_int32 crypto_int32_optblocker = 0;
-volatile crypto_int64 crypto_int64_optblocker = 0;
-#include "sntrup761.c"
+#اگر_ختم
+خالی randombytes(غیرعلامتی حرف *ptr, سائز_t l);
+متلون crypto_int16 crypto_int16_optblocker = 0;
+متلون crypto_int32 crypto_int32_optblocker = 0;
+متلون crypto_int64 crypto_int64_optblocker = 0;
+#شامل "sntrup761.c"
 
-static int real_random;
+ساکن صحیح real_random;
 
-void
-randombytes(unsigned char *ptr, size_t l)
+خالی
+randombytes(غیرعلامتی حرف *ptr, سائز_t l)
 {
-	if (real_random)
+	اگر (real_random)
 		arc4random_buf(ptr, l);
-	else
+	ورنہ
 		memset(ptr, 0, l);
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
+صحیح LLVMFuzzer_Test_One_داخلہ(ثابت uint8_t* داخلہ, سائز_t len)
 {
-	unsigned char pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
-	unsigned char ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
-	unsigned char secret[crypto_kem_sntrup761_BYTES];
+	غیرعلامتی حرف pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
+	غیرعلامتی حرف ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
+	غیرعلامتی حرف secret[crypto_kem_sntrup761_بائٹیں];
 
-	memset(&pk, 0, sizeof(pk));
-	if (len > sizeof(pk)) {
-		len = sizeof(pk);
+	memset(&pk, 0, حجم(pk));
+	اگر (len > حجم(pk)) {
+		len = حجم(pk);
 	}
-	memcpy(pk, input, len);
+	حافظہ_نقل(pk, داخلہ, len);
 
 	real_random = 0;
-	(void)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
+	(خالی)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
 	real_random = 1;
-	(void)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
-	return 0;
+	(خالی)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
+	واپس 0;
 }
 
 } // extern

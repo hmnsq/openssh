@@ -30,15 +30,15 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoull.c */
 
-#include "includes.h"
-#ifndef HAVE_STRTOULL
+#شامل "includes.h"
+#اگر_غیر_تعریف_شدہ HAVE_STRTOULL
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#شامل <ctype.h>
+#شامل <errno.h>
+#شامل <limits.h>
+#شامل <stdlib.h>
 
 /*
  * Convert a string to an unsigned long long.
@@ -46,65 +46,65 @@
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-unsigned long long
-strtoull(const char *nptr, char **endptr, int base)
+غیرعلامتی طویل طویل
+strtoull(ثابت حرف *nptr, حرف **endptr, صحیح بنیاد)
 {
-	const char *s;
-	unsigned long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	ثابت حرف *s;
+	غیرعلامتی طویل طویل acc, cutoff;
+	صحیح c;
+	صحیح neg, any, cutlim;
 
 	/*
 	 * See strtoq for comments as to the logic used.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	کرو {
+		c = (غیرعلامتی حرف) *s++;
+	} جب (خلا_ہے(c));
+	اگر (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else { 
+	} ورنہ { 
 		neg = 0;
-		if (c == '+')
+		اگر (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	اگر ((بنیاد == 0 || بنیاد == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
-		base = 16;
+		بنیاد = 16;
 	}
-	if (base == 0)
-		base = c == '0' ? 8 : 10;
+	اگر (بنیاد == 0)
+		بنیاد = c == '0' ? 8 : 10;
 
-	cutoff = ULLONG_MAX / (unsigned long long)base;
-	cutlim = ULLONG_MAX % (unsigned long long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	cutoff = ULLONG_MAX / (غیرعلامتی طویل طویل)بنیاد;
+	cutlim = ULLONG_MAX % (غیرعلامتی طویل طویل)بنیاد;
+	برائے (acc = 0, any = 0;; c = (غیرعلامتی حرف) *s++) {
+		اگر (ہندسہ_ہے(c))
 			c -= '0';
-		else if (isalpha(c))
+		ورنہ اگر (حرف_ہے(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		ورنہ
+			توڑو;
+		اگر (c >= بنیاد)
+			توڑو;
+		اگر (any < 0)
+			جاری;
+		اگر (acc > cutoff || (acc == cutoff && c > cutlim)) {
 			any = -1;
 			acc = ULLONG_MAX;
 			errno = ERANGE;
-		} else {
+		} ورنہ {
 			any = 1;
-			acc *= (unsigned long long)base;
+			acc *= (غیرعلامتی طویل طویل)بنیاد;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	اگر (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	اگر (endptr != 0)
+		*endptr = (حرف *) (any ? s - 1 : nptr);
+	واپس (acc);
 }
-#endif /* !HAVE_STRTOULL */
+#اگر_ختم /* !HAVE_STRTOULL */

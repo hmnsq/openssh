@@ -24,26 +24,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DISPATCH_H
-#define DISPATCH_H
+#اگر_غیر_تعریف_شدہ DISPATCH_H
+#تعریف_کرو DISPATCH_H
 
-#define DISPATCH_MAX	255
+#تعریف_کرو DISPATCH_MAX	255
 
-enum {
-	DISPATCH_BLOCK,
+شمار {
+	DISPATCH_بلاک,
 	DISPATCH_NONBLOCK
 };
 
-struct ssh;
+ساخت ssh;
 
-typedef int dispatch_fn(int, uint32_t, struct ssh *);
+قسمتعریف صحیح dispatch_fn(صحیح, uint32_t, ساخت ssh *);
 
-int	dispatch_protocol_error(int, uint32_t, struct ssh *);
-int	dispatch_protocol_ignore(int, uint32_t, struct ssh *);
-void	ssh_dispatch_init(struct ssh *, dispatch_fn *);
-void	ssh_dispatch_set(struct ssh *, int, dispatch_fn *);
-void	ssh_dispatch_range(struct ssh *, u_int, u_int, dispatch_fn *);
-int	ssh_dispatch_run(struct ssh *, int, volatile sig_atomic_t *);
-void	ssh_dispatch_run_fatal(struct ssh *, int, volatile sig_atomic_t *);
+صحیح	dispatch_protocol_error(صحیح, uint32_t, ساخت ssh *);
+صحیح	dispatch_protocol_ignore(صحیح, uint32_t, ساخت ssh *);
+خالی	ssh_dispatch_init(ساخت ssh *, dispatch_fn *);
+خالی	ssh_dispatch_سیٹ(ساخت ssh *, صحیح, dispatch_fn *);
+خالی	ssh_dispatch_range(ساخت ssh *, u_int, u_int, dispatch_fn *);
+صحیح	ssh_dispatch_تسلسل(ساخت ssh *, صحیح, متلون sig_atomic_t *);
+خالی	ssh_dispatch_تسلسل_fatal(ساخت ssh *, صحیح, متلون sig_atomic_t *);
 
-#endif
+#اگر_ختم

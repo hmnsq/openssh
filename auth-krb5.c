@@ -28,58 +28,58 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <pwd.h>
-#include <stdarg.h>
+#شامل <sys/types.h>
+#شامل <pwd.h>
+#شامل <stdarg.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "packet.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "misc.h"
-#include "servconf.h"
-#include "uidswap.h"
-#include "hostfile.h"
-#include "auth.h"
+#شامل "xmalloc.h"
+#شامل "ssh.h"
+#شامل "packet.h"
+#شامل "log.h"
+#شامل "sshbuf.h"
+#شامل "sshkey.h"
+#شامل "misc.h"
+#شامل "servconf.h"
+#شامل "uidswap.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
 
-#ifdef KRB5
-#include <errno.h>
-#include <unistd.h>
-#include <string.h>
-#include <krb5.h>
+#اگر_تعریف_شدہ KRB5
+#شامل <errno.h>
+#شامل <unistd.h>
+#شامل <string.h>
+#شامل <krb5.h>
 
-extern ServerOptions	 options;
+خارجی ServerOptions	 options;
 
-static int
-krb5_init(void *context)
+ساکن صحیح
+krb5_init(خالی *context)
 {
 	Authctxt *authctxt = (Authctxt *)context;
-	krb5_error_code problem;
+	krb5_error_رمز problem;
 
-	if (authctxt->krb5_ctx == NULL) {
+	اگر (authctxt->krb5_ctx == تہی) {
 		problem = krb5_init_context(&authctxt->krb5_ctx);
-		if (problem)
-			return (problem);
+		اگر (problem)
+			واپس (problem);
 	}
-	return (0);
+	واپس (0);
 }
 
-int
-auth_krb5_password(Authctxt *authctxt, const char *password)
+صحیح
+auth_krb5_password(Authctxt *authctxt, ثابت حرف *password)
 {
-#ifndef HEIMDAL
+#اگر_غیر_تعریف_شدہ HEIMDAL
 	krb5_creds creds;
 	krb5_principal server;
-#endif
-	krb5_error_code problem;
-	krb5_ccache ccache = NULL;
-	int len;
-	char *client, *platform_client;
-	const char *errmsg;
+#اگر_ختم
+	krb5_error_رمز problem;
+	krb5_ccache ccache = تہی;
+	صحیح len;
+	حرف *client, *platform_client;
+	ثابت حرف *errmsg;
 
 	/* get platform-specific kerberos client principal name (if it exists) */
 	platform_client = platform_krb5_get_principal_name(authctxt->pw->pw_name);
@@ -88,186 +88,186 @@ auth_krb5_password(Authctxt *authctxt, const char *password)
 	temporarily_use_uid(authctxt->pw);
 
 	problem = krb5_init(authctxt);
-	if (problem)
-		goto out;
+	اگر (problem)
+		جاؤ برآمد;
 
 	problem = krb5_parse_name(authctxt->krb5_ctx, client,
 		    &authctxt->krb5_user);
-	if (problem)
-		goto out;
+	اگر (problem)
+		جاؤ برآمد;
 
-#ifdef HEIMDAL
+#اگر_تعریف_شدہ HEIMDAL
 # ifdef HAVE_KRB5_CC_NEW_UNIQUE
 	problem = krb5_cc_new_unique(authctxt->krb5_ctx,
-	    krb5_mcc_ops.prefix, NULL, &ccache);
-# else
+	    krb5_mcc_ops.سابقہ, تہی, &ccache);
+# ورنہ
 	problem = krb5_cc_gen_new(authctxt->krb5_ctx, &krb5_mcc_ops, &ccache);
 # endif
-	if (problem)
-		goto out;
+	اگر (problem)
+		جاؤ برآمد;
 
 	problem = krb5_cc_initialize(authctxt->krb5_ctx, ccache,
 		authctxt->krb5_user);
-	if (problem)
-		goto out;
+	اگر (problem)
+		جاؤ برآمد;
 
 	restore_uid();
 
 	problem = krb5_verify_user(authctxt->krb5_ctx, authctxt->krb5_user,
-	    ccache, password, 1, NULL);
+	    ccache, password, 1, تہی);
 
 	temporarily_use_uid(authctxt->pw);
 
-	if (problem)
-		goto out;
+	اگر (problem)
+		جاؤ برآمد;
 
 # ifdef HAVE_KRB5_CC_NEW_UNIQUE
 	problem = krb5_cc_new_unique(authctxt->krb5_ctx,
-	    krb5_fcc_ops.prefix, NULL, &authctxt->krb5_fwd_ccache);
-# else
+	    krb5_fcc_ops.سابقہ, تہی, &authctxt->krb5_fwd_ccache);
+# ورنہ
 	problem = krb5_cc_gen_new(authctxt->krb5_ctx, &krb5_fcc_ops,
 	    &authctxt->krb5_fwd_ccache);
 # endif
-	if (problem)
-		goto out;
+	اگر (problem)
+		جاؤ برآمد;
 
 	problem = krb5_cc_copy_cache(authctxt->krb5_ctx, ccache,
 	    authctxt->krb5_fwd_ccache);
 	krb5_cc_destroy(authctxt->krb5_ctx, ccache);
-	ccache = NULL;
-	if (problem)
-		goto out;
+	ccache = تہی;
+	اگر (problem)
+		جاؤ برآمد;
 
-#else
+#ورنہ
 	problem = krb5_get_init_creds_password(authctxt->krb5_ctx, &creds,
-	    authctxt->krb5_user, (char *)password, NULL, NULL, 0, NULL, NULL);
-	if (problem)
-		goto out;
+	    authctxt->krb5_user, (حرف *)password, تہی, تہی, 0, تہی, تہی);
+	اگر (problem)
+		جاؤ برآمد;
 
-	problem = krb5_sname_to_principal(authctxt->krb5_ctx, NULL, NULL,
+	problem = krb5_sname_مقصد_principal(authctxt->krb5_ctx, تہی, تہی,
 	    KRB5_NT_SRV_HST, &server);
-	if (problem)
-		goto out;
+	اگر (problem)
+		جاؤ برآمد;
 
 	restore_uid();
 	problem = krb5_verify_init_creds(authctxt->krb5_ctx, &creds, server,
-	    NULL, NULL, NULL);
+	    تہی, تہی, تہی);
 	krb5_free_principal(authctxt->krb5_ctx, server);
 	temporarily_use_uid(authctxt->pw);
-	if (problem)
-		goto out;
+	اگر (problem)
+		جاؤ برآمد;
 
-	if (!krb5_kuserok(authctxt->krb5_ctx, authctxt->krb5_user,
+	اگر (!krb5_kuserok(authctxt->krb5_ctx, authctxt->krb5_user,
 	    authctxt->pw->pw_name)) {
 		problem = -1;
-		goto out;
+		جاؤ برآمد;
 	}
 
 	problem = ssh_krb5_cc_gen(authctxt->krb5_ctx,
 	    &authctxt->krb5_fwd_ccache);
-	if (problem)
-		goto out;
+	اگر (problem)
+		جاؤ برآمد;
 
 	problem = krb5_cc_initialize(authctxt->krb5_ctx,
 	    authctxt->krb5_fwd_ccache, authctxt->krb5_user);
-	if (problem)
-		goto out;
+	اگر (problem)
+		جاؤ برآمد;
 
 	problem = krb5_cc_store_cred(authctxt->krb5_ctx,
 	    authctxt->krb5_fwd_ccache, &creds);
-	if (problem)
-		goto out;
-#endif
+	اگر (problem)
+		جاؤ برآمد;
+#اگر_ختم
 
-	authctxt->krb5_ticket_file = (char *)krb5_cc_get_name(authctxt->krb5_ctx, authctxt->krb5_fwd_ccache);
+	authctxt->krb5_ticket_file = (حرف *)krb5_cc_get_name(authctxt->krb5_ctx, authctxt->krb5_fwd_ccache);
 
-	len = strlen(authctxt->krb5_ticket_file) + 6;
+	len = لڑی_لمبائی(authctxt->krb5_ticket_file) + 6;
 	authctxt->krb5_ccname = xmalloc(len);
 	snprintf(authctxt->krb5_ccname, len, "FILE:%s",
 	    authctxt->krb5_ticket_file);
 
-#ifdef USE_PAM
-	if (options.use_pam)
+#اگر_تعریف_شدہ USE_PAM
+	اگر (options.use_pam)
 		do_pam_putenv("KRB5CCNAME", authctxt->krb5_ccname);
-#endif
+#اگر_ختم
 
- out:
+ برآمد:
 	restore_uid();
 	
-	free(platform_client);
+	آزاد(platform_client);
 
-	if (problem) {
-		if (ccache)
+	اگر (problem) {
+		اگر (ccache)
 			krb5_cc_destroy(authctxt->krb5_ctx, ccache);
 
-		if (authctxt->krb5_ctx != NULL && problem!=-1) {
-			errmsg = krb5_get_error_message(authctxt->krb5_ctx,
+		اگر (authctxt->krb5_ctx != تہی && problem!=-1) {
+			errmsg = krb5_get_error_پیغام(authctxt->krb5_ctx,
 			    problem);
 			debug("Kerberos password authentication failed: %s",
 			    errmsg);
-			krb5_free_error_message(authctxt->krb5_ctx, errmsg);
-		} else
+			krb5_free_error_پیغام(authctxt->krb5_ctx, errmsg);
+		} ورنہ
 			debug("Kerberos password authentication failed: %d",
 			    problem);
 
 		krb5_cleanup_proc(authctxt);
 
-		if (options.kerberos_or_local_passwd)
-			return (-1);
-		else
-			return (0);
+		اگر (options.kerberos_or_local_passwd)
+			واپس (-1);
+		ورنہ
+			واپس (0);
 	}
-	return (authctxt->valid ? 1 : 0);
+	واپس (authctxt->valid ? 1 : 0);
 }
 
-void
+خالی
 krb5_cleanup_proc(Authctxt *authctxt)
 {
 	debug("krb5_cleanup_proc called");
-	if (authctxt->krb5_fwd_ccache) {
+	اگر (authctxt->krb5_fwd_ccache) {
 		krb5_cc_destroy(authctxt->krb5_ctx, authctxt->krb5_fwd_ccache);
-		authctxt->krb5_fwd_ccache = NULL;
+		authctxt->krb5_fwd_ccache = تہی;
 	}
-	if (authctxt->krb5_user) {
+	اگر (authctxt->krb5_user) {
 		krb5_free_principal(authctxt->krb5_ctx, authctxt->krb5_user);
-		authctxt->krb5_user = NULL;
+		authctxt->krb5_user = تہی;
 	}
-	if (authctxt->krb5_ctx) {
+	اگر (authctxt->krb5_ctx) {
 		krb5_free_context(authctxt->krb5_ctx);
-		authctxt->krb5_ctx = NULL;
+		authctxt->krb5_ctx = تہی;
 	}
 }
 
-#ifndef HEIMDAL
-krb5_error_code
+#اگر_غیر_تعریف_شدہ HEIMDAL
+krb5_error_رمز
 ssh_krb5_cc_gen(krb5_context ctx, krb5_ccache *ccache) {
-	int tmpfd, ret, oerrno;
-	char ccname[40];
-	mode_t old_umask;
+	صحیح tmpfd, ret, oerrno;
+	حرف ccname[40];
+	منوال_t old_umask;
 
-	ret = snprintf(ccname, sizeof(ccname),
+	ret = snprintf(ccname, حجم(ccname),
 	    "FILE:/tmp/krb5cc_%d_XXXXXXXXXX", geteuid());
-	if (ret < 0 || (size_t)ret >= sizeof(ccname))
-		return ENOMEM;
+	اگر (ret < 0 || (سائز_t)ret >= حجم(ccname))
+		واپس ENOMEM;
 
 	old_umask = umask(0177);
-	tmpfd = mkstemp(ccname + strlen("FILE:"));
+	tmpfd = mkstemp(ccname + لڑی_لمبائی("FILE:"));
 	oerrno = errno;
 	umask(old_umask);
-	if (tmpfd == -1) {
+	اگر (tmpfd == -1) {
 		logit("mkstemp(): %.100s", strerror(oerrno));
-		return oerrno;
+		واپس oerrno;
 	}
 
-	if (fchmod(tmpfd,S_IRUSR | S_IWUSR) == -1) {
+	اگر (fchmod(tmpfd,S_IRUSR | S_IWUSR) == -1) {
 		oerrno = errno;
 		logit("fchmod(): %.100s", strerror(oerrno));
 		close(tmpfd);
-		return oerrno;
+		واپس oerrno;
 	}
 	close(tmpfd);
 
-	return (krb5_cc_resolve(ctx, ccname, ccache));
+	واپس (krb5_cc_resolve(ctx, ccname, ccache));
 }
-#endif /* !HEIMDAL */
-#endif /* KRB5 */
+#اگر_ختم /* !HEIMDAL */
+#اگر_ختم /* KRB5 */

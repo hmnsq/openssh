@@ -22,16 +22,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SSH_AUDIT_H
+#اگر_غیر_تعریف_شدہ _SSH_AUDIT_H
 # define _SSH_AUDIT_H
 
-#include "loginrec.h"
+#شامل "loginrec.h"
 
-struct ssh;
+ساخت ssh;
 
-enum ssh_audit_event_type {
+شمار ssh_audit_event_type {
 	SSH_LOGIN_EXCEED_MAXTRIES,
-	SSH_LOGIN_ROOT_DENIED,
+	SSH_LOGIN_جڑ_DENIED,
 	SSH_AUTH_SUCCESS,
 	SSH_AUTH_FAIL_NONE,
 	SSH_AUTH_FAIL_PASSWD,
@@ -45,13 +45,13 @@ enum ssh_audit_event_type {
 	SSH_CONNECTION_ABANDON,	/* closed without completing auth */
 	SSH_AUDIT_UNKNOWN
 };
-typedef enum ssh_audit_event_type ssh_audit_event_t;
+قسمتعریف شمار ssh_audit_event_type ssh_audit_event_t;
 
-void	audit_connection_from(const char *, int);
-void	audit_event(struct ssh *, ssh_audit_event_t);
-void	audit_session_open(struct logininfo *);
-void	audit_session_close(struct logininfo *);
-void	audit_run_command(const char *);
-ssh_audit_event_t audit_classify_auth(const char *);
+خالی	audit_connection_from(ثابت حرف *, صحیح);
+خالی	audit_event(ساخت ssh *, ssh_audit_event_t);
+خالی	audit_session_open(ساخت logininfo *);
+خالی	audit_session_close(ساخت logininfo *);
+خالی	audit_تسلسل_command(ثابت حرف *);
+ssh_audit_event_t audit_classify_auth(ثابت حرف *);
 
-#endif /* _SSH_AUDIT_H */
+#اگر_ختم /* _SSH_AUDIT_H */

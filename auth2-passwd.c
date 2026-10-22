@@ -23,57 +23,57 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <stdarg.h>
+#شامل <stdio.h>
 
-#include "packet.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "misc.h"
-#include "servconf.h"
+#شامل "packet.h"
+#شامل "ssherr.h"
+#شامل "log.h"
+#شامل "sshkey.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
+#اگر_تعریف_شدہ GSSAPI
+#شامل "ssh-gss.h"
+#اگر_ختم
+#شامل "monitor_wrap.h"
+#شامل "misc.h"
+#شامل "servconf.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_passwd;
+خارجی ServerOptions options;
+خارجی ساخت authmethod_cfg methodcfg_passwd;
 
-static int
-userauth_passwd(struct ssh *ssh, const char *method)
+ساکن صحیح
+userauth_passwd(ساخت ssh *ssh, ثابت حرف *طریقہ)
 {
-	char *password = NULL;
-	int authenticated = 0, r;
+	حرف *password = تہی;
+	صحیح authenticated = 0, r;
 	u_char change;
-	size_t len = 0;
+	سائز_t len = 0;
 
-	if ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
+	اگر ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &password, &len)) != 0 ||
-	    (change && (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0) ||
-	    (r = sshpkt_get_end(ssh)) != 0) {
+	    (change && (r = sshpkt_get_cstring(ssh, تہی, تہی)) != 0) ||
+	    (r = sshpkt_get_انتہا(ssh)) != 0) {
 		freezero(password, len);
 		fatal_fr(r, "parse packet");
 	}
 
-	if (change)
+	اگر (change)
 		logit("password change not supported");
-	else if (mm_auth_password(ssh, password) == 1)
+	ورنہ اگر (mm_auth_password(ssh, password) == 1)
 		authenticated = 1;
 	freezero(password, len);
-	return authenticated;
+	واپس authenticated;
 }
 
-Authmethod method_passwd = {
+Authmethod طریقہ_passwd = {
 	&methodcfg_passwd,
 	userauth_passwd,
 };

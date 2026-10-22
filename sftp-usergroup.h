@@ -17,9 +17,9 @@
 /* sftp client user/group lookup and caching */
 
 /* Lookup uids/gids and populate cache */
-void get_remote_user_groups_from_glob(struct sftp_conn *conn, glob_t *g);
-void get_remote_user_groups_from_dirents(struct sftp_conn *conn, SFTP_DIRENT **d);
+خالی get_remote_user_groups_from_glob(ساخت sftp_conn *conn, glob_t *g);
+خالی get_remote_user_groups_from_dirents(ساخت sftp_conn *conn, SFTP_DIRENT **d);
 
 /* Return user/group name from cache or NULL if not found */
-const char *ruser_name(uid_t uid);
-const char *rgroup_name(uid_t gid);
+ثابت حرف *ruser_name(uid_t uid);
+ثابت حرف *rgroup_name(uid_t gid);

@@ -25,236 +25,236 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/socket.h>
-#include <sys/tree.h>
-#include <sys/queue.h>
+#شامل <sys/types.h>
+#شامل <sys/wait.h>
+#شامل <sys/socket.h>
+#شامل <sys/tree.h>
+#شامل <sys/queue.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <paths.h>
-#include <poll.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <errno.h>
+#شامل <fcntl.h>
+#شامل <limits.h>
+#شامل <paths.h>
+#شامل <poll.h>
+#شامل <pwd.h>
+#شامل <signal.h>
+#شامل <stdarg.h>
+#شامل <stdint.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/dh.h>
-#endif
+#اگر_تعریف_شدہ WITH_OPENSSL
+#شامل <openssl/dh.h>
+#اگر_ختم
 
-#include "openbsd-compat/openssl-compat.h"
+#شامل "openbsd-compat/openssl-compat.h"
 
-#include "atomicio.h"
-#include "xmalloc.h"
-#include "ssh.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "cipher.h"
-#include "kex.h"
-#include "dh.h"
-#include "auth-pam.h"
-#include "packet.h"
-#include "auth-options.h"
-#include "sshpty.h"
-#include "channels.h"
-#include "session.h"
-#include "sshlogin.h"
-#include "canohost.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "monitor.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "monitor_fdpass.h"
-#include "compat.h"
-#include "ssh2.h"
-#include "authfd.h"
-#include "match.h"
-#include "ssherr.h"
-#include "sk-api.h"
-#include "srclimit.h"
+#شامل "atomicio.h"
+#شامل "xmalloc.h"
+#شامل "ssh.h"
+#شامل "sshkey.h"
+#شامل "sshbuf.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
+#شامل "cipher.h"
+#شامل "kex.h"
+#شامل "dh.h"
+#شامل "auth-pam.h"
+#شامل "packet.h"
+#شامل "auth-options.h"
+#شامل "sshpty.h"
+#شامل "channels.h"
+#شامل "session.h"
+#شامل "sshlogin.h"
+#شامل "canohost.h"
+#شامل "log.h"
+#شامل "misc.h"
+#شامل "servconf.h"
+#شامل "monitor.h"
+#اگر_تعریف_شدہ GSSAPI
+#شامل "ssh-gss.h"
+#اگر_ختم
+#شامل "monitor_wrap.h"
+#شامل "monitor_fdpass.h"
+#شامل "compat.h"
+#شامل "ssh2.h"
+#شامل "authfd.h"
+#شامل "match.h"
+#شامل "ssherr.h"
+#شامل "sk-api.h"
+#شامل "srclimit.h"
 
-#ifdef GSSAPI
-static Gssctxt *gsscontext = NULL;
-#endif
+#اگر_تعریف_شدہ GSSAPI
+ساکن Gssctxt *gsscontext = تہی;
+#اگر_ختم
 
 /* Imports */
-extern ServerOptions options;
-extern u_int utmp_len;
-extern struct sshbuf *cfg;
-extern struct sshbuf *loginmsg;
-extern struct include_list includes;
-extern struct sshauthopt *auth_opts; /* XXX move to permanent ssh->authctxt? */
+خارجی ServerOptions options;
+خارجی u_int utmp_len;
+خارجی ساخت sshbuf *cfg;
+خارجی ساخت sshbuf *loginmsg;
+خارجی ساخت include_list includes;
+خارجی ساخت sshauthopt *auth_opts; /* XXX move to permanent ssh->authctxt? */
 
 /* State exported from the child */
-static struct sshbuf *child_state;
+ساکن ساخت sshbuf *بچہ_state;
 
 /* Functions on the monitor that answer unprivileged requests */
 
-int mm_answer_moduli(struct ssh *, int, struct sshbuf *);
-int mm_answer_setcompat(struct ssh *, int, struct sshbuf *);
-int mm_answer_sign(struct ssh *, int, struct sshbuf *);
-int mm_answer_pwnamallow(struct ssh *, int, struct sshbuf *);
-int mm_answer_auth2_read_banner(struct ssh *, int, struct sshbuf *);
-int mm_answer_authserv(struct ssh *, int, struct sshbuf *);
-int mm_answer_authpassword(struct ssh *, int, struct sshbuf *);
-int mm_answer_bsdauthquery(struct ssh *, int, struct sshbuf *);
-int mm_answer_bsdauthrespond(struct ssh *, int, struct sshbuf *);
-int mm_answer_keyallowed(struct ssh *, int, struct sshbuf *);
-int mm_answer_keyverify(struct ssh *, int, struct sshbuf *);
-int mm_answer_pty(struct ssh *, int, struct sshbuf *);
-int mm_answer_pty_cleanup(struct ssh *, int, struct sshbuf *);
-int mm_answer_term(struct ssh *, int, struct sshbuf *);
-int mm_answer_state(struct ssh *, int, struct sshbuf *);
+صحیح mm_answer_moduli(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_setcompat(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_sign(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_pwnamallow(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_auth2_read_banner(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_authserv(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_authpassword(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_bsdauthquery(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_bsdauthrespond(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_keyallowed(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_keyverify(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_pty(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_pty_cleanup(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_رکن(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_state(ساخت ssh *, صحیح, ساخت sshbuf *);
 
-#ifdef USE_PAM
-int mm_answer_pam_start(struct ssh *, int, struct sshbuf *);
-int mm_answer_pam_account(struct ssh *, int, struct sshbuf *);
-int mm_answer_pam_init_ctx(struct ssh *, int, struct sshbuf *);
-int mm_answer_pam_query(struct ssh *, int, struct sshbuf *);
-int mm_answer_pam_respond(struct ssh *, int, struct sshbuf *);
-int mm_answer_pam_free_ctx(struct ssh *, int, struct sshbuf *);
-#endif
+#اگر_تعریف_شدہ USE_PAM
+صحیح mm_answer_pam_آغاز(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_pam_account(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_pam_init_ctx(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_pam_query(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_pam_respond(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_pam_free_ctx(ساخت ssh *, صحیح, ساخت sshbuf *);
+#اگر_ختم
 
-#ifdef GSSAPI
-int mm_answer_gss_setup_ctx(struct ssh *, int, struct sshbuf *);
-int mm_answer_gss_accept_ctx(struct ssh *, int, struct sshbuf *);
-int mm_answer_gss_userok(struct ssh *, int, struct sshbuf *);
-int mm_answer_gss_checkmic(struct ssh *, int, struct sshbuf *);
-#endif
+#اگر_تعریف_شدہ GSSAPI
+صحیح mm_answer_gss_تیاری_ctx(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_gss_accept_ctx(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_gss_userok(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_gss_checkmic(ساخت ssh *, صحیح, ساخت sshbuf *);
+#اگر_ختم
 
-#ifdef SSH_AUDIT_EVENTS
-int mm_answer_audit_event(struct ssh *, int, struct sshbuf *);
-int mm_answer_audit_command(struct ssh *, int, struct sshbuf *);
-#endif
+#اگر_تعریف_شدہ SSH_AUDIT_EVENTS
+صحیح mm_answer_audit_event(ساخت ssh *, صحیح, ساخت sshbuf *);
+صحیح mm_answer_audit_command(ساخت ssh *, صحیح, ساخت sshbuf *);
+#اگر_ختم
 
-static Authctxt *authctxt;
+ساکن Authctxt *authctxt;
 
 /* local state for key verify */
-static u_char *key_blob = NULL;
-static size_t key_bloblen = 0;
-static u_int key_blobtype = MM_NOKEY;
-static struct sshauthopt *key_opts = NULL;
-static char *hostbased_cuser = NULL;
-static char *hostbased_chost = NULL;
-static char *auth_method = "unknown";
-static char *auth_submethod = NULL;
-static u_int session_id2_len = 0;
-static u_char *session_id2 = NULL;
-static pid_t monitor_child_pid;
-static int auth_attempted = 0;
-static int invalid_user = 0;
-static int compat_set = 0;
+ساکن u_char *کلید_blob = تہی;
+ساکن سائز_t کلید_bloblen = 0;
+ساکن u_int کلید_blobtype = MM_NOKEY;
+ساکن ساخت sshauthopt *کلید_opts = تہی;
+ساکن حرف *hostbased_cuser = تہی;
+ساکن حرف *hostbased_chost = تہی;
+ساکن حرف *auth_طریقہ = "unknown";
+ساکن حرف *auth_submethod = تہی;
+ساکن u_int session_id2_len = 0;
+ساکن u_char *session_id2 = تہی;
+ساکن pid_t monitor_بچہ_pid;
+ساکن صحیح auth_attempted = 0;
+ساکن صحیح invalid_user = 0;
+ساکن صحیح compat_سیٹ = 0;
 
-struct mon_table {
-	enum monitor_reqtype type;
-	int flags;
-	int (*f)(struct ssh *, int, struct sshbuf *);
+ساخت mon_جدول {
+	شمار monitor_reqtype type;
+	صحیح flags;
+	صحیح (*f)(ساخت ssh *, صحیح, ساخت sshbuf *);
 };
 
-#define MON_ISAUTH	0x0004	/* Required for Authentication */
-#define MON_AUTHDECIDE	0x0008	/* Decides Authentication */
-#define MON_ONCE	0x0010	/* Disable after calling */
-#define MON_ALOG	0x0020	/* Log auth attempt without authenticating */
+#تعریف_کرو MON_ISAUTH	0x0004	/* Required for Authentication */
+#تعریف_کرو MON_AUTHDECIDE	0x0008	/* Decides Authentication */
+#تعریف_کرو MON_ONCE	0x0010	/* Disable after calling */
+#تعریف_کرو MON_ALOG	0x0020	/* Log auth attempt without authenticating */
 
-#define MON_AUTH	(MON_ISAUTH|MON_AUTHDECIDE)
+#تعریف_کرو MON_AUTH	(MON_ISAUTH|MON_AUTHDECIDE)
 
-#define MON_PERMIT	0x1000	/* Request is permitted */
+#تعریف_کرو MON_PERMIT	0x1000	/* Request is permitted */
 
-static int monitor_read(struct ssh *, struct monitor *, struct mon_table *,
-    struct mon_table **);
-static int monitor_read_log(struct monitor *);
+ساکن صحیح monitor_read(ساخت ssh *, ساخت monitor *, ساخت mon_جدول *,
+    ساخت mon_جدول **);
+ساکن صحیح monitor_read_log(ساخت monitor *);
 
-struct mon_table mon_dispatch_proto20[] = {
+ساخت mon_جدول mon_dispatch_proto20[] = {
     {MONITOR_REQ_STATE, MON_ONCE, mm_answer_state},
-#ifdef WITH_OPENSSL
+#اگر_تعریف_شدہ WITH_OPENSSL
     {MONITOR_REQ_MODULI, MON_ONCE, mm_answer_moduli},
-#endif
+#اگر_ختم
     {MONITOR_REQ_SETCOMPAT, MON_ONCE, mm_answer_setcompat},
     {MONITOR_REQ_SIGN, MON_ONCE, mm_answer_sign},
     {MONITOR_REQ_PWNAM, MON_ONCE, mm_answer_pwnamallow},
     {MONITOR_REQ_AUTHSERV, MON_ONCE, mm_answer_authserv},
     {MONITOR_REQ_AUTH2_READ_BANNER, MON_ONCE, mm_answer_auth2_read_banner},
     {MONITOR_REQ_AUTHPASSWORD, MON_AUTH, mm_answer_authpassword},
-#ifdef USE_PAM
-    {MONITOR_REQ_PAM_START, MON_ONCE, mm_answer_pam_start},
+#اگر_تعریف_شدہ USE_PAM
+    {MONITOR_REQ_PAM_آغاز, MON_ONCE, mm_answer_pam_آغاز},
     {MONITOR_REQ_PAM_ACCOUNT, 0, mm_answer_pam_account},
     {MONITOR_REQ_PAM_INIT_CTX, MON_ONCE, mm_answer_pam_init_ctx},
     {MONITOR_REQ_PAM_QUERY, 0, mm_answer_pam_query},
     {MONITOR_REQ_PAM_RESPOND, MON_ONCE, mm_answer_pam_respond},
     {MONITOR_REQ_PAM_FREE_CTX, MON_ONCE|MON_AUTHDECIDE, mm_answer_pam_free_ctx},
-#endif
-#ifdef SSH_AUDIT_EVENTS
+#اگر_ختم
+#اگر_تعریف_شدہ SSH_AUDIT_EVENTS
     {MONITOR_REQ_AUDIT_EVENT, MON_PERMIT, mm_answer_audit_event},
-#endif
-#ifdef BSD_AUTH
+#اگر_ختم
+#اگر_تعریف_شدہ BSD_AUTH
     {MONITOR_REQ_BSDAUTHQUERY, MON_ISAUTH, mm_answer_bsdauthquery},
     {MONITOR_REQ_BSDAUTHRESPOND, MON_AUTH, mm_answer_bsdauthrespond},
-#endif
+#اگر_ختم
     {MONITOR_REQ_KEYALLOWED, MON_ISAUTH, mm_answer_keyallowed},
     {MONITOR_REQ_KEYVERIFY, MON_AUTH, mm_answer_keyverify},
-#ifdef GSSAPI
-    {MONITOR_REQ_GSSSETUP, MON_ISAUTH, mm_answer_gss_setup_ctx},
+#اگر_تعریف_شدہ GSSAPI
+    {MONITOR_REQ_GSSSETUP, MON_ISAUTH, mm_answer_gss_تیاری_ctx},
     {MONITOR_REQ_GSSSTEP, 0, mm_answer_gss_accept_ctx},
     {MONITOR_REQ_GSSUSEROK, MON_ONCE|MON_AUTHDECIDE, mm_answer_gss_userok},
     {MONITOR_REQ_GSSCHECKMIC, MON_ONCE, mm_answer_gss_checkmic},
-#endif
-    {0, 0, NULL}
+#اگر_ختم
+    {0, 0, تہی}
 };
 
-struct mon_table mon_dispatch_postauth20[] = {
+ساخت mon_جدول mon_dispatch_postauth20[] = {
     {MONITOR_REQ_STATE, MON_ONCE, mm_answer_state},
-#ifdef WITH_OPENSSL
+#اگر_تعریف_شدہ WITH_OPENSSL
     {MONITOR_REQ_MODULI, 0, mm_answer_moduli},
-#endif
+#اگر_ختم
     {MONITOR_REQ_SIGN, 0, mm_answer_sign},
     {MONITOR_REQ_PTY, 0, mm_answer_pty},
     {MONITOR_REQ_PTYCLEANUP, 0, mm_answer_pty_cleanup},
-    {MONITOR_REQ_TERM, 0, mm_answer_term},
-#ifdef SSH_AUDIT_EVENTS
+    {MONITOR_REQ_رکن, 0, mm_answer_رکن},
+#اگر_تعریف_شدہ SSH_AUDIT_EVENTS
     {MONITOR_REQ_AUDIT_EVENT, MON_PERMIT, mm_answer_audit_event},
     {MONITOR_REQ_AUDIT_COMMAND, MON_PERMIT, mm_answer_audit_command},
-#endif
-    {0, 0, NULL}
+#اگر_ختم
+    {0, 0, تہی}
 };
 
-struct mon_table *mon_dispatch;
+ساخت mon_جدول *mon_dispatch;
 
 /* Specifies if a certain message is allowed at the moment */
-static void
-monitor_permit(struct mon_table *ent, enum monitor_reqtype type, int permit)
+ساکن خالی
+monitor_permit(ساخت mon_جدول *ent, شمار monitor_reqtype type, صحیح permit)
 {
-	while (ent->f != NULL) {
-		if (ent->type == type) {
+	جب (ent->f != تہی) {
+		اگر (ent->type == type) {
 			ent->flags &= ~MON_PERMIT;
 			ent->flags |= permit ? MON_PERMIT : 0;
-			return;
+			واپس;
 		}
 		ent++;
 	}
 }
 
-static void
-monitor_permit_authentications(int permit)
+ساکن خالی
+monitor_permit_authentications(صحیح permit)
 {
-	struct mon_table *ent = mon_dispatch;
+	ساخت mon_جدول *ent = mon_dispatch;
 
-	while (ent->f != NULL) {
-		if (ent->flags & MON_AUTH) {
+	جب (ent->f != تہی) {
+		اگر (ent->flags & MON_AUTH) {
 			ent->flags &= ~MON_PERMIT;
 			ent->flags |= permit ? MON_PERMIT : 0;
 		}
@@ -262,22 +262,22 @@ monitor_permit_authentications(int permit)
 	}
 }
 
-void
-monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
+خالی
+monitor_بچہ_preauth(ساخت ssh *ssh, ساخت monitor *pmonitor)
 {
-	struct mon_table *ent;
-	int status, authenticated = 0, partial = 0;
+	ساخت mon_جدول *ent;
+	صحیح حالت_2, authenticated = 0, partial = 0;
 
 	debug3("preauth child monitor started");
 
-	if (pmonitor->m_recvfd >= 0)
+	اگر (pmonitor->m_recvfd >= 0)
 		close(pmonitor->m_recvfd);
-	if (pmonitor->m_log_sendfd >= 0)
+	اگر (pmonitor->m_log_sendfd >= 0)
 		close(pmonitor->m_log_sendfd);
 	pmonitor->m_log_sendfd = pmonitor->m_recvfd = -1;
 
 	authctxt = (Authctxt *)ssh->authctxt;
-	memset(authctxt, 0, sizeof(*authctxt));
+	memset(authctxt, 0, حجم(*authctxt));
 	ssh->authctxt = authctxt;
 
 	authctxt->loginmsg = loginmsg;
@@ -290,43 +290,43 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
 	monitor_permit(mon_dispatch, MONITOR_REQ_SIGN, 1);
 
 	/* The first few requests do not require asynchronous access */
-	while (!authenticated) {
+	جب (!authenticated) {
 		partial = 0;
-		auth_method = "unknown";
-		auth_submethod = NULL;
+		auth_طریقہ = "unknown";
+		auth_submethod = تہی;
 		auth2_authctxt_reset_info(authctxt);
 
 		authenticated = (monitor_read(ssh, pmonitor,
 		    mon_dispatch, &ent) == 1);
 
 		/* Record that auth was attempted to set exit status later */
-		if ((ent->flags & MON_AUTH) != 0)
+		اگر ((ent->flags & MON_AUTH) != 0)
 			auth_attempted = 1;
 
 		/* Special handling for multiple required authentications */
-		if (options.num_auth_methods != 0) {
-			if (authenticated &&
+		اگر (options.عدد_auth_methods != 0) {
+			اگر (authenticated &&
 			    !auth2_update_methods_lists(authctxt,
-			    auth_method, auth_submethod)) {
-				debug3_f("method %s: partial", auth_method);
+			    auth_طریقہ, auth_submethod)) {
+				debug3_f("method %s: partial", auth_طریقہ);
 				authenticated = 0;
 				partial = 1;
 			}
 		}
 
-		if (authenticated) {
-			if (!(ent->flags & MON_AUTHDECIDE))
+		اگر (authenticated) {
+			اگر (!(ent->flags & MON_AUTHDECIDE))
 				fatal_f("unexpected authentication from %d",
 				    ent->type);
-			if (authctxt->pw->pw_uid == 0 &&
-			    !auth_root_allowed(ssh, auth_method))
+			اگر (authctxt->pw->pw_uid == 0 &&
+			    !auth_جڑ_allowed(ssh, auth_طریقہ))
 				authenticated = 0;
-#ifdef USE_PAM
+#اگر_تعریف_شدہ USE_PAM
 			/* PAM needs to perform account checks after auth */
-			if (options.use_pam && authenticated) {
-				struct sshbuf *m;
+			اگر (options.use_pam && authenticated) {
+				ساخت sshbuf *m;
 
-				if ((m = sshbuf_new()) == NULL)
+				اگر ((m = sshbuf_new()) == تہی)
 					fatal("%s: sshbuf_new failed",
 					    __func__);
 				mm_request_receive_expect(pmonitor->m_sendfd,
@@ -335,91 +335,91 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
 				    ssh, pmonitor->m_sendfd, m);
 				sshbuf_free(m);
 			}
-#endif
+#اگر_ختم
 		}
-		if (ent->flags & (MON_AUTHDECIDE|MON_ALOG)) {
+		اگر (ent->flags & (MON_AUTHDECIDE|MON_ALOG)) {
 			auth_log(ssh, authenticated, partial,
-			    auth_method, auth_submethod);
-			if (!partial && !authenticated)
+			    auth_طریقہ, auth_submethod);
+			اگر (!partial && !authenticated)
 				authctxt->failures++;
-			if (authenticated || partial) {
+			اگر (authenticated || partial) {
 				auth2_update_session_info(authctxt,
-				    auth_method, auth_submethod);
+				    auth_طریقہ, auth_submethod);
 			}
 		}
-		if (authctxt->failures > options.max_authtries) {
+		اگر (authctxt->failures > options.max_authtries) {
 			/* Shouldn't happen */
 			fatal_f("privsep child made too many authentication "
 			    "attempts");
 		}
 	}
 
-	if (!authctxt->valid)
+	اگر (!authctxt->valid)
 		fatal_f("authenticated invalid user");
-	if (strcmp(auth_method, "unknown") == 0)
+	اگر (strcmp(auth_طریقہ, "unknown") == 0)
 		fatal_f("authentication method name unknown");
 
 	debug_f("user %s authenticated by privileged process", authctxt->user);
 	auth_attempted = 0;
-	ssh->authctxt = NULL;
-	ssh_packet_set_log_preamble(ssh, "user %s", authctxt->user);
+	ssh->authctxt = تہی;
+	ssh_packet_سیٹ_log_preamble(ssh, "user %s", authctxt->user);
 
 	mm_get_keystate(ssh, pmonitor);
 
 	/* Drain any buffered messages from the child */
-	while (pmonitor->m_log_recvfd != -1 && monitor_read_log(pmonitor) == 0)
+	جب (pmonitor->m_log_recvfd != -1 && monitor_read_log(pmonitor) == 0)
 		;
 
 	/* Wait for the child's exit status */
-	while (waitpid(pmonitor->m_pid, &status, 0) == -1) {
-		if (errno == EINTR)
-			continue;
+	جب (waitpid(pmonitor->m_pid, &حالت_2, 0) == -1) {
+		اگر (errno == EINTR)
+			جاری;
 		fatal_f("waitpid: %s", strerror(errno));
 	}
-	if (WIFEXITED(status)) {
-		if (WEXITSTATUS(status) != 0)
+	اگر (WIFEXITED(حالت_2)) {
+		اگر (WEXITSTATUS(حالت_2) != 0)
 			fatal_f("preauth child %ld exited with status %d",
-			    (long)pmonitor->m_pid, WEXITSTATUS(status));
-	} else if (WIFSIGNALED(status)) {
+			    (طویل)pmonitor->m_pid, WEXITSTATUS(حالت_2));
+	} ورنہ اگر (WIFSIGNALED(حالت_2)) {
 		fatal_f("preauth child %ld terminated by signal %d",
-		    (long)pmonitor->m_pid, WTERMSIG(status));
+		    (طویل)pmonitor->m_pid, WTERMSIG(حالت_2));
 	}
 	debug3_f("preauth child %ld terminated successfully",
-	    (long)pmonitor->m_pid);
+	    (طویل)pmonitor->m_pid);
 
-	if (pmonitor->m_recvfd >= 0)
+	اگر (pmonitor->m_recvfd >= 0)
 		close(pmonitor->m_recvfd);
-	if (pmonitor->m_log_sendfd >= 0)
+	اگر (pmonitor->m_log_sendfd >= 0)
 		close(pmonitor->m_log_sendfd);
 	pmonitor->m_sendfd = pmonitor->m_log_recvfd = -1;
 	pmonitor->m_pid = -1;
 }
 
-static void
-monitor_set_child_handler(pid_t pid)
+ساکن خالی
+monitor_سیٹ_بچہ_handler(pid_t pid)
 {
-	monitor_child_pid = pid;
+	monitor_بچہ_pid = pid;
 }
 
-static void
-monitor_child_handler(int sig)
+ساکن خالی
+monitor_بچہ_handler(صحیح sig)
 {
-	kill(monitor_child_pid, sig);
+	kill(monitor_بچہ_pid, sig);
 }
 
-void
-monitor_child_postauth(struct ssh *ssh, struct monitor *pmonitor)
+خالی
+monitor_بچہ_postauth(ساخت ssh *ssh, ساخت monitor *pmonitor)
 {
 	close(pmonitor->m_recvfd);
 	pmonitor->m_recvfd = -1;
 
-	monitor_set_child_handler(pmonitor->m_pid);
-	ssh_signal(SIGHUP, &monitor_child_handler);
-	ssh_signal(SIGTERM, &monitor_child_handler);
-	ssh_signal(SIGINT, &monitor_child_handler);
-#ifdef SIGXFSZ
+	monitor_سیٹ_بچہ_handler(pmonitor->m_pid);
+	ssh_signal(SIGHUP, &monitor_بچہ_handler);
+	ssh_signal(SIGTERM, &monitor_بچہ_handler);
+	ssh_signal(SIGINT, &monitor_بچہ_handler);
+#اگر_تعریف_شدہ SIGXFSZ
 	ssh_signal(SIGXFSZ, SIG_IGN);
-#endif
+#اگر_ختم
 
 	mon_dispatch = mon_dispatch_postauth20;
 
@@ -427,186 +427,186 @@ monitor_child_postauth(struct ssh *ssh, struct monitor *pmonitor)
 	monitor_permit(mon_dispatch, MONITOR_REQ_STATE, 1);
 	monitor_permit(mon_dispatch, MONITOR_REQ_MODULI, 1);
 	monitor_permit(mon_dispatch, MONITOR_REQ_SIGN, 1);
-	monitor_permit(mon_dispatch, MONITOR_REQ_TERM, 1);
+	monitor_permit(mon_dispatch, MONITOR_REQ_رکن, 1);
 
-	if (auth_opts->permit_pty_flag) {
+	اگر (auth_opts->permit_pty_flag) {
 		monitor_permit(mon_dispatch, MONITOR_REQ_PTY, 1);
 		monitor_permit(mon_dispatch, MONITOR_REQ_PTYCLEANUP, 1);
 	}
 
-	for (;;)
-		monitor_read(ssh, pmonitor, mon_dispatch, NULL);
+	برائے (;;)
+		monitor_read(ssh, pmonitor, mon_dispatch, تہی);
 }
 
-static int
-monitor_read_log(struct monitor *pmonitor)
+ساکن صحیح
+monitor_read_log(ساخت monitor *pmonitor)
 {
-	struct sshbuf *logmsg;
+	ساخت sshbuf *logmsg;
 	u_int len, level, forced;
-	char *msg;
+	حرف *پیغام;
 	u_char *p;
-	int r;
+	صحیح r;
 
-	if ((logmsg = sshbuf_new()) == NULL)
+	اگر ((logmsg = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
 
 	/* Read length */
-	if ((r = sshbuf_reserve(logmsg, 4, &p)) != 0)
+	اگر ((r = sshbuf_reserve(logmsg, 4, &p)) != 0)
 		fatal_fr(r, "reserve len");
-	if (atomicio(read, pmonitor->m_log_recvfd, p, 4) != 4) {
-		if (errno == EPIPE) {
+	اگر (atomicio(اقرأ, pmonitor->m_log_recvfd, p, 4) != 4) {
+		اگر (errno == EPIPE) {
 			sshbuf_free(logmsg);
 			debug_f("child log fd closed");
 			close(pmonitor->m_log_recvfd);
 			pmonitor->m_log_recvfd = -1;
-			return -1;
+			واپس -1;
 		}
 		fatal_f("log fd read: %s", strerror(errno));
 	}
-	if ((r = sshbuf_get_u32(logmsg, &len)) != 0)
+	اگر ((r = sshbuf_get_u32(logmsg, &len)) != 0)
 		fatal_fr(r, "parse len");
-	if (len <= 4 || len > 8192)
+	اگر (len <= 4 || len > 8192)
 		fatal_f("invalid log message length %u", len);
 
 	/* Read severity, message */
 	sshbuf_reset(logmsg);
-	if ((r = sshbuf_reserve(logmsg, len, &p)) != 0)
+	اگر ((r = sshbuf_reserve(logmsg, len, &p)) != 0)
 		fatal_fr(r, "reserve msg");
-	if (atomicio(read, pmonitor->m_log_recvfd, p, len) != len)
+	اگر (atomicio(اقرأ, pmonitor->m_log_recvfd, p, len) != len)
 		fatal_f("log fd read: %s", strerror(errno));
-	if ((r = sshbuf_get_u32(logmsg, &level)) != 0 ||
+	اگر ((r = sshbuf_get_u32(logmsg, &level)) != 0 ||
 	    (r = sshbuf_get_u32(logmsg, &forced)) != 0 ||
-	    (r = sshbuf_get_cstring(logmsg, &msg, NULL)) != 0)
+	    (r = sshbuf_get_cstring(logmsg, &پیغام, تہی)) != 0)
 		fatal_fr(r, "parse");
 
 	/* Log it */
-	if (log_level_name(level) == NULL)
+	اگر (log_level_name(level) == تہی)
 		fatal_f("invalid log level %u (corrupted message?)", level);
-	sshlogdirect(level, forced, "%s [%s]", msg,
+	sshlogdirect(level, forced, "%s [%s]", پیغام,
 	    mon_dispatch == mon_dispatch_postauth20 ? "postauth" : "preauth");
 
 	sshbuf_free(logmsg);
-	free(msg);
+	آزاد(پیغام);
 
-	return 0;
+	واپس 0;
 }
 
-static int
-monitor_read(struct ssh *ssh, struct monitor *pmonitor, struct mon_table *ent,
-    struct mon_table **pent)
+ساکن صحیح
+monitor_read(ساخت ssh *ssh, ساخت monitor *pmonitor, ساخت mon_جدول *ent,
+    ساخت mon_جدول **pent)
 {
-	struct sshbuf *m;
-	int r, ret;
+	ساخت sshbuf *m;
+	صحیح r, ret;
 	u_char type;
-	struct pollfd pfd[2];
+	ساخت pollfd pfd[2];
 
-	for (;;) {
-		memset(&pfd, 0, sizeof(pfd));
+	برائے (;;) {
+		memset(&pfd, 0, حجم(pfd));
 		pfd[0].fd = pmonitor->m_sendfd;
 		pfd[0].events = POLLIN;
 		pfd[1].fd = pmonitor->m_log_recvfd;
 		pfd[1].events = pfd[1].fd == -1 ? 0 : POLLIN;
-		if (poll(pfd, pfd[1].fd == -1 ? 1 : 2, -1) == -1) {
-			if (errno == EINTR || errno == EAGAIN)
-				continue;
+		اگر (poll(pfd, pfd[1].fd == -1 ? 1 : 2, -1) == -1) {
+			اگر (errno == EINTR || errno == EAGAIN)
+				جاری;
 			fatal_f("poll: %s", strerror(errno));
 		}
-		if (pfd[1].revents) {
+		اگر (pfd[1].revents) {
 			/*
 			 * Drain all log messages before processing next
 			 * monitor request.
 			 */
 			monitor_read_log(pmonitor);
-			continue;
+			جاری;
 		}
-		if (pfd[0].revents)
-			break;  /* Continues below */
+		اگر (pfd[0].revents)
+			توڑو;  /* Continues below */
 	}
 
-	if ((m = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new");
 
 	mm_request_receive(pmonitor->m_sendfd, m);
-	if ((r = sshbuf_get_u8(m, &type)) != 0)
+	اگر ((r = sshbuf_get_u8(m, &type)) != 0)
 		fatal_fr(r, "parse type");
 
 	debug3_f("checking request %d", type);
 
-	while (ent->f != NULL) {
-		if (ent->type == type)
-			break;
+	جب (ent->f != تہی) {
+		اگر (ent->type == type)
+			توڑو;
 		ent++;
 	}
 
-	if (ent->f != NULL) {
-		if (!(ent->flags & MON_PERMIT))
+	اگر (ent->f != تہی) {
+		اگر (!(ent->flags & MON_PERMIT))
 			fatal_f("unpermitted request %d", type);
 		ret = (*ent->f)(ssh, pmonitor->m_sendfd, m);
 		sshbuf_free(m);
 
 		/* The child may use this request only once, disable it */
-		if (ent->flags & MON_ONCE) {
+		اگر (ent->flags & MON_ONCE) {
 			debug2_f("%d used once, disabling now", type);
 			ent->flags &= ~MON_PERMIT;
 		}
 
-		if (pent != NULL)
+		اگر (pent != تہی)
 			*pent = ent;
 
-		return ret;
+		واپس ret;
 	}
 
 	fatal_f("unsupported request: %d", type);
 
 	/* NOTREACHED */
-	return (-1);
+	واپس (-1);
 }
 
 /* allowed key state */
-static int
-monitor_allowed_key(const u_char *blob, u_int bloblen)
+ساکن صحیح
+monitor_allowed_کلید(ثابت u_char *blob, u_int bloblen)
 {
 	/* make sure key is allowed */
-	if (key_blob == NULL || key_bloblen != bloblen ||
-	    timingsafe_bcmp(key_blob, blob, key_bloblen))
-		return (0);
-	return (1);
+	اگر (کلید_blob == تہی || کلید_bloblen != bloblen ||
+	    timingsafe_bcmp(کلید_blob, blob, کلید_bloblen))
+		واپس (0);
+	واپس (1);
 }
 
-static void
-monitor_reset_key_state(void)
+ساکن خالی
+monitor_reset_کلید_state(خالی)
 {
 	/* reset state */
-	free(key_blob);
-	free(hostbased_cuser);
-	free(hostbased_chost);
-	sshauthopt_free(key_opts);
-	key_blob = NULL;
-	key_bloblen = 0;
-	key_blobtype = MM_NOKEY;
-	key_opts = NULL;
-	hostbased_cuser = NULL;
-	hostbased_chost = NULL;
+	آزاد(کلید_blob);
+	آزاد(hostbased_cuser);
+	آزاد(hostbased_chost);
+	sshauthopt_free(کلید_opts);
+	کلید_blob = تہی;
+	کلید_bloblen = 0;
+	کلید_blobtype = MM_NOKEY;
+	کلید_opts = تہی;
+	hostbased_cuser = تہی;
+	hostbased_chost = تہی;
 }
 
-int
-mm_answer_state(struct ssh *ssh, int sock, struct sshbuf *unused)
+صحیح
+mm_answer_state(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *غیر_مستعمل)
 {
-	struct sshbuf *m = NULL, *config = NULL, *hostkeys = NULL;
-	struct sshbuf *opts = NULL, *confdata = NULL;
-	int postauth;
-	int r;
+	ساخت sshbuf *m = تہی, *config = تہی, *hostkeys = تہی;
+	ساخت sshbuf *opts = تہی, *confdata = تہی;
+	صحیح postauth;
+	صحیح r;
 
 	debug_f("config len %zu", sshbuf_len(cfg));
 
-	if ((m = sshbuf_new()) == NULL ||
-	    (config = sshbuf_new()) == NULL ||
-	    (opts = sshbuf_new()) == NULL ||
-	    (confdata = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی ||
+	    (config = sshbuf_new()) == تہی ||
+	    (opts = sshbuf_new()) == تہی ||
+	    (confdata = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new failed");
 
 	hostkeys = pack_hostkeys();
-	if ((r = serialise_server_options(&options, &config)) != 0)
+	اگر ((r = serialise_server_options(&options, &config)) != 0)
 		fatal_fr(r, "serialise_server_options");
 
 	/*
@@ -625,15 +625,15 @@ mm_answer_state(struct ssh *ssh, int sock, struct sshbuf *unused)
 	 *	string  session_info (postauth)
 	 *	string  authopts (postauth)
 	 */
-	if ((r = sshbuf_put_stringb(m, config)) != 0 ||
+	اگر ((r = sshbuf_put_stringb(m, config)) != 0 ||
 	    (r = sshbuf_put_u64(m, options.timing_secret)) != 0 ||
 	    (r = sshbuf_put_stringb(m, hostkeys)) != 0 ||
-	    (r = sshbuf_put_stringb(m, ssh->kex->server_version)) != 0 ||
-	    (r = sshbuf_put_stringb(m, ssh->kex->client_version)) != 0)
+	    (r = sshbuf_put_stringb(m, ssh->kex->server_نسخہ)) != 0 ||
+	    (r = sshbuf_put_stringb(m, ssh->kex->client_نسخہ)) != 0)
 		fatal_fr(r, "compose config");
 
 	postauth = (authctxt && authctxt->pw && authctxt->authenticated);
-	if (postauth) {
+	اگر (postauth) {
 		/* XXX shouldn't be reachable */
 		fatal_f("internal error: called in postauth");
 	}
@@ -647,38 +647,38 @@ mm_answer_state(struct ssh *ssh, int sock, struct sshbuf *unused)
 	sshbuf_free(m);
 	debug3_f("done");
 
-	return (0);
+	واپس (0);
 }
 
-#ifdef WITH_OPENSSL
-int
-mm_answer_moduli(struct ssh *ssh, int sock, struct sshbuf *m)
+#اگر_تعریف_شدہ WITH_OPENSSL
+صحیح
+mm_answer_moduli(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
 	DH *dh;
-	const BIGNUM *dh_p, *dh_g;
-	int r;
+	ثابت BIGNUM *dh_p, *dh_g;
+	صحیح r;
 	u_int min, want, max;
 
-	if ((r = sshbuf_get_u32(m, &min)) != 0 ||
+	اگر ((r = sshbuf_get_u32(m, &min)) != 0 ||
 	    (r = sshbuf_get_u32(m, &want)) != 0 ||
 	    (r = sshbuf_get_u32(m, &max)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3_f("got parameters: %d %d %d", min, want, max);
 	/* We need to check here, too, in case the child got corrupted */
-	if (max < min || want < min || max < want)
+	اگر (max < min || want < min || max < want)
 		fatal_f("bad parameters: %d %d %d", min, want, max);
 
 	sshbuf_reset(m);
 
-	dh = choose_dh(min, want, max);
-	if (dh == NULL) {
-		if ((r = sshbuf_put_u8(m, 0)) != 0)
+	dh = انتخاب_dh(min, want, max);
+	اگر (dh == تہی) {
+		اگر ((r = sshbuf_put_u8(m, 0)) != 0)
 			fatal_fr(r, "assemble empty");
-	} else {
+	} ورنہ {
 		/* Send first bignum */
-		DH_get0_pqg(dh, &dh_p, NULL, &dh_g);
-		if ((r = sshbuf_put_u8(m, 1)) != 0 ||
+		DH_get0_pqg(dh, &dh_p, تہی, &dh_g);
+		اگر ((r = sshbuf_put_u8(m, 1)) != 0 ||
 		    (r = sshbuf_put_bignum2(m, dh_p)) != 0 ||
 		    (r = sshbuf_put_bignum2(m, dh_g)) != 0)
 			fatal_fr(r, "assemble");
@@ -686,51 +686,51 @@ mm_answer_moduli(struct ssh *ssh, int sock, struct sshbuf *m)
 		DH_free(dh);
 	}
 	mm_request_send(sock, MONITOR_ANS_MODULI, m);
-	return (0);
+	واپس (0);
 }
-#endif
+#اگر_ختم
 
-int
-mm_answer_setcompat(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_setcompat(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	int r;
+	صحیح r;
 
 	debug3_f("entering");
 
-	if ((r = sshbuf_get_u32(m, &ssh->compat)) != 0)
+	اگر ((r = sshbuf_get_u32(m, &ssh->compat)) != 0)
 		fatal_fr(r, "parse");
-	compat_set = 1;
+	compat_سیٹ = 1;
 
-	return (0);
+	واپس (0);
 }
 
-int
-mm_answer_sign(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_sign(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	extern int auth_sock;			/* XXX move to state struct? */
-	struct sshkey *pubkey, *key;
-	struct sshbuf *sigbuf = NULL;
-	u_char *p = NULL, *signature = NULL;
-	char *alg = NULL;
-	size_t datlen, siglen;
-	int r, is_proof = 0, keyid;
+	خارجی صحیح auth_sock;			/* XXX move to state struct? */
+	ساخت sshkey *pubkey, *کلید;
+	ساخت sshbuf *sigbuf = تہی;
+	u_char *p = تہی, *signature = تہی;
+	حرف *alg = تہی;
+	سائز_t datlen, siglen;
+	صحیح r, is_proof = 0, keyid;
 	u_int compat;
-	const char proof_req[] = "hostkeys-prove-00@openssh.com";
-	static int nhostkey_proofs_done, *hostkey_proofs_done;
+	ثابت حرف proof_req[] = "hostkeys-prove-00@openssh.com";
+	ساکن صحیح nhostkey_proofs_مکمل, *hostkey_proofs_مکمل;
 
 	debug3_f("entering");
 
 	/* Make sure the unpriv process sent the compat bits already */
-	if (!compat_set)
+	اگر (!compat_سیٹ)
 		fatal_f("state error: setcompat never called");
 
-	if ((r = sshkey_froms(m, &pubkey)) != 0 ||
+	اگر ((r = sshkey_froms(m, &pubkey)) != 0 ||
 	    (r = sshbuf_get_string(m, &p, &datlen)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &alg, NULL)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &alg, تہی)) != 0 ||
 	    (r = sshbuf_get_u32(m, &compat)) != 0)
 		fatal_fr(r, "parse");
 
-	if ((keyid = get_hostkey_index(pubkey, 1, ssh)) == -1)
+	اگر ((keyid = get_hostkey_اشاریہ(pubkey, 1, ssh)) == -1)
 		fatal_f("unknown hostkey");
 	debug_f("hostkey %s index %d", sshkey_ssh_name(pubkey), keyid);
 	sshkey_free(pubkey);
@@ -746,34 +746,34 @@ mm_answer_sign(struct ssh *ssh, int sock, struct sshbuf *m)
 	 * it's not trivial, since what is signed is the hash, rather
 	 * than the full kex structure...
 	 */
-	if (datlen != 20 && datlen != 32 && datlen != 48 && datlen != 64) {
+	اگر (datlen != 20 && datlen != 32 && datlen != 48 && datlen != 64) {
 		/*
 		 * Construct expected hostkey proof and compare it to what
 		 * the client sent us.
 		 */
-		if (session_id2_len == 0) /* hostkeys is never first */
+		اگر (session_id2_len == 0) /* hostkeys is never first */
 			fatal_f("bad data length: %zu", datlen);
-		if ((key = get_hostkey_public_by_index(keyid, ssh)) == NULL)
+		اگر ((کلید = get_hostkey_عوامی_by_اشاریہ(keyid, ssh)) == تہی)
 			fatal_f("no hostkey for index %d", keyid);
-		if (keyid >= nhostkey_proofs_done) {
-			hostkey_proofs_done = xrecallocarray(
-			    hostkey_proofs_done, nhostkey_proofs_done,
-			    keyid + 1, sizeof(*hostkey_proofs_done));
-			nhostkey_proofs_done = keyid + 1;
+		اگر (keyid >= nhostkey_proofs_مکمل) {
+			hostkey_proofs_مکمل = xrecallocarray(
+			    hostkey_proofs_مکمل, nhostkey_proofs_مکمل,
+			    keyid + 1, حجم(*hostkey_proofs_مکمل));
+			nhostkey_proofs_مکمل = keyid + 1;
 		}
-		if (hostkey_proofs_done[keyid]) {
+		اگر (hostkey_proofs_مکمل[keyid]) {
 			fatal_f("hostkeys proof requested for %s key %d "
-			    "multiple times", sshkey_type(key), keyid);
+			    "multiple times", sshkey_type(کلید), keyid);
 		}
-		hostkey_proofs_done[keyid] = 1;
-		if ((sigbuf = sshbuf_new()) == NULL)
+		hostkey_proofs_مکمل[keyid] = 1;
+		اگر ((sigbuf = sshbuf_new()) == تہی)
 			fatal_f("sshbuf_new");
-		if ((r = sshbuf_put_cstring(sigbuf, proof_req)) != 0 ||
+		اگر ((r = sshbuf_put_cstring(sigbuf, proof_req)) != 0 ||
 		    (r = sshbuf_put_string(sigbuf, session_id2,
 		    session_id2_len)) != 0 ||
-		    (r = sshkey_puts(key, sigbuf)) != 0)
+		    (r = sshkey_puts(کلید, sigbuf)) != 0)
 			fatal_fr(r, "assemble private key proof");
-		if (datlen != sshbuf_len(sigbuf) ||
+		اگر (datlen != sshbuf_len(sigbuf) ||
 		    memcmp(p, sshbuf_ptr(sigbuf), sshbuf_len(sigbuf)) != 0)
 			fatal_f("bad data length: %zu, hostkey proof len %zu",
 			    datlen, sshbuf_len(sigbuf));
@@ -782,82 +782,82 @@ mm_answer_sign(struct ssh *ssh, int sock, struct sshbuf *m)
 	}
 
 	/* save session id, it will be passed on the first call */
-	if (session_id2_len == 0) {
+	اگر (session_id2_len == 0) {
 		session_id2_len = datlen;
 		session_id2 = xmalloc(session_id2_len);
-		memcpy(session_id2, p, session_id2_len);
+		حافظہ_نقل(session_id2, p, session_id2_len);
 	}
 
-	if ((key = get_hostkey_by_index(keyid)) != NULL) {
-		if ((r = sshkey_sign(key, &signature, &siglen, p, datlen, alg,
-		    options.sk_provider, NULL, compat)) != 0)
+	اگر ((کلید = get_hostkey_by_اشاریہ(keyid)) != تہی) {
+		اگر ((r = sshkey_sign(کلید, &signature, &siglen, p, datlen, alg,
+		    options.sk_provider, تہی, compat)) != 0)
 			fatal_fr(r, "sign");
-	} else if ((key = get_hostkey_public_by_index(keyid, ssh)) != NULL &&
+	} ورنہ اگر ((کلید = get_hostkey_عوامی_by_اشاریہ(keyid, ssh)) != تہی &&
 	    auth_sock > 0) {
-		if ((r = ssh_agent_sign(auth_sock, key, &signature, &siglen,
+		اگر ((r = ssh_agent_sign(auth_sock, کلید, &signature, &siglen,
 		    p, datlen, alg, compat)) != 0)
 			fatal_fr(r, "agent sign");
-	} else
+	} ورنہ
 		fatal_f("no hostkey from index %d", keyid);
 
 	debug3_f("%s %s signature len=%zu", alg,
 	    is_proof ? "hostkey proof" : "KEX", siglen);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_string(m, signature, siglen)) != 0)
+	اگر ((r = sshbuf_put_string(m, signature, siglen)) != 0)
 		fatal_fr(r, "assemble");
 
-	free(alg);
-	free(p);
-	free(signature);
+	آزاد(alg);
+	آزاد(p);
+	آزاد(signature);
 
 	mm_request_send(sock, MONITOR_ANS_SIGN, m);
 
 	/* Turn on permissions for getpwnam */
 	monitor_permit(mon_dispatch, MONITOR_REQ_PWNAM, 1);
 
-	return (0);
+	واپس (0);
 }
 
-#define PUTPW(b, id) \
-	do { \
-		if ((r = sshbuf_put_string(b, \
-		    &pwent->id, sizeof(pwent->id))) != 0) \
+#تعریف_کرو PUTPW(b, id) \
+	کرو { \
+		اگر ((r = sshbuf_put_string(b, \
+		    &pwent->id, حجم(pwent->id))) != 0) \
 			fatal_fr(r, "assemble %s", #id); \
-	} while (0)
+	} جب (0)
 
-void
-mm_encode_server_options(struct sshbuf *m)
+خالی
+mm_encode_server_options(ساخت sshbuf *m)
 {
-	int r;
-	struct sshbuf *config;
+	صحیح r;
+	ساخت sshbuf *config;
 
-	if ((config = sshbuf_new()) == NULL)
+	اگر ((config = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new failed");
-	if ((r = serialise_server_options(&options, &config)) != 0)
+	اگر ((r = serialise_server_options(&options, &config)) != 0)
 		fatal_fr(r, "serialise_server_options");
-	if ((r = sshbuf_put_stringb(m, config)) != 0)
+	اگر ((r = sshbuf_put_stringb(m, config)) != 0)
 		fatal_fr(r, "assemble options");
 	sshbuf_free(config);
 }
 
 /* Retrieves the password entry and also checks if the user is permitted */
-int
-mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_pwnamallow(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	struct passwd *pwent;
-	int r, allowed = 0;
+	ساخت passwd *pwent;
+	صحیح r, allowed = 0;
 
 	debug3_f("entering");
 
 	/* Make sure the unpriv process sent the compat bits already */
-	if (!compat_set)
+	اگر (!compat_سیٹ)
 		fatal_f("state error: setcompat never called");
 
-	if (authctxt->attempt++ != 0)
+	اگر (authctxt->attempt++ != 0)
 		fatal_f("multiple attempts for getpwnam");
 
-	if ((r = sshbuf_get_cstring(m, &authctxt->user, NULL)) != 0)
+	اگر ((r = sshbuf_get_cstring(m, &authctxt->user, تہی)) != 0)
 		fatal_fr(r, "parse");
 
 	pwent = getpwnamallow(ssh, authctxt->user);
@@ -866,12 +866,12 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
 
 	sshbuf_reset(m);
 
-	if (pwent == NULL) {
+	اگر (pwent == تہی) {
 		invalid_user = 1;
-		if ((r = sshbuf_put_u8(m, 0)) != 0)
+		اگر ((r = sshbuf_put_u8(m, 0)) != 0)
 			fatal_fr(r, "assemble fakepw");
 		authctxt->pw = fakepw();
-		goto out;
+		جاؤ برآمد;
 	}
 
 	allowed = 1;
@@ -879,38 +879,38 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
 	authctxt->valid = 1;
 
 	/* XXX send fake class/dir/shell, etc. */
-	if ((r = sshbuf_put_u8(m, 1)) != 0)
+	اگر ((r = sshbuf_put_u8(m, 1)) != 0)
 		fatal_fr(r, "assemble ok");
 	PUTPW(m, pw_uid);
 	PUTPW(m, pw_gid);
-#ifdef HAVE_STRUCT_PASSWD_PW_CHANGE
+#اگر_تعریف_شدہ HAVE_STRUCT_PASSWD_PW_CHANGE
 	PUTPW(m, pw_change);
-#endif
-#ifdef HAVE_STRUCT_PASSWD_PW_EXPIRE
+#اگر_ختم
+#اگر_تعریف_شدہ HAVE_STRUCT_PASSWD_PW_EXPIRE
 	PUTPW(m, pw_expire);
-#endif
-	if ((r = sshbuf_put_cstring(m, pwent->pw_name)) != 0 ||
+#اگر_ختم
+	اگر ((r = sshbuf_put_cstring(m, pwent->pw_name)) != 0 ||
 	    (r = sshbuf_put_cstring(m, "*")) != 0 ||
-#ifdef HAVE_STRUCT_PASSWD_PW_GECOS
+#اگر_تعریف_شدہ HAVE_STRUCT_PASSWD_PW_GECOS
 	    (r = sshbuf_put_cstring(m, pwent->pw_gecos)) != 0 ||
-#endif
-#ifdef HAVE_STRUCT_PASSWD_PW_CLASS
+#اگر_ختم
+#اگر_تعریف_شدہ HAVE_STRUCT_PASSWD_PW_CLASS
 	    (r = sshbuf_put_cstring(m, pwent->pw_class)) != 0 ||
-#endif
+#اگر_ختم
 	    (r = sshbuf_put_cstring(m, pwent->pw_dir)) != 0 ||
 	    (r = sshbuf_put_cstring(m, pwent->pw_shell)) != 0)
 		fatal_fr(r, "assemble pw");
 
- out:
-	ssh_packet_set_log_preamble(ssh, "%suser %s",
+ برآمد:
+	ssh_packet_سیٹ_log_preamble(ssh, "%suser %s",
 	    authctxt->valid ? "authenticating" : "invalid ", authctxt->user);
 
-	if (options.refuse_connection) {
+	اگر (options.refuse_connection) {
 		logit("administratively prohibited connection for "
 		    "%s%s from %.128s port %d",
 		    authctxt->valid ? "" : "invalid user ",
 		    authctxt->user, ssh_remote_ipaddr(ssh),
-		    ssh_remote_port(ssh));
+		    ssh_remote_پورٹ(ssh));
 		cleanup_exit(EXIT_CONFIG_REFUSED);
 	}
 
@@ -918,7 +918,7 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
 	mm_encode_server_options(m);
 
 	/* Create valid auth method lists */
-	if (auth2_setup_methods_lists(authctxt) != 0) {
+	اگر (auth2_تیاری_methods_lists(authctxt) != 0) {
 		/*
 		 * The monitor will continue long enough to let the child
 		 * run to its packet_disconnect(), but it must not allow any
@@ -934,47 +934,47 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
 	monitor_permit(mon_dispatch, MONITOR_REQ_AUTHSERV, 1);
 	monitor_permit(mon_dispatch, MONITOR_REQ_AUTH2_READ_BANNER, 1);
 
-#ifdef USE_PAM
-	if (options.use_pam)
-		monitor_permit(mon_dispatch, MONITOR_REQ_PAM_START, 1);
-#endif
+#اگر_تعریف_شدہ USE_PAM
+	اگر (options.use_pam)
+		monitor_permit(mon_dispatch, MONITOR_REQ_PAM_آغاز, 1);
+#اگر_ختم
 
-	return (0);
+	واپس (0);
 }
 
-int mm_answer_auth2_read_banner(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح mm_answer_auth2_read_banner(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	char *banner;
-	int r;
+	حرف *banner;
+	صحیح r;
 
 	sshbuf_reset(m);
 	banner = auth2_read_banner();
-	if ((r = sshbuf_put_cstring(m, banner != NULL ? banner : "")) != 0)
+	اگر ((r = sshbuf_put_cstring(m, banner != تہی ? banner : "")) != 0)
 		fatal_fr(r, "assemble");
 	mm_request_send(sock, MONITOR_ANS_AUTH2_READ_BANNER, m);
-	free(banner);
+	آزاد(banner);
 
-	return (0);
+	واپس (0);
 }
 
-int
-mm_answer_authserv(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_authserv(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	int r;
+	صحیح r;
 
 	monitor_permit_authentications(1);
 
-	if ((r = sshbuf_get_cstring(m, &authctxt->service, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &authctxt->style, NULL)) != 0)
+	اگر ((r = sshbuf_get_cstring(m, &authctxt->service, تہی)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &authctxt->style, تہی)) != 0)
 		fatal_fr(r, "parse");
 	debug3_f("service=%s, style=%s", authctxt->service, authctxt->style);
 
-	if (strlen(authctxt->style) == 0) {
-		free(authctxt->style);
-		authctxt->style = NULL;
+	اگر (لڑی_لمبائی(authctxt->style) == 0) {
+		آزاد(authctxt->style);
+		authctxt->style = تہی;
 	}
 
-	return (0);
+	واپس (0);
 }
 
 /*
@@ -983,40 +983,40 @@ mm_answer_authserv(struct ssh *ssh, int sock, struct sshbuf *m)
  * performed in the unprivileged authentication code).
  * Returns 1 on success, 0 otherwise.
  */
-static int
-key_base_type_match(const char *method, const struct sshkey *key,
-    const char *list)
+ساکن صحیح
+کلید_بنیاد_type_مطابقت(ثابت حرف *طریقہ, ثابت ساخت sshkey *کلید,
+    ثابت حرف *list)
 {
-	char *s, *l, *ol = xstrdup(list);
-	int found = 0;
+	حرف *s, *l, *ol = xstrdup(list);
+	صحیح ملا = 0;
 
 	l = ol;
-	for ((s = strsep(&l, ",")); s && *s != '\0'; (s = strsep(&l, ","))) {
-		if (sshkey_type_from_name(s) == key->type) {
-			found = 1;
-			break;
+	برائے ((s = strsep(&l, ",")); s && *s != '\0'; (s = strsep(&l, ","))) {
+		اگر (sshkey_type_from_name(s) == کلید->type) {
+			ملا = 1;
+			توڑو;
 		}
 	}
-	if (!found) {
-		error("%s key type %s is not in permitted list %s", method,
-		    sshkey_ssh_name(key), list);
+	اگر (!ملا) {
+		error("%s key type %s is not in permitted list %s", طریقہ,
+		    sshkey_ssh_name(کلید), list);
 	}
 
-	free(ol);
-	return found;
+	آزاد(ol);
+	واپس ملا;
 }
 
-int
-mm_answer_authpassword(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_authpassword(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	static int call_count;
-	char *passwd;
-	int r, authenticated;
-	size_t plen;
+	ساکن صحیح call_گنتی;
+	حرف *passwd;
+	صحیح r, authenticated;
+	سائز_t plen;
 
-	if (!options.password_authentication)
+	اگر (!options.password_authentication)
 		fatal_f("password authentication not enabled");
-	if ((r = sshbuf_get_cstring(m, &passwd, &plen)) != 0)
+	اگر ((r = sshbuf_get_cstring(m, &passwd, &plen)) != 0)
 		fatal_fr(r, "parse");
 	/* Only authenticate if the context is valid */
 	authenticated = options.password_authentication &&
@@ -1024,695 +1024,695 @@ mm_answer_authpassword(struct ssh *ssh, int sock, struct sshbuf *m)
 	freezero(passwd, plen);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, authenticated)) != 0)
+	اگر ((r = sshbuf_put_u32(m, authenticated)) != 0)
 		fatal_fr(r, "assemble");
-#ifdef USE_PAM
-	if ((r = sshbuf_put_u32(m, sshpam_get_maxtries_reached())) != 0)
+#اگر_تعریف_شدہ USE_PAM
+	اگر ((r = sshbuf_put_u32(m, sshpam_get_maxtries_reached())) != 0)
 		fatal_fr(r, "assemble PAM");
-#endif
+#اگر_ختم
 
 	debug3_f("sending result %d", authenticated);
 	mm_request_send(sock, MONITOR_ANS_AUTHPASSWORD, m);
 
-	call_count++;
-	if (plen == 0 && call_count == 1)
-		auth_method = "none";
-	else
-		auth_method = "password";
+	call_گنتی++;
+	اگر (plen == 0 && call_گنتی == 1)
+		auth_طریقہ = "none";
+	ورنہ
+		auth_طریقہ = "password";
 
 	/* Causes monitor loop to terminate if authenticated */
-	return (authenticated);
+	واپس (authenticated);
 }
 
-#ifdef BSD_AUTH
-int
-mm_answer_bsdauthquery(struct ssh *ssh, int sock, struct sshbuf *m)
+#اگر_تعریف_شدہ BSD_AUTH
+صحیح
+mm_answer_bsdauthquery(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	char *name, *infotxt;
+	حرف *name, *infotxt;
 	u_int numprompts, *echo_on, success;
-	char **prompts;
-	int r;
+	حرف **prompts;
+	صحیح r;
 
-	if (!options.kbd_interactive_authentication)
+	اگر (!options.kbd_interactive_authentication)
 		fatal_f("kbd-int authentication not enabled");
 	success = bsdauth_query(authctxt, &name, &infotxt, &numprompts,
 	    &prompts, &echo_on) < 0 ? 0 : 1;
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, success)) != 0)
+	اگر ((r = sshbuf_put_u32(m, success)) != 0)
 		fatal_fr(r, "assemble");
-	if (success) {
-		if ((r = sshbuf_put_cstring(m, prompts[0])) != 0)
+	اگر (success) {
+		اگر ((r = sshbuf_put_cstring(m, prompts[0])) != 0)
 			fatal_fr(r, "assemble prompt");
 	}
 
 	debug3_f("sending challenge success: %u", success);
 	mm_request_send(sock, MONITOR_ANS_BSDAUTHQUERY, m);
 
-	if (success) {
-		free(name);
-		free(infotxt);
-		free(prompts);
-		free(echo_on);
+	اگر (success) {
+		آزاد(name);
+		آزاد(infotxt);
+		آزاد(prompts);
+		آزاد(echo_on);
 	}
 
-	return (0);
+	واپس (0);
 }
 
-int
-mm_answer_bsdauthrespond(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_bsdauthrespond(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	char *response;
-	int r, authok;
+	حرف *response;
+	صحیح r, authok;
 
-	if (!options.kbd_interactive_authentication)
+	اگر (!options.kbd_interactive_authentication)
 		fatal_f("kbd-int authentication not enabled");
-	if (authctxt->as == NULL)
+	اگر (authctxt->as == تہی)
 		fatal_f("no bsd auth session");
 
-	if ((r = sshbuf_get_cstring(m, &response, NULL)) != 0)
+	اگر ((r = sshbuf_get_cstring(m, &response, تہی)) != 0)
 		fatal_fr(r, "parse");
 	authok = options.kbd_interactive_authentication &&
 	    auth_userresponse(authctxt->as, response, 0);
-	authctxt->as = NULL;
+	authctxt->as = تہی;
 	debug3_f("<%s> = <%d>", response, authok);
-	free(response);
+	آزاد(response);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, authok)) != 0)
+	اگر ((r = sshbuf_put_u32(m, authok)) != 0)
 		fatal_fr(r, "assemble");
 
 	debug3_f("sending authenticated: %d", authok);
 	mm_request_send(sock, MONITOR_ANS_BSDAUTHRESPOND, m);
 
-	auth_method = "keyboard-interactive";
+	auth_طریقہ = "keyboard-interactive";
 	auth_submethod = "bsdauth";
 
-	return (authok != 0);
+	واپس (authok != 0);
 }
-#endif
+#اگر_ختم
 
-#ifdef USE_PAM
-int
-mm_answer_pam_start(struct ssh *ssh, int sock, struct sshbuf *m)
+#اگر_تعریف_شدہ USE_PAM
+صحیح
+mm_answer_pam_آغاز(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	if (!options.use_pam)
+	اگر (!options.use_pam)
 		fatal_f("UsePAM not set, but ended up in %s anyway", __func__);
 
-	start_pam(ssh);
+	آغاز_pam(ssh);
 
 	monitor_permit(mon_dispatch, MONITOR_REQ_PAM_ACCOUNT, 1);
-	if (options.kbd_interactive_authentication)
+	اگر (options.kbd_interactive_authentication)
 		monitor_permit(mon_dispatch, MONITOR_REQ_PAM_INIT_CTX, 1);
 
-	return (0);
+	واپس (0);
 }
 
-int
-mm_answer_pam_account(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_pam_account(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
 	u_int ret;
-	int r;
+	صحیح r;
 
-	if (!options.use_pam)
+	اگر (!options.use_pam)
 		fatal_f("PAM not enabled");
 
 	ret = do_pam_account();
 
-	if ((r = sshbuf_put_u32(m, ret)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, ret)) != 0 ||
 	    (r = sshbuf_put_stringb(m, loginmsg)) != 0)
 		fatal_fr(r, "buffer error");
 	sshbuf_reset(loginmsg);
 
 	mm_request_send(sock, MONITOR_ANS_PAM_ACCOUNT, m);
 
-	return (ret);
+	واپس (ret);
 }
 
-static void *sshpam_ctxt, *sshpam_authok;
-extern KbdintDevice sshpam_device;
+ساکن خالی *sshpam_ctxt, *sshpam_authok;
+خارجی KbdintDevice sshpam_device;
 
-int
-mm_answer_pam_init_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_pam_init_ctx(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
 	u_int ok = 0;
-	int r;
+	صحیح r;
 
 	debug3_f("entering");
-	if (!options.kbd_interactive_authentication)
+	اگر (!options.kbd_interactive_authentication)
 		fatal_f("kbd-int authentication not enabled");
-	if (sshpam_ctxt != NULL)
+	اگر (sshpam_ctxt != تہی)
 		fatal_f("already called");
 	sshpam_ctxt = (sshpam_device.init_ctx)(authctxt);
-	sshpam_authok = NULL;
+	sshpam_authok = تہی;
 	sshbuf_reset(m);
-	if (sshpam_ctxt != NULL) {
+	اگر (sshpam_ctxt != تہی) {
 		monitor_permit(mon_dispatch, MONITOR_REQ_PAM_FREE_CTX, 1);
 		monitor_permit(mon_dispatch, MONITOR_REQ_PAM_QUERY, 1);
 		ok = 1;
 	}
-	if ((r = sshbuf_put_u32(m, ok)) != 0)
+	اگر ((r = sshbuf_put_u32(m, ok)) != 0)
 		fatal_fr(r, "buffer error");
 	mm_request_send(sock, MONITOR_ANS_PAM_INIT_CTX, m);
-	return (0);
+	واپس (0);
 }
 
-int
-mm_answer_pam_query(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_pam_query(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	char *name = NULL, *info = NULL, **prompts = NULL;
-	u_int i, num = 0, *echo_on = 0;
-	int r, ret;
+	حرف *name = تہی, *info = تہی, **prompts = تہی;
+	u_int i, عدد = 0, *echo_on = 0;
+	صحیح r, ret;
 
 	debug3_f("entering");
-	sshpam_authok = NULL;
-	if (sshpam_ctxt == NULL)
+	sshpam_authok = تہی;
+	اگر (sshpam_ctxt == تہی)
 		fatal_f("no context");
 	ret = (sshpam_device.query)(sshpam_ctxt, &name, &info,
-	    &num, &prompts, &echo_on);
-	if (ret == 0 && num == 0 && sshpam_priv_kbdint_authdone(sshpam_ctxt))
+	    &عدد, &prompts, &echo_on);
+	اگر (ret == 0 && عدد == 0 && sshpam_priv_kbdint_authdone(sshpam_ctxt))
 		sshpam_authok = sshpam_ctxt;
-	if (num > 1 || name == NULL || info == NULL)
+	اگر (عدد > 1 || name == تہی || info == تہی)
 		fatal("sshpam_device.query failed");
 	monitor_permit(mon_dispatch, MONITOR_REQ_PAM_RESPOND, 1);
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, ret)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, ret)) != 0 ||
 	    (r = sshbuf_put_cstring(m, name)) != 0 ||
 	    (r = sshbuf_put_cstring(m, info)) != 0 ||
 	    (r = sshbuf_put_u32(m, sshpam_get_maxtries_reached())) != 0 ||
-	    (r = sshbuf_put_u32(m, num)) != 0)
+	    (r = sshbuf_put_u32(m, عدد)) != 0)
 		fatal_fr(r, "buffer error");
-	free(name);
-	free(info);
-	for (i = 0; i < num; ++i) {
-		if ((r = sshbuf_put_cstring(m, prompts[i])) != 0 ||
+	آزاد(name);
+	آزاد(info);
+	برائے (i = 0; i < عدد; ++i) {
+		اگر ((r = sshbuf_put_cstring(m, prompts[i])) != 0 ||
 		    (r = sshbuf_put_u32(m, echo_on[i])) != 0)
 			fatal_fr(r, "buffer error");
-		free(prompts[i]);
+		آزاد(prompts[i]);
 	}
-	free(prompts);
-	free(echo_on);
-	auth_method = "keyboard-interactive";
+	آزاد(prompts);
+	آزاد(echo_on);
+	auth_طریقہ = "keyboard-interactive";
 	auth_submethod = "pam";
 	mm_request_send(sock, MONITOR_ANS_PAM_QUERY, m);
-	return (0);
+	واپس (0);
 }
 
-int
-mm_answer_pam_respond(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_pam_respond(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	char **resp;
-	u_int i, num;
-	int r, ret;
+	حرف **resp;
+	u_int i, عدد;
+	صحیح r, ret;
 
 	debug3_f("entering");
-	if (sshpam_ctxt == NULL)
+	اگر (sshpam_ctxt == تہی)
 		fatal_f("no context");
-	sshpam_authok = NULL;
-	if ((r = sshbuf_get_u32(m, &num)) != 0)
+	sshpam_authok = تہی;
+	اگر ((r = sshbuf_get_u32(m, &عدد)) != 0)
 		fatal_fr(r, "buffer error");
-	if (num > PAM_MAX_NUM_MSG) {
+	اگر (عدد > PAM_MAX_عدد_پیغام) {
 		fatal_f("Too many PAM messages, got %u, expected <= %u",
-		    num, (unsigned)PAM_MAX_NUM_MSG);
+		    عدد, (غیرعلامتی)PAM_MAX_عدد_پیغام);
 	}
-	if (num > 0) {
-		resp = xcalloc(num, sizeof(char *));
-		for (i = 0; i < num; ++i) {
-			if ((r = sshbuf_get_cstring(m, &(resp[i]), NULL)) != 0)
+	اگر (عدد > 0) {
+		resp = xcalloc(عدد, حجم(حرف *));
+		برائے (i = 0; i < عدد; ++i) {
+			اگر ((r = sshbuf_get_cstring(m, &(resp[i]), تہی)) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
 		}
-		ret = (sshpam_device.respond)(sshpam_ctxt, num, resp);
-		for (i = 0; i < num; ++i)
-			free(resp[i]);
-		free(resp);
-	} else {
-		ret = (sshpam_device.respond)(sshpam_ctxt, num, NULL);
+		ret = (sshpam_device.respond)(sshpam_ctxt, عدد, resp);
+		برائے (i = 0; i < عدد; ++i)
+			آزاد(resp[i]);
+		آزاد(resp);
+	} ورنہ {
+		ret = (sshpam_device.respond)(sshpam_ctxt, عدد, تہی);
 	}
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, ret)) != 0)
+	اگر ((r = sshbuf_put_u32(m, ret)) != 0)
 		fatal_fr(r, "buffer error");
 	mm_request_send(sock, MONITOR_ANS_PAM_RESPOND, m);
-	auth_method = "keyboard-interactive";
+	auth_طریقہ = "keyboard-interactive";
 	auth_submethod = "pam";
-	if (ret == 0)
+	اگر (ret == 0)
 		sshpam_authok = sshpam_ctxt;
-	return (0);
+	واپس (0);
 }
 
-int
-mm_answer_pam_free_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_pam_free_ctx(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	int r = sshpam_authok != NULL && sshpam_authok == sshpam_ctxt;
+	صحیح r = sshpam_authok != تہی && sshpam_authok == sshpam_ctxt;
 
 	debug3_f("entering");
-	if (sshpam_ctxt == NULL)
+	اگر (sshpam_ctxt == تہی)
 		fatal_f("no context");
 	(sshpam_device.free_ctx)(sshpam_ctxt);
-	sshpam_ctxt = sshpam_authok = NULL;
+	sshpam_ctxt = sshpam_authok = تہی;
 	sshbuf_reset(m);
 	mm_request_send(sock, MONITOR_ANS_PAM_FREE_CTX, m);
 	/* Allow another attempt */
 	monitor_permit(mon_dispatch, MONITOR_REQ_PAM_INIT_CTX, 1);
-	auth_method = "keyboard-interactive";
+	auth_طریقہ = "keyboard-interactive";
 	auth_submethod = "pam";
-	return r;
+	واپس r;
 }
-#endif
+#اگر_ختم
 
-int
-mm_answer_keyallowed(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_keyallowed(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	struct sshkey *key = NULL;
-	char *cuser, *chost;
+	ساخت sshkey *کلید = تہی;
+	حرف *cuser, *chost;
 	u_int pubkey_auth_attempt;
 	u_int type = 0;
-	int r, allowed = 0;
-	struct sshauthopt *opts = NULL;
+	صحیح r, allowed = 0;
+	ساخت sshauthopt *opts = تہی;
 
 	debug3_f("entering");
-	if ((r = sshbuf_get_u32(m, &type)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &cuser, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &chost, NULL)) != 0 ||
-	    (r = sshkey_froms(m, &key)) != 0 ||
+	اگر ((r = sshbuf_get_u32(m, &type)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &cuser, تہی)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &chost, تہی)) != 0 ||
+	    (r = sshkey_froms(m, &کلید)) != 0 ||
 	    (r = sshbuf_get_u32(m, &pubkey_auth_attempt)) != 0)
 		fatal_fr(r, "parse");
 
-	if (key != NULL && authctxt->valid) {
-		switch (type) {
-		case MM_USERKEY:
-			auth_method = "publickey";
-			if (!options.pubkey_authentication)
-				break;
-			if (auth2_key_already_used(authctxt, key))
-				break;
-			if (!key_base_type_match(auth_method, key,
+	اگر (کلید != تہی && authctxt->valid) {
+		انتخاب (type) {
+		حالت MM_USERKEY:
+			auth_طریقہ = "publickey";
+			اگر (!options.pubkey_authentication)
+				توڑو;
+			اگر (auth2_کلید_already_مستعمل(authctxt, کلید))
+				توڑو;
+			اگر (!کلید_بنیاد_type_مطابقت(auth_طریقہ, کلید,
 			    options.pubkey_accepted_algos))
-				break;
-			allowed = user_key_allowed(ssh, authctxt->pw, key,
+				توڑو;
+			allowed = user_کلید_allowed(ssh, authctxt->pw, کلید,
 			    pubkey_auth_attempt, &opts);
-			break;
-		case MM_HOSTKEY:
-			auth_method = "hostbased";
-			if (!options.hostbased_authentication)
-				break;
-			if (auth2_key_already_used(authctxt, key))
-				break;
-			if (!key_base_type_match(auth_method, key,
+			توڑو;
+		حالت MM_HOSTKEY:
+			auth_طریقہ = "hostbased";
+			اگر (!options.hostbased_authentication)
+				توڑو;
+			اگر (auth2_کلید_already_مستعمل(authctxt, کلید))
+				توڑو;
+			اگر (!کلید_بنیاد_type_مطابقت(auth_طریقہ, کلید,
 			    options.hostbased_accepted_algos))
-				break;
-			allowed = hostbased_key_allowed(ssh, authctxt->pw,
-			    cuser, chost, key);
-			auth2_record_info(authctxt,
+				توڑو;
+			allowed = hostbased_کلید_allowed(ssh, authctxt->pw,
+			    cuser, chost, کلید);
+			auth2_ریکارڈ_info(authctxt,
 			    "client user \"%.100s\", client host \"%.100s\"",
 			    cuser, chost);
-			break;
-		default:
+			توڑو;
+		طےشدہ:
 			fatal_f("unknown key type %u", type);
-			break;
+			توڑو;
 		}
 	}
 
-	debug3_f("%s authentication%s: %s key is %s", auth_method,
+	debug3_f("%s authentication%s: %s key is %s", auth_طریقہ,
 	    pubkey_auth_attempt ? "" : " test",
-	    (key == NULL || !authctxt->valid) ? "invalid" : sshkey_type(key),
+	    (کلید == تہی || !authctxt->valid) ? "invalid" : sshkey_type(کلید),
 	    allowed ? "allowed" : "not allowed");
 
-	auth2_record_key(authctxt, 0, key);
+	auth2_ریکارڈ_کلید(authctxt, 0, کلید);
 
 	/* clear temporarily storage (used by verify) */
-	monitor_reset_key_state();
+	monitor_reset_کلید_state();
 
-	if (allowed) {
+	اگر (allowed) {
 		/* Save temporarily for comparison in verify */
-		if ((r = sshkey_to_blob(key, &key_blob, &key_bloblen)) != 0)
+		اگر ((r = sshkey_مقصد_blob(کلید, &کلید_blob, &کلید_bloblen)) != 0)
 			fatal_fr(r, "sshkey_to_blob");
-		key_blobtype = type;
-		key_opts = opts;
+		کلید_blobtype = type;
+		کلید_opts = opts;
 		hostbased_cuser = cuser;
 		hostbased_chost = chost;
-	} else {
+	} ورنہ {
 		/* Log failed attempt */
-		auth_log(ssh, 0, 0, auth_method, NULL);
-		free(cuser);
-		free(chost);
+		auth_log(ssh, 0, 0, auth_طریقہ, تہی);
+		آزاد(cuser);
+		آزاد(chost);
 	}
-	sshkey_free(key);
+	sshkey_free(کلید);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, allowed)) != 0)
+	اگر ((r = sshbuf_put_u32(m, allowed)) != 0)
 		fatal_fr(r, "assemble");
-	if (opts != NULL && (r = sshauthopt_serialise(opts, m, 1)) != 0)
+	اگر (opts != تہی && (r = sshauthopt_serialise(opts, m, 1)) != 0)
 		fatal_fr(r, "sshauthopt_serialise");
 	mm_request_send(sock, MONITOR_ANS_KEYALLOWED, m);
 
-	if (!allowed)
+	اگر (!allowed)
 		sshauthopt_free(opts);
 
-	return (0);
+	واپس (0);
 }
 
-static int
-monitor_valid_userblob(struct ssh *ssh, const u_char *data, u_int datalen)
+ساکن صحیح
+monitor_valid_userblob(ساخت ssh *ssh, ثابت u_char *ڈیٹا, u_int datalen)
 {
-	struct sshbuf *b;
-	struct sshkey *hostkey = NULL;
-	const u_char *p;
-	char *userstyle, *cp;
-	size_t len;
+	ساخت sshbuf *b;
+	ساخت sshkey *hostkey = تہی;
+	ثابت u_char *p;
+	حرف *userstyle, *cp;
+	سائز_t len;
 	u_char type;
-	int hostbound = 0, r, fail = 0;
+	صحیح hostbound = 0, r, fail = 0;
 
-	if ((b = sshbuf_from(data, datalen)) == NULL)
+	اگر ((b = sshbuf_from(ڈیٹا, datalen)) == تہی)
 		fatal_f("sshbuf_from");
 
-	if ((r = sshbuf_get_string_direct(b, &p, &len)) != 0)
+	اگر ((r = sshbuf_get_string_براہ_راست(b, &p, &len)) != 0)
 		fatal_fr(r, "parse sessionid");
-	if ((session_id2 == NULL) ||
+	اگر ((session_id2 == تہی) ||
 	    (len != session_id2_len) ||
 	    (timingsafe_bcmp(p, session_id2, session_id2_len) != 0))
 		fail++;
-	if ((r = sshbuf_get_u8(b, &type)) != 0)
+	اگر ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_MSG_USERAUTH_REQUEST)
+	اگر (type != SSH2_پیغام_USERAUTH_REQUEST)
 		fail++;
-	if ((r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
+	اگر ((r = sshbuf_get_cstring(b, &cp, تہی)) != 0)
 		fatal_fr(r, "parse userstyle");
 	xasprintf(&userstyle, "%s%s%s", authctxt->user,
 	    authctxt->style ? ":" : "",
 	    authctxt->style ? authctxt->style : "");
-	if (strcmp(userstyle, cp) != 0) {
+	اگر (strcmp(userstyle, cp) != 0) {
 		logit("wrong user name passed to monitor: "
 		    "expected %s != %.100s", userstyle, cp);
 		fail++;
 	}
-	free(userstyle);
-	free(cp);
-	if ((r = sshbuf_skip_string(b)) != 0 ||	/* service */
-	    (r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
+	آزاد(userstyle);
+	آزاد(cp);
+	اگر ((r = sshbuf_skip_string(b)) != 0 ||	/* service */
+	    (r = sshbuf_get_cstring(b, &cp, تہی)) != 0)
 		fatal_fr(r, "parse method");
-	if (strcmp("publickey", cp) != 0) {
-		if (strcmp("publickey-hostbound-v00@openssh.com", cp) == 0)
+	اگر (strcmp("publickey", cp) != 0) {
+		اگر (strcmp("publickey-hostbound-v00@openssh.com", cp) == 0)
 			hostbound = 1;
-		else
+		ورنہ
 			fail++;
 	}
-	free(cp);
-	if ((r = sshbuf_get_u8(b, &type)) != 0)
+	آزاد(cp);
+	اگر ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse pktype");
-	if (type == 0)
+	اگر (type == 0)
 		fail++;
-	if ((r = sshbuf_skip_string(b)) != 0 ||	/* pkalg */
+	اگر ((r = sshbuf_skip_string(b)) != 0 ||	/* pkalg */
 	    (r = sshbuf_skip_string(b)) != 0 ||	/* pkblob */
 	    (hostbound && (r = sshkey_froms(b, &hostkey)) != 0))
 		fatal_fr(r, "parse pk");
-	if (sshbuf_len(b) != 0)
+	اگر (sshbuf_len(b) != 0)
 		fail++;
 	sshbuf_free(b);
-	if (hostkey != NULL) {
+	اگر (hostkey != تہی) {
 		/*
 		 * Ensure this is actually one of our hostkeys; unfortunately
 		 * can't check ssh->kex->initial_hostkey directly at this point
 		 * as packet state has not yet been exported to monitor.
 		 */
-		if (get_hostkey_index(hostkey, 1, ssh) == -1)
+		اگر (get_hostkey_اشاریہ(hostkey, 1, ssh) == -1)
 			fatal_f("hostbound hostkey does not match");
 		sshkey_free(hostkey);
 	}
-	return (fail == 0);
+	واپس (fail == 0);
 }
 
-static int
-monitor_valid_hostbasedblob(const u_char *data, u_int datalen,
-    const char *cuser, const char *chost)
+ساکن صحیح
+monitor_valid_hostbasedblob(ثابت u_char *ڈیٹا, u_int datalen,
+    ثابت حرف *cuser, ثابت حرف *chost)
 {
-	struct sshbuf *b;
-	const u_char *p;
-	char *cp, *userstyle;
-	size_t len;
-	int r, fail = 0;
+	ساخت sshbuf *b;
+	ثابت u_char *p;
+	حرف *cp, *userstyle;
+	سائز_t len;
+	صحیح r, fail = 0;
 	u_char type;
 
-	if ((b = sshbuf_from(data, datalen)) == NULL)
+	اگر ((b = sshbuf_from(ڈیٹا, datalen)) == تہی)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_get_string_direct(b, &p, &len)) != 0)
+	اگر ((r = sshbuf_get_string_براہ_راست(b, &p, &len)) != 0)
 		fatal_fr(r, "parse sessionid");
 
-	if ((session_id2 == NULL) ||
+	اگر ((session_id2 == تہی) ||
 	    (len != session_id2_len) ||
 	    (timingsafe_bcmp(p, session_id2, session_id2_len) != 0))
 		fail++;
 
-	if ((r = sshbuf_get_u8(b, &type)) != 0)
+	اگر ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_MSG_USERAUTH_REQUEST)
+	اگر (type != SSH2_پیغام_USERAUTH_REQUEST)
 		fail++;
-	if ((r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
+	اگر ((r = sshbuf_get_cstring(b, &cp, تہی)) != 0)
 		fatal_fr(r, "parse userstyle");
 	xasprintf(&userstyle, "%s%s%s", authctxt->user,
 	    authctxt->style ? ":" : "",
 	    authctxt->style ? authctxt->style : "");
-	if (strcmp(userstyle, cp) != 0) {
+	اگر (strcmp(userstyle, cp) != 0) {
 		logit("wrong user name passed to monitor: "
 		    "expected %s != %.100s", userstyle, cp);
 		fail++;
 	}
-	free(userstyle);
-	free(cp);
-	if ((r = sshbuf_skip_string(b)) != 0 ||	/* service */
-	    (r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
+	آزاد(userstyle);
+	آزاد(cp);
+	اگر ((r = sshbuf_skip_string(b)) != 0 ||	/* service */
+	    (r = sshbuf_get_cstring(b, &cp, تہی)) != 0)
 		fatal_fr(r, "parse method");
-	if (strcmp(cp, "hostbased") != 0)
+	اگر (strcmp(cp, "hostbased") != 0)
 		fail++;
-	free(cp);
-	if ((r = sshbuf_skip_string(b)) != 0 ||	/* pkalg */
+	آزاد(cp);
+	اگر ((r = sshbuf_skip_string(b)) != 0 ||	/* pkalg */
 	    (r = sshbuf_skip_string(b)) != 0)	/* pkblob */
 		fatal_fr(r, "parse pk");
 
 	/* verify client host, strip trailing dot if necessary */
-	if ((r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
+	اگر ((r = sshbuf_get_cstring(b, &cp, تہی)) != 0)
 		fatal_fr(r, "parse host");
-	if (((len = strlen(cp)) > 0) && cp[len - 1] == '.')
+	اگر (((len = لڑی_لمبائی(cp)) > 0) && cp[len - 1] == '.')
 		cp[len - 1] = '\0';
-	if (strcmp(cp, chost) != 0)
+	اگر (strcmp(cp, chost) != 0)
 		fail++;
-	free(cp);
+	آزاد(cp);
 
 	/* verify client user */
-	if ((r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
+	اگر ((r = sshbuf_get_cstring(b, &cp, تہی)) != 0)
 		fatal_fr(r, "parse ruser");
-	if (strcmp(cp, cuser) != 0)
+	اگر (strcmp(cp, cuser) != 0)
 		fail++;
-	free(cp);
+	آزاد(cp);
 
-	if (sshbuf_len(b) != 0)
+	اگر (sshbuf_len(b) != 0)
 		fail++;
 	sshbuf_free(b);
-	return (fail == 0);
+	واپس (fail == 0);
 }
 
-int
-mm_answer_keyverify(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_keyverify(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	struct sshkey *key;
-	const u_char *signature, *data, *blob;
-	char *sigalg = NULL, *fp = NULL;
-	size_t signaturelen, datalen, bloblen;
-	int r, ret, req_presence = 0, req_verify = 0, valid_data = 0;
-	int encoded_ret;
-	struct sshkey_sig_details *sig_details = NULL;
+	ساخت sshkey *کلید;
+	ثابت u_char *signature, *ڈیٹا, *blob;
+	حرف *sigalg = تہی, *fp = تہی;
+	سائز_t signaturelen, datalen, bloblen;
+	صحیح r, ret, req_presence = 0, req_verify = 0, valid_ڈیٹا = 0;
+	صحیح encoded_ret;
+	ساخت sshkey_sig_details *sig_details = تہی;
 
-	if ((r = sshbuf_get_string_direct(m, &blob, &bloblen)) != 0 ||
-	    (r = sshbuf_get_string_direct(m, &signature, &signaturelen)) != 0 ||
-	    (r = sshbuf_get_string_direct(m, &data, &datalen)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &sigalg, NULL)) != 0)
+	اگر ((r = sshbuf_get_string_براہ_راست(m, &blob, &bloblen)) != 0 ||
+	    (r = sshbuf_get_string_براہ_راست(m, &signature, &signaturelen)) != 0 ||
+	    (r = sshbuf_get_string_براہ_راست(m, &ڈیٹا, &datalen)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &sigalg, تہی)) != 0)
 		fatal_fr(r, "parse");
 
-	if (hostbased_cuser == NULL || hostbased_chost == NULL ||
-	  !monitor_allowed_key(blob, bloblen))
+	اگر (hostbased_cuser == تہی || hostbased_chost == تہی ||
+	  !monitor_allowed_کلید(blob, bloblen))
 		fatal_f("bad key, not previously allowed");
 
 	/* Empty signature algorithm means NULL. */
-	if (*sigalg == '\0') {
-		free(sigalg);
-		sigalg = NULL;
+	اگر (*sigalg == '\0') {
+		آزاد(sigalg);
+		sigalg = تہی;
 	}
 
 	/* XXX use sshkey_froms here; need to change key_blob, etc. */
-	if ((r = sshkey_from_blob(blob, bloblen, &key)) != 0)
+	اگر ((r = sshkey_from_blob(blob, bloblen, &کلید)) != 0)
 		fatal_fr(r, "parse key");
 
-	switch (key_blobtype) {
-	case MM_USERKEY:
-		valid_data = monitor_valid_userblob(ssh, data, datalen);
-		auth_method = "publickey";
-		break;
-	case MM_HOSTKEY:
-		valid_data = monitor_valid_hostbasedblob(data, datalen,
+	انتخاب (کلید_blobtype) {
+	حالت MM_USERKEY:
+		valid_ڈیٹا = monitor_valid_userblob(ssh, ڈیٹا, datalen);
+		auth_طریقہ = "publickey";
+		توڑو;
+	حالت MM_HOSTKEY:
+		valid_ڈیٹا = monitor_valid_hostbasedblob(ڈیٹا, datalen,
 		    hostbased_cuser, hostbased_chost);
-		auth_method = "hostbased";
-		break;
-	default:
-		valid_data = 0;
-		break;
+		auth_طریقہ = "hostbased";
+		توڑو;
+	طےشدہ:
+		valid_ڈیٹا = 0;
+		توڑو;
 	}
-	if (!valid_data)
+	اگر (!valid_ڈیٹا)
 		fatal_f("bad %s signature data blob",
-		    key_blobtype == MM_USERKEY ? "userkey" :
-		    (key_blobtype == MM_HOSTKEY ? "hostkey" : "unknown"));
+		    کلید_blobtype == MM_USERKEY ? "userkey" :
+		    (کلید_blobtype == MM_HOSTKEY ? "hostkey" : "unknown"));
 
-	if ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
-	    SSH_FP_DEFAULT)) == NULL)
+	اگر ((fp = sshkey_fingerprint(کلید, options.fingerprint_hash,
+	    SSH_FP_DEFAULT)) == تہی)
 		fatal_f("sshkey_fingerprint failed");
 
-	ret = sshkey_verify(key, signature, signaturelen, data, datalen,
+	ret = sshkey_verify(کلید, signature, signaturelen, ڈیٹا, datalen,
 	    sigalg, ssh->compat, &sig_details);
-	debug3_f("%s %s signature using %s %s%s%s", auth_method,
-	    sshkey_type(key), sigalg == NULL ? "default" : sigalg,
+	debug3_f("%s %s signature using %s %s%s%s", auth_طریقہ,
+	    sshkey_type(کلید), sigalg == تہی ? "default" : sigalg,
 	    (ret == 0) ? "verified" : "unverified",
 	    (ret != 0) ? ": " : "", (ret != 0) ? ssh_err(ret) : "");
 
-	if (ret == 0 && key_blobtype == MM_USERKEY && sig_details != NULL) {
+	اگر (ret == 0 && کلید_blobtype == MM_USERKEY && sig_details != تہی) {
 		req_presence = (options.pubkey_auth_options &
 		    PUBKEYAUTH_TOUCH_REQUIRED) ||
-		    !key_opts->no_require_user_presence;
-		if (req_presence &&
+		    !کلید_opts->no_require_user_presence;
+		اگر (req_presence &&
 		    (sig_details->sk_flags & SSH_SK_USER_PRESENCE_REQD) == 0) {
 			error("public key %s %s signature for %s%s from %.128s "
 			    "port %d rejected: user presence "
 			    "(authenticator touch) requirement not met ",
-			    sshkey_type(key), fp,
+			    sshkey_type(کلید), fp,
 			    authctxt->valid ? "" : "invalid user ",
 			    authctxt->user, ssh_remote_ipaddr(ssh),
-			    ssh_remote_port(ssh));
+			    ssh_remote_پورٹ(ssh));
 			ret = SSH_ERR_SIGNATURE_INVALID;
 		}
 		req_verify = (options.pubkey_auth_options &
-		    PUBKEYAUTH_VERIFY_REQUIRED) || key_opts->require_verify;
-		if (req_verify &&
+		    PUBKEYAUTH_VERIFY_REQUIRED) || کلید_opts->require_verify;
+		اگر (req_verify &&
 		    (sig_details->sk_flags & SSH_SK_USER_VERIFICATION_REQD) == 0) {
 			error("public key %s %s signature for %s%s from %.128s "
 			    "port %d rejected: user verification requirement "
-			    "not met ", sshkey_type(key), fp,
+			    "not met ", sshkey_type(کلید), fp,
 			    authctxt->valid ? "" : "invalid user ",
 			    authctxt->user, ssh_remote_ipaddr(ssh),
-			    ssh_remote_port(ssh));
+			    ssh_remote_پورٹ(ssh));
 			ret = SSH_ERR_SIGNATURE_INVALID;
 		}
 	}
-	auth2_record_key(authctxt, ret == 0, key);
+	auth2_ریکارڈ_کلید(authctxt, ret == 0, کلید);
 
-	if (key_blobtype == MM_USERKEY && ret == 0)
-		auth_activate_options(ssh, key_opts);
-	monitor_reset_key_state();
+	اگر (کلید_blobtype == MM_USERKEY && ret == 0)
+		auth_activate_options(ssh, کلید_opts);
+	monitor_reset_کلید_state();
 
 	sshbuf_reset(m);
 
 	/* encode ret != 0 as positive integer, since we're sending u32 */
 	encoded_ret = (ret != 0);
-	if ((r = sshbuf_put_u32(m, encoded_ret)) != 0 ||
-	    (r = sshbuf_put_u8(m, sig_details != NULL)) != 0)
+	اگر ((r = sshbuf_put_u32(m, encoded_ret)) != 0 ||
+	    (r = sshbuf_put_u8(m, sig_details != تہی)) != 0)
 		fatal_fr(r, "assemble");
-	if (sig_details != NULL) {
-		if ((r = sshbuf_put_u32(m, sig_details->sk_counter)) != 0 ||
+	اگر (sig_details != تہی) {
+		اگر ((r = sshbuf_put_u32(m, sig_details->sk_شمار)) != 0 ||
 		    (r = sshbuf_put_u8(m, sig_details->sk_flags)) != 0)
 			fatal_fr(r, "assemble sk");
 	}
 	sshkey_sig_details_free(sig_details);
 	mm_request_send(sock, MONITOR_ANS_KEYVERIFY, m);
 
-	free(sigalg);
-	free(fp);
-	sshkey_free(key);
+	آزاد(sigalg);
+	آزاد(fp);
+	sshkey_free(کلید);
 
-	return ret == 0;
+	واپس ret == 0;
 }
 
-static void
-mm_record_login(struct ssh *ssh, Session *s, struct passwd *pw)
+ساکن خالی
+mm_ریکارڈ_login(ساخت ssh *ssh, Session *s, ساخت passwd *pw)
 {
 	socklen_t fromlen;
-	struct sockaddr_storage from;
+	ساخت sockaddr_storage from;
 
 	/*
 	 * Get IP address of client. If the connection is not a socket, let
 	 * the address be 0.0.0.0.
 	 */
-	memset(&from, 0, sizeof(from));
-	fromlen = sizeof(from);
-	if (ssh_packet_connection_is_on_socket(ssh)) {
-		if (getpeername(ssh_packet_get_connection_in(ssh),
-		    (struct sockaddr *)&from, &fromlen) == -1) {
+	memset(&from, 0, حجم(from));
+	fromlen = حجم(from);
+	اگر (ssh_packet_connection_is_on_socket(ssh)) {
+		اگر (getpeername(ssh_packet_get_connection_اندر(ssh),
+		    (ساخت sockaddr *)&from, &fromlen) == -1) {
 			debug("getpeername: %.100s", strerror(errno));
 			cleanup_exit(255);
 		}
 	}
 	/* Record that there was a login on that tty from the remote host. */
-	record_login(s->pid, s->tty, pw->pw_name, pw->pw_uid,
+	ریکارڈ_login(s->pid, s->tty, pw->pw_name, pw->pw_uid,
 	    session_get_remote_name_or_ip(ssh, utmp_len, options.use_dns),
-	    (struct sockaddr *)&from, fromlen);
+	    (ساخت sockaddr *)&from, fromlen);
 }
 
-static void
+ساکن خالی
 mm_session_close(Session *s)
 {
-	debug3_f("session %d pid %ld", s->self, (long)s->pid);
-	if (s->ttyfd != -1) {
+	debug3_f("session %d pid %ld", s->self, (طویل)s->pid);
+	اگر (s->ttyfd != -1) {
 		debug3_f("tty %s ptyfd %d", s->tty, s->ptyfd);
 		session_pty_cleanup2(s);
 	}
-	session_unused(s->self);
+	session_غیر_مستعمل(s->self);
 }
 
-int
-mm_answer_pty(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_pty(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	extern struct monitor *pmonitor;
+	خارجی ساخت monitor *pmonitor;
 	Session *s;
-	int r, res, fd0;
+	صحیح r, res, fd0;
 
 	debug3_f("entering");
 
 	sshbuf_reset(m);
 	s = session_new();
-	if (s == NULL)
-		goto error;
+	اگر (s == تہی)
+		جاؤ error;
 	s->authctxt = authctxt;
 	s->pw = authctxt->pw;
 	s->pid = pmonitor->m_pid;
-	res = pty_allocate(&s->ptyfd, &s->ttyfd, s->tty, sizeof(s->tty));
-	if (res == 0)
-		goto error;
+	res = pty_allocate(&s->ptyfd, &s->ttyfd, s->tty, حجم(s->tty));
+	اگر (res == 0)
+		جاؤ error;
 	pty_setowner(authctxt->pw, s->tty);
 
-	if ((r = sshbuf_put_u32(m, 1)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, 1)) != 0 ||
 	    (r = sshbuf_put_cstring(m, s->tty)) != 0)
 		fatal_fr(r, "assemble");
 
 	/* We need to trick ttyslot */
-	if (dup2(s->ttyfd, 0) == -1)
+	اگر (dup2(s->ttyfd, 0) == -1)
 		fatal_f("dup2");
 
-	mm_record_login(ssh, s, authctxt->pw);
+	mm_ریکارڈ_login(ssh, s, authctxt->pw);
 
 	/* Now we can close the file descriptor again */
 	close(0);
 
 	/* send messages generated by record_login */
-	if ((r = sshbuf_put_stringb(m, loginmsg)) != 0)
+	اگر ((r = sshbuf_put_stringb(m, loginmsg)) != 0)
 		fatal_fr(r, "assemble loginmsg");
 	sshbuf_reset(loginmsg);
 
 	mm_request_send(sock, MONITOR_ANS_PTY, m);
 
-	if (mm_send_fd(sock, s->ptyfd) == -1 ||
+	اگر (mm_send_fd(sock, s->ptyfd) == -1 ||
 	    mm_send_fd(sock, s->ttyfd) == -1)
 		fatal_f("send fds failed");
 
 	/* make sure nothing uses fd 0 */
-	if ((fd0 = open(_PATH_DEVNULL, O_RDONLY)) == -1)
+	اگر ((fd0 = open(_PATH_DEVNULL, O_RDONLY)) == -1)
 		fatal_f("open(/dev/null): %s", strerror(errno));
-	if (fd0 != 0)
+	اگر (fd0 != 0)
 		error_f("fd0 %d != 0", fd0);
 
 	/* slave side of pty is not needed */
@@ -1723,139 +1723,139 @@ mm_answer_pty(struct ssh *ssh, int sock, struct sshbuf *m)
 
 	debug3_f("tty %s ptyfd %d", s->tty, s->ttyfd);
 
-	return (0);
+	واپس (0);
 
  error:
-	if (s != NULL)
+	اگر (s != تہی)
 		mm_session_close(s);
-	if ((r = sshbuf_put_u32(m, 0)) != 0)
+	اگر ((r = sshbuf_put_u32(m, 0)) != 0)
 		fatal_fr(r, "assemble 0");
 	mm_request_send(sock, MONITOR_ANS_PTY, m);
-	return (0);
+	واپس (0);
 }
 
-int
-mm_answer_pty_cleanup(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_pty_cleanup(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
 	Session *s;
-	char *tty;
-	int r;
+	حرف *tty;
+	صحیح r;
 
 	debug3_f("entering");
 
-	if ((r = sshbuf_get_cstring(m, &tty, NULL)) != 0)
+	اگر ((r = sshbuf_get_cstring(m, &tty, تہی)) != 0)
 		fatal_fr(r, "parse tty");
-	if ((s = session_by_tty(tty)) != NULL)
+	اگر ((s = session_by_tty(tty)) != تہی)
 		mm_session_close(s);
 	sshbuf_reset(m);
-	free(tty);
-	return (0);
+	آزاد(tty);
+	واپس (0);
 }
 
-int
-mm_answer_term(struct ssh *ssh, int sock, struct sshbuf *req)
+صحیح
+mm_answer_رکن(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *req)
 {
-	extern struct monitor *pmonitor;
-	int res, status;
+	خارجی ساخت monitor *pmonitor;
+	صحیح res, حالت_2;
 
 	debug3_f("tearing down sessions");
 
 	/* The child is terminating */
 	session_destroy_all(ssh, &mm_session_close);
 
-#ifdef USE_PAM
-	if (options.use_pam)
+#اگر_تعریف_شدہ USE_PAM
+	اگر (options.use_pam)
 		sshpam_cleanup();
-#endif
+#اگر_ختم
 
-	while (waitpid(pmonitor->m_pid, &status, 0) == -1)
-		if (errno != EINTR)
-			exit(1);
+	جب (waitpid(pmonitor->m_pid, &حالت_2, 0) == -1)
+		اگر (errno != EINTR)
+			باہر_نکلو(1);
 
-	res = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
+	res = WIFEXITED(حالت_2) ? WEXITSTATUS(حالت_2) : 1;
 
 	/* Terminate process */
-	exit(res);
+	باہر_نکلو(res);
 }
 
-#ifdef SSH_AUDIT_EVENTS
+#اگر_تعریف_شدہ SSH_AUDIT_EVENTS
 /* Report that an audit event occurred */
-int
-mm_answer_audit_event(struct ssh *ssh, int socket, struct sshbuf *m)
+صحیح
+mm_answer_audit_event(ساخت ssh *ssh, صحیح socket, ساخت sshbuf *m)
 {
 	u_int n;
 	ssh_audit_event_t event;
-	int r;
+	صحیح r;
 
 	debug3_f("entering");
 
-	if ((r = sshbuf_get_u32(m, &n)) != 0)
+	اگر ((r = sshbuf_get_u32(m, &n)) != 0)
 		fatal_fr(r, "buffer error");
 	event = (ssh_audit_event_t)n;
-	switch (event) {
-	case SSH_AUTH_FAIL_PUBKEY:
-	case SSH_AUTH_FAIL_HOSTBASED:
-	case SSH_AUTH_FAIL_GSSAPI:
-	case SSH_LOGIN_EXCEED_MAXTRIES:
-	case SSH_LOGIN_ROOT_DENIED:
-	case SSH_CONNECTION_CLOSE:
-	case SSH_INVALID_USER:
+	انتخاب (event) {
+	حالت SSH_AUTH_FAIL_PUBKEY:
+	حالت SSH_AUTH_FAIL_HOSTBASED:
+	حالت SSH_AUTH_FAIL_GSSAPI:
+	حالت SSH_LOGIN_EXCEED_MAXTRIES:
+	حالت SSH_LOGIN_جڑ_DENIED:
+	حالت SSH_CONNECTION_CLOSE:
+	حالت SSH_INVALID_USER:
 		audit_event(ssh, event);
-		break;
-	default:
+		توڑو;
+	طےشدہ:
 		fatal("Audit event type %d not permitted", event);
 	}
 
-	return (0);
+	واپس (0);
 }
 
-int
-mm_answer_audit_command(struct ssh *ssh, int socket, struct sshbuf *m)
+صحیح
+mm_answer_audit_command(ساخت ssh *ssh, صحیح socket, ساخت sshbuf *m)
 {
-	char *cmd;
-	int r;
+	حرف *cmd;
+	صحیح r;
 
 	debug3_f("entering");
-	if ((r = sshbuf_get_cstring(m, &cmd, NULL)) != 0)
+	اگر ((r = sshbuf_get_cstring(m, &cmd, تہی)) != 0)
 		fatal_fr(r, "buffer error");
 	/* sanity check command, if so how? */
-	audit_run_command(cmd);
-	free(cmd);
-	return (0);
+	audit_تسلسل_command(cmd);
+	آزاد(cmd);
+	واپس (0);
 }
-#endif /* SSH_AUDIT_EVENTS */
+#اگر_ختم /* SSH_AUDIT_EVENTS */
 
-void
-monitor_clear_keystate(struct ssh *ssh, struct monitor *pmonitor)
+خالی
+monitor_clear_keystate(ساخت ssh *ssh, ساخت monitor *pmonitor)
 {
-	ssh_clear_newkeys(ssh, MODE_IN);
-	ssh_clear_newkeys(ssh, MODE_OUT);
-	sshbuf_free(child_state);
-	child_state = NULL;
+	ssh_clear_newkeys(ssh, منوال_اندر);
+	ssh_clear_newkeys(ssh, منوال_برآمد);
+	sshbuf_free(بچہ_state);
+	بچہ_state = تہی;
 }
 
-void
-monitor_apply_keystate(struct ssh *ssh, struct monitor *pmonitor)
+خالی
+monitor_apply_keystate(ساخت ssh *ssh, ساخت monitor *pmonitor)
 {
-	struct kex *kex;
-	int r;
+	ساخت kex *kex;
+	صحیح r;
 
 	debug3_f("packet_set_state");
-	if ((r = ssh_packet_set_state(ssh, child_state)) != 0)
+	اگر ((r = ssh_packet_سیٹ_state(ssh, بچہ_state)) != 0)
 		fatal_fr(r, "packet_set_state");
-	sshbuf_free(child_state);
-	child_state = NULL;
-	if ((kex = ssh->kex) == NULL)
+	sshbuf_free(بچہ_state);
+	بچہ_state = تہی;
+	اگر ((kex = ssh->kex) == تہی)
 		fatal_f("internal error: ssh->kex == NULL");
-	if (session_id2_len != sshbuf_len(ssh->kex->session_id)) {
+	اگر (session_id2_len != sshbuf_len(ssh->kex->session_id)) {
 		fatal_f("incorrect session id length %zu (expected %u)",
 		    sshbuf_len(ssh->kex->session_id), session_id2_len);
 	}
-	if (memcmp(sshbuf_ptr(ssh->kex->session_id), session_id2,
+	اگر (memcmp(sshbuf_ptr(ssh->kex->session_id), session_id2,
 	    session_id2_len) != 0)
 		fatal_f("session ID mismatch");
 	/* XXX set callbacks */
-#ifdef WITH_OPENSSL
+#اگر_تعریف_شدہ WITH_OPENSSL
 	kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_server;
 	kex->kex[KEX_DH_GRP14_SHA1] = kex_gen_server;
 	kex->kex[KEX_DH_GRP14_SHA256] = kex_gen_server;
@@ -1865,120 +1865,120 @@ monitor_apply_keystate(struct ssh *ssh, struct monitor *pmonitor)
 	kex->kex[KEX_DH_GEX_SHA256] = kexgex_server;
 	kex->kex[KEX_ECDH_SHA2] = kex_gen_server;
 	kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_server;
-#endif
+#اگر_ختم
 	kex->kex[KEX_C25519_SHA256] = kex_gen_server;
 	kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_server;
 	kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_server;
-	kex->load_host_public_key=&get_hostkey_public_by_type;
-	kex->load_host_private_key=&get_hostkey_private_by_type;
-	kex->host_key_index=&get_hostkey_index;
+	kex->بھرو_host_عوامی_کلید=&get_hostkey_عوامی_by_type;
+	kex->بھرو_host_نجی_کلید=&get_hostkey_نجی_by_type;
+	kex->host_کلید_اشاریہ=&get_hostkey_اشاریہ;
 	kex->sign = sshd_hostkey_sign;
 }
 
 /* This function requires careful sanity checking */
 
-void
-mm_get_keystate(struct ssh *ssh, struct monitor *pmonitor)
+خالی
+mm_get_keystate(ساخت ssh *ssh, ساخت monitor *pmonitor)
 {
 	debug3_f("Waiting for new keys");
 
-	if ((child_state = sshbuf_new()) == NULL)
+	اگر ((بچہ_state = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new failed");
 	mm_request_receive_expect(pmonitor->m_sendfd, MONITOR_REQ_KEYEXPORT,
-	    child_state);
+	    بچہ_state);
 	debug3_f("GOT new keys");
 }
 
 
 /* XXX */
 
-static void
-monitor_openfds(struct monitor *mon, int do_logfds)
+ساکن خالی
+monitor_openfds(ساخت monitor *mon, صحیح do_logfds)
 {
-	int pair[2];
-#ifdef SO_ZEROIZE
-	int on = 1;
-#endif
+	صحیح pair[2];
+#اگر_تعریف_شدہ SO_ZEROIZE
+	صحیح on = 1;
+#اگر_ختم
 
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1)
+	اگر (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1)
 		fatal_f("socketpair: %s", strerror(errno));
-#ifdef SO_ZEROIZE
-	if (setsockopt(pair[0], SOL_SOCKET, SO_ZEROIZE, &on, sizeof(on)) == -1)
+#اگر_تعریف_شدہ SO_ZEROIZE
+	اگر (setsockopt(pair[0], SOL_SOCKET, SO_ZEROIZE, &on, حجم(on)) == -1)
 		error("setsockopt SO_ZEROIZE(0): %.100s", strerror(errno));
-	if (setsockopt(pair[1], SOL_SOCKET, SO_ZEROIZE, &on, sizeof(on)) == -1)
+	اگر (setsockopt(pair[1], SOL_SOCKET, SO_ZEROIZE, &on, حجم(on)) == -1)
 		error("setsockopt SO_ZEROIZE(1): %.100s", strerror(errno));
-#endif
+#اگر_ختم
 	FD_CLOSEONEXEC(pair[0]);
 	FD_CLOSEONEXEC(pair[1]);
 	mon->m_recvfd = pair[0];
 	mon->m_sendfd = pair[1];
 
-	if (do_logfds) {
-		if (pipe(pair) == -1)
+	اگر (do_logfds) {
+		اگر (pipe(pair) == -1)
 			fatal_f("pipe: %s", strerror(errno));
 		FD_CLOSEONEXEC(pair[0]);
 		FD_CLOSEONEXEC(pair[1]);
 		mon->m_log_recvfd = pair[0];
 		mon->m_log_sendfd = pair[1];
-	} else
+	} ورنہ
 		mon->m_log_recvfd = mon->m_log_sendfd = -1;
 }
 
-struct monitor *
-monitor_init(void)
+ساخت monitor *
+monitor_init(خالی)
 {
-	struct monitor *mon;
+	ساخت monitor *mon;
 
-	mon = xcalloc(1, sizeof(*mon));
+	mon = xcalloc(1, حجم(*mon));
 	monitor_openfds(mon, 1);
 
-	return mon;
+	واپس mon;
 }
 
-void
-monitor_reinit(struct monitor *mon)
+خالی
+monitor_reinit(ساخت monitor *mon)
 {
 	monitor_openfds(mon, 0);
 }
 
-int
-monitor_auth_attempted(void)
+صحیح
+monitor_auth_attempted(خالی)
 {
-	return auth_attempted;
+	واپس auth_attempted;
 }
 
-int
-monitor_invalid_user(void)
+صحیح
+monitor_invalid_user(خالی)
 {
-	return invalid_user;
+	واپس invalid_user;
 }
 
-#ifdef GSSAPI
-int
-mm_answer_gss_setup_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
+#اگر_تعریف_شدہ GSSAPI
+صحیح
+mm_answer_gss_تیاری_ctx(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
 	gss_OID_desc goid;
 	OM_uint32 major;
-	size_t len;
+	سائز_t len;
 	u_char *p;
-	int r;
+	صحیح r;
 
-	if (!options.gss_authentication)
+	اگر (!options.gss_authentication)
 		fatal_f("GSSAPI authentication not enabled");
 
 	ssh_gssapi_cleanup_global_client();
 
-	if ((r = sshbuf_get_string(m, &p, &len)) != 0)
+	اگر ((r = sshbuf_get_string(m, &p, &len)) != 0)
 		fatal_fr(r, "parse");
 	goid.elements = p;
-	goid.length = len;
+	goid.لمبائی = len;
 
 	major = ssh_gssapi_server_ctx(&gsscontext, &goid);
 
-	free(goid.elements);
+	آزاد(goid.elements);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, major)) != 0)
+	اگر ((r = sshbuf_put_u32(m, major)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(sock, MONITOR_ANS_GSSSETUP, m);
@@ -1986,99 +1986,99 @@ mm_answer_gss_setup_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
 	/* Now we have a context, enable the step */
 	monitor_permit(mon_dispatch, MONITOR_REQ_GSSSTEP, 1);
 
-	return (0);
+	واپس (0);
 }
 
-int
-mm_answer_gss_accept_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_gss_accept_ctx(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	gss_buffer_desc in;
-	gss_buffer_desc out = GSS_C_EMPTY_BUFFER;
+	gss_بفر_desc اندر;
+	gss_بفر_desc برآمد = GSS_C_خالی_خانے_بفر;
 	OM_uint32 major, minor;
 	OM_uint32 flags = 0; /* GSI needs this */
-	int r;
+	صحیح r;
 
-	if (!options.gss_authentication)
+	اگر (!options.gss_authentication)
 		fatal_f("GSSAPI authentication not enabled");
 
-	if ((r = ssh_gssapi_get_buffer_desc(m, &in)) != 0)
+	اگر ((r = ssh_gssapi_get_بفر_desc(m, &اندر)) != 0)
 		fatal_fr(r, "ssh_gssapi_get_buffer_desc");
-	major = ssh_gssapi_accept_ctx(gsscontext, &in, &out, &flags);
-	free(in.value);
+	major = ssh_gssapi_accept_ctx(gsscontext, &اندر, &برآمد, &flags);
+	آزاد(اندر.قدر);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, major)) != 0 ||
-	    (r = sshbuf_put_string(m, out.value, out.length)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, major)) != 0 ||
+	    (r = sshbuf_put_string(m, برآمد.قدر, برآمد.لمبائی)) != 0 ||
 	    (r = sshbuf_put_u32(m, flags)) != 0)
 		fatal_fr(r, "assemble");
 	mm_request_send(sock, MONITOR_ANS_GSSSTEP, m);
 
-	gss_release_buffer(&minor, &out);
+	gss_release_بفر(&minor, &برآمد);
 
-	if (major == GSS_S_COMPLETE) {
+	اگر (major == GSS_S_COMPLETE) {
 		monitor_permit(mon_dispatch, MONITOR_REQ_GSSSTEP, 0);
 		monitor_permit(mon_dispatch, MONITOR_REQ_GSSUSEROK, 1);
 		monitor_permit(mon_dispatch, MONITOR_REQ_GSSCHECKMIC, 1);
 	}
-	return (0);
+	واپس (0);
 }
 
-int
-mm_answer_gss_checkmic(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_gss_checkmic(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	gss_buffer_desc gssbuf, mic;
+	gss_بفر_desc gssbuf, mic;
 	OM_uint32 ret;
-	int r;
+	صحیح r;
 
-	if (!options.gss_authentication)
+	اگر (!options.gss_authentication)
 		fatal_f("GSSAPI authentication not enabled");
 
-	if ((r = ssh_gssapi_get_buffer_desc(m, &gssbuf)) != 0 ||
-	    (r = ssh_gssapi_get_buffer_desc(m, &mic)) != 0)
+	اگر ((r = ssh_gssapi_get_بفر_desc(m, &gssbuf)) != 0 ||
+	    (r = ssh_gssapi_get_بفر_desc(m, &mic)) != 0)
 		fatal_fr(r, "ssh_gssapi_get_buffer_desc");
 
 	ret = ssh_gssapi_checkmic(gsscontext, &gssbuf, &mic);
 
-	free(gssbuf.value);
-	free(mic.value);
+	آزاد(gssbuf.قدر);
+	آزاد(mic.قدر);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, ret)) != 0)
+	اگر ((r = sshbuf_put_u32(m, ret)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(sock, MONITOR_ANS_GSSCHECKMIC, m);
 
-	if (!GSS_ERROR(ret))
+	اگر (!GSS_ERROR(ret))
 		monitor_permit(mon_dispatch, MONITOR_REQ_GSSUSEROK, 1);
 
-	return (0);
+	واپس (0);
 }
 
-int
-mm_answer_gss_userok(struct ssh *ssh, int sock, struct sshbuf *m)
+صحیح
+mm_answer_gss_userok(ساخت ssh *ssh, صحیح sock, ساخت sshbuf *m)
 {
-	int r, authenticated;
-	const char *displayname;
+	صحیح r, authenticated;
+	ثابت حرف *displayname;
 
-	if (!options.gss_authentication)
+	اگر (!options.gss_authentication)
 		fatal_f("GSSAPI authentication not enabled");
 
 	authenticated = authctxt->valid && ssh_gssapi_userok(authctxt->user);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, authenticated)) != 0)
+	اگر ((r = sshbuf_put_u32(m, authenticated)) != 0)
 		fatal_fr(r, "assemble");
 
 	debug3_f("sending result %d", authenticated);
 	mm_request_send(sock, MONITOR_ANS_GSSUSEROK, m);
 
-	auth_method = "gssapi-with-mic";
+	auth_طریقہ = "gssapi-with-mic";
 
-	if ((displayname = ssh_gssapi_displayname()) != NULL)
-		auth2_record_info(authctxt, "%s", displayname);
+	اگر ((displayname = ssh_gssapi_displayname()) != تہی)
+		auth2_ریکارڈ_info(authctxt, "%s", displayname);
 
 	/* Monitor loop will terminate if authenticated */
-	return (authenticated);
+	واپس (authenticated);
 }
-#endif /* GSSAPI */
+#اگر_ختم /* GSSAPI */
 

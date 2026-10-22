@@ -15,93 +15,93 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
 
-#include "ssh_api.h"
-#include "compat.h"
-#include "log.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "dh.h"
-#include "misc.h"
-#include "ssh2.h"
-#include "version.h"
-#include "myproposal.h"
-#include "ssherr.h"
-#include "sshbuf.h"
+#شامل "ssh_api.h"
+#شامل "compat.h"
+#شامل "log.h"
+#شامل "authfile.h"
+#شامل "sshkey.h"
+#شامل "dh.h"
+#شامل "misc.h"
+#شامل "ssh2.h"
+#شامل "version.h"
+#شامل "myproposal.h"
+#شامل "ssherr.h"
+#شامل "sshbuf.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#شامل "openbsd-compat/openssl-compat.h"
 
-#include <string.h>
+#شامل <string.h>
 
-int	_ssh_exchange_banner(struct ssh *);
-int	_ssh_send_banner(struct ssh *, struct sshbuf *);
-int	_ssh_read_banner(struct ssh *, struct sshbuf *);
-int	_ssh_order_hostkeyalgs(struct ssh *);
-int	_ssh_verify_host_key(struct sshkey *, struct ssh *);
-struct sshkey *_ssh_host_public_key(int, int, struct ssh *);
-struct sshkey *_ssh_host_private_key(int, int, struct ssh *);
-int	_ssh_host_key_sign(struct ssh *, struct sshkey *, struct sshkey *,
-    u_char **, size_t *, const u_char *, size_t, const char *);
+صحیح	_ssh_exchange_banner(ساخت ssh *);
+صحیح	_ssh_send_banner(ساخت ssh *, ساخت sshbuf *);
+صحیح	_ssh_read_banner(ساخت ssh *, ساخت sshbuf *);
+صحیح	ssh_ترتیب_hostkeyalgs(ساخت ssh *);
+صحیح	ssh_verify_host_کلید(ساخت sshkey *, ساخت ssh *);
+ساخت sshkey *ssh_host_عوامی_کلید(صحیح, صحیح, ساخت ssh *);
+ساخت sshkey *ssh_host_نجی_کلید(صحیح, صحیح, ساخت ssh *);
+صحیح	ssh_host_کلید_sign(ساخت ssh *, ساخت sshkey *, ساخت sshkey *,
+    u_char **, سائز_t *, ثابت u_char *, سائز_t, ثابت حرف *);
 
 /*
  * stubs for privsep calls in the server side implementation of kex.
  */
-int	mm_sshkey_sign(struct sshkey *, u_char **, u_int *,
-    const u_char *, u_int, const char *, const char *, const char *, u_int);
+صحیح	mm_sshkey_sign(ساخت sshkey *, u_char **, u_int *,
+    ثابت u_char *, u_int, ثابت حرف *, ثابت حرف *, ثابت حرف *, u_int);
 
-#ifdef WITH_OPENSSL
-DH	*mm_choose_dh(int, int, int);
-#endif
+#اگر_تعریف_شدہ WITH_OPENSSL
+DH	*mm_انتخاب_dh(صحیح, صحیح, صحیح);
+#اگر_ختم
 
-int
-mm_sshkey_sign(struct sshkey *key, u_char **sigp, u_int *lenp,
-    const u_char *data, u_int datalen, const char *alg,
-    const char *sk_provider, const char *sk_pin, u_int compat)
+صحیح
+mm_sshkey_sign(ساخت sshkey *کلید, u_char **sigp, u_int *lenp,
+    ثابت u_char *ڈیٹا, u_int datalen, ثابت حرف *alg,
+    ثابت حرف *sk_provider, ثابت حرف *sk_pin, u_int compat)
 {
-	size_t slen = 0;
-	int ret;
+	سائز_t slen = 0;
+	صحیح ret;
 
-	ret = sshkey_sign(key, sigp, &slen, data, datalen, alg,
+	ret = sshkey_sign(کلید, sigp, &slen, ڈیٹا, datalen, alg,
 	    sk_provider, sk_pin, compat);
 	*lenp = slen;
-	return ret;
+	واپس ret;
 }
 
-#ifdef WITH_OPENSSL
+#اگر_تعریف_شدہ WITH_OPENSSL
 DH *
-mm_choose_dh(int min, int nbits, int max)
+mm_انتخاب_dh(صحیح min, صحیح nbits, صحیح max)
 {
-	return choose_dh(min, nbits, max);
+	واپس انتخاب_dh(min, nbits, max);
 }
-#endif
+#اگر_ختم
 
 /* API */
 
-int
-ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
+صحیح
+ssh_init(ساخت ssh **sshp, صحیح is_server, ساخت kex_params *kex_params)
 {
-	char *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *populated[PROPOSAL_MAX];
-	struct ssh *ssh;
-	char **proposal;
-	static int called;
-	int r;
+	حرف *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
+	حرف *populated[PROPOSAL_MAX];
+	ساخت ssh *ssh;
+	حرف **proposal;
+	ساکن صحیح called;
+	صحیح r;
 
-	if (!called) {
-		seed_rng();
+	اگر (!called) {
+		بیج_rng();
 		called = 1;
 	}
 
-	if ((ssh = ssh_packet_set_connection(NULL, -1, -1)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (is_server)
-		ssh_packet_set_server(ssh);
+	اگر ((ssh = ssh_packet_سیٹ_connection(تہی, -1, -1)) == تہی)
+		واپس SSH_ERR_ALLOC_FAIL;
+	اگر (is_server)
+		ssh_packet_سیٹ_server(ssh);
 
 	/* Initialize key exchange */
 	proposal = kex_params ? kex_params->proposal : myproposal;
@@ -110,17 +110,17 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 	    proposal[PROPOSAL_ENC_ALGS_CTOS],
 	    proposal[PROPOSAL_MAC_ALGS_CTOS],
 	    proposal[PROPOSAL_COMP_ALGS_CTOS],
-	    proposal[PROPOSAL_SERVER_HOST_KEY_ALGS]);
+	    proposal[PROPOSAL_SERVER_HOST_کلید_ALGS]);
 	r = kex_ready(ssh, populated);
 	kex_proposal_free_entries(populated);
-	if (r != 0) {
+	اگر (r != 0) {
 		ssh_free(ssh);
-		return r;
+		واپس r;
 	}
 
 	ssh->kex->server = is_server;
-	if (is_server) {
-#ifdef WITH_OPENSSL
+	اگر (is_server) {
+#اگر_تعریف_شدہ WITH_OPENSSL
 		ssh->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_server;
 		ssh->kex->kex[KEX_DH_GRP14_SHA1] = kex_gen_server;
 		ssh->kex->kex[KEX_DH_GRP14_SHA256] = kex_gen_server;
@@ -129,16 +129,16 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 		ssh->kex->kex[KEX_DH_GEX_SHA1] = kexgex_server;
 		ssh->kex->kex[KEX_DH_GEX_SHA256] = kexgex_server;
 		ssh->kex->kex[KEX_ECDH_SHA2] = kex_gen_server;
-#endif /* WITH_OPENSSL */
+#اگر_ختم /* WITH_OPENSSL */
 		ssh->kex->kex[KEX_C25519_SHA256] = kex_gen_server;
 		ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_server;
 		ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_server;
 		ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_server;
-		ssh->kex->load_host_public_key=&_ssh_host_public_key;
-		ssh->kex->load_host_private_key=&_ssh_host_private_key;
-		ssh->kex->sign=&_ssh_host_key_sign;
-	} else {
-#ifdef WITH_OPENSSL
+		ssh->kex->بھرو_host_عوامی_کلید=&ssh_host_عوامی_کلید;
+		ssh->kex->بھرو_host_نجی_کلید=&ssh_host_نجی_کلید;
+		ssh->kex->sign=&ssh_host_کلید_sign;
+	} ورنہ {
+#اگر_تعریف_شدہ WITH_OPENSSL
 		ssh->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_client;
 		ssh->kex->kex[KEX_DH_GRP14_SHA1] = kex_gen_client;
 		ssh->kex->kex[KEX_DH_GRP14_SHA256] = kex_gen_client;
@@ -147,112 +147,112 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 		ssh->kex->kex[KEX_DH_GEX_SHA1] = kexgex_client;
 		ssh->kex->kex[KEX_DH_GEX_SHA256] = kexgex_client;
 		ssh->kex->kex[KEX_ECDH_SHA2] = kex_gen_client;
-#endif /* WITH_OPENSSL */
+#اگر_ختم /* WITH_OPENSSL */
 		ssh->kex->kex[KEX_C25519_SHA256] = kex_gen_client;
 		ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_client;
 		ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_client;
 		ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_client;
-		ssh->kex->verify_host_key =&_ssh_verify_host_key;
+		ssh->kex->verify_host_کلید =&ssh_verify_host_کلید;
 	}
 	*sshp = ssh;
-	return 0;
+	واپس 0;
 }
 
-void
-ssh_free(struct ssh *ssh)
+خالی
+ssh_free(ساخت ssh *ssh)
 {
-	struct key_entry *k;
+	ساخت کلید_اندراج *k;
 
-	if (ssh == NULL)
-		return;
+	اگر (ssh == تہی)
+		واپس;
 
 	/*
 	 * we've only created the public keys variants in case we
 	 * are a acting as a server.
 	 */
-	while ((k = TAILQ_FIRST(&ssh->public_keys)) != NULL) {
-		TAILQ_REMOVE(&ssh->public_keys, k, next);
-		if (ssh->kex && ssh->kex->server)
-			sshkey_free(k->key);
-		free(k);
+	جب ((k = TAILQ_FIRST(&ssh->عوامی_کلیدیں)) != تہی) {
+		TAILQ_REMOVE(&ssh->عوامی_کلیدیں, k, اگلا);
+		اگر (ssh->kex && ssh->kex->server)
+			sshkey_free(k->کلید);
+		آزاد(k);
 	}
-	while ((k = TAILQ_FIRST(&ssh->private_keys)) != NULL) {
-		TAILQ_REMOVE(&ssh->private_keys, k, next);
-		free(k);
+	جب ((k = TAILQ_FIRST(&ssh->نجی_کلیدیں)) != تہی) {
+		TAILQ_REMOVE(&ssh->نجی_کلیدیں, k, اگلا);
+		آزاد(k);
 	}
 	ssh_packet_close(ssh);
-	free(ssh);
+	آزاد(ssh);
 }
 
-void
-ssh_set_app_data(struct ssh *ssh, void *app_data)
+خالی
+ssh_سیٹ_app_ڈیٹا(ساخت ssh *ssh, خالی *app_ڈیٹا)
 {
-	ssh->app_data = app_data;
+	ssh->app_ڈیٹا = app_ڈیٹا;
 }
 
-void *
-ssh_get_app_data(struct ssh *ssh)
+خالی *
+ssh_get_app_ڈیٹا(ساخت ssh *ssh)
 {
-	return ssh->app_data;
+	واپس ssh->app_ڈیٹا;
 }
 
 /* Returns < 0 on error, 0 otherwise */
-int
-ssh_add_hostkey(struct ssh *ssh, struct sshkey *key)
+صحیح
+ssh_جوڑو_hostkey(ساخت ssh *ssh, ساخت sshkey *کلید)
 {
-	struct sshkey *pubkey = NULL;
-	struct key_entry *k = NULL, *k_prv = NULL;
-	int r;
+	ساخت sshkey *pubkey = تہی;
+	ساخت کلید_اندراج *k = تہی, *k_prv = تہی;
+	صحیح r;
 
-	if (ssh->kex->server) {
-		if ((r = sshkey_from_private(key, &pubkey)) != 0)
-			return r;
-		if ((k = malloc(sizeof(*k))) == NULL ||
-		    (k_prv = malloc(sizeof(*k_prv))) == NULL) {
-			free(k);
+	اگر (ssh->kex->server) {
+		اگر ((r = sshkey_from_نجی(کلید, &pubkey)) != 0)
+			واپس r;
+		اگر ((k = حافظہ_دو(حجم(*k))) == تہی ||
+		    (k_prv = حافظہ_دو(حجم(*k_prv))) == تہی) {
+			آزاد(k);
 			sshkey_free(pubkey);
-			return SSH_ERR_ALLOC_FAIL;
+			واپس SSH_ERR_ALLOC_FAIL;
 		}
-		k_prv->key = key;
-		TAILQ_INSERT_TAIL(&ssh->private_keys, k_prv, next);
+		k_prv->کلید = کلید;
+		TAILQ_INSERT_TAIL(&ssh->نجی_کلیدیں, k_prv, اگلا);
 
 		/* add the public key, too */
-		k->key = pubkey;
-		TAILQ_INSERT_TAIL(&ssh->public_keys, k, next);
+		k->کلید = pubkey;
+		TAILQ_INSERT_TAIL(&ssh->عوامی_کلیدیں, k, اگلا);
 		r = 0;
-	} else {
-		if ((k = malloc(sizeof(*k))) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		k->key = key;
-		TAILQ_INSERT_TAIL(&ssh->public_keys, k, next);
+	} ورنہ {
+		اگر ((k = حافظہ_دو(حجم(*k))) == تہی)
+			واپس SSH_ERR_ALLOC_FAIL;
+		k->کلید = کلید;
+		TAILQ_INSERT_TAIL(&ssh->عوامی_کلیدیں, k, اگلا);
 		r = 0;
 	}
 
-	return r;
+	واپس r;
 }
 
-int
-ssh_set_verify_host_key_callback(struct ssh *ssh,
-    int (*cb)(struct sshkey *, struct ssh *))
+صحیح
+ssh_سیٹ_verify_host_کلید_callback(ساخت ssh *ssh,
+    صحیح (*cb)(ساخت sshkey *, ساخت ssh *))
 {
-	if (cb == NULL || ssh->kex == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	اگر (cb == تہی || ssh->kex == تہی)
+		واپس SSH_ERR_INVALID_دلیل;
 
-	ssh->kex->verify_host_key = cb;
+	ssh->kex->verify_host_کلید = cb;
 
-	return 0;
+	واپس 0;
 }
 
-int
-ssh_input_append(struct ssh *ssh, const u_char *data, size_t len)
+صحیح
+ssh_داخلہ_append(ساخت ssh *ssh, ثابت u_char *ڈیٹا, سائز_t len)
 {
-	return sshbuf_put(ssh_packet_get_input(ssh), data, len);
+	واپس sshbuf_put(ssh_packet_get_داخلہ(ssh), ڈیٹا, len);
 }
 
-int
-ssh_packet_next(struct ssh *ssh, u_char *typep)
+صحیح
+ssh_packet_اگلا(ساخت ssh *ssh, u_char *typep)
 {
-	int r;
+	صحیح r;
 	uint32_t seqnr;
 	u_char type;
 
@@ -260,10 +260,10 @@ ssh_packet_next(struct ssh *ssh, u_char *typep)
 	 * Try to read a packet. Return SSH_MSG_NONE if no packet or not
 	 * enough data.
 	 */
-	*typep = SSH_MSG_NONE;
-	if (sshbuf_len(ssh->kex->client_version) == 0 ||
-	    sshbuf_len(ssh->kex->server_version) == 0)
-		return _ssh_exchange_banner(ssh);
+	*typep = SSH_پیغام_NONE;
+	اگر (sshbuf_len(ssh->kex->client_نسخہ) == 0 ||
+	    sshbuf_len(ssh->kex->server_نسخہ) == 0)
+		واپس _ssh_exchange_banner(ssh);
 	/*
 	 * If we enough data and a dispatch function then
 	 * call the function and get the next packet.
@@ -275,175 +275,175 @@ ssh_packet_next(struct ssh *ssh, u_char *typep)
 	 *     30-49    Key exchange method specific (numbers can be reused for
 	 *              different authentication methods)
 	 */
-	for (;;) {
-		if ((r = ssh_packet_read_poll2(ssh, &type, &seqnr)) != 0)
-			return r;
-		if (type > 0 && type < DISPATCH_MAX &&
-		    type >= SSH2_MSG_KEXINIT && type <= SSH2_MSG_TRANSPORT_MAX &&
-		    ssh->dispatch[type] != NULL) {
-			if ((r = (*ssh->dispatch[type])(type, seqnr, ssh)) != 0)
-				return r;
-		} else {
+	برائے (;;) {
+		اگر ((r = ssh_packet_read_poll2(ssh, &type, &seqnr)) != 0)
+			واپس r;
+		اگر (type > 0 && type < DISPATCH_MAX &&
+		    type >= SSH2_پیغام_KEXINIT && type <= SSH2_پیغام_TRANSPORT_MAX &&
+		    ssh->dispatch[type] != تہی) {
+			اگر ((r = (*ssh->dispatch[type])(type, seqnr, ssh)) != 0)
+				واپس r;
+		} ورنہ {
 			*typep = type;
-			return 0;
+			واپس 0;
 		}
 	}
 }
 
-const u_char *
-ssh_packet_payload(struct ssh *ssh, size_t *lenp)
+ثابت u_char *
+ssh_packet_payload(ساخت ssh *ssh, سائز_t *lenp)
 {
-	return sshpkt_ptr(ssh, lenp);
+	واپس sshpkt_ptr(ssh, lenp);
 }
 
-int
-ssh_packet_put(struct ssh *ssh, int type, const u_char *data, size_t len)
+صحیح
+ssh_packet_put(ساخت ssh *ssh, صحیح type, ثابت u_char *ڈیٹا, سائز_t len)
 {
-	int r;
+	صحیح r;
 
-	if ((r = sshpkt_start(ssh, type)) != 0 ||
-	    (r = sshpkt_put(ssh, data, len)) != 0 ||
+	اگر ((r = sshpkt_آغاز(ssh, type)) != 0 ||
+	    (r = sshpkt_put(ssh, ڈیٹا, len)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
-	return 0;
+		واپس r;
+	واپس 0;
 }
 
-const u_char *
-ssh_output_ptr(struct ssh *ssh, size_t *len)
+ثابت u_char *
+ssh_output_ptr(ساخت ssh *ssh, سائز_t *len)
 {
-	struct sshbuf *output = ssh_packet_get_output(ssh);
+	ساخت sshbuf *output = ssh_packet_get_output(ssh);
 
 	*len = sshbuf_len(output);
-	return sshbuf_ptr(output);
+	واپس sshbuf_ptr(output);
 }
 
-int
-ssh_output_consume(struct ssh *ssh, size_t len)
+صحیح
+ssh_output_consume(ساخت ssh *ssh, سائز_t len)
 {
-	return sshbuf_consume(ssh_packet_get_output(ssh), len);
+	واپس sshbuf_consume(ssh_packet_get_output(ssh), len);
 }
 
-int
-ssh_output_space(struct ssh *ssh, size_t len)
+صحیح
+ssh_output_space(ساخت ssh *ssh, سائز_t len)
 {
-	return (0 == sshbuf_check_reserve(ssh_packet_get_output(ssh), len));
+	واپس (0 == sshbuf_check_reserve(ssh_packet_get_output(ssh), len));
 }
 
-int
-ssh_input_space(struct ssh *ssh, size_t len)
+صحیح
+ssh_داخلہ_space(ساخت ssh *ssh, سائز_t len)
 {
-	return (0 == sshbuf_check_reserve(ssh_packet_get_input(ssh), len));
+	واپس (0 == sshbuf_check_reserve(ssh_packet_get_داخلہ(ssh), len));
 }
 
 /* Read other side's version identification. */
-int
-_ssh_read_banner(struct ssh *ssh, struct sshbuf *banner)
+صحیح
+_ssh_read_banner(ساخت ssh *ssh, ساخت sshbuf *banner)
 {
-	struct sshbuf *input = ssh_packet_get_input(ssh);
-	const char *mismatch = "Protocol mismatch.\r\n";
-	const u_char *s = sshbuf_ptr(input);
+	ساخت sshbuf *داخلہ = ssh_packet_get_داخلہ(ssh);
+	ثابت حرف *mismatch = "Protocol mismatch.\r\n";
+	ثابت u_char *s = sshbuf_ptr(داخلہ);
 	u_char c;
-	char *cp = NULL, *remote_version = NULL;
-	int r = 0, remote_major, remote_minor, expect_nl;
-	size_t n, j;
+	حرف *cp = تہی, *remote_نسخہ = تہی;
+	صحیح r = 0, remote_major, remote_minor, expect_nl;
+	سائز_t n, j;
 
-	for (j = n = 0;;) {
+	برائے (j = n = 0;;) {
 		sshbuf_reset(banner);
 		expect_nl = 0;
-		for (;;) {
-			if (j >= sshbuf_len(input))
-				return 0; /* insufficient data in input buf */
+		برائے (;;) {
+			اگر (j >= sshbuf_len(داخلہ))
+				واپس 0; /* insufficient data in input buf */
 			c = s[j++];
-			if (c == '\r') {
+			اگر (c == '\r') {
 				expect_nl = 1;
-				continue;
+				جاری;
 			}
-			if (c == '\n')
-				break;
-			if (expect_nl)
-				goto bad;
-			if ((r = sshbuf_put_u8(banner, c)) != 0)
-				return r;
-			if (sshbuf_len(banner) > SSH_MAX_BANNER_LEN)
-				goto bad;
+			اگر (c == '\n')
+				توڑو;
+			اگر (expect_nl)
+				جاؤ bad;
+			اگر ((r = sshbuf_put_u8(banner, c)) != 0)
+				واپس r;
+			اگر (sshbuf_len(banner) > SSH_MAX_BANNER_LEN)
+				جاؤ bad;
 		}
-		if (sshbuf_len(banner) >= 4 &&
+		اگر (sshbuf_len(banner) >= 4 &&
 		    memcmp(sshbuf_ptr(banner), "SSH-", 4) == 0)
-			break;
-		debug_f("%.*s", (int)sshbuf_len(banner),
+			توڑو;
+		debug_f("%.*s", (صحیح)sshbuf_len(banner),
 		    sshbuf_ptr(banner));
 		/* Accept lines before banner only on client */
-		if (ssh->kex->server || ++n > SSH_MAX_PRE_BANNER_LINES) {
+		اگر (ssh->kex->server || ++n > SSH_MAX_PRE_BANNER_سطریں) {
   bad:
-			if ((r = sshbuf_put(ssh_packet_get_output(ssh),
-			    mismatch, strlen(mismatch))) != 0)
-				return r;
-			return SSH_ERR_NO_PROTOCOL_VERSION;
+			اگر ((r = sshbuf_put(ssh_packet_get_output(ssh),
+			    mismatch, لڑی_لمبائی(mismatch))) != 0)
+				واپس r;
+			واپس SSH_ERR_NO_PROTOCOL_نسخہ;
 		}
 	}
-	if ((r = sshbuf_consume(input, j)) != 0)
-		return r;
+	اگر ((r = sshbuf_consume(داخلہ, j)) != 0)
+		واپس r;
 
 	/* XXX remote version must be the same size as banner for sscanf */
-	if ((cp = sshbuf_dup_string(banner)) == NULL ||
-	    (remote_version = calloc(1, sshbuf_len(banner))) == NULL) {
+	اگر ((cp = sshbuf_dup_string(banner)) == تہی ||
+	    (remote_نسخہ = صفر_حافظہ_دو(1, sshbuf_len(banner))) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
 
 	/*
 	 * Check that the versions match.  In future this might accept
 	 * several versions and set appropriate flags to handle them.
 	 */
-	if (sscanf(cp, "SSH-%d.%d-%[^\n]\n",
-	    &remote_major, &remote_minor, remote_version) != 3) {
+	اگر (لڑی_سے_پڑھو(cp, "SSH-%d.%d-%[^\n]\n",
+	    &remote_major, &remote_minor, remote_نسخہ) != 3) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
 	debug("Remote protocol version %d.%d, remote software version %.100s",
-	    remote_major, remote_minor, remote_version);
+	    remote_major, remote_minor, remote_نسخہ);
 
-	compat_banner(ssh, remote_version);
-	if  (remote_major == 1 && remote_minor == 99) {
+	compat_banner(ssh, remote_نسخہ);
+	اگر  (remote_major == 1 && remote_minor == 99) {
 		remote_major = 2;
 		remote_minor = 0;
 	}
-	if (remote_major != 2)
+	اگر (remote_major != 2)
 		r = SSH_ERR_PROTOCOL_MISMATCH;
 
 	debug("Remote version string %.100s", cp);
- out:
-	free(cp);
-	free(remote_version);
-	return r;
+ برآمد:
+	آزاد(cp);
+	آزاد(remote_نسخہ);
+	واپس r;
 }
 
 /* Send our own protocol version identification. */
-int
-_ssh_send_banner(struct ssh *ssh, struct sshbuf *banner)
+صحیح
+_ssh_send_banner(ساخت ssh *ssh, ساخت sshbuf *banner)
 {
-	char *cp;
-	int r;
+	حرف *cp;
+	صحیح r;
 
-	if ((r = sshbuf_putf(banner, "SSH-2.0-%.100s\r\n", SSH_VERSION)) != 0)
-		return r;
-	if ((r = sshbuf_putb(ssh_packet_get_output(ssh), banner)) != 0)
-		return r;
+	اگر ((r = sshbuf_putf(banner, "SSH-2.0-%.100s\r\n", SSH_نسخہ)) != 0)
+		واپس r;
+	اگر ((r = sshbuf_putb(ssh_packet_get_output(ssh), banner)) != 0)
+		واپس r;
 	/* Remove trailing \r\n */
-	if ((r = sshbuf_consume_end(banner, 2)) != 0)
-		return r;
-	if ((cp = sshbuf_dup_string(banner)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	اگر ((r = sshbuf_consume_انتہا(banner, 2)) != 0)
+		واپس r;
+	اگر ((cp = sshbuf_dup_string(banner)) == تہی)
+		واپس SSH_ERR_ALLOC_FAIL;
 	debug("Local version string %.100s", cp);
-	free(cp);
-	return 0;
+	آزاد(cp);
+	واپس 0;
 }
 
-int
-_ssh_exchange_banner(struct ssh *ssh)
+صحیح
+_ssh_exchange_banner(ساخت ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r;
+	ساخت kex *kex = ssh->kex;
+	صحیح r;
 
 	/*
 	 * if _ssh_read_banner() cannot parse a full version string
@@ -451,140 +451,140 @@ _ssh_exchange_banner(struct ssh *ssh)
 	 */
 
 	r = 0;
-	if (kex->server) {
-		if (sshbuf_len(ssh->kex->server_version) == 0)
-			r = _ssh_send_banner(ssh, ssh->kex->server_version);
-		if (r == 0 &&
-		    sshbuf_len(ssh->kex->server_version) != 0 &&
-		    sshbuf_len(ssh->kex->client_version) == 0)
-			r = _ssh_read_banner(ssh, ssh->kex->client_version);
-	} else {
-		if (sshbuf_len(ssh->kex->server_version) == 0)
-			r = _ssh_read_banner(ssh, ssh->kex->server_version);
-		if (r == 0 &&
-		    sshbuf_len(ssh->kex->server_version) != 0 &&
-		    sshbuf_len(ssh->kex->client_version) == 0)
-			r = _ssh_send_banner(ssh, ssh->kex->client_version);
+	اگر (kex->server) {
+		اگر (sshbuf_len(ssh->kex->server_نسخہ) == 0)
+			r = _ssh_send_banner(ssh, ssh->kex->server_نسخہ);
+		اگر (r == 0 &&
+		    sshbuf_len(ssh->kex->server_نسخہ) != 0 &&
+		    sshbuf_len(ssh->kex->client_نسخہ) == 0)
+			r = _ssh_read_banner(ssh, ssh->kex->client_نسخہ);
+	} ورنہ {
+		اگر (sshbuf_len(ssh->kex->server_نسخہ) == 0)
+			r = _ssh_read_banner(ssh, ssh->kex->server_نسخہ);
+		اگر (r == 0 &&
+		    sshbuf_len(ssh->kex->server_نسخہ) != 0 &&
+		    sshbuf_len(ssh->kex->client_نسخہ) == 0)
+			r = _ssh_send_banner(ssh, ssh->kex->client_نسخہ);
 	}
-	if (r != 0)
-		return r;
+	اگر (r != 0)
+		واپس r;
 	/* start initial kex as soon as we have exchanged the banners */
-	if (sshbuf_len(ssh->kex->server_version) != 0 &&
-	    sshbuf_len(ssh->kex->client_version) != 0) {
-		if ((r = _ssh_order_hostkeyalgs(ssh)) != 0 ||
+	اگر (sshbuf_len(ssh->kex->server_نسخہ) != 0 &&
+	    sshbuf_len(ssh->kex->client_نسخہ) != 0) {
+		اگر ((r = ssh_ترتیب_hostkeyalgs(ssh)) != 0 ||
 		    (r = kex_send_kexinit(ssh)) != 0)
-			return r;
+			واپس r;
 	}
-	return 0;
+	واپس 0;
 }
 
-struct sshkey *
-_ssh_host_public_key(int type, int nid, struct ssh *ssh)
+ساخت sshkey *
+ssh_host_عوامی_کلید(صحیح type, صحیح nid, ساخت ssh *ssh)
 {
-	struct key_entry *k;
+	ساخت کلید_اندراج *k;
 
 	debug3_f("need %d", type);
-	TAILQ_FOREACH(k, &ssh->public_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (k->key->type == type &&
-		    (type != KEY_ECDSA || k->key->ecdsa_nid == nid))
-			return (k->key);
+	TAILQ_FOREACH(k, &ssh->عوامی_کلیدیں, اگلا) {
+		debug3_f("check %s", sshkey_type(k->کلید));
+		اگر (k->کلید->type == type &&
+		    (type != کلید_ECDSA || k->کلید->ecdsa_nid == nid))
+			واپس (k->کلید);
 	}
-	return (NULL);
+	واپس (تہی);
 }
 
-struct sshkey *
-_ssh_host_private_key(int type, int nid, struct ssh *ssh)
+ساخت sshkey *
+ssh_host_نجی_کلید(صحیح type, صحیح nid, ساخت ssh *ssh)
 {
-	struct key_entry *k;
+	ساخت کلید_اندراج *k;
 
 	debug3_f("need %d", type);
-	TAILQ_FOREACH(k, &ssh->private_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (k->key->type == type &&
-		    (type != KEY_ECDSA || k->key->ecdsa_nid == nid))
-			return (k->key);
+	TAILQ_FOREACH(k, &ssh->نجی_کلیدیں, اگلا) {
+		debug3_f("check %s", sshkey_type(k->کلید));
+		اگر (k->کلید->type == type &&
+		    (type != کلید_ECDSA || k->کلید->ecdsa_nid == nid))
+			واپس (k->کلید);
 	}
-	return (NULL);
+	واپس (تہی);
 }
 
-int
-_ssh_verify_host_key(struct sshkey *hostkey, struct ssh *ssh)
+صحیح
+ssh_verify_host_کلید(ساخت sshkey *hostkey, ساخت ssh *ssh)
 {
-	struct key_entry *k;
+	ساخت کلید_اندراج *k;
 
 	debug3_f("need %s", sshkey_type(hostkey));
-	TAILQ_FOREACH(k, &ssh->public_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (sshkey_equal_public(hostkey, k->key))
-			return (0);	/* ok */
+	TAILQ_FOREACH(k, &ssh->عوامی_کلیدیں, اگلا) {
+		debug3_f("check %s", sshkey_type(k->کلید));
+		اگر (sshkey_equal_عوامی(hostkey, k->کلید))
+			واپس (0);	/* ok */
 	}
-	return (-1);	/* failed */
+	واپس (-1);	/* failed */
 }
 
 /* offer hostkey algorithms in kexinit depending on registered keys */
-int
-_ssh_order_hostkeyalgs(struct ssh *ssh)
+صحیح
+ssh_ترتیب_hostkeyalgs(ساخت ssh *ssh)
 {
-	struct key_entry *k;
-	char *orig, *avail, *oavail = NULL, *alg, *replace = NULL;
-	char **proposal;
-	size_t maxlen;
-	int ktype, nid, r;
+	ساخت کلید_اندراج *k;
+	حرف *orig, *avail, *oavail = تہی, *alg, *replace = تہی;
+	حرف **proposal;
+	سائز_t maxlen;
+	صحیح ktype, nid, r;
 
 	/* XXX we de-serialize ssh->kex->my, modify it, and change it */
-	if ((r = kex_buf2prop(ssh->kex->my, NULL, &proposal)) != 0)
-		return r;
-	orig = proposal[PROPOSAL_SERVER_HOST_KEY_ALGS];
-	if ((oavail = avail = strdup(orig)) == NULL) {
+	اگر ((r = kex_buf2prop(ssh->kex->my, تہی, &proposal)) != 0)
+		واپس r;
+	orig = proposal[PROPOSAL_SERVER_HOST_کلید_ALGS];
+	اگر ((oavail = avail = strdup(orig)) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	maxlen = strlen(avail) + 1;
-	if ((replace = calloc(1, maxlen)) == NULL) {
+	maxlen = لڑی_لمبائی(avail) + 1;
+	اگر ((replace = صفر_حافظہ_دو(1, maxlen)) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
 	*replace = '\0';
-	while ((alg = strsep(&avail, ",")) && *alg != '\0') {
-		if ((ktype = sshkey_type_from_name(alg)) == KEY_UNSPEC)
-			continue;
+	جب ((alg = strsep(&avail, ",")) && *alg != '\0') {
+		اگر ((ktype = sshkey_type_from_name(alg)) == کلید_UNSPEC)
+			جاری;
 		nid = sshkey_ecdsa_nid_from_name(alg);
-		TAILQ_FOREACH(k, &ssh->public_keys, next) {
-			if (k->key->type != ktype &&
-			    (!sshkey_is_cert(k->key) ||
-			    k->key->type != sshkey_type_plain(ktype)))
-				continue;
-			if (sshkey_type_plain(k->key->type) == KEY_ECDSA &&
-			    k->key->ecdsa_nid != nid)
-				continue;
+		TAILQ_FOREACH(k, &ssh->عوامی_کلیدیں, اگلا) {
+			اگر (k->کلید->type != ktype &&
+			    (!sshkey_is_cert(k->کلید) ||
+			    k->کلید->type != sshkey_type_plain(ktype)))
+				جاری;
+			اگر (sshkey_type_plain(k->کلید->type) == کلید_ECDSA &&
+			    k->کلید->ecdsa_nid != nid)
+				جاری;
 			/* Candidate */
-			if (*replace != '\0')
+			اگر (*replace != '\0')
 				strlcat(replace, ",", maxlen);
 			strlcat(replace, alg, maxlen);
-			break;
+			توڑو;
 		}
 	}
-	if (*replace != '\0') {
+	اگر (*replace != '\0') {
 		debug2_f("orig/%d    %s", ssh->kex->server, orig);
 		debug2_f("replace/%d %s", ssh->kex->server, replace);
-		free(orig);
-		proposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = replace;
-		replace = NULL;	/* owned by proposal */
+		آزاد(orig);
+		proposal[PROPOSAL_SERVER_HOST_کلید_ALGS] = replace;
+		replace = تہی;	/* owned by proposal */
 		r = kex_prop2buf(ssh->kex->my, proposal);
 	}
- out:
-	free(oavail);
-	free(replace);
+ برآمد:
+	آزاد(oavail);
+	آزاد(replace);
 	kex_prop_free(proposal);
-	return r;
+	واپس r;
 }
 
-int
-_ssh_host_key_sign(struct ssh *ssh, struct sshkey *privkey,
-    struct sshkey *pubkey, u_char **signature, size_t *slen,
-    const u_char *data, size_t dlen, const char *alg)
+صحیح
+ssh_host_کلید_sign(ساخت ssh *ssh, ساخت sshkey *privkey,
+    ساخت sshkey *pubkey, u_char **signature, سائز_t *slen,
+    ثابت u_char *ڈیٹا, سائز_t dlen, ثابت حرف *alg)
 {
-	return sshkey_sign(privkey, signature, slen, data, dlen,
-	    alg, NULL, NULL, ssh->compat);
+	واپس sshkey_sign(privkey, signature, slen, ڈیٹا, dlen,
+	    alg, تہی, تہی, ssh->compat);
 }

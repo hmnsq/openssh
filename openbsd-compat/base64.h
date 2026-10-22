@@ -40,24 +40,24 @@
  * IF IBM IS APPRISED OF THE POSSIBILITY OF SUCH DAMAGES.
  */
 
-#ifndef _BSD_BASE64_H
-#define _BSD_BASE64_H
+#اگر_غیر_تعریف_شدہ _BSD_BASE64_H
+#تعریف_کرو _BSD_BASE64_H
 
-#include "includes.h"
+#شامل "includes.h"
 
-#ifndef HAVE___B64_NTOP
+#اگر_غیر_تعریف_شدہ HAVE___B64_NTOP
 # ifndef HAVE_B64_NTOP
-int b64_ntop(u_char const *src, size_t srclength, char *target,
-    size_t targsize);
+صحیح b64_ntop(u_char ثابت *src, سائز_t srclength, حرف *ہدف,
+    سائز_t targsize);
 # endif /* !HAVE_B64_NTOP */
 # define __b64_ntop(a,b,c,d) b64_ntop(a,b,c,d)
-#endif /* HAVE___B64_NTOP */
+#اگر_ختم /* HAVE___B64_NTOP */
 
-#ifndef HAVE___B64_PTON
+#اگر_غیر_تعریف_شدہ HAVE___B64_PTON
 # ifndef HAVE_B64_PTON
-int b64_pton(char const *src, u_char *target, size_t targsize);
+صحیح b64_pton(حرف ثابت *src, u_char *ہدف, سائز_t targsize);
 # endif /* !HAVE_B64_PTON */
 # define __b64_pton(a,b,c) b64_pton(a,b,c)
-#endif /* HAVE___B64_PTON */
+#اگر_ختم /* HAVE___B64_PTON */
 
-#endif /* _BSD_BASE64_H */
+#اگر_ختم /* _BSD_BASE64_H */

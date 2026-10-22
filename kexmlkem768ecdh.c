@@ -23,286 +23,286 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include <signal.h>
-#include <endian.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <stdbool.h>
+#شامل <string.h>
+#شامل <signal.h>
+#شامل <endian.h>
 
-#include "sshkey.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "digest.h"
-#include "ssherr.h"
+#شامل "sshkey.h"
+#شامل "kex.h"
+#شامل "sshbuf.h"
+#شامل "digest.h"
+#شامل "ssherr.h"
 
-#ifdef WITH_OPENSSL
-int
-kex_kem_mlkem768ecdh_keypair(struct kex *kex)
+#اگر_تعریف_شدہ WITH_OPENSSL
+صحیح
+kex_kem_mlkem768ecdh_keypair(ساخت kex *kex)
 {
-	struct sshbuf *buf = NULL;
-	struct sshbuf *ec_blob = NULL;
-	EC_KEY *client_key = NULL;
-	const EC_GROUP *group;
-	const EC_POINT *public_key;
-	u_char *cp = NULL;
-	size_t need;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ساخت sshbuf *buf = تہی;
+	ساخت sshbuf *ec_blob = تہی;
+	EC_کلید *client_کلید = تہی;
+	ثابت EC_گروہ *گروہ;
+	ثابت EC_نقطہ *عوامی_کلید;
+	u_char *cp = تہی;
+	سائز_t need;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
 
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	اگر ((buf = sshbuf_new()) == تہی)
+		واپس SSH_ERR_ALLOC_FAIL;
 	need = MLKEM768_PUBLICKEYBYTES;
-	if ((r = sshbuf_reserve(buf, need, &cp)) != 0)
-		goto out;
-	if (crypto_kem_mlkem768_keypair(cp, kex->mlkem768_client_key) != 0) {
-		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+	اگر ((r = sshbuf_reserve(buf, need, &cp)) != 0)
+		جاؤ برآمد;
+	اگر (crypto_kem_mlkem768_keypair(cp, kex->mlkem768_client_کلید) != 0) {
+		r = SSH_ERR_اندرونی_ERROR;
+		جاؤ برآمد;
 	}
-#ifdef DEBUG_KEXECDH
+#اگر_تعریف_شدہ DEBUG_KEXECDH
 	dump_digest("client public key mlkem768:", cp,
 	    MLKEM768_PUBLICKEYBYTES);
-#endif
-	if ((client_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
+#اگر_ختم
+	اگر ((client_کلید = EC_کلید_new_by_خم_name(kex->ec_nid)) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if (EC_KEY_generate_key(client_key) != 1) {
+	اگر (EC_کلید_generate_کلید(client_کلید) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		جاؤ برآمد;
 	}
-	group = EC_KEY_get0_group(client_key);
-	public_key = EC_KEY_get0_public_key(client_key);
+	گروہ = EC_کلید_get0_گروہ(client_کلید);
+	عوامی_کلید = EC_کلید_get0_عوامی_کلید(client_کلید);
 
-	if ((ec_blob = sshbuf_new()) == NULL) {
+	اگر ((ec_blob = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_put_ec(ec_blob, public_key, group)) != 0 ||
-	    (r = sshbuf_get_u32(ec_blob, NULL)) != 0 ||
+	اگر ((r = sshbuf_put_ec(ec_blob, عوامی_کلید, گروہ)) != 0 ||
+	    (r = sshbuf_get_u32(ec_blob, تہی)) != 0 ||
 	    (r = sshbuf_putb(buf, ec_blob)) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
+		جاؤ برآمد;
+#اگر_تعریف_شدہ DEBUG_KEXECDH
 	fputs("client private key EC:\n", stderr);
-	sshkey_dump_ec_key(client_key);
-#endif
+	sshkey_dump_ec_کلید(client_کلید);
+#اگر_ختم
 	/* success */
 	r = 0;
-	kex->ec_client_key = client_key;
-	kex->ec_group = group;
-	client_key = NULL;	/* owned by the kex */
+	kex->ec_client_کلید = client_کلید;
+	kex->ec_گروہ = گروہ;
+	client_کلید = تہی;	/* owned by the kex */
 	kex->client_pub = buf;
-	buf = NULL;
- out:
+	buf = تہی;
+ برآمد:
 	sshbuf_free(buf);
 	sshbuf_free(ec_blob);
-	EC_KEY_free(client_key);
-	return r;
+	EC_کلید_free(client_کلید);
+	واپس r;
 }
 
-int
-kex_kem_mlkem768ecdh_enc(struct kex *kex,
-   const struct sshbuf *client_blob, struct sshbuf **server_blobp,
-   struct sshbuf **shared_secretp)
+صحیح
+kex_kem_mlkem768ecdh_enc(ساخت kex *kex,
+   ثابت ساخت sshbuf *client_blob, ساخت sshbuf **server_blobp,
+   ساخت sshbuf **shared_secretp)
 {
-	const EC_GROUP *group;
-	const EC_POINT *pub_key;
-	EC_KEY *server_key = NULL;
-	struct sshbuf *ec_pub = NULL;
-	struct sshbuf *ec_blob = NULL;
-	struct sshbuf *ec_shared = NULL;
-	struct sshbuf *server_blob = NULL;
-	struct sshbuf *buf = NULL;
-	const u_char *client_pub;
-	u_char hash[SSH_DIGEST_MAX_LENGTH];
+	ثابت EC_گروہ *گروہ;
+	ثابت EC_نقطہ *pub_کلید;
+	EC_کلید *server_کلید = تہی;
+	ساخت sshbuf *ec_pub = تہی;
+	ساخت sshbuf *ec_blob = تہی;
+	ساخت sshbuf *ec_shared = تہی;
+	ساخت sshbuf *server_blob = تہی;
+	ساخت sshbuf *buf = تہی;
+	ثابت u_char *client_pub;
+	u_char hash[SSH_DIGEST_MAX_لمبائی];
 	u_char ct[MLKEM768_CIPHERTEXTBYTES];
-	u_char shared_secret[MLKEM768_BYTES];
-	size_t need;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	u_char shared_secret[MLKEM768_بائٹیں];
+	سائز_t need;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = تہی;
+	*shared_secretp = تہی;
 
 	/* client_blob contains both KEM and ECDH client pubkeys */
 	need = MLKEM768_PUBLICKEYBYTES;
-	if (sshbuf_len(client_blob) <= need) {
+	اگر (sshbuf_len(client_blob) <= need) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		جاؤ برآمد;
 	}
 	client_pub = sshbuf_ptr(client_blob);
-#ifdef DEBUG_KEXECDH
+#اگر_تعریف_شدہ DEBUG_KEXECDH
 	dump_digest("client public key mlkem768:", client_pub,
 	    MLKEM768_PUBLICKEYBYTES);
-#endif
+#اگر_ختم
 
 	/* allocate buffer for concatenation of KEM key and ECDH shared key */
 	/* the buffer will be hashed and the result is the shared secret */
-	if ((buf = sshbuf_new()) == NULL) {
+	اگر ((buf = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
 	/* allocate space for encrypted KEM key and ECDH pub key */
-	if ((server_blob = sshbuf_new()) == NULL) {
+	اگر ((server_blob = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
 	/* generate and encrypt KEM key with client key */
-	if (crypto_kem_mlkem768_enc(ct, shared_secret, client_pub) != 0) {
-		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+	اگر (crypto_kem_mlkem768_enc(ct, shared_secret, client_pub) != 0) {
+		r = SSH_ERR_اندرونی_ERROR;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_put(buf, shared_secret, sizeof(shared_secret))) != 0 ||
-	    (r = sshbuf_put(server_blob, ct, sizeof(ct))) != 0)
-		goto out;
+	اگر ((r = sshbuf_put(buf, shared_secret, حجم(shared_secret))) != 0 ||
+	    (r = sshbuf_put(server_blob, ct, حجم(ct))) != 0)
+		جاؤ برآمد;
 
 	client_pub += MLKEM768_PUBLICKEYBYTES;
-	if ((ec_pub = sshbuf_from(client_pub, sshbuf_len(client_blob) -
-	    MLKEM768_PUBLICKEYBYTES)) == NULL) {
+	اگر ((ec_pub = sshbuf_from(client_pub, sshbuf_len(client_blob) -
+	    MLKEM768_PUBLICKEYBYTES)) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
 	/* generate ECDH key pair */
-	if ((server_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
+	اگر ((server_کلید = EC_کلید_new_by_خم_name(kex->ec_nid)) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if (EC_KEY_generate_key(server_key) != 1) {
+	اگر (EC_کلید_generate_کلید(server_کلید) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		جاؤ برآمد;
 	}
-	group = EC_KEY_get0_group(server_key);
-#ifdef DEBUG_KEXECDH
+	گروہ = EC_کلید_get0_گروہ(server_کلید);
+#اگر_تعریف_شدہ DEBUG_KEXECDH
 	fputs("server private key EC:\n", stderr);
-	sshkey_dump_ec_key(server_key);
-#endif
+	sshkey_dump_ec_کلید(server_کلید);
+#اگر_ختم
 	/* store server pubkey after ciphertext */
-	pub_key = EC_KEY_get0_public_key(server_key);
-	if ((ec_blob = sshbuf_new()) == NULL) {
+	pub_کلید = EC_کلید_get0_عوامی_کلید(server_کلید);
+	اگر ((ec_blob = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_put_ec(ec_blob, pub_key, group)) != 0 ||
-	    (r = sshbuf_get_u32(ec_blob, NULL)) != 0 ||
+	اگر ((r = sshbuf_put_ec(ec_blob, pub_کلید, گروہ)) != 0 ||
+	    (r = sshbuf_get_u32(ec_blob, تہی)) != 0 ||
 	    (r = sshbuf_putb(server_blob, ec_blob)) != 0)
-		goto out;
+		جاؤ برآمد;
 
 	/* append ECDH shared key */
-	if ((r = kex_ecdh_dec_key_group(kex, ec_pub, server_key, group,
+	اگر ((r = kex_ecdh_dec_کلید_گروہ(kex, ec_pub, server_کلید, گروہ,
 	    1, &ec_shared)) != 0 ||
 	    (r = sshbuf_putb(buf, ec_shared)) != 0)
-		goto out;
+		جاؤ برآمد;
 
-	if ((r = ssh_digest_buffer(kex->hash_alg, buf, hash, sizeof(hash))) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
-	dump_digest("server cipher text:", ct, sizeof(ct));
-	dump_digest("server kem key:", shared_secret, sizeof(shared_secret));
+	اگر ((r = ssh_digest_بفر(kex->hash_alg, buf, hash, حجم(hash))) != 0)
+		جاؤ برآمد;
+#اگر_تعریف_شدہ DEBUG_KEXECDH
+	dump_digest("server cipher text:", ct, حجم(ct));
+	dump_digest("server kem key:", shared_secret, حجم(shared_secret));
 	dump_digest("concatenation of KEM key and ECDH shared key:",
 	    sshbuf_ptr(buf), sshbuf_len(buf));
-#endif
+#اگر_ختم
 	/* string-encoded hash is resulting shared secret */
 	sshbuf_reset(buf);
-	if ((r = sshbuf_put_string(buf, hash,
-	    ssh_digest_bytes(kex->hash_alg))) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
+	اگر ((r = sshbuf_put_string(buf, hash,
+	    ssh_digest_بائٹیں(kex->hash_alg))) != 0)
+		جاؤ برآمد;
+#اگر_تعریف_شدہ DEBUG_KEXECDH
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
-#endif
+#اگر_ختم
 	/* success */
 	r = 0;
 	*server_blobp = server_blob;
 	*shared_secretp = buf;
-	server_blob = NULL;
-	buf = NULL;
- out:
-	explicit_bzero(hash, sizeof(hash));
-	explicit_bzero(shared_secret, sizeof(shared_secret));
-	EC_KEY_free(server_key);
+	server_blob = تہی;
+	buf = تہی;
+ برآمد:
+	explicit_bzero(hash, حجم(hash));
+	explicit_bzero(shared_secret, حجم(shared_secret));
+	EC_کلید_free(server_کلید);
 	sshbuf_free(ec_pub);
 	sshbuf_free(ec_blob);
 	sshbuf_free(ec_shared);
 	sshbuf_free(server_blob);
 	sshbuf_free(buf);
-	return r;
+	واپس r;
 }
 
-int
-kex_kem_mlkem768ecdh_dec(struct kex *kex,
-    const struct sshbuf *server_blob, struct sshbuf **shared_secretp)
+صحیح
+kex_kem_mlkem768ecdh_dec(ساخت kex *kex,
+    ثابت ساخت sshbuf *server_blob, ساخت sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	struct sshbuf *ec_pub = NULL;
-	struct sshbuf *ec_shared = NULL;
-	u_char shared_secret[MLKEM768_BYTES];
-	const u_char *ciphertext, *server_pub;
-	u_char hash[SSH_DIGEST_MAX_LENGTH];
-	size_t need;
-	int r;
+	ساخت sshbuf *buf = تہی;
+	ساخت sshbuf *ec_pub = تہی;
+	ساخت sshbuf *ec_shared = تہی;
+	u_char shared_secret[MLKEM768_بائٹیں];
+	ثابت u_char *ciphertext, *server_pub;
+	u_char hash[SSH_DIGEST_MAX_لمبائی];
+	سائز_t need;
+	صحیح r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = تہی;
 
 	need = MLKEM768_CIPHERTEXTBYTES;
-	if (sshbuf_len(server_blob) <= need) {
+	اگر (sshbuf_len(server_blob) <= need) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		جاؤ برآمد;
 	}
 	ciphertext = sshbuf_ptr(server_blob);
 	server_pub = ciphertext + MLKEM768_CIPHERTEXTBYTES;
-#ifdef DEBUG_KEXECDH
+#اگر_تعریف_شدہ DEBUG_KEXECDH
 	dump_digest("server cipher text (dec):", ciphertext,
 	    MLKEM768_CIPHERTEXTBYTES);
-#endif
+#اگر_ختم
 	/* hash concatenation of KEM key and ECDH shared key */
-	if ((buf = sshbuf_new()) == NULL) {
+	اگر ((buf = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if (crypto_kem_mlkem768_dec(shared_secret, ciphertext,
-	    kex->mlkem768_client_key) != 0) {
-		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+	اگر (crypto_kem_mlkem768_dec(shared_secret, ciphertext,
+	    kex->mlkem768_client_کلید) != 0) {
+		r = SSH_ERR_اندرونی_ERROR;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_put(buf, shared_secret, sizeof(shared_secret))) != 0)
-		goto out;
-	if ((ec_pub = sshbuf_from(server_pub, sshbuf_len(server_blob) - need))
-	    == NULL) {
+	اگر ((r = sshbuf_put(buf, shared_secret, حجم(shared_secret))) != 0)
+		جاؤ برآمد;
+	اگر ((ec_pub = sshbuf_from(server_pub, sshbuf_len(server_blob) - need))
+	    == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = kex_ecdh_dec_key_group(kex, ec_pub, kex->ec_client_key,
-	    kex->ec_group, 1, &ec_shared)) != 0 ||
+	اگر ((r = kex_ecdh_dec_کلید_گروہ(kex, ec_pub, kex->ec_client_کلید,
+	    kex->ec_گروہ, 1, &ec_shared)) != 0 ||
 	    (r = sshbuf_putb(buf, ec_shared)) != 0)
-		goto out;
-	if ((r = ssh_digest_buffer(kex->hash_alg, buf,
-	    hash, sizeof(hash))) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
-	dump_digest("client kem key:", shared_secret, sizeof(shared_secret));
+		جاؤ برآمد;
+	اگر ((r = ssh_digest_بفر(kex->hash_alg, buf,
+	    hash, حجم(hash))) != 0)
+		جاؤ برآمد;
+#اگر_تعریف_شدہ DEBUG_KEXECDH
+	dump_digest("client kem key:", shared_secret, حجم(shared_secret));
 	dump_digest("concatenation of KEM key and ECDH shared key:",
 	    sshbuf_ptr(buf), sshbuf_len(buf));
-#endif
+#اگر_ختم
 	sshbuf_reset(buf);
-	if ((r = sshbuf_put_string(buf, hash,
-	    ssh_digest_bytes(kex->hash_alg))) != 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
+	اگر ((r = sshbuf_put_string(buf, hash,
+	    ssh_digest_بائٹیں(kex->hash_alg))) != 0)
+		جاؤ برآمد;
+#اگر_تعریف_شدہ DEBUG_KEXECDH
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
-#endif
+#اگر_ختم
 	/* success */
 	r = 0;
 	*shared_secretp = buf;
-	buf = NULL;
- out:
-	explicit_bzero(hash, sizeof(hash));
-	explicit_bzero(shared_secret, sizeof(shared_secret));
-	EC_KEY_free(kex->ec_client_key);
-	kex->ec_client_key = NULL;
+	buf = تہی;
+ برآمد:
+	explicit_bzero(hash, حجم(hash));
+	explicit_bzero(shared_secret, حجم(shared_secret));
+	EC_کلید_free(kex->ec_client_کلید);
+	kex->ec_client_کلید = تہی;
 	sshbuf_free(ec_pub);
 	sshbuf_free(ec_shared);
 	sshbuf_free(buf);
-	return r;
+	واپس r;
 }
-#endif	/* WITH_OPENSSL */
+#اگر_ختم	/* WITH_OPENSSL */

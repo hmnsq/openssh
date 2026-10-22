@@ -23,310 +23,310 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/uio.h>
+#شامل <sys/types.h>
+#شامل <sys/stat.h>
+#شامل <sys/uio.h>
 
-#include <fcntl.h>
-#include <limits.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
-#include <time.h>
+#شامل <fcntl.h>
+#شامل <limits.h>
+#شامل <pwd.h>
+#شامل <stdarg.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <time.h>
 
-#include "stdlib.h"
-#include "atomicio.h"
-#include "xmalloc.h"
-#include "ssh2.h"
-#include "packet.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "dispatch.h"
-#include "pathnames.h"
-#include "ssherr.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "digest.h"
-#include "kex.h"
+#شامل "stdlib.h"
+#شامل "atomicio.h"
+#شامل "xmalloc.h"
+#شامل "ssh2.h"
+#شامل "packet.h"
+#شامل "log.h"
+#شامل "sshbuf.h"
+#شامل "misc.h"
+#شامل "servconf.h"
+#شامل "sshkey.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
+#شامل "dispatch.h"
+#شامل "pathnames.h"
+#شامل "ssherr.h"
+#اگر_تعریف_شدہ GSSAPI
+#شامل "ssh-gss.h"
+#اگر_ختم
+#شامل "monitor_wrap.h"
+#شامل "digest.h"
+#شامل "kex.h"
 
 /* import */
-extern ServerOptions options;
-extern struct sshbuf *loginmsg;
+خارجی ServerOptions options;
+خارجی ساخت sshbuf *loginmsg;
 
 /* methods */
 
-extern Authmethod method_none;
-extern Authmethod method_pubkey;
-extern Authmethod method_passwd;
-extern Authmethod method_kbdint;
-extern Authmethod method_hostbased;
-#ifdef GSSAPI
-extern Authmethod method_gssapi;
-#endif
+خارجی Authmethod طریقہ_none;
+خارجی Authmethod طریقہ_pubkey;
+خارجی Authmethod طریقہ_passwd;
+خارجی Authmethod طریقہ_kbdint;
+خارجی Authmethod طریقہ_hostbased;
+#اگر_تعریف_شدہ GSSAPI
+خارجی Authmethod طریقہ_gssapi;
+#اگر_ختم
 
 Authmethod *authmethods[] = {
-	&method_none,
-	&method_pubkey,
-#ifdef GSSAPI
-	&method_gssapi,
-#endif
-	&method_passwd,
-	&method_kbdint,
-	&method_hostbased,
-	NULL
+	&طریقہ_none,
+	&طریقہ_pubkey,
+#اگر_تعریف_شدہ GSSAPI
+	&طریقہ_gssapi,
+#اگر_ختم
+	&طریقہ_passwd,
+	&طریقہ_kbdint,
+	&طریقہ_hostbased,
+	تہی
 };
 
 /* protocol */
 
-static int input_service_request(int, uint32_t, struct ssh *);
-static int input_userauth_request(int, uint32_t, struct ssh *);
+ساکن صحیح داخلہ_service_request(صحیح, uint32_t, ساخت ssh *);
+ساکن صحیح داخلہ_userauth_request(صحیح, uint32_t, ساخت ssh *);
 
 /* helper */
-static Authmethod *authmethod_byname(const char *);
-static Authmethod *authmethod_lookup(Authctxt *, const char *);
-static char *authmethods_get(Authctxt *authctxt);
+ساکن Authmethod *authmethod_byname(ثابت حرف *);
+ساکن Authmethod *authmethod_lookup(Authctxt *, ثابت حرف *);
+ساکن حرف *authmethods_get(Authctxt *authctxt);
 
-#define MATCH_NONE	0	/* method or submethod mismatch */
-#define MATCH_METHOD	1	/* method matches (no submethod specified) */
-#define MATCH_BOTH	2	/* method and submethod match */
-#define MATCH_PARTIAL	3	/* method matches, submethod can't be checked */
-static int list_starts_with(const char *, const char *, const char *);
+#تعریف_کرو مطابقت_NONE	0	/* method or submethod mismatch */
+#تعریف_کرو مطابقت_طریقہ	1	/* method matches (no submethod specified) */
+#تعریف_کرو مطابقت_BOTH	2	/* method and submethod match */
+#تعریف_کرو مطابقت_PARTIAL	3	/* method matches, submethod can't be checked */
+ساکن صحیح list_starts_with(ثابت حرف *, ثابت حرف *, ثابت حرف *);
 
-char *
-auth2_read_banner(void)
+حرف *
+auth2_read_banner(خالی)
 {
-	struct stat st;
-	char *banner = NULL;
-	size_t len, n;
-	int fd;
+	ساخت stat st;
+	حرف *banner = تہی;
+	سائز_t len, n;
+	صحیح fd;
 
-	if ((fd = open(options.banner, O_RDONLY)) == -1)
-		return (NULL);
-	if (fstat(fd, &st) == -1) {
+	اگر ((fd = open(options.banner, O_RDONLY)) == -1)
+		واپس (تہی);
+	اگر (fstat(fd, &st) == -1) {
 		close(fd);
-		return (NULL);
+		واپس (تہی);
 	}
-	if (st.st_size <= 0 || st.st_size > 1*1024*1024) {
+	اگر (st.st_size <= 0 || st.st_size > 1*1024*1024) {
 		close(fd);
-		return (NULL);
+		واپس (تہی);
 	}
 
-	len = (size_t)st.st_size;		/* truncate */
+	len = (سائز_t)st.st_size;		/* truncate */
 	banner = xmalloc(len + 1);
-	n = atomicio(read, fd, banner, len);
+	n = atomicio(اقرأ, fd, banner, len);
 	close(fd);
 
-	if (n != len) {
-		free(banner);
-		return (NULL);
+	اگر (n != len) {
+		آزاد(banner);
+		واپس (تہی);
 	}
 	banner[n] = '\0';
 
-	return (banner);
+	واپس (banner);
 }
 
-static void
-userauth_send_banner(struct ssh *ssh, const char *msg)
+ساکن خالی
+userauth_send_banner(ساخت ssh *ssh, ثابت حرف *پیغام)
 {
-	int r;
+	صحیح r;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_BANNER)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, msg)) != 0 ||
+	اگر ((r = sshpkt_آغاز(ssh, SSH2_پیغام_USERAUTH_BANNER)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, پیغام)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||	/* language, unused */
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 	debug_f("sent");
 }
 
-static void
-userauth_banner(struct ssh *ssh)
+ساکن خالی
+userauth_banner(ساخت ssh *ssh)
 {
-	char *banner = NULL;
+	حرف *banner = تہی;
 
-	if (options.banner == NULL)
-		return;
+	اگر (options.banner == تہی)
+		واپس;
 
-	if ((banner = mm_auth2_read_banner()) == NULL)
-		goto done;
+	اگر ((banner = mm_auth2_read_banner()) == تہی)
+		جاؤ مکمل;
 	userauth_send_banner(ssh, banner);
 
-done:
-	free(banner);
+مکمل:
+	آزاد(banner);
 }
 
 /*
  * loop until authctxt->success == TRUE
  */
-void
-do_authentication2(struct ssh *ssh)
+خالی
+do_authentication2(ساخت ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 
 	ssh_dispatch_init(ssh, &dispatch_protocol_error);
-	if (ssh->kex->ext_info_c)
-		ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_SERVICE_REQUEST, &input_service_request);
-	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &authctxt->success);
-	ssh->authctxt = NULL;
+	اگر (ssh->kex->ext_info_c)
+		ssh_dispatch_سیٹ(ssh, SSH2_پیغام_EXT_INFO, &kex_داخلہ_ext_info);
+	ssh_dispatch_سیٹ(ssh, SSH2_پیغام_SERVICE_REQUEST, &داخلہ_service_request);
+	ssh_dispatch_تسلسل_fatal(ssh, DISPATCH_بلاک, &authctxt->success);
+	ssh->authctxt = تہی;
 }
 
-static int
-input_service_request(int type, uint32_t seq, struct ssh *ssh)
+ساکن صحیح
+داخلہ_service_request(صحیح type, uint32_t seq, ساخت ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	char *service = NULL;
-	int r, acceptit = 0;
+	حرف *service = تہی;
+	صحیح r, acceptit = 0;
 
-	if ((r = sshpkt_get_cstring(ssh, &service, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+	اگر ((r = sshpkt_get_cstring(ssh, &service, تہی)) != 0 ||
+	    (r = sshpkt_get_انتہا(ssh)) != 0)
+		جاؤ برآمد;
 
-	if (authctxt == NULL)
+	اگر (authctxt == تہی)
 		fatal("input_service_request: no authctxt");
 
-	if (strcmp(service, "ssh-userauth") == 0) {
-		if (!authctxt->success) {
+	اگر (strcmp(service, "ssh-userauth") == 0) {
+		اگر (!authctxt->success) {
 			acceptit = 1;
 			/* now we can handle user-auth requests */
-			ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_REQUEST,
-			    &input_userauth_request);
+			ssh_dispatch_سیٹ(ssh, SSH2_پیغام_USERAUTH_REQUEST,
+			    &داخلہ_userauth_request);
 		}
 	}
 	/* XXX all other service requests are denied */
 
-	if (acceptit) {
-		if ((r = sshpkt_start(ssh, SSH2_MSG_SERVICE_ACCEPT)) != 0 ||
+	اگر (acceptit) {
+		اگر ((r = sshpkt_آغاز(ssh, SSH2_پیغام_SERVICE_ACCEPT)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, service)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
-			goto out;
-	} else {
+			جاؤ برآمد;
+	} ورنہ {
 		debug("bad service request %s", service);
 		ssh_packet_disconnect(ssh, "bad service request %s", service);
 	}
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &dispatch_protocol_error);
+	ssh_dispatch_سیٹ(ssh, SSH2_پیغام_EXT_INFO, &dispatch_protocol_error);
 	r = 0;
- out:
-	free(service);
-	return r;
+ برآمد:
+	آزاد(service);
+	واپس r;
 }
 
-#define MIN_FAIL_DELAY_SECONDS 0.005
-#define MAX_FAIL_DELAY_SECONDS 5.0
-static double
-user_specific_delay(const char *user)
+#تعریف_کرو MIN_FAIL_DELAY_SECONDS 0.005
+#تعریف_کرو MAX_FAIL_DELAY_SECONDS 5.0
+ساکن دوہرا
+user_specific_delay(ثابت حرف *user)
 {
-	char b[512];
-	size_t len = ssh_digest_bytes(SSH_DIGEST_SHA512);
+	حرف b[512];
+	سائز_t len = ssh_digest_بائٹیں(SSH_DIGEST_SHA512);
 	u_char *hash = xmalloc(len);
-	double delay;
+	دوہرا delay;
 
-	(void)snprintf(b, sizeof b, "%llu%s",
-	    (unsigned long long)options.timing_secret, user);
-	if (ssh_digest_memory(SSH_DIGEST_SHA512, b, strlen(b), hash, len) != 0)
+	(خالی)snprintf(b, حجم b, "%llu%s",
+	    (غیرعلامتی طویل طویل)options.timing_secret, user);
+	اگر (ssh_digest_حافظہ(SSH_DIGEST_SHA512, b, لڑی_لمبائی(b), hash, len) != 0)
 		fatal_f("ssh_digest_memory");
 	/* 0-4.2 ms of delay */
-	delay = (double)PEEK_U32(hash) / 1000 / 1000 / 1000 / 1000;
+	delay = (دوہرا)PEEK_U32(hash) / 1000 / 1000 / 1000 / 1000;
 	freezero(hash, len);
 	debug3_f("user specific delay %0.3lfms", delay*1000);
-	return MIN_FAIL_DELAY_SECONDS + delay;
+	واپس MIN_FAIL_DELAY_SECONDS + delay;
 }
 
-static void
-ensure_minimum_time_since(double start, double seconds)
+ساکن خالی
+ensure_minimum_وقت_since(دوہرا آغاز, دوہرا seconds)
 {
-	struct timespec ts;
-	double elapsed = monotime_double() - start, req = seconds, remain;
+	ساخت timespec ts;
+	دوہرا elapsed = monotime_double() - آغاز, req = seconds, remain;
 
-	if (elapsed > MAX_FAIL_DELAY_SECONDS) {
+	اگر (elapsed > MAX_FAIL_DELAY_SECONDS) {
 		debug3_f("elapsed %0.3lfms exceeded the max delay "
 		    "requested %0.3lfms)", elapsed*1000, req*1000);
-		return;
+		واپس;
 	}
 
 	/* if we've already passed the requested time, scale up */
-	while ((remain = seconds - elapsed) < 0.0)
+	جب ((remain = seconds - elapsed) < 0.0)
 		seconds *= 2;
 
 	ts.tv_sec = remain;
 	ts.tv_nsec = (remain - ts.tv_sec) * 1000000000;
 	debug3_f("elapsed %0.3lfms, delaying %0.3lfms (requested %0.3lfms)",
 	    elapsed*1000, remain*1000, req*1000);
-	nanosleep(&ts, NULL);
+	nanosleep(&ts, تہی);
 }
 
-void
-auth_failure_delay(Authctxt *authctxt, double tstart)
+خالی
+auth_failure_delay(Authctxt *authctxt, دوہرا tstart)
 {
-	ensure_minimum_time_since(tstart, user_specific_delay(authctxt->user));
+	ensure_minimum_وقت_since(tstart, user_specific_delay(authctxt->user));
 }
 
-static int
-input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
+ساکن صحیح
+داخلہ_userauth_request(صحیح type, uint32_t seq, ساخت ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	Authmethod *m = NULL;
-	char *user = NULL, *service = NULL, *method = NULL, *style = NULL;
-	int r, authenticated = 0;
-	double tstart = monotime_double();
+	Authmethod *m = تہی;
+	حرف *user = تہی, *service = تہی, *طریقہ = تہی, *style = تہی;
+	صحیح r, authenticated = 0;
+	دوہرا tstart = monotime_double();
 
-	if (authctxt == NULL)
+	اگر (authctxt == تہی)
 		fatal("input_userauth_request: no authctxt");
 
-	if ((r = sshpkt_get_cstring(ssh, &user, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &service, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &method, NULL)) != 0)
-		goto out;
-	debug("userauth-request for user %s service %s method %s", user, service, method);
+	اگر ((r = sshpkt_get_cstring(ssh, &user, تہی)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &service, تہی)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &طریقہ, تہی)) != 0)
+		جاؤ برآمد;
+	debug("userauth-request for user %s service %s method %s", user, service, طریقہ);
 	debug("attempt %d failures %d", authctxt->attempt, authctxt->failures);
 
-	if ((style = strchr(user, ':')) != NULL)
+	اگر ((style = strchr(user, ':')) != تہی)
 		*style++ = 0;
 
-	if (authctxt->attempt >= 1024)
+	اگر (authctxt->attempt >= 1024)
 		auth_maxtries_exceeded(ssh);
-	if (authctxt->attempt++ == 0) {
+	اگر (authctxt->attempt++ == 0) {
 		/* setup auth context */
 		authctxt->pw = mm_getpwnamallow(ssh, user);
 		authctxt->user = xstrdup(user);
 		authctxt->service = xstrdup(service);
-		authctxt->style = style ? xstrdup(style) : NULL;
-		if (authctxt->pw && strcmp(service, "ssh-connection")==0) {
+		authctxt->style = style ? xstrdup(style) : تہی;
+		اگر (authctxt->pw && strcmp(service, "ssh-connection")==0) {
 			authctxt->valid = 1;
 			debug2_f("setting up authctxt for %s", user);
-		} else {
+		} ورنہ {
 			authctxt->valid = 0;
 			/* Invalid user, fake password information */
 			authctxt->pw = fakepw();
-#ifdef SSH_AUDIT_EVENTS
+#اگر_تعریف_شدہ SSH_AUDIT_EVENTS
 			mm_audit_event(ssh, SSH_INVALID_USER);
-#endif
+#اگر_ختم
 		}
-#ifdef USE_PAM
-		if (options.use_pam)
-			mm_start_pam(ssh);
-#endif
-		ssh_packet_set_log_preamble(ssh, "%suser %s",
+#اگر_تعریف_شدہ USE_PAM
+		اگر (options.use_pam)
+			mm_آغاز_pam(ssh);
+#اگر_ختم
+		ssh_packet_سیٹ_log_preamble(ssh, "%suser %s",
 		    authctxt->valid ? "authenticating " : "invalid ", user);
 		setproctitle("%s [net]", authctxt->valid ? user : "unknown");
 		mm_inform_authserv(service, style);
 		userauth_banner(ssh);
-		if ((r = kex_server_update_ext_info(ssh)) != 0)
+		اگر ((r = kex_server_update_ext_info(ssh)) != 0)
 			fatal_fr(r, "kex_server_update_ext_info failed");
-		if (auth2_setup_methods_lists(authctxt) != 0)
+		اگر (auth2_تیاری_methods_lists(authctxt) != 0)
 			ssh_packet_disconnect(ssh,
 			    "no authentication methods enabled");
-	} else if (strcmp(user, authctxt->user) != 0 ||
+	} ورنہ اگر (strcmp(user, authctxt->user) != 0 ||
 	    strcmp(service, authctxt->service) != 0) {
 		ssh_packet_disconnect(ssh, "Change of username or service "
 		    "not allowed: (%s,%s) -> (%s,%s)",
@@ -335,12 +335,12 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
 	/* reset state */
 	auth2_challenge_stop(ssh);
 
-#ifdef GSSAPI
+#اگر_تعریف_شدہ GSSAPI
 	ssh_gssapi_cleanup_global_client();
 	/* XXX move to auth2_gssapi_stop() */
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
-#endif
+	ssh_dispatch_سیٹ(ssh, SSH2_پیغام_USERAUTH_GSSAPI_TOKEN, تہی);
+	ssh_dispatch_سیٹ(ssh, SSH2_پیغام_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, تہی);
+#اگر_ختم
 
 	auth2_authctxt_reset_info(authctxt);
 	authctxt->postponed = 0;
@@ -348,127 +348,127 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
 	authctxt->auth_failure_already_counted = 0;
 
 	/* try to authenticate user */
-	m = authmethod_lookup(authctxt, method);
-	if (m != NULL && authctxt->failures < options.max_authtries) {
-		debug2("input_userauth_request: try method %s", method);
-		authenticated =	m->userauth(ssh, method);
+	m = authmethod_lookup(authctxt, طریقہ);
+	اگر (m != تہی && authctxt->failures < options.max_authtries) {
+		debug2("input_userauth_request: try method %s", طریقہ);
+		authenticated =	m->userauth(ssh, طریقہ);
 	}
-	if (!authctxt->authenticated && strcmp(method, "none") != 0)
+	اگر (!authctxt->authenticated && strcmp(طریقہ, "none") != 0)
 		auth_failure_delay(authctxt, tstart);
 
-	userauth_finish(ssh, authenticated, method, NULL);
+	userauth_اختتام(ssh, authenticated, طریقہ, تہی);
 	r = 0;
- out:
-	free(service);
-	free(user);
-	free(method);
-	return r;
+ برآمد:
+	آزاد(service);
+	آزاد(user);
+	آزاد(طریقہ);
+	واپس r;
 }
 
-void
-userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
-    const char *submethod)
+خالی
+userauth_اختتام(ساخت ssh *ssh, صحیح authenticated, ثابت حرف *packet_طریقہ,
+    ثابت حرف *submethod)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	Authmethod *m = NULL;
-	const char *method = packet_method;
-	char *methods;
-	int r, partial = 0;
+	Authmethod *m = تہی;
+	ثابت حرف *طریقہ = packet_طریقہ;
+	حرف *methods;
+	صحیح r, partial = 0;
 
-	if (authenticated) {
-		if (!authctxt->valid) {
+	اگر (authenticated) {
+		اگر (!authctxt->valid) {
 			fatal("INTERNAL ERROR: authenticated invalid user %s",
 			    authctxt->user);
 		}
-		if (authctxt->postponed)
+		اگر (authctxt->postponed)
 			fatal("INTERNAL ERROR: authenticated and postponed");
 		/* prefer primary authmethod name to possible synonym */
-		if ((m = authmethod_byname(method)) == NULL)
-			fatal("INTERNAL ERROR: bad method %s", method);
-		method = m->cfg->name;
+		اگر ((m = authmethod_byname(طریقہ)) == تہی)
+			fatal("INTERNAL ERROR: bad method %s", طریقہ);
+		طریقہ = m->cfg->name;
 	}
 
 	/* Special handling for root */
-	if (authenticated && authctxt->pw->pw_uid == 0 &&
-	    !auth_root_allowed(ssh, method)) {
+	اگر (authenticated && authctxt->pw->pw_uid == 0 &&
+	    !auth_جڑ_allowed(ssh, طریقہ)) {
 		authenticated = 0;
-#ifdef SSH_AUDIT_EVENTS
-		mm_audit_event(ssh, SSH_LOGIN_ROOT_DENIED);
-#endif
+#اگر_تعریف_شدہ SSH_AUDIT_EVENTS
+		mm_audit_event(ssh, SSH_LOGIN_جڑ_DENIED);
+#اگر_ختم
 	}
 
-	if (authenticated && options.num_auth_methods != 0) {
-		if (!auth2_update_methods_lists(authctxt, method, submethod)) {
+	اگر (authenticated && options.عدد_auth_methods != 0) {
+		اگر (!auth2_update_methods_lists(authctxt, طریقہ, submethod)) {
 			authenticated = 0;
 			partial = 1;
 		}
 	}
 
 	/* Log before sending the reply */
-	auth_log(ssh, authenticated, partial, method, submethod);
+	auth_log(ssh, authenticated, partial, طریقہ, submethod);
 
 	/* Update information exposed to session */
-	if (authenticated || partial)
-		auth2_update_session_info(authctxt, method, submethod);
+	اگر (authenticated || partial)
+		auth2_update_session_info(authctxt, طریقہ, submethod);
 
-	if (authctxt->postponed)
-		return;
+	اگر (authctxt->postponed)
+		واپس;
 
-#ifdef USE_PAM
-	if (options.use_pam && authenticated) {
-		int r, success = mm_do_pam_account();
+#اگر_تعریف_شدہ USE_PAM
+	اگر (options.use_pam && authenticated) {
+		صحیح r, success = mm_do_pam_account();
 
 		/* If PAM returned a message, send it to the user. */
-		if (sshbuf_len(loginmsg) > 0) {
-			if ((r = sshbuf_put(loginmsg, "\0", 1)) != 0)
+		اگر (sshbuf_len(loginmsg) > 0) {
+			اگر ((r = sshbuf_put(loginmsg, "\0", 1)) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
 			userauth_send_banner(ssh, sshbuf_ptr(loginmsg));
-			if ((r = ssh_packet_write_wait(ssh)) != 0) {
+			اگر ((r = ssh_packet_write_wait(ssh)) != 0) {
 				sshpkt_fatal(ssh, r,
 				    "%s: send PAM banner", __func__);
 			}
 		}
-		if (!success) {
+		اگر (!success) {
 			fatal("Access denied for user %s by PAM account "
 			    "configuration", authctxt->user);
 		}
 	}
-#endif
+#اگر_ختم
 
-	if (authenticated == 1) {
+	اگر (authenticated == 1) {
 		/* turn off userauth */
-		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_REQUEST,
+		ssh_dispatch_سیٹ(ssh, SSH2_پیغام_USERAUTH_REQUEST,
 		    &dispatch_protocol_ignore);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_SUCCESS)) != 0 ||
+		اگر ((r = sshpkt_آغاز(ssh, SSH2_پیغام_USERAUTH_SUCCESS)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
 			fatal_fr(r, "send success packet");
 		/* now we can break out */
 		authctxt->success = 1;
-		ssh_packet_set_log_preamble(ssh, "user %s", authctxt->user);
-	} else {
+		ssh_packet_سیٹ_log_preamble(ssh, "user %s", authctxt->user);
+	} ورنہ {
 		/* Allow initial try of "none" auth without failure penalty */
-		if (!partial && !authctxt->server_caused_failure &&
+		اگر (!partial && !authctxt->server_caused_failure &&
 		    !authctxt->auth_failure_already_counted &&
-		    (authctxt->attempt > 1 || strcmp(method, "none") != 0))
+		    (authctxt->attempt > 1 || strcmp(طریقہ, "none") != 0))
 			authctxt->failures++;
-		if (authctxt->failures >= options.max_authtries) {
-#ifdef SSH_AUDIT_EVENTS
+		اگر (authctxt->failures >= options.max_authtries) {
+#اگر_تعریف_شدہ SSH_AUDIT_EVENTS
 			mm_audit_event(ssh, SSH_LOGIN_EXCEED_MAXTRIES);
-#endif
+#اگر_ختم
 			auth_maxtries_exceeded(ssh);
 		}
 		methods = authmethods_get(authctxt);
 		debug3_f("failure partial=%d next methods=\"%s\"",
 		    partial, methods);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_FAILURE)) != 0 ||
+		اگر ((r = sshpkt_آغاز(ssh, SSH2_پیغام_USERAUTH_FAILURE)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, methods)) != 0 ||
 		    (r = sshpkt_put_u8(ssh, partial)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
 			fatal_fr(r, "send failure packet");
-		free(methods);
+		آزاد(methods);
 	}
 }
 
@@ -477,9 +477,9 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
  * methods list. Returns 1 if allowed, or no methods lists configured.
  * 0 otherwise.
  */
-int
-auth2_method_allowed(Authctxt *authctxt, const char *method,
-    const char *submethod)
+صحیح
+auth2_طریقہ_allowed(Authctxt *authctxt, ثابت حرف *طریقہ,
+    ثابت حرف *submethod)
 {
 	u_int i;
 
@@ -487,79 +487,79 @@ auth2_method_allowed(Authctxt *authctxt, const char *method,
 	 * NB. authctxt->num_auth_methods might be zero as a result of
 	 * auth2_setup_methods_lists(), so check the configuration.
 	 */
-	if (options.num_auth_methods == 0)
-		return 1;
-	for (i = 0; i < authctxt->num_auth_methods; i++) {
-		if (list_starts_with(authctxt->auth_methods[i], method,
-		    submethod) != MATCH_NONE)
-			return 1;
+	اگر (options.عدد_auth_methods == 0)
+		واپس 1;
+	برائے (i = 0; i < authctxt->عدد_auth_methods; i++) {
+		اگر (list_starts_with(authctxt->auth_methods[i], طریقہ,
+		    submethod) != مطابقت_NONE)
+			واپس 1;
 	}
-	return 0;
+	واپس 0;
 }
 
-static char *
+ساکن حرف *
 authmethods_get(Authctxt *authctxt)
 {
-	struct sshbuf *b;
-	char *list;
-	int i, r;
+	ساخت sshbuf *b;
+	حرف *list;
+	صحیح i, r;
 
-	if ((b = sshbuf_new()) == NULL)
+	اگر ((b = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new failed");
-	for (i = 0; authmethods[i] != NULL; i++) {
-		if (strcmp(authmethods[i]->cfg->name, "none") == 0)
-			continue;
-		if (authmethods[i]->cfg->enabled == NULL ||
+	برائے (i = 0; authmethods[i] != تہی; i++) {
+		اگر (strcmp(authmethods[i]->cfg->name, "none") == 0)
+			جاری;
+		اگر (authmethods[i]->cfg->enabled == تہی ||
 		    *(authmethods[i]->cfg->enabled) == 0)
-			continue;
-		if (!auth2_method_allowed(authctxt, authmethods[i]->cfg->name,
-		    NULL))
-			continue;
-		if ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) ? "," : "",
+			جاری;
+		اگر (!auth2_طریقہ_allowed(authctxt, authmethods[i]->cfg->name,
+		    تہی))
+			جاری;
+		اگر ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) ? "," : "",
 		    authmethods[i]->cfg->name)) != 0)
 			fatal_fr(r, "buffer error");
 	}
-	if ((list = sshbuf_dup_string(b)) == NULL)
+	اگر ((list = sshbuf_dup_string(b)) == تہی)
 		fatal_f("sshbuf_dup_string failed");
 	sshbuf_free(b);
-	return list;
+	واپس list;
 }
 
-static Authmethod *
-authmethod_byname(const char *name)
+ساکن Authmethod *
+authmethod_byname(ثابت حرف *name)
 {
-	int i;
+	صحیح i;
 
-	if (name == NULL)
+	اگر (name == تہی)
 		fatal_f("NULL authentication method name");
-	for (i = 0; authmethods[i] != NULL; i++) {
-		if (strcmp(name, authmethods[i]->cfg->name) == 0 ||
-		    (authmethods[i]->cfg->synonym != NULL &&
+	برائے (i = 0; authmethods[i] != تہی; i++) {
+		اگر (strcmp(name, authmethods[i]->cfg->name) == 0 ||
+		    (authmethods[i]->cfg->synonym != تہی &&
 		    strcmp(name, authmethods[i]->cfg->synonym) == 0))
-			return authmethods[i];
+			واپس authmethods[i];
 	}
 	debug_f("unrecognized authentication method name: %s", name);
-	return NULL;
+	واپس تہی;
 }
 
-static Authmethod *
-authmethod_lookup(Authctxt *authctxt, const char *name)
+ساکن Authmethod *
+authmethod_lookup(Authctxt *authctxt, ثابت حرف *name)
 {
-	Authmethod *method;
+	Authmethod *طریقہ;
 
-	if ((method = authmethod_byname(name)) == NULL)
-		return NULL;
+	اگر ((طریقہ = authmethod_byname(name)) == تہی)
+		واپس تہی;
 
-	if (method->cfg->enabled == NULL || *(method->cfg->enabled) == 0) {
+	اگر (طریقہ->cfg->enabled == تہی || *(طریقہ->cfg->enabled) == 0) {
 		debug3_f("method %s not enabled", name);
-		return NULL;
+		واپس تہی;
 	}
-	if (!auth2_method_allowed(authctxt, method->cfg->name, NULL)) {
+	اگر (!auth2_طریقہ_allowed(authctxt, طریقہ->cfg->name, تہی)) {
 		debug3_f("method %s not allowed "
 		    "by AuthenticationMethods", name);
-		return NULL;
+		واپس تہی;
 	}
-	return method;
+	واپس طریقہ;
 }
 
 /*
@@ -569,70 +569,70 @@ authmethod_lookup(Authctxt *authctxt, const char *name)
  * has been requested. For this reason, all tests for whether multiple is
  * enabled should consult options.num_auth_methods directly.
  */
-int
-auth2_setup_methods_lists(Authctxt *authctxt)
+صحیح
+auth2_تیاری_methods_lists(Authctxt *authctxt)
 {
 	u_int i;
 
 	/* First, normalise away the "any" pseudo-method */
-	if (options.num_auth_methods == 1 &&
+	اگر (options.عدد_auth_methods == 1 &&
 	    strcmp(options.auth_methods[0], "any") == 0) {
-		free(options.auth_methods[0]);
-		options.auth_methods[0] = NULL;
-		options.num_auth_methods = 0;
+		آزاد(options.auth_methods[0]);
+		options.auth_methods[0] = تہی;
+		options.عدد_auth_methods = 0;
 	}
 
-	if (options.num_auth_methods == 0)
-		return 0;
+	اگر (options.عدد_auth_methods == 0)
+		واپس 0;
 	debug3_f("checking methods");
-	authctxt->auth_methods = xcalloc(options.num_auth_methods,
-	    sizeof(*authctxt->auth_methods));
-	authctxt->num_auth_methods = 0;
-	for (i = 0; i < options.num_auth_methods; i++) {
-		if (auth2_methods_valid(options.auth_methods[i], 1) != 0) {
+	authctxt->auth_methods = xcalloc(options.عدد_auth_methods,
+	    حجم(*authctxt->auth_methods));
+	authctxt->عدد_auth_methods = 0;
+	برائے (i = 0; i < options.عدد_auth_methods; i++) {
+		اگر (auth2_methods_valid(options.auth_methods[i], 1) != 0) {
 			logit("Authentication methods list \"%s\" contains "
 			    "disabled method, skipping",
 			    options.auth_methods[i]);
-			continue;
+			جاری;
 		}
 		debug("authentication methods list %d: %s",
-		    authctxt->num_auth_methods, options.auth_methods[i]);
-		authctxt->auth_methods[authctxt->num_auth_methods++] =
+		    authctxt->عدد_auth_methods, options.auth_methods[i]);
+		authctxt->auth_methods[authctxt->عدد_auth_methods++] =
 		    xstrdup(options.auth_methods[i]);
 	}
-	if (authctxt->num_auth_methods == 0) {
+	اگر (authctxt->عدد_auth_methods == 0) {
 		error("No AuthenticationMethods left after eliminating "
 		    "disabled methods");
-		return -1;
+		واپس -1;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-list_starts_with(const char *methods, const char *method,
-    const char *submethod)
+ساکن صحیح
+list_starts_with(ثابت حرف *methods, ثابت حرف *طریقہ,
+    ثابت حرف *submethod)
 {
-	size_t l = strlen(method);
-	int match;
-	const char *p;
+	سائز_t l = لڑی_لمبائی(طریقہ);
+	صحیح مطابقت;
+	ثابت حرف *p;
 
-	if (strncmp(methods, method, l) != 0)
-		return MATCH_NONE;
+	اگر (لڑی_موازنہ(methods, طریقہ, l) != 0)
+		واپس مطابقت_NONE;
 	p = methods + l;
-	match = MATCH_METHOD;
-	if (*p == ':') {
-		if (!submethod)
-			return MATCH_PARTIAL;
-		l = strlen(submethod);
+	مطابقت = مطابقت_طریقہ;
+	اگر (*p == ':') {
+		اگر (!submethod)
+			واپس مطابقت_PARTIAL;
+		l = لڑی_لمبائی(submethod);
 		p += 1;
-		if (strncmp(submethod, p, l))
-			return MATCH_NONE;
+		اگر (لڑی_موازنہ(submethod, p, l))
+			واپس مطابقت_NONE;
 		p += l;
-		match = MATCH_BOTH;
+		مطابقت = مطابقت_BOTH;
 	}
-	if (*p != ',' && *p != '\0')
-		return MATCH_NONE;
-	return match;
+	اگر (*p != ',' && *p != '\0')
+		واپس مطابقت_NONE;
+	واپس مطابقت;
 }
 
 /*
@@ -640,24 +640,24 @@ list_starts_with(const char *methods, const char *method,
  * Returns 0 if the list of methods did not start with that method or 1
  * if it did.
  */
-static int
-remove_method(char **methods, const char *method, const char *submethod)
+ساکن صحیح
+remove_طریقہ(حرف **methods, ثابت حرف *طریقہ, ثابت حرف *submethod)
 {
-	char *omethods = *methods, *p;
-	size_t l = strlen(method);
-	int match;
+	حرف *omethods = *methods, *p;
+	سائز_t l = لڑی_لمبائی(طریقہ);
+	صحیح مطابقت;
 
-	match = list_starts_with(omethods, method, submethod);
-	if (match != MATCH_METHOD && match != MATCH_BOTH)
-		return 0;
+	مطابقت = list_starts_with(omethods, طریقہ, submethod);
+	اگر (مطابقت != مطابقت_طریقہ && مطابقت != مطابقت_BOTH)
+		واپس 0;
 	p = omethods + l;
-	if (submethod && match == MATCH_BOTH)
-		p += 1 + strlen(submethod); /* include colon */
-	if (*p == ',')
+	اگر (submethod && مطابقت == مطابقت_BOTH)
+		p += 1 + لڑی_لمبائی(submethod); /* include colon */
+	اگر (*p == ',')
 		p++;
 	*methods = xstrdup(p);
-	free(omethods);
-	return 1;
+	آزاد(omethods);
+	واپس 1;
 }
 
 /*
@@ -666,55 +666,55 @@ remove_method(char **methods, const char *method, const char *submethod)
  * in any list, then authentication is deemed successful.
  * Returns 1 if the method completed any authentication list or 0 otherwise.
  */
-int
-auth2_update_methods_lists(Authctxt *authctxt, const char *method,
-    const char *submethod)
+صحیح
+auth2_update_methods_lists(Authctxt *authctxt, ثابت حرف *طریقہ,
+    ثابت حرف *submethod)
 {
-	u_int i, found = 0;
+	u_int i, ملا = 0;
 
-	debug3_f("updating methods list after \"%s\"", method);
-	for (i = 0; i < authctxt->num_auth_methods; i++) {
-		if (!remove_method(&(authctxt->auth_methods[i]), method,
+	debug3_f("updating methods list after \"%s\"", طریقہ);
+	برائے (i = 0; i < authctxt->عدد_auth_methods; i++) {
+		اگر (!remove_طریقہ(&(authctxt->auth_methods[i]), طریقہ,
 		    submethod))
-			continue;
-		found = 1;
-		if (*authctxt->auth_methods[i] == '\0') {
+			جاری;
+		ملا = 1;
+		اگر (*authctxt->auth_methods[i] == '\0') {
 			debug2("authentication methods list %d complete", i);
-			return 1;
+			واپس 1;
 		}
 		debug3("authentication methods list %d remaining: \"%s\"",
 		    i, authctxt->auth_methods[i]);
 	}
 	/* This should not happen, but would be bad if it did */
-	if (!found)
+	اگر (!ملا)
 		fatal_f("method not in AuthenticationMethods");
-	return 0;
+	واپس 0;
 }
 
 /* Reset method-specific information */
-void auth2_authctxt_reset_info(Authctxt *authctxt)
+خالی auth2_authctxt_reset_info(Authctxt *authctxt)
 {
-	sshkey_free(authctxt->auth_method_key);
-	free(authctxt->auth_method_info);
-	authctxt->auth_method_key = NULL;
-	authctxt->auth_method_info = NULL;
+	sshkey_free(authctxt->auth_طریقہ_کلید);
+	آزاد(authctxt->auth_طریقہ_info);
+	authctxt->auth_طریقہ_کلید = تہی;
+	authctxt->auth_طریقہ_info = تہی;
 }
 
 /* Record auth method-specific information for logs */
-void
-auth2_record_info(Authctxt *authctxt, const char *fmt, ...)
+خالی
+auth2_ریکارڈ_info(Authctxt *authctxt, ثابت حرف *fmt, ...)
 {
 	va_list ap;
-	int i;
+	صحیح i;
 
-	free(authctxt->auth_method_info);
-	authctxt->auth_method_info = NULL;
+	آزاد(authctxt->auth_طریقہ_info);
+	authctxt->auth_طریقہ_info = تہی;
 
 	va_start(ap, fmt);
-	i = vasprintf(&authctxt->auth_method_info, fmt, ap);
+	i = vasprintf(&authctxt->auth_طریقہ_info, fmt, ap);
 	va_end(ap);
 
-	if (i == -1)
+	اگر (i == -1)
 		fatal_f("vasprintf failed");
 }
 
@@ -723,95 +723,95 @@ auth2_record_info(Authctxt *authctxt, const char *fmt, ...)
  * and to ensure that the same key is not subsequently accepted again for
  * multiple authentication.
  */
-void
-auth2_record_key(Authctxt *authctxt, int authenticated,
-    const struct sshkey *key)
+خالی
+auth2_ریکارڈ_کلید(Authctxt *authctxt, صحیح authenticated,
+    ثابت ساخت sshkey *کلید)
 {
-	struct sshkey **tmp, *dup;
-	int r;
+	ساخت sshkey **tmp, *dup;
+	صحیح r;
 
-	if ((r = sshkey_from_private(key, &dup)) != 0)
+	اگر ((r = sshkey_from_نجی(کلید, &dup)) != 0)
 		fatal_fr(r, "copy key");
-	sshkey_free(authctxt->auth_method_key);
-	authctxt->auth_method_key = dup;
+	sshkey_free(authctxt->auth_طریقہ_کلید);
+	authctxt->auth_طریقہ_کلید = dup;
 
-	if (!authenticated)
-		return;
+	اگر (!authenticated)
+		واپس;
 
 	/* If authenticated, make sure we don't accept this key again */
-	if ((r = sshkey_from_private(key, &dup)) != 0)
+	اگر ((r = sshkey_from_نجی(کلید, &dup)) != 0)
 		fatal_fr(r, "copy key");
-	if (authctxt->nprev_keys >= INT_MAX ||
-	    (tmp = recallocarray(authctxt->prev_keys, authctxt->nprev_keys,
-	    authctxt->nprev_keys + 1, sizeof(*authctxt->prev_keys))) == NULL)
+	اگر (authctxt->nprev_کلیدیں >= زیادہ_سے_زیادہ_عدد ||
+	    (tmp = recallocarray(authctxt->پچھلا_کلیدیں, authctxt->nprev_کلیدیں,
+	    authctxt->nprev_کلیدیں + 1, حجم(*authctxt->پچھلا_کلیدیں))) == تہی)
 		fatal_f("reallocarray failed");
-	authctxt->prev_keys = tmp;
-	authctxt->prev_keys[authctxt->nprev_keys] = dup;
-	authctxt->nprev_keys++;
+	authctxt->پچھلا_کلیدیں = tmp;
+	authctxt->پچھلا_کلیدیں[authctxt->nprev_کلیدیں] = dup;
+	authctxt->nprev_کلیدیں++;
 
 }
 
 /* Checks whether a key has already been previously used for authentication */
-int
-auth2_key_already_used(Authctxt *authctxt, const struct sshkey *key)
+صحیح
+auth2_کلید_already_مستعمل(Authctxt *authctxt, ثابت ساخت sshkey *کلید)
 {
 	u_int i;
-	char *fp;
+	حرف *fp;
 
-	for (i = 0; i < authctxt->nprev_keys; i++) {
-		if (sshkey_equal_public(key, authctxt->prev_keys[i])) {
-			fp = sshkey_fingerprint(authctxt->prev_keys[i],
+	برائے (i = 0; i < authctxt->nprev_کلیدیں; i++) {
+		اگر (sshkey_equal_عوامی(کلید, authctxt->پچھلا_کلیدیں[i])) {
+			fp = sshkey_fingerprint(authctxt->پچھلا_کلیدیں[i],
 			    options.fingerprint_hash, SSH_FP_DEFAULT);
 			debug3_f("key already used: %s %s",
-			    sshkey_type(authctxt->prev_keys[i]),
-			    fp == NULL ? "UNKNOWN" : fp);
-			free(fp);
-			return 1;
+			    sshkey_type(authctxt->پچھلا_کلیدیں[i]),
+			    fp == تہی ? "UNKNOWN" : fp);
+			آزاد(fp);
+			واپس 1;
 		}
 	}
-	return 0;
+	واپس 0;
 }
 
 /*
  * Updates authctxt->session_info with details of authentication. Should be
  * whenever an authentication method succeeds.
  */
-void
-auth2_update_session_info(Authctxt *authctxt, const char *method,
-    const char *submethod)
+خالی
+auth2_update_session_info(Authctxt *authctxt, ثابت حرف *طریقہ,
+    ثابت حرف *submethod)
 {
-	int r;
+	صحیح r;
 
-	if (authctxt->session_info == NULL) {
-		if ((authctxt->session_info = sshbuf_new()) == NULL)
+	اگر (authctxt->session_info == تہی) {
+		اگر ((authctxt->session_info = sshbuf_new()) == تہی)
 			fatal_f("sshbuf_new");
 	}
 
 	/* Append method[/submethod] */
-	if ((r = sshbuf_putf(authctxt->session_info, "%s%s%s",
-	    method, submethod == NULL ? "" : "/",
-	    submethod == NULL ? "" : submethod)) != 0)
+	اگر ((r = sshbuf_putf(authctxt->session_info, "%s%s%s",
+	    طریقہ, submethod == تہی ? "" : "/",
+	    submethod == تہی ? "" : submethod)) != 0)
 		fatal_fr(r, "append method");
 
 	/* Append key if present */
-	if (authctxt->auth_method_key != NULL) {
-		if ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
-		    (r = sshkey_format_text(authctxt->auth_method_key,
+	اگر (authctxt->auth_طریقہ_کلید != تہی) {
+		اگر ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
+		    (r = sshkey_format_متن(authctxt->auth_طریقہ_کلید,
 		    authctxt->session_info)) != 0)
 			fatal_fr(r, "append key");
 	}
 
-	if (authctxt->auth_method_info != NULL) {
+	اگر (authctxt->auth_طریقہ_info != تہی) {
 		/* Ensure no ambiguity here */
-		if (strchr(authctxt->auth_method_info, '\n') != NULL)
+		اگر (strchr(authctxt->auth_طریقہ_info, '\n') != تہی)
 			fatal_f("auth_method_info contains \\n");
-		if ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
+		اگر ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
 		    (r = sshbuf_putf(authctxt->session_info, "%s",
-		    authctxt->auth_method_info)) != 0) {
+		    authctxt->auth_طریقہ_info)) != 0) {
 			fatal_fr(r, "append method info");
 		}
 	}
-	if ((r = sshbuf_put_u8(authctxt->session_info, '\n')) != 0)
+	اگر ((r = sshbuf_put_u8(authctxt->session_info, '\n')) != 0)
 		fatal_fr(r, "append");
 }
 

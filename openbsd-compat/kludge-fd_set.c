@@ -7,22 +7,22 @@
  * function compiled without _FORTIFY_SOURCE.
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#if defined(HAVE_FEATURES_H) && defined(_FORTIFY_SOURCE)
+#اگر defined(HAVE_FEATURES_H) && defined(FORTIFY_ماخذ)
 # include <features.h>
-# if defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
-#  if __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0)
-#   undef _FORTIFY_SOURCE
+# اگر defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
+#  اگر __GLIBC_PREREQ(2, 15) && (FORTIFY_ماخذ > 0)
+#   undef FORTIFY_ماخذ
 #   undef __USE_FORTIFY_LEVEL
 #   include <sys/socket.h>
-void kludge_FD_SET(int n, fd_set *set) {
-	FD_SET(n, set);
+خالی kludge_FD_سیٹ(صحیح n, fd_set *سیٹ) {
+	FD_SET(n, سیٹ);
 }
-int kludge_FD_ISSET(int n, fd_set *set) {
-	return FD_ISSET(n, set);
+صحیح kludge_FD_ISSET(صحیح n, fd_set *سیٹ) {
+	واپس FD_ISSET(n, سیٹ);
 }
 #  endif /* __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0) */
 # endif /* __GNU_LIBRARY__ && __GLIBC_PREREQ */
-#endif /* HAVE_FEATURES_H && _FORTIFY_SOURCE */
+#اگر_ختم /* HAVE_FEATURES_H && _FORTIFY_SOURCE */
 

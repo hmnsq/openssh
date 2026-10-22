@@ -43,230 +43,230 @@
  * suitable code.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <errno.h>
-#include <string.h>
-#include <termios.h>
-#include <stdarg.h>
+#شامل <errno.h>
+#شامل <string.h>
+#شامل <termios.h>
+#شامل <stdarg.h>
 
-#include "packet.h"
-#include "log.h"
-#include "compat.h"
-#include "sshbuf.h"
+#شامل "packet.h"
+#شامل "log.h"
+#شامل "compat.h"
+#شامل "sshbuf.h"
 
-#define TTY_OP_END		0
+#تعریف_کرو TTY_OP_انتہا		0
 /*
  * uint32 (u_int) follows speed.
  */
-#define TTY_OP_ISPEED	128
-#define TTY_OP_OSPEED	129
+#تعریف_کرو TTY_OP_ISPEED	128
+#تعریف_کرو TTY_OP_OSPEED	129
 
 /*
  * Converts POSIX speed_t to a baud rate.  The values of the
  * constants for speed_t are not themselves portable.
  */
-static int
-speed_to_baud(speed_t speed)
+ساکن صحیح
+رفتار_مقصد_baud(speed_t رفتار)
 {
-	switch (speed) {
-	case B0:
-		return 0;
-	case B50:
-		return 50;
-	case B75:
-		return 75;
-	case B110:
-		return 110;
-	case B134:
-		return 134;
-	case B150:
-		return 150;
-	case B200:
-		return 200;
-	case B300:
-		return 300;
-	case B600:
-		return 600;
-	case B1200:
-		return 1200;
-	case B1800:
-		return 1800;
-	case B2400:
-		return 2400;
-	case B4800:
-		return 4800;
-	case B9600:
-		return 9600;
+	انتخاب (رفتار) {
+	حالت B0:
+		واپس 0;
+	حالت B50:
+		واپس 50;
+	حالت B75:
+		واپس 75;
+	حالت B110:
+		واپس 110;
+	حالت B134:
+		واپس 134;
+	حالت B150:
+		واپس 150;
+	حالت B200:
+		واپس 200;
+	حالت B300:
+		واپس 300;
+	حالت B600:
+		واپس 600;
+	حالت B1200:
+		واپس 1200;
+	حالت B1800:
+		واپس 1800;
+	حالت B2400:
+		واپس 2400;
+	حالت B4800:
+		واپس 4800;
+	حالت B9600:
+		واپس 9600;
 
-#ifdef B19200
-	case B19200:
-		return 19200;
-#else /* B19200 */
-#ifdef EXTA
-	case EXTA:
-		return 19200;
-#endif /* EXTA */
-#endif /* B19200 */
+#اگر_تعریف_شدہ B19200
+	حالت B19200:
+		واپس 19200;
+#ورنہ /* B19200 */
+#اگر_تعریف_شدہ EXTA
+	حالت EXTA:
+		واپس 19200;
+#اگر_ختم /* EXTA */
+#اگر_ختم /* B19200 */
 
-#ifdef B38400
-	case B38400:
-		return 38400;
-#else /* B38400 */
-#ifdef EXTB
-	case EXTB:
-		return 38400;
-#endif /* EXTB */
-#endif /* B38400 */
+#اگر_تعریف_شدہ B38400
+	حالت B38400:
+		واپس 38400;
+#ورنہ /* B38400 */
+#اگر_تعریف_شدہ EXTB
+	حالت EXTB:
+		واپس 38400;
+#اگر_ختم /* EXTB */
+#اگر_ختم /* B38400 */
 
-#ifdef B7200
-	case B7200:
-		return 7200;
-#endif /* B7200 */
-#ifdef B14400
-	case B14400:
-		return 14400;
-#endif /* B14400 */
-#ifdef B28800
-	case B28800:
-		return 28800;
-#endif /* B28800 */
-#ifdef B57600
-	case B57600:
-		return 57600;
-#endif /* B57600 */
-#ifdef B76800
-	case B76800:
-		return 76800;
-#endif /* B76800 */
-#ifdef B115200
-	case B115200:
-		return 115200;
-#endif /* B115200 */
-#ifdef B230400
-	case B230400:
-		return 230400;
-#endif /* B230400 */
-	default:
-		return 9600;
+#اگر_تعریف_شدہ B7200
+	حالت B7200:
+		واپس 7200;
+#اگر_ختم /* B7200 */
+#اگر_تعریف_شدہ B14400
+	حالت B14400:
+		واپس 14400;
+#اگر_ختم /* B14400 */
+#اگر_تعریف_شدہ B28800
+	حالت B28800:
+		واپس 28800;
+#اگر_ختم /* B28800 */
+#اگر_تعریف_شدہ B57600
+	حالت B57600:
+		واپس 57600;
+#اگر_ختم /* B57600 */
+#اگر_تعریف_شدہ B76800
+	حالت B76800:
+		واپس 76800;
+#اگر_ختم /* B76800 */
+#اگر_تعریف_شدہ B115200
+	حالت B115200:
+		واپس 115200;
+#اگر_ختم /* B115200 */
+#اگر_تعریف_شدہ B230400
+	حالت B230400:
+		واپس 230400;
+#اگر_ختم /* B230400 */
+	طےشدہ:
+		واپس 9600;
 	}
 }
 
 /*
  * Converts a numeric baud rate to a POSIX speed_t.
  */
-static speed_t
-baud_to_speed(int baud)
+ساکن speed_t
+baud_مقصد_رفتار(صحیح baud)
 {
-	switch (baud) {
-	case 0:
-		return B0;
-	case 50:
-		return B50;
-	case 75:
-		return B75;
-	case 110:
-		return B110;
-	case 134:
-		return B134;
-	case 150:
-		return B150;
-	case 200:
-		return B200;
-	case 300:
-		return B300;
-	case 600:
-		return B600;
-	case 1200:
-		return B1200;
-	case 1800:
-		return B1800;
-	case 2400:
-		return B2400;
-	case 4800:
-		return B4800;
-	case 9600:
-		return B9600;
+	انتخاب (baud) {
+	حالت 0:
+		واپس B0;
+	حالت 50:
+		واپس B50;
+	حالت 75:
+		واپس B75;
+	حالت 110:
+		واپس B110;
+	حالت 134:
+		واپس B134;
+	حالت 150:
+		واپس B150;
+	حالت 200:
+		واپس B200;
+	حالت 300:
+		واپس B300;
+	حالت 600:
+		واپس B600;
+	حالت 1200:
+		واپس B1200;
+	حالت 1800:
+		واپس B1800;
+	حالت 2400:
+		واپس B2400;
+	حالت 4800:
+		واپس B4800;
+	حالت 9600:
+		واپس B9600;
 
-#ifdef B19200
-	case 19200:
-		return B19200;
-#else /* B19200 */
-#ifdef EXTA
-	case 19200:
-		return EXTA;
-#endif /* EXTA */
-#endif /* B19200 */
+#اگر_تعریف_شدہ B19200
+	حالت 19200:
+		واپس B19200;
+#ورنہ /* B19200 */
+#اگر_تعریف_شدہ EXTA
+	حالت 19200:
+		واپس EXTA;
+#اگر_ختم /* EXTA */
+#اگر_ختم /* B19200 */
 
-#ifdef B38400
-	case 38400:
-		return B38400;
-#else /* B38400 */
-#ifdef EXTB
-	case 38400:
-		return EXTB;
-#endif /* EXTB */
-#endif /* B38400 */
+#اگر_تعریف_شدہ B38400
+	حالت 38400:
+		واپس B38400;
+#ورنہ /* B38400 */
+#اگر_تعریف_شدہ EXTB
+	حالت 38400:
+		واپس EXTB;
+#اگر_ختم /* EXTB */
+#اگر_ختم /* B38400 */
 
-#ifdef B7200
-	case 7200:
-		return B7200;
-#endif /* B7200 */
-#ifdef B14400
-	case 14400:
-		return B14400;
-#endif /* B14400 */
-#ifdef B28800
-	case 28800:
-		return B28800;
-#endif /* B28800 */
-#ifdef B57600
-	case 57600:
-		return B57600;
-#endif /* B57600 */
-#ifdef B76800
-	case 76800:
-		return B76800;
-#endif /* B76800 */
-#ifdef B115200
-	case 115200:
-		return B115200;
-#endif /* B115200 */
-#ifdef B230400
-	case 230400:
-		return B230400;
-#endif /* B230400 */
-	default:
-		return B9600;
+#اگر_تعریف_شدہ B7200
+	حالت 7200:
+		واپس B7200;
+#اگر_ختم /* B7200 */
+#اگر_تعریف_شدہ B14400
+	حالت 14400:
+		واپس B14400;
+#اگر_ختم /* B14400 */
+#اگر_تعریف_شدہ B28800
+	حالت 28800:
+		واپس B28800;
+#اگر_ختم /* B28800 */
+#اگر_تعریف_شدہ B57600
+	حالت 57600:
+		واپس B57600;
+#اگر_ختم /* B57600 */
+#اگر_تعریف_شدہ B76800
+	حالت 76800:
+		واپس B76800;
+#اگر_ختم /* B76800 */
+#اگر_تعریف_شدہ B115200
+	حالت 115200:
+		واپس B115200;
+#اگر_ختم /* B115200 */
+#اگر_تعریف_شدہ B230400
+	حالت 230400:
+		واپس B230400;
+#اگر_ختم /* B230400 */
+	طےشدہ:
+		واپس B9600;
 	}
 }
 
 /*
  * Encode a special character into SSH line format.
  */
-static u_int
+ساکن u_int
 special_char_encode(cc_t c)
 {
-#ifdef _POSIX_VDISABLE
-	if (c == _POSIX_VDISABLE)
-		return 255;
-#endif /* _POSIX_VDISABLE */
-	return c;
+#اگر_تعریف_شدہ _POSIX_VDISABLE
+	اگر (c == _POSIX_VDISABLE)
+		واپس 255;
+#اگر_ختم /* _POSIX_VDISABLE */
+	واپس c;
 }
 
 /*
  * Decode a special character from SSH line format.
  */
-static cc_t
+ساکن cc_t
 special_char_decode(u_int c)
 {
-#ifdef _POSIX_VDISABLE
-	if (c == 255)
-		return _POSIX_VDISABLE;
-#endif /* _POSIX_VDISABLE */
-	return c;
+#اگر_تعریف_شدہ _POSIX_VDISABLE
+	اگر (c == 255)
+		واپس _POSIX_VDISABLE;
+#اگر_ختم /* _POSIX_VDISABLE */
+	واپس c;
 }
 
 /*
@@ -274,61 +274,61 @@ special_char_decode(u_int c)
  * or tiop in a portable manner, and appends the modes to a packet
  * being constructed.
  */
-void
-ssh_tty_make_modes(struct ssh *ssh, int fd, struct termios *tiop)
+خالی
+ssh_tty_make_modes(ساخت ssh *ssh, صحیح fd, ساخت termios *tiop)
 {
-	struct termios tio;
-	struct sshbuf *buf;
-	int r, ibaud, obaud;
+	ساخت termios tio;
+	ساخت sshbuf *buf;
+	صحیح r, ibaud, obaud;
 
-	if ((buf = sshbuf_new()) == NULL)
+	اگر ((buf = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new failed");
 
-	if (tiop == NULL) {
-		if (fd == -1) {
+	اگر (tiop == تہی) {
+		اگر (fd == -1) {
 			debug_f("no fd or tio");
-			goto end;
+			جاؤ انتہا;
 		}
-		if (tcgetattr(fd, &tio) == -1) {
+		اگر (tcgetattr(fd, &tio) == -1) {
 			logit("tcgetattr: %.100s", strerror(errno));
-			goto end;
+			جاؤ انتہا;
 		}
-	} else
+	} ورنہ
 		tio = *tiop;
 
 	/* Store input and output baud rates. */
-	obaud = speed_to_baud(cfgetospeed(&tio));
-	ibaud = speed_to_baud(cfgetispeed(&tio));
-	if ((r = sshbuf_put_u8(buf, TTY_OP_OSPEED)) != 0 ||
+	obaud = رفتار_مقصد_baud(cfgetospeed(&tio));
+	ibaud = رفتار_مقصد_baud(cfgetispeed(&tio));
+	اگر ((r = sshbuf_put_u8(buf, TTY_OP_OSPEED)) != 0 ||
 	    (r = sshbuf_put_u32(buf, obaud)) != 0 ||
 	    (r = sshbuf_put_u8(buf, TTY_OP_ISPEED)) != 0 ||
 	    (r = sshbuf_put_u32(buf, ibaud)) != 0)
 		fatal_fr(r, "compose");
 
 	/* Store values of mode flags. */
-#define TTYCHAR(NAME, OP) \
-	if ((r = sshbuf_put_u8(buf, OP)) != 0 || \
+#تعریف_کرو TTYCHAR(NAME, OP) \
+	اگر ((r = sshbuf_put_u8(buf, OP)) != 0 || \
 	    (r = sshbuf_put_u32(buf, \
 	    special_char_encode(tio.c_cc[NAME]))) != 0) \
 		fatal_fr(r, "compose %s", #NAME);
 
-#define SSH_TTYMODE_IUTF8 42  /* for SSH_BUG_UTF8TTYMODE */
+#تعریف_کرو SSH_TTYMODE_IUTF8 42  /* for SSH_BUG_UTF8TTYMODE */
 
-#define TTYMODE(NAME, FIELD, OP) \
-	if (OP == SSH_TTYMODE_IUTF8 && (ssh->compat & SSH_BUG_UTF8TTYMODE)) { \
+#تعریف_کرو TTYMODE(NAME, میدان_2, OP) \
+	اگر (OP == SSH_TTYMODE_IUTF8 && (ssh->compat & SSH_BUG_UTF8TTYMODE)) { \
 		debug3_f("SSH_BUG_UTF8TTYMODE"); \
-	} else if ((r = sshbuf_put_u8(buf, OP)) != 0 || \
-	    (r = sshbuf_put_u32(buf, ((tio.FIELD & NAME) != 0))) != 0) \
+	} ورنہ اگر ((r = sshbuf_put_u8(buf, OP)) != 0 || \
+	    (r = sshbuf_put_u32(buf, ((tio.میدان_2 & NAME) != 0))) != 0) \
 		fatal_fr(r, "compose %s", #NAME);
 
-#include "ttymodes.h"
+#شامل "ttymodes.h"
 
-#undef TTYCHAR
-#undef TTYMODE
+#تعریف_منسوخ TTYCHAR
+#تعریف_منسوخ TTYMODE
 
-end:
+انتہا:
 	/* Mark end of mode data. */
-	if ((r = sshbuf_put_u8(buf, TTY_OP_END)) != 0 ||
+	اگر ((r = sshbuf_put_u8(buf, TTY_OP_انتہا)) != 0 ||
 	    (r = sshpkt_put_stringb(ssh, buf)) != 0)
 		fatal_fr(r, "compose end");
 	sshbuf_free(buf);
@@ -338,24 +338,24 @@ end:
  * Decodes terminal modes for the terminal referenced by fd in a portable
  * manner from a packet being read.
  */
-void
-ssh_tty_parse_modes(struct ssh *ssh, int fd)
+خالی
+ssh_tty_parse_modes(ساخت ssh *ssh, صحیح fd)
 {
-	struct termios tio;
-	struct sshbuf *buf;
-	const u_char *data;
+	ساخت termios tio;
+	ساخت sshbuf *buf;
+	ثابت u_char *ڈیٹا;
 	u_char opcode;
 	u_int baud, u;
-	int r, failure = 0;
-	size_t len;
+	صحیح r, failure = 0;
+	سائز_t len;
 
-	if ((r = sshpkt_get_string_direct(ssh, &data, &len)) != 0)
+	اگر ((r = sshpkt_get_string_براہ_راست(ssh, &ڈیٹا, &len)) != 0)
 		fatal_fr(r, "parse");
-	if (len == 0)
-		return;
-	if ((buf = sshbuf_from(data, len)) == NULL) {
+	اگر (len == 0)
+		واپس;
+	اگر ((buf = sshbuf_from(ڈیٹا, len)) == تہی) {
 		error_f("sshbuf_from failed");
-		return;
+		واپس;
 	}
 
 	/*
@@ -363,56 +363,56 @@ ssh_tty_parse_modes(struct ssh *ssh, int fd)
 	 * flags. I am hoping that if there are any machine-specific
 	 * modes, they will initially have reasonable values.
 	 */
-	if (tcgetattr(fd, &tio) == -1) {
+	اگر (tcgetattr(fd, &tio) == -1) {
 		logit("tcgetattr: %.100s", strerror(errno));
 		failure = -1;
 	}
 
-	while (sshbuf_len(buf) > 0) {
-		if ((r = sshbuf_get_u8(buf, &opcode)) != 0)
+	جب (sshbuf_len(buf) > 0) {
+		اگر ((r = sshbuf_get_u8(buf, &opcode)) != 0)
 			fatal_fr(r, "parse opcode");
-		switch (opcode) {
-		case TTY_OP_END:
-			goto set;
+		انتخاب (opcode) {
+		حالت TTY_OP_انتہا:
+			جاؤ سیٹ;
 
-		case TTY_OP_ISPEED:
-			if ((r = sshbuf_get_u32(buf, &baud)) != 0)
+		حالت TTY_OP_ISPEED:
+			اگر ((r = sshbuf_get_u32(buf, &baud)) != 0)
 				fatal_fr(r, "parse ispeed");
-			if (failure != -1 &&
-			    cfsetispeed(&tio, baud_to_speed(baud)) == -1)
+			اگر (failure != -1 &&
+			    cfsetispeed(&tio, baud_مقصد_رفتار(baud)) == -1)
 				error("cfsetispeed failed for %d", baud);
-			break;
+			توڑو;
 
-		case TTY_OP_OSPEED:
-			if ((r = sshbuf_get_u32(buf, &baud)) != 0)
+		حالت TTY_OP_OSPEED:
+			اگر ((r = sshbuf_get_u32(buf, &baud)) != 0)
 				fatal_fr(r, "parse ospeed");
-			if (failure != -1 &&
-			    cfsetospeed(&tio, baud_to_speed(baud)) == -1)
+			اگر (failure != -1 &&
+			    cfsetospeed(&tio, baud_مقصد_رفتار(baud)) == -1)
 				error("cfsetospeed failed for %d", baud);
-			break;
+			توڑو;
 
-#define TTYCHAR(NAME, OP) \
-		case OP: \
-			if ((r = sshbuf_get_u32(buf, &u)) != 0) \
+#تعریف_کرو TTYCHAR(NAME, OP) \
+		حالت OP: \
+			اگر ((r = sshbuf_get_u32(buf, &u)) != 0) \
 				fatal_fr(r, "parse %s", #NAME); \
 			tio.c_cc[NAME] = special_char_decode(u); \
-			break;
-#define TTYMODE(NAME, FIELD, OP) \
-		case OP: \
-			if ((r = sshbuf_get_u32(buf, &u)) != 0) \
+			توڑو;
+#تعریف_کرو TTYMODE(NAME, میدان_2, OP) \
+		حالت OP: \
+			اگر ((r = sshbuf_get_u32(buf, &u)) != 0) \
 				fatal_fr(r, "parse %s", #NAME); \
-			if (u) \
-				tio.FIELD |= NAME; \
-			else \
-				tio.FIELD &= ~NAME; \
-			break;
+			اگر (u) \
+				tio.میدان_2 |= NAME; \
+			ورنہ \
+				tio.میدان_2 &= ~NAME; \
+			توڑو;
 
-#include "ttymodes.h"
+#شامل "ttymodes.h"
 
-#undef TTYCHAR
-#undef TTYMODE
+#تعریف_منسوخ TTYCHAR
+#تعریف_منسوخ TTYMODE
 
-		default:
+		طےشدہ:
 			debug("Ignoring unsupported tty mode opcode %d (0x%x)",
 			    opcode, opcode);
 			/*
@@ -422,28 +422,28 @@ ssh_tty_parse_modes(struct ssh *ssh, int fd)
 			 * Opcodes 160 to 255 are undefined and cause parsing
 			 * to stop.
 			 */
-			if (opcode > 0 && opcode < 160) {
-				if ((r = sshbuf_get_u32(buf, NULL)) != 0)
+			اگر (opcode > 0 && opcode < 160) {
+				اگر ((r = sshbuf_get_u32(buf, تہی)) != 0)
 					fatal_fr(r, "parse arg");
-				break;
-			} else {
+				توڑو;
+			} ورنہ {
 				logit_f("unknown opcode %d", opcode);
-				goto set;
+				جاؤ سیٹ;
 			}
 		}
 	}
 
-set:
+سیٹ:
 	len = sshbuf_len(buf);
 	sshbuf_free(buf);
-	if (len > 0) {
+	اگر (len > 0) {
 		logit_f("%zu bytes left", len);
-		return;		/* Don't process bytes passed */
+		واپس;		/* Don't process bytes passed */
 	}
-	if (failure == -1)
-		return;		/* Packet parsed ok but tcgetattr() failed */
+	اگر (failure == -1)
+		واپس;		/* Packet parsed ok but tcgetattr() failed */
 
 	/* Set the new modes for the terminal. */
-	if (tcsetattr(fd, TCSANOW, &tio) == -1)
+	اگر (tcsetattr(fd, TCSANOW, &tio) == -1)
 		logit("Setting tty modes failed: %.100s", strerror(errno));
 }

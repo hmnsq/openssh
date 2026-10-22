@@ -30,20 +30,20 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/vis.c */
 
-#include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#شامل "includes.h"
+#اگر !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
-#include <sys/types.h>
-#include <errno.h>
-#include <ctype.h>
-#include <limits.h>
-#include <string.h>
-#include <stdlib.h>
+#شامل <sys/types.h>
+#شامل <errno.h>
+#شامل <ctype.h>
+#شامل <limits.h>
+#شامل <string.h>
+#شامل <stdlib.h>
 
-#include "vis.h"
+#شامل "vis.h"
 
-#define	isoctal(c)	(((u_char)(c)) >= '0' && ((u_char)(c)) <= '7')
-#define	isvisible(c,flag)						\
+#تعریف_کرو	isoctal(c)	(((u_char)(c)) >= '0' && ((u_char)(c)) <= '7')
+#تعریف_کرو	isvisible(c,flag)						\
 	(((c) == '\\' || (flag & VIS_ALL) == 0) &&			\
 	(((u_int)(c) <= UCHAR_MAX && isascii((u_char)(c)) &&		\
 	(((c) != '*' && (c) != '?' && (c) != '[' && (c) != '#') ||	\
@@ -51,96 +51,96 @@
 	((flag & VIS_SP) == 0 && (c) == ' ') ||				\
 	((flag & VIS_TAB) == 0 && (c) == '\t') ||			\
 	((flag & VIS_NL) == 0 && (c) == '\n') ||			\
-	((flag & VIS_SAFE) && ((c) == '\b' ||				\
+	((flag & VIS_محفوظ) && ((c) == '\b' ||				\
 		(c) == '\007' || (c) == '\r' ||				\
 		isgraph((u_char)(c))))))
 
 /*
  * vis - visually encode characters
  */
-char *
-vis(char *dst, int c, int flag, int nextc)
+حرف *
+vis(حرف *dst, صحیح c, صحیح flag, صحیح nextc)
 {
-	if (isvisible(c, flag)) {
-		if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	اگر (isvisible(c, flag)) {
+		اگر ((c == '"' && (flag & VIS_DQ) != 0) ||
 		    (c == '\\' && (flag & VIS_NOSLASH) == 0))
 			*dst++ = '\\';
 		*dst++ = c;
 		*dst = '\0';
-		return (dst);
+		واپس (dst);
 	}
 
-	if (flag & VIS_CSTYLE) {
-		switch(c) {
-		case '\n':
+	اگر (flag & VIS_CSTYLE) {
+		انتخاب(c) {
+		حالت '\n':
 			*dst++ = '\\';
 			*dst++ = 'n';
-			goto done;
-		case '\r':
+			جاؤ مکمل;
+		حالت '\r':
 			*dst++ = '\\';
 			*dst++ = 'r';
-			goto done;
-		case '\b':
+			جاؤ مکمل;
+		حالت '\b':
 			*dst++ = '\\';
 			*dst++ = 'b';
-			goto done;
-		case '\a':
+			جاؤ مکمل;
+		حالت '\a':
 			*dst++ = '\\';
 			*dst++ = 'a';
-			goto done;
-		case '\v':
+			جاؤ مکمل;
+		حالت '\v':
 			*dst++ = '\\';
 			*dst++ = 'v';
-			goto done;
-		case '\t':
+			جاؤ مکمل;
+		حالت '\t':
 			*dst++ = '\\';
 			*dst++ = 't';
-			goto done;
-		case '\f':
+			جاؤ مکمل;
+		حالت '\f':
 			*dst++ = '\\';
 			*dst++ = 'f';
-			goto done;
-		case ' ':
+			جاؤ مکمل;
+		حالت ' ':
 			*dst++ = '\\';
 			*dst++ = 's';
-			goto done;
-		case '\0':
+			جاؤ مکمل;
+		حالت '\0':
 			*dst++ = '\\';
 			*dst++ = '0';
-			if (isoctal(nextc)) {
+			اگر (isoctal(nextc)) {
 				*dst++ = '0';
 				*dst++ = '0';
 			}
-			goto done;
+			جاؤ مکمل;
 		}
 	}
-	if (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
+	اگر (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
 	    ((flag & VIS_GLOB) && (c == '*' || c == '?' || c == '[' || c == '#'))) {
 		*dst++ = '\\';
 		*dst++ = ((u_char)c >> 6 & 07) + '0';
 		*dst++ = ((u_char)c >> 3 & 07) + '0';
 		*dst++ = ((u_char)c & 07) + '0';
-		goto done;
+		جاؤ مکمل;
 	}
-	if ((flag & VIS_NOSLASH) == 0)
+	اگر ((flag & VIS_NOSLASH) == 0)
 		*dst++ = '\\';
-	if (c & 0200) {
+	اگر (c & 0200) {
 		c &= 0177;
 		*dst++ = 'M';
 	}
-	if (iscntrl((u_char)c)) {
+	اگر (iscntrl((u_char)c)) {
 		*dst++ = '^';
-		if (c == 0177)
+		اگر (c == 0177)
 			*dst++ = '?';
-		else
+		ورنہ
 			*dst++ = c + '@';
-	} else {
+	} ورنہ {
 		*dst++ = '-';
 		*dst++ = c;
 	}
-done:
+مکمل:
 	*dst = '\0';
-	return (dst);
+	واپس (dst);
 }
 DEF_WEAK(vis);
 
@@ -157,97 +157,97 @@ DEF_WEAK(vis);
  *	Strvisx encodes exactly len bytes from src into dst.
  *	This is useful for encoding a block of data.
  */
-int
-strvis(char *dst, const char *src, int flag)
+صحیح
+strvis(حرف *dst, ثابت حرف *src, صحیح flag)
 {
-	char c;
-	char *start;
+	حرف c;
+	حرف *آغاز;
 
-	for (start = dst; (c = *src);)
+	برائے (آغاز = dst; (c = *src);)
 		dst = vis(dst, c, flag, *++src);
 	*dst = '\0';
-	return (dst - start);
+	واپس (dst - آغاز);
 }
 DEF_WEAK(strvis);
 
-int
-strnvis(char *dst, const char *src, size_t siz, int flag)
+صحیح
+strnvis(حرف *dst, ثابت حرف *src, سائز_t siz, صحیح flag)
 {
-	char *start, *end;
-	char tbuf[5];
-	int c, i;
+	حرف *آغاز, *انتہا;
+	حرف tbuf[5];
+	صحیح c, i;
 
 	i = 0;
-	for (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
-		if (isvisible(c, flag)) {
-			if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	برائے (آغاز = dst, انتہا = آغاز + siz - 1; (c = *src) && dst < انتہا; ) {
+		اگر (isvisible(c, flag)) {
+			اگر ((c == '"' && (flag & VIS_DQ) != 0) ||
 			    (c == '\\' && (flag & VIS_NOSLASH) == 0)) {
 				/* need space for the extra '\\' */
-				if (dst + 1 >= end) {
+				اگر (dst + 1 >= انتہا) {
 					i = 2;
-					break;
+					توڑو;
 				}
 				*dst++ = '\\';
 			}
 			i = 1;
 			*dst++ = c;
 			src++;
-		} else {
+		} ورنہ {
 			i = vis(tbuf, c, flag, *++src) - tbuf;
-			if (dst + i <= end) {
-				memcpy(dst, tbuf, i);
+			اگر (dst + i <= انتہا) {
+				حافظہ_نقل(dst, tbuf, i);
 				dst += i;
-			} else {
+			} ورنہ {
 				src--;
-				break;
+				توڑو;
 			}
 		}
 	}
-	if (siz > 0)
+	اگر (siz > 0)
 		*dst = '\0';
-	if (dst + i > end) {
+	اگر (dst + i > انتہا) {
 		/* adjust return value for truncation */
-		while ((c = *src))
+		جب ((c = *src))
 			dst += vis(tbuf, c, flag, *++src) - tbuf;
 	}
-	return (dst - start);
+	واپس (dst - آغاز);
 }
 
-#if 0 /* unused in OpenSSH */
-int
-stravis(char **outp, const char *src, int flag)
+#اگر 0 /* unused in OpenSSH */
+صحیح
+stravis(حرف **outp, ثابت حرف *src, صحیح flag)
 {
-	char *buf;
-	int len, serrno;
+	حرف *buf;
+	صحیح len, serrno;
 
-	buf = reallocarray(NULL, 4, strlen(src) + 1);
-	if (buf == NULL)
-		return -1;
+	buf = reallocarray(تہی, 4, لڑی_لمبائی(src) + 1);
+	اگر (buf == تہی)
+		واپس -1;
 	len = strvis(buf, src, flag);
 	serrno = errno;
 	*outp = realloc(buf, len + 1);
-	if (*outp == NULL) {
+	اگر (*outp == تہی) {
 		*outp = buf;
 		errno = serrno;
 	}
-	return (len);
+	واپس (len);
 }
 
-int
-strvisx(char *dst, const char *src, size_t len, int flag)
+صحیح
+strvisx(حرف *dst, ثابت حرف *src, سائز_t len, صحیح flag)
 {
-	char c;
-	char *start;
+	حرف c;
+	حرف *آغاز;
 
-	for (start = dst; len > 1; len--) {
+	برائے (آغاز = dst; len > 1; len--) {
 		c = *src;
 		dst = vis(dst, c, flag, *++src);
 	}
-	if (len)
+	اگر (len)
 		dst = vis(dst, *src, flag, '\0');
 	*dst = '\0';
-	return (dst - start);
+	واپس (dst - آغاز);
 }
-#endif /* unused */
+#اگر_ختم /*غیر_مستعمل*/
 
-#endif
+#اگر_ختم

@@ -30,15 +30,15 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoll.c */
 
-#include "includes.h"
-#ifndef HAVE_STRTOLL
+#شامل "includes.h"
+#اگر_غیر_تعریف_شدہ HAVE_STRTOLL
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#شامل <ctype.h>
+#شامل <errno.h>
+#شامل <limits.h>
+#شامل <stdlib.h>
 
 /*
  * Convert a string to a long long.
@@ -46,13 +46,13 @@
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-long long
-strtoll(const char *nptr, char **endptr, int base)
+طویل طویل
+strtoll(ثابت حرف *nptr, حرف **endptr, صحیح بنیاد)
 {
-	const char *s;
-	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	ثابت حرف *s;
+	طویل طویل acc, cutoff;
+	صحیح c;
+	صحیح neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -60,25 +60,25 @@ strtoll(const char *nptr, char **endptr, int base)
 	 * assume decimal; if base is already 16, allow 0x.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	کرو {
+		c = (غیرعلامتی حرف) *s++;
+	} جب (خلا_ہے(c));
+	اگر (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} ورنہ {
 		neg = 0;
-		if (c == '+')
+		اگر (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	اگر ((بنیاد == 0 || بنیاد == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
-		base = 16;
+		بنیاد = 16;
 	}
-	if (base == 0)
-		base = c == '0' ? 8 : 10;
+	اگر (بنیاد == 0)
+		بنیاد = c == '0' ? 8 : 10;
 
 	/*
 	 * Compute the cutoff value between legal numbers and illegal
@@ -99,50 +99,50 @@ strtoll(const char *nptr, char **endptr, int base)
 	 * overflow.
 	 */
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
-	cutlim = cutoff % base;
-	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
-			cutlim -= base;
+	cutlim = cutoff % بنیاد;
+	cutoff /= بنیاد;
+	اگر (neg) {
+		اگر (cutlim > 0) {
+			cutlim -= بنیاد;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	برائے (acc = 0, any = 0;; c = (غیرعلامتی حرف) *s++) {
+		اگر (ہندسہ_ہے(c))
 			c -= '0';
-		else if (isalpha(c))
+		ورنہ اگر (حرف_ہے(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		ورنہ
+			توڑو;
+		اگر (c >= بنیاد)
+			توڑو;
+		اگر (any < 0)
+			جاری;
+		اگر (neg) {
+			اگر (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} ورنہ {
 				any = 1;
-				acc *= base;
+				acc *= بنیاد;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} ورنہ {
+			اگر (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} ورنہ {
 				any = 1;
-				acc *= base;
+				acc *= بنیاد;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	اگر (endptr != 0)
+		*endptr = (حرف *) (any ? s - 1 : nptr);
+	واپس (acc);
 }
-#endif /* HAVE_STRTOLL */
+#اگر_ختم /* HAVE_STRTOLL */

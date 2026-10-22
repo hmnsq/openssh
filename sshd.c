@@ -24,72 +24,72 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/queue.h>
-#include <sys/wait.h>
-#include <sys/utsname.h>
+#شامل <sys/types.h>
+#شامل <sys/ioctl.h>
+#شامل <sys/socket.h>
+#شامل <sys/stat.h>
+#شامل <sys/time.h>
+#شامل <sys/queue.h>
+#شامل <sys/wait.h>
+#شامل <sys/utsname.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <paths.h>
-#include <grp.h>
-#include <poll.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
+#شامل <errno.h>
+#شامل <fcntl.h>
+#شامل <netdb.h>
+#شامل <paths.h>
+#شامل <grp.h>
+#شامل <poll.h>
+#شامل <pwd.h>
+#شامل <signal.h>
+#شامل <stdarg.h>
+#شامل <time.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <limits.h>
 
-#ifdef HAVE_SECUREWARE
-#include <sys/security.h>
-#include <prot.h>
-#endif
+#اگر_تعریف_شدہ HAVE_SECUREWARE
+#شامل <sys/security.h>
+#شامل <prot.h>
+#اگر_ختم
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "sshpty.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
-#include "compat.h"
-#include "digest.h"
-#include "sshkey.h"
-#include "authfile.h"
-#include "pathnames.h"
-#include "canohost.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "authfd.h"
-#include "msg.h"
-#include "version.h"
-#include "ssherr.h"
-#include "sk-api.h"
-#include "addr.h"
-#include "srclimit.h"
-#include "atomicio.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
+#شامل "xmalloc.h"
+#شامل "ssh.h"
+#شامل "sshpty.h"
+#شامل "log.h"
+#شامل "sshbuf.h"
+#شامل "misc.h"
+#شامل "servconf.h"
+#شامل "compat.h"
+#شامل "digest.h"
+#شامل "sshkey.h"
+#شامل "authfile.h"
+#شامل "pathnames.h"
+#شامل "canohost.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
+#شامل "authfd.h"
+#شامل "msg.h"
+#شامل "version.h"
+#شامل "ssherr.h"
+#شامل "sk-api.h"
+#شامل "addr.h"
+#شامل "srclimit.h"
+#شامل "atomicio.h"
+#اگر_تعریف_شدہ GSSAPI
+#شامل "ssh-gss.h"
+#اگر_ختم
+#شامل "monitor_wrap.h"
 
 /* Re-exec fds */
-#define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
-#define REEXEC_CONFIG_PASS_FD		(STDERR_FILENO + 2)
-#define REEXEC_MIN_FREE_FD		(STDERR_FILENO + 3)
+#تعریف_کرو REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
+#تعریف_کرو REEXEC_CONFIG_PASS_FD		(STDERR_FILENO + 2)
+#تعریف_کرو REEXEC_MIN_FREE_FD		(STDERR_FILENO + 3)
 
-extern char *__progname;
+خارجی حرف *__progname;
 
 /* Server configuration options. */
 ServerOptions options;
@@ -100,20 +100,20 @@ ServerOptions options;
  * log, the daemon will not go to background, and will exit after processing
  * the first connection.
  */
-int debug_flag = 0;
+صحیح debug_flag = 0;
 
 /* Saved arguments to main(). */
-static char execpath[PATH_MAX];
-static char **saved_argv;
-static int saved_argc;
+ساکن حرف execpath[PATH_MAX];
+ساکن حرف **saved_argv;
+ساکن صحیح saved_argc;
 
 /*
  * The sockets that the server is listening; this is used in the SIGHUP
  * signal handler.
  */
-#define	MAX_LISTEN_SOCKS	16
-static int listen_socks[MAX_LISTEN_SOCKS];
-static int num_listen_socks = 0;
+#تعریف_کرو	MAX_LISTEN_SOCKS	16
+ساکن صحیح listen_socks[MAX_LISTEN_SOCKS];
+ساکن صحیح عدد_listen_socks = 0;
 
 /*
  * Any really sensitive data in the application is contained in this
@@ -123,18 +123,18 @@ static int num_listen_socks = 0;
  * have access to the internals of them, and locking just the structure is
  * not very useful.  Currently, memory locking is not implemented.
  */
-struct {
-	struct sshkey	**host_keys;		/* all private host keys */
-	struct sshkey	**host_pubkeys;		/* all public host keys */
-	struct sshkey	**host_certificates;	/* all public host certificates */
-	int		have_ssh2_key;
-} sensitive_data;
+ساخت {
+	ساخت sshkey	**host_کلیدیں;		/* all private host keys */
+	ساخت sshkey	**host_pubkeys;		/* all public host keys */
+	ساخت sshkey	**host_certificates;	/* all public host certificates */
+	صحیح		have_ssh2_کلید;
+} sensitive_ڈیٹا;
 
 /* This is set to true when a signal is received. */
-static volatile sig_atomic_t received_siginfo = 0;
-static volatile sig_atomic_t received_sigchld = 0;
-static volatile sig_atomic_t received_sighup = 0;
-static volatile sig_atomic_t received_sigterm = 0;
+ساکن متلون sig_atomic_t received_siginfo = 0;
+ساکن متلون sig_atomic_t received_sigchld = 0;
+ساکن متلون sig_atomic_t received_sighup = 0;
+ساکن متلون sig_atomic_t received_sigterm = 0;
 
 /* record remote hostname or ip */
 u_int utmp_len = HOST_NAME_MAX+1;
@@ -165,131 +165,131 @@ u_int utmp_len = HOST_NAME_MAX+1;
  * preauth processes will exit with a status of EXIT_LOGIN_GRACE to indicate
  * they did not authenticate before the LoginGraceTime alarm fired.
  */
-struct early_child {
-	int pipefd;
-	int early;		/* Indicates child closed listener */
-	char *id;		/* human readable connection identifier */
+ساخت early_بچہ {
+	صحیح pipefd;
+	صحیح early;		/* Indicates child closed listener */
+	حرف *id;		/* human readable connection identifier */
 	pid_t pid;
-	struct xaddr addr;
-	int have_addr;
-	int status, have_status;
-	struct sshbuf *config;
-	struct sshbuf *keys;
+	ساخت xaddr addr;
+	صحیح have_addr;
+	صحیح حالت_2, have_حالت;
+	ساخت sshbuf *config;
+	ساخت sshbuf *کلیدیں;
 };
-static struct early_child *children;
-static int children_active;
+ساکن ساخت early_بچہ *children;
+ساکن صحیح children_فعال;
 
 /* sshd_config buffer */
-struct sshbuf *cfg;
-struct sshbuf *config;	/* packed */
+ساخت sshbuf *cfg;
+ساخت sshbuf *config;	/* packed */
 
 /* Included files from the configuration file */
-struct include_list includes = TAILQ_HEAD_INITIALIZER(includes);
+ساخت include_list includes = TAILQ_HEAD_INITIALIZER(includes);
 
 /* message to be displayed after login */
-struct sshbuf *loginmsg;
+ساخت sshbuf *loginmsg;
 
 /* Unprivileged user */
-struct passwd *privsep_pw = NULL;
+ساخت passwd *privsep_pw = تہی;
 
-static char *listener_proctitle;
+ساکن حرف *listener_proctitle;
 
 /*
  * Close all listening sockets
  */
-static void
-close_listen_socks(void)
+ساکن خالی
+close_listen_socks(خالی)
 {
-	int i;
+	صحیح i;
 
-	for (i = 0; i < num_listen_socks; i++)
+	برائے (i = 0; i < عدد_listen_socks; i++)
 		close(listen_socks[i]);
-	num_listen_socks = 0;
+	عدد_listen_socks = 0;
 }
 
 /* Allocate and initialise the children array */
-static void
-child_alloc(void)
+ساکن خالی
+بچہ_alloc(خالی)
 {
-	int i;
+	صحیح i;
 
-	children = xcalloc(options.max_startups, sizeof(*children));
-	for (i = 0; i < options.max_startups; i++) {
+	children = xcalloc(options.max_startups, حجم(*children));
+	برائے (i = 0; i < options.max_startups; i++) {
 		children[i].pipefd = -1;
 		children[i].pid = -1;
 	}
 }
 
 /* Register a new connection in the children array; child pid comes later */
-static struct early_child *
-child_register(int pipefd, int sockfd)
+ساکن ساخت early_بچہ *
+بچہ_رجسٹر(صحیح pipefd, صحیح sockfd)
 {
-	int i, lport, rport;
-	char *laddr = NULL, *raddr = NULL;
-	struct early_child *child = NULL;
-	struct sockaddr_storage addr;
-	socklen_t addrlen = sizeof(addr);
-	struct sockaddr *sa = (struct sockaddr *)&addr;
+	صحیح i, lport, rport;
+	حرف *laddr = تہی, *raddr = تہی;
+	ساخت early_بچہ *بچہ = تہی;
+	ساخت sockaddr_storage addr;
+	socklen_t addrlen = حجم(addr);
+	ساخت sockaddr *sa = (ساخت sockaddr *)&addr;
 
-	for (i = 0; i < options.max_startups; i++) {
-		if (children[i].pipefd != -1 ||
-		    children[i].config != NULL ||
-		    children[i].keys != NULL ||
+	برائے (i = 0; i < options.max_startups; i++) {
+		اگر (children[i].pipefd != -1 ||
+		    children[i].config != تہی ||
+		    children[i].کلیدیں != تہی ||
 		    children[i].pid > 0)
-			continue;
-		child = &(children[i]);
-		break;
+			جاری;
+		بچہ = &(children[i]);
+		توڑو;
 	}
-	if (child == NULL) {
+	اگر (بچہ == تہی) {
 		fatal_f("error: accepted connection when all %d child "
 		    " slots full", options.max_startups);
 	}
-	child->pipefd = pipefd;
-	child->early = 1;
-	if ((child->config = sshbuf_fromb(config)) == NULL)
+	بچہ->pipefd = pipefd;
+	بچہ->early = 1;
+	اگر ((بچہ->config = sshbuf_fromb(config)) == تہی)
 		fatal_f("sshbuf_fromb failed");
 	/* record peer address, if available */
-	if (getpeername(sockfd, sa, &addrlen) == 0 &&
-	   addr_sa_to_xaddr(sa, addrlen, &child->addr) == 0)
-		child->have_addr = 1;
+	اگر (getpeername(sockfd, sa, &addrlen) == 0 &&
+	   addr_sa_مقصد_xaddr(sa, addrlen, &بچہ->addr) == 0)
+		بچہ->have_addr = 1;
 	/* format peer address string for logs */
-	if ((lport = get_local_port(sockfd)) == 0 ||
-	    (rport = get_peer_port(sockfd)) == 0) {
+	اگر ((lport = get_local_پورٹ(sockfd)) == 0 ||
+	    (rport = get_peer_پورٹ(sockfd)) == 0) {
 		/* Not a TCP socket */
 		raddr = get_peer_ipaddr(sockfd);
-		xasprintf(&child->id, "connection from %s", raddr);
-	} else {
+		xasprintf(&بچہ->id, "connection from %s", raddr);
+	} ورنہ {
 		laddr = get_local_ipaddr(sockfd);
 		raddr = get_peer_ipaddr(sockfd);
-		xasprintf(&child->id, "connection from %s to %s", raddr, laddr);
+		xasprintf(&بچہ->id, "connection from %s to %s", raddr, laddr);
 	}
-	free(laddr);
-	free(raddr);
-	if (++children_active > options.max_startups)
+	آزاد(laddr);
+	آزاد(raddr);
+	اگر (++children_فعال > options.max_startups)
 		fatal_f("internal error: more children than max_startups");
 
-	return child;
+	واپس بچہ;
 }
 
 /*
  * Finally free a child entry. Don't call this directly.
  */
-static void
-child_finish(struct early_child *child)
+ساکن خالی
+بچہ_اختتام(ساخت early_بچہ *بچہ)
 {
-	if (children_active == 0)
+	اگر (children_فعال == 0)
 		fatal_f("internal error: children_active underflow");
-	if (child->pipefd != -1) {
-		srclimit_done(child->pipefd);
-		close(child->pipefd);
+	اگر (بچہ->pipefd != -1) {
+		srclimit_مکمل(بچہ->pipefd);
+		close(بچہ->pipefd);
 	}
-	sshbuf_free(child->config);
-	sshbuf_free(child->keys);
-	free(child->id);
-	memset(child, '\0', sizeof(*child));
-	child->pipefd = -1;
-	child->pid = -1;
-	children_active--;
+	sshbuf_free(بچہ->config);
+	sshbuf_free(بچہ->کلیدیں);
+	آزاد(بچہ->id);
+	memset(بچہ, '\0', حجم(*بچہ));
+	بچہ->pipefd = -1;
+	بچہ->pid = -1;
+	children_فعال--;
 }
 
 /*
@@ -297,33 +297,33 @@ child_finish(struct early_child *child)
  * (it will still be tracked for waitpid()) unless force_final is set, or
  * child has already exited.
  */
-static void
-child_close(struct early_child *child, int force_final, int quiet)
+ساکن خالی
+بچہ_close(ساخت early_بچہ *بچہ, صحیح force_final, صحیح quiet)
 {
-	if (!quiet)
+	اگر (!quiet)
 		debug_f("enter%s", force_final ? " (forcing)" : "");
-	if (child->pipefd != -1) {
-		srclimit_done(child->pipefd);
-		close(child->pipefd);
-		child->pipefd = -1;
+	اگر (بچہ->pipefd != -1) {
+		srclimit_مکمل(بچہ->pipefd);
+		close(بچہ->pipefd);
+		بچہ->pipefd = -1;
 	}
-	if (child->pid == -1 || force_final)
-		child_finish(child);
+	اگر (بچہ->pid == -1 || force_final)
+		بچہ_اختتام(بچہ);
 }
 
 /* Record a child exit. Safe to call from signal handlers */
-static void
-child_exit(pid_t pid, int status)
+ساکن خالی
+بچہ_exit(pid_t pid, صحیح حالت_2)
 {
-	int i;
+	صحیح i;
 
-	if (children == NULL || pid <= 0)
-		return;
-	for (i = 0; i < options.max_startups; i++) {
-		if (children[i].pid == pid) {
-			children[i].have_status = 1;
-			children[i].status = status;
-			break;
+	اگر (children == تہی || pid <= 0)
+		واپس;
+	برائے (i = 0; i < options.max_startups; i++) {
+		اگر (children[i].pid == pid) {
+			children[i].have_حالت = 1;
+			children[i].حالت_2 = حالت_2;
+			توڑو;
 		}
 	}
 }
@@ -334,163 +334,163 @@ child_exit(pid_t pid, int status)
  * Handles logging of exit condition and will finalise the child if its pipe
  * had already been closed.
  */
-static void
-child_reap(struct early_child *child)
+ساکن خالی
+بچہ_reap(ساخت early_بچہ *بچہ)
 {
 	LogLevel level = SYSLOG_LEVEL_DEBUG1;
-	int was_crash, penalty_type = SRCLIMIT_PENALTY_NONE;
-	const char *child_status;
+	صحیح was_crash, penalty_type = SRCLIMIT_PENALTY_NONE;
+	ثابت حرف *بچہ_حالت;
 
-	if (child->config)
-		child_status = " (sending config)";
-	else if (child->keys)
-		child_status = " (sending keys)";
-	else if (child->early)
-		child_status = " (early)";
-	else
-		child_status = "";
+	اگر (بچہ->config)
+		بچہ_حالت = " (sending config)";
+	ورنہ اگر (بچہ->کلیدیں)
+		بچہ_حالت = " (sending keys)";
+	ورنہ اگر (بچہ->early)
+		بچہ_حالت = " (early)";
+	ورنہ
+		بچہ_حالت = "";
 
 	/* Log exit information */
-	if (WIFSIGNALED(child->status)) {
+	اگر (WIFSIGNALED(بچہ->حالت_2)) {
 		/*
 		 * Increase logging for signals potentially associated
 		 * with serious conditions.
 		 */
-		if ((was_crash = signal_is_crash(WTERMSIG(child->status))))
+		اگر ((was_crash = signal_is_crash(WTERMSIG(بچہ->حالت_2))))
 			level = SYSLOG_LEVEL_ERROR;
 		do_log2(level, "session process %ld for %s killed by "
-		    "signal %d%s", (long)child->pid, child->id,
-		    WTERMSIG(child->status), child_status);
-		if (was_crash)
+		    "signal %d%s", (طویل)بچہ->pid, بچہ->id,
+		    WTERMSIG(بچہ->حالت_2), بچہ_حالت);
+		اگر (was_crash)
 			penalty_type = SRCLIMIT_PENALTY_CRASH;
-	} else if (!WIFEXITED(child->status)) {
+	} ورنہ اگر (!WIFEXITED(بچہ->حالت_2)) {
 		penalty_type = SRCLIMIT_PENALTY_CRASH;
 		error("session process %ld for %s terminated abnormally, "
-		    "status=0x%x%s", (long)child->pid, child->id, child->status,
-		    child_status);
-	} else {
+		    "status=0x%x%s", (طویل)بچہ->pid, بچہ->id, بچہ->حالت_2,
+		    بچہ_حالت);
+	} ورنہ {
 		/* Normal exit. We care about the status */
-		switch (WEXITSTATUS(child->status)) {
-		case 0:
+		انتخاب (WEXITSTATUS(بچہ->حالت_2)) {
+		حالت 0:
 			debug3_f("preauth child %ld for %s completed "
-			    "normally%s", (long)child->pid, child->id,
-			    child_status);
-			break;
-		case EXIT_LOGIN_GRACE:
+			    "normally%s", (طویل)بچہ->pid, بچہ->id,
+			    بچہ_حالت);
+			توڑو;
+		حالت EXIT_LOGIN_GRACE:
 			penalty_type = SRCLIMIT_PENALTY_GRACE_EXCEEDED;
 			logit("Timeout before authentication for %s, "
-			    "pid = %ld%s", child->id, (long)child->pid,
-			    child_status);
-			break;
-		case EXIT_CHILD_CRASH:
+			    "pid = %ld%s", بچہ->id, (طویل)بچہ->pid,
+			    بچہ_حالت);
+			توڑو;
+		حالت EXIT_بچہ_CRASH:
 			penalty_type = SRCLIMIT_PENALTY_CRASH;
 			logit("Session process %ld unpriv child crash for %s%s",
-			    (long)child->pid, child->id, child_status);
-			break;
-		case EXIT_AUTH_ATTEMPTED:
+			    (طویل)بچہ->pid, بچہ->id, بچہ_حالت);
+			توڑو;
+		حالت EXIT_AUTH_ATTEMPTED:
 			penalty_type = SRCLIMIT_PENALTY_AUTHFAIL;
 			debug_f("preauth child %ld for %s exited "
 			    "after unsuccessful auth attempt%s",
-			    (long)child->pid, child->id, child_status);
-			break;
-		case EXIT_INVALID_USER:
+			    (طویل)بچہ->pid, بچہ->id, بچہ_حالت);
+			توڑو;
+		حالت EXIT_INVALID_USER:
 			penalty_type = SRCLIMIT_PENALTY_INVALIDUSER;
 			debug_f("preauth child %ld for %s exited "
 			    "after auth attempt by invalid user%s",
-			    (long)child->pid, child->id, child_status);
-			break;
-		case EXIT_CONFIG_REFUSED:
+			    (طویل)بچہ->pid, بچہ->id, بچہ_حالت);
+			توڑو;
+		حالت EXIT_CONFIG_REFUSED:
 			penalty_type = SRCLIMIT_PENALTY_REFUSECONNECTION;
 			debug_f("preauth child %ld for %s prohibited by"
 			    "RefuseConnection%s",
-			    (long)child->pid, child->id, child_status);
-			break;
-		default:
+			    (طویل)بچہ->pid, بچہ->id, بچہ_حالت);
+			توڑو;
+		طےشدہ:
 			penalty_type = SRCLIMIT_PENALTY_NOAUTH;
 			debug_f("preauth child %ld for %s exited "
-			    "with status %d%s", (long)child->pid, child->id,
-			    WEXITSTATUS(child->status), child_status);
-			break;
+			    "with status %d%s", (طویل)بچہ->pid, بچہ->id,
+			    WEXITSTATUS(بچہ->حالت_2), بچہ_حالت);
+			توڑو;
 		}
 	}
 
-	if (child->have_addr)
-		srclimit_penalise(&child->addr, penalty_type);
+	اگر (بچہ->have_addr)
+		srclimit_penalise(&بچہ->addr, penalty_type);
 
-	child->pid = -1;
-	child->have_status = 0;
-	if (child->pipefd == -1)
-		child_finish(child);
+	بچہ->pid = -1;
+	بچہ->have_حالت = 0;
+	اگر (بچہ->pipefd == -1)
+		بچہ_اختتام(بچہ);
 }
 
 /* Reap all children that have exited; called after SIGCHLD */
-static void
-child_reap_all_exited(void)
+ساکن خالی
+بچہ_reap_all_exited(خالی)
 {
-	int i;
+	صحیح i;
 	pid_t pid;
-	int status;
+	صحیح حالت_2;
 
-	if (children == NULL)
-		return;
+	اگر (children == تہی)
+		واپس;
 
-	for (;;) {
-		if ((pid = waitpid(-1, &status, WNOHANG)) == 0)
-			break;
-		else if (pid == -1) {
-			if (errno == EINTR || errno == EAGAIN)
-				continue;
-			if (errno != ECHILD)
+	برائے (;;) {
+		اگر ((pid = waitpid(-1, &حالت_2, WNOHANG)) == 0)
+			توڑو;
+		ورنہ اگر (pid == -1) {
+			اگر (errno == EINTR || errno == EAGAIN)
+				جاری;
+			اگر (errno != ECHILD)
 				error_f("waitpid: %s", strerror(errno));
-			break;
+			توڑو;
 		}
-		child_exit(pid, status);
+		بچہ_exit(pid, حالت_2);
 	}
 
-	for (i = 0; i < options.max_startups; i++) {
-		if (!children[i].have_status)
-			continue;
-		child_reap(&(children[i]));
+	برائے (i = 0; i < options.max_startups; i++) {
+		اگر (!children[i].have_حالت)
+			جاری;
+		بچہ_reap(&(children[i]));
 	}
 }
 
-static void
-close_startup_pipes(void)
+ساکن خالی
+close_startup_pipes(خالی)
 {
-	int i;
+	صحیح i;
 
-	if (children == NULL)
-		return;
-	for (i = 0; i < options.max_startups; i++) {
-		if (children[i].pipefd != -1)
-			child_close(&(children[i]), 1, 1);
+	اگر (children == تہی)
+		واپس;
+	برائے (i = 0; i < options.max_startups; i++) {
+		اگر (children[i].pipefd != -1)
+			بچہ_close(&(children[i]), 1, 1);
 	}
 }
 
 /* Called after SIGINFO */
-static void
-show_info(void)
+ساکن خالی
+show_info(خالی)
 {
-	int i;
-	const char *child_status;
+	صحیح i;
+	ثابت حرف *بچہ_حالت;
 
 	/* XXX print listening sockets here too */
-	if (children == NULL)
-		return;
-	logit("%d active startups", children_active);
-	for (i = 0; i < options.max_startups; i++) {
-		if (children[i].pipefd == -1 && children[i].pid <= 0)
-			continue;
-		if (children[i].config)
-			child_status = " (sending config)";
-		else if (children[i].keys)
-			child_status = " (sending keys)";
-		else if (children[i].early)
-			child_status = " (early)";
-		else
-			child_status = "";
+	اگر (children == تہی)
+		واپس;
+	logit("%d active startups", children_فعال);
+	برائے (i = 0; i < options.max_startups; i++) {
+		اگر (children[i].pipefd == -1 && children[i].pid <= 0)
+			جاری;
+		اگر (children[i].config)
+			بچہ_حالت = " (sending config)";
+		ورنہ اگر (children[i].کلیدیں)
+			بچہ_حالت = " (sending keys)";
+		ورنہ اگر (children[i].early)
+			بچہ_حالت = " (early)";
+		ورنہ
+			بچہ_حالت = "";
 		logit("child %d: fd=%d pid=%ld %s%s", i, children[i].pipefd,
-		    (long)children[i].pid, children[i].id, child_status);
+		    (طویل)children[i].pid, children[i].id, بچہ_حالت);
 	}
 	srclimit_penalty_info();
 }
@@ -501,8 +501,8 @@ show_info(void)
  * the server key).
  */
 
-static void
-sighup_handler(int sig)
+ساکن خالی
+sighup_handler(صحیح sig)
 {
 	received_sighup = 1;
 }
@@ -511,11 +511,11 @@ sighup_handler(int sig)
  * Called from the main program after receiving SIGHUP.
  * Restarts the server.
  */
-static void
-sighup_restart(void)
+ساکن خالی
+sighup_restart(خالی)
 {
 	logit("Received SIGHUP; restarting.");
-	if (options.pid_file != NULL)
+	اگر (options.pid_file != تہی)
 		unlink(options.pid_file);
 	platform_pre_restart();
 	close_listen_socks();
@@ -524,28 +524,28 @@ sighup_restart(void)
 	execv(execpath, saved_argv);
 	logit("RESTART FAILED: execpath='%.100s', error: %.100s.", execpath,
 	    strerror(errno));
-	exit(1);
+	باہر_نکلو(1);
 }
 
 /*
  * Generic signal handler for terminating signals in the master daemon.
  */
-static void
-sigterm_handler(int sig)
+ساکن خالی
+sigterm_handler(صحیح sig)
 {
 	received_sigterm = sig;
 }
 
-#ifdef SIGINFO
-static void
-siginfo_handler(int sig)
+#اگر_تعریف_شدہ SIGINFO
+ساکن خالی
+siginfo_handler(صحیح sig)
 {
 	received_siginfo = 1;
 }
-#endif
+#اگر_ختم
 
-static void
-main_sigchld_handler(int sig)
+ساکن خالی
+main_sigchld_handler(صحیح sig)
 {
 	received_sigchld = 1;
 }
@@ -556,26 +556,26 @@ main_sigchld_handler(int sig)
  * of (max_startups_rate/100). the probability increases linearly until
  * all connections are dropped for startups > max_startups
  */
-static int
-should_drop_connection(int startups)
+ساکن صحیح
+should_drop_connection(صحیح startups)
 {
-	int p, r;
+	صحیح p, r;
 
-	if (startups < options.max_startups_begin)
-		return 0;
-	if (startups >= options.max_startups)
-		return 1;
-	if (options.max_startups_rate == 100)
-		return 1;
+	اگر (startups < options.max_startups_begin)
+		واپس 0;
+	اگر (startups >= options.max_startups)
+		واپس 1;
+	اگر (options.max_startups_شرح == 100)
+		واپس 1;
 
-	p  = 100 - options.max_startups_rate;
+	p  = 100 - options.max_startups_شرح;
 	p *= startups - options.max_startups_begin;
 	p /= options.max_startups - options.max_startups_begin;
-	p += options.max_startups_rate;
-	r = arc4random_uniform(100);
+	p += options.max_startups_شرح;
+	r = arc4random_یکساں(100);
 
 	debug_f("p %d, r %d", p, r);
-	return (r < p) ? 1 : 0;
+	واپس (r < p) ? 1 : 0;
 }
 
 /*
@@ -585,165 +585,165 @@ should_drop_connection(int startups)
  * Logs when the MaxStartups condition is entered or exited, and periodically
  * while in that state.
  */
-static int
-drop_connection(int sock, int startups, int notify_pipe)
+ساکن صحیح
+drop_connection(صحیح sock, صحیح startups, صحیح notify_pipe)
 {
-	static struct log_ratelimit_ctx ratelimit_maxstartups;
-	static struct log_ratelimit_ctx ratelimit_penalty;
-	static int init_done;
-	char *laddr, *raddr;
-	const char *reason = NULL, *subreason = NULL;
-	const char msg[] = "Not allowed at this time\r\n";
-	struct log_ratelimit_ctx *rl = NULL;
-	int ratelimited;
+	ساکن ساخت log_ratelimit_ctx ratelimit_maxstartups;
+	ساکن ساخت log_ratelimit_ctx ratelimit_penalty;
+	ساکن صحیح init_مکمل;
+	حرف *laddr, *raddr;
+	ثابت حرف *reason = تہی, *subreason = تہی;
+	ثابت حرف پیغام[] = "Not allowed at this time\r\n";
+	ساخت log_ratelimit_ctx *rl = تہی;
+	صحیح ratelimited;
 	u_int ndropped;
 
-	if (!init_done) {
-		init_done = 1;
+	اگر (!init_مکمل) {
+		init_مکمل = 1;
 		log_ratelimit_init(&ratelimit_maxstartups, 4, 60, 20, 5*60);
 		log_ratelimit_init(&ratelimit_penalty, 8, 60, 30, 2*60);
 	}
 
 	/* PerSourcePenalties */
-	if (!srclimit_penalty_check_allow(sock, &subreason)) {
+	اگر (!srclimit_penalty_check_allow(sock, &subreason)) {
 		reason = "PerSourcePenalties";
 		rl = &ratelimit_penalty;
-	} else {
+	} ورنہ {
 		/* MaxStartups */
-		if (!should_drop_connection(startups) &&
+		اگر (!should_drop_connection(startups) &&
 		    srclimit_check_allow(sock, notify_pipe) == 1)
-			return 0;
+			واپس 0;
 		reason = "MaxStartups";
 		rl = &ratelimit_maxstartups;
 	}
 
 	laddr = get_local_ipaddr(sock);
 	raddr = get_peer_ipaddr(sock);
-	ratelimited = log_ratelimit(rl, time(NULL), NULL, &ndropped);
+	ratelimited = log_ratelimit(rl, time(تہی), تہی, &ndropped);
 	do_log2(ratelimited ? SYSLOG_LEVEL_DEBUG3 : SYSLOG_LEVEL_INFO,
 	    "drop connection #%d from [%s]:%d on [%s]:%d %s",
 	    startups,
-	    raddr, get_peer_port(sock),
-	    laddr, get_local_port(sock),
-	    subreason != NULL ? subreason : reason);
-	free(laddr);
-	free(raddr);
-	if (ndropped != 0) {
+	    raddr, get_peer_پورٹ(sock),
+	    laddr, get_local_پورٹ(sock),
+	    subreason != تہی ? subreason : reason);
+	آزاد(laddr);
+	آزاد(raddr);
+	اگر (ndropped != 0) {
 		logit("%s logging rate-limited: additional %u connections "
 		    "dropped", reason, ndropped);
 	}
 
 	/* best-effort notification to client */
-	(void)write(sock, msg, sizeof(msg) - 1);
-	return 1;
+	(خالی)اكتب(sock, پیغام, حجم(پیغام) - 1);
+	واپس 1;
 }
 
-static void
-usage(void)
+ساکن خالی
+usage(خالی)
 {
-	fprintf(stderr, "%s, %s\n", SSH_RELEASE, SSH_OPENSSL_VERSION);
+	fprintf(stderr, "%s, %s\n", SSH_RELEASE, SSH_OPENSSL_نسخہ);
 	fprintf(stderr,
 "usage: sshd [-46DdeGiqTtV] [-C connection_spec] [-c host_cert_file]\n"
 "            [-E log_file] [-f config_file] [-g login_grace_time]\n"
 "            [-h host_key_file] [-o option] [-p port] [-u len]\n"
 	);
-	exit(1);
+	باہر_نکلو(1);
 }
 
-static struct sshbuf *
-pack_hostkeys(void)
+ساکن ساخت sshbuf *
+pack_hostkeys(خالی)
 {
-	struct sshbuf *m = NULL, *keybuf = NULL, *hostkeys = NULL;
-	int r;
+	ساخت sshbuf *m = تہی, *keybuf = تہی, *hostkeys = تہی;
+	صحیح r;
 	u_int i;
-	size_t len;
+	سائز_t len;
 
-	if ((m = sshbuf_new()) == NULL ||
-	    (keybuf = sshbuf_new()) == NULL ||
-	    (hostkeys = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی ||
+	    (keybuf = sshbuf_new()) == تہی ||
+	    (hostkeys = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new failed");
 
 	/* pack hostkeys into a string. Empty key slots get empty strings */
-	for (i = 0; i < options.num_host_key_files; i++) {
+	برائے (i = 0; i < options.عدد_host_کلید_files; i++) {
 		/* private key */
 		sshbuf_reset(keybuf);
-		if (sensitive_data.host_keys[i] != NULL &&
-		    (r = sshkey_private_serialize(sensitive_data.host_keys[i],
+		اگر (sensitive_ڈیٹا.host_کلیدیں[i] != تہی &&
+		    (r = sshkey_نجی_serialize(sensitive_ڈیٹا.host_کلیدیں[i],
 		    keybuf)) != 0)
 			fatal_fr(r, "serialize hostkey private");
-		if ((r = sshbuf_put_stringb(hostkeys, keybuf)) != 0)
+		اگر ((r = sshbuf_put_stringb(hostkeys, keybuf)) != 0)
 			fatal_fr(r, "compose hostkey private");
 		/* public key */
-		if (sensitive_data.host_pubkeys[i] != NULL) {
-			if ((r = sshkey_puts(sensitive_data.host_pubkeys[i],
+		اگر (sensitive_ڈیٹا.host_pubkeys[i] != تہی) {
+			اگر ((r = sshkey_puts(sensitive_ڈیٹا.host_pubkeys[i],
 			    hostkeys)) != 0)
 				fatal_fr(r, "compose hostkey public");
-		} else {
-			if ((r = sshbuf_put_string(hostkeys, NULL, 0)) != 0)
+		} ورنہ {
+			اگر ((r = sshbuf_put_string(hostkeys, تہی, 0)) != 0)
 				fatal_fr(r, "compose hostkey empty public");
 		}
 		/* cert */
-		if (sensitive_data.host_certificates[i] != NULL) {
-			if ((r = sshkey_puts(
-			    sensitive_data.host_certificates[i],
+		اگر (sensitive_ڈیٹا.host_certificates[i] != تہی) {
+			اگر ((r = sshkey_puts(
+			    sensitive_ڈیٹا.host_certificates[i],
 			    hostkeys)) != 0)
 				fatal_fr(r, "compose host cert");
-		} else {
-			if ((r = sshbuf_put_string(hostkeys, NULL, 0)) != 0)
+		} ورنہ {
+			اگر ((r = sshbuf_put_string(hostkeys, تہی, 0)) != 0)
 				fatal_fr(r, "compose host cert empty");
 		}
 	}
 
-	if ((r = sshbuf_put_u32(m, 0)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, 0)) != 0 ||
 	    (r = sshbuf_put_u8(m, 0)) != 0 ||
 	    (r = sshbuf_put_stringb(m, hostkeys)) != 0)
 		fatal_fr(r, "compose message");
-	if ((len = sshbuf_len(m)) < 5 || len > 0xffffffff)
+	اگر ((len = sshbuf_len(m)) < 5 || len > 0xffffffff)
 		fatal_f("bad length %zu", len);
 	POKE_U32(sshbuf_mutable_ptr(m), len - 4);
 
 	sshbuf_free(keybuf);
 	sshbuf_free(hostkeys);
-	return m;
+	واپس m;
 }
 
-static struct sshbuf *
-pack_config(struct sshbuf *conf)
+ساکن ساخت sshbuf *
+pack_config(ساخت sshbuf *conf)
 {
-	struct sshbuf *m = NULL, *inc = NULL;
-	struct include_item *item = NULL;
-	size_t len;
-	int r;
+	ساخت sshbuf *m = تہی, *inc = تہی;
+	ساخت include_شے *شے = تہی;
+	سائز_t len;
+	صحیح r;
 
 	debug3_f("d config len %zu", sshbuf_len(conf));
 
-	if ((m = sshbuf_new()) == NULL ||
-	    (inc = sshbuf_new()) == NULL)
+	اگر ((m = sshbuf_new()) == تہی ||
+	    (inc = sshbuf_new()) == تہی)
 		fatal_f("sshbuf_new failed");
 
 	/* pack includes into a string */
-	TAILQ_FOREACH(item, &includes, entry) {
-		if ((r = sshbuf_put_cstring(inc, item->selector)) != 0 ||
-		    (r = sshbuf_put_cstring(inc, item->filename)) != 0 ||
-		    (r = sshbuf_put_stringb(inc, item->contents)) != 0)
+	TAILQ_FOREACH(شے, &includes, اندراج_2) {
+		اگر ((r = sshbuf_put_cstring(inc, شے->selector)) != 0 ||
+		    (r = sshbuf_put_cstring(inc, شے->filename)) != 0 ||
+		    (r = sshbuf_put_stringb(inc, شے->contents)) != 0)
 			fatal_fr(r, "compose includes");
 	}
 
-	if ((r = sshbuf_put_u32(m, 0)) != 0 ||
+	اگر ((r = sshbuf_put_u32(m, 0)) != 0 ||
 	    (r = sshbuf_put_u8(m, 0)) != 0 ||
 	    (r = sshbuf_put_stringb(m, conf)) != 0 ||
 	    (r = sshbuf_put_u64(m, options.timing_secret)) != 0 ||
 	    (r = sshbuf_put_stringb(m, inc)) != 0)
 		fatal_fr(r, "compose config");
 
-	if ((len = sshbuf_len(m)) < 5 || len > 0xffffffff)
+	اگر ((len = sshbuf_len(m)) < 5 || len > 0xffffffff)
 		fatal_f("bad length %zu", len);
 	POKE_U32(sshbuf_mutable_ptr(m), len - 4);
 
 	sshbuf_free(inc);
 
 	debug3_f("done");
-	return m;
+	واپس m;
 }
 
 /*
@@ -772,135 +772,135 @@ pack_config(struct sshbuf *conf)
  * It sends the config from a child process back to the parent.
  * The parent will read the config after exec.
  */
-static void
-send_rexec_state(int fd)
+ساکن خالی
+send_rexec_state(صحیح fd)
 {
-	struct sshbuf *keys;
+	ساخت sshbuf *کلیدیں;
 	u_int mlen;
 	pid_t pid;
 
-	if ((pid = fork()) == -1)
+	اگر ((pid = fork()) == -1)
 		fatal_f("fork failed: %s", strerror(errno));
-	if (pid != 0)
-		return;
+	اگر (pid != 0)
+		واپس;
 
 	debug3_f("entering fd = %d config len %zu", fd,
 	    sshbuf_len(config));
 
 	mlen = sshbuf_len(config);
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(config), mlen) != mlen)
+	اگر (atomicio(vwrite, fd, sshbuf_mutable_ptr(config), mlen) != mlen)
 		error_f("write: %s", strerror(errno));
 
-	keys = pack_hostkeys();
-	mlen = sshbuf_len(keys);
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(keys), mlen) != mlen)
+	کلیدیں = pack_hostkeys();
+	mlen = sshbuf_len(کلیدیں);
+	اگر (atomicio(vwrite, fd, sshbuf_mutable_ptr(کلیدیں), mlen) != mlen)
 		error_f("write: %s", strerror(errno));
 
-	sshbuf_free(keys);
+	sshbuf_free(کلیدیں);
 	debug3_f("done");
-	exit(0);
+	باہر_نکلو(0);
 }
 
 /*
  * Listen for TCP connections
  */
-static void
-listen_on_addrs(struct listenaddr *la)
+ساکن خالی
+listen_on_addrs(ساخت listenaddr *la)
 {
-	int ret, listen_sock;
-	struct addrinfo *ai;
-	char ntop[NI_MAXHOST], strport[NI_MAXSERV];
+	صحیح ret, listen_sock;
+	ساخت addrinfo *ai;
+	حرف ntop[NI_MAXHOST], strport[NI_MAXSERV];
 
-	for (ai = la->addrs; ai; ai = ai->ai_next) {
-		if (ai->ai_family != AF_INET && ai->ai_family != AF_INET6)
-			continue;
-		if (num_listen_socks >= MAX_LISTEN_SOCKS)
+	برائے (ai = la->addrs; ai; ai = ai->ai_next) {
+		اگر (ai->ai_family != AF_INET && ai->ai_family != AF_INET6)
+			جاری;
+		اگر (عدد_listen_socks >= MAX_LISTEN_SOCKS)
 			fatal("Too many listen sockets. "
 			    "Enlarge MAX_LISTEN_SOCKS");
-		if ((ret = getnameinfo(ai->ai_addr, ai->ai_addrlen,
-		    ntop, sizeof(ntop), strport, sizeof(strport),
+		اگر ((ret = getnameinfo(ai->ai_addr, ai->ai_addrlen,
+		    ntop, حجم(ntop), strport, حجم(strport),
 		    NI_NUMERICHOST|NI_NUMERICSERV)) != 0) {
 			error("getnameinfo failed: %.100s",
 			    ssh_gai_strerror(ret));
-			continue;
+			جاری;
 		}
 		/* Create socket for listening. */
 		listen_sock = socket(ai->ai_family, ai->ai_socktype,
 		    ai->ai_protocol);
-		if (listen_sock == -1) {
+		اگر (listen_sock == -1) {
 			/* kernel may not support ipv6 */
 			verbose("socket: %.100s", strerror(errno));
-			continue;
+			جاری;
 		}
-		if (set_nonblock(listen_sock) == -1) {
+		اگر (سیٹ_nonblock(listen_sock) == -1) {
 			close(listen_sock);
-			continue;
+			جاری;
 		}
-		if (fcntl(listen_sock, F_SETFD, FD_CLOEXEC) == -1) {
+		اگر (fcntl(listen_sock, F_SETFD, FD_CLOEXEC) == -1) {
 			verbose("socket: CLOEXEC: %s", strerror(errno));
 			close(listen_sock);
-			continue;
+			جاری;
 		}
 		/* Socket options */
-		set_reuseaddr(listen_sock);
-		if (la->rdomain != NULL &&
-		    set_rdomain(listen_sock, la->rdomain) == -1) {
+		سیٹ_reuseaddr(listen_sock);
+		اگر (la->rdomain != تہی &&
+		    سیٹ_rdomain(listen_sock, la->rdomain) == -1) {
 			close(listen_sock);
-			continue;
+			جاری;
 		}
 
 		/* Only communicate in IPv6 over AF_INET6 sockets. */
-		if (ai->ai_family == AF_INET6)
-			sock_set_v6only(listen_sock);
+		اگر (ai->ai_family == AF_INET6)
+			sock_سیٹ_v6only(listen_sock);
 
 		debug("Bind to port %s on %s.", strport, ntop);
 
 		/* Bind the socket to the desired port. */
-		if (bind(listen_sock, ai->ai_addr, ai->ai_addrlen) == -1) {
+		اگر (bind(listen_sock, ai->ai_addr, ai->ai_addrlen) == -1) {
 			error("Bind to port %s on %s failed: %.200s.",
 			    strport, ntop, strerror(errno));
 			close(listen_sock);
-			continue;
+			جاری;
 		}
-		listen_socks[num_listen_socks] = listen_sock;
-		num_listen_socks++;
+		listen_socks[عدد_listen_socks] = listen_sock;
+		عدد_listen_socks++;
 
 		/* Start listening on the port. */
-		if (listen(listen_sock, SSH_LISTEN_BACKLOG) == -1)
+		اگر (listen(listen_sock, SSH_LISTEN_BACKLOG) == -1)
 			fatal("listen on [%s]:%s: %.100s",
 			    ntop, strport, strerror(errno));
 		logit("Server listening on %s port %s%s%s.",
 		    ntop, strport,
-		    la->rdomain == NULL ? "" : " rdomain ",
-		    la->rdomain == NULL ? "" : la->rdomain);
+		    la->rdomain == تہی ? "" : " rdomain ",
+		    la->rdomain == تہی ? "" : la->rdomain);
 	}
 }
 
-static void
-server_listen(void)
+ساکن خالی
+server_listen(خالی)
 {
 	u_int i;
 
 	/* Initialise per-source limit tracking. */
 	srclimit_init(options.max_startups,
-	    options.per_source_max_startups,
-	    options.per_source_masklen_ipv4,
-	    options.per_source_masklen_ipv6,
-	    &options.per_source_penalty,
-	    options.per_source_penalty_exempt);
+	    options.فی_ماخذ_max_startups,
+	    options.فی_ماخذ_masklen_ipv4,
+	    options.فی_ماخذ_masklen_ipv6,
+	    &options.فی_ماخذ_penalty,
+	    options.فی_ماخذ_penalty_exempt);
 
-	for (i = 0; i < options.num_listen_addrs; i++) {
+	برائے (i = 0; i < options.عدد_listen_addrs; i++) {
 		listen_on_addrs(&options.listen_addrs[i]);
 		freeaddrinfo(options.listen_addrs[i].addrs);
-		free(options.listen_addrs[i].rdomain);
+		آزاد(options.listen_addrs[i].rdomain);
 		memset(&options.listen_addrs[i], 0,
-		    sizeof(options.listen_addrs[i]));
+		    حجم(options.listen_addrs[i]));
 	}
-	free(options.listen_addrs);
-	options.listen_addrs = NULL;
-	options.num_listen_addrs = 0;
+	آزاد(options.listen_addrs);
+	options.listen_addrs = تہی;
+	options.عدد_listen_addrs = 0;
 
-	if (!num_listen_socks)
+	اگر (!عدد_listen_socks)
 		fatal("Cannot bind any address.");
 }
 
@@ -908,26 +908,26 @@ server_listen(void)
  * The main TCP accept loop. Note that, for the non-debug case, returns
  * from this function are in a forked subprocess.
  */
-static void
-server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s,
-    int log_stderr)
+ساکن خالی
+server_accept_loop(صحیح *sock_اندر, صحیح *sock_برآمد, صحیح *newsock, صحیح *config_s,
+    صحیح log_stderr)
 {
-	struct pollfd *pfd = NULL;
-	int i, ret, npfd, r;
-	int oactive = -1, listening = 0, lameduck = 0;
-	int *startup_pollfd;
+	ساخت pollfd *pfd = تہی;
+	صحیح i, ret, npfd, r;
+	صحیح oactive = -1, listening = 0, lameduck = 0;
+	صحیح *startup_pollfd;
 	ssize_t len;
-	const u_char *ptr;
-	char c = 0;
-	struct sockaddr_storage from;
-	struct early_child *child;
-	struct sshbuf *buf;
+	ثابت u_char *ptr;
+	حرف c = 0;
+	ساخت sockaddr_storage from;
+	ساخت early_بچہ *بچہ;
+	ساخت sshbuf *buf;
 	socklen_t fromlen;
 	sigset_t nsigset, osigset;
 
 	/* pipes connected to unauthenticated child sshd processes */
-	child_alloc();
-	startup_pollfd = xcalloc(options.max_startups, sizeof(int));
+	بچہ_alloc();
+	startup_pollfd = xcalloc(options.max_startups, حجم(صحیح));
 
 	/*
 	 * Prepare signal mask that we use to block signals that might set
@@ -938,230 +938,230 @@ server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s,
 	sigemptyset(&nsigset);
 	sigaddset(&nsigset, SIGHUP);
 	sigaddset(&nsigset, SIGCHLD);
-#ifdef SIGINFO
+#اگر_تعریف_شدہ SIGINFO
 	sigaddset(&nsigset, SIGINFO);
-#endif
+#اگر_ختم
 	sigaddset(&nsigset, SIGTERM);
 	sigaddset(&nsigset, SIGQUIT);
 
 	/* sized for worst-case */
-	pfd = xcalloc(num_listen_socks + options.max_startups,
-	    sizeof(struct pollfd));
+	pfd = xcalloc(عدد_listen_socks + options.max_startups,
+	    حجم(ساخت pollfd));
 
 	/*
 	 * Stay listening for connections until the system crashes or
 	 * the daemon is killed with a signal.
 	 */
-	for (;;) {
+	برائے (;;) {
 		sigprocmask(SIG_BLOCK, &nsigset, &osigset);
-		if (received_sigterm) {
+		اگر (received_sigterm) {
 			logit("Received signal %d; terminating.",
-			    (int) received_sigterm);
+			    (صحیح) received_sigterm);
 			close_listen_socks();
-			if (options.pid_file != NULL)
+			اگر (options.pid_file != تہی)
 				unlink(options.pid_file);
-			exit(received_sigterm == SIGTERM ? 0 : 255);
+			باہر_نکلو(received_sigterm == SIGTERM ? 0 : 255);
 		}
-		if (received_sigchld) {
-			child_reap_all_exited();
+		اگر (received_sigchld) {
+			بچہ_reap_all_exited();
 			received_sigchld = 0;
 		}
-		if (received_siginfo) {
+		اگر (received_siginfo) {
 			show_info();
 			received_siginfo = 0;
 		}
-		if (oactive != children_active) {
+		اگر (oactive != children_فعال) {
 			setproctitle("%s [listener] %d of %d-%d startups",
-			    listener_proctitle, children_active,
+			    listener_proctitle, children_فعال,
 			    options.max_startups_begin, options.max_startups);
-			oactive = children_active;
+			oactive = children_فعال;
 		}
-		if (received_sighup) {
-			if (!lameduck) {
+		اگر (received_sighup) {
+			اگر (!lameduck) {
 				debug("Received SIGHUP; waiting for children");
 				close_listen_socks();
 				lameduck = 1;
 			}
-			if (listening <= 0) {
+			اگر (listening <= 0) {
 				/*
 				 * Leave termination signals blocked, so
 				 * they don't get lost across a restart.
 				 */
 				sigaddset(&osigset, SIGTERM);
 				sigaddset(&osigset, SIGQUIT);
-				sigprocmask(SIG_SETMASK, &osigset, NULL);
+				sigprocmask(SIG_SETMASK, &osigset, تہی);
 				sighup_restart();
 			}
 		}
 
-		for (i = 0; i < num_listen_socks; i++) {
+		برائے (i = 0; i < عدد_listen_socks; i++) {
 			pfd[i].fd = listen_socks[i];
 			pfd[i].events = POLLIN;
 		}
-		npfd = num_listen_socks;
-		for (i = 0; i < options.max_startups; i++) {
+		npfd = عدد_listen_socks;
+		برائے (i = 0; i < options.max_startups; i++) {
 			startup_pollfd[i] = -1;
-			if (children[i].pipefd != -1) {
+			اگر (children[i].pipefd != -1) {
 				pfd[npfd].fd = children[i].pipefd;
 				pfd[npfd].events = POLLIN;
-				if (children[i].config != NULL ||
-				    children[i].keys != NULL)
+				اگر (children[i].config != تہی ||
+				    children[i].کلیدیں != تہی)
 					pfd[npfd].events |= POLLOUT;
 				startup_pollfd[i] = npfd++;
 			}
 		}
 
 		/* Wait until a connection arrives or a child exits. */
-		ret = ppoll(pfd, npfd, NULL, &osigset);
-		if (ret == -1 && errno != EINTR) {
+		ret = ppoll(pfd, npfd, تہی, &osigset);
+		اگر (ret == -1 && errno != EINTR) {
 			error("ppoll: %.100s", strerror(errno));
-			if (errno == EINVAL)
+			اگر (errno == EINVAL)
 				cleanup_exit(1); /* can't recover */
 		}
-		sigprocmask(SIG_SETMASK, &osigset, NULL);
-		if (ret == -1)
-			continue;
+		sigprocmask(SIG_SETMASK, &osigset, تہی);
+		اگر (ret == -1)
+			جاری;
 
-		for (i = 0; i < options.max_startups; i++) {
-			if (children[i].pipefd == -1 ||
+		برائے (i = 0; i < options.max_startups; i++) {
+			اگر (children[i].pipefd == -1 ||
 			    startup_pollfd[i] == -1 ||
 			    !(pfd[startup_pollfd[i]].revents & POLLOUT))
-				continue;
-			if (children[i].config)
+				جاری;
+			اگر (children[i].config)
 				buf = children[i].config;
-			else if (children[i].keys)
-				buf = children[i].keys;
-			else {
+			ورنہ اگر (children[i].کلیدیں)
+				buf = children[i].کلیدیں;
+			ورنہ {
 				error_f("no buffer to send");
-				continue;
+				جاری;
 			}
 			ptr = sshbuf_ptr(buf);
 			len = sshbuf_len(buf);
-			ret = write(children[i].pipefd, ptr, len);
-			if (ret == -1 && (errno == EINTR || errno == EAGAIN))
-				continue;
-			if (ret <= 0) {
-				if (children[i].early)
+			ret = اكتب(children[i].pipefd, ptr, len);
+			اگر (ret == -1 && (errno == EINTR || errno == EAGAIN))
+				جاری;
+			اگر (ret <= 0) {
+				اگر (children[i].early)
 					listening--;
-				child_close(&(children[i]), 0, 0);
-				continue;
+				بچہ_close(&(children[i]), 0, 0);
+				جاری;
 			}
-			if (ret == len) {
+			اگر (ret == len) {
 				/* finished sending buffer */
 				sshbuf_free(buf);
-				if (children[i].config == buf) {
+				اگر (children[i].config == buf) {
 					/* sent config, now send keys */
-					children[i].config = NULL;
-					children[i].keys = pack_hostkeys();
-				} else if (children[i].keys == buf) {
+					children[i].config = تہی;
+					children[i].کلیدیں = pack_hostkeys();
+				} ورنہ اگر (children[i].کلیدیں == buf) {
 					/* sent both config and keys */
-					children[i].keys = NULL;
-				} else {
+					children[i].کلیدیں = تہی;
+				} ورنہ {
 					fatal("config buf not set");
 				}
 
-			} else {
-				if ((r = sshbuf_consume(buf, ret)) != 0)
+			} ورنہ {
+				اگر ((r = sshbuf_consume(buf, ret)) != 0)
 					fatal_fr(r, "config buf inconsistent");
 			}
 		}
-		for (i = 0; i < options.max_startups; i++) {
-			if (children[i].pipefd == -1 ||
+		برائے (i = 0; i < options.max_startups; i++) {
+			اگر (children[i].pipefd == -1 ||
 			    startup_pollfd[i] == -1 ||
 			    !(pfd[startup_pollfd[i]].revents & (POLLIN|POLLHUP)))
-				continue;
-			switch (read(children[i].pipefd, &c, sizeof(c))) {
-			case -1:
-				if (errno == EINTR || errno == EAGAIN)
-					continue;
-				if (errno != EPIPE) {
+				جاری;
+			انتخاب (اقرأ(children[i].pipefd, &c, حجم(c))) {
+			حالت -1:
+				اگر (errno == EINTR || errno == EAGAIN)
+					جاری;
+				اگر (errno != EPIPE) {
 					error_f("startup pipe %d (fd=%d): "
 					    "read %s", i, children[i].pipefd,
 					    strerror(errno));
 				}
 				/* FALLTHROUGH */
-			case 0:
+			حالت 0:
 				/* child closed pipe */
-				if (children[i].early)
+				اگر (children[i].early)
 					listening--;
 				debug3_f("child %lu for %s closed pipe",
-				    (long)children[i].pid, children[i].id);
-				child_close(&(children[i]), 0, 0);
-				break;
-			case 1:
-				if (children[i].config) {
+				    (طویل)children[i].pid, children[i].id);
+				بچہ_close(&(children[i]), 0, 0);
+				توڑو;
+			حالت 1:
+				اگر (children[i].config) {
 					error_f("startup pipe %d (fd=%d)"
 					    " early read",
 					    i, children[i].pipefd);
-					goto problem_child;
+					جاؤ problem_بچہ;
 				}
-				if (children[i].early && c == '\0') {
+				اگر (children[i].early && c == '\0') {
 					/* child has finished preliminaries */
 					listening--;
 					children[i].early = 0;
 					debug2_f("child %lu for %s received "
-					    "config", (long)children[i].pid,
+					    "config", (طویل)children[i].pid,
 					    children[i].id);
-				} else if (!children[i].early && c == '\001') {
+				} ورنہ اگر (!children[i].early && c == '\001') {
 					/* child has completed auth */
 					debug2_f("child %lu for %s auth done",
-					    (long)children[i].pid,
+					    (طویل)children[i].pid,
 					    children[i].id);
-					child_close(&(children[i]), 1, 0);
-				} else {
+					بچہ_close(&(children[i]), 1, 0);
+				} ورنہ {
 					error_f("unexpected message 0x%02x "
 					    "child %ld for %s in state %d",
-					    (int)c, (long)children[i].pid,
+					    (صحیح)c, (طویل)children[i].pid,
 					    children[i].id, children[i].early);
- problem_child:
-					if (children[i].early)
+ problem_بچہ:
+					اگر (children[i].early)
 						listening--;
-					if (children[i].pid > 0)
+					اگر (children[i].pid > 0)
 						kill(children[i].pid, SIGTERM);
-					child_close(&(children[i]), 0, 0);
+					بچہ_close(&(children[i]), 0, 0);
 				}
-				break;
+				توڑو;
 			}
 		}
-		for (i = 0; i < num_listen_socks; i++) {
-			if (!(pfd[i].revents & POLLIN))
-				continue;
-			fromlen = sizeof(from);
+		برائے (i = 0; i < عدد_listen_socks; i++) {
+			اگر (!(pfd[i].revents & POLLIN))
+				جاری;
+			fromlen = حجم(from);
 			*newsock = accept(listen_socks[i],
-			    (struct sockaddr *)&from, &fromlen);
-			if (*newsock == -1) {
-				if (errno != EINTR && errno != EWOULDBLOCK &&
+			    (ساخت sockaddr *)&from, &fromlen);
+			اگر (*newsock == -1) {
+				اگر (errno != EINTR && errno != EWOULDBLOCK &&
 				    errno != ECONNABORTED && errno != EAGAIN)
 					error("accept: %.100s",
 					    strerror(errno));
-				if (errno == EMFILE || errno == ENFILE)
+				اگر (errno == EMFILE || errno == ENFILE)
 					usleep(100 * 1000);
-				continue;
+				جاری;
 			}
-			if (unset_nonblock(*newsock) == -1) {
+			اگر (unset_nonblock(*newsock) == -1) {
 				close(*newsock);
-				continue;
+				جاری;
 			}
-			if (socketpair(AF_UNIX,
+			اگر (socketpair(AF_UNIX,
 			    SOCK_STREAM, 0, config_s) == -1) {
 				error("reexec socketpair: %s",
 				    strerror(errno));
 				close(*newsock);
-				continue;
+				جاری;
 			}
-			if (drop_connection(*newsock,
-			    children_active, config_s[0])) {
+			اگر (drop_connection(*newsock,
+			    children_فعال, config_s[0])) {
 				close(*newsock);
 				close(config_s[0]);
 				close(config_s[1]);
-				continue;
+				جاری;
 			}
 
 			/*
 			 * Got connection.  Fork a child to handle it, unless
 			 * we are in debugging mode.
 			 */
-			if (debug_flag) {
+			اگر (debug_flag) {
 				/*
 				 * In debugging mode.  Close the listening
 				 * socket, and start processing the
@@ -1169,13 +1169,13 @@ server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s,
 				 */
 				debug("Server will not fork when running in debugging mode.");
 				close_listen_socks();
-				*sock_in = *newsock;
-				*sock_out = *newsock;
+				*sock_اندر = *newsock;
+				*sock_برآمد = *newsock;
 				send_rexec_state(config_s[0]);
 				close(config_s[0]);
-				free(pfd);
-				free(startup_pollfd);
-				return;
+				آزاد(pfd);
+				آزاد(startup_pollfd);
+				واپس;
 			}
 
 			/*
@@ -1184,10 +1184,10 @@ server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s,
 			 * parent continues listening.
 			 */
 			platform_pre_fork();
-			set_nonblock(config_s[0]);
+			سیٹ_nonblock(config_s[0]);
 			listening++;
-			child = child_register(config_s[0], *newsock);
-			if ((child->pid = fork()) == 0) {
+			بچہ = بچہ_رجسٹر(config_s[0], *newsock);
+			اگر ((بچہ->pid = fork()) == 0) {
 				/*
 				 * Child.  Close the listening and
 				 * max_startup sockets.  Start using
@@ -1196,27 +1196,27 @@ server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s,
 				 * We return from this function to handle
 				 * the connection.
 				 */
-				platform_post_fork_child();
+				platform_post_fork_بچہ();
 				close_startup_pipes();
 				close_listen_socks();
-				*sock_in = *newsock;
-				*sock_out = *newsock;
+				*sock_اندر = *newsock;
+				*sock_برآمد = *newsock;
 				log_init(__progname,
 				    options.log_level,
 				    options.log_facility,
 				    log_stderr);
 				close(config_s[0]);
-				free(pfd);
-				free(startup_pollfd);
-				return;
+				آزاد(pfd);
+				آزاد(startup_pollfd);
+				واپس;
 			}
 
 			/* Parent.  Stay in the loop. */
-			platform_post_fork_parent(child->pid);
-			if (child->pid == -1)
+			platform_post_fork_والد(بچہ->pid);
+			اگر (بچہ->pid == -1)
 				error("fork: %.100s", strerror(errno));
-			else
-				debug("Forked child %ld.", (long)child->pid);
+			ورنہ
+				debug("Forked child %ld.", (طویل)بچہ->pid);
 
 			close(config_s[1]);
 			close(*newsock);
@@ -1230,128 +1230,128 @@ server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s,
 	}
 }
 
-static void
-accumulate_host_timing_secret(struct sshbuf *server_cfg,
-    struct sshkey *key)
+ساکن خالی
+accumulate_host_timing_secret(ساخت sshbuf *server_cfg,
+    ساخت sshkey *کلید)
 {
-	static struct ssh_digest_ctx *ctx;
+	ساکن ساخت ssh_digest_ctx *ctx;
 	u_char *hash;
-	size_t len;
-	struct sshbuf *buf;
-	int r;
+	سائز_t len;
+	ساخت sshbuf *buf;
+	صحیح r;
 
-	if (ctx == NULL && (ctx = ssh_digest_start(SSH_DIGEST_SHA512)) == NULL)
+	اگر (ctx == تہی && (ctx = ssh_digest_آغاز(SSH_DIGEST_SHA512)) == تہی)
 		fatal_f("ssh_digest_start");
-	if (key == NULL) { /* finalize */
+	اگر (کلید == تہی) { /* finalize */
 		/* add server config in case we are using agent for host keys */
-		if (ssh_digest_update(ctx, sshbuf_ptr(server_cfg),
+		اگر (ssh_digest_update(ctx, sshbuf_ptr(server_cfg),
 		    sshbuf_len(server_cfg)) != 0)
 			fatal_f("ssh_digest_update");
-		len = ssh_digest_bytes(SSH_DIGEST_SHA512);
+		len = ssh_digest_بائٹیں(SSH_DIGEST_SHA512);
 		hash = xmalloc(len);
-		if (ssh_digest_final(ctx, hash, len) != 0)
+		اگر (ssh_digest_final(ctx, hash, len) != 0)
 			fatal_f("ssh_digest_final");
 		options.timing_secret = PEEK_U64(hash);
 		freezero(hash, len);
 		ssh_digest_free(ctx);
-		ctx = NULL;
-		return;
+		ctx = تہی;
+		واپس;
 	}
-	if ((buf = sshbuf_new()) == NULL)
+	اگر ((buf = sshbuf_new()) == تہی)
 		fatal_f("could not allocate buffer");
-	if ((r = sshkey_private_serialize(key, buf)) != 0)
-		fatal_fr(r, "encode %s key", sshkey_ssh_name(key));
-	if (ssh_digest_update(ctx, sshbuf_ptr(buf), sshbuf_len(buf)) != 0)
+	اگر ((r = sshkey_نجی_serialize(کلید, buf)) != 0)
+		fatal_fr(r, "encode %s key", sshkey_ssh_name(کلید));
+	اگر (ssh_digest_update(ctx, sshbuf_ptr(buf), sshbuf_len(buf)) != 0)
 		fatal_f("ssh_digest_update");
 	sshbuf_reset(buf);
 	sshbuf_free(buf);
 }
 
-static char *
-prepare_proctitle(int ac, char **av)
+ساکن حرف *
+prepare_proctitle(صحیح ac, حرف **av)
 {
-	char *ret = NULL;
-	int i;
+	حرف *ret = تہی;
+	صحیح i;
 
-	for (i = 0; i < ac; i++)
+	برائے (i = 0; i < ac; i++)
 		xextendf(&ret, " ", "%s", av[i]);
-	return ret;
+	واپس ret;
 }
 
 /* Disconnect from the controlling tty. */
-static void
-disconnect_controlling_tty(void)
+ساکن خالی
+disconnect_controlling_tty(خالی)
 {
-#ifdef TIOCNOTTY
+#اگر_تعریف_شدہ TIOCNOTTY
 # ifndef O_NOCTTY
 #  define O_NOCTTY 0
 # endif
-	int fd;
+	صحیح fd;
 
-	if ((fd = open(_PATH_TTY, O_RDWR | O_NOCTTY)) >= 0) {
-		(void) ioctl(fd, TIOCNOTTY, NULL);
+	اگر ((fd = open(_PATH_TTY, O_RDWR | O_NOCTTY)) >= 0) {
+		(خالی) ioctl(fd, TIOCNOTTY, تہی);
 		close(fd);
 	}
-#endif /* TIOCNOTTY */
+#اگر_ختم /* TIOCNOTTY */
 }
 
-static void
-print_config(struct connection_info *connection_info)
+ساکن خالی
+print_config(ساخت connection_info *connection_info)
 {
 	connection_info->test = 1;
-	parse_server_match_config(&options, &includes, connection_info);
+	parse_server_مطابقت_config(&options, &includes, connection_info);
 	dump_config(&options);
-	exit(0);
+	باہر_نکلو(0);
 }
 
 /*
  * Main program for the daemon.
  */
-int
-main(int ac, char **av)
+صحیح
+مین(صحیح ac, حرف **av)
 {
-	extern char *optarg;
-	extern int optind;
-	int log_stderr = 0, inetd_flag = 0, test_flag = 0, no_daemon_flag = 0;
-	char *config_file_name = _PATH_SERVER_CONFIG_FILE;
-	int r, opt, do_dump_cfg = 0, keytype, already_daemon, have_agent = 0;
-	int sock_in = -1, sock_out = -1, newsock = -1, rexec_argc = 0;
-	int devnull, config_s[2] = { -1 , -1 }, have_connection_info = 0;
-	int need_chroot = 1;
-	char *args, *fp, *line, *logfile = NULL, **rexec_argv = NULL;
-	struct stat sb;
+	خارجی حرف *optarg;
+	خارجی صحیح optind;
+	صحیح log_stderr = 0, inetd_flag = 0, test_flag = 0, no_daemon_flag = 0;
+	حرف *config_file_name = راستہ_SERVER_CONFIG_FILE;
+	صحیح r, opt, do_dump_cfg = 0, keytype, already_daemon, have_agent = 0;
+	صحیح sock_اندر = -1, sock_برآمد = -1, newsock = -1, rexec_argc = 0;
+	صحیح devnull, config_s[2] = { -1 , -1 }, have_connection_info = 0;
+	صحیح need_chroot = 1;
+	حرف *دلائل, *fp, *سطر, *logfile = تہی, **rexec_argv = تہی;
+	ساخت stat sb;
 	u_int i, j;
-	mode_t new_umask;
-	struct sshkey *key;
-	struct sshkey *pubkey;
-	struct connection_info connection_info;
-	struct utsname utsname;
+	منوال_t new_umask;
+	ساخت sshkey *کلید;
+	ساخت sshkey *pubkey;
+	ساخت connection_info connection_info;
+	ساخت utsname utsname;
 	sigset_t sigmask;
 
-	memset(&connection_info, 0, sizeof(connection_info));
-#ifdef HAVE_SECUREWARE
-	(void)set_auth_parameters(ac, av);
-#endif
+	memset(&connection_info, 0, حجم(connection_info));
+#اگر_تعریف_شدہ HAVE_SECUREWARE
+	(خالی)سیٹ_auth_parameters(ac, av);
+#اگر_ختم
 	__progname = ssh_get_progname(av[0]);
 
 	sigemptyset(&sigmask);
-	sigprocmask(SIG_SETMASK, &sigmask, NULL);
+	sigprocmask(SIG_SETMASK, &sigmask, تہی);
 
 	/* Save argv. Duplicate so setproctitle emulation doesn't clobber it */
 	saved_argc = ac;
 	rexec_argc = ac;
-	saved_argv = xcalloc(ac + 1, sizeof(*saved_argv));
-	for (i = 0; (int)i < ac; i++)
+	saved_argv = xcalloc(ac + 1, حجم(*saved_argv));
+	برائے (i = 0; (صحیح)i < ac; i++)
 		saved_argv[i] = xstrdup(av[i]);
-	saved_argv[i] = NULL;
+	saved_argv[i] = تہی;
 
-#ifndef HAVE_SETPROCTITLE
+#اگر_غیر_تعریف_شدہ HAVE_SETPROCTITLE
 	/* Prepare for later setproctitle emulation */
 	compat_init_setproctitle(ac, av);
 	av = saved_argv;
-#endif
+#اگر_ختم
 
-	if (geteuid() == 0 && setgroups(0, NULL) == -1)
+	اگر (geteuid() == 0 && setgroups(0, تہی) == -1)
 		debug("setgroups(): %.200s", strerror(errno));
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
@@ -1361,155 +1361,155 @@ main(int ac, char **av)
 	initialize_server_options(&options);
 
 	/* Parse command-line arguments. */
-	args = argv_assemble(ac, av); /* logged later */
-	while ((opt = getopt(ac, av,
+	دلائل = argv_assemble(ac, av); /* logged later */
+	جب ((opt = getopt(ac, av,
 	    "C:E:b:c:f:g:h:k:o:p:u:46DGQRTdeiqrtV")) != -1) {
-		switch (opt) {
-		case '4':
-			options.address_family = AF_INET;
-			break;
-		case '6':
-			options.address_family = AF_INET6;
-			break;
-		case 'f':
+		انتخاب (opt) {
+		حالت '4':
+			options.پتہ_family = AF_INET;
+			توڑو;
+		حالت '6':
+			options.پتہ_family = AF_INET6;
+			توڑو;
+		حالت 'f':
 			config_file_name = optarg;
-			break;
-		case 'c':
-			servconf_add_hostcert("[command-line]", 0,
+			توڑو;
+		حالت 'c':
+			servconf_جوڑو_hostcert("[command-line]", 0,
 			    &options, optarg);
-			break;
-		case 'd':
-			if (debug_flag == 0) {
+			توڑو;
+		حالت 'd':
+			اگر (debug_flag == 0) {
 				debug_flag = 1;
 				options.log_level = SYSLOG_LEVEL_DEBUG1;
-			} else if (options.log_level < SYSLOG_LEVEL_DEBUG3)
+			} ورنہ اگر (options.log_level < SYSLOG_LEVEL_DEBUG3)
 				options.log_level++;
-			break;
-		case 'D':
+			توڑو;
+		حالت 'D':
 			no_daemon_flag = 1;
-			break;
-		case 'G':
+			توڑو;
+		حالت 'G':
 			do_dump_cfg = 1;
-			break;
-		case 'E':
+			توڑو;
+		حالت 'E':
 			logfile = optarg;
 			/* FALLTHROUGH */
-		case 'e':
+		حالت 'e':
 			log_stderr = 1;
-			break;
-		case 'i':
+			توڑو;
+		حالت 'i':
 			inetd_flag = 1;
-			break;
-		case 'r':
+			توڑو;
+		حالت 'r':
 			logit("-r option is deprecated");
-			break;
-		case 'R':
+			توڑو;
+		حالت 'R':
 			fatal("-R not supported here");
-			break;
-		case 'Q':
+			توڑو;
+		حالت 'Q':
 			/* ignored */
-			break;
-		case 'q':
+			توڑو;
+		حالت 'q':
 			options.log_level = SYSLOG_LEVEL_QUIET;
-			break;
-		case 'b':
+			توڑو;
+		حالت 'b':
 			/* protocol 1, ignored */
-			break;
-		case 'p':
+			توڑو;
+		حالت 'p':
 			options.ports_from_cmdline = 1;
-			if (options.num_ports >= MAX_PORTS) {
+			اگر (options.عدد_ports >= MAX_PORTS) {
 				fprintf(stderr, "too many ports.\n");
-				exit(1);
+				باہر_نکلو(1);
 			}
-			options.ports[options.num_ports++] = a2port(optarg);
-			if (options.ports[options.num_ports-1] <= 0) {
+			options.ports[options.عدد_ports++] = a2port(optarg);
+			اگر (options.ports[options.عدد_ports-1] <= 0) {
 				fprintf(stderr, "Bad port number.\n");
-				exit(1);
+				باہر_نکلو(1);
 			}
-			break;
-		case 'g':
-			if ((options.login_grace_time = convtime(optarg)) == -1) {
+			توڑو;
+		حالت 'g':
+			اگر ((options.login_grace_وقت = convtime(optarg)) == -1) {
 				fprintf(stderr, "Invalid login grace time.\n");
-				exit(1);
+				باہر_نکلو(1);
 			}
-			break;
-		case 'k':
+			توڑو;
+		حالت 'k':
 			/* protocol 1, ignored */
-			break;
-		case 'h':
-			servconf_add_hostkey("[command-line]", 0,
+			توڑو;
+		حالت 'h':
+			servconf_جوڑو_hostkey("[command-line]", 0,
 			    &options, optarg, 1);
-			break;
-		case 't':
+			توڑو;
+		حالت 't':
 			test_flag = 1;
-			break;
-		case 'T':
+			توڑو;
+		حالت 'T':
 			test_flag = 2;
-			break;
-		case 'C':
-			if (parse_server_match_testspec(&connection_info,
+			توڑو;
+		حالت 'C':
+			اگر (parse_server_مطابقت_testspec(&connection_info,
 			    optarg) == -1)
-				exit(1);
+				باہر_نکلو(1);
 			have_connection_info = 1;
-			break;
-		case 'u':
+			توڑو;
+		حالت 'u':
 			utmp_len = (u_int)strtonum(optarg, 0,
-			    HOST_NAME_MAX+1+1, NULL);
-			if (utmp_len > HOST_NAME_MAX+1) {
+			    HOST_NAME_MAX+1+1, تہی);
+			اگر (utmp_len > HOST_NAME_MAX+1) {
 				fprintf(stderr, "Invalid utmp length.\n");
-				exit(1);
+				باہر_نکلو(1);
 			}
-			break;
-		case 'o':
-			line = xstrdup(optarg);
-			if (process_server_config_line(&options, line,
-			    "command-line", 0, NULL, NULL, &includes) != 0)
-				exit(1);
-			free(line);
-			break;
-		case 'V':
+			توڑو;
+		حالت 'o':
+			سطر = xstrdup(optarg);
+			اگر (process_server_config_سطر(&options, سطر,
+			    "command-line", 0, تہی, تہی, &includes) != 0)
+				باہر_نکلو(1);
+			آزاد(سطر);
+			توڑو;
+		حالت 'V':
 			fprintf(stderr, "%s, %s\n",
-			    SSH_RELEASE, SSH_OPENSSL_VERSION);
-			exit(0);
-		default:
+			    SSH_RELEASE, SSH_OPENSSL_نسخہ);
+			باہر_نکلو(0);
+		طےشدہ:
 			usage();
-			break;
+			توڑو;
 		}
 	}
 
-	if (getexecpath(execpath, sizeof execpath) != 0) {
-		if (strlcpy(execpath, av[0], sizeof execpath) >=
-		    sizeof execpath) {
+	اگر (getexecpath(execpath, حجم execpath) != 0) {
+		اگر (strlcpy(execpath, av[0], حجم execpath) >=
+		    حجم execpath) {
 			fprintf(stderr, "execution path is too long\n");
-			exit(1);
+			باہر_نکلو(1);
 		}
 	}
-	if (!test_flag && !inetd_flag && !do_dump_cfg && !path_absolute(execpath))
+	اگر (!test_flag && !inetd_flag && !do_dump_cfg && !راستہ_absolute(execpath))
 		fatal("sshd requires execution with an absolute path");
 
 	closefrom(STDERR_FILENO + 1);
 
 	/* Reserve fds we'll need later for reexec things */
-	if ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1)
+	اگر ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1)
 		fatal("open %s: %s", _PATH_DEVNULL, strerror(errno));
-	while (devnull < REEXEC_MIN_FREE_FD) {
-		if ((devnull = dup(devnull)) == -1)
+	جب (devnull < REEXEC_MIN_FREE_FD) {
+		اگر ((devnull = dup(devnull)) == -1)
 			fatal("dup %s: %s", _PATH_DEVNULL, strerror(errno));
 	}
 
-	seed_rng();
+	بیج_rng();
 
 	/* If requested, redirect the logs to the specified logfile. */
-	if (logfile != NULL) {
-		char *cp, pid_s[32];
+	اگر (logfile != تہی) {
+		حرف *cp, pid_s[32];
 
-		snprintf(pid_s, sizeof(pid_s), "%ld", (unsigned long)getpid());
+		snprintf(pid_s, حجم(pid_s), "%ld", (غیرعلامتی طویل)getpid());
 		cp = percent_expand(logfile,
 		    "p", pid_s,
 		    "P", "sshd",
-		    (char *)NULL);
-		log_redirect_stderr_to(cp);
-		free(cp);
+		    (حرف *)تہی);
+		log_redirect_stderr_مقصد(cp);
+		آزاد(cp);
 	}
 
 	/*
@@ -1517,9 +1517,9 @@ main(int ac, char **av)
 	 * key (unless started from inetd)
 	 */
 	log_init(__progname,
-	    options.log_level == SYSLOG_LEVEL_NOT_SET ?
+	    options.log_level == SYSLOG_LEVEL_NOT_سیٹ ?
 	    SYSLOG_LEVEL_INFO : options.log_level,
-	    options.log_facility == SYSLOG_FACILITY_NOT_SET ?
+	    options.log_facility == SYSLOG_FACILITY_NOT_سیٹ ?
 	    SYSLOG_FACILITY_AUTH : options.log_facility,
 	    log_stderr || !inetd_flag || debug_flag);
 
@@ -1527,49 +1527,49 @@ main(int ac, char **av)
 	 * Unset KRB5CCNAME, otherwise the user's session may inherit it from
 	 * root's environment
 	 */
-	if (getenv("KRB5CCNAME") != NULL)
-		(void) unsetenv("KRB5CCNAME");
+	اگر (getenv("KRB5CCNAME") != تہی)
+		(خالی) unsetenv("KRB5CCNAME");
 
-	sensitive_data.have_ssh2_key = 0;
+	sensitive_ڈیٹا.have_ssh2_کلید = 0;
 
 	/*
 	 * If we're not doing an extended test do not silently ignore connection
 	 * test params.
 	 */
-	if (test_flag < 2 && have_connection_info)
+	اگر (test_flag < 2 && have_connection_info)
 		fatal("Config test connection parameter (-C) provided without "
 		    "test mode (-T)");
 
-	debug("sshd version %s, %s", SSH_VERSION, SSH_OPENSSL_VERSION);
-	if (uname(&utsname) != 0) {
-		memset(&utsname, 0, sizeof(utsname));
-		strlcpy(utsname.sysname, "UNKNOWN", sizeof(utsname.sysname));
+	debug("sshd version %s, %s", SSH_نسخہ, SSH_OPENSSL_نسخہ);
+	اگر (uname(&utsname) != 0) {
+		memset(&utsname, 0, حجم(utsname));
+		strlcpy(utsname.sysname, "UNKNOWN", حجم(utsname.sysname));
 	}
 	debug3("Running on %s %s %s %s", utsname.sysname, utsname.release,
-	    utsname.version, utsname.machine);
-	debug3("Started with: %s", args);
-	free(args);
+	    utsname.نسخہ, utsname.machine);
+	debug3("Started with: %s", دلائل);
+	آزاد(دلائل);
 
 	/* Fetch our configuration */
-	if ((cfg = sshbuf_new()) == NULL)
+	اگر ((cfg = sshbuf_new()) == تہی)
 		fatal("sshbuf_new config failed");
-	if (strcasecmp(config_file_name, "none") != 0)
-		load_server_config(config_file_name, cfg);
+	اگر (strcasecmp(config_file_name, "none") != 0)
+		بھرو_server_config(config_file_name, cfg);
 
 	parse_server_config(&options, config_file_name, cfg,
-	    &includes, NULL, 0);
+	    &includes, تہی, 0);
 
 	/* Fill in default values for those options not explicitly set. */
 	fill_default_server_options(&options);
 
 	/* Check that options are sensible */
-	if (options.authorized_keys_command_user == NULL &&
-	    (options.authorized_keys_command != NULL &&
-	    strcasecmp(options.authorized_keys_command, "none") != 0))
+	اگر (options.authorized_کلیدیں_command_user == تہی &&
+	    (options.authorized_کلیدیں_command != تہی &&
+	    strcasecmp(options.authorized_کلیدیں_command, "none") != 0))
 		fatal("AuthorizedKeysCommand set without "
 		    "AuthorizedKeysCommandUser");
-	if (options.authorized_principals_command_user == NULL &&
-	    (options.authorized_principals_command != NULL &&
+	اگر (options.authorized_principals_command_user == تہی &&
+	    (options.authorized_principals_command != تہی &&
 	    strcasecmp(options.authorized_principals_command, "none") != 0))
 		fatal("AuthorizedPrincipalsCommand set without "
 		    "AuthorizedPrincipalsCommandUser");
@@ -1580,213 +1580,213 @@ main(int ac, char **av)
 	 * daemonisation in the presence of Match blocks, but this catches
 	 * and warns for trivial misconfigurations that could break login.
 	 */
-	if (options.num_auth_methods != 0) {
-		for (i = 0; i < options.num_auth_methods; i++) {
-			if (auth2_methods_valid(options.auth_methods[i],
+	اگر (options.عدد_auth_methods != 0) {
+		برائے (i = 0; i < options.عدد_auth_methods; i++) {
+			اگر (auth2_methods_valid(options.auth_methods[i],
 			    1) == 0)
-				break;
+				توڑو;
 		}
-		if (i >= options.num_auth_methods)
+		اگر (i >= options.عدد_auth_methods)
 			fatal("AuthenticationMethods cannot be satisfied by "
 			    "enabled authentication methods");
 	}
 
 	/* Check that there are no remaining arguments. */
-	if (optind < ac) {
+	اگر (optind < ac) {
 		fprintf(stderr, "Extra argument %s.\n", av[optind]);
-		exit(1);
+		باہر_نکلو(1);
 	}
 
-	if (do_dump_cfg)
+	اگر (do_dump_cfg)
 		print_config(&connection_info);
 
 	/* load host keys */
-	sensitive_data.host_keys = xcalloc(options.num_host_key_files,
-	    sizeof(struct sshkey *));
-	sensitive_data.host_pubkeys = xcalloc(options.num_host_key_files,
-	    sizeof(struct sshkey *));
+	sensitive_ڈیٹا.host_کلیدیں = xcalloc(options.عدد_host_کلید_files,
+	    حجم(ساخت sshkey *));
+	sensitive_ڈیٹا.host_pubkeys = xcalloc(options.عدد_host_کلید_files,
+	    حجم(ساخت sshkey *));
 
-	if (options.host_key_agent) {
-		if (strcmp(options.host_key_agent, SSH_AUTHSOCKET_ENV_NAME))
+	اگر (options.host_کلید_agent) {
+		اگر (strcmp(options.host_کلید_agent, SSH_AUTHSOCKET_ENV_NAME))
 			setenv(SSH_AUTHSOCKET_ENV_NAME,
-			    options.host_key_agent, 1);
-		if ((r = ssh_get_authentication_socket(NULL)) == 0)
+			    options.host_کلید_agent, 1);
+		اگر ((r = ssh_get_authentication_socket(تہی)) == 0)
 			have_agent = 1;
-		else
+		ورنہ
 			error_r(r, "Could not connect to agent \"%s\"",
-			    options.host_key_agent);
+			    options.host_کلید_agent);
 	}
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		int ll = options.host_key_file_userprovided[i] ?
+	برائے (i = 0; i < options.عدد_host_کلید_files; i++) {
+		صحیح ll = options.host_کلید_file_userprovided[i] ?
 		    SYSLOG_LEVEL_ERROR : SYSLOG_LEVEL_DEBUG1;
 
-		if (options.host_key_files[i] == NULL)
-			continue;
-		if ((r = sshkey_load_private(options.host_key_files[i], "",
-		    &key, NULL)) != 0 &&
+		اگر (options.host_کلید_files[i] == تہی)
+			جاری;
+		اگر ((r = sshkey_بھرو_نجی(options.host_کلید_files[i], "",
+		    &کلید, تہی)) != 0 &&
 		    r != SSH_ERR_SYSTEM_ERROR && !have_agent)
 			do_log2_r(r, ll, "Unable to load host key \"%s\"",
-			    options.host_key_files[i]);
-		if (sshkey_is_sk(key) &&
-		    key->sk_flags & SSH_SK_USER_PRESENCE_REQD) {
+			    options.host_کلید_files[i]);
+		اگر (sshkey_is_sk(کلید) &&
+		    کلید->sk_flags & SSH_SK_USER_PRESENCE_REQD) {
 			debug("host key %s requires user presence, ignoring",
-			    options.host_key_files[i]);
-			key->sk_flags &= ~SSH_SK_USER_PRESENCE_REQD;
+			    options.host_کلید_files[i]);
+			کلید->sk_flags &= ~SSH_SK_USER_PRESENCE_REQD;
 		}
-		if (r == 0 && key != NULL &&
-		    (r = sshkey_shield_private(key)) != 0) {
+		اگر (r == 0 && کلید != تہی &&
+		    (r = sshkey_shield_نجی(کلید)) != 0) {
 			do_log2_r(r, ll, "Unable to shield host key \"%s\"",
-			    options.host_key_files[i]);
-			sshkey_free(key);
-			key = NULL;
+			    options.host_کلید_files[i]);
+			sshkey_free(کلید);
+			کلید = تہی;
 		}
-		if ((r = sshkey_load_public(options.host_key_files[i],
-		    &pubkey, NULL)) != 0 && r != SSH_ERR_SYSTEM_ERROR)
+		اگر ((r = sshkey_بھرو_عوامی(options.host_کلید_files[i],
+		    &pubkey, تہی)) != 0 && r != SSH_ERR_SYSTEM_ERROR)
 			do_log2_r(r, ll, "Unable to load host key \"%s\"",
-			    options.host_key_files[i]);
-		if (pubkey != NULL && key != NULL) {
-			if (!sshkey_equal(pubkey, key)) {
+			    options.host_کلید_files[i]);
+		اگر (pubkey != تہی && کلید != تہی) {
+			اگر (!sshkey_equal(pubkey, کلید)) {
 				error("Public key for %s does not match "
-				    "private key", options.host_key_files[i]);
+				    "private key", options.host_کلید_files[i]);
 				sshkey_free(pubkey);
-				pubkey = NULL;
+				pubkey = تہی;
 			}
 		}
-		if (pubkey == NULL && key != NULL) {
-			if ((r = sshkey_from_private(key, &pubkey)) != 0)
+		اگر (pubkey == تہی && کلید != تہی) {
+			اگر ((r = sshkey_from_نجی(کلید, &pubkey)) != 0)
 				fatal_r(r, "Could not demote key: \"%s\"",
-				    options.host_key_files[i]);
+				    options.host_کلید_files[i]);
 		}
-		if (pubkey != NULL && (r = sshkey_check_rsa_length(pubkey,
-		    options.required_rsa_size)) != 0) {
-			error_fr(r, "Host key %s", options.host_key_files[i]);
+		اگر (pubkey != تہی && (r = sshkey_check_rsa_لمبائی(pubkey,
+		    options.required_rsa_سائز)) != 0) {
+			error_fr(r, "Host key %s", options.host_کلید_files[i]);
 			sshkey_free(pubkey);
-			sshkey_free(key);
-			continue;
+			sshkey_free(کلید);
+			جاری;
 		}
-		sensitive_data.host_keys[i] = key;
-		sensitive_data.host_pubkeys[i] = pubkey;
+		sensitive_ڈیٹا.host_کلیدیں[i] = کلید;
+		sensitive_ڈیٹا.host_pubkeys[i] = pubkey;
 
-		if (key == NULL && pubkey != NULL && have_agent) {
+		اگر (کلید == تہی && pubkey != تہی && have_agent) {
 			debug("will rely on agent for hostkey %s",
-			    options.host_key_files[i]);
+			    options.host_کلید_files[i]);
 			keytype = pubkey->type;
-		} else if (key != NULL) {
-			keytype = key->type;
-			accumulate_host_timing_secret(cfg, key);
-		} else {
+		} ورنہ اگر (کلید != تہی) {
+			keytype = کلید->type;
+			accumulate_host_timing_secret(cfg, کلید);
+		} ورنہ {
 			do_log2(ll, "Unable to load host key: %s",
-			    options.host_key_files[i]);
-			sensitive_data.host_keys[i] = NULL;
-			sensitive_data.host_pubkeys[i] = NULL;
-			continue;
+			    options.host_کلید_files[i]);
+			sensitive_ڈیٹا.host_کلیدیں[i] = تہی;
+			sensitive_ڈیٹا.host_pubkeys[i] = تہی;
+			جاری;
 		}
 
-		switch (keytype) {
-		case KEY_RSA:
-		case KEY_ECDSA:
-		case KEY_ED25519:
-		case KEY_MLDSA44_ED25519:
-		case KEY_ECDSA_SK:
-		case KEY_ED25519_SK:
-			if (have_agent || key != NULL)
-				sensitive_data.have_ssh2_key = 1;
-			break;
+		انتخاب (keytype) {
+		حالت کلید_RSA:
+		حالت کلید_ECDSA:
+		حالت کلید_ED25519:
+		حالت کلید_MLDSA44_ED25519:
+		حالت کلید_ECDSA_SK:
+		حالت کلید_ED25519_SK:
+			اگر (have_agent || کلید != تہی)
+				sensitive_ڈیٹا.have_ssh2_کلید = 1;
+			توڑو;
 		}
-		if ((fp = sshkey_fingerprint(pubkey, options.fingerprint_hash,
-		    SSH_FP_DEFAULT)) == NULL)
+		اگر ((fp = sshkey_fingerprint(pubkey, options.fingerprint_hash,
+		    SSH_FP_DEFAULT)) == تہی)
 			fatal("sshkey_fingerprint failed");
 		debug("%s host key #%d: %s %s",
-		    key ? "private" : "agent", i, sshkey_ssh_name(pubkey), fp);
-		free(fp);
+		    کلید ? "private" : "agent", i, sshkey_ssh_name(pubkey), fp);
+		آزاد(fp);
 	}
-	accumulate_host_timing_secret(cfg, NULL);
-	if (!sensitive_data.have_ssh2_key) {
+	accumulate_host_timing_secret(cfg, تہی);
+	اگر (!sensitive_ڈیٹا.have_ssh2_کلید) {
 		logit("sshd: no hostkeys available -- exiting.");
-		exit(1);
+		باہر_نکلو(1);
 	}
 
 	/*
 	 * Load certificates. They are stored in an array at identical
 	 * indices to the public keys that they relate to.
 	 */
-	sensitive_data.host_certificates = xcalloc(options.num_host_key_files,
-	    sizeof(struct sshkey *));
-	for (i = 0; i < options.num_host_key_files; i++)
-		sensitive_data.host_certificates[i] = NULL;
+	sensitive_ڈیٹا.host_certificates = xcalloc(options.عدد_host_کلید_files,
+	    حجم(ساخت sshkey *));
+	برائے (i = 0; i < options.عدد_host_کلید_files; i++)
+		sensitive_ڈیٹا.host_certificates[i] = تہی;
 
-	for (i = 0; i < options.num_host_cert_files; i++) {
-		if (options.host_cert_files[i] == NULL)
-			continue;
-		if ((r = sshkey_load_public(options.host_cert_files[i],
-		    &key, NULL)) != 0) {
+	برائے (i = 0; i < options.عدد_host_cert_files; i++) {
+		اگر (options.host_cert_files[i] == تہی)
+			جاری;
+		اگر ((r = sshkey_بھرو_عوامی(options.host_cert_files[i],
+		    &کلید, تہی)) != 0) {
 			error_r(r, "Could not load host certificate \"%s\"",
 			    options.host_cert_files[i]);
-			continue;
+			جاری;
 		}
-		if (!sshkey_is_cert(key)) {
+		اگر (!sshkey_is_cert(کلید)) {
 			error("Certificate file is not a certificate: %s",
 			    options.host_cert_files[i]);
-			sshkey_free(key);
-			continue;
+			sshkey_free(کلید);
+			جاری;
 		}
 		/* Find matching private key */
-		for (j = 0; j < options.num_host_key_files; j++) {
-			if (sshkey_equal_public(key,
-			    sensitive_data.host_pubkeys[j])) {
-				sensitive_data.host_certificates[j] = key;
-				break;
+		برائے (j = 0; j < options.عدد_host_کلید_files; j++) {
+			اگر (sshkey_equal_عوامی(کلید,
+			    sensitive_ڈیٹا.host_pubkeys[j])) {
+				sensitive_ڈیٹا.host_certificates[j] = کلید;
+				توڑو;
 			}
 		}
-		if (j >= options.num_host_key_files) {
+		اگر (j >= options.عدد_host_کلید_files) {
 			error("No matching private key for certificate: %s",
 			    options.host_cert_files[i]);
-			sshkey_free(key);
-			continue;
+			sshkey_free(کلید);
+			جاری;
 		}
-		sensitive_data.host_certificates[j] = key;
-		debug("host certificate: #%u type %d %s", j, key->type,
-		    sshkey_type(key));
+		sensitive_ڈیٹا.host_certificates[j] = کلید;
+		debug("host certificate: #%u type %d %s", j, کلید->type,
+		    sshkey_type(کلید));
 	}
 
 	/* Ensure privsep directory is correctly configured. */
 	need_chroot = ((getuid() == 0 || geteuid() == 0) ||
 	    options.kerberos_authentication);
-	if ((getpwnam(SSH_PRIVSEP_USER)) == NULL && need_chroot) {
+	اگر ((getpwnam(SSH_PRIVSEP_USER)) == تہی && need_chroot) {
 		fatal("Privilege separation user %s does not exist",
 		    SSH_PRIVSEP_USER);
 	}
 	endpwent();
 
-	if (need_chroot) {
-		if ((stat(_PATH_PRIVSEP_CHROOT_DIR, &sb) == -1) ||
+	اگر (need_chroot) {
+		اگر ((stat(راستہ_PRIVSEP_CHROOT_DIR, &sb) == -1) ||
 		    (S_ISDIR(sb.st_mode) == 0))
 			fatal("Missing privilege separation directory: %s",
-			    _PATH_PRIVSEP_CHROOT_DIR);
-#ifdef HAVE_CYGWIN
-		if (check_ntsec(_PATH_PRIVSEP_CHROOT_DIR) &&
+			    راستہ_PRIVSEP_CHROOT_DIR);
+#اگر_تعریف_شدہ HAVE_CYGWIN
+		اگر (check_ntsec(راستہ_PRIVSEP_CHROOT_DIR) &&
 		    (sb.st_uid != getuid () ||
 		    (sb.st_mode & (S_IWGRP|S_IWOTH)) != 0))
-#else
-		if (sb.st_uid != 0 || (sb.st_mode & (S_IWGRP|S_IWOTH)) != 0)
-#endif
+#ورنہ
+		اگر (sb.st_uid != 0 || (sb.st_mode & (S_IWGRP|S_IWOTH)) != 0)
+#اگر_ختم
 			fatal("%s must be owned by root and not group or "
-			    "world-writable.", _PATH_PRIVSEP_CHROOT_DIR);
+			    "world-writable.", راستہ_PRIVSEP_CHROOT_DIR);
 	}
 
-	if (test_flag > 1)
+	اگر (test_flag > 1)
 		print_config(&connection_info);
 
 	config = pack_config(cfg);
-	if (sshbuf_len(config) > MONITOR_MAX_CFGLEN) {
+	اگر (sshbuf_len(config) > MONITOR_MAX_CFGLEN) {
 		fatal("Configuration file is too large (have %zu, max %d)",
 		    sshbuf_len(config), MONITOR_MAX_CFGLEN);
 	}
 
 	/* Configuration looks good, so exit if in test mode. */
-	if (test_flag)
-		exit(0);
+	اگر (test_flag)
+		باہر_نکلو(0);
 
 	/*
 	 * Clear out any supplemental groups we may have inherited.  This
@@ -1795,45 +1795,45 @@ main(int ac, char **av)
 	 * to create a file, and we can't control the code in every
 	 * module which might be used).
 	 */
-	if (setgroups(0, NULL) < 0)
+	اگر (setgroups(0, تہی) < 0)
 		debug("setgroups() failed: %.200s", strerror(errno));
 
 	/* Prepare arguments for sshd-session */
-	if (rexec_argc < 0)
+	اگر (rexec_argc < 0)
 		fatal("rexec_argc %d < 0", rexec_argc);
-	rexec_argv = xcalloc(rexec_argc + 3, sizeof(char *));
+	rexec_argv = xcalloc(rexec_argc + 3, حجم(حرف *));
 	/* Point to the sshd-session binary instead of sshd */
-	rexec_argv[0] = options.sshd_session_path;
-	for (i = 1; i < (u_int)rexec_argc; i++) {
+	rexec_argv[0] = options.sshd_session_راستہ;
+	برائے (i = 1; i < (u_int)rexec_argc; i++) {
 		debug("rexec_argv[%d]='%s'", i, saved_argv[i]);
 		rexec_argv[i] = saved_argv[i];
 	}
 	rexec_argv[rexec_argc++] = "-R";
-	rexec_argv[rexec_argc] = NULL;
-	if (stat(rexec_argv[0], &sb) != 0 || !(sb.st_mode & (S_IXOTH|S_IXUSR)))
+	rexec_argv[rexec_argc] = تہی;
+	اگر (stat(rexec_argv[0], &sb) != 0 || !(sb.st_mode & (S_IXOTH|S_IXUSR)))
 		fatal("%s does not exist or is not executable", rexec_argv[0]);
 	debug3("using %s for re-exec", rexec_argv[0]);
 
 	/* Ensure that the privsep binary exists now too. */
-	if (stat(options.sshd_auth_path, &sb) != 0 ||
+	اگر (stat(options.sshd_auth_راستہ, &sb) != 0 ||
 	    !(sb.st_mode & (S_IXOTH|S_IXUSR))) {
 		fatal("%s does not exist or is not executable",
-		    options.sshd_auth_path);
+		    options.sshd_auth_راستہ);
 	}
 
 	listener_proctitle = prepare_proctitle(ac, av);
 
 	/* Ensure that umask disallows at least group and world write */
 	new_umask = umask(0077) | 0022;
-	(void) umask(new_umask);
+	(خالی) umask(new_umask);
 
 	/* Initialize the log (it is reinitialized below in case we forked). */
-	if (debug_flag && !inetd_flag)
+	اگر (debug_flag && !inetd_flag)
 		log_stderr = 1;
 	log_init(__progname, options.log_level,
 	    options.log_facility, log_stderr);
-	for (i = 0; i < options.num_log_verbose; i++)
-		log_verbose_add(options.log_verbose[i]);
+	برائے (i = 0; i < options.عدد_log_verbose; i++)
+		log_verbose_جوڑو(options.log_verbose[i]);
 
 	/*
 	 * If not in debugging mode, not started from inetd and not already
@@ -1841,9 +1841,9 @@ main(int ac, char **av)
 	 * terminal, and fork.  The original process exits.
 	 */
 	already_daemon = daemonized();
-	if (!(debug_flag || inetd_flag || no_daemon_flag || already_daemon)) {
+	اگر (!(debug_flag || inetd_flag || no_daemon_flag || already_daemon)) {
 
-		if (daemon(0, 0) == -1)
+		اگر (daemon(0, 0) == -1)
 			fatal("daemon() failed: %.200s", strerror(errno));
 
 		disconnect_controlling_tty();
@@ -1855,20 +1855,20 @@ main(int ac, char **av)
 	 * Chdir to the root directory so that the current disk can be
 	 * unmounted if desired.
 	 */
-	if (chdir("/") == -1)
+	اگر (chdir("/") == -1)
 		error("chdir(\"/\"): %s", strerror(errno));
 
 	/* ignore SIGPIPE */
 	ssh_signal(SIGPIPE, SIG_IGN);
 
 	/* Get a connection, either from inetd or a listening TCP socket */
-	if (inetd_flag) {
+	اگر (inetd_flag) {
 		/* Send configuration to ancestor sshd-session process */
-		if (socketpair(AF_UNIX, SOCK_STREAM, 0, config_s) == -1)
+		اگر (socketpair(AF_UNIX, SOCK_STREAM, 0, config_s) == -1)
 			fatal("socketpair: %s", strerror(errno));
 		send_rexec_state(config_s[0]);
 		close(config_s[0]);
-	} else {
+	} ورنہ {
 		platform_pre_listen();
 		server_listen();
 
@@ -1876,9 +1876,9 @@ main(int ac, char **av)
 		ssh_signal(SIGCHLD, main_sigchld_handler);
 		ssh_signal(SIGTERM, sigterm_handler);
 		ssh_signal(SIGQUIT, sigterm_handler);
-#ifdef SIGINFO
+#اگر_تعریف_شدہ SIGINFO
 		ssh_signal(SIGINFO, siginfo_handler);
-#endif
+#اگر_ختم
 
 		platform_post_listen();
 
@@ -1886,20 +1886,20 @@ main(int ac, char **av)
 		 * Write out the pid file after the sigterm handler
 		 * is setup and the listen sockets are bound
 		 */
-		if (options.pid_file != NULL && !debug_flag) {
+		اگر (options.pid_file != تہی && !debug_flag) {
 			FILE *f = fopen(options.pid_file, "w");
 
-			if (f == NULL) {
+			اگر (f == تہی) {
 				error("Couldn't create pid file \"%s\": %s",
 				    options.pid_file, strerror(errno));
-			} else {
-				fprintf(f, "%ld\n", (long) getpid());
+			} ورنہ {
+				fprintf(f, "%ld\n", (طویل) getpid());
 				fclose(f);
 			}
 		}
 
 		/* Accept a connection and return in a forked child */
-		server_accept_loop(&sock_in, &sock_out,
+		server_accept_loop(&sock_اندر, &sock_برآمد,
 		    &newsock, config_s, log_stderr);
 	}
 
@@ -1911,25 +1911,25 @@ main(int ac, char **av)
 	 * setlogin() affects the entire process group.  We don't
 	 * want the child to be able to affect the parent.
 	 */
-	if (!debug_flag && !inetd_flag && setsid() == -1)
+	اگر (!debug_flag && !inetd_flag && setsid() == -1)
 		error("setsid: %.100s", strerror(errno));
 
 	debug("rexec start in %d out %d newsock %d config_s %d/%d",
-	    sock_in, sock_out, newsock, config_s[0], config_s[1]);
-	if (!inetd_flag) {
-		if (dup2(newsock, STDIN_FILENO) == -1)
+	    sock_اندر, sock_برآمد, newsock, config_s[0], config_s[1]);
+	اگر (!inetd_flag) {
+		اگر (dup2(newsock, STDIN_FILENO) == -1)
 			fatal("dup2 stdin: %s", strerror(errno));
-		if (dup2(STDIN_FILENO, STDOUT_FILENO) == -1)
+		اگر (dup2(STDIN_FILENO, STDOUT_FILENO) == -1)
 			fatal("dup2 stdout: %s", strerror(errno));
-		if (newsock > STDOUT_FILENO)
+		اگر (newsock > STDOUT_FILENO)
 			close(newsock);
 	}
-	if (config_s[1] != REEXEC_CONFIG_PASS_FD) {
-		if (dup2(config_s[1], REEXEC_CONFIG_PASS_FD) == -1)
+	اگر (config_s[1] != REEXEC_CONFIG_PASS_FD) {
+		اگر (dup2(config_s[1], REEXEC_CONFIG_PASS_FD) == -1)
 			fatal("dup2 config_s: %s", strerror(errno));
 		close(config_s[1]);
 	}
-	log_redirect_stderr_to(NULL);
+	log_redirect_stderr_مقصد(تہی);
 	closefrom(REEXEC_MIN_FREE_FD);
 
 	ssh_signal(SIGHUP, SIG_IGN); /* avoid reset to SIG_DFL */
@@ -1939,8 +1939,8 @@ main(int ac, char **av)
 }
 
 /* server specific fatal cleanup */
-void
-cleanup_exit(int i)
+خالی
+cleanup_exit(صحیح i)
 {
 	_exit(i);
 }

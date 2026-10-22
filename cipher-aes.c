@@ -22,140 +22,140 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
 /* compatibility with old or broken OpenSSL versions */
-#include "openbsd-compat/openssl-compat.h"
+#شامل "openbsd-compat/openssl-compat.h"
 
-#ifdef USE_BUILTIN_RIJNDAEL
-#include <sys/types.h>
+#اگر_تعریف_شدہ USE_BUILTIN_RIJNDAEL
+#شامل <sys/types.h>
 
-#include <openssl/evp.h>
+#شامل <openssl/evp.h>
 
-#include <stdarg.h>
-#include <string.h>
+#شامل <stdarg.h>
+#شامل <string.h>
 
-#include "rijndael.h"
-#include "xmalloc.h"
-#include "log.h"
+#شامل "rijndael.h"
+#شامل "xmalloc.h"
+#شامل "log.h"
 
-#define RIJNDAEL_BLOCKSIZE 16
-struct ssh_rijndael_ctx
+#تعریف_کرو RIJNDAEL_BLOCKSIZE 16
+ساخت ssh_rijndael_ctx
 {
 	rijndael_ctx	r_ctx;
 	u_char		r_iv[RIJNDAEL_BLOCKSIZE];
 };
 
-static int
-ssh_rijndael_init(EVP_CIPHER_CTX *ctx, const u_char *key, const u_char *iv,
-    int enc)
+ساکن صحیح
+ssh_rijndael_init(EVP_CIPHER_CTX *ctx, ثابت u_char *کلید, ثابت u_char *iv,
+    صحیح enc)
 {
-	struct ssh_rijndael_ctx *c;
+	ساخت ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
-		c = xmalloc(sizeof(*c));
-		EVP_CIPHER_CTX_set_app_data(ctx, c);
+	اگر ((c = EVP_CIPHER_CTX_get_app_ڈیٹا(ctx)) == تہی) {
+		c = xmalloc(حجم(*c));
+		EVP_CIPHER_CTX_سیٹ_app_ڈیٹا(ctx, c);
 	}
-	if (key != NULL) {
-		if (enc == -1)
+	اگر (کلید != تہی) {
+		اگر (enc == -1)
 			enc = ctx->encrypt;
-		rijndael_set_key(&c->r_ctx, (u_char *)key,
-		    8*EVP_CIPHER_CTX_key_length(ctx), enc);
+		rijndael_سیٹ_کلید(&c->r_ctx, (u_char *)کلید,
+		    8*EVP_CIPHER_CTX_کلید_لمبائی(ctx), enc);
 	}
-	if (iv != NULL)
-		memcpy(c->r_iv, iv, RIJNDAEL_BLOCKSIZE);
-	return (1);
+	اگر (iv != تہی)
+		حافظہ_نقل(c->r_iv, iv, RIJNDAEL_BLOCKSIZE);
+	واپس (1);
 }
 
-static int
-ssh_rijndael_cbc(EVP_CIPHER_CTX *ctx, u_char *dest, const u_char *src,
-    size_t len)
+ساکن صحیح
+ssh_rijndael_cbc(EVP_CIPHER_CTX *ctx, u_char *dest, ثابت u_char *src,
+    سائز_t len)
 {
-	struct ssh_rijndael_ctx *c;
+	ساخت ssh_rijndael_ctx *c;
 	u_char buf[RIJNDAEL_BLOCKSIZE];
 	u_char *cprev, *cnow, *plain, *ivp;
-	int i, j, blocks = len / RIJNDAEL_BLOCKSIZE;
+	صحیح i, j, بلاکیں = len / RIJNDAEL_BLOCKSIZE;
 
-	if (len == 0)
-		return (1);
-	if (len % RIJNDAEL_BLOCKSIZE)
+	اگر (len == 0)
+		واپس (1);
+	اگر (len % RIJNDAEL_BLOCKSIZE)
 		fatal("ssh_rijndael_cbc: bad len %d", len);
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
+	اگر ((c = EVP_CIPHER_CTX_get_app_ڈیٹا(ctx)) == تہی) {
 		error("ssh_rijndael_cbc: no context");
-		return (0);
+		واپس (0);
 	}
-	if (ctx->encrypt) {
+	اگر (ctx->encrypt) {
 		cnow  = dest;
 		plain = (u_char *)src;
 		cprev = c->r_iv;
-		for (i = 0; i < blocks; i++, plain+=RIJNDAEL_BLOCKSIZE,
+		برائے (i = 0; i < بلاکیں; i++, plain+=RIJNDAEL_BLOCKSIZE,
 		    cnow+=RIJNDAEL_BLOCKSIZE) {
-			for (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
+			برائے (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
 				buf[j] = plain[j] ^ cprev[j];
 			rijndael_encrypt(&c->r_ctx, buf, cnow);
 			cprev = cnow;
 		}
-		memcpy(c->r_iv, cprev, RIJNDAEL_BLOCKSIZE);
-	} else {
+		حافظہ_نقل(c->r_iv, cprev, RIJNDAEL_BLOCKSIZE);
+	} ورنہ {
 		cnow  = (u_char *) (src+len-RIJNDAEL_BLOCKSIZE);
 		plain = dest+len-RIJNDAEL_BLOCKSIZE;
 
-		memcpy(buf, cnow, RIJNDAEL_BLOCKSIZE);
-		for (i = blocks; i > 0; i--, cnow-=RIJNDAEL_BLOCKSIZE,
+		حافظہ_نقل(buf, cnow, RIJNDAEL_BLOCKSIZE);
+		برائے (i = بلاکیں; i > 0; i--, cnow-=RIJNDAEL_BLOCKSIZE,
 		    plain-=RIJNDAEL_BLOCKSIZE) {
 			rijndael_decrypt(&c->r_ctx, cnow, plain);
 			ivp = (i == 1) ? c->r_iv : cnow-RIJNDAEL_BLOCKSIZE;
-			for (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
+			برائے (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
 				plain[j] ^= ivp[j];
 		}
-		memcpy(c->r_iv, buf, RIJNDAEL_BLOCKSIZE);
+		حافظہ_نقل(c->r_iv, buf, RIJNDAEL_BLOCKSIZE);
 	}
-	return (1);
+	واپس (1);
 }
 
-static int
+ساکن صحیح
 ssh_rijndael_cleanup(EVP_CIPHER_CTX *ctx)
 {
-	struct ssh_rijndael_ctx *c;
+	ساخت ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) != NULL) {
-		memset(c, 0, sizeof(*c));
-		free(c);
-		EVP_CIPHER_CTX_set_app_data(ctx, NULL);
+	اگر ((c = EVP_CIPHER_CTX_get_app_ڈیٹا(ctx)) != تہی) {
+		memset(c, 0, حجم(*c));
+		آزاد(c);
+		EVP_CIPHER_CTX_سیٹ_app_ڈیٹا(ctx, تہی);
 	}
-	return (1);
+	واپس (1);
 }
 
-void
-ssh_rijndael_iv(EVP_CIPHER_CTX *evp, int doset, u_char * iv, u_int len)
+خالی
+ssh_rijndael_iv(EVP_CIPHER_CTX *evp, صحیح doset, u_char * iv, u_int len)
 {
-	struct ssh_rijndael_ctx *c;
+	ساخت ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(evp)) == NULL)
+	اگر ((c = EVP_CIPHER_CTX_get_app_ڈیٹا(evp)) == تہی)
 		fatal("ssh_rijndael_iv: no context");
-	if (doset)
-		memcpy(c->r_iv, iv, len);
-	else
-		memcpy(iv, c->r_iv, len);
+	اگر (doset)
+		حافظہ_نقل(c->r_iv, iv, len);
+	ورنہ
+		حافظہ_نقل(iv, c->r_iv, len);
 }
 
-const EVP_CIPHER *
-evp_rijndael(void)
+ثابت EVP_CIPHER *
+evp_rijndael(خالی)
 {
-	static EVP_CIPHER rijndal_cbc;
+	ساکن EVP_CIPHER rijndal_cbc;
 
-	memset(&rijndal_cbc, 0, sizeof(EVP_CIPHER));
+	memset(&rijndal_cbc, 0, حجم(EVP_CIPHER));
 	rijndal_cbc.nid = NID_undef;
-	rijndal_cbc.block_size = RIJNDAEL_BLOCKSIZE;
+	rijndal_cbc.بلاک_سائز = RIJNDAEL_BLOCKSIZE;
 	rijndal_cbc.iv_len = RIJNDAEL_BLOCKSIZE;
-	rijndal_cbc.key_len = 16;
+	rijndal_cbc.کلید_len = 16;
 	rijndal_cbc.init = ssh_rijndael_init;
 	rijndal_cbc.cleanup = ssh_rijndael_cleanup;
 	rijndal_cbc.do_cipher = ssh_rijndael_cbc;
-#ifndef SSH_OLD_EVP
-	rijndal_cbc.flags = EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH |
+#اگر_غیر_تعریف_شدہ SSH_OLD_EVP
+	rijndal_cbc.flags = EVP_CIPH_CBC_منوال | EVP_CIPH_VARIABLE_لمبائی |
 	    EVP_CIPH_ALWAYS_CALL_INIT | EVP_CIPH_CUSTOM_IV;
-#endif
-	return (&rijndal_cbc);
+#اگر_ختم
+	واپس (&rijndal_cbc);
 }
-#endif /* USE_BUILTIN_RIJNDAEL */
+#اگر_ختم /* USE_BUILTIN_RIJNDAEL */

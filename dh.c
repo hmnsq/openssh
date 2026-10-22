@@ -23,310 +23,310 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#اگر_تعریف_شدہ WITH_OPENSSL
+#شامل "openbsd-compat/openssl-compat.h"
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+#شامل <errno.h>
+#شامل <stdarg.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <limits.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#شامل <openssl/bn.h>
+#شامل <openssl/dh.h>
 
-#include "dh.h"
-#include "pathnames.h"
-#include "log.h"
-#include "misc.h"
-#include "ssherr.h"
+#شامل "dh.h"
+#شامل "pathnames.h"
+#شامل "log.h"
+#شامل "misc.h"
+#شامل "ssherr.h"
 
-static const char *moduli_filename;
+ساکن ثابت حرف *moduli_filename;
 
-void dh_set_moduli_file(const char *filename)
+خالی dh_سیٹ_moduli_file(ثابت حرف *filename)
 {
 	moduli_filename = filename;
 }
 
-static const char * get_moduli_filename(void)
+ساکن ثابت حرف * get_moduli_filename(خالی)
 {
-	return moduli_filename ? moduli_filename : _PATH_DH_MODULI;
+	واپس moduli_filename ? moduli_filename : راستہ_DH_MODULI;
 }
 
-static int
-parse_prime(int linenum, char *line, struct dhgroup *dhg)
+ساکن صحیح
+parse_مفرد(صحیح linenum, حرف *سطر, ساخت dhgroup *dhg)
 {
-	char *cp, *arg;
-	char *strsize, *gen, *prime;
-	const char *errstr = NULL;
-	long long n;
+	حرف *cp, *arg;
+	حرف *strsize, *gen, *مفرد;
+	ثابت حرف *errstr = تہی;
+	طویل طویل n;
 
-	dhg->p = dhg->g = NULL;
-	cp = line;
-	if ((arg = strdelim(&cp)) == NULL)
-		return 0;
+	dhg->p = dhg->g = تہی;
+	cp = سطر;
+	اگر ((arg = strdelim(&cp)) == تہی)
+		واپس 0;
 	/* Ignore leading whitespace */
-	if (*arg == '\0')
+	اگر (*arg == '\0')
 		arg = strdelim(&cp);
-	if (!arg || !*arg || *arg == '#')
-		return 0;
+	اگر (!arg || !*arg || *arg == '#')
+		واپس 0;
 
-	/* time */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	/*وقت*/
+	اگر (cp == تہی || *arg == '\0')
+		جاؤ truncated;
 	arg = strsep(&cp, " "); /* type */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	اگر (cp == تہی || *arg == '\0')
+		جاؤ truncated;
 	/* Ensure this is a safe prime */
 	n = strtonum(arg, 0, 5, &errstr);
-	if (errstr != NULL || n != MODULI_TYPE_SAFE) {
-		error("moduli:%d: type is not %d", linenum, MODULI_TYPE_SAFE);
-		goto fail;
+	اگر (errstr != تہی || n != MODULI_TYPE_محفوظ) {
+		error("moduli:%d: type is not %d", linenum, MODULI_TYPE_محفوظ);
+		جاؤ fail;
 	}
 	arg = strsep(&cp, " "); /* tests */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	اگر (cp == تہی || *arg == '\0')
+		جاؤ truncated;
 	/* Ensure prime has been tested and is not composite */
 	n = strtonum(arg, 0, 0x1f, &errstr);
-	if (errstr != NULL ||
-	    (n & MODULI_TESTS_COMPOSITE) || !(n & ~MODULI_TESTS_COMPOSITE)) {
+	اگر (errstr != تہی ||
+	    (n & MODULI_TESTS_مرکب) || !(n & ~MODULI_TESTS_مرکب)) {
 		error("moduli:%d: invalid moduli tests flag", linenum);
-		goto fail;
+		جاؤ fail;
 	}
 	arg = strsep(&cp, " "); /* tries */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	اگر (cp == تہی || *arg == '\0')
+		جاؤ truncated;
 	n = strtonum(arg, 0, 1<<30, &errstr);
-	if (errstr != NULL || n == 0) {
+	اگر (errstr != تہی || n == 0) {
 		error("moduli:%d: invalid primality trial count", linenum);
-		goto fail;
+		جاؤ fail;
 	}
-	strsize = strsep(&cp, " "); /* size */
-	if (cp == NULL || *strsize == '\0' ||
-	    (dhg->size = (int)strtonum(strsize, 0, 64*1024, &errstr)) == 0 ||
+	strsize = strsep(&cp, " "); /*سائز*/
+	اگر (cp == تہی || *strsize == '\0' ||
+	    (dhg->سائز = (صحیح)strtonum(strsize, 0, 64*1024, &errstr)) == 0 ||
 	    errstr) {
 		error("moduli:%d: invalid prime length", linenum);
-		goto fail;
+		جاؤ fail;
 	}
 	/* The whole group is one bit larger */
-	dhg->size++;
+	dhg->سائز++;
 	gen = strsep(&cp, " "); /* gen */
-	if (cp == NULL || *gen == '\0')
-		goto truncated;
-	prime = strsep(&cp, " "); /* prime */
-	if (cp != NULL || *prime == '\0') {
+	اگر (cp == تہی || *gen == '\0')
+		جاؤ truncated;
+	مفرد = strsep(&cp, " "); /*مفرد*/
+	اگر (cp != تہی || *مفرد == '\0') {
  truncated:
 		error("moduli:%d: truncated", linenum);
-		goto fail;
+		جاؤ fail;
 	}
 
-	if ((dhg->g = BN_new()) == NULL ||
-	    (dhg->p = BN_new()) == NULL) {
+	اگر ((dhg->g = BN_new()) == تہی ||
+	    (dhg->p = BN_new()) == تہی) {
 		error("parse_prime: BN_new failed");
-		goto fail;
+		جاؤ fail;
 	}
-	if (BN_hex2bn(&dhg->g, gen) == 0) {
+	اگر (BN_hex2bn(&dhg->g, gen) == 0) {
 		error("moduli:%d: could not parse generator value", linenum);
-		goto fail;
+		جاؤ fail;
 	}
-	if (BN_hex2bn(&dhg->p, prime) == 0) {
+	اگر (BN_hex2bn(&dhg->p, مفرد) == 0) {
 		error("moduli:%d: could not parse prime value", linenum);
-		goto fail;
+		جاؤ fail;
 	}
-	if (BN_num_bits(dhg->p) != dhg->size) {
+	اگر (BN_عدد_بٹ(dhg->p) != dhg->سائز) {
 		error("moduli:%d: prime has wrong size: actual %d listed %d",
-		    linenum, BN_num_bits(dhg->p), dhg->size - 1);
-		goto fail;
+		    linenum, BN_عدد_بٹ(dhg->p), dhg->سائز - 1);
+		جاؤ fail;
 	}
-	if (BN_cmp(dhg->g, BN_value_one()) <= 0) {
+	اگر (BN_cmp(dhg->g, BN_قدر_one()) <= 0) {
 		error("moduli:%d: generator is invalid", linenum);
-		goto fail;
+		جاؤ fail;
 	}
-	return 1;
+	واپس 1;
 
  fail:
 	BN_clear_free(dhg->g);
 	BN_clear_free(dhg->p);
-	dhg->g = dhg->p = NULL;
-	return 0;
+	dhg->g = dhg->p = تہی;
+	واپس 0;
 }
 
 DH *
-choose_dh(int min, int wantbits, int max)
+انتخاب_dh(صحیح min, صحیح wantbits, صحیح max)
 {
 	FILE *f;
-	char *line = NULL;
-	size_t linesize = 0;
-	int best, bestcount, which, linenum;
-	struct dhgroup dhg;
+	حرف *سطر = تہی;
+	سائز_t linesize = 0;
+	صحیح بہترین, bestcount, which, linenum;
+	ساخت dhgroup dhg;
 
-	if ((f = fopen(get_moduli_filename(), "r")) == NULL) {
+	اگر ((f = fopen(get_moduli_filename(), "r")) == تہی) {
 		logit("WARNING: could not open %s (%s), using fixed modulus",
 		    get_moduli_filename(), strerror(errno));
-		return (dh_new_group_fallback(max));
+		واپس (dh_new_گروہ_fallback(max));
 	}
 
 	linenum = 0;
-	best = bestcount = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	بہترین = bestcount = 0;
+	جب (getline(&سطر, &linesize, f) != -1) {
 		linenum++;
-		if (!parse_prime(linenum, line, &dhg))
-			continue;
+		اگر (!parse_مفرد(linenum, سطر, &dhg))
+			جاری;
 		BN_clear_free(dhg.g);
 		BN_clear_free(dhg.p);
 
-		if (dhg.size > max || dhg.size < min)
-			continue;
+		اگر (dhg.سائز > max || dhg.سائز < min)
+			جاری;
 
-		if ((dhg.size > wantbits && dhg.size < best) ||
-		    (dhg.size > best && best < wantbits)) {
-			best = dhg.size;
+		اگر ((dhg.سائز > wantbits && dhg.سائز < بہترین) ||
+		    (dhg.سائز > بہترین && بہترین < wantbits)) {
+			بہترین = dhg.سائز;
 			bestcount = 0;
 		}
-		if (dhg.size == best)
+		اگر (dhg.سائز == بہترین)
 			bestcount++;
 	}
-	free(line);
-	line = NULL;
+	آزاد(سطر);
+	سطر = تہی;
 	linesize = 0;
 	rewind(f);
 
-	if (bestcount == 0) {
+	اگر (bestcount == 0) {
 		fclose(f);
 		logit("WARNING: no suitable primes (size %d/%d/%d) in %s",
 		    min, wantbits, max, get_moduli_filename());
-		return NULL;
+		واپس تہی;
 	}
-	which = arc4random_uniform(bestcount);
+	which = arc4random_یکساں(bestcount);
 
 	linenum = 0;
 	bestcount = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	جب (getline(&سطر, &linesize, f) != -1) {
 		linenum++;
-		if (!parse_prime(linenum, line, &dhg))
-			continue;
-		if ((dhg.size > max || dhg.size < min) ||
-		    dhg.size != best ||
+		اگر (!parse_مفرد(linenum, سطر, &dhg))
+			جاری;
+		اگر ((dhg.سائز > max || dhg.سائز < min) ||
+		    dhg.سائز != بہترین ||
 		    bestcount++ != which) {
 			BN_clear_free(dhg.g);
 			BN_clear_free(dhg.p);
-			continue;
+			جاری;
 		}
-		break;
+		توڑو;
 	}
-	free(line);
-	line = NULL;
+	آزاد(سطر);
+	سطر = تہی;
 	fclose(f);
-	if (bestcount != which + 1) {
+	اگر (bestcount != which + 1) {
 		logit("WARNING: selected prime disappeared in %s, giving up",
 		    get_moduli_filename());
-		return (dh_new_group_fallback(max));
+		واپس (dh_new_گروہ_fallback(max));
 	}
 
-	return (dh_new_group(dhg.g, dhg.p));
+	واپس (dh_new_گروہ(dhg.g, dhg.p));
 }
 
 /* diffie-hellman-groupN-sha1 */
 
-int
-dh_pub_is_valid(const DH *dh, const BIGNUM *dh_pub)
+صحیح
+dh_pub_is_valid(ثابت DH *dh, ثابت BIGNUM *dh_pub)
 {
-	int i;
-	int n = BN_num_bits(dh_pub);
-	int bits_set = 0;
+	صحیح i;
+	صحیح n = BN_عدد_بٹ(dh_pub);
+	صحیح بٹ_سیٹ = 0;
 	BIGNUM *tmp;
-	const BIGNUM *dh_p;
+	ثابت BIGNUM *dh_p;
 
-	DH_get0_pqg(dh, &dh_p, NULL, NULL);
+	DH_get0_pqg(dh, &dh_p, تہی, تہی);
 
-	if (BN_is_negative(dh_pub)) {
+	اگر (BN_is_negative(dh_pub)) {
 		logit("invalid public DH value: negative");
-		return 0;
+		واپس 0;
 	}
-	if (BN_cmp(dh_pub, BN_value_one()) != 1) {	/* pub_exp <= 1 */
+	اگر (BN_cmp(dh_pub, BN_قدر_one()) != 1) {	/* pub_exp <= 1 */
 		logit("invalid public DH value: <= 1");
-		return 0;
+		واپس 0;
 	}
 
-	if ((tmp = BN_new()) == NULL) {
+	اگر ((tmp = BN_new()) == تہی) {
 		error_f("BN_new failed");
-		return 0;
+		واپس 0;
 	}
-	if (!BN_sub(tmp, dh_p, BN_value_one()) ||
+	اگر (!BN_sub(tmp, dh_p, BN_قدر_one()) ||
 	    BN_cmp(dh_pub, tmp) != -1) {		/* pub_exp > p-2 */
 		BN_clear_free(tmp);
 		logit("invalid public DH value: >= p-1");
-		return 0;
+		واپس 0;
 	}
 	BN_clear_free(tmp);
 
-	for (i = 0; i <= n; i++)
-		if (BN_is_bit_set(dh_pub, i))
-			bits_set++;
-	debug2("bits set: %d/%d", bits_set, BN_num_bits(dh_p));
+	برائے (i = 0; i <= n; i++)
+		اگر (BN_is_ثنائی_ہندسہ_سیٹ(dh_pub, i))
+			بٹ_سیٹ++;
+	debug2("bits set: %d/%d", بٹ_سیٹ, BN_عدد_بٹ(dh_p));
 
 	/*
 	 * if g==2 and bits_set==1 then computing log_g(dh_pub) is trivial
 	 */
-	if (bits_set < 4) {
+	اگر (بٹ_سیٹ < 4) {
 		logit("invalid public DH value (%d/%d)",
-		    bits_set, BN_num_bits(dh_p));
-		return 0;
+		    بٹ_سیٹ, BN_عدد_بٹ(dh_p));
+		واپس 0;
 	}
-	return 1;
+	واپس 1;
 }
 
-int
-dh_gen_key(DH *dh, int need)
+صحیح
+dh_gen_کلید(DH *dh, صحیح need)
 {
-	int pbits;
-	const BIGNUM *dh_p, *pub_key;
+	صحیح pbits;
+	ثابت BIGNUM *dh_p, *pub_کلید;
 
-	DH_get0_pqg(dh, &dh_p, NULL, NULL);
+	DH_get0_pqg(dh, &dh_p, تہی, تہی);
 
-	if (need < 0 || dh_p == NULL ||
-	    (pbits = BN_num_bits(dh_p)) <= 0 ||
-	    need > INT_MAX / 2 || 2 * need > pbits)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (need < 256)
+	اگر (need < 0 || dh_p == تہی ||
+	    (pbits = BN_عدد_بٹ(dh_p)) <= 0 ||
+	    need > زیادہ_سے_زیادہ_عدد / 2 || 2 * need > pbits)
+		واپس SSH_ERR_INVALID_دلیل;
+	اگر (need < 256)
 		need = 256;
 	/*
 	 * Pollard Rho, Big step/Little Step attacks are O(sqrt(n)),
 	 * so double requested need here.
 	 */
-	if (!DH_set_length(dh, MINIMUM(need * 2, pbits - 1)))
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	اگر (!DH_سیٹ_لمبائی(dh, MINIMUM(need * 2, pbits - 1)))
+		واپس SSH_ERR_LIBCRYPTO_ERROR;
 
-	if (DH_generate_key(dh) == 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	DH_get0_key(dh, &pub_key, NULL);
-	if (!dh_pub_is_valid(dh, pub_key))
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	اگر (DH_generate_کلید(dh) == 0)
+		واپس SSH_ERR_LIBCRYPTO_ERROR;
+	DH_get0_کلید(dh, &pub_کلید, تہی);
+	اگر (!dh_pub_is_valid(dh, pub_کلید))
+		واپس SSH_ERR_INVALID_FORMAT;
+	واپس 0;
 }
 
 DH *
-dh_new_group_asc(const char *gen, const char *modulus)
+dh_new_گروہ_asc(ثابت حرف *gen, ثابت حرف *modulus)
 {
 	DH *dh;
-	BIGNUM *dh_p = NULL, *dh_g = NULL;
+	BIGNUM *dh_p = تہی, *dh_g = تہی;
 
-	if ((dh = DH_new()) == NULL)
-		return NULL;
-	if (BN_hex2bn(&dh_p, modulus) == 0 ||
+	اگر ((dh = DH_new()) == تہی)
+		واپس تہی;
+	اگر (BN_hex2bn(&dh_p, modulus) == 0 ||
 	    BN_hex2bn(&dh_g, gen) == 0)
-		goto fail;
-	if (!DH_set0_pqg(dh, dh_p, NULL, dh_g))
-		goto fail;
-	return dh;
+		جاؤ fail;
+	اگر (!DH_set0_pqg(dh, dh_p, تہی, dh_g))
+		جاؤ fail;
+	واپس dh;
  fail:
 	DH_free(dh);
 	BN_clear_free(dh_p);
 	BN_clear_free(dh_g);
-	return NULL;
+	واپس تہی;
 }
 
 /*
@@ -334,25 +334,25 @@ dh_new_group_asc(const char *gen, const char *modulus)
  * value.
  */
 DH *
-dh_new_group(BIGNUM *gen, BIGNUM *modulus)
+dh_new_گروہ(BIGNUM *gen, BIGNUM *modulus)
 {
 	DH *dh;
 
-	if ((dh = DH_new()) == NULL)
-		return NULL;
-	if (!DH_set0_pqg(dh, modulus, NULL, gen)) {
+	اگر ((dh = DH_new()) == تہی)
+		واپس تہی;
+	اگر (!DH_set0_pqg(dh, modulus, تہی, gen)) {
 		DH_free(dh);
-		return NULL;
+		واپس تہی;
 	}
 
-	return dh;
+	واپس dh;
 }
 
 /* rfc2409 "Second Oakley Group" (1024 bits) */
 DH *
-dh_new_group1(void)
+dh_new_group1(خالی)
 {
-	static char *gen = "2", *group1 =
+	ساکن حرف *gen = "2", *group1 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -360,14 +360,14 @@ dh_new_group1(void)
 	    "EE386BFB" "5A899FA5" "AE9F2411" "7C4B1FE6" "49286651" "ECE65381"
 	    "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group1));
+	واپس (dh_new_گروہ_asc(gen, group1));
 }
 
 /* rfc3526 group 14 "2048-bit MODP Group" */
 DH *
-dh_new_group14(void)
+dh_new_group14(خالی)
 {
-	static char *gen = "2", *group14 =
+	ساکن حرف *gen = "2", *group14 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -380,14 +380,14 @@ dh_new_group14(void)
 	    "DE2BCBF6" "95581718" "3995497C" "EA956AE5" "15D22618" "98FA0510"
 	    "15728E5A" "8AACAA68" "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group14));
+	واپس (dh_new_گروہ_asc(gen, group14));
 }
 
 /* rfc3526 group 16 "4096-bit MODP Group" */
 DH *
-dh_new_group16(void)
+dh_new_group16(خالی)
 {
-	static char *gen = "2", *group16 =
+	ساکن حرف *gen = "2", *group16 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -411,14 +411,14 @@ dh_new_group16(void)
 	    "93B4EA98" "8D8FDDC1" "86FFB7DC" "90A6C08F" "4DF435C9" "34063199"
 	    "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group16));
+	واپس (dh_new_گروہ_asc(gen, group16));
 }
 
 /* rfc3526 group 18 "8192-bit MODP Group" */
 DH *
-dh_new_group18(void)
+dh_new_group18(خالی)
 {
-	static char *gen = "2", *group18 =
+	ساکن حرف *gen = "2", *group18 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -463,23 +463,23 @@ dh_new_group18(void)
 	    "9558E447" "5677E9AA" "9E3050E2" "765694DF" "C81F56E8" "80B96E71"
 	    "60C980DD" "98EDD3DF" "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group18));
+	واپس (dh_new_گروہ_asc(gen, group18));
 }
 
 /* Select fallback group used by DH-GEX if moduli file cannot be read. */
 DH *
-dh_new_group_fallback(int max)
+dh_new_گروہ_fallback(صحیح max)
 {
 	debug3_f("requested max size %d", max);
-	if (max < 3072) {
+	اگر (max < 3072) {
 		debug3("using 2k bit group 14");
-		return dh_new_group14();
-	} else if (max < 6144) {
+		واپس dh_new_group14();
+	} ورنہ اگر (max < 6144) {
 		debug3("using 4k bit group 16");
-		return dh_new_group16();
+		واپس dh_new_group16();
 	}
 	debug3("using 8k bit group 18");
-	return dh_new_group18();
+	واپس dh_new_group18();
 }
 
 /*
@@ -490,15 +490,15 @@ dh_new_group_fallback(int max)
  * from RFC4419 section 3.
  */
 u_int
-dh_estimate(int bits)
+dh_estimate(صحیح بٹ)
 {
-	if (bits <= 112)
-		return 2048;
-	if (bits <= 128)
-		return 3072;
-	if (bits <= 192)
-		return 7680;
-	return 8192;
+	اگر (بٹ <= 112)
+		واپس 2048;
+	اگر (بٹ <= 128)
+		واپس 3072;
+	اگر (بٹ <= 192)
+		واپس 7680;
+	واپس 8192;
 }
 
-#endif /* WITH_OPENSSL */
+#اگر_ختم /* WITH_OPENSSL */

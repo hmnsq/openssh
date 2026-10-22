@@ -30,91 +30,91 @@
 
 /* OPENBSD ORIGINAL: lib/libc/rpc/bindresvport.c */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#ifndef HAVE_BINDRESVPORT_SA
-#include <sys/types.h>
-#include <sys/socket.h>
+#اگر_غیر_تعریف_شدہ HAVE_BINDRESVPORT_SA
+#شامل <sys/types.h>
+#شامل <sys/socket.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#شامل <netinet/in.h>
+#شامل <arpa/inet.h>
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <errno.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#define STARTPORT 600
-#define ENDPORT (IPPORT_RESERVED - 1)
-#define NPORTS	(ENDPORT - STARTPORT + 1)
+#تعریف_کرو STARTPORT 600
+#تعریف_کرو ENDPORT (IPPORT_RESERVED - 1)
+#تعریف_کرو NPORTS	(ENDPORT - STARTPORT + 1)
 
 /*
  * Bind a socket to a privileged IP port
  */
-int
-bindresvport_sa(int sd, struct sockaddr *sa)
+صحیح
+bindresvport_sa(صحیح sd, ساخت sockaddr *sa)
 {
-	int error, af;
-	struct sockaddr_storage myaddr;
-	struct sockaddr_in *in;
-	struct sockaddr_in6 *in6;
+	صحیح error, af;
+	ساخت sockaddr_storage myaddr;
+	ساخت sockaddr_in *اندر;
+	ساخت sockaddr_in6 *in6;
 	u_int16_t *portp;
-	u_int16_t port;
+	u_int16_t پورٹ;
 	socklen_t salen;
-	int i;
+	صحیح i;
 
-	if (sa == NULL) {
-		memset(&myaddr, 0, sizeof(myaddr));
-		sa = (struct sockaddr *)&myaddr;
-		salen = sizeof(myaddr);
+	اگر (sa == تہی) {
+		memset(&myaddr, 0, حجم(myaddr));
+		sa = (ساخت sockaddr *)&myaddr;
+		salen = حجم(myaddr);
 
-		if (getsockname(sd, sa, &salen) == -1)
-			return -1;	/* errno is correctly set */
+		اگر (getsockname(sd, sa, &salen) == -1)
+			واپس -1;	/* errno is correctly set */
 
 		af = sa->sa_family;
 		memset(&myaddr, 0, salen);
-	} else
+	} ورنہ
 		af = sa->sa_family;
 
-	if (af == AF_INET) {
-		in = (struct sockaddr_in *)sa;
-		salen = sizeof(struct sockaddr_in);
-		portp = &in->sin_port;
-	} else if (af == AF_INET6) {
-		in6 = (struct sockaddr_in6 *)sa;
-		salen = sizeof(struct sockaddr_in6);
+	اگر (af == AF_INET) {
+		اندر = (ساخت sockaddr_in *)sa;
+		salen = حجم(ساخت sockaddr_in);
+		portp = &اندر->sin_port;
+	} ورنہ اگر (af == AF_INET6) {
+		in6 = (ساخت sockaddr_in6 *)sa;
+		salen = حجم(ساخت sockaddr_in6);
 		portp = &in6->sin6_port;
-	} else {
+	} ورنہ {
 		errno = EPFNOSUPPORT;
-		return (-1);
+		واپس (-1);
 	}
 	sa->sa_family = af;
 
-	port = ntohs(*portp);
-	if (port == 0)
-		port = arc4random_uniform(NPORTS) + STARTPORT;
+	پورٹ = ntohs(*portp);
+	اگر (پورٹ == 0)
+		پورٹ = arc4random_یکساں(NPORTS) + STARTPORT;
 
 	/* Avoid warning */
 	error = -1;
 
-	for(i = 0; i < NPORTS; i++) {
-		*portp = htons(port);
+	برائے(i = 0; i < NPORTS; i++) {
+		*portp = htons(پورٹ);
 		
 		error = bind(sd, sa, salen);
 
 		/* Terminate on success */
-		if (error == 0)
-			break;
+		اگر (error == 0)
+			توڑو;
 			
 		/* Terminate on errors, except "address already in use" */
-		if ((error < 0) && !((errno == EADDRINUSE) || (errno == EINVAL)))
-			break;
+		اگر ((error < 0) && !((errno == EADDRINUSE) || (errno == EINVAL)))
+			توڑو;
 			
-		port++;
-		if (port > ENDPORT)
-			port = STARTPORT;
+		پورٹ++;
+		اگر (پورٹ > ENDPORT)
+			پورٹ = STARTPORT;
 	}
 
-	return (error);
+	واپس (error);
 }
 
-#endif /* HAVE_BINDRESVPORT_SA */
+#اگر_ختم /* HAVE_BINDRESVPORT_SA */

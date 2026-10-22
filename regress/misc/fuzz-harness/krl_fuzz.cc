@@ -1,54 +1,54 @@
 // libfuzzer driver for krl parse fuzzing.
 
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
+#شامل <stddef.h>
+#شامل <stdint.h>
+#شامل <string.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
 
-extern "C" {
-#include "includes.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "krl.h"
-#include "log.h"
-#include "authfile.h"
+خارجی "C" {
+#شامل "includes.h"
+#شامل "sshkey.h"
+#شامل "sshbuf.h"
+#شامل "ssherr.h"
+#شامل "krl.h"
+#شامل "log.h"
+#شامل "authfile.h"
 }
 
-static int initialised = 0;
-static FILE *null_file;
-static struct sshkey *key = NULL;
+ساکن صحیح initialised = 0;
+ساکن FILE *null_file;
+ساکن ساخت sshkey *کلید = تہی;
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+خارجی "C" صحیح LLVMFuzzer_Test_One_داخلہ(ثابت uint8_t *ڈیٹا, سائز_t سائز) {
     // single initialisation
-    if (!initialised) {
+    اگر (!initialised) {
         log_init("krl_fuzz", SYSLOG_LEVEL_ERROR, SYSLOG_FACILITY_AUTH, 0);
 
-        if ((null_file = fopen("/dev/null", "w")) == NULL) return 0;
+        اگر ((null_file = fopen("/dev/null", "w")) == تہی) واپس 0;
 
-        if (sshkey_generate(KEY_ED25519, 0, &key) != 0) return 0;
+        اگر (sshkey_generate(کلید_ED25519, 0, &کلید) != 0) واپس 0;
 
         initialised = 1;
     }
 
     // Reject empty corpus
-    if (size < 4) return 0;
+    اگر (سائز < 4) واپس 0;
 
     // Convert fuzzer data to ssh buffer
-    struct sshbuf *buf = sshbuf_from(data, size);
-    if (!buf) return 0;
+    ساخت sshbuf *buf = sshbuf_from(ڈیٹا, سائز);
+    اگر (!buf) واپس 0;
 
     // Parse the ssh buffer as krl, early exit if failed
-    struct ssh_krl *krl = NULL;
-    int ret = ssh_krl_from_blob(buf, &krl);
+    ساخت ssh_krl *krl = تہی;
+    صحیح ret = ssh_krl_from_blob(buf, &krl);
     sshbuf_free(buf);
-    if (ret != 0) return 0;
+    اگر (ret != 0) واپس 0;
 
     // Fuzz serailisation roundtrip
-    struct sshbuf *output = sshbuf_new();
-    struct ssh_krl *krl2 = NULL;
-    ssh_krl_to_blob(krl, output);
+    ساخت sshbuf *output = sshbuf_new();
+    ساخت ssh_krl *krl2 = تہی;
+    ssh_krl_مقصد_blob(krl, output);
     ssh_krl_from_blob(output, &krl2);
     ssh_krl_free(krl2);
     sshbuf_free(output);
@@ -57,8 +57,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     krl_dump(krl, null_file);
 
     // Fuzz ssh_krl_check_key
-    ssh_krl_check_key(krl, key);
+    ssh_krl_check_کلید(krl, کلید);
 
     ssh_krl_free(krl);
-    return 0;
+    واپس 0;
 }

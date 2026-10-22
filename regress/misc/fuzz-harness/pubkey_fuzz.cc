@@ -1,17 +1,17 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
+#شامل <stddef.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
 
-extern "C" {
+خارجی "C" {
 
-#include "sshkey.h"
+#شامل "sshkey.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+صحیح LLVMFuzzer_Test_One_داخلہ(ثابت uint8_t* ڈیٹا, سائز_t سائز)
 {
-	struct sshkey *k = NULL;
-	int r = sshkey_from_blob(data, size, &k);
-	if (r == 0) sshkey_free(k);
-	return 0;
+	ساخت sshkey *k = تہی;
+	صحیح r = sshkey_from_blob(ڈیٹا, سائز, &k);
+	اگر (r == 0) sshkey_free(k);
+	واپس 0;
 }
 
 } // extern

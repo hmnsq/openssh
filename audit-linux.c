@@ -25,37 +25,37 @@
  * Red Hat author: Jan F. Chadima <jchadima@redhat.com>
  */
 
-#include "includes.h"
-#if defined(USE_LINUX_AUDIT)
-#include <libaudit.h>
-#include <unistd.h>
-#include <string.h>
+#شامل "includes.h"
+#اگر defined(USE_LINUX_AUDIT)
+#شامل <libaudit.h>
+#شامل <unistd.h>
+#شامل <string.h>
 
-#include "log.h"
-#include "audit.h"
-#include "canohost.h"
-#include "packet.h"
+#شامل "log.h"
+#شامل "audit.h"
+#شامل "canohost.h"
+#شامل "packet.h"
 
-const char *audit_username(void);
+ثابت حرف *audit_username(خالی);
 
-int
-linux_audit_record_event(int uid, const char *username, const char *hostname,
-    const char *ip, const char *ttyn, int success)
+صحیح
+linux_audit_ریکارڈ_event(صحیح uid, ثابت حرف *username, ثابت حرف *hostname,
+    ثابت حرف *ip, ثابت حرف *ttyn, صحیح success)
 {
-	int audit_fd, rc, saved_errno;
+	صحیح audit_fd, rc, saved_errno;
 
-	if ((audit_fd = audit_open()) < 0) {
-		if (errno == EINVAL || errno == EPROTONOSUPPORT ||
+	اگر ((audit_fd = audit_open()) < 0) {
+		اگر (errno == EINVAL || errno == EPROTONOSUPPORT ||
 		    errno == EAFNOSUPPORT)
-			return 1; /* No audit support in kernel */
-		else
-			return 0; /* Must prevent login */
+			واپس 1; /* No audit support in kernel */
+		ورنہ
+			واپس 0; /* Must prevent login */
 	}
-        if (hostname != NULL && strcmp(hostname, "UNKNOWN") == 0)
-                hostname = NULL;
-	rc = audit_log_acct_message(audit_fd, AUDIT_USER_LOGIN,
-	    NULL, "login", username ? username : "(unknown)",
-	    username == NULL ? uid : -1, hostname, ip, ttyn, success);
+        اگر (hostname != تہی && strcmp(hostname, "UNKNOWN") == 0)
+                hostname = تہی;
+	rc = audit_log_acct_پیغام(audit_fd, AUDIT_USER_LOGIN,
+	    تہی, "login", username ? username : "(unknown)",
+	    username == تہی ? uid : -1, hostname, ip, ttyn, success);
 	saved_errno = errno;
 	close(audit_fd);
 
@@ -63,64 +63,64 @@ linux_audit_record_event(int uid, const char *username, const char *hostname,
 	 * Do not report error if the error is EPERM and sshd is run as non
 	 * root user.
 	 */
-	if ((rc == -EPERM) && (geteuid() != 0))
+	اگر ((rc == -EPERM) && (geteuid() != 0))
 		rc = 0;
 	errno = saved_errno;
 
-	return rc >= 0;
+	واپس rc >= 0;
 }
 
 /* Below is the sshd audit API code */
 
-void
-audit_connection_from(const char *host, int port)
+خالی
+audit_connection_from(ثابت حرف *host, صحیح پورٹ)
 {
 	/* not implemented */
 }
 
-void
-audit_run_command(const char *command)
+خالی
+audit_تسلسل_command(ثابت حرف *command)
 {
 	/* not implemented */
 }
 
-void
-audit_session_open(struct logininfo *li)
+خالی
+audit_session_open(ساخت logininfo *li)
 {
-	if (linux_audit_record_event(li->uid, NULL, li->hostname, NULL,
-	    li->line, 1) == 0)
+	اگر (linux_audit_ریکارڈ_event(li->uid, تہی, li->hostname, تہی,
+	    li->سطر, 1) == 0)
 		fatal("linux_audit_write_entry failed: %s", strerror(errno));
 }
 
-void
-audit_session_close(struct logininfo *li)
+خالی
+audit_session_close(ساخت logininfo *li)
 {
 	/* not implemented */
 }
 
-void
-audit_event(struct ssh *ssh, ssh_audit_event_t event)
+خالی
+audit_event(ساخت ssh *ssh, ssh_audit_event_t event)
 {
-	switch(event) {
-	case SSH_AUTH_SUCCESS:
-	case SSH_CONNECTION_CLOSE:
-	case SSH_NOLOGIN:
-	case SSH_LOGIN_EXCEED_MAXTRIES:
-	case SSH_LOGIN_ROOT_DENIED:
-		break;
-	case SSH_AUTH_FAIL_NONE:
-	case SSH_AUTH_FAIL_PASSWD:
-	case SSH_AUTH_FAIL_KBDINT:
-	case SSH_AUTH_FAIL_PUBKEY:
-	case SSH_AUTH_FAIL_HOSTBASED:
-	case SSH_AUTH_FAIL_GSSAPI:
-	case SSH_INVALID_USER:
-		linux_audit_record_event(-1, audit_username(), NULL,
+	انتخاب(event) {
+	حالت SSH_AUTH_SUCCESS:
+	حالت SSH_CONNECTION_CLOSE:
+	حالت SSH_NOLOGIN:
+	حالت SSH_LOGIN_EXCEED_MAXTRIES:
+	حالت SSH_LOGIN_جڑ_DENIED:
+		توڑو;
+	حالت SSH_AUTH_FAIL_NONE:
+	حالت SSH_AUTH_FAIL_PASSWD:
+	حالت SSH_AUTH_FAIL_KBDINT:
+	حالت SSH_AUTH_FAIL_PUBKEY:
+	حالت SSH_AUTH_FAIL_HOSTBASED:
+	حالت SSH_AUTH_FAIL_GSSAPI:
+	حالت SSH_INVALID_USER:
+		linux_audit_ریکارڈ_event(-1, audit_username(), تہی,
 		    ssh_remote_ipaddr(ssh), "sshd", 0);
-		break;
-	default:
+		توڑو;
+	طےشدہ:
 		debug_f("unhandled event %d", event);
-		break;
+		توڑو;
 	}
 }
-#endif /* USE_LINUX_AUDIT */
+#اگر_ختم /* USE_LINUX_AUDIT */

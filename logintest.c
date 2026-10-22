@@ -27,39 +27,39 @@
  **               and lastlog retrieval
  **/
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/socket.h>
+#شامل <sys/types.h>
+#شامل <sys/wait.h>
+#شامل <sys/socket.h>
 
-#include <netinet/in.h>
+#شامل <netinet/in.h>
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <pwd.h>
-#include <netdb.h>
-#include <time.h>
+#شامل <unistd.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
+#شامل <string.h>
+#شامل <pwd.h>
+#شامل <netdb.h>
+#شامل <time.h>
 
-#include "loginrec.h"
+#شامل "loginrec.h"
 
-extern char *__progname;
+خارجی حرف *__progname;
 
-#define PAUSE_BEFORE_LOGOUT 3
+#تعریف_کرو PAUSE_BEFORE_LOGOUT 3
 
-int nologtest = 0;
-int compile_opts_only = 0;
-int be_verbose = 0;
+صحیح nologtest = 0;
+صحیح compile_opts_only = 0;
+صحیح be_verbose = 0;
 
 
 /* Dump a logininfo to stdout. Assumes a tab size of 8 chars. */
-void
-dump_logininfo(struct logininfo *li, char *descname)
+خالی
+dump_logininfo(ساخت logininfo *li, حرف *descname)
 {
 	/* yes I know how nasty this is */
-	printf("struct logininfo %s = {\n\t"
+	لکھو("struct logininfo %s = {\n\t"
 	    "progname\t'%s'\n\ttype\t\t%d\n\t"
 	    "pid\t\t%d\n\tuid\t\t%d\n\t"
 	    "line\t\t'%s'\n\tusername\t'%s'\n\t"
@@ -71,105 +71,105 @@ dump_logininfo(struct logininfo *li, char *descname)
 	    "\t}\n"
 	    "}\n",
 	    descname, li->progname, li->type,
-	    li->pid, li->uid, li->line,
-	    li->username, li->hostname, li->exit,
+	    li->pid, li->uid, li->سطر,
+	    li->username, li->hostname, li->باہر_نکلو,
 	    li->termination, li->tv_sec, li->tv_usec,
 	    li->hostaddr.sa.sa_family);
 }
 
 
-int
+صحیح
 testAPI()
 {
-	struct logininfo *li1;
-	struct passwd *pw;
-	struct hostent *he;
-	struct sockaddr_in sa_in4;
-	char cmdstring[256], stripline[8];
-	char username[32];
-#ifdef HAVE_TIME_H
+	ساخت logininfo *li1;
+	ساخت passwd *pw;
+	ساخت hostent *he;
+	ساخت sockaddr_in sa_in4;
+	حرف cmdstring[256], stripline[8];
+	حرف username[32];
+#اگر_تعریف_شدہ HAVE_وقت_H
 	time_t t0, t1, t2, logintime, logouttime;
-	char s_t0[64],s_t1[64],s_t2[64];
-	char s_logintime[64], s_logouttime[64]; /* ctime() strings */
-#endif
+	حرف s_t0[64],s_t1[64],s_t2[64];
+	حرف s_logintime[64], s_logouttime[64]; /* ctime() strings */
+#اگر_ختم
 
-	printf("**\n** Testing the API...\n**\n");
+	لکھو("**\n** Testing the API...\n**\n");
 
 	pw = getpwuid(getuid());
-	strlcpy(username, pw->pw_name, sizeof(username));
+	strlcpy(username, pw->pw_name, حجم(username));
 
 	/* gethostname(hostname, sizeof(hostname)); */
 
-	printf("login_alloc_entry test (no host info):\n");
+	لکھو("login_alloc_entry test (no host info):\n");
 
 	/* FIXME fake tty more effectively - this could upset some platforms */
-	li1 = login_alloc_entry((int)getpid(), username, NULL, ttyname(0));
-	strlcpy(li1->progname, "OpenSSH-logintest", sizeof(li1->progname));
+	li1 = login_alloc_اندراج((صحیح)getpid(), username, تہی, ttyname(0));
+	strlcpy(li1->progname, "OpenSSH-logintest", حجم(li1->progname));
 
-	if (be_verbose)
+	اگر (be_verbose)
 		dump_logininfo(li1, "li1");
 
-	printf("Setting host address info for 'localhost' (may call out):\n");
-	if (! (he = gethostbyname("localhost"))) {
-		printf("Couldn't set hostname(lookup failed)\n");
-	} else {
+	لکھو("Setting host address info for 'localhost' (may call out):\n");
+	اگر (! (he = gethostbyname("localhost"))) {
+		لکھو("Couldn't set hostname(lookup failed)\n");
+	} ورنہ {
 		/* NOTE: this is messy, but typically a program wouldn't have to set
 		 *  any of this, a sockaddr_in* would be already prepared */
-		memcpy((void *)&(sa_in4.sin_addr), (void *)&(he->h_addr_list[0][0]),
-		    sizeof(struct in_addr));
-		login_set_addr(li1, (struct sockaddr *) &sa_in4, sizeof(sa_in4));
-		strlcpy(li1->hostname, "localhost", sizeof(li1->hostname));
+		حافظہ_نقل((خالی *)&(sa_in4.sin_addr), (خالی *)&(he->h_addr_list[0][0]),
+		    حجم(ساخت in_addr));
+		login_سیٹ_addr(li1, (ساخت sockaddr *) &sa_in4, حجم(sa_in4));
+		strlcpy(li1->hostname, "localhost", حجم(li1->hostname));
 	}
-	if (be_verbose)
+	اگر (be_verbose)
 		dump_logininfo(li1, "li1");
 
-	if ((int)geteuid() != 0) {
-		printf("NOT RUNNING LOGIN TESTS - you are not root!\n");
-		return 1;
+	اگر ((صحیح)geteuid() != 0) {
+		لکھو("NOT RUNNING LOGIN TESTS - you are not root!\n");
+		واپس 1;
 	}
 
-	if (nologtest)
-		return 1;
+	اگر (nologtest)
+		واپس 1;
 
-	line_stripname(stripline, li1->line, sizeof(stripline));
+	سطر_stripname(stripline, li1->سطر, حجم(stripline));
 
-	printf("Performing an invalid login attempt (no type field)\n--\n");
+	لکھو("Performing an invalid login attempt (no type field)\n--\n");
 	login_write(li1);
-	printf("--\n(Should have written errors to stderr)\n");
+	لکھو("--\n(Should have written errors to stderr)\n");
 
-#ifdef HAVE_TIME_H
-	(void)time(&t0);
-	strlcpy(s_t0, ctime(&t0), sizeof(s_t0));
-	t1 = login_get_lastlog_time(getuid());
-	strlcpy(s_t1, ctime(&t1), sizeof(s_t1));
-	printf("Before logging in:\n\tcurrent time is %d - %s\t"
+#اگر_تعریف_شدہ HAVE_وقت_H
+	(خالی)time(&t0);
+	strlcpy(s_t0, ctime(&t0), حجم(s_t0));
+	t1 = login_get_lastlog_وقت(getuid());
+	strlcpy(s_t1, ctime(&t1), حجم(s_t1));
+	لکھو("Before logging in:\n\tcurrent time is %d - %s\t"
 	    "lastlog time is %d - %s\n",
-	    (int)t0, s_t0, (int)t1, s_t1);
-#endif
+	    (صحیح)t0, s_t0, (صحیح)t1, s_t1);
+#اگر_ختم
 
-	printf("Performing a login on line %s ", stripline);
-#ifdef HAVE_TIME_H
-	(void)time(&logintime);
-	strlcpy(s_logintime, ctime(&logintime), sizeof(s_logintime));
-	printf("at %d - %s", (int)logintime, s_logintime);
-#endif
-	printf("--\n");
+	لکھو("Performing a login on line %s ", stripline);
+#اگر_تعریف_شدہ HAVE_وقت_H
+	(خالی)time(&logintime);
+	strlcpy(s_logintime, ctime(&logintime), حجم(s_logintime));
+	لکھو("at %d - %s", (صحیح)logintime, s_logintime);
+#اگر_ختم
+	لکھو("--\n");
 	login_login(li1);
 
-	snprintf(cmdstring, sizeof(cmdstring), "who | grep '%s '",
+	snprintf(cmdstring, حجم(cmdstring), "who | grep '%s '",
 		 stripline);
 	system(cmdstring);
 
-	printf("--\nPausing for %d second(s)...\n", PAUSE_BEFORE_LOGOUT);
+	لکھو("--\nPausing for %d second(s)...\n", PAUSE_BEFORE_LOGOUT);
 	sleep(PAUSE_BEFORE_LOGOUT);
 
-	printf("Performing a logout ");
-#ifdef HAVE_TIME_H
-	(void)time(&logouttime);
-	strlcpy(s_logouttime, ctime(&logouttime), sizeof(s_logouttime));
-	printf("at %d - %s", (int)logouttime, s_logouttime);
-#endif
-	printf("\nThe root login shown above should be gone.\n"
+	لکھو("Performing a logout ");
+#اگر_تعریف_شدہ HAVE_وقت_H
+	(خالی)time(&logouttime);
+	strlcpy(s_logouttime, ctime(&logouttime), حجم(s_logouttime));
+	لکھو("at %d - %s", (صحیح)logouttime, s_logouttime);
+#اگر_ختم
+	لکھو("\nThe root login shown above should be gone.\n"
 	    "If the root login hasn't gone, but another user on the same\n"
 	    "pty has, this is OK - we're hacking it here, and there\n"
 	    "shouldn't be two users on one pty in reality...\n"
@@ -177,130 +177,130 @@ testAPI()
 	login_logout(li1);
 
 	system(cmdstring);
-	printf("-- ('who' output ends)\n");
+	لکھو("-- ('who' output ends)\n");
 
-#ifdef HAVE_TIME_H
-	t2 = login_get_lastlog_time(getuid());
-	strlcpy(s_t2, ctime(&t2), sizeof(s_t2));
-	printf("After logging in, lastlog time is %d - %s\n", (int)t2, s_t2);
-	if (t1 == t2)
-		printf("The lastlog times before and after logging in are the "
+#اگر_تعریف_شدہ HAVE_وقت_H
+	t2 = login_get_lastlog_وقت(getuid());
+	strlcpy(s_t2, ctime(&t2), حجم(s_t2));
+	لکھو("After logging in, lastlog time is %d - %s\n", (صحیح)t2, s_t2);
+	اگر (t1 == t2)
+		لکھو("The lastlog times before and after logging in are the "
 		    "same.\nThis indicates that lastlog is ** NOT WORKING "
 		    "CORRECTLY **\n");
-	else if (t0 != t2)
+	ورنہ اگر (t0 != t2)
 		/* We can be off by a second or so, even when recording works fine.
 		 * I'm not 100% sure why, but it's true. */
-		printf("** The login time and the lastlog time differ.\n"
+		لکھو("** The login time and the lastlog time differ.\n"
 		    "** This indicates that lastlog is either recording the "
 		    "wrong time,\n** or retrieving the wrong entry.\n"
 		    "If it's off by less than %d second(s) "
 		    "run the test again.\n", PAUSE_BEFORE_LOGOUT);
-	else
-		printf("lastlog agrees with the login time. This is a good thing.\n");
+	ورنہ
+		لکھو("lastlog agrees with the login time. This is a good thing.\n");
 
-#endif
+#اگر_ختم
 
-	printf("--\nThe output of 'last' shown next should have "
+	لکھو("--\nThe output of 'last' shown next should have "
 	    "an entry for root \n  on %s for the time shown above:\n--\n",
 	    stripline);
-	snprintf(cmdstring, sizeof(cmdstring), "last | grep '%s ' | head -3",
+	snprintf(cmdstring, حجم(cmdstring), "last | grep '%s ' | head -3",
 		 stripline);
 	system(cmdstring);
 
-	printf("--\nEnd of login test.\n");
+	لکھو("--\nEnd of login test.\n");
 
-	login_free_entry(li1);
+	login_free_اندراج(li1);
 
-	return 1;
+	واپس 1;
 } /* testAPI() */
 
 
-void
-testLineName(char *line)
+خالی
+test_سطر_Name(حرف *سطر)
 {
 	/* have to null-terminate - these functions are designed for
 	 * structures with fixed-length char arrays, and don't null-term.*/
-	char full[17], strip[9], abbrev[5];
+	حرف بھرا[17], strip[9], abbrev[5];
 
-	memset(full, '\0', sizeof(full));
-	memset(strip, '\0', sizeof(strip));
-	memset(abbrev, '\0', sizeof(abbrev));
+	memset(بھرا, '\0', حجم(بھرا));
+	memset(strip, '\0', حجم(strip));
+	memset(abbrev, '\0', حجم(abbrev));
 
-	line_fullname(full, line, sizeof(full)-1);
-	line_stripname(strip, full, sizeof(strip)-1);
-	line_abbrevname(abbrev, full, sizeof(abbrev)-1);
-	printf("%s: %s, %s, %s\n", line, full, strip, abbrev);
+	سطر_fullname(بھرا, سطر, حجم(بھرا)-1);
+	سطر_stripname(strip, بھرا, حجم(strip)-1);
+	سطر_abbrevname(abbrev, بھرا, حجم(abbrev)-1);
+	لکھو("%s: %s, %s, %s\n", سطر, بھرا, strip, abbrev);
 
 } /* testLineName() */
 
 
-int
+صحیح
 testOutput()
 {
-	printf("**\n** Testing linename functions\n**\n");
-	testLineName("/dev/pts/1");
-	testLineName("pts/1");
-	testLineName("pts/999");
-	testLineName("/dev/ttyp00");
-	testLineName("ttyp00");
+	لکھو("**\n** Testing linename functions\n**\n");
+	test_سطر_Name("/dev/pts/1");
+	test_سطر_Name("pts/1");
+	test_سطر_Name("pts/999");
+	test_سطر_Name("/dev/ttyp00");
+	test_سطر_Name("ttyp00");
 
-	return 1;
+	واپس 1;
 } /* testOutput() */
 
 
 /* show which options got compiled in */
-void
-showOptions(void)
+خالی
+showOptions(خالی)
 {
-	printf("**\n** Compile-time options\n**\n");
+	لکھو("**\n** Compile-time options\n**\n");
 
-	printf("login recording methods selected:\n");
-#ifdef USE_LOGIN
-	printf("\tUSE_LOGIN\n");
-#endif
-#ifdef USE_UTMP
-	printf("\tUSE_UTMP (UTMP_FILE=%s)\n", UTMP_FILE);
-#endif
-#ifdef USE_UTMPX
-	printf("\tUSE_UTMPX\n");
-#endif
-#ifdef USE_WTMP
-	printf("\tUSE_WTMP (WTMP_FILE=%s)\n", WTMP_FILE);
-#endif
-#ifdef USE_WTMPX
-	printf("\tUSE_WTMPX (WTMPX_FILE=%s)\n", WTMPX_FILE);
-#endif
-#ifdef USE_LASTLOG
-	printf("\tUSE_LASTLOG (LASTLOG_FILE=%s)\n", LASTLOG_FILE);
-#endif
-	printf("\n");
+	لکھو("login recording methods selected:\n");
+#اگر_تعریف_شدہ USE_LOGIN
+	لکھو("\tUSE_LOGIN\n");
+#اگر_ختم
+#اگر_تعریف_شدہ USE_UTMP
+	لکھو("\tUSE_UTMP (UTMP_FILE=%s)\n", UTMP_FILE);
+#اگر_ختم
+#اگر_تعریف_شدہ USE_UTMPX
+	لکھو("\tUSE_UTMPX\n");
+#اگر_ختم
+#اگر_تعریف_شدہ USE_WTMP
+	لکھو("\tUSE_WTMP (WTMP_FILE=%s)\n", WTMP_FILE);
+#اگر_ختم
+#اگر_تعریف_شدہ USE_WTMPX
+	لکھو("\tUSE_WTMPX (WTMPX_FILE=%s)\n", WTMPX_FILE);
+#اگر_ختم
+#اگر_تعریف_شدہ USE_LASTLOG
+	لکھو("\tUSE_LASTLOG (LASTLOG_FILE=%s)\n", LASTLOG_FILE);
+#اگر_ختم
+	لکھو("\n");
 
 } /* showOptions() */
 
 
-int
-main(int argc, char *argv[])
+صحیح
+مین(صحیح argc, حرف *argv[])
 {
-	printf("Platform-independent login recording test driver\n");
+	لکھو("Platform-independent login recording test driver\n");
 
 	__progname = ssh_get_progname(argv[0]);
-	if (argc == 2) {
-		if (strncmp(argv[1], "-i", 3) == 0)
+	اگر (argc == 2) {
+		اگر (لڑی_موازنہ(argv[1], "-i", 3) == 0)
 			compile_opts_only = 1;
-		else if (strncmp(argv[1], "-v", 3) == 0)
+		ورنہ اگر (لڑی_موازنہ(argv[1], "-v", 3) == 0)
 			be_verbose=1;
 	}
 
-	if (!compile_opts_only) {
-		if (be_verbose && !testOutput())
-			return 1;
+	اگر (!compile_opts_only) {
+		اگر (be_verbose && !testOutput())
+			واپس 1;
 
-		if (!testAPI())
-			return 1;
+		اگر (!testAPI())
+			واپس 1;
 	}
 
 	showOptions();
 
-	return 0;
+	واپس 0;
 } /* main() */
 

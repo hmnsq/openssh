@@ -18,14 +18,14 @@
 
 /* Client side of SSH2 filexfer protocol */
 
-#ifndef _SFTP_CLIENT_H
-#define _SFTP_CLIENT_H
+#اگر_غیر_تعریف_شدہ _SFTP_CLIENT_H
+#تعریف_کرو _SFTP_CLIENT_H
 
-typedef struct SFTP_DIRENT SFTP_DIRENT;
+قسمتعریف ساخت SFTP_DIRENT SFTP_DIRENT;
 
-struct SFTP_DIRENT {
-	char *filename;
-	char *longname;
+ساخت SFTP_DIRENT {
+	حرف *filename;
+	حرف *longname;
 	Attrib a;
 };
 
@@ -33,10 +33,10 @@ struct SFTP_DIRENT {
  * Used for statvfs responses on the wire from the server, because the
  * server's native format may be larger than the client's.
  */
-struct sftp_statvfs {
+ساخت sftp_statvfs {
 	uint64_t f_bsize;
 	uint64_t f_frsize;
-	uint64_t f_blocks;
+	uint64_t f_بلاکیں;
 	uint64_t f_bfree;
 	uint64_t f_bavail;
 	uint64_t f_files;
@@ -48,158 +48,158 @@ struct sftp_statvfs {
 };
 
 /* Used for limits response on the wire from the server */
-struct sftp_limits {
-	uint64_t packet_length;
-	uint64_t read_length;
-	uint64_t write_length;
+ساخت sftp_limits {
+	uint64_t packet_لمبائی;
+	uint64_t read_لمبائی;
+	uint64_t write_لمبائی;
 	uint64_t open_handles;
 };
 
 /* print flag values */
-#define SFTP_QUIET		0	/* be quiet during transfers */
-#define SFTP_PRINT		1	/* list files and show progress bar */
-#define SFTP_PROGRESS_ONLY	2	/* progress bar only */
+#تعریف_کرو SFTP_QUIET		0	/* be quiet during transfers */
+#تعریف_کرو SFTP_PRINT		1	/* list files and show progress bar */
+#تعریف_کرو SFTP_پیش_رفت_ONLY	2	/* progress bar only */
 
 /*
  * Initialise a SSH filexfer connection. Returns NULL on error or
  * a pointer to a initialized sftp_conn struct on success.
  */
-struct sftp_conn *sftp_init(int, int, u_int, u_int, uint64_t);
-void sftp_free(struct sftp_conn *);
+ساخت sftp_conn *sftp_init(صحیح, صحیح, u_int, u_int, uint64_t);
+خالی sftp_free(ساخت sftp_conn *);
 
-u_int sftp_proto_version(struct sftp_conn *);
+u_int sftp_proto_نسخہ(ساخت sftp_conn *);
 
 /* Query server limits */
-int sftp_get_limits(struct sftp_conn *, struct sftp_limits *);
+صحیح sftp_get_limits(ساخت sftp_conn *, ساخت sftp_limits *);
 
 /* Close file referred to by 'handle' */
-int sftp_close(struct sftp_conn *, const u_char *, u_int);
+صحیح sftp_close(ساخت sftp_conn *, ثابت u_char *, u_int);
 
 /* Read contents of 'path' to NULL-terminated array 'dir' */
-int sftp_readdir(struct sftp_conn *, const char *, SFTP_DIRENT ***);
+صحیح sftp_readdir(ساخت sftp_conn *, ثابت حرف *, SFTP_DIRENT ***);
 
 /* Frees a NULL-terminated array of SFTP_DIRENTs (eg. from sftp_readdir) */
-void sftp_free_dirents(SFTP_DIRENT **);
+خالی sftp_free_dirents(SFTP_DIRENT **);
 
 /* Delete file 'path' */
-int sftp_rm(struct sftp_conn *, const char *);
+صحیح sftp_rm(ساخت sftp_conn *, ثابت حرف *);
 
 /* Create directory 'path' */
-int sftp_mkdir(struct sftp_conn *, const char *, Attrib *, int);
+صحیح sftp_mkdir(ساخت sftp_conn *, ثابت حرف *, Attrib *, صحیح);
 
 /* Create directory 'path' and intermediate directories as required */
-int sftp_mkpath(struct sftp_conn *, const char *, Attrib *, int);
+صحیح sftp_mkpath(ساخت sftp_conn *, ثابت حرف *, Attrib *, صحیح);
 
 /* Remove directory 'path' */
-int sftp_rmdir(struct sftp_conn *, const char *);
+صحیح sftp_rmdir(ساخت sftp_conn *, ثابت حرف *);
 
 /* Get file attributes of 'path' (follows symlinks) */
-int sftp_stat(struct sftp_conn *, const char *, int, Attrib *);
+صحیح sftp_stat(ساخت sftp_conn *, ثابت حرف *, صحیح, Attrib *);
 
 /* Get file attributes of 'path' (does not follow symlinks) */
-int sftp_lstat(struct sftp_conn *, const char *, int, Attrib *);
+صحیح sftp_lstat(ساخت sftp_conn *, ثابت حرف *, صحیح, Attrib *);
 
 /* Set file attributes of 'path' */
-int sftp_setstat(struct sftp_conn *, const char *, Attrib *);
+صحیح sftp_setstat(ساخت sftp_conn *, ثابت حرف *, Attrib *);
 
 /* Set file attributes of open file 'handle' */
-int sftp_fsetstat(struct sftp_conn *, const u_char *, u_int, Attrib *);
+صحیح sftp_fsetstat(ساخت sftp_conn *, ثابت u_char *, u_int, Attrib *);
 
 /* Set file attributes of 'path', not following symlinks */
-int sftp_lsetstat(struct sftp_conn *conn, const char *path, Attrib *a);
+صحیح sftp_lsetstat(ساخت sftp_conn *conn, ثابت حرف *راستہ, Attrib *a);
 
 /* Canonicalise 'path' - caller must free result */
-char *sftp_realpath(struct sftp_conn *, const char *);
+حرف *sftp_realpath(ساخت sftp_conn *, ثابت حرف *);
 
 /* Canonicalisation with tilde expansion (requires server extension) */
-char *sftp_expand_path(struct sftp_conn *, const char *);
+حرف *sftp_expand_راستہ(ساخت sftp_conn *, ثابت حرف *);
 
 /* Returns non-zero if server can tilde-expand paths */
-int sftp_can_expand_path(struct sftp_conn *);
+صحیح sftp_can_expand_راستہ(ساخت sftp_conn *);
 
 /* Get statistics for filesystem hosting file at "path" */
-int sftp_statvfs(struct sftp_conn *, const char *, struct sftp_statvfs *, int);
+صحیح sftp_statvfs(ساخت sftp_conn *, ثابت حرف *, ساخت sftp_statvfs *, صحیح);
 
 /* Rename 'oldpath' to 'newpath' */
-int sftp_rename(struct sftp_conn *, const char *, const char *, int);
+صحیح sftp_rename(ساخت sftp_conn *, ثابت حرف *, ثابت حرف *, صحیح);
 
 /* Copy 'oldpath' to 'newpath' */
-int sftp_copy(struct sftp_conn *, const char *, const char *);
+صحیح sftp_copy(ساخت sftp_conn *, ثابت حرف *, ثابت حرف *);
 
 /* Link 'oldpath' to 'newpath' */
-int sftp_hardlink(struct sftp_conn *, const char *, const char *);
+صحیح sftp_hardlink(ساخت sftp_conn *, ثابت حرف *, ثابت حرف *);
 
 /* Rename 'oldpath' to 'newpath' */
-int sftp_symlink(struct sftp_conn *, const char *, const char *);
+صحیح sftp_symlink(ساخت sftp_conn *, ثابت حرف *, ثابت حرف *);
 
 /* Call fsync() on open file 'handle' */
-int sftp_fsync(struct sftp_conn *conn, u_char *, u_int);
+صحیح sftp_fsync(ساخت sftp_conn *conn, u_char *, u_int);
 
 /*
  * Download 'remote_path' to 'local_path'. Preserve permissions and times
  * if 'pflag' is set
  */
-int sftp_download(struct sftp_conn *, const char *, const char *, Attrib *,
-    int, int, int, int);
+صحیح sftp_download(ساخت sftp_conn *, ثابت حرف *, ثابت حرف *, Attrib *,
+    صحیح, صحیح, صحیح, صحیح);
 
 /*
  * Recursively download 'remote_directory' to 'local_directory'. Preserve
  * times if 'pflag' is set
  */
-int sftp_download_dir(struct sftp_conn *, const char *, const char *, Attrib *,
-    int, int, int, int, int, int);
+صحیح sftp_download_dir(ساخت sftp_conn *, ثابت حرف *, ثابت حرف *, Attrib *,
+    صحیح, صحیح, صحیح, صحیح, صحیح, صحیح);
 
 /*
  * Upload 'local_path' to 'remote_path'. Preserve permissions and times
  * if 'pflag' is set
  */
-int sftp_upload(struct sftp_conn *, const char *, const char *,
-    int, int, int, int);
+صحیح sftp_upload(ساخت sftp_conn *, ثابت حرف *, ثابت حرف *,
+    صحیح, صحیح, صحیح, صحیح);
 
 /*
  * Recursively upload 'local_directory' to 'remote_directory'. Preserve
  * times if 'pflag' is set
  */
-int sftp_upload_dir(struct sftp_conn *, const char *, const char *,
-    int, int, int, int, int, int);
+صحیح sftp_upload_dir(ساخت sftp_conn *, ثابت حرف *, ثابت حرف *,
+    صحیح, صحیح, صحیح, صحیح, صحیح, صحیح);
 
 /*
  * Download a 'from_path' from the 'from' connection and upload it to
  * to 'to' connection at 'to_path'.
  */
-int sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
-    const char *from_path, const char *to_path,
-    Attrib *a, int preserve_flag);
+صحیح sftp_crossload(ساخت sftp_conn *from, ساخت sftp_conn *مقصد,
+    ثابت حرف *from_راستہ, ثابت حرف *مقصد_راستہ,
+    Attrib *a, صحیح preserve_flag);
 
 /*
  * Recursively download a directory from 'from_path' from the 'from'
  * connection and upload it to 'to' connection at 'to_path'.
  */
-int sftp_crossload_dir(struct sftp_conn *from, struct sftp_conn *to,
-    const char *from_path, const char *to_path,
-    Attrib *dirattrib, int preserve_flag, int print_flag,
-    int follow_link_flag);
+صحیح sftp_crossload_dir(ساخت sftp_conn *from, ساخت sftp_conn *مقصد,
+    ثابت حرف *from_راستہ, ثابت حرف *مقصد_راستہ,
+    Attrib *dirattrib, صحیح preserve_flag, صحیح print_flag,
+    صحیح follow_link_flag);
 
 /*
  * User/group ID to name translation.
  */
-int sftp_can_get_users_groups_by_id(struct sftp_conn *conn);
-int sftp_get_users_groups_by_id(struct sftp_conn *conn,
-    const u_int *uids, u_int nuids,
-    const u_int *gids, u_int ngids,
-    char ***usernamesp, char ***groupnamesp);
+صحیح sftp_can_get_users_groups_by_id(ساخت sftp_conn *conn);
+صحیح sftp_get_users_groups_by_id(ساخت sftp_conn *conn,
+    ثابت u_int *uids, u_int nuids,
+    ثابت u_int *gids, u_int ngids,
+    حرف ***usernamesp, حرف ***groupnamesp);
 
 /* Concatenate paths, taking care of slashes. Caller must free result. */
-char *sftp_path_append(const char *, const char *);
+حرف *sftp_راستہ_append(ثابت حرف *, ثابت حرف *);
 
 /* Make absolute path if relative path and CWD is given. Does not modify
  * original if the path is already absolute. */
-char *sftp_make_absolute(char *, const char *);
+حرف *sftp_make_absolute(حرف *, ثابت حرف *);
 
 /* Check if remote path is directory */
-int sftp_remote_is_dir(struct sftp_conn *conn, const char *path);
+صحیح sftp_remote_is_dir(ساخت sftp_conn *conn, ثابت حرف *راستہ);
 
 /* Check whether path returned from glob(..., GLOB_MARK, ...) is a directory */
-int sftp_globpath_is_dir(const char *pathname);
+صحیح sftp_globpath_is_dir(ثابت حرف *pathname);
 
-#endif
+#اگر_ختم

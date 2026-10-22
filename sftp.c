@@ -15,115 +15,115 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/statvfs.h>
-#include <sys/wait.h>
+#شامل <sys/types.h>
+#شامل <sys/ioctl.h>
+#شامل <sys/stat.h>
+#شامل <sys/socket.h>
+#شامل <sys/statvfs.h>
+#شامل <sys/wait.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <glob.h>
-#include <paths.h>
-#include <libgen.h>
-#ifdef HAVE_LOCALE_H
+#شامل <ctype.h>
+#شامل <errno.h>
+#شامل <fcntl.h>
+#شامل <glob.h>
+#شامل <paths.h>
+#شامل <libgen.h>
+#اگر_تعریف_شدہ HAVE_LOCALE_H
 # include <locale.h>
-#endif
-#ifdef USE_LIBEDIT
-#include <histedit.h>
-#else
-typedef void EditLine;
-#endif
-#include <limits.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <util.h>
+#اگر_ختم
+#اگر_تعریف_شدہ USE_LIBEDIT
+#شامل <histedit.h>
+#ورنہ
+قسمتعریف خالی Edit_سطر;
+#اگر_ختم
+#شامل <limits.h>
+#شامل <signal.h>
+#شامل <stdarg.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <util.h>
 
-#include "xmalloc.h"
-#include "log.h"
-#include "pathnames.h"
-#include "misc.h"
-#include "utf8.h"
+#شامل "xmalloc.h"
+#شامل "log.h"
+#شامل "pathnames.h"
+#شامل "misc.h"
+#شامل "utf8.h"
 
-#include "sftp.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sftp-common.h"
-#include "sftp-client.h"
-#include "sftp-usergroup.h"
+#شامل "sftp.h"
+#شامل "ssherr.h"
+#شامل "sshbuf.h"
+#شامل "sftp-common.h"
+#شامل "sftp-client.h"
+#شامل "sftp-usergroup.h"
 
 /* File to read commands from */
 FILE* infile;
 
 /* Are we in batchfile mode? */
-int batchmode = 0;
+صحیح batchmode = 0;
 
 /* PID of ssh transport process */
-static volatile pid_t sshpid = -1;
+ساکن متلون pid_t sshpid = -1;
 
 /* Suppress diagnostic messages */
-int quiet = 0;
+صحیح quiet = 0;
 
 /* This is set to 0 if the progressmeter is not desired. */
-int showprogress = 1;
+صحیح showprogress = 1;
 
 /* When this option is set, we always recursively download/upload directories */
-int global_rflag = 0;
+صحیح global_rflag = 0;
 
 /* When this option is set, we resume download or upload if possible */
-int global_aflag = 0;
+صحیح global_aflag = 0;
 
 /* When this option is set, the file transfers will always preserve times */
-int global_pflag = 0;
+صحیح global_pflag = 0;
 
 /* When this option is set, transfers will have fsync() called on each file */
-int global_fflag = 0;
+صحیح global_fflag = 0;
 
 /* SIGINT received during command processing */
-volatile sig_atomic_t interrupted = 0;
+متلون sig_atomic_t interrupted = 0;
 
 /* I wish qsort() took a separate ctx for the comparison function...*/
-int sort_flag;
-glob_t *sort_glob;
+صحیح ترتیب_دو_flag;
+glob_t *ترتیب_دو_glob;
 
 /* Context used for commandline completion */
-struct complete_ctx {
-	struct sftp_conn *conn;
-	char **remote_pathp;
+ساخت complete_ctx {
+	ساخت sftp_conn *conn;
+	حرف **remote_pathp;
 };
 
-int sftp_glob(struct sftp_conn *, const char *, int,
-    int (*)(const char *, int), glob_t *); /* proto for sftp-glob.c */
+صحیح sftp_glob(ساخت sftp_conn *, ثابت حرف *, صحیح,
+    صحیح (*)(ثابت حرف *, صحیح), glob_t *); /* proto for sftp-glob.c */
 
-extern char *__progname;
+خارجی حرف *__progname;
 
 /* Separators for interactive commands */
-#define WHITESPACE " \t\r\n"
+#تعریف_کرو WHITESPACE " \t\r\n"
 
 /* ls flags */
-#define LS_LONG_VIEW	0x0001	/* Full view ala ls -l */
-#define LS_SHORT_VIEW	0x0002	/* Single row view ala ls -1 */
-#define LS_NUMERIC_VIEW	0x0004	/* Long view with numeric uid/gid */
-#define LS_NAME_SORT	0x0008	/* Sort by name (default) */
-#define LS_TIME_SORT	0x0010	/* Sort by mtime */
-#define LS_SIZE_SORT	0x0020	/* Sort by file size */
-#define LS_REVERSE_SORT	0x0040	/* Reverse sort order */
-#define LS_SHOW_ALL	0x0080	/* Don't skip filenames starting with '.' */
-#define LS_SI_UNITS	0x0100	/* Display sizes as K, M, G, etc. */
+#تعریف_کرو LS_LONG_VIEW	0x0001	/* Full view ala ls -l */
+#تعریف_کرو LS_SHORT_VIEW	0x0002	/* Single row view ala ls -1 */
+#تعریف_کرو LS_NUMERIC_VIEW	0x0004	/* Long view with numeric uid/gid */
+#تعریف_کرو LS_NAME_ترتیب_دو	0x0008	/* Sort by name (default) */
+#تعریف_کرو LS_وقت_ترتیب_دو	0x0010	/* Sort by mtime */
+#تعریف_کرو LS_سائز_ترتیب_دو	0x0020	/* Sort by file size */
+#تعریف_کرو LS_الٹ_ترتیب_دو	0x0040	/* Reverse sort order */
+#تعریف_کرو LS_SHOW_ALL	0x0080	/* Don't skip filenames starting with '.' */
+#تعریف_کرو LS_SI_UNITS	0x0100	/* Display sizes as K, M, G, etc. */
 
-#define VIEW_FLAGS	(LS_LONG_VIEW|LS_SHORT_VIEW|LS_NUMERIC_VIEW|LS_SI_UNITS)
-#define SORT_FLAGS	(LS_NAME_SORT|LS_TIME_SORT|LS_SIZE_SORT)
+#تعریف_کرو VIEW_FLAGS	(LS_LONG_VIEW|LS_SHORT_VIEW|LS_NUMERIC_VIEW|LS_SI_UNITS)
+#تعریف_کرو ترتیب_دو_FLAGS	(LS_NAME_ترتیب_دو|LS_وقت_ترتیب_دو|LS_سائز_ترتیب_دو)
 
 /* Commands for interactive mode */
-enum sftp_command {
+شمار sftp_command {
 	I_CHDIR = 1,
 	I_CHGRP,
 	I_CHMOD,
@@ -150,23 +150,23 @@ enum sftp_command {
 	I_RMDIR,
 	I_SHELL,
 	I_SYMLINK,
-	I_VERSION,
-	I_PROGRESS,
+	I_نسخہ,
+	I_پیش_رفت,
 };
 
-struct CMD {
-	const char *c;
-	const int n;
-	const int t;	/* Completion type for the first argument */
-	const int t2;	/* completion type for the optional second argument */
+ساخت CMD {
+	ثابت حرف *c;
+	ثابت صحیح n;
+	ثابت صحیح t;	/* Completion type for the first argument */
+	ثابت صحیح t2;	/* completion type for the optional second argument */
 };
 
 /* Type of completion */
-#define NOARGS	0
-#define REMOTE	1
-#define LOCAL	2
+#تعریف_کرو NOARGS	0
+#تعریف_کرو REMOTE	1
+#تعریف_کرو LOCAL	2
 
-static const struct CMD cmds[] = {
+ساکن ثابت ساخت CMD cmds[] = {
 	{ "bye",	I_QUIT,		NOARGS,		NOARGS	},
 	{ "cd",		I_CHDIR,	REMOTE,		NOARGS	},
 	{ "chdir",	I_CHDIR,	REMOTE,		NOARGS	},
@@ -191,7 +191,7 @@ static const struct CMD cmds[] = {
 	{ "mkdir",	I_MKDIR,	REMOTE,		NOARGS	},
 	{ "mget",	I_GET,		REMOTE,		LOCAL	},
 	{ "mput",	I_PUT,		LOCAL,		REMOTE	},
-	{ "progress",	I_PROGRESS,	NOARGS,		NOARGS	},
+	{ "progress",	I_پیش_رفت,	NOARGS,		NOARGS	},
 	{ "put",	I_PUT,		LOCAL,		REMOTE	},
 	{ "pwd",	I_PWD,		REMOTE,		NOARGS	},
 	{ "quit",	I_QUIT,		NOARGS,		NOARGS	},
@@ -201,79 +201,79 @@ static const struct CMD cmds[] = {
 	{ "rm",		I_RM,		REMOTE,		NOARGS	},
 	{ "rmdir",	I_RMDIR,	REMOTE,		NOARGS	},
 	{ "symlink",	I_SYMLINK,	REMOTE,		REMOTE	},
-	{ "version",	I_VERSION,	NOARGS,		NOARGS	},
+	{ "version",	I_نسخہ,	NOARGS,		NOARGS	},
 	{ "!",		I_SHELL,	NOARGS,		NOARGS	},
 	{ "?",		I_HELP,		NOARGS,		NOARGS	},
-	{ NULL,		-1,		-1,		-1	}
+	{ تہی,		-1,		-1,		-1	}
 };
 
-static void
-killchild(int signo)
+ساکن خالی
+killchild(صحیح signo)
 {
 	pid_t pid;
 
 	pid = sshpid;
-	if (pid > 1) {
+	اگر (pid > 1) {
 		kill(pid, SIGTERM);
-		(void)waitpid(pid, NULL, 0);
+		(خالی)waitpid(pid, تہی, 0);
 	}
 
 	_exit(1);
 }
 
-static void
-suspchild(int signo)
+ساکن خالی
+suspchild(صحیح signo)
 {
-	int save_errno = errno;
-	if (sshpid > 1) {
+	صحیح save_errno = errno;
+	اگر (sshpid > 1) {
 		kill(sshpid, signo);
-		while (waitpid(sshpid, NULL, WUNTRACED) == -1 && errno == EINTR)
-			continue;
+		جب (waitpid(sshpid, تہی, WUNTRACED) == -1 && errno == EINTR)
+			جاری;
 	}
 	kill(getpid(), SIGSTOP);
 	errno = save_errno;
 }
 
-static void
-cmd_interrupt(int signo)
+ساکن خالی
+cmd_مداخلت(صحیح signo)
 {
-	const char msg[] = "\rInterrupt  \n";
-	int olderrno = errno;
+	ثابت حرف پیغام[] = "\rInterrupt  \n";
+	صحیح olderrno = errno;
 
-	(void)write(STDERR_FILENO, msg, sizeof(msg) - 1);
+	(خالی)اكتب(STDERR_FILENO, پیغام, حجم(پیغام) - 1);
 	interrupted = 1;
 	errno = olderrno;
 }
 
-static void
-read_interrupt(int signo)
+ساکن خالی
+read_مداخلت(صحیح signo)
 {
 	interrupted = 1;
 }
 
-static void
-sigchld_handler(int sig)
+ساکن خالی
+sigchld_handler(صحیح sig)
 {
-	int save_errno = errno;
+	صحیح save_errno = errno;
 	pid_t pid;
-	const char msg[] = "\rConnection closed.  \n";
+	ثابت حرف پیغام[] = "\rConnection closed.  \n";
 
 	/* Report if ssh transport process dies. */
-	while ((pid = waitpid(sshpid, NULL, WNOHANG)) == -1 && errno == EINTR)
-		continue;
-	if (pid == sshpid) {
-		if (!quiet)
-		    (void)write(STDERR_FILENO, msg, sizeof(msg) - 1);
+	جب ((pid = waitpid(sshpid, تہی, WNOHANG)) == -1 && errno == EINTR)
+		جاری;
+	اگر (pid == sshpid) {
+		اگر (!quiet)
+		    (خالی)اكتب(STDERR_FILENO, پیغام, حجم(پیغام) - 1);
 		sshpid = -1;
 	}
 
 	errno = save_errno;
 }
 
-static void
-help(void)
+ساکن خالی
+help(خالی)
 {
-	printf("Available commands:\n"
+	لکھو("Available commands:\n"
 	    "bye                                Quit sftp\n"
 	    "cd path                            Change remote directory to 'path'\n"
 	    "chgrp [-h] grp path                Change group of file 'path' to 'grp'\n"
@@ -310,393 +310,393 @@ help(void)
 	    "?                                  Synonym for help\n");
 }
 
-static void
-local_do_shell(const char *args)
+ساکن خالی
+local_do_shell(ثابت حرف *دلائل)
 {
-	int status;
-	char *shell;
+	صحیح حالت_2;
+	حرف *shell;
 	pid_t pid;
 
-	if (!*args)
-		args = NULL;
+	اگر (!*دلائل)
+		دلائل = تہی;
 
-	if ((shell = getenv("SHELL")) == NULL || *shell == '\0')
+	اگر ((shell = getenv("SHELL")) == تہی || *shell == '\0')
 		shell = _PATH_BSHELL;
 
-	if ((pid = fork()) == -1)
+	اگر ((pid = fork()) == -1)
 		fatal("Couldn't fork: %s", strerror(errno));
 
-	if (pid == 0) {
-		if (args) {
-			debug3("Executing %s -c \"%s\"", shell, args);
-			execl(shell, shell, "-c", args, (char *)NULL);
-		} else {
+	اگر (pid == 0) {
+		اگر (دلائل) {
+			debug3("Executing %s -c \"%s\"", shell, دلائل);
+			execl(shell, shell, "-c", دلائل, (حرف *)تہی);
+		} ورنہ {
 			debug3("Executing %s", shell);
-			execl(shell, shell, (char *)NULL);
+			execl(shell, shell, (حرف *)تہی);
 		}
 		fprintf(stderr, "Couldn't execute \"%s\": %s\n", shell,
 		    strerror(errno));
 		_exit(1);
 	}
-	while (waitpid(pid, &status, 0) == -1)
-		if (errno != EINTR)
+	جب (waitpid(pid, &حالت_2, 0) == -1)
+		اگر (errno != EINTR)
 			fatal("Couldn't wait for child: %s", strerror(errno));
-	if (!WIFEXITED(status))
+	اگر (!WIFEXITED(حالت_2))
 		error("Shell exited abnormally");
-	else if (WEXITSTATUS(status))
-		error("Shell exited with status %d", WEXITSTATUS(status));
+	ورنہ اگر (WEXITSTATUS(حالت_2))
+		error("Shell exited with status %d", WEXITSTATUS(حالت_2));
 }
 
-static void
-local_do_ls(const char *args)
+ساکن خالی
+local_do_ls(ثابت حرف *دلائل)
 {
-	if (!args || !*args)
-		local_do_shell(_PATH_LS);
-	else {
-		int len = strlen(_PATH_LS " ") + strlen(args) + 1;
-		char *buf = xmalloc(len);
+	اگر (!دلائل || !*دلائل)
+		local_do_shell(راستہ_LS);
+	ورنہ {
+		صحیح len = لڑی_لمبائی(راستہ_LS " ") + لڑی_لمبائی(دلائل) + 1;
+		حرف *buf = xmalloc(len);
 
 		/* XXX: quoting - rip quoting code from ftp? */
-		snprintf(buf, len, _PATH_LS " %s", args);
+		snprintf(buf, len, راستہ_LS " %s", دلائل);
 		local_do_shell(buf);
-		free(buf);
+		آزاد(buf);
 	}
 }
 
 /* Strip one path (usually the pwd) from the start of another */
-static char *
-path_strip(const char *path, const char *strip)
+ساکن حرف *
+راستہ_strip(ثابت حرف *راستہ, ثابت حرف *strip)
 {
-	size_t len;
+	سائز_t len;
 
-	if (strip == NULL || (len = strlen(strip)) == 0)
-		return (xstrdup(path));
+	اگر (strip == تہی || (len = لڑی_لمبائی(strip)) == 0)
+		واپس (xstrdup(راستہ));
 
-	if (strncmp(path, strip, len) == 0) {
-		if (strip[len - 1] != '/' && path[len] == '/')
+	اگر (لڑی_موازنہ(راستہ, strip, len) == 0) {
+		اگر (strip[len - 1] != '/' && راستہ[len] == '/')
 			len++;
-		return (xstrdup(path + len));
+		واپس (xstrdup(راستہ + len));
 	}
 
-	return (xstrdup(path));
+	واپس (xstrdup(راستہ));
 }
 
-static int
-parse_getput_flags(const char *cmd, char **argv, int argc,
-    int *aflag, int *fflag, int *pflag, int *rflag)
+ساکن صحیح
+parse_getput_flags(ثابت حرف *cmd, حرف **argv, صحیح argc,
+    صحیح *aflag, صحیح *fflag, صحیح *pflag, صحیح *rflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	خارجی صحیح opterr, optind, optopt, optreset;
+	صحیح ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*aflag = *fflag = *rflag = *pflag = 0;
-	while ((ch = getopt(argc, argv, "afPpRr")) != -1) {
-		switch (ch) {
-		case 'a':
+	جب ((ch = getopt(argc, argv, "afPpRr")) != -1) {
+		انتخاب (ch) {
+		حالت 'a':
 			*aflag = 1;
-			break;
-		case 'f':
+			توڑو;
+		حالت 'f':
 			*fflag = 1;
-			break;
-		case 'p':
-		case 'P':
+			توڑو;
+		حالت 'p':
+		حالت 'P':
 			*pflag = 1;
-			break;
-		case 'r':
-		case 'R':
+			توڑو;
+		حالت 'r':
+		حالت 'R':
 			*rflag = 1;
-			break;
-		default:
+			توڑو;
+		طےشدہ:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			واپس -1;
 		}
 	}
 
-	return optind;
+	واپس optind;
 }
 
-static int
-parse_mkdir_flags(const char *cmd, char **argv, int argc, int *pflag)
+ساکن صحیح
+parse_mkdir_flags(ثابت حرف *cmd, حرف **argv, صحیح argc, صحیح *pflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	خارجی صحیح opterr, optind, optopt, optreset;
+	صحیح ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*pflag = 0;
-	while ((ch = getopt(argc, argv, "p")) != -1) {
-		switch (ch) {
-		case 'p':
+	جب ((ch = getopt(argc, argv, "p")) != -1) {
+		انتخاب (ch) {
+		حالت 'p':
 			*pflag = 1;
-			break;
-		default:
+			توڑو;
+		طےشدہ:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			واپس -1;
 		}
 	}
 
-	return optind;
+	واپس optind;
 }
 
-static int
-parse_link_flags(const char *cmd, char **argv, int argc, int *sflag)
+ساکن صحیح
+parse_link_flags(ثابت حرف *cmd, حرف **argv, صحیح argc, صحیح *sflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	خارجی صحیح opterr, optind, optopt, optreset;
+	صحیح ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*sflag = 0;
-	while ((ch = getopt(argc, argv, "s")) != -1) {
-		switch (ch) {
-		case 's':
+	جب ((ch = getopt(argc, argv, "s")) != -1) {
+		انتخاب (ch) {
+		حالت 's':
 			*sflag = 1;
-			break;
-		default:
+			توڑو;
+		طےشدہ:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			واپس -1;
 		}
 	}
 
-	return optind;
+	واپس optind;
 }
 
-static int
-parse_rename_flags(const char *cmd, char **argv, int argc, int *lflag)
+ساکن صحیح
+parse_rename_flags(ثابت حرف *cmd, حرف **argv, صحیح argc, صحیح *lflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	خارجی صحیح opterr, optind, optopt, optreset;
+	صحیح ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*lflag = 0;
-	while ((ch = getopt(argc, argv, "l")) != -1) {
-		switch (ch) {
-		case 'l':
+	جب ((ch = getopt(argc, argv, "l")) != -1) {
+		انتخاب (ch) {
+		حالت 'l':
 			*lflag = 1;
-			break;
-		default:
+			توڑو;
+		طےشدہ:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			واپس -1;
 		}
 	}
 
-	return optind;
+	واپس optind;
 }
 
-static int
-parse_ls_flags(char **argv, int argc, int *lflag)
+ساکن صحیح
+parse_ls_flags(حرف **argv, صحیح argc, صحیح *lflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	خارجی صحیح opterr, optind, optopt, optreset;
+	صحیح ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
-	*lflag = LS_NAME_SORT;
-	while ((ch = getopt(argc, argv, "1Safhlnrt")) != -1) {
-		switch (ch) {
-		case '1':
+	*lflag = LS_NAME_ترتیب_دو;
+	جب ((ch = getopt(argc, argv, "1Safhlnrt")) != -1) {
+		انتخاب (ch) {
+		حالت '1':
 			*lflag &= ~VIEW_FLAGS;
 			*lflag |= LS_SHORT_VIEW;
-			break;
-		case 'S':
-			*lflag &= ~SORT_FLAGS;
-			*lflag |= LS_SIZE_SORT;
-			break;
-		case 'a':
+			توڑو;
+		حالت 'S':
+			*lflag &= ~ترتیب_دو_FLAGS;
+			*lflag |= LS_سائز_ترتیب_دو;
+			توڑو;
+		حالت 'a':
 			*lflag |= LS_SHOW_ALL;
-			break;
-		case 'f':
-			*lflag &= ~SORT_FLAGS;
-			break;
-		case 'h':
+			توڑو;
+		حالت 'f':
+			*lflag &= ~ترتیب_دو_FLAGS;
+			توڑو;
+		حالت 'h':
 			*lflag |= LS_SI_UNITS;
-			break;
-		case 'l':
+			توڑو;
+		حالت 'l':
 			*lflag &= ~LS_SHORT_VIEW;
 			*lflag |= LS_LONG_VIEW;
-			break;
-		case 'n':
+			توڑو;
+		حالت 'n':
 			*lflag &= ~LS_SHORT_VIEW;
 			*lflag |= LS_NUMERIC_VIEW|LS_LONG_VIEW;
-			break;
-		case 'r':
-			*lflag |= LS_REVERSE_SORT;
-			break;
-		case 't':
-			*lflag &= ~SORT_FLAGS;
-			*lflag |= LS_TIME_SORT;
-			break;
-		default:
+			توڑو;
+		حالت 'r':
+			*lflag |= LS_الٹ_ترتیب_دو;
+			توڑو;
+		حالت 't':
+			*lflag &= ~ترتیب_دو_FLAGS;
+			*lflag |= LS_وقت_ترتیب_دو;
+			توڑو;
+		طےشدہ:
 			error("ls: Invalid flag -%c", optopt);
-			return -1;
+			واپس -1;
 		}
 	}
 
-	return optind;
+	واپس optind;
 }
 
-static int
-parse_df_flags(const char *cmd, char **argv, int argc, int *hflag, int *iflag)
+ساکن صحیح
+parse_df_flags(ثابت حرف *cmd, حرف **argv, صحیح argc, صحیح *hflag, صحیح *iflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	خارجی صحیح opterr, optind, optopt, optreset;
+	صحیح ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*hflag = *iflag = 0;
-	while ((ch = getopt(argc, argv, "hi")) != -1) {
-		switch (ch) {
-		case 'h':
+	جب ((ch = getopt(argc, argv, "hi")) != -1) {
+		انتخاب (ch) {
+		حالت 'h':
 			*hflag = 1;
-			break;
-		case 'i':
+			توڑو;
+		حالت 'i':
 			*iflag = 1;
-			break;
-		default:
+			توڑو;
+		طےشدہ:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			واپس -1;
 		}
 	}
 
-	return optind;
+	واپس optind;
 }
 
-static int
-parse_ch_flags(const char *cmd, char **argv, int argc, int *hflag)
+ساکن صحیح
+parse_ch_flags(ثابت حرف *cmd, حرف **argv, صحیح argc, صحیح *hflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	خارجی صحیح opterr, optind, optopt, optreset;
+	صحیح ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*hflag = 0;
-	while ((ch = getopt(argc, argv, "h")) != -1) {
-		switch (ch) {
-		case 'h':
+	جب ((ch = getopt(argc, argv, "h")) != -1) {
+		انتخاب (ch) {
+		حالت 'h':
 			*hflag = 1;
-			break;
-		default:
+			توڑو;
+		طےشدہ:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			واپس -1;
 		}
 	}
 
-	return optind;
+	واپس optind;
 }
 
-static int
-parse_no_flags(const char *cmd, char **argv, int argc)
+ساکن صحیح
+parse_no_flags(ثابت حرف *cmd, حرف **argv, صحیح argc)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	خارجی صحیح opterr, optind, optopt, optreset;
+	صحیح ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
-	while ((ch = getopt(argc, argv, "")) != -1) {
-		switch (ch) {
-		default:
+	جب ((ch = getopt(argc, argv, "")) != -1) {
+		انتخاب (ch) {
+		طےشدہ:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			واپس -1;
 		}
 	}
 
-	return optind;
+	واپس optind;
 }
 
-static char *
-escape_glob(const char *s)
+ساکن حرف *
+escape_glob(ثابت حرف *s)
 {
-	size_t i, o, len;
-	char *ret;
+	سائز_t i, o, len;
+	حرف *ret;
 
-	len = strlen(s);
+	len = لڑی_لمبائی(s);
 	ret = xcalloc(2, len + 1);
-	for (i = o = 0; i < len; i++) {
-		if (strchr("[]?*\\", s[i]) != NULL)
+	برائے (i = o = 0; i < len; i++) {
+		اگر (strchr("[]?*\\", s[i]) != تہی)
 			ret[o++] = '\\';
 		ret[o++] = s[i];
 	}
 	ret[o++] = '\0';
-	return ret;
+	واپس ret;
 }
 
 /*
  * Arg p must be dynamically allocated.  make_absolute will either return it
  * or free it and allocate a new one.  Caller must free returned string.
  */
-static char *
-make_absolute_pwd_glob(char *p, const char *pwd)
+ساکن حرف *
+make_absolute_pwd_glob(حرف *p, ثابت حرف *pwd)
 {
-	char *ret, *escpwd;
+	حرف *ret, *escpwd;
 
 	escpwd = escape_glob(pwd);
-	if (p == NULL)
-		return escpwd;
+	اگر (p == تہی)
+		واپس escpwd;
 	ret = sftp_make_absolute(p, escpwd);
-	free(escpwd);
-	return ret;
+	آزاد(escpwd);
+	واپس ret;
 }
 
-static int
-local_is_dir(const char *path)
+ساکن صحیح
+local_is_dir(ثابت حرف *راستہ)
 {
-	struct stat sb;
+	ساخت stat sb;
 
-	if (stat(path, &sb) == -1)
-		return 0;
-	return S_ISDIR(sb.st_mode);
+	اگر (stat(راستہ, &sb) == -1)
+		واپس 0;
+	واپس S_ISDIR(sb.st_mode);
 }
 
-static int
-process_get(struct sftp_conn *conn, const char *src, const char *dst,
-    const char *pwd, int pflag, int rflag, int resume, int fflag)
+ساکن صحیح
+process_get(ساخت sftp_conn *conn, ثابت حرف *src, ثابت حرف *dst,
+    ثابت حرف *pwd, صحیح pflag, صحیح rflag, صحیح resume, صحیح fflag)
 {
-	char *filename, *abs_src = NULL, *abs_dst = NULL, *tmp = NULL;
+	حرف *filename, *abs_src = تہی, *abs_dst = تہی, *tmp = تہی;
 	glob_t g;
-	int i, r, err = 0;
+	صحیح i, r, err = 0;
 
 	abs_src = make_absolute_pwd_glob(xstrdup(src), pwd);
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, حجم(g));
 
 	debug3("Looking up %s", abs_src);
-	if ((r = sftp_glob(conn, abs_src, GLOB_MARK, NULL, &g)) != 0) {
-		if (r == GLOB_NOSPACE) {
+	اگر ((r = sftp_glob(conn, abs_src, GLOB_MARK, تہی, &g)) != 0) {
+		اگر (r == GLOB_NOSPACE) {
 			error("Too many matches for \"%s\".", abs_src);
-		} else {
+		} ورنہ {
 			error("File \"%s\" not found.", abs_src);
 		}
 		err = -1;
-		goto out;
+		جاؤ برآمد;
 	}
 
 	/*
 	 * If multiple matches then dst must be a directory or
 	 * unspecified.
 	 */
-	if (g.gl_matchc > 1 && dst != NULL && !local_is_dir(dst)) {
+	اگر (g.gl_matchc > 1 && dst != تہی && !local_is_dir(dst)) {
 		error("Multiple source paths, but destination "
 		    "\"%s\" is not a directory", dst);
 		err = -1;
-		goto out;
+		جاؤ برآمد;
 	}
 
-	for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+	برائے (i = 0; g.gl_pathv[i] && !interrupted; i++) {
 		tmp = xstrdup(g.gl_pathv[i]);
-		if ((filename = basename(tmp)) == NULL) {
+		اگر ((filename = basename(tmp)) == تہی) {
 			error("basename %s: %s", tmp, strerror(errno));
-			free(tmp);
+			آزاد(tmp);
 			err = -1;
-			goto out;
+			جاؤ برآمد;
 		}
 
 		/*
@@ -704,351 +704,351 @@ process_get(struct sftp_conn *conn, const char *src, const char *dst,
 		 * In particular, never select the local root as an implicit
 		 * destination for a remote root.
 		 */
-		if (strcmp(filename, "..") == 0 ||
+		اگر (strcmp(filename, "..") == 0 ||
 		    (filename[0] != '\0' &&
 		    filename[strspn(filename, "/")] == '\0'))
 			filename = ".";
 
-		if (g.gl_matchc == 1 && dst) {
-			if (local_is_dir(dst)) {
-				abs_dst = sftp_path_append(dst, filename);
-			} else {
+		اگر (g.gl_matchc == 1 && dst) {
+			اگر (local_is_dir(dst)) {
+				abs_dst = sftp_راستہ_append(dst, filename);
+			} ورنہ {
 				abs_dst = xstrdup(dst);
 			}
-		} else if (dst) {
-			abs_dst = sftp_path_append(dst, filename);
-		} else {
+		} ورنہ اگر (dst) {
+			abs_dst = sftp_راستہ_append(dst, filename);
+		} ورنہ {
 			abs_dst = xstrdup(filename);
 		}
-		free(tmp);
+		آزاد(tmp);
 
 		resume |= global_aflag;
-		if (!quiet && resume)
+		اگر (!quiet && resume)
 			mprintf("Resuming %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
-		else if (!quiet && !resume)
+		ورنہ اگر (!quiet && !resume)
 			mprintf("Fetching %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
 		/* XXX follow link flag */
-		if (sftp_globpath_is_dir(g.gl_pathv[i]) &&
+		اگر (sftp_globpath_is_dir(g.gl_pathv[i]) &&
 		    (rflag || global_rflag)) {
-			if (sftp_download_dir(conn, g.gl_pathv[i], abs_dst,
-			    NULL, pflag || global_pflag, 1, resume,
+			اگر (sftp_download_dir(conn, g.gl_pathv[i], abs_dst,
+			    تہی, pflag || global_pflag, 1, resume,
 			    fflag || global_fflag, 0, 0) == -1)
 				err = -1;
-		} else {
-			if (sftp_download(conn, g.gl_pathv[i], abs_dst, NULL,
+		} ورنہ {
+			اگر (sftp_download(conn, g.gl_pathv[i], abs_dst, تہی,
 			    pflag || global_pflag, resume,
 			    fflag || global_fflag, 0) == -1)
 				err = -1;
 		}
-		free(abs_dst);
-		abs_dst = NULL;
+		آزاد(abs_dst);
+		abs_dst = تہی;
 	}
 
-out:
-	free(abs_src);
+برآمد:
+	آزاد(abs_src);
 	globfree(&g);
-	return(err);
+	واپس(err);
 }
 
-static int
-process_put(struct sftp_conn *conn, const char *src, const char *dst,
-    const char *pwd, int pflag, int rflag, int resume, int fflag)
+ساکن صحیح
+process_put(ساخت sftp_conn *conn, ثابت حرف *src, ثابت حرف *dst,
+    ثابت حرف *pwd, صحیح pflag, صحیح rflag, صحیح resume, صحیح fflag)
 {
-	char *tmp_dst = NULL;
-	char *abs_dst = NULL;
-	char *tmp = NULL, *filename = NULL;
+	حرف *tmp_dst = تہی;
+	حرف *abs_dst = تہی;
+	حرف *tmp = تہی, *filename = تہی;
 	glob_t g;
-	int err = 0;
-	int i, dst_is_dir = 1;
-	struct stat sb;
+	صحیح err = 0;
+	صحیح i, dst_is_dir = 1;
+	ساخت stat sb;
 
-	if (dst) {
+	اگر (dst) {
 		tmp_dst = xstrdup(dst);
 		tmp_dst = sftp_make_absolute(tmp_dst, pwd);
 	}
 
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, حجم(g));
 	debug3("Looking up %s", src);
-	if (glob(src, GLOB_NOCHECK | GLOB_MARK, NULL, &g)) {
+	اگر (glob(src, GLOB_NOCHECK | GLOB_MARK, تہی, &g)) {
 		error("File \"%s\" not found.", src);
 		err = -1;
-		goto out;
+		جاؤ برآمد;
 	}
 
 	/* If we aren't fetching to pwd then stash this status for later */
-	if (tmp_dst != NULL)
+	اگر (tmp_dst != تہی)
 		dst_is_dir = sftp_remote_is_dir(conn, tmp_dst);
 
 	/* If multiple matches, dst may be directory or unspecified */
-	if (g.gl_matchc > 1 && tmp_dst && !dst_is_dir) {
+	اگر (g.gl_matchc > 1 && tmp_dst && !dst_is_dir) {
 		error("Multiple paths match, but destination "
 		    "\"%s\" is not a directory", tmp_dst);
 		err = -1;
-		goto out;
+		جاؤ برآمد;
 	}
 
-	for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-		if (stat(g.gl_pathv[i], &sb) == -1) {
+	برائے (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+		اگر (stat(g.gl_pathv[i], &sb) == -1) {
 			err = -1;
 			error("stat %s: %s", g.gl_pathv[i], strerror(errno));
-			continue;
+			جاری;
 		}
 
 		tmp = xstrdup(g.gl_pathv[i]);
-		if ((filename = basename(tmp)) == NULL) {
+		اگر ((filename = basename(tmp)) == تہی) {
 			error("basename %s: %s", tmp, strerror(errno));
-			free(tmp);
+			آزاد(tmp);
 			err = -1;
-			goto out;
+			جاؤ برآمد;
 		}
 		/* Special handling for source of '..' */
-		if (strcmp(filename, "..") == 0)
+		اگر (strcmp(filename, "..") == 0)
 			filename = "."; /* Upload to dest, not dest/.. */
 
-		free(abs_dst);
-		abs_dst = NULL;
-		if (g.gl_matchc == 1 && tmp_dst) {
+		آزاد(abs_dst);
+		abs_dst = تہی;
+		اگر (g.gl_matchc == 1 && tmp_dst) {
 			/* If directory specified, append filename */
-			if (dst_is_dir)
-				abs_dst = sftp_path_append(tmp_dst, filename);
-			else
+			اگر (dst_is_dir)
+				abs_dst = sftp_راستہ_append(tmp_dst, filename);
+			ورنہ
 				abs_dst = xstrdup(tmp_dst);
-		} else if (tmp_dst) {
-			abs_dst = sftp_path_append(tmp_dst, filename);
-		} else {
+		} ورنہ اگر (tmp_dst) {
+			abs_dst = sftp_راستہ_append(tmp_dst, filename);
+		} ورنہ {
 			abs_dst = sftp_make_absolute(xstrdup(filename), pwd);
 		}
-		free(tmp);
+		آزاد(tmp);
 
 		resume |= global_aflag;
-		if (!quiet && resume)
+		اگر (!quiet && resume)
 			mprintf("Resuming upload of %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
-		else if (!quiet && !resume)
+		ورنہ اگر (!quiet && !resume)
 			mprintf("Uploading %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
 		/* XXX follow_link_flag */
-		if (sftp_globpath_is_dir(g.gl_pathv[i]) &&
+		اگر (sftp_globpath_is_dir(g.gl_pathv[i]) &&
 		    (rflag || global_rflag)) {
-			if (sftp_upload_dir(conn, g.gl_pathv[i], abs_dst,
+			اگر (sftp_upload_dir(conn, g.gl_pathv[i], abs_dst,
 			    pflag || global_pflag, 1, resume,
 			    fflag || global_fflag, 0, 0) == -1)
 				err = -1;
-		} else {
-			if (sftp_upload(conn, g.gl_pathv[i], abs_dst,
+		} ورنہ {
+			اگر (sftp_upload(conn, g.gl_pathv[i], abs_dst,
 			    pflag || global_pflag, resume,
 			    fflag || global_fflag, 0) == -1)
 				err = -1;
 		}
 	}
 
-out:
-	free(abs_dst);
-	free(tmp_dst);
+برآمد:
+	آزاد(abs_dst);
+	آزاد(tmp_dst);
 	globfree(&g);
-	return(err);
+	واپس(err);
 }
 
-static int
-sdirent_comp(const void *aa, const void *bb)
+ساکن صحیح
+sdirent_comp(ثابت خالی *aa, ثابت خالی *bb)
 {
 	SFTP_DIRENT *a = *(SFTP_DIRENT **)aa;
 	SFTP_DIRENT *b = *(SFTP_DIRENT **)bb;
-	int rmul = sort_flag & LS_REVERSE_SORT ? -1 : 1;
+	صحیح rmul = ترتیب_دو_flag & LS_الٹ_ترتیب_دو ? -1 : 1;
 
-#define NCMP(a,b) (a == b ? 0 : (a < b ? 1 : -1))
-	if (sort_flag & LS_NAME_SORT)
-		return (rmul * strcmp(a->filename, b->filename));
-	else if (sort_flag & LS_TIME_SORT)
-		return (rmul * NCMP(a->a.mtime, b->a.mtime));
-	else if (sort_flag & LS_SIZE_SORT)
-		return (rmul * NCMP(a->a.size, b->a.size));
+#تعریف_کرو NCMP(a,b) (a == b ? 0 : (a < b ? 1 : -1))
+	اگر (ترتیب_دو_flag & LS_NAME_ترتیب_دو)
+		واپس (rmul * strcmp(a->filename, b->filename));
+	ورنہ اگر (ترتیب_دو_flag & LS_وقت_ترتیب_دو)
+		واپس (rmul * NCMP(a->a.mtime, b->a.mtime));
+	ورنہ اگر (ترتیب_دو_flag & LS_سائز_ترتیب_دو)
+		واپس (rmul * NCMP(a->a.سائز, b->a.سائز));
 
 	fatal("Unknown ls sort type");
 }
 
 /* sftp ls.1 replacement for directories */
-static int
-do_ls_dir(struct sftp_conn *conn, const char *path,
-    const char *strip_path, int lflag)
+ساکن صحیح
+do_ls_dir(ساخت sftp_conn *conn, ثابت حرف *راستہ,
+    ثابت حرف *strip_راستہ, صحیح lflag)
 {
-	int n;
+	صحیح n;
 	u_int c = 1, colspace = 0, columns = 1;
 	SFTP_DIRENT **d;
 
-	if ((n = sftp_readdir(conn, path, &d)) != 0)
-		return (n);
+	اگر ((n = sftp_readdir(conn, راستہ, &d)) != 0)
+		واپس (n);
 
-	if (!(lflag & LS_SHORT_VIEW)) {
-		u_int m = 0, width = 80;
-		struct winsize ws;
-		char *tmp;
+	اگر (!(lflag & LS_SHORT_VIEW)) {
+		u_int m = 0, چوڑائی = 80;
+		ساخت winsize ws;
+		حرف *tmp;
 
 		/* Count entries for sort and find longest filename */
-		for (n = 0; d[n] != NULL; n++) {
-			if (d[n]->filename[0] != '.' || (lflag & LS_SHOW_ALL))
-				m = MAXIMUM(m, strlen(d[n]->filename));
+		برائے (n = 0; d[n] != تہی; n++) {
+			اگر (d[n]->filename[0] != '.' || (lflag & LS_SHOW_ALL))
+				m = زیادہ_سے_زیادہ(m, لڑی_لمبائی(d[n]->filename));
 		}
 
 		/* Add any subpath that also needs to be counted */
-		tmp = path_strip(path, strip_path);
-		m += strlen(tmp);
-		free(tmp);
+		tmp = راستہ_strip(راستہ, strip_راستہ);
+		m += لڑی_لمبائی(tmp);
+		آزاد(tmp);
 
-		if (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
-			width = ws.ws_col;
+		اگر (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
+			چوڑائی = ws.ws_ستون;
 
-		columns = width / (m + 2);
-		columns = MAXIMUM(columns, 1);
-		colspace = width / columns;
-		colspace = MINIMUM(colspace, width);
+		columns = چوڑائی / (m + 2);
+		columns = زیادہ_سے_زیادہ(columns, 1);
+		colspace = چوڑائی / columns;
+		colspace = MINIMUM(colspace, چوڑائی);
 	}
 
-	if (lflag & SORT_FLAGS) {
-		for (n = 0; d[n] != NULL; n++)
+	اگر (lflag & ترتیب_دو_FLAGS) {
+		برائے (n = 0; d[n] != تہی; n++)
 			;	/* count entries */
-		sort_flag = lflag & (SORT_FLAGS|LS_REVERSE_SORT);
-		qsort(d, n, sizeof(*d), sdirent_comp);
+		ترتیب_دو_flag = lflag & (ترتیب_دو_FLAGS|LS_الٹ_ترتیب_دو);
+		qsort(d, n, حجم(*d), sdirent_comp);
 	}
 
 	get_remote_user_groups_from_dirents(conn, d);
-	for (n = 0; d[n] != NULL && !interrupted; n++) {
-		char *tmp, *fname;
+	برائے (n = 0; d[n] != تہی && !interrupted; n++) {
+		حرف *tmp, *fname;
 
-		if (d[n]->filename[0] == '.' && !(lflag & LS_SHOW_ALL))
-			continue;
+		اگر (d[n]->filename[0] == '.' && !(lflag & LS_SHOW_ALL))
+			جاری;
 
-		tmp = sftp_path_append(path, d[n]->filename);
-		fname = path_strip(tmp, strip_path);
-		free(tmp);
+		tmp = sftp_راستہ_append(راستہ, d[n]->filename);
+		fname = راستہ_strip(tmp, strip_راستہ);
+		آزاد(tmp);
 
-		if (lflag & LS_LONG_VIEW) {
-			if ((lflag & (LS_NUMERIC_VIEW|LS_SI_UNITS)) != 0 ||
+		اگر (lflag & LS_LONG_VIEW) {
+			اگر ((lflag & (LS_NUMERIC_VIEW|LS_SI_UNITS)) != 0 ||
 			    sftp_can_get_users_groups_by_id(conn)) {
-				char *lname;
-				struct stat sb;
-				const char *user = NULL, *group = NULL;
+				حرف *lname;
+				ساخت stat sb;
+				ثابت حرف *user = تہی, *گروہ = تہی;
 
-				memset(&sb, 0, sizeof(sb));
-				attrib_to_stat(&d[n]->a, &sb);
-				if ((lflag & LS_NUMERIC_VIEW) == 0) {
+				memset(&sb, 0, حجم(sb));
+				attrib_مقصد_stat(&d[n]->a, &sb);
+				اگر ((lflag & LS_NUMERIC_VIEW) == 0) {
 					user = ruser_name(sb.st_uid);
-					group = rgroup_name(sb.st_gid);
+					گروہ = rgroup_name(sb.st_gid);
 				}
 				lname = ls_file(fname, &sb, 1,
-				    (lflag & LS_SI_UNITS), user, group);
+				    (lflag & LS_SI_UNITS), user, گروہ);
 				mprintf("%s\n", lname);
-				free(lname);
-			} else
+				آزاد(lname);
+			} ورنہ
 				mprintf("%s\n", d[n]->longname);
-		} else {
+		} ورنہ {
 			mprintf("%-*s", colspace, fname);
-			if (c >= columns) {
-				printf("\n");
+			اگر (c >= columns) {
+				لکھو("\n");
 				c = 1;
-			} else
+			} ورنہ
 				c++;
 		}
 
-		free(fname);
+		آزاد(fname);
 	}
 
-	if (!(lflag & LS_LONG_VIEW) && (c != 1))
-		printf("\n");
+	اگر (!(lflag & LS_LONG_VIEW) && (c != 1))
+		لکھو("\n");
 
 	sftp_free_dirents(d);
-	return (0);
+	واپس (0);
 }
 
-static int
-sglob_comp(const void *aa, const void *bb)
+ساکن صحیح
+sglob_comp(ثابت خالی *aa, ثابت خالی *bb)
 {
-	u_int a = *(const u_int *)aa;
-	u_int b = *(const u_int *)bb;
-	const char *ap = sort_glob->gl_pathv[a];
-	const char *bp = sort_glob->gl_pathv[b];
-	const struct stat *as = sort_glob->gl_statv[a];
-	const struct stat *bs = sort_glob->gl_statv[b];
-	int rmul = sort_flag & LS_REVERSE_SORT ? -1 : 1;
+	u_int a = *(ثابت u_int *)aa;
+	u_int b = *(ثابت u_int *)bb;
+	ثابت حرف *ap = ترتیب_دو_glob->gl_pathv[a];
+	ثابت حرف *bp = ترتیب_دو_glob->gl_pathv[b];
+	ثابت ساخت stat *as = ترتیب_دو_glob->gl_statv[a];
+	ثابت ساخت stat *bs = ترتیب_دو_glob->gl_statv[b];
+	صحیح rmul = ترتیب_دو_flag & LS_الٹ_ترتیب_دو ? -1 : 1;
 
-#define NCMP(a,b) (a == b ? 0 : (a < b ? 1 : -1))
+#تعریف_کرو NCMP(a,b) (a == b ? 0 : (a < b ? 1 : -1))
 	/* order entries without stat information last */
-	if (as == NULL || bs == NULL)
-		return (as == bs) ? 0 : (as == NULL ? rmul : -rmul);
-	if (sort_flag & LS_NAME_SORT)
-		return (rmul * strcmp(ap, bp));
-	else if (sort_flag & LS_TIME_SORT) {
-#if defined(HAVE_STRUCT_STAT_ST_MTIM)
-		if (timespeccmp(&as->st_mtim, &bs->st_mtim, ==))
-			return 0;
-		return timespeccmp(&as->st_mtim, &bs->st_mtim, <) ?
+	اگر (as == تہی || bs == تہی)
+		واپس (as == bs) ? 0 : (as == تہی ? rmul : -rmul);
+	اگر (ترتیب_دو_flag & LS_NAME_ترتیب_دو)
+		واپس (rmul * strcmp(ap, bp));
+	ورنہ اگر (ترتیب_دو_flag & LS_وقت_ترتیب_دو) {
+#اگر defined(HAVE_STRUCT_STAT_ST_MTIM)
+		اگر (timespeccmp(&as->st_mtim, &bs->st_mtim, ==))
+			واپس 0;
+		واپس timespeccmp(&as->st_mtim, &bs->st_mtim, <) ?
 		    rmul : -rmul;
-#elif defined(HAVE_STRUCT_STAT_ST_MTIME)
-		return (rmul * NCMP(as->st_mtime, bs->st_mtime));
-#else
-	return rmul * 1;
-#endif
-	} else if (sort_flag & LS_SIZE_SORT)
-		return (rmul * NCMP(as->st_size, bs->st_size));
+#وگرنہ_اگر defined(HAVE_STRUCT_STAT_ST_MTIME)
+		واپس (rmul * NCMP(as->st_mtime, bs->st_mtime));
+#ورنہ
+	واپس rmul * 1;
+#اگر_ختم
+	} ورنہ اگر (ترتیب_دو_flag & LS_سائز_ترتیب_دو)
+		واپس (rmul * NCMP(as->st_size, bs->st_size));
 
 	fatal("Unknown ls sort type");
 }
 
 /* sftp ls.1 replacement which handles path globs */
-static int
-do_globbed_ls(struct sftp_conn *conn, const char *path,
-    const char *strip_path, int lflag)
+ساکن صحیح
+do_globbed_ls(ساخت sftp_conn *conn, ثابت حرف *راستہ,
+    ثابت حرف *strip_راستہ, صحیح lflag)
 {
-	char *fname, *lname;
+	حرف *fname, *lname;
 	glob_t g;
-	int err, r;
-	struct winsize ws;
-	u_int i, j, nentries, *indices = NULL, c = 1;
-	u_int colspace = 0, columns = 1, m = 0, width = 80;
+	صحیح err, r;
+	ساخت winsize ws;
+	u_int i, j, nentries, *indices = تہی, c = 1;
+	u_int colspace = 0, columns = 1, m = 0, چوڑائی = 80;
 
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, حجم(g));
 
-	if ((r = sftp_glob(conn, path,
+	اگر ((r = sftp_glob(conn, راستہ,
 	    GLOB_MARK|GLOB_NOCHECK|GLOB_BRACE|GLOB_KEEPSTAT|GLOB_NOSORT,
-	    NULL, &g)) != 0 ||
+	    تہی, &g)) != 0 ||
 	    (g.gl_pathc && !g.gl_matchc)) {
-		if (g.gl_pathc)
+		اگر (g.gl_pathc)
 			globfree(&g);
-		if (r == GLOB_NOSPACE) {
-			error("Can't ls: Too many matches for \"%s\"", path);
-		} else {
-			error("Can't ls: \"%s\" not found", path);
+		اگر (r == GLOB_NOSPACE) {
+			error("Can't ls: Too many matches for \"%s\"", راستہ);
+		} ورنہ {
+			error("Can't ls: \"%s\" not found", راستہ);
 		}
-		return -1;
+		واپس -1;
 	}
 
-	if (interrupted)
-		goto out;
+	اگر (interrupted)
+		جاؤ برآمد;
 
 	/*
 	 * If the glob returns a single match and it is a directory,
 	 * then just list its contents.
 	 */
-	if (g.gl_matchc == 1 && g.gl_statv[0] != NULL &&
+	اگر (g.gl_matchc == 1 && g.gl_statv[0] != تہی &&
 	    S_ISDIR(g.gl_statv[0]->st_mode)) {
-		err = do_ls_dir(conn, g.gl_pathv[0], strip_path, lflag);
+		err = do_ls_dir(conn, g.gl_pathv[0], strip_راستہ, lflag);
 		globfree(&g);
-		return err;
+		واپس err;
 	}
 
-	if (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
-		width = ws.ws_col;
+	اگر (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
+		چوڑائی = ws.ws_ستون;
 
-	if (!(lflag & LS_SHORT_VIEW)) {
+	اگر (!(lflag & LS_SHORT_VIEW)) {
 		/* Count entries for sort and find longest filename */
-		for (i = 0; g.gl_pathv[i]; i++)
-			m = MAXIMUM(m, strlen(g.gl_pathv[i]));
+		برائے (i = 0; g.gl_pathv[i]; i++)
+			m = زیادہ_سے_زیادہ(m, لڑی_لمبائی(g.gl_pathv[i]));
 
-		columns = width / (m + 2);
-		columns = MAXIMUM(columns, 1);
-		colspace = width / columns;
+		columns = چوڑائی / (m + 2);
+		columns = زیادہ_سے_زیادہ(columns, 1);
+		colspace = چوڑائی / columns;
 	}
 
 	/*
@@ -1056,117 +1056,117 @@ do_globbed_ls(struct sftp_conn *conn, const char *path,
 	 * an array of indices into it and sort that. For the usual
 	 * unsorted case, the indices are just the identity 1=1, 2=2, etc.
 	 */
-	for (nentries = 0; g.gl_pathv[nentries] != NULL; nentries++)
+	برائے (nentries = 0; g.gl_pathv[nentries] != تہی; nentries++)
 		;	/* count entries */
-	indices = xcalloc(nentries, sizeof(*indices));
-	for (i = 0; i < nentries; i++)
+	indices = xcalloc(nentries, حجم(*indices));
+	برائے (i = 0; i < nentries; i++)
 		indices[i] = i;
 
-	if (lflag & SORT_FLAGS) {
-		sort_glob = &g;
-		sort_flag = lflag & (SORT_FLAGS|LS_REVERSE_SORT);
-		qsort(indices, nentries, sizeof(*indices), sglob_comp);
-		sort_glob = NULL;
+	اگر (lflag & ترتیب_دو_FLAGS) {
+		ترتیب_دو_glob = &g;
+		ترتیب_دو_flag = lflag & (ترتیب_دو_FLAGS|LS_الٹ_ترتیب_دو);
+		qsort(indices, nentries, حجم(*indices), sglob_comp);
+		ترتیب_دو_glob = تہی;
 	}
 
 	get_remote_user_groups_from_glob(conn, &g);
-	for (j = 0; j < nentries && !interrupted; j++) {
+	برائے (j = 0; j < nentries && !interrupted; j++) {
 		i = indices[j];
-		fname = path_strip(g.gl_pathv[i], strip_path);
-		if (lflag & LS_LONG_VIEW) {
-			const char *user = NULL, *group = NULL;
+		fname = راستہ_strip(g.gl_pathv[i], strip_راستہ);
+		اگر (lflag & LS_LONG_VIEW) {
+			ثابت حرف *user = تہی, *گروہ = تہی;
 
-			if (g.gl_statv[i] == NULL) {
+			اگر (g.gl_statv[i] == تہی) {
 				error("no stat information for %s", fname);
-				free(fname);
-				continue;
+				آزاد(fname);
+				جاری;
 			}
-			if ((lflag & LS_NUMERIC_VIEW) == 0) {
+			اگر ((lflag & LS_NUMERIC_VIEW) == 0) {
 				user = ruser_name(g.gl_statv[i]->st_uid);
-				group = rgroup_name(g.gl_statv[i]->st_gid);
+				گروہ = rgroup_name(g.gl_statv[i]->st_gid);
 			}
 			lname = ls_file(fname, g.gl_statv[i], 1,
-			    (lflag & LS_SI_UNITS), user, group);
+			    (lflag & LS_SI_UNITS), user, گروہ);
 			mprintf("%s\n", lname);
-			free(lname);
-		} else {
+			آزاد(lname);
+		} ورنہ {
 			mprintf("%-*s", colspace, fname);
-			if (c >= columns) {
-				printf("\n");
+			اگر (c >= columns) {
+				لکھو("\n");
 				c = 1;
-			} else
+			} ورنہ
 				c++;
 		}
-		free(fname);
+		آزاد(fname);
 	}
 
-	if (!(lflag & LS_LONG_VIEW) && (c != 1))
-		printf("\n");
+	اگر (!(lflag & LS_LONG_VIEW) && (c != 1))
+		لکھو("\n");
 
- out:
-	if (g.gl_pathc)
+ برآمد:
+	اگر (g.gl_pathc)
 		globfree(&g);
-	free(indices);
+	آزاد(indices);
 
-	return 0;
+	واپس 0;
 }
 
-static int
-do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
+ساکن صحیح
+do_df(ساخت sftp_conn *conn, ثابت حرف *راستہ, صحیح hflag, صحیح iflag)
 {
-	struct sftp_statvfs st;
-	char s_used[FMT_SCALED_STRSIZE], s_avail[FMT_SCALED_STRSIZE];
-	char s_root[FMT_SCALED_STRSIZE], s_total[FMT_SCALED_STRSIZE];
-	char s_icapacity[16], s_dcapacity[16];
+	ساخت sftp_statvfs st;
+	حرف s_مستعمل[FMT_SCALED_STRSIZE], s_avail[FMT_SCALED_STRSIZE];
+	حرف s_جڑ[FMT_SCALED_STRSIZE], s_کل[FMT_SCALED_STRSIZE];
+	حرف s_icapacity[16], s_dcapacity[16];
 
-	if (sftp_statvfs(conn, path, &st, 1) == -1)
-		return -1;
-	if (st.f_files == 0)
-		strlcpy(s_icapacity, "ERR", sizeof(s_icapacity));
-	else {
-		snprintf(s_icapacity, sizeof(s_icapacity), "%3llu%%",
-		    (unsigned long long)(100 * (st.f_files - st.f_ffree) /
+	اگر (sftp_statvfs(conn, راستہ, &st, 1) == -1)
+		واپس -1;
+	اگر (st.f_files == 0)
+		strlcpy(s_icapacity, "ERR", حجم(s_icapacity));
+	ورنہ {
+		snprintf(s_icapacity, حجم(s_icapacity), "%3llu%%",
+		    (غیرعلامتی طویل طویل)(100 * (st.f_files - st.f_ffree) /
 		    st.f_files));
 	}
-	if (st.f_blocks == 0)
-		strlcpy(s_dcapacity, "ERR", sizeof(s_dcapacity));
-	else {
-		snprintf(s_dcapacity, sizeof(s_dcapacity), "%3llu%%",
-		    (unsigned long long)(100 * (st.f_blocks - st.f_bfree) /
-		    st.f_blocks));
+	اگر (st.f_بلاکیں == 0)
+		strlcpy(s_dcapacity, "ERR", حجم(s_dcapacity));
+	ورنہ {
+		snprintf(s_dcapacity, حجم(s_dcapacity), "%3llu%%",
+		    (غیرعلامتی طویل طویل)(100 * (st.f_بلاکیں - st.f_bfree) /
+		    st.f_بلاکیں));
 	}
-	if (iflag) {
-		printf("     Inodes        Used       Avail      "
+	اگر (iflag) {
+		لکھو("     Inodes        Used       Avail      "
 		    "(root)    %%Capacity\n");
-		printf("%11llu %11llu %11llu %11llu         %s\n",
-		    (unsigned long long)st.f_files,
-		    (unsigned long long)(st.f_files - st.f_ffree),
-		    (unsigned long long)st.f_favail,
-		    (unsigned long long)st.f_ffree, s_icapacity);
-	} else if (hflag) {
-		strlcpy(s_used, "error", sizeof(s_used));
-		strlcpy(s_avail, "error", sizeof(s_avail));
-		strlcpy(s_root, "error", sizeof(s_root));
-		strlcpy(s_total, "error", sizeof(s_total));
-		fmt_scaled((st.f_blocks - st.f_bfree) * st.f_frsize, s_used);
+		لکھو("%11llu %11llu %11llu %11llu         %s\n",
+		    (غیرعلامتی طویل طویل)st.f_files,
+		    (غیرعلامتی طویل طویل)(st.f_files - st.f_ffree),
+		    (غیرعلامتی طویل طویل)st.f_favail,
+		    (غیرعلامتی طویل طویل)st.f_ffree, s_icapacity);
+	} ورنہ اگر (hflag) {
+		strlcpy(s_مستعمل, "error", حجم(s_مستعمل));
+		strlcpy(s_avail, "error", حجم(s_avail));
+		strlcpy(s_جڑ, "error", حجم(s_جڑ));
+		strlcpy(s_کل, "error", حجم(s_کل));
+		fmt_scaled((st.f_بلاکیں - st.f_bfree) * st.f_frsize, s_مستعمل);
 		fmt_scaled(st.f_bavail * st.f_frsize, s_avail);
-		fmt_scaled(st.f_bfree * st.f_frsize, s_root);
-		fmt_scaled(st.f_blocks * st.f_frsize, s_total);
-		printf("    Size     Used    Avail   (root)    %%Capacity\n");
-		printf("%7sB %7sB %7sB %7sB         %s\n",
-		    s_total, s_used, s_avail, s_root, s_dcapacity);
-	} else {
-		printf("        Size         Used        Avail       "
+		fmt_scaled(st.f_bfree * st.f_frsize, s_جڑ);
+		fmt_scaled(st.f_بلاکیں * st.f_frsize, s_کل);
+		لکھو("    Size     Used    Avail   (root)    %%Capacity\n");
+		لکھو("%7sB %7sB %7sB %7sB         %s\n",
+		    s_کل, s_مستعمل, s_avail, s_جڑ, s_dcapacity);
+	} ورنہ {
+		لکھو("        Size         Used        Avail       "
 		    "(root)    %%Capacity\n");
-		printf("%12llu %12llu %12llu %12llu         %s\n",
-		    (unsigned long long)(st.f_frsize * st.f_blocks / 1024),
-		    (unsigned long long)(st.f_frsize *
-		    (st.f_blocks - st.f_bfree) / 1024),
-		    (unsigned long long)(st.f_frsize * st.f_bavail / 1024),
-		    (unsigned long long)(st.f_frsize * st.f_bfree / 1024),
+		لکھو("%12llu %12llu %12llu %12llu         %s\n",
+		    (غیرعلامتی طویل طویل)(st.f_frsize * st.f_بلاکیں / 1024),
+		    (غیرعلامتی طویل طویل)(st.f_frsize *
+		    (st.f_بلاکیں - st.f_bfree) / 1024),
+		    (غیرعلامتی طویل طویل)(st.f_frsize * st.f_bavail / 1024),
+		    (غیرعلامتی طویل طویل)(st.f_frsize * st.f_bfree / 1024),
 		    s_dcapacity);
 	}
-	return 0;
+	واپس 0;
 }
 
 /*
@@ -1174,37 +1174,37 @@ do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
  * applied in makeargv() when the string is destined for a function that
  * does not glob it.
  */
-static void
-undo_glob_escape(char *s)
+ساکن خالی
+undo_glob_escape(حرف *s)
 {
-	size_t i, j;
+	سائز_t i, j;
 
-	for (i = j = 0;;) {
-		if (s[i] == '\0') {
+	برائے (i = j = 0;;) {
+		اگر (s[i] == '\0') {
 			s[j] = '\0';
-			return;
+			واپس;
 		}
-		if (s[i] != '\\') {
+		اگر (s[i] != '\\') {
 			s[j++] = s[i++];
-			continue;
+			جاری;
 		}
 		/* s[i] == '\\' */
 		++i;
-		switch (s[i]) {
-		case '?':
-		case '[':
-		case '*':
-		case '\\':
+		انتخاب (s[i]) {
+		حالت '?':
+		حالت '[':
+		حالت '*':
+		حالت '\\':
 			s[j++] = s[i++];
-			break;
-		case '\0':
+			توڑو;
+		حالت '\0':
 			s[j++] = '\\';
 			s[j] = '\0';
-			return;
-		default:
+			واپس;
+		طےشدہ:
 			s[j++] = '\\';
 			s[j++] = s[i++];
-			break;
+			توڑو;
 		}
 	}
 }
@@ -1225,65 +1225,65 @@ undo_glob_escape(char *s)
  * last argument's quote has been properly terminated or 0 otherwise.
  * This parameter is only of use if "sloppy" is set.
  */
-#define MAXARGS		128
-#define MAXARGLEN	8192
-static char **
-makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
+#تعریف_کرو MAXARGS		128
+#تعریف_کرو MAXARGLEN	8192
+ساکن حرف **
+makeargv(ثابت حرف *arg, صحیح *argcp, صحیح sloppy, حرف *lastquote,
     u_int *terminated)
 {
-	int argc, quot;
-	size_t i, j;
-	static char argvs[MAXARGLEN];
-	static char *argv[MAXARGS + 1];
-	enum { MA_START, MA_SQUOTE, MA_DQUOTE, MA_UNQUOTED } state, q;
+	صحیح argc, quot;
+	سائز_t i, j;
+	ساکن حرف argvs[MAXARGLEN];
+	ساکن حرف *argv[MAXARGS + 1];
+	شمار { MA_آغاز, MA_SQUOTE, MA_DQUOTE, MA_UNQUOTED } state, q;
 
 	*argcp = argc = 0;
-	if (strlen(arg) > sizeof(argvs) - 1) {
- args_too_longs:
+	اگر (لڑی_لمبائی(arg) > حجم(argvs) - 1) {
+ دلائل_too_longs:
 		error("string too long");
-		return NULL;
+		واپس تہی;
 	}
-	if (terminated != NULL)
+	اگر (terminated != تہی)
 		*terminated = 1;
-	if (lastquote != NULL)
+	اگر (lastquote != تہی)
 		*lastquote = '\0';
-	state = MA_START;
+	state = MA_آغاز;
 	i = j = 0;
-	for (;;) {
-		if ((size_t)argc >= sizeof(argv) / sizeof(*argv)){
+	برائے (;;) {
+		اگر ((سائز_t)argc >= حجم(argv) / حجم(*argv)){
 			error("Too many arguments.");
-			return NULL;
+			واپس تہی;
 		}
-		if (isspace((unsigned char)arg[i])) {
-			if (state == MA_UNQUOTED) {
+		اگر (خلا_ہے((غیرعلامتی حرف)arg[i])) {
+			اگر (state == MA_UNQUOTED) {
 				/* Terminate current argument */
 				argvs[j++] = '\0';
 				argc++;
-				state = MA_START;
-			} else if (state != MA_START)
+				state = MA_آغاز;
+			} ورنہ اگر (state != MA_آغاز)
 				argvs[j++] = arg[i];
-		} else if (arg[i] == '"' || arg[i] == '\'') {
+		} ورنہ اگر (arg[i] == '"' || arg[i] == '\'') {
 			q = arg[i] == '"' ? MA_DQUOTE : MA_SQUOTE;
-			if (state == MA_START) {
+			اگر (state == MA_آغاز) {
 				argv[argc] = argvs + j;
 				state = q;
-				if (lastquote != NULL)
+				اگر (lastquote != تہی)
 					*lastquote = arg[i];
-			} else if (state == MA_UNQUOTED)
+			} ورنہ اگر (state == MA_UNQUOTED)
 				state = q;
-			else if (state == q)
+			ورنہ اگر (state == q)
 				state = MA_UNQUOTED;
-			else
+			ورنہ
 				argvs[j++] = arg[i];
-		} else if (arg[i] == '\\') {
-			if (state == MA_SQUOTE || state == MA_DQUOTE) {
+		} ورنہ اگر (arg[i] == '\\') {
+			اگر (state == MA_SQUOTE || state == MA_DQUOTE) {
 				quot = state == MA_SQUOTE ? '\'' : '"';
 				/* Unescape quote we are in */
 				/* XXX support \n and friends? */
-				if (arg[i + 1] == quot) {
+				اگر (arg[i + 1] == quot) {
 					i++;
 					argvs[j++] = arg[i];
-				} else if (arg[i + 1] == '?' ||
+				} ورنہ اگر (arg[i + 1] == '?' ||
 				    arg[i + 1] == '[' || arg[i + 1] == '*') {
 					/*
 					 * Special case for sftp: append
@@ -1291,24 +1291,24 @@ makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
 					 * glob will undo one level of
 					 * escaping. NB. string can grow here.
 					 */
-					if (j >= sizeof(argvs) - 5)
-						goto args_too_longs;
+					اگر (j >= حجم(argvs) - 5)
+						جاؤ دلائل_too_longs;
 					argvs[j++] = '\\';
 					argvs[j++] = arg[i++];
 					argvs[j++] = '\\';
 					argvs[j++] = arg[i];
-				} else {
+				} ورنہ {
 					argvs[j++] = arg[i++];
 					argvs[j++] = arg[i];
 				}
-			} else {
-				if (state == MA_START) {
+			} ورنہ {
+				اگر (state == MA_آغاز) {
 					argv[argc] = argvs + j;
 					state = MA_UNQUOTED;
-					if (lastquote != NULL)
+					اگر (lastquote != تہی)
 						*lastquote = '\0';
 				}
-				if (arg[i + 1] == '?' || arg[i + 1] == '[' ||
+				اگر (arg[i + 1] == '?' || arg[i + 1] == '[' ||
 				    arg[i + 1] == '*' || arg[i + 1] == '\\') {
 					/*
 					 * Special case for sftp: append
@@ -1318,76 +1318,76 @@ makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
 					 */
 					argvs[j++] = arg[i++];
 					argvs[j++] = arg[i];
-				} else {
+				} ورنہ {
 					/* Unescape everything */
 					/* XXX support \n and friends? */
 					i++;
-					if (arg[i] == '\0')
-						goto early_nul;
+					اگر (arg[i] == '\0')
+						جاؤ early_nul;
 					argvs[j++] = arg[i];
 				}
 			}
-		} else if (arg[i] == '#') {
-			if (state == MA_SQUOTE || state == MA_DQUOTE)
+		} ورنہ اگر (arg[i] == '#') {
+			اگر (state == MA_SQUOTE || state == MA_DQUOTE)
 				argvs[j++] = arg[i];
-			else
-				goto string_done;
-		} else if (arg[i] == '\0') {
-			if (state == MA_SQUOTE || state == MA_DQUOTE) {
+			ورنہ
+				جاؤ string_مکمل;
+		} ورنہ اگر (arg[i] == '\0') {
+			اگر (state == MA_SQUOTE || state == MA_DQUOTE) {
  early_nul:
-				if (sloppy) {
+				اگر (sloppy) {
 					state = MA_UNQUOTED;
-					if (terminated != NULL)
+					اگر (terminated != تہی)
 						*terminated = 0;
-					goto string_done;
+					جاؤ string_مکمل;
 				}
 				error("Unterminated quoted argument");
-				return NULL;
+				واپس تہی;
 			}
- string_done:
-			if (state == MA_UNQUOTED) {
+ string_مکمل:
+			اگر (state == MA_UNQUOTED) {
 				argvs[j++] = '\0';
 				argc++;
 			}
-			break;
-		} else {
-			if (state == MA_START) {
+			توڑو;
+		} ورنہ {
+			اگر (state == MA_آغاز) {
 				argv[argc] = argvs + j;
 				state = MA_UNQUOTED;
-				if (lastquote != NULL)
+				اگر (lastquote != تہی)
 					*lastquote = '\0';
 			}
-			if ((state == MA_SQUOTE || state == MA_DQUOTE) &&
+			اگر ((state == MA_SQUOTE || state == MA_DQUOTE) &&
 			    (arg[i] == '?' || arg[i] == '[' || arg[i] == '*')) {
 				/*
 				 * Special case for sftp: escape quoted
 				 * glob(3) wildcards. NB. string can grow
 				 * here.
 				 */
-				if (j >= sizeof(argvs) - 3)
-					goto args_too_longs;
+				اگر (j >= حجم(argvs) - 3)
+					جاؤ دلائل_too_longs;
 				argvs[j++] = '\\';
 				argvs[j++] = arg[i];
-			} else
+			} ورنہ
 				argvs[j++] = arg[i];
 		}
 		i++;
 	}
 	*argcp = argc;
-	return argv;
+	واپس argv;
 }
 
-static int
-parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
-	  int *fflag, int *hflag, int *iflag, int *lflag, int *pflag,
-	  int *rflag, int *sflag,
-    unsigned long *n_arg, char **path1, char **path2)
+ساکن صحیح
+parse_دلائل(ثابت حرف **cpp, صحیح *ignore_errors, صحیح *disable_echo, صحیح *aflag,
+	  صحیح *fflag, صحیح *hflag, صحیح *iflag, صحیح *lflag, صحیح *pflag,
+	  صحیح *rflag, صحیح *sflag,
+    غیرعلامتی طویل *n_arg, حرف **path1, حرف **path2)
 {
-	const char *cmd, *cp = *cpp;
-	char *cp2, **argv;
-	int base = 0;
-	long long ll;
-	int path1_mandatory = 0, i, cmdnum, optidx, argc;
+	ثابت حرف *cmd, *cp = *cpp;
+	حرف *cp2, **argv;
+	صحیح بنیاد = 0;
+	طویل طویل ll;
+	صحیح path1_mandatory = 0, i, cmdnum, optidx, argc;
 
 	/* Skip leading whitespace */
 	cp = cp + strspn(cp, WHITESPACE);
@@ -1398,520 +1398,520 @@ parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
 	 */
 	*ignore_errors = 0;
 	*disable_echo = 0;
-	for (;*cp != '\0'; cp++) {
-		if (*cp == '-') {
+	برائے (;*cp != '\0'; cp++) {
+		اگر (*cp == '-') {
 			*ignore_errors = 1;
-		} else if (*cp == '@') {
+		} ورنہ اگر (*cp == '@') {
 			*disable_echo = 1;
-		} else {
+		} ورنہ {
 			/* all other characters terminate prefix processing */
-			break;
+			توڑو;
 		}
 	}
 	cp = cp + strspn(cp, WHITESPACE);
 
 	/* Ignore blank lines and lines which begin with comment '#' char */
-	if (*cp == '\0' || *cp == '#')
-		return (0);
+	اگر (*cp == '\0' || *cp == '#')
+		واپس (0);
 
-	if ((argv = makeargv(cp, &argc, 0, NULL, NULL)) == NULL)
-		return -1;
+	اگر ((argv = makeargv(cp, &argc, 0, تہی, تہی)) == تہی)
+		واپس -1;
 
 	/* Figure out which command we have */
-	for (i = 0; cmds[i].c != NULL; i++) {
-		if (argv[0] != NULL && strcasecmp(cmds[i].c, argv[0]) == 0)
-			break;
+	برائے (i = 0; cmds[i].c != تہی; i++) {
+		اگر (argv[0] != تہی && strcasecmp(cmds[i].c, argv[0]) == 0)
+			توڑو;
 	}
 	cmdnum = cmds[i].n;
 	cmd = cmds[i].c;
 
 	/* Special case */
-	if (*cp == '!') {
+	اگر (*cp == '!') {
 		cp++;
 		cmdnum = I_SHELL;
-	} else if (cmdnum == -1) {
+	} ورنہ اگر (cmdnum == -1) {
 		error("Invalid command.");
-		return -1;
+		واپس -1;
 	}
 
 	/* Get arguments and parse flags */
 	*aflag = *fflag = *hflag = *iflag = *lflag = *pflag = 0;
 	*rflag = *sflag = 0;
-	*path1 = *path2 = NULL;
+	*path1 = *path2 = تہی;
 	optidx = 1;
-	switch (cmdnum) {
-	case I_GET:
-	case I_REGET:
-	case I_REPUT:
-	case I_PUT:
-		if ((optidx = parse_getput_flags(cmd, argv, argc,
+	انتخاب (cmdnum) {
+	حالت I_GET:
+	حالت I_REGET:
+	حالت I_REPUT:
+	حالت I_PUT:
+		اگر ((optidx = parse_getput_flags(cmd, argv, argc,
 		    aflag, fflag, pflag, rflag)) == -1)
-			return -1;
+			واپس -1;
 		/* Get first pathname (mandatory) */
-		if (argc - optidx < 1) {
+		اگر (argc - optidx < 1) {
 			error("You must specify at least one path after a "
 			    "%s command.", cmd);
-			return -1;
+			واپس -1;
 		}
 		*path1 = xstrdup(argv[optidx]);
 		/* Get second pathname (optional) */
-		if (argc - optidx > 1) {
+		اگر (argc - optidx > 1) {
 			*path2 = xstrdup(argv[optidx + 1]);
 			/* Destination is not globbed */
 			undo_glob_escape(*path2);
 		}
-		break;
-	case I_LINK:
-		if ((optidx = parse_link_flags(cmd, argv, argc, sflag)) == -1)
-			return -1;
-		goto parse_two_paths;
-	case I_COPY:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
-		goto parse_two_paths;
-	case I_RENAME:
-		if ((optidx = parse_rename_flags(cmd, argv, argc, lflag)) == -1)
-			return -1;
-		goto parse_two_paths;
-	case I_SYMLINK:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
+		توڑو;
+	حالت I_LINK:
+		اگر ((optidx = parse_link_flags(cmd, argv, argc, sflag)) == -1)
+			واپس -1;
+		جاؤ parse_two_paths;
+	حالت I_COPY:
+		اگر ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			واپس -1;
+		جاؤ parse_two_paths;
+	حالت I_RENAME:
+		اگر ((optidx = parse_rename_flags(cmd, argv, argc, lflag)) == -1)
+			واپس -1;
+		جاؤ parse_two_paths;
+	حالت I_SYMLINK:
+		اگر ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			واپس -1;
  parse_two_paths:
-		if (argc - optidx < 2) {
+		اگر (argc - optidx < 2) {
 			error("You must specify two paths after a %s "
 			    "command.", cmd);
-			return -1;
+			واپس -1;
 		}
 		*path1 = xstrdup(argv[optidx]);
 		*path2 = xstrdup(argv[optidx + 1]);
 		/* Paths are not globbed */
 		undo_glob_escape(*path1);
 		undo_glob_escape(*path2);
-		break;
-	case I_MKDIR:
-	case I_LMKDIR:
-		if ((optidx = parse_mkdir_flags(cmd, argv, argc, pflag)) == -1)
-			return -1;
+		توڑو;
+	حالت I_MKDIR:
+	حالت I_LMKDIR:
+		اگر ((optidx = parse_mkdir_flags(cmd, argv, argc, pflag)) == -1)
+			واپس -1;
 		path1_mandatory = 1;
-		goto parse_one_path;
-	case I_RM:
-	case I_RMDIR:
+		جاؤ parse_one_راستہ;
+	حالت I_RM:
+	حالت I_RMDIR:
 		path1_mandatory = 1;
 		/* FALLTHROUGH */
-	case I_CHDIR:
-	case I_LCHDIR:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
- parse_one_path:
+	حالت I_CHDIR:
+	حالت I_LCHDIR:
+		اگر ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			واپس -1;
+ parse_one_راستہ:
 		/* Get pathname (mandatory) */
-		if (argc - optidx < 1) {
-			if (!path1_mandatory)
-				break; /* return a NULL path1 */
+		اگر (argc - optidx < 1) {
+			اگر (!path1_mandatory)
+				توڑو; /* return a NULL path1 */
 			error("You must specify a path after a %s command.",
 			    cmd);
-			return -1;
+			واپس -1;
 		}
 		*path1 = xstrdup(argv[optidx]);
 		/* Only "rm" globs */
-		if (cmdnum != I_RM)
+		اگر (cmdnum != I_RM)
 			undo_glob_escape(*path1);
-		break;
-	case I_DF:
-		if ((optidx = parse_df_flags(cmd, argv, argc, hflag,
+		توڑو;
+	حالت I_DF:
+		اگر ((optidx = parse_df_flags(cmd, argv, argc, hflag,
 		    iflag)) == -1)
-			return -1;
+			واپس -1;
 		/* Default to current directory if no path specified */
-		if (argc - optidx < 1)
-			*path1 = NULL;
-		else {
+		اگر (argc - optidx < 1)
+			*path1 = تہی;
+		ورنہ {
 			*path1 = xstrdup(argv[optidx]);
 			undo_glob_escape(*path1);
 		}
-		break;
-	case I_LS:
-		if ((optidx = parse_ls_flags(argv, argc, lflag)) == -1)
-			return(-1);
+		توڑو;
+	حالت I_LS:
+		اگر ((optidx = parse_ls_flags(argv, argc, lflag)) == -1)
+			واپس(-1);
 		/* Path is optional */
-		if (argc - optidx > 0)
+		اگر (argc - optidx > 0)
 			*path1 = xstrdup(argv[optidx]);
-		break;
-	case I_LLS:
+		توڑو;
+	حالت I_LLS:
 		/* Skip ls command and following whitespace */
-		cp = cp + strlen(cmd) + strspn(cp, WHITESPACE);
-	case I_SHELL:
+		cp = cp + لڑی_لمبائی(cmd) + strspn(cp, WHITESPACE);
+	حالت I_SHELL:
 		/* Uses the rest of the line */
-		break;
-	case I_LUMASK:
-	case I_CHMOD:
-		base = 8;
+		توڑو;
+	حالت I_LUMASK:
+	حالت I_CHMOD:
+		بنیاد = 8;
 		/* FALLTHROUGH */
-	case I_CHOWN:
-	case I_CHGRP:
-		if ((optidx = parse_ch_flags(cmd, argv, argc, hflag)) == -1)
-			return -1;
+	حالت I_CHOWN:
+	حالت I_CHGRP:
+		اگر ((optidx = parse_ch_flags(cmd, argv, argc, hflag)) == -1)
+			واپس -1;
 		/* Get numeric arg (mandatory) */
-		if (argc - optidx < 1)
-			goto need_num_arg;
+		اگر (argc - optidx < 1)
+			جاؤ need_عدد_arg;
 		errno = 0;
-		ll = strtoll(argv[optidx], &cp2, base);
-		if (cp2 == argv[optidx] || *cp2 != '\0' ||
+		ll = strtoll(argv[optidx], &cp2, بنیاد);
+		اگر (cp2 == argv[optidx] || *cp2 != '\0' ||
 		    ((ll == LLONG_MIN || ll == LLONG_MAX) && errno == ERANGE) ||
 		    ll < 0 || ll > UINT32_MAX) {
- need_num_arg:
+ need_عدد_arg:
 			error("You must supply a numeric argument "
 			    "to the %s command.", cmd);
-			return -1;
+			واپس -1;
 		}
 		*n_arg = ll;
-		if (cmdnum == I_LUMASK)
-			break;
+		اگر (cmdnum == I_LUMASK)
+			توڑو;
 		/* Get pathname (mandatory) */
-		if (argc - optidx < 2) {
+		اگر (argc - optidx < 2) {
 			error("You must specify a path after a %s command.",
 			    cmd);
-			return -1;
+			واپس -1;
 		}
 		*path1 = xstrdup(argv[optidx + 1]);
-		break;
-	case I_QUIT:
-	case I_PWD:
-	case I_LPWD:
-	case I_HELP:
-	case I_VERSION:
-	case I_PROGRESS:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
-		break;
-	default:
+		توڑو;
+	حالت I_QUIT:
+	حالت I_PWD:
+	حالت I_LPWD:
+	حالت I_HELP:
+	حالت I_نسخہ:
+	حالت I_پیش_رفت:
+		اگر ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			واپس -1;
+		توڑو;
+	طےشدہ:
 		fatal("Command not implemented");
 	}
 
 	*cpp = cp;
-	return(cmdnum);
+	واپس(cmdnum);
 }
 
-static int
-parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
-    const char *startdir, int err_abort, int echo_command)
+ساکن صحیح
+parse_dispatch_command(ساخت sftp_conn *conn, ثابت حرف *cmd, حرف **pwd,
+    ثابت حرف *startdir, صحیح err_abort, صحیح echo_command)
 {
-	const char *ocmd = cmd;
-	char *path1, *path2, *tmp;
-	int ignore_errors = 0, disable_echo = 1;
-	int aflag = 0, fflag = 0, hflag = 0, iflag = 0;
-	int lflag = 0, pflag = 0, rflag = 0, sflag = 0;
-	int cmdnum, i;
-	unsigned long n_arg = 0;
+	ثابت حرف *ocmd = cmd;
+	حرف *path1, *path2, *tmp;
+	صحیح ignore_errors = 0, disable_echo = 1;
+	صحیح aflag = 0, fflag = 0, hflag = 0, iflag = 0;
+	صحیح lflag = 0, pflag = 0, rflag = 0, sflag = 0;
+	صحیح cmdnum, i;
+	غیرعلامتی طویل n_arg = 0;
 	Attrib a, aa;
-	char path_buf[PATH_MAX];
-	int err = 0;
+	حرف راستہ_buf[PATH_MAX];
+	صحیح err = 0;
 	glob_t g;
 
-	path1 = path2 = NULL;
-	cmdnum = parse_args(&cmd, &ignore_errors, &disable_echo, &aflag, &fflag,
+	path1 = path2 = تہی;
+	cmdnum = parse_دلائل(&cmd, &ignore_errors, &disable_echo, &aflag, &fflag,
 	    &hflag, &iflag, &lflag, &pflag, &rflag, &sflag, &n_arg,
 	    &path1, &path2);
-	if (ignore_errors != 0)
+	اگر (ignore_errors != 0)
 		err_abort = 0;
 
-	if (echo_command && !disable_echo)
+	اگر (echo_command && !disable_echo)
 		mprintf("sftp> %s\n", ocmd);
 
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, حجم(g));
 
 	/* Perform command */
-	switch (cmdnum) {
-	case 0:
+	انتخاب (cmdnum) {
+	حالت 0:
 		/* Blank line */
-		break;
-	case -1:
+		توڑو;
+	حالت -1:
 		/* Unrecognized command */
 		err = -1;
-		break;
-	case I_REGET:
+		توڑو;
+	حالت I_REGET:
 		aflag = 1;
 		/* FALLTHROUGH */
-	case I_GET:
+	حالت I_GET:
 		err = process_get(conn, path1, path2, *pwd, pflag,
 		    rflag, aflag, fflag);
-		break;
-	case I_REPUT:
+		توڑو;
+	حالت I_REPUT:
 		aflag = 1;
 		/* FALLTHROUGH */
-	case I_PUT:
+	حالت I_PUT:
 		err = process_put(conn, path1, path2, *pwd, pflag,
 		    rflag, aflag, fflag);
-		break;
-	case I_COPY:
+		توڑو;
+	حالت I_COPY:
 		path1 = sftp_make_absolute(path1, *pwd);
 		path2 = sftp_make_absolute(path2, *pwd);
 		err = sftp_copy(conn, path1, path2);
-		break;
-	case I_RENAME:
+		توڑو;
+	حالت I_RENAME:
 		path1 = sftp_make_absolute(path1, *pwd);
 		path2 = sftp_make_absolute(path2, *pwd);
 		err = sftp_rename(conn, path1, path2, lflag);
-		break;
-	case I_SYMLINK:
+		توڑو;
+	حالت I_SYMLINK:
 		sflag = 1;
 		/* FALLTHROUGH */
-	case I_LINK:
-		if (!sflag)
+	حالت I_LINK:
+		اگر (!sflag)
 			path1 = sftp_make_absolute(path1, *pwd);
 		path2 = sftp_make_absolute(path2, *pwd);
 		err = (sflag ? sftp_symlink : sftp_hardlink)(conn,
 		    path1, path2);
-		break;
-	case I_RM:
+		توڑو;
+	حالت I_RM:
 		path1 = make_absolute_pwd_glob(path1, *pwd);
-		sftp_glob(conn, path1, GLOB_NOCHECK, NULL, &g);
-		for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-			if (!quiet)
+		sftp_glob(conn, path1, GLOB_NOCHECK, تہی, &g);
+		برائے (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+			اگر (!quiet)
 				mprintf("Removing %s\n", g.gl_pathv[i]);
 			err = sftp_rm(conn, g.gl_pathv[i]);
-			if (err != 0 && err_abort)
-				break;
+			اگر (err != 0 && err_abort)
+				توڑو;
 		}
-		break;
-	case I_MKDIR:
+		توڑو;
+	حالت I_MKDIR:
 		path1 = sftp_make_absolute(path1, *pwd);
 		attrib_clear(&a);
 		a.flags |= SSH2_FILEXFER_ATTR_PERMISSIONS;
 		a.perm = 0777;
-		if (pflag)
+		اگر (pflag)
 			err = sftp_mkpath(conn, path1, &a, 1);
-		else
+		ورنہ
 			err = sftp_mkdir(conn, path1, &a, 1);
-		break;
-	case I_RMDIR:
+		توڑو;
+	حالت I_RMDIR:
 		path1 = sftp_make_absolute(path1, *pwd);
 		err = sftp_rmdir(conn, path1);
-		break;
-	case I_CHDIR:
-		if (path1 == NULL || *path1 == '\0')
+		توڑو;
+	حالت I_CHDIR:
+		اگر (path1 == تہی || *path1 == '\0')
 			path1 = xstrdup(startdir);
 		path1 = sftp_make_absolute(path1, *pwd);
-		if ((tmp = sftp_realpath(conn, path1)) == NULL) {
+		اگر ((tmp = sftp_realpath(conn, path1)) == تہی) {
 			err = 1;
-			break;
+			توڑو;
 		}
-		if (sftp_stat(conn, tmp, 0, &aa) != 0) {
-			free(tmp);
+		اگر (sftp_stat(conn, tmp, 0, &aa) != 0) {
+			آزاد(tmp);
 			err = 1;
-			break;
+			توڑو;
 		}
-		if (!(aa.flags & SSH2_FILEXFER_ATTR_PERMISSIONS)) {
+		اگر (!(aa.flags & SSH2_FILEXFER_ATTR_PERMISSIONS)) {
 			error("Can't change directory: Can't check target");
-			free(tmp);
+			آزاد(tmp);
 			err = 1;
-			break;
+			توڑو;
 		}
-		if (!S_ISDIR(aa.perm)) {
+		اگر (!S_ISDIR(aa.perm)) {
 			error("Can't change directory: \"%s\" is not "
 			    "a directory", tmp);
-			free(tmp);
+			آزاد(tmp);
 			err = 1;
-			break;
+			توڑو;
 		}
-		free(*pwd);
+		آزاد(*pwd);
 		*pwd = tmp;
-		break;
-	case I_LS:
-		if (!path1) {
+		توڑو;
+	حالت I_LS:
+		اگر (!path1) {
 			do_ls_dir(conn, *pwd, *pwd, lflag);
-			break;
+			توڑو;
 		}
 
 		/* Strip pwd off beginning of non-absolute paths */
-		tmp = NULL;
-		if (!path_absolute(path1))
+		tmp = تہی;
+		اگر (!راستہ_absolute(path1))
 			tmp = *pwd;
 
 		path1 = make_absolute_pwd_glob(path1, *pwd);
 		err = do_globbed_ls(conn, path1, tmp, lflag);
-		break;
-	case I_DF:
+		توڑو;
+	حالت I_DF:
 		/* Default to current directory if no path specified */
-		if (path1 == NULL)
+		اگر (path1 == تہی)
 			path1 = xstrdup(*pwd);
 		path1 = sftp_make_absolute(path1, *pwd);
 		err = do_df(conn, path1, hflag, iflag);
-		break;
-	case I_LCHDIR:
-		if (path1 == NULL || *path1 == '\0')
+		توڑو;
+	حالت I_LCHDIR:
+		اگر (path1 == تہی || *path1 == '\0')
 			path1 = xstrdup("~");
 		tmp = tilde_expand_filename(path1, getuid());
-		free(path1);
+		آزاد(path1);
 		path1 = tmp;
-		if (chdir(path1) == -1) {
+		اگر (chdir(path1) == -1) {
 			error("Couldn't change local directory to "
 			    "\"%s\": %s", path1, strerror(errno));
 			err = 1;
 		}
-		break;
-	case I_LMKDIR:
-		if (pflag) {
-			if (mkdir_path(path1, 0777) != 0)
+		توڑو;
+	حالت I_LMKDIR:
+		اگر (pflag) {
+			اگر (mkdir_راستہ(path1, 0777) != 0)
 				err = 1;
-			break;
+			توڑو;
 		}
-		if (mkdir(path1, 0777) == -1) {
+		اگر (mkdir(path1, 0777) == -1) {
 			error("Couldn't create local directory "
 			    "\"%s\": %s", path1, strerror(errno));
 			err = 1;
 		}
-		break;
-	case I_LLS:
+		توڑو;
+	حالت I_LLS:
 		local_do_ls(cmd);
-		break;
-	case I_SHELL:
+		توڑو;
+	حالت I_SHELL:
 		local_do_shell(cmd);
-		break;
-	case I_LUMASK:
+		توڑو;
+	حالت I_LUMASK:
 		umask(n_arg);
-		printf("Local umask: %03lo\n", n_arg);
-		break;
-	case I_CHMOD:
+		لکھو("Local umask: %03lo\n", n_arg);
+		توڑو;
+	حالت I_CHMOD:
 		path1 = make_absolute_pwd_glob(path1, *pwd);
 		attrib_clear(&a);
 		a.flags |= SSH2_FILEXFER_ATTR_PERMISSIONS;
 		a.perm = n_arg;
-		sftp_glob(conn, path1, GLOB_NOCHECK, NULL, &g);
-		for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-			if (!quiet)
+		sftp_glob(conn, path1, GLOB_NOCHECK, تہی, &g);
+		برائے (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+			اگر (!quiet)
 				mprintf("Changing mode on %s\n",
 				    g.gl_pathv[i]);
 			err = (hflag ? sftp_lsetstat : sftp_setstat)(conn,
 			    g.gl_pathv[i], &a);
-			if (err != 0 && err_abort)
-				break;
+			اگر (err != 0 && err_abort)
+				توڑو;
 		}
-		break;
-	case I_CHOWN:
-	case I_CHGRP:
+		توڑو;
+	حالت I_CHOWN:
+	حالت I_CHGRP:
 		path1 = make_absolute_pwd_glob(path1, *pwd);
-		sftp_glob(conn, path1, GLOB_NOCHECK, NULL, &g);
-		for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-			if ((hflag ? sftp_lstat : sftp_stat)(conn,
+		sftp_glob(conn, path1, GLOB_NOCHECK, تہی, &g);
+		برائے (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+			اگر ((hflag ? sftp_lstat : sftp_stat)(conn,
 			    g.gl_pathv[i], 0, &aa) != 0) {
-				if (err_abort) {
+				اگر (err_abort) {
 					err = -1;
-					break;
-				} else
-					continue;
+					توڑو;
+				} ورنہ
+					جاری;
 			}
-			if (!(aa.flags & SSH2_FILEXFER_ATTR_UIDGID)) {
+			اگر (!(aa.flags & SSH2_FILEXFER_ATTR_UIDGID)) {
 				error("Can't get current ownership of "
 				    "remote file \"%s\"", g.gl_pathv[i]);
-				if (err_abort) {
+				اگر (err_abort) {
 					err = -1;
-					break;
-				} else
-					continue;
+					توڑو;
+				} ورنہ
+					جاری;
 			}
 			aa.flags &= SSH2_FILEXFER_ATTR_UIDGID;
-			if (cmdnum == I_CHOWN) {
-				if (!quiet)
+			اگر (cmdnum == I_CHOWN) {
+				اگر (!quiet)
 					mprintf("Changing owner on %s\n",
 					    g.gl_pathv[i]);
 				aa.uid = n_arg;
-			} else {
-				if (!quiet)
+			} ورنہ {
+				اگر (!quiet)
 					mprintf("Changing group on %s\n",
 					    g.gl_pathv[i]);
 				aa.gid = n_arg;
 			}
 			err = (hflag ? sftp_lsetstat : sftp_setstat)(conn,
 			    g.gl_pathv[i], &aa);
-			if (err != 0 && err_abort)
-				break;
+			اگر (err != 0 && err_abort)
+				توڑو;
 		}
-		break;
-	case I_PWD:
+		توڑو;
+	حالت I_PWD:
 		mprintf("Remote working directory: %s\n", *pwd);
-		break;
-	case I_LPWD:
-		if (!getcwd(path_buf, sizeof(path_buf))) {
+		توڑو;
+	حالت I_LPWD:
+		اگر (!getcwd(راستہ_buf, حجم(راستہ_buf))) {
 			error("Couldn't get local cwd: %s", strerror(errno));
 			err = -1;
-			break;
+			توڑو;
 		}
-		mprintf("Local working directory: %s\n", path_buf);
-		break;
-	case I_QUIT:
+		mprintf("Local working directory: %s\n", راستہ_buf);
+		توڑو;
+	حالت I_QUIT:
 		/* Processed below */
-		break;
-	case I_HELP:
+		توڑو;
+	حالت I_HELP:
 		help();
-		break;
-	case I_VERSION:
-		printf("SFTP protocol version %u\n", sftp_proto_version(conn));
-		break;
-	case I_PROGRESS:
+		توڑو;
+	حالت I_نسخہ:
+		لکھو("SFTP protocol version %u\n", sftp_proto_نسخہ(conn));
+		توڑو;
+	حالت I_پیش_رفت:
 		showprogress = !showprogress;
-		if (showprogress)
-			printf("Progress meter enabled\n");
-		else
-			printf("Progress meter disabled\n");
-		break;
-	default:
+		اگر (showprogress)
+			لکھو("Progress meter enabled\n");
+		ورنہ
+			لکھو("Progress meter disabled\n");
+		توڑو;
+	طےشدہ:
 		fatal("%d is not implemented", cmdnum);
 	}
 
-	if (g.gl_pathc)
+	اگر (g.gl_pathc)
 		globfree(&g);
-	free(path1);
-	free(path2);
+	آزاد(path1);
+	آزاد(path2);
 
 	/* If an unignored error occurs in batch mode we should abort. */
-	if (err_abort && err != 0)
-		return (-1);
-	else if (cmdnum == I_QUIT)
-		return (1);
+	اگر (err_abort && err != 0)
+		واپس (-1);
+	ورنہ اگر (cmdnum == I_QUIT)
+		واپس (1);
 
-	return (0);
+	واپس (0);
 }
 
-#ifdef USE_LIBEDIT
-static char *
-prompt(EditLine *el)
+#اگر_تعریف_شدہ USE_LIBEDIT
+ساکن حرف *
+prompt(Edit_سطر *el)
 {
-	return ("sftp> ");
+	واپس ("sftp> ");
 }
 
 /* Display entries in 'list' after skipping the first 'len' chars */
-static void
-complete_display(char **list, u_int len)
+ساکن خالی
+complete_display(حرف **list, u_int len)
 {
-	u_int y, m = 0, width = 80, columns = 1, colspace = 0, llen;
-	struct winsize ws;
-	char *tmp;
+	u_int y, m = 0, چوڑائی = 80, columns = 1, colspace = 0, llen;
+	ساخت winsize ws;
+	حرف *tmp;
 
 	/* Count entries for sort and find longest */
-	for (y = 0; list[y]; y++)
-		m = MAXIMUM(m, strlen(list[y]));
+	برائے (y = 0; list[y]; y++)
+		m = زیادہ_سے_زیادہ(m, لڑی_لمبائی(list[y]));
 
-	if (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
-		width = ws.ws_col;
+	اگر (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
+		چوڑائی = ws.ws_ستون;
 
 	m = m > len ? m - len : 0;
-	columns = width / (m + 2);
-	columns = MAXIMUM(columns, 1);
-	colspace = width / columns;
-	colspace = MINIMUM(colspace, width);
+	columns = چوڑائی / (m + 2);
+	columns = زیادہ_سے_زیادہ(columns, 1);
+	colspace = چوڑائی / columns;
+	colspace = MINIMUM(colspace, چوڑائی);
 
-	printf("\n");
+	لکھو("\n");
 	m = 1;
-	for (y = 0; list[y]; y++) {
-		llen = strlen(list[y]);
+	برائے (y = 0; list[y]; y++) {
+		llen = لڑی_لمبائی(list[y]);
 		tmp = llen > len ? list[y] + len : "";
 		mprintf("%-*s", colspace, tmp);
-		if (m >= columns) {
-			printf("\n");
+		اگر (m >= columns) {
+			لکھو("\n");
 			m = 1;
-		} else
+		} ورنہ
 			m++;
 	}
-	printf("\n");
+	لکھو("\n");
 }
 
 /*
@@ -1919,25 +1919,25 @@ complete_display(char **list, u_int len)
  * attempt to find an autocompletion that extends "word" by the next
  * characters common to all entries in "list".
  */
-static char *
-complete_ambiguous(const char *word, char **list, size_t count)
+ساکن حرف *
+complete_ambiguous(ثابت حرف *لفظ, حرف **list, سائز_t گنتی)
 {
-	size_t i, j, matchlen;
-	char *tmp;
-	int len;
+	سائز_t i, j, matchlen;
+	حرف *tmp;
+	صحیح len;
 
-	if (word == NULL)
-		return NULL;
+	اگر (لفظ == تہی)
+		واپس تہی;
 
-	if (count == 0)
-		return xstrdup(word); /* no options to complete */
+	اگر (گنتی == 0)
+		واپس xstrdup(لفظ); /* no options to complete */
 
 	/* Find length of common stem across list */
-	matchlen = strlen(list[0]);
-	for (i = 1; i < count && list[i] != NULL; i++) {
-		for (j = 0; j < matchlen; j++)
-			if (list[0][j] != list[i][j])
-				break;
+	matchlen = لڑی_لمبائی(list[0]);
+	برائے (i = 1; i < گنتی && list[i] != تہی; i++) {
+		برائے (j = 0; j < matchlen; j++)
+			اگر (list[0][j] != list[i][j])
+				توڑو;
 		matchlen = j;
 	}
 
@@ -1945,96 +1945,96 @@ complete_ambiguous(const char *word, char **list, size_t count)
 	 * Now check that the common stem doesn't finish in the middle of
 	 * a multibyte character.
 	 */
-	mblen(NULL, 0);
-	for (i = 0; i < matchlen;) {
+	mblen(تہی, 0);
+	برائے (i = 0; i < matchlen;) {
 		len = mblen(list[0] + i, matchlen - i);
-		if (len <= 0 || i + (size_t)len > matchlen)
-			break;
-		i += (size_t)len;
+		اگر (len <= 0 || i + (سائز_t)len > matchlen)
+			توڑو;
+		i += (سائز_t)len;
 	}
 	/* If so, truncate */
-	if (i < matchlen)
+	اگر (i < matchlen)
 		matchlen = i;
 
-	if (matchlen > strlen(word)) {
+	اگر (matchlen > لڑی_لمبائی(لفظ)) {
 		tmp = xstrdup(list[0]);
 		tmp[matchlen] = '\0';
-		return tmp;
+		واپس tmp;
 	}
 
-	return xstrdup(word);
+	واپس xstrdup(لفظ);
 }
 
 /* Autocomplete a sftp command */
-static int
-complete_cmd_parse(EditLine *el, char *cmd, int lastarg, char quote,
-    int terminated)
+ساکن صحیح
+complete_cmd_parse(Edit_سطر *el, حرف *cmd, صحیح lastarg, حرف quote,
+    صحیح terminated)
 {
-	u_int y, count = 0, cmdlen, tmplen;
-	char *tmp, **list, argterm[3];
-	const LineInfo *lf;
+	u_int y, گنتی = 0, cmdlen, tmplen;
+	حرف *tmp, **list, argterm[3];
+	ثابت سطر_Info *lf;
 
-	list = xcalloc((sizeof(cmds) / sizeof(*cmds)) + 1, sizeof(char *));
+	list = xcalloc((حجم(cmds) / حجم(*cmds)) + 1, حجم(حرف *));
 
 	/* No command specified: display all available commands */
-	if (cmd == NULL) {
-		for (y = 0; cmds[y].c; y++)
-			list[count++] = xstrdup(cmds[y].c);
+	اگر (cmd == تہی) {
+		برائے (y = 0; cmds[y].c; y++)
+			list[گنتی++] = xstrdup(cmds[y].c);
 
-		list[count] = NULL;
+		list[گنتی] = تہی;
 		complete_display(list, 0);
 
-		for (y = 0; list[y] != NULL; y++)
-			free(list[y]);
-		free(list);
-		return count;
+		برائے (y = 0; list[y] != تہی; y++)
+			آزاد(list[y]);
+		آزاد(list);
+		واپس گنتی;
 	}
 
 	/* Prepare subset of commands that start with "cmd" */
-	cmdlen = strlen(cmd);
-	for (y = 0; cmds[y].c; y++)  {
-		if (!strncasecmp(cmd, cmds[y].c, cmdlen))
-			list[count++] = xstrdup(cmds[y].c);
+	cmdlen = لڑی_لمبائی(cmd);
+	برائے (y = 0; cmds[y].c; y++)  {
+		اگر (!strncasecmp(cmd, cmds[y].c, cmdlen))
+			list[گنتی++] = xstrdup(cmds[y].c);
 	}
-	list[count] = NULL;
+	list[گنتی] = تہی;
 
-	if (count == 0) {
-		free(list);
-		return 0;
+	اگر (گنتی == 0) {
+		آزاد(list);
+		واپس 0;
 	}
 
 	/* Complete ambiguous command */
-	tmp = complete_ambiguous(cmd, list, count);
-	if (count > 1)
+	tmp = complete_ambiguous(cmd, list, گنتی);
+	اگر (گنتی > 1)
 		complete_display(list, 0);
 
-	for (y = 0; list[y]; y++)
-		free(list[y]);
-	free(list);
+	برائے (y = 0; list[y]; y++)
+		آزاد(list[y]);
+	آزاد(list);
 
-	if (tmp != NULL) {
-		tmplen = strlen(tmp);
-		cmdlen = strlen(cmd);
+	اگر (tmp != تہی) {
+		tmplen = لڑی_لمبائی(tmp);
+		cmdlen = لڑی_لمبائی(cmd);
 		/* If cmd may be extended then do so */
-		if (tmplen > cmdlen)
-			if (el_insertstr(el, tmp + cmdlen) == -1)
+		اگر (tmplen > cmdlen)
+			اگر (el_insertstr(el, tmp + cmdlen) == -1)
 				fatal("el_insertstr failed.");
-		lf = el_line(el);
+		lf = el_سطر(el);
 		/* Terminate argument cleanly */
-		if (count == 1) {
+		اگر (گنتی == 1) {
 			y = 0;
-			if (!terminated)
+			اگر (!terminated)
 				argterm[y++] = quote;
-			if (lastarg || *(lf->cursor) != ' ')
+			اگر (lastarg || *(lf->cursor) != ' ')
 				argterm[y++] = ' ';
 			argterm[y] = '\0';
-			if (y > 0 && el_insertstr(el, argterm) == -1)
+			اگر (y > 0 && el_insertstr(el, argterm) == -1)
 				fatal("el_insertstr failed.");
 		}
-		free(tmp);
+		آزاد(tmp);
 	}
 
-	return count;
+	واپس گنتی;
 }
 
 /*
@@ -2042,211 +2042,211 @@ complete_cmd_parse(EditLine *el, char *cmd, int lastarg, char quote,
  * local or remote files. The "cmdarg" argument specifies the actual argument
  * and accepts values 1 or 2.
  */
-static int
-complete_is_remote(char *cmd, int cmdarg) {
-	int i;
+ساکن صحیح
+complete_is_remote(حرف *cmd, صحیح cmdarg) {
+	صحیح i;
 
-	if (cmd == NULL)
-		return -1;
+	اگر (cmd == تہی)
+		واپس -1;
 
-	for (i = 0; cmds[i].c; i++) {
-		if (!strncasecmp(cmd, cmds[i].c, strlen(cmds[i].c))) {
-			if (cmdarg == 1)
-				return cmds[i].t;
-			else if (cmdarg == 2)
-				return cmds[i].t2;
-			break;
+	برائے (i = 0; cmds[i].c; i++) {
+		اگر (!strncasecmp(cmd, cmds[i].c, لڑی_لمبائی(cmds[i].c))) {
+			اگر (cmdarg == 1)
+				واپس cmds[i].t;
+			ورنہ اگر (cmdarg == 2)
+				واپس cmds[i].t2;
+			توڑو;
 		}
 	}
 
-	return -1;
+	واپس -1;
 }
 
 /* Autocomplete a filename "file" */
-static int
-complete_match(EditLine *el, struct sftp_conn *conn, char *remote_path,
-    char *file, int remote, int lastarg, char quote, int terminated)
+ساکن صحیح
+complete_مطابقت(Edit_سطر *el, ساخت sftp_conn *conn, حرف *remote_راستہ,
+    حرف *file, صحیح remote, صحیح lastarg, حرف quote, صحیح terminated)
 {
 	glob_t g;
-	char *tmp, *tmp2, ins[8];
+	حرف *tmp, *tmp2, ins[8];
 	u_int i, hadglob, pwdlen, len, tmplen, filelen, cesc, isesc, isabs;
-	int clen;
-	const LineInfo *lf;
+	صحیح clen;
+	ثابت سطر_Info *lf;
 
 	/* Glob from "file" location */
-	if (file == NULL)
+	اگر (file == تہی)
 		tmp = xstrdup("*");
-	else
+	ورنہ
 		xasprintf(&tmp, "%s*", file);
 
 	/* Check if the path is absolute. */
-	isabs = path_absolute(tmp);
+	isabs = راستہ_absolute(tmp);
 
-	memset(&g, 0, sizeof(g));
-	if (remote != LOCAL) {
-		tmp = make_absolute_pwd_glob(tmp, remote_path);
-		sftp_glob(conn, tmp, GLOB_DOOFFS|GLOB_MARK, NULL, &g);
-	} else
-		(void)glob(tmp, GLOB_DOOFFS|GLOB_MARK, NULL, &g);
+	memset(&g, 0, حجم(g));
+	اگر (remote != LOCAL) {
+		tmp = make_absolute_pwd_glob(tmp, remote_راستہ);
+		sftp_glob(conn, tmp, GLOB_DOOFFS|GLOB_MARK, تہی, &g);
+	} ورنہ
+		(خالی)glob(tmp, GLOB_DOOFFS|GLOB_MARK, تہی, &g);
 
 	/* Determine length of pwd so we can trim completion display */
-	for (hadglob = tmplen = pwdlen = 0; tmp[tmplen] != 0; tmplen++) {
+	برائے (hadglob = tmplen = pwdlen = 0; tmp[tmplen] != 0; tmplen++) {
 		/* Terminate counting on first unescaped glob metacharacter */
-		if (tmp[tmplen] == '*' || tmp[tmplen] == '?') {
-			if (tmp[tmplen] != '*' || tmp[tmplen + 1] != '\0')
+		اگر (tmp[tmplen] == '*' || tmp[tmplen] == '?') {
+			اگر (tmp[tmplen] != '*' || tmp[tmplen + 1] != '\0')
 				hadglob = 1;
-			break;
+			توڑو;
 		}
-		if (tmp[tmplen] == '\\' && tmp[tmplen + 1] != '\0')
+		اگر (tmp[tmplen] == '\\' && tmp[tmplen + 1] != '\0')
 			tmplen++;
-		if (tmp[tmplen] == '/')
+		اگر (tmp[tmplen] == '/')
 			pwdlen = tmplen + 1;	/* track last seen '/' */
 	}
-	free(tmp);
-	tmp = NULL;
+	آزاد(tmp);
+	tmp = تہی;
 
-	if (g.gl_matchc == 0)
-		goto out;
+	اگر (g.gl_matchc == 0)
+		جاؤ برآمد;
 
-	if (g.gl_matchc > 1)
+	اگر (g.gl_matchc > 1)
 		complete_display(g.gl_pathv, pwdlen);
 
 	/* Don't try to extend globs */
-	if (file == NULL || hadglob)
-		goto out;
+	اگر (file == تہی || hadglob)
+		جاؤ برآمد;
 
 	tmp2 = complete_ambiguous(file, g.gl_pathv, g.gl_matchc);
-	tmp = path_strip(tmp2, isabs ? NULL : remote_path);
-	free(tmp2);
+	tmp = راستہ_strip(tmp2, isabs ? تہی : remote_راستہ);
+	آزاد(tmp2);
 
-	if (tmp == NULL)
-		goto out;
+	اگر (tmp == تہی)
+		جاؤ برآمد;
 
-	tmplen = strlen(tmp);
-	filelen = strlen(file);
+	tmplen = لڑی_لمبائی(tmp);
+	filelen = لڑی_لمبائی(file);
 
 	/* Count the number of escaped characters in the input string. */
 	cesc = isesc = 0;
-	for (i = 0; i < filelen; i++) {
-		if (!isesc && file[i] == '\\' && i + 1 < filelen){
+	برائے (i = 0; i < filelen; i++) {
+		اگر (!isesc && file[i] == '\\' && i + 1 < filelen){
 			isesc = 1;
 			cesc++;
-		} else
+		} ورنہ
 			isesc = 0;
 	}
 
-	if (tmplen > (filelen - cesc)) {
+	اگر (tmplen > (filelen - cesc)) {
 		tmp2 = tmp + filelen - cesc;
-		len = strlen(tmp2);
+		len = لڑی_لمبائی(tmp2);
 		/* quote argument on way out */
-		mblen(NULL, 0);
-		for (i = 0; i < len; i += clen) {
-			if ((clen = mblen(tmp2 + i, len - i)) < 0 ||
-			    (size_t)clen > sizeof(ins) - 2)
+		mblen(تہی, 0);
+		برائے (i = 0; i < len; i += clen) {
+			اگر ((clen = mblen(tmp2 + i, len - i)) < 0 ||
+			    (سائز_t)clen > حجم(ins) - 2)
 				fatal("invalid multibyte character");
 			ins[0] = '\\';
-			memcpy(ins + 1, tmp2 + i, clen);
+			حافظہ_نقل(ins + 1, tmp2 + i, clen);
 			ins[clen + 1] = '\0';
-			switch (tmp2[i]) {
-			case '\'':
-			case '"':
-			case '\\':
-			case '\t':
-			case '[':
-			case ' ':
-			case '#':
-			case '*':
-				if (quote == '\0' || tmp2[i] == quote) {
-					if (el_insertstr(el, ins) == -1)
+			انتخاب (tmp2[i]) {
+			حالت '\'':
+			حالت '"':
+			حالت '\\':
+			حالت '\t':
+			حالت '[':
+			حالت ' ':
+			حالت '#':
+			حالت '*':
+				اگر (quote == '\0' || tmp2[i] == quote) {
+					اگر (el_insertstr(el, ins) == -1)
 						fatal("el_insertstr "
 						    "failed.");
-					break;
+					توڑو;
 				}
 				/* FALLTHROUGH */
-			default:
-				if (el_insertstr(el, ins + 1) == -1)
+			طےشدہ:
+				اگر (el_insertstr(el, ins + 1) == -1)
 					fatal("el_insertstr failed.");
-				break;
+				توڑو;
 			}
 		}
 	}
 
-	lf = el_line(el);
-	if (g.gl_matchc == 1) {
+	lf = el_سطر(el);
+	اگر (g.gl_matchc == 1) {
 		i = 0;
-		if (!terminated && quote != '\0')
+		اگر (!terminated && quote != '\0')
 			ins[i++] = quote;
-		if (*(lf->cursor - 1) != '/' &&
+		اگر (*(lf->cursor - 1) != '/' &&
 		    (lastarg || *(lf->cursor) != ' '))
 			ins[i++] = ' ';
 		ins[i] = '\0';
-		if (i > 0 && el_insertstr(el, ins) == -1)
+		اگر (i > 0 && el_insertstr(el, ins) == -1)
 			fatal("el_insertstr failed.");
 	}
-	free(tmp);
+	آزاد(tmp);
 
- out:
+ برآمد:
 	globfree(&g);
-	return g.gl_matchc;
+	واپس g.gl_matchc;
 }
 
 /* tab-completion hook function, called via libedit */
-static unsigned char
-complete(EditLine *el, int ch)
+ساکن غیرعلامتی حرف
+complete(Edit_سطر *el, صحیح ch)
 {
-	char **argv, *line, quote;
-	int argc, carg;
+	حرف **argv, *سطر, quote;
+	صحیح argc, carg;
 	u_int cursor, len, terminated, ret = CC_ERROR;
-	const LineInfo *lf;
-	struct complete_ctx *complete_ctx;
+	ثابت سطر_Info *lf;
+	ساخت complete_ctx *complete_ctx;
 
-	lf = el_line(el);
-	if (el_get(el, EL_CLIENTDATA, (void**)&complete_ctx) != 0)
+	lf = el_سطر(el);
+	اگر (el_get(el, EL_CLIENTDATA, (خالی**)&complete_ctx) != 0)
 		fatal_f("el_get failed");
 
 	/* Figure out which argument the cursor points to */
-	cursor = lf->cursor - lf->buffer;
-	line = xmalloc(cursor + 1);
-	memcpy(line, lf->buffer, cursor);
-	line[cursor] = '\0';
-	argv = makeargv(line, &carg, 1, &quote, &terminated);
-	free(line);
+	cursor = lf->cursor - lf->بفر;
+	سطر = xmalloc(cursor + 1);
+	حافظہ_نقل(سطر, lf->بفر, cursor);
+	سطر[cursor] = '\0';
+	argv = makeargv(سطر, &carg, 1, &quote, &terminated);
+	آزاد(سطر);
 
 	/* Get all the arguments on the line */
-	len = lf->lastchar - lf->buffer;
-	line = xmalloc(len + 1);
-	memcpy(line, lf->buffer, len);
-	line[len] = '\0';
-	argv = makeargv(line, &argc, 1, NULL, NULL);
+	len = lf->lastchar - lf->بفر;
+	سطر = xmalloc(len + 1);
+	حافظہ_نقل(سطر, lf->بفر, len);
+	سطر[len] = '\0';
+	argv = makeargv(سطر, &argc, 1, تہی, تہی);
 
 	/* Ensure cursor is at EOL or a argument boundary */
-	if (line[cursor] != ' ' && line[cursor] != '\0' &&
-	    line[cursor] != '\n') {
-		free(line);
-		return ret;
+	اگر (سطر[cursor] != ' ' && سطر[cursor] != '\0' &&
+	    سطر[cursor] != '\n') {
+		آزاد(سطر);
+		واپس ret;
 	}
 
-	if (carg == 0) {
+	اگر (carg == 0) {
 		/* Show all available commands */
-		complete_cmd_parse(el, NULL, argc == carg, '\0', 1);
+		complete_cmd_parse(el, تہی, argc == carg, '\0', 1);
 		ret = CC_REDISPLAY;
-	} else if (carg == 1 && cursor > 0 && line[cursor - 1] != ' ')  {
+	} ورنہ اگر (carg == 1 && cursor > 0 && سطر[cursor - 1] != ' ')  {
 		/* Handle the command parsing */
-		if (complete_cmd_parse(el, argv[0], argc == carg,
+		اگر (complete_cmd_parse(el, argv[0], argc == carg,
 		    quote, terminated) != 0)
 			ret = CC_REDISPLAY;
-	} else if (carg >= 1) {
+	} ورنہ اگر (carg >= 1) {
 		/* Handle file parsing */
-		int remote = 0;
-		int i = 0, cmdarg = 0;
-		char *filematch = NULL;
+		صحیح remote = 0;
+		صحیح i = 0, cmdarg = 0;
+		حرف *filematch = تہی;
 
-		if (carg > 1 && line[cursor-1] != ' ')
+		اگر (carg > 1 && سطر[cursor-1] != ' ')
 			filematch = argv[carg - 1];
 
-		for (i = 1; i < carg; i++) {
+		برائے (i = 1; i < carg; i++) {
 			/* Skip flags */
-			if (argv[i][0] != '-')
+			اگر (argv[i][0] != '-')
 				cmdarg++;
 		}
 
@@ -2254,216 +2254,216 @@ complete(EditLine *el, int ch)
 		 * If previous argument is complete, then offer completion
 		 * on the next one.
 		 */
-		if (line[cursor - 1] == ' ')
+		اگر (سطر[cursor - 1] == ' ')
 			cmdarg++;
 
 		remote = complete_is_remote(argv[0], cmdarg);
 
-		if ((remote == REMOTE || remote == LOCAL) &&
-		    complete_match(el, complete_ctx->conn,
+		اگر ((remote == REMOTE || remote == LOCAL) &&
+		    complete_مطابقت(el, complete_ctx->conn,
 		    *complete_ctx->remote_pathp, filematch,
 		    remote, carg == argc, quote, terminated) != 0)
 			ret = CC_REDISPLAY;
 	}
 
-	free(line);
-	return ret;
+	آزاد(سطر);
+	واپس ret;
 }
-#endif /* USE_LIBEDIT */
+#اگر_ختم /* USE_LIBEDIT */
 
-static int
-interactive_loop(struct sftp_conn *conn, char *file1, char *file2)
+ساکن صحیح
+interactive_loop(ساخت sftp_conn *conn, حرف *file1, حرف *file2)
 {
-	char *remote_path;
-	char *dir = NULL, *startdir = NULL;
-	char cmd[2048];
-	int err, interactive;
-	EditLine *el = NULL;
-#ifdef USE_LIBEDIT
-	const char *editor;
-	History *hl = NULL;
+	حرف *remote_راستہ;
+	حرف *dir = تہی, *startdir = تہی;
+	حرف cmd[2048];
+	صحیح err, interactive;
+	Edit_سطر *el = تہی;
+#اگر_تعریف_شدہ USE_LIBEDIT
+	ثابت حرف *editor;
+	History *hl = تہی;
 	HistEvent hev;
-	extern char *__progname;
-	struct complete_ctx complete_ctx;
+	خارجی حرف *__progname;
+	ساخت complete_ctx complete_ctx;
 
-	if (!batchmode && isatty(STDIN_FILENO)) {
-		if ((el = el_init(__progname, stdin, stdout, stderr)) == NULL)
+	اگر (!batchmode && isatty(STDIN_FILENO)) {
+		اگر ((el = el_init(__progname, stdin, stdout, stderr)) == تہی)
 			fatal("Couldn't initialise editline");
-		if ((hl = history_init()) == NULL)
+		اگر ((hl = history_init()) == تہی)
 			fatal("Couldn't initialise editline history");
 		history(hl, &hev, H_SETSIZE, 100);
-		el_set(el, EL_HIST, history, hl);
+		el_سیٹ(el, EL_HIST, history, hl);
 
-		el_set(el, EL_PROMPT, prompt);
-		el_set(el, EL_EDITOR, "emacs");
-		el_set(el, EL_TERMINAL, NULL);
-		el_set(el, EL_SIGNAL, 1);
-		el_source(el, NULL);
+		el_سیٹ(el, EL_PROMPT, prompt);
+		el_سیٹ(el, EL_EDITOR, "emacs");
+		el_سیٹ(el, EL_TERMINAL, تہی);
+		el_سیٹ(el, EL_SIGNAL, 1);
+		el_ماخذ(el, تہی);
 
 		/* Tab Completion */
-		el_set(el, EL_ADDFN, "ftp-complete",
+		el_سیٹ(el, EL_ADDFN, "ftp-complete",
 		    "Context sensitive argument completion", complete);
 		complete_ctx.conn = conn;
-		complete_ctx.remote_pathp = &remote_path;
-		el_set(el, EL_CLIENTDATA, (void*)&complete_ctx);
-		el_set(el, EL_BIND, "^I", "ftp-complete", NULL);
+		complete_ctx.remote_pathp = &remote_راستہ;
+		el_سیٹ(el, EL_CLIENTDATA, (خالی*)&complete_ctx);
+		el_سیٹ(el, EL_BIND, "^I", "ftp-complete", تہی);
 		/* enable ctrl-left-arrow and ctrl-right-arrow */
-		el_set(el, EL_BIND, "\\e[1;5C", "em-next-word", NULL);
-		el_set(el, EL_BIND, "\\e\\e[C", "em-next-word", NULL);
-		el_set(el, EL_BIND, "\\e[1;5D", "ed-prev-word", NULL);
-		el_set(el, EL_BIND, "\\e\\e[D", "ed-prev-word", NULL);
+		el_سیٹ(el, EL_BIND, "\\e[1;5C", "em-next-word", تہی);
+		el_سیٹ(el, EL_BIND, "\\e\\e[C", "em-next-word", تہی);
+		el_سیٹ(el, EL_BIND, "\\e[1;5D", "ed-prev-word", تہی);
+		el_سیٹ(el, EL_BIND, "\\e\\e[D", "ed-prev-word", تہی);
 		/* make ^w match ksh behaviour */
-		el_set(el, EL_BIND, "^w", "ed-delete-prev-word", NULL);
+		el_سیٹ(el, EL_BIND, "^w", "ed-delete-prev-word", تہی);
 
 		/* el_source() may have changed EL_EDITOR to vi */
-		if (el_get(el, EL_EDITOR, &editor) == 0 && editor[0] == 'v')
-			el_set(el, EL_BIND, "^[", "vi-command-mode", NULL);
+		اگر (el_get(el, EL_EDITOR, &editor) == 0 && editor[0] == 'v')
+			el_سیٹ(el, EL_BIND, "^[", "vi-command-mode", تہی);
 	}
-#endif /* USE_LIBEDIT */
+#اگر_ختم /* USE_LIBEDIT */
 
-	if ((remote_path = sftp_realpath(conn, ".")) == NULL)
+	اگر ((remote_راستہ = sftp_realpath(conn, ".")) == تہی)
 		fatal("Need cwd");
-	startdir = xstrdup(remote_path);
+	startdir = xstrdup(remote_راستہ);
 
-	if (file1 != NULL) {
+	اگر (file1 != تہی) {
 		dir = xstrdup(file1);
-		dir = sftp_make_absolute(dir, remote_path);
+		dir = sftp_make_absolute(dir, remote_راستہ);
 
-		if (sftp_remote_is_dir(conn, dir) && file2 == NULL) {
-			if (!quiet)
+		اگر (sftp_remote_is_dir(conn, dir) && file2 == تہی) {
+			اگر (!quiet)
 				mprintf("Changing to: %s\n", dir);
-			snprintf(cmd, sizeof cmd, "cd \"%s\"", dir);
-			if (parse_dispatch_command(conn, cmd,
-			    &remote_path, startdir, 1, 0) != 0) {
-				free(dir);
-				free(startdir);
-				free(remote_path);
-				free(conn);
-				return (-1);
+			snprintf(cmd, حجم cmd, "cd \"%s\"", dir);
+			اگر (parse_dispatch_command(conn, cmd,
+			    &remote_راستہ, startdir, 1, 0) != 0) {
+				آزاد(dir);
+				آزاد(startdir);
+				آزاد(remote_راستہ);
+				آزاد(conn);
+				واپس (-1);
 			}
-		} else {
-			err = process_get(conn, dir, file2, remote_path, 0, 0,
+		} ورنہ {
+			err = process_get(conn, dir, file2, remote_راستہ, 0, 0,
 			    global_aflag, 0);
-			free(dir);
-			free(startdir);
-			free(remote_path);
-			free(conn);
-			return (err);
+			آزاد(dir);
+			آزاد(startdir);
+			آزاد(remote_راستہ);
+			آزاد(conn);
+			واپس (err);
 		}
-		free(dir);
+		آزاد(dir);
 	}
 
-	setvbuf(stdout, NULL, _IOLBF, 0);
-	setvbuf(infile, NULL, _IOLBF, 0);
+	setvbuf(stdout, تہی, _IOLBF, 0);
+	setvbuf(infile, تہی, _IOLBF, 0);
 
 	interactive = !batchmode && isatty(STDIN_FILENO);
 	err = 0;
-	for (;;) {
-		struct sigaction sa;
+	برائے (;;) {
+		ساخت sigaction sa;
 
 		interrupted = 0;
-		memset(&sa, 0, sizeof(sa));
-		sa.sa_handler = interactive ? read_interrupt : killchild;
-		if (sigaction(SIGINT, &sa, NULL) == -1) {
+		memset(&sa, 0, حجم(sa));
+		sa.sa_handler = interactive ? read_مداخلت : killchild;
+		اگر (sigaction(SIGINT, &sa, تہی) == -1) {
 			debug3("sigaction(%s): %s", strsignal(SIGINT),
 			    strerror(errno));
-			break;
+			توڑو;
 		}
-		if (el == NULL) {
-			if (interactive) {
-				printf("sftp> ");
+		اگر (el == تہی) {
+			اگر (interactive) {
+				لکھو("sftp> ");
 				fflush(stdout);
 			}
-			if (fgets(cmd, sizeof(cmd), infile) == NULL) {
-				if (interactive)
-					printf("\n");
-				if (interrupted)
-					continue;
-				break;
+			اگر (fgets(cmd, حجم(cmd), infile) == تہی) {
+				اگر (interactive)
+					لکھو("\n");
+				اگر (interrupted)
+					جاری;
+				توڑو;
 			}
-		} else {
-#ifdef USE_LIBEDIT
-			const char *line;
-			int count = 0;
+		} ورنہ {
+#اگر_تعریف_شدہ USE_LIBEDIT
+			ثابت حرف *سطر;
+			صحیح گنتی = 0;
 
-			if ((line = el_gets(el, &count)) == NULL ||
-			    count <= 0) {
-				printf("\n");
-				if (interrupted)
-					continue;
-				break;
+			اگر ((سطر = el_gets(el, &گنتی)) == تہی ||
+			    گنتی <= 0) {
+				لکھو("\n");
+				اگر (interrupted)
+					جاری;
+				توڑو;
 			}
-			history(hl, &hev, H_ENTER, line);
-			if (strlcpy(cmd, line, sizeof(cmd)) >= sizeof(cmd)) {
+			history(hl, &hev, H_ENTER, سطر);
+			اگر (strlcpy(cmd, سطر, حجم(cmd)) >= حجم(cmd)) {
 				fprintf(stderr, "Error: input line too long\n");
-				continue;
+				جاری;
 			}
-#endif /* USE_LIBEDIT */
+#اگر_ختم /* USE_LIBEDIT */
 		}
 
 		cmd[strcspn(cmd, "\n")] = '\0';
 
 		/* Handle user interrupts gracefully during commands */
 		interrupted = 0;
-		ssh_signal(SIGINT, cmd_interrupt);
+		ssh_signal(SIGINT, cmd_مداخلت);
 
-		err = parse_dispatch_command(conn, cmd, &remote_path,
-		    startdir, batchmode, !interactive && el == NULL);
-		if (err != 0)
-			break;
+		err = parse_dispatch_command(conn, cmd, &remote_راستہ,
+		    startdir, batchmode, !interactive && el == تہی);
+		اگر (err != 0)
+			توڑو;
 	}
 	ssh_signal(SIGCHLD, SIG_DFL);
-	free(remote_path);
-	free(startdir);
-	free(conn);
+	آزاد(remote_راستہ);
+	آزاد(startdir);
+	آزاد(conn);
 
-#ifdef USE_LIBEDIT
-	if (hl != NULL)
-		history_end(hl);
-	if (el != NULL)
-		el_end(el);
-#endif /* USE_LIBEDIT */
+#اگر_تعریف_شدہ USE_LIBEDIT
+	اگر (hl != تہی)
+		history_انتہا(hl);
+	اگر (el != تہی)
+		el_انتہا(el);
+#اگر_ختم /* USE_LIBEDIT */
 
 	/* err == 1 signifies normal "quit" exit */
-	return (err >= 0 ? 0 : -1);
+	واپس (err >= 0 ? 0 : -1);
 }
 
-static void
-connect_to_server(char *path, char **args, int *in, int *out)
+ساکن خالی
+connect_مقصد_server(حرف *راستہ, حرف **دلائل, صحیح *اندر, صحیح *برآمد)
 {
-	int c_in, c_out;
-#ifdef USE_PIPES
-	int pin[2], pout[2];
+	صحیح c_اندر, c_برآمد;
+#اگر_تعریف_شدہ USE_PIPES
+	صحیح pin[2], pout[2];
 
-	if ((pipe(pin) == -1) || (pipe(pout) == -1))
+	اگر ((pipe(pin) == -1) || (pipe(pout) == -1))
 		fatal("pipe: %s", strerror(errno));
-	*in = pin[0];
-	*out = pout[1];
-	c_in = pout[0];
-	c_out = pin[1];
-#else /* USE_PIPES */
-	int inout[2];
+	*اندر = pin[0];
+	*برآمد = pout[1];
+	c_اندر = pout[0];
+	c_برآمد = pin[1];
+#ورنہ /* USE_PIPES */
+	صحیح inout[2];
 
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, inout) == -1)
+	اگر (socketpair(AF_UNIX, SOCK_STREAM, 0, inout) == -1)
 		fatal("socketpair: %s", strerror(errno));
-	*in = *out = inout[0];
-	c_in = c_out = inout[1];
-#endif /* USE_PIPES */
-	FD_CLOSEONEXEC(*in);
-	FD_CLOSEONEXEC(*out);
+	*اندر = *برآمد = inout[0];
+	c_اندر = c_برآمد = inout[1];
+#اگر_ختم /* USE_PIPES */
+	FD_CLOSEONEXEC(*اندر);
+	FD_CLOSEONEXEC(*برآمد);
 
-	if ((sshpid = fork()) == -1)
+	اگر ((sshpid = fork()) == -1)
 		fatal("fork: %s", strerror(errno));
-	else if (sshpid == 0) {
-		if ((dup2(c_in, STDIN_FILENO) == -1) ||
-		    (dup2(c_out, STDOUT_FILENO) == -1)) {
+	ورنہ اگر (sshpid == 0) {
+		اگر ((dup2(c_اندر, STDIN_FILENO) == -1) ||
+		    (dup2(c_برآمد, STDOUT_FILENO) == -1)) {
 			fprintf(stderr, "dup2: %s\n", strerror(errno));
 			_exit(1);
 		}
-		close(*in);
-		close(*out);
-		close(c_in);
-		close(c_out);
+		close(*اندر);
+		close(*برآمد);
+		close(c_اندر);
+		close(c_برآمد);
 
 		/*
 		 * The underlying ssh is in the same process group, so we must
@@ -2474,8 +2474,8 @@ connect_to_server(char *path, char **args, int *in, int *out)
 		 */
 		ssh_signal(SIGINT, SIG_IGN);
 		ssh_signal(SIGTERM, SIG_DFL);
-		execvp(path, args);
-		fprintf(stderr, "exec: %s: %s\n", path, strerror(errno));
+		execvp(راستہ, دلائل);
+		fprintf(stderr, "exec: %s: %s\n", راستہ, strerror(errno));
 		_exit(1);
 	}
 
@@ -2486,14 +2486,14 @@ connect_to_server(char *path, char **args, int *in, int *out)
 	ssh_signal(SIGTTIN, suspchild);
 	ssh_signal(SIGTTOU, suspchild);
 	ssh_signal(SIGCHLD, sigchld_handler);
-	close(c_in);
-	close(c_out);
+	close(c_اندر);
+	close(c_برآمد);
 }
 
-static void
-usage(void)
+ساکن خالی
+usage(خالی)
 {
-	extern char *__progname;
+	خارجی حرف *__progname;
 
 	fprintf(stderr,
 	    "usage: %s [-46AaCfNpqrv] [-B buffer_size] [-b batchfile] [-c cipher]\n"
@@ -2502,271 +2502,271 @@ usage(void)
 	    "          [-R num_requests] [-S program] [-s subsystem | sftp_server]\n"
 	    "          [-X sftp_option] destination\n",
 	    __progname);
-	exit(1);
+	باہر_نکلو(1);
 }
 
-int
-main(int argc, char **argv)
+صحیح
+مین(صحیح argc, حرف **argv)
 {
-	int r, in, out, ch, err, tmp, port = -1, noisy = 0;
-	char *host = NULL, *user, *cp, **cpp, *file2 = NULL;
-	int debug_level = 0;
-	char *file1 = NULL, *sftp_server = NULL;
-	char *ssh_program = _PATH_SSH_PROGRAM, *sftp_direct = NULL;
-	const char *errstr;
+	صحیح r, اندر, برآمد, ch, err, tmp, پورٹ = -1, noisy = 0;
+	حرف *host = تہی, *user, *cp, **cpp, *file2 = تہی;
+	صحیح debug_level = 0;
+	حرف *file1 = تہی, *sftp_server = تہی;
+	حرف *ssh_پروگرام = راستہ_SSH_پروگرام, *sftp_براہ_راست = تہی;
+	ثابت حرف *errstr;
 	LogLevel ll = SYSLOG_LEVEL_INFO;
-	arglist args;
-	extern int optind;
-	extern char *optarg;
-	struct sftp_conn *conn;
-	size_t copy_buffer_len = 0;
-	size_t num_requests = 0;
-	long long llv, limit_kbps = 0;
+	arglist دلائل;
+	خارجی صحیح optind;
+	خارجی حرف *optarg;
+	ساخت sftp_conn *conn;
+	سائز_t copy_بفر_len = 0;
+	سائز_t عدد_درخواستیں = 0;
+	طویل طویل llv, حد_بندی_kbps = 0;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
 	msetlocale();
 
 	__progname = ssh_get_progname(argv[0]);
-	memset(&args, '\0', sizeof(args));
-	args.list = NULL;
-	addargs(&args, "%s", ssh_program);
-	addargs(&args, "-oForwardX11 no");
-	addargs(&args, "-oPermitLocalCommand no");
-	addargs(&args, "-oClearAllForwardings yes");
-	addargs(&args, "-oControlMaster no");
+	memset(&دلائل, '\0', حجم(دلائل));
+	دلائل.list = تہی;
+	addargs(&دلائل, "%s", ssh_پروگرام);
+	addargs(&دلائل, "-oForwardX11 no");
+	addargs(&دلائل, "-oPermitLocalCommand no");
+	addargs(&دلائل, "-oClearAllForwardings yes");
+	addargs(&دلائل, "-oControlMaster no");
 
 	ll = SYSLOG_LEVEL_INFO;
 	infile = stdin;
 
-	while ((ch = getopt(argc, argv,
+	جب ((ch = getopt(argc, argv,
 	    "1246AafhNpqrvCc:D:i:l:o:s:S:b:B:F:J:P:R:X:")) != -1) {
-		switch (ch) {
+		انتخاب (ch) {
 		/* Passed through to ssh(1) */
-		case 'A':
-		case '4':
-		case '6':
-		case 'C':
-			addargs(&args, "-%c", ch);
-			break;
+		حالت 'A':
+		حالت '4':
+		حالت '6':
+		حالت 'C':
+			addargs(&دلائل, "-%c", ch);
+			توڑو;
 		/* Passed through to ssh(1) with argument */
-		case 'F':
-		case 'J':
-		case 'c':
-		case 'i':
-		case 'o':
-			addargs(&args, "-%c", ch);
-			addargs(&args, "%s", optarg);
-			break;
-		case 'q':
+		حالت 'F':
+		حالت 'J':
+		حالت 'c':
+		حالت 'i':
+		حالت 'o':
+			addargs(&دلائل, "-%c", ch);
+			addargs(&دلائل, "%s", optarg);
+			توڑو;
+		حالت 'q':
 			ll = SYSLOG_LEVEL_ERROR;
 			quiet = 1;
 			showprogress = 0;
-			addargs(&args, "-%c", ch);
-			break;
-		case 'P':
-			port = a2port(optarg);
-			if (port <= 0)
+			addargs(&دلائل, "-%c", ch);
+			توڑو;
+		حالت 'P':
+			پورٹ = a2port(optarg);
+			اگر (پورٹ <= 0)
 				fatal("Bad port \"%s\"\n", optarg);
-			break;
-		case 'v':
-			if (debug_level < 3) {
-				addargs(&args, "-v");
+			توڑو;
+		حالت 'v':
+			اگر (debug_level < 3) {
+				addargs(&دلائل, "-v");
 				ll = SYSLOG_LEVEL_DEBUG1 + debug_level;
 			}
 			debug_level++;
-			break;
-		case '1':
+			توڑو;
+		حالت '1':
 			fatal("SSH protocol v.1 is no longer supported");
-			break;
-		case '2':
+			توڑو;
+		حالت '2':
 			/* accept silently */
-			break;
-		case 'a':
+			توڑو;
+		حالت 'a':
 			global_aflag = 1;
-			break;
-		case 'B':
-			copy_buffer_len = strtol(optarg, &cp, 10);
-			if (copy_buffer_len == 0 || *cp != '\0')
+			توڑو;
+		حالت 'B':
+			copy_بفر_len = strtol(optarg, &cp, 10);
+			اگر (copy_بفر_len == 0 || *cp != '\0')
 				fatal("Invalid buffer size \"%s\"", optarg);
-			break;
-		case 'b':
-			if (batchmode)
+			توڑو;
+		حالت 'b':
+			اگر (batchmode)
 				fatal("Batch file already specified.");
 
 			/* Allow "-" as stdin */
-			if (strcmp(optarg, "-") != 0 &&
-			    (infile = fopen(optarg, "r")) == NULL)
+			اگر (strcmp(optarg, "-") != 0 &&
+			    (infile = fopen(optarg, "r")) == تہی)
 				fatal("%s (%s).", strerror(errno), optarg);
 			showprogress = 0;
 			quiet = batchmode = 1;
-			addargs(&args, "-obatchmode yes");
-			break;
-		case 'f':
+			addargs(&دلائل, "-obatchmode yes");
+			توڑو;
+		حالت 'f':
 			global_fflag = 1;
-			break;
-		case 'N':
+			توڑو;
+		حالت 'N':
 			noisy = 1; /* Used to clear quiet mode after getopt */
-			break;
-		case 'p':
+			توڑو;
+		حالت 'p':
 			global_pflag = 1;
-			break;
-		case 'D':
-			sftp_direct = optarg;
-			break;
-		case 'l':
-			limit_kbps = strtonum(optarg, 1, 100 * 1024 * 1024,
+			توڑو;
+		حالت 'D':
+			sftp_براہ_راست = optarg;
+			توڑو;
+		حالت 'l':
+			حد_بندی_kbps = strtonum(optarg, 1, 100 * 1024 * 1024,
 			    &errstr);
-			if (errstr != NULL)
+			اگر (errstr != تہی)
 				usage();
-			limit_kbps *= 1024; /* kbps */
-			break;
-		case 'r':
+			حد_بندی_kbps *= 1024; /* kbps */
+			توڑو;
+		حالت 'r':
 			global_rflag = 1;
-			break;
-		case 'R':
-			num_requests = strtol(optarg, &cp, 10);
-			if (num_requests == 0 || *cp != '\0')
+			توڑو;
+		حالت 'R':
+			عدد_درخواستیں = strtol(optarg, &cp, 10);
+			اگر (عدد_درخواستیں == 0 || *cp != '\0')
 				fatal("Invalid number of requests \"%s\"",
 				    optarg);
-			break;
-		case 's':
+			توڑو;
+		حالت 's':
 			sftp_server = optarg;
-			break;
-		case 'S':
-			ssh_program = optarg;
-			replacearg(&args, 0, "%s", ssh_program);
-			break;
-		case 'X':
+			توڑو;
+		حالت 'S':
+			ssh_پروگرام = optarg;
+			replacearg(&دلائل, 0, "%s", ssh_پروگرام);
+			توڑو;
+		حالت 'X':
 			/* Please keep in sync with ssh.c -X */
-			if (strncmp(optarg, "buffer=", 7) == 0) {
-				r = scan_scaled(optarg + 7, &llv);
-				if (r == 0 && (llv <= 0 || llv > 256 * 1024)) {
+			اگر (لڑی_موازنہ(optarg, "buffer=", 7) == 0) {
+				r = جائزہ_scaled(optarg + 7, &llv);
+				اگر (r == 0 && (llv <= 0 || llv > 256 * 1024)) {
 					r = -1;
 					errno = EINVAL;
 				}
-				if (r == -1) {
+				اگر (r == -1) {
 					fatal("Invalid buffer size \"%s\": %s",
 					     optarg + 7, strerror(errno));
 				}
-				copy_buffer_len = (size_t)llv;
-			} else if (strncmp(optarg, "nrequests=", 10) == 0) {
+				copy_بفر_len = (سائز_t)llv;
+			} ورنہ اگر (لڑی_موازنہ(optarg, "nrequests=", 10) == 0) {
 				llv = strtonum(optarg + 10, 1, 256 * 1024,
 				    &errstr);
-				if (errstr != NULL) {
+				اگر (errstr != تہی) {
 					fatal("Invalid number of requests "
 					    "\"%s\": %s", optarg + 10, errstr);
 				}
-				num_requests = (size_t)llv;
-			} else {
+				عدد_درخواستیں = (سائز_t)llv;
+			} ورنہ {
 				fatal("Invalid -X option");
 			}
-			break;
-		case 'h':
-		default:
+			توڑو;
+		حالت 'h':
+		طےشدہ:
 			usage();
 		}
 	}
 
 	/* Do this last because we want the user to be able to override it */
-	addargs(&args, "-oForwardAgent no");
+	addargs(&دلائل, "-oForwardAgent no");
 
-	if (!isatty(STDERR_FILENO))
+	اگر (!isatty(STDERR_FILENO))
 		showprogress = 0;
 
-	if (noisy)
+	اگر (noisy)
 		quiet = 0;
 
 	log_init(argv[0], ll, SYSLOG_FACILITY_USER, 1);
 
-	if (sftp_direct == NULL) {
-		if (optind == argc || argc > (optind + 2))
+	اگر (sftp_براہ_راست == تہی) {
+		اگر (optind == argc || argc > (optind + 2))
 			usage();
 		argv += optind;
 
-		switch (parse_uri("sftp", *argv, &user, &host, &tmp, &file1)) {
-		case -1:
+		انتخاب (parse_uri("sftp", *argv, &user, &host, &tmp, &file1)) {
+		حالت -1:
 			usage();
-			break;
-		case 0:
-			if (tmp != -1)
-				port = tmp;
-			break;
-		default:
+			توڑو;
+		حالت 0:
+			اگر (tmp != -1)
+				پورٹ = tmp;
+			توڑو;
+		طےشدہ:
 			/* Try with user, host and path. */
-			if (parse_user_host_path(*argv, &user, &host,
+			اگر (parse_user_host_راستہ(*argv, &user, &host,
 			    &file1) == 0)
-				break;
+				توڑو;
 			/* Try with user and host. */
-			if (parse_user_host_port(*argv, &user, &host, NULL)
+			اگر (parse_user_host_پورٹ(*argv, &user, &host, تہی)
 			    == 0)
-				break;
+				توڑو;
 			/* Treat as a plain hostname. */
 			host = xstrdup(*argv);
 			host = cleanhostname(host);
-			break;
+			توڑو;
 		}
 		file2 = *(argv + 1);
 
-		if (!*host) {
+		اگر (!*host) {
 			fprintf(stderr, "Missing hostname\n");
 			usage();
 		}
 
-		if (port != -1)
-			addargs(&args, "-oPort %d", port);
-		if (user != NULL) {
-			addargs(&args, "-l");
-			addargs(&args, "%s", user);
+		اگر (پورٹ != -1)
+			addargs(&دلائل, "-oPort %d", پورٹ);
+		اگر (user != تہی) {
+			addargs(&دلائل, "-l");
+			addargs(&دلائل, "%s", user);
 		}
 
 		/* no subsystem if the server-spec contains a '/' */
-		if (sftp_server == NULL || strchr(sftp_server, '/') == NULL)
-			addargs(&args, "-s");
+		اگر (sftp_server == تہی || strchr(sftp_server, '/') == تہی)
+			addargs(&دلائل, "-s");
 
-		addargs(&args, "--");
-		addargs(&args, "%s", host);
-		addargs(&args, "%s", (sftp_server != NULL ?
+		addargs(&دلائل, "--");
+		addargs(&دلائل, "%s", host);
+		addargs(&دلائل, "%s", (sftp_server != تہی ?
 		    sftp_server : "sftp"));
 
-		connect_to_server(ssh_program, args.list, &in, &out);
-	} else {
-		if ((r = argv_split(sftp_direct, &tmp, &cpp, 1)) != 0)
+		connect_مقصد_server(ssh_پروگرام, دلائل.list, &اندر, &برآمد);
+	} ورنہ {
+		اگر ((r = argv_بانٹو(sftp_براہ_راست, &tmp, &cpp, 1)) != 0)
 			fatal_r(r, "Parse -D arguments");
-		if (cpp[0] == NULL)
+		اگر (cpp[0] == تہی)
 			fatal("No sftp server specified via -D");
-		connect_to_server(cpp[0], cpp, &in, &out);
+		connect_مقصد_server(cpp[0], cpp, &اندر, &برآمد);
 		argv_free(cpp, tmp);
 	}
-	freeargs(&args);
+	freeargs(&دلائل);
 
-	conn = sftp_init(in, out, copy_buffer_len, num_requests, limit_kbps);
-	if (conn == NULL)
+	conn = sftp_init(اندر, برآمد, copy_بفر_len, عدد_درخواستیں, حد_بندی_kbps);
+	اگر (conn == تہی)
 		fatal("Couldn't initialise connection to server");
 
-	if (!quiet) {
-		if (sftp_direct == NULL)
+	اگر (!quiet) {
+		اگر (sftp_براہ_راست == تہی)
 			fprintf(stderr, "Connected to %s.\n", host);
-		else
-			fprintf(stderr, "Attached to %s.\n", sftp_direct);
+		ورنہ
+			fprintf(stderr, "Attached to %s.\n", sftp_براہ_راست);
 	}
 
 	err = interactive_loop(conn, file1, file2);
 
-#if !defined(USE_PIPES)
-	shutdown(in, SHUT_RDWR);
-	shutdown(out, SHUT_RDWR);
-#endif
+#اگر !defined(USE_PIPES)
+	shutdown(اندر, SHUT_RDWR);
+	shutdown(برآمد, SHUT_RDWR);
+#اگر_ختم
 
-	close(in);
-	close(out);
-	if (batchmode)
+	close(اندر);
+	close(برآمد);
+	اگر (batchmode)
 		fclose(infile);
 
-	while (waitpid(sshpid, NULL, 0) == -1 && sshpid > 1)
-		if (errno != EINTR)
+	جب (waitpid(sshpid, تہی, 0) == -1 && sshpid > 1)
+		اگر (errno != EINTR)
 			fatal("Couldn't wait for ssh process: %s",
 			    strerror(errno));
 
-	exit(err == 0 ? 0 : 1);
+	باہر_نکلو(err == 0 ? 0 : 1);
 }

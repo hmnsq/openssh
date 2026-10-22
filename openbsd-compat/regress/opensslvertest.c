@@ -14,18 +14,18 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
 
-int ssh_compatible_openssl(long, long);
+صحیح ssh_compatible_openssl(طویل, طویل);
 
-struct version_test {
-	long headerver;
-	long libver;
-	int result;
-} version_tests[] = {
+ساخت نسخہ_test {
+	طویل headerver;
+	طویل libver;
+	صحیح نتیجہ;
+} نسخہ_tests[] = {
 	/* built with 1.0.1b release headers */
 	{ 0x1000101fL, 0x1000101fL, 1},/* exact match */
 	{ 0x1000101fL, 0x1000102fL, 1},	/* newer library patch version: ok */
@@ -57,28 +57,28 @@ struct version_test {
 	{ 0x3010101fL, 0x4010101fL, 0},	/* newer library major version: NO */
 };
 
-void
-fail(long hver, long lver, int result)
+خالی
+fail(طویل hver, طویل lver, صحیح نتیجہ)
 {
-	fprintf(stderr, "opensslver: header %lx library %lx != %d \n", hver, lver, result);
-	exit(1);
+	fprintf(stderr, "opensslver: header %lx library %lx != %d \n", hver, lver, نتیجہ);
+	باہر_نکلو(1);
 }
 
-int
-main(void)
+صحیح
+مین(خالی)
 {
-#ifdef WITH_OPENSSL
-	unsigned int i;
-	int res;
-	long hver, lver;
+#اگر_تعریف_شدہ WITH_OPENSSL
+	غیرعلامتی صحیح i;
+	صحیح res;
+	طویل hver, lver;
 
-	for (i = 0; i < sizeof(version_tests) / sizeof(version_tests[0]); i++) {
-		hver = version_tests[i].headerver;
-		lver = version_tests[i].libver;
-		res = version_tests[i].result;
-		if (ssh_compatible_openssl(hver, lver) != res)
+	برائے (i = 0; i < حجم(نسخہ_tests) / حجم(نسخہ_tests[0]); i++) {
+		hver = نسخہ_tests[i].headerver;
+		lver = نسخہ_tests[i].libver;
+		res = نسخہ_tests[i].نتیجہ;
+		اگر (ssh_compatible_openssl(hver, lver) != res)
 			fail(hver, lver, res);
 	}
-#endif
-	exit(0);
+#اگر_ختم
+	باہر_نکلو(0);
 }

@@ -5,76 +5,76 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <sys/types.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#include "../test_helper/test_helper.h"
+#شامل "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#شامل "log.h"
+#شامل "misc.h"
+#شامل "xmalloc.h"
 
-void test_hpdelim(void);
+خالی test_hpdelim(خالی);
 
-void
-test_hpdelim(void)
+خالی
+test_hpdelim(خالی)
 {
-	char *orig, *str, *cp, *port;
+	حرف *orig, *str, *cp, *پورٹ;
 
-#define START_STRING(x)	orig = str = xstrdup(x)
-#define DONE_STRING()	free(orig)
+#تعریف_کرو آغاز_STRING(x)	orig = str = xstrdup(x)
+#تعریف_کرو مکمل_STRING()	آزاد(orig)
 
-	TEST_START("hpdelim host only");
-	START_STRING("host");
+	TEST_آغاز("hpdelim host only");
+	آغاز_STRING("host");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "host");
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(str, تہی);
+	مکمل_STRING();
+	TEST_مکمل();
 
-	TEST_START("hpdelim :port");
-	START_STRING(":1234");
+	TEST_آغاز("hpdelim :port");
+	آغاز_STRING(":1234");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "");
-	ASSERT_PTR_NE(str, NULL);
-	port = hpdelim(&str);
-	ASSERT_STRING_EQ(port, "1234");
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_NE(str, تہی);
+	پورٹ = hpdelim(&str);
+	ASSERT_STRING_EQ(پورٹ, "1234");
+	ASSERT_PTR_EQ(str, تہی);
+	مکمل_STRING();
+	TEST_مکمل();
 
-	TEST_START("hpdelim host:port");
-	START_STRING("host:1234");
+	TEST_آغاز("hpdelim host:port");
+	آغاز_STRING("host:1234");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "host");
-	ASSERT_PTR_NE(str, NULL);
-	port = hpdelim(&str);
-	ASSERT_STRING_EQ(port, "1234");
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_NE(str, تہی);
+	پورٹ = hpdelim(&str);
+	ASSERT_STRING_EQ(پورٹ, "1234");
+	ASSERT_PTR_EQ(str, تہی);
+	مکمل_STRING();
+	TEST_مکمل();
 
-	TEST_START("hpdelim [host]:port");
-	START_STRING("[::1]:1234");
+	TEST_آغاز("hpdelim [host]:port");
+	آغاز_STRING("[::1]:1234");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "[::1]");
-	ASSERT_PTR_NE(str, NULL);
-	port = hpdelim(&str);
-	ASSERT_STRING_EQ(port, "1234");
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_NE(str, تہی);
+	پورٹ = hpdelim(&str);
+	ASSERT_STRING_EQ(پورٹ, "1234");
+	ASSERT_PTR_EQ(str, تہی);
+	مکمل_STRING();
+	TEST_مکمل();
 
-	TEST_START("hpdelim missing ] error");
-	START_STRING("[::1:1234");
+	TEST_آغاز("hpdelim missing ] error");
+	آغاز_STRING("[::1:1234");
 	cp = hpdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, تہی);
+	مکمل_STRING();
+	TEST_مکمل();
 
 }

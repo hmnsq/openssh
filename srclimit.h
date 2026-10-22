@@ -13,30 +13,30 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-struct xaddr;
+ساخت xaddr;
 
-struct per_source_penalty;
+ساخت فی_ماخذ_penalty;
 
-void	srclimit_init(int, int, int, int,
-    struct per_source_penalty *, const char *);
-int	srclimit_check_allow(int, int);
-void	srclimit_done(int);
+خالی	srclimit_init(صحیح, صحیح, صحیح, صحیح,
+    ساخت فی_ماخذ_penalty *, ثابت حرف *);
+صحیح	srclimit_check_allow(صحیح, صحیح);
+خالی	srclimit_مکمل(صحیح);
 
-#define SRCLIMIT_PENALTY_NONE			0
-#define SRCLIMIT_PENALTY_CRASH			1
-#define SRCLIMIT_PENALTY_AUTHFAIL		2
-#define SRCLIMIT_PENALTY_GRACE_EXCEEDED		3
-#define SRCLIMIT_PENALTY_NOAUTH			4
-#define SRCLIMIT_PENALTY_REFUSECONNECTION	5
-#define SRCLIMIT_PENALTY_INVALIDUSER		6
+#تعریف_کرو SRCLIMIT_PENALTY_NONE			0
+#تعریف_کرو SRCLIMIT_PENALTY_CRASH			1
+#تعریف_کرو SRCLIMIT_PENALTY_AUTHFAIL		2
+#تعریف_کرو SRCLIMIT_PENALTY_GRACE_EXCEEDED		3
+#تعریف_کرو SRCLIMIT_PENALTY_NOAUTH			4
+#تعریف_کرو SRCLIMIT_PENALTY_REFUSECONNECTION	5
+#تعریف_کرو SRCLIMIT_PENALTY_INVALIDUSER		6
 
 /* meaningful exit values, used by sshd listener for penalties */
-#define EXIT_LOGIN_GRACE	3	/* login grace period exceeded */
-#define EXIT_CHILD_CRASH	4	/* preauth child crashed */
-#define EXIT_AUTH_ATTEMPTED	5	/* at least one auth attempt made */
-#define EXIT_CONFIG_REFUSED	6	/* sshd_config RefuseConnection */
-#define EXIT_INVALID_USER	7	/* invalid user supplied */
+#تعریف_کرو EXIT_LOGIN_GRACE	3	/* login grace period exceeded */
+#تعریف_کرو EXIT_بچہ_CRASH	4	/* preauth child crashed */
+#تعریف_کرو EXIT_AUTH_ATTEMPTED	5	/* at least one auth attempt made */
+#تعریف_کرو EXIT_CONFIG_REFUSED	6	/* sshd_config RefuseConnection */
+#تعریف_کرو EXIT_INVALID_USER	7	/* invalid user supplied */
 
-void	srclimit_penalise(struct xaddr *, int);
-int	srclimit_penalty_check_allow(int, const char **);
-void	srclimit_penalty_info(void);
+خالی	srclimit_penalise(ساخت xaddr *, صحیح);
+صحیح	srclimit_penalty_check_allow(صحیح, ثابت حرف **);
+خالی	srclimit_penalty_info(خالی);

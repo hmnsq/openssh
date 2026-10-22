@@ -15,67 +15,67 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
+#شامل <sys/types.h>
+#شامل <sys/socket.h>
+#شامل <sys/wait.h>
 
-#include <limits.h>
-#include <errno.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
+#شامل <limits.h>
+#شامل <errno.h>
+#شامل <signal.h>
+#شامل <stdarg.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <fcntl.h>
 
-#include "log.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "msg.h"
-#include "pathnames.h"
-#include "ssh-sk.h"
-#include "misc.h"
+#شامل "log.h"
+#شامل "ssherr.h"
+#شامل "sshbuf.h"
+#شامل "sshkey.h"
+#شامل "msg.h"
+#شامل "pathnames.h"
+#شامل "ssh-sk.h"
+#شامل "misc.h"
 
 /* #define DEBUG_SK 1 */
 
-static int
-start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
+ساکن صحیح
+آغاز_helper(صحیح *fdp, pid_t *pidp, خالی (**osigchldp)(صحیح))
 {
-	void (*osigchld)(int);
-	int oerrno, pair[2], execpipe[2];
+	خالی (*osigchld)(صحیح);
+	صحیح oerrno, pair[2], execpipe[2];
 	ssize_t n;
 	pid_t pid;
-	char execbuf[100], *helper, *verbosity = NULL;
+	حرف execbuf[100], *helper, *verbosity = تہی;
 
 	*fdp = -1;
 	*pidp = 0;
 	*osigchldp = SIG_DFL;
 
 	helper = getenv("SSH_SK_HELPER");
-	if (helper == NULL || strlen(helper) == 0)
-		helper = _PATH_SSH_SK_HELPER;
-#ifdef DEBUG_SK
+	اگر (helper == تہی || لڑی_لمبائی(helper) == 0)
+		helper = راستہ_SSH_SK_HELPER;
+#اگر_تعریف_شدہ DEBUG_SK
 	verbosity = "-vvv";
-#endif
+#اگر_ختم
 
 	/* Create a O_CLOEXEC pipe to capture the execve() failure */
-	if (pipe(execpipe) == -1) {
+	اگر (pipe(execpipe) == -1) {
 		error("pipe:  %s", strerror(errno));
-		return SSH_ERR_SYSTEM_ERROR;
+		واپس SSH_ERR_SYSTEM_ERROR;
 	}
 	/* Start helper */
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1) {
+	اگر (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1) {
 		error("socketpair: %s", strerror(errno));
 		close(execpipe[0]);
 		close(execpipe[1]);
-		return SSH_ERR_SYSTEM_ERROR;
+		واپس SSH_ERR_SYSTEM_ERROR;
 	}
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if ((pid = fork()) == -1) {
+	اگر ((pid = fork()) == -1) {
 		oerrno = errno;
 		error("fork: %s", strerror(errno));
 		close(pair[0]);
@@ -84,260 +84,260 @@ start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
 		close(execpipe[1]);
 		ssh_signal(SIGCHLD, osigchld);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		واپس SSH_ERR_SYSTEM_ERROR;
 	}
-	if (pid == 0) {
+	اگر (pid == 0) {
 		close(execpipe[0]);
 		FD_CLOSEONEXEC(execpipe[1]);
-		if ((dup2(pair[1], STDIN_FILENO) == -1) ||
+		اگر ((dup2(pair[1], STDIN_FILENO) == -1) ||
 		    (dup2(pair[1], STDOUT_FILENO) == -1)) {
-			snprintf(execbuf, sizeof execbuf,
+			snprintf(execbuf, حجم execbuf,
 			    "dup2: %s", strerror(errno));
-			write(execpipe[1], execbuf, strlen(execbuf)+1);
+			اكتب(execpipe[1], execbuf, لڑی_لمبائی(execbuf)+1);
 			_exit(1);
 		}
 		close(pair[0]);
 		close(pair[1]);
 		closefrom(STDERR_FILENO + 1);
 		debug_f("starting %s %s", helper,
-		    verbosity == NULL ? "" : verbosity);
-		execlp(helper, helper, verbosity, (char *)NULL);
-		snprintf(execbuf, sizeof execbuf,
+		    verbosity == تہی ? "" : verbosity);
+		execlp(helper, helper, verbosity, (حرف *)تہی);
+		snprintf(execbuf, حجم execbuf,
 		    "execlp: %s", strerror(errno));
-		write(execpipe[1], execbuf, strlen(execbuf)+1);
+		اكتب(execpipe[1], execbuf, لڑی_لمبائی(execbuf)+1);
 		_exit(1);
 	}
 	close(pair[1]);
 
 	close(execpipe[1]);
-	n = read(execpipe[0], execbuf, sizeof execbuf);
+	n = اقرأ(execpipe[0], execbuf, حجم execbuf);
 	close(execpipe[0]);
-	if (n > 0) {
+	اگر (n > 0) {
 		execbuf[n - 1] = '\0';
 		error_f("%s", execbuf);
-		return SSH_ERR_AGENT_FAILURE;
+		واپس SSH_ERR_AGENT_FAILURE;
 	}
 
 	/* success */
-	debug3_f("started pid=%ld", (long)pid);
+	debug3_f("started pid=%ld", (طویل)pid);
 	*fdp = pair[0];
 	*pidp = pid;
 	*osigchldp = osigchld;
-	return 0;
+	واپس 0;
 }
 
-static int
+ساکن صحیح
 reap_helper(pid_t pid)
 {
-	int status, oerrno;
+	صحیح حالت_2, oerrno;
 
-	debug3_f("pid=%ld", (long)pid);
+	debug3_f("pid=%ld", (طویل)pid);
 
 	errno = 0;
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno == EINTR) {
+	جب (waitpid(pid, &حالت_2, 0) == -1) {
+		اگر (errno == EINTR) {
 			errno = 0;
-			continue;
+			جاری;
 		}
 		oerrno = errno;
 		error_f("waitpid: %s", strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		واپس SSH_ERR_SYSTEM_ERROR;
 	}
-	if (!WIFEXITED(status)) {
+	اگر (!WIFEXITED(حالت_2)) {
 		error_f("helper exited abnormally");
-		return SSH_ERR_AGENT_FAILURE;
-	} else if (WEXITSTATUS(status) != 0) {
+		واپس SSH_ERR_AGENT_FAILURE;
+	} ورنہ اگر (WEXITSTATUS(حالت_2) != 0) {
 		error_f("helper exited with non-zero exit status");
-		return SSH_ERR_AGENT_FAILURE;
+		واپس SSH_ERR_AGENT_FAILURE;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-client_converse(struct sshbuf *msg, struct sshbuf **respp, u_int type)
+ساکن صحیح
+client_converse(ساخت sshbuf *پیغام, ساخت sshbuf **respp, u_int type)
 {
-	int oerrno, fd, r2, ll, r = SSH_ERR_INTERNAL_ERROR;
+	صحیح oerrno, fd, r2, ll, r = SSH_ERR_اندرونی_ERROR;
 	u_int rtype, rerr;
 	pid_t pid;
-	u_char version;
-	void (*osigchld)(int);
-	struct sshbuf *req = NULL, *resp = NULL;
-	*respp = NULL;
+	u_char نسخہ;
+	خالی (*osigchld)(صحیح);
+	ساخت sshbuf *req = تہی, *resp = تہی;
+	*respp = تہی;
 
-	if ((r = start_helper(&fd, &pid, &osigchld)) != 0)
-		return r;
+	اگر ((r = آغاز_helper(&fd, &pid, &osigchld)) != 0)
+		واپس r;
 
-	if ((req = sshbuf_new()) == NULL || (resp = sshbuf_new()) == NULL) {
+	اگر ((req = sshbuf_new()) == تہی || (resp = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
 	/* Request preamble: type, log_on_stderr, log_level */
 	ll = log_level_get();
-	if ((r = sshbuf_put_u32(req, type)) != 0 ||
+	اگر ((r = sshbuf_put_u32(req, type)) != 0 ||
 	    (r = sshbuf_put_u8(req, log_is_on_stderr() != 0)) != 0 ||
 	    (r = sshbuf_put_u32(req, ll < 0 ? 0 : ll)) != 0 ||
-	    (r = sshbuf_putb(req, msg)) != 0) {
+	    (r = sshbuf_putb(req, پیغام)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = ssh_msg_send(fd, SSH_SK_HELPER_VERSION, req)) != 0) {
+	اگر ((r = ssh_پیغام_send(fd, SSH_SK_HELPER_نسخہ, req)) != 0) {
 		error_fr(r, "send");
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = ssh_msg_recv(fd, resp)) != 0) {
+	اگر ((r = ssh_پیغام_recv(fd, resp)) != 0) {
 		error_fr(r, "receive");
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_get_u8(resp, &version)) != 0) {
+	اگر ((r = sshbuf_get_u8(resp, &نسخہ)) != 0) {
 		error_fr(r, "parse version");
-		goto out;
+		جاؤ برآمد;
 	}
-	if (version != SSH_SK_HELPER_VERSION) {
+	اگر (نسخہ != SSH_SK_HELPER_نسخہ) {
 		error_f("unsupported version: got %u, expected %u",
-		    version, SSH_SK_HELPER_VERSION);
+		    نسخہ, SSH_SK_HELPER_نسخہ);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_get_u32(resp, &rtype)) != 0) {
+	اگر ((r = sshbuf_get_u32(resp, &rtype)) != 0) {
 		error_fr(r, "parse message type");
-		goto out;
+		جاؤ برآمد;
 	}
-	if (rtype == SSH_SK_HELPER_ERROR) {
-		if ((r = sshbuf_get_u32(resp, &rerr)) != 0) {
+	اگر (rtype == SSH_SK_HELPER_ERROR) {
+		اگر ((r = sshbuf_get_u32(resp, &rerr)) != 0) {
 			error_fr(r, "parse");
-			goto out;
+			جاؤ برآمد;
 		}
 		debug_f("helper returned error -%u", rerr);
 		/* OpenSSH error values are negative; encoded as -err on wire */
-		if (rerr == 0 || rerr >= INT_MAX)
-			r = SSH_ERR_INTERNAL_ERROR;
-		else
-			r = -(int)rerr;
-		goto out;
-	} else if (rtype != type) {
+		اگر (rerr == 0 || rerr >= زیادہ_سے_زیادہ_عدد)
+			r = SSH_ERR_اندرونی_ERROR;
+		ورنہ
+			r = -(صحیح)rerr;
+		جاؤ برآمد;
+	} ورنہ اگر (rtype != type) {
 		error_f("helper returned incorrect message type %u, "
 		    "expecting %u", rtype, type);
-		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		r = SSH_ERR_اندرونی_ERROR;
+		جاؤ برآمد;
 	}
 	/* success */
 	r = 0;
- out:
+ برآمد:
 	oerrno = errno;
 	close(fd);
-	if ((r2 = reap_helper(pid)) != 0) {
-		if (r == 0) {
+	اگر ((r2 = reap_helper(pid)) != 0) {
+		اگر (r == 0) {
 			r = r2;
 			oerrno = errno;
 		}
 	}
-	if (r == 0) {
+	اگر (r == 0) {
 		*respp = resp;
-		resp = NULL;
+		resp = تہی;
 	}
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	ssh_signal(SIGCHLD, osigchld);
 	errno = oerrno;
-	return r;
+	واپس r;
 
 }
 
-int
-sshsk_sign(const char *provider, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin)
+صحیح
+sshsk_sign(ثابت حرف *provider, ساخت sshkey *کلید,
+    u_char **sigp, سائز_t *lenp, ثابت u_char *ڈیٹا, سائز_t datalen,
+    u_int compat, ثابت حرف *pin)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *req = NULL, *resp = NULL;
+	صحیح oerrno, r = SSH_ERR_اندرونی_ERROR;
+	ساخت sshbuf *kbuf = تہی, *req = تہی, *resp = تہی;
 
-	*sigp = NULL;
+	*sigp = تہی;
 	*lenp = 0;
 
-#ifndef ENABLE_SK
-	return SSH_ERR_KEY_TYPE_UNKNOWN;
-#endif
+#اگر_غیر_تعریف_شدہ ENABLE_SK
+	واپس SSH_ERR_کلید_TYPE_UNKNOWN;
+#اگر_ختم
 
-	if ((kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	اگر ((kbuf = sshbuf_new()) == تہی ||
+	    (req = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
 
-	if ((r = sshkey_private_serialize(key, kbuf)) != 0) {
+	اگر ((r = sshkey_نجی_serialize(کلید, kbuf)) != 0) {
 		error_fr(r, "encode key");
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_put_stringb(req, kbuf)) != 0 ||
+	اگر ((r = sshbuf_put_stringb(req, kbuf)) != 0 ||
 	    (r = sshbuf_put_cstring(req, provider)) != 0 ||
-	    (r = sshbuf_put_string(req, data, datalen)) != 0 ||
-	    (r = sshbuf_put_cstring(req, NULL)) != 0 || /* alg */
+	    (r = sshbuf_put_string(req, ڈیٹا, datalen)) != 0 ||
+	    (r = sshbuf_put_cstring(req, تہی)) != 0 || /* alg */
 	    (r = sshbuf_put_u32(req, compat)) != 0 ||
 	    (r = sshbuf_put_cstring(req, pin)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		جاؤ برآمد;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_SIGN)) != 0)
-		goto out;
+	اگر ((r = client_converse(req, &resp, SSH_SK_HELPER_SIGN)) != 0)
+		جاؤ برآمد;
 
-	if ((r = sshbuf_get_string(resp, sigp, lenp)) != 0) {
+	اگر ((r = sshbuf_get_string(resp, sigp, lenp)) != 0) {
 		error_fr(r, "parse signature");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
-	if (sshbuf_len(resp) != 0) {
+	اگر (sshbuf_len(resp) != 0) {
 		error_f("trailing data in response");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
 	/* success */
 	r = 0;
- out:
+ برآمد:
 	oerrno = errno;
-	if (r != 0) {
+	اگر (r != 0) {
 		freezero(*sigp, *lenp);
-		*sigp = NULL;
+		*sigp = تہی;
 		*lenp = 0;
 	}
 	sshbuf_free(kbuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	واپس r;
 }
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest)
+صحیح
+sshsk_enroll(صحیح type, ثابت حرف *provider_راستہ, ثابت حرف *device,
+    ثابت حرف *application, ثابت حرف *userid, uint8_t flags,
+    ثابت حرف *pin, ساخت sshbuf *challenge_buf,
+    ساخت sshkey **keyp, ساخت sshbuf *attest)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *abuf = NULL, *req = NULL, *resp = NULL;
-	struct sshkey *key = NULL;
+	صحیح oerrno, r = SSH_ERR_اندرونی_ERROR;
+	ساخت sshbuf *kbuf = تہی, *abuf = تہی, *req = تہی, *resp = تہی;
+	ساخت sshkey *کلید = تہی;
 
-	*keyp = NULL;
-	if (attest != NULL)
+	*keyp = تہی;
+	اگر (attest != تہی)
 		sshbuf_reset(attest);
 
-#ifndef ENABLE_SK
-	return SSH_ERR_KEY_TYPE_UNKNOWN;
-#endif
+#اگر_غیر_تعریف_شدہ ENABLE_SK
+	واپس SSH_ERR_کلید_TYPE_UNKNOWN;
+#اگر_ختم
 
-	if (type < 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	اگر (type < 0)
+		واپس SSH_ERR_INVALID_دلیل;
 
-	if ((abuf = sshbuf_new()) == NULL ||
-	    (kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	اگر ((abuf = sshbuf_new()) == تہی ||
+	    (kbuf = sshbuf_new()) == تہی ||
+	    (req = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
 
-	if ((r = sshbuf_put_u32(req, (u_int)type)) != 0 ||
-	    (r = sshbuf_put_cstring(req, provider_path)) != 0 ||
+	اگر ((r = sshbuf_put_u32(req, (u_int)type)) != 0 ||
+	    (r = sshbuf_put_cstring(req, provider_راستہ)) != 0 ||
 	    (r = sshbuf_put_cstring(req, device)) != 0 ||
 	    (r = sshbuf_put_cstring(req, application)) != 0 ||
 	    (r = sshbuf_put_cstring(req, userid)) != 0 ||
@@ -345,156 +345,156 @@ sshsk_enroll(int type, const char *provider_path, const char *device,
 	    (r = sshbuf_put_cstring(req, pin)) != 0 ||
 	    (r = sshbuf_put_stringb(req, challenge_buf)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		جاؤ برآمد;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_ENROLL)) != 0)
-		goto out;
+	اگر ((r = client_converse(req, &resp, SSH_SK_HELPER_ENROLL)) != 0)
+		جاؤ برآمد;
 
-	if ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
+	اگر ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
 	    (r = sshbuf_get_stringb(resp, abuf)) != 0) {
 		error_fr(r, "parse");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
-	if (sshbuf_len(resp) != 0) {
+	اگر (sshbuf_len(resp) != 0) {
 		error_f("trailing data in response");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
+	اگر ((r = sshkey_نجی_deserialize(kbuf, &کلید)) != 0) {
 		error_fr(r, "encode");
-		goto out;
+		جاؤ برآمد;
 	}
-	if (attest != NULL && (r = sshbuf_putb(attest, abuf)) != 0) {
+	اگر (attest != تہی && (r = sshbuf_putb(attest, abuf)) != 0) {
 		error_fr(r, "encode attestation information");
-		goto out;
+		جاؤ برآمد;
 	}
 
 	/* success */
 	r = 0;
-	*keyp = key;
-	key = NULL;
- out:
+	*keyp = کلید;
+	کلید = تہی;
+ برآمد:
 	oerrno = errno;
-	sshkey_free(key);
+	sshkey_free(کلید);
 	sshbuf_free(kbuf);
 	sshbuf_free(abuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	واپس r;
 }
 
-static void
-sshsk_free_resident_key(struct sshsk_resident_key *srk)
+ساکن خالی
+sshsk_free_resident_کلید(ساخت sshsk_resident_کلید *srk)
 {
-	if (srk == NULL)
-		return;
-	sshkey_free(srk->key);
+	اگر (srk == تہی)
+		واپس;
+	sshkey_free(srk->کلید);
 	freezero(srk->user_id, srk->user_id_len);
-	free(srk);
+	آزاد(srk);
 }
 
 
-void
-sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks)
+خالی
+sshsk_free_resident_کلیدیں(ساخت sshsk_resident_کلید **srks, سائز_t nsrks)
 {
-	size_t i;
+	سائز_t i;
 
-	if (srks == NULL || nsrks == 0)
-		return;
+	اگر (srks == تہی || nsrks == 0)
+		واپس;
 
-	for (i = 0; i < nsrks; i++)
-		sshsk_free_resident_key(srks[i]);
-	free(srks);
+	برائے (i = 0; i < nsrks; i++)
+		sshsk_free_resident_کلید(srks[i]);
+	آزاد(srks);
 }
 
-int
-sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
-    size_t *nsrksp)
+صحیح
+sshsk_بھرو_resident(ثابت حرف *provider_راستہ, ثابت حرف *device,
+    ثابت حرف *pin, u_int flags, ساخت sshsk_resident_کلید ***srksp,
+    سائز_t *nsrksp)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *req = NULL, *resp = NULL;
-	struct sshkey *key = NULL;
-	struct sshsk_resident_key *srk = NULL, **srks = NULL, **tmp;
-	u_char *userid = NULL;
-	size_t userid_len = 0, nsrks = 0;
+	صحیح oerrno, r = SSH_ERR_اندرونی_ERROR;
+	ساخت sshbuf *kbuf = تہی, *req = تہی, *resp = تہی;
+	ساخت sshkey *کلید = تہی;
+	ساخت sshsk_resident_کلید *srk = تہی, **srks = تہی, **tmp;
+	u_char *userid = تہی;
+	سائز_t userid_len = 0, nsrks = 0;
 
-	*srksp = NULL;
+	*srksp = تہی;
 	*nsrksp = 0;
 
-	if ((kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	اگر ((kbuf = sshbuf_new()) == تہی ||
+	    (req = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
 
-	if ((r = sshbuf_put_cstring(req, provider_path)) != 0 ||
+	اگر ((r = sshbuf_put_cstring(req, provider_راستہ)) != 0 ||
 	    (r = sshbuf_put_cstring(req, device)) != 0 ||
 	    (r = sshbuf_put_cstring(req, pin)) != 0 ||
 	    (r = sshbuf_put_u32(req, flags)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		جاؤ برآمد;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
-		goto out;
+	اگر ((r = client_converse(req, &resp, SSH_SK_HELPER_بھرو_RESIDENT)) != 0)
+		جاؤ برآمد;
 
-	while (sshbuf_len(resp) != 0) {
+	جب (sshbuf_len(resp) != 0) {
 		/* key, comment, user_id */
-		if ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
-		    (r = sshbuf_get_cstring(resp, NULL, NULL)) != 0 ||
+		اگر ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
+		    (r = sshbuf_get_cstring(resp, تہی, تہی)) != 0 ||
 		    (r = sshbuf_get_string(resp, &userid, &userid_len)) != 0) {
 			error_fr(r, "parse");
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			جاؤ برآمد;
 		}
-		if ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
+		اگر ((r = sshkey_نجی_deserialize(kbuf, &کلید)) != 0) {
 			error_fr(r, "decode key");
-			goto out;
+			جاؤ برآمد;
 		}
-		if ((srk = calloc(1, sizeof(*srk))) == NULL) {
+		اگر ((srk = صفر_حافظہ_دو(1, حجم(*srk))) == تہی) {
 			error_f("calloc failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			جاؤ برآمد;
 		}
-		srk->key = key;
-		key = NULL;
+		srk->کلید = کلید;
+		کلید = تہی;
 		srk->user_id = userid;
 		srk->user_id_len = userid_len;
-		userid = NULL;
+		userid = تہی;
 		userid_len = 0;
-		if ((tmp = recallocarray(srks, nsrks, nsrks + 1,
-		    sizeof(*srks))) == NULL) {
+		اگر ((tmp = recallocarray(srks, nsrks, nsrks + 1,
+		    حجم(*srks))) == تہی) {
 			error_f("recallocarray keys failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			جاؤ برآمد;
 		}
 		debug_f("srks[%zu]: %s %s uidlen %zu", nsrks,
-		    sshkey_type(srk->key), srk->key->sk_application,
+		    sshkey_type(srk->کلید), srk->کلید->sk_application,
 		    srk->user_id_len);
 		srks = tmp;
 		srks[nsrks++] = srk;
-		srk = NULL;
+		srk = تہی;
 	}
 
 	/* success */
 	r = 0;
 	*srksp = srks;
 	*nsrksp = nsrks;
-	srks = NULL;
+	srks = تہی;
 	nsrks = 0;
- out:
+ برآمد:
 	oerrno = errno;
-	sshsk_free_resident_key(srk);
-	sshsk_free_resident_keys(srks, nsrks);
+	sshsk_free_resident_کلید(srk);
+	sshsk_free_resident_کلیدیں(srks, nsrks);
 	freezero(userid, userid_len);
-	sshkey_free(key);
+	sshkey_free(کلید);
 	sshbuf_free(kbuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	واپس r;
 }

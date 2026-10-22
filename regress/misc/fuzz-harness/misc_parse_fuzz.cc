@@ -36,132 +36,132 @@ limitations under the License.
  *   match_host_and_ip, match_user (match.c)
  */
 
-#include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
+#شامل <stdio.h>
+#شامل <stddef.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <sys/types.h>
 
-extern "C" {
-#include "addr.h"
-#include "match.h"
-#include "misc.h"
-#include "log.h"
+خارجی "C" {
+#شامل "addr.h"
+#شامل "match.h"
+#شامل "misc.h"
+#شامل "log.h"
 }
 
-static int log_initialized = 0;
+ساکن صحیح log_initialized = 0;
 
-static char *
-dup_n(const uint8_t *body, size_t blen)
+ساکن حرف *
+dup_n(ثابت uint8_t *body, سائز_t blen)
 {
-	char *s = (char *)malloc(blen + 1);
-	if (s == NULL)
-		return NULL;
-	memcpy(s, body, blen);
+	حرف *s = (حرف *)حافظہ_دو(blen + 1);
+	اگر (s == تہی)
+		واپس تہی;
+	حافظہ_نقل(s, body, blen);
 	s[blen] = '\0';
-	return s;
+	واپس s;
 }
 
-static void
-split_two(const uint8_t *body, size_t blen, char **a, char **b)
+ساکن خالی
+بانٹو_two(ثابت uint8_t *body, سائز_t blen, حرف **a, حرف **b)
 {
-	const uint8_t *nul = (const uint8_t *)memchr(body, 0, blen);
-	*a = NULL;
-	*b = NULL;
-	if (nul == NULL) {
+	ثابت uint8_t *nul = (ثابت uint8_t *)memchr(body, 0, blen);
+	*a = تہی;
+	*b = تہی;
+	اگر (nul == تہی) {
 		*a = dup_n(body, blen);
 		*b = strdup("");
-		return;
+		واپس;
 	}
-	size_t alen = (size_t)(nul - body);
+	سائز_t alen = (سائز_t)(nul - body);
 	*a = dup_n(body, alen);
 	*b = dup_n(nul + 1, blen - alen - 1);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+خارجی "C" صحیح
+LLVMFuzzer_Test_One_داخلہ(ثابت uint8_t *ڈیٹا, سائز_t سائز)
 {
-	if (!log_initialized) {
+	اگر (!log_initialized) {
 		log_init("misc_parse_fuzz", SYSLOG_LEVEL_QUIET,
 		    SYSLOG_FACILITY_AUTH, 0);
 		log_initialized = 1;
 	}
-	if (size == 0)
-		return 0;
+	اگر (سائز == 0)
+		واپس 0;
 
-	char *s = dup_n(data, size);
-	char *a = NULL, *b = NULL;
-	split_two(data, size, &a, &b);
-	if (s == NULL || a == NULL || b == NULL) {
-		free(s);
-		free(a);
-		free(b);
-		return 0;
+	حرف *s = dup_n(ڈیٹا, سائز);
+	حرف *a = تہی, *b = تہی;
+	بانٹو_two(ڈیٹا, سائز, &a, &b);
+	اگر (s == تہی || a == تہی || b == تہی) {
+		آزاد(s);
+		آزاد(a);
+		آزاد(b);
+		واپس 0;
 	}
 
 	{
-		char *u = NULL, *h = NULL;
-		int port = 0;
-		if (parse_user_host_port(s, &u, &h, &port) == 0) {
-			free(u);
-			free(h);
+		حرف *u = تہی, *h = تہی;
+		صحیح پورٹ = 0;
+		اگر (parse_user_host_پورٹ(s, &u, &h, &پورٹ) == 0) {
+			آزاد(u);
+			آزاد(h);
 		}
 	}
 	{
-		char *u = NULL, *h = NULL, *p = NULL;
-		int port = 0;
-		if (parse_uri("ssh", s, &u, &h, &port, &p) == 0) {
-			free(u);
-			free(h);
-			free(p);
+		حرف *u = تہی, *h = تہی, *p = تہی;
+		صحیح پورٹ = 0;
+		اگر (parse_uri("ssh", s, &u, &h, &پورٹ, &p) == 0) {
+			آزاد(u);
+			آزاد(h);
+			آزاد(p);
 		}
 	}
-	(void)convtime(s);
-	(void)a2port(s);
+	(خالی)convtime(s);
+	(خالی)a2port(s);
 	{
-		int tun = 0;
-		(void)a2tun(s, &tun);
+		صحیح tun = 0;
+		(خالی)a2tun(s, &tun);
 	}
 	{
-		int ac = 0;
-		char **av = NULL;
-		if (argv_split(s, &ac, &av, 1) == 0) {
-			char *back = argv_assemble(ac, av);
-			free(back);
+		صحیح ac = 0;
+		حرف **av = تہی;
+		اگر (argv_بانٹو(s, &ac, &av, 1) == 0) {
+			حرف *عقب = argv_assemble(ac, av);
+			آزاد(عقب);
 			argv_free(av, ac);
 		}
 	}
 	{
-		const char *err = NULL;
-		(void)valid_domain(s, 0, &err);
+		ثابت حرف *err = تہی;
+		(خالی)valid_domain(s, 0, &err);
 	}
-	(void)valid_env_name(s);
+	(خالی)valid_env_name(s);
 	{
 		uint64_t t = 0;
-		(void)parse_absolute_time(s, &t);
+		(خالی)parse_absolute_وقت(s, &t);
 	}
 
 	{
-		struct xaddr n;
-		(void)addr_pton(s, &n);
+		ساخت xaddr n;
+		(خالی)addr_pton(s, &n);
 	}
 	{
-		struct xaddr n;
-		u_int prefix = 0;
-		(void)addr_pton_cidr(s, &n, &prefix);
+		ساخت xaddr n;
+		u_int سابقہ = 0;
+		(خالی)addr_pton_cidr(s, &n, &سابقہ);
 	}
 
-	(void)addr_match_list(a, b);
-	(void)addr_match_cidr_list(a, b);
-	(void)match_pattern(a, b);
-	(void)match_pattern_list(a, b, 0);
-	(void)match_hostname(a, b);
-	(void)match_host_and_ip(a, "127.0.0.1", b);
-	(void)match_user("fuzz", a, "127.0.0.1", b);
+	(خالی)addr_مطابقت_list(a, b);
+	(خالی)addr_مطابقت_cidr_list(a, b);
+	(خالی)مطابقت_نمونہ(a, b);
+	(خالی)مطابقت_نمونہ_list(a, b, 0);
+	(خالی)مطابقت_hostname(a, b);
+	(خالی)مطابقت_host_and_ip(a, "127.0.0.1", b);
+	(خالی)مطابقت_user("fuzz", a, "127.0.0.1", b);
 
-	free(s);
-	free(a);
-	free(b);
-	return 0;
+	آزاد(s);
+	آزاد(a);
+	آزاد(b);
+	واپس 0;
 }

@@ -15,17 +15,17 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef SSHSIG_H
-#define SSHSIG_H
+#اگر_غیر_تعریف_شدہ SSHSIG_H
+#تعریف_کرو SSHSIG_H
 
-struct sshbuf;
-struct sshkey;
-struct sshsigopt;
-struct sshkey_sig_details;
+ساخت sshbuf;
+ساخت sshkey;
+ساخت sshsigopt;
+ساخت sshkey_sig_details;
 
-typedef int sshsig_signer(struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *, const char *,
-    u_int, void *);
+قسمتعریف صحیح sshsig_signer(ساخت sshkey *, u_char **, سائز_t *,
+    ثابت u_char *, سائز_t, ثابت حرف *, ثابت حرف *, ثابت حرف *,
+    u_int, خالی *);
 
 /* Buffer-oriented API */
 
@@ -34,19 +34,19 @@ typedef int sshsig_signer(struct sshkey *, u_char **, size_t *,
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  * out is populated with the detached signature, or NULL on failure.
  */
-int sshsig_signb(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin, const struct sshbuf *message,
-    const char *sig_namespace, struct sshbuf **out,
-    sshsig_signer *signer, void *signer_ctx);
+صحیح sshsig_signb(ساخت sshkey *کلید, ثابت حرف *hashalg,
+    ثابت حرف *sk_provider, ثابت حرف *sk_pin, ثابت ساخت sshbuf *پیغام_2,
+    ثابت حرف *sig_namespace, ساخت sshbuf **برآمد,
+    sshsig_signer *signer, خالی *signer_ctx);
 
 /*
  * Verifies that a detached signature is valid and optionally returns key
  * used to sign via argument.
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  */
-int sshsig_verifyb(struct sshbuf *signature,
-    const struct sshbuf *message, const char *sig_namespace,
-    struct sshkey **sign_keyp, struct sshkey_sig_details **sig_details);
+صحیح sshsig_verifyb(ساخت sshbuf *signature,
+    ثابت ساخت sshbuf *پیغام_2, ثابت حرف *sig_namespace,
+    ساخت sshkey **sign_keyp, ساخت sshkey_sig_details **sig_details);
 
 /* File/FD-oriented API */
 
@@ -55,57 +55,57 @@ int sshsig_verifyb(struct sshbuf *signature,
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  * out is populated with the detached signature, or NULL on failure.
  */
-int sshsig_sign_fd(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin,
-    int fd, const char *sig_namespace,
-    struct sshbuf **out, sshsig_signer *signer, void *signer_ctx);
+صحیح sshsig_sign_fd(ساخت sshkey *کلید, ثابت حرف *hashalg,
+    ثابت حرف *sk_provider, ثابت حرف *sk_pin,
+    صحیح fd, ثابت حرف *sig_namespace,
+    ساخت sshbuf **برآمد, sshsig_signer *signer, خالی *signer_ctx);
 
 /*
  * Verifies that a detached signature over a file is valid and optionally
  * returns key used to sign via argument.
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  */
-int sshsig_verify_fd(struct sshbuf *signature, int fd,
-    const char *sig_namespace, struct sshkey **sign_keyp,
-    struct sshkey_sig_details **sig_details);
+صحیح sshsig_verify_fd(ساخت sshbuf *signature, صحیح fd,
+    ثابت حرف *sig_namespace, ساخت sshkey **sign_keyp,
+    ساخت sshkey_sig_details **sig_details);
 
 /* Utility functions */
 
 /*
  * Return a base64 encoded "ASCII armoured" version of a raw signature.
  */
-int sshsig_armor(const struct sshbuf *blob, struct sshbuf **out);
+صحیح sshsig_armor(ثابت ساخت sshbuf *blob, ساخت sshbuf **برآمد);
 
 /*
  * Decode a base64 encoded armoured signature to a raw signature.
  */
-int sshsig_dearmor(struct sshbuf *sig, struct sshbuf **out);
+صحیح sshsig_dearmor(ساخت sshbuf *sig, ساخت sshbuf **برآمد);
 
 /*
  * Checks whether a particular key/principal/namespace is permitted by
  * an allowed_keys file. Returns 0 on success.
  */
-int sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
-    const char *principal, const char *ns, uint64_t verify_time);
+صحیح sshsig_check_allowed_کلیدیں(ثابت حرف *راستہ, ثابت ساخت sshkey *sign_کلید,
+    ثابت حرف *principal, ثابت حرف *ns, uint64_t verify_وقت);
 
 /* Parse zero or more allowed_keys signature options */
-struct sshsigopt *sshsigopt_parse(const char *opts,
-    const char *path, u_long linenum, const char **errstrp);
+ساخت sshsigopt *sshsigopt_parse(ثابت حرف *opts,
+    ثابت حرف *راستہ, u_long linenum, ثابت حرف **errstrp);
 
 /* Free signature options */
-void sshsigopt_free(struct sshsigopt *opts);
+خالی sshsigopt_free(ساخت sshsigopt *opts);
 
 /* Get public key from signature */
-int sshsig_get_pubkey(struct sshbuf *signature, struct sshkey **pubkey);
+صحیح sshsig_get_pubkey(ساخت sshbuf *signature, ساخت sshkey **pubkey);
 
 /* Find principal in allowed_keys file, given a sshkey. Returns
  * 0 on success.
  */
-int sshsig_find_principals(const char *path, const struct sshkey *sign_key,
-    uint64_t verify_time, char **principal);
+صحیح sshsig_ڈھونڈو_principals(ثابت حرف *راستہ, ثابت ساخت sshkey *sign_کلید,
+    uint64_t verify_وقت, حرف **principal);
 
 /* Find all principals in allowed_keys file matching *principal */
-int sshsig_match_principals(const char *path,
-	const char *principal, char ***principalsp, size_t *nprincipalsp);
+صحیح sshsig_مطابقت_principals(ثابت حرف *راستہ,
+	ثابت حرف *principal, حرف ***principalsp, سائز_t *nprincipalsp);
 
-#endif /* SSHSIG_H */
+#اگر_ختم /* SSHSIG_H */

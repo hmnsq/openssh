@@ -35,51 +35,51 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <termios.h>
+#شامل <termios.h>
 
-struct ssh;
+ساخت ssh;
 
 /* Client side main loop for the interactive session. */
-int	 client_loop(struct ssh *, int, int, int);
-int	 client_x11_get_proto(struct ssh *, const char *, const char *,
-	    u_int, u_int, char **, char **);
-void	 client_session2_setup(struct ssh *, int, int, int,
-	    const char *, struct termios *, int, struct sshbuf *, char **);
-char	 *client_request_tun_fwd(struct ssh *, int, int, int,
-    channel_open_fn *, void *);
-void	 client_stop_mux(void);
+صحیح	 client_loop(ساخت ssh *, صحیح, صحیح, صحیح);
+صحیح	 client_x11_get_proto(ساخت ssh *, ثابت حرف *, ثابت حرف *,
+	    u_int, u_int, حرف **, حرف **);
+خالی	 client_session2_تیاری(ساخت ssh *, صحیح, صحیح, صحیح,
+	    ثابت حرف *, ساخت termios *, صحیح, ساخت sshbuf *, حرف **);
+حرف	 *client_request_tun_fwd(ساخت ssh *, صحیح, صحیح, صحیح,
+    channel_open_fn *, خالی *);
+خالی	 client_stop_mux(خالی);
 
 /* Escape filter for protocol 2 sessions */
-void	*client_new_escape_filter_ctx(int);
-void	 client_filter_cleanup(struct ssh *, int, void *);
-int	 client_simple_escape_filter(struct ssh *, Channel *, char *, int);
+خالی	*client_new_escape_filter_ctx(صحیح);
+خالی	 client_filter_cleanup(ساخت ssh *, صحیح, خالی *);
+صحیح	 client_simple_escape_filter(ساخت ssh *, Channel *, حرف *, صحیح);
 
 /* Global request confirmation callbacks */
-typedef void global_confirm_cb(struct ssh *, int, uint32_t, void *);
-void	 client_register_global_confirm(global_confirm_cb *, void *);
+قسمتعریف خالی global_confirm_cb(ساخت ssh *, صحیح, uint32_t, خالی *);
+خالی	 client_رجسٹر_global_confirm(global_confirm_cb *, خالی *);
 
 /* Channel request confirmation callbacks */
-enum confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
-void client_expect_confirm(struct ssh *, int, const char *,
-    enum confirm_action);
+شمار confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
+خالی client_expect_confirm(ساخت ssh *, صحیح, ثابت حرف *,
+    شمار confirm_action);
 
 /* Multiplexing protocol version */
-#define SSHMUX_VER			4
+#تعریف_کرو SSHMUX_VER			4
 
 /* Multiplexing control protocol flags */
-#define SSHMUX_COMMAND_OPEN		1	/* Open new connection */
-#define SSHMUX_COMMAND_ALIVE_CHECK	2	/* Check master is alive */
-#define SSHMUX_COMMAND_TERMINATE	3	/* Ask master to exit */
-#define SSHMUX_COMMAND_STDIO_FWD	4	/* Open stdio fwd (ssh -W) */
-#define SSHMUX_COMMAND_FORWARD		5	/* Forward only, no command */
-#define SSHMUX_COMMAND_STOP		6	/* Disable mux but not conn */
-#define SSHMUX_COMMAND_CANCEL_FWD	7	/* Cancel forwarding(s) */
-#define SSHMUX_COMMAND_PROXY		8	/* Open new connection */
-#define SSHMUX_COMMAND_CONNINFO		9	/* Show connection information */
-#define SSHMUX_COMMAND_CHANINFO		10	/* Show channels information */
+#تعریف_کرو SSHMUX_COMMAND_OPEN		1	/* Open new connection */
+#تعریف_کرو SSHMUX_COMMAND_ALIVE_CHECK	2	/* Check master is alive */
+#تعریف_کرو SSHMUX_COMMAND_TERMINATE	3	/* Ask master to exit */
+#تعریف_کرو SSHMUX_COMMAND_STDIO_FWD	4	/* Open stdio fwd (ssh -W) */
+#تعریف_کرو SSHMUX_COMMAND_FORWARD		5	/* Forward only, no command */
+#تعریف_کرو SSHMUX_COMMAND_STOP		6	/* Disable mux but not conn */
+#تعریف_کرو SSHMUX_COMMAND_CANCEL_FWD	7	/* Cancel forwarding(s) */
+#تعریف_کرو SSHMUX_COMMAND_PROXY		8	/* Open new connection */
+#تعریف_کرو SSHMUX_COMMAND_CONNINFO		9	/* Show connection information */
+#تعریف_کرو SSHMUX_COMMAND_CHANINFO		10	/* Show channels information */
 
-void	muxserver_listen(struct ssh *);
-int	muxclient(const char *);
-void	mux_exit_message(struct ssh *, Channel *, int);
-void	mux_tty_alloc_failed(struct ssh *ssh, Channel *);
+خالی	muxserver_listen(ساخت ssh *);
+صحیح	muxclient(ثابت حرف *);
+خالی	mux_exit_پیغام(ساخت ssh *, Channel *, صحیح);
+خالی	mux_tty_alloc_failed(ساخت ssh *ssh, Channel *);
 

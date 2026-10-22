@@ -5,142 +5,142 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <sys/types.h>
+#شامل <sys/stat.h>
+#شامل <fcntl.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/err.h>
-#include <openssl/evp.h>
-#include <openssl/crypto.h>
-#endif
+#اگر_تعریف_شدہ WITH_OPENSSL
+#شامل <openssl/err.h>
+#شامل <openssl/evp.h>
+#شامل <openssl/crypto.h>
+#اگر_ختم
 
-#include "ssherr.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "sshsig.h"
-#include "log.h"
+#شامل "ssherr.h"
+#شامل "authfile.h"
+#شامل "sshkey.h"
+#شامل "sshbuf.h"
+#شامل "sshsig.h"
+#شامل "log.h"
 
-#include "../test_helper/test_helper.h"
+#شامل "../test_helper/test_helper.h"
 
-static struct sshbuf *
-load_file(const char *name)
+ساکن ساخت sshbuf *
+بھرو_file(ثابت حرف *name)
 {
-	struct sshbuf *ret = NULL;
+	ساخت sshbuf *ret = تہی;
 
-	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_INT_EQ(sshbuf_بھرو_file(test_ڈیٹا_file(name), &ret), 0);
+	ASSERT_PTR_NE(ret, تہی);
+	واپس ret;
 }
 
-static struct sshkey *
-load_key(const char *name)
+ساکن ساخت sshkey *
+بھرو_کلید(ثابت حرف *name)
 {
-	struct sshkey *ret = NULL;
-	ASSERT_INT_EQ(sshkey_load_public(test_data_file(name), &ret, NULL), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ساخت sshkey *ret = تہی;
+	ASSERT_INT_EQ(sshkey_بھرو_عوامی(test_ڈیٹا_file(name), &ret, تہی), 0);
+	ASSERT_PTR_NE(ret, تہی);
+	واپس ret;
 }
 
-static void
-check_sig(const char *keyname, const char *signame, const struct sshbuf *msg,
-    const char *namespace)
+ساکن خالی
+check_sig(ثابت حرف *keyname, ثابت حرف *signame, ثابت ساخت sshbuf *پیغام,
+    ثابت حرف *namespace)
 {
-	struct sshkey *k, *sign_key;
-	struct sshbuf *sig, *rawsig;
-	struct sshkey_sig_details *sig_details;
+	ساخت sshkey *k, *sign_کلید;
+	ساخت sshbuf *sig, *rawsig;
+	ساخت sshkey_sig_details *sig_details;
 
-	k = load_key(keyname);
-	sig = load_file(signame);
-	sign_key = NULL;
-	sig_details = NULL;
-	rawsig = NULL;
+	k = بھرو_کلید(keyname);
+	sig = بھرو_file(signame);
+	sign_کلید = تہی;
+	sig_details = تہی;
+	rawsig = تہی;
 	ASSERT_INT_EQ(sshsig_dearmor(sig, &rawsig), 0);
-	ASSERT_INT_EQ(sshsig_verifyb(rawsig, msg, namespace,
-	    &sign_key, &sig_details), 0);
-	ASSERT_INT_EQ(sshkey_equal(k, sign_key), 1);
+	ASSERT_INT_EQ(sshsig_verifyb(rawsig, پیغام, namespace,
+	    &sign_کلید, &sig_details), 0);
+	ASSERT_INT_EQ(sshkey_equal(k, sign_کلید), 1);
 	sshkey_free(k);
-	sshkey_free(sign_key);
+	sshkey_free(sign_کلید);
 	sshkey_sig_details_free(sig_details);
 	sshbuf_free(sig);
 	sshbuf_free(rawsig);
 }
 
-void
-tests(void)
+خالی
+tests(خالی)
 {
-	struct sshbuf *msg;
-	char *namespace;
+	ساخت sshbuf *پیغام;
+	حرف *namespace;
 
-#if 0
+#اگر 0
         log_init("test_sshsig", SYSLOG_LEVEL_DEBUG3, SYSLOG_FACILITY_AUTH, 1);
-#endif
+#اگر_ختم
 
-#ifdef WITH_OPENSSL
-	OpenSSL_add_all_algorithms();
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
-#endif
+#اگر_تعریف_شدہ WITH_OPENSSL
+	Open_SSL_جوڑو_all_algorithms();
+	OPENSSL_init_crypto(OPENSSL_INIT_بھرو_CRYPTO_لڑیاں, تہی);
+#اگر_ختم
 
-	TEST_START("load data");
-	msg = load_file("namespace");
-	namespace = sshbuf_dup_string(msg);
-	ASSERT_PTR_NE(namespace, NULL);
-	sshbuf_free(msg);
-	msg = load_file("signed-data");
-	TEST_DONE();
+	TEST_آغاز("load data");
+	پیغام = بھرو_file("namespace");
+	namespace = sshbuf_dup_string(پیغام);
+	ASSERT_PTR_NE(namespace, تہی);
+	sshbuf_free(پیغام);
+	پیغام = بھرو_file("signed-data");
+	TEST_مکمل();
 
-#ifdef WITH_OPENSSL
-	TEST_START("check RSA signature");
-	check_sig("rsa.pub", "rsa.sig", msg, namespace);
-	TEST_DONE();
+#اگر_تعریف_شدہ WITH_OPENSSL
+	TEST_آغاز("check RSA signature");
+	check_sig("rsa.pub", "rsa.sig", پیغام, namespace);
+	TEST_مکمل();
 
 
-	TEST_START("check ECDSA signature");
-	check_sig("ecdsa.pub", "ecdsa.sig", msg, namespace);
-	TEST_DONE();
-#endif
+	TEST_آغاز("check ECDSA signature");
+	check_sig("ecdsa.pub", "ecdsa.sig", پیغام, namespace);
+	TEST_مکمل();
+#اگر_ختم
 
-	TEST_START("check ED25519 signature");
-	check_sig("ed25519.pub", "ed25519.sig", msg, namespace);
-	TEST_DONE();
+	TEST_آغاز("check ED25519 signature");
+	check_sig("ed25519.pub", "ed25519.sig", پیغام, namespace);
+	TEST_مکمل();
 
-	TEST_START("check MLDSA44-ED25519 signature");
-	check_sig("mldsa44-ed25519.pub", "mldsa44-ed25519.sig", msg, namespace);
-	TEST_DONE();
+	TEST_آغاز("check MLDSA44-ED25519 signature");
+	check_sig("mldsa44-ed25519.pub", "mldsa44-ed25519.sig", پیغام, namespace);
+	TEST_مکمل();
 
-#ifdef ENABLE_SK
-#if defined(WITH_OPENSSL)
-	TEST_START("check ECDSA-SK signature");
-	check_sig("ecdsa_sk.pub", "ecdsa_sk.sig", msg, namespace);
-	TEST_DONE();
-#endif
+#اگر_تعریف_شدہ ENABLE_SK
+#اگر defined(WITH_OPENSSL)
+	TEST_آغاز("check ECDSA-SK signature");
+	check_sig("ecdsa_sk.pub", "ecdsa_sk.sig", پیغام, namespace);
+	TEST_مکمل();
+#اگر_ختم
 
-	TEST_START("check ED25519-SK signature");
-	check_sig("ed25519_sk.pub", "ed25519_sk.sig", msg, namespace);
-	TEST_DONE();
+	TEST_آغاز("check ED25519-SK signature");
+	check_sig("ed25519_sk.pub", "ed25519_sk.sig", پیغام, namespace);
+	TEST_مکمل();
 
-#if defined(WITH_OPENSSL)
-	TEST_START("check ECDSA-SK webauthn signature");
+#اگر defined(WITH_OPENSSL)
+	TEST_آغاز("check ECDSA-SK webauthn signature");
 	check_sig("ecdsa_sk_webauthn.pub", "ecdsa_sk_webauthn.sig",
-	    msg, namespace);
-	TEST_DONE();
-#endif
-#endif /* ENABLE_SK */
+	    پیغام, namespace);
+	TEST_مکمل();
+#اگر_ختم
+#اگر_ختم /* ENABLE_SK */
 
-	sshbuf_free(msg);
-	free(namespace);
+	sshbuf_free(پیغام);
+	آزاد(namespace);
 }
 
-void
-benchmarks(void)
+خالی
+benchmarks(خالی)
 {
-	printf("no benchmarks\n");
+	لکھو("no benchmarks\n");
 }

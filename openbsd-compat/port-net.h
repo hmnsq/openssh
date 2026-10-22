@@ -14,35 +14,35 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _PORT_TUN_H
-#define _PORT_TUN_H
+#اگر_غیر_تعریف_شدہ پورٹ_TUN_H
+#تعریف_کرو پورٹ_TUN_H
 
-struct Channel;
-struct ssh;
+ساخت Channel;
+ساخت ssh;
 
-#if defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
+#اگر defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
 # define CUSTOM_SYS_TUN_OPEN
-int	  sys_tun_open(int, int, char **);
-#endif
+صحیح	  sys_tun_open(صحیح, صحیح, حرف **);
+#اگر_ختم
 
-#if defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
+#اگر defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
 # define SSH_TUN_FILTER
-int	 sys_tun_infilter(struct ssh *, struct Channel *, char *, int);
-u_char	*sys_tun_outfilter(struct ssh *, struct Channel *, u_char **, size_t *);
-#endif
+صحیح	 sys_tun_infilter(ساخت ssh *, ساخت Channel *, حرف *, صحیح);
+u_char	*sys_tun_outfilter(ساخت ssh *, ساخت Channel *, u_char **, سائز_t *);
+#اگر_ختم
 
-#if defined(SYS_RDOMAIN_LINUX)
+#اگر defined(SYS_RDOMAIN_LINUX)
 # define HAVE_SYS_GET_RDOMAIN
-# define HAVE_SYS_SET_RDOMAIN
+# define HAVE_SYS_سیٹ_RDOMAIN
 # define HAVE_SYS_VALID_RDOMAIN
-char *sys_get_rdomain(int fd);
-int sys_set_rdomain(int fd, const char *name);
-int sys_valid_rdomain(const char *name);
-#endif
+حرف *sys_get_rdomain(صحیح fd);
+صحیح sys_سیٹ_rdomain(صحیح fd, ثابت حرف *name);
+صحیح sys_valid_rdomain(ثابت حرف *name);
+#اگر_ختم
 
-#if defined(SYS_RDOMAIN_XXX)
-# define HAVE_SYS_SET_PROCESS_RDOMAIN
-void sys_set_process_rdomain(const char *name);
-#endif
+#اگر defined(SYS_RDOMAIN_XXX)
+# define HAVE_SYS_سیٹ_PROCESS_RDOMAIN
+خالی sys_سیٹ_process_rdomain(ثابت حرف *name);
+#اگر_ختم
 
-#endif
+#اگر_ختم

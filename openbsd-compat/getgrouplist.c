@@ -30,25 +30,25 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getgrouplist.c */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#ifndef HAVE_GETGROUPLIST
+#اگر_غیر_تعریف_شدہ HAVE_GETGROUPLIST
 
 /*
  * get credential
  */
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <grp.h>
+#شامل <sys/types.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+صحیح
+getgrouplist(ثابت حرف *uname, gid_t agroup, gid_t *groups, صحیح *grpcnt)
 {
-	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	ساخت گروہ *grp;
+	صحیح i, ngroups;
+	صحیح ret, maxgroups;
+	صحیح bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	اگر (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		واپس (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,29 +67,29 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
-			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+	جب ((grp = getgrent())) {
+		اگر (grp->gr_gid == agroup)
+			جاری;
+		برائے (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			اگر (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
-			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		اگر (bail)
+			جاری;
+		برائے (i = 0; grp->gr_mem[i]; i++) {
+			اگر (!strcmp(grp->gr_mem[i], uname)) {
+				اگر (ngroups >= maxgroups) {
 					ret = -1;
-					goto out;
+					جاؤ برآمد;
 				}
 				groups[ngroups++] = grp->gr_gid;
-				break;
+				توڑو;
 			}
 		}
 	}
-out:
+برآمد:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	واپس (ret);
 }
 
-#endif /* HAVE_GETGROUPLIST */
+#اگر_ختم /* HAVE_GETGROUPLIST */

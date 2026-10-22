@@ -14,201 +14,201 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <stdarg.h>
+#شامل <stdio.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-pam.h"
-#include "platform.h"
+#شامل "log.h"
+#شامل "misc.h"
+#شامل "servconf.h"
+#شامل "sshkey.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
+#شامل "auth-pam.h"
+#شامل "platform.h"
 
-#include "openbsd-compat/openbsd-compat.h"
+#شامل "openbsd-compat/openbsd-compat.h"
 
-extern ServerOptions options;
+خارجی ServerOptions options;
 
 /* return 1 if we are running with privilege to swap UIDs, 0 otherwise */
-int
-platform_privileged_uidswap(void)
+صحیح
+platform_privileged_uidswap(خالی)
 {
-#ifdef HAVE_CYGWIN
+#اگر_تعریف_شدہ HAVE_CYGWIN
 	/* uid 0 is not special on Cygwin so always try */
-	return 1;
-#else
-	return (getuid() == 0 || geteuid() == 0);
-#endif
+	واپس 1;
+#ورنہ
+	واپس (getuid() == 0 || geteuid() == 0);
+#اگر_ختم
 }
 
 /*
  * This gets called before switching UIDs, and is called even when sshd is
  * not running as root.
  */
-void
-platform_setusercontext(struct passwd *pw)
+خالی
+platform_setusercontext(ساخت passwd *pw)
 {
-#ifdef WITH_SELINUX
+#اگر_تعریف_شدہ WITH_SELINUX
 	/* Cache selinux status for later use */
-	(void)ssh_selinux_enabled();
-#endif
+	(خالی)ssh_selinux_enabled();
+#اگر_ختم
 
-#ifdef USE_SOLARIS_PROJECTS
+#اگر_تعریف_شدہ USE_SOLARIS_PROJECTS
 	/*
 	 * If solaris projects were detected, set the default now, unless
 	 * we are using PAM in which case it is the responsibility of the
 	 * PAM stack.
 	 */
-	if (!options.use_pam && (getuid() == 0 || geteuid() == 0))
-		solaris_set_default_project(pw);
-#endif
+	اگر (!options.use_pam && (getuid() == 0 || geteuid() == 0))
+		solaris_سیٹ_default_project(pw);
+#اگر_ختم
 
-#if defined(HAVE_LOGIN_CAP) && defined (__bsdi__)
-	if (getuid() == 0 || geteuid() == 0)
+#اگر defined(HAVE_LOGIN_CAP) && defined (__bsdi__)
+	اگر (getuid() == 0 || geteuid() == 0)
 		setpgid(0, 0);
 # endif
 
-#if defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
+#اگر defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
 	/*
 	 * If we have both LOGIN_CAP and PAM, we want to establish creds
 	 * before calling setusercontext (in session.c:do_setusercontext).
 	 */
-	if (getuid() == 0 || geteuid() == 0) {
-		if (options.use_pam) {
+	اگر (getuid() == 0 || geteuid() == 0) {
+		اگر (options.use_pam) {
 			do_pam_setcred();
 		}
 	}
 # endif /* USE_PAM */
 
-#if !defined(HAVE_LOGIN_CAP) && defined(HAVE_GETLUID) && defined(HAVE_SETLUID)
-	if (getuid() == 0 || geteuid() == 0) {
+#اگر !defined(HAVE_LOGIN_CAP) && defined(HAVE_GETLUID) && defined(HAVE_SETLUID)
+	اگر (getuid() == 0 || geteuid() == 0) {
 		/* Sets login uid for accounting */
-		if (getluid() == -1 && setluid(pw->pw_uid) == -1)
+		اگر (getluid() == -1 && setluid(pw->pw_uid) == -1)
 			error("setluid: %s", strerror(errno));
 	}
-#endif
+#اگر_ختم
 }
 
 /*
  * This gets called after we've established the user's groups, and is only
  * called if sshd is running as root.
  */
-void
-platform_setusercontext_post_groups(struct passwd *pw)
+خالی
+platform_setusercontext_post_groups(ساخت passwd *pw)
 {
-#if !defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
+#اگر !defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
 	/*
 	 * PAM credentials may take the form of supplementary groups.
 	 * These will have been wiped by the above initgroups() call.
 	 * Reestablish them here.
 	 */
-	if (options.use_pam) {
+	اگر (options.use_pam) {
 		do_pam_setcred();
 	}
-#endif /* USE_PAM */
+#اگر_ختم /* USE_PAM */
 
-#if !defined(HAVE_LOGIN_CAP) && (defined(WITH_IRIX_PROJECT) || \
+#اگر !defined(HAVE_LOGIN_CAP) && (defined(WITH_IRIX_PROJECT) || \
     defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY))
 	irix_setusercontext(pw);
-#endif /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */
+#اگر_ختم /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */
 
-#ifdef _AIX
+#اگر_تعریف_شدہ _AIX
 	aix_usrinfo(pw);
-#endif /* _AIX */
+#اگر_ختم /* _AIX */
 
-#ifdef HAVE_SETPCRED
+#اگر_تعریف_شدہ HAVE_SETPCRED
 	/*
 	 * If we have a chroot directory, we set all creds except real
 	 * uid which we will need for chroot.  If we don't have a
 	 * chroot directory, we don't override anything.
 	 */
 	{
-		char **creds = NULL, *chroot_creds[] =
-		    { "REAL_USER=root", NULL };
+		حرف **creds = تہی, *chroot_creds[] =
+		    { "REAL_USER=root", تہی };
 
-		if (options.chroot_directory != NULL &&
+		اگر (options.chroot_directory != تہی &&
 		    strcasecmp(options.chroot_directory, "none") != 0)
 			creds = chroot_creds;
 
-		if (setpcred(pw->pw_name, creds) == -1)
+		اگر (setpcred(pw->pw_name, creds) == -1)
 			fatal("Failed to set process credentials");
 	}
-#endif /* HAVE_SETPCRED */
-#ifdef WITH_SELINUX
-	ssh_selinux_setup_exec_context(pw->pw_name);
-#endif
+#اگر_ختم /* HAVE_SETPCRED */
+#اگر_تعریف_شدہ WITH_SELINUX
+	ssh_selinux_تیاری_exec_context(pw->pw_name);
+#اگر_ختم
 }
 
-char *
-platform_krb5_get_principal_name(const char *pw_name)
+حرف *
+platform_krb5_get_principal_name(ثابت حرف *pw_name)
 {
-#ifdef USE_AIX_KRB_NAME
-	return aix_krb5_get_principal_name(pw_name);
-#else
-	return NULL;
-#endif
+#اگر_تعریف_شدہ USE_AIX_KRB_NAME
+	واپس aix_krb5_get_principal_name(pw_name);
+#ورنہ
+	واپس تہی;
+#اگر_ختم
 }
 
 /* returns 1 if account is locked */
-int
-platform_locked_account(struct passwd *pw)
+صحیح
+platform_locked_account(ساخت passwd *pw)
 {
-	int locked = 0;
-	char *passwd = pw->pw_passwd;
-#ifdef USE_SHADOW
-	struct spwd *spw = NULL;
-#ifdef USE_LIBIAF
-	char *iaf_passwd = NULL;
-#endif
+	صحیح locked = 0;
+	حرف *passwd = pw->pw_passwd;
+#اگر_تعریف_شدہ USE_SHADOW
+	ساخت spwd *spw = تہی;
+#اگر_تعریف_شدہ USE_LIBIAF
+	حرف *iaf_passwd = تہی;
+#اگر_ختم
 
 	spw = getspnam(pw->pw_name);
-#ifdef HAS_SHADOW_EXPIRE
-	if (spw != NULL && auth_shadow_acctexpired(spw))
-		return 1;
-#endif /* HAS_SHADOW_EXPIRE */
+#اگر_تعریف_شدہ HAS_SHADOW_EXPIRE
+	اگر (spw != تہی && auth_shadow_acctexpired(spw))
+		واپس 1;
+#اگر_ختم /* HAS_SHADOW_EXPIRE */
 
-	if (spw != NULL)
-#ifdef USE_LIBIAF
+	اگر (spw != تہی)
+#اگر_تعریف_شدہ USE_LIBIAF
 		iaf_passwd = passwd = get_iaf_password(pw);
-#else
+#ورنہ
 		passwd = spw->sp_pwdp;
-#endif /* USE_LIBIAF */
-#endif
+#اگر_ختم /* USE_LIBIAF */
+#اگر_ختم
 
 	/* check for locked account */
-	if (passwd && *passwd) {
-#ifdef LOCKED_PASSWD_STRING
-		if (strcmp(passwd, LOCKED_PASSWD_STRING) == 0) {
+	اگر (passwd && *passwd) {
+#اگر_تعریف_شدہ LOCKED_PASSWD_STRING
+		اگر (strcmp(passwd, LOCKED_PASSWD_STRING) == 0) {
 			debug3_f("password matches locked string '%s'",
 			    LOCKED_PASSWD_STRING);
 			locked = 1;
 		}
-#endif
-#ifdef LOCKED_PASSWD_PREFIX
-		if (strncmp(passwd, LOCKED_PASSWD_PREFIX,
-		    strlen(LOCKED_PASSWD_PREFIX)) == 0) {
+#اگر_ختم
+#اگر_تعریف_شدہ LOCKED_PASSWD_سابقہ
+		اگر (لڑی_موازنہ(passwd, LOCKED_PASSWD_سابقہ,
+		    لڑی_لمبائی(LOCKED_PASSWD_سابقہ)) == 0) {
 			debug3_f("password matches locked prefix '%s'",
-			    LOCKED_PASSWD_PREFIX);
+			    LOCKED_PASSWD_سابقہ);
 			locked = 1;
 		}
-#endif
-#ifdef LOCKED_PASSWD_SUBSTR
-		if (strstr(passwd, LOCKED_PASSWD_SUBSTR)) {
+#اگر_ختم
+#اگر_تعریف_شدہ LOCKED_PASSWD_SUBSTR
+		اگر (لڑی_تلاش(passwd, LOCKED_PASSWD_SUBSTR)) {
 			debug3_f("password matches locked substring '%s'",
 			   LOCKED_PASSWD_SUBSTR);
 			locked = 1;
 		}
-#endif
+#اگر_ختم
 	}
-#ifdef USE_LIBIAF
-	if (iaf_passwd != NULL)
-		freezero(iaf_passwd, strlen(iaf_passwd));
-#endif /* USE_LIBIAF */
+#اگر_تعریف_شدہ USE_LIBIAF
+	اگر (iaf_passwd != تہی)
+		freezero(iaf_passwd, لڑی_لمبائی(iaf_passwd));
+#اگر_ختم /* USE_LIBIAF */
 
-	return locked;
+	واپس locked;
 }

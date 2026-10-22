@@ -5,61 +5,61 @@
  * Written by Ted Unangst
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <string.h>
+#شامل <string.h>
 
 /*
  * explicit_bzero - don't let the compiler optimize away bzero
  */
 
-#ifndef HAVE_EXPLICIT_BZERO
+#اگر_غیر_تعریف_شدہ HAVE_EXPLICIT_BZERO
 
-#ifdef HAVE_EXPLICIT_MEMSET
+#اگر_تعریف_شدہ HAVE_EXPLICIT_MEMSET
 
-void
-explicit_bzero(void *p, size_t n)
+خالی
+explicit_bzero(خالی *p, سائز_t n)
 {
-	(void)explicit_memset(p, 0, n);
+	(خالی)explicit_memset(p, 0, n);
 }
 
-#elif defined(HAVE_MEMSET_S)
+#وگرنہ_اگر defined(HAVE_MEMSET_S)
 
-void
-explicit_bzero(void *p, size_t n)
+خالی
+explicit_bzero(خالی *p, سائز_t n)
 {
-	if (n == 0)
-		return;
-	(void)memset_s(p, n, 0, n);
+	اگر (n == 0)
+		واپس;
+	(خالی)memset_s(p, n, 0, n);
 }
 
-#else /* HAVE_MEMSET_S */
+#ورنہ /* HAVE_MEMSET_S */
 
 /*
  * Indirect bzero through a volatile pointer to hopefully avoid
  * dead-store optimisation eliminating the call.
  */
-static void (* volatile ssh_bzero)(void *, size_t) = bzero;
+ساکن خالی (* متلون ssh_bzero)(خالی *, سائز_t) = bzero;
 
-void
-explicit_bzero(void *p, size_t n)
+خالی
+explicit_bzero(خالی *p, سائز_t n)
 {
-	if (n == 0)
-		return;
+	اگر (n == 0)
+		واپس;
 	/*
 	 * clang -fsanitize=memory needs to intercept memset-like functions
 	 * to correctly detect memory initialisation. Make sure one is called
 	 * directly since our indirection trick above successfully confuses it.
 	 */
-#if defined(__has_feature)
-# if __has_feature(memory_sanitizer)
+#اگر defined(__has_feature)
+# اگر __has_feature(حافظہ_sanitizer)
 	memset(p, 0, n);
 # endif
-#endif
+#اگر_ختم
 
 	ssh_bzero(p, n);
 }
 
-#endif /* HAVE_MEMSET_S */
+#اگر_ختم /* HAVE_MEMSET_S */
 
-#endif /* HAVE_EXPLICIT_BZERO */
+#اگر_ختم /* HAVE_EXPLICIT_BZERO */

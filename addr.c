@@ -16,146 +16,146 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#شامل <sys/types.h>
+#شامل <sys/socket.h>
+#شامل <netinet/in.h>
+#شامل <arpa/inet.h>
 
-#include <netdb.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <limits.h>
+#شامل <netdb.h>
+#شامل <string.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
+#شامل <limits.h>
 
-#include "addr.h"
+#شامل "addr.h"
 
-#define _SA(x)	((struct sockaddr *)(x))
+#تعریف_کرو _SA(x)	((ساخت sockaddr *)(x))
 
-static int
-addr_unicast_masklen(int af)
+ساکن صحیح
+addr_unicast_masklen(صحیح af)
 {
-	switch (af) {
-	case AF_INET:
-		return 32;
-	case AF_INET6:
-		return 128;
-	default:
-		return -1;
+	انتخاب (af) {
+	حالت AF_INET:
+		واپس 32;
+	حالت AF_INET6:
+		واپس 128;
+	طےشدہ:
+		واپس -1;
 	}
 }
 
-static inline int
-masklen_valid(int af, u_int masklen)
+ساکن اندرونی صحیح
+masklen_valid(صحیح af, u_int masklen)
 {
-	switch (af) {
-	case AF_INET:
-		return masklen <= 32 ? 0 : -1;
-	case AF_INET6:
-		return masklen <= 128 ? 0 : -1;
-	default:
-		return -1;
+	انتخاب (af) {
+	حالت AF_INET:
+		واپس masklen <= 32 ? 0 : -1;
+	حالت AF_INET6:
+		واپس masklen <= 128 ? 0 : -1;
+	طےشدہ:
+		واپس -1;
 	}
 }
 
-static int
-addr_xaddr_to_sa(const struct xaddr *xa, struct sockaddr *sa, socklen_t *len,
-    uint16_t port)
+ساکن صحیح
+addr_xaddr_مقصد_sa(ثابت ساخت xaddr *xa, ساخت sockaddr *sa, socklen_t *len,
+    uint16_t پورٹ)
 {
-	struct sockaddr_in *in4 = (struct sockaddr_in *)sa;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)sa;
+	ساخت sockaddr_in *in4 = (ساخت sockaddr_in *)sa;
+	ساخت sockaddr_in6 *in6 = (ساخت sockaddr_in6 *)sa;
 
-	if (xa == NULL || sa == NULL || len == NULL)
-		return -1;
+	اگر (xa == تہی || sa == تہی || len == تہی)
+		واپس -1;
 
-	switch (xa->af) {
-	case AF_INET:
-		if (*len < sizeof(*in4))
-			return -1;
-		memset(sa, '\0', sizeof(*in4));
-		*len = sizeof(*in4);
-#ifdef SOCK_HAS_LEN
-		in4->sin_len = sizeof(*in4);
-#endif
+	انتخاب (xa->af) {
+	حالت AF_INET:
+		اگر (*len < حجم(*in4))
+			واپس -1;
+		memset(sa, '\0', حجم(*in4));
+		*len = حجم(*in4);
+#اگر_تعریف_شدہ SOCK_HAS_LEN
+		in4->sin_len = حجم(*in4);
+#اگر_ختم
 		in4->sin_family = AF_INET;
-		in4->sin_port = htons(port);
-		memcpy(&in4->sin_addr, &xa->v4, sizeof(in4->sin_addr));
-		break;
-	case AF_INET6:
-		if (*len < sizeof(*in6))
-			return -1;
-		memset(sa, '\0', sizeof(*in6));
-		*len = sizeof(*in6);
-#ifdef SOCK_HAS_LEN
-		in6->sin6_len = sizeof(*in6);
-#endif
+		in4->sin_port = htons(پورٹ);
+		حافظہ_نقل(&in4->sin_addr, &xa->v4, حجم(in4->sin_addr));
+		توڑو;
+	حالت AF_INET6:
+		اگر (*len < حجم(*in6))
+			واپس -1;
+		memset(sa, '\0', حجم(*in6));
+		*len = حجم(*in6);
+#اگر_تعریف_شدہ SOCK_HAS_LEN
+		in6->sin6_len = حجم(*in6);
+#اگر_ختم
 		in6->sin6_family = AF_INET6;
-		in6->sin6_port = htons(port);
-		memcpy(&in6->sin6_addr, &xa->v6, sizeof(in6->sin6_addr));
-#ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
+		in6->sin6_port = htons(پورٹ);
+		حافظہ_نقل(&in6->sin6_addr, &xa->v6, حجم(in6->sin6_addr));
+#اگر_تعریف_شدہ HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
 		in6->sin6_scope_id = xa->scope_id;
-#endif
-		break;
-	default:
-		return -1;
+#اگر_ختم
+		توڑو;
+	طےشدہ:
+		واپس -1;
 	}
-	return 0;
+	واپس 0;
 }
 
 /*
  * Convert struct sockaddr to struct xaddr
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa)
+صحیح
+addr_sa_مقصد_xaddr(ساخت sockaddr *sa, socklen_t slen, ساخت xaddr *xa)
 {
-	struct sockaddr_in *in4 = (struct sockaddr_in *)sa;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)sa;
+	ساخت sockaddr_in *in4 = (ساخت sockaddr_in *)sa;
+	ساخت sockaddr_in6 *in6 = (ساخت sockaddr_in6 *)sa;
 
-	memset(xa, '\0', sizeof(*xa));
+	memset(xa, '\0', حجم(*xa));
 
-	switch (sa->sa_family) {
-	case AF_INET:
-		if (slen < (socklen_t)sizeof(*in4))
-			return -1;
+	انتخاب (sa->sa_family) {
+	حالت AF_INET:
+		اگر (slen < (socklen_t)حجم(*in4))
+			واپس -1;
 		xa->af = AF_INET;
-		memcpy(&xa->v4, &in4->sin_addr, sizeof(xa->v4));
-		break;
-	case AF_INET6:
-		if (slen < (socklen_t)sizeof(*in6))
-			return -1;
+		حافظہ_نقل(&xa->v4, &in4->sin_addr, حجم(xa->v4));
+		توڑو;
+	حالت AF_INET6:
+		اگر (slen < (socklen_t)حجم(*in6))
+			واپس -1;
 		xa->af = AF_INET6;
-		memcpy(&xa->v6, &in6->sin6_addr, sizeof(xa->v6));
-#ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
+		حافظہ_نقل(&xa->v6, &in6->sin6_addr, حجم(xa->v6));
+#اگر_تعریف_شدہ HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
 		xa->scope_id = in6->sin6_scope_id;
-#endif
-		break;
-	default:
-		return -1;
+#اگر_ختم
+		توڑو;
+	طےشدہ:
+		واپس -1;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int
-addr_invert(struct xaddr *n)
+ساکن صحیح
+addr_invert(ساخت xaddr *n)
 {
-	int i;
+	صحیح i;
 
-	if (n == NULL)
-		return -1;
+	اگر (n == تہی)
+		واپس -1;
 
-	switch (n->af) {
-	case AF_INET:
+	انتخاب (n->af) {
+	حالت AF_INET:
 		n->v4.s_addr = ~n->v4.s_addr;
-		return 0;
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
+		واپس 0;
+	حالت AF_INET6:
+		برائے (i = 0; i < 4; i++)
 			n->addr32[i] = ~n->addr32[i];
-		return 0;
-	default:
-		return -1;
+		واپس 0;
+	طےشدہ:
+		واپس -1;
 	}
 }
 
@@ -164,163 +164,163 @@ addr_invert(struct xaddr *n)
  * store it in 'n'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_netmask(int af, u_int l, struct xaddr *n)
+صحیح
+addr_netmask(صحیح af, u_int l, ساخت xaddr *n)
 {
-	int i;
+	صحیح i;
 
-	if (masklen_valid(af, l) != 0 || n == NULL)
-		return -1;
+	اگر (masklen_valid(af, l) != 0 || n == تہی)
+		واپس -1;
 
-	memset(n, '\0', sizeof(*n));
-	switch (af) {
-	case AF_INET:
+	memset(n, '\0', حجم(*n));
+	انتخاب (af) {
+	حالت AF_INET:
 		n->af = AF_INET;
-		if (l == 0)
-			return 0;
+		اگر (l == 0)
+			واپس 0;
 		n->v4.s_addr = htonl((0xffffffff << (32 - l)) & 0xffffffff);
-		return 0;
-	case AF_INET6:
+		واپس 0;
+	حالت AF_INET6:
 		n->af = AF_INET6;
-		for (i = 0; i < 4 && l >= 32; i++, l -= 32)
+		برائے (i = 0; i < 4 && l >= 32; i++, l -= 32)
 			n->addr32[i] = 0xffffffffU;
-		if (i < 4 && l != 0)
+		اگر (i < 4 && l != 0)
 			n->addr32[i] = htonl((0xffffffff << (32 - l)) &
 			    0xffffffff);
-		return 0;
-	default:
-		return -1;
+		واپس 0;
+	طےشدہ:
+		واپس -1;
 	}
 }
 
-static int
-addr_hostmask(int af, u_int l, struct xaddr *n)
+ساکن صحیح
+addr_hostmask(صحیح af, u_int l, ساخت xaddr *n)
 {
-	if (addr_netmask(af, l, n) == -1 || addr_invert(n) == -1)
-		return -1;
-	return 0;
+	اگر (addr_netmask(af, l, n) == -1 || addr_invert(n) == -1)
+		واپس -1;
+	واپس 0;
 }
 
 /*
  * Perform logical AND of addresses 'a' and 'b', storing result in 'dst'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b)
+صحیح
+addr_and(ساخت xaddr *dst, ثابت ساخت xaddr *a, ثابت ساخت xaddr *b)
 {
-	int i;
+	صحیح i;
 
-	if (dst == NULL || a == NULL || b == NULL || a->af != b->af)
-		return -1;
+	اگر (dst == تہی || a == تہی || b == تہی || a->af != b->af)
+		واپس -1;
 
-	memcpy(dst, a, sizeof(*dst));
-	switch (a->af) {
-	case AF_INET:
+	حافظہ_نقل(dst, a, حجم(*dst));
+	انتخاب (a->af) {
+	حالت AF_INET:
 		dst->v4.s_addr &= b->v4.s_addr;
-		return 0;
-	case AF_INET6:
+		واپس 0;
+	حالت AF_INET6:
 		dst->scope_id = a->scope_id;
-		for (i = 0; i < 4; i++)
+		برائے (i = 0; i < 4; i++)
 			dst->addr32[i] &= b->addr32[i];
-		return 0;
-	default:
-		return -1;
+		واپس 0;
+	طےشدہ:
+		واپس -1;
 	}
 }
 
-static int
-addr_or(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b)
+ساکن صحیح
+addr_or(ساخت xaddr *dst, ثابت ساخت xaddr *a, ثابت ساخت xaddr *b)
 {
-	int i;
+	صحیح i;
 
-	if (dst == NULL || a == NULL || b == NULL || a->af != b->af)
-		return (-1);
+	اگر (dst == تہی || a == تہی || b == تہی || a->af != b->af)
+		واپس (-1);
 
-	memcpy(dst, a, sizeof(*dst));
-	switch (a->af) {
-	case AF_INET:
+	حافظہ_نقل(dst, a, حجم(*dst));
+	انتخاب (a->af) {
+	حالت AF_INET:
 		dst->v4.s_addr |= b->v4.s_addr;
-		return (0);
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
+		واپس (0);
+	حالت AF_INET6:
+		برائے (i = 0; i < 4; i++)
 			dst->addr32[i] |= b->addr32[i];
-		return (0);
-	default:
-		return (-1);
+		واپس (0);
+	طےشدہ:
+		واپس (-1);
 	}
 }
 
-int
-addr_cmp(const struct xaddr *a, const struct xaddr *b)
+صحیح
+addr_cmp(ثابت ساخت xaddr *a, ثابت ساخت xaddr *b)
 {
-	int i;
+	صحیح i;
 
-	if (a->af != b->af)
-		return (a->af == AF_INET6 ? 1 : -1);
+	اگر (a->af != b->af)
+		واپس (a->af == AF_INET6 ? 1 : -1);
 
-	switch (a->af) {
-	case AF_INET:
+	انتخاب (a->af) {
+	حالت AF_INET:
 		/*
 		 * Can't just subtract here as 255.255.255.255 - 0.0.0.0 is
 		 * too big to fit into a signed int
 		 */
-		if (a->v4.s_addr == b->v4.s_addr)
-			return 0;
-		return (ntohl(a->v4.s_addr) > ntohl(b->v4.s_addr) ? 1 : -1);
-	case AF_INET6:
+		اگر (a->v4.s_addr == b->v4.s_addr)
+			واپس 0;
+		واپس (ntohl(a->v4.s_addr) > ntohl(b->v4.s_addr) ? 1 : -1);
+	حالت AF_INET6:
 		/*
 		 * Do this a byte at a time to avoid the above issue and
 		 * any endian problems
 		 */
-		for (i = 0; i < 16; i++)
-			if (a->addr8[i] - b->addr8[i] != 0)
-				return (a->addr8[i] - b->addr8[i]);
-		if (a->scope_id == b->scope_id)
-			return (0);
-		return (a->scope_id > b->scope_id ? 1 : -1);
-	default:
-		return (-1);
+		برائے (i = 0; i < 16; i++)
+			اگر (a->addr8[i] - b->addr8[i] != 0)
+				واپس (a->addr8[i] - b->addr8[i]);
+		اگر (a->scope_id == b->scope_id)
+			واپس (0);
+		واپس (a->scope_id > b->scope_id ? 1 : -1);
+	طےشدہ:
+		واپس (-1);
 	}
 }
 
-static int
-addr_is_all0s(const struct xaddr *a)
+ساکن صحیح
+addr_is_all0s(ثابت ساخت xaddr *a)
 {
-	int i;
+	صحیح i;
 
-	switch (a->af) {
-	case AF_INET:
-		return (a->v4.s_addr == 0 ? 0 : -1);
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
-			if (a->addr32[i] != 0)
-				return -1;
-		return 0;
-	default:
-		return -1;
+	انتخاب (a->af) {
+	حالت AF_INET:
+		واپس (a->v4.s_addr == 0 ? 0 : -1);
+	حالت AF_INET6:
+		برائے (i = 0; i < 4; i++)
+			اگر (a->addr32[i] != 0)
+				واپس -1;
+		واپس 0;
+	طےشدہ:
+		واپس -1;
 	}
 }
 
 /* Increment the specified address. Note, does not do overflow checking */
-void
-addr_increment(struct xaddr *a)
+خالی
+addr_increment(ساخت xaddr *a)
 {
-	int i;
+	صحیح i;
 	uint32_t n;
 
-	switch (a->af) {
-	case AF_INET:
+	انتخاب (a->af) {
+	حالت AF_INET:
 		a->v4.s_addr = htonl(ntohl(a->v4.s_addr) + 1);
-		break;
-	case AF_INET6:
-		for (i = 0; i < 4; i++) {
+		توڑو;
+	حالت AF_INET6:
+		برائے (i = 0; i < 4; i++) {
 			/* Increment with carry */
 			n = ntohl(a->addr32[3 - i]) + 1;
 			a->addr32[3 - i] = htonl(n);
-			if (n != 0)
-				break;
+			اگر (n != 0)
+				توڑو;
 		}
-		break;
+		توڑو;
 	}
 }
 
@@ -330,181 +330,181 @@ addr_increment(struct xaddr *a)
  * Returns 0 if host portion of address is all-zeros,
  * -1 if not all zeros or on failure.
  */
-static int
-addr_host_is_all0s(const struct xaddr *a, u_int masklen)
+ساکن صحیح
+addr_host_is_all0s(ثابت ساخت xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_addr, tmp_mask, tmp_result;
+	ساخت xaddr tmp_addr, tmp_نقاب, tmp_نتیجہ;
 
-	memcpy(&tmp_addr, a, sizeof(tmp_addr));
-	if (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
-		return -1;
-	if (addr_and(&tmp_result, &tmp_addr, &tmp_mask) == -1)
-		return -1;
-	return addr_is_all0s(&tmp_result);
+	حافظہ_نقل(&tmp_addr, a, حجم(tmp_addr));
+	اگر (addr_hostmask(a->af, masklen, &tmp_نقاب) == -1)
+		واپس -1;
+	اگر (addr_and(&tmp_نتیجہ, &tmp_addr, &tmp_نقاب) == -1)
+		واپس -1;
+	واپس addr_is_all0s(&tmp_نتیجہ);
 }
 
-#if 0
-static int
-addr_host_to_all0s(struct xaddr *a, u_int masklen)
+#اگر 0
+ساکن صحیح
+addr_host_مقصد_all0s(ساخت xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_mask;
+	ساخت xaddr tmp_نقاب;
 
-	if (addr_netmask(a->af, masklen, &tmp_mask) == -1)
-		return (-1);
-	if (addr_and(a, a, &tmp_mask) == -1)
-		return (-1);
-	return (0);
+	اگر (addr_netmask(a->af, masklen, &tmp_نقاب) == -1)
+		واپس (-1);
+	اگر (addr_and(a, a, &tmp_نقاب) == -1)
+		واپس (-1);
+	واپس (0);
 }
-#endif
+#اگر_ختم
 
-int
-addr_host_to_all1s(struct xaddr *a, u_int masklen)
+صحیح
+addr_host_مقصد_all1s(ساخت xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_mask;
+	ساخت xaddr tmp_نقاب;
 
-	if (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
-		return (-1);
-	if (addr_or(a, a, &tmp_mask) == -1)
-		return (-1);
-	return (0);
+	اگر (addr_hostmask(a->af, masklen, &tmp_نقاب) == -1)
+		واپس (-1);
+	اگر (addr_or(a, a, &tmp_نقاب) == -1)
+		واپس (-1);
+	واپس (0);
 }
 
 /*
  * Parse string address 'p' into 'n'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_pton(const char *p, struct xaddr *n)
+صحیح
+addr_pton(ثابت حرف *p, ساخت xaddr *n)
 {
-	struct addrinfo hints, *ai;
+	ساخت addrinfo hints, *ai;
 
-	memset(&hints, '\0', sizeof(hints));
+	memset(&hints, '\0', حجم(hints));
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (p == NULL || getaddrinfo(p, NULL, &hints, &ai) != 0)
-		return -1;
+	اگر (p == تہی || getaddrinfo(p, تہی, &hints, &ai) != 0)
+		واپس -1;
 
-	if (ai == NULL)
-		return -1;
+	اگر (ai == تہی)
+		واپس -1;
 
-	if (ai->ai_addr == NULL) {
+	اگر (ai->ai_addr == تہی) {
 		freeaddrinfo(ai);
-		return -1;
+		واپس -1;
 	}
 
-	if (n != NULL && addr_sa_to_xaddr(ai->ai_addr, ai->ai_addrlen,
+	اگر (n != تہی && addr_sa_مقصد_xaddr(ai->ai_addr, ai->ai_addrlen,
 	    n) == -1) {
 		freeaddrinfo(ai);
-		return -1;
+		واپس -1;
 	}
 
 	freeaddrinfo(ai);
-	return 0;
+	واپس 0;
 }
 
-#if 0
-static int
-addr_sa_pton(const char *h, const char *s, struct sockaddr *sa, socklen_t slen)
+#اگر 0
+ساکن صحیح
+addr_sa_pton(ثابت حرف *h, ثابت حرف *s, ساخت sockaddr *sa, socklen_t slen)
 {
-	struct addrinfo hints, *ai;
+	ساخت addrinfo hints, *ai;
 
-	memset(&hints, '\0', sizeof(hints));
+	memset(&hints, '\0', حجم(hints));
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (h == NULL || getaddrinfo(h, s, &hints, &ai) != 0)
-		return -1;
+	اگر (h == تہی || getaddrinfo(h, s, &hints, &ai) != 0)
+		واپس -1;
 
-	if (ai == NULL)
-		return -1;
+	اگر (ai == تہی)
+		واپس -1;
 
-	if (ai->ai_addr == NULL) {
+	اگر (ai->ai_addr == تہی) {
 		freeaddrinfo(ai);
-		return -1;
+		واپس -1;
 	}
 
-	if (sa != NULL) {
-		if (slen < ai->ai_addrlen) {
+	اگر (sa != تہی) {
+		اگر (slen < ai->ai_addrlen) {
 			freeaddrinfo(ai);
-			return -1;
+			واپس -1;
 		}
-		memcpy(sa, &ai->ai_addr, ai->ai_addrlen);
+		حافظہ_نقل(sa, &ai->ai_addr, ai->ai_addrlen);
 	}
 
 	freeaddrinfo(ai);
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-int
-addr_ntop(const struct xaddr *n, char *p, size_t len)
+صحیح
+addr_ntop(ثابت ساخت xaddr *n, حرف *p, سائز_t len)
 {
-	struct sockaddr_storage ss;
-	socklen_t slen = sizeof(ss);
+	ساخت sockaddr_storage ss;
+	socklen_t slen = حجم(ss);
 
-	if (addr_xaddr_to_sa(n, _SA(&ss), &slen, 0) == -1)
-		return -1;
-	if (p == NULL || len == 0)
-		return -1;
-	if (getnameinfo(_SA(&ss), slen, p, len, NULL, 0,
+	اگر (addr_xaddr_مقصد_sa(n, _SA(&ss), &slen, 0) == -1)
+		واپس -1;
+	اگر (p == تہی || len == 0)
+		واپس -1;
+	اگر (getnameinfo(_SA(&ss), slen, p, len, تہی, 0,
 	    NI_NUMERICHOST) != 0)
-		return -1;
+		واپس -1;
 
-	return 0;
+	واپس 0;
 }
 
 /*
  * Parse a CIDR address (x.x.x.x/y or xxxx:yyyy::/z).
  * Return -1 on parse error, -2 on inconsistency or 0 on success.
  */
-int
-addr_pton_cidr(const char *p, struct xaddr *n, u_int *l)
+صحیح
+addr_pton_cidr(ثابت حرف *p, ساخت xaddr *n, u_int *l)
 {
-	struct xaddr tmp;
+	ساخت xaddr tmp;
 	u_int masklen = 999;
-	char addrbuf[64], *mp;
-	const char *errstr;
+	حرف addrbuf[64], *mp;
+	ثابت حرف *errstr;
 
 	/* Don't modify argument */
-	if (p == NULL || strlcpy(addrbuf, p, sizeof(addrbuf)) >= sizeof(addrbuf))
-		return -1;
+	اگر (p == تہی || strlcpy(addrbuf, p, حجم(addrbuf)) >= حجم(addrbuf))
+		واپس -1;
 
-	if ((mp = strchr(addrbuf, '/')) != NULL) {
+	اگر ((mp = strchr(addrbuf, '/')) != تہی) {
 		*mp = '\0';
 		mp++;
-		masklen = (u_int)strtonum(mp, 0, INT_MAX, &errstr);
-		if (errstr)
-			return -1;
+		masklen = (u_int)strtonum(mp, 0, زیادہ_سے_زیادہ_عدد, &errstr);
+		اگر (errstr)
+			واپس -1;
 	}
 
-	if (addr_pton(addrbuf, &tmp) == -1)
-		return -1;
+	اگر (addr_pton(addrbuf, &tmp) == -1)
+		واپس -1;
 
-	if (mp == NULL)
+	اگر (mp == تہی)
 		masklen = addr_unicast_masklen(tmp.af);
-	if (masklen_valid(tmp.af, masklen) == -1)
-		return -2;
-	if (addr_host_is_all0s(&tmp, masklen) != 0)
-		return -2;
+	اگر (masklen_valid(tmp.af, masklen) == -1)
+		واپس -2;
+	اگر (addr_host_is_all0s(&tmp, masklen) != 0)
+		واپس -2;
 
-	if (n != NULL)
-		memcpy(n, &tmp, sizeof(*n));
-	if (l != NULL)
+	اگر (n != تہی)
+		حافظہ_نقل(n, &tmp, حجم(*n));
+	اگر (l != تہی)
 		*l = masklen;
 
-	return 0;
+	واپس 0;
 }
 
-int
-addr_netmatch(const struct xaddr *host, const struct xaddr *net, u_int masklen)
+صحیح
+addr_netmatch(ثابت ساخت xaddr *host, ثابت ساخت xaddr *net, u_int masklen)
 {
-	struct xaddr tmp_mask, tmp_result;
+	ساخت xaddr tmp_نقاب, tmp_نتیجہ;
 
-	if (host->af != net->af)
-		return -1;
+	اگر (host->af != net->af)
+		واپس -1;
 
-	if (addr_netmask(host->af, masklen, &tmp_mask) == -1)
-		return -1;
-	if (addr_and(&tmp_result, host, &tmp_mask) == -1)
-		return -1;
-	return addr_cmp(&tmp_result, net);
+	اگر (addr_netmask(host->af, masklen, &tmp_نقاب) == -1)
+		واپس -1;
+	اگر (addr_and(&tmp_نتیجہ, host, &tmp_نقاب) == -1)
+		واپس -1;
+	واپس addr_cmp(&tmp_نتیجہ, net);
 }

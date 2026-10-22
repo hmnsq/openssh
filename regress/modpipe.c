@@ -16,135 +16,135 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <errno.h>
-#ifdef HAVE_ERR_H
+#شامل <sys/types.h>
+#شامل <unistd.h>
+#شامل <stdio.h>
+#شامل <string.h>
+#شامل <stdarg.h>
+#شامل <stdlib.h>
+#شامل <errno.h>
+#اگر_تعریف_شدہ HAVE_ERR_H
 # include <err.h>
-#endif
-#include "openbsd-compat/getopt_long.c"
+#اگر_ختم
+#شامل "openbsd-compat/getopt_long.c"
 
-static void
-usage(void)
+ساکن خالی
+usage(خالی)
 {
 	fprintf(stderr, "Usage: modpipe -w [-m modspec ...] < in > out\n");
 	fprintf(stderr, "modspec is one of:\n");
 	fprintf(stderr, "    xor:offset:value       - XOR \"value\" at \"offset\"\n");
 	fprintf(stderr, "    andor:offset:val1:val2 - AND \"val1\" then OR \"val2\" at \"offset\"\n");
-	exit(1);
+	باہر_نکلو(1);
 }
 
-#define MAX_MODIFICATIONS 256
-struct modification {
-	enum { MOD_XOR, MOD_AND_OR } what;
-	unsigned long long offset;
+#تعریف_کرو MAX_MODIFICATIONS 256
+ساخت modification {
+	شمار { MOD_XOR, MOD_AND_OR } what;
+	غیرعلامتی طویل طویل انحراف;
 	uint8_t m1, m2;
 };
 
-static void
-parse_modification(const char *s, struct modification *m)
+ساکن خالی
+parse_modification(ثابت حرف *s, ساخت modification *m)
 {
-	char what[16+1];
-	int n, m1, m2;
+	حرف what[16+1];
+	صحیح n, m1, m2;
 
-	bzero(m, sizeof(*m));
-	if ((n = sscanf(s, "%16[^:]%*[:]%llu%*[:]%i%*[:]%i",
-	    what, &m->offset, &m1, &m2)) < 3)
+	bzero(m, حجم(*m));
+	اگر ((n = لڑی_سے_پڑھو(s, "%16[^:]%*[:]%llu%*[:]%i%*[:]%i",
+	    what, &m->انحراف, &m1, &m2)) < 3)
 		errx(1, "Invalid modification spec \"%s\"", s);
-	if (strcasecmp(what, "xor") == 0) {
-		if (n > 3)
+	اگر (strcasecmp(what, "xor") == 0) {
+		اگر (n > 3)
 			errx(1, "Invalid modification spec \"%s\"", s);
-		if (m1 < 0 || m1 > 0xff)
+		اگر (m1 < 0 || m1 > 0xff)
 			errx(1, "Invalid XOR modification value");
 		m->what = MOD_XOR;
 		m->m1 = m1;
-	} else if (strcasecmp(what, "andor") == 0) {
-		if (n != 4)
+	} ورنہ اگر (strcasecmp(what, "andor") == 0) {
+		اگر (n != 4)
 			errx(1, "Invalid modification spec \"%s\"", s);
-		if (m1 < 0 || m1 > 0xff)
+		اگر (m1 < 0 || m1 > 0xff)
 			errx(1, "Invalid AND modification value");
-		if (m2 < 0 || m2 > 0xff)
+		اگر (m2 < 0 || m2 > 0xff)
 			errx(1, "Invalid OR modification value");
 		m->what = MOD_AND_OR;
 		m->m1 = m1;
 		m->m2 = m2;
-	} else
+	} ورنہ
 		errx(1, "Invalid modification type \"%s\"", what);
 }
 
-int
-main(int argc, char **argv)
+صحیح
+مین(صحیح argc, حرف **argv)
 {
-	int ch;
+	صحیح ch;
 	u_char buf[8192];
-	size_t total;
+	سائز_t کل;
 	ssize_t r, s, o;
-	struct modification mods[MAX_MODIFICATIONS];
-	u_int i, wflag = 0, num_mods = 0;
+	ساخت modification mods[MAX_MODIFICATIONS];
+	u_int i, wflag = 0, عدد_mods = 0;
 
-	while ((ch = getopt(argc, argv, "wm:")) != -1) {
-		switch (ch) {
-		case 'm':
-			if (num_mods >= MAX_MODIFICATIONS)
+	جب ((ch = getopt(argc, argv, "wm:")) != -1) {
+		انتخاب (ch) {
+		حالت 'm':
+			اگر (عدد_mods >= MAX_MODIFICATIONS)
 				errx(1, "Too many modifications");
-			parse_modification(optarg, &(mods[num_mods++]));
-			break;
-		case 'w':
+			parse_modification(optarg, &(mods[عدد_mods++]));
+			توڑو;
+		حالت 'w':
 			wflag = 1;
-			break;
-		default:
+			توڑو;
+		طےشدہ:
 			usage();
 			/* NOTREACHED */
 		}
 	}
-	for (total = 0;;) {
-		r = s = read(STDIN_FILENO, buf, sizeof(buf));
-		if (r == 0)
-			break;
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR)
-				continue;
+	برائے (کل = 0;;) {
+		r = s = اقرأ(STDIN_FILENO, buf, حجم(buf));
+		اگر (r == 0)
+			توڑو;
+		اگر (r < 0) {
+			اگر (errno == EAGAIN || errno == EINTR)
+				جاری;
 			err(1, "read");
 		}
-		for (i = 0; i < num_mods; i++) {
-			if (mods[i].offset < total ||
-			    mods[i].offset >= total + s)
-				continue;
-			switch (mods[i].what) {
-			case MOD_XOR:
-				buf[mods[i].offset - total] ^= mods[i].m1;
-				break;
-			case MOD_AND_OR:
-				buf[mods[i].offset - total] &= mods[i].m1;
-				buf[mods[i].offset - total] |= mods[i].m2;
-				break;
+		برائے (i = 0; i < عدد_mods; i++) {
+			اگر (mods[i].انحراف < کل ||
+			    mods[i].انحراف >= کل + s)
+				جاری;
+			انتخاب (mods[i].what) {
+			حالت MOD_XOR:
+				buf[mods[i].انحراف - کل] ^= mods[i].m1;
+				توڑو;
+			حالت MOD_AND_OR:
+				buf[mods[i].انحراف - کل] &= mods[i].m1;
+				buf[mods[i].انحراف - کل] |= mods[i].m2;
+				توڑو;
 			}
 		}
-		for (o = 0; o < s; o += r) {
-			r = write(STDOUT_FILENO, buf + o, s - o);
-			if (r == 0)
-				break;
-			if (r < 0) {
-				if (errno == EAGAIN || errno == EINTR)
-					continue;
+		برائے (o = 0; o < s; o += r) {
+			r = اكتب(STDOUT_FILENO, buf + o, s - o);
+			اگر (r == 0)
+				توڑو;
+			اگر (r < 0) {
+				اگر (errno == EAGAIN || errno == EINTR)
+					جاری;
 				err(1, "write");
 			}
 		}
-		total += s;
+		کل += s;
 	}
 	/* Warn if modifications not reached in input stream */
 	r = 0;
-	for (i = 0; wflag && i < num_mods; i++) {
-		if (mods[i].offset < total)
-			continue;
+	برائے (i = 0; wflag && i < عدد_mods; i++) {
+		اگر (mods[i].انحراف < کل)
+			جاری;
 		r = 1;
 		fprintf(stderr, "modpipe: warning - mod %u not reached\n", i);
 	}
-	return r;
+	واپس r;
 }

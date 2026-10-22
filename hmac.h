@@ -15,24 +15,24 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _HMAC_H
-#define _HMAC_H
+#اگر_غیر_تعریف_شدہ _HMAC_H
+#تعریف_کرو _HMAC_H
 
 /* Returns the algorithm's digest length in bytes or 0 for invalid algorithm */
-size_t ssh_hmac_bytes(int alg);
+سائز_t ssh_hmac_بائٹیں(صحیح alg);
 
-struct sshbuf;
-struct ssh_hmac_ctx;
-struct ssh_hmac_ctx *ssh_hmac_start(int alg);
+ساخت sshbuf;
+ساخت ssh_hmac_ctx;
+ساخت ssh_hmac_ctx *ssh_hmac_آغاز(صحیح alg);
 
 /* Sets the state of the HMAC or resets the state if key == NULL */
-int ssh_hmac_init(struct ssh_hmac_ctx *ctx, const void *key, size_t klen)
+صحیح ssh_hmac_init(ساخت ssh_hmac_ctx *ctx, ثابت خالی *کلید, سائز_t klen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_hmac_update(struct ssh_hmac_ctx *ctx, const void *m, size_t mlen)
+صحیح ssh_hmac_update(ساخت ssh_hmac_ctx *ctx, ثابت خالی *m, سائز_t mlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_hmac_update_buffer(struct ssh_hmac_ctx *ctx, const struct sshbuf *b);
-int ssh_hmac_final(struct ssh_hmac_ctx *ctx, u_char *d, size_t dlen)
+صحیح ssh_hmac_update_بفر(ساخت ssh_hmac_ctx *ctx, ثابت ساخت sshbuf *b);
+صحیح ssh_hmac_final(ساخت ssh_hmac_ctx *ctx, u_char *d, سائز_t dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-void ssh_hmac_free(struct ssh_hmac_ctx *ctx);
+خالی ssh_hmac_free(ساخت ssh_hmac_ctx *ctx);
 
-#endif /* _HMAC_H */
+#اگر_ختم /* _HMAC_H */

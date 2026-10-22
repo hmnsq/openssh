@@ -14,60 +14,60 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#if !defined(HAVE_GETPEEREID)
+#اگر !defined(HAVE_GETPEEREID)
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#شامل <sys/types.h>
+#شامل <sys/socket.h>
 
-#include <unistd.h>
+#شامل <unistd.h>
 
-#if defined(SO_PEERCRED)
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+#اگر defined(SO_PEERCRED)
+صحیح
+getpeereid(صحیح s, uid_t *euid, gid_t *gid)
 {
-	struct ucred cred;
-	socklen_t len = sizeof(cred);
+	ساخت ucred cred;
+	socklen_t len = حجم(cred);
 
-	if (getsockopt(s, SOL_SOCKET, SO_PEERCRED, &cred, &len) < 0)
-		return (-1);
+	اگر (getsockopt(s, SOL_SOCKET, SO_PEERCRED, &cred, &len) < 0)
+		واپس (-1);
 	*euid = cred.uid;
 	*gid = cred.gid;
 
-	return (0);
+	واپس (0);
 }
-#elif defined(HAVE_GETPEERUCRED)
+#وگرنہ_اگر defined(HAVE_GETPEERUCRED)
 
-#ifdef HAVE_UCRED_H
+#اگر_تعریف_شدہ HAVE_UCRED_H
 # include <ucred.h>
-#endif
+#اگر_ختم
 
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+صحیح
+getpeereid(صحیح s, uid_t *euid, gid_t *gid)
 {
-	ucred_t *ucred = NULL;
+	ucred_t *ucred = تہی;
 
-	if (getpeerucred(s, &ucred) == -1)
-		return (-1);
-	if ((*euid = ucred_geteuid(ucred)) == -1)
-		return (-1);
-	if ((*gid = ucred_getrgid(ucred)) == -1)
-		return (-1);
+	اگر (getpeerucred(s, &ucred) == -1)
+		واپس (-1);
+	اگر ((*euid = ucred_geteuid(ucred)) == -1)
+		واپس (-1);
+	اگر ((*gid = ucred_getrgid(ucred)) == -1)
+		واپس (-1);
 
 	ucred_free(ucred);
 
-	return (0);
+	واپس (0);
 }
-#else
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+#ورنہ
+صحیح
+getpeereid(صحیح s, uid_t *euid, gid_t *gid)
 {
 	*euid = geteuid();
 	*gid = getgid();
 
-	return (0);
+	واپس (0);
 }
-#endif /* defined(SO_PEERCRED) */
+#اگر_ختم /* defined(SO_PEERCRED) */
 
-#endif /* !defined(HAVE_GETPEEREID) */
+#اگر_ختم /* !defined(HAVE_GETPEEREID) */

@@ -35,202 +35,202 @@
  * that ai_family is AF_INET. Don't use it for another purpose.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#شامل <netinet/in.h>
+#شامل <arpa/inet.h>
 
-#ifndef HAVE_GETNAMEINFO
-int getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
-		size_t hostlen, char *serv, size_t servlen, int flags)
+#اگر_غیر_تعریف_شدہ HAVE_GETNAMEINFO
+صحیح getnameinfo(ثابت ساخت sockaddr *sa, سائز_t salen, حرف *host,
+		سائز_t hostlen, حرف *serv, سائز_t servlen, صحیح flags)
 {
-	struct sockaddr_in *sin = (struct sockaddr_in *)sa;
-	struct hostent *hp;
-	char tmpserv[16];
+	ساخت sockaddr_in *جیب = (ساخت sockaddr_in *)sa;
+	ساخت hostent *hp;
+	حرف tmpserv[16];
 
-	if ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
-	    salen < sizeof(struct sockaddr_in))
-		return (EAI_FAMILY);
-	if (serv != NULL) {
-		snprintf(tmpserv, sizeof(tmpserv), "%d", ntohs(sin->sin_port));
-		if (strlcpy(serv, tmpserv, servlen) >= servlen)
-			return (EAI_MEMORY);
+	اگر ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
+	    salen < حجم(ساخت sockaddr_in))
+		واپس (EAI_FAMILY);
+	اگر (serv != تہی) {
+		snprintf(tmpserv, حجم(tmpserv), "%d", ntohs(جیب->sin_port));
+		اگر (strlcpy(serv, tmpserv, servlen) >= servlen)
+			واپس (EAI_MEMORY);
 	}
 
-	if (host != NULL) {
-		if (flags & NI_NUMERICHOST) {
-			if (strlcpy(host, inet_ntoa(sin->sin_addr),
+	اگر (host != تہی) {
+		اگر (flags & NI_NUMERICHOST) {
+			اگر (strlcpy(host, inet_ntoa(جیب->sin_addr),
 			    hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
-		} else {
-			hp = gethostbyaddr((char *)&sin->sin_addr,
-			    sizeof(struct in_addr), AF_INET);
-			if (hp == NULL)
-				return (EAI_NODATA);
+				واپس (EAI_MEMORY);
+			ورنہ
+				واپس (0);
+		} ورنہ {
+			hp = gethostbyaddr((حرف *)&جیب->sin_addr,
+			    حجم(ساخت in_addr), AF_INET);
+			اگر (hp == تہی)
+				واپس (EAI_NODATA);
 
-			if (strlcpy(host, hp->h_name, hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
+			اگر (strlcpy(host, hp->h_name, hostlen) >= hostlen)
+				واپس (EAI_MEMORY);
+			ورنہ
+				واپس (0);
 		}
 	}
-	return (0);
+	واپس (0);
 }
-#endif /* !HAVE_GETNAMEINFO */
+#اگر_ختم /* !HAVE_GETNAMEINFO */
 
-#ifndef HAVE_GAI_STRERROR
-#ifdef HAVE_CONST_GAI_STRERROR_PROTO
-const char *
-#else
-char *
-#endif
-gai_strerror(int err)
+#اگر_غیر_تعریف_شدہ HAVE_GAI_STRERROR
+#اگر_تعریف_شدہ HAVE_CONST_GAI_STRERROR_PROTO
+ثابت حرف *
+#ورنہ
+حرف *
+#اگر_ختم
+gai_strerror(صحیح err)
 {
-	switch (err) {
-	case EAI_NODATA:
-		return ("no address associated with name");
-	case EAI_MEMORY:
-		return ("memory allocation failure");
-	case EAI_NONAME:
-		return ("name or service is not known");
-	case EAI_FAMILY:
-		return ("ai_family not supported");
-	default:
-		return ("unknown/invalid error");
+	انتخاب (err) {
+	حالت EAI_NODATA:
+		واپس ("no address associated with name");
+	حالت EAI_MEMORY:
+		واپس ("memory allocation failure");
+	حالت EAI_NONAME:
+		واپس ("name or service is not known");
+	حالت EAI_FAMILY:
+		واپس ("ai_family not supported");
+	طےشدہ:
+		واپس ("unknown/invalid error");
 	}
 }
-#endif /* !HAVE_GAI_STRERROR */
+#اگر_ختم /* !HAVE_GAI_STRERROR */
 
-#ifndef HAVE_FREEADDRINFO
-void
-freeaddrinfo(struct addrinfo *ai)
+#اگر_غیر_تعریف_شدہ HAVE_FREEADDRINFO
+خالی
+freeaddrinfo(ساخت addrinfo *ai)
 {
-	struct addrinfo *next;
+	ساخت addrinfo *اگلا;
 
-	for(; ai != NULL;) {
-		next = ai->ai_next;
-		free(ai);
-		ai = next;
+	برائے(; ai != تہی;) {
+		اگلا = ai->ai_next;
+		آزاد(ai);
+		ai = اگلا;
 	}
 }
-#endif /* !HAVE_FREEADDRINFO */
+#اگر_ختم /* !HAVE_FREEADDRINFO */
 
-#ifndef HAVE_GETADDRINFO
-static struct
-addrinfo *malloc_ai(int port, u_long addr, const struct addrinfo *hints)
+#اگر_غیر_تعریف_شدہ HAVE_GETADDRINFO
+ساکن ساخت
+addrinfo *malloc_ai(صحیح پورٹ, u_long addr, ثابت ساخت addrinfo *hints)
 {
-	struct addrinfo *ai;
+	ساخت addrinfo *ai;
 
-	ai = malloc(sizeof(*ai) + sizeof(struct sockaddr_in));
-	if (ai == NULL)
-		return (NULL);
+	ai = حافظہ_دو(حجم(*ai) + حجم(ساخت sockaddr_in));
+	اگر (ai == تہی)
+		واپس (تہی);
 
-	memset(ai, '\0', sizeof(*ai) + sizeof(struct sockaddr_in));
+	memset(ai, '\0', حجم(*ai) + حجم(ساخت sockaddr_in));
 
-	ai->ai_addr = (struct sockaddr *)(ai + 1);
+	ai->ai_addr = (ساخت sockaddr *)(ai + 1);
 	/* XXX -- ssh doesn't use sa_len */
-	ai->ai_addrlen = sizeof(struct sockaddr_in);
+	ai->ai_addrlen = حجم(ساخت sockaddr_in);
 	ai->ai_addr->sa_family = ai->ai_family = AF_INET;
 
-	((struct sockaddr_in *)(ai)->ai_addr)->sin_port = port;
-	((struct sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
+	((ساخت sockaddr_in *)(ai)->ai_addr)->sin_port = پورٹ;
+	((ساخت sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
 
 	/* XXX: the following is not generally correct, but does what we want */
-	if (hints->ai_socktype)
+	اگر (hints->ai_socktype)
 		ai->ai_socktype = hints->ai_socktype;
-	else
+	ورنہ
 		ai->ai_socktype = SOCK_STREAM;
 
-	if (hints->ai_protocol)
+	اگر (hints->ai_protocol)
 		ai->ai_protocol = hints->ai_protocol;
 
-	return (ai);
+	واپس (ai);
 }
 
-int
-getaddrinfo(const char *hostname, const char *servname,
-    const struct addrinfo *hints, struct addrinfo **res)
+صحیح
+getaddrinfo(ثابت حرف *hostname, ثابت حرف *servname,
+    ثابت ساخت addrinfo *hints, ساخت addrinfo **res)
 {
-	struct hostent *hp;
-	struct servent *sp;
-	struct in_addr in;
-	int i;
-	long int port;
+	ساخت hostent *hp;
+	ساخت servent *sp;
+	ساخت in_addr اندر;
+	صحیح i;
+	طویل صحیح پورٹ;
 	u_long addr;
 
-	port = 0;
-	if (hints && hints->ai_family != AF_UNSPEC &&
+	پورٹ = 0;
+	اگر (hints && hints->ai_family != AF_UNSPEC &&
 	    hints->ai_family != AF_INET)
-		return (EAI_FAMILY);
-	if (servname != NULL) {
-		char *cp;
+		واپس (EAI_FAMILY);
+	اگر (servname != تہی) {
+		حرف *cp;
 
-		port = strtol(servname, &cp, 10);
-		if (port > 0 && port <= 65535 && *cp == '\0')
-			port = htons(port);
-		else if ((sp = getservbyname(servname, NULL)) != NULL)
-			port = sp->s_port;
-		else
-			port = 0;
+		پورٹ = strtol(servname, &cp, 10);
+		اگر (پورٹ > 0 && پورٹ <= 65535 && *cp == '\0')
+			پورٹ = htons(پورٹ);
+		ورنہ اگر ((sp = getservbyname(servname, تہی)) != تہی)
+			پورٹ = sp->s_port;
+		ورنہ
+			پورٹ = 0;
 	}
 
-	if (hints && hints->ai_flags & AI_PASSIVE) {
+	اگر (hints && hints->ai_flags & AI_PASSIVE) {
 		addr = htonl(0x00000000);
-		if (hostname && inet_aton(hostname, &in) != 0)
-			addr = in.s_addr;
-		*res = malloc_ai(port, addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		اگر (hostname && inet_aton(hostname, &اندر) != 0)
+			addr = اندر.s_addr;
+		*res = malloc_ai(پورٹ, addr, hints);
+		اگر (*res == تہی)
+			واپس (EAI_MEMORY);
+		واپس (0);
 	}
 
-	if (!hostname) {
-		*res = malloc_ai(port, htonl(0x7f000001), hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+	اگر (!hostname) {
+		*res = malloc_ai(پورٹ, htonl(0x7f000001), hints);
+		اگر (*res == تہی)
+			واپس (EAI_MEMORY);
+		واپس (0);
 	}
 
-	if (inet_aton(hostname, &in)) {
-		*res = malloc_ai(port, in.s_addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+	اگر (inet_aton(hostname, &اندر)) {
+		*res = malloc_ai(پورٹ, اندر.s_addr, hints);
+		اگر (*res == تہی)
+			واپس (EAI_MEMORY);
+		واپس (0);
 	}
 
 	/* Don't try DNS if AI_NUMERICHOST is set */
-	if (hints && hints->ai_flags & AI_NUMERICHOST)
-		return (EAI_NONAME);
+	اگر (hints && hints->ai_flags & AI_NUMERICHOST)
+		واپس (EAI_NONAME);
 
 	hp = gethostbyname(hostname);
-	if (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
-		struct addrinfo *cur, *prev;
+	اگر (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
+		ساخت addrinfo *cur, *پچھلا;
 
-		cur = prev = *res = NULL;
-		for (i = 0; hp->h_addr_list[i]; i++) {
-			struct in_addr *in = (struct in_addr *)hp->h_addr_list[i];
+		cur = پچھلا = *res = تہی;
+		برائے (i = 0; hp->h_addr_list[i]; i++) {
+			ساخت in_addr *اندر = (ساخت in_addr *)hp->h_addr_list[i];
 
-			cur = malloc_ai(port, in->s_addr, hints);
-			if (cur == NULL) {
-				if (*res != NULL)
+			cur = malloc_ai(پورٹ, اندر->s_addr, hints);
+			اگر (cur == تہی) {
+				اگر (*res != تہی)
 					freeaddrinfo(*res);
-				return (EAI_MEMORY);
+				واپس (EAI_MEMORY);
 			}
-			if (prev)
-				prev->ai_next = cur;
-			else
+			اگر (پچھلا)
+				پچھلا->ai_next = cur;
+			ورنہ
 				*res = cur;
 
-			prev = cur;
+			پچھلا = cur;
 		}
-		return (0);
+		واپس (0);
 	}
 
-	return (EAI_NODATA);
+	واپس (EAI_NODATA);
 }
-#endif /* !HAVE_GETADDRINFO */
+#اگر_ختم /* !HAVE_GETADDRINFO */

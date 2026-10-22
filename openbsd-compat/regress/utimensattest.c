@@ -14,58 +14,58 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#شامل <sys/types.h>
+#شامل <sys/stat.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <errno.h>
+#شامل <fcntl.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
-#define TMPFILE "utimensat.tmp"
-#define TMPFILE2 "utimensat.tmp2"
+#تعریف_کرو TMPFILE "utimensat.tmp"
+#تعریف_کرو TMPFILE2 "utimensat.tmp2"
 
-#ifndef AT_SYMLINK_NOFOLLOW
+#اگر_غیر_تعریف_شدہ AT_SYMLINK_NOFOLLOW
 # define AT_SYMLINK_NOFOLLOW 0x80000000
-#endif
+#اگر_ختم
 
-int utimensat(int, const char *, const struct timespec[2], int);
+صحیح utimensat(صحیح, ثابت حرف *, ثابت ساخت timespec[2], صحیح);
 
-static void
-cleanup(void)
+ساکن خالی
+cleanup(خالی)
 {
-	(void)unlink(TMPFILE);
-	(void)unlink(TMPFILE2);
+	(خالی)unlink(TMPFILE);
+	(خالی)unlink(TMPFILE2);
 }
 
-static void
-fail(char *msg, long expect, long got)
+ساکن خالی
+fail(حرف *پیغام, طویل expect, طویل got)
 {
-	int saved_errno = errno;
+	صحیح saved_errno = errno;
 
-	if (expect == got && got == 0)
-		fprintf(stderr, "utimensat: %s: %s\n", msg,
+	اگر (expect == got && got == 0)
+		fprintf(stderr, "utimensat: %s: %s\n", پیغام,
 		     strerror(saved_errno));
-	else
+	ورنہ
 		fprintf(stderr, "utimensat: %s: expected %ld got %ld\n",
-		     msg, expect, got);
+		     پیغام, expect, got);
 	cleanup();
-	exit(1);
+	باہر_نکلو(1);
 }
 
-int
-main(void)
+صحیح
+مین(خالی)
 {
-	int fd;
-	struct stat sb;
-	struct timespec ts[2];
+	صحیح fd;
+	ساخت stat sb;
+	ساخت timespec ts[2];
 
 	cleanup();
-	if ((fd = open(TMPFILE, O_CREAT, 0600)) == -1)
+	اگر ((fd = open(TMPFILE, O_CREAT, 0600)) == -1)
 		fail("open", 0, 0);
 	close(fd);
 
@@ -73,32 +73,32 @@ main(void)
 	ts[0].tv_nsec = 23456789;
 	ts[1].tv_sec = 34567890;
 	ts[1].tv_nsec = 45678901;
-	if (utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW) == -1)
+	اگر (utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW) == -1)
 		fail("utimensat", 0, 0);
 
-	if (stat(TMPFILE, &sb) == -1)
+	اگر (stat(TMPFILE, &sb) == -1)
 		fail("stat", 0, 0);
-#if 0
+#اگر 0
 	/*
 	 * This test only works on filesystems mounted 'noatime', otherwise the
 	 * stat() above resets atime. Skip by default.
 	 */
-	if (sb.st_atime != 12345678)
+	اگر (sb.st_atime != 12345678)
 		fail("st_atime", 0, 0);
-#endif
-	if (sb.st_mtime != 34567890)
+#اگر_ختم
+	اگر (sb.st_mtime != 34567890)
 		fail("st_mtime", 0, 0);
-#if 0
+#اگر 0
 	/*
 	 * Results expected to be rounded to the nearest microsecond.
 	 * Depends on timestamp precision in kernel and filesystem so
 	 * disabled by default.
 	 */
-	if (sb.st_atim.tv_nsec != 23456000)
+	اگر (sb.st_atim.tv_nsec != 23456000)
 		fail("atim.tv_nsec", 23456000, sb.st_atim.tv_nsec);
-	if (sb.st_mtim.tv_nsec != 45678000)
+	اگر (sb.st_mtim.tv_nsec != 45678000)
 		fail("mtim.tv_nsec", 45678000, sb.st_mtim.tv_nsec);
-#endif
+#اگر_ختم
 
 	/*
 	 * POSIX specifies that when given a symlink, AT_SYMLINK_NOFOLLOW
@@ -107,20 +107,20 @@ main(void)
 	 * with instead of following a symlink when explicitly asked not to.
 	 * Here we just test that it does not update the destination.
 	 */
-	if (rename(TMPFILE, TMPFILE2) == -1)
+	اگر (rename(TMPFILE, TMPFILE2) == -1)
 		fail("rename", 0, 0);
-	if (symlink(TMPFILE2, TMPFILE) == -1)
+	اگر (symlink(TMPFILE2, TMPFILE) == -1)
 		fail("symlink", 0, 0);
 	ts[0].tv_sec = 11223344;
 	ts[1].tv_sec = 55667788;
-	(void)utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW);
-	if (stat(TMPFILE2, &sb) == -1)
+	(خالی)utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW);
+	اگر (stat(TMPFILE2, &sb) == -1)
 		fail("stat", 0, 0 );
-	if (sb.st_atime == 11223344)
+	اگر (sb.st_atime == 11223344)
 		fail("utimensat symlink st_atime", 0, 0 );
-	if (sb.st_mtime == 55667788)
+	اگر (sb.st_mtime == 55667788)
 		fail("utimensat symlink st_mtime", 0, 0 );
 
 	cleanup();
-	exit(0);
+	باہر_نکلو(0);
 }

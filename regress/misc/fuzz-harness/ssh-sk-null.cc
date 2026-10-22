@@ -15,38 +15,38 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-extern "C" {
+خارجی "C" {
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include "ssherr.h"
-#include "ssh-sk.h"
+#شامل "ssherr.h"
+#شامل "ssh-sk.h"
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest)
+صحیح
+sshsk_enroll(صحیح type, ثابت حرف *provider_راستہ, ثابت حرف *device,
+    ثابت حرف *application, ثابت حرف *userid, uint8_t flags,
+    ثابت حرف *pin, ساخت sshbuf *challenge_buf,
+    ساخت sshkey **keyp, ساخت sshbuf *attest)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	واپس SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
-int
-sshsk_sign(const char *provider_path, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin)
+صحیح
+sshsk_sign(ثابت حرف *provider_راستہ, ساخت sshkey *کلید,
+    u_char **sigp, سائز_t *lenp, ثابت u_char *ڈیٹا, سائز_t datalen,
+    u_int compat, ثابت حرف *pin)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	واپس SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
-int
-sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
-    size_t *nsrksp)
+صحیح
+sshsk_بھرو_resident(ثابت حرف *provider_راستہ, ثابت حرف *device,
+    ثابت حرف *pin, u_int flags, ساخت sshsk_resident_کلید ***srksp,
+    سائز_t *nsrksp)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	واپس SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
 };

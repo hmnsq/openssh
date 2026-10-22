@@ -25,79 +25,79 @@
 
 /* OPENBSD ORIGINAL: lib/libc/crypt/arc4random.c */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <fcntl.h>
-#include <limits.h>
-#include <signal.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/time.h>
+#شامل <fcntl.h>
+#شامل <limits.h>
+#شامل <signal.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <sys/types.h>
+#شامل <sys/time.h>
 
-#ifndef HAVE_ARC4RANDOM
+#اگر_غیر_تعریف_شدہ HAVE_ARC4RANDOM
 
 /*
  * Always use the getentropy implementation from bsd-getentropy.c, which
  * will call a native getentropy if available then fall back as required.
  * We use a different name so that OpenSSL cannot call the wrong getentropy.
  */
-int _ssh_compat_getentropy(void *, size_t);
-#ifdef getentropy
+صحیح _ssh_compat_getentropy(خالی *, سائز_t);
+#اگر_تعریف_شدہ getentropy
 # undef getentropy
-#endif
-#define getentropy(x, y) (_ssh_compat_getentropy((x), (y)))
+#اگر_ختم
+#تعریف_کرو getentropy(x, y) (_ssh_compat_getentropy((x), (y)))
 
-#include "log.h"
+#شامل "log.h"
 
-#define KEYSTREAM_ONLY
-#include "chacha_private.h"
+#تعریف_کرو KEYSTREAM_ONLY
+#شامل "chacha_private.h"
 
-#define minimum(a, b) ((a) < (b) ? (a) : (b))
+#تعریف_کرو minimum(a, b) ((a) < (b) ? (a) : (b))
 
-#if defined(__GNUC__) || defined(_MSC_VER)
-#define inline __inline
-#else				/* __GNUC__ || _MSC_VER */
-#define inline
-#endif				/* !__GNUC__ && !_MSC_VER */
+#اگر defined(__GNUC__) || defined(_MSC_VER)
+#تعریف_کرو اندرونی __inline
+#ورنہ				/* __GNUC__ || _MSC_VER */
+#تعریف_کرو اندرونی
+#اگر_ختم				/* !__GNUC__ && !_MSC_VER */
 
-#define KEYSZ	32
-#define IVSZ	8
-#define BLOCKSZ	64
-#define RSBUFSZ	(16*BLOCKSZ)
+#تعریف_کرو KEYSZ	32
+#تعریف_کرو IVSZ	8
+#تعریف_کرو BLOCKSZ	64
+#تعریف_کرو RSBUFSZ	(16*BLOCKSZ)
 
-#define REKEY_BASE	(1024*1024) /* NB. should be a power of 2 */
+#تعریف_کرو REKEY_بنیاد	(1024*1024) /* NB. should be a power of 2 */
 
 /* Marked MAP_INHERIT_ZERO, so zero'd out in fork children. */
-static struct _rs {
-	size_t		rs_have;	/* valid bytes at end of rs_buf */
-	size_t		rs_count;	/* bytes till reseed */
+ساکن ساخت _rs {
+	سائز_t		rs_have;	/* valid bytes at end of rs_buf */
+	سائز_t		rs_گنتی;	/* bytes till reseed */
 } *rs;
 
 /* Maybe be preserved in fork children, if _rs_allocate() decides. */
-static struct _rsx {
+ساکن ساخت _rsx {
 	chacha_ctx	rs_chacha;	/* chacha context for random keystream */
 	u_char		rs_buf[RSBUFSZ];	/* keystream blocks */
 } *rsx;
 
-static inline int _rs_allocate(struct _rs **, struct _rsx **);
-static inline void _rs_forkdetect(void);
-#include "arc4random.h"
+ساکن اندرونی صحیح _rs_allocate(ساخت _rs **, ساخت _rsx **);
+ساکن اندرونی خالی _rs_forkdetect(خالی);
+#شامل "arc4random.h"
 
-static inline void _rs_rekey(u_char *dat, size_t datlen);
+ساکن اندرونی خالی _rs_rekey(u_char *dat, سائز_t datlen);
 
-static inline void
-_rs_init(u_char *buf, size_t n)
+ساکن اندرونی خالی
+_rs_init(u_char *buf, سائز_t n)
 {
-	if (n < KEYSZ + IVSZ)
-		return;
+	اگر (n < KEYSZ + IVSZ)
+		واپس;
 
-	if (rs == NULL) {
-		if (_rs_allocate(&rs, &rsx) == -1)
+	اگر (rs == تہی) {
+		اگر (_rs_allocate(&rs, &rsx) == -1)
 			_exit(1);
 	}
 
@@ -105,113 +105,113 @@ _rs_init(u_char *buf, size_t n)
 	chacha_ivsetup(&rsx->rs_chacha, buf + KEYSZ);
 }
 
-static void
-_rs_stir(void)
+ساکن خالی
+_rs_stir(خالی)
 {
 	u_char rnd[KEYSZ + IVSZ];
 	uint32_t rekey_fuzz = 0;
 
-	if (getentropy(rnd, sizeof rnd) == -1)
+	اگر (getentropy(rnd, حجم rnd) == -1)
 		_getentropy_fail();
 
-	if (!rs)
-		_rs_init(rnd, sizeof(rnd));
-	else
-		_rs_rekey(rnd, sizeof(rnd));
-	explicit_bzero(rnd, sizeof(rnd));	/* discard source seed */
+	اگر (!rs)
+		_rs_init(rnd, حجم(rnd));
+	ورنہ
+		_rs_rekey(rnd, حجم(rnd));
+	explicit_bzero(rnd, حجم(rnd));	/* discard source seed */
 
 	/* invalidate rs_buf */
 	rs->rs_have = 0;
-	memset(rsx->rs_buf, 0, sizeof(rsx->rs_buf));
+	memset(rsx->rs_buf, 0, حجم(rsx->rs_buf));
 
 	/* rekey interval should not be predictable */
-	chacha_encrypt_bytes(&rsx->rs_chacha, (uint8_t *)&rekey_fuzz,
-	    (uint8_t *)&rekey_fuzz, sizeof(rekey_fuzz));
-	rs->rs_count = REKEY_BASE + (rekey_fuzz % REKEY_BASE);
+	chacha_encrypt_بائٹیں(&rsx->rs_chacha, (uint8_t *)&rekey_fuzz,
+	    (uint8_t *)&rekey_fuzz, حجم(rekey_fuzz));
+	rs->rs_گنتی = REKEY_بنیاد + (rekey_fuzz % REKEY_بنیاد);
 }
 
-static inline void
-_rs_stir_if_needed(size_t len)
+ساکن اندرونی خالی
+_rs_stir_if_needed(سائز_t len)
 {
 	_rs_forkdetect();
-	if (!rs || rs->rs_count <= len)
+	اگر (!rs || rs->rs_گنتی <= len)
 		_rs_stir();
-	if (rs->rs_count <= len)
-		rs->rs_count = 0;
-	else
-		rs->rs_count -= len;
+	اگر (rs->rs_گنتی <= len)
+		rs->rs_گنتی = 0;
+	ورنہ
+		rs->rs_گنتی -= len;
 }
 
-static inline void
-_rs_rekey(u_char *dat, size_t datlen)
+ساکن اندرونی خالی
+_rs_rekey(u_char *dat, سائز_t datlen)
 {
-#ifndef KEYSTREAM_ONLY
-	memset(rsx->rs_buf, 0, sizeof(rsx->rs_buf));
-#endif
+#اگر_غیر_تعریف_شدہ KEYSTREAM_ONLY
+	memset(rsx->rs_buf, 0, حجم(rsx->rs_buf));
+#اگر_ختم
 	/* fill rs_buf with the keystream */
-	chacha_encrypt_bytes(&rsx->rs_chacha, rsx->rs_buf,
-	    rsx->rs_buf, sizeof(rsx->rs_buf));
+	chacha_encrypt_بائٹیں(&rsx->rs_chacha, rsx->rs_buf,
+	    rsx->rs_buf, حجم(rsx->rs_buf));
 	/* mix in optional user provided data */
-	if (dat) {
-		size_t i, m;
+	اگر (dat) {
+		سائز_t i, m;
 
 		m = minimum(datlen, KEYSZ + IVSZ);
-		for (i = 0; i < m; i++)
+		برائے (i = 0; i < m; i++)
 			rsx->rs_buf[i] ^= dat[i];
 	}
 	/* immediately reinit for backtracking resistance */
 	_rs_init(rsx->rs_buf, KEYSZ + IVSZ);
 	memset(rsx->rs_buf, 0, KEYSZ + IVSZ);
-	rs->rs_have = sizeof(rsx->rs_buf) - KEYSZ - IVSZ;
+	rs->rs_have = حجم(rsx->rs_buf) - KEYSZ - IVSZ;
 }
 
-static inline void
-_rs_random_buf(void *_buf, size_t n)
+ساکن اندرونی خالی
+_rs_random_buf(خالی *_buf, سائز_t n)
 {
 	u_char *buf = (u_char *)_buf;
 	u_char *keystream;
-	size_t m;
+	سائز_t m;
 
 	_rs_stir_if_needed(n);
-	while (n > 0) {
-		if (rs->rs_have > 0) {
+	جب (n > 0) {
+		اگر (rs->rs_have > 0) {
 			m = minimum(n, rs->rs_have);
-			keystream = rsx->rs_buf + sizeof(rsx->rs_buf)
+			keystream = rsx->rs_buf + حجم(rsx->rs_buf)
 			    - rs->rs_have;
-			memcpy(buf, keystream, m);
+			حافظہ_نقل(buf, keystream, m);
 			memset(keystream, 0, m);
 			buf += m;
 			n -= m;
 			rs->rs_have -= m;
 		}
-		if (rs->rs_have == 0)
-			_rs_rekey(NULL, 0);
+		اگر (rs->rs_have == 0)
+			_rs_rekey(تہی, 0);
 	}
 }
 
-static inline void
+ساکن اندرونی خالی
 _rs_random_u32(uint32_t *val)
 {
 	u_char *keystream;
 
-	_rs_stir_if_needed(sizeof(*val));
-	if (rs->rs_have < sizeof(*val))
-		_rs_rekey(NULL, 0);
-	keystream = rsx->rs_buf + sizeof(rsx->rs_buf) - rs->rs_have;
-	memcpy(val, keystream, sizeof(*val));
-	memset(keystream, 0, sizeof(*val));
-	rs->rs_have -= sizeof(*val);
+	_rs_stir_if_needed(حجم(*val));
+	اگر (rs->rs_have < حجم(*val))
+		_rs_rekey(تہی, 0);
+	keystream = rsx->rs_buf + حجم(rsx->rs_buf) - rs->rs_have;
+	حافظہ_نقل(val, keystream, حجم(*val));
+	memset(keystream, 0, حجم(*val));
+	rs->rs_have -= حجم(*val);
 }
 
 uint32_t
-arc4random(void)
+arc4random(خالی)
 {
 	uint32_t val;
 
-	_ARC4_LOCK();
+	ARC4_تالا();
 	_rs_random_u32(&val);
 	_ARC4_UNLOCK();
-	return val;
+	واپس val;
 }
 DEF_WEAK(arc4random);
 
@@ -220,33 +220,33 @@ DEF_WEAK(arc4random);
  * arc4random_buf().
  */
 # ifndef HAVE_ARC4RANDOM_BUF
-void
-arc4random_buf(void *buf, size_t n)
+خالی
+arc4random_buf(خالی *buf, سائز_t n)
 {
-	_ARC4_LOCK();
+	ARC4_تالا();
 	_rs_random_buf(buf, n);
 	_ARC4_UNLOCK();
 }
 DEF_WEAK(arc4random_buf);
 # endif /* !HAVE_ARC4RANDOM_BUF */
-#endif /* !HAVE_ARC4RANDOM */
+#اگر_ختم /* !HAVE_ARC4RANDOM */
 
 /* arc4random_buf() that uses platform arc4random() */
-#if !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM)
-void
-arc4random_buf(void *_buf, size_t n)
+#اگر !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM)
+خالی
+arc4random_buf(خالی *_buf, سائز_t n)
 {
-	size_t i;
+	سائز_t i;
 	u_int32_t r = 0;
-	char *buf = (char *)_buf;
+	حرف *buf = (حرف *)_buf;
 
-	for (i = 0; i < n; i++) {
-		if (i % 4 == 0)
+	برائے (i = 0; i < n; i++) {
+		اگر (i % 4 == 0)
 			r = arc4random();
 		buf[i] = r & 0xff;
 		r >>= 8;
 	}
-	explicit_bzero(&r, sizeof(r));
+	explicit_bzero(&r, حجم(r));
 }
-#endif /* !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM) */
+#اگر_ختم /* !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM) */
 

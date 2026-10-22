@@ -5,31 +5,31 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <sys/types.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#include "../test_helper/test_helper.h"
+#شامل "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#شامل "log.h"
+#شامل "misc.h"
 
-void test_parse(void);
-void test_convtime(void);
-void test_expand(void);
-void test_argv(void);
-void test_strdelim(void);
-void test_hpdelim(void);
-void test_ptimeout(void);
-void test_xextendf(void);
-void test_misc(void);
+خالی test_parse(خالی);
+خالی test_convtime(خالی);
+خالی test_expand(خالی);
+خالی test_argv(خالی);
+خالی test_strdelim(خالی);
+خالی test_hpdelim(خالی);
+خالی test_ptimeout(خالی);
+خالی test_xextendf(خالی);
+خالی test_misc(خالی);
 
-void
-tests(void)
+خالی
+tests(خالی)
 {
 	test_parse();
 	test_convtime();
@@ -42,8 +42,8 @@ tests(void)
 	test_misc();
 }
 
-void
-benchmarks(void)
+خالی
+benchmarks(خالی)
 {
-	printf("no benchmarks\n");
+	لکھو("no benchmarks\n");
 }

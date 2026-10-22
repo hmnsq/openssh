@@ -5,36 +5,36 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <stdio.h>
+#شامل <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#شامل "../test_helper/test_helper.h"
 
-void sshbuf_tests(void);
-void sshbuf_getput_basic_tests(void);
-void sshbuf_getput_crypto_tests(void);
-void sshbuf_misc_tests(void);
-void sshbuf_fuzz_tests(void);
-void sshbuf_getput_fuzz_tests(void);
-void sshbuf_fixed(void);
+خالی sshbuf_tests(خالی);
+خالی sshbuf_getput_basic_tests(خالی);
+خالی sshbuf_getput_crypto_tests(خالی);
+خالی sshbuf_misc_tests(خالی);
+خالی sshbuf_fuzz_tests(خالی);
+خالی sshbuf_getput_fuzz_tests(خالی);
+خالی sshbuf_fixed(خالی);
 
-void
-tests(void)
+خالی
+tests(خالی)
 {
 	sshbuf_tests();
 	sshbuf_getput_basic_tests();
-#ifdef WITH_OPENSSL
+#اگر_تعریف_شدہ WITH_OPENSSL
 	sshbuf_getput_crypto_tests();
-#endif
+#اگر_ختم
 	sshbuf_misc_tests();
 	sshbuf_fuzz_tests();
 	sshbuf_getput_fuzz_tests();
 	sshbuf_fixed();
 }
 
-void
-benchmarks(void)
+خالی
+benchmarks(خالی)
 {
-	printf("no benchmarks\n");
+	لکھو("no benchmarks\n");
 }

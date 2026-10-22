@@ -23,112 +23,112 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <signal.h>
-#include <stdarg.h>
+#شامل <signal.h>
+#شامل <stdarg.h>
 
-#include "ssh2.h"
-#include "log.h"
-#include "dispatch.h"
-#include "packet.h"
-#include "ssherr.h"
+#شامل "ssh2.h"
+#شامل "log.h"
+#شامل "dispatch.h"
+#شامل "packet.h"
+#شامل "ssherr.h"
 
-int
-dispatch_protocol_error(int type, uint32_t seq, struct ssh *ssh)
+صحیح
+dispatch_protocol_error(صحیح type, uint32_t seq, ساخت ssh *ssh)
 {
-	int r;
+	صحیح r;
 
 	logit_f("type %d seq %u", type, seq);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_UNIMPLEMENTED)) != 0 ||
+	اگر ((r = sshpkt_آغاز(ssh, SSH2_پیغام_UNIMPLEMENTED)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, seq)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s", __func__);
-	return 0;
+	واپس 0;
 }
 
-int
-dispatch_protocol_ignore(int type, uint32_t seq, struct ssh *ssh)
+صحیح
+dispatch_protocol_ignore(صحیح type, uint32_t seq, ساخت ssh *ssh)
 {
 	logit_f("type %d seq %u", type, seq);
-	return 0;
+	واپس 0;
 }
 
-void
-ssh_dispatch_init(struct ssh *ssh, dispatch_fn *dflt)
+خالی
+ssh_dispatch_init(ساخت ssh *ssh, dispatch_fn *dflt)
 {
 	u_int i;
-	for (i = 0; i < DISPATCH_MAX; i++)
+	برائے (i = 0; i < DISPATCH_MAX; i++)
 		ssh->dispatch[i] = dflt;
 }
 
-void
-ssh_dispatch_range(struct ssh *ssh, u_int from, u_int to, dispatch_fn *fn)
+خالی
+ssh_dispatch_range(ساخت ssh *ssh, u_int from, u_int مقصد, dispatch_fn *fn)
 {
 	u_int i;
 
-	for (i = from; i <= to; i++) {
-		if (i >= DISPATCH_MAX)
-			break;
+	برائے (i = from; i <= مقصد; i++) {
+		اگر (i >= DISPATCH_MAX)
+			توڑو;
 		ssh->dispatch[i] = fn;
 	}
 }
 
-void
-ssh_dispatch_set(struct ssh *ssh, int type, dispatch_fn *fn)
+خالی
+ssh_dispatch_سیٹ(ساخت ssh *ssh, صحیح type, dispatch_fn *fn)
 {
 	ssh->dispatch[type] = fn;
 }
 
-int
-ssh_dispatch_run(struct ssh *ssh, int mode, volatile sig_atomic_t *done)
+صحیح
+ssh_dispatch_تسلسل(ساخت ssh *ssh, صحیح منوال, متلون sig_atomic_t *مکمل)
 {
-	int r;
+	صحیح r;
 	u_char type;
 	uint32_t seqnr;
 
-	for (;;) {
-		if (mode == DISPATCH_BLOCK) {
+	برائے (;;) {
+		اگر (منوال == DISPATCH_بلاک) {
 			r = ssh_packet_read_seqnr(ssh, &type, &seqnr);
-			if (r != 0)
-				return r;
-		} else {
+			اگر (r != 0)
+				واپس r;
+		} ورنہ {
 			r = ssh_packet_read_poll_seqnr(ssh, &type, &seqnr);
-			if (r != 0)
-				return r;
-			if (type == SSH_MSG_NONE)
-				return 0;
+			اگر (r != 0)
+				واپس r;
+			اگر (type == SSH_پیغام_NONE)
+				واپس 0;
 		}
-		if (type > 0 && type < DISPATCH_MAX &&
-		    ssh->dispatch[type] != NULL) {
-			if (ssh->dispatch_skip_packets) {
+		اگر (type > 0 && type < DISPATCH_MAX &&
+		    ssh->dispatch[type] != تہی) {
+			اگر (ssh->dispatch_skip_packets) {
 				debug2("skipped packet (type %u)", type);
 				ssh->dispatch_skip_packets--;
-				continue;
+				جاری;
 			}
 			r = (*ssh->dispatch[type])(type, seqnr, ssh);
-			if (r != 0)
-				return r;
-		} else {
+			اگر (r != 0)
+				واپس r;
+		} ورنہ {
 			r = sshpkt_disconnect(ssh,
 			    "protocol error: rcvd type %d", type);
-			if (r != 0)
-				return r;
-			return SSH_ERR_DISCONNECTED;
+			اگر (r != 0)
+				واپس r;
+			واپس SSH_ERR_DISCONNECTED;
 		}
-		if (done != NULL && *done)
-			return 0;
+		اگر (مکمل != تہی && *مکمل)
+			واپس 0;
 	}
 }
 
-void
-ssh_dispatch_run_fatal(struct ssh *ssh, int mode, volatile sig_atomic_t *done)
+خالی
+ssh_dispatch_تسلسل_fatal(ساخت ssh *ssh, صحیح منوال, متلون sig_atomic_t *مکمل)
 {
-	int r;
+	صحیح r;
 
-	if ((r = ssh_dispatch_run(ssh, mode, done)) != 0)
+	اگر ((r = ssh_dispatch_تسلسل(ssh, منوال, مکمل)) != 0)
 		sshpkt_fatal(ssh, r, "%s", __func__);
 }

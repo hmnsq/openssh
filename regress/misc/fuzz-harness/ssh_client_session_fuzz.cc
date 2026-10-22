@@ -10,14 +10,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stddef.h>
-#include <stdint.h>
+#شامل <stddef.h>
+#شامل <stdint.h>
 
-extern "C" void fuzz_one_message(const uint8_t *data, size_t size);
+خارجی "C" خالی fuzz_one_پیغام(ثابت uint8_t *ڈیٹا, سائز_t سائز);
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+خارجی "C" صحیح
+LLVMFuzzer_Test_One_داخلہ(ثابت uint8_t *ڈیٹا, سائز_t سائز)
 {
-	fuzz_one_message(data, size);
-	return 0;
+	fuzz_one_پیغام(ڈیٹا, سائز);
+	واپس 0;
 }

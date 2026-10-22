@@ -5,446 +5,446 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <sys/types.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#include "../test_helper/test_helper.h"
+#شامل "../test_helper/test_helper.h"
 
-#include "sshkey.h"
-#include "authfile.h"
-#include "hostfile.h"
+#شامل "sshkey.h"
+#شامل "authfile.h"
+#شامل "hostfile.h"
 
-struct expected {
-	const char *key_file;		/* Path for key, NULL for none */
-	int no_parse_status;		/* Expected status w/o key parsing */
-	int no_parse_keytype;		/* Expected keytype w/o key parsing */
-	int match_host_p;		/* Match 'prometheus.example.com' */
-	int match_host_s;		/* Match 'sisyphus.example.com' */
-	int match_ipv4;			/* Match '192.0.2.1' */
-	int match_ipv6;			/* Match '2001:db8::1' */
-	int match_flags;		/* Expected flags from match */
-	struct hostkey_foreach_line l;	/* Expected line contents */
+ساخت expected {
+	ثابت حرف *کلید_file;		/* Path for key, NULL for none */
+	صحیح no_parse_حالت;		/* Expected status w/o key parsing */
+	صحیح no_parse_keytype;		/* Expected keytype w/o key parsing */
+	صحیح مطابقت_host_p;		/* Match 'prometheus.example.com' */
+	صحیح مطابقت_host_s;		/* Match 'sisyphus.example.com' */
+	صحیح مطابقت_ipv4;			/* Match '192.0.2.1' */
+	صحیح مطابقت_ipv6;			/* Match '2001:db8::1' */
+	صحیح مطابقت_flags;		/* Expected flags from match */
+	ساخت hostkey_foreach_سطر l;	/* Expected line contents */
 };
 
-struct cbctx {
-	const struct expected *expected;
-	size_t nexpected;
-	size_t i;
-	int flags;
-	int match_host_p;
-	int match_host_s;
-	int match_ipv4;
-	int match_ipv6;
+ساخت cbctx {
+	ثابت ساخت expected *expected;
+	سائز_t nexpected;
+	سائز_t i;
+	صحیح flags;
+	صحیح مطابقت_host_p;
+	صحیح مطابقت_host_s;
+	صحیح مطابقت_ipv4;
+	صحیح مطابقت_ipv6;
 };
 
 /*
  * hostkeys_foreach() iterator callback that verifies the line passed
  * against an array of expected entries.
  */
-static int
-check(struct hostkey_foreach_line *l, void *_ctx)
+ساکن صحیح
+check(ساخت hostkey_foreach_سطر *l, خالی *_ctx)
 {
-	struct cbctx *ctx = (struct cbctx *)_ctx;
-	const struct expected *expected;
-	int parse_key = (ctx->flags & HKF_WANT_PARSE_KEY) != 0;
-	const int matching = (ctx->flags & HKF_WANT_MATCH) != 0;
-	u_int expected_status, expected_match;
-	int expected_keytype, skip = 0;
+	ساخت cbctx *ctx = (ساخت cbctx *)_ctx;
+	ثابت ساخت expected *expected;
+	صحیح parse_کلید = (ctx->flags & HKF_WANT_PARSE_کلید) != 0;
+	ثابت صحیح matching = (ctx->flags & HKF_WANT_مطابقت) != 0;
+	u_int expected_حالت, expected_مطابقت;
+	صحیح expected_keytype, skip = 0;
 
 	test_subtest_info("entry %zu/%zu, file line %ld",
 	    ctx->i + 1, ctx->nexpected, l->linenum);
 
-	for (;;) {
-		ASSERT_SIZE_T_LT(ctx->i, ctx->nexpected);
+	برائے (;;) {
+		ASSERT_سائز_T_LT(ctx->i, ctx->nexpected);
 		expected = ctx->expected + ctx->i++;
 		/* If we are matching host/IP then skip entries that don't */
-		if (!matching)
-			break;
-		if (ctx->match_host_p && expected->match_host_p)
-			break;
-		if (ctx->match_host_s && expected->match_host_s)
-			break;
-		if (ctx->match_ipv4 && expected->match_ipv4)
-			break;
-		if (ctx->match_ipv6 && expected->match_ipv6)
-			break;
+		اگر (!matching)
+			توڑو;
+		اگر (ctx->مطابقت_host_p && expected->مطابقت_host_p)
+			توڑو;
+		اگر (ctx->مطابقت_host_s && expected->مطابقت_host_s)
+			توڑو;
+		اگر (ctx->مطابقت_ipv4 && expected->مطابقت_ipv4)
+			توڑو;
+		اگر (ctx->مطابقت_ipv6 && expected->مطابقت_ipv6)
+			توڑو;
 	}
-	expected_status = (parse_key || expected->no_parse_status < 0) ?
-	    expected->l.status : (u_int)expected->no_parse_status;
-	expected_match = expected->l.match;
-#define UPDATE_MATCH_STATUS(x) do { \
-		if (ctx->x && expected->x) { \
-			expected_match |= expected->x; \
-			if (expected_status == HKF_STATUS_OK) \
-				expected_status = HKF_STATUS_MATCHED; \
+	expected_حالت = (parse_کلید || expected->no_parse_حالت < 0) ?
+	    expected->l.حالت_2 : (u_int)expected->no_parse_حالت;
+	expected_مطابقت = expected->l.مطابقت;
+#تعریف_کرو UPDATE_مطابقت_حالت(x) کرو { \
+		اگر (ctx->x && expected->x) { \
+			expected_مطابقت |= expected->x; \
+			اگر (expected_حالت == HKF_حالت_OK) \
+				expected_حالت = HKF_حالت_MATCHED; \
 		} \
-	} while (0)
-	expected_keytype = (parse_key || expected->no_parse_keytype < 0) ?
+	} جب (0)
+	expected_keytype = (parse_کلید || expected->no_parse_keytype < 0) ?
 	    expected->l.keytype : expected->no_parse_keytype;
 
-#ifndef WITH_OPENSSL
-	if (expected->l.keytype == KEY_RSA ||
-	    expected->no_parse_keytype == KEY_RSA ||
-	    expected->l.keytype == KEY_ECDSA ||
-	    expected->no_parse_keytype == KEY_ECDSA)
+#اگر_غیر_تعریف_شدہ WITH_OPENSSL
+	اگر (expected->l.keytype == کلید_RSA ||
+	    expected->no_parse_keytype == کلید_RSA ||
+	    expected->l.keytype == کلید_ECDSA ||
+	    expected->no_parse_keytype == کلید_ECDSA)
 		skip = 1;
-#endif /* WITH_OPENSSL */
-	if (skip) {
-		expected_status = HKF_STATUS_INVALID;
-		expected_keytype = KEY_UNSPEC;
-		parse_key = 0;
+#اگر_ختم /* WITH_OPENSSL */
+	اگر (skip) {
+		expected_حالت = HKF_حالت_INVALID;
+		expected_keytype = کلید_UNSPEC;
+		parse_کلید = 0;
 	}
-	UPDATE_MATCH_STATUS(match_host_p);
-	UPDATE_MATCH_STATUS(match_host_s);
-	UPDATE_MATCH_STATUS(match_ipv4);
-	UPDATE_MATCH_STATUS(match_ipv6);
+	UPDATE_مطابقت_حالت(مطابقت_host_p);
+	UPDATE_مطابقت_حالت(مطابقت_host_s);
+	UPDATE_مطابقت_حالت(مطابقت_ipv4);
+	UPDATE_مطابقت_حالت(مطابقت_ipv6);
 
-	ASSERT_PTR_NE(l->path, NULL); /* Don't care about path */
+	ASSERT_PTR_NE(l->راستہ, تہی); /* Don't care about path */
 	ASSERT_LONG_LONG_EQ(l->linenum, expected->l.linenum);
-	ASSERT_U_INT_EQ(l->status, expected_status);
-	ASSERT_U_INT_EQ(l->match, expected_match);
+	ASSERT_U_INT_EQ(l->حالت_2, expected_حالت);
+	ASSERT_U_INT_EQ(l->مطابقت, expected_مطابقت);
 	/* Not all test entries contain fulltext */
-	if (expected->l.line != NULL)
-		ASSERT_STRING_EQ(l->line, expected->l.line);
+	اگر (expected->l.سطر != تہی)
+		ASSERT_STRING_EQ(l->سطر, expected->l.سطر);
 	ASSERT_INT_EQ(l->marker, expected->l.marker);
 	/* XXX we skip hashed hostnames for now; implement checking */
-	if (expected->l.hosts != NULL)
+	اگر (expected->l.hosts != تہی)
 		ASSERT_STRING_EQ(l->hosts, expected->l.hosts);
 	/* Not all test entries contain raw keys */
-	if (expected->l.rawkey != NULL)
+	اگر (expected->l.rawkey != تہی)
 		ASSERT_STRING_EQ(l->rawkey, expected->l.rawkey);
 	/* XXX synthesise raw key for cases lacking and compare */
 	ASSERT_INT_EQ(l->keytype, expected_keytype);
-	if (parse_key) {
-		if (expected->l.key == NULL)
-			ASSERT_PTR_EQ(l->key, NULL);
-		if (expected->l.key != NULL) {
-			ASSERT_PTR_NE(l->key, NULL);
-			ASSERT_INT_EQ(sshkey_equal(l->key, expected->l.key), 1);
+	اگر (parse_کلید) {
+		اگر (expected->l.کلید == تہی)
+			ASSERT_PTR_EQ(l->کلید, تہی);
+		اگر (expected->l.کلید != تہی) {
+			ASSERT_PTR_NE(l->کلید, تہی);
+			ASSERT_INT_EQ(sshkey_equal(l->کلید, expected->l.کلید), 1);
 		}
 	}
-	if (parse_key && l->comment != NULL && expected->l.comment != NULL)
+	اگر (parse_کلید && l->comment != تہی && expected->l.comment != تہی)
 		ASSERT_STRING_EQ(l->comment, expected->l.comment);
-	return 0;
+	واپس 0;
 }
 
 /* Loads public keys for a set of expected results */
-static void
-prepare_expected(struct expected *expected, size_t n)
+ساکن خالی
+prepare_expected(ساخت expected *expected, سائز_t n)
 {
-	size_t i;
+	سائز_t i;
 
-	for (i = 0; i < n; i++) {
-		if (expected[i].key_file == NULL)
-			continue;
-#ifndef WITH_OPENSSL
-		switch (expected[i].l.keytype) {
-		case KEY_RSA:
-		case KEY_ECDSA:
-			continue;
+	برائے (i = 0; i < n; i++) {
+		اگر (expected[i].کلید_file == تہی)
+			جاری;
+#اگر_غیر_تعریف_شدہ WITH_OPENSSL
+		انتخاب (expected[i].l.keytype) {
+		حالت کلید_RSA:
+		حالت کلید_ECDSA:
+			جاری;
 		}
-#endif /* WITH_OPENSSL */
-		ASSERT_INT_EQ(sshkey_load_public(
-		    test_data_file(expected[i].key_file), &expected[i].l.key,
-		    NULL), 0);
+#اگر_ختم /* WITH_OPENSSL */
+		ASSERT_INT_EQ(sshkey_بھرو_عوامی(
+		    test_ڈیٹا_file(expected[i].کلید_file), &expected[i].l.کلید,
+		    تہی), 0);
 	}
 }
 
-static void
-cleanup_expected(struct expected *expected, size_t n)
+ساکن خالی
+cleanup_expected(ساخت expected *expected, سائز_t n)
 {
-	size_t i;
+	سائز_t i;
 
-	for (i = 0; i < n; i++) {
-		sshkey_free(expected[i].l.key);
-		expected[i].l.key = NULL;
+	برائے (i = 0; i < n; i++) {
+		sshkey_free(expected[i].l.کلید);
+		expected[i].l.کلید = تہی;
 	}
 }
 
-struct expected expected_full[] = {
-	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
-		NULL,				/* path, don't care */
+ساخت expected expected_بھرا[] = {
+	{ تہی, -1, -1, 0, 0, 0, 0, -1, {
+		تہی,				/* path, don't care */
 		1,				/* line number */
-		HKF_STATUS_COMMENT,		/* status */
+		HKF_حالت_COMMENT,		/*حالت*/
 		0,				/* match flags */
 		"# Plain host keys, plain host names", /* full line, optional */
 		MRK_NONE,			/* marker (CA / revoked) */
-		NULL,				/* hosts text */
-		NULL,				/* raw key, optional */
-		KEY_UNSPEC,			/* key type */
-		NULL,				/* deserialised key */
-		NULL,				/* comment */
+		تہی,				/* hosts text */
+		تہی,				/* raw key, optional */
+		کلید_UNSPEC,			/* key type */
+		تہی,				/* deserialised key */
+		تہی,				/* comment */
 		0,				/* note */
 	} },
-	{ "ecdsa_1.pub" , -1, -1, 0, HKF_MATCH_HOST, 0, 0, -1, {
-		NULL,
+	{ "ecdsa_1.pub" , -1, -1, 0, HKF_مطابقت_HOST, 0, 0, -1, {
+		تہی,
 		2,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
 		"sisyphus.example.com",
-		NULL,
-		KEY_ECDSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		کلید_ECDSA,
+		تہی,	/* filled at runtime */
 		"ECDSA #1",
 		0,
 	} },
-	{ "ed25519_1.pub" , -1, -1, 0, HKF_MATCH_HOST, 0, 0, -1, {
-		NULL,
+	{ "ed25519_1.pub" , -1, -1, 0, HKF_مطابقت_HOST, 0, 0, -1, {
+		تہی,
 		3,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
 		"sisyphus.example.com",
-		NULL,
-		KEY_ED25519,
-		NULL,	/* filled at runtime */
+		تہی,
+		کلید_ED25519,
+		تہی,	/* filled at runtime */
 		"ED25519 #1",
 		0,
 	} },
-	{ "rsa_1.pub" , -1, -1, 0, HKF_MATCH_HOST, 0, 0, -1, {
-		NULL,
+	{ "rsa_1.pub" , -1, -1, 0, HKF_مطابقت_HOST, 0, 0, -1, {
+		تہی,
 		4,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
 		"sisyphus.example.com",
-		NULL,
-		KEY_RSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		کلید_RSA,
+		تہی,	/* filled at runtime */
 		"RSA #1",
 		0,
 	} },
-	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, 0, 0, 0, -1, {
+		تہی,
 		5,
-		HKF_STATUS_COMMENT,
+		HKF_حالت_COMMENT,
 		0,
 		"",
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, 0, 0, 0, -1, {
+		تہی,
 		6,
-		HKF_STATUS_COMMENT,
+		HKF_حالت_COMMENT,
 		0,
 		"# Plain host keys, hostnames + addresses",
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ "ecdsa_2.pub" , -1, -1, HKF_MATCH_HOST, 0, HKF_MATCH_IP, HKF_MATCH_IP, -1, {
-		NULL,
+	{ "ecdsa_2.pub" , -1, -1, HKF_مطابقت_HOST, 0, HKF_مطابقت_IP, HKF_مطابقت_IP, -1, {
+		تہی,
 		7,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
 		"prometheus.example.com,192.0.2.1,2001:db8::1",
-		NULL,
-		KEY_ECDSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		کلید_ECDSA,
+		تہی,	/* filled at runtime */
 		"ECDSA #2",
 		0,
 	} },
-	{ "ed25519_2.pub" , -1, -1, HKF_MATCH_HOST, 0, HKF_MATCH_IP, HKF_MATCH_IP, -1, {
-		NULL,
+	{ "ed25519_2.pub" , -1, -1, HKF_مطابقت_HOST, 0, HKF_مطابقت_IP, HKF_مطابقت_IP, -1, {
+		تہی,
 		8,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
 		"prometheus.example.com,192.0.2.1,2001:db8::1",
-		NULL,
-		KEY_ED25519,
-		NULL,	/* filled at runtime */
+		تہی,
+		کلید_ED25519,
+		تہی,	/* filled at runtime */
 		"ED25519 #2",
 		0,
 	} },
-	{ "rsa_2.pub" , -1, -1, HKF_MATCH_HOST, 0, HKF_MATCH_IP, HKF_MATCH_IP, -1, {
-		NULL,
+	{ "rsa_2.pub" , -1, -1, HKF_مطابقت_HOST, 0, HKF_مطابقت_IP, HKF_مطابقت_IP, -1, {
+		تہی,
 		9,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
 		"prometheus.example.com,192.0.2.1,2001:db8::1",
-		NULL,
-		KEY_RSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		کلید_RSA,
+		تہی,	/* filled at runtime */
 		"RSA #2",
 		0,
 	} },
-	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, 0, 0, 0, -1, {
+		تہی,
 		10,
-		HKF_STATUS_COMMENT,
+		HKF_حالت_COMMENT,
 		0,
 		"",
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, 0, 0, 0, -1, {
+		تہی,
 		11,
-		HKF_STATUS_COMMENT,
+		HKF_حالت_COMMENT,
 		0,
 		"# Some hosts with wildcard names / IPs",
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ "ecdsa_3.pub" , -1, -1, HKF_MATCH_HOST, HKF_MATCH_HOST, HKF_MATCH_IP, HKF_MATCH_IP, -1, {
-		NULL,
+	{ "ecdsa_3.pub" , -1, -1, HKF_مطابقت_HOST, HKF_مطابقت_HOST, HKF_مطابقت_IP, HKF_مطابقت_IP, -1, {
+		تہی,
 		12,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
 		"*.example.com,192.0.2.*,2001:*",
-		NULL,
-		KEY_ECDSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		کلید_ECDSA,
+		تہی,	/* filled at runtime */
 		"ECDSA #3",
 		0,
 	} },
-	{ "ed25519_3.pub" , -1, -1, HKF_MATCH_HOST, HKF_MATCH_HOST, HKF_MATCH_IP, HKF_MATCH_IP, -1, {
-		NULL,
+	{ "ed25519_3.pub" , -1, -1, HKF_مطابقت_HOST, HKF_مطابقت_HOST, HKF_مطابقت_IP, HKF_مطابقت_IP, -1, {
+		تہی,
 		13,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
 		"*.example.com,192.0.2.*,2001:*",
-		NULL,
-		KEY_ED25519,
-		NULL,	/* filled at runtime */
+		تہی,
+		کلید_ED25519,
+		تہی,	/* filled at runtime */
 		"ED25519 #3",
 		0,
 	} },
-	{ "rsa_3.pub" , -1, -1, HKF_MATCH_HOST, HKF_MATCH_HOST, HKF_MATCH_IP, HKF_MATCH_IP, -1, {
-		NULL,
+	{ "rsa_3.pub" , -1, -1, HKF_مطابقت_HOST, HKF_مطابقت_HOST, HKF_مطابقت_IP, HKF_مطابقت_IP, -1, {
+		تہی,
 		14,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
 		"*.example.com,192.0.2.*,2001:*",
-		NULL,
-		KEY_RSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		کلید_RSA,
+		تہی,	/* filled at runtime */
 		"RSA #3",
 		0,
 	} },
-	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, 0, 0, 0, -1, {
+		تہی,
 		15,
-		HKF_STATUS_COMMENT,
+		HKF_حالت_COMMENT,
 		0,
 		"",
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, 0, 0, 0, -1, {
+		تہی,
 		16,
-		HKF_STATUS_COMMENT,
+		HKF_حالت_COMMENT,
 		0,
 		"# Hashed hostname and address entries",
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ "ecdsa_5.pub" , -1, -1, 0, HKF_MATCH_HOST|HKF_MATCH_HOST_HASHED, 0, 0, -1, {
-		NULL,
+	{ "ecdsa_5.pub" , -1, -1, 0, HKF_مطابقت_HOST|HKF_مطابقت_HOST_HASHED, 0, 0, -1, {
+		تہی,
 		17,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_ECDSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		تہی,
+		کلید_ECDSA,
+		تہی,	/* filled at runtime */
 		"ECDSA #5",
 		0,
 	} },
-	{ "ed25519_5.pub" , -1, -1, 0, HKF_MATCH_HOST|HKF_MATCH_HOST_HASHED, 0, 0, -1, {
-		NULL,
+	{ "ed25519_5.pub" , -1, -1, 0, HKF_مطابقت_HOST|HKF_مطابقت_HOST_HASHED, 0, 0, -1, {
+		تہی,
 		18,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_ED25519,
-		NULL,	/* filled at runtime */
+		تہی,
+		تہی,
+		کلید_ED25519,
+		تہی,	/* filled at runtime */
 		"ED25519 #5",
 		0,
 	} },
-	{ "rsa_5.pub" , -1, -1, 0, HKF_MATCH_HOST|HKF_MATCH_HOST_HASHED, 0, 0, -1, {
-		NULL,
+	{ "rsa_5.pub" , -1, -1, 0, HKF_مطابقت_HOST|HKF_مطابقت_HOST_HASHED, 0, 0, -1, {
+		تہی,
 		19,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_RSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		تہی,
+		کلید_RSA,
+		تہی,	/* filled at runtime */
 		"RSA #5",
 		0,
 	} },
-	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, 0, 0, 0, -1, {
+		تہی,
 		20,
-		HKF_STATUS_COMMENT,
+		HKF_حالت_COMMENT,
 		0,
 		"",
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
 	/*
@@ -452,540 +452,540 @@ struct expected expected_full[] = {
 	 * hostname and addresses in the pre-hashed known_hosts are split
 	 * to separate lines.
 	 */
-	{ "ecdsa_6.pub" , -1, -1, HKF_MATCH_HOST|HKF_MATCH_HOST_HASHED, 0, 0, 0, -1, {
-		NULL,
+	{ "ecdsa_6.pub" , -1, -1, HKF_مطابقت_HOST|HKF_مطابقت_HOST_HASHED, 0, 0, 0, -1, {
+		تہی,
 		21,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_ECDSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		تہی,
+		کلید_ECDSA,
+		تہی,	/* filled at runtime */
 		"ECDSA #6",
 		0,
 	} },
-	{ "ecdsa_6.pub" , -1, -1, 0, 0, HKF_MATCH_IP|HKF_MATCH_IP_HASHED, 0, -1, {
-		NULL,
+	{ "ecdsa_6.pub" , -1, -1, 0, 0, HKF_مطابقت_IP|HKF_مطابقت_IP_HASHED, 0, -1, {
+		تہی,
 		22,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_ECDSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		تہی,
+		کلید_ECDSA,
+		تہی,	/* filled at runtime */
 		"ECDSA #6",
 		0,
 	} },
-	{ "ecdsa_6.pub" , -1, -1, 0, 0, 0, HKF_MATCH_IP|HKF_MATCH_IP_HASHED, -1, {
-		NULL,
+	{ "ecdsa_6.pub" , -1, -1, 0, 0, 0, HKF_مطابقت_IP|HKF_مطابقت_IP_HASHED, -1, {
+		تہی,
 		23,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_ECDSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		تہی,
+		کلید_ECDSA,
+		تہی,	/* filled at runtime */
 		"ECDSA #6",
 		0,
 	} },
-	{ "ed25519_6.pub" , -1, -1, HKF_MATCH_HOST|HKF_MATCH_HOST_HASHED, 0, 0, 0, -1, {
-		NULL,
+	{ "ed25519_6.pub" , -1, -1, HKF_مطابقت_HOST|HKF_مطابقت_HOST_HASHED, 0, 0, 0, -1, {
+		تہی,
 		24,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_ED25519,
-		NULL,	/* filled at runtime */
+		تہی,
+		تہی,
+		کلید_ED25519,
+		تہی,	/* filled at runtime */
 		"ED25519 #6",
 		0,
 	} },
-	{ "ed25519_6.pub" , -1, -1, 0, 0, HKF_MATCH_IP|HKF_MATCH_IP_HASHED, 0, -1, {
-		NULL,
+	{ "ed25519_6.pub" , -1, -1, 0, 0, HKF_مطابقت_IP|HKF_مطابقت_IP_HASHED, 0, -1, {
+		تہی,
 		25,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_ED25519,
-		NULL,	/* filled at runtime */
+		تہی,
+		تہی,
+		کلید_ED25519,
+		تہی,	/* filled at runtime */
 		"ED25519 #6",
 		0,
 	} },
-	{ "ed25519_6.pub" , -1, -1, 0, 0, 0, HKF_MATCH_IP|HKF_MATCH_IP_HASHED, -1, {
-		NULL,
+	{ "ed25519_6.pub" , -1, -1, 0, 0, 0, HKF_مطابقت_IP|HKF_مطابقت_IP_HASHED, -1, {
+		تہی,
 		26,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_ED25519,
-		NULL,	/* filled at runtime */
+		تہی,
+		تہی,
+		کلید_ED25519,
+		تہی,	/* filled at runtime */
 		"ED25519 #6",
 		0,
 	} },
-	{ "rsa_6.pub" , -1, -1, HKF_MATCH_HOST|HKF_MATCH_HOST_HASHED, 0, 0, 0, -1, {
-		NULL,
+	{ "rsa_6.pub" , -1, -1, HKF_مطابقت_HOST|HKF_مطابقت_HOST_HASHED, 0, 0, 0, -1, {
+		تہی,
 		27,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_RSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		تہی,
+		کلید_RSA,
+		تہی,	/* filled at runtime */
 		"RSA #6",
 		0,
 	} },
-	{ "rsa_6.pub" , -1, -1, 0, 0, HKF_MATCH_IP|HKF_MATCH_IP_HASHED, 0, -1, {
-		NULL,
+	{ "rsa_6.pub" , -1, -1, 0, 0, HKF_مطابقت_IP|HKF_مطابقت_IP_HASHED, 0, -1, {
+		تہی,
 		28,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_RSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		تہی,
+		کلید_RSA,
+		تہی,	/* filled at runtime */
 		"RSA #6",
 		0,
 	} },
-	{ "rsa_6.pub" , -1, -1, 0, 0, 0, HKF_MATCH_IP|HKF_MATCH_IP_HASHED, -1, {
-		NULL,
+	{ "rsa_6.pub" , -1, -1, 0, 0, 0, HKF_مطابقت_IP|HKF_مطابقت_IP_HASHED, -1, {
+		تہی,
 		29,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_RSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		تہی,
+		کلید_RSA,
+		تہی,	/* filled at runtime */
 		"RSA #6",
 		0,
 	} },
-	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, 0, 0, 0, -1, {
+		تہی,
 		30,
-		HKF_STATUS_COMMENT,
+		HKF_حالت_COMMENT,
 		0,
 		"",
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, 0, 0, 0, -1, {
+		تہی,
 		31,
-		HKF_STATUS_COMMENT,
+		HKF_حالت_COMMENT,
 		0,
 		"",
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, 0, 0, 0, -1, {
+		تہی,
 		32,
-		HKF_STATUS_COMMENT,
+		HKF_حالت_COMMENT,
 		0,
 		"# Revoked and CA keys",
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ "ed25519_4.pub" , -1, -1, 0, HKF_MATCH_HOST, 0, 0, -1, {
-		NULL,
+	{ "ed25519_4.pub" , -1, -1, 0, HKF_مطابقت_HOST, 0, 0, -1, {
+		تہی,
 		33,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_REVOKE,
 		"sisyphus.example.com",
-		NULL,
-		KEY_ED25519,
-		NULL,	/* filled at runtime */
+		تہی,
+		کلید_ED25519,
+		تہی,	/* filled at runtime */
 		"ED25519 #4",
 		0,
 	} },
-	{ "ecdsa_4.pub" , -1, -1, HKF_MATCH_HOST, 0, 0, 0, -1, {
-		NULL,
+	{ "ecdsa_4.pub" , -1, -1, HKF_مطابقت_HOST, 0, 0, 0, -1, {
+		تہی,
 		34,
-		HKF_STATUS_OK,
+		HKF_حالت_OK,
 		0,
-		NULL,
+		تہی,
 		MRK_CA,
 		"prometheus.example.com",
-		NULL,
-		KEY_ECDSA,
-		NULL,	/* filled at runtime */
+		تہی,
+		کلید_ECDSA,
+		تہی,	/* filled at runtime */
 		"ECDSA #4",
 		0,
 	} },
-	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, 0, 0, 0, -1, {
+		تہی,
 		35,
-		HKF_STATUS_COMMENT,
+		HKF_حالت_COMMENT,
 		0,
 		"",
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, 0, 0, 0, -1, {
+		تہی,
 		36,
-		HKF_STATUS_COMMENT,
+		HKF_حالت_COMMENT,
 		0,
 		"# Some invalid lines",
 		MRK_NONE,
-		NULL,
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ NULL, -1, -1, 0, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, 0, 0, 0, -1, {
+		تہی,
 		37,
-		HKF_STATUS_INVALID,
+		HKF_حالت_INVALID,
 		0,
-		NULL,
+		تہی,
 		MRK_ERROR,
-		NULL,
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ NULL, -1, -1, 0, HKF_MATCH_HOST, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, HKF_مطابقت_HOST, 0, 0, -1, {
+		تہی,
 		38,
-		HKF_STATUS_INVALID,
+		HKF_حالت_INVALID,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
 		"sisyphus.example.com",
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ NULL, -1, -1, HKF_MATCH_HOST, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, HKF_مطابقت_HOST, 0, 0, 0, -1, {
+		تہی,
 		39,
-		HKF_STATUS_INVALID,
+		HKF_حالت_INVALID,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
 		"prometheus.example.com",
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ NULL, HKF_STATUS_OK, KEY_ED25519, 0, HKF_MATCH_HOST, 0, 0, -1, {
-		NULL,
+	{ تہی, HKF_حالت_OK, کلید_ED25519, 0, HKF_مطابقت_HOST, 0, 0, -1, {
+		تہی,
 		40,
-		HKF_STATUS_INVALID,	/* Would be ok if key not parsed */
+		HKF_حالت_INVALID,	/* Would be ok if key not parsed */
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
 		"sisyphus.example.com",
-		NULL,
-		KEY_UNSPEC,
-		NULL,
-		NULL,
+		تہی,
+		کلید_UNSPEC,
+		تہی,
+		تہی,
 		0,
 	} },
-	{ NULL, -1, -1, 0, HKF_MATCH_HOST, 0, 0, -1, {
-		NULL,
+	{ تہی, -1, -1, 0, HKF_مطابقت_HOST, 0, 0, -1, {
+		تہی,
 		41,
-		HKF_STATUS_INVALID,
+		HKF_حالت_INVALID,
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
 		"sisyphus.example.com",
-		NULL,
-		KEY_UNSPEC,
-		NULL,	/* filled at runtime */
-		NULL,
+		تہی,
+		کلید_UNSPEC,
+		تہی,	/* filled at runtime */
+		تہی,
 		0,
 	} },
-	{ NULL, HKF_STATUS_OK, KEY_RSA, HKF_MATCH_HOST, 0, 0, 0, -1, {
-		NULL,
+	{ تہی, HKF_حالت_OK, کلید_RSA, HKF_مطابقت_HOST, 0, 0, 0, -1, {
+		تہی,
 		42,
-		HKF_STATUS_INVALID,	/* Would be ok if key not parsed */
+		HKF_حالت_INVALID,	/* Would be ok if key not parsed */
 		0,
-		NULL,
+		تہی,
 		MRK_NONE,
 		"prometheus.example.com",
-		NULL,
-		KEY_UNSPEC,
-		NULL,	/* filled at runtime */
-		NULL,
+		تہی,
+		کلید_UNSPEC,
+		تہی,	/* filled at runtime */
+		تہی,
 		0,
 	} },
 };
 
-void test_iterate(void);
+خالی test_iterate(خالی);
 
-void
-test_iterate(void)
+خالی
+test_iterate(خالی)
 {
-	struct cbctx ctx;
+	ساخت cbctx ctx;
 
-	TEST_START("hostkeys_iterate all with key parse");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
-	ctx.flags = HKF_WANT_PARSE_KEY;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
-	    check, &ctx, NULL, NULL, ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	TEST_آغاز("hostkeys_iterate all with key parse");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
+	ctx.flags = HKF_WANT_PARSE_کلید;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
+	    check, &ctx, تہی, تہی, ctx.flags, 0), 0);
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate all without key parse");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	TEST_آغاز("hostkeys_iterate all without key parse");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
 	ctx.flags = 0;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
-	    check, &ctx, NULL, NULL, ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
+	    check, &ctx, تہی, تہی, ctx.flags, 0), 0);
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate specify host 1");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	TEST_آغاز("hostkeys_iterate specify host 1");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
 	ctx.flags = 0;
-	ctx.match_host_p = 1;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
-	    check, &ctx, "prometheus.example.com", NULL, ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	ctx.مطابقت_host_p = 1;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
+	    check, &ctx, "prometheus.example.com", تہی, ctx.flags, 0), 0);
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate specify host 2");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	TEST_آغاز("hostkeys_iterate specify host 2");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
 	ctx.flags = 0;
-	ctx.match_host_s = 1;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
-	    check, &ctx, "sisyphus.example.com", NULL, ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	ctx.مطابقت_host_s = 1;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
+	    check, &ctx, "sisyphus.example.com", تہی, ctx.flags, 0), 0);
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate match host 1");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
-	ctx.flags = HKF_WANT_MATCH;
-	ctx.match_host_p = 1;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
-	    check, &ctx, "prometheus.example.com", NULL, ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	TEST_آغاز("hostkeys_iterate match host 1");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
+	ctx.flags = HKF_WANT_مطابقت;
+	ctx.مطابقت_host_p = 1;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
+	    check, &ctx, "prometheus.example.com", تہی, ctx.flags, 0), 0);
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate match host 2");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
-	ctx.flags = HKF_WANT_MATCH;
-	ctx.match_host_s = 1;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
-	    check, &ctx, "sisyphus.example.com", NULL, ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	TEST_آغاز("hostkeys_iterate match host 2");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
+	ctx.flags = HKF_WANT_مطابقت;
+	ctx.مطابقت_host_s = 1;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
+	    check, &ctx, "sisyphus.example.com", تہی, ctx.flags, 0), 0);
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate specify host missing");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	TEST_آغاز("hostkeys_iterate specify host missing");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
 	ctx.flags = 0;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
-	    check, &ctx, "actaeon.example.org", NULL, ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
+	    check, &ctx, "actaeon.example.org", تہی, ctx.flags, 0), 0);
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate match host missing");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
-	ctx.flags = HKF_WANT_MATCH;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
-	    check, &ctx, "actaeon.example.org", NULL, ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	TEST_آغاز("hostkeys_iterate match host missing");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
+	ctx.flags = HKF_WANT_مطابقت;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
+	    check, &ctx, "actaeon.example.org", تہی, ctx.flags, 0), 0);
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate specify IPv4");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	TEST_آغاز("hostkeys_iterate specify IPv4");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
 	ctx.flags = 0;
-	ctx.match_ipv4 = 1;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
+	ctx.مطابقت_ipv4 = 1;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
 	    check, &ctx, "tiresias.example.org", "192.0.2.1", ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate specify IPv6");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	TEST_آغاز("hostkeys_iterate specify IPv6");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
 	ctx.flags = 0;
-	ctx.match_ipv6 = 1;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
+	ctx.مطابقت_ipv6 = 1;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
 	    check, &ctx, "tiresias.example.org", "2001:db8::1",
 	    ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate match IPv4");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
-	ctx.flags = HKF_WANT_MATCH;
-	ctx.match_ipv4 = 1;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
+	TEST_آغاز("hostkeys_iterate match IPv4");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
+	ctx.flags = HKF_WANT_مطابقت;
+	ctx.مطابقت_ipv4 = 1;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
 	    check, &ctx, "tiresias.example.org", "192.0.2.1", ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate match IPv6");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
-	ctx.flags = HKF_WANT_MATCH;
-	ctx.match_ipv6 = 1;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
+	TEST_آغاز("hostkeys_iterate match IPv6");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
+	ctx.flags = HKF_WANT_مطابقت;
+	ctx.مطابقت_ipv6 = 1;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
 	    check, &ctx, "tiresias.example.org", "2001:db8::1",
 	    ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate specify addr missing");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	TEST_آغاز("hostkeys_iterate specify addr missing");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
 	ctx.flags = 0;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
 	    check, &ctx, "tiresias.example.org", "192.168.0.1",
 	    ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate match addr missing");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
-	ctx.flags = HKF_WANT_MATCH;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
+	TEST_آغاز("hostkeys_iterate match addr missing");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
+	ctx.flags = HKF_WANT_مطابقت;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
 	    check, &ctx, "tiresias.example.org", "::1", ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate specify host 2 and IPv4");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
+	TEST_آغاز("hostkeys_iterate specify host 2 and IPv4");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
 	ctx.flags = 0;
-	ctx.match_host_s = 1;
-	ctx.match_ipv4 = 1;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
+	ctx.مطابقت_host_s = 1;
+	ctx.مطابقت_ipv4 = 1;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
 	    check, &ctx, "sisyphus.example.com", "192.0.2.1", ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate match host 1 and IPv6");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
-	ctx.flags = HKF_WANT_MATCH;
-	ctx.match_host_p = 1;
-	ctx.match_ipv6 = 1;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
+	TEST_آغاز("hostkeys_iterate match host 1 and IPv6");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
+	ctx.flags = HKF_WANT_مطابقت;
+	ctx.مطابقت_host_p = 1;
+	ctx.مطابقت_ipv6 = 1;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
 	    check, &ctx, "prometheus.example.com",
 	    "2001:db8::1", ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate specify host 2 and IPv4 w/ key parse");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
-	ctx.flags = HKF_WANT_PARSE_KEY;
-	ctx.match_host_s = 1;
-	ctx.match_ipv4 = 1;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
+	TEST_آغاز("hostkeys_iterate specify host 2 and IPv4 w/ key parse");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
+	ctx.flags = HKF_WANT_PARSE_کلید;
+	ctx.مطابقت_host_s = 1;
+	ctx.مطابقت_ipv4 = 1;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
 	    check, &ctx, "sisyphus.example.com", "192.0.2.1", ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 
-	TEST_START("hostkeys_iterate match host 1 and IPv6 w/ key parse");
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.expected = expected_full;
-	ctx.nexpected = sizeof(expected_full)/sizeof(*expected_full);
-	ctx.flags = HKF_WANT_MATCH|HKF_WANT_PARSE_KEY;
-	ctx.match_host_p = 1;
-	ctx.match_ipv6 = 1;
-	prepare_expected(expected_full, ctx.nexpected);
-	ASSERT_INT_EQ(hostkeys_foreach(test_data_file("known_hosts"),
+	TEST_آغاز("hostkeys_iterate match host 1 and IPv6 w/ key parse");
+	memset(&ctx, 0, حجم(ctx));
+	ctx.expected = expected_بھرا;
+	ctx.nexpected = حجم(expected_بھرا)/حجم(*expected_بھرا);
+	ctx.flags = HKF_WANT_مطابقت|HKF_WANT_PARSE_کلید;
+	ctx.مطابقت_host_p = 1;
+	ctx.مطابقت_ipv6 = 1;
+	prepare_expected(expected_بھرا, ctx.nexpected);
+	ASSERT_INT_EQ(hostkeys_foreach(test_ڈیٹا_file("known_hosts"),
 	    check, &ctx, "prometheus.example.com",
 	    "2001:db8::1", ctx.flags, 0), 0);
-	cleanup_expected(expected_full, ctx.nexpected);
-	TEST_DONE();
+	cleanup_expected(expected_بھرا, ctx.nexpected);
+	TEST_مکمل();
 }
 

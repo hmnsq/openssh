@@ -17,437 +17,437 @@
 
 /* #define DEBUG_SK 1 */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#ifdef ENABLE_SK
+#اگر_تعریف_شدہ ENABLE_SK
 
-#include <dlfcn.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdio.h>
+#شامل <dlfcn.h>
+#شامل <stddef.h>
+#شامل <stdint.h>
+#شامل <string.h>
+#شامل <stdio.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/objects.h>
-#include <openssl/ec.h>
-#include <openssl/evp.h>
-#endif /* WITH_OPENSSL */
+#اگر_تعریف_شدہ WITH_OPENSSL
+#شامل <openssl/objects.h>
+#شامل <openssl/ec.h>
+#شامل <openssl/evp.h>
+#اگر_ختم /* WITH_OPENSSL */
 
-#include "log.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "ssherr.h"
-#include "digest.h"
+#شامل "log.h"
+#شامل "misc.h"
+#شامل "sshbuf.h"
+#شامل "sshkey.h"
+#شامل "ssherr.h"
+#شامل "digest.h"
 
-#include "ssh-sk.h"
-#include "sk-api.h"
-#include "crypto_api.h"
+#شامل "ssh-sk.h"
+#شامل "sk-api.h"
+#شامل "crypto_api.h"
 
-struct sshsk_provider {
-	char *path;
-	void *dlhandle;
+ساخت sshsk_provider {
+	حرف *راستہ;
+	خالی *dlhandle;
 
 	/* Return the version of the middleware API */
-	uint32_t (*sk_api_version)(void);
+	uint32_t (*sk_api_نسخہ)(خالی);
 
 	/* Enroll a U2F key (private key generation) */
-	int (*sk_enroll)(int alg, const uint8_t *challenge,
-	    size_t challenge_len, const char *application, uint8_t flags,
-	    const char *pin, struct sk_option **opts,
-	    struct sk_enroll_response **enroll_response);
+	صحیح (*sk_enroll)(صحیح alg, ثابت uint8_t *challenge,
+	    سائز_t challenge_len, ثابت حرف *application, uint8_t flags,
+	    ثابت حرف *pin, ساخت sk_option **opts,
+	    ساخت sk_enroll_response **enroll_response);
 
 	/* Sign a challenge */
-	int (*sk_sign)(int alg, const uint8_t *message, size_t message_len,
-	    const char *application,
-	    const uint8_t *key_handle, size_t key_handle_len,
-	    uint8_t flags, const char *pin, struct sk_option **opts,
-	    struct sk_sign_response **sign_response);
+	صحیح (*sk_sign)(صحیح alg, ثابت uint8_t *پیغام_2, سائز_t پیغام_len_2,
+	    ثابت حرف *application,
+	    ثابت uint8_t *کلید_handle, سائز_t کلید_handle_len,
+	    uint8_t flags, ثابت حرف *pin, ساخت sk_option **opts,
+	    ساخت sk_sign_response **sign_response);
 
 	/* Enumerate resident keys */
-	int (*sk_load_resident_keys)(const char *pin, struct sk_option **opts,
-	    struct sk_resident_key ***rks, size_t *nrks);
+	صحیح (*sk_بھرو_resident_کلیدیں)(ثابت حرف *pin, ساخت sk_option **opts,
+	    ساخت sk_resident_کلید ***rks, سائز_t *nrks);
 };
 
 /* Built-in version */
-int ssh_sk_enroll(int alg, const uint8_t *challenge,
-    size_t challenge_len, const char *application, uint8_t flags,
-    const char *pin, struct sk_option **opts,
-    struct sk_enroll_response **enroll_response);
-int ssh_sk_sign(int alg, const uint8_t *message, size_t message_len,
-    const char *application,
-    const uint8_t *key_handle, size_t key_handle_len,
-    uint8_t flags, const char *pin, struct sk_option **opts,
-    struct sk_sign_response **sign_response);
-int ssh_sk_load_resident_keys(const char *pin, struct sk_option **opts,
-    struct sk_resident_key ***rks, size_t *nrks);
+صحیح ssh_sk_enroll(صحیح alg, ثابت uint8_t *challenge,
+    سائز_t challenge_len, ثابت حرف *application, uint8_t flags,
+    ثابت حرف *pin, ساخت sk_option **opts,
+    ساخت sk_enroll_response **enroll_response);
+صحیح ssh_sk_sign(صحیح alg, ثابت uint8_t *پیغام_2, سائز_t پیغام_len_2,
+    ثابت حرف *application,
+    ثابت uint8_t *کلید_handle, سائز_t کلید_handle_len,
+    uint8_t flags, ثابت حرف *pin, ساخت sk_option **opts,
+    ساخت sk_sign_response **sign_response);
+صحیح ssh_sk_بھرو_resident_کلیدیں(ثابت حرف *pin, ساخت sk_option **opts,
+    ساخت sk_resident_کلید ***rks, سائز_t *nrks);
 
-static void
-sshsk_free(struct sshsk_provider *p)
+ساکن خالی
+sshsk_free(ساخت sshsk_provider *p)
 {
-	if (p == NULL)
-		return;
-	free(p->path);
-	if (p->dlhandle != NULL)
+	اگر (p == تہی)
+		واپس;
+	آزاد(p->راستہ);
+	اگر (p->dlhandle != تہی)
 		dlclose(p->dlhandle);
-	free(p);
+	آزاد(p);
 }
 
-static struct sshsk_provider *
-sshsk_open(const char *path)
+ساکن ساخت sshsk_provider *
+sshsk_open(ثابت حرف *راستہ)
 {
-	struct sshsk_provider *ret = NULL;
-	uint32_t version;
+	ساخت sshsk_provider *ret = تہی;
+	uint32_t نسخہ;
 
-	if (path == NULL || *path == '\0') {
+	اگر (راستہ == تہی || *راستہ == '\0') {
 		error("No FIDO SecurityKeyProvider specified");
-		return NULL;
+		واپس تہی;
 	}
-	if ((ret = calloc(1, sizeof(*ret))) == NULL) {
+	اگر ((ret = صفر_حافظہ_دو(1, حجم(*ret))) == تہی) {
 		error_f("calloc failed");
-		return NULL;
+		واپس تہی;
 	}
-	if ((ret->path = strdup(path)) == NULL) {
+	اگر ((ret->راستہ = strdup(راستہ)) == تہی) {
 		error_f("strdup failed");
-		goto fail;
+		جاؤ fail;
 	}
 	/* Skip the rest if we're using the linked in middleware */
-	if (strcasecmp(ret->path, "internal") == 0) {
-#ifdef ENABLE_SK_INTERNAL
+	اگر (strcasecmp(ret->راستہ, "internal") == 0) {
+#اگر_تعریف_شدہ ENABLE_SK_اندرونی
 		ret->sk_enroll = ssh_sk_enroll;
 		ret->sk_sign = ssh_sk_sign;
-		ret->sk_load_resident_keys = ssh_sk_load_resident_keys;
-		return ret;
-#else
+		ret->sk_بھرو_resident_کلیدیں = ssh_sk_بھرو_resident_کلیدیں;
+		واپس ret;
+#ورنہ
 		error("internal security key support not enabled");
-		goto fail;
-#endif
+		جاؤ fail;
+#اگر_ختم
 	}
-	if (lib_contains_symbol(path, "sk_api_version") != 0) {
-		error("provider %s is not an OpenSSH FIDO library", path);
-		goto fail;
+	اگر (lib_شامل_ہے_علامت(راستہ, "sk_api_version") != 0) {
+		error("provider %s is not an OpenSSH FIDO library", راستہ);
+		جاؤ fail;
 	}
-	if ((ret->dlhandle = dlopen(path, RTLD_NOW)) == NULL)
-		fatal("Provider \"%s\" dlopen failed: %s", path, dlerror());
-	if ((ret->sk_api_version = dlsym(ret->dlhandle,
-	    "sk_api_version")) == NULL) {
+	اگر ((ret->dlhandle = dlopen(راستہ, RTLD_NOW)) == تہی)
+		fatal("Provider \"%s\" dlopen failed: %s", راستہ, dlerror());
+	اگر ((ret->sk_api_نسخہ = dlsym(ret->dlhandle,
+	    "sk_api_version")) == تہی) {
 		error("Provider \"%s\" dlsym(sk_api_version) failed: %s",
-		    path, dlerror());
-		goto fail;
+		    راستہ, dlerror());
+		جاؤ fail;
 	}
-	version = ret->sk_api_version();
-	debug_f("provider %s implements version 0x%08lx", ret->path,
-	    (u_long)version);
-	if ((version & SSH_SK_VERSION_MAJOR_MASK) != SSH_SK_VERSION_MAJOR) {
+	نسخہ = ret->sk_api_نسخہ();
+	debug_f("provider %s implements version 0x%08lx", ret->راستہ,
+	    (u_long)نسخہ);
+	اگر ((نسخہ & SSH_SK_نسخہ_MAJOR_نقاب) != SSH_SK_نسخہ_MAJOR) {
 		error("Provider \"%s\" implements unsupported "
 		    "version 0x%08lx (supported: 0x%08lx)",
-		    path, (u_long)version, (u_long)SSH_SK_VERSION_MAJOR);
-		goto fail;
+		    راستہ, (u_long)نسخہ, (u_long)SSH_SK_نسخہ_MAJOR);
+		جاؤ fail;
 	}
-	if ((ret->sk_enroll = dlsym(ret->dlhandle, "sk_enroll")) == NULL) {
+	اگر ((ret->sk_enroll = dlsym(ret->dlhandle, "sk_enroll")) == تہی) {
 		error("Provider %s dlsym(sk_enroll) failed: %s",
-		    path, dlerror());
-		goto fail;
+		    راستہ, dlerror());
+		جاؤ fail;
 	}
-	if ((ret->sk_sign = dlsym(ret->dlhandle, "sk_sign")) == NULL) {
+	اگر ((ret->sk_sign = dlsym(ret->dlhandle, "sk_sign")) == تہی) {
 		error("Provider \"%s\" dlsym(sk_sign) failed: %s",
-		    path, dlerror());
-		goto fail;
+		    راستہ, dlerror());
+		جاؤ fail;
 	}
-	if ((ret->sk_load_resident_keys = dlsym(ret->dlhandle,
-	    "sk_load_resident_keys")) == NULL) {
+	اگر ((ret->sk_بھرو_resident_کلیدیں = dlsym(ret->dlhandle,
+	    "sk_load_resident_keys")) == تہی) {
 		error("Provider \"%s\" dlsym(sk_load_resident_keys) "
-		    "failed: %s", path, dlerror());
-		goto fail;
+		    "failed: %s", راستہ, dlerror());
+		جاؤ fail;
 	}
 	/* success */
-	return ret;
+	واپس ret;
 fail:
 	sshsk_free(ret);
-	return NULL;
+	واپس تہی;
 }
 
-static void
-sshsk_free_enroll_response(struct sk_enroll_response *r)
+ساکن خالی
+sshsk_free_enroll_response(ساخت sk_enroll_response *r)
 {
-	if (r == NULL)
-		return;
-	freezero(r->key_handle, r->key_handle_len);
-	freezero(r->public_key, r->public_key_len);
+	اگر (r == تہی)
+		واپس;
+	freezero(r->کلید_handle, r->کلید_handle_len);
+	freezero(r->عوامی_کلید, r->عوامی_کلید_len);
 	freezero(r->signature, r->signature_len);
 	freezero(r->attestation_cert, r->attestation_cert_len);
 	freezero(r->authdata, r->authdata_len);
-	freezero(r, sizeof(*r));
+	freezero(r, حجم(*r));
 }
 
-static void
-sshsk_free_sign_response(struct sk_sign_response *r)
+ساکن خالی
+sshsk_free_sign_response(ساخت sk_sign_response *r)
 {
-	if (r == NULL)
-		return;
+	اگر (r == تہی)
+		واپس;
 	freezero(r->sig_r, r->sig_r_len);
 	freezero(r->sig_s, r->sig_s_len);
-	freezero(r, sizeof(*r));
+	freezero(r, حجم(*r));
 }
 
-#ifdef WITH_OPENSSL
+#اگر_تعریف_شدہ WITH_OPENSSL
 /* Assemble key from response */
-static int
-sshsk_ecdsa_assemble(struct sk_enroll_response *resp, struct sshkey **keyp)
+ساکن صحیح
+sshsk_ecdsa_assemble(ساخت sk_enroll_response *resp, ساخت sshkey **keyp)
 {
-	struct sshkey *key = NULL;
-	struct sshbuf *b = NULL;
-	EC_KEY *ecdsa = NULL;
-	EC_POINT *q = NULL;
-	const EC_GROUP *g = NULL;
-	int r;
+	ساخت sshkey *کلید = تہی;
+	ساخت sshbuf *b = تہی;
+	EC_کلید *ecdsa = تہی;
+	EC_نقطہ *q = تہی;
+	ثابت EC_گروہ *g = تہی;
+	صحیح r;
 
-	*keyp = NULL;
-	if ((key = sshkey_new(KEY_ECDSA_SK)) == NULL) {
+	*keyp = تہی;
+	اگر ((کلید = sshkey_new(کلید_ECDSA_SK)) == تہی) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	key->ecdsa_nid = NID_X9_62_prime256v1;
-	if ((ecdsa = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL ||
-	    (g = EC_KEY_get0_group(ecdsa)) == NULL ||
-	    (q = EC_POINT_new(g)) == NULL ||
-	    (b = sshbuf_new()) == NULL) {
+	کلید->ecdsa_nid = NID_X9_62_prime256v1;
+	اگر ((ecdsa = EC_کلید_new_by_خم_name(کلید->ecdsa_nid)) == تہی ||
+	    (g = EC_کلید_get0_گروہ(ecdsa)) == تہی ||
+	    (q = EC_نقطہ_new(g)) == تہی ||
+	    (b = sshbuf_new()) == تہی) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_put_string(b,
-	    resp->public_key, resp->public_key_len)) != 0) {
+	اگر ((r = sshbuf_put_string(b,
+	    resp->عوامی_کلید, resp->عوامی_کلید_len)) != 0) {
 		error_fr(r, "sshbuf_put_string");
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_get_ec(b, q, g)) != 0) {
+	اگر ((r = sshbuf_get_ec(b, q, g)) != 0) {
 		error_fr(r, "parse");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
-	if (sshkey_ec_validate_public(g, q) != 0) {
+	اگر (sshkey_ec_validate_عوامی(g, q) != 0) {
 		error("Authenticator returned invalid ECDSA key");
-		r = SSH_ERR_KEY_INVALID_EC_VALUE;
-		goto out;
+		r = SSH_ERR_کلید_INVALID_EC_قدر;
+		جاؤ برآمد;
 	}
-	if (EC_KEY_set_public_key(ecdsa, q) != 1) {
+	اگر (EC_کلید_سیٹ_عوامی_کلید(ecdsa, q) != 1) {
 		/* XXX assume it is a allocation error */
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((key->pkey = EVP_PKEY_new()) == NULL) {
+	اگر ((کلید->pkey = EVP_PKEY_new()) == تہی) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ecdsa) != 1) {
+	اگر (EVP_PKEY_set1_EC_کلید(کلید->pkey, ecdsa) != 1) {
 		error_f("Assigning EC_KEY failed");
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		جاؤ برآمد;
 	}
 	/* success */
-	*keyp = key;
-	key = NULL; /* transferred */
+	*keyp = کلید;
+	کلید = تہی; /* transferred */
 	r = 0;
- out:
-	sshkey_free(key);
+ برآمد:
+	sshkey_free(کلید);
 	sshbuf_free(b);
-	EC_KEY_free(ecdsa);
-	EC_POINT_free(q);
-	return r;
+	EC_کلید_free(ecdsa);
+	EC_نقطہ_free(q);
+	واپس r;
 }
-#endif /* WITH_OPENSSL */
+#اگر_ختم /* WITH_OPENSSL */
 
-static int
-sshsk_ed25519_assemble(struct sk_enroll_response *resp, struct sshkey **keyp)
+ساکن صحیح
+sshsk_ed25519_assemble(ساخت sk_enroll_response *resp, ساخت sshkey **keyp)
 {
-	struct sshkey *key = NULL;
-	int r;
+	ساخت sshkey *کلید = تہی;
+	صحیح r;
 
-	*keyp = NULL;
-	if (resp->public_key_len != ED25519_PK_SZ) {
-		error_f("invalid size: %zu", resp->public_key_len);
+	*keyp = تہی;
+	اگر (resp->عوامی_کلید_len != ED25519_PK_SZ) {
+		error_f("invalid size: %zu", resp->عوامی_کلید_len);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((key = sshkey_new(KEY_ED25519_SK)) == NULL) {
+	اگر ((کلید = sshkey_new(کلید_ED25519_SK)) == تہی) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((key->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL) {
+	اگر ((کلید->ed25519_pk = حافظہ_دو(ED25519_PK_SZ)) == تہی) {
 		error_f("malloc failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	memcpy(key->ed25519_pk, resp->public_key, ED25519_PK_SZ);
+	حافظہ_نقل(کلید->ed25519_pk, resp->عوامی_کلید, ED25519_PK_SZ);
 	/* success */
-	*keyp = key;
-	key = NULL; /* transferred */
+	*keyp = کلید;
+	کلید = تہی; /* transferred */
 	r = 0;
- out:
-	sshkey_free(key);
-	return r;
+ برآمد:
+	sshkey_free(کلید);
+	واپس r;
 }
 
-static int
-sshsk_key_from_response(int alg, const char *application, uint8_t flags,
-    struct sk_enroll_response *resp, struct sshkey **keyp)
+ساکن صحیح
+sshsk_کلید_from_response(صحیح alg, ثابت حرف *application, uint8_t flags,
+    ساخت sk_enroll_response *resp, ساخت sshkey **keyp)
 {
-	struct sshkey *key = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ساخت sshkey *کلید = تہی;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
 
-	*keyp = NULL;
+	*keyp = تہی;
 
 	/* Check response validity */
-	if (resp->public_key == NULL || resp->key_handle == NULL) {
+	اگر (resp->عوامی_کلید == تہی || resp->کلید_handle == تہی) {
 		error_f("sk_enroll response invalid");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
-	switch (alg) {
-#ifdef WITH_OPENSSL
-	case SSH_SK_ECDSA:
-		if ((r = sshsk_ecdsa_assemble(resp, &key)) != 0)
-			goto out;
-		break;
-#endif /* WITH_OPENSSL */
-	case SSH_SK_ED25519:
-		if ((r = sshsk_ed25519_assemble(resp, &key)) != 0)
-			goto out;
-		break;
-	default:
+	انتخاب (alg) {
+#اگر_تعریف_شدہ WITH_OPENSSL
+	حالت SSH_SK_ECDSA:
+		اگر ((r = sshsk_ecdsa_assemble(resp, &کلید)) != 0)
+			جاؤ برآمد;
+		توڑو;
+#اگر_ختم /* WITH_OPENSSL */
+	حالت SSH_SK_ED25519:
+		اگر ((r = sshsk_ed25519_assemble(resp, &کلید)) != 0)
+			جاؤ برآمد;
+		توڑو;
+	طےشدہ:
 		error_f("unsupported algorithm %d", alg);
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		r = SSH_ERR_INVALID_دلیل;
+		جاؤ برآمد;
 	}
-	key->sk_flags = flags;
-	if ((key->sk_key_handle = sshbuf_new()) == NULL ||
-	    (key->sk_reserved = sshbuf_new()) == NULL) {
+	کلید->sk_flags = flags;
+	اگر ((کلید->sk_کلید_handle = sshbuf_new()) == تہی ||
+	    (کلید->sk_reserved = sshbuf_new()) == تہی) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((key->sk_application = strdup(application)) == NULL) {
+	اگر ((کلید->sk_application = strdup(application)) == تہی) {
 		error_f("strdup application failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_put(key->sk_key_handle, resp->key_handle,
-	    resp->key_handle_len)) != 0) {
+	اگر ((r = sshbuf_put(کلید->sk_کلید_handle, resp->کلید_handle,
+	    resp->کلید_handle_len)) != 0) {
 		error_fr(r, "put key handle");
-		goto out;
+		جاؤ برآمد;
 	}
 	/* success */
 	r = 0;
-	*keyp = key;
-	key = NULL;
- out:
-	sshkey_free(key);
-	return r;
+	*keyp = کلید;
+	کلید = تہی;
+ برآمد:
+	sshkey_free(کلید);
+	واپس r;
 }
 
-static int
-skerr_to_ssherr(int skerr)
+ساکن صحیح
+skerr_مقصد_ssherr(صحیح skerr)
 {
-	switch (skerr) {
-	case SSH_SK_ERR_UNSUPPORTED:
-		return SSH_ERR_FEATURE_UNSUPPORTED;
-	case SSH_SK_ERR_PIN_REQUIRED:
-		return SSH_ERR_KEY_WRONG_PASSPHRASE;
-	case SSH_SK_ERR_DEVICE_NOT_FOUND:
-		return SSH_ERR_DEVICE_NOT_FOUND;
-	case SSH_SK_ERR_CREDENTIAL_EXISTS:
-		return SSH_ERR_KEY_BAD_PERMISSIONS;
-	case SSH_SK_ERR_GENERAL:
-	default:
-		return SSH_ERR_INVALID_FORMAT;
+	انتخاب (skerr) {
+	حالت SSH_SK_ERR_UNSUPPORTED:
+		واپس SSH_ERR_FEATURE_UNSUPPORTED;
+	حالت SSH_SK_ERR_PIN_REQUIRED:
+		واپس SSH_ERR_کلید_WRONG_PASSPHRASE;
+	حالت SSH_SK_ERR_DEVICE_NOT_ملا:
+		واپس SSH_ERR_DEVICE_NOT_ملا;
+	حالت SSH_SK_ERR_CREDENTIAL_EXISTS:
+		واپس SSH_ERR_کلید_BAD_PERMISSIONS;
+	حالت SSH_SK_ERR_GENERAL:
+	طےشدہ:
+		واپس SSH_ERR_INVALID_FORMAT;
 	}
 }
 
-static void
-sshsk_free_options(struct sk_option **opts)
+ساکن خالی
+sshsk_free_options(ساخت sk_option **opts)
 {
-	size_t i;
+	سائز_t i;
 
-	if (opts == NULL)
-		return;
-	for (i = 0; opts[i] != NULL; i++) {
-		free(opts[i]->name);
-		free(opts[i]->value);
-		free(opts[i]);
+	اگر (opts == تہی)
+		واپس;
+	برائے (i = 0; opts[i] != تہی; i++) {
+		آزاد(opts[i]->name);
+		آزاد(opts[i]->قدر);
+		آزاد(opts[i]);
 	}
-	free(opts);
+	آزاد(opts);
 }
 
-static int
-sshsk_add_option(struct sk_option ***optsp, size_t *noptsp,
-    const char *name, const char *value, uint8_t required)
+ساکن صحیح
+sshsk_جوڑو_option(ساخت sk_option ***optsp, سائز_t *noptsp,
+    ثابت حرف *name, ثابت حرف *قدر, uint8_t required)
 {
-	struct sk_option **opts = *optsp;
-	size_t nopts = *noptsp;
+	ساخت sk_option **opts = *optsp;
+	سائز_t nopts = *noptsp;
 
-	if ((opts = recallocarray(opts, nopts, nopts + 2, /* extra for NULL */
-	    sizeof(*opts))) == NULL) {
+	اگر ((opts = recallocarray(opts, nopts, nopts + 2, /* extra for NULL */
+	    حجم(*opts))) == تہی) {
 		error_f("array alloc failed");
-		return SSH_ERR_ALLOC_FAIL;
+		واپس SSH_ERR_ALLOC_FAIL;
 	}
 	*optsp = opts;
 	*noptsp = nopts + 1;
-	if ((opts[nopts] = calloc(1, sizeof(**opts))) == NULL) {
+	اگر ((opts[nopts] = صفر_حافظہ_دو(1, حجم(**opts))) == تہی) {
 		error_f("alloc failed");
-		return SSH_ERR_ALLOC_FAIL;
+		واپس SSH_ERR_ALLOC_FAIL;
 	}
-	if ((opts[nopts]->name = strdup(name)) == NULL ||
-	    (opts[nopts]->value = strdup(value)) == NULL) {
+	اگر ((opts[nopts]->name = strdup(name)) == تہی ||
+	    (opts[nopts]->قدر = strdup(قدر)) == تہی) {
 		error_f("alloc failed");
-		return SSH_ERR_ALLOC_FAIL;
+		واپس SSH_ERR_ALLOC_FAIL;
 	}
 	opts[nopts]->required = required;
-	return 0;
+	واپس 0;
 }
 
-static int
-make_options(const char *device, const char *user_id,
-    struct sk_option ***optsp)
+ساکن صحیح
+make_options(ثابت حرف *device, ثابت حرف *user_id,
+    ساخت sk_option ***optsp)
 {
-	struct sk_option **opts = NULL;
-	size_t nopts = 0;
-	int r, ret = SSH_ERR_INTERNAL_ERROR;
+	ساخت sk_option **opts = تہی;
+	سائز_t nopts = 0;
+	صحیح r, ret = SSH_ERR_اندرونی_ERROR;
 
-	if (device != NULL &&
-	    (r = sshsk_add_option(&opts, &nopts, "device", device, 0)) != 0) {
+	اگر (device != تہی &&
+	    (r = sshsk_جوڑو_option(&opts, &nopts, "device", device, 0)) != 0) {
 		ret = r;
-		goto out;
+		جاؤ برآمد;
 	}
-	if (user_id != NULL &&
-	    (r = sshsk_add_option(&opts, &nopts, "user", user_id, 0)) != 0) {
+	اگر (user_id != تہی &&
+	    (r = sshsk_جوڑو_option(&opts, &nopts, "user", user_id, 0)) != 0) {
 		ret = r;
-		goto out;
+		جاؤ برآمد;
 	}
 	/* success */
 	*optsp = opts;
-	opts = NULL;
+	opts = تہی;
 	nopts = 0;
 	ret = 0;
- out:
+ برآمد:
 	sshsk_free_options(opts);
-	return ret;
+	واپس ret;
 }
 
 
-static int
-fill_attestation_blob(const struct sk_enroll_response *resp,
-    struct sshbuf *attest)
+ساکن صحیح
+fill_attestation_blob(ثابت ساخت sk_enroll_response *resp,
+    ساخت sshbuf *attest)
 {
-	int r;
+	صحیح r;
 
-	if (attest == NULL)
-		return 0; /* nothing to do */
-	if ((r = sshbuf_put_cstring(attest, "ssh-sk-attest-v01")) != 0 ||
+	اگر (attest == تہی)
+		واپس 0; /* nothing to do */
+	اگر ((r = sshbuf_put_cstring(attest, "ssh-sk-attest-v01")) != 0 ||
 	    (r = sshbuf_put_string(attest,
 	    resp->attestation_cert, resp->attestation_cert_len)) != 0 ||
 	    (r = sshbuf_put_string(attest,
@@ -455,429 +455,429 @@ fill_attestation_blob(const struct sk_enroll_response *resp,
 	    (r = sshbuf_put_string(attest,
 	    resp->authdata, resp->authdata_len)) != 0 ||
 	    (r = sshbuf_put_u32(attest, 0)) != 0 || /* resvd flags */
-	    (r = sshbuf_put_string(attest, NULL, 0)) != 0 /* resvd */) {
+	    (r = sshbuf_put_string(attest, تہی, 0)) != 0 /* resvd */) {
 		error_fr(r, "compose");
-		return r;
+		واپس r;
 	}
 	/* success */
-	return 0;
+	واپس 0;
 }
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest)
+صحیح
+sshsk_enroll(صحیح type, ثابت حرف *provider_راستہ, ثابت حرف *device,
+    ثابت حرف *application, ثابت حرف *userid, uint8_t flags,
+    ثابت حرف *pin, ساخت sshbuf *challenge_buf,
+    ساخت sshkey **keyp, ساخت sshbuf *attest)
 {
-	struct sshsk_provider *skp = NULL;
-	struct sshkey *key = NULL;
+	ساخت sshsk_provider *skp = تہی;
+	ساخت sshkey *کلید = تہی;
 	u_char randchall[32];
-	const u_char *challenge;
-	size_t challenge_len;
-	struct sk_enroll_response *resp = NULL;
-	struct sk_option **opts = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int alg;
+	ثابت u_char *challenge;
+	سائز_t challenge_len;
+	ساخت sk_enroll_response *resp = تہی;
+	ساخت sk_option **opts = تہی;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
+	صحیح alg;
 
 	debug_f("provider \"%s\", device \"%s\", application \"%s\", "
 	    "userid \"%s\", flags 0x%02x, challenge len %zu%s",
-	    provider_path, device, application, userid, flags,
-	    challenge_buf == NULL ? 0 : sshbuf_len(challenge_buf),
-	    (pin != NULL && *pin != '\0') ? " with-pin" : "");
+	    provider_راستہ, device, application, userid, flags,
+	    challenge_buf == تہی ? 0 : sshbuf_len(challenge_buf),
+	    (pin != تہی && *pin != '\0') ? " with-pin" : "");
 
-	*keyp = NULL;
-	if (attest)
+	*keyp = تہی;
+	اگر (attest)
 		sshbuf_reset(attest);
 
-	if ((r = make_options(device, userid, &opts)) != 0)
-		goto out;
+	اگر ((r = make_options(device, userid, &opts)) != 0)
+		جاؤ برآمد;
 
-	switch (type) {
-#ifdef WITH_OPENSSL
-	case KEY_ECDSA_SK:
+	انتخاب (type) {
+#اگر_تعریف_شدہ WITH_OPENSSL
+	حالت کلید_ECDSA_SK:
 		alg = SSH_SK_ECDSA;
-		break;
-#endif /* WITH_OPENSSL */
-	case KEY_ED25519_SK:
+		توڑو;
+#اگر_ختم /* WITH_OPENSSL */
+	حالت کلید_ED25519_SK:
 		alg = SSH_SK_ED25519;
-		break;
-	default:
+		توڑو;
+	طےشدہ:
 		error_f("unsupported key type");
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		r = SSH_ERR_INVALID_دلیل;
+		جاؤ برآمد;
 	}
-	if (provider_path == NULL) {
+	اگر (provider_راستہ == تہی) {
 		error_f("missing provider");
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		r = SSH_ERR_INVALID_دلیل;
+		جاؤ برآمد;
 	}
-	if (application == NULL || *application == '\0') {
+	اگر (application == تہی || *application == '\0') {
 		error_f("missing application");
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		r = SSH_ERR_INVALID_دلیل;
+		جاؤ برآمد;
 	}
-	if (challenge_buf == NULL) {
+	اگر (challenge_buf == تہی) {
 		debug_f("using random challenge");
-		arc4random_buf(randchall, sizeof(randchall));
+		arc4random_buf(randchall, حجم(randchall));
 		challenge = randchall;
-		challenge_len = sizeof(randchall);
-	} else if (sshbuf_len(challenge_buf) == 0) {
+		challenge_len = حجم(randchall);
+	} ورنہ اگر (sshbuf_len(challenge_buf) == 0) {
 		error("Missing enrollment challenge");
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
-	} else {
+		r = SSH_ERR_INVALID_دلیل;
+		جاؤ برآمد;
+	} ورنہ {
 		challenge = sshbuf_ptr(challenge_buf);
 		challenge_len = sshbuf_len(challenge_buf);
 		debug3_f("using explicit challenge len=%zd", challenge_len);
 	}
-	if ((skp = sshsk_open(provider_path)) == NULL) {
+	اگر ((skp = sshsk_open(provider_راستہ)) == تہی) {
 		r = SSH_ERR_INVALID_FORMAT; /* XXX sshsk_open return code? */
-		goto out;
+		جاؤ برآمد;
 	}
 	/* XXX validate flags? */
 	/* enroll key */
-	if ((r = skp->sk_enroll(alg, challenge, challenge_len, application,
+	اگر ((r = skp->sk_enroll(alg, challenge, challenge_len, application,
 	    flags, pin, opts, &resp)) != 0) {
-		debug_f("provider \"%s\" failure %d", provider_path, r);
-		r = skerr_to_ssherr(r);
-		goto out;
+		debug_f("provider \"%s\" failure %d", provider_راستہ, r);
+		r = skerr_مقصد_ssherr(r);
+		جاؤ برآمد;
 	}
 
-	if ((r = sshsk_key_from_response(alg, application, resp->flags,
-	    resp, &key)) != 0)
-		goto out;
+	اگر ((r = sshsk_کلید_from_response(alg, application, resp->flags,
+	    resp, &کلید)) != 0)
+		جاؤ برآمد;
 
 	/* Optionally fill in the attestation information */
-	if ((r = fill_attestation_blob(resp, attest)) != 0)
-		goto out;
+	اگر ((r = fill_attestation_blob(resp, attest)) != 0)
+		جاؤ برآمد;
 
 	/* success */
-	*keyp = key;
-	key = NULL; /* transferred */
+	*keyp = کلید;
+	کلید = تہی; /* transferred */
 	r = 0;
- out:
+ برآمد:
 	sshsk_free_options(opts);
 	sshsk_free(skp);
-	sshkey_free(key);
+	sshkey_free(کلید);
 	sshsk_free_enroll_response(resp);
-	explicit_bzero(randchall, sizeof(randchall));
-	return r;
+	explicit_bzero(randchall, حجم(randchall));
+	واپس r;
 }
 
-#ifdef WITH_OPENSSL
-static int
-sshsk_ecdsa_sig(struct sk_sign_response *resp, struct sshbuf *sig)
+#اگر_تعریف_شدہ WITH_OPENSSL
+ساکن صحیح
+sshsk_ecdsa_sig(ساخت sk_sign_response *resp, ساخت sshbuf *sig)
 {
-	struct sshbuf *inner_sig = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ساخت sshbuf *inner_sig = تہی;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
 
 	/* Check response validity */
-	if (resp->sig_r == NULL || resp->sig_s == NULL) {
+	اگر (resp->sig_r == تہی || resp->sig_s == تہی) {
 		error_f("sk_sign response invalid");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((inner_sig = sshbuf_new()) == NULL) {
+	اگر ((inner_sig = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
 	/* Prepare and append inner signature object */
-	if ((r = sshbuf_put_bignum2_bytes(inner_sig,
+	اگر ((r = sshbuf_put_bignum2_بائٹیں(inner_sig,
 	    resp->sig_r, resp->sig_r_len)) != 0 ||
-	    (r = sshbuf_put_bignum2_bytes(inner_sig,
+	    (r = sshbuf_put_bignum2_بائٹیں(inner_sig,
 	    resp->sig_s, resp->sig_s_len)) != 0) {
 		error_fr(r, "compose inner");
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_put_stringb(sig, inner_sig)) != 0 ||
+	اگر ((r = sshbuf_put_stringb(sig, inner_sig)) != 0 ||
 	    (r = sshbuf_put_u8(sig, resp->flags)) != 0 ||
-	    (r = sshbuf_put_u32(sig, resp->counter)) != 0) {
+	    (r = sshbuf_put_u32(sig, resp->شمار_2)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		جاؤ برآمد;
 	}
-#ifdef DEBUG_SK
+#اگر_تعریف_شدہ DEBUG_SK
 	fprintf(stderr, "%s: sig_r:\n", __func__);
-	sshbuf_dump_data(resp->sig_r, resp->sig_r_len, stderr);
+	sshbuf_dump_ڈیٹا(resp->sig_r, resp->sig_r_len, stderr);
 	fprintf(stderr, "%s: sig_s:\n", __func__);
-	sshbuf_dump_data(resp->sig_s, resp->sig_s_len, stderr);
+	sshbuf_dump_ڈیٹا(resp->sig_s, resp->sig_s_len, stderr);
 	fprintf(stderr, "%s: inner:\n", __func__);
 	sshbuf_dump(inner_sig, stderr);
-#endif
+#اگر_ختم
 	r = 0;
- out:
+ برآمد:
 	sshbuf_free(inner_sig);
-	return r;
+	واپس r;
 }
-#endif /* WITH_OPENSSL */
+#اگر_ختم /* WITH_OPENSSL */
 
-static int
-sshsk_ed25519_sig(struct sk_sign_response *resp, struct sshbuf *sig)
+ساکن صحیح
+sshsk_ed25519_sig(ساخت sk_sign_response *resp, ساخت sshbuf *sig)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
 
 	/* Check response validity */
-	if (resp->sig_r == NULL) {
+	اگر (resp->sig_r == تہی) {
 		error_f("sk_sign response invalid");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_put_string(sig,
+	اگر ((r = sshbuf_put_string(sig,
 	    resp->sig_r, resp->sig_r_len)) != 0 ||
 	    (r = sshbuf_put_u8(sig, resp->flags)) != 0 ||
-	    (r = sshbuf_put_u32(sig, resp->counter)) != 0) {
+	    (r = sshbuf_put_u32(sig, resp->شمار_2)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		جاؤ برآمد;
 	}
-#ifdef DEBUG_SK
+#اگر_تعریف_شدہ DEBUG_SK
 	fprintf(stderr, "%s: sig_r:\n", __func__);
-	sshbuf_dump_data(resp->sig_r, resp->sig_r_len, stderr);
-#endif
+	sshbuf_dump_ڈیٹا(resp->sig_r, resp->sig_r_len, stderr);
+#اگر_ختم
 	r = 0;
- out:
-	return r;
+ برآمد:
+	واپس r;
 }
 
-int
-sshsk_sign(const char *provider_path, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin)
+صحیح
+sshsk_sign(ثابت حرف *provider_راستہ, ساخت sshkey *کلید,
+    u_char **sigp, سائز_t *lenp, ثابت u_char *ڈیٹا, سائز_t datalen,
+    u_int compat, ثابت حرف *pin)
 {
-	struct sshsk_provider *skp = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int type, alg;
-	struct sk_sign_response *resp = NULL;
-	struct sshbuf *inner_sig = NULL, *sig = NULL;
-	struct sk_option **opts = NULL;
+	ساخت sshsk_provider *skp = تہی;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
+	صحیح type, alg;
+	ساخت sk_sign_response *resp = تہی;
+	ساخت sshbuf *inner_sig = تہی, *sig = تہی;
+	ساخت sk_option **opts = تہی;
 
 	debug_f("provider \"%s\", key %s, flags 0x%02x%s",
-	    provider_path, sshkey_type(key), key->sk_flags,
-	    (pin != NULL && *pin != '\0') ? " with-pin" : "");
+	    provider_راستہ, sshkey_type(کلید), کلید->sk_flags,
+	    (pin != تہی && *pin != '\0') ? " with-pin" : "");
 
-	if (sigp != NULL)
-		*sigp = NULL;
-	if (lenp != NULL)
+	اگر (sigp != تہی)
+		*sigp = تہی;
+	اگر (lenp != تہی)
 		*lenp = 0;
-	type = sshkey_type_plain(key->type);
-	switch (type) {
-#ifdef WITH_OPENSSL
-	case KEY_ECDSA_SK:
+	type = sshkey_type_plain(کلید->type);
+	انتخاب (type) {
+#اگر_تعریف_شدہ WITH_OPENSSL
+	حالت کلید_ECDSA_SK:
 		alg = SSH_SK_ECDSA;
-		break;
-#endif /* WITH_OPENSSL */
-	case KEY_ED25519_SK:
+		توڑو;
+#اگر_ختم /* WITH_OPENSSL */
+	حالت کلید_ED25519_SK:
 		alg = SSH_SK_ED25519;
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		توڑو;
+	طےشدہ:
+		واپس SSH_ERR_INVALID_دلیل;
 	}
-	if (provider_path == NULL ||
-	    key->sk_key_handle == NULL ||
-	    key->sk_application == NULL || *key->sk_application == '\0') {
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+	اگر (provider_راستہ == تہی ||
+	    کلید->sk_کلید_handle == تہی ||
+	    کلید->sk_application == تہی || *کلید->sk_application == '\0') {
+		r = SSH_ERR_INVALID_دلیل;
+		جاؤ برآمد;
 	}
-	if ((skp = sshsk_open(provider_path)) == NULL) {
+	اگر ((skp = sshsk_open(provider_راستہ)) == تہی) {
 		r = SSH_ERR_INVALID_FORMAT; /* XXX sshsk_open return code? */
-		goto out;
+		جاؤ برآمد;
 	}
-#ifdef DEBUG_SK
+#اگر_تعریف_شدہ DEBUG_SK
 	fprintf(stderr, "%s: sk_flags = 0x%02x, sk_application = \"%s\"\n",
-	    __func__, key->sk_flags, key->sk_application);
+	    __func__, کلید->sk_flags, کلید->sk_application);
 	fprintf(stderr, "%s: sk_key_handle:\n", __func__);
-	sshbuf_dump(key->sk_key_handle, stderr);
-#endif
-	if ((r = skp->sk_sign(alg, data, datalen, key->sk_application,
-	    sshbuf_ptr(key->sk_key_handle), sshbuf_len(key->sk_key_handle),
-	    key->sk_flags, pin, opts, &resp)) != 0) {
+	sshbuf_dump(کلید->sk_کلید_handle, stderr);
+#اگر_ختم
+	اگر ((r = skp->sk_sign(alg, ڈیٹا, datalen, کلید->sk_application,
+	    sshbuf_ptr(کلید->sk_کلید_handle), sshbuf_len(کلید->sk_کلید_handle),
+	    کلید->sk_flags, pin, opts, &resp)) != 0) {
 		debug_f("sk_sign failed with code %d", r);
-		r = skerr_to_ssherr(r);
-		goto out;
+		r = skerr_مقصد_ssherr(r);
+		جاؤ برآمد;
 	}
 	/* Assemble signature */
-	if ((sig = sshbuf_new()) == NULL) {
+	اگر ((sig = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_put_cstring(sig, sshkey_ssh_name_plain(key))) != 0) {
+	اگر ((r = sshbuf_put_cstring(sig, sshkey_ssh_name_plain(کلید))) != 0) {
 		error_fr(r, "compose outer");
-		goto out;
+		جاؤ برآمد;
 	}
-	switch (type) {
-#ifdef WITH_OPENSSL
-	case KEY_ECDSA_SK:
-		if ((r = sshsk_ecdsa_sig(resp, sig)) != 0)
-			goto out;
-		break;
-#endif /* WITH_OPENSSL */
-	case KEY_ED25519_SK:
-		if ((r = sshsk_ed25519_sig(resp, sig)) != 0)
-			goto out;
-		break;
+	انتخاب (type) {
+#اگر_تعریف_شدہ WITH_OPENSSL
+	حالت کلید_ECDSA_SK:
+		اگر ((r = sshsk_ecdsa_sig(resp, sig)) != 0)
+			جاؤ برآمد;
+		توڑو;
+#اگر_ختم /* WITH_OPENSSL */
+	حالت کلید_ED25519_SK:
+		اگر ((r = sshsk_ed25519_sig(resp, sig)) != 0)
+			جاؤ برآمد;
+		توڑو;
 	}
-#ifdef DEBUG_SK
+#اگر_تعریف_شدہ DEBUG_SK
 	fprintf(stderr, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
-	    __func__, resp->flags, resp->counter);
+	    __func__, resp->flags, resp->شمار_2);
 	fprintf(stderr, "%s: data to sign:\n", __func__);
-	sshbuf_dump_data(data, datalen, stderr);
+	sshbuf_dump_ڈیٹا(ڈیٹا, datalen, stderr);
 	fprintf(stderr, "%s: sigbuf:\n", __func__);
 	sshbuf_dump(sig, stderr);
-#endif
-	if (sigp != NULL) {
-		if ((*sigp = malloc(sshbuf_len(sig))) == NULL) {
+#اگر_ختم
+	اگر (sigp != تہی) {
+		اگر ((*sigp = حافظہ_دو(sshbuf_len(sig))) == تہی) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			جاؤ برآمد;
 		}
-		memcpy(*sigp, sshbuf_ptr(sig), sshbuf_len(sig));
+		حافظہ_نقل(*sigp, sshbuf_ptr(sig), sshbuf_len(sig));
 	}
-	if (lenp != NULL)
+	اگر (lenp != تہی)
 		*lenp = sshbuf_len(sig);
 	/* success */
 	r = 0;
- out:
+ برآمد:
 	sshsk_free_options(opts);
 	sshsk_free(skp);
 	sshsk_free_sign_response(resp);
 	sshbuf_free(sig);
 	sshbuf_free(inner_sig);
-	return r;
+	واپس r;
 }
 
-static void
-sshsk_free_sk_resident_keys(struct sk_resident_key **rks, size_t nrks)
+ساکن خالی
+sshsk_free_sk_resident_کلیدیں(ساخت sk_resident_کلید **rks, سائز_t nrks)
 {
-	size_t i;
+	سائز_t i;
 
-	if (nrks == 0 || rks == NULL)
-		return;
-	for (i = 0; i < nrks; i++) {
-		free(rks[i]->application);
+	اگر (nrks == 0 || rks == تہی)
+		واپس;
+	برائے (i = 0; i < nrks; i++) {
+		آزاد(rks[i]->application);
 		freezero(rks[i]->user_id, rks[i]->user_id_len);
-		freezero(rks[i]->key.key_handle, rks[i]->key.key_handle_len);
-		freezero(rks[i]->key.public_key, rks[i]->key.public_key_len);
-		freezero(rks[i]->key.signature, rks[i]->key.signature_len);
-		freezero(rks[i]->key.attestation_cert,
-		    rks[i]->key.attestation_cert_len);
-		freezero(rks[i], sizeof(**rks));
+		freezero(rks[i]->کلید.کلید_handle, rks[i]->کلید.کلید_handle_len);
+		freezero(rks[i]->کلید.عوامی_کلید, rks[i]->کلید.عوامی_کلید_len);
+		freezero(rks[i]->کلید.signature, rks[i]->کلید.signature_len);
+		freezero(rks[i]->کلید.attestation_cert,
+		    rks[i]->کلید.attestation_cert_len);
+		freezero(rks[i], حجم(**rks));
 	}
-	free(rks);
+	آزاد(rks);
 }
 
-static void
-sshsk_free_resident_key(struct sshsk_resident_key *srk)
+ساکن خالی
+sshsk_free_resident_کلید(ساخت sshsk_resident_کلید *srk)
 {
-	if (srk == NULL)
-		return;
-	sshkey_free(srk->key);
+	اگر (srk == تہی)
+		واپس;
+	sshkey_free(srk->کلید);
 	freezero(srk->user_id, srk->user_id_len);
-	free(srk);
+	آزاد(srk);
 }
 
 
-void
-sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks)
+خالی
+sshsk_free_resident_کلیدیں(ساخت sshsk_resident_کلید **srks, سائز_t nsrks)
 {
-	size_t i;
+	سائز_t i;
 
-	if (srks == NULL || nsrks == 0)
-		return;
+	اگر (srks == تہی || nsrks == 0)
+		واپس;
 
-	for (i = 0; i < nsrks; i++)
-		sshsk_free_resident_key(srks[i]);
-	free(srks);
+	برائے (i = 0; i < nsrks; i++)
+		sshsk_free_resident_کلید(srks[i]);
+	آزاد(srks);
 }
 
-int
-sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
-    size_t *nsrksp)
+صحیح
+sshsk_بھرو_resident(ثابت حرف *provider_راستہ, ثابت حرف *device,
+    ثابت حرف *pin, u_int flags, ساخت sshsk_resident_کلید ***srksp,
+    سائز_t *nsrksp)
 {
-	struct sshsk_provider *skp = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sk_resident_key **rks = NULL;
-	size_t i, nrks = 0, nsrks = 0;
-	struct sshkey *key = NULL;
-	struct sshsk_resident_key *srk = NULL, **srks = NULL, **tmp;
+	ساخت sshsk_provider *skp = تہی;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
+	ساخت sk_resident_کلید **rks = تہی;
+	سائز_t i, nrks = 0, nsrks = 0;
+	ساخت sshkey *کلید = تہی;
+	ساخت sshsk_resident_کلید *srk = تہی, **srks = تہی, **tmp;
 	uint8_t sk_flags;
-	struct sk_option **opts = NULL;
+	ساخت sk_option **opts = تہی;
 
-	debug_f("provider \"%s\"%s", provider_path,
-	    (pin != NULL && *pin != '\0') ? ", have-pin": "");
+	debug_f("provider \"%s\"%s", provider_راستہ,
+	    (pin != تہی && *pin != '\0') ? ", have-pin": "");
 
-	if (srksp == NULL || nsrksp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	*srksp = NULL;
+	اگر (srksp == تہی || nsrksp == تہی)
+		واپس SSH_ERR_INVALID_دلیل;
+	*srksp = تہی;
 	*nsrksp = 0;
 
-	if ((r = make_options(device, NULL, &opts)) != 0)
-		goto out;
-	if ((skp = sshsk_open(provider_path)) == NULL) {
+	اگر ((r = make_options(device, تہی, &opts)) != 0)
+		جاؤ برآمد;
+	اگر ((skp = sshsk_open(provider_راستہ)) == تہی) {
 		r = SSH_ERR_INVALID_FORMAT; /* XXX sshsk_open return code? */
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = skp->sk_load_resident_keys(pin, opts, &rks, &nrks)) != 0) {
-		error("Provider \"%s\" returned failure %d", provider_path, r);
-		r = skerr_to_ssherr(r);
-		goto out;
+	اگر ((r = skp->sk_بھرو_resident_کلیدیں(pin, opts, &rks, &nrks)) != 0) {
+		error("Provider \"%s\" returned failure %d", provider_راستہ, r);
+		r = skerr_مقصد_ssherr(r);
+		جاؤ برآمد;
 	}
-	for (i = 0; i < nrks; i++) {
+	برائے (i = 0; i < nrks; i++) {
 		debug3_f("rk %zu: slot %zu, alg %d, app \"%s\", uidlen %zu",
-		    i, rks[i]->slot, rks[i]->alg, rks[i]->application,
+		    i, rks[i]->خانہ, rks[i]->alg, rks[i]->application,
 		    rks[i]->user_id_len);
 		/* XXX need better filter here */
-		if (strncmp(rks[i]->application, "ssh:", 4) != 0)
-			continue;
-		switch (rks[i]->alg) {
-		case SSH_SK_ECDSA:
-		case SSH_SK_ED25519:
-			break;
-		default:
-			continue;
+		اگر (لڑی_موازنہ(rks[i]->application, "ssh:", 4) != 0)
+			جاری;
+		انتخاب (rks[i]->alg) {
+		حالت SSH_SK_ECDSA:
+		حالت SSH_SK_ED25519:
+			توڑو;
+		طےشدہ:
+			جاری;
 		}
-		sk_flags = SSH_SK_USER_PRESENCE_REQD|SSH_SK_RESIDENT_KEY;
-		if ((rks[i]->flags & SSH_SK_USER_VERIFICATION_REQD))
+		sk_flags = SSH_SK_USER_PRESENCE_REQD|SSH_SK_RESIDENT_کلید;
+		اگر ((rks[i]->flags & SSH_SK_USER_VERIFICATION_REQD))
 			sk_flags |= SSH_SK_USER_VERIFICATION_REQD;
-		if ((r = sshsk_key_from_response(rks[i]->alg,
-		    rks[i]->application, sk_flags, &rks[i]->key, &key)) != 0)
-			goto out;
-		if ((srk = calloc(1, sizeof(*srk))) == NULL) {
+		اگر ((r = sshsk_کلید_from_response(rks[i]->alg,
+		    rks[i]->application, sk_flags, &rks[i]->کلید, &کلید)) != 0)
+			جاؤ برآمد;
+		اگر ((srk = صفر_حافظہ_دو(1, حجم(*srk))) == تہی) {
 			error_f("calloc failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			جاؤ برآمد;
 		}
-		srk->key = key;
-		key = NULL; /* transferred */
-		if ((srk->user_id = calloc(1, rks[i]->user_id_len)) == NULL) {
+		srk->کلید = کلید;
+		کلید = تہی; /* transferred */
+		اگر ((srk->user_id = صفر_حافظہ_دو(1, rks[i]->user_id_len)) == تہی) {
 			error_f("calloc failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			جاؤ برآمد;
 		}
-		memcpy(srk->user_id, rks[i]->user_id, rks[i]->user_id_len);
+		حافظہ_نقل(srk->user_id, rks[i]->user_id, rks[i]->user_id_len);
 		srk->user_id_len = rks[i]->user_id_len;
-		if ((tmp = recallocarray(srks, nsrks, nsrks + 1,
-		    sizeof(*tmp))) == NULL) {
+		اگر ((tmp = recallocarray(srks, nsrks, nsrks + 1,
+		    حجم(*tmp))) == تہی) {
 			error_f("recallocarray failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			جاؤ برآمد;
 		}
 		srks = tmp;
 		srks[nsrks++] = srk;
-		srk = NULL;
+		srk = تہی;
 		/* XXX synthesise comment */
 	}
 	/* success */
 	*srksp = srks;
 	*nsrksp = nsrks;
-	srks = NULL;
+	srks = تہی;
 	nsrks = 0;
 	r = 0;
- out:
+ برآمد:
 	sshsk_free_options(opts);
 	sshsk_free(skp);
-	sshsk_free_sk_resident_keys(rks, nrks);
-	sshkey_free(key);
-	sshsk_free_resident_key(srk);
-	sshsk_free_resident_keys(srks, nsrks);
-	return r;
+	sshsk_free_sk_resident_کلیدیں(rks, nrks);
+	sshkey_free(کلید);
+	sshsk_free_resident_کلید(srk);
+	sshsk_free_resident_کلیدیں(srks, nsrks);
+	واپس r;
 }
 
-#endif /* ENABLE_SK */
+#اگر_ختم /* ENABLE_SK */

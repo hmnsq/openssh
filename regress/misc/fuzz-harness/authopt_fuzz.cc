@@ -1,33 +1,33 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#شامل <stddef.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <string.h>
+#شامل <stdlib.h>
 
-extern "C" {
+خارجی "C" {
 
-#include "auth-options.h"
+#شامل "auth-options.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+صحیح LLVMFuzzer_Test_One_داخلہ(ثابت uint8_t* ڈیٹا, سائز_t سائز)
 {
-	char *cp = (char *)malloc(size + 1);
-	struct sshauthopt *opts = NULL, *merge = NULL, *add = sshauthopt_new();
+	حرف *cp = (حرف *)حافظہ_دو(سائز + 1);
+	ساخت sshauthopt *opts = تہی, *ملاؤ = تہی, *جوڑو = sshauthopt_new();
 
-	if (cp == NULL || add == NULL)
-		goto out;
-	memcpy(cp, data, size);
-	cp[size] = '\0';
-	if ((opts = sshauthopt_parse(cp, NULL)) == NULL)
-		goto out;
-	if ((merge = sshauthopt_merge(opts, add, NULL)) == NULL)
-		goto out;
+	اگر (cp == تہی || جوڑو == تہی)
+		جاؤ برآمد;
+	حافظہ_نقل(cp, ڈیٹا, سائز);
+	cp[سائز] = '\0';
+	اگر ((opts = sshauthopt_parse(cp, تہی)) == تہی)
+		جاؤ برآمد;
+	اگر ((ملاؤ = sshauthopt_ملاؤ(opts, جوڑو, تہی)) == تہی)
+		جاؤ برآمد;
 
- out:
-	free(cp);
-	sshauthopt_free(add);
+ برآمد:
+	آزاد(cp);
+	sshauthopt_free(جوڑو);
 	sshauthopt_free(opts);
-	sshauthopt_free(merge);
-	return 0;
+	sshauthopt_free(ملاؤ);
+	واپس 0;
 }
 
 } // extern "C"

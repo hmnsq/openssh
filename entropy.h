@@ -22,12 +22,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _ENTROPY_H
-#define _ENTROPY_H
+#اگر_غیر_تعریف_شدہ _ENTROPY_H
+#تعریف_کرو _ENTROPY_H
 
-struct sshbuf;
+ساخت sshbuf;
 
-void seed_rng(void);
-void reseed_prngs(void);
+خالی بیج_rng(خالی);
+خالی reseed_prngs(خالی);
 
-#endif /* _ENTROPY_H */
+#اگر_ختم /* _ENTROPY_H */

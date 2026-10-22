@@ -22,26 +22,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
-#ifdef USE_PAM
+#شامل "includes.h"
+#اگر_تعریف_شدہ USE_PAM
 
-struct ssh;
+ساخت ssh;
 
-void start_pam(struct ssh *);
-void finish_pam(void);
-u_int do_pam_account(void);
-void do_pam_session(struct ssh *);
-void do_pam_setcred(void);
-int do_pam_putenv(char *, char *);
-char ** fetch_pam_environment(void);
-char ** fetch_pam_child_environment(void);
-void free_pam_environment(char **);
-void sshpam_thread_cleanup(void);
-void sshpam_cleanup(void);
-int sshpam_auth_passwd(Authctxt *, const char *);
-int sshpam_get_maxtries_reached(void);
-void sshpam_set_maxtries_reached(int);
-int is_pam_session_open(void);
-int sshpam_priv_kbdint_authdone(void *ctxtp);
+خالی آغاز_pam(ساخت ssh *);
+خالی اختتام_pam(خالی);
+u_int do_pam_account(خالی);
+خالی do_pam_session(ساخت ssh *);
+خالی do_pam_setcred(خالی);
+صحیح do_pam_putenv(حرف *, حرف *);
+حرف ** fetch_pam_environment(خالی);
+حرف ** fetch_pam_بچہ_environment(خالی);
+خالی free_pam_environment(حرف **);
+خالی sshpam_thread_cleanup(خالی);
+خالی sshpam_cleanup(خالی);
+صحیح sshpam_auth_passwd(Authctxt *, ثابت حرف *);
+صحیح sshpam_get_maxtries_reached(خالی);
+خالی sshpam_سیٹ_maxtries_reached(صحیح);
+صحیح is_pam_session_open(خالی);
+صحیح sshpam_priv_kbdint_authdone(خالی *ctxtp);
 
-#endif /* USE_PAM */
+#اگر_ختم /* USE_PAM */

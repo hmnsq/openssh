@@ -23,123 +23,123 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <grp.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+#شامل <grp.h>
+#شامل <unistd.h>
+#شامل <stdarg.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <limits.h>
 
-#include "xmalloc.h"
-#include "groupaccess.h"
-#include "match.h"
-#include "log.h"
+#شامل "xmalloc.h"
+#شامل "groupaccess.h"
+#شامل "match.h"
+#شامل "log.h"
 
-static int ngroups;
-static char **groups_byname;
+ساکن صحیح ngroups;
+ساکن حرف **groups_byname;
 
 /*
  * Initialize group access list for user with primary (base) and
  * supplementary groups.  Return the number of groups in the list.
  */
-int
-ga_init(const char *user, gid_t base)
+صحیح
+ga_init(ثابت حرف *user, gid_t بنیاد)
 {
 	gid_t *groups_bygid;
-	int ongroups, i, j, retry = 0;
-	struct group *gr;
+	صحیح ongroups, i, j, retry = 0;
+	ساخت گروہ *gr;
 
-	if (ngroups > 0)
+	اگر (ngroups > 0)
 		ga_free();
 
 	ongroups = ngroups = NGROUPS_MAX;
-#if defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
+#اگر defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
 	ongroups = ngroups = MAX(NGROUPS_MAX, sysconf(_SC_NGROUPS_MAX));
-#endif
+#اگر_ختم
 
-	groups_bygid = xcalloc(ngroups, sizeof(*groups_bygid));
-	while (getgrouplist(user, base, groups_bygid, &ngroups) == -1) {
-		if (ngroups <= ongroups) {
+	groups_bygid = xcalloc(ngroups, حجم(*groups_bygid));
+	جب (getgrouplist(user, بنیاد, groups_bygid, &ngroups) == -1) {
+		اگر (ngroups <= ongroups) {
 			error("getgrouplist(\"%s\", %ld): failed",
-			    user, (long)base);
-			free(groups_bygid);
-			groups_bygid = NULL;
+			    user, (طویل)بنیاد);
+			آزاد(groups_bygid);
+			groups_bygid = تہی;
 			ngroups = 0;
-			return 0;
+			واپس 0;
 		}
-		if (retry++ > 0) {
+		اگر (retry++ > 0) {
 			fatal("getgrouplist(\"%s\", %ld): groups list too big "
-			    "(have %ld, need %ld)", user, (long)base,
-			    (long)ongroups, (long)ngroups);
+			    "(have %ld, need %ld)", user, (طویل)بنیاد,
+			    (طویل)ongroups, (طویل)ngroups);
 		}
 		groups_bygid = xreallocarray(groups_bygid, ngroups,
-		    sizeof(*groups_bygid));
+		    حجم(*groups_bygid));
 	}
-	groups_byname = xcalloc(ngroups, sizeof(*groups_byname));
+	groups_byname = xcalloc(ngroups, حجم(*groups_byname));
 
-	for (i = 0, j = 0; i < ngroups; i++)
-		if ((gr = getgrgid(groups_bygid[i])) != NULL)
+	برائے (i = 0, j = 0; i < ngroups; i++)
+		اگر ((gr = getgrgid(groups_bygid[i])) != تہی)
 			groups_byname[j++] = xstrdup(gr->gr_name);
-	free(groups_bygid);
-	return (ngroups = j);
+	آزاد(groups_bygid);
+	واپس (ngroups = j);
 }
 
 /*
  * Return 1 if one of user's groups is contained in groups.
  * Return 0 otherwise.  Use match_pattern() for string comparison.
  */
-int
-ga_match(char * const *groups, int n)
+صحیح
+ga_مطابقت(حرف * ثابت *groups, صحیح n)
 {
-	int i, j;
+	صحیح i, j;
 
-	for (i = 0; i < ngroups; i++)
-		for (j = 0; j < n; j++)
-			if (match_pattern(groups_byname[i], groups[j]))
-				return 1;
-	return 0;
+	برائے (i = 0; i < ngroups; i++)
+		برائے (j = 0; j < n; j++)
+			اگر (مطابقت_نمونہ(groups_byname[i], groups[j]))
+				واپس 1;
+	واپس 0;
 }
 
 /*
  * Return 1 if one of user's groups matches group_pattern list.
  * Return 0 on negated or no match.
  */
-int
-ga_match_pattern_list(const char *group_pattern)
+صحیح
+ga_مطابقت_نمونہ_list(ثابت حرف *گروہ_نمونہ)
 {
-	int i, found = 0;
+	صحیح i, ملا = 0;
 
-	for (i = 0; i < ngroups; i++) {
-		switch (match_usergroup_pattern_list(groups_byname[i],
-		    group_pattern)) {
-		case -1:
-			return 0;	/* Negated match wins */
-		case 0:
-			continue;
-		case 1:
-			found = 1;
+	برائے (i = 0; i < ngroups; i++) {
+		انتخاب (مطابقت_usergroup_نمونہ_list(groups_byname[i],
+		    گروہ_نمونہ)) {
+		حالت -1:
+			واپس 0;	/* Negated match wins */
+		حالت 0:
+			جاری;
+		حالت 1:
+			ملا = 1;
 		}
 	}
-	return found;
+	واپس ملا;
 }
 
 /*
  * Free memory allocated for group access list.
  */
-void
-ga_free(void)
+خالی
+ga_free(خالی)
 {
-	int i;
+	صحیح i;
 
-	if (ngroups > 0) {
-		for (i = 0; i < ngroups; i++)
-			free(groups_byname[i]);
+	اگر (ngroups > 0) {
+		برائے (i = 0; i < ngroups; i++)
+			آزاد(groups_byname[i]);
 		ngroups = 0;
-		free(groups_byname);
-		groups_byname = NULL;
+		آزاد(groups_byname);
+		groups_byname = تہی;
 	}
 }

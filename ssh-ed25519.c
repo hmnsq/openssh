@@ -15,282 +15,282 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <limits.h>
+#شامل <sys/types.h>
+#شامل <limits.h>
 
-#include "crypto_api.h"
+#شامل "crypto_api.h"
 
-#include <string.h>
-#include <stdarg.h>
+#شامل <string.h>
+#شامل <stdarg.h>
 
-#include "log.h"
-#include "sshbuf.h"
-#define SSHKEY_INTERNAL
-#include "sshkey.h"
-#include "ssherr.h"
+#شامل "log.h"
+#شامل "sshbuf.h"
+#تعریف_کرو SSHKEY_اندرونی
+#شامل "sshkey.h"
+#شامل "ssherr.h"
 
-static void
-ssh_ed25519_cleanup(struct sshkey *k)
+ساکن خالی
+ssh_ed25519_cleanup(ساخت sshkey *k)
 {
 	freezero(k->ed25519_pk, ED25519_PK_SZ);
 	freezero(k->ed25519_sk, ED25519_SK_SZ);
-	k->ed25519_pk = NULL;
-	k->ed25519_sk = NULL;
+	k->ed25519_pk = تہی;
+	k->ed25519_sk = تہی;
 }
 
-static int
-ssh_ed25519_equal(const struct sshkey *a, const struct sshkey *b)
+ساکن صحیح
+ssh_ed25519_equal(ثابت ساخت sshkey *a, ثابت ساخت sshkey *b)
 {
-	if (a->ed25519_pk == NULL || b->ed25519_pk == NULL)
-		return 0;
-	if (memcmp(a->ed25519_pk, b->ed25519_pk, ED25519_PK_SZ) != 0)
-		return 0;
-	return 1;
+	اگر (a->ed25519_pk == تہی || b->ed25519_pk == تہی)
+		واپس 0;
+	اگر (memcmp(a->ed25519_pk, b->ed25519_pk, ED25519_PK_SZ) != 0)
+		واپس 0;
+	واپس 1;
 }
 
-static int
-ssh_ed25519_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+ساکن صحیح
+ssh_ed25519_serialize_عوامی(ثابت ساخت sshkey *کلید, ساخت sshbuf *b,
+    شمار sshkey_serialize_rep opts)
 {
-	int r;
+	صحیح r;
 
-	if (key->ed25519_pk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0)
-		return r;
+	اگر (کلید->ed25519_pk == تہی)
+		واپس SSH_ERR_INVALID_دلیل;
+	اگر ((r = sshbuf_put_string(b, کلید->ed25519_pk, ED25519_PK_SZ)) != 0)
+		واپس r;
 
-	return 0;
+	واپس 0;
 }
 
-static int
-ssh_ed25519_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+ساکن صحیح
+ssh_ed25519_serialize_نجی(ثابت ساخت sshkey *کلید, ساخت sshbuf *b,
+    شمار sshkey_serialize_rep opts)
 {
-	int r;
+	صحیح r;
 
-	if ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0 ||
-	    (r = sshbuf_put_string(b, key->ed25519_sk, ED25519_SK_SZ)) != 0)
-		return r;
+	اگر ((r = sshbuf_put_string(b, کلید->ed25519_pk, ED25519_PK_SZ)) != 0 ||
+	    (r = sshbuf_put_string(b, کلید->ed25519_sk, ED25519_SK_SZ)) != 0)
+		واپس r;
 
-	return 0;
+	واپس 0;
 }
 
-static int
-ssh_ed25519_generate(struct sshkey *k, int bits)
+ساکن صحیح
+ssh_ed25519_generate(ساخت sshkey *k, صحیح بٹ)
 {
-	if ((k->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL ||
-	    (k->ed25519_sk = malloc(ED25519_SK_SZ)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (crypto_sign_ed25519_keypair(k->ed25519_pk, k->ed25519_sk) != 0)
-		return SSH_ERR_CRYPTO_ERROR;
-	return 0;
+	اگر ((k->ed25519_pk = حافظہ_دو(ED25519_PK_SZ)) == تہی ||
+	    (k->ed25519_sk = حافظہ_دو(ED25519_SK_SZ)) == تہی)
+		واپس SSH_ERR_ALLOC_FAIL;
+	اگر (crypto_sign_ed25519_keypair(k->ed25519_pk, k->ed25519_sk) != 0)
+		واپس SSH_ERR_CRYPTO_ERROR;
+	واپس 0;
 }
 
-static int
-ssh_ed25519_copy_public(const struct sshkey *from, struct sshkey *to)
+ساکن صحیح
+ssh_ed25519_copy_عوامی(ثابت ساخت sshkey *from, ساخت sshkey *مقصد)
 {
-	if (from->ed25519_pk == NULL)
-		return 0; /* XXX SSH_ERR_INTERNAL_ERROR ? */
-	if ((to->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	memcpy(to->ed25519_pk, from->ed25519_pk, ED25519_PK_SZ);
-	return 0;
+	اگر (from->ed25519_pk == تہی)
+		واپس 0; /* XXX SSH_ERR_INTERNAL_ERROR ? */
+	اگر ((مقصد->ed25519_pk = حافظہ_دو(ED25519_PK_SZ)) == تہی)
+		واپس SSH_ERR_ALLOC_FAIL;
+	حافظہ_نقل(مقصد->ed25519_pk, from->ed25519_pk, ED25519_PK_SZ);
+	واپس 0;
 }
 
-static int
-ssh_ed25519_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+ساکن صحیح
+ssh_ed25519_deserialize_عوامی(ثابت حرف *ktype, ساخت sshbuf *b,
+    ساخت sshkey *کلید)
 {
-	u_char *pk = NULL;
-	size_t len = 0;
-	int r;
+	u_char *pk = تہی;
+	سائز_t len = 0;
+	صحیح r;
 
-	if ((r = sshbuf_get_string(b, &pk, &len)) != 0)
-		return r;
-	if (len != ED25519_PK_SZ) {
+	اگر ((r = sshbuf_get_string(b, &pk, &len)) != 0)
+		واپس r;
+	اگر (len != ED25519_PK_SZ) {
 		freezero(pk, len);
-		return SSH_ERR_INVALID_FORMAT;
+		واپس SSH_ERR_INVALID_FORMAT;
 	}
-	key->ed25519_pk = pk;
-	return 0;
+	کلید->ed25519_pk = pk;
+	واپس 0;
 }
 
-static int
-ssh_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+ساکن صحیح
+ssh_ed25519_deserialize_نجی(ثابت حرف *ktype, ساخت sshbuf *b,
+    ساخت sshkey *کلید)
 {
-	int r;
-	size_t sklen = 0;
-	u_char *ed25519_sk = NULL;
+	صحیح r;
+	سائز_t sklen = 0;
+	u_char *ed25519_sk = تہی;
 
-	if ((r = ssh_ed25519_deserialize_public(NULL, b, key)) != 0)
-		goto out;
-	if ((r = sshbuf_get_string(b, &ed25519_sk, &sklen)) != 0)
-		goto out;
-	if (sklen != ED25519_SK_SZ) {
+	اگر ((r = ssh_ed25519_deserialize_عوامی(تہی, b, کلید)) != 0)
+		جاؤ برآمد;
+	اگر ((r = sshbuf_get_string(b, &ed25519_sk, &sklen)) != 0)
+		جاؤ برآمد;
+	اگر (sklen != ED25519_SK_SZ) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
-	key->ed25519_sk = ed25519_sk;
-	ed25519_sk = NULL; /* transferred */
+	کلید->ed25519_sk = ed25519_sk;
+	ed25519_sk = تہی; /* transferred */
 	/* success */
 	r = 0;
- out:
+ برآمد:
 	freezero(ed25519_sk, sklen);
-	return r;
+	واپس r;
 }
 
-static int
-ssh_ed25519_sign(struct sshkey *key,
-    u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider, const char *sk_pin, u_int compat)
+ساکن صحیح
+ssh_ed25519_sign(ساخت sshkey *کلید,
+    u_char **sigp, سائز_t *lenp,
+    ثابت u_char *ڈیٹا, سائز_t datalen,
+    ثابت حرف *alg, ثابت حرف *sk_provider, ثابت حرف *sk_pin, u_int compat)
 {
-	u_char sig[crypto_sign_ed25519_BYTES];
-	unsigned long long siglen = 0;
-	int r, ret;
+	u_char sig[crypto_sign_ed25519_بائٹیں];
+	غیرعلامتی طویل طویل siglen = 0;
+	صحیح r, ret;
 
-	if (lenp != NULL)
+	اگر (lenp != تہی)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	اگر (sigp != تہی)
+		*sigp = تہی;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ED25519 ||
-	    key->ed25519_sk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	اگر (کلید == تہی ||
+	    sshkey_type_plain(کلید->type) != کلید_ED25519 ||
+	    کلید->ed25519_sk == تہی)
+		واپس SSH_ERR_INVALID_دلیل;
 
-	if ((ret = crypto_sign_ed25519_detached(sig, &siglen, data, datalen,
-	    key->ed25519_sk)) != 0 || siglen != sizeof(sig)) {
-		r = SSH_ERR_INVALID_ARGUMENT; /* XXX better error? */
-		goto out;
+	اگر ((ret = crypto_sign_ed25519_detached(sig, &siglen, ڈیٹا, datalen,
+	    کلید->ed25519_sk)) != 0 || siglen != حجم(sig)) {
+		r = SSH_ERR_INVALID_دلیل; /* XXX better error? */
+		جاؤ برآمد;
 	}
-	if ((r = ssh_ed25519_encode_store_sig(sig, siglen,
+	اگر ((r = ssh_ed25519_encode_store_sig(sig, siglen,
 	    sigp, lenp)) != 0)
-		goto out;
+		جاؤ برآمد;
 
 	/* success */
 	r = 0;
- out:
-	explicit_bzero(sig, sizeof(sig));
-	return r;
+ برآمد:
+	explicit_bzero(sig, حجم(sig));
+	واپس r;
 }
 
-int
-ssh_ed25519_encode_store_sig(const u_char *sig, size_t slen,
-    u_char **sigp, size_t *lenp)
+صحیح
+ssh_ed25519_encode_store_sig(ثابت u_char *sig, سائز_t slen,
+    u_char **sigp, سائز_t *lenp)
 {
-	struct sshbuf *b = NULL;
-	int r = -1;
-	size_t len;
+	ساخت sshbuf *b = تہی;
+	صحیح r = -1;
+	سائز_t len;
 
-	if (lenp != NULL)
+	اگر (lenp != تہی)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	اگر (sigp != تہی)
+		*sigp = تہی;
 
-	if (slen != crypto_sign_ed25519_BYTES)
-		return SSH_ERR_INVALID_ARGUMENT;
+	اگر (slen != crypto_sign_ed25519_بائٹیں)
+		واپس SSH_ERR_INVALID_دلیل;
 
 	/* encode signature */
-	if ((b = sshbuf_new()) == NULL) {
+	اگر ((b = sshbuf_new()) == تہی) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((r = sshbuf_put_cstring(b, "ssh-ed25519")) != 0 ||
+	اگر ((r = sshbuf_put_cstring(b, "ssh-ed25519")) != 0 ||
 	    (r = sshbuf_put_string(b, sig, slen)) != 0)
-		goto out;
+		جاؤ برآمد;
 	len = sshbuf_len(b);
-	if (sigp != NULL) {
-		if ((*sigp = malloc(len)) == NULL) {
+	اگر (sigp != تہی) {
+		اگر ((*sigp = حافظہ_دو(len)) == تہی) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			جاؤ برآمد;
 		}
-		memcpy(*sigp, sshbuf_ptr(b), len);
+		حافظہ_نقل(*sigp, sshbuf_ptr(b), len);
 	}
-	if (lenp != NULL)
+	اگر (lenp != تہی)
 		*lenp = len;
 	/* success */
 	r = 0;
- out:
+ برآمد:
 	sshbuf_free(b);
-	return r;
+	واپس r;
 }
 
-static int
-ssh_ed25519_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+ساکن صحیح
+ssh_ed25519_verify(ثابت ساخت sshkey *کلید,
+    ثابت u_char *sig, سائز_t siglen,
+    ثابت u_char *ڈیٹا, سائز_t dlen, ثابت حرف *alg, u_int compat,
+    ساخت sshkey_sig_details **detailsp)
 {
-	struct sshbuf *b = NULL;
-	char *ktype = NULL;
-	const u_char *sigblob;
-	size_t len;
-	int r, ret;
+	ساخت sshbuf *b = تہی;
+	حرف *ktype = تہی;
+	ثابت u_char *sigblob;
+	سائز_t len;
+	صحیح r, ret;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ED25519 ||
-	    key->ed25519_pk == NULL ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	اگر (کلید == تہی ||
+	    sshkey_type_plain(کلید->type) != کلید_ED25519 ||
+	    کلید->ed25519_pk == تہی ||
+	    sig == تہی || siglen == 0)
+		واپس SSH_ERR_INVALID_دلیل;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_get_cstring(b, &ktype, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(b, &sigblob, &len)) != 0)
-		goto out;
-	if (strcmp("ssh-ed25519", ktype) != 0) {
-		r = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+	اگر ((b = sshbuf_from(sig, siglen)) == تہی)
+		واپس SSH_ERR_ALLOC_FAIL;
+	اگر ((r = sshbuf_get_cstring(b, &ktype, تہی)) != 0 ||
+	    (r = sshbuf_get_string_براہ_راست(b, &sigblob, &len)) != 0)
+		جاؤ برآمد;
+	اگر (strcmp("ssh-ed25519", ktype) != 0) {
+		r = SSH_ERR_کلید_TYPE_MISMATCH;
+		جاؤ برآمد;
 	}
-	if (sshbuf_len(b) != 0) {
-		r = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+	اگر (sshbuf_len(b) != 0) {
+		r = SSH_ERR_UNEXPECTED_TRAILING_ڈیٹا;
+		جاؤ برآمد;
 	}
-	if (len != crypto_sign_ed25519_BYTES) {
+	اگر (len != crypto_sign_ed25519_بائٹیں) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
-	if ((ret = crypto_sign_ed25519_verify_detached(sigblob, data, dlen,
-	    key->ed25519_pk)) != 0) {
+	اگر ((ret = crypto_sign_ed25519_verify_detached(sigblob, ڈیٹا, dlen,
+	    کلید->ed25519_pk)) != 0) {
 		debug2_f("crypto_sign_ed25519_verify_detached failed: %d", ret);
 	}
-	if (ret != 0) {
+	اگر (ret != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		جاؤ برآمد;
 	}
 	/* success */
 	r = 0;
- out:
+ برآمد:
 	sshbuf_free(b);
-	free(ktype);
-	return r;
+	آزاد(ktype);
+	واپس r;
 }
 
 /* NB. not static; used by ED25519-SK */
-const struct sshkey_impl_funcs sshkey_ed25519_funcs = {
-	/* .size = */		NULL,
-	/* .alloc = */		NULL,
+ثابت ساخت sshkey_impl_funcs sshkey_ed25519_funcs = {
+	/* .size = */		تہی,
+	/* .alloc = */		تہی,
 	/* .cleanup = */	ssh_ed25519_cleanup,
 	/* .equal = */		ssh_ed25519_equal,
-	/* .ssh_serialize_public = */ ssh_ed25519_serialize_public,
-	/* .ssh_deserialize_public = */ ssh_ed25519_deserialize_public,
-	/* .ssh_serialize_private = */ ssh_ed25519_serialize_private,
-	/* .ssh_deserialize_private = */ ssh_ed25519_deserialize_private,
+	/* .ssh_serialize_public = */ ssh_ed25519_serialize_عوامی,
+	/* .ssh_deserialize_public = */ ssh_ed25519_deserialize_عوامی,
+	/* .ssh_serialize_private = */ ssh_ed25519_serialize_نجی,
+	/* .ssh_deserialize_private = */ ssh_ed25519_deserialize_نجی,
 	/* .generate = */	ssh_ed25519_generate,
-	/* .copy_public = */	ssh_ed25519_copy_public,
+	/* .copy_public = */	ssh_ed25519_copy_عوامی,
 	/* .sign = */		ssh_ed25519_sign,
 	/* .verify = */		ssh_ed25519_verify,
 };
 
-const struct sshkey_impl sshkey_ed25519_impl = {
+ثابت ساخت sshkey_impl sshkey_ed25519_impl = {
 	/* .name = */		"ssh-ed25519",
 	/* .shortname = */	"ED25519",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ED25519,
+	/* .sigalg = */		تہی,
+	/* .type = */		کلید_ED25519,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -298,11 +298,11 @@ const struct sshkey_impl sshkey_ed25519_impl = {
 	/* .funcs = */		&sshkey_ed25519_funcs,
 };
 
-const struct sshkey_impl sshkey_ed25519_cert_impl = {
+ثابت ساخت sshkey_impl sshkey_ed25519_cert_impl = {
 	/* .name = */		"ssh-ed25519-cert-v01@openssh.com",
 	/* .shortname = */	"ED25519-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ED25519_CERT,
+	/* .sigalg = */		تہی,
+	/* .type = */		کلید_ED25519_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	0,

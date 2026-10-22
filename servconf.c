@@ -10,571 +10,571 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/queue.h>
-#include <sys/stat.h>
-#ifdef __OpenBSD__
-#include <sys/sysctl.h>
-#endif
+#شامل <sys/types.h>
+#شامل <sys/socket.h>
+#شامل <sys/queue.h>
+#شامل <sys/stat.h>
+#اگر_تعریف_شدہ __OpenBSD__
+#شامل <sys/sysctl.h>
+#اگر_ختم
 
-#include <netinet/in.h>
-#include <netinet/ip.h>
-#ifdef HAVE_NET_ROUTE_H
-#include <net/route.h>
-#endif
+#شامل <netinet/in.h>
+#شامل <netinet/ip.h>
+#اگر_تعریف_شدہ HAVE_NET_ROUTE_H
+#شامل <net/route.h>
+#اگر_ختم
 
-#include <ctype.h>
-#include <glob.h>
-#include <netdb.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <unistd.h>
-#include <limits.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <util.h>
+#شامل <ctype.h>
+#شامل <glob.h>
+#شامل <netdb.h>
+#شامل <pwd.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <signal.h>
+#شامل <unistd.h>
+#شامل <limits.h>
+#شامل <stdarg.h>
+#شامل <errno.h>
+#شامل <util.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
-#include "pathnames.h"
-#include "cipher.h"
-#include "sshkey.h"
-#include "kex.h"
-#include "mac.h"
-#include "match.h"
-#include "channels.h"
-#include "groupaccess.h"
-#include "canohost.h"
-#include "packet.h"
-#include "ssherr.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "myproposal.h"
-#include "digest.h"
-#include "version.h"
+#شامل "xmalloc.h"
+#شامل "ssh.h"
+#شامل "log.h"
+#شامل "sshbuf.h"
+#شامل "misc.h"
+#شامل "servconf.h"
+#شامل "pathnames.h"
+#شامل "cipher.h"
+#شامل "sshkey.h"
+#شامل "kex.h"
+#شامل "mac.h"
+#شامل "match.h"
+#شامل "channels.h"
+#شامل "groupaccess.h"
+#شامل "canohost.h"
+#شامل "packet.h"
+#شامل "ssherr.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
+#شامل "myproposal.h"
+#شامل "digest.h"
+#شامل "version.h"
 
-#define SSHD_CONFIG_BLOB_VERSION	1
+#تعریف_کرو SSHD_CONFIG_BLOB_نسخہ	1
 
-#if !defined(SSHD_PAM_SERVICE)
+#اگر !defined(SSHD_PAM_SERVICE)
 # define SSHD_PAM_SERVICE		"sshd"
-#endif
+#اگر_ختم
 
-static void add_listen_addr(ServerOptions *, const char *,
-    const char *, int);
-static void add_one_listen_addr(ServerOptions *, const char *,
-    const char *, int);
-static void parse_server_config_depth(ServerOptions *options,
-    const char *filename, struct sshbuf *conf, struct include_list *includes,
-    struct connection_info *connectinfo, int flags, int *activep, int depth);
+ساکن خالی جوڑو_listen_addr(ServerOptions *, ثابت حرف *,
+    ثابت حرف *, صحیح);
+ساکن خالی جوڑو_one_listen_addr(ServerOptions *, ثابت حرف *,
+    ثابت حرف *, صحیح);
+ساکن خالی parse_server_config_گہرائی(ServerOptions *options,
+    ثابت حرف *filename, ساخت sshbuf *conf, ساخت include_list *includes,
+    ساخت connection_info *connectinfo, صحیح flags, صحیح *activep, صحیح گہرائی);
 
-extern struct sshbuf *cfg;
+خارجی ساخت sshbuf *cfg;
 
 /* Initializes the server options to their default values. */
 
-void
+خالی
 initialize_server_options(ServerOptions *options)
 {
-	memset(options, 0, sizeof(*options));
-#define SSHCONF_INT(var, conf, flags, ms, def, cp)	options->var = -1;
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp)	options->var = -1;
-#define SSHCONF_STRING(var, conf, flags, cp)		options->var = NULL;
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
+	memset(options, 0, حجم(*options));
+#تعریف_کرو SSHCONF_INT(var, conf, flags, ms, def, cp)	options->var = -1;
+#تعریف_کرو SSHCONF_INTFLAG(var, conf, flags, def, cp)	options->var = -1;
+#تعریف_کرو SSHCONF_STRING(var, conf, flags, cp)		options->var = تہی;
+#تعریف_کرو SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
 	options->nvar = 0; \
-	options->var = NULL;
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
+	options->var = تہی;
+#تعریف_کرو SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
 	init_##funcsuffix(options)
-#define SSHCONF_NONCONF(funcsuffix) \
+#تعریف_کرو SSHCONF_NONCONF(funcsuffix) \
 	init_##funcsuffix(options)
-#define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	options->var = NULL;
-#define SSHCONF_ALIAS(old, conf, flags)			/* empty */
+#تعریف_کرو SSHCONF_DEPRECATE(conf, flags, opcode)		/*خالی_خانے*/
+#تعریف_کرو SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
+#تعریف_کرو SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	options->var = تہی;
+#تعریف_کرو SSHCONF_ALIAS(old, conf, flags)			/*خالی_خانے*/
 
 	/* Using macros for these is a bit overkill but forces consistency */
-#define init_hostkeyfile(options) \
-	options->host_key_files = 0; \
-	options->num_host_key_files = 0; \
-	options->host_key_file_userprovided = NULL;
-#define init_ipqos(options) \
+#تعریف_کرو init_hostkeyfile(options) \
+	options->host_کلید_files = 0; \
+	options->عدد_host_کلید_files = 0; \
+	options->host_کلید_file_userprovided = تہی;
+#تعریف_کرو init_ipqos(options) \
 	options->ip_qos_interactive = -1; \
 	options->ip_qos_bulk = -1;
-#define init_listenaddress(options) \
-	options->queued_listen_addrs = NULL; \
-	options->num_queued_listens = 0; \
-	options->listen_addrs = NULL; \
-	options->num_listen_addrs = 0;
-#define init_logfacility(options) \
-	options->log_facility = SYSLOG_FACILITY_NOT_SET;
-#define init_loglevel(options) \
-	options->log_level = SYSLOG_LEVEL_NOT_SET;
-#define init_port(options) \
-	options->num_ports = 0; \
+#تعریف_کرو init_listenaddress(options) \
+	options->queued_listen_addrs = تہی; \
+	options->عدد_queued_listens = 0; \
+	options->listen_addrs = تہی; \
+	options->عدد_listen_addrs = 0;
+#تعریف_کرو init_logfacility(options) \
+	options->log_facility = SYSLOG_FACILITY_NOT_سیٹ;
+#تعریف_کرو init_loglevel(options) \
+	options->log_level = SYSLOG_LEVEL_NOT_سیٹ;
+#تعریف_کرو init_پورٹ(options) \
+	options->عدد_ports = 0; \
 	options->ports_from_cmdline = 0;
-#define init_gatewayports(options) \
+#تعریف_کرو init_gatewayports(options) \
 	options->fwd_opts.gateway_ports = -1;
-#define init_streamlocalbindmask(options) \
-	options->fwd_opts.streamlocal_bind_mask = (mode_t)-1;
-#define init_streamlocalbindunlink(options) \
+#تعریف_کرو init_streamlocalbindmask(options) \
+	options->fwd_opts.streamlocal_bind_نقاب = (منوال_t)-1;
+#تعریف_کرو init_streamlocalbindunlink(options) \
 	options->fwd_opts.streamlocal_bind_unlink = -1;
-#define init_maxstartups(options) \
+#تعریف_کرو init_maxstartups(options) \
 	options->max_startups_begin = -1; \
-	options->max_startups_rate = -1; \
+	options->max_startups_شرح = -1; \
 	options->max_startups = -1;
-#define init_permituserenv(options) \
+#تعریف_کرو init_permituserenv(options) \
 	options->permit_user_env = -1; \
-	options->permit_user_env_allowlist = NULL;
-#define init_persourcenetblocksize(options) \
-	options->per_source_masklen_ipv4 = -1; \
-	options->per_source_masklen_ipv6 = -1;
-#define init_persourcepenalties(options) \
-	options->per_source_penalty_exempt = NULL; \
-	options->per_source_penalty.enabled = -1; \
-	options->per_source_penalty.max_sources4 = -1; \
-	options->per_source_penalty.max_sources6 = -1; \
-	options->per_source_penalty.overflow_mode = -1; \
-	options->per_source_penalty.overflow_mode6 = -1; \
-	options->per_source_penalty.penalty_crash = -1.0; \
-	options->per_source_penalty.penalty_authfail = -1.0; \
-	options->per_source_penalty.penalty_invaliduser = -1.0; \
-	options->per_source_penalty.penalty_noauth = -1.0; \
-	options->per_source_penalty.penalty_grace = -1.0; \
-	options->per_source_penalty.penalty_refuseconnection = -1.0; \
-	options->per_source_penalty.penalty_max = -1.0; \
-	options->per_source_penalty.penalty_min = -1.0;
-#define init_rekeylimit(options) \
-	options->rekey_limit = -1; \
+	options->permit_user_env_allowlist = تہی;
+#تعریف_کرو init_persourcenetblocksize(options) \
+	options->فی_ماخذ_masklen_ipv4 = -1; \
+	options->فی_ماخذ_masklen_ipv6 = -1;
+#تعریف_کرو init_persourcepenalties(options) \
+	options->فی_ماخذ_penalty_exempt = تہی; \
+	options->فی_ماخذ_penalty.enabled = -1; \
+	options->فی_ماخذ_penalty.max_sources4 = -1; \
+	options->فی_ماخذ_penalty.max_sources6 = -1; \
+	options->فی_ماخذ_penalty.حد_سے_تجاوز_منوال = -1; \
+	options->فی_ماخذ_penalty.حد_سے_تجاوز_mode6 = -1; \
+	options->فی_ماخذ_penalty.penalty_crash = -1.0; \
+	options->فی_ماخذ_penalty.penalty_authfail = -1.0; \
+	options->فی_ماخذ_penalty.penalty_invaliduser = -1.0; \
+	options->فی_ماخذ_penalty.penalty_noauth = -1.0; \
+	options->فی_ماخذ_penalty.penalty_grace = -1.0; \
+	options->فی_ماخذ_penalty.penalty_refuseconnection = -1.0; \
+	options->فی_ماخذ_penalty.penalty_max = -1.0; \
+	options->فی_ماخذ_penalty.penalty_min = -1.0;
+#تعریف_کرو init_rekeylimit(options) \
+	options->rekey_حد_بندی = -1; \
 	options->rekey_interval = -1;
-#define init_subsystem(options) \
-	options->num_subsystems = 0; \
-	options->subsystem_name = NULL; \
-	options->subsystem_command = NULL; \
-	options->subsystem_args = NULL;
-#define init_pubkey_auth_options(options) \
+#تعریف_کرو init_subsystem(options) \
+	options->عدد_subsystems = 0; \
+	options->subsystem_name = تہی; \
+	options->subsystem_command = تہی; \
+	options->subsystem_دلائل = تہی;
+#تعریف_کرو init_pubkey_auth_options(options) \
 	options->pubkey_auth_options = -1; \
 	options->max_pubkey_ok = -1;
-#define init_timingsecret(options) \
+#تعریف_کرو init_timingsecret(options) \
 	options->timing_secret = 0;
 
 	SSHD_CONFIG_ENTRIES
 
-#undef init_hostkeyfile
-#undef init_ipqos
-#undef init_listenaddress
-#undef init_logfacility
-#undef init_loglevel
-#undef init_port
-#undef init_gatewayports
-#undef init_streamlocalbindmask
-#undef init_streamlocalbindunlink
-#undef init_maxstartups
-#undef init_permituserenv
-#undef init_persourcenetblocksize
-#undef init_persourcepenalties
-#undef init_rekeylimit
-#undef init_subsystem
-#undef init_timingsecret
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#تعریف_منسوخ init_hostkeyfile
+#تعریف_منسوخ init_ipqos
+#تعریف_منسوخ init_listenaddress
+#تعریف_منسوخ init_logfacility
+#تعریف_منسوخ init_loglevel
+#تعریف_منسوخ init_پورٹ
+#تعریف_منسوخ init_gatewayports
+#تعریف_منسوخ init_streamlocalbindmask
+#تعریف_منسوخ init_streamlocalbindunlink
+#تعریف_منسوخ init_maxstartups
+#تعریف_منسوخ init_permituserenv
+#تعریف_منسوخ init_persourcenetblocksize
+#تعریف_منسوخ init_persourcepenalties
+#تعریف_منسوخ init_rekeylimit
+#تعریف_منسوخ init_subsystem
+#تعریف_منسوخ init_timingsecret
+#تعریف_منسوخ SSHCONF_INT
+#تعریف_منسوخ SSHCONF_INTFLAG
+#تعریف_منسوخ SSHCONF_STRING
+#تعریف_منسوخ SSHCONF_STRARRAY
+#تعریف_منسوخ SSHCONF_CUSTOM
+#تعریف_منسوخ SSHCONF_NONCONF
+#تعریف_منسوخ SSHCONF_DEPRECATE
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_INT
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_STRING
+#تعریف_منسوخ SSHCONF_ALIAS
 }
 
 /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-static int
-option_clear_or_none(const char *o)
+ساکن صحیح
+option_clear_or_none(ثابت حرف *o)
 {
-	return o == NULL || strcasecmp(o, "none") == 0;
+	واپس o == تہی || strcasecmp(o, "none") == 0;
 }
 
-static void
+ساکن خالی
 assemble_algorithms(ServerOptions *o)
 {
-	char *all_cipher, *all_mac, *all_kex, *all_key, *all_sig;
-	char *def_cipher, *def_mac, *def_kex, *def_key, *def_sig;
-	int r;
+	حرف *all_cipher, *all_mac, *all_kex, *all_کلید, *all_sig;
+	حرف *def_cipher, *def_mac, *def_kex, *def_کلید, *def_sig;
+	صحیح r;
 
 	all_cipher = cipher_alg_list(',', 0);
 	all_mac = mac_alg_list(',');
 	all_kex = kex_alg_list(',');
-	all_key = sshkey_alg_list(0, 0, 1, ',');
+	all_کلید = sshkey_alg_list(0, 0, 1, ',');
 	all_sig = sshkey_alg_list(0, 1, 1, ',');
 	/* remove unsupported algos from default lists */
-	def_cipher = match_filter_allowlist(KEX_SERVER_ENCRYPT, all_cipher);
-	def_mac = match_filter_allowlist(KEX_SERVER_MAC, all_mac);
-	def_kex = match_filter_allowlist(KEX_SERVER_KEX, all_kex);
-	def_key = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_key);
-	def_sig = match_filter_allowlist(SSH_ALLOWED_CA_SIGALGS, all_sig);
-#define ASSEMBLE(what, defaults, all) \
-	do { \
-		if ((r = kex_assemble_names(&o->what, defaults, all)) != 0) \
+	def_cipher = مطابقت_filter_allowlist(KEX_SERVER_ENCRYPT, all_cipher);
+	def_mac = مطابقت_filter_allowlist(KEX_SERVER_MAC, all_mac);
+	def_kex = مطابقت_filter_allowlist(KEX_SERVER_KEX, all_kex);
+	def_کلید = مطابقت_filter_allowlist(KEX_DEFAULT_PK_ALG, all_کلید);
+	def_sig = مطابقت_filter_allowlist(SSH_ALLOWED_CA_SIGALGS, all_sig);
+#تعریف_کرو ASSEMBLE(what, defaults, all) \
+	کرو { \
+		اگر ((r = kex_assemble_نام(&o->what, defaults, all)) != 0) \
 			fatal_fr(r, "%s", #what); \
-	} while (0)
+	} جب (0)
 	ASSEMBLE(ciphers, def_cipher, all_cipher);
 	ASSEMBLE(macs, def_mac, all_mac);
 	ASSEMBLE(kex_algorithms, def_kex, all_kex);
-	ASSEMBLE(hostkeyalgorithms, def_key, all_key);
-	ASSEMBLE(hostbased_accepted_algos, def_key, all_key);
-	ASSEMBLE(pubkey_accepted_algos, def_key, all_key);
+	ASSEMBLE(hostkeyalgorithms, def_کلید, all_کلید);
+	ASSEMBLE(hostbased_accepted_algos, def_کلید, all_کلید);
+	ASSEMBLE(pubkey_accepted_algos, def_کلید, all_کلید);
 	ASSEMBLE(ca_sign_algorithms, def_sig, all_sig);
-#undef ASSEMBLE
-	free(all_cipher);
-	free(all_mac);
-	free(all_kex);
-	free(all_key);
-	free(all_sig);
-	free(def_cipher);
-	free(def_mac);
-	free(def_kex);
-	free(def_key);
-	free(def_sig);
+#تعریف_منسوخ ASSEMBLE
+	آزاد(all_cipher);
+	آزاد(all_mac);
+	آزاد(all_kex);
+	آزاد(all_کلید);
+	آزاد(all_sig);
+	آزاد(def_cipher);
+	آزاد(def_mac);
+	آزاد(def_kex);
+	آزاد(def_کلید);
+	آزاد(def_sig);
 }
 
-void
-servconf_add_hostkey(const char *file, const int line,
-    ServerOptions *options, const char *path, int userprovided)
+خالی
+servconf_جوڑو_hostkey(ثابت حرف *file, ثابت صحیح سطر,
+    ServerOptions *options, ثابت حرف *راستہ, صحیح userprovided)
 {
-	char *apath = derelativise_path(path);
+	حرف *apath = derelativise_راستہ(راستہ);
 
-	opt_array_append2(file, line, "HostKey",
-	    &options->host_key_files, &options->host_key_file_userprovided,
-	    &options->num_host_key_files, apath, userprovided);
-	free(apath);
+	opt_array_append2(file, سطر, "HostKey",
+	    &options->host_کلید_files, &options->host_کلید_file_userprovided,
+	    &options->عدد_host_کلید_files, apath, userprovided);
+	آزاد(apath);
 }
 
-void
-servconf_add_hostcert(const char *file, const int line,
-    ServerOptions *options, const char *path)
+خالی
+servconf_جوڑو_hostcert(ثابت حرف *file, ثابت صحیح سطر,
+    ServerOptions *options, ثابت حرف *راستہ)
 {
-	char *apath = derelativise_path(path);
+	حرف *apath = derelativise_راستہ(راستہ);
 
-	opt_array_append(file, line, "HostCertificate",
-	    &options->host_cert_files, &options->num_host_cert_files, apath);
-	free(apath);
+	opt_array_append(file, سطر, "HostCertificate",
+	    &options->host_cert_files, &options->عدد_host_cert_files, apath);
+	آزاد(apath);
 }
 
-void
+خالی
 fill_default_server_options(ServerOptions *options)
 {
 	u_int i;
 
 	/* Portable-specific overrides */
-#ifdef SKIP_PRIVDROP
-	if (options->allow_streamlocal_forwarding != -1 &&
+#اگر_تعریف_شدہ SKIP_PRIVDROP
+	اگر (options->allow_streamlocal_forwarding != -1 &&
 	    options->allow_streamlocal_forwarding != FORWARD_DENY)
 		logit("StreamlocalForwarding is not supported on this system");
 	options->allow_streamlocal_forwarding = 0;
-	if (options->fwd_opts.gateway_ports != -1 &&
+	اگر (options->fwd_opts.gateway_ports != -1 &&
 	    options->fwd_opts.gateway_ports != 0)
 		logit("GatewayPorts is not supported on this system");
 	options->fwd_opts.gateway_ports = 0;
-#endif
+#اگر_ختم
 
-#define SSHCONF_INT(var, conf, flags, ms, def, cp) \
-	if (options->var == -1) \
+#تعریف_کرو SSHCONF_INT(var, conf, flags, ms, def, cp) \
+	اگر (options->var == -1) \
 		options->var = def;
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp) \
-	if (options->var == -1) \
+#تعریف_کرو SSHCONF_INTFLAG(var, conf, flags, def, cp) \
+	اگر (options->var == -1) \
 		options->var = def;
-#define SSHCONF_STRING(var, conf, flags, cp)		/* done manually */
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	/* done manually */
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	/* done manually */
-#define SSHCONF_NONCONF(funcsuffix)			/* done manually */
-#define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(options->var); \
-		options->var = NULL; \
-	} while (0);
-#define SSHCONF_ALIAS(old, conf, flags)			/* empty */
+#تعریف_کرو SSHCONF_STRING(var, conf, flags, cp)		/* done manually */
+#تعریف_کرو SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	/* done manually */
+#تعریف_کرو SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	/* done manually */
+#تعریف_کرو SSHCONF_NONCONF(funcsuffix)			/* done manually */
+#تعریف_کرو SSHCONF_DEPRECATE(conf, flags, opcode)		/*خالی_خانے*/
+#تعریف_کرو SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
+#تعریف_کرو SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
+	کرو { \
+		آزاد(options->var); \
+		options->var = تہی; \
+	} جب (0);
+#تعریف_کرو SSHCONF_ALIAS(old, conf, flags)			/*خالی_خانے*/
 
 	/* XXX maybe use macros here too to force consistency? */
 
 	SSHD_CONFIG_ENTRIES
 
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#تعریف_منسوخ SSHCONF_INT
+#تعریف_منسوخ SSHCONF_INTFLAG
+#تعریف_منسوخ SSHCONF_STRING
+#تعریف_منسوخ SSHCONF_STRARRAY
+#تعریف_منسوخ SSHCONF_CUSTOM
+#تعریف_منسوخ SSHCONF_NONCONF
+#تعریف_منسوخ SSHCONF_DEPRECATE
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_INT
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_STRING
+#تعریف_منسوخ SSHCONF_ALIAS
 
-#ifdef USE_PAM
-	if (options->pam_service_name == NULL)
+#اگر_تعریف_شدہ USE_PAM
+	اگر (options->pam_service_name == تہی)
 		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
-#endif
+#اگر_ختم
 
-	if (options->num_host_key_files == 0) {
+	اگر (options->عدد_host_کلید_files == 0) {
 		/* fill default hostkeys */
-		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_RSA_KEY_FILE, 0);
-		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_ECDSA_KEY_FILE, 0);
-		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_ED25519_KEY_FILE, 0);
-		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_MLDSA44_ED25519_KEY_FILE, 0);
+		servconf_جوڑو_hostkey("[default]", 0, options,
+		    راستہ_HOST_RSA_کلید_FILE, 0);
+		servconf_جوڑو_hostkey("[default]", 0, options,
+		    راستہ_HOST_ECDSA_کلید_FILE, 0);
+		servconf_جوڑو_hostkey("[default]", 0, options,
+		    راستہ_HOST_ED25519_کلید_FILE, 0);
+		servconf_جوڑو_hostkey("[default]", 0, options,
+		    راستہ_HOST_MLDSA44_ED25519_کلید_FILE, 0);
 	}
 	/* No certificates by default */
-	if (options->num_ports == 0)
-		options->ports[options->num_ports++] = SSH_DEFAULT_PORT;
-	if (options->listen_addrs == NULL)
-		add_listen_addr(options, NULL, NULL, 0);
-	if (options->pid_file == NULL)
-		options->pid_file = xstrdup(_PATH_SSH_DAEMON_PID_FILE);
-	if (options->moduli_file == NULL)
-		options->moduli_file = xstrdup(_PATH_DH_MODULI);
-	if (options->xauth_location == NULL)
-		options->xauth_location = xstrdup(_PATH_XAUTH);
-	if (options->log_facility == SYSLOG_FACILITY_NOT_SET)
+	اگر (options->عدد_ports == 0)
+		options->ports[options->عدد_ports++] = SSH_DEFAULT_پورٹ;
+	اگر (options->listen_addrs == تہی)
+		جوڑو_listen_addr(options, تہی, تہی, 0);
+	اگر (options->pid_file == تہی)
+		options->pid_file = xstrdup(راستہ_SSH_DAEMON_PID_FILE);
+	اگر (options->moduli_file == تہی)
+		options->moduli_file = xstrdup(راستہ_DH_MODULI);
+	اگر (options->xauth_location == تہی)
+		options->xauth_location = xstrdup(راستہ_XAUTH);
+	اگر (options->log_facility == SYSLOG_FACILITY_NOT_سیٹ)
 		options->log_facility = SYSLOG_FACILITY_AUTH;
-	if (options->log_level == SYSLOG_LEVEL_NOT_SET)
+	اگر (options->log_level == SYSLOG_LEVEL_NOT_سیٹ)
 		options->log_level = SYSLOG_LEVEL_INFO;
-	if (options->permit_user_env == -1) {
+	اگر (options->permit_user_env == -1) {
 		options->permit_user_env = 0;
-		options->permit_user_env_allowlist = NULL;
+		options->permit_user_env_allowlist = تہی;
 	}
-	if (options->rekey_limit == -1)
-		options->rekey_limit = 0;
-	if (options->rekey_interval == -1)
+	اگر (options->rekey_حد_بندی == -1)
+		options->rekey_حد_بندی = 0;
+	اگر (options->rekey_interval == -1)
 		options->rekey_interval = 0;
-	if (options->fwd_opts.gateway_ports == -1)
+	اگر (options->fwd_opts.gateway_ports == -1)
 		options->fwd_opts.gateway_ports = 0;
-	if (options->max_startups == -1)
+	اگر (options->max_startups == -1)
 		options->max_startups = 100;
-	if (options->max_startups_rate == -1)
-		options->max_startups_rate = 30;		/* 30% */
-	if (options->max_startups_begin == -1)
+	اگر (options->max_startups_شرح == -1)
+		options->max_startups_شرح = 30;		/* 30% */
+	اگر (options->max_startups_begin == -1)
 		options->max_startups_begin = 10;
-	if (options->per_source_masklen_ipv4 == -1)
-		options->per_source_masklen_ipv4 = 32;
-	if (options->per_source_masklen_ipv6 == -1)
-		options->per_source_masklen_ipv6 = 128;
-	if (options->per_source_penalty.enabled == -1)
-		options->per_source_penalty.enabled = 1;
-	if (options->per_source_penalty.max_sources4 == -1)
-		options->per_source_penalty.max_sources4 = 65536;
-	if (options->per_source_penalty.max_sources6 == -1)
-		options->per_source_penalty.max_sources6 = 65536;
-	if (options->per_source_penalty.overflow_mode == -1)
-		options->per_source_penalty.overflow_mode = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
-	if (options->per_source_penalty.overflow_mode6 == -1)
-		options->per_source_penalty.overflow_mode6 = options->per_source_penalty.overflow_mode;
-	if (options->per_source_penalty.penalty_crash < 0.0)
-		options->per_source_penalty.penalty_crash = 90.0;
-	if (options->per_source_penalty.penalty_grace < 0.0)
-		options->per_source_penalty.penalty_grace = 10.0;
-	if (options->per_source_penalty.penalty_authfail < 0.0)
-		options->per_source_penalty.penalty_authfail = 5.0;
-	if (options->per_source_penalty.penalty_invaliduser < 0.0)
-		options->per_source_penalty.penalty_invaliduser = 5.0;
-	if (options->per_source_penalty.penalty_noauth < 0.0)
-		options->per_source_penalty.penalty_noauth = 1.0;
-	if (options->per_source_penalty.penalty_refuseconnection < 0.0)
-		options->per_source_penalty.penalty_refuseconnection = 10.0;
-	if (options->per_source_penalty.penalty_min < 0.0)
-		options->per_source_penalty.penalty_min = 15.0;
-	if (options->per_source_penalty.penalty_max < 0.0)
-		options->per_source_penalty.penalty_max = 600.0;
-	if (options->num_authkeys_files == 0) {
+	اگر (options->فی_ماخذ_masklen_ipv4 == -1)
+		options->فی_ماخذ_masklen_ipv4 = 32;
+	اگر (options->فی_ماخذ_masklen_ipv6 == -1)
+		options->فی_ماخذ_masklen_ipv6 = 128;
+	اگر (options->فی_ماخذ_penalty.enabled == -1)
+		options->فی_ماخذ_penalty.enabled = 1;
+	اگر (options->فی_ماخذ_penalty.max_sources4 == -1)
+		options->فی_ماخذ_penalty.max_sources4 = 65536;
+	اگر (options->فی_ماخذ_penalty.max_sources6 == -1)
+		options->فی_ماخذ_penalty.max_sources6 = 65536;
+	اگر (options->فی_ماخذ_penalty.حد_سے_تجاوز_منوال == -1)
+		options->فی_ماخذ_penalty.حد_سے_تجاوز_منوال = فی_ماخذ_PENALTY_حد_سے_تجاوز_PERMISSIVE;
+	اگر (options->فی_ماخذ_penalty.حد_سے_تجاوز_mode6 == -1)
+		options->فی_ماخذ_penalty.حد_سے_تجاوز_mode6 = options->فی_ماخذ_penalty.حد_سے_تجاوز_منوال;
+	اگر (options->فی_ماخذ_penalty.penalty_crash < 0.0)
+		options->فی_ماخذ_penalty.penalty_crash = 90.0;
+	اگر (options->فی_ماخذ_penalty.penalty_grace < 0.0)
+		options->فی_ماخذ_penalty.penalty_grace = 10.0;
+	اگر (options->فی_ماخذ_penalty.penalty_authfail < 0.0)
+		options->فی_ماخذ_penalty.penalty_authfail = 5.0;
+	اگر (options->فی_ماخذ_penalty.penalty_invaliduser < 0.0)
+		options->فی_ماخذ_penalty.penalty_invaliduser = 5.0;
+	اگر (options->فی_ماخذ_penalty.penalty_noauth < 0.0)
+		options->فی_ماخذ_penalty.penalty_noauth = 1.0;
+	اگر (options->فی_ماخذ_penalty.penalty_refuseconnection < 0.0)
+		options->فی_ماخذ_penalty.penalty_refuseconnection = 10.0;
+	اگر (options->فی_ماخذ_penalty.penalty_min < 0.0)
+		options->فی_ماخذ_penalty.penalty_min = 15.0;
+	اگر (options->فی_ماخذ_penalty.penalty_max < 0.0)
+		options->فی_ماخذ_penalty.penalty_max = 600.0;
+	اگر (options->عدد_authkeys_files == 0) {
 		opt_array_append("[default]", 0, "AuthorizedKeysFiles",
-		    &options->authorized_keys_files,
-		    &options->num_authkeys_files,
-		    _PATH_SSH_USER_PERMITTED_KEYS);
+		    &options->authorized_کلیدیں_files,
+		    &options->عدد_authkeys_files,
+		    راستہ_SSH_USER_PERMITTED_کلیدیں);
 		opt_array_append("[default]", 0, "AuthorizedKeysFiles",
-		    &options->authorized_keys_files,
-		    &options->num_authkeys_files,
-		    _PATH_SSH_USER_PERMITTED_KEYS2);
+		    &options->authorized_کلیدیں_files,
+		    &options->عدد_authkeys_files,
+		    راستہ_SSH_USER_PERMITTED_KEYS2);
 	}
-	if (options->ip_qos_interactive == -1)
+	اگر (options->ip_qos_interactive == -1)
 		options->ip_qos_interactive = IPTOS_DSCP_EF;
-	if (options->ip_qos_bulk == -1)
+	اگر (options->ip_qos_bulk == -1)
 		options->ip_qos_bulk = IPTOS_DSCP_CS0;
-	if (options->version_addendum == NULL)
-		options->version_addendum = xstrdup("");
-	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
-		options->fwd_opts.streamlocal_bind_mask = 0177;
-	if (options->fwd_opts.streamlocal_bind_unlink == -1)
+	اگر (options->نسخہ_addendum == تہی)
+		options->نسخہ_addendum = xstrdup("");
+	اگر (options->fwd_opts.streamlocal_bind_نقاب == (منوال_t)-1)
+		options->fwd_opts.streamlocal_bind_نقاب = 0177;
+	اگر (options->fwd_opts.streamlocal_bind_unlink == -1)
 		options->fwd_opts.streamlocal_bind_unlink = 0;
-	if (options->sk_provider == NULL)
+	اگر (options->sk_provider == تہی)
 		options->sk_provider = xstrdup("internal");
-	if (options->sshd_session_path == NULL)
-		options->sshd_session_path = xstrdup(_PATH_SSHD_SESSION);
-	if (options->sshd_auth_path == NULL)
-		options->sshd_auth_path = xstrdup(_PATH_SSHD_AUTH);
-	if (options->pubkey_auth_options == -1) {
+	اگر (options->sshd_session_راستہ == تہی)
+		options->sshd_session_راستہ = xstrdup(راستہ_SSHD_SESSION);
+	اگر (options->sshd_auth_راستہ == تہی)
+		options->sshd_auth_راستہ = xstrdup(راستہ_SSHD_AUTH);
+	اگر (options->pubkey_auth_options == -1) {
 		options->pubkey_auth_options = 0;
 		options->max_pubkey_ok = DEFAULT_AUTH_FAIL_MAX;
 	}
-	if (options->agent_socket_path == NULL)
-		options->agent_socket_path = xstrdup(_PATH_SSH_AGENT_SOCKET_DIR);
+	اگر (options->agent_socket_راستہ == تہی)
+		options->agent_socket_راستہ = xstrdup(راستہ_SSH_AGENT_SOCKET_DIR);
 
 	assemble_algorithms(options);
 
-#define CLEAR_ON_NONE(v) \
-	do { \
-		if (option_clear_or_none(v)) { \
-			free(v); \
-			v = NULL; \
+#تعریف_کرو CLEAR_ON_NONE(v) \
+	کرو { \
+		اگر (option_clear_or_none(v)) { \
+			آزاد(v); \
+			v = تہی; \
 		} \
-	} while(0)
-#define CLEAR_ON_NONE_ARRAY(v, nv, none) \
-	do { \
-		if (options->nv == 1 && \
+	} جب(0)
+#تعریف_کرو CLEAR_ON_NONE_ARRAY(v, nv, none) \
+	کرو { \
+		اگر (options->nv == 1 && \
 		    strcasecmp(options->v[0], none) == 0) { \
-			free(options->v[0]); \
-			free(options->v); \
-			options->v = NULL; \
+			آزاد(options->v[0]); \
+			آزاد(options->v); \
+			options->v = تہی; \
 			options->nv = 0; \
 		} \
-	} while (0)
+	} جب (0)
 	CLEAR_ON_NONE(options->pid_file);
 	CLEAR_ON_NONE(options->xauth_location);
 	CLEAR_ON_NONE(options->banner);
-	CLEAR_ON_NONE(options->trusted_user_ca_keys);
+	CLEAR_ON_NONE(options->trusted_user_ca_کلیدیں);
 	CLEAR_ON_NONE(options->sk_provider);
 	CLEAR_ON_NONE(options->authorized_principals_file);
 	CLEAR_ON_NONE(options->adm_forced_command);
 	CLEAR_ON_NONE(options->chroot_directory);
 	CLEAR_ON_NONE(options->routing_domain);
-	CLEAR_ON_NONE(options->host_key_agent);
-	CLEAR_ON_NONE(options->per_source_penalty_exempt);
-	CLEAR_ON_NONE(options->agent_socket_path);
+	CLEAR_ON_NONE(options->host_کلید_agent);
+	CLEAR_ON_NONE(options->فی_ماخذ_penalty_exempt);
+	CLEAR_ON_NONE(options->agent_socket_راستہ);
 
-	for (i = 0; i < options->num_host_key_files; i++)
-		CLEAR_ON_NONE(options->host_key_files[i]);
-	for (i = 0; i < options->num_host_cert_files; i++)
+	برائے (i = 0; i < options->عدد_host_کلید_files; i++)
+		CLEAR_ON_NONE(options->host_کلید_files[i]);
+	برائے (i = 0; i < options->عدد_host_cert_files; i++)
 		CLEAR_ON_NONE(options->host_cert_files[i]);
 
-	CLEAR_ON_NONE_ARRAY(channel_timeouts, num_channel_timeouts, "none");
-	CLEAR_ON_NONE_ARRAY(auth_methods, num_auth_methods, "any");
-	CLEAR_ON_NONE_ARRAY(revoked_keys_files, num_revoked_keys_files, "none");
-	CLEAR_ON_NONE_ARRAY(authorized_keys_files, num_authkeys_files, "none");
-#undef CLEAR_ON_NONE
-#undef CLEAR_ON_NONE_ARRAY
+	CLEAR_ON_NONE_ARRAY(channel_timeouts, عدد_channel_timeouts, "none");
+	CLEAR_ON_NONE_ARRAY(auth_methods, عدد_auth_methods, "any");
+	CLEAR_ON_NONE_ARRAY(revoked_کلیدیں_files, عدد_revoked_کلیدیں_files, "none");
+	CLEAR_ON_NONE_ARRAY(authorized_کلیدیں_files, عدد_authkeys_files, "none");
+#تعریف_منسوخ CLEAR_ON_NONE
+#تعریف_منسوخ CLEAR_ON_NONE_ARRAY
 }
 
 /* Macros to declare ServerOpCodes enum values */
-#define SSHCONF_INT(var, conf, flags, ms, def, cp)	s##conf,
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp)	s##conf,
-#define SSHCONF_STRING(var, conf, flags, cp)		s##conf,
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	s##conf,
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	s##conf,
-#define SSHCONF_NONCONF(funcsuffix)			/* empty */
-#define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	/* empty */
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	/* empty */
-#define SSHCONF_ALIAS(old, conf, flags)			/* empty */
+#تعریف_کرو SSHCONF_INT(var, conf, flags, ms, def, cp)	s##conf,
+#تعریف_کرو SSHCONF_INTFLAG(var, conf, flags, def, cp)	s##conf,
+#تعریف_کرو SSHCONF_STRING(var, conf, flags, cp)		s##conf,
+#تعریف_کرو SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	s##conf,
+#تعریف_کرو SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	s##conf,
+#تعریف_کرو SSHCONF_NONCONF(funcsuffix)			/*خالی_خانے*/
+#تعریف_کرو SSHCONF_DEPRECATE(conf, flags, opcode)		/*خالی_خانے*/
+#تعریف_کرو SSHCONF_UNSUPPORTED_INT(var, conf, flags)	/*خالی_خانے*/
+#تعریف_کرو SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	/*خالی_خانے*/
+#تعریف_کرو SSHCONF_ALIAS(old, conf, flags)			/*خالی_خانے*/
 
 /* Keyword tokens. */
-typedef enum {
+قسمتعریف شمار {
 	sBadOption,		/* == unknown option */
 	SSHD_CONFIG_ENTRIES
-	sMatch, sInclude,
+	s_مطابقت, sInclude,
 	sDeprecated, sIgnore, sUnsupported
 } ServerOpCodes;
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#تعریف_منسوخ SSHCONF_INT
+#تعریف_منسوخ SSHCONF_INTFLAG
+#تعریف_منسوخ SSHCONF_STRING
+#تعریف_منسوخ SSHCONF_STRARRAY
+#تعریف_منسوخ SSHCONF_CUSTOM
+#تعریف_منسوخ SSHCONF_NONCONF
+#تعریف_منسوخ SSHCONF_DEPRECATE
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_INT
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_STRING
+#تعریف_منسوخ SSHCONF_ALIAS
 
-#define SSHCFG_GLOBAL		0x01	/* allowed in main section of config */
-#define SSHCFG_MATCH		0x02	/* allowed inside a Match section */
-#define SSHCFG_ALL		(SSHCFG_GLOBAL|SSHCFG_MATCH)
-#define SSHCFG_NEVERMATCH	0x04  /* Match never matches; internal only */
-#define SSHCFG_MATCH_ONLY	0x08  /* Match only in conditional blocks; internal only */
+#تعریف_کرو SSHCFG_GLOBAL		0x01	/* allowed in main section of config */
+#تعریف_کرو SSHCFG_مطابقت		0x02	/* allowed inside a Match section */
+#تعریف_کرو SSHCFG_ALL		(SSHCFG_GLOBAL|SSHCFG_مطابقت)
+#تعریف_کرو SSHCFG_NEVERMATCH	0x04  /* Match never matches; internal only */
+#تعریف_کرو SSHCFG_مطابقت_ONLY	0x08  /* Match only in conditional blocks; internal only */
 
 /* Macros to define keywords[] entries */
-#define SSHCONF_KW(conf, flags)		{ #conf, s##conf, flags },
-#define SSHCONF_INT(var, conf, flags, ms, def, cp)	SSHCONF_KW(conf, flags)
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp)	SSHCONF_KW(conf, flags)
-#define SSHCONF_STRING(var, conf, flags, cp)		SSHCONF_KW(conf, flags)
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	SSHCONF_KW(conf, flags)
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	SSHCONF_KW(conf, flags)
-#define SSHCONF_NONCONF(funcsuffix)			/* empty */
-#define SSHCONF_DEPRECATED				sDeprecated
-#define SSHCONF_IGNORE					sIgnore
-#define SSHCONF_DEPRECATE(conf, flags, opcode) \
+#تعریف_کرو SSHCONF_KW(conf, flags)		{ #conf, s##conf, flags },
+#تعریف_کرو SSHCONF_INT(var, conf, flags, ms, def, cp)	SSHCONF_KW(conf, flags)
+#تعریف_کرو SSHCONF_INTFLAG(var, conf, flags, def, cp)	SSHCONF_KW(conf, flags)
+#تعریف_کرو SSHCONF_STRING(var, conf, flags, cp)		SSHCONF_KW(conf, flags)
+#تعریف_کرو SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	SSHCONF_KW(conf, flags)
+#تعریف_کرو SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	SSHCONF_KW(conf, flags)
+#تعریف_کرو SSHCONF_NONCONF(funcsuffix)			/*خالی_خانے*/
+#تعریف_کرو SSHCONF_DEPRECATED				sDeprecated
+#تعریف_کرو SSHCONF_IGNORE					sIgnore
+#تعریف_کرو SSHCONF_DEPRECATE(conf, flags, opcode) \
 	{ #conf, opcode, flags },
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags) \
+#تعریف_کرو SSHCONF_UNSUPPORTED_INT(var, conf, flags) \
 	{ #conf, sUnsupported, flags },
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
+#تعریف_کرو SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
 	{ #conf, sUnsupported, flags },
-#define SSHCONF_ALIAS(old, conf, flags) \
+#تعریف_کرو SSHCONF_ALIAS(old, conf, flags) \
 	{ #old, s##conf, flags },
 
 /* Textual representation of the tokens. */
-static struct {
-	const char *name;
+ساکن ساخت {
+	ثابت حرف *name;
 	ServerOpCodes opcode;
 	u_int flags;
 } keywords[] = {
 	SSHD_CONFIG_ENTRIES
-	{ "match", sMatch, SSHCFG_ALL },
+	{ "match", s_مطابقت, SSHCFG_ALL },
 	{ "include", sInclude, SSHCFG_ALL },
-	{ NULL, sBadOption, 0 }
+	{ تہی, sBadOption, 0 }
 };
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATED
-#undef SSHCONF_IGNORE
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#تعریف_منسوخ SSHCONF_INT
+#تعریف_منسوخ SSHCONF_INTFLAG
+#تعریف_منسوخ SSHCONF_STRING
+#تعریف_منسوخ SSHCONF_STRARRAY
+#تعریف_منسوخ SSHCONF_CUSTOM
+#تعریف_منسوخ SSHCONF_NONCONF
+#تعریف_منسوخ SSHCONF_DEPRECATED
+#تعریف_منسوخ SSHCONF_IGNORE
+#تعریف_منسوخ SSHCONF_DEPRECATE
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_INT
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_STRING
+#تعریف_منسوخ SSHCONF_ALIAS
 
-static struct {
-	int val;
-	char *text;
+ساکن ساخت {
+	صحیح val;
+	حرف *متن;
 } tunmode_desc[] = {
 	{ SSH_TUNMODE_NO, "no" },
 	{ SSH_TUNMODE_POINTOPOINT, "point-to-point" },
 	{ SSH_TUNMODE_ETHERNET, "ethernet" },
 	{ SSH_TUNMODE_YES, "yes" },
-	{ -1, NULL }
+	{ -1, تہی }
 };
 
 /* Returns an opcode name from its number */
 
-static const char *
-lookup_opcode_name(ServerOpCodes code)
+ساکن ثابت حرف *
+lookup_opcode_name(ServerOpCodes رمز)
 {
 	u_int i;
 
-	for (i = 0; keywords[i].name != NULL; i++)
-		if (keywords[i].opcode == code)
-			return(keywords[i].name);
-	return "UNKNOWN";
+	برائے (i = 0; keywords[i].name != تہی; i++)
+		اگر (keywords[i].opcode == رمز)
+			واپس(keywords[i].name);
+	واپس "UNKNOWN";
 }
 
 
@@ -582,181 +582,181 @@ lookup_opcode_name(ServerOpCodes code)
  * Returns the number of the token pointed to by cp or sBadOption.
  */
 
-static ServerOpCodes
-parse_token(const char *cp, const char *filename,
-	    int linenum, u_int *flags)
+ساکن ServerOpCodes
+parse_token(ثابت حرف *cp, ثابت حرف *filename,
+	    صحیح linenum, u_int *flags)
 {
 	u_int i;
 
-	for (i = 0; keywords[i].name; i++)
-		if (strcasecmp(cp, keywords[i].name) == 0) {
+	برائے (i = 0; keywords[i].name; i++)
+		اگر (strcasecmp(cp, keywords[i].name) == 0) {
 			*flags = keywords[i].flags;
-			return keywords[i].opcode;
+			واپس keywords[i].opcode;
 		}
 
 	error("%s: line %d: Bad configuration option: %s",
 	    filename, linenum, cp);
-	return sBadOption;
+	واپس sBadOption;
 }
 
-char *
-derelativise_path(const char *path)
+حرف *
+derelativise_راستہ(ثابت حرف *راستہ)
 {
-	char *expanded, *ret, cwd[PATH_MAX];
+	حرف *expanded, *ret, cwd[PATH_MAX];
 
-	if (strcasecmp(path, "none") == 0)
-		return xstrdup("none");
-	expanded = tilde_expand_filename(path, getuid());
-	if (path_absolute(expanded))
-		return expanded;
-	if (getcwd(cwd, sizeof(cwd)) == NULL)
+	اگر (strcasecmp(راستہ, "none") == 0)
+		واپس xstrdup("none");
+	expanded = tilde_expand_filename(راستہ, getuid());
+	اگر (راستہ_absolute(expanded))
+		واپس expanded;
+	اگر (getcwd(cwd, حجم(cwd)) == تہی)
 		fatal_f("getcwd: %s", strerror(errno));
 	xasprintf(&ret, "%s/%s", cwd, expanded);
-	free(expanded);
-	return ret;
+	آزاد(expanded);
+	واپس ret;
 }
 
-static void
-add_listen_addr(ServerOptions *options, const char *addr,
-    const char *rdomain, int port)
+ساکن خالی
+جوڑو_listen_addr(ServerOptions *options, ثابت حرف *addr,
+    ثابت حرف *rdomain, صحیح پورٹ)
 {
 	u_int i;
 
-	if (port > 0)
-		add_one_listen_addr(options, addr, rdomain, port);
-	else {
-		for (i = 0; i < options->num_ports; i++) {
-			add_one_listen_addr(options, addr, rdomain,
+	اگر (پورٹ > 0)
+		جوڑو_one_listen_addr(options, addr, rdomain, پورٹ);
+	ورنہ {
+		برائے (i = 0; i < options->عدد_ports; i++) {
+			جوڑو_one_listen_addr(options, addr, rdomain,
 			    options->ports[i]);
 		}
 	}
 }
 
-static void
-add_one_listen_addr(ServerOptions *options, const char *addr,
-    const char *rdomain, int port)
+ساکن خالی
+جوڑو_one_listen_addr(ServerOptions *options, ثابت حرف *addr,
+    ثابت حرف *rdomain, صحیح پورٹ)
 {
-	struct addrinfo hints, *ai, *aitop;
-	char strport[NI_MAXSERV];
-	int gaierr;
+	ساخت addrinfo hints, *ai, *aitop;
+	حرف strport[NI_MAXSERV];
+	صحیح gaierr;
 	u_int i;
 
 	/* Find listen_addrs entry for this rdomain */
-	for (i = 0; i < options->num_listen_addrs; i++) {
-		if (rdomain == NULL && options->listen_addrs[i].rdomain == NULL)
-			break;
-		if (rdomain == NULL || options->listen_addrs[i].rdomain == NULL)
-			continue;
-		if (strcmp(rdomain, options->listen_addrs[i].rdomain) == 0)
-			break;
+	برائے (i = 0; i < options->عدد_listen_addrs; i++) {
+		اگر (rdomain == تہی && options->listen_addrs[i].rdomain == تہی)
+			توڑو;
+		اگر (rdomain == تہی || options->listen_addrs[i].rdomain == تہی)
+			جاری;
+		اگر (strcmp(rdomain, options->listen_addrs[i].rdomain) == 0)
+			توڑو;
 	}
-	if (i >= options->num_listen_addrs) {
+	اگر (i >= options->عدد_listen_addrs) {
 		/* No entry for this rdomain; allocate one */
-		if (i >= INT_MAX)
+		اگر (i >= زیادہ_سے_زیادہ_عدد)
 			fatal_f("too many listen addresses");
 		options->listen_addrs = xrecallocarray(options->listen_addrs,
-		    options->num_listen_addrs, options->num_listen_addrs + 1,
-		    sizeof(*options->listen_addrs));
-		i = options->num_listen_addrs++;
-		if (rdomain != NULL)
+		    options->عدد_listen_addrs, options->عدد_listen_addrs + 1,
+		    حجم(*options->listen_addrs));
+		i = options->عدد_listen_addrs++;
+		اگر (rdomain != تہی)
 			options->listen_addrs[i].rdomain = xstrdup(rdomain);
 	}
 	/* options->listen_addrs[i] points to the addresses for this rdomain */
 
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = options->address_family;
+	memset(&hints, 0, حجم(hints));
+	hints.ai_family = options->پتہ_family;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = (addr == NULL) ? AI_PASSIVE : 0;
-	snprintf(strport, sizeof strport, "%d", port);
-	if ((gaierr = getaddrinfo(addr, strport, &hints, &aitop)) != 0)
+	hints.ai_flags = (addr == تہی) ? AI_PASSIVE : 0;
+	snprintf(strport, حجم strport, "%d", پورٹ);
+	اگر ((gaierr = getaddrinfo(addr, strport, &hints, &aitop)) != 0)
 		fatal("bad addr or host: %s (%s)",
 		    addr ? addr : "<NULL>",
 		    ssh_gai_strerror(gaierr));
-	for (ai = aitop; ai->ai_next; ai = ai->ai_next)
+	برائے (ai = aitop; ai->ai_next; ai = ai->ai_next)
 		;
 	ai->ai_next = options->listen_addrs[i].addrs;
 	options->listen_addrs[i].addrs = aitop;
 }
 
 /* Returns nonzero if the routing domain name is valid */
-static int
-valid_rdomain(const char *name)
+ساکن صحیح
+valid_rdomain(ثابت حرف *name)
 {
-#if defined(HAVE_SYS_VALID_RDOMAIN)
-	return sys_valid_rdomain(name);
-#elif defined(__OpenBSD__)
-	const char *errstr;
-	long long num;
-	struct rt_tableinfo info;
-	int mib[6];
-	size_t miblen = sizeof(mib);
+#اگر defined(HAVE_SYS_VALID_RDOMAIN)
+	واپس sys_valid_rdomain(name);
+#وگرنہ_اگر defined(__OpenBSD__)
+	ثابت حرف *errstr;
+	طویل طویل عدد;
+	ساخت rt_tableinfo info;
+	صحیح mib[6];
+	سائز_t miblen = حجم(mib);
 
-	if (name == NULL)
-		return 1;
+	اگر (name == تہی)
+		واپس 1;
 
-	num = strtonum(name, 0, 255, &errstr);
-	if (errstr != NULL)
-		return 0;
+	عدد = strtonum(name, 0, 255, &errstr);
+	اگر (errstr != تہی)
+		واپس 0;
 
 	/* Check whether the table actually exists */
-	memset(mib, 0, sizeof(mib));
+	memset(mib, 0, حجم(mib));
 	mib[0] = CTL_NET;
 	mib[1] = PF_ROUTE;
-	mib[4] = NET_RT_TABLE;
-	mib[5] = (int)num;
-	if (sysctl(mib, 6, &info, &miblen, NULL, 0) == -1)
-		return 0;
+	mib[4] = NET_RT_جدول;
+	mib[5] = (صحیح)عدد;
+	اگر (sysctl(mib, 6, &info, &miblen, تہی, 0) == -1)
+		واپس 0;
 
-	return 1;
-#else /* defined(__OpenBSD__) */
+	واپس 1;
+#ورنہ /* defined(__OpenBSD__) */
 	error("Routing domains are not supported on this platform");
-	return 0;
-#endif
+	واپس 0;
+#اگر_ختم
 }
 
 /*
  * Queue a ListenAddress to be processed once we have all of the Ports
  * and AddressFamily options.
  */
-static void
-queue_listen_addr(ServerOptions *options, const char *addr,
-    const char *rdomain, int port)
+ساکن خالی
+قطار_listen_addr(ServerOptions *options, ثابت حرف *addr,
+    ثابت حرف *rdomain, صحیح پورٹ)
 {
-	struct queued_listenaddr *qla;
+	ساخت queued_listenaddr *qla;
 
 	options->queued_listen_addrs = xrecallocarray(
 	    options->queued_listen_addrs,
-	    options->num_queued_listens, options->num_queued_listens + 1,
-	    sizeof(*options->queued_listen_addrs));
-	qla = &options->queued_listen_addrs[options->num_queued_listens++];
+	    options->عدد_queued_listens, options->عدد_queued_listens + 1,
+	    حجم(*options->queued_listen_addrs));
+	qla = &options->queued_listen_addrs[options->عدد_queued_listens++];
 	qla->addr = xstrdup(addr);
-	qla->port = port;
-	qla->rdomain = rdomain == NULL ? NULL : xstrdup(rdomain);
+	qla->پورٹ = پورٹ;
+	qla->rdomain = rdomain == تہی ? تہی : xstrdup(rdomain);
 }
 
 /*
  * Process queued (text) ListenAddress entries.
  */
-static void
+ساکن خالی
 process_queued_listen_addrs(ServerOptions *options)
 {
 	u_int i;
-	struct queued_listenaddr *qla;
+	ساخت queued_listenaddr *qla;
 
-	if (options->num_ports == 0)
-		options->ports[options->num_ports++] = SSH_DEFAULT_PORT;
-	if (options->address_family == -1)
-		options->address_family = AF_UNSPEC;
+	اگر (options->عدد_ports == 0)
+		options->ports[options->عدد_ports++] = SSH_DEFAULT_پورٹ;
+	اگر (options->پتہ_family == -1)
+		options->پتہ_family = AF_UNSPEC;
 
-	for (i = 0; i < options->num_queued_listens; i++) {
+	برائے (i = 0; i < options->عدد_queued_listens; i++) {
 		qla = &options->queued_listen_addrs[i];
-		add_listen_addr(options, qla->addr, qla->rdomain, qla->port);
-		free(qla->addr);
-		free(qla->rdomain);
+		جوڑو_listen_addr(options, qla->addr, qla->rdomain, qla->پورٹ);
+		آزاد(qla->addr);
+		آزاد(qla->rdomain);
 	}
-	free(options->queued_listen_addrs);
-	options->queued_listen_addrs = NULL;
-	options->num_queued_listens = 0;
+	آزاد(options->queued_listen_addrs);
+	options->queued_listen_addrs = تہی;
+	options->عدد_queued_listens = 0;
 }
 
 /*
@@ -792,36 +792,36 @@ process_queued_listen_addrs(ServerOptions *options)
  *		PermittedChannelRequests session,forwarded-tcpip
  */
 
-static int
-match_cfg_line_group(const char *grps, int line, const char *user)
+ساکن صحیح
+مطابقت_cfg_سطر_گروہ(ثابت حرف *grps, صحیح سطر, ثابت حرف *user)
 {
-	int result = 0;
-	struct passwd *pw;
+	صحیح نتیجہ = 0;
+	ساخت passwd *pw;
 
-	if (user == NULL)
-		goto out;
+	اگر (user == تہی)
+		جاؤ برآمد;
 
-	if ((pw = getpwnam(user)) == NULL) {
+	اگر ((pw = getpwnam(user)) == تہی) {
 		debug("Can't match group at line %d because user %.100s does "
-		    "not exist", line, user);
-	} else if (ga_init(pw->pw_name, pw->pw_gid) == 0) {
+		    "not exist", سطر, user);
+	} ورنہ اگر (ga_init(pw->pw_name, pw->pw_gid) == 0) {
 		debug("Can't Match group because user %.100s not in any group "
-		    "at line %d", user, line);
-	} else if (ga_match_pattern_list(grps) != 1) {
+		    "at line %d", user, سطر);
+	} ورنہ اگر (ga_مطابقت_نمونہ_list(grps) != 1) {
 		debug("user %.100s does not match group list %.100s at line %d",
-		    user, grps, line);
-	} else {
+		    user, grps, سطر);
+	} ورنہ {
 		debug("user %.100s matched group list %.100s at line %d", user,
-		    grps, line);
-		result = 1;
+		    grps, سطر);
+		نتیجہ = 1;
 	}
-out:
+برآمد:
 	ga_free();
-	return result;
+	واپس نتیجہ;
 }
 
-static void
-match_test_missing_fatal(const char *criteria, const char *attrib)
+ساکن خالی
+مطابقت_test_missing_fatal(ثابت حرف *criteria, ثابت حرف *attrib)
 {
 	fatal("'Match %s' in configuration but '%s' not in connection "
 	    "test specification.", criteria, attrib);
@@ -832,1221 +832,1221 @@ match_test_missing_fatal(const char *criteria, const char *attrib)
  * to check every attribute and set the result to zero if any attribute does
  * not match.
  */
-static int
-match_cfg_line(const char *full_line, int *acp, char ***avp,
-    int line, struct connection_info *ci)
+ساکن صحیح
+مطابقت_cfg_سطر(ثابت حرف *بھرا_سطر, صحیح *acp, حرف ***avp,
+    صحیح سطر, ساخت connection_info *ci)
 {
-	int result = 1, attributes = 0, port;
-	char *arg, *attrib = NULL, *oattrib;
+	صحیح نتیجہ = 1, اوصاف = 0, پورٹ;
+	حرف *arg, *attrib = تہی, *oattrib;
 
-	if (ci == NULL) {
+	اگر (ci == تہی) {
 		debug3("checking syntax for 'Match %s' on line %d",
-		    full_line, line);
-	} else {
+		    بھرا_سطر, سطر);
+	} ورنہ {
 		debug3("checking match for '%s' user %s%s host %s addr %s "
-		    "laddr %s lport %d rdomain %s on line %d", full_line,
+		    "laddr %s lport %d rdomain %s on line %d", بھرا_سطر,
 		    ci->user ? ci->user : "(null)",
 		    ci->user_invalid ? " (invalid)" : "",
 		    ci->host ? ci->host : "(null)",
-		    ci->address ? ci->address : "(null)",
+		    ci->پتہ ? ci->پتہ : "(null)",
 		    ci->laddress ? ci->laddress : "(null)", ci->lport,
-		    ci->rdomain ? ci->rdomain : "(null)", line);
+		    ci->rdomain ? ci->rdomain : "(null)", سطر);
 	}
 
-	while ((oattrib = argv_next(acp, avp)) != NULL) {
+	جب ((oattrib = argv_اگلا(acp, avp)) != تہی) {
 		/* Terminate on comment */
-		if (*oattrib == '#') {
+		اگر (*oattrib == '#') {
 			argv_consume(acp); /* mark all arguments consumed */
-			break;
+			توڑو;
 		}
 		attrib = xstrdup(oattrib);
-		arg = NULL;
-		attributes++;
+		arg = تہی;
+		اوصاف++;
 		/* Criterion "all" has no argument and must appear alone */
-		if (strcasecmp(attrib, "all") == 0) {
-			if (attributes > 1 ||
-			    ((arg = argv_next(acp, avp)) != NULL &&
+		اگر (strcasecmp(attrib, "all") == 0) {
+			اگر (اوصاف > 1 ||
+			    ((arg = argv_اگلا(acp, avp)) != تہی &&
 			    *arg != '\0' && *arg != '#')) {
 				error("'all' cannot be combined with other "
 				    "Match attributes");
-				result = -1;
-				goto out;
+				نتیجہ = -1;
+				جاؤ برآمد;
 			}
-			if (arg != NULL && *arg == '#')
+			اگر (arg != تہی && *arg == '#')
 				argv_consume(acp); /* consume remaining args */
-			result = 1;
-			goto out;
+			نتیجہ = 1;
+			جاؤ برآمد;
 		}
 		/* Criterion "invalid-user" also has no argument */
-		if (strcasecmp(attrib, "invalid-user") == 0) {
-			if (ci == NULL) {
-				result = 0;
-				goto next;
+		اگر (strcasecmp(attrib, "invalid-user") == 0) {
+			اگر (ci == تہی) {
+				نتیجہ = 0;
+				جاؤ اگلا;
 			}
-			if (ci->user_invalid == 0)
-				result = 0;
-			else
-				debug("matched invalid-user at line %d", line);
-			goto next;
+			اگر (ci->user_invalid == 0)
+				نتیجہ = 0;
+			ورنہ
+				debug("matched invalid-user at line %d", سطر);
+			جاؤ اگلا;
 		}
 
 		/* Keep this list in sync with below */
-		if (strprefix(attrib, "user=", 1) != NULL ||
-		    strprefix(attrib, "group=", 1) != NULL ||
-		    strprefix(attrib, "host=", 1) != NULL ||
-		    strprefix(attrib, "address=", 1) != NULL ||
-		    strprefix(attrib, "localaddress=", 1) != NULL ||
-		    strprefix(attrib, "localport=", 1) != NULL ||
-		    strprefix(attrib, "rdomain=", 1) != NULL ||
-		    strprefix(attrib, "version=", 1) != NULL) {
+		اگر (strprefix(attrib, "user=", 1) != تہی ||
+		    strprefix(attrib, "group=", 1) != تہی ||
+		    strprefix(attrib, "host=", 1) != تہی ||
+		    strprefix(attrib, "address=", 1) != تہی ||
+		    strprefix(attrib, "localaddress=", 1) != تہی ||
+		    strprefix(attrib, "localport=", 1) != تہی ||
+		    strprefix(attrib, "rdomain=", 1) != تہی ||
+		    strprefix(attrib, "version=", 1) != تہی) {
 			arg = strchr(attrib, '=');
 			*(arg++) = '\0';
-		} else {
-			arg = argv_next(acp, avp);
+		} ورنہ {
+			arg = argv_اگلا(acp, avp);
 		}
 
 		/* All other criteria require an argument */
-		if (arg == NULL || *arg == '\0' || *arg == '#') {
+		اگر (arg == تہی || *arg == '\0' || *arg == '#') {
 			error("Missing Match criteria for %s", attrib);
-			result = -1;
-			goto out;
+			نتیجہ = -1;
+			جاؤ برآمد;
 		}
-		if (strcasecmp(attrib, "user") == 0) {
-			if (ci == NULL || (ci->test && ci->user == NULL)) {
-				result = 0;
-				goto next;
+		اگر (strcasecmp(attrib, "user") == 0) {
+			اگر (ci == تہی || (ci->test && ci->user == تہی)) {
+				نتیجہ = 0;
+				جاؤ اگلا;
 			}
-			if (ci->user == NULL)
-				match_test_missing_fatal("User", "user");
-			if (match_usergroup_pattern_list(ci->user, arg) != 1)
-				result = 0;
-			else
+			اگر (ci->user == تہی)
+				مطابقت_test_missing_fatal("User", "user");
+			اگر (مطابقت_usergroup_نمونہ_list(ci->user, arg) != 1)
+				نتیجہ = 0;
+			ورنہ
 				debug("user %.100s matched 'User %.100s' at "
-				    "line %d", ci->user, arg, line);
-		} else if (strcasecmp(attrib, "group") == 0) {
-			if (ci == NULL || (ci->test && ci->user == NULL)) {
-				result = 0;
-				goto next;
+				    "line %d", ci->user, arg, سطر);
+		} ورنہ اگر (strcasecmp(attrib, "group") == 0) {
+			اگر (ci == تہی || (ci->test && ci->user == تہی)) {
+				نتیجہ = 0;
+				جاؤ اگلا;
 			}
-			if (ci->user == NULL)
-				match_test_missing_fatal("Group", "user");
-			switch (match_cfg_line_group(arg, line, ci->user)) {
-			case -1:
-				result = -1;
-				goto out;
-			case 0:
-				result = 0;
+			اگر (ci->user == تہی)
+				مطابقت_test_missing_fatal("Group", "user");
+			انتخاب (مطابقت_cfg_سطر_گروہ(arg, سطر, ci->user)) {
+			حالت -1:
+				نتیجہ = -1;
+				جاؤ برآمد;
+			حالت 0:
+				نتیجہ = 0;
 			}
-		} else if (strcasecmp(attrib, "host") == 0) {
-			if (ci == NULL || (ci->test && ci->host == NULL)) {
-				result = 0;
-				goto next;
+		} ورنہ اگر (strcasecmp(attrib, "host") == 0) {
+			اگر (ci == تہی || (ci->test && ci->host == تہی)) {
+				نتیجہ = 0;
+				جاؤ اگلا;
 			}
-			if (ci->host == NULL)
-				match_test_missing_fatal("Host", "host");
-			if (match_hostname(ci->host, arg) != 1)
-				result = 0;
-			else
+			اگر (ci->host == تہی)
+				مطابقت_test_missing_fatal("Host", "host");
+			اگر (مطابقت_hostname(ci->host, arg) != 1)
+				نتیجہ = 0;
+			ورنہ
 				debug("connection from %.100s matched 'Host "
-				    "%.100s' at line %d", ci->host, arg, line);
-		} else if (strcasecmp(attrib, "address") == 0) {
-			if (ci == NULL || (ci->test && ci->address == NULL)) {
-				if (addr_match_list(NULL, arg) != 0)
+				    "%.100s' at line %d", ci->host, arg, سطر);
+		} ورنہ اگر (strcasecmp(attrib, "address") == 0) {
+			اگر (ci == تہی || (ci->test && ci->پتہ == تہی)) {
+				اگر (addr_مطابقت_list(تہی, arg) != 0)
 					fatal("Invalid Match address argument "
-					    "'%s' at line %d", arg, line);
-				result = 0;
-				goto next;
+					    "'%s' at line %d", arg, سطر);
+				نتیجہ = 0;
+				جاؤ اگلا;
 			}
-			if (ci->address == NULL)
-				match_test_missing_fatal("Address", "addr");
-			switch (addr_match_list(ci->address, arg)) {
-			case 1:
+			اگر (ci->پتہ == تہی)
+				مطابقت_test_missing_fatal("Address", "addr");
+			انتخاب (addr_مطابقت_list(ci->پتہ, arg)) {
+			حالت 1:
 				debug("connection from %.100s matched 'Address "
-				    "%.100s' at line %d", ci->address, arg, line);
-				break;
-			case 0:
-			case -1:
-				result = 0;
-				break;
-			case -2:
-				result = -1;
-				goto out;
+				    "%.100s' at line %d", ci->پتہ, arg, سطر);
+				توڑو;
+			حالت 0:
+			حالت -1:
+				نتیجہ = 0;
+				توڑو;
+			حالت -2:
+				نتیجہ = -1;
+				جاؤ برآمد;
 			}
-		} else if (strcasecmp(attrib, "localaddress") == 0){
-			if (ci == NULL || (ci->test && ci->laddress == NULL)) {
-				if (addr_match_list(NULL, arg) != 0)
+		} ورنہ اگر (strcasecmp(attrib, "localaddress") == 0){
+			اگر (ci == تہی || (ci->test && ci->laddress == تہی)) {
+				اگر (addr_مطابقت_list(تہی, arg) != 0)
 					fatal("Invalid Match localaddress "
 					    "argument '%s' at line %d", arg,
-					    line);
-				result = 0;
-				goto next;
+					    سطر);
+				نتیجہ = 0;
+				جاؤ اگلا;
 			}
-			if (ci->laddress == NULL)
-				match_test_missing_fatal("LocalAddress",
+			اگر (ci->laddress == تہی)
+				مطابقت_test_missing_fatal("LocalAddress",
 				    "laddr");
-			switch (addr_match_list(ci->laddress, arg)) {
-			case 1:
+			انتخاب (addr_مطابقت_list(ci->laddress, arg)) {
+			حالت 1:
 				debug("connection from %.100s matched "
 				    "'LocalAddress %.100s' at line %d",
-				    ci->laddress, arg, line);
-				break;
-			case 0:
-			case -1:
-				result = 0;
-				break;
-			case -2:
-				result = -1;
-				goto out;
+				    ci->laddress, arg, سطر);
+				توڑو;
+			حالت 0:
+			حالت -1:
+				نتیجہ = 0;
+				توڑو;
+			حالت -2:
+				نتیجہ = -1;
+				جاؤ برآمد;
 			}
-		} else if (strcasecmp(attrib, "localport") == 0) {
-			if ((port = a2port(arg)) == -1) {
+		} ورنہ اگر (strcasecmp(attrib, "localport") == 0) {
+			اگر ((پورٹ = a2port(arg)) == -1) {
 				error("Invalid LocalPort '%s' on Match line",
 				    arg);
-				result = -1;
-				goto out;
+				نتیجہ = -1;
+				جاؤ برآمد;
 			}
-			if (ci == NULL || (ci->test && ci->lport == -1)) {
-				result = 0;
-				goto next;
+			اگر (ci == تہی || (ci->test && ci->lport == -1)) {
+				نتیجہ = 0;
+				جاؤ اگلا;
 			}
-			if (ci->lport == 0)
-				match_test_missing_fatal("LocalPort", "lport");
+			اگر (ci->lport == 0)
+				مطابقت_test_missing_fatal("LocalPort", "lport");
 			/* TODO support port lists */
-			if (port == ci->lport)
+			اگر (پورٹ == ci->lport)
 				debug("connection from %.100s matched "
 				    "'LocalPort %d' at line %d",
-				    ci->laddress, port, line);
-			else
-				result = 0;
-		} else if (strcasecmp(attrib, "rdomain") == 0) {
-			if (ci == NULL || (ci->test && ci->rdomain == NULL)) {
-				result = 0;
-				goto next;
+				    ci->laddress, پورٹ, سطر);
+			ورنہ
+				نتیجہ = 0;
+		} ورنہ اگر (strcasecmp(attrib, "rdomain") == 0) {
+			اگر (ci == تہی || (ci->test && ci->rdomain == تہی)) {
+				نتیجہ = 0;
+				جاؤ اگلا;
 			}
-			if (ci->rdomain == NULL)
-				match_test_missing_fatal("RDomain", "rdomain");
-			if (match_pattern_list(ci->rdomain, arg, 0) != 1)
-				result = 0;
-			else
+			اگر (ci->rdomain == تہی)
+				مطابقت_test_missing_fatal("RDomain", "rdomain");
+			اگر (مطابقت_نمونہ_list(ci->rdomain, arg, 0) != 1)
+				نتیجہ = 0;
+			ورنہ
 				debug("connection RDomain %.100s matched "
 				    "'RDomain %.100s' at line %d",
-				    ci->rdomain, arg, line);
-		} else if (strcasecmp(attrib, "version") == 0) {
-			if (match_pattern_list(SSH_RELEASE, arg, 0) != 1)
-				result = 0;
-			else
+				    ci->rdomain, arg, سطر);
+		} ورنہ اگر (strcasecmp(attrib, "version") == 0) {
+			اگر (مطابقت_نمونہ_list(SSH_RELEASE, arg, 0) != 1)
+				نتیجہ = 0;
+			ورنہ
 				debug("version %.100s matched "
 				    "'version %.100s' at line %d",
-				    SSH_RELEASE, arg, line);
-		} else {
+				    SSH_RELEASE, arg, سطر);
+		} ورنہ {
 			error("Unsupported Match attribute %s", oattrib);
-			result = -1;
-			goto out;
+			نتیجہ = -1;
+			جاؤ برآمد;
 		}
- next:
-		free(attrib);
-		attrib = NULL;
+ اگلا:
+		آزاد(attrib);
+		attrib = تہی;
 	}
-	if (attributes == 0) {
+	اگر (اوصاف == 0) {
 		error("One or more attributes required for Match");
-		return -1;
+		واپس -1;
 	}
- out:
-	if (ci != NULL && result != -1)
-		debug3("match %sfound on line %d", result ? "" : "not ", line);
-	free(attrib);
-	return result;
+ برآمد:
+	اگر (ci != تہی && نتیجہ != -1)
+		debug3("match %sfound on line %d", نتیجہ ? "" : "not ", سطر);
+	آزاد(attrib);
+	واپس نتیجہ;
 }
 
-#define WHITESPACE " \t\r\n"
+#تعریف_کرو WHITESPACE " \t\r\n"
 
 /* Multistate option parsing */
-struct multistate {
-	char *key;
-	int value;
+ساخت multistate {
+	حرف *کلید;
+	صحیح قدر;
 };
-static const struct multistate multistate_flag[] = {
+ساکن ثابت ساخت multistate multistate_flag[] = {
 	{ "yes",			1 },
 	{ "no",				0 },
-	{ NULL, -1 }
+	{ تہی, -1 }
 };
-static const struct multistate multistate_ignore_rhosts[] = {
+ساکن ثابت ساخت multistate multistate_ignore_rhosts[] = {
 	{ "yes",			IGNORE_RHOSTS_YES },
 	{ "no",				IGNORE_RHOSTS_NO },
 	{ "shosts-only",		IGNORE_RHOSTS_SHOSTS },
-	{ NULL, -1 }
+	{ تہی, -1 }
 };
-static const struct multistate multistate_addressfamily[] = {
+ساکن ثابت ساخت multistate multistate_addressfamily[] = {
 	{ "inet",			AF_INET },
 	{ "inet6",			AF_INET6 },
 	{ "any",			AF_UNSPEC },
-	{ NULL, -1 }
+	{ تہی, -1 }
 };
-static const struct multistate multistate_permitrootlogin[] = {
+ساکن ثابت ساخت multistate multistate_permitrootlogin[] = {
 	{ "prohibit-password",		PERMIT_NO_PASSWD },
 	{ "without-password",		PERMIT_NO_PASSWD },
 	{ "forced-commands-only",	PERMIT_FORCED_ONLY },
 	{ "yes",			PERMIT_YES },
 	{ "no",				PERMIT_NO },
-	{ NULL, -1 }
+	{ تہی, -1 }
 };
-static const struct multistate multistate_compression[] = {
-#ifdef WITH_ZLIB
+ساکن ثابت ساخت multistate multistate_compression[] = {
+#اگر_تعریف_شدہ WITH_ZLIB
 	{ "yes",			COMP_DELAYED },
 	{ "delayed",			COMP_DELAYED },
-#endif
+#اگر_ختم
 	{ "no",				COMP_NONE },
-	{ NULL, -1 }
+	{ تہی, -1 }
 };
-static const struct multistate multistate_gatewayports[] = {
+ساکن ثابت ساخت multistate multistate_gatewayports[] = {
 	{ "clientspecified",		2 },
 	{ "yes",			1 },
 	{ "no",				0 },
-	{ NULL, -1 }
+	{ تہی, -1 }
 };
-static const struct multistate multistate_tcpfwd[] = {
+ساکن ثابت ساخت multistate multistate_tcpfwd[] = {
 	{ "yes",			FORWARD_ALLOW },
 	{ "all",			FORWARD_ALLOW },
 	{ "no",				FORWARD_DENY },
 	{ "remote",			FORWARD_REMOTE },
 	{ "local",			FORWARD_LOCAL },
-	{ NULL, -1 }
+	{ تہی, -1 }
 };
-static const struct multistate multistate_keepalives[] = {
+ساکن ثابت ساخت multistate multistate_keepalives[] = {
 	{ "true",			SSH_KEEPALIVES_TRANSPORT },
 	{ "false",			SSH_KEEPALIVES_OFF },
 	{ "yes",			SSH_KEEPALIVES_TRANSPORT },
 	{ "no",				SSH_KEEPALIVES_OFF },
 	{ "transport",			SSH_KEEPALIVES_TRANSPORT },
 	{ "all",			SSH_KEEPALIVES_ALL },
-	{ NULL, -1 }
+	{ تہی, -1 }
 };
-static const struct multistate multistate_warnweakcrypto[] = {
+ساکن ثابت ساخت multistate multistate_warnweakcrypto[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
 	{ "no",				0 },
 	{ "no-pq-kex",			0 },
-	{ NULL, -1 }
+	{ تہی, -1 }
 };
 
-static int
-process_server_config_line_depth(ServerOptions *options, char *line,
-    const char *filename, int linenum, int *activep,
-    struct connection_info *connectinfo, int *inc_flags, int depth,
-    struct include_list *includes)
+ساکن صحیح
+process_server_config_سطر_گہرائی(ServerOptions *options, حرف *سطر,
+    ثابت حرف *filename, صحیح linenum, صحیح *activep,
+    ساخت connection_info *connectinfo, صحیح *inc_flags, صحیح گہرائی,
+    ساخت include_list *includes)
 {
-	char *str, ***chararrayptr, **charptr, *arg, *arg2, *p, *keyword;
-	int cmdline = 0, *intptr, value, value2, value3, n, port, oactive, r;
-	double dvalue, *doubleptr = NULL;
-	int ca_only = 0, found = 0;
+	حرف *str, ***chararrayptr, **charptr, *arg, *arg2, *p, *keyword;
+	صحیح cmdline = 0, *intptr, قدر, value2, value3, n, پورٹ, oactive, r;
+	دوہرا dvalue, *doubleptr = تہی;
+	صحیح ca_only = 0, ملا = 0;
 	SyslogFacility *log_facility_ptr;
 	LogLevel *log_level_ptr;
 	ServerOpCodes opcode;
 	u_int i, *uintptr, flags = 0;
-	size_t len;
-	long long val64;
-	const struct multistate *multistate_ptr;
-	const char *errstr;
-	struct include_item *item;
+	سائز_t len;
+	طویل طویل val64;
+	ثابت ساخت multistate *multistate_ptr;
+	ثابت حرف *errstr;
+	ساخت include_شے *شے;
 	glob_t gbuf;
-	char **oav = NULL, **av;
-	int oac = 0, ac;
-	int ret = -1;
-	char **strs = NULL; /* string array arguments; freed implicitly */
+	حرف **oav = تہی, **av;
+	صحیح oac = 0, ac;
+	صحیح ret = -1;
+	حرف **strs = تہی; /* string array arguments; freed implicitly */
 	u_int nstrs = 0;
 
 	/* Strip trailing whitespace. Allow \f (form feed) at EOL only */
-	if ((len = strlen(line)) == 0)
-		return 0;
-	for (len--; len > 0; len--) {
-		if (strchr(WHITESPACE "\f", line[len]) == NULL)
-			break;
-		line[len] = '\0';
+	اگر ((len = لڑی_لمبائی(سطر)) == 0)
+		واپس 0;
+	برائے (len--; len > 0; len--) {
+		اگر (strchr(WHITESPACE "\f", سطر[len]) == تہی)
+			توڑو;
+		سطر[len] = '\0';
 	}
 
-	str = line;
-	if ((keyword = strdelim(&str)) == NULL)
-		return 0;
+	str = سطر;
+	اگر ((keyword = strdelim(&str)) == تہی)
+		واپس 0;
 	/* Ignore leading whitespace */
-	if (*keyword == '\0')
+	اگر (*keyword == '\0')
 		keyword = strdelim(&str);
-	if (!keyword || !*keyword || *keyword == '#')
-		return 0;
-	if (str == NULL || *str == '\0') {
+	اگر (!keyword || !*keyword || *keyword == '#')
+		واپس 0;
+	اگر (str == تہی || *str == '\0') {
 		error("%s line %d: no argument after keyword \"%s\"",
 		    filename, linenum, keyword);
-		return -1;
+		واپس -1;
 	}
-	intptr = NULL;
-	charptr = NULL;
+	intptr = تہی;
+	charptr = تہی;
 	opcode = parse_token(keyword, filename, linenum, &flags);
 
-	if (argv_split(str, &oac, &oav, 1) != 0) {
+	اگر (argv_بانٹو(str, &oac, &oav, 1) != 0) {
 		error("%s line %d: invalid quotes", filename, linenum);
-		return -1;
+		واپس -1;
 	}
 	ac = oac;
 	av = oav;
 
-	if (activep == NULL) { /* We are processing a command line directive */
+	اگر (activep == تہی) { /* We are processing a command line directive */
 		cmdline = 1;
 		activep = &cmdline;
 	}
-	if (*activep && opcode != sMatch && opcode != sInclude)
+	اگر (*activep && opcode != s_مطابقت && opcode != sInclude)
 		debug3("%s:%d setting %s %s", filename, linenum, keyword, str);
-	if (*activep == 0 && !(flags & SSHCFG_MATCH)) {
-		if (connectinfo == NULL) {
+	اگر (*activep == 0 && !(flags & SSHCFG_مطابقت)) {
+		اگر (connectinfo == تہی) {
 			fatal("%s line %d: Directive '%s' is not allowed "
 			    "within a Match block", filename, linenum, keyword);
-		} else { /* this is a directive we have already processed */
+		} ورنہ { /* this is a directive we have already processed */
 			ret = 0;
-			goto out;
+			جاؤ برآمد;
 		}
 	}
 
-	switch (opcode) {
+	انتخاب (opcode) {
 	/* Portable-specific options */
-#ifdef USE_PAM
-	case sUsePAM:
+#اگر_تعریف_شدہ USE_PAM
+	حالت sUsePAM:
 		intptr = &options->use_pam;
-		goto parse_flag;
-	case sPAMServiceName:
+		جاؤ parse_flag;
+	حالت sPAMServiceName:
 		charptr = &options->pam_service_name;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0') {
 			fatal("%s line %d: missing argument.",
 			    filename, linenum);
 		}
-		if (*activep && *charptr == NULL)
+		اگر (*activep && *charptr == تہی)
 			*charptr = xstrdup(arg);
-		break;
-#endif
+		توڑو;
+#اگر_ختم
 
 	/* Standard Options */
-	case sBadOption:
-		goto out;
-	case sPort:
+	حالت sBadOption:
+		جاؤ برآمد;
+	حالت s_پورٹ:
 		/* ignore ports from configfile if cmdline specifies ports */
-		if (options->ports_from_cmdline) {
+		اگر (options->ports_from_cmdline) {
 			argv_consume(&ac);
-			break;
+			توڑو;
 		}
-		if (options->num_ports >= MAX_PORTS)
+		اگر (options->عدد_ports >= MAX_PORTS)
 			fatal("%s line %d: too many ports.",
 			    filename, linenum);
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: missing port number.",
 			    filename, linenum);
-		options->ports[options->num_ports++] = a2port(arg);
-		if (options->ports[options->num_ports-1] <= 0)
+		options->ports[options->عدد_ports++] = a2port(arg);
+		اگر (options->ports[options->عدد_ports-1] <= 0)
 			fatal("%s line %d: Badly formatted port number.",
 			    filename, linenum);
-		break;
+		توڑو;
 
-	case sLoginGraceTime:
-		intptr = &options->login_grace_time;
- parse_time:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت s_Login_Grace_وقت:
+		intptr = &options->login_grace_وقت;
+ parse_وقت:
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: missing time value.",
 			    filename, linenum);
-		if ((value = convtime(arg)) == -1)
+		اگر ((قدر = convtime(arg)) == -1)
 			fatal("%s line %d: invalid time value.",
 			    filename, linenum);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		اگر (*activep && *intptr == -1)
+			*intptr = قدر;
+		توڑو;
 
-	case sListenAddress:
-		arg = argv_next(&ac, &av);
-		if (arg == NULL || *arg == '\0')
+	حالت s_Listen_پتہ:
+		arg = argv_اگلا(&ac, &av);
+		اگر (arg == تہی || *arg == '\0')
 			fatal("%s line %d: missing address",
 			    filename, linenum);
 		/* check for bare IPv6 address: no "[]" and 2 or more ":" */
-		if (strchr(arg, '[') == NULL && (p = strchr(arg, ':')) != NULL
-		    && strchr(p+1, ':') != NULL) {
-			port = 0;
+		اگر (strchr(arg, '[') == تہی && (p = strchr(arg, ':')) != تہی
+		    && strchr(p+1, ':') != تہی) {
+			پورٹ = 0;
 			p = arg;
-		} else {
-			arg2 = NULL;
+		} ورنہ {
+			arg2 = تہی;
 			p = hpdelim(&arg);
-			if (p == NULL)
+			اگر (p == تہی)
 				fatal("%s line %d: bad address:port usage",
 				    filename, linenum);
 			p = cleanhostname(p);
-			if (arg == NULL)
-				port = 0;
-			else if ((port = a2port(arg)) <= 0)
+			اگر (arg == تہی)
+				پورٹ = 0;
+			ورنہ اگر ((پورٹ = a2port(arg)) <= 0)
 				fatal("%s line %d: bad port number",
 				    filename, linenum);
 		}
 		/* Optional routing table */
-		arg2 = NULL;
-		if ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcmp(arg, "rdomain") != 0 ||
-			    (arg2 = argv_next(&ac, &av)) == NULL)
+		arg2 = تہی;
+		اگر ((arg = argv_اگلا(&ac, &av)) != تہی) {
+			اگر (strcmp(arg, "rdomain") != 0 ||
+			    (arg2 = argv_اگلا(&ac, &av)) == تہی)
 				fatal("%s line %d: bad ListenAddress syntax",
 				    filename, linenum);
-			if (!valid_rdomain(arg2))
+			اگر (!valid_rdomain(arg2))
 				fatal("%s line %d: bad routing domain",
 				    filename, linenum);
 		}
-		queue_listen_addr(options, p, arg2, port);
+		قطار_listen_addr(options, p, arg2, پورٹ);
 
-		break;
+		توڑو;
 
-	case sAddressFamily:
-		intptr = &options->address_family;
+	حالت s_پتہ_Family:
+		intptr = &options->پتہ_family;
 		multistate_ptr = multistate_addressfamily;
  parse_multistate:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: missing argument.",
 			    filename, linenum);
-		value = -1;
-		for (i = 0; multistate_ptr[i].key != NULL; i++) {
-			if (strcasecmp(arg, multistate_ptr[i].key) == 0) {
-				value = multistate_ptr[i].value;
-				break;
+		قدر = -1;
+		برائے (i = 0; multistate_ptr[i].کلید != تہی; i++) {
+			اگر (strcasecmp(arg, multistate_ptr[i].کلید) == 0) {
+				قدر = multistate_ptr[i].قدر;
+				توڑو;
 			}
 		}
-		if (value == -1)
+		اگر (قدر == -1)
 			fatal("%s line %d: unsupported option \"%s\".",
 			    filename, linenum, arg);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		اگر (*activep && *intptr == -1)
+			*intptr = قدر;
+		توڑو;
 
-	case sHostKey:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت s_Host_کلید:
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: missing file name.",
 			    filename, linenum);
-		if (*activep) {
-			servconf_add_hostkey(filename, linenum,
+		اگر (*activep) {
+			servconf_جوڑو_hostkey(filename, linenum,
 			    options, arg, 1);
 		}
-		break;
+		توڑو;
 
-	case sHostKeyAgent:
-		charptr = &options->host_key_agent;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت s_Host_کلید_Agent:
+		charptr = &options->host_کلید_agent;
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: missing socket name.",
 			    filename, linenum);
-		if (*activep && *charptr == NULL)
+		اگر (*activep && *charptr == تہی)
 			*charptr = !strcmp(arg, SSH_AUTHSOCKET_ENV_NAME) ?
-			    xstrdup(arg) : derelativise_path(arg);
-		break;
+			    xstrdup(arg) : derelativise_راستہ(arg);
+		توڑو;
 
-	case sHostCertificate:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت sHostCertificate:
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: missing file name.",
 			    filename, linenum);
-		if (*activep)
-			servconf_add_hostcert(filename, linenum, options, arg);
-		break;
+		اگر (*activep)
+			servconf_جوڑو_hostcert(filename, linenum, options, arg);
+		توڑو;
 
-	case sPidFile:
+	حالت sPidFile:
 		charptr = &options->pid_file;
  parse_filename:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: missing file name.",
 			    filename, linenum);
-		if (*activep && *charptr == NULL) {
-			*charptr = derelativise_path(arg);
+		اگر (*activep && *charptr == تہی) {
+			*charptr = derelativise_راستہ(arg);
 			/* increase optional counter */
-			if (intptr != NULL)
+			اگر (intptr != تہی)
 				*intptr = *intptr + 1;
 		}
-		break;
+		توڑو;
 
-	case sModuliFile:
+	حالت sModuliFile:
 		charptr = &options->moduli_file;
-		goto parse_filename;
+		جاؤ parse_filename;
 
-	case sPermitRootLogin:
-		intptr = &options->permit_root_login;
+	حالت s_Permit_جڑ_Login:
+		intptr = &options->permit_جڑ_login;
 		multistate_ptr = multistate_permitrootlogin;
-		goto parse_multistate;
+		جاؤ parse_multistate;
 
-	case sIgnoreRhosts:
+	حالت sIgnoreRhosts:
 		intptr = &options->ignore_rhosts;
 		multistate_ptr = multistate_ignore_rhosts;
-		goto parse_multistate;
+		جاؤ parse_multistate;
 
-	case sIgnoreUserKnownHosts:
-		intptr = &options->ignore_user_known_hosts;
+	حالت s_Ignore_User_معلوم_Hosts:
+		intptr = &options->ignore_user_معلوم_hosts;
  parse_flag:
 		multistate_ptr = multistate_flag;
-		goto parse_multistate;
+		جاؤ parse_multistate;
 
-	case sHostbasedAuthentication:
+	حالت sHostbasedAuthentication:
 		intptr = &options->hostbased_authentication;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sHostbasedUsesNameFromPacketOnly:
-		intptr = &options->hostbased_uses_name_from_packet_only;
-		goto parse_flag;
+	حالت s_Hostbased_استعمال_کرتا_Name_From_Packet_Only:
+		intptr = &options->hostbased_استعمال_کرتا_name_from_packet_only;
+		جاؤ parse_flag;
 
-	case sHostbasedAcceptedAlgorithms:
+	حالت sHostbasedAcceptedAlgorithms:
 		charptr = &options->hostbased_accepted_algos;
 		ca_only = 0;
  parse_pubkey_algos:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: Missing argument.",
 			    filename, linenum);
-		if (*arg != '-' &&
-		    !sshkey_names_valid2(*arg == '+' || *arg == '^' ?
+		اگر (*arg != '-' &&
+		    !sshkey_نام_valid2(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg, 1, ca_only))
 			fatal("%s line %d: Bad key types '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (*activep && *charptr == NULL)
+		اگر (*activep && *charptr == تہی)
 			*charptr = xstrdup(arg);
-		break;
+		توڑو;
 
-	case sHostKeyAlgorithms:
+	حالت s_Host_کلید_Algorithms:
 		charptr = &options->hostkeyalgorithms;
 		ca_only = 0;
-		goto parse_pubkey_algos;
+		جاؤ parse_pubkey_algos;
 
-	case sCASignatureAlgorithms:
+	حالت sCASignatureAlgorithms:
 		charptr = &options->ca_sign_algorithms;
 		ca_only = 1;
-		goto parse_pubkey_algos;
+		جاؤ parse_pubkey_algos;
 
-	case sPubkeyAuthentication:
+	حالت sPubkeyAuthentication:
 		intptr = &options->pubkey_authentication;
 		ca_only = 0;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sPubkeyAcceptedAlgorithms:
+	حالت sPubkeyAcceptedAlgorithms:
 		charptr = &options->pubkey_accepted_algos;
 		ca_only = 0;
-		goto parse_pubkey_algos;
+		جاؤ parse_pubkey_algos;
 
-	case sPubkeyAuthOptions:
+	حالت sPubkeyAuthOptions:
 		intptr = &options->pubkey_auth_options;
-		value = 0;
+		قدر = 0;
 		value2 = -1;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcasecmp(arg, "none") == 0)
-				continue;
-			if (strcasecmp(arg, "touch-required") == 0)
-				value |= PUBKEYAUTH_TOUCH_REQUIRED;
-			else if (strcasecmp(arg, "verify-required") == 0)
-				value |= PUBKEYAUTH_VERIFY_REQUIRED;
-			else if (strncasecmp(arg, "max-pk-ok:", 10) == 0) {
+		جب ((arg = argv_اگلا(&ac, &av)) != تہی) {
+			اگر (strcasecmp(arg, "none") == 0)
+				جاری;
+			اگر (strcasecmp(arg, "touch-required") == 0)
+				قدر |= PUBKEYAUTH_TOUCH_REQUIRED;
+			ورنہ اگر (strcasecmp(arg, "verify-required") == 0)
+				قدر |= PUBKEYAUTH_VERIFY_REQUIRED;
+			ورنہ اگر (strncasecmp(arg, "max-pk-ok:", 10) == 0) {
 				value2 = strtonum(arg + 10, 0, 255, &errstr);
-				if (errstr != NULL) {
+				اگر (errstr != تہی) {
 					error("%s line %d: bad %s max-pk-ok "
 					    "value: %s", filename, linenum,
 					keyword, errstr);
-					goto out;
+					جاؤ برآمد;
 				}
-			} else {
+			} ورنہ {
 				error("%s line %d: unsupported %s option %s",
 				    filename, linenum, keyword, arg);
-				goto out;
+				جاؤ برآمد;
 			}
 		}
-		if (*activep && options->pubkey_auth_options == -1) {
-			options->pubkey_auth_options = value;
+		اگر (*activep && options->pubkey_auth_options == -1) {
+			options->pubkey_auth_options = قدر;
 			options->max_pubkey_ok = value2;
 		}
-		break;
+		توڑو;
 
-#ifdef KRB5
-	case sKerberosAuthentication:
+#اگر_تعریف_شدہ KRB5
+	حالت sKerberosAuthentication:
 		intptr = &options->kerberos_authentication;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sKerberosOrLocalPasswd:
+	حالت sKerberosOrLocalPasswd:
 		intptr = &options->kerberos_or_local_passwd;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sKerberosTicketCleanup:
+	حالت sKerberosTicketCleanup:
 		intptr = &options->kerberos_ticket_cleanup;
-		goto parse_flag;
-#ifdef USE_AFS
-	case sKerberosGetAFSToken:
+		جاؤ parse_flag;
+#اگر_تعریف_شدہ USE_AFS
+	حالت sKerberosGetAFSToken:
 		intptr = &options->kerberos_get_afs_token;
-		goto parse_flag;
-#endif /* USE_AFS */
-#endif /* KRB5 */
+		جاؤ parse_flag;
+#اگر_ختم /* USE_AFS */
+#اگر_ختم /* KRB5 */
 
-#ifdef GSSAPI
-	case sGSSAPIAuthentication:
+#اگر_تعریف_شدہ GSSAPI
+	حالت sGSSAPIAuthentication:
 		intptr = &options->gss_authentication;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sGSSAPICleanupCredentials:
+	حالت sGSSAPICleanupCredentials:
 		intptr = &options->gss_cleanup_creds;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sGSSAPIDelegateCredentials:
+	حالت sGSSAPIDelegateCredentials:
 		intptr = &options->gss_deleg_creds;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sGSSAPIStrictAcceptorCheck:
+	حالت sGSSAPIStrictAcceptorCheck:
 		intptr = &options->gss_strict_acceptor;
-		goto parse_flag;
-#endif /* GSSAPI */
+		جاؤ parse_flag;
+#اگر_ختم /* GSSAPI */
 
-	case sPasswordAuthentication:
+	حالت sPasswordAuthentication:
 		intptr = &options->password_authentication;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sKbdInteractiveAuthentication:
+	حالت sKbdInteractiveAuthentication:
 		intptr = &options->kbd_interactive_authentication;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sPrintMotd:
+	حالت sPrintMotd:
 		intptr = &options->print_motd;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-#ifndef DISABLE_LASTLOG
-	case sPrintLastLog:
+#اگر_غیر_تعریف_شدہ DISABLE_LASTLOG
+	حالت s_Print_آخری_Log:
 		intptr = &options->print_lastlog;
-		goto parse_flag;
-#endif
+		جاؤ parse_flag;
+#اگر_ختم
 
-	case sX11Forwarding:
+	حالت sX11Forwarding:
 		intptr = &options->x11_forwarding;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sX11DisplayOffset:
-		intptr = &options->x11_display_offset;
+	حالت s_X11_Display_انحراف:
+		intptr = &options->x11_display_انحراف;
  parse_int:
-		arg = argv_next(&ac, &av);
-		if ((errstr = atoi_err(arg, &value)) != NULL)
+		arg = argv_اگلا(&ac, &av);
+		اگر ((errstr = atoi_err(arg, &قدر)) != تہی)
 			fatal("%s line %d: %s integer value %s.",
 			    filename, linenum, keyword, errstr);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		اگر (*activep && *intptr == -1)
+			*intptr = قدر;
+		توڑو;
 
-	case sX11UseLocalhost:
+	حالت sX11UseLocalhost:
 		intptr = &options->x11_use_localhost;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sXAuthLocation:
+	حالت sXAuthLocation:
 		charptr = &options->xauth_location;
-		goto parse_filename;
+		جاؤ parse_filename;
 
-	case sPermitTTY:
+	حالت sPermitTTY:
 		intptr = &options->permit_tty;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sPermitUserRC:
+	حالت sPermitUserRC:
 		intptr = &options->permit_user_rc;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sStrictModes:
+	حالت sStrictModes:
 		intptr = &options->strict_modes;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sTCPKeepAlive:
+	حالت sTCPKeepAlive:
 		intptr = &options->tcp_keep_alive;
 		multistate_ptr = multistate_keepalives;
-		goto parse_multistate;
+		جاؤ parse_multistate;
 
-	case sPermitEmptyPasswords:
-		intptr = &options->permit_empty_passwd;
-		goto parse_flag;
+	حالت s_Permit_خالی_خانے_Passwords:
+		intptr = &options->permit_خالی_خانے_passwd;
+		جاؤ parse_flag;
 
-	case sPermitUserEnvironment:
+	حالت sPermitUserEnvironment:
 		intptr = &options->permit_user_env;
 		charptr = &options->permit_user_env_allowlist;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		value = 0;
-		p = NULL;
-		if (strcmp(arg, "yes") == 0)
-			value = 1;
-		else if (strcmp(arg, "no") == 0)
-			value = 0;
-		else {
+		قدر = 0;
+		p = تہی;
+		اگر (strcmp(arg, "yes") == 0)
+			قدر = 1;
+		ورنہ اگر (strcmp(arg, "no") == 0)
+			قدر = 0;
+		ورنہ {
 			/* Pattern-list specified */
-			value = 1;
+			قدر = 1;
 			p = xstrdup(arg);
 		}
-		if (*activep && *intptr == -1) {
-			*intptr = value;
+		اگر (*activep && *intptr == -1) {
+			*intptr = قدر;
 			*charptr = p;
-			p = NULL;
+			p = تہی;
 		}
-		free(p);
-		break;
+		آزاد(p);
+		توڑو;
 
-	case sCompression:
+	حالت sCompression:
 		intptr = &options->compression;
 		multistate_ptr = multistate_compression;
-		goto parse_multistate;
+		جاؤ parse_multistate;
 
-	case sRekeyLimit:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت s_Rekey_حد_بندی:
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (strcmp(arg, "default") == 0) {
+		اگر (strcmp(arg, "default") == 0) {
 			val64 = 0;
-		} else {
-			if (scan_scaled(arg, &val64) == -1)
+		} ورنہ {
+			اگر (جائزہ_scaled(arg, &val64) == -1)
 				fatal("%.200s line %d: Bad %s number '%s': %s",
 				    filename, linenum, keyword,
 				    arg, strerror(errno));
-			if (val64 != 0 && val64 < 16)
+			اگر (val64 != 0 && val64 < 16)
 				fatal("%.200s line %d: %s too small",
 				    filename, linenum, keyword);
 		}
-		if (*activep && options->rekey_limit == -1)
-			options->rekey_limit = val64;
-		if (ac != 0) { /* optional rekey interval present */
-			if (strcmp(av[0], "none") == 0) {
-				(void)argv_next(&ac, &av);	/* discard */
-				break;
+		اگر (*activep && options->rekey_حد_بندی == -1)
+			options->rekey_حد_بندی = val64;
+		اگر (ac != 0) { /* optional rekey interval present */
+			اگر (strcmp(av[0], "none") == 0) {
+				(خالی)argv_اگلا(&ac, &av);	/* discard */
+				توڑو;
 			}
 			intptr = &options->rekey_interval;
-			goto parse_time;
+			جاؤ parse_وقت;
 		}
-		break;
+		توڑو;
 
-	case sGatewayPorts:
+	حالت sGatewayPorts:
 		intptr = &options->fwd_opts.gateway_ports;
 		multistate_ptr = multistate_gatewayports;
-		goto parse_multistate;
+		جاؤ parse_multistate;
 
-	case sUseDNS:
+	حالت sUseDNS:
 		intptr = &options->use_dns;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sSyslogFacility:
+	حالت sSyslogFacility:
 		log_facility_ptr = &options->log_facility;
-		arg = argv_next(&ac, &av);
-		value = log_facility_number(arg);
-		if (value == SYSLOG_FACILITY_NOT_SET)
+		arg = argv_اگلا(&ac, &av);
+		قدر = log_facility_نمبر(arg);
+		اگر (قدر == SYSLOG_FACILITY_NOT_سیٹ)
 			fatal("%.200s line %d: unsupported log facility '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (*log_facility_ptr == -1)
-			*log_facility_ptr = (SyslogFacility) value;
-		break;
+		اگر (*log_facility_ptr == -1)
+			*log_facility_ptr = (SyslogFacility) قدر;
+		توڑو;
 
-	case sLogLevel:
+	حالت sLogLevel:
 		log_level_ptr = &options->log_level;
-		arg = argv_next(&ac, &av);
-		value = log_level_number(arg);
-		if (value == SYSLOG_LEVEL_NOT_SET)
+		arg = argv_اگلا(&ac, &av);
+		قدر = log_level_نمبر(arg);
+		اگر (قدر == SYSLOG_LEVEL_NOT_سیٹ)
 			fatal("%.200s line %d: unsupported log level '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (*activep && *log_level_ptr == -1)
-			*log_level_ptr = (LogLevel) value;
-		break;
+		اگر (*activep && *log_level_ptr == -1)
+			*log_level_ptr = (LogLevel) قدر;
+		توڑو;
 
-	case sLogVerbose:
-		found = options->num_log_verbose == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+	حالت sLogVerbose:
+		ملا = options->عدد_log_verbose == 0;
+		جب ((arg = argv_اگلا(&ac, &av)) != تہی) {
+			اگر (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				جاؤ برآمد;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			اگر (strcasecmp(arg, "none") == 0) {
+				اگر (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					جاؤ برآمد;
 				}
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		اگر (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		اگر (ملا && *activep) {
 			options->log_verbose = strs;
-			options->num_log_verbose = nstrs;
-			strs = NULL; /* transferred */
+			options->عدد_log_verbose = nstrs;
+			strs = تہی; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		توڑو;
 
-	case sAllowTcpForwarding:
+	حالت sAllowTcpForwarding:
 		intptr = &options->allow_tcp_forwarding;
 		multistate_ptr = multistate_tcpfwd;
-		goto parse_multistate;
+		جاؤ parse_multistate;
 
-	case sAllowStreamLocalForwarding:
+	حالت s_Allow_دھارا_Local_Forwarding:
 		intptr = &options->allow_streamlocal_forwarding;
 		multistate_ptr = multistate_tcpfwd;
-		goto parse_multistate;
+		جاؤ parse_multistate;
 
-	case sAllowAgentForwarding:
+	حالت sAllowAgentForwarding:
 		intptr = &options->allow_agent_forwarding;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sAgentSocketPath:
-		charptr = &options->agent_socket_path;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت s_Agent_Socket_راستہ:
+		charptr = &options->agent_socket_راستہ;
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: missing path.", filename, linenum);
-		if (strncmp(arg, "shared:", 7) == 0) {
+		اگر (لڑی_موازنہ(arg, "shared:", 7) == 0) {
 			/* Shared paths must be absolute */
-			if (arg[7] != '/') {
+			اگر (arg[7] != '/') {
 				fatal("%s line %d: invalid shared path.",
 				    filename, linenum);
 			}
-		} else if (strncmp(arg, "user:", 5) == 0) {
+		} ورنہ اگر (لڑی_موازنہ(arg, "user:", 5) == 0) {
 			/* User paths must not be empty */
-			if (arg[5] == '\0') {
+			اگر (arg[5] == '\0') {
 				fatal("%s line %d: invalid user path.",
 				    filename, linenum);
 			}
-		} else if (strcmp(arg, "none") != 0)
+		} ورنہ اگر (strcmp(arg, "none") != 0)
 			fatal("%s line %d: invalid path.", filename, linenum);
-		if (*activep && *charptr == NULL)
+		اگر (*activep && *charptr == تہی)
 			*charptr = xstrdup(arg);
-		break;
+		توڑو;
 
-	case sDisableForwarding:
+	حالت sDisableForwarding:
 		intptr = &options->disable_forwarding;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sAllowUsers:
+	حالت sAllowUsers:
 		chararrayptr = &options->allow_users;
-		uintptr = &options->num_allow_users;
+		uintptr = &options->عدد_allow_users;
  parse_allowdenyusers:
 		/* XXX appends to list; doesn't respect first-match-wins */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' ||
-			    match_user(NULL, NULL, NULL, arg) == -1)
+		جب ((arg = argv_اگلا(&ac, &av)) != تہی) {
+			اگر (*arg == '\0' ||
+			    مطابقت_user(تہی, تہی, تہی, arg) == -1)
 				fatal("%s line %d: invalid %s pattern: \"%s\"",
 				    filename, linenum, keyword, arg);
-			found = 1;
-			if (!*activep)
-				continue;
+			ملا = 1;
+			اگر (!*activep)
+				جاری;
 			opt_array_append(filename, linenum, keyword,
 			    chararrayptr, uintptr, arg);
 		}
-		if (!found) {
+		اگر (!ملا) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		توڑو;
 
-	case sDenyUsers:
+	حالت sDenyUsers:
 		chararrayptr = &options->deny_users;
-		uintptr = &options->num_deny_users;
-		goto parse_allowdenyusers;
+		uintptr = &options->عدد_deny_users;
+		جاؤ parse_allowdenyusers;
 
-	case sAllowGroups:
+	حالت sAllowGroups:
 		chararrayptr = &options->allow_groups;
-		uintptr = &options->num_allow_groups;
+		uintptr = &options->عدد_allow_groups;
 		/* XXX appends to list; doesn't respect first-match-wins */
  parse_allowdenygroups:
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0')
+		جب ((arg = argv_اگلا(&ac, &av)) != تہی) {
+			اگر (*arg == '\0')
 				fatal("%s line %d: empty %s pattern",
 				    filename, linenum, keyword);
-			found = 1;
-			if (!*activep)
-				continue;
+			ملا = 1;
+			اگر (!*activep)
+				جاری;
 			opt_array_append(filename, linenum, keyword,
 			    chararrayptr, uintptr, arg);
 		}
-		if (!found) {
+		اگر (!ملا) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		توڑو;
 
-	case sDenyGroups:
+	حالت sDenyGroups:
 		chararrayptr = &options->deny_groups;
-		uintptr = &options->num_deny_groups;
-		goto parse_allowdenygroups;
+		uintptr = &options->عدد_deny_groups;
+		جاؤ parse_allowdenygroups;
 
-	case sCiphers:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت sCiphers:
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*arg != '-' &&
+		اگر (*arg != '-' &&
 		    !ciphers_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg))
 			fatal("%s line %d: Bad SSH2 cipher spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (options->ciphers == NULL)
+		اگر (options->ciphers == تہی)
 			options->ciphers = xstrdup(arg);
-		break;
+		توڑو;
 
-	case sMacs:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت sMacs:
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*arg != '-' &&
+		اگر (*arg != '-' &&
 		    !mac_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg))
 			fatal("%s line %d: Bad SSH2 mac spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (options->macs == NULL)
+		اگر (options->macs == تہی)
 			options->macs = xstrdup(arg);
-		break;
+		توڑو;
 
-	case sKexAlgorithms:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت sKexAlgorithms:
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*arg != '-' &&
-		    !kex_names_valid(*arg == '+' || *arg == '^' ?
+		اگر (*arg != '-' &&
+		    !kex_نام_valid(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg))
 			fatal("%s line %d: Bad SSH2 KexAlgorithms '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (options->kex_algorithms == NULL)
+		اگر (options->kex_algorithms == تہی)
 			options->kex_algorithms = xstrdup(arg);
-		break;
+		توڑو;
 
-	case sSubsystem:
-		if ((arg = argv_next(&ac, &av)) == NULL || *arg == '\0' ||
-		   ((arg2 = argv_next(&ac, &av)) == NULL || *arg2 == '\0'))
+	حالت sSubsystem:
+		اگر ((arg = argv_اگلا(&ac, &av)) == تہی || *arg == '\0' ||
+		   ((arg2 = argv_اگلا(&ac, &av)) == تہی || *arg2 == '\0'))
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (!*activep) {
+		اگر (!*activep) {
 			argv_consume(&ac);
-			break;
+			توڑو;
 		}
-		found = 0;
-		for (i = 0; i < options->num_subsystems; i++) {
-			if (strcmp(arg, options->subsystem_name[i]) == 0) {
-				found = 1;
-				break;
+		ملا = 0;
+		برائے (i = 0; i < options->عدد_subsystems; i++) {
+			اگر (strcmp(arg, options->subsystem_name[i]) == 0) {
+				ملا = 1;
+				توڑو;
 			}
 		}
-		if (found) {
+		اگر (ملا) {
 			debug("%s line %d: Subsystem '%s' already defined.",
 			    filename, linenum, arg);
 			argv_consume(&ac);
-			break;
+			توڑو;
 		}
 		options->subsystem_name = xrecallocarray(
-		    options->subsystem_name, options->num_subsystems,
-		    options->num_subsystems + 1,
-		    sizeof(*options->subsystem_name));
+		    options->subsystem_name, options->عدد_subsystems,
+		    options->عدد_subsystems + 1,
+		    حجم(*options->subsystem_name));
 		options->subsystem_command = xrecallocarray(
-		    options->subsystem_command, options->num_subsystems,
-		    options->num_subsystems + 1,
-		    sizeof(*options->subsystem_command));
-		options->subsystem_args = xrecallocarray(
-		    options->subsystem_args, options->num_subsystems,
-		    options->num_subsystems + 1,
-		    sizeof(*options->subsystem_args));
-		options->subsystem_name[options->num_subsystems] = xstrdup(arg);
-		options->subsystem_command[options->num_subsystems] =
+		    options->subsystem_command, options->عدد_subsystems,
+		    options->عدد_subsystems + 1,
+		    حجم(*options->subsystem_command));
+		options->subsystem_دلائل = xrecallocarray(
+		    options->subsystem_دلائل, options->عدد_subsystems,
+		    options->عدد_subsystems + 1,
+		    حجم(*options->subsystem_دلائل));
+		options->subsystem_name[options->عدد_subsystems] = xstrdup(arg);
+		options->subsystem_command[options->عدد_subsystems] =
 		    xstrdup(arg2);
 		/* Collect arguments (separate to executable) */
 		arg = argv_assemble(1, &arg2); /* quote command correctly */
 		arg2 = argv_assemble(ac, av); /* rest of command */
-		xasprintf(&options->subsystem_args[options->num_subsystems],
+		xasprintf(&options->subsystem_دلائل[options->عدد_subsystems],
 		    "%s%s%s", arg, *arg2 == '\0' ? "" : " ", arg2);
-		free(arg2);
-		free(arg);
+		آزاد(arg2);
+		آزاد(arg);
 		argv_consume(&ac);
-		options->num_subsystems++;
-		break;
+		options->عدد_subsystems++;
+		توڑو;
 
-	case sMaxStartups:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت sMaxStartups:
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		/* begin:rate:max */
-		if ((n = sscanf(arg, "%d:%d:%d",
-		    &value, &value2, &value3)) == 3) {
-			if (value > value3 || value2 > 100 || value2 < 1)
+		اگر ((n = لڑی_سے_پڑھو(arg, "%d:%d:%d",
+		    &قدر, &value2, &value3)) == 3) {
+			اگر (قدر > value3 || value2 > 100 || value2 < 1)
 				fatal("%s line %d: Invalid %s spec.",
 				    filename, linenum, keyword);
-		} else if (n == 1) {
-			value3 = value;
+		} ورنہ اگر (n == 1) {
+			value3 = قدر;
 			value2 = -1;
-		} else {
+		} ورنہ {
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
 		}
-		if (value <= 0 || value3 <= 0)
+		اگر (قدر <= 0 || value3 <= 0)
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
-		if (*activep && options->max_startups == -1) {
-			options->max_startups_begin = value;
-			options->max_startups_rate = value2;
+		اگر (*activep && options->max_startups == -1) {
+			options->max_startups_begin = قدر;
+			options->max_startups_شرح = value2;
 			options->max_startups = value3;
 		}
-		break;
+		توڑو;
 
-	case sPerSourceNetBlockSize:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت s_فی_ماخذ_Net_بلاک_سائز:
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		switch (n = sscanf(arg, "%d:%d", &value, &value2)) {
-		case 2:
-			if (value2 < 0 || value2 > 128)
+		انتخاب (n = لڑی_سے_پڑھو(arg, "%d:%d", &قدر, &value2)) {
+		حالت 2:
+			اگر (value2 < 0 || value2 > 128)
 				n = -1;
 			/* FALLTHROUGH */
-		case 1:
-			if (value < 0 || value > 32)
+		حالت 1:
+			اگر (قدر < 0 || قدر > 32)
 				n = -1;
 		}
-		if (n != 1 && n != 2)
+		اگر (n != 1 && n != 2)
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
-		if (*activep && options->per_source_masklen_ipv4 == -1) {
-			options->per_source_masklen_ipv4 = value;
-			if (n == 2)
-				options->per_source_masklen_ipv6 = value2;
+		اگر (*activep && options->فی_ماخذ_masklen_ipv4 == -1) {
+			options->فی_ماخذ_masklen_ipv4 = قدر;
+			اگر (n == 2)
+				options->فی_ماخذ_masklen_ipv6 = value2;
 		}
-		break;
+		توڑو;
 
-	case sPerSourceMaxStartups:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت s_فی_ماخذ_Max_Startups:
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (strcmp(arg, "none") == 0) { /* no limit */
-			value = INT_MAX;
-		} else {
-			if ((errstr = atoi_err(arg, &value)) != NULL)
+		اگر (strcmp(arg, "none") == 0) { /* no limit */
+			قدر = زیادہ_سے_زیادہ_عدد;
+		} ورنہ {
+			اگر ((errstr = atoi_err(arg, &قدر)) != تہی)
 				fatal("%s line %d: %s integer value %s.",
 				    filename, linenum, keyword, errstr);
 		}
-		if (*activep && options->per_source_max_startups == -1)
-			options->per_source_max_startups = value;
-		break;
+		اگر (*activep && options->فی_ماخذ_max_startups == -1)
+			options->فی_ماخذ_max_startups = قدر;
+		توڑو;
 
-	case sPerSourcePenaltyExemptList:
-		charptr = &options->per_source_penalty_exempt;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت s_فی_ماخذ_Penalty_Exempt_List:
+		charptr = &options->فی_ماخذ_penalty_exempt;
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: missing argument.",
 			    filename, linenum);
-		if (addr_match_list(NULL, arg) != 0) {
+		اگر (addr_مطابقت_list(تہی, arg) != 0) {
 			fatal("%s line %d: keyword %s "
 			    "invalid address argument.",
 			    filename, linenum, keyword);
 		}
-		if (*activep && *charptr == NULL)
+		اگر (*activep && *charptr == تہی)
 			*charptr = xstrdup(arg);
-		break;
+		توڑو;
 
-	case sPerSourcePenalties:
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			const char *q = NULL;
+	حالت s_فی_ماخذ_Penalties:
+		جب ((arg = argv_اگلا(&ac, &av)) != تہی) {
+			ثابت حرف *q = تہی;
 
-			found = 1;
-			intptr = NULL;
-			doubleptr = NULL;
-			value = -1;
+			ملا = 1;
+			intptr = تہی;
+			doubleptr = تہی;
+			قدر = -1;
 			value2 = 0;
 			/* Allow no/yes only in first position */
-			if (strcasecmp(arg, "no") == 0 ||
+			اگر (strcasecmp(arg, "no") == 0 ||
 			    (value2 = (strcasecmp(arg, "yes") == 0))) {
-				if (ac > 0) {
+				اگر (ac > 0) {
 					fatal("%s line %d: keyword %s \"%s\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword, arg);
 				}
-				if (*activep &&
-				    options->per_source_penalty.enabled == -1)
-					options->per_source_penalty.enabled = value2;
-				continue;
-			} else if ((q = strprefix(arg, "crash:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_crash;
-			} else if ((q = strprefix(arg, "authfail:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_authfail;
-			} else if ((q = strprefix(arg, "invaliduser:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_invaliduser;
-			} else if ((q = strprefix(arg, "noauth:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_noauth;
-			} else if ((q = strprefix(arg, "grace-exceeded:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_grace;
-			} else if ((q = strprefix(arg, "refuseconnection:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_refuseconnection;
-			} else if ((q = strprefix(arg, "max:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_max;
-			} else if ((q = strprefix(arg, "min:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_min;
-			} else if ((q = strprefix(arg, "max-sources4:", 0)) != NULL) {
-				intptr = &options->per_source_penalty.max_sources4;
-				if ((errstr = atoi_err(q, &value)) != NULL)
+				اگر (*activep &&
+				    options->فی_ماخذ_penalty.enabled == -1)
+					options->فی_ماخذ_penalty.enabled = value2;
+				جاری;
+			} ورنہ اگر ((q = strprefix(arg, "crash:", 0)) != تہی) {
+				doubleptr = &options->فی_ماخذ_penalty.penalty_crash;
+			} ورنہ اگر ((q = strprefix(arg, "authfail:", 0)) != تہی) {
+				doubleptr = &options->فی_ماخذ_penalty.penalty_authfail;
+			} ورنہ اگر ((q = strprefix(arg, "invaliduser:", 0)) != تہی) {
+				doubleptr = &options->فی_ماخذ_penalty.penalty_invaliduser;
+			} ورنہ اگر ((q = strprefix(arg, "noauth:", 0)) != تہی) {
+				doubleptr = &options->فی_ماخذ_penalty.penalty_noauth;
+			} ورنہ اگر ((q = strprefix(arg, "grace-exceeded:", 0)) != تہی) {
+				doubleptr = &options->فی_ماخذ_penalty.penalty_grace;
+			} ورنہ اگر ((q = strprefix(arg, "refuseconnection:", 0)) != تہی) {
+				doubleptr = &options->فی_ماخذ_penalty.penalty_refuseconnection;
+			} ورنہ اگر ((q = strprefix(arg, "max:", 0)) != تہی) {
+				doubleptr = &options->فی_ماخذ_penalty.penalty_max;
+			} ورنہ اگر ((q = strprefix(arg, "min:", 0)) != تہی) {
+				doubleptr = &options->فی_ماخذ_penalty.penalty_min;
+			} ورنہ اگر ((q = strprefix(arg, "max-sources4:", 0)) != تہی) {
+				intptr = &options->فی_ماخذ_penalty.max_sources4;
+				اگر ((errstr = atoi_err(q, &قدر)) != تہی)
 					fatal("%s line %d: %s value %s.",
 					    filename, linenum, keyword, errstr);
-			} else if ((q = strprefix(arg, "max-sources6:", 0)) != NULL) {
-				intptr = &options->per_source_penalty.max_sources6;
-				if ((errstr = atoi_err(q, &value)) != NULL)
+			} ورنہ اگر ((q = strprefix(arg, "max-sources6:", 0)) != تہی) {
+				intptr = &options->فی_ماخذ_penalty.max_sources6;
+				اگر ((errstr = atoi_err(q, &قدر)) != تہی)
 					fatal("%s line %d: %s value %s.",
 					    filename, linenum, keyword, errstr);
-			} else if (strcmp(arg, "overflow:deny-all") == 0) {
-				intptr = &options->per_source_penalty.overflow_mode;
-				value = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
-			} else if (strcmp(arg, "overflow:permissive") == 0) {
-				intptr = &options->per_source_penalty.overflow_mode;
-				value = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
-			} else if (strcmp(arg, "overflow6:deny-all") == 0) {
-				intptr = &options->per_source_penalty.overflow_mode6;
-				value = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
-			} else if (strcmp(arg, "overflow6:permissive") == 0) {
-				intptr = &options->per_source_penalty.overflow_mode6;
-				value = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
-			} else {
+			} ورنہ اگر (strcmp(arg, "overflow:deny-all") == 0) {
+				intptr = &options->فی_ماخذ_penalty.حد_سے_تجاوز_منوال;
+				قدر = فی_ماخذ_PENALTY_حد_سے_تجاوز_DENY_ALL;
+			} ورنہ اگر (strcmp(arg, "overflow:permissive") == 0) {
+				intptr = &options->فی_ماخذ_penalty.حد_سے_تجاوز_منوال;
+				قدر = فی_ماخذ_PENALTY_حد_سے_تجاوز_PERMISSIVE;
+			} ورنہ اگر (strcmp(arg, "overflow6:deny-all") == 0) {
+				intptr = &options->فی_ماخذ_penalty.حد_سے_تجاوز_mode6;
+				قدر = فی_ماخذ_PENALTY_حد_سے_تجاوز_DENY_ALL;
+			} ورنہ اگر (strcmp(arg, "overflow6:permissive") == 0) {
+				intptr = &options->فی_ماخذ_penalty.حد_سے_تجاوز_mode6;
+				قدر = فی_ماخذ_PENALTY_حد_سے_تجاوز_PERMISSIVE;
+			} ورنہ {
 				fatal("%s line %d: unsupported %s keyword %s",
 				    filename, linenum, keyword, arg);
 			}
 
-			if (doubleptr != NULL) {
-				if ((dvalue = convtime_double(q)) < 0) {
+			اگر (doubleptr != تہی) {
+				اگر ((dvalue = convtime_double(q)) < 0) {
 					fatal("%s line %d: invalid %s time value.",
 					    filename, linenum, keyword);
 				}
-				if (*activep && *doubleptr < 0.0) {
+				اگر (*activep && *doubleptr < 0.0) {
 					*doubleptr = dvalue;
-					options->per_source_penalty.enabled = 1;
+					options->فی_ماخذ_penalty.enabled = 1;
 				}
-			} else if (intptr != NULL) {
-				if (*activep && *intptr == -1) {
-					*intptr = value;
-					options->per_source_penalty.enabled = 1;
+			} ورنہ اگر (intptr != تہی) {
+				اگر (*activep && *intptr == -1) {
+					*intptr = قدر;
+					options->فی_ماخذ_penalty.enabled = 1;
 				}
-			} else {
+			} ورنہ {
 				fatal_f("%s line %d: internal error",
 				    filename, linenum);
 			}
 		}
-		if (!found) {
+		اگر (!ملا) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		توڑو;
 
-	case sMaxAuthTries:
+	حالت sMaxAuthTries:
 		intptr = &options->max_authtries;
-		goto parse_int;
+		جاؤ parse_int;
 
-	case sMaxSessions:
+	حالت sMaxSessions:
 		intptr = &options->max_sessions;
-		goto parse_int;
+		جاؤ parse_int;
 
-	case sBanner:
+	حالت sBanner:
 		charptr = &options->banner;
-		goto parse_filename;
+		جاؤ parse_filename;
 
 	/*
 	 * These options can contain %X options expanded at
@@ -2054,146 +2054,146 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 	 *
 	 * AuthorizedKeysFile	/etc/ssh_keys/%u
 	 */
-	case sAuthorizedKeysFile:
-		uintptr = &options->num_authkeys_files;
-		chararrayptr = &options->authorized_keys_files;
+	حالت s_Authorized_کلیدیں_File:
+		uintptr = &options->عدد_authkeys_files;
+		chararrayptr = &options->authorized_کلیدیں_files;
  parse_filenames:
-		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		ملا = *uintptr == 0;
+		جب ((arg = argv_اگلا(&ac, &av)) != تہی) {
+			اگر (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				جاؤ برآمد;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			اگر (strcasecmp(arg, "none") == 0) {
+				اگر (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					جاؤ برآمد;
 				}
 			}
 			arg2 = tilde_expand_filename(arg, getuid());
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg2);
-			free(arg2);
+			آزاد(arg2);
 		}
-		if (nstrs == 0) {
+		اگر (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		اگر (ملا && *activep) {
 			*chararrayptr = strs;
 			*uintptr = nstrs;
-			strs = NULL; /* transferred */
+			strs = تہی; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		توڑو;
 
-	case sAuthorizedPrincipalsFile:
+	حالت sAuthorizedPrincipalsFile:
 		charptr = &options->authorized_principals_file;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*activep && *charptr == NULL) {
+		اگر (*activep && *charptr == تہی) {
 			*charptr = tilde_expand_filename(arg, getuid());
 			/* increase optional counter */
-			if (intptr != NULL)
+			اگر (intptr != تہی)
 				*intptr = *intptr + 1;
 		}
-		break;
+		توڑو;
 
-	case sClientAliveInterval:
+	حالت sClientAliveInterval:
 		intptr = &options->client_alive_interval;
-		goto parse_time;
+		جاؤ parse_وقت;
 
-	case sClientAliveCountMax:
-		intptr = &options->client_alive_count_max;
-		goto parse_int;
+	حالت s_Client_Alive_گنتی_Max:
+		intptr = &options->client_alive_گنتی_max;
+		جاؤ parse_int;
 
-	case sAcceptEnv:
+	حالت sAcceptEnv:
 		/* XXX appends to list; doesn't respect first-match-wins */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' || strchr(arg, '=') != NULL)
+		جب ((arg = argv_اگلا(&ac, &av)) != تہی) {
+			اگر (*arg == '\0' || strchr(arg, '=') != تہی)
 				fatal("%s line %d: Invalid environment name.",
 				    filename, linenum);
-			found = 1;
-			if (!*activep)
-				continue;
+			ملا = 1;
+			اگر (!*activep)
+				جاری;
 			opt_array_append(filename, linenum, keyword,
-			    &options->accept_env, &options->num_accept_env,
+			    &options->accept_env, &options->عدد_accept_env,
 			    arg);
 		}
-		if (!found) {
+		اگر (!ملا) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		توڑو;
 
-	case sSetEnv:
-		found = options->num_setenv == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' || strchr(arg, '=') == NULL)
+	حالت s_سیٹ_Env:
+		ملا = options->عدد_setenv == 0;
+		جب ((arg = argv_اگلا(&ac, &av)) != تہی) {
+			اگر (*arg == '\0' || strchr(arg, '=') == تہی)
 				fatal("%s line %d: Invalid environment.",
 				    filename, linenum);
-			if (lookup_setenv_in_list(arg, strs, nstrs) != NULL) {
+			اگر (lookup_setenv_اندر_list(arg, strs, nstrs) != تہی) {
 				debug2("%s line %d: ignoring duplicate env "
 				    "name \"%.64s\"", filename, linenum, arg);
-				continue;
+				جاری;
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		اگر (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		اگر (ملا && *activep) {
 			options->setenv = strs;
-			options->num_setenv = nstrs;
-			strs = NULL; /* transferred */
+			options->عدد_setenv = nstrs;
+			strs = تہی; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		توڑو;
 
-	case sPermitTunnel:
+	حالت sPermitTunnel:
 		intptr = &options->permit_tun;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		value = -1;
-		for (i = 0; tunmode_desc[i].val != -1; i++)
-			if (strcmp(tunmode_desc[i].text, arg) == 0) {
-				value = tunmode_desc[i].val;
-				break;
+		قدر = -1;
+		برائے (i = 0; tunmode_desc[i].val != -1; i++)
+			اگر (strcmp(tunmode_desc[i].متن, arg) == 0) {
+				قدر = tunmode_desc[i].val;
+				توڑو;
 			}
-		if (value == -1)
+		اگر (قدر == -1)
 			fatal("%s line %d: bad %s argument %s",
 			    filename, linenum, keyword, arg);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		اگر (*activep && *intptr == -1)
+			*intptr = قدر;
+		توڑو;
 
-	case sInclude:
-		if (cmdline) {
+	حالت sInclude:
+		اگر (cmdline) {
 			fatal("Include directive not supported as a "
 			    "command-line option");
 		}
-		value = 0;
-		while ((arg2 = argv_next(&ac, &av)) != NULL) {
-			if (*arg2 == '\0') {
+		قدر = 0;
+		جب ((arg2 = argv_اگلا(&ac, &av)) != تہی) {
+			اگر (*arg2 == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				جاؤ برآمد;
 			}
-			value++;
-			found = 0;
-			if (*arg2 != '/' && *arg2 != '~') {
+			قدر++;
+			ملا = 0;
+			اگر (*arg2 != '/' && *arg2 != '~') {
 				xasprintf(&arg, "%s/%s", SSHDIR, arg2);
-			} else
+			} ورنہ
 				arg = xstrdup(arg2);
 
 			/*
@@ -2203,31 +2203,31 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			oactive = *activep;
 
 			/* consult cache of include files */
-			TAILQ_FOREACH(item, includes, entry) {
-				if (strcmp(item->selector, arg) != 0)
-					continue;
-				if (item->filename != NULL) {
-					parse_server_config_depth(options,
-					    item->filename, item->contents,
+			TAILQ_FOREACH(شے, includes, اندراج_2) {
+				اگر (strcmp(شے->selector, arg) != 0)
+					جاری;
+				اگر (شے->filename != تہی) {
+					parse_server_config_گہرائی(options,
+					    شے->filename, شے->contents,
 					    includes, connectinfo,
-					    (*inc_flags & SSHCFG_MATCH_ONLY
-					        ? SSHCFG_MATCH_ONLY : (oactive
+					    (*inc_flags & SSHCFG_مطابقت_ONLY
+					        ? SSHCFG_مطابقت_ONLY : (oactive
 					            ? 0 : SSHCFG_NEVERMATCH)),
-					    activep, depth + 1);
+					    activep, گہرائی + 1);
 				}
-				found = 1;
+				ملا = 1;
 				*activep = oactive;
 			}
-			if (found != 0) {
-				free(arg);
-				continue;
+			اگر (ملا != 0) {
+				آزاد(arg);
+				جاری;
 			}
 
 			/* requested glob was not in cache */
 			debug2("%s line %d: new include %s",
 			    filename, linenum, arg);
-			if ((r = glob(arg, 0, NULL, &gbuf)) != 0) {
-				if (r != GLOB_NOMATCH) {
+			اگر ((r = glob(arg, 0, تہی, &gbuf)) != 0) {
+				اگر (r != GLOB_NOMATCH) {
 					fatal("%s line %d: include \"%s\" glob "
 					    "failed", filename, linenum, arg);
 				}
@@ -2237,846 +2237,846 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 				 */
 				debug2("%s line %d: no match for %s",
 				    filename, linenum, arg);
-				item = xcalloc(1, sizeof(*item));
-				item->selector = xstrdup(arg);
+				شے = xcalloc(1, حجم(*شے));
+				شے->selector = xstrdup(arg);
 				TAILQ_INSERT_TAIL(includes,
-				    item, entry);
+				    شے, اندراج_2);
 			}
-			if (gbuf.gl_pathc > INT_MAX)
+			اگر (gbuf.gl_pathc > زیادہ_سے_زیادہ_عدد)
 				fatal_f("too many glob results");
-			for (n = 0; n < (int)gbuf.gl_pathc; n++) {
+			برائے (n = 0; n < (صحیح)gbuf.gl_pathc; n++) {
 				debug2("%s line %d: including %s",
 				    filename, linenum, gbuf.gl_pathv[n]);
-				item = xcalloc(1, sizeof(*item));
-				item->selector = xstrdup(arg);
-				item->filename = xstrdup(gbuf.gl_pathv[n]);
-				if ((item->contents = sshbuf_new()) == NULL)
+				شے = xcalloc(1, حجم(*شے));
+				شے->selector = xstrdup(arg);
+				شے->filename = xstrdup(gbuf.gl_pathv[n]);
+				اگر ((شے->contents = sshbuf_new()) == تہی)
 					fatal_f("sshbuf_new failed");
-				load_server_config(item->filename,
-				    item->contents);
-				parse_server_config_depth(options,
-				    item->filename, item->contents,
+				بھرو_server_config(شے->filename,
+				    شے->contents);
+				parse_server_config_گہرائی(options,
+				    شے->filename, شے->contents,
 				    includes, connectinfo,
-				    (*inc_flags & SSHCFG_MATCH_ONLY
-				        ? SSHCFG_MATCH_ONLY : (oactive
+				    (*inc_flags & SSHCFG_مطابقت_ONLY
+				        ? SSHCFG_مطابقت_ONLY : (oactive
 				            ? 0 : SSHCFG_NEVERMATCH)),
-				    activep, depth + 1);
+				    activep, گہرائی + 1);
 				*activep = oactive;
-				TAILQ_INSERT_TAIL(includes, item, entry);
+				TAILQ_INSERT_TAIL(includes, شے, اندراج_2);
 			}
 			globfree(&gbuf);
-			free(arg);
+			آزاد(arg);
 		}
-		if (value == 0) {
+		اگر (قدر == 0) {
 			fatal("%s line %d: %s missing filename argument",
 			    filename, linenum, keyword);
 		}
-		break;
+		توڑو;
 
-	case sMatch:
-		if (cmdline)
+	حالت s_مطابقت:
+		اگر (cmdline)
 			fatal("Match directive not supported as a command-line "
 			    "option");
-		value = match_cfg_line(str, &ac, &av, linenum,
-		    (*inc_flags & SSHCFG_NEVERMATCH ? NULL : connectinfo));
-		if (value < 0)
+		قدر = مطابقت_cfg_سطر(str, &ac, &av, linenum,
+		    (*inc_flags & SSHCFG_NEVERMATCH ? تہی : connectinfo));
+		اگر (قدر < 0)
 			fatal("%s line %d: Bad Match condition", filename,
 			    linenum);
-		*activep = (*inc_flags & SSHCFG_NEVERMATCH) ? 0 : value;
+		*activep = (*inc_flags & SSHCFG_NEVERMATCH) ? 0 : قدر;
 		/*
 		 * The MATCH_ONLY flag is applicable only until the first
 		 * match block.
 		 */
-		*inc_flags &= ~SSHCFG_MATCH_ONLY;
-		break;
+		*inc_flags &= ~SSHCFG_مطابقت_ONLY;
+		توڑو;
 
-	case sPermitListen:
-	case sPermitOpen:
-		if (opcode == sPermitListen) {
-			uintptr = &options->num_permitted_listens;
+	حالت sPermitListen:
+	حالت sPermitOpen:
+		اگر (opcode == sPermitListen) {
+			uintptr = &options->عدد_permitted_listens;
 			chararrayptr = &options->permitted_listens;
-		} else {
-			uintptr = &options->num_permitted_opens;
+		} ورنہ {
+			uintptr = &options->عدد_permitted_opens;
 			chararrayptr = &options->permitted_opens;
 		}
-		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcmp(arg, "any") == 0 ||
+		ملا = *uintptr == 0;
+		جب ((arg = argv_اگلا(&ac, &av)) != تہی) {
+			اگر (strcmp(arg, "any") == 0 ||
 			    strcmp(arg, "none") == 0) {
-				if (nstrs != 0) {
+				اگر (nstrs != 0) {
 					fatal("%s line %d: %s must appear "
 					    "alone on a %s line.",
 					    filename, linenum, arg, keyword);
 				}
 				opt_array_append(filename, linenum, keyword,
 				    &strs, &nstrs, arg);
-				continue;
+				جاری;
 			}
 
-			if (opcode == sPermitListen &&
-			    strchr(arg, ':') == NULL) {
+			اگر (opcode == sPermitListen &&
+			    strchr(arg, ':') == تہی) {
 				/*
 				 * Allow bare port number for PermitListen
 				 * to indicate a wildcard listen host.
 				 */
 				xasprintf(&arg2, "*:%s", arg);
-			} else {
+			} ورنہ {
 				arg2 = xstrdup(arg);
 				p = hpdelim(&arg);
-				if (p == NULL) {
+				اگر (p == تہی) {
 					fatal("%s line %d: %s missing host",
 					    filename, linenum, keyword);
 				}
 				p = cleanhostname(p);
 			}
-			if (arg == NULL ||
-			    ((port = permitopen_port(arg)) < 0)) {
+			اگر (arg == تہی ||
+			    ((پورٹ = permitopen_پورٹ(arg)) < 0)) {
 				fatal("%s line %d: %s bad port number",
 				    filename, linenum, keyword);
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg2);
-			free(arg2);
+			آزاد(arg2);
 		}
-		if (nstrs == 0) {
+		اگر (nstrs == 0) {
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		اگر (ملا && *activep) {
 			*chararrayptr = strs;
 			*uintptr = nstrs;
-			strs = NULL; /* transferred */
+			strs = تہی; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		توڑو;
 
-	case sForceCommand:
-		if (str == NULL || *str == '\0')
+	حالت sForceCommand:
+		اگر (str == تہی || *str == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		len = strspn(str, WHITESPACE);
-		if (*activep && options->adm_forced_command == NULL)
+		اگر (*activep && options->adm_forced_command == تہی)
 			options->adm_forced_command = xstrdup(str + len);
 		argv_consume(&ac);
-		break;
+		توڑو;
 
-	case sChrootDirectory:
+	حالت sChrootDirectory:
 		charptr = &options->chroot_directory;
 
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*activep && *charptr == NULL)
+		اگر (*activep && *charptr == تہی)
 			*charptr = xstrdup(arg);
-		break;
+		توڑو;
 
-	case sTrustedUserCAKeys:
-		charptr = &options->trusted_user_ca_keys;
-		goto parse_filename;
+	حالت sTrustedUserCAKeys:
+		charptr = &options->trusted_user_ca_کلیدیں;
+		جاؤ parse_filename;
 
-	case sRevokedKeys:
-		uintptr = &options->num_revoked_keys_files;
-		chararrayptr = &options->revoked_keys_files;
-		goto parse_filenames;
+	حالت s_Revoked_کلیدیں:
+		uintptr = &options->عدد_revoked_کلیدیں_files;
+		chararrayptr = &options->revoked_کلیدیں_files;
+		جاؤ parse_filenames;
 
-	case sSecurityKeyProvider:
+	حالت s_Security_کلید_Provider:
 		charptr = &options->sk_provider;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*activep && *charptr == NULL) {
+		اگر (*activep && *charptr == تہی) {
 			*charptr = strcasecmp(arg, "internal") == 0 ?
-			    xstrdup(arg) : derelativise_path(arg);
+			    xstrdup(arg) : derelativise_راستہ(arg);
 			/* increase optional counter */
-			if (intptr != NULL)
+			اگر (intptr != تہی)
 				*intptr = *intptr + 1;
 		}
-		break;
+		توڑو;
 
-	case sIPQoS:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت sIPQoS:
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if ((value = parse_ipqos(arg)) == -1)
+		اگر ((قدر = parse_ipqos(arg)) == -1)
 			fatal("%s line %d: Bad %s value: %s",
 			    filename, linenum, keyword, arg);
-		if (value == INT_MIN) {
+		اگر (قدر == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
-			value = INT_MAX;
+			قدر = زیادہ_سے_زیادہ_عدد;
 		}
-		arg = argv_next(&ac, &av);
-		if (arg == NULL)
-			value2 = value;
-		else if ((value2 = parse_ipqos(arg)) == -1)
+		arg = argv_اگلا(&ac, &av);
+		اگر (arg == تہی)
+			value2 = قدر;
+		ورنہ اگر ((value2 = parse_ipqos(arg)) == -1)
 			fatal("%s line %d: Bad %s value: %s",
 			    filename, linenum, keyword, arg);
-		if (value2 == INT_MIN) {
+		اگر (value2 == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
-			value2 = INT_MAX;
+			value2 = زیادہ_سے_زیادہ_عدد;
 		}
-		if (*activep && options->ip_qos_interactive == -1) {
-			options->ip_qos_interactive = value;
+		اگر (*activep && options->ip_qos_interactive == -1) {
+			options->ip_qos_interactive = قدر;
 			options->ip_qos_bulk = value2;
 		}
-		break;
+		توڑو;
 
-	case sVersionAddendum:
-		if (str == NULL || *str == '\0')
+	حالت s_نسخہ_Addendum:
+		اگر (str == تہی || *str == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		len = strspn(str, WHITESPACE);
-		if (strchr(str + len, '\r') != NULL) {
+		اگر (strchr(str + len, '\r') != تہی) {
 			fatal("%.200s line %d: Invalid %s argument",
 			    filename, linenum, keyword);
 		}
-		if ((arg = strchr(line, '#')) != NULL) {
+		اگر ((arg = strchr(سطر, '#')) != تہی) {
 			*arg = '\0';
-			rtrim(line);
+			rtrim(سطر);
 		}
-		if (*activep && options->version_addendum == NULL) {
-			if (strcasecmp(str + len, "none") == 0)
-				options->version_addendum = xstrdup("");
-			else
-				options->version_addendum = xstrdup(str + len);
+		اگر (*activep && options->نسخہ_addendum == تہی) {
+			اگر (strcasecmp(str + len, "none") == 0)
+				options->نسخہ_addendum = xstrdup("");
+			ورنہ
+				options->نسخہ_addendum = xstrdup(str + len);
 		}
 		argv_consume(&ac);
-		break;
+		توڑو;
 
-	case sAuthorizedKeysCommand:
-		charptr = &options->authorized_keys_command;
+	حالت s_Authorized_کلیدیں_Command:
+		charptr = &options->authorized_کلیدیں_command;
  parse_command:
 		len = strspn(str, WHITESPACE);
-		if (str[len] != '/' && strcasecmp(str + len, "none") != 0) {
+		اگر (str[len] != '/' && strcasecmp(str + len, "none") != 0) {
 			fatal("%.200s line %d: %s must be an absolute path",
 			    filename, linenum, keyword);
 		}
-		if (*activep && *charptr == NULL)
+		اگر (*activep && *charptr == تہی)
 			*charptr = xstrdup(str + len);
 		argv_consume(&ac);
-		break;
+		توڑو;
 
-	case sAuthorizedKeysCommandUser:
-		charptr = &options->authorized_keys_command_user;
+	حالت s_Authorized_کلیدیں_Command_User:
+		charptr = &options->authorized_کلیدیں_command_user;
  parse_localuser:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0') {
 			fatal("%s line %d: missing %s argument.",
 			    filename, linenum, keyword);
 		}
-		if (*activep && *charptr == NULL)
+		اگر (*activep && *charptr == تہی)
 			*charptr = xstrdup(arg);
-		break;
+		توڑو;
 
-	case sAuthorizedPrincipalsCommand:
+	حالت sAuthorizedPrincipalsCommand:
 		charptr = &options->authorized_principals_command;
-		goto parse_command;
+		جاؤ parse_command;
 
-	case sAuthorizedPrincipalsCommandUser:
+	حالت sAuthorizedPrincipalsCommandUser:
 		charptr = &options->authorized_principals_command_user;
-		goto parse_localuser;
+		جاؤ parse_localuser;
 
-	case sAuthenticationMethods:
-		found = options->num_auth_methods == 0;
-		value = 0; /* seen "any" pseudo-method */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcmp(arg, "any") == 0) {
-				if (nstrs > 0) {
+	حالت sAuthenticationMethods:
+		ملا = options->عدد_auth_methods == 0;
+		قدر = 0; /* seen "any" pseudo-method */
+		جب ((arg = argv_اگلا(&ac, &av)) != تہی) {
+			اگر (strcmp(arg, "any") == 0) {
+				اگر (nstrs > 0) {
 					fatal("%s line %d: \"any\" must "
 					    "appear alone in %s",
 					    filename, linenum, keyword);
 				}
-				value = 1;
-			} else if (value) {
+				قدر = 1;
+			} ورنہ اگر (قدر) {
 				fatal("%s line %d: \"any\" must appear "
 				    "alone in %s", filename, linenum, keyword);
-			} else if (auth2_methods_valid(arg, 0) != 0) {
+			} ورنہ اگر (auth2_methods_valid(arg, 0) != 0) {
 				fatal("%s line %d: invalid %s method list.",
 				    filename, linenum, keyword);
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		اگر (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		اگر (ملا && *activep) {
 			options->auth_methods = strs;
-			options->num_auth_methods = nstrs;
-			strs = NULL; /* transferred */
+			options->عدد_auth_methods = nstrs;
+			strs = تہی; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		توڑو;
 
-	case sStreamLocalBindMask:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت s_دھارا_Local_Bind_نقاب:
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		/* Parse mode in octal format */
-		value = strtol(arg, &p, 8);
-		if (arg == p || value < 0 || value > 0777)
+		قدر = strtol(arg, &p, 8);
+		اگر (arg == p || قدر < 0 || قدر > 0777)
 			fatal("%s line %d: Invalid %s.",
 			    filename, linenum, keyword);
-		if (*activep &&
-		    options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
-			options->fwd_opts.streamlocal_bind_mask = (mode_t)value;
-		break;
+		اگر (*activep &&
+		    options->fwd_opts.streamlocal_bind_نقاب == (منوال_t)-1)
+			options->fwd_opts.streamlocal_bind_نقاب = (منوال_t)قدر;
+		توڑو;
 
-	case sStreamLocalBindUnlink:
+	حالت s_دھارا_Local_Bind_Unlink:
 		intptr = &options->fwd_opts.streamlocal_bind_unlink;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sFingerprintHash:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	حالت sFingerprintHash:
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if ((value = ssh_digest_alg_by_name(arg)) == -1)
+		اگر ((قدر = ssh_digest_alg_by_name(arg)) == -1)
 			fatal("%.200s line %d: Invalid %s algorithm \"%s\".",
 			    filename, linenum, keyword, arg);
-		if (*activep)
-			options->fingerprint_hash = value;
-		break;
+		اگر (*activep)
+			options->fingerprint_hash = قدر;
+		توڑو;
 
-	case sExposeAuthInfo:
+	حالت sExposeAuthInfo:
 		intptr = &options->expose_userauth_info;
-		goto parse_flag;
+		جاؤ parse_flag;
 
-	case sRDomain:
-#if !defined(__OpenBSD__) && !defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
+	حالت sRDomain:
+#اگر !defined(__OpenBSD__) && !defined(HAVE_SYS_سیٹ_PROCESS_RDOMAIN)
 		fatal("%s line %d: setting RDomain not supported on this "
 		    "platform.", filename, linenum);
-#endif
+#اگر_ختم
 		charptr = &options->routing_domain;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_اگلا(&ac, &av);
+		اگر (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (strcasecmp(arg, "none") != 0 && strcmp(arg, "%D") != 0 &&
+		اگر (strcasecmp(arg, "none") != 0 && strcmp(arg, "%D") != 0 &&
 		    !valid_rdomain(arg))
 			fatal("%s line %d: invalid routing domain",
 			    filename, linenum);
-		if (*activep && *charptr == NULL)
+		اگر (*activep && *charptr == تہی)
 			*charptr = xstrdup(arg);
-		break;
+		توڑو;
 
-	case sRequiredRSASize:
-		intptr = &options->required_rsa_size;
-		goto parse_int;
+	حالت sRequiredRSASize:
+		intptr = &options->required_rsa_سائز;
+		جاؤ parse_int;
 
-	case sChannelTimeout:
-		found = options->num_channel_timeouts == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+	حالت sChannelTimeout:
+		ملا = options->عدد_channel_timeouts == 0;
+		جب ((arg = argv_اگلا(&ac, &av)) != تہی) {
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			اگر (strcasecmp(arg, "none") == 0) {
+				اگر (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					جاؤ برآمد;
 				}
-			} else if (parse_pattern_interval(arg,
-			    NULL, NULL) != 0) {
+			} ورنہ اگر (parse_نمونہ_interval(arg,
+			    تہی, تہی) != 0) {
 				fatal("%s line %d: invalid channel timeout %s",
 				    filename, linenum, arg);
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		اگر (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		اگر (ملا && *activep) {
 			options->channel_timeouts = strs;
-			options->num_channel_timeouts = nstrs;
-			strs = NULL; /* transferred */
+			options->عدد_channel_timeouts = nstrs;
+			strs = تہی; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		توڑو;
 
-	case sUnusedConnectionTimeout:
-		intptr = &options->unused_connection_timeout;
+	حالت s_غیر_مستعمل_Connection_Timeout:
+		intptr = &options->غیر_مستعمل_connection_timeout;
 		/* peek at first arg for "none" so we can reuse parse_time */
-		if (av[0] != NULL && strcasecmp(av[0], "none") == 0) {
-			(void)argv_next(&ac, &av); /* consume arg */
-			if (*activep)
+		اگر (av[0] != تہی && strcasecmp(av[0], "none") == 0) {
+			(خالی)argv_اگلا(&ac, &av); /* consume arg */
+			اگر (*activep)
 				*intptr = 0;
-			break;
+			توڑو;
 		}
-		goto parse_time;
+		جاؤ parse_وقت;
 
-	case sSshdSessionPath:
-		charptr = &options->sshd_session_path;
-		goto parse_filename;
+	حالت s_Sshd_Session_راستہ:
+		charptr = &options->sshd_session_راستہ;
+		جاؤ parse_filename;
 
-	case sSshdAuthPath:
-		charptr = &options->sshd_auth_path;
-		goto parse_filename;
+	حالت s_Sshd_Auth_راستہ:
+		charptr = &options->sshd_auth_راستہ;
+		جاؤ parse_filename;
 
-	case sRefuseConnection:
+	حالت sRefuseConnection:
 		intptr = &options->refuse_connection;
 		multistate_ptr = multistate_flag;
-		goto parse_multistate;
+		جاؤ parse_multistate;
 
-	case sWarnWeakCrypto:
+	حالت sWarnWeakCrypto:
 		intptr = &options->warn_weak_crypto;
 		multistate_ptr = multistate_warnweakcrypto;
-		goto parse_multistate;
+		جاؤ parse_multistate;
 
-	case sDeprecated:
-	case sIgnore:
-	case sUnsupported:
+	حالت sDeprecated:
+	حالت sIgnore:
+	حالت sUnsupported:
 		do_log2(opcode == sIgnore ?
 		    SYSLOG_LEVEL_DEBUG2 : SYSLOG_LEVEL_INFO,
 		    "%s line %d: %s option %s", filename, linenum,
 		    opcode == sUnsupported ? "Unsupported" : "Deprecated",
 		    keyword);
 		argv_consume(&ac);
-		break;
+		توڑو;
 
-	default:
+	طےشدہ:
 		fatal("%s line %d: Missing handler for opcode %s (%d)",
 		    filename, linenum, keyword, opcode);
 	}
 	/* Check that there is no garbage at end of line. */
-	if (ac > 0) {
+	اگر (ac > 0) {
 		error("%.200s line %d: keyword %s extra arguments "
 		    "at end of line", filename, linenum, keyword);
-		goto out;
+		جاؤ برآمد;
 	}
 
 	/* success */
 	ret = 0;
- out:
-	opt_array_free2(strs, NULL, nstrs);
+ برآمد:
+	opt_array_free2(strs, تہی, nstrs);
 	argv_free(oav, oac);
-	return ret;
+	واپس ret;
 }
 
-int
-process_server_config_line(ServerOptions *options, char *line,
-    const char *filename, int linenum, int *activep,
-    struct connection_info *connectinfo, struct include_list *includes)
+صحیح
+process_server_config_سطر(ServerOptions *options, حرف *سطر,
+    ثابت حرف *filename, صحیح linenum, صحیح *activep,
+    ساخت connection_info *connectinfo, ساخت include_list *includes)
 {
-	int inc_flags = 0;
+	صحیح inc_flags = 0;
 
-	return process_server_config_line_depth(options, line, filename,
+	واپس process_server_config_سطر_گہرائی(options, سطر, filename,
 	    linenum, activep, connectinfo, &inc_flags, 0, includes);
 }
 
 
 /* Reads the server configuration file. */
 
-void
-load_server_config(const char *filename, struct sshbuf *conf)
+خالی
+بھرو_server_config(ثابت حرف *filename, ساخت sshbuf *conf)
 {
-	struct stat st;
-	char *line = NULL, *cp;
-	size_t linesize = 0;
+	ساخت stat st;
+	حرف *سطر = تہی, *cp;
+	سائز_t linesize = 0;
 	FILE *f;
-	int r;
+	صحیح r;
 
 	debug2_f("filename %s", filename);
-	if ((f = fopen(filename, "r")) == NULL) {
+	اگر ((f = fopen(filename, "r")) == تہی) {
 		perror(filename);
-		exit(1);
+		باہر_نکلو(1);
 	}
 	sshbuf_reset(conf);
 	/* grow buffer, so realloc is avoided for large config files */
-	if (fstat(fileno(f), &st) == 0 && st.st_size > 0 &&
+	اگر (fstat(fileno(f), &st) == 0 && st.st_size > 0 &&
 	    (r = sshbuf_allocate(conf, st.st_size)) != 0)
 		fatal_fr(r, "allocate");
-	while (getline(&line, &linesize, f) != -1) {
+	جب (getline(&سطر, &linesize, f) != -1) {
 		/*
 		 * Strip whitespace
 		 * NB - preserve newlines, they are needed to reproduce
 		 * line numbers later for error messages
 		 */
-		cp = line + strspn(line, " \t\r");
-		if ((r = sshbuf_put(conf, cp, strlen(cp))) != 0)
+		cp = سطر + strspn(سطر, " \t\r");
+		اگر ((r = sshbuf_put(conf, cp, لڑی_لمبائی(cp))) != 0)
 			fatal_fr(r, "sshbuf_put");
 	}
-	free(line);
-	if ((r = sshbuf_put_u8(conf, 0)) != 0)
+	آزاد(سطر);
+	اگر ((r = sshbuf_put_u8(conf, 0)) != 0)
 		fatal_fr(r, "sshbuf_put_u8");
 	fclose(f);
 	debug2_f("done config len = %zu", sshbuf_len(conf));
 }
 
-void
-parse_server_match_config(ServerOptions *options,
-   struct include_list *includes, struct connection_info *connectinfo)
+خالی
+parse_server_مطابقت_config(ServerOptions *options,
+   ساخت include_list *includes, ساخت connection_info *connectinfo)
 {
 	ServerOptions mo;
 
 	initialize_server_options(&mo);
 	parse_server_config(&mo, "reprocess config", cfg, includes,
 	    connectinfo, 0);
-	copy_set_server_options(options, &mo, 0);
+	copy_سیٹ_server_options(options, &mo, 0);
 	free_server_options(&mo);
 }
 
-int
-parse_server_match_testspec(struct connection_info *ci, char *spec)
+صحیح
+parse_server_مطابقت_testspec(ساخت connection_info *ci, حرف *spec)
 {
-	char *p;
-	const char *val;
+	حرف *p;
+	ثابت حرف *val;
 
-	while ((p = strsep(&spec, ",")) && *p != '\0') {
-		if ((val = strprefix(p, "addr=", 0)) != NULL) {
-			ci->address = xstrdup(val);
-		} else if ((val = strprefix(p, "host=", 0)) != NULL) {
+	جب ((p = strsep(&spec, ",")) && *p != '\0') {
+		اگر ((val = strprefix(p, "addr=", 0)) != تہی) {
+			ci->پتہ = xstrdup(val);
+		} ورنہ اگر ((val = strprefix(p, "host=", 0)) != تہی) {
 			ci->host = xstrdup(val);
-		} else if ((val = strprefix(p, "user=", 0)) != NULL) {
+		} ورنہ اگر ((val = strprefix(p, "user=", 0)) != تہی) {
 			ci->user = xstrdup(val);
-		} else if ((val = strprefix(p, "laddr=", 0)) != NULL) {
+		} ورنہ اگر ((val = strprefix(p, "laddr=", 0)) != تہی) {
 			ci->laddress = xstrdup(val);
-		} else if ((val = strprefix(p, "rdomain=", 0)) != NULL) {
+		} ورنہ اگر ((val = strprefix(p, "rdomain=", 0)) != تہی) {
 			ci->rdomain = xstrdup(val);
-		} else if ((val = strprefix(p, "lport=", 0)) != NULL) {
+		} ورنہ اگر ((val = strprefix(p, "lport=", 0)) != تہی) {
 			ci->lport = a2port(val);
-			if (ci->lport == -1) {
+			اگر (ci->lport == -1) {
 				fprintf(stderr, "Invalid port '%s' in test mode"
 				    " specification %s\n", p+6, p);
-				return -1;
+				واپس -1;
 			}
-		} else if (strcmp(p, "invalid-user") == 0) {
+		} ورنہ اگر (strcmp(p, "invalid-user") == 0) {
 			ci->user_invalid = 1;
-		} else {
+		} ورنہ {
 			fprintf(stderr, "Invalid test mode specification %s\n",
 			    p);
-			return -1;
+			واپس -1;
 		}
 	}
-	return 0;
+	واپس 0;
 }
 
-void
-servconf_merge_subsystems(ServerOptions *dst, ServerOptions *src)
+خالی
+servconf_ملاؤ_subsystems(ServerOptions *dst, ServerOptions *src)
 {
-	u_int i, j, found;
+	u_int i, j, ملا;
 
-	for (i = 0; i < src->num_subsystems; i++) {
-		found = 0;
-		for (j = 0; j < dst->num_subsystems; j++) {
-			if (strcmp(src->subsystem_name[i],
+	برائے (i = 0; i < src->عدد_subsystems; i++) {
+		ملا = 0;
+		برائے (j = 0; j < dst->عدد_subsystems; j++) {
+			اگر (strcmp(src->subsystem_name[i],
 			    dst->subsystem_name[j]) == 0) {
-				found = 1;
-				break;
+				ملا = 1;
+				توڑو;
 			}
 		}
-		if (found) {
+		اگر (ملا) {
 			debug_f("override \"%s\"", dst->subsystem_name[j]);
-			free(dst->subsystem_command[j]);
-			free(dst->subsystem_args[j]);
+			آزاد(dst->subsystem_command[j]);
+			آزاد(dst->subsystem_دلائل[j]);
 			dst->subsystem_command[j] =
 			    xstrdup(src->subsystem_command[i]);
-			dst->subsystem_args[j] =
-			    xstrdup(src->subsystem_args[i]);
-			continue;
+			dst->subsystem_دلائل[j] =
+			    xstrdup(src->subsystem_دلائل[i]);
+			جاری;
 		}
 		debug_f("add \"%s\"", src->subsystem_name[i]);
 		dst->subsystem_name = xrecallocarray(
-		    dst->subsystem_name, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_name));
+		    dst->subsystem_name, dst->عدد_subsystems,
+		    dst->عدد_subsystems + 1, حجم(*dst->subsystem_name));
 		dst->subsystem_command = xrecallocarray(
-		    dst->subsystem_command, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_command));
-		dst->subsystem_args = xrecallocarray(
-		    dst->subsystem_args, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_args));
-		j = dst->num_subsystems++;
+		    dst->subsystem_command, dst->عدد_subsystems,
+		    dst->عدد_subsystems + 1, حجم(*dst->subsystem_command));
+		dst->subsystem_دلائل = xrecallocarray(
+		    dst->subsystem_دلائل, dst->عدد_subsystems,
+		    dst->عدد_subsystems + 1, حجم(*dst->subsystem_دلائل));
+		j = dst->عدد_subsystems++;
 		dst->subsystem_name[j] = xstrdup(src->subsystem_name[i]);
 		dst->subsystem_command[j] = xstrdup(src->subsystem_command[i]);
-		dst->subsystem_args[j] = xstrdup(src->subsystem_args[i]);
+		dst->subsystem_دلائل[j] = xstrdup(src->subsystem_دلائل[i]);
 	}
 }
 
-static int
-serialise_s32(struct sshbuf *buf, int v)
+ساکن صحیح
+serialise_s32(ساخت sshbuf *buf, صحیح v)
 {
 	uint32_t uv;
-	int r;
+	صحیح r;
 
 	uv = v < 0 ? (uint32_t)(-(v + 1)) + 1 : (uint32_t)v;
-	if ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
+	اگر ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
 	    (r = sshbuf_put_u32(buf, uv)) != 0)
-		return r;
-	return 0;
+		واپس r;
+	واپس 0;
 }
 
-static int
-serialise_s64(struct sshbuf *buf, int64_t v)
+ساکن صحیح
+serialise_s64(ساخت sshbuf *buf, int64_t v)
 {
 	uint64_t uv;
-	int r;
+	صحیح r;
 
 	uv = v < 0 ? (uint64_t)(-(v + 1)) + 1 : (uint64_t)v;
-	if ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
+	اگر ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
 	    (r = sshbuf_put_u64(buf, uv)) != 0)
-		return r;
-	return 0;
+		واپس r;
+	واپس 0;
 }
 
-static int
-serialise_mode(struct sshbuf *buf, mode_t v)
+ساکن صحیح
+serialise_منوال(ساخت sshbuf *buf, منوال_t v)
 {
 	u_int uv;
 
-	if (v == (mode_t)-1)
-		return serialise_s32(buf, -1);
+	اگر (v == (منوال_t)-1)
+		واپس serialise_s32(buf, -1);
 	uv = (u_int)v;
-	if ((mode_t)uv != v || uv > 0777)
-		return SSH_ERR_INVALID_FORMAT;
-	return serialise_s32(buf, (int)uv);
+	اگر ((منوال_t)uv != v || uv > 0777)
+		واپس SSH_ERR_INVALID_FORMAT;
+	واپس serialise_s32(buf, (صحیح)uv);
 }
 
-static int
-serialise_double(struct sshbuf *buf, double v)
+ساکن صحیح
+serialise_double(ساخت sshbuf *buf, دوہرا v)
 {
 	/*
 	 * XXX this is no good for a wire encoding.
 	 * It's fine for passing configurations via RPC, but it would
 	 * be nicer to have an exact binary encoding here.
 	 */
-	return sshbuf_put(buf, &v, sizeof(v));
+	واپس sshbuf_put(buf, &v, حجم(v));
 }
 
-static int
-serialise_nullable_string(struct sshbuf *buf, const char *s)
+ساکن صحیح
+serialise_nullable_string(ساخت sshbuf *buf, ثابت حرف *s)
 {
-	int r;
+	صحیح r;
 
-	if ((r = sshbuf_put_u8(buf, s != NULL)) != 0)
-		return r;
-	if (s == NULL)
-		return 0;
-	return sshbuf_put_cstring(buf, s);
+	اگر ((r = sshbuf_put_u8(buf, s != تہی)) != 0)
+		واپس r;
+	اگر (s == تہی)
+		واپس 0;
+	واپس sshbuf_put_cstring(buf, s);
 }
 
-static int
-serialise_nullable_string_array(struct sshbuf *buf, char **a, u_int n)
+ساکن صحیح
+serialise_nullable_string_array(ساخت sshbuf *buf, حرف **a, u_int n)
 {
-	int r;
+	صحیح r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, n)) != 0)
-		return r;
-	for (i = 0; i < n; i++) {
-		if ((r = serialise_nullable_string(buf, a[i])) != 0)
-			return r;
+	اگر ((r = sshbuf_put_u32(buf, n)) != 0)
+		واپس r;
+	برائے (i = 0; i < n; i++) {
+		اگر ((r = serialise_nullable_string(buf, a[i])) != 0)
+			واپس r;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_hostkeyfile(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_hostkeyfile(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_host_key_files)) != 0) {
+	اگر ((r = sshbuf_put_u32(buf, options->عدد_host_کلید_files)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		واپس r;
 	}
-	for (i = 0; i < options->num_host_key_files; i++) {
-		if ((r = serialise_s32(buf,
-		    options->host_key_file_userprovided[i])) != 0 ||
+	برائے (i = 0; i < options->عدد_host_کلید_files; i++) {
+		اگر ((r = serialise_s32(buf,
+		    options->host_کلید_file_userprovided[i])) != 0 ||
 		    (r = serialise_nullable_string(buf,
-		    options->host_key_files[i])) != 0) {
+		    options->host_کلید_files[i])) != 0) {
 			error_fr(r, "serialise member");
-			return r;
+			واپس r;
 		}
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_ipqos(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_ipqos(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = serialise_s32(buf, options->ip_qos_interactive)) != 0 ||
+	اگر ((r = serialise_s32(buf, options->ip_qos_interactive)) != 0 ||
 	    (r = serialise_s32(buf, options->ip_qos_bulk)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		واپس r;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_listenaddress(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_listenaddress(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 	u_int i;
 
 	/* Note: only serialises queued listen addresses */
-	if ((r = sshbuf_put_u32(buf, options->num_queued_listens)) != 0) {
+	اگر ((r = sshbuf_put_u32(buf, options->عدد_queued_listens)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		واپس r;
 	}
-	for (i = 0; i < options->num_queued_listens; i++) {
-		const struct queued_listenaddr *qla =
+	برائے (i = 0; i < options->عدد_queued_listens; i++) {
+		ثابت ساخت queued_listenaddr *qla =
 		    options->queued_listen_addrs + i;
 
-		if ((r = sshbuf_put_cstring(buf, qla->addr)) != 0 ||
-		    (r = serialise_s32(buf, qla->port)) != 0 ||
+		اگر ((r = sshbuf_put_cstring(buf, qla->addr)) != 0 ||
+		    (r = serialise_s32(buf, qla->پورٹ)) != 0 ||
 		    (r = serialise_nullable_string(buf, qla->rdomain)) != 0) {
 			error_fr(r, "serialise member");
-			return r;
+			واپس r;
 		}
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_logfacility(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_logfacility(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = serialise_s32(buf, (int)options->log_facility)) != 0) {
+	اگر ((r = serialise_s32(buf, (صحیح)options->log_facility)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		واپس r;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_loglevel(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_loglevel(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = serialise_s32(buf, (int)options->log_level)) != 0) {
+	اگر ((r = serialise_s32(buf, (صحیح)options->log_level)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		واپس r;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_port(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_پورٹ(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_ports)) != 0) {
+	اگر ((r = sshbuf_put_u32(buf, options->عدد_ports)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		واپس r;
 	}
-	for (i = 0; i < options->num_ports; i++) {
-		if ((r = serialise_s32(buf, options->ports[i])) != 0) {
+	برائے (i = 0; i < options->عدد_ports; i++) {
+		اگر ((r = serialise_s32(buf, options->ports[i])) != 0) {
 			error_fr(r, "serialise port");
-			return r;
+			واپس r;
 		}
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_gatewayports(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_gatewayports(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = serialise_s32(buf, options->fwd_opts.gateway_ports)) != 0) {
+	اگر ((r = serialise_s32(buf, options->fwd_opts.gateway_ports)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		واپس r;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_streamlocalbindmask(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_streamlocalbindmask(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = serialise_mode(buf,
-	    options->fwd_opts.streamlocal_bind_mask)) != 0) {
+	اگر ((r = serialise_منوال(buf,
+	    options->fwd_opts.streamlocal_bind_نقاب)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		واپس r;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_streamlocalbindunlink(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_streamlocalbindunlink(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = sshbuf_put_u8(buf,
+	اگر ((r = sshbuf_put_u8(buf,
 	    (options->fwd_opts.streamlocal_bind_unlink != 0))) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		واپس r;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_maxstartups(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_maxstartups(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = serialise_s32(buf, options->max_startups_begin)) != 0 ||
-	    (r = serialise_s32(buf, options->max_startups_rate)) != 0 ||
+	اگر ((r = serialise_s32(buf, options->max_startups_begin)) != 0 ||
+	    (r = serialise_s32(buf, options->max_startups_شرح)) != 0 ||
 	    (r = serialise_s32(buf, options->max_startups)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		واپس r;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_permituserenv(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_permituserenv(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = serialise_s32(buf, options->permit_user_env)) != 0 ||
+	اگر ((r = serialise_s32(buf, options->permit_user_env)) != 0 ||
 	    (r = serialise_nullable_string(buf,
 	    options->permit_user_env_allowlist)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		واپس r;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_persourcenetblocksize(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_persourcenetblocksize(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = serialise_s32(buf, options->per_source_masklen_ipv4)) != 0 ||
-	    (r = serialise_s32(buf, options->per_source_masklen_ipv6)) != 0) {
+	اگر ((r = serialise_s32(buf, options->فی_ماخذ_masklen_ipv4)) != 0 ||
+	    (r = serialise_s32(buf, options->فی_ماخذ_masklen_ipv6)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		واپس r;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_persourcepenalties(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_persourcepenalties(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	const struct per_source_penalty *psp = &options->per_source_penalty;
-	int r;
+	ثابت ساخت فی_ماخذ_penalty *psp = &options->فی_ماخذ_penalty;
+	صحیح r;
 
-	if ((r = serialise_s32(buf, psp->enabled)) != 0 ||
+	اگر ((r = serialise_s32(buf, psp->enabled)) != 0 ||
 	    (r = serialise_s32(buf, psp->max_sources4)) != 0 ||
 	    (r = serialise_s32(buf, psp->max_sources6)) != 0 ||
-	    (r = serialise_s32(buf, psp->overflow_mode)) != 0 ||
-	    (r = serialise_s32(buf, psp->overflow_mode6)) != 0 ||
+	    (r = serialise_s32(buf, psp->حد_سے_تجاوز_منوال)) != 0 ||
+	    (r = serialise_s32(buf, psp->حد_سے_تجاوز_mode6)) != 0 ||
 	    (r = serialise_double(buf, psp->penalty_crash)) != 0 ||
 	    (r = serialise_double(buf, psp->penalty_grace)) != 0 ||
 	    (r = serialise_double(buf, psp->penalty_authfail)) != 0 ||
@@ -3086,535 +3086,535 @@ serialise_persourcepenalties(const ServerOptions *options, struct sshbuf *buf)
 	    (r = serialise_double(buf, psp->penalty_max)) != 0 ||
 	    (r = serialise_double(buf, psp->penalty_min)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		واپس r;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_rekeylimit(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_rekeylimit(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = serialise_s64(buf, options->rekey_limit)) != 0 ||
+	اگر ((r = serialise_s64(buf, options->rekey_حد_بندی)) != 0 ||
 	    (r = serialise_s32(buf, options->rekey_interval)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		واپس r;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_subsystem(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_subsystem(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_subsystems)) != 0) {
+	اگر ((r = sshbuf_put_u32(buf, options->عدد_subsystems)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		واپس r;
 	}
-	for (i = 0; i < options->num_subsystems; i++) {
-		if ((r = sshbuf_put_cstring(buf,
+	برائے (i = 0; i < options->عدد_subsystems; i++) {
+		اگر ((r = sshbuf_put_cstring(buf,
 		    options->subsystem_name[i])) != 0 ||
 		    (r = sshbuf_put_cstring(buf,
 		    options->subsystem_command[i])) != 0 ||
 		    (r = sshbuf_put_cstring(buf,
-		    options->subsystem_args[i])) != 0) {
+		    options->subsystem_دلائل[i])) != 0) {
 			error_fr(r, "serialise member");
-			return r;
+			واپس r;
 		}
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_pubkey_auth_options(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_pubkey_auth_options(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = serialise_s32(buf, options->pubkey_auth_options)) != 0 ||
+	اگر ((r = serialise_s32(buf, options->pubkey_auth_options)) != 0 ||
 	    (r = serialise_s32(buf, options->max_pubkey_ok)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		واپس r;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-serialise_timingsecret(const ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+serialise_timingsecret(ثابت ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = sshbuf_put_u64(buf, options->timing_secret)) != 0) {
+	اگر ((r = sshbuf_put_u64(buf, options->timing_secret)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		واپس r;
 	}
-	return 0;
+	واپس 0;
 }
 
 
-int
-serialise_server_options(const ServerOptions *options, struct sshbuf **bufp)
+صحیح
+serialise_server_options(ثابت ServerOptions *options, ساخت sshbuf **bufp)
 {
-	struct sshbuf *buf = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ساخت sshbuf *buf = تہی;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
 
-	*bufp = NULL;
+	*bufp = تہی;
 
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u32(buf, SSHD_CONFIG_BLOB_VERSION)) != 0) {
+	اگر ((buf = sshbuf_new()) == تہی)
+		واپس SSH_ERR_ALLOC_FAIL;
+	اگر ((r = sshbuf_put_u32(buf, SSHD_CONFIG_BLOB_نسخہ)) != 0) {
 		error_fr(r, "serialise version");
-		goto out;
+		جاؤ برآمد;
 	}
 
-#define SSHCONF_INT(var, conf, flags, ms, def, cp) \
-	if ((r = serialise_s32(buf, options->var)) != 0) { \
+#تعریف_کرو SSHCONF_INT(var, conf, flags, ms, def, cp) \
+	اگر ((r = serialise_s32(buf, options->var)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		جاؤ برآمد; \
 	}
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp) \
-	if ((r = serialise_s32(buf, options->var)) != 0) { \
+#تعریف_کرو SSHCONF_INTFLAG(var, conf, flags, def, cp) \
+	اگر ((r = serialise_s32(buf, options->var)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		جاؤ برآمد; \
 	}
-#define SSHCONF_STRING(var, conf, flags, cp) \
-	if ((r = serialise_nullable_string(buf, options->var)) != 0) { \
+#تعریف_کرو SSHCONF_STRING(var, conf, flags, cp) \
+	اگر ((r = serialise_nullable_string(buf, options->var)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		جاؤ برآمد; \
 	}
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
-	if ((r = serialise_nullable_string_array(buf, options->var, \
+#تعریف_کرو SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
+	اگر ((r = serialise_nullable_string_array(buf, options->var, \
 	    options->nvar)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		جاؤ برآمد; \
 	}
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
-	if ((r = serialise_##funcsuffix(options, buf)) != 0) \
-		goto out;
-#define SSHCONF_NONCONF(funcsuffix) \
-	if ((r = serialise_##funcsuffix(options, buf)) != 0) \
-		goto out;
-#define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	/* empty */
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	/* empty */
-#define SSHCONF_ALIAS(old, conf, flags)			/* empty */
+#تعریف_کرو SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
+	اگر ((r = serialise_##funcsuffix(options, buf)) != 0) \
+		جاؤ برآمد;
+#تعریف_کرو SSHCONF_NONCONF(funcsuffix) \
+	اگر ((r = serialise_##funcsuffix(options, buf)) != 0) \
+		جاؤ برآمد;
+#تعریف_کرو SSHCONF_DEPRECATE(conf, flags, opcode)		/*خالی_خانے*/
+#تعریف_کرو SSHCONF_UNSUPPORTED_INT(var, conf, flags)	/*خالی_خانے*/
+#تعریف_کرو SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	/*خالی_خانے*/
+#تعریف_کرو SSHCONF_ALIAS(old, conf, flags)			/*خالی_خانے*/
 
 	SSHD_CONFIG_ENTRIES
 
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#تعریف_منسوخ SSHCONF_INT
+#تعریف_منسوخ SSHCONF_INTFLAG
+#تعریف_منسوخ SSHCONF_STRING
+#تعریف_منسوخ SSHCONF_STRARRAY
+#تعریف_منسوخ SSHCONF_CUSTOM
+#تعریف_منسوخ SSHCONF_NONCONF
+#تعریف_منسوخ SSHCONF_DEPRECATE
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_INT
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_STRING
+#تعریف_منسوخ SSHCONF_ALIAS
 
 	/* success */
 	r = 0;
 	*bufp = buf;
-	buf = NULL; /* transferred */
- out:
+	buf = تہی; /* transferred */
+ برآمد:
 	sshbuf_free(buf);
-	return r;
+	واپس r;
 }
 
-static int
-deserialise_s32(struct sshbuf *buf, int *v)
+ساکن صحیح
+deserialise_s32(ساخت sshbuf *buf, صحیح *v)
 {
 	uint32_t tmp;
-	int r;
+	صحیح r;
 	u_char was_signed;
 
-	if ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
+	اگر ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
 	    (r = sshbuf_get_u32(buf, &tmp)) != 0)
-		return r;
-	if (was_signed > 1)
-		return SSH_ERR_INVALID_FORMAT;
-	if (was_signed) {
-		if (tmp > (uint32_t)INT_MAX + 1)
-			return SSH_ERR_INVALID_FORMAT;
-		*v = tmp == (uint32_t)INT_MAX + 1 ? INT_MIN : -(int)tmp;
-	} else {
-		if (tmp > INT_MAX)
-			return SSH_ERR_INVALID_FORMAT;
-		*v = (int)tmp;
+		واپس r;
+	اگر (was_signed > 1)
+		واپس SSH_ERR_INVALID_FORMAT;
+	اگر (was_signed) {
+		اگر (tmp > (uint32_t)زیادہ_سے_زیادہ_عدد + 1)
+			واپس SSH_ERR_INVALID_FORMAT;
+		*v = tmp == (uint32_t)زیادہ_سے_زیادہ_عدد + 1 ? INT_MIN : -(صحیح)tmp;
+	} ورنہ {
+		اگر (tmp > زیادہ_سے_زیادہ_عدد)
+			واپس SSH_ERR_INVALID_FORMAT;
+		*v = (صحیح)tmp;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_s64(struct sshbuf *buf, int64_t *v)
+ساکن صحیح
+deserialise_s64(ساخت sshbuf *buf, int64_t *v)
 {
 	uint64_t tmp;
-	int r;
+	صحیح r;
 	u_char was_signed;
 
-	if ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
+	اگر ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
 	    (r = sshbuf_get_u64(buf, &tmp)) != 0)
-		return r;
-	if (was_signed > 1)
-		return SSH_ERR_INVALID_FORMAT;
-	if (was_signed) {
-		if (tmp > (uint64_t)INT64_MAX + 1)
-			return SSH_ERR_INVALID_FORMAT;
+		واپس r;
+	اگر (was_signed > 1)
+		واپس SSH_ERR_INVALID_FORMAT;
+	اگر (was_signed) {
+		اگر (tmp > (uint64_t)INT64_MAX + 1)
+			واپس SSH_ERR_INVALID_FORMAT;
 		*v = tmp == (uint64_t)INT64_MAX + 1 ?
 		    INT64_MIN : -(int64_t)tmp;
-	} else {
-		if (tmp > INT64_MAX)
-			return SSH_ERR_INVALID_FORMAT;
+	} ورنہ {
+		اگر (tmp > INT64_MAX)
+			واپس SSH_ERR_INVALID_FORMAT;
 		*v = (int64_t)tmp;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_mode(struct sshbuf *buf, mode_t *v)
+ساکن صحیح
+deserialise_منوال(ساخت sshbuf *buf, منوال_t *v)
 {
-	int r, tmp;
+	صحیح r, tmp;
 
-	if ((r = deserialise_s32(buf, &tmp)) != 0)
-		return r;
-	if (tmp == -1) {
-		*v = (mode_t)-1;
-		return 0;
+	اگر ((r = deserialise_s32(buf, &tmp)) != 0)
+		واپس r;
+	اگر (tmp == -1) {
+		*v = (منوال_t)-1;
+		واپس 0;
 	}
-	if (tmp < 0 || tmp > 0777)
-		return SSH_ERR_INVALID_FORMAT;
-	*v = (mode_t)tmp;
-	return 0;
+	اگر (tmp < 0 || tmp > 0777)
+		واپس SSH_ERR_INVALID_FORMAT;
+	*v = (منوال_t)tmp;
+	واپس 0;
 }
 
-static int
-deserialise_double(struct sshbuf *buf, double *v)
+ساکن صحیح
+deserialise_double(ساخت sshbuf *buf, دوہرا *v)
 {
-	return sshbuf_get(buf, v, sizeof(*v));
+	واپس sshbuf_get(buf, v, حجم(*v));
 }
 
-static int
-deserialise_nullable_string(struct sshbuf *buf, char **sp)
+ساکن صحیح
+deserialise_nullable_string(ساخت sshbuf *buf, حرف **sp)
 {
-	int r;
+	صحیح r;
 	u_char present;
 
-	if ((r = sshbuf_get_u8(buf, &present)) != 0)
-		return r;
-	if (present == 0) {
-		*sp = NULL;
-		return 0;
+	اگر ((r = sshbuf_get_u8(buf, &present)) != 0)
+		واپس r;
+	اگر (present == 0) {
+		*sp = تہی;
+		واپس 0;
 	}
-	if (present != 1)
-		return SSH_ERR_INVALID_FORMAT;
-	return sshbuf_get_cstring(buf, sp, NULL);
+	اگر (present != 1)
+		واپس SSH_ERR_INVALID_FORMAT;
+	واپس sshbuf_get_cstring(buf, sp, تہی);
 }
 
-static void
-free_string_array(char **a, u_int n)
+ساکن خالی
+free_string_array(حرف **a, u_int n)
 {
 	u_int i;
 
-	if (a == NULL)
-		return;
-	for (i = 0; i < n; i++)
-		free(a[i]);
-	free(a);
+	اگر (a == تہی)
+		واپس;
+	برائے (i = 0; i < n; i++)
+		آزاد(a[i]);
+	آزاد(a);
 }
 
-static int
-deserialise_count(struct sshbuf *buf, u_int *np, const char *what)
+ساکن صحیح
+deserialise_گنتی(ساخت sshbuf *buf, u_int *np, ثابت حرف *what)
 {
-	int r;
+	صحیح r;
 	uint32_t n;
 
-	if ((r = sshbuf_get_u32(buf, &n)) != 0) {
+	اگر ((r = sshbuf_get_u32(buf, &n)) != 0) {
 		error_fr(r, "deserialise %s length", what);
-		return r;
+		واپس r;
 	}
-	if (n > UINT_MAX) {
+	اگر (n > UINT_MAX) {
 		error_f("bad number of %s", what);
-		return SSH_ERR_INVALID_FORMAT;
+		واپس SSH_ERR_INVALID_FORMAT;
 	}
-	if (n > sshbuf_len(buf)) {
+	اگر (n > sshbuf_len(buf)) {
 		error_f("bad number of %s", what);
-		return SSH_ERR_INVALID_FORMAT;
+		واپس SSH_ERR_INVALID_FORMAT;
 	}
 	*np = n;
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_nullable_string_array(struct sshbuf *buf, char ***arrayp,
+ساکن صحیح
+deserialise_nullable_string_array(ساخت sshbuf *buf, حرف ***arrayp,
     u_int *np)
 {
-	char **a = NULL;
-	int r;
+	حرف **a = تہی;
+	صحیح r;
 	u_int i, n;
 
-	*arrayp = NULL;
+	*arrayp = تہی;
 	*np = 0;
-	if ((r = deserialise_count(buf, &n, "strings")) != 0)
-		return r;
-	if (n > 0)
-		a = xcalloc(n, sizeof(*a));
-	for (i = 0; i < n; i++) {
-		if ((r = deserialise_nullable_string(buf, a + i)) != 0) {
+	اگر ((r = deserialise_گنتی(buf, &n, "strings")) != 0)
+		واپس r;
+	اگر (n > 0)
+		a = xcalloc(n, حجم(*a));
+	برائے (i = 0; i < n; i++) {
+		اگر ((r = deserialise_nullable_string(buf, a + i)) != 0) {
 			free_string_array(a, i + 1);
-			return r;
+			واپس r;
 		}
 	}
 	*arrayp = a;
 	*np = n;
-	return 0;
+	واپس 0;
 }
 
-static void
-free_queued_listen_addrs(struct queued_listenaddr *qla, u_int n)
+ساکن خالی
+free_queued_listen_addrs(ساخت queued_listenaddr *qla, u_int n)
 {
 	u_int i;
 
-	if (qla == NULL)
-		return;
-	for (i = 0; i < n; i++) {
-		free(qla[i].addr);
-		free(qla[i].rdomain);
+	اگر (qla == تہی)
+		واپس;
+	برائے (i = 0; i < n; i++) {
+		آزاد(qla[i].addr);
+		آزاد(qla[i].rdomain);
 	}
-	free(qla);
+	آزاد(qla);
 }
 
-static int
-deserialise_hostkeyfile(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_hostkeyfile(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r, *userprovided = NULL;
+	صحیح r, *userprovided = تہی;
 	u_int i, n;
-	char **files = NULL;
+	حرف **files = تہی;
 
-	if ((r = deserialise_count(buf, &n, "host key files")) != 0)
-		return r;
-	if (n > 0) {
-		userprovided = xcalloc(n, sizeof(*userprovided));
-		files = xcalloc(n, sizeof(*files));
+	اگر ((r = deserialise_گنتی(buf, &n, "host key files")) != 0)
+		واپس r;
+	اگر (n > 0) {
+		userprovided = xcalloc(n, حجم(*userprovided));
+		files = xcalloc(n, حجم(*files));
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = deserialise_s32(buf, userprovided + i)) != 0 ||
+	برائے (i = 0; i < n; i++) {
+		اگر ((r = deserialise_s32(buf, userprovided + i)) != 0 ||
 		    (r = deserialise_nullable_string(buf, files + i)) != 0) {
 			error_fr(r, "deserialise member");
 			free_string_array(files, i + 1);
-			free(userprovided);
-			return r;
+			آزاد(userprovided);
+			واپس r;
 		}
 	}
-	options->num_host_key_files = n;
-	options->host_key_file_userprovided = userprovided;
-	options->host_key_files = files;
-	return 0;
+	options->عدد_host_کلید_files = n;
+	options->host_کلید_file_userprovided = userprovided;
+	options->host_کلید_files = files;
+	واپس 0;
 }
 
-static int
-deserialise_ipqos(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_ipqos(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = deserialise_s32(buf, &options->ip_qos_interactive)) != 0 ||
+	اگر ((r = deserialise_s32(buf, &options->ip_qos_interactive)) != 0 ||
 	    (r = deserialise_s32(buf, &options->ip_qos_bulk)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		واپس r;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_listenaddress(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_listenaddress(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 	u_int i, n;
-	struct queued_listenaddr *qla = NULL;
+	ساخت queued_listenaddr *qla = تہی;
 
-	if ((r = deserialise_count(buf, &n, "listen addresses")) != 0)
-		return r;
-	if (n > 0)
-		qla = xcalloc(n, sizeof(*qla));
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_get_cstring(buf, &qla[i].addr, NULL)) != 0 ||
-		    (r = deserialise_s32(buf, &qla[i].port)) != 0 ||
+	اگر ((r = deserialise_گنتی(buf, &n, "listen addresses")) != 0)
+		واپس r;
+	اگر (n > 0)
+		qla = xcalloc(n, حجم(*qla));
+	برائے (i = 0; i < n; i++) {
+		اگر ((r = sshbuf_get_cstring(buf, &qla[i].addr, تہی)) != 0 ||
+		    (r = deserialise_s32(buf, &qla[i].پورٹ)) != 0 ||
 		    (r = deserialise_nullable_string(buf,
 		    &qla[i].rdomain)) != 0) {
 			error_fr(r, "deserialise member");
 			free_queued_listen_addrs(qla, i + 1);
-			return r;
+			واپس r;
 		}
 	}
-	options->num_queued_listens = n;
+	options->عدد_queued_listens = n;
 	options->queued_listen_addrs = qla;
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_logfacility(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_logfacility(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r, tmp;
+	صحیح r, tmp;
 
-	if ((r = deserialise_s32(buf, &tmp)) != 0) {
+	اگر ((r = deserialise_s32(buf, &tmp)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		واپس r;
 	}
-	if (tmp != SYSLOG_FACILITY_NOT_SET &&
-	    log_facility_name((SyslogFacility)tmp) == NULL) {
+	اگر (tmp != SYSLOG_FACILITY_NOT_سیٹ &&
+	    log_facility_name((SyslogFacility)tmp) == تہی) {
 		error_f("bad syslog facility");
-		return SSH_ERR_INVALID_FORMAT;
+		واپس SSH_ERR_INVALID_FORMAT;
 	}
 	options->log_facility = (SyslogFacility)tmp;
 
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_loglevel(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_loglevel(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r, tmp;
+	صحیح r, tmp;
 
-	if ((r = deserialise_s32(buf, &tmp)) != 0) {
+	اگر ((r = deserialise_s32(buf, &tmp)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		واپس r;
 	}
-	if (tmp != SYSLOG_LEVEL_NOT_SET &&
-	    log_level_name((LogLevel)tmp) == NULL) {
+	اگر (tmp != SYSLOG_LEVEL_NOT_سیٹ &&
+	    log_level_name((LogLevel)tmp) == تہی) {
 		error_f("bad log level");
-		return SSH_ERR_INVALID_FORMAT;
+		واپس SSH_ERR_INVALID_FORMAT;
 	}
 	options->log_level = (LogLevel)tmp;
 
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_port(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_پورٹ(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 	u_int i, n;
 
-	if ((r = deserialise_count(buf, &n, "ports")) != 0)
-		return r;
-	if (n > MAX_PORTS) {
+	اگر ((r = deserialise_گنتی(buf, &n, "ports")) != 0)
+		واپس r;
+	اگر (n > MAX_PORTS) {
 		error_f("bad number of ports");
-		return SSH_ERR_INVALID_FORMAT;
+		واپس SSH_ERR_INVALID_FORMAT;
 	}
-	options->num_ports = n;
-	memset(options->ports, 0, sizeof(options->ports));
-	for (i = 0; i < options->num_ports; i++) {
-		if ((r = deserialise_s32(buf, options->ports + i)) != 0) {
+	options->عدد_ports = n;
+	memset(options->ports, 0, حجم(options->ports));
+	برائے (i = 0; i < options->عدد_ports; i++) {
+		اگر ((r = deserialise_s32(buf, options->ports + i)) != 0) {
 			error_fr(r, "deserialise port");
-			return r;
+			واپس r;
 		}
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_gatewayports(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_gatewayports(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = deserialise_s32(buf, &options->fwd_opts.gateway_ports)) != 0) {
+	اگر ((r = deserialise_s32(buf, &options->fwd_opts.gateway_ports)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		واپس r;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_streamlocalbindmask(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_streamlocalbindmask(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = deserialise_mode(buf,
-	    &options->fwd_opts.streamlocal_bind_mask)) != 0) {
+	اگر ((r = deserialise_منوال(buf,
+	    &options->fwd_opts.streamlocal_bind_نقاب)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		واپس r;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_streamlocalbindunlink(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_streamlocalbindunlink(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 	u_char tmp;
 
-	if ((r = sshbuf_get_u8(buf, &tmp)) != 0) {
+	اگر ((r = sshbuf_get_u8(buf, &tmp)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		واپس r;
 	}
-	if (tmp > 1) {
+	اگر (tmp > 1) {
 		error_f("bad boolean");
-		return SSH_ERR_INVALID_FORMAT;
+		واپس SSH_ERR_INVALID_FORMAT;
 	}
 	options->fwd_opts.streamlocal_bind_unlink = tmp;
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_maxstartups(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_maxstartups(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = deserialise_s32(buf, &options->max_startups_begin)) != 0 ||
-	    (r = deserialise_s32(buf, &options->max_startups_rate)) != 0 ||
+	اگر ((r = deserialise_s32(buf, &options->max_startups_begin)) != 0 ||
+	    (r = deserialise_s32(buf, &options->max_startups_شرح)) != 0 ||
 	    (r = deserialise_s32(buf, &options->max_startups)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		واپس r;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_permituserenv(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_permituserenv(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = deserialise_s32(buf, &options->permit_user_env)) != 0 ||
+	اگر ((r = deserialise_s32(buf, &options->permit_user_env)) != 0 ||
 	    (r = deserialise_nullable_string(buf,
 	    &options->permit_user_env_allowlist)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		واپس r;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_persourcenetblocksize(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_persourcenetblocksize(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = deserialise_s32(buf,
-	    &options->per_source_masklen_ipv4)) != 0 ||
+	اگر ((r = deserialise_s32(buf,
+	    &options->فی_ماخذ_masklen_ipv4)) != 0 ||
 	    (r = deserialise_s32(buf,
-	    &options->per_source_masklen_ipv6)) != 0) {
+	    &options->فی_ماخذ_masklen_ipv6)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		واپس r;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_persourcepenalties(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_persourcepenalties(ServerOptions *options, ساخت sshbuf *buf)
 {
-	struct per_source_penalty *psp = &options->per_source_penalty;
-	int r;
+	ساخت فی_ماخذ_penalty *psp = &options->فی_ماخذ_penalty;
+	صحیح r;
 
-	if ((r = deserialise_s32(buf, &psp->enabled)) != 0 ||
+	اگر ((r = deserialise_s32(buf, &psp->enabled)) != 0 ||
 	    (r = deserialise_s32(buf, &psp->max_sources4)) != 0 ||
 	    (r = deserialise_s32(buf, &psp->max_sources6)) != 0 ||
-	    (r = deserialise_s32(buf, &psp->overflow_mode)) != 0 ||
-	    (r = deserialise_s32(buf, &psp->overflow_mode6)) != 0 ||
+	    (r = deserialise_s32(buf, &psp->حد_سے_تجاوز_منوال)) != 0 ||
+	    (r = deserialise_s32(buf, &psp->حد_سے_تجاوز_mode6)) != 0 ||
 	    (r = deserialise_double(buf, &psp->penalty_crash)) != 0 ||
 	    (r = deserialise_double(buf, &psp->penalty_grace)) != 0 ||
 	    (r = deserialise_double(buf, &psp->penalty_authfail)) != 0 ||
@@ -3625,382 +3625,382 @@ deserialise_persourcepenalties(ServerOptions *options, struct sshbuf *buf)
 	    (r = deserialise_double(buf, &psp->penalty_max)) != 0 ||
 	    (r = deserialise_double(buf, &psp->penalty_min)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		واپس r;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_rekeylimit(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_rekeylimit(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = deserialise_s64(buf, &options->rekey_limit)) != 0 ||
+	اگر ((r = deserialise_s64(buf, &options->rekey_حد_بندی)) != 0 ||
 	    (r = deserialise_s32(buf, &options->rekey_interval)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		واپس r;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_subsystem(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_subsystem(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 	u_int i, n;
-	char **names = NULL, **commands = NULL, **args = NULL;
+	حرف **نام = تہی, **commands = تہی, **دلائل = تہی;
 
-	if ((r = deserialise_count(buf, &n, "subsystems")) != 0)
-		return r;
-	if (n > 0) {
-		names = xcalloc(n, sizeof(*names));
-		commands = xcalloc(n, sizeof(*names));
-		args = xcalloc(n, sizeof(*args));
+	اگر ((r = deserialise_گنتی(buf, &n, "subsystems")) != 0)
+		واپس r;
+	اگر (n > 0) {
+		نام = xcalloc(n, حجم(*نام));
+		commands = xcalloc(n, حجم(*نام));
+		دلائل = xcalloc(n, حجم(*دلائل));
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_get_cstring(buf, names + i, NULL)) != 0 ||
-		    (r = sshbuf_get_cstring(buf, commands + i, NULL)) != 0 ||
-		    (r = sshbuf_get_cstring(buf, args + i, NULL)) != 0) {
+	برائے (i = 0; i < n; i++) {
+		اگر ((r = sshbuf_get_cstring(buf, نام + i, تہی)) != 0 ||
+		    (r = sshbuf_get_cstring(buf, commands + i, تہی)) != 0 ||
+		    (r = sshbuf_get_cstring(buf, دلائل + i, تہی)) != 0) {
 			error_fr(r, "deserialise member");
-			free_string_array(names, i + 1);
+			free_string_array(نام, i + 1);
 			free_string_array(commands, i + 1);
-			free_string_array(args, i + 1);
-			return r;
+			free_string_array(دلائل, i + 1);
+			واپس r;
 		}
 	}
-	options->num_subsystems = n;
-	options->subsystem_name = names;
+	options->عدد_subsystems = n;
+	options->subsystem_name = نام;
 	options->subsystem_command = commands;
-	options->subsystem_args = args;
-	return 0;
+	options->subsystem_دلائل = دلائل;
+	واپس 0;
 }
 
-static int
-deserialise_pubkey_auth_options(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_pubkey_auth_options(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = deserialise_s32(buf, &options->pubkey_auth_options)) != 0 ||
+	اگر ((r = deserialise_s32(buf, &options->pubkey_auth_options)) != 0 ||
 	    (r = deserialise_s32(buf, &options->max_pubkey_ok)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		واپس r;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-deserialise_timingsecret(ServerOptions *options, struct sshbuf *buf)
+ساکن صحیح
+deserialise_timingsecret(ServerOptions *options, ساخت sshbuf *buf)
 {
-	int r;
+	صحیح r;
 
-	if ((r = sshbuf_get_u64(buf, &options->timing_secret)) != 0) {
+	اگر ((r = sshbuf_get_u64(buf, &options->timing_secret)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		واپس r;
 	}
-	return 0;
+	واپس 0;
 }
 
-int
-deserialise_server_options(struct sshbuf *buf, ServerOptions *options)
+صحیح
+deserialise_server_options(ساخت sshbuf *buf, ServerOptions *options)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	uint32_t version;
+	صحیح r = SSH_ERR_اندرونی_ERROR;
+	uint32_t نسخہ;
 	ServerOptions new_options;
 
 	initialize_server_options(&new_options);
-	if ((r = sshbuf_get_u32(buf, &version)) != 0) {
+	اگر ((r = sshbuf_get_u32(buf, &نسخہ)) != 0) {
 		error_fr(r, "deserialise version");
-		goto out;
+		جاؤ برآمد;
 	}
-	if (version != SSHD_CONFIG_BLOB_VERSION) {
-		error_f("unsupported config blob version %u", version);
+	اگر (نسخہ != SSHD_CONFIG_BLOB_نسخہ) {
+		error_f("unsupported config blob version %u", نسخہ);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
-#define SSHCONF_INT(var, conf, flags, ms, def, cp) \
-	if ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
+#تعریف_کرو SSHCONF_INT(var, conf, flags, ms, def, cp) \
+	اگر ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		جاؤ برآمد; \
 	}
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp) \
-	if ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
+#تعریف_کرو SSHCONF_INTFLAG(var, conf, flags, def, cp) \
+	اگر ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		جاؤ برآمد; \
 	}
-#define SSHCONF_STRING(var, conf, flags, cp) \
-	if ((r = deserialise_nullable_string(buf, &new_options.var)) != 0) { \
+#تعریف_کرو SSHCONF_STRING(var, conf, flags, cp) \
+	اگر ((r = deserialise_nullable_string(buf, &new_options.var)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		جاؤ برآمد; \
 	}
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
-	if ((r = deserialise_nullable_string_array(buf, &new_options.var, \
+#تعریف_کرو SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
+	اگر ((r = deserialise_nullable_string_array(buf, &new_options.var, \
 	    &new_options.nvar)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		جاؤ برآمد; \
 	}
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
-	if ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
-		goto out;
-#define SSHCONF_NONCONF(funcsuffix) \
-	if ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
-		goto out;
-#define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	new_options.var = 0;
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(new_options.var); \
-		new_options.var = NULL; \
-	} while (0);
-#define SSHCONF_ALIAS(old, conf, flags)			/* empty */
+#تعریف_کرو SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
+	اگر ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
+		جاؤ برآمد;
+#تعریف_کرو SSHCONF_NONCONF(funcsuffix) \
+	اگر ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
+		جاؤ برآمد;
+#تعریف_کرو SSHCONF_DEPRECATE(conf, flags, opcode)		/*خالی_خانے*/
+#تعریف_کرو SSHCONF_UNSUPPORTED_INT(var, conf, flags)	new_options.var = 0;
+#تعریف_کرو SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
+	کرو { \
+		آزاد(new_options.var); \
+		new_options.var = تہی; \
+	} جب (0);
+#تعریف_کرو SSHCONF_ALIAS(old, conf, flags)			/*خالی_خانے*/
 
 	SSHD_CONFIG_ENTRIES
 
-	if (sshbuf_len(buf) != 0) {
+	اگر (sshbuf_len(buf) != 0) {
 		error_f("trailing data in config blob");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		جاؤ برآمد;
 	}
 
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#تعریف_منسوخ SSHCONF_INT
+#تعریف_منسوخ SSHCONF_INTFLAG
+#تعریف_منسوخ SSHCONF_STRING
+#تعریف_منسوخ SSHCONF_STRARRAY
+#تعریف_منسوخ SSHCONF_CUSTOM
+#تعریف_منسوخ SSHCONF_NONCONF
+#تعریف_منسوخ SSHCONF_DEPRECATE
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_INT
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_STRING
+#تعریف_منسوخ SSHCONF_ALIAS
 
 	/* success */
 	r = 0;
 	free_server_options(options);
 	*options = new_options;
-	memset(&new_options, 0, sizeof(new_options));
- out:
+	memset(&new_options, 0, حجم(new_options));
+ برآمد:
 	free_server_options(&new_options);
-	return r;
+	واپس r;
 }
 
-static void
+ساکن خالی
 free_hostkeyfile(ServerOptions *options)
 {
 	u_int i;
 
-	for (i = 0; i < options->num_host_key_files; i++)
-		free(options->host_key_files[i]);
-	free(options->host_key_files);
-	free(options->host_key_file_userprovided);
+	برائے (i = 0; i < options->عدد_host_کلید_files; i++)
+		آزاد(options->host_کلید_files[i]);
+	آزاد(options->host_کلید_files);
+	آزاد(options->host_کلید_file_userprovided);
 }
 
-static void
+ساکن خالی
 free_listenaddress(ServerOptions *options)
 {
 	u_int i;
 
 	free_queued_listen_addrs(options->queued_listen_addrs,
-	    options->num_queued_listens);
+	    options->عدد_queued_listens);
 
-	for (i = 0; i < options->num_listen_addrs; i++) {
-		free(options->listen_addrs[i].rdomain);
-		if (options->listen_addrs[i].addrs != NULL)
+	برائے (i = 0; i < options->عدد_listen_addrs; i++) {
+		آزاد(options->listen_addrs[i].rdomain);
+		اگر (options->listen_addrs[i].addrs != تہی)
 			freeaddrinfo(options->listen_addrs[i].addrs);
 	}
-	free(options->listen_addrs);
+	آزاد(options->listen_addrs);
 }
 
-static void
+ساکن خالی
 free_permituserenv(ServerOptions *options)
 {
-	free(options->permit_user_env_allowlist);
+	آزاد(options->permit_user_env_allowlist);
 }
 
-static void
+ساکن خالی
 free_subsystem(ServerOptions *options)
 {
 	u_int i;
 
-	for (i = 0; i < options->num_subsystems; i++) {
-		free(options->subsystem_name[i]);
-		free(options->subsystem_command[i]);
-		free(options->subsystem_args[i]);
+	برائے (i = 0; i < options->عدد_subsystems; i++) {
+		آزاد(options->subsystem_name[i]);
+		آزاد(options->subsystem_command[i]);
+		آزاد(options->subsystem_دلائل[i]);
 	}
-	free(options->subsystem_name);
-	free(options->subsystem_command);
-	free(options->subsystem_args);
+	آزاد(options->subsystem_name);
+	آزاد(options->subsystem_command);
+	آزاد(options->subsystem_دلائل);
 }
 
-void
+خالی
 free_server_options(ServerOptions *options)
 {
-#define SSHCONF_INT(var, conf, flags, ms, def, cp)	/* empty */
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp)	/* empty */
-#define SSHCONF_STRING(var, conf, flags, cp)		free(options->var);
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
+#تعریف_کرو SSHCONF_INT(var, conf, flags, ms, def, cp)	/*خالی_خانے*/
+#تعریف_کرو SSHCONF_INTFLAG(var, conf, flags, def, cp)	/*خالی_خانے*/
+#تعریف_کرو SSHCONF_STRING(var, conf, flags, cp)		آزاد(options->var);
+#تعریف_کرو SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
 	free_string_array(options->var, options->nvar);
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
+#تعریف_کرو SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
 	free_##funcsuffix(options);
-#define SSHCONF_NONCONF(funcsuffix) \
+#تعریف_کرو SSHCONF_NONCONF(funcsuffix) \
 	free_##funcsuffix(options);
-#define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(options->var); \
-		options->var = NULL; \
-	} while (0);
-#define SSHCONF_ALIAS(old, conf, flags)			/* empty */
+#تعریف_کرو SSHCONF_DEPRECATE(conf, flags, opcode)		/*خالی_خانے*/
+#تعریف_کرو SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
+#تعریف_کرو SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
+	کرو { \
+		آزاد(options->var); \
+		options->var = تہی; \
+	} جب (0);
+#تعریف_کرو SSHCONF_ALIAS(old, conf, flags)			/*خالی_خانے*/
 
-#define free_ipqos(options)
-#define free_logfacility(options)
-#define free_loglevel(options)
-#define free_port(options)
-#define free_gatewayports(options)
-#define free_streamlocalbindmask(options)
-#define free_streamlocalbindunlink(options)
-#define free_maxstartups(options)
-#define free_persourcenetblocksize(options)
-#define free_persourcepenalties(options)
-#define free_rekeylimit(options)
-#define free_pubkey_auth_options(options)
-#define free_timingsecret(options)
+#تعریف_کرو free_ipqos(options)
+#تعریف_کرو free_logfacility(options)
+#تعریف_کرو free_loglevel(options)
+#تعریف_کرو free_پورٹ(options)
+#تعریف_کرو free_gatewayports(options)
+#تعریف_کرو free_streamlocalbindmask(options)
+#تعریف_کرو free_streamlocalbindunlink(options)
+#تعریف_کرو free_maxstartups(options)
+#تعریف_کرو free_persourcenetblocksize(options)
+#تعریف_کرو free_persourcepenalties(options)
+#تعریف_کرو free_rekeylimit(options)
+#تعریف_کرو free_pubkey_auth_options(options)
+#تعریف_کرو free_timingsecret(options)
 
 	SSHD_CONFIG_ENTRIES
 
-#undef free_ipqos
-#undef free_logfacility
-#undef free_loglevel
-#undef free_port
-#undef free_gatewayports
-#undef free_streamlocalbindmask
-#undef free_streamlocalbindunlink
-#undef free_maxstartups
-#undef free_persourcenetblocksize
-#undef free_persourcepenalties
-#undef free_rekeylimit
-#undef free_timingsecret
+#تعریف_منسوخ free_ipqos
+#تعریف_منسوخ free_logfacility
+#تعریف_منسوخ free_loglevel
+#تعریف_منسوخ free_پورٹ
+#تعریف_منسوخ free_gatewayports
+#تعریف_منسوخ free_streamlocalbindmask
+#تعریف_منسوخ free_streamlocalbindunlink
+#تعریف_منسوخ free_maxstartups
+#تعریف_منسوخ free_persourcenetblocksize
+#تعریف_منسوخ free_persourcepenalties
+#تعریف_منسوخ free_rekeylimit
+#تعریف_منسوخ free_timingsecret
 
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#تعریف_منسوخ SSHCONF_INT
+#تعریف_منسوخ SSHCONF_INTFLAG
+#تعریف_منسوخ SSHCONF_STRING
+#تعریف_منسوخ SSHCONF_STRARRAY
+#تعریف_منسوخ SSHCONF_CUSTOM
+#تعریف_منسوخ SSHCONF_NONCONF
+#تعریف_منسوخ SSHCONF_DEPRECATE
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_INT
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_STRING
+#تعریف_منسوخ SSHCONF_ALIAS
 
 	initialize_server_options(options);
 }
 
-static void
-copy_server_option_int(int *dst, int src)
+ساکن خالی
+copy_server_option_int(صحیح *dst, صحیح src)
 {
-	if (src != -1)
+	اگر (src != -1)
 		*dst = src;
 }
 
-static void
+ساکن خالی
 copy_server_option_int64(int64_t *dst, int64_t src)
 {
-	if (src != -1)
+	اگر (src != -1)
 		*dst = src;
 }
 
-static void
-copy_server_option_string(char **dst, const char *src)
+ساکن خالی
+copy_server_option_string(حرف **dst, ثابت حرف *src)
 {
-	if (src != NULL && *dst != src) {
-		free(*dst);
+	اگر (src != تہی && *dst != src) {
+		آزاد(*dst);
 		*dst = xstrdup(src);
 	}
 }
 
-static void
-copy_server_option_strarray_values(char ***dst, u_int ndst,
-    char * const *src, u_int nsrc)
+ساکن خالی
+copy_server_option_strarray_اقدار(حرف ***dst, u_int ndst,
+    حرف * ثابت *src, u_int nsrc)
 {
 	u_int i;
 
-	if (nsrc == 0)
-		return;
-	for (i = 0; i < ndst; i++)
-		free((*dst)[i]);
-	free(*dst);
-	*dst = xcalloc(nsrc, sizeof(**dst));
-	for (i = 0; i < nsrc; i++)
-		(*dst)[i] = src[i] == NULL ? NULL : xstrdup(src[i]);
+	اگر (nsrc == 0)
+		واپس;
+	برائے (i = 0; i < ndst; i++)
+		آزاد((*dst)[i]);
+	آزاد(*dst);
+	*dst = xcalloc(nsrc, حجم(**dst));
+	برائے (i = 0; i < nsrc; i++)
+		(*dst)[i] = src[i] == تہی ? تہی : xstrdup(src[i]);
 }
 
-static void
-copy_server_option_strarray(char ***dst, u_int *ndst,
-    char * const *src, u_int nsrc)
+ساکن خالی
+copy_server_option_strarray(حرف ***dst, u_int *ndst,
+    حرف * ثابت *src, u_int nsrc)
 {
-	if (nsrc == 0)
-		return;
-	copy_server_option_strarray_values(dst, *ndst, src, nsrc);
+	اگر (nsrc == 0)
+		واپس;
+	copy_server_option_strarray_اقدار(dst, *ndst, src, nsrc);
 	*ndst = nsrc;
 }
 
-static void
-copy_ipqos(ServerOptions *dst, const ServerOptions *src)
+ساکن خالی
+copy_ipqos(ServerOptions *dst, ثابت ServerOptions *src)
 {
 	copy_server_option_int(&dst->ip_qos_interactive,
 	    src->ip_qos_interactive);
 	copy_server_option_int(&dst->ip_qos_bulk, src->ip_qos_bulk);
 }
 
-static void
-copy_gatewayports(ServerOptions *dst, const ServerOptions *src)
+ساکن خالی
+copy_gatewayports(ServerOptions *dst, ثابت ServerOptions *src)
 {
 	copy_server_option_int(&dst->fwd_opts.gateway_ports,
 	    src->fwd_opts.gateway_ports);
 }
 
-static void
-copy_streamlocalbindunlink(ServerOptions *dst, const ServerOptions *src)
+ساکن خالی
+copy_streamlocalbindunlink(ServerOptions *dst, ثابت ServerOptions *src)
 {
 	copy_server_option_int(&dst->fwd_opts.streamlocal_bind_unlink,
 	    src->fwd_opts.streamlocal_bind_unlink);
 }
 
-static void
-copy_loglevel(ServerOptions *dst, const ServerOptions *src)
+ساکن خالی
+copy_loglevel(ServerOptions *dst, ثابت ServerOptions *src)
 {
-	if (src->log_level != -1)
+	اگر (src->log_level != -1)
 		dst->log_level = src->log_level;
 }
 
-static void
-copy_rekeylimit(ServerOptions *dst, const ServerOptions *src)
+ساکن خالی
+copy_rekeylimit(ServerOptions *dst, ثابت ServerOptions *src)
 {
-	copy_server_option_int64(&dst->rekey_limit, src->rekey_limit);
+	copy_server_option_int64(&dst->rekey_حد_بندی, src->rekey_حد_بندی);
 	copy_server_option_int(&dst->rekey_interval, src->rekey_interval);
 }
 
-static void
-copy_subsystem(ServerOptions *dst, const ServerOptions *src)
+ساکن خالی
+copy_subsystem(ServerOptions *dst, ثابت ServerOptions *src)
 {
-	u_int old_num_subsystems = dst->num_subsystems;
+	u_int old_عدد_subsystems = dst->عدد_subsystems;
 
-	if (src->num_subsystems == 0)
-		return;
-	copy_server_option_strarray_values(&dst->subsystem_name,
-	    old_num_subsystems, src->subsystem_name, src->num_subsystems);
-	copy_server_option_strarray_values(&dst->subsystem_command,
-	    old_num_subsystems, src->subsystem_command, src->num_subsystems);
-	copy_server_option_strarray_values(&dst->subsystem_args,
-	    old_num_subsystems, src->subsystem_args, src->num_subsystems);
-	dst->num_subsystems = src->num_subsystems;
+	اگر (src->عدد_subsystems == 0)
+		واپس;
+	copy_server_option_strarray_اقدار(&dst->subsystem_name,
+	    old_عدد_subsystems, src->subsystem_name, src->عدد_subsystems);
+	copy_server_option_strarray_اقدار(&dst->subsystem_command,
+	    old_عدد_subsystems, src->subsystem_command, src->عدد_subsystems);
+	copy_server_option_strarray_اقدار(&dst->subsystem_دلائل,
+	    old_عدد_subsystems, src->subsystem_دلائل, src->عدد_subsystems);
+	dst->عدد_subsystems = src->عدد_subsystems;
 }
 
-static void
-copy_pubkey_auth_options(ServerOptions *dst, const ServerOptions *src)
+ساکن خالی
+copy_pubkey_auth_options(ServerOptions *dst, ثابت ServerOptions *src)
 {
-	if (src->pubkey_auth_options != -1) {
+	اگر (src->pubkey_auth_options != -1) {
 		dst->pubkey_auth_options = src->pubkey_auth_options;
 		dst->max_pubkey_ok = src->max_pubkey_ok;
 	}
@@ -4012,54 +4012,54 @@ copy_pubkey_auth_options(ServerOptions *dst, const ServerOptions *src)
  * If the preauth flag is set, skip the post-authentication-only manual
  * string cleanup and subsystem merge below.
  */
-void
-copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
+خالی
+copy_سیٹ_server_options(ServerOptions *dst, ServerOptions *src, صحیح preauth)
 {
-	if (dst == src)
-		return;
+	اگر (dst == src)
+		واپس;
 
-#define SSHCONF_INT(var, conf, flags, ms, def, cp) \
+#تعریف_کرو SSHCONF_INT(var, conf, flags, ms, def, cp) \
 	cp(copy_server_option_int(&dst->var, src->var);)
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp) \
+#تعریف_کرو SSHCONF_INTFLAG(var, conf, flags, def, cp) \
 	cp(copy_server_option_int(&dst->var, src->var);)
-#define SSHCONF_STRING(var, conf, flags, cp) \
+#تعریف_کرو SSHCONF_STRING(var, conf, flags, cp) \
 	cp(copy_server_option_string(&dst->var, src->var);)
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
+#تعریف_کرو SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
 	cp(copy_server_option_strarray(&dst->var, &dst->nvar, \
 	    src->var, src->nvar);)
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
+#تعریف_کرو SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
 	cp(copy_##funcsuffix(dst, src);)
-#define SSHCONF_NONCONF(funcsuffix)			/* empty */
-#define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	dst->var = 0;
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(dst->var); \
-		dst->var = NULL; \
-	} while (0);
-#define SSHCONF_ALIAS(old, conf, flags)			/* empty */
+#تعریف_کرو SSHCONF_NONCONF(funcsuffix)			/*خالی_خانے*/
+#تعریف_کرو SSHCONF_DEPRECATE(conf, flags, opcode)		/*خالی_خانے*/
+#تعریف_کرو SSHCONF_UNSUPPORTED_INT(var, conf, flags)	dst->var = 0;
+#تعریف_کرو SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
+	کرو { \
+		آزاد(dst->var); \
+		dst->var = تہی; \
+	} جب (0);
+#تعریف_کرو SSHCONF_ALIAS(old, conf, flags)			/*خالی_خانے*/
 
 	SSHD_CONFIG_ENTRIES
 
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#تعریف_منسوخ SSHCONF_INT
+#تعریف_منسوخ SSHCONF_INTFLAG
+#تعریف_منسوخ SSHCONF_STRING
+#تعریف_منسوخ SSHCONF_STRARRAY
+#تعریف_منسوخ SSHCONF_CUSTOM
+#تعریف_منسوخ SSHCONF_NONCONF
+#تعریف_منسوخ SSHCONF_DEPRECATE
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_INT
+#تعریف_منسوخ SSHCONF_UNSUPPORTED_STRING
+#تعریف_منسوخ SSHCONF_ALIAS
 
 	/*
 	 * The bind_mask is a mode_t that may be unsigned, so we can't use
 	 * copy_server_option_int - it does a signed comparison that causes
 	 * compiler warnings.
 	 */
-	if (src->fwd_opts.streamlocal_bind_mask != (mode_t)-1) {
-		dst->fwd_opts.streamlocal_bind_mask =
-		    src->fwd_opts.streamlocal_bind_mask;
+	اگر (src->fwd_opts.streamlocal_bind_نقاب != (منوال_t)-1) {
+		dst->fwd_opts.streamlocal_bind_نقاب =
+		    src->fwd_opts.streamlocal_bind_نقاب;
 	}
 
 	/* Arguments that accept '+...' need to be expanded */
@@ -4070,23 +4070,23 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
 	 * consulted before authentication, so they must be cleared here
 	 * rather than in the post-auth section below.
 	 */
-#define CLEAR_ON_NONE(v) \
-	do { \
-		if (option_clear_or_none(v)) { \
-			free(v); \
-			v = NULL; \
+#تعریف_کرو CLEAR_ON_NONE(v) \
+	کرو { \
+		اگر (option_clear_or_none(v)) { \
+			آزاد(v); \
+			v = تہی; \
 		} \
-	} while(0)
+	} جب(0)
 	CLEAR_ON_NONE(dst->authorized_principals_file);
-	CLEAR_ON_NONE(dst->trusted_user_ca_keys);
+	CLEAR_ON_NONE(dst->trusted_user_ca_کلیدیں);
 	CLEAR_ON_NONE(dst->banner);
 
 	/*
 	 * The only things that should be below this point are string options
 	 * which are only used after authentication.
 	 */
-	if (preauth)
-		return;
+	اگر (preauth)
+		واپس;
 
 	/* These options may be "none" to clear a global setting */
 	copy_server_option_string(&dst->adm_forced_command,
@@ -4095,282 +4095,282 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
 	    src->chroot_directory);
 	CLEAR_ON_NONE(dst->chroot_directory);
 	CLEAR_ON_NONE(dst->adm_forced_command);
-#undef CLEAR_ON_NONE
+#تعریف_منسوخ CLEAR_ON_NONE
 
 	/* Subsystems require merging. */
-	servconf_merge_subsystems(dst, src);
+	servconf_ملاؤ_subsystems(dst, src);
 }
 
-#define SERVCONF_MAX_DEPTH	16
-static void
-parse_server_config_depth(ServerOptions *options, const char *filename,
-    struct sshbuf *conf, struct include_list *includes,
-    struct connection_info *connectinfo, int flags, int *activep, int depth)
+#تعریف_کرو SERVCONF_MAX_گہرائی	16
+ساکن خالی
+parse_server_config_گہرائی(ServerOptions *options, ثابت حرف *filename,
+    ساخت sshbuf *conf, ساخت include_list *includes,
+    ساخت connection_info *connectinfo, صحیح flags, صحیح *activep, صحیح گہرائی)
 {
-	int linenum, bad_options = 0;
-	char *cp, *obuf, *cbuf;
+	صحیح linenum, bad_options = 0;
+	حرف *cp, *obuf, *cbuf;
 
-	if (depth < 0 || depth > SERVCONF_MAX_DEPTH)
+	اگر (گہرائی < 0 || گہرائی > SERVCONF_MAX_گہرائی)
 		fatal("Too many recursive configuration includes");
 
 	debug2_f("config %s len %zu%s", filename, sshbuf_len(conf),
 	    (flags & SSHCFG_NEVERMATCH ? " [checking syntax only]" : ""));
 
-	if ((obuf = cbuf = sshbuf_dup_string(conf)) == NULL)
+	اگر ((obuf = cbuf = sshbuf_dup_string(conf)) == تہی)
 		fatal_f("sshbuf_dup_string failed");
 	linenum = 1;
-	while ((cp = strsep(&cbuf, "\n")) != NULL) {
-		if (process_server_config_line_depth(options, cp,
+	جب ((cp = strsep(&cbuf, "\n")) != تہی) {
+		اگر (process_server_config_سطر_گہرائی(options, cp,
 		    filename, linenum++, activep, connectinfo, &flags,
-		    depth, includes) != 0)
+		    گہرائی, includes) != 0)
 			bad_options++;
 	}
-	free(obuf);
-	if (bad_options > 0)
+	آزاد(obuf);
+	اگر (bad_options > 0)
 		fatal("%s: terminating, %d bad configuration options",
 		    filename, bad_options);
 }
 
-void
-parse_server_config(ServerOptions *options, const char *filename,
-    struct sshbuf *conf, struct include_list *includes,
-    struct connection_info *connectinfo, int reexec)
+خالی
+parse_server_config(ServerOptions *options, ثابت حرف *filename,
+    ساخت sshbuf *conf, ساخت include_list *includes,
+    ساخت connection_info *connectinfo, صحیح reexec)
 {
-	int active = connectinfo ? 0 : 1;
-	parse_server_config_depth(options, filename, conf, includes,
-	    connectinfo, (connectinfo ? SSHCFG_MATCH_ONLY : 0), &active, 0);
-	if (!reexec)
+	صحیح فعال = connectinfo ? 0 : 1;
+	parse_server_config_گہرائی(options, filename, conf, includes,
+	    connectinfo, (connectinfo ? SSHCFG_مطابقت_ONLY : 0), &فعال, 0);
+	اگر (!reexec)
 		process_queued_listen_addrs(options);
 }
 
-static const char *
-fmt_multistate_int(int val, const struct multistate *m)
+ساکن ثابت حرف *
+fmt_multistate_int(صحیح val, ثابت ساخت multistate *m)
 {
 	u_int i;
 
-	for (i = 0; m[i].key != NULL; i++) {
-		if (m[i].value == val)
-			return m[i].key;
+	برائے (i = 0; m[i].کلید != تہی; i++) {
+		اگر (m[i].قدر == val)
+			واپس m[i].کلید;
 	}
-	return "UNKNOWN";
+	واپس "UNKNOWN";
 }
 
-static const char *
-fmt_intarg(ServerOpCodes code, int val)
+ساکن ثابت حرف *
+fmt_intarg(ServerOpCodes رمز, صحیح val)
 {
-	if (val == -1)
-		return "unset";
-	switch (code) {
-	case sAddressFamily:
-		return fmt_multistate_int(val, multistate_addressfamily);
-	case sPermitRootLogin:
-		return fmt_multistate_int(val, multistate_permitrootlogin);
-	case sGatewayPorts:
-		return fmt_multistate_int(val, multistate_gatewayports);
-	case sCompression:
-		return fmt_multistate_int(val, multistate_compression);
-	case sAllowTcpForwarding:
-		return fmt_multistate_int(val, multistate_tcpfwd);
-	case sAllowStreamLocalForwarding:
-		return fmt_multistate_int(val, multistate_tcpfwd);
-	case sIgnoreRhosts:
-		return fmt_multistate_int(val, multistate_ignore_rhosts);
-	case sTCPKeepAlive:
-		return fmt_multistate_int(val, multistate_keepalives);
-	case sWarnWeakCrypto:
-		return fmt_multistate_int(val, multistate_warnweakcrypto);
-	case sFingerprintHash:
-		return ssh_digest_alg_name(val);
-	default:
-		switch (val) {
-		case 0:
-			return "no";
-		case 1:
-			return "yes";
-		default:
-			return "UNKNOWN";
+	اگر (val == -1)
+		واپس "unset";
+	انتخاب (رمز) {
+	حالت s_پتہ_Family:
+		واپس fmt_multistate_int(val, multistate_addressfamily);
+	حالت s_Permit_جڑ_Login:
+		واپس fmt_multistate_int(val, multistate_permitrootlogin);
+	حالت sGatewayPorts:
+		واپس fmt_multistate_int(val, multistate_gatewayports);
+	حالت sCompression:
+		واپس fmt_multistate_int(val, multistate_compression);
+	حالت sAllowTcpForwarding:
+		واپس fmt_multistate_int(val, multistate_tcpfwd);
+	حالت s_Allow_دھارا_Local_Forwarding:
+		واپس fmt_multistate_int(val, multistate_tcpfwd);
+	حالت sIgnoreRhosts:
+		واپس fmt_multistate_int(val, multistate_ignore_rhosts);
+	حالت sTCPKeepAlive:
+		واپس fmt_multistate_int(val, multistate_keepalives);
+	حالت sWarnWeakCrypto:
+		واپس fmt_multistate_int(val, multistate_warnweakcrypto);
+	حالت sFingerprintHash:
+		واپس ssh_digest_alg_name(val);
+	طےشدہ:
+		انتخاب (val) {
+		حالت 0:
+			واپس "no";
+		حالت 1:
+			واپس "yes";
+		طےشدہ:
+			واپس "UNKNOWN";
 		}
 	}
 }
 
-static void
-dump_cfg_int(ServerOpCodes code, int val)
+ساکن خالی
+dump_cfg_int(ServerOpCodes رمز, صحیح val)
 {
-	if (code == sUnusedConnectionTimeout && val == 0) {
-		printf("%s none\n", lookup_opcode_name(code));
-		return;
+	اگر (رمز == s_غیر_مستعمل_Connection_Timeout && val == 0) {
+		لکھو("%s none\n", lookup_opcode_name(رمز));
+		واپس;
 	}
-	printf("%s %d\n", lookup_opcode_name(code), val);
+	لکھو("%s %d\n", lookup_opcode_name(رمز), val);
 }
 
-static void
-dump_cfg_oct(ServerOpCodes code, int val)
+ساکن خالی
+dump_cfg_oct(ServerOpCodes رمز, صحیح val)
 {
-	printf("%s 0%o\n", lookup_opcode_name(code), val);
+	لکھو("%s 0%o\n", lookup_opcode_name(رمز), val);
 }
 
-static void
-dump_cfg_fmtint(ServerOpCodes code, int val)
+ساکن خالی
+dump_cfg_fmtint(ServerOpCodes رمز, صحیح val)
 {
-	printf("%s %s\n", lookup_opcode_name(code), fmt_intarg(code, val));
+	لکھو("%s %s\n", lookup_opcode_name(رمز), fmt_intarg(رمز, val));
 }
 
-static void
-dump_cfg_string(ServerOpCodes code, const char *val)
+ساکن خالی
+dump_cfg_string(ServerOpCodes رمز, ثابت حرف *val)
 {
-	printf("%s %s\n", lookup_opcode_name(code),
-	    val == NULL ? "none" : val);
+	لکھو("%s %s\n", lookup_opcode_name(رمز),
+	    val == تہی ? "none" : val);
 }
 
-static void
-dump_cfg_strarray(ServerOpCodes code, u_int count, char **vals)
+ساکن خالی
+dump_cfg_strarray(ServerOpCodes رمز, u_int گنتی, حرف **vals)
 {
 	u_int i;
 
-	for (i = 0; i < count; i++)
-		printf("%s %s\n", lookup_opcode_name(code), vals[i]);
+	برائے (i = 0; i < گنتی; i++)
+		لکھو("%s %s\n", lookup_opcode_name(رمز), vals[i]);
 }
 
-static void
-dump_cfg_strarray_oneline(ServerOpCodes code, u_int count, char **vals)
+ساکن خالی
+dump_cfg_strarray_oneline(ServerOpCodes رمز, u_int گنتی, حرف **vals)
 {
 	u_int i;
 
-	switch (code) {
-	case sAuthenticationMethods:
-	case sChannelTimeout:
-		break;
-	default:
-		if (count <= 0)
-			return;
-		break;
+	انتخاب (رمز) {
+	حالت sAuthenticationMethods:
+	حالت sChannelTimeout:
+		توڑو;
+	طےشدہ:
+		اگر (گنتی <= 0)
+			واپس;
+		توڑو;
 	}
 
-	printf("%s", lookup_opcode_name(code));
-	for (i = 0; i < count; i++)
-		printf(" %s",  vals[i]);
-	if (code == sAuthenticationMethods && count == 0)
-		printf(" any");
-	else if (code == sChannelTimeout && count == 0)
-		printf(" none");
-	printf("\n");
+	لکھو("%s", lookup_opcode_name(رمز));
+	برائے (i = 0; i < گنتی; i++)
+		لکھو(" %s",  vals[i]);
+	اگر (رمز == sAuthenticationMethods && گنتی == 0)
+		لکھو(" any");
+	ورنہ اگر (رمز == sChannelTimeout && گنتی == 0)
+		لکھو(" none");
+	لکھو("\n");
 }
 
-static char *
-format_listen_addrs(struct listenaddr *la)
+ساکن حرف *
+format_listen_addrs(ساخت listenaddr *la)
 {
-	int r;
-	struct addrinfo *ai;
-	char addr[NI_MAXHOST], port[NI_MAXSERV];
-	char *laddr1 = xstrdup(""), *laddr2 = NULL;
+	صحیح r;
+	ساخت addrinfo *ai;
+	حرف addr[NI_MAXHOST], پورٹ[NI_MAXSERV];
+	حرف *laddr1 = xstrdup(""), *laddr2 = تہی;
 
 	/*
 	 * ListenAddress must be after Port.  add_one_listen_addr pushes
 	 * addresses onto a stack, so to maintain ordering we need to
 	 * print these in reverse order.
 	 */
-	for (ai = la->addrs; ai; ai = ai->ai_next) {
-		if ((r = getnameinfo(ai->ai_addr, ai->ai_addrlen, addr,
-		    sizeof(addr), port, sizeof(port),
+	برائے (ai = la->addrs; ai; ai = ai->ai_next) {
+		اگر ((r = getnameinfo(ai->ai_addr, ai->ai_addrlen, addr,
+		    حجم(addr), پورٹ, حجم(پورٹ),
 		    NI_NUMERICHOST|NI_NUMERICSERV)) != 0) {
 			error("getnameinfo: %.100s", ssh_gai_strerror(r));
-			continue;
+			جاری;
 		}
 		laddr2 = laddr1;
-		if (ai->ai_family == AF_INET6) {
+		اگر (ai->ai_family == AF_INET6) {
 			xasprintf(&laddr1, "ListenAddress [%s]:%s%s%s\n%s",
-			    addr, port,
-			    la->rdomain == NULL ? "" : " rdomain ",
-			    la->rdomain == NULL ? "" : la->rdomain,
+			    addr, پورٹ,
+			    la->rdomain == تہی ? "" : " rdomain ",
+			    la->rdomain == تہی ? "" : la->rdomain,
 			    laddr2);
-		} else {
+		} ورنہ {
 			xasprintf(&laddr1, "ListenAddress %s:%s%s%s\n%s",
-			    addr, port,
-			    la->rdomain == NULL ? "" : " rdomain ",
-			    la->rdomain == NULL ? "" : la->rdomain,
+			    addr, پورٹ,
+			    la->rdomain == تہی ? "" : " rdomain ",
+			    la->rdomain == تہی ? "" : la->rdomain,
 			    laddr2);
 		}
-		free(laddr2);
+		آزاد(laddr2);
 	}
-	return laddr1;
+	واپس laddr1;
 }
 
-void
+خالی
 dump_config(ServerOptions *o)
 {
-	char *s;
+	حرف *s;
 	u_int i;
 
 	/* these are usually at the top of the config */
-	for (i = 0; i < o->num_ports; i++)
-		printf("Port %d\n", o->ports[i]);
-	dump_cfg_fmtint(sAddressFamily, o->address_family);
+	برائے (i = 0; i < o->عدد_ports; i++)
+		لکھو("Port %d\n", o->ports[i]);
+	dump_cfg_fmtint(s_پتہ_Family, o->پتہ_family);
 
-	for (i = 0; i < o->num_listen_addrs; i++) {
+	برائے (i = 0; i < o->عدد_listen_addrs; i++) {
 		s = format_listen_addrs(&o->listen_addrs[i]);
-		printf("%s", s);
-		free(s);
+		لکھو("%s", s);
+		آزاد(s);
 	}
 
 	/* integer arguments */
-#ifdef USE_PAM
+#اگر_تعریف_شدہ USE_PAM
 	dump_cfg_fmtint(sUsePAM, o->use_pam);
 	dump_cfg_string(sPAMServiceName, o->pam_service_name);
-#endif
-	dump_cfg_int(sLoginGraceTime, o->login_grace_time);
-	dump_cfg_int(sX11DisplayOffset, o->x11_display_offset);
+#اگر_ختم
+	dump_cfg_int(s_Login_Grace_وقت, o->login_grace_وقت);
+	dump_cfg_int(s_X11_Display_انحراف, o->x11_display_انحراف);
 	dump_cfg_int(sMaxAuthTries, o->max_authtries);
 	dump_cfg_int(sMaxSessions, o->max_sessions);
 	dump_cfg_int(sClientAliveInterval, o->client_alive_interval);
-	dump_cfg_int(sClientAliveCountMax, o->client_alive_count_max);
-	dump_cfg_int(sRequiredRSASize, o->required_rsa_size);
-	dump_cfg_oct(sStreamLocalBindMask, o->fwd_opts.streamlocal_bind_mask);
-	dump_cfg_int(sUnusedConnectionTimeout, o->unused_connection_timeout);
+	dump_cfg_int(s_Client_Alive_گنتی_Max, o->client_alive_گنتی_max);
+	dump_cfg_int(sRequiredRSASize, o->required_rsa_سائز);
+	dump_cfg_oct(s_دھارا_Local_Bind_نقاب, o->fwd_opts.streamlocal_bind_نقاب);
+	dump_cfg_int(s_غیر_مستعمل_Connection_Timeout, o->غیر_مستعمل_connection_timeout);
 
 	/* formatted integer arguments */
-	dump_cfg_fmtint(sPermitRootLogin, o->permit_root_login);
+	dump_cfg_fmtint(s_Permit_جڑ_Login, o->permit_جڑ_login);
 	dump_cfg_fmtint(sIgnoreRhosts, o->ignore_rhosts);
-	dump_cfg_fmtint(sIgnoreUserKnownHosts, o->ignore_user_known_hosts);
+	dump_cfg_fmtint(s_Ignore_User_معلوم_Hosts, o->ignore_user_معلوم_hosts);
 	dump_cfg_fmtint(sHostbasedAuthentication, o->hostbased_authentication);
-	dump_cfg_fmtint(sHostbasedUsesNameFromPacketOnly,
-	    o->hostbased_uses_name_from_packet_only);
+	dump_cfg_fmtint(s_Hostbased_استعمال_کرتا_Name_From_Packet_Only,
+	    o->hostbased_استعمال_کرتا_name_from_packet_only);
 	dump_cfg_fmtint(sPubkeyAuthentication, o->pubkey_authentication);
-#ifdef KRB5
+#اگر_تعریف_شدہ KRB5
 	dump_cfg_fmtint(sKerberosAuthentication, o->kerberos_authentication);
 	dump_cfg_fmtint(sKerberosOrLocalPasswd, o->kerberos_or_local_passwd);
 	dump_cfg_fmtint(sKerberosTicketCleanup, o->kerberos_ticket_cleanup);
 # ifdef USE_AFS
 	dump_cfg_fmtint(sKerberosGetAFSToken, o->kerberos_get_afs_token);
 # endif
-#endif
-#ifdef GSSAPI
+#اگر_ختم
+#اگر_تعریف_شدہ GSSAPI
 	dump_cfg_fmtint(sGSSAPIAuthentication, o->gss_authentication);
 	dump_cfg_fmtint(sGSSAPICleanupCredentials, o->gss_cleanup_creds);
 	dump_cfg_fmtint(sGSSAPIDelegateCredentials, o->gss_deleg_creds);
 	dump_cfg_fmtint(sGSSAPIStrictAcceptorCheck, o->gss_strict_acceptor);
-#endif
+#اگر_ختم
 	dump_cfg_fmtint(sPasswordAuthentication, o->password_authentication);
 	dump_cfg_fmtint(sKbdInteractiveAuthentication,
 	    o->kbd_interactive_authentication);
 	dump_cfg_fmtint(sPrintMotd, o->print_motd);
-#ifndef DISABLE_LASTLOG
-	dump_cfg_fmtint(sPrintLastLog, o->print_lastlog);
-#endif
+#اگر_غیر_تعریف_شدہ DISABLE_LASTLOG
+	dump_cfg_fmtint(s_Print_آخری_Log, o->print_lastlog);
+#اگر_ختم
 	dump_cfg_fmtint(sX11Forwarding, o->x11_forwarding);
 	dump_cfg_fmtint(sX11UseLocalhost, o->x11_use_localhost);
 	dump_cfg_fmtint(sPermitTTY, o->permit_tty);
 	dump_cfg_fmtint(sPermitUserRC, o->permit_user_rc);
 	dump_cfg_fmtint(sStrictModes, o->strict_modes);
 	dump_cfg_fmtint(sTCPKeepAlive, o->tcp_keep_alive);
-	dump_cfg_fmtint(sPermitEmptyPasswords, o->permit_empty_passwd);
+	dump_cfg_fmtint(s_Permit_خالی_خانے_Passwords, o->permit_خالی_خانے_passwd);
 	dump_cfg_fmtint(sCompression, o->compression);
 	dump_cfg_fmtint(sGatewayPorts, o->fwd_opts.gateway_ports);
 	dump_cfg_fmtint(sUseDNS, o->use_dns);
 	dump_cfg_fmtint(sAllowTcpForwarding, o->allow_tcp_forwarding);
 	dump_cfg_fmtint(sAllowAgentForwarding, o->allow_agent_forwarding);
 	dump_cfg_fmtint(sDisableForwarding, o->disable_forwarding);
-	dump_cfg_fmtint(sAllowStreamLocalForwarding, o->allow_streamlocal_forwarding);
-	dump_cfg_fmtint(sStreamLocalBindUnlink, o->fwd_opts.streamlocal_bind_unlink);
+	dump_cfg_fmtint(s_Allow_دھارا_Local_Forwarding, o->allow_streamlocal_forwarding);
+	dump_cfg_fmtint(s_دھارا_Local_Bind_Unlink, o->fwd_opts.streamlocal_bind_unlink);
 	dump_cfg_fmtint(sFingerprintHash, o->fingerprint_hash);
 	dump_cfg_fmtint(sExposeAuthInfo, o->expose_userauth_info);
 	dump_cfg_fmtint(sWarnWeakCrypto, o->warn_weak_crypto);
@@ -4385,142 +4385,142 @@ dump_config(ServerOptions *o)
 	dump_cfg_string(sBanner, o->banner);
 	dump_cfg_string(sForceCommand, o->adm_forced_command);
 	dump_cfg_string(sChrootDirectory, o->chroot_directory);
-	dump_cfg_string(sTrustedUserCAKeys, o->trusted_user_ca_keys);
-	dump_cfg_string(sSecurityKeyProvider, o->sk_provider);
+	dump_cfg_string(sTrustedUserCAKeys, o->trusted_user_ca_کلیدیں);
+	dump_cfg_string(s_Security_کلید_Provider, o->sk_provider);
 	dump_cfg_string(sAuthorizedPrincipalsFile,
 	    o->authorized_principals_file);
-	dump_cfg_string(sVersionAddendum, *o->version_addendum == '\0'
-	    ? "none" : o->version_addendum);
-	dump_cfg_string(sAuthorizedKeysCommand, o->authorized_keys_command);
-	dump_cfg_string(sAuthorizedKeysCommandUser, o->authorized_keys_command_user);
+	dump_cfg_string(s_نسخہ_Addendum, *o->نسخہ_addendum == '\0'
+	    ? "none" : o->نسخہ_addendum);
+	dump_cfg_string(s_Authorized_کلیدیں_Command, o->authorized_کلیدیں_command);
+	dump_cfg_string(s_Authorized_کلیدیں_Command_User, o->authorized_کلیدیں_command_user);
 	dump_cfg_string(sAuthorizedPrincipalsCommand, o->authorized_principals_command);
 	dump_cfg_string(sAuthorizedPrincipalsCommandUser, o->authorized_principals_command_user);
-	dump_cfg_string(sHostKeyAgent, o->host_key_agent);
+	dump_cfg_string(s_Host_کلید_Agent, o->host_کلید_agent);
 	dump_cfg_string(sKexAlgorithms, o->kex_algorithms);
 	dump_cfg_string(sCASignatureAlgorithms, o->ca_sign_algorithms);
 	dump_cfg_string(sHostbasedAcceptedAlgorithms, o->hostbased_accepted_algos);
-	dump_cfg_string(sHostKeyAlgorithms, o->hostkeyalgorithms);
+	dump_cfg_string(s_Host_کلید_Algorithms, o->hostkeyalgorithms);
 	dump_cfg_string(sPubkeyAcceptedAlgorithms, o->pubkey_accepted_algos);
-#if defined(__OpenBSD__) || defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
+#اگر defined(__OpenBSD__) || defined(HAVE_SYS_سیٹ_PROCESS_RDOMAIN)
 	dump_cfg_string(sRDomain, o->routing_domain);
-#endif
-	dump_cfg_string(sSshdSessionPath, o->sshd_session_path);
-	dump_cfg_string(sSshdAuthPath, o->sshd_auth_path);
-	dump_cfg_string(sPerSourcePenaltyExemptList, o->per_source_penalty_exempt);
-	dump_cfg_string(sAgentSocketPath, o->agent_socket_path);
+#اگر_ختم
+	dump_cfg_string(s_Sshd_Session_راستہ, o->sshd_session_راستہ);
+	dump_cfg_string(s_Sshd_Auth_راستہ, o->sshd_auth_راستہ);
+	dump_cfg_string(s_فی_ماخذ_Penalty_Exempt_List, o->فی_ماخذ_penalty_exempt);
+	dump_cfg_string(s_Agent_Socket_راستہ, o->agent_socket_راستہ);
 
 	/* string arguments requiring a lookup */
 	dump_cfg_string(sLogLevel, log_level_name(o->log_level));
 	dump_cfg_string(sSyslogFacility, log_facility_name(o->log_facility));
 
 	/* string array arguments */
-	dump_cfg_strarray_oneline(sAuthorizedKeysFile, o->num_authkeys_files,
-	    o->authorized_keys_files);
-	dump_cfg_strarray_oneline(sRevokedKeys, o->num_revoked_keys_files,
-	    o->revoked_keys_files);
-	dump_cfg_strarray(sHostKey, o->num_host_key_files, o->host_key_files);
-	dump_cfg_strarray(sHostCertificate, o->num_host_cert_files,
+	dump_cfg_strarray_oneline(s_Authorized_کلیدیں_File, o->عدد_authkeys_files,
+	    o->authorized_کلیدیں_files);
+	dump_cfg_strarray_oneline(s_Revoked_کلیدیں, o->عدد_revoked_کلیدیں_files,
+	    o->revoked_کلیدیں_files);
+	dump_cfg_strarray(s_Host_کلید, o->عدد_host_کلید_files, o->host_کلید_files);
+	dump_cfg_strarray(sHostCertificate, o->عدد_host_cert_files,
 	    o->host_cert_files);
-	dump_cfg_strarray(sAllowUsers, o->num_allow_users, o->allow_users);
-	dump_cfg_strarray(sDenyUsers, o->num_deny_users, o->deny_users);
-	dump_cfg_strarray(sAllowGroups, o->num_allow_groups, o->allow_groups);
-	dump_cfg_strarray(sDenyGroups, o->num_deny_groups, o->deny_groups);
-	dump_cfg_strarray(sAcceptEnv, o->num_accept_env, o->accept_env);
-	dump_cfg_strarray(sSetEnv, o->num_setenv, o->setenv);
+	dump_cfg_strarray(sAllowUsers, o->عدد_allow_users, o->allow_users);
+	dump_cfg_strarray(sDenyUsers, o->عدد_deny_users, o->deny_users);
+	dump_cfg_strarray(sAllowGroups, o->عدد_allow_groups, o->allow_groups);
+	dump_cfg_strarray(sDenyGroups, o->عدد_deny_groups, o->deny_groups);
+	dump_cfg_strarray(sAcceptEnv, o->عدد_accept_env, o->accept_env);
+	dump_cfg_strarray(s_سیٹ_Env, o->عدد_setenv, o->setenv);
 	dump_cfg_strarray_oneline(sAuthenticationMethods,
-	    o->num_auth_methods, o->auth_methods);
+	    o->عدد_auth_methods, o->auth_methods);
 	dump_cfg_strarray_oneline(sLogVerbose,
-	    o->num_log_verbose, o->log_verbose);
+	    o->عدد_log_verbose, o->log_verbose);
 	dump_cfg_strarray_oneline(sChannelTimeout,
-	    o->num_channel_timeouts, o->channel_timeouts);
+	    o->عدد_channel_timeouts, o->channel_timeouts);
 
 	/* other arguments */
-	for (i = 0; i < o->num_subsystems; i++)
-		printf("Subsystem %s %s\n", o->subsystem_name[i],
-		    o->subsystem_args[i]);
+	برائے (i = 0; i < o->عدد_subsystems; i++)
+		لکھو("Subsystem %s %s\n", o->subsystem_name[i],
+		    o->subsystem_دلائل[i]);
 
-	printf("MaxStartups %d:%d:%d\n", o->max_startups_begin,
-	    o->max_startups_rate, o->max_startups);
-	printf("PerSourceMaxStartups ");
-	if (o->per_source_max_startups == INT_MAX)
-		printf("none\n");
-	else
-		printf("%d\n", o->per_source_max_startups);
-	printf("PerSourceNetBlockSize %d:%d\n", o->per_source_masklen_ipv4,
-	    o->per_source_masklen_ipv6);
+	لکھو("MaxStartups %d:%d:%d\n", o->max_startups_begin,
+	    o->max_startups_شرح, o->max_startups);
+	لکھو("PerSourceMaxStartups ");
+	اگر (o->فی_ماخذ_max_startups == زیادہ_سے_زیادہ_عدد)
+		لکھو("none\n");
+	ورنہ
+		لکھو("%d\n", o->فی_ماخذ_max_startups);
+	لکھو("PerSourceNetBlockSize %d:%d\n", o->فی_ماخذ_masklen_ipv4,
+	    o->فی_ماخذ_masklen_ipv6);
 
-	s = NULL;
-	for (i = 0; tunmode_desc[i].val != -1; i++) {
-		if (tunmode_desc[i].val == o->permit_tun) {
-			s = tunmode_desc[i].text;
-			break;
+	s = تہی;
+	برائے (i = 0; tunmode_desc[i].val != -1; i++) {
+		اگر (tunmode_desc[i].val == o->permit_tun) {
+			s = tunmode_desc[i].متن;
+			توڑو;
 		}
 	}
 	dump_cfg_string(sPermitTunnel, s);
 
-	printf("IPQoS %s ", iptos2str(o->ip_qos_interactive));
-	printf("%s\n", iptos2str(o->ip_qos_bulk));
+	لکھو("IPQoS %s ", iptos2str(o->ip_qos_interactive));
+	لکھو("%s\n", iptos2str(o->ip_qos_bulk));
 
-	printf("RekeyLimit %llu %d\n", (unsigned long long)o->rekey_limit,
+	لکھو("RekeyLimit %llu %d\n", (غیرعلامتی طویل طویل)o->rekey_حد_بندی,
 	    o->rekey_interval);
 
-	printf("PermitOpen");
-	if (o->num_permitted_opens == 0)
-		printf(" any");
-	else {
-		for (i = 0; i < o->num_permitted_opens; i++)
-			printf(" %s", o->permitted_opens[i]);
+	لکھو("PermitOpen");
+	اگر (o->عدد_permitted_opens == 0)
+		لکھو(" any");
+	ورنہ {
+		برائے (i = 0; i < o->عدد_permitted_opens; i++)
+			لکھو(" %s", o->permitted_opens[i]);
 	}
-	printf("\n");
-	printf("PermitListen");
-	if (o->num_permitted_listens == 0)
-		printf(" any");
-	else {
-		for (i = 0; i < o->num_permitted_listens; i++)
-			printf(" %s", o->permitted_listens[i]);
+	لکھو("\n");
+	لکھو("PermitListen");
+	اگر (o->عدد_permitted_listens == 0)
+		لکھو(" any");
+	ورنہ {
+		برائے (i = 0; i < o->عدد_permitted_listens; i++)
+			لکھو(" %s", o->permitted_listens[i]);
 	}
-	printf("\n");
+	لکھو("\n");
 
-	if (o->permit_user_env_allowlist == NULL) {
+	اگر (o->permit_user_env_allowlist == تہی) {
 		dump_cfg_fmtint(sPermitUserEnvironment, o->permit_user_env);
-	} else {
-		printf("PermitUserEnvironment %s\n",
+	} ورنہ {
+		لکھو("PermitUserEnvironment %s\n",
 		    o->permit_user_env_allowlist);
 	}
 
-	printf("PubkeyAuthOptions");
-	if (o->pubkey_auth_options == 0)
-		printf(" none");
-	if (o->pubkey_auth_options & PUBKEYAUTH_TOUCH_REQUIRED)
-		printf(" touch-required");
-	if (o->pubkey_auth_options & PUBKEYAUTH_VERIFY_REQUIRED)
-		printf(" verify-required");
-	if (o->max_pubkey_ok != -1)
-		printf(" max-pk-ok:%d", o->max_pubkey_ok);
-	printf("\n");
+	لکھو("PubkeyAuthOptions");
+	اگر (o->pubkey_auth_options == 0)
+		لکھو(" none");
+	اگر (o->pubkey_auth_options & PUBKEYAUTH_TOUCH_REQUIRED)
+		لکھو(" touch-required");
+	اگر (o->pubkey_auth_options & PUBKEYAUTH_VERIFY_REQUIRED)
+		لکھو(" verify-required");
+	اگر (o->max_pubkey_ok != -1)
+		لکھو(" max-pk-ok:%d", o->max_pubkey_ok);
+	لکھو("\n");
 
-	if (o->per_source_penalty.enabled) {
-		printf("PerSourcePenalties crash:%f authfail:%f noauth:%f "
+	اگر (o->فی_ماخذ_penalty.enabled) {
+		لکھو("PerSourcePenalties crash:%f authfail:%f noauth:%f "
 		    "invaliduser:%f "
 		    "grace-exceeded:%f refuseconnection:%f max:%f min:%f "
 		    "max-sources4:%d max-sources6:%d "
 		    "overflow:%s overflow6:%s\n",
-		    o->per_source_penalty.penalty_crash,
-		    o->per_source_penalty.penalty_authfail,
-		    o->per_source_penalty.penalty_noauth,
-		    o->per_source_penalty.penalty_invaliduser,
-		    o->per_source_penalty.penalty_grace,
-		    o->per_source_penalty.penalty_refuseconnection,
-		    o->per_source_penalty.penalty_max,
-		    o->per_source_penalty.penalty_min,
-		    o->per_source_penalty.max_sources4,
-		    o->per_source_penalty.max_sources6,
-		    o->per_source_penalty.overflow_mode ==
-		    PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL ?
+		    o->فی_ماخذ_penalty.penalty_crash,
+		    o->فی_ماخذ_penalty.penalty_authfail,
+		    o->فی_ماخذ_penalty.penalty_noauth,
+		    o->فی_ماخذ_penalty.penalty_invaliduser,
+		    o->فی_ماخذ_penalty.penalty_grace,
+		    o->فی_ماخذ_penalty.penalty_refuseconnection,
+		    o->فی_ماخذ_penalty.penalty_max,
+		    o->فی_ماخذ_penalty.penalty_min,
+		    o->فی_ماخذ_penalty.max_sources4,
+		    o->فی_ماخذ_penalty.max_sources6,
+		    o->فی_ماخذ_penalty.حد_سے_تجاوز_منوال ==
+		    فی_ماخذ_PENALTY_حد_سے_تجاوز_DENY_ALL ?
 		    "deny-all" : "permissive",
-		    o->per_source_penalty.overflow_mode6 ==
-		    PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL ?
+		    o->فی_ماخذ_penalty.حد_سے_تجاوز_mode6 ==
+		    فی_ماخذ_PENALTY_حد_سے_تجاوز_DENY_ALL ?
 		    "deny-all" : "permissive");
-	} else
-		printf("PerSourcePenalties no\n");
+	} ورنہ
+		لکھو("PerSourcePenalties no\n");
 }

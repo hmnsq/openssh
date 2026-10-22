@@ -14,208 +14,208 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _BSD_MISC_H
-#define _BSD_MISC_H
+#اگر_غیر_تعریف_شدہ _BSD_MISC_H
+#تعریف_کرو _BSD_MISC_H
 
-#include "includes.h"
+#شامل "includes.h"
 
-char *ssh_get_progname(char *);
-int seed_from_prngd(unsigned char *, size_t);
+حرف *ssh_get_progname(حرف *);
+صحیح بیج_from_prngd(غیرعلامتی حرف *, سائز_t);
 
-#ifndef HAVE_SETSID
-#define setsid() setpgrp(0, getpid())
-#endif /* !HAVE_SETSID */
+#اگر_غیر_تعریف_شدہ HAVE_SETSID
+#تعریف_کرو setsid() setpgrp(0, getpid())
+#اگر_ختم /* !HAVE_SETSID */
 
-#ifndef HAVE_SETENV
-int setenv(const char *, const char *, int);
-#endif /* !HAVE_SETENV */
+#اگر_غیر_تعریف_شدہ HAVE_SETENV
+صحیح setenv(ثابت حرف *, ثابت حرف *, صحیح);
+#اگر_ختم /* !HAVE_SETENV */
 
-#ifndef HAVE_SETLOGIN
-int setlogin(const char *);
-#endif /* !HAVE_SETLOGIN */
+#اگر_غیر_تعریف_شدہ HAVE_SETLOGIN
+صحیح setlogin(ثابت حرف *);
+#اگر_ختم /* !HAVE_SETLOGIN */
 
-#ifndef HAVE_INNETGR
-int innetgr(const char *, const char *, const char *, const char *);
-#endif /* HAVE_INNETGR */
+#اگر_غیر_تعریف_شدہ HAVE_INNETGR
+صحیح innetgr(ثابت حرف *, ثابت حرف *, ثابت حرف *, ثابت حرف *);
+#اگر_ختم /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t);
-#endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
+#اگر !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+صحیح seteuid(uid_t);
+#اگر_ختم /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t);
-#endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
+#اگر !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+صحیح setegid(uid_t);
+#اگر_ختم /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int);
-#endif
+#اگر !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+ثابت حرف *strerror(صحیح);
+#اگر_ختم
 
-#if !defined(HAVE_SETLINEBUF)
-#define setlinebuf(a)	(setvbuf((a), NULL, _IOLBF, 0))
-#endif
+#اگر !defined(HAVE_SETLINEBUF)
+#تعریف_کرو setlinebuf(a)	(setvbuf((a), تہی, _IOLBF, 0))
+#اگر_ختم
 
-#ifndef HAVE_UTIMES
-#ifndef HAVE_STRUCT_TIMEVAL
-struct timeval {
-	long tv_sec;
-	long tv_usec;
+#اگر_غیر_تعریف_شدہ HAVE_UTIMES
+#اگر_غیر_تعریف_شدہ HAVE_STRUCT_TIMEVAL
+ساخت timeval {
+	طویل tv_sec;
+	طویل tv_usec;
 }
-#endif /* HAVE_STRUCT_TIMEVAL */
+#اگر_ختم /* HAVE_STRUCT_TIMEVAL */
 
-int utimes(const char *, struct timeval *);
-#endif /* HAVE_UTIMES */
+صحیح utimes(ثابت حرف *, ساخت timeval *);
+#اگر_ختم /* HAVE_UTIMES */
 
-#ifndef HAVE_DIRFD
-int dirfd(void *);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_DIRFD
+صحیح dirfd(خالی *);
+#اگر_ختم
 
-#ifndef AT_FDCWD
+#اگر_غیر_تعریف_شدہ AT_FDCWD
 # define AT_FDCWD (-2)
-#endif
+#اگر_ختم
 
-#ifndef HAVE_FCHMODAT
-int fchmodat(int, const char *, mode_t, int);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_FCHMODAT
+صحیح fchmodat(صحیح, ثابت حرف *, منوال_t, صحیح);
+#اگر_ختم
 
-#ifndef HAVE_FCHOWNAT
-int fchownat(int, const char *, uid_t, gid_t, int);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_FCHOWNAT
+صحیح fchownat(صحیح, ثابت حرف *, uid_t, gid_t, صحیح);
+#اگر_ختم
 
-#ifdef HAVE_FSTATAT
-int fstatat(int, const char *, struct stat *, int);
-#endif
+#اگر_تعریف_شدہ HAVE_FSTATAT
+صحیح fstatat(صحیح, ثابت حرف *, ساخت stat *, صحیح);
+#اگر_ختم
 
-#ifdef HAVE_UNLINKAT
-int unlinkat(int, const char *, int);
-#endif
+#اگر_تعریف_شدہ HAVE_UNLINKAT
+صحیح unlinkat(صحیح, ثابت حرف *, صحیح);
+#اگر_ختم
 
-#ifndef HAVE_TRUNCATE
-int truncate (const char *, off_t);
-#endif /* HAVE_TRUNCATE */
+#اگر_غیر_تعریف_شدہ HAVE_TRUNCATE
+صحیح truncate (ثابت حرف *, off_t);
+#اگر_ختم /* HAVE_TRUNCATE */
 
-#ifndef HAVE_STRUCT_TIMESPEC
-struct timespec {
+#اگر_غیر_تعریف_شدہ HAVE_STRUCT_TIMESPEC
+ساخت timespec {
 	time_t	tv_sec;
-	long	tv_nsec;
+	طویل	tv_nsec;
 };
-#endif /* !HAVE_STRUCT_TIMESPEC */
+#اگر_ختم /* !HAVE_STRUCT_TIMESPEC */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+#اگر !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
 # include <time.h>
-int nanosleep(const struct timespec *, struct timespec *);
-#endif
+صحیح nanosleep(ثابت ساخت timespec *, ساخت timespec *);
+#اگر_ختم
 
-#ifndef HAVE_UTIMENSAT
+#اگر_غیر_تعریف_شدہ HAVE_UTIMENSAT
 # include <time.h>
 /* start with the high bits and work down to minimise risk of overlap */
 # ifndef AT_SYMLINK_NOFOLLOW
 #  define AT_SYMLINK_NOFOLLOW 0x80000000
 # endif
-int utimensat(int, const char *, const struct timespec[2], int);
-#endif /* !HAVE_UTIMENSAT */
+صحیح utimensat(صحیح, ثابت حرف *, ثابت ساخت timespec[2], صحیح);
+#اگر_ختم /* !HAVE_UTIMENSAT */
 
-#ifndef HAVE_USLEEP
-int usleep(unsigned int useconds);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_USLEEP
+صحیح usleep(غیرعلامتی صحیح useconds);
+#اگر_ختم
 
-#ifndef HAVE_TCGETPGRP
-pid_t tcgetpgrp(int);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_TCGETPGRP
+pid_t tcgetpgrp(صحیح);
+#اگر_ختم
 
-#ifndef HAVE_TCSENDBREAK
-int tcsendbreak(int, int);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_TCSENDBREAK
+صحیح tcsendbreak(صحیح, صحیح);
+#اگر_ختم
 
-#ifndef HAVE_UNSETENV
-int unsetenv(const char *);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_UNSETENV
+صحیح unsetenv(ثابت حرف *);
+#اگر_ختم
 
-#ifndef HAVE_ISBLANK
-int	isblank(int);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_ISBLANK
+صحیح	isblank(صحیح);
+#اگر_ختم
 
-#ifndef HAVE_GETPGID
+#اگر_غیر_تعریف_شدہ HAVE_GETPGID
 pid_t getpgid(pid_t);
-#endif
+#اگر_ختم
 
-#ifndef HAVE_PSELECT
-int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
-    const sigset_t *);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_PSELECT
+صحیح pselect(صحیح, fd_set *, fd_set *, fd_set *, ثابت ساخت timespec *,
+    ثابت sigset_t *);
+#اگر_ختم
 
-#ifndef HAVE_ENDGRENT
-# define endgrent() do { } while(0)
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_ENDGRENT
+# define endgrent() کرو { } جب(0)
+#اگر_ختم
 
-#ifndef HAVE_KRB5_GET_ERROR_MESSAGE
-# define krb5_get_error_message krb5_get_err_text
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_KRB5_GET_ERROR_پیغام
+# define krb5_get_error_پیغام krb5_get_err_متن
+#اگر_ختم
 
-#ifndef HAVE_KRB5_FREE_ERROR_MESSAGE
-# define krb5_free_error_message(a,b) do { } while(0)
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_KRB5_FREE_ERROR_پیغام
+# define krb5_free_error_پیغام(a,b) کرو { } جب(0)
+#اگر_ختم
 
-#ifndef HAVE_PLEDGE
-int pledge(const char *promises, const char *execpromises);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_PLEDGE
+صحیح pledge(ثابت حرف *promises, ثابت حرف *execpromises);
+#اگر_ختم
 
-#ifndef HAVE_UNVEIL
-int unveil(const char *, const char *);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_UNVEIL
+صحیح unveil(ثابت حرف *, ثابت حرف *);
+#اگر_ختم
 
 /* bsd-err.h */
-#ifndef HAVE_ERR
-void err(int, const char *, ...) __attribute__((format(printf, 2, 3)));
-#endif
-#ifndef HAVE_ERRX
-void errx(int, const char *, ...) __attribute__((format(printf, 2, 3)));
-#endif
-#ifndef HAVE_WARN
-void warn(const char *, ...) __attribute__((format(printf, 1, 2)));
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_ERR
+خالی err(صحیح, ثابت حرف *, ...) __attribute__((format(لکھو, 2, 3)));
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ HAVE_ERRX
+خالی errx(صحیح, ثابت حرف *, ...) __attribute__((format(لکھو, 2, 3)));
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ HAVE_WARN
+خالی warn(ثابت حرف *, ...) __attribute__((format(لکھو, 1, 2)));
+#اگر_ختم
 
-#ifndef HAVE_LLABS
-long long llabs(long long);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_LLABS
+طویل طویل llabs(طویل طویل);
+#اگر_ختم
 
-#if defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
-void bzero(void *, size_t);
-#endif
+#اگر defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
+خالی bzero(خالی *, سائز_t);
+#اگر_ختم
 
-#ifndef HAVE_RAISE
-int raise(int);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_RAISE
+صحیح اٹھاؤ(صحیح);
+#اگر_ختم
 
-#ifndef HAVE_GETSID
+#اگر_غیر_تعریف_شدہ HAVE_GETSID
 pid_t getsid(pid_t);
-#endif
+#اگر_ختم
 
-#ifndef HAVE_FLOCK
+#اگر_غیر_تعریف_شدہ HAVE_FLOCK
 # define LOCK_SH		0x01
 # define LOCK_EX		0x02
 # define LOCK_NB		0x04
 # define LOCK_UN		0x08
-int flock(int, int);
-#endif
+صحیح flock(صحیح, صحیح);
+#اگر_ختم
 
-#ifdef FFLUSH_NULL_BUG
+#اگر_تعریف_شدہ FFLUSH_NULL_BUG
 # define fflush(x)	(_ssh_compat_fflush(x))
-#endif
+#اگر_ختم
 
-#ifndef HAVE_LOCALTIME_R
-struct tm *localtime_r(const time_t *, struct tm *);
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_LOCALTIME_R
+ساخت tm *localtime_r(ثابت time_t *, ساخت tm *);
+#اگر_ختم
 
-#ifndef HAVE_CLOCK_GETTIME
-typedef int clockid_t;
-#ifndef CLOCK_REALTIME
+#اگر_غیر_تعریف_شدہ HAVE_CLOCK_GETTIME
+قسمتعریف صحیح clockid_t;
+#اگر_غیر_تعریف_شدہ CLOCK_REALTIME
 # define CLOCK_REALTIME	0
-#endif
-int clock_gettime(clockid_t, struct timespec *);
-#endif
+#اگر_ختم
+صحیح clock_gettime(clockid_t, ساخت timespec *);
+#اگر_ختم
 
-#ifndef HAVE_REALPATH
-#define realpath(x, y)	(sftp_realpath((x), (y)))
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_REALPATH
+#تعریف_کرو realpath(x, y)	(sftp_realpath((x), (y)))
+#اگر_ختم
 
-#endif /* _BSD_MISC_H */
+#اگر_ختم /* _BSD_MISC_H */

@@ -14,22 +14,22 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _PORT_SOLARIS_H
+#اگر_غیر_تعریف_شدہ پورٹ_SOLARIS_H
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <pwd.h>
+#شامل <pwd.h>
 
-void solaris_contract_pre_fork(void);
-void solaris_contract_post_fork_child(void);
-void solaris_contract_post_fork_parent(pid_t pid);
-void solaris_set_default_project(struct passwd *);
+خالی solaris_contract_pre_fork(خالی);
+خالی solaris_contract_post_fork_بچہ(خالی);
+خالی solaris_contract_post_fork_والد(pid_t pid);
+خالی solaris_سیٹ_default_project(ساخت passwd *);
 # ifdef USE_SOLARIS_PRIVS
-#include <priv.h>
-priv_set_t *solaris_basic_privset(void);
-void solaris_drop_privs_pinfo_net_fork_exec(void);
-void solaris_drop_privs_root_pinfo_net(void);
-void solaris_drop_privs_root_pinfo_net_exec(void);
+#شامل <priv.h>
+priv_سیٹ_t *solaris_basic_privset(خالی);
+خالی solaris_drop_privs_pinfo_net_fork_exec(خالی);
+خالی solaris_drop_privs_جڑ_pinfo_net(خالی);
+خالی solaris_drop_privs_جڑ_pinfo_net_exec(خالی);
 # endif /* USE_SOLARIS_PRIVS */
 
-#endif
+#اگر_ختم

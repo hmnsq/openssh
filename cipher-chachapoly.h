@@ -15,26 +15,26 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef CHACHA_POLY_AEAD_H
-#define CHACHA_POLY_AEAD_H
+#اگر_غیر_تعریف_شدہ CHACHA_POLY_AEAD_H
+#تعریف_کرو CHACHA_POLY_AEAD_H
 
-#include <sys/types.h>
-#include "chacha.h"
-#include "poly1305.h"
+#شامل <sys/types.h>
+#شامل "chacha.h"
+#شامل "poly1305.h"
 
-#define CHACHA_KEYLEN	32 /* Only 256 bit keys used here */
+#تعریف_کرو CHACHA_KEYLEN	32 /* Only 256 bit keys used here */
 
-struct chachapoly_ctx;
+ساخت chachapoly_ctx;
 
-struct chachapoly_ctx *chachapoly_new(const u_char *key, u_int keylen)
+ساخت chachapoly_ctx *chachapoly_new(ثابت u_char *کلید, u_int keylen)
     __attribute__((__bounded__(__buffer__, 1, 2)));
-void chachapoly_free(struct chachapoly_ctx *cpctx);
+خالی chachapoly_free(ساخت chachapoly_ctx *cpctx);
 
-int	chachapoly_crypt(struct chachapoly_ctx *cpctx, u_int seqnr,
-    u_char *dest, const u_char *src, u_int len, u_int aadlen, u_int authlen,
-    int do_encrypt);
-int	chachapoly_get_length(struct chachapoly_ctx *cpctx,
-    u_int *plenp, u_int seqnr, const u_char *cp, u_int len)
+صحیح	chachapoly_crypt(ساخت chachapoly_ctx *cpctx, u_int seqnr,
+    u_char *dest, ثابت u_char *src, u_int len, u_int aadlen, u_int authlen,
+    صحیح do_encrypt);
+صحیح	chachapoly_get_لمبائی(ساخت chachapoly_ctx *cpctx,
+    u_int *plenp, u_int seqnr, ثابت u_char *cp, u_int len)
     __attribute__((__bounded__(__buffer__, 4, 5)));
 
-#endif /* CHACHA_POLY_AEAD_H */
+#اگر_ختم /* CHACHA_POLY_AEAD_H */

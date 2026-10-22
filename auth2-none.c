@@ -23,47 +23,47 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
+#شامل <sys/types.h>
+#شامل <stdarg.h>
+#شامل <stdio.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "packet.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "ssh2.h"
-#include "ssherr.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
+#شامل "xmalloc.h"
+#شامل "sshkey.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
+#شامل "packet.h"
+#شامل "log.h"
+#شامل "misc.h"
+#شامل "servconf.h"
+#شامل "ssh2.h"
+#شامل "ssherr.h"
+#اگر_تعریف_شدہ GSSAPI
+#شامل "ssh-gss.h"
+#اگر_ختم
+#شامل "monitor_wrap.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_none;
+خارجی ServerOptions options;
+خارجی ساخت authmethod_cfg methodcfg_none;
 
-extern int none_enabled;
+خارجی صحیح none_enabled;
 
-static int
-userauth_none(struct ssh *ssh, const char *method)
+ساکن صحیح
+userauth_none(ساخت ssh *ssh, ثابت حرف *طریقہ)
 {
-	int r;
+	صحیح r;
 
 	none_enabled = 0;
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	اگر ((r = sshpkt_get_انتہا(ssh)) != 0)
 		fatal_fr(r, "parse packet");
-	if (options.permit_empty_passwd && options.password_authentication)
-		return mm_auth_password(ssh, "");
-	return (0);
+	اگر (options.permit_خالی_خانے_passwd && options.password_authentication)
+		واپس mm_auth_password(ssh, "");
+	واپس (0);
 }
 
-Authmethod method_none = {
+Authmethod طریقہ_none = {
 	&methodcfg_none,
 	userauth_none,
 };

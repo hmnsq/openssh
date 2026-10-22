@@ -15,193 +15,193 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#ifdef WITH_OPENSSL
+#اگر_تعریف_شدہ WITH_OPENSSL
 
-#include <sys/types.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <sys/types.h>
+#شامل <limits.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#include <openssl/evp.h>
+#شامل <openssl/evp.h>
 
-#include "openbsd-compat/openssl-compat.h"
+#شامل "openbsd-compat/openssl-compat.h"
 
-#include "sshbuf.h"
-#include "digest.h"
-#include "ssherr.h"
+#شامل "sshbuf.h"
+#شامل "digest.h"
+#شامل "ssherr.h"
 
-#ifndef HAVE_EVP_SHA256
-# define EVP_sha256 NULL
-#endif
-#ifndef HAVE_EVP_SHA384
-# define EVP_sha384 NULL
-#endif
-#ifndef HAVE_EVP_SHA512
-# define EVP_sha512 NULL
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_EVP_SHA256
+# define EVP_sha256 تہی
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ HAVE_EVP_SHA384
+# define EVP_sha384 تہی
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ HAVE_EVP_SHA512
+# define EVP_sha512 تہی
+#اگر_ختم
 
-struct ssh_digest_ctx {
-	int alg;
+ساخت ssh_digest_ctx {
+	صحیح alg;
 	EVP_MD_CTX *mdctx;
 };
 
-struct ssh_digest {
-	int id;
-	const char *name;
-	size_t digest_len;
-	const EVP_MD *(*mdfunc)(void);
+ساخت ssh_digest {
+	صحیح id;
+	ثابت حرف *name;
+	سائز_t digest_len;
+	ثابت EVP_MD *(*mdfunc)(خالی);
 };
 
 /* NB. Indexed directly by algorithm number */
-const struct ssh_digest digests[] = {
+ثابت ساخت ssh_digest digests[] = {
 	{ SSH_DIGEST_MD5,	"MD5",		16,	EVP_md5 },
 	{ SSH_DIGEST_SHA1,	"SHA1",		20,	EVP_sha1 },
 	{ SSH_DIGEST_SHA256,	"SHA256",	32,	EVP_sha256 },
 	{ SSH_DIGEST_SHA384,	"SHA384",	48,	EVP_sha384 },
 	{ SSH_DIGEST_SHA512,	"SHA512",	64,	EVP_sha512 },
-	{ -1,			NULL,		0,	NULL },
+	{ -1,			تہی,		0,	تہی },
 };
 
-static const struct ssh_digest *
-ssh_digest_by_alg(int alg)
+ساکن ثابت ساخت ssh_digest *
+ssh_digest_by_alg(صحیح alg)
 {
-	if (alg < 0 || alg >= SSH_DIGEST_MAX)
-		return NULL;
-	if (digests[alg].id != alg) /* sanity */
-		return NULL;
-	if (digests[alg].mdfunc == NULL)
-		return NULL;
-	return &(digests[alg]);
+	اگر (alg < 0 || alg >= SSH_DIGEST_MAX)
+		واپس تہی;
+	اگر (digests[alg].id != alg) /* sanity */
+		واپس تہی;
+	اگر (digests[alg].mdfunc == تہی)
+		واپس تہی;
+	واپس &(digests[alg]);
 }
 
-int
-ssh_digest_alg_by_name(const char *name)
+صحیح
+ssh_digest_alg_by_name(ثابت حرف *name)
 {
-	int alg;
+	صحیح alg;
 
-	for (alg = 0; digests[alg].id != -1; alg++) {
-		if (strcasecmp(name, digests[alg].name) == 0)
-			return digests[alg].id;
+	برائے (alg = 0; digests[alg].id != -1; alg++) {
+		اگر (strcasecmp(name, digests[alg].name) == 0)
+			واپس digests[alg].id;
 	}
-	return -1;
+	واپس -1;
 }
 
-const char *
-ssh_digest_alg_name(int alg)
+ثابت حرف *
+ssh_digest_alg_name(صحیح alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	ثابت ساخت ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? NULL : digest->name;
+	واپس digest == تہی ? تہی : digest->name;
 }
 
-size_t
-ssh_digest_bytes(int alg)
+سائز_t
+ssh_digest_بائٹیں(صحیح alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	ثابت ساخت ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? 0 : digest->digest_len;
+	واپس digest == تہی ? 0 : digest->digest_len;
 }
 
-size_t
-ssh_digest_blocksize(struct ssh_digest_ctx *ctx)
+سائز_t
+ssh_digest_blocksize(ساخت ssh_digest_ctx *ctx)
 {
-	return EVP_MD_CTX_block_size(ctx->mdctx);
+	واپس EVP_MD_CTX_بلاک_سائز(ctx->mdctx);
 }
 
-struct ssh_digest_ctx *
-ssh_digest_start(int alg)
+ساخت ssh_digest_ctx *
+ssh_digest_آغاز(صحیح alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-	struct ssh_digest_ctx *ret;
+	ثابت ساخت ssh_digest *digest = ssh_digest_by_alg(alg);
+	ساخت ssh_digest_ctx *ret;
 
-	if (digest == NULL || ((ret = calloc(1, sizeof(*ret))) == NULL))
-		return NULL;
+	اگر (digest == تہی || ((ret = صفر_حافظہ_دو(1, حجم(*ret))) == تہی))
+		واپس تہی;
 	ret->alg = alg;
-	if ((ret->mdctx = EVP_MD_CTX_new()) == NULL) {
-		free(ret);
-		return NULL;
+	اگر ((ret->mdctx = EVP_MD_CTX_new()) == تہی) {
+		آزاد(ret);
+		واپس تہی;
 	}
-	if (EVP_DigestInit_ex(ret->mdctx, digest->mdfunc(), NULL) != 1) {
+	اگر (EVP_DigestInit_ex(ret->mdctx, digest->mdfunc(), تہی) != 1) {
 		ssh_digest_free(ret);
-		return NULL;
+		واپس تہی;
 	}
-	return ret;
+	واپس ret;
 }
 
-int
-ssh_digest_copy_state(struct ssh_digest_ctx *from, struct ssh_digest_ctx *to)
+صحیح
+ssh_digest_copy_state(ساخت ssh_digest_ctx *from, ساخت ssh_digest_ctx *مقصد)
 {
-	if (from->alg != to->alg)
-		return SSH_ERR_INVALID_ARGUMENT;
+	اگر (from->alg != مقصد->alg)
+		واپس SSH_ERR_INVALID_دلیل;
 	/* we have bcopy-style order while openssl has memcpy-style */
-	if (!EVP_MD_CTX_copy_ex(to->mdctx, from->mdctx))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	اگر (!EVP_MD_CTX_copy_ex(مقصد->mdctx, from->mdctx))
+		واپس SSH_ERR_LIBCRYPTO_ERROR;
+	واپس 0;
 }
 
-int
-ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
+صحیح
+ssh_digest_update(ساخت ssh_digest_ctx *ctx, ثابت خالی *m, سائز_t mlen)
 {
-	if (EVP_DigestUpdate(ctx->mdctx, m, mlen) != 1)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	اگر (EVP_DigestUpdate(ctx->mdctx, m, mlen) != 1)
+		واپس SSH_ERR_LIBCRYPTO_ERROR;
+	واپس 0;
 }
 
-int
-ssh_digest_update_buffer(struct ssh_digest_ctx *ctx, const struct sshbuf *b)
+صحیح
+ssh_digest_update_بفر(ساخت ssh_digest_ctx *ctx, ثابت ساخت sshbuf *b)
 {
-	return ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
+	واپس ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
 }
 
-int
-ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
+صحیح
+ssh_digest_final(ساخت ssh_digest_ctx *ctx, u_char *d, سائز_t dlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	ثابت ساخت ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 	u_int l = dlen;
 
-	if (digest == NULL || dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len) /* No truncation allowed */
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_DigestFinal_ex(ctx->mdctx, d, &l) != 1)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (l != digest->digest_len) /* sanity */
-		return SSH_ERR_INTERNAL_ERROR;
-	return 0;
+	اگر (digest == تہی || dlen > UINT_MAX)
+		واپس SSH_ERR_INVALID_دلیل;
+	اگر (dlen < digest->digest_len) /* No truncation allowed */
+		واپس SSH_ERR_INVALID_دلیل;
+	اگر (EVP_DigestFinal_ex(ctx->mdctx, d, &l) != 1)
+		واپس SSH_ERR_LIBCRYPTO_ERROR;
+	اگر (l != digest->digest_len) /* sanity */
+		واپس SSH_ERR_اندرونی_ERROR;
+	واپس 0;
 }
 
-void
-ssh_digest_free(struct ssh_digest_ctx *ctx)
+خالی
+ssh_digest_free(ساخت ssh_digest_ctx *ctx)
 {
-	if (ctx == NULL)
-		return;
+	اگر (ctx == تہی)
+		واپس;
 	EVP_MD_CTX_free(ctx->mdctx);
-	freezero(ctx, sizeof(*ctx));
+	freezero(ctx, حجم(*ctx));
 }
 
-int
-ssh_digest_memory(int alg, const void *m, size_t mlen, u_char *d, size_t dlen)
+صحیح
+ssh_digest_حافظہ(صحیح alg, ثابت خالی *m, سائز_t mlen, u_char *d, سائز_t dlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	ثابت ساخت ssh_digest *digest = ssh_digest_by_alg(alg);
 	u_int mdlen;
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len)
-		return SSH_ERR_INVALID_ARGUMENT;
+	اگر (digest == تہی)
+		واپس SSH_ERR_INVALID_دلیل;
+	اگر (dlen > UINT_MAX)
+		واپس SSH_ERR_INVALID_دلیل;
+	اگر (dlen < digest->digest_len)
+		واپس SSH_ERR_INVALID_دلیل;
 	mdlen = dlen;
-	if (!EVP_Digest(m, mlen, d, &mdlen, digest->mdfunc(), NULL))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	اگر (!EVP_Digest(m, mlen, d, &mdlen, digest->mdfunc(), تہی))
+		واپس SSH_ERR_LIBCRYPTO_ERROR;
+	واپس 0;
 }
 
-int
-ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+صحیح
+ssh_digest_بفر(صحیح alg, ثابت ساخت sshbuf *b, u_char *d, سائز_t dlen)
 {
-	return ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
+	واپس ssh_digest_حافظہ(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
 }
-#endif /* WITH_OPENSSL */
+#اگر_ختم /* WITH_OPENSSL */

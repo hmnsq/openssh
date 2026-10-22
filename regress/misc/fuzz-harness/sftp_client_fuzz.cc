@@ -39,59 +39,59 @@ limitations under the License.
  * so LSan sees zero per-iteration leaks.
  */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#شامل <setjmp.h>
+#شامل <signal.h>
+#شامل <stddef.h>
+#شامل <stdint.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <sys/socket.h>
+#شامل <sys/types.h>
 
-extern "C" {
-#include "includes.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sftp.h"
-#include "sftp-common.h"
-#include "sftp-client.h"
+خارجی "C" {
+#شامل "includes.h"
+#شامل "sshbuf.h"
+#شامل "ssherr.h"
+#شامل "log.h"
+#شامل "sftp.h"
+#شامل "sftp-common.h"
+#شامل "sftp-client.h"
 
-void fuzz_arena_begin(void);
-void fuzz_arena_cleanup(void);
+خالی fuzz_arena_begin(خالی);
+خالی fuzz_arena_cleanup(خالی);
 }
 
-extern "C" volatile sig_atomic_t interrupted = 0;
-extern "C" int showprogress = 0;
-extern "C" void start_progress_meter(const char *file, off_t filesize,
-    off_t *ctr) { (void)file; (void)filesize; (void)ctr; }
-extern "C" void refresh_progress_meter(int force_update) { (void)force_update; }
-extern "C" void stop_progress_meter(void) { }
+خارجی "C" متلون sig_atomic_t interrupted = 0;
+خارجی "C" صحیح showprogress = 0;
+خارجی "C" خالی آغاز_پیش_رفت_meter(ثابت حرف *file, off_t filesize,
+    off_t *ctr) { (خالی)file; (خالی)filesize; (خالی)ctr; }
+خارجی "C" خالی refresh_پیش_رفت_meter(صحیح force_update) { (خالی)force_update; }
+خارجی "C" خالی stop_پیش_رفت_meter(خالی) { }
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+ساکن jmp_buf fuzz_env;
+ساکن متلون صحیح اندر_fuzz = 0;
 
-extern "C" void
-cleanup_exit(int code)
+خارجی "C" خالی
+cleanup_exit(صحیح رمز)
 {
-	if (in_fuzz)
-		longjmp(fuzz_env, code ? code : 1);
-	_exit(code);
+	اگر (اندر_fuzz)
+		longjmp(fuzz_env, رمز ? رمز : 1);
+	_exit(رمز);
 }
 
-static const uint8_t k_version_reply[] = {
+ساکن ثابت uint8_t k_نسخہ_جواب[] = {
     0x00, 0x00, 0x00, 0x05,
     0x02,
     0x00, 0x00, 0x00, 0x03,
 };
 
-enum {
+شمار {
 	API_STAT,
 	API_LSTAT,
 	API_REALPATH,
-	API_EXPAND_PATH,
+	API_EXPAND_راستہ,
 	API_READDIR,
 	API_STATVFS,
 	API_GET_LIMITS,
@@ -100,111 +100,111 @@ enum {
 	API_RMDIR,
 	API_RENAME,
 	API_SYMLINK,
-	API_COUNT,
+	API_گنتی,
 };
 
-static void
-run_one(int api, const uint8_t *body, size_t bsize)
+ساکن خالی
+تسلسل_one(صحیح api, ثابت uint8_t *body, سائز_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	صحیح sv[2] = { -1, -1 };
+	اگر (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		واپس;
 
-	ssize_t w = write(sv[0], k_version_reply, sizeof(k_version_reply));
-	(void)w;
-	if (bsize > 0)
-		w = write(sv[0], body, bsize);
-	(void)w;
+	ssize_t w = اكتب(sv[0], k_نسخہ_جواب, حجم(k_نسخہ_جواب));
+	(خالی)w;
+	اگر (bsize > 0)
+		w = اكتب(sv[0], body, bsize);
+	(خالی)w;
 	shutdown(sv[0], SHUT_WR);
 
 	fuzz_arena_begin();
-	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
-		struct sftp_conn *conn = sftp_init(sv[1], sv[1], 32768, 64, 0);
-		if (conn != NULL) {
+	اندر_fuzz = 1;
+	اگر (setjmp(fuzz_env) == 0) {
+		ساخت sftp_conn *conn = sftp_init(sv[1], sv[1], 32768, 64, 0);
+		اگر (conn != تہی) {
 			Attrib attr;
 			attrib_clear(&attr);
 
-			switch (api) {
-			case API_STAT: {
+			انتخاب (api) {
+			حالت API_STAT: {
 				Attrib a;
-				(void)sftp_stat(conn, "/fuzz", 1, &a);
-				break;
+				(خالی)sftp_stat(conn, "/fuzz", 1, &a);
+				توڑو;
 			}
-			case API_LSTAT: {
+			حالت API_LSTAT: {
 				Attrib a;
-				(void)sftp_lstat(conn, "/fuzz", 1, &a);
-				break;
+				(خالی)sftp_lstat(conn, "/fuzz", 1, &a);
+				توڑو;
 			}
-			case API_REALPATH: {
-				char *p = sftp_realpath(conn, "/fuzz");
-				free(p);
-				break;
+			حالت API_REALPATH: {
+				حرف *p = sftp_realpath(conn, "/fuzz");
+				آزاد(p);
+				توڑو;
 			}
-			case API_EXPAND_PATH: {
-				char *p = sftp_expand_path(conn, "~");
-				free(p);
-				break;
+			حالت API_EXPAND_راستہ: {
+				حرف *p = sftp_expand_راستہ(conn, "~");
+				آزاد(p);
+				توڑو;
 			}
-			case API_READDIR: {
-				SFTP_DIRENT **dir = NULL;
-				(void)sftp_readdir(conn, "/fuzz", &dir);
-				if (dir != NULL)
+			حالت API_READDIR: {
+				SFTP_DIRENT **dir = تہی;
+				(خالی)sftp_readdir(conn, "/fuzz", &dir);
+				اگر (dir != تہی)
 					sftp_free_dirents(dir);
-				break;
+				توڑو;
 			}
-			case API_STATVFS: {
-				struct sftp_statvfs vfs;
-				(void)sftp_statvfs(conn, "/fuzz", &vfs, 1);
-				break;
+			حالت API_STATVFS: {
+				ساخت sftp_statvfs vfs;
+				(خالی)sftp_statvfs(conn, "/fuzz", &vfs, 1);
+				توڑو;
 			}
-			case API_GET_LIMITS: {
-				struct sftp_limits lim;
-				(void)sftp_get_limits(conn, &lim);
-				break;
+			حالت API_GET_LIMITS: {
+				ساخت sftp_limits lim;
+				(خالی)sftp_get_limits(conn, &lim);
+				توڑو;
 			}
-			case API_RM:
-				(void)sftp_rm(conn, "/fuzz");
-				break;
-			case API_MKDIR:
-				(void)sftp_mkdir(conn, "/fuzz", &attr, 0);
-				break;
-			case API_RMDIR:
-				(void)sftp_rmdir(conn, "/fuzz");
-				break;
-			case API_RENAME:
-				(void)sftp_rename(conn, "/a", "/b", 0);
-				break;
-			case API_SYMLINK:
-				(void)sftp_symlink(conn, "/a", "/b");
-				break;
+			حالت API_RM:
+				(خالی)sftp_rm(conn, "/fuzz");
+				توڑو;
+			حالت API_MKDIR:
+				(خالی)sftp_mkdir(conn, "/fuzz", &attr, 0);
+				توڑو;
+			حالت API_RMDIR:
+				(خالی)sftp_rmdir(conn, "/fuzz");
+				توڑو;
+			حالت API_RENAME:
+				(خالی)sftp_rename(conn, "/a", "/b", 0);
+				توڑو;
+			حالت API_SYMLINK:
+				(خالی)sftp_symlink(conn, "/a", "/b");
+				توڑو;
 			}
 
 			sftp_free(conn);
 		}
 	}
-	in_fuzz = 0;
+	اندر_fuzz = 0;
 	fuzz_arena_cleanup();
 
 	close(sv[0]);
 	close(sv[1]);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+خارجی "C" صحیح
+LLVMFuzzer_Test_One_داخلہ(ثابت uint8_t *ڈیٹا, سائز_t سائز)
 {
-	static int initialized = 0;
-	if (!initialized) {
+	ساکن صحیح initialized = 0;
+	اگر (!initialized) {
 		initialized = 1;
 		log_init("sftp_client_fuzz", SYSLOG_LEVEL_ERROR,
 		    SYSLOG_FACILITY_AUTH, 0);
 	}
 
-	if (size > 65536)
-		return 0;
+	اگر (سائز > 65536)
+		واپس 0;
 
-	for (int api = 0; api < API_COUNT; api++)
-		run_one(api, data, size);
+	برائے (صحیح api = 0; api < API_گنتی; api++)
+		تسلسل_one(api, ڈیٹا, سائز);
 
-	return 0;
+	واپس 0;
 }

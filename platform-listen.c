@@ -14,88 +14,88 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <stdarg.h>
+#شامل <stdio.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
-#include "log.h"
-#include "misc.h"
-#include "platform.h"
+#شامل "log.h"
+#شامل "misc.h"
+#شامل "platform.h"
 
-#include "openbsd-compat/openbsd-compat.h"
+#شامل "openbsd-compat/openbsd-compat.h"
 
-void
-platform_pre_listen(void)
+خالی
+platform_pre_listen(خالی)
 {
-#ifdef LINUX_OOM_ADJUST
+#اگر_تعریف_شدہ LINUX_OOM_ADJUST
 	/* Adjust out-of-memory killer so listening process is not killed */
-	oom_adjust_setup();
-#endif
-#ifdef LINUX_MEMLOCK_ONFAULT
+	oom_adjust_تیاری();
+#اگر_ختم
+#اگر_تعریف_شدہ LINUX_MEMLOCK_ONFAULT
 	/*
 	 * Protect ourselves against kcompactd so that we are able to process
 	 * new connections while it is active and migrating pages.
 	 */
-	memlock_onfault_setup();
-#endif
+	memlock_onfault_تیاری();
+#اگر_ختم
 }
 
-void
-platform_post_listen(void)
+خالی
+platform_post_listen(خالی)
 {
-#ifdef SYSTEMD_NOTIFY
+#اگر_تعریف_شدہ SYSTEMD_NOTIFY
 	ssh_systemd_notify_ready();
-#endif
+#اگر_ختم
 }
 
-void
-platform_pre_fork(void)
+خالی
+platform_pre_fork(خالی)
 {
-#ifdef USE_SOLARIS_PROCESS_CONTRACTS
+#اگر_تعریف_شدہ USE_SOLARIS_PROCESS_CONTRACTS
 	solaris_contract_pre_fork();
-#endif
+#اگر_ختم
 }
 
-void
-platform_pre_restart(void)
+خالی
+platform_pre_restart(خالی)
 {
-#ifdef SYSTEMD_NOTIFY
+#اگر_تعریف_شدہ SYSTEMD_NOTIFY
 	ssh_systemd_notify_reload();
-#endif
-#ifdef LINUX_OOM_ADJUST
+#اگر_ختم
+#اگر_تعریف_شدہ LINUX_OOM_ADJUST
 	oom_adjust_restore();
-#endif
+#اگر_ختم
 }
 
-void
-platform_post_fork_parent(pid_t child_pid)
+خالی
+platform_post_fork_والد(pid_t بچہ_pid)
 {
-#ifdef USE_SOLARIS_PROCESS_CONTRACTS
-	solaris_contract_post_fork_parent(child_pid);
-#endif
+#اگر_تعریف_شدہ USE_SOLARIS_PROCESS_CONTRACTS
+	solaris_contract_post_fork_والد(بچہ_pid);
+#اگر_ختم
 }
 
-void
-platform_post_fork_child(void)
+خالی
+platform_post_fork_بچہ(خالی)
 {
-#ifdef USE_SOLARIS_PROCESS_CONTRACTS
-	solaris_contract_post_fork_child();
-#endif
-#ifdef LINUX_OOM_ADJUST
+#اگر_تعریف_شدہ USE_SOLARIS_PROCESS_CONTRACTS
+	solaris_contract_post_fork_بچہ();
+#اگر_ختم
+#اگر_تعریف_شدہ LINUX_OOM_ADJUST
 	oom_adjust_restore();
-#endif
+#اگر_ختم
 }
 
-void platform_pre_session_start(void)
+خالی platform_pre_session_آغاز(خالی)
 {
-#ifdef LINUX_MEMLOCK_ONFAULT
+#اگر_تعریف_شدہ LINUX_MEMLOCK_ONFAULT
 	/*
 	 * Memlock flags are dropped on fork, lock the memory again so that the
 	 * child connection is also protected against kcompactd.
 	 */
-	memlock_onfault_setup();
-#endif
+	memlock_onfault_تیاری();
+#اگر_ختم
 }

@@ -31,49 +31,49 @@
  * SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#ifndef HAVE_SETPROCTITLE
+#اگر_غیر_تعریف_شدہ HAVE_SETPROCTITLE
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#ifdef HAVE_SYS_PSTAT_H
-#include <sys/pstat.h>
-#endif
-#include <string.h>
+#شامل <stdarg.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <unistd.h>
+#اگر_تعریف_شدہ HAVE_SYS_PSTAT_H
+#شامل <sys/pstat.h>
+#اگر_ختم
+#شامل <string.h>
 
-#include <vis.h>
+#شامل <vis.h>
 
-#define SPT_NONE	0	/* don't use it at all */
-#define SPT_PSTAT	1	/* use pstat(PSTAT_SETCMD, ...) */
-#define SPT_REUSEARGV	2	/* cover argv with title information */
+#تعریف_کرو SPT_NONE	0	/* don't use it at all */
+#تعریف_کرو SPT_PSTAT	1	/* use pstat(PSTAT_SETCMD, ...) */
+#تعریف_کرو SPT_REUSEARGV	2	/* cover argv with title information */
 
-#ifndef SPT_TYPE
+#اگر_غیر_تعریف_شدہ SPT_TYPE
 # define SPT_TYPE	SPT_NONE
-#endif
+#اگر_ختم
 
-#ifndef SPT_PADCHAR
+#اگر_غیر_تعریف_شدہ SPT_PADCHAR
 # define SPT_PADCHAR	'\0'
-#endif
+#اگر_ختم
 
-#if SPT_TYPE == SPT_REUSEARGV
-static char *argv_start = NULL;
-static size_t argv_env_len = 0;
-#endif
+#اگر SPT_TYPE == SPT_REUSEARGV
+ساکن حرف *argv_آغاز = تہی;
+ساکن سائز_t argv_env_len = 0;
+#اگر_ختم
 
-#endif /* HAVE_SETPROCTITLE */
+#اگر_ختم /* HAVE_SETPROCTITLE */
 
-void
-compat_init_setproctitle(int argc, char *argv[])
+خالی
+compat_init_setproctitle(صحیح argc, حرف *argv[])
 {
-#if !defined(HAVE_SETPROCTITLE) && \
+#اگر !defined(HAVE_SETPROCTITLE) && \
     defined(SPT_TYPE) && SPT_TYPE == SPT_REUSEARGV
-	extern char **environ;
-	char *lastargv = NULL;
-	char **envp = environ;
-	int i;
+	خارجی حرف **environ;
+	حرف *lastargv = تہی;
+	حرف **envp = environ;
+	صحیح i;
 
 	/*
 	 * NB: This assumes that argv has already been copied out of the
@@ -81,90 +81,90 @@ compat_init_setproctitle(int argc, char *argv[])
 	 * programs. Beware.
 	 */
 
-	if (argc == 0 || argv[0] == NULL)
-		return;
+	اگر (argc == 0 || argv[0] == تہی)
+		واپس;
 
 	/* Fail if we can't allocate room for the new environment */
-	for (i = 0; envp[i] != NULL; i++)
+	برائے (i = 0; envp[i] != تہی; i++)
 		;
-	if ((environ = calloc(i + 1, sizeof(*environ))) == NULL) {
+	اگر ((environ = صفر_حافظہ_دو(i + 1, حجم(*environ))) == تہی) {
 		environ = envp;	/* put it back */
-		return;
+		واپس;
 	}
 
 	/*
 	 * Find the last argv string or environment variable within
 	 * our process memory area.
 	 */
-	for (i = 0; i < argc; i++) {
-		if (lastargv == NULL || lastargv + 1 == argv[i])
-			lastargv = argv[i] + strlen(argv[i]);
+	برائے (i = 0; i < argc; i++) {
+		اگر (lastargv == تہی || lastargv + 1 == argv[i])
+			lastargv = argv[i] + لڑی_لمبائی(argv[i]);
 	}
-	for (i = 0; envp[i] != NULL; i++) {
-		if (lastargv + 1 == envp[i])
-			lastargv = envp[i] + strlen(envp[i]);
+	برائے (i = 0; envp[i] != تہی; i++) {
+		اگر (lastargv + 1 == envp[i])
+			lastargv = envp[i] + لڑی_لمبائی(envp[i]);
 	}
 
-	argv[1] = NULL;
-	argv_start = argv[0];
+	argv[1] = تہی;
+	argv_آغاز = argv[0];
 	argv_env_len = lastargv - argv[0] - 1;
 
 	/*
 	 * Copy environment
 	 * XXX - will truncate env on strdup fail
 	 */
-	for (i = 0; envp[i] != NULL; i++)
+	برائے (i = 0; envp[i] != تہی; i++)
 		environ[i] = strdup(envp[i]);
-	environ[i] = NULL;
-#endif /* SPT_REUSEARGV */
+	environ[i] = تہی;
+#اگر_ختم /* SPT_REUSEARGV */
 }
 
-#ifndef HAVE_SETPROCTITLE
-void
-setproctitle(const char *fmt, ...)
+#اگر_غیر_تعریف_شدہ HAVE_SETPROCTITLE
+خالی
+setproctitle(ثابت حرف *fmt, ...)
 {
-#if SPT_TYPE != SPT_NONE
+#اگر SPT_TYPE != SPT_NONE
 	va_list ap;
-	char buf[1024], ptitle[1024];
-	size_t len = 0;
-	int r;
-	extern char *__progname;
-#if SPT_TYPE == SPT_PSTAT
-	union pstun pst;
-#endif
+	حرف buf[1024], ptitle[1024];
+	سائز_t len = 0;
+	صحیح r;
+	خارجی حرف *__progname;
+#اگر SPT_TYPE == SPT_PSTAT
+	اتحاد pstun pst;
+#اگر_ختم
 
-#if SPT_TYPE == SPT_REUSEARGV
-	if (argv_env_len <= 0)
-		return;
-#endif
+#اگر SPT_TYPE == SPT_REUSEARGV
+	اگر (argv_env_len <= 0)
+		واپس;
+#اگر_ختم
 
-	strlcpy(buf, __progname, sizeof(buf));
+	strlcpy(buf, __progname, حجم(buf));
 
 	r = -1;
 	va_start(ap, fmt);
-	if (fmt != NULL) {
-		len = strlcat(buf, ": ", sizeof(buf));
-		if (len < sizeof(buf))
-			r = vsnprintf(buf + len, sizeof(buf) - len , fmt, ap);
+	اگر (fmt != تہی) {
+		len = strlcat(buf, ": ", حجم(buf));
+		اگر (len < حجم(buf))
+			r = vsnprintf(buf + len, حجم(buf) - len , fmt, ap);
 	}
 	va_end(ap);
-	if (r == -1 || (size_t)r >= sizeof(buf) - len)
-		return;
-	strnvis(ptitle, buf, sizeof(ptitle),
+	اگر (r == -1 || (سائز_t)r >= حجم(buf) - len)
+		واپس;
+	strnvis(ptitle, buf, حجم(ptitle),
 	    VIS_CSTYLE|VIS_NL|VIS_TAB|VIS_OCTAL);
 
-#if SPT_TYPE == SPT_PSTAT
+#اگر SPT_TYPE == SPT_PSTAT
 	pst.pst_command = ptitle;
-	pstat(PSTAT_SETCMD, pst, strlen(ptitle), 0, 0);
-#elif SPT_TYPE == SPT_REUSEARGV
+	pstat(PSTAT_SETCMD, pst, لڑی_لمبائی(ptitle), 0, 0);
+#وگرنہ_اگر SPT_TYPE == SPT_REUSEARGV
 /*	debug("setproctitle: copy \"%s\" into len %d",
 	    buf, argv_env_len); */
-	len = strlcpy(argv_start, ptitle, argv_env_len);
-	for(; len < argv_env_len; len++)
-		argv_start[len] = SPT_PADCHAR;
-#endif
+	len = strlcpy(argv_آغاز, ptitle, argv_env_len);
+	برائے(; len < argv_env_len; len++)
+		argv_آغاز[len] = SPT_PADCHAR;
+#اگر_ختم
 
-#endif /* SPT_NONE */
+#اگر_ختم /* SPT_NONE */
 }
 
-#endif /* HAVE_SETPROCTITLE */
+#اگر_ختم /* HAVE_SETPROCTITLE */

@@ -22,9 +22,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#ifdef USE_LIBIAF
-char * get_iaf_password(struct passwd *pw);
-#endif
+#اگر_تعریف_شدہ USE_LIBIAF
+حرف * get_iaf_password(ساخت passwd *pw);
+#اگر_ختم
 

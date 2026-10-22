@@ -23,31 +23,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SSHMAC_H
-#define SSHMAC_H
+#اگر_غیر_تعریف_شدہ SSHMAC_H
+#تعریف_کرو SSHMAC_H
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-struct sshmac {
-	char	*name;
-	int	enabled;
+ساخت sshmac {
+	حرف	*name;
+	صحیح	enabled;
 	u_int	mac_len;
-	u_char	*key;
-	u_int	key_len;
-	int	type;
-	int	etm;		/* Encrypt-then-MAC */
-	struct ssh_hmac_ctx	*hmac_ctx;
-	struct umac_ctx		*umac_ctx;
+	u_char	*کلید;
+	u_int	کلید_len;
+	صحیح	type;
+	صحیح	etm;		/* Encrypt-then-MAC */
+	ساخت ssh_hmac_ctx	*hmac_ctx;
+	ساخت umac_ctx		*umac_ctx;
 };
 
-int	 mac_valid(const char *);
-char	*mac_alg_list(char);
-int	 mac_setup(struct sshmac *, char *);
-int	 mac_init(struct sshmac *);
-int	 mac_compute(struct sshmac *, uint32_t, const u_char *, int,
-    u_char *, size_t);
-int	 mac_check(struct sshmac *, uint32_t, const u_char *, size_t,
-    const u_char *, size_t);
-void	 mac_clear(struct sshmac *);
+صحیح	 mac_valid(ثابت حرف *);
+حرف	*mac_alg_list(حرف);
+صحیح	 mac_تیاری(ساخت sshmac *, حرف *);
+صحیح	 mac_init(ساخت sshmac *);
+صحیح	 mac_compute(ساخت sshmac *, uint32_t, ثابت u_char *, صحیح,
+    u_char *, سائز_t);
+صحیح	 mac_check(ساخت sshmac *, uint32_t, ثابت u_char *, سائز_t,
+    ثابت u_char *, سائز_t);
+خالی	 mac_clear(ساخت sshmac *);
 
-#endif /* SSHMAC_H */
+#اگر_ختم /* SSHMAC_H */

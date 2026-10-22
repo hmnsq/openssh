@@ -17,327 +17,327 @@ limitations under the License.
  * the threat-model writeup.
  */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <pwd.h>
-#include <sys/types.h>
+#شامل <setjmp.h>
+#شامل <signal.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <pwd.h>
+#شامل <sys/types.h>
 
-#include "log.h"
-#include "digest.h"
-#include "misc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssh_api.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
-#include "servconf.h"
-#include "channels.h"
-#include "session.h"
+#شامل "log.h"
+#شامل "digest.h"
+#شامل "misc.h"
+#شامل "ssh.h"
+#شامل "ssh2.h"
+#شامل "ssh_api.h"
+#شامل "ssherr.h"
+#شامل "sshbuf.h"
+#شامل "sshkey.h"
+#شامل "packet.h"
+#شامل "myproposal.h"
+#شامل "kex.h"
+#شامل "xmalloc.h"
+#شامل "authfile.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
+#شامل "auth-options.h"
+#شامل "servconf.h"
+#شامل "channels.h"
+#شامل "session.h"
 
 ServerOptions options;
-struct sshbuf *loginmsg = NULL;
-struct include_list includes;
-static struct sshauthopt g_auth_opts_storage;
-struct sshauthopt *auth_opts = &g_auth_opts_storage;
-struct passwd *privsep_pw = NULL;
+ساخت sshbuf *loginmsg = تہی;
+ساخت include_list includes;
+ساکن ساخت sshauthopt g_auth_opts_storage;
+ساخت sshauthopt *auth_opts = &g_auth_opts_storage;
+ساخت passwd *privsep_pw = تہی;
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+ساکن jmp_buf fuzz_env;
+ساکن متلون صحیح اندر_fuzz = 0;
 
-void
-cleanup_exit(int code)
+خالی
+cleanup_exit(صحیح رمز)
 {
-	if (in_fuzz)
-		longjmp(fuzz_env, code ? code : 1);
-	_exit(code);
+	اگر (اندر_fuzz)
+		longjmp(fuzz_env, رمز ? رمز : 1);
+	_exit(رمز);
 }
 
-void
-__wrap_ssh_packet_disconnect(struct ssh *ssh, const char *fmt, ...)
+خالی
+__wrap_ssh_packet_disconnect(ساخت ssh *ssh, ثابت حرف *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
+	(خالی)ssh;
+	(خالی)fmt;
+	اگر (اندر_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(1);
 }
 
-int
-__wrap_sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+صحیح
+__wrap_sshpkt_fatal(ساخت ssh *ssh, صحیح r, ثابت حرف *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
+	(خالی)ssh;
+	(خالی)fmt;
+	اگر (اندر_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(r ? r : 1);
 }
 
-int
-mm_is_monitor(void)
+صحیح
+mm_is_monitor(خالی)
 {
-	return 0;
+	واپس 0;
 }
 
-void
-mm_audit_run_command(const char *cmd)
+خالی
+mm_audit_تسلسل_command(ثابت حرف *cmd)
 {
-	(void)cmd;
+	(خالی)cmd;
 }
 
-int
-mm_pty_allocate(int *ptyfd, int *ttyfd, char *namebuf, size_t namebuflen)
+صحیح
+mm_pty_allocate(صحیح *ptyfd, صحیح *ttyfd, حرف *namebuf, سائز_t namebuflen)
 {
 	*ptyfd = -1;
 	*ttyfd = -1;
-	if (namebuf != NULL && namebuflen > 0)
+	اگر (namebuf != تہی && namebuflen > 0)
 		namebuf[0] = '\0';
-	return 0;
+	واپس 0;
 }
 
-void mm_session_pty_cleanup2(Session *s) { (void)s; }
-int platform_locked_account(struct passwd *pw) { (void)pw; return 0; }
-void record_failed_login(struct ssh *ssh, const char *user,
-    const char *hostname, const char *ttyname) { (void)ssh; (void)user;
-    (void)hostname; (void)ttyname; }
-int temporarily_use_uid(struct passwd *pw) { (void)pw; return 0; }
-void restore_uid(void) { }
-void platform_setusercontext(struct passwd *pw) { (void)pw; }
-void platform_setusercontext_post_groups(struct passwd *pw) { (void)pw; }
-struct connection_info *
-server_get_connection_info(struct ssh *ssh, int populate, int use_dns)
-    { (void)ssh; (void)populate; (void)use_dns; return NULL; }
-int auth2_methods_valid(const char *list, int allow_unknown)
-    { (void)list; (void)allow_unknown; return 0; }
-struct sshbuf *cfg = NULL;
-int auth_sock = -1;
-char **tun_fwd_ifnames = NULL;
+خالی mm_session_pty_cleanup2(Session *s) { (خالی)s; }
+صحیح platform_locked_account(ساخت passwd *pw) { (خالی)pw; واپس 0; }
+خالی ریکارڈ_failed_login(ساخت ssh *ssh, ثابت حرف *user,
+    ثابت حرف *hostname, ثابت حرف *ttyname) { (خالی)ssh; (خالی)user;
+    (خالی)hostname; (خالی)ttyname; }
+صحیح temporarily_use_uid(ساخت passwd *pw) { (خالی)pw; واپس 0; }
+خالی restore_uid(خالی) { }
+خالی platform_setusercontext(ساخت passwd *pw) { (خالی)pw; }
+خالی platform_setusercontext_post_groups(ساخت passwd *pw) { (خالی)pw; }
+ساخت connection_info *
+server_get_connection_info(ساخت ssh *ssh, صحیح populate, صحیح use_dns)
+    { (خالی)ssh; (خالی)populate; (خالی)use_dns; واپس تہی; }
+صحیح auth2_methods_valid(ثابت حرف *list, صحیح allow_unknown)
+    { (خالی)list; (خالی)allow_unknown; واپس 0; }
+ساخت sshbuf *cfg = تہی;
+صحیح auth_sock = -1;
+حرف **tun_fwd_ifnames = تہی;
 
-struct logininfo *login_get_lastlog(struct logininfo *li, const uid_t uid)
-    { (void)li; (void)uid; return NULL; }
-struct logininfo *login_alloc_entry(pid_t pid, const char *username,
-    const char *hostname, const char *line)
-    { (void)pid; (void)username; (void)hostname; (void)line; return NULL; }
-void server_process_permitopen(struct ssh *ssh) { (void)ssh; }
-void server_process_channel_timeouts(struct ssh *ssh) { (void)ssh; }
-int server_loop2(struct ssh *ssh, Authctxt *authctxt)
-    { (void)ssh; (void)authctxt; return 0; }
-int platform_privileged_uidswap(void) { return 0; }
-int sftp_server_main(int argc, char **argv, struct passwd *user_pw)
-    { (void)argc; (void)argv; (void)user_pw; return 0; }
-int debug_flag = 0;
-void permanently_set_uid(struct passwd *pw) { (void)pw; }
-int login_login(struct logininfo *li) { (void)li; return 0; }
-int login_logout(struct logininfo *li) { (void)li; return 0; }
-void login_free_entry(struct logininfo *li) { (void)li; }
-void login_set_addr(struct logininfo *li, const struct sockaddr *sa,
-    const unsigned int sa_size) { (void)li; (void)sa; (void)sa_size; }
-int openpty(int *amaster, int *aslave, char *name,
-    const struct termios *termp, const struct winsize *winp)
-    { (void)termp; (void)winp; *amaster = -1; *aslave = -1;
-    if (name) name[0] = '\0'; return -1; }
+ساخت logininfo *login_get_lastlog(ساخت logininfo *li, ثابت uid_t uid)
+    { (خالی)li; (خالی)uid; واپس تہی; }
+ساخت logininfo *login_alloc_اندراج(pid_t pid, ثابت حرف *username,
+    ثابت حرف *hostname, ثابت حرف *سطر)
+    { (خالی)pid; (خالی)username; (خالی)hostname; (خالی)سطر; واپس تہی; }
+خالی server_process_permitopen(ساخت ssh *ssh) { (خالی)ssh; }
+خالی server_process_channel_timeouts(ساخت ssh *ssh) { (خالی)ssh; }
+صحیح server_loop2(ساخت ssh *ssh, Authctxt *authctxt)
+    { (خالی)ssh; (خالی)authctxt; واپس 0; }
+صحیح platform_privileged_uidswap(خالی) { واپس 0; }
+صحیح sftp_server_main(صحیح argc, حرف **argv, ساخت passwd *user_pw)
+    { (خالی)argc; (خالی)argv; (خالی)user_pw; واپس 0; }
+صحیح debug_flag = 0;
+خالی permanently_سیٹ_uid(ساخت passwd *pw) { (خالی)pw; }
+صحیح login_login(ساخت logininfo *li) { (خالی)li; واپس 0; }
+صحیح login_logout(ساخت logininfo *li) { (خالی)li; واپس 0; }
+خالی login_free_اندراج(ساخت logininfo *li) { (خالی)li; }
+خالی login_سیٹ_addr(ساخت logininfo *li, ثابت ساخت sockaddr *sa,
+    ثابت غیرعلامتی صحیح sa_سائز) { (خالی)li; (خالی)sa; (خالی)sa_سائز; }
+صحیح openpty(صحیح *amaster, صحیح *aslave, حرف *name,
+    ثابت ساخت termios *termp, ثابت ساخت winsize *winp)
+    { (خالی)termp; (خالی)winp; *amaster = -1; *aslave = -1;
+    اگر (name) name[0] = '\0'; واپس -1; }
 
-extern int __real_do_exec(struct ssh *, Session *, const char *);
-extern int __real_do_exec_pty(struct ssh *, Session *, const char *);
-extern int __real_do_exec_no_pty(struct ssh *, Session *, const char *);
+خارجی صحیح __real_do_exec(ساخت ssh *, Session *, ثابت حرف *);
+خارجی صحیح __real_do_exec_pty(ساخت ssh *, Session *, ثابت حرف *);
+خارجی صحیح __real_do_exec_no_pty(ساخت ssh *, Session *, ثابت حرف *);
 
-int
-__wrap_do_exec(struct ssh *ssh, Session *s, const char *command)
+صحیح
+__wrap_do_exec(ساخت ssh *ssh, Session *s, ثابت حرف *command)
 {
-	(void)ssh;
-	(void)s;
-	(void)command;
-	return 0;
+	(خالی)ssh;
+	(خالی)s;
+	(خالی)command;
+	واپس 0;
 }
 
-int
-__wrap_do_exec_pty(struct ssh *ssh, Session *s, const char *command)
+صحیح
+__wrap_do_exec_pty(ساخت ssh *ssh, Session *s, ثابت حرف *command)
 {
-	(void)ssh;
-	(void)s;
-	(void)command;
-	return 0;
+	(خالی)ssh;
+	(خالی)s;
+	(خالی)command;
+	واپس 0;
 }
 
-int
-__wrap_do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
+صحیح
+__wrap_do_exec_no_pty(ساخت ssh *ssh, Session *s, ثابت حرف *command)
 {
-	(void)ssh;
-	(void)s;
-	(void)command;
-	return 0;
+	(خالی)ssh;
+	(خالی)s;
+	(خالی)command;
+	واپس 0;
 }
 
-static struct sshkey *
-load_private(const char *str)
+ساکن ساخت sshkey *
+بھرو_نجی(ثابت حرف *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	ساخت sshbuf *b = sshbuf_from(str, لڑی_لمبائی(str));
+	ساخت sshkey *k = تہی;
+	اگر (b == تہی || sshkey_parse_نجی_fileblob(b, "", &k, تہی) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	واپس k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+ساکن ساخت sshkey *
+بھرو_عوامی(ثابت حرف *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	حرف *tmp, *cp;
+	ساخت sshkey *k = sshkey_new(کلید_UNSPEC);
+	اگر (k == تہی)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	اگر (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	آزاد(tmp);
+	واپس k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+ساکن صحیح
+pump(ساخت ssh *from, ساخت ssh *مقصد, سائز_t *transferred)
 {
-	const u_char *buf;
-	size_t len;
+	ثابت u_char *buf;
+	سائز_t len;
 	u_char type;
-	int r;
+	صحیح r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	اگر ((r = ssh_packet_اگلا(from, &type)) != 0)
+		واپس r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	اگر (len == 0)
+		واپس 0;
+	اگر ((r = ssh_داخلہ_append(مقصد, buf, len)) != 0)
+		واپس r;
+	اگر ((r = ssh_output_consume(from, len)) != 0)
+		واپس r;
 	*transferred = len;
-	return 0;
+	واپس 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+ساکن صحیح
+تسلسل_kex(ساخت ssh *client, ساخت ssh *server)
 {
-	int r;
-	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	صحیح r;
+	سائز_t cn, sn;
+	برائے (صحیح i = 0; i < 100; i++) {
+		اگر ((r = pump(server, client, &sn)) != 0) واپس r;
+		اگر ((r = pump(client, server, &cn)) != 0) واپس r;
+		اگر (server->kex->مکمل && client->kex->مکمل)
+			واپس 0;
+		اگر (cn == 0 && sn == 0)
+			واپس SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	واپس SSH_ERR_PROTOCOL_ERROR;
 }
 
-#include "fixed-keys.h"
+#شامل "fixed-keys.h"
 
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
-static int g_channel_id = -1;
-static Authctxt g_authctxt;
-static struct passwd g_fake_pw;
+ساکن ساخت ssh *g_client = تہی;
+ساکن ساخت ssh *g_server = تہی;
+ساکن صحیح g_init = 0;
+ساکن صحیح g_channel_id = -1;
+ساکن Authctxt g_authctxt;
+ساکن ساخت passwd g_fake_pw;
 
-static char *g_pending_rtype = NULL;
-static char *g_pending_exec_cmd = NULL;
-static char *g_pending_env_name = NULL;
-static char *g_pending_env_val = NULL;
+ساکن حرف *g_pending_rtype = تہی;
+ساکن حرف *g_pending_exec_cmd = تہی;
+ساکن حرف *g_pending_env_name = تہی;
+ساکن حرف *g_pending_env_val = تہی;
 
-static void
-my_session_exec_req(struct ssh *ssh)
+ساکن خالی
+my_session_exec_req(ساخت ssh *ssh)
 {
-	int r;
-	if ((r = sshpkt_get_cstring(ssh, &g_pending_exec_cmd, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	صحیح r;
+	اگر ((r = sshpkt_get_cstring(ssh, &g_pending_exec_cmd, تہی)) != 0 ||
+	    (r = sshpkt_get_انتہا(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 }
 
-static void
-my_session_env_req(struct ssh *ssh)
+ساکن خالی
+my_session_env_req(ساخت ssh *ssh)
 {
-	int r;
-	if ((r = sshpkt_get_cstring(ssh, &g_pending_env_name, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &g_pending_env_val, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	صحیح r;
+	اگر ((r = sshpkt_get_cstring(ssh, &g_pending_env_name, تہی)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &g_pending_env_val, تہی)) != 0 ||
+	    (r = sshpkt_get_انتہا(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 }
 
-static int
-input_channel_request(int type, uint32_t seq, struct ssh *ssh)
+ساکن صحیح
+داخلہ_channel_request(صحیح type, uint32_t seq, ساخت ssh *ssh)
 {
 	uint32_t chan_id;
-	u_char want_reply;
+	u_char want_جواب;
 
-	(void)type;
-	(void)seq;
-	if (sshpkt_get_u32(ssh, &chan_id) != 0 ||
-	    sshpkt_get_cstring(ssh, &g_pending_rtype, NULL) != 0 ||
-	    sshpkt_get_u8(ssh, &want_reply) != 0)
-		return 0;
-	if (g_channel_id >= 0 && g_pending_rtype != NULL) {
+	(خالی)type;
+	(خالی)seq;
+	اگر (sshpkt_get_u32(ssh, &chan_id) != 0 ||
+	    sshpkt_get_cstring(ssh, &g_pending_rtype, تہی) != 0 ||
+	    sshpkt_get_u8(ssh, &want_جواب) != 0)
+		واپس 0;
+	اگر (g_channel_id >= 0 && g_pending_rtype != تہی) {
 		Channel *c = channel_lookup(ssh, g_channel_id);
-		if (c != NULL) {
-			if (strcmp(g_pending_rtype, "exec") == 0)
+		اگر (c != تہی) {
+			اگر (strcmp(g_pending_rtype, "exec") == 0)
 				my_session_exec_req(ssh);
-			else if (strcmp(g_pending_rtype, "env") == 0)
+			ورنہ اگر (strcmp(g_pending_rtype, "env") == 0)
 				my_session_env_req(ssh);
-			else
-				(void)session_input_channel_req(ssh, c,
+			ورنہ
+				(خالی)session_داخلہ_channel_req(ssh, c,
 				    g_pending_rtype);
 		}
 	}
-	return 0;
+	واپس 0;
 }
 
-static void
-reset_channel(struct ssh *ssh)
+ساکن خالی
+reset_channel(ساخت ssh *ssh)
 {
-	if (g_channel_id >= 0) {
+	اگر (g_channel_id >= 0) {
 		Channel *c = channel_lookup(ssh, g_channel_id);
-		if (c != NULL)
+		اگر (c != تہی)
 			channel_free(ssh, c);
 		g_channel_id = -1;
 	}
-	Channel *c = channel_new(ssh, (char *)"session", SSH_CHANNEL_LARVAL,
-	    -1, -1, -1, 32768, 32768, 0, (char *)"fuzz", 0);
-	if (c == NULL)
-		return;
+	Channel *c = channel_new(ssh, (حرف *)"session", SSH_CHANNEL_LARVAL,
+	    -1, -1, -1, 32768, 32768, 0, (حرف *)"fuzz", 0);
+	اگر (c == تہی)
+		واپس;
 	g_channel_id = c->self;
 	Session *s = session_new();
-	if (s != NULL) {
+	اگر (s != تہی) {
 		s->chanid = c->self;
 		s->pw = &g_fake_pw;
 	}
 }
 
-static int
-init_once(void)
+ساکن صحیح
+init_once(خالی)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	اگر (g_init)
+		واپس 0;
+	اشارہ(SIGPIPE, SIG_IGN);
 	log_init("session_channel_req_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	memset(&g_fake_pw, 0, sizeof(g_fake_pw));
-	g_fake_pw.pw_name = (char *)"fuzz";
+	memset(&g_fake_pw, 0, حجم(g_fake_pw));
+	g_fake_pw.pw_name = (حرف *)"fuzz";
 	g_fake_pw.pw_uid = 1000;
 	g_fake_pw.pw_gid = 1000;
-	g_fake_pw.pw_dir = (char *)"/tmp";
-	g_fake_pw.pw_shell = (char *)"/bin/sh";
+	g_fake_pw.pw_dir = (حرف *)"/tmp";
+	g_fake_pw.pw_shell = (حرف *)"/bin/sh";
 	privsep_pw = &g_fake_pw;
 
 	initialize_server_options(&options);
@@ -345,87 +345,87 @@ init_once(void)
 
 	loginmsg = sshbuf_new();
 
-	memset(&g_authctxt, 0, sizeof(g_authctxt));
+	memset(&g_authctxt, 0, حجم(g_authctxt));
 	g_authctxt.pw = &g_fake_pw;
 	g_authctxt.valid = 1;
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	ساخت sshkey *priv = بھرو_نجی(PRIV_ED25519);
+	ساخت sshkey *pub = بھرو_عوامی(PUB_ED25519);
+	حرف *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	ثابت حرف *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	حرف *proposal[PROPOSAL_MAX] = { 0 };
+	صحیح i;
+	برائے (i = 0; i < PROPOSAL_MAX; i++) {
+		ثابت حرف *p = defaults[i];
+		اگر (i == PROPOSAL_SERVER_HOST_کلید_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		ورنہ اگر (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		ورنہ اگر (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		ورنہ اگر (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	ساخت kex_params kp;
+	حافظہ_نقل(kp.proposal, proposal, حجم(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	اگر (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
-	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		واپس -1;
+	اگر (ssh_جوڑو_hostkey(g_server, priv) != 0 ||
+	    ssh_جوڑو_hostkey(g_client, pub) != 0)
+		واپس -1;
+	اگر (تسلسل_kex(g_client, g_server) != 0)
+		واپس -1;
 
 	g_server->authctxt = &g_authctxt;
 
 	channel_init_channels(g_server);
 
 	ssh_dispatch_init(g_server, &dispatch_protocol_ignore);
-	ssh_dispatch_set(g_server, SSH2_MSG_CHANNEL_REQUEST,
-	    &input_channel_request);
+	ssh_dispatch_سیٹ(g_server, SSH2_پیغام_CHANNEL_REQUEST,
+	    &داخلہ_channel_request);
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	آزاد(keyname);
+	برائے (i = 0; i < PROPOSAL_MAX; i++)
+		آزاد(proposal[i]);
 	g_init = 1;
-	return 0;
+	واپس 0;
 }
 
-void
-fuzz_session_one(const uint8_t *data, size_t size)
+خالی
+fuzz_session_one(ثابت uint8_t *ڈیٹا, سائز_t سائز)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	اگر (init_once() != 0)
+		واپس;
+	اگر (سائز > 65000)
+		واپس;
 
 	reset_channel(g_server);
 
-	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
-		size_t transferred;
-		if (ssh_packet_put(g_client, SSH2_MSG_CHANNEL_REQUEST,
-		    data, size) != 0)
-			goto done;
-		if (pump(g_client, g_server, &transferred) != 0)
-			goto done;
-		(void)ssh_dispatch_run(g_server, DISPATCH_NONBLOCK, NULL);
-	done:
+	اندر_fuzz = 1;
+	اگر (setjmp(fuzz_env) == 0) {
+		سائز_t transferred;
+		اگر (ssh_packet_put(g_client, SSH2_پیغام_CHANNEL_REQUEST,
+		    ڈیٹا, سائز) != 0)
+			جاؤ مکمل;
+		اگر (pump(g_client, g_server, &transferred) != 0)
+			جاؤ مکمل;
+		(خالی)ssh_dispatch_تسلسل(g_server, DISPATCH_NONBLOCK, تہی);
+	مکمل:
 		;
 	}
-	in_fuzz = 0;
-	free(g_pending_rtype);
-	g_pending_rtype = NULL;
-	free(g_pending_exec_cmd);
-	g_pending_exec_cmd = NULL;
-	free(g_pending_env_name);
-	g_pending_env_name = NULL;
-	free(g_pending_env_val);
-	g_pending_env_val = NULL;
+	اندر_fuzz = 0;
+	آزاد(g_pending_rtype);
+	g_pending_rtype = تہی;
+	آزاد(g_pending_exec_cmd);
+	g_pending_exec_cmd = تہی;
+	آزاد(g_pending_env_name);
+	g_pending_env_name = تہی;
+	آزاد(g_pending_env_val);
+	g_pending_env_val = تہی;
 }

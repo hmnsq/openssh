@@ -13,104 +13,104 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <stdarg.h>
+#شامل <stdint.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#include "xmalloc.h"
-#include "log.h"
+#شامل "xmalloc.h"
+#شامل "log.h"
 
-#if defined(__OpenBSD__)
-const char * const malloc_options = "S";
-#endif /* __OpenBSD__ */
+#اگر defined(__OpenBSD__)
+ثابت حرف * ثابت malloc_options = "S";
+#اگر_ختم /* __OpenBSD__ */
 
-void *
-xmalloc(size_t size)
+خالی *
+xmalloc(سائز_t سائز)
 {
-	void *ptr;
+	خالی *ptr;
 
-	if (size == 0)
+	اگر (سائز == 0)
 		fatal("xmalloc: zero size");
-	ptr = malloc(size);
-	if (ptr == NULL)
-		fatal("xmalloc: out of memory (allocating %zu bytes)", size);
-	return ptr;
+	ptr = حافظہ_دو(سائز);
+	اگر (ptr == تہی)
+		fatal("xmalloc: out of memory (allocating %zu bytes)", سائز);
+	واپس ptr;
 }
 
-void *
-xcalloc(size_t nmemb, size_t size)
+خالی *
+xcalloc(سائز_t nmemb, سائز_t سائز)
 {
-	void *ptr;
+	خالی *ptr;
 
-	if (size == 0 || nmemb == 0)
+	اگر (سائز == 0 || nmemb == 0)
 		fatal("xcalloc: zero size");
-	if (SIZE_MAX / nmemb < size)
+	اگر (SIZE_MAX / nmemb < سائز)
 		fatal("xcalloc: nmemb * size > SIZE_MAX");
-	ptr = calloc(nmemb, size);
-	if (ptr == NULL)
+	ptr = صفر_حافظہ_دو(nmemb, سائز);
+	اگر (ptr == تہی)
 		fatal("xcalloc: out of memory (allocating %zu bytes)",
-		    size * nmemb);
-	return ptr;
+		    سائز * nmemb);
+	واپس ptr;
 }
 
-void *
-xreallocarray(void *ptr, size_t nmemb, size_t size)
+خالی *
+xreallocarray(خالی *ptr, سائز_t nmemb, سائز_t سائز)
 {
-	void *new_ptr;
+	خالی *new_ptr;
 
-	new_ptr = reallocarray(ptr, nmemb, size);
-	if (new_ptr == NULL)
+	new_ptr = reallocarray(ptr, nmemb, سائز);
+	اگر (new_ptr == تہی)
 		fatal("xreallocarray: out of memory (%zu elements of %zu bytes)",
-		    nmemb, size);
-	return new_ptr;
+		    nmemb, سائز);
+	واپس new_ptr;
 }
 
-void *
-xrecallocarray(void *ptr, size_t onmemb, size_t nmemb, size_t size)
+خالی *
+xrecallocarray(خالی *ptr, سائز_t onmemb, سائز_t nmemb, سائز_t سائز)
 {
-	void *new_ptr;
+	خالی *new_ptr;
 
-	new_ptr = recallocarray(ptr, onmemb, nmemb, size);
-	if (new_ptr == NULL)
+	new_ptr = recallocarray(ptr, onmemb, nmemb, سائز);
+	اگر (new_ptr == تہی)
 		fatal("xrecallocarray: out of memory (%zu elements of %zu bytes)",
-		    nmemb, size);
-	return new_ptr;
+		    nmemb, سائز);
+	واپس new_ptr;
 }
 
-char *
-xstrdup(const char *str)
+حرف *
+xstrdup(ثابت حرف *str)
 {
-	size_t len;
-	char *cp;
+	سائز_t len;
+	حرف *cp;
 
-	len = strlen(str) + 1;
+	len = لڑی_لمبائی(str) + 1;
 	cp = xmalloc(len);
-	return memcpy(cp, str, len);
+	واپس حافظہ_نقل(cp, str, len);
 }
 
-int
-xvasprintf(char **ret, const char *fmt, va_list ap)
+صحیح
+xvasprintf(حرف **ret, ثابت حرف *fmt, va_list ap)
 {
-	int i;
+	صحیح i;
 
 	i = vasprintf(ret, fmt, ap);
-	if (i < 0 || *ret == NULL)
+	اگر (i < 0 || *ret == تہی)
 		fatal("xvasprintf: could not allocate memory");
-	return i;
+	واپس i;
 }
 
-int
-xasprintf(char **ret, const char *fmt, ...)
+صحیح
+xasprintf(حرف **ret, ثابت حرف *fmt, ...)
 {
 	va_list ap;
-	int i;
+	صحیح i;
 
 	va_start(ap, fmt);
 	i = xvasprintf(ret, fmt, ap);
 	va_end(ap);
-	return i;
+	واپس i;
 }

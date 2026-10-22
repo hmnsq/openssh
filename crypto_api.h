@@ -5,206 +5,206 @@
  * Placed in the public domain.
  */
 
-#ifndef crypto_api_h
-#define crypto_api_h
+#اگر_غیر_تعریف_شدہ crypto_api_h
+#تعریف_کرو crypto_api_h
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <stdint.h>
-#include <stdlib.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
 
-typedef int8_t crypto_int8;
-typedef uint8_t crypto_uint8;
-typedef int16_t crypto_int16;
-typedef uint16_t crypto_uint16;
-typedef int32_t crypto_int32;
-typedef uint32_t crypto_uint32;
-typedef int64_t crypto_int64;
-typedef uint64_t crypto_uint64;
+قسمتعریف int8_t crypto_int8;
+قسمتعریف uint8_t crypto_uint8;
+قسمتعریف int16_t crypto_int16;
+قسمتعریف uint16_t crypto_uint16;
+قسمتعریف int32_t crypto_int32;
+قسمتعریف uint32_t crypto_uint32;
+قسمتعریف int64_t crypto_int64;
+قسمتعریف uint64_t crypto_uint64;
 
-#define randombytes(buf, buf_len) arc4random_buf((buf), (buf_len))
-#define small_random32() arc4random()
+#تعریف_کرو randombytes(buf, buf_len) arc4random_buf((buf), (buf_len))
+#تعریف_کرو small_random32() arc4random()
 
-#define crypto_hash_sha512_BYTES 64U
+#تعریف_کرو crypto_hash_sha512_بائٹیں 64U
 
-#ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-static inline int
-crypto_hash_sha512(unsigned char *out, const unsigned char *in,
-    unsigned long long inlen)
+#اگر_تعریف_شدہ WITH_OPENSSL
+#شامل <openssl/evp.h>
+ساکن اندرونی صحیح
+crypto_hash_sha512(غیرعلامتی حرف *برآمد, ثابت غیرعلامتی حرف *اندر,
+    غیرعلامتی طویل طویل inlen)
 {
 
-	if (!EVP_Digest(in, inlen, out, NULL, EVP_sha512(), NULL))
-		return -1;
-	return 0;
+	اگر (!EVP_Digest(اندر, inlen, برآمد, تہی, EVP_sha512(), تہی))
+		واپس -1;
+	واپس 0;
 }
-#else /* WITH_OPENSSL */
+#ورنہ /* WITH_OPENSSL */
 # ifdef HAVE_SHA2_H
 #  include <sha2.h>
 # endif
-static inline int
-crypto_hash_sha512(unsigned char *out, const unsigned char *in,
-    unsigned long long inlen)
+ساکن اندرونی صحیح
+crypto_hash_sha512(غیرعلامتی حرف *برآمد, ثابت غیرعلامتی حرف *اندر,
+    غیرعلامتی طویل طویل inlen)
 {
 
 	SHA2_CTX ctx;
 
 	SHA512Init(&ctx);
-	SHA512Update(&ctx, in, inlen);
-	SHA512Final(out, &ctx);
-	return 0;
+	SHA512Update(&ctx, اندر, inlen);
+	SHA512Final(برآمد, &ctx);
+	واپس 0;
 }
-#endif /* WITH_OPENSSL */
+#اگر_ختم /* WITH_OPENSSL */
 
-#define crypto_sign_ed25519_SECRETKEYBYTES 64U
-#define crypto_sign_ed25519_PUBLICKEYBYTES 32U
-#define crypto_sign_ed25519_SEEDBYTES 32U
-#define crypto_sign_ed25519_BYTES 64U
+#تعریف_کرو crypto_sign_ed25519_SECRETKEYBYTES 64U
+#تعریف_کرو crypto_sign_ed25519_PUBLICKEYBYTES 32U
+#تعریف_کرو crypto_sign_ed25519_SEEDBYTES 32U
+#تعریف_کرو crypto_sign_ed25519_بائٹیں 64U
 
-int	crypto_sign_ed25519_detached(unsigned char *, unsigned long long *,
-    const unsigned char *, unsigned long long, const unsigned char *);
-int	crypto_sign_ed25519_verify_detached(const unsigned char *,
-    const unsigned char *, unsigned long long, const unsigned char *);
-int	crypto_sign_ed25519_keypair(unsigned char *, unsigned char *);
-int	crypto_sign_ed25519_seed_keypair(unsigned char *, unsigned char *,
-    const unsigned char *);
+صحیح	crypto_sign_ed25519_detached(غیرعلامتی حرف *, غیرعلامتی طویل طویل *,
+    ثابت غیرعلامتی حرف *, غیرعلامتی طویل طویل, ثابت غیرعلامتی حرف *);
+صحیح	crypto_sign_ed25519_verify_detached(ثابت غیرعلامتی حرف *,
+    ثابت غیرعلامتی حرف *, غیرعلامتی طویل طویل, ثابت غیرعلامتی حرف *);
+صحیح	crypto_sign_ed25519_keypair(غیرعلامتی حرف *, غیرعلامتی حرف *);
+صحیح	crypto_sign_ed25519_بیج_keypair(غیرعلامتی حرف *, غیرعلامتی حرف *,
+    ثابت غیرعلامتی حرف *);
 
-#define crypto_kem_sntrup761_PUBLICKEYBYTES 1158
-#define crypto_kem_sntrup761_SECRETKEYBYTES 1763
-#define crypto_kem_sntrup761_CIPHERTEXTBYTES 1039
-#define crypto_kem_sntrup761_BYTES 32
+#تعریف_کرو crypto_kem_sntrup761_PUBLICKEYBYTES 1158
+#تعریف_کرو crypto_kem_sntrup761_SECRETKEYBYTES 1763
+#تعریف_کرو crypto_kem_sntrup761_CIPHERTEXTBYTES 1039
+#تعریف_کرو crypto_kem_sntrup761_بائٹیں 32
 
-int	crypto_kem_sntrup761_enc(unsigned char *cstr, unsigned char *k,
-    const unsigned char *pk);
-int	crypto_kem_sntrup761_dec(unsigned char *k,
-    const unsigned char *cstr, const unsigned char *sk);
-int	crypto_kem_sntrup761_keypair(unsigned char *pk, unsigned char *sk);
+صحیح	crypto_kem_sntrup761_enc(غیرعلامتی حرف *cstr, غیرعلامتی حرف *k,
+    ثابت غیرعلامتی حرف *pk);
+صحیح	crypto_kem_sntrup761_dec(غیرعلامتی حرف *k,
+    ثابت غیرعلامتی حرف *cstr, ثابت غیرعلامتی حرف *sk);
+صحیح	crypto_kem_sntrup761_keypair(غیرعلامتی حرف *pk, غیرعلامتی حرف *sk);
 
 /* ML-KEM-768 */
-#define crypto_kem_mlkem768_PUBLICKEYBYTES 1184
-#define crypto_kem_mlkem768_SECRETKEYBYTES 2400
-#define crypto_kem_mlkem768_CIPHERTEXTBYTES 1088
-#define crypto_kem_mlkem768_BYTES 32
-#define crypto_kem_mlkem768_ENCSEEDBYTES 32
-#define crypto_kem_mlkem768_KEYPAIRSEEDBYTES 64
+#تعریف_کرو crypto_kem_mlkem768_PUBLICKEYBYTES 1184
+#تعریف_کرو crypto_kem_mlkem768_SECRETKEYBYTES 2400
+#تعریف_کرو crypto_kem_mlkem768_CIPHERTEXTBYTES 1088
+#تعریف_کرو crypto_kem_mlkem768_بائٹیں 32
+#تعریف_کرو crypto_kem_mlkem768_ENCSEEDBYTES 32
+#تعریف_کرو crypto_kem_mlkem768_KEYPAIRSEEDBYTES 64
 
 /* Aliases for MLKEM768 */
-#define MLKEM768_PUBLICKEYBYTES crypto_kem_mlkem768_PUBLICKEYBYTES
-#define MLKEM768_SECRETKEYBYTES crypto_kem_mlkem768_SECRETKEYBYTES
-#define MLKEM768_CIPHERTEXTBYTES crypto_kem_mlkem768_CIPHERTEXTBYTES
-#define MLKEM768_BYTES crypto_kem_mlkem768_BYTES
+#تعریف_کرو MLKEM768_PUBLICKEYBYTES crypto_kem_mlkem768_PUBLICKEYBYTES
+#تعریف_کرو MLKEM768_SECRETKEYBYTES crypto_kem_mlkem768_SECRETKEYBYTES
+#تعریف_کرو MLKEM768_CIPHERTEXTBYTES crypto_kem_mlkem768_CIPHERTEXTBYTES
+#تعریف_کرو MLKEM768_بائٹیں crypto_kem_mlkem768_بائٹیں
 
-int crypto_kem_mlkem768_keypair(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
+صحیح crypto_kem_mlkem768_keypair(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
     uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES]);
-int crypto_kem_mlkem768_enc(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
-    uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
-    const uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES]);
-int crypto_kem_mlkem768_dec(uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
-    const uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
-    const uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES]);
-int crypto_kem_mlkem768_keypair_seeded(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
-    uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES], const uint8_t seed[64]);
-int crypto_kem_mlkem768_enc_seeded(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
-    uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
-    const uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
-    const uint8_t seed[32]);
+صحیح crypto_kem_mlkem768_enc(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
+    uint8_t shared_secret[crypto_kem_mlkem768_بائٹیں],
+    ثابت uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES]);
+صحیح crypto_kem_mlkem768_dec(uint8_t shared_secret[crypto_kem_mlkem768_بائٹیں],
+    ثابت uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
+    ثابت uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES]);
+صحیح crypto_kem_mlkem768_keypair_seeded(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
+    uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES], ثابت uint8_t بیج[64]);
+صحیح crypto_kem_mlkem768_enc_seeded(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
+    uint8_t shared_secret[crypto_kem_mlkem768_بائٹیں],
+    ثابت uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
+    ثابت uint8_t بیج[32]);
 
 /* ML-DSA-44 */
-#define MLDSA44_PUBLICKEYBYTES 1312
-#define MLDSA44_SECRETKEYBYTES 2560
-#define MLDSA44_SIGBYTES 2420
-#define MLDSA44_SEEDBYTES 32
+#تعریف_کرو MLDSA44_PUBLICKEYBYTES 1312
+#تعریف_کرو MLDSA44_SECRETKEYBYTES 2560
+#تعریف_کرو MLDSA44_SIGBYTES 2420
+#تعریف_کرو MLDSA44_SEEDBYTES 32
 
-int crypto_sign_mldsa44_keypair(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
+صحیح crypto_sign_mldsa44_keypair(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
     uint8_t sk[MLDSA44_SECRETKEYBYTES]);
-int crypto_sign_mldsa44(uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA44_SECRETKEYBYTES]);
-int crypto_sign_mldsa44_verify(const uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA44_PUBLICKEYBYTES]);
-int crypto_sign_mldsa44_keypair_seeded(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
-    uint8_t sk[MLDSA44_SECRETKEYBYTES], const uint8_t seed[MLDSA44_SEEDBYTES]);
-int crypto_sign_mldsa44_seeded(uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA44_SECRETKEYBYTES],
-    const uint8_t seed[MLDSA44_SEEDBYTES]);
+صحیح crypto_sign_mldsa44(uint8_t sig[MLDSA44_SIGBYTES],
+    ثابت uint8_t *پیغام, سائز_t msglen,
+    ثابت uint8_t *ctx, سائز_t ctxlen,
+    ثابت uint8_t sk[MLDSA44_SECRETKEYBYTES]);
+صحیح crypto_sign_mldsa44_verify(ثابت uint8_t sig[MLDSA44_SIGBYTES],
+    ثابت uint8_t *پیغام, سائز_t msglen,
+    ثابت uint8_t *ctx, سائز_t ctxlen,
+    ثابت uint8_t pk[MLDSA44_PUBLICKEYBYTES]);
+صحیح crypto_sign_mldsa44_keypair_seeded(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
+    uint8_t sk[MLDSA44_SECRETKEYBYTES], ثابت uint8_t بیج[MLDSA44_SEEDBYTES]);
+صحیح crypto_sign_mldsa44_seeded(uint8_t sig[MLDSA44_SIGBYTES],
+    ثابت uint8_t *پیغام, سائز_t msglen,
+    ثابت uint8_t *ctx, سائز_t ctxlen,
+    ثابت uint8_t sk[MLDSA44_SECRETKEYBYTES],
+    ثابت uint8_t بیج[MLDSA44_SEEDBYTES]);
 
 /* ML-DSA-65 */
-#define MLDSA65_PUBLICKEYBYTES 1952
-#define MLDSA65_SECRETKEYBYTES 4032
-#define MLDSA65_SIGBYTES 3309
-#define MLDSA65_SEEDBYTES 32
+#تعریف_کرو MLDSA65_PUBLICKEYBYTES 1952
+#تعریف_کرو MLDSA65_SECRETKEYBYTES 4032
+#تعریف_کرو MLDSA65_SIGBYTES 3309
+#تعریف_کرو MLDSA65_SEEDBYTES 32
 
-#if 0
-int crypto_sign_mldsa65_keypair(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
+#اگر 0
+صحیح crypto_sign_mldsa65_keypair(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
     uint8_t sk[MLDSA65_SECRETKEYBYTES]);
-int crypto_sign_mldsa65(uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA65_SECRETKEYBYTES]);
-int crypto_sign_mldsa65_verify(const uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA65_PUBLICKEYBYTES]);
-int crypto_sign_mldsa65_keypair_seeded(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
-    uint8_t sk[MLDSA65_SECRETKEYBYTES], const uint8_t seed[MLDSA65_SEEDBYTES]);
-int crypto_sign_mldsa65_seeded(uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA65_SECRETKEYBYTES],
-    const uint8_t seed[MLDSA65_SEEDBYTES]);
-#endif
+صحیح crypto_sign_mldsa65(uint8_t sig[MLDSA65_SIGBYTES],
+    ثابت uint8_t *پیغام, سائز_t msglen,
+    ثابت uint8_t *ctx, سائز_t ctxlen,
+    ثابت uint8_t sk[MLDSA65_SECRETKEYBYTES]);
+صحیح crypto_sign_mldsa65_verify(ثابت uint8_t sig[MLDSA65_SIGBYTES],
+    ثابت uint8_t *پیغام, سائز_t msglen,
+    ثابت uint8_t *ctx, سائز_t ctxlen,
+    ثابت uint8_t pk[MLDSA65_PUBLICKEYBYTES]);
+صحیح crypto_sign_mldsa65_keypair_seeded(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
+    uint8_t sk[MLDSA65_SECRETKEYBYTES], ثابت uint8_t بیج[MLDSA65_SEEDBYTES]);
+صحیح crypto_sign_mldsa65_seeded(uint8_t sig[MLDSA65_SIGBYTES],
+    ثابت uint8_t *پیغام, سائز_t msglen,
+    ثابت uint8_t *ctx, سائز_t ctxlen,
+    ثابت uint8_t sk[MLDSA65_SECRETKEYBYTES],
+    ثابت uint8_t بیج[MLDSA65_SEEDBYTES]);
+#اگر_ختم
 
 /* ML-DSA-87 */
-#define MLDSA87_PUBLICKEYBYTES 2592
-#define MLDSA87_SECRETKEYBYTES 4896
-#define MLDSA87_SIGBYTES 4627
-#define MLDSA87_SEEDBYTES 32
+#تعریف_کرو MLDSA87_PUBLICKEYBYTES 2592
+#تعریف_کرو MLDSA87_SECRETKEYBYTES 4896
+#تعریف_کرو MLDSA87_SIGBYTES 4627
+#تعریف_کرو MLDSA87_SEEDBYTES 32
 
-int crypto_sign_mldsa87_keypair(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
+صحیح crypto_sign_mldsa87_keypair(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
     uint8_t sk[MLDSA87_SECRETKEYBYTES]);
-int crypto_sign_mldsa87(uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA87_SECRETKEYBYTES]);
-int crypto_sign_mldsa87_verify(const uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA87_PUBLICKEYBYTES]);
-int crypto_sign_mldsa87_keypair_seeded(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
-    uint8_t sk[MLDSA87_SECRETKEYBYTES], const uint8_t seed[MLDSA87_SEEDBYTES]);
-int crypto_sign_mldsa87_seeded(uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA87_SECRETKEYBYTES],
-    const uint8_t seed[MLDSA87_SEEDBYTES]);
+صحیح crypto_sign_mldsa87(uint8_t sig[MLDSA87_SIGBYTES],
+    ثابت uint8_t *پیغام, سائز_t msglen,
+    ثابت uint8_t *ctx, سائز_t ctxlen,
+    ثابت uint8_t sk[MLDSA87_SECRETKEYBYTES]);
+صحیح crypto_sign_mldsa87_verify(ثابت uint8_t sig[MLDSA87_SIGBYTES],
+    ثابت uint8_t *پیغام, سائز_t msglen,
+    ثابت uint8_t *ctx, سائز_t ctxlen,
+    ثابت uint8_t pk[MLDSA87_PUBLICKEYBYTES]);
+صحیح crypto_sign_mldsa87_keypair_seeded(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
+    uint8_t sk[MLDSA87_SECRETKEYBYTES], ثابت uint8_t بیج[MLDSA87_SEEDBYTES]);
+صحیح crypto_sign_mldsa87_seeded(uint8_t sig[MLDSA87_SIGBYTES],
+    ثابت uint8_t *پیغام, سائز_t msglen,
+    ثابت uint8_t *ctx, سائز_t ctxlen,
+    ثابت uint8_t sk[MLDSA87_SECRETKEYBYTES],
+    ثابت uint8_t بیج[MLDSA87_SEEDBYTES]);
 
 /* MLDSA44-Ed25519-SHA512 */
-#define MLDSA44_ED25519_PK_SZ (MLDSA44_PUBLICKEYBYTES + crypto_sign_ed25519_PUBLICKEYBYTES)
-#define MLDSA44_ED25519_SK_SZ (MLDSA44_SEEDBYTES + crypto_sign_ed25519_SEEDBYTES)
-#define MLDSA44_ED25519_SIG_SZ (MLDSA44_SIGBYTES + crypto_sign_ed25519_BYTES)
+#تعریف_کرو MLDSA44_ED25519_PK_SZ (MLDSA44_PUBLICKEYBYTES + crypto_sign_ed25519_PUBLICKEYBYTES)
+#تعریف_کرو MLDSA44_ED25519_SK_SZ (MLDSA44_SEEDBYTES + crypto_sign_ed25519_SEEDBYTES)
+#تعریف_کرو MLDSA44_ED25519_SIG_SZ (MLDSA44_SIGBYTES + crypto_sign_ed25519_بائٹیں)
 
-int crypto_sign_mldsa44_ed25519_keygen(uint8_t pk[MLDSA44_ED25519_PK_SZ],
+صحیح crypto_sign_mldsa44_ed25519_keygen(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     uint8_t sk[MLDSA44_ED25519_SK_SZ]);
-int crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
+صحیح crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     uint8_t sk[MLDSA44_ED25519_SK_SZ],
-    const uint8_t mldsa_seed[MLDSA44_SEEDBYTES],
-    const uint8_t ed25519_seed[crypto_sign_ed25519_SEEDBYTES]);
-int crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA44_ED25519_SK_SZ]);
-int crypto_sign_mldsa44_ed25519_verify(const uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA44_ED25519_PK_SZ]);
+    ثابت uint8_t mldsa_بیج[MLDSA44_SEEDBYTES],
+    ثابت uint8_t ed25519_بیج[crypto_sign_ed25519_SEEDBYTES]);
+صحیح crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
+    ثابت uint8_t *پیغام, سائز_t msglen,
+    ثابت uint8_t *ctx, سائز_t ctxlen,
+    ثابت uint8_t sk[MLDSA44_ED25519_SK_SZ]);
+صحیح crypto_sign_mldsa44_ed25519_verify(ثابت uint8_t sig[MLDSA44_ED25519_SIG_SZ],
+    ثابت uint8_t *پیغام, سائز_t msglen,
+    ثابت uint8_t *ctx, سائز_t ctxlen,
+    ثابت uint8_t pk[MLDSA44_ED25519_PK_SZ]);
 
 /* Utility */
-void sha3_256(uint8_t digest[32], const uint8_t *data, size_t len);
-void sha3_512(uint8_t digest[64], const uint8_t *data, size_t len);
+خالی sha3_256(uint8_t digest[32], ثابت uint8_t *ڈیٹا, سائز_t len);
+خالی sha3_512(uint8_t digest[64], ثابت uint8_t *ڈیٹا, سائز_t len);
 
-#endif /* crypto_api_h */
+#اگر_ختم /* crypto_api_h */

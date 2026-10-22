@@ -17,159 +17,159 @@
 
 /* Utility functions/framework for fuzz tests */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/uio.h>
+#شامل <sys/types.h>
+#شامل <sys/uio.h>
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <unistd.h>
+#شامل <assert.h>
+#شامل <ctype.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <signal.h>
+#شامل <unistd.h>
 
-#include "test_helper.h"
-#include "atomicio.h"
+#شامل "test_helper.h"
+#شامل "atomicio.h"
 
 /* #define FUZZ_DEBUG */
 
-#ifdef FUZZ_DEBUG
-# define FUZZ_DBG(x) do { \
-		printf("%s:%d %s: ", __FILE__, __LINE__, __func__); \
-		printf x; \
-		printf("\n"); \
+#اگر_تعریف_شدہ FUZZ_DEBUG
+# define FUZZ_DBG(x) کرو { \
+		لکھو("%s:%d %s: ", __FILE__, __LINE__, __func__); \
+		لکھو x; \
+		لکھو("\n"); \
 		fflush(stdout); \
-	} while (0)
-#else
+	} جب (0)
+#ورنہ
 # define FUZZ_DBG(x)
-#endif
+#اگر_ختم
 
 /* For brevity later */
-typedef unsigned long long fuzz_ullong;
+قسمتعریف غیرعلامتی طویل طویل fuzz_ullong;
 
 /* For base-64 fuzzing */
-static const char fuzz_b64chars[] =
+ساکن ثابت حرف fuzz_b64chars[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-struct fuzz {
+ساخت fuzz {
 	/* Fuzz method currently in use */
-	int strategy;
+	صحیح strategy;
 
 	/* Fuzz methods remaining */
-	int strategies;
+	صحیح strategies;
 
 	/* Original seed data blob */
-	void *seed;
-	size_t slen;
+	خالی *بیج;
+	سائز_t slen;
 
 	/* Current working copy of seed with fuzz mutations applied */
 	u_char *fuzzed;
 
 	/* Used by fuzz methods */
-	size_t o1, o2;
+	سائز_t o1, o2;
 };
 
-static const char *
+ساکن ثابت حرف *
 fuzz_ntop(u_int n)
 {
-	switch (n) {
-	case 0:
-		return "NONE";
-	case FUZZ_1_BIT_FLIP:
-		return "FUZZ_1_BIT_FLIP";
-	case FUZZ_2_BIT_FLIP:
-		return "FUZZ_2_BIT_FLIP";
-	case FUZZ_1_BYTE_FLIP:
-		return "FUZZ_1_BYTE_FLIP";
-	case FUZZ_2_BYTE_FLIP:
-		return "FUZZ_2_BYTE_FLIP";
-	case FUZZ_TRUNCATE_START:
-		return "FUZZ_TRUNCATE_START";
-	case FUZZ_TRUNCATE_END:
-		return "FUZZ_TRUNCATE_END";
-	case FUZZ_BASE64:
-		return "FUZZ_BASE64";
-	default:
+	انتخاب (n) {
+	حالت 0:
+		واپس "NONE";
+	حالت FUZZ_1_ثنائی_ہندسہ_FLIP:
+		واپس "FUZZ_1_BIT_FLIP";
+	حالت FUZZ_2_ثنائی_ہندسہ_FLIP:
+		واپس "FUZZ_2_BIT_FLIP";
+	حالت FUZZ_1_BYTE_FLIP:
+		واپس "FUZZ_1_BYTE_FLIP";
+	حالت FUZZ_2_BYTE_FLIP:
+		واپس "FUZZ_2_BYTE_FLIP";
+	حالت FUZZ_TRUNCATE_آغاز:
+		واپس "FUZZ_TRUNCATE_START";
+	حالت FUZZ_TRUNCATE_انتہا:
+		واپس "FUZZ_TRUNCATE_END";
+	حالت FUZZ_BASE64:
+		واپس "FUZZ_BASE64";
+	طےشدہ:
 		abort();
 	}
 }
 
-static int
-fuzz_fmt(struct fuzz *fuzz, char *s, size_t n)
+ساکن صحیح
+fuzz_fmt(ساخت fuzz *fuzz, حرف *s, سائز_t n)
 {
-	if (fuzz == NULL)
-		return -1;
+	اگر (fuzz == تہی)
+		واپس -1;
 
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
+	انتخاب (fuzz->strategy) {
+	حالت FUZZ_1_ثنائی_ہندسہ_FLIP:
 		snprintf(s, n, "%s case %zu of %zu (bit: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen * 8, fuzz->o1);
-		return 0;
-	case FUZZ_2_BIT_FLIP:
+		واپس 0;
+	حالت FUZZ_2_ثنائی_ہندسہ_FLIP:
 		snprintf(s, n, "%s case %llu of %llu (bits: %zu, %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (((fuzz_ullong)fuzz->o2) * fuzz->slen * 8) + fuzz->o1,
 		    ((fuzz_ullong)fuzz->slen * 8) * fuzz->slen * 8,
 		    fuzz->o1, fuzz->o2);
-		return 0;
-	case FUZZ_1_BYTE_FLIP:
+		واپس 0;
+	حالت FUZZ_1_BYTE_FLIP:
 		snprintf(s, n, "%s case %zu of %zu (byte: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_2_BYTE_FLIP:
+		واپس 0;
+	حالت FUZZ_2_BYTE_FLIP:
 		snprintf(s, n, "%s case %llu of %llu (bytes: %zu, %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (((fuzz_ullong)fuzz->o2) * fuzz->slen) + fuzz->o1,
 		    ((fuzz_ullong)fuzz->slen) * fuzz->slen,
 		    fuzz->o1, fuzz->o2);
-		return 0;
-	case FUZZ_TRUNCATE_START:
+		واپس 0;
+	حالت FUZZ_TRUNCATE_آغاز:
 		snprintf(s, n, "%s case %zu of %zu (offset: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_TRUNCATE_END:
+		واپس 0;
+	حالت FUZZ_TRUNCATE_انتہا:
 		snprintf(s, n, "%s case %zu of %zu (offset: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_BASE64:
-		assert(fuzz->o2 < sizeof(fuzz_b64chars) - 1);
+		واپس 0;
+	حالت FUZZ_BASE64:
+		أكد(fuzz->o2 < حجم(fuzz_b64chars) - 1);
 		snprintf(s, n, "%s case %llu of %llu (offset: %zu char: %c)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (fuzz->o1 * (fuzz_ullong)64) + fuzz->o2,
 		    fuzz->slen * (fuzz_ullong)64, fuzz->o1,
 		    fuzz_b64chars[fuzz->o2]);
-		return 0;
-	default:
-		return -1;
+		واپس 0;
+	طےشدہ:
+		واپس -1;
 	}
 }
 
-static void
-dump(u_char *p, size_t len)
+ساکن خالی
+dump(u_char *p, سائز_t len)
 {
-	size_t i, j;
+	سائز_t i, j;
 
-	for (i = 0; i < len; i += 16) {
+	برائے (i = 0; i < len; i += 16) {
 		fprintf(stderr, "%.4zd: ", i);
-		for (j = i; j < i + 16; j++) {
-			if (j < len)
+		برائے (j = i; j < i + 16; j++) {
+			اگر (j < len)
 				fprintf(stderr, "%02x ", p[j]);
-			else
+			ورنہ
 				fprintf(stderr, "   ");
 		}
 		fprintf(stderr, " ");
-		for (j = i; j < i + 16; j++) {
-			if (j < len) {
-				if  (isascii(p[j]) && isprint(p[j]))
+		برائے (j = i; j < i + 16; j++) {
+			اگر (j < len) {
+				اگر  (isascii(p[j]) && isprint(p[j]))
 					fprintf(stderr, "%c", p[j]);
-				else
+				ورنہ
 					fprintf(stderr, ".");
 			}
 		}
@@ -177,108 +177,108 @@ dump(u_char *p, size_t len)
 	}
 }
 
-void
-fuzz_dump(struct fuzz *fuzz)
+خالی
+fuzz_dump(ساخت fuzz *fuzz)
 {
-	char buf[256];
+	حرف buf[256];
 
-	if (fuzz_fmt(fuzz, buf, sizeof(buf)) != 0) {
+	اگر (fuzz_fmt(fuzz, buf, حجم(buf)) != 0) {
 		fprintf(stderr, "%s: fuzz invalid\n", __func__);
 		abort();
 	}
 	fputs(buf, stderr);
-	fprintf(stderr, "fuzz original %p len = %zu\n", fuzz->seed, fuzz->slen);
-	dump(fuzz->seed, fuzz->slen);
+	fprintf(stderr, "fuzz original %p len = %zu\n", fuzz->بیج, fuzz->slen);
+	dump(fuzz->بیج, fuzz->slen);
 	fprintf(stderr, "fuzz context %p len = %zu\n", fuzz, fuzz_len(fuzz));
 	dump(fuzz_ptr(fuzz), fuzz_len(fuzz));
 }
 
-static struct fuzz *last_fuzz;
+ساکن ساخت fuzz *آخری_fuzz;
 
-static void
-siginfo(int unused __attribute__((__unused__)))
+ساکن خالی
+siginfo(صحیح غیر_مستعمل __attribute__((__unused__)))
 {
-	char buf[256];
+	حرف buf[256];
 
-	test_info(buf, sizeof(buf));
-	atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
-	if (last_fuzz != NULL) {
-		fuzz_fmt(last_fuzz, buf, sizeof(buf));
-		atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
+	test_info(buf, حجم(buf));
+	atomicio(vwrite, STDERR_FILENO, buf, لڑی_لمبائی(buf));
+	اگر (آخری_fuzz != تہی) {
+		fuzz_fmt(آخری_fuzz, buf, حجم(buf));
+		atomicio(vwrite, STDERR_FILENO, buf, لڑی_لمبائی(buf));
 	}
 }
 
-struct fuzz *
-fuzz_begin(u_int strategies, const void *p, size_t l)
+ساخت fuzz *
+fuzz_begin(u_int strategies, ثابت خالی *p, سائز_t l)
 {
-	struct fuzz *ret = calloc(1, sizeof(*ret));
+	ساخت fuzz *ret = صفر_حافظہ_دو(1, حجم(*ret));
 
-	assert(p != NULL);
-	assert(ret != NULL);
-	ret->seed = malloc(l);
-	assert(ret->seed != NULL);
-	memcpy(ret->seed, p, l);
+	أكد(p != تہی);
+	أكد(ret != تہی);
+	ret->بیج = حافظہ_دو(l);
+	أكد(ret->بیج != تہی);
+	حافظہ_نقل(ret->بیج, p, l);
 	ret->slen = l;
 	ret->strategies = strategies;
 
-	assert(ret->slen < SIZE_MAX / 8);
-	assert(ret->strategies <= (FUZZ_MAX|(FUZZ_MAX-1)));
+	أكد(ret->slen < SIZE_MAX / 8);
+	أكد(ret->strategies <= (FUZZ_MAX|(FUZZ_MAX-1)));
 
 	FUZZ_DBG(("begin, ret = %p", ret));
 
-	fuzz_next(ret);
+	fuzz_اگلا(ret);
 
-	last_fuzz = ret;
-#ifdef SIGINFO
-	signal(SIGINFO, siginfo);
-#endif
-	signal(SIGUSR1, siginfo);
+	آخری_fuzz = ret;
+#اگر_تعریف_شدہ SIGINFO
+	اشارہ(SIGINFO, siginfo);
+#اگر_ختم
+	اشارہ(SIGUSR1, siginfo);
 
-	return ret;
+	واپس ret;
 }
 
-void
-fuzz_cleanup(struct fuzz *fuzz)
+خالی
+fuzz_cleanup(ساخت fuzz *fuzz)
 {
 	FUZZ_DBG(("cleanup, fuzz = %p", fuzz));
-	last_fuzz = NULL;
-#ifdef SIGINFO
-	signal(SIGINFO, SIG_DFL);
-#endif
-	signal(SIGUSR1, SIG_DFL);
-	assert(fuzz != NULL);
-	assert(fuzz->seed != NULL);
-	assert(fuzz->fuzzed != NULL);
-	free(fuzz->seed);
-	free(fuzz->fuzzed);
-	free(fuzz);
+	آخری_fuzz = تہی;
+#اگر_تعریف_شدہ SIGINFO
+	اشارہ(SIGINFO, SIG_DFL);
+#اگر_ختم
+	اشارہ(SIGUSR1, SIG_DFL);
+	أكد(fuzz != تہی);
+	أكد(fuzz->بیج != تہی);
+	أكد(fuzz->fuzzed != تہی);
+	آزاد(fuzz->بیج);
+	آزاد(fuzz->fuzzed);
+	آزاد(fuzz);
 }
 
-static int
-fuzz_strategy_done(struct fuzz *fuzz)
+ساکن صحیح
+fuzz_strategy_مکمل(ساخت fuzz *fuzz)
 {
 	FUZZ_DBG(("fuzz = %p, strategy = %s, o1 = %zu, o2 = %zu, slen = %zu",
 	    fuzz, fuzz_ntop(fuzz->strategy), fuzz->o1, fuzz->o2, fuzz->slen));
 
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-		return fuzz->o1 >= fuzz->slen * 8;
-	case FUZZ_2_BIT_FLIP:
-		return fuzz->o2 >= fuzz->slen * 8;
-	case FUZZ_2_BYTE_FLIP:
-		return fuzz->o2 >= fuzz->slen;
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
-	case FUZZ_BASE64:
-		return fuzz->o1 >= fuzz->slen;
-	default:
+	انتخاب (fuzz->strategy) {
+	حالت FUZZ_1_ثنائی_ہندسہ_FLIP:
+		واپس fuzz->o1 >= fuzz->slen * 8;
+	حالت FUZZ_2_ثنائی_ہندسہ_FLIP:
+		واپس fuzz->o2 >= fuzz->slen * 8;
+	حالت FUZZ_2_BYTE_FLIP:
+		واپس fuzz->o2 >= fuzz->slen;
+	حالت FUZZ_1_BYTE_FLIP:
+	حالت FUZZ_TRUNCATE_آغاز:
+	حالت FUZZ_TRUNCATE_انتہا:
+	حالت FUZZ_BASE64:
+		واپس fuzz->o1 >= fuzz->slen;
+	طےشدہ:
 		abort();
 	}
 }
 
-void
-fuzz_next(struct fuzz *fuzz)
+خالی
+fuzz_اگلا(ساخت fuzz *fuzz)
 {
 	u_int i;
 
@@ -286,86 +286,86 @@ fuzz_next(struct fuzz *fuzz)
 	    "o1 = %zu, o2 = %zu, slen = %zu", fuzz, fuzz_ntop(fuzz->strategy),
 	    (u_long)fuzz->strategies, fuzz->o1, fuzz->o2, fuzz->slen));
 
-	if (fuzz->strategy == 0 || fuzz_strategy_done(fuzz)) {
+	اگر (fuzz->strategy == 0 || fuzz_strategy_مکمل(fuzz)) {
 		/* If we are just starting out, we need to allocate too */
-		if (fuzz->fuzzed == NULL) {
+		اگر (fuzz->fuzzed == تہی) {
 			FUZZ_DBG(("alloc"));
-			fuzz->fuzzed = calloc(fuzz->slen, 1);
+			fuzz->fuzzed = صفر_حافظہ_دو(fuzz->slen, 1);
 		}
 		/* Pick next strategy */
 		FUZZ_DBG(("advance"));
-		for (i = 1; i <= FUZZ_MAX; i <<= 1) {
-			if ((fuzz->strategies & i) != 0) {
+		برائے (i = 1; i <= FUZZ_MAX; i <<= 1) {
+			اگر ((fuzz->strategies & i) != 0) {
 				fuzz->strategy = i;
-				break;
+				توڑو;
 			}
 		}
 		FUZZ_DBG(("selected = %u", fuzz->strategy));
-		if (fuzz->strategy == 0) {
+		اگر (fuzz->strategy == 0) {
 			FUZZ_DBG(("done, no more strategies"));
-			return;
+			واپس;
 		}
 		fuzz->strategies &= ~(fuzz->strategy);
 		fuzz->o1 = fuzz->o2 = 0;
 	}
 
-	assert(fuzz->fuzzed != NULL);
+	أكد(fuzz->fuzzed != تہی);
 
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-		assert(fuzz->o1 / 8 < fuzz->slen);
-		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
+	انتخاب (fuzz->strategy) {
+	حالت FUZZ_1_ثنائی_ہندسہ_FLIP:
+		أكد(fuzz->o1 / 8 < fuzz->slen);
+		حافظہ_نقل(fuzz->fuzzed, fuzz->بیج, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1 / 8] ^= 1 << (fuzz->o1 % 8);
 		fuzz->o1++;
-		break;
-	case FUZZ_2_BIT_FLIP:
-		assert(fuzz->o1 / 8 < fuzz->slen);
-		assert(fuzz->o2 / 8 < fuzz->slen);
-		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
+		توڑو;
+	حالت FUZZ_2_ثنائی_ہندسہ_FLIP:
+		أكد(fuzz->o1 / 8 < fuzz->slen);
+		أكد(fuzz->o2 / 8 < fuzz->slen);
+		حافظہ_نقل(fuzz->fuzzed, fuzz->بیج, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1 / 8] ^= 1 << (fuzz->o1 % 8);
 		fuzz->fuzzed[fuzz->o2 / 8] ^= 1 << (fuzz->o2 % 8);
 		fuzz->o1++;
-		if (fuzz->o1 >= fuzz->slen * 8) {
+		اگر (fuzz->o1 >= fuzz->slen * 8) {
 			fuzz->o1 = 0;
 			fuzz->o2++;
 		}
-		break;
-	case FUZZ_1_BYTE_FLIP:
-		assert(fuzz->o1 < fuzz->slen);
-		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
+		توڑو;
+	حالت FUZZ_1_BYTE_FLIP:
+		أكد(fuzz->o1 < fuzz->slen);
+		حافظہ_نقل(fuzz->fuzzed, fuzz->بیج, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] ^= 0xff;
 		fuzz->o1++;
-		break;
-	case FUZZ_2_BYTE_FLIP:
-		assert(fuzz->o1 < fuzz->slen);
-		assert(fuzz->o2 < fuzz->slen);
-		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
+		توڑو;
+	حالت FUZZ_2_BYTE_FLIP:
+		أكد(fuzz->o1 < fuzz->slen);
+		أكد(fuzz->o2 < fuzz->slen);
+		حافظہ_نقل(fuzz->fuzzed, fuzz->بیج, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] ^= 0xff;
 		fuzz->fuzzed[fuzz->o2] ^= 0xff;
 		fuzz->o1++;
-		if (fuzz->o1 >= fuzz->slen) {
+		اگر (fuzz->o1 >= fuzz->slen) {
 			fuzz->o1 = 0;
 			fuzz->o2++;
 		}
-		break;
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
-		assert(fuzz->o1 < fuzz->slen);
-		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
+		توڑو;
+	حالت FUZZ_TRUNCATE_آغاز:
+	حالت FUZZ_TRUNCATE_انتہا:
+		أكد(fuzz->o1 < fuzz->slen);
+		حافظہ_نقل(fuzz->fuzzed, fuzz->بیج, fuzz->slen);
 		fuzz->o1++;
-		break;
-	case FUZZ_BASE64:
-		assert(fuzz->o1 < fuzz->slen);
-		assert(fuzz->o2 < sizeof(fuzz_b64chars) - 1);
-		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
+		توڑو;
+	حالت FUZZ_BASE64:
+		أكد(fuzz->o1 < fuzz->slen);
+		أكد(fuzz->o2 < حجم(fuzz_b64chars) - 1);
+		حافظہ_نقل(fuzz->fuzzed, fuzz->بیج, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] = fuzz_b64chars[fuzz->o2];
 		fuzz->o2++;
-		if (fuzz->o2 >= sizeof(fuzz_b64chars) - 1) {
+		اگر (fuzz->o2 >= حجم(fuzz_b64chars) - 1) {
 			fuzz->o2 = 0;
 			fuzz->o1++;
 		}
-		break;
-	default:
+		توڑو;
+	طےشدہ:
 		abort();
 	}
 
@@ -374,61 +374,61 @@ fuzz_next(struct fuzz *fuzz)
 	    (u_long)fuzz->strategies, fuzz->o1, fuzz->o2, fuzz->slen));
 }
 
-int
-fuzz_matches_original(struct fuzz *fuzz)
+صحیح
+fuzz_matches_original(ساخت fuzz *fuzz)
 {
-	if (fuzz_len(fuzz) != fuzz->slen)
-		return 0;
-	return memcmp(fuzz_ptr(fuzz), fuzz->seed, fuzz->slen) == 0;
+	اگر (fuzz_len(fuzz) != fuzz->slen)
+		واپس 0;
+	واپس memcmp(fuzz_ptr(fuzz), fuzz->بیج, fuzz->slen) == 0;
 }
 
-int
-fuzz_done(struct fuzz *fuzz)
+صحیح
+fuzz_مکمل(ساخت fuzz *fuzz)
 {
 	FUZZ_DBG(("fuzz = %p, strategies = 0x%lx", fuzz,
 	    (u_long)fuzz->strategies));
 
-	return fuzz_strategy_done(fuzz) && fuzz->strategies == 0;
+	واپس fuzz_strategy_مکمل(fuzz) && fuzz->strategies == 0;
 }
 
-size_t
-fuzz_len(struct fuzz *fuzz)
+سائز_t
+fuzz_len(ساخت fuzz *fuzz)
 {
-	assert(fuzz->fuzzed != NULL);
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-	case FUZZ_2_BIT_FLIP:
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_2_BYTE_FLIP:
-	case FUZZ_BASE64:
-		return fuzz->slen;
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
-		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->slen - fuzz->o1;
-	default:
+	أكد(fuzz->fuzzed != تہی);
+	انتخاب (fuzz->strategy) {
+	حالت FUZZ_1_ثنائی_ہندسہ_FLIP:
+	حالت FUZZ_2_ثنائی_ہندسہ_FLIP:
+	حالت FUZZ_1_BYTE_FLIP:
+	حالت FUZZ_2_BYTE_FLIP:
+	حالت FUZZ_BASE64:
+		واپس fuzz->slen;
+	حالت FUZZ_TRUNCATE_آغاز:
+	حالت FUZZ_TRUNCATE_انتہا:
+		أكد(fuzz->o1 <= fuzz->slen);
+		واپس fuzz->slen - fuzz->o1;
+	طےشدہ:
 		abort();
 	}
 }
 
 u_char *
-fuzz_ptr(struct fuzz *fuzz)
+fuzz_ptr(ساخت fuzz *fuzz)
 {
-	assert(fuzz->fuzzed != NULL);
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-	case FUZZ_2_BIT_FLIP:
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_2_BYTE_FLIP:
-	case FUZZ_BASE64:
-		return fuzz->fuzzed;
-	case FUZZ_TRUNCATE_START:
-		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->fuzzed + fuzz->o1;
-	case FUZZ_TRUNCATE_END:
-		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->fuzzed;
-	default:
+	أكد(fuzz->fuzzed != تہی);
+	انتخاب (fuzz->strategy) {
+	حالت FUZZ_1_ثنائی_ہندسہ_FLIP:
+	حالت FUZZ_2_ثنائی_ہندسہ_FLIP:
+	حالت FUZZ_1_BYTE_FLIP:
+	حالت FUZZ_2_BYTE_FLIP:
+	حالت FUZZ_BASE64:
+		واپس fuzz->fuzzed;
+	حالت FUZZ_TRUNCATE_آغاز:
+		أكد(fuzz->o1 <= fuzz->slen);
+		واپس fuzz->fuzzed + fuzz->o1;
+	حالت FUZZ_TRUNCATE_انتہا:
+		أكد(fuzz->o1 <= fuzz->slen);
+		واپس fuzz->fuzzed;
+	طےشدہ:
 		abort();
 	}
 }

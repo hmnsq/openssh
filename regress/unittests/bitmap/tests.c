@@ -5,95 +5,95 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <sys/types.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#endif
+#اگر_تعریف_شدہ WITH_OPENSSL
+#شامل <openssl/bn.h>
+#اگر_ختم
 
-#include "../test_helper/test_helper.h"
+#شامل "../test_helper/test_helper.h"
 
-#include "bitmap.h"
+#شامل "bitmap.h"
 
-#define DEFAULT_NTESTS 131
+#تعریف_کرو DEFAULT_NTESTS 131
 
-void
-tests(void)
+خالی
+tests(خالی)
 {
-#ifdef WITH_OPENSSL
-	struct bitmap *b;
+#اگر_تعریف_شدہ WITH_OPENSSL
+	ساخت bitmap *b;
 	BIGNUM *bn;
-	size_t len;
-	int i, j, k, n, ntests = DEFAULT_NTESTS;
+	سائز_t len;
+	صحیح i, j, k, n, ntests = DEFAULT_NTESTS;
 	u_char bbuf[1024], bnbuf[1024];
-	int r;
+	صحیح r;
 
-	if (test_is_fast())
+	اگر (test_is_fast())
 		ntests /= 4;
-	else if (test_is_slow())
+	ورنہ اگر (test_is_slow())
 		ntests *= 2;
 
-	TEST_START("bitmap_new");
+	TEST_آغاز("bitmap_new");
 	b = bitmap_new();
-	ASSERT_PTR_NE(b, NULL);
+	ASSERT_PTR_NE(b, تہی);
 	bn = BN_new();
-	ASSERT_PTR_NE(bn, NULL);
-	TEST_DONE();
+	ASSERT_PTR_NE(bn, تہی);
+	TEST_مکمل();
 
-	TEST_START("bitmap_set_bit / bitmap_test_bit");
-	for (i = -1; i < ntests; i++) {
-		for (j = -1; j < ntests; j++) {
-			for (k = -1; k < ntests; k++) {
+	TEST_آغاز("bitmap_set_bit / bitmap_test_bit");
+	برائے (i = -1; i < ntests; i++) {
+		برائے (j = -1; j < ntests; j++) {
+			برائے (k = -1; k < ntests; k++) {
 				bitmap_zero(b);
 				BN_clear(bn);
 
 				test_subtest_info("set %d/%d/%d", i, j, k);
 				/* Set bits */
-				if (i >= 0) {
-					ASSERT_INT_EQ(bitmap_set_bit(b, i), 0);
-					ASSERT_INT_EQ(BN_set_bit(bn, i), 1);
+				اگر (i >= 0) {
+					ASSERT_INT_EQ(bitmap_سیٹ_ثنائی_ہندسہ(b, i), 0);
+					ASSERT_INT_EQ(BN_سیٹ_ثنائی_ہندسہ(bn, i), 1);
 				}
-				if (j >= 0) {
-					ASSERT_INT_EQ(bitmap_set_bit(b, j), 0);
-					ASSERT_INT_EQ(BN_set_bit(bn, j), 1);
+				اگر (j >= 0) {
+					ASSERT_INT_EQ(bitmap_سیٹ_ثنائی_ہندسہ(b, j), 0);
+					ASSERT_INT_EQ(BN_سیٹ_ثنائی_ہندسہ(bn, j), 1);
 				}
-				if (k >= 0) {
-					ASSERT_INT_EQ(bitmap_set_bit(b, k), 0);
-					ASSERT_INT_EQ(BN_set_bit(bn, k), 1);
+				اگر (k >= 0) {
+					ASSERT_INT_EQ(bitmap_سیٹ_ثنائی_ہندسہ(b, k), 0);
+					ASSERT_INT_EQ(BN_سیٹ_ثنائی_ہندسہ(bn, k), 1);
 				}
 
 				/* Check perfect match between bitmap and bn */
 				test_subtest_info("match %d/%d/%d", i, j, k);
-				for (n = 0; n < ntests; n++) {
-					ASSERT_INT_EQ(BN_is_bit_set(bn, n),
-					    bitmap_test_bit(b, n));
+				برائے (n = 0; n < ntests; n++) {
+					ASSERT_INT_EQ(BN_is_ثنائی_ہندسہ_سیٹ(bn, n),
+					    bitmap_test_ثنائی_ہندسہ(b, n));
 				}
 
 				/* Test length calculations */
 				test_subtest_info("length %d/%d/%d", i, j, k);
-				ASSERT_INT_EQ(BN_num_bits(bn),
-				    (int)bitmap_nbits(b));
-				ASSERT_INT_EQ(BN_num_bytes(bn),
-				    (int)bitmap_nbytes(b));
+				ASSERT_INT_EQ(BN_عدد_بٹ(bn),
+				    (صحیح)bitmap_nbits(b));
+				ASSERT_INT_EQ(BN_عدد_بائٹیں(bn),
+				    (صحیح)bitmap_nbytes(b));
 
 				/* Test serialisation */
 				test_subtest_info("serialise %d/%d/%d",
 				    i, j, k);
 				len = bitmap_nbytes(b);
-				memset(bbuf, 0xfc, sizeof(bbuf));
-				ASSERT_INT_EQ(bitmap_to_string(b, bbuf,
-				    sizeof(bbuf)), 0);
-				for (n = len; n < (int)sizeof(bbuf); n++)
+				memset(bbuf, 0xfc, حجم(bbuf));
+				ASSERT_INT_EQ(bitmap_مقصد_string(b, bbuf,
+				    حجم(bbuf)), 0);
+				برائے (n = len; n < (صحیح)حجم(bbuf); n++)
 					ASSERT_U8_EQ(bbuf[n], 0xfc);
 				r = BN_bn2bin(bn, bnbuf);
 				ASSERT_INT_GE(r, 0);
-				ASSERT_INT_EQ(r, (int)len);
+				ASSERT_INT_EQ(r, (صحیح)len);
 				ASSERT_MEM_EQ(bbuf, bnbuf, len);
 
 				/* Test deserialisation */
@@ -102,45 +102,45 @@ tests(void)
 				bitmap_zero(b);
 				ASSERT_INT_EQ(bitmap_from_string(b, bnbuf,
 				    len), 0);
-				for (n = 0; n < ntests; n++) {
-					ASSERT_INT_EQ(BN_is_bit_set(bn, n),
-					    bitmap_test_bit(b, n));
+				برائے (n = 0; n < ntests; n++) {
+					ASSERT_INT_EQ(BN_is_ثنائی_ہندسہ_سیٹ(bn, n),
+					    bitmap_test_ثنائی_ہندسہ(b, n));
 				}
 
 				/* Test clearing bits */
 				test_subtest_info("clear %d/%d/%d",
 				    i, j, k);
-				for (n = 0; n < ntests; n++) {
-					ASSERT_INT_EQ(bitmap_set_bit(b, n), 0);
-					ASSERT_INT_EQ(BN_set_bit(bn, n), 1);
+				برائے (n = 0; n < ntests; n++) {
+					ASSERT_INT_EQ(bitmap_سیٹ_ثنائی_ہندسہ(b, n), 0);
+					ASSERT_INT_EQ(BN_سیٹ_ثنائی_ہندسہ(bn, n), 1);
 				}
-				if (i >= 0) {
-					bitmap_clear_bit(b, i);
-					BN_clear_bit(bn, i);
+				اگر (i >= 0) {
+					bitmap_clear_ثنائی_ہندسہ(b, i);
+					BN_clear_ثنائی_ہندسہ(bn, i);
 				}
-				if (j >= 0) {
-					bitmap_clear_bit(b, j);
-					BN_clear_bit(bn, j);
+				اگر (j >= 0) {
+					bitmap_clear_ثنائی_ہندسہ(b, j);
+					BN_clear_ثنائی_ہندسہ(bn, j);
 				}
-				if (k >= 0) {
-					bitmap_clear_bit(b, k);
-					BN_clear_bit(bn, k);
+				اگر (k >= 0) {
+					bitmap_clear_ثنائی_ہندسہ(b, k);
+					BN_clear_ثنائی_ہندسہ(bn, k);
 				}
-				for (n = 0; n < ntests; n++) {
-					ASSERT_INT_EQ(BN_is_bit_set(bn, n),
-					    bitmap_test_bit(b, n));
+				برائے (n = 0; n < ntests; n++) {
+					ASSERT_INT_EQ(BN_is_ثنائی_ہندسہ_سیٹ(bn, n),
+					    bitmap_test_ثنائی_ہندسہ(b, n));
 				}
 			}
 		}
 	}
 	bitmap_free(b);
 	BN_free(bn);
-	TEST_DONE();
-#endif
+	TEST_مکمل();
+#اگر_ختم
 }
 
-void
-benchmarks(void)
+خالی
+benchmarks(خالی)
 {
-	printf("no benchmarks\n");
+	لکھو("no benchmarks\n");
 }

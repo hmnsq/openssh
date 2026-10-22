@@ -27,40 +27,40 @@
  * binary mode on Windows systems.
  */
 
-#ifndef _BSD_CYGWIN_UTIL_H
-#define _BSD_CYGWIN_UTIL_H
+#اگر_غیر_تعریف_شدہ _BSD_CYGWIN_UTIL_H
+#تعریف_کرو _BSD_CYGWIN_UTIL_H
 
-#ifdef HAVE_CYGWIN
+#اگر_تعریف_شدہ HAVE_CYGWIN
 
-#undef ERROR
+#تعریف_منسوخ ERROR
 
 /* Avoid including windows headers. */
-typedef void *HANDLE;
-#define INVALID_HANDLE_VALUE ((HANDLE) -1)
-#define DNLEN 16
-#define UNLEN 256
+قسمتعریف خالی *HANDLE;
+#تعریف_کرو INVALID_HANDLE_قدر ((HANDLE) -1)
+#تعریف_کرو DNLEN 16
+#تعریف_کرو UNLEN 256
 
 /* Cygwin functions for which declarations are only available when including
    windows headers, so we have to define them here explicitly. */
-extern HANDLE cygwin_logon_user (const struct passwd *, const char *);
-extern void cygwin_set_impersonation_token (const HANDLE);
+خارجی HANDLE cygwin_logon_user (ثابت ساخت passwd *, ثابت حرف *);
+خارجی خالی cygwin_سیٹ_impersonation_token (ثابت HANDLE);
 
-#include <sys/cygwin.h>
-#include <io.h>
+#شامل <sys/cygwin.h>
+#شامل <io.h>
 
-#define CYGWIN_SSH_PRIVSEP_USER (cygwin_ssh_privsep_user())
-const char *cygwin_ssh_privsep_user();
+#تعریف_کرو CYGWIN_SSH_PRIVSEP_USER (cygwin_ssh_privsep_user())
+ثابت حرف *cygwin_ssh_privsep_user();
 
-int binary_open(const char *, int , ...);
-int check_ntsec(const char *);
-char **fetch_windows_environment(void);
-void free_windows_environment(char **);
-int cygwin_ug_match_pattern_list(const char *, const char *);
+صحیح ثنائی_open(ثابت حرف *, صحیح , ...);
+صحیح check_ntsec(ثابت حرف *);
+حرف **fetch_windows_environment(خالی);
+خالی free_windows_environment(حرف **);
+صحیح cygwin_ug_مطابقت_نمونہ_list(ثابت حرف *, ثابت حرف *);
 
-#ifndef NO_BINARY_OPEN
-#define open binary_open
-#endif
+#اگر_غیر_تعریف_شدہ NO_ثنائی_OPEN
+#تعریف_کرو open ثنائی_open
+#اگر_ختم
 
-#endif /* HAVE_CYGWIN */
+#اگر_ختم /* HAVE_CYGWIN */
 
-#endif /* _BSD_CYGWIN_UTIL_H */
+#اگر_ختم /* _BSD_CYGWIN_UTIL_H */

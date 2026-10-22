@@ -22,11 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SSH_MSG_H
-#define SSH_MSG_H
+#اگر_غیر_تعریف_شدہ SSH_پیغام_H
+#تعریف_کرو SSH_پیغام_H
 
-struct sshbuf;
-int	 ssh_msg_send(int, u_char, struct sshbuf *);
-int	 ssh_msg_recv(int, struct sshbuf *);
+ساخت sshbuf;
+صحیح	 ssh_پیغام_send(صحیح, u_char, ساخت sshbuf *);
+صحیح	 ssh_پیغام_recv(صحیح, ساخت sshbuf *);
 
-#endif
+#اگر_ختم

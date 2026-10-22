@@ -15,21 +15,21 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef OPENSSH_AESCTR_H
-#define OPENSSH_AESCTR_H
+#اگر_غیر_تعریف_شدہ OPENSSH_AESCTR_H
+#تعریف_کرو OPENSSH_AESCTR_H
 
-#include "rijndael.h"
+#شامل "rijndael.h"
 
-#define AES_BLOCK_SIZE 16
+#تعریف_کرو AES_بلاک_سائز 16
 
-typedef struct aesctr_ctx {
-	int	rounds;				/* keylen-dependent #rounds */
+قسمتعریف ساخت aesctr_ctx {
+	صحیح	دور;				/* keylen-dependent #rounds */
 	u32	ek[4*(AES_MAXROUNDS + 1)];	/* encrypt key schedule */
-	u8	ctr[AES_BLOCK_SIZE];		/* counter */
+	u8	ctr[AES_بلاک_سائز];		/*شمار*/
 } aesctr_ctx;
 
-void aesctr_keysetup(aesctr_ctx *x,const u8 *k,u32 kbits,u32 ivbits);
-void aesctr_ivsetup(aesctr_ctx *x,const u8 *iv);
-void aesctr_encrypt_bytes(aesctr_ctx *x,const u8 *m,u8 *c,u32 bytes);
+خالی aesctr_keysetup(aesctr_ctx *x,ثابت u8 *k,u32 kbits,u32 ivbits);
+خالی aesctr_ivsetup(aesctr_ctx *x,ثابت u8 *iv);
+خالی aesctr_encrypt_بائٹیں(aesctr_ctx *x,ثابت u8 *m,u8 *c,u32 بائٹیں);
 
-#endif
+#اگر_ختم

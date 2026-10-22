@@ -15,170 +15,170 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#شامل <sys/types.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
+#شامل <string.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/ec.h>
+#اگر_تعریف_شدہ WITH_OPENSSL
+#شامل <openssl/bn.h>
+#شامل <openssl/ec.h>
 
-#include "ssherr.h"
-#define SSHBUF_INTERNAL
-#include "sshbuf.h"
+#شامل "ssherr.h"
+#تعریف_کرو SSHBUF_اندرونی
+#شامل "sshbuf.h"
 
-int
-sshbuf_get_bignum2(struct sshbuf *buf, BIGNUM **valp)
+صحیح
+sshbuf_get_bignum2(ساخت sshbuf *buf, BIGNUM **valp)
 {
 	BIGNUM *v;
-	const u_char *d;
-	size_t len;
-	int r;
+	ثابت u_char *d;
+	سائز_t len;
+	صحیح r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if ((r = sshbuf_get_bignum2_bytes_direct(buf, &d, &len)) != 0)
-		return r;
-	if (valp != NULL) {
-		if ((v = BN_new()) == NULL ||
-		    BN_bin2bn(d, len, v) == NULL) {
+	اگر (valp != تہی)
+		*valp = تہی;
+	اگر ((r = sshbuf_get_bignum2_بائٹیں_براہ_راست(buf, &d, &len)) != 0)
+		واپس r;
+	اگر (valp != تہی) {
+		اگر ((v = BN_new()) == تہی ||
+		    BN_bin2bn(d, len, v) == تہی) {
 			BN_clear_free(v);
-			return SSH_ERR_ALLOC_FAIL;
+			واپس SSH_ERR_ALLOC_FAIL;
 		}
 		*valp = v;
 	}
-	return 0;
+	واپس 0;
 }
 
-static int
-get_ec(const u_char *d, size_t len, EC_POINT *v, const EC_GROUP *g)
+ساکن صحیح
+get_ec(ثابت u_char *d, سائز_t len, EC_نقطہ *v, ثابت EC_گروہ *g)
 {
 	/* Refuse overlong bignums */
-	if (len == 0 || len > SSHBUF_MAX_ECPOINT)
-		return SSH_ERR_ECPOINT_TOO_LARGE;
+	اگر (len == 0 || len > SSHBUF_MAX_ECPOINT)
+		واپس SSH_ERR_ECPOINT_TOO_LARGE;
 	/* Only handle uncompressed points */
-	if (*d != POINT_CONVERSION_UNCOMPRESSED)
-		return SSH_ERR_INVALID_FORMAT;
-	if (v != NULL && EC_POINT_oct2point(g, v, d, len, NULL) != 1)
-		return SSH_ERR_INVALID_FORMAT; /* XXX assumption */
-	return 0;
+	اگر (*d != نقطہ_CONVERSION_UNCOMPRESSED)
+		واپس SSH_ERR_INVALID_FORMAT;
+	اگر (v != تہی && EC_نقطہ_oct2point(g, v, d, len, تہی) != 1)
+		واپس SSH_ERR_INVALID_FORMAT; /* XXX assumption */
+	واپس 0;
 }
 
-int
-sshbuf_get_ec(struct sshbuf *buf, EC_POINT *v, const EC_GROUP *g)
+صحیح
+sshbuf_get_ec(ساخت sshbuf *buf, EC_نقطہ *v, ثابت EC_گروہ *g)
 {
-	const u_char *d;
-	size_t len;
-	int r;
+	ثابت u_char *d;
+	سائز_t len;
+	صحیح r;
 
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0)
-		return r;
-	if ((r = get_ec(d, len, v, g)) != 0)
-		return r;
+	اگر ((r = sshbuf_peek_string_براہ_راست(buf, &d, &len)) < 0)
+		واپس r;
+	اگر ((r = get_ec(d, len, v, g)) != 0)
+		واپس r;
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	اگر (sshbuf_get_string_براہ_راست(buf, تہی, تہی) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		واپس SSH_ERR_اندرونی_ERROR;
 	}
-	return 0;
+	واپس 0;
 }
 
-int
-sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v)
+صحیح
+sshbuf_get_eckey(ساخت sshbuf *buf, EC_کلید *v)
 {
-	EC_POINT *pt = EC_POINT_new(EC_KEY_get0_group(v));
-	int r;
-	const u_char *d;
-	size_t len;
+	EC_نقطہ *pt = EC_نقطہ_new(EC_کلید_get0_گروہ(v));
+	صحیح r;
+	ثابت u_char *d;
+	سائز_t len;
 
-	if (pt == NULL) {
+	اگر (pt == تہی) {
 		SSHBUF_DBG(("SSH_ERR_ALLOC_FAIL"));
-		return SSH_ERR_ALLOC_FAIL;
+		واپس SSH_ERR_ALLOC_FAIL;
 	}
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0) {
-		EC_POINT_free(pt);
-		return r;
+	اگر ((r = sshbuf_peek_string_براہ_راست(buf, &d, &len)) < 0) {
+		EC_نقطہ_free(pt);
+		واپس r;
 	}
-	if ((r = get_ec(d, len, pt, EC_KEY_get0_group(v))) != 0) {
-		EC_POINT_free(pt);
-		return r;
+	اگر ((r = get_ec(d, len, pt, EC_کلید_get0_گروہ(v))) != 0) {
+		EC_نقطہ_free(pt);
+		واپس r;
 	}
-	if (EC_KEY_set_public_key(v, pt) != 1) {
-		EC_POINT_free(pt);
-		return SSH_ERR_ALLOC_FAIL; /* XXX assumption */
+	اگر (EC_کلید_سیٹ_عوامی_کلید(v, pt) != 1) {
+		EC_نقطہ_free(pt);
+		واپس SSH_ERR_ALLOC_FAIL; /* XXX assumption */
 	}
-	EC_POINT_free(pt);
+	EC_نقطہ_free(pt);
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	اگر (sshbuf_get_string_براہ_راست(buf, تہی, تہی) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		واپس SSH_ERR_اندرونی_ERROR;
 	}
-	return 0;
+	واپس 0;
 }
 
-int
-sshbuf_put_bignum2(struct sshbuf *buf, const BIGNUM *v)
+صحیح
+sshbuf_put_bignum2(ساخت sshbuf *buf, ثابت BIGNUM *v)
 {
 	u_char d[SSHBUF_MAX_BIGNUM + 1];
-	int len = BN_num_bytes(v), prepend = 0, r;
+	صحیح len = BN_عدد_بائٹیں(v), prepend = 0, r;
 
-	if (len < 0 || len > SSHBUF_MAX_BIGNUM)
-		return SSH_ERR_INVALID_ARGUMENT;
+	اگر (len < 0 || len > SSHBUF_MAX_BIGNUM)
+		واپس SSH_ERR_INVALID_دلیل;
 	*d = '\0';
-	if (BN_bn2bin(v, d + 1) != len)
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+	اگر (BN_bn2bin(v, d + 1) != len)
+		واپس SSH_ERR_اندرونی_ERROR; /* Shouldn't happen */
 	/* If MSB is set, prepend a \0 */
-	if (len > 0 && (d[1] & 0x80) != 0)
+	اگر (len > 0 && (d[1] & 0x80) != 0)
 		prepend = 1;
-	if ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
-		explicit_bzero(d, sizeof(d));
-		return r;
+	اگر ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
+		explicit_bzero(d, حجم(d));
+		واپس r;
 	}
-	explicit_bzero(d, sizeof(d));
-	return 0;
+	explicit_bzero(d, حجم(d));
+	واپس 0;
 }
 
-int
-sshbuf_put_ec(struct sshbuf *buf, const EC_POINT *v, const EC_GROUP *g)
+صحیح
+sshbuf_put_ec(ساخت sshbuf *buf, ثابت EC_نقطہ *v, ثابت EC_گروہ *g)
 {
 	u_char d[SSHBUF_MAX_ECPOINT];
-	size_t len;
-	int ret;
+	سائز_t len;
+	صحیح ret;
 
-	if ((len = EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
-	    NULL, 0, NULL)) > SSHBUF_MAX_ECPOINT) {
-		return SSH_ERR_INVALID_ARGUMENT;
+	اگر ((len = EC_نقطہ_point2oct(g, v, نقطہ_CONVERSION_UNCOMPRESSED,
+	    تہی, 0, تہی)) > SSHBUF_MAX_ECPOINT) {
+		واپس SSH_ERR_INVALID_دلیل;
 	}
-	if (EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
-	    d, len, NULL) != len) {
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+	اگر (EC_نقطہ_point2oct(g, v, نقطہ_CONVERSION_UNCOMPRESSED,
+	    d, len, تہی) != len) {
+		واپس SSH_ERR_اندرونی_ERROR; /* Shouldn't happen */
 	}
 	ret = sshbuf_put_string(buf, d, len);
 	explicit_bzero(d, len);
-	return ret;
+	واپس ret;
 }
 
-int
-sshbuf_put_eckey(struct sshbuf *buf, const EC_KEY *v)
+صحیح
+sshbuf_put_eckey(ساخت sshbuf *buf, ثابت EC_کلید *v)
 {
-	return sshbuf_put_ec(buf, EC_KEY_get0_public_key(v),
-	    EC_KEY_get0_group(v));
+	واپس sshbuf_put_ec(buf, EC_کلید_get0_عوامی_کلید(v),
+	    EC_کلید_get0_گروہ(v));
 }
 
-int
-sshbuf_put_ec_pkey(struct sshbuf *buf, EVP_PKEY *pkey)
+صحیح
+sshbuf_put_ec_pkey(ساخت sshbuf *buf, EVP_PKEY *pkey)
 {
-	const EC_KEY *ec;
+	ثابت EC_کلید *ec;
 
-	if ((ec = EVP_PKEY_get0_EC_KEY(pkey)) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return sshbuf_put_eckey(buf, ec);
+	اگر ((ec = EVP_PKEY_get0_EC_کلید(pkey)) == تہی)
+		واپس SSH_ERR_LIBCRYPTO_ERROR;
+	واپس sshbuf_put_eckey(buf, ec);
 }
-#endif /* WITH_OPENSSL */
+#اگر_ختم /* WITH_OPENSSL */

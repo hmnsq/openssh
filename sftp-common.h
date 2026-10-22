@@ -26,15 +26,15 @@
  */
 
 /* Maximum packet that we are willing to send/accept */
-#define SFTP_MAX_MSG_LENGTH	(256 * 1024)
+#تعریف_کرو SFTP_MAX_پیغام_لمبائی	(256 * 1024)
 
-struct sshbuf;
-typedef struct Attrib Attrib;
+ساخت sshbuf;
+قسمتعریف ساخت Attrib Attrib;
 
 /* File attributes */
-struct Attrib {
+ساخت Attrib {
 	uint32_t	flags;
-	uint64_t	size;
+	uint64_t	سائز;
 	uint32_t	uid;
 	uint32_t	gid;
 	uint32_t	perm;
@@ -42,12 +42,12 @@ struct Attrib {
 	uint32_t	mtime;
 };
 
-void	 attrib_clear(Attrib *);
-void	 stat_to_attrib(const struct stat *, Attrib *);
-void	 attrib_to_stat(const Attrib *, struct stat *);
-int	 decode_attrib(struct sshbuf *, Attrib *);
-int	 encode_attrib(struct sshbuf *, const Attrib *);
-char	*ls_file(const char *, const struct stat *, int, int,
-    const char *, const char *);
+خالی	 attrib_clear(Attrib *);
+خالی	 stat_مقصد_attrib(ثابت ساخت stat *, Attrib *);
+خالی	 attrib_مقصد_stat(ثابت Attrib *, ساخت stat *);
+صحیح	 decode_attrib(ساخت sshbuf *, Attrib *);
+صحیح	 encode_attrib(ساخت sshbuf *, ثابت Attrib *);
+حرف	*ls_file(ثابت حرف *, ثابت ساخت stat *, صحیح, صحیح,
+    ثابت حرف *, ثابت حرف *);
 
-const char *fx2txt(int);
+ثابت حرف *fx2txt(صحیح);

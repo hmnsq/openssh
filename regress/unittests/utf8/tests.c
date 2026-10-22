@@ -6,62 +6,62 @@
  * and placed in the public domain.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <locale.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
+#شامل <locale.h>
+#شامل <stdarg.h>
+#شامل <string.h>
+#شامل <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#شامل "../test_helper/test_helper.h"
 
-#include "utf8.h"
+#شامل "utf8.h"
 
-static void
-badarg(void)
+ساکن خالی
+badarg(خالی)
 {
-	char	 buf[16];
-	int	 len, width;
+	حرف	 buf[16];
+	صحیح	 len, چوڑائی;
 
-	width = 1;
-	TEST_START("utf8_badarg");
-	len = snmprintf(buf, sizeof(buf), &width, "\377");
+	چوڑائی = 1;
+	TEST_آغاز("utf8_badarg");
+	len = snmprintf(buf, حجم(buf), &چوڑائی, "\377");
 	ASSERT_INT_EQ(len, -1);
 	ASSERT_STRING_EQ(buf, "");
-	ASSERT_INT_EQ(width, 0);
-	TEST_DONE();
+	ASSERT_INT_EQ(چوڑائی, 0);
+	TEST_مکمل();
 }
 
-static void
-one(int utf8, const char *name, const char *mbs, int width,
-    int wantwidth, int wantlen, const char *wants)
+ساکن خالی
+one(صحیح utf8, ثابت حرف *name, ثابت حرف *mbs, صحیح چوڑائی,
+    صحیح wantwidth, صحیح wantlen, ثابت حرف *چاہتا)
 {
-	char	 buf[16];
-	int	*wp;
-	int	 len;
+	حرف	 buf[16];
+	صحیح	*wp;
+	صحیح	 len;
 
-	if (wantlen == -2)
-		wantlen = strlen(wants);
-	(void)strlcpy(buf, utf8 ? "utf8_" : "c_", sizeof(buf));
-	(void)strlcat(buf, name, sizeof(buf));
-	TEST_START(buf);
-	wp = wantwidth == -2 ? NULL : &width;
-	len = snmprintf(buf, sizeof(buf), wp, "%s", mbs);
+	اگر (wantlen == -2)
+		wantlen = لڑی_لمبائی(چاہتا);
+	(خالی)strlcpy(buf, utf8 ? "utf8_" : "c_", حجم(buf));
+	(خالی)strlcat(buf, name, حجم(buf));
+	TEST_آغاز(buf);
+	wp = wantwidth == -2 ? تہی : &چوڑائی;
+	len = snmprintf(buf, حجم(buf), wp, "%s", mbs);
 	ASSERT_INT_EQ(len, wantlen);
-	ASSERT_STRING_EQ(buf, wants);
-	ASSERT_INT_EQ(width, wantwidth);
-	TEST_DONE();
+	ASSERT_STRING_EQ(buf, چاہتا);
+	ASSERT_INT_EQ(چوڑائی, wantwidth);
+	TEST_مکمل();
 }
 
-void
-tests(void)
+خالی
+tests(خالی)
 {
-	char	*loc;
+	حرف	*loc;
 
-	TEST_START("utf8_setlocale");
+	TEST_آغاز("utf8_setlocale");
 	loc = setlocale(LC_CTYPE, "en_US.UTF-8");
-	ASSERT_PTR_NE(loc, NULL);
-	TEST_DONE();
+	ASSERT_PTR_NE(loc, تہی);
+	TEST_مکمل();
 
 	badarg();
 	one(1, "empty", "", 2, 0, 0, "");
@@ -80,10 +80,10 @@ tests(void)
 	one(1, "double_fit", "a\343\201\201", 3, 3, 4, "a\343\201\201");
 	one(1, "double_spc", "a\343\201\201", 4, 3, 4, "a\343\201\201");
 
-	TEST_START("C_setlocale");
+	TEST_آغاز("C_setlocale");
 	loc = setlocale(LC_CTYPE, "C");
-	ASSERT_PTR_NE(loc, NULL);
-	TEST_DONE();
+	ASSERT_PTR_NE(loc, تہی);
+	TEST_مکمل();
 
 	badarg();
 	one(0, "empty", "", 2, 0, 0, "");
@@ -103,8 +103,8 @@ tests(void)
 	one(0, "double_spc", "a\343\201\201", 13, 13, 13, "a\\343\\201\\201");
 }
 
-void
-benchmarks(void)
+خالی
+benchmarks(خالی)
 {
-	printf("no benchmarks\n");
+	لکھو("no benchmarks\n");
 }
