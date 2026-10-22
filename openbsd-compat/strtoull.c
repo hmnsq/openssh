@@ -30,15 +30,15 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoull.c */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 #ifndef HAVE_STRTOULL
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#अन्तर्भाव <ctype.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <stdlib.h>
 
 /*
  * Convert a string to an unsigned long long.
@@ -46,65 +46,65 @@
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-unsigned long long
-strtoull(const char *nptr, char **endptr, int base)
+अचिन्हित दीर्घ दीर्घ
+strtoull(ध्रुव वर्ण *nptr, वर्ण **endptr, पूर्णाङ्क base)
 {
-	const char *s;
-	unsigned long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	ध्रुव वर्ण *s;
+	अचिन्हित दीर्घ दीर्घ acc, cutoff;
+	पूर्णाङ्क c;
+	पूर्णाङ्क neg, any, cutlim;
 
 	/*
 	 * See strtoq for comments as to the logic used.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	कुरु {
+		c = (अचिन्हित वर्ण) *s++;
+	} यावत् (है_खाली(c));
+	यदि (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else { 
+	} अन्यथा { 
 		neg = 0;
-		if (c == '+')
+		यदि (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	यदि ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	यदि (base == 0)
 		base = c == '0' ? 8 : 10;
 
-	cutoff = ULLONG_MAX / (unsigned long long)base;
-	cutlim = ULLONG_MAX % (unsigned long long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	cutoff = ULLONG_MAX / (अचिन्हित दीर्घ दीर्घ)base;
+	cutlim = ULLONG_MAX % (अचिन्हित दीर्घ दीर्घ)base;
+	प्रति (acc = 0, any = 0;; c = (अचिन्हित वर्ण) *s++) {
+		यदि (है_अंक(c))
 			c -= '0';
-		else if (isalpha(c))
-			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		अन्यथा यदि (है_अक्षर(c))
+			c -= है_बड़ा(c) ? 'A' - 10 : 'a' - 10;
+		अन्यथा
+			भङ्ग;
+		यदि (c >= base)
+			भङ्ग;
+		यदि (any < 0)
+			अनुवर्त;
+		यदि (acc > cutoff || (acc == cutoff && c > cutlim)) {
 			any = -1;
 			acc = ULLONG_MAX;
-			errno = ERANGE;
-		} else {
+			त्रुटि_सं = दुस्फल;
+		} अन्यथा {
 			any = 1;
-			acc *= (unsigned long long)base;
+			acc *= (अचिन्हित दीर्घ दीर्घ)base;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	यदि (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	यदि (endptr != 0)
+		*endptr = (वर्ण *) (any ? s - 1 : nptr);
+	प्रत्यागम (acc);
 }
 #endif /* !HAVE_STRTOULL */
