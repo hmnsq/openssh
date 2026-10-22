@@ -31,7 +31,7 @@
 /* OPENBSD ORIGINAL: lib/libc/gen/vis.c */
 
 #include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#ꦪꦼꦤ꧀ !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
 #include <sys/types.h>
 #include <errno.h>
@@ -58,63 +58,63 @@
 /*
  * vis - visually encode characters
  */
-char *
-vis(char *dst, int c, int flag, int nextc)
+var_na *
+vis(var_na *dst, puur_naa_nka c, puur_naa_nka flag, puur_naa_nka nextc)
 {
-	if (isvisible(c, flag)) {
-		if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	ꦪꦼꦤ꧀ (isvisible(c, flag)) {
+		ꦪꦼꦤ꧀ ((c == '"' && (flag & VIS_DQ) != 0) ||
 		    (c == '\\' && (flag & VIS_NOSLASH) == 0))
 			*dst++ = '\\';
 		*dst++ = c;
 		*dst = '\0';
-		return (dst);
+		ꦮꦭꦶ (dst);
 	}
 
-	if (flag & VIS_CSTYLE) {
+	ꦪꦼꦤ꧀ (flag & VIS_CSTYLE) {
 		switch(c) {
-		case '\n':
+		pak_sa '\n':
 			*dst++ = '\\';
 			*dst++ = 'n';
 			goto done;
-		case '\r':
+		pak_sa '\r':
 			*dst++ = '\\';
 			*dst++ = 'r';
 			goto done;
-		case '\b':
+		pak_sa '\b':
 			*dst++ = '\\';
 			*dst++ = 'b';
 			goto done;
-		case '\a':
+		pak_sa '\a':
 			*dst++ = '\\';
 			*dst++ = 'a';
 			goto done;
-		case '\v':
+		pak_sa '\v':
 			*dst++ = '\\';
 			*dst++ = 'v';
 			goto done;
-		case '\t':
+		pak_sa '\t':
 			*dst++ = '\\';
 			*dst++ = 't';
 			goto done;
-		case '\f':
+		pak_sa '\f':
 			*dst++ = '\\';
 			*dst++ = 'f';
 			goto done;
-		case ' ':
+		pak_sa ' ':
 			*dst++ = '\\';
 			*dst++ = 's';
 			goto done;
-		case '\0':
+		pak_sa '\0':
 			*dst++ = '\\';
 			*dst++ = '0';
-			if (isoctal(nextc)) {
+			ꦪꦼꦤ꧀ (isoctal(nextc)) {
 				*dst++ = '0';
 				*dst++ = '0';
 			}
 			goto done;
 		}
 	}
-	if (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
+	ꦪꦼꦤ꧀ (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
 	    ((flag & VIS_GLOB) && (c == '*' || c == '?' || c == '[' || c == '#'))) {
 		*dst++ = '\\';
 		*dst++ = ((u_char)c >> 6 & 07) + '0';
@@ -122,25 +122,25 @@ vis(char *dst, int c, int flag, int nextc)
 		*dst++ = ((u_char)c & 07) + '0';
 		goto done;
 	}
-	if ((flag & VIS_NOSLASH) == 0)
+	ꦪꦼꦤ꧀ ((flag & VIS_NOSLASH) == 0)
 		*dst++ = '\\';
-	if (c & 0200) {
+	ꦪꦼꦤ꧀ (c & 0200) {
 		c &= 0177;
 		*dst++ = 'M';
 	}
-	if (iscntrl((u_char)c)) {
+	ꦪꦼꦤ꧀ (iscntrl((u_char)c)) {
 		*dst++ = '^';
-		if (c == 0177)
+		ꦪꦼꦤ꧀ (c == 0177)
 			*dst++ = '?';
-		else
+		ꦭꦶꦪ
 			*dst++ = c + '@';
-	} else {
+	} ꦭꦶꦪ {
 		*dst++ = '-';
 		*dst++ = c;
 	}
 done:
 	*dst = '\0';
-	return (dst);
+	ꦮꦭꦶ (dst);
 }
 DEF_WEAK(vis);
 
@@ -157,96 +157,96 @@ DEF_WEAK(vis);
  *	Strvisx encodes exactly len bytes from src into dst.
  *	This is useful for encoding a block of data.
  */
-int
-strvis(char *dst, const char *src, int flag)
+puur_naa_nka
+strvis(var_na *dst, const var_na *src, puur_naa_nka flag)
 {
-	char c;
-	char *start;
+	var_na c;
+	var_na *start;
 
-	for (start = dst; (c = *src);)
+	ꦏꦁꦒꦺꦴ (start = dst; (c = *src);)
 		dst = vis(dst, c, flag, *++src);
 	*dst = '\0';
-	return (dst - start);
+	ꦮꦭꦶ (dst - start);
 }
 DEF_WEAK(strvis);
 
-int
-strnvis(char *dst, const char *src, size_t siz, int flag)
+puur_naa_nka
+strnvis(var_na *dst, const var_na *src, size_t siz, puur_naa_nka flag)
 {
-	char *start, *end;
-	char tbuf[5];
-	int c, i;
+	var_na *start, *end;
+	var_na tbuf[5];
+	puur_naa_nka c, i;
 
 	i = 0;
-	for (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
-		if (isvisible(c, flag)) {
-			if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	ꦏꦁꦒꦺꦴ (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
+		ꦪꦼꦤ꧀ (isvisible(c, flag)) {
+			ꦪꦼꦤ꧀ ((c == '"' && (flag & VIS_DQ) != 0) ||
 			    (c == '\\' && (flag & VIS_NOSLASH) == 0)) {
 				/* need space for the extra '\\' */
-				if (dst + 1 >= end) {
+				ꦪꦼꦤ꧀ (dst + 1 >= end) {
 					i = 2;
-					break;
+					bha_nga;
 				}
 				*dst++ = '\\';
 			}
 			i = 1;
 			*dst++ = c;
 			src++;
-		} else {
+		} ꦭꦶꦪ {
 			i = vis(tbuf, c, flag, *++src) - tbuf;
-			if (dst + i <= end) {
+			ꦪꦼꦤ꧀ (dst + i <= end) {
 				memcpy(dst, tbuf, i);
 				dst += i;
-			} else {
+			} ꦭꦶꦪ {
 				src--;
-				break;
+				bha_nga;
 			}
 		}
 	}
-	if (siz > 0)
+	ꦪꦼꦤ꧀ (siz > 0)
 		*dst = '\0';
-	if (dst + i > end) {
+	ꦪꦼꦤ꧀ (dst + i > end) {
 		/* adjust return value for truncation */
-		while ((c = *src))
+		ꦱꦼꦢꦼꦭ ((c = *src))
 			dst += vis(tbuf, c, flag, *++src) - tbuf;
 	}
-	return (dst - start);
+	ꦮꦭꦶ (dst - start);
 }
 
-#if 0 /* unused in OpenSSH */
-int
-stravis(char **outp, const char *src, int flag)
+#ꦪꦼꦤ꧀ 0 /* unused in OpenSSH */
+puur_naa_nka
+stravis(var_na **outp, const var_na *src, puur_naa_nka flag)
 {
-	char *buf;
-	int len, serrno;
+	var_na *buf;
+	puur_naa_nka len, serrno;
 
 	buf = reallocarray(NULL, 4, strlen(src) + 1);
-	if (buf == NULL)
-		return -1;
+	ꦪꦼꦤ꧀ (buf == NULL)
+		ꦮꦭꦶ -1;
 	len = strvis(buf, src, flag);
 	serrno = errno;
 	*outp = realloc(buf, len + 1);
-	if (*outp == NULL) {
+	ꦪꦼꦤ꧀ (*outp == NULL) {
 		*outp = buf;
 		errno = serrno;
 	}
-	return (len);
+	ꦮꦭꦶ (len);
 }
 
-int
-strvisx(char *dst, const char *src, size_t len, int flag)
+puur_naa_nka
+strvisx(var_na *dst, const var_na *src, size_t len, puur_naa_nka flag)
 {
-	char c;
-	char *start;
+	var_na c;
+	var_na *start;
 
-	for (start = dst; len > 1; len--) {
+	ꦏꦁꦒꦺꦴ (start = dst; len > 1; len--) {
 		c = *src;
 		dst = vis(dst, c, flag, *++src);
 	}
-	if (len)
+	ꦪꦼꦤ꧀ (len)
 		dst = vis(dst, *src, flag, '\0');
 	*dst = '\0';
-	return (dst - start);
+	ꦮꦭꦶ (dst - start);
 }
 #endif /* unused */
 

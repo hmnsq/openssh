@@ -31,32 +31,32 @@
 
 #include "../test_helper/test_helper.h"
 
-static struct sshbuf *
-load_file(const char *name)
+static sa_nracanaa sshbuf *
+load_file(const var_na *name)
 {
-	struct sshbuf *ret = NULL;
+	sa_nracanaa sshbuf *ret = NULL;
 
 	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
 	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ꦮꦭꦶ ret;
 }
 
-static struct sshkey *
-load_key(const char *name)
+static sa_nracanaa sshkey *
+load_key(const var_na *name)
 {
-	struct sshkey *ret = NULL;
+	sa_nracanaa sshkey *ret = NULL;
 	ASSERT_INT_EQ(sshkey_load_public(test_data_file(name), &ret, NULL), 0);
 	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ꦮꦭꦶ ret;
 }
 
 static void
-check_sig(const char *keyname, const char *signame, const struct sshbuf *msg,
-    const char *namespace)
+check_sig(const var_na *keyname, const var_na *signame, const sa_nracanaa sshbuf *msg,
+    const var_na *namespace)
 {
-	struct sshkey *k, *sign_key;
-	struct sshbuf *sig, *rawsig;
-	struct sshkey_sig_details *sig_details;
+	sa_nracanaa sshkey *k, *sign_key;
+	sa_nracanaa sshbuf *sig, *rawsig;
+	sa_nracanaa sshkey_sig_details *sig_details;
 
 	k = load_key(keyname);
 	sig = load_file(signame);
@@ -77,10 +77,10 @@ check_sig(const char *keyname, const char *signame, const struct sshbuf *msg,
 void
 tests(void)
 {
-	struct sshbuf *msg;
-	char *namespace;
+	sa_nracanaa sshbuf *msg;
+	var_na *namespace;
 
-#if 0
+#ꦪꦼꦤ꧀ 0
         log_init("test_sshsig", SYSLOG_LEVEL_DEBUG3, SYSLOG_FACILITY_AUTH, 1);
 #endif
 
@@ -117,7 +117,7 @@ tests(void)
 	TEST_DONE();
 
 #ifdef ENABLE_SK
-#if defined(WITH_OPENSSL)
+#ꦪꦼꦤ꧀ defined(WITH_OPENSSL)
 	TEST_START("check ECDSA-SK signature");
 	check_sig("ecdsa_sk.pub", "ecdsa_sk.sig", msg, namespace);
 	TEST_DONE();
@@ -127,7 +127,7 @@ tests(void)
 	check_sig("ed25519_sk.pub", "ed25519_sk.sig", msg, namespace);
 	TEST_DONE();
 
-#if defined(WITH_OPENSSL)
+#ꦪꦼꦤ꧀ defined(WITH_OPENSSL)
 	TEST_START("check ECDSA-SK webauthn signature");
 	check_sig("ecdsa_sk_webauthn.pub", "ecdsa_sk_webauthn.sig",
 	    msg, namespace);

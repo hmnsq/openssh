@@ -47,7 +47,7 @@
 
 #include "includes.h"
 
-#if !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS)
+#ꦪꦼꦤ꧀ !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS)
 
 #include <stdlib.h>
 #include <string.h>
@@ -57,8 +57,8 @@
 
 #include "getrrsetbyname.h"
 
-#if defined(HAVE_DECL_H_ERRNO) && !HAVE_DECL_H_ERRNO
-extern int h_errno;
+#ꦪꦼꦤ꧀ defined(HAVE_DECL_H_ERRNO) && !HAVE_DECL_H_ERRNO
+extern puur_naa_nka h_errno;
 #endif
 
 /* We don't need multithread support here */
@@ -68,7 +68,7 @@ extern int h_errno;
 #define _THREAD_PRIVATE(a,b,c) (c)
 
 #ifndef HAVE__RES_EXTERN
-struct __res_state _res;
+sa_nracanaa __res_state _res;
 #endif
 
 /* Necessary functions and macros */
@@ -113,7 +113,7 @@ struct __res_state _res;
  * If the system doesn't have _getshort/_getlong or that are not exactly what
  * we need then use local replacements, avoiding name collisions.
  */
-#if !defined(HAVE__GETSHORT) || !defined(HAVE__GETLONG) || \
+#ꦪꦼꦤ꧀ !defined(HAVE__GETSHORT) || !defined(HAVE__GETLONG) || \
     !defined(HAVE_DECL__GETSHORT) || HAVE_DECL__GETSHORT == 0 || \
     !defined(HAVE_DECL__GETLONG) || HAVE_DECL__GETLONG == 0
 # ifdef _getshort
@@ -133,7 +133,7 @@ _getshort(const u_char *msgp)
 	u_int16_t u;
 
 	GETSHORT(u, msgp);
-	return (u);
+	ꦮꦭꦶ (u);
 }
 
 static u_int32_t
@@ -142,7 +142,7 @@ _getlong(const u_char *msgp)
 	u_int32_t u;
 
 	GETLONG(u, msgp);
-	return (u);
+	ꦮꦭꦶ (u);
 }
 #endif /* missing _getshort/_getlong */
 
@@ -150,78 +150,78 @@ _getlong(const u_char *msgp)
 
 #define ANSWER_BUFFER_SIZE 0xffff
 
-struct dns_query {
-	char			*name;
+sa_nracanaa dns_query {
+	var_na			*name;
 	u_int16_t		type;
 	u_int16_t		class;
-	struct dns_query	*next;
+	sa_nracanaa dns_query	*next;
 };
 
-struct dns_rr {
-	char			*name;
+sa_nracanaa dns_rr {
+	var_na			*name;
 	u_int16_t		type;
 	u_int16_t		class;
 	u_int16_t		ttl;
 	u_int16_t		size;
 	void			*rdata;
-	struct dns_rr		*next;
+	sa_nracanaa dns_rr		*next;
 };
 
-struct dns_response {
+sa_nracanaa dns_response {
 	HEADER			header;
-	struct dns_query	*query;
-	struct dns_rr		*answer;
-	struct dns_rr		*authority;
-	struct dns_rr		*additional;
+	sa_nracanaa dns_query	*query;
+	sa_nracanaa dns_rr		*answer;
+	sa_nracanaa dns_rr		*authority;
+	sa_nracanaa dns_rr		*additional;
 };
 
-static struct dns_response *parse_dns_response(const u_char *, int);
-static struct dns_query *parse_dns_qsection(const u_char *, int,
-    const u_char **, int);
-static struct dns_rr *parse_dns_rrsection(const u_char *, int, const u_char **,
-    int);
+static sa_nracanaa dns_response *parse_dns_response(const u_char *, puur_naa_nka);
+static sa_nracanaa dns_query *parse_dns_qsection(const u_char *, puur_naa_nka,
+    const u_char **, puur_naa_nka);
+static sa_nracanaa dns_rr *parse_dns_rrsection(const u_char *, puur_naa_nka, const u_char **,
+    puur_naa_nka);
 
-static void free_dns_query(struct dns_query *);
-static void free_dns_rr(struct dns_rr *);
-static void free_dns_response(struct dns_response *);
+static void free_dns_query(sa_nracanaa dns_query *);
+static void free_dns_rr(sa_nracanaa dns_rr *);
+static void free_dns_response(sa_nracanaa dns_response *);
 
-static int count_dns_rr(struct dns_rr *, u_int16_t, u_int16_t);
+static puur_naa_nka count_dns_rr(sa_nracanaa dns_rr *, u_int16_t, u_int16_t);
 
-int
-getrrsetbyname(const char *hostname, unsigned int rdclass,
-    unsigned int rdtype, unsigned int flags,
-    struct rrsetinfo **res)
+puur_naa_nka
+getrrsetbyname(const var_na *hostname, unsigned puur_naa_nka rdclass,
+    unsigned puur_naa_nka rdtype, unsigned puur_naa_nka flags,
+    sa_nracanaa rrsetinfo **res)
 {
-	struct __res_state *_resp = _THREAD_PRIVATE(_res, _res, &_res);
-	int result;
-	struct rrsetinfo *rrset = NULL;
-	struct dns_response *response = NULL;
-	struct dns_rr *rr;
-	struct rdatainfo *rdata;
-	int length;
-	unsigned int index_ans, index_sig;
+	sa_nracanaa __res_state *_resp = _THREAD_PRIVATE(_res, _res, &_res);
+	puur_naa_nka result;
+	sa_nracanaa rrsetinfo *rrset = NULL;
+	sa_nracanaa dns_response *response = NULL;
+	sa_nracanaa dns_rr *rr;
+	sa_nracanaa rdatainfo *rdata;
+	puur_naa_nka length;
+	unsigned puur_naa_nka index_ans, index_sig;
 	u_char answer[ANSWER_BUFFER_SIZE];
 
 	/* check for invalid class and type */
-	if (rdclass > 0xffff || rdtype > 0xffff) {
+	ꦪꦼꦤ꧀ (rdclass > 0xffff || rdtype > 0xffff) {
 		result = ERRSET_INVAL;
 		goto fail;
 	}
 
 	/* don't allow queries of class or type ANY */
-	if (rdclass == 0xff || rdtype == 0xff) {
+	ꦪꦼꦤ꧀ (rdclass == 0xff || rdtype == 0xff) {
 		result = ERRSET_INVAL;
 		goto fail;
 	}
 
 	/* don't allow flags yet, unimplemented */
-	if (flags) {
+	ꦪꦼꦤ꧀ (flags) {
 		result = ERRSET_INVAL;
 		goto fail;
 	}
 
 	/* initialize resolver */
-	if ((_resp->options & RES_INIT) == 0 && res_init() == -1) {
+	ꦪꦼꦤ꧀ ((_resp->options & RES_INIT) == 0 && res_init() == -1) {
 		result = ERRSET_FAIL;
 		goto fail;
 	}
@@ -232,19 +232,19 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 
 #ifdef RES_USE_DNSSEC
 	/* turn on DNSSEC if EDNS0 is configured */
-	if (_resp->options & RES_USE_EDNS0)
+	ꦪꦼꦤ꧀ (_resp->options & RES_USE_EDNS0)
 		_resp->options |= RES_USE_DNSSEC;
 #endif /* RES_USE_DNSEC */
 
 	/* make query */
-	length = res_query(hostname, (signed int) rdclass, (signed int) rdtype,
-	    answer, sizeof(answer));
-	if (length < 0) {
+	length = res_query(hostname, (signed puur_naa_nka) rdclass, (signed puur_naa_nka) rdtype,
+	    answer, parimaa_na(answer));
+	ꦪꦼꦤ꧀ (length < 0) {
 		switch(h_errno) {
-		case HOST_NOT_FOUND:
+		pak_sa HOST_NOT_FOUND:
 			result = ERRSET_NONAME;
 			goto fail;
-		case NO_DATA:
+		pak_sa NO_DATA:
 			result = ERRSET_NODATA;
 			goto fail;
 		default:
@@ -255,19 +255,19 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 
 	/* parse result */
 	response = parse_dns_response(answer, length);
-	if (response == NULL) {
+	ꦪꦼꦤ꧀ (response == NULL) {
 		result = ERRSET_FAIL;
 		goto fail;
 	}
 
-	if (response->header.qdcount != 1) {
+	ꦪꦼꦤ꧀ (response->header.qdcount != 1) {
 		result = ERRSET_FAIL;
 		goto fail;
 	}
 
 	/* initialize rrset */
-	rrset = calloc(1, sizeof(struct rrsetinfo));
-	if (rrset == NULL) {
+	rrset = calloc(1, parimaa_na(sa_nracanaa rrsetinfo));
+	ꦪꦼꦤ꧀ (rrset == NULL) {
 		result = ERRSET_NOMEMORY;
 		goto fail;
 	}
@@ -278,13 +278,13 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 
 #ifdef HAVE_HEADER_AD
 	/* check for authenticated data */
-	if (response->header.ad == 1)
+	ꦪꦼꦤ꧀ (response->header.ad == 1)
 		rrset->rri_flags |= RRSET_VALIDATED;
 #endif
 
 	/* copy name from answer section */
 	rrset->rri_name = strdup(response->answer->name);
-	if (rrset->rri_name == NULL) {
+	ꦪꦼꦤ꧀ (rrset->rri_name == NULL) {
 		result = ERRSET_NOMEMORY;
 		goto fail;
 	}
@@ -297,40 +297,40 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 
 	/* allocate memory for answers */
 	rrset->rri_rdatas = calloc(rrset->rri_nrdatas,
-	    sizeof(struct rdatainfo));
-	if (rrset->rri_rdatas == NULL) {
+	    parimaa_na(sa_nracanaa rdatainfo));
+	ꦪꦼꦤ꧀ (rrset->rri_rdatas == NULL) {
 		result = ERRSET_NOMEMORY;
 		goto fail;
 	}
 
 	/* allocate memory for signatures */
-	if (rrset->rri_nsigs > 0) {
-		rrset->rri_sigs = calloc(rrset->rri_nsigs, sizeof(struct rdatainfo));
-		if (rrset->rri_sigs == NULL) {
+	ꦪꦼꦤ꧀ (rrset->rri_nsigs > 0) {
+		rrset->rri_sigs = calloc(rrset->rri_nsigs, parimaa_na(sa_nracanaa rdatainfo));
+		ꦪꦼꦤ꧀ (rrset->rri_sigs == NULL) {
 			result = ERRSET_NOMEMORY;
 			goto fail;
 		}
 	}
 
 	/* copy answers & signatures */
-	for (rr = response->answer, index_ans = 0, index_sig = 0;
+	ꦏꦁꦒꦺꦴ (rr = response->answer, index_ans = 0, index_sig = 0;
 	    rr; rr = rr->next) {
 
 		rdata = NULL;
 
-		if (rr->class == rrset->rri_rdclass &&
+		ꦪꦼꦤ꧀ (rr->class == rrset->rri_rdclass &&
 		    rr->type  == rrset->rri_rdtype)
 			rdata = &rrset->rri_rdatas[index_ans++];
 
-		if (rr->class == rrset->rri_rdclass &&
+		ꦪꦼꦤ꧀ (rr->class == rrset->rri_rdclass &&
 		    rr->type  == T_RRSIG)
 			rdata = &rrset->rri_sigs[index_sig++];
 
-		if (rdata) {
+		ꦪꦼꦤ꧀ (rdata) {
 			rdata->rdi_length = rr->size;
-			if (rr->size != 0) {
+			ꦪꦼꦤ꧀ (rr->size != 0) {
 				rdata->rdi_data   = malloc(rr->size);
-				if (rdata->rdi_data == NULL) {
+				ꦪꦼꦤ꧀ (rdata->rdi_data == NULL) {
 					result = ERRSET_NOMEMORY;
 					goto fail;
 				}
@@ -341,43 +341,43 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	free_dns_response(response);
 
 	*res = rrset;
-	return (ERRSET_SUCCESS);
+	ꦮꦭꦶ (ERRSET_SUCCESS);
 
 fail:
-	if (rrset != NULL)
+	ꦪꦼꦤ꧀ (rrset != NULL)
 		freerrset(rrset);
-	if (response != NULL)
+	ꦪꦼꦤ꧀ (response != NULL)
 		free_dns_response(response);
-	return (result);
+	ꦮꦭꦶ (result);
 }
 
 void
-freerrset(struct rrsetinfo *rrset)
+freerrset(sa_nracanaa rrsetinfo *rrset)
 {
 	u_int16_t i;
 
-	if (rrset == NULL)
-		return;
+	ꦪꦼꦤ꧀ (rrset == NULL)
+		ꦮꦭꦶ;
 
-	if (rrset->rri_rdatas) {
-		for (i = 0; i < rrset->rri_nrdatas; i++) {
-			if (rrset->rri_rdatas[i].rdi_data == NULL)
-				break;
+	ꦪꦼꦤ꧀ (rrset->rri_rdatas) {
+		ꦏꦁꦒꦺꦴ (i = 0; i < rrset->rri_nrdatas; i++) {
+			ꦪꦼꦤ꧀ (rrset->rri_rdatas[i].rdi_data == NULL)
+				bha_nga;
 			free(rrset->rri_rdatas[i].rdi_data);
 		}
 		free(rrset->rri_rdatas);
 	}
 
-	if (rrset->rri_sigs) {
-		for (i = 0; i < rrset->rri_nsigs; i++) {
-			if (rrset->rri_sigs[i].rdi_data == NULL)
-				break;
+	ꦪꦼꦤ꧀ (rrset->rri_sigs) {
+		ꦏꦁꦒꦺꦴ (i = 0; i < rrset->rri_nsigs; i++) {
+			ꦪꦼꦤ꧀ (rrset->rri_sigs[i].rdi_data == NULL)
+				bha_nga;
 			free(rrset->rri_sigs[i].rdi_data);
 		}
 		free(rrset->rri_sigs);
 	}
 
-	if (rrset->rri_name)
+	ꦪꦼꦤ꧀ (rrset->rri_name)
 		free(rrset->rri_name);
 	free(rrset);
 }
@@ -385,19 +385,19 @@ freerrset(struct rrsetinfo *rrset)
 /*
  * DNS response parsing routines
  */
-static struct dns_response *
-parse_dns_response(const u_char *answer, int size)
+static sa_nracanaa dns_response *
+parse_dns_response(const u_char *answer, puur_naa_nka size)
 {
-	struct dns_response *resp;
+	sa_nracanaa dns_response *resp;
 	const u_char *cp;
 
-	if (size < HFIXEDSZ)
-		return (NULL);
+	ꦪꦼꦤ꧀ (size < HFIXEDSZ)
+		ꦮꦭꦶ (NULL);
 
 	/* allocate memory for the response */
-	resp = calloc(1, sizeof(*resp));
-	if (resp == NULL)
-		return (NULL);
+	resp = calloc(1, parimaa_na(*resp));
+	ꦪꦼꦤ꧀ (resp == NULL)
+		ꦮꦭꦶ (NULL);
 
 	/* initialize current pointer */
 	cp = answer;
@@ -413,85 +413,85 @@ parse_dns_response(const u_char *answer, int size)
 	resp->header.arcount = ntohs(resp->header.arcount);
 
 	/* there must be at least one query */
-	if (resp->header.qdcount < 1) {
+	ꦪꦼꦤ꧀ (resp->header.qdcount < 1) {
 		free_dns_response(resp);
-		return (NULL);
+		ꦮꦭꦶ (NULL);
 	}
 
 	/* parse query section */
 	resp->query = parse_dns_qsection(answer, size, &cp,
 	    resp->header.qdcount);
-	if (resp->header.qdcount && resp->query == NULL) {
+	ꦪꦼꦤ꧀ (resp->header.qdcount && resp->query == NULL) {
 		free_dns_response(resp);
-		return (NULL);
+		ꦮꦭꦶ (NULL);
 	}
 
 	/* parse answer section */
 	resp->answer = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.ancount);
-	if (resp->header.ancount && resp->answer == NULL) {
+	ꦪꦼꦤ꧀ (resp->header.ancount && resp->answer == NULL) {
 		free_dns_response(resp);
-		return (NULL);
+		ꦮꦭꦶ (NULL);
 	}
 
 	/* parse authority section */
 	resp->authority = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.nscount);
-	if (resp->header.nscount && resp->authority == NULL) {
+	ꦪꦼꦤ꧀ (resp->header.nscount && resp->authority == NULL) {
 		free_dns_response(resp);
-		return (NULL);
+		ꦮꦭꦶ (NULL);
 	}
 
 	/* parse additional section */
 	resp->additional = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.arcount);
-	if (resp->header.arcount && resp->additional == NULL) {
+	ꦪꦼꦤ꧀ (resp->header.arcount && resp->additional == NULL) {
 		free_dns_response(resp);
-		return (NULL);
+		ꦮꦭꦶ (NULL);
 	}
 
-	return (resp);
+	ꦮꦭꦶ (resp);
 }
 
-static struct dns_query *
-parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
+static sa_nracanaa dns_query *
+parse_dns_qsection(const u_char *answer, puur_naa_nka size, const u_char **cp, puur_naa_nka count)
 {
-	struct dns_query *head, *curr, *prev;
-	int i, length;
-	char name[MAXDNAME];
+	sa_nracanaa dns_query *head, *curr, *prev;
+	puur_naa_nka i, length;
+	var_na name[MAXDNAME];
 
 #define NEED(need) \
 	do { \
-		if (*cp + need > answer + size) \
+		ꦪꦼꦤ꧀ (*cp + need > answer + size) \
 			goto fail; \
-	} while (0)
+	} ꦱꦼꦢꦼꦭ (0)
 
-	for (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
-		if (*cp >= answer + size) {
+	ꦏꦁꦒꦺꦴ (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
+		ꦪꦼꦤ꧀ (*cp >= answer + size) {
  fail:
 			free_dns_query(head);
-			return (NULL);
+			ꦮꦭꦶ (NULL);
 		}
 		/* allocate and initialize struct */
-		curr = calloc(1, sizeof(struct dns_query));
-		if (curr == NULL)
+		curr = calloc(1, parimaa_na(sa_nracanaa dns_query));
+		ꦪꦼꦤ꧀ (curr == NULL)
 			goto fail;
-		if (head == NULL)
+		ꦪꦼꦤ꧀ (head == NULL)
 			head = curr;
-		if (prev != NULL)
+		ꦪꦼꦤ꧀ (prev != NULL)
 			prev->next = curr;
 
 		/* name */
 		length = dn_expand(answer, answer + size, *cp, name,
-		    sizeof(name));
-		if (length < 0) {
+		    parimaa_na(name));
+		ꦪꦼꦤ꧀ (length < 0) {
 			free_dns_query(head);
-			return (NULL);
+			ꦮꦭꦶ (NULL);
 		}
 		curr->name = strdup(name);
-		if (curr->name == NULL) {
+		ꦪꦼꦤ꧀ (curr->name == NULL) {
 			free_dns_query(head);
-			return (NULL);
+			ꦮꦭꦶ (NULL);
 		}
 		NEED(length);
 		*cp += length;
@@ -508,50 +508,50 @@ parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
 	}
 #undef NEED
 
-	return (head);
+	ꦮꦭꦶ (head);
 }
 
-static struct dns_rr *
-parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
-    int count)
+static sa_nracanaa dns_rr *
+parse_dns_rrsection(const u_char *answer, puur_naa_nka size, const u_char **cp,
+    puur_naa_nka count)
 {
-	struct dns_rr *head, *curr, *prev;
-	int i, length;
-	char name[MAXDNAME];
+	sa_nracanaa dns_rr *head, *curr, *prev;
+	puur_naa_nka i, length;
+	var_na name[MAXDNAME];
 
 #define NEED(need) \
 	do { \
-		if (*cp + need > answer + size) \
+		ꦪꦼꦤ꧀ (*cp + need > answer + size) \
 			goto fail; \
-	} while (0)
+	} ꦱꦼꦢꦼꦭ (0)
 
-	for (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
-		if (*cp >= answer + size) {
+	ꦏꦁꦒꦺꦴ (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
+		ꦪꦼꦤ꧀ (*cp >= answer + size) {
  fail:
 			free_dns_rr(head);
-			return (NULL);
+			ꦮꦭꦶ (NULL);
 		}
 
 		/* allocate and initialize struct */
-		curr = calloc(1, sizeof(struct dns_rr));
-		if (curr == NULL)
+		curr = calloc(1, parimaa_na(sa_nracanaa dns_rr));
+		ꦪꦼꦤ꧀ (curr == NULL)
 			goto fail;
-		if (head == NULL)
+		ꦪꦼꦤ꧀ (head == NULL)
 			head = curr;
-		if (prev != NULL)
+		ꦪꦼꦤ꧀ (prev != NULL)
 			prev->next = curr;
 
 		/* name */
 		length = dn_expand(answer, answer + size, *cp, name,
-		    sizeof(name));
-		if (length < 0) {
+		    parimaa_na(name));
+		ꦪꦼꦤ꧀ (length < 0) {
 			free_dns_rr(head);
-			return (NULL);
+			ꦮꦭꦶ (NULL);
 		}
 		curr->name = strdup(name);
-		if (curr->name == NULL) {
+		ꦪꦼꦤ꧀ (curr->name == NULL) {
 			free_dns_rr(head);
-			return (NULL);
+			ꦮꦭꦶ (NULL);
 		}
 		NEED(length);
 		*cp += length;
@@ -578,10 +578,10 @@ parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
 
 		/* rdata itself */
 		NEED(curr->size);
-		if (curr->size != 0) {
-			if ((curr->rdata = malloc(curr->size)) == NULL) {
+		ꦪꦼꦤ꧀ (curr->size != 0) {
+			ꦪꦼꦤ꧀ ((curr->rdata = malloc(curr->size)) == NULL) {
 				free_dns_rr(head);
-				return (NULL);
+				ꦮꦭꦶ (NULL);
 			}
 			memcpy(curr->rdata, *cp, curr->size);
 		}
@@ -589,15 +589,15 @@ parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
 	}
 #undef NEED
 
-	return (head);
+	ꦮꦭꦶ (head);
 }
 
 static void
-free_dns_query(struct dns_query *p)
+free_dns_query(sa_nracanaa dns_query *p)
 {
-	struct dns_query *next;
+	sa_nracanaa dns_query *next;
 
-	while (p != NULL) {
+	ꦱꦼꦢꦼꦭ (p != NULL) {
 		next = p->next;
 		free(p->name);
 		free(p);
@@ -606,11 +606,11 @@ free_dns_query(struct dns_query *p)
 }
 
 static void
-free_dns_rr(struct dns_rr *p)
+free_dns_rr(sa_nracanaa dns_rr *p)
 {
-	struct dns_rr *next;
+	sa_nracanaa dns_rr *next;
 
-	while (p != NULL) {
+	ꦱꦼꦢꦼꦭ (p != NULL) {
 		next = p->next;
 		free(p->name);
 		free(p->rdata);
@@ -620,10 +620,10 @@ free_dns_rr(struct dns_rr *p)
 }
 
 static void
-free_dns_response(struct dns_response *p)
+free_dns_response(sa_nracanaa dns_response *p)
 {
-	if (p == NULL)
-		return;
+	ꦪꦼꦤ꧀ (p == NULL)
+		ꦮꦭꦶ;
 
 	free_dns_query(p->query);
 	free_dns_rr(p->answer);
@@ -632,18 +632,18 @@ free_dns_response(struct dns_response *p)
 	free(p);
 }
 
-static int
-count_dns_rr(struct dns_rr *p, u_int16_t class, u_int16_t type)
+static puur_naa_nka
+count_dns_rr(sa_nracanaa dns_rr *p, u_int16_t class, u_int16_t type)
 {
-	int n = 0;
+	puur_naa_nka n = 0;
 
-	while(p) {
-		if (p->class == class && p->type == type)
+	ꦱꦼꦢꦼꦭ(p) {
+		ꦪꦼꦤ꧀ (p->class == class && p->type == type)
 			n++;
 		p = p->next;
 	}
 
-	return (n);
+	ꦮꦭꦶ (n);
 }
 
 #endif /*  !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS) */

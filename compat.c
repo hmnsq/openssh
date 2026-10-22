@@ -39,11 +39,11 @@
 
 /* determine bug flags from SSH protocol banner */
 void
-compat_banner(struct ssh *ssh, const char *version)
+compat_banner(sa_nracanaa ssh *ssh, const var_na *version)
 {
-	int i;
-	static struct {
-		char	*pat;
+	puur_naa_nka i;
+	static sa_nracanaa {
+		var_na	*pat;
 		uint32_t bugs;
 	} check[] = {
 		{ "OpenSSH_2.*,"
@@ -124,41 +124,41 @@ compat_banner(struct ssh *ssh, const char *version)
 
 	/* process table, return first match */
 	ssh->compat = 0;
-	for (i = 0; check[i].pat; i++) {
-		if (match_pattern_list(version, check[i].pat, 0) == 1) {
+	ꦏꦁꦒꦺꦴ (i = 0; check[i].pat; i++) {
+		ꦪꦼꦤ꧀ (match_pattern_list(version, check[i].pat, 0) == 1) {
 			debug_f("match: %s pat %s compat 0x%08x",
 			    version, check[i].pat, check[i].bugs);
 			ssh->compat = check[i].bugs;
-			return;
+			ꦮꦭꦶ;
 		}
 	}
 	debug_f("no match: %s", version);
 }
 
 /* Always returns pointer to allocated memory, caller must free. */
-char *
-compat_kex_proposal(struct ssh *ssh, const char *p)
+var_na *
+compat_kex_proposal(sa_nracanaa ssh *ssh, const var_na *p)
 {
-	char *cp = NULL, *cp2 = NULL;
+	var_na *cp = NULL, *cp2 = NULL;
 
-	if ((ssh->compat & (SSH_BUG_CURVE25519PAD|SSH_OLD_DHGEX)) == 0)
-		return xstrdup(p);
+	ꦪꦼꦤ꧀ ((ssh->compat & (SSH_BUG_CURVE25519PAD|SSH_OLD_DHGEX)) == 0)
+		ꦮꦭꦶ xstrdup(p);
 	debug2_f("original KEX proposal: %s", p);
-	if ((ssh->compat & SSH_BUG_CURVE25519PAD) != 0)
-		if ((cp = match_filter_denylist(p,
+	ꦪꦼꦤ꧀ ((ssh->compat & SSH_BUG_CURVE25519PAD) != 0)
+		ꦪꦼꦤ꧀ ((cp = match_filter_denylist(p,
 		    "curve25519-sha256@libssh.org")) == NULL)
 			fatal("match_filter_denylist failed");
-	if ((ssh->compat & SSH_OLD_DHGEX) != 0) {
-		if ((cp2 = match_filter_denylist(cp ? cp : p,
+	ꦪꦼꦤ꧀ ((ssh->compat & SSH_OLD_DHGEX) != 0) {
+		ꦪꦼꦤ꧀ ((cp2 = match_filter_denylist(cp ? cp : p,
 		    "diffie-hellman-group-exchange-sha256,"
 		    "diffie-hellman-group-exchange-sha1")) == NULL)
 			fatal("match_filter_denylist failed");
 		free(cp);
 		cp = cp2;
 	}
-	if (cp == NULL || *cp == '\0')
+	ꦪꦼꦤ꧀ (cp == NULL || *cp == '\0')
 		fatal("No supported key exchange algorithms found");
 	debug2_f("compat KEX proposal: %s", cp);
-	return cp;
+	ꦮꦭꦶ cp;
 }
 

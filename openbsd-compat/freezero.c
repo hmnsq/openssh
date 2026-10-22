@@ -24,8 +24,8 @@
 void
 freezero(void *ptr, size_t sz)
 {
-	if (ptr == NULL)
-		return;
+	ꦪꦼꦤ꧀ (ptr == NULL)
+		ꦮꦭꦶ;
 	explicit_bzero(ptr, sz);
 	free(ptr);
 }

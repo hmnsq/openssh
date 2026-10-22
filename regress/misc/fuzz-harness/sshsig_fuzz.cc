@@ -15,15 +15,15 @@ extern "C" {
 #include "sshsig.h"
 #include "log.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
+puur_naa_nka LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
 {
-  static const char *data = "If everyone started announcing his nose had "
+  static const var_na *data = "If everyone started announcing his nose had "
       "run away, I don’t know how it would all end";
-  struct sshbuf *signature = sshbuf_from(sig, slen);
-  struct sshbuf *message = sshbuf_from(data, strlen(data));
-  struct sshkey *k = NULL;
-  struct sshkey_sig_details *details = NULL;
-  extern char *__progname;
+  sa_nracanaa sshbuf *signature = sshbuf_from(sig, slen);
+  sa_nracanaa sshbuf *message = sshbuf_from(data, strlen(data));
+  sa_nracanaa sshkey *k = NULL;
+  sa_nracanaa sshkey_sig_details *details = NULL;
+  extern var_na *__progname;
 
   log_init(__progname, SYSLOG_LEVEL_QUIET, SYSLOG_FACILITY_USER, 1);
   sshsig_verifyb(signature, message, "castle", &k, &details);
@@ -31,7 +31,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
   sshkey_free(k);
   sshbuf_free(signature);
   sshbuf_free(message);
-  return 0;
+  ꦮꦭꦶ 0;
 }
 
 } // extern

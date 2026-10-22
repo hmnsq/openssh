@@ -36,43 +36,43 @@
 
 /* Minimal sandbox that sets zero nfiles, nprocs and filesize rlimits */
 
-struct ssh_sandbox {
-	int junk;
+sa_nracanaa ssh_sandbox {
+	puur_naa_nka junk;
 };
 
-struct ssh_sandbox *
-ssh_sandbox_init(struct monitor *monitor)
+sa_nracanaa ssh_sandbox *
+ssh_sandbox_init(sa_nracanaa monitor *monitor)
 {
-	struct ssh_sandbox *box;
+	sa_nracanaa ssh_sandbox *box;
 
 	/*
 	 * Strictly, we don't need to maintain any state here but we need
 	 * to return non-NULL to satisfy the API.
 	 */
 	debug3_f("preparing rlimit sandbox");
-	box = xcalloc(1, sizeof(*box));
-	return box;
+	box = xcalloc(1, parimaa_na(*box));
+	ꦮꦭꦶ box;
 }
 
 void
-ssh_sandbox_child(struct ssh_sandbox *box)
+ssh_sandbox_child(sa_nracanaa ssh_sandbox *box)
 {
-	struct rlimit rl_zero;
+	sa_nracanaa rlimit rl_zero;
 
 	rl_zero.rlim_cur = rl_zero.rlim_max = 0;
 
 #ifndef SANDBOX_SKIP_RLIMIT_FSIZE
-	if (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
+	ꦪꦼꦤ꧀ (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
 		fatal_f("setrlimit(RLIMIT_FSIZE, { 0, 0 }): %s",
 			strerror(errno));
 #endif
 #ifndef SANDBOX_SKIP_RLIMIT_NOFILE
-	if (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
+	ꦪꦼꦤ꧀ (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
 		fatal_f("setrlimit(RLIMIT_NOFILE, { 0, 0 }): %s",
 			strerror(errno));
 #endif
 #ifdef HAVE_RLIMIT_NPROC
-	if (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
+	ꦪꦼꦤ꧀ (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
 		fatal_f("setrlimit(RLIMIT_NPROC, { 0, 0 }): %s",
 			strerror(errno));
 #endif

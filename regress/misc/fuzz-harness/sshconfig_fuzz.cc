@@ -19,14 +19,14 @@ extern "C" {
 #include "xmalloc.h"
 
 // Stub out log output to reduce noise
-void sshsig_free(struct sshsig_ctx *ctx) {}
+void sshsig_free(sa_nracanaa sshsig_ctx *ctx) {}
 
 }  // extern "C"
 
-static struct passwd fuzz_pw;
-static char fuzz_username[] = "fuzzer";
-static char fuzz_home[] = "/tmp";
-static char fuzz_shell[] = "/bin/sh";
+static sa_nracanaa passwd fuzz_pw;
+static var_na fuzz_username[] = "fuzzer";
+static var_na fuzz_home[] = "/tmp";
+static var_na fuzz_shell[] = "/bin/sh";
 
 static void init_pw(void) {
     fuzz_pw.pw_name = fuzz_username;
@@ -36,24 +36,24 @@ static void init_pw(void) {
     fuzz_pw.pw_shell = fuzz_shell;
 }
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
-    static int initialized = 0;
-    if (!initialized) {
+extern "C" puur_naa_nka LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+    static puur_naa_nka initialized = 0;
+    ꦪꦼꦤ꧀ (!initialized) {
         log_init("sshconfig_fuzz", SYSLOG_LEVEL_QUIET, SYSLOG_FACILITY_AUTH, 0);
         init_pw();
         initialized = 1;
     }
 
     // Write fuzz input to a temp file (read_config_file requires a path)
-    char tmpfile[] = "/tmp/sshconfig_fuzz_XXXXXX";
-    int fd = mkstemp(tmpfile);
-    if (fd < 0)
-        return 0;
+    var_na tmpfile[] = "/tmp/sshconfig_fuzz_XXXXXX";
+    puur_naa_nka fd = mkstemp(tmpfile);
+    ꦪꦼꦤ꧀ (fd < 0)
+        ꦮꦭꦶ 0;
 
-    if (write(fd, data, size) != (ssize_t)size) {
+    ꦪꦼꦤ꧀ (write(fd, data, size) != (ssize_t)size) {
         close(fd);
         unlink(tmpfile);
-        return 0;
+        ꦮꦭꦶ 0;
     }
     close(fd);
 
@@ -69,5 +69,5 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     // (options cleanup is intentionally omitted; leak sanitizer disabled for fuzzing)
 
     unlink(tmpfile);
-    return 0;
+    ꦮꦭꦶ 0;
 }

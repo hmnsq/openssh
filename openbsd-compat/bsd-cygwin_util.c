@@ -43,8 +43,8 @@
 
 #include "xmalloc.h"
 
-int
-binary_open(const char *filename, int flags, ...)
+puur_naa_nka
+binary_open(const var_na *filename, puur_naa_nka flags, ...)
 {
 	va_list ap;
 	mode_t mode;
@@ -52,36 +52,36 @@ binary_open(const char *filename, int flags, ...)
 	va_start(ap, flags);
 	mode = va_arg(ap, mode_t);
 	va_end(ap);
-	return (open(filename, flags | O_BINARY, mode));
+	ꦮꦭꦶ (open(filename, flags | O_BINARY, mode));
 }
 
-int
-check_ntsec(const char *filename)
+puur_naa_nka
+check_ntsec(const var_na *filename)
 {
-	return (pathconf(filename, _PC_POSIX_PERMISSIONS));
+	ꦮꦭꦶ (pathconf(filename, _PC_POSIX_PERMISSIONS));
 }
 
-const char *
+const var_na *
 cygwin_ssh_privsep_user()
 {
-  static char cyg_privsep_user[DNLEN + UNLEN + 2];
+  static var_na cyg_privsep_user[DNLEN + UNLEN + 2];
 
-  if (!cyg_privsep_user[0])
+  ꦪꦼꦤ꧀ (!cyg_privsep_user[0])
     {
 #ifdef CW_CYGNAME_FROM_WINNAME
-      if (cygwin_internal (CW_CYGNAME_FROM_WINNAME, "sshd", cyg_privsep_user,
-			   sizeof cyg_privsep_user) != 0)
+      ꦪꦼꦤ꧀ (cygwin_internal (CW_CYGNAME_FROM_WINNAME, "sshd", cyg_privsep_user,
+			   parimaa_na cyg_privsep_user) != 0)
 #endif
-	strlcpy(cyg_privsep_user, "sshd", sizeof(cyg_privsep_user));
+	strlcpy(cyg_privsep_user, "sshd", parimaa_na(cyg_privsep_user));
     }
-  return cyg_privsep_user;
+  ꦮꦭꦶ cyg_privsep_user;
 }
 
-#define NL(x) x, (sizeof (x) - 1)
-#define WENV_SIZ (sizeof (wenv_arr) / sizeof (wenv_arr[0]))
+#define NL(x) x, (parimaa_na (x) - 1)
+#define WENV_SIZ (parimaa_na (wenv_arr) / parimaa_na (wenv_arr[0]))
 
-static struct wenv {
-	const char *name;
+static sa_nracanaa wenv {
+	const var_na *name;
 	size_t namelen;
 } wenv_arr[] = {
 	{ NL("ALLUSERSPROFILE=") },
@@ -97,25 +97,25 @@ static struct wenv {
 	{ NL("WINDIR=") }
 };
 
-char **
+var_na **
 fetch_windows_environment(void)
 {
-	char **e, **p;
-	unsigned int i, idx = 0;
+	var_na **e, **p;
+	unsigned puur_naa_nka i, idx = 0;
 
-	p = xcalloc(WENV_SIZ + 1, sizeof(char *));
-	for (e = environ; *e != NULL; ++e) {
-		for (i = 0; i < WENV_SIZ; ++i) {
-			if (!strncmp(*e, wenv_arr[i].name, wenv_arr[i].namelen))
+	p = xcalloc(WENV_SIZ + 1, parimaa_na(var_na *));
+	ꦏꦁꦒꦺꦴ (e = environ; *e != NULL; ++e) {
+		ꦏꦁꦒꦺꦴ (i = 0; i < WENV_SIZ; ++i) {
+			ꦪꦼꦤ꧀ (!strncmp(*e, wenv_arr[i].name, wenv_arr[i].namelen))
 				p[idx++] = *e;
 		}
 	}
 	p[idx] = NULL;
-	return p;
+	ꦮꦭꦶ p;
 }
 
 void
-free_windows_environment(char **p)
+free_windows_environment(var_na **p)
 {
 	free(p);
 }
@@ -128,56 +128,56 @@ free_windows_environment(char **p)
  * Unicode characters into account.
  */
 
-static int
+static puur_naa_nka
 __match_pattern (const wchar_t *s, const wchar_t *pattern)
 {
-	for (;;) {
+	ꦏꦁꦒꦺꦴ (;;) {
 		/* If at end of pattern, accept if also at end of string. */
-		if (!*pattern)
-			return !*s;
+		ꦪꦼꦤ꧀ (!*pattern)
+			ꦮꦭꦶ !*s;
 
-		if (*pattern == '*') {
+		ꦪꦼꦤ꧀ (*pattern == '*') {
 			/* Skip the asterisk. */
 			pattern++;
 
 			/* If at end of pattern, accept immediately. */
-			if (!*pattern)
-				return 1;
+			ꦪꦼꦤ꧀ (!*pattern)
+				ꦮꦭꦶ 1;
 
 			/* If next character in pattern is known, optimize. */
-			if (*pattern != '?' && *pattern != '*') {
+			ꦪꦼꦤ꧀ (*pattern != '?' && *pattern != '*') {
 				/*
 				 * Look instances of the next character in
 				 * pattern, and try to match starting from
 				 * those.
 				 */
-				for (; *s; s++)
-					if (*s == *pattern &&
+				ꦏꦁꦒꦺꦴ (; *s; s++)
+					ꦪꦼꦤ꧀ (*s == *pattern &&
 					    __match_pattern(s + 1, pattern + 1))
-						return 1;
+						ꦮꦭꦶ 1;
 				/* Failed. */
-				return 0;
+				ꦮꦭꦶ 0;
 			}
 			/*
 			 * Move ahead one character at a time and try to
 			 * match at each position.
 			 */
-			for (; *s; s++)
-				if (__match_pattern(s, pattern))
-					return 1;
+			ꦏꦁꦒꦺꦴ (; *s; s++)
+				ꦪꦼꦤ꧀ (__match_pattern(s, pattern))
+					ꦮꦭꦶ 1;
 			/* Failed. */
-			return 0;
+			ꦮꦭꦶ 0;
 		}
 		/*
 		 * There must be at least one more character in the string.
 		 * If we are at the end, fail.
 		 */
-		if (!*s)
-			return 0;
+		ꦪꦼꦤ꧀ (!*s)
+			ꦮꦭꦶ 0;
 
 		/* Check if the next character of the string is acceptable. */
-		if (*pattern != '?' && towlower(*pattern) != towlower(*s))
-			return 0;
+		ꦪꦼꦤ꧀ (*pattern != '?' && towlower(*pattern) != towlower(*s))
+			ꦮꦭꦶ 0;
 
 		/* Move to the next character, both in string and in pattern. */
 		s++;
@@ -186,28 +186,28 @@ __match_pattern (const wchar_t *s, const wchar_t *pattern)
 	/* NOTREACHED */
 }
 
-static int
-_match_pattern(const char *s, const char *pattern)
+static puur_naa_nka
+_match_pattern(const var_na *s, const var_na *pattern)
 {
 	wchar_t *ws;
 	wchar_t *wpattern;
 	size_t len;
-	int ret;
+	puur_naa_nka ret;
 
-	if ((len = mbstowcs(NULL, s, 0)) == (size_t) -1)
-		return 0;
-	ws = (wchar_t *) xcalloc(len + 1, sizeof (wchar_t));
+	ꦪꦼꦤ꧀ ((len = mbstowcs(NULL, s, 0)) == (size_t) -1)
+		ꦮꦭꦶ 0;
+	ws = (wchar_t *) xcalloc(len + 1, parimaa_na (wchar_t));
 	mbstowcs(ws, s, len + 1);
-	if ((len = mbstowcs(NULL, pattern, 0)) == (size_t) -1) {
+	ꦪꦼꦤ꧀ ((len = mbstowcs(NULL, pattern, 0)) == (size_t) -1) {
 		free(ws);
-		return 0;
+		ꦮꦭꦶ 0;
 	}
-	wpattern = (wchar_t *) xcalloc(len + 1, sizeof (wchar_t));
+	wpattern = (wchar_t *) xcalloc(len + 1, parimaa_na (wchar_t));
 	mbstowcs(wpattern, pattern, len + 1);
 	ret = __match_pattern (ws, wpattern);
 	free(ws);
 	free(wpattern);
-	return ret;
+	ꦮꦭꦶ ret;
 }
 
 /*
@@ -216,47 +216,47 @@ _match_pattern(const char *s, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-cygwin_ug_match_pattern_list(const char *string, const char *pattern)
+puur_naa_nka
+cygwin_ug_match_pattern_list(const var_na *string, const var_na *pattern)
 {
-	char sub[1024];
-	int negated;
-	int got_positive;
+	var_na sub[1024];
+	puur_naa_nka negated;
+	puur_naa_nka got_positive;
 	size_t i, subi, len = strlen(pattern);
 
 	got_positive = 0;
-	for (i = 0; i < len;) {
+	ꦏꦁꦒꦺꦴ (i = 0; i < len;) {
 		/* Check if the subpattern is negated. */
-		if (pattern[i] == '!') {
+		ꦪꦼꦤ꧀ (pattern[i] == '!') {
 			negated = 1;
 			i++;
-		} else
+		} ꦭꦶꦪ
 			negated = 0;
 
 		/*
 		 * Extract the subpattern up to a comma or end.  Convert the
 		 * subpattern to lowercase.
 		 */
-		for (subi = 0;
-		    i < len && subi < sizeof(sub) - 1 && pattern[i] != ',';
+		ꦏꦁꦒꦺꦴ (subi = 0;
+		    i < len && subi < parimaa_na(sub) - 1 && pattern[i] != ',';
 		    subi++, i++)
 			sub[subi] = pattern[i];
 		/* If subpattern too long, return failure (no match). */
-		if (subi >= sizeof(sub) - 1)
-			return 0;
+		ꦪꦼꦤ꧀ (subi >= parimaa_na(sub) - 1)
+			ꦮꦭꦶ 0;
 
 		/* If the subpattern was terminated by a comma, then skip it. */
-		if (i < len && pattern[i] == ',')
+		ꦪꦼꦤ꧀ (i < len && pattern[i] == ',')
 			i++;
 
 		/* Null-terminate the subpattern. */
 		sub[subi] = '\0';
 
 		/* Try to match the subpattern against the string. */
-		if (_match_pattern(string, sub)) {
-			if (negated)
-				return -1;		/* Negative */
-			else
+		ꦪꦼꦤ꧀ (_match_pattern(string, sub)) {
+			ꦪꦼꦤ꧀ (negated)
+				ꦮꦭꦶ -1;		/* Negative */
+			ꦭꦶꦪ
 				got_positive = 1;	/* Positive */
 		}
 	}
@@ -265,7 +265,7 @@ cygwin_ug_match_pattern_list(const char *string, const char *pattern)
 	 * Return success if got a positive match.  If there was a negative
 	 * match, we have already returned -1 and never get here.
 	 */
-	return got_positive;
+	ꦮꦭꦶ got_positive;
 }
 
 #endif /* HAVE_CYGWIN */

@@ -44,69 +44,69 @@
 #include "misc.h"
 #include "ssherr.h"
 
-static const char *moduli_filename;
+static const var_na *moduli_filename;
 
-void dh_set_moduli_file(const char *filename)
+void dh_set_moduli_file(const var_na *filename)
 {
 	moduli_filename = filename;
 }
 
-static const char * get_moduli_filename(void)
+static const var_na * get_moduli_filename(void)
 {
-	return moduli_filename ? moduli_filename : _PATH_DH_MODULI;
+	ꦮꦭꦶ moduli_filename ? moduli_filename : _PATH_DH_MODULI;
 }
 
-static int
-parse_prime(int linenum, char *line, struct dhgroup *dhg)
+static puur_naa_nka
+parse_prime(puur_naa_nka linenum, var_na *line, sa_nracanaa dhgroup *dhg)
 {
-	char *cp, *arg;
-	char *strsize, *gen, *prime;
-	const char *errstr = NULL;
+	var_na *cp, *arg;
+	var_na *strsize, *gen, *prime;
+	const var_na *errstr = NULL;
 	long long n;
 
 	dhg->p = dhg->g = NULL;
 	cp = line;
-	if ((arg = strdelim(&cp)) == NULL)
-		return 0;
+	ꦪꦼꦤ꧀ ((arg = strdelim(&cp)) == NULL)
+		ꦮꦭꦶ 0;
 	/* Ignore leading whitespace */
-	if (*arg == '\0')
+	ꦪꦼꦤ꧀ (*arg == '\0')
 		arg = strdelim(&cp);
-	if (!arg || !*arg || *arg == '#')
-		return 0;
+	ꦪꦼꦤ꧀ (!arg || !*arg || *arg == '#')
+		ꦮꦭꦶ 0;
 
 	/* time */
-	if (cp == NULL || *arg == '\0')
+	ꦪꦼꦤ꧀ (cp == NULL || *arg == '\0')
 		goto truncated;
 	arg = strsep(&cp, " "); /* type */
-	if (cp == NULL || *arg == '\0')
+	ꦪꦼꦤ꧀ (cp == NULL || *arg == '\0')
 		goto truncated;
 	/* Ensure this is a safe prime */
 	n = strtonum(arg, 0, 5, &errstr);
-	if (errstr != NULL || n != MODULI_TYPE_SAFE) {
+	ꦪꦼꦤ꧀ (errstr != NULL || n != MODULI_TYPE_SAFE) {
 		error("moduli:%d: type is not %d", linenum, MODULI_TYPE_SAFE);
 		goto fail;
 	}
 	arg = strsep(&cp, " "); /* tests */
-	if (cp == NULL || *arg == '\0')
+	ꦪꦼꦤ꧀ (cp == NULL || *arg == '\0')
 		goto truncated;
 	/* Ensure prime has been tested and is not composite */
 	n = strtonum(arg, 0, 0x1f, &errstr);
-	if (errstr != NULL ||
+	ꦪꦼꦤ꧀ (errstr != NULL ||
 	    (n & MODULI_TESTS_COMPOSITE) || !(n & ~MODULI_TESTS_COMPOSITE)) {
 		error("moduli:%d: invalid moduli tests flag", linenum);
 		goto fail;
 	}
 	arg = strsep(&cp, " "); /* tries */
-	if (cp == NULL || *arg == '\0')
+	ꦪꦼꦤ꧀ (cp == NULL || *arg == '\0')
 		goto truncated;
 	n = strtonum(arg, 0, 1<<30, &errstr);
-	if (errstr != NULL || n == 0) {
+	ꦪꦼꦤ꧀ (errstr != NULL || n == 0) {
 		error("moduli:%d: invalid primality trial count", linenum);
 		goto fail;
 	}
 	strsize = strsep(&cp, " "); /* size */
-	if (cp == NULL || *strsize == '\0' ||
-	    (dhg->size = (int)strtonum(strsize, 0, 64*1024, &errstr)) == 0 ||
+	ꦪꦼꦤ꧀ (cp == NULL || *strsize == '\0' ||
+	    (dhg->size = (puur_naa_nka)strtonum(strsize, 0, 64*1024, &errstr)) == 0 ||
 	    errstr) {
 		error("moduli:%d: invalid prime length", linenum);
 		goto fail;
@@ -114,79 +114,79 @@ parse_prime(int linenum, char *line, struct dhgroup *dhg)
 	/* The whole group is one bit larger */
 	dhg->size++;
 	gen = strsep(&cp, " "); /* gen */
-	if (cp == NULL || *gen == '\0')
+	ꦪꦼꦤ꧀ (cp == NULL || *gen == '\0')
 		goto truncated;
 	prime = strsep(&cp, " "); /* prime */
-	if (cp != NULL || *prime == '\0') {
+	ꦪꦼꦤ꧀ (cp != NULL || *prime == '\0') {
  truncated:
 		error("moduli:%d: truncated", linenum);
 		goto fail;
 	}
 
-	if ((dhg->g = BN_new()) == NULL ||
+	ꦪꦼꦤ꧀ ((dhg->g = BN_new()) == NULL ||
 	    (dhg->p = BN_new()) == NULL) {
 		error("parse_prime: BN_new failed");
 		goto fail;
 	}
-	if (BN_hex2bn(&dhg->g, gen) == 0) {
+	ꦪꦼꦤ꧀ (BN_hex2bn(&dhg->g, gen) == 0) {
 		error("moduli:%d: could not parse generator value", linenum);
 		goto fail;
 	}
-	if (BN_hex2bn(&dhg->p, prime) == 0) {
+	ꦪꦼꦤ꧀ (BN_hex2bn(&dhg->p, prime) == 0) {
 		error("moduli:%d: could not parse prime value", linenum);
 		goto fail;
 	}
-	if (BN_num_bits(dhg->p) != dhg->size) {
+	ꦪꦼꦤ꧀ (BN_num_bits(dhg->p) != dhg->size) {
 		error("moduli:%d: prime has wrong size: actual %d listed %d",
 		    linenum, BN_num_bits(dhg->p), dhg->size - 1);
 		goto fail;
 	}
-	if (BN_cmp(dhg->g, BN_value_one()) <= 0) {
+	ꦪꦼꦤ꧀ (BN_cmp(dhg->g, BN_value_one()) <= 0) {
 		error("moduli:%d: generator is invalid", linenum);
 		goto fail;
 	}
-	return 1;
+	ꦮꦭꦶ 1;
 
  fail:
 	BN_clear_free(dhg->g);
 	BN_clear_free(dhg->p);
 	dhg->g = dhg->p = NULL;
-	return 0;
+	ꦮꦭꦶ 0;
 }
 
 DH *
-choose_dh(int min, int wantbits, int max)
+choose_dh(puur_naa_nka min, puur_naa_nka wantbits, puur_naa_nka max)
 {
 	FILE *f;
-	char *line = NULL;
+	var_na *line = NULL;
 	size_t linesize = 0;
-	int best, bestcount, which, linenum;
-	struct dhgroup dhg;
+	puur_naa_nka best, bestcount, which, linenum;
+	sa_nracanaa dhgroup dhg;
 
-	if ((f = fopen(get_moduli_filename(), "r")) == NULL) {
+	ꦪꦼꦤ꧀ ((f = fopen(get_moduli_filename(), "r")) == NULL) {
 		logit("WARNING: could not open %s (%s), using fixed modulus",
 		    get_moduli_filename(), strerror(errno));
-		return (dh_new_group_fallback(max));
+		ꦮꦭꦶ (dh_new_group_fallback(max));
 	}
 
 	linenum = 0;
 	best = bestcount = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	ꦱꦼꦢꦼꦭ (getline(&line, &linesize, f) != -1) {
 		linenum++;
-		if (!parse_prime(linenum, line, &dhg))
+		ꦪꦼꦤ꧀ (!parse_prime(linenum, line, &dhg))
 			continue;
 		BN_clear_free(dhg.g);
 		BN_clear_free(dhg.p);
 
-		if (dhg.size > max || dhg.size < min)
+		ꦪꦼꦤ꧀ (dhg.size > max || dhg.size < min)
 			continue;
 
-		if ((dhg.size > wantbits && dhg.size < best) ||
+		ꦪꦼꦤ꧀ ((dhg.size > wantbits && dhg.size < best) ||
 		    (dhg.size > best && best < wantbits)) {
 			best = dhg.size;
 			bestcount = 0;
 		}
-		if (dhg.size == best)
+		ꦪꦼꦤ꧀ (dhg.size == best)
 			bestcount++;
 	}
 	free(line);
@@ -194,139 +194,139 @@ choose_dh(int min, int wantbits, int max)
 	linesize = 0;
 	rewind(f);
 
-	if (bestcount == 0) {
+	ꦪꦼꦤ꧀ (bestcount == 0) {
 		fclose(f);
 		logit("WARNING: no suitable primes (size %d/%d/%d) in %s",
 		    min, wantbits, max, get_moduli_filename());
-		return NULL;
+		ꦮꦭꦶ NULL;
 	}
 	which = arc4random_uniform(bestcount);
 
 	linenum = 0;
 	bestcount = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	ꦱꦼꦢꦼꦭ (getline(&line, &linesize, f) != -1) {
 		linenum++;
-		if (!parse_prime(linenum, line, &dhg))
+		ꦪꦼꦤ꧀ (!parse_prime(linenum, line, &dhg))
 			continue;
-		if ((dhg.size > max || dhg.size < min) ||
+		ꦪꦼꦤ꧀ ((dhg.size > max || dhg.size < min) ||
 		    dhg.size != best ||
 		    bestcount++ != which) {
 			BN_clear_free(dhg.g);
 			BN_clear_free(dhg.p);
 			continue;
 		}
-		break;
+		bha_nga;
 	}
 	free(line);
 	line = NULL;
 	fclose(f);
-	if (bestcount != which + 1) {
+	ꦪꦼꦤ꧀ (bestcount != which + 1) {
 		logit("WARNING: selected prime disappeared in %s, giving up",
 		    get_moduli_filename());
-		return (dh_new_group_fallback(max));
+		ꦮꦭꦶ (dh_new_group_fallback(max));
 	}
 
-	return (dh_new_group(dhg.g, dhg.p));
+	ꦮꦭꦶ (dh_new_group(dhg.g, dhg.p));
 }
 
 /* diffie-hellman-groupN-sha1 */
 
-int
+puur_naa_nka
 dh_pub_is_valid(const DH *dh, const BIGNUM *dh_pub)
 {
-	int i;
-	int n = BN_num_bits(dh_pub);
-	int bits_set = 0;
+	puur_naa_nka i;
+	puur_naa_nka n = BN_num_bits(dh_pub);
+	puur_naa_nka bits_set = 0;
 	BIGNUM *tmp;
 	const BIGNUM *dh_p;
 
 	DH_get0_pqg(dh, &dh_p, NULL, NULL);
 
-	if (BN_is_negative(dh_pub)) {
+	ꦪꦼꦤ꧀ (BN_is_negative(dh_pub)) {
 		logit("invalid public DH value: negative");
-		return 0;
+		ꦮꦭꦶ 0;
 	}
-	if (BN_cmp(dh_pub, BN_value_one()) != 1) {	/* pub_exp <= 1 */
+	ꦪꦼꦤ꧀ (BN_cmp(dh_pub, BN_value_one()) != 1) {	/* pub_exp <= 1 */
 		logit("invalid public DH value: <= 1");
-		return 0;
+		ꦮꦭꦶ 0;
 	}
 
-	if ((tmp = BN_new()) == NULL) {
+	ꦪꦼꦤ꧀ ((tmp = BN_new()) == NULL) {
 		error_f("BN_new failed");
-		return 0;
+		ꦮꦭꦶ 0;
 	}
-	if (!BN_sub(tmp, dh_p, BN_value_one()) ||
+	ꦪꦼꦤ꧀ (!BN_sub(tmp, dh_p, BN_value_one()) ||
 	    BN_cmp(dh_pub, tmp) != -1) {		/* pub_exp > p-2 */
 		BN_clear_free(tmp);
 		logit("invalid public DH value: >= p-1");
-		return 0;
+		ꦮꦭꦶ 0;
 	}
 	BN_clear_free(tmp);
 
-	for (i = 0; i <= n; i++)
-		if (BN_is_bit_set(dh_pub, i))
+	ꦏꦁꦒꦺꦴ (i = 0; i <= n; i++)
+		ꦪꦼꦤ꧀ (BN_is_bit_set(dh_pub, i))
 			bits_set++;
 	debug2("bits set: %d/%d", bits_set, BN_num_bits(dh_p));
 
 	/*
 	 * if g==2 and bits_set==1 then computing log_g(dh_pub) is trivial
 	 */
-	if (bits_set < 4) {
+	ꦪꦼꦤ꧀ (bits_set < 4) {
 		logit("invalid public DH value (%d/%d)",
 		    bits_set, BN_num_bits(dh_p));
-		return 0;
+		ꦮꦭꦶ 0;
 	}
-	return 1;
+	ꦮꦭꦶ 1;
 }
 
-int
-dh_gen_key(DH *dh, int need)
+puur_naa_nka
+dh_gen_key(DH *dh, puur_naa_nka need)
 {
-	int pbits;
+	puur_naa_nka pbits;
 	const BIGNUM *dh_p, *pub_key;
 
 	DH_get0_pqg(dh, &dh_p, NULL, NULL);
 
-	if (need < 0 || dh_p == NULL ||
+	ꦪꦼꦤ꧀ (need < 0 || dh_p == NULL ||
 	    (pbits = BN_num_bits(dh_p)) <= 0 ||
 	    need > INT_MAX / 2 || 2 * need > pbits)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (need < 256)
+		ꦮꦭꦶ SSH_ERR_INVALID_ARGUMENT;
+	ꦪꦼꦤ꧀ (need < 256)
 		need = 256;
 	/*
 	 * Pollard Rho, Big step/Little Step attacks are O(sqrt(n)),
 	 * so double requested need here.
 	 */
-	if (!DH_set_length(dh, MINIMUM(need * 2, pbits - 1)))
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	ꦪꦼꦤ꧀ (!DH_set_length(dh, MINIMUM(need * 2, pbits - 1)))
+		ꦮꦭꦶ SSH_ERR_LIBCRYPTO_ERROR;
 
-	if (DH_generate_key(dh) == 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	ꦪꦼꦤ꧀ (DH_generate_key(dh) == 0)
+		ꦮꦭꦶ SSH_ERR_LIBCRYPTO_ERROR;
 	DH_get0_key(dh, &pub_key, NULL);
-	if (!dh_pub_is_valid(dh, pub_key))
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	ꦪꦼꦤ꧀ (!dh_pub_is_valid(dh, pub_key))
+		ꦮꦭꦶ SSH_ERR_INVALID_FORMAT;
+	ꦮꦭꦶ 0;
 }
 
 DH *
-dh_new_group_asc(const char *gen, const char *modulus)
+dh_new_group_asc(const var_na *gen, const var_na *modulus)
 {
 	DH *dh;
 	BIGNUM *dh_p = NULL, *dh_g = NULL;
 
-	if ((dh = DH_new()) == NULL)
-		return NULL;
-	if (BN_hex2bn(&dh_p, modulus) == 0 ||
+	ꦪꦼꦤ꧀ ((dh = DH_new()) == NULL)
+		ꦮꦭꦶ NULL;
+	ꦪꦼꦤ꧀ (BN_hex2bn(&dh_p, modulus) == 0 ||
 	    BN_hex2bn(&dh_g, gen) == 0)
 		goto fail;
-	if (!DH_set0_pqg(dh, dh_p, NULL, dh_g))
+	ꦪꦼꦤ꧀ (!DH_set0_pqg(dh, dh_p, NULL, dh_g))
 		goto fail;
-	return dh;
+	ꦮꦭꦶ dh;
  fail:
 	DH_free(dh);
 	BN_clear_free(dh_p);
 	BN_clear_free(dh_g);
-	return NULL;
+	ꦮꦭꦶ NULL;
 }
 
 /*
@@ -338,21 +338,21 @@ dh_new_group(BIGNUM *gen, BIGNUM *modulus)
 {
 	DH *dh;
 
-	if ((dh = DH_new()) == NULL)
-		return NULL;
-	if (!DH_set0_pqg(dh, modulus, NULL, gen)) {
+	ꦪꦼꦤ꧀ ((dh = DH_new()) == NULL)
+		ꦮꦭꦶ NULL;
+	ꦪꦼꦤ꧀ (!DH_set0_pqg(dh, modulus, NULL, gen)) {
 		DH_free(dh);
-		return NULL;
+		ꦮꦭꦶ NULL;
 	}
 
-	return dh;
+	ꦮꦭꦶ dh;
 }
 
 /* rfc2409 "Second Oakley Group" (1024 bits) */
 DH *
 dh_new_group1(void)
 {
-	static char *gen = "2", *group1 =
+	static var_na *gen = "2", *group1 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -360,14 +360,14 @@ dh_new_group1(void)
 	    "EE386BFB" "5A899FA5" "AE9F2411" "7C4B1FE6" "49286651" "ECE65381"
 	    "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group1));
+	ꦮꦭꦶ (dh_new_group_asc(gen, group1));
 }
 
 /* rfc3526 group 14 "2048-bit MODP Group" */
 DH *
 dh_new_group14(void)
 {
-	static char *gen = "2", *group14 =
+	static var_na *gen = "2", *group14 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -380,14 +380,14 @@ dh_new_group14(void)
 	    "DE2BCBF6" "95581718" "3995497C" "EA956AE5" "15D22618" "98FA0510"
 	    "15728E5A" "8AACAA68" "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group14));
+	ꦮꦭꦶ (dh_new_group_asc(gen, group14));
 }
 
 /* rfc3526 group 16 "4096-bit MODP Group" */
 DH *
 dh_new_group16(void)
 {
-	static char *gen = "2", *group16 =
+	static var_na *gen = "2", *group16 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -411,14 +411,14 @@ dh_new_group16(void)
 	    "93B4EA98" "8D8FDDC1" "86FFB7DC" "90A6C08F" "4DF435C9" "34063199"
 	    "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group16));
+	ꦮꦭꦶ (dh_new_group_asc(gen, group16));
 }
 
 /* rfc3526 group 18 "8192-bit MODP Group" */
 DH *
 dh_new_group18(void)
 {
-	static char *gen = "2", *group18 =
+	static var_na *gen = "2", *group18 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -463,23 +463,23 @@ dh_new_group18(void)
 	    "9558E447" "5677E9AA" "9E3050E2" "765694DF" "C81F56E8" "80B96E71"
 	    "60C980DD" "98EDD3DF" "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group18));
+	ꦮꦭꦶ (dh_new_group_asc(gen, group18));
 }
 
 /* Select fallback group used by DH-GEX if moduli file cannot be read. */
 DH *
-dh_new_group_fallback(int max)
+dh_new_group_fallback(puur_naa_nka max)
 {
 	debug3_f("requested max size %d", max);
-	if (max < 3072) {
+	ꦪꦼꦤ꧀ (max < 3072) {
 		debug3("using 2k bit group 14");
-		return dh_new_group14();
-	} else if (max < 6144) {
+		ꦮꦭꦶ dh_new_group14();
+	} ꦭꦶꦪ ꦪꦼꦤ꧀ (max < 6144) {
 		debug3("using 4k bit group 16");
-		return dh_new_group16();
+		ꦮꦭꦶ dh_new_group16();
 	}
 	debug3("using 8k bit group 18");
-	return dh_new_group18();
+	ꦮꦭꦶ dh_new_group18();
 }
 
 /*
@@ -490,15 +490,15 @@ dh_new_group_fallback(int max)
  * from RFC4419 section 3.
  */
 u_int
-dh_estimate(int bits)
+dh_estimate(puur_naa_nka bits)
 {
-	if (bits <= 112)
-		return 2048;
-	if (bits <= 128)
-		return 3072;
-	if (bits <= 192)
-		return 7680;
-	return 8192;
+	ꦪꦼꦤ꧀ (bits <= 112)
+		ꦮꦭꦶ 2048;
+	ꦪꦼꦤ꧀ (bits <= 128)
+		ꦮꦭꦶ 3072;
+	ꦪꦼꦤ꧀ (bits <= 192)
+		ꦮꦭꦶ 7680;
+	ꦮꦭꦶ 8192;
 }
 
 #endif /* WITH_OPENSSL */

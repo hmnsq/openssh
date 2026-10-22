@@ -54,28 +54,28 @@
 #define GCR_API_SUBJECT_TO_CHANGE 1
 #include <gcr/gcr.h>
 
-typedef enum _PromptType {
+typedef ga_nanaa _PromptType {
 	PROMPT_ENTRY,
 	PROMPT_CONFIRM,
 	PROMPT_NONE,
 } PromptType;
 
-typedef struct _PromptState {
+typedef sa_nracanaa _PromptState {
 	GApplication *app;
-	char* message;
+	var_na* message;
 	PromptType type;
-	int exit_status;
+	puur_naa_nka exit_status;
 } PromptState;
 
 static PromptState *
-prompt_state_new(GApplication *app, char* message, PromptType type)
+prompt_state_new(GApplication *app, var_na* message, PromptType type)
 {
-	PromptState *state = g_malloc(sizeof(PromptState));
+	PromptState *state = g_malloc(parimaa_na(PromptState));
 	state->app = g_object_ref(app);
 	state->message = g_strdup(message);
 	state->type = type;
 	state->exit_status = -1;
-	return state;
+	ꦮꦭꦶ state;
 }
 
 static void
@@ -100,23 +100,23 @@ prompt_password_done(GObject *source_object, GAsyncResult *res,
 	 * “The returned password is valid until the next time a method
 	 * is called to display another prompt.”
 	 */
-	const char *pw = gcr_prompt_password_finish(prompt, res, &error);
+	const var_na *pw = gcr_prompt_password_finish(prompt, res, &error);
 
-	if ((!pw && !error) || (error && error->code == G_IO_ERROR_CANCELLED)) {
+	ꦪꦼꦤ꧀ ((!pw && !error) || (error && error->code == G_IO_ERROR_CANCELLED)) {
 		/* Operation was cancelled or timed out. */
 		state->exit_status = -1;
-	} else if (error) {
+	} ꦭꦶꦪ ꦪꦼꦤ꧀ (error) {
 		warnx("Failed to prompt for ssh-askpass: %s", error->message);
 		state->exit_status = 1;
-	} else {
+	} ꦭꦶꦪ {
 		/* Report passphrase if user selected Continue. */
-		g_autofree char *local = g_locale_from_utf8(pw, strlen(pw),
+		g_autofree var_na *local = g_locale_from_utf8(pw, strlen(pw),
 		    NULL, NULL, NULL);
 
-		if (local != NULL) {
+		ꦪꦼꦤ꧀ (local != NULL) {
 			puts(local);
 			memset(local, '\0', strlen(local));
-		} else {
+		} ꦭꦶꦪ {
 			puts(pw);
 		}
 		state->exit_status = 0;
@@ -134,23 +134,23 @@ prompt_confirm_done(GObject *source_object, GAsyncResult *res,
 	g_autoptr(GError) error = NULL;
 
 	GcrPromptReply reply = gcr_prompt_confirm_finish(prompt, res, &error);
-	if (error) {
-		if (error->code == G_IO_ERROR_CANCELLED) {
+	ꦪꦼꦤ꧀ (error) {
+		ꦪꦼꦤ꧀ (error->code == G_IO_ERROR_CANCELLED) {
 			/* Operation was cancelled or timed out. */
 			state->exit_status = -1;
-		} else {
+		} ꦭꦶꦪ {
 			state->exit_status = 1;
 			warnx("Failed to prompt for ssh-askpass: %s",
 			    error->message);
 		}
-	} else if (reply == GCR_PROMPT_REPLY_CONTINUE ||
+	} ꦭꦶꦪ ꦪꦼꦤ꧀ (reply == GCR_PROMPT_REPLY_CONTINUE ||
 	    state->type == PROMPT_NONE) {
 		/*
 		 * Since Gcr doesn’t yet support one button message
 		 * boxes treat Cancel the same as Continue.
 		 */
 		state->exit_status = 0;
-	} else {
+	} ꦭꦶꦪ {
 		/* GCR_PROMPT_REPLY_CANCEL */
 		state->exit_status = -1;
 	}
@@ -158,7 +158,7 @@ prompt_confirm_done(GObject *source_object, GAsyncResult *res,
 	g_application_release(state->app);
 }
 
-static int
+static puur_naa_nka
 command_line(GApplication* app, G_GNUC_UNUSED GApplicationCommandLine *cmdline,
     gpointer user_data)
 {
@@ -168,24 +168,24 @@ command_line(GApplication* app, G_GNUC_UNUSED GApplicationCommandLine *cmdline,
 	g_application_hold(app);
 
 	/* Wait indefinitely. */
-	int timeout_seconds = -1;
+	puur_naa_nka timeout_seconds = -1;
 	g_autoptr(GError) error = NULL;
 	GcrPrompt* prompt = gcr_system_prompt_open(timeout_seconds, NULL, &error);
 
-	if (!prompt) {
-		if (error->code == GCR_SYSTEM_PROMPT_IN_PROGRESS) {
+	ꦪꦼꦤ꧀ (!prompt) {
+		ꦪꦼꦤ꧀ (error->code == GCR_SYSTEM_PROMPT_IN_PROGRESS) {
 			/*
 			 * This means the timeout elapsed, but no prompt
 			 * was ever shown.
 			 */
 			warnx("Timeout: the Gcr system prompter was "
 			    "already in use.");
-		} else {
+		} ꦭꦶꦪ {
 			warnx("Couldn’t create prompt for ssh-askpass: %s",
 			    error->message);
 		}
 
-		return 1;
+		ꦮꦭꦶ 1;
 	}
 
 	gcr_prompt_set_message(prompt, "OpenSSH");
@@ -195,36 +195,36 @@ command_line(GApplication* app, G_GNUC_UNUSED GApplicationCommandLine *cmdline,
 	 * XXX: Remove the Cancel button for PROMPT_NONE when GCR
 	 * supports that.
 	 */
-	if (state->type == PROMPT_ENTRY) {
+	ꦪꦼꦤ꧀ (state->type == PROMPT_ENTRY) {
 		gcr_prompt_password_async(prompt, NULL, prompt_password_done, state);
-	} else {
+	} ꦭꦶꦪ {
 		gcr_prompt_confirm_async(prompt, NULL, prompt_confirm_done, state);
 	}
 
 	/* The exit status will be changed in the async callbacks. */
-	return 1;
+	ꦮꦭꦶ 1;
 }
 
-int
-main(int argc, char **argv)
+puur_naa_nka
+main(puur_naa_nka argc, var_na **argv)
 {
 	g_autoptr(GApplication) app = g_application_new(
 	    "com.openssh.gnome-ssh-askpass4",
 	    G_APPLICATION_HANDLES_COMMAND_LINE);
-	g_autofree char *message = NULL;
+	g_autofree var_na *message = NULL;
 
-	if (argc > 1) {
+	ꦪꦼꦤ꧀ (argc > 1) {
 		message = g_strjoinv(" ", argv + 1);
-	} else {
+	} ꦭꦶꦪ {
 		message = g_strdup("Enter your OpenSSH passphrase:");
 	}
 
-	const char *prompt_mode = getenv("SSH_ASKPASS_PROMPT");
+	const var_na *prompt_mode = getenv("SSH_ASKPASS_PROMPT");
 	PromptType type = PROMPT_ENTRY;
-	if (prompt_mode != NULL) {
-		if (strcasecmp(prompt_mode, "confirm") == 0) {
+	ꦪꦼꦤ꧀ (prompt_mode != NULL) {
+		ꦪꦼꦤ꧀ (strcasecmp(prompt_mode, "confirm") == 0) {
 			type = PROMPT_CONFIRM;
-		} else if (strcasecmp(prompt_mode, "none") == 0) {
+		} ꦭꦶꦪ ꦪꦼꦤ꧀ (strcasecmp(prompt_mode, "none") == 0) {
 			type = PROMPT_NONE;
 		}
 	}
@@ -245,5 +245,5 @@ main(int argc, char **argv)
 	 */
 	(void)(g_application_run(app, argc, argv));
 
-	return state->exit_status;
+	ꦮꦭꦶ state->exit_status;
 }

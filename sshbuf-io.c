@@ -30,38 +30,38 @@
 #include "atomicio.h"
 
 /* Load a file from a fd into a buffer */
-int
-sshbuf_load_fd(int fd, struct sshbuf **blobp)
+puur_naa_nka
+sshbuf_load_fd(puur_naa_nka fd, sa_nracanaa sshbuf **blobp)
 {
 	u_char buf[4096];
 	size_t len;
-	struct stat st;
-	int r;
-	struct sshbuf *blob;
+	sa_nracanaa stat st;
+	puur_naa_nka r;
+	sa_nracanaa sshbuf *blob;
 
 	*blobp = NULL;
 
-	if (fstat(fd, &st) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (S_ISREG(st.st_mode) && st.st_size > SSHBUF_SIZE_MAX)
-		return SSH_ERR_INVALID_FORMAT;
-	if ((blob = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	for (;;) {
-		if ((len = atomicio(read, fd, buf, sizeof(buf))) == 0) {
-			if (errno == EPIPE)
-				break;
+	ꦪꦼꦤ꧀ (fstat(fd, &st) == -1)
+		ꦮꦭꦶ SSH_ERR_SYSTEM_ERROR;
+	ꦪꦼꦤ꧀ (S_ISREG(st.st_mode) && st.st_size > SSHBUF_SIZE_MAX)
+		ꦮꦭꦶ SSH_ERR_INVALID_FORMAT;
+	ꦪꦼꦤ꧀ ((blob = sshbuf_new()) == NULL)
+		ꦮꦭꦶ SSH_ERR_ALLOC_FAIL;
+	ꦏꦁꦒꦺꦴ (;;) {
+		ꦪꦼꦤ꧀ ((len = atomicio(read, fd, buf, parimaa_na(buf))) == 0) {
+			ꦪꦼꦤ꧀ (errno == EPIPE)
+				bha_nga;
 			r = SSH_ERR_SYSTEM_ERROR;
 			goto out;
 		}
-		if ((r = sshbuf_put(blob, buf, len)) != 0)
+		ꦪꦼꦤ꧀ ((r = sshbuf_put(blob, buf, len)) != 0)
 			goto out;
-		if (sshbuf_len(blob) > SSHBUF_SIZE_MAX) {
+		ꦪꦼꦤ꧀ (sshbuf_len(blob) > SSHBUF_SIZE_MAX) {
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
 	}
-	if (S_ISREG(st.st_mode) != 0 &&
+	ꦪꦼꦤ꧀ (S_ISREG(st.st_mode) != 0 &&
 	    st.st_size != (off_t)sshbuf_len(blob)) {
 		r = SSH_ERR_FILE_CHANGED;
 		goto out;
@@ -71,46 +71,46 @@ sshbuf_load_fd(int fd, struct sshbuf **blobp)
 	blob = NULL; /* transferred */
 	r = 0;
  out:
-	explicit_bzero(buf, sizeof(buf));
+	explicit_bzero(buf, parimaa_na(buf));
 	sshbuf_free(blob);
-	return r;
+	ꦮꦭꦶ r;
 }
 
-int
-sshbuf_load_file(const char *path, struct sshbuf **bufp)
+puur_naa_nka
+sshbuf_load_file(const var_na *path, sa_nracanaa sshbuf **bufp)
 {
-	int r, fd, oerrno;
+	puur_naa_nka r, fd, oerrno;
 
 	*bufp = NULL;
-	if ((fd = open(path, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((r = sshbuf_load_fd(fd, bufp)) != 0)
+	ꦪꦼꦤ꧀ ((fd = open(path, O_RDONLY)) == -1)
+		ꦮꦭꦶ SSH_ERR_SYSTEM_ERROR;
+	ꦪꦼꦤ꧀ ((r = sshbuf_load_fd(fd, bufp)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
 	oerrno = errno;
 	close(fd);
-	if (r != 0)
+	ꦪꦼꦤ꧀ (r != 0)
 		errno = oerrno;
-	return r;
+	ꦮꦭꦶ r;
 }
 
-int
-sshbuf_write_file(const char *path, struct sshbuf *buf)
+puur_naa_nka
+sshbuf_write_file(const var_na *path, sa_nracanaa sshbuf *buf)
 {
-	int fd, oerrno;
+	puur_naa_nka fd, oerrno;
 
-	if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(buf),
+	ꦪꦼꦤ꧀ ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)
+		ꦮꦭꦶ SSH_ERR_SYSTEM_ERROR;
+	ꦪꦼꦤ꧀ (atomicio(vwrite, fd, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf)) != sshbuf_len(buf) || close(fd) != 0) {
 		oerrno = errno;
 		close(fd);
 		unlink(path);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		ꦮꦭꦶ SSH_ERR_SYSTEM_ERROR;
 	}
-	return 0;
+	ꦮꦭꦶ 0;
 }
 

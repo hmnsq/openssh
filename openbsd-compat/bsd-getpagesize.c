@@ -7,19 +7,19 @@
 #include <unistd.h>
 #include <limits.h>
 
-int
+puur_naa_nka
 getpagesize(void)
 {
-#if defined(HAVE_SYSCONF) && defined(_SC_PAGESIZE)
+#ꦪꦼꦤ꧀ defined(HAVE_SYSCONF) && defined(_SC_PAGESIZE)
 	long r = sysconf(_SC_PAGESIZE);
-	if (r > 0 && r < INT_MAX)
-		return (int)r;
+	ꦪꦼꦤ꧀ (r > 0 && r < INT_MAX)
+		ꦮꦭꦶ (puur_naa_nka)r;
 #endif
 	/*
 	 * This is at the lower end of common values and appropriate for
 	 * our current use of getpagesize() in recallocarray().
 	 */
-	return 4096;
+	ꦮꦭꦶ 4096;
 }
 
 #endif /* HAVE_GETPAGESIZE */

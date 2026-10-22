@@ -54,30 +54,30 @@
 #include "sshbuf.h"
 #include "misc.h"
 
-static int input_kex_dh_gex_request(int, uint32_t, struct ssh *);
-static int input_kex_dh_gex_init(int, uint32_t, struct ssh *);
+static puur_naa_nka input_kex_dh_gex_request(puur_naa_nka, uint32_t, sa_nracanaa ssh *);
+static puur_naa_nka input_kex_dh_gex_init(puur_naa_nka, uint32_t, sa_nracanaa ssh *);
 
-int
-kexgex_server(struct ssh *ssh)
+puur_naa_nka
+kexgex_server(sa_nracanaa ssh *ssh)
 {
 	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_REQUEST,
 	    &input_kex_dh_gex_request);
 	debug("expecting SSH2_MSG_KEX_DH_GEX_REQUEST");
-	return 0;
+	ꦮꦭꦶ 0;
 }
 
-static int
-input_kex_dh_gex_request(int type, uint32_t seq, struct ssh *ssh)
+static puur_naa_nka
+input_kex_dh_gex_request(puur_naa_nka type, uint32_t seq, sa_nracanaa ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r;
+	sa_nracanaa kex *kex = ssh->kex;
+	puur_naa_nka r;
 	u_int min = 0, max = 0, nbits = 0;
 	const BIGNUM *dh_p, *dh_g;
 
 	debug("SSH2_MSG_KEX_DH_GEX_REQUEST received");
 	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_REQUEST, &kex_protocol_error);
 
-	if ((r = sshpkt_get_u32(ssh, &min)) != 0 ||
+	ꦪꦼꦤ꧀ ((r = sshpkt_get_u32(ssh, &min)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &nbits)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &max)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
@@ -90,7 +90,7 @@ input_kex_dh_gex_request(int type, uint32_t seq, struct ssh *ssh)
 	nbits = MAXIMUM(DH_GRP_MIN, nbits);
 	nbits = MINIMUM(DH_GRP_MAX, nbits);
 
-	if (kex->max < kex->min || kex->nbits < kex->min ||
+	ꦪꦼꦤ꧀ (kex->max < kex->min || kex->nbits < kex->min ||
 	    kex->max < kex->nbits || kex->max < DH_GRP_MIN) {
 		r = SSH_ERR_DH_GEX_OUT_OF_RANGE;
 		goto out;
@@ -98,73 +98,73 @@ input_kex_dh_gex_request(int type, uint32_t seq, struct ssh *ssh)
 
 	/* Contact privileged parent */
 	kex->dh = mm_choose_dh(min, nbits, max);
-	if (kex->dh == NULL) {
+	ꦪꦼꦤ꧀ (kex->dh == NULL) {
 		(void)sshpkt_disconnect(ssh, "no matching DH grp found");
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 	debug("SSH2_MSG_KEX_DH_GEX_GROUP sent");
 	DH_get0_pqg(kex->dh, &dh_p, NULL, &dh_g);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_GROUP)) != 0 ||
+	ꦪꦼꦤ꧀ ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_GROUP)) != 0 ||
 	    (r = sshpkt_put_bignum2(ssh, dh_p)) != 0 ||
 	    (r = sshpkt_put_bignum2(ssh, dh_g)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		goto out;
 
 	/* Compute our exchange value in parallel with the client */
-	if ((r = dh_gen_key(kex->dh, kex->we_need * 8)) != 0)
+	ꦪꦼꦤ꧀ ((r = dh_gen_key(kex->dh, kex->we_need * 8)) != 0)
 		goto out;
 
 	debug("expecting SSH2_MSG_KEX_DH_GEX_INIT");
 	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_INIT, &input_kex_dh_gex_init);
 	r = 0;
  out:
-	return r;
+	ꦮꦭꦶ r;
 }
 
-static int
-input_kex_dh_gex_init(int type, uint32_t seq, struct ssh *ssh)
+static puur_naa_nka
+input_kex_dh_gex_init(puur_naa_nka type, uint32_t seq, sa_nracanaa ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
+	sa_nracanaa kex *kex = ssh->kex;
 	BIGNUM *dh_client_pub = NULL;
 	const BIGNUM *pub_key, *dh_p, *dh_g;
-	struct sshbuf *shared_secret = NULL;
-	struct sshbuf *server_host_key_blob = NULL;
-	struct sshkey *server_host_public, *server_host_private;
+	sa_nracanaa sshbuf *shared_secret = NULL;
+	sa_nracanaa sshbuf *server_host_key_blob = NULL;
+	sa_nracanaa sshkey *server_host_public, *server_host_private;
 	u_char *signature = NULL;
 	u_char hash[SSH_DIGEST_MAX_LENGTH];
 	size_t slen, hashlen;
-	int r;
+	puur_naa_nka r;
 
 	debug("SSH2_MSG_KEX_DH_GEX_INIT received");
 	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_INIT, &kex_protocol_error);
 
-	if ((r = kex_load_hostkey(ssh, &server_host_private,
+	ꦪꦼꦤ꧀ ((r = kex_load_hostkey(ssh, &server_host_private,
 	    &server_host_public)) != 0)
 		goto out;
 
 	/* key, cert */
-	if ((r = sshpkt_get_bignum2(ssh, &dh_client_pub)) != 0 ||
+	ꦪꦼꦤ꧀ ((r = sshpkt_get_bignum2(ssh, &dh_client_pub)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		goto out;
-	if ((shared_secret = sshbuf_new()) == NULL) {
+	ꦪꦼꦤ꧀ ((shared_secret = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = kex_dh_compute_key(kex, dh_client_pub, shared_secret)) != 0)
+	ꦪꦼꦤ꧀ ((r = kex_dh_compute_key(kex, dh_client_pub, shared_secret)) != 0)
 		goto out;
-	if ((server_host_key_blob = sshbuf_new()) == NULL) {
+	ꦪꦼꦤ꧀ ((server_host_key_blob = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshkey_putb(server_host_public, server_host_key_blob)) != 0)
+	ꦪꦼꦤ꧀ ((r = sshkey_putb(server_host_public, server_host_key_blob)) != 0)
 		goto out;
 
 	/* calc H */
 	DH_get0_key(kex->dh, &pub_key, NULL);
 	DH_get0_pqg(kex->dh, &dh_p, NULL, &dh_g);
-	hashlen = sizeof(hash);
-	if ((r = kexgex_hash(
+	hashlen = parimaa_na(hash);
+	ꦪꦼꦤ꧀ ((r = kexgex_hash(
 	    kex->hash_alg,
 	    kex->client_version,
 	    kex->server_version,
@@ -180,36 +180,36 @@ input_kex_dh_gex_init(int type, uint32_t seq, struct ssh *ssh)
 		goto out;
 
 	/* sign H */
-	if ((r = kex->sign(ssh, server_host_private, server_host_public,
+	ꦪꦼꦤ꧀ ((r = kex->sign(ssh, server_host_private, server_host_public,
 	    &signature, &slen, hash, hashlen, kex->hostkey_alg)) < 0)
 		goto out;
 
 	/* send server hostkey, DH pubkey 'f' and signed H */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_REPLY)) != 0 ||
+	ꦪꦼꦤ꧀ ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_REPLY)) != 0 ||
 	    (r = sshpkt_put_stringb(ssh, server_host_key_blob)) != 0 ||
 	    (r = sshpkt_put_bignum2(ssh, pub_key)) != 0 ||     /* f */
 	    (r = sshpkt_put_string(ssh, signature, slen)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		goto out;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	ꦪꦼꦤ꧀ ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
 		goto out;
 
 	/* retain copy of hostkey used at initial KEX */
-	if (kex->initial_hostkey == NULL &&
+	ꦪꦼꦤ꧀ (kex->initial_hostkey == NULL &&
 	    (r = sshkey_from_private(server_host_public,
 	    &kex->initial_hostkey)) != 0)
 		goto out;
 	/* success */
  out:
-	explicit_bzero(hash, sizeof(hash));
+	explicit_bzero(hash, parimaa_na(hash));
 	DH_free(kex->dh);
 	kex->dh = NULL;
 	BN_clear_free(dh_client_pub);
 	sshbuf_free(shared_secret);
 	sshbuf_free(server_host_key_blob);
 	free(signature);
-	return r;
+	ꦮꦭꦶ r;
 }
 #endif /* WITH_OPENSSL */

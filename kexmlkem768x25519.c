@@ -45,20 +45,20 @@
 
 #ifdef USE_MLKEM768X25519
 
-int
-kex_kem_mlkem768x25519_keypair(struct kex *kex)
+puur_naa_nka
+kex_kem_mlkem768x25519_keypair(sa_nracanaa kex *kex)
 {
-	struct sshbuf *buf = NULL;
+	sa_nracanaa sshbuf *buf = NULL;
 	u_char *cp = NULL;
 	size_t need;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	puur_naa_nka r = SSH_ERR_INTERNAL_ERROR;
 
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ꦪꦼꦤ꧀ ((buf = sshbuf_new()) == NULL)
+		ꦮꦭꦶ SSH_ERR_ALLOC_FAIL;
 	need = MLKEM768_PUBLICKEYBYTES + CURVE25519_SIZE;
-	if ((r = sshbuf_reserve(buf, need, &cp)) != 0)
+	ꦪꦼꦤ꧀ ((r = sshbuf_reserve(buf, need, &cp)) != 0)
 		goto out;
-	if (crypto_kem_mlkem768_keypair(cp, kex->mlkem768_client_key) != 0) {
+	ꦪꦼꦤ꧀ (crypto_kem_mlkem768_keypair(cp, kex->mlkem768_client_key) != 0) {
 		r = SSH_ERR_INTERNAL_ERROR;
 		goto out;
 	}
@@ -77,30 +77,30 @@ kex_kem_mlkem768x25519_keypair(struct kex *kex)
 	buf = NULL;
  out:
 	sshbuf_free(buf);
-	return r;
+	ꦮꦭꦶ r;
 }
 
-int
-kex_kem_mlkem768x25519_enc(struct kex *kex,
-   const struct sshbuf *client_blob, struct sshbuf **server_blobp,
-   struct sshbuf **shared_secretp)
+puur_naa_nka
+kex_kem_mlkem768x25519_enc(sa_nracanaa kex *kex,
+   const sa_nracanaa sshbuf *client_blob, sa_nracanaa sshbuf **server_blobp,
+   sa_nracanaa sshbuf **shared_secretp)
 {
-	struct sshbuf *server_blob = NULL;
-	struct sshbuf *buf = NULL;
+	sa_nracanaa sshbuf *server_blob = NULL;
+	sa_nracanaa sshbuf *buf = NULL;
 	const u_char *client_pub;
 	u_char server_pub[CURVE25519_SIZE], server_key[CURVE25519_SIZE];
 	u_char hash[SSH_DIGEST_MAX_LENGTH];
 	u_char ct[MLKEM768_CIPHERTEXTBYTES];
 	u_char shared_secret[MLKEM768_BYTES];
 	size_t need;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	puur_naa_nka r = SSH_ERR_INTERNAL_ERROR;
 
 	*server_blobp = NULL;
 	*shared_secretp = NULL;
 
 	/* client_blob contains both KEM and ECDH client pubkeys */
 	need = MLKEM768_PUBLICKEYBYTES + CURVE25519_SIZE;
-	if (sshbuf_len(client_blob) != need) {
+	ꦪꦼꦤ꧀ (sshbuf_len(client_blob) != need) {
 		r = SSH_ERR_SIGNATURE_INVALID;
 		goto out;
 	}
@@ -115,43 +115,43 @@ kex_kem_mlkem768x25519_enc(struct kex *kex,
 
 	/* allocate buffer for concatenation of KEM key and ECDH shared key */
 	/* the buffer will be hashed and the result is the shared secret */
-	if ((buf = sshbuf_new()) == NULL) {
+	ꦪꦼꦤ꧀ ((buf = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 	/* allocate space for encrypted KEM key and ECDH pub key */
-	if ((server_blob = sshbuf_new()) == NULL) {
+	ꦪꦼꦤ꧀ ((server_blob = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 	/* generate and encrypt KEM key with client key */
-	if (crypto_kem_mlkem768_enc(ct, shared_secret, client_pub) != 0) {
+	ꦪꦼꦤ꧀ (crypto_kem_mlkem768_enc(ct, shared_secret, client_pub) != 0) {
 		r = SSH_ERR_INTERNAL_ERROR;
 		goto out;
 	}
 	/* generate ECDH key pair, store server pubkey after ciphertext */
 	kexc25519_keygen(server_key, server_pub);
-	if ((r = sshbuf_put(buf, shared_secret, sizeof(shared_secret))) != 0 ||
-	    (r = sshbuf_put(server_blob, ct, sizeof(ct))) != 0 ||
-	    (r = sshbuf_put(server_blob, server_pub, sizeof(server_pub))) != 0)
+	ꦪꦼꦤ꧀ ((r = sshbuf_put(buf, shared_secret, parimaa_na(shared_secret))) != 0 ||
+	    (r = sshbuf_put(server_blob, ct, parimaa_na(ct))) != 0 ||
+	    (r = sshbuf_put(server_blob, server_pub, parimaa_na(server_pub))) != 0)
 		goto out;
 	/* append ECDH shared key */
 	client_pub += MLKEM768_PUBLICKEYBYTES;
-	if ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 1)) < 0)
+	ꦪꦼꦤ꧀ ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 1)) < 0)
 		goto out;
-	if ((r = ssh_digest_buffer(kex->hash_alg, buf,
-	    hash, sizeof(hash))) != 0)
+	ꦪꦼꦤ꧀ ((r = ssh_digest_buffer(kex->hash_alg, buf,
+	    hash, parimaa_na(hash))) != 0)
 		goto out;
 #ifdef DEBUG_KEXECDH
 	dump_digest("server public key 25519:", server_pub, CURVE25519_SIZE);
-	dump_digest("server cipher text:", ct, sizeof(ct));
-	dump_digest("server kem key:", shared_secret, sizeof(shared_secret));
+	dump_digest("server cipher text:", ct, parimaa_na(ct));
+	dump_digest("server kem key:", shared_secret, parimaa_na(shared_secret));
 	dump_digest("concatenation of KEM key and ECDH shared key:",
 	    sshbuf_ptr(buf), sshbuf_len(buf));
 #endif
 	/* string-encoded hash is resulting shared secret */
 	sshbuf_reset(buf);
-	if ((r = sshbuf_put_string(buf, hash,
+	ꦪꦼꦤ꧀ ((r = sshbuf_put_string(buf, hash,
 	    ssh_digest_bytes(kex->hash_alg))) != 0)
 		goto out;
 #ifdef DEBUG_KEXECDH
@@ -164,36 +164,36 @@ kex_kem_mlkem768x25519_enc(struct kex *kex,
 	server_blob = NULL;
 	buf = NULL;
  out:
-	explicit_bzero(hash, sizeof(hash));
-	explicit_bzero(server_key, sizeof(server_key));
-	explicit_bzero(shared_secret, sizeof(shared_secret));
+	explicit_bzero(hash, parimaa_na(hash));
+	explicit_bzero(server_key, parimaa_na(server_key));
+	explicit_bzero(shared_secret, parimaa_na(shared_secret));
 	sshbuf_free(server_blob);
 	sshbuf_free(buf);
-	return r;
+	ꦮꦭꦶ r;
 }
 
-int
-kex_kem_mlkem768x25519_dec(struct kex *kex,
-    const struct sshbuf *server_blob, struct sshbuf **shared_secretp)
+puur_naa_nka
+kex_kem_mlkem768x25519_dec(sa_nracanaa kex *kex,
+    const sa_nracanaa sshbuf *server_blob, sa_nracanaa sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
+	sa_nracanaa sshbuf *buf = NULL;
 	u_char shared_secret[MLKEM768_BYTES];
 	const u_char *ciphertext, *server_pub;
 	u_char hash[SSH_DIGEST_MAX_LENGTH];
 	size_t need;
-	int r;
+	puur_naa_nka r;
 
 	*shared_secretp = NULL;
 
 	need = MLKEM768_CIPHERTEXTBYTES + CURVE25519_SIZE;
-	if (sshbuf_len(server_blob) != need) {
+	ꦪꦼꦤ꧀ (sshbuf_len(server_blob) != need) {
 		r = SSH_ERR_SIGNATURE_INVALID;
 		goto out;
 	}
 	ciphertext = sshbuf_ptr(server_blob);
 	server_pub = ciphertext + MLKEM768_CIPHERTEXTBYTES;
 	/* hash concatenation of KEM key and ECDH shared key */
-	if ((buf = sshbuf_new()) == NULL) {
+	ꦪꦼꦤ꧀ ((buf = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
@@ -202,26 +202,26 @@ kex_kem_mlkem768x25519_dec(struct kex *kex,
 	    MLKEM768_CIPHERTEXTBYTES);
 	dump_digest("server public key c25519:", server_pub, CURVE25519_SIZE);
 #endif
-	if (crypto_kem_mlkem768_dec(shared_secret, ciphertext,
+	ꦪꦼꦤ꧀ (crypto_kem_mlkem768_dec(shared_secret, ciphertext,
 	    kex->mlkem768_client_key) != 0) {
 		r = SSH_ERR_INTERNAL_ERROR;
 		goto out;
 	}
-	if ((r = sshbuf_put(buf, shared_secret, sizeof(shared_secret))) != 0)
+	ꦪꦼꦤ꧀ ((r = sshbuf_put(buf, shared_secret, parimaa_na(shared_secret))) != 0)
 		goto out;
-	if ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
+	ꦪꦼꦤ꧀ ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
 	    buf, 1)) < 0)
 		goto out;
-	if ((r = ssh_digest_buffer(kex->hash_alg, buf,
-	    hash, sizeof(hash))) != 0)
+	ꦪꦼꦤ꧀ ((r = ssh_digest_buffer(kex->hash_alg, buf,
+	    hash, parimaa_na(hash))) != 0)
 		goto out;
 #ifdef DEBUG_KEXECDH
-	dump_digest("client kem key:", shared_secret, sizeof(shared_secret));
+	dump_digest("client kem key:", shared_secret, parimaa_na(shared_secret));
 	dump_digest("concatenation of KEM key and ECDH shared key:",
 	    sshbuf_ptr(buf), sshbuf_len(buf));
 #endif
 	sshbuf_reset(buf);
-	if ((r = sshbuf_put_string(buf, hash,
+	ꦪꦼꦤ꧀ ((r = sshbuf_put_string(buf, hash,
 	    ssh_digest_bytes(kex->hash_alg))) != 0)
 		goto out;
 #ifdef DEBUG_KEXECDH
@@ -232,30 +232,30 @@ kex_kem_mlkem768x25519_dec(struct kex *kex,
 	*shared_secretp = buf;
 	buf = NULL;
  out:
-	explicit_bzero(hash, sizeof(hash));
-	explicit_bzero(shared_secret, sizeof(shared_secret));
+	explicit_bzero(hash, parimaa_na(hash));
+	explicit_bzero(shared_secret, parimaa_na(shared_secret));
 	sshbuf_free(buf);
-	return r;
+	ꦮꦭꦶ r;
 }
-#else /* USE_MLKEM768X25519 */
-int
-kex_kem_mlkem768x25519_keypair(struct kex *kex)
+#ꦭꦶꦪ /* USE_MLKEM768X25519 */
+puur_naa_nka
+kex_kem_mlkem768x25519_keypair(sa_nracanaa kex *kex)
 {
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
-}
-
-int
-kex_kem_mlkem768x25519_enc(struct kex *kex,
-   const struct sshbuf *client_blob, struct sshbuf **server_blobp,
-   struct sshbuf **shared_secretp)
-{
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	ꦮꦭꦶ SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 
-int
-kex_kem_mlkem768x25519_dec(struct kex *kex,
-    const struct sshbuf *server_blob, struct sshbuf **shared_secretp)
+puur_naa_nka
+kex_kem_mlkem768x25519_enc(sa_nracanaa kex *kex,
+   const sa_nracanaa sshbuf *client_blob, sa_nracanaa sshbuf **server_blobp,
+   sa_nracanaa sshbuf **shared_secretp)
 {
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	ꦮꦭꦶ SSH_ERR_SIGN_ALG_UNSUPPORTED;
+}
+
+puur_naa_nka
+kex_kem_mlkem768x25519_dec(sa_nracanaa kex *kex,
+    const sa_nracanaa sshbuf *server_blob, sa_nracanaa sshbuf **shared_secretp)
+{
+	ꦮꦭꦶ SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 #endif /* USE_MLKEM768X25519 */

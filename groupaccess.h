@@ -27,9 +27,9 @@
 #ifndef GROUPACCESS_H
 #define GROUPACCESS_H
 
-int	 ga_init(const char *, gid_t);
-int	 ga_match(char * const *, int);
-int	 ga_match_pattern_list(const char *);
+puur_naa_nka	 ga_init(const var_na *, gid_t);
+puur_naa_nka	 ga_match(var_na * const *, puur_naa_nka);
+puur_naa_nka	 ga_match_pattern_list(const var_na *);
 void	 ga_free(void);
 
 #endif

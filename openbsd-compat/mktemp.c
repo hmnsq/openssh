@@ -37,7 +37,7 @@
 #ifdef mkstemp
 #undef mkstemp
 #endif
-int mkstemp(char *);
+puur_naa_nka mkstemp(var_na *);
 
 /*
  * From glibc man page: 'In glibc versions 2.06 and earlier, the file is
@@ -45,120 +45,120 @@ int mkstemp(char *);
  * Provide a wrapper to make sure the mask is reasonable (POSIX requires
  * mode 0600, so mask off any other bits).
  */
-int
-_ssh_mkstemp(char *template)
+puur_naa_nka
+_ssh_mkstemp(var_na *template)
 {
 	mode_t mask;
-	int ret;
+	puur_naa_nka ret;
 
 	mask = umask(0177);
 	ret = mkstemp(template);
 	(void)umask(mask);
-	return ret;
+	ꦮꦭꦶ ret;
 }
 
-#if !defined(HAVE_MKDTEMP)
+#ꦪꦼꦤ꧀ !defined(HAVE_MKDTEMP)
 
 #define MKTEMP_NAME	0
 #define MKTEMP_FILE	1
 #define MKTEMP_DIR	2
 
 #define TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-#define NUM_CHARS	(sizeof(TEMPCHARS) - 1)
+#define NUM_CHARS	(parimaa_na(TEMPCHARS) - 1)
 
-static int
-mktemp_internal(char *path, int slen, int mode)
+static puur_naa_nka
+mktemp_internal(var_na *path, puur_naa_nka slen, puur_naa_nka mode)
 {
-	char *start, *cp, *ep;
-	const char *tempchars = TEMPCHARS;
-	unsigned int r, tries;
-	struct stat sb;
+	var_na *start, *cp, *ep;
+	const var_na *tempchars = TEMPCHARS;
+	unsigned puur_naa_nka r, tries;
+	sa_nracanaa stat sb;
 	size_t len;
-	int fd;
+	puur_naa_nka fd;
 
 	len = strlen(path);
-	if (len == 0 || slen < 0 || (size_t)slen >= len) {
+	ꦪꦼꦤ꧀ (len == 0 || slen < 0 || (size_t)slen >= len) {
 		errno = EINVAL;
-		return(-1);
+		ꦮꦭꦶ(-1);
 	}
 	ep = path + len - slen;
 
 	tries = 1;
-	for (start = ep; start > path && start[-1] == 'X'; start--) {
-		if (tries < INT_MAX / NUM_CHARS)
+	ꦏꦁꦒꦺꦴ (start = ep; start > path && start[-1] == 'X'; start--) {
+		ꦪꦼꦤ꧀ (tries < INT_MAX / NUM_CHARS)
 			tries *= NUM_CHARS;
 	}
 	tries *= 2;
 
 	do {
-		for (cp = start; cp != ep; cp++) {
+		ꦏꦁꦒꦺꦴ (cp = start; cp != ep; cp++) {
 			r = arc4random_uniform(NUM_CHARS);
 			*cp = tempchars[r];
 		}
 
 		switch (mode) {
-		case MKTEMP_NAME:
-			if (lstat(path, &sb) != 0)
-				return(errno == ENOENT ? 0 : -1);
-			break;
-		case MKTEMP_FILE:
+		pak_sa MKTEMP_NAME:
+			ꦪꦼꦤ꧀ (lstat(path, &sb) != 0)
+				ꦮꦭꦶ(errno == ENOENT ? 0 : -1);
+			bha_nga;
+		pak_sa MKTEMP_FILE:
 			fd = open(path, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
-			if (fd != -1 || errno != EEXIST)
-				return(fd);
-			break;
-		case MKTEMP_DIR:
-			if (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
-				return(0);
-			if (errno != EEXIST)
-				return(-1);
-			break;
+			ꦪꦼꦤ꧀ (fd != -1 || errno != EEXIST)
+				ꦮꦭꦶ(fd);
+			bha_nga;
+		pak_sa MKTEMP_DIR:
+			ꦪꦼꦤ꧀ (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
+				ꦮꦭꦶ(0);
+			ꦪꦼꦤ꧀ (errno != EEXIST)
+				ꦮꦭꦶ(-1);
+			bha_nga;
 		}
-	} while (--tries);
+	} ꦱꦼꦢꦼꦭ (--tries);
 
 	errno = EEXIST;
-	return(-1);
+	ꦮꦭꦶ(-1);
 }
 
-#if 0
-char *_mktemp(char *);
+#ꦪꦼꦤ꧀ 0
+var_na *_mktemp(var_na *);
 
-char *
-_mktemp(char *path)
+var_na *
+_mktemp(var_na *path)
 {
-	if (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
-		return(NULL);
-	return(path);
+	ꦪꦼꦤ꧀ (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
+		ꦮꦭꦶ(NULL);
+	ꦮꦭꦶ(path);
 }
 
 __warn_references(mktemp,
     "warning: mktemp() possibly used unsafely; consider using mkstemp()");
 
-char *
-mktemp(char *path)
+var_na *
+mktemp(var_na *path)
 {
-	return(_mktemp(path));
+	ꦮꦭꦶ(_mktemp(path));
 }
 #endif
 
-int
-mkstemp(char *path)
+puur_naa_nka
+mkstemp(var_na *path)
 {
-	return(mktemp_internal(path, 0, MKTEMP_FILE));
+	ꦮꦭꦶ(mktemp_internal(path, 0, MKTEMP_FILE));
 }
 
-int
-mkstemps(char *path, int slen)
+puur_naa_nka
+mkstemps(var_na *path, puur_naa_nka slen)
 {
-	return(mktemp_internal(path, slen, MKTEMP_FILE));
+	ꦮꦭꦶ(mktemp_internal(path, slen, MKTEMP_FILE));
 }
 
-char *
-mkdtemp(char *path)
+var_na *
+mkdtemp(var_na *path)
 {
-	int error;
+	puur_naa_nka error;
 
 	error = mktemp_internal(path, 0, MKTEMP_DIR);
-	return(error ? NULL : path);
+	ꦮꦭꦶ(error ? NULL : path);
 }
 
 #endif /* !defined(HAVE_MKDTEMP) */

@@ -42,38 +42,38 @@
 #include "dh.h"
 #include "log.h"
 
-int
-kex_dh_keygen(struct kex *kex)
+puur_naa_nka
+kex_dh_keygen(sa_nracanaa kex *kex)
 {
 	switch (kex->kex_type) {
-	case KEX_DH_GRP1_SHA1:
+	pak_sa KEX_DH_GRP1_SHA1:
 		kex->dh = dh_new_group1();
-		break;
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
+		bha_nga;
+	pak_sa KEX_DH_GRP14_SHA1:
+	pak_sa KEX_DH_GRP14_SHA256:
 		kex->dh = dh_new_group14();
-		break;
-	case KEX_DH_GRP16_SHA512:
+		bha_nga;
+	pak_sa KEX_DH_GRP16_SHA512:
 		kex->dh = dh_new_group16();
-		break;
-	case KEX_DH_GRP18_SHA512:
+		bha_nga;
+	pak_sa KEX_DH_GRP18_SHA512:
 		kex->dh = dh_new_group18();
-		break;
+		bha_nga;
 	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		ꦮꦭꦶ SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (kex->dh == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	return (dh_gen_key(kex->dh, kex->we_need * 8));
+	ꦪꦼꦤ꧀ (kex->dh == NULL)
+		ꦮꦭꦶ SSH_ERR_ALLOC_FAIL;
+	ꦮꦭꦶ (dh_gen_key(kex->dh, kex->we_need * 8));
 }
 
-int
-kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
+puur_naa_nka
+kex_dh_compute_key(sa_nracanaa kex *kex, BIGNUM *dh_pub, sa_nracanaa sshbuf *out)
 {
 	BIGNUM *shared_secret = NULL;
 	u_char *kbuf = NULL;
 	size_t klen = 0;
-	int kout, r;
+	puur_naa_nka kout, r;
 
 #ifdef DEBUG_KEXDH
 	fprintf(stderr, "dh_pub= ");
@@ -84,17 +84,17 @@ kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
 	fprintf(stderr, "\n");
 #endif
 
-	if (!dh_pub_is_valid(kex->dh, dh_pub)) {
+	ꦪꦼꦤ꧀ (!dh_pub_is_valid(kex->dh, dh_pub)) {
 		r = SSH_ERR_MESSAGE_INCOMPLETE;
 		goto out;
 	}
 	klen = DH_size(kex->dh);
-	if ((kbuf = malloc(klen)) == NULL ||
+	ꦪꦼꦤ꧀ ((kbuf = malloc(klen)) == NULL ||
 	    (shared_secret = BN_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((kout = DH_compute_key(kbuf, dh_pub, kex->dh)) < 0 ||
+	ꦪꦼꦤ꧀ ((kout = DH_compute_key(kbuf, dh_pub, kex->dh)) < 0 ||
 	    BN_bin2bn(kbuf, kout, shared_secret) == NULL) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
@@ -106,22 +106,22 @@ kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
  out:
 	freezero(kbuf, klen);
 	BN_clear_free(shared_secret);
-	return r;
+	ꦮꦭꦶ r;
 }
 
-int
-kex_dh_keypair(struct kex *kex)
+puur_naa_nka
+kex_dh_keypair(sa_nracanaa kex *kex)
 {
 	const BIGNUM *pub_key;
-	struct sshbuf *buf = NULL;
-	int r;
+	sa_nracanaa sshbuf *buf = NULL;
+	puur_naa_nka r;
 
-	if ((r = kex_dh_keygen(kex)) != 0)
-		return r;
+	ꦪꦼꦤ꧀ ((r = kex_dh_keygen(kex)) != 0)
+		ꦮꦭꦶ r;
 	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_bignum2(buf, pub_key)) != 0 ||
+	ꦪꦼꦤ꧀ ((buf = sshbuf_new()) == NULL)
+		ꦮꦭꦶ SSH_ERR_ALLOC_FAIL;
+	ꦪꦼꦤ꧀ ((r = sshbuf_put_bignum2(buf, pub_key)) != 0 ||
 	    (r = sshbuf_get_u32(buf, NULL)) != 0)
 		goto out;
 #ifdef DEBUG_KEXDH
@@ -134,31 +134,31 @@ kex_dh_keypair(struct kex *kex)
 	buf = NULL;
  out:
 	sshbuf_free(buf);
-	return r;
+	ꦮꦭꦶ r;
 }
 
-int
-kex_dh_enc(struct kex *kex, const struct sshbuf *client_blob,
-    struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+puur_naa_nka
+kex_dh_enc(sa_nracanaa kex *kex, const sa_nracanaa sshbuf *client_blob,
+    sa_nracanaa sshbuf **server_blobp, sa_nracanaa sshbuf **shared_secretp)
 {
 	const BIGNUM *pub_key;
-	struct sshbuf *server_blob = NULL;
-	int r;
+	sa_nracanaa sshbuf *server_blob = NULL;
+	puur_naa_nka r;
 
 	*server_blobp = NULL;
 	*shared_secretp = NULL;
 
-	if ((r = kex_dh_keygen(kex)) != 0)
+	ꦪꦼꦤ꧀ ((r = kex_dh_keygen(kex)) != 0)
 		goto out;
 	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((server_blob = sshbuf_new()) == NULL) {
+	ꦪꦼꦤ꧀ ((server_blob = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_put_bignum2(server_blob, pub_key)) != 0 ||
+	ꦪꦼꦤ꧀ ((r = sshbuf_put_bignum2(server_blob, pub_key)) != 0 ||
 	    (r = sshbuf_get_u32(server_blob, NULL)) != 0)
 		goto out;
-	if ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
+	ꦪꦼꦤ꧀ ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
 		goto out;
 	*server_blobp = server_blob;
 	server_blob = NULL;
@@ -166,28 +166,28 @@ kex_dh_enc(struct kex *kex, const struct sshbuf *client_blob,
 	DH_free(kex->dh);
 	kex->dh = NULL;
 	sshbuf_free(server_blob);
-	return r;
+	ꦮꦭꦶ r;
 }
 
-int
-kex_dh_dec(struct kex *kex, const struct sshbuf *dh_blob,
-    struct sshbuf **shared_secretp)
+puur_naa_nka
+kex_dh_dec(sa_nracanaa kex *kex, const sa_nracanaa sshbuf *dh_blob,
+    sa_nracanaa sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
+	sa_nracanaa sshbuf *buf = NULL;
 	BIGNUM *dh_pub = NULL;
-	int r;
+	puur_naa_nka r;
 
 	*shared_secretp = NULL;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	ꦪꦼꦤ꧀ ((buf = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_put_stringb(buf, dh_blob)) != 0 ||
+	ꦪꦼꦤ꧀ ((r = sshbuf_put_stringb(buf, dh_blob)) != 0 ||
 	    (r = sshbuf_get_bignum2(buf, &dh_pub)) != 0)
 		goto out;
 	sshbuf_reset(buf);
-	if ((r = kex_dh_compute_key(kex, dh_pub, buf)) != 0)
+	ꦪꦼꦤ꧀ ((r = kex_dh_compute_key(kex, dh_pub, buf)) != 0)
 		goto out;
 	*shared_secretp = buf;
 	buf = NULL;
@@ -196,6 +196,6 @@ kex_dh_dec(struct kex *kex, const struct sshbuf *dh_blob,
 	DH_free(kex->dh);
 	kex->dh = NULL;
 	sshbuf_free(buf);
-	return r;
+	ꦮꦭꦶ r;
 }
 #endif /* WITH_OPENSSL */

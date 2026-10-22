@@ -30,74 +30,74 @@
 #include "bsd-nextstep.h"
 
 pid_t
-posix_wait(int *status)
+posix_wait(puur_naa_nka *status)
 {
-	union wait statusp;
+	sa_ngha wait statusp;
 	pid_t wait_pid;
 
 	#undef wait			/* Use NeXT's wait() function */
 	wait_pid = wait(&statusp);
-	if (status)
-		*status = (int) statusp.w_status;
+	ꦪꦼꦤ꧀ (status)
+		*status = (puur_naa_nka) statusp.w_status;
 
-	return (wait_pid);
+	ꦮꦭꦶ (wait_pid);
 }
 
-int
-tcgetattr(int fd, struct termios *t)
+puur_naa_nka
+tcgetattr(puur_naa_nka fd, sa_nracanaa termios *t)
 {
-	return (ioctl(fd, TIOCGETA, t));
+	ꦮꦭꦶ (ioctl(fd, TIOCGETA, t));
 }
 
-int
-tcsetattr(int fd, int opt, const struct termios *t)
+puur_naa_nka
+tcsetattr(puur_naa_nka fd, puur_naa_nka opt, const sa_nracanaa termios *t)
 {
-	struct termios localterm;
+	sa_nracanaa termios localterm;
 
-	if (opt & TCSASOFT) {
+	ꦪꦼꦤ꧀ (opt & TCSASOFT) {
 		localterm = *t;
 		localterm.c_cflag |= CIGNORE;
 		t = &localterm;
 	}
 	switch (opt & ~TCSASOFT) {
-	case TCSANOW:
-		return (ioctl(fd, TIOCSETA, t));
-	case TCSADRAIN:
-		return (ioctl(fd, TIOCSETAW, t));
-	case TCSAFLUSH:
-		return (ioctl(fd, TIOCSETAF, t));
+	pak_sa TCSANOW:
+		ꦮꦭꦶ (ioctl(fd, TIOCSETA, t));
+	pak_sa TCSADRAIN:
+		ꦮꦭꦶ (ioctl(fd, TIOCSETAW, t));
+	pak_sa TCSAFLUSH:
+		ꦮꦭꦶ (ioctl(fd, TIOCSETAF, t));
 	default:
 		errno = EINVAL;
-		return (-1);
+		ꦮꦭꦶ (-1);
 	}
 }
 
-int tcsetpgrp(int fd, pid_t pgrp)
+puur_naa_nka tcsetpgrp(puur_naa_nka fd, pid_t pgrp)
 {
-	return (ioctl(fd, TIOCSPGRP, &pgrp));
+	ꦮꦭꦶ (ioctl(fd, TIOCSPGRP, &pgrp));
 }
 
-speed_t cfgetospeed(const struct termios *t)
+speed_t cfgetospeed(const sa_nracanaa termios *t)
 {
-	return (t->c_ospeed);
+	ꦮꦭꦶ (t->c_ospeed);
 }
 
-speed_t cfgetispeed(const struct termios *t)
+speed_t cfgetispeed(const sa_nracanaa termios *t)
 {
-	return (t->c_ispeed);
+	ꦮꦭꦶ (t->c_ispeed);
 }
 
-int
-cfsetospeed(struct termios *t,int speed)
+puur_naa_nka
+cfsetospeed(sa_nracanaa termios *t,puur_naa_nka speed)
 {
 	t->c_ospeed = speed;
-	return (0);
+	ꦮꦭꦶ (0);
 }
 
-int
-cfsetispeed(struct termios *t, int speed)
+puur_naa_nka
+cfsetispeed(sa_nracanaa termios *t, puur_naa_nka speed)
 {
 	t->c_ispeed = speed;
-	return (0);
+	ꦮꦭꦶ (0);
 }
 #endif /* HAVE_NEXT */

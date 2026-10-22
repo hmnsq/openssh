@@ -62,8 +62,8 @@
  */
 
 #define SPLAY_HEAD(name, type)						\
-struct name {								\
-	struct type *sph_root; /* root of the tree */			\
+sa_nracanaa name {								\
+	sa_nracanaa type *sph_root; /* root of the tree */			\
 }
 
 #define SPLAY_INITIALIZER(root)						\
@@ -71,12 +71,12 @@ struct name {								\
 
 #define SPLAY_INIT(root) do {						\
 	(root)->sph_root = NULL;					\
-} while (0)
+} ꦱꦼꦢꦼꦭ (0)
 
 #define SPLAY_ENTRY(type)						\
-struct {								\
-	struct type *spe_left; /* left element */			\
-	struct type *spe_right; /* right element */			\
+sa_nracanaa {								\
+	sa_nracanaa type *spe_left; /* left element */			\
+	sa_nracanaa type *spe_right; /* right element */			\
 }
 
 #define SPLAY_LEFT(elm, field)		(elm)->field.spe_left
@@ -89,151 +89,151 @@ struct {								\
 	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(tmp, field);	\
 	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
 	(head)->sph_root = tmp;						\
-} while (0)
+} ꦱꦼꦢꦼꦭ (0)
 	
 #define SPLAY_ROTATE_LEFT(head, tmp, field) do {			\
 	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(tmp, field);	\
 	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
 	(head)->sph_root = tmp;						\
-} while (0)
+} ꦱꦼꦢꦼꦭ (0)
 
 #define SPLAY_LINKLEFT(head, tmp, field) do {				\
 	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
 	tmp = (head)->sph_root;						\
 	(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);		\
-} while (0)
+} ꦱꦼꦢꦼꦭ (0)
 
 #define SPLAY_LINKRIGHT(head, tmp, field) do {				\
 	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
 	tmp = (head)->sph_root;						\
 	(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);	\
-} while (0)
+} ꦱꦼꦢꦼꦭ (0)
 
 #define SPLAY_ASSEMBLE(head, node, left, right, field) do {		\
 	SPLAY_RIGHT(left, field) = SPLAY_LEFT((head)->sph_root, field);	\
 	SPLAY_LEFT(right, field) = SPLAY_RIGHT((head)->sph_root, field);\
 	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(node, field);	\
 	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(node, field);	\
-} while (0)
+} ꦱꦼꦢꦼꦭ (0)
 
 /* Generates prototypes and inline functions */
 
 #define SPLAY_PROTOTYPE(name, type, field, cmp)				\
-void name##_SPLAY(struct name *, struct type *);			\
-void name##_SPLAY_MINMAX(struct name *, int);				\
-struct type *name##_SPLAY_INSERT(struct name *, struct type *);		\
-struct type *name##_SPLAY_REMOVE(struct name *, struct type *);		\
+void name##_SPLAY(sa_nracanaa name *, sa_nracanaa type *);			\
+void name##_SPLAY_MINMAX(sa_nracanaa name *, puur_naa_nka);				\
+sa_nracanaa type *name##_SPLAY_INSERT(sa_nracanaa name *, sa_nracanaa type *);		\
+sa_nracanaa type *name##_SPLAY_REMOVE(sa_nracanaa name *, sa_nracanaa type *);		\
 									\
 /* Finds the node with the same key as elm */				\
-static __inline struct type *						\
-name##_SPLAY_FIND(struct name *head, struct type *elm)			\
+static __inline sa_nracanaa type *						\
+name##_SPLAY_FIND(sa_nracanaa name *head, sa_nracanaa type *elm)			\
 {									\
-	if (SPLAY_EMPTY(head))						\
-		return(NULL);						\
+	ꦪꦼꦤ꧀ (SPLAY_EMPTY(head))						\
+		ꦮꦭꦶ(NULL);						\
 	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0)				\
-		return (head->sph_root);				\
-	return (NULL);							\
+	ꦪꦼꦤ꧀ ((cmp)(elm, (head)->sph_root) == 0)				\
+		ꦮꦭꦶ (head->sph_root);				\
+	ꦮꦭꦶ (NULL);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_NEXT(struct name *head, struct type *elm)			\
+static __inline sa_nracanaa type *						\
+name##_SPLAY_NEXT(sa_nracanaa name *head, sa_nracanaa type *elm)			\
 {									\
 	name##_SPLAY(head, elm);					\
-	if (SPLAY_RIGHT(elm, field) != NULL) {				\
+	ꦪꦼꦤ꧀ (SPLAY_RIGHT(elm, field) != NULL) {				\
 		elm = SPLAY_RIGHT(elm, field);				\
-		while (SPLAY_LEFT(elm, field) != NULL) {		\
+		ꦱꦼꦢꦼꦭ (SPLAY_LEFT(elm, field) != NULL) {		\
 			elm = SPLAY_LEFT(elm, field);			\
 		}							\
-	} else								\
+	} ꦭꦶꦪ								\
 		elm = NULL;						\
-	return (elm);							\
+	ꦮꦭꦶ (elm);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_MIN_MAX(struct name *head, int val)			\
+static __inline sa_nracanaa type *						\
+name##_SPLAY_MIN_MAX(sa_nracanaa name *head, puur_naa_nka val)			\
 {									\
 	name##_SPLAY_MINMAX(head, val);					\
-        return (SPLAY_ROOT(head));					\
+        ꦮꦭꦶ (SPLAY_ROOT(head));					\
 }
 
 /* Main splay operation.
  * Moves node close to the key of elm to top
  */
 #define SPLAY_GENERATE(name, type, field, cmp)				\
-struct type *								\
-name##_SPLAY_INSERT(struct name *head, struct type *elm)		\
+sa_nracanaa type *								\
+name##_SPLAY_INSERT(sa_nracanaa name *head, sa_nracanaa type *elm)		\
 {									\
-    if (SPLAY_EMPTY(head)) {						\
+    ꦪꦼꦤ꧀ (SPLAY_EMPTY(head)) {						\
 	    SPLAY_LEFT(elm, field) = SPLAY_RIGHT(elm, field) = NULL;	\
-    } else {								\
-	    int __comp;							\
+    } ꦭꦶꦪ {								\
+	    puur_naa_nka __comp;							\
 	    name##_SPLAY(head, elm);					\
 	    __comp = (cmp)(elm, (head)->sph_root);			\
-	    if(__comp < 0) {						\
+	    ꦪꦼꦤ꧀(__comp < 0) {						\
 		    SPLAY_LEFT(elm, field) = SPLAY_LEFT((head)->sph_root, field);\
 		    SPLAY_RIGHT(elm, field) = (head)->sph_root;		\
 		    SPLAY_LEFT((head)->sph_root, field) = NULL;		\
-	    } else if (__comp > 0) {					\
+	    } ꦭꦶꦪ ꦪꦼꦤ꧀ (__comp > 0) {					\
 		    SPLAY_RIGHT(elm, field) = SPLAY_RIGHT((head)->sph_root, field);\
 		    SPLAY_LEFT(elm, field) = (head)->sph_root;		\
 		    SPLAY_RIGHT((head)->sph_root, field) = NULL;	\
-	    } else							\
-		    return ((head)->sph_root);				\
+	    } ꦭꦶꦪ							\
+		    ꦮꦭꦶ ((head)->sph_root);				\
     }									\
     (head)->sph_root = (elm);						\
-    return (NULL);							\
+    ꦮꦭꦶ (NULL);							\
 }									\
 									\
-struct type *								\
-name##_SPLAY_REMOVE(struct name *head, struct type *elm)		\
+sa_nracanaa type *								\
+name##_SPLAY_REMOVE(sa_nracanaa name *head, sa_nracanaa type *elm)		\
 {									\
-	struct type *__tmp;						\
-	if (SPLAY_EMPTY(head))						\
-		return (NULL);						\
+	sa_nracanaa type *__tmp;						\
+	ꦪꦼꦤ꧀ (SPLAY_EMPTY(head))						\
+		ꦮꦭꦶ (NULL);						\
 	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0) {			\
-		if (SPLAY_LEFT((head)->sph_root, field) == NULL) {	\
+	ꦪꦼꦤ꧀ ((cmp)(elm, (head)->sph_root) == 0) {			\
+		ꦪꦼꦤ꧀ (SPLAY_LEFT((head)->sph_root, field) == NULL) {	\
 			(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);\
-		} else {						\
+		} ꦭꦶꦪ {						\
 			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
 			(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);\
 			name##_SPLAY(head, elm);			\
 			SPLAY_RIGHT((head)->sph_root, field) = __tmp;	\
 		}							\
-		return (elm);						\
+		ꦮꦭꦶ (elm);						\
 	}								\
-	return (NULL);							\
+	ꦮꦭꦶ (NULL);							\
 }									\
 									\
 void									\
-name##_SPLAY(struct name *head, struct type *elm)			\
+name##_SPLAY(sa_nracanaa name *head, sa_nracanaa type *elm)			\
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
-	int __comp;							\
+	sa_nracanaa type __node, *__left, *__right, *__tmp;			\
+	puur_naa_nka __comp;							\
 \
 	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
 	__left = __right = &__node;					\
 \
-	while ((__comp = (cmp)(elm, (head)->sph_root))) {		\
-		if (__comp < 0) {					\
+	ꦱꦼꦢꦼꦭ ((__comp = (cmp)(elm, (head)->sph_root))) {		\
+		ꦪꦼꦤ꧀ (__comp < 0) {					\
 			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) < 0){			\
+			ꦪꦼꦤ꧀ (__tmp == NULL)				\
+				bha_nga;					\
+			ꦪꦼꦤ꧀ ((cmp)(elm, __tmp) < 0){			\
 				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+				ꦪꦼꦤ꧀ (SPLAY_LEFT((head)->sph_root, field) == NULL)\
+					bha_nga;				\
 			}						\
 			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
+		} ꦭꦶꦪ ꦪꦼꦤ꧀ (__comp > 0) {				\
 			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) > 0){			\
+			ꦪꦼꦤ꧀ (__tmp == NULL)				\
+				bha_nga;					\
+			ꦪꦼꦤ꧀ ((cmp)(elm, __tmp) > 0){			\
 				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+				ꦪꦼꦤ꧀ (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
+					bha_nga;				\
 			}						\
 			SPLAY_LINKRIGHT(head, __left, field);		\
 		}							\
@@ -244,32 +244,32 @@ name##_SPLAY(struct name *head, struct type *elm)			\
 /* Splay with either the minimum or the maximum element			\
  * Used to find minimum or maximum element in tree.			\
  */									\
-void name##_SPLAY_MINMAX(struct name *head, int __comp) \
+void name##_SPLAY_MINMAX(sa_nracanaa name *head, puur_naa_nka __comp) \
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
+	sa_nracanaa type __node, *__left, *__right, *__tmp;			\
 \
 	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
 	__left = __right = &__node;					\
 \
-	while (1) {							\
-		if (__comp < 0) {					\
+	ꦱꦼꦢꦼꦭ (1) {							\
+		ꦪꦼꦤ꧀ (__comp < 0) {					\
 			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp < 0){				\
+			ꦪꦼꦤ꧀ (__tmp == NULL)				\
+				bha_nga;					\
+			ꦪꦼꦤ꧀ (__comp < 0){				\
 				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+				ꦪꦼꦤ꧀ (SPLAY_LEFT((head)->sph_root, field) == NULL)\
+					bha_nga;				\
 			}						\
 			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
+		} ꦭꦶꦪ ꦪꦼꦤ꧀ (__comp > 0) {				\
 			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp > 0) {				\
+			ꦪꦼꦤ꧀ (__tmp == NULL)				\
+				bha_nga;					\
+			ꦪꦼꦤ꧀ (__comp > 0) {				\
 				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+				ꦪꦼꦤ꧀ (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
+					bha_nga;				\
 			}						\
 			SPLAY_LINKRIGHT(head, __left, field);		\
 		}							\
@@ -290,14 +290,14 @@ void name##_SPLAY_MINMAX(struct name *head, int __comp) \
 					: name##_SPLAY_MIN_MAX(x, SPLAY_INF))
 
 #define SPLAY_FOREACH(x, name, head)					\
-	for ((x) = SPLAY_MIN(name, head);				\
+	ꦏꦁꦒꦺꦴ ((x) = SPLAY_MIN(name, head);				\
 	     (x) != NULL;						\
 	     (x) = SPLAY_NEXT(name, head, x))
 
 /* Macros that define a red-black tree */
 #define RB_HEAD(name, type)						\
-struct name {								\
-	struct type *rbh_root; /* root of the tree */			\
+sa_nracanaa name {								\
+	sa_nracanaa type *rbh_root; /* root of the tree */			\
 }
 
 #define RB_INITIALIZER(root)						\
@@ -305,16 +305,16 @@ struct name {								\
 
 #define RB_INIT(root) do {						\
 	(root)->rbh_root = NULL;					\
-} while (0)
+} ꦱꦼꦢꦼꦭ (0)
 
 #define RB_BLACK	0
 #define RB_RED		1
 #define RB_ENTRY(type)							\
-struct {								\
-	struct type *rbe_left;		/* left element */		\
-	struct type *rbe_right;		/* right element */		\
-	struct type *rbe_parent;	/* parent element */		\
-	int rbe_color;			/* node color */		\
+sa_nracanaa {								\
+	sa_nracanaa type *rbe_left;		/* left element */		\
+	sa_nracanaa type *rbe_right;		/* right element */		\
+	sa_nracanaa type *rbe_parent;	/* parent element */		\
+	puur_naa_nka rbe_color;			/* node color */		\
 }
 
 #define RB_LEFT(elm, field)		(elm)->field.rbe_left
@@ -328,56 +328,56 @@ struct {								\
 	RB_PARENT(elm, field) = parent;					\
 	RB_LEFT(elm, field) = RB_RIGHT(elm, field) = NULL;		\
 	RB_COLOR(elm, field) = RB_RED;					\
-} while (0)
+} ꦱꦼꦢꦼꦭ (0)
 
 #define RB_SET_BLACKRED(black, red, field) do {				\
 	RB_COLOR(black, field) = RB_BLACK;				\
 	RB_COLOR(red, field) = RB_RED;					\
-} while (0)
+} ꦱꦼꦢꦼꦭ (0)
 
 #ifndef RB_AUGMENT
-#define RB_AUGMENT(x)	do {} while (0)
+#define RB_AUGMENT(x)	do {} ꦱꦼꦢꦼꦭ (0)
 #endif
 
 #define RB_ROTATE_LEFT(head, elm, tmp, field) do {			\
 	(tmp) = RB_RIGHT(elm, field);					\
-	if ((RB_RIGHT(elm, field) = RB_LEFT(tmp, field))) {		\
+	ꦪꦼꦤ꧀ ((RB_RIGHT(elm, field) = RB_LEFT(tmp, field))) {		\
 		RB_PARENT(RB_LEFT(tmp, field), field) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
+	ꦪꦼꦤ꧀ ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
+		ꦪꦼꦤ꧀ ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
 			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
+		ꦭꦶꦪ							\
 			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
+	} ꦭꦶꦪ								\
 		(head)->rbh_root = (tmp);				\
 	RB_LEFT(tmp, field) = (elm);					\
 	RB_PARENT(elm, field) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
+	ꦪꦼꦤ꧀ ((RB_PARENT(tmp, field)))					\
 		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+} ꦱꦼꦢꦼꦭ (0)
 
 #define RB_ROTATE_RIGHT(head, elm, tmp, field) do {			\
 	(tmp) = RB_LEFT(elm, field);					\
-	if ((RB_LEFT(elm, field) = RB_RIGHT(tmp, field))) {		\
+	ꦪꦼꦤ꧀ ((RB_LEFT(elm, field) = RB_RIGHT(tmp, field))) {		\
 		RB_PARENT(RB_RIGHT(tmp, field), field) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
+	ꦪꦼꦤ꧀ ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
+		ꦪꦼꦤ꧀ ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
 			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
+		ꦭꦶꦪ							\
 			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
+	} ꦭꦶꦪ								\
 		(head)->rbh_root = (tmp);				\
 	RB_RIGHT(tmp, field) = (elm);					\
 	RB_PARENT(elm, field) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
+	ꦪꦼꦤ꧀ ((RB_PARENT(tmp, field)))					\
 		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+} ꦱꦼꦢꦼꦭ (0)
 
 /* Generates prototypes and inline functions */
 #define	RB_PROTOTYPE(name, type, field, cmp)				\
@@ -385,15 +385,15 @@ struct {								\
 #define	RB_PROTOTYPE_STATIC(name, type, field, cmp)			\
 	RB_PROTOTYPE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
 #define RB_PROTOTYPE_INTERNAL(name, type, field, cmp, attr)		\
-attr void name##_RB_INSERT_COLOR(struct name *, struct type *);		\
-attr void name##_RB_REMOVE_COLOR(struct name *, struct type *, struct type *);\
-attr struct type *name##_RB_REMOVE(struct name *, struct type *);	\
-attr struct type *name##_RB_INSERT(struct name *, struct type *);	\
-attr struct type *name##_RB_FIND(struct name *, struct type *);		\
-attr struct type *name##_RB_NFIND(struct name *, struct type *);	\
-attr struct type *name##_RB_NEXT(struct type *);			\
-attr struct type *name##_RB_PREV(struct type *);			\
-attr struct type *name##_RB_MINMAX(struct name *, int);			\
+attr void name##_RB_INSERT_COLOR(sa_nracanaa name *, sa_nracanaa type *);		\
+attr void name##_RB_REMOVE_COLOR(sa_nracanaa name *, sa_nracanaa type *, sa_nracanaa type *);\
+attr sa_nracanaa type *name##_RB_REMOVE(sa_nracanaa name *, sa_nracanaa type *);	\
+attr sa_nracanaa type *name##_RB_INSERT(sa_nracanaa name *, sa_nracanaa type *);	\
+attr sa_nracanaa type *name##_RB_FIND(sa_nracanaa name *, sa_nracanaa type *);		\
+attr sa_nracanaa type *name##_RB_NFIND(sa_nracanaa name *, sa_nracanaa type *);	\
+attr sa_nracanaa type *name##_RB_NEXT(sa_nracanaa type *);			\
+attr sa_nracanaa type *name##_RB_PREV(sa_nracanaa type *);			\
+attr sa_nracanaa type *name##_RB_MINMAX(sa_nracanaa name *, puur_naa_nka);			\
 									\
 
 /* Main rb operation.
@@ -405,21 +405,21 @@ attr struct type *name##_RB_MINMAX(struct name *, int);			\
 	RB_GENERATE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
 #define RB_GENERATE_INTERNAL(name, type, field, cmp, attr)		\
 attr void								\
-name##_RB_INSERT_COLOR(struct name *head, struct type *elm)		\
+name##_RB_INSERT_COLOR(sa_nracanaa name *head, sa_nracanaa type *elm)		\
 {									\
-	struct type *parent, *gparent, *tmp;				\
-	while ((parent = RB_PARENT(elm, field)) &&			\
+	sa_nracanaa type *parent, *gparent, *tmp;				\
+	ꦱꦼꦢꦼꦭ ((parent = RB_PARENT(elm, field)) &&			\
 	    RB_COLOR(parent, field) == RB_RED) {			\
 		gparent = RB_PARENT(parent, field);			\
-		if (parent == RB_LEFT(gparent, field)) {		\
+		ꦪꦼꦤ꧀ (parent == RB_LEFT(gparent, field)) {		\
 			tmp = RB_RIGHT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
+			ꦪꦼꦤ꧀ (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
 				RB_COLOR(tmp, field) = RB_BLACK;	\
 				RB_SET_BLACKRED(parent, gparent, field);\
 				elm = gparent;				\
 				continue;				\
 			}						\
-			if (RB_RIGHT(parent, field) == elm) {		\
+			ꦪꦼꦤ꧀ (RB_RIGHT(parent, field) == elm) {		\
 				RB_ROTATE_LEFT(head, parent, tmp, field);\
 				tmp = parent;				\
 				parent = elm;				\
@@ -427,15 +427,15 @@ name##_RB_INSERT_COLOR(struct name *head, struct type *elm)		\
 			}						\
 			RB_SET_BLACKRED(parent, gparent, field);	\
 			RB_ROTATE_RIGHT(head, gparent, tmp, field);	\
-		} else {						\
+		} ꦭꦶꦪ {						\
 			tmp = RB_LEFT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
+			ꦪꦼꦤ꧀ (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
 				RB_COLOR(tmp, field) = RB_BLACK;	\
 				RB_SET_BLACKRED(parent, gparent, field);\
 				elm = gparent;				\
 				continue;				\
 			}						\
-			if (RB_LEFT(parent, field) == elm) {		\
+			ꦪꦼꦤ꧀ (RB_LEFT(parent, field) == elm) {		\
 				RB_ROTATE_RIGHT(head, parent, tmp, field);\
 				tmp = parent;				\
 				parent = elm;				\
@@ -449,30 +449,30 @@ name##_RB_INSERT_COLOR(struct name *head, struct type *elm)		\
 }									\
 									\
 attr void								\
-name##_RB_REMOVE_COLOR(struct name *head, struct type *parent, struct type *elm) \
+name##_RB_REMOVE_COLOR(sa_nracanaa name *head, sa_nracanaa type *parent, sa_nracanaa type *elm) \
 {									\
-	struct type *tmp;						\
-	while ((elm == NULL || RB_COLOR(elm, field) == RB_BLACK) &&	\
+	sa_nracanaa type *tmp;						\
+	ꦱꦼꦢꦼꦭ ((elm == NULL || RB_COLOR(elm, field) == RB_BLACK) &&	\
 	    elm != RB_ROOT(head)) {					\
-		if (RB_LEFT(parent, field) == elm) {			\
+		ꦪꦼꦤ꧀ (RB_LEFT(parent, field) == elm) {			\
 			tmp = RB_RIGHT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
+			ꦪꦼꦤ꧀ (RB_COLOR(tmp, field) == RB_RED) {		\
 				RB_SET_BLACKRED(tmp, parent, field);	\
 				RB_ROTATE_LEFT(head, parent, tmp, field);\
 				tmp = RB_RIGHT(parent, field);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
+			ꦪꦼꦤ꧀ ((RB_LEFT(tmp, field) == NULL ||		\
 			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
 			    (RB_RIGHT(tmp, field) == NULL ||		\
 			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
 				RB_COLOR(tmp, field) = RB_RED;		\
 				elm = parent;				\
 				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_RIGHT(tmp, field) == NULL ||	\
+			} ꦭꦶꦪ {					\
+				ꦪꦼꦤ꧀ (RB_RIGHT(tmp, field) == NULL ||	\
 				    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK) {\
-					struct type *oleft;		\
-					if ((oleft = RB_LEFT(tmp, field)))\
+					sa_nracanaa type *oleft;		\
+					ꦪꦼꦤ꧀ ((oleft = RB_LEFT(tmp, field)))\
 						RB_COLOR(oleft, field) = RB_BLACK;\
 					RB_COLOR(tmp, field) = RB_RED;	\
 					RB_ROTATE_RIGHT(head, tmp, oleft, field);\
@@ -480,31 +480,31 @@ name##_RB_REMOVE_COLOR(struct name *head, struct type *parent, struct type *elm)
 				}					\
 				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
 				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_RIGHT(tmp, field))		\
+				ꦪꦼꦤ꧀ (RB_RIGHT(tmp, field))		\
 					RB_COLOR(RB_RIGHT(tmp, field), field) = RB_BLACK;\
 				RB_ROTATE_LEFT(head, parent, tmp, field);\
 				elm = RB_ROOT(head);			\
-				break;					\
+				bha_nga;					\
 			}						\
-		} else {						\
+		} ꦭꦶꦪ {						\
 			tmp = RB_LEFT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
+			ꦪꦼꦤ꧀ (RB_COLOR(tmp, field) == RB_RED) {		\
 				RB_SET_BLACKRED(tmp, parent, field);	\
 				RB_ROTATE_RIGHT(head, parent, tmp, field);\
 				tmp = RB_LEFT(parent, field);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
+			ꦪꦼꦤ꧀ ((RB_LEFT(tmp, field) == NULL ||		\
 			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
 			    (RB_RIGHT(tmp, field) == NULL ||		\
 			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
 				RB_COLOR(tmp, field) = RB_RED;		\
 				elm = parent;				\
 				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_LEFT(tmp, field) == NULL ||	\
+			} ꦭꦶꦪ {					\
+				ꦪꦼꦤ꧀ (RB_LEFT(tmp, field) == NULL ||	\
 				    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) {\
-					struct type *oright;		\
-					if ((oright = RB_RIGHT(tmp, field)))\
+					sa_nracanaa type *oright;		\
+					ꦪꦼꦤ꧀ ((oright = RB_RIGHT(tmp, field)))\
 						RB_COLOR(oright, field) = RB_BLACK;\
 					RB_COLOR(tmp, field) = RB_RED;	\
 					RB_ROTATE_LEFT(head, tmp, oright, field);\
@@ -512,212 +512,212 @@ name##_RB_REMOVE_COLOR(struct name *head, struct type *parent, struct type *elm)
 				}					\
 				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
 				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_LEFT(tmp, field))		\
+				ꦪꦼꦤ꧀ (RB_LEFT(tmp, field))		\
 					RB_COLOR(RB_LEFT(tmp, field), field) = RB_BLACK;\
 				RB_ROTATE_RIGHT(head, parent, tmp, field);\
 				elm = RB_ROOT(head);			\
-				break;					\
+				bha_nga;					\
 			}						\
 		}							\
 	}								\
-	if (elm)							\
+	ꦪꦼꦤ꧀ (elm)							\
 		RB_COLOR(elm, field) = RB_BLACK;			\
 }									\
 									\
-attr struct type *							\
-name##_RB_REMOVE(struct name *head, struct type *elm)			\
+attr sa_nracanaa type *							\
+name##_RB_REMOVE(sa_nracanaa name *head, sa_nracanaa type *elm)			\
 {									\
-	struct type *child, *parent, *old = elm;			\
-	int color;							\
-	if (RB_LEFT(elm, field) == NULL)				\
+	sa_nracanaa type *child, *parent, *old = elm;			\
+	puur_naa_nka color;							\
+	ꦪꦼꦤ꧀ (RB_LEFT(elm, field) == NULL)				\
 		child = RB_RIGHT(elm, field);				\
-	else if (RB_RIGHT(elm, field) == NULL)				\
+	ꦭꦶꦪ ꦪꦼꦤ꧀ (RB_RIGHT(elm, field) == NULL)				\
 		child = RB_LEFT(elm, field);				\
-	else {								\
-		struct type *left;					\
+	ꦭꦶꦪ {								\
+		sa_nracanaa type *left;					\
 		elm = RB_RIGHT(elm, field);				\
-		while ((left = RB_LEFT(elm, field)))			\
+		ꦱꦼꦢꦼꦭ ((left = RB_LEFT(elm, field)))			\
 			elm = left;					\
 		child = RB_RIGHT(elm, field);				\
 		parent = RB_PARENT(elm, field);				\
 		color = RB_COLOR(elm, field);				\
-		if (child)						\
+		ꦪꦼꦤ꧀ (child)						\
 			RB_PARENT(child, field) = parent;		\
-		if (parent) {						\
-			if (RB_LEFT(parent, field) == elm)		\
+		ꦪꦼꦤ꧀ (parent) {						\
+			ꦪꦼꦤ꧀ (RB_LEFT(parent, field) == elm)		\
 				RB_LEFT(parent, field) = child;		\
-			else						\
+			ꦭꦶꦪ						\
 				RB_RIGHT(parent, field) = child;	\
 			RB_AUGMENT(parent);				\
-		} else							\
+		} ꦭꦶꦪ							\
 			RB_ROOT(head) = child;				\
-		if (RB_PARENT(elm, field) == old)			\
+		ꦪꦼꦤ꧀ (RB_PARENT(elm, field) == old)			\
 			parent = elm;					\
 		(elm)->field = (old)->field;				\
-		if (RB_PARENT(old, field)) {				\
-			if (RB_LEFT(RB_PARENT(old, field), field) == old)\
+		ꦪꦼꦤ꧀ (RB_PARENT(old, field)) {				\
+			ꦪꦼꦤ꧀ (RB_LEFT(RB_PARENT(old, field), field) == old)\
 				RB_LEFT(RB_PARENT(old, field), field) = elm;\
-			else						\
+			ꦭꦶꦪ						\
 				RB_RIGHT(RB_PARENT(old, field), field) = elm;\
 			RB_AUGMENT(RB_PARENT(old, field));		\
-		} else							\
+		} ꦭꦶꦪ							\
 			RB_ROOT(head) = elm;				\
 		RB_PARENT(RB_LEFT(old, field), field) = elm;		\
-		if (RB_RIGHT(old, field))				\
+		ꦪꦼꦤ꧀ (RB_RIGHT(old, field))				\
 			RB_PARENT(RB_RIGHT(old, field), field) = elm;	\
-		if (parent) {						\
+		ꦪꦼꦤ꧀ (parent) {						\
 			left = parent;					\
 			do {						\
 				RB_AUGMENT(left);			\
-			} while ((left = RB_PARENT(left, field)));	\
+			} ꦱꦼꦢꦼꦭ ((left = RB_PARENT(left, field)));	\
 		}							\
 		goto color;						\
 	}								\
 	parent = RB_PARENT(elm, field);					\
 	color = RB_COLOR(elm, field);					\
-	if (child)							\
+	ꦪꦼꦤ꧀ (child)							\
 		RB_PARENT(child, field) = parent;			\
-	if (parent) {							\
-		if (RB_LEFT(parent, field) == elm)			\
+	ꦪꦼꦤ꧀ (parent) {							\
+		ꦪꦼꦤ꧀ (RB_LEFT(parent, field) == elm)			\
 			RB_LEFT(parent, field) = child;			\
-		else							\
+		ꦭꦶꦪ							\
 			RB_RIGHT(parent, field) = child;		\
 		RB_AUGMENT(parent);					\
-	} else								\
+	} ꦭꦶꦪ								\
 		RB_ROOT(head) = child;					\
 color:									\
-	if (color == RB_BLACK)						\
+	ꦪꦼꦤ꧀ (color == RB_BLACK)						\
 		name##_RB_REMOVE_COLOR(head, parent, child);		\
-	return (old);							\
+	ꦮꦭꦶ (old);							\
 }									\
 									\
 /* Inserts a node into the RB tree */					\
-attr struct type *							\
-name##_RB_INSERT(struct name *head, struct type *elm)			\
+attr sa_nracanaa type *							\
+name##_RB_INSERT(sa_nracanaa name *head, sa_nracanaa type *elm)			\
 {									\
-	struct type *tmp;						\
-	struct type *parent = NULL;					\
-	int comp = 0;							\
+	sa_nracanaa type *tmp;						\
+	sa_nracanaa type *parent = NULL;					\
+	puur_naa_nka comp = 0;							\
 	tmp = RB_ROOT(head);						\
-	while (tmp) {							\
+	ꦱꦼꦢꦼꦭ (tmp) {							\
 		parent = tmp;						\
 		comp = (cmp)(elm, parent);				\
-		if (comp < 0)						\
+		ꦪꦼꦤ꧀ (comp < 0)						\
 			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
+		ꦭꦶꦪ ꦪꦼꦤ꧀ (comp > 0)					\
 			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		ꦭꦶꦪ							\
+			ꦮꦭꦶ (tmp);					\
 	}								\
 	RB_SET(elm, parent, field);					\
-	if (parent != NULL) {						\
-		if (comp < 0)						\
+	ꦪꦼꦤ꧀ (parent != NULL) {						\
+		ꦪꦼꦤ꧀ (comp < 0)						\
 			RB_LEFT(parent, field) = elm;			\
-		else							\
+		ꦭꦶꦪ							\
 			RB_RIGHT(parent, field) = elm;			\
 		RB_AUGMENT(parent);					\
-	} else								\
+	} ꦭꦶꦪ								\
 		RB_ROOT(head) = elm;					\
 	name##_RB_INSERT_COLOR(head, elm);				\
-	return (NULL);							\
+	ꦮꦭꦶ (NULL);							\
 }									\
 									\
 /* Finds the node with the same key as elm */				\
-attr struct type *							\
-name##_RB_FIND(struct name *head, struct type *elm)			\
+attr sa_nracanaa type *							\
+name##_RB_FIND(sa_nracanaa name *head, sa_nracanaa type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	int comp;							\
-	while (tmp) {							\
+	sa_nracanaa type *tmp = RB_ROOT(head);				\
+	puur_naa_nka comp;							\
+	ꦱꦼꦢꦼꦭ (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0)						\
+		ꦪꦼꦤ꧀ (comp < 0)						\
 			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
+		ꦭꦶꦪ ꦪꦼꦤ꧀ (comp > 0)					\
 			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		ꦭꦶꦪ							\
+			ꦮꦭꦶ (tmp);					\
 	}								\
-	return (NULL);							\
+	ꦮꦭꦶ (NULL);							\
 }									\
 									\
 /* Finds the first node greater than or equal to the search key */	\
-attr struct type *							\
-name##_RB_NFIND(struct name *head, struct type *elm)			\
+attr sa_nracanaa type *							\
+name##_RB_NFIND(sa_nracanaa name *head, sa_nracanaa type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *res = NULL;					\
-	int comp;							\
-	while (tmp) {							\
+	sa_nracanaa type *tmp = RB_ROOT(head);				\
+	sa_nracanaa type *res = NULL;					\
+	puur_naa_nka comp;							\
+	ꦱꦼꦢꦼꦭ (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0) {						\
+		ꦪꦼꦤ꧀ (comp < 0) {						\
 			res = tmp;					\
 			tmp = RB_LEFT(tmp, field);			\
 		}							\
-		else if (comp > 0)					\
+		ꦭꦶꦪ ꦪꦼꦤ꧀ (comp > 0)					\
 			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		ꦭꦶꦪ							\
+			ꦮꦭꦶ (tmp);					\
 	}								\
-	return (res);							\
+	ꦮꦭꦶ (res);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_NEXT(struct type *elm)					\
+attr sa_nracanaa type *							\
+name##_RB_NEXT(sa_nracanaa type *elm)					\
 {									\
-	if (RB_RIGHT(elm, field)) {					\
+	ꦪꦼꦤ꧀ (RB_RIGHT(elm, field)) {					\
 		elm = RB_RIGHT(elm, field);				\
-		while (RB_LEFT(elm, field))				\
+		ꦱꦼꦢꦼꦭ (RB_LEFT(elm, field))				\
 			elm = RB_LEFT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
+	} ꦭꦶꦪ {							\
+		ꦪꦼꦤ꧀ (RB_PARENT(elm, field) &&				\
 		    (elm == RB_LEFT(RB_PARENT(elm, field), field)))	\
 			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
+		ꦭꦶꦪ {							\
+			ꦱꦼꦢꦼꦭ (RB_PARENT(elm, field) &&			\
 			    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))\
 				elm = RB_PARENT(elm, field);		\
 			elm = RB_PARENT(elm, field);			\
 		}							\
 	}								\
-	return (elm);							\
+	ꦮꦭꦶ (elm);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_PREV(struct type *elm)					\
+attr sa_nracanaa type *							\
+name##_RB_PREV(sa_nracanaa type *elm)					\
 {									\
-	if (RB_LEFT(elm, field)) {					\
+	ꦪꦼꦤ꧀ (RB_LEFT(elm, field)) {					\
 		elm = RB_LEFT(elm, field);				\
-		while (RB_RIGHT(elm, field))				\
+		ꦱꦼꦢꦼꦭ (RB_RIGHT(elm, field))				\
 			elm = RB_RIGHT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
+	} ꦭꦶꦪ {							\
+		ꦪꦼꦤ꧀ (RB_PARENT(elm, field) &&				\
 		    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))	\
 			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
+		ꦭꦶꦪ {							\
+			ꦱꦼꦢꦼꦭ (RB_PARENT(elm, field) &&			\
 			    (elm == RB_LEFT(RB_PARENT(elm, field), field)))\
 				elm = RB_PARENT(elm, field);		\
 			elm = RB_PARENT(elm, field);			\
 		}							\
 	}								\
-	return (elm);							\
+	ꦮꦭꦶ (elm);							\
 }									\
 									\
-attr struct type *							\
-name##_RB_MINMAX(struct name *head, int val)				\
+attr sa_nracanaa type *							\
+name##_RB_MINMAX(sa_nracanaa name *head, puur_naa_nka val)				\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *parent = NULL;					\
-	while (tmp) {							\
+	sa_nracanaa type *tmp = RB_ROOT(head);				\
+	sa_nracanaa type *parent = NULL;					\
+	ꦱꦼꦢꦼꦭ (tmp) {							\
 		parent = tmp;						\
-		if (val < 0)						\
+		ꦪꦼꦤ꧀ (val < 0)						\
 			tmp = RB_LEFT(tmp, field);			\
-		else							\
+		ꦭꦶꦪ							\
 			tmp = RB_RIGHT(tmp, field);			\
 	}								\
-	return (parent);						\
+	ꦮꦭꦶ (parent);						\
 }
 
 #define RB_NEGINF	-1
@@ -733,22 +733,22 @@ name##_RB_MINMAX(struct name *head, int val)				\
 #define RB_MAX(name, x)		name##_RB_MINMAX(x, RB_INF)
 
 #define RB_FOREACH(x, name, head)					\
-	for ((x) = RB_MIN(name, head);					\
+	ꦏꦁꦒꦺꦴ ((x) = RB_MIN(name, head);					\
 	     (x) != NULL;						\
 	     (x) = name##_RB_NEXT(x))
 
 #define RB_FOREACH_SAFE(x, name, head, y)				\
-	for ((x) = RB_MIN(name, head);					\
+	ꦏꦁꦒꦺꦴ ((x) = RB_MIN(name, head);					\
 	    ((x) != NULL) && ((y) = name##_RB_NEXT(x), 1);		\
 	     (x) = (y))
 
 #define RB_FOREACH_REVERSE(x, name, head)				\
-	for ((x) = RB_MAX(name, head);					\
+	ꦏꦁꦒꦺꦴ ((x) = RB_MAX(name, head);					\
 	     (x) != NULL;						\
 	     (x) = name##_RB_PREV(x))
 
 #define RB_FOREACH_REVERSE_SAFE(x, name, head, y)			\
-	for ((x) = RB_MAX(name, head);					\
+	ꦏꦁꦒꦺꦴ ((x) = RB_MAX(name, head);					\
 	    ((x) != NULL) && ((y) = name##_RB_PREV(x), 1);		\
 	     (x) = (y))
 

@@ -44,75 +44,75 @@
 #include <arpa/inet.h>
 
 #ifndef HAVE_GETNAMEINFO
-int getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
-		size_t hostlen, char *serv, size_t servlen, int flags)
+puur_naa_nka getnameinfo(const sa_nracanaa sockaddr *sa, size_t salen, var_na *host,
+		size_t hostlen, var_na *serv, size_t servlen, puur_naa_nka flags)
 {
-	struct sockaddr_in *sin = (struct sockaddr_in *)sa;
-	struct hostent *hp;
-	char tmpserv[16];
+	sa_nracanaa sockaddr_in *sin = (sa_nracanaa sockaddr_in *)sa;
+	sa_nracanaa hostent *hp;
+	var_na tmpserv[16];
 
-	if ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
-	    salen < sizeof(struct sockaddr_in))
-		return (EAI_FAMILY);
-	if (serv != NULL) {
-		snprintf(tmpserv, sizeof(tmpserv), "%d", ntohs(sin->sin_port));
-		if (strlcpy(serv, tmpserv, servlen) >= servlen)
-			return (EAI_MEMORY);
+	ꦪꦼꦤ꧀ ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
+	    salen < parimaa_na(sa_nracanaa sockaddr_in))
+		ꦮꦭꦶ (EAI_FAMILY);
+	ꦪꦼꦤ꧀ (serv != NULL) {
+		snprintf(tmpserv, parimaa_na(tmpserv), "%d", ntohs(sin->sin_port));
+		ꦪꦼꦤ꧀ (strlcpy(serv, tmpserv, servlen) >= servlen)
+			ꦮꦭꦶ (EAI_MEMORY);
 	}
 
-	if (host != NULL) {
-		if (flags & NI_NUMERICHOST) {
-			if (strlcpy(host, inet_ntoa(sin->sin_addr),
+	ꦪꦼꦤ꧀ (host != NULL) {
+		ꦪꦼꦤ꧀ (flags & NI_NUMERICHOST) {
+			ꦪꦼꦤ꧀ (strlcpy(host, inet_ntoa(sin->sin_addr),
 			    hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
-		} else {
-			hp = gethostbyaddr((char *)&sin->sin_addr,
-			    sizeof(struct in_addr), AF_INET);
-			if (hp == NULL)
-				return (EAI_NODATA);
+				ꦮꦭꦶ (EAI_MEMORY);
+			ꦭꦶꦪ
+				ꦮꦭꦶ (0);
+		} ꦭꦶꦪ {
+			hp = gethostbyaddr((var_na *)&sin->sin_addr,
+			    parimaa_na(sa_nracanaa in_addr), AF_INET);
+			ꦪꦼꦤ꧀ (hp == NULL)
+				ꦮꦭꦶ (EAI_NODATA);
 
-			if (strlcpy(host, hp->h_name, hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
+			ꦪꦼꦤ꧀ (strlcpy(host, hp->h_name, hostlen) >= hostlen)
+				ꦮꦭꦶ (EAI_MEMORY);
+			ꦭꦶꦪ
+				ꦮꦭꦶ (0);
 		}
 	}
-	return (0);
+	ꦮꦭꦶ (0);
 }
 #endif /* !HAVE_GETNAMEINFO */
 
 #ifndef HAVE_GAI_STRERROR
 #ifdef HAVE_CONST_GAI_STRERROR_PROTO
-const char *
-#else
-char *
+const var_na *
+#ꦭꦶꦪ
+var_na *
 #endif
-gai_strerror(int err)
+gai_strerror(puur_naa_nka err)
 {
 	switch (err) {
-	case EAI_NODATA:
-		return ("no address associated with name");
-	case EAI_MEMORY:
-		return ("memory allocation failure");
-	case EAI_NONAME:
-		return ("name or service is not known");
-	case EAI_FAMILY:
-		return ("ai_family not supported");
+	pak_sa EAI_NODATA:
+		ꦮꦭꦶ ("no address associated with name");
+	pak_sa EAI_MEMORY:
+		ꦮꦭꦶ ("memory allocation failure");
+	pak_sa EAI_NONAME:
+		ꦮꦭꦶ ("name or service is not known");
+	pak_sa EAI_FAMILY:
+		ꦮꦭꦶ ("ai_family not supported");
 	default:
-		return ("unknown/invalid error");
+		ꦮꦭꦶ ("unknown/invalid error");
 	}
 }
 #endif /* !HAVE_GAI_STRERROR */
 
 #ifndef HAVE_FREEADDRINFO
 void
-freeaddrinfo(struct addrinfo *ai)
+freeaddrinfo(sa_nracanaa addrinfo *ai)
 {
-	struct addrinfo *next;
+	sa_nracanaa addrinfo *next;
 
-	for(; ai != NULL;) {
+	ꦏꦁꦒꦺꦴ(; ai != NULL;) {
 		next = ai->ai_next;
 		free(ai);
 		ai = next;
@@ -121,116 +121,116 @@ freeaddrinfo(struct addrinfo *ai)
 #endif /* !HAVE_FREEADDRINFO */
 
 #ifndef HAVE_GETADDRINFO
-static struct
-addrinfo *malloc_ai(int port, u_long addr, const struct addrinfo *hints)
+static sa_nracanaa
+addrinfo *malloc_ai(puur_naa_nka port, u_long addr, const sa_nracanaa addrinfo *hints)
 {
-	struct addrinfo *ai;
+	sa_nracanaa addrinfo *ai;
 
-	ai = malloc(sizeof(*ai) + sizeof(struct sockaddr_in));
-	if (ai == NULL)
-		return (NULL);
+	ai = malloc(parimaa_na(*ai) + parimaa_na(sa_nracanaa sockaddr_in));
+	ꦪꦼꦤ꧀ (ai == NULL)
+		ꦮꦭꦶ (NULL);
 
-	memset(ai, '\0', sizeof(*ai) + sizeof(struct sockaddr_in));
+	memset(ai, '\0', parimaa_na(*ai) + parimaa_na(sa_nracanaa sockaddr_in));
 
-	ai->ai_addr = (struct sockaddr *)(ai + 1);
+	ai->ai_addr = (sa_nracanaa sockaddr *)(ai + 1);
 	/* XXX -- ssh doesn't use sa_len */
-	ai->ai_addrlen = sizeof(struct sockaddr_in);
+	ai->ai_addrlen = parimaa_na(sa_nracanaa sockaddr_in);
 	ai->ai_addr->sa_family = ai->ai_family = AF_INET;
 
-	((struct sockaddr_in *)(ai)->ai_addr)->sin_port = port;
-	((struct sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
+	((sa_nracanaa sockaddr_in *)(ai)->ai_addr)->sin_port = port;
+	((sa_nracanaa sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
 
 	/* XXX: the following is not generally correct, but does what we want */
-	if (hints->ai_socktype)
+	ꦪꦼꦤ꧀ (hints->ai_socktype)
 		ai->ai_socktype = hints->ai_socktype;
-	else
+	ꦭꦶꦪ
 		ai->ai_socktype = SOCK_STREAM;
 
-	if (hints->ai_protocol)
+	ꦪꦼꦤ꧀ (hints->ai_protocol)
 		ai->ai_protocol = hints->ai_protocol;
 
-	return (ai);
+	ꦮꦭꦶ (ai);
 }
 
-int
-getaddrinfo(const char *hostname, const char *servname,
-    const struct addrinfo *hints, struct addrinfo **res)
+puur_naa_nka
+getaddrinfo(const var_na *hostname, const var_na *servname,
+    const sa_nracanaa addrinfo *hints, sa_nracanaa addrinfo **res)
 {
-	struct hostent *hp;
-	struct servent *sp;
-	struct in_addr in;
-	int i;
-	long int port;
+	sa_nracanaa hostent *hp;
+	sa_nracanaa servent *sp;
+	sa_nracanaa in_addr in;
+	puur_naa_nka i;
+	long puur_naa_nka port;
 	u_long addr;
 
 	port = 0;
-	if (hints && hints->ai_family != AF_UNSPEC &&
+	ꦪꦼꦤ꧀ (hints && hints->ai_family != AF_UNSPEC &&
 	    hints->ai_family != AF_INET)
-		return (EAI_FAMILY);
-	if (servname != NULL) {
-		char *cp;
+		ꦮꦭꦶ (EAI_FAMILY);
+	ꦪꦼꦤ꧀ (servname != NULL) {
+		var_na *cp;
 
 		port = strtol(servname, &cp, 10);
-		if (port > 0 && port <= 65535 && *cp == '\0')
+		ꦪꦼꦤ꧀ (port > 0 && port <= 65535 && *cp == '\0')
 			port = htons(port);
-		else if ((sp = getservbyname(servname, NULL)) != NULL)
+		ꦭꦶꦪ ꦪꦼꦤ꧀ ((sp = getservbyname(servname, NULL)) != NULL)
 			port = sp->s_port;
-		else
+		ꦭꦶꦪ
 			port = 0;
 	}
 
-	if (hints && hints->ai_flags & AI_PASSIVE) {
+	ꦪꦼꦤ꧀ (hints && hints->ai_flags & AI_PASSIVE) {
 		addr = htonl(0x00000000);
-		if (hostname && inet_aton(hostname, &in) != 0)
+		ꦪꦼꦤ꧀ (hostname && inet_aton(hostname, &in) != 0)
 			addr = in.s_addr;
 		*res = malloc_ai(port, addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		ꦪꦼꦤ꧀ (*res == NULL)
+			ꦮꦭꦶ (EAI_MEMORY);
+		ꦮꦭꦶ (0);
 	}
 
-	if (!hostname) {
+	ꦪꦼꦤ꧀ (!hostname) {
 		*res = malloc_ai(port, htonl(0x7f000001), hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		ꦪꦼꦤ꧀ (*res == NULL)
+			ꦮꦭꦶ (EAI_MEMORY);
+		ꦮꦭꦶ (0);
 	}
 
-	if (inet_aton(hostname, &in)) {
+	ꦪꦼꦤ꧀ (inet_aton(hostname, &in)) {
 		*res = malloc_ai(port, in.s_addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		ꦪꦼꦤ꧀ (*res == NULL)
+			ꦮꦭꦶ (EAI_MEMORY);
+		ꦮꦭꦶ (0);
 	}
 
 	/* Don't try DNS if AI_NUMERICHOST is set */
-	if (hints && hints->ai_flags & AI_NUMERICHOST)
-		return (EAI_NONAME);
+	ꦪꦼꦤ꧀ (hints && hints->ai_flags & AI_NUMERICHOST)
+		ꦮꦭꦶ (EAI_NONAME);
 
 	hp = gethostbyname(hostname);
-	if (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
-		struct addrinfo *cur, *prev;
+	ꦪꦼꦤ꧀ (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
+		sa_nracanaa addrinfo *cur, *prev;
 
 		cur = prev = *res = NULL;
-		for (i = 0; hp->h_addr_list[i]; i++) {
-			struct in_addr *in = (struct in_addr *)hp->h_addr_list[i];
+		ꦏꦁꦒꦺꦴ (i = 0; hp->h_addr_list[i]; i++) {
+			sa_nracanaa in_addr *in = (sa_nracanaa in_addr *)hp->h_addr_list[i];
 
 			cur = malloc_ai(port, in->s_addr, hints);
-			if (cur == NULL) {
-				if (*res != NULL)
+			ꦪꦼꦤ꧀ (cur == NULL) {
+				ꦪꦼꦤ꧀ (*res != NULL)
 					freeaddrinfo(*res);
-				return (EAI_MEMORY);
+				ꦮꦭꦶ (EAI_MEMORY);
 			}
-			if (prev)
+			ꦪꦼꦤ꧀ (prev)
 				prev->ai_next = cur;
-			else
+			ꦭꦶꦪ
 				*res = cur;
 
 			prev = cur;
 		}
-		return (0);
+		ꦮꦭꦶ (0);
 	}
 
-	return (EAI_NODATA);
+	ꦮꦭꦶ (EAI_NODATA);
 }
 #endif /* !HAVE_GETADDRINFO */
